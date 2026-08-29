@@ -1,17 +1,21 @@
 #!/usr/bin/env bash
 # Quality gate — runs Gate 3 (scope) then Gate 1 (verify).
 #
-# Wired as a Stop hook in .claude/settings.json, so it runs when Claude finishes
-# a turn. Exit 2 blocks the stop and feeds the failure back to Claude to fix.
-# Also runnable by hand: ./scripts/gate.sh
+# Wired as a Stop hook in .claude/settings.json, which calls it as
+#   ./scripts/gate.sh --hook
+# so it runs when Claude finishes a turn. Exit 2 blocks the stop and feeds the
+# failure back to Claude to fix.
+# Also runnable by hand or from CI: ./scripts/gate.sh
 #
 # verify.sh is skipped when only documentation changed, so doc turns stay fast.
 
 set -uo pipefail
 
-# Hook input arrives on stdin (empty when run by hand). Never re-block a turn
-# that is already continuing because of this hook.
-if [ ! -t 0 ]; then
+# Hook input (JSON) arrives on stdin, but ONLY in hook mode. Every other caller
+# leaves stdin alone: a script or CI job inherits a stdin that may never reach
+# EOF, and reading it there hangs the gate forever instead of running it.
+# Never re-block a turn that is already continuing because of this hook.
+if [ "${1:-}" = "--hook" ] && [ ! -t 0 ]; then
   input="$(cat)"
   if printf '%s' "$input" | grep -q '"stop_hook_active"[[:space:]]*:[[:space:]]*true'; then
     exit 0
