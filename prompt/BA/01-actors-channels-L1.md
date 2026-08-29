@@ -3,7 +3,9 @@
 ## Context
 
 - Nguồn khung: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §2.1 (người dùng chính), §2.2 (kênh bán).
-- Nguồn dữ kiện: `master_plan/shop-facts.md` §2 (bảng 4 kênh), §3 (**5 trạm làm việc có tên**).
+- Nguồn số: `master_plan/00-scope.md` §2 (**bảng 5 kênh — nhà thật**), §1 (giờ bán, 11 bàn).
+- Nguồn quy tắc: `master_plan/shop-facts.md` §2 (hệ quả nghiệp vụ của 5 kênh),
+  §3 (**5 trạm làm việc có tên**).
 - Đích: `docs/product.md` §1 và §2, hiện là chỗ giữ do BA-00 dựng.
 - Task: `work/backlog.md` BA-01, BA-02.
 
@@ -33,11 +35,16 @@ work/backlog.md
 
 - Chỉ mô tả **quyền và trách nhiệm nghiệp vụ**. Không nhắc tới màn hình, role table,
   permission model, hay cách đăng nhập — đó là System Design.
-- Bốn kênh bán là Delivery, Pickup, QR tại bàn, Staff POS. Không thêm kênh mới.
+- **Năm** kênh bán: `delivery` · `pickup` · `qr_table` · `staff_pos` · `phone_preorder`.
+  Không thêm kênh thứ sáu.
 - Mỗi kênh phải nói rõ ba điều: có gắn với phiên bàn hay không, ai xác nhận đơn, và khách phải
-  cung cấp thông tin định danh gì. Lấy đúng bảng `shop-facts.md` §2:
-  delivery/pickup **bắt buộc số điện thoại và không gắn phiên bàn**; qr_table/staff_pos
-  **ẩn danh theo bàn và cùng gộp vào một phiên bàn**.
+  cung cấp thông tin định danh gì. Lấy đúng bảng `00-scope.md` §2:
+  **chỉ hai kênh gắn phiên bàn** — `qr_table` và `staff_pos`, ẩn danh theo bàn, gộp vào một phiên
+  và tính tiền một lần; **ba kênh còn lại** — `delivery`, `pickup`, `phone_preorder` — mỗi đơn là
+  một đơn vị thanh toán độc lập.
+- **`phone_preorder` là kênh riêng** (owner chốt 2026-08-29): khách gọi `0382688666`, nhân viên
+  nhập hộ, đơn **không thuộc phiên bàn nào**. Đừng gộp nó vào `staff_pos` — `staff_pos` là đặt hộ
+  **tại quán, tại một bàn cụ thể**, hai việc khác nhau.
 - Nhân viên quán làm việc theo **5 trạm có tên** (`shop-facts.md` §3): quầy · tráng bánh ·
   gấp bánh · lấy canh · dọn bàn. Dùng đúng năm tên này, không tự đặt tên khác, không gộp.
   Chủ quán là vai riêng, ngoài năm trạm.
@@ -53,9 +60,11 @@ work/backlog.md
 - §1 nêu rõ ranh giới hệ thống: cái gì hệ thống chịu trách nhiệm, cái gì không.
 - §1 liệt kê đúng 5 trạm làm việc theo tên ở `shop-facts.md` §3, mỗi trạm có một câu nói trạm đó
   làm gì; không có trạm thứ 6, không thiếu trạm nào.
-- §2 có bảng 4 kênh bán; mỗi dòng có: tên kênh, ai khởi tạo đơn, có dùng phiên bàn không,
+- §2 có bảng **5** kênh bán; mỗi dòng có: tên kênh, ai khởi tạo đơn, có dùng phiên bàn không,
   ai xác nhận, thông tin định danh khách bắt buộc.
-- Đọc §2 biết ngay: hai kênh nào cần số điện thoại, hai kênh nào ẩn danh theo bàn.
+- Đọc §2 biết ngay: **ba** kênh nào không gắn phiên bàn, **hai** kênh nào ẩn danh theo bàn.
+- §2 có câu khẳng định **chỉ có năm kênh** và phân biệt được `staff_pos` (đặt hộ tại bàn) với
+  `phone_preorder` (đặt trước qua điện thoại, không bàn).
 - Với mỗi kênh, đọc bảng là biết được đơn từ kênh đó có cần quầy xác nhận trước khi làm hay không.
 - Không có câu nào gán quyền mà kế hoạch gốc không nói (mọi quyền suy đoán phải nằm ở Unknowns).
 - Người không biết code đọc §1–§2 giải thích được ai dùng hệ thống và bán qua đường nào.
@@ -64,7 +73,7 @@ work/backlog.md
 
 ```bash
 ./scripts/gate.sh
-grep -n 'Delivery\|Pickup\|QR\|POS' docs/product.md   # đủ 4 kênh
+grep -n 'Delivery\|Pickup\|QR\|POS\|đặt trước\|hotline' docs/product.md   # đủ 5 kênh
 grep -nc 'tráng bánh\|gấp bánh\|lấy canh\|dọn bàn\|quầy' docs/product.md   # đủ 5 trạm
 git status --porcelain                                # chỉ file trong Scope
 ```
@@ -77,6 +86,12 @@ Nếu chưa có câu trả lời, ghi `GIẢ ĐỊNH` + mức rủi ro vào `doc
 - Nhân viên có phân vai trong MVP (một người cố định một trạm, hay ai cũng làm được mọi trạm)?
   `shop-facts.md` §3 chỉ nói **có 5 trạm**, không nói ai được làm trạm nào.
 - Chủ quán có đồng thời là nhân viên trên hệ thống không?
+- Đơn `phone_preorder` sau đó khách tới ăn tại quán thì có chuyển thành phiên bàn không, hay vẫn
+  là đơn độc lập?
+
+Đã có lời giải, **không** ghi lại thành Unknown nữa:
+- ~~Đơn đặt trước qua hotline gắn vào bàn nào~~ → `00-scope.md` §2 (owner chốt 2026-08-29):
+  **kênh thứ năm `phone_preorder`, không gắn bàn**.
 
 Đã có lời giải, **không** ghi lại thành Unknown nữa:
 - ~~Khách QR có cần định danh không~~ → `shop-facts.md` §2: **ẩn danh theo bàn**; chỉ delivery và

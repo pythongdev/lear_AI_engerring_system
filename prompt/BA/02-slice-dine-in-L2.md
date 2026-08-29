@@ -7,7 +7,9 @@
 
 - Nguồn khung: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §3 Epic A, §4.1 (15 bước),
   §4.3 (đặt hộ tại quầy), §5 quy tắc 1, 2, 3, 4, 9.
-- Nguồn dữ kiện: `master_plan/shop-facts.md` §3 (5 trạm), §5 (sơ đồ luồng tại bàn),
+- Nguồn số: `master_plan/00-scope.md` §4.4 (**thành phần một suất bán** — cơ sở của việc nổ),
+  §2 (chỉ `qr_table` và `staff_pos` gắn phiên bàn).
+- Nguồn quy tắc: `master_plan/shop-facts.md` §3 (5 trạm), §5 (sơ đồ luồng tại bàn),
   **§5.1 (nổ việc xuống bếp)**, **§6.1 (gọi thêm khi đang thu tiền)**.
 - Đích: `docs/product.md` §3.1.
 - Đã chốt trước đó: §1 actor, §2 kênh bán (BA-01, BA-02).
@@ -49,10 +51,12 @@ work/backlog.md
 - Một đơn được quầy duyệt sẽ sinh việc ở **nhiều trạm cùng lúc** (tráng bánh · gấp bánh · lấy canh),
   không phải một hàng đợi tuần tự. Dùng đúng tên trạm ở `shop-facts.md` §3.
 - **Việc xuống bếp phải nổ ra thành phần**, không được là một dòng "Combo ×2" mơ hồ
-  (`shop-facts.md` §5.1). Ba hệ quả nghiệp vụ phải viết ra:
-  số lượng thành phần = số suất × số thành phần trong suất; thành phần **không nhận nhân**
-  (giò) thì không kèm mô tả nhân; **nước chấm là việc cấp ĐƠN**, mọi đơn tại bàn đều có một việc
-  cho trạm lấy canh.
+  (`shop-facts.md` §5.1). Bốn hệ quả nghiệp vụ phải viết ra:
+  số lượng thành phần = số suất × số thành phần trong suất (`00-scope.md` §4.4);
+  **mọi suất bán đều kèm bánh cuốn**, không riêng combo — một suất trứng là 1 trứng + 4 bánh,
+  một suất giò là 1 giò + 4 bánh, nên "gọi 1 suất trứng" bếp làm **5 thứ**;
+  thành phần **không nhận nhân** (giò) thì không kèm mô tả nhân;
+  **nước chấm là việc cấp ĐƠN**, mọi đơn tại bàn đều có một việc cho trạm lấy canh.
 - Khách nhìn hoá đơn theo **suất bán**, bếp nhìn theo **thành phần**. Hai cách nhìn cùng một đơn —
   nói rõ điều này, đừng để người đọc tự suy.
 - Mỗi bước phải ghi rõ **ai** thực hiện (dùng đúng actor ở §1).
@@ -73,6 +77,8 @@ work/backlog.md
 - Có mô tả một đơn duyệt xong sinh việc ở những trạm nào, dùng đúng 5 tên trạm.
 - Có ví dụ nổ thành phần (dùng lại ví dụ 2 suất "Đầy đủ" ở `shop-facts.md` §5.1), cho thấy
   số lượng bếp thấy khác số lượng trên hoá đơn.
+- Có câu khẳng định **mọi suất bán đều kèm bánh cuốn**, không chỉ combo — nếu §3.1 chỉ nói tới
+  combo thì chưa đạt.
 - `quality/invariants.md` có ít nhất các invariant: một bàn một phiên chưa thanh toán
   (**tính cả lúc đang chờ thanh toán**); tính tiền theo phiên chứ không theo từng lượt gọi;
   bàn trống chỉ sau khi đóng phiên và dọn bàn; đơn đã duyệt sinh **đủ** việc cho mọi trạm liên quan.

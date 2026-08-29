@@ -58,8 +58,11 @@ work/backlog.md
   - *Chủ quán tạm dừng nhận đơn* → **thắng giờ mở cửa**, kể cả đang trong giờ bán (§6.3).
   - *Mất mạng / mất điện / POS hỏng* → **sổ giấy**, quán vẫn bán (§6.6).
 - Tình huống *"món hết sau khi khách đã chọn"* phải nói rõ nó xảy ra ở **mức thành phần**:
-  một combo gồm nhiều thành phần (`shop-facts.md` §4.2), hết **một** thành phần thì xử lý thế nào
-  với cả suất — nếu chưa có lời giải thì đây là `GIẢ ĐỊNH`, không tự chốt.
+  **mọi suất bán đều gồm nhiều thành phần** (`00-scope.md` §4.4 — kể cả suất trứng và suất giò
+  đều kèm 4 cái bánh), hết **một** thành phần thì xử lý thế nào với cả suất — nếu chưa có lời giải
+  thì đây là `GIẢ ĐỊNH`, không tự chốt.
+- **Hết bánh cuốn là hết gần như mọi món**, vì mọi suất đều kèm bánh. Ghi rõ hệ quả này, đừng để
+  "món hết" trông như chuyện của một dòng menu.
 - Không bỏ sót tình huống nào trong danh sách 14 mục.
 
 ## Acceptance

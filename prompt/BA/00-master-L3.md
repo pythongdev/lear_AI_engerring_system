@@ -6,8 +6,11 @@
 ## Context
 
 - Kế hoạch BA gốc: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` (đọc §2–§14) — cho **khung**.
-- Dữ kiện quán: `master_plan/shop-facts.md` (đọc toàn bộ) — cho **số liệu cụ thể**. §8 của file này
-  có 5 unknown còn treo, trong đó **U-1 (chưa có bảng giá thật) chặn BA-06 và BA-11**.
+- Phạm vi bán và giá: `master_plan/00-scope.md` — **nhà duy nhất** của 5 kênh, bảng giá, phụ thu,
+  thành phần một suất bán. Chỗ nào khác nói khác ⇒ file này thắng.
+- Quy tắc vận hành: `master_plan/shop-facts.md` — 5 trạm, luồng tại bàn, nổ việc xuống bếp, đối
+  soát, sổ giấy. §8 của file này có 4 unknown còn treo, trong đó **U-1 (giá một suất trứng)
+  chặn BA-06** — chạm tiền, hai cách hiểu lệch nhau 12.000–20.000đ mỗi suất.
 - Nguồn sự thật cần điền: `docs/product.md`, `docs/decisions.md`, `quality/invariants.md`,
   `work/backlog.md` — hiện đang là template rỗng.
 - Quy tắc viết prompt/task: `docs/prompt-guideline.md`. Quy tắc nghiệm thu: `quality/review-gate.md`.
@@ -27,7 +30,8 @@ prompt con điền vào mà không giẫm chân nhau.
 - `docs/product.md` (chỉ dựng **mục lục và tiêu đề mục rỗng**, không viết nội dung nghiệp vụ)
 
 Không được sửa:
-- `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`, `master_plan/shop-facts.md` (là input, không phải sản phẩm)
+- `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`, `master_plan/00-scope.md`,
+  `master_plan/shop-facts.md` (là input, không phải sản phẩm)
 - `master_plan/phase_1_system_design_banh_cuon_ba_thanh.md`, `master_plan/prompt-fullstack.md`
 - `docs/architecture.md`, `docs/decisions.md`, `quality/invariants.md` (thuộc prompt con)
 - `prompt/BA/*` (bộ prompt con đã chốt)
@@ -60,9 +64,9 @@ docs/product.md
    prompt tương ứng trong `prompt/BA/`.
 2. `docs/product.md`: mục lục 8 mục dưới đây, mỗi mục chỉ có tiêu đề + một dòng
    `> Chưa chốt — BA-0N` làm chỗ giữ.
-3. Danh sách 10 câu hỏi ở §10 kế hoạch gốc **và 5 unknown U-1–U-5 ở §8 `shop-facts.md`** được
+3. Danh sách 10 câu hỏi ở §10 kế hoạch gốc **và 4 unknown U-1–U-4 ở §8 `shop-facts.md`** được
    phân bổ về đúng task sẽ trả lời chúng (ghi trong mục Acceptance hoặc Unknowns của task đó
-   trong backlog). U-1 phải được ghi là **chặn** BA-06 và BA-11.
+   trong backlog). U-1 ghi là **chặn BA-06**.
 
 Khung mục `docs/product.md`:
 
@@ -87,8 +91,8 @@ Khung mục `docs/product.md`:
 - `docs/product.md` có đúng 8 tiêu đề mục theo bảng trên, mỗi mục có chỗ giữ, không mục nào
   chứa nội dung nghiệp vụ đã chốt.
 - 10 câu hỏi ở §10 kế hoạch gốc đều xuất hiện trong backlog, mỗi câu gắn với ít nhất một task.
-- 5 unknown U-1–U-5 ở §8 `shop-facts.md` đều xuất hiện trong backlog; U-1 và U-2 được đánh dấu
-  chặn task nào, không chỉ ghi cho có.
+- 4 unknown U-1–U-4 ở §8 `shop-facts.md` đều xuất hiện trong backlog; U-1 được đánh dấu
+  **chặn BA-06**, không chỉ ghi cho có.
 - Không có file mới nào được tạo ngoài hai file trong Scope.
 - Không có chuỗi `endpoint`, `schema`, `API`, `component`, `Docker` trong nội dung mới thêm.
 
@@ -108,9 +112,8 @@ Gate 2: đọc lại từng dòng Acceptance ở trên và chỉ ra chỗ trong 
 
 - Chưa có câu hỏi mới. Prompt này chỉ chia việc; các câu hỏi nghiệp vụ được chuyển về task con,
   không trả lời ở đây.
-- Đã biết trước: `shop-facts.md` §8 U-1 — **chưa có bảng giá và danh sách món đầy đủ**
-  (nhà thật `00-scope.md` của dự án cũ không có trong repo này). Không tự bịa giá.
-  Việc của prompt này là **ghi nó thành vật cản có tên trong backlog**, không phải giải nó.
+- Đã biết trước: U-1 (giá một suất trứng) ở `shop-facts.md` §8. Việc của prompt này là **ghi nó
+  thành vật cản có tên trong backlog**, không phải giải nó.
 
 ## Report (AI trả lời sau khi làm)
 

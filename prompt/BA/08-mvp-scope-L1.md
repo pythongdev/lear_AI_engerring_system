@@ -7,8 +7,9 @@
 
 - Nguồn khung: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §9 (làm / chưa làm),
   §13 (rủi ro đi sớm vào kỹ thuật).
-- Nguồn dữ kiện: `master_plan/shop-facts.md` §2 (4 kênh), §3 (5 trạm), §6.5–§6.6
-  (đối soát cuối ngày, sổ giấy dự phòng).
+- Nguồn số: `master_plan/00-scope.md` §2 (**5 kênh**), **§5 (bảng "Ngoài phạm vi" — 4 dòng đã chốt)**.
+- Nguồn quy tắc: `master_plan/shop-facts.md` §3 (5 trạm), §6.7 (ranh giới đã chốt),
+  §6.5–§6.6 (đối soát cuối ngày, sổ giấy dự phòng).
 - Đích: `docs/product.md` §7.
 - Đã chốt trước đó: §1–§6.
 
@@ -36,7 +37,12 @@ work/backlog.md
 
 - Danh sách "làm" phải bám đúng §9 kế hoạch gốc. Không tự thêm năng lực nghe hợp lý
   (loyalty, khuyến mãi, đặt bàn trước, đánh giá món, tách/gộp bàn, tích điểm...).
-  `shop-facts.md` không nhắc tới bất kỳ thứ nào trong số đó ⇒ mặc định là **ngoài MVP**.
+  Không nguồn nào nhắc tới chúng ⇒ mặc định là **ngoài MVP**.
+- **Bốn dòng ở `00-scope.md` §5 là ranh giới đã chốt, không phải chỗ trống chờ điền**, chép nguyên
+  ý vào phần "Ngoài MVP" kèm chữ *quyền chủ quán*: kênh bán **thứ sáu** · **đơn tối thiểu / bậc
+  phí ship** · số tài khoản ngân hàng cứng trong sản phẩm · **món ngoài bảng giá**.
+  Khác biệt quan trọng: mấy thứ này ngoài MVP vì **chủ quán đã quyết không làm**, không phải vì
+  "để sau" — viết đúng lý do đó.
 - Hạng mục "Điều phối công việc tới các trạm" phải khoanh đúng **5 trạm** ở `shop-facts.md` §3,
   không mở rộng thành "cấu hình trạm tuỳ ý".
 - Hai hạng mục vận hành phải nằm trong MVP vì `shop-facts.md` §6.5–§6.6 coi chúng là bắt buộc:
@@ -51,12 +57,15 @@ work/backlog.md
 ## Acceptance
 
 - §7 có hai danh sách tách bạch: "Trong MVP" và "Ngoài MVP (giai đoạn đầu không làm)".
-- Danh sách "Trong MVP" phủ đủ 14 hạng mục ở §9 kế hoạch gốc.
+- Danh sách "Trong MVP" phủ đủ 14 hạng mục ở §9 kế hoạch gốc. Hạng mục "Bốn kênh bán" ghi lại
+  thành **năm** kênh theo `00-scope.md` §2, kèm một dòng nói rõ kế hoạch gốc viết lúc chưa có
+  `phone_preorder`.
 - Mỗi hạng mục trong "Trong MVP" có tham chiếu tới mục §1–§6 mô tả nó.
 - Mỗi hạng mục "Ngoài MVP" có một câu lý do.
 - Có câu khẳng định: yêu cầu ngoài danh sách MVP không được làm trong giai đoạn này mà phải
   vào `work/backlog.md`.
-- "Ngoài MVP" nêu đích danh ít nhất: khuyến mãi/giảm giá, tích điểm, tách/gộp bàn, đặt bàn trước.
+- "Ngoài MVP" nêu đích danh ít nhất: khuyến mãi/giảm giá, tích điểm, tách/gộp bàn, đặt bàn trước,
+  và **đủ 4 dòng ở `00-scope.md` §5** với lý do là *chủ quán đã quyết*, không phải *để sau*.
 - Đối soát cuối ngày và quy trình sổ giấy có mặt trong "Trong MVP".
 - Không có hạng mục nào là công việc kỹ thuật thuần (schema, endpoint, CI).
 

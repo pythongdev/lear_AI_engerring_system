@@ -7,8 +7,9 @@
 
 - Nguồn khung: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §3 Epic B, §4.2,
   §5 quy tắc 5, 8, 10, 11, §6.
-- Nguồn dữ kiện: `master_plan/shop-facts.md` §1 (giờ bán, phí ship), §2 (định danh khách theo kênh),
-  §6.3 (tạm dừng nhận đơn).
+- Nguồn số: `master_plan/00-scope.md` §1 (giờ bán), §2 (**phí ship 0đ, giờ hẹn pickup, kênh
+  `phone_preorder`**), §5 (ranh giới: không có đơn tối thiểu, không có bậc phí ship).
+- Nguồn quy tắc: `master_plan/shop-facts.md` §2, §6.3 (tạm dừng nhận đơn), §8 U-4.
 - Đích: `docs/product.md` §3.2.
 - Đã chốt trước đó: §1 actor, §2 kênh bán; §3.1 lát cắt tại bàn (dùng để đối chiếu khác biệt).
 
@@ -41,11 +42,15 @@ work/backlog.md
 - Tổng tiền phải được hệ thống xác định lại khi đơn được tạo; khách không tự quyết giá.
 - Ship và pickup phải được tách rõ ở bước cuối: pickup chờ khách tới lấy, delivery đóng gói
   và hoàn thành đơn.
-- Dữ kiện đã chốt, dùng đúng, **không** ghi lại thành câu hỏi (`shop-facts.md` §1, §2):
+- Dữ kiện đã chốt, dùng đúng, **không** ghi lại thành câu hỏi (`00-scope.md` §1, §2, §5):
   - Giờ bán **06:00–11:00, tất cả các ngày**, múi giờ `Asia/Ho_Chi_Minh`.
-  - Phí ship **0đ**. Không có **đơn tối thiểu**.
-  - Cả delivery và pickup **bắt buộc số điện thoại**.
+  - Phí ship **0đ**. Không có **đơn tối thiểu**. Không có bậc phí ship — đây là **chốt**,
+    không phải chỗ trống chờ điền.
   - **Pickup có giờ hẹn tới lấy.**
+- **Lát cắt này phủ BA kênh không gắn bàn**, không phải hai: `delivery` · `pickup` ·
+  **`phone_preorder`** (đặt trước qua hotline `0382688666`, nhân viên nhập hộ — owner chốt
+  2026-08-29, `00-scope.md` §2). Cả ba **không thuộc phiên bàn nào** và mỗi đơn là một đơn vị
+  thanh toán độc lập. Bỏ `phone_preorder` là bỏ một phần ba lát cắt.
 - **"Tạm dừng nhận đơn" của chủ quán có ưu tiên CAO HƠN giờ mở cửa** (`shop-facts.md` §6.3):
   đang trong giờ bán mà bấm tạm dừng thì vẫn không nhận đơn. Viết rõ thứ tự ưu tiên này,
   đừng để hai quy tắc nằm cạnh nhau mà không nói cái nào thắng.
@@ -56,15 +61,17 @@ work/backlog.md
 ## Acceptance
 
 - §3.2 có luồng đủ 9 bước theo §4.2 kế hoạch gốc, mỗi bước ghi rõ actor.
+- §3.2 phủ đủ **ba** kênh không gắn bàn, và nói rõ `phone_preorder` khác `staff_pos` ở chỗ nào.
 - Có câu khẳng định đơn ship/pickup không gắn phiên bàn và được thanh toán độc lập.
-- Nêu rõ thông tin liên hệ tối thiểu khách phải cung cấp cho từng kênh: cả hai bắt buộc số điện
-  thoại; pickup có thêm giờ hẹn tới lấy.
+- Nêu rõ thông tin liên hệ tối thiểu khách phải cung cấp cho từng kênh; pickup có thêm giờ hẹn
+  tới lấy. Mức tối thiểu chưa chốt ⇒ ghi `⚠ chưa chốt — U-4`, không tự quyết.
 - Có nêu giờ bán cụ thể (06:00–11:00) và phí ship (0đ, không đơn tối thiểu) — không viết chung
   chung kiểu "theo giờ mở cửa của quán".
 - Có mô tả hành vi khi ngoài giờ bán: đơn bị từ chối, và khách nhìn thấy điều gì ở mức nghiệp vụ.
 - Có mô tả hành vi khi chủ quán tạm dừng nhận đơn trong giờ bán, và câu khẳng định nút tạm dừng
   **thắng** giờ mở cửa.
 - Có một đoạn "Khác gì so với đơn tại bàn" liệt kê ít nhất 3 khác biệt nghiệp vụ.
+- Có mô tả đường đi của **đơn `phone_preorder`** từ lúc nhân viên nghe máy tới lúc đơn hoàn thành.
 - `quality/invariants.md` có invariant: đơn ship/pickup không thuộc phiên bàn nào;
   không tạo được đơn ngoài giờ bán hoặc khi đang tạm dừng nhận đơn.
 - Không có nội dung về nhà cung cấp vận chuyển, API bản đồ, hay cách tính phí ship
@@ -83,14 +90,19 @@ Gate 5 (L2): đọc lại invariant mới, xác nhận không mâu thuẫn invar
 
 ## Unknowns
 
-- Delivery ở MVP chỉ ghi nhận đơn, hay có quản lý trạng thái giao hàng? (§10.7 · `shop-facts.md` U-4)
+- **U-4 · thông tin liên hệ tối thiểu** cho ba kênh không gắn bàn là gì?
+- Đơn `phone_preorder` có giờ hẹn như `pickup` không, hay chỉ ghi "khi nào xong thì gọi"?
+- Delivery ở MVP chỉ ghi nhận đơn, hay có quản lý trạng thái giao hàng? (§10.7 · `shop-facts.md` U-2)
 - Đơn ship/pickup có được thanh toán trước không, hay chỉ thu khi nhận hàng?
 - Giờ hẹn pickup có khung tối thiểu không (đặt trước ít nhất bao lâu), và quá giờ hẹn thì sao?
 - Ai giao hàng — nhân viên quán hay bên thứ ba?
 
 Đã có lời giải, **không** ghi lại thành Unknown nữa:
-- ~~Pickup có bắt buộc giờ hẹn không (§10.6)~~ → `shop-facts.md` §2: **có giờ hẹn**.
-- ~~Có thu phí ship không~~ → `shop-facts.md` §1: **0đ**, không đơn tối thiểu.
+- ~~Đơn đặt trước qua hotline đi kênh nào~~ → `00-scope.md` §2: kênh riêng **`phone_preorder`**,
+  không gắn bàn (owner chốt 2026-08-29).
+- ~~Pickup có bắt buộc giờ hẹn không (§10.6)~~ → `00-scope.md` §2: **có giờ hẹn**.
+- ~~Có thu phí ship không, ai quyết mức phí~~ → `00-scope.md` §2 và §5: **0đ**, không đơn tối
+  thiểu, không bậc phí — và đây là ranh giới đã chốt, không phải chỗ trống.
 
 ## Report (AI trả lời sau khi làm)
 

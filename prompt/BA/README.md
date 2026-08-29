@@ -6,18 +6,26 @@ Viết theo `docs/prompt-guideline.md`. Kiểm kết quả theo `quality/review-
 
 ## Hai nguồn input, không phải một
 
-| Nguồn | Cho cái gì |
-|---|---|
-| `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` | **Khung** nghiệp vụ: 11 task, 3 lát cắt, 12 quy tắc, 14 ngoại lệ, 10 câu hỏi |
-| `master_plan/shop-facts.md` | **Dữ kiện** của quán: giờ bán, 11 bàn, 4 kênh, 5 trạm, cấu trúc giá, thành phần suất bán, quy tắc nổ việc xuống bếp |
+| Nguồn | Cho cái gì | Ai là nhà thật |
+|---|---|---|
+| `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` | **Khung** nghiệp vụ: 11 task, 3 lát cắt, 12 quy tắc, 14 ngoại lệ, 10 câu hỏi | — |
+| `master_plan/00-scope.md` | **Số**: phạm vi bán, **5 kênh**, bảng giá thành phần, giá một suất, phụ thu, thành phần một suất bán | **Nhà duy nhất của giá và phạm vi.** Chỗ khác nói khác ⇒ file này thắng |
+| `master_plan/shop-facts.md` | **Quy tắc vận hành**: 5 trạm, luồng tại bàn, nổ việc xuống bếp, đối soát, sổ giấy | Con trỏ tới hai file trên, **cố ý không chép số** |
 
-Kế hoạch gốc không chứa một con số nào của quán này. Chạy bộ prompt mà bỏ `shop-facts.md`
-sẽ ra một `docs/product.md` đúng khuôn nhưng áp cho quán ăn nào cũng được — tức là chưa chốt gì.
+Kế hoạch gốc không chứa một con số nào của quán này. Chạy bộ prompt mà bỏ hai file kia sẽ ra một
+`docs/product.md` đúng khuôn nhưng áp cho quán ăn nào cũng được — tức là chưa chốt gì.
+
+⚠️ **Cần một con số ⇒ tra `00-scope.md`, không tra `shop-facts.md`.** `shop-facts.md` cố ý không
+giữ bản chép nào của bảng giá; mỗi bản chép là một chỗ sẽ trôi.
 
 ⚠️ `shop-facts.md` §7 liệt kê những phần **cấm** đưa vào tài liệu BA (stack, bảng dữ liệu,
 endpoint, route, UI). Đọc mục đó trước khi dán bất kỳ thứ gì từ `prompt-fullstack.md` vào session.
 
-⚠️ `shop-facts.md` §8 U-1 (**chưa có bảng giá thật**) là unknown **chặn** BA-06 và BA-11.
+⚠️ **Mô hình giá là "giá một suất = TỔNG giá các thành phần"** (`00-scope.md` §4.2, §4.4).
+Bảng §4.2 là giá **thành phần**, không phải giá suất — đọc nhầm hai cái này là thu sai tiền.
+
+⚠️ `shop-facts.md` §8 còn **U-1: giá một suất trứng đứng riêng** (chặn BA-06). Hai cách hiểu lệch
+nhau 12.000–20.000đ mỗi suất — phải hỏi chủ quán, không được tự chọn.
 
 ## Nguyên tắc của bộ prompt này
 
