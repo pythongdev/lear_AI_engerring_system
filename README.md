@@ -19,13 +19,20 @@ docs/
   product.md
   architecture.md
   decisions.md
+  prompt-guideline.md
 work/
   backlog.md
   findings.md
+  scope.txt
 quality/
   invariants.md
+  review-gate.md
 scripts/
   verify.sh
+  check-scope.sh
+  gate.sh
+.claude/
+  settings.json
 ```
 
 ## Risk-based ceremony

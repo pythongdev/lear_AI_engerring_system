@@ -1,0 +1,13 @@
+# Scope của task đang làm — dùng bởi scripts/check-scope.sh (Gate 3).
+#
+# Khai báo trước khi bắt đầu task, khớp với mục Scope trong prompt.
+# Mỗi dòng một pattern:
+#
+#   order/         cho phép mọi thứ dưới order/
+#   docs/x.md      cho phép đúng file này
+#   !order/db.go   cấm, kể cả khi một dòng allow ở trên đã khớp
+#
+# Lưu ý: * khớp cả dấu / (order/* cũng khớp order/sub/a.go).
+#
+# File này rỗng (chỉ có comment) = chưa khai báo scope → Gate 3 bỏ qua.
+# Xoá hết pattern sau khi task xong.
