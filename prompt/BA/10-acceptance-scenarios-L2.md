@@ -1,0 +1,108 @@
+# 10 — Scenario nghiệm thu và cổng chất lượng BA (L2) · BA-11
+
+> L2 và là cổng cuối của giai đoạn BA. Prompt này không thêm nghiệp vụ mới — nó chứng minh
+> nghiệp vụ đã chốt chạy được từ đầu đến cuối. Không qua được cổng này thì không sang System Design.
+
+## Context
+
+- Nguồn khung: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §12 (cổng chất lượng BA),
+  §3 (ba lát cắt).
+- Nguồn dữ kiện: `master_plan/shop-facts.md` §5.1 (ví dụ nổ việc xuống bếp — dùng làm số liệu
+  cho scenario 1), §6.1, §8 U-1.
+- Đích: `docs/product.md` §8.
+- Đầu vào: toàn bộ §1–§7 `docs/product.md`, `docs/decisions.md`, `quality/invariants.md`.
+
+## Goal
+
+`docs/product.md` §8 có ba scenario nghiệm thu BA diễn lại được bằng nghiệp vụ thuần, và kết quả
+chạy thử ba scenario đó chứng minh tài liệu BA không còn lỗ hổng chặn System Design.
+
+## Scope
+
+Được sửa:
+- `docs/product.md` §8
+- `work/findings.md` (ghi lỗ hổng phát hiện khi diễn scenario)
+- `work/backlog.md` (cập nhật trạng thái BA-01–BA-11)
+
+Không được sửa:
+- §1–§7 của `docs/product.md` — nếu diễn scenario mà thấy §1–§7 sai/thiếu, **không tự sửa**:
+  ghi finding và mở lại task BA tương ứng.
+- `docs/decisions.md`, `quality/invariants.md`
+
+Dòng chép vào `work/scope.txt`:
+```text
+docs/product.md
+work/findings.md
+work/backlog.md
+```
+
+## Constraints
+
+- Ba scenario bắt buộc, đúng §12 kế hoạch gốc:
+  1. Khách QR tại bàn → gọi nhiều lần → thanh toán một lần.
+  2. Khách đặt ship/pickup → quán xác nhận → hoàn thành.
+  3. Chủ quán đổi giá → đơn mới dùng giá mới, đơn cũ không đổi.
+- Mỗi bước của scenario phải trỏ được về một mục cụ thể trong §1–§7. Bước nào không trỏ được
+  = lỗ hổng tài liệu → finding, không tự lấp bằng cách viết thêm nghiệp vụ.
+- Scenario viết bằng ngôn ngữ nghiệp vụ, không có thuật ngữ kỹ thuật. Người không biết code
+  phải diễn lại được.
+- Mỗi scenario phải có kết quả mong đợi cụ thể, kiểm được đúng/sai (số lần thu tiền, tổng tiền
+  đơn cũ, trạng thái cuối của bàn).
+- **Scenario 1 dùng số liệu thật, không viết chung chung.** Bám ví dụ `shop-facts.md` §5.1:
+  bàn 5 · gọi lần đầu **2 suất "Đầy đủ trứng tái", thịt + mộc nhĩ, nhiều nhân** · kết quả kiểm
+  được ở bếp là **6 cái bánh cuốn, 2 quả trứng, 2 chiếc giò, 1 việc nước chấm cho bàn 5** —
+  không phải "bếp nhận được việc".
+- **Scenario 1 phải có lượt gọi thêm xảy ra SAU khi quầy đã bắt đầu thu tiền**, và kết quả mong
+  đợi là **vẫn 1 lần thu tiền, 1 hoá đơn** (`shop-facts.md` §6.1). Đây là bước chứng minh chỗ
+  hỏng-ra-tiền nguy hiểm nhất; scenario không có bước này thì chưa nghiệm thu được lát cắt A.
+- ⚠️ **Tổng tiền cụ thể chưa kiểm được** vì U-1 (chưa có bảng giá). Scenario vẫn viết đủ, ô tổng
+  tiền ghi `⚠ chưa kiểm được — U-1`. Không bịa số để checklist trông xanh.
+- Không đóng giai đoạn BA khi còn `GIẢ ĐỊNH` rủi ro cao chặn scenario nào. **U-1 đang là một
+  giả định như vậy** — mặc định kết luận của prompt này là "chưa đủ điều kiện sang System Design",
+  trừ khi U-1 đã được gỡ trước khi chạy.
+
+## Acceptance
+
+- §8 có đúng 3 scenario, mỗi scenario có: bối cảnh, các bước, kết quả mong đợi kiểm được đúng/sai.
+- Scenario 1 nêu rõ số lần thanh toán = 1 dù có nhiều lượt gọi món, và trạng thái cuối của bàn là `Trống`.
+- Scenario 1 có ít nhất một lượt gọi thêm **sau khi quầy bắt đầu thu tiền**, kết quả vẫn là 1 hoá đơn.
+- Scenario 1 có bước kiểm số lượng bếp nhận được (6 bánh / 2 trứng / 2 giò / 1 nước chấm),
+  khác số lượng trên hoá đơn (2 suất).
+- Scenario 2 nêu rõ đơn không gắn phiên bàn và trạng thái cuối là `Hoàn thành`.
+- Scenario 3 nêu rõ tổng tiền đơn cũ không đổi sau khi giá menu đổi.
+- Mỗi bước trong cả 3 scenario có tham chiếu tới mục §1–§7 chứa quy tắc tương ứng.
+- Có checklist cổng chất lượng BA (9 mục ở §12 kế hoạch gốc) với trạng thái tick thật,
+  không tick mục chưa đạt. Mục "có quy tắc giá và tiền" **không được tick** khi U-1 còn treo.
+- Mọi lỗ hổng phát hiện khi diễn scenario đều có finding trong `work/findings.md`, kèm task
+  BA cần mở lại.
+- `work/backlog.md`: task BA-01–BA-11 nào đã xong được đánh dấu Done; task phải mở lại
+  quay về Ready kèm lý do.
+- Không có bước nào trong scenario mô tả thao tác kỹ thuật.
+
+## Verify
+
+```bash
+./scripts/gate.sh
+grep -c '^### Scenario' docs/product.md      # = 3
+grep -n '\[ \]\|\[x\]' docs/product.md       # checklist 9 mục cổng chất lượng
+grep -nEi 'click|button|màn hình|api|endpoint' docs/product.md   # không có kết quả
+git status --porcelain
+```
+Gate 2: diễn miệng từng scenario, mỗi bước chỉ tay vào mục §1–§7 chứng minh nó.
+Gate 5 (L2): chạy scenario 3 đối chiếu trực tiếp với invariant lịch sử đơn trong
+`quality/invariants.md`; hai chỗ mâu thuẫn nhau = chưa đạt.
+Gate 6: nhờ một session mới (context sạch) đọc §1–§8 và tự diễn lại 3 scenario, không đưa
+lý do đã giải thích trước đó.
+
+## Unknowns
+
+- Ai là người ký duyệt cổng chất lượng BA — ai nói "được, sang System Design"?
+- Có được mở System Design **song song** phần không phụ thuộc giá (vòng đời, trạm, luồng) trong
+  lúc chờ gỡ U-1 không, hay phải chờ hết?
+
+## Report (AI trả lời sau khi làm)
+
+- Đã thay đổi gì
+- Đã verify bằng cách nào, kết quả ra sao
+- Còn vấn đề gì chưa giải quyết (nêu rõ: BA đã đủ điều kiện sang System Design chưa,
+  nếu chưa thì mục nào của cổng chất lượng chưa đạt)
