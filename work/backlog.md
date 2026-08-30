@@ -1,13 +1,22 @@
+<a id="top"></a>
 # Backlog
 
-Hai phần, đọc từ trên xuống:
+Hai phần, đọc từ trên xuống: **cần làm** (`Ready`, `In Progress`) và **đã xong** (`Done`).
+Cả hai là danh sách gạch đầu dòng, gọn trong một màn hình. Mô tả dài của từng task nằm ở
+hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 
-- **Cần làm** — `## Ready` (+ `## In Progress`): việc chưa xong, theo thứ tự lấy.
-- **Đã xong** — `## Done`: việc đã đóng, kèm ngày.
+| Mục | Nội dung |
+|---|---|
+| [Ready](#ready) | việc cần làm — checklist + thứ tự lấy |
+| [In Progress](#in-progress) | task đang chạy |
+| [Done](#done) | việc đã xong |
+| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | mô tả dài T-012…BA-11 + bảng mười câu hỏi §10 |
+| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-011…T-002 |
+| [Task Detail Template](#template) | khuôn viết một task mới |
 
-Cả hai đều là danh sách gạch đầu dòng, gọn trong một màn hình. Mô tả dài của từng
-task nằm ở hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
+Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
+<a id="ready"></a>
 ## Ready
 
 Sáu việc bảo trì. **Hai việc chặn chuỗi BA, làm trước:** T-012 → T-015. Bốn việc còn lại không
@@ -51,14 +60,19 @@ Chuỗi BA chạy từ trên xuống. Thứ tự là cột "Cần xong trước"
 Mỗi task chạm **một** mục tài liệu riêng, nên revert được độc lập: §3.1 · §3.2 · §3.3 · §4 · §5 ·
 §6 · §7 · `docs/decisions.md` · §8. Hai task cùng chạm một mục là dấu hiệu chia việc sai.
 
-Chi tiết từng task ở **Chi tiết — việc cần làm**.
+Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-lam).
 
+[↑ đầu file](#top)
+
+<a id="in-progress"></a>
 ## In Progress
 
+<a id="done"></a>
 ## Done
 
-Chi tiết từng task ở **Chi tiết — việc đã xong**.
+Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xong).
 
+- [x] T-018 Gate 7 — hook chặn turn kết thúc mà chưa giao khối commit (ADR-004) (2026-08-30)
 - [x] T-017 Kết thúc mỗi task/phiên giao sẵn nội dung commit (CLAUDE.md §6.1) (2026-08-30)
 - [x] T-011 `phone_preorder` nay thuộc lát cắt Epic B — luồng mang đi ba kênh (2026-08-30)
 - [x] T-008 Backlog có 11 task BA-01–BA-11, thứ tự phụ thuộc và acceptance kiểm được
@@ -72,6 +86,9 @@ Chi tiết từng task ở **Chi tiết — việc đã xong**.
 - [x] T-003 Vòng cập nhật liên tục — brief đầu phiên + luật ghi trong phiên (CLAUDE.md §7)
 - [x] T-002 Đảo nhà thật về `master_plan/shop-facts.md` (ADR-001)
 
+[↑ đầu file](#top)
+
+<a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
 
 ### Mười câu hỏi §10 kế hoạch gốc — ai trả lời câu nào
@@ -578,7 +595,51 @@ grep -n 'phone_preorder' docs/product.md
 git status --porcelain
 ```
 
+[↑ đầu file](#top)
+
+<a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### T-018 — §6.1 là kỷ luật, chưa có cơ chế nào chặn việc quên
+
+**Prompt:** yêu cầu miệng của chủ repo, 2026-08-30 — *"thêm hook để đảm bảo không quên"* (L2)
+
+**Goal:**
+T-017 viết luật §6.1 nhưng không có gì thi hành nó: một phiên quên giao khối commit thì không ai
+biết, đúng loại hỏng `work/findings.md` F-001 nói tới — luật dựa vào trí nhớ. Cuối mỗi turn, nếu
+cây làm việc còn thay đổi **git đang theo dõi** mà báo cáo của turn đó không kèm khối
+`git commit -m`, Stop hook phải chặn và trả lời về cho phiên.
+
+**Scope:**
+`scripts/check-commit-block.sh` (mới) · `scripts/check-commit-block.test.sh` (mới) ·
+`scripts/gate.sh` · `scripts/verify.sh` · `CLAUDE.md` · `README.md` · `docs/decisions.md` ·
+`work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+Không tự chạy `git add`/`git commit` — quyền commit vẫn của người dùng (CLAUDE.md §6). Không đổi
+`check-scope.sh`. Không thêm hook thứ hai vào `.claude/settings.json`. Không dữ kiện nghiệp vụ.
+
+**Acceptance:**
+1. `scripts/check-commit-block.sh` đọc JSON hook trên stdin, exit 2 khi có thay đổi tracked chưa
+   commit mà turn hiện tại không có `git commit -m`; exit 0 khi có khối, hoặc khi cây sạch.
+2. `work/scope.txt` **không** tính là thay đổi cần commit (§6.1: nó không bao giờ nằm trong khối).
+3. Chỉ file **tracked** kích hoạt hook — file chưa track không, đúng luật ADR-003.
+4. Nhắc **một lần cho mỗi trạng thái cây**: đã giao khối rồi thì turn sau không bị nhắc lại nếu
+   cây không đổi. Dấu vết nằm trong `.git/`, không phải file trong repo.
+5. Mọi đường lỗi (không phải git repo, thiếu python3, không đọc được transcript, không phải hook
+   mode) đều exit 0 — không bao giờ chặn nhầm.
+6. `gate.sh --hook` gọi nó **sau** khi gate xanh; `gate.sh` chạy tay không gọi (không có transcript).
+7. `scripts/check-commit-block.test.sh` chạy được độc lập, phủ 1–5, và `verify.sh` tự chạy mọi
+   `scripts/*.test.sh`.
+8. ADR-004 ghi lại ba lựa chọn: nhắc-không-tự-commit · chỉ file tracked · gắn vào `gate.sh` thay vì
+   hook Stop thứ hai.
+9. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/check-commit-block.test.sh
+./scripts/gate.sh
+```
 
 ### T-017 — Kết thúc task/phiên chưa giao nội dung commit
 
@@ -967,6 +1028,9 @@ grep -rn '3.000\|9.000\|25.000' --include='*.md' master_plan/ prompt/ docs/
 ./scripts/gate.sh
 ```
 
+[↑ đầu file](#top)
+
+<a id="template"></a>
 ## Task Detail Template
 
 ### T-XXX — Short title
@@ -985,3 +1049,5 @@ How correctness will be recognized.
 
 **Verify:**  
 Commands or checks to run.
+
+[↑ đầu file](#top)

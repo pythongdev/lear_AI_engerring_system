@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Quality gate — runs Gate 3 (scope) then Gate 1 (verify).
+# Quality gate — runs Gate 3 (scope), Gate 1 (verify), then Gate 7 (commit).
 #
 # Wired as a Stop hook in .claude/settings.json, which calls it as
 #   ./scripts/gate.sh --hook
@@ -8,6 +8,8 @@
 # Also runnable by hand or from CI: ./scripts/gate.sh
 #
 # verify.sh is skipped when only documentation changed, so doc turns stay fast.
+# check-commit-block.sh runs only in hook mode (it needs the transcript) and only
+# after the gate is green: no point asking for a commit message for a red change.
 
 set -uo pipefail
 
@@ -63,3 +65,11 @@ if [ "$failed" -ne 0 ]; then
 fi
 
 printf '%s\n' "$report"
+
+# Gate 7 — CLAUDE.md §6.1: the turn hands over the commit content.
+if [ "${1:-}" = "--hook" ] && [ -n "${input:-}" ]; then
+  printf '%s' "$input" | ./scripts/check-commit-block.sh --hook
+  rc=$?
+  [ "$rc" -ne 0 ] && exit "$rc"
+fi
+exit 0

@@ -21,4 +21,10 @@ if [ -f "package.json" ]; then
   fi
 fi
 
+for t in "$(cd "$(dirname "$0")" && pwd)"/*.test.sh; do
+  [ -f "$t" ] || continue
+  echo "[test] $t"
+  "$t"
+done
+
 echo "Verification passed."

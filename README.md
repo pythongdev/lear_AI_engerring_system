@@ -30,6 +30,8 @@ quality/
 scripts/
   verify.sh
   check-scope.sh
+  check-commit-block.sh
+  check-commit-block.test.sh
   gate.sh
   brief.sh
 .claude/

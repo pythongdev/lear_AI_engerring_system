@@ -94,16 +94,29 @@ acceptance, không đưa lý do LLM đã tự giải thích.
 
 ---
 
+## Gate 7 — Bàn giao nội dung commit
+
+Người bấm commit là người dùng; người **viết** commit là phiên vừa làm. Hết mỗi
+task, và hết mỗi phiên cho phần còn chưa commit, báo cáo phải kết thúc bằng một
+khối `git add` + `git commit` dán chạy được ngay — luật đầy đủ ở `CLAUDE.md` §6.1.
+
+Cổng này tự động: `scripts/check-commit-block.sh` chặn kết thúc lượt khi cây còn
+thay đổi **git đang theo dõi** mà lượt đó không đưa ra khối commit nào. File chưa
+track và `work/scope.txt` không kích hoạt nó, và nó chỉ hỏi **một lần cho mỗi
+trạng thái cây** — đỏ vì lý do sai còn hại hơn không đỏ (ADR-003, ADR-004).
+
 ## Tự động hoá
 
-Gate 1 và Gate 3 chạy tự động qua Stop hook trong `.claude/settings.json`:
+Gate 1, Gate 3 và Gate 7 chạy tự động qua Stop hook trong `.claude/settings.json`:
 
 ```text
-Stop hook → scripts/gate.sh → check-scope.sh + verify.sh
+Stop hook → scripts/gate.sh → check-scope.sh + verify.sh + check-commit-block.sh
 ```
 
 Hook fail sẽ chặn kết thúc lượt và trả lỗi lại cho LLM tự sửa. `verify.sh` được
-bỏ qua khi chỉ có tài liệu thay đổi. Chạy tay: `./scripts/gate.sh`.
+bỏ qua khi chỉ có tài liệu thay đổi, và chạy mọi `scripts/*.test.sh` khi không.
+`check-commit-block.sh` chỉ chạy trong hook mode — chạy tay không có transcript
+để đọc. Chạy tay: `./scripts/gate.sh`.
 
 Xem hoặc tắt hook bằng `/hooks`.
 

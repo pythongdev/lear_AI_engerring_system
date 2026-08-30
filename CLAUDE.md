@@ -51,7 +51,8 @@ CLAUDE.md          this file — read first
 docs/              product, architecture, decisions, prompt guideline
 work/              backlog.md, scope.txt, findings.md
 quality/           invariants.md, review-gate.md
-scripts/           gate.sh → check-scope.sh + verify.sh; brief.sh (§7)
+scripts/           gate.sh → check-scope.sh + verify.sh + check-commit-block.sh;
+                   brief.sh (§7)
 master_plan/       domain facts for the current project
 prompt/            prompt sets built from master_plan/
 .claude/           settings.json (SessionStart → brief.sh, Stop → gate.sh)
@@ -139,8 +140,12 @@ It runs, in order:
    (ADR-003). If the note lists a file *your* task created, put it in scope or
    delete it; nothing else will stop you.
 2. `scripts/verify.sh` (Gate 1) — Go: `gofmt` check, `go build`, `go test`;
-   Node: `npm test` / `lint` / `build` when present. Skipped when the change
-   touches documentation only.
+   Node: `npm test` / `lint` / `build` when present, then every
+   `scripts/*.test.sh`. Skipped when the change touches documentation only.
+3. `scripts/check-commit-block.sh` (Gate 7) — **hook mode only**, and only once
+   the two above are green: tracked changes are waiting to be committed, so the
+   turn must hand over the commit block (§6.1). Untracked files and
+   `work/scope.txt` never trigger it, and it asks once per state of the tree.
 
 The gate is also wired as a Stop hook in `.claude/settings.json`, so it runs when
 a turn ends; a failure blocks the turn and returns the output to be fixed.
@@ -186,6 +191,10 @@ Verified: ./scripts/gate.sh green."
 
 Give the block whether or not the user asks for it — asking to commit is a
 separate request (§6), and the answer to it is already written by then.
+
+This one is enforced, not remembered: `scripts/check-commit-block.sh` (Gate 7,
+§5) blocks the end of a turn that leaves tracked changes uncommitted without a
+`git commit -m` block in its report.
 
 ## 7. Keeping the System Current
 

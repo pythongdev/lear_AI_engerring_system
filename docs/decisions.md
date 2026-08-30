@@ -152,3 +152,55 @@ vòng phản hồi ở `quality/review-gate.md`.
 **Applies to:**
 `scripts/check-scope.sh` · `CLAUDE.md` §5 · `quality/review-gate.md` Gate 3 · `work/backlog.md`
 T-010.
+
+---
+
+### ADR-004 — Nội dung commit do phiên viết, và có cơ chế chặn khi quên
+
+**Decision:**
+Từ 2026-08-30, `CLAUDE.md` §6.1 bắt mỗi turn kết thúc bằng một khối `git add` + `git commit` dán
+chạy được ngay, và `scripts/check-commit-block.sh` thi hành luật đó: gọi từ `gate.sh --hook` sau
+khi gate đã xanh, exit 2 (chặn kết thúc lượt) khi cây còn thay đổi git theo dõi mà lượt đó không
+đưa ra khối commit nào. Ba giới hạn đi kèm là một phần của quyết định:
+
+- **Chỉ nhắc, không tự commit.** Hook không chạy `git add`, không chạy `git commit`.
+- **Chỉ file tracked kích hoạt.** File chưa track không, `work/scope.txt` không.
+- **Một lần cho mỗi trạng thái cây.** Dấu vết ở `.git/lean-ai-commit-block`.
+
+**Why:**
+T-017 viết luật §6.1 và không có gì thi hành nó — đúng loại hỏng `work/findings.md` F-001 nói tới.
+Bằng chứng có sẵn trong git log của chính repo này ngay hôm đó: `202e8c4 ádg`, `2692178 sdgf`,
+`25f0f88 sdfg` — ba commit không có nội dung, vì việc soạn nội dung rơi vào lúc phiên đã kết thúc
+và người còn lại không còn biết task nào, file nào, bằng chứng nào.
+
+Chủ repo yêu cầu thêm hook ngày 2026-08-30, dù `CLAUDE.md` §3.8 nói chỉ dựng cơ chế sau lần sai
+thứ hai. Ở đây lần sai không phải một lần: nó là ba commit liên tiếp, và cái mất đi — lý do của
+một thay đổi — không lấy lại được sau khi phiên kết thúc.
+
+Ba giới hạn trên đều để tránh **đỏ vì lý do sai** (bài học ADR-003):
+- Tự commit sẽ lấy mất quyền quyết định cuối của người dùng (`CLAUDE.md` §6).
+- File chưa track không nói được nó có từ bao giờ, đúng lý lẽ ADR-003.
+- Không có luật "một lần cho mỗi trạng thái", một cây đang dở sẽ nhắc lại ở **mọi** lượt sau, kể
+  cả lượt chỉ trả lời một câu hỏi. Nhắc thừa vài lần là cách nhanh nhất dạy người ta bỏ qua hook.
+
+**Rejected alternatives:**
+- *Thêm hook Stop thứ hai trong `.claude/settings.json`.* Thứ tự giữa hai hook không đảm bảo, mà
+  thứ tự ở đây có nghĩa: gate đỏ thì đừng đòi commit message cho một thay đổi còn hỏng. Gắn vào
+  cuối `gate.sh` là chỗ duy nhất nói được "sau khi xanh".
+- *Hook tự tạo commit.* Nhanh hơn cho người dùng, nhưng §6 nói commit là quyết định của người
+  dùng, và một commit tự động sinh ra từ máy sẽ có đúng chất lượng của `ádg`.
+- *Chặn theo mọi thay đổi kể cả file chưa track.* Mọi file nháp, output tạm, prompt chưa commit
+  sẽ đòi một khối commit — lặp lại đúng cái bẫy ADR-003 đã gỡ.
+- *Không có dấu vết trạng thái, nhắc mỗi lượt.* Ít máy móc hơn một chút, đổi lại là nhắc lại vô
+  ích ở mọi lượt sau khi người dùng chưa commit ngay. Dấu vết đặt trong `.git/` nên không phải
+  bảo trì gì: không cần `.gitignore`, không bao giờ bị commit, mất theo bản clone.
+
+**Rủi ro đã chấp nhận:**
+Vì chỉ nhắc một lần cho mỗi trạng thái, một phiên cố tình bỏ qua lời nhắc sẽ không bị nhắc lại cho
+tới khi cây đổi tiếp. Đổi lại là hook không bao giờ trở thành tiếng ồn. Nếu có lần thứ hai một
+thay đổi đi vào git mà không có nội dung commit, ghi finding và siết lại.
+
+**Applies to:**
+`scripts/check-commit-block.sh` (mới) · `scripts/check-commit-block.test.sh` (mới) ·
+`scripts/gate.sh` · `scripts/verify.sh` · `CLAUDE.md` §2 (cây thư mục) · §5 · §6.1 · §7.3 · §8 ·
+`quality/review-gate.md` Gate 7 · `README.md` · `work/backlog.md` T-017, T-018.
