@@ -1,11 +1,235 @@
 # Product
 
-Business rules and product behavior live here.
+Hành vi nghiệp vụ của sản phẩm. Mỗi mục dưới đây do một task BA chốt.
 
-## Rules
+> **Dữ kiện quán không sống ở đây.** Giá, phụ thu, giờ bán, số bàn, thành phần một suất bán và
+> các quy tắc vận hành thuộc `master_plan/shop-facts.md` (ADR-001). File này mô tả *sản phẩm phải
+> hành xử thế nào* dựa trên các dữ kiện đó; chỗ nào cần một con số, tra ở owner, đừng chép về đây.
 
-Replace this section with the project's actual business rules.
+## 1. Actor và phạm vi hệ thống
+
+*BA-01 — chốt 2026-08-30. Nguồn: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §2.1 (khung
+actor) + `master_plan/shop-facts.md` §1, §2, §3, §5, §6 (dữ kiện quán, chủ quán chốt 2026-08-19 →
+2026-08-30).*
+
+Hệ thống phục vụ **ba** nhóm actor. Mục này chỉ nói **quyền và trách nhiệm nghiệp vụ** — ai được
+làm gì, ai chịu trách nhiệm việc gì. Màn hình, cách đăng nhập và mô hình phân quyền là việc của
+System Design, không có ở đây.
+
+### 1.1 Khách hàng
+
+Người đặt món. Không có mặt trong quán cũng có thể là khách (giao tận nơi, tới lấy, gọi điện).
+
+Việc khách làm:
+
+- Đặt món **giao tận nơi**, tự bấm trên web.
+- Đặt món **tới lấy** tại quán, tự bấm trên web, kèm giờ hẹn lấy.
+- **Quét QR tại bàn** và tự gọi món cho bàn mình đang ngồi.
+- **Gọi hotline để đặt trước**; khách nói, nhân viên nhập hộ vào hệ thống.
+- **Gọi thêm món** khi đang ngồi bàn, kể cả sau khi quầy đã bắt đầu thu tiền — mọi lượt gọi của
+  cùng một bàn vẫn thuộc **một** phiên và được tính **một** lần (`shop-facts.md` §6.1).
+- **Chọn cách trả tiền** — tiền mặt hoặc VietQR — và trả **lúc nhận hàng**, không trả trước
+  (`shop-facts.md` §6.3).
+
+Việc khách **không** làm: khách không tự xác nhận đơn của mình, và **không bao giờ quyết định giá**
+— giá luôn do hệ thống xác định lại từ bảng giá (`shop-facts.md` §4.6 quy tắc 9).
+
+### 1.2 Nhân viên quán
+
+Người của quán, làm việc theo **năm trạm** ở §1.5.
+
+Việc nhân viên làm:
+
+- **Xác nhận (duyệt) đơn khách tự gửi** trước khi việc xuống bếp. Đơn chưa duyệt không sinh việc ở
+  bất kỳ trạm nào (`shop-facts.md` §6.2).
+- **Đặt món hộ khách tại quán**, gắn vào một số bàn cụ thể.
+- **Nhập hộ đơn đặt trước qua điện thoại**, và khi nhận điện thoại **phải hỏi**: giao tận nơi hay
+  tới lấy, và cần hàng lúc mấy giờ (`shop-facts.md` §5.2).
+- **Làm phần việc của trạm mình** (§1.5).
+- **Đóng gói** đơn mang đi, và **tự đi giao** đơn giao tận nơi — quán không thuê bên thứ ba
+  (`shop-facts.md` §6.7).
+- **Thu tiền lúc trao hàng** (tiền mặt hoặc VietQR) và **tự bấm xác nhận đã nhận tiền** — xem ranh giới hệ thống ở §1.4.
+- **Đóng phiên bàn** khi khách đã trả tiền, rồi **dọn bàn** để bàn trở lại trạng thái trống.
+- **Quyết định hoàn tiền theo từng trường hợp** tại quầy — không có luật cứng, người ở quầy nhìn
+  tình huống thật rồi quyết; mọi lần hoàn phải để lại vết: hoàn bao nhiêu, cho đơn nào, ai bấm, lý
+  do gì (`shop-facts.md` §6.4).
+
+### 1.3 Chủ quán
+
+Vai riêng, **ngoài** năm trạm.
+
+Việc chủ quán làm:
+
+- **Quản lý menu**: món nào đang bán, món nào ngừng bán.
+- **Quản lý giá** theo bảng giá ở `shop-facts.md` §4.
+- **Quản lý nhân viên và bàn**.
+- **Tạm dừng nhận đơn** giữa buổi (ví dụ hết nguyên liệu). Nút này có ưu tiên **cao hơn giờ mở
+  cửa** (`shop-facts.md` §6.8).
+- **Nhập số tài khoản** nhận chuyển khoản trong phần quản trị (`shop-facts.md` §1).
+- **Xem báo cáo doanh thu**, cộng từ **cả hai** nguồn — phiên bàn và đơn lẻ; bỏ sót một nguồn là
+  báo cáo thiếu tiền (`shop-facts.md` §6.9).
+
+### 1.4 Ranh giới hệ thống
+
+**Hệ thống chịu trách nhiệm:**
+
+- Nhận đơn qua đúng năm kênh ở §2, và chặn đơn ngoài giờ bán hoặc khi chủ quán đang tạm dừng nhận
+  đơn.
+- Tự xác định giá của mọi đơn từ bảng giá, và từ chối tổ hợp tuỳ chọn không hợp lệ.
+- Giữ một bàn có **một** phiên chưa thanh toán, và gộp mọi lượt gọi của bàn đó vào phiên ấy.
+- Nổ một dòng đơn thành **việc cho từng trạm** theo thành phần của suất (`shop-facts.md` §5.3).
+- Giữ trạng thái của đơn và của bàn, kể cả trạng thái "đang giao" của đơn giao tận nơi.
+- Ghi lại mọi thao tác chạm tiền hoặc chạm trạng thái đơn, đủ để đối soát cuối ngày truy ngược.
+
+**Hệ thống KHÔNG chịu trách nhiệm:**
+
+- **Không tự biết tiền đã về tài khoản.** Mã VietQR là mã tĩnh, không sinh riêng cho từng hoá đơn;
+  người ở quầy nhìn báo có rồi bấm xác nhận (`shop-facts.md` §1).
+- **Không quyết định thay quầy việc hoàn tiền** — hệ thống chỉ ghi lại quyết định đó
+  (`shop-facts.md` §6.4).
+- **Không giao hàng thay quán.** Quán tự đi giao; hệ thống chỉ cho biết đơn nào còn trên đường
+  (`shop-facts.md` §6.7).
+- **Không phải chỗ dựa duy nhất để bán hàng.** Mất điện, mất mạng hay máy hỏng thì quán chuyển sang
+  **sổ giấy** và **không dừng bán** (`shop-facts.md` §6.11).
+- Không quản lý nguyên liệu, tồn kho, chấm công hay kế toán.
+
+### 1.5 Năm trạm làm việc
+
+Nhân viên quán làm việc theo **đúng năm trạm** (`shop-facts.md` §3). Đây là **việc quán làm**,
+không phải màn hình hay quyền đăng nhập của trạm đó.
+
+| Trạm | Trạm đó làm gì |
+|---|---|
+| **quầy** | Nhận và xác nhận đơn, đặt hộ khách, thu tiền, đóng phiên bàn |
+| **tráng bánh** | Tráng bánh và làm trứng |
+| **gấp bánh** | Gấp bánh, xếp đĩa, cắt giò |
+| **lấy canh** | Làm nước chấm và canh cho **mọi** đơn — đơn mang đi thì gói riêng |
+| **dọn bàn** | Dọn bàn sau khi phiên đã đóng, trả bàn về trạng thái trống |
+
+Chủ quán là vai riêng, **ngoài** năm trạm này. Không có trạm thứ sáu; thêm một trạm là đổi cách
+quán vận hành, phải hỏi chủ quán.
+
+## 2. Kênh bán
+
+*BA-02 — chốt 2026-08-30. Nguồn: `master_plan/shop-facts.md` §2 (bảng kênh, chủ quán chốt
+2026-08-24, sửa 2026-08-29), §6.2 (ai phải duyệt), §6.5 (thông tin liên hệ, chủ quán chốt
+2026-08-30).*
+
+Quán bán qua **đúng năm kênh, không có kênh thứ sáu**. Con số năm là **quyết định của chủ quán**,
+không phải bản tóm tắt của người viết tài liệu: thêm kênh thứ sáu là **đổi phạm vi**, phải xin phép
+chủ quán (`shop-facts.md` §2, §6.12).
+
+| Kênh | Ai khởi tạo đơn | Gắn phiên bàn | Ai xác nhận trước khi việc xuống bếp | Định danh khách **bắt buộc** |
+|---|---|---|---|---|
+| **Delivery** — giao tận nơi | Khách, tự bấm trên web | **Không** | **Quầy phải duyệt** | Số điện thoại **và** địa chỉ giao |
+| **Pickup** — khách tới lấy | Khách, tự bấm trên web | **Không** | **Quầy phải duyệt** | Số điện thoại **và** giờ hẹn lấy |
+| **QR tại bàn** | Khách, quét QR tại bàn mình ngồi | **Có** | **Quầy phải duyệt** | Không — **ẩn danh theo số bàn** |
+| **Staff POS** — đặt hộ tại bàn | Nhân viên, tại quán, cho **một số bàn cụ thể** | **Có** | Không cần duyệt — đơn vào thẳng | Không — **ẩn danh theo số bàn** |
+| **Đặt trước qua hotline** | Nhân viên, nhập hộ khi khách gọi điện | **Không** | Không cần duyệt — đơn vào thẳng | Số điện thoại **và** giờ khách cần hàng; **địa chỉ giao nếu khách chọn giao tận nơi** |
+
+Danh sách trường liên hệ đầy đủ (kể cả trường "nên có") ở `shop-facts.md` §6.5 — đừng chép về đây.
+
+### 2.1 Hai kênh gắn phiên bàn, ba kênh không
+
+- **Hai kênh gắn phiên bàn — QR tại bàn và Staff POS.** Khách **ẩn danh theo số bàn**: quán chỉ cần
+  biết "bàn 5", không cần biết tên ai. Mọi lượt gọi của bàn đó, bằng bất kỳ tổ hợp nào của hai
+  kênh này, **gộp vào một phiên và tính tiền một lần**.
+- **Ba kênh không gắn phiên bàn — Delivery, Pickup, Đặt trước qua hotline.** Mỗi đơn là **một đơn
+  vị thanh toán độc lập**, không gộp với đơn nào khác, kể cả cùng một khách đặt hai lần. Cả ba
+  phải có thông tin để gọi lại được.
+
+### 2.2 Ai phải được duyệt, và vì sao
+
+Luật chỉ có một câu: **đơn do KHÁCH tự gửi phải được quầy duyệt; đơn do NHÂN VIÊN nhập thì không**
+(`shop-facts.md` §6.2).
+
+- Phải duyệt: **QR tại bàn, Delivery, Pickup** — ba kênh khách tự bấm.
+- Không cần duyệt: **Staff POS, Đặt trước qua hotline** — nhân viên đã nhập thì đã có người chịu
+  trách nhiệm.
+
+Bước duyệt tồn tại để **chặn đơn ảo**, nên nó chỉ có nghĩa với đơn không ai chịu trách nhiệm. Đơn
+chưa được duyệt **không sinh việc ở bất kỳ trạm nào**.
+
+### 2.3 Staff POS ≠ Đặt trước qua hotline
+
+Hai kênh này đều do nhân viên bấm, nhưng là **hai việc khác nhau** và không được gộp:
+
+| | **Staff POS** | **Đặt trước qua hotline** |
+|---|---|---|
+| Khách đang ở đâu | **Tại quán, ngồi một bàn cụ thể** | Ở ngoài, gọi điện tới |
+| Có số bàn không | **Có** — đơn vào phiên của bàn đó | **Không** — đơn không thuộc phiên bàn nào |
+| Đơn vị tính tiền | Phiên bàn, gộp chung một hoá đơn | Đơn lẻ, tự nó là một đơn vị thanh toán |
+| Kết thúc thế nào | Ăn tại bàn, đóng phiên, dọn bàn | Khách tới lấy **hoặc** quán đi giao — nhân viên phải hỏi |
+
+Trước 2026-08-29, đơn hotline từng bị ghi là đi bằng Staff POS. **Cách ghi đó sai và đã bị gỡ**
+(chủ quán chốt 2026-08-29, `shop-facts.md` §2): Staff POS luôn gắn một số bàn, mà khách gọi điện
+thì chưa ngồi bàn nào. Thấy cách ghi cũ quay lại ở bất kỳ tài liệu nào ⇒ đó là bug.
+
+## 3. Ba lát cắt nghiệp vụ
+
+> Chưa chốt — BA-03, BA-04, BA-05
+
+## 4. Giá và thanh toán
+
+> Chưa chốt — BA-06
+
+## 5. Vòng đời nghiệp vụ
+
+> Chưa chốt — BA-07
+
+## 6. Ngoại lệ
+
+> Chưa chốt — BA-08
+
+## 7. Phạm vi MVP
+
+> Chưa chốt — BA-09
+
+## 8. Scenario nghiệm thu BA
+
+> Chưa chốt — BA-11
 
 ## Unknowns
 
-Record unresolved business questions here temporarily. Do not let implementation silently decide them.
+Câu hỏi nghiệp vụ chưa có lời giải. Không để việc thực hiện âm thầm quyết định thay.
+
+### U-001 — Nhân viên có phân vai theo trạm trong MVP không?
+
+**Câu hỏi:** Một người có bị cố định vào một trạm, hay ai cũng làm được mọi trạm?
+`shop-facts.md` §3 chỉ nói **có năm trạm**, không nói ai được làm trạm nào.
+**Ai trả lời được:** chủ quán.
+**Đang chặn:** cách mô tả trách nhiệm của nhân viên ở §1.2 và §1.5 (hiện viết ở mức "việc của
+trạm", không gán người); sau này chặn phần phân việc ở §5.
+**Ghi ngày:** 2026-08-30 (BA-01).
+
+### U-002 — Chủ quán có đồng thời là nhân viên trên hệ thống không?
+
+**Câu hỏi:** Chủ quán có tự đứng quầy, thu tiền, đặt hộ như một nhân viên không, hay chỉ làm việc
+quản trị ở §1.3? Kế hoạch gốc tách hai vai và `shop-facts.md` §3 nói chủ quán ở **ngoài** năm trạm,
+nhưng không nói chủ quán có được làm việc của trạm hay không.
+**Ai trả lời được:** chủ quán.
+**Đang chặn:** §1.3 hiện chỉ liệt kê việc quản trị, chưa gán cho chủ quán bất kỳ việc vận hành nào.
+**Ghi ngày:** 2026-08-30 (BA-01).
+
+### U-003 — Đơn đặt trước qua hotline, khách tới ăn tại quán thì thành gì?
+
+**Câu hỏi:** Nếu khách đặt trước qua điện thoại rồi tới ăn tại quán, đơn đó có chuyển thành phiên
+bàn (và gộp với món khách gọi thêm tại bàn) hay vẫn là một đơn độc lập?
+`shop-facts.md` §2 chỉ chốt đơn hotline **không gắn bàn lúc tạo**; trường hợp khách tới ngồi lại
+chưa ai nói.
+**Ai trả lời được:** chủ quán.
+**Đang chặn:** §2.3 (cột "Kết thúc thế nào"); sau này chặn quy tắc gộp hoá đơn ở §4 và §5.
+**Ghi ngày:** 2026-08-30 (BA-01).
+
+### Đã có lời giải — không ghi lại thành Unknown nữa
+
+- ~~Đơn đặt trước qua hotline gắn vào bàn nào~~ → là **kênh thứ năm, không gắn bàn**
+  (chủ quán chốt 2026-08-29, `shop-facts.md` §2).
+- ~~Khách quét QR có phải khai định danh không~~ → **ẩn danh theo số bàn**; chỉ Delivery và Pickup
+  bắt buộc số điện thoại (`shop-facts.md` §2, §6.5).
+
+### Chưa ai xác nhận — suy luận, không phải lời chủ quán
+
+Ba chỗ suy luận S-1, S-2, S-3 ở `shop-facts.md` §7.2 vẫn chưa ai hỏi lại. **S-1 chạm tiền** (phụ
+thu suất trứng ×5 hay ×4 — 25.000 hay 24.000 một suất). Chúng thuộc §4 (BA-06) và BA-10, không
+được chốt ở §1–§2.

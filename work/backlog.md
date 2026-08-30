@@ -8,6 +8,46 @@
 
 ## Done
 
+- [x] BA-01 `docs/product.md` §1 — Actor và phạm vi hệ thống
+- [x] BA-02 `docs/product.md` §2 — Kênh bán
+
+### BA-01 / BA-02 — Actor, phạm vi hệ thống và kênh bán
+
+**Prompt:** `prompt/BA/01-actors-channels-L1.md` (L1, chạy 2026-08-30)
+
+**Goal:**
+`docs/product.md` §1 và §2 mô tả được: hệ thống phục vụ những ai, mỗi actor được làm gì, quán bán
+qua kênh nào và mỗi kênh khác nhau ở điểm nghiệp vụ nào.
+
+**Scope:**
+`docs/product.md` (§1, §2, mục Unknowns) · `work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+Nội dung nghiệp vụ của §3–§8 `docs/product.md`. `docs/decisions.md`, `quality/invariants.md`,
+`docs/architecture.md`, `master_plan/*` — đều là input, không phải sản phẩm.
+
+**Acceptance:**
+1. §1 có đúng 3 nhóm actor (Khách hàng · Nhân viên quán · Chủ quán), mỗi nhóm là danh sách hành
+   động nghiệp vụ quan sát được → §1.1–§1.3.
+2. §1 nêu ranh giới hệ thống: chịu trách nhiệm gì, không chịu trách nhiệm gì → §1.4.
+3. §1 liệt kê đúng 5 trạm theo tên ở `master_plan/shop-facts.md` §3, mỗi trạm một câu → §1.5;
+   không trạm thứ 6, chủ quán là vai ngoài 5 trạm.
+4. §2 có bảng 5 kênh, mỗi dòng đủ: tên kênh · ai khởi tạo · có phiên bàn không · ai xác nhận ·
+   định danh khách bắt buộc.
+5. Đọc §2 biết ngay 3 kênh không gắn phiên bàn và 2 kênh ẩn danh theo bàn → §2.1.
+6. §2 khẳng định chỉ có 5 kênh, và phân biệt Staff POS (đặt hộ tại bàn) với đặt trước qua hotline
+   (không bàn) → mở đầu §2 và §2.3.
+7. Với mỗi kênh, bảng §2 cho biết đơn có cần quầy duyệt trước khi xuống bếp không → cột 4 và §2.2.
+8. Không câu nào gán quyền mà nguồn không nói; quyền suy đoán nằm ở Unknowns → U-001, U-002, U-003.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -n 'Delivery\|Pickup\|QR\|POS\|đặt trước\|hotline' docs/product.md
+grep -c 'tráng bánh\|gấp bánh\|lấy canh\|dọn bàn\|quầy' docs/product.md
+git status --porcelain
+```
+
 - [x] T-003 Vòng cập nhật liên tục — brief đầu phiên + luật ghi trong phiên (CLAUDE.md §7)
 
 ### T-003 — Vòng cập nhật liên tục
