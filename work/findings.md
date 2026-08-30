@@ -287,3 +287,51 @@ T-011, T-012 (lần rà thứ ba)
 
 **Status:**
 Fixed
+
+---
+
+### F-007 — Bản xuất khẩu trỏ vào bảy đường không tồn tại, và người đọc nó ở ngoài repo
+
+**Problem:**
+`master_plan/prompt-fullstack.md` là bản xuất khẩu để gửi cho agent **ngoài** repo. Phần đầu file
+(khối trích dẫn dòng 9–16) trỏ tới bảy đường không có trong repo này — kiểm bằng
+`ls design quality/05-checklist.md finding.md quality/prompt_guiline.md` ngày **2026-08-30**, cả bốn
+đều `No such file or directory`:
+
+- `design/data_base/01-thiet-ke.md` (schema) · `design/backend/01-thiet-ke.md` (API) ·
+  `design/frontend/01-thiet-ke.md` (route) · `design/system_design/01-thiet-ke.md` (bất biến) —
+  thư mục `design/` không tồn tại;
+- `quality/05-checklist.md` (định nghĩa XONG) · `quality/prompt_guiline.md` (khuôn 5 vế, trỏ từ
+  dòng đầu file) · `finding.md#f-67` (rủi ro trôi của chính bản chép này).
+
+Cùng loại, mức nhẹ hơn: §7 hàng `0 · BA` bảo *"trả lời 3 câu chưa rõ ở §3.2"*, trong khi §3.2 nay
+chỉ còn một dòng *"Đã gộp vào §3.1"* và không giữ câu hỏi nào.
+
+**Impact:**
+Nặng hơn một link hỏng ở tài liệu nội bộ, vì file này được **dán vào prompt của agent ngoài repo**.
+Người trong repo gặp link hỏng thì `ls` một cái là biết; người ngoài repo không có repo để `ls`. Họ
+thấy một câu khẳng định *"nhà thật của schema là `design/data_base/01`"* và không có cách nào biết
+nhà đó không tồn tại — nên hoặc dừng vì thiếu đầu vào, hoặc tự bịa ra nội dung của bảy file đó rồi
+coi là đã có nguồn. Riêng `quality/prompt_guiline.md` và `finding.md#f-67` còn được nêu như **khuôn
+và sổ rủi ro** của chính file này, tức phần tự-mô-tả của bản xuất khẩu cũng trỏ vào hư không.
+
+**Decision / Fix:**
+Chưa sửa — và cố ý không sửa trong T-013. Đây **không phải lỗi chữ**: sửa từng link đòi phải biết
+`design/**` và `quality/05-checklist.md` là (a) tài liệu của một repo khác mà file này từng thuộc
+về, (b) tài liệu sẽ được sinh ra ở các pha sau, hay (c) tàn dư của một cấu trúc đã bỏ. Ba khả năng
+dẫn tới ba cách sửa khác nhau (trỏ đi nơi khác · ghi là *sẽ có sau pha N* · gỡ hẳn), nên chọn bừa
+một cái là đoán hộ người quyết định.
+
+Câu hỏi phải trả lời trước khi sửa: **`prompt-fullstack.md` còn thuộc dự án nào, và nó xuất khẩu ra
+cho ai?** Trả lời xong mới biết bảy đường kia là link cần chữa hay là dấu vết cần gỡ. Task đã ghi
+vào `work/backlog.md` → *Ready* (**T-019**).
+
+Luật rút ra, bổ sung cho F-005 và F-006: hai luật đó rà **dữ kiện** đã đổi. Ở một bản xuất khẩu còn
+phải rà **pointer** — mọi đường dẫn nó nêu ra phải `ls` được **tại thời điểm xuất khẩu**, vì người
+đọc nó không đứng trong repo để tự kiểm.
+
+**Related task:**
+T-013 (phát hiện) · T-019 (sửa)
+
+**Status:**
+Open

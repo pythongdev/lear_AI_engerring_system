@@ -1,6 +1,6 @@
 # Prompt bàn giao — lập kế hoạch full-stack "Bánh cuốn Bà Thanh Cao Bằng"
 
-> Cập nhật **2026-08-24** · Lane sở hữu: **NON-CODE** · Khuôn: [quality/prompt_guiline.md](../quality/prompt_guiline.md) (5 vế).
+> Cập nhật **2026-08-30** · Lane sở hữu: **NON-CODE** · Khuôn: [quality/prompt_guiline.md](../quality/prompt_guiline.md) (5 vế).
 >
 > **Đầu ra của prompt này là KẾ HOẠCH, không phải code.** Bảo một AI "làm luôn cả dự án" là cách chắc
 > chắn nhất để nhận về 40 file không ai rà. Prompt này bắt nó trả lời trước hai câu khó nhất —
@@ -34,9 +34,13 @@ Agent **ngoài** repo ⇒ copy **nguyên §1 → §10** làm prompt hệ thống
 
 | Mặt | Người dùng | Thiết bị |
 |---|---|---|
-| **Web đặt hàng** | Khách ship / đặt trước tới lấy | Điện thoại khách |
+| **Web đặt hàng** | Khách đặt giao tận nơi / đặt trước tới lấy | Điện thoại khách |
 | **QR tại bàn** | Khách ăn tại quán | Điện thoại khách |
-| **POS + màn hình trạm** | Nhân viên: quầy, tráng bánh, gấp bánh, lấy canh, dọn bàn | Tablet của quán |
+| **POS + màn hình trạm** | Nhân viên: quầy (đặt hộ tại bàn **và nhập hộ đơn khách gọi qua điện thoại**), tráng bánh, gấp bánh, lấy canh, dọn bàn | Tablet của quán |
+
+Ba mặt, **không** phải ba kênh: khách vào hệ thống bằng nhiều đường hơn thế, và một số đường chỉ đi
+qua tay nhân viên. Danh sách kênh bán và kênh nào gắn số bàn ở [shop-facts.md §2](shop-facts.md) —
+đừng đếm kênh bằng số mặt của bảng trên.
 
 Kế hoạch đó đi qua **6 pha** (§7): **BA → System design → DB → BE → FE → Deploy & vận hành**.
 Mỗi pha một lượt trả lời. Mỗi pha phải đẻ ra đúng hai thứ khó nhất, và đây là **trọng tâm chấm điểm**:
@@ -67,8 +71,17 @@ của file này; nó tự đứng một mình và không trỏ đi đâu.
 
 Lệch với file này ⇒ **`shop-facts.md` thắng** ([CLAUDE.md §2](../CLAUDE.md)).
 
-⚠️ **Hai chỗ file này từng chép sai, đã gỡ:** *"bốn kênh bán"* (đúng là **năm**, thêm
-`phone_preorder` từ 2026-08-29) và bảng giá riêng ở §3.1 cũ. Thấy chúng quay lại là bug.
+⚠️ **Ba kiểu chép sai file này từng mắc, đã gỡ:** *"bốn kênh bán"* (đúng là **năm**, thêm
+`phone_preorder` từ 2026-08-29) · bảng giá riêng ở §3.1 cũ · luồng mang đi bị gọi bằng cách liệt kê
+thiếu thành viên (*"ship/pickup"*, *"Một đơn ship"*). Thấy chúng quay lại là bug.
+
+**Lần gần nhất — 2026-08-30 (T-013).** Con số bốn vẫn còn sống ở **§7 hàng `0 · BA`**
+(*"4 kênh bán · 2 sơ đồ luồng (tại bàn, ship)"*) — tức **ngay dưới khối cảnh báo này**, trong ô định
+nghĩa đầu ra bắt buộc của cả pha BA — cùng ba chỗ nữa: §2 (bảng ba mặt thiếu đường điện thoại), §3.3
+(luồng mang đi bị rút thành một con số đếm khác biệt), §5 (lát cắt B *"Một đơn ship"*). Hai bài
+học, cả hai đã có nhà thật trong repo: một khối cảnh báo viết **trong cùng file** không cứu được
+bản chép (`work/findings.md` F-001), và chỗ lệch thường **không chứa con số nào** — nên phải grep
+theo **định danh** kênh rồi đọc những chỗ grep *không* ra kết quả (F-006).
 
 ### 3.2 Đã gộp vào §3.1
 
@@ -94,7 +107,12 @@ Khách ngồi bàn 5
                     Quầy thu tiền (mặt / VietQR) → đóng phiên → DỌN BÀN → bàn trống
 ```
 
-Luồng ship/pickup khác 3 điểm: **cần SĐT**, **không có phiên bàn**, có bước **đóng gói** thay cho mang ra bàn.
+Luồng **mang đi** — tên gọi chung của mọi kênh không gắn số bàn — đi đường khác, và khác biệt cốt lõi
+là **mỗi đơn tự nó là một đơn vị thanh toán, không có phiên bàn nào để gộp vào**. Mọi khác biệt còn
+lại (thông tin liên hệ, đóng gói, hẹn giờ, chỗ thu tiền, trạng thái đang giao) đọc ở
+[shop-facts.md §5.2](shop-facts.md) — danh sách ở đó có mốc thời gian và tự nhận là **chưa chắc đã
+đủ**, nên đừng chép nó về đây thành một con số.
+
 Ngoài giờ bán: web khoá nút đặt, hiện *"Quán mở cửa 6h–11h sáng"*. Admin có nút **"Tạm dừng nhận đơn"**
 **ưu tiên cao hơn** giờ mở cửa (dùng khi hết nguyên liệu).
 
@@ -197,7 +215,7 @@ Bắt đầu bằng đúng 3 **lát cắt dọc chạy được đầu-cuối**,
 | Lát cắt | Chạy được nghĩa là | Vì sao nó là lát cắt |
 |---|---|---|
 | **A. Một suất tại bàn** | khách quét QR gọi 1 suất → quầy duyệt → bếp thấy việc → quầy thu tiền → đóng phiên → bàn trống | Chạm hết 5 trạm và toàn bộ vòng đời tiền |
-| **B. Một đơn ship** | khách web đặt → Telegram báo → quầy duyệt → hoàn thành | Đường tiền thứ hai, **không** đi qua phiên bàn |
+| **B. Một đơn mang đi** | khách web đặt → Telegram báo → quầy duyệt → hoàn thành · **và** đơn khách gọi qua điện thoại: nhân viên nhập hộ → vào thẳng, **không** qua bước quầy duyệt (đã có người chịu trách nhiệm) → hoàn thành | Đường tiền thứ hai, **không** đi qua phiên bàn. Phủ **mọi** kênh không gắn bàn, kể cả đường điện thoại — danh sách kênh ở [shop-facts.md §2](shop-facts.md), luồng ở [§5.2](shop-facts.md) |
 | **C. Chủ quán đổi giá** | sửa giá ở Admin → đơn mới theo giá mới, **đơn cũ giữ nguyên giá** | Chứng minh snapshot, thứ chỉ lộ ra sau vài tuần |
 
 Task = mảnh nhỏ nhất khiến **một lát cắt chạy thêm được một đoạn**. Mảnh nào không đẩy lát cắt nào tiến lên
@@ -298,7 +316,7 @@ BE luôn tính lại giá từ DB (vi phạm = khách đặt món 0đ) · backup
 
 | Pha | Câu hỏi pha này chốt xong | Đầu ra bắt buộc (ngoài master task + cổng chất lượng) |
 |---|---|---|
-| **0 · BA** | Quán làm gì, ai thao tác, tiền đi đường nào | 4 kênh bán · 2 sơ đồ luồng (tại bàn, ship) · danh sách quy tắc nghiệp vụ · **trả lời 3 câu chưa rõ ở §3.2** hoặc ghi thành giả định có mức rủi ro |
+| **0 · BA** | Quán làm gì, ai thao tác, tiền đi đường nào | **năm** kênh bán, đủ cả năm ([shop-facts.md §2](shop-facts.md)) · 2 sơ đồ luồng (tại bàn, **mang đi**) · danh sách quy tắc nghiệp vụ · **trả lời 3 câu chưa rõ ở §3.2** hoặc ghi thành giả định có mức rủi ro |
 | **1 · System design** | Cái gì bảo vệ cái gì | **Bảng bất biến 3 cột (§6.2)** · ràng buộc kiến trúc ẩn + dấu hiệu phải xem lại · chọn nguồn thời gian · 5 rủi ro lớn nhất kèm cách chặn |
 | **2 · DB** | Dữ liệu sống ở đâu | Sơ đồ quan hệ · thứ tự migration · dữ liệu mồi (menu thật [shop-facts §4.2–§4.3](shop-facts.md)) · quy tắc dữ liệu · **query đối chiếu cho từng bất biến** |
 | **3 · BE** | Ai được làm gì, giá tính ở đâu | Endpoint + quyền theo vai · hợp đồng API (nguồn duy nhất cho FE) · **hàm tính giá duy nhất** + bảng ca test · luồng đặt món từng bước · realtime + dự phòng |

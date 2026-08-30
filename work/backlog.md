@@ -10,8 +10,8 @@ hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 | [Ready](#ready) | việc cần làm — checklist + thứ tự lấy |
 | [In Progress](#in-progress) | task đang chạy |
 | [Done](#done) | việc đã xong |
-| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | mô tả dài T-013…BA-11 + bảng mười câu hỏi §10 |
-| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-012…T-002 |
+| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | mô tả dài T-014…BA-11 + bảng mười câu hỏi §10 |
+| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-013…T-002 |
 | [Vòng chạy một task L1](#vong-chay) | mười bước thủ tục từ nhận task tới khối commit |
 | [Task Detail Template](#template) | khuôn viết một task mới |
 
@@ -24,19 +24,24 @@ Năm việc bảo trì. **Một việc chặn chuỗi BA, làm trước: T-015.*
 chặn ai, chen vào lúc nào cũng được.
 
 - [ ] T-015 §10 kế hoạch gốc: hai câu đã có lời giải, một câu hỏi hẹp hơn thực tế — chặn BA-10
-- [ ] T-013 `master_plan/prompt-fullstack.md` vẫn nói "4 kênh" và "luồng ship/pickup khác 3 điểm"
 - [ ] T-014 §2.1 kế hoạch gốc thiếu việc khách gọi điện đặt trước
 - [ ] T-016 `work/scope.txt` được commit kèm pattern, hai lần
 - [ ] T-009 Gỡ dòng mẫu T-001 khỏi Ready
+- [ ] T-019 `prompt-fullstack.md` trỏ tới bảy đường không tồn tại — F-007
 - [ ] T-001 Replace this with the first meaningful task.
 
 - **T-011 đã xong 2026-08-30** — dòng BA-04 ở §11 kế hoạch gốc nay ghi đủ ba kênh không gắn bàn,
   và §3 Epic B, §4.2, §5, §6, §12 cũng vậy. Khung và nhà thật (`master_plan/shop-facts.md` §5.2)
   nay nói cùng một luồng mang đi.
-- **T-012 đã xong 2026-08-30** — `prompt/BA/**` nay gọi luồng mang đi bằng tên luồng và ba kênh.
-  **T-013 là phần cuối cùng của con bug T-011 sửa**: cùng một kênh `phone_preorder`, loại file
-  còn lại là bản xuất khẩu. Luật rà chung ở `work/findings.md` **F-006**: grep theo **định danh**
-  kênh, không theo con số — và đọc những file grep **không** ra kết quả, vì chỗ thiếu nằm ở đó.
+- **T-012 và T-013 đã xong 2026-08-30 — con bug T-011 mở ra nay đóng hết.** Cùng một kênh
+  `phone_preorder`, bốn loại file: tài liệu tra cứu (xong từ trước), tài liệu khung (T-007, T-011),
+  prompt (T-012) — ba loại F-005 kể tên — và loại thứ tư F-005 không kể, **bản xuất khẩu** (T-013). Luật rà chung ở `work/findings.md`
+  **F-006**: grep theo **định danh** kênh, không theo con số — và đọc những file grep **không**
+  ra kết quả, vì chỗ thiếu nằm ở đó.
+- **T-019 sinh ra từ T-013 (2026-08-30), không chặn ai.** T-013 sửa chữ trong
+  `master_plan/prompt-fullstack.md`; nó **không** sửa việc file đó trỏ tới bảy đường không tồn
+  tại trong repo. Đó không phải lỗi chữ mà là câu hỏi *file này còn thuộc dự án nào* — ghi ở
+  `work/findings.md` **F-007** (Open).
 - **BA-04, BA-06 và BA-11 hết bị T-012 chặn (2026-08-30).** Scenario 2 ở
   `prompt/BA/10-acceptance-scenarios-L2.md` nay nêu đủ ba kênh và đòi diễn `phone_preorder`
   **không qua bước quầy duyệt**, nên tick BA-11 không còn đóng giai đoạn BA khi một kênh chưa
@@ -74,6 +79,7 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xong).
 
+- [x] T-013 Bản xuất khẩu `prompt-fullstack.md` không còn nói "4 kênh", lát cắt B phủ luồng mang đi (2026-08-30)
 - [x] T-012 Bộ prompt `prompt/BA/` gọi luồng mang đi bằng ba kênh (F-006, lần rà thứ ba) (2026-08-30)
 - [x] T-018 Gate 7 — hook chặn turn kết thúc mà chưa giao khối commit (ADR-004) (2026-08-30)
 - [x] T-017 Kết thúc mỗi task/phiên giao sẵn nội dung commit (CLAUDE.md §6.1) (2026-08-30)
@@ -118,18 +124,6 @@ ADR, câu nào chưa thì thành GIẢ ĐỊNH có mức rủi ro và người c
 **S-1, S-2, S-3 không phải giả định.** Chủ quán xác nhận cả ba ngày **2026-08-30**
 (`shop-facts.md` §7.1); §7.2 nay không còn mục nào. Task nào ghi chúng là "chưa xác nhận" là sai.
 
-### T-013 — `prompt-fullstack.md` vẫn nói "4 kênh" và "luồng ship/pickup khác 3 điểm"
-
-**Prompt:** `prompt/maintenance/06-fullstack-export-three-channels-L1.md` (L1)
-
-**Goal:**
-`master_plan/prompt-fullstack.md` là bản xuất khẩu cho agent **ngoài** repo. Nó có sẵn một khối ⚠️
-ở §3.1 nói *"thấy 'bốn kênh bán' quay lại là bug"* — và con số bốn vẫn còn sống ở §7 hàng **0 · BA**
-("4 kênh bán · 2 sơ đồ luồng (tại bàn, ship)"), cùng ba chỗ khác. Bằng chứng nữa cho F-001: cảnh
-báo viết trong cùng file không cứu được bản chép.
-
-**Acceptance · Verify:** trong file prompt.
-
 ### T-014 — §2.1 kế hoạch gốc thiếu việc khách gọi điện đặt trước
 
 **Prompt:** `prompt/maintenance/07-plan-actor-phone-order-L1.md` (L1)
@@ -169,7 +163,9 @@ lý do sai (hoặc xanh nhầm), và `brief.sh` in *"a task is open"* cho mọi 
 
 CLAUDE.md §3.8 chỉ cho dựng cơ chế **sau hai lần**; ngưỡng đã đạt, nên task này được phép — nhưng
 là **cảnh báo, không chặn** (ADR-003), và chỉ kêu khi scope đã khai báo mà backlog không có task
-nào ở *In Progress*. Cần **ADR-004** và **F-007**.
+nào ở *In Progress*. Cần một ADR và một finding — nhưng **hai số prompt viết ra đã bị lấy mất**:
+ADR-004 là của T-018 (2026-08-30), F-007 là của T-013 (2026-08-30). Dùng số trống kế tiếp tại
+thời điểm làm, đừng dùng số ghi trong prompt.
 
 **Acceptance · Verify:** trong file prompt.
 
@@ -182,6 +178,28 @@ nào ở *In Progress*. Cần **ADR-004** và **F-007**.
 đang được chỉ vào một dòng mẫu không phải task. Gỡ nó đi, không tick, không đưa xuống Done.
 
 **Acceptance · Verify:** trong file prompt.
+
+### T-019 — `prompt-fullstack.md` trỏ tới bảy đường không tồn tại
+
+**Prompt:** chưa có · **Finding:** `work/findings.md` **F-007** (Open) · L1
+
+**Goal:**
+`master_plan/prompt-fullstack.md` là bản xuất khẩu, được **dán vào prompt của agent ngoài repo**.
+Khối trích dẫn đầu file trỏ tới bốn tài liệu `design/**`, `quality/05-checklist.md`,
+`quality/prompt_guiline.md` và `finding.md#f-67` — kiểm ngày 2026-08-30, **không đường nào tồn
+tại**. Người đọc file này không có repo để `ls`, nên họ hoặc dừng vì thiếu đầu vào, hoặc tự bịa nội
+dung của bảy file rồi coi là đã có nguồn.
+
+**Không sửa được bằng cách sửa từng link.** Phải trả lời trước: *`prompt-fullstack.md` còn thuộc dự
+án nào, xuất khẩu cho ai?* — bảy đường kia là (a) tài liệu của một repo khác, (b) tài liệu sẽ sinh
+ra ở pha sau, hay (c) tàn dư của cấu trúc đã bỏ. Ba khả năng, ba cách sửa khác nhau. **Hỏi người,
+đừng đoán** (CLAUDE.md §3.5).
+
+Kèm theo, cùng loại nhưng nhẹ hơn: §7 hàng `0 · BA` bảo *"trả lời 3 câu chưa rõ ở §3.2"*, trong khi
+§3.2 nay chỉ còn dòng *"Đã gộp vào §3.1"* và không giữ câu hỏi nào. T-013 cố ý không sửa câu đó vì
+sửa là phải đoán ba câu ấy nay nằm ở đâu.
+
+**Acceptance · Verify:** viết khi có lời giải cho câu hỏi trên.
 
 ### BA-03 — Lát cắt một suất tại bàn
 
@@ -591,6 +609,44 @@ git status --porcelain
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### T-013 — Bản xuất khẩu còn nói "4 kênh" và gọi luồng mang đi bằng hai kênh
+
+**Prompt:** `prompt/maintenance/06-fullstack-export-three-channels-L1.md` (L1) · **Xong 2026-08-30**
+
+**Goal:**
+`master_plan/prompt-fullstack.md` — bản xuất khẩu cho agent **ngoài** repo — không còn chỗ nào nói
+quán bán bốn kênh, và mọi chỗ mô tả luồng mang đi đều gọi tên luồng thay vì kể thiếu thành viên.
+
+**Đã sửa năm chỗ** (chỉ trong `master_plan/prompt-fullstack.md`):
+
+| Mục | Trước | Sau |
+|---|---|---|
+| §7 hàng `0 · BA` | "4 kênh bán · 2 sơ đồ luồng (tại bàn, ship)" | "**năm** kênh bán, đủ cả năm (trỏ `shop-facts.md` §2) · 2 sơ đồ luồng (tại bàn, **mang đi**)" |
+| §2 bảng ba mặt | POS chỉ có "đặt món hộ khách"; không có đường điện thoại | quầy "đặt hộ tại bàn **và nhập hộ đơn khách gọi qua điện thoại**", kèm câu "ba mặt **không** phải ba kênh" + trỏ `shop-facts.md` §2 |
+| §3.3 | "Luồng ship/pickup khác **3 điểm**: cần SĐT, không phiên bàn, có đóng gói" | gọi tên **luồng mang đi**, nêu khác biệt cốt lõi (mỗi đơn là một đơn vị thanh toán, không phiên bàn), **bỏ con số**, trỏ `shop-facts.md` §5.2 |
+| §5 lát cắt B | "**B. Một đơn ship** — khách web đặt → Telegram → quầy duyệt" | "**B. Một đơn mang đi**" — thêm nhánh đơn gọi điện thoại do nhân viên nhập hộ, **không** qua bước quầy duyệt |
+| §3.1 khối ⚠️ | kể hai kiểu chép sai cũ | vẫn **một** khối, nay kể ba kiểu + lần gặp 2026-08-30 và tìm thấy ở đâu |
+
+**Ba điều task này chứng minh, ngoài việc sửa chữ:**
+
+1. **Cảnh báo cùng file không cứu được bản chép (F-001).** Dòng "4 kênh bán" sống sót **ngay dưới**
+   khối ⚠️ nói "thấy 'bốn kênh bán' quay lại là bug", trong ô định nghĩa đầu ra bắt buộc của cả
+   pha BA. Một agent ngoài repo giao đúng bốn kênh rồi coi pha BA là xong.
+2. **Bỏ con số, đừng thay số (F-003).** "Khác 3 điểm" **không** được sửa thành "khác 7 điểm": đếm
+   là tóm tắt của người viết thì không được viết như khẳng định đã đủ, và một bản xuất khẩu càng
+   không nên giữ con số sẽ trôi. Chỗ cần danh sách thì **trỏ** nhà thật.
+3. **Loại file thứ tư của F-005 nay đã rà xong.** Tra cứu → khung (T-007, T-011) → prompt (T-012)
+   → bản xuất khẩu (T-013), cùng một kênh `phone_preorder`.
+
+**Phát hiện kèm theo, KHÔNG sửa trong task này:** file trỏ tới bảy đường không tồn tại →
+`work/findings.md` **F-007** (Open) + **T-019** ở [Ready](#ready). Sửa từng link là đoán hộ người
+quyết định `prompt-fullstack.md` còn thuộc dự án nào.
+
+**Lệch nhỏ so với Acceptance của prompt:** dòng `grep -c '⚠️'` trong prompt kỳ vọng **1**, thực tế
+ra **2** — cả trước lẫn sau khi sửa. Kết quả thứ hai là §6.2 (*"bất biến nào chưa có cơ chế bảo vệ
+thì đánh dấu ⚠️ ngay trong bảng"*), một câu hướng dẫn chứ không phải khối cảnh báo. Điều kiện thật
+— **một** khối cảnh báo ở §3.1 — vẫn đúng.
 
 ### T-012 — Bộ prompt BA còn mô tả luồng mang đi bằng hai kênh
 
