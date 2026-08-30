@@ -1,4 +1,4 @@
-# 10 — Đơn mang đi được trả trước; §6.3 còn viết "không bao giờ thu trước" (L2) · T-019
+# 10 — Đơn mang đi được trả trước; §6.3 còn viết "không bao giờ thu trước" (L2) · T-020
 
 ## Context
 
@@ -101,14 +101,18 @@ work/scope.txt
 8. `prompt/BA/03-slice-ship-pickup-L2.md` Unknowns: câu "thanh toán trước" được gạch ngang kèm
    lời giải, đúng cách file đó đang ghi ba câu đã đóng phía trên.
 9. `work/findings.md` F-006 có một đoạn nối về chỗ lệch số điện thoại ở `docs/product.md`.
-10. `grep -rn 'không bao giờ thu trước\|không trả trước\|chưa bao giờ thu trước'` toàn repo → rỗng.
+10. `grep -rn 'không bao giờ thu trước\|không trả trước\|chưa bao giờ thu trước'` toàn repo chỉ
+    còn kết quả ở **hồ sơ của chính task này** — `work/backlog.md` (entry T-020) và file prompt
+    này — nơi câu cũ được **trích lại** để kể task sửa gì. Không còn kết quả nào ở
+    `master_plan/**`, `docs/**`, `prompt/BA/**`, tức không còn chỗ nào **khẳng định** luật cũ.
 11. `./scripts/gate.sh` xanh; `git status --porcelain` chỉ liệt kê file trong Scope.
 
 ## Verify
 
 ```bash
 ./scripts/gate.sh
-grep -rn 'không bao giờ thu trước\|không trả trước\|chưa bao giờ được thu trước\|chưa bao giờ thu trước' --include='*.md' .
+grep -rn 'không bao giờ thu trước\|không trả trước\|chưa bao giờ được thu trước\|chưa bao giờ thu trước' \
+  --include='*.md' . | grep -v 'work/backlog.md\|prompt/maintenance/10-'   # phải rỗng
 grep -rn 'trả trước\|thu trước' master_plan/shop-facts.md docs/product.md
 grep -c '^[0-9]\{1,2\}\. \*\*' master_plan/shop-facts.md        # §6 vẫn 13 quy tắc
 grep -n 'U-005' docs/product.md

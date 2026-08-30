@@ -55,8 +55,10 @@ Ba hệ quả nghiệp vụ, đây mới là phần quan trọng của bảng tr
 2026-08-30). Khách đã đặt trước qua điện thoại nhưng rồi tới quán ngồi ăn ⇒ **huỷ đơn đặt trước**,
 khách quét QR tại bàn và gọi lại bằng `qr_table` như mọi khách ngồi bàn khác. Không có đường nối
 một đơn `phone_preorder` vào một phiên bàn — điều đó giữ nguyên luật "mỗi đơn không gắn bàn là một
-đơn vị thanh toán độc lập" ở trên. Tiền chưa bao giờ thu trước (§6.3) nên huỷ đơn đặt trước **không
-sinh việc hoàn tiền**.
+đơn vị thanh toán độc lập" ở trên. **Huỷ như vậy sinh việc hoàn tiền hay không là tuỳ đơn đã trả
+tiền chưa** (§6.3, chủ quán chốt 2026-08-30): đơn **chưa** trả — đường mặc định — thì huỷ xong là
+hết, không có tiền nào phải trả lại; đơn khách **đã chọn trả trước** thì huỷ **có** sinh việc hoàn
+tiền, xử theo §6.4 (quầy quyết từng ca, ghi vết).
 
 **Định danh khách:** hai kênh gắn bàn là **ẩn danh theo bàn** — quán chỉ cần biết "bàn 5", không
 cần biết tên ai. Ba kênh còn lại phải có thông tin để gọi lại được — danh sách trường tối thiểu ở
@@ -242,7 +244,8 @@ Quán có đúng **hai** luồng, và năm kênh ở §2 rơi vào đúng một 
 
 Hai luật chạy xuyên cả hai luồng, nhớ trước khi đọc sơ đồ:
 
-- **Thu tiền lúc TRAO HÀNG, không bao giờ thu trước.** Tiền mặt hoặc VietQR, khách chọn.
+- **Mặc định thu tiền lúc TRAO HÀNG.** Tiền mặt hoặc VietQR, khách chọn. Riêng **đơn mang đi**,
+  khách được chọn **trả trước** — nhánh tuỳ chọn, luật đầy đủ ở §6.3.
 - **Đơn do KHÁCH tự gửi phải được quầy duyệt; đơn do NHÂN VIÊN nhập thì không.** Bước duyệt tồn tại
   để chống đơn ảo — nhân viên nhập thì đã có người chịu trách nhiệm rồi.
 
@@ -313,7 +316,8 @@ hứa là đã đủ** — gặp điểm khác thứ tám thì ghi thêm vào đ
 5. **`pickup` có giờ hẹn lấy**, `phone_preorder` là đơn đặt trước nên cũng có mốc giờ khách cần
    hàng. Luồng tại bàn không có khái niệm hẹn giờ.
 6. **Thu tiền lúc trao hàng, có thể ở ngoài quán** — đơn giao tận nơi thu ngay tại chỗ khách, không
-   phải ở quầy. Luồng tại bàn luôn thu ở quầy lúc đóng phiên.
+   phải ở quầy. Luồng tại bàn luôn thu ở quầy lúc đóng phiên. **Và chỉ luồng này có nhánh trả
+   trước** (§6.3): khách mang đi được chọn trả tiền ngay lúc đặt, khách ngồi bàn thì không.
 7. **Chỉ đơn giao tận nơi có trạng thái "đang giao"** — vì quán tự đi giao, quầy phải biết đơn nào
    còn trên đường và ai đang cầm tiền chưa về.
 
@@ -350,9 +354,20 @@ Nếu thành phần một suất đổi thì **sửa §4.5 trước**, rồi s�
    không.** Phải duyệt: `qr_table`, `delivery`, `pickup`. Không cần duyệt: `staff_pos`,
    `phone_preorder`. Lý do là mục đích của bước duyệt — chặn đơn ảo — chỉ có nghĩa với đơn không
    ai chịu trách nhiệm. Đơn chưa duyệt **không sinh việc ở bất kỳ trạm nào**.
-3. **Thu tiền lúc trao hàng, không bao giờ thu trước.** Ăn tại bàn: thu ở quầy lúc đóng phiên.
-   Tới lấy: thu ở quầy lúc khách tới. Giao tận nơi: thu **tại chỗ khách**, lúc đưa hàng. Cả ba
-   trường hợp khách đều được chọn **tiền mặt hoặc VietQR**.
+3. **Mặc định thu tiền lúc trao hàng; riêng đơn mang đi, khách ĐƯỢC CHỌN trả trước** (chủ quán
+   chốt 2026-08-30). Đường mặc định không đổi: ăn tại bàn thu ở quầy lúc đóng phiên · tới lấy
+   thu ở quầy lúc khách tới · giao tận nơi thu **tại chỗ khách**, lúc đưa hàng. Cả ba trường
+   hợp khách đều được chọn **tiền mặt hoặc VietQR**.
+   - **Trả trước là tuỳ chọn của khách, cho cả ba kênh mang đi** (`delivery`, `pickup`,
+     `phone_preorder` — §5.2). Khách không chọn gì thì đơn đi đường mặc định ở trên. **Luồng ăn
+     tại bàn không có nhánh trả trước** — phiên bàn còn mở thì còn gọi thêm được, nên chưa
+     chốt được số tiền để trả (§6.1).
+   - ⇒ **Huỷ một đơn ĐÃ trả trước thì sinh việc hoàn tiền, xử theo §6.4** — quầy quyết từng ca
+     và phải ghi vết. Đơn **chưa** trả tiền thì huỷ không sinh việc gì về tiền.
+   - Còn mở: **đơn trả trước thì trả bằng gì, ai bấm xác nhận đã nhận tiền, và lúc nào**
+     (`docs/product.md` → *Unknowns* **U-005**). VietQR ở đây là **tĩnh** (§1) nên hệ thống
+     không tự biết tiền đã về, mà lúc khách trả trước thì không có nhân viên nào đứng đối diện
+     khách. Chưa ai trả lời ⇒ **không được suy ra**.
 4. **Hoàn tiền: có, nhưng không có luật cứng — người ở quầy quyết định từng trường hợp** (chủ quán
    chốt 2026-08-30). Không phải mọi ca đều được hoàn, và cũng không cấm hoàn; quầy nhìn tình huống
    thật rồi quyết.
@@ -434,7 +449,8 @@ muốn lật lại một quyết định thì biết đang lật lại điều g
 | 2026-08-29 | Sửa: kênh đó tên `phone_preorder`, và **`staff_pos` không dùng cho đơn hotline** | §2 |
 | 2026-08-29 | Suất giò = 9.000 + tiền 4 cái bánh; bánh trong suất giò **có** nhận nhân | §4.3 · §4.5 |
 | 2026-08-30 | **Suất trứng = giá trứng + tiền 4 cái bánh**, cộng gộp thành phần như suất giò | §4.3 |
-| 2026-08-30 | Thu tiền **lúc trao hàng**, tiền mặt hoặc VietQR — không thu trước | §6.3 |
+| 2026-08-30 | Thu tiền **lúc trao hàng** là đường mặc định, tiền mặt hoặc VietQR | §6.3 |
+| 2026-08-30 | **Sửa cùng ngày:** đơn mang đi — cả ba kênh — khách **được chọn trả trước**; huỷ đơn đã trả trước ⇒ hoàn theo §6.4 | §6.3 · §6.4 |
 | 2026-08-30 | **Quán tự đi giao**, đơn giao mang trạng thái "đang giao" | §6.7 |
 | 2026-08-30 | Đơn web (`delivery`, `pickup`) **cần quầy duyệt** như đơn QR | §6.2 |
 | 2026-08-30 | Đơn mang đi **vẫn có nước chấm**, gói riêng | §6.6 |

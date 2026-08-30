@@ -20,7 +20,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-Năm việc bảo trì. **Một việc chặn chuỗi BA, làm trước: T-015.** Bốn việc còn lại không
+Sáu việc bảo trì. **Một việc chặn chuỗi BA, làm trước: T-015.** Năm việc còn lại không
 chặn ai, chen vào lúc nào cũng được.
 
 - [ ] T-015 §10 kế hoạch gốc: hai câu đã có lời giải, một câu hỏi hẹp hơn thực tế — chặn BA-10
@@ -28,6 +28,7 @@ chặn ai, chen vào lúc nào cũng được.
 - [ ] T-016 `work/scope.txt` được commit kèm pattern, hai lần
 - [ ] T-009 Gỡ dòng mẫu T-001 khỏi Ready
 - [ ] T-019 `prompt-fullstack.md` trỏ tới bảy đường không tồn tại — F-007
+- [ ] T-021 `brief.sh` đọc Unknowns bằng hình dạng dòng, in sai cả hai chiều — F-008
 - [ ] T-001 Replace this with the first meaningful task.
 
 - **T-011 đã xong 2026-08-30** — dòng BA-04 ở §11 kế hoạch gốc nay ghi đủ ba kênh không gắn bàn,
@@ -38,6 +39,11 @@ chặn ai, chen vào lúc nào cũng được.
   prompt (T-012) — ba loại F-005 kể tên — và loại thứ tư F-005 không kể, **bản xuất khẩu** (T-013). Luật rà chung ở `work/findings.md`
   **F-006**: grep theo **định danh** kênh, không theo con số — và đọc những file grep **không**
   ra kết quả, vì chỗ thiếu nằm ở đó.
+- **T-021 sinh ra từ T-020 (2026-08-30), không chặn ai nhưng chạm vào thứ mọi phiên đều dùng.**
+  `brief.sh` đọc mục *Unknowns* bằng `grep` theo hình dạng dòng, nên nó vừa giấu U-005 vừa in
+  U-004 đã đóng như đang mở. T-020 đã sửa **phía dữ liệu** để brief đọc đúng ngay hôm nay; chữa
+  tận gốc là cho brief đọc **cấu trúc** như nó đang làm với findings — `work/findings.md`
+  **F-008** (Open). Chạm `scripts/**` nên là task riêng, không nhét vào T-020.
 - **T-019 sinh ra từ T-013 (2026-08-30), không chặn ai.** T-013 sửa chữ trong
   `master_plan/prompt-fullstack.md`; nó **không** sửa việc file đó trỏ tới bảy đường không tồn
   tại trong repo. Đó không phải lỗi chữ mà là câu hỏi *file này còn thuộc dự án nào* — ghi ở
@@ -46,6 +52,10 @@ chặn ai, chen vào lúc nào cũng được.
   `prompt/BA/10-acceptance-scenarios-L2.md` nay nêu đủ ba kênh và đòi diễn `phone_preorder`
   **không qua bước quầy duyệt**, nên tick BA-11 không còn đóng giai đoạn BA khi một kênh chưa
   ai nghiệm thu.
+- **T-020 đã xong 2026-08-30, BA-04 và BA-06 hết bị nó chặn.** Chủ quán lật luật thu tiền ngay
+  trong ngày đã chốt nó: đơn mang đi **được** trả trước, là tuỳ chọn. `shop-facts.md` §6.3 nay
+  nói đúng thứ đó, nên hai task kia đọc vào không còn chép một luật đã chết. **Nhưng T-020 để
+  lại U-005** (ai xác nhận tiền của đơn trả trước) — BA-06 không tick hết được nếu U-005 còn mở.
 - **T-015 chặn BA-10** và nên xong trước BA-04, BA-06: §10 còn để mở hai câu đã chốt, task sau đọc
   vào sẽ biến luật đã chốt thành giả định (CLAUDE.md §3.5 cấm).
 - T-016 là việc của hệ thống làm việc, không chạm dữ kiện quán — chạy song song với bất kỳ task nào.
@@ -55,9 +65,9 @@ Chuỗi BA chạy từ trên xuống. Thứ tự là cột "Cần xong trước"
 đã xong 2026-08-30 nên BA-03, BA-04, BA-05 mở được ngay và chạy song song được.
 
 - [ ] BA-03 `docs/product.md` §3.1 — lát cắt một suất tại bàn · cần BA-02
-- [ ] BA-04 `docs/product.md` §3.2 — lát cắt một đơn mang đi (ba kênh) · cần BA-02 (T-011, T-012 xong)
+- [ ] BA-04 `docs/product.md` §3.2 — lát cắt một đơn mang đi (ba kênh) · cần BA-02 (T-011, T-012, T-020 xong)
 - [ ] BA-05 `docs/product.md` §3.3 — lát cắt chủ quán đổi menu/giá · cần BA-02
-- [ ] BA-06 `docs/product.md` §4 — quy tắc giá và thanh toán · cần BA-03, BA-04
+- [ ] BA-06 `docs/product.md` §4 — quy tắc giá và thanh toán · cần BA-03, BA-04 (T-020 xong; **U-005 còn mở**)
 - [ ] BA-07 `docs/product.md` §5 — vòng đời đơn, phiên bàn, công việc trạm · cần BA-03
 - [ ] BA-08 `docs/product.md` §6 — ngoại lệ · cần BA-03–BA-07
 - [ ] BA-09 `docs/product.md` §7 — phạm vi MVP · cần BA-01–BA-08
@@ -79,6 +89,8 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xong).
 
+- [x] T-021 Bản xuất khẩu hết chép số tiền của nhà thật — §4, §9.1, §9.4 nay trỏ `shop-facts.md` (2026-08-30)
+- [x] T-020 Đơn mang đi được trả trước — §6.3 hết câu "không bao giờ thu trước", mở U-005 (2026-08-30)
 - [x] T-013 Bản xuất khẩu `prompt-fullstack.md` không còn nói "4 kênh", lát cắt B phủ luồng mang đi (2026-08-30)
 - [x] T-012 Bộ prompt `prompt/BA/` gọi luồng mang đi bằng ba kênh (F-006, lần rà thứ ba) (2026-08-30)
 - [x] T-018 Gate 7 — hook chặn turn kết thúc mà chưa giao khối commit (ADR-004) (2026-08-30)
@@ -178,6 +190,39 @@ thời điểm làm, đừng dùng số ghi trong prompt.
 đang được chỉ vào một dòng mẫu không phải task. Gỡ nó đi, không tick, không đưa xuống Done.
 
 **Acceptance · Verify:** trong file prompt.
+
+### T-021 — `brief.sh` đọc Unknowns bằng hình dạng dòng, in sai cả hai chiều
+
+**Prompt:** chưa có · **Finding:** `work/findings.md` **F-008** (Open) · L2
+
+**Goal:**
+`scripts/brief.sh` in đúng danh sách unknown **đang mở** của `docs/product.md`, không phụ thuộc
+vào việc người viết vắt dòng hay in đậm ở đâu.
+
+**Nói một câu, việc phải làm là gì:**
+Cho mục OPEN UNKNOWNS đọc **cấu trúc**, đúng cách mục OPEN FINDINGS đã làm (`brief.sh` dòng 72–78
+bắt `^### F-` rồi đọc `**Status:**`). Việc **không** phải làm: nới regex cho khớp thêm vài hình
+dạng — đó là chữa triệu chứng, hình dạng thứ ba sẽ lại trượt.
+
+**Vì sao có task này:**
+T-020 (2026-08-30) mở U-005 và brief **không** in nó ra, đồng thời vẫn in U-004 — câu đã đóng từ
+trước — như đang mở. T-020 đã sửa phía dữ liệu nên brief đúng ngay hôm nay, nhưng luật "viết
+`U-XXX` sao cho `grep` bắt được" là thứ dựa vào trí nhớ, đúng loại hỏng `work/findings.md` F-001
+nói tới.
+
+**Không làm thì mất gì:**
+Brief là cơ chế ADR-002 dựa vào để **đẩy** trạng thái vào mỗi phiên, và nó cố ý `exit 0` ở mọi
+đường lỗi — nên khi đọc sai thì không có gì kêu lên, phiên sau chỉ đơn giản tin bản sai. Một câu
+hỏi nghiệp vụ bị giấu là một chỗ CLAUDE.md §3.5 bị vô hiệu: phiên sau không biết có câu phải hỏi
+nên tự quyết.
+
+**Bẫy hay sửa nhầm nhất:**
+- **Đây là L2 vì chạm `scripts/**` — thứ chạy trong mọi phiên.** Sửa hỏng `brief.sh` thì mọi phiên
+  sau mở ra với một brief sai hoặc rỗng. Có `scripts/*.test.sh` làm khuôn sẵn để viết test.
+- **Giữ luật "brief không bao giờ chặn"** (CLAUDE.md §7.1): mọi đường lỗi vẫn phải `exit 0`.
+- **Brief trỏ, không chép** — vẫn chỉ in định danh và tiêu đề câu hỏi, không in nội dung dữ kiện.
+
+**Acceptance · Verify:** chưa viết — task này chưa có file prompt.
 
 ### T-019 — `prompt-fullstack.md` trỏ tới bảy đường không tồn tại
 
@@ -610,6 +655,164 @@ git status --porcelain
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+### T-021 — Bản xuất khẩu còn chép ba con số tiền của nhà thật
+
+**Prompt:** không có (task sinh trong phiên 2026-08-30, từ mục *còn chưa giải quyết* của T-013) · L1
+· **Xong 2026-08-30**
+
+**Goal:**
+`master_plan/prompt-fullstack.md` tự đặt luật ở §3.1 — *"Không có con số nào ở đây"* — nhưng vẫn
+còn bốn dòng mang số tiền. T-013 chỉ rà **kênh và luồng** nên không đụng tới chúng; chúng có từ
+trước, không phải do T-013 thêm vào.
+
+| Dòng | Đang viết | Nhà thật của con số |
+|---|---|---|
+| §4 (FE, giao diện khách) | `Thêm vào giỏ · 5.000đ` · `→ 34.000đ` | bánh cuốn nhân Nhiều = 5.000 (`shop-facts.md` §4.2) · combo Đầy đủ nhiều nhân = 34.000 (§4.3) |
+| §9.1 (ví dụ dòng master task ĐÚNG) | "Sai **1.000đ** mỗi suất" | phụ thu mỗi phần nhận nhân (§4.4) |
+| §9.4 (ví dụ nổ thành phần) | `34.000 × 2 = 68.000` | **chép nguyên văn** `shop-facts.md` §5.3 |
+
+Nặng nhất là hai dòng ở §9: §9 tự giới thiệu là *"Ví dụ chuẩn — bám đúng, đừng sáng tạo"*, nên agent
+ngoài repo được bảo chép y nguyên. Chủ quán đổi giá thì bản xuất khẩu vẫn dạy giá cũ, và người đọc
+nó không có repo để đối chiếu.
+
+**Vì sao là task chứ không phải finding:** bài học đã có nhà — `work/findings.md` **F-001**
+(*"một bản chép có kèm cảnh báo vẫn là một bản chép"*) và chính luật §3.1 của file. Ở đây chỉ thiếu
+**việc**, và việc thì không chờ ai trả lời. Cũng vì thế **không gộp vào T-019**: T-019 đứng chờ một
+câu hỏi cho người, việc này làm được ngay.
+
+**Scope:** `master_plan/prompt-fullstack.md` · `work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:** `master_plan/shop-facts.md` (nhà thật, đang đúng) · `docs/**` · `prompt/**` ·
+`quality/**` · `scripts/**` · mọi file T-020 vừa sửa.
+
+**Acceptance:**
+1. `grep -nE '[0-9]{1,3}\.000' master_plan/prompt-fullstack.md` **rỗng**.
+2. §4 vẫn chốt được hai luật giao diện cũ (giá hiện ngay trên nút thêm vào giỏ · tiền định dạng
+   `vi-VN`) mà không nêu con số nào, và nói thêm **giá lấy từ API**, khớp §6.9 (*BE luôn tính lại
+   giá từ DB*).
+3. §9.1 ô *Hỏng thì mất gì* vẫn **cụ thể** — nói đúng khoản tiền nào sai, không nói chung chung
+   kiểu "lỗi đơn" — nhưng không còn con số. Đây là ví dụ dạy cách viết cột đó, hỏng tính cụ thể
+   là hỏng cả bài học.
+4. §9.4 **giữ nguyên** phần nổ thành phần và mọi số **thành phần** (combo = 3 bánh + 1 trứng +
+   1 giò, 2 combo ⇒ 6 bánh). Chúng được phép ở lại vì ví dụ dạy đúng chúng, đã trỏ
+   `shop-facts.md` §4.5, có ngày chốt và có sẵn luật bảo trì *"thành phần đổi thì sửa ví dụ này
+   trước"*. Chỉ **dòng tiền** bị bỏ số và trỏ §4.3.
+5. Khối ⚠️ ở §3.1 ghi thêm lần này, kèm ngày — vẫn đúng **một** khối.
+6. Không đổi cấu trúc §1 → §10, không đổi stack/cổng/sơ đồ 16 bảng, không đụng bảng sáu pha §7.
+7. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -nE '[0-9]{1,3}\.000|0382688666' master_plan/prompt-fullstack.md   # rỗng
+grep -n 'Thêm vào giỏ\|Intl.NumberFormat' master_plan/prompt-fullstack.md
+grep -n 'Hỏng thì mất gì\|không ai phát hiện' master_plan/prompt-fullstack.md
+sed -n '/9.4 Việc xuống bếp/,/§10/p' master_plan/prompt-fullstack.md      # ×6 còn nguyên
+grep -c '⚠️' master_plan/prompt-fullstack.md
+git status --porcelain
+```
+
+**Đã sửa ba dòng, giữ lại một:**
+
+| Chỗ | Sau khi sửa |
+|---|---|
+| §4 giao diện khách | bỏ cả hai số; thêm luật **giá lấy từ API, không hard-code** (trỏ §6.9) và tả định dạng `vi-VN` bằng lời (dấu chấm ngăn nghìn, hậu tố `đ`) |
+| §9.1 ô *Hỏng thì mất gì* | "Thu sai **phụ thu ở mọi suất có nhân**, không ai phát hiện tới cuối tháng" — vẫn nói đúng khoản tiền nào sai, không còn con số |
+| §9.4 dòng tiền | `[… — Thịt+mộc nhĩ, Nhiều nhân]   ← đơn giá: shop-facts §4.3` |
+| §9.4 số **thành phần** | **giữ nguyên** (`×6`, `×2`, combo = 3 bánh + 1 trứng + 1 giò) — xem Acceptance 4 |
+| §3.1 khối ⚠️ | vẫn **một** khối, ghi thêm lần này |
+
+**Một chỗ suýt hỏng, đáng nhớ:** bản nháp đầu của khối ⚠️ **trích cả ba con số** để kể lại lỗi —
+và thế là Acceptance 1 vẫn đỏ, file vẫn đủ ba con số tiền, chỉ là chúng chuyển từ chỗ này sang chỗ
+kia. Luật đã ghi thẳng vào khối đó: *cảnh báo nêu chỗ sai và loại sai, không chép lại giá trị sai.*
+Cùng họ với F-001 — bản chép nào cũng là bản chép, kể cả bản chép nằm trong lời cảnh báo về việc
+chép.
+
+**Phát hiện kèm theo, không sửa:** §9.3 còn một link `../finding.md#f-31` — cùng loại với F-007,
+và cho thấy F-007 đếm thiếu (nó chỉ kể `#f-67`). Vào **T-019** khi task đó chạy.
+
+### T-020 — §6.3 còn viết "không bao giờ thu trước", trong khi đơn mang đi đã được trả trước
+
+**Prompt:** `prompt/maintenance/10-prepay-takeaway-L2.md` (L2) · **chặn** BA-04, BA-06
+
+**Goal:**
+`master_plan/shop-facts.md` nói đúng thứ chủ quán chốt: đơn mang đi **mặc định** thu lúc trao
+hàng, nhưng khách **được chọn** trả trước; đơn đã trả trước mà huỷ thì hoàn theo §6.4. Không còn
+chỗ nào trong repo nói "không bao giờ thu trước", và không còn chỗ nào suy ra "huỷ đơn không bao
+giờ sinh việc hoàn tiền".
+
+**Nói một câu, việc phải làm là gì:**
+Sửa **luật** ở nhà thật rồi đuổi theo mọi chỗ trỏ về nó. Việc **không** phải làm: biến trả trước
+thành mặc định — nó là tuỳ chọn; và không đụng luồng ăn tại bàn, vẫn thu ở quầy lúc đóng phiên.
+
+**Vì sao có task này:**
+Chủ quán chốt **2026-08-30**: *"đơn mang đi có thể thanh toán trước"*, kèm ba vế trả lời trong
+cùng ngày — trả trước là **tuỳ chọn** · áp cho **cả ba** kênh mang đi · huỷ đơn đã trả trước thì
+hoàn **theo §6.4** (quầy quyết từng ca, phải ghi vết). Câu này **lật một luật đã chốt cùng ngày**:
+§6.3 quy tắc 3 đang viết *"không bao giờ thu trước"*, và §7.1 có dòng nhật ký ghi đúng câu đó.
+Chỗ lệch lộ ra khi T-012 đọc mục *Unknowns* của `prompt/BA/03-slice-ship-pickup-L2.md` — câu hỏi
+"đơn mang đi có được thanh toán trước không" nằm đó, và §6.3 đã trả lời "không". T-012 cố ý không
+sửa (ngoài scope), báo cáo lại, và chủ quán trả lời ngược với §6.3.
+
+**Không làm thì mất gì — ba chỗ, xếp theo mức nặng:**
+- **BA-06** viết `docs/product.md` §4 — quy tắc giá và thanh toán. Nó đọc §6.3. Chạy BA-06 trước
+  T-020 là **chép nguyên một luật đã chết vào tài liệu sản phẩm**, rồi mọi thứ hạ nguồn tính tiền
+  theo nó. Đây là chỗ nặng nhất.
+- **BA-04** viết §3.2 — chính lát cắt mang đi, nơi nhánh trả trước sống. Prompt của nó còn giữ câu
+  hỏi đã có lời giải, nên nó sẽ hỏi lại một thứ đã chốt (CLAUDE.md §3.5 cấm biến luật đã chốt
+  thành giả định).
+- **Luật đổ theo:** `shop-facts.md` §2 và `docs/product.md` §2.4 đều suy ra *"tiền chưa bao giờ
+  thu trước ⇒ huỷ đơn đặt trước **không sinh việc hoàn tiền**"*. Từ hôm nay câu đó chỉ đúng cho
+  đơn chưa trả tiền — để nguyên là để một quán thật tin rằng huỷ đơn thì không phải trả lại tiền.
+
+**Thứ tự đọc trước khi sửa file đầu tiên:**
+1. `master_plan/shop-facts.md` §6.3 (luật đang sai) → §6.4 (hoàn tiền, nơi ca huỷ đơn đã trả rơi
+   vào) → §5 và §5.2 (hai bản nhắc lại) → §2 đoạn huỷ đơn hotline → §7.1 nhật ký chốt.
+2. `prompt/maintenance/10-prepay-takeaway-L2.md` — bảng *Context* liệt kê **tám** chỗ phải sửa,
+   mục *Constraints* có sáu cái bẫy, *Acceptance* có **mười một** dòng.
+
+**Ba cái bẫy hay sửa nhầm nhất** (danh sách đủ ở *Constraints* của prompt):
+- **Trả trước là tuỳ chọn, không phải mặc định.** Viết thành "đơn mang đi thu tiền trước" là sai
+  lời chốt.
+- **Không xoá dòng nhật ký §7.1 cũ.** Hai lần chốt cùng một ngày là chuyện thật; nhật ký phải kể
+  được cả hai mà không tự mâu thuẫn.
+- **Không tự quyết ai bấm xác nhận "đã nhận tiền" cho đơn trả trước.** VietQR là tĩnh và không có
+  ai đứng đối diện khách lúc trả ⇒ ghi **U-005**, đừng suy ra.
+
+**Cách hoàn thành — đủ mười bước, 1 tới 10.** Luật chung ở
+[Vòng chạy một task L1](#vong-chay); dưới đây là việc cụ thể của T-020 ở đúng bước đó.
+
+1. **Đọc.** Entry này rồi cả file prompt — nhất là bảng *Context* và sáu dòng *Constraints*.
+2. **Khai scope.** Bảy dòng ở mục *Scope* của prompt, nối vào cuối `work/scope.txt`.
+3. **Mở task.** Cắt dòng `- [ ] T-020 …` khỏi [Ready](#ready) xuống [In Progress](#in-progress).
+4. **Sửa, từ nhà thật ra ngoài.** `shop-facts.md` §6.3 → §5 → §5.2 điểm 6 → §2 → §7.1, rồi mới
+   tới `docs/product.md`, rồi `prompt/BA/03`. Sửa nhà thật sau cùng là tự chép luật cũ đi tiếp.
+5. **Một câu hỏi phải ghi, không được trả lời:** U-005 (ai xác nhận tiền của đơn trả trước).
+6. **Verify.** Bảy lệnh ở mục *Verify* của prompt. Lệnh dễ trượt nhất là lệnh `grep` toàn repo tìm
+   "không bao giờ thu trước" — phải **rỗng**, kể cả trong `master_plan/**` và `docs/**`.
+7. **Gate 2 — mười một dòng Acceptance, mười một bằng chứng**, mỗi dòng trỏ tới một `file:dòng`.
+8. **Findings.** Chỗ lệch số điện thoại ở `docs/product.md` → *Unknowns* nối vào **F-006**, không
+   mở finding mới: đúng con bug T-012 đã sửa ở `prompt/BA/01`, lần này ở tài liệu tra cứu.
+9. **Đóng task.** Tick ở [Done](#done) kèm ngày · chuyển khối này sang
+   [Chi tiết — việc đã xong](#chi-tiet-da-xong) · xoá bảy pattern khỏi `work/scope.txt` · sửa hai
+   dòng ở [Ready](#ready) đang trỏ tới T-020 (câu "Sáu việc bảo trì", bullet "T-020 chặn BA-04 và
+   BA-06") và ghi `(T-020 xong)` vào dòng BA-04, BA-06.
+10. **Khối commit.** Một khối, liệt kê từng file, subject `T-020: …`, không có `work/scope.txt`.
+
+**Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+
+**Đã xong 2026-08-30.** Tám chỗ trong bảng *Context* đã sửa; nhà thật `shop-facts.md` §6.3 nay
+nói đủ ba vế của lời chốt và §6 vẫn đúng 13 quy tắc. Hai chỗ **ngoài** bảng đó cũng phải sửa vì
+trỏ vào dữ kiện vừa dịch chuyển: dòng lệch số điện thoại ở `docs/product.md` → *Unknowns* (nối
+vào **F-006**, lần rà thứ tư — lần đầu chỗ lệch nằm ở **tài liệu tra cứu**), và ghi chú đóng
+T-012 trong chính backlog này, chỗ còn khẳng định *"§6.3 đã trả lời: không"*.
+**Một dòng Acceptance đã bị sửa sau khi bắt đầu:** dòng 10 đòi grep toàn repo phải rỗng, nhưng
+hồ sơ của chính task (entry này + file prompt) **phải** trích lại câu cũ mới kể được nó sửa gì.
+Dòng 10 nay loại trừ đúng hai file đó và vẫn đòi rỗng ở `master_plan/**`, `docs/**`,
+`prompt/BA/**`.
+**Còn mở:** **U-005** — đơn trả trước thì trả bằng gì, ai bấm xác nhận đã nhận tiền, lúc nào.
+Chặn BA-06 và một phần BA-07; chỉ chủ quán trả lời được.
+
 ### T-013 — Bản xuất khẩu còn nói "4 kênh" và gọi luồng mang đi bằng hai kênh
 
 **Prompt:** `prompt/maintenance/06-fullstack-export-three-channels-L1.md` (L1) · **Xong 2026-08-30**
@@ -768,9 +971,10 @@ buộc số điện thoại"*, sai với `shop-facts.md` §6.5 (bắt buộc cho
 được nối vào `work/findings.md` **F-006** đúng theo bước 8, không mở F-007. `grep -rn
 'ship/pickup\|Ship / Pickup' prompt/BA/` nay rỗng; `phone_preorder` có mặt ở sáu file
 (`01`, `03`, `05`, `08`, `09`, `10`); không file nào bị đổi tên; câu doanh thu vẫn **hai** nguồn.
-**Còn mở, không thuộc T-012:** `03-slice-ship-pickup-L2.md` còn một Unknown *"đơn mang đi có
-được thanh toán trước không"* mà `shop-facts.md` §6.3 đã trả lời (thu lúc trao hàng, không bao
-giờ thu trước) — sửa nội dung Unknowns là việc của BA-04, T-012 chỉ sửa cách gọi kênh.*
+**Đã chuyển tiếp, không thuộc T-012:** `03-slice-ship-pickup-L2.md` còn một Unknown *"đơn mang
+đi có được thanh toán trước không"*. T-012 báo cáo lại thay vì tự sửa, và **chủ quán trả lời
+ngược với §6.3 đang viết lúc đó**: đơn mang đi **được** trả trước. Việc ghi lời chốt đó thành
+**T-020**, đóng 2026-08-30 — nên câu Unknown này nay đã có lời giải trong chính file 03.*
 
 *Mục này được viết dài thêm 2026-08-30 theo yêu cầu của owner ("không hiểu task này để làm gì").
 Phạm vi công việc không đổi — chỉ thêm phần vì sao, hậu quả, thứ tự đọc và cách hoàn thành. Bảng

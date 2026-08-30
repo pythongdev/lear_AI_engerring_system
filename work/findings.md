@@ -282,11 +282,68 @@ nếu chỉ áp cho vài kênh thì nói rõ vì sao. Nó cũng chốt cách rà
 (`phone_preorder`) rồi đọc **những file không có kết quả** — chỗ thiếu nằm ở đó, không nằm
 trong kết quả grep.
 
+**Lần rà thứ tư — tài liệu tra cứu, 2026-08-30 (T-020).** Cùng một câu sai còn một bản nữa ở
+`docs/product.md` → *Unknowns*: *"chỉ Delivery và Pickup bắt buộc số điện thoại"*. Nó nằm ở
+**loại file thứ nhất** của F-005 — loại "luôn được nhớ" — nên ba lần rà trước đều đi qua mà
+không thấy, vì cả ba đều tìm ở chỗ *hay quên*. Bài học hẹp và cụ thể: chỗ lệch nằm trong một
+dòng **nhật ký câu hỏi đã đóng**, thứ ai cũng đọc lướt vì tưởng đã xong. Khi rà theo định danh,
+**các mục "đã có lời giải" phải được đọc như nội dung sống**, không phải như lưu trữ —
+chúng chính là chỗ một câu trả lời cũ nằm lại sau khi dữ kiện đã đi tiếp.
+
 **Related task:**
-T-011, T-012 (lần rà thứ ba)
+T-011, T-012 (lần rà thứ ba), T-020 (lần rà thứ tư)
 
 **Status:**
 Fixed
+
+---
+
+### F-008 — Brief đọc Unknowns bằng **hình dạng dòng**, nên cách xuống dòng quyết định phiên sau có thấy câu hỏi không
+
+**Problem:**
+`scripts/brief.sh` lấy hai danh sách "đang mở" theo hai cách khác hẳn nhau:
+
+- **Findings** (dòng 72–78): đọc **cấu trúc** — bắt `^### F-`, rồi đọc giá trị dưới `**Status:**`.
+  Viết hoa, in đậm, xuống dòng thế nào cũng không ảnh hưởng.
+- **Unknowns** (dòng 82): đọc **hình dạng dòng** — `grep -E '^\s*[-*]?\s*U-[0-9]'` trên cả khối
+  `## Unknowns`.
+
+Vế thứ hai hỏng hai chiều, và ngày **2026-08-30** (T-020) hỏng cả hai chiều cùng lúc:
+
+1. **Giấu câu đang mở.** U-005 viết là `- **U-005 — …*` (in đậm ngay sau gạch đầu dòng) ⇒ giữa
+   `[-*]?` và `U-` có thêm một dấu `*` ⇒ không khớp ⇒ brief in ra như thể **không còn câu nào mở**.
+2. **Khoe câu đã đóng.** Câu văn xuôi kể các unknown *đã trả lời* vắt dòng đúng chỗ khiến một dòng
+   **bắt đầu** bằng `U-004 — câu sinh ra từ…` ⇒ khớp ⇒ brief in U-004 vào OPEN UNKNOWNS suốt nhiều
+   phiên, dù U-004 đã đóng từ trước.
+
+**Impact:**
+Đây là hỏng ở **đúng cơ chế mà CLAUDE.md §7.1 dựa vào**: brief là thứ đẩy trạng thái hôm nay vào
+phiên mới, và nó "không bao giờ chặn" — mọi đường lỗi đều `exit 0`. Nên khi nó đọc sai thì không có
+gì kêu lên; phiên sau chỉ đơn giản **tin bản sai**. Cụ thể lần này: BA-06 phải biết U-005 mới tick
+được mục "không còn business rule bị suy đoán", mà brief lại bảo không còn câu nào mở. Chiều ngược
+lại rẻ hơn nhưng bẩn dai: nhiều phiên liền được kể là U-004 đang mở, và ADR-002 nói phiên **tin**
+brief hơn trí nhớ của mình.
+
+**Decision / Fix:**
+Đã sửa **phía dữ liệu** trong T-020 (2026-08-30): U-005 viết thành `- U-005 — **…**` (định danh
+đứng ngay sau gạch đầu dòng, in đậm lùi ra sau), và câu văn xuôi được vắt lại để không dòng nào bắt
+đầu bằng `U-004`.
+
+Luật khi viết một `U-XXX` ở `docs/product.md` → *Unknowns*, cho tới khi `brief.sh` đọc theo cấu
+trúc: **định danh đứng đầu dòng, ngay sau `- `, không có ký tự trang trí nào chen vào**; và **không
+để một dòng văn xuôi nào bắt đầu bằng `U-` khi câu đó đã đóng**. Muốn nhấn mạnh thì in đậm phần
+*sau* định danh.
+
+Chưa sửa `scripts/brief.sh` — đó là chỗ chữa tận gốc (đọc cấu trúc như đang làm với findings, hoặc
+tách hẳn hai mục *đang mở* / *đã đóng* thành hai khối máy đọc được), nhưng nằm ngoài scope T-020 và
+là một quyết định về hình dạng của `docs/product.md`, không phải sửa chữ. Ghi thành task
+**T-021** ở `work/backlog.md` → *Ready*.
+
+**Related task:**
+T-020 (phát hiện, sửa phía dữ liệu), T-021 (chữa tận gốc)
+
+**Status:**
+Open
 
 ---
 

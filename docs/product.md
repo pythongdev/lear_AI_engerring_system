@@ -28,8 +28,12 @@ Việc khách làm:
 - **Gọi hotline để đặt trước**; khách nói, nhân viên nhập hộ vào hệ thống.
 - **Gọi thêm món** khi đang ngồi bàn, kể cả sau khi quầy đã bắt đầu thu tiền — mọi lượt gọi của
   cùng một bàn vẫn thuộc **một** phiên và được tính **một** lần (`shop-facts.md` §6.1).
-- **Chọn cách trả tiền** — tiền mặt hoặc VietQR — và trả **lúc nhận hàng**, không trả trước
-  (`shop-facts.md` §6.3).
+- **Chọn cách trả tiền** — tiền mặt hoặc VietQR — và trả **lúc nhận hàng** (`shop-facts.md`
+  §6.3). Đó là đường mặc định.
+- **Chọn trả trước, nếu là đơn mang đi** — khách đặt giao tận nơi, tới lấy hay gọi hotline đều
+  được trả tiền ngay lúc đặt thay vì lúc nhận hàng (chủ quán chốt 2026-08-30,
+  `shop-facts.md` §6.3). Là **tuỳ chọn**: không chọn thì trả lúc nhận hàng. Khách ngồi bàn
+  không có lựa chọn này — phiên bàn còn mở thì còn gọi thêm được nên chưa chốt được số tiền.
 
 Việc khách **không** làm: khách không tự xác nhận đơn của mình, và **không bao giờ quyết định giá**
 — giá luôn do hệ thống xác định lại từ bảng giá (`shop-facts.md` §4.6 quy tắc 9).
@@ -51,6 +55,8 @@ Việc nhân viên làm:
 - **Đóng gói** đơn mang đi, và **tự đi giao** đơn giao tận nơi — quán không thuê bên thứ ba
   (`shop-facts.md` §6.7).
 - **Thu tiền lúc trao hàng** (tiền mặt hoặc VietQR) và **tự bấm xác nhận đã nhận tiền** — xem ranh giới hệ thống ở §1.4.
+  Với đơn khách **đã chọn trả trước** thì chưa rõ ai bấm xác nhận và vào lúc nào — xem
+  **U-005** ở *Unknowns*, chưa ai trả lời.
 - **Đóng phiên bàn** khi khách đã trả tiền, rồi **dọn bàn** để bàn trở lại trạng thái trống.
 - **Huỷ một đơn** — chỉ **người đứng quầy** làm được (chủ quán chốt 2026-08-30,
   `shop-facts.md` §6.13); bốn trạm còn lại không huỷ được đơn nào, kể cả đơn của việc mình đang làm.
@@ -186,8 +192,12 @@ Chủ quán chốt 2026-08-30 (`shop-facts.md` §2): khách đã đặt trước
 ngồi ăn ⇒ **huỷ đơn đặt trước**, khách quét QR tại bàn và gọi lại như mọi khách ngồi bàn khác.
 
 Không có đường nối một đơn đặt trước vào một phiên bàn. Đó là lý do luật "mỗi đơn không gắn bàn là
-một đơn vị thanh toán độc lập" (§2.1) không có ngoại lệ nào. Tiền chưa bao giờ được thu trước
-(`shop-facts.md` §6.3), nên huỷ đơn đặt trước **không sinh việc hoàn tiền**.
+một đơn vị thanh toán độc lập" (§2.1) không có ngoại lệ nào.
+
+**Huỷ như vậy có sinh việc hoàn tiền hay không là tuỳ đơn đã trả tiền chưa** (chủ quán chốt
+2026-08-30, `shop-facts.md` §6.3). Đơn **chưa** trả — đường mặc định — thì huỷ xong là hết. Đơn
+khách **đã chọn trả trước** thì huỷ **có** sinh việc hoàn tiền, xử theo `shop-facts.md` §6.4:
+người đứng quầy quyết từng ca và ghi vết.
 
 **Người bấm huỷ là người đứng quầy** (chủ quán chốt 2026-08-30, `shop-facts.md` §6.13) — không
 phải nhân viên bất kỳ. Cùng một người vừa duyệt đơn (§2.2), vừa huỷ đơn, vừa quyết định hoàn tiền,
@@ -225,13 +235,19 @@ thì **nhờ người đứng quầy bấm**. Không có cửa thứ hai — m�
 
 Câu hỏi nghiệp vụ chưa có lời giải. Không để việc thực hiện âm thầm quyết định thay.
 
-**Hiện không còn câu hỏi nào mở.** Câu tiếp theo phát hiện được phải nằm ở đây, dạng `U-XXX`,
-kèm ai trả lời được và đang chặn gì — không được để việc thực hiện tự quyết (CLAUDE.md §4).
+Đang mở **một** câu, sinh ra ngày 2026-08-30 từ chính lời chốt cho phép trả trước:
+
+- U-005 — **đơn khách trả trước thì trả bằng gì, ai bấm xác nhận "đã nhận tiền", và vào lúc
+  nào?** Đơn thu lúc trao hàng thì người trao hàng bấm; đơn trả trước thì không có nhân viên
+  nào đứng đối diện khách, và VietQR ở đây là **tĩnh** (`shop-facts.md` §1) nên hệ thống không
+  tự biết tiền đã về. *Ai trả lời được:* chủ quán. *Đang chặn:* BA-06 (§4 phải nói rõ ai xác
+  nhận đã thu được tiền cho **từng** phương thức) và một phần BA-07 (đơn trả trước đứng ở
+  trạng thái nào trước khi giao).
 
 ### Đã có lời giải — không ghi lại thành Unknown nữa
 
-Ngày **2026-08-30** chủ quán trả lời hết ba unknown mở ở BA-01, cả ba chỗ suy luận S-1–S-3, và
-U-004 — câu sinh ra từ chính lời giải của U-003.
+Ngày **2026-08-30** chủ quán trả lời hết ba unknown mở ở BA-01, cả ba chỗ suy luận S-1–S-3,
+và cả câu U-004 sinh ra từ chính lời giải của U-003.
 
 | Câu hỏi cũ | Lời giải (chủ quán, 2026-08-30) | Ghi ở |
 |---|---|---|
@@ -247,8 +263,9 @@ Câu cũ hơn, đã đóng từ trước:
 
 - ~~Đơn đặt trước qua hotline gắn vào bàn nào~~ → là **kênh thứ năm, không gắn bàn**
   (chủ quán chốt 2026-08-29, `shop-facts.md` §2).
-- ~~Khách quét QR có phải khai định danh không~~ → **ẩn danh theo số bàn**; chỉ Delivery và Pickup
-  bắt buộc số điện thoại (`shop-facts.md` §2, §6.5).
+- ~~Khách quét QR có phải khai định danh không~~ → **ẩn danh theo số bàn**; **cả ba kênh không
+  gắn bàn** — Delivery, Pickup và đặt trước qua hotline — bắt buộc số điện thoại
+  (`shop-facts.md` §2, §6.5).
 
 `master_plan/shop-facts.md` §7.2 — chỗ giữ các mục **suy ra chưa xác nhận** — từ 2026-08-30
 **không còn mục nào**. Tài liệu nào còn nói "ba chỗ suy luận chưa ai xác nhận" là pointer cũ.

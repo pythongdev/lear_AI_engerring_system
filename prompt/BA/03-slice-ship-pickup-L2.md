@@ -102,7 +102,11 @@ Gate 5 (L2): đọc lại invariant mới, xác nhận không mâu thuẫn invar
   viên hỏi khách giao tận nơi hay tới lấy, **và cần lúc mấy giờ**.
 - ~~Delivery ở MVP chỉ ghi nhận đơn, hay quản lý trạng thái giao hàng~~ → **đã gỡ 2026-08-30**
   (`shop-facts.md` §6.7): quán **tự đi giao**, đơn giao mang trạng thái **"đang giao"**.
-- Đơn mang đi có được thanh toán trước không, hay chỉ thu khi nhận hàng?
+- ~~Đơn mang đi có được thanh toán trước không, hay chỉ thu khi nhận hàng?~~ → **được trả
+  trước, và đó là tuỳ chọn của khách** (chủ quán chốt 2026-08-30, `shop-facts.md` §6.3):
+  mặc định vẫn thu lúc trao hàng, cả ba kênh mang đi đều được chọn trả trước, và huỷ một đơn
+  đã trả trước thì hoàn tiền theo §6.4. Chưa rõ **ai bấm xác nhận đã nhận tiền** cho đơn trả
+  trước — `docs/product.md` → *Unknowns* **U-005**, đừng tự quyết.
 - Giờ hẹn pickup có khung tối thiểu không (đặt trước ít nhất bao lâu), và quá giờ hẹn thì sao?
 - Ai giao hàng — nhân viên quán hay bên thứ ba?
 
