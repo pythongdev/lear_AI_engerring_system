@@ -7,12 +7,12 @@
 
 - Nguồn khung: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §6 (Giá, Thanh toán),
   §5 quy tắc 3, 5, 6, 12.
-- Nguồn số: `master_plan/00-scope.md` §3 (2 phương thức, VietQR **tĩnh**),
-  **§4.1 công thức · §4.2 bảng giá thành phần + bảng giá một suất · §4.3 phụ thu ·
-  §4.4 thành phần suất bán**, §6 GD-01.
-- Nguồn quy tắc: `master_plan/shop-facts.md` §4.1 (chín quy tắc cấu tạo giá),
-  **§4.3 (bằng chứng mô hình tổng thành phần)**, §4.4 (11 tổ hợp), §6.4 (doanh thu hai nguồn),
-  §6.5 (đối soát cuối ngày), **§8 U-1 — giá một suất trứng, chặn task này**.
+- Nguồn số: `master_plan/shop-facts.md` §1 (2 phương thức, VietQR **tĩnh**),
+  **§4.1 công thức · §4.2 giá thành phần · §4.3 giá một suất · §4.4 phụ thu ·
+  §4.5 thành phần suất bán** — bảng giá nay **đã đầy, không còn ô nào treo**.
+- Nguồn quy tắc: `master_plan/shop-facts.md` §4.6 (chín quy tắc cấu tạo giá),
+  **§4.7 (bằng chứng mô hình tổng thành phần)**, §4.8 (11 tổ hợp), §6.3 (thu tiền lúc trao hàng),
+  §6.4 (hoàn tiền — quầy quyết từng ca), §6.9 (doanh thu hai nguồn), §6.10 (đối soát cuối ngày).
 - Đích: `docs/product.md` §4.
 - Đã chốt trước đó: §3.1 (tính tiền theo phiên bàn), §3.2 (đơn ship/pickup độc lập),
   §3.3 (bất biến lịch sử giá).
@@ -49,31 +49,32 @@ work/backlog.md
   - Ship/pickup: mỗi đơn là một đơn vị thanh toán độc lập.
   - Mọi thao tác ảnh hưởng đến tiền phải kiểm chứng lại được.
 - **Luật gốc của giá là "giá một SUẤT = TỔNG giá các THÀNH PHẦN của suất"**
-  (`00-scope.md` §4.2 + §4.4). Viết câu này ra đầu §4 — mọi luật khác là hệ quả của nó.
-- ⚠️ **Phân biệt hai bảng ở `00-scope.md` §4.2**: bảng trên là giá **thành phần**
+  (`shop-facts.md` §4.2–§4.3 + §4.5). Viết câu này ra đầu §4 — mọi luật khác là hệ quả của nó.
+- ⚠️ **Phân biệt hai bảng ở `shop-facts.md` §4.2–§4.3**: bảng trên là giá **thành phần**
   (1 cái bánh · 1 quả trứng · 1 chiếc giò), bảng dưới là giá **một suất bán**. Đọc nhầm bảng
   thành phần thành bảng suất là **thu thiếu tiền** — ví dụ suất giò là **25.000**, không phải
   9.000. Nói rõ khác biệt này trong §4.
-- Kèm các quy tắc ở `shop-facts.md` §4.1: giá gốc thành phần = **giá chay** · loại nhân **không**
+- Kèm các quy tắc ở `shop-facts.md` §4.6: giá gốc thành phần = **giá chay** · loại nhân **không**
   đổi giá · **phụ thu +1.000 cho MỖI phần nhận nhân** (suất bánh cuốn ×1, suất giò ×4, combo ×4 —
   là hệ quả, không phải ba con số rời) · **giò không nhận nhân nhưng 4 cái bánh trong suất giò thì
   có** · nhóm "Lượng nhân" chỉ tồn tại khi nhân ≠ Chay ⇒ **Chay + Nhiều nhân bị TỪ CHỐI** ·
   mặc định là **nhân Thịt, lượng Thường** · khách không bao giờ gửi giá lên.
-- **Không chép bảng giá `00-scope.md` §4.2 vào `docs/product.md`.** §4 trỏ tới nó và chốt
+- **Không chép bảng giá `shop-facts.md` §4.2–§4.3 vào `docs/product.md`.** §4 trỏ tới nó và chốt
   **quy tắc**; bảng giá có đúng một nhà. Chép là tạo chỗ sẽ trôi.
-- **11 tổ hợp ở `shop-facts.md` §4.4 là hợp đồng với chủ quán.** Chép danh sách **tổ hợp đầu vào**
-  vào §4 làm bảng ca phải phủ, cột giá kỳ vọng ghi "tra `00-scope.md` §4.2".
-- ⚠️ **U-1 chặn task này** (`00-scope.md` §6 GD-01): **giá một suất trứng đứng riêng chưa chốt**.
-  Suất trứng có cùng hình dạng suất giò (1 trứng + 4 bánh) nhưng chủ quán mới chỉ trả lời về giò;
-  hai cách hiểu lệch nhau **12.000–20.000đ mỗi suất**. **Không tự chọn cách nghe hợp lý hơn** —
-  ghi `⚠ chưa chốt — U-1`, chuyển câu hỏi sang BA-10, và ghi trong Report rằng task chưa đủ điều
-  kiện đánh Done.
+- **11 tổ hợp ở `shop-facts.md` §4.8 là hợp đồng với chủ quán.** Chép danh sách **tổ hợp đầu vào**
+  vào §4 làm bảng ca phải phủ, cột giá kỳ vọng ghi "tra `shop-facts.md` §4.2–§4.3".
+- ✅ **U-1 đã gỡ, task này không còn bị chặn** (`shop-facts.md` §4.3, chủ quán chốt 2026-08-30):
+  suất trứng = giá trứng + tiền 4 cái bánh, phụ thu **×5**. Giá tra ở §4.3, không chép vào prompt.
+  Giá suất trứng đã chốt, nhưng **cách tính phụ thu thì chưa ai xác nhận** (`shop-facts.md` §7.2
+  S-1): ×5 cho ra 25.000 ở nhân thường, ×4 cho ra 24.000. File này ghi ×5. **Không lặng lẽ coi
+  như đã chốt** — viết theo ×5, đánh dấu `⚠ suy luận — S-1`, và nêu câu hỏi kiểm chứng trong
+  Report: *"Suất trứng nhân thường là 25.000 hay 24.000?"*
 - Phương thức thanh toán ở MVP chỉ có: tiền mặt, VietQR tĩnh. Không thêm cổng thanh toán,
   ví điện tử, thẻ — kể cả dạng "chuẩn bị cho sau này".
 - **Doanh thu một ngày phải cộng từ HAI nguồn**: phiên bàn (dine-in) và đơn lẻ (ship/pickup).
-  Một khoản tiền thuộc **đúng một** trong hai, không bao giờ cả hai (`shop-facts.md` §6.4).
+  Một khoản tiền thuộc **đúng một** trong hai, không bao giờ cả hai (`shop-facts.md` §6.9).
   Báo cáo bỏ sót một nguồn là báo cáo thiếu.
-- **Đối soát cuối ngày đã chốt** (`shop-facts.md` §6.5): mỗi tối đối chiếu doanh thu hệ thống với
+- **Đối soát cuối ngày đã chốt** (`shop-facts.md` §6.10): mỗi tối đối chiếu doanh thu hệ thống với
   **sổ giấy** và **tiền trong két**; **lệch 1 đồng cũng phải tìm ra lý do**. Viết ra như một quy
   trình của quán, không viết như một tính năng phần mềm.
 - VietQR **tĩnh** nghĩa là hệ thống không tự biết tiền đã về. Phải chốt rõ ai xác nhận đã thu
@@ -85,14 +86,15 @@ work/backlog.md
 - §4 nêu rõ nguồn của giá và khẳng định khách không thể tự đặt giá.
 - §4 nêu rõ thời điểm tổng tiền được xác định, và điều gì xảy ra nếu giá menu đổi sau thời điểm đó.
 - §4 mở đầu bằng luật "giá một suất = tổng giá thành phần", và phân biệt rõ **bảng giá thành phần**
-  với **bảng giá một suất** ở `00-scope.md` §4.2.
-- §4 nêu quy tắc phụ thu là **+1.000 mỗi phần nhận nhân**, và nói rõ ×1 / ×4 là hệ quả.
+  với **bảng giá một suất** ở `shop-facts.md` §4.3.
+- §4 nêu quy tắc phụ thu là **+1.000 mỗi phần nhận nhân**, và nói rõ ×1 / ×4 / ×5 là hệ quả.
 - §4 nói rõ mặc định khi khách không chọn gì là **nhân Thịt, lượng Thường**.
-- §4 có bảng 11 tổ hợp bắt buộc phủ theo `shop-facts.md` §4.4; ca 11 ghi rõ **bị từ chối**.
-- Có một ca cho **suất trứng đứng riêng** mang dấu `⚠ chưa chốt — U-1`.
-- §4 **không chép** bảng giá; chỗ cần số thì trỏ `00-scope.md` §4.2.
+- §4 có bảng 11 tổ hợp bắt buộc phủ theo `shop-facts.md` §4.8; ca 11 ghi rõ **bị từ chối**.
+- Có ba ca cho **suất trứng đứng riêng** (ca 5, 6, 7), giá tra `shop-facts.md` §4.3; hai ca có
+  nhân mang dấu `⚠ suy luận — S-1`.
+- §4 **không chép** bảng giá; chỗ cần số thì trỏ `shop-facts.md` §4.2–§4.3.
 - Không có câu nào nói phụ thu "không nhân theo số phần bếp làm" — câu đó đã bị gỡ khỏi
-  `00-scope.md` ngày 2026-08-29, thấy nó quay lại là bug.
+  `shop-facts.md` ngày 2026-08-29, thấy nó quay lại là bug.
 - Có bảng hoặc danh sách phân biệt đơn vị thanh toán theo kênh: tại bàn = phiên; ship/pickup = đơn.
 - Liệt kê đúng 2 phương thức thanh toán, mỗi phương thức nói rõ ai xác nhận đã thu được tiền.
 - Có mô tả trường hợp thanh toán chưa xác nhận được: phiên/đơn nằm ở trạng thái nào,
@@ -113,7 +115,7 @@ work/backlog.md
 grep -nEi 'momo|zalopay|vnpay|stripe|thẻ tín dụng|webhook|api' docs/product.md  # không có kết quả
 grep -n 'VietQR\|tiền mặt' docs/product.md
 grep -c 'Chay\|Nhiều nhân' docs/product.md      # bảng 11 tổ hợp có mặt
-grep -n 'U-1' docs/product.md                    # ca suất trứng được đánh dấu, không tự chọn
+grep -n 'S-1' docs/product.md                    # ca suất trứng ghi rõ phụ thu là suy luận
 grep -n '25.000\|thành phần' docs/product.md     # phân biệt giá thành phần vs giá suất
 grep -c '000' docs/product.md                    # rất ít: §4 không phải nơi chép bảng giá
 grep -n '^### I-' quality/invariants.md
@@ -126,9 +128,9 @@ câu trả lời phải đọc thẳng ra được từ §4, không phải suy l
 
 ## Unknowns
 
-- **U-1 · Giá một suất trứng đứng riêng là bao nhiêu?** (`00-scope.md` §6 GD-01). Rủi ro **cao**,
-  **chặn task này**. Hai cách hiểu: 20.000/25.000/30.000 (cùng mô hình tổng thành phần như suất
-  giò) hay 8.000/9.000/10.000 (§4.2 đã là giá suất). Lệch **12.000–20.000đ mỗi suất** — phải hỏi
+- **S-1 · Phụ thu một suất trứng là ×5 hay ×4?** (`shop-facts.md` §7.2). Rủi ro **cao** nhưng
+  **không chặn task này**. Giá đã chốt (§4.3); điều chưa xác nhận là quả trứng có
+  lên giá theo nhân không. ×5 ⇒ nhân thường 25.000, ×4 ⇒ 24.000. Lệch **1.000–2.000đ mỗi suất** — phải hỏi
   chủ quán, không được tự chọn.
 - Ai được xác nhận "đã thu tiền" với VietQR tĩnh, và có cần hai người xác nhận không?
 - Có cho phép hoàn tiền không, ai được phép? (§10.5)

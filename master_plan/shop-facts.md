@@ -1,12 +1,14 @@
 # Bánh cuốn Bà Thanh Cao Bằng — dữ kiện quán
 
+> **Đây là nhà duy nhất của mọi dữ kiện về quán** — phạm vi bán, kênh bán, bảng giá, phụ thu,
+> thành phần suất bán, luồng vận hành, quy tắc nghiệp vụ. Chỗ nào khác trong dự án nói khác file
+> này ⇒ **file này thắng**, chỗ kia là bug phải sửa ngay. Không có bản chép thứ hai của bất kỳ
+> con số nào; đổi giá thì sửa đúng một chỗ, là đây.
+>
 > **File này tự đứng một mình.** Ai chưa từng biết quán, đọc hết file này là nắm được: quán bán
 > gì, bán cho ai qua đường nào, giá bao nhiêu, bếp làm ra cái gì, và tiền đi đường nào từ lúc
-> khách gọi tới lúc bàn trống. Không cần mở thêm tài liệu nào khác.
->
-> ⚠️ **Cảnh báo bảo trì.** Bảng giá ở §4 là bản chép; trong dự án còn một bản nữa của đúng những
-> con số này. **Đổi giá thì phải đổi cả hai chỗ trong cùng một lần sửa.** Hai bản lệch nhau nghĩa
-> là quán đang thu sai tiền ở một trong hai chỗ, và không ai biết chỗ nào.
+> khách gọi tới lúc bàn trống. Không cần mở thêm tài liệu nào khác, và file này cũng không trỏ
+> đi đâu — nó là điểm cuối.
 
 ---
 

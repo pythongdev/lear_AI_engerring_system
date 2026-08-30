@@ -7,10 +7,11 @@
 
 - Nguồn khung: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §3 Epic C, §5 quy tắc 5, 6, 7,
   §6 (Giá).
-- Nguồn số: `master_plan/00-scope.md` §4.1 (công thức), §4.2 (bảng giá), §4.3 (phụ thu),
-  §4.4 (thành phần một suất bán), §5 (**món ngoài bảng §4.2 là đổi phạm vi**).
-- Nguồn quy tắc: `master_plan/shop-facts.md` §4.1 (chín quy tắc cấu tạo giá),
-  §4.3 (**bằng chứng mô hình tổng thành phần**), §4.4 (11 tổ hợp).
+- Nguồn số: `master_plan/shop-facts.md` §4.1 (công thức), §4.2 (giá **thành phần**),
+  §4.3 (giá một **suất bán**), §4.4 (phụ thu), §4.5 (thành phần một suất bán),
+  §6.12 (**món ngoài bảng §4.2 là đổi phạm vi**).
+- Nguồn quy tắc: `master_plan/shop-facts.md` §4.6 (chín quy tắc cấu tạo giá),
+  §4.7 (**bằng chứng mô hình tổng thành phần**), §4.8 (11 tổ hợp giá).
 - Đích: `docs/product.md` §3.3.
 - Đã chốt trước đó: §3.1, §3.2 — hai lát cắt tạo ra đơn mà lát cắt này không được phép đụng vào.
 
@@ -41,21 +42,22 @@ work/backlog.md
 - Giữ quy tắc §5.5 và §5.6: giá xác định tại thời điểm đặt hàng; thay đổi menu/giá không làm
   thay đổi đơn cũ.
 - Giữ quy tắc §5.7: tổ hợp món/option không hợp lệ phải bị từ chối.
-- **Giá một suất = tổng giá các thành phần** (`00-scope.md` §4.2 + §4.4), mỗi thành phần =
+- **Giá một suất = tổng giá các thành phần** (`shop-facts.md` §4.2–§4.3 + §4.5), mỗi thành phần =
   giá chay + phụ thu nhân + phụ thu lượng nhân. ⇒ "đổi giá" có **bốn chiều** phải phủ:
   đổi giá một **thành phần** · đổi mức phụ thu **nhân** · đổi mức phụ thu **lượng nhân** ·
   đổi **thành phần của một suất** (§4.4). Đơn cũ phải giữ nguyên **cả bốn**.
 - Chiều thứ tư là chiều dễ quên nhất và đắt nhất: đổi combo từ 3 cái bánh xuống 2 làm **mọi** đơn
   cũ sai nếu không giữ nguyên thành phần tại thời điểm đặt.
-- **Ngừng bán một món là đổi phạm vi, quyền chủ quán** (`00-scope.md` §5: món ngoài bảng §4.2
+- **Ngừng bán một món là đổi phạm vi, quyền chủ quán** (`shop-facts.md` §6.12: món ngoài bảng §4.2
   không tự thêm). Lát cắt này mô tả **hệ quả** khi chủ quán làm việc đó, không mở đường cho ai
   khác làm.
 - Tổ hợp không hợp lệ đã có ví dụ chốt sẵn để bám: **Chay + Nhiều nhân phải bị TỪ CHỐI**, không
-  âm thầm bỏ qua tuỳ chọn thừa — bếp nhận phiếu mâu thuẫn là hỏng món (`shop-facts.md` §4.1 ca 11).
+  âm thầm bỏ qua tuỳ chọn thừa — bếp nhận phiếu mâu thuẫn là hỏng món (`shop-facts.md` §4.6 quy tắc 3 · §4.8 ca 11).
   Nguyên nhân nghiệp vụ: nhóm "Lượng nhân" chỉ tồn tại khi nhân **khác Chay**.
-- **Không chép bảng giá vào §3.3.** Nhà thật là `00-scope.md` §4.2 — §3.3 chốt **hành vi khi giá
+- **Không chép bảng giá vào §3.3.** Nhà thật là `shop-facts.md` §4.2–§4.3 — §3.3 chốt **hành vi khi giá
   đổi**, không chốt giá. Cần minh hoạ thì dùng **một** ví dụ và ghi rõ nó là bản chép của
-  `00-scope.md §4.2`, đổi giá thì phải sửa cả hai.
+  `shop-facts.md §4.2–§4.3`; bản chép đó là chỗ **duy nhất** được phép có số ngoài nhà thật, và
+  đổi giá thì phải sửa nó theo.
 - Không mô tả cách lưu trữ (snapshot, versioning, bảng lịch sử). Chỉ chốt **kết quả nghiệp vụ
   phải luôn đúng**; cách làm là việc của System Design.
 - Phải xử lý cả hai chiều: đổi giá, và ngừng bán/xoá món.
@@ -72,7 +74,7 @@ work/backlog.md
   có nêu đích danh ví dụ Chay + Nhiều nhân.
 - §3.3 phủ **cả bốn chiều đổi giá**: giá thành phần, phụ thu nhân, phụ thu lượng nhân, và
   **thành phần của một suất**.
-- §3.3 không chép lại bảng giá; ví dụ minh hoạ (nếu có) ghi rõ nguồn `00-scope.md §4.2`.
+- §3.3 không chép lại bảng giá; ví dụ minh hoạ (nếu có) ghi rõ nguồn `shop-facts.md §4.2–§4.3`.
 - Có nêu rõ trạng thái của đơn đang dở khi giá đổi (hoặc ghi là Unknown nếu chưa chốt được).
 - `quality/invariants.md` có invariant: đơn đã tạo không đổi giá và tên món khi menu đổi;
   và invariant: tổ hợp món/option không hợp lệ bị từ chối.
@@ -96,7 +98,7 @@ Gate 5 (L2): kiểm tra invariant lịch sử đơn không mâu thuẫn với c�
 
 - Chủ quán có được đổi giá ngay lập tức trong giờ bán không? (§10.9)
 - Đơn đã xác nhận nhưng chưa hoàn thành: áp giá cũ hay phải xác nhận lại?
-- Chủ quán có được đổi **thành phần** một suất bán (`00-scope.md` §4.4) trong lúc đang bán không,
+- Chủ quán có được đổi **thành phần** một suất bán (`shop-facts.md` §4.5) trong lúc đang bán không,
   hay phải chờ hết ngày?
 - Món hết sau khi khách đã chọn thì quán xử lý thay thế hay hủy? (§10.3 — sẽ chốt ở BA-08)
 

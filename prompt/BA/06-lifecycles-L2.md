@@ -7,7 +7,7 @@
 
 - Nguồn khung: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §7 (ba vòng đời),
   §5 quy tắc 1, 4, 9, 12.
-- Nguồn dữ kiện: `master_plan/shop-facts.md` §3 (5 trạm), §5.1 (một đơn nổ thành nhiều việc),
+- Nguồn dữ kiện: `master_plan/shop-facts.md` §3 (5 trạm), §5.3 (một đơn nổ thành nhiều việc),
   **§6.1 (phiên ở "Chờ thanh toán" vẫn nhận đơn mới)**.
 - Đích: `docs/product.md` §5.
 - Đã chốt trước đó: §3.1–§3.3 (các luồng đã dùng một số tên trạng thái), §4 (thanh toán).
@@ -50,7 +50,7 @@ work/backlog.md
   Thiếu dòng này là **thu thiếu tiền**, không phải thiếu tài liệu.
 - Bàn chỉ rời khỏi "một phiên chưa thanh toán" khi phiên **Đã đóng**. `Chờ thanh toán` vẫn tính là
   phiên chưa thanh toán — nói rõ trong §5, vì đây là chỗ dễ hiểu nhầm nhất.
-- **Một đơn sinh nhiều công việc trạm** (`shop-facts.md` §5.1), mỗi việc có vòng đời riêng và
+- **Một đơn sinh nhiều công việc trạm** (`shop-facts.md` §5.3), mỗi việc có vòng đời riêng và
   chạy song song. Nói rõ đơn vị của vòng đời "công việc trạm" là **một việc ở một trạm**,
   không phải cả đơn.
 - Từ trạng thái nào được hủy đơn, và ai được hủy: nếu kế hoạch gốc chưa chốt → Unknowns,

@@ -9,23 +9,30 @@ Viết theo `docs/prompt-guideline.md`. Kiểm kết quả theo `quality/review-
 | Nguồn | Cho cái gì | Ai là nhà thật |
 |---|---|---|
 | `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` | **Khung** nghiệp vụ: 11 task, 3 lát cắt, 12 quy tắc, 14 ngoại lệ, 10 câu hỏi | — |
-| `master_plan/00-scope.md` | **Số**: phạm vi bán, **5 kênh**, bảng giá thành phần, giá một suất, phụ thu, thành phần một suất bán | **Nhà duy nhất của giá và phạm vi.** Chỗ khác nói khác ⇒ file này thắng |
-| `master_plan/shop-facts.md` | **Quy tắc vận hành**: 5 trạm, luồng tại bàn, nổ việc xuống bếp, đối soát, sổ giấy | Con trỏ tới hai file trên, **cố ý không chép số** |
+| `master_plan/shop-facts.md` | **Mọi dữ kiện quán**: phạm vi bán, **5 kênh**, bảng giá thành phần, giá một suất, phụ thu, thành phần một suất bán, 5 trạm, hai luồng bán, nổ việc xuống bếp, 12 quy tắc nghiệp vụ, đối soát, sổ giấy | **Nhà duy nhất, từ 2026-08-30.** Chỗ khác nói khác ⇒ file này thắng |
 
-Kế hoạch gốc không chứa một con số nào của quán này. Chạy bộ prompt mà bỏ hai file kia sẽ ra một
+Kế hoạch gốc không chứa một con số nào của quán này. Chạy bộ prompt mà bỏ `shop-facts.md` sẽ ra một
 `docs/product.md` đúng khuôn nhưng áp cho quán ăn nào cũng được — tức là chưa chốt gì.
 
-⚠️ **Cần một con số ⇒ tra `00-scope.md`, không tra `shop-facts.md`.** `shop-facts.md` cố ý không
-giữ bản chép nào của bảng giá; mỗi bản chép là một chỗ sẽ trôi.
+⚠️ **Cần bất kỳ dữ kiện nào của quán ⇒ tra `shop-facts.md`, và chỉ tra ở đó.** Từ 2026-08-30 nó là
+nhà duy nhất; không còn bản chép thứ hai của bất kỳ con số nào. `master_plan/00-scope.md` chỉ còn
+là file trỏ, **không sở hữu gì** — thấy ai chép bảng giá về đó là bug.
 
-⚠️ `shop-facts.md` §7 liệt kê những phần **cấm** đưa vào tài liệu BA (stack, bảng dữ liệu,
-endpoint, route, UI). Đọc mục đó trước khi dán bất kỳ thứ gì từ `prompt-fullstack.md` vào session.
+⚠️ **Cấm đưa vào tài liệu BA**: stack công nghệ, tên bảng dữ liệu và cột, endpoint, cây route,
+quy tắc kích thước chữ và màu. Những thứ đó thuộc System Design trở đi. `shop-facts.md` cố ý
+không chứa chúng, nên nếu chúng xuất hiện trong đầu ra BA thì chúng đến từ `prompt-fullstack.md`
+§3.4–§3.7 — đó là dán nhầm.
 
-⚠️ **Mô hình giá là "giá một suất = TỔNG giá các thành phần"** (`00-scope.md` §4.2, §4.4).
-Bảng §4.2 là giá **thành phần**, không phải giá suất — đọc nhầm hai cái này là thu sai tiền.
+⚠️ **Mô hình giá là "giá một suất = TỔNG giá các thành phần"** (`shop-facts.md` §4.6 quy tắc 1).
+Bảng §4.2 là giá **thành phần**, bảng §4.3 là giá **một suất bán** — đọc nhầm hai cái này là thu
+sai tiền. Bằng chứng của mô hình ở §4.7, mười một ca giá bắt buộc phủ ở §4.8.
 
-⚠️ `shop-facts.md` §8 còn **U-1: giá một suất trứng đứng riêng** (chặn BA-06). Hai cách hiểu lệch
-nhau 12.000–20.000đ mỗi suất — phải hỏi chủ quán, không được tự chọn.
+✅ **Bảng giá đã đầy, không còn unknown nào** (`shop-facts.md` §7.1). U-1–U-4 và GD-01 đã được chủ
+quán trả lời hết ngày 2026-08-30; ô cuối cùng — giá suất trứng — nay có số ở §4.3.
+
+⚠️ **Còn ba chỗ suy luận chưa ai xác nhận** (`shop-facts.md` §7.2). Chạm tiền là **S-1**: phụ thu
+suất trứng ×5 hay ×4, tức suất trứng nhân thường là 25.000 hay 24.000. Viết theo ×5 và ghi rõ đó
+là suy luận — không được lặng lẽ coi như đã chốt.
 
 ## Nguyên tắc của bộ prompt này
 

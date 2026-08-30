@@ -3,7 +3,7 @@
 ## Context
 
 - Nguồn khung: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §2.1 (người dùng chính), §2.2 (kênh bán).
-- Nguồn số: `master_plan/00-scope.md` §2 (**bảng 5 kênh — nhà thật**), §1 (giờ bán, 11 bàn).
+- Nguồn số: `master_plan/shop-facts.md` §2 (**bảng 5 kênh — nhà thật**), §1 (giờ bán, 11 bàn).
 - Nguồn quy tắc: `master_plan/shop-facts.md` §2 (hệ quả nghiệp vụ của 5 kênh),
   §3 (**5 trạm làm việc có tên**).
 - Đích: `docs/product.md` §1 và §2, hiện là chỗ giữ do BA-00 dựng.
@@ -38,7 +38,7 @@ work/backlog.md
 - **Năm** kênh bán: `delivery` · `pickup` · `qr_table` · `staff_pos` · `phone_preorder`.
   Không thêm kênh thứ sáu.
 - Mỗi kênh phải nói rõ ba điều: có gắn với phiên bàn hay không, ai xác nhận đơn, và khách phải
-  cung cấp thông tin định danh gì. Lấy đúng bảng `00-scope.md` §2:
+  cung cấp thông tin định danh gì. Lấy đúng bảng `shop-facts.md` §2:
   **chỉ hai kênh gắn phiên bàn** — `qr_table` và `staff_pos`, ẩn danh theo bàn, gộp vào một phiên
   và tính tiền một lần; **ba kênh còn lại** — `delivery`, `pickup`, `phone_preorder` — mỗi đơn là
   một đơn vị thanh toán độc lập.
@@ -90,7 +90,7 @@ Nếu chưa có câu trả lời, ghi `GIẢ ĐỊNH` + mức rủi ro vào `doc
   là đơn độc lập?
 
 Đã có lời giải, **không** ghi lại thành Unknown nữa:
-- ~~Đơn đặt trước qua hotline gắn vào bàn nào~~ → `00-scope.md` §2 (owner chốt 2026-08-29):
+- ~~Đơn đặt trước qua hotline gắn vào bàn nào~~ → `shop-facts.md` §2 (owner chốt 2026-08-29):
   **kênh thứ năm `phone_preorder`, không gắn bàn**.
 
 Đã có lời giải, **không** ghi lại thành Unknown nữa:

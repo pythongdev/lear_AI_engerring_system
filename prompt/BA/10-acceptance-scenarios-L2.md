@@ -7,10 +7,10 @@
 
 - Nguồn khung: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §12 (cổng chất lượng BA),
   §3 (ba lát cắt).
-- Nguồn số: `master_plan/00-scope.md` §4.2 (bảng giá — dùng để viết tổng tiền kiểm được),
-  §4.4 (thành phần suất bán).
-- Nguồn quy tắc: `master_plan/shop-facts.md` §5.1 (ví dụ nổ việc xuống bếp — số liệu cho
-  scenario 1), §6.1, §8 (U-1).
+- Nguồn số: `master_plan/shop-facts.md` §4.2 (giá thành phần), §4.3 (giá một suất — dùng để viết
+  tổng tiền kiểm được), §4.5 (thành phần suất bán), §4.8 (11 tổ hợp kèm giá kỳ vọng).
+- Nguồn quy tắc: `master_plan/shop-facts.md` §5.3 (ví dụ nổ việc xuống bếp — số liệu cho
+  scenario 1), §6.1, §7.2 (ba chỗ suy luận, S-1 chạm tiền).
 - Đích: `docs/product.md` §8.
 - Đầu vào: toàn bộ §1–§7 `docs/product.md`, `docs/decisions.md`, `quality/invariants.md`.
 
@@ -50,22 +50,23 @@ work/backlog.md
   phải diễn lại được.
 - Mỗi scenario phải có kết quả mong đợi cụ thể, kiểm được đúng/sai (số lần thu tiền, tổng tiền
   đơn cũ, trạng thái cuối của bàn).
-- **Scenario 1 dùng số liệu thật, không viết chung chung.** Bám ví dụ `shop-facts.md` §5.1:
+- **Scenario 1 dùng số liệu thật, không viết chung chung.** Bám ví dụ `shop-facts.md` §5.3:
   bàn 5 · gọi lần đầu **2 suất "Đầy đủ trứng tái", thịt + mộc nhĩ, nhiều nhân** · kết quả kiểm
   được ở bếp là **6 cái bánh cuốn, 2 quả trứng, 2 chiếc giò, 1 việc nước chấm cho bàn 5** —
   không phải "bếp nhận được việc".
 - **Scenario 1 phải có lượt gọi thêm xảy ra SAU khi quầy đã bắt đầu thu tiền**, và kết quả mong
   đợi là **vẫn 1 lần thu tiền, 1 hoá đơn** (`shop-facts.md` §6.1). Đây là bước chứng minh chỗ
   hỏng-ra-tiền nguy hiểm nhất; scenario không có bước này thì chưa nghiệm thu được lát cắt A.
-- **Tổng tiền phải là số cụ thể, tra `00-scope.md` §4.2.** Ví dụ scenario 1: 2 suất "Đầy đủ trứng
+- **Tổng tiền phải là số cụ thể, tra `shop-facts.md` §4.3.** Ví dụ scenario 1: 2 suất "Đầy đủ trứng
   tái", thịt + mộc nhĩ, nhiều nhân ⇒ **68.000đ**. Ghi rõ con số này là **bản chép** của
-  `00-scope.md` §4.2 và §4.3; giá đổi thì phải sửa cả scenario.
-- Scenario **3** (đổi giá) phải nêu đích danh món và mức giá trước/sau, tra từ `00-scope.md` §4.2 —
+  `shop-facts.md` §4.2–§4.3 và §4.4; giá đổi thì phải sửa cả scenario.
+- Scenario **3** (đổi giá) phải nêu đích danh món và mức giá trước/sau, tra từ `shop-facts.md` §4.3 —
   "đơn cũ giữ nguyên tổng tiền" mà không có số thì không kiểm được đúng/sai.
-- Không đóng giai đoạn BA khi còn `GIẢ ĐỊNH` rủi ro cao chặn scenario nào. **U-1 (giá một suất
-  trứng) đang là một giả định như vậy** (`shop-facts.md` §8 · `00-scope.md` §6 GD-01) — mặc định
-  kết luận của prompt này là "chưa đủ điều kiện sang System Design", trừ khi U-1 đã được gỡ.
-  Nói rõ scenario nào bị chạm: bất kỳ scenario nào có **suất trứng đứng riêng**.
+- Không đóng giai đoạn BA khi còn `GIẢ ĐỊNH` rủi ro cao chặn scenario nào. **U-1 đã được gỡ**
+  (chủ quán chốt 2026-08-30: suất trứng = 20.000 / 25.000 / 30.000), nên giá không còn là vật cản.
+  Thứ còn lại là **S-1** (`shop-facts.md` §7.2): phụ thu suất trứng ×5 hay ×4 — mới là suy luận,
+  chưa ai xác nhận. Scenario nào có **suất trứng nhân thường hoặc nhiều nhân** thì chạm S-1;
+  viết scenario đó theo ×5 và ghi kèm một dòng nói rõ nó dựa trên suy luận nào.
 - **Scenario 2 phải dùng kênh `phone_preorder`** ít nhất một lần, vì đó là kênh mới nhất
   (owner chốt 2026-08-29) và chưa từng được diễn thử. Đơn `phone_preorder` **không thuộc phiên
   bàn nào** — kết quả mong đợi phải kiểm được điều đó.
@@ -76,15 +77,15 @@ work/backlog.md
 - Scenario 1 nêu rõ số lần thanh toán = 1 dù có nhiều lượt gọi món, và trạng thái cuối của bàn là `Trống`.
 - Scenario 1 có ít nhất một lượt gọi thêm **sau khi quầy bắt đầu thu tiền**, kết quả vẫn là 1 hoá đơn.
 - Scenario 1 có bước kiểm số lượng bếp nhận được (6 bánh / 2 trứng / 2 giò / 1 nước chấm),
-  khác số lượng trên hoá đơn (2 suất), và tổng tiền là **68.000đ** tra từ `00-scope.md` §4.2.
-- Scenario 3 có món cụ thể, giá trước và giá sau, tra từ `00-scope.md` §4.2.
+  khác số lượng trên hoá đơn (2 suất), và tổng tiền là **68.000đ** tra từ `shop-facts.md` §4.3.
+- Scenario 3 có món cụ thể, giá trước và giá sau, tra từ `shop-facts.md` §4.3.
 - Scenario 2 nêu rõ đơn không gắn phiên bàn và trạng thái cuối là `Hoàn thành`, và có ít nhất
   một lượt dùng kênh `phone_preorder`.
 - Scenario 3 nêu rõ tổng tiền đơn cũ không đổi sau khi giá menu đổi.
 - Mỗi bước trong cả 3 scenario có tham chiếu tới mục §1–§7 chứa quy tắc tương ứng.
 - Có checklist cổng chất lượng BA (9 mục ở §12 kế hoạch gốc) với trạng thái tick thật,
   không tick mục chưa đạt. Mục "không còn business rule quan trọng bị suy đoán" **không được tick**
-  khi U-1 còn treo.
+  khi S-1 chưa được chủ quán xác nhận.
 - Mọi lỗ hổng phát hiện khi diễn scenario đều có finding trong `work/findings.md`, kèm task
   BA cần mở lại.
 - `work/backlog.md`: task BA-01–BA-11 nào đã xong được đánh dấu Done; task phải mở lại
@@ -110,8 +111,8 @@ lý do đã giải thích trước đó.
 ## Unknowns
 
 - Ai là người ký duyệt cổng chất lượng BA — ai nói "được, sang System Design"?
-- Có được mở System Design **song song** phần không phụ thuộc U-1 (vòng đời, trạm, luồng tại
-  bàn) trong lúc chờ chủ quán trả lời không, hay phải chờ hết?
+- Có được mở System Design **song song** phần không phụ thuộc S-1 (vòng đời, trạm, luồng tại
+  bàn) trong lúc chờ chủ quán xác nhận cách tính phụ thu suất trứng không, hay phải chờ hết?
 
 ## Report (AI trả lời sau khi làm)
 

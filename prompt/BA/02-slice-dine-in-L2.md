@@ -7,9 +7,9 @@
 
 - Nguồn khung: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §3 Epic A, §4.1 (15 bước),
   §4.3 (đặt hộ tại quầy), §5 quy tắc 1, 2, 3, 4, 9.
-- Nguồn số: `master_plan/00-scope.md` §4.4 (**thành phần một suất bán** — cơ sở của việc nổ),
+- Nguồn số: `master_plan/shop-facts.md` §4.5 (**thành phần một suất bán** — cơ sở của việc nổ),
   §2 (chỉ `qr_table` và `staff_pos` gắn phiên bàn).
-- Nguồn quy tắc: `master_plan/shop-facts.md` §3 (5 trạm), §5 (sơ đồ luồng tại bàn),
+- Nguồn quy tắc: `master_plan/shop-facts.md` §3 (5 trạm), §5.1 (sơ đồ luồng tại bàn),
   **§5.1 (nổ việc xuống bếp)**, **§6.1 (gọi thêm khi đang thu tiền)**.
 - Đích: `docs/product.md` §3.1.
 - Đã chốt trước đó: §1 actor, §2 kênh bán (BA-01, BA-02).
@@ -51,8 +51,8 @@ work/backlog.md
 - Một đơn được quầy duyệt sẽ sinh việc ở **nhiều trạm cùng lúc** (tráng bánh · gấp bánh · lấy canh),
   không phải một hàng đợi tuần tự. Dùng đúng tên trạm ở `shop-facts.md` §3.
 - **Việc xuống bếp phải nổ ra thành phần**, không được là một dòng "Combo ×2" mơ hồ
-  (`shop-facts.md` §5.1). Bốn hệ quả nghiệp vụ phải viết ra:
-  số lượng thành phần = số suất × số thành phần trong suất (`00-scope.md` §4.4);
+  (`shop-facts.md` §5.3). Bốn hệ quả nghiệp vụ phải viết ra:
+  số lượng thành phần = số suất × số thành phần trong suất (`shop-facts.md` §4.5);
   **mọi suất bán đều kèm bánh cuốn**, không riêng combo — một suất trứng là 1 trứng + 4 bánh,
   một suất giò là 1 giò + 4 bánh, nên "gọi 1 suất trứng" bếp làm **5 thứ**;
   thành phần **không nhận nhân** (giò) thì không kèm mô tả nhân;
@@ -75,7 +75,7 @@ work/backlog.md
 - Có câu khẳng định: khách gọi thêm khi phiên đang chờ thanh toán vẫn vào **cùng một hoá đơn**,
   và nói rõ bàn chưa được coi là trống ở thời điểm đó.
 - Có mô tả một đơn duyệt xong sinh việc ở những trạm nào, dùng đúng 5 tên trạm.
-- Có ví dụ nổ thành phần (dùng lại ví dụ 2 suất "Đầy đủ" ở `shop-facts.md` §5.1), cho thấy
+- Có ví dụ nổ thành phần (dùng lại ví dụ 2 suất "Đầy đủ" ở `shop-facts.md` §5.3), cho thấy
   số lượng bếp thấy khác số lượng trên hoá đơn.
 - Có câu khẳng định **mọi suất bán đều kèm bánh cuốn**, không chỉ combo — nếu §3.1 chỉ nói tới
   combo thì chưa đạt.

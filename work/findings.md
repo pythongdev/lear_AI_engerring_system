@@ -57,7 +57,21 @@ thắng. Nếu tái phát lệch giá dù đã có cảnh báo, cân nhắc mộ
 —
 
 **Status:**
-Open
+Fixed
+
+**ĐÓNG 2026-08-30 — bản trùng đã bị xoá, không còn hai bản nào.** Xem ADR-001: `shop-facts.md`
+nay là nhà duy nhất, `00-scope.md` rút thành file trỏ không giữ số. Khuyến nghị "viết script so
+khớp hai bảng giá" ở dưới **không còn cần** — không còn hai bảng để so.
+
+**Vì sao phải đóng bằng cách đổi kiến trúc chứ không phải bằng kỷ luật:**
+Chủ quán chốt giá suất trứng (20.000 / 25.000 / 30.000). Con số được ghi vào `shop-facts.md`
+trước, và trong khoảng thời gian đó `00-scope.md` — **nhà thật của giá** — vẫn ghi ô đó là
+"⚠ chưa chốt". Hai file mâu thuẫn nhau về một con số tiền chỉ **một ngày** sau khi bản trùng được
+tạo ra. Cảnh báo bảo trì viết ở đầu `shop-facts.md` cùng ngày **không cứu được gì**.
+
+Bài học: một bản chép có kèm cảnh báo vẫn là một bản chép. Cảnh báo dựa vào việc người sửa nhớ đọc
+nó; nhà-duy-nhất không dựa vào ai nhớ gì. Khi yêu cầu "file phải đọc độc lập" xung đột với luật
+"một fact một nhà", **đừng giải bằng cách chép rồi hứa sẽ đồng bộ** — hãy đổi xem ai là nhà.
 
 ---
 
@@ -115,6 +129,41 @@ Phân biệt hai loại đếm, và chỉ loại đầu được viết là "đ�
 
 Kiểm tra kèm theo: mỗi khi §2 thêm hoặc sửa một kênh, rà xem kênh đó đã xuất hiện trong **một** luồng
 ở §5 chưa. Kênh chỉ có trong bảng §2 mà không có trong luồng nào là bug.
+
+**Related task:**
+—
+
+**Status:**
+Fixed
+
+---
+
+### F-004 — Suy ra từ luật đã chốt thì phải ghi tách khỏi lời chủ quán
+
+**Problem:**
+Ngày 2026-08-30 chủ quán trả lời năm câu về luồng mang đi và ba câu còn treo. Nhiều câu trả lời là
+câu nói ngắn ("thu tiền lúc giao hàng", "case by case", "cộng gộp tiền bánh"), từ đó phải **suy ra**
+chi tiết mới dùng được: phụ thu suất trứng là ×5 hay ×4, trường liên hệ nào bắt buộc, hoàn tiền có
+phải ghi vết không. Nếu trộn phần suy ra vào cùng chỗ với phần chủ quán nói thẳng, phiên sau không
+phân biệt được cái nào đã được xác nhận và cái nào chỉ là suy luận hợp lý.
+
+**Impact:**
+Riêng chỗ phụ thu suất trứng, hai cách suy lệch nhau **1.000–2.000đ mỗi suất**. Một suy luận sai
+được ghi lẫn vào các dòng "owner chốt" sẽ không bao giờ bị ai hỏi lại, vì trông y hệt một quyết định
+đã xác nhận.
+
+**Decision / Fix:**
+Tách hai loại ra hai mục riêng và nói rõ mục nào lật trước:
+- `master_plan/shop-facts.md` §7.1 = **nhật ký chốt** (ngày + ai chốt cái gì).
+- `master_plan/shop-facts.md` §7.2 = **ba chỗ suy ra** (S-1 phụ thu ×5 · S-2 trường liên hệ bắt
+  buộc · S-3 hoàn tiền phải ghi vết), mỗi mục kèm suy từ đâu và sai thì mất gì.
+- ~~`master_plan/00-scope.md` §6 giữ một đoạn tương ứng~~ — file đó đã rút thành file trỏ
+  (ADR-001, 2026-08-30); S-1 nay chỉ sống ở `shop-facts.md` §7.2, đúng một chỗ.
+- Mỗi chỗ suy ra chạm tiền phải kèm sẵn **một câu hỏi kiểm chứng** dạng có/không để lần gặp chủ
+  quán sau hỏi được ngay: *"Suất trứng nhân thường là 25.000 hay 24.000?"*
+
+Luật chung: khi câu trả lời của chủ quán ngắn hơn quyết định cần có, phần chênh lệch là **suy luận**
+và phải ghi ở mục suy luận, không được ghi lẫn vào nhật ký chốt.
 
 **Related task:**
 —

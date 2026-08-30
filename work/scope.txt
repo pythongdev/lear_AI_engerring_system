@@ -11,9 +11,3 @@
 #
 # File này rỗng (chỉ có comment) = chưa khai báo scope → Gate 3 bỏ qua.
 # Xoá hết pattern sau khi task xong.
-master_plan/shop-facts.md
-work/findings.md
-CLAUDE.md
-work/scope.txt
-master_plan/to_do_list.md
-master_plan/00-scope.md

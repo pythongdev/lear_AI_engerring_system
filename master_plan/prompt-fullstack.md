@@ -7,7 +7,7 @@
 > **master task chẻ thế nào** và **chất lượng gác bằng gì** — rồi mới tới lượt viết code ở các phiên sau.
 >
 > **File này là bản xuất khẩu, không phải nhà của sự thật nào.** Mọi con số có nhà thật trong repo,
-> lệch ⇒ **nhà thật thắng** ([CLAUDE.md §2](../CLAUDE.md)): phạm vi & giá [00-scope.md](00-scope.md) ·
+> lệch ⇒ **nhà thật thắng** ([CLAUDE.md §2](../CLAUDE.md)): mọi dữ kiện quán [shop-facts.md](shop-facts.md) ·
 > schema [design/data_base/01](../design/data_base/01-thiet-ke.md) · API [design/backend/01](../design/backend/01-thiet-ke.md) ·
 > route [design/frontend/01](../design/frontend/01-thiet-ke.md) · bất biến [design/system_design/01](../design/system_design/01-thiet-ke.md) ·
 > định nghĩa XONG [quality/05](../quality/05-checklist.md). Là bản chép nên nó **sẽ trôi** — rủi ro ghi ở [F-67](../finding.md#f-67).
@@ -48,24 +48,29 @@ Code chỉ xuất hiện dưới dạng **chữ ký hàm, DDL, hoặc endpoint**
 
 ## §3 Ngữ cảnh
 
-### 3.1 Quán
+### 3.1 Quán, kênh bán, menu và giá — nhà thật ở `shop-facts.md`
 
-| Mục | Giá trị |
+**Không có con số nào ở đây.** Toàn bộ dữ kiện quán sống ở một nhà duy nhất:
+[shop-facts.md](shop-facts.md). Agent ngoài repo ⇒ **dán nguyên file đó vào prompt** cùng với §1–§10
+của file này; nó tự đứng một mình và không trỏ đi đâu.
+
+| Cần gì | Mục ở `shop-facts.md` |
 |---|---|
-| Tên | Bánh cuốn Bà Thanh Cao Bằng · hotline `0382688666` |
-| Giờ bán | **06:00 – 11:00**, tất cả các ngày (múi giờ `Asia/Ho_Chi_Minh`) |
-| Số bàn | **11** · Phí ship **0đ** · Không có đơn tối thiểu |
-| Thanh toán | Tiền mặt tại quầy · Chuyển khoản **VietQR tĩnh** (số tài khoản nhập sau ở Admin, **không chặn code**) |
+| Tên quán, hotline, giờ bán, múi giờ, 11 bàn, hai cách thanh toán | **§1** |
+| **Năm** kênh bán (không phải bốn) và kênh nào gắn bàn | **§2** |
+| Năm trạm làm việc | **§3** |
+| Công thức giá · bảng giá thành phần · giá một suất · phụ thu · thành phần suất bán | **§4.1 → §4.5** |
+| Chín quy tắc cấu tạo giá · mười một ca giá bắt buộc phủ | **§4.6 · §4.8** |
+| Hai luồng bán (tại bàn, mang đi) và việc nổ xuống bếp | **§5** |
+| Mười hai quy tắc nghiệp vụ | **§6** |
+| Nhật ký chốt và ba chỗ suy luận chưa xác nhận | **§7** |
 
-Bốn kênh bán: `delivery` (khách, web) · `pickup` (khách, web, có giờ hẹn) · `qr_table` (khách quét QR tại bàn) ·
-`staff_pos` (nhân viên đặt hộ). Hai kênh sau **đều gắn với một số bàn** và **gộp vào một phiên bàn, tính tiền một lần**.
+Lệch với file này ⇒ **`shop-facts.md` thắng** ([CLAUDE.md §2](../CLAUDE.md)).
 
-### 3.2 Menu và giá — nhà thật ở `00-scope.md`
+⚠️ **Hai chỗ file này từng chép sai, đã gỡ:** *"bốn kênh bán"* (đúng là **năm**, thêm
+`phone_preorder` từ 2026-08-29) và bảng giá riêng ở §3.1 cũ. Thấy chúng quay lại là bug.
 
-Công thức giá, bảng giá, nhóm tuỳ chọn và **thành phần một suất bán** đã chuyển về nhà duy nhất của chúng:
-[00-scope.md](00-scope.md) §4 — công thức **§4.1** · bảng giá **§4.2** · phụ thu **§4.3** · thành phần suất bán
-**§4.4** (owner chốt 2026-08-19). Phạm vi bán và bốn kênh ở [00-scope.md](00-scope.md) §2.
-Lệch với file này ⇒ **`00-scope.md` thắng** ([CLAUDE.md §2](../CLAUDE.md)).
+### 3.2 Đã gộp vào §3.1
 
 ### 3.3 Luồng ăn tại bàn (chiếm phần lớn doanh thu — vẽ được luồng này rồi mới thiết kế)
 
@@ -295,7 +300,7 @@ BE luôn tính lại giá từ DB (vi phạm = khách đặt món 0đ) · backup
 |---|---|---|
 | **0 · BA** | Quán làm gì, ai thao tác, tiền đi đường nào | 4 kênh bán · 2 sơ đồ luồng (tại bàn, ship) · danh sách quy tắc nghiệp vụ · **trả lời 3 câu chưa rõ ở §3.2** hoặc ghi thành giả định có mức rủi ro |
 | **1 · System design** | Cái gì bảo vệ cái gì | **Bảng bất biến 3 cột (§6.2)** · ràng buộc kiến trúc ẩn + dấu hiệu phải xem lại · chọn nguồn thời gian · 5 rủi ro lớn nhất kèm cách chặn |
-| **2 · DB** | Dữ liệu sống ở đâu | Sơ đồ quan hệ · thứ tự migration · dữ liệu mồi (menu thật [00-scope §4.2](00-scope.md)) · quy tắc dữ liệu · **query đối chiếu cho từng bất biến** |
+| **2 · DB** | Dữ liệu sống ở đâu | Sơ đồ quan hệ · thứ tự migration · dữ liệu mồi (menu thật [shop-facts §4.2–§4.3](shop-facts.md)) · quy tắc dữ liệu · **query đối chiếu cho từng bất biến** |
 | **3 · BE** | Ai được làm gì, giá tính ở đâu | Endpoint + quyền theo vai · hợp đồng API (nguồn duy nhất cho FE) · **hàm tính giá duy nhất** + bảng ca test · luồng đặt món từng bước · realtime + dự phòng |
 | **4 · FE** | Người dùng thấy gì | Cây route · nguyên tắc UI **theo từng loại người dùng** · nguồn dữ liệu mỗi màn · type sinh từ hợp đồng API, không gõ tay |
 | **5 · Deploy & vận hành** | Chạy thật thì sao | compose production · HTTPS · **backup đã restore thử** · checklist trước deploy · quy trình sự cố + sổ giấy · việc hằng ngày/hằng tháng |
@@ -346,7 +351,7 @@ SAI : "Không được mở 2 phiên trên cùng một bàn."            ← l�
 **9.3 Mười một ca giá bắt buộc (dùng nguyên, đây là hợp đồng với chủ quán)**
 
 Đây là danh sách **tổ hợp đầu vào** phải phủ, **không** phải nhà của giá. Giá kỳ vọng của mười ca đầu tra
-thẳng ở [00-scope.md](00-scope.md) §4.2 (bảng giá) và §4.3 (phụ thu) — mỗi số từng đứng ở đây chỉ là bản
+thẳng ở [shop-facts.md](shop-facts.md) §4.3 (giá một suất) và §4.4 (phụ thu) — mỗi số từng đứng ở đây chỉ là bản
 chép của một ô trong bảng đó, nay gỡ đi để §4.2 đổi giá thì không còn bản chép nào đứng im ([F-31](../finding.md#f-31)).
 
 ```
@@ -357,14 +362,17 @@ chép của một ô trong bảng đó, nay gỡ đi để §4.2 đổi giá th�
  5. Trứng chín  · Chay          · —
  6. Trứng tái   · Thịt+mộc nhĩ  · Thường
  7. Trứng vàng  · Thịt          · Nhiều
- 8. Giò         · —             · —          ⟵ giò không nhận nhân (§4.4)
+ 8. Giò         · Thịt          · Nhiều      ⟵ giò không nhận nhân, nhưng 4 cái bánh trong suất giò thì CÓ
  9. Đầy đủ chín · Thịt          · Thường     ⟵ combo: phụ thu ×4 (§4.3)
 10. Đầy đủ tái  · Thịt+mộc nhĩ  · Nhiều
 11. Bánh cuốn   · Chay          · Nhiều      → LỖI
 ```
 
-Ca 11 là ca **duy nhất** ghi kết quả tại chỗ. §4.2 không tra ra nó được, vì nó không phải một giá — nó là
-luật hành vi ở §4.3: *lượng nhân chỉ hiện khi nhân ≠ Chay*, nên tổ hợp Chay + Nhiều không hợp lệ.
+Ca 11 là ca **duy nhất** ghi kết quả tại chỗ. Bảng giá không tra ra nó được, vì nó không phải một giá — nó là
+luật hành vi: *lượng nhân chỉ hiện khi nhân ≠ Chay*, nên tổ hợp Chay + Nhiều không hợp lệ.
+
+**Ca 5, 6, 7 (suất trứng) nay đã có giá** — owner chốt 2026-08-30, tra [shop-facts §4.8](shop-facts.md).
+Bản cũ của file này viết ca 8 là `Giò · — · —`; cách ghi đó **sai** từ 2026-08-29 và đã sửa ở trên.
 
 **9.4 Việc xuống bếp phải "nổ" ra thành phần** — khách gọi **2 suất "Đầy đủ trứng tái", thịt + mộc nhĩ, nhiều nhân**:
 
@@ -381,7 +389,7 @@ Bếp phải thấy:
 ```
 
 Số lượng = `số combo × số thành phần`. Bếp không bao giờ được thấy một dòng "Combo ×2" mơ hồ.
-**Số bánh ở đây đã đối chiếu với thành phần owner chốt 2026-08-19** ([00-scope §4.4](00-scope.md)):
+**Số bánh ở đây đã đối chiếu với thành phần owner chốt 2026-08-19** ([shop-facts §4.5](shop-facts.md)):
 combo = **3 cái** bánh cuốn + 1 quả trứng + 1 chiếc giò ⇒ 2 combo ra **6 cái bánh**, đúng như bảng trên.
 Mọi pha sau đều tham chiếu ví dụ này, nên thành phần đổi thì **sửa ví dụ này trước**.
 

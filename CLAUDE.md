@@ -33,10 +33,14 @@ is a bug to fix now.
 | How to write a prompt/task | `docs/prompt-guideline.md` |
 | How to check LLM output | `quality/review-gate.md` |
 | Risk levels, repo philosophy | `README.md` |
+| Shop facts: scope, channels, prices, flows, business rules | `master_plan/shop-facts.md` |
 
-Domain material for the current project lives in `master_plan/` (`00-scope.md`
-owns selling scope and prices; `shop-facts.md` owns operating rules and
-deliberately keeps no copy of the numbers) and the BA prompt set in `prompt/BA/`.
+Domain material for the current project lives in `master_plan/` and the BA prompt
+set in `prompt/BA/`. **`master_plan/shop-facts.md` is the single owner of every
+shop fact** — selling scope, channels, prices, surcharges, portion composition,
+operating flows, business rules. It is deliberately self-contained and link-free:
+it points nowhere, everything points at it. `master_plan/00-scope.md` is a
+redirect stub kept only so older links resolve; it owns nothing.
 
 ```text
 CLAUDE.md          this file — read first

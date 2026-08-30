@@ -7,10 +7,11 @@
 
 - Nguồn khung: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §10 (10 câu hỏi phải chốt),
   cộng toàn bộ mục Unknowns còn treo từ các prompt 01–08.
-- Nguồn số: `master_plan/00-scope.md` — mọi câu hỏi về giá, phạm vi bán, kênh, thành phần suất
-  bán **đã có câu trả lời ở đây**, và `00-scope.md` §6 khẳng định file đó không còn giả định nào.
-- Nguồn unknown: `master_plan/shop-facts.md` §8 (**U-1–U-4**) và `00-scope.md` §6 (**GD-01**,
-  cùng một câu với U-1) và các mục "Đã có lời giải" ở cuối phần Unknowns của prompt 01, 02, 03 —
+- Nguồn số: `master_plan/shop-facts.md` — mọi câu hỏi về giá, phạm vi bán, kênh, thành phần suất
+  bán **đã có câu trả lời ở đây**, và `shop-facts.md` §7.1 khẳng định file đó không còn câu hỏi treo.
+- Nguồn giả định: `master_plan/shop-facts.md` §7.2 (**S-1, S-2, S-3** — ba chỗ suy ra từ luật đã
+  chốt, chưa ai xác nhận; **U-1–U-4 và GD-01 đã gỡ hết ngày 2026-08-30**,
+  đã ghi vào nhật ký §7.1) và các mục "Đã có lời giải" ở cuối phần Unknowns của prompt 01, 02, 03 —
   những câu đó **đã có câu trả lời từ người**, phải vào file dưới dạng **ADR có nguồn**, không
   phải `GIẢ ĐỊNH`.
 - Đích: `docs/decisions.md`.
@@ -45,19 +46,22 @@ work/backlog.md
   - `GIẢ ĐỊNH GD-00N` — chưa có câu trả lời, ghi kèm: nội dung giả định, mức rủi ro
     (cao/trung bình/thấp), hậu quả nếu giả định sai, ai cần trả lời.
 - Không được nâng một `GIẢ ĐỊNH` thành `ADR` nếu không có câu trả lời thật từ người.
-- Ngược lại cũng sai: câu **đã có** câu trả lời trong `00-scope.md` hoặc `shop-facts.md` thì
+- Ngược lại cũng sai: câu **đã có** câu trả lời trong `shop-facts.md` thì
   **không được hạ xuống `GIẢ ĐỊNH`**. Ghi thành ADR, mục "Why" trỏ đích danh nguồn và mục số.
-  Ít nhất sáu câu sau thuộc loại này: pickup **có** giờ hẹn (§10.6 · `00-scope.md` §2) ·
-  phí ship **0đ**, không đơn tối thiểu (`00-scope.md` §2, §5) · khách QR **ẩn danh theo bàn** ·
+  Ít nhất sáu câu sau thuộc loại này: pickup **có** giờ hẹn (§10.6 · `shop-facts.md` §2) ·
+  phí ship **0đ**, không đơn tối thiểu (`shop-facts.md` §2, §6.12) · khách QR **ẩn danh theo bàn** ·
   khách gọi thêm khi đang thu tiền vào **cùng hoá đơn** (`shop-facts.md` §6.1) ·
   **đơn đặt trước qua hotline là kênh thứ năm `phone_preorder`, không gắn bàn** (owner chốt
-  2026-08-29, `00-scope.md` §2) · **suất giò = 9.000 + tiền 4 cái bánh theo nhân** (owner chốt
-  2026-08-29, `00-scope.md` §4.2).
-- **U-1 là câu chạm tiền, ghi là `GIẢ ĐỊNH` rủi ro cao**, không phải ADR:
+  2026-08-29, `shop-facts.md` §2) · **suất giò = 9.000 + tiền 4 cái bánh theo nhân** (owner chốt
+  2026-08-29, `shop-facts.md` §4.2–§4.3).
+- **S-1 là chỗ chạm tiền, ghi là `GIẢ ĐỊNH` rủi ro cao**, không phải ADR:
   - **không** được chọn cách hiểu nghe hợp lý hơn rồi ghi thành ADR;
-  - nêu **cả hai** cách hiểu kèm con số và hậu quả (lệch 12.000–20.000đ mỗi suất);
-  - ghi rõ **sau khi chủ quán chọn phải sửa `00-scope.md` §4.2 và §6** — nếu không, lần đọc sau
-    lại đẻ ra đúng câu hỏi này.
+  - nêu **cả hai** cách hiểu kèm con số và hậu quả (phụ thu ×5 ⇒ 25.000, ×4 ⇒ 24.000 cho suất
+    trứng nhân thường — lệch 1.000–2.000đ mỗi suất);
+  - chép nguyên câu hỏi kiểm chứng đã soạn ở `shop-facts.md` §7.2: *"Suất trứng nhân thường là
+    25.000 hay 24.000?"*;
+  - ghi rõ **sau khi chủ quán trả lời phải sửa `shop-facts.md` §4.3, §4.4 và chuyển S-1 từ §7.2
+    lên §7.1** — nếu không, lần đọc sau lại đẻ ra đúng câu hỏi này.
 - Giả định mức rủi ro **cao** phải chặn task System Design phụ thuộc nó — ghi rõ task nào bị chặn.
 - Không ghi quyết định kỹ thuật (chọn ngôn ngữ, DB, framework) — giai đoạn này chưa tới đó.
 - Mọi Unknowns của prompt 01–08 phải xuất hiện ở đây; không được im lặng bỏ qua.
@@ -66,15 +70,16 @@ work/backlog.md
 
 - 10 câu hỏi ở §10 kế hoạch gốc đều có mục tương ứng trong `docs/decisions.md`,
   dạng ADR hoặc GIẢ ĐỊNH, không câu nào thiếu.
-- 4 unknown U-1–U-4 ở `shop-facts.md` §8 đều có mục tương ứng.
-- U-1 nêu đủ **cả hai** cách hiểu kèm con số, và có dòng "sau khi chốt phải sửa `00-scope.md`
-  §4.2 và §6".
+- 3 chỗ suy luận S-1–S-3 ở `shop-facts.md` §7.2 đều có mục tương ứng.
+- S-1 nêu đủ **cả hai** cách hiểu kèm con số, và có dòng "sau khi chốt phải sửa `shop-facts.md`
+  §4.3, §4.4 và chuyển lên §7.1".
 - Mọi mục Unknowns của prompt 01–08 đều xuất hiện trong file, không sót.
 - Sáu câu đã có lời giải (giờ hẹn pickup · phí ship 0đ · khách QR ẩn danh · gọi thêm khi đang
   thu tiền · `phone_preorder` là kênh thứ năm · giá suất giò) nằm ở dạng **ADR**, không phải
-  GIẢ ĐỊNH, và "Why" trỏ được về `00-scope.md` hoặc `shop-facts.md` kèm mục số và ngày chốt.
-- U-1 nằm ở dạng GIẢ ĐỊNH rủi ro **cao**, ghi rõ chặn BA-06.
-- Không có mục nào về giá bị ghi là "chưa biết" ngoài U-1 — phần còn lại đã có ở `00-scope.md` §4.2.
+  GIẢ ĐỊNH, và "Why" trỏ được về `shop-facts.md` kèm mục số và ngày chốt (nhật ký ở §7.1).
+- S-1 nằm ở dạng GIẢ ĐỊNH rủi ro **cao**, ghi rõ hậu quả bằng tiền.
+- **Không có mục nào về giá bị ghi là "chưa biết"** — bảng giá `shop-facts.md` §4.2–§4.3 đã đầy
+  từ 2026-08-30; chỉ còn *cách tính* phụ thu suất trứng là suy luận (S-1).
 - Mỗi ADR có đủ 4 phần theo template: Decision, Why, Rejected alternatives, Applies to.
 - Mỗi GIẢ ĐỊNH có đủ: nội dung, mức rủi ro, hậu quả nếu sai, người cần trả lời.
 - Không có mục nào vừa là quyết định vừa không nói được ai đã quyết.
@@ -86,10 +91,10 @@ work/backlog.md
 
 ```bash
 ./scripts/gate.sh
-grep -c '^### ADR-\|^### GD-' docs/decisions.md      # ≥ 14 (10 câu §10 + U-1..U-4)
+grep -c '^### ADR-\|^### GD-' docs/decisions.md      # ≥ 13 (10 câu §10 + S-1..S-3)
 grep -n 'Rủi ro' docs/decisions.md                   # mọi GD đều có mức rủi ro
 grep -nEi 'postgres|mysql|react|next\.js|golang|framework' docs/decisions.md  # không có kết quả
-grep -n '00-scope' docs/decisions.md               # U-1 ghi rõ sửa lại ở đâu sau khi chốt
+grep -n 'shop-facts.md' docs/decisions.md               # S-1 ghi rõ sửa lại ở đâu sau khi xác nhận
 git status --porcelain
 ```
 Gate 2: mở §10 kế hoạch gốc, đánh dấu từng câu hỏi 1–10 với ID mục tương ứng.
@@ -100,8 +105,8 @@ Gate 5 (L2): với mỗi GIẢ ĐỊNH rủi ro cao, kiểm tra nó có được
 
 - Người có thẩm quyền trả lời các câu hỏi này là ai (chủ quán trực tiếp, hay quản lý)?
   Cần biết để ghi vào ô "ai cần trả lời".
-- Sau khi chủ quán gỡ U-1, ai là người sửa lại `00-scope.md` §4.2 và §6 — và sửa trước hay sau
-  khi cập nhật `docs/decisions.md`?
+- Sau khi chủ quán xác nhận S-1, ai là người sửa lại `shop-facts.md` §4.3, §4.4 và §7 — và sửa
+  trước hay sau khi cập nhật `docs/decisions.md`?
 
 ## Report (AI trả lời sau khi làm)
 

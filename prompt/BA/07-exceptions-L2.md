@@ -50,7 +50,7 @@ work/backlog.md
   trạng thái mới → ghi finding, quay lại BA-07.
 - Nhóm "mất mạng / mất điện / POS hỏng" chỉ chốt **quán làm gì bằng tay**, không thiết kế
   cơ chế dự phòng kỹ thuật. Câu trả lời đã chốt: **chuyển sang ghi sổ giấy, không dừng bán**
-  (`shop-facts.md` §6.6). Phần còn phải chốt là *ai giữ sổ, ghi những gì, nhập lại vào hệ thống
+  (`shop-facts.md` §6.11). Phần còn phải chốt là *ai giữ sổ, ghi những gì, nhập lại vào hệ thống
   lúc nào* — cái này chưa có, ghi Unknowns.
 - Ba tình huống đã có lời giải, **dùng luôn, không ghi thành `Chưa chốt`**:
   - *Khách gọi thêm sau khi quầy bắt đầu thu tiền* → vào **cùng phiên, cùng hoá đơn**
@@ -58,7 +58,7 @@ work/backlog.md
   - *Chủ quán tạm dừng nhận đơn* → **thắng giờ mở cửa**, kể cả đang trong giờ bán (§6.3).
   - *Mất mạng / mất điện / POS hỏng* → **sổ giấy**, quán vẫn bán (§6.6).
 - Tình huống *"món hết sau khi khách đã chọn"* phải nói rõ nó xảy ra ở **mức thành phần**:
-  **mọi suất bán đều gồm nhiều thành phần** (`00-scope.md` §4.4 — kể cả suất trứng và suất giò
+  **mọi suất bán đều gồm nhiều thành phần** (`shop-facts.md` §4.5 — kể cả suất trứng và suất giò
   đều kèm 4 cái bánh), hết **một** thành phần thì xử lý thế nào với cả suất — nếu chưa có lời giải
   thì đây là `GIẢ ĐỊNH`, không tự chốt.
 - **Hết bánh cuốn là hết gần như mọi món**, vì mọi suất đều kèm bánh. Ghi rõ hệ quả này, đừng để
