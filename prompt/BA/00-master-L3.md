@@ -10,8 +10,9 @@
   thành phần một suất bán. Chỗ nào khác nói khác ⇒ file này thắng.
 - Quy tắc vận hành: `master_plan/shop-facts.md` — 5 trạm, luồng tại bàn, nổ việc xuống bếp, đối
   soát, sổ giấy. **§7.1 là nhật ký chốt** — tính tới 2026-08-30 file đó không còn unknown nào;
-  U-1–U-4 và GD-01 đã được chủ quán trả lời hết. **§7.2 có ba chỗ suy luận chưa ai xác nhận**,
-  trong đó **S-1 (phụ thu suất trứng ×5 hay ×4) chạm tiền**, lệch 1.000–2.000đ mỗi suất.
+  U-1–U-4 và GD-01 đã được chủ quán trả lời hết. **Ba chỗ suy luận S-1–S-3 cũng đã được chủ quán
+  xác nhận ngày 2026-08-30** (§7.1): S-1 = **×5**, suất trứng nhân thường **25.000**. §7.2 nay
+  rỗng — không còn chỗ suy luận nào để mang vào backlog.
 - Nguồn sự thật cần điền: `docs/product.md`, `docs/decisions.md`, `quality/invariants.md`,
   `work/backlog.md` — hiện đang là template rỗng.
 - Quy tắc viết prompt/task: `docs/prompt-guideline.md`. Quy tắc nghiệm thu: `quality/review-gate.md`.
@@ -67,8 +68,8 @@ docs/product.md
    `> Chưa chốt — BA-0N` làm chỗ giữ.
 3. Danh sách 10 câu hỏi ở §10 kế hoạch gốc được phân bổ về đúng task sẽ trả lời chúng (ghi trong
    mục Acceptance hoặc Unknowns của task đó trong backlog). **U-1–U-4 đã gỡ hết** (`shop-facts.md`
-   §7.1) nên không còn là vật cản; thay vào đó **ba chỗ suy luận S-1–S-3 ở §7.2** phải xuất hiện
-   trong backlog, **S-1 ghi là chạm tiền**.
+   §7.1) nên không còn là vật cản. **S-1–S-3 cũng đã được xác nhận 2026-08-30**, nên backlog
+   **không** còn phải mang chúng vào dạng giả định; nếu vẫn muốn ghi, ghi là *đã chốt* kèm ngày.
 
 Khung mục `docs/product.md`:
 
@@ -93,8 +94,8 @@ Khung mục `docs/product.md`:
 - `docs/product.md` có đúng 8 tiêu đề mục theo bảng trên, mỗi mục có chỗ giữ, không mục nào
   chứa nội dung nghiệp vụ đã chốt.
 - 10 câu hỏi ở §10 kế hoạch gốc đều xuất hiện trong backlog, mỗi câu gắn với ít nhất một task.
-- 3 chỗ suy luận S-1–S-3 ở `shop-facts.md` §7.2 đều xuất hiện trong backlog; S-1 được đánh dấu
-  **chạm tiền**, không chỉ ghi cho có.
+- Không có dòng nào trong backlog ghi S-1–S-3 là giả định chưa xác nhận (chúng đã chốt
+  2026-08-30, `shop-facts.md` §7.1).
 - Không có file mới nào được tạo ngoài hai file trong Scope.
 - Không có chuỗi `endpoint`, `schema`, `API`, `component`, `Docker` trong nội dung mới thêm.
 
@@ -105,7 +106,7 @@ Khung mục `docs/product.md`:
 grep -c 'BA-0\|BA-1' work/backlog.md          # ≥ 11 dòng có ID task
 grep -n '^## ' docs/product.md                # 8 mục, đúng thứ tự bảng trên
 grep -nEi 'endpoint|schema|component|docker' docs/product.md work/backlog.md   # không có kết quả
-grep -n 'S-1' work/backlog.md                 # chỗ suy luận chạm tiền có mặt và ghi rõ hậu quả
+grep -n 'S-1' work/backlog.md                 # nếu có, phải ghi là ĐÃ CHỐT 2026-08-30, không phải giả định
 git status --porcelain                        # chỉ 2 file trong Scope thay đổi
 ```
 Gate 2: đọc lại từng dòng Acceptance ở trên và chỉ ra chỗ trong file chứng minh nó.
@@ -114,9 +115,8 @@ Gate 2: đọc lại từng dòng Acceptance ở trên và chỉ ra chỗ trong 
 
 - Chưa có câu hỏi mới. Prompt này chỉ chia việc; các câu hỏi nghiệp vụ được chuyển về task con,
   không trả lời ở đây.
-- Đã biết trước: S-1 (phụ thu suất trứng ×5 hay ×4) ở `shop-facts.md` §7.2. Việc của prompt này
-  là **ghi nó thành một dòng có tên trong backlog**, không phải giải nó. Câu hỏi kiểm chứng đã
-  soạn sẵn ở §7.2: *"Suất trứng nhân thường là 25.000 hay 24.000?"*
+- ~~S-1 (phụ thu suất trứng ×5 hay ×4)~~ — **đã đóng 2026-08-30**: chủ quán trả lời **25.000**
+  (×5), `shop-facts.md` §7.1. Không còn là unknown của prompt này.
 
 ## Report (AI trả lời sau khi làm)
 

@@ -51,6 +51,13 @@ Ba hệ quả nghiệp vụ, đây mới là phần quan trọng của bảng tr
    ghi là đi bằng `staff_pos`; cách ghi đó **sai** và đã bị gỡ, vì `staff_pos` luôn gắn một số
    bàn, mà khách gọi điện thì chưa ngồi bàn nào.
 
+**Đơn hotline mà khách tới ăn tại quán thì HUỶ, không chuyển thành phiên bàn** (chủ quán chốt
+2026-08-30). Khách đã đặt trước qua điện thoại nhưng rồi tới quán ngồi ăn ⇒ **huỷ đơn đặt trước**,
+khách quét QR tại bàn và gọi lại bằng `qr_table` như mọi khách ngồi bàn khác. Không có đường nối
+một đơn `phone_preorder` vào một phiên bàn — điều đó giữ nguyên luật "mỗi đơn không gắn bàn là một
+đơn vị thanh toán độc lập" ở trên. Tiền chưa bao giờ thu trước (§6.3) nên huỷ đơn đặt trước **không
+sinh việc hoàn tiền**.
+
 **Định danh khách:** hai kênh gắn bàn là **ẩn danh theo bàn** — quán chỉ cần biết "bàn 5", không
 cần biết tên ai. Ba kênh còn lại phải có thông tin để gọi lại được — danh sách trường tối thiểu ở
 §6.5.
@@ -65,7 +72,23 @@ cần biết tên ai. Ba kênh còn lại phải có thông tin để gọi lạ
 | `canh` — lấy canh | Nước chấm, canh |
 | `don_ban` — dọn bàn | Dọn bàn sau khi phiên đã đóng |
 
-Chủ quán (`owner`) là một vai riêng, **ngoài** năm trạm trên.
+**Ai làm trạm nào — chủ quán chốt 2026-08-30.** Năm trạm trên là năm loại việc, nhưng chỉ chia
+thành **bốn vai người**:
+
+| Vai | Gồm trạm | Ghi chú |
+|---|---|---|
+| Người đứng quầy | `quay` | trạm riêng, một người |
+| Người tráng bánh | `trang_banh` | trạm riêng, một người |
+| Người gấp bánh | `gap_banh` | trạm riêng, một người |
+| Người canh & dọn | `canh` + `don_ban` | **một người làm cả hai trạm** |
+
+Ba trạm đầu là **trạm riêng** — không kiêm sang trạm khác. `canh` và `don_ban` **chung một người**;
+đây là hai loại việc khác nhau nhưng cùng một đôi tay, nên khi bếp đông thì hai việc này tranh nhau
+người, còn ba trạm kia thì không.
+
+Chủ quán (`owner`) là một vai riêng, **ngoài** năm trạm trên — nhưng **thỉnh thoảng chủ quán đứng
+quầy** (chốt 2026-08-30), tức làm đúng việc của trạm `quay`. Chủ quán đứng quầy vẫn là chủ quán;
+vai quản trị không mất đi.
 
 ## 4. Menu, giá và tuỳ chọn
 
@@ -102,6 +125,9 @@ số tiền của suất"* ⇒ 9.000 + 4 × giá bánh theo nhân đã chọn.
 
 **Suất trứng, chủ quán chốt 2026-08-30:** gồm 1 quả trứng + 4 cái bánh cuốn, **cộng gộp tiền
 thành phần** như suất giò, bánh tính theo mức nhân đã chọn ⇒ giá trứng + 4 × giá bánh.
+**Quả trứng cũng lên giá theo mức nhân đã chọn** (chủ quán xác nhận 2026-08-30, trả lời thẳng câu
+hỏi *"suất trứng nhân thường là 25.000 hay 24.000"* ⇒ **25.000**). Nên phụ thu suất trứng là **×5**,
+không phải ×4 — xem §4.6 luật 5. Đây **không còn là suy luận**.
 Đây là ô cuối cùng còn trống của bảng giá; **từ 2026-08-30 bảng giá đã đầy, không còn ô ⚠ nào.**
 
 ### 4.4 Nhóm tuỳ chọn và phụ thu
@@ -155,7 +181,9 @@ Nên suất giò có **ba** giá, không phải một.
    giá.
 5. **Phụ thu là +1.000 cho MỖI phần nhận nhân của suất.** Suất bánh cuốn ×1 · suất giò ×4 · combo
    ×4 · **suất trứng ×5** — bốn con số này là **hệ quả** của luật 1, không phải bốn con số rời cần
-   nhớ thuộc lòng. Suất trứng ×5 vì cả 4 cái bánh **và** quả trứng đều nhận nhân (§4.5).
+   nhớ thuộc lòng. Suất trứng ×5 vì cả 4 cái bánh **và** quả trứng đều nhận nhân (§4.5); chủ quán
+   xác nhận thẳng con số này ngày 2026-08-30 (suất trứng nhân thường = **25.000**, không phải
+   24.000).
 6. **Giò không nhận nhân, nhưng 4 cái bánh trong suất giò thì có** (chủ quán chốt 2026-08-29).
 7. Một dòng đơn chọn **một** loại nhân + **một** lượng nhân, áp cho **mọi phần nhận nhân** của
    suất đó. Không chọn nhân riêng cho từng cái bánh.
@@ -329,7 +357,9 @@ Nếu thành phần một suất đổi thì **sửa §4.5 trước**, rồi s�
    chốt 2026-08-30). Không phải mọi ca đều được hoàn, và cũng không cấm hoàn; quầy nhìn tình huống
    thật rồi quyết.
    ⇒ Chính vì **không có luật cứng nên mọi lần hoàn phải để lại vết**: hoàn bao nhiêu, cho đơn nào,
-   ai bấm, lý do gì. Không có vết thì đối soát cuối ngày (§6.10) sẽ lệch mà không ai truy được — mà
+   ai bấm, lý do gì. **Người đứng quầy là người làm việc ghi vết đó** (chủ quán xác nhận
+   2026-08-30) — cùng một người vừa quyết vừa ghi, nên không có ca nào hoàn tiền mà không ai đứng
+   tên. Không có vết thì đối soát cuối ngày (§6.10) sẽ lệch mà không ai truy được — mà
    luật đối soát nói *lệch 1 đồng cũng phải tìm ra lý do*.
 5. **Thông tin liên hệ cho ba kênh không gắn bàn.** Hai trường **bắt buộc**, phần còn lại người ở
    quầy điền theo tình huống thật lúc đó (chủ quán chốt 2026-08-30):
@@ -343,7 +373,8 @@ Nếu thành phần một suất đổi thì **sửa §4.5 trước**, rồi s�
    | Ghi chú (lối vào, mốc đường…) | tuỳ tình huống | tuỳ tình huống | tuỳ tình huống |
 
    Hai trường bắt buộc là **hệ quả của luồng**, không phải sở thích: không có số điện thoại thì
-   không gọi lại được khi tới nơi, không có địa chỉ thì quán tự đi giao vào đâu.
+   không gọi lại được khi tới nơi, không có địa chỉ thì quán tự đi giao vào đâu. **Chủ quán xác
+   nhận thẳng hai trường này là bắt buộc (2026-08-30)** — trước đó chúng mới là suy ra từ luồng.
 6. **Mọi đơn đều có nước chấm — kể cả đơn mang đi.** Trạm `canh` sinh việc cho **mọi** đơn, không
    riêng đơn tại bàn; đơn mang đi thì gói riêng. Bỏ sót là khách nhận bánh không có nước chấm.
 7. **Quán tự đi giao, và đơn giao tận nơi mang trạng thái "đang giao".** Quầy phải nhìn được đơn
@@ -369,11 +400,12 @@ Nếu thành phần một suất đổi thì **sửa §4.5 trước**, rồi s�
 
     Thêm bất kỳ thứ nào trong bốn thứ trên là **đổi phạm vi, quyền chủ quán**.
 
-## 7. Nhật ký chốt — và ba chỗ suy ra
+## 7. Nhật ký chốt
 
-**Tính tới 2026-08-30, không còn câu hỏi nào treo.** Bảng giá đã đầy, cả năm kênh đều có luồng.
-Mục này giữ lại **ai chốt cái gì, ngày nào**, để phiên sau muốn lật lại một quyết định thì biết
-đang lật lại điều gì.
+**Tính tới 2026-08-30, không còn câu hỏi nào treo, và cũng không còn chỗ suy ra nào chưa xác
+nhận.** Bảng giá đã đầy, cả năm kênh đều có luồng, ba mục suy luận S-1–S-3 đã được chủ quán trả
+lời thẳng (§7.1, ba dòng đánh dấu *xác nhận S-*). Mục này giữ lại **ai chốt cái gì, ngày nào**, để phiên sau
+muốn lật lại một quyết định thì biết đang lật lại điều gì.
 
 ### 7.1 Chủ quán đã chốt những gì
 
@@ -391,22 +423,28 @@ Mục này giữ lại **ai chốt cái gì, ngày nào**, để phiên sau mu�
 | 2026-08-30 | `phone_preorder` kết thúc **cả hai kiểu**; nhân viên hỏi khách khi nhận điện thoại | §5.2 |
 | 2026-08-30 | **Hoàn tiền được phép**, quyết định từng ca ở quầy, không có luật cứng | §6.4 |
 | 2026-08-30 | Thông tin liên hệ: quầy cung cấp theo tình huống thật, có trường bắt buộc | §6.5 |
+| 2026-08-30 | **Phân trạm**: quầy · tráng bánh · gấp bánh là ba trạm riêng; `canh` + `don_ban` chung một người | §3 |
+| 2026-08-30 | **Chủ quán thỉnh thoảng đứng quầy** — làm việc của trạm `quay`, vẫn giữ vai chủ quán | §3 |
+| 2026-08-30 | Đơn hotline mà khách tới ăn tại quán ⇒ **huỷ**, khách gọi lại bằng `qr_table` | §2 |
+| 2026-08-30 | *(xác nhận S-1)* Quả trứng **lên giá theo nhân** ⇒ phụ thu suất trứng **×5**, suất trứng nhân thường = **25.000** | §4.3 · §4.6 |
+| 2026-08-30 | *(xác nhận S-2)* Số điện thoại và địa chỉ giao **đúng là hai trường bắt buộc** | §6.5 |
+| 2026-08-30 | *(xác nhận S-3)* **Người đứng quầy** là người quyết định và ghi vết mỗi lần hoàn tiền | §6.4 |
 
-### 7.2 Ba chỗ suy ra, không phải lời chủ quán nói thẳng
+### 7.2 Chỗ suy ra chưa xác nhận — **hiện không còn mục nào**
 
-Ba mục dưới **không** có câu nói tương ứng của chủ quán. Chúng được suy ra từ những luật đã chốt ở
-trên, và ghi tách ra ở đây đúng vì thế: phiên sau muốn lật lại thì lật ba mục này trước, đừng lật
-những dòng ở §7.1.
+Mục này từng giữ ba chỗ được **suy ra** từ luật đã chốt chứ không phải lời chủ quán nói thẳng:
+**S-1** (phụ thu suất trứng ×5 hay ×4) · **S-2** (hai trường liên hệ bắt buộc) · **S-3** (hoàn tiền
+phải ghi vết, ai ghi). Ngày **2026-08-30** chủ quán trả lời thẳng cả ba, đúng như đang ghi trong
+tài liệu; chúng đã chuyển lên §7.1 và **không còn là suy luận**.
 
-| # | Suy ra cái gì | Suy từ đâu | Sai thì mất gì |
-|---|---|---|---|
-| **S-1** | **Phụ thu suất trứng là ×5**, không phải ×4 | §4.6 luật 1 (giá suất = tổng thành phần) + §4.5 (trong suất trứng, **cả** 4 cái bánh **và** quả trứng đều nhận nhân) + §4.2 (quả trứng có ba giá 8/9/10) | ×4 thì suất trứng thường là 24.000 chứ không phải 25.000 ⇒ **thu thiếu 1.000–2.000đ mỗi suất** |
-| **S-2** | **Số điện thoại và địa chỉ giao là hai trường bắt buộc** (§6.5) | quán tự đi giao (§6.7) thì phải có địa chỉ; thu tiền tại chỗ khách (§6.3) thì phải gọi được lúc tới nơi | Nhận đơn xong không giao được, hoặc giao tới nơi không tìm thấy khách |
-| **S-3** | **Mọi lần hoàn tiền phải ghi lại số tiền, đơn nào, ai bấm, lý do** (§6.4) | hoàn tiền không có luật cứng (§6.4) + đối soát cuối ngày đòi *lệch 1 đồng cũng phải tìm ra lý do* (§6.10) | Két thiếu tiền mà không ai truy được vì sao |
+Riêng S-1 — chỗ chạm tiền — được hỏi bằng đúng câu kiểm chứng đã soạn sẵn: *"Suất trứng nhân
+thường là 25.000 hay 24.000?"* Trả lời: **25.000**, tức quả trứng cũng lên giá theo mức nhân. Bảng
+giá §4.3 không phải sửa một con số nào; thứ thay đổi là **trạng thái** của con số đó, từ suy luận
+thành đã chốt.
 
-**S-1 chạm tiền trực tiếp — nếu chỉ hỏi lại chủ quán được một câu, hỏi câu này:** *"Suất trứng
-nhân thường là 25.000 hay 24.000?"* 25.000 nghĩa là quả trứng cũng lên giá theo nhân (×5, đúng như
-file này đang ghi); 24.000 nghĩa là chỉ 4 cái bánh lên giá còn quả trứng đứng yên ở 8.000 (×4).
+Mục này để trống có chủ đích, **không xoá**: chỗ suy ra tiếp theo phải nằm ở đây, tách khỏi §7.1
+(`work/findings.md` F-004). Thấy một dòng nào trong repo còn nói "ba chỗ suy luận chưa ai xác nhận"
+⇒ đó là pointer cũ, sửa đi.
 
 ### 7.3 Quy tắc cho phiên sau
 
@@ -415,4 +453,6 @@ bảng §7.1 với ngày. Đừng để một quyết định chỉ sống ở �
 cứu quy tắc.
 
 Nếu một mục ở §7.2 được chủ quán xác nhận hoặc bác bỏ, chuyển nó lên §7.1 kèm ngày và xoá khỏi
-§7.2. Ba mục đó chỉ được nằm ở §7.2 chừng nào **chưa ai hỏi**.
+§7.2 — **và trong cùng lần sửa đó, `grep -rn` cả repo tìm những chỗ đang nói mục ấy "chưa xác
+nhận" rồi sửa nốt.** Một mục chỉ được nằm ở §7.2 chừng nào **chưa ai hỏi**. Cả ba mục đầu tiên
+(S-1, S-2, S-3) đã đi qua đúng đường này ngày 2026-08-30.

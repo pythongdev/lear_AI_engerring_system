@@ -36,7 +36,9 @@ Việc khách **không** làm: khách không tự xác nhận đơn của mình,
 
 ### 1.2 Nhân viên quán
 
-Người của quán, làm việc theo **năm trạm** ở §1.5.
+Người của quán, làm việc theo **năm trạm** ở §1.5. Năm trạm đó chia thành **bốn vai người**: quầy,
+tráng bánh, gấp bánh mỗi thứ là một trạm riêng; lấy canh và dọn bàn do **cùng một người** làm
+(chủ quán chốt 2026-08-30, `shop-facts.md` §3).
 
 Việc nhân viên làm:
 
@@ -56,7 +58,9 @@ Việc nhân viên làm:
 
 ### 1.3 Chủ quán
 
-Vai riêng, **ngoài** năm trạm.
+Vai riêng, **ngoài** năm trạm — nhưng **thỉnh thoảng chủ quán đứng quầy** (chốt 2026-08-30), tức
+làm đúng việc của trạm quầy ở §1.2: nhận và xác nhận đơn, thu tiền, đóng phiên. Lúc đó chủ quán
+vẫn là chủ quán, không mất vai quản trị.
 
 Việc chủ quán làm:
 
@@ -106,8 +110,13 @@ không phải màn hình hay quyền đăng nhập của trạm đó.
 | **lấy canh** | Làm nước chấm và canh cho **mọi** đơn — đơn mang đi thì gói riêng |
 | **dọn bàn** | Dọn bàn sau khi phiên đã đóng, trả bàn về trạng thái trống |
 
-Chủ quán là vai riêng, **ngoài** năm trạm này. Không có trạm thứ sáu; thêm một trạm là đổi cách
-quán vận hành, phải hỏi chủ quán.
+**Năm trạm, bốn người** (chủ quán chốt 2026-08-30): quầy · tráng bánh · gấp bánh là **ba trạm
+riêng**, mỗi trạm một người, không kiêm sang trạm khác. **Lấy canh và dọn bàn do cùng một người
+làm** — hai loại việc khác nhau nhưng cùng một đôi tay, nên khi đông khách chúng tranh nhau người,
+còn ba trạm kia thì không.
+
+Chủ quán là vai riêng, **ngoài** năm trạm này, nhưng có đứng quầy khi cần (§1.3). Không có trạm thứ
+sáu; thêm một trạm là đổi cách quán vận hành, phải hỏi chủ quán.
 
 ## 2. Kênh bán
 
@@ -160,10 +169,21 @@ Hai kênh này đều do nhân viên bấm, nhưng là **hai việc khác nhau**
 | Có số bàn không | **Có** — đơn vào phiên của bàn đó | **Không** — đơn không thuộc phiên bàn nào |
 | Đơn vị tính tiền | Phiên bàn, gộp chung một hoá đơn | Đơn lẻ, tự nó là một đơn vị thanh toán |
 | Kết thúc thế nào | Ăn tại bàn, đóng phiên, dọn bàn | Khách tới lấy **hoặc** quán đi giao — nhân viên phải hỏi |
+| Khách đổi ý, tới ăn tại quán | — (đã ở quán rồi) | **Huỷ đơn**, khách quét QR gọi lại bằng kênh QR tại bàn (§2.4) |
 
 Trước 2026-08-29, đơn hotline từng bị ghi là đi bằng Staff POS. **Cách ghi đó sai và đã bị gỡ**
 (chủ quán chốt 2026-08-29, `shop-facts.md` §2): Staff POS luôn gắn một số bàn, mà khách gọi điện
 thì chưa ngồi bàn nào. Thấy cách ghi cũ quay lại ở bất kỳ tài liệu nào ⇒ đó là bug.
+
+### 2.4 Đơn hotline mà khách tới ăn tại quán thì huỷ, không chuyển thành phiên bàn
+
+Chủ quán chốt 2026-08-30 (`shop-facts.md` §2): khách đã đặt trước qua điện thoại nhưng rồi tới quán
+ngồi ăn ⇒ **huỷ đơn đặt trước**, khách quét QR tại bàn và gọi lại như mọi khách ngồi bàn khác.
+
+Không có đường nối một đơn đặt trước vào một phiên bàn. Đó là lý do luật "mỗi đơn không gắn bàn là
+một đơn vị thanh toán độc lập" (§2.1) không có ngoại lệ nào. Tiền chưa bao giờ được thu trước
+(`shop-facts.md` §6.3), nên huỷ đơn đặt trước **không sinh việc hoàn tiền** — ai được bấm huỷ thì
+xem U-004.
 
 ## 3. Ba lát cắt nghiệp vụ
 
@@ -193,43 +213,39 @@ thì chưa ngồi bàn nào. Thấy cách ghi cũ quay lại ở bất kỳ tài
 
 Câu hỏi nghiệp vụ chưa có lời giải. Không để việc thực hiện âm thầm quyết định thay.
 
-### U-001 — Nhân viên có phân vai theo trạm trong MVP không?
+### U-004 — Ai được bấm huỷ một đơn?
 
-**Câu hỏi:** Một người có bị cố định vào một trạm, hay ai cũng làm được mọi trạm?
-`shop-facts.md` §3 chỉ nói **có năm trạm**, không nói ai được làm trạm nào.
+**Câu hỏi:** §2.4 chốt rằng đơn đặt trước qua hotline **bị huỷ** khi khách tới ăn tại quán — nhưng
+chưa ai nói **ai** được bấm huỷ: chỉ người đứng quầy, bất kỳ nhân viên nào, hay phải chủ quán?
+Câu hỏi này đã có sẵn trong kế hoạch gốc (`master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §10
+câu 1: *"Ai có quyền xác nhận, hủy và chỉnh sửa đơn?"*) và nay có một luồng thật đụng vào nó.
 **Ai trả lời được:** chủ quán.
-**Đang chặn:** cách mô tả trách nhiệm của nhân viên ở §1.2 và §1.5 (hiện viết ở mức "việc của
-trạm", không gán người); sau này chặn phần phân việc ở §5.
-**Ghi ngày:** 2026-08-30 (BA-01).
-
-### U-002 — Chủ quán có đồng thời là nhân viên trên hệ thống không?
-
-**Câu hỏi:** Chủ quán có tự đứng quầy, thu tiền, đặt hộ như một nhân viên không, hay chỉ làm việc
-quản trị ở §1.3? Kế hoạch gốc tách hai vai và `shop-facts.md` §3 nói chủ quán ở **ngoài** năm trạm,
-nhưng không nói chủ quán có được làm việc của trạm hay không.
-**Ai trả lời được:** chủ quán.
-**Đang chặn:** §1.3 hiện chỉ liệt kê việc quản trị, chưa gán cho chủ quán bất kỳ việc vận hành nào.
-**Ghi ngày:** 2026-08-30 (BA-01).
-
-### U-003 — Đơn đặt trước qua hotline, khách tới ăn tại quán thì thành gì?
-
-**Câu hỏi:** Nếu khách đặt trước qua điện thoại rồi tới ăn tại quán, đơn đó có chuyển thành phiên
-bàn (và gộp với món khách gọi thêm tại bàn) hay vẫn là một đơn độc lập?
-`shop-facts.md` §2 chỉ chốt đơn hotline **không gắn bàn lúc tạo**; trường hợp khách tới ngồi lại
-chưa ai nói.
-**Ai trả lời được:** chủ quán.
-**Đang chặn:** §2.3 (cột "Kết thúc thế nào"); sau này chặn quy tắc gộp hoá đơn ở §4 và §5.
-**Ghi ngày:** 2026-08-30 (BA-01).
+**Đang chặn:** §2.4 (mô tả được việc huỷ nhưng không gán được người); sau này chặn §6 Ngoại lệ
+(BA-08) và phần quyền thao tác ở §7 MVP (BA-09).
+**Gợi ý so sánh:** hoàn tiền đã được chốt là việc của **người đứng quầy** (`shop-facts.md` §6.4),
+nên "quầy huỷ đơn" là cách hiểu gần nhất — nhưng **đó là suy luận, chưa ai xác nhận**, không được
+viết vào §2.4 như đã chốt.
+**Ghi ngày:** 2026-08-30 (T-004).
 
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+Ngày **2026-08-30** chủ quán trả lời hết ba unknown mở ở BA-01 và cả ba chỗ suy luận S-1–S-3.
+
+| Câu hỏi cũ | Lời giải (chủ quán, 2026-08-30) | Ghi ở |
+|---|---|---|
+| ~~U-001 — nhân viên có phân vai theo trạm không~~ | **Có.** Quầy · tráng bánh · gấp bánh là ba trạm riêng; lấy canh và dọn bàn **chung một người** | §1.5 · `shop-facts.md` §3 |
+| ~~U-002 — chủ quán có là nhân viên không~~ | **Thỉnh thoảng đứng quầy**, vẫn giữ vai chủ quán | §1.3 · `shop-facts.md` §3 |
+| ~~U-003 — đơn hotline rồi khách tới ăn tại quán~~ | **Huỷ đơn đặt trước**, khách quét QR gọi lại | §2.4 · `shop-facts.md` §2 |
+| ~~S-1 — phụ thu suất trứng ×5 hay ×4~~ | **×5** — quả trứng cũng lên giá theo nhân, suất trứng nhân thường = **25.000** | `shop-facts.md` §4.3 · §4.6 |
+| ~~S-2 — hai trường liên hệ bắt buộc~~ | **Đúng**, số điện thoại và địa chỉ giao là bắt buộc | §2 · `shop-facts.md` §6.5 |
+| ~~S-3 — ai ghi vết mỗi lần hoàn tiền~~ | **Người đứng quầy** vừa quyết định vừa ghi vết | `shop-facts.md` §6.4 |
+
+Câu cũ hơn, đã đóng từ trước:
 
 - ~~Đơn đặt trước qua hotline gắn vào bàn nào~~ → là **kênh thứ năm, không gắn bàn**
   (chủ quán chốt 2026-08-29, `shop-facts.md` §2).
 - ~~Khách quét QR có phải khai định danh không~~ → **ẩn danh theo số bàn**; chỉ Delivery và Pickup
   bắt buộc số điện thoại (`shop-facts.md` §2, §6.5).
 
-### Chưa ai xác nhận — suy luận, không phải lời chủ quán
-
-Ba chỗ suy luận S-1, S-2, S-3 ở `shop-facts.md` §7.2 vẫn chưa ai hỏi lại. **S-1 chạm tiền** (phụ
-thu suất trứng ×5 hay ×4 — 25.000 hay 24.000 một suất). Chúng thuộc §4 (BA-06) và BA-10, không
-được chốt ở §1–§2.
+`master_plan/shop-facts.md` §7.2 — chỗ giữ các mục **suy ra chưa xác nhận** — từ 2026-08-30
+**không còn mục nào**. Tài liệu nào còn nói "ba chỗ suy luận chưa ai xác nhận" là pointer cũ.

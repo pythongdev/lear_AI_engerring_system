@@ -64,9 +64,9 @@ work/backlog.md
   "đơn cũ giữ nguyên tổng tiền" mà không có số thì không kiểm được đúng/sai.
 - Không đóng giai đoạn BA khi còn `GIẢ ĐỊNH` rủi ro cao chặn scenario nào. **U-1 đã được gỡ**
   (chủ quán chốt 2026-08-30: suất trứng = 20.000 / 25.000 / 30.000), nên giá không còn là vật cản.
-  Thứ còn lại là **S-1** (`shop-facts.md` §7.2): phụ thu suất trứng ×5 hay ×4 — mới là suy luận,
-  chưa ai xác nhận. Scenario nào có **suất trứng nhân thường hoặc nhiều nhân** thì chạm S-1;
-  viết scenario đó theo ×5 và ghi kèm một dòng nói rõ nó dựa trên suy luận nào.
+  **S-1 cũng đã được chủ quán xác nhận 2026-08-30**: phụ thu suất trứng **×5**, suất trứng nhân
+  thường **25.000** (`shop-facts.md` §7.1). Scenario có suất trứng viết theo ×5 và **không** cần
+  dán nhãn suy luận nữa.
 - **Scenario 2 phải dùng kênh `phone_preorder`** ít nhất một lần, vì đó là kênh mới nhất
   (owner chốt 2026-08-29) và chưa từng được diễn thử. Đơn `phone_preorder` **không thuộc phiên
   bàn nào** — kết quả mong đợi phải kiểm được điều đó.
@@ -84,8 +84,9 @@ work/backlog.md
 - Scenario 3 nêu rõ tổng tiền đơn cũ không đổi sau khi giá menu đổi.
 - Mỗi bước trong cả 3 scenario có tham chiếu tới mục §1–§7 chứa quy tắc tương ứng.
 - Có checklist cổng chất lượng BA (9 mục ở §12 kế hoạch gốc) với trạng thái tick thật,
-  không tick mục chưa đạt. Mục "không còn business rule quan trọng bị suy đoán" **không được tick**
-  khi S-1 chưa được chủ quán xác nhận.
+  không tick mục chưa đạt. Mục "không còn business rule quan trọng bị suy đoán" nay **không còn bị
+  S-1 chặn** (chốt 2026-08-30) — nhưng chỉ được tick khi mọi Unknown đang mở ở `docs/product.md`
+  đã đóng, kể cả **U-004 (ai được bấm huỷ đơn)**.
 - Mọi lỗ hổng phát hiện khi diễn scenario đều có finding trong `work/findings.md`, kèm task
   BA cần mở lại.
 - `work/backlog.md`: task BA-01–BA-11 nào đã xong được đánh dấu Done; task phải mở lại
@@ -111,8 +112,8 @@ lý do đã giải thích trước đó.
 ## Unknowns
 
 - Ai là người ký duyệt cổng chất lượng BA — ai nói "được, sang System Design"?
-- Có được mở System Design **song song** phần không phụ thuộc S-1 (vòng đời, trạm, luồng tại
-  bàn) trong lúc chờ chủ quán xác nhận cách tính phụ thu suất trứng không, hay phải chờ hết?
+- ~~Có được mở System Design song song phần không phụ thuộc S-1 không~~ — **hết hiệu lực**:
+  S-1 đã được chủ quán xác nhận 2026-08-30, không còn gì để chờ.
 
 ## Report (AI trả lời sau khi làm)
 

@@ -30,9 +30,10 @@ sai tiền. Bằng chứng của mô hình ở §4.7, mười một ca giá bắ
 ✅ **Bảng giá đã đầy, không còn unknown nào** (`shop-facts.md` §7.1). U-1–U-4 và GD-01 đã được chủ
 quán trả lời hết ngày 2026-08-30; ô cuối cùng — giá suất trứng — nay có số ở §4.3.
 
-⚠️ **Còn ba chỗ suy luận chưa ai xác nhận** (`shop-facts.md` §7.2). Chạm tiền là **S-1**: phụ thu
-suất trứng ×5 hay ×4, tức suất trứng nhân thường là 25.000 hay 24.000. Viết theo ×5 và ghi rõ đó
-là suy luận — không được lặng lẽ coi như đã chốt.
+✅ **Ba chỗ suy luận S-1–S-3 đã được chủ quán xác nhận ngày 2026-08-30** (`shop-facts.md` §7.1,
+ba dòng *xác nhận S-*). S-1 — chỗ chạm tiền — trả lời là **×5**: quả trứng cũng lên giá theo nhân,
+suất trứng nhân thường = **25.000**. Viết theo ×5 và **không** còn phải đánh dấu là suy luận.
+`shop-facts.md` §7.2 nay rỗng; prompt nào còn bảo "ghi S-1 là giả định" là pointer cũ.
 
 ## Nguyên tắc của bộ prompt này
 

@@ -63,7 +63,7 @@ của file này; nó tự đứng một mình và không trỏ đi đâu.
 | Chín quy tắc cấu tạo giá · mười một ca giá bắt buộc phủ | **§4.6 · §4.8** |
 | Hai luồng bán (tại bàn, mang đi) và việc nổ xuống bếp | **§5** |
 | Mười hai quy tắc nghiệp vụ | **§6** |
-| Nhật ký chốt và ba chỗ suy luận chưa xác nhận | **§7** |
+| Nhật ký chốt (§7.2 — chỗ suy luận chưa xác nhận — hiện rỗng) | **§7** |
 
 Lệch với file này ⇒ **`shop-facts.md` thắng** ([CLAUDE.md §2](../CLAUDE.md)).
 

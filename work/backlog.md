@@ -8,6 +8,50 @@
 
 ## Done
 
+- [x] T-004 Ghi nhận sáu câu trả lời của chủ quán ngày 2026-08-30 (U-001–U-003, S-1–S-3)
+
+### T-004 — Sáu câu trả lời của chủ quán 2026-08-30
+
+**Goal:**
+Sáu câu hỏi đang treo — ba unknown ở `docs/product.md` và ba chỗ suy luận ở
+`master_plan/shop-facts.md` §7.2 — được chủ quán trả lời hết ngày 2026-08-30. Mỗi câu trả lời về
+đúng owner của nó, kèm ngày và người chốt, và **mọi pointer đang nói "chưa ai xác nhận" phải được
+sửa trong cùng lần thay đổi này** (CLAUDE.md §7.2).
+
+**Scope:**
+`master_plan/shop-facts.md` · `master_plan/00-scope.md` · `docs/product.md` · `prompt/BA/*.md` ·
+`work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+Không đổi một con số giá nào — S-1 được xác nhận **đúng như bảng §4.3 đang ghi**, đây là đổi
+*trạng thái* của một dữ kiện, không phải đổi dữ kiện. Không sửa `work/findings.md` (F-004 là bản
+ghi lịch sử của một bài học, không phải chỗ tra cứu trạng thái hiện tại).
+
+**Acceptance:**
+1. `shop-facts.md` §3 ghi cách phân trạm: quầy · tráng bánh · gấp bánh là ba trạm riêng, lấy canh
+   và dọn bàn do cùng một người; chủ quán thỉnh thoảng đứng quầy.
+2. `shop-facts.md` ghi: đơn đặt trước qua hotline mà khách tới ăn tại quán thì **huỷ** đơn đó,
+   khách gọi lại bằng `qr_table` — không có đường chuyển đơn hotline thành phiên bàn.
+3. `shop-facts.md` §6.4 ghi rõ **người đứng quầy** là người quyết định và ghi vết hoàn tiền.
+4. `shop-facts.md` §4.3/§4.6 ghi phụ thu suất trứng ×5 là **chốt**, không còn chữ "suy luận";
+   giá 20.000 / 25.000 / 30.000 **không đổi**.
+5. `shop-facts.md` §7.1 có bốn dòng mới ngày 2026-08-30 cho bốn quyết định trên; §7.2 không còn
+   mục nào và nói rõ là đã rỗng.
+6. `docs/product.md`: U-001, U-002, U-003 chuyển sang mục đã có lời giải kèm câu trả lời và ngày;
+   §1 và §2 phản ánh nội dung mới; mục "chưa ai xác nhận" ở §2 được gỡ.
+7. `grep -rn 'S-1' --include='*.md' .` không còn chỗ nào nói S-1 là suy luận chưa xác nhận, trừ
+   `work/findings.md` (bản ghi lịch sử) và chỗ ghi ngày nó được chốt.
+8. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -rn 'chưa ai xác nhận\|chưa xác nhận' --include='*.md' . | grep -v findings.md
+grep -n '25.000' master_plan/shop-facts.md      # giá suất trứng không đổi
+grep -n 'U-00' docs/product.md
+git status --porcelain
+```
+
 - [x] BA-01 `docs/product.md` §1 — Actor và phạm vi hệ thống
 - [x] BA-02 `docs/product.md` §2 — Kênh bán
 

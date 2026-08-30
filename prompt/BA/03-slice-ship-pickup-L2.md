@@ -93,8 +93,8 @@ Gate 5 (L2): đọc lại invariant mới, xác nhận không mâu thuẫn invar
 ## Unknowns
 
 - ~~**U-4 · thông tin liên hệ tối thiểu** cho ba kênh không gắn bàn~~ → **đã gỡ 2026-08-30**
-  (`shop-facts.md` §6.5). Còn lại là **S-2**: hai trường bắt buộc đó được *suy ra* từ luồng, chưa
-  có câu xác nhận riêng của chủ quán (`shop-facts.md` §7.2).
+  (`shop-facts.md` §6.5). **S-2 đã được chủ quán xác nhận 2026-08-30** — hai trường đó đúng là bắt
+  buộc, không còn là suy luận (`shop-facts.md` §7.1, §6.5).
 - ~~Đơn `phone_preorder` có giờ hẹn như `pickup` không~~ → **có** (`shop-facts.md` §5.2): nhân
   viên hỏi khách giao tận nơi hay tới lấy, **và cần lúc mấy giờ**.
 - ~~Delivery ở MVP chỉ ghi nhận đơn, hay quản lý trạng thái giao hàng~~ → **đã gỡ 2026-08-30**

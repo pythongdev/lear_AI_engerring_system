@@ -81,13 +81,21 @@ Gate 2: với mỗi dòng Acceptance, trỏ tới đoạn văn trong `docs/produ
 
 ## Unknowns
 
-Nếu chưa có câu trả lời, ghi `GIẢ ĐỊNH` + mức rủi ro vào `docs/decisions.md` ở BA-10 (prompt 09),
-đừng chốt tại đây:
-- Nhân viên có phân vai trong MVP (một người cố định một trạm, hay ai cũng làm được mọi trạm)?
-  `shop-facts.md` §3 chỉ nói **có 5 trạm**, không nói ai được làm trạm nào.
-- Chủ quán có đồng thời là nhân viên trên hệ thống không?
-- Đơn `phone_preorder` sau đó khách tới ăn tại quán thì có chuyển thành phiên bàn không, hay vẫn
-  là đơn độc lập?
+Luật chung: câu nào chưa có lời giải thì ghi `GIẢ ĐỊNH` + mức rủi ro vào `docs/decisions.md` ở
+BA-10 (prompt 09), đừng chốt tại đây.
+
+Cả ba câu hỏi của prompt này **đã được chủ quán trả lời ngày 2026-08-30** (`shop-facts.md` §7.1);
+chúng còn ở đây để phiên sau biết prompt từng hỏi gì, **không phải để hỏi lại**:
+
+- ~~Nhân viên có phân vai theo trạm không~~ → **có**: quầy · tráng bánh · gấp bánh là ba trạm
+  riêng, `canh` + `don_ban` chung một người (`shop-facts.md` §3).
+- ~~Chủ quán có đồng thời là nhân viên không~~ → **thỉnh thoảng đứng quầy**, vẫn giữ vai chủ quán
+  (`shop-facts.md` §3).
+- ~~Đơn `phone_preorder` rồi khách tới ăn tại quán~~ → **huỷ đơn đặt trước**, khách quét QR gọi
+  lại bằng `qr_table` (`shop-facts.md` §2).
+
+Câu **mới** sinh ra từ lời giải thứ ba, chưa ai trả lời: **ai được bấm huỷ đơn?**
+→ `docs/product.md` → Unknowns **U-004**.
 
 Đã có lời giải, **không** ghi lại thành Unknown nữa:
 - ~~Đơn đặt trước qua hotline gắn vào bàn nào~~ → `shop-facts.md` §2 (owner chốt 2026-08-29):

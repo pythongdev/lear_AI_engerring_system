@@ -65,9 +65,9 @@ work/backlog.md
   vào §4 làm bảng ca phải phủ, cột giá kỳ vọng ghi "tra `shop-facts.md` §4.2–§4.3".
 - ✅ **U-1 đã gỡ, task này không còn bị chặn** (`shop-facts.md` §4.3, chủ quán chốt 2026-08-30):
   suất trứng = giá trứng + tiền 4 cái bánh, phụ thu **×5**. Giá tra ở §4.3, không chép vào prompt.
-  Giá suất trứng đã chốt, nhưng **cách tính phụ thu thì chưa ai xác nhận** (`shop-facts.md` §7.2
-  S-1): ×5 cho ra 25.000 ở nhân thường, ×4 cho ra 24.000. File này ghi ×5. **Không lặng lẽ coi
-  như đã chốt** — viết theo ×5, đánh dấu `⚠ suy luận — S-1`, và nêu câu hỏi kiểm chứng trong
+  Giá suất trứng **và** cách tính phụ thu đều đã chốt: chủ quán xác nhận 2026-08-30 rằng quả
+  trứng cũng lên giá theo nhân ⇒ **×5**, suất trứng nhân thường **25.000** (`shop-facts.md` §7.1,
+  §4.3, §4.6 luật 5). Viết theo ×5 và **không** đánh dấu là suy luận nữa; câu hỏi kiểm chứng cũ
   Report: *"Suất trứng nhân thường là 25.000 hay 24.000?"*
 - Phương thức thanh toán ở MVP chỉ có: tiền mặt, VietQR tĩnh. Không thêm cổng thanh toán,
   ví điện tử, thẻ — kể cả dạng "chuẩn bị cho sau này".
@@ -90,8 +90,8 @@ work/backlog.md
 - §4 nêu quy tắc phụ thu là **+1.000 mỗi phần nhận nhân**, và nói rõ ×1 / ×4 / ×5 là hệ quả.
 - §4 nói rõ mặc định khi khách không chọn gì là **nhân Thịt, lượng Thường**.
 - §4 có bảng 11 tổ hợp bắt buộc phủ theo `shop-facts.md` §4.8; ca 11 ghi rõ **bị từ chối**.
-- Có ba ca cho **suất trứng đứng riêng** (ca 5, 6, 7), giá tra `shop-facts.md` §4.3; hai ca có
-  nhân mang dấu `⚠ suy luận — S-1`.
+- Có ba ca cho **suất trứng đứng riêng** (ca 5, 6, 7), giá tra `shop-facts.md` §4.3; phụ thu ×5
+  là **đã chốt** (2026-08-30), không đánh dấu suy luận.
 - §4 **không chép** bảng giá; chỗ cần số thì trỏ `shop-facts.md` §4.2–§4.3.
 - Không có câu nào nói phụ thu "không nhân theo số phần bếp làm" — câu đó đã bị gỡ khỏi
   `shop-facts.md` ngày 2026-08-29, thấy nó quay lại là bug.
@@ -115,7 +115,7 @@ work/backlog.md
 grep -nEi 'momo|zalopay|vnpay|stripe|thẻ tín dụng|webhook|api' docs/product.md  # không có kết quả
 grep -n 'VietQR\|tiền mặt' docs/product.md
 grep -c 'Chay\|Nhiều nhân' docs/product.md      # bảng 11 tổ hợp có mặt
-grep -n 'S-1' docs/product.md                    # ca suất trứng ghi rõ phụ thu là suy luận
+grep -n '×5\|x5' docs/product.md                 # ca suất trứng ghi phụ thu ×5 (đã chốt 2026-08-30)
 grep -n '25.000\|thành phần' docs/product.md     # phân biệt giá thành phần vs giá suất
 grep -c '000' docs/product.md                    # rất ít: §4 không phải nơi chép bảng giá
 grep -n '^### I-' quality/invariants.md
@@ -128,10 +128,9 @@ câu trả lời phải đọc thẳng ra được từ §4, không phải suy l
 
 ## Unknowns
 
-- **S-1 · Phụ thu một suất trứng là ×5 hay ×4?** (`shop-facts.md` §7.2). Rủi ro **cao** nhưng
-  **không chặn task này**. Giá đã chốt (§4.3); điều chưa xác nhận là quả trứng có
-  lên giá theo nhân không. ×5 ⇒ nhân thường 25.000, ×4 ⇒ 24.000. Lệch **1.000–2.000đ mỗi suất** — phải hỏi
-  chủ quán, không được tự chọn.
+- ~~S-1 · Phụ thu một suất trứng là ×5 hay ×4?~~ — **đã đóng 2026-08-30**: chủ quán xác nhận quả
+  trứng **có** lên giá theo nhân ⇒ **×5**, suất trứng nhân thường **25.000**
+  (`shop-facts.md` §7.1, §4.3, §4.6 luật 5).
 - Ai được xác nhận "đã thu tiền" với VietQR tĩnh, và có cần hai người xác nhận không?
 - Có cho phép hoàn tiền không, ai được phép? (§10.5)
 - Có giảm giá / khuyến mãi / phụ thu ở MVP không? Nếu có thì ai quyết?

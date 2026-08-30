@@ -20,7 +20,7 @@
 | §4.3 | Nhóm tuỳ chọn và phụ thu | **§4.4** |
 | §4.4 | Thành phần một suất bán | **§4.5** |
 | §5 | Ngoài phạm vi — bốn ranh giới | **§6.12** |
-| §6 GD-01 | Giả định giá suất trứng | **đã gỡ 2026-08-30** — giá ở §4.3, chi tiết suy luận ở §7.2 (S-1) |
+| §6 GD-01 | Giả định giá suất trứng | **đã gỡ 2026-08-30** — giá ở §4.3; cách tính phụ thu (S-1) cũng đã chốt, nhật ký ở §7.1 |
 
 Ba mục ở `shop-facts.md` **không có tiền thân** ở file này, vì file này chưa bao giờ sở hữu chúng:
 **§3** năm trạm làm việc · **§5** hai luồng bán · **§6** mười hai quy tắc nghiệp vụ · **§7** nhật ký chốt.
@@ -30,5 +30,6 @@ Ba mục ở `shop-facts.md` **không có tiền thân** ở file này, vì file
 - **Giá suất trứng đã chốt** (chủ quán, 2026-08-30) — số ở `shop-facts.md` §4.3, không chép về đây.
   Bản cũ của file này ghi ô đó là "⚠ chưa chốt — GD-01"; **GD-01 không còn tồn tại**.
 - **U-1 đến U-4** từng nằm ở `shop-facts.md` §8 đã được trả lời hết. Mục §8 không còn; nhật ký
-  chốt nay ở **§7.1**, ba chỗ suy luận chưa xác nhận ở **§7.2**.
+  chốt nay ở **§7.1**; **§7.2 (chỗ suy luận chưa xác nhận) hiện rỗng** — S-1–S-3 đã được chủ quán
+  xác nhận 2026-08-30.
 - `shop-facts.md` **cố ý không chứa liên kết nào** — nó là điểm cuối, không trỏ ngược về đây.

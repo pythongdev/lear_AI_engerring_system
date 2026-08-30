@@ -9,9 +9,10 @@
   cộng toàn bộ mục Unknowns còn treo từ các prompt 01–08.
 - Nguồn số: `master_plan/shop-facts.md` — mọi câu hỏi về giá, phạm vi bán, kênh, thành phần suất
   bán **đã có câu trả lời ở đây**, và `shop-facts.md` §7.1 khẳng định file đó không còn câu hỏi treo.
-- Nguồn giả định: `master_plan/shop-facts.md` §7.2 (**S-1, S-2, S-3** — ba chỗ suy ra từ luật đã
-  chốt, chưa ai xác nhận; **U-1–U-4 và GD-01 đã gỡ hết ngày 2026-08-30**,
-  đã ghi vào nhật ký §7.1) và các mục "Đã có lời giải" ở cuối phần Unknowns của prompt 01, 02, 03 —
+- Nguồn giả định: `master_plan/shop-facts.md` §7.2 — **hiện rỗng**. S-1, S-2, S-3 (ba chỗ từng
+  chỉ là suy ra từ luật đã chốt) **đã được chủ quán xác nhận ngày 2026-08-30** và chuyển lên nhật
+  ký §7.1, cùng chỗ với U-1–U-4 và GD-01. Nguồn còn lại: các mục "Đã có lời giải" ở cuối phần
+  Unknowns của prompt 01, 02, 03 —
   những câu đó **đã có câu trả lời từ người**, phải vào file dưới dạng **ADR có nguồn**, không
   phải `GIẢ ĐỊNH`.
 - Đích: `docs/decisions.md`.
@@ -54,14 +55,14 @@ work/backlog.md
   **đơn đặt trước qua hotline là kênh thứ năm `phone_preorder`, không gắn bàn** (owner chốt
   2026-08-29, `shop-facts.md` §2) · **suất giò = 9.000 + tiền 4 cái bánh theo nhân** (owner chốt
   2026-08-29, `shop-facts.md` §4.2–§4.3).
-- **S-1 là chỗ chạm tiền, ghi là `GIẢ ĐỊNH` rủi ro cao**, không phải ADR:
-  - **không** được chọn cách hiểu nghe hợp lý hơn rồi ghi thành ADR;
-  - nêu **cả hai** cách hiểu kèm con số và hậu quả (phụ thu ×5 ⇒ 25.000, ×4 ⇒ 24.000 cho suất
-    trứng nhân thường — lệch 1.000–2.000đ mỗi suất);
-  - chép nguyên câu hỏi kiểm chứng đã soạn ở `shop-facts.md` §7.2: *"Suất trứng nhân thường là
-    25.000 hay 24.000?"*;
-  - ghi rõ **sau khi chủ quán trả lời phải sửa `shop-facts.md` §4.3, §4.4 và chuyển S-1 từ §7.2
-    lên §7.1** — nếu không, lần đọc sau lại đẻ ra đúng câu hỏi này.
+- **S-1, S-2, S-3 nay là ADR, không phải GIẢ ĐỊNH** — chủ quán đã xác nhận cả ba ngày
+  2026-08-30 (`shop-facts.md` §7.1, ba dòng *xác nhận S-*):
+  - **S-1** — quả trứng **lên giá theo nhân** ⇒ phụ thu suất trứng **×5**, suất trứng nhân thường
+    **25.000** (không phải 24.000). "Why" ghi rõ đây từng là suy luận và được hỏi bằng câu kiểm
+    chứng nào, để phiên sau biết nó đã đi qua cửa nào;
+  - **S-2** — số điện thoại và địa chỉ giao đúng là hai trường bắt buộc;
+  - **S-3** — người đứng quầy vừa quyết định vừa ghi vết mỗi lần hoàn tiền.
+  Bảng giá `shop-facts.md` §4.3 **không đổi một con số nào** khi S-1 được xác nhận.
 - Giả định mức rủi ro **cao** phải chặn task System Design phụ thuộc nó — ghi rõ task nào bị chặn.
 - Không ghi quyết định kỹ thuật (chọn ngôn ngữ, DB, framework) — giai đoạn này chưa tới đó.
 - Mọi Unknowns của prompt 01–08 phải xuất hiện ở đây; không được im lặng bỏ qua.
@@ -70,16 +71,14 @@ work/backlog.md
 
 - 10 câu hỏi ở §10 kế hoạch gốc đều có mục tương ứng trong `docs/decisions.md`,
   dạng ADR hoặc GIẢ ĐỊNH, không câu nào thiếu.
-- 3 chỗ suy luận S-1–S-3 ở `shop-facts.md` §7.2 đều có mục tương ứng.
-- S-1 nêu đủ **cả hai** cách hiểu kèm con số, và có dòng "sau khi chốt phải sửa `shop-facts.md`
-  §4.3, §4.4 và chuyển lên §7.1".
+- S-1, S-2, S-3 đều có mục tương ứng, ở dạng **ADR** (đã chốt 2026-08-30), không phải GIẢ ĐỊNH.
+- ADR của S-1 ghi con số đã chốt (**25.000**, ×5) và nói rõ nó từng là suy luận tới 2026-08-30.
 - Mọi mục Unknowns của prompt 01–08 đều xuất hiện trong file, không sót.
 - Sáu câu đã có lời giải (giờ hẹn pickup · phí ship 0đ · khách QR ẩn danh · gọi thêm khi đang
   thu tiền · `phone_preorder` là kênh thứ năm · giá suất giò) nằm ở dạng **ADR**, không phải
   GIẢ ĐỊNH, và "Why" trỏ được về `shop-facts.md` kèm mục số và ngày chốt (nhật ký ở §7.1).
-- S-1 nằm ở dạng GIẢ ĐỊNH rủi ro **cao**, ghi rõ hậu quả bằng tiền.
-- **Không có mục nào về giá bị ghi là "chưa biết"** — bảng giá `shop-facts.md` §4.2–§4.3 đã đầy
-  từ 2026-08-30; chỉ còn *cách tính* phụ thu suất trứng là suy luận (S-1).
+- **Không có mục nào về giá bị ghi là "chưa biết" hay "giả định"** — bảng giá
+  `shop-facts.md` §4.2–§4.3 đã đầy và **cách tính phụ thu cũng đã chốt** từ 2026-08-30.
 - Mỗi ADR có đủ 4 phần theo template: Decision, Why, Rejected alternatives, Applies to.
 - Mỗi GIẢ ĐỊNH có đủ: nội dung, mức rủi ro, hậu quả nếu sai, người cần trả lời.
 - Không có mục nào vừa là quyết định vừa không nói được ai đã quyết.
@@ -105,7 +104,9 @@ Gate 5 (L2): với mỗi GIẢ ĐỊNH rủi ro cao, kiểm tra nó có được
 
 - Người có thẩm quyền trả lời các câu hỏi này là ai (chủ quán trực tiếp, hay quản lý)?
   Cần biết để ghi vào ô "ai cần trả lời".
-- Sau khi chủ quán xác nhận S-1, ai là người sửa lại `shop-facts.md` §4.3, §4.4 và §7 — và sửa
+- ~~Sau khi chủ quán xác nhận S-1, ai sửa lại `shop-facts.md`~~ — **đã xảy ra 2026-08-30**
+  (T-004): §4.3, §4.6, §7.1, §7.2 và toàn bộ pointer trong `prompt/BA/` đã được sửa trong cùng
+  một lần thay đổi. Câu hỏi còn lại của mục này: ai là người sửa — và sửa
   trước hay sau khi cập nhật `docs/decisions.md`?
 
 ## Report (AI trả lời sau khi làm)
