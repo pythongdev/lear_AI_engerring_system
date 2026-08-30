@@ -50,8 +50,8 @@ Ba hệ quả nghiệp vụ, đây mới là phần quan trọng của bảng tr
    bàn, mà khách gọi điện thì chưa ngồi bàn nào.
 
 **Định danh khách:** hai kênh gắn bàn là **ẩn danh theo bàn** — quán chỉ cần biết "bàn 5", không
-cần biết tên ai. Ba kênh còn lại phải có thông tin để gọi lại được (mức tối thiểu là bao nhiêu thì
-chưa chốt — xem §7).
+cần biết tên ai. Ba kênh còn lại phải có thông tin để gọi lại được — danh sách trường tối thiểu ở
+§6.5.
 
 ## 3. Năm trạm làm việc
 
@@ -93,13 +93,14 @@ Giò **không nhận nhân** nên một giá cho cả ba cột.
 | Suất bánh cuốn | 1 bánh | 3.000 | 4.000 | 5.000 |
 | **Suất giò** | 1 giò + 4 bánh | **21.000** | **25.000** | **29.000** |
 | Combo "Đầy đủ" trứng chín / tái / vàng | 3 bánh + 1 trứng + 1 giò | 26.000 | **30.000** | 34.000 |
-| Suất trứng chín / tái / vàng | 1 trứng + 4 bánh | ⚠ chưa chốt | ⚠ chưa chốt | ⚠ chưa chốt |
+| **Suất trứng** chín / tái / vàng | 1 trứng + 4 bánh | **20.000** | **25.000** | **30.000** |
 
 **Suất giò, chủ quán chốt 2026-08-29:** *"1 cái giò là 9.000, tính thêm tiền số lượng bánh là ra
 số tiền của suất"* ⇒ 9.000 + 4 × giá bánh theo nhân đã chọn.
 
-**Suất trứng chưa có giá** — đây là ô duy nhất còn trống trong toàn bộ bảng giá, và nó chạm tiền.
-Xem §7.
+**Suất trứng, chủ quán chốt 2026-08-30:** gồm 1 quả trứng + 4 cái bánh cuốn, **cộng gộp tiền
+thành phần** như suất giò, bánh tính theo mức nhân đã chọn ⇒ giá trứng + 4 × giá bánh.
+Đây là ô cuối cùng còn trống của bảng giá; **từ 2026-08-30 bảng giá đã đầy, không còn ô ⚠ nào.**
 
 ### 4.4 Nhóm tuỳ chọn và phụ thu
 
@@ -118,7 +119,7 @@ Hai cột "Món lẻ" và "Combo" ở trên chỉ là hai trường hợp hay g�
 | Suất bánh cuốn | 1 (cái bánh) | +1.000 (**×1**) |
 | Suất giò | 4 (bốn cái bánh; giò không nhận nhân) | +4.000 (**×4**) |
 | Combo "Đầy đủ" | 4 (ba cái bánh + quả trứng) | +4.000 (**×4**) |
-| Suất trứng | 5 (bốn cái bánh + quả trứng) | ⚠ chưa chốt — §7 |
+| Suất trứng | 5 (bốn cái bánh + quả trứng) | +5.000 (**×5**) |
 
 ### 4.5 Thành phần một suất bán — chủ quán chốt 2026-08-19
 
@@ -151,7 +152,8 @@ Nên suất giò có **ba** giá, không phải một.
 4. **Loại nhân không đổi giá.** Thịt và Thịt + mộc nhĩ cùng mức phụ thu; chỉ **lượng nhân** mới đổi
    giá.
 5. **Phụ thu là +1.000 cho MỖI phần nhận nhân của suất.** Suất bánh cuốn ×1 · suất giò ×4 · combo
-   ×4 — ba con số này là **hệ quả** của luật 1, không phải ba con số rời cần nhớ thuộc lòng.
+   ×4 · **suất trứng ×5** — bốn con số này là **hệ quả** của luật 1, không phải bốn con số rời cần
+   nhớ thuộc lòng. Suất trứng ×5 vì cả 4 cái bánh **và** quả trứng đều nhận nhân (§4.5).
 6. **Giò không nhận nhân, nhưng 4 cái bánh trong suất giò thì có** (chủ quán chốt 2026-08-29).
 7. Một dòng đơn chọn **một** loại nhân + **một** lượng nhân, áp cho **mọi phần nhận nhân** của
    suất đó. Không chọn nhân riêng cho từng cái bánh.
@@ -187,17 +189,17 @@ bất kỳ tài liệu nào, **đó là bug**, không phải quy tắc.
 | 2 | Bánh cuốn | Thịt | Thường | **4.000** | |
 | 3 | Bánh cuốn | Thịt | Nhiều | **5.000** | |
 | 4 | Bánh cuốn | Thịt + mộc nhĩ | Nhiều | **5.000** | phải **bằng ca 3** — loại nhân không đổi giá |
-| 5 | Suất trứng chín | Chay | — | ⚠ **chưa chốt** | §7 |
-| 6 | Suất trứng tái | Thịt + mộc nhĩ | Thường | ⚠ **chưa chốt** | §7 |
-| 7 | Suất trứng vàng | Thịt | Nhiều | ⚠ **chưa chốt** | §7 |
+| 5 | Suất trứng chín | Chay | — | **20.000** | 8.000 + 4 × 3.000 |
+| 6 | Suất trứng tái | Thịt + mộc nhĩ | Thường | **25.000** | 9.000 + 4 × 4.000; phụ thu ×5 |
+| 7 | Suất trứng vàng | Thịt | Nhiều | **30.000** | 10.000 + 4 × 5.000; phụ thu ×5 |
 | 8 | Suất giò | Thịt | Nhiều | **29.000** | 9.000 + 4 × 5.000; giò không nhận nhân, bánh thì có |
 | 9 | Combo Đầy đủ chín | Thịt | Thường | **30.000** | combo: phụ thu ×4 |
 | 10 | Combo Đầy đủ tái | Thịt + mộc nhĩ | Nhiều | **34.000** | |
 | 11 | Bánh cuốn | Chay | Nhiều | **PHẢI BỊ TỪ CHỐI** | không phải một giá, mà là luật ở §4.6.3 |
 
-Tám ca có số (1–4, 8–10) đã đối chiếu khớp bảng giá §4.3. **Ba ca 5–7 chưa tính được** vì giá suất
-trứng chưa chốt — chúng chính là ô trống ở §7, không phải ca cần thêm sau. Ca 11 là ca duy nhất có
-kết quả không phải một con số.
+**Cả mười ca có số (1–10) đều tính được và đã đối chiếu khớp bảng giá §4.3** — từ 2026-08-30 không
+còn ca nào treo. Ca 11 là ca duy nhất có kết quả không phải một con số. Mười một ca này là **hợp
+đồng với chủ quán**: đủ mười một mới được coi là tính giá đúng.
 
 ## 5. Hai luồng bán
 
@@ -309,7 +311,7 @@ tráng mấy cái bánh.
 
 Nếu thành phần một suất đổi thì **sửa §4.5 trước**, rồi sửa ví dụ này cho khớp.
 
-## 6. Mười quy tắc nghiệp vụ phải đúng
+## 6. Mười hai quy tắc nghiệp vụ phải đúng
 
 1. **Khách gọi thêm khi quầy đã bắt đầu thu tiền vẫn thuộc CÙNG phiên, CÙNG một hoá đơn.** Phiên
    ở trạng thái "chờ thanh toán" **chưa** giải phóng bàn. Tách ra hoá đơn thứ hai ⇒ **thu thiếu
@@ -321,21 +323,40 @@ Nếu thành phần một suất đổi thì **sửa §4.5 trước**, rồi s�
 3. **Thu tiền lúc trao hàng, không bao giờ thu trước.** Ăn tại bàn: thu ở quầy lúc đóng phiên.
    Tới lấy: thu ở quầy lúc khách tới. Giao tận nơi: thu **tại chỗ khách**, lúc đưa hàng. Cả ba
    trường hợp khách đều được chọn **tiền mặt hoặc VietQR**.
-4. **Mọi đơn đều có nước chấm — kể cả đơn mang đi.** Trạm `canh` sinh việc cho **mọi** đơn, không
+4. **Hoàn tiền: có, nhưng không có luật cứng — người ở quầy quyết định từng trường hợp** (chủ quán
+   chốt 2026-08-30). Không phải mọi ca đều được hoàn, và cũng không cấm hoàn; quầy nhìn tình huống
+   thật rồi quyết.
+   ⇒ Chính vì **không có luật cứng nên mọi lần hoàn phải để lại vết**: hoàn bao nhiêu, cho đơn nào,
+   ai bấm, lý do gì. Không có vết thì đối soát cuối ngày (§6.10) sẽ lệch mà không ai truy được — mà
+   luật đối soát nói *lệch 1 đồng cũng phải tìm ra lý do*.
+5. **Thông tin liên hệ cho ba kênh không gắn bàn.** Hai trường **bắt buộc**, phần còn lại người ở
+   quầy điền theo tình huống thật lúc đó (chủ quán chốt 2026-08-30):
+
+   | Trường | `delivery` | `pickup` | `phone_preorder` |
+   |---|---|---|---|
+   | **Số điện thoại** | **bắt buộc** | **bắt buộc** | **bắt buộc** |
+   | **Địa chỉ giao** | **bắt buộc** | không cần | **bắt buộc nếu chọn giao tận nơi** |
+   | Tên / cách xưng hô | nên có | nên có | nên có |
+   | Giờ khách cần hàng | nên có | **bắt buộc** (giờ hẹn lấy) | **bắt buộc** |
+   | Ghi chú (lối vào, mốc đường…) | tuỳ tình huống | tuỳ tình huống | tuỳ tình huống |
+
+   Hai trường bắt buộc là **hệ quả của luồng**, không phải sở thích: không có số điện thoại thì
+   không gọi lại được khi tới nơi, không có địa chỉ thì quán tự đi giao vào đâu.
+6. **Mọi đơn đều có nước chấm — kể cả đơn mang đi.** Trạm `canh` sinh việc cho **mọi** đơn, không
    riêng đơn tại bàn; đơn mang đi thì gói riêng. Bỏ sót là khách nhận bánh không có nước chấm.
-5. **Quán tự đi giao, và đơn giao tận nơi mang trạng thái "đang giao".** Quầy phải nhìn được đơn
+7. **Quán tự đi giao, và đơn giao tận nơi mang trạng thái "đang giao".** Quầy phải nhìn được đơn
    nào còn trên đường và ai đang cầm tiền chưa về. Giao xong bấm **đã giao + đã thu tiền** cùng lúc.
-6. **Nút "Tạm dừng nhận đơn" của chủ quán có ưu tiên CAO HƠN giờ mở cửa** — dùng khi hết nguyên
+8. **Nút "Tạm dừng nhận đơn" của chủ quán có ưu tiên CAO HƠN giờ mở cửa** — dùng khi hết nguyên
    liệu giữa buổi. Ngoài giờ bán, web khoá nút đặt và hiện *"Quán mở cửa 6h–11h sáng"*.
-7. **Một khoản tiền gắn với đúng MỘT đơn vị tính tiền** — hoặc một phiên bàn, hoặc một đơn lẻ,
+9. **Một khoản tiền gắn với đúng MỘT đơn vị tính tiền** — hoặc một phiên bàn, hoặc một đơn lẻ,
    không bao giờ cả hai. ⇒ **báo cáo doanh thu phải cộng từ CẢ HAI nguồn**; bỏ sót một nguồn là
    báo cáo thiếu tiền.
-8. **Đối soát cuối ngày.** Trong 2 tuần đầu chạy thật, mỗi tối đối chiếu doanh thu hệ thống với
-   **sổ giấy** và **tiền trong két**. **Lệch 1 đồng cũng phải tìm ra lý do.** Đây là cổng chất
-   lượng mạnh nhất của cả dự án, mạnh hơn mọi bài kiểm thử.
-9. **Sổ giấy là kế hoạch dự phòng BẮT BUỘC.** Mất điện, mất mạng, hoặc máy hỏng ⇒ quán chuyển sang
-   ghi tay và **không dừng bán**.
-10. **Bốn ranh giới đã chốt — đây là quyết định, không phải chỗ trống chờ ai điền:**
+10. **Đối soát cuối ngày.** Trong 2 tuần đầu chạy thật, mỗi tối đối chiếu doanh thu hệ thống với
+    **sổ giấy** và **tiền trong két**. **Lệch 1 đồng cũng phải tìm ra lý do.** Đây là cổng chất
+    lượng mạnh nhất của cả dự án, mạnh hơn mọi bài kiểm thử.
+11. **Sổ giấy là kế hoạch dự phòng BẮT BUỘC.** Mất điện, mất mạng, hoặc máy hỏng ⇒ quán chuyển sang
+    ghi tay và **không dừng bán**.
+12. **Bốn ranh giới đã chốt — đây là quyết định, không phải chỗ trống chờ ai điền:**
 
     | Không làm | Vì sao |
     |---|---|
@@ -346,39 +367,50 @@ Nếu thành phần một suất đổi thì **sửa §4.5 trước**, rồi s�
 
     Thêm bất kỳ thứ nào trong bốn thứ trên là **đổi phạm vi, quyền chủ quán**.
 
-## 7. Ba điều chủ quán chưa chốt
+## 7. Nhật ký chốt — và ba chỗ suy ra
 
-**Đã gỡ ngày 2026-08-29:**
-- ~~Đơn đặt trước qua hotline gắn vào bàn nào~~ → **kênh riêng `phone_preorder`, không gắn bàn**.
-- ~~Suất giò có nhận tuỳ chọn nhân không~~ → **có**: 9.000 + tiền 4 cái bánh theo nhân đã chọn.
+**Tính tới 2026-08-30, không còn câu hỏi nào treo.** Bảng giá đã đầy, cả năm kênh đều có luồng.
+Mục này giữ lại **ai chốt cái gì, ngày nào**, để phiên sau muốn lật lại một quyết định thì biết
+đang lật lại điều gì.
 
-**Đã gỡ ngày 2026-08-30** (năm câu về luồng mang đi):
-- ~~Đơn giao hàng thu tiền lúc nào~~ → **lúc trao hàng cho khách**, tiền mặt hoặc VietQR (§6.3).
-- ~~Ai đi giao~~ → **quán tự đi giao**, và đơn giao có trạng thái **"đang giao"** (§6.5).
-- ~~Đơn web có cần quầy duyệt như đơn QR không~~ → **có** (§6.2).
-- ~~Đơn mang đi có nước chấm không~~ → **có, gói riêng** (§6.4).
-- ~~`phone_preorder` kết thúc thế nào~~ → **cả hai kiểu**; nhân viên hỏi khách giao tận nơi hay
-  tới lấy khi nhận điện thoại (§5.2).
+### 7.1 Chủ quán đã chốt những gì
 
-Còn lại ba câu, câu đầu chạm tiền:
-
-| # | Câu hỏi | Vì sao chưa trả lời được | Hỏng thì mất gì |
-|---|---|---|---|
-| **1** | **Một suất trứng đứng riêng giá bao nhiêu?** | Suất trứng có cùng hình dạng với suất giò (1 trứng + 4 bánh) nhưng chủ quán mới chỉ nói về giò | Hai cách hiểu lệch nhau **12.000–20.000đ mỗi suất**. Xem bảng dưới |
-| 2 | Có hoàn tiền không, ai được phép hoàn? | chưa ai hỏi chủ quán | Không có đường xử lý khi khách trả món |
-| 3 | Ba kênh không gắn bàn cần tối thiểu những thông tin liên hệ gì? | chỉ biết là phải gọi lại được, chưa biết gồm những gì | Nhận đơn xong không liên lạc được với khách |
-
-**Chi tiết câu 1 — giá suất trứng:**
-
-| Cách hiểu | Suất trứng (chay / thường / nhiều) | Hậu quả nếu chọn sai |
+| Ngày | Chốt cái gì | Ghi ở |
 |---|---|---|
-| **A** — cùng mô hình tổng thành phần như suất giò | 20.000 / 25.000 / 30.000 | — |
-| **B** — 8.000 / 9.000 / 10.000 đã là giá cả suất | 8.000 / 9.000 / 10.000 | **Thu thiếu 12.000–20.000đ mỗi suất trứng** |
+| 2026-08-19 | Thành phần bếp làm ra của cả bốn suất bán | §4.5 |
+| 2026-08-24 | Đơn hotline đi bằng kênh riêng, không gắn bàn | §2 |
+| 2026-08-29 | Sửa: kênh đó tên `phone_preorder`, và **`staff_pos` không dùng cho đơn hotline** | §2 |
+| 2026-08-29 | Suất giò = 9.000 + tiền 4 cái bánh; bánh trong suất giò **có** nhận nhân | §4.3 · §4.5 |
+| 2026-08-30 | **Suất trứng = giá trứng + tiền 4 cái bánh**, cộng gộp thành phần như suất giò | §4.3 |
+| 2026-08-30 | Thu tiền **lúc trao hàng**, tiền mặt hoặc VietQR — không thu trước | §6.3 |
+| 2026-08-30 | **Quán tự đi giao**, đơn giao mang trạng thái "đang giao" | §6.7 |
+| 2026-08-30 | Đơn web (`delivery`, `pickup`) **cần quầy duyệt** như đơn QR | §6.2 |
+| 2026-08-30 | Đơn mang đi **vẫn có nước chấm**, gói riêng | §6.6 |
+| 2026-08-30 | `phone_preorder` kết thúc **cả hai kiểu**; nhân viên hỏi khách khi nhận điện thoại | §5.2 |
+| 2026-08-30 | **Hoàn tiền được phép**, quyết định từng ca ở quầy, không có luật cứng | §6.4 |
+| 2026-08-30 | Thông tin liên hệ: quầy cung cấp theo tình huống thật, có trường bắt buộc | §6.5 |
 
-Cách A khớp với mô hình đã tái tạo đúng cả ba ô combo ở §4.7. Cách B khớp với việc bảng §4.2 trước
-đây từng bị đọc nhầm thành bảng giá suất. **Không được tự chọn — phải hỏi chủ quán.**
+### 7.2 Ba chỗ suy ra, không phải lời chủ quán nói thẳng
 
-Ngoài ba câu trên, mọi con số và quy tắc trong file này là thứ chủ quán đã chốt: bảng giá §4.2 và
-phụ thu §4.4 là giá gốc của quán · thành phần suất bán §4.5 chốt 2026-08-19 · kênh `phone_preorder`
-chốt 2026-08-24 và sửa 2026-08-29 · giá suất giò chốt 2026-08-29 · năm quy tắc luồng mang đi (§6.2
-đến §6.5, và nhánh kết thúc của `phone_preorder` ở §5.2) chốt 2026-08-30.
+Ba mục dưới **không** có câu nói tương ứng của chủ quán. Chúng được suy ra từ những luật đã chốt ở
+trên, và ghi tách ra ở đây đúng vì thế: phiên sau muốn lật lại thì lật ba mục này trước, đừng lật
+những dòng ở §7.1.
+
+| # | Suy ra cái gì | Suy từ đâu | Sai thì mất gì |
+|---|---|---|---|
+| **S-1** | **Phụ thu suất trứng là ×5**, không phải ×4 | §4.6 luật 1 (giá suất = tổng thành phần) + §4.5 (trong suất trứng, **cả** 4 cái bánh **và** quả trứng đều nhận nhân) + §4.2 (quả trứng có ba giá 8/9/10) | ×4 thì suất trứng thường là 24.000 chứ không phải 25.000 ⇒ **thu thiếu 1.000–2.000đ mỗi suất** |
+| **S-2** | **Số điện thoại và địa chỉ giao là hai trường bắt buộc** (§6.5) | quán tự đi giao (§6.7) thì phải có địa chỉ; thu tiền tại chỗ khách (§6.3) thì phải gọi được lúc tới nơi | Nhận đơn xong không giao được, hoặc giao tới nơi không tìm thấy khách |
+| **S-3** | **Mọi lần hoàn tiền phải ghi lại số tiền, đơn nào, ai bấm, lý do** (§6.4) | hoàn tiền không có luật cứng (§6.4) + đối soát cuối ngày đòi *lệch 1 đồng cũng phải tìm ra lý do* (§6.10) | Két thiếu tiền mà không ai truy được vì sao |
+
+**S-1 chạm tiền trực tiếp — nếu chỉ hỏi lại chủ quán được một câu, hỏi câu này:** *"Suất trứng
+nhân thường là 25.000 hay 24.000?"* 25.000 nghĩa là quả trứng cũng lên giá theo nhân (×5, đúng như
+file này đang ghi); 24.000 nghĩa là chỉ 4 cái bánh lên giá còn quả trứng đứng yên ở 8.000 (×4).
+
+### 7.3 Quy tắc cho phiên sau
+
+Khi chủ quán chốt thêm điều gì: ghi vào đúng mục nghiệp vụ (§1–§6) **trước**, rồi thêm một dòng vào
+bảng §7.1 với ngày. Đừng để một quyết định chỉ sống ở §7 — mục này là nhật ký, không phải nơi tra
+cứu quy tắc.
+
+Nếu một mục ở §7.2 được chủ quán xác nhận hoặc bác bỏ, chuyển nó lên §7.1 kèm ngày và xoá khỏi
+§7.2. Ba mục đó chỉ được nằm ở §7.2 chừng nào **chưa ai hỏi**.
