@@ -341,7 +341,7 @@ tráng mấy cái bánh.
 
 Nếu thành phần một suất đổi thì **sửa §4.5 trước**, rồi sửa ví dụ này cho khớp.
 
-## 6. Mười hai quy tắc nghiệp vụ phải đúng
+## 6. Mười ba quy tắc nghiệp vụ phải đúng
 
 1. **Khách gọi thêm khi quầy đã bắt đầu thu tiền vẫn thuộc CÙNG phiên, CÙNG một hoá đơn.** Phiên
    ở trạng thái "chờ thanh toán" **chưa** giải phóng bàn. Tách ra hoá đơn thứ hai ⇒ **thu thiếu
@@ -400,6 +400,17 @@ Nếu thành phần một suất đổi thì **sửa §4.5 trước**, rồi s�
 
     Thêm bất kỳ thứ nào trong bốn thứ trên là **đổi phạm vi, quyền chủ quán**.
 
+13. **Chỉ người đứng quầy được huỷ một đơn** (chủ quán chốt 2026-08-30) — bấm trên máy POS ở quầy.
+    Nhân viên ở bốn trạm còn lại (`trang_banh`, `gap_banh`, `canh`, `don_ban`) **không** huỷ được
+    đơn, kể cả đơn của chính việc mình đang làm.
+    ⇒ **Hệ quả (suy ra, không phải lời chủ quán):** chủ quán lúc đang đứng quầy thì huỷ được, vì
+    khi đó chủ quán làm đúng việc của trạm `quay` (§3). Chủ quán **không** đứng quầy mà muốn huỷ
+    thì chưa ai nói — chưa gặp ca đó thì đừng tự chốt.
+
+    Quyền này đi đôi với hai luật đã có: quầy là nơi **duyệt** đơn (§6.2) và là nơi **quyết định
+    hoàn tiền** (§6.4). Cùng một người chịu trách nhiệm cho cả ba việc chạm tiền, nên đối soát
+    cuối ngày (§6.10) luôn truy được về một người.
+
 ## 7. Nhật ký chốt
 
 **Tính tới 2026-08-30, không còn câu hỏi nào treo, và cũng không còn chỗ suy ra nào chưa xác
@@ -429,6 +440,7 @@ muốn lật lại một quyết định thì biết đang lật lại điều g
 | 2026-08-30 | *(xác nhận S-1)* Quả trứng **lên giá theo nhân** ⇒ phụ thu suất trứng **×5**, suất trứng nhân thường = **25.000** | §4.3 · §4.6 |
 | 2026-08-30 | *(xác nhận S-2)* Số điện thoại và địa chỉ giao **đúng là hai trường bắt buộc** | §6.5 |
 | 2026-08-30 | *(xác nhận S-3)* **Người đứng quầy** là người quyết định và ghi vết mỗi lần hoàn tiền | §6.4 |
+| 2026-08-30 | **Chỉ người đứng quầy được huỷ đơn**, bấm trên máy POS ở quầy | §6.13 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **hiện không còn mục nào**
 

@@ -86,7 +86,8 @@ work/backlog.md
 - Có checklist cổng chất lượng BA (9 mục ở §12 kế hoạch gốc) với trạng thái tick thật,
   không tick mục chưa đạt. Mục "không còn business rule quan trọng bị suy đoán" nay **không còn bị
   S-1 chặn** (chốt 2026-08-30) — nhưng chỉ được tick khi mọi Unknown đang mở ở `docs/product.md`
-  đã đóng, kể cả **U-004 (ai được bấm huỷ đơn)**.
+  đã đóng. **U-004 (ai được bấm huỷ đơn) đã đóng 2026-08-30**: chỉ người đứng quầy
+  (`shop-facts.md` §6.13).
 - Mọi lỗ hổng phát hiện khi diễn scenario đều có finding trong `work/findings.md`, kèm task
   BA cần mở lại.
 - `work/backlog.md`: task BA-01–BA-11 nào đã xong được đánh dấu Done; task phải mở lại

@@ -9,7 +9,7 @@ Viết theo `docs/prompt-guideline.md`. Kiểm kết quả theo `quality/review-
 | Nguồn | Cho cái gì | Ai là nhà thật |
 |---|---|---|
 | `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` | **Khung** nghiệp vụ: 11 task, 3 lát cắt, 12 quy tắc, 14 ngoại lệ, 10 câu hỏi | — |
-| `master_plan/shop-facts.md` | **Mọi dữ kiện quán**: phạm vi bán, **5 kênh**, bảng giá thành phần, giá một suất, phụ thu, thành phần một suất bán, 5 trạm, hai luồng bán, nổ việc xuống bếp, 12 quy tắc nghiệp vụ, đối soát, sổ giấy | **Nhà duy nhất, từ 2026-08-30.** Chỗ khác nói khác ⇒ file này thắng |
+| `master_plan/shop-facts.md` | **Mọi dữ kiện quán**: phạm vi bán, **5 kênh**, bảng giá thành phần, giá một suất, phụ thu, thành phần một suất bán, 5 trạm, hai luồng bán, nổ việc xuống bếp, 13 quy tắc nghiệp vụ, đối soát, sổ giấy | **Nhà duy nhất, từ 2026-08-30.** Chỗ khác nói khác ⇒ file này thắng |
 
 Kế hoạch gốc không chứa một con số nào của quán này. Chạy bộ prompt mà bỏ `shop-facts.md` sẽ ra một
 `docs/product.md` đúng khuôn nhưng áp cho quán ăn nào cũng được — tức là chưa chốt gì.

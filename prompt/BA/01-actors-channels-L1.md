@@ -94,8 +94,8 @@ chúng còn ở đây để phiên sau biết prompt từng hỏi gì, **không 
 - ~~Đơn `phone_preorder` rồi khách tới ăn tại quán~~ → **huỷ đơn đặt trước**, khách quét QR gọi
   lại bằng `qr_table` (`shop-facts.md` §2).
 
-Câu **mới** sinh ra từ lời giải thứ ba, chưa ai trả lời: **ai được bấm huỷ đơn?**
-→ `docs/product.md` → Unknowns **U-004**.
+Câu **mới** sinh ra từ lời giải thứ ba: ~~ai được bấm huỷ đơn?~~ → **chỉ người đứng quầy**
+(chủ quán chốt 2026-08-30, `shop-facts.md` §6.13). U-004 đã đóng.
 
 Đã có lời giải, **không** ghi lại thành Unknown nữa:
 - ~~Đơn đặt trước qua hotline gắn vào bàn nào~~ → `shop-facts.md` §2 (owner chốt 2026-08-29):

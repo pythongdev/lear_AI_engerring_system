@@ -8,6 +8,39 @@
 
 ## Done
 
+- [x] T-005 U-004 — chỉ người đứng quầy được huỷ đơn (chủ quán chốt 2026-08-30)
+
+### T-005 — Ai được bấm huỷ một đơn
+
+**Goal:**
+U-004 — câu hỏi sinh ra từ luật huỷ đơn hotline ở T-004 — đã có lời giải của chủ quán: **người
+đứng quầy**, thao tác trên máy POS ở quầy. Ghi vào owner, đóng U-004, sửa mọi pointer đang chờ nó.
+
+**Scope:**
+`master_plan/shop-facts.md` · `master_plan/prompt-fullstack.md` · `docs/product.md` ·
+`prompt/BA/*.md` · `work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+Không đổi luật huỷ đơn (đã chốt ở T-004), không đổi luật hoàn tiền, không chạm bảng giá.
+
+**Acceptance:**
+1. `shop-facts.md` §6 có quy tắc mới: **chỉ người đứng quầy được huỷ đơn**; tiêu đề §6 đổi từ
+   "Mười hai" sang "Mười ba quy tắc" và mọi pointer đếm số quy tắc được sửa theo.
+2. Hệ quả "chủ quán đứng quầy thì huỷ được" ghi là **hệ quả suy ra**, không trộn vào lời chủ quán.
+3. `shop-facts.md` §7.1 có dòng ngày 2026-08-30 cho quyết định này.
+4. `docs/product.md`: quyền huỷ nằm trong việc của nhân viên (§1.2) và của trạm quầy (§1.5);
+   §2.4 gán đích danh người bấm huỷ; U-004 chuyển sang bảng đã có lời giải.
+5. `grep -rn 'U-004'` không còn chỗ nào coi nó là câu hỏi đang mở.
+6. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -rn 'U-004' --include='*.md' .
+grep -rn 'Mười hai quy tắc\|Mười ba quy tắc' --include='*.md' .
+git status --porcelain
+```
+
 - [x] T-004 Ghi nhận sáu câu trả lời của chủ quán ngày 2026-08-30 (U-001–U-003, S-1–S-3)
 
 ### T-004 — Sáu câu trả lời của chủ quán 2026-08-30
