@@ -1,0 +1,1 @@
+Sửa: 00-scope.md, shop-facts.md, 10 file prompt. Việc tiếp theo: hỏi chủ quán giá một suất trứng. 

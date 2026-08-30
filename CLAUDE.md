@@ -11,8 +11,9 @@ first, every session, before touching anything else. It says where facts live,
 how to work, and what "done" means. It does not repeat those facts — it points
 at their single owner.
 
-Ceremony scales with risk (L0–L3). The levels are defined in `README.md`; how to
-write a prompt at each level is in `docs/prompt-guideline.md`.
+Ceremony scales with risk (L0–L3): most changes owe almost nothing, a few owe a
+lot. The levels are defined in `README.md`, what each one costs here is §3, and
+how to write a prompt at each level is in `docs/prompt-guideline.md`.
 
 ## 2. Source of Truth
 
@@ -50,18 +51,36 @@ prompt/            prompt sets built from master_plan/
 
 ## 3. Working Rules
 
+Ceremony follows risk. Pick the level by what breaks if the change is wrong, not
+by the size of the diff (levels: `README.md`). **Most changes are L0 or L1.**
+
+| Obligation | L0 | L1 | L2 | L3 |
+|---|:--:|:--:|:--:|:--:|
+| `./scripts/gate.sh` passes | ✓ | ✓ | ✓ | ✓ |
+| Entry in `work/backlog.md` | — | ✓ | ✓ | ✓, split into L1/L2 |
+| `work/scope.txt` declared | — | ✓ | ✓ | ✓ |
+| Acceptance written *before* the change | — | ✓ | ✓ | ✓ |
+| Regression test for the related invariant | — | — | ✓ | ✓ |
+| ADR in `docs/decisions.md` | — | — | if a design choice was made | ✓ |
+| Design reviewed before any code | — | — | — | ✓ |
+
+L0 is a real level, not a loophole: a typo, a formatting run, a mechanical rename
+is *change → gate → done*, no paperwork. A change is L1+ once it alters behavior,
+a contract, or data. Escalate only when the answer to "what breaks if this is
+wrong" reaches money, stored data, or a published contract — not to feel safe.
+
+Then, at every level:
+
 1. **Context** — load only what the task needs: the task entry in
    `work/backlog.md`, the patterns in `work/scope.txt`, the owners in §2 that
    the task actually touches, and the code and tests under those patterns. Do
    not read the repository by default.
-2. **Focus** — one meaningful task at a time. A meaningful change alters
-   behavior, contracts, or data (a bug fix, a new endpoint, a price rule);
-   formatting and mechanical renames are L0 and need no task entry.
-3. **Priority** — take the top unchecked item in `work/backlog.md` → *Ready*
-   unless the user names another. An Open finding in `work/findings.md` that
-   blocks a Ready task is done first. Move the item to *In Progress* when you
-   start.
-4. **Scope** — declare `work/scope.txt` before the first edit, matching the
+2. **Focus** — one task at a time, finished before the next is started.
+3. **Priority** (L1+) — take the top unchecked item in `work/backlog.md` →
+   *Ready* unless the user names another. An Open finding in `work/findings.md`
+   that blocks a Ready task is done first. Move the item to *In Progress* when
+   you start.
+4. **Scope** (L1+) — declare `work/scope.txt` before the first edit, matching the
    Scope section of the prompt, and stay inside it. One pattern per line:
 
    ```text
@@ -73,13 +92,15 @@ prompt/            prompt sets built from master_plan/
    If the task genuinely needs more, update `work/scope.txt` and say so — do not
    edit outside it silently. Clear the patterns when the task is done.
 5. **Never invent business truth** — if a business rule is unclear, stop and ask.
-   If you cannot ask, record it and leave the behavior undecided (§4).
-6. **Verify** — run `./scripts/gate.sh` after every meaningful change (§5).
+   If you cannot ask, record it and leave the behavior undecided (§4). This rule
+   has no L0.
+6. **Verify** — run `./scripts/gate.sh` after every change (§5).
 7. **Record durable facts** — a rule, decision, or invariant discovered while
    working goes into its owner from §2, in that file's own template, in the same
    change that discovered it.
-8. **No ceremony documents** — do not create a `.md` file nobody asked for. Add
-   a rule, a hook, or a test only after a real problem has recurred.
+8. **No ceremony documents** — do not create a `.md` file nobody asked for. Add a
+   rule, a hook, or a test only after the same problem has cost you twice
+   (`quality/review-gate.md` → *Vòng phản hồi*).
 
 ## 4. Handling Unknowns
 
@@ -123,13 +144,25 @@ review, cold-context review — are in `quality/review-gate.md`.
 
 ## 7. Definition of Done
 
+Tiered like §3 — an L0 change is done after four lines, not eleven.
+
+**Every level**
+
 - [ ] `./scripts/gate.sh` passes (§5).
-- [ ] Every Acceptance line in the task maps to a named test or a manual run with
-      real output pasted (`quality/review-gate.md` Gate 2).
-- [ ] Diff checked against the red-flag table in `quality/review-gate.md` Gate 4.
-- [ ] L2+ only: the related invariant in `quality/invariants.md` has a regression
-      test.
-- [ ] New rules, decisions, invariants, unknowns recorded in their owner (§2, §4).
-- [ ] Task moved to *Done* in `work/backlog.md`; `work/scope.txt` cleared.
+- [ ] You read your own diff.
+- [ ] Any rule, decision, invariant, or unknown you hit is recorded in its owner
+      (§2, §4).
 - [ ] Report: what changed, how it was verified (with command output), what is
       still unresolved.
+
+**L1 and up, additionally**
+
+- [ ] Every Acceptance line maps to a named test, or to a manual run with real
+      output pasted (`quality/review-gate.md` Gate 2).
+- [ ] Diff checked against the red-flag table in Gate 4.
+- [ ] Task moved to *Done* in `work/backlog.md`; `work/scope.txt` cleared.
+
+**L2 and up, additionally**
+
+- [ ] The related invariant in `quality/invariants.md` has a regression test, and
+      you ran it yourself.
