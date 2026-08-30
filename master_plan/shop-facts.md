@@ -403,9 +403,16 @@ Nếu thành phần một suất đổi thì **sửa §4.5 trước**, rồi s�
 13. **Chỉ người đứng quầy được huỷ một đơn** (chủ quán chốt 2026-08-30) — bấm trên máy POS ở quầy.
     Nhân viên ở bốn trạm còn lại (`trang_banh`, `gap_banh`, `canh`, `don_ban`) **không** huỷ được
     đơn, kể cả đơn của chính việc mình đang làm.
-    ⇒ **Hệ quả (suy ra, không phải lời chủ quán):** chủ quán lúc đang đứng quầy thì huỷ được, vì
-    khi đó chủ quán làm đúng việc của trạm `quay` (§3). Chủ quán **không** đứng quầy mà muốn huỷ
-    thì chưa ai nói — chưa gặp ca đó thì đừng tự chốt.
+    **Quyền huỷ gắn với CHỖ ĐỨNG, không gắn với chức vụ** (chủ quán chốt 2026-08-30). Hai ca của
+    chính chủ quán:
+
+    | Chủ quán… | Huỷ đơn thế nào |
+    |---|---|
+    | **đang đứng quầy** | tự bấm — lúc đó chủ quán làm đúng việc của trạm `quay` (§3) |
+    | **không đứng quầy** | **nhờ người đứng quầy bấm trên POS** — không có đường huỷ riêng nào khác |
+
+    Chức vụ không mở thêm cửa nào. **Mọi lần huỷ đều đi qua đúng một cửa: máy POS ở quầy**, nên
+    lần huỷ nào cũng có đúng một người đứng tên.
 
     Quyền này đi đôi với hai luật đã có: quầy là nơi **duyệt** đơn (§6.2) và là nơi **quyết định
     hoàn tiền** (§6.4). Cùng một người chịu trách nhiệm cho cả ba việc chạm tiền, nên đối soát
@@ -441,6 +448,7 @@ muốn lật lại một quyết định thì biết đang lật lại điều g
 | 2026-08-30 | *(xác nhận S-2)* Số điện thoại và địa chỉ giao **đúng là hai trường bắt buộc** | §6.5 |
 | 2026-08-30 | *(xác nhận S-3)* **Người đứng quầy** là người quyết định và ghi vết mỗi lần hoàn tiền | §6.4 |
 | 2026-08-30 | **Chỉ người đứng quầy được huỷ đơn**, bấm trên máy POS ở quầy | §6.13 |
+| 2026-08-30 | Quyền huỷ gắn **chỗ đứng, không gắn chức vụ**: chủ quán không đứng quầy thì **nhờ người đứng quầy bấm** | §6.13 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **hiện không còn mục nào**
 

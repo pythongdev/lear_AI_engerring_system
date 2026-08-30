@@ -8,6 +8,36 @@
 
 ## Done
 
+- [x] T-006 Quyền huỷ đơn gắn với chỗ đứng, không gắn chức vụ (chủ quán chốt 2026-08-30)
+
+### T-006 — Chủ quán không đứng quầy thì huỷ đơn thế nào
+
+**Goal:**
+Chỗ suy luận duy nhất còn lại của T-005 — "chủ quán không đứng quầy mà muốn huỷ thì chưa ai nói" —
+đã có lời chủ quán: **nhờ người đứng quầy bấm trên POS**. Không còn đường huỷ riêng cho chức vụ.
+
+**Scope:**
+`master_plan/shop-facts.md` · `docs/product.md` · `work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+Không đổi ai được huỷ (§6.13 đã chốt ở T-005), không chạm luật duyệt đơn hay hoàn tiền.
+
+**Acceptance:**
+1. `shop-facts.md` §6.13 không còn câu "chưa ai nói"; thay bằng quyết định của chủ quán kèm ngày.
+2. §6.13 nói rõ quyền huỷ gắn với **chỗ đứng (quầy/POS)**, không gắn **chức vụ**.
+3. `shop-facts.md` §7.1 có dòng ngày 2026-08-30 cho quyết định này.
+4. `docs/product.md` §1.3 và §2.4 khớp: chủ quán không có đường huỷ riêng; đoạn ghi "hệ quả suy
+   ra" ở §2.4 được thay bằng lời chủ quán.
+5. `grep -rn 'chưa ai nói\|hệ quả suy ra'` trong hai file trên không còn dính tới quyền huỷ.
+6. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -n 'chưa ai nói\|suy ra' master_plan/shop-facts.md docs/product.md
+git status --porcelain
+```
+
 - [x] T-005 U-004 — chỉ người đứng quầy được huỷ đơn (chủ quán chốt 2026-08-30)
 
 ### T-005 — Ai được bấm huỷ một đơn

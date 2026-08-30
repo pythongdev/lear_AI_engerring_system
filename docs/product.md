@@ -72,6 +72,9 @@ Việc chủ quán làm:
 - **Tạm dừng nhận đơn** giữa buổi (ví dụ hết nguyên liệu). Nút này có ưu tiên **cao hơn giờ mở
   cửa** (`shop-facts.md` §6.8).
 - **Nhập số tài khoản** nhận chuyển khoản trong phần quản trị (`shop-facts.md` §1).
+- **Không** có đường huỷ đơn riêng. Muốn huỷ một đơn mà không đang đứng quầy thì **nhờ người
+  đứng quầy bấm** (chủ quán chốt 2026-08-30, `shop-facts.md` §6.13) — quyền huỷ gắn với chỗ đứng,
+  không gắn với chức vụ.
 - **Xem báo cáo doanh thu**, cộng từ **cả hai** nguồn — phiên bàn và đơn lẻ; bỏ sót một nguồn là
   báo cáo thiếu tiền (`shop-facts.md` §6.9).
 
@@ -188,9 +191,11 @@ một đơn vị thanh toán độc lập" (§2.1) không có ngoại lệ nào.
 
 **Người bấm huỷ là người đứng quầy** (chủ quán chốt 2026-08-30, `shop-facts.md` §6.13) — không
 phải nhân viên bất kỳ. Cùng một người vừa duyệt đơn (§2.2), vừa huỷ đơn, vừa quyết định hoàn tiền,
-nên mọi thao tác chạm tiền đều truy được về một người. Chủ quán lúc đang đứng quầy thì cũng huỷ
-được, vì khi đó chủ quán làm đúng việc của trạm quầy (§1.3) — **đây là hệ quả suy ra, không phải
-câu chủ quán nói thẳng**; ca chủ quán muốn huỷ khi *không* đứng quầy thì chưa ai hỏi.
+nên mọi thao tác chạm tiền đều truy được về một người.
+
+**Quyền huỷ gắn với chỗ đứng, không gắn với chức vụ** (chủ quán chốt 2026-08-30). Chủ quán đang
+đứng quầy thì tự bấm, vì lúc đó làm đúng việc của trạm quầy (§1.3); chủ quán **không** đứng quầy
+thì **nhờ người đứng quầy bấm**. Không có cửa thứ hai — mọi lần huỷ đều đi qua máy POS ở quầy.
 
 ## 3. Ba lát cắt nghiệp vụ
 
@@ -236,7 +241,7 @@ U-004 — câu sinh ra từ chính lời giải của U-003.
 | ~~S-1 — phụ thu suất trứng ×5 hay ×4~~ | **×5** — quả trứng cũng lên giá theo nhân, suất trứng nhân thường = **25.000** | `shop-facts.md` §4.3 · §4.6 |
 | ~~S-2 — hai trường liên hệ bắt buộc~~ | **Đúng**, số điện thoại và địa chỉ giao là bắt buộc | §2 · `shop-facts.md` §6.5 |
 | ~~S-3 — ai ghi vết mỗi lần hoàn tiền~~ | **Người đứng quầy** vừa quyết định vừa ghi vết | `shop-facts.md` §6.4 |
-| ~~U-004 — ai được bấm huỷ một đơn~~ | **Chỉ người đứng quầy**, bấm trên máy POS ở quầy | §2.4 · `shop-facts.md` §6.13 |
+| ~~U-004 — ai được bấm huỷ một đơn~~ | **Chỉ người đứng quầy**, bấm trên máy POS ở quầy; chủ quán không đứng quầy thì **nhờ người đứng quầy bấm** | §2.4 · `shop-facts.md` §6.13 |
 
 Câu cũ hơn, đã đóng từ trước:
 
