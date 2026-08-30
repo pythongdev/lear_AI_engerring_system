@@ -298,6 +298,79 @@ Fixed
 
 ---
 
+### F-009 — Hai cổng cố ý ngoảnh mặt khỏi file chưa track, và `git add -A` chuyên đi nhặt đúng chỗ đó
+
+**Problem:**
+Ngày **2026-08-30**, commit `0b3a337` mang subject *"T-020: đơn mang đi được trả trước, §6.3 hết
+câu tuyệt đối"* nhưng nội dung là **1096 dòng của ba file `docs/` chưa track**
+(`updatee_sýstem.md`, `đánh_giá_file_decisions.md`, `đánh_giá_file_product.md`) — **không một dòng
+nào của T-020**. T-020 thật là `1b1d5f5`, sáu file, đã đúng. Phiên làm T-020 đã nói rõ trong báo
+cáo rằng ba file kia *"không phải của tôi, không nằm trong khối commit"*, và khối commit được giao
+liệt kê đích danh sáu file.
+
+Đây là lần thứ **tư** của cùng một họ lỗi — commit nuốt thứ mà task không được phép chạm:
+
+| # | Commit | Nuốt cái gì | Task khai scope thế nào |
+|---|---|---|---|
+| 1 | `5c41f65` | `work/scope.txt` còn 6 pattern | §6 cấm commit `work/scope.txt` |
+| 2 | `25f0f88` | `work/scope.txt` còn 8 pattern | như trên |
+| 3 | `128955a` (T-013) | `prompt/maintenance/10-prepay-takeaway-L2.md`, +133 dòng | scope ghi thẳng *"Không được sửa: `prompt/**`"* |
+| 4 | `0b3a337` (mang tên T-020) | ba file `docs/`, +1096 dòng | khối commit được giao liệt kê sáu file, không có file nào trong đó |
+
+Ba lần đầu từng được đọc là chuyện quên dọn (T-016). Lần thứ tư cho thấy cơ chế thật, và nó không
+phải chuyện trí nhớ — **hai cổng đang cố ý không nhìn vào đúng tập file mà `git add -A` nhặt**:
+
+- **Gate 3** (`check-scope.sh`) chỉ chặn file **git đang theo dõi**; file chưa track chỉ in
+  `note:` — đây là **quyết định**, ADR-003, và là quyết định đúng: git không phân biệt được file
+  chưa track do task này tạo ra hay đã nằm đó từ trước.
+- **Gate 7** (`check-commit-block.sh`) bỏ qua dòng `??` ngay từ đầu, cũng viện đúng ADR-003, và nó
+  chỉ hỏi *"turn này có giao khối commit không"* — **không bao giờ hỏi trong khối đó có gì**.
+
+⇒ File chưa track là **giao điểm mù của cả hai cổng**. `git add -A` và `git add .` thì ngược lại:
+chúng nhặt chính xác tập đó. Luật cấm chúng có tồn tại — CLAUDE.md §6.1 *"List the files, one by
+one. Never `git add -A`, never `.`"* — nhưng luật đó **không có cơ chế nào đứng sau**, đúng loại
+hỏng F-001 mô tả.
+
+**Impact:**
+Nặng nhất không phải 1096 dòng thừa, mà là **commit message nói sai về chính nó**, ở đúng nơi hệ
+thống dùng làm tín hiệu trạng thái. `brief.sh` in RECENT COMMITS cho mọi phiên mới (ADR-002), nên
+phiên sau đọc log thấy **hai** commit cùng tên "T-020" và tin cả hai là việc của T-020. Kéo theo:
+
+- **`git revert` mất an toàn.** Hai subject giống hệt nhau; revert nhầm cái thì hoặc không gỡ được
+  gì, hoặc xoá âm thầm 1096 dòng của người khác.
+- **Ba file kia nay đã được track**, nên chúng không còn là ghi chú vãng lai. Trong đó
+  `docs/updatee_sýstem.md` (1010 dòng) mô tả một **cấu trúc sở hữu khác** với CLAUDE.md §2
+  (`docs/facts/business-rules.md`… trong khi §2 nói `master_plan/shop-facts.md` là nhà duy nhất).
+  §2 nói hai chỗ mâu thuẫn thì chỗ kia *"là bug phải sửa ngay"* — bug đó vừa được commit vào repo.
+- Lần 3 còn cho thấy phạm vi sát thương chéo giữa các phiên: ghi chú `note:` của Gate 3 in ra cho
+  **phiên đang mở**, còn `git add` lại xảy ra ở **phiên khác**. Cảnh báo được đưa cho đúng người sai.
+
+**Decision / Fix:**
+Chưa sửa cơ chế. CLAUDE.md §3.8 chỉ cho dựng cơ chế sau khi cùng một vấn đề trả giá hai lần —
+ngưỡng đã vượt gấp đôi, nên lần này **được phép**, nhưng đi kèm hai ràng buộc để không đập vỡ
+ADR-003:
+
+1. **Không lật ADR-003.** Gate 3 vẫn không được chặn vì một file chưa track — lý do của ADR-003
+   còn nguyên giá trị.
+2. Chỗ kiểm đúng là **tập file đã `git add`**, không phải cây làm việc: tại thời điểm đó câu hỏi
+   *"file này có thuộc scope không"* mới trả lời được, vì người ta vừa cố ý chọn nó. Kiểm này thuộc
+   Gate 7 (nơi đã đọc khối commit) và **cảnh báo, không chặn**.
+
+Việc sửa **gấp vào T-016** thay vì mở task mới — T-016 đã là L2, đã sửa đúng script family đó, và
+mở task riêng cho cùng một lần sửa là thứ §3.8 gọi là ceremony.
+
+Riêng hậu quả đã commit của lần thứ tư — hai commit trùng tên và ba file `docs/` nay đã track,
+trong đó một file mâu thuẫn §2 — là việc **T-023**, vì nó cần chủ repo quyết (sửa lịch sử hay để
+nguyên; giữ, chuyển hay xoá ba file đó).
+
+**Related task:**
+T-016 (gấp phần kiểm staged-vs-scope vào), T-023 (dọn hậu quả đã commit)
+
+**Status:**
+Open
+
+---
+
 ### F-008 — Brief đọc Unknowns bằng **hình dạng dòng**, nên cách xuống dòng quyết định phiên sau có thấy câu hỏi không
 
 **Problem:**

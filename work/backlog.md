@@ -20,7 +20,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-Sáu việc bảo trì. **Một việc chặn chuỗi BA, làm trước: T-015.** Năm việc còn lại không
+Bảy việc bảo trì. **Một việc chặn chuỗi BA, làm trước: T-015.** Sáu việc còn lại không
 chặn ai, chen vào lúc nào cũng được.
 
 - [ ] T-015 §10 kế hoạch gốc: hai câu đã có lời giải, một câu hỏi hẹp hơn thực tế — chặn BA-10
@@ -29,6 +29,7 @@ chặn ai, chen vào lúc nào cũng được.
 - [ ] T-009 Gỡ dòng mẫu T-001 khỏi Ready
 - [ ] T-019 `prompt-fullstack.md` trỏ tới bảy đường không tồn tại — F-007
 - [ ] T-021 `brief.sh` đọc Unknowns bằng hình dạng dòng, in sai cả hai chiều — F-008
+- [ ] T-023 Hai commit trùng tên "T-020"; ba file `docs/` bị commit nhầm, một file mâu thuẫn §2 — F-009
 - [ ] T-001 Replace this with the first meaningful task.
 
 - **T-011 đã xong 2026-08-30** — dòng BA-04 ở §11 kế hoạch gốc nay ghi đủ ba kênh không gắn bàn,
@@ -39,6 +40,14 @@ chặn ai, chen vào lúc nào cũng được.
   prompt (T-012) — ba loại F-005 kể tên — và loại thứ tư F-005 không kể, **bản xuất khẩu** (T-013). Luật rà chung ở `work/findings.md`
   **F-006**: grep theo **định danh** kênh, không theo con số — và đọc những file grep **không**
   ra kết quả, vì chỗ thiếu nằm ở đó.
+- **T-023 dọn hậu quả đã commit của F-009 (2026-08-30) — cần chủ repo quyết, không tự làm.**
+  Commit `0b3a337` mang subject của T-020 nhưng chứa 1096 dòng của ba file `docs/` chưa track;
+  T-020 thật là `1b1d5f5`. Hai commit trùng tên làm `git revert` mất an toàn, và
+  `docs/updatee_sýstem.md` nay đã track trong khi nó mô tả một cấu trúc sở hữu khác CLAUDE.md
+  §2. **Sửa lịch sử hay để nguyên là quyền chủ repo**, nên task này dừng ở mức ghi.
+- **T-016 nay gánh thêm phần kiểm của F-009.** Nó vốn chỉ lo `work/scope.txt` quên dọn; F-009
+  cho thấy cùng một script family phải kiểm thêm **tập file đã `git add`** có nằm trong scope
+  không. Gấp vào T-016, không mở task riêng (§3.8).
 - **T-021 sinh ra từ T-020 (2026-08-30), không chặn ai nhưng chạm vào thứ mọi phiên đều dùng.**
   `brief.sh` đọc mục *Unknowns* bằng `grep` theo hình dạng dòng, nên nó vừa giấu U-005 vừa in
   U-004 đã đóng như đang mở. T-020 đã sửa **phía dữ liệu** để brief đọc đúng ngay hôm nay; chữa
@@ -179,7 +188,47 @@ nào ở *In Progress*. Cần một ADR và một finding — nhưng **hai số 
 ADR-004 là của T-018 (2026-08-30), F-007 là của T-013 (2026-08-30). Dùng số trống kế tiếp tại
 thời điểm làm, đừng dùng số ghi trong prompt.
 
-**Acceptance · Verify:** trong file prompt.
+**Phạm vi mở rộng 2026-08-30 (F-009):** ngoài việc kêu khi `work/scope.txt` còn pattern, task
+này gánh thêm phần kiểm **tập file đã `git add` có nằm trong scope không**. Lý do gộp: cùng một
+script family, cùng một họ lỗi *commit nuốt thứ task không được phép chạm*, và đã trả giá bốn
+lần (`5c41f65`, `25f0f88`, `128955a`, `0b3a337`). Hai ràng buộc bắt buộc, chi tiết ở F-009:
+**không lật ADR-003** (Gate 3 vẫn không chặn vì file chưa track), và phần kiểm mới **cảnh báo,
+không chặn**, đặt ở Gate 7 — nơi đã đọc khối commit.
+
+**Acceptance · Verify:** trong file prompt — **phần mở rộng trên chưa có Acceptance**, phải viết
+trước khi sửa code (CLAUDE.md §3, L2).
+
+### T-023 — Hai commit trùng tên "T-020", và ba file `docs/` bị commit nhầm
+
+**Prompt:** chưa có · **Finding:** `work/findings.md` **F-009** (Open) · L2
+
+**Goal:**
+Lịch sử git kể đúng thứ đã xảy ra, và `docs/` không còn file nào mâu thuẫn CLAUDE.md §2.
+
+**Nói một câu, việc phải làm là gì:**
+Quyết ba việc rồi thi hành: (a) hai commit trùng subject `T-020` xử thế nào, (b) ba file `docs/`
+vừa bị track thì giữ, chuyển hay xoá, (c) riêng `docs/updatee_sýstem.md` mô tả cấu trúc sở hữu
+khác §2 thì phần nào thành đề xuất có chủ, phần nào bỏ. Việc **không** phải làm: tự sửa lịch
+sử git — đó là quyền chủ repo.
+
+**Vì sao có task này:**
+`0b3a337` (2026-08-30) mang subject *"T-020: đơn mang đi được trả trước…"* nhưng nội dung là
+1096 dòng của ba file `docs/` chưa track, không một dòng nào của T-020; T-020 thật là `1b1d5f5`.
+Cơ chế và ba lần trước ghi ở **F-009**.
+
+**Không làm thì mất gì:**
+- `brief.sh` in RECENT COMMITS cho mọi phiên mới (ADR-002), nên phiên sau đọc thấy **hai** commit
+  cùng tên T-020 và tin cả hai là việc của T-020.
+- `git revert` mất an toàn: revert nhầm cái thì hoặc không gỡ được gì, hoặc xoá âm thầm 1096 dòng.
+- `docs/updatee_sýstem.md` nay là **nội dung repo đã track** mô tả một cấu trúc sở hữu khác §2.
+  §2 nói hai chỗ mâu thuẫn thì chỗ kia là bug phải sửa ngay — bug đó đang nằm trong repo.
+
+**Bẫy:**
+- **Không `git push --force` hay rewrite lịch sử đã chia sẻ** nếu chưa có lệnh rõ ràng.
+- **Đọc `updatee_sýstem.md` trước khi xoá.** 1010 dòng, có thể có đề xuất đáng giữ; xoá thẳng là
+  vứt việc của người khác.
+
+**Acceptance · Verify:** chưa viết — task này chưa có file prompt.
 
 ### T-009 — Gỡ dòng mẫu T-001 khỏi Ready
 
