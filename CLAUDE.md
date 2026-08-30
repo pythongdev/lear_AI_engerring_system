@@ -156,6 +156,37 @@ review, cold-context review — are in `quality/review-gate.md`.
 - One task per commit. Subject: `T-XXX: what changed` (imperative, ≤ 72 chars).
 - `work/scope.txt` is working state, not a deliverable — do not commit patterns.
 
+### 6.1 Hand over the commit, ready to paste
+
+You do not run `git commit`; you **write** it. The session is the only place that
+still knows which task this was, which files it touched, and what the gate
+printed — that knowledge has to leave the session in a form the user can paste.
+So the closing report of **every task**, and of **every session** for whatever is
+still uncommitted, ends with:
+
+```bash
+git add CLAUDE.md work/backlog.md
+git commit -m "T-XXX: what changed" -m "Why it changed.
+Verified: ./scripts/gate.sh green."
+```
+
+- **List the files, one by one.** Never `git add -A`, never `.` — the block must
+  stage this task's files and nothing that happened to be lying around.
+- **`work/scope.txt` is never in the block** (§6 above; the two times it was
+  committed are `work/backlog.md` T-016).
+- **Subject follows §6:** `T-XXX: what changed`, imperative, ≤ 72 chars, written
+  in the language the change itself is written in. An L0 change with no task ID
+  drops the `T-XXX:` prefix.
+- **Body: one to three lines** — why, plus the evidence that it works. Skip the
+  body when the subject already says everything (a typo, a rename).
+- **One task per block.** Two tasks finished in one session are two blocks, in
+  the order they should be committed (§6: one task per commit).
+- **Uncommitted work that is not yours is not folded in.** Name it, say it is
+  not in your block, and leave it to whoever made it.
+
+Give the block whether or not the user asks for it — asking to commit is a
+separate request (§6), and the answer to it is already written by then.
+
 ## 7. Keeping the System Current
 
 The repo grows; a session's memory does not survive it. Every session starts
@@ -231,6 +262,8 @@ Anything true only inside your head is lost. Before finishing:
 - `work/scope.txt` is cleared when the task is done, or left declared and
   accurate when it is not.
 - Every rule, decision, invariant and unknown you hit is in its owner (§2, §4).
+- Every task finished this session has its paste-ready commit block in the
+  report (§6.1), plus one for anything else left uncommitted.
 - The final report says what is **still unresolved**, in the same words the
   next session would need to pick it up.
 
@@ -245,6 +278,7 @@ Tiered like §3 — an L0 change is done after four lines, not eleven.
 - [ ] Any rule, decision, invariant, or unknown you hit is recorded in its owner
       (§2, §4), written so the next session can trust it (§7.2).
 - [ ] Handed off: backlog and `work/scope.txt` match reality (§7.3).
+- [ ] Commit content handed over as a paste-ready block (§6.1).
 - [ ] Report: what changed, how it was verified (with command output), what is
       still unresolved.
 

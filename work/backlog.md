@@ -55,12 +55,11 @@ Chi tiết từng task ở **Chi tiết — việc cần làm**.
 
 ## In Progress
 
-(không có task nào đang chạy)
-
 ## Done
 
-Mới nhất ở trên. Chi tiết từng task ở **Chi tiết — việc đã xong**.
+Chi tiết từng task ở **Chi tiết — việc đã xong**.
 
+- [x] T-017 Kết thúc mỗi task/phiên giao sẵn nội dung commit (CLAUDE.md §6.1) (2026-08-30)
 - [x] T-011 `phone_preorder` nay thuộc lát cắt Epic B — luồng mang đi ba kênh (2026-08-30)
 - [x] T-008 Backlog có 11 task BA-01–BA-11, thứ tự phụ thuộc và acceptance kiểm được
 - [x] T-010 Gate 3 chỉ chặn file git đang theo dõi; file chưa track chỉ được ghi chú (ADR-003)
@@ -580,6 +579,40 @@ git status --porcelain
 ```
 
 ## Chi tiết — việc đã xong
+
+### T-017 — Kết thúc task/phiên chưa giao nội dung commit
+
+**Prompt:** yêu cầu miệng của chủ repo, 2026-08-30 (L1)
+
+**Goal:**
+Chủ repo là người bấm commit, nhưng người viết commit phải là phiên làm việc — phiên là chỗ duy
+nhất còn biết task nào, file nào, bằng chứng nào. Hiện §6 chỉ quy định *dạng* subject và cấm tự
+commit; không có dòng nào bắt phiên **giao** nội dung commit. Kết quả nằm ngay trong git log:
+`202e8c4 ádg`, `2692178 sdgf`, `25f0f88 sdfg` — ba commit gần nhất không có nội dung, vì việc soạn
+nội dung rơi vào lúc phiên đã kết thúc.
+
+**Scope:**
+`CLAUDE.md` · `work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+Không dữ kiện nghiệp vụ. Không tự chạy `git commit`/`git add`. Không thêm hook, không thêm script,
+không tạo file `.md` mới (CLAUDE.md §3.8).
+
+**Acceptance:**
+1. `CLAUDE.md` §6 có tiểu mục §6.1 quy định: cuối **mỗi task** và cuối **mỗi phiên** cho phần chưa
+   commit, báo cáo kết thúc bằng một khối `git add` + `git commit` dán chạy được ngay.
+2. §6.1 nói rõ khối đó **liệt kê từng file**, không `git add -A`, và không bao giờ chứa
+   `work/scope.txt` (nối lại luật §6 gạch đầu dòng 4 và T-016).
+3. §7.3 (bàn giao cuối phiên) có một gạch đầu dòng trỏ tới §6.1.
+4. §8 *Every level* có một dòng checklist về nội dung commit.
+5. Chính task này giao commit theo đúng §6.1 — bằng chứng là khối commit ở cuối báo cáo.
+6. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+grep -n "6.1" CLAUDE.md
+./scripts/gate.sh
+```
 
 ### T-011 — Kênh `phone_preorder` không thuộc lát cắt BA nào
 
