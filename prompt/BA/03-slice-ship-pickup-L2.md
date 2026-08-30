@@ -1,6 +1,6 @@
-# 03 — Lát cắt "một đơn ship/pickup" (L2) · BA-04
+# 03 — Lát cắt "một đơn mang đi" (L2) · BA-04
 
-> L2 vì đơn ship/pickup là đơn vị thu tiền độc lập; sai luồng là đơn khách không đi hết
+> L2 vì đơn mang đi là đơn vị thu tiền độc lập; sai luồng là đơn khách không đi hết
 > quy trình hoặc thu tiền sai kênh.
 
 ## Context
@@ -16,8 +16,9 @@
 
 ## Goal
 
-`docs/product.md` §3.2 mô tả trọn đường đi của một đơn ship và một đơn pickup — từ lúc khách
-chọn món đến lúc đơn hoàn thành — và nêu rõ nó khác đơn tại bàn ở chỗ nào.
+`docs/product.md` §3.2 mô tả trọn đường đi của một **đơn mang đi** — một luồng, ba kênh
+`delivery` · `pickup` · `phone_preorder` (`shop-facts.md` §5.2), từ lúc khách đặt đến lúc đơn
+hoàn thành — và nêu rõ nó khác đơn tại bàn ở chỗ nào.
 
 ## Scope
 
@@ -38,11 +39,13 @@ work/backlog.md
 
 ## Constraints
 
-- Giữ quy tắc §5: đơn ship/pickup **không** dùng phiên bàn; mỗi đơn là một đơn vị nghiệp vụ
+- Giữ quy tắc §5: đơn mang đi **không** dùng phiên bàn; mỗi đơn là một đơn vị nghiệp vụ
   độc lập; ngoài giờ bán không nhận đơn; chủ quán có thể tạm dừng nhận đơn bất kể giờ bán.
 - Tổng tiền phải được hệ thống xác định lại khi đơn được tạo; khách không tự quyết giá.
-- Ship và pickup phải được tách rõ ở bước cuối: pickup chờ khách tới lấy, delivery đóng gói
-  và hoàn thành đơn.
+- Bước cuối tách theo **cách trao hàng**, không theo kênh (`shop-facts.md` §5.2): **giao tận nơi**
+  (quán tự đi giao, đơn mang trạng thái "đang giao", thu tiền tại chỗ khách) và **tới lấy**
+  (khách tới quán lấy, thu tiền tại quầy). `phone_preorder` rơi vào **một trong hai** — nhân viên
+  phải hỏi khách chọn cách nào, nên đừng gán cho nó một nhánh riêng thứ ba.
 - Dữ kiện đã chốt, dùng đúng, **không** ghi lại thành câu hỏi (`shop-facts.md` §1, §2, §6.12):
   - Giờ bán **06:00–11:00, tất cả các ngày**, múi giờ `Asia/Ho_Chi_Minh`.
   - Phí ship **0đ**. Không có **đơn tối thiểu**. Không có bậc phí ship — đây là **chốt**,
@@ -63,7 +66,7 @@ work/backlog.md
 
 - §3.2 có luồng đủ 9 bước theo §4.2 kế hoạch gốc, mỗi bước ghi rõ actor.
 - §3.2 phủ đủ **ba** kênh không gắn bàn, và nói rõ `phone_preorder` khác `staff_pos` ở chỗ nào.
-- Có câu khẳng định đơn ship/pickup không gắn phiên bàn và được thanh toán độc lập.
+- Có câu khẳng định đơn mang đi — cả ba kênh — không gắn phiên bàn và được thanh toán độc lập.
 - Nêu rõ thông tin liên hệ tối thiểu khách phải cung cấp cho từng kênh; pickup có thêm giờ hẹn
   tới lấy. Mức tối thiểu **đã chốt** (`shop-facts.md` §6.5): **số điện thoại bắt buộc cả ba kênh**,
   **địa chỉ bắt buộc khi giao tận nơi**, phần còn lại quầy điền theo tình huống thật.
@@ -74,7 +77,7 @@ work/backlog.md
   **thắng** giờ mở cửa.
 - Có một đoạn "Khác gì so với đơn tại bàn" liệt kê ít nhất 3 khác biệt nghiệp vụ.
 - Có mô tả đường đi của **đơn `phone_preorder`** từ lúc nhân viên nghe máy tới lúc đơn hoàn thành.
-- `quality/invariants.md` có invariant: đơn ship/pickup không thuộc phiên bàn nào;
+- `quality/invariants.md` có invariant: đơn mang đi không thuộc phiên bàn nào;
   không tạo được đơn ngoài giờ bán hoặc khi đang tạm dừng nhận đơn.
 - Không có nội dung về nhà cung cấp vận chuyển, API bản đồ, hay cách tính phí ship
   (trừ khi đã được trả lời trong Unknowns).
@@ -99,7 +102,7 @@ Gate 5 (L2): đọc lại invariant mới, xác nhận không mâu thuẫn invar
   viên hỏi khách giao tận nơi hay tới lấy, **và cần lúc mấy giờ**.
 - ~~Delivery ở MVP chỉ ghi nhận đơn, hay quản lý trạng thái giao hàng~~ → **đã gỡ 2026-08-30**
   (`shop-facts.md` §6.7): quán **tự đi giao**, đơn giao mang trạng thái **"đang giao"**.
-- Đơn ship/pickup có được thanh toán trước không, hay chỉ thu khi nhận hàng?
+- Đơn mang đi có được thanh toán trước không, hay chỉ thu khi nhận hàng?
 - Giờ hẹn pickup có khung tối thiểu không (đặt trước ít nhất bao lâu), và quá giờ hẹn thì sao?
 - Ai giao hàng — nhân viên quán hay bên thứ ba?
 

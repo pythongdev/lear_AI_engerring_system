@@ -42,7 +42,9 @@ work/backlog.md
 
 - Ba scenario bắt buộc, đúng §12 kế hoạch gốc:
   1. Khách QR tại bàn → gọi nhiều lần → thanh toán một lần.
-  2. Khách đặt ship/pickup → quán xác nhận → hoàn thành.
+  2. Khách đặt **đơn mang đi** — một luồng, ba kênh: `delivery` · `pickup` · `phone_preorder`
+     (`shop-facts.md` §5.2) → quán xác nhận → hoàn thành. Đơn `phone_preorder` do nhân viên
+     nhập hộ nên **không qua bước quầy duyệt**; hai kênh còn lại phải duyệt (`shop-facts.md` §6.2).
   3. Chủ quán đổi giá → đơn mới dùng giá mới, đơn cũ không đổi.
 - Mỗi bước của scenario phải trỏ được về một mục cụ thể trong §1–§7. Bước nào không trỏ được
   = lỗ hổng tài liệu → finding, không tự lấp bằng cách viết thêm nghiệp vụ.
@@ -69,7 +71,9 @@ work/backlog.md
   dán nhãn suy luận nữa.
 - **Scenario 2 phải dùng kênh `phone_preorder`** ít nhất một lần, vì đó là kênh mới nhất
   (owner chốt 2026-08-29) và chưa từng được diễn thử. Đơn `phone_preorder` **không thuộc phiên
-  bàn nào** — kết quả mong đợi phải kiểm được điều đó.
+  bàn nào** và **không đi qua bước quầy duyệt** (`shop-facts.md` §6.2 — nhân viên nhập hộ thì
+  đã có người chịu trách nhiệm) — kết quả mong đợi phải kiểm được cả hai điều đó. Diễn scenario 2
+  chỉ bằng `delivery` và `pickup` là nghiệm thu thiếu một phần ba lát cắt.
 
 ## Acceptance
 
@@ -79,8 +83,9 @@ work/backlog.md
 - Scenario 1 có bước kiểm số lượng bếp nhận được (6 bánh / 2 trứng / 2 giò / 1 nước chấm),
   khác số lượng trên hoá đơn (2 suất), và tổng tiền là **68.000đ** tra từ `shop-facts.md` §4.3.
 - Scenario 3 có món cụ thể, giá trước và giá sau, tra từ `shop-facts.md` §4.3.
-- Scenario 2 nêu rõ đơn không gắn phiên bàn và trạng thái cuối là `Hoàn thành`, và có ít nhất
-  một lượt dùng kênh `phone_preorder`.
+- Scenario 2 nêu đủ **ba** kênh mang đi, nêu rõ đơn không gắn phiên bàn và trạng thái cuối là
+  `Hoàn thành`, có ít nhất một lượt dùng kênh `phone_preorder`, và nói rõ lượt đó **không qua
+  bước quầy duyệt**.
 - Scenario 3 nêu rõ tổng tiền đơn cũ không đổi sau khi giá menu đổi.
 - Mỗi bước trong cả 3 scenario có tham chiếu tới mục §1–§7 chứa quy tắc tương ứng.
 - Có checklist cổng chất lượng BA (9 mục ở §12 kế hoạch gốc) với trạng thái tick thật,

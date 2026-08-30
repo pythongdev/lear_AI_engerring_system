@@ -51,7 +51,7 @@ suất trứng nhân thường = **25.000**. Viết theo ×5 và **không** còn
 | 00 | `00-master-L3.md` | L3 | BA-01–BA-11 | Kế hoạch BA + backlog + khung tài liệu |
 | 01 | `01-actors-channels-L1.md` | L1 | BA-01, BA-02 | `docs/product.md` §1 Actor, §2 Kênh bán |
 | 02 | `02-slice-dine-in-L2.md` | L2 | BA-03 | `docs/product.md` §3.1 Luồng ăn tại bàn |
-| 03 | `03-slice-ship-pickup-L2.md` | L2 | BA-04 | `docs/product.md` §3.2 Luồng ship/pickup |
+| 03 | `03-slice-ship-pickup-L2.md` | L2 | BA-04 | `docs/product.md` §3.2 Luồng mang đi (ba kênh) |
 | 04 | `04-slice-menu-price-change-L2.md` | L2 | BA-05 | `docs/product.md` §3.3 Đổi menu/giá |
 | 05 | `05-pricing-payment-L2.md` | L2 | BA-06 | `docs/product.md` §4 Giá & thanh toán + invariants |
 | 06 | `06-lifecycles-L2.md` | L2 | BA-07 | `docs/product.md` §5 Vòng đời + invariants |

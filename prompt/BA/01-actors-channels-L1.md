@@ -102,8 +102,9 @@ Câu **mới** sinh ra từ lời giải thứ ba: ~~ai được bấm huỷ đ�
   **kênh thứ năm `phone_preorder`, không gắn bàn**.
 
 Đã có lời giải, **không** ghi lại thành Unknown nữa:
-- ~~Khách QR có cần định danh không~~ → `shop-facts.md` §2: **ẩn danh theo bàn**; chỉ delivery và
-  pickup mới bắt buộc số điện thoại.
+- ~~Khách QR có cần định danh không~~ → `shop-facts.md` §2: **ẩn danh theo bàn**; **cả ba kênh
+  không gắn bàn** — `delivery`, `pickup`, `phone_preorder` — mới bắt buộc số điện thoại
+  (`shop-facts.md` §6.5, chủ quán chốt 2026-08-30).
 
 ## Report (AI trả lời sau khi làm)
 

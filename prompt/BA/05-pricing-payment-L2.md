@@ -14,7 +14,8 @@
   **§4.7 (bằng chứng mô hình tổng thành phần)**, §4.8 (11 tổ hợp), §6.3 (thu tiền lúc trao hàng),
   §6.4 (hoàn tiền — quầy quyết từng ca), §6.9 (doanh thu hai nguồn), §6.10 (đối soát cuối ngày).
 - Đích: `docs/product.md` §4.
-- Đã chốt trước đó: §3.1 (tính tiền theo phiên bàn), §3.2 (đơn ship/pickup độc lập),
+- Đã chốt trước đó: §3.1 (tính tiền theo phiên bàn), §3.2 (đơn mang đi độc lập — đủ ba kênh
+  `delivery` · `pickup` · `phone_preorder`, `shop-facts.md` §5.2),
   §3.3 (bất biến lịch sử giá).
 
 ## Goal
@@ -46,7 +47,8 @@ work/backlog.md
   - Tổng tiền được xác định lại khi đơn được tạo.
   - Đơn cũ giữ nguyên giá đã áp dụng (invariant từ BA-05).
   - Ăn tại bàn: nhiều đơn → một phiên → một lần thanh toán.
-  - Ship/pickup: mỗi đơn là một đơn vị thanh toán độc lập.
+  - Đơn mang đi — cả ba kênh `delivery` · `pickup` · `phone_preorder` (`shop-facts.md` §5.2):
+    mỗi đơn là một đơn vị thanh toán độc lập.
   - Mọi thao tác ảnh hưởng đến tiền phải kiểm chứng lại được.
 - **Luật gốc của giá là "giá một SUẤT = TỔNG giá các THÀNH PHẦN của suất"**
   (`shop-facts.md` §4.2–§4.3 + §4.5). Viết câu này ra đầu §4 — mọi luật khác là hệ quả của nó.
@@ -71,7 +73,9 @@ work/backlog.md
   Report: *"Suất trứng nhân thường là 25.000 hay 24.000?"*
 - Phương thức thanh toán ở MVP chỉ có: tiền mặt, VietQR tĩnh. Không thêm cổng thanh toán,
   ví điện tử, thẻ — kể cả dạng "chuẩn bị cho sau này".
-- **Doanh thu một ngày phải cộng từ HAI nguồn**: phiên bàn (dine-in) và đơn lẻ (ship/pickup).
+- **Doanh thu một ngày phải cộng từ HAI nguồn**: phiên bàn (dine-in) và đơn mang đi (đủ ba kênh).
+  **Hai** ở đây chia theo **đơn vị thanh toán** (phiên bàn ↔ đơn lẻ), không chia theo kênh —
+  ba kênh mang đi cùng rơi vào nguồn thứ hai (`shop-facts.md` §5 bảng đầu mục).
   Một khoản tiền thuộc **đúng một** trong hai, không bao giờ cả hai (`shop-facts.md` §6.9).
   Báo cáo bỏ sót một nguồn là báo cáo thiếu.
 - **Đối soát cuối ngày đã chốt** (`shop-facts.md` §6.10): mỗi tối đối chiếu doanh thu hệ thống với
@@ -95,14 +99,15 @@ work/backlog.md
 - §4 **không chép** bảng giá; chỗ cần số thì trỏ `shop-facts.md` §4.2–§4.3.
 - Không có câu nào nói phụ thu "không nhân theo số phần bếp làm" — câu đó đã bị gỡ khỏi
   `shop-facts.md` ngày 2026-08-29, thấy nó quay lại là bug.
-- Có bảng hoặc danh sách phân biệt đơn vị thanh toán theo kênh: tại bàn = phiên; ship/pickup = đơn.
+- Có bảng hoặc danh sách phân biệt đơn vị thanh toán theo kênh, đủ **năm** kênh: `qr_table` và
+  `staff_pos` = phiên; `delivery`, `pickup` và `phone_preorder` = đơn.
 - Liệt kê đúng 2 phương thức thanh toán, mỗi phương thức nói rõ ai xác nhận đã thu được tiền.
 - Có mô tả trường hợp thanh toán chưa xác nhận được: phiên/đơn nằm ở trạng thái nào,
   bàn có được giải phóng không.
 - Nêu được cơ sở đối soát cuối ngày ở mức nghiệp vụ: đối chiếu với **sổ giấy** và **tiền trong két**,
   ngưỡng chấp nhận lệch = **0đ**.
-- Có câu khẳng định doanh thu một ngày = tiền thu từ phiên bàn **cộng** tiền thu từ đơn ship/pickup,
-  và một khoản tiền chỉ thuộc một trong hai.
+- Có câu khẳng định doanh thu một ngày = tiền thu từ phiên bàn **cộng** tiền thu từ đơn mang đi
+  (cả ba kênh), và một khoản tiền chỉ thuộc một trong hai.
 - `quality/invariants.md` có ít nhất: tổng tiền của một phiên bằng tổng tiền các đơn thuộc phiên đó;
   giá áp dụng cho một đơn không đổi sau khi đơn được tạo; không có thao tác đổi tiền nào
   không truy vết lại được.

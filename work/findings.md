@@ -267,8 +267,23 @@ Chữa tận gốc, cùng hướng với ADR-001 và F-005: tài liệu khung **
 trỏ về `shop-facts.md` §5.2 cho danh sách thành viên, thay vì tự liệt kê kênh. Chỗ nào buộc phải
 liệt kê thì liệt kê đủ cả ba định danh, để lần sau grep theo tên bắt được nó.
 
+**Lần rà thứ ba — `prompt/**`, 2026-08-30 (T-012).** Loại file thứ ba của F-005 lệch ở đúng bốn
+chỗ mà bảng *Context* của `prompt/maintenance/05-ba-prompts-three-channels-L1.md` đã kể
+(`10-acceptance-scenarios-L2.md`, `05-pricing-payment-L2.md`, `03-slice-ship-pickup-L2.md`,
+`prompt/BA/README.md`) — **và một chỗ nữa bảng đó không kể**:
+`prompt/BA/01-actors-channels-L1.md` viết *"chỉ delivery và pickup mới bắt buộc số điện thoại"*,
+trong khi `shop-facts.md` §6.5 bắt buộc số điện thoại cho **cả ba** kênh không gắn bàn.
+
+Chỗ này bổ sung một dạng lệch cho luật trên: nó **không** mô tả luồng, nó liệt kê thành viên
+trong một câu nói về **một trường dữ liệu bắt buộc** — tức chạm vào cái mà quán cần để giao được
+hàng. Nên câu hỏi thứ hai của luật rà mở rộng thêm một vế: mỗi chỗ liệt kê thành viên phải hỏi
+*"quy tắc này áp cho cả luồng hay chỉ cho vài kênh?"* — nếu áp cho cả luồng thì gọi tên luồng,
+nếu chỉ áp cho vài kênh thì nói rõ vì sao. Nó cũng chốt cách rà đúng: grep định danh
+(`phone_preorder`) rồi đọc **những file không có kết quả** — chỗ thiếu nằm ở đó, không nằm
+trong kết quả grep.
+
 **Related task:**
-T-011
+T-011, T-012 (lần rà thứ ba)
 
 **Status:**
 Fixed

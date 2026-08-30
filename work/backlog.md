@@ -10,8 +10,9 @@ hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 | [Ready](#ready) | việc cần làm — checklist + thứ tự lấy |
 | [In Progress](#in-progress) | task đang chạy |
 | [Done](#done) | việc đã xong |
-| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | mô tả dài T-012…BA-11 + bảng mười câu hỏi §10 |
-| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-011…T-002 |
+| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | mô tả dài T-013…BA-11 + bảng mười câu hỏi §10 |
+| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-012…T-002 |
+| [Vòng chạy một task L1](#vong-chay) | mười bước thủ tục từ nhận task tới khối commit |
 | [Task Detail Template](#template) | khuôn viết một task mới |
 
 Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
@@ -19,10 +20,9 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-Sáu việc bảo trì. **Hai việc chặn chuỗi BA, làm trước:** T-012 → T-015. Bốn việc còn lại không
+Năm việc bảo trì. **Một việc chặn chuỗi BA, làm trước: T-015.** Bốn việc còn lại không
 chặn ai, chen vào lúc nào cũng được.
 
-- [ ] T-012 Bộ prompt `prompt/BA/` còn mô tả luồng mang đi bằng hai kênh — chặn BA-04, BA-06, BA-11
 - [ ] T-015 §10 kế hoạch gốc: hai câu đã có lời giải, một câu hỏi hẹp hơn thực tế — chặn BA-10
 - [ ] T-013 `master_plan/prompt-fullstack.md` vẫn nói "4 kênh" và "luồng ship/pickup khác 3 điểm"
 - [ ] T-014 §2.1 kế hoạch gốc thiếu việc khách gọi điện đặt trước
@@ -33,12 +33,14 @@ chặn ai, chen vào lúc nào cũng được.
 - **T-011 đã xong 2026-08-30** — dòng BA-04 ở §11 kế hoạch gốc nay ghi đủ ba kênh không gắn bàn,
   và §3 Epic B, §4.2, §5, §6, §12 cũng vậy. Khung và nhà thật (`master_plan/shop-facts.md` §5.2)
   nay nói cùng một luồng mang đi.
-- **T-012 và T-013 là phần còn lại của cùng con bug T-011 sửa** — cùng một kênh
-  `phone_preorder`, hai loại file khác: `prompt/**` và bản xuất khẩu. Luật rà chung ở
-  `work/findings.md` **F-006**: grep theo **định danh** kênh, không theo con số.
-- **T-012 chặn BA-04, BA-06, BA-11.** Ba task đó chạy bằng prompt còn kể hai kênh; nặng nhất là
-  BA-11 — nó tick theo `prompt/BA/10-acceptance-scenarios-L2.md` dòng 45, tức đóng cả giai đoạn BA
-  mà một kênh chưa ai nghiệm thu.
+- **T-012 đã xong 2026-08-30** — `prompt/BA/**` nay gọi luồng mang đi bằng tên luồng và ba kênh.
+  **T-013 là phần cuối cùng của con bug T-011 sửa**: cùng một kênh `phone_preorder`, loại file
+  còn lại là bản xuất khẩu. Luật rà chung ở `work/findings.md` **F-006**: grep theo **định danh**
+  kênh, không theo con số — và đọc những file grep **không** ra kết quả, vì chỗ thiếu nằm ở đó.
+- **BA-04, BA-06 và BA-11 hết bị T-012 chặn (2026-08-30).** Scenario 2 ở
+  `prompt/BA/10-acceptance-scenarios-L2.md` nay nêu đủ ba kênh và đòi diễn `phone_preorder`
+  **không qua bước quầy duyệt**, nên tick BA-11 không còn đóng giai đoạn BA khi một kênh chưa
+  ai nghiệm thu.
 - **T-015 chặn BA-10** và nên xong trước BA-04, BA-06: §10 còn để mở hai câu đã chốt, task sau đọc
   vào sẽ biến luật đã chốt thành giả định (CLAUDE.md §3.5 cấm).
 - T-016 là việc của hệ thống làm việc, không chạm dữ kiện quán — chạy song song với bất kỳ task nào.
@@ -48,7 +50,7 @@ Chuỗi BA chạy từ trên xuống. Thứ tự là cột "Cần xong trước"
 đã xong 2026-08-30 nên BA-03, BA-04, BA-05 mở được ngay và chạy song song được.
 
 - [ ] BA-03 `docs/product.md` §3.1 — lát cắt một suất tại bàn · cần BA-02
-- [ ] BA-04 `docs/product.md` §3.2 — lát cắt một đơn mang đi (ba kênh) · cần BA-02 (T-011 xong)
+- [ ] BA-04 `docs/product.md` §3.2 — lát cắt một đơn mang đi (ba kênh) · cần BA-02 (T-011, T-012 xong)
 - [ ] BA-05 `docs/product.md` §3.3 — lát cắt chủ quán đổi menu/giá · cần BA-02
 - [ ] BA-06 `docs/product.md` §4 — quy tắc giá và thanh toán · cần BA-03, BA-04
 - [ ] BA-07 `docs/product.md` §5 — vòng đời đơn, phiên bàn, công việc trạm · cần BA-03
@@ -72,6 +74,7 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xong).
 
+- [x] T-012 Bộ prompt `prompt/BA/` gọi luồng mang đi bằng ba kênh (F-006, lần rà thứ ba) (2026-08-30)
 - [x] T-018 Gate 7 — hook chặn turn kết thúc mà chưa giao khối commit (ADR-004) (2026-08-30)
 - [x] T-017 Kết thúc mỗi task/phiên giao sẵn nội dung commit (CLAUDE.md §6.1) (2026-08-30)
 - [x] T-011 `phone_preorder` nay thuộc lát cắt Epic B — luồng mang đi ba kênh (2026-08-30)
@@ -114,71 +117,6 @@ ADR, câu nào chưa thì thành GIẢ ĐỊNH có mức rủi ro và người c
 
 **S-1, S-2, S-3 không phải giả định.** Chủ quán xác nhận cả ba ngày **2026-08-30**
 (`shop-facts.md` §7.1); §7.2 nay không còn mục nào. Task nào ghi chúng là "chưa xác nhận" là sai.
-
-### T-012 — Bộ prompt BA còn mô tả luồng mang đi bằng hai kênh
-
-**Prompt:** `prompt/maintenance/05-ba-prompts-three-channels-L1.md` (L1) · **chặn** BA-04, BA-06, BA-11
-
-**Goal:**
-Không còn prompt nào trong `prompt/BA/` mô tả luồng mang đi bằng cách kể hai kênh. T-011 đã sửa
-tài liệu **khung**; đây là loại file thứ ba của `work/findings.md` F-005 — `prompt/**`, thứ phiên
-sau đọc rồi làm theo. Nặng nhất là `10-acceptance-scenarios-L2.md` dòng 45: BA-11 tick theo nó.
-
-**Nói một câu, việc phải làm là gì:**
-Sửa **chữ** trong `prompt/BA/**` để mọi prompt gọi luồng mang đi là **một luồng ba kênh**
-(`delivery` · `pickup` · `phone_preorder`) thay vì kể tên hai kênh ("ship/pickup"). Đây là việc
-sửa phạm vi cho đúng, **không** phải viết lại prompt: không đổi tên file, không đổi ID `BA-01`–
-`BA-11`, không đổi level, không thêm/bớt bước hay scenario.
-
-**Vì sao có task này:**
-Chủ quán chốt kênh bán thứ năm `phone_preorder` (2026-08-24, sửa tên 2026-08-29, chốt luồng
-2026-08-30). Nhà thật `master_plan/shop-facts.md` §5.2 xếp nó **chung một luồng** với `delivery`
-và `pickup` — ba kênh không gắn bàn, mỗi đơn là một đơn vị thanh toán riêng. Theo F-005, một dữ
-kiện đổi thì phải rà đủ **ba loại file**: tài liệu tra cứu (`docs/product.md` — đã xong từ BA-02),
-tài liệu khung (kế hoạch gốc — T-011 xong 2026-08-30), và **prompt** — loại thứ ba, chưa ai rà.
-T-012 chính là loại thứ ba đó. T-013 là phần còn lại: bản xuất khẩu.
-
-**Không làm thì mất gì — ba chỗ, xếp theo mức nặng:**
-- **BA-11** tick nghiệm thu theo `prompt/BA/10-acceptance-scenarios-L2.md`. Scenario 2 đang viết là
-  "khách đặt ship/pickup". Diễn lại được scenario đó rồi tick nghĩa là **đóng cả giai đoạn BA
-  trong lúc một trong ba kênh chưa ai nghiệm thu**, rồi bước sang System Design với mô hình bán
-  hàng thiếu một kênh. Đây là chỗ nặng nhất, và là lý do T-012 phải chạy trước.
-- **BA-06** chốt quy tắc giá và thanh toán. `05-pricing-payment-L2.md` đang mô tả đơn vị thanh
-  toán của đơn không gắn bàn bằng hai kênh ⇒ `phone_preorder` bước vào giai đoạn sau mà **không có
-  luật tính tiền**.
-- **BA-04** viết `docs/product.md` §3.2 — chính lát cắt mang đi. Prompt của nó
-  (`03-slice-ship-pickup-L2.md`) hiện **tự mâu thuẫn**: một dòng đã nói đủ ba kênh, tiêu đề và
-  nhiều dòng khác vẫn nói hai.
-
-**Đây là con bug F-006, không phải bug mới.**
-Chỗ lệch **không chứa con số nào** — nó viết "ship/pickup", "Ship / Pickup" — nên luật grep theo
-con số của F-005 (`bốn`/`4`, `năm`/`5`) chạy đúng vẫn ra rỗng. Rà bằng **định danh** kênh
-(`phone_preorder`), và mỗi chỗ liệt kê thành viên thay vì gọi tên luồng là một chỗ phải sửa.
-
-**Thứ tự đọc trước khi sửa file đầu tiên:**
-1. `master_plan/shop-facts.md` §5.2 — luồng thật. Chú ý điểm dễ bỏ sót: `phone_preorder` do nhân
-   viên nhập hộ nên **không qua bước quầy duyệt**, khác `delivery` và `pickup`.
-2. `work/findings.md` F-005 và F-006 — vì sao rà theo định danh, và ba loại file phải rà.
-3. `prompt/maintenance/05-ba-prompts-three-channels-L1.md` — mục *Context* có **bảng liệt kê đúng
-   từng file, từng dòng** đang sai và sai kiểu gì. Chép bốn dòng ở mục *Scope* vào `work/scope.txt`
-   trước khi sửa. Đọc hết *Constraints*: có mấy cái bẫy sửa nhầm là hỏng.
-4. `prompt/BA/03-slice-ship-pickup-L2.md` dòng 51 — câu đã viết đúng, dùng làm mẫu giọng văn cho
-   các chỗ còn lại.
-
-**Ba cái bẫy hay sửa nhầm nhất** (danh sách đủ ở mục *Constraints* của prompt):
-- **Không đổi tên file.** `03-slice-ship-pickup-L2.md` giữ nguyên tên dù nội dung nói ba kênh —
-  `prompt/BA/README.md`, `work/backlog.md` và §11 kế hoạch gốc trỏ tới nó theo tên. Sửa tiêu đề
-  bên trong thì được.
-- **Doanh thu vẫn cộng từ HAI nguồn, không phải ba.** Con số hai chia theo **đơn vị thanh toán**
-  (phiên bàn ↔ đơn lẻ), không chia theo kênh. Thấy "hai" mà sửa thành "ba" là sai.
-- **Không chép sơ đồ, số hotline hay giá** từ `shop-facts.md` vào prompt — chỗ cần chi tiết thì
-  **trỏ** (ADR-001, F-001).
-
-**Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
-
-*Mục này được viết dài thêm 2026-08-30 theo yêu cầu của owner ("không hiểu task này để làm gì").
-Phạm vi công việc không đổi — chỉ thêm phần vì sao, hậu quả và thứ tự đọc. Bảng chỗ phải sửa,
-Acceptance và Verify vẫn chỉ sống ở file prompt.*
 
 ### T-013 — `prompt-fullstack.md` vẫn nói "4 kênh" và "luồng ship/pickup khác 3 điểm"
 
@@ -654,6 +592,135 @@ git status --porcelain
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+### T-012 — Bộ prompt BA còn mô tả luồng mang đi bằng hai kênh
+
+**Prompt:** `prompt/maintenance/05-ba-prompts-three-channels-L1.md` (L1) · **chặn** BA-04, BA-06, BA-11
+
+**Goal:**
+Không còn prompt nào trong `prompt/BA/` mô tả luồng mang đi bằng cách kể hai kênh. T-011 đã sửa
+tài liệu **khung**; đây là loại file thứ ba của `work/findings.md` F-005 — `prompt/**`, thứ phiên
+sau đọc rồi làm theo. Nặng nhất là `10-acceptance-scenarios-L2.md` dòng 45: BA-11 tick theo nó.
+
+**Nói một câu, việc phải làm là gì:**
+Sửa **chữ** trong `prompt/BA/**` để mọi prompt gọi luồng mang đi là **một luồng ba kênh**
+(`delivery` · `pickup` · `phone_preorder`) thay vì kể tên hai kênh ("ship/pickup"). Đây là việc
+sửa phạm vi cho đúng, **không** phải viết lại prompt: không đổi tên file, không đổi ID `BA-01`–
+`BA-11`, không đổi level, không thêm/bớt bước hay scenario.
+
+**Vì sao có task này:**
+Chủ quán chốt kênh bán thứ năm `phone_preorder` (2026-08-24, sửa tên 2026-08-29, chốt luồng
+2026-08-30). Nhà thật `master_plan/shop-facts.md` §5.2 xếp nó **chung một luồng** với `delivery`
+và `pickup` — ba kênh không gắn bàn, mỗi đơn là một đơn vị thanh toán riêng. Theo F-005, một dữ
+kiện đổi thì phải rà đủ **ba loại file**: tài liệu tra cứu (`docs/product.md` — đã xong từ BA-02),
+tài liệu khung (kế hoạch gốc — T-011 xong 2026-08-30), và **prompt** — loại thứ ba, chưa ai rà.
+T-012 chính là loại thứ ba đó. T-013 là phần còn lại: bản xuất khẩu.
+
+**Không làm thì mất gì — ba chỗ, xếp theo mức nặng:**
+- **BA-11** tick nghiệm thu theo `prompt/BA/10-acceptance-scenarios-L2.md`. Scenario 2 đang viết là
+  "khách đặt ship/pickup". Diễn lại được scenario đó rồi tick nghĩa là **đóng cả giai đoạn BA
+  trong lúc một trong ba kênh chưa ai nghiệm thu**, rồi bước sang System Design với mô hình bán
+  hàng thiếu một kênh. Đây là chỗ nặng nhất, và là lý do T-012 phải chạy trước.
+- **BA-06** chốt quy tắc giá và thanh toán. `05-pricing-payment-L2.md` đang mô tả đơn vị thanh
+  toán của đơn không gắn bàn bằng hai kênh ⇒ `phone_preorder` bước vào giai đoạn sau mà **không có
+  luật tính tiền**.
+- **BA-04** viết `docs/product.md` §3.2 — chính lát cắt mang đi. Prompt của nó
+  (`03-slice-ship-pickup-L2.md`) hiện **tự mâu thuẫn**: một dòng đã nói đủ ba kênh, tiêu đề và
+  nhiều dòng khác vẫn nói hai.
+
+**Đây là con bug F-006, không phải bug mới.**
+Chỗ lệch **không chứa con số nào** — nó viết "ship/pickup", "Ship / Pickup" — nên luật grep theo
+con số của F-005 (`bốn`/`4`, `năm`/`5`) chạy đúng vẫn ra rỗng. Rà bằng **định danh** kênh
+(`phone_preorder`), và mỗi chỗ liệt kê thành viên thay vì gọi tên luồng là một chỗ phải sửa.
+
+**Thứ tự đọc trước khi sửa file đầu tiên:**
+1. `master_plan/shop-facts.md` §5.2 — luồng thật. Chú ý điểm dễ bỏ sót: `phone_preorder` do nhân
+   viên nhập hộ nên **không qua bước quầy duyệt**, khác `delivery` và `pickup`.
+2. `work/findings.md` F-005 và F-006 — vì sao rà theo định danh, và ba loại file phải rà.
+3. `prompt/maintenance/05-ba-prompts-three-channels-L1.md` — mục *Context* có **bảng liệt kê đúng
+   từng file, từng dòng** đang sai và sai kiểu gì. Chép bốn dòng ở mục *Scope* vào `work/scope.txt`
+   trước khi sửa. Đọc hết *Constraints*: có mấy cái bẫy sửa nhầm là hỏng.
+4. `prompt/BA/03-slice-ship-pickup-L2.md` dòng 51 — câu đã viết đúng, dùng làm mẫu giọng văn cho
+   các chỗ còn lại.
+
+**Ba cái bẫy hay sửa nhầm nhất** (danh sách đủ ở mục *Constraints* của prompt):
+- **Không đổi tên file.** `03-slice-ship-pickup-L2.md` giữ nguyên tên dù nội dung nói ba kênh —
+  `prompt/BA/README.md`, `work/backlog.md` và §11 kế hoạch gốc trỏ tới nó theo tên. Sửa tiêu đề
+  bên trong thì được.
+- **Doanh thu vẫn cộng từ HAI nguồn, không phải ba.** Con số hai chia theo **đơn vị thanh toán**
+  (phiên bàn ↔ đơn lẻ), không chia theo kênh. Thấy "hai" mà sửa thành "ba" là sai.
+- **Không chép sơ đồ, số hotline hay giá** từ `shop-facts.md` vào prompt — chỗ cần chi tiết thì
+  **trỏ** (ADR-001, F-001).
+
+**Cách hoàn thành — đủ mười bước, 1 tới 10.** Luật chung của từng bước ở
+[Vòng chạy một task L1](#vong-chay); dưới đây là **việc cụ thể của T-012** đứng ở đúng bước đó.
+
+1. **Đọc.** Entry này, rồi đọc hết `prompt/maintenance/05-ba-prompts-three-channels-L1.md` — nhất
+   là bảng ở mục *Context* (liệt kê từng file, từng dòng đang sai) và mục *Constraints*. Nền tảng
+   thì theo "Thứ tự đọc trước khi sửa" ở trên: `shop-facts.md` §5.2 rồi F-005 · F-006.
+2. **Khai scope.** Nối bốn dòng ở mục *Scope* của prompt vào **cuối** `work/scope.txt` — nối thêm,
+   đừng ghi đè phần chú thích có sẵn:
+   ```bash
+   cat >> work/scope.txt <<'EOF'
+   prompt/BA/
+   work/backlog.md
+   work/findings.md
+   work/scope.txt
+   EOF
+   ```
+   Ngoài bốn dòng đó là ngoài scope: `master_plan/**`, `docs/**`, `quality/**`, `scripts/**`,
+   `prompt/maintenance/**` — chạm vào là Gate 3 đỏ, đúng như thiết kế.
+3. **Mở task.** Cắt dòng `- [ ] T-012 …` khỏi [Ready](#ready), dán xuống
+   [In Progress](#in-progress). Chưa tick, chưa đụng [Done](#done).
+4. **Sửa, từ chỗ nặng xuống nhẹ.** `10-acceptance-scenarios-L2.md` (chặn BA-11) →
+   `05-pricing-payment-L2.md` (chặn BA-06) → `03-slice-ship-pickup-L2.md` (chặn BA-04) →
+   `prompt/BA/README.md`. Dòng 51 của file thứ ba là câu đã viết đúng — dùng làm mẫu giọng văn cho
+   các chỗ còn lại. Ba cái bẫy ở mục ngay trên: không đổi tên file · doanh thu vẫn **hai** nguồn ·
+   không chép sơ đồ, hotline hay giá vào prompt.
+5. **Không có câu hỏi nghiệp vụ nào phải hỏi.** Luồng ba kênh đã chốt ở `shop-facts.md` §5.2 (chủ
+   quán chốt 2026-08-30) và tài liệu khung đã khớp từ T-011. Task này chỉ sửa chữ cho khớp thứ đã
+   chốt — dừng lại hỏi ở đây là hiểu sai việc.
+6. **Verify.** Chạy nguyên khối lệnh ở mục *Verify* của prompt (tám lệnh: `gate.sh`, bốn lệnh
+   `grep`, `git status --porcelain`, `git diff --stat`), rồi đọc kỹ hai lệnh dễ trượt nhất:
+   `git status` **không được có file nào bị rename**, và `grep` hotline/giá phải **rỗng**.
+7. **Gate 2 — chín dòng Acceptance, chín bằng chứng.** Mục *Acceptance* của prompt có đúng **chín**
+   dòng. Mỗi dòng phải trỏ được tới một `file:dòng` cụ thể sau khi sửa, hoặc tới output thật của
+   lệnh `grep` tương ứng. Dòng nào không trỏ được là chưa xong — không tick.
+8. **Findings — chỉ ghi khi có.** Tìm thấy chỗ lệch **ngoài** bảng *Context* thì sửa luôn trong
+   cùng lần và **nối vào `work/findings.md` F-006**, đừng mở F-007: cùng một con bug, cùng một
+   luật. Không tìm thấy gì thêm thì không đụng file này, và bỏ nó khỏi khối commit ở bước 10.
+9. **Đóng task — bốn việc, làm cùng lúc.** (a) Tick `- [x] T-012 … (YYYY-MM-DD)` ở [Done](#done);
+   (b) chuyển khối chi tiết này sang [Chi tiết — việc đã xong](#chi-tiet-da-xong); (c) **xoá bốn
+   pattern vừa thêm ở bước 2** khỏi `work/scope.txt`; (d) sửa **bốn dòng ở [Ready](#ready) đang
+   trỏ tới T-012**: câu "Sáu việc bảo trì" → năm · câu "Hai việc chặn chuỗi BA, làm trước:
+   T-012 → T-015" → chỉ còn T-015 · bullet "T-012 và T-013 là phần còn lại của cùng con bug T-011
+   sửa" · bullet "T-012 chặn BA-04, BA-06, BA-11". Dòng BA-04 ghi thêm `(T-012 xong)` theo đúng
+   cách nó đang ghi `(T-011 xong)`.
+10. **Khối commit.** Một khối, liệt kê từng file, subject `T-012: …`, **không** có
+    `work/scope.txt` (§6):
+    ```bash
+    git add prompt/BA/10-acceptance-scenarios-L2.md prompt/BA/05-pricing-payment-L2.md \
+            prompt/BA/03-slice-ship-pickup-L2.md prompt/BA/README.md work/backlog.md
+    git commit -m "T-012: bộ prompt BA gọi luồng mang đi bằng ba kênh" -m "..."
+    ```
+    Thêm `work/findings.md` vào `git add` **chỉ khi** bước 8 thực sự có ghi.
+
+**Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+
+**Đã xong 2026-08-30.** Bốn chỗ trong bảng *Context* của prompt đã sửa, cộng một chỗ thứ năm
+bảng đó không kể — `prompt/BA/01-actors-channels-L1.md` viết *"chỉ delivery và pickup mới bắt
+buộc số điện thoại"*, sai với `shop-facts.md` §6.5 (bắt buộc cho cả ba kênh). Chỗ thứ năm này
+được nối vào `work/findings.md` **F-006** đúng theo bước 8, không mở F-007. `grep -rn
+'ship/pickup\|Ship / Pickup' prompt/BA/` nay rỗng; `phone_preorder` có mặt ở sáu file
+(`01`, `03`, `05`, `08`, `09`, `10`); không file nào bị đổi tên; câu doanh thu vẫn **hai** nguồn.
+**Còn mở, không thuộc T-012:** `03-slice-ship-pickup-L2.md` còn một Unknown *"đơn mang đi có
+được thanh toán trước không"* mà `shop-facts.md` §6.3 đã trả lời (thu lúc trao hàng, không bao
+giờ thu trước) — sửa nội dung Unknowns là việc của BA-04, T-012 chỉ sửa cách gọi kênh.*
+
+*Mục này được viết dài thêm 2026-08-30 theo yêu cầu của owner ("không hiểu task này để làm gì").
+Phạm vi công việc không đổi — chỉ thêm phần vì sao, hậu quả, thứ tự đọc và cách hoàn thành. Bảng
+chỗ phải sửa, Acceptance và Verify vẫn chỉ sống ở file prompt; mười bước thủ tục sống một chỗ ở
+[Vòng chạy một task L1](#vong-chay), không chép vào từng task.*
+
 ### T-018 — §6.1 là kỷ luật, chưa có cơ chế nào chặn việc quên
 
 **Prompt:** yêu cầu miệng của chủ repo, 2026-08-30 — *"thêm hook để đảm bảo không quên"* (L2)
@@ -1084,24 +1151,110 @@ grep -rn '3.000\|9.000\|25.000' --include='*.md' master_plan/ prompt/ docs/
 
 [↑ đầu file](#top)
 
+<a id="vong-chay"></a>
+## Vòng chạy một task L1 — mười bước
+
+File prompt trong `prompt/**` giữ **nội dung** của task: sửa gì, ở đâu, xong là thế nào. Mười bước
+dưới đây là **thủ tục** — thứ CLAUDE.md bắt mọi task L1+ phải làm và prompt không nhắc lại. Chạy
+prompt mà bỏ thủ tục thì gate xanh nhưng không kiểm gì (bước 2), hoặc phiên sau nhận một backlog
+nói sai sự thật (bước 9).
+
+1. Đọc entry của task ở [Chi tiết — việc cần làm](#chi-tiet-can-lam), rồi đọc hết file prompt của
+   nó — cả mục *Constraints* và *Unknowns*, không chỉ *Goal*.
+2. **Khai `work/scope.txt`**: chép nguyên khối dòng ở mục *Scope* của prompt, **trước** lần sửa đầu
+   tiên (CLAUDE.md §3.4). Bỏ bước này thì Gate 3 in `scope not declared, skipping` — gate xanh mà
+   không kiểm gì.
+3. Chuyển dòng task từ [Ready](#ready) xuống [In Progress](#in-progress) (§3.3).
+4. Sửa file theo mục *Context* và *Constraints* của prompt, ở trong scope. Cần ra ngoài scope thì
+   sửa `work/scope.txt` và **nói ra**, đừng sửa lén.
+5. Gặp dữ kiện nghiệp vụ chưa rõ thì **dừng và hỏi** — không tự quyết. Luật này không có mức L0
+   (§3.5); không hỏi được thì ghi thành U-XXX ở `docs/product.md` → *Unknowns*.
+6. Chạy mục *Verify* của prompt, rồi `./scripts/gate.sh`. Dán **output thật** vào report — "tôi đã
+   test" không phải bằng chứng (§5).
+7. Gate 2: mỗi dòng *Acceptance* phải trỏ được tới **dòng cụ thể** trong file chứng minh nó
+   (`quality/review-gate.md`). Dòng nào không trỏ được là chưa xong.
+8. Dữ kiện mới ghi về đúng nhà của nó (§2, §4), kèm ngày và ai quyết (§7.2). Rồi `grep -rn` những
+   chỗ **trỏ tới** thứ vừa đổi và sửa luôn trong cùng lần — pointer lệch là bug của lần này, không
+   phải task sau.
+9. Tick task ở [Done](#done) kèm ngày, chuyển khối chi tiết sang
+   [Chi tiết — việc đã xong](#chi-tiet-da-xong), và **xoá sạch pattern trong `work/scope.txt`**
+   (§7.3). Quên bước xoá đã hỏng hai lần — đó là lý do T-016 tồn tại.
+10. Kết thúc bằng **khối `git commit` dán được** (§6.1): liệt kê từng file, không `git add -A`,
+    không kèm `work/scope.txt`. Gate 7 chặn turn nếu thiếu khối này.
+
+[↑ đầu file](#top)
+
 <a id="template"></a>
 ## Task Detail Template
 
-### T-XXX — Short title
+Khuôn dưới đây rút ra từ entry **T-012** — entry đầy đủ nhất hiện có. T-012 đã xong 2026-08-30
+nên đọc nó ở [Chi tiết — việc đã xong](#chi-tiet-da-xong), mục đầu tiên, như một bản mẫu
+**đã điền** — cả phần đóng task ở cuối, thứ chỉ viết được sau khi làm xong.
 
-**Goal:**  
-What outcome is required.
+**Luật số một: entry TRỎ, prompt GIỮ.** Entry trả lời *vì sao có task này và mất gì nếu bỏ*.
+File prompt trả lời *sửa dòng nào, xong là thế nào*. Năm thứ **không bao giờ** chép vào entry:
+bảng file/dòng phải sửa · mục *Acceptance* · mục *Verify* · giá và số điện thoại · sơ đồ luồng.
+Chép là tạo bản thứ hai, và bản thứ hai luôn trôi — `work/findings.md` F-001.
 
-**Scope:**  
-What may change.
+### Khuôn L1+ — bảy khối bắt buộc
 
-**Out of scope:**  
-What must not change.
+```markdown
+### T-XXX — <hiện trạng đang SAI, không phải việc phải làm>
 
-**Acceptance:**  
-How correctness will be recognized.
+**Prompt:** `prompt/.../xx-tên-Lx.md` (L?) · **chặn** <task khác, nếu có>
 
-**Verify:**  
-Commands or checks to run.
+**Goal:**
+Xong rồi thì thế giới khác đi thế nào. Một đoạn.
+
+**Nói một câu, việc phải làm là gì:**
+Một câu việc phải làm, kèm một câu việc **không** phải làm — chỗ người ta hay làm quá tay.
+
+**Vì sao có task này:**
+Gốc rễ, kèm ngày và ai quyết. Nói cả vì sao chỗ này không được sửa trong lần trước.
+
+**Không làm thì mất gì:**
+Hậu quả xếp theo mức nặng, mỗi cái gọi tên task hoặc dữ liệu lãnh đủ. Đây là khối
+quyết định thứ tự ưu tiên — viết mơ hồ ở đây thì task nằm mãi trong Ready.
+
+**Cách hoàn thành — đủ mười bước, 1 tới 10.**
+Luật chung ở [Vòng chạy một task L1](#vong-chay); ở đây viết **việc cụ thể của task
+này** đứng ở đúng bước đó. Bước nào không có gì riêng vẫn phải có một dòng — bỏ trống
+là người đọc tưởng mình đọc sót.
+
+**Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+```
+
+### Ba khối thêm — chỉ khi có thật
+
+| Khối | Thêm khi |
+|---|---|
+| **Đây là con bug F-XXX** | task là lần lặp lại của một finding đã ghi — nói rõ vì sao vòng rà trước không bắt được |
+| **Thứ tự đọc trước khi sửa file đầu tiên** | phải đọc từ ba file trở lên mới hiểu việc |
+| **Bẫy hay sửa nhầm nhất** | có chỗ sửa đúng-mà-hỏng; hai tới ba cái, mỗi cái một dòng, danh sách đủ để ở *Constraints* của prompt |
+
+### Khuôn L0 — bốn dòng là đủ
+
+L0 là mức thật, không phải cửa lách: sửa lỗi chính tả, đổi tên máy móc, chạy formatter.
+Không bịa thêm khối cho đủ bộ.
+
+```markdown
+### T-XXX — <việc>
+
+**Prompt:** `prompt/.../xx-tên-L0.md` (L0)
+
+**Goal:**
+Một tới ba dòng.
+
+**Acceptance · Verify:** trong file prompt.
+```
+
+### Soát lại trước khi coi entry là viết xong
+
+- [ ] Tiêu đề nói **hiện trạng sai**, không nói cách sửa — để lúc đóng task đọc lại còn biết nó từng hỏng ở đâu.
+- [ ] Mỗi dữ kiện có **ngày** và **ai quyết** (CLAUDE.md §7.2).
+- [ ] "Đúng N" chỉ dùng khi N là **quyết định** của chủ quán; phép đếm của người viết thì phải kèm mốc thời gian và lời mời bổ sung (F-003).
+- [ ] Không có giá, số hotline, sơ đồ hay bảng file/dòng nào bị chép từ nhà thật vào entry (F-001).
+- [ ] Mục *Cách hoàn thành* chạy **liền 1→10**, không nhảy cóc.
+- [ ] Viết lại đáng kể thì để lại một dòng *nghiêng* cuối entry: ngày, ai yêu cầu, đổi cái gì.
 
 [↑ đầu file](#top)
