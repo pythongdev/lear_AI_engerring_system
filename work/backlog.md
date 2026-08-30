@@ -124,7 +124,61 @@ Không còn prompt nào trong `prompt/BA/` mô tả luồng mang đi bằng các
 tài liệu **khung**; đây là loại file thứ ba của `work/findings.md` F-005 — `prompt/**`, thứ phiên
 sau đọc rồi làm theo. Nặng nhất là `10-acceptance-scenarios-L2.md` dòng 45: BA-11 tick theo nó.
 
+**Nói một câu, việc phải làm là gì:**
+Sửa **chữ** trong `prompt/BA/**` để mọi prompt gọi luồng mang đi là **một luồng ba kênh**
+(`delivery` · `pickup` · `phone_preorder`) thay vì kể tên hai kênh ("ship/pickup"). Đây là việc
+sửa phạm vi cho đúng, **không** phải viết lại prompt: không đổi tên file, không đổi ID `BA-01`–
+`BA-11`, không đổi level, không thêm/bớt bước hay scenario.
+
+**Vì sao có task này:**
+Chủ quán chốt kênh bán thứ năm `phone_preorder` (2026-08-24, sửa tên 2026-08-29, chốt luồng
+2026-08-30). Nhà thật `master_plan/shop-facts.md` §5.2 xếp nó **chung một luồng** với `delivery`
+và `pickup` — ba kênh không gắn bàn, mỗi đơn là một đơn vị thanh toán riêng. Theo F-005, một dữ
+kiện đổi thì phải rà đủ **ba loại file**: tài liệu tra cứu (`docs/product.md` — đã xong từ BA-02),
+tài liệu khung (kế hoạch gốc — T-011 xong 2026-08-30), và **prompt** — loại thứ ba, chưa ai rà.
+T-012 chính là loại thứ ba đó. T-013 là phần còn lại: bản xuất khẩu.
+
+**Không làm thì mất gì — ba chỗ, xếp theo mức nặng:**
+- **BA-11** tick nghiệm thu theo `prompt/BA/10-acceptance-scenarios-L2.md`. Scenario 2 đang viết là
+  "khách đặt ship/pickup". Diễn lại được scenario đó rồi tick nghĩa là **đóng cả giai đoạn BA
+  trong lúc một trong ba kênh chưa ai nghiệm thu**, rồi bước sang System Design với mô hình bán
+  hàng thiếu một kênh. Đây là chỗ nặng nhất, và là lý do T-012 phải chạy trước.
+- **BA-06** chốt quy tắc giá và thanh toán. `05-pricing-payment-L2.md` đang mô tả đơn vị thanh
+  toán của đơn không gắn bàn bằng hai kênh ⇒ `phone_preorder` bước vào giai đoạn sau mà **không có
+  luật tính tiền**.
+- **BA-04** viết `docs/product.md` §3.2 — chính lát cắt mang đi. Prompt của nó
+  (`03-slice-ship-pickup-L2.md`) hiện **tự mâu thuẫn**: một dòng đã nói đủ ba kênh, tiêu đề và
+  nhiều dòng khác vẫn nói hai.
+
+**Đây là con bug F-006, không phải bug mới.**
+Chỗ lệch **không chứa con số nào** — nó viết "ship/pickup", "Ship / Pickup" — nên luật grep theo
+con số của F-005 (`bốn`/`4`, `năm`/`5`) chạy đúng vẫn ra rỗng. Rà bằng **định danh** kênh
+(`phone_preorder`), và mỗi chỗ liệt kê thành viên thay vì gọi tên luồng là một chỗ phải sửa.
+
+**Thứ tự đọc trước khi sửa file đầu tiên:**
+1. `master_plan/shop-facts.md` §5.2 — luồng thật. Chú ý điểm dễ bỏ sót: `phone_preorder` do nhân
+   viên nhập hộ nên **không qua bước quầy duyệt**, khác `delivery` và `pickup`.
+2. `work/findings.md` F-005 và F-006 — vì sao rà theo định danh, và ba loại file phải rà.
+3. `prompt/maintenance/05-ba-prompts-three-channels-L1.md` — mục *Context* có **bảng liệt kê đúng
+   từng file, từng dòng** đang sai và sai kiểu gì. Chép bốn dòng ở mục *Scope* vào `work/scope.txt`
+   trước khi sửa. Đọc hết *Constraints*: có mấy cái bẫy sửa nhầm là hỏng.
+4. `prompt/BA/03-slice-ship-pickup-L2.md` dòng 51 — câu đã viết đúng, dùng làm mẫu giọng văn cho
+   các chỗ còn lại.
+
+**Ba cái bẫy hay sửa nhầm nhất** (danh sách đủ ở mục *Constraints* của prompt):
+- **Không đổi tên file.** `03-slice-ship-pickup-L2.md` giữ nguyên tên dù nội dung nói ba kênh —
+  `prompt/BA/README.md`, `work/backlog.md` và §11 kế hoạch gốc trỏ tới nó theo tên. Sửa tiêu đề
+  bên trong thì được.
+- **Doanh thu vẫn cộng từ HAI nguồn, không phải ba.** Con số hai chia theo **đơn vị thanh toán**
+  (phiên bàn ↔ đơn lẻ), không chia theo kênh. Thấy "hai" mà sửa thành "ba" là sai.
+- **Không chép sơ đồ, số hotline hay giá** từ `shop-facts.md` vào prompt — chỗ cần chi tiết thì
+  **trỏ** (ADR-001, F-001).
+
 **Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+
+*Mục này được viết dài thêm 2026-08-30 theo yêu cầu của owner ("không hiểu task này để làm gì").
+Phạm vi công việc không đổi — chỉ thêm phần vì sao, hậu quả và thứ tự đọc. Bảng chỗ phải sửa,
+Acceptance và Verify vẫn chỉ sống ở file prompt.*
 
 ### T-013 — `prompt-fullstack.md` vẫn nói "4 kênh" và "luồng ship/pickup khác 3 điểm"
 
