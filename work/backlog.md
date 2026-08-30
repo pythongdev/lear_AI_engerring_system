@@ -8,6 +8,43 @@
 
 ## Done
 
+- [x] T-003 Vòng cập nhật liên tục — brief đầu phiên + luật ghi trong phiên (CLAUDE.md §7)
+
+### T-003 — Vòng cập nhật liên tục
+
+**Goal:**
+Mỗi phiên mới bắt đầu bằng trạng thái **hiện tại** của hệ thống, không phải trạng thái của ngày
+tài liệu được viết. Việc đó phải là cơ chế (hook chạy tự động), không phải kỷ luật (nhớ đọc file).
+
+**Scope:**
+`CLAUDE.md` · `README.md` · `scripts/brief.sh` (mới) · `.claude/settings.json` ·
+`docs/decisions.md` · `work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+Mọi dữ kiện nghiệp vụ — không sửa một con số, một quy tắc, một finding nào. Không đổi `gate.sh`,
+`verify.sh`, `check-scope.sh`. Không tạo file `.md` mới.
+
+**Acceptance:**
+1. `./scripts/brief.sh` chạy được từ repo sạch, exit 0, in ra: task In Progress, scope đã khai báo,
+   task Ready kế tiếp, finding Open, unknown Open, ADR mới nhất, commit gần đây, ngày sửa cuối của
+   từng file owner ở §2.
+2. `brief.sh` **không chép** một dữ kiện nghiệp vụ nào — chỉ tên file, mã số, ngày (chống tái phạm
+   F-001). `grep -E '[0-9]{1,3}\.000' scripts/brief.sh` không ra kết quả.
+3. `.claude/settings.json` có hook `SessionStart` gọi `brief.sh`, và hook `Stop` cũ còn nguyên.
+4. `CLAUDE.md` có §7 mô tả vòng: đầu phiên (brief tự động) → trong phiên (ghi ngay, kèm ngày) →
+   cuối phiên (bàn giao). §8 là Definition of Done, có thêm dòng nhắc ghi nhận.
+5. Cây thư mục ở `CLAUDE.md` §2 và `README.md` có `scripts/brief.sh`.
+6. ADR-002 trong `docs/decisions.md` ghi lại lựa chọn cơ chế-thay-vì-kỷ-luật.
+7. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/brief.sh; echo "exit=$?"
+grep -E '[0-9]{1,3}\.000' scripts/brief.sh
+python3 -c "import json;print(list(json.load(open('.claude/settings.json'))['hooks']))"
+./scripts/gate.sh
+```
+
 - [x] T-002 Đảo nhà thật về `master_plan/shop-facts.md` (ADR-001)
 
 ### T-002 — Đảo nhà thật về `master_plan/shop-facts.md`

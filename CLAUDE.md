@@ -15,6 +15,10 @@ Ceremony scales with risk (L0–L3): most changes owe almost nothing, a few owe 
 lot. The levels are defined in `README.md`, what each one costs here is §3, and
 how to write a prompt at each level is in `docs/prompt-guideline.md`.
 
+The repository keeps growing; a session's memory does not. §7 is how the system
+hands each new session the state as it is **today** — read it before you trust
+anything you think you already know about this project.
+
 ## 2. Source of Truth
 
 One fact, one owner. If two files disagree, the owner below wins and the other
@@ -47,10 +51,10 @@ CLAUDE.md          this file — read first
 docs/              product, architecture, decisions, prompt guideline
 work/              backlog.md, scope.txt, findings.md
 quality/           invariants.md, review-gate.md
-scripts/           gate.sh → check-scope.sh + verify.sh
+scripts/           gate.sh → check-scope.sh + verify.sh; brief.sh (§7)
 master_plan/       domain facts for the current project
 prompt/            prompt sets built from master_plan/
-.claude/           settings.json (Stop hook runs the gate)
+.claude/           settings.json (SessionStart → brief.sh, Stop → gate.sh)
 ```
 
 ## 3. Working Rules
@@ -75,10 +79,11 @@ wrong" reaches money, stored data, or a published contract — not to feel safe.
 
 Then, at every level:
 
-1. **Context** — load only what the task needs: the task entry in
-   `work/backlog.md`, the patterns in `work/scope.txt`, the owners in §2 that
-   the task actually touches, and the code and tests under those patterns. Do
-   not read the repository by default.
+1. **Context** — start from the session brief (§7.1), which arrives on its own
+   and tells you what moved since last time. Then load only what the task needs:
+   the task entry in `work/backlog.md`, the patterns in `work/scope.txt`, the
+   owners in §2 that the task actually touches, and the code and tests under
+   those patterns. Do not read the repository by default.
 2. **Focus** — one task at a time, finished before the next is started.
 3. **Priority** (L1+) — take the top unchecked item in `work/backlog.md` →
    *Ready* unless the user names another. An Open finding in `work/findings.md`
@@ -101,7 +106,8 @@ Then, at every level:
 6. **Verify** — run `./scripts/gate.sh` after every change (§5).
 7. **Record durable facts** — a rule, decision, or invariant discovered while
    working goes into its owner from §2, in that file's own template, in the same
-   change that discovered it.
+   change that discovered it. How to write it so the next session can trust it:
+   §7.2.
 8. **No ceremony documents** — do not create a `.md` file nobody asked for. Add a
    rule, a hook, or a test only after the same problem has cost you twice
    (`quality/review-gate.md` → *Vòng phản hồi*).
@@ -146,7 +152,85 @@ review, cold-context review — are in `quality/review-gate.md`.
 - One task per commit. Subject: `T-XXX: what changed` (imperative, ≤ 72 chars).
 - `work/scope.txt` is working state, not a deliverable — do not commit patterns.
 
-## 7. Definition of Done
+## 7. Keeping the System Current
+
+The repo grows; a session's memory does not survive it. Every session starts
+cold and will act on whatever it is handed — so it must be handed the state of
+**today**, not the state of the day the documents were written.
+
+The loop is: **the brief arrives → you record as you go → you hand off.**
+Only the middle step is discipline, and that is deliberate — `work/findings.md`
+F-001 is the record of what happens when a rule relies on someone remembering.
+
+### 7.1 Start of session — the brief arrives on its own
+
+`scripts/brief.sh` prints the live state: the task In Progress, the declared
+scope, the next Ready task, Open findings, Open unknowns, the newest ADRs,
+recent commits, the last-changed date of every owner file in §2, and any
+uncommitted work.
+
+It is a `SessionStart` hook in `.claude/settings.json`, so it runs on startup,
+`/clear`, resume and compaction, and its output is in context before the first
+instruction. Nobody has to remember to read it. Run it by hand whenever the
+state may have moved under you:
+
+```bash
+./scripts/brief.sh
+```
+
+Two rules keep it honest:
+
+- **It points, it never copies.** File names, IDs, dates, headings — never a
+  price, a rule text, or a channel list. A brief carrying facts would be the
+  second copy F-001 was written about. Read facts from their owner in §2.
+- **It never blocks.** Every failure path exits 0. A broken brief must not cost
+  you a session.
+
+When a brief line contradicts what you believe: the brief's dates come from
+git, so **the brief wins** and you re-read that owner before touching anything.
+
+### 7.2 During the session — record so the next session can trust it
+
+Record at the moment of discovery, in the same change, in the owner from §2 —
+never in a note "to file later". A fact you learned and did not write down dies
+when the session ends, and the next session re-derives it wrong.
+
+Four rules make a recorded fact usable by someone who was not there:
+
+- **Date and attribution.** Every new or changed fact carries `YYYY-MM-DD` and
+  who decided it. An undated fact can never be aged out, so it is believed
+  forever.
+- **What you were told ≠ what you inferred.** ("Owner" below means the person
+  who decides — the business owner, the user — not the file owners of §2.) When
+  the answer you got is shorter than the decision you need, the gap is your
+  inference: it goes in the inference section, never in the log of what was
+  confirmed (F-004).
+- **"Exactly N" only when N is a decision, not your summary.** The owner saying
+  "exactly five channels, there is no sixth" may be written as exact — adding a
+  sixth then needs their permission. Your own count — "differs in three places"
+  — may not: date it and invite the fourth (F-003).
+- **Follow the pointers.** After changing a fact, `grep -rn` for what referred
+  to it. A pointer left aimed at a fact that moved is a bug in the same change,
+  not a follow-up task.
+
+Where each kind of fact goes is §4. Do not create a file for it (§3.8): a new
+fact belongs in an existing owner. If a genuinely new **category** of fact
+appears, §2's table gains a row in the same change that creates its owner —
+an owner that §2 does not list is an owner nobody will find.
+
+### 7.3 End of session — hand off
+
+Anything true only inside your head is lost. Before finishing:
+
+- The task in `work/backlog.md` reflects reality — moved to *Done*, or left in
+  *In Progress* with what remains written into the entry.
+- `work/scope.txt` is cleared when the task is done, or left declared and
+  accurate when it is not.
+- Every rule, decision, invariant and unknown you hit is in its owner (§2, §4).
+- The final report says what is **still unresolved**, in the same words the
+  next session would need to pick it up.
+
+## 8. Definition of Done
 
 Tiered like §3 — an L0 change is done after four lines, not eleven.
 
@@ -155,7 +239,8 @@ Tiered like §3 — an L0 change is done after four lines, not eleven.
 - [ ] `./scripts/gate.sh` passes (§5).
 - [ ] You read your own diff.
 - [ ] Any rule, decision, invariant, or unknown you hit is recorded in its owner
-      (§2, §4).
+      (§2, §4), written so the next session can trust it (§7.2).
+- [ ] Handed off: backlog and `work/scope.txt` match reality (§7.3).
 - [ ] Report: what changed, how it was verified (with command output), what is
       still unresolved.
 

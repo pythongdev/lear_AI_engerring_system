@@ -31,6 +31,7 @@ scripts/
   verify.sh
   check-scope.sh
   gate.sh
+  brief.sh
 .claude/
   settings.json
 ```
@@ -59,9 +60,11 @@ Design + decision + task breakdown + invariants + verification + review.
 
 ## Context loading
 
-Start with `CLAUDE.md`, then load only the product, architecture, decisions, code, and tests relevant to the current task.
+`scripts/brief.sh` runs as a `SessionStart` hook and hands every session the current state: what is in progress, what is open, what changed. Start with it and `CLAUDE.md`, then load only the product, architecture, decisions, code, and tests relevant to the current task.
 
 Do not read the entire repository by default.
+
+The brief points at owners; it never copies a fact out of one. See `CLAUDE.md` §7.
 
 ## Findings
 
