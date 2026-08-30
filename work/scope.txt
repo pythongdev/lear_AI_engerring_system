@@ -11,14 +11,3 @@
 #
 # File này rỗng (chỉ có comment) = chưa khai báo scope → Gate 3 bỏ qua.
 # Xoá hết pattern sau khi task xong.
-
-scripts/check-scope.sh
-CLAUDE.md
-quality/review-gate.md
-docs/decisions.md
-work/backlog.md
-work/scope.txt
-
-# Còn giữ nguyên các file T-007 đang chưa commit trong cùng cây làm việc:
-master_plan/BA_initial_plan_banh_cuon_ba_thanh.md
-work/findings.md

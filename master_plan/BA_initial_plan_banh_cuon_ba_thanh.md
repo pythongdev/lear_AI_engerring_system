@@ -55,9 +55,12 @@ Khách quét QR → chọn món → gửi đơn → quầy xác nhận → các 
 
 **Mục tiêu BA:** chứng minh được toàn bộ vòng đời của một khách ăn tại quán.
 
-### Epic B — Một đơn ship/pickup
+### Epic B — Một đơn mang đi
 
-Khách chọn món → nhập thông tin cần thiết → đặt hàng → quán nhận thông báo → quầy xác nhận → chuẩn bị/đóng gói → hoàn thành đơn.
+Ba kênh không gắn bàn đi chung **một** lát cắt: `delivery`, `pickup`, `phone_preorder`
+(`master_plan/shop-facts.md` §5.2).
+
+Khách chọn món trên web, hoặc gọi điện để nhân viên nhập hộ (`phone_preorder`) → nhập thông tin liên hệ cần thiết → đặt hàng → quán nhận thông báo → quầy xác nhận đơn khách tự gửi → chuẩn bị/đóng gói → khách tới lấy hoặc quán giao tận nơi → hoàn thành đơn.
 
 **Mục tiêu BA:** chứng minh được đường đi độc lập của đơn không gắn với bàn.
 
@@ -89,17 +92,19 @@ Chủ quán thay đổi menu hoặc giá → đơn mới sử dụng thông tin 
 14. Bàn được dọn.
 15. Bàn trở lại trạng thái sẵn sàng.
 
-### 4.2 Ship / Pickup
+### 4.2 Mang đi — `delivery`, `pickup`, `phone_preorder`
 
-1. Khách chọn món.
-2. Khách cung cấp thông tin liên hệ cần thiết.
-3. Hệ thống xác định tổng tiền.
-4. Đơn được tạo.
-5. Quán nhận thông báo.
-6. Quầy xác nhận.
-7. Quán chuẩn bị món.
-8. Pickup: chờ khách tới lấy.
-9. Delivery: đóng gói và hoàn thành đơn.
+1. Khách chọn món trên web (`delivery`, `pickup`), hoặc khách gọi điện và nhân viên nhập hộ (`phone_preorder`).
+2. Với `phone_preorder`, nhân viên hỏi ngay lúc nhận máy: giao tận nơi hay khách tới lấy, và cần lúc mấy giờ.
+3. Khách cung cấp thông tin liên hệ cần thiết.
+4. Hệ thống xác định tổng tiền.
+5. Đơn được tạo.
+6. Quán nhận thông báo.
+7. Quầy xác nhận đơn khách tự gửi; đơn nhân viên nhập hộ không cần bước này.
+8. Quán chuẩn bị món và đóng gói.
+9. Đơn kết thúc theo một trong hai nhánh — khách tới lấy, hoặc quán giao tận nơi; `phone_preorder` đi nhánh nào là theo câu trả lời ở bước 2.
+
+Chi tiết luồng — ai duyệt, thu tiền lúc nào, bảy điểm khác luồng tại bàn: `master_plan/shop-facts.md` §5.2.
 
 ### 4.3 Đặt hộ tại quầy
 
@@ -123,7 +128,7 @@ Các quy tắc dưới đây phải được chốt ở BA trước khi thiết 
 5. Giá phải được xác định tại thời điểm đặt hàng.
 6. Thay đổi menu/giá không được làm thay đổi đơn cũ.
 7. Tổ hợp món/option không hợp lệ phải bị từ chối.
-8. Đơn ship/pickup không sử dụng phiên bàn.
+8. Đơn mang đi — `delivery`, `pickup`, `phone_preorder` — không sử dụng phiên bàn.
 9. Bàn chỉ trở thành trống sau khi phiên được đóng và bàn được dọn.
 10. Ngoài giờ bán không nhận đơn.
 11. Chủ quán có thể tạm dừng nhận đơn bất kể đang trong giờ bán.
@@ -151,7 +156,7 @@ Các phương thức hiện tại:
 
 > Nhiều đơn → một phiên bàn → một lần thanh toán.
 
-Đối với ship/pickup:
+Đối với đơn mang đi (`delivery`, `pickup`, `phone_preorder`):
 
 > Mỗi đơn là một đơn vị nghiệp vụ độc lập.
 
@@ -258,7 +263,7 @@ Nếu chưa có câu trả lời, ghi thành `GIẢ ĐỊNH` và đánh dấu m�
 | BA-01 | 0 · BA | Xác định người dùng và phạm vi hệ thống | — | Danh sách actor + phạm vi được duyệt | Làm sai đối tượng sử dụng | ⬜ |
 | BA-02 | 0 · BA | Chốt năm kênh bán và mục tiêu từng kênh | BA-01 | Bảng kênh bán + luồng chính | Sai mô hình bán hàng | ⬜ |
 | BA-03 | 0 · BA | Mô tả lát cắt một suất tại bàn | BA-02 | Luồng từ gọi món đến đóng bàn | Thu thiếu tiền hoặc bàn kẹt | ⬜ |
-| BA-04 | 0 · BA | Mô tả lát cắt một đơn ship/pickup | BA-02 | Luồng từ đặt đến hoàn thành | Đơn khách không đi hết quy trình | ⬜ |
+| BA-04 | 0 · BA | Mô tả lát cắt một đơn mang đi — `delivery`, `pickup`, `phone_preorder` | BA-02 | Luồng từ đặt đến hoàn thành | Đơn khách không đi hết quy trình | ⬜ |
 | BA-05 | 0 · BA | Mô tả lát cắt thay đổi menu/giá | BA-02 | Luồng trước/sau khi đổi giá | Sai lịch sử đơn cũ | ⬜ |
 | BA-06 | 0 · BA | Chốt quy tắc giá và thanh toán | BA-03, BA-04 | Danh sách quy tắc giá/tiền | Thu sai tiền | ⬜ |
 | BA-07 | 0 · BA | Chốt vòng đời đơn, phiên bàn và công việc | BA-03 | Sơ đồ trạng thái nghiệp vụ | Đơn hoặc bàn bị kẹt | ⬜ |
@@ -283,12 +288,22 @@ Chỉ sang System Design khi:
 - [ ] Một người không biết code có thể đọc luồng và giải thích quán phải làm gì.
 - [ ] Ba scenario nghiệm thu BA có thể được diễn lại bằng nghiệp vụ:
   - Khách QR tại bàn → gọi nhiều lần → thanh toán một lần.
-  - Khách đặt ship/pickup → quán xác nhận → hoàn thành.
+  - Khách đặt mang đi — `delivery`, `pickup`, `phone_preorder` → quán tiếp nhận (xác nhận với đơn khách tự gửi) → hoàn thành.
   - Chủ quán đổi giá → đơn mới dùng giá mới, đơn cũ không đổi.
 
-> *Ghi chú 2026-08-30 (T-007):* §2.2, §9, dòng BA-02 ở §11 và ô đầu của checklist trên đây từng
+> *Ghi chú 2026-08-30 — hai lần sửa cùng ngày, T-007 rồi T-011:*
+>
+> **T-007 — con số kênh.** §2.2, §9, dòng BA-02 ở §11 và ô đầu của checklist trên đây từng
 > ghi con số **bốn**; kênh thứ năm `phone_preorder` được chủ quán chốt **2026-08-24** và sửa tên
 > **2026-08-29**, nên cả bốn chỗ đã được sửa thành năm theo `master_plan/shop-facts.md` §2 · §7.1.
+>
+> **T-011 — luồng của chính kênh đó.** Sửa con số không làm kênh đó có luồng: `phone_preorder`
+> vẫn không thuộc lát cắt nào. §3 Epic B, §4.2, dòng BA-04 ở §11, scenario thứ hai của checklist
+> trên đây, §5 quy tắc 8 và §6 mục Thanh toán đều chỉ kể `ship/pickup`. Sáu chỗ đó nay nói luồng
+> **mang đi** gồm cả ba kênh không gắn bàn, theo `master_plan/shop-facts.md` §5.2 — luồng chủ
+> quán chốt **2026-08-30** (`shop-facts.md` §7.1). Số lát cắt không đổi: vẫn ba, Epic B mở rộng
+> chứ không sinh Epic D. Vì sao hai lần rà trước không chặn được lần này: `work/findings.md`
+> **F-006**.
 
 ---
 

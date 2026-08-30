@@ -215,3 +215,60 @@ T-007
 
 **Status:**
 Fixed
+
+---
+
+### F-006 — Rà theo **con số** không tìm được chỗ lệch không chứa con số nào
+
+**Problem:**
+Kênh `phone_preorder` (chủ quán chốt 2026-08-24, sửa tên 2026-08-29, luồng chốt 2026-08-30) có mặt
+trong `master_plan/shop-facts.md` §2 và §5.2 — nhà thật gộp nó cùng `delivery` và `pickup` thành
+**một** luồng mang đi. Tài liệu khung `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` thì không
+cho nó thuộc lát cắt nào, ở **sáu** chỗ: §3 Epic B ("Một đơn ship/pickup"), §4.2 (tiêu đề
+"Ship / Pickup", bước 8–9 chỉ kết thúc cho `pickup` và `delivery`), §5 quy tắc 8, §6 mục Thanh toán,
+§11 dòng BA-04, §12 scenario nghiệm thu thứ hai.
+
+Đây là **lần thứ ba** khung lệch nhà thật ở cùng một kênh (F-003, F-005). Hai lần trước đã để lại
+luật rà, và cả hai đều **không thể** bắt được lần này:
+
+- **F-003** dạy cách *viết* một con số đếm, và để lại một kiểm tra đúng hướng — *"mỗi khi §2 thêm
+  hoặc sửa một kênh, rà xem kênh đó đã xuất hiện trong một luồng ở §5 chưa"*. Nhưng "§5" ở đó là
+  §5 **của `shop-facts.md`**. Kiểm tra chỉ chạy trong phạm vi một file, nên nó xanh: §5.2 đã có
+  `phone_preorder` thật.
+- **F-005** dạy *phải grep ở đâu* khi một dữ kiện đổi: grep con số đã đổi, cả chữ lẫn số
+  (`bốn`/`4`, `năm`/`5`), qua ba loại file. Chạy đúng luật này vẫn ra rỗng ở cả sáu chỗ trên —
+  **không chỗ nào chứa một con số**. Chúng viết "ship/pickup", "Pickup:", "Delivery:". Grep theo
+  con số không thể tìm ra một chỗ chưa bao giờ nhắc tới con số.
+
+**Impact:**
+Chỗ lệch sống sót qua đúng hai lần rà soát được thiết kế để bắt nó, và sống ở tài liệu quyết định
+khi nào giai đoạn BA được coi là xong. §12 scenario 2 nghiệm thu luồng mang đi bằng hai kênh: diễn
+lại được scenario đó rồi tick, là đóng giai đoạn BA trong lúc một phần ba lát cắt chưa ai kiểm.
+§11 giao BA-04 thiếu việc; §5 quy tắc 8 và §6 Thanh toán để ngỏ câu hỏi `phone_preorder` có dùng
+phiên bàn không, tức chạm thẳng vào cách tính tiền. Riêng lần này prompt `prompt/BA/03-slice-ship-pickup-L2.md`
+đã phủ đủ ba kênh nên hậu quả bị chặn lại; đó là may, không phải luật.
+
+**Decision / Fix:**
+Đã sửa cả sáu chỗ 2026-08-30 (T-011) và ghi vào khối ghi chú sẵn có ở cuối §12 — vẫn một khối.
+Luật rút ra, **thay thế mức phủ của F-003 và F-005 chứ không mâu thuẫn với chúng**:
+
+Một chỗ lệch có thể **không chứa dữ kiện đã đổi**. Nó lệch bằng chỗ **thiếu**, và chỗ thiếu thì
+không grep được. Nên khi `shop-facts.md` §2 thêm hoặc sửa một thực thể được đếm (kênh, trạm, suất
+bán), lần rà không dừng ở việc grep con số, mà phải grep **định danh** của thực thể đó
+(`phone_preorder`, không phải `năm`) trên toàn repo, rồi trả lời hai câu **theo tên**, không theo số:
+
+1. Thực thể này thuộc **luồng** nào? (`shop-facts.md` §5 — phạm vi F-003.)
+2. Thực thể này thuộc **lát cắt / task / dòng nghiệm thu** nào của tài liệu khung? Nếu một tài liệu
+   khung mô tả cùng một luồng bằng cách **liệt kê thành viên** (`"ship/pickup"`, `"Pickup:"`,
+   `"Delivery:"`) thay vì gọi tên luồng, mỗi chỗ liệt kê là một chỗ phải sửa — kể cả khi nó không
+   có con số nào.
+
+Chữa tận gốc, cùng hướng với ADR-001 và F-005: tài liệu khung **gọi tên luồng** ("đơn mang đi") và
+trỏ về `shop-facts.md` §5.2 cho danh sách thành viên, thay vì tự liệt kê kênh. Chỗ nào buộc phải
+liệt kê thì liệt kê đủ cả ba định danh, để lần sau grep theo tên bắt được nó.
+
+**Related task:**
+T-011
+
+**Status:**
+Fixed
