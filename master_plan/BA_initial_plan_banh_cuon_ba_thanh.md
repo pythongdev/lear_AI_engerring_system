@@ -39,10 +39,9 @@ Xác định rõ:
 
 ### 2.2 Các kênh bán
 
-- Delivery.
-- Pickup.
-- QR tại bàn.
-- Staff POS.
+Quán bán qua **đúng năm kênh, không có kênh thứ sáu**. Tên kênh, ai bấm, kênh nào gắn số bàn
+và mỗi kênh khác nhau ở điểm nghiệp vụ nào: `master_plan/shop-facts.md` §2 — nhà duy nhất của
+dữ kiện quán (ADR-001). Kế hoạch này là khung, cố ý **không** chép lại bảng kênh.
 
 ---
 
@@ -208,7 +207,7 @@ Giai đoạn BA cần thống nhất cách quán xử lý ít nhất các tình 
 ### Làm trong giai đoạn đầu
 
 - Menu và giá.
-- Bốn kênh bán.
+- Năm kênh bán (`master_plan/shop-facts.md` §2).
 - Đặt món.
 - Quản lý phiên bàn.
 - Xác nhận đơn.
@@ -257,7 +256,7 @@ Nếu chưa có câu trả lời, ghi thành `GIẢ ĐỊNH` và đánh dấu m�
 | ID | Pha · Tầng | Việc | Cần xong trước | Đầu ra kiểm chứng được | Hỏng thì mất gì | Trạng thái |
 |---|---|---|---|---|---|---|
 | BA-01 | 0 · BA | Xác định người dùng và phạm vi hệ thống | — | Danh sách actor + phạm vi được duyệt | Làm sai đối tượng sử dụng | ⬜ |
-| BA-02 | 0 · BA | Chốt bốn kênh bán và mục tiêu từng kênh | BA-01 | Bảng kênh bán + luồng chính | Sai mô hình bán hàng | ⬜ |
+| BA-02 | 0 · BA | Chốt năm kênh bán và mục tiêu từng kênh | BA-01 | Bảng kênh bán + luồng chính | Sai mô hình bán hàng | ⬜ |
 | BA-03 | 0 · BA | Mô tả lát cắt một suất tại bàn | BA-02 | Luồng từ gọi món đến đóng bàn | Thu thiếu tiền hoặc bàn kẹt | ⬜ |
 | BA-04 | 0 · BA | Mô tả lát cắt một đơn ship/pickup | BA-02 | Luồng từ đặt đến hoàn thành | Đơn khách không đi hết quy trình | ⬜ |
 | BA-05 | 0 · BA | Mô tả lát cắt thay đổi menu/giá | BA-02 | Luồng trước/sau khi đổi giá | Sai lịch sử đơn cũ | ⬜ |
@@ -274,7 +273,7 @@ Nếu chưa có câu trả lời, ghi thành `GIẢ ĐỊNH` và đánh dấu m�
 
 Chỉ sang System Design khi:
 
-- [ ] Có 4 kênh bán rõ ràng.
+- [ ] Có đủ **năm** kênh bán rõ ràng, đúng tên ở `master_plan/shop-facts.md` §2.
 - [ ] Có 3 lát cắt nghiệp vụ từ đầu đến cuối.
 - [ ] Có quy tắc giá và tiền.
 - [ ] Có vòng đời đơn và phiên bàn.
@@ -286,6 +285,10 @@ Chỉ sang System Design khi:
   - Khách QR tại bàn → gọi nhiều lần → thanh toán một lần.
   - Khách đặt ship/pickup → quán xác nhận → hoàn thành.
   - Chủ quán đổi giá → đơn mới dùng giá mới, đơn cũ không đổi.
+
+> *Ghi chú 2026-08-30 (T-007):* §2.2, §9, dòng BA-02 ở §11 và ô đầu của checklist trên đây từng
+> ghi con số **bốn**; kênh thứ năm `phone_preorder` được chủ quán chốt **2026-08-24** và sửa tên
+> **2026-08-29**, nên cả bốn chỗ đã được sửa thành năm theo `master_plan/shop-facts.md` §2 · §7.1.
 
 ---
 

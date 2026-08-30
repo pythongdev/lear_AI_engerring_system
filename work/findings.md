@@ -170,3 +170,48 @@ và phải ghi ở mục suy luận, không được ghi lẫn vào nhật ký c
 
 **Status:**
 Fixed
+
+---
+
+### F-005 — Đổi một con số ở `shop-facts.md` thì phải grep cả tài liệu **khung**, không chỉ tài liệu tra cứu
+
+**Problem:**
+Chủ quán chốt kênh thứ năm (`phone_preorder`) ngày **2026-08-24**, sửa tên ngày **2026-08-29**.
+`master_plan/shop-facts.md` §2 và `docs/product.md` §2 — hai chỗ người ta *tra cứu* danh sách kênh —
+được cập nhật ngay. Nhưng `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`, tài liệu **khung** của
+cả giai đoạn BA, vẫn nói bốn ở **bốn** chỗ tới tận **2026-08-30**: §2.2 (liệt kê 4 kênh), §9 (phạm vi
+MVP), §11 dòng BA-02 (tên việc phải làm), §12 (cổng chất lượng). Lệch **sáu ngày** mà không ai thấy.
+Ba chỗ đầu được T-007 nêu tên; chỗ thứ tư (§9) chỉ lộ ra khi grep, tức bản thân lần rà soát ban đầu
+cũng sót.
+
+**Impact:**
+Nặng hơn một dòng tài liệu cũ, vì §12 là **cổng chất lượng của cả giai đoạn BA** và BA-11
+(`prompt/BA/10-acceptance-scenarios-L2.md`) tick theo đúng danh sách đó. Tick "đủ 4 kênh" là **đóng
+giai đoạn BA trong lúc một kênh thật chưa hề được nghiệm thu**, rồi bước sang System Design với mô
+hình bán hàng thiếu một kênh. §11 thì giao cho BA-02 sai việc phải làm, còn §9 cắt kênh thứ năm khỏi
+phạm vi MVP. Tài liệu khung không bị ai tra cứu hằng ngày nên không ai phát hiện nó sai — chính vì
+vậy nó sai lâu nhất.
+
+**Decision / Fix:**
+Đã sửa cả bốn chỗ 2026-08-30 (T-007) và để lại một dòng ghi chú có ngày ngay tại §12. Luật rút ra,
+**tổng quát hơn F-003**: F-003 nói *cách viết* một con số đếm (đếm nào được phép ghi "đúng N"), luật
+này nói *phải đi tìm ở đâu* khi con số đó đổi.
+
+Khi một dữ kiện ở `master_plan/shop-facts.md` đổi — số kênh, số trạm, số quy tắc, số suất bán — trong
+**cùng lần sửa đó** phải `grep -rn` cả repo cho con số ấy, kể cả bằng chữ (`bốn`/`4`, `năm`/`5`), và
+rà đủ **ba loại file**, không chỉ loại đầu:
+
+1. tài liệu **tra cứu** (`docs/product.md`) — loại luôn được nhớ;
+2. tài liệu **khung** (kế hoạch gốc, master task, cổng chất lượng) — loại bị quên, và là loại quyết
+   định khi nào một giai đoạn được coi là xong;
+3. **prompt** (`prompt/**`) — thứ phiên sau đọc rồi làm theo.
+
+Ưu tiên chữa tận gốc thay vì chữa từng chỗ: chỗ nào cần danh sách thì **trỏ** về nhà thật, đừng chép
+(ADR-001, F-001). §2.2 kế hoạch gốc nay là một câu trỏ, nên lần đổi kênh sau nó không thể lệch nữa;
+chỉ những chỗ buộc phải nêu con số (§9, §11, §12) mới còn phải grep.
+
+**Related task:**
+T-007
+
+**Status:**
+Fixed

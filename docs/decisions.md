@@ -101,3 +101,54 @@ lại (ghi lúc phát hiện) vẫn là kỷ luật, vì không script nào bi�
 **Applies to:**
 `CLAUDE.md` §1 · §2 (cây thư mục) · §3.1 · §3.7 · §7 (mới) · §8 · `scripts/brief.sh` ·
 `.claude/settings.json` · `README.md`.
+
+---
+
+### ADR-003 — Gate 3 chỉ chặn file git đang theo dõi; file chưa track chỉ được ghi chú
+
+**Decision:**
+Từ 2026-08-30, `scripts/check-scope.sh` tách hai loại thay đổi ngoài scope:
+
+- file **git đang theo dõi** → `FAIL`, exit 1, gate đỏ như cũ;
+- file **chưa track** (`??`) → một dòng `check-scope: note —` liệt kê tên file, exit 0.
+
+Hành vi với file đã track không đổi một chút nào. `CLAUDE.md` §5 và
+`quality/review-gate.md` Gate 3 mô tả đúng luật này.
+
+**Why:**
+`git status` nói một file **chưa được track**, không nói nó **có từ bao giờ**. Với một file đã
+track, git có bản gốc để so, nên "file này vừa bị đổi trong lúc task chạy" là sự thật kiểm được.
+Với file chưa track thì không có gì để so — script chỉ đoán, và nó đoán rằng mọi file chưa track
+đều do task đang chạy tạo ra.
+
+Ngày 2026-08-30, T-007 chạy prompt `prompt/maintenance/01-...md`. Ba file prompt trong thư mục đó
+đã nằm sẵn trong cây **trước khi task bắt đầu** (brief đầu phiên liệt kê chúng ở mục UNCOMMITTED).
+Gate đỏ, và cách duy nhất để xanh là nới `work/scope.txt` cho một thư mục mà task **không** sửa
+file nào trong đó — tức khai một scope sai để làm hài lòng cái máy kiểm scope.
+
+Đó là hỏng kiểu nguy hiểm nhất của một gate: **đỏ vì lý do sai**. Người dùng học được rằng gate
+đỏ đôi khi vô nghĩa, và cách qua nó là nới scope. Sau vài lần, `work/scope.txt` biến thành thủ tục
+và Gate 3 không còn bắt được thứ nó sinh ra để bắt — scope drift thật.
+
+**Rejected alternatives:**
+- *Giữ nguyên, ai gặp thì tự nới scope.* Đã thử đúng một lần và nó đẻ ra ngay một dòng scope sai
+  sự thật. Luật dựa vào việc người ta chịu khó nới đúng chỗ là luật dựa vào trí nhớ (F-001).
+- *Bỏ hẳn `--untracked-files=all`, không in gì.* Rẻ hơn, nhưng khi đó file mới do task tạo ra
+  ngoài scope biến mất hoàn toàn khỏi output — kể cả một file `.md` nghi lễ mà `CLAUDE.md` §3.8
+  cấm. Ghi chú giữ được cái nhìn thấy mà không phải trả giá bằng gate đỏ sai.
+- *Commit các file prompt trước khi chạy chúng.* Chữa đúng ca này, không chữa loại lỗi: output
+  tạm, file nháp, thư mục build đều rơi vào cùng bẫy, và không phải file nào cũng đáng commit.
+- *Ghi mốc thời gian lúc khai scope rồi chỉ tính file mới hơn mốc đó.* Cần thêm trạng thái phải
+  bảo trì (một file mốc, ai xoá, khi nào reset) cho một suy đoán vẫn không chắc. Máy móc nhiều hơn
+  giá trị nó mang lại.
+
+**Rủi ro đã chấp nhận:**
+Một task tạo **file mới** ngoài scope nay không bị chặn, chỉ bị ghi chú. Ca cụ thể đáng lo là file
+`.md` nghi lễ mà `CLAUDE.md` §3.8 cấm tạo. Bù lại: dòng `note:` luôn in ra và nói thẳng *"nếu file
+này do chính task vừa tạo: đưa vào scope, hoặc xoá đi"*, và Gate 4 (đọc diff) vẫn phải đi qua.
+Nếu có lần thứ hai một file mới lọt ra ngoài scope mà không ai thấy, ghi finding và siết lại — đúng
+vòng phản hồi ở `quality/review-gate.md`.
+
+**Applies to:**
+`scripts/check-scope.sh` · `CLAUDE.md` §5 · `quality/review-gate.md` Gate 3 · `work/backlog.md`
+T-010.

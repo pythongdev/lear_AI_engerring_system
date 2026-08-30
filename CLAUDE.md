@@ -132,8 +132,12 @@ Record only what has future value. A one-off imperfection is not a finding.
 
 It runs, in order:
 
-1. `scripts/check-scope.sh` (Gate 3) — every changed file must match
-   `work/scope.txt`. Catches the correct change that touches unauthorized files.
+1. `scripts/check-scope.sh` (Gate 3) — every changed file **git already tracks**
+   must match `work/scope.txt`. Catches the correct change that touches
+   unauthorized files. An untracked file outside scope is printed as a `note:`
+   and does **not** fail the gate — git cannot tell whether it predates the task
+   (ADR-003). If the note lists a file *your* task created, put it in scope or
+   delete it; nothing else will stop you.
 2. `scripts/verify.sh` (Gate 1) — Go: `gofmt` check, `go build`, `go test`;
    Node: `npm test` / `lint` / `build` when present. Skipped when the change
    touches documentation only.

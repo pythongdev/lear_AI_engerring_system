@@ -2,11 +2,120 @@
 
 ## Ready
 
+- [ ] T-010 `check-scope` đang tính file chưa track là "thay đổi ngoài scope"
+- [ ] T-011 Kênh `phone_preorder` không thuộc lát cắt BA nào — kế hoạch gốc §3 · §4
+- [ ] T-008 Chạy BA-00: dựng BA-03–BA-11 trong backlog (BA-01/02 đã xong)
+- [ ] T-009 Gỡ dòng mẫu T-001 khỏi Ready
 - [ ] T-001 Replace this with the first meaningful task.
+
+Bốn task trên chạy **theo thứ tự**: T-010 → T-011 → T-008 → T-009.
+
+- T-010 trước, vì mọi task sau đều chạy với prompt chưa commit trong `prompt/maintenance/` và
+  sẽ đỏ gate vì đúng lý do sai đó.
+- **T-011 phải xong trước T-008.** T-008 dựng BA-03–BA-11 trong backlog **từ bảng §11 của kế
+  hoạch gốc**; nếu định nghĩa lát cắt của BA-04 còn thiếu `phone_preorder` thì T-008 chép đúng
+  chỗ thiếu đó vào backlog rồi khoá lại — cùng cái bẫy đã bắt T-007 phải chạy trước.
+- T-009 chạy trước T-008 thì Ready rỗng.
+
+(T-007 xong 2026-08-30, nên kế hoạch gốc không còn con số kênh sai để T-008 chép vào backlog.)
+
+### T-010 — `check-scope` tính file chưa track là thay đổi ngoài scope
+
+**Prompt:** không có — phát hiện trong lúc chạy T-007, sửa ngay trong cùng phiên 2026-08-30.
+
+**Goal:**
+Gate chỉ đỏ vì thứ **task này** làm. `scripts/check-scope.sh` đọc `git status --untracked-files=all`
+nên ba file `prompt/maintenance/*.md` đã nằm sẵn trong cây từ **trước** khi T-007 bắt đầu bị tính là
+"thay đổi ngoài scope", và T-007 phải nới `work/scope.txt` chỉ để gate xanh. Một gate đỏ vì lý do
+sai dạy người dùng bỏ qua nó — đắt hơn nhiều so với thứ nó bắt được.
+
+**Scope:**
+`scripts/check-scope.sh` · `CLAUDE.md` §5 · `quality/review-gate.md` Gate 3 · `docs/decisions.md` ·
+`work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+`gate.sh`, `verify.sh`, `brief.sh`, `.claude/settings.json`. Không đổi cú pháp pattern của
+`work/scope.txt`. Không đụng dữ kiện nghiệp vụ.
+
+**Acceptance:**
+1. File **đã được git theo dõi** mà đổi ngoài scope ⇒ `check-scope.sh` vẫn FAIL, exit 1 — hành vi
+   này không được yếu đi.
+2. File **chưa track** (`??`) nằm ngoài scope ⇒ **không** làm gate đỏ; được in thành một dòng
+   `note:` để vẫn nhìn thấy, exit 0.
+3. Chạy `./scripts/gate.sh` trên cây hiện tại (có `prompt/maintenance/` chưa track) với scope
+   **không** chứa `prompt/maintenance/` ⇒ xanh.
+4. Đầu file `check-scope.sh` nói rõ luật mới và **vì sao** — người đọc sau không tự ý siết lại.
+5. `CLAUDE.md` §5 và `quality/review-gate.md` Gate 3 nói đúng hành vi mới (rà pointer, CLAUDE.md §7.2).
+6. `docs/decisions.md` có ADR-003 ghi lựa chọn *ghi chú thay vì chặn*, kèm rủi ro đã chấp nhận:
+   file **mới** do task tạo ra ngoài scope (ví dụ file `.md` nghi lễ, CLAUDE.md §3.8) nay chỉ được
+   ghi chú, không bị chặn.
+7. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+touch /tmp/x && cp /tmp/x ./ngoai-scope-untracked.md && ./scripts/check-scope.sh; echo "exit=$?"   # note, exit 0
+echo x >> README.md && ./scripts/check-scope.sh; echo "exit=$?"                                    # FAIL, exit 1
+git checkout README.md && rm -f ngoai-scope-untracked.md
+```
+
+### T-011 — Kênh `phone_preorder` không thuộc lát cắt BA nào
+
+**Prompt:** `prompt/maintenance/04-phone-preorder-slice-L1.md` (L1)
+
+**Goal:**
+Mỗi kênh ở `master_plan/shop-facts.md` §2 có **đúng một** lát cắt BA nhận trách nhiệm mô tả luồng.
+Hiện `phone_preorder` không có: kế hoạch gốc §3 chỉ có Epic A (tại bàn) và Epic B (ship/pickup), §4
+cũng vậy, nên BA-03 và BA-04 không ai nhận nó. Đây đúng con bug mà `work/findings.md` F-003 đã đặt
+tên: *"Kênh chỉ có trong bảng §2 mà không có trong luồng nào là bug."* T-007 sửa **con số** kênh,
+không sửa chỗ thiếu **luồng** này.
+
+**Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+
+### T-008 — Chạy BA-00 sau khi BA-01/BA-02 đã xong
+
+**Prompt:** `prompt/maintenance/02-run-ba00-backlog-L3.md` (L3, bọc `prompt/BA/00-master-L3.md`)
+
+**Goal:**
+Backlog có đủ 11 task BA-01–BA-11 với thứ tự phụ thuộc và acceptance kiểm được. BA-00 chưa từng
+chạy, nhưng prompt 01 thì đã chạy — nên chạy BA-00 nguyên văn sẽ **ghi đè** `docs/product.md`
+§1/§2 bằng chỗ giữ. Prompt bọc nêu ba điều chỉnh cần thiết.
+
+**Acceptance · Verify:** trong file prompt.
+
+### T-009 — Gỡ dòng mẫu T-001 khỏi Ready
+
+**Prompt:** `prompt/maintenance/03-retire-T-001-L0.md` (L0)
+
+**Goal:**
+`brief.sh` là `SessionStart` hook, in NEXT READY bằng dòng chưa tick đầu tiên — nên mọi phiên mới
+đang được chỉ vào một dòng mẫu không phải task. Gỡ nó đi, không tick, không đưa xuống Done.
+
+**Acceptance · Verify:** trong file prompt.
+
 
 ## In Progress
 
 ## Done
+
+- [x] T-007 Kế hoạch gốc không còn nói "bốn kênh bán" — §2.2 · §9 · §11 · §12 (F-005)
+
+### T-007 — Kế hoạch gốc còn nói "bốn kênh bán"
+
+**Prompt:** `prompt/maintenance/01-fix-plan-channel-count-L1.md` (L1)
+
+**Goal:**
+`master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` không còn chỗ nào nói quán bán qua bốn kênh.
+Nguy hiểm nhất là §12 dòng 277 — cổng chất lượng của cả giai đoạn BA; BA-11 tick theo nó sẽ đóng
+giai đoạn BA trong lúc kênh thứ năm chưa được nghiệm thu.
+
+**Acceptance · Verify:** sống trong file prompt, **không chép lại ở đây** (F-001 — một fact một
+nhà; entry này trỏ, prompt giữ).
+
+**Đã làm 2026-08-30:** bốn chỗ (không phải ba) đã sửa thành **năm** kênh —
+`master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §2.2 (nay là câu trỏ về `shop-facts.md` §2,
+không chép bảng), §9 (phạm vi MVP — chỗ thứ tư, chỉ lộ ra khi grep), §11 dòng BA-02, §12 cổng chất
+lượng. Một dòng ghi chú có ngày để lại ở cuối §12. Bài học ghi ở `work/findings.md` **F-005**.
 
 - [x] T-006 Quyền huỷ đơn gắn với chỗ đứng, không gắn chức vụ (chủ quán chốt 2026-08-30)
 

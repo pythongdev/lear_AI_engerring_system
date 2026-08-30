@@ -53,6 +53,12 @@ nhưng không phải cái viết trong Goal.
 So file đã đổi với scope khai trong `work/scope.txt`. File ngoài scope → hỏi lại
 hoặc revert phần đó.
 
+Chỉ file **git đang theo dõi** mới làm gate đỏ. File chưa track nằm ngoài scope
+được in thành dòng `note:` và không chặn — git không biết nó có từ trước task hay
+do task vừa tạo (ADR-003, 2026-08-30). Dòng `note:` vì thế phải **đọc**: nếu file
+trong đó là do task này tạo ra thì đó vẫn là scope drift, chỉ khác là không ai
+chặn bạn.
+
 Scope drift là lỗi số 1 của LLM và nó **không** hiện ra trong test xanh.
 
 ## Gate 4 — Đọc diff săn red flag

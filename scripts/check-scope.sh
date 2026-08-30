@@ -14,6 +14,16 @@
 # Note: * matches across / (order/* also matches order/sub/a.go).
 #
 # No work/scope.txt, or one with no active patterns → scope not declared, skip.
+#
+# TRACKED vs UNTRACKED (đổi 2026-08-30, T-010 — xem docs/decisions.md ADR-003):
+# Chỉ file **git đang theo dõi** mới làm gate đỏ. File chưa track (`??`) nằm ngoài
+# scope chỉ được in thành một dòng `note:` và exit 0.
+# Lý do: git không biết file chưa track có từ bao giờ, nên một file nằm sẵn trong
+# cây từ trước khi task bắt đầu (prompt chưa commit, ghi chú nháp, output tạm) bị
+# tính cho task đang chạy. Gate đỏ vì lý do sai dạy người ta bỏ qua gate — mất
+# nhiều hơn thứ nó bắt được.
+# Cái giá đã chấp nhận: file **mới** do chính task tạo ra ngoài scope nay chỉ được
+# ghi chú. Dòng `note:` là chỗ nhìn thấy nó — đọc, đừng lướt.
 
 set -uo pipefail
 
@@ -59,19 +69,34 @@ matches() {
 }
 
 violations=()
+untracked=()
 while IFS= read -r line; do
   [ -n "$line" ] || continue
+  status="${line:0:2}"
   path="${line:3}"
   case "$path" in *" -> "*) path="${path##* -> }" ;; esac
   [ -n "$path" ] || continue
+
+  reason=""
   if [ ${#deny[@]} -gt 0 ] && matches "$path" "${deny[@]}"; then
-    violations+=("$path (matches a ! deny pattern)")
-    continue
+    reason="$path (matches a ! deny pattern)"
+  elif [ ${#allow[@]} -eq 0 ] || ! matches "$path" "${allow[@]}"; then
+    reason="$path"
   fi
-  if [ ${#allow[@]} -eq 0 ] || ! matches "$path" "${allow[@]}"; then
-    violations+=("$path")
+  [ -n "$reason" ] || continue
+
+  if [ "$status" = "??" ]; then
+    untracked+=("$reason")
+  else
+    violations+=("$reason")
   fi
 done < <(git -c core.quotepath=false status --porcelain --untracked-files=all)
+
+if [ ${#untracked[@]} -gt 0 ]; then
+  echo "check-scope: note — file chưa được git theo dõi, nằm ngoài scope (không chặn gate):"
+  printf '  ? %s\n' "${untracked[@]}"
+  echo "  Nếu file nào trong số này do chính task vừa tạo ra: đưa vào scope, hoặc xoá đi."
+fi
 
 if [ ${#violations[@]} -gt 0 ]; then
   echo "check-scope: FAIL — files changed outside the scope declared in $SCOPE_FILE:"
@@ -80,4 +105,4 @@ if [ ${#violations[@]} -gt 0 ]; then
   exit 1
 fi
 
-echo "check-scope: OK — all changes within declared scope."
+echo "check-scope: OK — all tracked changes within declared scope."
