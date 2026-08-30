@@ -1,15 +1,38 @@
 # Backlog
 
+Hai phần, đọc từ trên xuống:
+
+- **Cần làm** — `## Ready` (+ `## In Progress`): việc chưa xong, theo thứ tự lấy.
+- **Đã xong** — `## Done`: việc đã đóng, kèm ngày.
+
+Cả hai đều là danh sách gạch đầu dòng, gọn trong một màn hình. Mô tả dài của từng
+task nằm ở hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
+
 ## Ready
 
-Việc bảo trì còn lại chạy trước chuỗi BA: T-009. (T-011 xong **2026-08-30**.)
+Sáu việc bảo trì. **Hai việc chặn chuỗi BA, làm trước:** T-012 → T-015. Bốn việc còn lại không
+chặn ai, chen vào lúc nào cũng được.
 
+- [ ] T-012 Bộ prompt `prompt/BA/` còn mô tả luồng mang đi bằng hai kênh — chặn BA-04, BA-06, BA-11
+- [ ] T-015 §10 kế hoạch gốc: hai câu đã có lời giải, một câu hỏi hẹp hơn thực tế — chặn BA-10
+- [ ] T-013 `master_plan/prompt-fullstack.md` vẫn nói "4 kênh" và "luồng ship/pickup khác 3 điểm"
+- [ ] T-014 §2.1 kế hoạch gốc thiếu việc khách gọi điện đặt trước
+- [ ] T-016 `work/scope.txt` được commit kèm pattern, hai lần
 - [ ] T-009 Gỡ dòng mẫu T-001 khỏi Ready
 - [ ] T-001 Replace this with the first meaningful task.
 
 - **T-011 đã xong 2026-08-30** — dòng BA-04 ở §11 kế hoạch gốc nay ghi đủ ba kênh không gắn bàn,
-  và §3 Epic B, §4.2, §5, §6, §12 cũng vậy. BA-04 hết chỗ chặn: khung và nhà thật
-  (`master_plan/shop-facts.md` §5.2) nay nói cùng một luồng mang đi.
+  và §3 Epic B, §4.2, §5, §6, §12 cũng vậy. Khung và nhà thật (`master_plan/shop-facts.md` §5.2)
+  nay nói cùng một luồng mang đi.
+- **T-012 và T-013 là phần còn lại của cùng con bug T-011 sửa** — cùng một kênh
+  `phone_preorder`, hai loại file khác: `prompt/**` và bản xuất khẩu. Luật rà chung ở
+  `work/findings.md` **F-006**: grep theo **định danh** kênh, không theo con số.
+- **T-012 chặn BA-04, BA-06, BA-11.** Ba task đó chạy bằng prompt còn kể hai kênh; nặng nhất là
+  BA-11 — nó tick theo `prompt/BA/10-acceptance-scenarios-L2.md` dòng 45, tức đóng cả giai đoạn BA
+  mà một kênh chưa ai nghiệm thu.
+- **T-015 chặn BA-10** và nên xong trước BA-04, BA-06: §10 còn để mở hai câu đã chốt, task sau đọc
+  vào sẽ biến luật đã chốt thành giả định (CLAUDE.md §3.5 cấm).
+- T-016 là việc của hệ thống làm việc, không chạm dữ kiện quán — chạy song song với bất kỳ task nào.
 - T-009 gỡ dòng mẫu T-001 khỏi Ready; chạy được ngay vì Ready đã có task thật.
 
 Chuỗi BA chạy từ trên xuống. Thứ tự là cột "Cần xong trước" của §11 kế hoạch gốc; BA-01 và BA-02
@@ -27,6 +50,30 @@ Chuỗi BA chạy từ trên xuống. Thứ tự là cột "Cần xong trước"
 
 Mỗi task chạm **một** mục tài liệu riêng, nên revert được độc lập: §3.1 · §3.2 · §3.3 · §4 · §5 ·
 §6 · §7 · `docs/decisions.md` · §8. Hai task cùng chạm một mục là dấu hiệu chia việc sai.
+
+Chi tiết từng task ở **Chi tiết — việc cần làm**.
+
+## In Progress
+
+(không có task nào đang chạy)
+
+## Done
+
+Mới nhất ở trên. Chi tiết từng task ở **Chi tiết — việc đã xong**.
+
+- [x] T-011 `phone_preorder` nay thuộc lát cắt Epic B — luồng mang đi ba kênh (2026-08-30)
+- [x] T-008 Backlog có 11 task BA-01–BA-11, thứ tự phụ thuộc và acceptance kiểm được
+- [x] T-010 Gate 3 chỉ chặn file git đang theo dõi; file chưa track chỉ được ghi chú (ADR-003)
+- [x] T-007 Kế hoạch gốc không còn nói "bốn kênh bán" — §2.2 · §9 · §11 · §12 (F-005)
+- [x] T-006 Quyền huỷ đơn gắn với chỗ đứng, không gắn chức vụ (chủ quán chốt 2026-08-30)
+- [x] T-005 U-004 — chỉ người đứng quầy được huỷ đơn (chủ quán chốt 2026-08-30)
+- [x] T-004 Ghi nhận sáu câu trả lời của chủ quán ngày 2026-08-30 (U-001–U-003, S-1–S-3)
+- [x] BA-01 `docs/product.md` §1 — Actor và phạm vi hệ thống
+- [x] BA-02 `docs/product.md` §2 — Kênh bán
+- [x] T-003 Vòng cập nhật liên tục — brief đầu phiên + luật ghi trong phiên (CLAUDE.md §7)
+- [x] T-002 Đảo nhà thật về `master_plan/shop-facts.md` (ADR-001)
+
+## Chi tiết — việc cần làm
 
 ### Mười câu hỏi §10 kế hoạch gốc — ai trả lời câu nào
 
@@ -51,6 +98,72 @@ ADR, câu nào chưa thì thành GIẢ ĐỊNH có mức rủi ro và người c
 
 **S-1, S-2, S-3 không phải giả định.** Chủ quán xác nhận cả ba ngày **2026-08-30**
 (`shop-facts.md` §7.1); §7.2 nay không còn mục nào. Task nào ghi chúng là "chưa xác nhận" là sai.
+
+### T-012 — Bộ prompt BA còn mô tả luồng mang đi bằng hai kênh
+
+**Prompt:** `prompt/maintenance/05-ba-prompts-three-channels-L1.md` (L1) · **chặn** BA-04, BA-06, BA-11
+
+**Goal:**
+Không còn prompt nào trong `prompt/BA/` mô tả luồng mang đi bằng cách kể hai kênh. T-011 đã sửa
+tài liệu **khung**; đây là loại file thứ ba của `work/findings.md` F-005 — `prompt/**`, thứ phiên
+sau đọc rồi làm theo. Nặng nhất là `10-acceptance-scenarios-L2.md` dòng 45: BA-11 tick theo nó.
+
+**Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+
+### T-013 — `prompt-fullstack.md` vẫn nói "4 kênh" và "luồng ship/pickup khác 3 điểm"
+
+**Prompt:** `prompt/maintenance/06-fullstack-export-three-channels-L1.md` (L1)
+
+**Goal:**
+`master_plan/prompt-fullstack.md` là bản xuất khẩu cho agent **ngoài** repo. Nó có sẵn một khối ⚠️
+ở §3.1 nói *"thấy 'bốn kênh bán' quay lại là bug"* — và con số bốn vẫn còn sống ở §7 hàng **0 · BA**
+("4 kênh bán · 2 sơ đồ luồng (tại bàn, ship)"), cùng ba chỗ khác. Bằng chứng nữa cho F-001: cảnh
+báo viết trong cùng file không cứu được bản chép.
+
+**Acceptance · Verify:** trong file prompt.
+
+### T-014 — §2.1 kế hoạch gốc thiếu việc khách gọi điện đặt trước
+
+**Prompt:** `prompt/maintenance/07-plan-actor-phone-order-L1.md` (L1)
+
+**Goal:**
+§2.1 *Người dùng chính* liệt kê việc khách làm là "Đặt ship · Đặt trước để tới lấy · Quét QR tại
+bàn" — không có đường điện thoại; phía nhân viên cũng chỉ có "Đặt món hộ khách" (tức `staff_pos`).
+`docs/product.md` §1.1 · §1.2 **đã** đúng từ BA-01, nên đây là chỗ khung lệch với cả nhà thật lẫn
+tài liệu tra cứu — chỗ lệch **thứ bảy** của cùng một kênh. T-011 cố ý không sửa: §2.1 nằm ngoài
+vòng rà của nó.
+
+**Acceptance · Verify:** trong file prompt.
+
+### T-015 — §10 kế hoạch gốc: hai câu đã có lời giải, một câu hỏi hẹp hơn thực tế
+
+**Prompt:** `prompt/maintenance/08-plan-open-questions-scope-L1.md` (L1) · **chặn** BA-10
+
+**Goal:**
+§10 câu 6 ("Pickup có cần giờ hẹn bắt buộc không?") và câu 7 (trạng thái giao hàng) **đã có lời
+giải** ở `shop-facts.md` §6.5 · §6.7, nhưng §10 vẫn để mở. Riêng câu 6 còn hỏi **hẹp hơn** thực tế:
+mốc giờ bắt buộc với cả `pickup` **và** `phone_preorder` (§6.5). Câu 7 thì đúng phạm vi — trạng
+thái "đang giao" chỉ có ở đơn giao tận nơi; đừng mở rộng nó cho ba kênh.
+
+Đánh số 1–10 **không đổi**: `work/backlog.md` và `prompt/BA/09-decisions-assumptions-L2.md` trỏ
+theo số thứ tự (`§10.6`).
+
+**Acceptance · Verify:** trong file prompt.
+
+### T-016 — `work/scope.txt` được commit kèm pattern, hai lần
+
+**Prompt:** `prompt/maintenance/09-scope-not-cleared-L2.md` (L2 — đổi hành vi thứ mọi phiên đều chạy)
+
+**Goal:**
+Task kết thúc mà `work/scope.txt` còn pattern thì phải nhìn thấy ngay, không phụ thuộc ai nhớ dọn.
+Đã hỏng hai lần: `5c41f65` (6 pattern) và `25f0f88` (8 pattern). Hậu quả ở hai chỗ — Gate 3 đỏ vì
+lý do sai (hoặc xanh nhầm), và `brief.sh` in *"a task is open"* cho mọi phiên mới.
+
+CLAUDE.md §3.8 chỉ cho dựng cơ chế **sau hai lần**; ngưỡng đã đạt, nên task này được phép — nhưng
+là **cảnh báo, không chặn** (ADR-003), và chỉ kêu khi scope đã khai báo mà backlog không có task
+nào ở *In Progress*. Cần **ADR-004** và **F-007**.
+
+**Acceptance · Verify:** trong file prompt.
 
 ### T-009 — Gỡ dòng mẫu T-001 khỏi Ready
 
@@ -466,12 +579,7 @@ grep -n 'phone_preorder' docs/product.md
 git status --porcelain
 ```
 
-
-## In Progress
-
-## Done
-
-- [x] T-011 `phone_preorder` nay thuộc lát cắt Epic B — luồng mang đi ba kênh (2026-08-30)
+## Chi tiết — việc đã xong
 
 ### T-011 — Kênh `phone_preorder` không thuộc lát cắt BA nào
 
@@ -505,8 +613,6 @@ ghi chú ở cuối §12 được nối thêm chứ không tách khối thứ ha
 
 Vì sao hai lần rà trước (F-003, F-005) không chặn được lần này — grep theo **con số** không tìm
 được chỗ lệch không chứa con số nào — ghi ở `work/findings.md` **F-006**.
-
-- [x] T-008 Backlog có 11 task BA-01–BA-11, thứ tự phụ thuộc và acceptance kiểm được
 
 ### T-008 — Chạy BA-00 sau khi BA-01/BA-02 đã xong
 
@@ -542,8 +648,6 @@ Hai chỗ phải tự quyết, ghi lại để phiên sau không phải đoán:
   đều là quyết định về cách vận hành repo, chưa có ADR nghiệp vụ nào; sáu câu §10 vẫn đang mở; và
   S-1–S-3 phải được viết thành ADR đã chốt chứ không phải biến mất. Sáu câu đó là 2, 3, 4, 8, 9, 10;
   phần "sửa đơn" của câu 1 là chỗ mở thứ bảy.
-
-- [x] T-010 Gate 3 chỉ chặn file git đang theo dõi; file chưa track chỉ được ghi chú (ADR-003)
 
 ### T-010 — `check-scope` tính file chưa track là thay đổi ngoài scope
 
@@ -610,9 +714,6 @@ check-scope: OK — all tracked changes within declared scope.
 exit=0
 ```
 
-
-- [x] T-007 Kế hoạch gốc không còn nói "bốn kênh bán" — §2.2 · §9 · §11 · §12 (F-005)
-
 ### T-007 — Kế hoạch gốc còn nói "bốn kênh bán"
 
 **Prompt:** `prompt/maintenance/01-fix-plan-channel-count-L1.md` (L1)
@@ -629,8 +730,6 @@ nhà; entry này trỏ, prompt giữ).
 `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §2.2 (nay là câu trỏ về `shop-facts.md` §2,
 không chép bảng), §9 (phạm vi MVP — chỗ thứ tư, chỉ lộ ra khi grep), §11 dòng BA-02, §12 cổng chất
 lượng. Một dòng ghi chú có ngày để lại ở cuối §12. Bài học ghi ở `work/findings.md` **F-005**.
-
-- [x] T-006 Quyền huỷ đơn gắn với chỗ đứng, không gắn chức vụ (chủ quán chốt 2026-08-30)
 
 ### T-006 — Chủ quán không đứng quầy thì huỷ đơn thế nào
 
@@ -659,8 +758,6 @@ Không đổi ai được huỷ (§6.13 đã chốt ở T-005), không chạm lu
 grep -n 'chưa ai nói\|suy ra' master_plan/shop-facts.md docs/product.md
 git status --porcelain
 ```
-
-- [x] T-005 U-004 — chỉ người đứng quầy được huỷ đơn (chủ quán chốt 2026-08-30)
 
 ### T-005 — Ai được bấm huỷ một đơn
 
@@ -692,8 +789,6 @@ grep -rn 'U-004' --include='*.md' .
 grep -rn 'Mười hai quy tắc\|Mười ba quy tắc' --include='*.md' .
 git status --porcelain
 ```
-
-- [x] T-004 Ghi nhận sáu câu trả lời của chủ quán ngày 2026-08-30 (U-001–U-003, S-1–S-3)
 
 ### T-004 — Sáu câu trả lời của chủ quán 2026-08-30
 
@@ -737,9 +832,6 @@ grep -n 'U-00' docs/product.md
 git status --porcelain
 ```
 
-- [x] BA-01 `docs/product.md` §1 — Actor và phạm vi hệ thống
-- [x] BA-02 `docs/product.md` §2 — Kênh bán
-
 ### BA-01 / BA-02 — Actor, phạm vi hệ thống và kênh bán
 
 **Prompt:** `prompt/BA/01-actors-channels-L1.md` (L1, chạy 2026-08-30)
@@ -777,8 +869,6 @@ grep -c 'tráng bánh\|gấp bánh\|lấy canh\|dọn bàn\|quầy' docs/product
 git status --porcelain
 ```
 
-- [x] T-003 Vòng cập nhật liên tục — brief đầu phiên + luật ghi trong phiên (CLAUDE.md §7)
-
 ### T-003 — Vòng cập nhật liên tục
 
 **Goal:**
@@ -813,8 +903,6 @@ grep -E '[0-9]{1,3}\.000' scripts/brief.sh
 python3 -c "import json;print(list(json.load(open('.claude/settings.json'))['hooks']))"
 ./scripts/gate.sh
 ```
-
-- [x] T-002 Đảo nhà thật về `master_plan/shop-facts.md` (ADR-001)
 
 ### T-002 — Đảo nhà thật về `master_plan/shop-facts.md`
 
