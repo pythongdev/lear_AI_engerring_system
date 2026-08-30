@@ -83,6 +83,17 @@ học, cả hai đã có nhà thật trong repo: một khối cảnh báo viết
 bản chép (`work/findings.md` F-001), và chỗ lệch thường **không chứa con số nào** — nên phải grep
 theo **định danh** kênh rồi đọc những chỗ grep *không* ra kết quả (F-006).
 
+**Cùng ngày, T-022 — luật *"không có con số nào ở đây"* bị vi phạm ở ba dòng mang số tiền:** một
+trong mô tả giao diện khách ở §4 (giá món trên nút thêm vào giỏ, và một số mẫu để minh hoạ định
+dạng), một trong ô *Hỏng thì mất gì* của ví dụ §9.1, một trong ví dụ nổ thành phần §9.4 — dòng cuối
+là **bản chép nguyên văn** một dòng của `shop-facts.md` §5.3. Hai dòng ở §9 nguy nhất, vì §9 tự xưng
+là *"Ví dụ chuẩn — bám đúng, đừng sáng tạo"*: nó **bảo người đọc chép y nguyên**. Cả ba nay trỏ về
+`shop-facts.md`. Số **thành phần** ở §9.4 thì **giữ nguyên** — ví dụ đó dạy đúng chúng, và chúng đã
+có ngày chốt, nguồn §4.5 và luật bảo trì riêng ngay dưới sơ đồ.
+
+**Luật cho chính khối này:** cảnh báo nêu **chỗ sai và loại sai**, không bao giờ chép lại giá trị
+sai — trích con số ra đây là tự tay dựng lại đúng thứ vừa gỡ.
+
 ### 3.2 Đã gộp vào §3.1
 
 ### 3.3 Luồng ăn tại bàn (chiếm phần lớn doanh thu — vẽ được luồng này rồi mới thiết kế)
@@ -179,8 +190,9 @@ admin/   orders · products · tables · staff · reports · settings          �
 ```
 
 - **Khách** — mobile-first 375px; nhân/lượng nhân là **hai hàng nút to**, không dropdown; chọn *Chay* thì hàng
-  "Lượng nhân" **biến mất** chứ không làm mờ; giá hiện ngay trên nút `Thêm vào giỏ · 5.000đ`;
-  tiền định dạng `Intl.NumberFormat('vi-VN')` → `34.000đ`; món hết: mờ + badge "Hết".
+  "Lượng nhân" **biến mất** chứ không làm mờ; giá hiện ngay trên nút `Thêm vào giỏ` và **lấy từ API,
+  không hard-code** (§6.9); tiền định dạng `Intl.NumberFormat('vi-VN')` — dấu chấm ngăn nghìn, hậu tố
+  `đ`; món hết: mờ + badge "Hết".
 - **Màn hình trạm** — tên món ≥ 24px, số lượng ≥ 40px; **một task = một thẻ, một nút `Xong`**; cũ nhất lên đầu;
   **màu theo thời gian chờ** trắng <3′ → vàng 3–7′ → đỏ >7′; **số bàn to nhất trên thẻ**;
   không hỏi "Bạn chắc chứ?", thay bằng `Hoàn tác` trong 10 giây.
@@ -353,7 +365,7 @@ SAI : | T-12 | BE | Làm API đơn hàng và phiên bàn | — | Code chạy đ�
 
 ĐÚNG: | T-12 | 3 · BE | Viết hàm tính giá 1 món từ DB (nạp món + option, chặn tổ hợp cấm) | T-07 (dữ liệu mồi menu) |
         `go test ./internal/menu/` xanh, đủ 11 ca ở §9.3, trong đó ca "Chay + Nhiều nhân" phải LỖI |
-        Sai 1.000đ mỗi suất, không ai phát hiện tới cuối tháng | ⬜ |
+        Thu sai phụ thu ở mọi suất có nhân, không ai phát hiện tới cuối tháng | ⬜ |
 ```
 
 **9.2 Một bất biến viết sai và viết đúng**
@@ -395,7 +407,7 @@ Bản cũ của file này viết ca 8 là `Giò · — · —`; cách ghi đó *
 **9.4 Việc xuống bếp phải "nổ" ra thành phần** — khách gọi **2 suất "Đầy đủ trứng tái", thịt + mộc nhĩ, nhiều nhân**:
 
 ```
-Khách trả tiền theo: [Đầy đủ trứng tái ×2 — Thịt+mộc nhĩ, Nhiều nhân — 34.000 × 2 = 68.000]
+Khách trả tiền theo: [Đầy đủ trứng tái ×2 — Thịt+mộc nhĩ, Nhiều nhân]   ← đơn giá: shop-facts §4.3
 
 Bếp phải thấy:
   trang_banh │ Bánh cuốn ×6 — thịt+mộc nhĩ, nhiều nhân

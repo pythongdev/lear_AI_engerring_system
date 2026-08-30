@@ -89,7 +89,7 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xong).
 
-- [x] T-021 Bản xuất khẩu hết chép số tiền của nhà thật — §4, §9.1, §9.4 nay trỏ `shop-facts.md` (2026-08-30)
+- [x] T-022 Bản xuất khẩu hết chép số tiền của nhà thật — §4, §9.1, §9.4 nay trỏ `shop-facts.md` (2026-08-30)
 - [x] T-020 Đơn mang đi được trả trước — §6.3 hết câu "không bao giờ thu trước", mở U-005 (2026-08-30)
 - [x] T-013 Bản xuất khẩu `prompt-fullstack.md` không còn nói "4 kênh", lát cắt B phủ luồng mang đi (2026-08-30)
 - [x] T-012 Bộ prompt `prompt/BA/` gọi luồng mang đi bằng ba kênh (F-006, lần rà thứ ba) (2026-08-30)
@@ -655,7 +655,7 @@ git status --porcelain
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
-### T-021 — Bản xuất khẩu còn chép ba con số tiền của nhà thật
+### T-022 — Bản xuất khẩu còn chép ba con số tiền của nhà thật
 
 **Prompt:** không có (task sinh trong phiên 2026-08-30, từ mục *còn chưa giải quyết* của T-013) · L1
 · **Xong 2026-08-30**
