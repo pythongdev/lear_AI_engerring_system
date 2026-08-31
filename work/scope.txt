@@ -12,19 +12,126 @@
 # File này rỗng (chỉ có comment) = chưa khai báo scope → Gate 3 bỏ qua.
 # Xoá hết pattern sau khi task xong.
 
-# T-023 — dọn hậu quả đã commit của F-009.
-CLAUDE.md
+# --- BA-03 — XONG 2026-08-31, nhưng CHƯA COMMIT nên khối này còn phải ở lại: -
+# ba file dưới đây vẫn là thay đổi tracked trong cây, gỡ sớm là Gate 3 đỏ.
+# GỠ NGAY SAU KHI commit BA-03 (CLAUDE.md §7.3). Phiên T-026 đừng xoá hộ.
+docs/product.md
+quality/invariants.md
+work/backlog.md
+
+# --- T-026 — XONG 2026-08-31, nhưng CHƯA COMMIT nên khối này còn phải ở lại ---
+# Nhận đề xuất Admin/POS vào hệ thống (CLAUDE.md §2). Mọi file dưới đây vẫn là thay
+# đổi tracked trong cây; gỡ khối này trước khi commit là Gate 3 đỏ.
+# GỠ NGAY SAU KHI commit T-026 (CLAUDE.md §7.3).
+# Chạy SONG SONG với BA-03. Ba file dùng chung, mỗi task chỉ sửa MỤC của mình:
+#   docs/product.md        BA-03 giữ §3.1 · T-026 chỉ THÊM vào *Unknowns* → *Đang mở*
+#   work/backlog.md        mỗi task chỉ sửa entry của mình
+#   quality/invariants.md  T-026 KHÔNG chạm — invariant của trục sản xuất thuộc BA-12.
+#                          Không viết dòng `!quality/invariants.md`: deny thắng allow,
+#                          nên nó sẽ chấm đỏ thay đổi hợp lệ của BA-03 (F-010).
+master_plan/shop-facts.md
+master_plan/00-scope.md
 docs/decisions.md
-docs/updatee_sýstem.md
 work/proposals/
+prompt/BA/
+# Thêm giữa task (CLAUDE.md §3.4): brief cắt danh sách ở 6 mà không nói, nên U-011
+# vừa viết ra đã vô hình. Ghi F-012 + mở T-027; KHÔNG sửa scripts/ trong task này.
+work/findings.md
+
+# --- T-025 — XONG 2026-08-31, nhưng CHƯA COMMIT nên khối này còn phải ở lại: ---
+# CLAUDE.md, work/findings.md, quality/review-gate.md, scripts/brief.sh và
+# scripts/brief.test.sh vẫn là thay đổi tracked trong cây; gỡ sớm là Gate 3 đỏ.
+# GỠ NGAY SAU KHI commit T-025 (CLAUDE.md §7.3). Phiên khác đừng xoá hộ.
+# --- T-025 — commit-msg hook chặn subject rỗng nghĩa (F-011, ADR-010) --------
+# Chạy SONG SONG với BA-03 và T-026. File dùng chung, mỗi task chỉ sửa MỤC của mình:
+#   work/backlog.md   T-025 chỉ sửa entry T-025 của mình
+#   docs/decisions.md T-026 giữ ADR-009 · T-025 chỉ THÊM ADR-010 ở cuối file
+# T-025 sở hữu riêng: scripts/ (hooks/commit-msg, install-hooks.sh, test), CLAUDE.md,
+# work/findings.md (F-011 → Fixed). Không chạm docs/product.md, master_plan/, prompt/.
+# quality/review-gate.md thêm vào scope giữa chừng (CLAUDE.md §3.4): file đó liệt kê
+# các cổng và nói "Gate 1/1b/3/7 chạy qua Stop hook" — thiếu Gate 8 thì nó nói sai.
+scripts/
+CLAUDE.md
+work/findings.md
+quality/review-gate.md
+
+# --- T-028 — XONG 2026-08-31, nhưng CHƯA COMMIT nên khối này còn phải ở lại --
+# GỠ NGAY SAU KHI commit T-028 (CLAUDE.md §7.3). Phiên khác đừng xoá hộ.
+# Ghi bảy lời chốt của chủ quán ngày 2026-08-31:
+# U-005 · U-006 (một nửa) · U-007 · U-008 · U-009 · U-010 · U-011.
+# Chạy sau BA-03/T-026/T-025, cả ba XONG-CHƯA-COMMIT. File dùng chung:
+#   master_plan/shop-facts.md  T-026 sở hữu §5.4 đang có · T-028 sửa §5.4, §6, §7
+#   docs/product.md            BA-03 giữ §3.1 · T-028 sửa Unknowns + §1, §2.1, §3.1
+#   quality/invariants.md      BA-03 giữ I-001–I-004 · T-028 chỉ THÊM I-005
+#   work/backlog.md            mỗi task chỉ sửa entry của mình
+# ⇒ commit ba file trên phải `git add -p` theo hunk, không add trọn file.
+master_plan/shop-facts.md
+docs/product.md
+quality/invariants.md
+work/backlog.md
+# Thêm giữa task (CLAUDE.md §3.4): §6 lên 15 quy tắc nên hai pointer đếm số quy
+# tắc thành sai — phải sửa trong cùng lần đổi (§7.2), không để lại task sau.
+master_plan/prompt-fullstack.md
+prompt/BA/README.md
+
+# --- T-029 — XONG 2026-08-31, nhưng CHƯA COMMIT nên khối này còn phải ở lại ---
+# GỠ NGAY SAU KHI commit T-029 (CLAUDE.md §7.3). Phiên khác đừng xoá hộ.
+# Đặc tả admin vào docs/architecture.md.
+# Chủ repo yêu cầu 2026-08-31: "thêm phần admin cho hệ thống này".
+# Chạy sau T-026/T-025/T-028 — cả ba XONG-CHƯA-COMMIT, khối của chúng ở trên
+# còn phải nằm lại. Phiên này ĐỪNG xoá hộ khối của ai.
+# File dùng chung, mỗi task chỉ sửa MỤC của mình:
+#   docs/decisions.md  T-026 giữ ADR-009 · T-025 giữ ADR-010 · T-029 THÊM ADR-011
+#   work/findings.md   T-025 giữ F-011/F-012 · T-029 THÊM F-013 ở cuối file
+#   work/backlog.md    mỗi task chỉ sửa entry của mình
+# T-029 sở hữu riêng: docs/architecture.md (đang là template rỗng).
+# KHÔNG chạm: master_plan/shop-facts.md (dữ kiện đã đủ, chỉ đọc) ·
+#             docs/product.md · quality/invariants.md · prompt/
+docs/architecture.md
+docs/decisions.md
 work/findings.md
 work/backlog.md
 
-# T-019 — XONG 2026-08-31, nhưng CHƯA COMMIT nên khối này còn phải ở lại: hai
-# file dưới đây vẫn là thay đổi tracked trong cây, gỡ sớm là Gate 3 đỏ.
-# GỠ NGAY SAU KHI commit T-019 (CLAUDE.md §7.3).
-# Chạy song song với T-023. Hai task không giẫm lên file nào của nhau ngoài
-# work/backlog.md và work/findings.md — ở đó hunk của hai task nằm xen kẽ, nên
-# commit hai file ấy phải staged theo hunk (`git add -p`), không add trọn file.
+# --- T-030 — XONG 2026-08-31, CHƯA COMMIT nên khối này còn phải ở lại -------
+# GỠ NGAY SAU KHI commit T-030 (CLAUDE.md §7.3). U-006: ghép bàn = 1 phiên, 1 hoá đơn.
+# (T-029 đã bị phiên khác lấy cho docs/architecture.md — không chạm file đó.)
+# Lời chủ quán 2026-08-31. Đổi I-001 (invariant của BA-03, chưa commit) vì luật
+# "một bàn một phiên" nay phải đọc là "một BÀN thuộc nhiều nhất một phiên".
+# §6 lên 16 quy tắc ⇒ hai pointer đếm số quy tắc phải sửa lại lần nữa (§7.2).
+master_plan/shop-facts.md
+docs/product.md
+quality/invariants.md
+work/backlog.md
 master_plan/prompt-fullstack.md
-scripts/check-links.ignore
+prompt/BA/README.md
+
+# --- T-032 — XONG 2026-08-31, CHƯA COMMIT nên khối này còn phải ở lại -------
+# GỠ NGAY SAU KHI commit T-032 (CLAUDE.md §7.3). Nợ: mục FE · BE · DB.
+# Chủ repo yêu cầu 2026-08-31 (nửa sau của U-012: "ghi ở đâu").
+# T-029 đã xong docs/architecture.md; T-032 THÊM §12 và đổi §12 cũ thành §13,
+# sửa §8 và §11 (U-006 đã đóng bởi T-030, thêm U-013). ADR-012 ở cuối decisions.
+docs/architecture.md
+docs/decisions.md
+docs/product.md
+work/backlog.md
+
+# --- T-033 — XONG 2026-08-31, nhưng CHƯA COMMIT nên khối này còn phải ở lại ---
+# GỠ NGAY SAU KHI commit T-033 (CLAUDE.md §7.3). Phiên khác đừng xoá hộ.
+# Ghi hai lời chốt 2026-08-31: U-012, U-013.
+# Và sửa CÂU HỎI của S-4: chủ quán trả lời "tôi không hiểu" ⇒ lỗi cách hỏi,
+# không phải lỗi người trả lời. S-4 vẫn Ở LẠI §7.2, không được suy ra.
+# Nhiều phiên khác XONG-CHƯA-COMMIT trong cùng cây — khối của chúng ở trên còn
+# phải nằm lại. Phiên này ĐỪNG xoá hộ khối của ai.
+# File dùng chung, mỗi task chỉ sửa MỤC của mình:
+#   master_plan/shop-facts.md  T-033 sửa §6.14, §6.16, §7.1, §7.2
+#   docs/product.md            T-033 sửa §3.1.6, §3.1.7, *Unknowns*
+#   docs/architecture.md       T-033 sửa §6.4 (công thức đối soát), §11, §12.4
+#   work/backlog.md            chỉ entry T-033
+master_plan/shop-facts.md
+docs/product.md
+docs/architecture.md
+work/backlog.md
+# Thêm giữa task (CLAUDE.md §3.4): đóng U-012/U-013 làm năm pointer hết đúng, hai
+# trong số đó nằm ở mục *Rủi ro* của ADR-011 và ADR-012. Sửa TIẾN — thêm một dòng
+# "Cập nhật <ngày>", không viết lại thân ADR (cùng tinh thần ADR-008).
+docs/decisions.md

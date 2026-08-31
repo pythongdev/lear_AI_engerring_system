@@ -69,7 +69,7 @@ của file này; nó tự đứng một mình và không trỏ đi đâu.
 | Công thức giá · bảng giá thành phần · giá một suất · phụ thu · thành phần suất bán | **§4.1 → §4.5** |
 | Chín quy tắc cấu tạo giá · mười một ca giá bắt buộc phủ | **§4.6 · §4.8** |
 | Hai luồng bán (tại bàn, mang đi) và việc nổ xuống bếp | **§5** |
-| Mười ba quy tắc nghiệp vụ | **§6** |
+| Mười sáu quy tắc nghiệp vụ | **§6** |
 | Nhật ký chốt (§7.2 — chỗ suy luận chưa xác nhận — hiện rỗng) | **§7** |
 
 Lệch với file này ⇒ **`shop-facts.md` thắng** ([CLAUDE.md §2](../CLAUDE.md)).

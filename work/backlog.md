@@ -54,6 +54,13 @@ không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31, T-016 xong 
   **một file, hai chủ**. Phiên vào sau phải **thêm** khối của mình chứ đừng ghi đè — ghi đè làm
   Gate 3 chấm việc của người kia bằng scope của mình, đúng thứ `work/findings.md` **F-010** mô tả,
   chỉ khác là nguyên nhân đến từ song song chứ không từ quên dọn.
+- **T-031 sinh ra từ T-029 (2026-08-31), không chặn ai, nhưng chặn được người ngoài repo.**
+  Chủ quán bỏ nút báo xong ở ba trạm bếp ngày 2026-08-31 (`master_plan/shop-facts.md` §5.4), trong
+  khi `master_plan/prompt-fullstack.md` §3.6 và §3.7 vẫn thiết kế `PATCH staff/tasks/:id` và
+  *"một task = một thẻ, một nút `Xong`"*. Đây là **loại thứ ba** của họ lỗi F-005 / F-007: người
+  đọc bản xuất khẩu đứng **ngoài** repo nên không grep được, họ dựng đúng thứ được viết — lần này
+  là một cơ chế cho một actor không tồn tại. Ràng buộc (đặc biệt: `don_ban` **vẫn** có thao tác,
+  và bỏ endpoint thì phải nói cái gì thay nó) ở `work/findings.md` **F-013** (Open).
 - **T-027 sinh ra từ T-026 (2026-08-31), không chặn ai, nhưng brief đang nói dối mỗi phiên.**
   `scripts/brief.sh` cắt cả bốn danh sách ở `MAX_LIST=6` và **không nói là đã cắt**. Ngày
   2026-08-31 số câu hỏi mở lên **bảy**, nên U-011 vô hình với mọi phiên mới kể từ dòng đầu tiên nó
@@ -94,6 +101,7 @@ Chuỗi BA chạy từ trên xuống. Thứ tự là cột "Cần xong trước"
 BA-07 nay hết bị chặn.
 
 - [ ] T-027 Brief cắt danh sách ở 6 mà không nói đã cắt — U-011 vô hình ngay lúc viết ra (F-012)
+- [ ] T-031 Bản xuất khẩu còn thiết kế nút `Xong` ở màn trạm mà chủ quán đã bỏ (F-013)
 
 - [ ] BA-04 `docs/product.md` §3.2 — lát cắt một đơn mang đi (ba kênh) · cần BA-02 (T-011, T-012, T-020 xong)
 - [ ] BA-05 `docs/product.md` §3.3 — lát cắt chủ quán đổi menu/giá · cần BA-02
@@ -122,10 +130,15 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="done"></a>
 ## Done
 
+- [x] T-033 U-012 và U-013 đóng nốt; câu hỏi S-4 viết lại vì hỏi sai cách (2026-08-31)
+- [x] T-029 `docs/architecture.md` hết là template rỗng: mặt admin có đặc tả, chỉ POS được ghi (ADR-011) (2026-08-31)
 - [x] T-026 Đề xuất Admin/POS được chấm: lời chủ quán về gom mẻ vào nhà thật, phần còn lại bị từ chối có tên (ADR-009) (2026-08-31)
 Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xong).
 
 - [x] T-025 Gate 8 — hook `commit-msg` của git từ chối subject rỗng nghĩa; cài bằng `core.hooksPath` (ADR-010, F-011) (2026-08-31)
+- [x] T-032 Nợ là một phần riêng: `docs/architecture.md` §12 có mục FE · BE · DB (ADR-012) (2026-08-31)
+- [x] T-030 U-006 — ghép bàn là MỘT phiên, MỘT hoá đơn; I-001 đọc lại; mở U-013 (2026-08-31)
+- [x] T-028 Bảy lời chốt của chủ quán 2026-08-31: cho nợ, năng lực nồi, suất đem về, máy không gom (2026-08-31)
 - [x] BA-03 `docs/product.md` §3.1 — lát cắt một suất tại bàn; I-001–I-004; mở U-006, U-007 (2026-08-31)
 - [x] T-023 Hậu quả đã commit của F-009 dọn xong: bản đồ hash, blueprint ra khỏi `docs/` (ADR-008) (2026-08-31)
 - [x] T-019 Bản xuất khẩu hết trỏ vào layout repo cũ; bảy dòng ignore đã gỡ (F-007) (2026-08-31)
@@ -678,6 +691,31 @@ lần thứ hai của cùng một hậu quả (sau F-008) ở `work/findings.md`
 
 [↑ đầu file](#top)
 
+### T-031 — Bản xuất khẩu vẫn thiết kế nút `Xong` ở màn trạm mà chủ quán đã bỏ
+
+**Prompt:** chưa có · **L1** — nó sửa tài liệu người **ngoài** repo dùng để dựng hệ thống.
+
+**Goal:**
+`master_plan/prompt-fullstack.md` §3.6 và §3.7 nói đúng thứ chủ quán đã chốt: ba trạm bếp không có
+nút báo xong, và POS là nơi ghi tiến độ.
+
+**Nói một câu, việc phải làm là gì:**
+Sửa ba chỗ của bản xuất khẩu cho khớp `docs/architecture.md` §1.1. Việc **không** phải làm: xoá
+luôn ba luật hiển thị còn đúng của §3.7 (chữ to · cũ nhất lên đầu · màu theo thời gian chờ).
+
+**Vì sao có task này:**
+Chủ quán bỏ nút báo xong ngày 2026-08-31 (`master_plan/shop-facts.md` §5.4). Bản xuất khẩu viết
+trước đó và nay sai ở ba chỗ; chi tiết, cái giá, và bốn ràng buộc để không sửa thành một lỗi khác ở
+`work/findings.md` **F-013**.
+
+**Không làm thì mất gì:**
+Một endpoint và một màn hình được xây cho một thao tác **không ai thực hiện**, rồi mọi con số phía
+sau nó đứng im — và vì màn hình *trông* như đang chạy, chỗ hỏng chỉ lộ ra lúc quán đã đông khách.
+
+**Acceptance · Verify:** viết vào prompt khi bắt đầu task; bốn ràng buộc đã có sẵn ở F-013.
+
+[↑ đầu file](#top)
+
 ### BA-12 — Lát cắt sản xuất theo mẻ chưa có ở đâu, trong khi quán đang làm theo mẻ mỗi sáng
 
 **Prompt:** `prompt/BA/12-production-control-L2.md` (L2) · **Cần xong trước:** BA-03, BA-07 ·
@@ -758,6 +796,265 @@ Luật chung ở [Vòng chạy một task L1](#vong-chay). Việc riêng của t
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### T-033 — Hai câu cuối đã có lời chốt, và câu hỏi S-4 hỏi sai người
+
+**Prompt:** không có — chủ quán trả lời thẳng ba câu trong một lượt, 2026-08-31. **L2** — một trong
+hai lời chốt quyết định **doanh thu tính vào ngày nào**, tức chạm tiền và chạm đối soát.
+
+**Goal:**
+U-012 và U-013 hết nằm trong danh sách đang mở, lời chốt về đúng owner, và mọi pointer nói chúng
+"còn mở" đã đuổi theo. S-4 vẫn mở, nhưng mang một câu hỏi **hỏi được**.
+
+**Ba câu, ba cách xử khác nhau:**
+
+| Câu | Lời chủ quán | Xử thế nào |
+|---|---|---|
+| **U-013** | *"pos bấm ghép bàn. không được ghép khi bàn kia đang mở"* | ghi thẳng — `shop-facts.md` §6.16 · `docs/product.md` §3.1.7 |
+| **U-012** | *"pos nhận. doanh thu tính ngày nợ"* | ghi thẳng — `shop-facts.md` §6.14 · `docs/product.md` §3.1.6 · `docs/architecture.md` §6.4, §12.4 |
+| **S-4** | *"tôi không hiểu"* | **không ghi lời giải nào.** Viết lại câu hỏi — `shop-facts.md` §7.2 |
+
+**Vì sao có task này:**
+Lời chốt chỉ sống trong hội thoại thì chết theo phiên (CLAUDE.md §7.2). Hai trong ba câu chặn
+BA-06, BA-07, BA-08.
+
+**Điều đáng ghi nhất — lời chốt U-013 đóng một ca đắt bằng một câu:**
+Câu hỏi mở ra hai ca rất khác nhau. Ca rẻ: nới một phiên sang bàn **trống**. Ca đắt: **gộp hai hoá
+đơn đã có tiền trong đó** — trộn tiền của hai phiên đang mở, chạm thẳng I-001. Chủ quán trả lời
+*"không được ghép khi bàn kia đang mở"* ⇒ **ca đắt bị đóng bằng quyết định, không phải bằng mã.**
+Hệ thống không cần và **không được** có đường trộn tiền hai hoá đơn. Hệ quả nghiệp vụ phải nói
+thẳng ra, vì nó là cái giá: hai nhóm đã ngồi hai bàn riêng thì trả **hai** hoá đơn, kể cả khi họ
+quen nhau và xin gộp.
+
+**Điều đáng ghi thứ hai — U-012 làm đối soát lệch ở HAI ngày, không phải một:**
+*Doanh thu tính ngày ghi nợ* nghĩa là ngày ghi nợ két **thiếu**, ngày trả nợ két **thừa** trong khi
+doanh thu hôm ấy không tăng. Công thức đối soát ở `docs/architecture.md` §6.4 trước đó chỉ có một
+dòng nợ ⇒ đã viết lại thành bốn dòng. Kèm một luật mới phải nói ra: **một lần trả nợ không bao giờ
+được ghi thành khoản bán mới** — ghi vậy là tính doanh thu **hai lần** cho cùng một bữa ăn, sai
+nặng hơn quên thu vì nó làm báo cáo trông đẹp hơn sự thật.
+
+**S-4: "tôi không hiểu" là dữ liệu về CÂU HỎI, không phải về người trả lời.**
+Câu kiểm chứng cũ — *"bảng ở quầy lúc đó hiện bàn 5 còn thiếu 3 hay đã đủ?"* — bắt chủ quán suy ra
+hộ **một bảng trong máy nên hiện con số nào**. Đó là câu về mô hình dữ liệu, và người viết tài liệu
+mới có nghĩa vụ trả lời nó. Câu mới hỏi về **cái quán**, thứ chủ quán biết rõ hơn bất kỳ ai:
+*"từ lúc bánh tráng xong đến lúc nó xuống bàn, có khi nào nó phải nằm chờ không?"* — kèm một câu
+thứ hai chỉ dùng khi trả lời là "có", vì lời chốt U-009 (bỏ nút bấm ở bếp) đã bịt nguồn dữ liệu
+duy nhất của con số thứ tư.
+
+Câu cũ giữ nguyên văn ở §7.2 làm **bằng chứng**, không phải để hỏi lại. Bài học ghi ở đây chứ không
+mở finding mới (CLAUDE.md §3.8 — mới hỏng một lần): **câu kiểm chứng phải hỏi về cái quán, không
+hỏi về cái bảng.** Ba câu kiểm chứng trước đó — S-1, S-2, S-3 — đều hỏi về quán và đều được trả lời
+gọn trong một lần.
+
+**Pointer đã đuổi theo (§7.2):** năm chỗ nói U-012/U-013 còn mở — `docs/product.md` §3.1.6, §3.1.7
+và phần văn xuôi mục *Unknowns* · `docs/architecture.md` §11, §12.3, §12.4 · `docs/decisions.md`
+ADR-011 và ADR-012 (**sửa tiến** bằng một dòng *Cập nhật*, không viết lại thân ADR — ADR-008).
+
+**Một xác nhận nhỏ đáng giữ:** §12.2 từng chọn **phương án hẹp** cho câu *ai bấm thu nợ* (người
+đang trực quầy) và ghi rõ đó là suy ra. Lời chủ quán trùng đúng phương án ấy ⇒ không phải sửa gì.
+Đây là bằng chứng cho luật chọn hẹp: chọn hẹp thì lúc có lời giải hoặc đúng sẵn, hoặc sửa một chỗ;
+chọn rộng thì sửa cả một nhánh.
+
+**Còn treo:**
+Danh sách câu hỏi nghiệp vụ đang mở nay **rỗng**. Còn đúng một chỗ suy ra — **S-4** — với câu hỏi
+mới chưa ai hỏi.
+
+[↑ đầu file](#top)
+
+### T-032 — Nợ là một phần riêng, có mục FE · BE · DB
+
+**Xong 2026-08-31.** L2 · không có prompt — chủ repo yêu cầu thẳng.
+`docs/architecture.md` **§12** (mới, bốn mục con) + §8, §11, §13 · `docs/decisions.md` **ADR-012**
+· `docs/product.md` *Unknowns* U-012 (trỏ tới §12).
+
+**Vì sao có task này:**
+Chủ quán chốt **cho nợ** (T-028, `shop-facts.md` §6.14), nhưng lời chốt chỉ nói *lúc sinh ra* của
+khoản nợ. T-029 viết xong `docs/architecture.md` thì nợ nằm rải ở sáu chỗ — §1.1, §4, §6.4, §7,
+§8, §11 — **không có mục nào của riêng nó**. Chủ repo yêu cầu một mục riêng, có FE, BE, DB.
+
+**Lập luận trung tâm:** nợ và phiên bàn có **hai vòng đời khác nhau**. Phiên đóng xong là hết;
+khoản nợ sinh ra *lúc* phiên đóng rồi sống tiếp nhiều ngày. Hai ô *"ai nợ / bao nhiêu"* gắn vào
+phiên bàn thì khoản nợ chết ngay tại chỗ nó sinh ra: không tra được ai còn nợ, không thu lại được,
+và §6.4 (ngưỡng lệch 0đ) mãi mãi không giải thích được chỗ két thiếu.
+
+**Ba mục đã viết:**
+- **§12.1 FE** — ba chỗ nợ hiện ra (POS lúc đóng phiên · màn *Nợ* riêng ở POS · báo cáo & đối
+  soát của chủ quán) và **một chỗ nó không được hiện**: năm màn trạm bếp.
+- **§12.2 BE** — bốn luật (chặn ở BE chứ không ở FE · nợ ≠ tiền đã thu · mọi thao tác có vết kèm
+  người đang trực `quay` · chỉ POS ghi) + bốn đường API bổ sung.
+- **§12.3 DB** — sáu thứ phải cất, ba ràng buộc phải để **database** giữ.
+
+**Hai chỗ nói thẳng là đang vượt rào / đang suy ra:**
+- §12.3 **cố ý vượt ranh giới §8** (*"không đặt tên bảng, không đặt tên cột"*) cho riêng phần nợ,
+  theo yêu cầu thẳng của chủ repo. Đã ghi ⚠️ ngay trong mục: đây là **đề xuất gửi sang pha 2**,
+  không phải lược đồ đã chốt.
+- **Người bấm *thu nợ* là người đang trực `quay`** — suy từ §4 và §3.3, **không** phải lời chủ
+  quán. Ghi rõ ở §12.4 và trong ADR-012 để chủ quán nói khác thì biết sửa chỗ nào trước.
+
+**Chỗ thiết kế bám vào câu còn treo:** §12.3 cất **cả hai** mốc thời gian — lúc ghi nợ và lúc thu
+nợ. U-012 còn mở ở vế *doanh thu tính ngày nào*; giữ cả hai mốc thì chủ quán chốt kiểu nào cũng
+dựng lại được báo cáo mà không sửa dữ liệu quá khứ. Đó là **phương án hẹp nhất**, không phải một
+lựa chọn ngầm (CLAUDE.md §3.5).
+
+**Pointer đã đuổi theo (§7.2):** §11 của `docs/architecture.md` còn liệt **U-006** là câu đang mở —
+T-030 đã đóng nó cùng ngày. Đã thay bằng **U-013** và ghi rõ U-006 đóng ra kết quả gì.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -n '^## 12\.\|^## 13\.\|^### 12\.' docs/architecture.md
+grep -n 'ADR-012' docs/decisions.md docs/architecture.md
+./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/LATEST/p'      # U-012, U-013
+```
+
+### T-029 — `docs/architecture.md` là template rỗng, trong khi mặt admin đã đủ dữ kiện để viết
+
+**Prompt:** không có — chủ repo yêu cầu thẳng 2026-08-31: *"tôi muốn thêm phần admin cho hệ thống
+này"*. **L2** — nó chốt ai được ghi cái gì, tức chạm quyền và chạm tiền.
+
+**Goal:**
+`docs/architecture.md` — owner của *Architecture* theo CLAUDE.md §2 — hết là template tiếng Anh
+rỗng, và giữ đặc tả mặt quản trị: ba mặt một miền · luật ghi · hai trục · POS · bếp · chủ quán ·
+tiền · quyền theo chỗ đứng · chỗ thiếu của hình dạng dữ liệu · câu còn treo.
+
+**Nói một câu, việc phải làm là gì:**
+Viết ra **ai được ghi cái gì** và **luật nào không bao giờ được rời khỏi backend**. Việc **không**
+phải làm: đặt tên bảng, tên cột, endpoint hay thư mục — lược đồ là việc của System Design và phải
+chạy sau BA-12.
+
+**Vì sao có task này:**
+Ba nguồn hội tụ trong cùng ngày 2026-08-31. (a) Chủ repo yêu cầu mặt admin. (b) T-026 đã đưa lời
+chủ quán về gom mẻ vào `master_plan/shop-facts.md` §5.4 và chốt ADR-009. (c) T-028 ghi bảy lời chốt
+nữa, trong đó **ba** lời quyết định thẳng hình dạng của mặt admin: bỏ nút bấm ở bếp (U-009) · máy
+không gom, người gom (U-011) · cho nợ và phải ghi ai nợ (U-007 → §6.14).
+
+Vì sao viết được ngay dù BA-12 chưa xong: phần lớn đặc tả **derive được** từ dữ kiện đã chốt, chứ
+không phải từ lát cắt chưa viết. Chỗ nào chưa chốt thì tài liệu nêu đích danh là đang treo (§11 của
+nó) thay vì tự quyết — lý lẽ đầy đủ ở `docs/decisions.md` **ADR-011**, mục *Rejected alternatives*.
+
+**Không làm thì mất gì:**
+- **Người dựng màn hình trạm làm ra một nút không ai bấm** — nặng nhất, và nó **đang** sắp xảy ra:
+  bản xuất khẩu vẫn thiết kế `PATCH staff/tasks/:id` (F-013 → T-031).
+- **Quyền huỷ bị gán theo `role`**, tức sai `shop-facts.md` §6.13: chủ quán có `role=owner` sẽ huỷ
+  được từ bất kỳ đâu, đúng thứ luật *"chức vụ không mở thêm cửa nào"* cấm.
+- **Sáu chỗ thiếu của 16 bảng không ai biết là thiếu** — vết hoàn tiền, khoản nợ, audit, ai đang
+  trực, note "đem về", đã phục vụ bao nhiêu. Phát hiện lúc đang viết mã là làm lại lược đồ.
+- **Owner của §2 vẫn rỗng.** Một owner rỗng là một owner nhìn thì như đã có.
+
+**Phát hiện lớn nhất trong lúc làm — không phải thứ task này đi tìm:**
+Lời chốt *"bỏ nút bấm ở bếp"* (2026-08-31) **bác** hai câu đang nằm trong
+`master_plan/prompt-fullstack.md` §3.6 và §3.7. Đây là **loại thứ ba** của họ lỗi F-005 / F-007 —
+người đọc bản xuất khẩu đứng **ngoài** repo nên không grep được, họ dựng đúng thứ được viết. Ghi
+thành `work/findings.md` **F-013**, việc sửa là **T-031**. Task này **không** tự sửa bản xuất khẩu:
+ba phiên khác đang có thay đổi chưa commit trong cùng cây, nhận thêm file vào scope là giẫm chân.
+
+**Chạy song song với ba phiên khác — và va số task:**
+T-026, T-025, T-028 đều XONG-CHƯA-COMMIT khi task này chạy; `work/scope.txt` mang **bốn** khối, mỗi
+khối ghi rõ chủ (F-010). T-029 sở hữu riêng `docs/architecture.md`; ba file dùng chung
+(`docs/decisions.md` ADR-011 · `work/findings.md` F-013 · `work/backlog.md`) mỗi task chỉ thêm mục
+của mình.
+
+**Bài học lặp lại lần thứ hai trong một ngày, ghi ở đây chứ không mở finding mới:** task này đánh
+số **T-030** cho việc sửa bản xuất khẩu, rồi phát hiện một phiên khác vừa lấy T-030 cho U-006 ⇒ đổi
+thành **T-031**. Đúng thứ đã xảy ra với U-006/U-008 lúc T-026 chạy. **Dãy số cũng là tài nguyên
+dùng chung**: đọc lại số cuối cùng ngay trước khi ghi, đừng lấy số theo bản đọc lúc đầu phiên.
+
+**Còn treo:**
+Ba câu chạm thẳng vào mặt admin, ghi ở §11 của tài liệu: **U-006** (ghép bàn một hoá đơn hay hai —
+nay đã có T-030 của phiên khác) · **U-012** (nợ trả sau tính doanh thu ngày nào) · **S-4** (bảng
+quầy ba cột hay bốn).
+
+[↑ đầu file](#top)
+
+### T-030 — U-006: ghép bàn là một phiên, một hoá đơn
+
+**Xong 2026-08-31.** L2 · không có prompt — lời chủ quán trả lời thẳng U-006.
+`master_plan/shop-facts.md` §5.1, §6.16, §7.1 · `docs/product.md` §2.1, §3.1.1, §3.1.4, §3.1.7,
+*Unknowns* · `quality/invariants.md` **I-001** (viết lại), **I-002** (thêm vế nhóm ghép).
+
+**Lời chốt:** ghép bàn ⇒ **một phiên và một hoá đơn**.
+
+**Vì sao đây là task L2 chứ không phải một dòng thêm vào:**
+Lời chốt này **phủ định cách đọc cũ của một invariant đang có**. I-001 đang viết *"một bàn chỉ có
+một phiên chưa thanh toán"*; câu ấy đọc xuôi thì như cấm luôn việc một phiên phủ hai bàn. Câu đúng
+là **"một bàn thuộc nhiều nhất một phiên chưa thanh toán"** — quan hệ **không đối xứng**: một bàn
+không nằm trong hai phiên còn mở, nhưng một phiên gắn được nhiều bàn. Không sửa I-001 thì phiên
+sau đọc invariant rồi chặn đúng thứ chủ quán vừa cho phép.
+
+**Bốn hệ quả đã viết ra, không để người đọc tự suy:**
+- Mọi lượt gọi từ bất kỳ bàn nào trong nhóm vào **cùng** phiên — tách ra hai hoá đơn là **thu
+  thiếu tiền**, đúng nghĩa cũ của §6.1.
+- **Bàn trở lại trống theo từng bàn**: đóng phiên là điều kiện chung, dọn bàn thì dọn từng cái.
+- **Bếp không biết đến chuyện ghép** — việc xuống bếp vẫn ghi bàn nào gọi, vì người bưng cần biết
+  bưng tới chỗ nào. Ghép là chuyện của tiền.
+- §2.1 (ẩn danh theo số bàn) vẫn đúng, chỉ nới thành nhóm bàn.
+
+**Chỗ cố ý KHÔNG suy ra ⇒ mở U-013:** ai được bấm ghép, và ghép được cả khi bàn kia **đã** có
+phiên đang mở hay chỉ khi bàn kia còn trống. Xếp một nhóm vào hai bàn trống ≠ gộp hai hoá đơn đã
+có tiền trong đó. Quyền bấm cũng chưa ai nói — §6.13 gắn quyền huỷ đơn với chỗ đứng ở quầy, nhưng
+đó là luật của việc khác.
+
+**Pointer đã đuổi theo (§7.2):** §6 lên **mười sáu** quy tắc ⇒ sửa lại
+`master_plan/prompt-fullstack.md` §7 và `prompt/BA/README.md` (lần thứ hai trong ngày; T-028 vừa
+đưa chúng lên mười lăm).
+
+**Verify:**
+```bash
+./scripts/gate.sh
+./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/LATEST/p'                    # U-012, U-013
+sed -n '/^### 3.1/,/^### 3.2/p' docs/product.md | grep -cE '^ *[0-9]+\.'   # vẫn 15
+grep -rn --include='*.md' '15 quy tắc' master_plan/ prompt/BA/ docs/        # rỗng
+```
+
+### T-028 — Bảy lời chốt của chủ quán ngày 2026-08-31
+
+**Xong 2026-08-31.** L2 · không có file prompt — lời chủ quán trả lời thẳng bảy câu đang mở.
+`master_plan/shop-facts.md` §5.1, §5.4, §6.3, §6.14, §6.15, §7.1, §7.2 · `docs/product.md` §1.1,
+§1.2, §1.4, §2.1, §3.1.1, §3.1.4, §3.1.6, *Unknowns* · `quality/invariants.md` **I-005, I-006**.
+
+**Vì sao có task này:**
+Chủ quán trả lời một loạt bảy câu trong một lượt. Lời chốt chỉ sống trong hội thoại thì chết theo
+phiên (CLAUDE.md §7.2), và sáu trong bảy câu đang **chặn** BA-06, BA-07, BA-08, BA-09, BA-12.
+
+**Bảy câu, và mỗi câu đi về đâu:**
+
+| Câu | Lời chốt | Nhà của nó |
+|---|---|---|
+| U-005 | Trả trước dùng **đúng hai** phương thức đang có; **POS xác nhận lúc nhận tiền** | `shop-facts.md` §6.3 |
+| U-006 | **Ghép bàn có thật** — nhưng một hoá đơn hay hai thì chưa nói ⇒ **còn mở, hẹp lại** | `docs/product.md` → *Unknowns* |
+| U-007 | **Cho nợ**; đóng phiên trên POS ghi **ai nợ, nợ bao nhiêu** | `shop-facts.md` §6.14 · §3.1.6 |
+| U-008 | Một nồi một lần tráng: **3 trứng / 2 bánh / 1 trứng + 1 bánh**; 2 nồi | `shop-facts.md` §5.4 |
+| U-009 | **Bỏ nút bấm ở bếp**; POS tự cập nhật số đã làm cho từng bàn | `shop-facts.md` §5.4 |
+| U-010 | Đơn mang đi **không** chung bảng gom việc; suất **đem về** của khách ngồi bàn thuộc **phiên bàn** | `shop-facts.md` §6.15 |
+| U-011 | **Máy không gom, người gom** — hệ thống chỉ hiện tổng nhu cầu | `shop-facts.md` §5.4 · §1.4 |
+
+**Ba chỗ cố ý KHÔNG suy ra (CLAUDE.md §3.5, §7.2):**
+- **U-006 chỉ đóng một nửa.** *"Ghép bàn có thể xảy ra"* là xác nhận việc ấy có thật, **không**
+  phải quyết định hệ thống phải làm gì. Ghép rồi ra một hoá đơn hay hai là câu chạm tiền và chạm
+  I-001, nên U-006 ở lại *Đang mở* với phạm vi hẹp hơn và một câu kiểm chứng soạn sẵn.
+- **Ba tổ hợp nồi không quy về một đơn vị chung.** 3 trứng · 2 bánh · 1+1 không khớp một mô hình
+  "N chỗ mỗi nồi"; §5.4 ghi nguyên ba tổ hợp và cấm đặt ra mô hình quy đổi.
+- **S-4 hẹp lại nhưng chưa được trả lời.** U-009 bỏ nút bấm ở bếp ⇒ vế *"phải có người bấm thêm
+  một nút"* của S-4 hết đúng, nhưng câu gốc — *có con số thứ tư hay không* — vẫn nguyên. Ghi rõ ở
+  `shop-facts.md` §7.2, câu kiểm chứng cũ không phải sửa một chữ.
+
+**Một câu mới mở ra:** **U-012** — nợ trả sau thì ai ghi nhận, doanh thu tính vào ngày nợ hay ngày
+trả. Sinh ra từ chính lời chốt cho nợ; để trống thì đối soát lệch hai lần mà §6.10 lấy ngưỡng 0đ.
+
+**Pointer đã đuổi theo (§7.2):** §6 lên **mười lăm** quy tắc ⇒ sửa
+`master_plan/prompt-fullstack.md` §7 và `prompt/BA/README.md`. Hai chỗ còn nói "13 quy tắc" là
+**ghi chép lịch sử, cố ý không sửa**: `prompt/maintenance/10-prepay-takeaway-L2.md` là prompt của
+T-020 đã chạy (nó *ra lệnh* giữ 13 quy tắc — sửa là viết lại thứ T-020 đã được bảo), và các entry
+Done cũ trong file này mô tả trạng thái lúc ấy.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/LATEST/p'     # đúng U-006, U-012
+sed -n '/^### 3.1/,/^### 3.2/p' docs/product.md | grep -cE '^ *[0-9]+\.'   # vẫn 15
+grep -rn --include='*.md' '13 quy tắc' master_plan/ prompt/BA/ docs/        # rỗng
+grep -n '^### I-' quality/invariants.md                                     # I-005, I-006
+```
 
 ### T-025 — `commit-msg` hook chặn subject rỗng nghĩa
 

@@ -787,3 +787,65 @@ chữa) · ADR-002 (brief đẩy trạng thái vào mọi phiên) · ADR-007 (h�
 
 **Status:**
 Open
+
+---
+
+### F-013 — Bản xuất khẩu vẫn thiết kế nút `Xong` ở màn trạm, sau khi chủ quán đã bỏ nút ấy
+
+**Problem:**
+Ngày **2026-08-31** chủ quán trả lời câu *ai bấm "đã làm xong" và "đã bưng ra bàn"* bằng cách **bỏ
+bước ấy đi**: *"bỏ qua bước này, POS sẽ tự cập nhật được bao nhiêu cái cho từng bàn"*
+(`master_plan/shop-facts.md` §5.4). Ba trạm `trang_banh`, `gap_banh`, `canh` không bấm gì cả.
+
+`master_plan/prompt-fullstack.md` — bản xuất khẩu để người **ngoài repo** lập kế hoạch full-stack —
+vẫn đang nói ngược lại, ở **ba** chỗ:
+
+| Chỗ | Đang viết |
+|---|---|
+| §3.6, khối *Nhân viên* | `PATCH staff/tasks/:id` (`todo → doing → done`) |
+| §3.7, gạch đầu dòng *Màn hình trạm* | *"một task = một thẻ, một nút `Xong`"* |
+| §3.7, cùng gạch đầu dòng | *"không hỏi 'Bạn chắc chứ?', thay bằng `Hoàn tác` trong 10 giây"* — `Hoàn tác` cho thao tác nào, khi không còn thao tác nào |
+
+Cả ba viết trước ngày 2026-08-31 và đúng vào lúc viết. Chúng sai **từ lúc chủ quán trả lời**, không
+phải từ lúc ai đó phát hiện.
+
+**Impact:**
+Đây là **loại thứ ba** của cùng một họ, sau F-005 (dữ kiện đổi, tài liệu khung còn nói cũ) và
+F-007 (pointer chết trong bản xuất khẩu). Điểm chung của cả ba: **người đọc bản xuất khẩu đứng
+ngoài repo** — họ không `grep` được, không thấy `shop-facts.md` §5.4, không biết có một lời chốt
+sau đó. Họ đọc §3.6 và §3.7 rồi dựng đúng thứ được viết.
+
+Cái giá cụ thể nếu không sửa: một endpoint và một màn hình được làm ra cho một thao tác **không ai
+thực hiện**. Nút đứng đó, không ai bấm, nên mọi con số phía sau nó — *"bàn này đã được mấy cái"*,
+*"còn thiếu gì"* — đứng im. Và vì màn hình *trông* như đang chạy, chỗ hỏng chỉ lộ ra khi quán đã
+đông khách.
+
+Nặng hơn F-005 ở một điểm: F-005 làm người ta ghi **sai một con số**; cái này làm người ta **xây
+một cơ chế cho một actor không tồn tại**, rồi mọi thứ dựng trên cơ chế ấy đều phải làm lại.
+
+**Decision / Fix:**
+Chưa sửa `master_plan/prompt-fullstack.md`. Ghi ngày 2026-08-31 trong lúc chạy **T-029** (viết
+`docs/architecture.md`); T-029 không nhận thêm file vào scope vì ba phiên khác đang có thay đổi
+chưa commit trong cùng cây làm việc.
+
+`docs/architecture.md` §1.1 nay nói thẳng luật đúng — **POS là nơi duy nhất ghi tiến độ; màn trạm
+chỉ đọc** (`docs/decisions.md` **ADR-011**) — và nêu đích danh ba chỗ của bản xuất khẩu đang sai.
+Việc sửa chính bản xuất khẩu là **T-031**.
+
+Ràng buộc cho T-031, để nó không sửa thành một lỗi khác:
+
+- Trạm `don_ban` **vẫn có** một thao tác (bấm *đã dọn*). "Bỏ nút ở bếp" là ba trạm, không phải bốn.
+- Bỏ `PATCH staff/tasks/:id` thì phải trả lời **cái gì thay nó** — `docs/architecture.md` §1.1 nói
+  là POS; đừng chỉ xoá dòng rồi để trống.
+- Ba luật hiển thị còn lại của §3.7 (chữ to · cũ nhất lên đầu · màu theo thời gian chờ) **vẫn
+  đúng**, đừng xoá kèm.
+- Không sửa `prompt/maintenance/` — đó là ghi chép lịch sử của các task đã chạy
+  (cùng lý lẽ T-028 đã dùng).
+
+**Related task:**
+T-031 (sửa bản xuất khẩu, còn mở) · T-029 (phát hiện, viết `docs/architecture.md`) ·
+T-028 (ghi lời chốt 2026-08-31 sinh ra mâu thuẫn này) · F-005 · F-007 (cùng họ, cùng chỗ đọc) ·
+ADR-011
+
+**Status:**
+Open

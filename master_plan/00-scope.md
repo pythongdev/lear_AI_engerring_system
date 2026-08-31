@@ -30,6 +30,6 @@ Ba mục ở `shop-facts.md` **không có tiền thân** ở file này, vì file
 - **Giá suất trứng đã chốt** (chủ quán, 2026-08-30) — số ở `shop-facts.md` §4.3, không chép về đây.
   Bản cũ của file này ghi ô đó là "⚠ chưa chốt — GD-01"; **GD-01 không còn tồn tại**.
 - **U-1 đến U-4** từng nằm ở `shop-facts.md` §8 đã được trả lời hết. Mục §8 không còn; nhật ký
-  chốt nay ở **§7.1**; **§7.2 (chỗ suy luận chưa xác nhận) hiện rỗng** — S-1–S-3 đã được chủ quán
-  xác nhận 2026-08-30.
+  chốt nay ở **§7.1**. **§7.2 (chỗ suy luận chưa xác nhận) giữ đúng một mục: S-4**, sinh ngày
+  2026-08-31 — S-1–S-3 đã được chủ quán xác nhận 2026-08-30 và đã lên §7.1.
 - `shop-facts.md` **cố ý không chứa liên kết nào** — nó là điểm cuối, không trỏ ngược về đây.

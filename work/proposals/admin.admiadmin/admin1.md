@@ -1,3 +1,47 @@
+> **ĐỀ XUẤT — CHƯA ÁP DỤNG. KHÔNG PHẢI SỰ THẬT CỦA REPO NÀY.**
+>
+> - **Là gì:** bản tư vấn thiết kế **Admin / POS / Production Control** cho quán, do một cố vấn
+>   ngoài viết, kèm nguyên văn lời chủ quán mô tả cách bếp gom việc. Nó nói hệ thống *nên* trông
+>   thế nào, không nói repo *đang* thế nào.
+> - **Vào repo ngày:** 2026-08-31, trong commit `03ffda3 "adg"` — commit đó gộp T-023 + T-019 và
+>   nuốt thêm file này, vốn không thuộc task nào (`work/findings.md` **F-011**, lần thứ năm).
+> - **Được chấm ngày:** 2026-08-31 (T-026). Thân bài giữ **nguyên văn**, không chiết, không sửa
+>   một dòng — kể cả phần lặp: từ dòng có `..............2222222222222222222222222` trở xuống,
+>   khối "Production Control" xuất hiện **hai lần gần như y hệt** (lần hai là bản dán lại của
+>   chính nó). Giữ cả hai vì thân bài không được sửa; đọc một lần là đủ.
+> - **Thứ đã được nhận, và chỉ có bấy nhiêu:** lời **chủ quán** trong file này — hai nồi tráng
+>   bánh, mỗi nồi ba quả trứng, làm lẻ thì mất nhiệt, và sáu thứ người đứng quầy phải nhìn thấy.
+>   Nó nay sống ở `master_plan/shop-facts.md` **§5.4** và **§7.1**, là dữ kiện quán có ngày và có
+>   người chốt. Cách đọc nghiệp vụ rút ra từ đó ở `docs/decisions.md` **ADR-009**; việc phải làm
+>   ở `work/backlog.md` **BA-12**.
+> - **Thứ KHÔNG được nhận:** mọi thứ còn lại — cây `/admin/...`, cây `admin/live/`,
+>   `admin/production/`, cây `code/be/internal/...` và `code/fe/admin/...`, danh sách màn hình
+>   Phase A–D, tên trạng thái kiểu `PENDING_APPROVAL` / `OUT_FOR_DELIVERY`, mô hình dữ liệu
+>   `ProductionDemand` / `ProductionBatch`, và bộ artifact `harness/plans/admin/00-15`. Đó là
+>   tầng thiết kế; repo này chưa chốt xong tầng nghiệp vụ (`docs/product.md` §3.2–§3.3, §4–§8 còn
+>   trống). Nhận cấu trúc trước là để tầng dưới quyết thay tầng trên — đúng thứ chính file này
+>   cảnh báo ở mục 27 của nó.
+> - **Trái CLAUDE.md §2 ở hai chỗ — §2 thắng:**
+>   - Mục *"Bộ Admin BA nên tạo tiếp theo"* đề xuất `harness/plans/admin/` làm nhà của tài liệu
+>     BA. **Không đúng ở repo này:** hành vi sản phẩm sống ở `docs/product.md`, task sống ở
+>     `work/backlog.md`, prompt sống ở `prompt/`.
+>   - Mục 29 đề xuất `code/be/internal/pricing/` v.v. làm nhà của luật giá. **Không đúng ở repo
+>     này:** nhà duy nhất của bảng giá và luật giá là `master_plan/shop-facts.md` §4 (ADR-001).
+>     Repo hiện chưa có thư mục mã nguồn nào.
+> - **Chỗ file này nói đúng nghiệp vụ đã chốt** — phiên bàn gộp một hoá đơn, bếp phải nhận thành
+>   phần chứ không nhận `Combo ×2`, khách không gửi giá lên, chỉ người đứng quầy được huỷ đơn,
+>   VietQR tĩnh phải xác nhận tay, doanh thu cộng từ cả hai nguồn — **không phải phát hiện mới**.
+>   Chúng đã nằm sẵn ở `master_plan/shop-facts.md` và `docs/product.md` §1, §2 từ 2026-08-30. Đọc
+>   ở owner, đừng đọc ở đây.
+> - **Đường dẫn bên trong file này phần lớn không mở được** — chúng mô tả cấu trúc đề xuất, không
+>   phải cấu trúc thật. Đó là lý do file nằm dưới `work/`, nơi Gate 1b không chấm link
+>   (CLAUDE.md §5).
+>
+> Muốn dùng ý nào trong đây thì mở một task trong `work/backlog.md` cho ý đó, đừng sửa repo theo
+> file này.
+
+---
+
 Được. Dựa trên **fact duy nhất của quán** bạn cung cấp, tôi sẽ thiết kế phần **Admin** theo hướng: **Admin không phải một dashboard chung chung**, mà là hệ thống điều hành quán, bám trực tiếp vào 5 kênh bán, 5 trạm, 2 luồng bán và các quyền nghiệp vụ đã chốt.
 
 Nguồn gốc nghiệp vụ là file fact của quán; file này quy định phạm vi bán, kênh, giá, vận hành và quy tắc nghiệp vụ, đồng thời là nguồn sự thật duy nhất. 
@@ -1371,6 +1415,982 @@ harness/
 
 
 ..............2222222222222222222222222
+
+Đúng. Với yêu cầu này, tôi thấy **thiết kế Admin trước đó còn thiếu một lớp rất quan trọng: Production Planning / Kitchen Control**.
+
+Bạn không chỉ cần biết **"có bao nhiêu order"**, mà người đứng quầy phải nhìn được:
+
+> **Hiện tại quán đang phải sản xuất tổng cộng bao nhiêu cái bánh, bao nhiêu trứng từng loại, bao nhiêu canh/nước chấm; cái nào đã làm, đã phục vụ, còn thiếu; thiếu cho bàn nào; và nên gom việc nào để bếp làm theo batch tối ưu.**
+
+Điều này phù hợp trực tiếp với fact hiện tại: một suất bán phải được "nổ" thành các thành phần bếp cần làm, chứ bếp không được nhìn một dòng `Combo ×2` mơ hồ. 
+
+## 1. Tôi sẽ đổi kiến trúc Admin thành 3 lớp
+
+```text
+                         ADMIN
+                           │
+          ┌────────────────┼─────────────────┐
+          │                │                 │
+          ▼                ▼                 ▼
+        POS            PRODUCTION         OWNER
+      / QUẦY           CONTROL           REPORT
+          │                │
+          │                │
+          ▼                ▼
+   Đơn + bàn + tiền    Bếp phải làm gì?
+                       Làm bao nhiêu?
+                       Cho ai?
+                       Còn thiếu gì?
+```
+
+Trong đó **Production Control** là màn hình trung tâm cho người đứng quầy.
+
+---
+
+# 2. Màn hình chính của POS không nên là Order List
+
+Thay vì:
+
+```text
+Orders
+#1001
+#1002
+#1003
+...
+```
+
+tôi đề xuất màn hình chính:
+
+# **QUẦY — TỔNG QUAN PHỤC VỤ**
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│ QUẦY                                      08:32             │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  BÀN ĐANG ĂN       CHỜ PHỤC VỤ       ĐANG THIẾU            │
+│      6                   2                  5               │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│ SẢN XUẤT CẦN LÀM                                          │
+│                                                             │
+│  BÁNH CUỐN                         31 cái                  │
+│  TRỨNG                              8 quả                  │
+│    ├── Chín                         3                     │
+│    ├── Tái                          3                     │
+│    └── Vàng                         2                     │
+│                                                             │
+│  NƯỚC CHẤM                          7 suất                 │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│ BẾP ĐANG LÀM                                             │
+│                                                             │
+│  Tráng bánh       12 / 31                                │
+│  Trứng             4 / 8                                 │
+│  Gấp bánh          9 / 31                                │
+│  Canh              5 / 7                                 │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│ BÀN                                                      │
+│                                                             │
+│  Bàn 2   Đang phục vụ     còn 2 bánh + 1 trứng tái       │
+│  Bàn 5   Đang phục vụ     còn 4 bánh                     │
+│  Bàn 7   Chờ món          còn 3 bánh + 2 trứng chín      │
+│  Bàn 8   Chờ món          còn 6 bánh + 2 trứng vàng      │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+Đây mới là **control tower của quầy**.
+
+---
+
+# 3. Phải phân biệt 4 con số
+
+Đây là phần rất quan trọng.
+
+Không chỉ có:
+
+```text
+ORDERED
+```
+
+mà cần:
+
+```text
+ORDERED
+   ↓
+NEEDED
+   ↓
+PRODUCED
+   ↓
+SERVED
+```
+
+Ví dụ bàn 5:
+
+```text
+Bàn 5
+
+Khách gọi:
+6 bánh
+2 trứng tái
+2 giò
+
+Đã sản xuất:
+4 bánh
+1 trứng
+
+Đã phục vụ:
+3 bánh
+1 trứng
+
+Còn khách chờ:
+3 bánh
+1 trứng tái
+2 giò
+```
+
+Nhưng production cũng phải biết:
+
+```text
+TỔNG CẦN
+6 bánh
+2 trứng
+
+ĐÃ SẢN XUẤT
+4 bánh
+1 trứng
+
+CÒN PHẢI SẢN XUẤT
+2 bánh
+1 trứng
+```
+
+Và service lại có thể khác:
+
+```text
+ĐÃ RA BÀN
+3 bánh
+1 trứng
+
+CÒN CHỜ PHỤC VỤ
+3 bánh
+1 trứng
+```
+
+Do đó:
+
+```text
+                    ORDER
+                      │
+             ┌────────┴────────┐
+             ▼                 ▼
+       PRODUCTION            SERVICE
+             │                 │
+       cần sản xuất       cần mang ra
+             │                 │
+             ▼                 ▼
+       đã sản xuất       đã phục vụ
+```
+
+---
+
+# 4. Đặc biệt: Production phải GỘP các bàn
+
+Đây chính là insight quan trọng nhất trong yêu cầu của bạn.
+
+Ví dụ 6 người vào cùng lúc:
+
+```text
+Bàn 1
+1 Combo đầy đủ
+
+Bàn 2
+1 Combo đầy đủ
+
+Bàn 3
+1 Combo đầy đủ
+
+Bàn 4
+1 Combo đầy đủ
+
+Bàn 5
+1 Combo đầy đủ
+
+Bàn 6
+1 Combo đầy đủ
+```
+
+Không được biến thành:
+
+```text
+Bàn 1 → làm 1 trứng
+Bàn 2 → làm 1 trứng
+Bàn 3 → làm 1 trứng
+...
+```
+
+Mà Production Control phải nhìn:
+
+```text
+TRỨNG
+
+Chín      2
+Tái       2
+Vàng      2
+
+TOTAL     6
+```
+
+Sau đó hệ thống biết:
+
+```text
+1 nồi = 3 quả
+2 nồi = 6 quả
+
+→ Có thể chạy 6 quả cùng một batch
+```
+
+**Đây là optimization của production, không phải optimization của order.**
+
+---
+
+# 5. Production Board nên có 2 chiều nhìn
+
+Tôi sẽ làm:
+
+```text
+             PRODUCTION CONTROL
+
+       [ THEO TỔNG ]       [ THEO BÀN ]
+```
+
+## Theo tổng
+
+```text
+╔══════════════════════════════════════╗
+║ CẦN LÀM NGAY                         ║
+╠══════════════════════════════════════╣
+║                                      ║
+║ BÁNH CUỐN                            ║
+║ ████████████████          24 / 36    ║
+║                                      ║
+║ TRỨNG                                 ║
+║                                      ║
+║ Chín       ███████          3 / 5    ║
+║ Tái        █████████        4 / 4    ║
+║ Vàng       ███              1 / 3    ║
+║                                      ║
+║ NƯỚC CHẤM                            ║
+║ ███████████               5 / 8      ║
+╚══════════════════════════════════════╝
+```
+
+---
+
+# 6. Nhưng tổng thôi vẫn chưa đủ
+
+Nếu chỉ hiển thị:
+
+```text
+Bánh: 36
+Trứng: 6
+```
+
+người đứng quầy sẽ không biết:
+
+> "36 cái bánh này dành cho bàn nào?"
+
+Vì vậy phải có **allocation**.
+
+Ví dụ:
+
+```text
+TỔNG BÁNH CÒN THIẾU: 12
+
+Bàn 1     2
+Bàn 3     4
+Bàn 5     3
+Bàn 6     3
+```
+
+Trứng:
+
+```text
+TRỨNG CÒN THIẾU: 5
+
+Chín
+Bàn 1     1
+Bàn 6     2
+
+Tái
+Bàn 3     1
+
+Vàng
+Bàn 5     1
+```
+
+Như vậy người quầy biết:
+
+> **Tôi có thể gom production, nhưng vẫn biết thành phẩm cuối cùng thuộc về ai.**
+
+---
+
+# 7. Đây là mô hình tôi khuyên dùng
+
+```text
+                    ORDER
+                      │
+                      ▼
+               ORDER COMPONENT
+                      │
+          ┌───────────┼───────────┐
+          │           │           │
+        BÁNH         TRỨNG       GIÒ
+          │           │
+          │       ┌───┼────┐
+          │       │   │    │
+          │      CHÍN TÁI  VÀNG
+          │
+          ▼
+      PRODUCTION
+          │
+          ▼
+       BATCH
+          │
+          ▼
+     PRODUCED ITEM
+          │
+          ▼
+       SERVICE
+          │
+          ▼
+        TABLE
+```
+
+**Order line** là thứ khách mua.
+
+**Order component** là thứ bếp phải làm.
+
+**Batch** là cách bếp gom nhiều component để sản xuất hiệu quả.
+
+**Service** là thứ đã thực sự đưa ra bàn.
+
+Đây là 4 khái niệm khác nhau.
+
+---
+
+# 8. Batch Production
+
+Tôi nghĩ đây nên là một domain chính:
+
+```text
+production/
+├── demand
+├── batch
+├── production_job
+└── service
+```
+
+Ví dụ:
+
+```text
+Batch #001
+
+Loại: TRỨNG
+────────────────────
+
+Chín     3
+Tái      2
+Vàng     1
+
+TOTAL    6
+
+Thiết bị:
+Nồi 1
+Nồi 2
+
+[ BẮT ĐẦU ]
+```
+
+Sau khi làm:
+
+```text
+Batch #001
+
+6 / 6 DONE
+
+Phân bổ:
+
+Bàn 1 → chín ×1
+Bàn 2 → chín ×1
+Bàn 3 → chín ×1
+
+Bàn 4 → tái ×1
+Bàn 5 → tái ×1
+
+Bàn 6 → vàng ×1
+```
+
+---
+
+# 9. Nhưng hệ thống KHÔNG nên tự quyết định quá sâu
+
+Có một điểm cần giữ:
+
+```text
+SYSTEM
+  ↓
+tổng hợp nhu cầu
+  ↓
+đề xuất batch
+  ↓
+NGƯỜI BẾP / QUẦY quyết định
+```
+
+Không nên ngay từ đầu làm:
+
+```text
+AI tự quyết định:
+Nồi 1 làm...
+Nồi 2 làm...
+lúc 08:37...
+```
+
+MVP chỉ cần:
+
+> **Hệ thống cho người đứng quầy thấy tổng nhu cầu và cho phép gom thành batch.**
+
+Sau này mới tối ưu algorithm.
+
+---
+
+# 10. Bánh cuốn cũng phải gom
+
+Ví dụ:
+
+```text
+6 khách:
+
+Combo × 6
+
+Bếp cần:
+
+Bánh cuốn = 18
+Trứng = 6
+Giò = 6
+Nước chấm = 6
+```
+
+Fact hiện tại quy định Combo Đầy đủ gồm:
+
+```text
+3 bánh
++
+1 trứng
++
+1 giò
+```
+
+và khi xuống bếp phải explode thành:
+
+```text
+Bánh ×18
+Trứng ×6
+Giò ×6
+Nước chấm ×6
+```
+
+
+
+Nhưng **không có nghĩa là phải sản xuất 18 bánh một lúc**.
+
+Production có thể:
+
+```text
+TRỨNG
+Batch 6
+
+BÁNH
+Batch 6
+Batch 6
+Batch 6
+
+GIÒ
+Batch 6
+
+CANH
+Batch 6
+```
+
+hoặc điều chỉnh theo tình hình thực tế.
+
+---
+
+# 11. Bảng "Quán hiện tại"
+
+Tôi rất thích ý bạn nói:
+
+> "tôi cần nắm được hiện tại quán thế nào"
+
+Vậy nên POS cần một bảng **LIVE FLOOR**.
+
+```text
+┌──────┬───────────────┬───────────────┬─────────────────────┐
+│ Bàn  │ Trạng thái    │ Đã phục vụ    │ Còn thiếu           │
+├──────┼───────────────┼───────────────┼─────────────────────┤
+│ 01   │ Đang ăn       │ 3/5 món       │ 2 bánh              │
+│ 02   │ Chờ món       │ 0/5           │ 3 bánh + 2 trứng    │
+│ 03   │ Đang ăn       │ 4/4           │ —                   │
+│ 04   │ Chờ phục vụ   │ 2/6           │ 4 bánh              │
+│ 05   │ Đang ăn       │ 3/6           │ 2 bánh + 1 trứng    │
+│ 06   │ Chờ thanh toán│ 6/6           │ —                   │
+└──────┴───────────────┴───────────────┴─────────────────────┘
+```
+
+Chỉ cần nhìn bảng này, người đứng quầy biết ngay:
+
+```text
+Bàn nào đang ăn?
+Bàn nào đang chờ?
+Bàn nào thiếu món?
+Bàn nào đủ?
+Bàn nào chờ thanh toán?
+```
+
+---
+
+# 12. Thêm "Kitchen Demand"
+
+Ngay bên cạnh:
+
+```text
+┌─────────────────────────────────────┐
+│ BẾP CÒN PHẢI LÀM                    │
+├─────────────────────────────────────┤
+│                                     │
+│ Bánh cuốn              14           │
+│                                     │
+│ Trứng chín              3           │
+│ Trứng tái               4           │
+│ Trứng vàng              2           │
+│                                     │
+│ Giò                     5           │
+│ Nước chấm               7           │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+Và thêm:
+
+```text
+ĐANG LÀM
+
+Bánh cuốn       8
+Trứng           6
+Giò             3
+Nước chấm       4
+```
+
+Do đó:
+
+```text
+DEMAND
+-
+PRODUCED
+=
+OUTSTANDING
+```
+
+---
+
+# 13. Một bảng cực kỳ hữu ích: "Thiếu gì?"
+
+```text
+⚠ CẦN LÀM
+
+BÁNH
+14 cái
+
+TRỨNG
+Chín       3
+Tái        4
+Vàng       2
+
+GIÒ
+5
+
+CANH
+7
+```
+
+Click `Trứng tái`:
+
+```text
+TRỨNG TÁI — CÒN THIẾU 4
+
+Bàn 2     1
+Bàn 5     1
+Bàn 7     2
+
+[ TẠO BATCH ]
+```
+
+Click:
+
+```text
+[ TẠO BATCH ]
+```
+
+→
+
+```text
+BATCH TRỨNG
+
+Tái ×4
+
+Phân bổ:
+Bàn 2 ×1
+Bàn 5 ×1
+Bàn 7 ×2
+
+[ BẮT ĐẦU ]
+```
+
+---
+
+# 14. Quan trọng: "Đã phục vụ" không phải "đã sản xuất"
+
+Ví dụ:
+
+```text
+Bàn 5 cần:
+
+6 bánh
+2 trứng
+```
+
+Bếp đã làm:
+
+```text
+6 bánh
+2 trứng
+```
+
+nhưng mới mang ra:
+
+```text
+3 bánh
+1 trứng
+```
+
+thì POS phải hiển thị:
+
+```text
+PRODUCED
+6 bánh
+2 trứng
+
+SERVED
+3 bánh
+1 trứng
+
+WAITING SERVICE
+3 bánh
+1 trứng
+```
+
+Không được tự động coi:
+
+```text
+produced = served
+```
+
+Đây sẽ là một domain state riêng.
+
+---
+
+# 15. Tôi đề xuất State cho từng component
+
+```text
+PENDING
+   ↓
+QUEUED
+   ↓
+IN_PRODUCTION
+   ↓
+PRODUCED
+   ↓
+READY_FOR_SERVICE
+   ↓
+SERVED
+```
+
+Nếu huỷ trước production thì:
+
+```text
+CANCELLED
+```
+
+Nhưng **Order** và **Component** có state khác nhau.
+
+Ví dụ:
+
+```text
+ORDER #1025
+APPROVED
+
+Components:
+
+Bánh ×6
+SERVED 3
+PRODUCED 6
+
+Trứng ×2
+SERVED 1
+PRODUCED 2
+
+Giò ×2
+SERVED 2
+```
+
+Order vẫn:
+
+```text
+PARTIALLY_SERVED
+```
+
+---
+
+# 16. Từ đây POS có thể có một màn hình cực mạnh
+
+## **LIVE CONTROL**
+
+```text
+╔══════════════════════════════════════════════════════════════╗
+║                     QUÁN HIỆN TẠI                            ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║ BÀN       6 đang ăn     2 chờ món     1 thanh toán           ║
+║                                                              ║
+╠══════════════════════════════════════════════════════════════╣
+║                    CẦN SẢN XUẤT                              ║
+║                                                              ║
+║ Bánh cuốn                                14                  ║
+║ Trứng chín                                3                  ║
+║ Trứng tái                                 4                  ║
+║ Trứng vàng                                2                  ║
+║ Giò                                        5                  ║
+║ Nước chấm                                 7                  ║
+║                                                              ║
+╠══════════════════════════════════════════════════════════════╣
+║                    ĐANG SẢN XUẤT                             ║
+║                                                              ║
+║ Batch #18  Trứng       6/6                   ✓               ║
+║ Batch #19  Bánh        6/12                  ███             ║
+║ Batch #20  Giò         3/5                   ██              ║
+║                                                              ║
+╠══════════════════════════════════════════════════════════════╣
+║                    CẦN PHỤC VỤ                               ║
+║                                                              ║
+║ Bàn 2       2 bánh + 1 trứng tái                            ║
+║ Bàn 5       3 bánh                                          ║
+║ Bàn 7       2 bánh + 2 trứng chín                           ║
+║                                                              ║
+╠══════════════════════════════════════════════════════════════╣
+║                    BÀN                                      ║
+║                                                              ║
+║ 01  ĂN       02  CHỜ      03  ĂN       04  TRỐNG            ║
+║ 05  ĂN       06  THANH    07  CHỜ      08  TRỐNG            ║
+║ 09  TRỐNG    10  ĂN       11  TRỐNG                         ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+**Đây mới chính là Admin/POS phù hợp với quán của bạn.**
+
+---
+
+# 17. Và tôi sẽ sửa lại cấu trúc Admin trước đó
+
+Thành:
+
+```text
+admin/
+│
+├── live/
+│   ├── floor
+│   ├── production
+│   └── service
+│
+├── pos/
+│   ├── orders
+│   ├── tables
+│   └── payment
+│
+├── production/
+│   ├── demand
+│   ├── batches
+│   ├── stations
+│   └── jobs
+│
+├── kitchen/
+│   ├── trang_banh
+│   ├── gap_banh
+│   ├── canh
+│   └── don_ban
+│
+├── orders/
+│
+├── menu/
+│
+├── pricing/
+│
+├── payments/
+│
+├── reconciliation/
+│
+├── reports/
+│
+├── settings/
+│
+└── audit/
+```
+
+Trong đó:
+
+> **`live/` + `production/` là hai module mới cực kỳ quan trọng.**
+
+---
+
+# 18. Domain model cũng phải thêm Production
+
+Tôi sẽ thiết kế:
+
+```text
+Order
+  │
+  └── OrderItem
+         │
+         └── OrderComponent
+                │
+                ├── production demand
+                │
+                ├── batch
+                │
+                └── service
+```
+
+Và:
+
+```text
+ProductionDemand
+        │
+        ├── component_type
+        ├── filling
+        ├── filling_amount
+        ├── quantity
+        ├── served_quantity
+        ├── produced_quantity
+        └── status
+```
+
+Sau đó:
+
+```text
+ProductionBatch
+        │
+        ├── component_type
+        ├── quantity
+        ├── production_station
+        └── batch_items
+                 │
+                 ├── table/session
+                 ├── order
+                 └── quantity
+```
+
+Điều này cho phép:
+
+```text
+6 trứng từ 6 order
+        ↓
+        ↓
+    1 BATCH
+        ↓
+     6 quả
+        ↓
+ phân bổ lại
+        ↓
+6 bàn khác nhau
+```
+
+Đây chính là thứ kiến trúc Order thông thường không giải quyết được.
+
+---
+
+# 19. Một nguyên tắc rất quan trọng
+
+**Order là đơn vị kinh doanh.**
+
+**Production batch là đơn vị sản xuất.**
+
+Hai thứ này **không phải một**.
+
+```text
+6 orders
+   ↓
+có thể tạo
+   ↓
+1 production batch
+```
+
+và:
+
+```text
+1 order
+   ↓
+có thể tạo
+   ↓
+nhiều production batch
+```
+
+Ví dụ một combo:
+
+```text
+Batch 1
+6 trứng
+
+Batch 2
+6 bánh
+
+Batch 3
+6 bánh
+
+Batch 4
+6 giò
+```
+
+Điều này phản ánh đúng cách quán thực sự vận hành.
+
+---
+
+## 20. Đây nên là mục tiêu của Admin
+
+Tôi sẽ định nghĩa Admin/POS của dự án bằng câu này:
+
+> **"Người đứng quầy nhìn một màn hình và biết ngay: quán đang có bao nhiêu bàn, bàn nào đang ăn, bàn nào đang chờ, mỗi bàn đã được phục vụ bao nhiêu, còn thiếu gì; đồng thời bếp tổng cộng còn phải làm bao nhiêu bánh, bao nhiêu trứng theo từng loại, bao nhiêu giò và nước chấm — và có thể gom các nhu cầu đó thành batch sản xuất để tận dụng năng lực của bếp."**
+
+Điểm này **nên trở thành một yêu cầu cốt lõi của Admin**, không phải một feature phụ.
+
+Và từ đây, tôi sẽ **không tiếp tục viết `admin-scope` theo kiểu CRUD nữa**. Artifact BA tiếp theo hợp lý nhất là thiết kế riêng **`production-control.md`**, trong đó khóa 5 thứ: **Demand → Batch → Production → Service → Live Floor**, rồi dùng nó làm nền cho UI POS và các API/backend sau này.
+
+
+người đứng quầy pos cần biết cần làm tổng bao nhiêu cái bánh bao nhiêu cái trứng bên ngoài cần ăn ngày bao nhiêu cái nhân gì lượng nhân như thế nào bao. nhiêu quả trưngs tái trứng chín hay trứng vàng với mục đich tối ưu. ví dụ có 6 người vào quán cùng 1 lúc ăn 6 suất đầy đủ thì quán không thể làm cho từng người 1 như thế mất thời gian. vì 1 nôi tráng bánh cuôn có thể làm 3 quả trứng và tôi có 2 nôi nên có thể làm 6 quả trứng cùng 1 lúc thê là 6 người ăn cùng lúc dc và làm bánh dần cho tưng người 1. còn nếu làm từng người 1 thì 1 nồi nếu chỉ làm 1 quả trứng se mất thời gian và mất nhiệt không tối ưu nên tôi cần 1 bảng ghi tổng số bánh trứng canh cần làm làm cho bàn nào ,bàn nào đang ăn và đã phục vụ dc bao nhiêu bánh còn thiều nhưng gì tôi cần nắm dc hiện tại quán thế nào bao nhiêu bàn chờ đang phục vụ bao anh nhiêu bàn còn thiếu những gì cần làm bao nhiêu
+
+
+
+
 
 Đúng. Với yêu cầu này, tôi thấy **thiết kế Admin trước đó còn thiếu một lớp rất quan trọng: Production Planning / Kitchen Control**.
 

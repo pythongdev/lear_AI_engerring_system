@@ -9,7 +9,7 @@ Viết theo `docs/prompt-guideline.md`. Kiểm kết quả theo `quality/review-
 | Nguồn | Cho cái gì | Ai là nhà thật |
 |---|---|---|
 | `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` | **Khung** nghiệp vụ: 11 task, 3 lát cắt, 12 quy tắc, 14 ngoại lệ, 10 câu hỏi | — |
-| `master_plan/shop-facts.md` | **Mọi dữ kiện quán**: phạm vi bán, **5 kênh**, bảng giá thành phần, giá một suất, phụ thu, thành phần một suất bán, 5 trạm, hai luồng bán, nổ việc xuống bếp, 13 quy tắc nghiệp vụ, đối soát, sổ giấy | **Nhà duy nhất, từ 2026-08-30.** Chỗ khác nói khác ⇒ file này thắng |
+| `master_plan/shop-facts.md` | **Mọi dữ kiện quán**: phạm vi bán, **5 kênh**, bảng giá thành phần, giá một suất, phụ thu, thành phần một suất bán, 5 trạm, hai luồng bán, nổ việc xuống bếp, 16 quy tắc nghiệp vụ, đối soát, sổ giấy | **Nhà duy nhất, từ 2026-08-30.** Chỗ khác nói khác ⇒ file này thắng |
 
 Kế hoạch gốc không chứa một con số nào của quán này. Chạy bộ prompt mà bỏ `shop-facts.md` sẽ ra một
 `docs/product.md` đúng khuôn nhưng áp cho quán ăn nào cũng được — tức là chưa chốt gì.
@@ -33,7 +33,12 @@ quán trả lời hết ngày 2026-08-30; ô cuối cùng — giá suất trứn
 ✅ **Ba chỗ suy luận S-1–S-3 đã được chủ quán xác nhận ngày 2026-08-30** (`shop-facts.md` §7.1,
 ba dòng *xác nhận S-*). S-1 — chỗ chạm tiền — trả lời là **×5**: quả trứng cũng lên giá theo nhân,
 suất trứng nhân thường = **25.000**. Viết theo ×5 và **không** còn phải đánh dấu là suy luận.
-`shop-facts.md` §7.2 nay rỗng; prompt nào còn bảo "ghi S-1 là giả định" là pointer cũ.
+Prompt nào còn bảo "ghi S-1 là giả định" là pointer cũ.
+
+⚠️ **`shop-facts.md` §7.2 không còn rỗng — từ 2026-08-31 nó giữ S-4** (*"đã làm xong, còn ở bếp"
+có phải một con số riêng không*), sinh ra từ §5.4 khi chủ quán mô tả cách bếp gom việc theo mẻ.
+S-4 **chưa** ai xác nhận: prompt nào chạm tới trục sản xuất phải ghi nó là **suy luận**, không ghi
+như lời chủ quán (`work/findings.md` F-004). Câu kiểm chứng đã soạn sẵn nằm ngay ở §7.2.
 
 ## Nguyên tắc của bộ prompt này
 
@@ -59,8 +64,15 @@ suất trứng nhân thường = **25.000**. Viết theo ×5 và **không** còn
 | 08 | `08-mvp-scope-L1.md` | L1 | BA-09 | `docs/product.md` §7 Phạm vi MVP |
 | 09 | `09-decisions-assumptions-L2.md` | L2 | BA-10 | `docs/decisions.md` ADR + giả định |
 | 10 | `10-acceptance-scenarios-L2.md` | L2 | BA-11 | `docs/product.md` §8 + cổng chất lượng BA |
+| 12 | `12-production-control-L2.md` | L2 | BA-12 | `docs/product.md` §3.4 Sản xuất theo mẻ + invariants |
 
-Chạy tuần tự. 02–04 phụ thuộc 01; 05–07 phụ thuộc 02–04; 10 là cổng cuối.
+Chạy tuần tự 00–10. 02–04 phụ thuộc 01; 05–07 phụ thuộc 02–04; 10 là cổng cuối.
+
+**Số 12 đứng ngoài dãy 00–10 có chủ đích.** Nó sinh ngày 2026-08-31 (`work/backlog.md` T-026) từ
+lời chủ quán về cách bếp gom việc, **sau** khi dãy 00–10 đã được chốt và đánh số; chen nó vào giữa
+sẽ đẩy số của mọi prompt sau nó và làm chết mọi pointer đang trỏ tới chúng. Nó chạy **sau BA-03 và
+BA-07**, trước BA-09 — thứ tự phụ thuộc ở `work/backlog.md`, không đọc theo số. Không có `11`;
+BA-11 dùng prompt số 10.
 
 ## Cách dùng một prompt
 

@@ -273,6 +273,15 @@ Khách ngồi bàn 5
                     Quầy thu tiền (mặt / VietQR) → đóng phiên → DỌN BÀN → bàn trống
 ```
 
+Sơ đồ trên là **đường thuận**. Hai nhánh đã chốt ngày 2026-08-31 không vẽ trong đó:
+
+- **Khách không trả được ⇒ quán cho nợ** (§6.14). Phiên vẫn đóng, vẫn dọn bàn, vẫn trả bàn về
+  trống — nhưng lúc đóng, POS bắt buộc ghi **ai nợ** và **nợ bao nhiêu**.
+- **Khách đang ngồi bàn gọi thêm suất đem về** (§6.15). Suất ấy đi vào **chính phiên bàn** này,
+  kèm note **"đem về"**; nó không rẽ sang luồng §5.2 và không thành một đơn riêng.
+- **Nhóm đông ngồi ghép hai bàn** (§6.16). Sơ đồ vẽ *"PHIÊN BÀN 5"* cho gọn; thật ra một phiên
+  gắn **một hoặc nhiều** bàn, và nhóm ghép trả **một** hoá đơn.
+
 ### 5.2 Luồng mang đi — `delivery`, `pickup`, `phone_preorder`
 
 ```
@@ -345,7 +354,118 @@ tráng mấy cái bánh.
 
 Nếu thành phần một suất đổi thì **sửa §4.5 trước**, rồi sửa ví dụ này cho khớp.
 
-## 6. Mười ba quy tắc nghiệp vụ phải đúng
+### 5.4 Bếp làm theo MẺ, không làm lần lượt từng suất — chủ quán chốt 2026-08-31
+
+§5.3 nói một dòng đơn **nổ ra** thành phần nào. Mục này nói bếp **làm chúng theo thứ tự nào**, và
+đây là lời chủ quán, không phải cách tổ chức do người viết tài liệu nghĩ ra.
+
+**Năng lực bếp — con số của chủ quán:**
+
+Quán có **2 nồi** tráng bánh cuốn. Một nồi, trong **một lần tráng**, làm được **đúng một** trong
+ba tổ hợp dưới đây — không phải một sức chứa chung quy đổi được:
+
+| Một lần tráng, MỘT nồi làm được | |
+|---|---|
+| **3 quả trứng** | hoặc |
+| **2 cái bánh** | hoặc |
+| **1 quả trứng + 1 cái bánh** | |
+
+Đây là lời chủ quán nói thẳng, hai lần trong ngày 2026-08-31: *"1 nồi tráng bánh cuốn có thể làm
+3 quả trứng và tôi có 2 nồi nên có thể làm 6 quả trứng cùng 1 lúc"*, rồi *"1 nồi có thể làm nhiều
+nhất 3 trứng, hoặc làm 2 bánh, hoặc làm 1 quả trứng và 1 cái bánh cùng 1 lần tráng"*.
+
+**Hệ quả quan trọng nhất: trứng và bánh tranh nhau cùng một cái nồi.** Không có nồi riêng cho
+trứng và nồi riêng cho bánh. Nồi đang làm trứng thì **vẫn** tráng được bánh, nhưng khi ấy nồi chỉ
+còn chỗ cho **1 trứng + 1 bánh** — tức nhận thêm một cái bánh làm mất hai chỗ trứng.
+
+**Ba tổ hợp trên không quy về một đơn vị chung.** 3 trứng · 2 bánh · 1+1 không phải ba cách chia
+cùng một số chỗ; đừng đặt ra "một nồi có N chỗ, trứng chiếm x, bánh chiếm y" rồi tính. Đó sẽ là mô
+hình của người viết tài liệu, không phải lời chủ quán. Cần một tổ hợp thứ tư thì **hỏi chủ quán**.
+
+Nhân lên cho **hai** nồi — đây là **phép nhân của người viết tài liệu**, không phải con số chủ quán
+đọc ra, trừ con số 6 quả trứng thì chủ quán nói thẳng: tối đa **6 trứng** một mẻ, **hoặc** 4 bánh,
+**hoặc** 2 trứng + 2 bánh, **hoặc** các tổ hợp trộn hai nồi khác nhau (một nồi 3 trứng + một nồi
+2 bánh).
+
+**Vì sao phải gom.** Làm lần lượt từng suất thì **mất thời gian và mất nhiệt** — một cái nồi chỉ
+nấu một quả trứng là nồi chạy gần như không tải. Sáu khách vào cùng lúc gọi sáu suất đầy đủ thì
+quán **không** làm xong suất người thứ nhất rồi mới bắt đầu suất người thứ hai: quán làm **sáu quả
+trứng một mẻ**, rồi tráng bánh dần cho từng người. Chủ quán mô tả đúng tình huống sáu người này
+làm ví dụ (2026-08-31).
+
+⇒ **Gom việc là cách quán đang chạy, không phải một tính năng thêm vào.** Một thiết kế bắt bếp
+nhận việc theo từng suất một là thiết kế bắt quán chạy chậm hơn hiện nay.
+
+**Gom theo tổng, nhưng vẫn biết thành phẩm của ai.** Sáu quả trứng làm chung một mẻ vẫn phải về
+đúng sáu bàn đã gọi chúng. Gom mà mất dấu chủ sở hữu là bưng nhầm bàn.
+
+**Gom theo đúng thứ khách chọn.** Loại nhân và lượng nhân đi theo từng thành phần (§4.5), nên hai
+cái bánh cùng tên nhưng khác lượng nhân là **hai** dòng việc, không gộp làm một. Trứng cũng vậy:
+gom theo **từng loại** — chín, tái, vàng — không gom thành một con số "trứng".
+
+**Những con số chủ quán đòi nhìn thấy — đếm được ba, tính tới 2026-08-31 — và một con số thứ tư
+là suy ra.** Ba là **phép đếm của người viết tài liệu** trên lời chủ quán, không phải con số chủ
+quán chốt: chủ quán nói ra thêm con số thứ tư thì thêm dòng vào bảng này, không cần xin phép ai.
+
+| Con số | Nghĩa | Nguồn |
+|---|---|---|
+| **Khách đã gọi** | tổng thành phần nổ ra từ các dòng đơn (§5.3) | chủ quán, 2026-08-31 |
+| **Đã bưng ra bàn** | đã tới tay khách | chủ quán, 2026-08-31 |
+| **Còn thiếu** | khách đã gọi − đã bưng ra bàn | chủ quán, 2026-08-31 |
+| **Đã làm xong, còn ở bếp** | bếp làm ra rồi nhưng chưa bưng ra | ⚠️ **suy ra, chưa ai xác nhận — S-4, §7.2** |
+
+Con số thứ tư chưa được chủ quán nói ra. Nó **không** được ghi như lời chủ quán chừng nào chưa hỏi
+(§7.2).
+
+**Người đứng quầy phải nhìn được những thứ dưới đây cùng một lúc** — chủ quán liệt kê ngày
+2026-08-31; **đếm được sáu, tính tới ngày đó**. Sáu là phép đếm của người viết tài liệu, không
+phải một ranh giới chủ quán chốt (khác hẳn "đúng năm kênh" ở §2, thứ *là* quyết định). Thấy thứ
+thứ bảy thì thêm vào đây:
+
+1. Tổng **còn phải làm**, tách theo từng thành phần: bánh cuốn · trứng theo từng loại (chín, tái,
+   vàng) · giò · nước chấm, kèm nhân và lượng nhân.
+2. Số ấy **chia cho bàn nào**.
+3. Bàn nào **đang ăn**, bàn nào **đang chờ món**.
+4. Mỗi bàn **đã được phục vụ bao nhiêu**.
+5. Mỗi bàn **còn thiếu gì**.
+6. Hiện tại quán **đang thế nào** — bao nhiêu bàn chờ, bao nhiêu bàn đang phục vụ.
+
+Đây là **một** thứ chủ quán mô tả: *"tôi cần nắm được hiện tại quán thế nào"*. Sáu dòng trên là
+sáu phần của cùng một cái nhìn đó, không phải sáu màn hình.
+
+**Ba chỗ từng để trống, chủ quán trả lời hết ngày 2026-08-31** (trước đó là U-008, U-009, U-010 ở
+`docs/product.md` → *Unknowns*):
+
+**1 · Không có nút bấm nào ở trạm bếp.** Câu hỏi *ai bấm "đã làm xong" và "đã bưng ra bàn", theo
+từng cái hay theo cả mẻ* được chủ quán trả lời bằng cách **bỏ bước ấy đi**: *"bỏ qua bước này, POS
+sẽ tự cập nhật được bao nhiêu cái cho từng bàn"*. Người tráng bánh, người gấp bánh và người lấy
+canh **không** phải bấm gì để báo xong — bắt bếp bấm là thêm việc cho ba đôi tay đang bận. Con số
+"mỗi bàn đã được bao nhiêu" sinh ra ở **POS**, không sinh ra ở bếp.
+
+**2 · Đơn mang đi KHÔNG nằm chung bảng gom việc với bàn.** Chủ quán trả lời thẳng: **không**. Bảng
+gom việc ở quầy là bảng **theo bàn**; ba kênh không gắn bàn (§2, §5.2) không đổ vào đó.
+
+**3 · Nhưng khách ĐANG NGỒI BÀN gọi thêm suất để đem về thì suất ấy thuộc BÀN, không thành đơn
+mang đi.** Lời chủ quán: *"có những lúc bàn đang ăn gọi đem về thì sẽ thêm suất cho bàn đó và note
+lại là đem về; thế này quản lý đơn giản hơn, nhưng mục note đem về cần rõ ràng"*. Ba hệ quả:
+
+- Suất đem về ấy vào **chính phiên bàn** đang mở, nên nó nằm trong **một** hoá đơn của bàn (§6.1)
+  và được **tính vào nguồn "phiên bàn"** của báo cáo doanh thu, không tính vào nguồn "đơn lẻ"
+  (§6.9). Không mở một đơn `pickup` hay `delivery` nào cho nó.
+- Suất ấy **vẫn nằm trên bảng gom việc theo bàn** — vì nó là suất của bàn đó. Đây không phải ngoại
+  lệ của luật 2 ở trên: luật 2 nói về ba kênh không gắn bàn, còn suất này gắn bàn.
+- **Note "đem về" phải rõ ràng** — chủ quán nhấn đúng chữ này. Bếp và người bưng phải đọc ra ngay
+  suất nào ăn tại chỗ, suất nào gói lại; đọc nhầm là khách mang về một đĩa không gói, hoặc một
+  suất bị gói trong khi khách ngồi ăn.
+
+**Và điều chủ quán đã chốt về quyền của máy: máy KHÔNG gom, người gom.** Ngày 2026-08-31 chủ quán
+trả lời câu *hệ thống chỉ hiện tổng nhu cầu, hay được phép tự chia mẻ*: **hệ thống chỉ hiện tổng
+nhu cầu để người tự gom — *"máy không làm, để người làm"***. Hệ thống **không** tự chia mẻ, **không**
+tự xếp nồi, **không** tự quyết thứ tự làm và **không** đề xuất mẻ. Nó bày ra các con số ở trên; ai
+gom, gom mấy quả, làm trước làm sau là quyết định của người ở bếp và ở quầy. Đây là một **ranh
+giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ là đổi phạm vi, phải xin phép chủ quán.
+
+## 6. Mười sáu quy tắc nghiệp vụ phải đúng
 
 1. **Khách gọi thêm khi quầy đã bắt đầu thu tiền vẫn thuộc CÙNG phiên, CÙNG một hoá đơn.** Phiên
    ở trạng thái "chờ thanh toán" **chưa** giải phóng bàn. Tách ra hoá đơn thứ hai ⇒ **thu thiếu
@@ -364,10 +484,13 @@ Nếu thành phần một suất đổi thì **sửa §4.5 trước**, rồi s�
      chốt được số tiền để trả (§6.1).
    - ⇒ **Huỷ một đơn ĐÃ trả trước thì sinh việc hoàn tiền, xử theo §6.4** — quầy quyết từng ca
      và phải ghi vết. Đơn **chưa** trả tiền thì huỷ không sinh việc gì về tiền.
-   - Còn mở: **đơn trả trước thì trả bằng gì, ai bấm xác nhận đã nhận tiền, và lúc nào**
-     (`docs/product.md` → *Unknowns* **U-005**). VietQR ở đây là **tĩnh** (§1) nên hệ thống
-     không tự biết tiền đã về, mà lúc khách trả trước thì không có nhân viên nào đứng đối diện
-     khách. Chưa ai trả lời ⇒ **không được suy ra**.
+   - **Đơn trả trước trả bằng đúng hai phương thức đang có, và POS xác nhận vào lúc nhận tiền**
+     (chủ quán chốt 2026-08-31, trả lời U-005). Không có phương thức thứ ba, không có cổng thanh
+     toán nào: vẫn là **tiền mặt** hoặc **chuyển khoản VietQR**. Và mốc xác nhận là **lúc tiền
+     thật sự tới tay quán** — người ở POS bấm xác nhận đã nhận tiền tại đúng thời điểm đó, không
+     phải lúc khách bấm chọn "trả trước". VietQR ở đây là **tĩnh** (§1) nên hệ thống vẫn không tự
+     biết tiền đã về; chọn "trả trước" là **ý định của khách**, còn "đã nhận tiền" chỉ do người
+     bấm ở POS tạo ra. POS đặt ở quầy (§6.13) nên người bấm là **người đứng quầy**.
 4. **Hoàn tiền: có, nhưng không có luật cứng — người ở quầy quyết định từng trường hợp** (chủ quán
    chốt 2026-08-30). Không phải mọi ca đều được hoàn, và cũng không cấm hoàn; quầy nhìn tình huống
    thật rồi quyết.
@@ -433,11 +556,79 @@ Nếu thành phần một suất đổi thì **sửa §4.5 trước**, rồi s�
     hoàn tiền** (§6.4). Cùng một người chịu trách nhiệm cho cả ba việc chạm tiền, nên đối soát
     cuối ngày (§6.10) luôn truy được về một người.
 
+14. **Khách không trả được thì quán CHO NỢ; đóng phiên trên POS phải ghi AI nợ và nợ BAO NHIÊU**
+    (chủ quán chốt 2026-08-31, trả lời U-007). Đây là đường chính thức cho ca khách rời quán mà
+    chưa trả tiền — không phải một ngoại lệ chờ ai đó nghĩ ra cách xử.
+    - **Phiên vẫn được đóng.** Không có chuyện để phiên mở mãi chờ tiền: đóng phiên rồi dọn bàn
+      thì bàn trở lại trống như mọi phiên khác (§6.1 vẫn đúng — bàn trống cần đóng phiên **và**
+      dọn bàn). Nếu không cho nợ thì một bàn quỵt tiền sẽ khoá luôn cái bàn đó.
+    - **Đóng phiên kiểu này bắt buộc ghi hai thứ: ai nợ, nợ bao nhiêu.** Thiếu một trong hai thì
+      khoản nợ vô chủ, và đối soát cuối ngày (§6.10) sẽ thấy két thiếu tiền mà không ai truy được
+      — đúng thứ luật *lệch 1 đồng cũng phải tìm ra lý do* cấm.
+    - ⇒ **Ghi nợ phá tính ẩn danh của phiên bàn.** Bình thường phiên bàn ẩn danh theo số bàn (§2);
+      ca này bắt buộc phải có một cái tên hoặc một cách gọi lại được. Đó là cái giá của việc cho
+      nợ, chủ quán đã chấp nhận.
+    - ⇒ **Một khoản nợ KHÔNG phải tiền đã thu.** Doanh thu trong ngày và tiền trong két lệch nhau
+      đúng bằng tổng nợ ghi trong ngày; §6.9 và §6.10 phải đọc được con số đó, nếu không đối soát
+      sẽ báo lệch mỗi lần có người nợ.
+    - **Người nợ quay lại trả thì POS ghi nhận** (chủ quán chốt 2026-08-31, trả lời U-012) — cùng
+      một cửa với mọi việc chạm tiền khác.
+    - **Doanh thu tính vào NGÀY GHI NỢ, không phải ngày thu được tiền** (chủ quán chốt
+      2026-08-31, trả lời U-012). Bữa ăn bán ngày nào thì doanh thu ngày ấy; lần trả sau chỉ là
+      tiền về, không phải một lần bán mới.
+    - ⇒ **Đối soát lệch ở HAI ngày khác nhau, và cả hai đều phải có tên**: ngày ghi nợ, két
+      **thiếu** đúng bằng tổng nợ ghi trong ngày; ngày người ta trả, két **thừa** đúng bằng tổng
+      nợ cũ thu được hôm đó, trong khi doanh thu hôm đó không tăng. Bảng đối soát (§6.10) phải bày
+      **cả hai** dòng, nếu không thì đúng luật *lệch một đồng cũng phải tìm ra lý do* sẽ báo động
+      giả mỗi lần có người nợ hoặc trả nợ.
+    - ⇒ **Một lần trả nợ không bao giờ được ghi thành một khoản bán mới.** Ghi thành khoản bán là
+      **tính doanh thu hai lần** cho cùng một bữa ăn — lỗi tiền nặng hơn cả việc quên thu.
+15. **Khách đang ngồi bàn gọi thêm suất để ĐEM VỀ thì suất ấy thuộc PHIÊN BÀN, kèm note "đem về"**
+    (chủ quán chốt 2026-08-31, trả lời U-010). Không mở đơn `pickup` hay `delivery` nào cho nó —
+    chủ quán chọn đường này vì *"thế này quản lý đơn giản hơn"*.
+    - Suất ấy vào **một** hoá đơn của bàn (§6.1) và tính vào nguồn **phiên bàn** của báo cáo doanh
+      thu, không tính vào nguồn đơn lẻ (§6.9).
+    - **Note "đem về" phải rõ ràng** — chủ quán nhấn đúng chữ này. Bếp và người bưng phải đọc ra
+      ngay suất nào ăn tại chỗ, suất nào gói lại.
+    - Luật này **không** mở đường ngược lại: một đơn `delivery`, `pickup` hay `phone_preorder` vẫn
+      không bao giờ nối được vào phiên bàn (§2, §5.2).
+16. **Ghép bàn: nhiều bàn ghép lại là MỘT phiên và MỘT hoá đơn** (chủ quán chốt 2026-08-31, trả
+    lời U-006). Ghép bàn là chuyện có thật ở quán, không phải ca hiếm — quán có 11 bàn (§1) và
+    nhóm đông thì ngồi tràn sang bàn bên.
+    - **Một phiên phục vụ được nhiều bàn.** Đây là chỗ luật cũ phải đọc lại: câu đúng không phải
+      *"một bàn một phiên"* mà là **"một bàn thuộc nhiều nhất một phiên chưa thanh toán"**. Một
+      phiên gắn **một hoặc nhiều** bàn; một bàn thì không bao giờ nằm trong hai phiên còn mở.
+    - **Mọi lượt gọi từ bất kỳ bàn nào trong nhóm đều vào cùng phiên ấy**, bằng bất kỳ tổ hợp nào
+      của `qr_table` và `staff_pos`. Khách ngồi bàn 4 quét QR trên bàn 4, khách ngồi bàn 5 quét QR
+      trên bàn 5 — vẫn **một** hoá đơn. Đây là §6.1 nới ra cho nhóm bàn, không phải luật mới chống
+      lại nó: tách nhóm ghép thành hai hoá đơn cũng là **thu thiếu tiền** theo đúng nghĩa cũ.
+    - **Bàn trở lại trống theo TỪNG bàn.** Phiên đóng là điều kiện chung cho cả nhóm, nhưng dọn
+      bàn thì dọn từng cái: bàn 4 trống khi phiên đã đóng **và** bàn 4 đã được dọn, không phụ
+      thuộc bàn 5 dọn xong chưa (§6.1 giữ nguyên hai điều kiện).
+    - **Việc xuống bếp vẫn ghi bàn nào gọi**, không ghi "nhóm" — người bưng cần biết bưng tới chỗ
+      nào (§5.3, §5.4). Ghép là chuyện của **tiền**, không phải chuyện của bếp.
+    - **Người đứng quầy bấm ghép, trên POS** (chủ quán chốt 2026-08-31, trả lời U-013). Cùng một
+      cửa với duyệt đơn (§6.2), huỷ đơn (§6.13), hoàn tiền (§6.4) và ghi nợ (§6.14) — mọi việc
+      chạm tiền đi qua đúng một máy, nên truy được về một người khi đối soát (§6.10).
+    - **CHỈ ghép được khi bàn kia còn TRỐNG. Bàn đang có phiên mở thì KHÔNG ghép được**
+      (chủ quán chốt 2026-08-31, trả lời U-013). Đây là **ranh giới**, không phải hạn chế kỹ
+      thuật chờ ai gỡ.
+    - ⇒ **Ghép bàn là NỚI một phiên đang mở sang một bàn trống, không bao giờ là GỘP hai hoá
+      đơn.** Hai việc nghe giống nhau nhưng khác hẳn: nới thì chưa có đồng nào của bàn kia phải
+      dời chỗ; gộp thì phải trộn tiền của hai hoá đơn đã có. Chủ quán chọn đường thứ nhất và
+      đóng đường thứ hai.
+    - ⇒ **Hai nhóm đã ngồi hai bàn riêng, mỗi bàn một phiên, thì trả HAI hoá đơn** — kể cả khi
+      họ quen nhau và xin gộp. Muốn một hoá đơn thì phải ghép **trước khi** bàn thứ hai được mở
+      phiên. Đây là hệ quả trực tiếp của luật trên, không phải luật thêm.
+    - ⇒ Luật này giữ nguyên vẹn *"một bàn thuộc nhiều nhất một phiên chưa thanh toán"* ở gạch đầu
+      dòng thứ nhất: bàn được ghép vào đang **trống**, tức chưa thuộc phiên nào.
+
 ## 7. Nhật ký chốt
 
-**Tính tới 2026-08-30, không còn câu hỏi nào treo, và cũng không còn chỗ suy ra nào chưa xác
-nhận.** Bảng giá đã đầy, cả năm kênh đều có luồng, ba mục suy luận S-1–S-3 đã được chủ quán trả
-lời thẳng (§7.1, ba dòng đánh dấu *xác nhận S-*). Mục này giữ lại **ai chốt cái gì, ngày nào**, để phiên sau
+**Tính tới 2026-08-31 có đúng một chỗ suy ra chưa xác nhận — S-4 ở §7.2.** Bảng giá đã đầy, cả
+năm kênh đều có luồng, ba mục suy luận S-1–S-3 đã được chủ quán trả lời thẳng ngày 2026-08-30
+(§7.1, ba dòng đánh dấu *xác nhận S-*). Chỗ suy ra duy nhất còn lại sinh ra ngày **2026-08-31**,
+từ lời chủ quán về cách bếp gom việc (§5.4). Mục này giữ lại **ai chốt cái gì, ngày nào**, để phiên sau
 muốn lật lại một quyết định thì biết đang lật lại điều gì.
 
 ### 7.1 Chủ quán đã chốt những gì
@@ -465,8 +656,21 @@ muốn lật lại một quyết định thì biết đang lật lại điều g
 | 2026-08-30 | *(xác nhận S-3)* **Người đứng quầy** là người quyết định và ghi vết mỗi lần hoàn tiền | §6.4 |
 | 2026-08-30 | **Chỉ người đứng quầy được huỷ đơn**, bấm trên máy POS ở quầy | §6.13 |
 | 2026-08-30 | Quyền huỷ gắn **chỗ đứng, không gắn chức vụ**: chủ quán không đứng quầy thì **nhờ người đứng quầy bấm** | §6.13 |
+| 2026-08-31 | **Năng lực bếp**: 2 nồi tráng bánh, mỗi nồi 3 quả trứng ⇒ **6 quả một mẻ** | §5.4 |
+| 2026-08-31 | Bếp **làm theo mẻ**, không làm lần lượt từng suất — làm lẻ thì mất thời gian và mất nhiệt | §5.4 |
+| 2026-08-31 | **Đơn trả trước** trả bằng đúng hai phương thức đang có (tiền mặt / VietQR), và **POS xác nhận vào lúc nhận tiền** — đóng U-005 | §6.3 |
+| 2026-08-31 | **Ghép bàn là chuyện có thật ở quán** | §6.16 |
+| 2026-08-31 | **Ghép bàn ⇒ MỘT phiên, MỘT hoá đơn** — một phiên gắn được nhiều bàn; "một bàn một phiên" đọc lại thành "một bàn thuộc nhiều nhất một phiên" — đóng U-006 | §6.16 |
+| 2026-08-31 | **Khách không trả được thì CHO NỢ**; đóng phiên trên POS phải ghi **ai nợ, nợ bao nhiêu** — đóng U-007 | §6.14 |
+| 2026-08-31 | **Năng lực một nồi, một lần tráng**: 3 trứng **hoặc** 2 bánh **hoặc** 1 trứng + 1 bánh ⇒ trứng và bánh **tranh nhau cùng một nồi** — đóng U-008 | §5.4 |
+| 2026-08-31 | **Bỏ nút bấm ở trạm bếp**: không ai bấm "đã làm xong" / "đã bưng ra bàn"; **POS tự cập nhật** số đã làm cho từng bàn — đóng U-009 | §5.4 |
+| 2026-08-31 | **Đơn mang đi KHÔNG chung bảng gom việc với bàn**; nhưng khách **đang ngồi bàn** gọi suất đem về thì suất ấy thuộc **phiên bàn**, kèm note "đem về" — đóng U-010 | §5.4 · §6.15 |
+| 2026-08-31 | **Máy không gom, người gom**: hệ thống chỉ hiện tổng nhu cầu, không tự chia mẻ / xếp nồi / quyết thứ tự — đóng U-011 | §5.4 |
+| 2026-08-31 | Người đứng quầy phải nhìn được cùng lúc (đếm được sáu, tính tới ngày này): tổng còn phải làm theo thành phần · chia cho bàn nào · bàn đang ăn / đang chờ · mỗi bàn đã phục vụ bao nhiêu · mỗi bàn còn thiếu gì · quán hiện đang thế nào | §5.4 |
+| 2026-08-31 | **Người đứng quầy bấm ghép bàn trên POS**; **chỉ ghép được khi bàn kia còn trống** (trả lời U-013) | §6.16 |
+| 2026-08-31 | **POS ghi nhận khi người nợ quay lại trả**; doanh thu tính vào **ngày ghi nợ**, không phải ngày trả (trả lời U-012) | §6.14 |
 
-### 7.2 Chỗ suy ra chưa xác nhận — **hiện không còn mục nào**
+### 7.2 Chỗ suy ra chưa xác nhận — **một mục: S-4**
 
 Mục này từng giữ ba chỗ được **suy ra** từ luật đã chốt chứ không phải lời chủ quán nói thẳng:
 **S-1** (phụ thu suất trứng ×5 hay ×4) · **S-2** (hai trường liên hệ bắt buộc) · **S-3** (hoàn tiền
@@ -478,9 +682,59 @@ thường là 25.000 hay 24.000?"* Trả lời: **25.000**, tức quả trứng 
 giá §4.3 không phải sửa một con số nào; thứ thay đổi là **trạng thái** của con số đó, từ suy luận
 thành đã chốt.
 
-Mục này để trống có chủ đích, **không xoá**: chỗ suy ra tiếp theo phải nằm ở đây, tách khỏi §7.1
+Mục này **không xoá** kể cả khi rỗng: chỗ suy ra tiếp theo phải nằm ở đây, tách khỏi §7.1
 (`work/findings.md` F-004). Thấy một dòng nào trong repo còn nói "ba chỗ suy luận chưa ai xác nhận"
-⇒ đó là pointer cũ, sửa đi.
+⇒ đó là pointer cũ, sửa đi. Từ **2026-08-31** mục này không còn rỗng — nó giữ **S-4**:
+
+**S-4 — "đã làm xong, còn ở bếp" có phải một con số riêng không?** (ghi 2026-08-31, T-026)
+
+Ngày 2026-08-31 chủ quán kể ra ba con số: **khách đã gọi** · **đã bưng ra bàn** · **còn thiếu**
+(§5.4). Con số thứ tư — *bếp đã làm xong nhưng chưa bưng ra* — **không** có trong lời chủ quán;
+nó do người tư vấn thêm vào và được ghi ở §5.4 với dấu ⚠️.
+
+Vì sao đáng hỏi chứ không đáng tự quyết: nếu chỉ có ba con số thì "còn thiếu" của một bàn tụt ngay
+lúc bếp làm xong, tức bảng ở quầy báo bàn đó đủ trong khi khách vẫn đang ngồi chờ. Nếu có bốn con
+số thì phải có người bấm thêm một nút — mà **ai bấm thì cũng chưa ai nói** (câu hỏi đang mở ở
+tài liệu sản phẩm).
+
+**Câu kiểm chứng CŨ — đã hỏi 2026-08-31, chủ quán trả lời *"tôi không hiểu"*.** Câu đó là:
+*"Bếp đã tráng xong 6 cái bánh của bàn 5 nhưng mới bưng ra 3 cái. Bảng ở quầy lúc đó hiện bàn 5
+còn thiếu 3 hay đã đủ?"* **Giữ lại nguyên văn ở đây làm bằng chứng, không phải để hỏi lại.**
+
+**Vì sao câu ấy hỏng — lỗi của người hỏi, không phải của người trả lời.** Nó bắt chủ quán suy ra
+hộ *một bảng trong máy nên hiện con số nào*, tức bắt người biết rõ cái quán trả lời một câu về mô
+hình dữ liệu. Chủ quán không có nghĩa vụ hình dung bảng ấy — người viết tài liệu mới có. Câu hỏi
+đúng phải hỏi về **cái quán**, thứ chủ quán biết rõ hơn bất kỳ ai.
+
+**Câu kiểm chứng MỚI, soạn 2026-08-31 (T-033) — hỏi đúng câu này:**
+
+> *"Từ lúc bếp tráng xong một cái bánh đến lúc nó đặt xuống bàn khách, có khi nào nó phải **nằm
+> chờ** không — chờ đủ đĩa, chờ người rảnh tay bưng, chờ món khác của cùng bàn? Hay gấp xong là
+> bưng ra ngay?"*
+
+| Trả lời | Nghĩa là | Làm gì |
+|---|---|---|
+| *"bưng ra ngay, không nằm chờ"* | *làm xong* và *ra tới bàn* là **một** việc | **ba** con số; xoá con số thứ tư khỏi §5.4, S-4 đóng |
+| *"có, đôi khi nằm chờ vài phút"* | hai việc khác nhau, quán thật sự có một chỗ *"đã xong, chưa ra"* | **bốn** con số ⇒ và **hỏi tiếp câu thứ hai** ở dưới |
+
+**Câu thứ hai, chỉ hỏi nếu câu trên trả lời là "có nằm chờ":**
+
+> *"Lúc ấy ai nói cho máy biết cái bánh đã xong? Anh đã bỏ nút bấm ở bếp rồi (§5.4), nên hoặc
+> người đứng quầy bấm thêm một nút, hoặc không ai nói và máy không biết."*
+
+Câu thứ hai tồn tại vì lời chốt U-009 đã bịt nguồn dữ liệu duy nhất của con số thứ tư. Trả lời
+*"không ai bấm thêm gì nữa"* thì con số thứ tư **không có cách nào tồn tại**, dù quán thật sự có
+chỗ nằm chờ — và lúc ấy §5.4 phải nói thẳng là bảng ở quầy **không biết** khoảng chờ đó, chứ không
+được im lặng giả vờ là không có.
+
+**Cập nhật 2026-08-31 (T-028): lời chốt của U-009 làm S-4 HẸP lại, nhưng không trả lời nó.** Chủ
+quán đã bỏ bước bấm ở trạm bếp — không ai bấm "đã làm xong" nữa, POS tự cập nhật (§5.4). Vế *"phải
+có người bấm thêm một nút"* trong đoạn trên vì thế không còn đúng: nếu con số thứ tư có tồn tại thì
+nó phải do **POS tự suy ra**, không do ai bấm. Câu hỏi gốc vẫn nguyên: **có con số thứ tư hay
+không.** Câu kiểm chứng ở trên không phải sửa một chữ — cứ hỏi đúng nó.
+
+**S-4 đã được hỏi một lần và VẪN chưa có lời giải** — hỏi hỏng thì tính là chưa hỏi. Nó ở lại
+đây, và **không được suy ra** (§7.3). Đừng dùng lại câu cũ.
 
 ### 7.3 Quy tắc cho phiên sau
 

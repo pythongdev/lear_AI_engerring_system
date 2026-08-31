@@ -622,3 +622,134 @@ hợp lệ đúng CLAUDE.md §6 — vẫn đi qua.
 `scripts/brief.sh` · `CLAUDE.md` §2, §6.2 · `work/findings.md` F-011 · `work/backlog.md` T-025 ·
 ADR-002 (brief đẩy trạng thái) · ADR-003 (đừng đỏ vì lý do sai) · ADR-004 (nội dung commit do phiên
 viết — ADR này là vế *siết lại* mà nó đặt sẵn điều kiện) · ADR-008 (sửa tiến, không viết lại).
+
+---
+
+### ADR-011 — Ba mặt dùng chung một miền nghiệp vụ, và **chỉ POS được ghi** tiến độ
+
+**Decision:**
+Từ **2026-08-31**, mặt quản trị của sản phẩm là **một** miền nghiệp vụ nhìn từ ba chỗ đứng — POS
+(quầy) · bếp (năm màn trạm) · chủ quán (quản trị) — chứ không phải ba sản phẩm. Luật nghiệp vụ
+sống ở miền, không sống trong màn hình: cùng một quy tắc *"chỉ người đứng quầy được huỷ đơn"* phải
+chặn được lời gọi đến từ bất kỳ mặt nào.
+
+Kèm theo, và đây là nửa quan trọng hơn: **POS là nơi duy nhất ghi ra tiến độ sản xuất và phục vụ;
+màn hình trạm chỉ đọc.** Ba trạm `trang_banh`, `gap_banh`, `canh` **không có nút báo xong**. Ngoại
+lệ duy nhất ở bếp là `don_ban` — bấm *đã dọn*, vì đó là bước cuối của một cái bàn, không phải bước
+giữa của một món.
+
+Hệ quả thứ ba, rút ra từ §6.13: **quyền gắn chỗ đứng, không gắn chức vụ**, nên hệ thống cần biết
+*ai đang trực trạm nào, lúc này* — một cột `role` cố định trên bảng nhân viên **không** diễn được
+luật ấy. Chủ quán đứng quầy thì có quyền của trạm `quay` **cộng thêm** quyền quản trị; chủ quán rời
+quầy thì mất vế thứ nhất.
+
+Đặc tả đầy đủ ở `docs/architecture.md`. ADR này **không** chốt tên bảng, tên cột hay endpoint.
+
+**Why:**
+Chủ quán chốt ngày **2026-08-31** (`master_plan/shop-facts.md` §5.4): *"bỏ qua bước này, POS sẽ tự
+cập nhật được bao nhiêu cái cho từng bàn"* — trả lời cho câu *ai bấm "đã làm xong"*. Lý do là ba
+đôi tay ở bếp đang bận; thêm một nút là thêm việc cho đúng người không rảnh. Câu trả lời ấy không
+phải một tuỳ chọn giao diện: nó quyết định **ai được ghi vào đâu**, tức là một quyết định kiến trúc.
+
+Vì sao một miền chứ không ba: bốn luật đắt nhất của quán — gộp phiên bàn (§6.1), duyệt trước khi
+xuống bếp (§6.2), quyền huỷ (§6.13), hoàn tiền có vết (§6.4) — đều **cắt ngang** cả ba mặt. Tách
+làm ba sản phẩm là chép bốn luật ấy làm ba bản, và ba bản sẽ lệch nhau (`work/findings.md` F-001,
+đúng họ lỗi đã tốn hai lần trong repo này).
+
+Vì sao `role` không đủ: `role` trả lời *người này là ai*; §6.13 hỏi *người này đang đứng đâu, lúc
+này* — và câu thứ hai đổi nhiều lần trong một buổi sáng.
+
+**Rejected alternatives:**
+- *Giữ nút `Xong` ở màn trạm như `master_plan/prompt-fullstack.md` §3.6, §3.7 đang viết.* Đây là
+  thiết kế **đang có** trong repo, và bị loại vì chủ quán đã bỏ nó ngày 2026-08-31. Giữ lại nghĩa
+  là làm ra một nút không ai bấm, rồi mọi con số phía sau nó đứng im. Mâu thuẫn ghi ở
+  `work/findings.md` **F-013**, việc sửa là **T-031**.
+- *Cho bếp bấm, nhưng "không bắt buộc".* Tệ hơn cả hai đường: con số vừa có vừa không, và không ai
+  biết một bàn chưa có món là do bếp chưa làm hay do bếp quên bấm.
+- *Ba ứng dụng riêng, mỗi mặt một cơ sở dữ liệu, đồng bộ với nhau.* Bốn luật cắt ngang ở trên biến
+  thành bốn bài toán đồng bộ — cho một quán một địa điểm, chỉ vài bàn (số bàn ở
+  `master_plan/shop-facts.md` §1, đừng chép về đây).
+- *Gán quyền huỷ theo `role=quay`.* Rẻ nhất và sai luật: chủ quán có `role=owner` sẽ huỷ được từ
+  bất kỳ đâu, đúng thứ §6.13 cấm — *"chức vụ không mở thêm cửa nào"*.
+- *Chờ BA-12 xong rồi mới viết `docs/architecture.md`.* Loại vì chủ repo yêu cầu mặt admin ngay
+  (2026-08-31), và phần lớn đặc tả **derive được** từ dữ kiện đã chốt. Chỗ nào chưa chốt thì tài
+  liệu nêu đích danh là đang treo (§11 của nó) thay vì tự quyết.
+
+**Rủi ro đã chấp nhận:**
+- **`docs/architecture.md` viết trước khi `docs/product.md` §3.4 (BA-12) tồn tại.** Nếu BA-12 mô
+  tả trục sản xuất khác đi, tài liệu kiến trúc phải sửa theo — nghiệp vụ vẫn là tầng trên. Đã hạ
+  giá bằng cách không chốt lược đồ dữ liệu: §8 của nó chỉ **kể tên chỗ thiếu**, không đặt tên bảng.
+- **"Chỉ POS ghi" dồn việc vào một người.** Người đứng quầy vừa duyệt, vừa thu tiền, vừa cập nhật
+  đã phục vụ. Đó là lựa chọn của chủ quán, và nó đúng với chỗ đứng: quầy là nơi nhìn thấy cả bàn
+  lẫn bếp. Rủi ro thật là lúc đông khách; chưa có dữ liệu thật để nói nó nặng tới đâu.
+- **Khái niệm "đang trực trạm nào" chưa có trong 16 bảng.** Ghi ở `docs/architecture.md` §8 làm
+  chỗ thiếu đã biết, không tự thiết kế quanh nó.
+- **Ba câu còn mở (U-006, U-012, S-4) chạm thẳng vào mặt admin.** Tài liệu nêu đích danh và viết
+  phần liên quan theo phương án hẹp nhất.
+  *Cập nhật 2026-08-31 (T-033): U-006 và U-012 đã đóng, S-4 đã hỏi một lần và hỏng — chủ quán trả
+  lời "tôi không hiểu", câu kiểm chứng mới ở `master_plan/shop-facts.md` §7.2. Rủi ro này giảm
+  xuống còn một mục, và cách xử vẫn nguyên: phần liên quan viết theo phương án hẹp nhất.*
+
+**Applies to:**
+`docs/architecture.md` (toàn bộ) · `master_plan/shop-facts.md` §5.4, §6.13, §6.14, §6.15 ·
+`master_plan/prompt-fullstack.md` §3.5, §3.6, §3.7 (ba chỗ phải sửa — T-031) ·
+`work/findings.md` F-013 · `work/backlog.md` T-029, T-031, BA-12 · ADR-009 (hai trục) ·
+ADR-001 (nhà của dữ kiện quán, không đổi).
+
+---
+
+### ADR-012 — Nợ là một **phần riêng** có mục ở cả ba tầng, không phải hai ô trên phiên bàn
+
+**Ngày:** 2026-08-31 · **Trạng thái:** Accepted · **Người quyết:** chủ repo (yêu cầu thẳng),
+trên nền lời chủ quán *"khách không trả tiền cho nợ, POS đóng ghi ai nợ nợ bao nhiêu"*
+(`master_plan/shop-facts.md` §6.14).
+
+**Bối cảnh.**
+Chủ quán chốt 2026-08-31 là **cho nợ**: khách rời quán chưa trả thì quầy vẫn đóng phiên, và lúc
+đóng phải ghi **ai nợ** và **nợ bao nhiêu**. Câu ấy nói đủ về *lúc sinh ra* của khoản nợ, và
+không nói gì về phần đời sau của nó. `docs/architecture.md` khi viết xong (T-029) rải nợ ở sáu
+chỗ — §1.1, §4, §6.4, §7, §8, §11 — nhưng không có mục nào của riêng nó.
+
+**Quyết định.**
+Nợ được đối xử như một **phần riêng của hệ thống**, có mục riêng ở **FE**, **BE** và **DB**, đặc
+tả ở `docs/architecture.md` §12. Không thêm hai ô *"ai nợ / bao nhiêu"* vào phiên bàn rồi coi là
+xong.
+
+**Vì sao.**
+- **Hai vòng đời khác nhau.** Phiên bàn đóng xong là hết; khoản nợ sinh ra **lúc** phiên đóng rồi
+  sống tiếp qua nhiều ngày cho tới khi có người trả. Nhét vòng đời dài vào bản ghi có vòng đời
+  ngắn thì khoản nợ chết ngay tại chỗ nó sinh ra.
+- **Không có mục riêng thì không thu lại được.** Không ai tra được *"hôm nay còn những ai nợ"*,
+  nên tiền đã cho nợ trên thực tế là tiền mất.
+- **Đối soát ngưỡng 0đ đòi hai con số.** `shop-facts.md` §6.10 bắt *lệch một đồng cũng phải tìm ra
+  lý do*; muốn giải thích chỗ lệch thì phải có **nợ ghi trong ngày** và **nợ thu trong ngày** —
+  hai con số chỉ tồn tại nếu nợ là một thứ đứng riêng.
+- **Nợ là đường tiền thứ tư** (`docs/architecture.md` §7), cùng họ với duyệt · huỷ · hoàn. Ba việc
+  kia đều có vết và có người đứng tên; nợ không có lý do gì được kém hơn.
+
+**Phương án đã loại.**
+- *Hai cột trên `table_sessions`.* Loại: không tra được danh sách nợ, không có chỗ ghi vết lúc thu,
+  và sửa số nợ sẽ đè lên bản ghi của một phiên đã đóng.
+- *Coi khoản nợ là một dòng thanh toán âm.* Loại: nó sẽ chảy vào báo cáo doanh thu như tiền đã
+  chạm tay, đúng thứ `shop-facts.md` §6.14 cấm — nợ **không** phải tiền đã thu.
+- *Chờ chủ quán trả lời nốt U-012 rồi mới làm.* Loại: vế còn treo là **kế toán** (doanh thu tính
+  ngày nào), không phải **hình dạng**. Cất cả hai mốc thời gian — lúc ghi nợ và lúc thu nợ — thì
+  chốt kiểu nào cũng dựng lại được báo cáo mà không sửa dữ liệu quá khứ.
+
+**Hệ quả.**
+- `docs/architecture.md` có **§12** mới; mục *Đọc gì tiếp* dời thành §13.
+- §12.3 **cố ý vượt ranh giới §8** (*không đặt tên bảng, tên cột*) cho riêng phần nợ, theo yêu cầu
+  thẳng của chủ repo. Nó là **đề xuất gửi sang pha 2**, không phải lược đồ đã chốt.
+- Một chỗ **suy ra, chưa phải lời chủ quán**: người bấm *thu nợ* là người đang trực `quay`, suy từ
+  §4 và §3.3. Chủ quán nói khác thì sửa §12.2 và §12.4 trước tiên.
+- **U-012 chưa đóng.** Vế *"ghi ở đâu"* xong; *"ai ghi nhận"* và *"doanh thu ngày nào"* còn mở.
+
+*Cập nhật 2026-08-31 (T-033) — sửa tiến, không viết lại hai dòng trên (ADR-008):* chủ quán đã đóng
+nốt **U-012** trong cùng ngày. **Ai ghi nhận: POS** — trùng đúng chỗ suy ra ở dòng trước, nên §12.2
+không phải sửa và chỗ ấy hết là suy luận. **Doanh thu tính ngày GHI NỢ**, không phải ngày thu tiền;
+hệ quả là đối soát lệch ở **hai** ngày ngược chiều nhau và `docs/architecture.md` §6.4 nay mang
+công thức đủ bốn dòng. Chi tiết ở `master_plan/shop-facts.md` §6.14.
+
+**Ảnh hưởng tới:** `docs/architecture.md` §8, §11, §12, §13 · `docs/product.md` §3.1.6 và
+*Unknowns* U-012 · `quality/invariants.md` I-005 · `master_plan/shop-facts.md` §6.14 (chỉ đọc).
+
