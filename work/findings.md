@@ -31,6 +31,19 @@ T-XXX
 **Status:**  
 Open / Fixed
 
+### Cách viết dòng `**Status:**` — hợp đồng với `scripts/brief.sh`
+
+`scripts/brief.sh` in mục OPEN FINDINGS cho **mọi phiên mới** (ADR-002), và nó so khớp
+**đúng chữ**: dòng ngay dưới `**Status:**` phải là `Open`, không thêm gì. `Open — chưa siết cơ
+chế` **không khớp**, nên finding đó biến mất khỏi brief trong khi vẫn còn mở — phiên sau không
+bao giờ nhìn thấy nó.
+
+Muốn nói thêm thì nói ở `**Decision / Fix:**`, không nói ở đây. Cùng một bài học với
+`docs/product.md` → *Unknowns* (F-008 · ADR-007): **thứ brief đọc được là thứ có hình dạng cố
+định**, và văn xuôi chen vào đúng chỗ đó là cách nhanh nhất để giấu một việc còn mở.
+
+Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong lượt nó được viết ra.
+
 ---
 
 ### F-001 — Bảng giá nay có hai bản: `00-scope.md` và `master_plan/shop-facts.md`
@@ -676,9 +689,23 @@ một ngưỡng. Ràng buộc kèm theo, để không lặp lại bài học ADR
 Bản đồ `0704139` → ba task nó thật sự chứa nằm ngay trong finding này; đó là thứ thay cho việc
 sửa lịch sử.
 
+**Lần thứ năm, cùng ngày: `03ffda3 "adg"` (2026-08-31).** Ghi thêm vào đây chứ không mở finding
+mới — cùng một cơ chế hỏng, chỉ khác số lần. Nó nuốt **T-023 + T-019** cùng một lúc, cộng
+`work/proposals/admin.admiadmin/admin1.md` (2342 dòng) mà không task nào trong hai task đó nhận.
+Bản đồ, để log ngừng nói dối (ADR-008):
+
+| Hash | Subject trong log | Nội dung **thật** |
+|---|---|---|
+| `0704139` | `dsfg` | T-016 + T-021 + T-009. 10 file, +1006/−97 |
+| `03ffda3` | `adg` | T-023 + T-019, **cộng** `work/proposals/admin.admiadmin/admin1.md` (+2342, không thuộc task nào). 9 file, +2779/−66 |
+
+Điểm đáng ghi của lần thứ năm: T-023 **đang chạy** khi nó xảy ra, nên chính task đi dọn hậu quả
+của `0b3a337` lại bị commit bằng đúng cơ chế nó đang dọn. Đó là bằng chứng mạnh nhất cho **T-025**:
+luật viết trong `CLAUDE.md` §6 không chạm tới được cái terminal.
+
 **Related task:**
 T-023 (phát hiện, ghi lại) · T-025 (siết lại, còn mở) · F-009 (cùng chỗ hỏng, phía *danh sách
 file* thay vì phía *subject*) · ADR-004 (đặt điều kiện kích hoạt) · ADR-008 (luật sửa tiến)
 
 **Status:**
-Open — cơ chế chưa siết. Bản đồ hash → nội dung thật đã ghi.
+Open

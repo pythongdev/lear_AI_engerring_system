@@ -10,7 +10,7 @@ hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 | [Ready](#ready) | việc cần làm — checklist + thứ tự lấy |
 | [In Progress](#in-progress) | task đang chạy |
 | [Done](#done) | việc đã xong |
-| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | mô tả dài T-023…BA-11 + bảng mười câu hỏi §10 |
+| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | mô tả dài T-025…BA-11 + bảng mười câu hỏi §10 |
 | [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-021…T-002 |
 | [Vòng chạy một task L1](#vong-chay) | mười bước thủ tục từ nhận task tới khối commit |
 | [Task Detail Template](#template) | khuôn viết một task mới |
@@ -45,6 +45,19 @@ không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31, T-016 xong 
   đóng như đang mở); nay nó đọc **cấu trúc**. Hệ quả cho mọi task sau: một câu hỏi nghiệp vụ chỉ
   được brief nhìn thấy khi nó là **một gạch đầu dòng** trong vùng đang mở của
   `docs/product.md` → *Unknowns* — luật đầy đủ ở CLAUDE.md §4 và `docs/decisions.md` **ADR-007**.
+- **T-019 và T-023 chạy song song ngày 2026-08-31, cả hai đã xong.** Trong lúc chạy,
+  `work/scope.txt` mang pattern của **cả hai** task cùng lúc, mỗi khối ghi rõ chủ. Hai task không
+  giẫm chân nhau: T-019 sở hữu `master_plan/prompt-fullstack.md` + `scripts/check-links.ignore`,
+  T-023 sở hữu `docs/updatee_sýstem.md` + `work/proposals/`; hai file dùng chung
+  (`work/backlog.md`, `work/findings.md`) mỗi task chỉ sửa mục của mình.
+  **Bài học, ghi ở đây chứ không mở finding mới:** hai phiên chạy cùng lúc thì `work/scope.txt` là
+  **một file, hai chủ**. Phiên vào sau phải **thêm** khối của mình chứ đừng ghi đè — ghi đè làm
+  Gate 3 chấm việc của người kia bằng scope của mình, đúng thứ `work/findings.md` **F-010** mô tả,
+  chỉ khác là nguyên nhân đến từ song song chứ không từ quên dọn.
+- **T-025 sinh ra từ T-023 (2026-08-31), không chặn ai.** Ba commit rỗng nghĩa trong một ngày
+  (`0704139 "dsfg"`, `03ffda3 "adg"`, và trước đó là bằng chứng của ADR-004) cho thấy Gate 7 chỉ
+  sống trong vòng đời một lượt của phiên; người gõ `git commit -m` ở terminal không đi qua lượt
+  nào. Chi tiết và ràng buộc ở `work/findings.md` **F-011** (Open).
 - **T-019 sinh ra từ T-013 (2026-08-30), không chặn ai.** T-013 sửa chữ trong
   `master_plan/prompt-fullstack.md`; nó **không** sửa việc file đó trỏ tới bảy đường không tồn
   tại trong repo. Đó không phải lỗi chữ mà là câu hỏi *file này còn thuộc dự án nào* — ghi ở
@@ -63,6 +76,8 @@ không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31, T-016 xong 
 
 Chuỗi BA chạy từ trên xuống. Thứ tự là cột "Cần xong trước" của §11 kế hoạch gốc; BA-01 và BA-02
 đã xong 2026-08-30 nên BA-03, BA-04, BA-05 mở được ngay và chạy song song được.
+
+- [ ] T-025 `commit-msg` hook chặn subject rỗng nghĩa — Gate 7 không với tới người gõ tay (F-011)
 
 - [ ] BA-03 `docs/product.md` §3.1 — lát cắt một suất tại bàn · cần BA-02
 - [ ] BA-04 `docs/product.md` §3.2 — lát cắt một đơn mang đi (ba kênh) · cần BA-02 (T-011, T-012, T-020 xong)
@@ -84,28 +99,14 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-023 Hai commit trùng tên "T-020"; ba file `docs/` bị commit nhầm, một file mâu thuẫn §2 — F-009
-
-Ba quyết định của chủ repo đã có (2026-08-31) — bảng trong [Chi tiết](#chi-tiet-can-lam) → T-023.
-
-~~**T-019 đã được trả về *Ready* ngày 2026-08-31.** Nó từng ở đây nhưng **chưa sửa một byte nào**
-(cây git sạch lúc T-023 bắt đầu), và `work/scope.txt` của nó đã bị T-023 ghi đè.~~
-**Câu trên hết đúng từ 2026-08-31: T-019 đã xong** (xem [Done](#done)). Nó chạy **song song** với
-T-023 trong cùng ngày, nên `work/scope.txt` một lúc mang pattern của **cả hai** task — mỗi khối
-ghi rõ chủ. Hai task không giẫm chân nhau: T-019 sở hữu `master_plan/prompt-fullstack.md` +
-`scripts/check-links.ignore`, T-023 sở hữu `docs/updatee_sýstem.md` + `work/proposals/`; hai file
-dùng chung (`work/backlog.md`, `work/findings.md`) mỗi task chỉ sửa mục của mình.
-
-**Bài học vào đúng chỗ này, không phải một finding mới:** hai phiên chạy cùng lúc thì
-`work/scope.txt` là **một file, hai chủ**. Phiên vào sau phải **thêm** khối của mình chứ đừng ghi
-đè — ghi đè làm Gate 3 chấm việc của người kia bằng scope của mình, đúng thứ F-010 mô tả, chỉ
-khác là nguyên nhân đến từ song song chứ không từ quên dọn.
+(không có task nào đang chạy)
 
 <a id="done"></a>
 ## Done
 
 Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xong).
 
+- [x] T-023 Hậu quả đã commit của F-009 dọn xong: bản đồ hash, blueprint ra khỏi `docs/` (ADR-008) (2026-08-31)
 - [x] T-019 Bản xuất khẩu hết trỏ vào layout repo cũ; bảy dòng ignore đã gỡ (F-007) (2026-08-31)
 - [x] T-021 `brief.sh` đọc Unknowns theo cấu trúc; mục Unknowns có hình dạng máy đọc được (ADR-007) (2026-08-31)
 - [x] T-009 Ready hết dòng mẫu của template — brief chỉ phiên mới vào một task thật (2026-08-31)
@@ -135,6 +136,44 @@ Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+### T-025 — `commit-msg` hook chặn subject rỗng nghĩa
+
+**Prompt:** chưa có · **Finding:** `work/findings.md` **F-011** (Open) · **ADR:** ADR-004 đặt sẵn
+điều kiện kích hoạt, ADR-008 là luật dọn hậu quả · L2 — đổi hành vi của **mọi** commit trong repo
+
+**Goal:**
+Một commit có subject không nói gì về chính nó (`dsfg`, `adg`, `ádg`) không vào được repo, kể cả
+khi người ta gõ `git commit -m` thẳng ở terminal — chỗ Gate 7 không với tới.
+
+**Nói một câu, việc phải làm là gì:**
+Thêm một `commit-msg` hook của **git** (không phải hook của Claude Code) từ chối subject không có
+dạng `T-XXX: …` và không đủ dài, kèm cách cài đặt cho bản clone mới. Việc **không** phải làm:
+sửa `scripts/check-commit-block.sh` — nó đã đúng phần việc của nó (ADR-004, ADR-006); lỗ hổng nằm
+ở chỗ nó chỉ sống trong vòng đời một lượt của phiên.
+
+**Vì sao có task này:**
+ADR-004 mục *Rủi ro đã chấp nhận* viết đúng câu: *"Nếu có lần thứ hai một thay đổi đi vào git mà
+không có nội dung commit, ghi finding và siết lại."* Ngày **2026-08-31** có **hai** lần nữa trong
+cùng một ngày — `0704139 "dsfg"` (nuốt T-016 + T-021 + T-009) và `03ffda3 "adg"` (nuốt T-023 +
+T-019 + một file 2342 dòng không thuộc task nào). Cả hai đã push, nên không sửa lại được
+(**ADR-008**). Bảng hash → nội dung thật ở **F-011**.
+
+**Không làm thì mất gì:**
+- `brief.sh` in RECENT COMMITS cho mọi phiên mới (ADR-002); đỉnh nhánh đang là `adg`.
+- `CLAUDE.md` §6 *"One task per commit"* hiện không có cơ chế nào đứng sau — đúng loại hỏng F-001.
+- Lý do của một thay đổi mất theo phiên và không lấy lại được.
+
+**Bẫy:**
+- **`git` hook không đi theo `git clone`.** Hook đặt trong `.git/hooks/` chỉ bảo vệ một máy. Phải
+  có cách cài (ví dụ `core.hooksPath` trỏ vào một thư mục được commit) và phải viết ra ở đâu đó
+  người mới đọc được.
+- **Phải có đường thoát và nói ra trong chính thông báo lỗi** (`--no-verify`), nếu không nó sẽ bị
+  gỡ khỏi máy chứ không được sửa — bài học ADR-003 về *đỏ vì lý do sai*.
+- **Không tự soạn nội dung commit.** `CLAUDE.md` §6 nói commit là quyết định của người dùng;
+  ADR-004 đã loại phương án hook tự commit.
+
+**Acceptance · Verify:** chưa viết — task này chưa có file prompt.
 
 ### Mười câu hỏi §10 kế hoạch gốc — ai trả lời câu nào
 
