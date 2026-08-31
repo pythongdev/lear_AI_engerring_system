@@ -51,7 +51,8 @@ CLAUDE.md          this file — read first
 docs/              product, architecture, decisions, prompt guideline
 work/              backlog.md, scope.txt, findings.md
 quality/           invariants.md, review-gate.md
-scripts/           gate.sh → check-scope.sh + verify.sh + check-commit-block.sh;
+scripts/           gate.sh → check-scope.sh + check-links.sh + verify.sh
+                   + check-commit-block.sh;
                    brief.sh (§7)
 master_plan/       domain facts for the current project
 prompt/            prompt sets built from master_plan/
@@ -139,11 +140,18 @@ It runs, in order:
    and does **not** fail the gate — git cannot tell whether it predates the task
    (ADR-003). If the note lists a file *your* task created, put it in scope or
    delete it; nothing else will stop you.
-2. `scripts/verify.sh` (Gate 1) — Go: `gofmt` check, `go build`, `go test`;
+2. `scripts/check-links.sh` (Gate 1b) — every path a **pointer document** names
+   must open. Runs on **every** turn, including documentation-only ones: docs are
+   what this repo produces, and step 3 is skipped for exactly those turns
+   (ADR-005). `work/` and `prompt/maintenance/` are not checked — a dead path
+   quoted there is evidence, not a bug. A path that deliberately does not exist
+   goes in `scripts/check-links.ignore` with its owner; an ignore line that stops
+   matching turns the gate red until it is removed.
+3. `scripts/verify.sh` (Gate 1) — Go: `gofmt` check, `go build`, `go test`;
    Node: `npm test` / `lint` / `build` when present, then every
    `scripts/*.test.sh`. Skipped when the change touches documentation only.
-3. `scripts/check-commit-block.sh` (Gate 7) — **hook mode only**, and only once
-   the two above are green: tracked changes are waiting to be committed, so the
+4. `scripts/check-commit-block.sh` (Gate 7) — **hook mode only**, and only once
+   the three above are green: tracked changes are waiting to be committed, so the
    turn must hand over the commit block (§6.1). Untracked files and
    `work/scope.txt` never trigger it, and it asks once per state of the tree.
 

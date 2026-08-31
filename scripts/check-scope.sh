@@ -77,6 +77,14 @@ while IFS= read -r line; do
   case "$path" in *" -> "*) path="${path##* -> }" ;; esac
   [ -n "$path" ] || continue
 
+  # File khai báo scope không bao giờ nằm trong scope nó khai báo (2026-08-30).
+  # Khai báo scope là việc BẮT BUỘC của mọi task L1+ (CLAUDE.md §3.4), nên nếu
+  # tính nó là vi phạm thì mọi task khai báo đúng luật đều mở màn bằng một Gate 3
+  # đỏ — và lối thoát duy nhất là tự liệt kê `work/scope.txt` vào chính nó, thứ
+  # đã đi thẳng vào hai commit (T-016). Đỏ vì lý do sai dạy người ta bỏ qua gate
+  # (ADR-003); `check-commit-block.sh` đã miễn trừ file này vì cùng lý do.
+  [ "$path" = "$SCOPE_FILE" ] && continue
+
   reason=""
   if [ ${#deny[@]} -gt 0 ] && matches "$path" "${deny[@]}"; then
     reason="$path (matches a ! deny pattern)"

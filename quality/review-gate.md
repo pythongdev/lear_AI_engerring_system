@@ -30,6 +30,24 @@ Build, test, lint, format. Deterministic, không phụ thuộc sự chú ý củ
 
 Đỏ = chưa xong. Không có ngoại lệ, không có "chỉ là lint thôi".
 
+## Gate 1b — Máy chấm tài liệu
+
+```bash
+./scripts/check-links.sh
+```
+
+Mọi đường dẫn mà một tài liệu **chỉ đường** nêu ra phải mở được. Chạy ở **mọi**
+lượt, kể cả lượt chỉ đổi tài liệu — đó chính là lượt Gate 1 bỏ qua, và tài liệu
+là thứ repo này sản xuất (ADR-005).
+
+Không chấm `work/` và `prompt/maintenance/`: ở đó một đường đã chết là **bằng
+chứng được trích dẫn**, không phải lỗi. Đường cố ý không tồn tại thì ghi vào
+`scripts/check-links.ignore` kèm chủ — và ngoại lệ ở đó **có hạn**: dòng nào
+không còn khớp lỗi nào thì gate đỏ cho tới khi gỡ.
+
+Cổng này chỉ biết đường dẫn có mở được không, không biết nó trỏ **đúng chỗ**
+không — việc đó vẫn là Gate 4.
+
 ## Gate 2 — Ánh xạ Acceptance → bằng chứng
 
 Mỗi dòng Acceptance phải chỉ ra được **cái gì chứng minh nó**:
@@ -107,14 +125,17 @@ trạng thái cây** — đỏ vì lý do sai còn hại hơn không đỏ (ADR-
 
 ## Tự động hoá
 
-Gate 1, Gate 3 và Gate 7 chạy tự động qua Stop hook trong `.claude/settings.json`:
+Gate 1, Gate 1b, Gate 3 và Gate 7 chạy tự động qua Stop hook trong
+`.claude/settings.json`:
 
 ```text
-Stop hook → scripts/gate.sh → check-scope.sh + verify.sh + check-commit-block.sh
+Stop hook → scripts/gate.sh → check-scope.sh + check-links.sh + verify.sh
+                              + check-commit-block.sh
 ```
 
 Hook fail sẽ chặn kết thúc lượt và trả lỗi lại cho LLM tự sửa. `verify.sh` được
-bỏ qua khi chỉ có tài liệu thay đổi, và chạy mọi `scripts/*.test.sh` khi không.
+bỏ qua khi chỉ có tài liệu thay đổi, và chạy mọi `scripts/*.test.sh` khi không —
+`check-links.sh` thì không bao giờ bị bỏ qua (ADR-005).
 `check-commit-block.sh` chỉ chạy trong hook mode — chạy tay không có transcript
 để đọc. Chạy tay: `./scripts/gate.sh`.
 

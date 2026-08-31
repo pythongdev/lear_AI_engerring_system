@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Quality gate — runs Gate 3 (scope), Gate 1 (verify), then Gate 7 (commit).
+# Quality gate — runs Gate 3 (scope), Gate 1b (links), Gate 1 (verify),
+# then Gate 7 (commit).
 #
 # Wired as a Stop hook in .claude/settings.json, which calls it as
 #   ./scripts/gate.sh --hook
@@ -8,6 +9,8 @@
 # Also runnable by hand or from CI: ./scripts/gate.sh
 #
 # verify.sh is skipped when only documentation changed, so doc turns stay fast.
+# check-links.sh is NOT skipped: tài liệu là thứ repo này sản xuất, nên lượt chỉ
+# đổi tài liệu là lượt duy nhất trước đây không bị máy chấm gì cả (ADR-005).
 # check-commit-block.sh runs only in hook mode (it needs the transcript) and only
 # after the gate is green: no point asking for a commit message for a red change.
 
@@ -36,6 +39,13 @@ else
   failed=1
 fi
 report="$out"
+
+if out="$(./scripts/check-links.sh 2>&1)"; then
+  report="$report"$'\n'"$out"
+else
+  report="$report"$'\n'"$out"
+  failed=1
+fi
 
 code_changed=0
 while IFS= read -r line; do

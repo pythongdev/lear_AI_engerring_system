@@ -460,8 +460,13 @@ Luật rút ra, bổ sung cho F-005 và F-006: hai luật đó rà **dữ kiện
 phải rà **pointer** — mọi đường dẫn nó nêu ra phải `ls` được **tại thời điểm xuất khẩu**, vì người
 đọc nó không đứng trong repo để tự kiểm.
 
+**Cơ chế đã dựng 2026-08-30 (T-024):** luật *"mọi đường dẫn nêu ra phải `ls` được"* nay do máy
+chấm — `scripts/check-links.sh` (Gate 1b, ADR-005) chạy ở mọi lượt. Bảy đường của file này được
+ghi vào `scripts/check-links.ignore` mang tên T-019 vì câu hỏi *"file này còn thuộc dự án nào"*
+vẫn chưa ai trả lời; finding vẫn **Open**, cổng chỉ đảm bảo không có đường chết **mới**.
+
 **Related task:**
-T-013 (phát hiện) · T-019 (sửa)
+T-013 (phát hiện) · T-019 (sửa) · T-024 (dựng cổng chấm)
 
 **Status:**
 Open

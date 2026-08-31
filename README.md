@@ -27,9 +27,16 @@ work/
 quality/
   invariants.md
   review-gate.md
+master_plan/
+  shop-facts.md        (mọi dữ kiện của dự án hiện tại — CLAUDE.md §2)
+prompt/
+  BA/ maintenance/     (bộ prompt dựng từ master_plan/)
 scripts/
   verify.sh
   check-scope.sh
+  check-links.sh
+  check-links.ignore
+  check-links.test.sh
   check-commit-block.sh
   check-commit-block.test.sh
   gate.sh
@@ -75,4 +82,3 @@ A finding is not a bug diary. Record only problems or lessons with future value.
 ## Evolution
 
 Do not add framework rules preemptively. Add automation or documentation when the project encounters a real recurring problem.
-# lear_AI_engerring_system

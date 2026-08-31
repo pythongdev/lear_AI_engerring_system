@@ -98,6 +98,7 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xong).
 
+- [x] T-024 Gate 1b — tài liệu cũng bị máy chấm: mọi pointer phải mở được (ADR-005) (2026-08-30)
 - [x] T-022 Bản xuất khẩu hết chép số tiền của nhà thật — §4, §9.1, §9.4 nay trỏ `shop-facts.md` (2026-08-30)
 - [x] T-020 Đơn mang đi được trả trước — §6.3 hết câu "không bao giờ thu trước", mở U-005 (2026-08-30)
 - [x] T-013 Bản xuất khẩu `prompt-fullstack.md` không còn nói "4 kênh", lát cắt B phủ luồng mang đi (2026-08-30)
@@ -174,6 +175,10 @@ theo số thứ tự (`§10.6`).
 **Acceptance · Verify:** trong file prompt.
 
 ### T-016 — `work/scope.txt` được commit kèm pattern, hai lần
+
+**Cập nhật 2026-08-30 (T-024):** một nguồn của lỗi này đã bị gỡ — `check-scope.sh` không còn tính
+`work/scope.txt` là file ngoài scope, nên phiên sau không còn bị Gate 3 ép liệt kê nó vào chính
+nó. Phần còn lại của T-016 (kêu khi scope quên dọn, và kiểm tập đã `git add`) vẫn nguyên.
 
 **Prompt:** `prompt/maintenance/09-scope-not-cleared-L2.md` (L2 — đổi hành vi thứ mọi phiên đều chạy)
 
@@ -274,6 +279,10 @@ nên tự quyết.
 **Acceptance · Verify:** chưa viết — task này chưa có file prompt.
 
 ### T-019 — `prompt-fullstack.md` trỏ tới bảy đường không tồn tại
+
+**Cập nhật 2026-08-30 (T-024):** bảy đường này nay nằm trong `scripts/check-links.ignore` mang tên
+T-019, nên Gate 1b xanh chừng nào chúng còn chết. Sửa xong thì **phải gỡ bảy dòng ignore đó** —
+ignore hết hạn tự làm gate đỏ, đó là cách task này báo mình đã xong.
 
 **Prompt:** chưa có · **Finding:** `work/findings.md` **F-007** (Open) · L1
 
@@ -703,6 +712,68 @@ git status --porcelain
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### T-024 — Lượt chỉ đổi tài liệu là lượt không có gì máy chấm
+
+**Prompt:** yêu cầu miệng của chủ repo, 2026-08-30 — *"đánh giá hệ thống và nâng cấp"* (L2) ·
+**Xong 2026-08-30**
+
+**Goal:**
+Repo này sản xuất tài liệu, nhưng cổng máy chấm duy nhất (`verify.sh`) in đúng một dòng cho mọi
+thay đổi tài liệu: *"verify: skipped — only documentation changed."* Bảy trong chín finding đang
+có đều là lỗi tài liệu. Xong rồi thì mọi lượt — kể cả lượt chỉ đổi tài liệu — đều có một cổng
+deterministic chạy qua, và không tài liệu chỉ đường nào còn trỏ vào đường không mở được mà không
+ai biết.
+
+**Nói một câu, việc phải làm là gì:**
+Dựng `scripts/check-links.sh` và cho `gate.sh` chạy nó ở **mọi** lượt. Việc **không** phải làm:
+sửa bảy đường chết của `master_plan/prompt-fullstack.md` — F-007 nói rõ sửa được thì phải biết
+trước file đó còn thuộc dự án nào, và đó là T-019.
+
+**Vì sao có task này:**
+Ngưỡng `CLAUDE.md` §3.8 (hai lần) đã vượt cho họ lỗi *tài liệu nói sai về chính repo*: F-005 và
+F-006 rà **dữ kiện** đã đổi, F-007 là loại thứ ba — **pointer chết**, và người đọc bản xuất khẩu
+đứng ngoài repo nên không `ls` được. Bằng chứng cổng chạy đúng: lần chạy đầu, chưa có dòng ignore
+nào, nó dựng lại **đúng bảy đường** F-007 tìm ra bằng tay, cộng hai đường cố ý không tồn tại,
+không hơn. Lựa chọn thiết kế ghi ở **ADR-005**.
+
+**Không làm thì mất gì:**
+- Mỗi bản xuất khẩu gửi ra ngoài repo lại có thể mang theo pointer chết mà không ai chấm — F-007
+  đã cho thấy giá: agent ngoài repo hoặc dừng, hoặc **tự bịa** nội dung bảy file rồi coi là nguồn.
+- Nợ pointer không có nơi hết hạn: bảy đường của T-019 nay nằm trong `check-links.ignore` mang tên
+  task, và ngày T-019 xong thì dòng ignore thừa **tự bắt đỏ** cho tới khi bị gỡ.
+
+**Đây là con bug F-007** — vòng rà trước không bắt được vì T-013 rà **con số** ("bốn kênh"), còn
+chỗ hỏng của F-007 không chứa con số nào. Chấm bằng máy thì không phụ thuộc vòng rà nào cả.
+
+**Sửa kèm — `check-scope.sh` không còn tính `work/scope.txt` là vi phạm scope.**
+Gặp ngay khi khai báo scope cho chính task này: Gate 3 đỏ vì `work/scope.txt` (file vừa sửa để
+khai báo) nằm ngoài scope nó khai báo. Nghĩa là **mọi** task L1+ khai báo đúng luật §3.4 đều mở
+màn bằng một Gate 3 đỏ, và lối thoát duy nhất là tự liệt kê `work/scope.txt` vào chính nó — đúng
+thứ đã đi thẳng vào hai commit (T-016). `check-commit-block.sh` đã miễn trừ file này từ trước;
+nay `check-scope.sh` cũng vậy. Đỏ vì lý do sai là thứ ADR-003 cấm.
+
+**Acceptance:**
+1. `scripts/check-links.sh` chạy độc lập, exit 1 khi một tài liệu chỉ đường nêu đường không mở
+   được, in ra `<file> :: <đường dẫn>`.
+2. Không chấm `work/` và `prompt/maintenance/` — ở đó đường đã chết là bằng chứng được trích dẫn.
+3. Nội dung trong khối ``` không bị tính là pointer; đường dẫn tương đối tính theo thư mục file.
+4. File `.md` **chưa track** chỉ được in dòng `note:`, không chặn gate (ADR-003).
+5. `scripts/check-links.ignore` giữ ngoại lệ kèm chủ, và **ignore hết hạn làm gate đỏ**.
+6. `gate.sh` gọi nó ở mọi lượt, kể cả lượt chỉ đổi tài liệu (khác `verify.sh`).
+7. `scripts/check-links.test.sh` phủ 1–5, và `verify.sh` tự chạy mọi `scripts/*.test.sh`.
+8. `check-scope.sh` bỏ qua chính `work/scope.txt`.
+9. ADR-005 ghi bốn ranh giới và bốn phương án bị loại; `CLAUDE.md` §5, `quality/review-gate.md`
+   Gate 1b, `README.md` nói cùng một chuyện.
+10. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/check-links.sh          # OK — mọi đường dẫn ... đều mở được
+./scripts/check-links.test.sh     # 8/8 ca ok
+./scripts/check-scope.sh          # OK — all tracked changes within declared scope
+./scripts/gate.sh                 # xanh, exit 0
+```
 
 ### T-022 — Bản xuất khẩu còn chép ba con số tiền của nhà thật
 
