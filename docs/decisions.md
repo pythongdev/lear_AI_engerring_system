@@ -660,10 +660,11 @@ Vì sao `role` không đủ: `role` trả lời *người này là ai*; §6.13 h
 này* — và câu thứ hai đổi nhiều lần trong một buổi sáng.
 
 **Rejected alternatives:**
-- *Giữ nút `Xong` ở màn trạm như `master_plan/prompt-fullstack.md` §3.6, §3.7 đang viết.* Đây là
-  thiết kế **đang có** trong repo, và bị loại vì chủ quán đã bỏ nó ngày 2026-08-31. Giữ lại nghĩa
-  là làm ra một nút không ai bấm, rồi mọi con số phía sau nó đứng im. Mâu thuẫn ghi ở
-  `work/findings.md` **F-013**, việc sửa là **T-031**.
+- *Giữ nút `Xong` ở màn trạm như `master_plan/prompt-fullstack.md` §3.6, §3.7 **từng** viết.* Đây
+  là thiết kế đã có sẵn trong repo lúc ADR này được viết, và bị loại vì chủ quán đã bỏ nó ngày
+  2026-08-31. Giữ lại nghĩa là làm ra một nút không ai bấm, rồi mọi con số phía sau nó đứng im.
+  Mâu thuẫn ghi ở `work/findings.md` **F-013**; **T-031 đã sửa bản xuất khẩu ngày 2026-08-31**,
+  nên §3.6 và §3.7 nay nói đúng luật này chứ không còn nói ngược.
 - *Cho bếp bấm, nhưng "không bắt buộc".* Tệ hơn cả hai đường: con số vừa có vừa không, và không ai
   biết một bàn chưa có món là do bếp chưa làm hay do bếp quên bấm.
 - *Ba ứng dụng riêng, mỗi mặt một cơ sở dữ liệu, đồng bộ với nhau.* Bốn luật cắt ngang ở trên biến
@@ -692,7 +693,8 @@ này* — và câu thứ hai đổi nhiều lần trong một buổi sáng.
 
 **Applies to:**
 `docs/architecture.md` (toàn bộ) · `master_plan/shop-facts.md` §5.4, §6.13, §6.14, §6.15 ·
-`master_plan/prompt-fullstack.md` §3.5, §3.6, §3.7 (ba chỗ phải sửa — T-031) ·
+`master_plan/prompt-fullstack.md` §3.5, §3.6, §3.7 (T-031 đã sửa §3.6 và §3.7 ngày 2026-08-31;
+§3.5 không phải sửa — 16 bảng không chốt trạng thái nào của `order_tasks`) ·
 `work/findings.md` F-013 · `work/backlog.md` T-029, T-031, BA-12 · ADR-009 (hai trục) ·
 ADR-001 (nhà của dữ kiện quán, không đổi).
 

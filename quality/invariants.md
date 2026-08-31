@@ -163,3 +163,58 @@ bàn 5 ⇒ phải **bị từ chối** (`docs/product.md` §2.4).
 
 *Phát hiện ở T-028, 2026-08-31.*
 
+
+### I-007 — Đơn mang đi không thuộc phiên bàn nào và là một đơn vị thanh toán độc lập
+
+**Invariant:**
+Mọi đơn của **ba kênh không gắn bàn** — Delivery, Pickup, Đặt trước qua hotline — không thuộc
+phiên bàn nào, tại **mọi** thời điểm trong vòng đời của nó. Mỗi đơn như vậy là **một** đơn vị
+thanh toán độc lập: nó không gộp với đơn khác, kể cả hai đơn của cùng một khách, và không bao giờ
+được nối vào một phiên bàn — kể cả khi khách đổi ý và tới quán ngồi ăn.
+
+**Why:**
+Đây là ranh giới chia đôi toàn bộ mô hình tiền của sản phẩm: một khoản tiền gắn với đúng **một**
+đơn vị tính tiền — hoặc một phiên bàn, hoặc một đơn lẻ, không bao giờ cả hai
+(`master_plan/shop-facts.md` §6.9). Nối một đơn mang đi vào phiên bàn thì khoản tiền ấy bị đếm ở
+nguồn sai, và báo cáo doanh thu — thứ phải cộng từ **cả hai** nguồn — hoặc thiếu, hoặc đếm hai
+lần. Chủ quán đã đóng đường nối đó bằng một quyết định (chốt 2026-08-30, `shop-facts.md` §2):
+khách đặt trước rồi tới quán ăn thì **huỷ đơn và gọi lại**, không chuyển đơn thành phiên bàn.
+I-006 khoá chiều ngược lại — suất "đem về" của khách ngồi bàn thuộc phiên bàn; hai invariant này
+là hai nửa của cùng một ranh giới và phải cùng đúng.
+
+**Verification:**
+Kịch bản âm: tạo một đơn tới lấy, rồi thử nối nó vào phiên đang mở của bàn 5 ⇒ thao tác phải **bị
+từ chối** (`docs/product.md` §2.4, §3.2.5). Kịch bản thật: khách đã đặt trước qua hotline nhưng
+tới quán ngồi ăn ⇒ đường duy nhất đi được là **huỷ** đơn cũ rồi gọi lại bằng QR tại bàn; sau ca
+này, số phiên bàn của bàn ấy vẫn là 1 và đơn hotline nằm ở trạng thái đã huỷ. Kịch bản đếm: một
+khách đặt hai đơn tới lấy cách nhau mười phút ⇒ **hai** đơn, **hai** lần thu tiền, không có thao
+tác nào gộp chúng. Đối soát cuối ngày (`shop-facts.md` §6.10): `doanh thu phiên bàn` +
+`doanh thu đơn lẻ` = tổng doanh thu, và không đơn nào xuất hiện ở cả hai vế.
+
+*Phát hiện ở BA-04, 2026-08-31.*
+
+### I-008 — Ngoài giờ bán hoặc đang tạm dừng nhận đơn thì không đơn nào được tạo
+
+**Invariant:**
+Một đơn mới chỉ được tạo khi **cả hai** điều kiện cùng mở: thời điểm tạo nằm trong giờ bán
+(`master_plan/shop-facts.md` §1, múi giờ `Asia/Ho_Chi_Minh`) **và** chủ quán không đang bật "tạm
+dừng nhận đơn". Nút tạm dừng có ưu tiên **cao hơn** giờ mở cửa: đang giữa giờ bán mà nút bật thì
+vẫn không đơn nào được tạo. Luật này áp cho **mọi** kênh, không riêng ba kênh mang đi. Đơn đã tạo
+**trước** đó không bị chạm tới: nó vẫn được làm, đóng gói, giao và thu tiền.
+
+**Why:**
+Hai quy tắc của kế hoạch gốc (§5 quy tắc 10 và 11) nằm cạnh nhau mà không nói cái nào thắng; chủ
+quán chốt thứ tự đó (`shop-facts.md` §6.8): nút tạm dừng dùng khi **hết nguyên liệu giữa buổi**,
+nên một đơn lọt qua trong lúc tạm dừng là một đơn quán **không có gì để làm** — khách chờ, rồi
+quán phải gọi lại xin huỷ. Nửa sau cũng phải đúng: chặn nhầm cả đơn đã nhận thì tới 11:00 mọi đơn
+đang trên đường giao bỗng không thu được tiền.
+
+**Verification:**
+Kịch bản biên: gửi một đơn lúc 05:59 và một đơn lúc 11:01 ⇒ cả hai **bị từ chối**, và khách thấy
+câu *"Quán mở cửa 6h–11h sáng"* chứ không phải một nút bấm im lặng (`docs/product.md` §3.2.6).
+Kịch bản ưu tiên: 08:00 — trong giờ bán — chủ quán bật tạm dừng ⇒ đơn mới của **cả năm** kênh đều
+bị từ chối; tắt tạm dừng thì đặt lại được ngay. Kịch bản không chạm đơn cũ: nhận một đơn giao tận
+nơi lúc 10:50, bật tạm dừng lúc 10:55 ⇒ đơn đó vẫn đi hết luồng, vẫn bấm được **đã giao và đã thu
+tiền** sau 11:00. Kiểm ngược, cuối ngày: không đơn nào có thời điểm tạo nằm ngoài 06:00–11:00.
+
+*Phát hiện ở BA-04, 2026-08-31.*

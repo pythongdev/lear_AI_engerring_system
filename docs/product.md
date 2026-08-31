@@ -453,7 +453,206 @@ Hai hệ quả phải nói ra, vì cả hai đều chạm thứ đã chốt ở 
 
 ### 3.2 Một đơn mang đi (ba kênh không gắn bàn)
 
-> Chưa chốt — BA-04
+*BA-04 — chốt 2026-08-31. Nguồn: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §3 Epic B,
+§4.2 (chín bước), §5 quy tắc 5, 8, 10, 11, §6 + `master_plan/shop-facts.md` §1, §2, §5.2, §6.2,
+§6.3, §6.5, §6.6, §6.7, §6.8, §6.12 (dữ kiện quán, chủ quán chốt 2026-08-19 → 2026-08-31).*
+
+Lát cắt này đi trọn một đơn **không gắn bàn**: từ lúc khách chọn món tới lúc đơn hoàn thành. Ba
+kênh không gắn phiên bàn ở §2.1 — **Delivery**, **Pickup** và **Đặt trước qua hotline** — chạy
+chung **một** luồng (`shop-facts.md` §5.2), không phải ba luồng song song.
+
+Tài liệu này gọi kênh bằng tên người đọc, đúng như §2. Ba định danh máy tương ứng, dùng ở
+`master_plan/shop-facts.md` §2 và §5.2, là `delivery` · `pickup` · `phone_preorder` — chép ra đây
+**một lần** để hai tài liệu ghép được vào nhau, sau dòng này §3.2 chỉ dùng tên người đọc.
+
+**Một luồng, ba kênh, hai kiểu kết thúc.** Ba kênh khác nhau ở *đường đơn đi vào* (ai bấm, có phải
+duyệt không); chúng khác nhau ở *đường đơn đi ra* theo **cách trao hàng**, không theo kênh: giao
+tận nơi, hoặc khách tới lấy (§3.2.2). Đây là chỗ dễ chia sai nhất của lát cắt — chia theo kênh sẽ
+đẻ ra một nhánh thứ ba cho đơn hotline, thứ không tồn tại.
+
+#### 3.2.1 Luồng chính — chín bước
+
+Mỗi bước ghi rõ ai làm. Tên actor dùng đúng §1, tên trạm dùng đúng năm tên ở §1.5, tên trạng thái
+dùng đúng bộ tên của §3.1.
+
+1. **Khách chọn món.** *Khách* tự bấm trên web (**Delivery**, **Pickup**), hoặc *Khách* gọi
+   hotline và *người đứng quầy* nhập hộ (**Đặt trước qua hotline**). Khách không gửi giá lên:
+   *Hệ thống* tự xác định giá từ bảng giá và từ chối tổ hợp tuỳ chọn không hợp lệ
+   (`shop-facts.md` §4.6 quy tắc 3 và quy tắc 9) — giống hệt bước 3 của §3.1.1.
+2. **Nhân viên hỏi cách trao hàng và giờ cần hàng — chỉ với đơn hotline.** *Người đứng quầy* đang
+   nghe máy **phải hỏi hai câu**: giao tận nơi hay khách tới lấy, và cần hàng lúc mấy giờ
+   (`shop-facts.md` §5.2). Câu trả lời của khách quyết định đơn này ra bằng nhánh nào ở bước 9.
+   Đơn **Delivery** và **Pickup** không có bước này: khách đã tự chọn cách trao hàng lúc bấm.
+3. **Khách cung cấp thông tin liên hệ.** *Khách* khai, hoặc *người đứng quầy* nhập hộ theo lời
+   khách. Mức tối thiểu của từng kênh ở §3.2.4 — thiếu một trường bắt buộc thì đơn không tạo được.
+4. **Hệ thống xác định tổng tiền.** *Hệ thống* tính lại tổng từ bảng giá tại thời điểm tạo đơn.
+   Đơn mang đi không có phí ship và không có đơn tối thiểu (§3.2.6), nên tổng tiền của đơn đúng
+   bằng tổng tiền các suất khách gọi.
+5. **Đơn được tạo.** *Hệ thống* tạo **một đơn lẻ**, không gắn phiên bàn nào (§3.2.5), ở trạng thái
+   **chờ duyệt** với hai kênh khách tự bấm và **đã duyệt** ngay với đơn hotline (bước 7). Đơn chỉ
+   được tạo khi quán **đang nhận đơn** — trong giờ bán và chủ quán không bấm tạm dừng (§3.2.6).
+   Ở bước này *Khách* được chọn **trả trước** thay cho đường mặc định là trả lúc nhận hàng; đó là
+   **tuỳ chọn**, và chỉ đơn mang đi mới có nó (§3.2.5).
+6. **Quán nhận thông báo.** *Hệ thống* báo đơn mới về quầy. *Người đứng quầy* là người nhìn thấy
+   đơn đầu tiên, kể cả với đơn hotline do chính mình vừa nhập.
+7. **Quầy xác nhận đơn khách tự gửi.** *Người đứng quầy* duyệt đơn **Delivery** và **Pickup**;
+   đơn chuyển từ **chờ duyệt** sang **đã duyệt**. Đơn **Đặt trước qua hotline** *không* đi qua
+   bước này — nhân viên đã nhập thì đã có người chịu trách nhiệm (§2.2). Đơn chưa duyệt **không
+   sinh việc ở bất kỳ trạm nào** (`shop-facts.md` §6.2), đúng như đơn tại bàn ở §3.1.3.
+8. **Quán chuẩn bị món và đóng gói.** *Hệ thống* nổ đơn đã duyệt thành việc của từng trạm theo
+   thành phần của suất — cách nổ y hệt §3.1.5, đơn mang đi không có cách tính riêng. Ba trạm bếp
+   nhận việc **cùng lúc**: *người tráng bánh*, *người gấp bánh*, *người canh & dọn*. **Mọi đơn
+   mang đi đều sinh một việc nước chấm**, chỉ khác là **gói riêng** (`shop-facts.md` §6.6) — bỏ
+   sót là khách nhận bánh không có nước chấm. Xong việc, *nhân viên quán* **đóng gói** đơn; bước
+   này thay cho bước "mang ra bàn" của §3.1.1.
+9. **Đơn kết thúc theo một trong hai nhánh.** *Nhân viên quán* giao tận nơi, hoặc *Khách* tới quán
+   lấy (§3.2.2). Tiền được thu ở bước này với đơn đi đường mặc định; đơn đã trả trước thì chỉ còn
+   việc trao hàng. Đơn chuyển sang **hoàn thành**. **Không có bước dọn bàn** — luồng này kết thúc
+   ở đây, trong khi §3.1.1 còn hai bước nữa.
+
+#### 3.2.2 Hai nhánh kết thúc — chia theo cách trao hàng, không theo kênh
+
+Bước 9 tách làm hai, và đường tách là **cách trao hàng** (`shop-facts.md` §5.2):
+
+- **Giao tận nơi.** *Nhân viên quán* **tự đi giao** — quán không thuê bên thứ ba (§1.4). Đơn mang
+  trạng thái **"đang giao"** từ lúc rời quán, để quầy nhìn được đơn nào còn trên đường và **ai
+  đang cầm tiền chưa về** (`shop-facts.md` §6.7). Thu tiền **tại chỗ khách**, tiền mặt hoặc
+  VietQR. Giao xong, *nhân viên quán* bấm **đã giao và đã thu tiền cùng lúc**.
+- **Khách tới lấy.** *Khách* tới quán nhận hàng, *người đứng quầy* trao và **thu tiền tại quầy**,
+  tiền mặt hoặc VietQR. Không có trạng thái "đang giao" ở nhánh này.
+
+**Chỉ đơn giao tận nơi có trạng thái "đang giao"** — nhánh tới lấy đi thẳng từ đóng gói sang hoàn
+thành. Và **không có nhánh thứ ba**: một đơn **Đặt trước qua hotline** rơi vào đúng một trong hai
+nhánh trên, theo câu trả lời khách đã cho ở bước 2.
+
+Hệ thống **không tự biết tiền đã về tài khoản** ở cả hai nhánh: mã VietQR là mã tĩnh, nên người
+trao hàng phải tự nhìn tiền hoặc nhìn báo có rồi bấm xác nhận đã nhận tiền (§1.4).
+
+#### 3.2.3 Đường đi của một đơn đặt trước qua hotline
+
+Kênh này khác **Staff POS** ở chỗ đã nói tại §2.3 — nhân viên bấm ở cả hai, nhưng Staff POS luôn
+gắn **một số bàn cụ thể** và đổ vào phiên bàn, còn khách gọi điện thì **chưa ngồi bàn nào** nên
+đơn của họ là một đơn lẻ, tự nó là một đơn vị thanh toán. Nói cách khác: hai kênh này giống nhau ở
+*ai bấm* và khác nhau ở **đơn vị tính tiền**, và đó là khác biệt quyết định: một bên tiền vào hoá
+đơn của bàn, một bên tiền đứng riêng một mình. Khác biệt thứ hai đi kèm: đơn hotline **phải hỏi**
+cách trao hàng và giờ (bước 2), đơn Staff POS thì không — khách đã ngồi ngay đó. Ghi đơn
+`phone_preorder` thành `staff_pos` là **bug**, cách ghi ấy đã bị gỡ ngày 2026-08-29 (§2.3).
+
+Trọn đường đi, từ lúc nhấc máy:
+
+- *Khách* gọi hotline. *Người đứng quầy* nghe máy và **hỏi hai câu bắt buộc**: giao tận nơi hay
+  tới lấy, cần hàng lúc mấy giờ (bước 2).
+- *Người đứng quầy* nhập món hộ khách, kèm số điện thoại và giờ khách cần hàng; chọn giao tận nơi
+  thì nhập thêm địa chỉ (§3.2.4).
+- *Hệ thống* tính tổng tiền và tạo đơn. Đơn **không đi qua bước duyệt** — vào thẳng trạng thái
+  **đã duyệt** (§2.2, bước 7).
+- Bếp làm và *nhân viên quán* đóng gói như bước 8, không khác đơn của hai kênh kia một điểm nào.
+- **Kết thúc kiểu thứ nhất — khách tới lấy:** *Khách* tới quán đúng giờ đã hẹn, *người đứng quầy*
+  trao hàng và thu tiền tại quầy. Đơn **hoàn thành**.
+- **Kết thúc kiểu thứ hai — quán giao:** đơn mang trạng thái **"đang giao"**, *nhân viên quán* đem
+  tới địa chỉ khách, thu tiền tại chỗ, bấm **đã giao và đã thu tiền**. Đơn **hoàn thành**.
+- **Khách đổi ý, tới quán ngồi ăn:** *người đứng quầy* **huỷ** đơn đặt trước và khách quét QR gọi
+  lại như mọi khách ngồi bàn (§2.4). Không có đường nối đơn này vào một phiên bàn. Đơn đã trả
+  trước thì việc huỷ sinh việc **hoàn tiền**, xử theo `shop-facts.md` §6.4.
+
+#### 3.2.4 Thông tin liên hệ tối thiểu — theo kênh, và theo cách trao hàng
+
+*Chủ quán chốt **2026-08-30** (`shop-facts.md` §6.5). Đây là dữ kiện **đã chốt**, không phải chỗ
+suy ra: trước ngày đó hai trường bắt buộc mới chỉ là suy luận từ luồng (S-2, `shop-facts.md` §7.1).*
+
+Ba câu, và cả ba là điều kiện để đơn được tạo ở bước 3:
+
+- **Số điện thoại — bắt buộc với cả ba kênh.** Không có số thì không gọi lại được khi tới nơi hoặc
+  khi cần hỏi lại. Đây là chỗ luồng mang đi khác hẳn luồng tại bàn: khách ngồi bàn **ẩn danh theo
+  số bàn** (§2.1), khách mang đi thì không bao giờ ẩn danh.
+- **Địa chỉ giao — bắt buộc khi giao tận nơi.** Tức: luôn bắt buộc với **Delivery**; với **Đặt
+  trước qua hotline** thì bắt buộc **nếu** khách chọn giao tận nơi (câu trả lời ở bước 2). Với
+  **Pickup** thì không cần — quán không đi đâu cả.
+- **Giờ khách cần hàng — bắt buộc với Pickup và với Đặt trước qua hotline.** Pickup có **giờ hẹn
+  lấy**; đơn hotline là đơn đặt trước nên cũng có mốc giờ. Với Delivery, giờ là trường **nên có**,
+  không bắt buộc.
+
+Danh sách trường đầy đủ — kể cả các trường "nên có" và "tuỳ tình huống" — ở `shop-facts.md` §6.5;
+§2 của tài liệu này đã nói **đừng chép nó về đây**, và §3.2 không chép.
+
+#### 3.2.5 Không phiên bàn, và mỗi đơn là một đơn vị thanh toán độc lập
+
+Bốn câu dưới đây là luật (§5 quy tắc 8 của kế hoạch gốc · `shop-facts.md` §2, §5.2, §6.3, §6.9):
+
+- **Đơn mang đi không thuộc phiên bàn nào.** Cả ba kênh, không có ngoại lệ. Không có đường nối một
+  đơn Delivery, Pickup hay đặt trước qua hotline vào một phiên bàn — kể cả khi khách đổi ý và tới
+  quán ngồi ăn; ca đó là **huỷ rồi gọi lại** (§2.4).
+- **Mỗi đơn được thanh toán độc lập.** Hai đơn của **cùng một khách**, đặt cách nhau mười phút,
+  vẫn là hai đơn vị tính tiền và hai lần thu tiền. Không có chỗ nào gộp chúng lại — cái gộp duy
+  nhất trong sản phẩm này là phiên bàn, và ba kênh này không có phiên bàn.
+- **Trả lúc trao hàng là đường mặc định; trả trước là tuỳ chọn của khách** (chủ quán chốt
+  2026-08-30, `shop-facts.md` §6.3). Cả ba kênh mang đi đều được chọn trả trước, bằng đúng hai
+  phương thức đang có — tiền mặt hoặc VietQR, không có phương thức thứ ba. **POS xác nhận đã nhận
+  tiền vào lúc tiền thật sự tới tay quán**, không phải lúc khách bấm chọn "trả trước" (chủ quán
+  chốt 2026-08-31, `shop-facts.md` §6.3): chọn trả trước là *ý định của khách*, còn *đã nhận tiền*
+  chỉ do người bấm ở POS tạo ra. Khách ngồi bàn **không** có nhánh này (§1.1).
+- **Suất "đem về" của khách đang ngồi bàn KHÔNG phải một đơn mang đi.** Nó thuộc **phiên bàn**
+  đang mở, kèm note "đem về" (§2.1, §3.1.4). Chiều ngược lại cũng không tồn tại. Nhầm chỗ này là
+  đếm tiền sai nguồn: `shop-facts.md` §6.9 buộc một khoản tiền gắn với đúng **một** đơn vị tính
+  tiền, và báo cáo doanh thu phải cộng **cả hai** nguồn — phiên bàn và đơn lẻ.
+
+#### 3.2.6 Khi nào quán không nhận đơn — giờ bán, và nút tạm dừng thắng giờ bán
+
+Hai điều kiện, và đơn chỉ được tạo khi **cả hai** đều mở (§5 quy tắc 10 và 11 của kế hoạch gốc ·
+`shop-facts.md` §1, §6.8):
+
+- **Giờ bán: 06:00 – 11:00, tất cả các ngày**, múi giờ `Asia/Ho_Chi_Minh` (`shop-facts.md` §1).
+  Ngoài khung giờ đó, web **khoá nút đặt** và khách nhìn thấy câu *"Quán mở cửa 6h–11h sáng"* —
+  khách biết ngay vì sao không đặt được và khi nào quay lại được, chứ không gặp một nút bấm im
+  lặng. Đơn gửi ngoài giờ bán **bị từ chối**, không xếp hàng chờ tới sáng hôm sau.
+- **Nút "Tạm dừng nhận đơn" của chủ quán THẮNG giờ mở cửa** (`shop-facts.md` §6.8). Đang giữa giờ
+  bán mà chủ quán bấm tạm dừng — thường là hết nguyên liệu giữa buổi — thì quán **vẫn không nhận
+  đơn**. Ưu tiên chỉ chạy một chiều: nút tạm dừng chặn được giờ bán, còn giờ bán **không bao giờ**
+  gỡ được nút tạm dừng — chỉ chủ quán tắt nó thì quán mới nhận đơn trở lại. Hai quy tắc này không
+  ngang hàng nhau.
+- **Đơn đã tạo trước đó không bị hai điều kiện này chạm tới.** Tạm dừng và hết giờ bán chặn *đơn
+  mới*; đơn đã nhận vẫn được làm, đóng gói, giao và thu tiền bình thường.
+
+**Phí ship 0đ, không có đơn tối thiểu, không có bậc phí ship theo khoảng cách.** Cả ba là **quyết
+định đã chốt** của chủ quán (`shop-facts.md` §2, §6.12), không phải chỗ trống chờ ai điền: thêm
+đơn tối thiểu hay bậc phí ship là **đổi phạm vi**, phải xin phép chủ quán.
+
+Hai con số vừa nêu — giờ bán và phí ship — là **dữ kiện quán**, nhà của chúng là `shop-facts.md`
+§1 và §2. Đây là chỗ **duy nhất** trong tài liệu này chép lại một con số của quán, và nó được chép
+vì một câu kiểu *"theo giờ mở cửa của quán"* thì không ai kiểm được. Đổi giờ bán hay phí ship ⇒
+sửa ở owner **và** sửa ở đây, trong cùng một lần đổi.
+
+#### 3.2.7 Khác gì so với đơn tại bàn
+
+Bảy điểm khác, lấy đúng danh sách của `shop-facts.md` §5.2 — **đây là danh sách đã biết tính tới
+2026-08-30, không phải lời hứa là đã đủ**: gặp điểm khác thứ tám thì ghi thêm vào `shop-facts.md`
+§5.2 trước, đừng tự đoán ở đây.
+
+- **Phải có thông tin liên hệ** (§3.2.4). Luồng tại bàn ẩn danh theo số bàn.
+- **Không có phiên bàn.** Mỗi đơn tự nó là một đơn vị thanh toán, không gộp với đơn nào khác, kể
+  cả cùng một khách đặt hai lần (§3.2.5). Luồng tại bàn gộp mọi lượt gọi của một bàn vào **một**
+  hoá đơn (§3.1.4).
+- **Có bước đóng gói thay cho bước mang ra bàn, và không có bước dọn bàn.** Luồng tại bàn kết thúc
+  ở bàn trống sau hai việc — đóng phiên và dọn bàn (§3.1.4); luồng mang đi kết thúc ngay khi trao
+  hàng xong.
+- **Nước chấm phải gói riêng.** Trạm **lấy canh** vẫn sinh việc cho mọi đơn mang đi, chỉ khác cách
+  đưa (`shop-facts.md` §6.6).
+- **Có hẹn giờ.** Pickup có giờ hẹn lấy, đơn hotline có mốc giờ khách cần hàng. Luồng tại bàn
+  không có khái niệm hẹn giờ.
+- **Thu tiền lúc trao hàng, và có thể thu ở ngoài quán** — đơn giao tận nơi thu ngay tại chỗ
+  khách. Luồng tại bàn luôn thu ở quầy lúc đóng phiên. **Và chỉ luồng này có nhánh trả trước**
+  (§3.2.5).
+- **Chỉ đơn giao tận nơi có trạng thái "đang giao"** (§3.2.2), vì quán tự đi giao nên quầy phải
+  biết đơn nào còn trên đường và ai đang cầm tiền chưa về.
+
+#### 3.2.8 Ba việc lát cắt này cố ý không nói tới
+
+- **Cách quán đi giao ngoài đường.** Ai cầm đơn nào, đi đường nào, giao mấy đơn một chuyến — quán
+  tự sắp, sản phẩm chỉ giữ trạng thái "đang giao" và cho quầy nhìn thấy nó (§1.4).
+- **Cách tính một mức phí ship khác 0đ.** Không có bậc, không có ngưỡng đơn tối thiểu; ranh giới
+  này đã chốt (§3.2.6).
+- **Vòng đời đầy đủ của đơn và tên từng trạng thái.** §3.2 chỉ dùng những trạng thái mà luồng này
+  thật sự đi qua; bộ tên đầy đủ và các nhánh ngoại lệ là việc của §5 (BA-07) và §6 (BA-08).
 
 ### 3.3 Chủ quán đổi menu hoặc giá
 

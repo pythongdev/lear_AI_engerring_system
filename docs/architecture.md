@@ -56,11 +56,11 @@ Hệ quả, và đây là chỗ dễ làm sai nhất:
 | Bàn đã dọn | trạm `don_ban` | §3 — việc này **có** một thao tác, vì nó là bước cuối của bàn, không phải bước giữa của món |
 | Việc phải làm | **không ai ghi** — nó *sinh ra* từ đơn đã duyệt (§5.3) | |
 
-⚠️ **Điều này bác một phần bản xuất khẩu.** `master_plan/prompt-fullstack.md` §3.6 còn liệt kê
-`PATCH staff/tasks/:id` (`todo → doing → done`) và §3.7 còn viết *"một task = một thẻ, một nút
-`Xong`"*. Hai câu đó viết **trước** lời chủ quán ngày 2026-08-31 và nay đã sai — chi tiết ở
-`work/findings.md` **F-013**, việc sửa là **T-031**. Ai đọc bản xuất khẩu để dựng màn hình trạm mà
-không đọc tài liệu này sẽ làm ra một nút không ai bấm.
+✅ **Bản xuất khẩu đã khớp lại, 2026-08-31 (T-031).** `master_plan/prompt-fullstack.md` §3.6 từng
+liệt kê một endpoint cho bếp bấm và §3.7 từng thiết kế một nút `Xong` ở màn trạm; cả hai viết
+**trước** lời chủ quán ngày 2026-08-31 và đã bị gỡ. §3.6 nay mang chính luật ghi này thành một
+khối tự đứng — người đọc **ngoài** repo không grep được, nên luật phải nằm trong file họ cầm, không
+phải ở một pointer về đây. Chi tiết mâu thuẫn và giá của nó: `work/findings.md` **F-013** (Fixed).
 
 ### 1.2 Cái gì không bao giờ được nằm ở frontend
 
@@ -233,7 +233,9 @@ Mỗi trạm một màn. Việc sinh ra từ đơn **đã duyệt**, nổ theo t
 | `quay` | xem §3 |
 
 Ba luật hiển thị đã chốt ở `master_plan/prompt-fullstack.md` §3.7 và vẫn đúng: chữ to đọc được từ
-xa · cũ nhất lên đầu · màu theo thời gian chờ. Cái **không** còn đúng là nút `Xong` (§1.1, F-013).
+xa · cũ nhất lên đầu · màu theo thời gian chờ. Nút `Xong` thì đã bị gỡ khỏi đó ngày 2026-08-31
+(T-031); §3.7 nay nói thẳng ba màn trạm là **chỉ đọc** và thẻ tự biến mất khi POS ghi đã phục vụ
+(§1.1, F-013 Fixed).
 
 **Realtime không được là đường duy nhất** (`prompt-fullstack.md` §4 ràng buộc 9): màn trạm vẫn phải
 tự lấy lại dữ liệu theo chu kỳ. Mất kết nối mà màn hình đứng im là bếp làm thiếu mà không ai biết.

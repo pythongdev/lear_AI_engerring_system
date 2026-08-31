@@ -298,13 +298,22 @@ state may have moved under you:
 ./scripts/brief.sh
 ```
 
-Two rules keep it honest:
+Three rules keep it honest:
 
 - **It points, it never copies.** File names, IDs, dates, headings — never a
   price, a rule text, or a channel list. A brief carrying facts would be the
   second copy F-001 was written about. Read facts from their owner in §2.
 - **It never blocks.** Every failure path exits 0. A broken brief must not cost
   you a session.
+- **It says when it cut a list.** Every list is capped — six items for In
+  Progress, Ready and Open findings, twelve for Open unknowns, which get their
+  own threshold because §3.5 can only stop a session that *knows* what it is
+  missing. When a list is longer than its cap, the brief prints `→ ĐÃ CẮT` with
+  how many it showed, how many are left, and where to read all of them. Silence
+  is only ever "that is the whole list": a seven-item list that printed six of
+  them silently is what made U-011 invisible from the day it was written
+  (`work/findings.md` F-012, fixed by T-027). So a capped list is a pointer, not
+  an answer — open the file it names before you decide anything.
 
 When a brief line contradicts what you believe: the brief's dates come from
 git, so **the brief wins** and you re-read that owner before touching anything.

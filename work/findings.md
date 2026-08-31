@@ -767,11 +767,30 @@ brief **trỏ, không chép**, và một brief dài 40 dòng thì không ai đ�
 nói đã cắt** — người đọc không có cách nào phân biệt "hết rồi" với "còn nữa".
 
 **Decision / Fix:**
-Chưa sửa. Ghi ngày **2026-08-31** trong lúc chạy T-026; T-026 **không** chạm `scripts/` vì hai
-phiên khác đang chạy song song trong cùng cây làm việc (BA-03, T-025), và T-025 sở hữu `scripts/`.
+**Đã sửa 2026-08-31 bởi T-027.** Ghi ngày 2026-08-31 trong lúc chạy T-026; T-026 **không** chạm
+`scripts/` vì hai phiên khác đang chạy song song trong cùng cây làm việc (BA-03, T-025), và T-025
+sở hữu `scripts/`.
 
-Việc siết lại là **T-027**, và nó **không phải** "đổi `MAX_LIST=6` thành một số to hơn": số nào
-cũng có một danh sách vượt qua nó, và lúc đó im lặng vẫn im lặng. Ràng buộc của T-027:
+Cách sửa, đúng bốn ràng buộc dưới đây — **không** phải "đổi `MAX_LIST=6` thành một số to hơn": số
+nào cũng có một danh sách vượt qua nó, và lúc đó im lặng vẫn im lặng.
+
+- `scripts/brief.sh` có hàm `emit`: in tối đa N mục, rồi khi có mục bị bỏ lại thì nói ra
+  **`→ ĐÃ CẮT: in 6/10 mục. Còn 4 mục nữa chỉ có ở work/backlog.md → Ready.`** — in mấy trên mấy,
+  còn mấy, và đọc đủ ở đâu. Cả bốn danh sách đi qua nó.
+- Danh sách **bằng hoặc ngắn hơn** ngưỡng không in thêm dòng nào: một dòng "đã in hết" ở mỗi phiên
+  là tiếng ồn, và tiếng ồn là thứ làm người ta thôi đọc brief.
+- Câu hỏi mở có hằng số riêng, `MAX_UNKNOWNS=12`, đặt cạnh `MAX_LIST=6` với lý do viết ngay ở đó.
+  Ca thật của finding này — **bảy** câu mở — nay in đủ bảy, U-011 có mặt. Khi nó *thật sự* bị cắt,
+  dòng thông báo nói thẳng hậu quả: phiên không biết mình đang thiếu thì CLAUDE.md §3.5 không dừng
+  được nó.
+- `scripts/brief.test.sh` có bảy ca mới (C1–C7) cho danh sách **vượt ngưỡng** ở cả bốn danh sách,
+  cộng ca "bằng đúng ngưỡng thì im" và ca "bảy câu mở không bị cắt". Mọi ca đều kiểm `exit 0`.
+
+Một thứ tiện thể đúng ra: `$inprog` nay giữ danh sách **đủ**, không phải bản đã cắt — cảnh báo
+"scope chưa dọn" hỏi "có task nào đang chạy không", và hỏi câu đó trên một danh sách đã cắt là hỏi
+trên nửa sự thật.
+
+Ràng buộc gốc của T-027, giữ lại nguyên văn để đọc ngược:
 
 - Brief **nói ra** phần đã cắt — bao nhiêu mục nữa, ở file nào — thay vì lặng lẽ dừng.
 - Danh sách **câu hỏi mở** đáng được đối xử khác ba danh sách kia: nó là thứ §3.5 bắt phiên phải
@@ -782,11 +801,11 @@ cũng có một danh sách vượt qua nó, và lúc đó im lặng vẫn im l�
   không ca nào bắt được lỗi này.
 
 **Related task:**
-T-027 (siết lại, còn mở) · T-026 (phát hiện) · F-008 (lần thứ nhất, phía *cách đọc*; T-021 đã
+T-027 (đã sửa 2026-08-31) · T-026 (phát hiện) · F-008 (lần thứ nhất, phía *cách đọc*; T-021 đã
 chữa) · ADR-002 (brief đẩy trạng thái vào mọi phiên) · ADR-007 (hợp đồng hình dạng mục Unknowns)
 
 **Status:**
-Open
+Fixed (2026-08-31, T-027)
 
 ---
 
@@ -842,10 +861,33 @@ Ràng buộc cho T-031, để nó không sửa thành một lỗi khác:
 - Không sửa `prompt/maintenance/` — đó là ghi chép lịch sử của các task đã chạy
   (cùng lý lẽ T-028 đã dùng).
 
+**Đã sửa — T-031, 2026-08-31.** Cả ba chỗ, và cả bốn ràng buộc trên đều giữ:
+
+| Chỗ | Nay viết |
+|---|---|
+| §3.6, khối *Nhân viên* | `PATCH staff/tasks/:id` **bị gỡ**; `GET staff/tasks?station=` đánh dấu **chỉ đọc**; thêm `POST staff/sessions/:id/served` — **POS** ghi đã phục vụ |
+| §3.6, ngay dưới khối | một khối *Luật ghi* **tự đứng**: chỉ POS ghi · không có vòng `todo → doing → done` · ngoại lệ duy nhất là `don_ban` bấm *đã dọn* |
+| §3.7, *Màn hình trạm* | ba trạm bếp là **màn chỉ đọc**, thẻ **tự biến mất** khi POS ghi đã phục vụ; ba luật hiển thị + số bàn to nhất **giữ nguyên** |
+| §3.7, `Hoàn tác` 10 giây | **chuyển** sang gạch đầu dòng mới *Màn dọn bàn* — nơi còn một thao tác thật, thay vì đứng ở màn không còn nút nào |
+
+Cái quan trọng nhất không phải việc xoá: **luật ghi nay nằm trong chính bản xuất khẩu**, không phải
+ở một pointer trỏ về `docs/architecture.md`. Đó là điểm chung của cả họ F-005 / F-007 / F-013 —
+người đọc đứng **ngoài** repo — nên bản vá phải tự đứng được trong file họ cầm.
+
+Bốn pointer nói *"bản xuất khẩu còn sai"* được sửa trong cùng thay đổi (CLAUDE.md §7.2):
+`docs/architecture.md` §1.1 và §5, `docs/decisions.md` ADR-011 (*Rejected alternatives* và
+*Applies to*). `master_plan/shop-facts.md` không đổi một chữ — dữ kiện chưa bao giờ sai, chỉ bản
+chép sai. `prompt/maintenance/` giữ nguyên theo ràng buộc thứ tư.
+
+**Chỗ còn hở, cố ý:** tên `POST staff/sessions/:id/served` là **thiết kế**, không phải dữ kiện —
+`docs/architecture.md` §8 cố ý không đặt tên bảng/cột/endpoint, và *"đã phục vụ bao nhiêu cho từng
+bàn"* vẫn nằm trong danh sách sáu chỗ 16 bảng chưa với tới. Pha System Design đổi tên nó thì đổi,
+miễn giữ đúng luật: **người ghi là POS**.
+
 **Related task:**
-T-031 (sửa bản xuất khẩu, còn mở) · T-029 (phát hiện, viết `docs/architecture.md`) ·
+T-031 (đã sửa bản xuất khẩu, 2026-08-31) · T-029 (phát hiện, viết `docs/architecture.md`) ·
 T-028 (ghi lời chốt 2026-08-31 sinh ra mâu thuẫn này) · F-005 · F-007 (cùng họ, cùng chỗ đọc) ·
 ADR-011
 
 **Status:**
-Open
+Fixed (2026-08-31, T-031)

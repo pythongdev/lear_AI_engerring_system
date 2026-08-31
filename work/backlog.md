@@ -54,20 +54,21 @@ không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31, T-016 xong 
   **một file, hai chủ**. Phiên vào sau phải **thêm** khối của mình chứ đừng ghi đè — ghi đè làm
   Gate 3 chấm việc của người kia bằng scope của mình, đúng thứ `work/findings.md` **F-010** mô tả,
   chỉ khác là nguyên nhân đến từ song song chứ không từ quên dọn.
-- **T-031 sinh ra từ T-029 (2026-08-31), không chặn ai, nhưng chặn được người ngoài repo.**
+- **T-031 đã xong 2026-08-31 — F-013 đóng, bản xuất khẩu hết thiết kế một nút không ai bấm.**
   Chủ quán bỏ nút báo xong ở ba trạm bếp ngày 2026-08-31 (`master_plan/shop-facts.md` §5.4), trong
-  khi `master_plan/prompt-fullstack.md` §3.6 và §3.7 vẫn thiết kế `PATCH staff/tasks/:id` và
-  *"một task = một thẻ, một nút `Xong`"*. Đây là **loại thứ ba** của họ lỗi F-005 / F-007: người
-  đọc bản xuất khẩu đứng **ngoài** repo nên không grep được, họ dựng đúng thứ được viết — lần này
-  là một cơ chế cho một actor không tồn tại. Ràng buộc (đặc biệt: `don_ban` **vẫn** có thao tác,
-  và bỏ endpoint thì phải nói cái gì thay nó) ở `work/findings.md` **F-013** (Open).
-- **T-027 sinh ra từ T-026 (2026-08-31), không chặn ai, nhưng brief đang nói dối mỗi phiên.**
-  `scripts/brief.sh` cắt cả bốn danh sách ở `MAX_LIST=6` và **không nói là đã cắt**. Ngày
-  2026-08-31 số câu hỏi mở lên **bảy**, nên U-011 vô hình với mọi phiên mới kể từ dòng đầu tiên nó
-  được viết. Ready cũng đang có 10 dòng chưa tick, trong đó **BA-12** nằm ngoài sáu dòng đầu. Đây
-  là lần **thứ hai** cùng một hậu quả với `work/findings.md` **F-008**, khác nguyên nhân: F-008
-  hỏng ở *cách đọc* (T-021 đã chữa), lần này hỏng ở *bộ cắt*. Ràng buộc — đặc biệt "đừng chỉ đổi
-  6 thành một số to hơn" — ở `work/findings.md` **F-012** (Open).
+  khi `master_plan/prompt-fullstack.md` §3.6 và §3.7 còn thiết kế cho bếp bấm. Đây là **loại thứ
+  ba** của họ lỗi F-005 / F-007, và bản vá cũng chung một hình: người đọc bản xuất khẩu đứng
+  **ngoài** repo nên không grep được ⇒ **luật ghi phải nằm trong chính file họ cầm**, không phải ở
+  một pointer trỏ về `docs/architecture.md`. §3.6 nay có một khối *Luật ghi* tự đứng. Hệ quả cho
+  mọi task sau chạm bản xuất khẩu: sửa một chỗ chép sai thì mang theo **lý do**, đừng chỉ xoá.
+- **T-027 đã xong 2026-08-31 — F-012 đóng, và brief hết cắt câm.** Trước đó
+  `scripts/brief.sh` cắt cả bốn danh sách ở `MAX_LIST=6` mà **không nói là đã cắt**, nên U-011 vô
+  hình với mọi phiên mới kể từ dòng đầu tiên nó được viết, và **BA-12** nằm ngoài sáu dòng Ready
+  đầu tiên. Hệ quả cho **mọi phiên sau**: một danh sách bị cắt nay in `→ ĐÃ CẮT: in 6/10 mục…` kèm
+  chỗ đọc đủ, và **không có dòng đó nghĩa là danh sách đã hết** — im lặng nay là một câu trả lời,
+  không còn là một chỗ trống. Câu hỏi mở có ngưỡng riêng (`MAX_UNKNOWNS=12`) vì CLAUDE.md §3.5 chỉ
+  dừng được phiên **biết** mình đang thiếu. Đây là lần thứ hai của cùng một hậu quả với
+  `work/findings.md` **F-008** (F-008 hỏng ở *cách đọc*, T-021 đã chữa; lần này hỏng ở *bộ cắt*).
 - **T-025 đã xong 2026-08-31 — F-011 đóng, và repo nay có một cổng thứ tám.**
   `scripts/hooks/commit-msg` là hook của **git**, nên nó đứng ở đúng chỗ Gate 7 không với tới:
   giữa người gõ `git commit -m` ở terminal và git. Hệ quả cho **mọi task sau**, kể cả L0: một
@@ -97,21 +98,18 @@ không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31, T-016 xong 
   chưa biết trục này rộng tới đâu.
 
 Chuỗi BA chạy từ trên xuống. Thứ tự là cột "Cần xong trước" của §11 kế hoạch gốc; BA-01 và BA-02
-đã xong 2026-08-30 và **BA-03 xong 2026-08-31**, nên BA-04, BA-05 chạy song song được, còn
-BA-07 nay hết bị chặn.
+đã xong 2026-08-30, **BA-03 và BA-04 xong 2026-08-31**, nên **BA-05, BA-06 và BA-07 chạy song song
+được** — không task BA nào còn bị một task BA khác chặn. `docs/product.md` nay đã chốt §1, §2,
+§3.1 và §3.2; ba lát cắt của §3 chỉ còn thiếu §3.3 (BA-05) và §3.4 (BA-12).
 
-- [ ] T-027 Brief cắt danh sách ở 6 mà không nói đã cắt — U-011 vô hình ngay lúc viết ra (F-012)
-- [ ] T-031 Bản xuất khẩu còn thiết kế nút `Xong` ở màn trạm mà chủ quán đã bỏ (F-013)
-
-- [ ] BA-04 `docs/product.md` §3.2 — lát cắt một đơn mang đi (ba kênh) · cần BA-02 (T-011, T-012, T-020 xong)
 - [ ] BA-05 `docs/product.md` §3.3 — lát cắt chủ quán đổi menu/giá · cần BA-02
-- [ ] BA-06 `docs/product.md` §4 — quy tắc giá và thanh toán · cần BA-04 (BA-03, T-020 xong; **U-005 còn mở**)
-- [ ] BA-07 `docs/product.md` §5 — vòng đời đơn, phiên bàn, công việc trạm (BA-03 xong; **U-006, U-007 còn mở**)
-- [ ] BA-08 `docs/product.md` §6 — ngoại lệ · cần BA-04–BA-07 (BA-03 xong; **U-007 còn mở**)
+- [ ] BA-06 `docs/product.md` §4 — quy tắc giá và thanh toán · hết bị chặn (BA-03, BA-04, T-020 xong; **U-005 đã đóng 2026-08-31**)
+- [ ] BA-07 `docs/product.md` §5 — vòng đời đơn, phiên bàn, công việc trạm (BA-03 xong; **U-006, U-007 đã đóng 2026-08-31**)
+- [ ] BA-08 `docs/product.md` §6 — ngoại lệ · cần BA-05–BA-07 (BA-03, BA-04 xong; **U-007 đã đóng 2026-08-31**)
 - [ ] BA-09 `docs/product.md` §7 — phạm vi MVP · cần BA-01–BA-08
 - [ ] BA-10 `docs/decisions.md` — quyết định và giả định · cần BA-01–BA-09
 - [ ] BA-11 `docs/product.md` §8 — ba scenario nghiệm thu BA · cần BA-03–BA-10
-- [ ] BA-12 `docs/product.md` §3.4 — lát cắt sản xuất theo mẻ · cần BA-03, BA-07 (**U-008–U-011 + S-4 còn mở**)
+- [ ] BA-12 `docs/product.md` §3.4 — lát cắt sản xuất theo mẻ · cần BA-03, BA-07 (**U-008–U-011 đã đóng 2026-08-31; S-4 còn mở**)
 
 Mỗi task chạm **một** mục tài liệu riêng, nên revert được độc lập: §3.1 · §3.2 · §3.3 · §4 · §5 ·
 §6 · §7 · `docs/decisions.md` · §8 · §3.4. Hai task cùng chạm một mục là dấu hiệu chia việc sai.
@@ -125,11 +123,13 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="in-progress"></a>
 ## In Progress
 
-(không có task nào đang chạy)
 
 <a id="done"></a>
 ## Done
 
+- [x] BA-04 `docs/product.md` §3.2 — lát cắt một đơn mang đi, ba kênh không gắn bàn; I-007, I-008 (2026-08-31)
+- [x] T-027 Brief nói ra phần nó đã cắt: `→ ĐÃ CẮT: in 6/10 mục` (F-012 đóng) (2026-08-31)
+- [x] T-031 Bản xuất khẩu hết nút `Xong` ở màn trạm: §3.6 mang luật ghi, POS là nơi duy nhất ghi (F-013) (2026-08-31)
 - [x] T-033 U-012 và U-013 đóng nốt; câu hỏi S-4 viết lại vì hỏi sai cách (2026-08-31)
 - [x] T-029 `docs/architecture.md` hết là template rỗng: mặt admin có đặc tả, chỉ POS được ghi (ADR-011) (2026-08-31)
 - [x] T-026 Đề xuất Admin/POS được chấm: lời chủ quán về gom mẻ vào nhà thật, phần còn lại bị từ chối có tên (ADR-009) (2026-08-31)
@@ -183,8 +183,8 @@ Bốn câu **đã có lời giải trước khi chuỗi BA bắt đầu**; task 
 | 3 | Món hết sau khi khách đã đặt | BA-08 | còn mở |
 | 4 | Khách không trả được tiền thì phiên bàn ở đâu | BA-08 | còn mở |
 | 5 | Có hoàn tiền không, ai được | BA-06 | **đã chốt** → `shop-facts.md` §6.4 — quầy quyết từng ca, phải ghi vết |
-| 6 | Pickup có cần giờ hẹn bắt buộc | BA-04 | **đã chốt** → `shop-facts.md` §6.5 — bắt buộc |
-| 7 | Delivery có quản lý trạng thái giao | BA-04 | **đã chốt** → `shop-facts.md` §6.7 — quán tự giao, có trạng thái "đang giao" |
+| 6 | Pickup có cần giờ hẹn bắt buộc | BA-04 | **đã chốt** → `shop-facts.md` §6.5 — bắt buộc; BA-04 chép vào `docs/product.md` §3.2.4 (2026-08-31) |
+| 7 | Delivery có quản lý trạng thái giao | BA-04 | **đã chốt** → `shop-facts.md` §6.7 — quán tự giao, có trạng thái "đang giao"; BA-04 chép vào `docs/product.md` §3.2.2 (2026-08-31) |
 | 8 | Doanh thu tính theo ngày nào, đơn huỷ/hoàn tiền ra sao | BA-06 | còn mở |
 | 9 | Chủ quán đổi giá đang bán ngay lập tức được không | BA-05 | còn mở |
 | 10 | Có lưu lịch sử thao tác nhân viên ở MVP không | BA-09 | còn mở |
@@ -294,55 +294,6 @@ grep -n 'T-019' scripts/check-links.ignore   # rỗng
 ./scripts/check-links.sh                     # xanh sau khi gỡ ignore
 grep -c '⚠️' master_plan/prompt-fullstack.md  # không tăng (2)
 grep -n '^## §' master_plan/prompt-fullstack.md   # vẫn đủ §1 → §11
-git status --porcelain
-```
-
-### BA-04 — Lát cắt một đơn mang đi (ba kênh không gắn bàn)
-
-**Prompt:** `prompt/BA/03-slice-ship-pickup-L2.md` (L2) · **Cần xong trước:** BA-02 (xong
-2026-08-30) và T-011 (xong 2026-08-30).
-
-**Goal:**
-`docs/product.md` §3.2 mô tả trọn đường đi của một đơn không gắn bàn — từ lúc khách chọn món tới
-lúc đơn hoàn thành — cho **cả ba** kênh `delivery`, `pickup`, `phone_preorder`, và nêu nó khác đơn
-tại bàn ở chỗ nào.
-
-Lát cắt này là **ba** kênh, không phải hai. Nguồn: `master_plan/shop-facts.md` §5.2 gộp cả ba kênh
-không gắn bàn vào **một** luồng, và `prompt/BA/03-slice-ship-pickup-L2.md` đã phủ đủ ba. Dòng BA-04
-ở §11 kế hoạch gốc từng viết "ship/pickup"; T-011 đã sửa **2026-08-30**, nên khung và nhà thật nay
-khớp nhau.
-
-**Scope:** `docs/product.md` §3.2 · `quality/invariants.md` (chỉ **thêm**) · `work/backlog.md`.
-
-**Out of scope:** §3.1, §3.3, §4–§8 của `docs/product.md` · `docs/decisions.md` ·
-`docs/architecture.md`.
-
-**Acceptance:**
-1. §3.2 có luồng đúng 9 bước theo §4.2 kế hoạch gốc, mỗi bước ghi actor.
-2. §3.2 phủ **ba** kênh không gắn bàn và nói `phone_preorder` khác `staff_pos` ở chỗ nào
-   (`docs/product.md` §2.3).
-3. Có đường đi của đơn `phone_preorder` từ lúc nhân viên nghe máy tới lúc đơn hoàn thành, gồm
-   **cả hai** kiểu kết thúc — khách tới lấy hoặc quán giao (`shop-facts.md` §5.2).
-4. Có câu khẳng định đơn mang đi không gắn phiên bàn và được thanh toán độc lập.
-5. Nêu thông tin liên hệ tối thiểu theo từng kênh: số điện thoại bắt buộc cả ba kênh, địa chỉ bắt
-   buộc khi giao tận nơi, giờ hẹn bắt buộc với `pickup` và `phone_preorder` — tra
-   `shop-facts.md` §6.5, ghi là **đã chốt 2026-08-30**, không đánh dấu suy luận. → §10 câu 6.
-6. Nêu đơn giao tận nơi mang trạng thái **"đang giao"** và quán tự đi giao
-   (`shop-facts.md` §6.7). → §10 câu 7.
-7. Nêu giờ bán 06:00–11:00 và phí ship 0đ, không đơn tối thiểu — bằng số, không viết chung chung.
-8. Có hành vi khi đặt ngoài giờ bán (đơn bị từ chối, khách nhìn thấy gì) và khi chủ quán tạm dừng
-   nhận đơn, kèm câu khẳng định nút tạm dừng **thắng** giờ mở cửa (`shop-facts.md` §6.8).
-9. Có đoạn "Khác gì so với đơn tại bàn" liệt kê ít nhất 3 khác biệt nghiệp vụ.
-10. `quality/invariants.md` có hai invariant: đơn mang đi không thuộc phiên bàn nào · không tạo
-    được đơn ngoài giờ bán hoặc khi đang tạm dừng nhận đơn.
-11. §3.2 không nói về nhà cung cấp vận chuyển, bản đồ, hay cách tính phí ship theo bậc.
-
-**Verify:**
-```bash
-./scripts/gate.sh
-grep -n 'phone_preorder' docs/product.md                       # có mặt trong §3.2
-sed -n '/^### 3.2/,/^### 3.3/p' docs/product.md | grep -cE '^ *[0-9]+\.'   # 9 bước
-grep -n 'đang giao\|06:00\|0đ' docs/product.md
 git status --porcelain
 ```
 
@@ -663,59 +614,6 @@ git status --porcelain
 
 [↑ đầu file](#top)
 
-### T-027 — Brief cắt danh sách ở 6 và không nói đã cắt, nên mục thứ bảy vô hình
-
-**Prompt:** chưa có · **L1** — nó đổi thứ mọi phiên mới đọc trước chỉ thị đầu tiên.
-
-**Goal:**
-Một phiên mới đọc brief là biết **có phần bị cắt hay không**. Danh sách bảy mục không còn trông
-giống hệt danh sách sáu mục.
-
-**Nói một câu, việc phải làm là gì:**
-Cho brief **nói ra** phần nó đã cắt. Việc **không** phải làm: đổi `MAX_LIST=6` thành một số to hơn
-— số nào cũng có một danh sách vượt qua nó, và lúc đó im lặng vẫn im lặng.
-
-**Vì sao có task này:**
-Ghi ngày 2026-08-31 trong lúc chạy T-026: câu hỏi mở lên **bảy**, brief in **sáu**, U-011 vô hình
-với mọi phiên mới kể từ dòng đầu tiên nó được viết ra. Chi tiết, bốn ràng buộc, và vì sao đây là
-lần thứ hai của cùng một hậu quả (sau F-008) ở `work/findings.md` **F-012**.
-
-**Không làm thì mất gì:**
-- **Phiên sau tự suy ra câu trả lời cho một câu hỏi nó không biết là đang mở** — nặng nhất, vì
-  CLAUDE.md §3.5 chỉ dừng được phiên **biết** mình đang thiếu.
-- **BA-12 không phiên nào nhìn thấy**: Ready đang có 10 dòng chưa tick, BA-12 nằm ngoài sáu dòng
-  đầu.
-- **Chính F-012 biến mất khỏi brief** khi số finding Open vượt sáu.
-
-**Acceptance · Verify:** viết vào prompt khi bắt đầu task; ràng buộc đã có sẵn ở F-012.
-
-[↑ đầu file](#top)
-
-### T-031 — Bản xuất khẩu vẫn thiết kế nút `Xong` ở màn trạm mà chủ quán đã bỏ
-
-**Prompt:** chưa có · **L1** — nó sửa tài liệu người **ngoài** repo dùng để dựng hệ thống.
-
-**Goal:**
-`master_plan/prompt-fullstack.md` §3.6 và §3.7 nói đúng thứ chủ quán đã chốt: ba trạm bếp không có
-nút báo xong, và POS là nơi ghi tiến độ.
-
-**Nói một câu, việc phải làm là gì:**
-Sửa ba chỗ của bản xuất khẩu cho khớp `docs/architecture.md` §1.1. Việc **không** phải làm: xoá
-luôn ba luật hiển thị còn đúng của §3.7 (chữ to · cũ nhất lên đầu · màu theo thời gian chờ).
-
-**Vì sao có task này:**
-Chủ quán bỏ nút báo xong ngày 2026-08-31 (`master_plan/shop-facts.md` §5.4). Bản xuất khẩu viết
-trước đó và nay sai ở ba chỗ; chi tiết, cái giá, và bốn ràng buộc để không sửa thành một lỗi khác ở
-`work/findings.md` **F-013**.
-
-**Không làm thì mất gì:**
-Một endpoint và một màn hình được xây cho một thao tác **không ai thực hiện**, rồi mọi con số phía
-sau nó đứng im — và vì màn hình *trông* như đang chạy, chỗ hỏng chỉ lộ ra lúc quán đã đông khách.
-
-**Acceptance · Verify:** viết vào prompt khi bắt đầu task; bốn ràng buộc đã có sẵn ở F-013.
-
-[↑ đầu file](#top)
-
 ### BA-12 — Lát cắt sản xuất theo mẻ chưa có ở đâu, trong khi quán đang làm theo mẻ mỗi sáng
 
 **Prompt:** `prompt/BA/12-production-control-L2.md` (L2) · **Cần xong trước:** BA-03, BA-07 ·
@@ -796,6 +694,236 @@ Luật chung ở [Vòng chạy một task L1](#vong-chay). Việc riêng của t
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### BA-04 — Lát cắt một đơn mang đi (ba kênh không gắn bàn)
+
+**Xong 2026-08-31.** L2 · prompt `prompt/BA/03-slice-ship-pickup-L2.md` · `docs/product.md` §3.2
+(tám mục con, §3.2.1–§3.2.8) · `quality/invariants.md` **I-007, I-008** · không mở unknown nào —
+mọi câu hỏi của prompt đều đã có lời giải ở `master_plan/shop-facts.md` trước khi task chạy.
+
+**Hai chỗ lệch so với entry gốc, cố ý:**
+- **§3.2 có ba định danh máy, đúng một lần.** BA-03 đã chọn luật *"`docs/product.md` chỉ gọi kênh
+  bằng tên người đọc"*, nhưng Acceptance 2 và mục *Verify* của BA-04 đòi `phone_preorder` **có
+  mặt** trong §3.2. Hai luật ngược nhau, nên §3.2 chép ba định danh `delivery` · `pickup` ·
+  `phone_preorder` vào **một** câu ở đầu mục, nói thẳng đó là cầu nối sang `shop-facts.md`, và từ
+  đó trở đi chỉ dùng tên người đọc. Ngoại lệ thứ hai là câu nói `phone_preorder` bị ghi thành
+  `staff_pos` là bug — chỗ đó **phải** gọi tên máy vì chính cái bug là một cái tên.
+- **§3.2.6 chép hai con số của quán** — giờ bán `06:00 – 11:00` và phí ship `0đ` — trong khi đầu
+  `docs/product.md` cấm chép dữ kiện quán về đây (ADR-001). Acceptance 7 đòi đúng thế: *"bằng số,
+  không viết chung chung"*, vì một câu kiểu "theo giờ mở cửa của quán" không kiểm được. Giảm hại
+  bằng cách gọi tên chủ ngay tại chỗ (`shop-facts.md` §1, §2) và ghi rõ đổi thì phải sửa cả hai
+  nơi trong cùng một lần đổi. Đây là bản chép thứ hai **duy nhất** trong file.
+
+**Sự cố trong lúc chạy — phiên BA-04 ghi đè `work/scope.txt` của hai phiên đang chạy song song:**
+Brief đầu phiên báo `work/scope.txt` còn 38 pattern thừa mà không task nào In Progress, nên phiên
+này dọn sạch rồi khai scope của mình (CLAUDE.md §7.3). Nhưng **T-027 và T-031 đang chạy trong cùng
+cây làm việc** ngay lúc đó, và cảnh báo của brief chỉ đọc được trạng thái lúc phiên bắt đầu. Ba
+khối scope đã được dựng lại ngay trong `work/scope.txt`, mỗi khối ghi rõ nó là **bản dựng lại**,
+suy từ file đang sửa trong cây + entry backlog, nên có thể hẹp hơn bản gốc.
+⇒ Đây là lần **thứ hai** của cùng một cơ chế: lần đầu là bài học T-019/T-023 ở [Ready](#ready)
+(*"phiên vào sau phải THÊM khối của mình, đừng ghi đè"*), họ lỗi `work/findings.md` **F-010**.
+Lần này nguyên nhân mới: **cảnh báo "scope bẩn" của brief không phân biệt được pattern của task đã
+xong với pattern của một phiên đang chạy song song.** Chưa mở finding — `work/findings.md` nằm
+ngoài scope của BA-04 và đang được phiên T-027 sửa; để chủ repo quyết có mở F-014 không.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Chứng minh ở |
+|---|---|
+| 1 | `docs/product.md` §3.2.1, chín bước, mỗi bước mở đầu bằng actor in nghiêng; `sed … \| grep -cE '^ *[0-9]+\.'` = 9 |
+| 2 | §3.2 đoạn mở (ba kênh + ba định danh) và §3.2.3 đoạn đầu — Staff POS khác ở **đơn vị tính tiền** và ở bước hỏi cách trao hàng |
+| 3 | §3.2.3, bảy gạch đầu dòng: từ *"Khách gọi hotline"* tới **hai** gạch "Kết thúc kiểu thứ nhất / thứ hai" |
+| 4 | §3.2.5, gạch đầu dòng 1 và 2 (và bước 5 của §3.2.1) |
+| 5 | §3.2.4, ba gạch đầu dòng + dòng *chủ quán chốt 2026-08-30*, không đánh dấu suy luận |
+| 6 | §3.2.2, gạch đầu dòng *"Giao tận nơi"*; nhắc lại ở §3.2.7 gạch cuối |
+| 7 | §3.2.6, gạch đầu dòng 1 (`06:00 – 11:00`) và đoạn cuối (`0đ`, không đơn tối thiểu, không bậc phí) |
+| 8 | §3.2.6, gạch đầu dòng 1 (ngoài giờ: khoá nút đặt + câu khách nhìn thấy) và gạch 2 (*"nút tạm dừng THẮNG giờ mở cửa"*) |
+| 9 | §3.2.7, **bảy** gạch đầu dòng khác biệt (yêu cầu tối thiểu là ba) |
+| 10 | `quality/invariants.md` **I-007** (không thuộc phiên bàn, thanh toán độc lập) và **I-008** (ngoài giờ bán / tạm dừng thì không tạo được đơn), cả hai có Verification |
+| 11 | `grep -nEi 'grab\|ahamove\|google maps\|api\|endpoint' docs/product.md` → rỗng; §3.2.8 nói thẳng ba thứ lát cắt này không nói tới |
+
+**Câu hỏi §10 đã đóng bằng task này:** câu 6 (pickup có giờ hẹn bắt buộc) → §3.2.4 · câu 7
+(delivery có trạng thái giao) → §3.2.2. Cả hai vốn **đã chốt** ở `shop-facts.md` trước khi task
+chạy; BA-04 chỉ chép lời giải kèm nguồn, không mở lại thành câu hỏi.
+
+
+**Prompt:** `prompt/BA/03-slice-ship-pickup-L2.md` (L2) · **Cần xong trước:** BA-02 (xong
+2026-08-30) và T-011 (xong 2026-08-30).
+
+**Goal:**
+`docs/product.md` §3.2 mô tả trọn đường đi của một đơn không gắn bàn — từ lúc khách chọn món tới
+lúc đơn hoàn thành — cho **cả ba** kênh `delivery`, `pickup`, `phone_preorder`, và nêu nó khác đơn
+tại bàn ở chỗ nào.
+
+Lát cắt này là **ba** kênh, không phải hai. Nguồn: `master_plan/shop-facts.md` §5.2 gộp cả ba kênh
+không gắn bàn vào **một** luồng, và `prompt/BA/03-slice-ship-pickup-L2.md` đã phủ đủ ba. Dòng BA-04
+ở §11 kế hoạch gốc từng viết "ship/pickup"; T-011 đã sửa **2026-08-30**, nên khung và nhà thật nay
+khớp nhau.
+
+**Scope:** `docs/product.md` §3.2 · `quality/invariants.md` (chỉ **thêm**) · `work/backlog.md`.
+
+**Out of scope:** §3.1, §3.3, §4–§8 của `docs/product.md` · `docs/decisions.md` ·
+`docs/architecture.md`.
+
+**Acceptance:**
+1. §3.2 có luồng đúng 9 bước theo §4.2 kế hoạch gốc, mỗi bước ghi actor.
+2. §3.2 phủ **ba** kênh không gắn bàn và nói `phone_preorder` khác `staff_pos` ở chỗ nào
+   (`docs/product.md` §2.3).
+3. Có đường đi của đơn `phone_preorder` từ lúc nhân viên nghe máy tới lúc đơn hoàn thành, gồm
+   **cả hai** kiểu kết thúc — khách tới lấy hoặc quán giao (`shop-facts.md` §5.2).
+4. Có câu khẳng định đơn mang đi không gắn phiên bàn và được thanh toán độc lập.
+5. Nêu thông tin liên hệ tối thiểu theo từng kênh: số điện thoại bắt buộc cả ba kênh, địa chỉ bắt
+   buộc khi giao tận nơi, giờ hẹn bắt buộc với `pickup` và `phone_preorder` — tra
+   `shop-facts.md` §6.5, ghi là **đã chốt 2026-08-30**, không đánh dấu suy luận. → §10 câu 6.
+6. Nêu đơn giao tận nơi mang trạng thái **"đang giao"** và quán tự đi giao
+   (`shop-facts.md` §6.7). → §10 câu 7.
+7. Nêu giờ bán 06:00–11:00 và phí ship 0đ, không đơn tối thiểu — bằng số, không viết chung chung.
+8. Có hành vi khi đặt ngoài giờ bán (đơn bị từ chối, khách nhìn thấy gì) và khi chủ quán tạm dừng
+   nhận đơn, kèm câu khẳng định nút tạm dừng **thắng** giờ mở cửa (`shop-facts.md` §6.8).
+9. Có đoạn "Khác gì so với đơn tại bàn" liệt kê ít nhất 3 khác biệt nghiệp vụ.
+10. `quality/invariants.md` có hai invariant: đơn mang đi không thuộc phiên bàn nào · không tạo
+    được đơn ngoài giờ bán hoặc khi đang tạm dừng nhận đơn.
+11. §3.2 không nói về nhà cung cấp vận chuyển, bản đồ, hay cách tính phí ship theo bậc.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -n 'phone_preorder' docs/product.md                       # có mặt trong §3.2
+sed -n '/^### 3.2/,/^### 3.3/p' docs/product.md | grep -cE '^ *[0-9]+\.'   # 9 bước
+grep -n 'đang giao\|06:00\|0đ' docs/product.md
+git status --porcelain
+```
+
+### T-027 — Brief cắt danh sách ở 6 và không nói đã cắt, nên mục thứ bảy vô hình
+
+**Prompt:** không có — người dùng chỉ nói *"đọc kĩ và hoàn thành T-027"*, 2026-08-31. **L1** —
+nó đổi thứ mọi phiên mới đọc trước chỉ thị đầu tiên. **Xong 2026-08-31.**
+
+**Goal:**
+Một phiên mới đọc brief là biết **có phần bị cắt hay không**. Danh sách bảy mục không còn trông
+giống hệt danh sách sáu mục.
+
+**Nói một câu, việc phải làm là gì:**
+Cho brief **nói ra** phần nó đã cắt. Việc **không** phải làm: đổi `MAX_LIST=6` thành một số to hơn
+— số nào cũng có một danh sách vượt qua nó, và lúc đó im lặng vẫn im lặng.
+
+**Vì sao có task này:**
+Ghi ngày 2026-08-31 trong lúc chạy T-026: câu hỏi mở lên **bảy**, brief in **sáu**, U-011 vô hình
+với mọi phiên mới kể từ dòng đầu tiên nó được viết ra. Chi tiết, bốn ràng buộc, và vì sao đây là
+lần thứ hai của cùng một hậu quả (sau F-008) ở `work/findings.md` **F-012**.
+
+**Không làm thì mất gì:**
+- **Phiên sau tự suy ra câu trả lời cho một câu hỏi nó không biết là đang mở** — nặng nhất, vì
+  CLAUDE.md §3.5 chỉ dừng được phiên **biết** mình đang thiếu.
+- **BA-12 không phiên nào nhìn thấy**: Ready đang có 10 dòng chưa tick, BA-12 nằm ngoài sáu dòng
+  đầu.
+- **Chính F-012 biến mất khỏi brief** khi số finding Open vượt sáu.
+
+**Acceptance** (viết trước khi sửa, 2026-08-31 · bốn ràng buộc gốc ở `work/findings.md` F-012):
+
+1. Danh sách **dài hơn** ngưỡng in ra một dòng nói **còn bao nhiêu mục** và **đọc đủ ở file nào**.
+   Đúng bốn danh sách: In Progress · Ready · Open findings · Open unknowns.
+2. Danh sách **bằng hoặc ngắn hơn** ngưỡng không in thêm dòng nào — im lặng ở đây là đúng, và
+   một dòng "đã in hết" mỗi phiên là tiếng ồn.
+3. **Câu hỏi mở có ngưỡng riêng**, khai báo riêng, không thừa hưởng `MAX_LIST`. Ca thật của
+   F-012 — **bảy** câu mở — phải in **đủ bảy**, U-011 có mặt.
+4. Khi câu hỏi mở *thật sự* bị cắt, dòng thông báo nói thẳng hậu quả theo CLAUDE.md §3.5
+   (phiên không biết mình đang thiếu), không dùng chung một câu với ba danh sách kia.
+5. `./scripts/brief.sh` **exit 0** ở mọi ca, kể cả ca bị cắt (CLAUDE.md §7.1).
+6. `scripts/brief.test.sh` có ca cho danh sách **vượt ngưỡng** ở cả bốn danh sách — ràng buộc
+   thứ tư của F-012: mọi ca cũ đều dưới ngưỡng nên không ca nào bắt được lỗi này.
+
+**Verify:** `./scripts/brief.test.sh` (verify.sh tự chạy nó) · `./scripts/gate.sh` ·
+và chạy tay `./scripts/brief.sh` trên chính repo này.
+
+**Kết quả (2026-08-31):**
+
+| Chỗ sửa | Sửa gì |
+|---|---|
+| `scripts/brief.sh` | hàm `emit` — in tối đa N mục rồi **nói ra** phần đã cắt: `→ ĐÃ CẮT: in 6/10 mục. Còn 4 mục nữa chỉ có ở work/backlog.md → Ready.` Cả bốn danh sách đi qua nó |
+| `scripts/brief.sh` | `MAX_UNKNOWNS=12` đứng riêng cạnh `MAX_LIST=6`, kèm lý do vì sao câu hỏi mở không thừa hưởng ngưỡng chung |
+| `scripts/brief.sh` | `$inprog` giữ danh sách **đủ**, không phải bản đã cắt — cảnh báo "scope chưa dọn" hỏi *"có task nào đang chạy không"*, hỏi câu đó trên bản đã cắt là hỏi trên nửa sự thật |
+| `scripts/brief.test.sh` | bảy ca C1–C7: bốn danh sách vượt ngưỡng · "bằng đúng ngưỡng thì im" · bảy câu mở **không** bị cắt · ngưỡng riêng không thừa hưởng `MAX_LIST` |
+| `CLAUDE.md` §7.1 | "hai luật giữ brief thật thà" thành **ba** — luật thứ ba: brief nói khi nó đã cắt |
+| `work/findings.md` | F-012 → **Fixed (2026-08-31, T-027)** |
+
+**Bằng chứng nó bắt được đúng con bug của chính mình:** ngay lần chạy đầu trên repo này, mục Ready
+in `→ ĐÃ CẮT: in 6/10 mục. Còn 4 mục nữa chỉ có ở work/backlog.md → Ready.` — bốn dòng cuối, trong
+đó có **BA-12**, là bốn dòng mà trước T-027 không phiên mới nào nhìn thấy.
+
+**Điều đáng ghi — vì sao không phải "đổi 6 thành 20":**
+Ngưỡng nào cũng có một danh sách vượt qua nó, và lúc vượt thì im lặng vẫn im lặng. Thứ hỏng chưa
+bao giờ là **cắt**: cắt là đúng, vì brief trỏ chứ không chép (CLAUDE.md §7.1) và một brief bốn mươi
+dòng thì không ai đọc. Thứ hỏng là người đọc không phân biệt được **"hết rồi"** với **"còn nữa"**.
+Nên bản sửa để nguyên con số và thêm **một câu**. Đổi số thì cũng xanh gate y như vậy — và F-012 sẽ
+quay lại lần thứ ba.
+
+**Điều đáng ghi thứ hai — một hằng số dùng chung là một quyết định không ai từng ra:**
+`MAX_LIST=6` áp cho cả bốn danh sách chỉ vì nó tiện, không vì ai từng cân nhắc rằng câu hỏi mở đáng
+được đối xử như ba danh sách kia. Ba danh sách kia trả lời *"làm gì tiếp"*; danh sách câu hỏi mở là
+thứ CLAUDE.md §3.5 bắt phiên phải **biết** trước khi nó tự suy ra một câu trả lời. Tách thành
+`MAX_UNKNOWNS`, đặt cạnh nhau, mỗi hằng số có lý do viết ngay bên trên — để lần sau ai sửa số cũng
+đọc được vì sao có hai số.
+
+**Điều đáng ghi thứ ba — ca kiểm thử phải vượt qua ngưỡng nó đang kiểm:**
+`scripts/brief.test.sh` trước T-027 có 43 ca và **không ca nào** có danh sách dài hơn sáu mục, nên
+bộ test xanh suốt trong khi bốn danh sách đều đang cắt câm. Đó là ràng buộc thứ tư của F-012 và là
+bài học chung: một ca kiểm thử luôn nằm dưới ngưỡng thì không kiểm cái ngưỡng, nó chỉ kiểm phần
+dễ.
+
+[↑ đầu file](#top)
+
+### T-031 — Bản xuất khẩu vẫn thiết kế nút `Xong` ở màn trạm mà chủ quán đã bỏ
+
+**Prompt:** không có — người dùng chỉ nói *"đọc kĩ và hoàn thành T-031"*, 2026-08-31. **L1** — nó
+sửa tài liệu người **ngoài** repo dùng để dựng hệ thống; không chạm dữ kiện, không chạm mã.
+
+**Goal:**
+`master_plan/prompt-fullstack.md` §3.6 và §3.7 nói đúng thứ chủ quán đã chốt: ba trạm bếp không có
+nút báo xong, và POS là nơi ghi tiến độ.
+
+**Ba chỗ sai, và chỗ nào được sửa thế nào:**
+
+| Chỗ | Trước | Sau |
+|---|---|---|
+| §3.6, khối *Nhân viên* | `PATCH staff/tasks/:id` (`todo → doing → done`) | **gỡ**; `GET staff/tasks?station=` ghi rõ **chỉ đọc**; thêm `POST staff/sessions/:id/served` — POS ghi đã phục vụ |
+| §3.7, *Màn hình trạm* | *"một task = một thẻ, một nút `Xong`"* | ba trạm bếp là **màn chỉ đọc**; thẻ **tự biến mất** khi POS ghi đã phục vụ |
+| §3.7, cùng gạch đầu dòng | `Hoàn tác` 10 giây cho một màn không còn thao tác nào | **chuyển** sang gạch đầu dòng mới *Màn dọn bàn* — nơi còn một thao tác thật |
+
+**Điều đáng ghi nhất — bản vá không phải là phép xoá:**
+Xoá `PATCH staff/tasks/:id` rồi để trống thì người đọc ngoài repo tự nghĩ ra một cơ chế khác, và
+lần này không ai biết họ nghĩ ra cái gì. Nên §3.6 nhận thêm một khối **Luật ghi** *tự đứng*: nói
+luôn lời chủ quán, lý do (*ba đôi tay đang bận*), ai ghi thay (POS), và ngoại lệ duy nhất
+(`don_ban` bấm *đã dọn*). Điểm chung của cả họ F-005 / F-007 / F-013 là **người đọc đứng ngoài
+repo, không grep được** — nên một pointer trỏ về `docs/architecture.md` §1.1 sẽ hỏng đúng cái cách
+ba finding kia đã hỏng. Luật phải nằm trong file họ cầm.
+
+**Điều đáng ghi thứ hai — ràng buộc "ba trạm, không phải bốn" là chỗ dễ hỏng nhất:**
+`don_ban` **vẫn có** một thao tác, vì nó là bước cuối của **bàn**, không phải bước giữa của **món**.
+Một bản vá đọc lướt sẽ gỡ luôn `PATCH staff/tables/:id/cleaned` và route `staff/cleaning`, tức chữa
+một lỗi bằng một lỗi to hơn. Cùng lý lẽ giữ lại luật `Hoàn tác` 10 giây — nó đúng, chỉ đứng nhầm
+màn.
+
+**Vì sao có task này:**
+Chủ quán bỏ nút báo xong ngày 2026-08-31 (`master_plan/shop-facts.md` §5.4). Bản xuất khẩu viết
+trước đó; chi tiết, cái giá và bốn ràng buộc ở `work/findings.md` **F-013**.
+
+**Acceptance · Verify:** bảy dòng acceptance viết trước khi sửa, giữ nguyên ở `work/findings.md`
+F-013 (bảng *Đã sửa*) và ở khối commit của phiên. Chạy: `./scripts/gate.sh` xanh ·
+`grep -rn "staff/tasks/:id"` không còn dòng nào ngoài `work/` và `prompt/maintenance/` · đọc lại
+§3.6 + §3.7 **chỉ bằng file đó** (không grep) — dựng theo đây không làm ra nút nào ở ba trạm bếp.
+
+**Đã chạm gì ngoài bản xuất khẩu:** bốn pointer nói *"bản xuất khẩu còn sai"*, sửa trong cùng thay
+đổi theo CLAUDE.md §7.2 — `docs/architecture.md` §1.1 và §5, `docs/decisions.md` ADR-011 (*Rejected
+alternatives*, *Applies to*). `master_plan/shop-facts.md` **không đổi một chữ**: dữ kiện chưa bao
+giờ sai, chỉ bản chép sai.
+
+**Còn hở, cố ý:** tên `POST staff/sessions/:id/served` là **thiết kế**, không phải dữ kiện.
+`docs/architecture.md` §8 cố ý không đặt tên bảng/cột/endpoint, và *"đã phục vụ bao nhiêu cho từng
+bàn"* vẫn nằm trong sáu chỗ 16 bảng chưa với tới. Pha System Design đổi tên nó thì đổi — miễn giữ
+đúng luật: **người ghi là POS**.
+
+[↑ đầu file](#top)
 
 ### T-033 — Hai câu cuối đã có lời chốt, và câu hỏi S-4 hỏi sai người
 

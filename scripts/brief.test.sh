@@ -265,6 +265,144 @@ case "$out" in
 esac
 exit0 "H3" "$rc"
 
+# --- C. Danh sách vượt ngưỡng: brief phải NÓI ra phần đã cắt (T-027 · F-012) --
+#
+# Mọi ca ở trên đều dưới ngưỡng, nên không ca nào bắt được lỗi F-012: bốn danh
+# sách cùng cắt ở 6 và không danh sách nào nói là đã cắt. Danh sách bảy mục in ra
+# sáu mục thì trông y hệt một danh sách sáu mục — người đọc không có cách nào
+# phân biệt "hết rồi" với "còn nữa". Bốn ca dài + hai ca ngắn dưới đây là chỗ đó.
+echo "=== brief.sh — danh sách vượt ngưỡng phải nói là đã cắt ==="
+
+# sect <tên mục> — lấy THÂN của một mục trong $out (tiêu đề mục bắt đầu ở cột 0).
+sect() {
+  printf '%s\n' "$out" | awk -v h="$1" 'index($0, h) == 1 { on = 1; next }
+                                        on && /^[A-Z]/ { exit } on'
+}
+
+# manyrepo <tên> <số dòng Ready> <số dòng In Progress>
+manyrepo() {
+  local d="$TMPROOT/$1" n="$2" m="$3" i
+  mkdir -p "$d/work" "$d/docs" && git -C "$d" init -q
+  git -C "$d" config user.email t@t && git -C "$d" config user.name t
+  {
+    echo "# Backlog"; echo; echo "## Ready"; echo
+    for i in $(seq 1 "$n"); do printf -- "- [ ] R-%03d việc thứ %s\n" "$i" "$i"; done
+    echo; echo "## In Progress"; echo
+    for i in $(seq 1 "$m"); do printf -- "- [ ] P-%03d đang chạy %s\n" "$i" "$i"; done
+    echo; echo "## Done"
+  } > "$d/work/backlog.md"
+  echo "# scope" > "$d/work/scope.txt"
+  : > "$d/docs/product.md"
+  git -C "$d" add -A >/dev/null 2>&1
+  git -C "$d" commit -qm init >/dev/null 2>&1
+  printf '%s' "$d"
+}
+
+# manyfindings <repo> <số finding Open>
+manyfindings() {
+  local d="$1" n="$2" i
+  {
+    echo "# Findings"; echo
+    for i in $(seq 1 "$n"); do
+      printf -- "### F-%03d — chuyện thứ %s\n\n**Status:**\nOpen\n\n" "$i" "$i"
+    done
+  } > "$d/work/findings.md"
+}
+
+inbody() { # inbody <tên ca> <thân mục> <chuỗi phải có>
+  case "$2" in
+    *"$3"*) echo "  ok   $1" ;;
+    *) echo "  FAIL $1 — mong đợi '$3', nhận:"; printf '%s\n' "$2" | sed 's/^/         /'
+       fails=$((fails + 1)) ;;
+  esac
+}
+
+notinbody() { # notinbody <tên ca> <thân mục> <chuỗi KHÔNG được có>
+  case "$2" in
+    *"$3"*) echo "  FAIL $1 — không được thấy '$3', nhận:"; printf '%s\n' "$2" | sed 's/^/         /'
+            fails=$((fails + 1)) ;;
+    *) echo "  ok   $1" ;;
+  esac
+}
+
+# C1. Ready 10 mục / ngưỡng 6 — đúng con số thật ngày 2026-08-31, khi BA-12 nằm
+#     ngoài sáu dòng đầu và không phiên mới nào nhìn thấy nó.
+r="$(manyrepo c1 10 1)"
+brief "$r"; b="$(sect 'NEXT READY')"
+inbody "C1 Ready dài nói ĐÃ CẮT"        "$b" "ĐÃ CẮT"
+inbody "C1 nói in mấy trên mấy"          "$b" "in 6/10 mục"
+inbody "C1 nói còn lại bao nhiêu"        "$b" "Còn 4 mục"
+inbody "C1 chỉ chỗ đọc đủ"               "$b" "work/backlog.md → Ready"
+inbody "C1 vẫn in mục thứ 6"             "$b" "R-006"
+notinbody "C1 mục thứ 7 đúng là bị cắt"  "$b" "R-007"
+n="$(printf '%s\n' "$b" | grep -c 'R-[0-9]')"
+if [ "$n" = "6" ]; then echo "  ok   C1 in đúng 6 dòng danh sách"
+else echo "  FAIL C1 — mong đợi 6 dòng R-, nhận $n"; fails=$((fails + 1)); fi
+exit0 "C1" "$rc"
+
+# C2. Ready đúng 6 mục — im. Một dòng "đã in hết" ở mỗi phiên là tiếng ồn, và
+#     tiếng ồn là thứ làm người ta thôi đọc brief.
+r="$(manyrepo c2 6 1)"
+brief "$r"; b="$(sect 'NEXT READY')"
+notinbody "C2 danh sách vừa đúng ngưỡng thì im" "$b" "ĐÃ CẮT"
+inbody    "C2 vẫn in đủ 6"                      "$b" "R-006"
+exit0 "C2" "$rc"
+
+# C3. In Progress 8 mục — và cảnh báo scope vẫn phải đọc danh sách ĐỦ, không đọc
+#     bản đã cắt: "có task nào đang chạy không" hỏi trên nửa sự thật là sai.
+r="$(manyrepo c3 1 8)"; setscope "$r" "docs/x.md"
+brief "$r"; b="$(sect 'IN PROGRESS')"
+inbody "C3 In Progress dài nói ĐÃ CẮT" "$b" "in 6/8 mục"
+inbody "C3 chỉ chỗ đọc đủ"             "$b" "work/backlog.md → In Progress"
+want   "C3 scope bẩn nhưng CÓ task chạy → im" no "$out"
+exit0 "C3" "$rc"
+
+# C4. Open findings 8 mục — F-012 tự nó biến mất khỏi brief khi số finding Open
+#     vượt sáu, đúng thứ finding ấy cảnh báo.
+r="$(manyrepo c4 1 1)"; manyfindings "$r" 8
+brief "$r"; b="$(sect 'OPEN FINDINGS')"
+inbody "C4 findings dài nói ĐÃ CẮT" "$b" "in 6/8 mục"
+inbody "C4 chỉ chỗ đọc đủ"          "$b" "work/findings.md"
+inbody "C4 vẫn in finding thứ 6"    "$b" "F-006"
+exit0 "C4" "$rc"
+
+# C5. CA THẬT CỦA F-012: bảy câu hỏi mở. Ngưỡng riêng của câu hỏi mở phải in đủ
+#     bảy — U-011 là câu đã vô hình với mọi phiên mới kể từ dòng nó được viết ra.
+r="$(manyrepo c5 1 1)"
+unknowns "$r" "### Đang mở" "" \
+  "- U-005 — câu một" "- U-006 — câu hai" "- U-007 — câu ba" "- U-008 — câu bốn" \
+  "- U-009 — câu năm" "- U-010 — câu sáu" "- U-011 — câu bảy"
+has    "C5 bảy câu mở vẫn thấy câu thứ bảy (U-011)" "U-011"
+hasnt  "C5 bảy câu mở KHÔNG bị cắt"                 "ĐÃ CẮT"
+n="$(printf '%s\n' "$u" | grep -c 'U-0')"
+if [ "$n" = "7" ]; then echo "  ok   C5 in đủ cả bảy câu"
+else echo "  FAIL C5 — mong đợi 7 câu, nhận $n"; fails=$((fails + 1)); fi
+exit0 "C5" "$rc"
+
+# C6. Câu hỏi mở vượt CẢ ngưỡng riêng (14 > 12) — vẫn cắt, nhưng phải nói thẳng
+#     hậu quả: §3.5 chỉ dừng được phiên BIẾT mình đang thiếu.
+r="$(manyrepo c6 1 1)"
+set -- "### Đang mở" ""
+for i in $(seq 1 14); do set -- "$@" "$(printf -- '- U-%03d — câu thứ %s' "$i" "$i")"; done
+unknowns "$r" "$@"
+has "C6 câu hỏi mở vượt ngưỡng riêng vẫn nói ĐÃ CẮT" "in 12/14 mục"
+has "C6 chỉ chỗ đọc đủ"                              "docs/product.md → Unknowns → Đang mở"
+has "C6 nói thẳng hậu quả §3.5"                      "§3.5"
+exit0 "C6" "$rc"
+
+# C7. Ngưỡng của câu hỏi mở là ngưỡng RIÊNG, không thừa hưởng MAX_LIST: bảy câu
+#     mở thì Ready dài vẫn bị cắt ở 6 trong cùng một lần chạy.
+b="$(sect 'NEXT READY')"
+notinbody "C7 Ready 1 mục thì không cắt" "$b" "ĐÃ CẮT"
+r="$(manyrepo c7 10 1)"
+unknowns "$r" "### Đang mở" "" \
+  "- U-005 — câu một" "- U-006 — câu hai" "- U-007 — câu ba" "- U-008 — câu bốn" \
+  "- U-009 — câu năm" "- U-010 — câu sáu" "- U-011 — câu bảy"
+hasnt "C7 bảy câu mở không bị cắt" "ĐÃ CẮT"
+b="$(sect 'NEXT READY')"
+inbody "C7 cùng lúc đó Ready 10 mục vẫn bị cắt ở 6" "$b" "in 6/10 mục"
+exit0 "C7" "$rc"
+
 if [ "$fails" -ne 0 ]; then
   echo "brief: $fails ca FAIL"; exit 1
 fi

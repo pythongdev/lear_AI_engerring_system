@@ -25,10 +25,40 @@ ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || {
 }
 cd "$ROOT" || exit 0
 
-MAX_LIST=6   # keep the brief small; it is injected into every session
+# Ngưỡng cắt. Cắt là quyết định ĐÚNG — brief trỏ chứ không chép (CLAUDE.md §7.1),
+# và một brief dài bốn mươi dòng thì không ai đọc. Thứ từng hỏng là cắt mà KHÔNG
+# NÓI đã cắt: danh sách bảy mục in ra sáu mục, trông y hệt một danh sách sáu mục,
+# nên U-011 vô hình với mọi phiên mới kể từ dòng đầu tiên nó được viết ra
+# (work/findings.md F-012 · T-027). Sửa bằng cách nói ra, không bằng cách nâng số:
+# số nào cũng có một danh sách vượt qua nó, và lúc đó im lặng vẫn im lặng.
+MAX_LIST=6        # In Progress · Ready · Open findings — ba danh sách để định hướng.
+
+# Câu hỏi mở có ngưỡng RIÊNG, và đó là một quyết định, không phải một hằng số bị
+# quên. Ba danh sách kia trả lời "làm gì tiếp"; danh sách này là thứ CLAUDE.md
+# §3.5 bắt phiên phải BIẾT trước khi nó tự suy ra một câu trả lời. Nó cũng ngắn
+# tự nhiên — bảy câu là đỉnh từ trước tới nay — nên ngưỡng đặt cao hơn hẳn: cắt
+# nó phải là chuyện hiếm, và khi xảy ra thì nói thẳng hậu quả (F-012).
+MAX_UNKNOWNS=12
 
 section() { printf '\n%s\n' "$1"; }
 none()    { printf '  (none)\n'; }
+
+# emit <max> <đọc đủ ở đâu> [dòng nói thêm khi bị cắt]   — danh sách vào từ stdin.
+# In tối đa <max> mục, rồi NÓI RA phần đã cắt: in mấy trên mấy, còn mấy, đọc ở đâu.
+# Người đọc phải phân biệt được "hết rồi" với "còn nữa"; im lặng thì không.
+emit() {
+  local max="$1" where="$2" extra="${3-}" items total
+  items="$(cat)"
+  if [ -z "$items" ]; then none; return 0; fi
+  total="$(printf '%s\n' "$items" | grep -c .)"
+  printf '%s\n' "$items" | head -n "$max" | sed 's/^/  /'
+  if [ "$total" -gt "$max" ]; then
+    printf '  → ĐÃ CẮT: in %s/%s mục. Còn %s mục nữa chỉ có ở %s.\n' \
+      "$max" "$total" "$((total - max))" "$where"
+    [ -n "$extra" ] && printf '%s\n' "$extra" | sed 's/^/    /'
+  fi
+  return 0   # brief không bao giờ đổi mã thoát (CLAUDE.md §7.1)
+}
 
 # Lines of a "## Heading" block in a markdown file, up to the next "## ".
 block() {
@@ -46,8 +76,10 @@ printf 'Read CLAUDE.md first. This brief points; the owners in §2 hold the fact
 
 # --- What is being worked on -------------------------------------------------
 section "IN PROGRESS (work/backlog.md)"
-inprog="$(block work/backlog.md '## In Progress' | grep -E '^- \[' | head -n "$MAX_LIST")"
-if [ -n "$inprog" ]; then printf '%s\n' "$inprog" | sed 's/^/  /'; else none; fi
+# Không cắt ở đây nữa: $inprog phải là danh sách ĐỦ, vì cảnh báo scope bên dưới
+# hỏi "có task nào đang chạy không" — cắt xong mới hỏi là hỏi trên một nửa sự thật.
+inprog="$(block work/backlog.md '## In Progress' | grep -E '^- \[')"
+printf '%s\n' "$inprog" | emit "$MAX_LIST" 'work/backlog.md → In Progress'
 
 section "DECLARED SCOPE (work/scope.txt)"
 # Scope đã khai + có task In Progress = bình thường. Scope đã khai + KHÔNG có task
@@ -92,8 +124,8 @@ if [ -x scripts/install-hooks.sh ]; then
 fi
 
 section "NEXT READY (work/backlog.md)"
-ready="$(block work/backlog.md '## Ready' | grep -E '^- \[ \]' | head -n "$MAX_LIST")"
-if [ -n "$ready" ]; then printf '%s\n' "$ready" | sed 's/^/  /'; else none; fi
+block work/backlog.md '## Ready' | grep -E '^- \[ \]' \
+  | emit "$MAX_LIST" 'work/backlog.md → Ready'
 
 # --- What is unresolved ------------------------------------------------------
 # An Open finding that blocks a Ready task is done first (CLAUDE.md §3.3).
@@ -102,8 +134,8 @@ openf="$(awk '
   /^### F-/ { title = $0; sub(/^### /, "", title); status = "" ; next }
   /^\*\*Status:\*\*/ { getline s; gsub(/^[ \t]+|[ \t]+$/, "", s);
                        if (s == "Open" && title != "") print title; title = "" }
-' work/findings.md 2>/dev/null | head -n "$MAX_LIST")"
-if [ -n "$openf" ]; then printf '%s\n' "$openf" | sed 's/^/  /'; else none; fi
+' work/findings.md 2>/dev/null)"
+printf '%s\n' "$openf" | emit "$MAX_LIST" 'work/findings.md (mục có **Status:** Open)'
 
 section "OPEN UNKNOWNS (docs/product.md → Unknowns)"
 # Đọc CẤU TRÚC, không đọc hình dạng dòng (T-021 · ADR-007 · work/findings.md F-008).
@@ -150,8 +182,12 @@ openu="$(block docs/product.md '## Unknowns' \
       item != ""            { item = item " " $0 }
       END                   { flush() }
     ' \
-  | head -n "$MAX_LIST")"
-if [ -n "$openu" ]; then printf '%s\n' "$openu" | sed 's/^/  /'; else none; fi
+  )"
+printf '%s\n' "$openu" \
+  | emit "$MAX_UNKNOWNS" 'docs/product.md → Unknowns → Đang mở' \
+      'Câu hỏi không có trong brief là câu hỏi phiên này không biết là mình đang
+thiếu, và CLAUDE.md §3.5 chỉ dừng được phiên BIẾT mình thiếu. Đọc hết mục
+đó TRƯỚC khi quyết bất cứ điều gì chạm tới nghiệp vụ.'
 
 # --- What was decided --------------------------------------------------------
 section "LATEST DECISIONS (docs/decisions.md)"

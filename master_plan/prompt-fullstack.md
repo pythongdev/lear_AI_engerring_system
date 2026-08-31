@@ -174,10 +174,24 @@ Bảy chi tiết không được bỏ:
 **chờ quầy duyệt**) · `GET t/:token/bill`
 
 **Nhân viên (JWT, phân quyền theo `role`):** `POST staff/login` (mật khẩu hoặc **PIN 4 số**) · `GET staff/me` ·
-`GET staff/tasks?station=` · `PATCH staff/tasks/:id` (`todo → doing → done`) · `GET staff/tables` ·
-`POST staff/sessions` · `POST staff/sessions/:id/orders` (đặt hộ) · `PATCH staff/orders/:id/confirm` ·
-`PATCH staff/orders/:id/cancel` · `POST staff/sessions/:id/checkout` · `PATCH staff/tables/:id/cleaned` ·
+`GET staff/tasks?station=` (**chỉ đọc**) · `GET staff/tables` · `POST staff/sessions` ·
+`POST staff/sessions/:id/orders` (đặt hộ) · `POST staff/sessions/:id/served` (**POS ghi đã phục vụ**,
+xem luật ghi dưới) · `PATCH staff/orders/:id/confirm` · `PATCH staff/orders/:id/cancel` ·
+`POST staff/sessions/:id/checkout` · `PATCH staff/tables/:id/cleaned` (**trạm `don_ban` bấm**) ·
 `GET staff/stream?station=` (**SSE**: `task.created` / `task.updated` / `task.cancelled`)
+
+> **Luật ghi — đọc trước khi thiết kế bất kỳ màn hình trạm nào.**
+> **POS là nơi duy nhất ghi ra tiến độ sản xuất và phục vụ; ba trạm bếp chỉ đọc.** Chủ quán chốt
+> ngày **2026-08-31**: người tráng bánh, người gấp bánh, người lấy canh **không bấm gì** để báo
+> xong — *"bỏ qua bước này, POS sẽ tự cập nhật được bao nhiêu cái cho từng bàn"*. Lý do là ba đôi
+> tay ấy đang bận; thêm một nút là thêm việc cho đúng người không rảnh.
+> ⇒ **Không có `PATCH staff/tasks/:id`, không có vòng `todo → doing → done` do bếp bấm.** Con số
+> *"bàn này đã được mấy cái, còn thiếu gì"* sinh ra ở **POS**, qua `POST staff/sessions/:id/served`,
+> và người bấm là người đứng quầy. Việc phải làm thì **không ai ghi** — nó *sinh ra* từ đơn đã
+> duyệt (invariant I4 ở §6.2) và **tắt** khi POS ghi đã phục vụ.
+> **Ngoại lệ duy nhất, và là một trạm chứ không phải một món:** `don_ban` bấm *đã dọn*
+> (`PATCH staff/tables/:id/cleaned`) — đó là bước cuối của **bàn**, không phải bước giữa của món.
+> Nên "bỏ nút ở bếp" là **ba** trạm, không phải bốn.
 
 **Chủ quán (`role=owner`):** CRUD `admin/products|categories|options|staff|tables` ·
 `PATCH admin/products/:id/availability` · `GET admin/tables/:id/qr.png` · `PUT admin/settings` ·
@@ -196,11 +210,18 @@ admin/   orders · products · tables · staff · reports · settings          �
   "Lượng nhân" **biến mất** chứ không làm mờ; giá hiện ngay trên nút `Thêm vào giỏ` và **lấy từ API,
   không hard-code** (§6.9); tiền định dạng `Intl.NumberFormat('vi-VN')` — dấu chấm ngăn nghìn, hậu tố
   `đ`; món hết: mờ + badge "Hết".
-- **Màn hình trạm** — tên món ≥ 24px, số lượng ≥ 40px; **một task = một thẻ, một nút `Xong`**; cũ nhất lên đầu;
-  **màu theo thời gian chờ** trắng <3′ → vàng 3–7′ → đỏ >7′; **số bàn to nhất trên thẻ**;
-  không hỏi "Bạn chắc chứ?", thay bằng `Hoàn tác` trong 10 giây.
+- **Màn hình trạm (`trang_banh`, `gap_banh`, `canh`) — MÀN CHỈ ĐỌC, không có nút nào** (luật ghi ở
+  §3.6): **một task = một thẻ**, thẻ **tự biến mất** khi POS ghi đã phục vụ, không ai bấm để đóng nó.
+  Tên món ≥ 24px, số lượng ≥ 40px; cũ nhất lên đầu; **màu theo thời gian chờ** trắng <3′ →
+  vàng 3–7′ → đỏ >7′; **số bàn to nhất trên thẻ**. Thiết kế màn này như một **tấm bảng treo
+  tường**: bếp liếc qua là biết còn phải làm gì, tay không rời việc.
+- **Màn dọn bàn (`cleaning`, trạm `don_ban`) — màn duy nhất ở bếp CÓ một thao tác:** bấm *đã dọn*.
+  Đúng chỗ này thì không hỏi "Bạn chắc chứ?", thay bằng `Hoàn tác` trong 10 giây — bấm nhầm một bàn
+  chưa dọn là bàn được coi là trống trong khi nó chưa trống.
 - **POS quầy** — màn chính là **sơ đồ bàn** (xanh trống / cam có khách / đỏ cần dọn) kèm tạm tính;
-  đặt hộ xong 1 suất trong **3 lần chạm**; đơn QR chờ duyệt hiện **banner đỏ + chuông**.
+  đặt hộ xong 1 suất trong **3 lần chạm**; đơn QR chờ duyệt hiện **banner đỏ + chuông**. Đây cũng
+  là nơi **ghi đã phục vụ cho từng bàn** (§3.6) — thao tác ấy phải nằm ngay trên sơ đồ bàn, vì
+  người đứng quầy làm nó giữa lúc đang duyệt đơn và đang thu tiền.
 
 ## §4 Ràng buộc — vi phạm là làm lại, không phải góp ý
 
