@@ -229,6 +229,42 @@ u="$(printf '%s\n' "$out" | awk '/^OPEN UNKNOWNS/ { on = 1; next } on && /^[A-Z]
 has   "U7 mất docs/product.md vẫn in (none)" "(none)"
 exit0 "U7 mất docs/product.md" "$rc"
 
+# --- H. Cảnh báo Gate 8 chưa cài (T-025 · ADR-010 · F-011) -------------------
+# `.git/` không theo `git clone`, nên một bản clone mới có file hook mà không có
+# hook đang chạy. Brief là chỗ duy nhất nói ra được điều đó ở mỗi phiên.
+echo "=== brief.sh — cảnh báo Gate 8 chưa cài ==="
+
+HERE_DIR="$(cd "$(dirname "$0")" && pwd)"
+r="$(newrepo h1 yes)"
+mkdir -p "$r/scripts/hooks"
+cp "$HERE_DIR/hooks/commit-msg" "$r/scripts/hooks/commit-msg"
+cp "$HERE_DIR/install-hooks.sh" "$r/scripts/install-hooks.sh"
+chmod +x "$r/scripts/hooks/commit-msg" "$r/scripts/install-hooks.sh"
+
+brief "$r"
+case "$out" in
+  *"Gate 8 CHƯA cài"*) echo "  ok   H1 kêu khi hook chưa cài" ;;
+  *) echo "  FAIL H1 — không kêu khi hook chưa cài"; fails=$((fails + 1)) ;;
+esac
+exit0 "H1" "$rc"
+
+( cd "$r" && ./scripts/install-hooks.sh >/dev/null 2>&1 )
+brief "$r"
+case "$out" in
+  *"Gate 8 CHƯA cài"*) echo "  FAIL H2 — vẫn kêu sau khi đã cài (tiếng ồn)"; fails=$((fails + 1)) ;;
+  *) echo "  ok   H2 im sau khi đã cài" ;;
+esac
+exit0 "H2" "$rc"
+
+# H3. Repo không có install-hooks.sh → im, và vẫn exit 0.
+r="$(newrepo h3 yes)"
+brief "$r"
+case "$out" in
+  *"GIT HOOKS"*) echo "  FAIL H3 — kêu ở repo không có scripts/install-hooks.sh"; fails=$((fails + 1)) ;;
+  *) echo "  ok   H3 im ở repo không có scripts/install-hooks.sh" ;;
+esac
+exit0 "H3" "$rc"
+
 if [ "$fails" -ne 0 ]; then
   echo "brief: $fails ca FAIL"; exit 1
 fi

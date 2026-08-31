@@ -474,3 +474,151 @@ và `scripts/brief.sh` in Open findings cho mọi phiên mới (ADR-002), nên b
 **Applies to:**
 `work/findings.md` F-009, F-011 · `work/backlog.md` T-023, T-025 · `CLAUDE.md` §6, §6.1 ·
 ADR-002 (brief in RECENT COMMITS) · ADR-004 (nội dung commit do phiên viết).
+
+---
+
+### ADR-009 — Nhu cầu sản xuất là một **trục riêng**, không phải một trạng thái của đơn
+
+**Decision:**
+Từ **2026-08-31**, sản phẩm mô tả *thứ bếp phải làm* bằng một trục riêng, đặt cạnh trục đơn hàng
+chứ không nằm trong nó. Trục ấy có bốn khái niệm, và chúng không thay thế được cho nhau:
+
+| Khái niệm | Đơn vị | Câu nó trả lời |
+|---|---|---|
+| **Nhu cầu** | một thành phần + nhân + lượng nhân | quán còn phải làm tổng cộng bao nhiêu |
+| **Mẻ** | một lần bếp làm | lần này làm mấy cái, bằng thiết bị nào |
+| **Đã làm xong** | một thành phần | bếp đã làm ra bao nhiêu |
+| **Đã phục vụ** | một thành phần, gắn một bàn | khách đã nhận bao nhiêu |
+
+Nhu cầu **cộng ngang qua nhiều bàn và nhiều đơn**: sáu bàn mỗi bàn một combo là *một* dòng nhu cầu
+sáu quả trứng, không phải sáu dòng. Mẻ trả kết quả **về lại đúng bàn đã gọi**. Và *đã làm xong* ≠
+*đã phục vụ* — nhưng con số "đã làm xong" hiện là **suy luận chưa xác nhận**, giữ ở
+`master_plan/shop-facts.md` §7.2 (S-4), không được ghi như lời chủ quán.
+
+Chỗ ở của từng phần: dữ kiện quán ở `master_plan/shop-facts.md` §5.4 (ADR-001 không đổi); hành vi
+sản phẩm ở `docs/product.md` §3.4, do **BA-12** viết; câu hỏi chưa ai trả lời ở *Unknowns*
+U-008–U-011.
+
+ADR này **không** quyết định màn hình, route, bảng dữ liệu hay tên trạng thái kỹ thuật. Đề xuất
+`work/proposals/admin.admiadmin/admin1.md` có đủ cả bốn thứ đó; không thứ nào được nhận.
+
+**Why:**
+Chủ quán nói ngày **2026-08-31**: hai nồi tráng bánh, mỗi nồi ba quả trứng, nên sáu khách vào cùng
+lúc thì làm **sáu quả một mẻ**; làm lần lượt từng suất là *mất thời gian và mất nhiệt*. Kèm theo
+đó là danh sách những thứ người đứng quầy phải nhìn thấy cùng lúc — đếm được sáu tính tới
+2026-08-31, và sáu là phép đếm của người viết, không phải ranh giới chủ quán chốt
+(`master_plan/shop-facts.md` §5.4).
+
+Điểm quyết định nằm ở một chỗ: **con số chủ quán cần không tồn tại trong mô hình lấy đơn làm gốc.**
+"Tổng còn phải làm 14 cái bánh" không phải thuộc tính của đơn nào cả — nó là tổng cắt ngang mọi đơn
+đang mở. Gắn trạng thái *đang làm / xong* vào từng dòng đơn thì diễn được *"dòng này xong"*, nhưng
+con số quán thật sự dùng để chạy bếp thì không có chỗ nào ghi.
+
+Điểm thứ hai: quán **đang** làm theo mẻ, bằng tay, hôm nay. Một thiết kế bắt bếp nhận việc theo
+từng suất không phải là thiếu tính năng — nó bắt quán chạy chậm hơn hiện tại. Đây là lý do trục
+này được ghi là **dữ kiện quán**, không phải một đề xuất cải tiến.
+
+**Rejected alternatives:**
+- *Thêm trạng thái "đang làm / đã xong" vào từng dòng đơn, rồi cộng lại khi cần vẽ màn hình.*
+  Rẻ nhất, và hỏng đúng chỗ vừa nói. Cộng lại được, nhưng con số cộng ra **không có chỗ nào ghi
+  ai đang làm nó** — mẻ trứng sáu quả không thuộc dòng đơn nào, nên nó không tồn tại trong mô
+  hình. Chỉ diễn được kết quả, không diễn được việc.
+- *Nhận nguyên khối cấu trúc `admin/live/`, `admin/production/`, cây trạng thái và mô hình dữ
+  liệu của đề xuất.* Đó là tầng thiết kế. Repo này chưa chốt xong lát cắt nghiệp vụ (§3.2–§3.3,
+  §4–§8 của `docs/product.md` còn trống). Nhận cấu trúc trước là để tầng dưới quyết thay tầng
+  trên — đúng thứ chính đề xuất ấy cảnh báo ở mục 27 của nó.
+- *Đợi BA-03…BA-09 xong rồi mới ghi.* Loại vì lời chủ quán không đợi được: nói ngày 2026-08-31,
+  không ghi ngay là mất (`CLAUDE.md` §7.2). Trục ghi hôm nay, hành vi viết sau, hai việc khác nhau.
+- *Ghi luôn "đã làm xong ≠ đã phục vụ" như lời chủ quán.* Chủ quán **không** nói câu đó; người tư
+  vấn suy ra. Trộn nó vào §7.1 là đúng lỗi `work/findings.md` **F-004**, nên nó xuống §7.2 làm
+  S-4 kèm câu kiểm chứng.
+- *Mở một owner mới cho dữ kiện sản xuất.* Trái ADR-001 và `CLAUDE.md` §3.8: đây là dữ kiện quán,
+  nhà của nó đã có.
+
+**Rủi ro đã chấp nhận:**
+- **Bốn câu hỏi mở cùng một lúc (U-008–U-011) cộng một chỗ suy ra (S-4).** BA-12 không tick hết
+  được cho tới khi chủ quán trả lời. Chấp nhận: bốn câu hỏi có tên rẻ hơn bốn chỗ tự suy
+  (`CLAUDE.md` §3.5), và cả năm đều hỏi được trong một lần gặp.
+- **Trục này làm nặng thêm mọi lát cắt viết sau nó.** BA-07 (vòng đời) và BA-09 (MVP) đều phải trả
+  lời thêm một câu. Chấp nhận vì đây là thứ quán đang làm bằng tay mỗi sáng, không phải tính năng
+  thêm vào.
+- **Ghi trục trước khi biết ai bấm nút nào.** U-009 chưa có lời giải, nên §3.4 sẽ mô tả được *cái
+  gì phải đếm được* mà chưa mô tả được *ai đếm*. Chấp nhận: thứ tự ngược lại đòi tự đặt luật.
+
+**Applies to:**
+`master_plan/shop-facts.md` §5.4, §7.1, §7.2 (S-4) · `docs/product.md` §3.4 và *Unknowns*
+U-008–U-011 · `work/backlog.md` BA-12, T-026 · `prompt/BA/12-production-control-L2.md` ·
+`work/proposals/admin.admiadmin/admin1.md` · ADR-001 (nhà của dữ kiện quán, không đổi).
+
+---
+
+### ADR-010 — Gate 8 là hook của **git**, cài bằng `core.hooksPath`, và chỉ chặn cái rỗng nghĩa
+
+**Decision:**
+Từ **2026-08-31** (T-025), repo có một cổng thứ tám: `scripts/hooks/commit-msg`, hook của **git**
+chứ không phải của Claude Code. Nó từ chối một commit khi subject không nói gì về chính nó, và bốn
+giới hạn dưới đây là một phần của quyết định, không phải chi tiết cài đặt:
+
+- **Hook nằm trong repo, bật bằng `core.hooksPath`.** `./scripts/install-hooks.sh` đặt
+  `core.hooksPath = scripts/hooks` cho bản clone hiện tại. Không dùng `.git/hooks/`.
+- **Luật hẹp, một câu:** bỏ tiền tố `T-XXX: ` nếu có (CLAUDE.md §6 cho phép L0 không mang mã task),
+  phần mô tả còn lại phải có **≥ 2 từ và ≥ 8 ký tự**. `Fix typo` qua, `adg` chết.
+- **Subject > 72 ký tự chỉ bị NHẮC.** CLAUDE.md §6 nói ≤ 72, nhưng một subject 75 ký tự vẫn nói
+  được nó là gì; chặn nó là *đỏ vì lý do sai* (ADR-003).
+- **Đường thoát `--no-verify` được in ra ngay trong thông báo từ chối.**
+
+Nội dung commit do git tự sinh — `Merge …`, `Revert …`, `fixup!`, `squash!`, `amend!` — không bị
+chấm: chấm chúng là chặn một câu mà người dùng không hề viết ra.
+
+**Why:**
+ADR-004 mục *Rủi ro đã chấp nhận* đặt sẵn điều kiện kích hoạt: *"Nếu có lần thứ hai một thay đổi đi
+vào git mà không có nội dung commit, ghi finding và siết lại."* Điều kiện đó đã chạm tới **năm**
+lần (`202e8c4 ádg`, `2692178 sdgf`, `25f0f88 sdfg`, `0704139 dsfg`, `03ffda3 adg`), hai lần cuối
+trong cùng ngày 2026-08-31 và đã push nên không sửa lại được (ADR-008). `work/findings.md` F-011 là
+vế *ghi*; ADR này là vế *siết lại*.
+
+Chỗ siết phải là **git**, không phải Claude Code. Gate 7 (`check-commit-block.sh`, ADR-004) đã chạy
+đúng phần việc của nó và vẫn không cứu được: nó sống trong vòng đời **một lượt của phiên**, còn
+người gõ `git commit -m dsfg` ở terminal không đi qua lượt nào. Bằng chứng mạnh nhất là `03ffda3`:
+nó nuốt chính T-023 — task đang đi dọn hậu quả của cơ chế này — trong lúc T-023 đang chạy.
+
+Luật giữ hẹp có lý do. Một hook chấm văn phong sẽ đỏ ở những commit thật sự nói được điều gì đó, và
+bài học ADR-003 nói cái giá của *đỏ vì lý do sai*: người ta gỡ cổng chứ không sửa cái sai. Ngưỡng
+2 từ / 8 ký tự là mức thấp nhất còn giết được cả năm subject đã có thật, mà `Fix typo` — một L0
+hợp lệ đúng CLAUDE.md §6 — vẫn đi qua.
+
+**Rejected alternatives:**
+- *Đặt hook thẳng vào `.git/hooks/commit-msg`.* Đơn giản nhất, và sai đúng cái sai T-025 nêu tên:
+  `.git/` không đi theo `git clone`, nên nó bảo vệ đúng một máy và biến mất ở mọi bản clone sau.
+- *`pre-commit` thay vì `commit-msg`.* `pre-commit` chạy **trước** khi có nội dung commit, nên nó
+  không đọc được subject — đúng thứ duy nhất cần chấm ở đây.
+- *Hook tự soạn hoặc tự sửa nội dung commit.* ADR-004 đã loại một lần: §6 nói commit là quyết định
+  của người dùng, và một subject máy sinh ra sẽ có đúng chất lượng của `ádg`.
+- *Bắt buộc mọi commit phải có `T-XXX:`.* Lật CLAUDE.md §6, vốn cho phép L0 không mang mã task. Nó
+  sẽ dạy người ta gõ một mã task bịa ra — tệ hơn không có mã.
+- *Chặn cả subject > 72 ký tự.* Xem trên: đỏ vì lý do sai.
+- *Không cài gì, chỉ viết luật vào CLAUDE.md §6.* Đó chính là trạng thái đã sinh ra năm commit kia,
+  và là đúng loại hỏng `work/findings.md` F-001 nói tới: một luật dựa vào việc người ta nhớ.
+- *Cho `gate.sh` gọi hook.* `gate.sh` cũng chỉ chạy trong vòng đời một lượt của phiên — lặp lại y
+  nguyên lỗ hổng của Gate 7.
+
+**Rủi ro đã chấp nhận:**
+- **`core.hooksPath` là config local ⇒ mỗi bản clone vẫn phải chạy `install-hooks.sh` một lần.**
+  Git không có cách nào bắt buộc điều đó, và một hook tự bật theo `git clone` sẽ là lỗ hổng bảo mật
+  chứ không phải tính năng. Giảm nhẹ: `scripts/brief.sh` chấm `install-hooks.sh --check` và **kêu ở
+  mỗi phiên** khi chưa cài (ADR-002 — trạng thái được **đẩy** vào phiên, không chờ ai đọc), và
+  CLAUDE.md §6.2 viết ra lệnh cài. Cảnh báo, không chặn: brief không bao giờ đổi mã thoát (§7.1).
+- **`core.hooksPath` THAY THẾ `.git/hooks/`, không cộng thêm.** Ai đang có hook riêng ở đó sẽ mất
+  nó. `install-hooks.sh` nêu đích danh những hook sẽ ngừng chạy trước khi đổi.
+- **`--no-verify` vẫn đi qua được.** Cố ý. Một cổng không có đường thoát sẽ bị gỡ khỏi máy chứ
+  không được sửa (ADR-003). Nếu `--no-verify` thành thói quen thì đó là finding tiếp theo, không
+  phải lý do bỏ đường thoát.
+- **Ngưỡng 2 từ / 8 ký tự không chặn được một subject sai nhưng đủ dài** (`T-025: fix stuff`).
+  Cổng này chặn *rỗng nghĩa*, không chấm *đúng sai* — chấm đúng sai là việc của Gate 7b và của
+  người đọc diff.
+
+**Applies to:**
+`scripts/hooks/commit-msg` · `scripts/install-hooks.sh` · `scripts/commit-msg.test.sh` ·
+`scripts/brief.sh` · `CLAUDE.md` §2, §6.2 · `work/findings.md` F-011 · `work/backlog.md` T-025 ·
+ADR-002 (brief đẩy trạng thái) · ADR-003 (đừng đỏ vì lý do sai) · ADR-004 (nội dung commit do phiên
+viết — ADR này là vế *siết lại* mà nó đặt sẵn điều kiện) · ADR-008 (sửa tiến, không viết lại).

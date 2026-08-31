@@ -703,9 +703,87 @@ Bản đồ, để log ngừng nói dối (ADR-008):
 của `0b3a337` lại bị commit bằng đúng cơ chế nó đang dọn. Đó là bằng chứng mạnh nhất cho **T-025**:
 luật viết trong `CLAUDE.md` §6 không chạm tới được cái terminal.
 
+**ĐÓNG 2026-08-31 (T-025) — cổng đã dựng, ở đúng chỗ Gate 7 với tay không tới.**
+`scripts/hooks/commit-msg` là hook của **git**, nên nó đứng giữa người gõ tay và git chứ không nằm
+trong vòng đời một lượt của phiên. Luật, các phương án đã loại và các rủi ro còn lại ở
+`docs/decisions.md` **ADR-010**; cách dùng ở `CLAUDE.md` §6.2. Cả năm subject kể tên trong finding
+này (`ádg`, `sdgf`, `sdfg`, `dsfg`, `adg`) đều là ca test trong `scripts/commit-msg.test.sh`, và ca
+cuối cùng của test dựng một repo thật rồi gõ `git commit -m "dsfg"` để chấm đúng đường mà F-011 đi
+qua.
+
+Bản đồ hash ở trên **ở lại vĩnh viễn**: hai commit kia đã push, ADR-008 nói sửa tiến chứ không viết
+lại, nên log vẫn hiển thị `dsfg` và `adg`. Cổng mới không dọn quá khứ, nó chỉ chặn lần thứ sáu.
+
+**Cái cổng này KHÔNG chặn, và ai đọc finding này phải biết:**
+- `git commit --no-verify` vẫn đi qua. Cố ý (ADR-003 — cổng không có đường thoát thì bị gỡ chứ
+  không được sửa). Nếu `--no-verify` thành thói quen thì đó là finding tiếp theo.
+- `.git/` không đi theo `git clone`, nên bản clone mới có file hook mà **không** có hook đang chạy
+  cho tới khi ai đó chạy `./scripts/install-hooks.sh`. Không ép được; chỉ nói ra được —
+  `scripts/brief.sh` kêu ở mỗi phiên khi chưa cài.
+- Nó chấm *rỗng nghĩa*, không chấm *đúng sai*. `T-025: fix stuff` vẫn qua.
+
 **Related task:**
-T-023 (phát hiện, ghi lại) · T-025 (siết lại, còn mở) · F-009 (cùng chỗ hỏng, phía *danh sách
-file* thay vì phía *subject*) · ADR-004 (đặt điều kiện kích hoạt) · ADR-008 (luật sửa tiến)
+T-023 (phát hiện, ghi lại) · T-025 (siết lại, **xong 2026-08-31**) · F-009 (cùng chỗ hỏng, phía
+*danh sách file* thay vì phía *subject*) · ADR-004 (đặt điều kiện kích hoạt) · ADR-008 (luật sửa
+tiến) · ADR-010 (cổng được dựng ra sao và vì sao hẹp đến thế)
+
+**Status:**
+Fixed
+
+---
+
+### F-012 — Brief cắt mọi danh sách ở 6 mà không nói đã cắt, nên câu hỏi thứ bảy vô hình ngay lúc được viết ra
+
+**Problem:**
+`scripts/brief.sh` đặt `MAX_LIST=6` và dùng nó cho **bốn** danh sách: In Progress · Ready · Open
+findings · Open unknowns. Mỗi danh sách kết thúc bằng `head -n "$MAX_LIST"`, và **không có dòng nào
+nói phần còn lại tồn tại**. Danh sách bảy mục in ra sáu mục, trông y hệt một danh sách sáu mục.
+
+Ngày **2026-08-31** nó xảy ra thật, trong chính lượt sinh ra dữ liệu: T-026 thêm bốn câu hỏi mở vào
+`docs/product.md` → *Unknowns*, BA-03 thêm hai câu trong cùng khoảng thời gian, cộng U-005 có sẵn
+là **bảy**. Brief in **sáu**. **U-011** — *máy chỉ hiện tổng nhu cầu hay được tự chia mẻ* — không
+xuất hiện trong brief của bất kỳ phiên mới nào, kể từ dòng đầu tiên nó được viết ra.
+
+Đây là **lần thứ hai** cùng một hậu quả, khác nguyên nhân. **F-008** là lần thứ nhất: brief đọc mục
+*Unknowns* bằng hình dạng dòng nên giấu mất U-005. T-021 đã chữa **cách đọc** (ADR-007), và cách
+đọc nay đúng — nó đọc ra đủ bảy mục rồi mới vứt mục thứ bảy đi ở bước in. Chỗ hỏng đã dịch từ
+*parser* sang *bộ cắt*, hậu quả thì không đổi.
+
+**Impact:**
+Hậu quả rơi đúng vào thứ CLAUDE.md §7 dựng brief lên để chống. Brief là **cơ chế duy nhất** đẩy
+danh sách câu hỏi mở vào một phiên bắt đầu từ context rỗng (ADR-002); phiên nào cũng đọc nó trước
+chỉ thị đầu tiên. Một câu hỏi không có trong brief là một câu hỏi phiên sau **không biết là mình
+đang không biết** — và CLAUDE.md §3.5 thì bắt phiên ấy dừng lại mà hỏi. Không biết có câu hỏi thì
+không dừng: nó tự suy ra một câu trả lời, đúng hành vi §3.5 cấm.
+
+Ba chỗ nữa cùng chịu, chưa xảy ra nhưng cùng một dòng mã:
+- **Ready** — hiện có 10 dòng chưa tick, brief in 6. Bốn task cuối, gồm cả **BA-12** vừa mở, không
+  phiên mới nào nhìn thấy.
+- **Open findings** — finding thứ bảy trở đi biến mất, kể cả finding này.
+- **In Progress** — ít khi quá 6, nhưng cùng cơ chế.
+
+Cái giá của việc im lặng nặng hơn cái giá của việc cắt. Cắt là quyết định đúng: CLAUDE.md §7.1 nói
+brief **trỏ, không chép**, và một brief dài 40 dòng thì không ai đọc. Thứ hỏng là **cắt mà không
+nói đã cắt** — người đọc không có cách nào phân biệt "hết rồi" với "còn nữa".
+
+**Decision / Fix:**
+Chưa sửa. Ghi ngày **2026-08-31** trong lúc chạy T-026; T-026 **không** chạm `scripts/` vì hai
+phiên khác đang chạy song song trong cùng cây làm việc (BA-03, T-025), và T-025 sở hữu `scripts/`.
+
+Việc siết lại là **T-027**, và nó **không phải** "đổi `MAX_LIST=6` thành một số to hơn": số nào
+cũng có một danh sách vượt qua nó, và lúc đó im lặng vẫn im lặng. Ràng buộc của T-027:
+
+- Brief **nói ra** phần đã cắt — bao nhiêu mục nữa, ở file nào — thay vì lặng lẽ dừng.
+- Danh sách **câu hỏi mở** đáng được đối xử khác ba danh sách kia: nó là thứ §3.5 bắt phiên phải
+  biết, và nó ngắn tự nhiên. Cắt nó là quyết định phải nói thẳng, không phải mặc định thừa hưởng
+  từ một hằng số dùng chung.
+- Không đổi mã thoát. Brief **không bao giờ** chặn (CLAUDE.md §7.1).
+- `scripts/brief.test.sh` có ca cho danh sách **dài hơn** ngưỡng — ca hiện có đều dưới ngưỡng nên
+  không ca nào bắt được lỗi này.
+
+**Related task:**
+T-027 (siết lại, còn mở) · T-026 (phát hiện) · F-008 (lần thứ nhất, phía *cách đọc*; T-021 đã
+chữa) · ADR-002 (brief đẩy trạng thái vào mọi phiên) · ADR-007 (hợp đồng hình dạng mục Unknowns)
 
 **Status:**
 Open

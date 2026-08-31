@@ -123,6 +123,26 @@ thay đổi **git đang theo dõi** mà lượt đó không đưa ra khối comm
 track và `work/scope.txt` không kích hoạt nó, và nó chỉ hỏi **một lần cho mỗi
 trạng thái cây** — đỏ vì lý do sai còn hại hơn không đỏ (ADR-003, ADR-004).
 
+---
+
+## Gate 8 — Subject của commit phải nói được nó là gì
+
+Gate 7 sống trong vòng đời **một lượt của phiên**. Người gõ `git commit -m` ở
+terminal không đi qua lượt nào, và năm commit đã vào repo này theo đúng đường đó
+(`work/findings.md` **F-011**). Gate 8 là hook của **git** —
+`scripts/hooks/commit-msg` — nên nó chấm **mọi** commit trên bản clone này, ai gõ
+cũng vậy.
+
+Luật hẹp, cố ý: bỏ tiền tố `T-XXX: ` nếu có, phần mô tả còn lại phải có ≥ 2 từ và
+≥ 8 ký tự. Subject > 72 ký tự chỉ bị **nhắc**, không chặn — đỏ vì lý do sai còn
+hại hơn không đỏ (ADR-003). Đường thoát `git commit --no-verify` được in ngay
+trong thông báo từ chối. Hook **không** tự soạn nội dung commit (ADR-004).
+
+Cổng này **không tự cài theo bản clone**: `.git/` không đi theo `git clone`, nên
+mỗi bản clone chạy `./scripts/install-hooks.sh` một lần. `scripts/brief.sh` kêu ở
+mỗi phiên khi chưa cài. Luật đầy đủ: `CLAUDE.md` §6.2, `docs/decisions.md`
+**ADR-010**.
+
 ## Tự động hoá
 
 Gate 1, Gate 1b, Gate 3 và Gate 7 chạy tự động qua Stop hook trong
@@ -138,6 +158,11 @@ bỏ qua khi chỉ có tài liệu thay đổi, và chạy mọi `scripts/*.test
 `check-links.sh` thì không bao giờ bị bỏ qua (ADR-005).
 `check-commit-block.sh` chỉ chạy trong hook mode — chạy tay không có transcript
 để đọc. Chạy tay: `./scripts/gate.sh`.
+
+**Gate 8 không nằm trong chuỗi này.** Nó là hook của git, không phải của Claude
+Code, và chạy ở một thời điểm khác: lúc `git commit`, chứ không phải lúc kết thúc
+lượt. Bật nó bằng `./scripts/install-hooks.sh` (một lần cho mỗi bản clone);
+`./scripts/install-hooks.sh --check` trả lời "đã cài chưa".
 
 Xem hoặc tắt hook bằng `/hooks`.
 

@@ -10,8 +10,8 @@ hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 | [Ready](#ready) | việc cần làm — checklist + thứ tự lấy |
 | [In Progress](#in-progress) | task đang chạy |
 | [Done](#done) | việc đã xong |
-| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | mô tả dài T-025…BA-11 + bảng mười câu hỏi §10 |
-| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-021…T-002 |
+| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | bảng mười câu hỏi §10 + mô tả dài T-019…BA-12 |
+| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-025…T-002 |
 | [Vòng chạy một task L1](#vong-chay) | mười bước thủ tục từ nhận task tới khối commit |
 | [Task Detail Template](#template) | khuôn viết một task mới |
 
@@ -54,10 +54,19 @@ không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31, T-016 xong 
   **một file, hai chủ**. Phiên vào sau phải **thêm** khối của mình chứ đừng ghi đè — ghi đè làm
   Gate 3 chấm việc của người kia bằng scope của mình, đúng thứ `work/findings.md` **F-010** mô tả,
   chỉ khác là nguyên nhân đến từ song song chứ không từ quên dọn.
-- **T-025 sinh ra từ T-023 (2026-08-31), không chặn ai.** Ba commit rỗng nghĩa trong một ngày
-  (`0704139 "dsfg"`, `03ffda3 "adg"`, và trước đó là bằng chứng của ADR-004) cho thấy Gate 7 chỉ
-  sống trong vòng đời một lượt của phiên; người gõ `git commit -m` ở terminal không đi qua lượt
-  nào. Chi tiết và ràng buộc ở `work/findings.md` **F-011** (Open).
+- **T-027 sinh ra từ T-026 (2026-08-31), không chặn ai, nhưng brief đang nói dối mỗi phiên.**
+  `scripts/brief.sh` cắt cả bốn danh sách ở `MAX_LIST=6` và **không nói là đã cắt**. Ngày
+  2026-08-31 số câu hỏi mở lên **bảy**, nên U-011 vô hình với mọi phiên mới kể từ dòng đầu tiên nó
+  được viết. Ready cũng đang có 10 dòng chưa tick, trong đó **BA-12** nằm ngoài sáu dòng đầu. Đây
+  là lần **thứ hai** cùng một hậu quả với `work/findings.md` **F-008**, khác nguyên nhân: F-008
+  hỏng ở *cách đọc* (T-021 đã chữa), lần này hỏng ở *bộ cắt*. Ràng buộc — đặc biệt "đừng chỉ đổi
+  6 thành một số to hơn" — ở `work/findings.md` **F-012** (Open).
+- **T-025 đã xong 2026-08-31 — F-011 đóng, và repo nay có một cổng thứ tám.**
+  `scripts/hooks/commit-msg` là hook của **git**, nên nó đứng ở đúng chỗ Gate 7 không với tới:
+  giữa người gõ `git commit -m` ở terminal và git. Hệ quả cho **mọi task sau**, kể cả L0: một
+  subject không nói gì (`adg`) không vào được repo, và **mỗi bản clone phải chạy
+  `./scripts/install-hooks.sh` một lần** — `.git/` không đi theo `git clone`, nên brief kêu ở mỗi
+  phiên khi chưa cài. Luật đầy đủ ở `CLAUDE.md` §6.2 và `docs/decisions.md` **ADR-010**.
 - **T-019 sinh ra từ T-013 (2026-08-30), không chặn ai.** T-013 sửa chữ trong
   `master_plan/prompt-fullstack.md`; nó **không** sửa việc file đó trỏ tới bảy đường không tồn
   tại trong repo. Đó không phải lỗi chữ mà là câu hỏi *file này còn thuộc dự án nào* — ghi ở
@@ -73,24 +82,33 @@ không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31, T-016 xong 
 - **T-015 chặn BA-10** và nên xong trước BA-04, BA-06: §10 còn để mở hai câu đã chốt, task sau đọc
   vào sẽ biến luật đã chốt thành giả định (CLAUDE.md §3.5 cấm).
 - T-016 là việc của hệ thống làm việc, không chạm dữ kiện quán — chạy song song với bất kỳ task nào.
+- **BA-12 sinh ra từ T-026 (2026-08-31), không chặn ai, nhưng chặn được BA-09.** Chủ quán mô tả
+  cách bếp **gom việc theo mẻ** trong `work/proposals/admin.admiadmin/admin1.md`; lời ấy nay là dữ
+  kiện ở `master_plan/shop-facts.md` §5.4 và cách đọc nó là `docs/decisions.md` **ADR-009**. Đây
+  là **lát cắt thứ tư**, không phải một mục của lát cắt nào có sẵn: nó cộng ngang qua mọi bàn và
+  mọi đơn, nên không có chỗ đứng trong §3.1 hay §3.2. BA-09 (phạm vi MVP) không chốt được nếu
+  chưa biết trục này rộng tới đâu.
 
 Chuỗi BA chạy từ trên xuống. Thứ tự là cột "Cần xong trước" của §11 kế hoạch gốc; BA-01 và BA-02
-đã xong 2026-08-30 nên BA-03, BA-04, BA-05 mở được ngay và chạy song song được.
+đã xong 2026-08-30 và **BA-03 xong 2026-08-31**, nên BA-04, BA-05 chạy song song được, còn
+BA-07 nay hết bị chặn.
 
-- [ ] T-025 `commit-msg` hook chặn subject rỗng nghĩa — Gate 7 không với tới người gõ tay (F-011)
+- [ ] T-027 Brief cắt danh sách ở 6 mà không nói đã cắt — U-011 vô hình ngay lúc viết ra (F-012)
 
-- [ ] BA-03 `docs/product.md` §3.1 — lát cắt một suất tại bàn · cần BA-02
 - [ ] BA-04 `docs/product.md` §3.2 — lát cắt một đơn mang đi (ba kênh) · cần BA-02 (T-011, T-012, T-020 xong)
 - [ ] BA-05 `docs/product.md` §3.3 — lát cắt chủ quán đổi menu/giá · cần BA-02
-- [ ] BA-06 `docs/product.md` §4 — quy tắc giá và thanh toán · cần BA-03, BA-04 (T-020 xong; **U-005 còn mở**)
-- [ ] BA-07 `docs/product.md` §5 — vòng đời đơn, phiên bàn, công việc trạm · cần BA-03
-- [ ] BA-08 `docs/product.md` §6 — ngoại lệ · cần BA-03–BA-07
+- [ ] BA-06 `docs/product.md` §4 — quy tắc giá và thanh toán · cần BA-04 (BA-03, T-020 xong; **U-005 còn mở**)
+- [ ] BA-07 `docs/product.md` §5 — vòng đời đơn, phiên bàn, công việc trạm (BA-03 xong; **U-006, U-007 còn mở**)
+- [ ] BA-08 `docs/product.md` §6 — ngoại lệ · cần BA-04–BA-07 (BA-03 xong; **U-007 còn mở**)
 - [ ] BA-09 `docs/product.md` §7 — phạm vi MVP · cần BA-01–BA-08
 - [ ] BA-10 `docs/decisions.md` — quyết định và giả định · cần BA-01–BA-09
 - [ ] BA-11 `docs/product.md` §8 — ba scenario nghiệm thu BA · cần BA-03–BA-10
+- [ ] BA-12 `docs/product.md` §3.4 — lát cắt sản xuất theo mẻ · cần BA-03, BA-07 (**U-008–U-011 + S-4 còn mở**)
 
 Mỗi task chạm **một** mục tài liệu riêng, nên revert được độc lập: §3.1 · §3.2 · §3.3 · §4 · §5 ·
-§6 · §7 · `docs/decisions.md` · §8. Hai task cùng chạm một mục là dấu hiệu chia việc sai.
+§6 · §7 · `docs/decisions.md` · §8 · §3.4. Hai task cùng chạm một mục là dấu hiệu chia việc sai.
+BA-12 đứng cuối danh sách nhưng chạm §3.4, tức nó cũng đổi tiêu đề §3 từ *ba* lát cắt sang *bốn* —
+đó là dòng duy nhất nó dùng chung với BA-03–BA-05.
 
 Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-lam).
 
@@ -104,8 +122,11 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="done"></a>
 ## Done
 
+- [x] T-026 Đề xuất Admin/POS được chấm: lời chủ quán về gom mẻ vào nhà thật, phần còn lại bị từ chối có tên (ADR-009) (2026-08-31)
 Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xong).
 
+- [x] T-025 Gate 8 — hook `commit-msg` của git từ chối subject rỗng nghĩa; cài bằng `core.hooksPath` (ADR-010, F-011) (2026-08-31)
+- [x] BA-03 `docs/product.md` §3.1 — lát cắt một suất tại bàn; I-001–I-004; mở U-006, U-007 (2026-08-31)
 - [x] T-023 Hậu quả đã commit của F-009 dọn xong: bản đồ hash, blueprint ra khỏi `docs/` (ADR-008) (2026-08-31)
 - [x] T-019 Bản xuất khẩu hết trỏ vào layout repo cũ; bảy dòng ignore đã gỡ (F-007) (2026-08-31)
 - [x] T-021 `brief.sh` đọc Unknowns theo cấu trúc; mục Unknowns có hình dạng máy đọc được (ADR-007) (2026-08-31)
@@ -136,44 +157,6 @@ Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
-
-### T-025 — `commit-msg` hook chặn subject rỗng nghĩa
-
-**Prompt:** chưa có · **Finding:** `work/findings.md` **F-011** (Open) · **ADR:** ADR-004 đặt sẵn
-điều kiện kích hoạt, ADR-008 là luật dọn hậu quả · L2 — đổi hành vi của **mọi** commit trong repo
-
-**Goal:**
-Một commit có subject không nói gì về chính nó (`dsfg`, `adg`, `ádg`) không vào được repo, kể cả
-khi người ta gõ `git commit -m` thẳng ở terminal — chỗ Gate 7 không với tới.
-
-**Nói một câu, việc phải làm là gì:**
-Thêm một `commit-msg` hook của **git** (không phải hook của Claude Code) từ chối subject không có
-dạng `T-XXX: …` và không đủ dài, kèm cách cài đặt cho bản clone mới. Việc **không** phải làm:
-sửa `scripts/check-commit-block.sh` — nó đã đúng phần việc của nó (ADR-004, ADR-006); lỗ hổng nằm
-ở chỗ nó chỉ sống trong vòng đời một lượt của phiên.
-
-**Vì sao có task này:**
-ADR-004 mục *Rủi ro đã chấp nhận* viết đúng câu: *"Nếu có lần thứ hai một thay đổi đi vào git mà
-không có nội dung commit, ghi finding và siết lại."* Ngày **2026-08-31** có **hai** lần nữa trong
-cùng một ngày — `0704139 "dsfg"` (nuốt T-016 + T-021 + T-009) và `03ffda3 "adg"` (nuốt T-023 +
-T-019 + một file 2342 dòng không thuộc task nào). Cả hai đã push, nên không sửa lại được
-(**ADR-008**). Bảng hash → nội dung thật ở **F-011**.
-
-**Không làm thì mất gì:**
-- `brief.sh` in RECENT COMMITS cho mọi phiên mới (ADR-002); đỉnh nhánh đang là `adg`.
-- `CLAUDE.md` §6 *"One task per commit"* hiện không có cơ chế nào đứng sau — đúng loại hỏng F-001.
-- Lý do của một thay đổi mất theo phiên và không lấy lại được.
-
-**Bẫy:**
-- **`git` hook không đi theo `git clone`.** Hook đặt trong `.git/hooks/` chỉ bảo vệ một máy. Phải
-  có cách cài (ví dụ `core.hooksPath` trỏ vào một thư mục được commit) và phải viết ra ở đâu đó
-  người mới đọc được.
-- **Phải có đường thoát và nói ra trong chính thông báo lỗi** (`--no-verify`), nếu không nó sẽ bị
-  gỡ khỏi máy chứ không được sửa — bài học ADR-003 về *đỏ vì lý do sai*.
-- **Không tự soạn nội dung commit.** `CLAUDE.md` §6 nói commit là quyết định của người dùng;
-  ADR-004 đã loại phương án hook tự commit.
-
-**Acceptance · Verify:** chưa viết — task này chưa có file prompt.
 
 ### Mười câu hỏi §10 kế hoạch gốc — ai trả lời câu nào
 
@@ -298,46 +281,6 @@ grep -n 'T-019' scripts/check-links.ignore   # rỗng
 ./scripts/check-links.sh                     # xanh sau khi gỡ ignore
 grep -c '⚠️' master_plan/prompt-fullstack.md  # không tăng (2)
 grep -n '^## §' master_plan/prompt-fullstack.md   # vẫn đủ §1 → §11
-git status --porcelain
-```
-
-### BA-03 — Lát cắt một suất tại bàn
-
-**Prompt:** `prompt/BA/02-slice-dine-in-L2.md` (L2) · **Cần xong trước:** BA-02 (xong 2026-08-30)
-
-**Goal:**
-`docs/product.md` §3.1 mô tả trọn vòng đời một khách ăn tại quán — từ lúc bàn được mở tới lúc bàn
-trở lại trạng thái trống — đủ để một người không biết code diễn lại được bằng nghiệp vụ.
-
-**Scope:** `docs/product.md` §3.1 · `quality/invariants.md` (chỉ **thêm**) · `work/backlog.md`.
-
-**Out of scope:** §3.2, §3.3, §4–§8 của `docs/product.md` · `docs/decisions.md` ·
-`docs/architecture.md` · invariant do task khác viết.
-
-**Acceptance:**
-1. §3.1 có luồng chính đúng 15 bước theo §4.1 kế hoạch gốc, mỗi bước ghi actor thực hiện.
-2. Có nhánh "đặt hộ tại quầy" (§4.3) và câu nói nó nhập vào phiên bàn nào.
-3. Có câu khẳng định nhiều lượt gọi món tại một bàn tạo **một** lần thanh toán.
-4. Có câu khẳng định khách gọi thêm lúc phiên đang chờ thanh toán vẫn vào cùng một hoá đơn, và
-   bàn chưa được coi là trống ở thời điểm đó (`shop-facts.md` §6.1).
-5. Có điều kiện để bàn trở lại trạng thái trống, và điều kiện đó gồm bước dọn bàn.
-6. Có điểm mà đơn `qr_table` bị chặn khi quầy chưa xác nhận (`shop-facts.md` §6.2).
-7. Nêu một đơn duyệt xong sinh việc ở những trạm nào, dùng đúng 5 tên trạm ở `shop-facts.md` §3.
-8. Có ví dụ nổ thành phần lấy lại từ `shop-facts.md` §5.3, cho thấy số lượng bếp thấy khác số
-   lượng trên hoá đơn.
-9. Có câu khẳng định **mọi suất bán đều kèm bánh cuốn**, không chỉ combo.
-10. `quality/invariants.md` có ít nhất bốn invariant: một bàn một phiên chưa thanh toán (tính cả
-    lúc chờ thanh toán) · tính tiền theo phiên chứ không theo lượt gọi · bàn trống chỉ sau khi
-    đóng phiên và dọn bàn · đơn đã duyệt sinh việc cho mọi trạm liên quan. Mỗi invariant có mục
-    Verification không để trống.
-11. §3.1 không chứa từ hiện thực kỹ thuật (websocket, queue, bảng dữ liệu).
-
-**Verify:**
-```bash
-./scripts/gate.sh
-sed -n '/^### 3.1/,/^### 3.2/p' docs/product.md | grep -cE '^ *[0-9]+\.'   # 15 bước
-grep -n 'tráng bánh\|gấp bánh\|canh\|dọn bàn\|quầy' docs/product.md
-grep -nEi 'websocket|queue' docs/product.md                                # rỗng
 git status --porcelain
 ```
 
@@ -707,13 +650,354 @@ git status --porcelain
 
 [↑ đầu file](#top)
 
+### T-027 — Brief cắt danh sách ở 6 và không nói đã cắt, nên mục thứ bảy vô hình
+
+**Prompt:** chưa có · **L1** — nó đổi thứ mọi phiên mới đọc trước chỉ thị đầu tiên.
+
+**Goal:**
+Một phiên mới đọc brief là biết **có phần bị cắt hay không**. Danh sách bảy mục không còn trông
+giống hệt danh sách sáu mục.
+
+**Nói một câu, việc phải làm là gì:**
+Cho brief **nói ra** phần nó đã cắt. Việc **không** phải làm: đổi `MAX_LIST=6` thành một số to hơn
+— số nào cũng có một danh sách vượt qua nó, và lúc đó im lặng vẫn im lặng.
+
+**Vì sao có task này:**
+Ghi ngày 2026-08-31 trong lúc chạy T-026: câu hỏi mở lên **bảy**, brief in **sáu**, U-011 vô hình
+với mọi phiên mới kể từ dòng đầu tiên nó được viết ra. Chi tiết, bốn ràng buộc, và vì sao đây là
+lần thứ hai của cùng một hậu quả (sau F-008) ở `work/findings.md` **F-012**.
+
+**Không làm thì mất gì:**
+- **Phiên sau tự suy ra câu trả lời cho một câu hỏi nó không biết là đang mở** — nặng nhất, vì
+  CLAUDE.md §3.5 chỉ dừng được phiên **biết** mình đang thiếu.
+- **BA-12 không phiên nào nhìn thấy**: Ready đang có 10 dòng chưa tick, BA-12 nằm ngoài sáu dòng
+  đầu.
+- **Chính F-012 biến mất khỏi brief** khi số finding Open vượt sáu.
+
+**Acceptance · Verify:** viết vào prompt khi bắt đầu task; ràng buộc đã có sẵn ở F-012.
+
+[↑ đầu file](#top)
+
+### BA-12 — Lát cắt sản xuất theo mẻ chưa có ở đâu, trong khi quán đang làm theo mẻ mỗi sáng
+
+**Prompt:** `prompt/BA/12-production-control-L2.md` (L2) · **Cần xong trước:** BA-03, BA-07 ·
+**chặn** BA-09
+
+**Goal:**
+`docs/product.md` §3.4 mô tả trọn lát cắt sản xuất — từ lúc một đơn được duyệt, việc của nó nhập
+vào tổng nhu cầu của quán, được gom thành mẻ, làm xong, rồi về đúng bàn đã gọi. Xong rồi thì người
+đứng quầy đọc §3.4 là biết bảng trước mặt mình phải hiện con số nào, và con số nào tăng giảm khi
+ai làm gì.
+
+**Nói một câu, việc phải làm là gì:**
+Viết ra **những con số nào tồn tại** ở trục sản xuất và chúng liên hệ với nhau thế nào. Việc
+**không** phải làm: vẽ màn hình, đặt tên trạng thái kiểu mã, hay chọn cấu trúc dữ liệu — đề xuất
+`work/proposals/admin.admiadmin/admin1.md` có sẵn cả ba và không thứ nào được nhận.
+
+**Vì sao có task này:**
+Chủ quán nói ngày **2026-08-31**: hai nồi tráng bánh, mỗi nồi ba quả trứng, sáu khách vào cùng lúc
+thì làm sáu quả một mẻ; làm lần lượt từng suất là *mất thời gian và mất nhiệt*. Kèm theo là danh
+sách những thứ người đứng quầy phải nhìn thấy cùng lúc — đếm được sáu tính tới ngày đó. Dữ kiện ở `master_plan/shop-facts.md` §5.4,
+cách đọc ở `docs/decisions.md` **ADR-009**.
+
+Vì sao nó không nằm gọn trong một lát cắt đã có: con số quán thật sự dùng — *"còn phải làm 14 cái
+bánh"* — **không thuộc đơn nào cả**, nó cộng ngang qua mọi đơn đang mở. §3.1 kể chuyện một bàn,
+§3.2 kể chuyện một đơn; không mục nào có chỗ cho một con số cắt ngang cả hai.
+
+**Không làm thì mất gì:**
+- **BA-09 chốt phạm vi MVP mà không biết trục này rộng tới đâu** — nặng nhất, vì MVP chốt xong là
+  cơ sở cho mọi việc sau.
+- **BA-07 viết vòng đời công việc trạm theo từng đơn** rồi phát hiện quán không làm theo đơn. Sửa
+  sau nghĩa là viết lại §5.
+- **Hệ thống làm ra bắt bếp nhận việc lẻ từng suất**, tức chậm hơn cách quán đang làm bằng tay —
+  hỏng nặng hơn thiếu tính năng, và chỉ lộ ra khi đang phục vụ khách.
+- **Năm câu hỏi (U-008–U-011, S-4) nằm mãi không ai hỏi.** Cả năm hỏi được trong **một** lần gặp;
+  để lâu thì phiên sau tự suy, đúng thứ CLAUDE.md §3.5 cấm.
+
+**Đây là con bug của một chỗ mù, không phải của một finding:**
+Không vòng rà nào bỏ sót — trục này **chưa từng** có mặt trong `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`,
+nên mười một task BA-01–BA-11 phủ đúng khung gốc và vẫn không phủ nó. Khung gốc mô tả quán bằng
+**đơn**; chủ quán vận hành quán bằng **mẻ**. Bài học ghi ở đây chứ không mở finding mới: một bộ
+task phủ kín tài liệu khung vẫn có thể phủ thiếu thực tế, vì tài liệu khung do người viết, không
+do quán viết.
+
+**Thứ tự đọc trước khi sửa file đầu tiên:**
+1. `master_plan/shop-facts.md` §5.4 → §5.3 → §4.5 — đọc ngược lên: gom việc, nổ thành phần, thành
+   phần một suất. Đọc xuôi sẽ tưởng §5.4 là mở rộng của §5.3, nó không phải.
+2. `docs/decisions.md` ADR-009 — bốn khái niệm và vì sao chúng không thay nhau được.
+3. `docs/product.md` §3.1 (BA-03) và §5 (BA-07) — trục đơn, để biết hai trục gặp nhau ở đâu.
+4. `master_plan/shop-facts.md` §7.2 (S-4) — chỗ suy ra chưa xác nhận; đọc **trước** khi viết một
+   dòng nào về "đã làm xong".
+
+**Bẫy hay sửa nhầm nhất:**
+- **Chép con số 2 · 3 · 6 vào `docs/product.md`.** Đúng số, và là bản chép thứ hai — F-001. §3.4
+  trỏ sang `shop-facts.md` §5.4, không mang số về.
+- **Viết "đã làm xong ≠ đã phục vụ" như thể chủ quán nói câu đó.** Chủ quán **không** nói; đó là
+  S-4, chưa xác nhận. Trộn vào phần đã chốt là đúng lỗi F-004.
+- **Cho §3.4 chỉ có bảng tổng.** Nhìn thì đủ, và mất chủ sở hữu: gom sáu quả trứng mà không tách
+  ngược về sáu bàn là bưng nhầm bàn.
+
+**Cách hoàn thành — đủ mười bước, 1 tới 10.**
+Luật chung ở [Vòng chạy một task L1](#vong-chay). Việc riêng của task này ở từng bước:
+1. Đọc brief; xác nhận BA-03 và BA-07 đã ở *Done*, vì §3.4 tham chiếu tên trạng thái của cả hai.
+2. Nhận task, chuyển BA-12 sang *In Progress*.
+3. **Hỏi chủ quán năm câu U-008–U-011 + S-4 trong một lần.** Câu kiểm chứng của S-4 đã soạn sẵn ở
+   `master_plan/shop-facts.md` §7.2 — hỏi đúng câu đó.
+4. Lời giải nào có ⇒ ghi vào `master_plan/shop-facts.md` §5.4 + §7.1 (và xoá khỏi §7.2 nếu là
+   S-4) **trước**, trong cùng một lần sửa; câu nào còn treo thì để nguyên ở *Unknowns*.
+5. Khai báo `work/scope.txt` theo mục Scope của prompt.
+6. Viết §3.4; đổi tiêu đề §3 sang **bốn** lát cắt.
+7. Thêm invariant vào `quality/invariants.md` — chỉ thêm, không sửa cái của task khác.
+8. `./scripts/gate.sh`.
+9. Gate 2 + Gate 5: cộng xuôi ví dụ sáu bàn ra tổng, rồi tách ngược về sáu bàn; hai chiều phải khớp.
+10. Đóng task, dọn scope, giao khối commit.
+
+**Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+
+[↑ đầu file](#top)
+
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### T-025 — `commit-msg` hook chặn subject rỗng nghĩa
+
+**Prompt:** không có — task sinh từ `work/findings.md` **F-011** · **ADR:** ADR-004 đặt sẵn điều
+kiện kích hoạt, ADR-008 là luật dọn hậu quả, **ADR-010** là quyết định của chính task này ·
+L2 — đổi hành vi của **mọi** commit trong repo · **Xong 2026-08-31**
+
+**Goal:**
+Một commit có subject không nói gì về chính nó (`dsfg`, `adg`, `ádg`) không vào được repo, kể cả
+khi người ta gõ `git commit -m` thẳng ở terminal — chỗ Gate 7 không với tới.
+
+**Nói một câu, việc phải làm là gì:**
+Thêm một `commit-msg` hook của **git** (không phải hook của Claude Code) từ chối subject không có
+dạng `T-XXX: …` và không đủ dài, kèm cách cài đặt cho bản clone mới. Việc **không** phải làm:
+sửa `scripts/check-commit-block.sh` — nó đã đúng phần việc của nó (ADR-004, ADR-006); lỗ hổng nằm
+ở chỗ nó chỉ sống trong vòng đời một lượt của phiên.
+
+**Vì sao có task này:**
+ADR-004 mục *Rủi ro đã chấp nhận* viết đúng câu: *"Nếu có lần thứ hai một thay đổi đi vào git mà
+không có nội dung commit, ghi finding và siết lại."* Ngày **2026-08-31** có **hai** lần nữa trong
+cùng một ngày — `0704139 "dsfg"` (nuốt T-016 + T-021 + T-009) và `03ffda3 "adg"` (nuốt T-023 +
+T-019 + một file 2342 dòng không thuộc task nào). Cả hai đã push, nên không sửa lại được
+(**ADR-008**). Bảng hash → nội dung thật ở **F-011**.
+
+**Không làm thì mất gì:**
+- `brief.sh` in RECENT COMMITS cho mọi phiên mới (ADR-002); đỉnh nhánh đang là `adg`.
+- `CLAUDE.md` §6 *"One task per commit"* hiện không có cơ chế nào đứng sau — đúng loại hỏng F-001.
+- Lý do của một thay đổi mất theo phiên và không lấy lại được.
+
+**Bẫy:**
+- **`git` hook không đi theo `git clone`.** Hook đặt trong `.git/hooks/` chỉ bảo vệ một máy. Phải
+  có cách cài (ví dụ `core.hooksPath` trỏ vào một thư mục được commit) và phải viết ra ở đâu đó
+  người mới đọc được.
+- **Phải có đường thoát và nói ra trong chính thông báo lỗi** (`--no-verify`), nếu không nó sẽ bị
+  gỡ khỏi máy chứ không được sửa — bài học ADR-003 về *đỏ vì lý do sai*.
+- **Không tự soạn nội dung commit.** `CLAUDE.md` §6 nói commit là quyết định của người dùng;
+  ADR-004 đã loại phương án hook tự commit.
+
+**Ba cái bẫy trên đã xử ra sao:**
+- **Hook không đi theo `git clone`** → hook được **commit** ở `scripts/hooks/`, bật bằng
+  `git config core.hooksPath scripts/hooks` qua `./scripts/install-hooks.sh`. Không ép được mỗi
+  clone chạy nó, nên chỗ *nói ra* là `scripts/brief.sh`: nó chấm `install-hooks.sh --check` và kêu
+  ở **mỗi phiên** khi chưa cài (ADR-002 — trạng thái được đẩy vào phiên, không chờ ai đọc).
+- **Đường thoát** `git commit --no-verify` được in **trong chính thông báo từ chối**, cùng với số
+  hiệu F-011 để người bị chặn đọc được lý do thay vì chỉ thấy mình bị chặn.
+- **Không tự soạn nội dung commit.** Hook chỉ đọc và từ chối; nó không sửa file nội dung, không
+  `git add`, không `git commit`.
+
+**Một quyết định phát sinh trong lúc làm — subject dài chỉ bị NHẮC, không bị chặn.**
+`CLAUDE.md` §6 nói subject ≤ 72 ký tự, nhưng một subject 75 ký tự **vẫn nói được nó là gì**, tức là
+không nằm trong Goal của task này. Chặn nó là *đỏ vì lý do sai*, và ADR-003 đã trả giá một lần cho
+bài học ấy. Ghi vào ADR-010 chứ không im lặng, vì nó là chỗ hook **cố ý không** thi hành một câu
+chữ của §6.
+
+**Acceptance:**
+1. `scripts/hooks/commit-msg` từ chối (exit ≠ 0) cả **năm** subject đã thật sự vào repo này:
+   `ádg`, `sdgf`, `sdfg`, `dsfg`, `adg` (F-011).
+2. Subject hợp lệ đi qua: `T-025: …` đầy đủ, và L0 không mã task (`Fix typo`) — §6 cho phép.
+3. Nội dung git tự sinh (`Merge …`, `Revert …`, `fixup!`, `squash!`, `amend!`) không bị chấm.
+4. Comment và dòng trống ở đầu file nội dung không bị nhận nhầm là subject.
+5. Subject > 72 ký tự: **exit 0** kèm một dòng nhắc, không chặn.
+6. Thông báo từ chối nêu `--no-verify` **và** F-011.
+7. File nội dung không đọc được ⇒ exit 0 (hook hỏng không được cướp mất commit).
+8. `./scripts/install-hooks.sh` đặt `core.hooksPath`, `--check` đỏ khi chưa cài và xanh sau khi
+   cài; nó nêu tên hook thật trong `.git/hooks/` sẽ ngừng chạy.
+9. Trong một repo git thật: `git commit -m "dsfg"` bị từ chối, subject hợp lệ commit được,
+   `--no-verify` vẫn đi qua — **và cả ba điều đó vẫn đúng khi commit từ một thư mục con**
+   (`core.hooksPath` là đường dẫn tương đối; git giải nó theo gốc cây làm việc, đã chấm bằng test).
+10. `scripts/brief.sh` kêu khi chưa cài, **im** sau khi cài, im ở repo không có
+    `scripts/install-hooks.sh`, và exit 0 ở cả ba ca.
+11. ADR-010 ghi luật, bảy phương án bị loại và bốn rủi ro còn lại; `CLAUDE.md` §2, §6.2 và F-011
+    nói cùng một chuyện.
+12. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/commit-msg.test.sh   # 28/28 ca ok (phủ 1–9)
+./scripts/brief.test.sh        # tất cả ca đều qua, gồm H1–H3 (phủ 10)
+./scripts/install-hooks.sh     # core.hooksPath = scripts/hooks
+./scripts/gate.sh              # xanh, exit 0
+```
+
+**Còn lại sau task này — cố ý, đã ghi ở ADR-010 và F-011:**
+`--no-verify` vẫn đi qua được · mỗi bản clone vẫn phải tự chạy `install-hooks.sh` · cổng chấm
+*rỗng nghĩa*, không chấm *đúng sai* (`T-025: fix stuff` vẫn qua).
+
+### T-026 — Đề xuất Admin/POS nằm trong repo không banner, và lời chủ quán trong đó chưa vào nhà thật
+
+**Prompt:** không có — task sinh từ yêu cầu trực tiếp của chủ repo ngày 2026-08-31
+(*"xem xét và làm hệ thống cho nhà hàng này dựa trên `work/proposals/admin.admiadmin/admin1.md`"*).
+**L2** — nó thêm dữ kiện vào `master_plan/shop-facts.md`, tức chạm hợp đồng với chủ quán.
+
+**Goal:**
+`work/proposals/admin.admiadmin/admin1.md` đi qua đúng đường CLAUDE.md §2 dành cho một đề xuất:
+banner nói nó là gì và trái §2 ở đâu · phần **dữ kiện quán** trong nó về đúng owner · phần
+**thiết kế** bị từ chối và ghi rõ là bị từ chối · phần **việc phải làm** thành một task có prompt.
+Xong rồi thì phiên sau đọc file ấy không còn tưởng nó là sự thật của repo.
+
+**Nói một câu, việc phải làm là gì:**
+Chấm một đề xuất và định tuyến nội dung của nó. Việc **không** phải làm: viết mã, dựng cây thư mục,
+hay chốt hành vi sản phẩm — hành vi là việc của BA-12, và nó cần năm câu trả lời chưa ai có.
+
+**Vì sao có task này:**
+File vào repo ngày **2026-08-31** trong commit `03ffda3 "adg"` — không thuộc task nào, không banner
+(`work/findings.md` **F-011**, lần thứ năm của họ lỗi ấy). CLAUDE.md §2 bắt mọi file trong
+`work/proposals/` mở đầu bằng banner nêu ngày, trạng thái, và những dòng của bảng §2 mà nó trái;
+file này không có. Trong lúc chưa ai chấm, nó là 3.318 dòng nói repo *nên* trông thế nào, nằm cạnh
+các file nói repo *đang* thế nào.
+
+Và nó không chỉ là lời cố vấn: **có nguyên văn lời chủ quán** trong đó — hai nồi tráng bánh, mỗi
+nồi ba quả trứng, làm lẻ thì mất nhiệt, cùng danh sách những thứ người đứng quầy phải nhìn thấy.
+CLAUDE.md §7.2
+nói dữ kiện phải được ghi **ngay lúc phát hiện**, vào owner của nó, không để lại thành ghi chú.
+
+**Không làm thì mất gì:**
+- **Dữ kiện quán chết cùng phiên.** Con số 2 nồi · 3 quả · 6 quả một mẻ chỉ nằm trong một file
+  không ai được phép tin. Phiên sau viết BA-07 hay BA-09 sẽ mô tả quán bằng **đơn**, trong khi quán
+  chạy bằng **mẻ**.
+- **Phiên sau nhận nhầm tầng thiết kế.** File có cây `/admin/...`, cây `code/be/internal/...`, tên
+  trạng thái kiểu mã và mô hình dữ liệu. Không có banner thì một phiên đang vội sẽ chép chúng vào
+  `docs/architecture.md` — và tầng dưới quyết thay tầng trên.
+- **Bốn câu hỏi + một chỗ suy ra không ai hỏi.** Cả năm hỏi được trong một lần gặp chủ quán.
+
+**Đây là con bug F-011, phía nội dung:**
+F-011 sở hữu phía **commit** — vì sao file này vào repo mà không ai nhìn. Task này sở hữu phía
+**nội dung** — file đã vào rồi thì chấm nó thế nào. Vòng rà trước không bắt được vì Gate 1b không
+chấm `work/` (cố ý, CLAUDE.md §5) và **không cổng nào kiểm banner của một file trong
+`work/proposals/`**: luật §2 hiện chỉ sống bằng trí nhớ. Đây là lần **thứ nhất** nó hỏng ở repo
+này — `work/proposals/updatee_sýstem.md` cũng từng vào không banner, nhưng lúc đó luật §2 chưa
+được viết (T-023 viết nó cùng ngày). Chưa đủ ngưỡng "tốn công hai lần" của CLAUDE.md §3.8 nên
+**không mở finding và không thêm cổng**; lần thứ hai thì mở.
+
+**Đã làm gì:**
+
+| Phần của đề xuất | Đi đâu |
+|---|---|
+| Lời **chủ quán** — 2 nồi · 3 quả/nồi · 6 quả một mẻ · làm lẻ mất nhiệt · danh sách thứ quầy phải nhìn | `master_plan/shop-facts.md` **§5.4** mới, nhật ký ở **§7.1** |
+| Suy luận của cố vấn — *"đã làm xong" là con số riêng* | `master_plan/shop-facts.md` **§7.2** làm **S-4**, kèm câu kiểm chứng — **không** trộn vào §7.1 (F-004) |
+| Cách đọc nghiệp vụ — sản xuất là trục riêng, bốn khái niệm | `docs/decisions.md` **ADR-009** |
+| Chỗ chủ quán chưa nói | `docs/product.md` → *Unknowns* **U-008–U-011** |
+| Hành vi sản phẩm phải viết | `work/backlog.md` **BA-12** + `prompt/BA/12-production-control-L2.md` |
+| Cây thư mục, màn hình Phase A–D, tên trạng thái, mô hình dữ liệu, bộ `harness/plans/admin/` | **từ chối**, nêu đích danh trong banner của chính file đề xuất |
+
+Kèm theo, ba pointer khẳng định `shop-facts.md` §7.2 rỗng đã hết đúng khi S-4 ra đời và đã được
+sửa trong cùng lần thay đổi (CLAUDE.md §7.2 — *theo dấu con trỏ*): `master_plan/shop-facts.md` §7
+mở đầu · `master_plan/00-scope.md` · `prompt/BA/README.md`.
+
+**Chạy song song với BA-03 — hai chủ trên ba file.**
+BA-03 ở *In Progress* trong một phiên khác khi task này chạy. `work/scope.txt` mang **hai** khối,
+mỗi khối ghi rõ chủ; phiên này **thêm** khối của mình chứ không ghi đè (bài học ở mục Ready,
+`work/findings.md` **F-010**). Ba file dùng chung, mỗi task chỉ sửa mục của mình:
+`docs/product.md` (BA-03 giữ §3.1 · T-026 chỉ thêm vào *Unknowns*) · `work/backlog.md` (mỗi task
+một entry) · `quality/invariants.md` (T-026 **không** chạm — invariant của trục sản xuất thuộc
+BA-12). Không viết dòng `!quality/invariants.md` vào scope: deny thắng allow, nên nó sẽ chấm đỏ
+thay đổi hợp lệ của BA-03.
+
+**Va số ngay trong lúc chạy, đáng ghi:** bốn unknown mới ban đầu đánh U-006–U-009; BA-03 đã lấy
+U-006 và U-007 trong cùng khoảng thời gian, nên chúng được đánh lại thành **U-008–U-011**. Hai
+phiên chạy song song thì **dãy số cũng là tài nguyên dùng chung** — kiểm số cuối cùng ngay trước
+khi ghi, đừng lấy số theo bản đọc lúc đầu phiên.
+
+**Còn treo, phiên sau nhặt:**
+Năm câu hỏi chủ quán chưa trả lời — U-008, U-009, U-010, U-011 và S-4. BA-12 không tick hết được
+cho tới lúc có lời giải, và cả năm hỏi được trong một lần gặp.
+
+[↑ đầu file](#top)
+
+### BA-03 — Lát cắt một suất tại bàn
+
+**Xong 2026-08-31.** L2 · prompt `prompt/BA/02-slice-dine-in-L2.md` · `docs/product.md` §3.1 ·
+`quality/invariants.md` **I-001–I-004** · mở **U-006** (tách/gộp bàn) và **U-007** (khách rời quán
+chưa trả tiền) ở `docs/product.md` → *Unknowns*.
+
+**Hai chỗ lệch so với entry gốc, cố ý:**
+- Acceptance 6 viết *"đơn `qr_table`"*, nhưng §3.1 gọi kênh là **QR tại bàn** — đúng tên §2 đang
+  dùng. Định danh `qr_table` là tên máy, `docs/product.md` chưa từng dùng tên máy của kênh nào, và
+  mục *Verify* của chính prompt BA-03 grep `table` mong không có kết quả. Hai tên cho một kênh
+  trong cùng tài liệu là đúng họ lỗi F-001, nên chọn tên §2.
+- `quality/invariants.md` mục *Template* dùng luôn ID `I-001` làm ví dụ, trùng với invariant thật
+  đầu tiên. Đã đổi placeholder đó thành `I-XXX`; không invariant nào bị sửa.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Chứng minh ở |
+|---|---|
+| 1 | `docs/product.md` §3.1.1, mười lăm bước; `sed … \| grep -cE '^ *[0-9]+\.'` = 15 |
+| 2 | §3.1.2, gạch đầu dòng 3 — "vào đúng phiên đang mở của bàn ấy" |
+| 3 | §3.1.4, gạch đầu dòng 2 |
+| 4 | §3.1.4, gạch đầu dòng 3 (và bước 11 của §3.1.1) |
+| 5 | §3.1.4, gạch đầu dòng 4 (và bước 15) |
+| 6 | §3.1.3, đoạn "Điểm chặn nằm giữa bước 4 và bước 6" (và bước 4, bước 5) |
+| 7 | §3.1.1 bước 6 và bước 7; §3.1.3 "cả năm trạm" |
+| 8 | §3.1.5, khối ví dụ + câu "Hoá đơn ghi ×2, bếp phải tráng ×6" |
+| 9 | §3.1.5, đoạn in đậm "Mọi suất bán đều kèm bánh cuốn, không riêng combo" |
+| 10 | `quality/invariants.md` I-001 · I-002 · I-003 · I-004, cả bốn có Verification |
+| 11 | `grep -nEi 'websocket\|socket\|queue\|endpoint\|schema\|table' docs/product.md` → rỗng |
+
+**Prompt:** `prompt/BA/02-slice-dine-in-L2.md` (L2) · **Cần xong trước:** BA-02 (xong 2026-08-30)
+
+**Goal:**
+`docs/product.md` §3.1 mô tả trọn vòng đời một khách ăn tại quán — từ lúc bàn được mở tới lúc bàn
+trở lại trạng thái trống — đủ để một người không biết code diễn lại được bằng nghiệp vụ.
+
+**Scope:** `docs/product.md` §3.1 · `quality/invariants.md` (chỉ **thêm**) · `work/backlog.md`.
+
+**Out of scope:** §3.2, §3.3, §4–§8 của `docs/product.md` · `docs/decisions.md` ·
+`docs/architecture.md` · invariant do task khác viết.
+
+**Acceptance:**
+1. §3.1 có luồng chính đúng 15 bước theo §4.1 kế hoạch gốc, mỗi bước ghi actor thực hiện.
+2. Có nhánh "đặt hộ tại quầy" (§4.3) và câu nói nó nhập vào phiên bàn nào.
+3. Có câu khẳng định nhiều lượt gọi món tại một bàn tạo **một** lần thanh toán.
+4. Có câu khẳng định khách gọi thêm lúc phiên đang chờ thanh toán vẫn vào cùng một hoá đơn, và
+   bàn chưa được coi là trống ở thời điểm đó (`shop-facts.md` §6.1).
+5. Có điều kiện để bàn trở lại trạng thái trống, và điều kiện đó gồm bước dọn bàn.
+6. Có điểm mà đơn `qr_table` bị chặn khi quầy chưa xác nhận (`shop-facts.md` §6.2).
+7. Nêu một đơn duyệt xong sinh việc ở những trạm nào, dùng đúng 5 tên trạm ở `shop-facts.md` §3.
+8. Có ví dụ nổ thành phần lấy lại từ `shop-facts.md` §5.3, cho thấy số lượng bếp thấy khác số
+   lượng trên hoá đơn.
+9. Có câu khẳng định **mọi suất bán đều kèm bánh cuốn**, không chỉ combo.
+10. `quality/invariants.md` có ít nhất bốn invariant: một bàn một phiên chưa thanh toán (tính cả
+    lúc chờ thanh toán) · tính tiền theo phiên chứ không theo lượt gọi · bàn trống chỉ sau khi
+    đóng phiên và dọn bàn · đơn đã duyệt sinh việc cho mọi trạm liên quan. Mỗi invariant có mục
+    Verification không để trống.
+11. §3.1 không chứa từ hiện thực kỹ thuật (websocket, queue, bảng dữ liệu).
+
+**Verify:**
+```bash
+./scripts/gate.sh
+sed -n '/^### 3.1/,/^### 3.2/p' docs/product.md | grep -cE '^ *[0-9]+\.'   # 15 bước
+grep -n 'tráng bánh\|gấp bánh\|canh\|dọn bàn\|quầy' docs/product.md
+grep -nEi 'websocket|queue' docs/product.md                                # rỗng
+git status --porcelain
+```
 
 ### T-023 — Hai commit trùng tên "T-020", và ba file `docs/` bị commit nhầm
 
 **Xong 2026-08-31.** `docs/decisions.md` **ADR-008** · `work/findings.md` **F-009** (Fixed) ·
-**F-011** (mới, Open) · L2 · không có file prompt — ba quyết định lấy trực tiếp từ chủ repo
+**F-011** (mới lúc đó; **đóng cùng ngày** bởi T-025 — Gate 8, ADR-010) · L2 · không có file
+prompt — ba quyết định lấy trực tiếp từ chủ repo
 
 **Goal:**
 Lịch sử git kể đúng thứ đã xảy ra, và `docs/` không còn file nào mâu thuẫn CLAUDE.md §2.
@@ -776,7 +1060,7 @@ Cơ chế và ba lần trước ghi ở **F-009**.
 | A5 | Hai file `đánh_giá_*` nguyên vẹn | Không xuất hiện trong `git status`; quyết định (b) là giữ nguyên |
 | A6 | F-009 đóng phần hậu quả | Bảng `hash → nội dung thật` cho `1b1d5f5` / `0b3a337`, ba quyết định của chủ repo, Status → Fixed trọn vẹn |
 | A7 | ADR-008 | "Lịch sử đã chia sẻ thì sửa tiến, không viết lại", nêu đích danh cả hai hash, bốn phương án bị loại |
-| A8 | `0704139 "dsfg"` | **F-011** (Open) + **T-025** trong Ready |
+| A8 | `0704139 "dsfg"` | **F-011** + **T-025** trong Ready — cả hai **đã đóng 2026-08-31**, cùng ngày, bởi T-025 (Gate 8, ADR-010) |
 | A9 | Gate xanh | `./scripts/gate.sh` |
 
 **Hai thứ phát sinh trong lúc làm, không nằm trong task gốc:**

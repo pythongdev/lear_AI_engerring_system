@@ -77,6 +77,20 @@ else
   printf '  (no work/scope.txt)\n'
 fi
 
+# --- Cổng nào đang thật sự đứng gác -----------------------------------------
+# Gate 8 (scripts/hooks/commit-msg) sống trong `.git/`, mà `.git/` không đi theo
+# `git clone`: một bản clone mới có file hook trong repo nhưng KHÔNG có nó đang
+# chạy, và không có gì kêu lên. Đây là chỗ kêu (docs/decisions.md ADR-010,
+# work/findings.md F-011). Cảnh báo, không chặn — brief không đổi mã thoát (§7.1).
+if [ -x scripts/install-hooks.sh ]; then
+  if ! ./scripts/install-hooks.sh --check >/dev/null 2>&1; then
+    section "GIT HOOKS (scripts/hooks/)"
+    printf '  → CẢNH BÁO: Gate 8 CHƯA cài trong bản clone này. `git commit -m` gõ tay\n'
+    printf '    không bị chấm gì cả — đúng lỗ hổng work/findings.md F-011.\n'
+    printf '    Cài một lần:  ./scripts/install-hooks.sh\n'
+  fi
+fi
+
 section "NEXT READY (work/backlog.md)"
 ready="$(block work/backlog.md '## Ready' | grep -E '^- \[ \]' | head -n "$MAX_LIST")"
 if [ -n "$ready" ]; then printf '%s\n' "$ready" | sed 's/^/  /'; else none; fi

@@ -64,7 +64,8 @@ work/              backlog.md, scope.txt, findings.md;
 quality/           invariants.md, review-gate.md
 scripts/           gate.sh → check-scope.sh + check-links.sh + verify.sh
                    + check-commit-block.sh;
-                   brief.sh (§7)
+                   brief.sh (§7);
+                   hooks/ → commit-msg (Gate 8, §6.2), install-hooks.sh
 master_plan/       domain facts for the current project
 prompt/            prompt sets built from master_plan/
 .claude/           settings.json (SessionStart → brief.sh, Stop → gate.sh)
@@ -234,6 +235,35 @@ separate request (§6), and the answer to it is already written by then.
 This one is enforced, not remembered: `scripts/check-commit-block.sh` (Gate 7,
 §5) blocks the end of a turn that leaves tracked changes uncommitted without a
 `git commit -m` block in its report.
+
+### 6.2 Gate 8 — git itself refuses a subject that says nothing
+
+Gate 7 lives inside the lifetime of **a session turn**. Someone typing
+`git commit -m` in a terminal never passes through a turn, and five commits
+reached this repo that way under the names `ádg`, `sdgf`, `sdfg`, `dsfg`, `adg`
+(`work/findings.md` F-011). `scripts/hooks/commit-msg` is the gate that stands
+where Gate 7 cannot: a **git** hook, so it runs for every commit on this clone,
+whoever writes it.
+
+```bash
+./scripts/install-hooks.sh          # once per clone — sets core.hooksPath
+./scripts/install-hooks.sh --check  # exit 1 = not installed here
+```
+
+- **Run it in every fresh clone.** `.git/` does not travel with `git clone`, so
+  the hook file is in the repo but not running until this command points
+  `core.hooksPath` at `scripts/hooks/` (`docs/decisions.md` ADR-010). The session
+  brief (§7.1) prints a warning while it is not installed, so nobody has to
+  remember — but nothing can *force* it, and that limit is part of the decision.
+- **What it refuses:** strip an optional `T-XXX: ` prefix, and what is left must
+  be at least 2 words and 8 characters. That is the whole rule. `Fix typo` passes;
+  `adg` does not.
+- **What it only warns about:** a subject over 72 characters. It still says what
+  it changed, and red for the wrong reason teaches people to remove the hook.
+- **Escape hatch, printed in the refusal itself:** `git commit --no-verify`.
+- **It never writes the message for you.** §6 keeps the commit as the user's
+  decision (`docs/decisions.md` ADR-004); a machine-written subject would have
+  exactly the quality of `ádg`.
 
 ## 7. Keeping the System Current
 

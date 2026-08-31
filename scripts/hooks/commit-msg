@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# Gate 8 — một commit phải nói được nó là commit gì.
+#
+# Đây là hook của **git**, không phải hook của Claude Code. Git gọi nó với một
+# tham số: đường dẫn tới file chứa nội dung commit đang soạn. Exit khác 0 = huỷ
+# commit.
+#
+# VÌ SAO CÓ NÓ (work/findings.md F-011 · docs/decisions.md ADR-004, ADR-010):
+# Gate 7 (scripts/check-commit-block.sh) bắt phiên phải giao nội dung commit,
+# nhưng nó sống trong vòng đời **một lượt của phiên**. Người gõ `git commit -m`
+# thẳng ở terminal không đi qua lượt nào, nên năm lần liền một thay đổi vào được
+# repo dưới cái tên `ádg`, `sdgf`, `sdfg`, `dsfg`, `adg`. Chỗ duy nhất còn đứng
+# được giữa người gõ tay và git là đây.
+#
+# LUẬT — cố ý hẹp, chỉ chặn cái RỖNG NGHĨA, không chấm văn phong:
+#   1. Bỏ tiền tố `T-XXX: ` nếu có (CLAUDE.md §6 cho phép L0 không mang mã task).
+#   2. Phần mô tả còn lại phải có ≥ 2 từ và ≥ 8 ký tự.
+#      `dsfg` `adg` `ádg` `sdgf` `sdfg` — một từ, 3–4 ký tự — chết ở đây.
+#      `Fix typo` — hai từ, 8 ký tự — qua. Đó là mức thấp nhất còn nói được điều gì.
+#   3. Subject dài quá 72 ký tự (CLAUDE.md §6) chỉ bị **nhắc**, không bị chặn:
+#      một subject 75 ký tự vẫn nói được nó là gì, chặn nó là đỏ vì lý do sai
+#      (bài học ADR-003).
+#
+# ĐƯỜNG THOÁT, nói ra ngay trong thông báo lỗi: `git commit --no-verify`.
+# Không có đường thoát thì hook bị GỠ khỏi máy chứ không được sửa (ADR-003).
+#
+# KHÔNG TỰ SOẠN NỘI DUNG. CLAUDE.md §6 nói commit là quyết định của người dùng,
+# và ADR-004 đã loại phương án hook tự viết commit: một commit máy sinh ra sẽ có
+# đúng chất lượng của `ádg`.
+#
+# Cài: ./scripts/install-hooks.sh   (git hook không đi theo bản clone — ADR-010)
+
+set -uo pipefail
+
+MSG_FILE="${1:-}"
+[ -n "$MSG_FILE" ] && [ -f "$MSG_FILE" ] || exit 0   # không đọc được ⇒ không chặn
+
+MIN_WORDS=2
+MIN_CHARS=8
+MAX_SUBJECT=72
+
+# Subject = dòng không rỗng, không phải comment, ĐẦU TIÊN.
+subject="$(grep -vE '^[[:space:]]*#' "$MSG_FILE" | grep -m1 -vE '^[[:space:]]*$')"
+subject="${subject#"${subject%%[![:space:]]*}"}"   # trim đầu
+subject="${subject%"${subject##*[![:space:]]}"}"   # trim cuối
+
+# Nội dung rỗng hoàn toàn: git tự huỷ commit, không cần nói thêm.
+[ -n "$subject" ] || exit 0
+
+# Commit do git tự sinh nội dung: merge, revert, và các dạng autosquash.
+# Chấm chúng là chặn một câu mà người dùng không viết ra (đỏ vì lý do sai).
+case "$subject" in
+  Merge\ *|Revert\ *|fixup!\ *|squash!\ *|amend!\ *) exit 0 ;;
+esac
+
+# Bỏ tiền tố mã task để chấm phần thật sự mô tả thay đổi.
+desc="$subject"
+case "$desc" in
+  T-[0-9][0-9][0-9]:*) desc="${desc#T-[0-9][0-9][0-9]:}" ;;
+  T-[0-9][0-9]:*)      desc="${desc#T-[0-9][0-9]:}" ;;
+esac
+desc="${desc#"${desc%%[![:space:]]*}"}"
+
+words="$(printf '%s\n' "$desc" | tr -s '[:space:]' '\n' | grep -c .)"
+chars="${#desc}"
+
+if [ "$words" -lt "$MIN_WORDS" ] || [ "$chars" -lt "$MIN_CHARS" ]; then
+  cat >&2 <<EOF
+
+Gate 8 — commit bị từ chối: subject không nói gì về thay đổi này.
+
+  subject : $subject
+  phần mô tả sau mã task : "$desc" ($words từ, $chars ký tự)
+  ngưỡng  : ít nhất $MIN_WORDS từ và $MIN_CHARS ký tự
+
+CLAUDE.md §6 — "T-XXX: what changed", câu mệnh lệnh, ≤ $MAX_SUBJECT ký tự.
+L0 không có mã task thì bỏ tiền tố T-XXX:, phần mô tả vẫn phải nói được gì đó.
+
+  git commit -m "T-025: chặn subject rỗng nghĩa bằng commit-msg hook"
+
+Lý do có cổng này: work/findings.md F-011 — năm commit \`dsfg\`/\`adg\` đã vào repo,
+đã push, không sửa lại được, và lý do của thay đổi mất theo phiên.
+
+Nếu lần này thật sự cần đi qua:  git commit --no-verify
+
+EOF
+  exit 1
+fi
+
+if [ "${#subject}" -gt "$MAX_SUBJECT" ]; then
+  printf '\nGate 8 — nhắc, KHÔNG chặn: subject dài %s ký tự, CLAUDE.md §6 nói ≤ %s.\n  %s\n\n' \
+    "${#subject}" "$MAX_SUBJECT" "$subject" >&2
+fi
+
+exit 0
