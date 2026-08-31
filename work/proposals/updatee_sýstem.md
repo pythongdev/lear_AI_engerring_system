@@ -1,3 +1,29 @@
+> **ĐỀ XUẤT — CHƯA ÁP DỤNG. KHÔNG PHẢI SỰ THẬT CỦA REPO NÀY.**
+>
+> - **Là gì:** bản tư vấn "blueprint v2" cho chính hệ thống engineering, do một cố vấn ngoài
+>   viết. Nó nói repo *nên* trông thế nào, không nói repo *đang* thế nào.
+> - **Vào repo ngày:** 2026-08-30, bị commit nhầm trong `0b3a337` — commit đó mang subject của
+>   T-020 nhưng nội dung là ba file `docs/` chưa track (`work/findings.md` **F-009**).
+> - **Chuyển ra khỏi `docs/` ngày:** 2026-08-31 (T-023, quyết định của chủ repo). `docs/` chỉ
+>   chứa owner của CLAUDE.md §2; file này không sở hữu fact nào. Thân bài giữ **nguyên văn**,
+>   không chiết, không sửa một dòng.
+> - **Trái CLAUDE.md §2 ở hai chỗ — §2 thắng:**
+>   - §1 và §5 đề xuất `docs/facts/{scope,domain,business-rules}.md` làm nhà của dữ kiện nghiệp
+>     vụ. **Không đúng ở repo này:** nhà duy nhất là `master_plan/shop-facts.md` (ADR-001).
+>   - §10 đề xuất `work/tasks/<task-XXX>.md`, mỗi task một file. **Không đúng ở repo này:** task
+>     sống trong `work/backlog.md`, prompt sống trong `prompt/`.
+> - **Phần lớn phần còn lại đã được làm rồi**, không cần đọc lại như việc phải làm: L0–L3
+>   (`README.md`), vòng findings (`work/findings.md`), luật "do not overbuild" (CLAUDE.md §3.8),
+>   invariants (`quality/invariants.md`), `scripts/verify.sh`.
+> - **Đường dẫn bên trong file này phần lớn không mở được** — chúng mô tả cấu trúc đề xuất, không
+>   phải cấu trúc thật. Đó là lý do file nằm dưới `work/`, nơi Gate 1b không chấm link
+>   (CLAUDE.md §5).
+>
+> Muốn dùng ý nào trong đây thì mở một task trong `work/backlog.md` cho ý đó, đừng sửa repo theo
+> file này.
+
+---
+
 Đúng. Nếu mục tiêu của bạn là biến repo hiện tại thành một **Lean AI Engineering System thực sự dùng được cho nhiều dự án**, mình khuyên **không xây thêm nhiều agent**, mà nâng cấp theo hướng:
 
 > **Canonical Facts → Risk-based Workflow → Implementation → Deterministic Verification**

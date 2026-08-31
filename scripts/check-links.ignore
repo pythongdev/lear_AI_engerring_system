@@ -10,16 +10,3 @@
 # --- đường dẫn cố ý không tồn tại (không phải lỗi, đừng "sửa") ---------------
 docs/decisions.md :: work/journal.md              # ADR-002 — phương án đã bị loại: file này cố ý không được tạo
 docs/prompt-guideline.md :: order/pricing.go      # ví dụ trong template L1/L2, không phải file của repo này
-
-# --- nợ có chủ: F-007 / T-019 ------------------------------------------------
-# Bảy đường của bản xuất khẩu. F-007 nói rõ: sửa từng link đòi phải biết trước
-# `prompt-fullstack.md` còn thuộc dự án nào và xuất cho ai — ba khả năng dẫn tới
-# ba cách sửa khác nhau, nên chọn bừa là đoán hộ người quyết định. Giữ ở đây cho
-# tới khi T-019 trả lời xong; T-019 xong thì bảy dòng này phải biến mất cùng.
-master_plan/prompt-fullstack.md :: ../quality/prompt_guiline.md         # T-019
-master_plan/prompt-fullstack.md :: ../quality/05-checklist.md           # T-019
-master_plan/prompt-fullstack.md :: ../design/data_base/01-thiet-ke.md   # T-019
-master_plan/prompt-fullstack.md :: ../design/backend/01-thiet-ke.md     # T-019
-master_plan/prompt-fullstack.md :: ../design/frontend/01-thiet-ke.md    # T-019
-master_plan/prompt-fullstack.md :: ../design/system_design/01-thiet-ke.md # T-019
-master_plan/prompt-fullstack.md :: ../finding.md                        # T-019 — nêu là "sổ rủi ro" của chính bản chép

@@ -339,7 +339,8 @@ phiên sau đọc log thấy **hai** commit cùng tên "T-020" và tin cả hai 
 - **`git revert` mất an toàn.** Hai subject giống hệt nhau; revert nhầm cái thì hoặc không gỡ được
   gì, hoặc xoá âm thầm 1096 dòng của người khác.
 - **Ba file kia nay đã được track**, nên chúng không còn là ghi chú vãng lai. Trong đó
-  `docs/updatee_sýstem.md` (1010 dòng) mô tả một **cấu trúc sở hữu khác** với CLAUDE.md §2
+  `docs/updatee_sýstem.md` (1010 dòng — nay ở `work/proposals/updatee_sýstem.md`, T-023 2026-08-31)
+  mô tả một **cấu trúc sở hữu khác** với CLAUDE.md §2
   (`docs/facts/business-rules.md`… trong khi §2 nói `master_plan/shop-facts.md` là nhà duy nhất).
   §2 nói hai chỗ mâu thuẫn thì chỗ kia *"là bug phải sửa ngay"* — bug đó vừa được commit vào repo.
 - Lần 3 còn cho thấy phạm vi sát thương chéo giữa các phiên: ghi chú `note:` của Gate 3 in ra cho
@@ -380,15 +381,39 @@ phiên, nên "cảnh báo" ở chỗ đó nghĩa là in vào hư không. Thứ b
 giao**, không phải thay đổi (Gate 1, 1b, 3 đã xanh trước khi nó chạy), và nó nhắc nhiều nhất một
 lần cho mỗi trạng thái cây. Lập luận đầy đủ ở **docs/decisions.md ADR-006**.
 
-Còn lại của F-009 là **hậu quả đã commit** — hai commit trùng tên "T-020", ba file `docs/` nay đã
-track — và việc đó cần chủ repo quyết, nên nó ở lại **T-023**, không ở lại finding này.
+**Hậu quả đã commit — đóng 2026-08-31 (T-023), theo ba quyết định của chủ repo.**
+
+*Bản đồ hash → nội dung thật.* Hai commit mang cùng subject *"T-020: đơn mang đi được trả trước,
+§6.3 hết câu tuyệt đối"*. Lịch sử **không** bị viết lại (cả hai đã nằm trên
+`origin/merge_first_time`; luật ở **docs/decisions.md ADR-008**), nên bảng này là thứ duy nhất
+phân biệt được chúng. Đọc nó trước khi `git revert` bất cứ cái nào:
+
+| Hash | Subject ghi trong log | Nội dung **thật** | Revert cái này thì mất gì |
+|---|---|---|---|
+| `1b1d5f5` | T-020: đơn mang đi được trả trước… | **Đúng là T-020.** 6 file, +331/−29: `docs/product.md`, `master_plan/shop-facts.md`, `prompt/BA/03-slice-ship-pickup-L2.md`, `prompt/maintenance/10-prepay-takeaway-L2.md`, `work/backlog.md`, `work/findings.md` | Mất chính T-020: §6.3 lại nói "không bao giờ thu trước", U-005 biến mất |
+| `0b3a337` | T-020: đơn mang đi được trả trước… *(sai)* | **Không một dòng nào của T-020.** 3 file `docs/` chưa track, +1096/−0: `updatee_sýstem.md`, `đánh_giá_file_decisions.md`, `đánh_giá_file_product.md` | Không gỡ được gì của T-020; và sẽ xoá ngược ba file kia — hai file trong đó chủ repo đã quyết **giữ** |
+
+*Ba quyết định của chủ repo, 2026-08-31 (T-023):*
+
+1. **Lịch sử: sửa tiến, không viết lại.** `0b3a337` đã push; rewrite + force-push bị loại. Bản đồ
+   trên, cộng ADR-008, là cách log ngừng nói dối mà không đụng vào lịch sử đã chia sẻ.
+2. **`docs/đánh_giá_file_product.md` và `docs/đánh_giá_file_decisions.md`: giữ nguyên tại chỗ.**
+   Chúng không sở hữu fact nào nên không mâu thuẫn CLAUDE.md §2; giữ là quyết định của chủ repo,
+   không phải thiếu sót.
+3. **`updatee_sýstem.md`: chuyển nguyên văn sang `work/proposals/updatee_sýstem.md`.** Đây là chỗ
+   duy nhất trong ba việc thật sự chạm §2: file mô tả `docs/facts/…` và `work/tasks/…` làm nhà của
+   fact và của task, trái với `master_plan/shop-facts.md` (ADR-001) và `work/backlog.md`. Nay nó ra
+   khỏi `docs/`, mở đầu bằng banner ghi ngày, ghi rõ **chưa áp dụng**, và ghi đích danh hai chỗ trái
+   §2. Thân bài không sửa một dòng (diff của lần chuyển: +26/−0, toàn bộ là banner). CLAUDE.md §2 có
+   thêm một dòng owner cho `work/proposals/` — owner mà §2 không liệt kê là owner không ai tìm ra.
 
 **Related task:**
-T-016 (đã dựng Gate 7b, 2026-08-31) · T-023 (dọn hậu quả đã commit, còn mở) · F-010 (cùng họ lỗi,
-phía scope còn sót) · ADR-006
+T-016 (đã dựng Gate 7b, 2026-08-31) · T-023 (đã dọn hậu quả đã commit, 2026-08-31) · F-010 (cùng
+họ lỗi, phía scope còn sót) · F-011 (`0704139 "dsfg"` — cùng chỗ hỏng, phía *subject* thay vì phía
+*danh sách file*) · ADR-006 · ADR-008
 
 **Status:**
-Fixed — cơ chế dựng 2026-08-31. Hậu quả đã commit vẫn là việc của T-023.
+Fixed — cơ chế dựng 2026-08-31 (T-016), hậu quả đã commit dọn xong 2026-08-31 (T-023).
 
 ---
 
@@ -503,11 +528,54 @@ chấm — `scripts/check-links.sh` (Gate 1b, ADR-005) chạy ở mọi lượt.
 ghi vào `scripts/check-links.ignore` mang tên T-019 vì câu hỏi *"file này còn thuộc dự án nào"*
 vẫn chưa ai trả lời; finding vẫn **Open**, cổng chỉ đảm bảo không có đường chết **mới**.
 
+**ĐÓNG 2026-08-31 (T-019) — chủ repo trả lời: đáp án là (c), tàn dư của một repo khác.**
+Bằng chứng đưa ra trước khi hỏi, chứ không phải sau khi đoán:
+
+- `git log --all -- 'design/*' 'quality/05-checklist.md' 'quality/prompt_guiline.md' 'finding.md'`
+  **rỗng** — không đường nào từng tồn tại trong repo này, một lần nào, trong toàn bộ lịch sử.
+- Bảy đường không rời rạc mà là **một bộ layout hoàn chỉnh** của repo cũ: `project_preparation/` +
+  `design/{data_base,backend,frontend,system_design}/01-thiet-ke.md` + `quality/05-checklist.md` +
+  `quality/prompt_guiline.md` + `finding.md` ở gốc (đánh số F-31, F-67 — repo này đánh F-001…).
+
+**Điểm chính, và là lý do finding này đáng giữ lại sau khi đóng: một "đường chết" không có một
+cách sửa.** Bảy đường chia làm hai nhóm khác hẳn nhau:
+
+- **Có nhà tương đương trong repo này ⇒ trỏ lại.** `quality/prompt_guiline.md` →
+  `docs/prompt-guideline.md` · `quality/05-checklist.md` → `CLAUDE.md` §8 + `quality/review-gate.md`
+  · `finding.md#f-67` và `#f-31` → `work/findings.md` F-001.
+- **Không có nhà, và sẽ không bao giờ có sẵn ⇒ bỏ link, ghi là việc phải làm.** Bốn đường
+  `design/**` (schema · API · route · bất biến) là **đầu ra của pha 1–4** ở §7 của chính file đó.
+  Trỏ chúng đi đâu cũng sai. Đây là chỗ dễ hỏng nhất: một agent sốt sắng sẽ trỏ chúng sang
+  `docs/architecture.md` cho gate xanh, và thế là biến *"việc chưa làm"* thành *"nguồn đã có"* —
+  đúng thứ hại mà finding này mở ra để chặn.
+
+**Đường thứ tám — finding này đếm thiếu, và Gate 1b không thấy được nó.** Dòng cuối §11 bảo người
+đọc tự kiểm bằng `` `grep -n '^## §' project_preparation/prompt-fullstack.md` `` — file tự gọi tên
+mình ở `project_preparation/` trong khi nó nằm ở `master_plan/`. `check-links.sh` bỏ qua chuỗi
+nháy ngược **có dấu cách** (dòng lọc `*" "*`), mà đây là cả một câu lệnh `grep`, nên cổng im lặng.
+
+**Chỗ mù đó vẫn còn, cố ý chưa dựng cơ chế.** Nới bộ lọc để nhận đường dẫn nằm trong câu lệnh sẽ
+kéo theo mọi `GET orders/:code`, `PATCH staff/tasks/:id`, `Asia/Ho_Chi_Minh` của §3.6 — nhiễu
+nhiều hơn tín hiệu. Mới hỏng **một** lần, dưới ngưỡng hai lần của CLAUDE.md §3.8. Cách bù hiện
+tại là tay: đổi bản xuất khẩu thì `grep` cả tên thư mục của repo cũ, đừng chỉ tin Gate 1b.
+Gặp lần thứ hai ⇒ mở finding riêng cho chỗ mù này, đừng nới bộ lọc trước khi có lần thứ hai.
+
+**Sửa gì 2026-08-31 (T-019):** tám chỗ ở `master_plan/prompt-fullstack.md` — khối đầu file (khuôn,
+nhà thật, F-67), §7 hàng `0 · BA`, §9.3 (F-31), §11 (hai chỗ). Bảy dòng ignore mang tên T-019 đã
+gỡ khỏi `scripts/check-links.ignore`; `./scripts/check-links.sh` xanh **sau khi** gỡ — đó là bằng
+chứng task xong, đúng như T-024 thiết kế (ignore hết hạn tự làm gate đỏ).
+
+**Một cái bẫy nhỏ, đáng nhớ:** dòng 3 ghi *"Khuôn: quality/prompt_guiline.md **(5 vế)**"*. Nhà
+tương đương `docs/prompt-guideline.md` §2 lại là **sáu khối**. Đổi đường dẫn mà giữ nguyên cái
+ngoặc là thay một pointer **chết** bằng một pointer **đúng đường nhưng sai nội dung** — loại thứ
+hai khó thấy hơn hẳn, vì mọi cổng đều xanh. Luật rút ra: sửa một pointer thì đọc cả câu chữ mô tả
+đích, không chỉ đổi đường dẫn.
+
 **Related task:**
-T-013 (phát hiện) · T-019 (sửa) · T-024 (dựng cổng chấm)
+T-013 (phát hiện) · T-019 (sửa, đóng 2026-08-31) · T-024 (dựng cổng chấm)
 
 **Status:**
-Open
+Fixed
 
 ---
 
@@ -560,3 +628,57 @@ T-016 (dựng cơ chế) · F-009 (cùng họ lỗi, phía khối commit) · ADR
 
 **Status:**
 Fixed
+
+---
+
+### F-011 — `0704139 "dsfg"`: cổng chặn được phiên quên viết nội dung commit, nhưng không chặn được người gõ `git commit -m` ngoài phiên
+
+**Problem:**
+Ngày **2026-08-31**, giữa lúc T-023 đang hỏi chủ repo ba câu quyết định, toàn bộ cây làm việc
+được commit thành `0704139` với subject **`dsfg`** và không có phần thân. Commit đó gộp **ba**
+task đã xong nhưng chưa commit — T-016, T-021, T-009 — 10 file, +1006/−97, kèm cả `docs/product.md`
+mà không subject nào nhắc tới. Nó đã được đẩy lên `origin/merge_first_time` trước khi ai kịp đọc.
+
+Đây là lần thứ **tư** của họ lỗi *commit không nói gì về chính nó*, sau ba lần ADR-004 đã dẫn làm
+bằng chứng (`202e8c4 ádg`, `2692178 sdgf`, `25f0f88 sdfg`). Khác ba lần trước ở một điểm đáng ghi:
+lần này **cơ chế đã tồn tại và đã chạy đúng** — `scripts/check-commit-block.sh` (Gate 7, ADR-004)
+cùng Gate 7b (ADR-006) đều xanh, và khối commit đúng luật §6.1 cho T-016 **đã được soạn sẵn và đưa
+ra trong lượt ngay trước đó**.
+
+**Impact:**
+ADR-004 nói thẳng cái mất là gì: *"lý do của một thay đổi không lấy lại được sau khi phiên kết
+thúc"*. Cụ thể ở đây:
+
+- **Ba task, một commit** — trái CLAUDE.md §6 *"One task per commit"*. Không revert được T-021 mà
+  không revert kèm T-016 và T-009.
+- **`brief.sh` in RECENT COMMITS cho mọi phiên mới** (ADR-002). Phiên sau đọc log thấy `dsfg` ở
+  đỉnh nhánh và không suy ra được gì; ba task xong hôm đó chỉ còn dấu vết trong `work/backlog.md`.
+- **Đã push** ⇒ không sửa được bằng `git commit --amend`. Cùng lý do với `0b3a337` ở F-009, nên
+  cùng cách xử: sửa tiến, không viết lại (**ADR-008**).
+- Nó cũng chứng minh **ranh giới thật của Gate 7**: cổng sống trong vòng đời một *lượt của phiên*.
+  Một người gõ `git commit -m dsfg` ở terminal không đi qua lượt nào cả. Không có hook nào của
+  Claude Code đứng ở đó được.
+
+**Decision / Fix:**
+ADR-004 mục *Rủi ro đã chấp nhận* đặt sẵn điều kiện kích hoạt: *"Nếu có lần thứ hai một thay đổi
+đi vào git mà không có nội dung commit, ghi finding và siết lại."* Finding này là vế **ghi**; vế
+**siết lại** là **T-025**, không làm gộp vào T-023 (§3.8: T-023 dọn hậu quả, không dựng cơ chế).
+
+Chỗ siết đúng là chỗ Gate 7 với tay không tới nhưng vẫn chạy được với người gõ tay: một
+**`commit-msg` hook của git** trong repo, từ chối subject không có dạng `T-XXX: …` hoặc ngắn hơn
+một ngưỡng. Ràng buộc kèm theo, để không lặp lại bài học ADR-003 (*đỏ vì lý do sai*):
+
+- Không lật CLAUDE.md §6: hook **không** tự soạn nội dung, chỉ từ chối cái rỗng nghĩa.
+- Phải có đường thoát rõ ràng (`--no-verify`) và nói ra trong chính thông báo lỗi.
+- `git` hook không đi theo bản clone; nên `T-025` phải kèm cách cài, nếu không nó chỉ bảo vệ đúng
+  một máy.
+
+Bản đồ `0704139` → ba task nó thật sự chứa nằm ngay trong finding này; đó là thứ thay cho việc
+sửa lịch sử.
+
+**Related task:**
+T-023 (phát hiện, ghi lại) · T-025 (siết lại, còn mở) · F-009 (cùng chỗ hỏng, phía *danh sách
+file* thay vì phía *subject*) · ADR-004 (đặt điều kiện kích hoạt) · ADR-008 (luật sửa tiến)
+
+**Status:**
+Open — cơ chế chưa siết. Bản đồ hash → nội dung thật đã ghi.

@@ -409,3 +409,68 @@ quyết định, trang trí không tham gia) mà không lấy **hình dạng** c
 **Applies to:**
 `scripts/brief.sh` · `scripts/brief.test.sh` · `docs/product.md` → *Unknowns* · `CLAUDE.md` §4 ·
 `work/findings.md` F-008 · `work/backlog.md` T-021 · ADR-002.
+
+---
+
+### ADR-008 — Lịch sử git đã chia sẻ thì sửa **tiến**, không viết lại; bản đồ hash sống trong `work/findings.md`
+
+**Decision:**
+Từ **2026-08-31**, một commit đã có mặt trên `origin` không được sửa lại — không `rebase`, không
+`--amend`, không `filter-branch`, không `push --force` — kể cả khi subject của nó nói sai về chính
+nó. Cách sửa là **sửa tiến**:
+
+1. Ghi **bản đồ `hash → nội dung thật`** vào `work/findings.md`, trong finding sở hữu sự cố đó,
+   dưới dạng bảng nêu đích danh hash, subject ghi trong log, nội dung thật, và *revert cái này thì
+   mất gì*.
+2. Commit tiếp theo dọn hậu quả **nêu đích danh hash sai** trong phần thân của nó.
+3. Không xoá, không sửa dòng log nào.
+
+Ngoại lệ duy nhất: chủ repo ra lệnh viết lại, rõ ràng, cho đúng commit đó. Phiên không tự quyết.
+
+Với commit **chưa** push, luật này không áp dụng — `--amend` là cách đúng và rẻ hơn nhiều.
+
+**Why:**
+Hai sự cố buộc phải trả lời cùng một câu hỏi trong cùng một ngày:
+
+- `0b3a337` (`work/findings.md` **F-009**) mang subject *"T-020: đơn mang đi được trả trước…"*
+  nhưng nội dung là 1096 dòng của ba file `docs/` chưa track; T-020 thật là `1b1d5f5`. Hai commit
+  trùng subject từng chữ.
+- `0704139` (`work/findings.md` **F-011**) mang subject `dsfg` và gộp ba task T-016, T-021, T-009.
+
+Cả hai đã nằm trên `origin/merge_first_time` khi được phát hiện. Viết lại chúng nghĩa là force-push
+một nhánh người khác có thể đã fetch: người đó sẽ có hai lịch sử không hoà được, và thứ mất đi
+(một `git pull` hỏng ở máy khác) đắt hơn hẳn thứ được (một dòng log đẹp hơn).
+
+Điểm thứ hai, và là điểm quyết định: **thứ hỏng ở đây không phải log, mà là tri thức**. Người đọc
+`0b3a337` cần biết nó thật ra chứa gì — đổi subject cũng không nói được điều đó, chỉ có bảng ở
+finding mới nói được. Sửa lịch sử là giải pháp đắt hơn mà giải quyết ít hơn.
+
+Chọn `work/findings.md` làm nhà của bản đồ vì ba lý do: nó đã là chủ của *"vấn đề lặp lại, bài học"*
+(CLAUDE.md §2); nó không bị Gate 1b chấm link nên chép được cả đường đã chết làm bằng chứng (§5);
+và `scripts/brief.sh` in Open findings cho mọi phiên mới (ADR-002), nên bản đồ tự đi tới người cần.
+
+**Rejected alternatives:**
+- *`git rebase -i` đổi subject rồi force-push.* Làm log sạch nhất, và là thứ bị loại thẳng: nhánh
+  đã ở trên `origin`. Còn một điểm nữa — sau khi rebase, mọi hash dẫn trong `work/findings.md`,
+  `work/backlog.md`, `docs/decisions.md` đều chết cùng lúc, nên "sửa lịch sử" kéo theo một lượt rà
+  toàn repo. Chi phí thật lớn hơn nhiều so với vẻ ngoài.
+- *`git revert 0b3a337` cho một dòng "Revert…" trong log.* Đúng ngữ nghĩa git và không viết lại
+  lịch sử, nhưng ở đây nó gỡ luôn hai file mà chủ repo đã quyết **giữ** (F-009). Revert là công cụ
+  gỡ **thay đổi**, còn thứ hỏng ở đây là **nhãn**.
+- *`git notes` gắn ghi chú vào từng commit sai.* Đúng chỗ nhất về mặt kỹ thuật, và bị loại vì
+  `git notes` không đi theo `git clone` hay `git push` mặc định. Một bản đồ mà bản clone sau không
+  thấy thì đúng bằng không có — cùng lý lẽ với `git` hook ở F-011.
+- *Không ghi gì, coi như log tự nói.* Đây chính là trạng thái đã tạo ra F-009: phiên sau đọc
+  RECENT COMMITS thấy hai dòng "T-020" và tin cả hai.
+
+**Rủi ro đã chấp nhận:**
+- **Log vẫn hiển thị subject sai, vĩnh viễn.** `brief.sh` in RECENT COMMITS nên phiên nào cũng
+  nhìn thấy nó trước khi nhìn thấy bản đồ. Bù lại: bản đồ nằm trong finding, và finding cũng được
+  brief in ra; F-009 và F-011 đều nêu đích danh hash ngay dòng tiêu đề.
+- **Bản đồ dựa vào việc người ta viết nó.** Không có cổng nào ép. Đây là giới hạn thật, và nó là
+  lý do `work/findings.md` **F-011** mở **T-025** cho một `commit-msg` hook chặn ngay từ đầu vào —
+  rẻ hơn nhiều so với việc dọn sau.
+
+**Applies to:**
+`work/findings.md` F-009, F-011 · `work/backlog.md` T-023, T-025 · `CLAUDE.md` §6, §6.1 ·
+ADR-002 (brief in RECENT COMMITS) · ADR-004 (nội dung commit do phiên viết).

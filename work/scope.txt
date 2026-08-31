@@ -11,3 +11,20 @@
 #
 # File này rỗng (chỉ có comment) = chưa khai báo scope → Gate 3 bỏ qua.
 # Xoá hết pattern sau khi task xong.
+
+# T-023 — dọn hậu quả đã commit của F-009.
+CLAUDE.md
+docs/decisions.md
+docs/updatee_sýstem.md
+work/proposals/
+work/findings.md
+work/backlog.md
+
+# T-019 — XONG 2026-08-31, nhưng CHƯA COMMIT nên khối này còn phải ở lại: hai
+# file dưới đây vẫn là thay đổi tracked trong cây, gỡ sớm là Gate 3 đỏ.
+# GỠ NGAY SAU KHI commit T-019 (CLAUDE.md §7.3).
+# Chạy song song với T-023. Hai task không giẫm lên file nào của nhau ngoài
+# work/backlog.md và work/findings.md — ở đó hunk của hai task nằm xen kẽ, nên
+# commit hai file ấy phải staged theo hunk (`git add -p`), không add trọn file.
+master_plan/prompt-fullstack.md
+scripts/check-links.ignore

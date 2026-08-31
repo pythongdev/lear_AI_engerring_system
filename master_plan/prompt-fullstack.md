@@ -1,6 +1,6 @@
 # Prompt bàn giao — lập kế hoạch full-stack "Bánh cuốn Bà Thanh Cao Bằng"
 
-> Cập nhật **2026-08-30** · Lane sở hữu: **NON-CODE** · Khuôn: [quality/prompt_guiline.md](../quality/prompt_guiline.md) (5 vế).
+> Cập nhật **2026-08-31** · Lane sở hữu: **NON-CODE** · Hình dạng file này: §1 → §10 · Khuôn prompt của repo: [docs/prompt-guideline.md](../docs/prompt-guideline.md) (sáu khối).
 >
 > **Đầu ra của prompt này là KẾ HOẠCH, không phải code.** Bảo một AI "làm luôn cả dự án" là cách chắc
 > chắn nhất để nhận về 40 file không ai rà. Prompt này bắt nó trả lời trước hai câu khó nhất —
@@ -8,9 +8,12 @@
 >
 > **File này là bản xuất khẩu, không phải nhà của sự thật nào.** Mọi con số có nhà thật trong repo,
 > lệch ⇒ **nhà thật thắng** ([CLAUDE.md §2](../CLAUDE.md)): mọi dữ kiện quán [shop-facts.md](shop-facts.md) ·
-> schema [design/data_base/01](../design/data_base/01-thiet-ke.md) · API [design/backend/01](../design/backend/01-thiet-ke.md) ·
-> route [design/frontend/01](../design/frontend/01-thiet-ke.md) · bất biến [design/system_design/01](../design/system_design/01-thiet-ke.md) ·
-> định nghĩa XONG [quality/05](../quality/05-checklist.md). Là bản chép nên nó **sẽ trôi** — rủi ro ghi ở [F-67](../finding.md#f-67).
+> định nghĩa XONG [CLAUDE.md §8](../CLAUDE.md) + [quality/review-gate.md](../quality/review-gate.md).
+> Là bản chép nên nó **sẽ trôi** — rủi ro ghi ở [work/findings.md](../work/findings.md) F-001.
+>
+> **Schema · API · route · bất biến CHƯA có nhà — đừng đi tìm.** Bốn thứ đó là **đầu ra của pha 1–4**
+> (§7), do chính prompt này sinh ra; tính tới 2026-08-31 chúng chưa tồn tại ở đâu cả. Gặp chỗ cần
+> chúng thì đó là việc phải làm, không phải nguồn để tra.
 
 **Cách dùng.** Agent **đã** ở trong repo này ⇒ đừng dùng file này, dùng [CLAUDE.md](../CLAUDE.md).
 Agent **ngoài** repo ⇒ copy **nguyên §1 → §10** làm prompt hệ thống, gửi **từng pha một** (§7).
@@ -328,7 +331,7 @@ BE luôn tính lại giá từ DB (vi phạm = khách đặt món 0đ) · backup
 
 | Pha | Câu hỏi pha này chốt xong | Đầu ra bắt buộc (ngoài master task + cổng chất lượng) |
 |---|---|---|
-| **0 · BA** | Quán làm gì, ai thao tác, tiền đi đường nào | **năm** kênh bán, đủ cả năm ([shop-facts.md §2](shop-facts.md)) · 2 sơ đồ luồng (tại bàn, **mang đi**) · danh sách quy tắc nghiệp vụ · **trả lời 3 câu chưa rõ ở §3.2** hoặc ghi thành giả định có mức rủi ro |
+| **0 · BA** | Quán làm gì, ai thao tác, tiền đi đường nào | **năm** kênh bán, đủ cả năm ([shop-facts.md §2](shop-facts.md)) · 2 sơ đồ luồng (tại bàn, **mang đi**) · danh sách quy tắc nghiệp vụ |
 | **1 · System design** | Cái gì bảo vệ cái gì | **Bảng bất biến 3 cột (§6.2)** · ràng buộc kiến trúc ẩn + dấu hiệu phải xem lại · chọn nguồn thời gian · 5 rủi ro lớn nhất kèm cách chặn |
 | **2 · DB** | Dữ liệu sống ở đâu | Sơ đồ quan hệ · thứ tự migration · dữ liệu mồi (menu thật [shop-facts §4.2–§4.3](shop-facts.md)) · quy tắc dữ liệu · **query đối chiếu cho từng bất biến** |
 | **3 · BE** | Ai được làm gì, giá tính ở đâu | Endpoint + quyền theo vai · hợp đồng API (nguồn duy nhất cho FE) · **hàm tính giá duy nhất** + bảng ca test · luồng đặt món từng bước · realtime + dự phòng |
@@ -382,7 +385,7 @@ SAI : "Không được mở 2 phiên trên cùng một bàn."            ← l�
 
 Đây là danh sách **tổ hợp đầu vào** phải phủ, **không** phải nhà của giá. Giá kỳ vọng của mười ca đầu tra
 thẳng ở [shop-facts.md](shop-facts.md) §4.3 (giá một suất) và §4.4 (phụ thu) — mỗi số từng đứng ở đây chỉ là bản
-chép của một ô trong bảng đó, nay gỡ đi để §4.2 đổi giá thì không còn bản chép nào đứng im ([F-31](../finding.md#f-31)).
+chép của một ô trong bảng đó, nay gỡ đi để §4.2 đổi giá thì không còn bản chép nào đứng im ([work/findings.md](../work/findings.md) F-001).
 
 ```
  1. Bánh cuốn   · Chay          · —
@@ -444,7 +447,8 @@ Sau đó mới xuất ra theo khuôn §8.
   Pha 1 (bất biến) và pha 3 (tính giá) nên đứng riêng hẳn một phiên — hai chỗ hỏng ra tiền.
 - **Trước khi sang pha sau**, bắt nó tự chấm: dòng task nào thiếu cột *Đầu ra kiểm chứng được*? bất biến nào
   chưa có cơ chế bảo vệ? Hai câu này bắt được phần lớn kế hoạch nghe-hay-mà-rỗng.
-- **Kiểm tra nhanh** ([prompt_guiline §6](../quality/prompt_guiline.md)): 5 vế đủ chưa —
+- **Kiểm tra nhanh — năm vế của chính file này** đủ chưa:
   nhiệm vụ §2 · ngữ cảnh §3 · ràng buộc §4 · biên nhận §6 · hình dạng đầu ra §8.
+  (Khác với khuôn prompt của repo — sáu khối, ở [docs/prompt-guideline.md](../docs/prompt-guideline.md) §2.)
 - **Đọc lại file này bằng lệnh**, đừng tin trí nhớ:
-  `grep -n '^## §' project_preparation/prompt-fullstack.md`
+  `grep -n '^## §' master_plan/prompt-fullstack.md`

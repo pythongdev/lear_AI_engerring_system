@@ -23,8 +23,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 Việc bảo trì ở mục này không việc nào chặn ai — chen vào lúc nào cũng được. Chuỗi BA nay
 không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31, T-016 xong 2026-08-31).
 
-- [ ] T-019 `prompt-fullstack.md` trỏ tới bảy đường không tồn tại — F-007
-- [ ] T-023 Hai commit trùng tên "T-020"; ba file `docs/` bị commit nhầm, một file mâu thuẫn §2 — F-009
 
 - **T-011 đã xong 2026-08-30** — dòng BA-04 ở §11 kế hoạch gốc nay ghi đủ ba kênh không gắn bàn,
   và §3 Epic B, §4.2, §5, §6, §12 cũng vậy. Khung và nhà thật (`master_plan/shop-facts.md` §5.2)
@@ -86,13 +84,29 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="in-progress"></a>
 ## In Progress
 
-(không có task nào đang chạy)
+- [ ] T-023 Hai commit trùng tên "T-020"; ba file `docs/` bị commit nhầm, một file mâu thuẫn §2 — F-009
+
+Ba quyết định của chủ repo đã có (2026-08-31) — bảng trong [Chi tiết](#chi-tiet-can-lam) → T-023.
+
+~~**T-019 đã được trả về *Ready* ngày 2026-08-31.** Nó từng ở đây nhưng **chưa sửa một byte nào**
+(cây git sạch lúc T-023 bắt đầu), và `work/scope.txt` của nó đã bị T-023 ghi đè.~~
+**Câu trên hết đúng từ 2026-08-31: T-019 đã xong** (xem [Done](#done)). Nó chạy **song song** với
+T-023 trong cùng ngày, nên `work/scope.txt` một lúc mang pattern của **cả hai** task — mỗi khối
+ghi rõ chủ. Hai task không giẫm chân nhau: T-019 sở hữu `master_plan/prompt-fullstack.md` +
+`scripts/check-links.ignore`, T-023 sở hữu `docs/updatee_sýstem.md` + `work/proposals/`; hai file
+dùng chung (`work/backlog.md`, `work/findings.md`) mỗi task chỉ sửa mục của mình.
+
+**Bài học vào đúng chỗ này, không phải một finding mới:** hai phiên chạy cùng lúc thì
+`work/scope.txt` là **một file, hai chủ**. Phiên vào sau phải **thêm** khối của mình chứ đừng ghi
+đè — ghi đè làm Gate 3 chấm việc của người kia bằng scope của mình, đúng thứ F-010 mô tả, chỉ
+khác là nguyên nhân đến từ song song chứ không từ quên dọn.
 
 <a id="done"></a>
 ## Done
 
 Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xong).
 
+- [x] T-019 Bản xuất khẩu hết trỏ vào layout repo cũ; bảy dòng ignore đã gỡ (F-007) (2026-08-31)
 - [x] T-021 `brief.sh` đọc Unknowns theo cấu trúc; mục Unknowns có hình dạng máy đọc được (ADR-007) (2026-08-31)
 - [x] T-009 Ready hết dòng mẫu của template — brief chỉ phiên mới vào một task thật (2026-08-31)
 - [x] T-016 Scope quên dọn thì brief kêu; Gate 7b đọc nội dung khối commit (ADR-006) (2026-08-31)
@@ -146,38 +160,6 @@ ADR, câu nào chưa thì thành GIẢ ĐỊNH có mức rủi ro và người c
 **S-1, S-2, S-3 không phải giả định.** Chủ quán xác nhận cả ba ngày **2026-08-30**
 (`shop-facts.md` §7.1); §7.2 nay không còn mục nào. Task nào ghi chúng là "chưa xác nhận" là sai.
 
-### T-023 — Hai commit trùng tên "T-020", và ba file `docs/` bị commit nhầm
-
-**Prompt:** chưa có · **Finding:** `work/findings.md` **F-009** (Open) · L2
-
-**Goal:**
-Lịch sử git kể đúng thứ đã xảy ra, và `docs/` không còn file nào mâu thuẫn CLAUDE.md §2.
-
-**Nói một câu, việc phải làm là gì:**
-Quyết ba việc rồi thi hành: (a) hai commit trùng subject `T-020` xử thế nào, (b) ba file `docs/`
-vừa bị track thì giữ, chuyển hay xoá, (c) riêng `docs/updatee_sýstem.md` mô tả cấu trúc sở hữu
-khác §2 thì phần nào thành đề xuất có chủ, phần nào bỏ. Việc **không** phải làm: tự sửa lịch
-sử git — đó là quyền chủ repo.
-
-**Vì sao có task này:**
-`0b3a337` (2026-08-30) mang subject *"T-020: đơn mang đi được trả trước…"* nhưng nội dung là
-1096 dòng của ba file `docs/` chưa track, không một dòng nào của T-020; T-020 thật là `1b1d5f5`.
-Cơ chế và ba lần trước ghi ở **F-009**.
-
-**Không làm thì mất gì:**
-- `brief.sh` in RECENT COMMITS cho mọi phiên mới (ADR-002), nên phiên sau đọc thấy **hai** commit
-  cùng tên T-020 và tin cả hai là việc của T-020.
-- `git revert` mất an toàn: revert nhầm cái thì hoặc không gỡ được gì, hoặc xoá âm thầm 1096 dòng.
-- `docs/updatee_sýstem.md` nay là **nội dung repo đã track** mô tả một cấu trúc sở hữu khác §2.
-  §2 nói hai chỗ mâu thuẫn thì chỗ kia là bug phải sửa ngay — bug đó đang nằm trong repo.
-
-**Bẫy:**
-- **Không `git push --force` hay rewrite lịch sử đã chia sẻ** nếu chưa có lệnh rõ ràng.
-- **Đọc `updatee_sýstem.md` trước khi xoá.** 1010 dòng, có thể có đề xuất đáng giữ; xoá thẳng là
-  vứt việc của người khác.
-
-**Acceptance · Verify:** chưa viết — task này chưa có file prompt.
-
 ### T-019 — `prompt-fullstack.md` trỏ tới bảy đường không tồn tại
 
 **Cập nhật 2026-08-30 (T-024):** bảy đường này nay nằm trong `scripts/check-links.ignore` mang tên
@@ -202,7 +184,83 @@ Kèm theo, cùng loại nhưng nhẹ hơn: §7 hàng `0 · BA` bảo *"trả l�
 §3.2 nay chỉ còn dòng *"Đã gộp vào §3.1"* và không giữ câu hỏi nào. T-013 cố ý không sửa câu đó vì
 sửa là phải đoán ba câu ấy nay nằm ở đâu.
 
-**Acceptance · Verify:** viết khi có lời giải cho câu hỏi trên.
+**Câu hỏi đã có lời giải — chủ repo chốt 2026-08-31.** Đáp án là **(c) tàn dư của một repo
+khác**, và cách sửa là **trỏ về nhà thật của repo này**. Bằng chứng đưa ra trước khi hỏi:
+
+- `git log --all -- 'design/*' 'quality/05-checklist.md' 'quality/prompt_guiline.md' 'finding.md'`
+  **rỗng** — không đường nào từng tồn tại trong repo này, một lần nào, trong toàn bộ lịch sử.
+- Bảy đường không rời rạc mà là **một bộ layout hoàn chỉnh** của repo cũ: `project_preparation/` +
+  `design/{data_base,backend,frontend,system_design}/01-thiet-ke.md` + `quality/05-checklist.md` +
+  `quality/prompt_guiline.md` + `finding.md` (ở gốc, đánh số F-31, F-67 — repo này đánh F-001…).
+
+**Đường thứ tám, F-007 không kể và Gate 1b không thấy:** dòng cuối §11 bảo người đọc tự kiểm bằng
+`grep -n '^## §' project_preparation/prompt-fullstack.md` — file tự gọi tên mình ở
+`project_preparation/`, trong khi nó nằm ở `master_plan/`. Gate 1b mù chỗ này vì `check-links.sh`
+chỉ nhận chuỗi nháy ngược **không có dấu cách**, mà đây là cả một câu lệnh `grep`. Ghi vào F-007.
+
+**Hai nhóm, hai cách sửa khác nhau** — đây là điểm chính của task:
+
+| Đường cũ | Repo này có nhà tương đương? | Cách sửa |
+|---|---|---|
+| `quality/prompt_guiline.md` | có — `docs/prompt-guideline.md` | trỏ lại |
+| `quality/05-checklist.md` | có — `CLAUDE.md` §8 + `quality/review-gate.md` | trỏ lại |
+| `finding.md#f-67`, `#f-31` | có — `work/findings.md` F-001 | trỏ lại |
+| `project_preparation/…` | có — chính file này ở `master_plan/` | trỏ lại |
+| `design/**` × 4 (schema · API · route · bất biến) | **không** | **bỏ link**, ghi là **đầu ra của pha 1–4 (§7)** |
+
+Bốn đường `design/**` là chỗ dễ sai nhất: chúng là **đầu ra** của chính prompt này, không phải đầu
+vào để tra. Trỏ chúng đi đâu cũng sai — nhà duy nhất đúng là "chưa tồn tại, pha 1–4 sinh ra".
+
+**Một cái ngoặc phải sửa theo, không chỉ đổi đường dẫn:** dòng 3 ghi *"Khuôn: quality/prompt_guiline.md
+(5 vế)"*. `docs/prompt-guideline.md` §2 là **sáu khối** (Context · Goal · Scope · Constraints ·
+Acceptance · Verify). Đổi đường dẫn mà giữ "(5 vế)" là thay một pointer chết bằng một pointer đúng
+đường nhưng **sai nội dung** — loại lỗi khó thấy hơn hẳn loại cũ. Năm vế ở §11 là bộ tự kiểm của
+**chính file này** trên §2/§3/§4/§6/§8, khác với sáu khối của repo; giữ cả hai, nói rõ cái nào của ai.
+
+**§7 hàng `0 · BA`:** chủ repo chốt **gỡ hẳn** vế *"trả lời 3 câu chưa rõ ở §3.2 hoặc ghi thành giả
+định có mức rủi ro"*. Ba câu đó đã gộp vào §3.1 và không còn tồn tại như câu hỏi; ba đầu ra còn lại
+của pha 0 giữ nguyên.
+
+**Scope:** `master_plan/prompt-fullstack.md` · `scripts/check-links.ignore` · `work/findings.md` ·
+`work/backlog.md`.
+
+**Out of scope:** `master_plan/shop-facts.md` (nhà thật, đang đúng) · `docs/**` · `prompt/**` ·
+`quality/**` · `scripts/*.sh` · cấu trúc §1 → §10 · nội dung nghiệp vụ của bất kỳ mục nào.
+
+**Acceptance:**
+1. `./scripts/check-links.sh` xanh **sau khi bảy dòng ignore mang tên T-019 đã bị xoá khỏi**
+   `scripts/check-links.ignore` — đây là cách task tự chứng minh mình xong (T-024 dựng sẵn: ignore
+   hết hạn làm gate đỏ).
+2. `grep -nE 'design/|quality/05-checklist|prompt_guiline|finding\.md|project_preparation'
+   master_plan/prompt-fullstack.md` **rỗng** — không còn dấu vết layout repo cũ, kể cả đường thứ tám
+   nằm trong câu lệnh `grep` mà Gate 1b không thấy.
+3. Mọi link markdown còn lại trong file đều mở được, kiểm bằng vòng lặp `ls` chạy tay (Gate 1b bỏ
+   qua chuỗi có dấu cách nên không thay thế được bước này).
+4. Khối đầu file vẫn nói đúng ba việc: file là **bản xuất khẩu**, lệch ⇒ **nhà thật thắng**, và
+   `shop-facts.md` là nhà của dữ kiện quán. Không thêm dữ kiện quán nào vào khối đó (F-001).
+5. Bốn thứ `design/**` từng trỏ tới (schema · API · route · bất biến) vẫn được nêu tên, nhưng nêu
+   như **đầu ra của pha 1–4 (§7)**, kèm câu nói thẳng chúng chưa tồn tại — người đọc ngoài repo
+   không được đi tìm chúng.
+6. Dòng 3 không còn ghi "(5 vế)" cho `docs/prompt-guideline.md`; §11 vẫn giữ bộ tự kiểm năm vế của
+   file này và nói rõ đó là năm vế của **file này**.
+7. §7 hàng `0 · BA` không còn nhắc §3.2; ba đầu ra còn lại của pha 0 (năm kênh · 2 sơ đồ luồng ·
+   danh sách quy tắc nghiệp vụ) giữ nguyên.
+8. Không đổi cấu trúc §1 → §10, không đổi stack/sơ đồ 16 bảng/bảng sáu pha, không đụng con số
+   thành phần ở §9.4 (T-022 sở hữu chúng).
+9. `grep -c '⚠️'` không tăng — task này không thêm khối cảnh báo mới (T-022 đã chốt **một** khối ở §3.1).
+10. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -nE 'design/|quality/05-checklist|prompt_guiline|finding\.md|project_preparation' \
+  master_plan/prompt-fullstack.md            # rỗng
+grep -n 'T-019' scripts/check-links.ignore   # rỗng
+./scripts/check-links.sh                     # xanh sau khi gỡ ignore
+grep -c '⚠️' master_plan/prompt-fullstack.md  # không tăng (2)
+grep -n '^## §' master_plan/prompt-fullstack.md   # vẫn đủ §1 → §11
+git status --porcelain
+```
 
 ### BA-03 — Lát cắt một suất tại bàn
 
@@ -612,6 +670,87 @@ git status --porcelain
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### T-023 — Hai commit trùng tên "T-020", và ba file `docs/` bị commit nhầm
+
+**Xong 2026-08-31.** `docs/decisions.md` **ADR-008** · `work/findings.md` **F-009** (Fixed) ·
+**F-011** (mới, Open) · L2 · không có file prompt — ba quyết định lấy trực tiếp từ chủ repo
+
+**Goal:**
+Lịch sử git kể đúng thứ đã xảy ra, và `docs/` không còn file nào mâu thuẫn CLAUDE.md §2.
+
+**Nói một câu, việc phải làm là gì:**
+Quyết ba việc rồi thi hành: (a) hai commit trùng subject `T-020` xử thế nào, (b) ba file `docs/`
+vừa bị track thì giữ, chuyển hay xoá, (c) riêng `docs/updatee_sýstem.md` mô tả cấu trúc sở hữu
+khác §2 thì phần nào thành đề xuất có chủ, phần nào bỏ. Việc **không** phải làm: tự sửa lịch
+sử git — đó là quyền chủ repo.
+
+**Vì sao có task này:**
+`0b3a337` (2026-08-30) mang subject *"T-020: đơn mang đi được trả trước…"* nhưng nội dung là
+1096 dòng của ba file `docs/` chưa track, không một dòng nào của T-020; T-020 thật là `1b1d5f5`.
+Cơ chế và ba lần trước ghi ở **F-009**.
+
+**Không làm thì mất gì:**
+- `brief.sh` in RECENT COMMITS cho mọi phiên mới (ADR-002), nên phiên sau đọc thấy **hai** commit
+  cùng tên T-020 và tin cả hai là việc của T-020.
+- `git revert` mất an toàn: revert nhầm cái thì hoặc không gỡ được gì, hoặc xoá âm thầm 1096 dòng.
+- `docs/updatee_sýstem.md` nay là **nội dung repo đã track** mô tả một cấu trúc sở hữu khác §2.
+  §2 nói hai chỗ mâu thuẫn thì chỗ kia là bug phải sửa ngay — bug đó đang nằm trong repo.
+
+**Bẫy:**
+- **Không `git push --force` hay rewrite lịch sử đã chia sẻ** nếu chưa có lệnh rõ ràng.
+- **Đọc `updatee_sýstem.md` trước khi xoá.** 1010 dòng, có thể có đề xuất đáng giữ; xoá thẳng là
+  vứt việc của người khác.
+
+**Ba quyết định của chủ repo (2026-08-31), làm căn cứ cho Acceptance dưới đây:**
+
+| | Câu hỏi | Chủ repo chốt |
+|---|---|---|
+| (a) | Hai commit trùng subject `T-020` | **Sửa tiến, không đụng lịch sử.** `0b3a337` đã nằm trên `origin/merge_first_time` — rewrite là lịch sử đã chia sẻ. Ghi bản đồ hash → nội dung thật và chốt luật thành ADR |
+| (b) | Hai file `đánh_giá_file_*.md` | **Giữ nguyên trong `docs/`.** Không xoá, không chuyển |
+| (c) | `docs/updatee_sýstem.md` | **Chuyển nguyên văn ra ngoài `docs/`**, kèm banner nói rõ là đề xuất chưa áp dụng. Không chiết nội dung |
+
+**Acceptance (viết 2026-08-31, TRƯỚC khi sửa — CLAUDE.md §3, L2):**
+
+| # | Acceptance |
+|---|---|
+| A1 | `docs/updatee_sýstem.md` không còn; file ở `work/proposals/updatee_sýstem.md`, thân bài **nguyên văn** — diff của lần chuyển chỉ được thêm banner ở đầu, không sửa một dòng nội dung nào |
+| A2 | Banner nói đủ bốn thứ: ngày, đây là **đề xuất chưa áp dụng**, mục nào trái CLAUDE.md §2, và §2 vẫn thắng |
+| A3 | `grep -rn "docs/updatee"` trong repo không còn kết quả nào trỏ đường cũ như một đường sống (§7.2 *Follow the pointers*) |
+| A4 | `CLAUDE.md` §2 có dòng owner cho `work/proposals/`, và cây thư mục §2 có nó — owner mà §2 không liệt kê là owner không ai tìm ra (§7.2) |
+| A5 | Hai file `đánh_giá_file_*.md` **không đổi một byte nào** — quyết định (b) là giữ nguyên |
+| A6 | F-009 mang bảng hash → nội dung thật cho `1b1d5f5` và `0b3a337`, và phần *hậu quả đã commit* đóng lại |
+| A7 | ADR-008 chốt luật "lịch sử đã chia sẻ thì sửa tiến, không viết lại", nêu đích danh hai hash |
+| A8 | `0704139 "dsfg"` được ghi thành finding riêng (F-011) — ADR-004 *Rủi ro đã chấp nhận* nói đúng câu "nếu có lần thứ hai … ghi finding và siết lại"; việc siết lại thành task mới trong Ready |
+| A9 | `./scripts/gate.sh` xanh |
+
+**Verify:** `./scripts/gate.sh`; `git show --stat` cho lần chuyển file (A1); `grep -rn "docs/updatee" . --exclude-dir=.git` (A3); `git diff --stat` trên hai file `đánh_giá_file_*.md` (A5).
+
+**Đã làm gì (2026-08-31):**
+
+| # | Acceptance | Bằng chứng |
+|---|---|---|
+| A1 | File ra khỏi `docs/` | `git mv` → `work/proposals/updatee_sýstem.md`; `git diff -M --stat` = **+26/−0**, không một dòng thân bài nào đổi |
+| A2 | Banner đủ bốn thứ | Ngày · "ĐỀ XUẤT — CHƯA ÁP DỤNG" · hai chỗ trái §2 (`docs/facts/…`, `work/tasks/…`) · "§2 thắng" |
+| A3 | Pointer đi theo | `work/findings.md` F-009 §Impact nay ghi kèm đường mới; các chỗ còn lại là **trích dẫn lịch sử** trong `work/`, nơi đường chết là bằng chứng chứ không phải bug (CLAUDE.md §5) |
+| A4 | §2 có owner mới | `CLAUDE.md` §2 thêm dòng `work/proposals/`, thêm một đoạn giải thích, và cây thư mục §2 có nó |
+| A5 | Hai file `đánh_giá_*` nguyên vẹn | Không xuất hiện trong `git status`; quyết định (b) là giữ nguyên |
+| A6 | F-009 đóng phần hậu quả | Bảng `hash → nội dung thật` cho `1b1d5f5` / `0b3a337`, ba quyết định của chủ repo, Status → Fixed trọn vẹn |
+| A7 | ADR-008 | "Lịch sử đã chia sẻ thì sửa tiến, không viết lại", nêu đích danh cả hai hash, bốn phương án bị loại |
+| A8 | `0704139 "dsfg"` | **F-011** (Open) + **T-025** trong Ready |
+| A9 | Gate xanh | `./scripts/gate.sh` |
+
+**Hai thứ phát sinh trong lúc làm, không nằm trong task gốc:**
+
+1. **`0704139 "dsfg"`** — giữa lúc T-023 đang hỏi chủ repo ba câu, toàn bộ cây làm việc bị commit
+   thành một commit subject `dsfg` gộp T-016 + T-021 + T-009, và đã push. Đây đúng điều kiện kích
+   hoạt mà ADR-004 đặt sẵn, nên nó thành **F-011** + **T-025**, không giải quyết trong T-023 (§3.8).
+2. **T-019 đang ở *In Progress* nhưng chưa sửa gì**, và `work/scope.txt` của nó bị T-023 ghi đè.
+   T-019 đã trả về *Ready*; ai nhận lại phải khai lại scope từ đầu.
+
+**Việc cố ý KHÔNG làm:** không `rebase`, không `--amend`, không `push --force` — lý do đầy đủ ở
+**ADR-008**. Và không chiết nội dung `updatee_sýstem.md` thành ADR hay task: chủ repo chọn chuyển
+nguyên văn.
 
 ### T-021 — `brief.sh` đọc Unknowns theo cấu trúc, không theo hình dạng dòng
 

@@ -38,6 +38,7 @@ is a bug to fix now.
 | How to check LLM output | `quality/review-gate.md` |
 | Risk levels, repo philosophy | `README.md` |
 | Shop facts: scope, channels, prices, flows, business rules | `master_plan/shop-facts.md` |
+| Proposals about this system that were **not** adopted | `work/proposals/` |
 
 Domain material for the current project lives in `master_plan/` and the BA prompt
 set in `prompt/BA/`. **`master_plan/shop-facts.md` is the single owner of every
@@ -46,10 +47,20 @@ operating flows, business rules. It is deliberately self-contained and link-free
 it points nowhere, everything points at it. `master_plan/00-scope.md` is a
 redirect stub kept only so older links resolve; it owns nothing.
 
+`work/proposals/` holds documents that say what this repo *should* look like —
+outside advice, blueprints, redesigns — none of it adopted. Nothing in there is a
+fact and nothing points at it: if a proposal is ever taken up, it becomes a task
+in `work/backlog.md`, and the fact lands in its owner above. Each file opens with
+a banner giving its date, its status, and the rows of this table it contradicts —
+where they disagree, **this table wins**. It lives under `work/` on purpose: the
+paths such a document names describe a structure that does not exist, and `work/`
+is where Gate 1b does not check links (§5).
+
 ```text
 CLAUDE.md          this file — read first
 docs/              product, architecture, decisions, prompt guideline
-work/              backlog.md, scope.txt, findings.md
+work/              backlog.md, scope.txt, findings.md;
+                   proposals/ — not adopted, owns nothing
 quality/           invariants.md, review-gate.md
 scripts/           gate.sh → check-scope.sh + check-links.sh + verify.sh
                    + check-commit-block.sh;
