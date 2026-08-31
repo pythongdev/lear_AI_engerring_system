@@ -10,8 +10,8 @@ hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 | [Ready](#ready) | việc cần làm — checklist + thứ tự lấy |
 | [In Progress](#in-progress) | task đang chạy |
 | [Done](#done) | việc đã xong |
-| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | mô tả dài T-015…BA-11 + bảng mười câu hỏi §10 |
-| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-014…T-002 |
+| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | mô tả dài T-023…BA-11 + bảng mười câu hỏi §10 |
+| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-021…T-002 |
 | [Vòng chạy một task L1](#vong-chay) | mười bước thủ tục từ nhận task tới khối commit |
 | [Task Detail Template](#template) | khuôn viết một task mới |
 
@@ -20,15 +20,11 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-Năm việc bảo trì, không việc nào chặn ai — chen vào lúc nào cũng được. Chuỗi BA nay
-không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31).
+Việc bảo trì ở mục này không việc nào chặn ai — chen vào lúc nào cũng được. Chuỗi BA nay
+không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31, T-016 xong 2026-08-31).
 
-- [ ] T-016 `work/scope.txt` được commit kèm pattern, hai lần
-- [ ] T-009 Gỡ dòng mẫu T-001 khỏi Ready
 - [ ] T-019 `prompt-fullstack.md` trỏ tới bảy đường không tồn tại — F-007
-- [ ] T-021 `brief.sh` đọc Unknowns bằng hình dạng dòng, in sai cả hai chiều — F-008
 - [ ] T-023 Hai commit trùng tên "T-020"; ba file `docs/` bị commit nhầm, một file mâu thuẫn §2 — F-009
-- [ ] T-001 Replace this with the first meaningful task.
 
 - **T-011 đã xong 2026-08-30** — dòng BA-04 ở §11 kế hoạch gốc nay ghi đủ ba kênh không gắn bàn,
   và §3 Epic B, §4.2, §5, §6, §12 cũng vậy. Khung và nhà thật (`master_plan/shop-facts.md` §5.2)
@@ -46,11 +42,11 @@ không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31).
 - **T-016 nay gánh thêm phần kiểm của F-009.** Nó vốn chỉ lo `work/scope.txt` quên dọn; F-009
   cho thấy cùng một script family phải kiểm thêm **tập file đã `git add`** có nằm trong scope
   không. Gấp vào T-016, không mở task riêng (§3.8).
-- **T-021 sinh ra từ T-020 (2026-08-30), không chặn ai nhưng chạm vào thứ mọi phiên đều dùng.**
-  `brief.sh` đọc mục *Unknowns* bằng `grep` theo hình dạng dòng, nên nó vừa giấu U-005 vừa in
-  U-004 đã đóng như đang mở. T-020 đã sửa **phía dữ liệu** để brief đọc đúng ngay hôm nay; chữa
-  tận gốc là cho brief đọc **cấu trúc** như nó đang làm với findings — `work/findings.md`
-  **F-008** (Open). Chạm `scripts/**` nên là task riêng, không nhét vào T-020.
+- **T-021 đã xong 2026-08-31 — F-008 đóng, và mục *Unknowns* nay có hình dạng bắt buộc.**
+  `brief.sh` hết đọc mục ấy bằng `grep` theo hình dạng dòng (nó vừa giấu U-005 vừa in U-004 đã
+  đóng như đang mở); nay nó đọc **cấu trúc**. Hệ quả cho mọi task sau: một câu hỏi nghiệp vụ chỉ
+  được brief nhìn thấy khi nó là **một gạch đầu dòng** trong vùng đang mở của
+  `docs/product.md` → *Unknowns* — luật đầy đủ ở CLAUDE.md §4 và `docs/decisions.md` **ADR-007**.
 - **T-019 sinh ra từ T-013 (2026-08-30), không chặn ai.** T-013 sửa chữ trong
   `master_plan/prompt-fullstack.md`; nó **không** sửa việc file đó trỏ tới bảy đường không tồn
   tại trong repo. Đó không phải lỗi chữ mà là câu hỏi *file này còn thuộc dự án nào* — ghi ở
@@ -66,7 +62,6 @@ không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31).
 - **T-015 chặn BA-10** và nên xong trước BA-04, BA-06: §10 còn để mở hai câu đã chốt, task sau đọc
   vào sẽ biến luật đã chốt thành giả định (CLAUDE.md §3.5 cấm).
 - T-016 là việc của hệ thống làm việc, không chạm dữ kiện quán — chạy song song với bất kỳ task nào.
-- T-009 gỡ dòng mẫu T-001 khỏi Ready; chạy được ngay vì Ready đã có task thật.
 
 Chuỗi BA chạy từ trên xuống. Thứ tự là cột "Cần xong trước" của §11 kế hoạch gốc; BA-01 và BA-02
 đã xong 2026-08-30 nên BA-03, BA-04, BA-05 mở được ngay và chạy song song được.
@@ -91,11 +86,16 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="in-progress"></a>
 ## In Progress
 
+(không có task nào đang chạy)
+
 <a id="done"></a>
 ## Done
 
 Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xong).
 
+- [x] T-021 `brief.sh` đọc Unknowns theo cấu trúc; mục Unknowns có hình dạng máy đọc được (ADR-007) (2026-08-31)
+- [x] T-009 Ready hết dòng mẫu của template — brief chỉ phiên mới vào một task thật (2026-08-31)
+- [x] T-016 Scope quên dọn thì brief kêu; Gate 7b đọc nội dung khối commit (ADR-006) (2026-08-31)
 - [x] T-015 §10 kế hoạch gốc: bốn câu mang dấu đã chốt, câu 6 hỏi đúng cả hai kênh (2026-08-31)
 - [x] T-014 §2.1 kế hoạch gốc nay có đường điện thoại — khách gọi, nhân viên nhập hộ (2026-08-31)
 - [x] T-024 Gate 1b — tài liệu cũng bị máy chấm: mọi pointer phải mở được (ADR-005) (2026-08-30)
@@ -146,35 +146,6 @@ ADR, câu nào chưa thì thành GIẢ ĐỊNH có mức rủi ro và người c
 **S-1, S-2, S-3 không phải giả định.** Chủ quán xác nhận cả ba ngày **2026-08-30**
 (`shop-facts.md` §7.1); §7.2 nay không còn mục nào. Task nào ghi chúng là "chưa xác nhận" là sai.
 
-### T-016 — `work/scope.txt` được commit kèm pattern, hai lần
-
-**Cập nhật 2026-08-30 (T-024):** một nguồn của lỗi này đã bị gỡ — `check-scope.sh` không còn tính
-`work/scope.txt` là file ngoài scope, nên phiên sau không còn bị Gate 3 ép liệt kê nó vào chính
-nó. Phần còn lại của T-016 (kêu khi scope quên dọn, và kiểm tập đã `git add`) vẫn nguyên.
-
-**Prompt:** `prompt/maintenance/09-scope-not-cleared-L2.md` (L2 — đổi hành vi thứ mọi phiên đều chạy)
-
-**Goal:**
-Task kết thúc mà `work/scope.txt` còn pattern thì phải nhìn thấy ngay, không phụ thuộc ai nhớ dọn.
-Đã hỏng hai lần: `5c41f65` (6 pattern) và `25f0f88` (8 pattern). Hậu quả ở hai chỗ — Gate 3 đỏ vì
-lý do sai (hoặc xanh nhầm), và `brief.sh` in *"a task is open"* cho mọi phiên mới.
-
-CLAUDE.md §3.8 chỉ cho dựng cơ chế **sau hai lần**; ngưỡng đã đạt, nên task này được phép — nhưng
-là **cảnh báo, không chặn** (ADR-003), và chỉ kêu khi scope đã khai báo mà backlog không có task
-nào ở *In Progress*. Cần một ADR và một finding — nhưng **hai số prompt viết ra đã bị lấy mất**:
-ADR-004 là của T-018 (2026-08-30), F-007 là của T-013 (2026-08-30). Dùng số trống kế tiếp tại
-thời điểm làm, đừng dùng số ghi trong prompt.
-
-**Phạm vi mở rộng 2026-08-30 (F-009):** ngoài việc kêu khi `work/scope.txt` còn pattern, task
-này gánh thêm phần kiểm **tập file đã `git add` có nằm trong scope không**. Lý do gộp: cùng một
-script family, cùng một họ lỗi *commit nuốt thứ task không được phép chạm*, và đã trả giá bốn
-lần (`5c41f65`, `25f0f88`, `128955a`, `0b3a337`). Hai ràng buộc bắt buộc, chi tiết ở F-009:
-**không lật ADR-003** (Gate 3 vẫn không chặn vì file chưa track), và phần kiểm mới **cảnh báo,
-không chặn**, đặt ở Gate 7 — nơi đã đọc khối commit.
-
-**Acceptance · Verify:** trong file prompt — **phần mở rộng trên chưa có Acceptance**, phải viết
-trước khi sửa code (CLAUDE.md §3, L2).
-
 ### T-023 — Hai commit trùng tên "T-020", và ba file `docs/` bị commit nhầm
 
 **Prompt:** chưa có · **Finding:** `work/findings.md` **F-009** (Open) · L2
@@ -204,49 +175,6 @@ Cơ chế và ba lần trước ghi ở **F-009**.
 - **Không `git push --force` hay rewrite lịch sử đã chia sẻ** nếu chưa có lệnh rõ ràng.
 - **Đọc `updatee_sýstem.md` trước khi xoá.** 1010 dòng, có thể có đề xuất đáng giữ; xoá thẳng là
   vứt việc của người khác.
-
-**Acceptance · Verify:** chưa viết — task này chưa có file prompt.
-
-### T-009 — Gỡ dòng mẫu T-001 khỏi Ready
-
-**Prompt:** `prompt/maintenance/03-retire-T-001-L0.md` (L0)
-
-**Goal:**
-`brief.sh` là `SessionStart` hook, in NEXT READY bằng dòng chưa tick đầu tiên — nên mọi phiên mới
-đang được chỉ vào một dòng mẫu không phải task. Gỡ nó đi, không tick, không đưa xuống Done.
-
-**Acceptance · Verify:** trong file prompt.
-
-### T-021 — `brief.sh` đọc Unknowns bằng hình dạng dòng, in sai cả hai chiều
-
-**Prompt:** chưa có · **Finding:** `work/findings.md` **F-008** (Open) · L2
-
-**Goal:**
-`scripts/brief.sh` in đúng danh sách unknown **đang mở** của `docs/product.md`, không phụ thuộc
-vào việc người viết vắt dòng hay in đậm ở đâu.
-
-**Nói một câu, việc phải làm là gì:**
-Cho mục OPEN UNKNOWNS đọc **cấu trúc**, đúng cách mục OPEN FINDINGS đã làm (`brief.sh` dòng 72–78
-bắt `^### F-` rồi đọc `**Status:**`). Việc **không** phải làm: nới regex cho khớp thêm vài hình
-dạng — đó là chữa triệu chứng, hình dạng thứ ba sẽ lại trượt.
-
-**Vì sao có task này:**
-T-020 (2026-08-30) mở U-005 và brief **không** in nó ra, đồng thời vẫn in U-004 — câu đã đóng từ
-trước — như đang mở. T-020 đã sửa phía dữ liệu nên brief đúng ngay hôm nay, nhưng luật "viết
-`U-XXX` sao cho `grep` bắt được" là thứ dựa vào trí nhớ, đúng loại hỏng `work/findings.md` F-001
-nói tới.
-
-**Không làm thì mất gì:**
-Brief là cơ chế ADR-002 dựa vào để **đẩy** trạng thái vào mỗi phiên, và nó cố ý `exit 0` ở mọi
-đường lỗi — nên khi đọc sai thì không có gì kêu lên, phiên sau chỉ đơn giản tin bản sai. Một câu
-hỏi nghiệp vụ bị giấu là một chỗ CLAUDE.md §3.5 bị vô hiệu: phiên sau không biết có câu phải hỏi
-nên tự quyết.
-
-**Bẫy hay sửa nhầm nhất:**
-- **Đây là L2 vì chạm `scripts/**` — thứ chạy trong mọi phiên.** Sửa hỏng `brief.sh` thì mọi phiên
-  sau mở ra với một brief sai hoặc rỗng. Có `scripts/*.test.sh` làm khuôn sẵn để viết test.
-- **Giữ luật "brief không bao giờ chặn"** (CLAUDE.md §7.1): mọi đường lỗi vẫn phải `exit 0`.
-- **Brief trỏ, không chép** — vẫn chỉ in định danh và tiêu đề câu hỏi, không in nội dung dữ kiện.
 
 **Acceptance · Verify:** chưa viết — task này chưa có file prompt.
 
@@ -684,6 +612,189 @@ git status --porcelain
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### T-021 — `brief.sh` đọc Unknowns theo cấu trúc, không theo hình dạng dòng
+
+**Xong 2026-08-31.** `docs/decisions.md` **ADR-007** · `work/findings.md` **F-008** (Resolved) · L2
+
+**Prompt:** chưa có · **Finding:** `work/findings.md` **F-008** (Open) · L2
+
+**Goal:**
+`scripts/brief.sh` in đúng danh sách unknown **đang mở** của `docs/product.md`, không phụ thuộc
+vào việc người viết vắt dòng hay in đậm ở đâu.
+
+**Nói một câu, việc phải làm là gì:**
+Cho mục OPEN UNKNOWNS đọc **cấu trúc**, đúng cách mục OPEN FINDINGS đã làm (`brief.sh` dòng 72–78
+bắt `^### F-` rồi đọc `**Status:**`). Việc **không** phải làm: nới regex cho khớp thêm vài hình
+dạng — đó là chữa triệu chứng, hình dạng thứ ba sẽ lại trượt.
+
+**Vì sao có task này:**
+T-020 (2026-08-30) mở U-005 và brief **không** in nó ra, đồng thời vẫn in U-004 — câu đã đóng từ
+trước — như đang mở. T-020 đã sửa phía dữ liệu nên brief đúng ngay hôm nay, nhưng luật "viết
+`U-XXX` sao cho `grep` bắt được" là thứ dựa vào trí nhớ, đúng loại hỏng `work/findings.md` F-001
+nói tới.
+
+**Không làm thì mất gì:**
+Brief là cơ chế ADR-002 dựa vào để **đẩy** trạng thái vào mỗi phiên, và nó cố ý `exit 0` ở mọi
+đường lỗi — nên khi đọc sai thì không có gì kêu lên, phiên sau chỉ đơn giản tin bản sai. Một câu
+hỏi nghiệp vụ bị giấu là một chỗ CLAUDE.md §3.5 bị vô hiệu: phiên sau không biết có câu phải hỏi
+nên tự quyết.
+
+**Bẫy hay sửa nhầm nhất:**
+- **Đây là L2 vì chạm `scripts/**` — thứ chạy trong mọi phiên.** Sửa hỏng `brief.sh` thì mọi phiên
+  sau mở ra với một brief sai hoặc rỗng. Có `scripts/*.test.sh` làm khuôn sẵn để viết test.
+- **Giữ luật "brief không bao giờ chặn"** (CLAUDE.md §7.1): mọi đường lỗi vẫn phải `exit 0`.
+- **Brief trỏ, không chép** — vẫn chỉ in định danh và tiêu đề câu hỏi, không in nội dung dữ kiện.
+
+**Acceptance (viết 2026-08-31, TRƯỚC khi sửa code — CLAUDE.md §3, L2):**
+
+Hợp đồng mới, phát biểu một câu: trong mục `## Unknowns` của `docs/product.md`, **vùng đang mở**
+là phần đầu mục (trước tiêu đề `###` đầu tiên) **cộng** mọi khối dưới một tiêu đề `### Đang mở`;
+trong vùng đó, **một gạch đầu dòng là một unknown đang mở**, và định danh `U-XXX` được tìm ở bất
+cứ đâu trong gạch đầu dòng ấy. Văn xuôi trong vùng mở không sinh ra unknown; mọi thứ dưới một
+tiêu đề `###` khác không được đọc.
+
+| # | Ca | Phải xảy ra |
+|---|---|---|
+| U1 | `- **U-005 — …**` (in đậm chen giữa gạch đầu dòng và định danh) | Vẫn in ra `U-005` — đây là chiều **giấu câu đang mở** của F-008 |
+| U2 | Dòng văn xuôi bắt đầu bằng `U-004 — …` nằm dưới `### Đã có lời giải` | **Không** in — chiều **khoe câu đã đóng** của F-008 |
+| U3 | Dòng văn xuôi (không gạch đầu dòng) bắt đầu bằng `U-006` ngay trong vùng mở | **Không** in — chỉ gạch đầu dòng mới là unknown |
+| U3b | Gạch đầu dòng chứa `U-` nằm dưới một tiêu đề `###` khác (mục "cách viết" chẳng hạn) | **Không** in — tiêu đề khác đóng vùng lại |
+| U4 | Một unknown vắt qua ba dòng, tiêu đề dài hơn 96 ký tự | In **một** mục, tiêu đề nối lại rồi cắt ở ranh giới **từ** — không xẻ đôi một chữ tiếng Việt |
+| U5 | Vùng mở không còn gạch đầu dòng nào | In `(none)`, không rơi xuống đọc vùng đã đóng |
+| U6 | Không có tiêu đề `### Đang mở` (hình dạng cũ của file) | Vẫn đọc được các gạch đầu dòng ở đầu mục — hợp đồng không đòi file phải sửa trước |
+| U7 | `docs/product.md` không tồn tại / không có mục `## Unknowns` | `(none)`, **exit 0** — brief không bao giờ chặn (CLAUDE.md §7.1) |
+| U8 | Bất kỳ ca nào ở trên | `brief.sh` exit 0, và chỉ in định danh + tiêu đề câu hỏi, không in nội dung dữ kiện (§7.1 "trỏ, không chép") |
+
+Ràng buộc chéo: **không nới regex cho khớp thêm hình dạng** (đó là chữa triệu chứng — Goal ở trên
+đã cấm), và **không tạo file test mới** — mở rộng `scripts/brief.test.sh` đã có.
+
+**Verify:** `./scripts/gate.sh` · `./scripts/brief.test.sh` (verify.sh tự chạy mọi
+`scripts/*.test.sh`) · `./scripts/brief.sh` trên repo thật, đối chiếu bằng mắt với
+`docs/product.md` → *Unknowns*.
+
+### T-016 — Scope quên dọn thì brief kêu; Gate 7b đọc nội dung khối commit
+
+**Cập nhật 2026-08-30 (T-024):** một nguồn của lỗi này đã bị gỡ — `check-scope.sh` không còn tính
+`work/scope.txt` là file ngoài scope, nên phiên sau không còn bị Gate 3 ép liệt kê nó vào chính
+nó. Phần còn lại của T-016 (kêu khi scope quên dọn, và kiểm tập đã `git add`) vẫn nguyên.
+
+**Prompt:** `prompt/maintenance/09-scope-not-cleared-L2.md` (L2 — đổi hành vi thứ mọi phiên đều chạy)
+· **Xong 2026-08-31** · **ADR-006** · `work/findings.md` **F-010** (mới), **F-009** (đóng phần cơ chế)
+
+**Goal:**
+Task kết thúc mà `work/scope.txt` còn pattern thì phải nhìn thấy ngay, không phụ thuộc ai nhớ dọn.
+Đã hỏng hai lần: `5c41f65` (6 pattern) và `25f0f88` (8 pattern). Hậu quả ở hai chỗ — Gate 3 đỏ vì
+lý do sai (hoặc xanh nhầm), và `brief.sh` in *"a task is open"* cho mọi phiên mới.
+
+CLAUDE.md §3.8 chỉ cho dựng cơ chế **sau hai lần**; ngưỡng đã đạt, nên task này được phép — nhưng
+là **cảnh báo, không chặn** (ADR-003), và chỉ kêu khi scope đã khai báo mà backlog không có task
+nào ở *In Progress*. Cần một ADR và một finding — nhưng **hai số prompt viết ra đã bị lấy mất**:
+ADR-004 là của T-018 (2026-08-30), F-007 là của T-013 (2026-08-30). Dùng số trống kế tiếp tại
+thời điểm làm, đừng dùng số ghi trong prompt.
+
+**Phạm vi mở rộng 2026-08-30 (F-009):** ngoài việc kêu khi `work/scope.txt` còn pattern, task
+này gánh thêm phần kiểm **tập file đã `git add` có nằm trong scope không**. Lý do gộp: cùng một
+script family, cùng một họ lỗi *commit nuốt thứ task không được phép chạm*, và đã trả giá bốn
+lần (`5c41f65`, `25f0f88`, `128955a`, `0b3a337`). Hai ràng buộc bắt buộc, chi tiết ở F-009:
+**không lật ADR-003** (Gate 3 vẫn không chặn vì file chưa track), và phần kiểm mới **cảnh báo,
+không chặn**, đặt ở Gate 7 — nơi đã đọc khối commit.
+
+**Acceptance · Verify phần gốc (scope quên dọn):** trong file prompt.
+
+**Acceptance phần mở rộng F-009 (viết 2026-08-31, TRƯỚC khi sửa code — CLAUDE.md §3, L2):**
+
+Gọi *khối commit* là đoạn `git add …` + `git commit -m …` mà lượt giao ra theo §6.1. Gate 7 đã
+đọc transcript để hỏi *"có khối không"*; phần mở rộng hỏi thêm *"trong khối có gì"*.
+
+| # | Ca | Phải xảy ra |
+|---|---|---|
+| A1 | Khối liệt kê một file **ngoài** `work/scope.txt` | Gate 7 nêu **đích danh** file đó, lượt không kết thúc im lặng |
+| A2 | Khối chỉ liệt kê file **trong** scope | Gate 7 im lặng, exit 0 |
+| A3 | Khối dùng `git add -A` hoặc `git add .` | Gate 7 nêu đích danh dạng lệnh bị §6.1 cấm |
+| A4 | Khối liệt kê `work/scope.txt` | Gate 7 kêu — §6.1 cấm nó nằm trong khối |
+| A5 | `work/scope.txt` **chưa khai** (rỗng/chỉ comment) | Gate 7 im lặng — không có gì để đối chiếu, đoán là tệ hơn im |
+| A6 | Đã kêu một lần cho **cùng một trạng thái cây** | Lần sau im — không lặp vô hạn, đúng luật 3 ở đầu `check-commit-block.sh` |
+| A7 | **Index thật** (`git diff --cached`) có file ngoài scope | Cũng bị nêu, cùng một đường ra với A1 |
+| A8 | File chưa track nằm trong khối và **trong** scope | Không kêu — ADR-003 không bị lật, vì ở đây căn cứ là scope, không phải trạng thái track |
+
+Ràng buộc chéo: **không đổi cách `check-scope.sh` đọc pattern** (Gate 3 đang đúng), và **không
+tạo script mới** — ngữ nghĩa pattern phải còn đúng **một** chủ, nếu không hai bản sẽ trôi khỏi
+nhau (cùng họ lỗi F-001).
+
+**Verify phần mở rộng:** `scripts/check-commit-block.test.sh` (mở rộng, không tạo file test mới cho
+Gate 7) + `scripts/brief.test.sh` cho phần gốc. Cả hai chạy tự động trong `verify.sh`.
+
+**Đã dựng gì — hai triệu chứng, hai chỗ chấm, vì chúng nổ ở hai thời điểm khác nhau:**
+
+| Chỗ | Kêu khi nào | Mã thoát |
+|---|---|---|
+| `scripts/brief.sh` | `work/scope.txt` còn pattern **mà** không có task nào ở *In Progress* — nêu đích danh file và số pattern | luôn 0 (§7.1) |
+| `scripts/check-commit-block.sh` — **Gate 7b** | khối commit nhặt file ngoài scope · dùng `git add -A` / `git add .` · có `work/scope.txt` trong khối | 2, nhiều nhất **một lần** cho mỗi trạng thái cây |
+| `scripts/check-scope.sh --match <path>…` | không kêu — chế độ phụ, in path nằm ngoài scope rồi exit 0 | luôn 0 |
+
+`--match` tồn tại để Gate 7b **không chép lại** cách so khớp pattern: ngữ nghĩa scope giữ đúng một
+chủ, nếu không hai bản sẽ trôi khỏi nhau đúng như hai bảng giá của F-001. Cách đọc pattern của
+Gate 3 không đổi một dòng nào.
+
+**Ba lựa chọn phải giải trình, đã ghi đủ trong ADR-006:**
+
+1. **Chọn `brief.sh`, không chọn `check-scope.sh`/`gate.sh`** cho triệu chứng "scope quên dọn":
+   nó là chỗ duy nhất trong ba ứng viên mà đầu ra **chắc chắn** tới được người đọc (hook
+   `SessionStart` → vào thẳng context, ADR-002). Nhánh xanh của gate chỉ đi ra stdout của một hook
+   `Stop` exit 0 — nơi không quay lại phiên; muốn nó tới nơi thì phải exit khác 0, tức là chặn,
+   thứ Constraints cấm. Nó cũng đúng là chỗ câu sai đang được in ra, và đã cầm sẵn cả hai đầu vào.
+2. **Gate 7b đi chệch F-009 ở một điểm, có chủ ý:** F-009 viết *"cảnh báo, không chặn"*; Gate 7b
+   dùng **exit 2** — đúng mã thoát Gate 7 đã dùng khi thiếu khối commit — vì ở exit 0 một hook
+   `Stop` không có kênh nào về phiên, nên "cảnh báo" ở đó là in vào hư không. Thứ bị trả lại là
+   **đoạn văn bản bàn giao**, không phải thay đổi: Gate 1, 1b, 3 đã xanh trước khi nó chạy.
+3. **ADR-003 không bị lật.** Gate 7b chấm **danh sách file vừa được cố ý chọn**, không chấm cây
+   làm việc; trạng thái track không tham gia vào kết luận (ca A8: file chưa track nằm trong scope
+   thì vẫn im). `check-scope.sh` không đổi hành vi Gate 3.
+
+**Số ADR/finding thực dùng khác số ghi trong prompt** — prompt viết ADR-004 và F-007, cả hai đã bị
+T-018 và T-013 lấy mất ngày 2026-08-30. Số trống kế tiếp tại thời điểm làm: **ADR-006** và
+**F-010**. F-010 chỉ sở hữu phía *scope còn sót* (hậu quả ở `check-scope.sh` và `brief.sh`); phía
+*khối commit nhặt nhầm* đã là **F-009** từ trước, nên nó được **nối thêm và đóng**, không chép lại
+— viết finding thứ hai cho cùng bảng bằng chứng chính là bệnh F-001.
+
+**Kiểm bằng gì:** `scripts/brief.test.sh` (mới, B1–B5) và `scripts/check-commit-block.test.sh`
+(mở rộng, A1–A8 — đúng bảng Acceptance ở trên). Cả hai chạy tự động trong `verify.sh`. Ca A6 từng
+**FAIL** ở lần chạy đầu: dấu vết `.git/lean-ai-commit-block` chỉ được đọc ở nhánh *thiếu khối*, nên
+một khối xấu bị kêu lại mãi. Đã sửa: nhánh *có khối* đọc dấu cũ trước rồi mới đóng dấu mới.
+
+**Còn nợ, cố ý:** Gate 7b đọc `git add` bằng **văn bản** trong transcript, nên khối viết theo kiểu
+lạ (biến shell, `xargs`, xuống dòng giữa danh sách file) sẽ lọt. Nó bắt đúng dạng §6.1 mô tả — cũng
+là dạng cả bốn lần hỏng đã dùng. Rủi ro này ghi ở ADR-006, không mở task mới.
+
+### T-009 — Gỡ dòng mẫu T-001 khỏi Ready
+
+**Prompt:** `prompt/maintenance/03-retire-T-001-L0.md` (L0) · **Xong 2026-08-31**
+
+**Hiện trạng đã sửa:**
+*Ready* còn một dòng mẫu của template khởi tạo repo — ID `T-001`, nội dung là câu "thay dòng này
+bằng task thật đầu tiên". Nó chưa bao giờ là task thật: không Goal, không Scope, không Acceptance.
+Nguyên văn dòng đó cố ý **không** chép lại ở đây, vì acceptance của task này là `grep` chuỗi ấy
+trong `work/backlog.md` phải rỗng.
+
+Nó không vô hại: `scripts/brief.sh` in **NEXT READY** bằng những dòng chưa tick đầu tiên của
+*Ready*, và brief là `SessionStart` hook — nên mọi phiên mới nhận nó như một việc, trước cả chỉ
+thị đầu tiên của người dùng. ADR-002 dựng brief để phiên mới nhận trạng thái **hôm nay**; một
+brief trỏ vào dòng mẫu là đúng thứ ADR-002 muốn chặn.
+
+**Đã làm:**
+Xoá dòng đó khỏi *Ready*. **Không** tick `[x]`, **không** chuyển xuống *Done* — Done ghi việc đã
+làm, đưa một dòng mẫu vào đó là làm hỏng lịch sử. Không phát minh task mới lấp chỗ: *Ready* sau
+việc này đúng bằng những task đã có.
+
+**Luật để lại — ID đã dùng thì không tái sử dụng:**
+Số **T-001 không được cấp lại** cho bất kỳ task mới nào. Nó vẫn xuất hiện trong tên task này, trong
+`prompt/maintenance/03-retire-T-001-L0.md` và trong các entry lịch sử — đó là **tham chiếu**, không
+phải một task đang sống.
+
+**Verify:** `grep -n 'meaningful task' work/backlog.md` rỗng;
+`./scripts/brief.sh` in NEXT READY là T-019 (task thật, có entry chi tiết); *Done* không có dòng nào
+mang ID T-001; `./scripts/gate.sh` xanh.
 
 ### T-015 — §10 kế hoạch gốc: hai câu đã có lời giải, một câu hỏi hẹp hơn thực tế
 

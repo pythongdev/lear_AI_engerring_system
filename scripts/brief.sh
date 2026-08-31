@@ -50,13 +50,26 @@ inprog="$(block work/backlog.md '## In Progress' | grep -E '^- \[' | head -n "$M
 if [ -n "$inprog" ]; then printf '%s\n' "$inprog" | sed 's/^/  /'; else none; fi
 
 section "DECLARED SCOPE (work/scope.txt)"
+# Scope đã khai + có task In Progress = bình thường. Scope đã khai + KHÔNG có task
+# nào In Progress = scope của task trước chưa dọn (CLAUDE.md §7.3) — đã đi thẳng
+# vào hai commit, `5c41f65` và `25f0f88`. Xem docs/decisions.md ADR-006.
+# Cảnh báo, không chặn: brief không bao giờ đổi mã thoát (§7.1).
 if [ -f work/scope.txt ]; then
   # No cap here. A scope line hidden by truncation is a scope line nobody
   # honours, and Gate 3 would then reject a file the brief said nothing about.
   scope="$(grep -vE '^\s*(#|$)' work/scope.txt)"
   if [ -n "$scope" ]; then
     printf '%s\n' "$scope" | sed 's/^/  /'
-    printf '  → a task is open. Finish or hand it off before starting another.\n'
+    if [ -n "$inprog" ]; then
+      printf '  → a task is open. Finish or hand it off before starting another.\n'
+    else
+      npat="$(printf '%s\n' "$scope" | grep -c .)"
+      printf '  → CẢNH BÁO: work/scope.txt còn %s pattern nhưng work/backlog.md không có\n' "$npat"
+      printf '    task nào ở In Progress. Scope của task đã xong chưa được dọn (CLAUDE.md §7.3).\n'
+      printf '    Dọn nó TRƯỚC khi bắt task mới: Gate 3 sẽ chấm bạn bằng scope của người khác,\n'
+      printf '    và §6 cấm pattern đi vào commit. Nếu bạn đang giữa một task: mở lại nó ở\n'
+      printf '    In Progress, đừng xoá scope.\n'
+    fi
   else
     printf '  (not declared — no task in flight, or an L0 change)\n'
   fi
@@ -79,7 +92,51 @@ openf="$(awk '
 if [ -n "$openf" ]; then printf '%s\n' "$openf" | sed 's/^/  /'; else none; fi
 
 section "OPEN UNKNOWNS (docs/product.md → Unknowns)"
-openu="$(block docs/product.md '## Unknowns' | grep -E '^\s*[-*]?\s*U-[0-9]' | head -n "$MAX_LIST")"
+# Đọc CẤU TRÚC, không đọc hình dạng dòng (T-021 · ADR-007 · work/findings.md F-008).
+# Bản cũ grep '^\s*[-*]?\s*U-[0-9]' trên cả mục, nên hỏng hai chiều cùng lúc:
+# một dấu `*` chen vào trước định danh là giấu mất câu đang mở, còn một dòng văn
+# xuôi vắt đúng chỗ để bắt đầu bằng `U-004` là in một câu đã đóng như đang mở.
+# Hợp đồng thay thế nó — viết ở docs/product.md ngay đầu mục Unknowns:
+#   1. vùng đang mở = đầu mục (trước '###' đầu tiên) + mọi khối dưới '### Đang mở';
+#      mọi thứ dưới một tiêu đề '###' khác đều không được đọc;
+#   2. trong vùng đó, một gạch đầu dòng = một unknown đang mở;
+#   3. định danh U-XXX tìm ở bất cứ đâu trong gạch đầu dòng ấy.
+# Trang trí và cách vắt dòng không còn tham gia vào kết luận.
+openu="$(block docs/product.md '## Unknowns' \
+  | awk 'BEGIN { open = 1 }
+         /^### / { open = ($0 ~ /^###[ \t]+Đang mở/); next }
+         open' \
+  | awk '
+      function flush(   id, rest, cut, n, w, i) {
+        if (item == "") return
+        if (match(item, /U-[0-9]+/)) {
+          id   = substr(item, RSTART, RLENGTH)
+          rest = substr(item, RSTART + RLENGTH)
+          gsub(/[*_`~]/, "", rest)                 # in đậm/nghiêng không phải dữ liệu
+          sub(/^[ \t]*[-—:]+[ \t]*/, "", rest)     # dấu nối ngay sau định danh
+          gsub(/[ \t]+/, " ", rest)                # dòng đã nối lại -> một khoảng trắng
+          sub(/^ /, "", rest); sub(/ $/, "", rest)
+          # Cắt theo TỪ, không theo ký tự: substr() ở đây đếm byte, nên cắt giữa
+          # một chữ tiếng Việt là để lại byte hỏng, và regex kế tiếp chết vì
+          # "towc: multibyte conversion failure" — brief mất luôn mục Unknowns.
+          if (length(rest) > 96) {
+            n = split(rest, w, " "); cut = ""
+            for (i = 1; i <= n; i++) {
+              if (cut != "" && length(cut " " w[i]) > 96) break
+              cut = (cut == "" ? w[i] : cut " " w[i])
+            }
+            if (cut != "") rest = cut "…"
+          }
+          print (rest == "" ? id : id " — " rest)
+        }
+        item = ""
+      }
+      /^[ \t]*[-*+][ \t]/ { flush(); sub(/^[ \t]*[-*+][ \t]+/, ""); item = $0; next }
+      /^[ \t]*$/           { flush(); next }
+      item != ""            { item = item " " $0 }
+      END                   { flush() }
+    ' \
+  | head -n "$MAX_LIST")"
 if [ -n "$openu" ]; then printf '%s\n' "$openu" | sed 's/^/  /'; else none; fi
 
 # --- What was decided --------------------------------------------------------

@@ -120,11 +120,22 @@ Never let implementation silently decide an open question. Route it:
 
 | Kind | Where | Format |
 |---|---|---|
-| Open business question | `docs/product.md` → *Unknowns* | `U-XXX — question, who can answer, what is blocked` |
+| Open business question | `docs/product.md` → *Unknowns* | one bullet under `### Đang mở`: `U-XXX — question, who can answer, what is blocked` |
 | Recurring problem or lesson | `work/findings.md` | `F-XXX` template in that file |
 | Choice between viable designs | `docs/decisions.md` | `ADR-XXX` template in that file |
 
 Record only what has future value. A one-off imperfection is not a finding.
+
+An open question is only routed if the brief can find it. `scripts/brief.sh` pushes
+the open list into every new session (§7.1), and it reads the *Unknowns* section by
+**structure**: the open region is the top of the section plus every block under a
+`### Đang mở` heading, and inside it **one bullet is one open question** — the
+`U-XXX` may sit anywhere in that bullet, bold or not, wrapped over as many lines as
+it needs. Prose there is prose, and anything under a different `###` heading is not
+read. So a question written as a paragraph, or filed under the answered heading, is
+a question the next session never sees. The full contract lives with the section it
+governs, in `docs/product.md` → *Unknowns* → *Cách viết một câu ở đây*
+(`docs/decisions.md` ADR-007, `work/findings.md` F-008).
 
 ## 5. Verification
 
@@ -154,6 +165,15 @@ It runs, in order:
    the three above are green: tracked changes are waiting to be committed, so the
    turn must hand over the commit block (§6.1). Untracked files and
    `work/scope.txt` never trigger it, and it asks once per state of the tree.
+   It then asks a second question — **what is in that block** (Gate 7b,
+   ADR-006): it reads the block's `git add` lines, plus the real index when
+   something is staged, and names any file outside `work/scope.txt`, any
+   `git add -A` / `git add .`, and `work/scope.txt` itself if it appears there.
+   It judges the file list you deliberately chose, never the working tree, so
+   ADR-003 stands: an untracked file inside scope stays silent. Scope not
+   declared ⇒ silent. Like the rest of Gate 7, it speaks at most once per state
+   of the tree, and what it sends back is the *report text* to rewrite — not the
+   change, which is already green by then.
 
 The gate is also wired as a Stop hook in `.claude/settings.json`, so it runs when
 a turn ends; a failure blocks the turn and returns the output to be fixed.
@@ -220,6 +240,13 @@ F-001 is the record of what happens when a rule relies on someone remembering.
 scope, the next Ready task, Open findings, Open unknowns, the newest ADRs,
 recent commits, the last-changed date of every owner file in §2, and any
 uncommitted work.
+
+It also warns about one state it can see and you cannot: `work/scope.txt` still
+holding patterns while **no** task sits in *In Progress* — the scope of a
+finished task nobody cleared (§7.3). Clear it before starting anything, or Gate 3
+will judge your change by someone else's scope; if you are mid-task, put the task
+back in *In Progress* rather than deleting the scope. Patterns **with** a task in
+*In Progress* are normal and stay silent (ADR-006, F-010).
 
 It is a `SessionStart` hook in `.claude/settings.json`, so it runs on startup,
 `/clear`, resume and compaction, and its output is in context before the first

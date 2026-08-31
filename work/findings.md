@@ -363,11 +363,32 @@ Riêng hậu quả đã commit của lần thứ tư — hai commit trùng tên 
 trong đó một file mâu thuẫn §2 — là việc **T-023**, vì nó cần chủ repo quyết (sửa lịch sử hay để
 nguyên; giữ, chuyển hay xoá ba file đó).
 
+**Cơ chế đã dựng 2026-08-31 (T-016) — Gate 7b.** `scripts/check-commit-block.sh` nay hỏi thêm câu
+thứ hai: **trong khối commit có gì**. Nó đọc các dòng `git add …` của khối (cộng index thật khi
+index không rỗng) và nêu đích danh ba thứ — file **ngoài scope** đã khai, dạng `git add -A` /
+`git add .` mà §6.1 cấm, và `work/scope.txt` nằm trong khối. Việc so khớp pattern gọi sang
+`scripts/check-scope.sh --match`, nên ngữ nghĩa scope vẫn chỉ có **một** chủ. Ca kiểm A1–A8 trong
+`scripts/check-commit-block.test.sh`.
+
+**Hai ràng buộc của finding này: một được giữ nguyên, một bị đi chệch có chủ ý.**
+*Giữ nguyên —* ADR-003 không bị lật: Gate 3 không đổi một dòng, và Gate 7b chấm **danh sách file
+vừa được cố ý chọn**, không chấm cây làm việc, nên trạng thái track không tham gia vào kết luận
+(ca A8: file chưa track nằm trong scope thì vẫn im).
+*Đi chệch —* finding này viết *"cảnh báo, không chặn"*. Gate 7b dùng **exit 2**, đúng mã thoát
+Gate 7 đã dùng sẵn khi thiếu khối commit. Lý do: hook `Stop` exit 0 không có kênh nào quay về
+phiên, nên "cảnh báo" ở chỗ đó nghĩa là in vào hư không. Thứ bị trả lại là **đoạn văn bản bàn
+giao**, không phải thay đổi (Gate 1, 1b, 3 đã xanh trước khi nó chạy), và nó nhắc nhiều nhất một
+lần cho mỗi trạng thái cây. Lập luận đầy đủ ở **docs/decisions.md ADR-006**.
+
+Còn lại của F-009 là **hậu quả đã commit** — hai commit trùng tên "T-020", ba file `docs/` nay đã
+track — và việc đó cần chủ repo quyết, nên nó ở lại **T-023**, không ở lại finding này.
+
 **Related task:**
-T-016 (gấp phần kiểm staged-vs-scope vào), T-023 (dọn hậu quả đã commit)
+T-016 (đã dựng Gate 7b, 2026-08-31) · T-023 (dọn hậu quả đã commit, còn mở) · F-010 (cùng họ lỗi,
+phía scope còn sót) · ADR-006
 
 **Status:**
-Open
+Fixed — cơ chế dựng 2026-08-31. Hậu quả đã commit vẫn là việc của T-023.
 
 ---
 
@@ -412,11 +433,28 @@ tách hẳn hai mục *đang mở* / *đã đóng* thành hai khối máy đọc
 là một quyết định về hình dạng của `docs/product.md`, không phải sửa chữ. Ghi thành task
 **T-021** ở `work/backlog.md` → *Ready*.
 
+**Đã chữa tận gốc 2026-08-31 (T-021 · `docs/decisions.md` ADR-007).** Mục *Unknowns* nay có hình
+dạng máy đọc được và `brief.sh` đọc đúng hình dạng đó: **vùng đang mở** = đầu mục + mọi khối dưới
+`### Đang mở`; trong vùng đó **một gạch đầu dòng là một unknown**, định danh tìm ở bất cứ đâu
+trong gạch đầu dòng. Nên **luật viết tay ở đoạn trên hết hiệu lực** — trang trí và cách vắt dòng
+không còn quyết định phiên sau thấy gì. Cách viết một câu ở đây nay nằm trong chính
+`docs/product.md` → *Unknowns* → *Cách viết một câu ở đây*, và ở CLAUDE.md §4.
+
+Sáu ca trong `scripts/brief.test.sh` khoá cả hai chiều lại (U1 giấu câu đang mở · U2, U5, U6 khoe
+câu đã đóng · U3, U3b văn xuôi và vùng khác không sinh unknown). Chạy chúng trên bản `brief.sh`
+trước T-021: **8 ca FAIL** — nghĩa là chúng thật sự bắt được con bug này.
+
+**Một bài học nhỏ đi kèm, trả giá ngay trong lúc sửa:** bản đầu cắt tiêu đề dài bằng
+`substr(rest, 1, 96)`. `substr()` ở awk trên máy này đếm **byte**, nên nó xẻ đôi một chữ tiếng
+Việt, và regex ngay sau đó chết vì `towc: multibyte conversion failure` — brief mất **cả mục**
+Unknowns mà vẫn `exit 0`, tức là hỏng đúng kiểu im lặng mà finding này nói tới. Cắt theo **từ**
+thì không bao giờ xẻ đôi một ký tự. Ca U4 giữ chỗ này.
+
 **Related task:**
-T-020 (phát hiện, sửa phía dữ liệu), T-021 (chữa tận gốc)
+T-020 (phát hiện, sửa phía dữ liệu), T-021 (chữa tận gốc, 2026-08-31)
 
 **Status:**
-Open
+Resolved
 
 ---
 
@@ -470,3 +508,55 @@ T-013 (phát hiện) · T-019 (sửa) · T-024 (dựng cổng chấm)
 
 **Status:**
 Open
+
+---
+
+### F-010 — Scope quên dọn thì phiên sau bị chấm bằng scope của người khác, và brief nói dối về trạng thái
+
+**Problem:**
+`work/scope.txt` là working state: CLAUDE.md §6 cấm commit pattern, §7.3 bắt xoá pattern khi task
+xong. Cả hai luật chỉ dựa vào **việc ai đó nhớ**, và đã hỏng hai lần, đếm bằng lịch sử git tới
+**2026-08-30**:
+
+| Commit | Ngày | Còn lại trong `work/scope.txt` |
+|---|---|---|
+| `5c41f65` "udpate shop fact" | 2026-08-30 | 6 pattern |
+| `25f0f88` "sdfg" | 2026-08-30 | 8 pattern (scope của T-010, còn kèm hai dòng của T-007) |
+
+Đếm lại được bằng:
+`for c in $(git log --format=%H -- work/scope.txt); do git show $c:work/scope.txt | grep -vcE '^\s*(#|$)'; done`
+
+Lần thứ ba bị T-011 chặn bằng tay lúc dọn cuối task (`2692178`) — sạch nhờ một người nhớ, không
+nhờ cơ chế nào.
+
+**Impact:**
+Hậu quả không nằm ở hai dòng text thừa mà ở **phiên sau**, tại đúng hai chỗ hệ thống dùng làm tín
+hiệu trạng thái:
+
+- **`scripts/check-scope.sh` (Gate 3) chấm bằng scope của task đã xong.** Nó coi *bất kỳ* pattern
+  nào là "scope đã khai báo". Phiên sau sửa một file khác ⇒ Gate 3 **đỏ vì lý do sai** — đúng thứ
+  ADR-003 gọi là *"dạy người ta bỏ qua gate"*. Hoặc tệ hơn: danh sách cũ tình cờ đủ rộng ⇒ gate
+  **xanh** cho một thay đổi chưa ai cho phép.
+- **`scripts/brief.sh` khẳng định sai.** Nó in nguyên khối *DECLARED SCOPE* rồi kết luận *"→ a task
+  is open. Finish or hand it off before starting another."* Mọi phiên mới mở màn bằng một câu sai
+  về trạng thái — trong khi CLAUDE.md §7 dựng cả brief lên để chống đúng chuyện đó.
+
+Đây cũng là hai dòng đầu của bảng bốn lần trong **F-009**: cùng một họ lỗi *commit nuốt thứ task
+không được phép chạm*. F-009 sở hữu phía **khối commit**; finding này sở hữu phía **scope còn sót**.
+
+**Decision / Fix:**
+Đã dựng cơ chế **2026-08-31 (T-016)**, và đây là điểm chính của finding: luật viết trong CLAUDE.md
+§6 và §7.3 **không tự thi hành được**. Ngưỡng §3.8 (*"chỉ thêm cơ chế sau khi cùng một vấn đề tốn
+công hai lần"*) đã đạt đúng bằng hai dòng của bảng trên — không sớm hơn.
+
+`scripts/brief.sh` nay phân biệt hai trạng thái và chỉ kêu ở trạng thái hỏng: scope còn pattern
+**mà** `work/backlog.md` không có task nào ở *In Progress*. Cảnh báo nêu đích danh `work/scope.txt`
+và số pattern còn lại; scope còn pattern **kèm** task *In Progress* là hợp lệ nên vẫn im. Brief
+không bao giờ đổi mã thoát (§7.1). Lý do chọn `brief.sh` chứ không phải `check-scope.sh` hay
+`gate.sh`: **docs/decisions.md ADR-006**. Ca kiểm: `scripts/brief.test.sh` (B1–B5).
+
+**Related task:**
+T-016 (dựng cơ chế) · F-009 (cùng họ lỗi, phía khối commit) · ADR-006
+
+**Status:**
+Fixed

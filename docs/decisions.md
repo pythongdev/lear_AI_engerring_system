@@ -264,3 +264,148 @@ diff) và §7.2 (đổi một dữ kiện thì `grep -rn` những gì trỏ vào
 `scripts/check-links.sh` (mới) · `scripts/check-links.ignore` (mới) · `scripts/check-links.test.sh`
 (mới) · `scripts/gate.sh` · `CLAUDE.md` §2 (cây thư mục) · §5 · `quality/review-gate.md` Gate 1b ·
 `README.md` · `work/findings.md` F-005, F-006, F-007 · `work/backlog.md` T-019.
+
+---
+
+### ADR-006 — Scope được chấm ở hai chỗ mới: brief kêu khi quên dọn, Gate 7 đọc nội dung khối commit
+
+**Decision:**
+Từ **2026-08-31** (T-016), hai cơ chế được dựng, cộng một chế độ phụ để chúng không sinh ra bản
+sao thứ hai của ngữ nghĩa pattern:
+
+- **`scripts/brief.sh` — cảnh báo "scope chưa dọn".** Khi `work/scope.txt` còn pattern **mà**
+  `work/backlog.md` không có task nào ở *In Progress*, brief in một khối cảnh báo nêu đích danh
+  `work/scope.txt` và **số pattern còn lại**. Có task *In Progress* thì brief giữ nguyên dòng cũ
+  (*"a task is open…"*) — hai trạng thái phân biệt được, nên cảnh báo không thành tiếng ồn.
+  Brief vẫn **không bao giờ đổi mã thoát** (CLAUDE.md §7.1).
+- **`scripts/check-commit-block.sh` — Gate 7b, "trong khối commit có gì".** Gate 7 vốn chỉ hỏi
+  *turn này có giao khối commit không*; nay nó đọc luôn các dòng `git add …` của khối (cộng index
+  thật nếu có ai đã `git add` trong phiên) và nêu tên ba thứ: file **ngoài scope**, dạng
+  `git add -A` / `git add .` mà §6.1 cấm, và `work/scope.txt` nằm trong khối.
+- **`scripts/check-scope.sh --match <path>…`** — chế độ phụ: in ra những path nằm ngoài scope, rồi
+  exit 0. Không đọc `git status`, không kết luận gì về trạng thái track. Có nó để Gate 7b hỏi được
+  câu "file này có thuộc scope không" mà **không chép lại** cách so khớp pattern. Cách đọc pattern
+  của Gate 3 không đổi một dòng.
+
+**Why:**
+Cùng một họ lỗi đã trả giá **bốn** lần (`work/findings.md` F-009, F-010) — ngưỡng §3.8 vượt gấp
+đôi. Nhưng hai triệu chứng cần hai chỗ chấm khác nhau, vì chúng nổ ở hai thời điểm khác nhau:
+scope quên dọn làm hại **phiên sau**, còn khối commit nhặt nhầm làm hại **ngay lúc dán**.
+
+Chọn `brief.sh` cho triệu chứng thứ nhất vì ba lý do, theo thứ tự quan trọng:
+
+1. **Nó là chỗ duy nhất trong ba ứng viên mà đầu ra chắc chắn tới được người đọc.** `brief.sh` là
+   hook `SessionStart`, stdout của nó vào thẳng context trước câu lệnh đầu tiên (ADR-002). Đầu ra
+   của `check-scope.sh`/`gate.sh` ở nhánh xanh chỉ đi ra stdout của một hook `Stop` exit 0 — nơi
+   không quay lại phiên. Một cảnh báo không ai đọc là ceremony, đúng thứ §3.8 cấm.
+2. **Đó là chỗ lời nói dối đang được in ra.** Dòng *"→ a task is open"* hôm nay khẳng định sai cho
+   mọi phiên mới; sửa nó là xoá lỗi, không phải thêm cổng.
+3. **Cả hai đầu vào đã nằm sẵn trong tay nó** — nó vốn đọc `## In Progress` và `work/scope.txt` để
+   in hai mục ngay cạnh nhau. Không parse thêm, không file mới.
+
+**Cảnh báo chứ không chặn, và chỗ đi chệch F-009 — nói thẳng ra:**
+F-009 yêu cầu phần kiểm mới *"cảnh báo, không chặn"*. Ở `brief.sh` điều đó là miễn phí và được
+giữ nguyên. Ở Gate 7b thì **không**: một hook `Stop` exit 0 không có kênh nào về tới phiên, nên
+"cảnh báo" ở đó có nghĩa là in vào hư không. Gate 7b vì thế dùng **exit 2 — đúng mã thoát Gate 7
+đã dùng sẵn** khi khối commit còn thiếu. Ba ranh giới giữ nó khỏi thành ADR-003 lần hai:
+
+- Nó **không chấm thay đổi**. Gate 1, 1b, 3 đã xanh trước khi nó chạy; thứ bị trả lại là **đoạn
+  văn bản bàn giao**, sửa trong một turn, không đụng một file nào.
+- Nó nêu **đích danh** file hoặc dạng lệnh sai. Đỏ vì lý do người dùng thấy là đúng thì không dạy
+  ai bỏ qua gate — đó mới là điều ADR-003 sợ.
+- Nó nhắc **nhiều nhất một lần cho mỗi trạng thái cây** (luật 3 của Gate 7), nên không khoá được
+  phiên. Ca A6 trong `check-commit-block.test.sh` giữ tính chất này.
+
+**ADR-003 không bị lật.** Gate 3 vẫn không đỏ vì file chưa track — không một dòng nào của nó đổi.
+Gate 7b chấm **danh sách file người ta vừa cố ý chọn**, không chấm cây làm việc: trạng thái track
+không tham gia vào kết luận, nên một file chưa track nằm trong scope thì vẫn im (ca A8).
+
+**Rejected alternatives:**
+- *Đặt cảnh báo "scope chưa dọn" vào `check-scope.sh` hoặc `gate.sh`.* Bắt sớm hơn một phiên —
+  đúng ngay cuối turn làm hỏng — nhưng chỉ nhìn thấy được khi ai đó chạy `./scripts/gate.sh` bằng
+  tay. Muốn nó tới được phiên thì phải exit khác 0, tức là chặn, thứ Constraints cấm.
+- *Chép lại cách so khớp pattern vào `check-commit-block.sh`.* Rẻ hơn `--match` chừng hai chục
+  dòng, và hai bản sẽ trôi khỏi nhau đúng như hai bảng giá của F-001.
+- *Chặn ngay ở `git add` bằng git hook.* Không đi theo bản clone, và §3.8 gọi chỗ chạy thứ ba là
+  ceremony khi `SessionStart` và `Stop` đã có.
+- *Bắt Gate 7b đọc index thay vì khối commit.* Phiên không chạy `git commit`; `git add` xảy ra ở
+  terminal của người dùng **sau** khi hook đã chạy xong, nên index gần như luôn rỗng lúc đó. Khối
+  commit là hình dạng duy nhất của "tập file vừa được cố ý chọn" mà hook nhìn thấy được. Index vẫn
+  được chấm khi nó không rỗng — thêm nó không tốn gì (ca A7).
+
+**Rủi ro đã chấp nhận:**
+- Gate 7b đọc `git add` bằng **văn bản trong transcript**, nên một khối viết theo kiểu lạ (biến
+  shell, `xargs`, xuống dòng giữa danh sách file) sẽ lọt. Nó bắt được đúng dạng §6.1 mô tả — và
+  đó cũng là dạng cả bốn lần hỏng đã dùng.
+- Cảnh báo "scope chưa dọn" chỉ đọc được *In Progress* của `work/backlog.md`. Task quên chuyển
+  sang *In Progress* sẽ bị kêu oan; giá phải trả là một dòng, và lời kêu nói thẳng lối ra
+  (*"mở lại nó ở In Progress, đừng xoá scope"*).
+
+**Applies to:**
+`scripts/brief.sh` · `scripts/brief.test.sh` (mới) · `scripts/check-scope.sh` (chế độ `--match`) ·
+`scripts/check-commit-block.sh` · `scripts/check-commit-block.test.sh` · `CLAUDE.md` §5 · §7.1 ·
+`work/findings.md` F-009, F-010 · `work/backlog.md` T-016 · ADR-002 · ADR-003.
+
+---
+
+### ADR-007 — Mục *Unknowns* có hình dạng máy đọc được, và brief đọc cấu trúc đó thay vì hình dạng dòng
+
+**Decision:**
+Từ **2026-08-31** (T-021), `docs/product.md` → *Unknowns* có một hợp đồng, và
+`scripts/brief.sh` đọc đúng hợp đồng đó:
+
+- **Vùng đang mở** = phần đầu mục (trước tiêu đề `###` đầu tiên) **cộng** mọi khối nằm dưới một
+  tiêu đề `### Đang mở`. Mọi thứ dưới một tiêu đề `###` khác không được đọc.
+- **Trong vùng đang mở, một gạch đầu dòng là một unknown đang mở.** Định danh `U-XXX` được tìm ở
+  **bất cứ đâu** trong gạch đầu dòng ấy, nên in đậm ở đâu cũng được.
+- **Văn xuôi trong vùng đang mở không sinh ra unknown**, và các dòng vắt của một gạch đầu dòng
+  được **nối lại** thành một mục trước khi cắt ngắn để in.
+- Hợp đồng được viết ở chính `docs/product.md`, dưới tiêu đề `### Cách viết một câu ở đây` — tức
+  là nằm trong vùng brief **không** đọc, nên ví dụ trong đó viết `U-` thoải mái.
+
+**Why:**
+`work/findings.md` **F-008**: bản cũ `grep -E '^\s*[-*]?\s*U-[0-9]'` chấm **hình dạng dòng**, nên
+ngày 2026-08-30 nó hỏng cả hai chiều cùng lúc — giấu U-005 (một dấu `*` chen vào trước định danh)
+và in U-004 đã đóng (một dòng văn xuôi tình cờ bắt đầu bằng `U-004`).
+
+Đây là hỏng ở **đúng cơ chế ADR-002 dựa vào**: brief đẩy trạng thái vào mỗi phiên và cố ý `exit 0`
+ở mọi đường lỗi, nên khi nó đọc sai thì **không có gì kêu lên** — phiên sau chỉ đơn giản tin bản
+sai, và một câu hỏi nghiệp vụ bị giấu là một chỗ CLAUDE.md §3.5 bị vô hiệu.
+
+T-020 đã vá **phía dữ liệu** (viết lại U-005, vắt lại câu văn) và để lại một luật *"viết `U-XXX`
+sao cho `grep` bắt được"*. Luật đó dựa vào trí nhớ — đúng loại hỏng F-001 nói tới, và hình dạng
+thứ ba sẽ lại trượt. Nới regex cho khớp thêm vài hình dạng cũng chỉ là bản nới của cùng luật đó.
+Chỗ chữa tận gốc là **cho tài liệu một hình dạng, rồi chấm hình dạng ấy** — đúng cách mục
+OPEN FINDINGS đã làm với `^### F-` + `**Status:**`, và mục đó chưa hỏng lần nào.
+
+**Vì sao không bắt chước findings từng chữ:**
+Mỗi finding là một mục `###` có `**Status:**` riêng, hợp lý vì một finding dài vài chục dòng. Một
+unknown là **một gạch đầu dòng**; cho mỗi câu một tiêu đề `###` cộng một dòng `**Status:**` sẽ
+biến một danh sách năm dòng thành năm mục, và phần *đã có lời giải* — nay là một bảng bảy dòng
+gạch ngang — thành bảy mục nữa. Đó là ceremony §3.8 cấm. Lấy **nguyên tắc** của findings (cấu trúc
+quyết định, trang trí không tham gia) mà không lấy **hình dạng** của nó.
+
+**Rejected alternatives:**
+- *Nới regex cho khớp cả `- **U-005`.* Rẻ nhất, và là thứ Goal của T-021 cấm thẳng: nó chỉ đóng
+  hình dạng đã gặp, không đóng hình dạng thứ ba. Nó cũng không chữa được chiều thứ hai —
+  một dòng văn xuôi bắt đầu bằng `U-004` vẫn khớp mọi regex đủ rộng để bắt được chiều thứ nhất.
+- *Cho mỗi `U-XXX` một tiêu đề `###` + `**Status:**` như findings.* Đúng chữ của prompt T-021,
+  nhưng xem đoạn trên — giá là biến một danh sách thành mười hai mục.
+- *Tách unknown ra một file riêng, máy đọc được (YAML/JSON).* Bản sao thứ hai của cùng một tập
+  dữ kiện, đúng thứ F-001 và ADR-001 cấm; và câu hỏi nghiệp vụ phải nằm cạnh tài liệu nghiệp vụ
+  thì người mới đọc mới thấy.
+- *Cho brief kêu lên khi mục Unknowns sai hình dạng.* Trái CLAUDE.md §7.1 — brief không bao giờ
+  chặn — và §3.8: chưa trả giá hai lần cho **hình dạng sai**, mới trả giá cho **cách đọc sai**.
+
+**Rủi ro đã chấp nhận:**
+- **Một tiêu đề `###` mới chen vào giữa mục sẽ giấu các gạch đầu dòng dưới nó.** Đây là mặt trái
+  trực tiếp của việc lấy tiêu đề làm ranh giới. Giá đã hạ xuống một mức: hợp đồng viết ngay trong
+  `docs/product.md` nên người sửa nhìn thấy, và `scripts/brief.test.sh` giữ ca U3b.
+- **Brief vẫn im khi đọc ra rỗng.** `(none)` có thể nghĩa là "không còn câu nào" hoặc "hình dạng
+  hỏng". Giữ nguyên vì §7.1 cấm brief chặn; ca U5 và U7 khoá hành vi `(none)` + `exit 0`.
+- **Tiêu đề dài bị cắt ở 96 ký tự.** Brief là con trỏ, không phải bản sao (§7.1) — muốn đọc đủ
+  thì mở `docs/product.md`.
+
+**Applies to:**
+`scripts/brief.sh` · `scripts/brief.test.sh` · `docs/product.md` → *Unknowns* · `CLAUDE.md` §4 ·
+`work/findings.md` F-008 · `work/backlog.md` T-021 · ADR-002.

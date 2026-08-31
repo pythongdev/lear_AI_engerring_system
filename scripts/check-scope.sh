@@ -24,8 +24,20 @@
 # nhiều hơn thứ nó bắt được.
 # Cái giá đã chấp nhận: file **mới** do chính task tạo ra ngoài scope nay chỉ được
 # ghi chú. Dòng `note:` là chỗ nhìn thấy nó — đọc, đừng lướt.
+#
+# CHẾ ĐỘ --match (thêm 2026-08-31, T-016 — xem docs/decisions.md ADR-006):
+#   ./scripts/check-scope.sh --match <path>...
+# In ra những path nằm NGOÀI scope, mỗi path một dòng, rồi exit 0. Không đọc
+# `git status`, không kết luận gì về trạng thái track — người gọi tự quyết.
+# Có chế độ này để `check-commit-block.sh` (Gate 7) hỏi được câu "file trong khối
+# commit có thuộc scope không" mà KHÔNG phải chép lại ngữ nghĩa pattern: hai bản
+# so khớp sẽ trôi khỏi nhau, đúng họ lỗi work/findings.md F-001.
+# Cách đọc pattern không đổi một dòng nào — Gate 3 vẫn hành xử y như trước.
 
 set -uo pipefail
+
+MODE="gate"
+if [ "${1:-}" = "--match" ]; then MODE="match"; shift; fi
 
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || {
   echo "check-scope: not a git repository, skipping"
@@ -36,6 +48,7 @@ cd "$ROOT" || exit 0
 SCOPE_FILE="${SCOPE_FILE:-work/scope.txt}"
 
 [ -f "$SCOPE_FILE" ] || {
+  [ "$MODE" = "match" ] && exit 0
   echo "check-scope: no $SCOPE_FILE — scope not declared, skipping"
   exit 0
 }
@@ -54,6 +67,7 @@ while IFS= read -r line || [ -n "$line" ]; do
 done < "$SCOPE_FILE"
 
 if [ ${#allow[@]} -eq 0 ] && [ ${#deny[@]} -eq 0 ]; then
+  [ "$MODE" = "match" ] && exit 0
   echo "check-scope: $SCOPE_FILE has no patterns — scope not declared, skipping"
   exit 0
 fi
@@ -67,6 +81,23 @@ matches() {
   done
   return 1
 }
+
+# --- Chế độ --match: chấm một danh sách path do người gọi đưa, rồi thôi --------
+if [ "$MODE" = "match" ]; then
+  for path in "$@"; do
+    [ -n "$path" ] || continue
+    # `work/scope.txt` được miễn ở đây vì lý do khác Gate 3: người gọi (Gate 7)
+    # có luật riêng cho nó (§6.1 cấm nó nằm trong khối commit), và luật đó nói
+    # "kêu", không phải "ngoài scope". Trả nó về sẽ thành hai lời nhắc chồng nhau.
+    [ "$path" = "$SCOPE_FILE" ] && continue
+    if [ ${#deny[@]} -gt 0 ] && matches "$path" "${deny[@]}"; then
+      printf '%s\n' "$path"
+    elif [ ${#allow[@]} -eq 0 ] || ! matches "$path" "${allow[@]}"; then
+      printf '%s\n' "$path"
+    fi
+  done
+  exit 0
+fi
 
 violations=()
 untracked=()

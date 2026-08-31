@@ -235,7 +235,13 @@ thì **nhờ người đứng quầy bấm**. Không có cửa thứ hai — m�
 
 Câu hỏi nghiệp vụ chưa có lời giải. Không để việc thực hiện âm thầm quyết định thay.
 
-Đang mở **một** câu, sinh ra ngày 2026-08-30 từ chính lời chốt cho phép trả trước:
+`scripts/brief.sh` đọc mục này và in danh sách đang mở vào **mọi phiên mới**, nên hình dạng của
+mục là một hợp đồng, không phải chuyện trình bày — cách viết ở
+[Cách viết một câu ở đây](#cach-viet) bên dưới.
+
+### Đang mở
+
+Một câu, sinh ra ngày 2026-08-30 từ chính lời chốt cho phép trả trước:
 
 - U-005 — **đơn khách trả trước thì trả bằng gì, ai bấm xác nhận "đã nhận tiền", và vào lúc
   nào?** Đơn thu lúc trao hàng thì người trao hàng bấm; đơn trả trước thì không có nhân viên
@@ -243,6 +249,22 @@ Câu hỏi nghiệp vụ chưa có lời giải. Không để việc thực hi�
   tự biết tiền đã về. *Ai trả lời được:* chủ quán. *Đang chặn:* BA-06 (§4 phải nói rõ ai xác
   nhận đã thu được tiền cho **từng** phương thức) và một phần BA-07 (đơn trả trước đứng ở
   trạng thái nào trước khi giao).
+
+<a id="cach-viet"></a>
+### Cách viết một câu ở đây
+
+Hợp đồng giữa mục này và `scripts/brief.sh` (T-021 · `docs/decisions.md` ADR-007 ·
+`work/findings.md` F-008). Mục này nằm dưới tiêu đề `###` của riêng nó nên brief **không** đọc —
+vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị in ra như câu đang mở.
+
+- **Vùng đang mở** = phần đầu mục (trước tiêu đề `###` đầu tiên) **cộng** mọi khối nằm dưới một
+  tiêu đề `### Đang mở`. Mọi thứ dưới một tiêu đề `###` khác đều không được đọc.
+- **Trong vùng đang mở, một gạch đầu dòng là một unknown đang mở.** Định danh `U-XXX` được tìm ở
+  bất cứ đâu trong gạch đầu dòng, nên in đậm chỗ nào cũng được và vắt dòng thoải mái.
+- **Văn xuôi trong vùng đang mở không sinh ra unknown.** Muốn nhắc tới một câu mà không mở nó thì
+  viết thành câu văn, đừng gạch đầu dòng.
+- Trả lời xong một câu thì **chuyển gạch đầu dòng ấy xuống mục đã có lời giải**, đừng chỉ gạch
+  ngang tại chỗ.
 
 ### Đã có lời giải — không ghi lại thành Unknown nữa
 
