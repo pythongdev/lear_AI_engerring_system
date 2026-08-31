@@ -10,8 +10,8 @@ hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 | [Ready](#ready) | việc cần làm — checklist + thứ tự lấy |
 | [In Progress](#in-progress) | task đang chạy |
 | [Done](#done) | việc đã xong |
-| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | mô tả dài T-014…BA-11 + bảng mười câu hỏi §10 |
-| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-013…T-002 |
+| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | mô tả dài T-015…BA-11 + bảng mười câu hỏi §10 |
+| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-014…T-002 |
 | [Vòng chạy một task L1](#vong-chay) | mười bước thủ tục từ nhận task tới khối commit |
 | [Task Detail Template](#template) | khuôn viết một task mới |
 
@@ -20,11 +20,9 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-Bảy việc bảo trì. **Một việc chặn chuỗi BA, làm trước: T-015.** Sáu việc còn lại không
-chặn ai, chen vào lúc nào cũng được.
+Năm việc bảo trì, không việc nào chặn ai — chen vào lúc nào cũng được. Chuỗi BA nay
+không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31).
 
-- [ ] T-015 §10 kế hoạch gốc: hai câu đã có lời giải, một câu hỏi hẹp hơn thực tế — chặn BA-10
-- [ ] T-014 §2.1 kế hoạch gốc thiếu việc khách gọi điện đặt trước
 - [ ] T-016 `work/scope.txt` được commit kèm pattern, hai lần
 - [ ] T-009 Gỡ dòng mẫu T-001 khỏi Ready
 - [ ] T-019 `prompt-fullstack.md` trỏ tới bảy đường không tồn tại — F-007
@@ -98,6 +96,8 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xong).
 
+- [x] T-015 §10 kế hoạch gốc: bốn câu mang dấu đã chốt, câu 6 hỏi đúng cả hai kênh (2026-08-31)
+- [x] T-014 §2.1 kế hoạch gốc nay có đường điện thoại — khách gọi, nhân viên nhập hộ (2026-08-31)
 - [x] T-024 Gate 1b — tài liệu cũng bị máy chấm: mọi pointer phải mở được (ADR-005) (2026-08-30)
 - [x] T-022 Bản xuất khẩu hết chép số tiền của nhà thật — §4, §9.1, §9.4 nay trỏ `shop-facts.md` (2026-08-30)
 - [x] T-020 Đơn mang đi được trả trước — §6.3 hết câu "không bao giờ thu trước", mở U-005 (2026-08-30)
@@ -145,34 +145,6 @@ ADR, câu nào chưa thì thành GIẢ ĐỊNH có mức rủi ro và người c
 
 **S-1, S-2, S-3 không phải giả định.** Chủ quán xác nhận cả ba ngày **2026-08-30**
 (`shop-facts.md` §7.1); §7.2 nay không còn mục nào. Task nào ghi chúng là "chưa xác nhận" là sai.
-
-### T-014 — §2.1 kế hoạch gốc thiếu việc khách gọi điện đặt trước
-
-**Prompt:** `prompt/maintenance/07-plan-actor-phone-order-L1.md` (L1)
-
-**Goal:**
-§2.1 *Người dùng chính* liệt kê việc khách làm là "Đặt ship · Đặt trước để tới lấy · Quét QR tại
-bàn" — không có đường điện thoại; phía nhân viên cũng chỉ có "Đặt món hộ khách" (tức `staff_pos`).
-`docs/product.md` §1.1 · §1.2 **đã** đúng từ BA-01, nên đây là chỗ khung lệch với cả nhà thật lẫn
-tài liệu tra cứu — chỗ lệch **thứ bảy** của cùng một kênh. T-011 cố ý không sửa: §2.1 nằm ngoài
-vòng rà của nó.
-
-**Acceptance · Verify:** trong file prompt.
-
-### T-015 — §10 kế hoạch gốc: hai câu đã có lời giải, một câu hỏi hẹp hơn thực tế
-
-**Prompt:** `prompt/maintenance/08-plan-open-questions-scope-L1.md` (L1) · **chặn** BA-10
-
-**Goal:**
-§10 câu 6 ("Pickup có cần giờ hẹn bắt buộc không?") và câu 7 (trạng thái giao hàng) **đã có lời
-giải** ở `shop-facts.md` §6.5 · §6.7, nhưng §10 vẫn để mở. Riêng câu 6 còn hỏi **hẹp hơn** thực tế:
-mốc giờ bắt buộc với cả `pickup` **và** `phone_preorder` (§6.5). Câu 7 thì đúng phạm vi — trạng
-thái "đang giao" chỉ có ở đơn giao tận nơi; đừng mở rộng nó cho ba kênh.
-
-Đánh số 1–10 **không đổi**: `work/backlog.md` và `prompt/BA/09-decisions-assumptions-L2.md` trỏ
-theo số thứ tự (`§10.6`).
-
-**Acceptance · Verify:** trong file prompt.
 
 ### T-016 — `work/scope.txt` được commit kèm pattern, hai lần
 
@@ -712,6 +684,85 @@ git status --porcelain
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### T-015 — §10 kế hoạch gốc: hai câu đã có lời giải, một câu hỏi hẹp hơn thực tế
+
+**Prompt:** `prompt/maintenance/08-plan-open-questions-scope-L1.md` (L1) · **Xong 2026-08-31** · gỡ chặn BA-10
+
+**Goal:**
+§10 câu 6 ("Pickup có cần giờ hẹn bắt buộc không?") và câu 7 (trạng thái giao hàng) **đã có lời
+giải** ở `shop-facts.md` §6.5 · §6.7, nhưng §10 vẫn để mở. Riêng câu 6 còn hỏi **hẹp hơn** thực tế:
+mốc giờ bắt buộc với cả `pickup` **và** `phone_preorder` (§6.5). Câu 7 thì đúng phạm vi — trạng
+thái "đang giao" chỉ có ở đơn giao tận nơi; đừng mở rộng nó cho ba kênh.
+
+Đánh số 1–10 **không đổi**: `work/backlog.md` và `prompt/BA/09-decisions-assumptions-L2.md` trỏ
+theo số thứ tự (`§10.6`).
+
+**Acceptance · Verify:** trong file prompt.
+
+**Đã sửa, tất cả trong §10 của `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`:**
+
+| Câu | Thành gì |
+|---|---|
+| **1** | giữ nguyên câu hỏi, thêm dấu *xác nhận* và *hủy* **đã chốt 2026-08-30** → §6.2 · §6.13, và ghi thẳng **phần "chỉnh sửa đơn" vẫn còn mở** |
+| **5** | giữ nguyên câu hỏi, thêm dấu **đã chốt 2026-08-30** → §6.4 |
+| **6** | **đổi phạm vi** — từ *"Pickup có cần giờ hẹn bắt buộc không?"* thành *"Giờ khách cần hàng có bắt buộc không, và với những kênh nào?"*, dấu chốt trỏ §6.5: bắt buộc với **cả `pickup` và `phone_preorder`** |
+| **7** | giữ nguyên câu hỏi **và phạm vi `delivery`**, thêm dấu chốt trỏ §6.7 |
+| đầu §10 | ba dòng dẫn: bốn câu 1·5·6·7 đã có lời giải, đọc ở nguồn, **đừng biến thành `GIẢ ĐỊNH`** |
+
+**Sáu câu còn mở (2, 3, 4, 8, 9, 10) không đổi một ký tự** — `git diff -U0` chỉ hiện bốn dòng
+1, 5, 6, 7. Đánh số 1–10 liên tục, vẫn đủ mười câu.
+
+**Đã mở từng mục nguồn ra kiểm (Acceptance yêu cầu nói rõ):** §6.2 (đơn khách tự gửi phải quầy
+duyệt) · §6.4 (hoàn tiền, quầy quyết từng ca) · §6.5 (bảng thông tin liên hệ — *Giờ khách cần
+hàng* bắt buộc với `pickup` **và** `phone_preorder`) · §6.7 (quán tự giao, trạng thái "đang giao") ·
+§6.13 (chỉ người đứng quầy được huỷ). Hai mục đỡ chéo: §5.2 điểm 5 (cả hai kênh đều có mốc giờ)
+và điểm 7 (chỉ đơn giao tận nơi có "đang giao"). Ngày chốt lấy từ §7.1 — cả năm dòng đều
+**2026-08-30**.
+
+**Ba câu được xác nhận là KHÔNG có lời giải**, nên cố ý không mang dấu chốt: câu 3 (món hết),
+câu 9 (đổi giá đang bán), câu 10 (lịch sử thao tác) — `grep` trên `shop-facts.md` không ra dòng
+nào. Câu 2, 4, 8 cũng vậy: §6.13 chỉ nói *huỷ* chứ không nói *sửa*, §6.1 nói phiên "chờ thanh
+toán" chứ không nói ca khách không trả được, §6.9 · §6.10 nói cộng đủ nguồn và đối soát chứ
+không chốt mốc ngày doanh thu.
+
+**Không tự chốt câu nào, không mở U-XXX mới.** Task chỉ ghi lại lời giải đã có sẵn trong
+`shop-facts.md`; không có chỗ nào phải suy luận (F-004).
+
+**Mục *"Mười câu hỏi §10"* ở trên không sửa** — đã đúng sẵn và trùng khớp với `shop-facts.md`;
+sửa nó là tạo bản chép thứ hai (ADR-001, F-001).
+
+### T-014 — §2.1 kế hoạch gốc thiếu việc khách gọi điện đặt trước
+
+**Prompt:** `prompt/maintenance/07-plan-actor-phone-order-L1.md` (L1) · **Xong 2026-08-31**
+
+**Goal:**
+§2.1 *Người dùng chính* liệt kê việc khách làm là "Đặt ship · Đặt trước để tới lấy · Quét QR tại
+bàn" — không có đường điện thoại; phía nhân viên cũng chỉ có "Đặt món hộ khách" (tức `staff_pos`).
+`docs/product.md` §1.1 · §1.2 **đã** đúng từ BA-01, nên đây là chỗ khung lệch với cả nhà thật lẫn
+tài liệu tra cứu — chỗ lệch **thứ bảy** của cùng một kênh. T-011 cố ý không sửa: §2.1 nằm ngoài
+vòng rà của nó.
+
+**Đã sửa ba chỗ, tất cả trong §2.1 của `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`:**
+
+| Chỗ | Thêm gì |
+|---|---|
+| nhóm **1. Khách hàng** | dòng thứ tư: *"Gọi điện đặt trước — khách nói, **không tự bấm**; nhân viên nhập hộ."* Ba dòng cũ giữ nguyên chữ |
+| nhóm **2. Nhân viên quán** | dòng *"Nhập hộ đơn đặt trước qua điện thoại"*, đặt ngay dưới "Đặt món hộ khách" và **nói rõ khác chỗ nào** (đặt hộ **tại quầy**), kèm nghĩa vụ hỏi giao-hay-lấy và mấy giờ |
+| cuối §2.1 | một dòng trỏ `master_plan/shop-facts.md` §5.2 cho phần ai duyệt và phải hỏi gì lúc nhận máy |
+
+**Không có chỗ lệch thứ tám trong cùng file.** Đã đọc §1, §4.3, §13, §14 — không mục nào khác kể
+việc của khách/nhân viên theo kênh; §4.2 và Epic B đã đủ ba kênh từ T-011. Nên **F-006 không được
+nối thêm** (prompt chỉ yêu cầu nối khi tìm thấy chỗ thứ tám).
+
+**Đọc chéo `docs/product.md` §1.1 · §1.2 (Acceptance yêu cầu nói rõ đã đọc):** không câu nào ở §2.1
+mâu thuẫn. §1.1 ghi *"Gọi hotline để đặt trước; khách nói, nhân viên nhập hộ vào hệ thống"* —
+§2.1 nói cùng một việc, ngắn hơn, và **không chép số hotline**. §1.2 ghi *"Nhập hộ đơn đặt trước
+qua điện thoại, và khi nhận điện thoại phải hỏi: giao tận nơi hay tới lấy, và cần hàng lúc mấy
+giờ"* — §2.1 giữ đúng hai nghĩa vụ đó, thêm phần phân biệt với đặt hộ tại quầy mà §1.2 tách sẵn
+thành hai gạch đầu dòng riêng.
+
+**§2.2 không đổi một ký tự** — vẫn là câu trỏ `shop-facts.md` §2 (ADR-001, F-001).
 
 ### T-024 — Lượt chỉ đổi tài liệu là lượt không có gì máy chấm
 

@@ -25,9 +25,12 @@ Xác định rõ:
    - Đặt ship.
    - Đặt trước để tới lấy.
    - Quét QR tại bàn.
+   - Gọi điện đặt trước — khách nói, **không tự bấm**; nhân viên nhập hộ.
 2. Nhân viên quán
    - Nhận/xác nhận đơn.
    - Đặt món hộ khách.
+   - Nhập hộ đơn đặt trước qua điện thoại — khác "Đặt món hộ khách" ở trên (đó là đặt hộ **tại
+     quầy**); khi nhận máy phải hỏi: giao tận nơi hay tới lấy, và cần hàng lúc mấy giờ.
    - Thực hiện công việc tại các trạm.
    - Thu tiền.
    - Dọn bàn.
@@ -36,6 +39,9 @@ Xác định rõ:
    - Quản lý giá và trạng thái bán.
    - Quản lý nhân viên/bàn.
    - Xem báo cáo.
+
+Đơn qua điện thoại là kênh `phone_preorder`; ai duyệt và nhân viên phải hỏi gì lúc nhận máy:
+`master_plan/shop-facts.md` §5.2.
 
 ### 2.2 Các kênh bán
 
@@ -241,13 +247,17 @@ Giai đoạn BA cần thống nhất cách quán xử lý ít nhất các tình 
 
 ## 10. Quyết định BA cần chốt trước khi sang System Design
 
-1. Ai có quyền xác nhận, hủy và chỉnh sửa đơn?
+Bốn câu — **1, 5, 6, 7** — đã có lời giải trong `master_plan/shop-facts.md` và mang dấu **đã chốt**
+ngay tại câu; đọc lời giải ở nguồn, **đừng mở lại thành câu hỏi và đừng biến chúng thành `GIẢ ĐỊNH`**.
+Câu 1 chỉ chốt một phần. Sáu câu còn lại vẫn đang mở.
+
+1. Ai có quyền xác nhận, hủy và chỉnh sửa đơn? — *xác nhận* và *hủy* **đã chốt 2026-08-30** → `master_plan/shop-facts.md` §6.2 · §6.13; phần **chỉnh sửa đơn vẫn còn mở**.
 2. Đơn đã xác nhận có được sửa hay chỉ được hủy/tạo lại?
 3. Khi món hết sau khi khách đặt, quán xử lý thay thế/hủy như thế nào?
 4. Khi khách không thanh toán được, phiên bàn giữ ở trạng thái nào?
-5. Có cho phép hoàn tiền không, và ai được phép?
-6. Pickup có cần giờ hẹn bắt buộc không?
-7. Delivery hiện chỉ cần ghi nhận đơn hay có quản lý trạng thái giao hàng?
+5. Có cho phép hoàn tiền không, và ai được phép? — **đã chốt 2026-08-30** → `master_plan/shop-facts.md` §6.4.
+6. Giờ khách cần hàng có bắt buộc không, và với những kênh nào? — **đã chốt 2026-08-30** → `master_plan/shop-facts.md` §6.5: bắt buộc với **cả `pickup` và `phone_preorder`**, không riêng `pickup`.
+7. Delivery hiện chỉ cần ghi nhận đơn hay có quản lý trạng thái giao hàng? — **đã chốt 2026-08-30** → `master_plan/shop-facts.md` §6.7; phạm vi giữ nguyên ở `delivery`, trạng thái "đang giao" chỉ có ở đơn giao tận nơi.
 8. Báo cáo doanh thu tính theo ngày nào và xử lý đơn hủy/hoàn tiền ra sao?
 9. Chủ quán có được thay đổi giá đang bán ngay lập tức không?
 10. Có cần lưu lịch sử thao tác của nhân viên ở MVP không?
