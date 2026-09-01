@@ -35,10 +35,15 @@ ba dòng *xác nhận S-*). S-1 — chỗ chạm tiền — trả lời là **×
 suất trứng nhân thường = **25.000**. Viết theo ×5 và **không** còn phải đánh dấu là suy luận.
 Prompt nào còn bảo "ghi S-1 là giả định" là pointer cũ.
 
-⚠️ **`shop-facts.md` §7.2 không còn rỗng — từ 2026-08-31 nó giữ S-4** (*"đã làm xong, còn ở bếp"
-có phải một con số riêng không*), sinh ra từ §5.4 khi chủ quán mô tả cách bếp gom việc theo mẻ.
-S-4 **chưa** ai xác nhận: prompt nào chạm tới trục sản xuất phải ghi nó là **suy luận**, không ghi
-như lời chủ quán (`work/findings.md` F-004). Câu kiểm chứng đã soạn sẵn nằm ngay ở §7.2.
+✅ **S-4 đã có lời giải ngày 2026-09-01, `shop-facts.md` §7.2 rỗng trở lại.** Câu hỏi
+(*"đã làm xong, còn ở bếp" có phải một con số riêng không*) được trả lời là **có**: bánh gấp xong
+nằm chờ thật, và **người đứng quầy bấm** nút "đã làm xong" — ba trạm bếp vẫn không bấm gì
+(§5.4, §7.1). Prompt nào còn bảo "ghi S-4 là suy luận" là **pointer cũ**.
+
+⚠️ **Nhưng lời giải ấy mở ra `docs/product.md` → *Unknowns* U-017**: quầy bấm theo **từng cái**,
+theo **cả mẻ**, hay theo **cả bàn**? Chưa ai trả lời. Prompt nào chạm trục sản xuất phải ghi
+**bốn** con số và nói rõ **cách đếm con số thứ tư chưa chốt** — không tự chọn hộ
+(`work/findings.md` F-004, CLAUDE.md §3.5).
 
 ## Nguyên tắc của bộ prompt này
 

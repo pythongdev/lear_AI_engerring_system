@@ -891,3 +891,63 @@ ADR-011
 
 **Status:**
 Fixed (2026-08-31, T-031)
+
+---
+
+### F-014 — Cảnh báo "scope bẩn" của brief bảo phiên mới XOÁ, trong khi chủ thật của scope đang chạy song song
+
+**Problem:**
+`scripts/brief.sh` in cảnh báo này khi `work/scope.txt` còn pattern mà `work/backlog.md` không có
+task nào ở *In Progress*:
+
+> *"Scope của task đã xong chưa được dọn. **Dọn nó TRƯỚC khi bắt task mới**"*
+
+Cảnh báo đọc trạng thái **lúc phiên bắt đầu**, và nó không phân biệt được hai thứ trông giống hệt
+nhau trong một file phẳng:
+
+| Cùng một hình dạng | Nhưng phải xử ngược nhau |
+|---|---|
+| Pattern của task **đã xong**, chưa commit | giữ lại — gỡ sớm là Gate 3 đỏ (đúng như chính scope.txt tự dặn) |
+| Pattern của một phiên **đang chạy song song**, vừa khai xong | **không được chạm** — xoá là cướp scope của người ta |
+
+Ngày **2026-09-01**, phiên chạy BA-04 nhận cảnh báo ấy (38 pattern, không task nào In Progress),
+làm đúng thứ được bảo, và **xoá mất khối scope của hai phiên T-027 và T-031 đang chạy trong cùng
+cây làm việc**. Ba khối được dựng lại ngay sau đó, mỗi khối ghi rõ nó là bản dựng lại và có thể
+hẹp hơn bản gốc; hai phiên kia tự sửa lại khối của mình.
+
+**Impact:**
+Đây là lần **thứ hai** của cùng một hậu quả, và lần này nguyên nhân nằm ở **máy**, không ở người:
+
+- Lần đầu (2026-08-31, T-019 + T-023 chạy song song) là **người** suýt ghi đè; bài học được ghi ở
+  `work/backlog.md` → *Ready* — *"phiên vào sau phải THÊM khối của mình chứ đừng ghi đè"* — cùng họ
+  với **F-010**.
+- Lần này **brief chủ động ra lệnh xoá**. Một bài học nằm trong `work/backlog.md` không thắng được
+  một câu mệnh lệnh in ra ở đầu mỗi phiên: phiên mới đọc brief trước, và brief nói "dọn nó TRƯỚC".
+
+Cái giá: Gate 3 chấm việc của phiên khác bằng scope của mình (đúng thứ **F-010** mô tả), và trong
+ca xấu hơn ca đã xảy ra — phiên kia commit trong lúc scope của nó đang bị xoá — `git add` theo một
+scope sai sẽ đưa file lạ vào commit, tức lại là **F-009**.
+
+**Decision / Fix:**
+Chưa sửa `scripts/brief.sh`. Ghi ngày 2026-09-01 trong lúc chạy **T-036**; sửa script là **T-035**,
+để riêng vì nó chạm `scripts/` và cần ca kiểm mới trong `scripts/brief.test.sh`.
+
+Ràng buộc cho T-035, để nó không sửa thành một lỗi khác:
+
+- **Đừng bỏ cảnh báo.** Ca nó bắt được là ca thật và đã cứu nhiều phiên: scope của task đã xong,
+  không ai dọn (`work/findings.md` **F-010**, `docs/decisions.md` ADR-006).
+- **Đổi lời, không đổi điều kiện.** Câu mệnh lệnh phải là *"THÊM khối của bạn vào cuối; chỉ gỡ khối
+  nào ghi rõ đã commit"* — chứ không phải *"dọn nó TRƯỚC khi bắt task mới"*.
+- **Brief không được tự đoán có phiên nào đang chạy.** Nó không có cách nào biết, và một cảnh báo
+  đoán sai còn tệ hơn cảnh báo hiện tại. Nó chỉ được **nói ra rằng nó không biết**.
+- Nếu muốn máy phân biệt được thật thì phải đổi **hình dạng của `work/scope.txt`** (mỗi khối có
+  dòng chủ + ngày, brief đọc theo cấu trúc như đã làm với *Unknowns* ở ADR-007) — đó là một quyết
+  định riêng, cần ADR, **không** gấp vào T-035 mà không hỏi.
+
+**Related task:**
+T-035 (sửa `brief.sh`) · T-036 (phát hiện, ghi finding) · BA-04 (phiên gây ra sự cố, entry có mục
+*Sự cố trong lúc chạy*) · F-010 (scope quên dọn — cùng file, ngược chiều) · F-009 (commit theo
+scope sai) · ADR-006 (Gate 7b + cảnh báo scope)
+
+**Status:**
+Open

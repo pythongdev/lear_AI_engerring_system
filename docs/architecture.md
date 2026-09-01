@@ -383,21 +383,29 @@ Không phải "chưa làm" — là **đã quyết định không làm**:
 
 ## 11. Câu chưa ai trả lời — đừng để mã tự quyết
 
-**Danh sách câu hỏi nghiệp vụ đang mở nay RỖNG** (`docs/product.md` → *Unknowns*, tính tới
-2026-08-31). Còn đúng **một** chỗ chưa chắc, và nó không phải câu hỏi nghiệp vụ mà là một **chỗ
-suy ra** — `master_plan/shop-facts.md` §7.2:
+**Cập nhật 2026-09-01 — S-4 đã có lời giải, và nó đổi số cột của §3.** Chủ quán trả lời: bánh gấp
+xong **có nằm chờ** (chờ đủ đĩa · chờ người rảnh tay bưng · chờ món khác của cùng bàn), và **người
+đứng quầy bấm** nút *"đã làm xong"* — `master_plan/shop-facts.md` §5.4, §7.1.
 
-| Chỗ chưa chắc | Chặn phần nào của tài liệu này |
-|---|---|
-| **S-4** — *"đã làm xong, còn ở bếp"* có phải một con số riêng | §3 — bảng quầy có **ba** cột hay **bốn** |
+| Chỗ từng chưa chắc | Nay | Hệ quả cho tài liệu này |
+|---|---|---|
+| **S-4** — *"đã làm xong, còn ở bếp"* có phải một con số riêng | **có**, chủ quán 2026-09-01 | §3 — bảng quầy có **BỐN** con số, không phải ba |
 
-**S-4 đã hỏi một lần và hỏng.** Ngày 2026-08-31 chủ quán trả lời *"tôi không hiểu"*: câu hỏi cũ
-bắt chủ quán suy ra hộ *một bảng trong máy nên hiện gì*, tức hỏi về mô hình dữ liệu thay vì hỏi về
-cái quán. `shop-facts.md` §7.2 nay giữ câu kiểm chứng **mới** — hỏi *từ lúc bánh tráng xong đến
-lúc nó xuống bàn, có nằm chờ không* — cùng một câu hỏi tiếp theo dùng khi trả lời là "có".
+⇒ **Phương án "ba con số" ở §3 hết đúng và phải viết lại.** Câu *"bảng quầy không biết khoảng chờ
+giữa làm xong và ra bàn"* nay sai: nó **biết**, vì quầy bấm. Nút ấy nằm ở **quầy**, không ở bếp —
+lời chốt U-009 (không có nút nào ở trạm bếp) vẫn nguyên vẹn, hai luật không mâu thuẫn.
 
-⇒ Tới khi S-4 có lời giải, §3 viết theo **phương án hẹp nhất: ba con số**, và nói thẳng là bảng
-quầy **không biết** khoảng chờ giữa *làm xong* và *ra bàn*, chứ không im lặng giả vờ là không có.
+⚠️ **Chưa viết được ngay khi tài liệu này ghi dòng trên** — `docs/product.md` → *Unknowns*
+**U-017** lúc ấy còn mở: quầy bấm theo **từng cái**, theo **cả mẻ**, hay theo **cả bàn**?
+
+*Cập nhật 2026-09-01 (T-037): **U-017 đã có lời giải — bấm theo MẺ*** (chủ quán chốt,
+`master_plan/shop-facts.md` §5.4). §3 nay viết được đủ: **bốn** con số, và con số thứ tư nhảy
+**theo bậc mẻ**, không nhảy từng đơn vị. Mẻ là đơn vị **bấm**, bàn vẫn là đơn vị **đếm** (§5.3).
+Việc viết lại §3 vẫn là của T-036 — T-037 chỉ gỡ dòng chặn này, không viết hộ đặc tả.*
+
+**Danh sách câu hỏi nghiệp vụ đang mở** (`docs/product.md` → *Unknowns*): cuối ngày 2026-09-01 nó
+**rỗng trở lại** — U-014, U-015, U-016 (mốc đổi menu/giá), U-017 và U-018 đều đã đóng trong ngày.
+Đọc ở owner, đừng tin con số trong câu này.
 
 **Ba câu đã đóng ngày 2026-08-31**, đọc lại nếu thấy tài liệu nào còn ghi chúng là đang mở:
 

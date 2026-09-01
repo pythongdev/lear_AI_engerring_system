@@ -495,6 +495,14 @@ sáu quả trứng, không phải sáu dòng. Mẻ trả kết quả **về lạ
 *đã phục vụ* — nhưng con số "đã làm xong" hiện là **suy luận chưa xác nhận**, giữ ở
 `master_plan/shop-facts.md` §7.2 (S-4), không được ghi như lời chủ quán.
 
+*Cập nhật 2026-09-01 (T-036): **S-4 đã có lời giải và câu trên hết là suy luận.** Chủ quán xác
+nhận bánh gấp xong **có nằm chờ**, nên "đã làm xong" là một con số thật, và **người đứng quầy bấm**
+nó (`master_plan/shop-facts.md` §5.4, §7.1; §7.2 rỗng trở lại). Từ nay được ghi như lời chủ quán,
+kèm ngày. Chỗ **chưa** chốt đã dời sang một câu hẹp hơn — bấm theo từng cái hay cả mẻ,
+`docs/product.md` → Unknowns **U-017** — và chính nó là thứ phải nêu đích danh khi viết §3.4.*
+*Cập nhật 2026-09-01 (T-037): **U-017 cũng đã đóng — bấm theo MẺ** (`shop-facts.md` §5.4). §3.4
+nay không còn câu nào phải nêu là chưa chốt.*
+
 Chỗ ở của từng phần: dữ kiện quán ở `master_plan/shop-facts.md` §5.4 (ADR-001 không đổi); hành vi
 sản phẩm ở `docs/product.md` §3.4, do **BA-12** viết; câu hỏi chưa ai trả lời ở *Unknowns*
 U-008–U-011.
@@ -539,6 +547,11 @@ này được ghi là **dữ kiện quán**, không phải một đề xuất c�
 - **Bốn câu hỏi mở cùng một lúc (U-008–U-011) cộng một chỗ suy ra (S-4).** BA-12 không tick hết
   được cho tới khi chủ quán trả lời. Chấp nhận: bốn câu hỏi có tên rẻ hơn bốn chỗ tự suy
   (`CLAUDE.md` §3.5), và cả năm đều hỏi được trong một lần gặp.
+  *Cập nhật 2026-09-01 (T-036): cả năm đã đóng — U-008–U-011 ngày 2026-08-31, S-4 ngày 2026-09-01.
+  Rủi ro này đã tiêu, và nó đúng như dự đoán: cả năm được hỏi trong hai lần gặp, không phải năm.
+  Đổi lại, lời giải S-4 đẻ ra **U-017** (bấm theo từng cái hay cả mẻ) — BA-12 vẫn không tick hết
+  được, chỉ khác là nay treo ở một câu chứ không phải năm.*
+  *Cập nhật 2026-09-01 (T-037): **U-017 đóng nốt trong ngày — theo MẺ.** BA-12 hết bị chặn.*
 - **Trục này làm nặng thêm mọi lát cắt viết sau nó.** BA-07 (vòng đời) và BA-09 (MVP) đều phải trả
   lời thêm một câu. Chấp nhận vì đây là thứ quán đang làm bằng tay mỗi sáng, không phải tính năng
   thêm vào.
@@ -690,6 +703,13 @@ này* — và câu thứ hai đổi nhiều lần trong một buổi sáng.
   *Cập nhật 2026-08-31 (T-033): U-006 và U-012 đã đóng, S-4 đã hỏi một lần và hỏng — chủ quán trả
   lời "tôi không hiểu", câu kiểm chứng mới ở `master_plan/shop-facts.md` §7.2. Rủi ro này giảm
   xuống còn một mục, và cách xử vẫn nguyên: phần liên quan viết theo phương án hẹp nhất.*
+  *Cập nhật 2026-09-01 (T-036): **S-4 đóng nốt** — bảng quầy có **bốn** con số và **người đứng quầy
+  bấm** "đã làm xong" (`master_plan/shop-facts.md` §5.4). Mặt admin/POS vì thế gánh thêm một thao
+  tác, đúng chiều rủi ro "dồn việc vào quầy" ghi ở gạch đầu dòng đầu mục này. Chỗ hẹp còn lại là
+  **U-017** (bấm theo từng cái hay cả mẻ); `docs/architecture.md` §3 phải viết bốn con số kèm câu
+  "cách đếm chưa chốt", không được quay lại phương án ba con số.*
+  *Cập nhật 2026-09-01 (T-037): **U-017 đóng — theo MẺ.** §3 bỏ được câu "cách đếm chưa chốt": bốn
+  con số, con số thứ tư nhảy theo bậc mẻ. Vẫn không được quay lại phương án ba con số.*
 
 **Applies to:**
 `docs/architecture.md` (toàn bộ) · `master_plan/shop-facts.md` §5.4, §6.13, §6.14, §6.15 ·

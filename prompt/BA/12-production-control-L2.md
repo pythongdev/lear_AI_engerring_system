@@ -57,14 +57,22 @@ Năm câu, tất cả đều hỏi được trong một lần gặp chủ quán.
 | **U-009** | Ai bấm "đã làm xong" / "đã bưng ra bàn", theo từng cái hay theo mẻ? | không có ai làm cho con số thay đổi ⇒ bảng đứng yên |
 | **U-010** | Đơn mang đi có gom chung bảng với bàn không? | cột "cho bàn nào" không biết ghi gì cho đơn giao tận nơi |
 | **U-011** | Máy chỉ hiện tổng, hay được tự chia mẻ? | không biết ai chịu trách nhiệm khi mẻ chia sai |
-| **S-4** | "Đã làm xong, còn ở bếp" có phải một con số riêng? | ba con số hay bốn — quyết định cả hình dạng §3.4 |
+| ~~**S-4**~~ | ~~"Đã làm xong, còn ở bếp" có phải một con số riêng?~~ | **đã đóng 2026-09-01: CÓ, bốn con số** — xem dưới |
+| **U-017** | Quầy bấm "đã làm xong" theo **từng cái**, theo **cả mẻ**, hay theo **cả bàn**? | ba cách cho ra ba con số thứ tư khác nhau — quyết định cách đếm của §3.4 |
 
-Câu kiểm chứng của S-4 đã soạn sẵn ở `master_plan/shop-facts.md` §7.2; hỏi đúng câu đó, đừng diễn
-đạt lại. Chủ quán trả lời xong ⇒ ghi vào `master_plan/shop-facts.md` **trước** (§5.4 cho nội dung,
-§7.1 cho nhật ký, xoá khỏi §7.2 nếu là S-4), rồi mới viết §3.4.
+**Cập nhật 2026-09-01 (T-036) — bốn câu U-008–U-011 và S-4 đều đã có lời giải; đọc
+`master_plan/shop-facts.md` §5.4 và §7.1, đừng hỏi lại.** S-4 trả lời là **có**: bánh gấp xong nằm
+chờ (chờ đủ đĩa · chờ người rảnh tay bưng · chờ món khác của cùng bàn), và **người đứng quầy bấm**
+nút "đã làm xong" — ba trạm bếp vẫn không bấm gì (U-009 nguyên vẹn). Câu duy nhất còn treo là
+**U-017** ở dòng trên.
 
-Còn mở mà vẫn phải chạy ⇒ §3.4 viết theo phương án **hẹp nhất** (ba con số, người tự gom, chỉ bàn)
-và nói thẳng câu nào đang treo. **Không** tự chọn phương án rộng rồi ghi là đã chốt.
+Câu nào còn treo thì chủ quán trả lời xong ⇒ ghi vào `master_plan/shop-facts.md` **trước** (§5.4
+cho nội dung, §7.1 cho nhật ký), rồi mới viết §3.4.
+
+Còn mở mà vẫn phải chạy ⇒ §3.4 viết theo phương án **hẹp nhất** và nói thẳng câu nào đang treo.
+**Không** tự chọn phương án rộng rồi ghi là đã chốt. *Cập nhật 2026-09-01: "hẹp nhất" **không còn
+là ba con số** — bốn con số nay là dữ kiện đã chốt. Chỗ hẹp nhất còn lại là **cách đếm** con số
+thứ tư (U-017): viết bốn con số, và nói rõ chưa chốt bấm theo từng cái hay cả mẻ.*
 
 ## Constraints
 
@@ -77,8 +85,9 @@ và nói thẳng câu nào đang treo. **Không** tự chọn phương án rộn
   Một §3.4 chỉ có tổng là một §3.4 chưa đạt.
 - **Gom theo đúng thứ khách chọn** (`shop-facts.md` §4.5): trứng tách theo chín / tái / vàng; bánh
   tách theo nhân và lượng nhân. Hai thành phần cùng tên khác lượng nhân là **hai** dòng.
-- **"Đã làm xong" ≠ "đã bưng ra bàn"** — nếu S-4 được xác nhận. Chưa xác nhận thì §3.4 dùng ba con
-  số và ghi rõ đang chờ S-4. Đừng viết như thể đã chốt.
+- **"Đã làm xong" ≠ "đã bưng ra bàn"** — **đã được chủ quán xác nhận 2026-09-01** (S-4), nên §3.4
+  dùng **bốn** con số. Cái chưa chốt là *cách đếm* con số thứ tư (U-017), không phải sự tồn tại
+  của nó. Đừng viết ngược lại, và đừng quay về ba con số.
 - **Trục sản xuất không thay thế trục đơn.** Đơn vẫn có vòng đời của nó (§5, BA-07); §3.4 nói hai
   trục gặp nhau ở đâu — đơn **đã duyệt** mới nhập vào nhu cầu (`shop-facts.md` §6.2), đơn **huỷ**
   rút khỏi nhu cầu.
@@ -102,8 +111,8 @@ và nói thẳng câu nào đang treo. **Không** tự chọn phương án rộn
    khỏi nhu cầu; nói rõ chuyện gì xảy ra với phần đã làm xong của một đơn bị huỷ.
 6. Trứng tách theo **ba loại**, bánh tách theo **nhân và lượng nhân** — có ví dụ cho thấy hai dòng
    không gộp được.
-7. Nêu trạng thái của **S-4**: hoặc "chủ quán đã xác nhận ngày …" kèm bốn con số, hoặc "chưa xác
-   nhận" kèm ba con số. Không có ca thứ ba.
+7. Nêu trạng thái của **S-4**: đã xác nhận **2026-09-01**, bốn con số, người đứng quầy bấm — và
+   nêu **U-017** là câu còn treo về *cách đếm* con số thứ tư. Không được viết ba con số.
 8. Mỗi câu trong U-008–U-011 hoặc đã có lời giải ghi kèm ngày, hoặc được nêu đích danh trong §3.4
    là **đang treo** và nói §3.4 đã chọn phương án hẹp nào thay cho nó.
 9. `quality/invariants.md` có ít nhất hai invariant: (a) tổng nhu cầu của một thành phần luôn bằng
