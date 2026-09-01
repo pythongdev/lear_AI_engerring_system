@@ -374,10 +374,20 @@ Không phải "chưa làm" — là **đã quyết định không làm**:
 - **Máy tự chia mẻ, tự xếp nồi, tự xếp thứ tự làm** — chủ quán chốt 2026-08-31: *"máy không làm,
   để người làm"* (§2).
 - **Nút bấm báo xong ở ba trạm bếp** — chủ quán bỏ đi, 2026-08-31 (§1.1).
-- **Nguyên liệu, tồn kho, chấm công, kế toán** (`docs/product.md` §1.4).
 - **Hệ thống là chỗ dựa duy nhất để bán hàng.** Mất điện hay mất mạng thì quán chuyển sang **sổ
   giấy** và **không dừng bán** (`shop-facts.md` §6.11). Mặt admin phải chịu được việc một buổi
   sáng bị nhập bù sau.
+
+**Một dòng đã RA khỏi mục này ngày 2026-09-02.** *Nguyên liệu, tồn kho, chấm công, kế toán* từng
+đứng ở đây như một quyết định không làm. Chủ quán chốt **ngược lại** ngày 2026-09-01 và **xác nhận
+lại 2026-09-02**: ba mảng **nguyên liệu · con người · tài chính** vào phạm vi (`docs/product.md`
+§1.4). Dòng ấy bị **xoá**, không phải chuyển chỗ — mục này chỉ giữ những gì **vẫn** là *đã quyết
+định không làm*.
+
+⚠️ **Mở ranh giới không sinh ra thiết kế.** Tài liệu này chưa có tầng, chưa có màn, chưa có dữ liệu
+nào cho ba mảng ấy, và §8 vẫn giữ nguyên danh sách chỗ thiếu của nó. Ai viết mặt admin cho ba mảng
+này thì đọc `docs/product.md` §1.4 trước — ở đó ghi rõ *được phép làm* chưa phải *làm ngay*, và §7
+(BA-09) mới là chỗ nói mảng nào vào MVP.
 
 ---
 

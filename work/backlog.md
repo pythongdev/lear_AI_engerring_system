@@ -11,7 +11,7 @@ hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 | [In Progress](#in-progress) | task đang chạy |
 | [Done](#done) | việc đã xong |
 | [Chi tiết — việc cần làm](#chi-tiet-can-lam) | bảng mười câu hỏi §10 + mô tả dài T-019…BA-12 (BA-05, BA-06 và BA-08 đã chuyển sang mục đã xong) |
-| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài BA-08…T-002 |
+| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-040…T-002 |
 | [Vòng chạy một task L1](#vong-chay) | mười bước thủ tục từ nhận task tới khối commit |
 | [Task Detail Template](#template) | khuôn viết một task mới |
 
@@ -157,12 +157,17 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-041 Nội dung mảng ADMIN phải có **mục riêng có nhãn** ở mọi tài liệu — tách phần T-040 vừa viết trộn, và chốt luật thành ADR-013 (2026-09-02)
+
+- [ ] BA-09 `docs/product.md` §7 — phạm vi MVP (2026-09-02)
+
 
 
 
 <a id="done"></a>
 ## Done
 
+- [x] T-040 Đ-1: ba mảng **nguyên liệu · con người · tài chính** vào phạm vi — hai dòng ranh giới cũ bị xoá ở `docs/product.md` §1.4 và `docs/architecture.md` §10; ngày chốt vào `shop-facts.md` §7.1 (2026-09-02)
 - [x] BA-08 `docs/product.md` §6 — mười bốn ngoại lệ; chín dòng chốt, năm dòng thành GĐ-01–GĐ-05 kèm mức rủi ro; mở U-025 (2026-09-02)
 - [x] T-039 U-021, U-023, U-024 đóng — **POS bấm cả bốn mốc**, bấm nhầm một mẻ **lùi được**; U-022 còn một nửa; §6.19, S-5 (2026-09-01)
 - [x] BA-07 `docs/product.md` §5 — ba vòng đời, trạng thái giữa của việc trạm là **đã làm xong còn ở bếp**; I-016, I-017; mở U-021–U-024 (2026-09-01)
@@ -215,6 +220,69 @@ Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+### T-041 — Nội dung mảng ADMIN nằm lẫn trong mục của mảng bán hàng, đọc không biết nó thuộc phần nào
+
+**L1** — chỉ tài liệu, không chạm hành vi; nhưng nó đặt ra một **luật viết** mà mọi task admin sau
+này phải theo, nên nó đẻ một ADR.
+
+**Prompt:** chưa có · **chặn** mọi task ADM-01…ADM-52 nếu chạy trước
+
+**Hiện trạng đang SAI:** T-040 (cùng ngày) ghi lời chốt Đ-1 bằng cách **viết chen vào mục đang có**
+— một khối dài trong `docs/product.md` §1.4 (*Ranh giới hệ thống*) và một khối nữa trong
+`docs/architecture.md` §10 (*Ngoài phạm vi mặt admin*). Cả hai mục ấy vốn nói về **mảng bán hàng**.
+Người đọc mở ra thấy một đoạn về nguyên liệu, chấm công, tài chính nằm giữa các dòng về đơn và bàn,
+và **không có cách nào biết đoạn ấy thuộc phần nào**.
+
+**Lời chủ repo, 2026-09-02:** *"khi cập nhật phần admin vào bất cứ tài liệu nào hãy làm thêm 1 mục
+cho admin tách riêng ra, tôi cần biết mục này là thuộc phần nào"*.
+
+**Goal:** mở bất kỳ tài liệu nào trong repo, nhìn mục lục là biết ngay đâu là phần **bán hàng** và
+đâu là phần **quản trị (admin)**; và luật ấy được ghi ở chỗ phiên sau buộc phải đọc, không phải chỗ
+ai đó phải nhớ.
+
+**Nói một câu, việc phải làm là gì:** chuyển nội dung admin của T-040 ra **mục riêng có nhãn** ở ba
+tài liệu, để lại ở mục cũ đúng **một dòng trỏ**, rồi chốt luật thành **ADR-013**. Việc **không**
+phải làm: viết thêm luật nghiệp vụ cho ba mảng admin, hay dựng mục con cho từng mảng — hôm nay chưa
+có dữ kiện nào để đổ vào đó.
+
+**Vì sao có task này:** một mục riêng có nhãn là thứ duy nhất **không trôi**. Ghi chen vào mục có
+sẵn thì mỗi lần mục ấy được sửa vì lý do bán hàng, phần admin lại bị đọc nhầm là luật bán hàng —
+đúng họ lỗi F-001 (hai thứ khác nhau ở chung một chỗ thì chỗ ấy sai với ít nhất một trong hai).
+
+**Không làm thì mất gì:** 52 việc ADM ở `work/admin-questions.md` §2 sẽ lần lượt được viết vào tài
+liệu; mỗi việc chen vào một mục bán hàng là một chỗ nữa không ai tách lại được. Sửa bây giờ mất một
+lượt, sửa sau mất một lượt cho mỗi mục.
+
+**Scope:** `docs/product.md` (§1.4 → mục mới §1.6) · `docs/architecture.md` (§10 → mục mới §14, và
+bảng §13) · `docs/decisions.md` (**ADR-013**) · `master_plan/shop-facts.md` (§7.1 cột *Ghi ở*, §7.3,
+mục mới **§8**) · `work/admin-questions.md` §4 · `work/backlog.md`.
+
+**Out of scope:** Đ-2, Đ-3, Đ-4 (vẫn chờ chủ quán xác nhận lại) · `quality/invariants.md` ·
+`CLAUDE.md` (đang có thay đổi chưa commit của phiên khác — không chen vào) · `prompt/`.
+
+**Bẫy hay sửa nhầm nhất:**
+- **Đánh số lại mục là làm gãy pointer.** `docs/architecture.md` §13 đang được
+  `prompt/BA/08-mvp-scope-L1.md` trỏ tới; mục admin mới phải là **§14** ở cuối, không được chèn vào
+  giữa rồi đẩy §13 xuống.
+- **`master_plan/shop-facts.md` không có liên kết nào** (ADR-001). Mục admin mới ở đó chỉ được trỏ
+  bằng số mục nội bộ, không được nhắc tên file khác.
+- **§7.1 vẫn phải là nhật ký ĐẦY ĐỦ.** Tách mục admin không có nghĩa là rút dòng chốt ra khỏi §7.1
+  — dòng ở lại, chỉ đổi cột *Ghi ở* thành **§8**.
+
+**Acceptance:**
+1. `docs/product.md` có mục **§1.6** mang nhãn admin, giữ toàn bộ nội dung ranh giới ba mảng; §1.4
+   chỉ còn **một dòng trỏ** sang §1.6 và không còn khối dài nào về admin.
+2. `docs/architecture.md` có mục **§14** mang nhãn admin; §10 chỉ còn một dòng trỏ; **§13 giữ
+   nguyên số** và bảng *Đọc gì tiếp* có thêm một dòng trỏ tới §14.
+3. `master_plan/shop-facts.md` có mục **§8** mang nhãn admin; §7.1 giữ nguyên dòng nhật ký nhưng
+   cột *Ghi ở* trỏ **§8**; §7.3 nói thêm rằng dữ kiện admin về §8.
+4. `master_plan/shop-facts.md` §8 **không nhắc tên file nào** (ADR-001).
+5. `docs/decisions.md` có **ADR-013** chốt luật *"nội dung admin đi vào mục riêng có nhãn"*, đủ bốn
+   khối Decision · Why · Rejected alternatives · Applies to.
+6. `work/admin-questions.md` §4 — bảng *lời giải đi đâu* nói rõ luật này và trỏ ADR-013.
+7. Mở mục lục của cả ba tài liệu, đọc tên mục là biết mục nào thuộc mảng admin.
+8. `./scripts/gate.sh` xanh.
 
 ### T-035 — Brief ra lệnh xoá `work/scope.txt` trong khi chủ thật của nó đang chạy song song
 
@@ -590,6 +658,85 @@ Luật chung ở [Vòng chạy một task L1](#vong-chay). Việc riêng của t
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### T-040 — Ranh giới hệ thống nói KHÔNG với ba mảng mà chủ quán đã chốt là CÓ
+
+**L1** — chỉ tài liệu, không chạm hành vi nào đang chạy; nhưng nó **xoá** một dòng ranh giới, và
+một ranh giới bị xoá nhầm thì task sau viết theo phạm vi sai (BA-09).
+
+**Prompt:** chưa có · **chặn** BA-09 (§7 phạm vi MVP) nếu chạy trước
+
+**Hiện trạng đang SAI:** `docs/product.md` §1.4 còn dòng *"Không quản lý nguyên liệu, tồn kho,
+chấm công hay kế toán"* và `docs/architecture.md` §10 xếp đúng bốn thứ ấy vào *"đã quyết định
+không làm"*. Chủ quán đã chốt **ngược lại** từ 2026-09-01, nên hôm nay hai câu ấy tả một sản phẩm
+hẹp hơn cái chủ quán đặt hàng.
+
+**Lời chủ quán:** chốt **2026-09-01** trong phiên, **xác nhận lại 2026-09-02** bằng đúng chữ
+*"Đ-1 → trả lời đồng ý theo lời chốt"* (`work/admin-questions.md` §1): **mở cả ba** — nguyên
+liệu · con người · tài chính — vào phạm vi hệ thống.
+
+**Goal:** ranh giới trong tài liệu bằng đúng ranh giới chủ quán chốt, và nhật ký chốt giữ được ngày
+để phiên sau biết mình đang lật lại điều gì.
+
+**Nói một câu, việc phải làm là gì:** xoá câu *"không quản lý…"* ở hai chỗ và ghi ngày chốt ở chỗ
+thứ ba. Việc **không** phải làm: viết luật nghiệp vụ, dựng màn, chọn mức sâu cho ba mảng, hay quyết
+mảng nào vào MVP — mở ranh giới chỉ là **được phép**, chưa phải **làm**.
+
+**Vì sao có task này:** `work/admin-questions.md` §1 giữ bốn lời chốt ngày 2026-09-01 mà **chưa
+file nào ghi lại** — hôm ấy `docs/product.md` đang có thay đổi chưa commit của BA-07 và sửa chồng
+lên đúng là cơ chế sự cố F-013/F-014. Chủ quán xác nhận lại Đ-1 ngày 2026-09-02 nên nó đi trước;
+Đ-2, Đ-3, Đ-4 **chưa** được xác nhận lại và **không** nằm trong task này.
+
+**Không làm thì mất gì:** BA-09 chốt *"MVP gồm những gì"* bằng cách đọc §1.4; đọc phải dòng cũ thì
+nó loại thẳng ba mảng ra khỏi MVP và phải viết lại lần hai. Mọi việc ADM-01…ADM-52 ở
+`work/admin-questions.md` §2 đều mâu thuẫn với owner của chính nó chừng nào dòng cũ còn đứng đó.
+
+**Scope:** `docs/product.md` §1.4 · `docs/architecture.md` §10 · `master_plan/shop-facts.md` §7.1 ·
+`work/admin-questions.md` · `work/backlog.md`.
+
+**Out of scope:** Đ-2, Đ-3, Đ-4 (chưa xác nhận lại) · `docs/decisions.md` · `quality/invariants.md`
+(chưa có luật nào để giữ) · `docs/product.md` §2–§8 · `prompt/`.
+
+**Acceptance:**
+1. `docs/product.md` §1.4 **không còn** dòng *"Không quản lý nguyên liệu, tồn kho, chấm công hay
+   kế toán"* trong danh sách *KHÔNG chịu trách nhiệm*.
+2. `docs/product.md` §1.4 nói ra lời chốt: ba mảng **nguyên liệu · con người · tài chính** vào phạm
+   vi, kèm **ngày** (2026-09-01, xác nhận lại 2026-09-02) và **ai chốt** (chủ quán).
+3. §1.4 nói thẳng rằng **mở ranh giới chưa sinh ra luật**, và mảng nào vào MVP là câu của §7
+   (BA-09) — để task sau không đọc nhầm *được phép* thành *phải làm ngay*.
+4. §1.4 nói rõ bốn ranh giới ở `shop-facts.md` §6.12 **không** bị lời chốt này chạm tới.
+5. `docs/architecture.md` §10 **không còn** dòng *"Nguyên liệu, tồn kho, chấm công, kế toán"*, và
+   có một đoạn nói dòng ấy đã ra khỏi mục, ngày nào, vì ai.
+6. `master_plan/shop-facts.md` §7.1 có **một dòng nhật ký** cho lời chốt này, ngày 2026-09-01, và
+   nó **không trỏ ra file khác** — tài liệu ấy cố ý không có link (CLAUDE.md §2).
+7. `work/admin-questions.md` §1 đánh dấu Đ-1 **đã về owner**, và §2 dòng ADM-53 nói rõ phần nào
+   còn lại (Đ-2, Đ-3, Đ-4).
+8. `grep -rn` cho *tồn kho / chấm công / kế toán* trong `docs/` và `master_plan/` không còn chỗ nào
+   nói ba mảng ấy ngoài phạm vi.
+9. `./scripts/gate.sh` xanh.
+
+**Cách hoàn thành:** khai báo `work/scope.txt` → viết Acceptance (khối này) → sửa ba owner theo
+thứ tự nhà thật trước (`shop-facts.md` §7.1) rồi tài liệu đọc lại theo nó (`product.md`,
+`architecture.md`) → cập nhật `work/admin-questions.md` → chạy gate → khối commit.
+
+**Đã xong 2026-09-02.** Chín dòng Acceptance đều có bằng chứng:
+- (1)(2)(3)(4) `docs/product.md` §1.4 — dòng *"Không quản lý…"* biến mất khỏi danh sách *KHÔNG chịu
+  trách nhiệm*; thay vào là khối **2026-09-02 — ranh giới vừa MỞ RA**, có ngày, có người chốt, có
+  câu *"mở ranh giới chưa phải là có luật"*, và có câu giữ nguyên bốn ranh giới §6.12.
+- (5) `docs/architecture.md` §10 — bullet *Nguyên liệu, tồn kho, chấm công, kế toán* bị xoá, thay
+  bằng đoạn **Một dòng đã RA khỏi mục này** kèm cảnh báo mở ranh giới không sinh ra thiết kế.
+- (6) `master_plan/shop-facts.md` §7.1 — thêm đúng một dòng nhật ký ngày 2026-09-01, cột *Ghi ở* để
+  dấu `—` chứ không trỏ ra file khác (tài liệu ấy cố ý không có link, `CLAUDE.md` §2).
+- (7) `work/admin-questions.md` — Đ-1 gạch ngang và đánh dấu ✅ đã về owner; dòng ADM-53 nói rõ còn
+  Đ-2, Đ-3, Đ-4.
+- (8) `grep -rn` *tồn kho / chấm công / kế toán* trong `docs/ master_plan/ prompt/ quality/` chỉ còn
+  **ba** chỗ trích lại chính câu đã xoá (đánh dấu là lịch sử) và một chỗ ở `docs/decisions.md` dùng
+  chữ *kế toán* theo nghĩa khác (doanh thu ghi nợ).
+- (9) `./scripts/gate.sh` xanh.
+
+**Việc còn lại, KHÔNG thuộc task này:** Đ-2, Đ-3, Đ-4 ở `work/admin-questions.md` §1 vẫn chưa về
+owner. Chủ quán mới xác nhận lại **Đ-1**; ba lời kia là lời chốt ngày 2026-09-01 chưa được nhắc
+lại, và chuyển chúng đi mà không hỏi là tự quyết thay chủ quán (`CLAUDE.md` §3.5).
 
 ### BA-08 — Ngoại lệ
 

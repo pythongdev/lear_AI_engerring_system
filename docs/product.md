@@ -126,7 +126,29 @@ Việc chủ quán làm:
 - **Không gom mẻ thay người.** Hệ thống chỉ hiện **tổng nhu cầu** để người tự gom; nó không tự
   chia mẻ, không xếp nồi, không quyết thứ tự làm và không đề xuất mẻ — *"máy không làm, để người
   làm"* (chủ quán chốt 2026-08-31, `shop-facts.md` §5.4). Cho máy chia mẻ là **đổi phạm vi**.
-- Không quản lý nguyên liệu, tồn kho, chấm công hay kế toán.
+
+**2026-09-02 — ranh giới vừa MỞ RA, và đây là chỗ ghi việc đó.**
+
+Tới 2026-09-01, danh sách *KHÔNG chịu trách nhiệm* ở trên còn một dòng cuối:
+*"Không quản lý nguyên liệu, tồn kho, chấm công hay kế toán"*. Chủ quán chốt **ngược lại** ngày
+**2026-09-01** và **xác nhận lại 2026-09-02**: mở **cả ba mảng — nguyên liệu · con người · tài
+chính —** vào phạm vi hệ thống. Dòng cũ vì thế bị **xoá**, không phải chuyển chỗ;
+`docs/architecture.md` §10 xoá dòng tương ứng trong cùng thay đổi này, và
+`master_plan/shop-facts.md` §7.1 giữ ngày chốt để phiên sau biết mình đang lật lại điều gì.
+
+**Mở ranh giới chưa phải là có luật.** Ba mảng ấy nay **được phép** có mặt, và hôm nay chỉ có thế:
+
+- Tài liệu này **chưa có một quy tắc nghiệp vụ nào** cho chúng — §2 tới §6 vẫn chỉ nói về việc bán
+  hàng. Đọc sự im lặng đó thành *"chưa quyết"*, đừng đọc thành *"không làm"*.
+- **Sâu tới đâu là quyết định riêng và chưa nằm ở đây.** Mảng nguyên liệu làm tới mức nào, mảng con
+  người làm tới mức nào — hai câu ấy chưa được ghi vào owner nào; việc chuyển chúng về còn nằm
+  trong `work/backlog.md`.
+- **Mảng nào vào MVP là câu của §7 (BA-09)**, không phải câu của mục này. Ranh giới nói *được phép
+  làm*; §7 nói *làm ngay bây giờ*. Hai câu khác nhau và không được trộn.
+
+**Bốn ranh giới ở `shop-facts.md` §6.12 KHÔNG bị lời chốt này chạm tới** — kênh bán thứ sáu, đơn
+tối thiểu và bậc phí ship, số tài khoản cứng trong sản phẩm, món ngoài bảng giá. Cả bốn vẫn là *đã
+quyết định không làm*, và thêm bất kỳ thứ nào vẫn phải xin phép chủ quán.
 
 ### 1.5 Năm trạm làm việc
 
@@ -1243,11 +1265,21 @@ Bốn điều phải đọc kèm bảng, rồi một việc không nằm trong b
 đẩy đơn sang trạng thái khác, nên nó không có dòng nào trong bảng trên và cũng **không** được coi
 là một chuyển tiếp ngoài bảng bị từ chối (§5.1).
 
-Hai chỗ của việc sửa đơn **chưa ai chốt**, và cả hai đều nằm ở **U-022**: sửa được **từ trạng thái
-nào** — đơn bếp đang làm dở thì còn sửa được không, đơn đã `Hoàn thành` thì sao — và một dòng vừa
-sửa **tính giá lúc nào**, vì §4.4 khoá giá theo *thời điểm tạo lượt gọi*. Chủ quán mới nói **ai
-sửa** và **sửa được**; đừng đọc câu ấy rộng hơn chữ của nó (`work/findings.md` F-004). Đây cũng là
-lý do dòng huỷ từ `Đang thực hiện` trong bảng còn để ngỏ ranh giới của nó.
+**Sửa được ở BẤT KỲ trạng thái nào** (chủ quán chốt 2026-09-02, `shop-facts.md` §6.19): *"quán
+đang ở trạng thái nào cũng sửa được, POS sẽ quyết định dựa trên tình hình thực tế"*. Không có ranh
+giới kiểu *"bếp tráng rồi thì thôi"*; đơn đã `Hoàn thành` cũng nằm trong chữ **bất kỳ**. Đây là
+cùng một kiểu luật với hoàn tiền (§4.8) và với đường lùi một mẻ (§5.4): chủ quán **không** dựng
+hàng rào cho máy mà giao quyết định cho người đứng quầy. ⇒ Vì không có luật cứng nên **mỗi lần sửa
+phải để lại vết** — sửa đơn nào, đổi gì, lúc mấy giờ, ai bấm (§4.9).
+
+**Hai vế lời chốt ấy KHÔNG chạm tới, và chúng rời khỏi U-022 thành hai câu riêng.** Chủ quán trả
+lời bằng chữ **sửa**; đọc rộng ra là đúng thứ `work/findings.md` F-004 cấm:
+
+- **Huỷ** còn được phép tới trạng thái nào — `Hoàn thành → Huỷ` hôm nay vẫn không có dòng trong
+  bảng trên (§5.6) ⇒ **U-026**.
+- Một dòng **vừa sửa** thì **tính giá lúc nào**, vì §4.4 khoá giá theo *thời điểm tạo lượt gọi* —
+  sửa xong lấy giá mới thì §3.3.3 vỡ, lấy giá cũ thì khách đổi sang món đắt hơn vẫn trả giá rẻ
+  ⇒ **U-027**.
 
 ### 5.3 Vòng đời PHIÊN BÀN — và cái bàn của nó
 
@@ -1393,11 +1425,14 @@ nghe như hợp lý, và vì mỗi ca đều có người sẽ hỏi *"sao khôn
   quay lại bàn ấy gọi tiếp thì đó là một **phiên mới**, một hoá đơn mới. Mở lại một phiên đã đóng
   là mở lại một hoá đơn đã thu tiền — thứ §3.3.3 và §4.4 khoá chặt.
 - **`Hoàn thành` → `Huỷ` (đơn): bị từ chối vì CHƯA CHỐT, không phải vì đã chốt là cấm.** Kế hoạch
-  gốc §8 liệt kê *"đơn đã hoàn thành nhưng cần điều chỉnh"* như một ngoại lệ phải xử. Ngày
-  2026-09-01 chủ quán trả lời **một nửa** câu ấy — đơn đã xác nhận thì **sửa** được, trên POS
-  (§5.2, `shop-facts.md` §6.19) — nhưng **không** nói sửa hay huỷ được **tới trạng thái nào**, nên
-  nửa còn lại vẫn là **U-022**. Bảng §5.2 không có dòng ấy nên sản phẩm từ chối nó; đó là trạng
-  thái **tạm thời của tài liệu**, và §6 (BA-08) là chỗ nó được chốt.
+  gốc §8 liệt kê *"đơn đã hoàn thành nhưng cần điều chỉnh"* như một ngoại lệ phải xử. Hai lần trả
+  lời đã thu hẹp nó tới mức chỉ còn **một chữ**: 2026-09-01 chủ quán chốt đơn đã xác nhận thì
+  **sửa** được, trên POS (`shop-facts.md` §6.19); 2026-09-02 chốt tiếp **sửa được ở bất kỳ trạng
+  thái nào** (§5.2). Cả hai lần đều nói **sửa** — chưa lần nào nói **huỷ**, nên `Hoàn thành → Huỷ`
+  vẫn không có dòng trong bảng §5.2 và vẫn bị từ chối. Vế còn lại nay đứng riêng thành **U-026**.
+  ⇒ **Trên thực tế ca này đã có đường đi rồi:** đơn đã `Hoàn thành` mà cần điều chỉnh thì **sửa**
+  nó (§5.2) và phần tiền chênh xử theo §4.8 — không phải chờ ai mở đường huỷ. U-026 chỉ còn hỏi
+  liệu quán có muốn **thêm** đường huỷ hay không.
 
 **Ca thứ ba đã rời danh sách này ngày 2026-09-01.** `Đã làm xong, còn ở bếp` → `Chưa làm` từng nằm
 đây với ghi chú *"quầy bấm nhầm một mẻ thì hôm nay không có đường lùi"*. Chủ quán trả lời U-024 là
@@ -1436,15 +1471,15 @@ Danh sách mười bốn tình huống lấy nguyên của kế hoạch gốc §
 | 2 | **Quầy từ chối đơn QR** | *Người đứng quầy* (`shop-facts.md` §6.2, §6.13) | `Chờ xác nhận` ⇒ `Huỷ` — dòng có sẵn ở bảng §5.2. Đơn bị từ chối **không** vào hoá đơn của phiên | Không có gì: đơn chưa duyệt chưa bao giờ chạm tiền |
 | 3 | **Khách gọi thêm sau khi quầy đã bắt đầu thu tiền** | *Khách* (QR tại bàn) hoặc *người đứng quầy* (đặt hộ) | Phiên `Chờ thanh toán` ⇒ **quay lại** `Đang phục vụ` (§5.3). Đơn mới đi vòng đời đơn bình thường | Vào **cùng phiên, cùng một hoá đơn** (`shop-facts.md` §6.1). Mở hoá đơn thứ hai là **thu thiếu tiền** — lỗi tiền nguy hiểm nhất của luồng tại bàn. Lượt gọi mới tính **giá tại thời điểm tạo lượt gọi** (§4.4) |
 | 4 | **Hai người cùng thao tác trên một bàn** | ⚠ **Chưa chốt — `docs/decisions.md` GĐ-01** | ⚠ Chưa chốt | ⚠ Chưa chốt |
-| 5 | **Món hết sau khi khách đã chọn** | ⚠ **Chưa chốt — `docs/decisions.md` GĐ-02** (câu 3 của bảng mười câu hỏi, `work/backlog.md`) | ⚠ Chưa chốt — xem ghi chú §6.3 bên dưới: hết **một thành phần** không phải chuyện của một dòng menu | ⚠ Chưa chốt |
+| 5 | **Món hết sau khi khách đã chọn** | *Người đứng quầy*, trên POS — **bàn với khách**, không tự thay thế và không tự huỷ (`shop-facts.md` §6.20) | **Kết quả là cái hai bên thống nhất tại lúc đó**: đổi sang thứ khác · bỏ phần thiếu · hoặc cả đơn sang `Huỷ`. Không có luật cứng chọn sẵn — xem §6.3, ca này thường áp cho **nhiều bàn một lúc** | Bớt món ⇒ bớt số phải trả. Đơn **đã trả trước** mà huỷ ⇒ sinh việc hoàn, xử theo §4.8 (quầy quyết từng ca, trừ vào doanh thu **ngày hoàn**) |
 | 6 | **Chủ quán tạm dừng nhận đơn** | *Chủ quán*, trên phần quản trị | Chặn đơn **mới**; nút này **thắng giờ mở cửa** (`shop-facts.md` §6.8, I-008). Đơn đang chạy **không** đổi trạng thái, việc đang làm ở bếp **không** dừng — không có trạng thái "tạm dừng" của việc trạm (§5.4) | Không đổi. Đơn đã nhận trước lúc bấm vẫn thu bình thường |
 | 7 | **Khách huỷ đơn** | Khách **báo**, *người đứng quầy* bấm trên POS — quyền huỷ gắn với **chỗ đứng**, không gắn chức vụ (`shop-facts.md` §6.13) | `Chờ xác nhận`, `Đã xác nhận` hoặc `Đang thực hiện` ⇒ `Huỷ` (§5.2). Việc trạm chưa xong của đơn ấy **rời bảng bếp cùng lúc** (§5.4). **Ranh giới trên còn mở:** `Hoàn thành → Huỷ` hôm nay bị từ chối — **U-022**, và dòng 13 của bảng này | Chưa trả ⇒ không gì. **Đã trả trước** ⇒ hoàn theo §4.8: quầy quyết từng ca, **mọi lần đều để lại vết**, và khoản hoàn trừ vào doanh thu **ngày hoàn** |
 | 8 | **Nhân viên huỷ đơn** | **Chỉ** *người đứng quầy*, trên POS. Bốn trạm còn lại (`trang_banh`, `gap_banh`, `canh`, `don_ban`) **không** huỷ được, kể cả đơn của chính việc mình đang làm. Chủ quán **không** đứng quầy thì **nhờ quầy bấm** — chức vụ không mở thêm cửa nào (`shop-facts.md` §6.13) | Như dòng 7 | Như dòng 7. Mọi lần huỷ đi qua **đúng một cửa**, nên lần nào cũng có đúng một người đứng tên khi đối soát (§4.9) |
-| 9 | **Thanh toán thất bại hoặc chưa xác nhận được** | ⚠ **Chưa chốt — `docs/decisions.md` GĐ-03**. *Phần đã chốt:* VietQR ở quán là mã **tĩnh**, máy **không** tự biết tiền đã về; câu *"đã nhận tiền"* chỉ do **người bấm ở POS** tạo ra (`shop-facts.md` §6.3) | ⚠ Chưa chốt — khách nói đã chuyển mà quầy chưa thấy tin nhắn báo có thì phiên đi đường nào | ⚠ Chưa chốt. *Đã chốt phần kề bên:* thu được **một phần** thì phần thiếu là **nợ**, xử theo §4.7 (dòng 10) |
+| 9 | **Thanh toán thất bại hoặc chưa xác nhận được** | *Người đứng quầy*, trên POS — **bàn với khách và quyết ngay lúc đó** (`shop-facts.md` §6.21). VietQR của quán là mã **tĩnh** nên máy **không bao giờ** tự biết tiền đã về; câu *"đã nhận tiền"* chỉ do người bấm ở POS tạo ra (§4.6) | **Hai đường ra, cả hai đã có sẵn:** quầy tin và cho khách đi ⇒ phiên `Chờ thanh toán` sang `Đã đóng` theo đường **nợ** (dòng 10), xoá nợ khi tin nhắn tới · hoặc quầy **chờ tin nhắn** rồi mới đóng phiên. Không đẻ trạng thái mới | Thu được **một phần** thì phần thiếu là **nợ** (§4.7). **Dù chọn đường nào cũng không ghi phần chuyển khoản thành tiền mặt** — §4.9 đối soát tiền mặt bằng **két**, chuyển khoản bằng **tin nhắn báo có**, cấm cộng gộp |
 | 10 | **Khách rời bàn nhưng chưa thanh toán** | *Người đứng quầy*, trên POS (`shop-facts.md` §6.14) | Phiên `Chờ thanh toán` ⇒ `Đã đóng` — **tiền chưa thu không chặn phiên đóng** (§5.3, I-017). Bàn sang `Bàn cần dọn`, dọn xong về `Trống` | Quán **cho nợ**. Đóng phiên **bắt buộc ghi ai nợ và nợ bao nhiêu** — thiếu một trong hai thì khoản nợ vô chủ. Doanh thu tính vào **ngày ghi nợ**, không phải ngày thu được tiền; két thiếu đúng bằng tổng nợ ghi trong ngày (§4.7, §4.10) |
 | 11 | **Mất mạng trong lúc quán đang phục vụ** | Cả quán chuyển cách làm; *người đứng quầy* giữ sổ (`shop-facts.md` §6.11) | **Không dừng bán.** Đơn và phiên vẫn chạy đúng các trạng thái §5, nhưng ghi **trên sổ giấy** thay vì trên máy | Thu bình thường, ghi sổ. Phần ghi tay phải nhập lại để đối soát cuối ngày còn đọc được (§4.9) |
 | 12 | **Mất điện hoặc thiết bị POS gặp sự cố** | Như dòng 11 (`shop-facts.md` §6.11) | Như dòng 11 | Như dòng 11 |
-| 13 | **Đơn đã hoàn thành nhưng cần điều chỉnh** | ⚠ **Chưa chốt — `docs/decisions.md` GĐ-04** (**U-022**). *Phần đã chốt:* đơn **đã xác nhận** thì **sửa** được, và sửa trên **POS** (`shop-facts.md` §6.19) | *Đã chốt:* **sửa đơn không phải một chuyển tiếp trạng thái** — đơn đang ở đâu vẫn ở đó, cái đổi là món / số suất / tuỳ chọn (§5.2). ⚠ *Chưa chốt:* sửa được **từ trạng thái nào**, và `Hoàn thành → Huỷ` hiện bị từ chối (§5.6) | ⚠ Chưa chốt: một dòng vừa sửa **tính giá lúc nào**, vì §4.4 khoá giá theo **thời điểm tạo lượt gọi**. Sửa đơn **chạm tiền** nên phải để lại vết như mọi thao tác chạm tiền khác (§4.9) |
+| 13 | **Đơn đã hoàn thành nhưng cần điều chỉnh** | *Người đứng quầy*, trên POS — **sửa chính đơn ấy**, không huỷ rồi tạo lại (`shop-facts.md` §6.19) | **Sửa được, kể cả đơn đã `Hoàn thành`** (chủ quán chốt 2026-09-02: *bất kỳ trạng thái nào*, POS quyết theo tình hình thực tế). Sửa **không phải** một chuyển tiếp trạng thái — đơn đang ở đâu vẫn ở đó, cái đổi là món / số suất / tuỳ chọn (§5.2). `Hoàn thành → Huỷ` vẫn bị từ chối, và **không cần tới nó**: đường đi là sửa (§5.6, **U-026**) | Chênh lệch sau khi sửa: thu thêm, hoặc **hoàn** theo §4.8 — khoản hoàn trừ vào doanh thu **ngày hoàn**. Mỗi lần sửa **để lại vết** (§4.9). ⚠ Còn một câu hẹp: dòng **vừa sửa** tính giá lúc nào, vì §4.4 khoá giá theo *thời điểm tạo lượt gọi* — **U-027** |
 | 14 | **Nhân viên thao tác nhầm trạng thái** | *Người đứng quầy*, trên POS | *Đã chốt cho ca hay xảy ra nhất:* bấm nhầm *"đã làm xong"* một **mẻ** ⇒ **lùi được**, `Đã làm xong, còn ở bếp` ⇒ `Chưa làm` (§5.4). **Không có mốc thời gian cứng** — quầy quyết từng ca. ⚠ **Chưa chốt — `docs/decisions.md` GĐ-05** cho **mọi thao tác nhầm khác** (duyệt nhầm, huỷ nhầm, đóng phiên nhầm) | Lùi một mẻ **phải để lại vết** — lùi mẻ nào, lúc mấy giờ, ai bấm: một mẻ lùi sai là một suất tính nhầm (I-012) |
 
 ### 6.2 Ba tình huống đã có lời giải từ trước, đọc thẳng ở đây
@@ -1483,7 +1518,176 @@ hiểu sai cỡ:
 
 ## 7. Phạm vi MVP
 
-> Chưa chốt — BA-09
+*BA-09 — chốt 2026-09-02. Nguồn: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §9 (làm /
+chưa chi tiết), §13 (rủi ro đi sớm vào kỹ thuật) + `master_plan/shop-facts.md` §2 (năm kênh), §3
+(năm trạm), §6.10–§6.11 (đối soát, sổ giấy), §6.12 (bốn ranh giới đã chốt).*
+
+Mục này **không đặt ra một luật nghiệp vụ nào**. Nó khoanh vùng cái §1–§6 đã chốt: cái gì làm ngay
+ở giai đoạn đầu, cái gì không, và **vì sao không** — để lần sau có người đề nghị mở rộng thì đã có
+chỗ đối chiếu thay vì cãi nhau bằng cảm tính.
+
+### 7.1 Cách đọc mục này
+
+- **Trong MVP** = làm ngay ở giai đoạn đầu, **và** §1–§6 đã mô tả nó. Hạng mục nào chưa trỏ được về
+  một mục §1–§6 thì mục này nói thẳng ra ở §7.7, không viết bù hộ.
+- **Ngoài MVP có HAI loại, không được trộn.** §7.4 là *chủ quán đã quyết định không làm* — mở lại
+  phải xin phép chủ quán. §7.5 là *chưa ai cần tới, để sau* — mở lại chỉ cần một task. Viết chung
+  một danh sách là biến quyết định của chủ quán thành một dòng chờ ai đó làm nốt.
+- **Chưa xếp được cũng là một chỗ đứng.** §7.6 giữ ba mảng mà ranh giới hệ thống vừa mở
+  (§1.4, 2026-09-02) nhưng chưa ai nói mảng nào phải có trong bản chạy đầu tiên. Chúng **không**
+  bị đẩy sang §7.4 và **không** tự nhảy vào §7.2.
+- **Danh sách này nói về năng lực nghiệp vụ, không nói về việc kỹ thuật.** Lý do ở §7.9.
+
+### 7.2 Trong MVP — mười bốn năng lực
+
+Đúng mười bốn dòng của kế hoạch gốc §9, không bớt dòng nào và không thêm dòng nào nghe hợp lý.
+
+| # | Năng lực | Mô tả ở đâu |
+|---|---|---|
+| 1 | **Menu và giá** — món nào đang bán, giá một suất tính thế nào | §3.3, §4.1–§4.3 |
+| 2 | **Năm kênh bán** — `delivery` · `pickup` · `qr_table` · `staff_pos` · `phone_preorder` | §2, §2.1 |
+| 3 | **Đặt món** — khách tự bấm, hoặc quầy nhập hộ; hệ thống tự tính giá | §3.1.1 (bước 1–4), §3.1.2, §3.2.1 (bước 1–5), §4.2 |
+| 4 | **Quản lý phiên bàn** — một bàn một phiên, ghép bàn vẫn một hoá đơn | §3.1.4, §3.1.7, §5.3 |
+| 5 | **Xác nhận đơn** — đơn khách tự gửi phải qua quầy, đơn nhân viên nhập thì không | §2.2, §3.1.3, §3.2.1 (bước 7), §5.2 |
+| 6 | **Điều phối công việc tới các trạm** — nổ một dòng đơn thành việc cho **đúng năm trạm** ở §1.5 | §1.5, §3.1.5, §5.4 |
+| 7 | **Thu tiền** — hai đơn vị thanh toán, hai phương thức, và ca chưa thu được | §4.5, §4.6, §4.7 |
+| 8 | **Đóng phiên và dọn bàn** — bàn chỉ trống sau khi đóng **và** dọn | §3.1.4, §5.3 |
+| 9 | **Quản lý menu cơ bản** — bật/tắt món, sửa giá, và đơn cũ không đổi theo | §1.3, §3.3.1, §3.3.4 |
+| 10 | **Quản lý nhân viên cơ bản** | §1.3 — ⚠ mới có **một dòng**, xem §7.7 |
+| 11 | **Quản lý bàn** — danh sách bàn và trạng thái của một cái bàn | §1.3, §3.1.4, §5.3 — ⚠ một nửa, xem §7.7 |
+| 12 | **Báo cáo doanh thu cơ bản** — cộng từ **đủ hai nguồn** | §1.3, §4.9, §4.10 — ⚠ "cơ bản" gồm gì, xem §7.7 |
+| 13 | **Thông báo đơn** — đơn mới nổ về quầy | §3.2.1 (bước 6) — ⚠ một câu, xem §7.7 |
+| 14 | **Cơ chế dự phòng khi realtime không hoạt động** | §6.1 (dòng 11–12), §6.2 — ⚠ còn chờ **U-025**, xem §7.7 |
+
+**Dòng 2 đọc là NĂM, không phải bốn.** Kế hoạch gốc §9 viết *"Bốn kênh bán"*, vì nó viết **trước
+2026-08-29** — ngày chủ quán chốt `phone_preorder` là một **kênh riêng**, không phải đơn `staff_pos`
+không gắn bàn (`shop-facts.md` §2, §2.3 trên đây). Dòng ấy trong kế hoạch gốc nay đã sửa thành năm.
+**Không có kênh thứ sáu** — thêm một kênh là việc của §7.4, không phải của MVP.
+
+**Dòng 6 khoanh đúng năm trạm ở §1.5**, không mở thành *"cấu hình trạm tuỳ ý"*. Trạm thứ sáu là đổi
+cách quán vận hành, phải hỏi chủ quán (§1.5). **Trục còn thiếu:** quán làm theo **mẻ**, không làm
+lần lượt từng suất (`shop-facts.md` §5.4) — trục ấy có mặt trong MVP nhưng chưa có mục nào của
+tài liệu này mô tả nó; §3.4 (BA-12) là chỗ của nó, xem §7.7.
+
+### 7.3 Hai việc VẬN HÀNH bắt buộc nằm trong MVP
+
+Hai dòng dưới đây **không phải tính năng phần mềm** — chúng là **việc quán làm bằng tay**. Chúng
+nằm trong MVP vì `shop-facts.md` §6.10 và §6.11 coi chúng là bắt buộc, và phần mềm phải làm ra để
+chúng chạy được chứ không cản chúng.
+
+| Việc của quán | Phần mềm phải chịu được gì | Mô tả ở đâu |
+|---|---|---|
+| **Đối soát doanh thu cuối ngày** — mỗi tối, hai tuần đầu chạy thật, đối chiếu **ba** nguồn: sổ giấy · tiền trong két · tin nhắn báo có. **Lệch 1 đồng cũng phải tìm ra lý do** | Doanh thu chia **theo phương thức**, không cộng gộp; mọi thao tác chạm tiền truy ngược được về một người và một thời điểm | §4.9, §4.10 · `shop-facts.md` §6.10 |
+| **Quy trình sổ giấy khi mất điện / mất mạng / POS hỏng** — quán ghi tay và **không dừng bán** | Không được là chỗ dựa duy nhất để bán hàng (§1.4); phần bán tay phải quay lại được vào hệ thống trong **cùng ngày**, nếu không thì đối soát ngưỡng 0đ vô nghĩa | §6.1 (dòng 11–12), §6.2 · `shop-facts.md` §6.11 |
+
+⚠ **Dòng thứ hai còn một nửa chưa chốt** — ai giữ sổ, ghi những trường nào, ai nhập lại và lúc nào:
+**U-025**, đang mở. Chừng nào nó chưa có lời giải, MVP **chưa biết** có phải làm một màn hình nhập
+bù hay không. §7 **không tự quyết thay** (CLAUDE.md §3.5); nó chỉ ghi rằng chỗ này còn treo.
+
+### 7.4 Ngoài MVP vì CHỦ QUÁN ĐÃ QUYẾT không làm
+
+Không phải *"để sau"*. Đây là **quyết định**, và mở lại bất kỳ dòng nào là **đổi phạm vi, quyền
+chủ quán** — một task trong `work/backlog.md` không đủ để mở, phải có lời chủ quán.
+
+| Không làm | Vì sao — lời đã chốt |
+|---|---|
+| **Kênh bán thứ sáu** | §2 chốt **đúng năm** kênh, không có kênh thứ sáu (`shop-facts.md` §2, §6.12) |
+| **Đơn tối thiểu, bậc phí ship** | ship **0đ** và **không** có đơn tối thiểu là lời chốt, không phải giá trị mặc định chờ ai chỉnh (`shop-facts.md` §6.12, §3.2.6 trên đây) |
+| **Số tài khoản ngân hàng cứng trong sản phẩm** | chủ quán **nhập trong phần quản trị**; VietQR ở quán là mã **tĩnh** (`shop-facts.md` §1, §6.12 · §1.3, §4.6 trên đây) |
+| **Món ngoài bảng giá `shop-facts.md` §4.2** | thêm một món là đổi phạm vi (`shop-facts.md` §6.12) |
+| **Máy tự chia mẻ, tự xếp nồi, tự quyết thứ tự làm** | *"máy không làm, để người làm"* (chủ quán chốt 2026-08-31, `shop-facts.md` §5.4 · §1.4 trên đây). Hệ thống chỉ hiện **tổng nhu cầu** |
+| **Nút bấm báo xong ở ba trạm bếp** | chủ quán **bỏ bước ấy đi** 2026-08-31 (U-009). Cả hai mốc *đã làm xong* và *đã bưng ra bàn* đều bấm ở **POS quầy** (§5.4) |
+
+### 7.5 Ngoài MVP vì chưa ai cần tới — để sau
+
+Không nguồn nào — kế hoạch gốc, `shop-facts.md`, hay lời chủ quán — nhắc tới những thứ dưới đây.
+Mặc định của một thứ không ai nhắc là **ngoài MVP**, không phải *"chắc là cũng cần"*.
+
+| Không làm ở giai đoạn đầu | Lý do |
+|---|---|
+| **Khuyến mãi, giảm giá, mã giảm giá** | §4.2 chốt giá **do hệ thống xác định** từ bảng giá; một khoản giảm là một luật giá mới mà chủ quán chưa chốt bao giờ |
+| **Tích điểm, khách hàng thân thiết** | hai kênh gắn bàn **ẩn danh theo bàn** (`shop-facts.md` §2) — quán không có định danh khách để cộng điểm vào |
+| **Tách bàn, tách hoá đơn** | ngược thẳng với I-002 và §3.1.4: một phiên bàn là **một** hoá đơn. *(Chiều ngược lại — **ghép** bàn — thì **đã vào MVP**, xem ghi chú ngay dưới bảng)* |
+| **Đặt bàn trước** | `phone_preorder` là đặt **món** trước, không phải giữ **bàn** (§2.3). Quán chưa bao giờ nói tới việc giữ chỗ |
+| **Đánh giá món, phản hồi của khách** | không nguồn nào nhắc tới |
+| **Tài khoản đăng nhập cho khách** | khách quét QR là xong, không có bước đăng nhập nào ở §3.1 hay §3.2 |
+| **Nhiều chi nhánh, nhiều quán** | mọi dữ kiện ở `shop-facts.md` tả **một** quán |
+
+**Một dòng của khuôn cũ nay chỉ còn đúng một nửa.** Khuôn BA-09 xếp *"tách/gộp bàn"* thành một dòng
+ngoài MVP; khuôn ấy viết **trước 2026-08-31**. Ngày đó chủ quán trả lời U-006: **ghép bàn là chuyện
+có thật**, một phiên gắn được nhiều bàn và vẫn **một** hoá đơn (`shop-facts.md` §6.16, §3.1.7 trên
+đây). Nên **gộp bàn nằm TRONG MVP** (dòng 4 của §7.2) và chỉ **tách** là ở ngoài. Chép nguyên dòng
+cũ vào đây sẽ loại bỏ một năng lực chủ quán đã chốt là có.
+
+### 7.6 Ba mảng vừa mở ranh giới nhưng CHƯA xếp được vào MVP hay ngoài MVP
+
+Ngày **2026-09-02** ranh giới hệ thống mở ra ba mảng — **nguyên liệu · con người · tài chính**
+(§1.4, chủ quán chốt 2026-09-01 và xác nhận lại 2026-09-02). §1.4 nói rõ: mở ranh giới là *được
+phép làm*, và **mảng nào vào MVP là câu của mục này**.
+
+Mục này trả lời được **một nửa**, và nửa còn lại là câu hỏi cho chủ quán:
+
+- **Nửa trả lời được:** hôm nay **không** mảng nào trong ba mảng ấy nằm ở §7.2. Không phải vì ai
+  quyết loại chúng ra, mà vì §7.2 có một điều kiện vào cửa — *§1–§6 đã mô tả nó* — và §2 tới §6
+  của tài liệu này **chưa có một quy tắc nghiệp vụ nào** cho ba mảng đó. Một hạng mục MVP không
+  trỏ được về mô tả nào là một hạng mục không ai làm được.
+- **Nửa còn mở:** mảng nào **phải** có trong bản chạy đầu tiên. Đó là **U-026**, ở mục *Unknowns*.
+
+Ba mảng này **không** thuộc §7.4 — chúng không phải *đã quyết định không làm*, ngược lại là đằng
+khác. Và chúng **không** thuộc §7.5 — *"chưa ai cần tới"* là sai với một thứ chủ quán vừa yêu cầu
+hai lần. Chỗ đứng đúng của chúng hôm nay là mục này: **được phép, chưa có luật, chưa xếp lịch.**
+
+`work/admin-questions.md` giữ 55 câu hỏi và danh sách việc ADM-01…ADM-52 cho ba mảng ấy. Đó là
+**working state**, không phải phạm vi: một dòng ở đó không vào MVP cho tới khi nó có luật ở §1–§6
+và có tên trong §7.2.
+
+### 7.7 Bốn chỗ MVP còn thiếu mô tả ở §1–§6
+
+Bốn dòng dưới đây **đang trong MVP** (§7.2 và §7.3) nhưng chưa trỏ được về một mô tả đủ để làm.
+Ghi ra đây thay vì viết bù, đúng như khuôn BA-09 dặn — viết bù là đặt ra luật nghiệp vụ mới, việc
+mà một mục L1 không được làm.
+
+| Chỗ thiếu | Hôm nay có gì | Ai lấp, bằng cách nào |
+|---|---|---|
+| **Trục sản xuất theo mẻ** (dòng 6) | dữ kiện đã đủ và đã chốt (`shop-facts.md` §5.4, `docs/decisions.md` ADR-009), nhưng tài liệu này chưa có mục nào cho nó | **§3.4 — BA-12.** Đây là **lát cắt thứ tư**, cộng ngang qua mọi bàn và mọi đơn nên không có chỗ trong §3.1 hay §3.2 |
+| **Quản lý nhân viên cơ bản** (dòng 10) | đúng **một** gạch đầu dòng ở §1.3: *"Quản lý nhân viên và bàn"*. Không mục nào nói thao tác nào có, thao tác nào không | câu hỏi cho **chủ quán**, và nó chồng lên mảng **con người** vừa mở ở §7.6 — nên nó đi cùng **U-026**, không tách ra thành một câu riêng |
+| **Báo cáo doanh thu "cơ bản"** (dòng 12) | §4.9 và §4.10 chốt **cách cộng** doanh thu và ngưỡng lệch **0đ**; chưa mục nào chốt báo cáo **bày ra những chỉ số nào** | **BA-10** gom, hoặc một task riêng. Không chặn: cách cộng đã đúng thì thêm một chỉ số không phá gì |
+| **Thông báo đơn** (dòng 13) | một câu ở §3.2.1 bước 6 — *hệ thống báo đơn mới về quầy* | chưa chặn ai ở pha BA. Báo **bằng đường nào** là System Design, nhưng *báo cái gì, cho trạm nào* thì còn thiếu |
+
+**Chỗ thứ năm là một câu hỏi chứ không phải chỗ thiếu:** dòng 14 và §7.3 đều còn chờ **U-025**
+(sổ giấy: ai giữ, ghi gì, nhập lại lúc nào). Nó ở mục *Unknowns*, không ở bảng này.
+
+### 7.8 Yêu cầu ngoài hai danh sách này thì làm gì
+
+**Một yêu cầu không có tên ở §7.2 hay §7.3 thì không được làm trong giai đoạn này.** Không thêm
+lặng lẽ vì *"nó nhỏ thôi"*, không gộp vào một task đang chạy vì *"tiện tay"*.
+
+Đường duy nhất là:
+
+1. **Vào `work/backlog.md`** thành một task có mức rủi ro và có Acceptance (CLAUDE.md §3).
+2. Nếu nó chạm một dòng của **§7.4** — bốn ranh giới `shop-facts.md` §6.12, máy chia mẻ, nút ở
+   trạm bếp — thì **task là chưa đủ**: phải có lời **chủ quán** trước, và lời ấy đi về owner của
+   nó (`master_plan/shop-facts.md`) trước khi ai viết một dòng nào.
+3. Nếu nó là một **luật nghiệp vụ** chưa ai chốt thì nó là một câu ở *Unknowns*, không phải một
+   hạng mục MVP (CLAUDE.md §3.5, §4).
+
+**Mục này là chỗ đối chiếu, không phải hàng rào.** Nó không chặn được ai; cái nó làm được là khiến
+việc mở rộng phải **nói ra thành lời** thay vì lặng lẽ chui vào một diff.
+
+### 7.9 Bốn việc mục này cố ý không nói tới
+
+- **Công việc kỹ thuật.** Kiến trúc BE và FE, cấu trúc dữ liệu, giao diện lập trình, thành phần
+  giao diện, đóng gói và tích hợp liên tục, cấu trúc mô-đun, nền tảng lập trình — kế hoạch gốc §9
+  xếp cả tám vào *"chưa cần chi tiết ở BA phase"*, và §13 cảnh báo đúng cái rủi ro đi sớm vào
+  kỹ thuật. Không dòng nào trong số đó là một **năng lực** của MVP; chúng là cách làm ra năng lực.
+  Chỗ của chúng là pha System Design, `docs/architecture.md`.
+- **Thứ tự làm.** §7 nói *cái gì trong MVP*, không nói *làm cái nào trước*. Thứ tự nằm ở
+  `work/backlog.md`.
+- **Ngày tháng.** Không mục nào ở đây hứa một mốc thời gian. MVP là một **danh sách**, không phải
+  một lịch.
+- **Mức sâu của một năng lực đã có tên.** *"Quản lý menu cơ bản"* gồm đúng những thao tác §3.3 mô
+  tả, không hơn; muốn hơn thì đi đường §7.8. §7 khoanh **có hay không**, còn **tới đâu** là việc
+  của mục mô tả nó ở §1–§6.
 
 ## 8. Scenario nghiệm thu BA
 

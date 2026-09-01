@@ -13,7 +13,8 @@
 > Nó nằm dưới `work/` có lý do: Gate 1b không chấm đường dẫn ở đây (`CLAUDE.md` §5),
 > và nó là **working state** giống `work/scope.txt`, không phải tài liệu xuất bản.
 >
-> **Mở:** 2026-09-02 · **theo yêu cầu của:** chủ quán · **trạng thái:** 4 câu đã chốt, **55 câu đang chờ**
+> **Mở:** 2026-09-02 · **theo yêu cầu của:** chủ quán · **trạng thái:** 4 câu đã chốt — **Đ-1 đã về owner
+> 2026-09-02 (T-040)**, Đ-2/Đ-3/Đ-4 chưa — và **55 câu đang chờ**
 
 ---
 
@@ -27,23 +28,29 @@
 
 ---
 
-## 1. Bốn lời đã chốt ngày 2026-09-01 — và chúng CHƯA vào owner
+## 1. Bốn lời đã chốt ngày 2026-09-01 — Đ-1 đã về owner, ba lời còn lại thì chưa
 
-Chủ quán chốt trong phiên ngày 2026-09-01. **Chưa file nào ghi lại**, vì `docs/product.md` lúc đó
+Chủ quán chốt trong phiên ngày 2026-09-01. Lúc ấy **chưa file nào ghi lại**, vì `docs/product.md`
 đang có thay đổi chưa commit của phiên BA-07 và sửa chồng lên là đúng cơ chế sự cố đã ghi bốn lần
 ở `work/findings.md` (F-013, F-014).
 
+**2026-09-02 — chủ quán xác nhận lại Đ-1** (*"Đ-1 → trả lời đồng ý theo lời chốt"*) và **T-040 đã
+chuyển nó về owner**. Ba lời còn lại **chưa được xác nhận lại và chưa đi đâu cả**: chúng vẫn chỉ
+tồn tại trong file này, mà file này không sở hữu sự thật nào.
+
 | # | Câu | Lời chốt | Phải về đâu |
 |---|---|---|---|
-| Đ-1 | Có mở lại ranh giới hệ thống không? | **Mở cả ba** — nguyên liệu, con người, tài chính vào phạm vi | `docs/product.md` §1.4 · `docs/architecture.md` §10 · `master_plan/shop-facts.md` §7.1 |
+| ~~Đ-1~~ | Có mở lại ranh giới hệ thống không? | **Mở cả ba** — nguyên liệu, con người, tài chính vào phạm vi | ✅ **đã về owner 2026-09-02 (T-040)**: `docs/product.md` §1.4 · `docs/architecture.md` §10 · `master_plan/shop-facts.md` §7.1 |
 | Đ-2 | Thứ tự làm | **Đóng nốt BA-08 → BA-12 trước**, rồi mới chạy nhánh admin | `work/backlog.md` |
 | Đ-3 | Nguyên liệu làm ở mức nào | **Sổ ghi tay điện tử** — máy **không** tự trừ kho theo công thức | `master_plan/shop-facts.md` (mục mới) · `docs/product.md` §1.4 |
 | Đ-4 | Con người làm tới đâu | **Cả ba mức**: ai đang trực trạm + chấm công + tính lương | `master_plan/shop-facts.md` (mục mới) · `docs/architecture.md` §8 |
 
-**Đ-1 lật ngược một câu đang nằm trong tài liệu.** Hôm nay `docs/product.md` §1.4 vẫn viết
-*"Không quản lý nguyên liệu, tồn kho, chấm công hay kế toán"*, và `docs/architecture.md` §10 xếp
-chúng vào *"đã quyết định không làm"*. Chừng nào hai câu ấy chưa sửa, mọi việc trong §2 dưới đây
-**mâu thuẫn với owner của chính nó** — nên **ADM-53 là việc đầu tiên phải chạy**.
+**Đ-1 lật ngược một câu đang nằm trong tài liệu — và câu ấy nay đã sửa (T-040, 2026-09-02).**
+`docs/product.md` §1.4 từng viết *"Không quản lý nguyên liệu, tồn kho, chấm công hay kế toán"*, và
+`docs/architecture.md` §10 xếp chúng vào *"đã quyết định không làm"*; cả hai dòng đã bị xoá, ngày
+chốt nằm ở `master_plan/shop-facts.md` §7.1. Việc trong §2 dưới đây vì thế **hết mâu thuẫn với
+owner của chính nó** — nhưng mở ranh giới mới chỉ là *được phép*: mảng nào vào MVP vẫn là câu của
+**BA-09**.
 
 **Đ-3 đóng luôn một câu chưa ai hỏi.** Chọn mức sổ tay nghĩa là hệ thống **không cần biết một suất
 bánh ăn hết bao nhiêu gam gạo**. Định lượng từng thành phần là kiến thức của người làm, không phải
@@ -124,10 +131,13 @@ Cột **L** là mức rủi ro `CLAUDE.md` §3 (L0 không giấy tờ → L3 ph�
 | ADM-50 | **Vết thao tác** — ai · lúc nào · sửa gì · giá trị cũ (chỗ thiếu `architecture.md` §8) | **L3** |
 | ADM-51 | Phân quyền màn quản trị: ai xem được lương, giá vốn, báo cáo | L2 |
 | ADM-52 | **Nhập bù sau khi mất điện** — quán bán bằng sổ giấy rồi nhập lại (`shop-facts.md` §6.11) | L2 |
-| **ADM-53** | **Sửa `docs/product.md` §1.4 + `architecture.md` §10 + `shop-facts.md` §7.1 để ghi bốn lời chốt ở §1** | L1 |
+| ~~**ADM-53**~~ | ~~Sửa `docs/product.md` §1.4 + `architecture.md` §10 + `shop-facts.md` §7.1 để ghi bốn lời chốt ở §1~~ — **phần Đ-1 xong 2026-09-02 (T-040)**; còn lại **Đ-2** (thứ tự làm → `work/backlog.md`), **Đ-3** và **Đ-4** (mức sâu của mảng nguyên liệu và mảng con người → `shop-facts.md`, mục mới) | L1 |
 
-⇒ **ADM-53 chạy đầu tiên**, và nên chạy **trước BA-09** (phạm vi MVP). BA-09 chốt "MVP gồm những
-gì"; nó mà viết theo ranh giới cũ thì viết xong phải viết lại lần hai.
+⇒ **Phần chặn nhất của ADM-53 đã xong**: BA-09 nay đọc được ranh giới đúng ở `docs/product.md`
+§1.4, nên nó không còn nguy cơ chốt "MVP gồm những gì" theo ranh giới cũ rồi phải viết lại lần hai.
+Phần còn lại của ADM-53 — Đ-2, Đ-3, Đ-4 — **chờ chủ quán xác nhận lại** đúng cách Đ-1 vừa được xác
+nhận; chưa xác nhận thì chưa chuyển, vì chuyển một lời chốt cũ mà chủ quán không nhắc lại là tự
+quyết thay chủ quán (`CLAUDE.md` §3.5).
 
 ---
 

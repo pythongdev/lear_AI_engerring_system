@@ -530,7 +530,7 @@ tự xếp nồi, **không** tự quyết thứ tự làm và **không** đề x
 gom, gom mấy quả, làm trước làm sau là quyết định của người ở bếp và ở quầy. Đây là một **ranh
 giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ là đổi phạm vi, phải xin phép chủ quán.
 
-## 6. Mười chín quy tắc nghiệp vụ phải đúng
+## 6. Hai mươi mốt quy tắc nghiệp vụ phải đúng
 
 1. **Khách gọi thêm khi quầy đã bắt đầu thu tiền vẫn thuộc CÙNG phiên, CÙNG một hoá đơn.** Phiên
    ở trạng thái "chờ thanh toán" **chưa** giải phóng bàn. Tách ra hoá đơn thứ hai ⇒ **thu thiếu
@@ -620,6 +620,18 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       xếp được vào nguồn nào để đối chiếu.
 11. **Sổ giấy là kế hoạch dự phòng BẮT BUỘC.** Mất điện, mất mạng, hoặc máy hỏng ⇒ quán chuyển sang
     ghi tay và **không dừng bán**.
+    - **Người giữ sổ và người nhập lại: POS hoặc chủ quán** (chủ quán chốt 2026-09-02, trả lời
+      U-025). Không giao cho trạm bếp nào — vẫn đúng một cửa như mọi việc chạm tiền khác (§6.13).
+    - **Nhập lại NGAY KHI CÓ THỂ, không có mốc giờ cứng** (cùng lời chốt). Chủ quán nói thẳng:
+      *"nhập ngay khi có thể… túm lại khi có thể sẽ nhập"*. Không có luật *"phải nhập trước cuối
+      ngày"* — người làm nhìn tình hình thật rồi nhập.
+    - **Có điện lại giữa buổi thì quay lại làm trên hệ thống ngay, phần ghi tay cập nhật sau**
+      (cùng lời chốt). Bán tiếp là việc gấp, nhập bù là việc sau — không bắt quán dừng bán để gõ
+      cho kịp sổ.
+    - ⇒ *Cách đọc, không phải lời chủ quán nói thẳng:* vì không có mốc cứng, **đối soát cuối ngày
+      (§6.10) có thể chạy khi phần ghi tay chưa vào máy hết**. Ngày mất điện là ngày bảng đối soát
+      phải đọc được *"còn N lượt bán trên giấy chưa nhập"*, nếu không thì ngưỡng **0đ** sẽ báo lệch
+      mà lý do chỉ là chưa gõ xong. Đây là hệ quả của lời chốt, phải nói ra chứ đừng để §6.10 tự vỡ.
 12. **Bốn ranh giới đã chốt — đây là quyết định, không phải chỗ trống chờ ai điền:**
 
     | Không làm | Vì sao |
@@ -780,10 +792,21 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
     đúng cái cửa mọi việc chạm tiền đã đi qua: **máy POS ở quầy** (§6.13).
     - **Sửa là đổi NỘI DUNG đơn, không phải đẩy đơn sang một trạng thái khác.** Đơn đang ở đâu thì
       vẫn ở đó; cái đổi là món, số suất hoặc tuỳ chọn (`docs/product.md` §5.2).
-    - **Nửa câu hỏi này CHƯA được trả lời, và nó nằm lại ở U-022:** sửa được **từ trạng thái nào**
-      (đơn bếp đang làm dở? đơn đã xong?), và **huỷ** còn được phép tới trạng thái nào. Chủ quán mới
-      nói **ai sửa** và **sửa được**, chưa nói **tới đâu thì thôi**. Đừng đọc câu chốt này rộng hơn
-      chữ của nó (`work/findings.md` F-004).
+    - **Sửa được ở BẤT KỲ trạng thái nào, và POS quyết theo tình hình thực tế** (chủ quán chốt
+      2026-09-02, trả lời nốt U-022): *"quán đang ở trạng thái nào cũng sửa được. POS sẽ quyết định
+      dựa trên tình hình thực tế."* **Không có mốc trạng thái cứng** — không có ranh giới kiểu
+      *"bếp đã tráng rồi thì thôi"*. Đơn đã `Hoàn thành` cũng nằm trong chữ *bất kỳ*.
+    - ⇒ **Luật này cùng họ với §6.4 (hoàn tiền) và với đường lùi một mẻ (§5.4).** Ba chỗ, một kiểu:
+      chủ quán **không** dựng hàng rào cho máy, mà giao quyết định cho **người đứng quầy** nhìn ca
+      thật. Tài liệu nào biến nó thành một bảng điều kiện là hiểu ngược lời chốt.
+    - ⇒ **Vì không có luật cứng nên mọi lần sửa phải để lại vết** — sửa đơn nào, đổi gì, lúc mấy
+      giờ, ai bấm. Đây là §6.10 áp vào, không phải luật mới: sửa đơn **chạm tiền**.
+    - **Vế HUỶ thì lời chốt này KHÔNG chạm tới.** Câu hỏi U-022 gồm cả *huỷ được tới trạng thái
+      nào*; chủ quán trả lời bằng chữ **sửa**. Không đọc rộng ra thành *"huỷ lúc nào cũng được"*
+      (`work/findings.md` F-004) — vế ấy ở lại thành **U-026**.
+    - ⇒ *Cách đọc, không phải lời chủ quán nói thẳng:* sửa một đơn **đã `Hoàn thành`** thì tiền đã
+      có thể thu xong rồi, nên lần sửa ấy kéo theo một khoản chênh — thu thêm, hoặc **hoàn** theo
+      §6.4 (và khoản hoàn rơi vào **ngày hoàn**). Sửa không phải là một đường vòng tránh §6.4.
     - ⇒ *Cách đọc, không phải lời chủ quán nói thẳng:* sửa một đơn **đã nổ việc xuống bếp** thì việc
       ở các trạm phải nổ lại theo nội dung mới (§5.3), và một suất bếp đã làm ra theo nội dung cũ
       không tự biến mất. Đây là lý do vế *"sửa được tới trạng thái nào"* không phải chuyện nhỏ —
@@ -793,6 +816,29 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       (*giá khoá theo từng lượt gọi*): một dòng vừa sửa tính giá **lúc nào** thì chưa ai chốt —
       cùng gốc với vế còn mở của U-022.
 
+20. **Món hết sau khi khách đã chọn: POS làm việc với khách, quyết định ra tại lúc thoả thuận xong**
+    (chủ quán chốt 2026-09-02). Không có luật cứng kiểu *"tự động thay thế"* hay *"tự động huỷ"*:
+    người đứng quầy gọi khách, bàn với khách, và **kết quả là cái hai bên thống nhất tại thời điểm
+    đó** — đổi sang thứ khác, bỏ phần thiếu, hay huỷ cả đơn.
+    - **Quy mô của ca này lớn hơn tên gọi của nó.** Mọi suất bán đều kèm bánh cuốn (§4.5), nên
+      **hết bánh là hết gần như mọi món** — không phải một dòng menu tắt đèn mà phần lớn thực đơn
+      tắt cùng lúc. Lời chốt này vì thế áp cho **nhiều bàn một lúc**, không phải một đơn lẻ.
+    - **Đường đã có cho đơn CHƯA vào là nút tạm dừng nhận đơn của chủ quán (§6.8).** Hai việc khác
+      nhau và phải làm cả hai: §6.8 chặn đơn **mới**, quy tắc này xử những đơn **đã nhận rồi**.
+    - ⇒ **Huỷ hoặc bớt món ở đây kéo theo tiền**: đơn đã trả trước thì sinh việc hoàn, xử theo
+      §6.4; đơn chưa trả thì chỉ bớt số phải trả. Không có ca nào quán giữ tiền của phần không giao.
+21. **Khách nói đã chuyển khoản mà quầy chưa thấy tin nhắn báo có: POS thảo luận với khách và quyết
+    ngay lúc đó** (chủ quán chốt 2026-09-02). Không có luật cứng *"phải giữ khách lại chờ"* và cũng
+    không có luật *"cứ cho đi"* — người đứng quầy nhìn ca thật rồi quyết.
+    - **Vì sao ca này có thật:** VietQR của quán là mã **tĩnh** (§1), nên **máy không bao giờ tự
+      biết tiền đã về**; câu *"đã nhận tiền"* chỉ do người bấm ở POS tạo ra (§6.3). Khoảng chênh
+      giữa lúc khách bấm chuyển và lúc tin nhắn tới là khoảng có thật, ngày nào cũng gặp.
+    - **Hai đường ra đều đã có sẵn, không cần đẻ trạng thái mới:** quầy tin và cho đi ⇒ ghi **nợ**
+      theo §6.14 (ai nợ, bao nhiêu), xoá nợ khi tin nhắn tới; hoặc quầy chờ tin nhắn rồi mới đóng
+      phiên theo §6.3. Chọn đường nào là quyết định của người đứng quầy tại ca đó.
+    - ⇒ **Dù chọn đường nào cũng không được ghi là "đã thu tiền mặt"** — phần chuyển khoản đối
+      chiếu bằng **tin nhắn báo có**, phần tiền mặt đối chiếu bằng **két**, và §6.10 cấm cộng gộp
+      hai nguồn. Ghi nhầm nguồn là làm hỏng đúng cái ngưỡng 0đ.
 
 ## 7. Nhật ký chốt
 
@@ -856,6 +902,11 @@ lại điều gì.
 | 2026-09-01 | **Đối soát cuối ngày có NGUỒN THỨ BA: tin nhắn báo có** — phần khách chuyển khoản đối chiếu bằng tin nhắn, vì két chỉ giữ tiền mặt (trả lời U-019) | §6.10 |
 | 2026-09-01 | **Hoàn tiền tính vào doanh thu NGÀY HOÀN**, không phải ngày bán gốc — ngược chiều với luật nợ ở §6.14 (trả lời U-019) | §6.4 |
 | 2026-09-01 | **Một lần thu chia được nhiều phương thức**; POS ghi **bao nhiêu tiền mặt, bao nhiêu chuyển khoản** (trả lời U-020) | §6.18 |
+| 2026-09-02 | **Sửa đơn được ở BẤT KỲ trạng thái nào**, POS quyết theo tình hình thực tế — không có mốc trạng thái cứng (trả lời nốt U-022; vế *huỷ* **không** được chạm tới, thành U-026) | §6.19 |
+| 2026-09-02 | **Sổ giấy: POS hoặc chủ quán giữ và nhập lại, nhập ngay khi có thể** — có điện lại giữa buổi thì làm tiếp trên hệ thống, ghi tay cập nhật sau (trả lời U-025) | §6.11 |
+| 2026-09-02 | **Món hết sau khi khách đã chọn: POS bàn với khách, quyết tại lúc thoả thuận xong** — không tự thay thế, không tự huỷ (đóng câu 3 bảng §10) | §6.20 |
+| 2026-09-02 | **Khách nói đã chuyển khoản mà chưa thấy báo có: POS bàn với khách, quyết ngay lúc đó** — hai đường ra là ghi nợ (§6.14) hoặc chờ tin nhắn (§6.3) | §6.21 |
+| 2026-09-01 | **Ba mảng quản trị vào phạm vi phần mềm**: nguyên liệu · con người · tài chính — lật ngược ranh giới cũ *"không quản lý nguyên liệu, tồn kho, chấm công, kế toán"*; chủ quán **xác nhận lại 2026-09-02** | **§8** |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **một mục, tính tới 2026-09-01**
 
@@ -897,7 +948,54 @@ Khi chủ quán chốt thêm điều gì: ghi vào đúng mục nghiệp vụ (�
 bảng §7.1 với ngày. Đừng để một quyết định chỉ sống ở §7 — mục này là nhật ký, không phải nơi tra
 cứu quy tắc.
 
+**Chốt về mảng QUẢN TRỊ (admin) thì mục nghiệp vụ của nó là §8, không phải §1–§6.** §1–§6 nói về
+việc **bán hàng**; nguyên liệu, con người và tài chính là mảng khác và có mục riêng. Dòng nhật ký
+vẫn vào §7.1 như mọi lời chốt khác, cột *Ghi ở* trỏ §8. Trộn dữ kiện admin vào §1–§6 là làm hỏng cả
+hai mục cùng lúc.
+
 Nếu một mục ở §7.2 được chủ quán xác nhận hoặc bác bỏ, chuyển nó lên §7.1 kèm ngày và xoá khỏi
 §7.2 — **và trong cùng lần sửa đó, `grep -rn` cả repo tìm những chỗ đang nói mục ấy "chưa xác
 nhận" rồi sửa nốt.** Một mục chỉ được nằm ở §7.2 chừng nào **chưa ai hỏi**. Cả ba mục đầu tiên
 (S-1, S-2, S-3) đã đi qua đúng đường này ngày 2026-08-30.
+
+---
+
+## 8. Mảng QUẢN TRỊ (admin) — mục riêng, không trộn vào §1–§7
+
+**Mục này là chỗ duy nhất giữ dữ kiện của mảng quản trị.** §1–§6 nói về việc **bán hàng** — bàn,
+đơn, giá, bếp, thu tiền. Mục này nói về việc **chạy cái quán**: nguyên liệu, con người, tiền vào
+tiền ra. Hai mảng đứng riêng vì chúng đổi vì hai lý do khác nhau, và một mục phục vụ hai lý do thì
+sai với ít nhất một trong hai.
+
+### 8.1 Ranh giới: ba mảng nằm TRONG phạm vi phần mềm
+
+**Chủ quán chốt 2026-09-01, xác nhận lại 2026-09-02.** Ba mảng vào phạm vi:
+
+| Mảng | Gồm những gì (theo lời chủ quán) |
+|---|---|
+| **Nguyên liệu** | thứ quán mua vào, nhập, dùng, hao hụt, còn lại |
+| **Con người** | ai làm, ai trực trạm nào, công, lương |
+| **Tài chính** | tiền vào tiền ra ngoài tiền hàng — chi phí, lãi lỗ, quỹ |
+
+Trước ngày đó, phần mềm được mô tả là **không** làm ba mảng này. Lời chốt lật ngược đúng câu ấy.
+
+### 8.2 Mở ranh giới chưa phải là có luật
+
+Tới hôm nay mục này **chỉ có ranh giới, chưa có một quy tắc nghiệp vụ nào**. Ba mảng ấy mới **được
+phép** có mặt:
+
+- **Mức sâu của từng mảng chưa chốt ở đây.** Mảng nguyên liệu làm tới đâu, mảng con người làm tới
+  đâu — chưa có dòng nào trong tài liệu này trả lời, nên đừng suy ra hộ.
+- **Chưa có con số nào.** Không danh mục nguyên liệu, không đơn vị tính, không số người, không đơn
+  giá công, không khoản chi. Mọi con số cho ba mảng này còn phải hỏi chủ quán.
+- **Bốn ranh giới ở §6 quy tắc 12 không bị lời chốt này chạm tới** — kênh bán thứ sáu, đơn tối
+  thiểu và bậc phí ship, số tài khoản cứng trong sản phẩm, món ngoài bảng giá. Cả bốn vẫn là *đã
+  quyết định không làm*.
+
+### 8.3 Dữ kiện admin mới thì viết vào đâu
+
+Vào **mục này**, đánh số tiếp §8.4, §8.5…, rồi thêm một dòng vào nhật ký §7.1 với ngày và cột
+*Ghi ở* trỏ về mục con vừa viết. Không viết dữ kiện admin vào §1–§6, kể cả khi nó "gần giống" một
+quy tắc bán hàng đã có: hết nguyên liệu và tạm dừng nhận đơn là hai việc khác nhau, một cái ở mục
+này, một cái ở §6.
+
