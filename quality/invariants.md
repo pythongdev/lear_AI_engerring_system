@@ -336,3 +336,107 @@ lần đổi mở lại vẫn thấy đúng thành phần cũ.
 
 *Phát hiện ở T-034, 2026-09-01. **Viết lại ở T-037, 2026-09-01** — lời chốt U-018 (máy chỉ nhắc)
 làm bản đầu sai; xem khối ⚠️ ở mục Why.*
+
+### I-012 — Mọi thao tác chạm tiền để lại vết truy ngược được về một người và một thời điểm
+
+**Invariant:**
+Không có thao tác nào làm đổi số tiền của quán mà không để lại vết đọc được **sau nhiều ngày**, và
+mỗi vết trả lời đủ bốn câu: **cái gì đổi**, **bao nhiêu**, **ai bấm**, **lúc mấy giờ**. Danh sách
+thao tác chạm tiền, tính tới 2026-09-01: **duyệt** đơn (`shop-facts.md` §6.2) · **huỷ** đơn (§6.13)
+· **hoàn tiền** (§6.4) · **ghi nợ** lúc đóng phiên và **thu nợ** về sau (§6.14) · **xác nhận đã
+nhận tiền** cho cả hai phương thức (§6.3) · **ghép bàn** (§6.16) · chủ quán **đổi giá** hoặc **đổi
+thành phần suất** (§6.17). Mọi thao tác trong danh sách đi qua **đúng một cửa: máy POS ở quầy**
+(`docs/product.md` §2.4, §4.6, §4.8), trừ hai ca đã chốt tên người khác: **người đi giao** bấm *đã
+giao + đã thu tiền* tại chỗ khách (§6.7), và **chủ quán** bấm đổi giá / đổi thành phần suất trên
+mặt quản trị (§6.17).
+
+**Why:**
+Đây là điều kiện để đối soát cuối ngày tồn tại được. `shop-facts.md` §6.10 lấy ngưỡng lệch là
+**0đ** — *lệch 1 đồng cũng phải tìm ra lý do* — mà "tìm ra lý do" chỉ là một câu chữ nếu thao tác
+gây ra chỗ lệch không có tên người và không có giờ. Hoàn tiền là ca rõ nhất: chủ quán cố ý **không
+đặt luật cứng** (§6.4), nên thứ duy nhất giữ được nó khỏi thành lỗ thủng là cái vết — không có
+luật để đối chiếu thì phải có người đứng tên. Ghi nợ (§6.14) và đổi thành phần suất giữa giờ bán
+(§6.17, I-011) cũng cùng một lý do: cả hai đều hợp lệ, cả hai đều làm két lệch, và cả hai chỉ vô
+hại khi đọc lại được.
+
+Nó **khác** I-005: I-005 bắt bản ghi đóng phiên phải có *ai nợ, bao nhiêu*; invariant này bắt **mọi
+thao tác tiền khác** cũng phải có mức đó, kể cả những thao tác không sinh ra bản ghi nào mới.
+
+**Verification:**
+Kịch bản phủ: chạy đủ một lượt tám thao tác trong danh sách trên, rồi **hôm sau** mở lại — mỗi
+thao tác phải đọc ra đủ bốn câu (cái gì, bao nhiêu, ai, mấy giờ). Kịch bản hoàn tiền: hoàn tiền một
+đơn đã trả trước bị huỷ ⇒ vết ghi đủ **bao nhiêu, đơn nào, ai bấm, lý do gì**
+(`docs/product.md` §4.8); thiếu lý do cũng là hỏng, vì không có luật cứng nào thay được nó. Kịch
+bản đối soát: dựng một ngày có **ghi nợ + thu nợ cũ + một lần hoàn + một lần chủ quán đổi giá giữa
+buổi** ⇒ bảng đối soát cuối ngày giải thích được **từng** chỗ lệch bằng đúng một thao tác có tên
+(`docs/product.md` §4.9). Kịch bản âm: không tồn tại đường nào đổi tiền mà không qua POS ở quầy,
+ngoài hai ca đã chốt ở trên.
+
+*Phát hiện ở BA-06, 2026-09-01.*
+
+### I-013 — Giá mọi dòng đơn do hệ thống tính lại; giá do khách gửi lên không bao giờ được dùng
+
+**Invariant:**
+Giá của mỗi dòng đơn được hệ thống **tính lại** tại thời điểm tạo lượt gọi, từ đúng hai thứ: món
+khách chọn và tuỳ chọn khách chọn kèm, tra `master_plan/shop-facts.md` §4.2 và §4.5. Một con số
+giá đến **từ phía khách** không bao giờ được dùng làm giá — kể cả khi nó bằng đúng giá đúng. Công
+thức là **tổng giá các thành phần của suất** (§4.6 quy tắc 1), nên "tính lại" nghĩa là cộng lại từ
+bảng thành phần, không phải đọc một con số nằm sẵn cạnh tên món. Luật áp cho **cả năm** kênh của
+`docs/product.md` §2.
+
+**Why:**
+`shop-facts.md` §4.6 quy tắc 9 nói thẳng hậu quả: nhận giá do khách gửi nghĩa là **có ngày khách
+đặt được món 0đ**. Ba kênh khách tự bấm — QR tại bàn, Delivery, Pickup — đều gửi dữ liệu từ máy
+của khách, nên đây không phải rủi ro lý thuyết. Bước quầy duyệt (§6.2) **không** đỡ được: nó chặn
+đơn ảo, không ai đứng đó cộng lại tiền từng dòng. Và vì giá một suất là **tổng thành phần**, đọc
+một con số có sẵn cũng hỏng theo cách thứ hai: chủ quán đổi giá một cái bánh thì con số nằm sẵn ấy
+không tự đúng lại (`docs/product.md` §3.3.2).
+
+Nó là nửa còn lại của I-010: I-010 chặn **tổ hợp tuỳ chọn** vô nghĩa đi vào đơn, invariant này
+chặn **con số tiền** đi vào đơn. Hai cửa khác nhau của cùng một luật *"khách chọn món, hệ thống
+quyết tiền"*.
+
+**Verification:**
+Kịch bản âm: gửi một đơn QR tại bàn kèm giá **0đ** cho một suất giò ⇒ đơn được tạo với giá tra từ
+`shop-facts.md` §4.3, **không** phải 0đ; lặp lại với một giá cao hơn giá đúng ⇒ vẫn ra giá đúng.
+Kịch bản kênh: lặp cả hai ca trên qua **năm** kênh của `docs/product.md` §2, kể cả quầy đặt hộ trên
+POS. Kịch bản tính lại: đặt một suất giò nhân thường, rồi chủ quán đổi giá một cái bánh, rồi đặt
+**mới** một suất giò cùng loại ⇒ đơn mới ra giá **mới** (đơn cũ giữ nguyên — I-009), chứng minh giá
+được cộng lại từ bảng thành phần chứ không đọc từ một chỗ nằm sẵn. Kịch bản phủ: mười ca có số của
+`shop-facts.md` §4.8 (ca 1–10) đều ra đúng giá kỳ vọng ghi ở đó.
+
+*Phát hiện ở BA-06, 2026-09-01.*
+
+### I-014 — Doanh thu một ngày cộng từ ĐỦ hai nguồn, và không khoản tiền nào đứng ở hai nguồn
+
+**Invariant:**
+Doanh thu của một ngày bán = **tiền từ phiên bàn** + **tiền từ đơn mang đi**, cộng từ **cả hai**
+nguồn, không bao giờ chỉ một. Mỗi khoản tiền thuộc **đúng một** nguồn: không khoản nào bị đếm hai
+lần, và không khoản nào rơi ra ngoài cả hai. "Hai nguồn" chia theo **đơn vị thanh toán**, không
+chia theo kênh — cả **ba** kênh mang đi (Delivery, Pickup, Đặt trước qua hotline) cùng rơi vào
+nguồn thứ hai (`master_plan/shop-facts.md` §6.9, `docs/product.md` §4.5, §4.10). Tiền được tính vào
+**ngày bán**, kể cả khoản khách nợ: doanh thu vào **ngày ghi nợ**, không phải ngày thu được tiền
+(§6.14), nên **một lần trả nợ không bao giờ là một khoản bán mới**.
+
+**Why:**
+I-006 và I-007 chốt **một đơn thuộc nguồn nào**; invariant này chốt **phép cộng ở trên** — và hai
+thứ hỏng khác nhau. Định tuyến đúng từng đơn mà báo cáo chỉ cộng một nguồn thì vẫn là **báo cáo
+thiếu tiền**, và nó thiếu một cách im lặng: không có thao tác sai, không có đơn nào lạc chỗ, chỉ có
+một con số nhỏ hơn sự thật. `shop-facts.md` §6.9 nói thẳng *"bỏ sót một nguồn là báo cáo thiếu"*.
+Chỗ dễ sai nhất là đếm **ba kênh** mang đi thành ba nguồn rồi quên phiên bàn, hoặc ngược lại — làm
+sản phẩm cho một quán mà phần lớn khách ngồi bàn thì nguồn đơn lẻ rất dễ bị bỏ quên. Vế "trả nợ
+không phải khoản bán mới" là chỗ đếm **hai lần** duy nhất đã biết trước: ghi nó thành một lần bán
+là tính doanh thu hai lần cho cùng một bữa ăn.
+
+**Verification:**
+Kịch bản cộng đủ: một ngày có **cả** phiên bàn **và** đơn của cả ba kênh mang đi ⇒ tổng báo cáo =
+tổng hai nguồn, và bỏ nguồn nào ra thì con số cũng nhỏ đi (chứng minh cả hai thật sự được cộng).
+Kịch bản không trùng: liệt kê mọi khoản tiền của ngày ấy ⇒ mỗi khoản xuất hiện đúng **một** lần
+trên đúng **một** nguồn; suất "đem về" của khách ngồi bàn nằm ở nguồn **phiên bàn** (I-006), đơn
+Pickup nằm ở nguồn **đơn lẻ** (I-007). Kịch bản nợ: bàn 5 nợ hôm nay, trả vào ba hôm sau ⇒ doanh
+thu **hôm nay** đã có đủ khoản đó, doanh thu **hôm trả** **không** tăng, và tổng doanh thu hai ngày
+cộng lại đúng bằng số tiền một bữa ăn (`docs/product.md` §3.1.6, §4.10). Kịch bản đối soát: dựng
+lại doanh thu của **mọi ngày đã qua** phải ra đúng con số đã đối soát hôm đó
+(`shop-facts.md` §6.10, cùng ràng buộc với I-009).
+
+*Phát hiện ở BA-06, 2026-09-01.*

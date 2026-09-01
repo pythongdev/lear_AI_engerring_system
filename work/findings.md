@@ -944,10 +944,55 @@ Ràng buộc cho T-035, để nó không sửa thành một lỗi khác:
   dòng chủ + ngày, brief đọc theo cấu trúc như đã làm với *Unknowns* ở ADR-007) — đó là một quyết
   định riêng, cần ADR, **không** gấp vào T-035 mà không hỏi.
 
+**Lần thứ ba, cùng ngày: `ffc2997` nuốt nguyên một task đang viết dở (2026-09-01).** Ghi thêm vào
+đây chứ không mở finding mới, vì nguyên nhân gốc y hệt: **nhiều phiên chạy trên cùng một cây làm
+việc**. Lần này hậu quả không rơi vào `work/scope.txt` mà rơi vào **lịch sử git** — đúng ca xấu hơn
+mà mục *Impact* ở trên đã đoán trước.
+
+Diễn biến: phiên **BA-06** đang viết `docs/product.md` §4 (mục *Giá và thanh toán*, ~290 dòng) thì
+một phiên song song commit hai task của nó. `git add docs/product.md` lấy **cả file**, mà file lúc
+ấy đã mang sẵn §4 chưa xong của phiên khác.
+
+*Bản đồ hash → nội dung thật:*
+
+| Hash | Subject | Nội dung thật |
+|---|---|---|
+| `c5540e2` | `T-036: S-4 có lời giải…` | đúng T-036 |
+| `53f58de` | `T-037: U-017 và U-018 đóng…` | đúng T-037 |
+| `ffc2997` | `T-036 + T-037: S-4, U-017 và U-018 đóng; mục Unknowns rỗng` | **T-036 + T-037 CỘNG toàn bộ `docs/product.md` §4 của BA-06** (+322 dòng ở `docs/product.md`, +15 ở `work/backlog.md`). Thân commit không nhắc BA-06 một chữ |
+
+Hai chỗ subject và thân commit `ffc2997` **nói sai về chính nó**, và cả hai đều đánh lừa được phiên
+sau:
+
+- Nó ghi *"mục Unknowns rỗng"*. Cây mà nó commit **không** rỗng: chính nó mang **U-019** và
+  **U-020** — hai câu BA-06 vừa mở — vào lịch sử dưới dạng gạch đầu dòng đang mở.
+- Ai chạy `git log` để tìm §4 đến từ đâu sẽ đọc ra *"T-036 + T-037"*, tức hai task **không liên
+  quan gì** tới giá và thanh toán. `git blame docs/product.md` cũng trỏ về đó.
+
+**`ffc2997` đã push lên `origin/merge_first_time` trước khi BA-06 phát hiện ra**, nên `ADR-008`
+đóng đường sửa lại: **sửa tiến, không viết lại**. Bản đồ hash ở trên là bản sửa tiến, và nó **ở lại
+vĩnh viễn** — cùng lý do với bản đồ hash ở F-011.
+
+⇒ **Bài học thêm, và nó không nằm trong T-035.** T-035 sửa *lời cảnh báo của brief*; ca này thì
+brief không dính dáng gì. Cái hỏng là **`git add <file>` lấy cả file, không lấy được "phần của
+tôi"** — nên trong một cây có nhiều phiên, *một task một commit* (CLAUDE.md §6) không phải thứ kỷ
+luật giữ được, mà là thứ **cách làm việc** phải giữ. Hai đường ra, chọn đường nào cũng được nhưng
+phải chọn:
+
+- **Không chạy hai phiên trên cùng một cây.** Phiên thứ hai làm trong `git worktree` riêng. Đây là
+  đường duy nhất thật sự đóng được cả F-014 lẫn ca này.
+- **Hoặc: trước khi commit, đọc `git diff --cached` và đối chiếu với `work/scope.txt` của MÌNH.**
+  Gate 7b (`ADR-006`) đã làm đúng việc này cho khối commit do phiên viết ra — nhưng nó không chạy
+  khi người ta gõ `git add` rồi `git commit` thẳng trong terminal, giống hệt khoảng trống mà
+  **F-011** mô tả và Gate 8 chỉ bịt được một nửa (Gate 8 chấm *subject*, không chấm *nội dung*).
+
 **Related task:**
-T-035 (sửa `brief.sh`) · T-036 (phát hiện, ghi finding) · BA-04 (phiên gây ra sự cố, entry có mục
-*Sự cố trong lúc chạy*) · F-010 (scope quên dọn — cùng file, ngược chiều) · F-009 (commit theo
-scope sai) · ADR-006 (Gate 7b + cảnh báo scope)
+T-035 (sửa `brief.sh`) · T-036 (phát hiện, ghi finding) · BA-04 (phiên gây ra sự cố lần 1, entry có
+mục *Sự cố trong lúc chạy*) · **BA-06 (phiên bị nuốt ở lần 3, entry có mục *Sự cố trong lúc
+chạy*)** · F-010 (scope quên dọn — cùng file, ngược chiều) · F-009 (commit theo scope sai) ·
+**F-011 (cùng khoảng trống: commit gõ thẳng trong terminal không qua phiên nào)** · ADR-006
+(Gate 7b + cảnh báo scope) · **ADR-008 (đã push thì sửa tiến — vì sao `ffc2997` không được viết
+lại)**
 
 **Status:**
 Open

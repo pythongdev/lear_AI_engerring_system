@@ -898,9 +898,11 @@ nhưng bốn cái bánh trong suất giò thì có** (chốt 2026-08-29, `shop-f
 **quả trứng cũng lên giá theo nhân, nên suất trứng là ×5 chứ không phải ×4** (chốt 2026-08-30,
 `shop-facts.md` §4.3, §4.6 quy tắc 5).
 
-⚠️ **Một câu từng lưu hành trong dự án nói ngược lại — *"phụ thu không nhân theo số phần bếp làm"*
-— đã bị lời chủ quán ngày 2026-08-29 phủ nhận và đã gỡ khỏi `shop-facts.md`** (§4.7). Thấy câu đó
-quay lại ở bất kỳ tài liệu nào, kể cả mục này, **đó là bug**, không phải một quy tắc.
+⚠️ **Một câu từng lưu hành trong dự án nói ngược lại** — rằng phụ thu **không** nhân lên theo số
+phần bếp làm ra. Lời chủ quán ngày 2026-08-29 về suất giò đã phủ nhận nó, và nó đã bị gỡ khỏi
+`shop-facts.md`. Nguyên văn câu ấy nay chỉ còn sống ở đúng **một** chỗ trong repo — tấm bia ở
+`shop-facts.md` §4.7 — và mục này cố ý **không** chép lại, để câu ấy grep ra ở đâu cũng là dấu
+hiệu nó đã quay lại. Thấy nó ở bất kỳ tài liệu nào, **đó là bug**, không phải một quy tắc.
 
 ### 4.3 Mười một tổ hợp bắt buộc phủ
 

@@ -10,8 +10,8 @@ hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 | [Ready](#ready) | việc cần làm — checklist + thứ tự lấy |
 | [In Progress](#in-progress) | task đang chạy |
 | [Done](#done) | việc đã xong |
-| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | bảng mười câu hỏi §10 + mô tả dài T-019…BA-12 (BA-05 đã chuyển sang mục đã xong) |
-| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-037…T-002 |
+| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | bảng mười câu hỏi §10 + mô tả dài T-019…BA-12 (BA-05 và BA-06 đã chuyển sang mục đã xong) |
+| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài BA-06…T-002 |
 | [Vòng chạy một task L1](#vong-chay) | mười bước thủ tục từ nhận task tới khối commit |
 | [Task Detail Template](#template) | khuôn viết một task mới |
 
@@ -112,10 +112,27 @@ tính đúng ca hai mức giá, đừng khoá giá theo lúc mở phiên. **BA-0
 **BA-09 (§7) thì đang chờ U-018** — lời giải U-016 đẻ ra nó: luật *"chờ hết buổi"* là luật cho
 người, chưa ai nói máy chặn hẳn hay chỉ nhắc, và MVP có làm nút chặn hay không phụ thuộc câu ấy.
 
+**BA-06 xong 2026-09-01, và nó đóng bốn thứ nhưng mở hai câu MỚI về tiền.** §4 nay chốt: luật gốc
+*giá một suất = tổng giá thành phần* · bảng mười một tổ hợp bắt buộc phủ (cột giá **cố ý không có
+số**, trỏ `shop-facts.md` §4.2–§4.3) · mốc khoá giá là **từng lượt gọi**, nên một hoá đơn phiên bàn
+mang hai mức giá là kết quả **đúng** · hai đơn vị thanh toán và hai phương thức, với **người đứng
+quầy** là người duy nhất nói được câu *"đã nhận tiền"* vì VietQR là mã **tĩnh**. Ba invariant mới:
+**I-012** (mọi thao tác chạm tiền để lại vết), **I-013** (khách không bao giờ đặt được giá),
+**I-014** (doanh thu cộng từ đủ hai nguồn).
+Hai câu mới, cả hai đều chạm đối soát ngưỡng **0đ** và cả hai phải hỏi **chủ quán**:
+**U-019** — buổi tối lấy gì đối chiếu phần khách **chuyển khoản** (két chỉ giữ tiền mặt), và một
+lần **hoàn tiền** trừ vào doanh thu ngày nào; §4.10 đang chạy bằng một **giả định** viết thẳng ra
+kèm rủi ro, đúng như dòng câu 8 ở bảng §10 dặn.
+**U-020** — khách trả **một phần tiền mặt, một phần chuyển khoản** thì quán có nhận không; §4.6
+đang viết theo nghĩa *"một lần thu chọn một phương thức"*, đọc từ chữ **hoặc** của
+`shop-facts.md` §1 và §6.3.
+Hệ quả cho task sau: **BA-07** phải đọc U-020 trước khi chốt vòng đời một lần thu tiền; **BA-08**
+phải đọc U-019 trước khi viết ca hoàn tiền; **BA-10** gom cả hai.
+
 - [ ] T-035 Brief bảo phiên mới XOÁ scope trong khi chủ thật đang chạy song song (F-014)
 
 - [ ] BA-07 `docs/product.md` §5 — vòng đời đơn, phiên bàn, công việc trạm (BA-03 xong; **U-006, U-007 đã đóng 2026-08-31**)
-- [ ] BA-08 `docs/product.md` §6 — ngoại lệ · cần BA-06, BA-07 (BA-03–BA-05 xong; **U-007 đã đóng 2026-08-31**, **U-016 đã đóng 2026-09-01**)
+- [ ] BA-08 `docs/product.md` §6 — ngoại lệ · chỉ còn **cần BA-07** (BA-03–BA-06 xong; **U-007 đã đóng 2026-08-31**, **U-016 đã đóng 2026-09-01**; đọc **U-019** trước khi viết ca hoàn tiền)
 - [ ] BA-09 `docs/product.md` §7 — phạm vi MVP · cần BA-01–BA-08 (**U-018 đã đóng 2026-09-01**: máy chỉ nhắc, không chặn ⇒ MVP không phải làm nút chặn)
 - [ ] BA-10 `docs/decisions.md` — quyết định và giả định · cần BA-01–BA-09
 - [ ] BA-11 `docs/product.md` §8 — ba scenario nghiệm thu BA · cần BA-03–BA-10
@@ -133,12 +150,12 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] BA-06 `docs/product.md` §4 — quy tắc giá và thanh toán (bắt đầu 2026-09-01)
 
 
 <a id="done"></a>
 ## Done
 
+- [x] BA-06 `docs/product.md` §4 — quy tắc giá và thanh toán; I-012, I-013, I-014; mở U-019, U-020 (2026-09-01)
 - [x] T-037 U-017 và U-018 đóng: bấm theo MẺ, máy chỉ NHẮC; I-011 viết lại vì bản đầu sai (2026-09-01) — **chung một commit với T-036**
 - [x] T-036 S-4 có lời giải: bảng quầy BỐN con số, quầy bấm "đã làm xong"; mở U-017, ghi F-014 (2026-09-01) — **chung một commit với T-037**
 - [x] T-034 Giá đổi được giữa giờ bán, thành phần suất phải chờ hết buổi; §6.17, I-011; mở U-018 (2026-09-01)
@@ -232,15 +249,18 @@ Bốn câu **đã có lời giải trước khi chuỗi BA bắt đầu**; task 
 | 2 | Đơn đã xác nhận được sửa hay chỉ huỷ/tạo lại | BA-07 | còn mở |
 | 3 | Món hết sau khi khách đã đặt | BA-08 | còn mở |
 | 4 | Khách không trả được tiền thì phiên bàn ở đâu | BA-08 | còn mở |
-| 5 | Có hoàn tiền không, ai được | BA-06 | **đã chốt** → `shop-facts.md` §6.4 — quầy quyết từng ca, phải ghi vết |
+| 5 | Có hoàn tiền không, ai được | BA-06 | **đã chốt** → `shop-facts.md` §6.4 — quầy quyết từng ca, phải ghi vết; BA-06 chép vào `docs/product.md` §4.8 (2026-09-01) |
 | 6 | Pickup có cần giờ hẹn bắt buộc | BA-04 | **đã chốt** → `shop-facts.md` §6.5 — bắt buộc; BA-04 chép vào `docs/product.md` §3.2.4 (2026-08-31) |
 | 7 | Delivery có quản lý trạng thái giao | BA-04 | **đã chốt** → `shop-facts.md` §6.7 — quán tự giao, có trạng thái "đang giao"; BA-04 chép vào `docs/product.md` §3.2.2 (2026-08-31) |
-| 8 | Doanh thu tính theo ngày nào, đơn huỷ/hoàn tiền ra sao | BA-06 | còn mở |
+| 8 | Doanh thu tính theo ngày nào, đơn huỷ/hoàn tiền ra sao | BA-06 | **một nửa đã chốt, một nửa còn mở** → doanh thu tính vào **ngày ghi nợ** (`shop-facts.md` §6.14, U-012); vế **hoàn tiền / huỷ đơn đã trả trước** còn mở, BA-06 mở thành **U-019** và chạy bằng giả định ghi ở `docs/product.md` §4.10 |
 | 9 | Chủ quán đổi giá đang bán ngay lập tức được không | BA-05 | **đã chốt 2026-09-01** (mở thành U-014 rồi đóng trong ngày, T-034) → **được**, không phải chờ hết buổi → `shop-facts.md` §6.17 · `docs/product.md` §3.3.1 |
 | 10 | Có lưu lịch sử thao tác nhân viên ở MVP không | BA-09 | còn mở |
 
-Sáu câu còn mở đều được BA-10 gom lại lần cuối (`docs/decisions.md`): câu nào chốt được thì thành
-ADR, câu nào chưa thì thành GIẢ ĐỊNH có mức rủi ro và người cần trả lời.
+Năm câu còn mở — và **nửa còn lại của câu 8** — đều được BA-10 gom lại lần cuối
+(`docs/decisions.md`): câu nào chốt được thì thành ADR, câu nào chưa thì thành GIẢ ĐỊNH có mức rủi
+ro và người cần trả lời. Riêng câu 8 thì BA-10 không được đọc là "còn mở nguyên": vế **doanh thu
+tính ngày nào** đã có lời giải từ 2026-08-31, chỉ vế **hoàn tiền rơi vào ngày nào** là chưa
+(**U-019**).
 
 **S-1, S-2, S-3 không phải giả định.** Chủ quán xác nhận cả ba ngày **2026-08-30**
 (`shop-facts.md` §7.1); §7.2 nay không còn mục nào. Task nào ghi chúng là "chưa xác nhận" là sai.
@@ -344,59 +364,6 @@ grep -n 'T-019' scripts/check-links.ignore   # rỗng
 ./scripts/check-links.sh                     # xanh sau khi gỡ ignore
 grep -c '⚠️' master_plan/prompt-fullstack.md  # không tăng (2)
 grep -n '^## §' master_plan/prompt-fullstack.md   # vẫn đủ §1 → §11
-git status --porcelain
-```
-
-### BA-06 — Quy tắc giá và thanh toán
-
-**Prompt:** `prompt/BA/05-pricing-payment-L2.md` (L2) · **Cần xong trước:** BA-03, BA-04
-
-**Goal:**
-`docs/product.md` §4 chốt toàn bộ quy tắc nghiệp vụ về tiền: giá từ đâu ra, tổng tiền xác định lúc
-nào, thu bằng cách nào, đối soát dựa trên cái gì.
-
-**Scope:** `docs/product.md` §4 · `quality/invariants.md` (chỉ **thêm**) · `work/backlog.md`.
-
-**Out of scope:** §1–§3, §5–§8 của `docs/product.md` · `docs/decisions.md` · `docs/architecture.md`.
-
-**Acceptance:**
-1. §4 nêu nguồn của giá và câu khẳng định khách không tự đặt được giá.
-2. §4 nêu thời điểm tổng tiền được xác định, và điều gì xảy ra nếu giá menu đổi sau thời điểm đó.
-3. §4 mở đầu bằng luật "giá một suất = tổng giá thành phần" và phân biệt bảng giá **thành phần**
-   (`shop-facts.md` §4.2) với bảng giá **một suất** (§4.3).
-4. §4 nêu quy tắc phụ thu **+1.000 mỗi phần nhận nhân**, và nói ×1 / ×4 / ×5 là hệ quả.
-5. §4 nêu mặc định khi khách không chọn gì: nhân Thịt, lượng Thường.
-6. §4 có bảng 11 tổ hợp bắt buộc phủ theo `shop-facts.md` §4.8; ca 11 ghi rõ **bị từ chối**.
-7. Ba ca suất trứng đứng riêng ghi phụ thu ×5 là **đã chốt 2026-08-30**, không đánh dấu suy luận.
-8. §4 **không chép** bảng giá; chỗ cần số thì trỏ `shop-facts.md` §4.2–§4.3.
-9. Không có câu nào nói phụ thu "không nhân theo số phần bếp làm" — câu đó đã bị gỡ 2026-08-29,
-   thấy nó quay lại là bug.
-10. Có bảng phân biệt đơn vị thanh toán theo kênh: tại bàn = phiên · mang đi = đơn.
-11. Liệt kê đúng 2 phương thức thanh toán, mỗi phương thức nói ai xác nhận đã thu được tiền.
-12. Có trường hợp thanh toán chưa xác nhận được: phiên/đơn ở trạng thái nào, bàn có được giải
-    phóng không.
-13. Nêu cơ sở đối soát cuối ngày: sổ giấy và tiền trong két, ngưỡng lệch chấp nhận = **0đ**
-    (`shop-facts.md` §6.10).
-14. Có câu khẳng định doanh thu một ngày = tiền từ phiên bàn **cộng** tiền từ đơn mang đi, và một
-    khoản tiền chỉ thuộc một trong hai (`shop-facts.md` §6.9).
-15. `quality/invariants.md` có ít nhất ba invariant: tổng tiền một phiên bằng tổng các đơn thuộc
-    phiên · giá áp cho một đơn không đổi sau khi đơn được tạo · không có thao tác đổi tiền nào
-    không truy vết lại được.
-16. Không có tên cổng thanh toán hay ngân hàng cụ thể.
-
-**Câu hỏi §10 gắn vào task này:**
-- Câu 5 — có hoàn tiền không, ai được: **đã chốt** → `shop-facts.md` §6.4. Quầy quyết từng ca,
-  **mọi lần hoàn phải để lại vết** (hoàn bao nhiêu, đơn nào, ai bấm, lý do gì) và người đứng quầy
-  là người ghi vết. Chép lời giải, đừng mở lại thành câu hỏi.
-- Câu 8 — doanh thu tính theo ngày nào, đơn huỷ/hoàn tiền vào đâu: **còn mở**. Hỏi người; chưa có
-  lời giải thì GIẢ ĐỊNH + rủi ro, chuyển BA-10.
-
-**Verify:**
-```bash
-./scripts/gate.sh
-sed -n '/^## 4\./,/^## 5\./p' docs/product.md | grep -c '^|'    # bảng 11 tổ hợp + bảng đơn vị
-grep -n '6.4\|6.9\|6.10' docs/product.md                        # có trỏ nguồn hoàn tiền/đối soát
-grep -nE '[0-9]{2}\.000' docs/product.md                        # không chép bảng giá
 git status --porcelain
 ```
 
@@ -701,6 +668,141 @@ Luật chung ở [Vòng chạy một task L1](#vong-chay). Việc riêng của t
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### BA-06 — Quy tắc giá và thanh toán
+
+**Xong 2026-09-01.** L2 · prompt `prompt/BA/05-pricing-payment-L2.md` · `docs/product.md` §4 (mười
+một mục con, §4.1–§4.11) · `quality/invariants.md` **I-012, I-013, I-014** · **mở hai unknown:
+U-019, U-020**.
+
+**Mục §4 phải chốt luật tiền trên một nhà thật đã đầy — nhưng đầy về GIÁ, không đầy về THU.**
+`master_plan/shop-facts.md` §4.1–§4.8 nói đủ mọi thứ về việc một suất đáng bao nhiêu tiền, và §6.3,
+§6.4, §6.9, §6.10, §6.14, §6.17 nói đủ về việc ai thu, ai hoàn, ai nợ. Chỗ mỏng là **buổi tối**:
+§6.10 bắt so doanh thu với *sổ giấy và tiền trong két*, ngưỡng **0đ**, trong khi két chỉ giữ tiền
+mặt và quán có hẳn một phương thức không đi qua két. BA-06 chốt hết phần có lời chủ quán, và đẩy
+đúng chỗ mỏng ấy thành **U-019** thay vì tự nghĩ ra một quy trình đối soát (CLAUDE.md §3.5).
+
+**Ba chỗ §4 cố ý viết khác thói quen, cả ba đều có lý do:**
+- **Cột "Giá kỳ vọng" của bảng mười một tổ hợp KHÔNG có số.** `shop-facts.md` §4.8 có sẵn cột giá,
+  chép sang là xong — nhưng §4 là mục **tiền**, tức chỗ người ta tin nhất, nên một bảng giá thứ hai
+  ở đây là bản sao nguy hiểm nhất có thể đặt (ADR-001, `work/findings.md` F-001). Cột ấy nay ghi
+  *"tra `shop-facts.md` §4.2–§4.3"*, và cột cuối đổi thành **"ca này bắt lỗi gì"** — thứ §4.8 không
+  có và là lý do thật để bảng tồn tại ở đây.
+- **§4 không có một con số tiền nào.** Kể cả cái bẫy *"suất giò không phải giá một chiếc giò"* —
+  Constraints của prompt viết nó kèm hai con số, §4.1 viết nó bằng **cấu tạo** (*một chiếc giò cộng
+  bốn cái bánh*) và trỏ về §4.3. Cùng một cái bẫy, không thêm một ô giá nào phải bảo trì. Đối chiếu:
+  §3.3.3 (BA-05) có bốn con số và phải mang theo một dòng banner dặn sửa nhà thật trước.
+- **§4.7 tách "chưa xác nhận được" khỏi "cho nợ".** Prompt hỏi một câu (*thanh toán chưa xác nhận
+  được thì bàn có trống không*), nhưng hai tình huống trả lời **ngược nhau**: chờ báo có ⇒ phiên
+  chưa đóng, **bàn không trống**; cho nợ ⇒ phiên **vẫn đóng**, bàn trống bình thường
+  (`shop-facts.md` §6.14). Gộp chúng là hoặc khoá một cái bàn cả buổi, hoặc mất một khoản tiền.
+
+**Sự cố trong lúc chạy — `ffc2997` nuốt mất §4, và không sửa lại được nữa.**
+Giữa lúc BA-06 đang viết `docs/product.md` §4, một phiên **chạy song song trên cùng cây làm việc**
+commit hai task của nó bằng `git add docs/product.md` — và lấy luôn ~290 dòng §4 chưa xong. Commit
+`ffc2997` mang subject *"T-036 + T-037"*, thân không nhắc BA-06 một chữ, lại còn tự mô tả sai
+(*"mục Unknowns rỗng"*, trong khi chính nó mang **U-019** và **U-020** vào lịch sử).
+Nó **đã push** trước khi BA-06 nhìn thấy ⇒ `docs/decisions.md` **ADR-008** đóng đường viết lại:
+sửa **tiến**. Bản sửa tiến là **bản đồ hash trong `work/findings.md` F-014** (lần thứ ba của cùng
+một finding — nguyên nhân gốc là nhiều phiên một cây, không phải lỗi của ai).
+⇒ **Đọc `git log` để tìm §4 đến từ đâu sẽ ra sai.** §4 nằm trong `ffc2997`; commit mang tên BA-06
+chỉ có `quality/invariants.md`, `work/backlog.md`, `work/findings.md` và một sửa nhỏ ở §4.2. Đây
+cũng là lý do BA-06 **không** gỡ hai khối scope T-036/T-037 dù chúng đã commit: phiên kia có thể
+vẫn đang chạy, và F-014 chính là finding về việc một phiên dọn scope của phiên khác.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Chứng minh ở |
+|---|---|
+| 1 | §4.2, ba gạch đầu dòng đầu — *"giá luôn do hệ thống tính lại từ bảng giá"*, *"khách không bao giờ gửi giá lên"* (`shop-facts.md` §4.6 quy tắc 9); thêm **I-013** |
+| 2 | §4.4 — mốc là **thời điểm tạo một lượt gọi**, kèm hai câu phủ định (không phải lúc mở phiên, không phải lúc thanh toán) và hệ quả *một hoá đơn hai mức giá* |
+| 3 | §4.1 mở đầu bằng khối trích dẫn *"giá một suất bán = tổng giá các thành phần"*, rồi bảng hai dòng phân biệt `shop-facts.md` §4.2 (thành phần) với §4.3 (một suất bán) |
+| 4 | §4.2, gạch đầu dòng *"+1.000 cho MỖI phần nhận nhân"* + bảng bốn dòng ×1 / ×4 / ×4 / ×5 với tiêu đề cột **"⇒ phụ thu mỗi bậc"** — chữ ⇒ là chỗ nói ra rằng đó là hệ quả |
+| 5 | §4.2, gạch đầu dòng *"Mặc định là nhân Thịt, lượng Thường"*, kèm câu chống hiểu nhầm *"đơn không có tuỳ chọn nào không phải đơn chay"* |
+| 6 | §4.3, bảng đủ **11** dòng theo đúng thứ tự `shop-facts.md` §4.8; dòng 11 ghi **PHẢI BỊ TỪ CHỐI** ở cột kết quả, và có một đoạn riêng ngay dưới bảng giải thích ca 11 hỏi gì |
+| 7 | §4.3, ca 5–6–7 ghi ×5 ở cột *"ca này bắt lỗi gì"*, và đoạn in đậm ngay dưới bảng ghi **đã chốt 2026-08-30** kèm nguồn `shop-facts.md` §7.1; không có chữ *suy ra* nào |
+| 8 | `grep -c '000' docs/product.md` = **5**, cả năm đều nằm ngoài §4 (bốn ở khối ví dụ §3.3.3, một ở bảng Unknowns) ⇒ §4 **không có ô giá nào** |
+| 9 | `grep -n 'không nhân theo' docs/product.md` → rỗng. §4.2 còn chủ động dựng bia: khối ⚠️ ghi câu đó đã bị gỡ 2026-08-29 và *thấy quay lại là bug* |
+| 10 | §4.5, bảng **năm** kênh → hai đơn vị: `qr_table` và `staff_pos` = **phiên bàn**; `delivery`, `pickup`, `phone_preorder` = **đơn** |
+| 11 | §4.6, bảng **hai** dòng — tiền mặt và VietQR tĩnh — mỗi dòng có cột *ai xác nhận* và cột *lúc nào*; ca đơn giao tận nơi ghi rõ người bấm là **người đi giao** (`shop-facts.md` §6.7) |
+| 12 | §4.7 — hai tình huống tách hẳn: **(a)** chờ báo có ⇒ phiên *chờ thanh toán*, **bàn KHÔNG trống** (I-003); **(b)** cho nợ ⇒ phiên **vẫn đóng**, bàn trống bình thường (I-005) |
+| 13 | §4.9 — *sổ giấy* và *tiền trong két*, ngưỡng **0đ**, viết như quy trình buổi tối của quán; kèm bảng bốn chuyện làm hai con số lệch nhau **hợp lệ** |
+| 14 | §4.10, câu in đậm mở mục (*doanh thu = phiên bàn + đơn mang đi*, một khoản thuộc đúng một trong hai) + đoạn *"hai chia theo ĐƠN VỊ THANH TOÁN, không chia theo kênh"*; thêm **I-014** |
+| 15 | Ba invariant yêu cầu đủ mặt: *tổng phiên = tổng đơn thuộc phiên* là **I-002** (đã có, BA-03) · *giá đơn không đổi sau khi tạo* là **I-009** (đã có, BA-05) · *không thao tác đổi tiền nào không truy vết được* là **I-012** (mới). Thêm **I-013** và **I-014**; ba cái mới đều ghi *"khác gì cái đã có"* để không thành bản sao |
+| 16 | `grep -nEi 'momo\|zalopay\|vnpay\|stripe\|thẻ tín dụng\|webhook\|api\|ngân hàng' docs/product.md` → chỉ một dòng, §4.11, và nó nói **không** làm: *số tài khoản ngân hàng do chủ quán nhập trong phần quản trị* |
+
+**Câu hỏi §10 gắn vào task này:**
+- **Câu 5 (hoàn tiền) — chép lời giải, xong.** `shop-facts.md` §6.4 vào `docs/product.md` §4.8:
+  quầy quyết từng ca, không có luật cứng, **mọi lần hoàn để lại vết** (bao nhiêu, đơn nào, ai bấm,
+  lý do gì), và người đứng quầy vừa quyết vừa ghi. Bảng *"khi nào một lần huỷ sinh việc hoàn tiền"*
+  là phần §4.8 thêm vào: nó ghép §6.4 với §6.3 (đơn đã trả trước ⇒ có hoàn; đơn chưa trả ⇒ không).
+- **Câu 8 — KHÔNG đóng được, và nó chỉ mở một NỬA.** Vế *doanh thu tính ngày nào* đã có lời giải
+  từ 2026-08-31 (ngày ghi nợ, `shop-facts.md` §6.14) và §4.10 chép thẳng. Vế *hoàn tiền / huỷ đơn
+  đã trả trước rơi vào ngày nào* thì không owner nào nói, nên nó lên hình dạng máy đọc được thành
+  **U-019**. Prompt cho phép ghi GIẢ ĐỊNH rồi đi tiếp, và BA-06 **đi** — khác BA-05 ở câu 9: chỗ
+  này giả định sai thì sửa **cách bày báo cáo**, không sửa dữ liệu quá khứ, vì cả hai mốc thời gian
+  đều đã được ghi (cùng lập luận với `docs/decisions.md` ADR-012). Giả định và **rủi ro nếu nó
+  sai** viết thẳng ở §4.10, và U-019 mang cả hai vế để BA-08 và BA-10 không phải tìm lại.
+
+**Unknown thứ hai sinh ra trong lúc viết, không có trong prompt:**
+- **U-020** — khách trả **một phần tiền mặt, một phần chuyển khoản**. Prompt có liệt kê nó ở mục
+  Unknowns nhưng như một câu phụ; viết §4.6 mới thấy nó quyết định **hình dạng của một lần thu
+  tiền** (một khoản hay nhiều khoản), tức chạm thẳng đối soát 0đ. `shop-facts.md` §1 và §6.3 chỉ
+  đưa gián tiếp một chữ **hoặc**, và một chữ *hoặc* trong câu mô tả lựa chọn của khách thì không đủ
+  làm luật. §4.6 viết theo nghĩa *một lần thu chọn một phương thức* và **nói thẳng ra rằng đó là
+  cách đọc**, kèm trỏ U-020.
+
+
+**Prompt:** `prompt/BA/05-pricing-payment-L2.md` (L2) · **Cần xong trước:** BA-03, BA-04
+
+**Goal:**
+`docs/product.md` §4 chốt toàn bộ quy tắc nghiệp vụ về tiền: giá từ đâu ra, tổng tiền xác định lúc
+nào, thu bằng cách nào, đối soát dựa trên cái gì.
+
+**Scope:** `docs/product.md` §4 · `quality/invariants.md` (chỉ **thêm**) · `work/backlog.md`.
+
+**Out of scope:** §1–§3, §5–§8 của `docs/product.md` · `docs/decisions.md` · `docs/architecture.md`.
+
+**Acceptance:**
+1. §4 nêu nguồn của giá và câu khẳng định khách không tự đặt được giá.
+2. §4 nêu thời điểm tổng tiền được xác định, và điều gì xảy ra nếu giá menu đổi sau thời điểm đó.
+3. §4 mở đầu bằng luật "giá một suất = tổng giá thành phần" và phân biệt bảng giá **thành phần**
+   (`shop-facts.md` §4.2) với bảng giá **một suất** (§4.3).
+4. §4 nêu quy tắc phụ thu **+1.000 mỗi phần nhận nhân**, và nói ×1 / ×4 / ×5 là hệ quả.
+5. §4 nêu mặc định khi khách không chọn gì: nhân Thịt, lượng Thường.
+6. §4 có bảng 11 tổ hợp bắt buộc phủ theo `shop-facts.md` §4.8; ca 11 ghi rõ **bị từ chối**.
+7. Ba ca suất trứng đứng riêng ghi phụ thu ×5 là **đã chốt 2026-08-30**, không đánh dấu suy luận.
+8. §4 **không chép** bảng giá; chỗ cần số thì trỏ `shop-facts.md` §4.2–§4.3.
+9. Không có câu nào nói phụ thu "không nhân theo số phần bếp làm" — câu đó đã bị gỡ 2026-08-29,
+   thấy nó quay lại là bug.
+10. Có bảng phân biệt đơn vị thanh toán theo kênh: tại bàn = phiên · mang đi = đơn.
+11. Liệt kê đúng 2 phương thức thanh toán, mỗi phương thức nói ai xác nhận đã thu được tiền.
+12. Có trường hợp thanh toán chưa xác nhận được: phiên/đơn ở trạng thái nào, bàn có được giải
+    phóng không.
+13. Nêu cơ sở đối soát cuối ngày: sổ giấy và tiền trong két, ngưỡng lệch chấp nhận = **0đ**
+    (`shop-facts.md` §6.10).
+14. Có câu khẳng định doanh thu một ngày = tiền từ phiên bàn **cộng** tiền từ đơn mang đi, và một
+    khoản tiền chỉ thuộc một trong hai (`shop-facts.md` §6.9).
+15. `quality/invariants.md` có ít nhất ba invariant: tổng tiền một phiên bằng tổng các đơn thuộc
+    phiên · giá áp cho một đơn không đổi sau khi đơn được tạo · không có thao tác đổi tiền nào
+    không truy vết lại được.
+16. Không có tên cổng thanh toán hay ngân hàng cụ thể.
+
+**Câu hỏi §10 gắn vào task này:**
+- Câu 5 — có hoàn tiền không, ai được: **đã chốt** → `shop-facts.md` §6.4. Quầy quyết từng ca,
+  **mọi lần hoàn phải để lại vết** (hoàn bao nhiêu, đơn nào, ai bấm, lý do gì) và người đứng quầy
+  là người ghi vết. Chép lời giải, đừng mở lại thành câu hỏi.
+- Câu 8 — doanh thu tính theo ngày nào, đơn huỷ/hoàn tiền vào đâu: **còn mở**. Hỏi người; chưa có
+  lời giải thì GIẢ ĐỊNH + rủi ro, chuyển BA-10.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+sed -n '/^## 4\./,/^## 5\./p' docs/product.md | grep -c '^|'    # bảng 11 tổ hợp + bảng đơn vị
+grep -n '6.4\|6.9\|6.10' docs/product.md                        # có trỏ nguồn hoàn tiền/đối soát
+grep -nE '[0-9]{2}\.000' docs/product.md                        # không chép bảng giá
+git status --porcelain
+```
 
 ### T-037 — Hai câu cuối đóng: bấm theo MẺ, và máy chỉ NHẮC
 
