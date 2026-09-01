@@ -114,7 +114,6 @@ người, chưa ai nói máy chặn hẳn hay chỉ nhắc, và MVP có làm nú
 
 - [ ] T-035 Brief bảo phiên mới XOÁ scope trong khi chủ thật đang chạy song song (F-014)
 
-- [ ] BA-06 `docs/product.md` §4 — quy tắc giá và thanh toán · hết bị chặn (BA-03, BA-04, T-020 xong; **U-005 đã đóng 2026-08-31**)
 - [ ] BA-07 `docs/product.md` §5 — vòng đời đơn, phiên bàn, công việc trạm (BA-03 xong; **U-006, U-007 đã đóng 2026-08-31**)
 - [ ] BA-08 `docs/product.md` §6 — ngoại lệ · cần BA-06, BA-07 (BA-03–BA-05 xong; **U-007 đã đóng 2026-08-31**, **U-016 đã đóng 2026-09-01**)
 - [ ] BA-09 `docs/product.md` §7 — phạm vi MVP · cần BA-01–BA-08 (**U-018 đã đóng 2026-09-01**: máy chỉ nhắc, không chặn ⇒ MVP không phải làm nút chặn)
@@ -134,12 +133,14 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] BA-06 `docs/product.md` §4 — quy tắc giá và thanh toán (bắt đầu 2026-09-01)
+
 
 <a id="done"></a>
 ## Done
 
-- [x] T-037 U-017 và U-018 đóng: bấm theo MẺ, máy chỉ NHẮC; I-011 viết lại vì bản đầu sai (2026-09-01)
-- [x] T-036 S-4 có lời giải: bảng quầy BỐN con số, quầy bấm "đã làm xong"; mở U-017, ghi F-014 (2026-09-01)
+- [x] T-037 U-017 và U-018 đóng: bấm theo MẺ, máy chỉ NHẮC; I-011 viết lại vì bản đầu sai (2026-09-01) — **chung một commit với T-036**
+- [x] T-036 S-4 có lời giải: bảng quầy BỐN con số, quầy bấm "đã làm xong"; mở U-017, ghi F-014 (2026-09-01) — **chung một commit với T-037**
 - [x] T-034 Giá đổi được giữa giờ bán, thành phần suất phải chờ hết buổi; §6.17, I-011; mở U-018 (2026-09-01)
 - [x] BA-05 `docs/product.md` §3.3 — lát cắt chủ quán đổi menu/giá; I-009, I-010; mở U-014–U-016 (2026-09-01)
 - [x] BA-04 `docs/product.md` §3.2 — lát cắt một đơn mang đi, ba kênh không gắn bàn; I-007, I-008 (2026-08-31)
@@ -702,6 +703,14 @@ Luật chung ở [Vòng chạy một task L1](#vong-chay). Việc riêng của t
 ## Chi tiết — việc đã xong
 
 ### T-037 — Hai câu cuối đóng: bấm theo MẺ, và máy chỉ NHẮC
+
+> **T-036 và T-037 nằm trong MỘT commit** (chủ repo quyết 2026-09-01). Hai phiên chạy song song
+> trong cùng một cây và cùng sửa `master_plan/shop-facts.md`, `docs/product.md`, `work/backlog.md`;
+> tới lúc commit thì thay đổi của hai task đã đan vào nhau trong cùng những file đó, và tách bằng
+> `git add -p` không rẻ hơn giá trị nó mang lại. **Hệ quả phải biết trước khi ai đó revert:** một
+> `git revert` commit này gỡ **cả hai** task — lời giải S-4 lẫn lời giải U-017/U-018. Muốn gỡ một
+> task thôi thì phải sửa tay, không có đường tự động. Đây là cái giá đã biết của việc chạy song
+> song, ghi ở đây chứ không mở finding mới — `work/findings.md` **F-014** đã giữ nguyên nhân gốc.
 
 **Xong 2026-09-01.** L2 · không có prompt — chủ quán trả lời U-017 và U-018 trong cùng một lượt ·
 `master_plan/shop-facts.md` §5.4 + §6.17 + hai dòng §7.1 · `docs/product.md` §1.2, §3.3.6, mục
