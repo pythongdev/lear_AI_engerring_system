@@ -67,7 +67,14 @@ Việc nhân viên làm:
   trống — xem §3.1.1 bước 12–13.
 - **Không phải bấm gì ở trạm bếp để báo đã làm xong.** Ba trạm bếp không có nút "đã làm xong" hay
   "đã bưng ra bàn"; số lượng đã làm cho từng bàn được cập nhật ở POS (chủ quán chốt 2026-08-31,
-  `shop-facts.md` §5.4).
+  `shop-facts.md` §5.4). Luật này nói về **bếp**: từ 2026-09-01 có một nút *"đã làm xong"*, nhưng
+  nó nằm ở **quầy** và **người đứng quầy** bấm — xem gạch đầu dòng ngay dưới.
+- **Bấm "đã làm xong" cho món bếp đã làm xong nhưng chưa bưng ra** — việc của **người đứng quầy**
+  (chủ quán chốt 2026-09-01, `shop-facts.md` §5.4). Món gấp xong có nằm chờ thật — chờ đủ đĩa, chờ
+  người rảnh tay bưng, chờ món khác của cùng bàn — nên *làm xong* và *ra tới bàn* là hai việc, và
+  bảng ở quầy đếm chúng bằng hai con số. **Bấm theo MẺ** (chủ quán chốt 2026-09-01,
+  `shop-facts.md` §5.4): một lần bấm ứng với một mẻ bếp vừa làm xong, không bấm từng cái và không
+  bấm cả bàn.
 - **Huỷ một đơn** — chỉ **người đứng quầy** làm được (chủ quán chốt 2026-08-30,
   `shop-facts.md` §6.13); bốn trạm còn lại không huỷ được đơn nào, kể cả đơn của việc mình đang làm.
 - **Quyết định hoàn tiền theo từng trường hợp** tại quầy — không có luật cứng, người ở quầy nhìn
@@ -656,7 +663,170 @@ Bảy điểm khác, lấy đúng danh sách của `shop-facts.md` §5.2 — **�
 
 ### 3.3 Chủ quán đổi menu hoặc giá
 
-> Chưa chốt — BA-05
+*BA-05 — chốt 2026-09-01. Nguồn: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §3 Epic C,
+§5 quy tắc 5, 6, 7, §6 (Giá) + `master_plan/shop-facts.md` §4.1–§4.8, §6.12 (dữ kiện quán, chủ
+quán chốt 2026-08-19 → 2026-08-31).*
+
+Hai lát cắt trên tạo ra đơn; lát cắt này **không tạo đơn nào**. Nó chốt đúng một câu: khi chủ quán
+sửa menu hoặc giá, cái gì đi theo cái mới và cái gì ở lại như cũ. Sai ở đây là sai **âm thầm** —
+không có lỗi nào nổ ra, chỉ có số tiền của một bữa ăn đã bán bị đổi sau lưng.
+
+Ranh giới chia hai phía là **thời điểm một lượt gọi được tạo**, không phải trạng thái nó đang ở
+đâu (kế hoạch gốc §5 quy tắc 5 và 6): giá được xác định một lần, lúc lượt gọi ấy được tạo, và từ
+đó không có thao tác nào của chủ quán chạm lại được vào nó.
+
+**Bốn chiều đổi giá ở §3.3.2 chia làm hai nhóm, với hai mốc khác nhau** (chủ quán chốt 2026-09-01,
+`shop-facts.md` §6.17): ba chiều **tiền** sửa được ngay giữa giờ bán; chiều thứ tư — **thành phần
+của một suất** — phải chờ hết buổi bán. Nhớ §3.3 thành *"một mốc duy nhất"* là làm sai đúng chiều
+đắt nhất.
+
+#### 3.3.1 Luồng — bảy bước
+
+Mỗi bước ghi rõ ai làm. Tên actor dùng đúng §1.
+
+1. **Chủ quán mở phần quản trị.** *Chủ quán* — vai ở §1.3 — là người duy nhất sửa được menu và
+   giá. Không trạm nào trong năm trạm ở §1.5 làm được việc này, kể cả quầy.
+2. **Chủ quán sửa.** Một trong bốn chiều ở §3.3.2, hoặc **ngừng bán** một món (§3.3.4).
+3. **Thay đổi có hiệu lực khi chủ quán lưu.** Không có lịch hẹn giờ, không có "áp dụng từ ngày
+   mai". **Sửa giá thì lưu lúc nào cũng được, kể cả giữa giờ bán** — chủ quán không phải chờ hết
+   buổi (chốt 2026-09-01, `shop-facts.md` §6.17). **Sửa thành phần một suất thì phải chờ hết
+   buổi bán** (§3.3.2 chiều thứ tư).
+4. **Menu khách nhìn thấy đổi theo, ở cả năm kênh** (§2). Một khách đang mở trang chọn món giữa
+   chừng thì lần gửi đơn tiếp theo của khách đó đã đi theo bảng giá mới — vì giá không do khách
+   gửi lên (`shop-facts.md` §4.6 quy tắc 9), *hệ thống* tự xác định lại lúc tạo đơn.
+5. **Đơn tạo sau mốc đó dùng menu và giá mới.** Toàn bộ, cả bốn chiều.
+6. **Đơn tạo trước mốc đó không đổi một chữ nào** — không đổi tên món, không đổi giá, không đổi
+   thành phần bếp phải làm (§3.3.3).
+7. **Việc đã xuống bếp không bị viết lại.** Đơn đã được duyệt thì việc ở các trạm đã nổ ra theo
+   thành phần tại thời điểm ấy (§3.1.5, `shop-facts.md` §5.3); chủ quán sửa menu sau đó không làm
+   phiếu đang treo ở bếp đổi nội dung.
+
+#### 3.3.2 "Đổi giá" có bốn chiều, không phải một
+
+Giá một suất bán **không** phải một con số nằm sẵn: nó là **tổng giá các thành phần** của suất
+(`shop-facts.md` §4.6 quy tắc 1, bằng chứng ở §4.7). Nên chủ quán có bốn cách khác nhau để làm đổi
+số tiền một khách phải trả:
+
+| # | Chủ quán đổi | Nhà thật | **Sửa được lúc nào** | Đơn cũ phải giữ nguyên |
+|---|---|---|---|---|
+| 1 | Giá một **thành phần** (cái bánh, quả trứng, chiếc giò) | `shop-facts.md` §4.2 | **giữa giờ bán cũng được** | giá từng thành phần đã áp |
+| 2 | Mức phụ thu **nhân** | `shop-facts.md` §4.4 | **giữa giờ bán cũng được** | mức phụ thu đã áp |
+| 3 | Mức phụ thu **lượng nhân** | `shop-facts.md` §4.4 | **giữa giờ bán cũng được** | mức phụ thu đã áp |
+| 4 | **Thành phần của một suất bán** | `shop-facts.md` §4.5 | **chỉ sau khi hết buổi bán** | suất đó gồm những gì, và bao nhiêu phần nhận nhân |
+
+Bốn chiều, **một luật**: đơn cũ giữ nguyên cả bốn. Giữ ba chiều đầu mà quên chiều thứ tư thì đơn cũ
+vẫn hỏng — và hỏng nặng hơn, vì lúc đó cả **tiền** lẫn **thứ bếp làm ra** đều sai.
+
+Chiều thứ tư là chiều dễ quên nhất, và là chiều duy nhất **không** được làm giữa giờ bán (chủ quán
+chốt 2026-09-01, `shop-facts.md` §6.17): nó đổi **thứ bếp phải làm ra**, mà bếp đang làm theo
+**mẻ** (`shop-facts.md` §5.4) — sửa giữa chừng là hai suất cùng tên, cách nhau mười phút, có ruột
+khác nhau. Đổi combo "Đầy đủ" từ ba cái bánh xuống hai là một thao tác duy
+nhất của chủ quán, nhưng nó chạm **mọi** đơn combo đã bán: nếu suất trong đơn cũ được đọc lại theo
+thành phần mới thì tổng tiền của những đơn ấy tụt xuống, và một hoá đơn đã thu tiền xong bỗng không
+khớp với số tiền thật đã nhận — thứ đối soát cuối ngày (`shop-facts.md` §6.10) bắt được nhưng không
+ai truy ra được lý do.
+
+#### 3.3.3 Đơn cũ giữ nguyên tổng tiền — đây là câu chốt của lát cắt
+
+**Một đơn đã tạo trước thời điểm đổi giá giữ nguyên tổng tiền của nó, mãi mãi.** Không có thao tác
+nào của chủ quán — đổi giá, đổi phụ thu, đổi thành phần suất, ngừng bán món — làm đổi được số tiền
+của một đơn đã có. Câu này áp cho mọi đơn của cả năm kênh (§2), và cho mọi phiên bàn đã đóng.
+
+Một ví dụ để thấy con số nào đứng yên. **Ví dụ này là bản chép của `shop-facts.md` §4.2–§4.3, và
+là chỗ duy nhất §3.3 có số; đổi giá thật thì sửa nhà thật trước, rồi sửa ví dụ này theo:**
+
+> Sáng thứ Hai, khách đặt **một suất giò, nhân thịt, lượng thường** — 25.000, tức
+> 9.000 (giò) + 4 × 4.000 (bốn cái bánh nhân thường). Trưa thứ Hai, chủ quán nâng giá một cái bánh
+> nhân thường lên 5.000. Từ lúc lưu, một suất giò cùng loại đặt mới có giá 29.000.
+> **Đơn sáng thứ Hai vẫn là 25.000** — mở lại nó ngày nào cũng thấy đúng con số đó.
+
+Ba điều đơn cũ giữ, không chỉ một:
+
+- **Tổng tiền**, và giá từng dòng đơn tạo ra tổng đó.
+- **Tên món** đúng như lúc khách gọi, kể cả khi tên ấy đã bị đổi hoặc ngừng bán (§3.3.4).
+- **Thành phần suất** đúng như lúc đặt — nghĩa là đọc lại một đơn combo cũ vẫn thấy đủ số bánh mà
+  bếp đã thật sự làm ra hôm đó (`shop-facts.md` §4.5).
+
+#### 3.3.4 Ngừng bán một món: biến khỏi menu, không biến khỏi đơn cũ
+
+Chủ quán quyết món nào đang bán, món nào ngừng bán (§1.3). Ngừng bán là **quyền chủ quán**, và lát
+cắt này chỉ mô tả **hệ quả** khi chủ quán làm việc đó — nó không mở đường cho ai khác làm. Chiều
+ngược lại — **thêm một món ngoài bảng giá `shop-facts.md` §4.2 — là đổi phạm vi**, cũng là quyền
+chủ quán và cũng không phải việc của lát cắt này (`shop-facts.md` §6.12).
+
+Từ lúc chủ quán lưu:
+
+- Món đó **không còn chọn được** ở bất kỳ kênh nào trong năm kênh của §2 — khách không thấy nó
+  trên web, quầy không đặt hộ được nó trên POS.
+- Đơn cũ có món đó **vẫn hiện đúng tên và đúng giá** đã bán. Không hiện thành "món đã xoá", không
+  hiện giá trống, không biến mất khỏi hoá đơn.
+- Báo cáo doanh thu của những ngày trước **không đổi một đồng nào** (`shop-facts.md` §6.9).
+
+Ca xảy ra thật và dễ làm sai nhất: món bị ngừng bán khi trong quán còn một đơn của nó **chưa hoàn
+thành**. Đơn ấy đi tiếp bình thường tới lúc trao hàng và thu tiền — nó đã được tạo trước mốc đổi,
+nên §3.3.3 áp cho nó. Ngừng bán chặn đơn **mới**, không rút lại đơn **cũ**.
+
+Món **hết giữa buổi** thì khác hẳn ca này: đó không phải chủ quán đổi menu mà là quán hết nguyên
+liệu, và đường xử lý là **tạm dừng nhận đơn** (§1.3, `quality/invariants.md` I-008) hoặc nhánh ngoại lệ của §6 (BA-08 —
+câu 3 của §10 kế hoạch gốc, còn mở).
+
+#### 3.3.5 Tổ hợp không hợp lệ bị TỪ CHỐI, không được tự sửa thành hợp lệ
+
+Nhóm **"Lượng nhân" chỉ tồn tại khi nhân khác Chay** (`shop-facts.md` §4.4). Nên tổ hợp
+**Chay + Nhiều nhân là không hợp lệ**, và đường đi duy nhất của nó là **bị từ chối**
+(`shop-facts.md` §4.6 quy tắc 3 · §4.8 ca 11 — ca duy nhất trong mười một ca có kết quả không phải
+một con số).
+
+**Từ chối, không phải sửa hộ.** Âm thầm bỏ tuỳ chọn thừa rồi cho đơn đi tiếp là đường sai: bếp nhận
+một phiếu mâu thuẫn thì hỏng món, và khách trả tiền cho một thứ khác thứ mình bấm. Hệ thống nói
+thẳng là tổ hợp đó không đặt được, để khách chọn lại.
+
+Lát cắt này thêm một chiều thời gian cho luật ấy: chủ quán đổi menu **có thể làm một tổ hợp đang
+hợp lệ trở thành không hợp lệ**. Từ lúc lưu, tổ hợp đó bị từ chối như mọi tổ hợp không hợp lệ khác
+— nhưng **đơn cũ mang tổ hợp ấy không bị sửa lại và không bị đánh dấu hỏng**: nó hợp lệ tại thời
+điểm nó được tạo, và §3.3.3 khoá nó lại ở đó.
+
+#### 3.3.6 Đơn đang dở, và phiên bàn vắt qua thời điểm đổi
+
+**Một lượt gọi đã tạo thì đã xong chuyện giá**, dù nó đang ở trạng thái nào — chờ quầy duyệt, đang
+làm ở bếp, đang giao, hay chờ thanh toán. Ranh giới là thời điểm **tạo lượt gọi**, không phải thời
+điểm hoàn thành (kế hoạch gốc §5 quy tắc 5). Không có bước "xác nhận lại giá" nào cho đơn đang dở.
+
+**Một phiên bàn đang mở vắt qua mốc đổi giá thì hoá đơn của nó mang hai mức giá — và như thế là
+đúng** (chủ quán chốt 2026-09-01, `shop-facts.md` §6.17, trả lời U-015):
+
+- Lượt gọi **trước** mốc giữ giá cũ; lượt gọi **sau** mốc áp giá mới. Cùng một món, cùng một bàn,
+  hai con số khác nhau trên **một** hoá đơn.
+- §3.1.4 và `quality/invariants.md` I-002 vẫn nguyên vẹn: một phiên vẫn sinh đúng **một** hoá đơn.
+  Cái đổi không phải số hoá đơn, mà là cách đọc tổng của nó — nó cộng từ những lượt gọi có thể có
+  giá khác nhau.
+- **Phiên bàn không khoá giá theo lúc mở phiên.** Đây là đường chủ quán **không** chọn, ghi ra đây
+  để không ai chọn lại nó sau này.
+- **Càng không tính lại cả phiên theo giá mới lúc thanh toán.** Đó là sửa tiền của một thứ khách
+  đã ăn xong, và nó phá thẳng §3.3.3.
+- ⇒ **Đối soát cuối ngày đọc được chuyện này** (`shop-facts.md` §6.10): ngày nào chủ quán đổi giá
+  giữa buổi thì cùng một món có hai giá đúng trong ngày ấy. Đó không phải một khoản lệch phải đi
+  tìm lý do — lý do đã có tên sẵn, là lần đổi giá lúc mấy giờ.
+
+**Luật *"đổi thành phần suất phải chờ hết buổi"* là luật cho NGƯỜI, không phải hàng rào của máy**
+(chủ quán chốt 2026-09-01, `shop-facts.md` §6.17, trả lời U-018). Chủ quán bấm sửa thành phần lúc
+9h sáng thì máy **nhắc một câu** — đang trong giờ bán, luật là chờ hết buổi — rồi **vẫn cho lưu**.
+Chủ quán giữ quyền tự phá luật của chính mình, và đó là quyết định, không phải chỗ chưa làm xong.
+
+⇒ Hệ quả phải nói thẳng, vì nó đổi cách đọc cả §3.3.2: **sản phẩm không bảo đảm rằng thành phần
+suất đứng yên trong giờ bán.** Nó chỉ bảo đảm chuyện đó không xảy ra **âm thầm** — có lời nhắc
+trước, và có vết đọc được sau, đủ để đối soát cuối ngày tìm ra (`shop-facts.md` §6.10).
+`quality/invariants.md` **I-011** được viết đúng theo ranh giới đó.
+
+#### 3.3.7 Ba việc lát cắt này cố ý không nói tới
+
+- **Cách máy giữ được lịch sử giá.** §3.3 chốt **kết quả nghiệp vụ phải luôn đúng** — mở một đơn cũ
+  ra thì thấy đúng số tiền đã bán. Làm cách nào để điều đó luôn đúng là việc của thiết kế hệ thống
+  (`docs/architecture.md`), không phải của tài liệu sản phẩm.
+- **Thêm món mới, hoặc đổi bảng giá thành một cấu trúc khác.** Thêm món ngoài `shop-facts.md` §4.2
+  là **đổi phạm vi**, quyền chủ quán (`shop-facts.md` §6.12).
+- **Ai được xem lại lịch sử đổi giá, và xem ở đâu.** Mọi thao tác chạm tiền đều phải kiểm chứng lại
+  được (§1.4), nhưng màn hình nào bày ra việc đó là câu của §7 (BA-09).
 
 ## 4. Giá và thanh toán
 
@@ -688,12 +858,14 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 
 ### Đang mở
 
-**Không còn câu nào đang mở, tính tới 2026-08-31.** U-012 và U-013 — hai câu cuối — được chủ quán
-trả lời trong ngày; cả hai đã chuyển xuống mục *Đã có lời giải*.
+**Không còn câu nào đang mở, tính tới 2026-09-01.** Năm câu mở trong ngày — U-014, U-015, U-016
+(mốc đổi menu/giá, T-034) và U-017, U-018 (T-036, T-037) — đều đã được chủ quán trả lời trong
+ngày; cả năm đã chuyển xuống mục *Đã có lời giải*.
 
 Mục này để trống là **trạng thái thật**, không phải mục bị bỏ quên: hình dạng của nó là hợp đồng
 với `scripts/brief.sh` (ADR-007), nên câu tiếp theo phải là **một gạch đầu dòng** đặt ngay dưới
-đây. Còn một chỗ **suy ra** chưa xác nhận — **S-4** — nhưng nó không sống ở đây, xem cuối mục.
+đây. `master_plan/shop-facts.md` §7.2 — chỗ giữ các mục **suy ra** chưa xác nhận — cũng rỗng từ
+2026-09-01, khi S-4 có lời giải.
 
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
@@ -763,15 +935,42 @@ Ngày **2026-08-31**, hai câu cuối cùng đóng nốt:
 Lời giải U-013 đóng luôn ca đáng sợ nhất mà câu hỏi ấy mở ra: **không bao giờ có việc gộp hai hoá
 đơn đã có tiền trong đó.** Ghép bàn chỉ là nới một phiên sang bàn trống.
 
-`master_plan/shop-facts.md` §7.2 — chỗ giữ các mục **suy ra chưa xác nhận** — rỗng từ
-2026-08-30 tới 2026-08-31; tài liệu nào còn nói "ba chỗ suy luận chưa ai xác nhận" là pointer cũ.
-Từ **2026-08-31** nó giữ đúng một mục, **S-4**: *"đã làm xong, còn ở bếp" có phải một con số riêng
-không* — sinh ra cùng lúc với U-008–U-011 ở trên, từ lời chủ quán về cách bếp gom việc theo mẻ.
-S-4 nằm ở §7.2 chứ không nằm ở đây vì nó là **chỗ suy ra**, không phải câu chưa ai hỏi
-(`work/findings.md` F-004).
+Ngày **2026-09-01**, ba câu BA-05 vừa mở được trả lời hết trong lượt kế tiếp (T-034):
 
-**S-4 đã được hỏi ngày 2026-08-31 và vẫn chưa có lời giải:** chủ quán trả lời *"tôi không hiểu"*.
-Câu hỏi cũ bắt chủ quán suy ra hộ *một bảng trong máy nên hiện con số nào* — một câu về mô hình dữ
-liệu, không phải về cái quán. Đó là **lỗi của người hỏi**. `shop-facts.md` §7.2 nay giữ một câu
-kiểm chứng **mới**, hỏi về cái quán thay vì về cái bảng; câu cũ được giữ lại nguyên văn ở đó làm
-bằng chứng, **không phải để hỏi lại**.
+| Câu hỏi cũ | Lời giải (chủ quán, 2026-09-01) | Ghi ở |
+|---|---|---|
+| ~~U-014 — chủ quán có được lưu thay đổi giá ngay giữa giờ bán không~~ | **Được** — *"không phải chờ đến hết buổi"*; hiệu lực từ lúc lưu | §3.3.1 · `shop-facts.md` §6.17 |
+| ~~U-015 — phiên bàn đang mở vắt qua mốc đổi giá thì hoá đơn ra sao~~ | **Lượt gọi trước mốc giữ giá cũ, lượt gọi sau mốc áp giá mới** ⇒ một hoá đơn mang **hai mức giá**, và như thế là đúng | §3.3.6 · `shop-facts.md` §6.17 |
+| ~~U-016 — có được đổi thành phần một suất trong lúc đang bán không~~ | **Không — phải chờ hết buổi bán.** Khác hẳn ba chiều tiền | §3.3.2 · `shop-facts.md` §4.5 · §6.17 |
+
+Ba câu ra **hai** luật, không phải một: chiều **tiền** sửa lúc nào cũng được, chiều **thành phần
+suất** phải chờ. §3.3.2 giữ ranh giới đó trong một bảng; nhớ nó thành một mốc duy nhất là làm sai
+đúng chiều đắt nhất.
+
+Cuối ngày **2026-09-01**, hai câu cuối — mỗi câu do một phiên mở — được trả lời nốt trong cùng một
+lượt (T-037):
+
+| Câu hỏi cũ | Lời giải (chủ quán, 2026-09-01) | Ghi ở |
+|---|---|---|
+| ~~U-017 — bấm "đã làm xong" theo từng cái, cả mẻ, hay cả bàn~~ | **Theo MẺ** — một lần bấm ứng với một mẻ bếp vừa làm xong | §1.2 · `shop-facts.md` §5.4 |
+| ~~U-018 — máy chặn hẳn hay chỉ nhắc khi sửa thành phần suất giữa giờ bán~~ | **Chỉ nhắc một câu, rồi vẫn cho lưu** — luật *"chờ hết buổi"* là luật cho **người** | §3.3.6 · `shop-facts.md` §6.17 |
+
+Lời giải U-018 buộc **viết lại `quality/invariants.md` I-011**: bản đầu nói *"thành phần suất không
+đổi trong giờ bán"*, và câu đó sai kể từ lúc biết máy không chặn. Thứ sản phẩm giữ được là chuyện
+đó không xảy ra **âm thầm** — nhắc trước, để vết sau. Một invariant hệ thống không giữ nổi thì
+không phải invariant.
+
+`master_plan/shop-facts.md` §7.2 — chỗ giữ các mục **suy ra chưa xác nhận** — rỗng từ
+2026-08-30 tới 2026-08-31, rồi giữ đúng một mục **S-4** từ 2026-08-31, và **rỗng trở lại từ
+2026-09-01** khi S-4 có lời giải. Tài liệu nào còn nói "ba chỗ suy luận chưa ai xác nhận", hay
+"§7.2 giữ S-4", là pointer cũ. S-4 nằm ở §7.2 chứ không nằm ở đây vì nó là **chỗ suy ra**, không
+phải câu chưa ai hỏi (`work/findings.md` F-004).
+
+**S-4 đã đóng ngày 2026-09-01, sau khi hỏi hai lần.** Lần đầu (2026-08-31) chủ quán trả lời
+*"tôi không hiểu"*: câu hỏi cũ bắt chủ quán suy ra hộ *một bảng trong máy nên hiện con số nào* —
+một câu về mô hình dữ liệu, không phải về cái quán, tức **lỗi của người hỏi**. Câu viết lại hỏi về
+**cái quán** — *từ lúc bánh tráng xong đến lúc nó xuống bàn, có nằm chờ không* — và được trả lời
+ngay: **có**, vì chờ đủ đĩa, chờ người rảnh tay bưng, chờ món khác của cùng bàn. Câu thứ hai —
+*ai nói cho máy biết món đã xong* — trả lời: **người đứng quầy bấm**. Cả hai ghi ở
+`shop-facts.md` §5.4 và §7.1; bài học về cách hỏi ở lại §7.2. Lời giải này mở ra **U-017** ở trên
+(bấm theo từng cái hay cả mẻ).

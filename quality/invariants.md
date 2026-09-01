@@ -296,35 +296,43 @@ bị từ chối, còn đơn cũ mở lại vẫn nguyên vẹn tên, giá và t
 
 *Phát hiện ở BA-05, 2026-09-01.*
 
-### I-011 — Thành phần một suất bán không đổi trong giờ bán
+### I-011 — Đổi thành phần suất trong giờ bán không bao giờ xảy ra ÂM THẦM
 
 **Invariant:**
-Một thay đổi **thành phần của suất bán** (`master_plan/shop-facts.md` §4.5 — suất đó gồm những gì)
-không bao giờ có hiệu lực trong giờ bán. Mọi lần đổi thành phần đều có mốc hiệu lực nằm **ngoài**
-06:00–11:00 (`shop-facts.md` §1, múi giờ `Asia/Ho_Chi_Minh`). Ba chiều còn lại của việc đổi giá —
-giá thành phần, phụ thu nhân, phụ thu lượng nhân — **không** chịu ràng buộc này: chúng đổi được bất
-kỳ lúc nào (`docs/product.md` §3.3.2).
+Một thao tác đổi **thành phần của suất bán** (`master_plan/shop-facts.md` §4.5) thực hiện trong
+giờ bán (06:00–11:00, `shop-facts.md` §1, múi giờ `Asia/Ho_Chi_Minh`) **luôn** phải đi qua hai
+thứ: một **lời nhắc** trước khi lưu, nói rằng đang trong giờ bán và luật là chờ hết buổi; và một
+**vết đọc được** sau khi lưu — đổi cái gì, lúc mấy giờ, ai bấm. Ba chiều còn lại của việc đổi giá
+— giá thành phần, phụ thu nhân, phụ thu lượng nhân — **không** chịu ràng buộc này: chúng đổi được
+bất kỳ lúc nào, không nhắc gì cả (`docs/product.md` §3.3.2).
 
 **Why:**
-Chủ quán chốt 2026-09-01 (`shop-facts.md` §6.17, trả lời U-016): giá thì *"không phải chờ đến hết
-buổi"*, còn thành phần thì *"chờ đến hết buổi bán hàng"*. Hai chiều xử khác nhau vì chúng hỏng khác
-nhau. Đổi giá chỉ đổi **số tiền** của lượt gọi sau đó, và I-009 đã khoá phần quá khứ. Đổi thành
-phần đổi **thứ bếp phải làm ra** — mà bếp làm theo **mẻ** (`shop-facts.md` §5.4), nên một mẻ đang
-trên nồi bỗng thuộc về hai định nghĩa khác nhau của cùng một tên món, và không có bản ghi nào chữa
-được chuyện suất bưng ra thiếu một cái bánh. Đây là chiều duy nhất trong bốn chiều mà hậu quả rơi
-vào **món ăn thật**, không rơi vào con số.
+Chủ quán chốt hai câu, và phải đọc **cùng nhau**. Câu thứ nhất (2026-09-01, trả lời U-016,
+`shop-facts.md` §6.17): đổi thành phần thì *"chờ đến hết buổi bán hàng"*. Câu thứ hai (2026-09-01,
+trả lời U-018): máy **chỉ nhắc một câu, không chặn** — chủ quán giữ quyền tự phá luật của chính
+mình.
+
+⚠️ **Nên invariant này KHÔNG nói "thành phần suất không đổi trong giờ bán".** Câu đó từng là bản
+đầu của I-011 (T-034) và nó **sai** kể từ lời chốt U-018: máy không chặn, nên trong quán vẫn có thể
+có một ngày thành phần đổi lúc 9h sáng. Một invariant mà hệ thống không giữ nổi thì không phải
+invariant — nó là một câu chúc. Thứ hệ thống **thật sự** giữ được là: chuyện đó không bao giờ xảy
+ra mà không ai biết.
+
+Vì sao đáng giữ đến thế: đổi thành phần đổi **thứ bếp phải làm ra**, mà bếp làm theo **mẻ**
+(`shop-facts.md` §5.4) — hai suất cùng tên, cách nhau mười phút, có ruột khác nhau, và không bản
+ghi nào chữa được chuyện suất bưng ra thiếu một cái bánh. Nó cũng đổi **tiền**: giá một suất là
+tổng giá các thành phần (§4.6 luật 1). Hai lý do ấy cộng lại là vì sao lần lưu ấy phải để lại vết —
+mọi thao tác chạm tiền đều phải truy ngược được cho đối soát cuối ngày (§6.10).
 
 **Verification:**
-Kịch bản kiểm ngược, chạy được mỗi ngày mà không cần biết máy có chặn hay không: liệt kê mọi lần
-đổi thành phần suất trong ngày ⇒ **không lần nào** có mốc hiệu lực nằm trong 06:00–11:00. Kịch bản
-đối chứng, phải **không** báo lỗi: một lần đổi **giá** lúc 08:30 là hợp lệ (§6.17) — luật này không
-được bắt nhầm sang ba chiều tiền. Kịch bản hệ quả: sau một lần đổi thành phần hợp lệ (ngoài giờ
-bán), mọi đơn của buổi hôm trước mở lại vẫn thấy đúng thành phần cũ (I-009), và đơn của buổi hôm
-sau thấy thành phần mới.
+Kịch bản lời nhắc: 09:00, sửa thành phần combo "Đầy đủ" từ 3 cái bánh xuống 2 ⇒ **phải** hiện lời
+nhắc trước khi lưu; bấm bỏ qua thì **vẫn lưu được** (đó là lời chốt U-018, không phải lỗi). Kịch
+bản đối chứng, phải **không** nhắc: 09:00, sửa **giá** một cái bánh ⇒ lưu thẳng, không lời nhắc nào
+— luật này không được bắt nhầm sang ba chiều tiền (`shop-facts.md` §6.17). Kịch bản ngoài giờ:
+13:00, sửa thành phần ⇒ không nhắc. Kịch bản vết: sau một lần lưu có bỏ qua lời nhắc, đối soát cuối
+ngày (§6.10) đọc ra được **lần đổi đó**, kèm giờ và người bấm; không đọc ra được là hỏng invariant
+này, kể cả khi lời nhắc đã hiện đúng. Kịch bản hệ quả, giữ nguyên từ I-009: mọi đơn tạo **trước**
+lần đổi mở lại vẫn thấy đúng thành phần cũ.
 
-**Chưa chốt:** máy **chặn hẳn** hay chỉ **nhắc rồi vẫn cho lưu** khi chủ quán định đổi thành phần
-giữa giờ bán — `docs/product.md` → *Unknowns* **U-018**. Verification ở trên cố ý viết ở mức đối
-soát cuối ngày nên nó đúng với cả hai lời giải; lời giải của U-018 sẽ **thêm** một kịch bản kiểm
-tại chỗ, không thay kịch bản này.
-
-*Phát hiện ở T-034, 2026-09-01.*
+*Phát hiện ở T-034, 2026-09-01. **Viết lại ở T-037, 2026-09-01** — lời chốt U-018 (máy chỉ nhắc)
+làm bản đầu sai; xem khối ⚠️ ở mục Why.*
