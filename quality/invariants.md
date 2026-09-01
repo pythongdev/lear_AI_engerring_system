@@ -218,3 +218,113 @@ nơi lúc 10:50, bật tạm dừng lúc 10:55 ⇒ đơn đó vẫn đi hết lu
 tiền** sau 11:00. Kiểm ngược, cuối ngày: không đơn nào có thời điểm tạo nằm ngoài 06:00–11:00.
 
 *Phát hiện ở BA-04, 2026-08-31.*
+
+### I-009 — Đơn đã tạo không đổi giá, tên món và thành phần khi chủ quán sửa menu
+
+**Invariant:**
+Một đơn đã được tạo giữ nguyên **tổng tiền**, **giá từng dòng**, **tên món** và **thành phần của
+suất** đúng như tại thời điểm tạo đơn, ở mọi thời điểm về sau. Không thao tác nào của chủ quán làm
+đổi được bốn thứ đó, kể cả khi chủ quán đổi giá một thành phần, đổi mức phụ thu nhân, đổi mức phụ
+thu lượng nhân, đổi thành phần của một suất bán, hay ngừng bán hẳn món đó
+(`master_plan/shop-facts.md` §4.2, §4.4, §4.5 — bốn chiều liệt kê ở `docs/product.md` §3.3.2).
+Ranh giới là **thời điểm tạo một LƯỢT GỌI**, không phải trạng thái nó đang ở: lượt gọi đang chờ
+duyệt, đang làm ở bếp, đang giao hay chờ thanh toán đều đã khoá giá xong. Ranh giới **không** phải
+lúc mở phiên bàn và **không** phải lúc thanh toán — nên một phiên bàn vắt qua mốc đổi giá cho ra
+**một hoá đơn mang hai mức giá cho cùng một món**, và đó là kết quả đúng (chủ quán chốt 2026-09-01,
+`master_plan/shop-facts.md` §6.17).
+
+**Why:**
+Kế hoạch gốc §5 quy tắc 5 và 6 chốt giá được xác định tại thời điểm đặt hàng và thay đổi menu
+không làm đổi đơn cũ. Vi phạm ở đây **không nổ ra lỗi nào** — không có thao tác sai, không có màn
+hình đỏ, chỉ có số tiền của một bữa ăn đã bán tự đổi sau lưng. Hậu quả rơi vào đối soát cuối ngày,
+nơi ngưỡng lệch là **0đ** (`shop-facts.md` §6.10): két khớp với số tiền thật đã thu, còn hệ thống
+lại kể một con số khác, và không ai truy ngược được vì thao tác gây ra nó là một lần chủ quán sửa
+giá hoàn toàn hợp lệ, có thể đã xảy ra nhiều ngày trước.
+
+Chiều thứ tư — **thành phần của một suất** — là chiều đắt nhất và dễ quên nhất. Giá một suất là
+**tổng giá các thành phần** (`shop-facts.md` §4.6 quy tắc 1, bằng chứng §4.7), nên đọc lại một đơn
+combo cũ theo thành phần **mới** làm sai cả tiền lẫn thứ bếp đã thật sự làm ra hôm đó.
+
+**Verification:**
+Kịch bản gốc — đổi giá món → mở đơn cũ → tổng tiền không đổi: đặt **một suất giò, nhân thịt, lượng
+thường** (25.000 theo `shop-facts.md` §4.3) → chủ quán nâng giá một cái bánh nhân thường từ 4.000
+lên 5.000 → mở lại đúng đơn ấy ⇒ tổng vẫn **25.000**, không phải 29.000; và một suất giò cùng loại
+đặt **mới** ra 29.000. Kịch bản phủ bốn chiều: lặp đúng kịch bản trên cho từng chiều ở
+`docs/product.md` §3.3.2 — giá thành phần · phụ thu nhân · phụ thu lượng nhân · thành phần suất
+(đổi combo "Đầy đủ" từ 3 cái bánh xuống 2) ⇒ cả bốn lần, đơn cũ giữ nguyên tổng tiền **và** giữ
+nguyên số phần bếp phải làm. Kịch bản ngừng bán: ngừng bán suất giò ⇒ đơn cũ vẫn hiện đúng tên
+*"suất giò"* và đúng giá đã bán, trong khi cả năm kênh (`docs/product.md` §2) không đặt mới được
+món đó. Kiểm ngược, cuối ngày: doanh thu của **mọi ngày đã qua** đọc lại phải bằng đúng con số đã
+đối soát hôm đó, kể cả sau một lần chủ quán sửa giá (`shop-facts.md` §6.9, §6.10).
+
+Kịch bản phiên bàn vắt qua mốc (chủ quán được đổi giá **giữa giờ bán**, `shop-facts.md` §6.17):
+bàn 5 gọi một suất bánh cuốn nhân thường lúc 8:00 → chủ quán nâng giá cái bánh nhân thường lúc 8:30
+→ bàn 5 gọi thêm **đúng món đó** lúc 9:00 → quầy đóng phiên. Kỳ vọng: **một** hoá đơn (I-002),
+tổng của nó = giá **cũ** + giá **mới**, không phải hai lần giá mới và cũng không phải hai lần giá
+cũ. Kịch bản âm đi kèm: không thao tác nào — kể cả bấm tính tiền — làm dòng lúc 8:00 nhảy sang giá
+mới.
+
+*Phát hiện ở BA-05, 2026-09-01. Siết lại ở T-034, 2026-09-01 — ranh giới là lượt gọi, không phải
+phiên.*
+
+### I-010 — Tổ hợp món/tuỳ chọn không hợp lệ bị TỪ CHỐI, không bao giờ được sửa hộ
+
+**Invariant:**
+Một dòng đơn mang tổ hợp tuỳ chọn không hợp lệ **bị từ chối**; hệ thống không bao giờ bỏ bớt, đổi
+hay thêm tuỳ chọn để biến nó thành hợp lệ rồi cho đơn đi tiếp. Tổ hợp không hợp lệ đã chốt là
+**Chay + Nhiều nhân**: nhóm *Lượng nhân* chỉ tồn tại khi nhân khác Chay
+(`master_plan/shop-facts.md` §4.4, §4.6 quy tắc 3, §4.8 ca 11). Luật này áp cho **mọi** kênh trong
+năm kênh của `docs/product.md` §2 — đơn khách tự bấm và đơn nhân viên nhập hộ như nhau. Khi chủ
+quán sửa menu làm một tổ hợp đang hợp lệ trở thành không hợp lệ, luật áp cho đơn **mới** kể từ lúc
+lưu; đơn **cũ** mang tổ hợp ấy không bị sửa lại và không bị đánh dấu hỏng (I-009).
+
+**Why:**
+Bếp nhận một phiếu mâu thuẫn là **hỏng món**: *"chay"* và *"nhiều nhân"* trên cùng một dòng không
+cho ai biết phải làm gì. Sửa hộ còn tệ hơn từ chối — khách trả tiền cho một thứ khác thứ mình bấm,
+và không ai biết vì đơn trông hoàn toàn bình thường. Đây cũng là nửa còn lại của luật giá: khách
+**không bao giờ** gửi giá lên, hệ thống tự xác định lại từ bảng giá (`shop-facts.md` §4.6 quy tắc
+9) — nhận một tổ hợp vô nghĩa rồi tự diễn giải là mở đúng cái cửa mà quy tắc 9 đóng.
+
+**Verification:**
+Kịch bản âm: gửi *"bánh cuốn, nhân Chay, lượng Nhiều nhân"* ⇒ đơn **bị từ chối**, không có đơn nào
+được tạo, và **không** có đơn *"bánh cuốn Chay"* nào lặng lẽ ra đời — đúng ca 11 của
+`shop-facts.md` §4.8, ca duy nhất trong mười một ca có kết quả không phải một con số. Kịch bản
+dương đối chứng: mười ca còn lại của §4.8 (ca 1–10) đều tạo được đơn và ra đúng giá kỳ vọng ghi ở
+đó. Kịch bản kênh: lặp ca 11 qua cả năm kênh, kể cả quầy đặt hộ trên POS ⇒ cả năm đều từ chối.
+Kịch bản đổi menu: một tổ hợp đang hợp lệ, chủ quán sửa menu làm nó thành không hợp lệ ⇒ đơn mới
+bị từ chối, còn đơn cũ mở lại vẫn nguyên vẹn tên, giá và thành phần (I-009).
+
+*Phát hiện ở BA-05, 2026-09-01.*
+
+### I-011 — Thành phần một suất bán không đổi trong giờ bán
+
+**Invariant:**
+Một thay đổi **thành phần của suất bán** (`master_plan/shop-facts.md` §4.5 — suất đó gồm những gì)
+không bao giờ có hiệu lực trong giờ bán. Mọi lần đổi thành phần đều có mốc hiệu lực nằm **ngoài**
+06:00–11:00 (`shop-facts.md` §1, múi giờ `Asia/Ho_Chi_Minh`). Ba chiều còn lại của việc đổi giá —
+giá thành phần, phụ thu nhân, phụ thu lượng nhân — **không** chịu ràng buộc này: chúng đổi được bất
+kỳ lúc nào (`docs/product.md` §3.3.2).
+
+**Why:**
+Chủ quán chốt 2026-09-01 (`shop-facts.md` §6.17, trả lời U-016): giá thì *"không phải chờ đến hết
+buổi"*, còn thành phần thì *"chờ đến hết buổi bán hàng"*. Hai chiều xử khác nhau vì chúng hỏng khác
+nhau. Đổi giá chỉ đổi **số tiền** của lượt gọi sau đó, và I-009 đã khoá phần quá khứ. Đổi thành
+phần đổi **thứ bếp phải làm ra** — mà bếp làm theo **mẻ** (`shop-facts.md` §5.4), nên một mẻ đang
+trên nồi bỗng thuộc về hai định nghĩa khác nhau của cùng một tên món, và không có bản ghi nào chữa
+được chuyện suất bưng ra thiếu một cái bánh. Đây là chiều duy nhất trong bốn chiều mà hậu quả rơi
+vào **món ăn thật**, không rơi vào con số.
+
+**Verification:**
+Kịch bản kiểm ngược, chạy được mỗi ngày mà không cần biết máy có chặn hay không: liệt kê mọi lần
+đổi thành phần suất trong ngày ⇒ **không lần nào** có mốc hiệu lực nằm trong 06:00–11:00. Kịch bản
+đối chứng, phải **không** báo lỗi: một lần đổi **giá** lúc 08:30 là hợp lệ (§6.17) — luật này không
+được bắt nhầm sang ba chiều tiền. Kịch bản hệ quả: sau một lần đổi thành phần hợp lệ (ngoài giờ
+bán), mọi đơn của buổi hôm trước mở lại vẫn thấy đúng thành phần cũ (I-009), và đơn của buổi hôm
+sau thấy thành phần mới.
+
+**Chưa chốt:** máy **chặn hẳn** hay chỉ **nhắc rồi vẫn cho lưu** khi chủ quán định đổi thành phần
+giữa giờ bán — `docs/product.md` → *Unknowns* **U-018**. Verification ở trên cố ý viết ở mức đối
+soát cuối ngày nên nó đúng với cả hai lời giải; lời giải của U-018 sẽ **thêm** một kịch bản kiểm
+tại chỗ, không thay kịch bản này.
+
+*Phát hiện ở T-034, 2026-09-01.*
