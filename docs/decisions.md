@@ -776,3 +776,105 @@ công thức đủ bốn dòng. Chi tiết ở `master_plan/shop-facts.md` §6.1
 **Ảnh hưởng tới:** `docs/architecture.md` §8, §11, §12, §13 · `docs/product.md` §3.1.6 và
 *Unknowns* U-012 · `quality/invariants.md` I-005 · `master_plan/shop-facts.md` §6.14 (chỉ đọc).
 
+
+## Giả định BA — ngoại lệ chưa có lời chốt
+
+Mục này giữ **giả định tạm thời** cho những dòng mang dấu ⚠ trong `docs/product.md` §6. Một `GĐ`
+**không phải** một quyết định: nó là chỗ ghi lại *nếu không ai trả lời thì hôm nay quán đang ngầm
+làm thế nào*, kèm **mức rủi ro** nếu giả định ấy sai. Có lời chủ quán thì `GĐ` bị **thay** bằng
+quy tắc trong owner của nó (`master_plan/shop-facts.md`), không phải sửa tại chỗ.
+
+Mọi `GĐ` dưới đây mở ngày **2026-09-02**, do **BA-08** (`docs/product.md` §6) — chưa hỏi chủ quán.
+
+### GĐ-01 — Hai người cùng thao tác trên một bàn: người bấm sau thắng
+
+**Dòng §6:** 4 · **Rủi ro: TRUNG BÌNH**
+
+**Giả định.** Hai người cùng sửa một phiên bàn thì thao tác **tới POS sau** là thao tác có hiệu
+lực; không có khoá, không có cảnh báo.
+
+**Vì sao tạm chấp nhận được.** POS là **cửa duy nhất được ghi** (`docs/decisions.md` ADR-011) và
+quán chỉ có **một** máy POS đặt ở quầy (`shop-facts.md` §6.13), nên hai lượt ghi thật sự đồng thời
+là hiếm. Ca có thật là **khách quét QR trong lúc quầy đang bấm** cho cùng bàn ấy.
+
+**Rủi ro nếu sai.** Một lượt gọi bị đè mất ⇒ **thu thiếu tiền** đúng kiểu `shop-facts.md` §6.1
+cấm. Xếp TRUNG BÌNH chứ không CAO vì lượt gọi của khách và thao tác của quầy ghi vào **hai chỗ khác
+nhau** của cùng một phiên, không đè lên nhau ở phần lớn ca.
+
+**Câu phải hỏi chủ quán.** *"Khách đang quét QR gọi thêm đúng lúc quầy bấm tính tiền cho bàn ấy thì
+ở quán xử lý thế nào?"*
+
+### GĐ-02 — Món hết sau khi khách đã chọn: quầy gọi khách, khách quyết đổi hay huỷ
+
+**Dòng §6:** 5 · **Rủi ro: CAO**
+
+**Giả định.** Quầy **liên hệ khách** rồi làm theo ý khách: đổi sang thành phần khác, bỏ phần thiếu,
+hoặc huỷ cả đơn. Máy không tự chọn giúp.
+
+**Vì sao tạm chấp nhận được.** Không có quy tắc nào của quán cho phép **đổi ruột một suất** mà
+không hỏi — đổi thành phần là quyền chủ quán và còn phải **chờ hết buổi** (`shop-facts.md` §6.17).
+Nên "hỏi khách" là giả định hẹp nhất, không tự chế luật mới.
+
+**Rủi ro nếu sai.** Xếp **CAO** vì quy mô: mọi suất đều kèm bánh (`shop-facts.md` §4.5), nên **hết
+bánh cuốn là hết gần như mọi món** — giả định này không áp cho một đơn lẻ mà có thể áp cho **cả
+buổi bán**. Chọn sai đường ở đây là chọn sai cho hàng chục đơn cùng lúc.
+
+**Câu phải hỏi chủ quán.** *"Đang bán mà hết bánh, những bàn đã gọi rồi thì quán làm thế nào — báo
+từng bàn, đổi món khác, hay trả tiền lại?"*
+
+### GĐ-03 — Khách nói đã chuyển khoản mà quầy chưa thấy báo có: ghi NỢ, không giữ khách
+
+**Dòng §6:** 9 · **Rủi ro: CAO**
+
+**Giả định.** Quầy **không** giữ khách lại chờ tin nhắn. Phiên đóng theo đường **nợ** của
+`shop-facts.md` §6.14 — ghi ai nợ, nợ bao nhiêu — và xoá khoản nợ khi tin nhắn báo có tới.
+
+**Vì sao tạm chấp nhận được.** VietQR ở quán là mã **tĩnh**, máy không bao giờ tự biết tiền đã về;
+câu *"đã nhận tiền"* chỉ do người bấm ở POS tạo ra (`shop-facts.md` §6.3). Quán **đã có** đúng một
+đường cho *"tiền chưa vào tay mà khách phải đi"*, và đó là nợ — giả định này dùng lại đường có sẵn
+thay vì đẻ trạng thái mới.
+
+**Rủi ro nếu sai.** Xếp **CAO** vì nó chạm thẳng cổng chất lượng mạnh nhất của dự án: đối soát cuối
+ngày ngưỡng **0đ** (`shop-facts.md` §6.10). Ghi nhầm một lần chuyển khoản thành nợ làm **hai** con
+số sai cùng lúc — phần chuyển khoản so với tin nhắn, và tổng nợ ghi trong ngày.
+
+**Câu phải hỏi chủ quán.** *"Khách bảo chuyển rồi mà điện thoại chưa có tin nhắn báo có thì quán
+cho khách đi hay giữ lại chờ?"*
+
+### GĐ-04 — Đơn đã hoàn thành cần điều chỉnh: không sửa, xử bằng hoàn tiền
+
+**Dòng §6:** 13 · **Rủi ro: TRUNG BÌNH**
+
+**Giả định.** Đơn đã `Hoàn thành` thì **không sửa nội dung nữa**; sai sót xử bằng đường **hoàn
+tiền** của §4.8 — quầy quyết từng ca, ghi vết, trừ vào doanh thu **ngày hoàn**.
+
+**Vì sao tạm chấp nhận được.** Chủ quán mới chốt **sửa được** và **sửa trên POS**, chưa chốt **tới
+trạng thái nào** (`shop-facts.md` §6.19, nửa còn mở của **U-022**). Bảng §5.2 hôm nay **không có**
+dòng `Hoàn thành → Huỷ`, nên giả định này là đọc đúng chữ của tài liệu chứ không nới rộng lời chủ
+quán (`work/findings.md` F-004).
+
+**Rủi ro nếu sai.** Nếu quán thật vẫn sửa đơn đã xong, thì mọi lần sửa ấy hôm nay đi vòng qua hoàn
+tiền — doanh thu rơi vào **ngày hoàn** thay vì ngày bán, và `shop-facts.md` §6.4 nói thẳng luật ấy
+**ngược chiều** luật nợ. Sai ở đây làm lệch sổ **giữa hai ngày**, không mất tiền.
+
+**Câu phải hỏi chủ quán.** *"Đơn đã làm xong đưa cho khách rồi mà phát hiện nhầm thì quán sửa lại
+đơn ấy hay trả tiền lại cho khách?"*
+
+### GĐ-05 — Thao tác nhầm ngoài ca "bấm nhầm một mẻ": phải nhờ quầy, không có nút hoàn tác
+
+**Dòng §6:** 14 · **Rủi ro: TRUNG BÌNH**
+
+**Giả định.** Chỉ ca **bấm nhầm *"đã làm xong"* một mẻ** có đường lùi (chủ quán chốt 2026-09-01,
+U-024). Mọi thao tác nhầm khác — duyệt nhầm một đơn, huỷ nhầm, đóng phiên nhầm — **không** có nút
+hoàn tác; cách xử là quầy làm bù bằng thao tác hợp lệ đang có.
+
+**Vì sao tạm chấp nhận được.** §5.1 nói **mọi chuyển tiếp ngoài bảng đều bị từ chối**, và chủ quán
+mới mở đúng **một** đường lùi. Suy đường lùi ấy ra cho các thao tác khác là nới lời chủ quán rộng
+hơn chữ của nó.
+
+**Rủi ro nếu sai.** Ca đắt nhất là **đóng phiên nhầm**: phiên `Đã đóng` **không** quay lại
+`Đang phục vụ` (§5.6, ca đã chốt), nên khách còn ngồi đó sẽ phải mở **phiên mới, hoá đơn mới** —
+đúng thứ `shop-facts.md` §6.1 gọi là thu thiếu tiền, chỉ khác nguyên nhân.
+
+**Câu phải hỏi chủ quán.** *"Quầy lỡ bấm đóng phiên một bàn khách vẫn đang ăn thì lúc đó làm thế
+nào?"*

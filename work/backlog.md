@@ -10,8 +10,8 @@ hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 | [Ready](#ready) | việc cần làm — checklist + thứ tự lấy |
 | [In Progress](#in-progress) | task đang chạy |
 | [Done](#done) | việc đã xong |
-| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | bảng mười câu hỏi §10 + mô tả dài T-019…BA-12 (BA-05 và BA-06 đã chuyển sang mục đã xong) |
-| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài BA-06…T-002 |
+| [Chi tiết — việc cần làm](#chi-tiet-can-lam) | bảng mười câu hỏi §10 + mô tả dài T-019…BA-12 (BA-05, BA-06 và BA-08 đã chuyển sang mục đã xong) |
+| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài BA-08…T-002 |
 | [Vòng chạy một task L1](#vong-chay) | mười bước thủ tục từ nhận task tới khối commit |
 | [Task Detail Template](#template) | khuôn viết một task mới |
 
@@ -140,7 +140,6 @@ lại, khối *GIẢ ĐỊNH* biến mất, **I-014** sửa và **I-015** thêm.
 
 - [ ] T-035 Brief bảo phiên mới XOÁ scope trong khi chủ thật đang chạy song song (F-014)
 
-- [ ] BA-08 `docs/product.md` §6 — ngoại lệ · **hết bị chặn**, BA-03–BA-07 xong 2026-09-01 (**U-007, U-016, U-019, U-021, U-023, U-024 đã đóng**; hoàn tiền tính **ngày hoàn** — §4.8, đừng mở lại; bấm nhầm một mẻ **lùi được** — §5.4, đừng viết lại thành ngoại lệ). Còn phải chốt: **U-022** — sửa/huỷ đơn được tới **trạng thái nào** (câu 1+2 bảng §10); tên trạng thái lấy ở §5
 - [ ] BA-09 `docs/product.md` §7 — phạm vi MVP · cần BA-01–BA-08 (**U-018 đã đóng 2026-09-01**: máy chỉ nhắc, không chặn ⇒ MVP không phải làm nút chặn)
 - [ ] BA-10 `docs/decisions.md` — quyết định và giả định · cần BA-01–BA-09 · **BA-07 để lại một quyết định phải thành ADR**: vòng đời công việc trạm bỏ `Đang làm` và giữ `Đã làm xong, còn ở bếp` thay vào (`docs/product.md` §5.4, lý do là U-009 + S-4)
 - [ ] BA-11 `docs/product.md` §8 — ba scenario nghiệm thu BA · cần BA-03–BA-10
@@ -164,6 +163,7 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="done"></a>
 ## Done
 
+- [x] BA-08 `docs/product.md` §6 — mười bốn ngoại lệ; chín dòng chốt, năm dòng thành GĐ-01–GĐ-05 kèm mức rủi ro; mở U-025 (2026-09-02)
 - [x] T-039 U-021, U-023, U-024 đóng — **POS bấm cả bốn mốc**, bấm nhầm một mẻ **lùi được**; U-022 còn một nửa; §6.19, S-5 (2026-09-01)
 - [x] BA-07 `docs/product.md` §5 — ba vòng đời, trạng thái giữa của việc trạm là **đã làm xong còn ở bếp**; I-016, I-017; mở U-021–U-024 (2026-09-01)
 - [x] T-038 U-019 và U-020 đóng: đối chiếu bằng tin nhắn báo có, hoàn tiền tính NGÀY HOÀN, một lần thu chia được hai phương thức; §6.18, I-015 (2026-09-01)
@@ -259,8 +259,8 @@ Bốn câu **đã có lời giải trước khi chuỗi BA bắt đầu**; task 
 |---|---|---|---|
 | 1 | Ai xác nhận / huỷ / sửa đơn | BA-07 | **cả ba vế đã chốt NGƯỜI** → xác nhận `shop-facts.md` §6.2 · huỷ §6.13 (2026-08-30) · **sửa đơn: POS sửa, không huỷ-rồi-tạo-lại** (§6.19, chốt 2026-09-01, T-039). Còn mở đúng một thứ: **từ trạng thái nào** thì sửa/huỷ được — **U-022**, chuyển BA-08 |
 | 2 | Đơn đã xác nhận được sửa hay chỉ huỷ/tạo lại | BA-07 | **đã chốt 2026-09-01** (T-039) → **sửa**, trên POS; `shop-facts.md` §6.19 · `docs/product.md` §5.2. Vế *tới trạng thái nào* ở lại **U-022** cùng câu 1 |
-| 3 | Món hết sau khi khách đã đặt | BA-08 | còn mở |
-| 4 | Khách không trả được tiền thì phiên bàn ở đâu | BA-08 | còn mở |
+| 3 | Món hết sau khi khách đã đặt | BA-08 | **còn mở, nay có giả định và mức rủi ro** → `docs/decisions.md` **GĐ-02** (rủi ro **CAO**: mọi suất đều kèm bánh nên hết bánh là hết gần như mọi món, `shop-facts.md` §4.5); `docs/product.md` §6 dòng 5 mang dấu ⚠, và §6.3 nói riêng chuyện quy mô (2026-09-02) |
+| 4 | Khách không trả được tiền thì phiên bàn ở đâu | BA-08 | **đã chốt** → quán **cho nợ**, phiên vẫn `Đã đóng`, POS bắt buộc ghi **ai nợ** và **nợ bao nhiêu** (`shop-facts.md` §6.14, đóng U-007 ngày 2026-08-31); BA-08 chép vào `docs/product.md` §6 dòng 10 (2026-09-02) |
 | 5 | Có hoàn tiền không, ai được | BA-06 | **đã chốt** → `shop-facts.md` §6.4 — quầy quyết từng ca, phải ghi vết; BA-06 chép vào `docs/product.md` §4.8 (2026-09-01) |
 | 6 | Pickup có cần giờ hẹn bắt buộc | BA-04 | **đã chốt** → `shop-facts.md` §6.5 — bắt buộc; BA-04 chép vào `docs/product.md` §3.2.4 (2026-08-31) |
 | 7 | Delivery có quản lý trạng thái giao | BA-04 | **đã chốt** → `shop-facts.md` §6.7 — quán tự giao, có trạng thái "đang giao"; BA-04 chép vào `docs/product.md` §3.2.2 (2026-08-31) |
@@ -375,48 +375,6 @@ grep -n 'T-019' scripts/check-links.ignore   # rỗng
 ./scripts/check-links.sh                     # xanh sau khi gỡ ignore
 grep -c '⚠️' master_plan/prompt-fullstack.md  # không tăng (2)
 grep -n '^## §' master_plan/prompt-fullstack.md   # vẫn đủ §1 → §11
-git status --porcelain
-```
-
-### BA-08 — Ngoại lệ
-
-**Prompt:** `prompt/BA/07-exceptions-L2.md` (L2) · **Cần xong trước:** BA-03–BA-07
-
-**Goal:**
-`docs/product.md` §6 chốt cách quán xử lý từng ngoại lệ quan trọng, ở mức nghiệp vụ, đủ để nhân
-viên biết phải làm gì mà không cần hỏi chủ quán.
-
-**Scope:** `docs/product.md` §6 · `docs/decisions.md` (ghi GIẢ ĐỊNH cho ngoại lệ chưa có lời
-giải) · `work/findings.md` (khi phát hiện mâu thuẫn giữa hai quy tắc đã chốt) · `work/backlog.md`.
-
-**Out of scope:** §1–§5, §7–§8 của `docs/product.md` · `quality/invariants.md` (BA-08 mô tả cách
-xử lý, không thêm bất biến) · `docs/architecture.md`.
-
-**Acceptance:**
-1. §6 có bảng phủ đúng 14 tình huống ở §8 kế hoạch gốc, không thiếu dòng nào.
-2. Mỗi dòng có đúng 4 cột: tình huống · ai xử lý · kết quả với đơn/phiên (trạng thái có trong §5) ·
-   kết quả với tiền.
-3. Mọi tên trạng thái trong §6 tìm được trong §5.
-4. Tình huống chưa chốt được đánh dấu `⚠ Chưa chốt — xem docs/decisions.md`; không dòng nào bị bỏ
-   trống lặng lẽ.
-5. Ba tình huống đã có lời giải — gọi thêm khi đang thu tiền (`shop-facts.md` §6.1) · tạm dừng
-   nhận đơn (§6.8) · mất điện/mất mạng/POS hỏng (§6.11) — **không** bị đánh dấu Chưa chốt.
-6. Mỗi tình huống chưa chốt có một mục tương ứng trong `docs/decisions.md` kèm mức rủi ro.
-7. Không dòng nào mô tả cách hệ thống kỹ thuật xử lý (retry, hàng đợi, offline cache).
-8. Hai quy tắc đã chốt mà mâu thuẫn nhau thì có finding trong `work/findings.md`.
-
-**Câu hỏi §10 gắn vào task này:**
-- Câu 3 — món hết sau khi khách đã đặt: thay thế, huỷ phần đó, hay huỷ cả đơn; và nếu chỉ hết
-  **một thành phần** của suất thì sao. **Còn mở.**
-- Câu 4 — khách không thanh toán được thì phiên bàn giữ ở trạng thái nào. **Còn mở.**
-Cả hai: hỏi người, không tự chốt; chưa có lời giải thì GIẢ ĐỊNH + rủi ro trong `docs/decisions.md`.
-
-**Verify:**
-```bash
-./scripts/gate.sh
-sed -n '/^## 6\./,/^## 7\./p' docs/product.md | grep -c '^| '   # 14 dòng tình huống
-grep -n 'Chưa chốt' docs/product.md docs/decisions.md           # khớp đôi một
-grep -nEi 'retry|offline cache|hàng đợi' docs/product.md        # rỗng
 git status --porcelain
 ```
 
@@ -632,6 +590,91 @@ Luật chung ở [Vòng chạy một task L1](#vong-chay). Việc riêng của t
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### BA-08 — Ngoại lệ
+
+**Prompt:** `prompt/BA/07-exceptions-L2.md` (L2) · **Cần xong trước:** BA-03–BA-07
+
+**Goal:**
+`docs/product.md` §6 chốt cách quán xử lý từng ngoại lệ quan trọng, ở mức nghiệp vụ, đủ để nhân
+viên biết phải làm gì mà không cần hỏi chủ quán.
+
+**Scope:** `docs/product.md` §6 · `docs/decisions.md` (ghi GIẢ ĐỊNH cho ngoại lệ chưa có lời
+giải) · `work/findings.md` (khi phát hiện mâu thuẫn giữa hai quy tắc đã chốt) · `work/backlog.md`.
+
+**Out of scope:** §1–§5, §7–§8 của `docs/product.md` · `quality/invariants.md` (BA-08 mô tả cách
+xử lý, không thêm bất biến) · `docs/architecture.md`.
+
+**Acceptance:**
+1. §6 có bảng phủ đúng 14 tình huống ở §8 kế hoạch gốc, không thiếu dòng nào.
+2. Mỗi dòng có đúng 4 cột: tình huống · ai xử lý · kết quả với đơn/phiên (trạng thái có trong §5) ·
+   kết quả với tiền.
+3. Mọi tên trạng thái trong §6 tìm được trong §5.
+4. Tình huống chưa chốt được đánh dấu `⚠ Chưa chốt — xem docs/decisions.md`; không dòng nào bị bỏ
+   trống lặng lẽ.
+5. Ba tình huống đã có lời giải — gọi thêm khi đang thu tiền (`shop-facts.md` §6.1) · tạm dừng
+   nhận đơn (§6.8) · mất điện/mất mạng/POS hỏng (§6.11) — **không** bị đánh dấu Chưa chốt.
+6. Mỗi tình huống chưa chốt có một mục tương ứng trong `docs/decisions.md` kèm mức rủi ro.
+7. Không dòng nào mô tả cách hệ thống kỹ thuật xử lý (retry, hàng đợi, offline cache).
+8. Hai quy tắc đã chốt mà mâu thuẫn nhau thì có finding trong `work/findings.md`.
+
+**Câu hỏi §10 gắn vào task này:**
+- Câu 3 — món hết sau khi khách đã đặt: thay thế, huỷ phần đó, hay huỷ cả đơn; và nếu chỉ hết
+  **một thành phần** của suất thì sao. **Còn mở.**
+- Câu 4 — khách không thanh toán được thì phiên bàn giữ ở trạng thái nào. **Còn mở.**
+Cả hai: hỏi người, không tự chốt; chưa có lời giải thì GIẢ ĐỊNH + rủi ro trong `docs/decisions.md`.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+sed -n '/^## 6\./,/^## 7\./p' docs/product.md | grep -c '^| '   # 14 dòng tình huống
+grep -n 'Chưa chốt' docs/product.md docs/decisions.md           # khớp đôi một
+grep -nEi 'retry|offline cache|hàng đợi' docs/product.md        # rỗng
+git status --porcelain
+```
+
+**Kết quả — chốt 2026-09-02.** `docs/product.md` §6 có bảng **mười bốn dòng**, phủ đúng danh sách
+kế hoạch gốc §8 không bớt dòng nào, mỗi dòng đủ bốn cột *tình huống · ai xử lý · kết quả với
+đơn/phiên · kết quả với tiền*. Mọi tên trạng thái trong §6 đều tìm được ở §5 (kiểm bằng máy, 13
+tên).
+
+**Chín dòng chốt được, năm dòng không — và năm dòng ấy đều có tên.** Chốt được vì đã có lời chủ
+quán ở `shop-facts.md`: gửi nhầm đơn QR · quầy từ chối đơn · gọi thêm khi đang thu tiền (§6.1) ·
+tạm dừng nhận đơn (§6.8) · khách huỷ · nhân viên huỷ (§6.13) · **khách rời bàn chưa trả** (§6.14 —
+cho nợ, đây là **câu 4** của bảng §10, nay đóng) · mất mạng · mất điện/POS hỏng (§6.11).
+
+**Năm dòng còn mở thành năm GIẢ ĐỊNH có mức rủi ro** trong `docs/decisions.md` — mục
+*Giả định BA* mới: **GĐ-01** hai người cùng thao tác một bàn (TRUNG BÌNH) · **GĐ-02** món hết sau
+khi khách đã chọn (**CAO**) · **GĐ-03** khách nói đã chuyển khoản mà chưa thấy báo có (**CAO**) ·
+**GĐ-04** đơn đã hoàn thành cần điều chỉnh (TRUNG BÌNH, chính là nửa còn mở của **U-022**) ·
+**GĐ-05** thao tác nhầm ngoài ca bấm nhầm một mẻ (TRUNG BÌNH). Mỗi mục ghi *giả định · vì sao tạm
+chấp nhận được · rủi ro nếu sai · câu phải hỏi chủ quán*.
+
+**Hai dòng CAO đều cao vì QUY MÔ, không vì độ khó.** GĐ-02: mọi suất đều kèm bánh
+(`shop-facts.md` §4.5) ⇒ **hết bánh cuốn là hết gần như mọi món**, nên chọn sai đường ở đây là
+chọn sai cho cả buổi bán chứ không phải một đơn — §6.3 nói riêng chuyện này ra. GĐ-03 chạm thẳng
+cổng chất lượng mạnh nhất của dự án: đối soát ngưỡng **0đ** (`shop-facts.md` §6.10).
+
+**Mở một câu mới: U-025** — mất điện thì **ai giữ sổ giấy, ghi những trường gì, ai nhập lại vào
+máy và lúc nào**. §6 chốt được *quán chuyển sang sổ giấy và không dừng bán* (§6.11) nhưng phần
+nhập lại thì chưa ai nói, mà không có nó thì đối soát cuối ngày của một ngày mất điện không chạy
+được. Prompt `07-exceptions-L2.md` đã dặn trước phải ghi Unknowns chỗ này.
+
+**Không thêm bất biến nào** — đúng Out of scope. Ba dòng chạm tiền nặng nhất (9, 10, 13) được đối
+chiếu tay với I-005, I-012, I-017 (Gate 5, L2): không dòng nào phá bất biến đang có.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Bằng chứng |
+|---|---|
+| 1 | `grep -c '^| [0-9]'` trên §6 → **14** |
+| 2 | mọi dòng bảng có đúng 5 cột (kiểm bằng `awk -F'|' 'NF!=7'` → rỗng) |
+| 3 | 13 tên trạng thái dùng ở §6, cả 13 tìm được trong §5 (kiểm bằng vòng lặp `grep`) |
+| 4 | năm dòng ⚠ mang đúng chuỗi `⚠ **Chưa chốt — docs/decisions.md GĐ-0X`; không ô nào trống |
+| 5 | dòng 3, 6, 11, 12 **không** mang dấu ⚠; §6.2 gọi tên lại ba ca ấy |
+| 6 | `GĐ-01…GĐ-05` trong §6 khớp đôi một với `### GĐ-01…GĐ-05` trong `docs/decisions.md`, mỗi mục có **Rủi ro:** |
+| 7 | `grep -nEi 'retry|cache|offline sync|hàng đợi|queue'` trên `docs/product.md` → rỗng |
+| 8 | không phát hiện hai quy tắc đã chốt mâu thuẫn nhau ⇒ **không** thêm finding (§3.8: không viết finding cho cái không có) |
 
 ### T-039 — Bốn câu BA-07 vừa mở có lời giải trong ngày, và một trong bốn MỞ RA một đường đi mới
 
