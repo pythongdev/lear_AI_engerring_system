@@ -255,7 +255,7 @@ vào cùng một phiên.
 Mỗi bước ghi rõ ai làm. Tên actor dùng đúng §1, tên trạm dùng đúng năm tên ở §1.5.
 
 1. **Bàn được mở.** *Khách* ngồi vào một bàn đang trống. *Hệ thống* mở cho bàn đó **một** phiên
-   bàn, trạng thái **đang mở**. Bàn nào còn một phiên chưa thanh toán thì không mở phiên thứ hai
+   bàn, trạng thái **Mở**. Bàn nào còn một phiên chưa thanh toán thì không mở phiên thứ hai
    (§3.1.4). Nhóm đông ngồi **ghép** hai bàn thì vẫn là **một** phiên, gắn cả hai bàn (§3.1.7).
 2. **Khách quét QR, hoặc nhân viên đặt hộ.** Hai đường vào, hai kênh: *Khách* quét QR tại chính
    bàn mình đang ngồi, hoặc *người đứng quầy* đặt hộ bằng Staff POS cho đúng số bàn ấy (nhánh đầy
@@ -263,12 +263,12 @@ Mỗi bước ghi rõ ai làm. Tên actor dùng đúng §1, tên trạm dùng đ
 3. **Khách chọn món.** *Khách* — hoặc *người đứng quầy* khi nhập hộ — chọn suất bán, chọn nhân và
    lượng nhân. Khách không gửi giá lên: *Hệ thống* tự xác định giá từ bảng giá và từ chối tổ hợp
    tuỳ chọn không hợp lệ (`shop-facts.md` §4.6 quy tắc 3 và quy tắc 9).
-4. **Đơn được gửi.** *Khách* bấm gửi. Đơn vào phiên bàn ở trạng thái **chờ duyệt**, và **chưa sinh
+4. **Đơn được gửi.** *Khách* bấm gửi. Đơn vào phiên bàn ở trạng thái **Chờ xác nhận**, và **chưa sinh
    việc ở bất kỳ trạm nào** (§3.1.3).
-5. **Quầy xác nhận.** *Người đứng quầy* duyệt đơn; đơn chuyển sang **đã duyệt**. Đơn khách tự gửi
+5. **Quầy xác nhận.** *Người đứng quầy* duyệt đơn; đơn chuyển sang **Đã xác nhận**. Đơn khách tự gửi
    qua QR tại bàn mà quầy chưa duyệt thì đứng lại ở bước 4. Đơn do *người đứng quầy* nhập bằng
    Staff POS không đi qua bước này — nhân viên đã nhập thì đã có người chịu trách nhiệm (§2.2).
-6. **Công việc được phân tới các trạm.** *Hệ thống* nổ đơn đã duyệt thành việc của từng trạm theo
+6. **Công việc được phân tới các trạm.** *Hệ thống* nổ đơn đã xác nhận thành việc của từng trạm theo
    thành phần của suất (§3.1.5). Ba trạm bếp nhận việc **cùng lúc** — **tráng bánh**, **gấp
    bánh**, **lấy canh** — không phải ba chặng nối đuôi nhau.
 7. **Các trạm hoàn thành phần việc.** *Người tráng bánh* tráng bánh và làm trứng; *người gấp bánh*
@@ -306,7 +306,7 @@ việc theo thứ tự (§4.3 kế hoạch gốc):
 - *Người đứng quầy* chọn món theo lời khách, kèm nhân và lượng nhân.
 - *Hệ thống* tạo đơn **vào đúng phiên đang mở của bàn ấy** — không mở phiên mới, không tạo một đơn
   lẻ. Bàn chưa có phiên nào thì chính lượt gọi này là lúc phiên được mở (bước 1).
-- Đơn được **xác nhận ngay**, không có chặng chờ duyệt: đơn do nhân viên nhập thì không cần duyệt
+- Đơn được **xác nhận ngay**, không có chặng **Chờ xác nhận**: đơn do nhân viên nhập thì không cần duyệt
   (§2.2).
 - Đơn đi thẳng vào bước 6 — nổ ra việc cho các trạm.
 - *Khách* gọi thêm sau đó bằng đường nào cũng được, quét QR hay lại nhờ quầy; mọi lượt vẫn vào
@@ -320,11 +320,11 @@ lượt nhờ quầy đặt hộ vẫn là **một** phiên, **một** hoá đơ
 Bước duyệt tồn tại để **chặn đơn ảo**, nên nó chỉ áp cho đơn không ai chịu trách nhiệm (§2.2).
 
 Điểm chặn nằm **giữa bước 4 và bước 6**: một đơn **QR tại bàn** đã gửi mà *người đứng quầy* chưa
-xác nhận thì nằm nguyên ở trạng thái **chờ duyệt** và **không sinh một việc nào** ở cả năm trạm —
+xác nhận thì nằm nguyên ở trạng thái **Chờ xác nhận** và **không sinh một việc nào** ở cả năm trạm —
 không tráng bánh, không gấp bánh, không nước chấm (`shop-facts.md` §6.2). Bếp không nhìn thấy đơn
 đó.
 
-Chặn ở đây là chặn **việc xuống bếp**, không phải chặn đơn khỏi phiên: đơn chờ duyệt **vẫn thuộc**
+Chặn ở đây là chặn **việc xuống bếp**, không phải chặn đơn khỏi phiên: đơn ở **Chờ xác nhận** **vẫn thuộc**
 phiên của bàn, và khi được duyệt thì vẫn được tính vào chính hoá đơn của phiên ấy (§3.1.4).
 
 #### 3.1.4 Một bàn, một phiên, một hoá đơn — và lúc nào bàn mới trống
@@ -496,17 +496,17 @@ dùng đúng bộ tên của §3.1.
    Đơn mang đi không có phí ship và không có đơn tối thiểu (§3.2.6), nên tổng tiền của đơn đúng
    bằng tổng tiền các suất khách gọi.
 5. **Đơn được tạo.** *Hệ thống* tạo **một đơn lẻ**, không gắn phiên bàn nào (§3.2.5), ở trạng thái
-   **chờ duyệt** với hai kênh khách tự bấm và **đã duyệt** ngay với đơn hotline (bước 7). Đơn chỉ
+   **Chờ xác nhận** với hai kênh khách tự bấm và **Đã xác nhận** ngay với đơn hotline (bước 7). Đơn chỉ
    được tạo khi quán **đang nhận đơn** — trong giờ bán và chủ quán không bấm tạm dừng (§3.2.6).
    Ở bước này *Khách* được chọn **trả trước** thay cho đường mặc định là trả lúc nhận hàng; đó là
    **tuỳ chọn**, và chỉ đơn mang đi mới có nó (§3.2.5).
 6. **Quán nhận thông báo.** *Hệ thống* báo đơn mới về quầy. *Người đứng quầy* là người nhìn thấy
    đơn đầu tiên, kể cả với đơn hotline do chính mình vừa nhập.
 7. **Quầy xác nhận đơn khách tự gửi.** *Người đứng quầy* duyệt đơn **Delivery** và **Pickup**;
-   đơn chuyển từ **chờ duyệt** sang **đã duyệt**. Đơn **Đặt trước qua hotline** *không* đi qua
+   đơn chuyển từ **Chờ xác nhận** sang **Đã xác nhận**. Đơn **Đặt trước qua hotline** *không* đi qua
    bước này — nhân viên đã nhập thì đã có người chịu trách nhiệm (§2.2). Đơn chưa duyệt **không
    sinh việc ở bất kỳ trạm nào** (`shop-facts.md` §6.2), đúng như đơn tại bàn ở §3.1.3.
-8. **Quán chuẩn bị món và đóng gói.** *Hệ thống* nổ đơn đã duyệt thành việc của từng trạm theo
+8. **Quán chuẩn bị món và đóng gói.** *Hệ thống* nổ đơn đã xác nhận thành việc của từng trạm theo
    thành phần của suất — cách nổ y hệt §3.1.5, đơn mang đi không có cách tính riêng. Ba trạm bếp
    nhận việc **cùng lúc**: *người tráng bánh*, *người gấp bánh*, *người canh & dọn*. **Mọi đơn
    mang đi đều sinh một việc nước chấm**, chỉ khác là **gói riêng** (`shop-facts.md` §6.6) — bỏ
@@ -552,7 +552,7 @@ Trọn đường đi, từ lúc nhấc máy:
 - *Người đứng quầy* nhập món hộ khách, kèm số điện thoại và giờ khách cần hàng; chọn giao tận nơi
   thì nhập thêm địa chỉ (§3.2.4).
 - *Hệ thống* tính tổng tiền và tạo đơn. Đơn **không đi qua bước duyệt** — vào thẳng trạng thái
-  **đã duyệt** (§2.2, bước 7).
+  **Đã xác nhận** (§2.2, bước 7).
 - Bếp làm và *nhân viên quán* đóng gói như bước 8, không khác đơn của hai kênh kia một điểm nào.
 - **Kết thúc kiểu thứ nhất — khách tới lấy:** *Khách* tới quán đúng giờ đã hẹn, *người đứng quầy*
   trao hàng và thu tiền tại quầy. Đơn **hoàn thành**.
@@ -788,8 +788,8 @@ hợp lệ trở thành không hợp lệ**. Từ lúc lưu, tổ hợp đó b�
 
 #### 3.3.6 Đơn đang dở, và phiên bàn vắt qua thời điểm đổi
 
-**Một lượt gọi đã tạo thì đã xong chuyện giá**, dù nó đang ở trạng thái nào — chờ quầy duyệt, đang
-làm ở bếp, đang giao, hay chờ thanh toán. Ranh giới là thời điểm **tạo lượt gọi**, không phải thời
+**Một lượt gọi đã tạo thì đã xong chuyện giá**, dù nó đang ở trạng thái nào — `Chờ xác nhận`, `Đang
+thực hiện`, `Đang giao`, hay phiên của nó đang `Chờ thanh toán` (§5). Ranh giới là thời điểm **tạo lượt gọi**, không phải thời
 điểm hoàn thành (kế hoạch gốc §5 quy tắc 5). Không có bước "xác nhận lại giá" nào cho đơn đang dở.
 
 **Một phiên bàn đang mở vắt qua mốc đổi giá thì hoá đơn của nó mang hai mức giá — và như thế là
@@ -1163,7 +1163,259 @@ và cách bày bảng đối soát, **không** phải dữ liệu quá khứ —
 
 ## 5. Vòng đời nghiệp vụ
 
-> Chưa chốt — BA-07
+*BA-07 — chốt 2026-09-01. Nguồn: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §7 (ba vòng
+đời), §5 quy tắc 1, 4, 9, 12 + `master_plan/shop-facts.md` §3, §5.3, §5.4, §6.1, §6.2, §6.6, §6.7,
+§6.13, §6.14, §6.16 (dữ kiện quán, chủ quán chốt 2026-08-19 → 2026-09-01).*
+
+Ba vòng đời, ba bảng: **đơn** (§5.2) · **phiên bàn và cái bàn của nó** (§5.3) · **công việc trạm**
+(§5.4). §3 kể ba lát cắt chạy từ đầu đến cuối; mục này rút ra bộ **tên trạng thái** mà cả ba lát
+cắt dùng chung, và nói ai được đẩy cái gì đi đâu.
+
+Sai ở đây không lộ ra lúc viết tài liệu, nó lộ ra giữa giờ cao điểm: một cái bàn kẹt ở trạng thái
+không ai gỡ được, hoặc một đơn nằm mãi trong bếp mà bảng ở quầy vẫn báo xong.
+
+<a id="cach-doc-5"></a>
+### 5.1 Cách đọc ba bảng dưới đây
+
+- **Mỗi dòng là một chuyển tiếp**, gồm bốn thứ: trạng thái nguồn · sự kiện · trạng thái đích · ai
+  kích hoạt. Cột *ai kích hoạt* dùng đúng tên vai của §1 và tên trạm của §1.5.
+- **Chuyển tiếp không có trong bảng là không hợp lệ và bị TỪ CHỐI.** Không có đường tắt, không có
+  chuyển tiếp "ngầm hiểu là được". Ba ca đáng gọi tên vì chúng nghe như có lý mà không có trong
+  bảng, ở §5.5. `quality/invariants.md` **I-016** giữ luật này.
+- **Tên trạng thái viết hoa chữ đầu ở mục này** — `Chờ thanh toán`. §3 và §4 viết thường trong văn
+  xuôi (*chờ thanh toán*): **cùng một trạng thái**, khác nhau ở cách trình bày, không phải hai thứ.
+- **Không có tên kiểu mã.** Trạng thái ở đây luôn là một cụm tiếng Việt đọc được thành câu — không
+  có hằng viết hoa nối bằng gạch dưới, không có trạng thái viết thành một con số. Tên máy, kiểu dữ
+  liệu và chỗ lưu là việc của `docs/architecture.md`. *(Mục này cố ý không viết ra một ví dụ kiểu
+  mã: `work/backlog.md` → BA-07 dò đúng hình dạng ấy bằng `grep`, và một ví dụ nêu ra để cấm cũng
+  làm phép dò kêu.)*
+- **BA-07 đổi tên hai trạng thái ở §3, đổi tên chứ không đổi nghĩa:** *chờ duyệt* → **Chờ xác
+  nhận**, *đã duyệt* → **Đã xác nhận**. Động từ **duyệt** giữ nguyên — người đứng quầy vẫn *duyệt*
+  đơn, chỉ có tên trạng thái là lấy theo kế hoạch gốc §7.
+- **"Phiên chưa đóng" là một cách gọi gộp, không phải một trạng thái.** Nó phủ cả ba trạng thái
+  `Mở` · `Đang phục vụ` · `Chờ thanh toán` — tức mọi phiên chưa tới `Đã đóng`. §3.1.4, §3.1.7 và
+  `quality/invariants.md` I-001 dùng chữ *"phiên đang mở"* theo đúng nghĩa gộp này.
+
+### 5.2 Vòng đời ĐƠN
+
+**Bắt đầu:** `Mới`. **Kết thúc:** `Hoàn thành` **hoặc** `Huỷ` — hai trạng thái kết thúc, không có
+đường ra thứ ba.
+
+| Trạng thái nguồn | Sự kiện | Trạng thái đích | Ai kích hoạt |
+|---|---|---|---|
+| *(chưa có đơn)* | Khách bấm gửi trên web hoặc QR tại bàn; hoặc quầy nhập xong một đơn đặt hộ / đơn hotline | **Mới** | *Khách* (QR tại bàn, Delivery, Pickup) hoặc *người đứng quầy* (Staff POS, Đặt trước qua hotline) |
+| Mới | Đơn thuộc kênh **phải duyệt**: QR tại bàn, Delivery, Pickup | **Chờ xác nhận** | *Hệ thống*, theo kênh (`shop-facts.md` §6.2) |
+| Mới | Đơn thuộc kênh **không phải duyệt**: Staff POS, Đặt trước qua hotline | **Đã xác nhận** | *Hệ thống*, theo kênh (§2.2) |
+| Chờ xác nhận | Quầy duyệt đơn | **Đã xác nhận** | *Người đứng quầy* (§3.1.1 bước 5, §3.2.1 bước 7) |
+| Chờ xác nhận | Quầy từ chối đơn | **Huỷ** | *Người đứng quầy* (`shop-facts.md` §6.13) |
+| Đã xác nhận | Hệ thống nổ đơn thành việc của từng trạm theo thành phần của suất (§3.1.5) | **Đang thực hiện** | *Hệ thống* |
+| Đã xác nhận | Quầy huỷ đơn — ví dụ khách đặt hotline đổi ý, tới quán ngồi ăn (§2.4) | **Huỷ** | *Người đứng quầy* |
+| Đang thực hiện | **Mọi** việc trạm của đơn đã ra tới tay khách: bưng ra bàn, hoặc đóng gói và trao cho khách tới lấy | **Hoàn thành** | *Người đứng quầy*, trên POS (chủ quán chốt 2026-09-01, `shop-facts.md` §5.4) |
+| Đang thực hiện | Đơn **giao tận nơi** đã đóng gói xong và rời quán | **Đang giao** | *Người đứng quầy*, trên POS (chủ quán chốt 2026-09-01, `shop-facts.md` §6.7) |
+| Đang thực hiện | Quầy huỷ đơn | **Huỷ** | *Người đứng quầy* — ranh giới huỷ tới đâu vẫn còn mở, **U-022** |
+| Đang giao | Nhân viên giao xong, bấm **đã giao** và **đã thu tiền** cùng lúc | **Hoàn thành** | *Nhân viên quán* đi giao (§3.2.2, `shop-facts.md` §6.7) |
+
+Bốn điều phải đọc kèm bảng, rồi một việc không nằm trong bảng:
+
+- **`Mới` là một trạng thái rất ngắn, và nó có thật.** Đơn nào cũng đi qua nó, rồi **kênh** quyết
+  định nó rẽ đâu ngay lập tức: ba kênh khách tự bấm sang `Chờ xác nhận`, hai kênh nhân viên nhập
+  sang thẳng `Đã xác nhận`. Tách `Mới` ra khỏi `Chờ xác nhận` là để chỗ rẽ ấy có tên — nhập chúng
+  làm một thì luật §6.2 mất chỗ đứng trong vòng đời.
+- **`Đã xác nhận` → `Đang thực hiện` là một bước của hệ thống, không phải một nút của người.** Ở
+  quán này việc xuống bếp ngay khi đơn được xác nhận (§3.1.1 bước 6), nên hai trạng thái ấy cách
+  nhau một khoảnh khắc. Đừng thiết kế một màn hình chờ ai đó bấm *"bắt đầu làm"*: không có ai bấm
+  (§5.4).
+- **`Đang giao` chỉ có ở đơn giao tận nơi**, và nó là trạng thái BA-07 **thêm** so với kế hoạch gốc
+  §7. Lý do ghi rõ: chủ quán chốt 2026-08-30 rằng **quán tự đi giao** và đơn giao mang trạng thái
+  *"đang giao"* để quầy nhìn được đơn nào còn trên đường và **ai đang cầm tiền chưa về**
+  (`shop-facts.md` §6.7); §3.2.2 đã dùng tên này từ BA-04. Nhánh khách tới lấy đi thẳng từ
+  `Đang thực hiện` sang `Hoàn thành`. **Hai đầu của nó do hai người khác nhau bấm** (chủ quán chốt
+  2026-09-01, trả lời U-023): *người đứng quầy* bấm lúc đơn **rời quán**, *nhân viên đi giao* bấm
+  lúc **giao xong** — vì quầy là chỗ phải biết ai đang cầm tiền chưa về.
+- **Đơn ở `Chờ xác nhận` không sinh một việc nào ở cả năm trạm** (`shop-facts.md` §6.2,
+  `quality/invariants.md` I-004). Nó **vẫn thuộc** phiên bàn của nó và vẫn được tính vào hoá đơn
+  của phiên khi được duyệt (§3.1.3) — chặn ở đây là chặn **việc xuống bếp**, không phải chặn đơn
+  khỏi phiên.
+
+**Và một việc KHÔNG có trong bảng, vì nó không phải chuyển tiếp: SỬA ĐƠN.** Khách đổi ý sau khi đơn
+đã xác nhận thì quán **sửa chính đơn ấy**, trên **POS**, chứ không huỷ rồi tạo lại (chủ quán chốt
+2026-09-01, `shop-facts.md` §6.19). Sửa đổi **nội dung** đơn — món, số suất, tuỳ chọn — chứ không
+đẩy đơn sang trạng thái khác, nên nó không có dòng nào trong bảng trên và cũng **không** được coi
+là một chuyển tiếp ngoài bảng bị từ chối (§5.1).
+
+Hai chỗ của việc sửa đơn **chưa ai chốt**, và cả hai đều nằm ở **U-022**: sửa được **từ trạng thái
+nào** — đơn bếp đang làm dở thì còn sửa được không, đơn đã `Hoàn thành` thì sao — và một dòng vừa
+sửa **tính giá lúc nào**, vì §4.4 khoá giá theo *thời điểm tạo lượt gọi*. Chủ quán mới nói **ai
+sửa** và **sửa được**; đừng đọc câu ấy rộng hơn chữ của nó (`work/findings.md` F-004). Đây cũng là
+lý do dòng huỷ từ `Đang thực hiện` trong bảng còn để ngỏ ranh giới của nó.
+
+### 5.3 Vòng đời PHIÊN BÀN — và cái bàn của nó
+
+**Bắt đầu:** bàn ở `Trống`, phiên sinh ra ở `Mở`. **Kết thúc:** phiên dừng hẳn ở `Đã đóng`; **cái
+bàn** thì đi tiếp hai bước nữa và quay về `Trống`.
+
+Kế hoạch gốc §7 viết cả sáu trạng thái thành một chuỗi
+`Mở → Đang phục vụ → Chờ thanh toán → Đã đóng → Bàn cần dọn → Trống`. Sáu trạng thái ấy giữ nguyên,
+nhưng chúng **không cùng một chủ thể**: bốn cái đầu là trạng thái của **phiên**, hai cái cuối là
+trạng thái của **cái bàn**. Đây không phải chuyện chữ nghĩa — nhóm ghép bàn (§3.1.7) là chỗ nó lộ
+ra: **một** phiên đóng lại, nhưng **từng** bàn được dọn riêng, nên bàn 4 về `Trống` trong khi bàn 5
+còn ở `Bàn cần dọn`. Một chuỗi sáu bước với một chủ thể duy nhất không tả được ca đó.
+
+| Trạng thái nguồn | Sự kiện | Trạng thái đích | Ai kích hoạt |
+|---|---|---|---|
+| **Trống** *(bàn)* | Khách ngồi vào bàn trống và lượt gọi đầu tiên được tạo cho bàn ấy, bằng QR tại bàn hoặc quầy đặt hộ | **Mở** *(phiên)* | *Hệ thống*, do *khách* hoặc *người đứng quầy* kích (§3.1.1 bước 1) |
+| **Trống** *(bàn)* | Quầy **ghép** bàn trống ấy vào một phiên chưa đóng đang có | bàn nhập vào phiên đó; phiên **giữ nguyên** trạng thái đang có | *Người đứng quầy*, trên POS (§3.1.7, `shop-facts.md` §6.16) |
+| Mở | Đơn đầu tiên của phiên được xác nhận và việc xuống bếp | **Đang phục vụ** | *Hệ thống* |
+| Đang phục vụ | Quầy tính tổng **cả** phiên và ra một hoá đơn (§3.1.1 bước 11) | **Chờ thanh toán** | *Người đứng quầy* |
+| Chờ thanh toán | **Khách gọi thêm** — quét QR, hoặc nhờ quầy đặt hộ | **Đang phục vụ** | *Khách* hoặc *người đứng quầy* (`shop-facts.md` §6.1) |
+| Chờ thanh toán | Quầy xác nhận **đã nhận tiền** rồi đóng phiên | **Đã đóng** | *Người đứng quầy* (§4.6) |
+| Chờ thanh toán | Khách **không trả được** ⇒ quán cho nợ; quầy đóng phiên kèm **ai nợ** và **nợ bao nhiêu** | **Đã đóng** | *Người đứng quầy* (§3.1.6, `shop-facts.md` §6.14) |
+| **Đã đóng** *(phiên)* | Phiên đã đóng ⇒ mọi bàn thuộc phiên cần dọn | **Bàn cần dọn** *(từng bàn)* | *Hệ thống* |
+| **Bàn cần dọn** *(bàn)* | Dọn xong **chính bàn ấy**, và xác nhận đã dọn | **Trống** *(bàn)* | *Người canh & dọn* — trạm `don_ban` (§1.5, `shop-facts.md` §3) |
+
+Bốn điều phải đọc kèm bảng:
+
+- **`Chờ thanh toán` KHÔNG phải trạng thái khoá, và nó vẫn là phiên CHƯA THANH TOÁN.** Đây là chỗ
+  dễ hiểu nhầm nhất của cả mục §5. Quầy bấm tính tiền không đóng phiên, không giải phóng bàn, và
+  không chặn lượt gọi mới: khách gọi thêm thì phiên **quay lại** `Đang phục vụ` và lượt gọi ấy vào
+  **chính** hoá đơn đó. Tách nó ra hoá đơn thứ hai là **thu thiếu tiền** — lỗi tiền nguy hiểm nhất
+  của luồng tại bàn (`shop-facts.md` §6.1, §3.1.4, `quality/invariants.md` I-002).
+- **Bàn rời khỏi "một phiên chưa thanh toán" chỉ khi phiên `Đã đóng`.** Bàn của một phiên đang ở
+  `Chờ thanh toán` vẫn **không trống**, kể cả khi khách đã quét VietQR mà quầy chưa thấy báo có
+  (§4.7 ca a).
+- **Đóng phiên bị chặn bởi MÓN chưa xong, không bị chặn bởi TIỀN chưa thu.** Hai luật ngược nhau và
+  rất dễ nhớ nhầm thành một: phiên **không** đóng được khi còn đơn chưa `Hoàn thành` và chưa `Huỷ`
+  (`quality/invariants.md` I-017); nhưng phiên **vẫn** đóng được khi khách còn nợ tiền, và đó là
+  đường chính thức chứ không phải ngoại lệ (§3.1.6, `shop-facts.md` §6.14).
+- **Bàn về `Trống` cần HAI việc, không phải một** — phiên `Đã đóng` **và** bàn đã dọn
+  (`quality/invariants.md` I-003). Dọn trước khi đóng phiên không làm bàn trống sớm hơn; đóng phiên
+  mà chưa dọn thì bàn vẫn bận. Với nhóm ghép bàn, điều kiện thứ nhất chung cho cả nhóm, điều kiện
+  thứ hai tính **từng bàn**.
+
+### 5.4 Vòng đời CÔNG VIỆC TRẠM — đơn vị là MỘT VIỆC Ở MỘT TRẠM
+
+**Đơn vị của vòng đời này là một việc ở một trạm, không phải cả đơn.** Một đơn nổ ra **nhiều** việc
+(§3.1.5, `shop-facts.md` §5.3) và chúng chạy **song song** ở các trạm khác nhau: hai suất đầy đủ
+trứng tái sinh sáu việc trên ba trạm, và ba trạm bếp nhận việc **cùng lúc** chứ không nối đuôi
+nhau. Mỗi việc trong sáu việc ấy có vòng đời riêng của nó, đi hết bảng dưới đây một mình.
+
+Hai cỡ việc, cả hai đều chạy đúng bảng này: việc **cấp thành phần** — bánh cuốn, trứng, giò — nhân
+lên theo số suất; việc **cấp đơn** — nước chấm — mỗi đơn đúng **một** việc cho trạm `canh`, không
+nhân lên (`shop-facts.md` §6.6).
+
+**Bắt đầu:** `Chưa làm`. **Kết thúc:** `Đã ra bàn`.
+
+| Trạng thái nguồn | Sự kiện | Trạng thái đích | Ai kích hoạt |
+|---|---|---|---|
+| *(chưa có việc)* | Đơn sang `Đang thực hiện`; hệ thống nổ đơn thành thành phần theo §3.1.5 | **Chưa làm** | *Hệ thống* |
+| Chưa làm | Quầy bấm **"đã làm xong"** cho **một mẻ** bếp vừa làm xong | **Đã làm xong, còn ở bếp** | *Người đứng quầy*, trên POS — **ba trạm bếp không bấm gì** (`shop-facts.md` §5.4) |
+| Đã làm xong, còn ở bếp | Việc được **bưng ra bàn**, hoặc **đóng gói và trao** với đơn mang đi | **Đã ra bàn** | *Người đứng quầy*, trên POS (chủ quán chốt 2026-09-01) |
+| Đã làm xong, còn ở bếp | Quầy nhận ra vừa bấm **nhầm** một mẻ và **lùi** lại | **Chưa làm** | *Người đứng quầy*, trên POS — **không có mốc thời gian cứng**, quầy quyết từng ca (chủ quán chốt 2026-09-01) |
+
+**Vòng đời này KHÁC kế hoạch gốc, và khác vì lời chủ quán.** Kế hoạch gốc §7 viết
+`Chưa làm → Đang làm → Hoàn thành`. Vẫn **ba** trạng thái, nhưng trạng thái giữa không phải
+*Đang làm*:
+
+- **Quán không ghi được `Đang làm`.** Chủ quán đã **bỏ mọi nút bấm ở trạm bếp** (chốt 2026-08-31,
+  đóng U-009, `shop-facts.md` §5.4): người tráng bánh, người gấp bánh và người lấy canh không phải
+  bấm gì cả. Không ai nói cho máy biết lúc bếp **bắt đầu** một việc, nên một trạng thái *Đang làm*
+  trong tài liệu sẽ là một trạng thái không bao giờ có dữ liệu thật.
+- **Nhưng có một khoảng khác, và nó có thật.** Chủ quán chốt 2026-09-01 (trả lời S-4) rằng bánh
+  gấp xong **có nằm chờ** trước khi ra bàn — *chờ đủ đĩa*, *chờ người rảnh tay bưng*, *chờ món khác
+  của cùng bàn*. Vì vậy bảng ở quầy có **bốn** con số chứ không phải ba, và con số thứ tư tên là
+  **"đã làm xong, còn ở bếp"** (`shop-facts.md` §5.4).
+- ⇒ **`Đã làm xong, còn ở bếp` là thứ quán ĐẾM ĐƯỢC; `Đang làm` là thứ kế hoạch gốc đoán.** BA-07
+  giữ đúng ba trạng thái và thay cái giữa bằng cái có dữ liệu. Đây là một **quyết định thiết kế
+  nghiệp vụ**, không phải chỗ chép thiếu — **BA-10** gom nó thành ADR.
+
+Ba điều phải đọc kèm bảng:
+
+- **Mẻ là đơn vị BẤM, bàn là đơn vị ĐẾM** (chủ quán chốt 2026-09-01, trả lời U-017). Một lần bấm
+  *"đã làm xong"* đẩy **nhiều** việc — có khi của **nhiều bàn** — từ `Chưa làm` sang
+  `Đã làm xong, còn ở bếp` cùng một lúc. ⇒ Con số ở quầy **nhảy theo bậc**, cả mẻ một lần; đó là
+  đúng, không phải lỗi đếm. Và một lần bấm phải **chia được** về từng bàn, vì việc xuống bếp luôn
+  ghi bàn nào gọi (`shop-facts.md` §5.3, §5.4).
+- **Cả hai mốc đều do người đứng quầy bấm** (chủ quán chốt 2026-09-01, trả lời U-021): *"đã làm
+  xong"* và *"đã ra bàn"*. Ba trạm bếp vẫn **không bấm gì** — U-009 nguyên vẹn, vì nó là luật về
+  **bếp**, không phải luật về quầy. ⇒ Quầy nay gánh **cả hai** mốc của mỗi suất; đó là rủi ro vận
+  hành thật, không phải chi tiết trình bày (`shop-facts.md` §5.4). *Bấm "đã ra bàn" theo đơn vị
+  nào — mẻ hay bàn — thì chủ quán chưa nói; chỗ suy ra ấy là* **S-5** *ở `shop-facts.md` §7.2, và*
+  **BA-12** *cần nó trước khi dựng bảng quầy.*
+- **Bấm nhầm thì LÙI ĐƯỢC, và không có mốc thời gian cứng** (chủ quán chốt 2026-09-01, trả lời
+  U-024): *"có đường lui, thời gian tuỳ theo thực tế để POS quyết định"*. Không có "trong vòng N
+  phút" — người đứng quầy nhìn tình huống thật rồi quyết, đúng cùng một kiểu với quyền hoàn tiền
+  (§4.8). ⇒ **Vì không có luật cứng nên mỗi lần lùi phải để lại vết** — lùi mẻ nào, lúc mấy giờ,
+  ai bấm. Đó không phải luật mới: `quality/invariants.md` I-012 đã buộc mọi thao tác chạm tiền
+  truy ngược được, và một mẻ lùi sai là một suất tính nhầm.
+- **Việc trạm không có nhánh huỷ của riêng nó.** Nó sống chết theo đơn: đơn sang `Huỷ` thì mọi việc
+  chưa xong của đơn ấy rời bảng bếp cùng lúc. Không có ai đứng ở trạm huỷ được một việc — quyền huỷ
+  chỉ nằm ở quầy, và nó là quyền huỷ **đơn** (`shop-facts.md` §6.13).
+- **Không có trạng thái "tạm dừng".** Hết nguyên liệu giữa buổi thì đường xử lý của quán là chủ
+  quán bấm **tạm dừng nhận đơn** — chặn đơn **mới**, không chạm việc đang làm (§3.2.6,
+  `shop-facts.md` §6.8, `quality/invariants.md` I-008). Còn ca **món hết sau khi khách đã đặt** là
+  câu 3 của bảng mười câu hỏi trong `work/backlog.md`, **còn mở**, và nó thuộc §6 (BA-08).
+- **Cách quán GOM nhiều việc thành một mẻ không ở đây.** §5 chốt trạng thái của **một** việc; bảng
+  gom việc ở quầy, bốn con số và năng lực hai cái nồi là **§3.4** (BA-12, `shop-facts.md` §5.4).
+  Và ranh giới đã chốt: **máy không gom, người gom** (chủ quán chốt 2026-08-31, đóng U-011).
+
+### 5.5 Ba vòng đời gặp nhau ở đâu
+
+Ba vòng đời không chạy độc lập. Bốn chỗ chúng ràng buộc nhau, và cả bốn đều là luật:
+
+- **Đơn ⟶ việc trạm.** Việc trạm chỉ sinh ra khi đơn vào `Đang thực hiện`, tức **sau** khi đơn đã
+  `Đã xác nhận`. Đơn ở `Mới` hoặc `Chờ xác nhận` **không sinh một việc nào** ở cả năm trạm
+  (`shop-facts.md` §6.2, `quality/invariants.md` I-004).
+- **Việc trạm ⟶ đơn.** Đơn chỉ `Hoàn thành` khi **mọi** việc trạm của nó đã ở `Đã ra bàn`. Còn một
+  việc ở `Chưa làm` hay ở `Đã làm xong, còn ở bếp` thì đơn vẫn `Đang thực hiện` — **kể cả khi khách
+  đã trả tiền xong**. Nước chấm cũng tính: nó là một việc như mọi việc khác, và quên nó là khách
+  nhận bánh không có nước chấm (`shop-facts.md` §6.6).
+- **Đơn ⟶ phiên bàn.** Phiên chỉ `Đã đóng` khi **mọi** đơn thuộc phiên ở `Hoàn thành` hoặc `Huỷ`
+  (`quality/invariants.md` I-017). Với nhóm ghép bàn, "mọi đơn thuộc phiên" phủ đơn của **tất cả**
+  các bàn trong nhóm (§3.1.7).
+- **Phiên bàn ⟶ cái bàn.** Bàn về `Trống` khi phiên `Đã đóng` **và** chính bàn ấy đã dọn xong
+  (`quality/invariants.md` I-003).
+
+Và một chỗ **cố ý không** ràng buộc, vì nó là chỗ hay bị siết nhầm:
+
+- **Vào `Chờ thanh toán` không đòi hỏi đơn nào phải xong.** Ở luồng thường ngày của quán, quầy tính
+  tiền **sau** khi món đã ra bàn — bước 11 đứng sau bước 8 của §3.1.1 — nên lúc ấy các đơn của phiên
+  thường đã `Hoàn thành` cả. Nhưng đó là **thứ tự quen của quán, không phải điều kiện**: `Chờ thanh
+  toán` là lúc quầy bắt đầu tính tiền, không phải lời tuyên bố phiên đã xong (`shop-facts.md` §6.1).
+  Ràng buộc cứng nằm ở `Đã đóng`, và chỉ ở đó. Siết nó lên `Chờ thanh toán` là cấm quầy tính tiền
+  trước trong khi bếp còn một bát canh chưa bưng — quán không làm việc theo kiểu đó.
+
+### 5.6 Hai chuyển tiếp nghe có lý mà bị TỪ CHỐI
+
+Luật ở §5.1 nói mọi chuyển tiếp ngoài bảng đều bị từ chối. Hai ca dưới đây được gọi tên vì chúng
+nghe như hợp lý, và vì mỗi ca đều có người sẽ hỏi *"sao không cho?"*:
+
+- **`Đã đóng` → `Đang phục vụ` (phiên bàn): không có đường quay lại, và đây là ca đã CHỐT.** Khách
+  quay lại bàn ấy gọi tiếp thì đó là một **phiên mới**, một hoá đơn mới. Mở lại một phiên đã đóng
+  là mở lại một hoá đơn đã thu tiền — thứ §3.3.3 và §4.4 khoá chặt.
+- **`Hoàn thành` → `Huỷ` (đơn): bị từ chối vì CHƯA CHỐT, không phải vì đã chốt là cấm.** Kế hoạch
+  gốc §8 liệt kê *"đơn đã hoàn thành nhưng cần điều chỉnh"* như một ngoại lệ phải xử. Ngày
+  2026-09-01 chủ quán trả lời **một nửa** câu ấy — đơn đã xác nhận thì **sửa** được, trên POS
+  (§5.2, `shop-facts.md` §6.19) — nhưng **không** nói sửa hay huỷ được **tới trạng thái nào**, nên
+  nửa còn lại vẫn là **U-022**. Bảng §5.2 không có dòng ấy nên sản phẩm từ chối nó; đó là trạng
+  thái **tạm thời của tài liệu**, và §6 (BA-08) là chỗ nó được chốt.
+
+**Ca thứ ba đã rời danh sách này ngày 2026-09-01.** `Đã làm xong, còn ở bếp` → `Chưa làm` từng nằm
+đây với ghi chú *"quầy bấm nhầm một mẻ thì hôm nay không có đường lùi"*. Chủ quán trả lời U-024 là
+**có** đường lùi, nên nay nó là một **dòng hợp lệ** trong bảng §5.4 chứ không còn là ca bị từ chối.
+Ghi lại chỗ nó từng đứng để phiên sau đọc §5.6 cũ không tưởng là tài liệu tự mâu thuẫn.
+
+### 5.7 Bốn việc mục này cố ý không nói tới
+
+- **Ngoại lệ.** Khách gửi nhầm đơn, món hết sau khi khách đã đặt, hai người cùng thao tác trên một
+  bàn, mất điện hoặc mất mạng giữa buổi — §5 chỉ chốt **bộ trạng thái và các đường đi hợp lệ**;
+  quán xử từng ca thế nào là §6 (BA-08).
+- **Lát cắt sản xuất theo mẻ.** Bảng gom việc ở quầy, bốn con số, năng lực hai cái nồi: **§3.4**
+  (BA-12). §5 nói một việc đi qua những trạng thái nào, §3.4 nói quán gom nhiều việc lại ra sao.
+- **Máy giữ trạng thái bằng cách nào.** Tên kỹ thuật, chỗ lưu, ai được xem lại lịch sử chuyển trạng
+  thái, màn hình nào bày ra bảng nào — `docs/architecture.md` và §7 (BA-09).
+- **Trạng thái của TIỀN.** Đã thu · chưa thu · nợ · đã hoàn — đó là §4, và nó **không** phải một
+  trạng thái của phiên hay của đơn. §5 chạm tiền đúng một chỗ: tiền chưa thu **không** chặn phiên
+  đóng (§5.3).
 
 ## 6. Ngoại lệ
 
@@ -1187,14 +1439,27 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 
 ### Đang mở
 
-**Không còn câu nào đang mở, tính tới 2026-09-01.** Bảy câu mở trong ngày — U-014, U-015, U-016
-(mốc đổi menu/giá, T-034) · U-017, U-018 (T-036, T-037) · **U-019, U-020** (BA-06, hai câu về
-tiền) — đều đã được chủ quán trả lời trong ngày; cả bảy đã chuyển xuống mục *Đã có lời giải*.
+**Bốn câu BA-07 mở ngày 2026-09-01 được chủ quán trả lời ngay trong ngày (T-039).** Ba câu đóng hẳn
+— U-021, U-023, U-024 — và đã xuống mục *Đã có lời giải*. Câu thứ tư chỉ được trả lời **một nửa**,
+nên nó **ở lại đây với phạm vi hẹp hơn**, đúng cách U-006 từng ở lại ngày 2026-08-31.
 
-Mục này để trống là **trạng thái thật**, không phải mục bị bỏ quên: hình dạng của nó là hợp đồng
-với `scripts/brief.sh` (ADR-007), nên câu tiếp theo phải là **một gạch đầu dòng** đặt ngay dưới
-đây. `master_plan/shop-facts.md` §7.2 — chỗ giữ các mục **suy ra** chưa xác nhận — cũng rỗng từ
-2026-09-01, khi S-4 có lời giải.
+- **U-022 — Sửa và huỷ một đơn được phép tới trạng thái nào?** *Nửa đã có lời giải (2026-09-01):*
+  đơn đã xác nhận thì **sửa được**, và **POS** là nơi sửa — không phải huỷ rồi tạo lại
+  (`shop-facts.md` §6.19, `docs/product.md` §5.2). *Nửa còn mở:* chủ quán nói **ai sửa** và **sửa
+  được**, chưa nói **tới đâu thì thôi** — sửa được khi bếp đang làm dở không, đơn đã `Hoàn thành`
+  thì sửa hay không, và **huỷ** còn được phép tới trạng thái nào. Đi kèm là một câu về **tiền**
+  cùng gốc: một dòng vừa sửa **tính giá lúc nào**, vì §4.4 khoá giá theo *thời điểm tạo lượt gọi*
+  — sửa xong mà lấy giá mới thì §3.3.3 vỡ, lấy giá cũ thì khách đổi sang món đắt hơn vẫn trả giá
+  rẻ. *Ai trả lời được:* **chủ quán** (hỏi về cái quán: *"khách đổi món lúc bếp đang tráng rồi thì
+  quán sửa hay làm lại từ đầu — và lúc ấy tính tiền theo giá nào?"*). *Đang chặn:* dòng huỷ từ
+  `Đang thực hiện` ở bảng `docs/product.md` §5.2 còn để ngỏ ranh giới, và ca `Hoàn thành → Huỷ` vẫn
+  bị từ chối vì chưa chốt (§5.6). Đây là **câu 1 (phần sửa đơn) và câu 2** của bảng mười câu hỏi
+  trong `work/backlog.md`; **BA-08** chốt, **BA-10** gom lần cuối.
+
+Hình dạng của mục là hợp đồng với `scripts/brief.sh` (ADR-007): câu trên là **một gạch đầu dòng**,
+và câu tiếp theo cũng phải vào đây dưới dạng ấy. `master_plan/shop-facts.md` §7.2 — chỗ giữ các mục
+**suy ra** chưa xác nhận — nay giữ **một** mục, **S-5** (bấm *"đã bưng ra bàn"* theo đơn vị nào),
+mở cùng ngày 2026-09-01; đó là chỗ **suy ra**, không phải câu hỏi đang mở, nên nó không nằm ở đây.
 
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
@@ -1214,6 +1479,17 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Ngày 2026-09-01, chủ quán trả lời ba câu BA-07 vừa mở, và cả ba ra cùng MỘT chỗ đứng: POS**
+(T-039). Đây là lần thứ tư cùng một câu trả lời lặp lại — duyệt đơn (§6.2), huỷ đơn (§6.13), hoàn
+tiền (§6.4), ghép bàn (§6.16), thu tiền, ghi nợ (§6.14) và nay cả hai mốc của bảng bếp đều đi qua
+đúng **một** cái máy ở quầy.
+
+| Câu hỏi cũ | Lời giải (chủ quán, 2026-09-01) | Ghi ở |
+|---|---|---|
+| ~~U-021 — ai nói cho máy biết một mẻ đã bưng ra bàn~~ | **POS** — người đứng quầy bấm, đúng chỗ đứng đã bấm *"đã làm xong"*; ba trạm bếp vẫn không bấm gì (U-009 nguyên vẹn) | `shop-facts.md` §5.4 · §5.4 trên đây |
+| ~~U-023 — ai bấm cho đơn giao tận nơi sang *đang giao*, lúc nào~~ | **POS**, lúc đơn **rời quán**; mốc **ra** vẫn do *người đi giao* bấm cùng lúc với *đã thu tiền* | `shop-facts.md` §6.7 · §5.2 trên đây |
+| ~~U-024 — bấm nhầm *đã làm xong* một mẻ thì có đường lùi không~~ | **Có đường lùi**, và **không có mốc thời gian cứng** — *"tuỳ theo thực tế để POS quyết định"* | `shop-facts.md` §5.4 · §5.4 và §5.6 trên đây |
 
 Ngày **2026-08-31** chủ quán trả lời một loạt sáu câu (T-028). Một câu thứ bảy — U-006 — chỉ được
 trả lời **một nửa**, nên nó ở lại mục *Đang mở* với phạm vi hẹp hơn.

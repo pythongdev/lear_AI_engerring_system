@@ -140,11 +140,11 @@ lại, khối *GIẢ ĐỊNH* biến mất, **I-014** sửa và **I-015** thêm.
 
 - [ ] T-035 Brief bảo phiên mới XOÁ scope trong khi chủ thật đang chạy song song (F-014)
 
-- [ ] BA-08 `docs/product.md` §6 — ngoại lệ · chỉ còn **cần BA-07** (BA-03–BA-06 xong; **U-007, U-016, U-019 đều đã đóng**; ca hoàn tiền chép lời giải ở `docs/product.md` §4.8 — hoàn tính **ngày hoàn** — đừng mở lại)
+- [ ] BA-08 `docs/product.md` §6 — ngoại lệ · **hết bị chặn**, BA-03–BA-07 xong 2026-09-01 (**U-007, U-016, U-019, U-021, U-023, U-024 đã đóng**; hoàn tiền tính **ngày hoàn** — §4.8, đừng mở lại; bấm nhầm một mẻ **lùi được** — §5.4, đừng viết lại thành ngoại lệ). Còn phải chốt: **U-022** — sửa/huỷ đơn được tới **trạng thái nào** (câu 1+2 bảng §10); tên trạng thái lấy ở §5
 - [ ] BA-09 `docs/product.md` §7 — phạm vi MVP · cần BA-01–BA-08 (**U-018 đã đóng 2026-09-01**: máy chỉ nhắc, không chặn ⇒ MVP không phải làm nút chặn)
-- [ ] BA-10 `docs/decisions.md` — quyết định và giả định · cần BA-01–BA-09
+- [ ] BA-10 `docs/decisions.md` — quyết định và giả định · cần BA-01–BA-09 · **BA-07 để lại một quyết định phải thành ADR**: vòng đời công việc trạm bỏ `Đang làm` và giữ `Đã làm xong, còn ở bếp` thay vào (`docs/product.md` §5.4, lý do là U-009 + S-4)
 - [ ] BA-11 `docs/product.md` §8 — ba scenario nghiệm thu BA · cần BA-03–BA-10
-- [ ] BA-12 `docs/product.md` §3.4 — lát cắt sản xuất theo mẻ · cần BA-03, BA-07 (**U-008–U-011, S-4 và U-017 đã đóng 2026-09-01** — hết bị câu hỏi nào chặn)
+- [ ] BA-12 `docs/product.md` §3.4 — lát cắt sản xuất theo mẻ · **BA-03 và BA-07 đã xong**, tên trạng thái lấy ở `docs/product.md` §5.4 (**U-008–U-011, S-4, U-017, U-021, U-024 đã đóng** — quầy bấm cả hai mốc, và lùi được). Đọc trước khi dựng bảng quầy: **S-5** (`shop-facts.md` §7.2) — bấm *đã bưng ra bàn* theo **đơn vị nào** thì mới là suy ra, chưa hỏi chủ quán
 
 Mỗi task chạm **một** mục tài liệu riêng, nên revert được độc lập: §3.1 · §3.2 · §3.3 · §4 · §5 ·
 §6 · §7 · `docs/decisions.md` · §8 · §3.4. Hai task cùng chạm một mục là dấu hiệu chia việc sai.
@@ -158,13 +158,14 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] BA-07 `docs/product.md` §5 — vòng đời đơn, phiên bàn, công việc trạm (bắt đầu 2026-09-01)
 
 
 
 <a id="done"></a>
 ## Done
 
+- [x] T-039 U-021, U-023, U-024 đóng — **POS bấm cả bốn mốc**, bấm nhầm một mẻ **lùi được**; U-022 còn một nửa; §6.19, S-5 (2026-09-01)
+- [x] BA-07 `docs/product.md` §5 — ba vòng đời, trạng thái giữa của việc trạm là **đã làm xong còn ở bếp**; I-016, I-017; mở U-021–U-024 (2026-09-01)
 - [x] T-038 U-019 và U-020 đóng: đối chiếu bằng tin nhắn báo có, hoàn tiền tính NGÀY HOÀN, một lần thu chia được hai phương thức; §6.18, I-015 (2026-09-01)
 - [x] BA-06 `docs/product.md` §4 — quy tắc giá và thanh toán; I-012, I-013, I-014; mở U-019, U-020 (2026-09-01)
 - [x] T-037 U-017 và U-018 đóng: bấm theo MẺ, máy chỉ NHẮC; I-011 viết lại vì bản đầu sai (2026-09-01) — **chung một commit với T-036**
@@ -256,8 +257,8 @@ Bốn câu **đã có lời giải trước khi chuỗi BA bắt đầu**; task 
 
 | §10 | Câu hỏi | Task | Trạng thái |
 |---|---|---|---|
-| 1 | Ai xác nhận / huỷ / sửa đơn | BA-07 | xác nhận **đã chốt** → `shop-facts.md` §6.2 · huỷ **đã chốt** → §6.13 (2026-08-30) · **sửa đơn còn mở** |
-| 2 | Đơn đã xác nhận được sửa hay chỉ huỷ/tạo lại | BA-07 | còn mở |
+| 1 | Ai xác nhận / huỷ / sửa đơn | BA-07 | **cả ba vế đã chốt NGƯỜI** → xác nhận `shop-facts.md` §6.2 · huỷ §6.13 (2026-08-30) · **sửa đơn: POS sửa, không huỷ-rồi-tạo-lại** (§6.19, chốt 2026-09-01, T-039). Còn mở đúng một thứ: **từ trạng thái nào** thì sửa/huỷ được — **U-022**, chuyển BA-08 |
+| 2 | Đơn đã xác nhận được sửa hay chỉ huỷ/tạo lại | BA-07 | **đã chốt 2026-09-01** (T-039) → **sửa**, trên POS; `shop-facts.md` §6.19 · `docs/product.md` §5.2. Vế *tới trạng thái nào* ở lại **U-022** cùng câu 1 |
 | 3 | Món hết sau khi khách đã đặt | BA-08 | còn mở |
 | 4 | Khách không trả được tiền thì phiên bàn ở đâu | BA-08 | còn mở |
 | 5 | Có hoàn tiền không, ai được | BA-06 | **đã chốt** → `shop-facts.md` §6.4 — quầy quyết từng ca, phải ghi vết; BA-06 chép vào `docs/product.md` §4.8 (2026-09-01) |
@@ -374,53 +375,6 @@ grep -n 'T-019' scripts/check-links.ignore   # rỗng
 ./scripts/check-links.sh                     # xanh sau khi gỡ ignore
 grep -c '⚠️' master_plan/prompt-fullstack.md  # không tăng (2)
 grep -n '^## §' master_plan/prompt-fullstack.md   # vẫn đủ §1 → §11
-git status --porcelain
-```
-
-### BA-07 — Vòng đời đơn, phiên bàn và công việc trạm
-
-**Prompt:** `prompt/BA/06-lifecycles-L2.md` (L2) · **Cần xong trước:** BA-03
-
-**Goal:**
-`docs/product.md` §5 định nghĩa ba vòng đời nghiệp vụ — đơn, phiên bàn, công việc trạm — với các
-trạng thái, chuyển tiếp hợp lệ, ai kích hoạt mỗi chuyển tiếp, và trạng thái kết thúc.
-
-**Scope:** `docs/product.md` §5 · §3.1–§3.3 **chỉ khi** phải đổi tên trạng thái cho khớp §5 (đổi
-tên, không đổi nghĩa) · `quality/invariants.md` (chỉ **thêm**) · `work/backlog.md`.
-
-**Out of scope:** §1, §2, §4, §6–§8 của `docs/product.md` · nội dung nghiệp vụ của §3 ·
-`docs/decisions.md` · `docs/architecture.md`.
-
-**Acceptance:**
-1. §5 có ba bảng chuyển trạng thái; mỗi dòng gồm trạng thái nguồn · sự kiện · trạng thái đích ·
-   ai kích hoạt.
-2. Mỗi vòng đời nêu trạng thái bắt đầu và các trạng thái kết thúc.
-3. Có câu khẳng định chuyển tiếp không nằm trong bảng thì bị từ chối.
-4. Nêu quan hệ giữa ba vòng đời: phiên bàn chỉ vào `Chờ thanh toán` khi các đơn của nó ở trạng
-   thái nào; đơn chỉ `Hoàn thành` khi công việc trạm ở trạng thái nào.
-5. Mọi tên trạng thái xuất hiện ở §3.1–§3.3 đều có trong §5, không còn tên lạc.
-6. Có điều kiện chuyển `Bàn cần dọn → Trống` và ai xác nhận đã dọn (trạm `don_ban`).
-7. Bảng phiên bàn có đường quay lại từ `Chờ thanh toán` khi khách gọi thêm, kèm câu khẳng định
-   `Chờ thanh toán` vẫn là phiên **chưa thanh toán**.
-8. §5 nói vòng đời "công việc trạm" áp cho **một việc ở một trạm**, và một đơn có nhiều việc chạy
-   song song ở các trạm khác nhau.
-9. `quality/invariants.md` có hai invariant: chuyển trạng thái không hợp lệ bị từ chối · phiên bàn
-   không thể `Đã đóng` khi còn đơn chưa hoàn thành hoặc chưa huỷ.
-10. Không có tên trạng thái viết kiểu mã (`ORDER_PENDING`, `status=2`).
-
-**Câu hỏi §10 gắn vào task này:**
-- Câu 1 — ai xác nhận / huỷ / sửa đơn. Hai phần **đã chốt**: xác nhận → `shop-facts.md` §6.2
-  (đơn khách tự gửi phải qua quầy; `staff_pos` và `phone_preorder` thì không); huỷ → §6.13
-  (**chỉ người đứng quầy**, quyền gắn với chỗ đứng chứ không gắn chức vụ, chốt 2026-08-30).
-  **Phần "sửa đơn" chưa ai nói** — đó là chỗ còn mở của câu này.
-- Câu 2 — đơn đã xác nhận được sửa hay chỉ huỷ rồi tạo lại: **còn mở**, cùng gốc với phần trên.
-  Hỏi người; chưa có lời giải thì GIẢ ĐỊNH + rủi ro, chuyển BA-10.
-
-**Verify:**
-```bash
-./scripts/gate.sh
-sed -n '/^## 5\./,/^## 6\./p' docs/product.md | grep -c '^|'    # ba bảng chuyển trạng thái
-grep -nE 'ORDER_[A-Z]+|status *=' docs/product.md               # rỗng
 git status --porcelain
 ```
 
@@ -678,6 +632,227 @@ Luật chung ở [Vòng chạy một task L1](#vong-chay). Việc riêng của t
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### T-039 — Bốn câu BA-07 vừa mở có lời giải trong ngày, và một trong bốn MỞ RA một đường đi mới
+
+**L2** — chạm bảng chuyển trạng thái của `docs/product.md` §5 và thêm một đường lùi chưa từng có.
+
+**Hiện trạng đang SAI:** BA-07 đóng ngày 2026-09-01 với bốn chỗ *"chưa ai chốt ai bấm"* nằm thẳng
+trong cột **ai kích hoạt** của hai bảng §5.2 và §5.4 — một bảng chuyển trạng thái có ô để trống thì
+chưa dùng được. Ngoài ra `docs/product.md` §5.6 đang nói *"bấm nhầm một mẻ thì hôm nay không có
+đường lùi"* và `quality/invariants.md` I-016 chép lại câu ấy; chủ quán trả lời **ngược**: có đường
+lùi. Nên ngay lúc này §5 tả một sản phẩm chặt hơn cái quán thật.
+
+**Lời chủ quán, 2026-09-01** (trả lời cả bốn câu trong một lần):
+- **U-021** — ai nói cho máy biết một mẻ **đã bưng ra bàn**: **"pos"**.
+- **U-022** — đơn đã xác nhận mà khách đổi ý: **"pos sửa đơn"** ⇒ **sửa được**, không phải huỷ rồi
+  tạo lại, và POS là nơi sửa. Vế **huỷ được phép tới trạng thái nào** thì câu trả lời **không
+  chạm tới** — U-022 ở lại *Đang mở* với phạm vi hẹp hơn, đúng cách U-006 từng ở lại (§*Đã có lời
+  giải*, 2026-08-31).
+- **U-023** — ai bấm cho đơn giao tận nơi sang `Đang giao`: **"pos"**.
+- **U-024** — bấm nhầm *"đã làm xong"* một mẻ: **"có đường lui. thời gian tuỳ theo thực tế để pos
+  quyết định"** ⇒ **có** đường lùi, và **không có mốc thời gian cứng** — người đứng quầy quyết
+  từng ca.
+
+**Goal:** bốn lời chốt vào nhà thật `master_plan/shop-facts.md`, rồi `docs/product.md` §5 và
+`quality/invariants.md` đọc lại theo nó; U-021, U-023, U-024 xuống *Đã có lời giải*, U-022 ở lại
+hẹp hơn.
+
+**Scope:** `master_plan/shop-facts.md` · `master_plan/prompt-fullstack.md` (chép lại số quy tắc
+§6) · `docs/product.md` §5 và *Unknowns* · `quality/invariants.md` · `work/backlog.md`.
+
+**Out of scope:** `docs/decisions.md` (BA-10 gom) · `docs/architecture.md` · §1–§4 và §6–§8 của
+`docs/product.md` · `prompt/BA/`.
+
+**Acceptance:**
+1. `shop-facts.md` chốt **POS là nơi bấm** cả hai con số của bảng quầy — *đã làm xong* **và** *đã
+   bưng ra bàn* — kèm ngày và người chốt.
+2. `shop-facts.md` chốt **đường lùi** cho một lần bấm nhầm, và ghi rõ **không có mốc thời gian
+   cứng**: người đứng quầy quyết từng ca.
+3. `shop-facts.md` có một quy tắc **sửa đơn**: đơn đã xác nhận **được sửa**, sửa **trên POS**, và
+   nói thẳng phần nào của câu hỏi **chưa** được trả lời.
+4. `shop-facts.md` chốt **POS bấm** mốc đơn giao tận nơi sang *"đang giao"*.
+5. Tiêu đề §6 và mọi chỗ chép lại số quy tắc (kể cả `master_plan/prompt-fullstack.md`) khớp số
+   quy tắc thật.
+6. `shop-facts.md` §7.1 có dòng nhật ký cho cả bốn lời chốt, ngày **2026-09-01**.
+7. `docs/product.md` §5.2 và §5.4 **không còn ô nào** ghi *"chưa ai chốt ai bấm"*.
+8. §5.4 có **dòng lùi** `Đã làm xong, còn ở bếp → Chưa làm`, và §5.6 không còn kể nó là ca bị từ
+   chối.
+9. §5.2 nói ra **sửa đơn**: nó **không** phải một chuyển tiếp trạng thái, và phần còn mở của U-022
+   được trỏ đúng.
+10. `quality/invariants.md` **I-016** đọc lại: chỉ còn **một** ca bị từ chối vì chưa chốt
+    (`Hoàn thành → Huỷ`), và phần *Verification* không còn dùng đường lùi làm kịch bản âm.
+11. **U-021, U-023, U-024** xuống bảng *Đã có lời giải*; **U-022** còn ở *Đang mở* với phạm vi hẹp
+    hơn và nói rõ nửa nào đã có lời giải.
+12. `work/backlog.md` bảng §10 câu 1 và câu 2 đọc lại theo lời chốt.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -n 'chưa ai chốt ai bấm' docs/product.md        # rỗng
+grep -n 'Đã làm xong, còn ở bếp | ' docs/product.md  # có dòng lùi
+./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/LATEST/p'   # chỉ còn U-022
+git status --porcelain
+```
+
+**Kết quả — chốt 2026-09-01.** Bốn câu, một lần trả lời, và cả bốn ra **cùng một chỗ đứng: POS**.
+Đây là lần thứ tư câu trả lời ấy lặp lại — duyệt đơn (§6.2), huỷ đơn (§6.13), hoàn tiền (§6.4),
+ghép bàn (§6.16), thu tiền, ghi nợ (§6.14), và nay cả hai mốc của bảng bếp cùng mốc *"đang giao"*
+đều đi qua đúng **một** cái máy ở quầy.
+
+| Câu | Lời chủ quán | Vào nhà thật | Đọc lại ở |
+|---|---|---|---|
+| **U-021** | *"pos"* | `shop-facts.md` §5.4 | `docs/product.md` §5.4 (ô *ai kích hoạt* của dòng cuối) |
+| **U-022** | *"pos sửa đơn"* — **nửa câu** | `shop-facts.md` **§6.19** (quy tắc mới) | §5.2, khối *"một việc KHÔNG có trong bảng"* |
+| **U-023** | *"pos"* | `shop-facts.md` §6.7 | §5.2 (dòng `Đang thực hiện → Đang giao`) |
+| **U-024** | *"có đường lui, thời gian tuỳ theo thực tế để pos quyết định"* | `shop-facts.md` §5.4 | §5.4 (**dòng lùi mới**) và §5.6 |
+
+**Ba thứ đổi hình, không chỉ điền vào chỗ trống:**
+
+1. **§5.4 có thêm một DÒNG, và §5.6 mất một ca.** `Đã làm xong, còn ở bếp → Chưa làm` từng là ca bị
+   **từ chối**; nay là chuyển tiếp **hợp lệ**. §5.6 đổi tiêu đề *Ba* → *Hai* và giữ lại một đoạn
+   nói chỗ ca thứ ba từng đứng, để phiên sau đọc bản cũ không tưởng tài liệu tự mâu thuẫn.
+   `quality/invariants.md` **I-016** đọc lại theo: kịch bản *âm* của đường lùi thành kịch bản
+   **dương**, và danh sách ngắn đi một dòng — chính là bằng chứng invariant ấy bảo vệ *"chỉ đi theo
+   bảng"* chứ không bảo vệ một danh sách cố định.
+2. **Sửa đơn là một việc KHÔNG phải chuyển tiếp.** Nó đổi *nội dung* đơn, không đẩy đơn sang trạng
+   thái khác, nên nó không có dòng trong bảng §5.2 và cũng **không** bị I-016 từ chối. Ghi thẳng ra
+   vì đọc nhầm chiều nào cũng hỏng: coi nó là chuyển tiếp thì bảng thiếu dòng, coi nó là ngoài
+   bảng thì sản phẩm từ chối một việc chủ quán vừa cho phép.
+3. **`shop-facts.md` §7.2 có lại một dòng: S-5.** Chủ quán nói **ai** bấm *"đã bưng ra bàn"*, chưa
+   nói **theo đơn vị nào** — mẻ hay bàn. Suy ra là **theo bàn** (một mẻ phục vụ nhiều bàn, còn bưng
+   thì bưng tới một bàn), và vì đó là suy ra nên nó vào §7.2 chứ không vào §7.1. **BA-12** cần nó
+   trước khi dựng bảng quầy.
+
+**Nửa câu U-022 còn lại, và nó kéo theo một câu về TIỀN.** Chủ quán nói *ai sửa* và *sửa được*,
+không nói *tới đâu thì thôi*. Nửa còn mở gồm: sửa được từ trạng thái nào · huỷ được tới trạng thái
+nào · và **một dòng vừa sửa tính giá lúc nào**, vì §4.4 khoá giá theo *thời điểm tạo lượt gọi* —
+lấy giá mới thì §3.3.3 vỡ, lấy giá cũ thì khách đổi sang món đắt hơn vẫn trả giá rẻ. Ghi vào U-022
+cùng gốc, không tách thành câu riêng, vì chủ quán sẽ trả lời cả cụm trong một lần.
+
+**Pointer phải sửa trong cùng lần đổi (CLAUDE.md §7.2).** S-5 làm hai câu *"§7.2 rỗng trở lại"* hết
+đúng: `docs/decisions.md` (ADR về S-4) và `prompt/BA/README.md`. Cả hai đã sửa, và `work/scope.txt`
+được nới thêm hai file ấy giữa task kèm lý do — chỉ sửa đúng mệnh đề sai, không viết ADR mới.
+
+**Verify — output thật:**
+```text
+$ ./scripts/gate.sh
+check-scope: OK — all tracked changes within declared scope.
+check-links: OK — mọi đường dẫn trong tài liệu chỉ đường đều mở được.
+verify: skipped — only documentation changed.
+
+$ grep -n 'chưa ai chốt ai bấm' docs/product.md            → rỗng  (bốn ô đã điền)
+$ grep -n 'lùi\*\* lại | \*\*Chưa làm\*\*' docs/product.md  → 1313  (dòng lùi có thật)
+$ ./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/^$/p'      → chỉ còn U-022
+$ grep -nE 'ORDER_[A-Z]+|status *=' docs/product.md        → rỗng
+```
+
+### BA-07 — Vòng đời đơn, phiên bàn và công việc trạm
+
+**Prompt:** `prompt/BA/06-lifecycles-L2.md` (L2) · **Cần xong trước:** BA-03
+
+**Goal:**
+`docs/product.md` §5 định nghĩa ba vòng đời nghiệp vụ — đơn, phiên bàn, công việc trạm — với các
+trạng thái, chuyển tiếp hợp lệ, ai kích hoạt mỗi chuyển tiếp, và trạng thái kết thúc.
+
+**Scope:** `docs/product.md` §5 · §3.1–§3.3 **chỉ khi** phải đổi tên trạng thái cho khớp §5 (đổi
+tên, không đổi nghĩa) · `quality/invariants.md` (chỉ **thêm**) · `work/backlog.md`.
+
+**Out of scope:** §1, §2, §4, §6–§8 của `docs/product.md` · nội dung nghiệp vụ của §3 ·
+`docs/decisions.md` · `docs/architecture.md`.
+
+**Acceptance:**
+1. §5 có ba bảng chuyển trạng thái; mỗi dòng gồm trạng thái nguồn · sự kiện · trạng thái đích ·
+   ai kích hoạt.
+2. Mỗi vòng đời nêu trạng thái bắt đầu và các trạng thái kết thúc.
+3. Có câu khẳng định chuyển tiếp không nằm trong bảng thì bị từ chối.
+4. Nêu quan hệ giữa ba vòng đời: phiên bàn chỉ vào `Chờ thanh toán` khi các đơn của nó ở trạng
+   thái nào; đơn chỉ `Hoàn thành` khi công việc trạm ở trạng thái nào.
+5. Mọi tên trạng thái xuất hiện ở §3.1–§3.3 đều có trong §5, không còn tên lạc.
+6. Có điều kiện chuyển `Bàn cần dọn → Trống` và ai xác nhận đã dọn (trạm `don_ban`).
+7. Bảng phiên bàn có đường quay lại từ `Chờ thanh toán` khi khách gọi thêm, kèm câu khẳng định
+   `Chờ thanh toán` vẫn là phiên **chưa thanh toán**.
+8. §5 nói vòng đời "công việc trạm" áp cho **một việc ở một trạm**, và một đơn có nhiều việc chạy
+   song song ở các trạm khác nhau.
+9. `quality/invariants.md` có hai invariant: chuyển trạng thái không hợp lệ bị từ chối · phiên bàn
+   không thể `Đã đóng` khi còn đơn chưa hoàn thành hoặc chưa huỷ.
+10. Không có tên trạng thái viết kiểu mã (`ORDER_PENDING`, `status=2`).
+
+**Câu hỏi §10 gắn vào task này:**
+- Câu 1 — ai xác nhận / huỷ / sửa đơn. Hai phần **đã chốt**: xác nhận → `shop-facts.md` §6.2
+  (đơn khách tự gửi phải qua quầy; `staff_pos` và `phone_preorder` thì không); huỷ → §6.13
+  (**chỉ người đứng quầy**, quyền gắn với chỗ đứng chứ không gắn chức vụ, chốt 2026-08-30).
+  **Phần "sửa đơn" chưa ai nói** — đó là chỗ còn mở của câu này.
+- Câu 2 — đơn đã xác nhận được sửa hay chỉ huỷ rồi tạo lại: **còn mở**, cùng gốc với phần trên.
+  Hỏi người; chưa có lời giải thì GIẢ ĐỊNH + rủi ro, chuyển BA-10.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+sed -n '/^## 5\./,/^## 6\./p' docs/product.md | grep -c '^|'    # ba bảng chuyển trạng thái
+grep -nE 'ORDER_[A-Z]+|status *=' docs/product.md               # rỗng
+git status --porcelain
+```
+
+**Kết quả — chốt 2026-09-01.** `docs/product.md` §5 có ba bảng chuyển trạng thái (§5.2 đơn · §5.3
+phiên bàn và cái bàn của nó · §5.4 công việc trạm), mỗi dòng đủ bốn cột *nguồn · sự kiện · đích ·
+ai kích hoạt*.
+
+**Ba chỗ §5 KHÁC kế hoạch gốc §7, cả ba đều có lý do ghi rõ:**
+
+1. **Thêm `Đang giao` vào vòng đời đơn.** Kế hoạch gốc không có nó; chủ quán chốt 2026-08-30 rằng
+   quán **tự đi giao** và đơn giao mang trạng thái ấy để quầy biết *ai đang cầm tiền chưa về*
+   (`shop-facts.md` §6.7), và §3.2.2 đã dùng tên này từ BA-04.
+2. **Vòng đời công việc trạm giữ BA trạng thái nhưng đổi cái GIỮA:** `Đang làm` →
+   **`Đã làm xong, còn ở bếp`**. Quán **không ghi được** *Đang làm* — chủ quán đã bỏ mọi nút bấm ở
+   trạm bếp (2026-08-31, đóng U-009), nên không ai nói cho máy biết lúc bếp *bắt đầu*. Đổi lại,
+   S-4 (2026-09-01) chốt là bánh gấp xong **có nằm chờ** trước khi ra bàn, và bảng quầy có **bốn**
+   con số vì thế. ⇒ §5 giữ thứ quán **đếm được** thay cho thứ kế hoạch gốc **đoán**. Đây là một
+   quyết định thiết kế nghiệp vụ ⇒ **BA-10 gom thành ADR** (`docs/decisions.md` ngoài scope BA-07).
+3. **Sáu trạng thái của "phiên bàn" tách làm HAI chủ thể:** bốn cái đầu là của **phiên**, hai cái
+   cuối (`Bàn cần dọn`, `Trống`) là của **cái bàn**. Nhóm ghép bàn là chỗ nó lộ ra: một phiên đóng,
+   nhưng từng bàn dọn riêng (§3.1.7) — một chuỗi sáu bước một chủ thể không tả được ca đó. Không
+   trạng thái nào bị bỏ.
+
+**Đổi tên ở §3 (đổi tên, KHÔNG đổi nghĩa) — 12 chỗ:** *chờ duyệt* → **Chờ xác nhận**, *đã duyệt* →
+**Đã xác nhận** (§3.1.1 bước 4–6, §3.1.2, §3.1.3, §3.2.1 bước 5–8, §3.2.3); *trạng thái đang mở* →
+**Mở** (§3.1.1 bước 1); §3.3.6 liệt kê trạng thái bằng đúng tên §5. Động từ **duyệt** giữ nguyên.
+`§5.1` ghi luật đọc: §5 viết hoa chữ đầu, §3–§4 viết thường trong văn xuôi — cùng một trạng thái;
+và *"phiên chưa đóng"* là cách gọi gộp ba trạng thái, không phải trạng thái thứ tư.
+
+**Bốn câu mở ra, và cả bốn cùng một họ.** §5 là mục đầu tiên đòi **mỗi** chuyển tiếp phải gọi tên
+được người kích hoạt nó, nên bốn chỗ chưa ai bấm lộ ra cùng lúc: **U-021** (ai bấm *đã bưng ra
+bàn* — chặn mốc kết thúc của cả vòng đời việc trạm lẫn vòng đời đơn, và chặn BA-12) · **U-022**
+(sửa đơn đã xác nhận, và huỷ được tới trạng thái nào — chính là câu 1 phần còn mở + câu 2 của bảng
+§10, chuyển BA-08) · **U-023** (ai bấm cho đơn sang `Đang giao`) · **U-024** (bấm nhầm một mẻ thì
+có đường lùi không). Cả bốn hỏi **chủ quán**, hỏi được trong **một** lần nói chuyện.
+
+**Hai invariant:** **I-016** (chuyển tiếp ngoài bảng bị từ chối — và nó bảo vệ *"chỉ đi theo
+bảng"*, không bảo vệ một danh sách cố định, nên U-022/U-024 có lời giải thì §5 thêm dòng mà
+invariant vẫn đúng nguyên văn) · **I-017** (phiên không `Đã đóng` khi còn đơn chưa `Hoàn thành` và
+chưa `Huỷ` — **món** chưa xong thì chặn, **tiền** chưa thu thì không, hai luật ngược chiều).
+
+**Sự cố trong lúc chạy — F-014 lần thứ TƯ.** Giữa lúc BA-07 đang viết §5, một phiên song song chạy
+T-038 `git add work/backlog.md` và commit cả file trong `30abf8f`, **nuốt luôn dòng *In Progress*
+của BA-07**. Subject của commit ấy — `BA-06: docs/product.md §4 …` — còn **trùng chữ** với
+`3f579f9`, nên lịch sử có hai commit cùng tên BA-06 và cái thứ hai chứa việc của ba task. Đã ghi
+thành lần thứ tư ở `work/findings.md` F-014 (`work/scope.txt` được nới thêm `work/findings.md`
+giữa task, có ghi lý do, đúng CLAUDE.md §3.4). Phần §5, bốn unknown và hai invariant **không** bị
+chạm — chỉ dòng backlog bị nuốt. `ADR-008` đóng đường viết lại lịch sử; đây là bản sửa tiến.
+
+**Verify — output thật:**
+```text
+$ ./scripts/gate.sh
+check-scope: OK — all tracked changes within declared scope.
+check-links: OK — mọi đường dẫn trong tài liệu chỉ đường đều mở được.
+verify: skipped — only documentation changed.
+
+$ sed -n '/^## 5\./,/^## 6\./p' docs/product.md | grep -c '^|'      → 29   (ba bảng)
+$ grep -nE 'ORDER_[A-Z]+|status *=' docs/product.md                  → rỗng (exit 1)
+$ ./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/LATEST/p'            → U-021 · U-022 · U-023 · U-024
+```
+Gate 5 (L2, tự tay dò): lấy **15** tên trạng thái xuất hiện ở §3.1–§3.3 và tìm từng cái trong §5 —
+đủ 15/15, và `grep "chờ duyệt\|đã duyệt"` trong §3 nay **rỗng**, không còn tên lạc.
 
 ### T-038 — U-019 và U-020 có lời giải, và một trong hai LẬT NGƯỢC giả định BA-06 vừa viết
 

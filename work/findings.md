@@ -986,6 +986,25 @@ phải chọn:
   khi người ta gõ `git add` rồi `git commit` thẳng trong terminal, giống hệt khoảng trống mà
   **F-011** mô tả và Gate 8 chỉ bịt được một nửa (Gate 8 chấm *subject*, không chấm *nội dung*).
 
+**Lần thứ tư, vẫn cùng ngày: `30abf8f` nuốt dòng *In Progress* của BA-07 (2026-09-01).** Cùng cơ
+chế với lần thứ ba, nên mục này chỉ ghi phần **mới**:
+
+- Phiên BA-07 khai scope, chuyển dòng task của mình từ *Ready* xuống *In Progress* trong
+  `work/backlog.md`, rồi bắt đầu viết §5. Một phiên song song (T-038) `git add work/backlog.md` và
+  commit — **cả file**, gồm cả dòng vừa xuất hiện của BA-07.
+- Commit ấy là `30abf8f`, subject **`BA-06: docs/product.md §4 chốt quy tắc giá và thanh toán`** —
+  một subject **trùng chữ** với `3f579f9` đã có trước đó. Nên lịch sử nay có **hai** commit tên
+  BA-06, và cái thứ hai chứa việc của **ba** task: phần còn lại của BA-06, phần backlog của T-038,
+  và một dòng của BA-07.
+- Cái khác so với lần thứ ba, và là lý do lần này vẫn đáng ghi: lần thứ ba nuốt **nội dung đang
+  viết dở**; lần này nuốt **trạng thái của một task đang chạy**. Hậu quả nhẹ hơn — dòng vẫn đúng,
+  vẫn nằm đúng chỗ — nhưng nó phá đúng thứ `work/backlog.md` dùng để trả lời câu *"ai đang làm
+  gì"*: `git log` nói dòng ấy do phiên BA-06 tạo ra, trong khi phiên tạo ra nó là BA-07.
+- ⇒ **Bốn lần trong hai ngày, ba lần trong một ngày.** Đường ra thứ nhất ở trên — *phiên thứ hai
+  làm trong `git worktree` riêng* — nay không còn là một trong hai lựa chọn ngang nhau nữa: đường
+  thứ hai (đọc `git diff --cached` trước khi commit) đã được viết ra sau lần thứ ba và **vẫn không
+  chặn được lần thứ tư**, vì nó dựa vào việc người commit nhớ làm.
+
 **Related task:**
 T-035 (sửa `brief.sh`) · T-036 (phát hiện, ghi finding) · BA-04 (phiên gây ra sự cố lần 1, entry có
 mục *Sự cố trong lúc chạy*) · **BA-06 (phiên bị nuốt ở lần 3, entry có mục *Sự cố trong lúc

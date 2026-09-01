@@ -457,6 +457,26 @@ cả bàn: **một lần bấm ứng với một mẻ bếp vừa làm xong**.
 - *Cách đọc, không phải lời chủ quán nói thẳng:* gạch đầu dòng thứ ba ở trên là hệ quả của việc
   ghép lời chốt này với §5.3. Chủ quán chỉ nói **theo mẻ**.
 
+**Con số thứ ba cũng do POS bấm, và đường lùi thì CÓ** (chủ quán chốt 2026-09-01, trả lời U-021 và
+U-024). Hai câu này khép nốt bảng bốn con số:
+
+- **"Đã bưng ra bàn" — người bấm là POS**, đúng chỗ đứng đã bấm *"đã làm xong"*. Lần hỏi
+  2026-08-31 gộp câu này vào U-009 và nhận lại *"bỏ qua bước này, POS sẽ tự cập nhật"*, tức chưa
+  trả lời **ai**; lần hỏi 2026-09-01 trả lời thẳng: **pos**. ⇒ **Cả hai mốc của một suất — làm
+  xong, và ra tới bàn — đều do người đứng quầy bấm.** Ba trạm bếp vẫn không bấm gì; U-009 nguyên
+  vẹn, vì nó là luật về **bếp**, không phải luật về quầy.
+- **Bấm nhầm thì LÙI ĐƯỢC, và không có mốc thời gian cứng** — lời chủ quán: *"có đường lui. thời
+  gian tuỳ theo thực tế để pos quyết định"*. Không có "trong vòng N phút": người đứng quầy nhìn
+  tình huống thật rồi quyết, đúng cùng một kiểu với quyền hoàn tiền ở §6.4.
+- ⇒ *Cách đọc, không phải lời chủ quán nói thẳng:* **vì không có luật cứng nên mỗi lần lùi phải để
+  lại vết** — lùi mẻ nào, lúc mấy giờ, ai bấm. Đây không phải luật mới mà là §6.4 áp cho cùng một
+  hình dạng: chỗ nào người quyết từng ca thay cho luật cứng, chỗ đó phải truy ngược được (§6.10,
+  lệch 1 đồng cũng phải tìm ra lý do).
+- ⇒ *Phép đếm của người viết tài liệu, không phải lời chủ quán:* *"đã bưng ra bàn"* là thao tác
+  **thứ bảy** người đứng quầy gánh, sau *"đã làm xong"* là thứ sáu. Con số bảy không phải một
+  ranh giới; nó ghi ở đây vì nó là rủi ro vận hành thật — quầy là đôi tay bận nhất quán, và nay
+  quầy bấm **cả hai** mốc của mỗi suất.
+
 **Người đứng quầy phải nhìn được những thứ dưới đây cùng một lúc** — chủ quán liệt kê ngày
 2026-08-31; **đếm được sáu, tính tới ngày đó**. Sáu là phép đếm của người viết tài liệu, không
 phải một ranh giới chủ quán chốt (khác hẳn "đúng năm kênh" ở §2, thứ *là* quyết định). Thấy thứ
@@ -510,7 +530,7 @@ tự xếp nồi, **không** tự quyết thứ tự làm và **không** đề x
 gom, gom mấy quả, làm trước làm sau là quyết định của người ở bếp và ở quầy. Đây là một **ranh
 giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ là đổi phạm vi, phải xin phép chủ quán.
 
-## 6. Mười tám quy tắc nghiệp vụ phải đúng
+## 6. Mười chín quy tắc nghiệp vụ phải đúng
 
 1. **Khách gọi thêm khi quầy đã bắt đầu thu tiền vẫn thuộc CÙNG phiên, CÙNG một hoá đơn.** Phiên
    ở trạng thái "chờ thanh toán" **chưa** giải phóng bàn. Tách ra hoá đơn thứ hai ⇒ **thu thiếu
@@ -575,6 +595,11 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
    riêng đơn tại bàn; đơn mang đi thì gói riêng. Bỏ sót là khách nhận bánh không có nước chấm.
 7. **Quán tự đi giao, và đơn giao tận nơi mang trạng thái "đang giao".** Quầy phải nhìn được đơn
    nào còn trên đường và ai đang cầm tiền chưa về. Giao xong bấm **đã giao + đã thu tiền** cùng lúc.
+   - **POS bấm mốc VÀO trạng thái ấy** (chủ quán chốt 2026-09-01, trả lời U-023). Trước đó mới chốt
+     mốc **ra** — người đi giao bấm *đã giao + đã thu tiền*; mốc **vào** thì chưa ai nói. Nay đủ hai
+     đầu: **quầy bấm lúc đơn rời quán**, người đi giao bấm lúc giao xong. ⇒ Cùng một lý do với
+     §6.13: quầy là chỗ nhìn thấy **ai đang cầm tiền chưa về**, nên quầy phải là chỗ đánh dấu lúc
+     tiền rời quán.
 8. **Nút "Tạm dừng nhận đơn" của chủ quán có ưu tiên CAO HƠN giờ mở cửa** — dùng khi hết nguyên
    liệu giữa buổi. Ngoài giờ bán, web khoá nút đặt và hiện *"Quán mở cửa 6h–11h sáng"*.
 9. **Một khoản tiền gắn với đúng MỘT đơn vị tính tiền** — hoặc một phiên bàn, hoặc một đơn lẻ,
@@ -749,14 +774,35 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       một phương thức. Tài liệu nào đọc chữ *hoặc* ấy thành luật loại trừ là **sai** — đó đúng là
       chỗ `docs/product.md` §4.6 viết sai trong ngày 2026-09-01 trước khi có lời chốt này.
 
+19. **Đơn đã xác nhận thì SỬA được, và sửa trên POS** (chủ quán chốt 2026-09-01, trả lời một nửa
+    U-022). Câu hỏi là *"khách đổi ý thì quán sửa đơn ấy, hay huỷ rồi tạo lại"*; chủ quán trả lời
+    **"pos sửa đơn"**. Vậy đường chính thức là **sửa**, không phải huỷ-rồi-tạo-lại, và nó đi qua
+    đúng cái cửa mọi việc chạm tiền đã đi qua: **máy POS ở quầy** (§6.13).
+    - **Sửa là đổi NỘI DUNG đơn, không phải đẩy đơn sang một trạng thái khác.** Đơn đang ở đâu thì
+      vẫn ở đó; cái đổi là món, số suất hoặc tuỳ chọn (`docs/product.md` §5.2).
+    - **Nửa câu hỏi này CHƯA được trả lời, và nó nằm lại ở U-022:** sửa được **từ trạng thái nào**
+      (đơn bếp đang làm dở? đơn đã xong?), và **huỷ** còn được phép tới trạng thái nào. Chủ quán mới
+      nói **ai sửa** và **sửa được**, chưa nói **tới đâu thì thôi**. Đừng đọc câu chốt này rộng hơn
+      chữ của nó (`work/findings.md` F-004).
+    - ⇒ *Cách đọc, không phải lời chủ quán nói thẳng:* sửa một đơn **đã nổ việc xuống bếp** thì việc
+      ở các trạm phải nổ lại theo nội dung mới (§5.3), và một suất bếp đã làm ra theo nội dung cũ
+      không tự biến mất. Đây là lý do vế *"sửa được tới trạng thái nào"* không phải chuyện nhỏ —
+      nó là ranh giới giữa *sửa* và *làm lại*.
+    - ⇒ *Cách đọc, không phải lời chủ quán nói thẳng:* sửa đơn **chạm tiền**, nên nó thuộc luật
+      §6.10 và phải để lại vết như mọi thao tác chạm tiền khác. Và nó đụng mốc khoá giá ở §6.17
+      (*giá khoá theo từng lượt gọi*): một dòng vừa sửa tính giá **lúc nào** thì chưa ai chốt —
+      cùng gốc với vế còn mở của U-022.
+
 
 ## 7. Nhật ký chốt
 
-**Tính tới 2026-09-01 không còn chỗ suy ra nào chưa xác nhận — §7.2 rỗng.** Bảng giá đã đầy, cả
+**Tính tới 2026-09-01 §7.2 giữ đúng MỘT chỗ suy ra chưa xác nhận — S-5.** Bảng giá đã đầy, cả
 năm kênh đều có luồng, ba mục suy luận S-1–S-3 đã được chủ quán trả lời thẳng ngày 2026-08-30
 (§7.1, ba dòng đánh dấu *xác nhận S-*), và **S-4** — chỗ suy ra sinh ngày 2026-08-31 từ lời chủ
-quán về cách bếp gom việc (§5.4) — đã được trả lời ngày **2026-09-01**. Mục này giữ lại **ai chốt cái gì, ngày nào**, để phiên sau
-muốn lật lại một quyết định thì biết đang lật lại điều gì.
+quán về cách bếp gom việc (§5.4) — đã được trả lời ngày **2026-09-01**. Cùng ngày, lời chốt cho
+U-021 đẻ ra **S-5** (bấm *"đã bưng ra bàn"* theo đơn vị nào), nên mục §7.2 lại có một dòng. Mục này
+giữ lại **ai chốt cái gì, ngày nào**, để phiên sau muốn lật lại một quyết định thì biết đang lật
+lại điều gì.
 
 ### 7.1 Chủ quán đã chốt những gì
 
@@ -803,15 +849,19 @@ muốn lật lại một quyết định thì biết đang lật lại điều g
 | 2026-09-01 | *(trả lời S-4, vế 2)* **Người đứng quầy bấm** nút "đã làm xong" trên POS — ba trạm bếp vẫn không bấm gì (U-009 nguyên vẹn) | §5.4 |
 | 2026-09-01 | **Bấm "đã làm xong" theo MẺ** — không theo từng cái, không theo cả bàn (trả lời U-017) | §5.4 |
 | 2026-09-01 | **Máy chỉ NHẮC một câu, không chặn**, khi chủ quán sửa thành phần suất giữa giờ bán ⇒ luật "chờ hết buổi" là luật cho **người** (trả lời U-018) | §6.17 |
+| 2026-09-01 | **POS bấm cả con số "đã bưng ra bàn"** — cùng chỗ đứng đã bấm *"đã làm xong"*; ba trạm bếp vẫn không bấm gì (trả lời U-021) | §5.4 |
+| 2026-09-01 | **Bấm nhầm một mẻ thì LÙI ĐƯỢC**, và **không có mốc thời gian cứng** — người đứng quầy quyết từng ca (trả lời U-024) | §5.4 |
+| 2026-09-01 | **Đơn đã xác nhận thì SỬA được, sửa trên POS** — không phải huỷ rồi tạo lại; vế *sửa/huỷ được tới trạng thái nào* **chưa** trả lời (trả lời một nửa U-022) | §6.19 |
+| 2026-09-01 | **POS bấm mốc đơn giao tận nơi VÀO trạng thái "đang giao"** — mốc ra vẫn do người đi giao bấm (trả lời U-023) | §6.7 |
 | 2026-09-01 | **Đối soát cuối ngày có NGUỒN THỨ BA: tin nhắn báo có** — phần khách chuyển khoản đối chiếu bằng tin nhắn, vì két chỉ giữ tiền mặt (trả lời U-019) | §6.10 |
 | 2026-09-01 | **Hoàn tiền tính vào doanh thu NGÀY HOÀN**, không phải ngày bán gốc — ngược chiều với luật nợ ở §6.14 (trả lời U-019) | §6.4 |
 | 2026-09-01 | **Một lần thu chia được nhiều phương thức**; POS ghi **bao nhiêu tiền mặt, bao nhiêu chuyển khoản** (trả lời U-020) | §6.18 |
 
-### 7.2 Chỗ suy ra chưa xác nhận — **rỗng, tính tới 2026-09-01**
+### 7.2 Chỗ suy ra chưa xác nhận — **một mục, tính tới 2026-09-01**
 
-Mục này giữ những chỗ được **suy ra** từ luật đã chốt chứ không phải lời chủ quán nói thẳng. Tính
-tới **2026-09-01** nó **rỗng**: cả bốn mục từng nằm đây đều đã được chủ quán xác nhận và đã lên
-§7.1.
+Mục này giữ những chỗ được **suy ra** từ luật đã chốt chứ không phải lời chủ quán nói thẳng. Bốn
+mục S-1–S-4 từng nằm đây đều đã được chủ quán xác nhận và đã lên §7.1; **S-5 mở ngày 2026-09-01**
+(T-039) và là mục duy nhất còn chưa xác nhận.
 
 | Chỗ suy ra | Hỏi ngày | Lời giải | Nay ở |
 |---|---|---|---|
@@ -819,10 +869,11 @@ tới **2026-09-01** nó **rỗng**: cả bốn mục từng nằm đây đều 
 | **S-2** — hai trường liên hệ bắt buộc | 2026-08-30 | **đúng**, số điện thoại và địa chỉ giao | §6.5 |
 | **S-3** — hoàn tiền phải ghi vết, ai ghi | 2026-08-30 | **người đứng quầy** vừa quyết vừa ghi | §6.4 |
 | **S-4** — *"đã làm xong, còn ở bếp"* có phải một con số riêng | 2026-08-31 (hỏng) → **2026-09-01** | **có** — bánh nằm chờ thật; bảng quầy **bốn** con số, **người đứng quầy bấm** | §5.4 |
+| **S-5** — *"đã bưng ra bàn"* bấm theo **đơn vị nào** | **2026-09-01**, chưa hỏi | *suy ra:* theo **bàn**, không theo mẻ — một mẻ phục vụ nhiều bàn (§5.4), còn bưng thì bưng tới **một** bàn. Chủ quán mới chỉ nói **ai** bấm, chưa nói **theo gì** | §5.4 · **BA-12** cần trước khi dựng bảng quầy |
 
 Mục này **không xoá** kể cả khi rỗng: chỗ suy ra tiếp theo phải nằm ở đây, tách khỏi §7.1
-(`work/findings.md` F-004). Thấy dòng nào trong repo còn nói *"§7.2 giữ S-4"* hoặc *"còn một chỗ
-suy ra chưa ai xác nhận"* ⇒ đó là pointer cũ, sửa đi.
+(`work/findings.md` F-004). Thấy dòng nào trong repo còn nói *"§7.2 rỗng"* ⇒ đó là pointer cũ, sửa
+đi — nó đúng trong khoảng từ lúc S-4 có lời giải tới lúc S-5 mở ra, cùng ngày **2026-09-01**.
 
 **S-4 phải hỏi hai lần, và lần đầu hỏng — bài học ở lại đây kể cả khi câu hỏi đã đóng.** Ngày
 2026-08-31 câu hỏi là: *"Bếp đã tráng xong 6 cái bánh của bàn 5 nhưng mới bưng ra 3 cái. Bảng ở

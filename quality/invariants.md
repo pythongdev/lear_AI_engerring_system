@@ -489,3 +489,87 @@ không ghi nợ. Kịch bản âm: thu nhiều hơn tổng hoá đơn ⇒ **bị
 chỉ một phương thức vẫn hợp lệ — đây là ca thường, không phải ngoại lệ.
 
 *Phát hiện ở T-038, 2026-09-01.*
+
+### I-016 — Chuyển trạng thái không có trong bảng §5 bị TỪ CHỐI, không bao giờ được làm ngầm
+
+**Invariant:**
+Ba vòng đời của `docs/product.md` §5 — **đơn** (§5.2), **phiên bàn và cái bàn của nó** (§5.3),
+**công việc trạm** (§5.4) — mỗi cái có một bảng chuyển tiếp đóng. Một chuyển tiếp **không có dòng**
+trong bảng của nó là **không hợp lệ** và bị **từ chối**; nó không được thực hiện im lặng, không
+được "tự sửa thành hợp lệ", và không có đường tắt nào bỏ qua một trạng thái ở giữa. Ba ca đã biết
+trước mà sản phẩm phải từ chối, kèm lý do vì sao chúng nghe có lý (§5.6): phiên `Đã đóng` **không**
+quay lại `Đang phục vụ` · đơn `Hoàn thành` **không** sang `Huỷ`.
+
+**Danh sách ấy ngắn đi một dòng ngày 2026-09-01 (T-039), và đó là bằng chứng invariant này đang làm
+đúng việc.** Việc trạm `Đã làm xong, còn ở bếp` → `Chưa làm` từng nằm trong danh sách bị từ chối;
+chủ quán chốt là **có** đường lùi (trả lời U-024), nên §5.4 có thêm một dòng và ca ấy nay **hợp
+lệ**. Invariant không phải sửa một chữ: nó bảo vệ *"chỉ đi theo bảng"*, không bảo vệ một danh sách
+cố định.
+
+**Why:**
+Vòng đời là chỗ **cả ba lát cắt của §3 gặp nhau**, nên một chuyển tiếp lạ không hỏng ở chỗ nó xảy
+ra mà hỏng ở chỗ khác, muộn hơn: mở lại một phiên `Đã đóng` là mở lại một hoá đơn **đã thu tiền**
+(§3.3.3, §4.4 — thứ I-009 khoá); đẩy một đơn thẳng từ `Chờ xác nhận` sang `Đang thực hiện` là cho
+việc xuống bếp mà **không ai duyệt** (`master_plan/shop-facts.md` §6.2 — thứ I-004 khoá). Từ chối
+sớm và nói ra là cách duy nhất giữ được luật *"mọi thao tác chạm tiền hoặc trạng thái đơn phải kiểm
+chứng lại được"* (kế hoạch gốc §5 quy tắc 12, I-012).
+
+**Một trong hai ca còn lại bị từ chối vì CHƯA AI CHỐT, không phải vì đã chốt là cấm:**
+`Hoàn thành → Huỷ` chờ **U-022** — mà U-022 nay đã có **một nửa** lời giải (đơn đã xác nhận thì
+sửa được, trên POS, `master_plan/shop-facts.md` §6.19), chỉ còn nửa *"tới trạng thái nào"*. Chủ
+quán trả lời nốt thì bảng §5.2 có thêm dòng và invariant này vẫn đúng nguyên văn.
+
+**Sửa đơn không phải chuyển tiếp, nên nó không nằm dưới invariant này.** Sửa đổi **nội dung** một
+đơn, không đẩy đơn sang trạng thái khác (`docs/product.md` §5.2) — từ chối nó nhân danh *"không có
+dòng nào trong bảng"* là đọc sai invariant.
+
+**Verification:**
+Kịch bản âm: đóng một phiên rồi cố đưa nó về `Đang phục vụ` ⇒ **bị từ chối**, và khách quay lại gọi
+tiếp thì mở **phiên mới** · huỷ một đơn đã `Hoàn thành` ⇒ **bị từ chối**. Kịch bản **dương** đi kèm,
+vì nó là ca vừa đổi phía: đưa một việc từ `Đã làm xong, còn ở bếp` về `Chưa làm` ⇒ **được**, và
+lần lùi ấy **để lại vết** (mẻ nào, mấy giờ, ai bấm — I-012); không có mốc thời gian nào chặn nó
+(`shop-facts.md` §5.4). Kịch bản bỏ bước:
+đơn ở `Chờ xác nhận` sinh việc xuống bếp mà không qua `Đã xác nhận` ⇒ **không việc nào được sinh**
+(I-004). Kịch bản phủ: dựng lại đúng danh sách dòng của ba bảng §5 rồi thử **mọi** cặp (nguồn,
+đích) còn lại ⇒ tất cả bị từ chối; danh sách bị từ chối phải **thay đổi** khi §5 thêm một dòng —
+nếu không, bảng và sản phẩm đã rời nhau.
+
+*Phát hiện ở BA-07, 2026-09-01. Đọc lại ở T-039 cùng ngày — đường lùi của việc trạm chuyển từ
+ca bị từ chối sang dòng hợp lệ (U-024).*
+
+### I-017 — Phiên bàn không thể `Đã đóng` khi còn đơn chưa `Hoàn thành` và chưa `Huỷ`
+
+**Invariant:**
+Một phiên bàn chỉ chuyển sang `Đã đóng` khi **mọi** đơn thuộc phiên đó ở `Hoàn thành` **hoặc**
+`Huỷ`. Còn một đơn ở `Mới`, `Chờ xác nhận`, `Đã xác nhận` hay `Đang thực hiện` thì thao tác đóng
+phiên **bị từ chối**. Với **nhóm ghép bàn**, "mọi đơn thuộc phiên" phủ đơn của **tất cả** các bàn
+trong nhóm (`docs/product.md` §3.1.7, `master_plan/shop-facts.md` §6.16), vì nhóm ghép vẫn là
+**một** phiên (I-002).
+
+**Điều kiện này nói về MÓN, không nói về TIỀN.** Phiên **vẫn** đóng được khi khách chưa trả đồng
+nào: quán **cho nợ**, và lúc đóng POS bắt buộc ghi **ai nợ** và **nợ bao nhiêu** (I-005,
+`shop-facts.md` §6.14). Hai luật ngược chiều nhau và **không được nhớ nhầm thành một**: món chưa
+xong thì **chặn** đóng phiên; tiền chưa thu thì **không** chặn.
+
+**Why:**
+Đóng phiên là mốc **cuối cùng** phiên còn nhận được lượt gọi và còn tính thêm được tiền (§5.3): từ
+đó bàn đi tiếp sang `Bàn cần dọn` rồi `Trống`, và mọi việc bếp còn treo của phiên ấy mất chỗ đứng.
+Đóng khi còn một đơn `Đang thực hiện` hỏng theo hai chiều cùng lúc — bếp vẫn làm ra một suất **không
+còn hoá đơn nào để về**, và khách đã trả tiền cho một món **không bao giờ được bưng ra**. Cả hai đều
+im lặng: không thao tác nào sai, chỉ có đối soát cuối ngày thấy lệch mà không truy được lý do
+(`shop-facts.md` §6.10, ngưỡng **0đ**).
+
+Chiều ngược lại phải chặn cùng lúc, nếu không luật này đẻ ra một cái bẫy: **không** được lấy nó làm
+cớ giữ phiên mở để chờ tiền. Không cho nợ thì một bàn quỵt tiền **khoá luôn cái bàn đó** cả buổi
+(§3.1.6) — đúng thứ chủ quán chốt 2026-08-31 là phải tránh.
+
+**Verification:**
+Kịch bản âm: bàn 5 có hai đơn, một `Hoàn thành` và một `Đang thực hiện` ⇒ bấm đóng phiên **bị từ
+chối**; huỷ hoặc hoàn thành nốt đơn thứ hai ⇒ đóng được. Kịch bản nợ: mọi đơn đã `Hoàn thành`, khách
+không trả được ⇒ phiên **đóng được**, và POS **bắt buộc** ghi ai nợ và bao nhiêu (I-005); bỏ trống
+một trong hai ⇒ thao tác bị từ chối. Kịch bản ghép bàn: nhóm bàn 4 + bàn 5, bàn 4 xong hết, bàn 5
+còn một đơn `Đang thực hiện` ⇒ **không** đóng được phiên, và bàn 4 **không** về `Trống` sớm hơn
+(I-003). Kịch bản gọi thêm: phiên ở `Chờ thanh toán` nhận một lượt gọi mới ⇒ phiên quay lại
+`Đang phục vụ` và **không** đóng được cho tới khi lượt gọi ấy xong (`shop-facts.md` §6.1, I-001).
+
+*Phát hiện ở BA-07, 2026-09-01.*

@@ -35,7 +35,9 @@ ba dòng *xác nhận S-*). S-1 — chỗ chạm tiền — trả lời là **×
 suất trứng nhân thường = **25.000**. Viết theo ×5 và **không** còn phải đánh dấu là suy luận.
 Prompt nào còn bảo "ghi S-1 là giả định" là pointer cũ.
 
-✅ **S-4 đã có lời giải ngày 2026-09-01, `shop-facts.md` §7.2 rỗng trở lại.** Câu hỏi
+✅ **S-4 đã có lời giải ngày 2026-09-01.** *(§7.2 rỗng trở lại trong ngày, rồi có lại **một** dòng
+— **S-5**, cùng ngày, T-039: bấm "đã bưng ra bàn" theo **đơn vị nào**. Prompt nào còn nói "§7.2
+rỗng" là pointer cũ.)* Câu hỏi
 (*"đã làm xong, còn ở bếp" có phải một con số riêng không*) được trả lời là **có**: bánh gấp xong
 nằm chờ thật, và **người đứng quầy bấm** nút "đã làm xong" — ba trạm bếp vẫn không bấm gì
 (§5.4, §7.1). Prompt nào còn bảo "ghi S-4 là suy luận" là **pointer cũ**.

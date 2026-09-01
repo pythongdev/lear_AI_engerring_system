@@ -497,7 +497,8 @@ sáu quả trứng, không phải sáu dòng. Mẻ trả kết quả **về lạ
 
 *Cập nhật 2026-09-01 (T-036): **S-4 đã có lời giải và câu trên hết là suy luận.** Chủ quán xác
 nhận bánh gấp xong **có nằm chờ**, nên "đã làm xong" là một con số thật, và **người đứng quầy bấm**
-nó (`master_plan/shop-facts.md` §5.4, §7.1; §7.2 rỗng trở lại). Từ nay được ghi như lời chủ quán,
+nó (`master_plan/shop-facts.md` §5.4, §7.1; §7.2 rỗng trở lại — **tới 2026-09-01, khi T-039 mở
+**S-5** ở đúng chỗ ấy**). Từ nay được ghi như lời chủ quán,
 kèm ngày. Chỗ **chưa** chốt đã dời sang một câu hẹp hơn — bấm theo từng cái hay cả mẻ,
 `docs/product.md` → Unknowns **U-017** — và chính nó là thứ phải nêu đích danh khi viết §3.4.*
 *Cập nhật 2026-09-01 (T-037): **U-017 cũng đã đóng — bấm theo MẺ** (`shop-facts.md` §5.4). §3.4
