@@ -129,10 +129,18 @@ kèm rủi ro, đúng như dòng câu 8 ở bảng §10 dặn.
 Hệ quả cho task sau: **BA-07** phải đọc U-020 trước khi chốt vòng đời một lần thu tiền; **BA-08**
 phải đọc U-019 trước khi viết ca hoàn tiền; **BA-10** gom cả hai.
 
+**T-038 cùng ngày: chủ quán đóng CẢ HAI câu, và một lời chốt lật ngược BA-06.** Hai đoạn ngay trên
+là ảnh chụp lúc BA-06 chạy — đọc trạng thái hôm nay ở entry **T-038**. Ba lời chốt (2026-09-01):
+**đối soát có nguồn thứ ba là tin nhắn báo có** (`shop-facts.md` §6.10) · **hoàn tiền tính vào ngày
+HOÀN, không phải ngày bán gốc** (§6.4 — **ngược chiều** luật nợ ở §6.14, đừng gộp thành một) ·
+**một lần thu chia được hai phương thức, POS ghi từng phần** (**§6.18** mới). §4.6 và §4.10 đã viết
+lại, khối *GIẢ ĐỊNH* biến mất, **I-014** sửa và **I-015** thêm.
+⇒ Hệ quả đáng giữ nhất: **doanh thu một ngày đã đối soát không bao giờ đổi về sau.**
+⇒ **BA-07, BA-08 và BA-10 hết chờ hai câu này**; đọc lời giải ở §4.6, §4.8–§4.10, đừng mở lại.
+
 - [ ] T-035 Brief bảo phiên mới XOÁ scope trong khi chủ thật đang chạy song song (F-014)
 
-- [ ] BA-07 `docs/product.md` §5 — vòng đời đơn, phiên bàn, công việc trạm (BA-03 xong; **U-006, U-007 đã đóng 2026-08-31**)
-- [ ] BA-08 `docs/product.md` §6 — ngoại lệ · chỉ còn **cần BA-07** (BA-03–BA-06 xong; **U-007 đã đóng 2026-08-31**, **U-016 đã đóng 2026-09-01**; đọc **U-019** trước khi viết ca hoàn tiền)
+- [ ] BA-08 `docs/product.md` §6 — ngoại lệ · chỉ còn **cần BA-07** (BA-03–BA-06 xong; **U-007, U-016, U-019 đều đã đóng**; ca hoàn tiền chép lời giải ở `docs/product.md` §4.8 — hoàn tính **ngày hoàn** — đừng mở lại)
 - [ ] BA-09 `docs/product.md` §7 — phạm vi MVP · cần BA-01–BA-08 (**U-018 đã đóng 2026-09-01**: máy chỉ nhắc, không chặn ⇒ MVP không phải làm nút chặn)
 - [ ] BA-10 `docs/decisions.md` — quyết định và giả định · cần BA-01–BA-09
 - [ ] BA-11 `docs/product.md` §8 — ba scenario nghiệm thu BA · cần BA-03–BA-10
@@ -150,11 +158,14 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] BA-07 `docs/product.md` §5 — vòng đời đơn, phiên bàn, công việc trạm (bắt đầu 2026-09-01)
+
 
 
 <a id="done"></a>
 ## Done
 
+- [x] T-038 U-019 và U-020 đóng: đối chiếu bằng tin nhắn báo có, hoàn tiền tính NGÀY HOÀN, một lần thu chia được hai phương thức; §6.18, I-015 (2026-09-01)
 - [x] BA-06 `docs/product.md` §4 — quy tắc giá và thanh toán; I-012, I-013, I-014; mở U-019, U-020 (2026-09-01)
 - [x] T-037 U-017 và U-018 đóng: bấm theo MẺ, máy chỉ NHẮC; I-011 viết lại vì bản đầu sai (2026-09-01) — **chung một commit với T-036**
 - [x] T-036 S-4 có lời giải: bảng quầy BỐN con số, quầy bấm "đã làm xong"; mở U-017, ghi F-014 (2026-09-01) — **chung một commit với T-037**
@@ -252,15 +263,14 @@ Bốn câu **đã có lời giải trước khi chuỗi BA bắt đầu**; task 
 | 5 | Có hoàn tiền không, ai được | BA-06 | **đã chốt** → `shop-facts.md` §6.4 — quầy quyết từng ca, phải ghi vết; BA-06 chép vào `docs/product.md` §4.8 (2026-09-01) |
 | 6 | Pickup có cần giờ hẹn bắt buộc | BA-04 | **đã chốt** → `shop-facts.md` §6.5 — bắt buộc; BA-04 chép vào `docs/product.md` §3.2.4 (2026-08-31) |
 | 7 | Delivery có quản lý trạng thái giao | BA-04 | **đã chốt** → `shop-facts.md` §6.7 — quán tự giao, có trạng thái "đang giao"; BA-04 chép vào `docs/product.md` §3.2.2 (2026-08-31) |
-| 8 | Doanh thu tính theo ngày nào, đơn huỷ/hoàn tiền ra sao | BA-06 | **một nửa đã chốt, một nửa còn mở** → doanh thu tính vào **ngày ghi nợ** (`shop-facts.md` §6.14, U-012); vế **hoàn tiền / huỷ đơn đã trả trước** còn mở, BA-06 mở thành **U-019** và chạy bằng giả định ghi ở `docs/product.md` §4.10 |
+| 8 | Doanh thu tính theo ngày nào, đơn huỷ/hoàn tiền ra sao | BA-06 | **đã chốt cả hai vế 2026-09-01** → bán (kể cả nợ) tính **ngày bán/ngày ghi nợ** (`shop-facts.md` §6.14) · hoàn tiền tính **ngày hoàn**, ngược chiều (§6.4, đóng U-019 ở T-038) → `docs/product.md` §4.8, §4.10 |
 | 9 | Chủ quán đổi giá đang bán ngay lập tức được không | BA-05 | **đã chốt 2026-09-01** (mở thành U-014 rồi đóng trong ngày, T-034) → **được**, không phải chờ hết buổi → `shop-facts.md` §6.17 · `docs/product.md` §3.3.1 |
 | 10 | Có lưu lịch sử thao tác nhân viên ở MVP không | BA-09 | còn mở |
 
-Năm câu còn mở — và **nửa còn lại của câu 8** — đều được BA-10 gom lại lần cuối
-(`docs/decisions.md`): câu nào chốt được thì thành ADR, câu nào chưa thì thành GIẢ ĐỊNH có mức rủi
-ro và người cần trả lời. Riêng câu 8 thì BA-10 không được đọc là "còn mở nguyên": vế **doanh thu
-tính ngày nào** đã có lời giải từ 2026-08-31, chỉ vế **hoàn tiền rơi vào ngày nào** là chưa
-(**U-019**).
+Năm câu còn mở đều được BA-10 gom lại lần cuối (`docs/decisions.md`): câu nào chốt được thì thành
+ADR, câu nào chưa thì thành GIẢ ĐỊNH có mức rủi ro và người cần trả lời. **Câu 8 đã ra khỏi danh
+sách đó ngày 2026-09-01** — cả hai vế đều có lời chủ quán, và hai vế đi **ngược chiều** nhau, nên
+BA-10 chép cả hai chứ đừng gộp thành một câu.
 
 **S-1, S-2, S-3 không phải giả định.** Chủ quán xác nhận cả ba ngày **2026-08-30**
 (`shop-facts.md` §7.1); §7.2 nay không còn mục nào. Task nào ghi chúng là "chưa xác nhận" là sai.
@@ -669,6 +679,122 @@ Luật chung ở [Vòng chạy một task L1](#vong-chay). Việc riêng của t
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+### T-038 — U-019 và U-020 có lời giải, và một trong hai LẬT NGƯỢC giả định BA-06 vừa viết
+
+**Xong 2026-09-01.** L2 · `master_plan/shop-facts.md` §6.4, §6.10, **§6.18 mới**, §7.1 (ba dòng) ·
+`master_plan/prompt-fullstack.md` (tiêu đề §6) · `docs/product.md` §4.6, §4.8, §4.9, §4.10 và
+*Unknowns* · `quality/invariants.md` **I-014 sửa, I-015 mới** · **đóng U-019 và U-020**.
+
+**Điểm đáng nhớ nhất: giả định được ghi ra kèm rủi ro nên lúc nó sai, chỗ phải sửa đã có sẵn tên.**
+BA-06 không tự chốt vế *hoàn tiền rơi vào ngày nào*; nó viết giả định (trừ vào ngày bán gốc) và
+viết luôn câu *"chủ quán chốt ngược lại thì phải sửa §4.9, §4.10 và cách bày bảng đối soát; không
+phải sửa dữ liệu quá khứ"*. Chủ quán chốt **ngược** trong cùng ngày, và T-038 chỉ việc làm đúng ba
+chỗ đã được kê. Đây là lý do CLAUDE.md §3.5 bắt ghi giả định thay vì im lặng chọn một bên.
+
+**Hai lời chốt đi NGƯỢC CHIỀU nhau, và đó là chỗ dễ hỏng nhất về sau:**
+
+| Việc | Rơi vào ngày | Nhà thật |
+|---|---|---|
+| Bán, kể cả khoản khách **nợ** | **ngày bán** (= ngày ghi nợ) | `shop-facts.md` §6.14 |
+| **Hoàn tiền** | **ngày hoàn** | `shop-facts.md` §6.4 |
+
+Gộp hai dòng ấy thành một luật là sai một trong hai. Cả `shop-facts.md` §6.4, `docs/product.md`
+§4.8 và `quality/invariants.md` I-014 đều nói thẳng chúng ngược chiều, kèm **cách đọc** vì sao:
+khoản nợ là một bữa ăn **đã bán xong**, tiền về muộn ⇒ thuộc ngày bán; một lần hoàn là **quyết định
+mới của người đứng quầy** hôm ấy (§6.4 không có luật cứng) ⇒ thuộc ngày quyết.
+
+⇒ **Hệ quả lớn nhất, đáng giữ hơn cả hai luật: doanh thu của một ngày đã đối soát không bao giờ đổi
+về sau.** Giả định cũ phá đúng thứ đó; lời chốt mới giữ nó. Đây là ràng buộc I-009 giữ cho từng
+đơn, nay có ở mức một ngày bán (I-014).
+
+**Lời chốt U-020 sửa một câu SAI mà BA-06 vừa viết ra vài giờ trước.** §4.6 từng viết *"một lần thu
+chọn một phương thức"*, đọc chữ **hoặc** ở `shop-facts.md` §1 thành luật loại trừ — trong khi chữ
+ấy chỉ mô tả **lựa chọn của khách**. Chủ quán: *"nhận cả hai"*. Cả §6.18, §4.6 và I-015 đều dựng
+bia cho câu sai ấy để nó không quay lại.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Chứng minh ở |
+|---|---|
+| 1 | `shop-facts.md` §6.10 — *"**ba** nguồn"*, nguồn thứ ba là **tin nhắn báo có**, ghi *chủ quán chốt 2026-09-01, trả lời U-019* |
+| 2 | `shop-facts.md` §6.4, bốn gạch đầu dòng mới; gạch thứ hai in đậm **NGƯỢC CHIỀU với luật nợ ở §6.14** |
+| 3 | `shop-facts.md` **§6.18** (quy tắc thứ mười tám) — chia được, POS ghi từng phần, tổng các phần = số phải trả |
+| 4 | `shop-facts.md` §7.1, ba dòng ngày 2026-09-01 trỏ §6.10 · §6.4 · §6.18 |
+| 5 | `grep -n 'một lần thu chọn một phương thức' docs/product.md` → **rỗng**; §4.6 nay là luật chia được + khối ⚠️ dựng bia cho câu cũ |
+| 6 | `grep -n 'GIẢ ĐỊNH' docs/product.md` → **rỗng**; §4.10 nay là luật, kèm một đoạn *Ghi lại cho phiên sau* kể lại giả định cũ đã bị lật thế nào |
+| 7 | §4.9 — bảng ba nguồn ở đầu mục, và dòng **Hoàn tiền** của bảng bốn chuyện đổi thành **"không lệch"** vì hai vế cùng giảm |
+| 8 | §4.10, câu ⇒ in đậm *"doanh thu của một ngày đã đối soát xong không bao giờ đổi về sau"*; nhắc lại ở I-014 |
+| 9 | `./scripts/brief.sh` → `OPEN UNKNOWNS (none)`; U-019 (hai vế, hai dòng) và U-020 nằm ở bảng *Đã có lời giải* |
+| 10 | `quality/invariants.md` I-014 — vế *"tính vào ngày bán"* thay bằng **bảng hai dòng ngược chiều**, và dòng xuất xứ ghi rõ *Sửa ở T-038 — bản đầu sai cho hoàn tiền* |
+| 11 | `quality/invariants.md` **I-015** — tổng các phần = số phải trả · mỗi phần đúng một phương thức · từng phần ghi riêng, vì §6.10 đối chiếu hai nguồn khác nhau |
+| 12 | Bảng §10 câu 8 ở trên → **đã chốt cả hai vế**, và câu chốt dưới bảng dặn BA-10 chép **cả hai** chứ đừng gộp |
+
+**Pointer đã đi theo (CLAUDE.md §7.2):** §6 lên mười tám quy tắc nên tiêu đề `shop-facts.md` §6 và
+dòng bảng ở bản xuất khẩu `master_plan/prompt-fullstack.md` đổi trong **cùng** thay đổi;
+`grep -rn 'Mười bảy quy tắc' master_plan/ docs/ quality/` → rỗng.
+
+
+
+**L2** — chạm thẳng cách tính doanh thu một ngày và cách ghi một lần thu tiền.
+
+**Hiện trạng đang SAI:** BA-06 đóng ngày 2026-09-01 với hai câu để mở, và `docs/product.md` §4.10
+đang chạy bằng một **giả định** viết thẳng ra: *hoàn tiền trừ vào doanh thu của ngày bán gốc*.
+Chủ quán trả lời cùng ngày, và trả lời **ngược lại**. §4.6 thì đang viết *"một lần thu chọn một
+phương thức"*, đọc từ chữ **hoặc** ở `shop-facts.md` §1 — chủ quán nói quán **nhận cả hai**.
+Nên ngay lúc này repo có hai câu sai về tiền, cả hai đều nằm ở mục người ta tin nhất.
+
+**Lời chủ quán, 2026-09-01:**
+- **U-019, vế 1** — *"đối chiếu qua tin nhắn khách chuyển khoản"*. Buổi tối, phần chuyển khoản
+  đối chiếu bằng **tin nhắn báo có**; đây là **nguồn thứ ba** của đối soát, đứng cạnh sổ giấy và
+  tiền trong két (`shop-facts.md` §6.10 hiện chỉ có hai).
+- **U-019, vế 2** — *"phần hoàn tiền tính vào ngày hôm hoàn tiền"*. **Không** phải ngày bán gốc.
+- **U-020** — *"nhận cả hai. POS xác nhận thông tin bao nhiêu chuyển khoản, bao nhiêu tiền mặt"*.
+  Một lần thu chia được làm hai khoản, và POS phải ghi **số tiền của từng phương thức**.
+
+**Goal:** ba lời chốt trên vào nhà thật `master_plan/shop-facts.md`, rồi `docs/product.md` §4 và
+`quality/invariants.md` đọc lại theo nó; U-019 và U-020 chuyển xuống mục *Đã có lời giải*.
+
+**Scope:** `master_plan/shop-facts.md` · `docs/product.md` §4 và *Unknowns* ·
+`quality/invariants.md` · `work/backlog.md`.
+
+**Out of scope:** `docs/architecture.md` · `docs/decisions.md` · §1–§3 và §5–§8 của
+`docs/product.md` · `prompt/`.
+
+**Acceptance:**
+1. `shop-facts.md` §6.10 có **ba** nguồn đối soát, nguồn thứ ba là **tin nhắn báo có**, kèm ngày và
+   người chốt.
+2. `shop-facts.md` §6.4 chốt **hoàn tiền tính vào doanh thu ngày HOÀN**, và nói rõ nó **khác**
+   luật nợ ở §6.14 (nợ tính ngày ghi nợ) — hai luật ngược chiều, không được nhớ nhầm thành một.
+3. `shop-facts.md` chốt **một lần thu chia được nhiều phương thức**, POS ghi số tiền từng phương
+   thức, và tổng các khoản = số tiền phải trả.
+4. `shop-facts.md` §7.1 có dòng nhật ký cho cả ba lời chốt, ngày **2026-09-01**.
+5. `docs/product.md` §4.6 **không còn** câu *"một lần thu chọn một phương thức"*; thay bằng luật
+   chia được, và **không còn** trỏ U-020 như câu đang mở.
+6. `docs/product.md` §4.10 **không còn khối GIẢ ĐỊNH** và không còn khối *Rủi ro nếu giả định này
+   sai*; thay bằng luật đã chốt.
+7. `docs/product.md` §4.9 bảng đối soát đọc lại theo lời chốt: dòng **hoàn tiền** không còn là một
+   chỗ lệch phải đi tìm lý do, và bảng có nguồn **tin nhắn báo có**.
+8. `docs/product.md` §4.9/§4.10 nói ra được hệ quả lớn: **doanh thu một ngày đã đối soát không bao
+   giờ đổi về sau** — thứ giả định cũ phá, lời chốt mới giữ.
+9. **U-019 và U-020 rời khỏi vùng đang mở** của *Unknowns* và xuống bảng *Đã có lời giải*; vùng
+   đang mở không còn gạch đầu dòng nào ⇒ `./scripts/brief.sh` in `(none)`.
+10. `quality/invariants.md` **I-014** sửa lại vế *"tính vào ngày bán"* để không mâu thuẫn với luật
+    hoàn tiền mới.
+11. Có invariant cho lần thu chia phương thức: tổng các khoản thu = số tiền phải trả, và mỗi khoản
+    mang đúng một phương thức.
+12. `work/backlog.md` bảng §10 câu 8 chuyển sang **đã chốt** (cả hai vế).
+
+**Verify:**
+```bash
+./scripts/gate.sh
+./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/LATEST/p'     # phải in (none)
+grep -n 'GIẢ ĐỊNH' docs/product.md                          # rỗng trong §4
+grep -n 'tin nhắn' master_plan/shop-facts.md docs/product.md
+grep -n 'một lần thu chọn một phương thức' docs/product.md  # rỗng
+git status --porcelain
+```
+
+
 ### BA-06 — Quy tắc giá và thanh toán
 
 **Xong 2026-09-01.** L2 · prompt `prompt/BA/05-pricing-payment-L2.md` · `docs/product.md` §4 (mười
@@ -696,6 +822,12 @@ mặt và quán có hẳn một phương thức không đi qua két. BA-06 chố
   được thì bàn có trống không*), nhưng hai tình huống trả lời **ngược nhau**: chờ báo có ⇒ phiên
   chưa đóng, **bàn không trống**; cho nợ ⇒ phiên **vẫn đóng**, bàn trống bình thường
   (`shop-facts.md` §6.14). Gộp chúng là hoặc khoá một cái bàn cả buổi, hoặc mất một khoản tiền.
+
+> **Cập nhật 2026-09-01 (T-038): cả hai unknown BA-06 mở đã đóng trong ngày**, chủ quán trả lời
+> ngay lượt kế tiếp. Một lời chốt **lật ngược** thứ BA-06 viết: §4.10 lúc ấy chạy bằng giả định
+> *hoàn tiền trừ vào ngày bán gốc*, chủ quán chốt là **ngày hoàn**. Mọi câu *"chưa chốt"* và khối
+> *GIẢ ĐỊNH* trong entry này là ảnh chụp lúc BA-06 chạy; trạng thái hôm nay đọc ở entry **T-038**,
+> `master_plan/shop-facts.md` §6.4, §6.10, §6.18 và `docs/product.md` §4.6, §4.8–§4.10.
 
 **Sự cố trong lúc chạy — `ffc2997` nuốt mất §4, và không sửa lại được nữa.**
 Giữa lúc BA-06 đang viết `docs/product.md` §4, một phiên **chạy song song trên cùng cây làm việc**

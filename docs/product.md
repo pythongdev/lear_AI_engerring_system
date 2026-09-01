@@ -999,10 +999,24 @@ chọn *trả trước* là **ý định của khách**, còn *đã nhận tiề
 quán chốt 2026-08-31, `shop-facts.md` §6.3). **Phiên bàn không có nhánh trả trước**: phiên còn mở
 thì khách còn gọi thêm được, nên chưa có số tiền nào để trả.
 
-**Một lần thu chọn một phương thức.** Chủ quán mô tả lựa chọn của khách là *"tiền mặt **hoặc**
-VietQR"* (`shop-facts.md` §1, §6.3), nên mục này viết theo nghĩa ấy. Ca khách muốn trả **một phần
-tiền mặt, một phần chuyển khoản** chưa ai hỏi chủ quán — nó là **U-020** ở mục *Unknowns*, đừng để
-việc thực hiện tự quyết thay.
+**Một lần thu CHIA ĐƯỢC làm hai phần, mỗi phần một phương thức** *(chủ quán chốt 2026-09-01,
+`shop-facts.md` §6.18)*. Khách đưa một phần tiền mặt rồi chuyển khoản nốt phần còn lại thì quán
+**nhận cả hai**, và **POS ghi số tiền của từng phần** — bao nhiêu tiền mặt, bao nhiêu chuyển khoản.
+
+- **Vẫn đúng hai phương thức**, không có phương thức thứ ba. Luật này không thêm cách trả nào, nó
+  chỉ nói một lần thu **không bị buộc** nằm gọn trong một phương thức.
+- **Tổng các phần đã thu = số tiền phải trả.** Thiếu thì đó là **nợ**, xử theo §4.7(b); không có
+  ca nào tổng các phần vượt quá số phải trả.
+- **Ghi gộp thành một con số tổng là hỏng đối soát.** Buổi tối, phần tiền mặt so với **két** và
+  phần chuyển khoản so với **tin nhắn báo có** (§4.9) — một lần thu không tách được thì không xếp
+  vào nguồn nào để đối chiếu.
+- **Người xác nhận không đổi**: vẫn là người bấm ở POS theo bảng trên. Chia phương thức không mở
+  thêm cửa nào.
+
+⚠️ Chữ **hoặc** trong *"tiền mặt hoặc VietQR"* (`shop-facts.md` §1, §6.3) mô tả **lựa chọn của
+khách**, **không** phải luật loại trừ. Mục này từng đọc nhầm đúng chỗ ấy trong ngày 2026-09-01,
+trước khi chủ quán trả lời U-020 — nó viết rằng mỗi lần thu chỉ được **một** phương thức. Tài liệu
+nào ràng buộc một lần thu vào một phương thức là đang mang lại lỗi đó.
 
 ### 4.7 Khi chưa thu được tiền: phiên/đơn ở đâu, bàn có trống không
 
@@ -1050,15 +1064,38 @@ Người bấm huỷ cũng là **người đứng quầy**, trên POS ở quầy
 cửa với duyệt đơn, hoàn tiền, ghi nợ và ghép bàn — nên mọi việc chạm tiền đều truy được về một
 người (`quality/invariants.md` I-012).
 
-**Hoàn tiền rơi vào doanh thu ngày nào thì CHƯA CHỐT** — xem **U-019** ở mục *Unknowns*, và giả
-định đang dùng ở §4.10.
+**Một lần hoàn tiền trừ vào doanh thu của NGÀY HOÀN, không phải ngày bán gốc** *(chủ quán chốt
+2026-09-01, `shop-facts.md` §6.4)*. Bán thứ Hai, hoàn thứ Tư ⇒ doanh thu **thứ Hai giữ nguyên**,
+doanh thu **thứ Tư** bị trừ đi khoản đã hoàn.
+
+⇒ **Luật này ngược chiều với luật nợ (§4.7b), và đó là chủ ý.** Nợ tính vào **ngày ghi nợ** dù tiền
+về sau; hoàn tính vào **ngày hoàn** dù hàng đã bán trước đó. Hai luật, hai chiều — nhớ nhầm thành
+một là sai một trong hai.
+
+*Cách đọc, không phải lời chủ quán nói thẳng:* hai ca khác nhau ở chỗ **cái gì đã xong**. Khoản nợ
+vẫn là một bữa ăn **đã bán xong**, chỉ tiền về muộn ⇒ thuộc ngày bán. Một lần hoàn thì không sửa
+lại chuyện đã bán; nó là **một quyết định mới của người đứng quầy** trong ngày hôm ấy — chính vì
+§6.4 không có luật cứng ⇒ thuộc ngày quyết.
 
 ### 4.9 Đối soát cuối ngày — ngưỡng lệch là 0đ
 
 **Đây là quy trình của quán, không phải một tính năng phần mềm.** Mỗi tối, trong **2 tuần đầu chạy
-thật**, người của quán đối chiếu **doanh thu hệ thống** với **sổ giấy** và **tiền trong két**
-(`shop-facts.md` §6.10). **Lệch 1 đồng cũng phải tìm ra lý do** — ngưỡng chấp nhận là **0đ**, và
-đây là cổng chất lượng mạnh nhất của cả dự án, mạnh hơn mọi bài kiểm thử.
+thật**, người của quán đối chiếu **doanh thu hệ thống** với **ba** nguồn (`shop-facts.md` §6.10):
+
+| Nguồn | Đối chiếu phần nào |
+|---|---|
+| **Sổ giấy** | toàn bộ — bản ghi tay độc lập của cả ngày |
+| **Tiền trong két** | phần khách trả **tiền mặt** |
+| **Tin nhắn báo có** | phần khách **chuyển khoản** *(chủ quán chốt 2026-09-01, trả lời U-019)* |
+
+**Lệch 1 đồng cũng phải tìm ra lý do** — ngưỡng chấp nhận là **0đ**, và đây là cổng chất lượng mạnh
+nhất của cả dự án, mạnh hơn mọi bài kiểm thử.
+
+**Nguồn thứ ba tồn tại vì két không giữ tiền chuyển khoản.** Quán có hai phương thức mà chỉ một đi
+qua két; so doanh thu với mỗi *sổ giấy + két* thì phần VietQR không có gì để đối chiếu. ⇒ **Đối
+soát chia theo PHƯƠNG THỨC, không cộng gộp**: một chỗ thiếu ở két có thể bị một chỗ thừa ở ngân
+hàng che mất, và lúc đó ngưỡng 0đ không còn nghĩa gì. Đây cũng là lý do một lần thu chia hai phương
+thức phải ghi rõ từng phần (§4.6).
 
 Sổ giấy không phải thứ chép cho vui: nó là **kế hoạch dự phòng bắt buộc** (`shop-facts.md` §6.11)
 — mất điện, mất mạng hay máy hỏng thì quán ghi tay và **không dừng bán**. Nên buổi tối luôn có hai
@@ -1071,7 +1108,7 @@ soát; không bày ra thì đúng luật *lệch một đồng cũng phải tìm
 |---|---|---|
 | **Ghi nợ** | két **thiếu** đúng bằng tổng nợ ghi trong ngày | doanh thu tính vào ngày ghi nợ, tiền thì chưa về (§3.1.6) |
 | **Thu nợ cũ** | két **thừa** đúng bằng tổng nợ cũ thu hôm đó, doanh thu hôm đó **không tăng** | trả nợ là tiền về, không phải một lần bán mới |
-| **Hoàn tiền** | két **thiếu** đúng bằng tổng đã hoàn | mỗi lần hoàn có vết riêng: bao nhiêu, đơn nào, ai bấm, lý do (§4.8) |
+| **Hoàn tiền** | **không lệch** — doanh thu hôm đó đã trừ sẵn khoản hoàn | hoàn tính vào **ngày hoàn** (§4.8), nên hai vế cùng giảm; trừ ở đúng nguồn đã hoàn ra — hoàn tiền mặt thì két giảm, hoàn chuyển khoản thì tin nhắn có chiều đi |
 | **Chủ quán đổi giá giữa buổi** | không lệch — nhưng **cùng một món có hai giá đúng trong ngày** | ranh giới khoá giá là từng lượt gọi (§4.4); coi đó là lệch là báo động giả |
 
 Ba chỗ tiền không nằm trong két mà vẫn là doanh thu — **VietQR**, **nợ ghi trong ngày** và tiền
@@ -1098,16 +1135,19 @@ nguồn" là chia sai (§4.5).
 - Quán bán **một buổi mỗi ngày**, 06:00–11:00 (`shop-facts.md` §1), nên "một ngày" ở đây là một
   buổi bán, không có ca đơn vắt qua nửa đêm.
 
-**GIẢ ĐỊNH đang dùng, chưa hỏi chủ quán** *(câu §10.8 · **U-019** · chuyển sang BA-10 nếu tới lúc
-đó vẫn chưa có lời giải)*: một lần **hoàn tiền** hoặc một lần **huỷ đơn đã trả trước** được **trừ
-vào doanh thu của ngày bán gốc**, không phải ngày bấm hoàn — cùng logic với nợ ở trên: sửa lại con
-số của chính bữa ăn đó thay vì tạo một khoản âm ở ngày khác.
+- **Hoàn tiền thì ngược lại: tính vào ngày HOÀN**, không phải ngày bán gốc (chủ quán chốt
+  2026-09-01, `shop-facts.md` §6.4). Lý do hai luật đi ngược chiều nhau ở §4.8.
 
-**Rủi ro nếu giả định này sai:** doanh thu của một ngày **đã đối soát xong** sẽ đổi khi có người
-hoàn tiền vào hôm sau, tức phá đúng thứ I-009 giữ — *đọc lại doanh thu của mọi ngày đã qua phải ra
-đúng con số đã đối soát hôm đó*. Chủ quán chốt ngược lại (trừ vào ngày bấm hoàn) thì phải sửa §4.9,
-§4.10 và cách bày bảng đối soát; **không** phải sửa dữ liệu quá khứ, vì cả hai mốc thời gian —
-ngày bán và ngày hoàn — đều đã được ghi.
+⇒ **Doanh thu của một ngày đã đối soát xong không bao giờ đổi về sau.** Đây là hệ quả đắt nhất của
+hai lời chốt trên, và là thứ giữ cho §4.9 có nghĩa: mọi chuyện xảy ra **sau** khi đóng sổ một ngày
+— khách trả nợ, quầy hoàn tiền — đều rơi vào **ngày mới**, nên con số đã ký hôm qua đọc lại lúc nào
+cũng bằng chính nó. Cùng một ràng buộc mà I-009 giữ cho từng đơn, ở mức một ngày bán
+(`quality/invariants.md` I-014).
+
+*Ghi lại cho phiên sau:* trong ngày 2026-09-01, §4 từng chạy bằng **giả định ngược lại** — hoàn
+tiền trừ vào ngày bán gốc — và giả định ấy đã được ghi ra kèm rủi ro của nó (BA-06, U-019). Chủ
+quán trả lời trong ngày và chốt **ngược**; đúng như phần rủi ro đã dặn, chỗ phải sửa là §4.8–§4.10
+và cách bày bảng đối soát, **không** phải dữ liệu quá khứ — cả hai mốc thời gian đều đã được ghi.
 
 ### 4.11 Bốn việc mục này cố ý không nói tới
 
@@ -1147,31 +1187,14 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 
 ### Đang mở
 
-**Hai câu mở ngày 2026-09-01 (BA-06), cả hai đều là câu về TIỀN.** Năm câu mở trước đó trong
-cùng ngày — U-014, U-015, U-016 (mốc đổi menu/giá, T-034) và U-017, U-018 (T-036, T-037) — đều đã
-được chủ quán trả lời trong ngày và đã chuyển xuống mục *Đã có lời giải*.
+**Không còn câu nào đang mở, tính tới 2026-09-01.** Bảy câu mở trong ngày — U-014, U-015, U-016
+(mốc đổi menu/giá, T-034) · U-017, U-018 (T-036, T-037) · **U-019, U-020** (BA-06, hai câu về
+tiền) — đều đã được chủ quán trả lời trong ngày; cả bảy đã chuyển xuống mục *Đã có lời giải*.
 
-- **U-019 — Buổi tối đối soát, quán lấy gì ra đối chiếu phần khách chuyển khoản, và một lần hoàn
-  tiền thì trừ vào doanh thu của ngày nào?** Két chỉ giữ **tiền mặt**, mà `shop-facts.md` §6.10 lại
-  bắt so doanh thu với **sổ giấy và tiền trong két**, ngưỡng lệch **0đ** — nên phần VietQR không
-  có chỗ nào để so, và mỗi lần hoàn tiền lại làm hai ngày lệch nhau. *Ai trả lời được:* **chủ
-  quán** (hỏi về cái quán: *"tối về anh chị ngồi tính tiền thế nào — phần khách chuyển khoản thì
-  nhìn vào đâu để biết đủ hay thiếu?"*). *Đang chặn:* `docs/product.md` §4.9 và §4.10 đang chạy
-  bằng một **giả định** viết thẳng ở §4.10 (hoàn tiền trừ vào ngày bán gốc); **BA-08** (§6 ngoại
-  lệ) và **BA-10** sẽ phải chốt hoặc chuyển nó thành giả định có tên. Đây là câu §10.8 của bảng
-  mười câu hỏi trong `work/backlog.md`.
-- **U-020 — Khách trả một phần tiền mặt, một phần chuyển khoản thì quán có nhận không?**
-  `shop-facts.md` §1 và §6.3 luôn nói *"tiền mặt **hoặc** VietQR"*, nên `docs/product.md` §4.6 hiện
-  viết là **một lần thu chọn một phương thức** — nhưng chưa ai hỏi thẳng chủ quán câu này. *Ai trả
-  lời được:* **chủ quán** (hỏi về cái quán: *"có khi nào khách đưa một ít tiền mặt rồi chuyển khoản
-  nốt phần còn lại không?"*). *Đang chặn:* không chặn task nào ngay, nhưng nó quyết định một lần
-  thu tiền được ghi thành **một** hay **nhiều** khoản — sai thì đối soát 0đ (§4.9) không bao giờ
-  khớp ở những ngày có ca đó. **BA-07** (§5 vòng đời) và **BA-10** phải đọc câu này.
-
-Hình dạng của mục là hợp đồng với `scripts/brief.sh` (ADR-007): mỗi câu ở trên là **một gạch đầu
-dòng**, và câu tiếp theo cũng phải vào đây dưới dạng ấy. `master_plan/shop-facts.md` §7.2 — chỗ
-giữ các mục **suy ra** chưa xác nhận — vẫn rỗng từ 2026-09-01, khi S-4 có lời giải; hai câu trên
-là **câu hỏi chưa ai trả lời**, không phải chỗ suy ra.
+Mục này để trống là **trạng thái thật**, không phải mục bị bỏ quên: hình dạng của nó là hợp đồng
+với `scripts/brief.sh` (ADR-007), nên câu tiếp theo phải là **một gạch đầu dòng** đặt ngay dưới
+đây. `master_plan/shop-facts.md` §7.2 — chỗ giữ các mục **suy ra** chưa xác nhận — cũng rỗng từ
+2026-09-01, khi S-4 có lời giải.
 
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
@@ -1260,6 +1283,9 @@ lượt (T-037):
 |---|---|---|
 | ~~U-017 — bấm "đã làm xong" theo từng cái, cả mẻ, hay cả bàn~~ | **Theo MẺ** — một lần bấm ứng với một mẻ bếp vừa làm xong | §1.2 · `shop-facts.md` §5.4 |
 | ~~U-018 — máy chặn hẳn hay chỉ nhắc khi sửa thành phần suất giữa giờ bán~~ | **Chỉ nhắc một câu, rồi vẫn cho lưu** — luật *"chờ hết buổi"* là luật cho **người** | §3.3.6 · `shop-facts.md` §6.17 |
+| ~~U-019 — buổi tối lấy gì đối chiếu phần khách chuyển khoản~~ | **Tin nhắn báo có** — nguồn thứ **ba** của đối soát, đứng cạnh sổ giấy và tiền trong két; ⇒ đối soát chia theo **phương thức**, không cộng gộp | §4.9 · `shop-facts.md` §6.10 |
+| ~~U-019 (vế 2) — một lần hoàn tiền trừ vào doanh thu ngày nào~~ | **Ngày HOÀN**, không phải ngày bán gốc — **ngược chiều** với luật nợ (nợ tính ngày ghi nợ) ⇒ doanh thu một ngày đã đối soát không bao giờ đổi về sau | §4.8 · §4.10 · `shop-facts.md` §6.4 |
+| ~~U-020 — khách trả một phần tiền mặt, một phần chuyển khoản~~ | **Nhận cả hai.** POS ghi **bao nhiêu tiền mặt, bao nhiêu chuyển khoản**; tổng các phần = số phải trả. Chữ *"hoặc"* ở `shop-facts.md` §1 là lựa chọn của khách, **không** phải luật loại trừ | §4.6 · `shop-facts.md` §6.18 |
 
 Lời giải U-018 buộc **viết lại `quality/invariants.md` I-011**: bản đầu nói *"thành phần suất không
 đổi trong giờ bán"*, và câu đó sai kể từ lúc biết máy không chặn. Thứ sản phẩm giữ được là chuyện

@@ -414,9 +414,18 @@ Doanh thu của một ngày bán = **tiền từ phiên bàn** + **tiền từ �
 nguồn, không bao giờ chỉ một. Mỗi khoản tiền thuộc **đúng một** nguồn: không khoản nào bị đếm hai
 lần, và không khoản nào rơi ra ngoài cả hai. "Hai nguồn" chia theo **đơn vị thanh toán**, không
 chia theo kênh — cả **ba** kênh mang đi (Delivery, Pickup, Đặt trước qua hotline) cùng rơi vào
-nguồn thứ hai (`master_plan/shop-facts.md` §6.9, `docs/product.md` §4.5, §4.10). Tiền được tính vào
-**ngày bán**, kể cả khoản khách nợ: doanh thu vào **ngày ghi nợ**, không phải ngày thu được tiền
-(§6.14), nên **một lần trả nợ không bao giờ là một khoản bán mới**.
+nguồn thứ hai (`master_plan/shop-facts.md` §6.9, `docs/product.md` §4.5, §4.10).
+
+**Ngày nào tính vào doanh thu ngày ấy — hai luật NGƯỢC CHIỀU, cả hai cùng đúng:**
+
+| Việc | Rơi vào ngày | Nguồn |
+|---|---|---|
+| **Bán**, kể cả khoản khách **nợ** | **ngày bán** = ngày ghi nợ, không phải ngày thu được tiền | `shop-facts.md` §6.14 |
+| **Hoàn tiền** | **ngày hoàn**, không phải ngày bán gốc | `shop-facts.md` §6.4, chủ quán chốt 2026-09-01 |
+
+⇒ **Một lần trả nợ không bao giờ là một khoản bán mới**, và **một lần hoàn không bao giờ sửa lại
+doanh thu của một ngày đã đóng sổ**. Hệ quả chung của hai luật: **doanh thu của một ngày đã đối soát
+không đổi về sau** — cùng ràng buộc mà I-009 giữ cho từng đơn, ở mức một ngày bán.
 
 **Why:**
 I-006 và I-007 chốt **một đơn thuộc nguồn nào**; invariant này chốt **phép cộng ở trên** — và hai
@@ -435,8 +444,48 @@ Kịch bản không trùng: liệt kê mọi khoản tiền của ngày ấy ⇒
 trên đúng **một** nguồn; suất "đem về" của khách ngồi bàn nằm ở nguồn **phiên bàn** (I-006), đơn
 Pickup nằm ở nguồn **đơn lẻ** (I-007). Kịch bản nợ: bàn 5 nợ hôm nay, trả vào ba hôm sau ⇒ doanh
 thu **hôm nay** đã có đủ khoản đó, doanh thu **hôm trả** **không** tăng, và tổng doanh thu hai ngày
-cộng lại đúng bằng số tiền một bữa ăn (`docs/product.md` §3.1.6, §4.10). Kịch bản đối soát: dựng
-lại doanh thu của **mọi ngày đã qua** phải ra đúng con số đã đối soát hôm đó
-(`shop-facts.md` §6.10, cùng ràng buộc với I-009).
+cộng lại đúng bằng số tiền một bữa ăn (`docs/product.md` §3.1.6, §4.10). Kịch bản hoàn tiền — đi
+**ngược** kịch bản nợ: bán thứ Hai, hoàn thứ Tư ⇒ doanh thu **thứ Hai giữ nguyên** (mở lại phải ra
+đúng con số đã đối soát tối thứ Hai), doanh thu **thứ Tư** giảm đúng bằng khoản đã hoàn. Kịch bản
+đối soát: dựng lại doanh thu của **mọi ngày đã qua** phải ra đúng con số đã đối soát hôm đó, kể cả
+sau một lần hoàn tiền và một lần thu nợ (`shop-facts.md` §6.10, cùng ràng buộc với I-009).
 
-*Phát hiện ở BA-06, 2026-09-01.*
+*Phát hiện ở BA-06, 2026-09-01. **Sửa ở T-038, 2026-09-01** — bản đầu chỉ có luật "tính vào ngày
+bán", đúng cho nợ nhưng **sai cho hoàn tiền**: lời chốt U-019 cùng ngày đặt hoàn tiền vào ngày
+hoàn. Nay là bảng hai dòng ngược chiều, không phải một câu.*
+
+### I-015 — Một lần thu chia được nhiều phương thức, nhưng tổng luôn khớp và từng phần luôn ghi riêng
+
+**Invariant:**
+Một lần thu tiền của một phiên bàn hoặc một đơn gồm **một hoặc nhiều** phần, mỗi phần mang **đúng
+một** phương thức trong hai phương thức của `master_plan/shop-facts.md` §1 (tiền mặt · VietQR
+tĩnh), và **số tiền của từng phần được ghi riêng** — không bao giờ gộp thành một con số tổng
+(`shop-facts.md` §6.18, chủ quán chốt 2026-09-01). **Tổng các phần đã thu = số tiền phải trả**;
+thiếu thì phần thiếu là một khoản **nợ** và đi theo I-005, và không có ca nào tổng các phần **vượt
+quá** số phải trả.
+
+**Why:**
+Chủ quán trả lời U-020 rằng quán **nhận cả hai** — *"POS xác nhận thông tin bao nhiêu chuyển khoản,
+bao nhiêu tiền mặt"*. Vế *ghi riêng từng phần* không phải chi tiết trình bày mà là điều kiện để đối
+soát cuối ngày tồn tại: §6.10 so **phần tiền mặt với két** và **phần chuyển khoản với tin nhắn báo
+có**, hai nguồn khác nhau, nên một lần thu ghi gộp thì không xếp được vào nguồn nào và ngưỡng **0đ**
+mất nghĩa ngay hôm có ca đó. Vế *tổng luôn khớp* chặn hai lỗi ngược chiều: thu thiếu mà tưởng đã đủ
+(khoản thiếu biến mất thay vì thành nợ có chủ), và thu thừa được ghi nhận (két thừa mà không ai
+truy được).
+
+⚠️ Invariant này **thay** một câu sai từng nằm ở `docs/product.md` §4.6 trong ngày 2026-09-01,
+câu ràng buộc mỗi lần thu vào **một** phương thức. Câu đó đọc chữ **hoặc** ở `shop-facts.md` §1
+thành luật loại trừ, trong khi chữ ấy chỉ mô tả **lựa chọn của khách**. Bất kỳ câu nào bắt một lần
+thu nằm gọn trong một phương thức là lỗi ấy quay lại.
+
+**Verification:**
+Kịch bản chia: một phiên bàn thu làm hai phần — một phần tiền mặt, một phần VietQR ⇒ POS ghi **hai**
+khoản, mỗi khoản có phương thức và số tiền riêng, và tổng hai khoản bằng đúng tổng hoá đơn (I-002).
+Kịch bản đối soát: cuối ngày, **tổng phần tiền mặt** của mọi lần thu khớp két và **tổng phần chuyển
+khoản** khớp tin nhắn báo có, tính riêng từng nguồn — không cộng gộp rồi so một con số
+(`docs/product.md` §4.9). Kịch bản thiếu: thu ít hơn tổng hoá đơn ⇒ phần thiếu **bắt buộc** thành
+một khoản nợ có tên và có số tiền, đúng I-005; không có đường nào đóng phiên với tổng nhỏ hơn mà
+không ghi nợ. Kịch bản âm: thu nhiều hơn tổng hoá đơn ⇒ **bị từ chối**. Kịch bản một phần: lần thu
+chỉ một phương thức vẫn hợp lệ — đây là ca thường, không phải ngoại lệ.
+
+*Phát hiện ở T-038, 2026-09-01.*
