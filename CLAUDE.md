@@ -359,7 +359,28 @@ Anything true only inside your head is lost. Before finishing:
 - Every task finished this session has its paste-ready commit block in the
   report (§6.1), plus one for anything else left uncommitted.
 - The final report says what is **still unresolved**, in the same words the
-  next session would need to pick it up.
+  next session would need to pick it up — and **every open question it names
+  carries a link to the question itself**, not just its ID.
+
+  A report saying *"U-022 is still open"* makes the reader go hunting for U-022;
+  the ID is an index entry, not an answer. So each one gets a clickable link to
+  the line where the question is actually written:
+
+  ```markdown
+  **U-022** — [docs/product.md:1508](docs/product.md#L1508)
+  **GĐ-04** — [docs/decisions.md:844](docs/decisions.md#L844)
+  ```
+
+  - **Applies to every kind of open thing you name:** `U-XXX` (`docs/product.md`
+    → *Unknowns*), `GĐ-XXX` and `ADR-XXX` (`docs/decisions.md`), `F-XXX`
+    (`work/findings.md`), `S-X` (`master_plan/shop-facts.md` §7.2), and a
+    blocked task in `work/backlog.md`.
+  - **Get the line number at report time**, with `grep -n`, in the same turn you
+    write the report. Line numbers drift as documents grow; one copied from
+    memory or from an earlier turn points at the wrong line.
+  - **Link the owner from §2, never a copy.** The link is a pointer, not a place
+    to restate the question — same reason the brief points and never copies
+    (§7.1, `work/findings.md` F-001).
 
 ## 8. Definition of Done
 
@@ -374,7 +395,8 @@ Tiered like §3 — an L0 change is done after four lines, not eleven.
 - [ ] Handed off: backlog and `work/scope.txt` match reality (§7.3).
 - [ ] Commit content handed over as a paste-ready block (§6.1).
 - [ ] Report: what changed, how it was verified (with command output), what is
-      still unresolved.
+      still unresolved — each open question named there carries a link to the
+      line it is written on, grepped in this turn (§7.3).
 
 **L1 and up, additionally**
 
