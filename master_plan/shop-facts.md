@@ -510,7 +510,7 @@ tự xếp nồi, **không** tự quyết thứ tự làm và **không** đề x
 gom, gom mấy quả, làm trước làm sau là quyết định của người ở bếp và ở quầy. Đây là một **ranh
 giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ là đổi phạm vi, phải xin phép chủ quán.
 
-## 6. Mười bảy quy tắc nghiệp vụ phải đúng
+## 6. Mười tám quy tắc nghiệp vụ phải đúng
 
 1. **Khách gọi thêm khi quầy đã bắt đầu thu tiền vẫn thuộc CÙNG phiên, CÙNG một hoá đơn.** Phiên
    ở trạng thái "chờ thanh toán" **chưa** giải phóng bàn. Tách ra hoá đơn thứ hai ⇒ **thu thiếu
@@ -544,6 +544,19 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
    2026-08-30) — cùng một người vừa quyết vừa ghi, nên không có ca nào hoàn tiền mà không ai đứng
    tên. Không có vết thì đối soát cuối ngày (§6.10) sẽ lệch mà không ai truy được — mà
    luật đối soát nói *lệch 1 đồng cũng phải tìm ra lý do*.
+   - **Một lần hoàn tiền trừ vào doanh thu của NGÀY HOÀN, không phải ngày bán gốc** (chủ quán chốt
+     2026-09-01, trả lời U-019). Bán hôm thứ Hai, hoàn hôm thứ Tư ⇒ doanh thu thứ Hai **giữ
+     nguyên**, doanh thu thứ Tư bị trừ đi khoản đã hoàn.
+   - ⇒ **Luật này NGƯỢC CHIỀU với luật nợ ở §6.14, và đó là chủ ý — đừng nhớ nhầm thành một.** Nợ
+     tính vào **ngày ghi nợ** (ngày bán) dù tiền về sau; hoàn tính vào **ngày hoàn** dù hàng bán
+     trước đó. Hai luật, hai chiều.
+   - *Cách đọc, không phải lời chủ quán nói thẳng:* hai ca khác nhau ở chỗ **cái gì đã xong**. Một
+     khoản nợ vẫn là một bữa ăn **đã bán xong**, chỉ có tiền là về muộn — nên nó thuộc ngày bán.
+     Một lần hoàn thì không sửa lại chuyện đã bán; nó là **một quyết định mới của người đứng quầy**
+     trong ngày hôm ấy (§6.4 không có luật cứng, quầy quyết từng ca) — nên nó thuộc ngày quyết.
+   - ⇒ **Doanh thu của một ngày đã đối soát xong không bao giờ đổi về sau.** Đây là hệ quả đắt nhất
+     của lời chốt này: mọi thứ xảy ra sau khi đóng sổ một ngày đều rơi vào ngày mới, nên con số đã
+     ký hôm qua đọc lại lúc nào cũng bằng chính nó.
 5. **Thông tin liên hệ cho ba kênh không gắn bàn.** Hai trường **bắt buộc**, phần còn lại người ở
    quầy điền theo tình huống thật lúc đó (chủ quán chốt 2026-08-30):
 
@@ -568,8 +581,18 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
    không bao giờ cả hai. ⇒ **báo cáo doanh thu phải cộng từ CẢ HAI nguồn**; bỏ sót một nguồn là
    báo cáo thiếu tiền.
 10. **Đối soát cuối ngày.** Trong 2 tuần đầu chạy thật, mỗi tối đối chiếu doanh thu hệ thống với
-    **sổ giấy** và **tiền trong két**. **Lệch 1 đồng cũng phải tìm ra lý do.** Đây là cổng chất
-    lượng mạnh nhất của cả dự án, mạnh hơn mọi bài kiểm thử.
+    **ba** nguồn: **sổ giấy**, **tiền trong két**, và **tin nhắn báo có của phần khách chuyển
+    khoản** (chủ quán chốt 2026-09-01, trả lời U-019). **Lệch 1 đồng cũng phải tìm ra lý do.** Đây
+    là cổng chất lượng mạnh nhất của cả dự án, mạnh hơn mọi bài kiểm thử.
+    - **Nguồn thứ ba tồn tại vì két không giữ tiền chuyển khoản.** Quán có hai phương thức (§1) mà
+      chỉ một đi qua két, nên so doanh thu với mỗi *sổ giấy + két* thì phần VietQR không có gì để
+      đối chiếu. Chủ quán trả lời thẳng: *"đối chiếu qua tin nhắn khách chuyển khoản"* — tin nhắn
+      báo có trên điện thoại là bản ghi độc lập của phần ấy.
+    - ⇒ **Đối soát chia theo PHƯƠNG THỨC, không cộng gộp.** Phần tiền mặt so với két; phần chuyển
+      khoản so với tin nhắn. Cộng hai phần lại rồi so với một con số tổng thì một chỗ thiếu ở két
+      có thể bị một chỗ thừa ở ngân hàng che mất, và ngưỡng 0đ không còn nghĩa gì.
+    - ⇒ **Một lần thu chia hai phương thức (§6.18) phải ghi rõ từng phần**, nếu không thì không
+      xếp được vào nguồn nào để đối chiếu.
 11. **Sổ giấy là kế hoạch dự phòng BẮT BUỘC.** Mất điện, mất mạng, hoặc máy hỏng ⇒ quán chuyển sang
     ghi tay và **không dừng bán**.
 12. **Bốn ranh giới đã chốt — đây là quyết định, không phải chỗ trống chờ ai điền:**
@@ -708,6 +731,24 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       phải truy ngược được cho đối soát cuối ngày (§6.10). Không có vết thì lời nhắc chỉ là một
       hộp thoại bấm cho qua.
 
+18. **Một lần thu tiền chia được làm nhiều phương thức, và POS ghi số tiền của TỪNG phần** (chủ
+    quán chốt 2026-09-01, trả lời U-020). Khách trả một phần tiền mặt, một phần chuyển khoản thì
+    quán **nhận cả hai** — *"POS xác nhận thông tin bao nhiêu chuyển khoản, bao nhiêu tiền mặt"*.
+    - **Vẫn đúng hai phương thức (§1), không có phương thức thứ ba.** Luật này không thêm cách trả
+      nào; nó nói rằng **một lần thu** không bị buộc phải nằm gọn trong một phương thức.
+    - **Tổng các phần đã thu = số tiền phải trả.** Thiếu thì đó là **nợ** và xử theo §6.14 (ghi ai
+      nợ, nợ bao nhiêu); không có ca nào tổng các phần lớn hơn số phải trả.
+    - **Mỗi phần mang đúng một phương thức, và số tiền của từng phần phải ghi riêng.** Ghi gộp
+      thành một con số tổng là làm hỏng đối soát cuối ngày: §6.10 so **phần tiền mặt với két** và
+      **phần chuyển khoản với tin nhắn báo có**, nên một lần thu không tách được thì không xếp vào
+      nguồn nào.
+    - **Người xác nhận không đổi:** vẫn là người bấm ở POS theo §6.3 — người đứng quầy, hoặc người
+      đi giao với đơn giao tận nơi (§6.7). Chia phương thức không mở thêm cửa nào.
+    - *Cách đọc, không phải lời chủ quán nói thẳng:* chữ **hoặc** trong *"tiền mặt hoặc VietQR"* ở
+      §1 và §6.3 mô tả **lựa chọn của khách**, không phải một ràng buộc rằng mỗi lần thu chỉ được
+      một phương thức. Tài liệu nào đọc chữ *hoặc* ấy thành luật loại trừ là **sai** — đó đúng là
+      chỗ `docs/product.md` §4.6 viết sai trong ngày 2026-09-01 trước khi có lời chốt này.
+
 
 ## 7. Nhật ký chốt
 
@@ -762,6 +803,9 @@ muốn lật lại một quyết định thì biết đang lật lại điều g
 | 2026-09-01 | *(trả lời S-4, vế 2)* **Người đứng quầy bấm** nút "đã làm xong" trên POS — ba trạm bếp vẫn không bấm gì (U-009 nguyên vẹn) | §5.4 |
 | 2026-09-01 | **Bấm "đã làm xong" theo MẺ** — không theo từng cái, không theo cả bàn (trả lời U-017) | §5.4 |
 | 2026-09-01 | **Máy chỉ NHẮC một câu, không chặn**, khi chủ quán sửa thành phần suất giữa giờ bán ⇒ luật "chờ hết buổi" là luật cho **người** (trả lời U-018) | §6.17 |
+| 2026-09-01 | **Đối soát cuối ngày có NGUỒN THỨ BA: tin nhắn báo có** — phần khách chuyển khoản đối chiếu bằng tin nhắn, vì két chỉ giữ tiền mặt (trả lời U-019) | §6.10 |
+| 2026-09-01 | **Hoàn tiền tính vào doanh thu NGÀY HOÀN**, không phải ngày bán gốc — ngược chiều với luật nợ ở §6.14 (trả lời U-019) | §6.4 |
+| 2026-09-01 | **Một lần thu chia được nhiều phương thức**; POS ghi **bao nhiêu tiền mặt, bao nhiêu chuyển khoản** (trả lời U-020) | §6.18 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **rỗng, tính tới 2026-09-01**
 
