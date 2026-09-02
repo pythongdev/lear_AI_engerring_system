@@ -168,6 +168,7 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] T-043 U-027 và U-030 đóng: đơn đã `Hoàn thành` **huỷ được** (§5.2 thêm dòng, §5.6 còn một ca, I-016 viết lại); **không mảng admin nào** ở bản chạy đầu (§7.6). U-026 còn mở (2026-09-02)
 
 - [x] T-042 Chủ quán trả lời U-022, U-025, GĐ-02, GĐ-03 — **POS quyết theo tình hình thực tế**; §6.19–§6.21 và §6.11; mở U-026, U-027 (2026-09-02)
 - [x] T-041 Mảng ADMIN có **mục riêng có nhãn** ở ba tài liệu — `docs/product.md` **§1.6**, `docs/architecture.md` **§14**, `shop-facts.md` **§8**; luật chốt thành **ADR-013** (2026-09-02)
@@ -561,6 +562,53 @@ Luật chung ở [Vòng chạy một task L1](#vong-chay). Việc riêng của t
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+### T-043 — Hai câu nữa đóng, và một trong hai bỏ `Hoàn thành` khỏi chỗ "điểm dừng"
+
+**L2** — thêm một dòng vào bảng chuyển trạng thái của đơn và đổi nghĩa một trạng thái kết thúc.
+
+**Lời chủ quán, 2026-09-02 (lượt hai trong ngày):**
+- **U-027** — đơn đã `Hoàn thành` có huỷ được không: *"có thể huỷ được, để POS quyết định trong
+  thực tế."*
+- **U-030** — mảng quản trị nào phải có ở bản chạy đầu: *"không mảng nào cần chạy với bán hàng.
+  Bán hàng xong chạy được thì để chạy trước."*
+- **U-026** — dòng vừa sửa tính giá lúc nào: trả lời *"đối sửa được tại thời điểm mà chủ quán quyết
+  định"* — **chưa đủ rõ để ghi thành luật tiền**, xem mục *Còn mở* dưới đây.
+
+**Kết quả.** `shop-facts.md` §6.19 nay chốt **cả sửa lẫn huỷ**: không mốc trạng thái nào chặn, POS
+quyết từng ca. `docs/product.md` §5.2 có thêm dòng `Hoàn thành → Huỷ`; §5.6 rút từ hai ca xuống
+**một**; §6 dòng 13 nay có **hai** đường (sửa hoặc huỷ); §7.6 chốt thứ tự *bán hàng trước, quản trị
+sau*; `quality/invariants.md` **I-016** viết lại cả ba phần. §7.1 có hai dòng nhật ký.
+
+**Chỗ đắt nhất của task này: `Hoàn thành` không còn là điểm dừng tuyệt đối.** §5.2 từng viết *"hai
+trạng thái kết thúc, không có đường ra thứ ba"* — câu ấy nay **sai**. Một đơn đã `Hoàn thành` là
+đơn **có thể đã thu tiền**, nên mọi chỗ đọc `Hoàn thành` như *"chốt sổ xong"* phải đọc lại: báo cáo
+doanh thu (§4.10), đối soát cuối ngày (§4.9). Đường tiền của lần huỷ ấy là **hoàn tiền** (§4.8) —
+rơi vào **ngày hoàn**, không sửa lại ngày bán. §5.2 nay mang một khối ⚠ nói đúng điều này.
+
+**Bài học ghi tại chỗ, không thành finding riêng (§3.8).** Hai ca §5.6 từng bị viết bằng giọng của
+luật (*"sản phẩm từ chối"*) trong khi thật ra **chưa ai hỏi chủ quán** — và **cả hai lần chủ quán
+đều trả lời ngược lại**. Cộng với ba giả định GĐ-02/03/04 bị thay hôm nay, đó là **năm** lần cùng
+một kiểu sai trong hai ngày: đoán chặt hơn quán thật. §5.6 nay nói thẳng bài học ấy tại chỗ.
+
+**Còn mở — U-026, và vì sao KHÔNG đoán.** Câu trả lời *"tại thời điểm mà chủ quán quyết định"* đọc
+được ít nhất hai nghĩa: (a) dòng vừa sửa lấy **giá đang hiệu lực lúc sửa**; (b) chủ quán chọn mốc
+giá cho **từng ca**. Hai nghĩa cho ra hai con số tiền khác nhau trên cùng một hoá đơn, và §4.4 đang
+khoá giá theo *thời điểm tạo lượt gọi* — chọn sai là **tính sai tiền của khách**. CLAUDE.md §3.5
+cấm đoán chỗ này, nên U-026 ở lại *Đang mở* và câu hỏi lại đã viết trong report.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Bằng chứng |
+|---|---|
+| 1 | `shop-facts.md` §6.19 có gạch đầu dòng *"Vế HUỶ nay cũng đã chốt"*; §7.1 có 6 dòng `2026-09-02` |
+| 2 | §5.2 có dòng `\| **Hoàn thành** \| ... \| **Huỷ** \|`; bảng lên **13** dòng |
+| 3 | §5.2 mở đầu mang khối ⚠ nói `Hoàn thành` không còn là điểm dừng tuyệt đối |
+| 4 | §5.6 tiêu đề *"Một chuyển tiếp"*, còn **1** gạch đầu dòng ca bị từ chối |
+| 5 | I-016: phần *Invariant* còn 1 ca, *Verification* có **2** kịch bản dương + đường tiền |
+| 6 | §7.6 tiêu đề đổi thành *"KHÔNG mảng nào ở bản chạy đầu tiên"* |
+| 7 | brief in đúng **một** unknown còn mở: U-026 |
+| 8 | `./scripts/gate.sh` xanh |
+
 ### T-042 — Bốn câu đang treo có lời giải trong một lần, và cả bốn nói cùng một điều
 
 **L2** — chạm quy tắc tiền (§6.20, §6.21), vòng đời đơn (§5.2, §5.6) và ba dòng của bảng ngoại lệ §6.

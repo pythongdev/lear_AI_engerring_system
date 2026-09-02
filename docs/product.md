@@ -1683,7 +1683,7 @@ có thật**, một phiên gắn được nhiều bàn và vẫn **một** hoá 
 đây). Nên **gộp bàn nằm TRONG MVP** (dòng 4 của §7.2) và chỉ **tách** là ở ngoài. Chép nguyên dòng
 cũ vào đây sẽ loại bỏ một năng lực chủ quán đã chốt là có.
 
-### 7.6 Mảng QUẢN TRỊ (admin) — ba mảng vừa mở ranh giới, chưa xếp được vào MVP hay ngoài MVP
+### 7.6 Mảng QUẢN TRỊ (admin) — được phép làm, nhưng KHÔNG mảng nào ở bản chạy đầu tiên
 
 Ngày **2026-09-02** ranh giới mảng quản trị mở ra ba mảng — **nguyên liệu · con người · tài
 chính** (**§1.6**, chủ quán chốt 2026-09-01 và xác nhận lại 2026-09-02). §1.6 nói rõ: mở ranh giới
@@ -1693,17 +1693,26 @@ là *được phép làm*, và **mảng nào vào MVP là câu của mục này*
 **ADR-013**. Nó là một **ô của bảng phạm vi**, không phải chỗ thứ hai giữ ranh giới ba mảng — ranh
 giới ở §1.6, mục này chỉ nói ba mảng ấy đứng đâu trong MVP.*
 
-Mục này trả lời được **một nửa**, và nửa còn lại là câu hỏi cho chủ quán:
+**Chủ quán chốt 2026-09-02 (trả lời U-030): KHÔNG mảng nào phải chạy cùng bản bán hàng đầu tiên.**
+Nguyên văn: *"không mảng nào cần chạy với bán hàng. Bán hàng xong chạy được thì để chạy trước."*
 
-- **Nửa trả lời được:** hôm nay **không** mảng nào trong ba mảng ấy nằm ở §7.2. Không phải vì ai
-  quyết loại chúng ra, mà vì §7.2 có một điều kiện vào cửa — *§1–§6 đã mô tả nó* — và §2 tới §6
-  của tài liệu này **chưa có một quy tắc nghiệp vụ nào** cho ba mảng đó. Một hạng mục MVP không
-  trỏ được về mô tả nào là một hạng mục không ai làm được.
-- **Nửa còn mở:** mảng nào **phải** có trong bản chạy đầu tiên. Đó là **U-030**, ở mục *Unknowns*.
+⇒ **Thứ tự đã rõ: bán hàng chạy trước, ba mảng quản trị đi sau.** Đây là một **quyết định về thứ
+tự**, không phải một lần loại bỏ — ranh giới §1.6 vẫn mở, ba mảng vẫn *được phép làm*.
 
-Ba mảng này **không** thuộc §7.4 — chúng không phải *đã quyết định không làm*, ngược lại là đằng
-khác. Và chúng **không** thuộc §7.5 — *"chưa ai cần tới"* là sai với một thứ chủ quán vừa yêu cầu
-hai lần. Chỗ đứng đúng của chúng hôm nay là mục này: **được phép, chưa có luật, chưa xếp lịch.**
+Hai điều đọc kèm, vì chúng dễ bị nhớ nhầm thành ngược nhau:
+
+- **Không mảng nào ở §7.2**, và nay có **hai** lý do độc lập cùng chỉ một hướng: (1) §7.2 có điều
+  kiện vào cửa — *§1–§6 đã mô tả nó* — mà §2–§6 **chưa có một quy tắc nghiệp vụ nào** cho ba mảng;
+  (2) chủ quán vừa nói thẳng là **không cần** chúng ở bản chạy đầu. Trước 2026-09-02 chỉ có lý do
+  thứ nhất, và nó là lý do **của tài liệu**; nay có thêm lý do **của chủ quán**.
+- **Ba mảng này vẫn không thuộc §7.4 và cũng không thuộc §7.5.** Không phải *"đã quyết định không
+  làm"* (§7.4) — ngược lại, chủ quán vừa mở ranh giới cho chúng hai lần. Không phải *"chưa ai cần
+  tới"* (§7.5) — có người cần, chỉ là **cần sau**. Chỗ đứng đúng vẫn là mục này, nhưng câu mô tả
+  nay đổi: **được phép, chưa có luật, và đã có thứ tự — đi sau bán hàng.**
+
+⇒ **Hệ quả cho việc xếp lịch:** ADM-01…ADM-52 ở `work/admin-questions.md` §2 nay có một mốc để xếp
+quanh — không phải *"chưa biết bao giờ"* mà là *"sau khi luồng bán hàng chạy được"*. Điều kiện vào
+cửa §7.2 **không đổi**: một mảng chỉ vào MVP khi §1–§6 đã có luật nghiệp vụ cho nó.
 
 `work/admin-questions.md` giữ 55 câu hỏi và danh sách việc ADM-01…ADM-52 cho ba mảng ấy. Đó là
 **working state**, không phải phạm vi: một dòng ở đó không vào MVP cho tới khi nó có luật ở §1–§6
@@ -1774,19 +1783,13 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 
 ### Đang mở
 
-**Ngày 2026-09-02 chủ quán trả lời bốn câu một lúc (T-042), và cả bốn cùng một hình dạng: POS quyết
-theo tình hình thực tế, không có luật cứng.** U-022 và U-025 đóng, hai giả định rủi ro CAO
-(**GĐ-02**, **GĐ-03**) được thay bằng quy tắc thật. Hai câu dưới đây là **phần lời chốt ấy không
-chạm tới** — chúng tách ra từ U-022, và cả hai đều hẹp tới mức chỉ chờ **một chữ**.
+**Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
+chủ quán quyết theo tình hình thực tế, không có luật cứng.** Lượt một (T-042) đóng U-022, U-025 và
+thay hai giả định rủi ro CAO; lượt hai (T-043) đóng **U-027** — đơn đã `Hoàn thành` cũng **huỷ
+được** — và **U-030** — **không** mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên.
 
-- **U-027 — Một đơn đã `Hoàn thành` thì có HUỶ được không?** *Vì sao còn hỏi:* hai lần trả lời
-  (2026-09-01 và 2026-09-02) đều nói **sửa** — *"quán đang ở trạng thái nào cũng sửa được"*
-  (`shop-facts.md` §6.19) — và **chưa lần nào** nói **huỷ**. Đọc chữ *sửa* thành *huỷ* là đúng thứ
-  `work/findings.md` F-004 cấm, nên bảng §5.2 vẫn không có dòng `Hoàn thành → Huỷ` (§5.6). *Ai trả
-  lời được:* **chủ quán** (hỏi về cái quán: *"đơn đã đưa cho khách xong rồi mà muốn bỏ hẳn thì quán
-  bỏ được không, hay chỉ sửa lại thôi?"*). *Đang chặn:* **không chặn ai** — ca *"đơn đã hoàn thành
-  cần điều chỉnh"* đã có đường đi bằng **sửa** (§6 dòng 13). Đây là câu hỏi *quán có muốn thêm một
-  đường nữa hay không*, không phải chỗ trống trong sản phẩm.
+**Còn đúng MỘT câu, và nó là câu chạm tiền.**
+
 - **U-026 — Một dòng VỪA SỬA thì tính giá lúc nào?** *Vì sao còn hỏi:* §4.4 khoá giá theo **thời
   điểm tạo lượt gọi**, và chủ quán chốt 2026-09-01 rằng giá đổi được **giữa giờ bán**
   (`shop-facts.md` §6.17). Nay sửa đơn được ở **mọi** trạng thái, nên một dòng tạo lúc 8h và sửa
@@ -1796,21 +1799,6 @@ chạm tới** — chúng tách ra từ U-022, và cả hai đều hẹp tới m
   trong một đơn gọi từ trước, thì tính tiền theo giá nào?"*). *Đang chặn:* dòng 13 của bảng §6 còn
   một ô ⚠; **BA-09** cần biết MVP có phải làm màn hình sửa đơn có tính lại giá hay không, và
   **BA-10** gom nó lần cuối.
-- **U-030 — Trong ba mảng vừa được mở vào phạm vi, mảng nào phải có ở BẢN CHẠY ĐẦU TIÊN?**
-  *Đã chốt phần ranh giới (2026-09-01, xác nhận lại 2026-09-02):* **nguyên liệu · con người ·
-  tài chính** đều **được phép** có mặt — dòng *"không quản lý nguyên liệu, tồn kho, chấm công hay
-  kế toán"* đã bị xoá khỏi §1.4, và ranh giới riêng của ba mảng nay ở **§1.6** (mặt kiến trúc:
-  `docs/architecture.md` §14). *Còn mở:* **được phép** khác **làm ngay**. Chưa ai nói mảng nào
-  phải chạy được cùng lúc với luồng bán hàng, mảng nào đi sau, và một mảng "có" thì gồm những thao
-  tác nào — riêng mảng **con người** nuốt luôn dòng *"Quản lý nhân viên cơ bản"* của §7.2, thứ hôm
-  nay chỉ có đúng một gạch đầu dòng ở §1.3. *Ai trả lời được:* **chủ quán** (hỏi về cái quán
-  trước, đúng bài học S-4: *"hôm khai trương phần mềm, anh cần nó làm được ngay việc gì ngoài bán
-  hàng — hay để bán hàng chạy êm rồi mới tính?"*). *Đang chặn:* **§7.6** không xếp được ba mảng
-  vào *trong MVP* hay *ngoài MVP*, và toàn bộ ADM-01…ADM-52 ở `work/admin-questions.md` §2 không
-  có thứ tự ưu tiên — một task mở sớm trước khi biết luật là một task sẽ phải viết lại. Ba lời
-  chốt **Đ-2, Đ-3, Đ-4** ở `work/admin-questions.md` §1 chạm đúng câu này nhưng **chưa được chủ
-  quán xác nhận lại**, nên chúng chưa phải lời giải.
-
 Hình dạng của mục là hợp đồng với `scripts/brief.sh` (ADR-007): **mỗi** câu trên là **một gạch đầu
 dòng**, và câu tiếp theo cũng phải vào đây dưới dạng ấy. `master_plan/shop-facts.md` §7.2 — chỗ giữ
 các mục **suy ra** chưa xác nhận — giữ **S-5** (bấm *"đã bưng ra bàn"* theo đơn vị nào); đó là chỗ
@@ -1858,6 +1846,8 @@ không được tự dựng hộ.
 | ~~U-025 — ai giữ sổ giấy, ghi gì, nhập lại lúc nào~~ | **POS hoặc chủ quán** giữ và nhập; **nhập ngay khi có thể**, không có mốc giờ cứng; có điện lại giữa buổi thì làm tiếp trên hệ thống, ghi tay cập nhật sau | `shop-facts.md` §6.11 · §6 dòng 11–12 trên đây |
 | ~~GĐ-02 — món hết sau khi khách đã chọn~~ | **POS bàn với khách**, quyết tại lúc thoả thuận xong — không tự thay thế, không tự huỷ. Đóng **câu 3** bảng mười câu hỏi | `shop-facts.md` §6.20 · §6 dòng 5 và §6.3 trên đây |
 | ~~GĐ-03 — khách nói đã chuyển khoản mà chưa thấy báo có~~ | **POS bàn với khách**, quyết ngay lúc đó; hai đường ra đã có sẵn — ghi **nợ** (§4.7) hoặc **chờ tin nhắn** (§4.6) | `shop-facts.md` §6.21 · §6 dòng 9 trên đây |
+| ~~U-027 — đơn đã `Hoàn thành` thì có huỷ được không~~ | **Huỷ được**, POS quyết trong thực tế — *"có thể huỷ được, để POS quyết định trong thực tế"*. Bảng §5.2 có thêm dòng `Hoàn thành → Huỷ`; §5.6 mất ca thứ hai | `shop-facts.md` §6.19 · §5.2, §5.6 và §6 dòng 13 trên đây |
+| ~~U-030 — mảng quản trị nào phải có ở bản chạy đầu tiên~~ | **Không mảng nào** — *"bán hàng xong chạy được thì để chạy trước"*. Là quyết định về **thứ tự**, không phải loại bỏ: ranh giới §1.6 vẫn mở | §7.6 trên đây · `shop-facts.md` §7.1 (ngày chốt) |
 
 Ngày **2026-08-31** chủ quán trả lời một loạt sáu câu (T-028). Một câu thứ bảy — U-006 — chỉ được
 trả lời **một nửa**, nên nó ở lại mục *Đang mở* với phạm vi hẹp hơn.
