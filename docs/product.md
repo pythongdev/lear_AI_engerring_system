@@ -1,3 +1,19 @@
+<!-- ==== BẢN LƯU — tách ngày 2026-09-02 · DOC-1 · docs/decisions.md ADR-014 ==== -->
+
+> # ⚠ Đây là BẢN LƯU, không phải nguồn sự thật
+>
+> **Đây là ảnh chụp `docs/product.md` đúng ngày tách, 2026-09-02.** Toàn bộ nội dung dưới đây đã
+> được chuyển **nguyên văn** sang [`docs/product/`](product/00-index.md), cắt theo pha.
+>
+> **File này không sở hữu sự thật nào.** Nó được giữ lại làm bản lưu; không tài liệu nào được trỏ
+> về đây như một owner (`CLAUDE.md` §2 trỏ vào `docs/product/`).
+>
+> **Không sửa ở đây.** Mọi thay đổi về hành vi nghiệp vụ đi vào file của mục ấy trong
+> [`docs/product/`](product/00-index.md). Sửa ở bản lưu là dựng bản sự thật thứ hai — đúng
+> `work/findings.md` **F-001**.
+
+---
+
 # Product
 
 Hành vi nghiệp vụ của sản phẩm. Mỗi mục dưới đây do một task BA chốt.
@@ -1831,7 +1847,7 @@ việc mở rộng phải **nói ra thành lời** thay vì lặng lẽ chui và
 
 > Chưa chốt — BA-11
 
-## Unknowns
+## Unknowns (BẢN LƯU — brief không đọc mục này; owner nay là docs/product/99-unknowns.md)
 
 Câu hỏi nghiệp vụ chưa có lời giải. Không để việc thực hiện âm thầm quyết định thay.
 
