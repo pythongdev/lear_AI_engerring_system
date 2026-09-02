@@ -777,6 +777,63 @@ công thức đủ bốn dòng. Chi tiết ở `master_plan/shop-facts.md` §6.1
 *Unknowns* U-012 · `quality/invariants.md` I-005 · `master_plan/shop-facts.md` §6.14 (chỉ đọc).
 
 
+### ADR-013 — Nội dung mảng ADMIN đi vào **mục riêng có nhãn**, không chen vào mục của mảng bán hàng
+
+**Decision:**
+Từ 2026-09-02, mọi nội dung thuộc **mảng admin** — nguyên liệu · con người · tài chính — cập nhật
+vào tài liệu nào cũng phải nằm ở **một mục riêng**, và **tên mục mang chữ `admin`**. Mục cũ của
+mảng bán hàng chỉ được để lại **một dòng trỏ**, không giữ nội dung admin.
+
+Ba mục ấy, tính tới hôm nay:
+
+| Tài liệu | Mục admin | Mục ấy giữ gì |
+|---|---|---|
+| `docs/product.md` | **§1.6** | ranh giới nghiệp vụ của ba mảng |
+| `docs/architecture.md` | **§14** | mặt kiến trúc, và bốn chỗ chạm với mảng bán hàng |
+| `master_plan/shop-facts.md` | **§8** | dữ kiện quán của ba mảng |
+
+Ba luật đi kèm:
+
+- **Nhật ký không tách.** `master_plan/shop-facts.md` §7.1 vẫn là nhật ký chốt **đầy đủ** của cả
+  hai mảng; dòng chốt admin ở lại đó, chỉ có cột *Ghi ở* trỏ về §8.
+- **Đánh số tiếp, không chèn vào giữa.** Mục admin mới lấy số cuối của tài liệu
+  (`docs/architecture.md` §14 đứng sau §13 vì `prompt/BA/08-mvp-scope-L1.md` đang trỏ §13).
+- **`master_plan/shop-facts.md` §8 không được trỏ ra file nào** — ADR-001 giữ nguyên: tài liệu đó
+  là điểm cuối, không có liên kết.
+
+**Why:**
+Chủ repo yêu cầu thẳng trong phiên 2026-09-02: *"khi cập nhật phần admin vào bất cứ tài liệu nào
+hãy làm thêm 1 mục cho admin tách riêng ra, tôi cần biết mục này là thuộc phần nào"*.
+
+Yêu cầu ấy có gốc kỹ thuật, không chỉ là sở thích. Cùng ngày, T-040 ghi lời chốt Đ-1 bằng cách viết
+chen một khối dài về nguyên liệu và chấm công vào giữa `docs/product.md` §1.4 — mục vốn tả ranh
+giới của **mảng bán hàng**. Kết quả là một mục phục vụ hai lý do thay đổi: sửa nó vì lý do bán hàng
+thì đụng phần admin, và ngược lại. Đó đúng là hình dạng lỗi `work/findings.md` **F-001** đã ghi cho
+trường hợp hai bản của một sự thật — ở đây là hai sự thật trong một chỗ, hỏng theo cùng một cách.
+
+Cái giá của việc không tách tăng theo thời gian: `work/admin-questions.md` §2 đang chờ **52 việc**
+ADM. Mỗi việc viết chen vào một mục bán hàng là một chỗ nữa không tách lại được; tách bây giờ tốn
+một lượt, tách sau tốn một lượt cho mỗi mục.
+
+**Rejected alternatives:**
+- *Gắn nhãn `[ADMIN]` trước từng đoạn, giữ nguyên chỗ.* Nhãn nằm trong lòng mục thì mục lục không
+  thấy; người đọc vẫn phải quét cả mục mới biết đoạn nào của mảng nào — đúng cái đang hỏng.
+- *Tách hẳn thành một file riêng dưới `docs/` chỉ dành cho mảng admin.* Vi phạm CLAUDE.md §2 (một sự thật một owner): ranh
+  giới hệ thống đã có owner là `docs/product.md` §1.4, kiến trúc đã có owner là
+  `docs/architecture.md`. Thêm file thứ ba là tạo owner thứ hai cho cùng loại sự thật, và
+  CLAUDE.md §3.8 cấm dựng tài liệu không ai yêu cầu.
+- *Chờ tới khi có luật nghiệp vụ thật rồi mới tách.* Lúc ấy đã có nhiều mục phải tách, và mỗi lần
+  tách muộn là một lần phải đọc lại xem câu nào thuộc mảng nào — thứ hôm nay còn biết chắc.
+- *Đổi số mục để mục admin đứng cạnh mục liên quan.* Làm gãy pointer đang trỏ tới số cũ; ADR-008
+  đã chốt hướng "sửa tiến, không viết lại".
+
+**Applies to:**
+`docs/product.md` §1.4 và **§1.6** · `docs/architecture.md` §10, §13 và **§14** ·
+`master_plan/shop-facts.md` §7.1, §7.3 và **§8** · `work/admin-questions.md` §4 · mọi task
+**ADM-01…ADM-52** sẽ mở sau này.
+
+---
+
 ## Giả định BA — ngoại lệ chưa có lời chốt
 
 Mục này giữ **giả định tạm thời** cho những dòng mang dấu ⚠ trong `docs/product.md` §6. Một `GĐ`
@@ -784,7 +841,13 @@ Mục này giữ **giả định tạm thời** cho những dòng mang dấu ⚠
 làm thế nào*, kèm **mức rủi ro** nếu giả định ấy sai. Có lời chủ quán thì `GĐ` bị **thay** bằng
 quy tắc trong owner của nó (`master_plan/shop-facts.md`), không phải sửa tại chỗ.
 
-Mọi `GĐ` dưới đây mở ngày **2026-09-02**, do **BA-08** (`docs/product.md` §6) — chưa hỏi chủ quán.
+Mọi `GĐ` dưới đây mở ngày **2026-09-02**, do **BA-08** (`docs/product.md` §6).
+
+**Ba trong năm mục đã bị THAY ngay trong ngày** (T-042): chủ quán trả lời **GĐ-02**, **GĐ-03** và
+**GĐ-04** cùng lúc với U-022 và U-025. Ba mục ấy giữ lại **có gạch ngang**, kèm lời chốt thật ở
+đầu, vì chỗ chúng đoán **lệch** là thứ đáng đọc: cả ba đều đoán quán **chặt hơn** quán thật — đoán
+ra một luật cứng ở nơi chủ quán cố ý không đặt luật nào. **GĐ-01** và **GĐ-05** vẫn là giả định
+đang có hiệu lực.
 
 ### GĐ-01 — Hai người cùng thao tác trên một bàn: người bấm sau thắng
 
@@ -804,9 +867,15 @@ nhau** của cùng một phiên, không đè lên nhau ở phần lớn ca.
 **Câu phải hỏi chủ quán.** *"Khách đang quét QR gọi thêm đúng lúc quầy bấm tính tiền cho bàn ấy thì
 ở quán xử lý thế nào?"*
 
-### GĐ-02 — Món hết sau khi khách đã chọn: quầy gọi khách, khách quyết đổi hay huỷ
+### GĐ-02 — ~~Món hết sau khi khách đã chọn~~ · **ĐÃ THAY bằng quy tắc, 2026-09-02**
 
-**Dòng §6:** 5 · **Rủi ro: CAO**
+**Dòng §6:** 5 · ~~**Rủi ro: CAO**~~ · **Trạng thái: Superseded** — `master_plan/shop-facts.md` §6.20
+
+> **Chủ quán chốt 2026-09-02:** *POS sẽ làm việc với khách và quyết định được đưa ra tại thời điểm
+> thảo luận xong với khách hàng.* Giả định bên dưới **đoán gần đúng** (quầy gọi khách, khách quyết)
+> nhưng đoán thiếu một nửa: nó viết như thể quán chọn sẵn một trong ba đường, còn lời chốt nói
+> **không có đường chọn sẵn nào** — kết quả là cái hai bên thống nhất tại ca đó. Đọc quy tắc ở
+> `shop-facts.md` §6.20, đừng đọc phần dưới. Giữ lại để thấy chỗ đoán lệch.
 
 **Giả định.** Quầy **liên hệ khách** rồi làm theo ý khách: đổi sang thành phần khác, bỏ phần thiếu,
 hoặc huỷ cả đơn. Máy không tự chọn giúp.
@@ -822,9 +891,14 @@ buổi bán**. Chọn sai đường ở đây là chọn sai cho hàng chục đ
 **Câu phải hỏi chủ quán.** *"Đang bán mà hết bánh, những bàn đã gọi rồi thì quán làm thế nào — báo
 từng bàn, đổi món khác, hay trả tiền lại?"*
 
-### GĐ-03 — Khách nói đã chuyển khoản mà quầy chưa thấy báo có: ghi NỢ, không giữ khách
+### GĐ-03 — ~~Khách nói đã chuyển khoản mà quầy chưa thấy báo có~~ · **ĐÃ THAY bằng quy tắc, 2026-09-02**
 
-**Dòng §6:** 9 · **Rủi ro: CAO**
+**Dòng §6:** 9 · ~~**Rủi ro: CAO**~~ · **Trạng thái: Superseded** — `master_plan/shop-facts.md` §6.21
+
+> **Chủ quán chốt 2026-09-02:** *POS sẽ thảo luận với khách và đưa ra quyết định tại lúc đó.* Giả
+> định bên dưới đoán **sai chiều**: nó chốt sẵn *"không giữ khách, ghi nợ"*, còn lời chốt để **cả
+> hai** đường mở — ghi nợ, **hoặc** chờ tin nhắn — và giao việc chọn cho người đứng quầy. Đây đúng
+> là chỗ một giả định nghe hợp lý đã suýt thành luật cứng. Đọc `shop-facts.md` §6.21.
 
 **Giả định.** Quầy **không** giữ khách lại chờ tin nhắn. Phiên đóng theo đường **nợ** của
 `shop-facts.md` §6.14 — ghi ai nợ, nợ bao nhiêu — và xoá khoản nợ khi tin nhắn báo có tới.
@@ -841,9 +915,15 @@ số sai cùng lúc — phần chuyển khoản so với tin nhắn, và tổng 
 **Câu phải hỏi chủ quán.** *"Khách bảo chuyển rồi mà điện thoại chưa có tin nhắn báo có thì quán
 cho khách đi hay giữ lại chờ?"*
 
-### GĐ-04 — Đơn đã hoàn thành cần điều chỉnh: không sửa, xử bằng hoàn tiền
+### GĐ-04 — ~~Đơn đã hoàn thành cần điều chỉnh~~ · **ĐÃ THAY bằng quy tắc, 2026-09-02**
 
-**Dòng §6:** 13 · **Rủi ro: TRUNG BÌNH**
+**Dòng §6:** 13 · ~~**Rủi ro: TRUNG BÌNH**~~ · **Trạng thái: Superseded** — `master_plan/shop-facts.md` §6.19
+
+> **Chủ quán chốt 2026-09-02:** *quán đang ở trạng thái nào cũng sửa được, POS sẽ quyết định dựa
+> trên tình hình thực tế.* Giả định bên dưới đoán **ngược hẳn** — nó viết *"đơn đã `Hoàn thành` thì
+> không sửa nữa, xử bằng hoàn tiền"*, và rủi ro nó tự nêu (*"nếu quán thật vẫn sửa đơn đã xong"*)
+> đúng là điều đã xảy ra. **Đây là giả định sai nhiều nhất trong năm mục**, và nó sai theo hướng
+> chặt hơn quán thật — đúng thứ CLAUDE.md §3.5 cảnh báo. Đọc `shop-facts.md` §6.19.
 
 **Giả định.** Đơn đã `Hoàn thành` thì **không sửa nội dung nữa**; sai sót xử bằng đường **hoàn
 tiền** của §4.8 — quầy quyết từng ca, ghi vết, trừ vào doanh thu **ngày hoàn**.

@@ -378,16 +378,10 @@ Không phải "chưa làm" — là **đã quyết định không làm**:
   giấy** và **không dừng bán** (`shop-facts.md` §6.11). Mặt admin phải chịu được việc một buổi
   sáng bị nhập bù sau.
 
-**Một dòng đã RA khỏi mục này ngày 2026-09-02.** *Nguyên liệu, tồn kho, chấm công, kế toán* từng
-đứng ở đây như một quyết định không làm. Chủ quán chốt **ngược lại** ngày 2026-09-01 và **xác nhận
-lại 2026-09-02**: ba mảng **nguyên liệu · con người · tài chính** vào phạm vi (`docs/product.md`
-§1.4). Dòng ấy bị **xoá**, không phải chuyển chỗ — mục này chỉ giữ những gì **vẫn** là *đã quyết
-định không làm*.
-
-⚠️ **Mở ranh giới không sinh ra thiết kế.** Tài liệu này chưa có tầng, chưa có màn, chưa có dữ liệu
-nào cho ba mảng ấy, và §8 vẫn giữ nguyên danh sách chỗ thiếu của nó. Ai viết mặt admin cho ba mảng
-này thì đọc `docs/product.md` §1.4 trước — ở đó ghi rõ *được phép làm* chưa phải *làm ngay*, và §7
-(BA-09) mới là chỗ nói mảng nào vào MVP.
+**Một dòng đã RA khỏi mục này ngày 2026-09-02**, và mảng đó nay có **mục riêng: §14**.
+*Nguyên liệu, tồn kho, chấm công, kế toán* từng đứng ở đây như một quyết định không làm; chủ quán
+chốt **ngược lại** 2026-09-01, xác nhận lại 2026-09-02. Dòng ấy bị **xoá**, không phải chuyển chỗ —
+mục này chỉ giữ những gì **vẫn** là *đã quyết định không làm*, và toàn bộ mảng quản trị đọc ở §14.
 
 ---
 
@@ -542,4 +536,57 @@ két lệch ở **hai** ngày ngược chiều nhau — công thức đầy đ�
 | Vì sao ba mặt một miền, và vì sao chỉ POS ghi | `docs/decisions.md` ADR-011 |
 | Vì sao nợ là một phần riêng, không phải một cột | `docs/decisions.md` ADR-012 · **§12** |
 | Trục sản xuất bằng ngôn ngữ nghiệp vụ | `work/backlog.md` BA-12 — **chưa viết** |
+| **Mảng quản trị (admin)** — nguyên liệu, con người, tài chính | **§14** · `docs/product.md` §1.6 · `master_plan/shop-facts.md` §8 |
 | Bản tư vấn ngoài, **không phải sự thật** | `work/proposals/admin.admiadmin/admin1.md` |
+
+---
+
+## 14. Mảng QUẢN TRỊ (admin) — nguyên liệu · con người · tài chính
+
+⚠️ **"Mảng admin" ở mục này KHÁC "mặt admin" ở §9 và §10.** Tiêu đề của cả tài liệu — *mặt quản
+trị* — nói về **toàn bộ** hệ thống nhìn từ ba chỗ đứng (§1); đó là nghĩa của chữ *admin* ở §9 và
+§10. Chữ **mảng admin** ở mục này hẹp hơn hẳn: đúng **ba mảng nghiệp vụ** nguyên liệu · con người ·
+tài chính, theo cách `work/admin-questions.md` gọi tên chúng. Đọc nhầm hai chữ này là đọc nhầm phạm
+vi của cả mục.
+
+**Mục này là chỗ duy nhất của tài liệu này nói về ba mảng đó.** §1–§13 mô tả kiến trúc của mảng
+**bán hàng** — ba mặt, hai trục, phiên bàn, tiền, nợ. Mục này là mảng **chạy quán**. Hai mảng đứng
+riêng vì chúng đổi vì hai lý do khác nhau; ai viết mảng này thì viết vào đây, không chèn vào mục
+của mảng kia.
+
+### 14.1 Ranh giới — ba mảng nằm TRONG phạm vi
+
+**Chủ quán chốt 2026-09-01, xác nhận lại 2026-09-02:** nguyên liệu · con người · tài chính vào
+phạm vi. Trước đó §10 xếp *"nguyên liệu, tồn kho, chấm công, kế toán"* vào **đã quyết định không
+làm**; dòng ấy đã bị xoá. Hành vi nghiệp vụ tương ứng ở `docs/product.md` §1.6; dữ kiện quán ở
+`master_plan/shop-facts.md` §8.
+
+### 14.2 Hôm nay mục này CHƯA có thiết kế nào
+
+Mở ranh giới **không** sinh ra kiến trúc. Tính tới 2026-09-02, tài liệu này chưa có cho ba mảng ấy:
+
+- không mặt nào trong §1 (*Một hệ thống, ba mặt*) được giao thêm việc — POS, BẾP và CHỦ QUÁN vẫn
+  đúng những màn đã tả;
+- không trục thứ ba nào ở §2 — hai trục *đơn* và *nhu cầu sản xuất* vẫn là tất cả;
+- không hình dạng dữ liệu nào; §8 (*Sáu chỗ hình dạng dữ liệu hiện có chưa với tới*) giữ nguyên
+  danh sách của nó, không cộng thêm chỗ thiếu nào vì lời chốt này.
+
+⚠️ **Đừng đọc mục này thành lời cho phép thiết kế.** *Được phép làm* là câu của mục này; *làm ngay
+bây giờ* là câu của `docs/product.md` §7 (BA-09). Ai dựng bảng, dựng màn hay chọn tầng cho ba mảng
+này trước khi §7 chốt là đang tự quyết phạm vi MVP.
+
+### 14.3 Chỗ mảng admin CHẠM vào mảng bán hàng — bốn chỗ đã biết
+
+Tách mục không có nghĩa hai mảng không dính nhau. Bốn chỗ dưới đây là nơi chúng gặp nhau, và cả
+bốn **chưa có luật**:
+
+| Chỗ chạm | Vì sao nó là chỗ chạm |
+|---|---|
+| Hết nguyên liệu → **tạm dừng nhận đơn** | nút tạm dừng đã có ở §6.2; ai bấm và bấm theo cái gì thì chưa |
+| **Ai đang trực trạm nào** → quyền huỷ đơn / hoàn tiền | §4 nói quyền gắn **chỗ đứng**, mà không dữ liệu nào ghi ai đang đứng đâu (§8 chỗ thiếu) |
+| **Sổ chi** → báo cáo lãi lỗ | §6.3 mới cộng doanh thu; chi phí chưa có ở đâu |
+| **Quỹ tiền mặt** → đối soát cuối ngày | §6.4 chốt ngưỡng lệch 0đ; tiền đầu buổi và tiền nộp về chưa nằm trong phép tính đó |
+
+Bốn chỗ này là lý do mảng admin **không** thể thiết kế tách rời mảng bán hàng, dù nó được viết ở
+mục riêng. Mục riêng là để **đọc** không lẫn, không phải để **thiết kế** không nhìn nhau.
+

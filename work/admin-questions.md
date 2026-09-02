@@ -42,8 +42,8 @@ tồn tại trong file này, mà file này không sở hữu sự thật nào.
 |---|---|---|---|
 | ~~Đ-1~~ | Có mở lại ranh giới hệ thống không? | **Mở cả ba** — nguyên liệu, con người, tài chính vào phạm vi | ✅ **đã về owner 2026-09-02 (T-040)**: `docs/product.md` §1.4 · `docs/architecture.md` §10 · `master_plan/shop-facts.md` §7.1 |
 | Đ-2 | Thứ tự làm | **Đóng nốt BA-08 → BA-12 trước**, rồi mới chạy nhánh admin | `work/backlog.md` |
-| Đ-3 | Nguyên liệu làm ở mức nào | **Sổ ghi tay điện tử** — máy **không** tự trừ kho theo công thức | `master_plan/shop-facts.md` (mục mới) · `docs/product.md` §1.4 |
-| Đ-4 | Con người làm tới đâu | **Cả ba mức**: ai đang trực trạm + chấm công + tính lương | `master_plan/shop-facts.md` (mục mới) · `docs/architecture.md` §8 |
+| Đ-3 | Nguyên liệu làm ở mức nào | **Sổ ghi tay điện tử** — máy **không** tự trừ kho theo công thức | `master_plan/shop-facts.md` **§8** · `docs/product.md` **§1.6** (mục admin, ADR-013) |
+| Đ-4 | Con người làm tới đâu | **Cả ba mức**: ai đang trực trạm + chấm công + tính lương | `master_plan/shop-facts.md` **§8** · `docs/architecture.md` **§14** (mục admin, ADR-013) |
 
 **Đ-1 lật ngược một câu đang nằm trong tài liệu — và câu ấy nay đã sửa (T-040, 2026-09-02).**
 `docs/product.md` §1.4 từng viết *"Không quản lý nguyên liệu, tồn kho, chấm công hay kế toán"*, và
@@ -343,6 +343,19 @@ Không có câu trả lời nào ở lại file này. Bảng đường đi (`CLA
 | Luật không bao giờ được vi phạm | `quality/invariants.md` |
 | Việc phải làm | `work/backlog.md` |
 | Câu hỏi hỏi rồi mà **vẫn chưa có lời giải** | `docs/product.md` → *Unknowns*, dạng `U-XXX` |
+
+**Và lời giải ấy vào MỤC RIÊNG của mảng admin, không chen vào mục của mảng bán hàng**
+(`docs/decisions.md` **ADR-013**, chủ repo yêu cầu 2026-09-02). Ba mục ấy đã có sẵn, cứ viết tiếp
+vào đó:
+
+| Tài liệu | Mục admin | Giữ gì |
+|---|---|---|
+| `docs/product.md` | **§1.6** | ranh giới và luật nghiệp vụ của ba mảng |
+| `docs/architecture.md` | **§14** | mặt kiến trúc, và chỗ chạm với mảng bán hàng |
+| `master_plan/shop-facts.md` | **§8** | dữ kiện quán của ba mảng — §8.3 nói cách đánh số tiếp |
+
+Nhật ký chốt thì **không** tách: dòng ngày tháng vẫn vào `master_plan/shop-facts.md` §7.1 như mọi
+lời chốt khác, chỉ khác cột *Ghi ở* trỏ về §8.
 
 **Vì sao 55 câu này không nằm thẳng ở *Unknowns*:** `scripts/brief.sh` in mục ấy vào **mọi phiên
 mới** và cắt ở **12 mục** (`CLAUDE.md` §7.1). Đổ 55 câu vào đó là làm mù chính cái cơ chế giữ cho

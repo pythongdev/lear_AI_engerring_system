@@ -9,6 +9,10 @@
 > gì, bán cho ai qua đường nào, giá bao nhiêu, bếp làm ra cái gì, và tiền đi đường nào từ lúc
 > khách gọi tới lúc bàn trống. Không cần mở thêm tài liệu nào khác, và file này cũng không trỏ
 > đi đâu — nó là điểm cuối.
+>
+> **Hai mảng, hai chỗ.** §1–§7 là mảng **bán hàng**; **§8 là mảng quản trị (admin)** — nguyên liệu,
+> con người, tài chính. Đọc số mục là biết mình đang ở mảng nào, và dữ kiện admin mới **chỉ** được
+> viết vào §8.
 
 ---
 
@@ -988,7 +992,7 @@ phép** có mặt:
   đâu — chưa có dòng nào trong tài liệu này trả lời, nên đừng suy ra hộ.
 - **Chưa có con số nào.** Không danh mục nguyên liệu, không đơn vị tính, không số người, không đơn
   giá công, không khoản chi. Mọi con số cho ba mảng này còn phải hỏi chủ quán.
-- **Bốn ranh giới ở §6 quy tắc 12 không bị lời chốt này chạm tới** — kênh bán thứ sáu, đơn tối
+- **Bốn ranh giới ở §6.12 không bị lời chốt này chạm tới** — kênh bán thứ sáu, đơn tối
   thiểu và bậc phí ship, số tài khoản cứng trong sản phẩm, món ngoài bảng giá. Cả bốn vẫn là *đã
   quyết định không làm*.
 
