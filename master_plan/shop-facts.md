@@ -534,7 +534,7 @@ tự xếp nồi, **không** tự quyết thứ tự làm và **không** đề x
 gom, gom mấy quả, làm trước làm sau là quyết định của người ở bếp và ở quầy. Đây là một **ranh
 giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ là đổi phạm vi, phải xin phép chủ quán.
 
-## 6. Hai mươi mốt quy tắc nghiệp vụ phải đúng
+## 6. Hai mươi hai quy tắc nghiệp vụ phải đúng
 
 1. **Khách gọi thêm khi quầy đã bắt đầu thu tiền vẫn thuộc CÙNG phiên, CÙNG một hoá đơn.** Phiên
    ở trạng thái "chờ thanh toán" **chưa** giải phóng bàn. Tách ra hoá đơn thứ hai ⇒ **thu thiếu
@@ -837,7 +837,8 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       dòng sửa sau mốc ấy sẽ **đắt hơn hoặc rẻ hơn** chính nó lúc mới gọi, dù khách không đổi món.
     - ⇒ **Vết của lần sửa phải ghi cả GIÁ CŨ và GIÁ MỚI**, không chỉ ghi "đã sửa". Đối soát cuối
       ngày ngưỡng **0đ** (§6.10) chỉ giải thích được chỗ lệch nếu đọc được dòng nào đổi giá lúc
-      mấy giờ; đây là §6.10 áp vào, không phải luật mới.
+      mấy giờ; đây là §6.10 áp vào, không phải luật mới. **Hình dạng đầy đủ của cái vết ấy nay ở
+      §6.22** — bản trước, bản sau, lý do, người sửa (`quality/invariants.md` I-018).
 
 20. **Món hết sau khi khách đã chọn: POS làm việc với khách, quyết định ra tại lúc thoả thuận xong**
     (chủ quán chốt 2026-09-02). Không có luật cứng kiểu *"tự động thay thế"* hay *"tự động huỷ"*:
@@ -862,6 +863,29 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
     - ⇒ **Dù chọn đường nào cũng không được ghi là "đã thu tiền mặt"** — phần chuyển khoản đối
       chiếu bằng **tin nhắn báo có**, phần tiền mặt đối chiếu bằng **két**, và §6.10 cấm cộng gộp
       hai nguồn. Ghi nhầm nguồn là làm hỏng đúng cái ngưỡng 0đ.
+22. **Sửa cái sai bằng CẬP NHẬT, không bằng hoàn tác — và mỗi lần cập nhật giữ BẢN TRƯỚC, BẢN SAU,
+    LÝ DO và NGƯỜI SỬA** (chủ quán chốt 2026-09-02). Ngoài đúng một ca đã có đường lùi — bấm nhầm
+    *"đã làm xong"* một mẻ (§5.4) — **không thao tác nào có nút hoàn tác**: duyệt nhầm một đơn, huỷ
+    nhầm, đóng phiên nhầm đều **không** quay ngược được. Thay vào đó có **nút cập nhật**, và lần
+    cập nhật ấy phải để lại một bản ghi đọc được về sau.
+    - **Bốn thứ một bản ghi phải trả lời:** **trước** khi sửa là thế nào · **sau** khi sửa là thế
+      nào · **lý do** · **ai sửa**. Chủ quán nói thẳng mục đích: *"để đối chiếu"* — nên bản ghi này
+      phục vụ §6.10, không phải một tính năng lịch sử cho vui.
+    - **"Bản copy trước và sau" là nguyên văn, và nó mạnh hơn một dòng log.** Ghi *"đã sửa đơn 12"*
+      là **chưa đủ**: phải dựng lại được đơn 12 **trước** lúc sửa và **sau** lúc sửa. Đây là chỗ
+      một bản ghi kiểu *"ai làm gì lúc mấy giờ"* thường thiếu, và thiếu đúng thứ để đối chiếu.
+    - **Luật này áp cho cả ca HAI NGƯỜI CÙNG THAO TÁC trên một bàn** (chủ quán chốt cùng lúc):
+      người bấm **sau thắng**, nhưng lần ghi đè ấy vẫn phải **note ai là người sửa** và giữ bản
+      trước — nếu không thì một lượt gọi bị đè mất sẽ không ai truy ra, và đó là **thu thiếu tiền**
+      đúng nghĩa §6.1.
+    - ⇒ **Quan hệ với §6.10 và §6.4:** đây là điều kiện để *lệch 1 đồng cũng tìm ra lý do* chạy
+      được ở những ca **không phải lỗi cộng trừ** mà là **có người sửa tay**. Hoàn tiền (§6.4) và
+      sửa đơn (§6.19) đã có luật *"để lại vết"*; quy tắc này nói **vết ấy gồm những gì**.
+    - *Cách đọc, không phải lời chủ quán nói thẳng:* chữ **lý do** chủ quán nêu ở ca *nút cập nhật*
+      (thao tác nhầm); áp nó cho **mọi** lần cập nhật — kể cả lần sửa đơn theo yêu cầu khách — là
+      **suy ra**, không phải lời chốt. Suy thế vì không có cách nào phân biệt lúc ghi: một lần sửa
+      đơn và một lần sửa vì bấm nhầm nhìn giống hệt nhau trong bản ghi, và cái phân biệt chúng
+      **chính là** ô lý do. Chủ quán nói khác đi thì sửa lại chỗ này.
 
 ## 7. Nhật ký chốt
 
@@ -925,6 +949,7 @@ lại điều gì.
 | 2026-09-01 | **Đối soát cuối ngày có NGUỒN THỨ BA: tin nhắn báo có** — phần khách chuyển khoản đối chiếu bằng tin nhắn, vì két chỉ giữ tiền mặt (trả lời U-019) | §6.10 |
 | 2026-09-01 | **Hoàn tiền tính vào doanh thu NGÀY HOÀN**, không phải ngày bán gốc — ngược chiều với luật nợ ở §6.14 (trả lời U-019) | §6.4 |
 | 2026-09-01 | **Một lần thu chia được nhiều phương thức**; POS ghi **bao nhiêu tiền mặt, bao nhiêu chuyển khoản** (trả lời U-020) | §6.18 |
+| 2026-09-02 | **Sửa sai bằng CẬP NHẬT, không hoàn tác; mỗi lần giữ bản trước, bản sau, lý do, người sửa** — *"để đối chiếu"* (xác nhận GĐ-01 và GĐ-05, kèm yêu cầu mới) | §6.22 |
 | 2026-09-02 | **Dòng vừa sửa lấy GIÁ ĐANG HIỆU LỰC LÚC SỬA** — sửa một dòng là đặt lại mốc khoá giá của dòng ấy; ngoại lệ có chủ ý của §6.17 (trả lời U-026) | §6.19 |
 | 2026-09-02 | **Đơn đã `Hoàn thành` cũng HUỶ được, POS quyết trong thực tế** (trả lời U-027) — cùng luật với *sửa*: không mốc trạng thái nào chặn | §6.19 |
 | 2026-09-02 | **Không mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên** — *"bán hàng xong chạy được thì để chạy trước"* (trả lời U-030) | — *phạm vi MVP, không phải dữ kiện quán; ghi ở `docs/product.md` §7* |

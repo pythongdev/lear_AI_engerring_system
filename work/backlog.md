@@ -150,6 +150,22 @@ lại, khối *GIẢ ĐỊNH* biến mất, **I-014** sửa và **I-015** thêm.
 - [ ] BA-11 `docs/product.md` §8 — ba scenario nghiệm thu BA · cần BA-03–BA-10
 - [ ] BA-12 `docs/product.md` §3.4 — lát cắt sản xuất theo mẻ · **BA-03 và BA-07 đã xong**, tên trạng thái lấy ở `docs/product.md` §5.4 (**U-008–U-011, S-4, U-017, U-021, U-024 đã đóng** — quầy bấm cả hai mốc, và lùi được). Đọc trước khi dựng bảng quầy: **S-5** (`shop-facts.md` §7.2) — bấm *đã bưng ra bàn* theo **đơn vị nào** thì mới là suy ra, chưa hỏi chủ quán
 
+- [ ] DOC-1 Dựng `docs/product/` cắt theo **pha**, `docs/product.md` thành bản lưu · L2 · prompt `prompt/maintenance/11-product-folder-pha-L2.md`
+- [ ] DOC-2 `scripts/brief.sh` đọc mục Unknowns ở file mới · L2 · **phải xong trước DOC-3** · prompt `prompt/maintenance/12-brief-unknowns-file-L2.md`
+- [ ] DOC-3 Chuyển pointer sang file mới (chia thành DOC-3a/3b/3c) · L3 · cần DOC-2 · prompt `prompt/maintenance/13-pointer-migration-L3.md`
+- [ ] DOC-4 `CLAUDE.md` §2 và §4 trỏ owner mới · L1 · cần DOC-3 · prompt `prompt/maintenance/14-claude-md-owner-L1.md`
+- [ ] DOC-5 `docs/architecture.md` dọn vào `1-system-design/` · L3 · **CHƯA ĐƯỢC CHẠY**, chờ một câu chốt mới của chủ repo · prompt `prompt/maintenance/15-architecture-into-system-design-L3.md`
+
+**Năm dòng DOC là ADR-014 (khối *SỬA ĐỔI 2026-09-02*), chạy ĐÚNG thứ tự 1→5.** Chúng không chặn
+chuỗi BA và chuỗi BA không chặn chúng — nhưng **DOC-1 và BA-11/BA-12 cùng chạm `docs/product.md`**,
+nên hai bên không được chạy cùng lúc (F-014 đã hỏng sáu lần trên đúng file này). Ai bắt DOC-1 thì
+đọc `./scripts/brief.sh` mục *DECLARED SCOPE* trước.
+
+**Vì sao tiền tố `DOC-` chứ không phải `T-`.** Ngày 2026-09-02 hai phiên song song đã **cùng lấy số
+T-040** và **cùng lấy số U-028** (ghi trong entry T-042). Một chuỗi năm task mở cùng lúc với một
+phiên khác đang đánh số `T-` là ca chắc chắn đụng lần nữa. Tiền tố riêng không sửa được F-014,
+nó chỉ lấy chuỗi này ra khỏi đường đua đánh số.
+
 Mỗi task chạm **một** mục tài liệu riêng, nên revert được độc lập: §3.1 · §3.2 · §3.3 · §4 · §5 ·
 §6 · §7 · `docs/decisions.md` · §8 · §3.4. Hai task cùng chạm một mục là dấu hiệu chia việc sai.
 BA-12 đứng cuối danh sách nhưng chạm §3.4, tức nó cũng đổi tiêu đề §3 từ *ba* lát cắt sang *bốn* —
@@ -167,6 +183,8 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] DOC-0 Chủ repo chốt trục **pha** thay cho **mảng** — ADR-014 thêm khối *SỬA ĐỔI 2026-09-02*, tiêu đề đổi theo; bộ **5 prompt thi hành** `prompt/maintenance/11`–`15`; mở DOC-1…DOC-5 (2026-09-02)
+- [x] T-045 GĐ-01 và GĐ-05 được xác nhận **kèm một yêu cầu mới**: mỗi lần cập nhật giữ bản trước · bản sau · lý do · người sửa. §6.22, **I-018**; §6 hết dấu ⚠; cả năm giả định nay đã bị thay (2026-09-02)
 - [x] BA-10 `docs/decisions.md` — **17 ADR nghiệp vụ (ADR-015…ADR-031)**, bảng tổng hợp đầu file và bản đồ phủ **10 câu §10 + U-001…U-030 + S-1…S-5**; 7 tham chiếu ngược `→ ADR` vào `docs/product.md`; mở **F-015** (2026-09-02)
 
 - [x] T-044 U-026 đóng — dòng vừa sửa lấy **giá đang hiệu lực lúc sửa**; ngoại lệ có chủ ý của §4.4, I-009 thêm ranh giới. **Mục Unknowns nay RỖNG** (2026-09-02)
@@ -518,6 +536,60 @@ Luật chung ở [Vòng chạy một task L1](#vong-chay). Việc riêng của t
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+### T-045 — Hai giả định cuối được xác nhận, và chủ quán THÊM vào một luật không ai hỏi
+
+**L2** — sinh một bất biến mới và một quy tắc cắt ngang mọi thao tác sửa.
+
+**Lời chủ quán, 2026-09-02:**
+- **GĐ-01** — *"đồng ý, nhưng cần note ai là người sửa. Hệ thống cần record sửa cái gì, có bản copy
+  trước khi sửa là thế nào, sau khi sửa là thế nào, ai sửa — để đối chiếu."*
+- **GĐ-05** — *"mọi thao tác nhầm khác — duyệt nhầm, huỷ nhầm, đóng phiên nhầm — không có nút hoàn
+  tác, nhưng có nút cập nhật, và có bản copy trước cập nhật / sau cập nhật / lý do / ai là người
+  sửa."*
+
+**Kết quả.** Hai câu trả lời **xác nhận** cả hai giả định, nhưng cả hai cùng kèm **một yêu cầu
+giống nhau** — nên nó không phải hai lời chốt lẻ mà là **một luật cắt ngang**:
+`master_plan/shop-facts.md` **§6.22** (quy tắc thứ hai mươi hai) và `quality/invariants.md`
+**I-018**. §6 dòng 4 và 14 hết dấu ⚠ — **cả mười bốn dòng nay đều có lời chốt**; `docs/decisions.md`
+GĐ-01 và GĐ-05 thành **Superseded**, nên **cả năm** giả định BA-08 đều đã bị thay.
+
+**Luật mới, nói gọn:** không có hoàn tác (trừ đúng ca lùi một mẻ, §5.4); có **nút cập nhật**; và
+mỗi lần cập nhật giữ **bốn** thứ — bản **trước** · bản **sau** · **lý do** · **người sửa**. Chủ
+quán nói thẳng mục đích: ***"để đối chiếu"*** ⇒ nó phục vụ §6.10, không phải một tính năng lịch sử.
+
+**Vì sao phải là invariant riêng, không nhét vào I-012.** I-012 hỏi *ai bấm, lúc mấy giờ, cái gì,
+bao nhiêu* cho mọi **thao tác chạm tiền**. I-018 hỏi *trước thế nào, sau thế nào, vì sao* cho mọi
+lần **sửa một bản ghi đã có**. Hai tập **không trùng nhau**: xác nhận đã nhận tiền là I-012 mà
+không phải I-018; đóng phiên nhầm rồi cập nhật là I-018 mà tiền có thể không đổi. Gộp lại thì mất
+đúng phần *"dựng lại được bản trước"* — phần đắt nhất.
+
+**Bài học ĐẮT NHẤT của hai ngày, ghi ở `docs/decisions.md` đầu mục Giả định.** Năm giả định, hai
+kiểu lệch:
+- **Bốn lần đoán CHẶT HƠN quán thật** (GĐ-02, GĐ-03, GĐ-04, nửa GĐ-05) — lộ ra ngay khi hỏi, vì
+  câu trả lời mâu thuẫn thẳng.
+- **Một lần đoán THIẾU** (GĐ-01, nửa còn lại của GĐ-05) — đoán **đúng** cơ chế, nhưng bỏ mất điều
+  kiện đi kèm. Kiểu này **không lộ ra khi hỏi câu đã viết**: hỏi *"ai thắng?"* thì được xác nhận là
+  đúng, và yêu cầu kia chỉ xuất hiện vì chủ quán **tự nói thêm**. ⇒ **Một giả định được xác nhận
+  không có nghĩa là đã đủ — nó chỉ có nghĩa là phần đã hỏi thì đúng.**
+
+**Một chỗ suy ra, đánh dấu tại chỗ (§7.2, F-004).** Chủ quán nêu chữ **lý do** ở ca *nút cập nhật*
+(thao tác nhầm); áp nó cho **mọi** lần cập nhật — kể cả sửa đơn theo yêu cầu khách — là **suy ra**.
+Lý do suy: không có cách nào phân biệt hai ca ấy lúc ghi, và thứ phân biệt chúng **chính là** ô lý
+do. Ghi rõ trong §6.22 để chủ quán bác được nếu sai.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Bằng chứng |
+|---|---|
+| 1 | `shop-facts.md` §6 = *Hai mươi hai quy tắc*; `prompt-fullstack.md` dòng 72 khớp |
+| 2 | §6.22 có đủ bốn thứ + câu *"để đối chiếu"* + đoạn *cách đọc* cho chữ **lý do** |
+| 3 | §7.1 có **8** dòng `2026-09-02` |
+| 4 | `quality/invariants.md` **I-018** có *Invariant · Why · quan hệ với I-012 · Verification* |
+| 5 | `docs/product.md` §6: `grep -c '⚠ \*\*Chưa chốt'` → **0**; dòng 4 và 14 trỏ §6.22 + I-018 |
+| 6 | ba chỗ nói *"còn ⚠"* trong §6 đã đọc lại (khối ADR đầu mục · lời mở · §6.4) |
+| 7 | `docs/decisions.md`: **5** mục mang *ĐÃ THAY bằng quy tắc*; không giả định nào còn hiệu lực |
+| 8 | `./scripts/gate.sh` xanh |
+
 ### BA-10 — Quyết định và giả định BA
 
 **Prompt:** `prompt/BA/09-decisions-assumptions-L2.md` (L2) · **Cần xong trước:** BA-01–BA-09

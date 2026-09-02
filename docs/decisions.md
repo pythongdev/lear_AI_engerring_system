@@ -896,9 +896,14 @@ một lượt, tách sau tốn một lượt cho mỗi mục.
 
 ---
 
-### ADR-014 — `docs/product.md` tách thành folder `docs/product/`, cắt theo mảng, file cũ ở lại làm **lưu trữ không ai trỏ về**
+### ADR-014 — `docs/product.md` tách thành folder `docs/product/`, cắt theo **pha**, file cũ ở lại làm **lưu trữ không ai trỏ về**
 
 **Trạng thái:** thiết kế đã chốt 2026-09-02, **chưa thi hành** — xem *Thi hành* ở cuối.
+
+> **Đọc mục này từ dưới lên.** Trục cắt ban đầu là **mảng**; chủ repo đổi sang **pha** cùng
+> ngày — khối *SỬA ĐỔI 2026-09-02* ở cuối mục là bản đang có hiệu lực. Phần thân dưới đây giữ
+> nguyên câu chữ cũ vì chỗ nó **đoán lệch** là thứ đáng đọc; chỗ nào hai bên nói khác nhau,
+> **khối sửa đổi thắng**.
 
 **Decision:**
 `docs/product.md` (1940 dòng) tách thành folder `docs/product/`. Trục cắt do chủ repo chọn
@@ -986,6 +991,75 @@ parser cấu trúc mục *Unknowns* — ADR-007) và `scripts/brief.test.sh` · 
 
 Lượt 2 phải xong **trước** lượt 3: brief là thứ mọi phiên mới đọc đầu tiên, hỏng nó là hỏng mọi
 phiên sau (ADR-002).
+
+**SỬA ĐỔI 2026-09-02 — trục ngoài đổi từ MẢNG sang PHA (chủ repo quyết)**
+
+Cùng ngày, sau khi đọc lại ADR này, chủ repo chốt: trục ngoài của folder là **pha**, không phải
+mảng. **Mảng không bị bỏ** — nó tụt xuống làm tầng trong, đúng ADR-013.
+
+Ba lý do, xếp theo sức nặng:
+
+1. **Repo đã cắt theo pha từ đầu, chỉ là cắt bằng file chứ chưa bằng folder.** Bốn owner hiện tại
+   xếp đúng theo pha, đọc banner đầu mỗi file là thấy: `master_plan/shop-facts.md` (dữ kiện thô,
+   trước mọi pha) → `docs/product.md` (*"mỗi mục do một task BA chốt"* — pha 0) →
+   `docs/architecture.md` (*"đặc tả, không phải mã… không nói tên hàm"* — pha 1) →
+   `master_plan/prompt-fullstack.md` (kế hoạch pha 2–5). Danh sách **sáu pha** là luật đã có ở
+   `master_plan/prompt-fullstack.md` §7, và nó **đã kèm sẵn luật chống chép** mà trục pha bắt buộc
+   phải có: *"pha 0–1 không nhắc tên bảng; pha 2 không nhắc endpoint; pha 3 không nhắc component;
+   pha 4 không đổi hợp đồng API"*. Chọn mảng là bắt cả repo học một trục thứ hai trong khi trục
+   thứ nhất đang chạy đúng.
+2. **Danh sách "mảng" ở bản gốc trên kia trộn hai loại.** *bán hàng · admin* là mảng; *db · be ·
+   system design · fe* là **pha**. Một trục trộn hai loại thì câu hỏi *"dòng này viết vào folder
+   nào"* không có câu trả lời máy móc, và mỗi phiên sẽ đoán một kiểu.
+3. **ADR-013 vừa đặt mảng ở tầng trong đúng một ngày trước.** Admin là *một mục có nhãn trong mỗi
+   tài liệu*, không phải một tài liệu riêng. Đưa mảng ra tầng ngoài là viết lại ADR-013 ngay sau
+   khi ghi nó.
+
+**Cây thư mục sau sửa đổi** (thay cây ở trên):
+
+```text
+docs/product/
+  00-index.md                    mục lục + luật ghi; không sở hữu sự thật nào
+  0-ba/                          pha 0 — BA
+    ban-hang/
+      01-actors-pham-vi.md       §1 trừ §1.6
+      02-kenh-ban.md             §2
+      03-lat-cat.md              §3        ← to nhất, cắt tiếp khi §3.4 xong
+      04-gia-thanh-toan.md       §4
+      05-vong-doi.md             §5
+      06-ngoai-le.md             §6
+      07-pham-vi-mvp.md          §7
+      08-scenario.md             §8
+    admin/
+      01-ranh-gioi.md            §1.6 — mục admin của ADR-013 chuyển về đây
+  99-unknowns.md                 mục Unknowns — scripts/brief.sh đọc ĐÚNG file này
+```
+
+**Không dựng folder rỗng** — điểm này *đổi* so với bản gốc, chỗ nói `00-chua-co-gi.md` làm nhà chờ.
+Pha 1–5 chưa có nội dung thì chưa có folder; `00-index.md` liệt kê đủ sáu pha và nói pha nào chưa
+mở. Một file tên *"chưa có gì"* là tài liệu nghi lễ, đúng thứ CLAUDE.md §3.8 cấm; và folder rỗng
+không gỡ được dòng nào.
+
+**Bốn thứ của bản gốc KHÔNG đổi:** file cũ ở lại làm lưu trữ và không ai được trỏ về · giữ số
+§1–§8 làm tên file để ~180 câu `docs/product.md §N` vẫn đọc đúng · lượt 2 phải xong trước lượt 3 ·
+Gate 1b vẫn không gác được luật "không trỏ về bản lưu", mắt người là cái chấm duy nhất.
+
+**Bảng thi hành sau sửa đổi** — bốn lượt cũ giữ nguyên việc, đổi tên folder đích; thêm lượt 5:
+
+| # | Mức | Việc | Prompt |
+|---|:--:|---|---|
+| 1 | L2 | Dựng `docs/product/` theo pha, chuyển nội dung, banner hoá file cũ | `prompt/maintenance/11-product-folder-pha-L2.md` |
+| 2 | **L2** | `scripts/brief.sh` đọc file unknowns mới; sửa `scripts/brief.test.sh` | `prompt/maintenance/12-brief-unknowns-file-L2.md` |
+| 3 | **L3** | Chuyển pointer sang file mới, theo từng nhóm file | `prompt/maintenance/13-pointer-migration-L3.md` |
+| 4 | L1 | `CLAUDE.md` §2 và §4 trỏ owner mới | `prompt/maintenance/14-claude-md-owner-L1.md` |
+| 5 | **L3 · CHƯA CHỐT** | `docs/architecture.md` dọn vào `1-system-design/` | `prompt/maintenance/15-architecture-into-system-design-L3.md` |
+
+Lượt 5 **chưa được phép chạy**: chủ repo mới chốt trục, chưa chốt việc `docs/architecture.md` có
+dọn vào folder hay không. Prompt viết sẵn để lúc chốt là chạy được ngay; ai chạy nó mà không có
+một câu chốt mới của chủ repo là làm sai ADR này.
+
+**Số pointer phải đo lại, đừng tin con số 464 ở trên.** Đo 2026-09-02 sau BA-10: **491 dòng trong
+35 file**, và nó còn tăng mỗi ngày chuỗi BA còn chạy. Lượt 3 phải đếm lại ngay trước khi bắt đầu.
 
 ---
 
@@ -1704,15 +1778,35 @@ quy tắc trong owner của nó (`master_plan/shop-facts.md`), không phải s�
 
 Mọi `GĐ` dưới đây mở ngày **2026-09-02**, do **BA-08** (`docs/product.md` §6).
 
-**Ba trong năm mục đã bị THAY ngay trong ngày** (T-042): chủ quán trả lời **GĐ-02**, **GĐ-03** và
-**GĐ-04** cùng lúc với U-022 và U-025. Ba mục ấy giữ lại **có gạch ngang**, kèm lời chốt thật ở
-đầu, vì chỗ chúng đoán **lệch** là thứ đáng đọc: cả ba đều đoán quán **chặt hơn** quán thật — đoán
-ra một luật cứng ở nơi chủ quán cố ý không đặt luật nào. **GĐ-01** và **GĐ-05** vẫn là giả định
-đang có hiệu lực.
+**CẢ NĂM mục đã bị thay trong ngày 2026-09-02, và mục này nay không giữ giả định nào còn hiệu
+lực.** Ba mục đầu bị thay ở lượt một (T-042 — GĐ-02, GĐ-03, GĐ-04), hai mục cuối ở lượt cuối
+(T-045 — GĐ-01, GĐ-05). Tất cả giữ lại **có gạch ngang**, kèm lời chốt thật ở đầu, vì chỗ chúng
+đoán **lệch** là thứ đáng đọc.
 
-### GĐ-01 — Hai người cùng thao tác trên một bàn: người bấm sau thắng
+**Năm lần đoán, hai kiểu lệch — và kiểu thứ hai mới là kiểu nguy hiểm.**
 
-**Dòng §6:** 4 · **Rủi ro: TRUNG BÌNH**
+- **Bốn lần đoán CHẶT HƠN quán thật** (GĐ-02, GĐ-03, GĐ-04, và một nửa GĐ-05): dựng ra một luật
+  cứng ở nơi chủ quán cố ý **không** đặt luật nào. Kiểu này lộ ra ngay khi hỏi, vì câu trả lời
+  mâu thuẫn thẳng với giả định.
+- **Một lần đoán THIẾU** (GĐ-01, và nửa còn lại của GĐ-05): đoán **đúng** phần cơ chế — người bấm
+  sau thắng, không có nút hoàn tác — nhưng bỏ mất thứ chủ quán coi là điều kiện đi kèm: **bản copy
+  trước và sau, lý do, người sửa**. Kiểu này **không** lộ ra khi hỏi câu đã viết: hỏi *"ai thắng?"*
+  thì được xác nhận là đoán đúng, và yêu cầu kia chỉ xuất hiện vì chủ quán tự nói thêm. ⇒ Một giả
+  định được xác nhận **không** có nghĩa là đã đủ; nó chỉ có nghĩa là phần **đã hỏi** thì đúng.
+
+⇒ Yêu cầu ấy nay là `master_plan/shop-facts.md` **§6.22** và `quality/invariants.md` **I-018**.
+
+### GĐ-01 — ~~Hai người cùng thao tác trên một bàn~~ · **ĐÃ THAY bằng quy tắc, 2026-09-02**
+
+**Dòng §6:** 4 · ~~**Rủi ro: TRUNG BÌNH**~~ · **Trạng thái: Superseded** —
+`master_plan/shop-facts.md` §6.22, `quality/invariants.md` I-018
+
+> **Chủ quán chốt 2026-09-02:** *"đồng ý, nhưng cần note ai là người sửa. Hệ thống cần record sửa
+> cái gì, có bản copy trước khi sửa là thế nào, sau khi sửa là thế nào, ai sửa — để đối chiếu."*
+> Giả định bên dưới đoán **đúng cơ chế** (người bấm sau thắng) nhưng **thiếu điều kiện đi kèm**:
+> lần ghi đè phải giữ **bản trước, bản sau và tên người sửa**. Đó không phải chi tiết kỹ thuật —
+> không có bản trước thì một lượt gọi bị đè mất sẽ không ai truy ra, và đó là **thu thiếu tiền**.
+> Đọc quy tắc ở `shop-facts.md` §6.22, đừng đọc phần dưới.
 
 **Giả định.** Hai người cùng sửa một phiên bàn thì thao tác **tới POS sau** là thao tác có hiệu
 lực; không có khoá, không có cảnh báo.
@@ -1801,9 +1895,16 @@ tiền — doanh thu rơi vào **ngày hoàn** thay vì ngày bán, và `shop-fa
 **Câu phải hỏi chủ quán.** *"Đơn đã làm xong đưa cho khách rồi mà phát hiện nhầm thì quán sửa lại
 đơn ấy hay trả tiền lại cho khách?"*
 
-### GĐ-05 — Thao tác nhầm ngoài ca "bấm nhầm một mẻ": phải nhờ quầy, không có nút hoàn tác
+### GĐ-05 — ~~Thao tác nhầm ngoài ca "bấm nhầm một mẻ"~~ · **ĐÃ THAY bằng quy tắc, 2026-09-02**
 
-**Dòng §6:** 14 · **Rủi ro: TRUNG BÌNH**
+**Dòng §6:** 14 · ~~**Rủi ro: TRUNG BÌNH**~~ · **Trạng thái: Superseded** —
+`master_plan/shop-facts.md` §6.22, `quality/invariants.md` I-018
+
+> **Chủ quán chốt 2026-09-02:** *"mọi thao tác nhầm khác — duyệt nhầm một đơn, huỷ nhầm, đóng phiên
+> nhầm — không có nút hoàn tác, nhưng có nút cập nhật, và có bản copy trước cập nhật / sau cập nhật
+> / lý do / ai là người sửa."* Giả định bên dưới đoán **đúng** vế *không có hoàn tác*, nhưng sai ở
+> vế sau: nó viết *"cách xử là quầy làm bù bằng thao tác hợp lệ đang có"*, tức **không có gì mới**.
+> Thật ra quán muốn một **nút cập nhật** kèm bản ghi bốn phần. Đọc `shop-facts.md` §6.22.
 
 **Giả định.** Chỉ ca **bấm nhầm *"đã làm xong"* một mẻ** có đường lùi (chủ quán chốt 2026-09-01,
 U-024). Mọi thao tác nhầm khác — duyệt nhầm một đơn, huỷ nhầm, đóng phiên nhầm — **không** có nút

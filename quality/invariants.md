@@ -601,3 +601,55 @@ còn một đơn `Đang thực hiện` ⇒ **không** đóng được phiên, v�
 `Đang phục vụ` và **không** đóng được cho tới khi lượt gọi ấy xong (`shop-facts.md` §6.1, I-001).
 
 *Phát hiện ở BA-07, 2026-09-01.*
+
+### I-018 — Mỗi lần CẬP NHẬT giữ được bản trước, bản sau, lý do và người sửa
+
+**Invariant:**
+Không có thao tác nào sửa một bản ghi đã tồn tại mà chỉ để lại dấu *"đã sửa"*. Mỗi lần cập nhật
+giữ đủ **bốn** thứ, và cả bốn phải đọc được **sau nhiều ngày**: bản ghi **trước** khi sửa · bản ghi
+**sau** khi sửa · **lý do** · **ai sửa**. Ràng buộc mạnh nhất là hai cái đầu — phải **dựng lại
+được** bản ghi ở cả hai phía của lần sửa, không phải chỉ biết rằng nó đã đổi
+(`master_plan/shop-facts.md` §6.22, chủ quán chốt 2026-09-02).
+
+Áp cho **mọi** lần sửa một bản ghi đã tồn tại, không riêng thao tác chạm tiền: sửa nội dung đơn
+(§6.19) · huỷ một đơn đã `Hoàn thành` (§6.19) · sửa sau khi **duyệt nhầm, huỷ nhầm, đóng phiên
+nhầm** (§6.22) · lần ghi đè khi **hai người cùng thao tác trên một bàn** (§6.22 — người bấm sau
+thắng, nhưng lần đè vẫn phải có tên người và bản trước) · lùi một mẻ bấm nhầm (§5.4) · chủ quán đổi
+giá hoặc đổi thành phần suất (§6.17).
+
+**Không có nút hoàn tác, và đó là chủ ý.** Ngoài đúng một ca — lùi một mẻ *"đã làm xong"* (§5.4) —
+cách sửa cái sai là **cập nhật**, không phải quay ngược trạng thái. ⇒ Invariant này là thứ **thay
+thế** cho hoàn tác: quán chấp nhận không quay ngược được, đổi lại đòi dựng lại được.
+
+**Why:**
+Chủ quán nói thẳng mục đích khi chốt: ***"để đối chiếu"***. Đối soát cuối ngày có ngưỡng **0đ**
+(`shop-facts.md` §6.10) — *lệch 1 đồng cũng phải tìm ra lý do* — và một chỗ lệch do **có người sửa
+tay** không thể truy được nếu chỉ biết *"đơn 12 đã bị sửa"*: phải so được số **trước** với số
+**sau** mới ra con số chênh và mới biết nó có đúng không.
+
+Hai ca cho thấy vì sao một dòng log là **không đủ**:
+- **Ghi đè khi hai người cùng thao tác.** Người bấm sau thắng (§6.22), nên một lượt gọi có thể
+  biến mất khỏi hoá đơn. Không giữ bản trước thì **không ai biết nó từng có** — và đó là **thu
+  thiếu tiền**, lỗi tiền nguy hiểm nhất của luồng tại bàn (`shop-facts.md` §6.1).
+- **Sửa một dòng đơn sau khi chủ quán đổi giá giữa buổi.** Dòng ấy lấy giá **lúc sửa** (§6.19,
+  I-009), nên số tiền đổi mà **món không đổi**. Bản ghi không có giá cũ thì chỗ lệch ấy trông y
+  hệt một lỗi tính tiền.
+
+**Quan hệ với I-012 — hai invariant khác nhau, đừng gộp.** I-012 hỏi *"ai bấm, lúc mấy giờ, cái gì,
+bao nhiêu"* cho mọi **thao tác chạm tiền**. I-018 hỏi *"trước thế nào, sau thế nào, vì sao"* cho mọi
+lần **sửa một bản ghi đã có**. Hai tập không trùng nhau: xác nhận đã nhận tiền là I-012 mà không
+phải I-018 (không sửa gì cả); đóng phiên nhầm rồi cập nhật là I-018 mà tiền có thể không đổi. Một
+lần hoàn tiền thì thuộc **cả hai**.
+
+**Verification:**
+Kịch bản dựng lại: sửa nội dung một đơn rồi đọc bản ghi ⇒ dựng lại được đơn **trước** và **sau**,
+đọc được **lý do** và **tên người sửa**; xoá bất kỳ một trong bốn thứ ⇒ bản ghi **không hợp lệ**.
+Kịch bản ghi đè: hai người cùng sửa một phiên bàn, người sau thắng ⇒ bản ghi giữ **cả** trạng thái
+người trước vừa ghi, và lượt gọi bị đè **dựng lại được**. Kịch bản đối soát: đổi giá giữa buổi rồi
+sửa một dòng của lượt gọi cũ ⇒ bảng đối soát (§6.10) đọc được **giá cũ và giá mới** của đúng dòng
+ấy, nên chỗ lệch có tên thay vì thành báo động giả (I-009). Kịch bản âm của hoàn tác: thử quay
+ngược một đơn `Huỷ` về `Đã xác nhận` ⇒ **bị từ chối** (I-016), và đường đi hợp lệ là **cập nhật**
+kèm đủ bốn thứ trên.
+
+*Phát hiện ở T-045, 2026-09-02 — khi chủ quán xác nhận GĐ-01 và GĐ-05 và kèm theo một yêu cầu
+không ai hỏi: bản copy trước và sau.*
