@@ -1018,39 +1018,94 @@ Open
 
 ---
 
-### F-015 — §4.9 vừa liệt kê lời giải của U-019 vừa nói U-019 CHƯA CHỐT, cách nhau 25 dòng
+### F-015 — Đóng một unknown chỉ sửa chỗ câu trả lời rơi vào, không sửa chỗ câu hỏi được NHẮC TỚI
 
-**Date:** 2026-09-02 · phát hiện khi chạy **BA-10** (đọc §4 để viết ADR-022)
+**Date:** 2026-09-02 · phát hiện khi chạy **BA-10** (đọc §4 và §6 để viết ADR-022 và ADR-017)
 
-**What happened:**
-`docs/product.md` §4.9 mở đầu bằng bảng **ba nguồn đối soát**, trong đó dòng thứ ba là *"Tin nhắn
-báo có — phần khách **chuyển khoản** *(chủ quán chốt 2026-09-01, trả lời U-019)*"*. Hai mươi lăm
-dòng sau, cùng mục ấy kết thúc bằng: *"**Riêng phần VietQR thì buổi tối quán lấy gì ra đối chiếu
-là câu CHƯA CHỐT** — xem **U-019**."*
+**Problem:**
+`docs/product.md` đang giữ **ba** câu nói về một unknown **đã đóng** như thể nó còn mở — và **hai
+trong ba** nói **ngược** với luật đã chốt ở mục khác của **chính file ấy**. Không phải lỗi trình
+bày: đây là ba chỗ một phiên mới sẽ đọc và làm theo.
 
-Hai câu nói ngược nhau về **cùng một câu hỏi**, trong **cùng một mục**. Câu thứ hai là văn bản của
-BA-06 (2026-09-01, viết khi U-019 còn mở); T-038 đóng U-019 trong ngày và thêm nguồn thứ ba vào
-bảng, nhưng **không xoá câu cũ ở cuối mục**.
+| # | Dòng | Câu đang có | Sự thật hôm nay |
+|:--:|---|---|---|
+| 1 | **§4.9**, dòng **1195–1196** | *"**Riêng phần VietQR thì buổi tối quán lấy gì ra đối chiếu là câu CHƯA CHỐT** — xem **U-019**."* | **U-019 đóng 2026-09-01**: nguồn đối chiếu là **tin nhắn báo có** — và nó nằm ngay **bảng ba nguồn ở đầu cùng mục ấy**, cách 25 dòng phía trên |
+| 2 | **§6 dòng 7**, dòng **1564** | *"**Ranh giới trên còn mở:** `Hoàn thành → Huỷ` **hôm nay bị từ chối** — **U-022**"* | **U-027 đóng 2026-09-02**: `Hoàn thành → Huỷ` **hợp lệ**, và §5.2 dòng **1306** đã có đúng dòng ấy. Câu này nói **ngược** |
+| 3 | **§6**, dòng **1588** | *"sửa được ở bất kỳ trạng thái nào (…); **không cần đường `Hoàn thành → Huỷ`**"* | Cùng lời chốt trên: đường ấy **có**, và quầy **chọn** giữa sửa và huỷ theo từng ca | 
 
-**Why it matters:**
-Đây không phải lỗi trình bày. `docs/product.md` là owner của quy tắc nghiệp vụ (CLAUDE.md §2), và
-một phiên mới đọc mục này từ dưới lên sẽ **mở lại U-019 như một câu đang treo** — đúng thứ CLAUDE.md
-§3.5 và §7.2 (*"Follow the pointers"*) tồn tại để chặn. Nó cũng là **loại lỗi thứ hai của F-001**:
-không phải hai file chép nhau, mà **một file giữ hai đời của cùng một sự thật**, và cái cũ không
-chết vì không ai grep nó.
+**Cách đo lại, chạy được:** khoanh vùng thân tài liệu (mọi thứ **trước** mục *Đã có lời giải*), rồi
+tìm các `U-XXX` đã đóng đứng cạnh ngôn ngữ còn-mở:
 
-`grep -rn 'U-019'` bắt được ngay — cái thiếu là **thói quen chạy grep ấy sau khi đóng một unknown**,
-thứ CLAUDE.md §7.2 đã yêu cầu thành lời nhưng không có cổng nào chấm.
+```bash
+S=$(grep -n '^<a id="da-co-loi-giai">' docs/product.md | cut -d: -f1)
+awk -v s=$S 'NR<s && /U-0[0-9][0-9]/ && (/CHƯA CHỐT/||/chưa chốt/||/còn mở/||/đang chờ/||/bị từ chối/)' docs/product.md
+```
 
-**Fix (chưa làm — BA-10 không sửa):**
-Xoá câu cuối §4.9 hoặc viết lại thành *"U-019 đã đóng 2026-09-01, xem bảng ba nguồn ở đầu mục"*.
-BA-10 **không** tự sửa: `docs/product.md` §1–§8 là nội dung nghiệp vụ đã chốt, ngoài scope BA-10
-(prompt `prompt/BA/09-decisions-assumptions-L2.md` → *Không được sửa*), và **BA-11** có sẵn luật
-cho đúng ca này — *thấy sai/thiếu thì ghi finding và mở lại task BA tương ứng*.
+Lệnh này ra đúng ba dòng trên ngày 2026-09-02. Nó **không** báo động giả với những chỗ nhắc `U-XXX`
+để **ghi công** một lời chốt (*"chủ quán chốt 2026-09-01, trả lời U-019"*) — kiểu nhắc ấy có hơn 40
+chỗ trong file và đều **đúng**. Ranh giới là **thì của câu**, không phải sự có mặt của cái ID.
+
+**Impact:**
+Ba chỗ này hỏng theo hai kiểu khác nhau, và kiểu thứ hai đắt hơn nhiều:
+
+- **Chỗ 1 — làm mở lại một câu đã đóng.** Phiên sau đọc §4.9 sẽ thấy một câu hỏi đang treo, trong
+  khi brief nói *Unknowns rỗng*. Hai owner nói ngược nhau ⇒ hoặc phiên ấy **đi hỏi lại chủ quán một
+  câu đã trả lời** (mất một lượt hỏi, và làm chủ quán mất tin vào việc mình đã nói), hoặc nó tin
+  brief và **không bao giờ biết tài liệu đang sai**.
+- **Chỗ 2 và 3 — dạy sai một luật nghiệp vụ.** `docs/product.md` là **owner** của quy tắc nghiệp vụ
+  (CLAUDE.md §2). Một phiên System Design đọc §6 dòng 7 sẽ **dựng hàng rào chặn `Hoàn thành → Huỷ`**
+  — đúng cái chủ quán vừa nói là **được phép**, và đúng thứ CLAUDE.md §3.5 cấm (*sản phẩm không tự
+  dựng hàng rào ở chỗ chủ quán cố ý không đặt*). Sai theo chiều **chặt hơn thực tế**, tức là chiều
+  không ai phàn nàn cho tới khi quán cần huỷ một đơn đã trao và phần mềm không cho.
+
+**Vì sao không cổng nào bắt được, và đây là phần đáng giữ nhất:**
+
+- **Gate 1b** chấm *đường dẫn có mở được không*, không chấm *câu này còn đúng không*. Cả ba dòng
+  đều không chứa đường dẫn nào hỏng.
+- **`scripts/brief.sh`** chỉ đọc **mục *Unknowns*** (ADR-007). Ba dòng trên nằm ở §4 và §6, ngoài
+  vùng brief đọc — và brief đang **đúng** khi im lặng: U-019, U-022, U-027 đều đã đóng thật.
+- **Chính vì mục *Unknowns* sạch** mà lỗi này sống được. Cổng duy nhất là câu CLAUDE.md §7.2 —
+  *"sau khi đổi một fact, `grep -rn` cho cái gì trỏ tới nó"* — và nó là **luật dựa vào trí nhớ**,
+  đúng loại `work/findings.md` **F-001** đã ghi là hỏng.
+
+**Cơ chế sinh ra nó, viết ở dạng chung vì nó sẽ lặp lại:**
+Đóng một unknown là **hai** việc, và phiên nào cũng chỉ nhớ việc thứ nhất.
+1. Ghi **câu trả lời** vào chỗ nó thuộc về — `shop-facts.md`, bảng §5.2, mục *Đã có lời giải*. ✅
+2. Sửa mọi chỗ **nhắc tới câu hỏi** — thường ở **mục khác**, do **task khác** viết, từ **ngày
+   khác**. ❌
+
+Ba chỗ trên là bằng chứng: câu trả lời U-019 rơi vào **§4.9 đầu mục** và §7.1, còn câu nhắc nằm ở
+**§4.9 cuối mục** — cùng mục mà vẫn sót. U-027 rơi vào **§5.2** và §5.6, còn câu nhắc nằm ở **§6**,
+do **BA-08** viết. Khoảng cách giữa hai chỗ càng lớn thì xác suất sót càng cao, và không ai đo được
+khoảng cách ấy lúc đang sửa.
+
+⇒ Đây là **loại thứ hai của F-001**: F-001 nói *hai file giữ hai bản của một sự thật*; đây là **một
+file giữ hai đời của cùng một sự thật**, và đời cũ không chết vì không ai nhìn lại nó.
+
+**Decision / Fix:**
+**BA-10 cố ý không sửa.** §1–§8 của `docs/product.md` là nội dung nghiệp vụ đã chốt, nằm ngoài scope
+prompt `prompt/BA/09-decisions-assumptions-L2.md` (mục *Không được sửa*). **BA-11** có sẵn luật cho
+đúng ca này — *thấy sai/thiếu thì **không tự sửa**: ghi finding và mở lại task BA tương ứng* — nên
+finding này là đầu vào của BA-11, không phải một việc bị bỏ quên.
+
+Ba việc cụ thể cho phiên sửa:
+1. Dòng 1195–1196: xoá, hoặc viết lại thành *"U-019 đã đóng 2026-09-01 — nguồn thứ ba là tin nhắn
+   báo có, xem bảng đầu mục."*
+2. Dòng 1564 (§6 dòng 7): bỏ *"Ranh giới trên còn mở"*, ghi `Hoàn thành ⇒ Huỷ` vào danh sách
+   chuyển tiếp hợp lệ của dòng ấy, trỏ §5.2 và **ADR-017**.
+3. Dòng 1588: đổi *"không cần đường `Hoàn thành → Huỷ`"* thành *"quầy chọn giữa **sửa** và **huỷ**
+   theo từng ca"*.
+
+**Chưa đề xuất cổng mới.** CLAUDE.md §3.8: một luật/hook/test chỉ được dựng sau khi cùng một vấn đề
+đã trả giá **hai** lần. Đây là lần **một** được đo. Lệnh `awk` ở trên đủ để lần sau đo lại trong 5
+giây; nếu nó lại ra kết quả sau một lượt đóng unknown khác, đó là lần hai và lúc ấy hãy dựng cổng
+(chỗ tự nhiên: thêm một bước vào `scripts/check-links.sh`, hoặc một `scripts/*.test.sh`).
 
 **Related task:**
-**BA-11** (diễn scenario §8 — sẽ đi qua đúng mục này) · BA-06 (viết câu gốc) · T-038 (đóng U-019,
-để lại câu cũ) · **ADR-022** (lời chốt thật, `docs/decisions.md`) · F-001 (hai đời của một sự thật)
+**BA-11** (nhận cả ba việc sửa) · **BA-08** (viết §6 dòng 7 và dòng 1588) · **BA-06** (viết câu
+§4.9) · **T-038** (đóng U-019, để lại chỗ 1) · **T-042**/**T-043** (đóng U-022 rồi U-027, để lại
+chỗ 2 và 3) · **ADR-017** và **ADR-022** (`docs/decisions.md` — lời chốt thật) · **F-001** (hai đời
+của một sự thật) · **F-004** (đọc rộng hơn chữ — vì sao U-027 phải hỏi riêng)
 
 **Status:**
 Open
