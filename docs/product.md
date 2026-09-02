@@ -993,10 +993,26 @@ I-010).
   khi chủ quán đổi giá và một lượt sau thì hoá đơn cộng hai mức giá lại — §3.1.4 vẫn nguyên vẹn:
   vẫn **một** phiên, **một** hoá đơn.
 
+**Và một ngoại lệ có chủ ý, chốt 2026-09-02: SỬA một dòng thì ĐẶT LẠI mốc khoá giá của dòng ấy.**
+Dòng vừa sửa lấy **giá đang hiệu lực lúc sửa**, không giữ giá cũ của lượt gọi (`shop-facts.md`
+§6.19, trả lời U-026). Ba điều phải đọc kèm, vì đây là chỗ dễ nhớ nhầm thành *"§4.4 bị phá"*:
+
+- **Luật ở đầu mục KHÔNG đổi.** *"Giá menu đổi sau mốc thì không chạm được lượt gọi cũ"* vẫn đúng
+  nguyên văn: một lần đổi giá **không bao giờ** tự với ngược vào dòng đã tạo. Cái đặt lại mốc là
+  **thao tác cố ý của người đứng quầy** trên đúng dòng đó — không phải lần đổi giá.
+- **Mốc khoá giá là của TỪNG DÒNG, không phải của cả lượt gọi.** Sửa một dòng trong lượt gọi ba
+  dòng thì hai dòng kia giữ nguyên giá cũ. ⇒ Một lượt gọi cũng được phép mang hai mức giá, đúng
+  cách một hoá đơn được phép mang hai mức giá ở gạch đầu dòng trên.
+- ⇒ **Hệ quả chạm tiền khách, phải nói thẳng:** nếu chủ quán đổi giá giữa buổi, một dòng sửa sau
+  mốc ấy sẽ **đắt hơn hoặc rẻ hơn chính nó lúc mới gọi**, dù khách không đổi món. Vì vậy vết của
+  lần sửa phải ghi **cả giá cũ lẫn giá mới** — ghi mỗi *"đã sửa"* là làm đối soát §4.9 không giải
+  thích được chỗ lệch.
+
 **Tổng của một phiên bàn = tổng các lượt gọi thuộc phiên ấy, mỗi lượt tính theo giá đã khoá của
-chính nó.** Không có phép tính nào lấy giá hiện tại nhân với số suất của cả phiên; làm thế là hỏng
-đúng ca hai mức giá ở trên. Với **nhóm bàn ghép**, "phiên ấy" phủ mọi bàn trong nhóm — vẫn một
-hoá đơn (§3.1.7, `quality/invariants.md` I-002).
+chính nó** — và mỗi **dòng** theo mốc đã khoá của chính dòng ấy. Không có phép tính nào lấy giá
+hiện tại nhân với số suất của cả phiên; làm thế là hỏng đúng ca hai mức giá ở trên. Với **nhóm bàn
+ghép**, "phiên ấy" phủ mọi bàn trong nhóm — vẫn một hoá đơn (§3.1.7,
+`quality/invariants.md` I-002).
 
 ### 4.5 Đơn vị thanh toán — theo kênh
 
@@ -1302,14 +1318,15 @@ cùng một kiểu luật với hoàn tiền (§4.8) và với đường lùi m�
 hàng rào cho máy mà giao quyết định cho người đứng quầy. ⇒ Vì không có luật cứng nên **mỗi lần sửa
 phải để lại vết** — sửa đơn nào, đổi gì, lúc mấy giờ, ai bấm (§4.9).
 
-**Hai vế lời chốt ấy KHÔNG chạm tới, và chúng rời khỏi U-022 thành hai câu riêng.** Chủ quán trả
-lời bằng chữ **sửa**; đọc rộng ra là đúng thứ `work/findings.md` F-004 cấm:
+**Hai vế lời chốt ngày 2026-09-01 không chạm tới đều đã đóng trong ngày 2026-09-02**, và cả hai
+đều được hỏi riêng thay vì suy ra từ chữ *sửa* (`work/findings.md` F-004):
 
-- **Huỷ** còn được phép tới trạng thái nào — `Hoàn thành → Huỷ` hôm nay vẫn không có dòng trong
-  bảng trên (§5.6) ⇒ **U-027**.
-- Một dòng **vừa sửa** thì **tính giá lúc nào**, vì §4.4 khoá giá theo *thời điểm tạo lượt gọi* —
-  sửa xong lấy giá mới thì §3.3.3 vỡ, lấy giá cũ thì khách đổi sang món đắt hơn vẫn trả giá rẻ
-  ⇒ **U-026**.
+- **Huỷ** cũng được, **kể cả đơn đã `Hoàn thành`**, POS quyết trong thực tế (U-027) ⇒ bảng trên nay
+  có dòng `Hoàn thành → Huỷ`, và §5.6 mất ca thứ hai.
+- **Một dòng vừa sửa lấy giá đang hiệu lực LÚC SỬA** (U-026) ⇒ sửa một dòng là **đặt lại mốc khoá
+  giá của chính dòng ấy**. Đây là ngoại lệ có chủ ý của §4.4, không phải §4.4 bị phá: một lần đổi
+  giá vẫn **không** tự với ngược vào dòng cũ — cái đặt lại mốc là **thao tác của người đứng quầy**.
+  Đọc §4.4 trước khi đụng vào phần tính tiền của việc sửa đơn.
 
 ### 5.3 Vòng đời PHIÊN BÀN — và cái bàn của nó
 
@@ -1521,7 +1538,7 @@ phải chỗ tài liệu còn thiếu: sản phẩm không được dựng hàng
 | 10 | **Khách rời bàn nhưng chưa thanh toán** | *Người đứng quầy*, trên POS (`shop-facts.md` §6.14) | Phiên `Chờ thanh toán` ⇒ `Đã đóng` — **tiền chưa thu không chặn phiên đóng** (§5.3, I-017). Bàn sang `Bàn cần dọn`, dọn xong về `Trống` | Quán **cho nợ**. Đóng phiên **bắt buộc ghi ai nợ và nợ bao nhiêu** — thiếu một trong hai thì khoản nợ vô chủ. Doanh thu tính vào **ngày ghi nợ**, không phải ngày thu được tiền; két thiếu đúng bằng tổng nợ ghi trong ngày (§4.7, §4.10) |
 | 11 | **Mất mạng trong lúc quán đang phục vụ** | Cả quán chuyển cách làm; *người đứng quầy* giữ sổ (`shop-facts.md` §6.11) | **Không dừng bán.** Đơn và phiên vẫn chạy đúng các trạng thái §5, nhưng ghi **trên sổ giấy** thay vì trên máy | Thu bình thường, ghi sổ. Phần ghi tay phải nhập lại để đối soát cuối ngày còn đọc được (§4.9) |
 | 12 | **Mất điện hoặc thiết bị POS gặp sự cố** | Như dòng 11 (`shop-facts.md` §6.11) | Như dòng 11 | Như dòng 11 |
-| 13 | **Đơn đã hoàn thành nhưng cần điều chỉnh** | *Người đứng quầy*, trên POS — **sửa chính đơn ấy**, không huỷ rồi tạo lại (`shop-facts.md` §6.19) | **Sửa được, kể cả đơn đã `Hoàn thành`** (chủ quán chốt 2026-09-02: *bất kỳ trạng thái nào*, POS quyết theo tình hình thực tế). Sửa **không phải** một chuyển tiếp trạng thái — đơn đang ở đâu vẫn ở đó, cái đổi là món / số suất / tuỳ chọn (§5.2). **Huỷ cũng được, kể cả đơn đã `Hoàn thành`** (chủ quán chốt 2026-09-02, trả lời U-027) — bảng §5.2 nay có dòng ấy. ⇒ Quầy có **hai** đường cho ca này, sửa hoặc huỷ, và POS chọn theo ca thật | Chênh lệch sau khi sửa: thu thêm, hoặc **hoàn** theo §4.8 — khoản hoàn trừ vào doanh thu **ngày hoàn**. Mỗi lần sửa **để lại vết** (§4.9). ⚠ Còn một câu hẹp: dòng **vừa sửa** tính giá lúc nào, vì §4.4 khoá giá theo *thời điểm tạo lượt gọi* — **U-026** |
+| 13 | **Đơn đã hoàn thành nhưng cần điều chỉnh** | *Người đứng quầy*, trên POS — **sửa chính đơn ấy**, không huỷ rồi tạo lại (`shop-facts.md` §6.19) | **Sửa được, kể cả đơn đã `Hoàn thành`** (chủ quán chốt 2026-09-02: *bất kỳ trạng thái nào*, POS quyết theo tình hình thực tế). Sửa **không phải** một chuyển tiếp trạng thái — đơn đang ở đâu vẫn ở đó, cái đổi là món / số suất / tuỳ chọn (§5.2). **Huỷ cũng được, kể cả đơn đã `Hoàn thành`** (chủ quán chốt 2026-09-02, trả lời U-027) — bảng §5.2 nay có dòng ấy. ⇒ Quầy có **hai** đường cho ca này, sửa hoặc huỷ, và POS chọn theo ca thật | Chênh lệch sau khi sửa: thu thêm, hoặc **hoàn** theo §4.8 — khoản hoàn trừ vào doanh thu **ngày hoàn**. Mỗi lần sửa **để lại vết** (§4.9). **Dòng vừa sửa lấy giá đang hiệu lực LÚC SỬA** (chủ quán chốt 2026-09-02, U-026) — sửa một dòng là **đặt lại mốc khoá giá** của chính dòng ấy (§4.4). Vết phải ghi **cả giá cũ lẫn giá mới** |
 | 14 | **Nhân viên thao tác nhầm trạng thái** | *Người đứng quầy*, trên POS | *Đã chốt cho ca hay xảy ra nhất:* bấm nhầm *"đã làm xong"* một **mẻ** ⇒ **lùi được**, `Đã làm xong, còn ở bếp` ⇒ `Chưa làm` (§5.4). **Không có mốc thời gian cứng** — quầy quyết từng ca. ⚠ **Chưa chốt — `docs/decisions.md` GĐ-05** cho **mọi thao tác nhầm khác** (duyệt nhầm, huỷ nhầm, đóng phiên nhầm) | Lùi một mẻ **phải để lại vết** — lùi mẻ nào, lúc mấy giờ, ai bấm: một mẻ lùi sai là một suất tính nhầm (I-012) |
 
 ### 6.2 Dòng nào đã chốt, và chốt từ đâu
@@ -1543,8 +1560,12 @@ phải chỗ tài liệu còn thiếu: sản phẩm không được dựng hàng
 - **Sổ giấy lúc mất điện** (dòng 11 và 12) — **POS hoặc chủ quán** giữ sổ và nhập lại, **nhập ngay
   khi có thể** (`shop-facts.md` §6.11).
 
-**Ba chỗ còn ⚠**, và cả ba đều hẹp: dòng 4 (**GĐ-01**) · dòng 13 phần **giá của dòng vừa sửa**
-(**U-026**) · dòng 14 phần **thao tác nhầm ngoài ca bấm nhầm một mẻ** (**GĐ-05**).
+**Hai chỗ còn ⚠**, cả hai đều là **giả định**, không còn câu hỏi nào đang chờ chủ quán: dòng 4
+(**GĐ-01** — hai người cùng thao tác một bàn) · dòng 14 (**GĐ-05** — thao tác nhầm ngoài ca bấm
+nhầm một mẻ).
+
+**Dòng 13 hết ⚠ ngày 2026-09-02:** vế cuối của nó — *giá của dòng vừa sửa* — đã có lời chốt
+(**U-026**: lấy giá đang hiệu lực lúc sửa, `shop-facts.md` §6.19, chi tiết ở §4.4).
 
 ### 6.3 Hết một THÀNH PHẦN, không phải hết một dòng menu
 
@@ -1788,17 +1809,14 @@ chủ quán quyết theo tình hình thực tế, không có luật cứng.** L�
 thay hai giả định rủi ro CAO; lượt hai (T-043) đóng **U-027** — đơn đã `Hoàn thành` cũng **huỷ
 được** — và **U-030** — **không** mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên.
 
-**Còn đúng MỘT câu, và nó là câu chạm tiền.**
+**Mục này hôm nay RỖNG — không còn câu hỏi nghiệp vụ nào đang chờ chủ quán.** Bảy câu mở trong
+ngày đều đã đóng trong ngày (T-042, T-043, T-044). Chỗ chưa chắc còn lại **không** phải câu hỏi:
+hai **giả định** `docs/decisions.md` GĐ-01 và GĐ-05 (§6 dòng 4 và 14) — chúng chờ ai đó gặp ca
+thật, không chờ ai trả lời — và một chỗ **suy ra** ở `master_plan/shop-facts.md` §7.2 (**S-5**).
 
-- **U-026 — Một dòng VỪA SỬA thì tính giá lúc nào?** *Vì sao còn hỏi:* §4.4 khoá giá theo **thời
-  điểm tạo lượt gọi**, và chủ quán chốt 2026-09-01 rằng giá đổi được **giữa giờ bán**
-  (`shop-facts.md` §6.17). Nay sửa đơn được ở **mọi** trạng thái, nên một dòng tạo lúc 8h và sửa
-  lúc 10h — sau một lần đổi giá — chưa có giá nào đúng hiển nhiên: lấy giá **mới** thì §3.3.3 vỡ
-  (*"lượt gọi nào tính giá của lượt ấy"*), lấy giá **cũ** thì khách đổi sang món đắt hơn vẫn trả
-  giá rẻ. *Ai trả lời được:* **chủ quán** (hỏi về cái quán: *"sáng đổi giá, sau đó khách đổi món
-  trong một đơn gọi từ trước, thì tính tiền theo giá nào?"*). *Đang chặn:* dòng 13 của bảng §6 còn
-  một ô ⚠; **BA-09** cần biết MVP có phải làm màn hình sửa đơn có tính lại giá hay không, và
-  **BA-10** gom nó lần cuối.
+Mục rỗng là trạng thái bình thường, không phải dấu hiệu quên ghi. Câu tiếp theo vào đây dưới dạng
+một gạch đầu dòng, đúng hợp đồng dưới.
+
 Hình dạng của mục là hợp đồng với `scripts/brief.sh` (ADR-007): **mỗi** câu trên là **một gạch đầu
 dòng**, và câu tiếp theo cũng phải vào đây dưới dạng ấy. `master_plan/shop-facts.md` §7.2 — chỗ giữ
 các mục **suy ra** chưa xác nhận — giữ **S-5** (bấm *"đã bưng ra bàn"* theo đơn vị nào); đó là chỗ
@@ -1848,6 +1866,7 @@ không được tự dựng hộ.
 | ~~GĐ-03 — khách nói đã chuyển khoản mà chưa thấy báo có~~ | **POS bàn với khách**, quyết ngay lúc đó; hai đường ra đã có sẵn — ghi **nợ** (§4.7) hoặc **chờ tin nhắn** (§4.6) | `shop-facts.md` §6.21 · §6 dòng 9 trên đây |
 | ~~U-027 — đơn đã `Hoàn thành` thì có huỷ được không~~ | **Huỷ được**, POS quyết trong thực tế — *"có thể huỷ được, để POS quyết định trong thực tế"*. Bảng §5.2 có thêm dòng `Hoàn thành → Huỷ`; §5.6 mất ca thứ hai | `shop-facts.md` §6.19 · §5.2, §5.6 và §6 dòng 13 trên đây |
 | ~~U-030 — mảng quản trị nào phải có ở bản chạy đầu tiên~~ | **Không mảng nào** — *"bán hàng xong chạy được thì để chạy trước"*. Là quyết định về **thứ tự**, không phải loại bỏ: ranh giới §1.6 vẫn mở | §7.6 trên đây · `shop-facts.md` §7.1 (ngày chốt) |
+| ~~U-026 — một dòng vừa sửa thì tính giá lúc nào~~ | **Giá đang hiệu lực LÚC SỬA** — sửa một dòng là **đặt lại mốc khoá giá** của chính dòng ấy. Ngoại lệ có chủ ý của §4.4: một lần đổi giá vẫn không tự với ngược vào dòng cũ | `shop-facts.md` §6.19 · §4.4, §5.2 và §6 dòng 13 trên đây |
 
 Ngày **2026-08-31** chủ quán trả lời một loạt sáu câu (T-028). Một câu thứ bảy — U-006 — chỉ được
 trả lời **một nửa**, nên nó ở lại mục *Đang mở* với phạm vi hẹp hơn.

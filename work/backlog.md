@@ -168,6 +168,7 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] T-044 U-026 đóng — dòng vừa sửa lấy **giá đang hiệu lực lúc sửa**; ngoại lệ có chủ ý của §4.4, I-009 thêm ranh giới. **Mục Unknowns nay RỖNG** (2026-09-02)
 - [x] T-043 U-027 và U-030 đóng: đơn đã `Hoàn thành` **huỷ được** (§5.2 thêm dòng, §5.6 còn một ca, I-016 viết lại); **không mảng admin nào** ở bản chạy đầu (§7.6). U-026 còn mở (2026-09-02)
 
 - [x] T-042 Chủ quán trả lời U-022, U-025, GĐ-02, GĐ-03 — **POS quyết theo tình hình thực tế**; §6.19–§6.21 và §6.11; mở U-026, U-027 (2026-09-02)
@@ -562,6 +563,47 @@ Luật chung ở [Vòng chạy một task L1](#vong-chay). Việc riêng của t
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+### T-044 — Câu cuối cùng đóng, và nó lật một mốc tiền
+
+**L2** — chạm mốc khoá giá (§4.4) và ranh giới của một bất biến tiền (I-009).
+
+**Lời chủ quán, 2026-09-02:** một dòng vừa sửa lấy **giá đang hiệu lực lúc sửa**. Câu trả lời đầu
+(*"đối sửa được tại thời điểm mà chủ quán quyết định"*) đọc được **hai** nghĩa cho ra **hai số tiền
+khác nhau** trên cùng một hoá đơn, nên phiên **hỏi lại** thay vì đoán (CLAUDE.md §3.5) — chủ quán
+chọn *lấy giá đang hiệu lực lúc sửa*.
+
+**Kết quả.** `shop-facts.md` §6.19 chốt: **sửa một dòng là đặt lại mốc khoá giá của chính dòng ấy**.
+`docs/product.md` §4.4 mang khối ngoại lệ; §5.2 và §6 dòng 13 đọc theo; `quality/invariants.md`
+**I-009** thêm ranh giới. §7.1 có dòng nhật ký. **Mục *Unknowns* nay rỗng.**
+
+**Chỗ dễ hỏng nhất, đã viết ra ở cả ba nơi:** lời chốt này **không** phá §4.4 và **không** nới
+I-009. Cái hai luật ấy cấm là **menu tự với ngược vào đơn cũ** — điều đó vẫn đúng nguyên văn. Cái
+được phép là **một thao tác cố ý của người đứng quầy trên đúng một dòng**. Bài kiểm phân biệt hai
+ca: đổi giá rồi **không** đụng đơn ⇒ mọi dòng giữ giá cũ · đổi giá rồi **sửa** một dòng ⇒ **chỉ
+dòng ấy** ăn giá mới. Sản phẩm nào đổi giá **cả lượt gọi** khi sửa một dòng là **vi phạm I-009**.
+
+**Hệ quả chạm tiền khách, không được giấu:** nếu chủ quán đổi giá giữa buổi, một dòng sửa sau mốc
+ấy **đắt hơn hoặc rẻ hơn chính nó lúc mới gọi**, dù khách không đổi món. ⇒ Vết của lần sửa phải ghi
+**cả giá cũ lẫn giá mới**; ghi mỗi *"đã sửa"* là làm đối soát ngưỡng 0đ (§4.9) không giải thích
+được chỗ lệch.
+
+**Bảy câu, hai ngày, một hình dạng — trừ câu này.** Sáu câu trước (U-021…U-025, U-027, U-030) đều
+ra *"POS quyết theo tình hình thực tế"*. Câu này chủ quán chọn một **luật cứng**. ⇒ Đừng đọc cái
+họ của sáu câu kia thành *"chủ quán không bao giờ đặt luật"* — họ đặt, ở đúng chỗ tiền của khách
+phải tính ra một con số duy nhất.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Bằng chứng |
+|---|---|
+| 1 | `shop-facts.md` §6.19 có gạch đầu dòng *"Một dòng vừa sửa lấy GIÁ ĐANG HIỆU LỰC LÚC SỬA"* |
+| 2 | §7.1 có **7** dòng `2026-09-02` |
+| 3 | `docs/product.md` §4.4 có khối *"ngoại lệ có chủ ý"* + ba gạch đầu dòng phân biệt |
+| 4 | I-009 có mục *"Một ngoại lệ, và nó KHÔNG nới invariant này ra"* kèm bài kiểm hai ca |
+| 5 | §6 còn **2** ⚠, cả hai là GĐ (dòng 4, 14); dòng 13 sạch |
+| 6 | `./scripts/brief.sh` → `OPEN UNKNOWNS (none)` |
+| 7 | `./scripts/gate.sh` xanh |
+
 ### T-043 — Hai câu nữa đóng, và một trong hai bỏ `Hoàn thành` khỏi chỗ "điểm dừng"
 
 **L2** — thêm một dòng vào bảng chuyển trạng thái của đơn và đổi nghĩa một trạng thái kết thúc.

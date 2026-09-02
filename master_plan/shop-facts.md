@@ -805,9 +805,15 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       thật. Tài liệu nào biến nó thành một bảng điều kiện là hiểu ngược lời chốt.
     - ⇒ **Vì không có luật cứng nên mọi lần sửa phải để lại vết** — sửa đơn nào, đổi gì, lúc mấy
       giờ, ai bấm. Đây là §6.10 áp vào, không phải luật mới: sửa đơn **chạm tiền**.
-    - **Vế HUỶ thì lời chốt này KHÔNG chạm tới.** Câu hỏi U-022 gồm cả *huỷ được tới trạng thái
-      nào*; chủ quán trả lời bằng chữ **sửa**. Không đọc rộng ra thành *"huỷ lúc nào cũng được"*
-      (`work/findings.md` F-004) — vế ấy ở lại thành **U-026**.
+    - **Vế HUỶ nay cũng đã chốt: HUỶ ĐƯỢC, kể cả đơn đã `Hoàn thành`, và POS quyết** (chủ quán
+      chốt 2026-09-02, trả lời U-027): *"có thể huỷ được, để POS quyết định trong thực tế."* ⇒ Bảng
+      vòng đời đơn có thêm dòng `Hoàn thành → Huỷ` (`docs/product.md` §5.2), và ca ấy **rời** danh
+      sách chuyển tiếp bị từ chối (§5.6).
+    - ⇒ **Sửa và huỷ nay CÙNG một luật: không có mốc trạng thái nào chặn, POS quyết từng ca.** Hỏi
+      hai lần, hai ngày, ra cùng một câu trả lời — đó là **luật**, không phải hai lời chốt rời.
+    - ⇒ **Huỷ một đơn đã `Hoàn thành` gần như luôn kéo theo tiền**: hàng đã tới tay khách và tiền
+      có thể đã thu, nên lần huỷ ấy đi kèm **hoàn tiền** theo §6.4 — quầy quyết từng ca, để lại
+      vết, và khoản hoàn rơi vào **ngày hoàn**. Huỷ không phải đường vòng tránh §6.4.
     - ⇒ *Cách đọc, không phải lời chủ quán nói thẳng:* sửa một đơn **đã `Hoàn thành`** thì tiền đã
       có thể thu xong rồi, nên lần sửa ấy kéo theo một khoản chênh — thu thêm, hoặc **hoàn** theo
       §6.4 (và khoản hoàn rơi vào **ngày hoàn**). Sửa không phải là một đường vòng tránh §6.4.
@@ -817,8 +823,21 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       nó là ranh giới giữa *sửa* và *làm lại*.
     - ⇒ *Cách đọc, không phải lời chủ quán nói thẳng:* sửa đơn **chạm tiền**, nên nó thuộc luật
       §6.10 và phải để lại vết như mọi thao tác chạm tiền khác. Và nó đụng mốc khoá giá ở §6.17
-      (*giá khoá theo từng lượt gọi*): một dòng vừa sửa tính giá **lúc nào** thì chưa ai chốt —
-      cùng gốc với vế còn mở của U-022.
+      (*giá khoá theo từng lượt gọi*).
+    - **Một dòng vừa sửa lấy GIÁ ĐANG HIỆU LỰC LÚC SỬA** (chủ quán chốt 2026-09-02, trả lời U-026).
+      Không giữ giá cũ của lượt gọi: dòng nào bị sửa thì **mốc khoá giá của chính dòng ấy được đặt
+      lại** về thời điểm sửa.
+    - ⇒ **Đây là NGOẠI LỆ có chủ ý của §6.17, không phải mâu thuẫn.** §6.17 nói *lượt gọi nào tính
+      giá của lượt ấy* — luật ấy trả lời câu *"chủ quán đổi giá thì đơn cũ có bị kéo theo không?"*
+      và câu trả lời vẫn là **không**: một lần đổi giá **không bao giờ** tự với ngược vào dòng cũ.
+      Cái đặt lại mốc ở đây là **một thao tác cố ý của người đứng quầy** trên đúng dòng đó, không
+      phải lần đổi giá. Hai chuyện khác nhau, đừng nhớ nhầm thành một.
+    - ⇒ **Sửa một dòng là ĐỊNH GIÁ LẠI dòng ấy.** Hệ quả phải nói thẳng vì nó chạm tiền của khách:
+      khách đổi sang món đắt hơn thì trả giá **mới**; và nếu chủ quán vừa đổi giá giữa buổi, một
+      dòng sửa sau mốc ấy sẽ **đắt hơn hoặc rẻ hơn** chính nó lúc mới gọi, dù khách không đổi món.
+    - ⇒ **Vết của lần sửa phải ghi cả GIÁ CŨ và GIÁ MỚI**, không chỉ ghi "đã sửa". Đối soát cuối
+      ngày ngưỡng **0đ** (§6.10) chỉ giải thích được chỗ lệch nếu đọc được dòng nào đổi giá lúc
+      mấy giờ; đây là §6.10 áp vào, không phải luật mới.
 
 20. **Món hết sau khi khách đã chọn: POS làm việc với khách, quyết định ra tại lúc thoả thuận xong**
     (chủ quán chốt 2026-09-02). Không có luật cứng kiểu *"tự động thay thế"* hay *"tự động huỷ"*:
@@ -906,6 +925,9 @@ lại điều gì.
 | 2026-09-01 | **Đối soát cuối ngày có NGUỒN THỨ BA: tin nhắn báo có** — phần khách chuyển khoản đối chiếu bằng tin nhắn, vì két chỉ giữ tiền mặt (trả lời U-019) | §6.10 |
 | 2026-09-01 | **Hoàn tiền tính vào doanh thu NGÀY HOÀN**, không phải ngày bán gốc — ngược chiều với luật nợ ở §6.14 (trả lời U-019) | §6.4 |
 | 2026-09-01 | **Một lần thu chia được nhiều phương thức**; POS ghi **bao nhiêu tiền mặt, bao nhiêu chuyển khoản** (trả lời U-020) | §6.18 |
+| 2026-09-02 | **Dòng vừa sửa lấy GIÁ ĐANG HIỆU LỰC LÚC SỬA** — sửa một dòng là đặt lại mốc khoá giá của dòng ấy; ngoại lệ có chủ ý của §6.17 (trả lời U-026) | §6.19 |
+| 2026-09-02 | **Đơn đã `Hoàn thành` cũng HUỶ được, POS quyết trong thực tế** (trả lời U-027) — cùng luật với *sửa*: không mốc trạng thái nào chặn | §6.19 |
+| 2026-09-02 | **Không mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên** — *"bán hàng xong chạy được thì để chạy trước"* (trả lời U-030) | — *phạm vi MVP, không phải dữ kiện quán; ghi ở `docs/product.md` §7* |
 | 2026-09-02 | **Sửa đơn được ở BẤT KỲ trạng thái nào**, POS quyết theo tình hình thực tế — không có mốc trạng thái cứng (trả lời nốt U-022; vế *huỷ* **không** được chạm tới, thành U-026) | §6.19 |
 | 2026-09-02 | **Sổ giấy: POS hoặc chủ quán giữ và nhập lại, nhập ngay khi có thể** — có điện lại giữa buổi thì làm tiếp trên hệ thống, ghi tay cập nhật sau (trả lời U-025) | §6.11 |
 | 2026-09-02 | **Món hết sau khi khách đã chọn: POS bàn với khách, quyết tại lúc thoả thuận xong** — không tự thay thế, không tự huỷ (đóng câu 3 bảng §10) | §6.20 |

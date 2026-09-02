@@ -233,6 +233,22 @@ lúc mở phiên bàn và **không** phải lúc thanh toán — nên một phi�
 **một hoá đơn mang hai mức giá cho cùng một món**, và đó là kết quả đúng (chủ quán chốt 2026-09-01,
 `master_plan/shop-facts.md` §6.17).
 
+**Một ngoại lệ, và nó KHÔNG nới invariant này ra** (chủ quán chốt 2026-09-02, trả lời U-026): khi
+người đứng quầy **sửa** một dòng, dòng ấy lấy **giá đang hiệu lực lúc sửa** — mốc khoá giá của
+chính dòng đó được **đặt lại** (`master_plan/shop-facts.md` §6.19, `docs/product.md` §4.4). Phân
+biệt phải giữ cho sắc, vì invariant này sống hay chết ở đúng chỗ ấy:
+
+- **Cái invariant cấm là menu tự với ngược vào đơn cũ.** Chủ quán đổi giá xong, **không** dòng nào
+  đã tạo được đổi theo. Điều đó **vẫn đúng nguyên văn** sau 2026-09-02.
+- **Cái được phép là một thao tác cố ý của người, trên đúng một dòng.** Giá dòng ấy đổi vì **có
+  người sửa nó**, không phải vì bảng giá đổi. Không có thao tác sửa thì không có thay đổi nào.
+- ⇒ **Bài kiểm phân biệt hai ca:** đổi giá menu rồi **không** đụng gì vào đơn ⇒ mọi dòng giữ giá cũ
+  (invariant này) · đổi giá menu rồi **sửa** một dòng ⇒ **chỉ dòng ấy** ăn giá mới, các dòng còn
+  lại của cùng lượt gọi giữ giá cũ. Một sản phẩm đổi giá **cả lượt gọi** khi sửa một dòng là **vi
+  phạm** invariant này.
+- ⇒ **Vết của lần sửa phải ghi cả giá cũ lẫn giá mới** (I-012), nếu không thì không ai phân biệt
+  được hai ca trên khi đối soát.
+
 **Why:**
 Kế hoạch gốc §5 quy tắc 5 và 6 chốt giá được xác định tại thời điểm đặt hàng và thay đổi menu
 không làm đổi đơn cũ. Vi phạm ở đây **không nổ ra lỗi nào** — không có thao tác sai, không có màn
@@ -496,15 +512,14 @@ chỉ một phương thức vẫn hợp lệ — đây là ca thường, không 
 Ba vòng đời của `docs/product.md` §5 — **đơn** (§5.2), **phiên bàn và cái bàn của nó** (§5.3),
 **công việc trạm** (§5.4) — mỗi cái có một bảng chuyển tiếp đóng. Một chuyển tiếp **không có dòng**
 trong bảng của nó là **không hợp lệ** và bị **từ chối**; nó không được thực hiện im lặng, không
-được "tự sửa thành hợp lệ", và không có đường tắt nào bỏ qua một trạng thái ở giữa. Ba ca đã biết
-trước mà sản phẩm phải từ chối, kèm lý do vì sao chúng nghe có lý (§5.6): phiên `Đã đóng` **không**
-quay lại `Đang phục vụ` · đơn `Hoàn thành` **không** sang `Huỷ`.
+được "tự sửa thành hợp lệ", và không có đường tắt nào bỏ qua một trạng thái ở giữa. **Tính tới
+2026-09-02 chỉ còn ĐÚNG MỘT ca** đã biết trước mà sản phẩm phải từ chối, kèm lý do vì sao nó nghe
+có lý (§5.6): phiên `Đã đóng` **không** quay lại `Đang phục vụ`.
 
-**Danh sách ấy ngắn đi một dòng ngày 2026-09-01 (T-039), và đó là bằng chứng invariant này đang làm
-đúng việc.** Việc trạm `Đã làm xong, còn ở bếp` → `Chưa làm` từng nằm trong danh sách bị từ chối;
-chủ quán chốt là **có** đường lùi (trả lời U-024), nên §5.4 có thêm một dòng và ca ấy nay **hợp
-lệ**. Invariant không phải sửa một chữ: nó bảo vệ *"chỉ đi theo bảng"*, không bảo vệ một danh sách
-cố định.
+**Danh sách ấy ngắn đi HAI dòng trong hai ngày, và đó là bằng chứng invariant này đang làm đúng
+việc.** `Đã làm xong, còn ở bếp` → `Chưa làm` rời ngày 2026-09-01 (U-024, T-039); `Hoàn thành` →
+`Huỷ` rời ngày 2026-09-02 (U-027, T-043) — chủ quán chốt **huỷ được, POS quyết trong thực tế**.
+Cả hai lần §5 có thêm một dòng và invariant **không phải sửa một chữ** ở phần này.
 
 **Why:**
 Vòng đời là chỗ **cả ba lát cắt của §3 gặp nhau**, nên một chuyển tiếp lạ không hỏng ở chỗ nó xảy
@@ -514,21 +529,34 @@ việc xuống bếp mà **không ai duyệt** (`master_plan/shop-facts.md` §6.
 sớm và nói ra là cách duy nhất giữ được luật *"mọi thao tác chạm tiền hoặc trạng thái đơn phải kiểm
 chứng lại được"* (kế hoạch gốc §5 quy tắc 12, I-012).
 
-**Một trong hai ca còn lại bị từ chối vì CHƯA AI CHỐT, không phải vì đã chốt là cấm:**
-`Hoàn thành → Huỷ` chờ **U-022** — mà U-022 nay đã có **một nửa** lời giải (đơn đã xác nhận thì
-sửa được, trên POS, `master_plan/shop-facts.md` §6.19), chỉ còn nửa *"tới trạng thái nào"*. Chủ
-quán trả lời nốt thì bảng §5.2 có thêm dòng và invariant này vẫn đúng nguyên văn.
+**Ngày 2026-09-02 danh sách ba ca ấy rút xuống còn MỘT, và invariant này vẫn đúng nguyên văn.**
+Chủ quán chốt đơn **sửa được ở bất kỳ trạng thái nào** và **huỷ được kể cả khi đã `Hoàn thành`**,
+POS quyết theo tình hình thực tế (`master_plan/shop-facts.md` §6.19 — trả lời U-022 rồi U-027). ⇒
+Bảng `docs/product.md` §5.2 có thêm dòng `Hoàn thành → Huỷ`, nên ca ấy **không còn** bị từ chối;
+`Đã làm xong, còn ở bếp → Chưa làm` cũng đã rời danh sách từ 2026-09-01 (U-024). Ca duy nhất còn
+lại là **`Đã đóng` → `Đang phục vụ`** (phiên bàn), và nó bị từ chối vì **đã chốt là cấm**, không
+phải vì chưa hỏi ai.
+
+⇒ **Đó chính là điều invariant này bảo vệ:** nó khoá luật *"chỉ đi theo bảng"*, **không** khoá một
+danh sách ca cố định. Ba lần bảng §5 đổi trong hai ngày, ba lần invariant này không phải sửa một
+chữ nào ở phần *Invariant*. Bản kiểm chứng thì **phải** đổi theo mỗi lần — xem *Verification*.
+
+⇒ **Và lời chốt 2026-09-02 KHÔNG nới invariant này ra.** *"Sửa được ở bất kỳ trạng thái nào"* nói
+về **sửa nội dung**, thứ đoạn ngay dưới đây chỉ ra là **không phải chuyển tiếp**. Đọc nó thành
+*"đơn muốn đi đâu cũng được"* là phá đúng cái invariant này bảo vệ.
 
 **Sửa đơn không phải chuyển tiếp, nên nó không nằm dưới invariant này.** Sửa đổi **nội dung** một
 đơn, không đẩy đơn sang trạng thái khác (`docs/product.md` §5.2) — từ chối nó nhân danh *"không có
 dòng nào trong bảng"* là đọc sai invariant.
 
 **Verification:**
-Kịch bản âm: đóng một phiên rồi cố đưa nó về `Đang phục vụ` ⇒ **bị từ chối**, và khách quay lại gọi
-tiếp thì mở **phiên mới** · huỷ một đơn đã `Hoàn thành` ⇒ **bị từ chối**. Kịch bản **dương** đi kèm,
-vì nó là ca vừa đổi phía: đưa một việc từ `Đã làm xong, còn ở bếp` về `Chưa làm` ⇒ **được**, và
-lần lùi ấy **để lại vết** (mẻ nào, mấy giờ, ai bấm — I-012); không có mốc thời gian nào chặn nó
-(`shop-facts.md` §5.4). Kịch bản bỏ bước:
+Kịch bản âm — nay chỉ còn **một**: đóng một phiên rồi cố đưa nó về `Đang phục vụ` ⇒ **bị từ chối**,
+và khách quay lại gọi tiếp thì mở **phiên mới**. Kịch bản **dương** đi kèm **hai** ca vừa đổi phía,
+và cả hai phải có bài kiểm riêng: đưa một việc từ `Đã làm xong, còn ở bếp` về `Chưa làm` ⇒
+**được** · huỷ một đơn đã `Hoàn thành` ⇒ **được**. Cả hai lần đều **để lại vết** (cái gì, mấy giờ,
+ai bấm — I-012) và **không có mốc thời gian nào chặn** (`shop-facts.md` §5.4, §6.19); riêng lần huỷ
+đơn đã `Hoàn thành` còn phải kiểm **đường tiền**: tiền đã thu thì lần huỷ ấy kéo theo **hoàn tiền**
+theo §6.4, rơi vào **ngày hoàn**, không sửa lại doanh thu ngày bán. Kịch bản bỏ bước:
 đơn ở `Chờ xác nhận` sinh việc xuống bếp mà không qua `Đã xác nhận` ⇒ **không việc nào được sinh**
 (I-004). Kịch bản phủ: dựng lại đúng danh sách dòng của ba bảng §5 rồi thử **mọi** cặp (nguồn,
 đích) còn lại ⇒ tất cả bị từ chối; danh sách bị từ chối phải **thay đổi** khi §5 thêm một dòng —
