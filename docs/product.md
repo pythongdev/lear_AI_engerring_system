@@ -12,6 +12,11 @@ Hành vi nghiệp vụ của sản phẩm. Mỗi mục dưới đây do một ta
 
 ## 1. Actor và phạm vi hệ thống
 
+> **Quyết định gốc của mục này:** → **ADR-028** (năm trạm; chủ quán đứng quầy vẫn là chủ quán) ·
+> **ADR-016** (POS ở quầy là cửa ghi duy nhất, quyền gắn với chỗ đứng) · **ADR-031** (§1.6 — ba
+> mảng quản trị được phép, nhưng đi sau bán hàng) · **ADR-011**, **ADR-013**.
+> Lý do, cái bị bác và ngày chốt ở `docs/decisions.md`; mục này không chép lại.
+
 *BA-01 — chốt 2026-08-30. Nguồn: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §2.1 (khung
 actor) + `master_plan/shop-facts.md` §1, §2, §3, §5, §6 (dữ kiện quán, chủ quán chốt 2026-08-19 →
 2026-08-30).*
@@ -195,6 +200,10 @@ chen vào mục của mảng bán hàng — `docs/decisions.md` **ADR-013**.
 
 ## 2. Kênh bán
 
+> **Quyết định gốc của mục này:** → **ADR-015** (năm kênh là danh sách đóng; `qr_table` ẩn danh
+> theo bàn, ba kênh không gắn bàn bắt buộc số điện thoại) · **ADR-021** (giờ hẹn bắt buộc với
+> `pickup` **và** `phone_preorder`; `delivery` có `Đang giao`) · **ADR-016** (ai duyệt, ai huỷ).
+
 *BA-02 — chốt 2026-08-30. Nguồn: `master_plan/shop-facts.md` §2 (bảng kênh, chủ quán chốt
 2026-08-24, sửa 2026-08-29), §6.2 (ai phải duyệt), §6.5 (thông tin liên hệ, chủ quán chốt
 2026-08-30).*
@@ -279,6 +288,11 @@ nên mọi thao tác chạm tiền đều truy được về một người.
 thì **nhờ người đứng quầy bấm**. Không có cửa thứ hai — mọi lần huỷ đều đi qua máy POS ở quầy.
 
 ## 3. Ba lát cắt nghiệp vụ
+
+> **Quyết định gốc của mục này:** → **ADR-027** (§3.1.7 ghép bàn = một phiên, một hoá đơn) ·
+> **ADR-019** (§3.1.6 cho nợ, doanh thu tính ngày ghi nợ) · **ADR-029** (§3.1.4 suất *đem về* của
+> khách ngồi bàn) · **ADR-023** (§3.3 đổi giá giữa buổi, thành phần suất chờ hết buổi) ·
+> **ADR-021** (§3.2 luồng mang đi) · **ADR-009** (§3.4 — trục mẻ, BA-12 chưa viết).
 
 Ba lát cắt chạy được từ đầu đến cuối, mỗi lát do một task BA chốt: một suất tại bàn (§3.1) · một
 đơn mang đi (§3.2) · chủ quán đổi menu hoặc giá (§3.3). Hai luồng bán của quán ở
@@ -874,6 +888,11 @@ trước, và có vết đọc được sau, đủ để đối soát cuối ng�
 
 ## 4. Giá và thanh toán
 
+> **Quyết định gốc của mục này:** → **ADR-023** (§4.4 mốc khoá giá là từng dòng) · **ADR-030**
+> (§4.6 hai phương thức, POS xác nhận lúc nhận tiền) · **ADR-019** (§4.7 nợ) · **ADR-020** (§4.8
+> hoàn tiền, tính ngày hoàn) · **ADR-022** (§4.9 đối soát ba nguồn ngưỡng 0đ, §4.10 hai nguồn
+> doanh thu) · **ADR-024** (vết của mọi thao tác chạm tiền) · **ADR-025** (giá suất trứng ×5).
+
 *BA-06 — chốt 2026-09-01. Nguồn: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §6 (giá,
 thanh toán), §5 quy tắc 3, 5, 6, 12 + `master_plan/shop-facts.md` §1 (hai phương thức, VietQR
 tĩnh), §4.1–§4.8 (công thức, hai bảng giá, phụ thu, chín quy tắc, mười một tổ hợp), §6.3, §6.4,
@@ -1223,6 +1242,10 @@ và cách bày bảng đối soát, **không** phải dữ liệu quá khứ —
 
 ## 5. Vòng đời nghiệp vụ
 
+> **Quyết định gốc của mục này:** → **ADR-017** (§5.2 sửa và huỷ không bị chặn bởi trạng thái;
+> dòng `Hoàn thành → Huỷ`) · **ADR-026** (§5.4 bỏ `Đang làm`, giữ `Đã làm xong, còn ở bếp`, và
+> đường lùi một mẻ) · **ADR-027** (§5.3 phiên bàn gắn nhiều bàn) · **ADR-016** (ai bấm mỗi mốc).
+
 *BA-07 — chốt 2026-09-01. Nguồn: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §7 (ba vòng
 đời), §5 quy tắc 1, 4, 9, 12 + `master_plan/shop-facts.md` §3, §5.3, §5.4, §6.1, §6.2, §6.6, §6.7,
 §6.13, §6.14, §6.16 (dữ kiện quán, chủ quán chốt 2026-08-19 → 2026-09-01).*
@@ -1505,6 +1528,11 @@ CLAUDE.md §3.5 tồn tại.
 
 ## 6. Ngoại lệ
 
+> **Quyết định gốc của mục này:** → **ADR-018** (dòng 5 — món hết) · **ADR-017** (dòng 13 — đơn
+> đã hoàn thành cần điều chỉnh) · **ADR-016** (dòng 11–12 — sổ giấy) · **ADR-030** (dòng 9 — chưa
+> thấy báo có) · **ADR-020** (đường tiền của mọi dòng huỷ). Hai dòng còn mang dấu ⚠ trỏ **GĐ-01**
+> và **GĐ-05**, hai giả định duy nhất còn hiệu lực.
+
 Mục này chốt **cách quán xử lý**, không chốt cách máy làm. Mỗi dòng nói ba thứ: **ai xử lý**, đơn
 hoặc phiên **về trạng thái nào** (tên trạng thái lấy nguyên ở §5), và **tiền** ra sao (luật ở §4).
 Cách hệ thống kỹ thuật thực hiện — thử lại, hàng chờ, bộ nhớ đệm khi mất mạng — **không** thuộc mục
@@ -1598,6 +1626,10 @@ tình huống sẽ bị hiểu sai **cỡ**, và lời chốt ấy sẽ bị đ�
   chúng cho tới khi có lời chốt.
 
 ## 7. Phạm vi MVP
+
+> **Quyết định gốc của mục này:** → **ADR-031** (§7.6 ba mảng quản trị đi sau bán hàng) ·
+> **ADR-024** (dòng 12 — *báo cáo doanh thu cơ bản* gồm cái vết tới đâu) · **ADR-015** (dòng 2 —
+> năm kênh, không có kênh thứ sáu) · **ADR-028** (dòng 6 — đúng năm trạm).
 
 *BA-09 — chốt 2026-09-02. Nguồn: `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §9 (làm /
 chưa chi tiết), §13 (rủi ro đi sớm vào kỹ thuật) + `master_plan/shop-facts.md` §2 (năm kênh), §3

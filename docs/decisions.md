@@ -2,6 +2,68 @@
 
 Record decisions that future engineers or AI sessions need to understand.
 
+<a id="bang-tong-hop"></a>
+## Bảng tổng hợp — mọi quyết định và giả định của repo này
+
+Một dòng cho mỗi mục của file. **Đây là bảng tra, không phải nơi giữ sự thật:** lý do, cái bị bác
+và phạm vi áp dụng nằm ở chính mục ấy bên dưới. Cột *Rủi ro* chỉ có nghĩa với một `GĐ` — một
+quyết định đã chốt thì không mang mức rủi ro, nó mang một cái ngày và một cái tên.
+
+Hai loại mục, và ranh giới giữa chúng là luật cứng (CLAUDE.md §3.5): **ADR** = có lời người thật ·
+**GĐ** = chưa ai trả lời, đang tạm chấp nhận. Không phiên nào được đổi loại của một mục mà không
+có câu trả lời mới từ người.
+
+| ID | Nội dung một dòng | Trạng thái | Rủi ro | Chặn việc gì |
+|---|---|---|:--:|---|
+| **Quyết định về CÁCH VẬN HÀNH REPO** ||||
+| ADR-001 | `master_plan/shop-facts.md` là nhà duy nhất của mọi dữ kiện quán | Đã chốt | — | — |
+| ADR-002 | Trạng thái hệ thống được **đẩy** vào mỗi phiên (brief) | Đã chốt | — | — |
+| ADR-003 | Gate 3 chỉ chặn file git đang theo dõi | Đã chốt | — | — |
+| ADR-004 | Nội dung commit do phiên viết; Gate 7 chặn khi quên | Đã chốt | — | — |
+| ADR-005 | Tài liệu cũng bị máy chấm: mọi pointer phải mở được | Đã chốt | — | — |
+| ADR-006 | Scope chấm ở hai chỗ: brief kêu khi quên dọn, Gate 7b đọc khối commit | Đã chốt | — | — |
+| ADR-007 | Mục *Unknowns* có hình dạng máy đọc được | Đã chốt | — | — |
+| ADR-008 | Lịch sử git đã chia sẻ thì sửa **tiến**, không viết lại | Đã chốt | — | — |
+| ADR-009 | Nhu cầu sản xuất là một **trục riêng**, không phải trạng thái của đơn | Đã chốt | — | — |
+| ADR-010 | Gate 8 là hook của **git**, cài bằng `core.hooksPath` | Đã chốt | — | — |
+| ADR-011 | Ba mặt dùng chung một miền, và **chỉ POS được ghi** tiến độ | Đã chốt | — | — |
+| ADR-012 | Nợ là một **phần riêng** có mục ở cả ba tầng | Đã chốt | — | — |
+| ADR-013 | Nội dung mảng ADMIN đi vào **mục riêng có nhãn** | Đã chốt | — | — |
+| ADR-014 | `docs/product.md` tách thành folder `docs/product/` | Đã chốt, **chưa thi hành** | — | bốn lượt thi hành ở cuối mục ấy |
+| **Quyết định NGHIỆP VỤ — BA-10** ||||
+| ADR-015 | Năm kênh bán là danh sách **đóng**; định danh khách khác nhau theo kênh | Đã chốt 2026-08-24→30 | — | — |
+| ADR-016 | **POS ở quầy là cửa ghi duy nhất**; quyền gắn với chỗ đứng | Đã chốt 2026-08-30→09-02 | — | — |
+| ADR-017 | Sửa và huỷ đơn **không** bị chặn bởi trạng thái; POS quyết từng ca | Đã chốt 2026-09-02 | — | — |
+| ADR-018 | Món hết sau khi khách chọn: **POS bàn với khách** | Đã chốt 2026-09-02 | — | thay **GĐ-02** |
+| ADR-019 | Không trả được thì **cho nợ**; doanh thu tính **ngày ghi nợ** | Đã chốt 2026-08-31 | — | — |
+| ADR-020 | Hoàn tiền: quầy quyết + ghi vết; tính **ngày hoàn** | Đã chốt 2026-08-30 · 09-01 | — | — |
+| ADR-021 | Giờ hẹn bắt buộc cả `pickup` **và** `phone_preorder`; `delivery` có `Đang giao` | Đã chốt 2026-08-30 · 09-01 | — | — |
+| ADR-022 | Doanh thu **hai nguồn**; đối soát **ba nguồn**, ngưỡng **0đ** | Đã chốt 2026-09-01 | — | — |
+| ADR-023 | Đổi giá được giữa buổi; mốc khoá giá là **từng dòng**; thành phần suất chờ hết buổi | Đã chốt 2026-09-01 · 09-02 | — | — |
+| ADR-024 | MVP **có** lưu vết, phạm vi = thao tác chạm tiền và chạm trạng thái | Đã chốt 2026-08-30 · 09-01 | — | — |
+| ADR-025 | Phụ thu suất trứng **×5** — suất trứng nhân thường **25.000** (S-1) | Đã chốt 2026-08-30 | — | — |
+| ADR-026 | Vòng đời việc trạm **bỏ `Đang làm`**, giữ `Đã làm xong, còn ở bếp` | Đã chốt 2026-08-31 · 09-01 | — | **BA-12** đọc trước khi dựng bảng quầy (kèm **S-5**) |
+| ADR-027 | Ghép bàn = **một phiên, một hoá đơn**, chỉ ghép sang bàn **trống** | Đã chốt 2026-08-31 | — | — |
+| ADR-028 | **Năm trạm**; chủ quán đứng quầy vẫn giữ vai chủ quán | Đã chốt 2026-08-30 | — | — |
+| ADR-029 | Suất *đem về* của khách ngồi bàn thuộc **phiên bàn** | Đã chốt 2026-08-31 | — | — |
+| ADR-030 | Trả trước: **tiền mặt hoặc VietQR**, POS xác nhận lúc **nhận tiền** | Đã chốt 2026-08-31 | — | — |
+| ADR-031 | Ba mảng quản trị **được phép**, nhưng đi **sau** bán hàng | Đã chốt 2026-09-02 | — | mốc xếp lịch cho ADM-01…ADM-52 |
+| **Giả định — chưa có lời chốt** ||||
+| GĐ-01 | Hai người cùng thao tác một bàn: **người bấm sau thắng** | **Giả định** | TRUNG BÌNH | không chặn task nào; chặn *ca khách quét QR trong lúc quầy đang bấm* |
+| GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
+| GĐ-03 | ~~Khách nói đã chuyển khoản mà quầy chưa thấy báo có~~ | **Đã thay** 2026-09-02 | — | — |
+| GĐ-04 | ~~Đơn đã hoàn thành cần điều chỉnh~~ | **Đã thay** 2026-09-02 → ADR-017 | — | — |
+| GĐ-05 | Thao tác nhầm **ngoài** ca *bấm nhầm một mẻ*: không có nút hoàn tác | **Giả định** | TRUNG BÌNH | không chặn task nào; ca đắt nhất là **đóng phiên nhầm** |
+
+**Không có giả định nào ở mức rủi ro CAO tính tới 2026-09-02**, nên không task System Design nào
+đang bị một `GĐ` chặn. Hai giả định còn lại đều **TRUNG BÌNH** và cả hai chờ *ai đó gặp ca thật*
+chứ không chờ một câu trả lời — vì thế chúng **không** nằm ở `docs/product.md` → *Unknowns*.
+
+Hai mục CAO từng có (**GĐ-02**, **GĐ-03**) đã được **thay bằng quy tắc thật** ngày 2026-09-02, chứ
+không phải bị hạ mức.
+
+---
+
 ## Template
 
 ### ADR-001 — Title
@@ -834,6 +896,805 @@ một lượt, tách sau tốn một lượt cho mỗi mục.
 
 ---
 
+### ADR-014 — `docs/product.md` tách thành folder `docs/product/`, cắt theo mảng, file cũ ở lại làm **lưu trữ không ai trỏ về**
+
+**Trạng thái:** thiết kế đã chốt 2026-09-02, **chưa thi hành** — xem *Thi hành* ở cuối.
+
+**Decision:**
+`docs/product.md` (1940 dòng) tách thành folder `docs/product/`. Trục cắt do chủ repo chọn
+(2026-09-02) là **mảng**: bán hàng · admin · db · be · system design · fe.
+
+Trục ấy **một mình chưa đủ**, vì hôm nay 1900 trong 1940 dòng đều là *bán hàng* (đo 2026-09-02:
+admin 34 dòng ở §1.6; db · be · system design · fe **0 dòng**). Cắt đúng theo nó cho ra một file
+1900 dòng và năm file rỗng — không gỡ được gì. Nên cấu trúc là **hai tầng**: tầng ngoài là mảng
+(trục chủ repo chọn), tầng trong của mảng *bán hàng* là các mục §1–§8 đang có.
+
+```text
+docs/product/
+  00-index.md              mục lục + luật ghi; không sở hữu sự thật nào
+  ban-hang/
+    01-actors-pham-vi.md   §1 trừ §1.6      (~160 dòng)
+    02-kenh-ban.md         §2                (85)
+    03-lat-cat.md          §3               (594)  ← vẫn to nhất, cắt tiếp khi §3.4 xong
+    04-gia-thanh-toan.md   §4               (333)
+    05-vong-doi.md         §5               (269)
+    06-ngoai-le.md         §6                (90)
+    07-pham-vi-mvp.md      §7               (184)
+    08-scenario.md         §8
+  admin/
+    01-ranh-gioi.md        §1.6              (34) — mục admin của ADR-013 chuyển về đây
+  system-design/  be/  db/  fe/
+    00-chua-co-gi.md       nhà chờ sẵn, xem luật dưới
+  99-unknowns.md           mục Unknowns — scripts/brief.sh đọc ĐÚNG file này
+```
+
+**Bốn file kỹ thuật giữ *yêu cầu sản phẩm* cho tầng đó, KHÔNG giữ thiết kế.** `db/`, `be/`,
+`fe/`, `system-design/` nói *cái gì bắt buộc phải đúng ở tầng ấy* — ví dụ *"mọi thao tác chạm tiền
+phải để lại vết đủ để đối soát truy ngược"*. Tên bảng, tên cột, khoá ngoại, API, route vẫn thuộc
+`docs/architecture.md` và `master_plan/prompt-fullstack.md` §3.4–§3.7 (CLAUDE.md §2 không đổi một
+dòng nào). Không có luật này thì folder mới thành owner thứ hai của kiến trúc — đúng F-001.
+
+**`docs/product.md` ở lại làm LƯU TRỮ, và không gì được trỏ về nó** (chủ repo, 2026-09-02:
+*"giữ lại trong trường hợp cần thì có thể xem lại, tuy nhiên không trỏ về, tuyệt đối không trỏ về,
+chỉ refer thôi"*). Cụ thể:
+
+- File cũ giữ nguyên nội dung, thêm banner đầu file: **ảnh chụp ngày tách, không sở hữu sự thật
+  nào, không sửa ở đây**. Nó được **nhắc tới** như một bản lưu, không được **trỏ tới** như một owner.
+- **464 chỗ đang trỏ `docs/product.md`** trong 33 file phải chuyển sang file mới trong cùng đợt thi
+  hành. Đây là phần nặng nhất và là lý do việc này là **L3**.
+- ⚠️ **Gate 1b không bảo vệ được luật này.** File cũ vẫn tồn tại nên mọi pointer cũ vẫn *mở được*
+  ⇒ gate vẫn xanh trong khi cả repo đọc bản lưu. Cái chấm duy nhất là mắt người, cho tới khi việc
+  này hỏng lần thứ hai (CLAUDE.md §3.8 mới cho dựng luật mới).
+
+**Why:**
+Chủ repo yêu cầu 2026-09-02: *"có lẽ chúng ta cần làm folder product và chia làm các file nhỏ liên
+quan đến từng domain, như thế tôi cảm thấy dễ quản lý hơn"*. 1940 dòng trong một file là chỗ mà mỗi
+task BA phải cuộn qua bảy mục không liên quan để tới mục của mình, và là chỗ hai phiên chạy song
+song **chắc chắn** đụng nhau — F-014 đã xảy ra **năm** lần, lần nào cũng trên đúng file này.
+
+Tách theo mảng còn trả trước một món nợ đang tới: chủ quán vừa mở ba mảng admin vào phạm vi
+(ADR-013). 52 việc ADM sẽ đổ vào tài liệu; đổ vào một file 1940 dòng thì nó thành 3000 dòng và
+không ai tách lại được nữa.
+
+**Rejected alternatives:**
+- *Giữ `docs/product.md` làm **file trỏ** như `master_plan/00-scope.md` (ADR-001).* Rẻ nhất — 464
+  liên kết cũ không gãy — nhưng chủ repo bác thẳng: *"tuyệt đối không trỏ về"*. Lý do đứng được:
+  file trỏ khiến hai cửa cùng dẫn tới một sự thật tồn tại lâu dài, và cửa cũ thì không bao giờ chết.
+- *Cắt đúng một tầng theo mảng, không cắt tiếp mảng bán hàng.* Cho ra một file 1900 dòng — đo rồi,
+  không gỡ được gì.
+- *Cắt theo domain nghiệp vụ và đánh số mục lại từ đầu.* ~180 câu `docs/product.md §N` trong repo
+  thành sai nghĩa mà `grep` không bắt được; giữ số §1–§8 làm tên file thì chúng vẫn đọc đúng.
+- *Xoá hẳn file cũ.* Chủ repo muốn xem lại được.
+- *Làm ngay trong phiên 2026-09-02.* Một phiên song song đang chạy **T-043** trên đúng
+  `docs/product.md` (sửa lần cuối 13 giây trước lúc quyết định này được ghi). Tách file lúc ấy là
+  xoá việc của họ.
+
+**Applies to:**
+`docs/product.md` → `docs/product/` · `scripts/brief.sh` (4 chỗ đọc thẳng đường dẫn, trong đó có
+parser cấu trúc mục *Unknowns* — ADR-007) và `scripts/brief.test.sh` · `CLAUDE.md` §2 và §4 ·
+`quality/invariants.md` (27 chỗ) · `work/backlog.md` (99 chỗ) · `docs/architecture.md` (14) ·
+`docs/decisions.md` (17) · toàn bộ `prompt/BA/` và `prompt/maintenance/`.
+
+**Thi hành — chia thành bốn lượt, không làm trong một lượt:**
+
+| # | Mức | Việc | Xong là thế nào |
+|---|:--:|---|---|
+| 1 | L2 | Dựng `docs/product/`, chuyển nội dung sang, banner hoá file cũ | nội dung khớp từng dòng với bản cũ; gate xanh |
+| 2 | **L2** | `scripts/brief.sh` đọc `99-unknowns.md`; sửa `brief.test.sh` | `./scripts/brief.sh` in đúng danh sách Open unknowns như trước khi tách |
+| 3 | **L3** | Chuyển 464 pointer sang file mới, theo từng nhóm file | không file nào ngoài bản lưu còn trỏ `docs/product.md` |
+| 4 | L1 | `CLAUDE.md` §2 và §4 trỏ owner mới | bảng §2 nói `docs/product/`, không nói file cũ |
+
+Lượt 2 phải xong **trước** lượt 3: brief là thứ mọi phiên mới đọc đầu tiên, hỏng nó là hỏng mọi
+phiên sau (ADR-002).
+
+---
+
+## Quyết định NGHIỆP VỤ — BA-10
+
+ADR-001 tới ADR-014 đều là quyết định **về cách vận hành repo này**. Mục dưới đây là loại thứ hai:
+**quyết định về cái quán**. Chúng do **chủ quán** chốt, không do phiên nào suy ra, và mỗi mục ghi
+đích danh ngày chốt cùng chỗ giữ dữ kiện gốc (`master_plan/shop-facts.md` — CLAUDE.md §2).
+
+**Luật đọc mục này, và nó là luật cứng:** một mục ở đây là **ADR** khi có lời người thật; là
+**GĐ** (mục *Giả định BA* bên dưới) khi chưa ai trả lời. Không phiên nào được nâng một `GĐ` thành
+`ADR` mà không có câu trả lời thật, và cũng không được hạ một câu **đã có lời chốt** xuống `GĐ` —
+cả hai chiều đều là tự trả lời thay chủ quán (CLAUDE.md §3.5, `work/findings.md` F-004).
+
+Bản đồ chứng minh không câu hỏi nào bị bỏ sót ở [§ Bản đồ](#ban-do) ngay dưới các ADR.
+
+---
+
+### ADR-015 — Năm kênh bán là danh sách ĐÓNG, và định danh khách khác nhau theo kênh
+
+**Decision:**
+Quán bán qua **đúng năm** kênh — `delivery` · `pickup` · `qr_table` · `staff_pos` ·
+`phone_preorder` — và không có kênh thứ sáu. `phone_preorder` (đặt trước qua hotline) là **kênh
+thứ năm riêng**, chốt 2026-08-24 và sửa tên 2026-08-29; nó **không gắn bàn**.
+
+Định danh khách chia theo kênh:
+
+- `qr_table` — khách **ẩn danh theo số bàn**: không khai tên, không khai số điện thoại.
+- `delivery`, `pickup`, `phone_preorder` — **bắt buộc số điện thoại**; riêng `delivery` bắt buộc
+  thêm **địa chỉ giao**. Hai trường ấy là bắt buộc thật, chủ quán xác nhận 2026-08-30 (**S-2**).
+
+Khách đã đặt qua hotline rồi đổi ý tới ăn tại quán ⇒ **huỷ đơn đặt trước, khách quét QR gọi lại**
+(**U-003**, chốt 2026-08-30). Không có đường "chuyển kênh" cho một đơn đang sống.
+
+**Why:**
+`master_plan/shop-facts.md` §2 và §6.5; nhật ký chốt §7.1 (2026-08-24, 2026-08-29, 2026-08-30).
+Ẩn danh theo bàn đứng được vì **cái bàn đã là định danh đủ** để bưng đồ ra và để thu tiền — quán
+không cần biết tên khách ngồi đó. Ba kênh không gắn bàn thì mất cái bàn, nên phải có một thứ khác
+gọi được khách, và thứ ấy là số điện thoại.
+
+**Rejected alternatives:**
+- *`phone_preorder` chỉ là một đơn `staff_pos` không gắn bàn.* Bác 2026-08-29: nó có **giờ hẹn**
+  bắt buộc (§6.5) và một đường tiếp nhận riêng, nên nó là kênh riêng. `work/findings.md` **F-005**
+  là cái giá của việc bốn tài liệu còn nói *"bốn kênh"* sau ngày ấy.
+- *Bắt khách `qr_table` khai số điện thoại.* Bác — quán không cần, và một ô bắt buộc không ai
+  dùng là một ô khách bỏ dở giữa chừng.
+- *Cho ca U-003 một đường "chuyển kênh" thay vì huỷ rồi gọi lại.* Bác — nó sinh ra một đơn thuộc
+  **hai** kênh, và đối soát cuối ngày (§4.9) không cộng nổi một đơn như thế vào nguồn nào.
+
+**Applies to:**
+`docs/product.md` §2, §2.1–§2.4 · `quality/invariants.md` I-007, I-008 ·
+`master_plan/shop-facts.md` §2, §6.5 · `docs/product.md` §7.2 dòng 2.
+
+---
+
+### ADR-016 — Máy POS ở quầy là CỬA GHI DUY NHẤT, và quyền gắn với CHỖ ĐỨNG chứ không gắn chức vụ
+
+**Decision:**
+Mọi thao tác làm đổi **tiền** hoặc đổi **trạng thái** đi qua đúng **một** cửa: máy POS đặt ở quầy.
+Người đứng quầy là người bấm: **duyệt** đơn khách tự gửi (§6.2) · **huỷ** đơn (§6.13, **U-004**) ·
+**hoàn tiền** (§6.4, **S-3**) · **ghi nợ** lúc đóng phiên và **thu nợ** về sau (§6.14, **U-012**) ·
+**ghép bàn** (§6.16, **U-013**) · bấm *"đã làm xong"* và *"đã bưng ra bàn"* cho bảng bếp (§5.4 —
+**U-009**, **U-017**, **U-021**) · bấm cho đơn giao sang `Đang giao` lúc đơn **rời quán**
+(**U-023**) · giữ và nhập lại **sổ giấy** sau khi mất điện (§6.11, **U-025**).
+
+**Hai ngoại lệ đã chốt đích danh tên người khác**, và chỉ hai: **người đi giao** bấm *đã giao + đã
+thu tiền* tại chỗ khách (§6.7); **chủ quán** bấm đổi giá hoặc đổi thành phần suất trên mặt quản
+trị (§6.17).
+
+**Quyền gắn với chỗ đứng, không gắn chức vụ.** Chủ quán không đứng quầy thì **nhờ người đứng quầy
+bấm** (**U-004**, chốt 2026-08-30); chủ quán đang đứng quầy thì bấm được, vì lúc ấy họ *là* người
+đứng quầy (ADR-028).
+
+**Why:**
+Đây là câu trả lời lặp lại **năm lần cho năm câu hỏi khác nhau**, trong bốn ngày khác nhau
+(2026-08-30 → 2026-09-02, `docs/product.md` → *Unknowns* → *Đã có lời giải*). Một câu trả lời lặp
+lại năm lần là một **luật về cách quán vận hành**, không phải năm lời chốt rời rạc. Nó có nền vật
+lý: quán chỉ có **một** máy POS, đặt ở quầy (§6.13).
+
+Nó cũng là điều kiện để **I-012** có nghĩa. Một cái vết chỉ truy ngược được về *một người* khi số
+cửa ghi là hữu hạn và đã biết tên; hai cửa ghi không ràng buộc nhau thì "ai bấm" thành câu hỏi
+không ai trả lời được sau ba ngày.
+
+**Rejected alternatives:**
+- *Gắn quyền vào **chức vụ** (chủ quán / nhân viên).* Bác 2026-08-30 (`work/backlog.md` T-006):
+  chủ quán ngồi ở nhà thì không còn ai huỷ được đơn, trong khi người đang đứng quầy nhìn thấy
+  khách ngay trước mặt.
+- *Đặt nút bấm ở ba trạm bếp.* Bác 2026-08-31 (**U-009**): *"bỏ bước ấy đi"*. Bếp đang tráng bánh
+  không rảnh tay bấm máy. `work/findings.md` **F-013** là cái giá của việc bản xuất khẩu còn giữ
+  nút ấy sau khi chủ quán đã bỏ.
+- *Cho mặt quản trị ghi tiến độ.* Bác — ADR-011: ba mặt dùng chung một miền nghiệp vụ, và **chỉ
+  POS được ghi**.
+
+**Applies to:**
+`docs/product.md` §1.5, §2.4, §4.6, §4.8, §5.4 · `quality/invariants.md` I-012 · ADR-011 ·
+`master_plan/shop-facts.md` §6.2, §6.4, §6.7, §6.13, §6.14, §6.16, §6.17.
+
+---
+
+### ADR-017 — Sửa và huỷ một đơn KHÔNG bị chặn bởi trạng thái; POS quyết từng ca
+
+**Decision:**
+Một đơn **sửa được ở bất kỳ trạng thái nào** (**U-022**, chốt 2026-09-02) và **huỷ được kể cả khi
+đã `Hoàn thành`** (**U-027**, chốt 2026-09-02). Không có mốc trạng thái nào chặn; **POS quyết theo
+tình hình thực tế**, từng ca một.
+
+Ba hệ quả đi kèm, và chúng là phần dễ đọc sai nhất:
+
+- **Sửa KHÔNG phải một chuyển tiếp trạng thái.** Đơn đang ở đâu vẫn ở đó; cái đổi là món, số suất,
+  tuỳ chọn. Vì thế sửa không nằm dưới **I-016** và không cần một dòng nào trong bảng §5.2.
+- **Huỷ thì LÀ một chuyển tiếp**, nên bảng §5.2 có thêm dòng `Hoàn thành → Huỷ`, và §5.6 mất ca
+  thứ hai trong danh sách bị từ chối.
+- **Huỷ một đơn đã `Hoàn thành` gần như luôn kéo theo tiền.** Hàng đã tới tay khách và tiền có thể
+  đã thu ⇒ lần huỷ ấy đi kèm **hoàn tiền** theo ADR-020, rơi vào **ngày hoàn**. Huỷ không phải
+  đường vòng tránh luật hoàn tiền.
+
+Mọi lần sửa và mọi lần huỷ **để lại vết** (ADR-024).
+
+**Why:**
+Chủ quán được hỏi **hai lần, hai ngày, hai câu tách nhau** — *sửa tới trạng thái nào* (2026-09-02,
+lượt một) rồi *huỷ tới trạng thái nào* (2026-09-02, lượt hai) — và trả lời cùng một câu. Đó là
+luật, không phải hai lời chốt rời (`master_plan/shop-facts.md` §6.19).
+
+Phải hỏi **hai lần** vì lượt một chỉ nói chữ *sửa*. Đọc chữ *sửa* thành *huỷ* là đúng thứ
+`work/findings.md` **F-004** cấm, nên vế huỷ ở lại thành **U-027** và mất thêm một lượt. Ghi lại ở
+đây vì cái giá ấy đáng nhớ hơn lời chốt.
+
+**Rejected alternatives:**
+- *"Đơn đã xác nhận thì chỉ được huỷ rồi tạo lại, không được sửa."* Bác 2026-09-02: §6.19 nói
+  **sửa chính đơn ấy**. Huỷ-rồi-tạo-lại làm mất lịch sử của đơn và sinh ra hai bản ghi cho một
+  việc, nên đối soát cuối ngày đếm đôi.
+- *Chặn cứng ở `Hoàn thành` cho cả sửa lẫn huỷ.* Bác — chủ quán cố ý **không** dựng hàng rào ở
+  đây, và sản phẩm không được tự dựng hộ.
+- *Suy vế huỷ ra từ lời chốt về sửa, ngay trong lượt một.* Bác vì lý do quy trình (F-004), và đó
+  là quyết định đúng: lời chốt thật hoá ra **rộng hơn** cái suy ra sẽ viết.
+
+**Applies to:**
+`docs/product.md` §5.2, §5.6, §6 dòng 13 · `quality/invariants.md` I-016 ·
+`master_plan/shop-facts.md` §6.19 · thay **GĐ-04**.
+
+---
+
+### ADR-018 — Món hết sau khi khách đã chọn: POS bàn với khách, không có luật tự động
+
+**Decision:**
+Khi một món hết sau lúc khách đã chọn, hệ thống **không tự thay thế** bằng món khác và **không tự
+huỷ** dòng ấy. **Người đứng quầy nói chuyện với khách**, và quyết định ra **tại lúc thoả thuận
+xong** (chủ quán chốt 2026-09-02, `master_plan/shop-facts.md` §6.20).
+
+**Why:**
+Đây là câu **3** của bảng mười câu §10 kế hoạch gốc, và nó từng là **GĐ-02** — một giả định đoán
+rằng quán có một luật xử lý cứng. Lời chủ quán cho thấy giả định ấy đoán quán **chặt hơn quán
+thật**: chủ quán cố ý để chỗ này cho con người, vì món hết là chuyện thương lượng, không phải
+chuyện tra bảng.
+
+**Rejected alternatives:**
+- *Tự động thay bằng món tương đương.* Bác — máy không biết khách chịu đổi sang cái gì, và một
+  suất bị đổi ngầm là một suất khách không gọi.
+- *Tự động huỷ dòng ấy rồi báo khách.* Bác — khách có thể muốn đổi chứ không muốn bỏ, và huỷ ngầm
+  làm hoá đơn hụt đi so với thứ khách nhớ mình đã gọi.
+
+**Applies to:**
+`docs/product.md` §6 dòng 5, §6.3 · `master_plan/shop-facts.md` §6.20 · thay **GĐ-02**.
+
+---
+
+### ADR-019 — Khách không trả được thì quán CHO NỢ, phiên vẫn đóng, và doanh thu tính NGÀY GHI NỢ
+
+**Decision:**
+Khách rời quán mà chưa trả tiền thì **quán cho nợ** (**U-007**, chốt 2026-08-31). Quầy **vẫn đóng
+phiên**, và lúc đóng POS **bắt buộc ghi ai nợ và nợ bao nhiêu**. Doanh thu tính vào **ngày ghi
+nợ**, không phải ngày thu được tiền (**U-012**, chốt 2026-08-31); **thu nợ cũ** về sau làm két
+thừa nhưng **không** làm tăng doanh thu ngày thu.
+
+**Why:**
+`master_plan/shop-facts.md` §6.14. Cho nợ là chuyện có thật ở quán quen, nên chặn nó bằng phần mềm
+là chặn một việc quán vẫn làm. Tính doanh thu vào **ngày ghi nợ** giữ được luật lớn hơn: **doanh
+thu một ngày đã đối soát không bao giờ đổi về sau** (ADR-022).
+
+⚠️ **Luật này NGƯỢC CHIỀU với hoàn tiền** (ADR-020: tính vào **ngày hoàn**, không phải ngày bán
+gốc). Hai luật ngược chiều nhau nhưng cùng phục vụ một mục đích — không bao giờ phải sửa lại con
+số của một ngày đã chốt sổ. Gộp chúng thành một câu là làm sai một trong hai.
+
+**Rejected alternatives:**
+- *Giữ phiên mở tới lúc khách trả.* Bác — cái bàn kẹt lại và không ai ngồi được (**I-003**), trong
+  khi khách đã về từ lâu.
+- *Tính doanh thu vào ngày thu được tiền.* Bác — doanh thu của một ngày đã đối soát sẽ đổi về sau,
+  và ngưỡng lệch **0đ** của §4.9 mất nghĩa ngay hôm đó.
+- *Không cho nợ.* Bác 2026-08-31 — quán vẫn cho nợ dù phần mềm nói gì.
+
+**Applies to:**
+`docs/product.md` §3.1.6, §4.7, §4.9, §4.10 · `quality/invariants.md` I-005, I-014 · ADR-012 ·
+`master_plan/shop-facts.md` §6.14.
+
+---
+
+### ADR-020 — Hoàn tiền: CÓ, người đứng quầy vừa quyết vừa ghi vết, và tính vào NGÀY HOÀN
+
+**Decision:**
+Quán **có** hoàn tiền, và **không có luật cứng** về khi nào được hoàn — **người đứng quầy quyết
+từng ca** theo tình hình thật (`master_plan/shop-facts.md` §6.4, chốt 2026-08-30). Cùng người ấy
+**ghi vết**, không tách thành hai vai (**S-3**, chủ quán xác nhận 2026-08-30).
+
+Mỗi lần hoàn để lại vết trả lời đủ **bốn** câu: hoàn **bao nhiêu** · cho **đơn nào** · **ai** bấm ·
+**lý do** gì. Khoản hoàn trừ vào doanh thu **ngày hoàn**, không phải ngày bán gốc (**U-019** vế 2,
+chốt 2026-09-01).
+
+**Why:**
+Chính vì **không có luật cứng** nên cái vết là thứ **duy nhất** giữ chỗ này khỏi thành lỗ thủng:
+không có bảng điều kiện để đối chiếu thì phải có người đứng tên (**I-012**). Ô *lý do* bắt buộc ở
+đây mà không bắt buộc ở thao tác khác cũng vì lẽ ấy.
+
+Tính vào **ngày hoàn** cho ra hệ quả đáng giữ nhất của cả §4: **doanh thu một ngày đã đối soát
+không bao giờ đổi về sau.** Đối soát ngưỡng 0đ (ADR-022) chỉ đứng được khi con số của hôm qua là
+con số cuối cùng.
+
+**Rejected alternatives:**
+- *Trừ khoản hoàn vào **ngày bán gốc**.* Bác 2026-09-01 — nó viết lại doanh thu một ngày đã chốt
+  sổ, nên mỗi lần hoàn là một lần phải đối soát lại quá khứ.
+- *Dựng một bảng điều kiện "được hoàn khi…".* Bác — chủ quán cố ý không đặt luật ấy; tài liệu nào
+  biến lời chốt này thành bảng điều kiện là hiểu ngược nó.
+- *Tách người quyết và người ghi vết làm hai vai.* Bác 2026-08-30 (S-3) — quán không có đủ người,
+  và tách ra thì cái vết chậm hơn cái quyết định.
+
+**Applies to:**
+`docs/product.md` §4.8, §4.9, §4.10 · `quality/invariants.md` I-012, I-014 ·
+`master_plan/shop-facts.md` §6.4 · ADR-017 (huỷ đơn đã `Hoàn thành` đi qua đây).
+
+---
+
+### ADR-021 — Giờ hẹn bắt buộc với `pickup` VÀ `phone_preorder`; `delivery` có quản lý trạng thái giao
+
+**Decision:**
+**Giờ khách cần hàng là bắt buộc**, và bắt buộc với **cả hai** kênh có hẹn — `pickup` **và**
+`phone_preorder`, không riêng `pickup` (`master_plan/shop-facts.md` §6.5, chốt 2026-08-30).
+
+`delivery` **có** quản lý trạng thái giao, không chỉ ghi nhận đơn (§6.7, chốt 2026-08-30): trạng
+thái `Đang giao` **chỉ tồn tại ở đơn giao tận nơi**, không có ở kênh khác. **POS bấm `Đang giao`
+lúc đơn RỜI QUÁN**; mốc kết thúc do **người đi giao** bấm tại chỗ khách, cùng lúc với *đã thu
+tiền* (**U-023**, chốt 2026-09-01).
+
+**Phí ship 0đ và không có đơn tối thiểu** (§6.12) — đây là một trong bốn ranh giới đã chốt của
+§6.12, không phải một con số chờ điền.
+
+**Rejected alternatives:**
+- *Giờ hẹn chỉ bắt buộc với `pickup`.* Bác — kế hoạch gốc §10 câu 6 viết như vậy vì viết trước
+  ngày `phone_preorder` thành kênh riêng; `shop-facts.md` §6.5 nói **cả hai**, và §2 của
+  `CLAUDE.md` cho `shop-facts.md` thắng.
+- *`delivery` chỉ ghi nhận đơn, không có trạng thái giao.* Bác 2026-08-30 — quán cần biết đơn nào
+  đang trên đường, vì tiền của đơn ấy chưa về két mà vẫn là doanh thu (ADR-022).
+- *Cho `Đang giao` xuất hiện ở mọi kênh mang đi.* Bác — `pickup` và `phone_preorder` khách tự tới
+  lấy, không có ai đi giao để bấm.
+
+**Applies to:**
+`docs/product.md` §2.1, §3.2.1, §5.2 · `quality/invariants.md` I-007 ·
+`master_plan/shop-facts.md` §6.5, §6.7, §6.12.
+
+---
+
+### ADR-022 — Doanh thu một ngày cộng từ ĐỦ hai nguồn; đối soát BA nguồn, ngưỡng lệch 0đ
+
+**Decision:**
+Doanh thu một ngày cộng từ **đủ hai** nguồn bán — bán **tại bàn** và bán **mang đi** — và không
+khoản nào đứng ở cả hai (**I-014**).
+
+Đối soát cuối ngày dùng **ba** nguồn, chia theo **phương thức**, không cộng gộp:
+
+| Nguồn | Đối chiếu phần nào |
+|---|---|
+| Sổ giấy | toàn bộ — bản ghi tay độc lập của cả ngày |
+| Tiền trong két | phần khách trả **tiền mặt** |
+| **Tin nhắn báo có** | phần khách **chuyển khoản** (**U-019**, chốt 2026-09-01) |
+
+**Ngưỡng lệch là 0đ** — lệch một đồng cũng phải tìm ra lý do. Một lần thu **chia được nhiều phương
+thức**, và POS ghi rõ bao nhiêu tiền mặt, bao nhiêu chuyển khoản (**U-020**, chốt 2026-09-01,
+`shop-facts.md` §6.18, **I-015**).
+
+Hai mốc ngày, ngược chiều nhau và cả hai đã chốt: **nợ** tính ngày **ghi nợ** (ADR-019) · **hoàn
+tiền** tính ngày **hoàn** (ADR-020).
+
+**Why:**
+Nguồn thứ ba tồn tại vì **két không giữ tiền chuyển khoản**. Quán có hai phương thức mà chỉ một đi
+qua két; so doanh thu với mỗi *sổ giấy + két* thì phần VietQR không có gì để đối chiếu.
+
+Chia theo phương thức chứ không cộng gộp là phần đắt nhất của quyết định này: một chỗ **thiếu** ở
+két có thể bị một chỗ **thừa** ở ngân hàng che mất, và lúc đó ngưỡng 0đ không còn nghĩa gì.
+
+**Rejected alternatives:**
+- *Đối soát bằng hai nguồn (sổ giấy + két).* Bác 2026-09-01 — phần VietQR không có gì đối chiếu.
+- *Cộng gộp ba nguồn rồi so đúng một con số.* Bác — lệch bù trừ nhau, ngưỡng 0đ thành hình thức.
+- *Ngưỡng chấp nhận vài nghìn cho "sai số đếm tiền".* Bác — đây là cổng chất lượng mạnh nhất của
+  cả dự án; một ngưỡng dương biến mọi lỗi nhỏ thành vô hình.
+- *Bắt khách chọn đúng một phương thức cho một lần thu.* Bác 2026-09-01 (U-020) — chữ *"hoặc"* ở
+  `shop-facts.md` §1 là lựa chọn của khách, không phải luật loại trừ.
+
+**Applies to:**
+`docs/product.md` §4.6, §4.9, §4.10 · `quality/invariants.md` I-014, I-015 ·
+`master_plan/shop-facts.md` §6.10, §6.18 · `docs/product.md` §7.2 dòng 12.
+
+---
+
+### ADR-023 — Chủ quán đổi giá được NGAY giữa giờ bán; mốc khoá giá là TỪNG DÒNG; thành phần suất phải chờ hết buổi
+
+**Decision:**
+Bốn chiều đổi menu **không** cùng một luật, và ranh giới đi giữa **tiền** và **thành phần**:
+
+- **Ba chiều TIỀN** — sửa giá, sửa phụ thu, bật/tắt món — sửa được **ngay giữa giờ bán**, hiệu lực
+  **từ lúc lưu**, không phải chờ hết buổi (**U-014**, chốt 2026-09-01).
+- **Chiều THÀNH PHẦN SUẤT** — phải **chờ hết buổi bán** (**U-016**, chốt 2026-09-01). Nhưng máy
+  **chỉ nhắc một câu rồi vẫn cho lưu** (**U-018**, chốt 2026-09-01): luật *chờ hết buổi* là luật
+  cho **người**, không phải hàng rào của máy.
+
+**Mốc khoá giá là TỪNG LƯỢT GỌI, và sau 2026-09-02 là TỪNG DÒNG.** Lượt gọi trước mốc đổi giá giữ
+giá cũ, lượt gọi sau mốc áp giá mới ⇒ **một hoá đơn phiên bàn được phép mang HAI mức giá** cho
+cùng một món, và đó là kết quả **đúng** (**U-015**, chủ quán chấp nhận 2026-09-01).
+
+**Sửa một dòng thì ĐẶT LẠI mốc khoá giá của chính dòng ấy**: dòng vừa sửa lấy **giá đang hiệu lực
+lúc sửa** (**U-026**, chốt 2026-09-02). Hai điều đọc kèm: (1) luật gốc không đổi — một lần **đổi
+giá** không bao giờ tự với ngược vào dòng đã tạo; cái đặt lại mốc là **thao tác cố ý của người
+đứng quầy** trên đúng dòng đó. (2) Vết của lần sửa phải ghi **cả giá cũ lẫn giá mới**, nếu không
+thì đối soát §4.9 không giải thích được chỗ lệch.
+
+**Why:**
+`master_plan/shop-facts.md` §6.17, §4.5, §6.19. Ba chiều tiền chỉ chạm **đơn mới**, nên đổi giữa
+buổi không hại ai; đổi **thành phần suất** thì chạm việc **đang nằm ở bếp** — một suất đang tráng
+dở bỗng đổi công thức là một suất không ai biết nó gồm gì.
+
+**Rejected alternatives:**
+- *Bắt cả bốn chiều chờ hết buổi.* Bác 2026-09-01 — *"không phải chờ đến hết buổi"*; nhớ bốn chiều
+  thành một mốc duy nhất là làm sai đúng chiều đắt nhất.
+- *Máy CHẶN hẳn việc sửa thành phần suất giữa giờ bán.* Bác 2026-09-01 (U-018) — máy chỉ nhắc.
+  `quality/invariants.md` **I-011** bản đầu viết theo giả định "máy chặn" và đã phải **viết lại**
+  ngay hôm sau; đó là bằng chứng vì sao câu này phải hỏi chứ không được suy.
+- *Khoá giá theo lúc **mở phiên**.* Bác — nó xoá mất ca hai mức giá mà chủ quán vừa nói là đúng.
+- *Dòng vừa sửa **giữ** giá cũ của lượt gọi.* Bác 2026-09-02 (U-026).
+
+**Applies to:**
+`docs/product.md` §3.3.1–§3.3.6, §4.4 · `quality/invariants.md` I-009, I-010, I-011, I-013 ·
+`master_plan/shop-facts.md` §4.5, §6.17, §6.19.
+
+---
+
+### ADR-024 — Vết thao tác trong MVP là BẮT BUỘC, và phạm vi của nó là thao tác chạm TIỀN và chạm TRẠNG THÁI
+
+**Decision:**
+Câu **10** của §10 kế hoạch gốc — *"có cần lưu lịch sử thao tác của nhân viên ở MVP không?"* — trả
+lời là **CÓ**, với một phạm vi đã khoanh:
+
+- **Bắt buộc lưu vết:** mọi thao tác **chạm tiền** (danh sách tám thao tác ở **I-012**) và mọi lần
+  **đổi trạng thái** một đơn, một phiên bàn, hay một việc trạm — kể cả lần **lùi** một mẻ (§5.4).
+- **Mỗi vết trả lời bốn câu:** cái gì đổi · bao nhiêu · **ai** bấm · lúc **mấy giờ**. Hai chỗ đòi
+  thêm: **hoàn tiền** phải có **lý do** (ADR-020), **sửa giá một dòng** phải có **cả giá cũ lẫn
+  giá mới** (ADR-023).
+- **KHÔNG thuộc MVP:** một nhật ký ghi **mọi** thao tác của nhân viên — mở màn hình, xem báo cáo,
+  tìm kiếm. Nó không nằm trong mười bốn năng lực của §7.2, và đối soát cuối ngày không cần nó.
+
+**Ai đã quyết, và ADR này gộp lời của ai.** Không có một câu trả lời duy nhất mang tên *"câu 10"*;
+lời chốt nằm ở **ba** chỗ, cả ba đều là lời **chủ quán**: **S-3** (2026-08-30 — người đứng quầy vừa
+quyết vừa **ghi vết** mỗi lần hoàn tiền) · **§6.10** (2026-08-30 — đối soát cuối ngày, ngưỡng lệch
+**0đ**) · **U-019** (2026-09-01 — nguồn thứ ba của đối soát). BA-10 **gộp** ba lời ấy thành một
+phạm vi và **không thêm gì**: phần *KHÔNG thuộc MVP* dưới đây là chỗ chưa ai hỏi, và nó được ghi ra
+đúng như thế chứ không được chốt hộ.
+
+**Why:**
+Cái vết là **điều kiện tồn tại** của ngưỡng lệch 0đ (ADR-022). *"Lệch một đồng cũng phải tìm ra lý
+do"* chỉ là một câu chữ nếu thao tác gây ra chỗ lệch không có tên người và không có giờ.
+
+Phạm vi dừng ở *chạm tiền và chạm trạng thái* vì đó đúng là tập thao tác làm hai con số của buổi
+tối lệch nhau. Mở rộng ra *mọi* thao tác thì thêm khối lượng mà không thêm một câu trả lời nào cho
+buổi đối soát.
+
+**Rejected alternatives:**
+- *Không lưu vết gì ở MVP, để pha sau làm.* Bác — ngưỡng 0đ của §4.9 sập ngay ngày đầu chạy thật,
+  và hai tuần đối soát đầu tiên là thứ không chạy lại được.
+- *Lưu nhật ký toàn bộ thao tác của nhân viên.* **Không bác — chỉ là chưa ai chốt.** Ghi rõ ở đây
+  để phiên sau không đọc ADR này thành *"đã quyết định là không bao giờ làm"*: nó nằm ở
+  `docs/product.md` §7.5 (*chưa ai cần tới*), và muốn đưa vào thì đi đường §7.8, không phải sửa
+  ADR này.
+
+**Applies to:**
+`docs/product.md` §4.8, §4.9, §5.4, §7.2 dòng 12 · `quality/invariants.md` I-012 · ADR-016
+(một cửa ghi là điều kiện để "ai bấm" trả lời được).
+
+---
+### ADR-025 — Phụ thu suất trứng là ×5, vì quả trứng LÊN GIÁ THEO NHÂN (S-1)
+
+**Decision:**
+Phụ thu của một suất trứng là **×5**, không phải ×4 ⇒ **suất trứng nhân thường = 25.000**, không
+phải 24.000 (**S-1**, chủ quán xác nhận **2026-08-30**). Lý do là quả trứng **cũng lên giá theo
+nhân**, đúng như bốn cái bánh của suất.
+
+Cùng họ và cùng ngày chốt: **giá một suất giò = 9.000 + tiền 4 cái bánh theo nhân** (chủ quán chốt
+2026-08-29). Cả hai đều là *giá tính từ thành phần*, đúng quy tắc gốc **giá một suất = tổng giá
+các thành phần** (`master_plan/shop-facts.md` §4.6 quy tắc 1).
+
+**Bảng giá `shop-facts.md` §4.3 KHÔNG đổi một con số nào** khi S-1 được xác nhận — nó đã viết theo
+×5 từ đầu. Cái đổi là **tư cách** của con số ấy: từ *suy ra* thành *đã chốt*.
+
+**Why:**
+S-1 nằm ở `master_plan/shop-facts.md` §7.2 (*chỗ suy ra chưa xác nhận*) cho tới 2026-08-30, tức nó
+là **suy luận của phiên**, không phải lời chủ quán nói thẳng. Một con số tiền đứng ở tư cách suy ra
+là chỗ nguy hiểm nhất trong cả tài liệu: nó **đúng hình dạng** một dữ kiện đã chốt và không có gì
+phân biệt được, cho tới lúc thu sai tiền của khách.
+
+Câu kiểm chứng hỏi được vì nó hỏi **về cái quán**: *"một suất trứng nhân thường bán 25.000 hay
+24.000?"* — không hỏi *"phụ thu nhân với mấy?"*. Bài học ấy về sau thành luật chung ở §7.2 sau khi
+**S-4** phải hỏi lại lần hai (`work/findings.md` F-004).
+
+**Rejected alternatives:**
+- *Phụ thu ×4 — quả trứng là một thành phần giá cố định.* Bác 2026-08-30 bởi chính chủ quán.
+- *Để con số ở tư cách "suy ra" và đi tiếp.* Bác — mọi bảng giá và mọi ca kiểm ở §4.8 đứng trên
+  nó; một con số tiền không được phép đứng ở tư cách suy ra.
+
+**Applies to:**
+`master_plan/shop-facts.md` §4.2, §4.3, §4.6, §7.1, §7.2 · `docs/product.md` §4.1–§4.3 ·
+`quality/invariants.md` I-013 · toàn bộ `prompt/BA/` (pointer đã sửa cùng ngày, T-004).
+
+---
+
+### ADR-026 — Vòng đời công việc trạm BỎ `Đang làm` và giữ `Đã làm xong, còn ở bếp` thay vào
+
+**Decision:**
+Vòng đời **công việc trạm** (`docs/product.md` §5.4) **không có** trạng thái `Đang làm`. Trạng thái
+giữa của nó là **`Đã làm xong, còn ở bếp`** — bếp làm ra rồi nhưng chưa bưng ra bàn.
+
+⇒ Bảng ở quầy có **BỐN** con số cho một bàn, không phải ba: cần · chưa làm · **đã làm xong còn ở
+bếp** · đã bưng ra bàn. Cả **hai** mốc — *đã làm xong* và *đã bưng ra bàn* — do **người đứng quầy
+bấm trên POS** (ADR-016, U-009 + U-017 + U-021); ba trạm bếp không bấm gì.
+
+Bấm nhầm *"đã làm xong"* một mẻ thì **lùi được**: `Đã làm xong, còn ở bếp` ⇒ `Chưa làm`, và
+**không có mốc thời gian cứng** nào chặn (**U-024**, chốt 2026-09-01). Mỗi lần lùi để lại vết
+(ADR-024).
+
+**Why:**
+Hai lời chốt cộng lại, và một mình lời nào cũng chưa đủ:
+
+1. **U-009 (2026-08-31): chủ quán bỏ mọi nút bấm ở ba trạm bếp** — *"bỏ bước ấy đi"*. Sau lời ấy
+   **không còn nguồn nào** nói được cho máy biết bếp *bắt đầu* làm lúc nào. Một trạng thái không ai
+   cập nhật được thì **hại hơn là không có**: nó luôn sai và không ai biết nó sai.
+2. **S-4 (2026-09-01): bánh gấp xong CÓ nằm chờ thật** — chờ đủ đĩa, chờ người rảnh tay bưng, chờ
+   món khác của cùng bàn. Ba lý do ấy do **chủ quán tự kể ra**, không ai gợi ý. ⇒ *làm xong* và
+   *ra bàn* là **hai** việc khác nhau, nên cái chỗ trống mà `Đang làm` bỏ lại **có một trạng thái
+   thật để điền vào**.
+
+Nói cách khác: `Đang làm` bị bỏ vì **không ai bấm được nó**, còn `Đã làm xong, còn ở bếp` được
+giữ vì **nó có thật trong bếp**. Đây là quyết định BA-07 để lại và BA-10 ghi thành ADR.
+
+**Rejected alternatives:**
+- *Giữ `Đang làm` và để POS suy ra.* Bác — quầy không nhìn thấy bếp bắt đầu lúc nào, và §7.2 của
+  `shop-facts.md` ghi rõ bài học: hỏi về **cái quán** thì được trả lời, hỏi về **cái bảng trong
+  máy** thì không.
+- *Gộp *làm xong* và *ra bàn* thành một mốc.* Bác 2026-09-01 bởi chính lời chủ quán (S-4 vế 1) —
+  gộp lại thì bảng quầy còn ba con số và bánh nằm chờ trở thành vô hình.
+- *Để ba trạm bếp tự bấm.* Bác 2026-08-31 (U-009). `work/findings.md` **F-013** là cái giá của
+  việc `master_plan/prompt-fullstack.md` còn thiết kế nút ấy sau khi chủ quán đã bỏ.
+- *Không cho lùi một mẻ đã bấm nhầm.* Bác 2026-09-01 (U-024) — *"tuỳ theo thực tế để POS quyết
+  định"*. **I-016** không phải sửa một chữ khi §5.4 thêm dòng ấy: nó khoá luật *chỉ đi theo bảng*,
+  không khoá một danh sách ca cố định.
+
+**Applies to:**
+`docs/product.md` §5.4, §5.6 · `master_plan/shop-facts.md` §5.4 · `quality/invariants.md` I-016 ·
+**BA-12** (`docs/product.md` §3.4 dựng bảng quầy — đọc **S-5** ở `shop-facts.md` §7.2 trước, vì
+*bấm "đã bưng ra bàn" theo đơn vị nào* mới chỉ là chỗ **suy ra**).
+
+---
+
+### ADR-027 — Ghép bàn là MỘT phiên và MỘT hoá đơn, và chỉ ghép được sang bàn TRỐNG
+
+**Decision:**
+Ghép bàn là chuyện có thật ở quán, và hệ thống làm nó bằng **một phiên gắn nhiều bàn**, ra **một**
+hoá đơn (**U-006**, chốt 2026-08-31). Câu *"một bàn một phiên"* đọc lại thành *"một bàn thuộc
+**nhiều nhất một** phiên chưa thanh toán"* (**I-001**).
+
+**Người đứng quầy bấm ghép, trên POS**, và **chỉ ghép được khi bàn kia còn TRỐNG** (**U-013**,
+chốt 2026-08-31).
+
+**Why:**
+`master_plan/shop-facts.md` §6.16. Vế thứ hai đóng luôn ca đáng sợ nhất mà câu hỏi này mở ra:
+**không bao giờ có việc gộp hai hoá đơn đã có tiền trong đó.** Ca ấy bị đóng bằng một **quyết định
+nghiệp vụ**, không phải bằng một thiết kế khéo — và đó là cách rẻ nhất để đóng nó.
+
+**Rejected alternatives:**
+- *Cho ghép hai bàn đều đang có phiên, rồi gộp hai hoá đơn.* Bác 2026-08-31 — gộp hai hoá đơn đã
+  có lượt gọi và có thể đã thu một phần là chỗ **thu thiếu tiền** dễ xảy ra nhất trong cả sản phẩm.
+- *Mỗi bàn giữ một hoá đơn riêng rồi cộng tay lúc thu.* Bác — **I-002** tính tiền theo **phiên**,
+  không theo bàn và không theo lượt gọi.
+
+**Applies to:**
+`docs/product.md` §3.1.7, §5.3 · `quality/invariants.md` I-001, I-002 ·
+`master_plan/shop-facts.md` §6.16 · `docs/product.md` §7.2 dòng 4.
+
+---
+
+### ADR-028 — Năm trạm làm việc; chủ quán đứng quầy vẫn giữ vai chủ quán
+
+**Decision:**
+Nhân viên **có** phân vai theo trạm (**U-001**, chốt 2026-08-30). **Năm** trạm: **quầy** · **tráng
+bánh** · **gấp bánh** · **lấy canh** và **dọn bàn** — hai trạm cuối do **chung một người** làm
+(`master_plan/shop-facts.md` §3).
+
+**Chủ quán thỉnh thoảng đứng quầy, và vẫn giữ vai chủ quán** (**U-002**, chốt 2026-08-30). Hai
+quyền đi theo hai thứ khác nhau, và không được trộn:
+
+- Quyền của **người đứng quầy** (duyệt, huỷ, hoàn tiền, ghi nợ, ghép bàn, bấm bảng bếp) đi theo
+  **chỗ đứng** — ai đang ở quầy thì có, kể cả chủ quán (ADR-016).
+- Quyền của **chủ quán** (đổi giá, đổi thành phần suất trên mặt quản trị) đi theo **con người** —
+  đứng ở đâu cũng có, và người đứng quầy **không** tự có nó (ADR-023).
+
+**Why:**
+`master_plan/shop-facts.md` §3, nhật ký §7.1 ngày 2026-08-30. Phân biệt hai chiều gắn quyền là thứ
+giữ cho **U-004** (*chủ quán không đứng quầy thì nhờ người đứng quầy bấm huỷ*) và **§6.17** (*chỉ
+chủ quán đổi giá*) cùng đúng một lúc mà không mâu thuẫn.
+
+**Rejected alternatives:**
+- *Nhân viên không phân vai — ai cũng làm mọi việc.* Bác 2026-08-30 (U-001).
+- *Coi chủ quán là "một nhân viên nữa có thêm quyền".* Bác — mặt quản trị biến mất và ADR-011 mất
+  chỗ đứng: ba mặt của sản phẩm phân biệt nhau đúng bằng vai này.
+- *Tách "lấy canh" và "dọn bàn" thành hai người.* Bác — quán không có đủ người; đây là dữ kiện,
+  không phải lựa chọn thiết kế.
+
+**Applies to:**
+`docs/product.md` §1.3, §1.5 · `master_plan/shop-facts.md` §3 · ADR-011, ADR-016 ·
+`docs/product.md` §7.2 dòng 6 (nổ việc cho **đúng năm trạm**).
+
+---
+
+### ADR-029 — Suất "đem về" của khách ĐANG NGỒI BÀN thuộc phiên bàn, không sinh đơn mang đi
+
+**Decision:**
+Đơn mang đi **không** dùng chung bảng gom việc với bàn (**U-010**, chốt 2026-08-31). Nhưng khách
+**đang ngồi bàn** gọi thêm một suất **đem về** thì suất ấy thuộc **phiên bàn** đang mở, kèm note
+**"đem về"** phải rõ ràng — nó **không** sinh ra một đơn mang đi riêng.
+
+**Why:**
+`master_plan/shop-facts.md` §6.15. Người khách ấy trả tiền **một lần**, cho **một** hoá đơn, đúng
+lúc đóng phiên. Tách suất đem về ra thành đơn `pickup` riêng là tạo **hai đơn vị thanh toán cho
+một người đang ngồi trước mặt** — và quầy sẽ quên một trong hai.
+
+Note *"đem về"* phải rõ vì nó đổi **việc của bếp** (gói mang đi thay vì bày đĩa), dù không đổi gì
+ở phần tiền.
+
+**Rejected alternatives:**
+- *Sinh một đơn `pickup` riêng cho suất đem về.* Bác 2026-08-31 — **I-006** và **I-002** cùng cấm:
+  tính tiền theo phiên bàn, và suất đem về của khách ngồi bàn không phải một đơn vị thanh toán độc
+  lập.
+- *Cho đơn mang đi dùng chung bảng gom việc với bàn.* Bác — bảng bàn gom theo **bàn**, đơn mang đi
+  không có bàn để gom vào.
+
+**Applies to:**
+`docs/product.md` §2.1, §3.1.4 · `quality/invariants.md` I-006, I-007 ·
+`master_plan/shop-facts.md` §6.15.
+
+---
+
+### ADR-030 — Đơn trả trước nhận TIỀN MẶT hoặc VietQR, và POS xác nhận vào lúc NHẬN TIỀN
+
+**Decision:**
+Đơn trả trước nhận đúng **hai** phương thức — **tiền mặt** hoặc **VietQR** — không có phương thức
+thứ ba (**U-005**, chốt 2026-08-31). **POS xác nhận vào lúc NHẬN TIỀN**, không phải lúc khách bấm
+chọn *"trả trước"*.
+
+**Người đứng quầy là người duy nhất nói được câu *"đã nhận tiền"***, vì mã **VietQR là mã TĨNH**:
+không có báo có tự động chạy về máy, nên máy không tự biết tiền đã về.
+
+**Why:**
+`master_plan/shop-facts.md` §6.3. Khoảng cách giữa *khách bấm chọn trả trước* và *tiền thật sự về*
+là chỗ đơn được đẩy xuống bếp trong khi chưa ai trả đồng nào. Mã tĩnh làm khoảng cách ấy không tự
+đóng lại được, nên nó phải đóng bằng **một người**.
+
+Đây cũng là gốc của lời chốt sau này ở **GĐ-03** (khách nói đã chuyển khoản mà quầy chưa thấy báo
+có): quầy bàn với khách và chọn một trong hai đường đã có — ghi **nợ** (ADR-019) hoặc **chờ tin
+nhắn** (ADR-022).
+
+**Rejected alternatives:**
+- *Coi "khách bấm trả trước" là đã trả.* Bác — mã tĩnh, không có báo có tự động; đây là ca thu
+  thiếu tiền rẻ nhất để tạo ra và đắt nhất để phát hiện.
+- *Dùng cổng thanh toán online có webhook báo có.* Bác — ngoài phạm vi (`docs/product.md` §7.4),
+  và nó đổi cách quán nhận tiền chứ không chỉ đổi phần mềm.
+
+**Applies to:**
+`docs/product.md` §4.6, §4.7, §6.3 · `quality/invariants.md` I-012, I-015 ·
+`master_plan/shop-facts.md` §6.3 · GĐ-03 (đã thay bằng quy tắc, §6.21).
+
+---
+
+### ADR-031 — Ba mảng quản trị được PHÉP làm, nhưng đi SAU luồng bán hàng
+
+**Decision:**
+**Không** mảng nào trong ba mảng quản trị — **nguyên liệu · con người · tài chính** — phải chạy
+cùng **bản bán hàng đầu tiên** (**U-030**, chủ quán chốt 2026-09-02). Nguyên văn: *"không mảng nào
+cần chạy với bán hàng. Bán hàng xong chạy được thì để chạy trước."*
+
+Đây là một quyết định về **THỨ TỰ**, không phải một lần loại bỏ. Ranh giới §1.6 vẫn **mở**: ba mảng
+ấy vẫn *được phép làm* (chủ quán chốt 2026-09-01, xác nhận lại 2026-09-02).
+
+**Phân vai với ADR-013, vì hai mục dễ bị đọc chồng lên nhau:** ADR-013 nói **viết** nội dung admin
+**vào đâu** (mục riêng có nhãn ở mỗi tài liệu). ADR này nói ba mảng ấy **đứng đâu trong thời gian**.
+
+**Why:**
+Hai lý do độc lập cùng chỉ một hướng, và trước 2026-09-02 chỉ có lý do thứ nhất:
+
+1. **Lý do của tài liệu:** `docs/product.md` §7.2 có một điều kiện vào cửa — *§1–§6 đã mô tả nó* —
+   mà §2 tới §6 **chưa có một quy tắc nghiệp vụ nào** cho ba mảng ấy. Một hạng mục MVP không trỏ
+   được về mô tả nào là một hạng mục không ai làm được.
+2. **Lý do của chủ quán:** họ vừa nói thẳng là **không cần** chúng ở bản chạy đầu.
+
+⇒ **Hệ quả cho việc xếp lịch:** ADM-01…ADM-52 ở `work/admin-questions.md` §2 nay có một mốc để xếp
+quanh — không phải *"chưa biết bao giờ"* mà là *"sau khi luồng bán hàng chạy được"*.
+
+**Rejected alternatives:**
+- *Xếp ba mảng vào `docs/product.md` §7.4 (**đã quyết định không làm**).* Bác — chủ quán vừa mở
+  ranh giới cho chúng **hai lần**; §7.4 sẽ nói ngược lại lời họ.
+- *Xếp vào §7.5 (**chưa ai cần tới**).* Bác — **có** người cần, chỉ là cần **sau**.
+- *Mở ADM-01…ADM-52 thành task ngay bây giờ.* Bác — một task mở trước khi có luật nghiệp vụ là
+  một task sẽ phải viết lại; điều kiện vào cửa §7.2 **không đổi** vì lời chốt này.
+
+**Applies to:**
+`docs/product.md` §1.6, §7.6 · `docs/architecture.md` §14 · `master_plan/shop-facts.md` §8 ·
+`work/admin-questions.md` §2 · ADR-013.
+
+---
+
+<a id="ban-do"></a>
+## Bản đồ — mọi câu hỏi BA nằm ở quyết định nào
+
+Mục này tồn tại để trả lời đúng một câu: **có câu hỏi nghiệp vụ nào bị bỏ sót không.** Nó không giữ
+sự thật nào của riêng nó; mọi ô đều trỏ về một mục ở trên hoặc một `GĐ` ở dưới.
+
+### Mười câu của §10 kế hoạch gốc
+
+`master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §10 liệt kê mười câu **phải chốt trước khi sang
+System Design**. Tính tới **2026-09-02**, cả mười đều đã chốt.
+
+| # | Câu hỏi | Đã chốt ở | Trạng thái |
+|:--:|---|---|---|
+| 1 | Ai xác nhận, huỷ và chỉnh sửa đơn? | **ADR-016** (xác nhận, huỷ) · **ADR-017** (sửa) | ✅ đủ ba vế |
+| 2 | Đơn đã xác nhận được sửa hay chỉ huỷ/tạo lại? | **ADR-017** | ✅ |
+| 3 | Món hết sau khi khách đặt thì xử lý thế nào? | **ADR-018** | ✅ (thay GĐ-02) |
+| 4 | Khách không thanh toán được thì phiên bàn ở trạng thái nào? | **ADR-019** | ✅ |
+| 5 | Có hoàn tiền không, ai được phép? | **ADR-020** | ✅ |
+| 6 | Giờ khách cần hàng có bắt buộc không, với kênh nào? | **ADR-021** | ✅ cả `pickup` **và** `phone_preorder` |
+| 7 | `delivery` chỉ ghi nhận đơn hay quản lý trạng thái giao? | **ADR-021** | ✅ có `Đang giao` |
+| 8 | Doanh thu tính theo ngày nào, đơn huỷ/hoàn ra sao? | **ADR-022** (+ ADR-019, ADR-020 cho hai mốc ngày) | ✅ |
+| 9 | Chủ quán đổi giá đang bán ngay được không? | **ADR-023** | ✅ |
+| 10 | Có cần lưu lịch sử thao tác nhân viên ở MVP không? | **ADR-024** | ✅ có, phạm vi đã khoanh |
+
+### Mọi Unknown đã mở từ BA-01 tới BA-09
+
+Ba mươi câu, **U-001 → U-030**, mở bởi các prompt 01–08 cộng BA-09. Không câu nào còn mở
+(`docs/product.md` → *Unknowns*, mục *Đang mở* rỗng tính tới 2026-09-02).
+
+| U | Câu hỏi (rút gọn) | Nằm ở |
+|---|---|---|
+| U-001 | Nhân viên có phân vai theo trạm không | **ADR-028** |
+| U-002 | Chủ quán có phải là nhân viên không | **ADR-028** |
+| U-003 | Đơn hotline rồi khách tới ăn tại quán | **ADR-015** |
+| U-004 | Ai được bấm huỷ một đơn | **ADR-016** |
+| U-005 | Đơn trả trước trả bằng gì, ai xác nhận, lúc nào | **ADR-030** |
+| U-006 | Ghép bàn thì hệ thống phải làm gì | **ADR-027** |
+| U-007 | Khách rời quán chưa trả tiền thì ai đóng phiên | **ADR-019** |
+| U-008 | Một nồi làm được bao nhiêu; trứng và bánh tranh nồi | **ADR-009** *(dữ kiện năng lực nồi: `shop-facts.md` §5.4)* |
+| U-009 | Ai bấm *đã làm xong* / *đã bưng ra bàn* | **ADR-026** · **ADR-016** |
+| U-010 | Đơn mang đi có chung bảng gom việc với bàn không | **ADR-029** |
+| U-011 | Máy có được tự chia mẻ không | **ADR-009** *(máy chỉ hiện tổng nhu cầu, người tự gom)* |
+| U-012 | Nợ: ai ghi nhận, doanh thu tính ngày nào | **ADR-019** |
+| U-013 | Ai bấm ghép bàn, ghép được khi bàn kia đang mở không | **ADR-027** |
+| U-014 | Đổi giá ngay giữa giờ bán được không | **ADR-023** |
+| U-015 | Phiên vắt qua mốc đổi giá thì hoá đơn ra sao | **ADR-023** |
+| U-016 | Đổi thành phần suất giữa giờ bán được không | **ADR-023** |
+| U-017 | Bấm *đã làm xong* theo từng cái, cả mẻ, hay cả bàn | **ADR-026** |
+| U-018 | Máy chặn hẳn hay chỉ nhắc khi sửa thành phần suất | **ADR-023** |
+| U-019 | Đối chiếu phần chuyển khoản bằng gì · hoàn tiền trừ ngày nào | **ADR-022** · **ADR-020** |
+| U-020 | Khách trả một phần tiền mặt, một phần chuyển khoản | **ADR-022** |
+| U-021 | Ai bấm *đã bưng ra bàn* | **ADR-026** · **ADR-016** |
+| U-022 | Sửa một đơn được phép tới trạng thái nào | **ADR-017** |
+| U-023 | Ai bấm cho đơn sang `Đang giao`, lúc nào | **ADR-021** |
+| U-024 | Bấm nhầm một mẻ thì có đường lùi không | **ADR-026** |
+| U-025 | Sổ giấy: ai giữ, ghi gì, nhập lại lúc nào | **ADR-016** |
+| U-026 | Một dòng vừa sửa thì tính giá lúc nào | **ADR-023** |
+| U-027 | Đơn đã `Hoàn thành` có huỷ được không | **ADR-017** |
+| U-028 | *(hai phiên song song cùng lấy số này 2026-09-02; không câu hỏi nào mang số ấy hôm nay)* | — |
+| U-029 | *(chưa bao giờ được cấp — dãy số nhảy vì cùng sự cố trên)* | — |
+| U-030 | Mảng quản trị nào phải có ở bản chạy đầu tiên | **ADR-031** |
+
+> **U-028 và U-029 là hai chỗ trống có thật trong dãy số, không phải hai câu hỏi bị mất.** Ngày
+> 2026-09-02 hai phiên chạy song song **cùng lấy số U-028** — sự cố ghi trong `work/backlog.md`
+> entry **T-042** (*"lần thứ sáu, và lần này CÓ thiệt hại"*) cùng với hai va chạm khác của cùng
+> ngày, và ở `work/findings.md` **F-014**. Không câu hỏi nào mang số U-028 hay U-029 trong
+> `docs/product.md` hôm nay. Phiên sau **không** tái sử dụng hai số này: câu hỏi mới lấy **U-031**.
+
+### Năm chỗ SUY RA — S-1 tới S-5
+
+`master_plan/shop-facts.md` §7.2 giữ những chỗ được **suy ra** từ luật đã chốt chứ không phải lời
+chủ quán nói thẳng. Bốn chỗ đã được xác nhận và lên §7.1; **S-5** vẫn còn là chỗ suy ra.
+
+| S | Chỗ suy ra | Hỏi ngày | Nằm ở |
+|---|---|---|---|
+| S-1 | Phụ thu suất trứng ×5 hay ×4 | 2026-08-30 ✅ | **ADR-025** |
+| S-2 | Số điện thoại và địa chỉ giao là hai trường bắt buộc | 2026-08-30 ✅ | **ADR-015** |
+| S-3 | Ai ghi vết mỗi lần hoàn tiền | 2026-08-30 ✅ | **ADR-020** |
+| S-4 | *"Đã làm xong, còn ở bếp"* có phải một con số riêng | 2026-08-31 (hỏng) → 2026-09-01 ✅ | **ADR-026** |
+| S-5 | Bấm *"đã bưng ra bàn"* theo **đơn vị nào** | **chưa hỏi** | ⚠️ vẫn là chỗ **suy ra** — `shop-facts.md` §7.2, **BA-12** phải đọc trước khi dựng bảng quầy |
+
+**S-5 không phải một `GĐ` và không phải một `U`.** Nó là chỗ *suy ra* — có một câu trả lời tạm
+(theo **bàn**, vì một mẻ phục vụ nhiều bàn còn bưng thì bưng tới một bàn) nhưng chưa ai hỏi chủ
+quán. Chỗ của nó là `master_plan/shop-facts.md` §7.2, và nó **không** vào mục *Unknowns* của
+`docs/product.md` (`work/findings.md` F-004: chỗ suy ra phải tách khỏi chỗ đã chốt).
+
+---
 ## Giả định BA — ngoại lệ chưa có lời chốt
 
 Mục này giữ **giả định tạm thời** cho những dòng mang dấu ⚠ trong `docs/product.md` §6. Một `GĐ`

@@ -1015,3 +1015,42 @@ lại)**
 
 **Status:**
 Open
+
+---
+
+### F-015 — §4.9 vừa liệt kê lời giải của U-019 vừa nói U-019 CHƯA CHỐT, cách nhau 25 dòng
+
+**Date:** 2026-09-02 · phát hiện khi chạy **BA-10** (đọc §4 để viết ADR-022)
+
+**What happened:**
+`docs/product.md` §4.9 mở đầu bằng bảng **ba nguồn đối soát**, trong đó dòng thứ ba là *"Tin nhắn
+báo có — phần khách **chuyển khoản** *(chủ quán chốt 2026-09-01, trả lời U-019)*"*. Hai mươi lăm
+dòng sau, cùng mục ấy kết thúc bằng: *"**Riêng phần VietQR thì buổi tối quán lấy gì ra đối chiếu
+là câu CHƯA CHỐT** — xem **U-019**."*
+
+Hai câu nói ngược nhau về **cùng một câu hỏi**, trong **cùng một mục**. Câu thứ hai là văn bản của
+BA-06 (2026-09-01, viết khi U-019 còn mở); T-038 đóng U-019 trong ngày và thêm nguồn thứ ba vào
+bảng, nhưng **không xoá câu cũ ở cuối mục**.
+
+**Why it matters:**
+Đây không phải lỗi trình bày. `docs/product.md` là owner của quy tắc nghiệp vụ (CLAUDE.md §2), và
+một phiên mới đọc mục này từ dưới lên sẽ **mở lại U-019 như một câu đang treo** — đúng thứ CLAUDE.md
+§3.5 và §7.2 (*"Follow the pointers"*) tồn tại để chặn. Nó cũng là **loại lỗi thứ hai của F-001**:
+không phải hai file chép nhau, mà **một file giữ hai đời của cùng một sự thật**, và cái cũ không
+chết vì không ai grep nó.
+
+`grep -rn 'U-019'` bắt được ngay — cái thiếu là **thói quen chạy grep ấy sau khi đóng một unknown**,
+thứ CLAUDE.md §7.2 đã yêu cầu thành lời nhưng không có cổng nào chấm.
+
+**Fix (chưa làm — BA-10 không sửa):**
+Xoá câu cuối §4.9 hoặc viết lại thành *"U-019 đã đóng 2026-09-01, xem bảng ba nguồn ở đầu mục"*.
+BA-10 **không** tự sửa: `docs/product.md` §1–§8 là nội dung nghiệp vụ đã chốt, ngoài scope BA-10
+(prompt `prompt/BA/09-decisions-assumptions-L2.md` → *Không được sửa*), và **BA-11** có sẵn luật
+cho đúng ca này — *thấy sai/thiếu thì ghi finding và mở lại task BA tương ứng*.
+
+**Related task:**
+**BA-11** (diễn scenario §8 — sẽ đi qua đúng mục này) · BA-06 (viết câu gốc) · T-038 (đóng U-019,
+để lại câu cũ) · **ADR-022** (lời chốt thật, `docs/decisions.md`) · F-001 (hai đời của một sự thật)
+
+**Status:**
+Open

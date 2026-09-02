@@ -11,7 +11,7 @@ hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 | [In Progress](#in-progress) | task đang chạy |
 | [Done](#done) | việc đã xong |
 | [Chi tiết — việc cần làm](#chi-tiet-can-lam) | bảng mười câu hỏi §10 + mô tả dài T-019…BA-12 (BA-05, BA-06, BA-08 và **BA-09** đã chuyển sang mục đã xong) |
-| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài BA-09…T-002 |
+| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài BA-10…T-002 |
 | [Vòng chạy một task L1](#vong-chay) | mười bước thủ tục từ nhận task tới khối commit |
 | [Task Detail Template](#template) | khuôn viết một task mới |
 
@@ -147,7 +147,6 @@ lại, khối *GIẢ ĐỊNH* biến mất, **I-014** sửa và **I-015** thêm.
 
 - [ ] T-035 Brief bảo phiên mới XOÁ scope trong khi chủ thật đang chạy song song (F-014)
 
-- [ ] BA-10 `docs/decisions.md` — quyết định và giả định · cần BA-01–BA-09 · **BA-07 để lại một quyết định phải thành ADR**: vòng đời công việc trạm bỏ `Đang làm` và giữ `Đã làm xong, còn ở bếp` thay vào (`docs/product.md` §5.4, lý do là U-009 + S-4)
 - [ ] BA-11 `docs/product.md` §8 — ba scenario nghiệm thu BA · cần BA-03–BA-10
 - [ ] BA-12 `docs/product.md` §3.4 — lát cắt sản xuất theo mẻ · **BA-03 và BA-07 đã xong**, tên trạng thái lấy ở `docs/product.md` §5.4 (**U-008–U-011, S-4, U-017, U-021, U-024 đã đóng** — quầy bấm cả hai mốc, và lùi được). Đọc trước khi dựng bảng quầy: **S-5** (`shop-facts.md` §7.2) — bấm *đã bưng ra bàn* theo **đơn vị nào** thì mới là suy ra, chưa hỏi chủ quán
 
@@ -168,6 +167,8 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] BA-10 `docs/decisions.md` — **17 ADR nghiệp vụ (ADR-015…ADR-031)**, bảng tổng hợp đầu file và bản đồ phủ **10 câu §10 + U-001…U-030 + S-1…S-5**; 7 tham chiếu ngược `→ ADR` vào `docs/product.md`; mở **F-015** (2026-09-02)
+
 - [x] T-044 U-026 đóng — dòng vừa sửa lấy **giá đang hiệu lực lúc sửa**; ngoại lệ có chủ ý của §4.4, I-009 thêm ranh giới. **Mục Unknowns nay RỖNG** (2026-09-02)
 - [x] T-043 U-027 và U-030 đóng: đơn đã `Hoàn thành` **huỷ được** (§5.2 thêm dòng, §5.6 còn một ca, I-016 viết lại); **không mảng admin nào** ở bản chạy đầu (§7.6). U-026 còn mở (2026-09-02)
 
@@ -390,52 +391,6 @@ grep -n '^## §' master_plan/prompt-fullstack.md   # vẫn đủ §1 → §11
 git status --porcelain
 ```
 
-### BA-10 — Quyết định và giả định BA
-
-**Prompt:** `prompt/BA/09-decisions-assumptions-L2.md` (L2) · **Cần xong trước:** BA-01–BA-09
-
-**Goal:**
-`docs/decisions.md` chứa toàn bộ quyết định BA đã chốt và toàn bộ giả định chưa chốt, mỗi giả định
-có mức rủi ro và người cần trả lời — không còn câu hỏi nghiệp vụ nào nằm rải rác trong đầu ai.
-
-**Task này không rỗng dù S-1–S-3 đã chốt.** Việc của nó không phải "gom giả định còn sót": nó
-phải viết ra ADR cho mọi thứ đã chốt — hiện `docs/decisions.md` mới có ADR-001–ADR-003 và cả ba
-đều là quyết định **về cách vận hành repo**, không có ADR nghiệp vụ nào. Còn lại: **sáu** câu §10
-đang mở (2, 3, 4, 8, 9, 10) cộng phần "sửa đơn" của câu 1, mọi mục Unknowns của prompt 01–08, và ba mục
-S-1–S-3 phải được ghi ở dạng **ADR đã chốt 2026-08-30**, không phải GIẢ ĐỊNH.
-
-**Scope:** `docs/decisions.md` · `docs/product.md` (**chỉ** thêm dòng tham chiếu `→ ADR-00N` tại
-chỗ quy tắc liên quan) · `work/backlog.md`.
-
-**Out of scope:** nội dung nghiệp vụ đã chốt ở §1–§8 `docs/product.md` ·
-`quality/invariants.md` · `docs/architecture.md`.
-
-**Acceptance:**
-1. 10 câu hỏi ở §10 kế hoạch gốc đều có mục tương ứng trong `docs/decisions.md`, dạng ADR hoặc
-   GIẢ ĐỊNH, không câu nào thiếu.
-2. S-1, S-2, S-3 đều có mục, ở dạng **ADR** (chốt 2026-08-30), không phải GIẢ ĐỊNH. ADR của S-1
-   ghi con số đã chốt (25.000, ×5) và nói rõ nó từng là suy luận tới 2026-08-30.
-3. Mọi mục Unknowns của prompt 01–08 đều xuất hiện trong file, không sót mục nào.
-4. Sáu câu đã có lời giải — giờ hẹn pickup · phí ship 0đ · khách QR ẩn danh · gọi thêm khi đang
-   thu tiền · `phone_preorder` là kênh thứ năm · giá suất giò — nằm ở dạng **ADR**, và phần "Why"
-   trỏ về `shop-facts.md` kèm mục số và ngày chốt ở §7.1.
-5. Không mục nào về giá bị ghi là "chưa biết" hay "giả định".
-6. Mỗi ADR có đủ 4 phần: Decision · Why · Rejected alternatives · Applies to.
-7. Mỗi GIẢ ĐỊNH có đủ: nội dung · mức rủi ro · hậu quả nếu sai · người cần trả lời.
-8. Không mục nào vừa là quyết định vừa không nói được ai đã quyết.
-9. Đầu file có bảng tổng hợp: ID | Trạng thái (Đã chốt / Giả định) | Rủi ro | Chặn việc gì.
-10. Mỗi quy tắc trong `docs/product.md` bắt nguồn từ một quyết định đều có tham chiếu `→ ADR-00N`.
-11. Không có quyết định về công nghệ hay kiến trúc.
-
-**Verify:**
-```bash
-./scripts/gate.sh
-grep -c '^### ADR-\|^### GIẢ ĐỊNH' docs/decisions.md
-grep -n 'S-1\|S-2\|S-3' docs/decisions.md          # cả ba ở dạng ADR
-grep -n 'ADR-0' docs/product.md                    # tham chiếu ngược
-git status --porcelain
-```
-
 ### BA-11 — Ba scenario nghiệm thu BA
 
 **Prompt:** `prompt/BA/10-acceptance-scenarios-L2.md` (L2) · **Cần xong trước:** BA-03–BA-10
@@ -563,6 +518,103 @@ Luật chung ở [Vòng chạy một task L1](#vong-chay). Việc riêng của t
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+### BA-10 — Quyết định và giả định BA
+
+**Prompt:** `prompt/BA/09-decisions-assumptions-L2.md` (L2) · **Cần xong trước:** BA-01–BA-09
+
+**Goal:**
+`docs/decisions.md` chứa toàn bộ quyết định BA đã chốt và toàn bộ giả định chưa chốt, mỗi giả định
+có mức rủi ro và người cần trả lời — không còn câu hỏi nghiệp vụ nào nằm rải rác trong đầu ai.
+
+**Task này không rỗng dù S-1–S-3 đã chốt.** Việc của nó không phải "gom giả định còn sót": nó
+phải viết ra ADR cho mọi thứ đã chốt — hiện `docs/decisions.md` mới có ADR-001–ADR-003 và cả ba
+đều là quyết định **về cách vận hành repo**, không có ADR nghiệp vụ nào. Còn lại: **sáu** câu §10
+đang mở (2, 3, 4, 8, 9, 10) cộng phần "sửa đơn" của câu 1, mọi mục Unknowns của prompt 01–08, và ba mục
+S-1–S-3 phải được ghi ở dạng **ADR đã chốt 2026-08-30**, không phải GIẢ ĐỊNH.
+
+**Scope:** `docs/decisions.md` · `docs/product.md` (**chỉ** thêm dòng tham chiếu `→ ADR-00N` tại
+chỗ quy tắc liên quan) · `work/backlog.md`.
+
+**Out of scope:** nội dung nghiệp vụ đã chốt ở §1–§8 `docs/product.md` ·
+`quality/invariants.md` · `docs/architecture.md`.
+
+**Acceptance:**
+1. 10 câu hỏi ở §10 kế hoạch gốc đều có mục tương ứng trong `docs/decisions.md`, dạng ADR hoặc
+   GIẢ ĐỊNH, không câu nào thiếu.
+2. S-1, S-2, S-3 đều có mục, ở dạng **ADR** (chốt 2026-08-30), không phải GIẢ ĐỊNH. ADR của S-1
+   ghi con số đã chốt (25.000, ×5) và nói rõ nó từng là suy luận tới 2026-08-30.
+3. Mọi mục Unknowns của prompt 01–08 đều xuất hiện trong file, không sót mục nào.
+4. Sáu câu đã có lời giải — giờ hẹn pickup · phí ship 0đ · khách QR ẩn danh · gọi thêm khi đang
+   thu tiền · `phone_preorder` là kênh thứ năm · giá suất giò — nằm ở dạng **ADR**, và phần "Why"
+   trỏ về `shop-facts.md` kèm mục số và ngày chốt ở §7.1.
+5. Không mục nào về giá bị ghi là "chưa biết" hay "giả định".
+6. Mỗi ADR có đủ 4 phần: Decision · Why · Rejected alternatives · Applies to.
+7. Mỗi GIẢ ĐỊNH có đủ: nội dung · mức rủi ro · hậu quả nếu sai · người cần trả lời.
+8. Không mục nào vừa là quyết định vừa không nói được ai đã quyết.
+9. Đầu file có bảng tổng hợp: ID | Trạng thái (Đã chốt / Giả định) | Rủi ro | Chặn việc gì.
+10. Mỗi quy tắc trong `docs/product.md` bắt nguồn từ một quyết định đều có tham chiếu `→ ADR-00N`.
+11. Không có quyết định về công nghệ hay kiến trúc.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -c '^### ADR-\|^### GIẢ ĐỊNH' docs/decisions.md
+grep -n 'S-1\|S-2\|S-3' docs/decisions.md          # cả ba ở dạng ADR
+grep -n 'ADR-0' docs/product.md                    # tham chiếu ngược
+git status --porcelain
+```
+
+**Đã xong 2026-09-02.** Mười một dòng Acceptance đều có bằng chứng:
+
+| # | Acceptance | Bằng chứng |
+|:--:|---|---|
+| 1 | 10 câu §10 đều có mục | `docs/decisions.md` → *Bản đồ* → bảng **Mười câu của §10**: cả 10 dòng trỏ ADR, không dòng nào là `GĐ` |
+| 2 | S-1, S-2, S-3 ở dạng **ADR** | S-1 → **ADR-025** · S-2 → **ADR-015** · S-3 → **ADR-020**; không mục nào là `GĐ` |
+| 3 | Mọi Unknown của prompt 01–08 có mặt | bảng **U-001 → U-030**, 30 dòng; U-028/U-029 là hai chỗ trống có thật, có chú thích lý do |
+| 4 | Sáu câu đã có lời giải ở dạng ADR, "Why" trỏ `shop-facts.md` + ngày | giờ hẹn pickup + `phone_preorder` → **ADR-021** · phí ship 0đ → ADR-021 · khách QR ẩn danh → **ADR-015** · gọi thêm khi đang thu tiền → **ADR-022**/ADR-017 · `phone_preorder` kênh thứ năm → ADR-015 · giá suất giò → **ADR-025** |
+| 5 | Không mục nào về giá bị ghi *"chưa biết"* / *"giả định"* | ADR-025 và ADR-023 đều là **ADR**; `grep 'GĐ'` không chạm mục giá nào |
+| 6 | Mỗi ADR đủ 4 phần | 17 mục mới đều có `**Decision:**` · `**Why:**` · `**Rejected alternatives:**` · `**Applies to:**` |
+| 7 | Mỗi GĐ đủ nội dung · rủi ro · hậu quả · người trả lời | GĐ-01 và GĐ-05 (hai mục còn hiệu lực) đều có `**Rủi ro:**`, *Rủi ro nếu sai*, *Câu phải hỏi chủ quán* |
+| 8 | Không mục nào vừa là quyết định vừa không nói ai quyết | mỗi ADR nghiệp vụ ghi **chủ quán** + ngày chốt trong `**Decision:**` |
+| 9 | Bảng tổng hợp đầu file | `docs/decisions.md` → *Bảng tổng hợp*, 36 dòng: ID · nội dung · trạng thái · rủi ro · chặn việc gì |
+| 10 | Tham chiếu ngược `→ ADR-0N` trong `docs/product.md` | 7 khối *Quyết định gốc của mục này* dưới §1…§7; `grep -c 'ADR-0'` → **31** |
+| 11 | Không có quyết định công nghệ/kiến trúc | `grep -nEi 'postgres|mysql|react|next\.js|golang|framework'` → rỗng |
+
+**Quyết định BA-07 để lại đã thành ADR:** **ADR-026** — vòng đời việc trạm **bỏ `Đang làm`** và giữ
+`Đã làm xong, còn ở bếp` thay vào. Phần *Why* tách rõ hai lời chốt vì một mình lời nào cũng chưa đủ:
+**U-009** (2026-08-31, bỏ mọi nút bấm ở bếp) làm `Đang làm` thành **trạng thái không ai cập nhật
+được**, còn **S-4** (2026-09-01, bánh gấp xong có nằm chờ thật) cho chỗ trống ấy một trạng thái
+**có thật trong bếp** để điền vào.
+
+**Ba chỗ BA-10 CỐ Ý không tự trả lời** (CLAUDE.md §3.5):
+- **S-5** — bấm *"đã bưng ra bàn"* theo đơn vị nào. Vẫn là chỗ **suy ra** ở `shop-facts.md` §7.2,
+  **không** bị nâng thành ADR và **không** bị hạ vào *Unknowns*. Bảng S-1…S-5 nói thẳng vì sao.
+- **GĐ-01, GĐ-05** — hai giả định TRUNG BÌNH còn hiệu lực. Không mục nào được nâng thành ADR; cả
+  hai chờ *ai đó gặp ca thật*, không chờ một câu trả lời.
+- **Câu 10 §10** (nhật ký thao tác nhân viên) — ADR-024 chốt phần **có** (vết của thao tác chạm
+  tiền và chạm trạng thái) và ghi thẳng rằng nhật ký **toàn bộ** thao tác *chưa ai chốt*, chứ
+  không phải *đã quyết là không làm*.
+
+**Lệch so với prompt, nói ra ở đây:** prompt bảo thêm dòng `→ ADR-00N` *"tại chỗ quy tắc liên
+quan"*. BA-10 đặt tham chiếu ở **đầu mỗi mục §1–§7** thay vì rải vào từng quy tắc, vì hai lý do:
+(a) một phiên song song đang ghi `docs/product.md` cùng lúc (F-014 — sáu lần va chạm, lần gần nhất
+mất một bullet), nên số điểm chạm phải ít nhất có thể; (b) **ADR-014** sắp cắt file này thành
+`docs/product/`, và bảy khối theo mục đi thẳng vào bảy file mới, còn bốn mươi dòng rải rác thì không.
+
+**Phát hiện kèm theo, KHÔNG sửa trong task này:** `docs/product.md` §4.9 vừa liệt kê lời giải của
+U-019 vừa nói U-019 *"CHƯA CHỐT"*, cách nhau 25 dòng ⇒ `work/findings.md` **F-015** (Open), giao
+cho **BA-11**. BA-10 không tự sửa vì §1–§8 của `docs/product.md` là nội dung nghiệp vụ đã chốt,
+nằm ngoài scope của prompt này.
+
+**Sự cố trong lúc chạy — F-014 lần thứ bảy, lần này KHÔNG có thiệt hại.** Lúc BA-10 bắt đầu, hai
+phiên khác đang chạy trên đúng ba file BA-10 cần: T-044 (ADR-014, `docs/decisions.md`) và một phiên
+đóng U-026 (`docs/product.md`, `shop-facts.md`, `invariants.md`, `work/backlog.md`). Cách né, ghi
+lại vì nó **có tác dụng**: (1) **thêm** khối scope của mình vào `work/scope.txt` chứ không ghi đè;
+(2) chỉ ghi vào **mục chưa ai chạm** — ADR-015 trở đi, đặt **sau** ADR-014; (3) hoãn phần
+`docs/product.md` tới cuối lượt và làm bằng thay-chuỗi chính xác, để một lần đụng độ **thất bại**
+chứ không **ghi đè**. ⇒ Việc của T-044 (ADR-014, +93 dòng) vẫn còn nguyên và **chưa commit**; nó
+**không** thuộc khối commit của BA-10.
+
 ### T-044 — Câu cuối cùng đóng, và nó lật một mốc tiền
 
 **L2** — chạm mốc khoá giá (§4.4) và ranh giới của một bất biến tiền (I-009).
