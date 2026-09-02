@@ -150,7 +150,6 @@ lại, khối *GIẢ ĐỊNH* biến mất, **I-014** sửa và **I-015** thêm.
 - [ ] BA-11 `docs/product.md` §8 — ba scenario nghiệm thu BA · cần BA-03–BA-10
 - [ ] BA-12 `docs/product.md` §3.4 — lát cắt sản xuất theo mẻ · **BA-03 và BA-07 đã xong**, tên trạng thái lấy ở `docs/product.md` §5.4 (**U-008–U-011, S-4, U-017, U-021, U-024 đã đóng** — quầy bấm cả hai mốc, và lùi được). Đọc trước khi dựng bảng quầy: **S-5** (`shop-facts.md` §7.2) — bấm *đã bưng ra bàn* theo **đơn vị nào** thì mới là suy ra, chưa hỏi chủ quán
 
-- [ ] DOC-2 `scripts/brief.sh` đọc mục Unknowns ở file mới · L2 · **phải xong trước DOC-3** · prompt `prompt/maintenance/12-brief-unknowns-file-L2.md`
 - [ ] DOC-3 Chuyển pointer sang file mới (chia thành DOC-3a/3b/3c) · L3 · cần DOC-2 · prompt `prompt/maintenance/13-pointer-migration-L3.md`
 - [ ] DOC-4 `CLAUDE.md` §2 và §4 trỏ owner mới · L1 · cần DOC-3 · prompt `prompt/maintenance/14-claude-md-owner-L1.md`
 - [ ] DOC-5 `docs/architecture.md` dọn vào `1-system-design/` · L3 · **CHƯA ĐƯỢC CHẠY**, chờ một câu chốt mới của chủ repo · prompt `prompt/maintenance/15-architecture-into-system-design-L3.md`
@@ -180,8 +179,10 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 
 
+
 <a id="done"></a>
 ## Done
+- [x] DOC-2 `scripts/brief.sh` đọc mục *Unknowns* ở `docs/product/99-unknowns.md` thay cho bản lưu — bốn chỗ đổi đường dẫn (tiêu đề mục · `block` · nhãn *chỗ đọc đủ* · dòng `OWNER FILES`), **parser ADR-007 không đổi một dòng `awk` nào**; `OWNER FILES` đổi `[ -f ]` thành `[ -e ]` vì owner nay là một THƯ MỤC (`[ -f ]` trên thư mục là false ⇒ dòng owner biến mất im lặng). `grep -n 'docs/product\.md' scripts/brief.sh` nay **rỗng**. Bốn ca test mới D1–D4 (đọc file mới · mất `docs/product/` vẫn `(none)` + exit 0 · **không** đọc mục Unknowns còn lại trong bản lưu · `OWNER FILES` in `docs/product/` kèm ngày thật); 89 ca xanh. Lượt 2/5 của ADR-014 (2026-09-02)
 - [x] DOC-1 `docs/product/` dựng theo **pha** — 10 mục chuyển **nguyên văn** (diff với `git show HEAD` rỗng cả 10; 163+37+89+599+354+286+104+197+4+165 = **1998 = 1998 dòng**, không dòng nào rơi); `docs/product.md` thành **bản lưu** có banner, tiêu đề `## Unknowns` đổi để brief không đọc nhầm bản lưu. Lượt 1/5 của ADR-014 (2026-09-02)
       ⚠ **Hệ quả cho BA-11 và BA-12:** hai task ấy còn ghi *"`docs/product.md` §8 / §3.4"*. Nhà thật nay là `docs/product/0-ba/ban-hang/08-scenario.md` và `03-lat-cat.md` — viết vào bản lưu là viết vào chỗ không ai đọc. DOC-3 sẽ sửa câu chữ; tới lúc đó ai chạy BA-11/BA-12 phải tự đọc dòng này.
 - [x] DOC-0 Chủ repo chốt trục **pha** thay cho **mảng** — ADR-014 thêm khối *SỬA ĐỔI 2026-09-02*, tiêu đề đổi theo; bộ **5 prompt thi hành** `prompt/maintenance/11`–`15`; mở DOC-1…DOC-5 (2026-09-02)

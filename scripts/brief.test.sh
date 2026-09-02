@@ -39,8 +39,8 @@ newrepo() {
     echo "## Done"
   } > "$d/work/backlog.md"
   echo "# scope" > "$d/work/scope.txt"
-  mkdir -p "$d/docs"
-  : > "$d/docs/product.md"
+  mkdir -p "$d/docs/product"
+  : > "$d/docs/product/99-unknowns.md"
   git -C "$d" add -A >/dev/null 2>&1
   git -C "$d" commit -qm init >/dev/null 2>&1
   printf '%s' "$d"
@@ -128,10 +128,13 @@ d="$TMPROOT/b5"; mkdir -p "$d"
 #   khoe câu đã đóng  — một dòng văn xuôi tình cờ bắt đầu bằng `U-004`.
 # Ca nào cũng đòi brief exit 0 (CLAUDE.md §7.1).
 
-# unknowns <repo> <nội dung mục Unknowns…> — ghi docs/product.md rồi chạy brief.
+# unknowns <repo> <nội dung mục Unknowns…> — ghi docs/product/99-unknowns.md rồi
+# chạy brief. Owner của mục Unknowns nay là file ấy, không phải bản lưu
+# docs/product.md (DOC-2 · ADR-014).
 unknowns() {
   local d="$1"; shift
-  { echo "# Product"; echo; echo "## Unknowns"; echo; printf '%s\n' "$@"; } > "$d/docs/product.md"
+  { echo "# Product"; echo; echo "## Unknowns"; echo; printf '%s\n' "$@"; } \
+    > "$d/docs/product/99-unknowns.md"
   brief "$d"
   # Chỉ lấy phần thân mục OPEN UNKNOWNS, không lấy dòng tiêu đề mục.
   u="$(printf '%s\n' "$out" | awk '/^OPEN UNKNOWNS/ { on = 1; next } on && /^[A-Z]/ { exit } on')"
@@ -177,7 +180,7 @@ has   "U3 vẫn thấy U-005" "U-005"
 hasnt "U3 văn xuôi không sinh ra unknown" "U-006"
 exit0 "U3" "$rc"
 
-# U3b. Gạch đầu dòng dưới một tiêu đề ### khác — chỗ docs/product.md để hợp đồng.
+# U3b. Gạch đầu dòng dưới một tiêu đề ### khác — chỗ 99-unknowns.md để hợp đồng.
 unknowns "$r" "### Đang mở" "" "- U-005 — câu đang mở" "" \
   "### Cách viết một câu ở đây" "" "- Ví dụ: viết \`U-009\` ở đây cũng không sao."
 has   "U3b vẫn thấy U-005" "U-005"
@@ -218,16 +221,16 @@ exit0 "U6" "$rc"
 
 # U7. Không có mục Unknowns, và không có cả file → (none) + exit 0.
 { echo "# Product"; echo; echo "## 1. Actor"; echo; echo "- U-005 — ngoài mục Unknowns."; } \
-  > "$r/docs/product.md"
+  > "$r/docs/product/99-unknowns.md"
 brief "$r"
 u="$(printf '%s\n' "$out" | awk '/^OPEN UNKNOWNS/ { on = 1; next } on && /^[A-Z]/ { exit } on')"
 hasnt "U7 không đọc U- ngoài mục Unknowns" "U-005"
 exit0 "U7 không có mục Unknowns" "$rc"
-rm -f "$r/docs/product.md"
+rm -f "$r/docs/product/99-unknowns.md"
 brief "$r"
 u="$(printf '%s\n' "$out" | awk '/^OPEN UNKNOWNS/ { on = 1; next } on && /^[A-Z]/ { exit } on')"
-has   "U7 mất docs/product.md vẫn in (none)" "(none)"
-exit0 "U7 mất docs/product.md" "$rc"
+has   "U7 mất docs/product/99-unknowns.md vẫn in (none)" "(none)"
+exit0 "U7 mất docs/product/99-unknowns.md" "$rc"
 
 # --- H. Cảnh báo Gate 8 chưa cài (T-025 · ADR-010 · F-011) -------------------
 # `.git/` không theo `git clone`, nên một bản clone mới có file hook mà không có
@@ -282,7 +285,7 @@ sect() {
 # manyrepo <tên> <số dòng Ready> <số dòng In Progress>
 manyrepo() {
   local d="$TMPROOT/$1" n="$2" m="$3" i
-  mkdir -p "$d/work" "$d/docs" && git -C "$d" init -q
+  mkdir -p "$d/work" "$d/docs/product" && git -C "$d" init -q
   git -C "$d" config user.email t@t && git -C "$d" config user.name t
   {
     echo "# Backlog"; echo; echo "## Ready"; echo
@@ -292,7 +295,7 @@ manyrepo() {
     echo; echo "## Done"
   } > "$d/work/backlog.md"
   echo "# scope" > "$d/work/scope.txt"
-  : > "$d/docs/product.md"
+  : > "$d/docs/product/99-unknowns.md"
   git -C "$d" add -A >/dev/null 2>&1
   git -C "$d" commit -qm init >/dev/null 2>&1
   printf '%s' "$d"
@@ -386,7 +389,7 @@ set -- "### Đang mở" ""
 for i in $(seq 1 14); do set -- "$@" "$(printf -- '- U-%03d — câu thứ %s' "$i" "$i")"; done
 unknowns "$r" "$@"
 has "C6 câu hỏi mở vượt ngưỡng riêng vẫn nói ĐÃ CẮT" "in 12/14 mục"
-has "C6 chỉ chỗ đọc đủ"                              "docs/product.md → Unknowns → Đang mở"
+has "C6 chỉ chỗ đọc đủ"                              "docs/product/99-unknowns.md → Unknowns → Đang mở"
 has "C6 nói thẳng hậu quả §3.5"                      "§3.5"
 exit0 "C6" "$rc"
 
@@ -402,6 +405,62 @@ hasnt "C7 bảy câu mở không bị cắt" "ĐÃ CẮT"
 b="$(sect 'NEXT READY')"
 inbody "C7 cùng lúc đó Ready 10 mục vẫn bị cắt ở 6" "$b" "in 6/10 mục"
 exit0 "C7" "$rc"
+
+# --- D. Owner của mục Unknowns là docs/product/99-unknowns.md (DOC-2 · ADR-014) --
+#
+# Bước 1 (DOC-1) đã chuyển mục Unknowns sang docs/product/99-unknowns.md và để
+# docs/product.md ở lại làm BẢN LƯU — một bản lưu KHÔNG sở hữu sự thật nào và
+# không ai được trỏ về. Ba ca dưới đây là ba cách hỏng của bước này:
+#   đọc đúng file · file chưa có mà vẫn không chặn · đọc nhầm bản lưu.
+echo "=== brief.sh — Unknowns đọc ở docs/product/99-unknowns.md ==="
+
+# D1. File mới có ba câu dưới '### Đang mở' → in đủ ba.
+r="$(newrepo d1 yes)"
+unknowns "$r" "### Đang mở" "" \
+  "- U-101 — câu một" "- U-102 — câu hai" "- U-103 — câu ba"
+has   "D1 thấy U-101" "U-101"
+has   "D1 thấy U-102" "U-102"
+has   "D1 thấy U-103" "U-103"
+n="$(printf '%s\n' "$u" | grep -c 'U-1')"
+if [ "$n" = "3" ]; then echo "  ok   D1 in đúng 3 câu"
+else echo "  FAIL D1 — mong đợi 3 câu, nhận $n"; fails=$((fails + 1)); fi
+exit0 "D1" "$rc"
+
+# D2. File mới KHÔNG tồn tại → (none), không lỗi, và vẫn exit 0 (CLAUDE.md §7.1).
+r="$(newrepo d2 yes)"
+rm -rf "$r/docs/product"
+brief "$r"
+u="$(printf '%s\n' "$out" | awk '/^OPEN UNKNOWNS/ { on = 1; next } on && /^[A-Z]/ { exit } on')"
+has   "D2 mất cả thư mục docs/product/ vẫn in (none)" "(none)"
+exit0 "D2 mất docs/product/" "$rc"
+
+# D3. Bản lưu docs/product.md VẪN còn một mục Unknowns cũ → brief không đọc nó.
+#     Đây là ca thật: bản lưu giữ nguyên văn mục cũ, và một câu đã đóng từ lâu
+#     ở đó mà lọt vào brief là phiên mới đi trả lời một câu không còn ai hỏi.
+r="$(newrepo d3 yes)"
+unknowns "$r" "### Đang mở" "" "- U-101 — câu đang mở, ở NHÀ THẬT"
+{ echo "# Product (BẢN LƯU)"; echo; echo "## Unknowns"; echo; echo "### Đang mở"; echo
+  echo "- U-999 — câu cũ nằm trong bản lưu, không ai còn hỏi."; } > "$r/docs/product.md"
+brief "$r"
+u="$(printf '%s\n' "$out" | awk '/^OPEN UNKNOWNS/ { on = 1; next } on && /^[A-Z]/ { exit } on')"
+has   "D3 vẫn thấy câu ở nhà thật" "U-101"
+hasnt "D3 KHÔNG đọc mục Unknowns của bản lưu" "U-999"
+exit0 "D3" "$rc"
+
+# D4. OWNER FILES: owner nay là THƯ MỤC docs/product/. Vòng lặp cũ dùng [ -f ],
+#     mà [ -f ] trên thư mục là false — dòng owner sẽ biến mất IM LẶNG, đúng kiểu
+#     hỏng brief không được phép có. Và bản lưu không còn là owner nào.
+b="$(sect 'OWNER FILES')"
+inbody    "D4 OWNER FILES in docs/product/"        "$b" "docs/product/"
+notinbody "D4 bản lưu không còn trong OWNER FILES" "$b" "docs/product.md"
+# Ngày phải là ngày THẬT của git, không phải 'uncommitted': `git log -1 -- <thư mục>`
+# vẫn trả lời đúng cho một thư mục, nên 'uncommitted' ở đây nghĩa là đã hỏi sai chỗ.
+pline="$(printf '%s\n' "$b" | grep 'docs/product/')"
+case "$pline" in
+  *[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*) echo "  ok   D4 docs/product/ có ngày thật" ;;
+  *) echo "  FAIL D4 — docs/product/ không có ngày thật, nhận: $pline"; fails=$((fails + 1)) ;;
+esac
+exit0 "D4" "$rc"
 
 if [ "$fails" -ne 0 ]; then
   echo "brief: $fails ca FAIL"; exit 1

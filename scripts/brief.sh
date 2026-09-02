@@ -137,18 +137,19 @@ openf="$(awk '
 ' work/findings.md 2>/dev/null)"
 printf '%s\n' "$openf" | emit "$MAX_LIST" 'work/findings.md (mục có **Status:** Open)'
 
-section "OPEN UNKNOWNS (docs/product.md → Unknowns)"
+section "OPEN UNKNOWNS (docs/product/99-unknowns.md → Unknowns)"
 # Đọc CẤU TRÚC, không đọc hình dạng dòng (T-021 · ADR-007 · work/findings.md F-008).
 # Bản cũ grep '^\s*[-*]?\s*U-[0-9]' trên cả mục, nên hỏng hai chiều cùng lúc:
 # một dấu `*` chen vào trước định danh là giấu mất câu đang mở, còn một dòng văn
 # xuôi vắt đúng chỗ để bắt đầu bằng `U-004` là in một câu đã đóng như đang mở.
-# Hợp đồng thay thế nó — viết ở docs/product.md ngay đầu mục Unknowns:
+# Hợp đồng thay thế nó — viết ở docs/product/99-unknowns.md ngay đầu mục Unknowns
+# (DOC-2 · ADR-014 chỉ đổi ĐƯỜNG DẪN; thuật toán dưới đây giữ nguyên từng dòng):
 #   1. vùng đang mở = đầu mục (trước '###' đầu tiên) + mọi khối dưới '### Đang mở';
 #      mọi thứ dưới một tiêu đề '###' khác đều không được đọc;
 #   2. trong vùng đó, một gạch đầu dòng = một unknown đang mở;
 #   3. định danh U-XXX tìm ở bất cứ đâu trong gạch đầu dòng ấy.
 # Trang trí và cách vắt dòng không còn tham gia vào kết luận.
-openu="$(block docs/product.md '## Unknowns' \
+openu="$(block docs/product/99-unknowns.md '## Unknowns' \
   | awk 'BEGIN { open = 1 }
          /^### / { open = ($0 ~ /^###[ \t]+Đang mở/); next }
          open' \
@@ -184,7 +185,7 @@ openu="$(block docs/product.md '## Unknowns' \
     ' \
   )"
 printf '%s\n' "$openu" \
-  | emit "$MAX_UNKNOWNS" 'docs/product.md → Unknowns → Đang mở' \
+  | emit "$MAX_UNKNOWNS" 'docs/product/99-unknowns.md → Unknowns → Đang mở' \
       'Câu hỏi không có trong brief là câu hỏi phiên này không biết là mình đang
 thiếu, và CLAUDE.md §3.5 chỉ dừng được phiên BIẾT mình thiếu. Đọc hết mục
 đó TRƯỚC khi quyết bất cứ điều gì chạm tới nghiệp vụ.'
@@ -203,11 +204,13 @@ section "OWNER FILES — last changed (CLAUDE.md §2)"
 # head. Dates come from git, so they cannot go stale the way a hand-typed
 # "last updated" line does.
 for f in \
-  docs/product.md docs/architecture.md docs/decisions.md \
+  docs/product/ docs/architecture.md docs/decisions.md \
   quality/invariants.md work/backlog.md work/findings.md \
   master_plan/shop-facts.md CLAUDE.md
 do
-  [ -f "$f" ] || continue
+  # -e, không -f: owner docs/product/ là một THƯ MỤC, và [ -f ] trên thư mục là
+  # false — dòng ấy sẽ biến mất im lặng, đúng kiểu hỏng mà brief không được phép.
+  [ -e "$f" ] || continue
   d="$(git log -1 --format=%ad --date=short -- "$f" 2>/dev/null)"
   [ -n "$d" ] || d="uncommitted"
   printf '  %-30s %s\n' "$f" "$d"

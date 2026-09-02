@@ -29,7 +29,7 @@ có câu trả lời mới từ người.
 | ADR-011 | Ba mặt dùng chung một miền, và **chỉ POS được ghi** tiến độ | Đã chốt | — | — |
 | ADR-012 | Nợ là một **phần riêng** có mục ở cả ba tầng | Đã chốt | — | — |
 | ADR-013 | Nội dung mảng ADMIN đi vào **mục riêng có nhãn** | Đã chốt | — | — |
-| ADR-014 | `docs/product.md` tách thành folder `docs/product/` | **Đang thi hành** — lượt 1/5 xong 2026-09-02 | — | còn lượt 2, 3, 4; lượt 5 chưa chốt |
+| ADR-014 | `docs/product.md` tách thành folder `docs/product/` | **Đang thi hành** — lượt 2/5 xong 2026-09-02 | — | còn lượt 3, 4; lượt 5 chưa chốt |
 | **Quyết định NGHIỆP VỤ — BA-10** ||||
 | ADR-015 | Năm kênh bán là danh sách **đóng**; định danh khách khác nhau theo kênh | Đã chốt 2026-08-24→30 | — | — |
 | ADR-016 | **POS ở quầy là cửa ghi duy nhất**; quyền gắn với chỗ đứng | Đã chốt 2026-08-30→09-02 | — | — |
@@ -900,9 +900,11 @@ một lượt, tách sau tốn một lượt cho mỗi mục.
 
 **Trạng thái:** thiết kế đã chốt 2026-09-02, **đang thi hành**. **Lượt 1/5 xong 2026-09-02**
 (DOC-1): `docs/product/` đã dựng theo pha, mười mục chuyển nguyên văn, `docs/product.md` thành bản
-lưu có banner. **Còn lại:** lượt 2 (DOC-2, `scripts/brief.sh`), lượt 3 (DOC-3, pointer), lượt 4
-(DOC-4, `CLAUDE.md`) — và lượt 5 **vẫn chưa được phép chạy**. Bảng đầy đủ ở *Bảng thi hành sau
-sửa đổi* cuối mục.
+lưu có banner. **Lượt 2/5 xong 2026-09-02** (DOC-2): `scripts/brief.sh` đọc mục *Unknowns* ở
+`docs/product/99-unknowns.md` — tiêu đề mục, chỗ đọc, nhãn *chỗ đọc đủ* và dòng *OWNER FILES* đều
+đã sang nhà thật; bản lưu không còn xuất hiện ở chỗ nào trong `scripts/brief.sh`. **Còn lại:** lượt
+3 (DOC-3, pointer), lượt 4 (DOC-4, `CLAUDE.md`) — và lượt 5 **vẫn chưa được phép chạy**. Bảng đầy
+đủ ở *Bảng thi hành sau sửa đổi* cuối mục.
 
 > **Đọc mục này từ dưới lên.** Trục cắt ban đầu là **mảng**; chủ repo đổi sang **pha** cùng
 > ngày — khối *SỬA ĐỔI 2026-09-02* ở cuối mục là bản đang có hiệu lực. Phần thân dưới đây giữ
