@@ -1473,21 +1473,112 @@ mỗi phiên mới lại đọc nó như scope đang có hiệu lực.
 đúng cái giá của việc một phiên xoá scope hộ người khác.
 
 **Decision / Fix:**
-Chưa sửa — cần một quyết định của chủ repo vì nó đụng thẳng vào §6. Ba đường, chọn một:
+**Chốt 2026-09-03 — chủ repo chọn ĐƯỜNG 2.** Nguyên văn quyết định: `work/scope.txt` **ở lại trong
+git** như một file trạng-thái-làm-việc chỉ mang **trạng thái nền**; bản **đã commit** của nó chỉ
+được chứa comment; **pattern là trạng thái phiên chạy và không bao giờ được commit**; và Gate 3 có
+thêm một phép chấm trạng thái nền, đỏ khi bản đã commit mang pattern đang hiệu lực.
 
-1. **Một lần miễn trừ có ghi ADR:** commit `work/scope.txt` đúng một lần để đưa nó về chỉ còn
-   comment, ghi rõ đây là ngoại lệ dọn nợ, không phải tiền lệ. (`work/backlog.md` T-016 ghi hai
-   lần trước nó từng được commit — đây là lần thứ ba, nên "ngoại lệ" đang thành thói quen.)
-2. **Đổi §6:** thừa nhận file có một *trạng thái nền* (chỉ comment) được phép nằm trong git, và
-   chỉ *pattern* mới bị cấm commit. Khi ấy cần một cổng chấm "file này ở trạng thái nền" thay vì
-   dựa vào trí nhớ.
-3. **Bỏ file khỏi git**, để `.gitignore` giữ, kèm một bản mẫu `work/scope.txt.example`. Đắt nhất,
-   nhưng là đường duy nhất khiến lỗi này **không tái diễn được**.
+Hai đường kia bị loại, ghi lại lý do để không ai mở lại: **đường 1** chỉ dọn một lần, mà "ngoại lệ
+một lần" này đã là **lần thứ ba** (`work/backlog.md` T-016 ghi hai lần trước). **Đường 3** là đường
+duy nhất khiến lỗi không tái diễn được, nhưng nó phải đẻ ra `work/scope.txt.example` — một bản sao
+thứ hai của cùng nội dung, đúng **F-001** — cộng một bước chép file ở mỗi clone mà không gì ép
+được, đúng giới hạn `docs/decisions.md` **ADR-010** đã chấp nhận cho `install-hooks.sh`.
+
+**Luật viết thành hình bất biến, không thành câu dặn dò:**
+
+> Bản **đã commit** của `work/scope.txt` chỉ chứa comment. Pattern là trạng thái của phiên đang
+> chạy, không bao giờ đi vào git.
+
+Ba điểm dưới đây là chỗ hình bất biến ấy dễ bị thi hành sai. Cả ba đều đã có tiền lệ trong repo,
+nên chúng là **ràng buộc**, không phải gợi ý.
+
+**1. "Trạng thái nền" định nghĩa bằng PARSER, không bằng một file mẫu thứ hai.**
+Cám dỗ là viết `EXPECTED="# Scope của task…"` hoặc dựng một `work/scope.baseline.txt` canonical rồi
+so từng byte. Đừng: đó là **bản sao thứ hai của cùng nội dung** (F-001) và nó khoá luôn phần
+comment — mà comment *phải* sửa được, bằng chứng là khối cảnh báo *"BA PHIÊN ĐANG CHẠY SONG SONG
+(2026-08-31)"* đang nằm trong file nay đã sai sự thật. Định nghĩa không-phải-đoán đã có sẵn:
+**chính parser của `scripts/check-scope.sh`**. Một dòng là pattern ⟺ bỏ phần từ `#` trở đi và cắt
+khoảng trắng xong vẫn khác rỗng. Trạng thái nền ⟺ **đếm pattern bằng 0**. Chính xác tuyệt đối,
+không có chỗ nào để gate "đoán pattern nào chết", và **ngữ nghĩa pattern vẫn chỉ có một chủ** —
+đúng lập luận `docs/decisions.md` **ADR-006** đã dùng khi thêm chế độ `--match`.
+
+**2. Chấm ở ĐÂU — chấm nhầm chỗ là sinh ra vòng khoá thứ hai.**
+Vị ngữ ngây thơ *"`git show HEAD:work/scope.txt` phải sạch"* khoá đúng cái lượt đi dọn: Gate 3 chạy
+**trước** commit, nên trong lượt T-047 `HEAD` vẫn mang ba khối cũ ⇒ gate đỏ ⇒ Stop hook chặn lượt ⇒
+không bao giờ giao nổi khối commit làm cho nó hết đỏ. Vị ngữ đúng là:
+
+> ĐỎ khi `HEAD:work/scope.txt` mang pattern **mà cây làm việc VẪN còn giữ**.
+
+Dọn xong là xanh ngay trong chính lượt ấy; lần commit bậy tiếp theo vẫn đỏ và ở lại đỏ cho tới khi
+có người gỡ — đúng cơ chế `scripts/check-links.ignore` (dòng ngoại lệ hết hạn thì gate đỏ). Ca còn
+hở duy nhất — `HEAD` bẩn nhưng cây đã sạch, tức nợ chưa được commit đi — in thành `note:` kèm câu
+*"đưa `work/scope.txt` vào khối commit của task này để xoá nợ"*, không đỏ.
+
+**3. Gate 7b KHÔNG được có "ngoại lệ cho commit migration".**
+Một cổng không xác minh được *loại* của commit; nó sẽ phải tin một chữ trong báo cáo, và chữ ấy
+tốn đúng bằng chữ `ádg` (F-011). Thay vào đó, luật 3 của `scripts/check-commit-block.sh` đổi **vị
+ngữ**: thôi hỏi *"`work/scope.txt` có nằm trong khối không"*, chuyển sang hỏi *"khối này có đưa
+**pattern** vào `work/scope.txt` không"* — đúng phép chấm ở điểm 1, áp lên nội dung file sẽ được
+`git add` (tức bản trong cây làm việc). Khi ấy:
+
+```text
+lượt migration      scope.txt chỉ-comment  → Gate 7b im  → hợp lệ THEO LUẬT
+sửa comment sau này scope.txt chỉ-comment  → Gate 7b im  → hợp lệ, không cần ai cho phép
+commit pattern      scope.txt có pattern   → Gate 7b kêu → đúng cái nó sinh ra để bắt
+```
+
+Không có miễn trừ nào phải nhớ, và **một vị ngữ dùng cho cả hai cổng** — hai bản so khớp sẽ trôi
+khỏi nhau (F-001).
+
+**Hệ quả về THỨ TỰ trong lượt T-047, phải làm đúng:** vì Gate 7b chấm bản trong cây, T-047 phải
+**xoá sạch pattern — kể cả khối của chính nó — TRƯỚC khi viết khối commit**. Đó cũng đúng là
+`CLAUDE.md` §7.3 (dọn scope khi task xong). Phần cuối lượt vì thế chạy ở trạng thái "chưa khai
+scope ⇒ Gate 3 bỏ qua": đó là trạng thái đúng của một task đang kết thúc, không phải lỗ hổng.
+
+**Pattern chết và pattern lặp: `note:`, KHÔNG phải FAIL.**
+Đây là chỗ mục này đi ngược đề xuất ban đầu, có lý do: một task tạo file mới **khai đường dẫn của
+file đó vào scope trước khi file tồn tại**, nên pattern ấy khớp-không-cái-gì ở mọi lượt trung gian.
+"Chết ⇒ đỏ" sẽ chặn đúng việc tạo file mới, và **đỏ vì lý do sai dạy người ta bỏ qua gate**
+(ADR-003 — cùng lý do file chưa track chỉ được `note:`). Khác `check-links.ignore`: ở đó đích
+**phải** tồn tại ngay lúc này mới hợp lệ, còn scope hợp lệ khi trỏ vào thứ sắp có. Pattern lặp cũng
+vô hại về ngữ nghĩa, chỉ là vệ sinh ⇒ cũng `note:`. **Chỉ hình bất biến ở điểm 2 mới làm gate đỏ.**
+
+**Việc T-047 phải làm — thứ tự có ràng buộc:**
+
+1. Sửa **`scripts/check-commit-block.sh`** (luật 3 → vị ngữ mới) và **`scripts/check-scope.sh`**
+   (thêm phép chấm trạng thái nền + hai dòng `note:`) **trước tiên**. Hai cổng chạy từ **cây làm
+   việc** chứ không từ `HEAD`, nên sửa xong là có hiệu lực ngay trong lượt ấy — đây chính là cách
+   gỡ khoá mà không cần ai miễn trừ cho ai.
+2. Đưa `work/scope.txt` về chỉ-comment: xoá ba khối cũ (BA-04, T-027, T-031), khối của chính T-047,
+   và mọi khối khác còn sót. Trước khi xoá khối của người khác, **kiểm bằng `git log` rằng task chủ
+   đã commit xong** — F-014 ghi cái giá của việc xoá hộ. Nhân tiện xoá luôn khối cảnh báo
+   *"BA PHIÊN ĐANG CHẠY SONG SONG (2026-08-31)"*: nó nói về ba task đã xong.
+3. **`scripts/check-scope.test.sh` — file này CHƯA TỒN TẠI**, phải tạo (`scripts/verify.sh` tự chạy
+   mọi `scripts/*.test.sh`). Bốn ca tối thiểu cho Gate 3: nền → PASS · `HEAD` có pattern còn nguyên
+   trong cây → FAIL · pattern chết → `note:` + exit 0 · pattern lặp → `note:` + exit 0. Cộng hai ca
+   vào `scripts/check-commit-block.test.sh`: khối mang `scope.txt` chỉ-comment → im · khối mang
+   `scope.txt` có pattern → kêu.
+4. Sửa `CLAUDE.md` cho luật hết mâu thuẫn: **§6** (câu *"do not commit patterns"* → hình bất biến),
+   **§6.1** (gạch đầu dòng *"`work/scope.txt` is never in the block"* nay sai — đúng phải là
+   *"không bao giờ mang pattern vào khối"*), **§5** mục 1 và mục 4 (mô tả hai cổng), **§3.4** và
+   **§7.3**. Chạy `grep -rn 'scope\.txt'` rồi đọc từng chỗ, đừng sửa theo trí nhớ (§7.2).
+5. **ADR bắt buộc** trong `docs/decisions.md`: đường 2 đổi một luật của §6, và §3 xếp "có quyết định
+   thiết kế" là L2 ⇒ phải có ADR. Nó ghi cả ba đường và lý do loại hai đường kia.
+6. Chạy `./scripts/gate.sh` + phép thử riêng ở bước 6 của entry T-047 (chứng minh cổng đã sống lại,
+   không chỉ dán lại dòng `OK`).
+7. **Một commit duy nhất**, subject nói rõ đây là *scope-state migration* chứ không phải scope của
+   một task thường.
+
+**Mục này không đóng bằng một lần dọn file.** Dọn file là bước 2 trong bảy bước; thứ làm nó khỏi
+tái diễn là **quyền sở hữu + hình bất biến + hai cổng thi hành**. F-020 chỉ chuyển sang *Fixed* khi
+cả bảy bước xong.
 
 **Related task:**
-T-047 (mở cùng ngày) · F-010 và F-014 (cùng file, cùng chỗ đau: nhiều phiên một `scope.txt`) ·
-F-017 (cùng hình dạng hỏng: cổng luôn xanh) · `CLAUDE.md` §6, §7.3 · Gate 7b (ADR-006)
+T-047 (mở cùng ngày, **hết bị chặn từ 2026-09-03** — đường đã chọn) · F-010 và F-014 (cùng file,
+cùng chỗ đau: nhiều phiên một `scope.txt`) · F-017 (cùng hình dạng hỏng: cổng luôn xanh) ·
+F-001 (vì sao không dựng file baseline thứ hai) · F-011 (vì sao cổng không được tin một chữ trong
+báo cáo) · `CLAUDE.md` §3.4, §5, §6, §6.1, §7.3 · ADR-003 (đỏ vì lý do sai) · ADR-006 (Gate 7b,
+ngữ nghĩa pattern một chủ) · ADR-010 (giới hạn của bước cài tay mỗi clone)
 
 **Status:**
-Open
-
+Open — đường đã chốt 2026-09-03, chờ T-047 thi hành

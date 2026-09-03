@@ -146,7 +146,7 @@ lại, khối *GIẢ ĐỊNH* biến mất, **I-014** sửa và **I-015** thêm.
 ⇒ Hệ quả đáng giữ nhất: **doanh thu một ngày đã đối soát không bao giờ đổi về sau.**
 ⇒ **BA-07, BA-08 và BA-10 hết chờ hai câu này**; đọc lời giải ở §4.6, §4.8–§4.10, đừng mở lại.
 
-- [ ] T-047 `work/scope.txt` mang ba khối pattern ĐÃ COMMIT ⇒ Gate 3 chấm mọi task bằng scope của người khác (F-020) · **chặn: cần chủ repo chọn đường** · chi tiết: [T-047](#t-047)
+- [ ] T-047 `work/scope.txt` mang ba khối pattern ĐÃ COMMIT ⇒ Gate 3 chấm mọi task bằng scope của người khác (F-020) · **hết bị chặn 2026-09-03: chủ repo chốt đường 2** (bảy bước ở F-020 → *Decision / Fix*) · **L2** · chi tiết: [T-047](#t-047)
 - [ ] T-035 Brief bảo phiên mới XOÁ scope trong khi chủ thật đang chạy song song (F-014)
 
 - [ ] BA-12 `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4 — lát cắt sản xuất theo mẻ · **BA-03 và BA-07 đã xong**, tên trạng thái lấy ở `docs/product/0-ba/ban-hang/05-vong-doi.md` §5.4 (**U-008–U-011, S-4, U-017, U-021, U-024 đã đóng** — quầy bấm cả hai mốc, và lùi được). Đọc trước khi dựng bảng quầy: **S-5** (`shop-facts.md` §7.2) — bấm *đã bưng ra bàn* theo **đơn vị nào** thì mới là suy ra, chưa hỏi chủ quán
@@ -442,20 +442,23 @@ chạm chính hai dòng BA-11/BA-12 này.
 <a id="t-047"></a>
 ### T-047 — `work/scope.txt` mang ba khối pattern ĐÃ COMMIT, nên Gate 3 chấm mọi task bằng scope của người khác
 
-**Prompt:** *chưa viết — và cố ý chưa viết.* Task này **chặn ở một quyết định**, không chặn ở
-công sức: ba đường đi cho ra ba prompt khác hẳn nhau. Prompt viết sau khi chủ repo chọn đường
-(`work/findings.md` **F-020**, mục *Decision / Fix*). Mức sẽ là **L2** ở đường 1 và 2, **L3** ở
-đường 3 · **không chặn task nào**, nhưng **mọi task chạy trước nó đều được chấm bằng một cái gate
-đã tắt**.
+**Prompt:** *chưa viết.* Đường đã chọn nên viết được rồi: **chủ repo chốt ĐƯỜNG 2 ngày
+2026-09-03** — `work/scope.txt` ở lại trong git, bản đã commit chỉ chứa comment, pattern không bao
+giờ được commit, và **hai cổng** (Gate 3, Gate 7b) thi hành hình bất biến ấy. Bảy bước phải làm,
+theo đúng thứ tự, nằm ở `work/findings.md` **F-020** → *Decision / Fix*; prompt chép chúng thành
+Acceptance. Mức **L2** · **không chặn task nào**, nhưng **mọi task chạy trước nó đều được chấm bằng
+một cái gate đã tắt**.
 
 **Goal:**
 Gate 3 chấm lại được. Sau task này, `work/scope.txt` chỉ chứa scope của task **đang** chạy, và
 việc một task xong mà quên dọn scope không còn im lặng đi qua được nữa.
 
 **Nói một câu, việc phải làm là gì:**
-Đưa `work/scope.txt` về trạng thái chỉ-comment và làm cho nó **không lặp lại được** —
-việc **không** phải làm là sửa `scripts/check-scope.sh`: cổng ấy chạy đúng như thiết kế, cái sai
-nằm ở **dữ liệu nó đọc**, không ở nó.
+Đưa `work/scope.txt` về trạng thái chỉ-comment **và dựng cổng giữ nó ở đó**: một hình bất biến duy
+nhất — *bản đã commit chỉ chứa comment* — thi hành ở `scripts/check-scope.sh` (Gate 3) và
+`scripts/check-commit-block.sh` (Gate 7b). Việc **không** phải làm: đổi cách đọc pattern của Gate 3
+(ngữ nghĩa ấy không sai một dòng nào, và nó chỉ được có một chủ — ADR-006), và dựng một file
+baseline thứ hai để so từng byte (bản sao thứ hai của cùng nội dung — F-001).
 
 **Vì sao có task này:**
 Phát hiện 2026-09-03 khi chạy DOC-5: brief in mục `DECLARED SCOPE` ra những file mà DOC-5 không hề
@@ -500,8 +503,15 @@ trống mà Gate 8 sinh ra để lấp cho *thông điệp* commit chứ không 
 - **Đừng xoá hộ khối của phiên khác theo phản xạ.** F-014 ghi đúng cái giá của việc ấy. Ba khối
   này gỡ được **chỉ vì** cả ba task đã commit xong từ 2026-08-31 — hãy kiểm lại điều đó bằng
   `git log` ngay trước khi gỡ, đừng tin dòng này.
-- **Đừng sửa `scripts/check-scope.sh` cho "chặt hơn".** Nó không sai. Sửa nó là chữa triệu chứng
-  và làm hỏng một cổng đang chạy đúng.
+- **Phần đọc pattern của `scripts/check-scope.sh` không sai — đừng "siết" nó.** Cái được thêm vào
+  là **một phép chấm mới** (bản đã commit có ở trạng thái nền không), không phải sửa cách khớp
+  pattern đang chạy đúng. *(Câu ở bản trước của mục này — "không phải sửa `check-scope.sh`" — đã bị
+  chính quyết định 2026-09-03 thay; đường 2 sửa cả hai script.)*
+- **Đừng chấm hình bất biến bằng `HEAD` thuần**, và **đừng cho Gate 7b một "ngoại lệ commit
+  migration"**. Cái thứ nhất khoá đúng lượt đi dọn, cái thứ hai bắt cổng tin một chữ trong báo cáo.
+  Vị ngữ đúng cho cả hai nằm ở F-020, điểm 2 và điểm 3.
+- **Pattern chết / pattern lặp chỉ được `note:`, không được làm gate đỏ** — task tạo file mới khai
+  đường dẫn vào scope trước khi file tồn tại (ADR-003). Lý do đầy đủ ở F-020.
 
 **Cách hoàn thành — mười bước** (luật chung ở [Vòng chạy một task L1](#vong-chay)):
 
@@ -510,8 +520,10 @@ trống mà Gate 8 sinh ra để lấp cho *thông điệp* commit chứ không 
 2. Khai `work/scope.txt`. Trớ trêu ở đây là thật: task này phải khai scope **vào đúng cái file nó
    sắp dọn**. Thêm khối của mình **bên dưới** ba khối cũ, đừng ghi đè.
 3. Chuyển dòng T-047 từ *Ready* xuống *In Progress*.
-4. **Chưa sửa gì cho tới khi chủ repo đã chọn đường** — đây là bước mà task này khác mọi task
-   khác. Chọn xong mới viết prompt, rồi mới sửa.
+4. **Đường đã chọn (2026-09-03, đường 2)** — bước "chờ quyết định" của bản trước đã xong. Viết
+   prompt bằng cách chép **bảy bước** ở F-020 → *Decision / Fix* thành Acceptance, rồi mới sửa.
+   Ràng buộc thứ tự quan trọng nhất: **sửa hai script TRƯỚC, dọn file SAU** — hai cổng chạy từ cây
+   làm việc nên bản sửa có hiệu lực ngay trong lượt ấy, và đó là cách gỡ khoá hợp lệ.
 5. Không có dữ kiện nghiệp vụ nào ở đây; câu chưa rõ **duy nhất** là câu chọn đường ở bước 4, và
    nó thuộc chủ repo chứ không thuộc chủ quán — hỏi thẳng, đừng ghi thành `U-XXX`.
 6. Chạy `./scripts/gate.sh`, dán output thật. Thêm **một phép thử riêng** mà task này bắt buộc
@@ -524,9 +536,10 @@ trống mà Gate 8 sinh ra để lấp cho *thông điệp* commit chứ không 
    trong đó thành sai.
 9. Tick *Done* kèm ngày, chuyển khối này sang *Chi tiết — việc đã xong*, và **xoá sạch pattern** —
    bước mà chính task này tồn tại vì nó đã bị quên ba lần.
-10. Khối `git commit` dán được. Chú ý: ở đường 1 và 3, `work/scope.txt` **buộc phải** có mặt trong
-    khối — trái §6.1 và Gate 7b sẽ kêu. Đó là lý do đường ấy cần một ADR cho phép, và report phải
-    nói thẳng điều đó chứ không lặng lẽ đi qua.
+10. Khối `git commit` dán được — **một commit duy nhất**, subject nói rõ đây là *scope-state
+    migration*. `work/scope.txt` **buộc phải** có mặt trong khối ấy (đó là cả điểm của lượt này), và
+    với vị ngữ mới của Gate 7b nó **im lặng hợp lệ** vì file lúc đó chỉ còn comment — không phải vì
+    ai miễn trừ cho nó. Muốn thế thì pattern phải được xoá **trước khi** viết khối commit (§7.3).
 
 **Acceptance · Verify:** trong file prompt, viết sau khi chọn đường (F-001 — entry này trỏ,
 prompt giữ).
