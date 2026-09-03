@@ -31,7 +31,7 @@ tổng tiền xác định lúc nào, thu bằng cách nào, và đối soát d�
 
 Không được sửa:
 - §1–§3, §5–§8 của `docs/product/0-ba/ban-hang/`
-- `docs/decisions.md`, `docs/architecture.md`
+- `docs/decisions.md`, `docs/product/1-system-design/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text

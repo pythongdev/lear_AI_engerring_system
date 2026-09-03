@@ -33,7 +33,7 @@ không ai gỡ được, hoặc một đơn nằm mãi trong bếp mà bảng �
   xuôi (*chờ thanh toán*): **cùng một trạng thái**, khác nhau ở cách trình bày, không phải hai thứ.
 - **Không có tên kiểu mã.** Trạng thái ở đây luôn là một cụm tiếng Việt đọc được thành câu — không
   có hằng viết hoa nối bằng gạch dưới, không có trạng thái viết thành một con số. Tên máy, kiểu dữ
-  liệu và chỗ lưu là việc của `docs/architecture.md`. *(Mục này cố ý không viết ra một ví dụ kiểu
+  liệu và chỗ lưu là việc của `docs/product/1-system-design/architecture.md`. *(Mục này cố ý không viết ra một ví dụ kiểu
   mã: `work/backlog.md` → BA-07 dò đúng hình dạng ấy bằng `grep`, và một ví dụ nêu ra để cấm cũng
   làm phép dò kêu.)*
 - **BA-07 đổi tên hai trạng thái ở §3, đổi tên chứ không đổi nghĩa:** *chờ duyệt* → **Chờ xác
@@ -285,7 +285,7 @@ CLAUDE.md §3.5 tồn tại.
 - **Lát cắt sản xuất theo mẻ.** Bảng gom việc ở quầy, bốn con số, năng lực hai cái nồi: **§3.4**
   (BA-12). §5 nói một việc đi qua những trạng thái nào, §3.4 nói quán gom nhiều việc lại ra sao.
 - **Máy giữ trạng thái bằng cách nào.** Tên kỹ thuật, chỗ lưu, ai được xem lại lịch sử chuyển trạng
-  thái, màn hình nào bày ra bảng nào — `docs/architecture.md` và §7 (BA-09).
+  thái, màn hình nào bày ra bảng nào — `docs/product/1-system-design/architecture.md` và §7 (BA-09).
 - **Trạng thái của TIỀN.** Đã thu · chưa thu · nợ · đã hoàn — đó là §4, và nó **không** phải một
   trạng thái của phiên hay của đơn. §5 chạm tiền đúng một chỗ: tiền chưa thu **không** chặn phiên
   đóng (§5.3).

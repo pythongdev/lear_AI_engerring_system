@@ -1223,9 +1223,15 @@ grep -rn 'docs/product\.md' --include='*.md' --include='*.sh' . \
 ```
 
 - Ba prompt con `13a` · `13b` · `13c` đã dùng bản này và **dán số đo kèm ngày**.
-- `prompt/maintenance/13-…-L3.md` và `15-…-L3.md` còn giữ bản hỏng. Không sửa trong lượt này:
+- ✅ **`15-…-L3.md` đã vá 2026-09-03 (T-046)** — mục *Acceptance* và mục *Verify* của nó nay dùng
+  bản portable, có dán số đo kèm ngày (**48** sau lọc / **142** chưa lọc) và một câu chỉ cách đọc
+  kết quả: hai lệnh ra bằng nhau ⇒ bộ lọc lại rỗng. Đây là lượt sửa mà gạch đầu dòng dưới đây gọi
+  tên. DOC-5 vẫn **chưa được phép chạy** (chủ repo chốt HOÃN 2026-09-03), nhưng cổng nghiệm thu của
+  nó thì đã chạy được.
+- `prompt/maintenance/13-…-L3.md` còn giữ bản hỏng. Không sửa trong lượt này:
   `prompt/maintenance/**` là sổ lịch sử (CLAUDE.md §5) và prompt 13 đã được thay thế trên thực tế
-  bởi ba prompt con. **DOC-5 thì phải sửa trước khi chạy** — nó chưa được chạy lần nào.
+  bởi ba prompt con. **DOC-5 thì phải sửa trước khi chạy** — nó chưa được chạy lần nào. *(Đã làm,
+  2026-09-03, T-046 — xem gạch đầu dòng trên.)*
 
 **Lặp lại lần hai, cơ chế khác — đo 2026-09-03 khi chạy DOC-3b:** *Verify* bước 4 của
 `prompt/maintenance/13b-pointer-nhom-B-L1.md` viết
@@ -1325,11 +1331,29 @@ tổng đúng và chỗ cắt sai — vì tổng ra từ `grep` còn chỗ cắt
 Lần này con số không đẩy phiên chạy đi phá gì, và lý do đáng chép cho prompt sau: **prompt 13c tự
 chừa cửa**, nó gọi dòng 167 là *"đọc rồi quyết"* và bắt viết kết luận vào report, thay vì chốt cứng
 *"đúng 1 dòng ở lại"*. Đó chính là hình dạng mục *Bài học chung* ở trên đề nghị — nó đã chạy đúng.
-Còn **DOC-5** chưa kiểm.
+
+**Kiểm lại ở DOC-5, 2026-09-03 (T-046) — lần thứ tư, và lần này TỔNG cũng sai, không chỉ chỗ cắt.**
+`prompt/maintenance/15-…-L3.md` ghi *"99 dòng"* ở ba chỗ (Context · Scope · Deliverables 2). Đếm
+thật hôm nay: **142 tổng / 48 sau bộ lọc**. Ba lần trước tổng luôn đúng vì chúng được đo và chạy
+**trong vòng một hai ngày**; prompt 15 nằm đấy chưa chạy trong khi chuỗi BA vẫn viết tiếp, nên nó
+là ca đầu tiên mà **cả hai đầu đều trôi**. Đã vá, không mở khoá DOC-5 — chủ repo chốt HOÃN
+(`work/backlog.md` T-046).
+
+**Và lượt vá tìm ra một cơ chế thứ hai, nặng hơn: con số ấy KHÔNG ĐỨNG YÊN ĐỦ LÂU để làm mốc.**
+Trong chính lượt T-046, đo ba lần cách nhau vài phút, tổng chưa lọc đi **133 → 139 → 142** —
+không một pointer nào đổi, nó nhích chỉ vì lượt vá viết thêm mấy câu *về chính task ấy* vào
+`work/backlog.md`, `work/findings.md` (mục bạn đang đọc) và vào file prompt. Cùng ba lần đo ấy,
+con số sau bộ lọc **đứng yên ở 48**. Lý do: tổng chưa lọc đếm cả `work/` và
+`prompt/maintenance/` — hai thư mục *sổ ghi chép* mà mọi prompt đã cố ý loại khỏi phạm vi, và là
+đúng hai thư mục **phình ra mỗi lần có ai viết về chính task ấy**. ⇒ **Một con số làm mốc phải được
+đo bằng đúng bộ lọc của phạm vi việc.** Đếm rộng hơn phạm vi thì con số ấy đo hoạt động viết lách
+của repo, không đo việc còn lại — và nó sẽ luôn lệch, theo chiều tăng, mà không ai chạm vào cái nó
+định đo.
 
 **Related task:**
 DOC-3a (đã xử lý cả hai chỗ) · DOC-3b (đã kiểm lại: 8/22 chứ không 10/20) ·
-DOC-3c (đã kiểm lại: 7/2 chứ không 8/1) · **DOC-5** (cùng lượt đo, chưa kiểm lại) ·
+DOC-3c (đã kiểm lại: 7/2 chứ không 8/1) · **T-046 / DOC-5 (đã kiểm lại 2026-09-03: 139/48, không
+phải 99 — và tổng chưa lọc không dùng làm mốc được)** ·
 F-003 (*"exactly N"*) · F-015 (thì của câu) · F-017 (cùng lượt đo, `grep` lọc rỗng)
 
 **Status:**
@@ -1399,3 +1423,63 @@ F-018 (con số trong prompt biến thành mệnh lệnh)
 
 **Status:**
 Open
+
+---
+
+### F-020 — Ba khối `work/scope.txt` bị COMMIT và không ai gỡ được, nên Gate 3 mở toang từ 2026-08-31
+
+**Date:** 2026-09-03 · phát hiện khi chạy **DOC-5**, lúc đọc `DECLARED SCOPE` trong brief thấy in
+ra những file mà task này không hề khai
+
+**Problem:**
+`CLAUDE.md` §6 viết: *"`work/scope.txt` is working state, not a deliverable — do not commit
+patterns."* Nhưng `git log -- work/scope.txt` cho thấy commit **`12c77f8` (T-031)** đã đưa **ba
+khối pattern** vào lịch sử: của **BA-04**, **T-027** và **T-031**. Cả ba task ấy xong từ
+2026-08-31, và chính ba khối ấy tự dặn *"GỠ NGAY SAU KHI commit"* — không ai gỡ.
+
+Mười pattern thừa đang mở cho **mọi** task chạy sau đó:
+
+```text
+docs/product.md · quality/invariants.md · work/backlog.md · scripts/brief.sh
+scripts/brief.test.sh · work/findings.md · CLAUDE.md
+master_plan/prompt-fullstack.md · docs/architecture.md · docs/decisions.md
+```
+
+**Impact:**
+Gate 3 là cổng bắt *"thay đổi đúng nhưng chạm file không được phép"*. Danh sách trên phủ gần hết
+những file quan trọng nhất của repo — `CLAUDE.md`, `docs/decisions.md`, `quality/invariants.md`,
+`work/backlog.md`. Với mọi task từ 2026-08-31 tới nay, **Gate 3 vẫn in `OK` nhưng gần như không
+còn chấm gì**. Nó hỏng theo đúng chiều F-017: **luôn xanh**, không bao giờ kêu.
+
+Đo trong lượt DOC-5, 2026-09-03: chạy lại Gate 3 với `SCOPE_FILE` trỏ vào **chỉ scope của DOC-5**
+ra `OK` — nên lượt này không mượn gì của ba khối cũ. Nhưng đó là may, không phải do cổng chặn.
+
+**Và đây là chỗ luật tự khoá chính nó — phần đáng đọc nhất của mục này:**
+Vì các pattern **đã nằm trong git**, xoá chúng tạo ra một thay đổi **tracked** trên
+`work/scope.txt`; muốn sửa thật thì phải **commit `work/scope.txt`** — đúng cái §6 cấm, và đúng
+cái Gate 7b bắt (nó kêu khi `work/scope.txt` xuất hiện trong khối commit). Một phiên tuân thủ luật
+**không có đường hợp lệ nào** để dọn. File đang ở trạng thái mà bộ luật hiện tại không gỡ được, và
+mỗi phiên mới lại đọc nó như scope đang có hiệu lực.
+
+Đây cũng là lý do lượt DOC-5 **không tự ý xoá ba khối ấy**: `work/findings.md` **F-014** đã ghi
+đúng cái giá của việc một phiên xoá scope hộ người khác.
+
+**Decision / Fix:**
+Chưa sửa — cần một quyết định của chủ repo vì nó đụng thẳng vào §6. Ba đường, chọn một:
+
+1. **Một lần miễn trừ có ghi ADR:** commit `work/scope.txt` đúng một lần để đưa nó về chỉ còn
+   comment, ghi rõ đây là ngoại lệ dọn nợ, không phải tiền lệ. (`work/backlog.md` T-016 ghi hai
+   lần trước nó từng được commit — đây là lần thứ ba, nên "ngoại lệ" đang thành thói quen.)
+2. **Đổi §6:** thừa nhận file có một *trạng thái nền* (chỉ comment) được phép nằm trong git, và
+   chỉ *pattern* mới bị cấm commit. Khi ấy cần một cổng chấm "file này ở trạng thái nền" thay vì
+   dựa vào trí nhớ.
+3. **Bỏ file khỏi git**, để `.gitignore` giữ, kèm một bản mẫu `work/scope.txt.example`. Đắt nhất,
+   nhưng là đường duy nhất khiến lỗi này **không tái diễn được**.
+
+**Related task:**
+T-047 (mở cùng ngày) · F-010 và F-014 (cùng file, cùng chỗ đau: nhiều phiên một `scope.txt`) ·
+F-017 (cùng hình dạng hỏng: cổng luôn xanh) · `CLAUDE.md` §6, §7.3 · Gate 7b (ADR-006)
+
+**Status:**
+Open
+

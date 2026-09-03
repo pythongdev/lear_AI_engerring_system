@@ -21,7 +21,7 @@ quán bán qua kênh nào và mỗi kênh khác nhau ở điểm nghiệp vụ n
 
 Không được sửa:
 - §3–§8 của `docs/product/0-ba/ban-hang/`
-- `docs/decisions.md`, `quality/invariants.md`, `docs/architecture.md`
+- `docs/decisions.md`, `quality/invariants.md`, `docs/product/1-system-design/architecture.md`
 - `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`, `master_plan/shop-facts.md`
 - `work/backlog.md` (trừ ô trạng thái của BA-01, BA-02)
 

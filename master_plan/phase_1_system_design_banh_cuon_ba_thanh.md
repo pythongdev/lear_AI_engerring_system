@@ -1,3 +1,25 @@
+<!-- ==== BẢN NHÁP PHA 1 — không sở hữu sự thật nào · ADR-014 SỬA ĐỔI 2026-09-03 · DOC-5 ==== -->
+
+> # ⚠ Đây là BẢN NHÁP pha 1, không phải nguồn sự thật
+>
+> **Đầu ra pha 1 nay ở [`docs/product/1-system-design/architecture.md`](../docs/product/1-system-design/architecture.md)**
+> (`CLAUDE.md` §2, hàng *Architecture*). File này là **bản nháp đầu**, viết trước tài liệu ấy, và
+> nó **không sở hữu một sự thật nào**.
+>
+> **Đừng đọc `I1`–`I8` ở đây như invariant đang có hiệu lực.** Owner của *Business invariants* là
+> `quality/invariants.md`, nơi đang giữ **I-001…I-018** — bản đã chín của cùng những câu này
+> (I1≈I-001 · I2≈I-002 · I3≈I-013 · I4≈I-004 · I7≈I-009 · I8≈I-003). Hai bản không khớp từng chữ,
+> và **bản ở `quality/invariants.md` là bản đúng**.
+>
+> **Vì sao nó ở lại `master_plan/` chứ không dọn vào `docs/product/1-system-design/`:** dọn vào là
+> đặt một bản sao **cũ hơn** nằm ngay cạnh owner thật — đúng thứ `work/findings.md` **F-001** gọi
+> tên. Chỗ của nó là `master_plan/`, nơi `CLAUDE.md` §2 dành cho *đầu vào* của dự án. Quyết định
+> và lý lẽ đầy đủ ở `docs/decisions.md` **ADR-014**, khối *SỬA ĐỔI 2026-09-03*.
+>
+> **Không sửa ở đây.** Nội dung dưới đây giữ nguyên làm bản ghi lịch sử.
+
+---
+
 # PHASE 1 — SYSTEM DESIGN
 ## Bánh cuốn Bà Thanh Cao Bằng
 

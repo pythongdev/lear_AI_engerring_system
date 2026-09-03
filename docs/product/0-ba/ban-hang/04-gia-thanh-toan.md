@@ -356,5 +356,5 @@ và cách bày bảng đối soát, **không** phải dữ liệu quá khứ —
 - **Số tài khoản ngân hàng, và mọi chuyện tích hợp.** Số tài khoản do chủ quán nhập trong phần
   quản trị, không cứng trong sản phẩm (`shop-facts.md` §1, §6.12).
 - **Cách tính toán được viết ra sao, và tiền được lưu ở đâu.** Đó là việc của
-  `docs/architecture.md`; mục này chỉ chốt luật.
+  `docs/product/1-system-design/architecture.md`; mục này chỉ chốt luật.
 

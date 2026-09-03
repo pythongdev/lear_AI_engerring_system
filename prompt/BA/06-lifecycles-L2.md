@@ -27,7 +27,7 @@
 Không được sửa:
 - §1, §2, §4, §6–§8 của `docs/product/0-ba/ban-hang/`
 - Nội dung nghiệp vụ của §3 (chỉ được đồng bộ tên trạng thái)
-- `docs/decisions.md`, `docs/architecture.md`
+- `docs/decisions.md`, `docs/product/1-system-design/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text

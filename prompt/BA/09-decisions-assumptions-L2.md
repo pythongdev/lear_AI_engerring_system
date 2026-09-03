@@ -31,7 +31,7 @@
 
 Không được sửa:
 - Nội dung nghiệp vụ đã chốt ở §1–§8 `docs/product/0-ba/ban-hang/` (chỉ được thêm tham chiếu)
-- `quality/invariants.md`, `docs/architecture.md`
+- `quality/invariants.md`, `docs/product/1-system-design/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text

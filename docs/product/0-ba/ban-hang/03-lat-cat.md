@@ -597,7 +597,7 @@ trước, và có vết đọc được sau, đủ để đối soát cuối ng�
 
 - **Cách máy giữ được lịch sử giá.** §3.3 chốt **kết quả nghiệp vụ phải luôn đúng** — mở một đơn cũ
   ra thì thấy đúng số tiền đã bán. Làm cách nào để điều đó luôn đúng là việc của thiết kế hệ thống
-  (`docs/architecture.md`), không phải của tài liệu sản phẩm.
+  (`docs/product/1-system-design/architecture.md`), không phải của tài liệu sản phẩm.
 - **Thêm món mới, hoặc đổi bảng giá thành một cấu trúc khác.** Thêm món ngoài `shop-facts.md` §4.2
   là **đổi phạm vi**, quyền chủ quán (`shop-facts.md` §6.12).
 - **Ai được xem lại lịch sử đổi giá, và xem ở đâu.** Mọi thao tác chạm tiền đều phải kiểm chứng lại

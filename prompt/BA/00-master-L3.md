@@ -35,7 +35,7 @@ Không được sửa:
 - `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`, `master_plan/shop-facts.md`,
   `master_plan/shop-facts.md` (là input, không phải sản phẩm)
 - `master_plan/phase_1_system_design_banh_cuon_ba_thanh.md`, `master_plan/prompt-fullstack.md`
-- `docs/architecture.md`, `docs/decisions.md`, `quality/invariants.md` (thuộc prompt con)
+- `docs/product/1-system-design/architecture.md`, `docs/decisions.md`, `quality/invariants.md` (thuộc prompt con)
 - `prompt/BA/*` (bộ prompt con đã chốt)
 - Mọi file trong `scripts/`, `.claude/`
 

@@ -37,7 +37,7 @@ Không được sửa:
 - §1, §2, §3.1–§3.3, §4–§8 của `docs/product/0-ba/ban-hang/` — kể cả khi thấy chỗ nên sửa; ghi vào Report
 - `master_plan/shop-facts.md` — trừ **một** trường hợp: chủ quán trả lời S-4 hoặc U-008–U-011
   **trong lúc** chạy task này, thì ghi vào §5.4 + §7.1 trước, rồi mới viết §3.4
-- `docs/decisions.md`, `docs/architecture.md`
+- `docs/decisions.md`, `docs/product/1-system-design/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text

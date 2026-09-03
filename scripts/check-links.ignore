@@ -10,3 +10,22 @@
 # --- đường dẫn cố ý không tồn tại (không phải lỗi, đừng "sửa") ---------------
 docs/decisions.md :: work/journal.md              # ADR-002 — phương án đã bị loại: file này cố ý không được tạo
 docs/prompt-guideline.md :: order/pricing.go      # ví dụ trong template L1/L2, không phải file của repo này
+
+# --- bản lưu docs/product.md: ảnh chụp ngày 2026-09-02, đường dẫn của NGÀY ẤY ---
+# 6 chỗ trong bản lưu nêu `docs/architecture.md`. File ấy dọn sang
+# docs/product/1-system-design/ ngày 2026-09-03 (ADR-014, SỬA ĐỔI 2026-09-03 · DOC-5).
+# Bản lưu KHÔNG được sửa (banner của chính nó: "Không sửa ở đây") — đổi đường dẫn trong
+# một ảnh chụp là khai rằng ảnh ấy mang một đường chưa tồn tại vào ngày chụp (F-018).
+# Ngoại lệ này là VĨNH VIỄN, chừng nào bản lưu còn được giữ.
+docs/product.md :: docs/architecture.md
+
+# --- ADR-014 kể lại chính lượt dọn: đường cũ là CHỦ NGỮ, không phải pointer ---
+# docs/decisions.md dòng 1066 (bảng thi hành, ô "lượt 5") và 1068 ("lượt 5 chưa được
+# phép chạy") nói VỀ việc docs/architecture.md dọn đi đâu. Đổi đường dẫn ở đó thì câu
+# thành "docs/product/1-system-design/architecture.md dọn vào 1-system-design/" — vô nghĩa.
+# Hai dòng ấy là lịch sử và ở lại (ADR-014, SỬA ĐỔI 2026-09-03 · DOC-5).
+#
+# GIÁ PHẢI TRẢ, ghi ra để không ai phát hiện lại: dòng này phủ MỌI lần `docs/architecture.md`
+# xuất hiện trong docs/decisions.md, nên một pointer MỚI viết nhầm về đường cũ trong file này
+# sẽ không bị Gate 1b bắt. Ai thêm pointer vào docs/decisions.md thì tự kiểm bằng mắt.
+docs/decisions.md :: docs/architecture.md

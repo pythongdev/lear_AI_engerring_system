@@ -25,7 +25,7 @@ làm ở giai đoạn đầu, để mọi task sau này có chỗ đối chiếu
 
 Không được sửa:
 - §1–§6, §8 của `docs/product/0-ba/ban-hang/`
-- `docs/decisions.md`, `quality/invariants.md`, `docs/architecture.md`
+- `docs/decisions.md`, `quality/invariants.md`, `docs/product/1-system-design/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text

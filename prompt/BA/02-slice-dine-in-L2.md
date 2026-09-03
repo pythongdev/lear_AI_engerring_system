@@ -27,7 +27,7 @@ bàn trở lại trạng thái trống — đủ để một người không bi�
 
 Không được sửa:
 - §3.2, §3.3, §4–§8 của `docs/product/0-ba/ban-hang/`
-- `docs/decisions.md`, `docs/architecture.md`
+- `docs/decisions.md`, `docs/product/1-system-design/architecture.md`
 - Invariant đã tồn tại của người khác trong `quality/invariants.md`
 
 Dòng chép vào `work/scope.txt`:

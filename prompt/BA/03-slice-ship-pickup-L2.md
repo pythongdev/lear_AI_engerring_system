@@ -28,7 +28,7 @@ hoàn thành — và nêu rõ nó khác đơn tại bàn ở chỗ nào.
 
 Không được sửa:
 - §3.1, §3.3, §4–§8 của `docs/product/0-ba/ban-hang/`
-- `docs/decisions.md`, `docs/architecture.md`
+- `docs/decisions.md`, `docs/product/1-system-design/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text

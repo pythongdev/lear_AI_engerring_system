@@ -146,12 +146,12 @@ lại, khối *GIẢ ĐỊNH* biến mất, **I-014** sửa và **I-015** thêm.
 ⇒ Hệ quả đáng giữ nhất: **doanh thu một ngày đã đối soát không bao giờ đổi về sau.**
 ⇒ **BA-07, BA-08 và BA-10 hết chờ hai câu này**; đọc lời giải ở §4.6, §4.8–§4.10, đừng mở lại.
 
+- [ ] T-047 `work/scope.txt` mang ba khối pattern ĐÃ COMMIT của BA-04/T-027/T-031 ⇒ Gate 3 mở toang từ 2026-08-31; và luật §6 tự khoá đường dọn (F-020) · **cần chủ repo chọn 1 trong 3 đường ghi ở F-020**
 - [ ] T-035 Brief bảo phiên mới XOÁ scope trong khi chủ thật đang chạy song song (F-014)
 
 - [ ] BA-11 `docs/product/0-ba/ban-hang/08-scenario.md` §8 — ba scenario nghiệm thu BA · cần BA-03–BA-10
 - [ ] BA-12 `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4 — lát cắt sản xuất theo mẻ · **BA-03 và BA-07 đã xong**, tên trạng thái lấy ở `docs/product/0-ba/ban-hang/05-vong-doi.md` §5.4 (**U-008–U-011, S-4, U-017, U-021, U-024 đã đóng** — quầy bấm cả hai mốc, và lùi được). Đọc trước khi dựng bảng quầy: **S-5** (`shop-facts.md` §7.2) — bấm *đã bưng ra bàn* theo **đơn vị nào** thì mới là suy ra, chưa hỏi chủ quán
 
-- [ ] DOC-5 `docs/architecture.md` dọn vào `1-system-design/` · L3 · **CHƯA ĐƯỢC CHẠY**, chờ một câu chốt mới của chủ repo · prompt `prompt/maintenance/15-architecture-into-system-design-L3.md`
 
 **DOC-3 chạy theo thứ tự 3b → 3a → 3c, KHÔNG theo thứ tự chữ cái** (chốt 2026-09-02, lượt L3
 chia việc). Lý do: **BA-11 và BA-12 vẫn ở *Ready***, và khối `Scope` trong hai prompt của chúng
@@ -183,11 +183,10 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 ## In Progress
 
 
-
-
-
 <a id="done"></a>
 ## Done
+- [x] DOC-5 `docs/architecture.md` → `docs/product/1-system-design/architecture.md` — **lượt 5/5, đóng ADR-014**. Chủ repo chốt **đồng ý** 2026-09-03, ghi thành khối *SỬA ĐỔI 2026-09-03* của ADR-014 (điều kiện mở khoá 1); ĐK2 dẫn bằng 6 mã commit, **ĐK3 thoả bằng chính luật của repo**: file dọn vào *là* dòng nội dung đầu tiên của pha 1, đúng câu *"tạo thư mục của pha cùng lúc với dòng nội dung đầu tiên"* ở `docs/product/00-index.md`, nên thư mục sinh ra có ruột chứ không phải nhà chờ rỗng mà bản sửa đổi trước đã cấm. **Chuyển bằng `git mv`** (lịch sử file đi theo), **giữ tên file** để cả lượt là đổi tiền tố đường dẫn thuần tuý, **giữ §1–§14** vì ADR-012/ADR-013 gọi tên mục bằng số. **48 dòng nêu đường cũ, chia 40 chuyển / 8 ở lại** — đúng số đã đo ở T-046, và chỗ cắt là việc **đọc thì của câu** chứ không phải đếm (F-015, F-018): 8 dòng ở lại gồm **6 dòng bản lưu** `docs/product.md` (banner của nó viết *"Không sửa ở đây"*; đổi đường dẫn trong một ảnh chụp là khai rằng ảnh ấy mang đường chưa tồn tại vào ngày chụp) và **2 dòng của chính ADR-014**, nơi đường cũ là **chủ ngữ** của câu (*"`docs/architecture.md` dọn vào `1-system-design/`"* — đổi thì câu vô nghĩa). **Điểm thiết kế prompt không lường:** khác lượt 3 (bản lưu ở lại nên pointer cũ vẫn mở được), lần này file rời đường cũ nên mọi pointer chưa chuyển chết ngay khi `git mv` chạy ⇒ **chia năm task con sẽ hỏng đúng câu Acceptance *"mỗi task con revert được độc lập"*** (lùi một task con giữa chừng = gate đỏ vì dòng ignore đã gỡ). Chủ repo chọn **một commit**: gate xanh trước và sau, không stub (thứ chính chủ repo đã bác cho bản lưu), lùi là `git revert` đúng một commit. Tám dòng ở lại phủ bằng **hai dòng `check-links.ignore` có ghi lý do và ghi cả cái giá** (dòng ngoại lệ phủ mọi lần xuất hiện trong file ấy ⇒ pointer *mới* viết nhầm về đường cũ trong hai file đó sẽ không bị Gate 1b bắt). **`CLAUDE.md` §2 trỏ FILE, `brief.sh` in THƯ MỤC — cố ý**: §2 trỏ file để Gate 1b còn chấm được (đường kết thúc bằng `/` bị `check-links.sh` bỏ qua hẳn — F-018), brief in thư mục vì *OWNER FILES* đo ngày đổi của cả pha. **Bản nháp `master_plan/phase_1_system_design_…md` ở lại `master_plan/` và được banner hoá là không sở hữu gì** — nó giữ `I1`–`I8` trong khi owner thật `quality/invariants.md` đang giữ `I-001…I-018` (I1≈I-001 · I2≈I-002 · I3≈I-013 · I4≈I-004 · I7≈I-009 · I8≈I-003), nên dọn nó vào cùng thư mục là đặt bản sao **cũ hơn** cạnh owner thật, đúng F-001. Gate xanh toàn phần, **`verify.sh` có chạy** (đụng `scripts/brief.sh`): 4 bộ test qua hết, trong đó `brief.test.sh` D4 chấm đúng mục *OWNER FILES*. `./scripts/brief.sh` in `docs/product/1-system-design/` và `exit 0` (2026-09-03)
+- [x] T-046 Prompt của DOC-5 hết mang hai con số hỏng — **không mở khoá DOC-5**. Chủ repo được hỏi 2026-09-03 và **chốt HOÃN**: chưa quyết `docs/architecture.md` có dọn vào folder hay không, nên khối ⛔ và cả ba điều kiện mở khoá **giữ nguyên từng chữ**; lượt này chỉ vá cổng, không mở cổng. Đo lại ba điều kiện và dán bằng chứng vào chính prompt: **ĐK2 đủ** (`bc5033c` · `83fe8ff` · `dc53768`/`fd64862`/`1a56b8e` · `ddec2f0`), **ĐK1 chưa có** (`docs/decisions.md` dòng 1068 vẫn viết *"chưa chốt"*), **ĐK3 mỏng** (`docs/product/00-index.md` dòng 15: pha 1 *"chưa mở"*; folder mới sẽ chứa 1–2 file). Hai chỗ vá: (1) **bộ lọc `grep` của mục *Acceptance* lọc rỗng** — F-017 đã dặn đích danh *"DOC-5 thì phải sửa trước khi chạy"*; bản cũ ba bộ lọc `^\./…` trả về **đúng bằng tổng chưa lọc** vì `grep` máy này là ugrep 7.8.4 in đường dẫn không có `./`. Bản portable trả về **48**, đã trích **nguyên khối ```bash trong prompt** ra chạy chứ không gõ lại, cộng một câu chỉ cách đọc kết quả (hai lệnh ra bằng nhau ⇒ bộ lọc lại rỗng). (2) **con số `99`** ở ba chỗ (Context · Scope · Deliverables 2) thay bằng số đo hôm nay kèm ngày và kèm lời mời tìm dòng thứ 49, không viết *"đúng N"* (F-018). **Không viết 48 thành "48 dòng phải chuyển"**: nêu đích danh vùng chắc chắn ở lại — 6 dòng bản lưu `docs/product.md` (banner của nó viết *"Không sửa ở đây"*) và `docs/decisions.md` 1066/1068 (hai dòng ấy nói về chính lượt 5, đường cũ là chủ ngữ chứ không phải pointer). **Phát hiện mới, ghi vào F-018 lần kiểm thứ tư:** tổng chưa lọc **tự nhích 133 → 139 → 142 ngay trong lượt vá** mà không pointer nào đổi — nó đếm cả `work/` và `prompt/maintenance/`, đúng hai thư mục phình ra mỗi lần có ai viết về chính task ấy, trong khi số sau bộ lọc đứng yên ở **48**. ⇒ luật rút ra: *một con số làm mốc phải được đo bằng đúng bộ lọc của phạm vi việc*. Đóng hai mục treo: **F-017** (prompt 15 hết giữ bản hỏng) và **F-018** (mục `DOC-5 chưa kiểm`). Prompt 15 nay trỏ **F-017 · F-018 · F-019** ngay đầu file, F-019 vì dòng `Done` của DOC-3b đã dự báo *"DOC-5 sẽ gặp lại y hệt"*. Gate xanh (2026-09-03)
 - [x] DOC-4 `CLAUDE.md` hết trỏ về bản lưu — **6 chỗ prompt đếm đều có thật và đều đã đổi** (29, 30, 135→141, 149→155, 370→376, 374→380), cộng **khối cây thư mục §2** mà prompt nêu riêng. Chia đích: **hai chỗ trỏ thư mục** `docs/product/` (hàng §2 *Business rules* — ghi **y hệt** ô bảng owner `docs/architecture.md` dòng 533 như DOC-3a dặn), **bốn chỗ trỏ thẳng** `docs/product/99-unknowns.md` (hàng §2 *Open business questions*, bảng §4, câu hợp đồng §4, câu liệt kê §7.3) — đối chiếu với `grep -n unknowns scripts/brief.sh`: brief đọc đúng file ấy ở cả bốn dòng 140/145/152/188, nên ADR-007 không lệch. **Dòng ví dụ §7.3 vẫn là ví dụ**: nó nằm trong khối ``` mà `check-links.sh` cắt bỏ trước khi rà, nên nó minh hoạ hình dạng chứ không phải pointer phải mở được; số dòng 1508 của bản lưu đổi thành 61 cho hợp một file 173 dòng. **Bản lưu còn đúng MỘT câu, không link** (dòng 44) và câu ấy nói nó *owns nothing* — §2 nay không còn chỗ nào gửi phiên mới về `docs/product.md`. Cấu trúc §2 không thêm/bớt hàng nào, đúng ràng buộc prompt. Hai chỗ ngoài Scope bị bỏ lại đúng như prompt dặn, ghi ở Report: banner `docs/product/99-unknowns.md` dòng 5–6 vẫn nói *"brief còn đọc bản lưu cho tới khi DOC-2 trỏ nó sang file này"* (DOC-2 xong 2026-09-02) và dòng Done của DOC-3b ghi nhầm *"Lượt 5/5"* trong khi nó là một phần của lượt 3. Gate xanh (Gate 1b **có** chấm `CLAUDE.md`). Lượt 4/5 của ADR-014; **chỉ còn lượt 5 (DOC-5), vẫn chưa được phép chạy** (2026-09-03)
 - [x] DOC-3b Nhóm B (`prompt/BA/**`, 13 file) hết trỏ về bản lưu — **92 dòng chuyển, 22 ở lại**. Ba loại như prompt chia, nhưng **chỗ cắt của loại 3 sai**: 30 dòng lệnh chia **8 / 22** (2 file còn sống / 11 prompt đã xong), không phải 10/20 — xác nhận **F-018** lần hai, `git diff` chứng minh 22 dòng lệnh của 11 prompt đã xong không đổi một ký tự. Chia đích của 92 dòng: **52 dòng** trỏ thẳng một file `.md` (48 file con `0-ba/ban-hang/`, 4 dòng `99-unknowns.md`), **18 dòng** trỏ thư mục `docs/product/0-ba/ban-hang/` (một đường dẫn mang nhiều `§N` trải nhiều file con — luật F-018 mục 2), **22 dòng** trỏ thư mục `docs/product/` (12 dòng scope trần + 10 dòng nói về cả tài liệu). Gate 1b nay chấm **44/114** dòng (52 dòng `.md` trừ 8 dòng lệnh nằm trong khối ```); 40 dòng thư mục và mọi thứ trong khối ``` là vùng mù — bằng chứng duy nhất là **chạy thử**, đã chạy cả 8 lệnh đã đổi, đối chiếu đường cũ/đường mới, kết quả trong report. Hai lệnh của BA-11/BA-12 vốn **báo xanh giả** trên bản lưu nay báo đúng (`click|button|…` 7 kết quả → 0; `S-4 có mặt` 5 kết quả từ mục khác → 0, tức nó chưa được viết thật). `git diff` chỉ đổi đường dẫn, trừ ba chỗ: **3 dòng** rụng cụm *→ Unknowns* thừa vì tên file mới đã nói điều đó (đúng tiền lệ DOC-3a), neo cuối `sed` trong lệnh BA-12 đổi `/^## 4\./` → `$` vì file con không còn `## 4.` phía sau, và khoảng trắng canh chú thích. Mở **F-019**: lượt tách DOC-1 sinh thêm một tiêu đề H1 mang cùng chữ với `## N.`, nên câu nghiệm thu `grep -n 'Ba lát cắt' # phải rỗng` của BA-12 nay cần đổi **ba** chỗ chứ không phải một như Acceptance 12 của nó viết — **ai chạy BA-12 đọc F-019 trước**; DOC-5 sẽ gặp lại y hệt. Cũng ghi vào **F-017** lần lặp thứ hai: bước 4 mục *Verify* của chính prompt 13b lọc bằng `git diff | grep -v <tên file>`, mà dòng thân `git diff` không mang tên file ⇒ luôn báo đỏ; bản chạy được là lọc ở đối số của `git diff`. Lượt 5/5 của ADR-014 (2026-09-03)
 - [x] DOC-3c Vùng *Ready* + *In Progress* của `work/backlog.md` hết trỏ về bản lưu — **7 dòng chuyển (8 lần xuất hiện), 2 dòng ở lại**; *In Progress* rỗng nên không có dòng nào ở đó. Prompt đếm *"9 dòng, 1 ở lại"*: tổng **9 dòng / 10 lần xuất hiện là đúng**, chỗ cắt mới sai — **F-018 lần thứ ba**, nhẹ nhất trong ba lần vì chính prompt đã chừa cửa (nó gọi dòng 167 là *"đọc rồi quyết"*). **Dòng 167 (nay 166) Ở LẠI**: câu ấy cảnh báo *"DOC-1 và BA-11/BA-12 cùng chạm"* một file, mà **DOC-1 đã xong ở `bc5033c`** ⇒ nó kể một va chạm **đã qua**, và đổi đường dẫn đi là khai rằng DOC-1 từng tranh chấp một thư mục do chính nó tạo ra. **Dòng 161 (nay 160) ở lại** đúng như prompt dặn — nó mô tả **cái sai đang tồn tại lúc viết** nên phải gọi đúng tên bản lưu; DOC-4 hoặc một task dọn riêng quyết định có rút gọn cả khối không, DOC-3c không đụng. Chia đích của 8 lần xuất hiện: **6 trỏ thẳng file con** (`99-unknowns.md` · `07-pham-vi-mvp.md` ×2 · `08-scenario.md` · `03-lat-cat.md` · `05-vong-doi.md`), **2 trỏ thư mục** theo luật F-018 mục 2 (`docs/product/0-ba/ban-hang/` cho câu trải §1–§3.4; `docs/product/` cho câu không mang số mục nào). Dòng **BA-12 đã đổi cả hai chỗ** (§3.4 và §5.4 → hai file khác nhau — ca dễ hỏng nhất của task này). **216 dòng ngoài hai vùng không đổi một ký tự**; `git diff` chỉ đổi đường dẫn, trừ hai đoạn văn phải **ngắt dòng lại** vì tên file mới dài hơn tên cũ (kiểm bằng cách gộp khoảng trắng rồi so chuỗi: y hệt). Gate 1b **không chấm `work/`** ⇒ task này không có cổng máy nào, bằng chứng là `git diff` và hai lệnh đếm ở mục *Verify* của prompt. Phần cuối của **DOC-3**; **DOC-4 hết bị chặn** (2026-09-03)
@@ -259,6 +258,65 @@ Chi tiết từng task ở [**Chi tiết — việc đã xong**](#chi-tiet-da-xo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-046"></a>
+### T-046 — Prompt của DOC-5 mang hai con số hỏng, và một trong hai là CỔNG NGHIỆM THU của nó
+
+**Mức:** L1 · **Trạng thái:** In Progress 2026-09-03 · **KHÔNG mở khoá DOC-5**
+
+**Bối cảnh.** Chủ repo được hỏi hôm nay (2026-09-03) rằng có chốt việc `docs/architecture.md` dọn
+vào `docs/product/1-system-design/` không, và **chốt là HOÃN**: chưa quyết dọn hay không, lượt này
+chỉ vá prompt để lúc chốt là chạy được ngay với con số đúng. Ba điều kiện mở khoá ở đầu
+`prompt/maintenance/15-architecture-into-system-design-L3.md` **vẫn còn nguyên**, và lượt này
+không đụng vào cái nào:
+
+| ĐK | Trạng thái đo 2026-09-03 | Bằng chứng |
+|:--:|---|---|
+| 1 — câu chốt của chủ repo trong `docs/decisions.md` | ❌ **chưa có** | dòng 1068 vẫn viết *"chưa chốt việc `docs/architecture.md` có dọn vào folder hay không"* |
+| 2 — bước 1–4 xong và đã commit | ✅ | `bc5033c` · `83fe8ff` · `dc53768`/`fd64862`/`1a56b8e` · `ddec2f0` |
+| 3 — pha 1 đã có sản phẩm thật | ⚠️ **mỏng** | `docs/product/00-index.md` dòng 15 ghi pha 1 *"chưa mở"*; folder mới sẽ chứa 1–2 file (`docs/architecture.md` 592 dòng, và có thể `master_plan/phase_1_system_design_banh_cuon_ba_thanh.md` 375 dòng) |
+
+**Vấn đề — hai con số, cùng một lượt đo 2026-09-02, cả hai đã hỏng.**
+
+1. **Bộ lọc `grep` của mục *Acceptance* lọc rỗng** — đúng **F-017**, mà F-017 đã dặn đích danh:
+   *"DOC-5 thì phải sửa trước khi chạy — nó chưa được chạy lần nào."* Đo hôm nay:
+
+   | Lệnh | Kết quả |
+   |---|---:|
+   | tổng số dòng trỏ `docs/architecture.md` | **133** |
+   | bản trong prompt (ba bộ lọc `^\./…`) | **133** ← không bỏ được dòng nào |
+   | bản portable của F-017 | **48** |
+
+   Nó hỏng theo chiều nguy hiểm nhất, y như ở DOC-3: **luôn có kết quả, không bao giờ báo lỗi**.
+   Phiên chạy DOC-5 sẽ thấy lệnh *"chứng minh đã xong"* trả về hàng trăm dòng `work/**` mà đề bài
+   đã nói là **không phải việc phải làm**, rồi hoặc kết luận mình thất bại, hoặc đi sửa `work/**`.
+
+2. **Con số `99` sai cả hai chiều.** Prompt viết *"99 dòng trong repo trỏ `docs/architecture.md`"*
+   (Context), *"~99 pointer"* (Scope) và *"Đếm lại 99 pointer"* (Deliverables 2). Hôm nay tổng là
+   **133**, phần sau bộ lọc portable là **48**. Đây là lần kiểm thứ tư của **F-018**, và là mục
+   `DOC-5 (cùng lượt đo, chưa kiểm lại)` mà F-018 để mở.
+
+**Acceptance** *(viết trước khi sửa — CLAUDE.md §3)*
+
+1. Câu `grep` trong mục *Acceptance* của prompt 15 **lọc được thật trên máy này**: chạy nó ra
+   **48**, nhỏ hơn hẳn tổng **133**. Dán cả hai số kèm ngày đo vào chính prompt (F-017: *"lệnh
+   nghiệm thu phải được chạy một lần lúc viết prompt, và dán kết quả vào chính prompt làm mốc"*).
+2. Không còn chỗ nào trong prompt 15 viết `99`. Con số mới đi kèm **ngày đo** và **lời mời tìm
+   chỗ thứ N+1**, không viết *"đúng N"* (F-018 mục *Bài học chung*).
+3. **48 không được viết thành "48 dòng phải chuyển".** Ba lần trước tổng đúng mà **chỗ cắt sai**,
+   vì chỗ cắt ra từ **đọc thì của câu**, không từ đếm (F-015, F-018). Prompt phải nói rõ đây là số
+   **phải đọc từng dòng**, và nêu đích danh vùng chắc chắn **ở lại**.
+4. **Khối ⛔ đầu file còn nguyên, cả ba điều kiện mở khoá không bị nới một chữ.** Lượt này vá cổng,
+   không mở cổng.
+5. Prompt 15 trỏ tới **F-017, F-018, F-019** để phiên chạy DOC-5 đọc trước — F-019 vì dòng `Done`
+   của DOC-3b đã dự báo *"DOC-5 sẽ gặp lại y hệt"*.
+6. `F-017` và `F-018` trong `work/findings.md` ghi rằng DOC-5 **đã được kiểm lại**, hết là mục treo.
+7. `./scripts/gate.sh` xanh.
+
+**Ngoài phạm vi.** Mọi thứ thuộc chính DOC-5: không chuyển một pointer nào, không dựng
+`docs/product/1-system-design/`, không viết ADR, không đụng `docs/decisions.md`.
+
+[↑ đầu file](#top)
 
 ### DOC-3b — Hai prompt BA còn sẽ chạy đang khai báo scope trỏ vào BẢN LƯU
 

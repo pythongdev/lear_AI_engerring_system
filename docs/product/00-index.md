@@ -12,13 +12,13 @@ Hành vi nghiệp vụ của sản phẩm, cắt theo **pha** ở tầng ngoài 
 | Pha | Thư mục | Tình trạng |
 |---|---|---|
 | 0 — BA (nghiệp vụ) | `0-ba/` | **đang mở** — xem bảng dưới |
-| 1 — System design | `1-system-design/` | **chưa mở** |
+| 1 — System design | [`1-system-design/`](1-system-design/architecture.md) | **đang mở** — xem bảng dưới |
 | 2 — Database | `2-db/` | **chưa mở** |
 | 3 — Backend | `3-be/` | **chưa mở** |
 | 4 — Frontend | `4-fe/` | **chưa mở** |
 | 5 — Deploy | `5-deploy/` | **chưa mở** |
 
-Thư mục của pha 1–5 **chưa tồn tại** và cố ý chưa tồn tại: nó ra đời cùng dòng nội dung đầu tiên
+Thư mục của pha **2–5** chưa tồn tại và cố ý chưa tồn tại: nó ra đời cùng dòng nội dung đầu tiên
 của pha ấy, không sớm hơn. Một file "chưa có gì" là tài liệu nghi lễ (`CLAUDE.md` §3.8), và một
 thư mục rỗng không gỡ được dòng nào cho ai.
 
@@ -42,6 +42,19 @@ thư mục rỗng không gỡ được dòng nào cho ai.
 | Mục | File |
 |---|---|
 | §1.6 Ranh giới của mảng admin | [01-ranh-gioi.md](0-ba/admin/01-ranh-gioi.md) |
+
+## Pha 1 — System design
+
+| Nội dung | File |
+|---|---|
+| §1–§14 — cấu trúc hệ thống, ba mặt, quyền, tiền, nợ, mảng admin | [1-system-design/architecture.md](1-system-design/architecture.md) |
+
+Đây là **đặc tả, không phải mã**: nó nói *cái gì phải đúng* và *ai được ghi cái gì*, không nói tên
+hàm, tên file hay thư viện. **Số mục §1–§14 không đánh lại** — `docs/decisions.md` ADR-012 (mục
+*Nợ* = §12) và ADR-013 (mục *admin* = §14) gọi tên mục bằng số ấy.
+
+`master_plan/phase_1_system_design_banh_cuon_ba_thanh.md` là **bản nháp pha 1 và không sở hữu gì**;
+nó ở lại `master_plan/` (ADR-014, khối *SỬA ĐỔI 2026-09-03*). Đừng đọc nó như một owner.
 
 **Câu hỏi chưa có lời giải** — [99-unknowns.md](99-unknowns.md), dùng chung cho mọi pha.
 

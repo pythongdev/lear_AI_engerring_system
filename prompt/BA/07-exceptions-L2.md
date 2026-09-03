@@ -28,7 +28,7 @@
 Không được sửa:
 - §1–§5, §7–§8 của `docs/product/0-ba/ban-hang/`
 - `quality/invariants.md` (BA-08 chỉ mô tả cách xử lý, không thêm bất biến mới)
-- `docs/architecture.md`
+- `docs/product/1-system-design/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text

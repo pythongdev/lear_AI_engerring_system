@@ -192,7 +192,7 @@ việc mở rộng phải **nói ra thành lời** thay vì lặng lẽ chui và
   giao diện, đóng gói và tích hợp liên tục, cấu trúc mô-đun, nền tảng lập trình — kế hoạch gốc §9
   xếp cả tám vào *"chưa cần chi tiết ở BA phase"*, và §13 cảnh báo đúng cái rủi ro đi sớm vào
   kỹ thuật. Không dòng nào trong số đó là một **năng lực** của MVP; chúng là cách làm ra năng lực.
-  Chỗ của chúng là pha System Design, `docs/architecture.md`.
+  Chỗ của chúng là pha System Design, `docs/product/1-system-design/architecture.md`.
 - **Thứ tự làm.** §7 nói *cái gì trong MVP*, không nói *làm cái nào trước*. Thứ tự nằm ở
   `work/backlog.md`.
 - **Ngày tháng.** Không mục nào ở đây hứa một mốc thời gian. MVP là một **danh sách**, không phải

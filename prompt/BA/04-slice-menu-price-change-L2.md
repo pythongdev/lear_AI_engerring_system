@@ -28,7 +28,7 @@ nguyên tên món và giá tại thời điểm đặt, kể cả khi món bị 
 
 Không được sửa:
 - §3.1, §3.2, §4–§8 của `docs/product/0-ba/ban-hang/`
-- `docs/decisions.md`, `docs/architecture.md`
+- `docs/decisions.md`, `docs/product/1-system-design/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text

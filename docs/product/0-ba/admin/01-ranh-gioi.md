@@ -22,7 +22,7 @@ mảng là một lần đọc nhầm mảng kia.
 
 Tới 2026-09-01, §1.4 còn một dòng cuối trong danh sách *KHÔNG chịu trách nhiệm*: *"Không quản lý
 nguyên liệu, tồn kho, chấm công hay kế toán"*. Lời chốt **lật ngược đúng câu ấy**, nên dòng đó bị
-**xoá**, không phải chuyển chỗ. `docs/architecture.md` §14 giữ mặt kiến trúc của cùng lời chốt, và
+**xoá**, không phải chuyển chỗ. `docs/product/1-system-design/architecture.md` §14 giữ mặt kiến trúc của cùng lời chốt, và
 `master_plan/shop-facts.md` §8 là nhà thật của dữ kiện ba mảng này.
 
 **Mở ranh giới chưa phải là có luật.** Ba mảng nay **được phép** có mặt, và hôm nay chỉ có thế:

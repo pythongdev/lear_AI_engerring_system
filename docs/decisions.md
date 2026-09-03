@@ -719,7 +719,7 @@ Hệ quả thứ ba, rút ra từ §6.13: **quyền gắn chỗ đứng, không 
 luật ấy. Chủ quán đứng quầy thì có quyền của trạm `quay` **cộng thêm** quyền quản trị; chủ quán rời
 quầy thì mất vế thứ nhất.
 
-Đặc tả đầy đủ ở `docs/architecture.md`. ADR này **không** chốt tên bảng, tên cột hay endpoint.
+Đặc tả đầy đủ ở `docs/product/1-system-design/architecture.md`. ADR này **không** chốt tên bảng, tên cột hay endpoint.
 
 **Why:**
 Chủ quán chốt ngày **2026-08-31** (`master_plan/shop-facts.md` §5.4): *"bỏ qua bước này, POS sẽ tự
@@ -748,18 +748,18 @@ này* — và câu thứ hai đổi nhiều lần trong một buổi sáng.
   `master_plan/shop-facts.md` §1, đừng chép về đây).
 - *Gán quyền huỷ theo `role=quay`.* Rẻ nhất và sai luật: chủ quán có `role=owner` sẽ huỷ được từ
   bất kỳ đâu, đúng thứ §6.13 cấm — *"chức vụ không mở thêm cửa nào"*.
-- *Chờ BA-12 xong rồi mới viết `docs/architecture.md`.* Loại vì chủ repo yêu cầu mặt admin ngay
+- *Chờ BA-12 xong rồi mới viết `docs/product/1-system-design/architecture.md`.* Loại vì chủ repo yêu cầu mặt admin ngay
   (2026-08-31), và phần lớn đặc tả **derive được** từ dữ kiện đã chốt. Chỗ nào chưa chốt thì tài
   liệu nêu đích danh là đang treo (§11 của nó) thay vì tự quyết.
 
 **Rủi ro đã chấp nhận:**
-- **`docs/architecture.md` viết trước khi `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4 (BA-12) tồn tại.** Nếu BA-12 mô
+- **`docs/product/1-system-design/architecture.md` viết trước khi `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4 (BA-12) tồn tại.** Nếu BA-12 mô
   tả trục sản xuất khác đi, tài liệu kiến trúc phải sửa theo — nghiệp vụ vẫn là tầng trên. Đã hạ
   giá bằng cách không chốt lược đồ dữ liệu: §8 của nó chỉ **kể tên chỗ thiếu**, không đặt tên bảng.
 - **"Chỉ POS ghi" dồn việc vào một người.** Người đứng quầy vừa duyệt, vừa thu tiền, vừa cập nhật
   đã phục vụ. Đó là lựa chọn của chủ quán, và nó đúng với chỗ đứng: quầy là nơi nhìn thấy cả bàn
   lẫn bếp. Rủi ro thật là lúc đông khách; chưa có dữ liệu thật để nói nó nặng tới đâu.
-- **Khái niệm "đang trực trạm nào" chưa có trong 16 bảng.** Ghi ở `docs/architecture.md` §8 làm
+- **Khái niệm "đang trực trạm nào" chưa có trong 16 bảng.** Ghi ở `docs/product/1-system-design/architecture.md` §8 làm
   chỗ thiếu đã biết, không tự thiết kế quanh nó.
 - **Ba câu còn mở (U-006, U-012, S-4) chạm thẳng vào mặt admin.** Tài liệu nêu đích danh và viết
   phần liên quan theo phương án hẹp nhất.
@@ -769,13 +769,13 @@ này* — và câu thứ hai đổi nhiều lần trong một buổi sáng.
   *Cập nhật 2026-09-01 (T-036): **S-4 đóng nốt** — bảng quầy có **bốn** con số và **người đứng quầy
   bấm** "đã làm xong" (`master_plan/shop-facts.md` §5.4). Mặt admin/POS vì thế gánh thêm một thao
   tác, đúng chiều rủi ro "dồn việc vào quầy" ghi ở gạch đầu dòng đầu mục này. Chỗ hẹp còn lại là
-  **U-017** (bấm theo từng cái hay cả mẻ); `docs/architecture.md` §3 phải viết bốn con số kèm câu
+  **U-017** (bấm theo từng cái hay cả mẻ); `docs/product/1-system-design/architecture.md` §3 phải viết bốn con số kèm câu
   "cách đếm chưa chốt", không được quay lại phương án ba con số.*
   *Cập nhật 2026-09-01 (T-037): **U-017 đóng — theo MẺ.** §3 bỏ được câu "cách đếm chưa chốt": bốn
   con số, con số thứ tư nhảy theo bậc mẻ. Vẫn không được quay lại phương án ba con số.*
 
 **Applies to:**
-`docs/architecture.md` (toàn bộ) · `master_plan/shop-facts.md` §5.4, §6.13, §6.14, §6.15 ·
+`docs/product/1-system-design/architecture.md` (toàn bộ) · `master_plan/shop-facts.md` §5.4, §6.13, §6.14, §6.15 ·
 `master_plan/prompt-fullstack.md` §3.5, §3.6, §3.7 (T-031 đã sửa §3.6 và §3.7 ngày 2026-08-31;
 §3.5 không phải sửa — 16 bảng không chốt trạng thái nào của `order_tasks`) ·
 `work/findings.md` F-013 · `work/backlog.md` T-029, T-031, BA-12 · ADR-009 (hai trục) ·
@@ -792,12 +792,12 @@ trên nền lời chủ quán *"khách không trả tiền cho nợ, POS đóng 
 **Bối cảnh.**
 Chủ quán chốt 2026-08-31 là **cho nợ**: khách rời quán chưa trả thì quầy vẫn đóng phiên, và lúc
 đóng phải ghi **ai nợ** và **nợ bao nhiêu**. Câu ấy nói đủ về *lúc sinh ra* của khoản nợ, và
-không nói gì về phần đời sau của nó. `docs/architecture.md` khi viết xong (T-029) rải nợ ở sáu
+không nói gì về phần đời sau của nó. `docs/product/1-system-design/architecture.md` khi viết xong (T-029) rải nợ ở sáu
 chỗ — §1.1, §4, §6.4, §7, §8, §11 — nhưng không có mục nào của riêng nó.
 
 **Quyết định.**
 Nợ được đối xử như một **phần riêng của hệ thống**, có mục riêng ở **FE**, **BE** và **DB**, đặc
-tả ở `docs/architecture.md` §12. Không thêm hai ô *"ai nợ / bao nhiêu"* vào phiên bàn rồi coi là
+tả ở `docs/product/1-system-design/architecture.md` §12. Không thêm hai ô *"ai nợ / bao nhiêu"* vào phiên bàn rồi coi là
 xong.
 
 **Vì sao.**
@@ -809,7 +809,7 @@ xong.
 - **Đối soát ngưỡng 0đ đòi hai con số.** `shop-facts.md` §6.10 bắt *lệch một đồng cũng phải tìm ra
   lý do*; muốn giải thích chỗ lệch thì phải có **nợ ghi trong ngày** và **nợ thu trong ngày** —
   hai con số chỉ tồn tại nếu nợ là một thứ đứng riêng.
-- **Nợ là đường tiền thứ tư** (`docs/architecture.md` §7), cùng họ với duyệt · huỷ · hoàn. Ba việc
+- **Nợ là đường tiền thứ tư** (`docs/product/1-system-design/architecture.md` §7), cùng họ với duyệt · huỷ · hoàn. Ba việc
   kia đều có vết và có người đứng tên; nợ không có lý do gì được kém hơn.
 
 **Phương án đã loại.**
@@ -822,7 +822,7 @@ xong.
   chốt kiểu nào cũng dựng lại được báo cáo mà không sửa dữ liệu quá khứ.
 
 **Hệ quả.**
-- `docs/architecture.md` có **§12** mới; mục *Đọc gì tiếp* dời thành §13.
+- `docs/product/1-system-design/architecture.md` có **§12** mới; mục *Đọc gì tiếp* dời thành §13.
 - §12.3 **cố ý vượt ranh giới §8** (*không đặt tên bảng, tên cột*) cho riêng phần nợ, theo yêu cầu
   thẳng của chủ repo. Nó là **đề xuất gửi sang pha 2**, không phải lược đồ đã chốt.
 - Một chỗ **suy ra, chưa phải lời chủ quán**: người bấm *thu nợ* là người đang trực `quay`, suy từ
@@ -832,10 +832,10 @@ xong.
 *Cập nhật 2026-08-31 (T-033) — sửa tiến, không viết lại hai dòng trên (ADR-008):* chủ quán đã đóng
 nốt **U-012** trong cùng ngày. **Ai ghi nhận: POS** — trùng đúng chỗ suy ra ở dòng trước, nên §12.2
 không phải sửa và chỗ ấy hết là suy luận. **Doanh thu tính ngày GHI NỢ**, không phải ngày thu tiền;
-hệ quả là đối soát lệch ở **hai** ngày ngược chiều nhau và `docs/architecture.md` §6.4 nay mang
+hệ quả là đối soát lệch ở **hai** ngày ngược chiều nhau và `docs/product/1-system-design/architecture.md` §6.4 nay mang
 công thức đủ bốn dòng. Chi tiết ở `master_plan/shop-facts.md` §6.14.
 
-**Ảnh hưởng tới:** `docs/architecture.md` §8, §11, §12, §13 · `docs/product/` §3.1.6 và
+**Ảnh hưởng tới:** `docs/product/1-system-design/architecture.md` §8, §11, §12, §13 · `docs/product/` §3.1.6 và
 *Unknowns* U-012 · `quality/invariants.md` I-005 · `master_plan/shop-facts.md` §6.14 (chỉ đọc).
 
 
@@ -851,7 +851,7 @@ Ba mục ấy, tính tới hôm nay:
 | Tài liệu | Mục admin | Mục ấy giữ gì |
 |---|---|---|
 | `docs/product/0-ba/admin/01-ranh-gioi.md` | **§1.6** | ranh giới nghiệp vụ của ba mảng |
-| `docs/architecture.md` | **§14** | mặt kiến trúc, và bốn chỗ chạm với mảng bán hàng |
+| `docs/product/1-system-design/architecture.md` | **§14** | mặt kiến trúc, và bốn chỗ chạm với mảng bán hàng |
 | `master_plan/shop-facts.md` | **§8** | dữ kiện quán của ba mảng |
 
 Ba luật đi kèm:
@@ -859,7 +859,7 @@ Ba luật đi kèm:
 - **Nhật ký không tách.** `master_plan/shop-facts.md` §7.1 vẫn là nhật ký chốt **đầy đủ** của cả
   hai mảng; dòng chốt admin ở lại đó, chỉ có cột *Ghi ở* trỏ về §8.
 - **Đánh số tiếp, không chèn vào giữa.** Mục admin mới lấy số cuối của tài liệu
-  (`docs/architecture.md` §14 đứng sau §13 vì `prompt/BA/08-mvp-scope-L1.md` đang trỏ §13).
+  (`docs/product/1-system-design/architecture.md` §14 đứng sau §13 vì `prompt/BA/08-mvp-scope-L1.md` đang trỏ §13).
 - **`master_plan/shop-facts.md` §8 không được trỏ ra file nào** — ADR-001 giữ nguyên: tài liệu đó
   là điểm cuối, không có liên kết.
 
@@ -882,7 +882,7 @@ một lượt, tách sau tốn một lượt cho mỗi mục.
   thấy; người đọc vẫn phải quét cả mục mới biết đoạn nào của mảng nào — đúng cái đang hỏng.
 - *Tách hẳn thành một file riêng dưới `docs/` chỉ dành cho mảng admin.* Vi phạm CLAUDE.md §2 (một sự thật một owner): ranh
   giới hệ thống đã có owner là `docs/product/0-ba/ban-hang/01-actors-pham-vi.md` §1.4, kiến trúc đã có owner là
-  `docs/architecture.md`. Thêm file thứ ba là tạo owner thứ hai cho cùng loại sự thật, và
+  `docs/product/1-system-design/architecture.md`. Thêm file thứ ba là tạo owner thứ hai cho cùng loại sự thật, và
   CLAUDE.md §3.8 cấm dựng tài liệu không ai yêu cầu.
 - *Chờ tới khi có luật nghiệp vụ thật rồi mới tách.* Lúc ấy đã có nhiều mục phải tách, và mỗi lần
   tách muộn là một lần phải đọc lại xem câu nào thuộc mảng nào — thứ hôm nay còn biết chắc.
@@ -890,7 +890,7 @@ một lượt, tách sau tốn một lượt cho mỗi mục.
   đã chốt hướng "sửa tiến, không viết lại".
 
 **Applies to:**
-`docs/product/0-ba/` §1.4 và **§1.6** · `docs/architecture.md` §10, §13 và **§14** ·
+`docs/product/0-ba/` §1.4 và **§1.6** · `docs/product/1-system-design/architecture.md` §10, §13 và **§14** ·
 `master_plan/shop-facts.md` §7.1, §7.3 và **§8** · `work/admin-questions.md` §4 · mọi task
 **ADM-01…ADM-52** sẽ mở sau này.
 
@@ -947,7 +947,7 @@ docs/product/
 **Bốn file kỹ thuật giữ *yêu cầu sản phẩm* cho tầng đó, KHÔNG giữ thiết kế.** `db/`, `be/`,
 `fe/`, `system-design/` nói *cái gì bắt buộc phải đúng ở tầng ấy* — ví dụ *"mọi thao tác chạm tiền
 phải để lại vết đủ để đối soát truy ngược"*. Tên bảng, tên cột, khoá ngoại, API, route vẫn thuộc
-`docs/architecture.md` và `master_plan/prompt-fullstack.md` §3.4–§3.7 (CLAUDE.md §2 không đổi một
+`docs/product/1-system-design/architecture.md` và `master_plan/prompt-fullstack.md` §3.4–§3.7 (CLAUDE.md §2 không đổi một
 dòng nào). Không có luật này thì folder mới thành owner thứ hai của kiến trúc — đúng F-001.
 
 **`docs/product.md` ở lại làm LƯU TRỮ, và không gì được trỏ về nó** (chủ repo, 2026-09-02:
@@ -988,7 +988,7 @@ không ai tách lại được nữa.
 **Applies to:**
 `docs/product.md` → `docs/product/` · `scripts/brief.sh` (4 chỗ đọc thẳng đường dẫn, trong đó có
 parser cấu trúc mục *Unknowns* — ADR-007) và `scripts/brief.test.sh` · `CLAUDE.md` §2 và §4 ·
-`quality/invariants.md` (27 chỗ) · `work/backlog.md` (99 chỗ) · `docs/architecture.md` (14) ·
+`quality/invariants.md` (27 chỗ) · `work/backlog.md` (99 chỗ) · `docs/product/1-system-design/architecture.md` (14) ·
 `docs/decisions.md` (17) · toàn bộ `prompt/BA/` và `prompt/maintenance/`.
 
 **Thi hành — chia thành bốn lượt, không làm trong một lượt:**
@@ -1013,7 +1013,7 @@ Ba lý do, xếp theo sức nặng:
 1. **Repo đã cắt theo pha từ đầu, chỉ là cắt bằng file chứ chưa bằng folder.** Bốn owner hiện tại
    xếp đúng theo pha, đọc banner đầu mỗi file là thấy: `master_plan/shop-facts.md` (dữ kiện thô,
    trước mọi pha) → `docs/product.md` (*"mỗi mục do một task BA chốt"* — pha 0) →
-   `docs/architecture.md` (*"đặc tả, không phải mã… không nói tên hàm"* — pha 1) →
+   `docs/product/1-system-design/architecture.md` (*"đặc tả, không phải mã… không nói tên hàm"* — pha 1) →
    `master_plan/prompt-fullstack.md` (kế hoạch pha 2–5). Danh sách **sáu pha** là luật đã có ở
    `master_plan/prompt-fullstack.md` §7, và nó **đã kèm sẵn luật chống chép** mà trục pha bắt buộc
    phải có: *"pha 0–1 không nhắc tên bảng; pha 2 không nhắc endpoint; pha 3 không nhắc component;
@@ -1063,7 +1063,7 @@ Gate 1b vẫn không gác được luật "không trỏ về bản lưu", mắt 
 | 2 | **L2** | `scripts/brief.sh` đọc file unknowns mới; sửa `scripts/brief.test.sh` | `prompt/maintenance/12-brief-unknowns-file-L2.md` |
 | 3 | **L3** | Chuyển pointer sang file mới, theo từng nhóm file | `prompt/maintenance/13-pointer-migration-L3.md` |
 | 4 | L1 | `CLAUDE.md` §2 và §4 trỏ owner mới | `prompt/maintenance/14-claude-md-owner-L1.md` |
-| 5 | **L3 · CHƯA CHỐT** | `docs/architecture.md` dọn vào `1-system-design/` | `prompt/maintenance/15-architecture-into-system-design-L3.md` |
+| 5 | **L3 · ĐÃ CHỐT VÀ ĐÃ XONG 2026-09-03** | `docs/architecture.md` dọn vào `1-system-design/` | `prompt/maintenance/15-architecture-into-system-design-L3.md` |
 
 Lượt 5 **chưa được phép chạy**: chủ repo mới chốt trục, chưa chốt việc `docs/architecture.md` có
 dọn vào folder hay không. Prompt viết sẵn để lúc chốt là chạy được ngay; ai chạy nó mà không có
@@ -1071,6 +1071,109 @@ một câu chốt mới của chủ repo là làm sai ADR này.
 
 **Số pointer phải đo lại, đừng tin con số 464 ở trên.** Đo 2026-09-02 sau BA-10: **491 dòng trong
 35 file**, và nó còn tăng mỗi ngày chuỗi BA còn chạy. Lượt 3 phải đếm lại ngay trước khi bắt đầu.
+
+**SỬA ĐỔI 2026-09-03 — chủ repo CHỐT ĐỒNG Ý dọn `docs/architecture.md` vào pha 1 (lượt 5 xong)**
+
+Hai đoạn ngay trên nói lượt 5 *"chưa được phép chạy"* và bảng ghi *"CHƯA CHỐT"*. **Hôm nay điều
+kiện ấy đã đủ.** Chủ repo được hỏi thẳng 2026-09-03 và trả lời **đồng ý**. Đây là câu chốt mà ba
+điều kiện mở khoá của `prompt/maintenance/15-architecture-into-system-design-L3.md` đòi, và nó
+được ghi ở đây đúng như điều kiện 1 yêu cầu.
+
+**Decision:**
+`docs/architecture.md` → **`docs/product/1-system-design/architecture.md`**, chuyển bằng `git mv`
+để lịch sử file đi theo. Giữ nguyên **tên file** và nguyên **số mục §1–§14**.
+
+- **Giữ tên file** vì nó biến cả lượt chuyển thành một phép đổi *tiền tố đường dẫn* thuần tuý —
+  `git diff` chứng minh được bằng mắt, và mọi câu `… §N` quanh pointer vẫn đọc đúng.
+- **Không thêm tiền tố số** (`01-architecture.md`) như `0-ba/ban-hang/`. Ở đó `01-`…`08-` khớp
+  §1–§8 vì mỗi file giữ **một** mục; file này giữ **cả** §1–§14, nên một con số đằng trước sẽ nói dối.
+- **Giữ số mục** vì ADR-012 (*Nợ* = §12) và ADR-013 (*admin* = §14) gọi tên mục bằng số; đánh số
+  lại là làm sai hai ADR mà `grep` không bắt được.
+
+**Ba điều kiện mở khoá — dẫn chứng bằng dòng thật, đo 2026-09-03:**
+
+| ĐK | Bằng chứng |
+|:--:|---|
+| 1 — câu chốt của chủ repo | chính khối này; chủ repo trả lời **đồng ý** 2026-09-03 |
+| 2 — bước 1–4 xong và đã commit | `bc5033c` (DOC-1) · `83fe8ff` (DOC-2) · `dc53768`/`fd64862`/`1a56b8e` (DOC-3a/b/c) · `ddec2f0` (DOC-4) |
+| 3 — pha 1 có sản phẩm thật | file 592 dòng dọn vào **chính là** dòng nội dung đầu tiên của pha 1, đúng luật *"tạo thư mục của pha cùng lúc với dòng nội dung đầu tiên"* (`docs/product/00-index.md`, mục *Luật ghi*). Thư mục sinh ra có ruột, không phải nhà chờ rỗng mà bản sửa đổi trước đã cấm |
+
+**Chuyển trong MỘT commit, không chia năm lượt như bảng thi hành dự tính — chủ repo chọn
+2026-09-03.** Lý do là một điểm mà bảng thi hành không lường: lượt 3 dễ chia vì bản lưu **ở lại**
+nên pointer cũ vẫn mở được và Gate 1b xanh suốt. Lượt này file **rời khỏi đường cũ**, nên mọi
+pointer chưa chuyển đều chết ngay khi `git mv` chạy. Ba phương án và vì sao chọn phương án này:
+
+- *Chia năm task con + `check-links.ignore` tạm.* Đúng chữ *"một task con = một commit"*, nhưng
+  **hỏng đúng câu Acceptance quan trọng nhất của prompt — "mỗi task con revert được độc lập"**:
+  lùi một task con giữa chừng thì pointer cũ quay lại trong khi dòng ignore đã gỡ ⇒ gate đỏ.
+- *Để một file trỏ ở đường cũ* (kiểu `master_plan/00-scope.md`, ADR-001). Chạy được, nhưng dựng
+  đúng thứ chủ repo đã bác cho bản lưu: *"tuyệt đối không trỏ về"* — hai cửa cùng dẫn tới một sự
+  thật, và cửa cũ không bao giờ chết.
+- ✅ **Một commit.** Gate xanh trước và sau, không lúc nào đỏ, không stub, không ignore tạm. Lùi là
+  `git revert` đúng một commit. Ràng buộc *"đừng gộp"* viết cho lượt 3 với **464 pointer / 33 file**;
+  ở đây là **40 dòng / 20 file** và là đổi tiền tố thuần tuý.
+
+**Số đo 2026-09-03 — 48 dòng nêu `docs/architecture.md`, chia 40 chuyển / 8 ở lại:**
+
+| Nhóm | Dòng | Xử lý |
+|---|---:|---|
+| `docs/decisions.md` | 22 | **20 chuyển**, 2 ở lại (xem dưới) |
+| `prompt/BA/**` (11 file) | 11 | chuyển — đều là dòng khai nguồn đọc |
+| `docs/product/0-ba/**` (5 file) | 6 | chuyển |
+| `docs/product.md` (bản lưu) | 6 | **ở lại** |
+| `CLAUDE.md` §2 · `scripts/brief.sh` · `docs/prompt-guideline.md` | 3 | chuyển |
+
+**Tám dòng ở lại, và vì sao — đây là chỗ `grep` không quyết được, phải đọc thì của câu** (`work/findings.md` F-015, F-018):
+
+1. **6 dòng bản lưu `docs/product.md`.** Banner của chính nó viết *"Không sửa ở đây"*; nó là ảnh
+   chụp ngày 2026-09-02. Đổi đường dẫn trong một ảnh chụp là khai rằng ảnh ấy mang một đường
+   **chưa tồn tại** vào ngày chụp — đúng lý lẽ đã dùng cho dòng 492 của `quality/invariants.md`.
+2. **Hai dòng của chính ADR này** (bảng thi hành ô *lượt 5*, và đoạn *"lượt 5 chưa được phép
+   chạy"*). Ở đó đường cũ là **chủ ngữ của câu** — nó nói *"`docs/architecture.md` dọn vào
+   `1-system-design/`"*. Đổi nó thì câu thành *"`docs/product/1-system-design/architecture.md` dọn
+   vào `1-system-design/`"*, vô nghĩa.
+
+Cả tám dòng nay được `scripts/check-links.ignore` phủ bằng **hai dòng ngoại lệ có ghi lý do**, và
+cái giá của chúng ghi ngay tại đó: dòng ngoại lệ phủ **mọi** lần đường cũ xuất hiện trong file ấy,
+nên một pointer **mới** viết nhầm về đường cũ trong hai file đó sẽ không bị Gate 1b bắt.
+
+**Chạy `grep` sau lượt này ra 12, không phải 8 — và cả 12 đều cố ý.** Tám dòng ở trên, cộng **bốn
+dòng do chính khối sửa đổi này viết ra**: nó buộc phải nhắc tên đường cũ để kể được rằng cái gì đã
+dọn đi đâu. Ghi ra để phiên sau đừng đi "sửa nốt cho sạch": một tài liệu kể lại một lượt chuyển
+**luôn** làm số đếm lớn hơn số pointer còn sót, và chênh lệch ấy là bằng chứng chứ không phải nợ
+(`work/findings.md` F-018 — đếm rộng hơn phạm vi thì con số đo hoạt động viết lách, không đo việc
+còn lại). Thấy dòng thứ 13 thì **đọc thì của câu trước khi sửa**.
+
+**`CLAUDE.md` §2 trỏ FILE, `scripts/brief.sh` in THƯ MỤC — cố ý, không phải lệch.** §2 trỏ thẳng
+`docs/product/1-system-design/architecture.md` để **Gate 1b còn chấm được**: một đường kết thúc
+bằng `/` bị `scripts/check-links.sh` bỏ qua hẳn (`work/findings.md` F-018, mục *Giá phải trả*).
+Brief in thư mục vì mục *OWNER FILES* ở đó đo **ngày đổi gần nhất của cả pha**, và pha 1 sẽ có
+thêm file. Hai bên cùng chỉ về một owner, chỉ khác độ mịn.
+
+**`master_plan/phase_1_system_design_banh_cuon_ba_thanh.md` Ở LẠI `master_plan/` và KHÔNG sở hữu
+gì.** Prompt bắt quyết dứt điểm chuyện này trong chính lượt này, vì để lửng là tạo owner thứ hai
+cho pha 1 (`work/findings.md` F-001). Đã đọc và quyết:
+
+- File ấy chứa **I1–I8**, mà owner của *Business invariants* theo `CLAUDE.md` §2 là
+  `quality/invariants.md` — nơi đang giữ **I-001…I-018**. I1–I8 là **bản đầu, đã bị thay**:
+  I1≈I-001, I2≈I-002, I3≈I-013, I4≈I-004, I7≈I-009, I8≈I-003. Dọn nó vào
+  `docs/product/1-system-design/` là đặt một bản sao **cũ hơn** nằm cạnh owner thật — đúng F-001,
+  và là kết cục tệ nhất trong mọi lựa chọn.
+- Nó cũng chứa **SD-01…SD-07** ở dạng nháp; phần đã chín của cùng nội dung nằm trong
+  `docs/product/1-system-design/architecture.md`.
+- Nó ở lại đúng chỗ của nó: `CLAUDE.md` §2 nói *"Domain material for the current project lives in
+  `master_plan/`"*. Nó là **đầu vào thô của pha 1**, không phải đầu ra.
+- Banner nói rõ điều đó được thêm vào đầu file trong cùng đợt này, và
+  `docs/product/00-index.md` mục *Pha 1* nhắc lại một câu để không ai đọc nhầm nó thành owner.
+
+**Phương án lùi:** cả lượt là **một commit**, nên lùi là `git revert <mã commit của DOC-5>` — nó
+trả `git mv` về chỗ cũ, trả 40 pointer về đường cũ, và gỡ hai dòng `check-links.ignore` cùng lúc,
+nên gate xanh ngay sau khi revert mà không phải dọn tay. Đây chính là thứ mà phương án
+*"chia năm task con"* không cho.
+
+**Rủi ro còn lại, ghi ra để phiên sau khỏi dò:** Gate 1b **không** chấm đường dẫn kết thúc bằng
+`/`, nên dòng `docs/product/1-system-design/` trong `scripts/brief.sh` và mọi câu trỏ thư mục là
+vùng mù — bằng chứng duy nhất cho chúng là **chạy thử**, đã chạy trong lượt này.
 
 ---
 
@@ -1688,7 +1791,7 @@ quanh — không phải *"chưa biết bao giờ"* mà là *"sau khi luồng bá
   một task sẽ phải viết lại; điều kiện vào cửa §7.2 **không đổi** vì lời chốt này.
 
 **Applies to:**
-`docs/product/0-ba/` §1.6, §7.6 · `docs/architecture.md` §14 · `master_plan/shop-facts.md` §8 ·
+`docs/product/0-ba/` §1.6, §7.6 · `docs/product/1-system-design/architecture.md` §14 · `master_plan/shop-facts.md` §8 ·
 `work/admin-questions.md` §2 · ADR-013.
 
 ---

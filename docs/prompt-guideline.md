@@ -47,7 +47,7 @@ Trả lời 5 câu. Chỉ cần **một** câu "có" ở nhóm dưới là phả
 Bối cảnh tối thiểu để AI không phải đoán, và không phải đọc cả repo.
 
 Nêu: file/module liên quan, tài liệu nguồn sự thật liên quan (`docs/product/`,
-`docs/architecture.md`, `quality/invariants.md`), và trạng thái hiện tại.
+`docs/product/1-system-design/architecture.md`, `quality/invariants.md`), và trạng thái hiện tại.
 
 - Tốt: "Giá đơn hiện được tính ở `order/pricing.go`. Quy tắc phụ thu nằm ở `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` mục 4."
 - Tệ: "Đọc codebase rồi tự hiểu."

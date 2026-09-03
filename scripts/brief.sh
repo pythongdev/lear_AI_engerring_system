@@ -204,7 +204,7 @@ section "OWNER FILES — last changed (CLAUDE.md §2)"
 # head. Dates come from git, so they cannot go stale the way a hand-typed
 # "last updated" line does.
 for f in \
-  docs/product/ docs/architecture.md docs/decisions.md \
+  docs/product/ docs/product/1-system-design/ docs/decisions.md \
   quality/invariants.md work/backlog.md work/findings.md \
   master_plan/shop-facts.md CLAUDE.md
 do

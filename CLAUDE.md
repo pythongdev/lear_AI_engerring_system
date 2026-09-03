@@ -28,7 +28,7 @@ is a bug to fix now.
 |---|---|
 | Business rules, product behavior | `docs/product/` |
 | Open business questions (unknowns) | `docs/product/99-unknowns.md` |
-| Architecture | `docs/architecture.md` |
+| Architecture | `docs/product/1-system-design/architecture.md` |
 | Architecture decisions (ADR) | `docs/decisions.md` |
 | Business invariants | `quality/invariants.md` |
 | Tasks | `work/backlog.md` |
@@ -63,8 +63,9 @@ is where Gate 1b does not check links (§5).
 
 ```text
 CLAUDE.md          this file — read first
-docs/              product/ → 00-index.md, 0-ba/…, 99-unknowns.md (behavior,
-                   by phase); architecture, decisions, prompt guideline
+docs/              product/ → 00-index.md, 0-ba/… (behavior), 1-system-design/
+                   (architecture), 99-unknowns.md — all by phase;
+                   decisions, prompt guideline
 work/              backlog.md, scope.txt, findings.md;
                    proposals/ — not adopted, owns nothing
 quality/           invariants.md, review-gate.md
