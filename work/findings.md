@@ -1317,9 +1317,19 @@ dòng lệnh và `12-production-control-L2.md` có 4, không phải 5+5. Tổng 
 *Acceptance*), nhưng nó xác nhận: mọi con số của **cùng lượt đo 2026-09-02** đều phải đếm lại
 trước khi tin. Còn **DOC-3c** (*"9 dòng, 1 ở lại"*) và **DOC-5** chưa kiểm.
 
+**Kiểm lại ở DOC-3c, 2026-09-03 — lệch lần thứ ba, và lần này rẻ nhất.** Prompt `13c` ghi
+*"9 dòng, 1 ở lại"* (dòng *Ready* của chính backlog cũng chép lại con số ấy). Đếm thật: **9 dòng /
+10 lần xuất hiện là đúng**, chỗ sai vẫn là **chỗ cắt** — **7 chuyển, 2 ở lại**, vì dòng 167 (*"DOC-1
+và BA-11/BA-12 cùng chạm"*) kể một va chạm **đã qua**: DOC-1 xong ở `bc5033c`. Ba lần đo, ba lần
+tổng đúng và chỗ cắt sai — vì tổng ra từ `grep` còn chỗ cắt ra từ **đọc thì của câu** (F-015).
+Lần này con số không đẩy phiên chạy đi phá gì, và lý do đáng chép cho prompt sau: **prompt 13c tự
+chừa cửa**, nó gọi dòng 167 là *"đọc rồi quyết"* và bắt viết kết luận vào report, thay vì chốt cứng
+*"đúng 1 dòng ở lại"*. Đó chính là hình dạng mục *Bài học chung* ở trên đề nghị — nó đã chạy đúng.
+Còn **DOC-5** chưa kiểm.
+
 **Related task:**
 DOC-3a (đã xử lý cả hai chỗ) · DOC-3b (đã kiểm lại: 8/22 chứ không 10/20) ·
-**DOC-3c, DOC-5** (cùng lượt đo, chưa kiểm lại) ·
+DOC-3c (đã kiểm lại: 7/2 chứ không 8/1) · **DOC-5** (cùng lượt đo, chưa kiểm lại) ·
 F-003 (*"exactly N"*) · F-015 (thì của câu) · F-017 (cùng lượt đo, `grep` lọc rỗng)
 
 **Status:**
