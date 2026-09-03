@@ -1388,6 +1388,13 @@ Chỗ thứ ba là **tiêu đề H1 do DOC-1 sinh ra khi tách file** (`# §3 �
 không phải nội dung nghiệp vụ, nó là **tên file viết ra thành tiêu đề** — nên không prompt nào có
 trước lượt tách biết nó tồn tại.
 
+**Nguyên nhân gốc:**
+Câu nghiệm thu đo **một chuỗi ký tự**, trong khi thứ nó muốn chấm là **một tiêu đề cụ thể**
+(`## 3.`). Hai thứ ấy chỉ trùng nhau chừng nào cụm chữ xuất hiện đúng một lần — và lượt tách file
+phá vỡ đúng điều kiện đó. Sau lượt tách, cùng một cụm chữ nằm ở ba tầng khác hẳn nhau — H1 do cơ
+chế tách sinh ra · tiêu đề mục nghiệp vụ · câu văn — mà `grep` không phân biệt được tầng nào. Chỗ
+hỏng nằm ở **cách viết câu nghiệm thu**, không ở BA-12 và cũng không ở lượt tách.
+
 **Impact:**
 Ai chạy BA-12 sẽ làm **đúng** Acceptance 12 (đổi `## 3.`), rồi thấy câu nghiệm thu **vẫn không
 rỗng**. Hai đường ra đều xấu: hoặc kết luận mình chưa xong trong khi đã làm đúng bài, hoặc sửa
@@ -1400,10 +1407,11 @@ của một file `.md`, vùng `scripts/check-links.sh` cắt bỏ trước khi r
 
 **Bài học chung, vì nó sẽ lặp:**
 Tách một tài liệu thành nhiều file **nhân đôi mọi tiêu đề mục ở tầng trên cùng**: mục §N nay có
-`# §N — <tên>` (tiêu đề file) *và* `## N. <tên>` (tiêu đề mục cũ). Mọi câu nghiệm thu đếm **chữ
-trong tiêu đề** đều lệch một đơn vị sau lượt tách, theo hướng **khó thấy nhất** — lệnh vẫn chạy,
-vẫn ra kết quả, chỉ ra sai. ⇒ Sau một lượt tách file, **chạy thử** mọi câu nghiệm thu đếm tiêu đề,
-đừng chỉ đổi đường dẫn cho chúng.
+`# §N — <tên>` (tiêu đề file) *và* `## N. <tên>` (tiêu đề mục cũ), bên cạnh những chỗ vốn đã mang
+cùng tên — câu văn mô tả và mọi dòng trỏ chéo về mục ấy. Mọi câu nghiệm thu đếm **chữ trong tiêu
+đề** đều lệch sau lượt tách, theo hướng **khó thấy nhất** — lệnh vẫn chạy, vẫn ra kết quả, chỉ ra
+sai. ⇒ Đừng suy rằng `grep '<chữ trong tiêu đề>'` bằng với *"tiêu đề cần đổi"*; sau một lượt tách
+file, **chạy thử** mọi câu nghiệm thu đếm tiêu đề, đừng chỉ đổi đường dẫn cho chúng.
 
 **Decision / Fix:**
 - **Không sửa Acceptance 12 trong lượt này.** DOC-3b chỉ được đổi đường dẫn (Acceptance 6 của
@@ -1411,14 +1419,23 @@ vẫn ra kết quả, chỉ ra sai. ⇒ Sau một lượt tách file, **chạy t
   và prompt 13b nói thẳng: lệch thì **ghi finding, đừng lặng lẽ sửa con số cho khớp**.
 - **Ai chạy BA-12 đọc mục này trước:** đổi **ba** chỗ trong
   `docs/product/0-ba/ban-hang/03-lat-cat.md` — dòng 1 (H1), dòng 7 (`## 3.`), dòng 14 (câu văn) —
-  chứ không phải một chỗ như Acceptance 12 viết. Đo 2026-09-03; số dòng trôi được, tra lại bằng
-  chính câu `grep` trên.
-- **DOC-5 sẽ gặp đúng chuyện này** khi tách `docs/architecture.md`. Đừng dựng cổng mới
-  (CLAUDE.md §3.8) — chạy thử là đủ.
+  chứ không phải một chỗ như Acceptance 12 viết. Đo 2026-09-03, kiểm lại cùng ngày vẫn đúng ba
+  dòng ấy. **Số dòng không phải hợp đồng** — tra lại bằng chính câu `grep` trên, đừng tin ba con
+  số này.
+- **DOC-5 đã chạy xong 2026-09-03 và KHÔNG gặp chuyện này.** Kiểm lại cùng ngày: nó chuyển
+  `docs/architecture.md` bằng `git mv`, giữ nguyên tên file và giữ nguyên §1–§14 — **dọn chỗ, chứ
+  không tách file** — nên không H1 nào được sinh ra (`work/backlog.md`, dòng `Done` của DOC-5).
+  Dự báo cũ ở dòng này **sai chỗ chứ không sai luật**: nó bắn vào một *task*, trong khi thứ đẻ ra
+  tiêu đề thứ hai là **lượt tách**. Câu này vẫn chờ **lượt tách thật tiếp theo**, task nào cũng thế.
+- **Đừng dựng cổng mới** (CLAUDE.md §3.8) — chạy thử câu nghiệm thu sau một lượt tách là đủ. Chỉ
+  khi có thêm vài finding cùng loại mới bàn tới chuyện chuẩn hoá nghiệm thu theo **cấu trúc tiêu
+  đề** thay cho **đếm chữ**.
 
 **Related task:**
-DOC-3b (phát hiện) · **BA-12** (chịu hậu quả, chưa chạy) · **DOC-5** (sẽ tách file tiếp) ·
-DOC-1 (lượt tách sinh ra H1) · F-017 (câu `grep` trong prompt không ai chạy thử) ·
+DOC-3b (phát hiện) · **BA-12** (chịu hậu quả, chưa chạy) · **DOC-5** (đã xong 2026-09-03, là
+lượt CHUYỂN file nên không dính) ·
+DOC-1 (lượt tách sinh ra H1) · **T-046** (đã trỏ prompt 15 về mục này để phiên chạy DOC-5 đọc
+trước) · F-017 (câu `grep` trong prompt không ai chạy thử) ·
 F-018 (con số trong prompt biến thành mệnh lệnh)
 
 **Status:**
