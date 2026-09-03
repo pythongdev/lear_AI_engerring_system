@@ -22,7 +22,10 @@ thay hai giả định rủi ro CAO; lượt hai (T-043) đóng **U-027** — đ
 được** — và **U-030** — **không** mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên.
 
 **Ngày 2026-09-03, BA-13 mở lại đúng MỘT câu** — và nó mở vì hai mục **đã chốt** trả lời khác
-nhau, không vì ai quên hỏi. Bảy câu mở ngày 2026-09-02 đều đã đóng trong ngày (T-042, T-043,
+nhau, không vì ai quên hỏi. **Cùng ngày, T-048 mở thêm một câu thứ hai — U-032** — trong lúc viết
+kế hoạch pha 1: nó mở vì ba luật *doanh thu tính ngày nào* đã chốt đều **không** phủ ca lượt bán
+nằm trên sổ giấy qua đêm. Vậy mục này đang giữ **hai** câu tính tới cuối ngày 2026-09-03; con số ấy
+là phép đếm của người viết, không phải một quyết định — đếm lại ở danh sách dưới, đừng tin câu này. Bảy câu mở ngày 2026-09-02 đều đã đóng trong ngày (T-042, T-043,
 T-044). Chỗ chưa chắc còn lại **không** phải câu hỏi: cả năm **giả định** `docs/decisions.md` GĐ
 đã bị **thay bằng quy tắc thật** ngày 2026-09-02 nên không mục nào còn hiệu lực, và một chỗ
 **suy ra** ở `master_plan/shop-facts.md` §7.2 (**S-5**).
@@ -38,6 +41,24 @@ T-044). Chỗ chưa chắc còn lại **không** phải câu hỏi: cả năm **
   quầy bấm khống một mốc cho một suất đang ở nhà khách. Chặn phiên System Design dựng màn quầy và
   màn người đi giao. **Đừng suy hộ** (CLAUDE.md §3.5) — chỗ này chạm mốc thu tiền.
   *Mở 2026-09-03 · BA-13 · `work/findings.md` F-022 chỗ 2.*
+
+- **U-032 — một lượt bán ghi trên SỔ GIẤY hôm mất điện, hôm sau mới nhập vào máy, thì doanh thu
+  của nó tính vào ngày nào: ngày quán bán, hay ngày gõ vào máy?** Ba luật *tính ngày nào* đã chốt
+  đều đi qua chỗ này mà không chỗ nào phủ được nó: nợ tính **ngày ghi nợ** (`shop-facts.md` §6.14),
+  hoàn tính **ngày hoàn** (§6.4), và sổ giấy thì *"nhập ngay khi có thể, không có mốc giờ cứng"*
+  (§6.11, chủ quán chốt 2026-09-02). §6.11 đã suy ra được một nửa — bảng đối soát ngày mất điện
+  phải đọc được *"còn N lượt bán trên giấy chưa nhập"* — nhưng nửa còn lại, **doanh thu ngày nào**,
+  thì chưa ai nói. **Ai trả lời được:** chủ quán. **Đang chặn:** pha 1 không định nghĩa được
+  *ngày bán* cho phép cộng tiền (`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6, bước
+  **P1-03**), và `quality/invariants.md` **I-014** đang đứng trên câu *"doanh thu một ngày đã đối
+  soát không bao giờ đổi về sau"* — nếu lượt nhập bù rơi vào **ngày gõ** thì câu ấy vẫn đúng nhưng
+  doanh thu ngày mất điện sai mãi mãi; nếu nó rơi vào **ngày bán** thì một ngày đã đối soát **có**
+  đổi về sau, và ngưỡng lệch 0đ (§6.10) mất nghĩa. Hai đường ra đều phá một thứ đang có, nên
+  **đừng suy hộ** (`CLAUDE.md` §3.5) — chỗ này chạm tiền và chạm đối soát.
+  **Cách hỏi** (bài học S-4, `shop-facts.md` §7.2 — hỏi về cái quán, đừng hỏi về cái bảng trong
+  máy): *"Hôm mất điện quán bán 30 suất ghi trên giấy, hôm sau mới gõ vào máy. Khi anh xem doanh
+  thu của hôm mất điện, anh muốn thấy 30 suất ấy nằm trong đó, hay nằm ở hôm sau?"*
+  *Mở 2026-09-03 · T-048 · `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §4 câu 2.*
 
 Câu tiếp theo vào đây dưới dạng một gạch đầu dòng, đúng hợp đồng dưới; mục này rỗng cũng là trạng
 thái bình thường, không phải dấu hiệu quên ghi.
