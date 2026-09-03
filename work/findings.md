@@ -1096,14 +1096,67 @@ Ba việc cụ thể cho phiên sửa:
 3. Dòng 1588: đổi *"không cần đường `Hoàn thành → Huỷ`"* thành *"quầy chọn giữa **sửa** và **huỷ**
    theo từng ca"*.
 
+**CẬP NHẬT 2026-09-03 (BA-11, hai lượt đọc context sạch của Gate 6) — bốn chỗ, không phải ba, và
+ba dòng số ở trên đã chuyển nhà.**
+
+Ba dòng `docs/product.md` 1195 / 1564 / 1588 nay sống ở file con của DOC-1 (2026-09-02). Địa chỉ
+đọc được hôm nay, đã kiểm từng chỗ:
+
+| # | Nhà hôm nay | Trạng thái |
+|:--:|---|---|
+| 1 | `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.9, dòng **313–314** | **còn nguyên** |
+| 2 | `docs/product/0-ba/ban-hang/06-ngoai-le.md` §6.1 dòng 7, dòng **42** | **còn nguyên** |
+| 3 | `docs/product/0-ba/ban-hang/06-ngoai-le.md` §6.2, dòng **66** | **còn nguyên** |
+| **4** | `docs/product/0-ba/ban-hang/01-actors-pham-vi.md` §1.2, dòng **78–79** | **MỚI — F-015 chưa từng biết** |
+
+**Chỗ thứ tư:** *"Với đơn khách **đã chọn trả trước** thì chưa rõ ai bấm xác nhận và vào lúc nào —
+xem **U-005** ở *Unknowns*, **chưa ai trả lời**."* — **U-005 đóng 2026-08-31**: POS xác nhận
+**lúc nhận tiền**, và người bấm là **người đứng quầy**. Lời giải nằm ở `shop-facts.md` §6.3, và
+**hai mục khác của chính bộ tài liệu này** — §3.2.5 và §4.6 — đã viết đúng nó. Đây là chỗ **đắt
+thứ hai** sau §6.1 dòng 7: nó nói *"chưa rõ ai bấm"* về đúng một thao tác **chạm tiền**, và nó
+nằm ở §1, mục đầu tiên mọi phiên đọc.
+
+**Và đây là phần đáng giữ nhất của lần cập nhật này: CÂU `awk` ĐO LẠI Ở TRÊN BẮT ĐƯỢC 2 TRONG 4.**
+Chạy lại nó hôm nay trên `docs/product/0-ba/`, hai chỗ **lọt**, mỗi chỗ vì một lý do khác nhau — và
+cả hai lý do đều sẽ lặp lại:
+
+- **Chỗ 1 lọt vì XUỐNG DÒNG.** Câu ở §4.9 gói lại ở cột ~100 và cụm từ khoá bị cắt làm đôi:
+  `…là câu CHƯA` ở cuối dòng 313, `CHỐT** — xem **U-019**` ở đầu dòng 314. `grep`/`awk` đọc theo
+  **dòng**, nên không dòng nào chứa cả `CHƯA CHỐT` lẫn `U-019`. Tài liệu này gói dòng ở mọi đoạn
+  văn ⇒ **mọi** bộ lọc theo dòng đều có xác suất này, không riêng câu trên.
+- **Chỗ 3 lọt vì KHÔNG CÓ MÃ.** Dòng 66 viết *"không cần đường `Hoàn thành → Huỷ`"* — không mang
+  `U-XXX` nào, nên vế `/U-0[0-9][0-9]/` loại nó ngay. Chính F-015 tìm ra chỗ này bằng **đọc**, không
+  bằng lệnh; bảng trên vẫn kể nó như thể lệnh bắt được.
+- **Chỗ 4 lọt vì TỪ KHOÁ THIẾU.** Nó viết *"chưa rõ"* và *"chưa ai trả lời"*, không viết
+  `CHƯA CHỐT` / `còn mở` / `bị từ chối`. Thêm hai từ ấy vào danh sách thì nó hiện ra ngay.
+
+⇒ **Bài học chung, và nó rộng hơn F-015:** một câu `grep` viết ra **cùng lúc** với ba ca đã biết
+thì nó mô tả **ba ca ấy**, không mô tả **loại lỗi**. Nó sẽ báo xanh cho ca thứ tư — đúng hình dạng
+`work/findings.md` **F-017**, chỉ khác là ở đây bộ lọc không rỗng mà **hụt**. Ai dựng cổng cho mục
+này (xem đoạn dưới) thì đừng chép câu `awk` trên: nó là **cách đo một lần**, không phải một cổng.
+
+**Bốn việc sửa nay thuộc `work/backlog.md` → BA-13** (mở 2026-09-03). BA-11 tìm ra chỗ thứ tư
+nhưng **không sửa chỗ nào**: §1–§7 nằm trong mục *Không được sửa* của
+`prompt/BA/10-acceptance-scenarios-L2.md`. Vì sao gom vào **một** task mới thay vì mở lại BA-01,
+BA-06 và BA-08: cả ba task ấy **đúng vào ngày chúng chạy**, và bốn câu trên hỏng **về sau**, do
+T-038 · T-042 · T-043 đóng unknown mà không quét chỗ nhắc tới câu hỏi — tức đúng cái cơ chế mục
+này mô tả. Đẩy ba dòng `Done` về `Ready` là ghi nợ vào tên lượt không gây ra nợ.
+
+**Đây là lần đo thứ HAI** (lần một: BA-10, 2026-09-02). Đoạn dưới viết lúc mới có lần một; nó nói
+*"nếu nó lại ra kết quả sau một lượt đóng unknown khác, đó là lần hai và lúc ấy hãy dựng cổng"*.
+Điều kiện ấy **nay đã đủ** — và lần hai còn nặng hơn lần một vì nó cho thấy chính công cụ đo cũng
+hụt. ⇒ Dựng cổng là việc của **BA-13**, và cổng ấy phải bắt được **cả bốn** chỗ trên, kể cả chỗ
+xuống dòng và chỗ không mang mã.
+
 **Chưa đề xuất cổng mới.** CLAUDE.md §3.8: một luật/hook/test chỉ được dựng sau khi cùng một vấn đề
 đã trả giá **hai** lần. Đây là lần **một** được đo. Lệnh `awk` ở trên đủ để lần sau đo lại trong 5
 giây; nếu nó lại ra kết quả sau một lượt đóng unknown khác, đó là lần hai và lúc ấy hãy dựng cổng
 (chỗ tự nhiên: thêm một bước vào `scripts/check-links.sh`, hoặc một `scripts/*.test.sh`).
 
 **Related task:**
-**BA-11** (nhận cả ba việc sửa) · **BA-08** (viết §6 dòng 7 và dòng 1588) · **BA-06** (viết câu
-§4.9) · **T-038** (đóng U-019, để lại chỗ 1) · **T-042**/**T-043** (đóng U-022 rồi U-027, để lại
+**BA-13** (nhận cả **bốn** việc sửa + dựng cổng — mở 2026-09-03) · **BA-11** (lượt đo thứ hai, tìm
+ra chỗ thứ tư và chỗ hụt của câu `awk`; không sửa gì) · **BA-01** (viết câu §1.2) ·
+**BA-08** (viết §6.1 dòng 7 và §6.2) · **BA-06** (viết câu §4.9) · **T-038** (đóng U-019, để lại chỗ 1) · **T-042**/**T-043** (đóng U-022 rồi U-027, để lại
 chỗ 2 và 3) · **ADR-017** và **ADR-022** (`docs/decisions.md` — lời chốt thật) · **F-001** (hai đời
 của một sự thật) · **F-004** (đọc rộng hơn chữ — vì sao U-027 phải hỏi riêng)
 
@@ -1252,109 +1305,135 @@ Open
 
 ---
 
-### F-018 — Prompt chốt "đúng N dòng" bằng một con số ĐẾM ĐƯỢC, rồi biến nó thành điều kiện nghiệm thu
+### F-018 — Prompt dùng số đếm động như một invariant, và biến kết quả đo thành điều kiện nghiệm thu
 
-**Date:** 2026-09-03 · phát hiện khi chạy **DOC-3a** (chuyển pointer nhóm A)
+**Date:** 2026-09-03 · phát hiện khi chạy **DOC-3a** (chuyển pointer nhóm A), lặp lại ở DOC-3b,
+DOC-3c và DOC-5/T-046 · viết lại 2026-09-03 theo yêu cầu chủ repo: **rút gọn và tổng quát hoá**,
+thôi ghi nhật ký từng lần lệch số vào chính finding.
 
 **Problem:**
-`prompt/maintenance/13a-pointer-nhom-A-L2.md` ghi hai con số như thể chúng là **lời chốt**:
+Một số prompt maintenance dùng **kết quả đếm tại một thời điểm** như thể đó là một sự thật bất
+biến: *"nhóm A còn **đúng 14 dòng**"* · *"**đúng 9 dòng, 1 dòng ở lại**"* · *"sửa **10** dòng, giữ
+nguyên **20** dòng"* · *"**99 dòng**"* trong *Context* / *Scope* / *Deliverables*.
 
-- *"nhóm A còn **đúng 14 dòng**"* (Acceptance 1), kèm bảng liệt kê đích danh 14 dòng ấy;
-- *"Luật ánh xạ — dùng đúng một luật, **đã xác nhận đủ phủ** 2026-09-02"*.
+Các con số ấy ra từ `grep`, nhưng quyết định thật lại phụ thuộc vào **ngữ nghĩa và thì của câu**:
 
-Chạy thật, **cả hai đều thiếu**, và thiếu theo hai kiểu khác nhau:
+- một dòng có cùng đường dẫn chưa chắc thuộc tập cần chuyển;
+- một dòng mang nhiều `§N` có thể không ánh xạ được vào một file con duy nhất;
+- tổng có thể đúng trong khi **chỗ cắt** giữa các nhóm sai;
+- tập dòng còn thay đổi tiếp sau ngày prompt được viết;
+- nếu phạm vi đếm gồm cả `work/` hoặc `prompt/maintenance/`, con số còn tăng chỉ vì đang có người
+  ghi chép **về chính task ấy**.
 
-| # | Chỗ | Prompt nói | Sự thật khi làm |
-|:--:|---|---|---|
-| 1 | `quality/invariants.md` **dòng 492** | không nằm trong bảng 14 dòng ⇒ **phải chuyển** | là **câu lịch sử**, phải **ở lại**: *"một câu sai từng nằm ở `docs/product.md` §4.6 **trong ngày 2026-09-01**"*. Đổi đường dẫn là khai rằng câu sai ấy nằm trong một file **chưa tồn tại** vào ngày đó |
-| 2 | **20 dòng** kiểu *"Ảnh hưởng tới:"* / *"Applies to:"* | luật ánh xạ *"đủ phủ"* | một đường dẫn mang **nhiều §N trải trên nhiều file con** (`§1.5, §2.4, §4.6, §4.8, §5.4`). Bảng ánh xạ chỉ có ô cho **một** §N ⇒ không ô nào áp được |
+Nên có **ba loại sai khác nhau, cùng một nguyên nhân**:
 
-Dòng 492 và `shop-facts.md` dòng 791 kể **cùng một sự việc** — cùng câu sai ở §4.6, cùng ngày
-2026-09-01. Prompt bắt được chỗ thứ hai, sót chỗ thứ nhất.
+| # | Loại | Hình dạng |
+|:--:|---|---|
+| 1 | **Tổng đúng, phân hoạch sai** | `grep` ra đúng tổng, nhưng phân loại *chuyển / ở lại* sai |
+| 2 | **Tổng sai theo thời gian** | repo tiếp tục đổi sau ngày đo |
+| 3 | **Đo sai phạm vi** | bộ lọc rộng hơn phạm vi việc ⇒ con số đo **hoạt động ghi chép**, không đo việc còn lại |
+
+Bằng chứng: ở **DOC-3a** prompt ghi 14 dòng, thực tế nhóm A có **15** — `quality/invariants.md`
+dòng 492 là một **câu lịch sử** (*"một câu sai từng nằm ở `docs/product.md` §4.6 trong ngày
+2026-09-01"*) nên phải **ở lại**; đổi đường dẫn ở đó là khai rằng câu sai ấy nằm trong một file
+**chưa tồn tại** vào ngày đó. Ở **DOC-3b** và **DOC-3c**, tổng đúng còn chỗ cắt sai. Đến **DOC-5**,
+cả tổng chưa lọc lẫn tổng sau bộ lọc đều đã khác con số trong prompt cũ.
 
 **Impact:**
-Con số ấy là **Acceptance 1**, nên nó không chỉ sai — nó **ra lệnh**. Một phiên làm đúng bài sẽ
-thấy `grep` đếm ra 15 chứ không phải 14, và đường dễ nhất để "về đúng 14" là **sửa dòng 492**, tức
-là làm hỏng đúng thứ *Cạm bẫy 2* của chính prompt ấy dựng lên để bảo vệ. Cổng nghiệm thu quay ngược
-súng vào việc nó đang gác. Với chỗ thứ hai thì rẻ hơn nhưng cùng cơ chế: không có ô ánh xạ nào áp
-được, phiên phải **tự đặt luật** giữa chừng — đúng lúc nó tin rằng luật đã được xác nhận đủ.
+Một con số nằm trong mục **Acceptance** không chỉ sai — nó **ra lệnh** cho phiên thực thi. Khi số
+ấy sai, đường rẻ nhất để "về đúng N" là **sửa dữ liệu** cho khớp, thay vì sửa đúng theo ngữ nghĩa:
 
-**Vì sao không cổng nào bắt được:**
-Cả hai con số ra từ `grep`, và `grep` đếm được **dòng nào có chuỗi `docs/product.md`** nhưng không
-đọc được **thì của câu**. Phân biệt *"hôm nay nó nằm ở đâu"* với *"ngày ấy nó từng nằm ở đâu"* là
-việc đọc, không phải việc đếm — cùng ranh giới F-015 đã gọi tên (*"Ranh giới là **thì của câu**,
-không phải sự có mặt của cái ID"*). Gate 1b thì mù hẳn: `docs/product.md` vẫn mở được, nên cả 15
-dòng đều xanh.
+```text
+grep → N
+N → Acceptance
+Acceptance → sửa dữ liệu cho bằng N
+```
 
-**Bài học chung, vì nó sẽ lặp:**
-CLAUDE.md §7.2 đã có đúng luật này — *"**Exactly N** only when N is a decision, not your summary"*
-(F-003) — nhưng nó mới được đọc là luật cho **tài liệu nghiệp vụ**. Nó là luật cho **prompt** nữa,
-và ở prompt thì đắt hơn: một con số trong mục *Acceptance* là thứ phiên sau **phải làm cho bằng**.
+Cổng nghiệm thu khi ấy có thể buộc phiên làm việc phá **chính cái invariant mà prompt được dựng ra
+để bảo vệ** — đúng chuyện suýt xảy ra ở DOC-3a với dòng 492.
 
-⇒ Khi một prompt đếm được N, viết **N kèm ngày đo và kèm lời mời tìm chỗ thứ N+1**, không viết
-*"đúng N"*. Câu *"đo 2026-09-02 ra 14 dòng ở lại; thấy dòng thứ 15 thì ghi lại, đừng ép về 14"*
-tốn thêm một dòng và gỡ hẳn cái bẫy trên.
+**Root cause:**
+`grep` chỉ xác định được **sự có mặt của một chuỗi**. Nó không xác định được thì của câu · ý nghĩa
+của tham chiếu · dòng lịch sử hay dòng hiện hành · phân hoạch *chuyển / giữ* · một tham chiếu áp
+cho một `§N` hay nhiều `§N` · phạm vi logic thật của task. Ngoài ra, **một count chỉ có nghĩa khi
+đi kèm phạm vi đo + bộ lọc + thời điểm đo**.
+
+Điều này nối dài ba bài học đã có: **F-003** — `Exactly N` chỉ hợp lệ khi N là một quyết định /
+invariant ổn định, không phải bản tóm tắt của mình; **F-015** — ranh giới là **thì của câu**, không
+phải sự xuất hiện của cái ID; **F-017** — `grep` có thể ra rỗng hoặc sai nếu bộ lọc không mô tả
+đúng tập cần đo.
 
 **Decision / Fix:**
-1. **Dòng 492 ở lại**, cùng lý lẽ với `shop-facts.md` 791 (CLAUDE.md §5: *một đường đã chết ở đó là
-   bằng chứng, không phải bug*). Nhóm A còn **15** dòng, không phải 14. Không sửa prompt 13a:
-   `prompt/maintenance/**` là sổ lịch sử (CLAUDE.md §5), và nó đã chạy xong.
-2. **20 dòng đa-mục → trỏ tới THƯ MỤC**, giữ nguyên mọi `§N`: `docs/product/0-ba/ban-hang/` (trải
-   §1–§8), `docs/product/0-ba/` (trải cả admin), `docs/product/` (trải cả *Unknowns*). Đây là một
-   đổi đường-dẫn-lấy-đường-dẫn nên không viết lại câu, và file con đánh số `01-`…`08-` khớp `§1`…`§8`
-   nên tra ngược vẫn chạy. Giá phải trả ghi rõ ở mục dưới.
-3. **DOC-3b, DOC-3c, DOC-5 phải đọc mục này trước khi tin con số trong prompt của chúng** — ba
-   prompt ấy đếm bằng cùng một `grep`, trong cùng lượt đo.
 
-**Giá phải trả của cách 2, ghi ra để không ai phát hiện lại:**
-`scripts/check-links.sh` chỉ nhận đường dẫn có **đuôi biết trước** (`.md`, `.sh`, …). Một đường
-kết thúc bằng `/` bị **bỏ qua hẳn** — không đỏ, mà cũng **không được chấm**. Đo sau khi chạy
-(2026-09-03): trong 99 dòng đã chuyển, **75 dòng trỏ tới một file `.md`** (Gate 1b chấm) và
-**24 dòng trỏ tới thư mục** (Gate 1b bỏ qua) — 20 dòng đa-mục ở trên, cộng bốn dòng vốn không mang
-số mục nào (`docs/architecture.md` 533 · `docs/prompt-guideline.md` 49, 161 ·
-`master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` 332). Acceptance 3 của prompt 13a nói
-*"113/114 dòng Gate 1b có chấm"*; sau DOC-3a con số thật là **90/114** (75 đã chuyển + 15 ở lại). Đừng dựng cổng mới cho việc này: CLAUDE.md §3.8 bắt chờ tới lần hỏng thứ hai.
+1. **Không dùng `Exactly N` cho tập có thể đổi hoặc cần đọc ngữ nghĩa.** Không viết
+   *"còn đúng 14 dòng"* / *"đúng 1 dòng ở lại"* / *"sửa đúng 10 dòng"*. Nếu N chỉ là kết quả của
+   một lần khảo sát thì viết:
 
-**Kiểm lại ở DOC-3b, 2026-09-03 — lệch lần nữa, đúng như mục 3 dự đoán.** Prompt
-`13b` chia 30 dòng lệnh thành *"sửa **10** dòng trong 2 file còn sống, giữ nguyên **20** dòng
-trong 11 prompt đã xong"*. Đếm thật: **8 / 22**. `prompt/BA/10-acceptance-scenarios-L2.md` có 4
-dòng lệnh và `12-production-control-L2.md` có 4, không phải 5+5. Tổng 30 thì đúng — chỗ sai là
-**chỗ cắt**. Lần này con số không đẩy phiên chạy đi phá gì (nó chỉ mô tả, không nằm trong
-*Acceptance*), nhưng nó xác nhận: mọi con số của **cùng lượt đo 2026-09-02** đều phải đếm lại
-trước khi tin. Còn **DOC-3c** (*"9 dòng, 1 ở lại"*) và **DOC-5** chưa kiểm.
+   ```text
+   Measurement:
+   - Đo ngày YYYY-MM-DD, với filter <...>, kết quả là N.
+   - N chỉ là baseline của lần đo này.
+   - Nếu phát hiện thêm phần tử, không sửa dữ liệu để ép về N;
+     phải ghi nhận phần tử mới và quyết định nó thuộc tập nào.
+   ```
 
-**Kiểm lại ở DOC-3c, 2026-09-03 — lệch lần thứ ba, và lần này rẻ nhất.** Prompt `13c` ghi
-*"9 dòng, 1 ở lại"* (dòng *Ready* của chính backlog cũng chép lại con số ấy). Đếm thật: **9 dòng /
-10 lần xuất hiện là đúng**, chỗ sai vẫn là **chỗ cắt** — **7 chuyển, 2 ở lại**, vì dòng 167 (*"DOC-1
-và BA-11/BA-12 cùng chạm"*) kể một va chạm **đã qua**: DOC-1 xong ở `bc5033c`. Ba lần đo, ba lần
-tổng đúng và chỗ cắt sai — vì tổng ra từ `grep` còn chỗ cắt ra từ **đọc thì của câu** (F-015).
-Lần này con số không đẩy phiên chạy đi phá gì, và lý do đáng chép cho prompt sau: **prompt 13c tự
-chừa cửa**, nó gọi dòng 167 là *"đọc rồi quyết"* và bắt viết kết luận vào report, thay vì chốt cứng
-*"đúng 1 dòng ở lại"*. Đó chính là hình dạng mục *Bài học chung* ở trên đề nghị — nó đã chạy đúng.
+2. **Acceptance kiểm tra quyết định, không kiểm tra ảnh chụp của count** — ví dụ: mọi tham chiếu
+   *hiện hành* trỏ đúng đích · tham chiếu *lịch sử* giữ nguyên · mỗi dòng đa-`§` xử lý theo luật đã
+   xác định · không item nào ngoài phạm vi bị sửa · không item nào trong phạm vi bị bỏ sót. Cần
+   count để hỗ trợ kiểm tra thì count là **chẩn đoán**, không phải mục tiêu phải đạt.
 
-**Kiểm lại ở DOC-5, 2026-09-03 (T-046) — lần thứ tư, và lần này TỔNG cũng sai, không chỉ chỗ cắt.**
-`prompt/maintenance/15-…-L3.md` ghi *"99 dòng"* ở ba chỗ (Context · Scope · Deliverables 2). Đếm
-thật hôm nay: **142 tổng / 48 sau bộ lọc**. Ba lần trước tổng luôn đúng vì chúng được đo và chạy
-**trong vòng một hai ngày**; prompt 15 nằm đấy chưa chạy trong khi chuỗi BA vẫn viết tiếp, nên nó
-là ca đầu tiên mà **cả hai đầu đều trôi**. Đã vá, không mở khoá DOC-5 — chủ repo chốt HOÃN
-(`work/backlog.md` T-046).
+3. **Mọi count dùng làm mốc phải ghi đủ xuất xứ:**
 
-**Và lượt vá tìm ra một cơ chế thứ hai, nặng hơn: con số ấy KHÔNG ĐỨNG YÊN ĐỦ LÂU để làm mốc.**
-Trong chính lượt T-046, đo ba lần cách nhau vài phút, tổng chưa lọc đi **133 → 139 → 142** —
-không một pointer nào đổi, nó nhích chỉ vì lượt vá viết thêm mấy câu *về chính task ấy* vào
-`work/backlog.md`, `work/findings.md` (mục bạn đang đọc) và vào file prompt. Cùng ba lần đo ấy,
-con số sau bộ lọc **đứng yên ở 48**. Lý do: tổng chưa lọc đếm cả `work/` và
-`prompt/maintenance/` — hai thư mục *sổ ghi chép* mà mọi prompt đã cố ý loại khỏi phạm vi, và là
-đúng hai thư mục **phình ra mỗi lần có ai viết về chính task ấy**. ⇒ **Một con số làm mốc phải được
-đo bằng đúng bộ lọc của phạm vi việc.** Đếm rộng hơn phạm vi thì con số ấy đo hoạt động viết lách
-của repo, không đo việc còn lại — và nó sẽ luôn lệch, theo chiều tăng, mà không ai chạm vào cái nó
-định đo.
+   ```text
+   Measured at: YYYY-MM-DD
+   Scope: <tập file/thư mục>
+   Filter: <điều kiện grep/query>
+   Count: N
+   Purpose: baseline / diagnostic
+   ```
+
+   Một count chưa có phạm vi/bộ lọc rõ ràng thì không được dùng làm Acceptance.
+
+4. **Tổng đúng không suy ra được phân hoạch đúng.** Phải xác định từng item bằng một luật kiểm
+   chứng được: `Total: 9 · Decision: xét từng item trong 9 xem nó chuyển hay ở lại`, **không phải**
+   `Exactly 9 items; exactly 1 stays`.
+
+5. **Count phải được đo trên đúng phạm vi việc.** Không dùng count bao gồm các thư mục nhật ký
+   (`work/`, `prompt/maintenance/`) nếu task không xử lý chúng — bộ lọc phải loại chúng ra ngay từ
+   đầu, nếu không thì chính việc viết finding/report sẽ làm đổi con số đang đo.
+
+6. **Các prompt cùng một lượt đo phải coi count cũ là cũ cho tới khi đo lại.** Trước khi chạy một
+   prompt có count: (1) xem ngày đo · (2) xem phạm vi/bộ lọc · (3) đếm lại nếu dữ liệu đã đổi ·
+   (4) không ép dữ liệu về con số ghi trong prompt.
+
+**Bài học chung — luật rút ra:**
+
+> **A count is evidence of a measurement, not an invariant, unless the count itself is a deliberate
+> decision.**
+
+Áp vào prompt:
+
+> **Khi prompt ghi một N do đo đếm, phải ghi ngày đo + phạm vi/bộ lọc, và coi N là baseline. Nếu
+> xuất hiện N+1, xử lý phần tử mới theo luật, không sửa dữ liệu chỉ để đưa count về N.**
+
+CLAUDE.md §7.2 đã có đúng luật này cho **tài liệu nghiệp vụ** (F-003); mục này nói rằng nó là luật
+cho **prompt** nữa, và ở prompt thì đắt hơn — một con số trong *Acceptance* là thứ phiên sau **phải
+làm cho bằng**.
+
+**Giá phải trả:**
+Luật số 2 ở trên (dòng đa-`§` thì **trỏ tới thư mục**, giữ nguyên mọi `§N`) có một cái giá, ghi ra
+để không ai phát hiện lại: `scripts/check-links.sh` chỉ nhận đường dẫn có **đuôi biết trước**
+(`.md`, `.sh`, …), nên một đường **kết thúc bằng `/` bị bỏ qua hẳn** — không đỏ, mà cũng **không
+được chấm**. Mỗi dòng chuyển từ file sang thư mục là một dòng rời khỏi tầm của Gate 1b. Đừng dựng
+cổng mới cho việc này: CLAUDE.md §3.8 bắt chờ tới lần hỏng thứ hai.
+
+**Không mở cổng mới cho chính F-018.** Đây là lỗi của **cách viết và cách duyệt prompt**; chỉ khi
+cùng cơ chế hỏng ấy tái diễn **sau khi luật trên đã được áp dụng** thì mới đáng nâng thành gate
+(CLAUDE.md §3.8).
 
 **Related task:**
-DOC-3a (đã xử lý cả hai chỗ) · DOC-3b (đã kiểm lại: 8/22 chứ không 10/20) ·
-DOC-3c (đã kiểm lại: 7/2 chứ không 8/1) · **T-046 / DOC-5 (đã kiểm lại 2026-09-03: 139/48, không
-phải 99 — và tổng chưa lọc không dùng làm mốc được)** ·
-F-003 (*"exactly N"*) · F-015 (thì của câu) · F-017 (cùng lượt đo, `grep` lọc rỗng)
+DOC-3a · DOC-3b · DOC-3c · T-046 / DOC-5 · F-003 (*"exactly N"*) · F-015 (thì của câu) ·
+F-017 (bộ lọc `grep` không mô tả đúng tập cần đo)
 
 **Status:**
 Open
@@ -1599,3 +1678,161 @@ ngữ nghĩa pattern một chủ) · ADR-010 (giới hạn của bước cài ta
 
 **Status:**
 Open — đường đã chốt 2026-09-03, chờ T-047 thi hành
+
+---
+
+### F-021 — Bảng tổng hợp `docs/decisions.md` nói NGƯỢC thân của chính nó về hai giả định đã bị thay
+
+**Date:** 2026-09-03 · phát hiện khi chạy **BA-11** (tick mục 6 của cổng chất lượng BA)
+
+**Problem:**
+`docs/decisions.md` mở đầu bằng một **bảng tổng hợp** — chỗ mọi phiên nhìn trước khi đọc thân. Hai
+dòng của bảng ấy nói ngược thân của chính file:
+
+| Dòng bảng | Bảng nói | Thân mục nói |
+|---|---|---|
+| **GĐ-01** (dòng 52) | `**Giả định**` · rủi ro **TRUNG BÌNH** — đang sống | *"~~Hai người cùng thao tác trên một bàn~~ · **ĐÃ THAY bằng quy tắc, 2026-09-02**"*, `Trạng thái: Superseded` |
+| **GĐ-05** (dòng 56) | `**Giả định**` · rủi ro **TRUNG BÌNH** — đang sống | *"~~Thao tác nhầm ngoài ca 'bấm nhầm một mẻ'~~ · **ĐÃ THAY bằng quy tắc, 2026-09-02**"*, `Trạng thái: Superseded` |
+
+Ba dòng cùng bảng — GĐ-02, GĐ-03, GĐ-04 — **đã** được sửa thành `**Đã thay** 2026-09-02`. Hai dòng
+này bị bỏ sót ở lượt **T-045**, lượt thay chính hai giả định ấy.
+
+Và đoạn văn **ngay dưới bảng** đi theo hai dòng sai: *"Hai giả định còn lại đều **TRUNG BÌNH** và
+cả hai chờ ai đó gặp ca thật"* — trong khi phần mở đầu mục *Giả định BA*, cách đó ~1830 dòng, viết
+*"**CẢ NĂM mục đã bị thay trong ngày 2026-09-02**, và mục này nay **không giữ giả định nào còn
+hiệu lực**"*. Cùng một file, hai câu trả lời cho câu hỏi *"còn giả định nào đang sống không?"*.
+
+**Impact:**
+- **Câu hỏi mà bảng này tồn tại để trả lời là câu hỏi nó trả lời sai.** Không ai đọc 2000 dòng ADR;
+  người ta đọc bảng đầu file. Một phiên hỏi *"còn giả định nào chặn không"* sẽ nhận **hai** giả
+  định đang sống thay vì **không**.
+- **Nó chặn đúng một cổng.** Mục 6 của cổng chất lượng BA (`master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`
+  §12) là *"có danh sách quyết định chưa rõ/giả định"*. Danh sách **có**, nhưng nó nói hai câu khác
+  nhau tuỳ chỗ đọc ⇒ BA-11 để trống mục ấy (`docs/product/0-ba/ban-hang/08-scenario.md`, mục
+  *Cổng chất lượng BA*).
+- **Sai theo chiều CHẶT HƠN thực tế** — chiều không ai phàn nàn: một phiên System Design sẽ né hai
+  chỗ đã có luật thật, hoặc đi hỏi lại chủ quán một câu chủ quán đã trả lời ngày 2026-09-02.
+
+**Cùng một cơ chế với `work/findings.md` F-015, khác chỗ đau.** F-015: đóng một **unknown** thì sửa
+chỗ câu trả lời rơi vào, quên chỗ **nhắc tới** câu hỏi. Ở đây: thay một **giả định** thì sửa
+**thân** mục, quên **mục lục** trỏ vào thân ấy. Cùng một hình: *cập nhật nơi nội dung sống, bỏ quên
+nơi nội dung được liệt kê.* Khác một điểm quan trọng — F-015 rải qua nhiều file, còn ở đây **hai
+chỗ mâu thuẫn nằm trong CÙNG một file**, cách nhau 1830 dòng.
+
+**Vì sao không cổng nào bắt được:**
+Gate 1b chấm đường dẫn mở được hay không; hai dòng bảng không chứa đường dẫn nào hỏng.
+`scripts/brief.sh` in *LATEST DECISIONS* bằng cách đọc các mục `ADR-XXX`, không đọc dòng `GĐ-XXX`
+của bảng. Không cổng nào so **một dòng chỉ mục** với **thân mục nó trỏ tới** — và đó là loại kiểm
+tra rẻ: cùng một mã định danh, hai chỗ, một phép so chuỗi.
+
+**Decision / Fix:**
+Sửa thuộc **BA-10** (`docs/decisions.md` là owner của nó); `docs/decisions.md` nằm trong mục
+*Không được sửa* của `prompt/BA/10-acceptance-scenarios-L2.md` nên **BA-11 không tự sửa**. Ba việc,
+gom vào **BA-13**:
+
+1. Dòng 52 và 56 của bảng: đổi cột trạng thái thành `**Đã thay** 2026-09-02`, đúng hình ba dòng
+   GĐ-02/03/04 ngay cạnh; cột rủi ro gạch ngang như thân mục đã làm.
+2. Đoạn văn dưới bảng: *"Hai giả định còn lại đều TRUNG BÌNH…"* → **cả năm đã bị thay**, không còn
+   giả định nào đang sống. Giữ câu *"Hai mục CAO từng có đã được thay bằng quy tắc thật chứ không
+   phải bị hạ mức"* — câu ấy vẫn đúng và vẫn đáng đọc.
+3. **Kiểm ngược, không sửa theo trí nhớ** (CLAUDE.md §7.2): `grep -n 'GĐ-0' docs/decisions.md` rồi
+   đọc **từng** chỗ — bảng, thân, mục mở đầu *Giả định BA*, và mọi chỗ ngoài file
+   (`docs/product/0-ba/ban-hang/06-ngoai-le.md` §6.2 đã nói *"cả năm giả định nay đã bị thay"*,
+   tức nó **đúng** và bảng mới là chỗ sai).
+
+**Chưa đề xuất cổng riêng cho mục này.** CLAUDE.md §3.8: một cổng chỉ dựng sau khi cùng một vấn đề
+trả giá **hai** lần. Đây là lần **một** cho hình *"mục lục lệch thân"*. Nhưng nó là họ hàng gần của
+F-015 (lần **hai** cùng ngày) ⇒ nếu BA-13 dựng cổng cho F-015, hãy hỏi cổng ấy có phủ luôn ca này
+không: cả hai đều là *"một mã định danh xuất hiện ở hai chỗ với hai trạng thái khác nhau"*.
+
+**Related task:**
+**BA-13** (nhận việc sửa — mở 2026-09-03) · **BA-10** (owner của `docs/decisions.md`) ·
+**T-045** (lượt thay GĐ-01 và GĐ-05, để lại hai dòng bảng) · **BA-11** (lượt phát hiện) ·
+**F-015** (cùng cơ chế, khác chỗ đau) · **F-001** (hai đời của một sự thật)
+
+**Status:**
+Open
+
+---
+
+### F-022 — Hai mục ĐÃ CHỐT trả lời khác nhau cho cùng một câu hỏi, và chỉ lộ ra khi DIỄN một scenario
+
+**Date:** 2026-09-03 · phát hiện khi chạy **BA-11**, qua **hai lượt đọc context sạch** (Gate 6)
+
+**Problem:**
+Ba chỗ trong `docs/product/0-ba/ban-hang/` mà **hai mục đã chốt** cho **hai** câu trả lời khác nhau
+cho **một** câu hỏi cụ thể. Không mục nào sai một mình; cái sai chỉ tồn tại **giữa** chúng.
+
+| # | Câu hỏi | Mục A nói | Mục B nói | Owner |
+|:--:|---|---|---|---|
+| 1 | Phiên bàn mở **lúc nào**? | §3.1.1 bước 1: *"Khách ngồi vào một bàn đang trống. **Hệ thống mở** cho bàn đó một phiên bàn"* | §5.3 bảng dòng 1 + §3.1.2: *"khách ngồi vào bàn trống **VÀ lượt gọi đầu tiên được tạo**"* | **BA-03** (§3.1) |
+| 2 | **Ai** bấm *"đã ra bàn"* cho một đơn **giao tận nơi**? | §5.4 bảng: ***người đứng quầy*, trên POS** | §3.2.2 + §5.2: người có mặt lúc trao hàng là ***nhân viên quán* đi giao**, và chính người ấy bấm *đã giao* + *đã thu tiền* | **BA-07** (§5) |
+| 3 | *"Nâng giá một cái bánh nhân thường từ 4.000 lên 5.000"* là thao tác gì? | Ô bảng `shop-facts.md` §4.2 có sẵn ba ô cho ba mức nhân ⇒ nâng ô *Thịt thường* ⇒ suất giò mới **29.000** | §4.1 + §4.6 luật 2: giá gốc **là ô Chay**, hai ô kia là **phụ thu** ⇒ phụ thu không đổi ⇒ suất giò mới vẫn **25.000** | **BA-05** (§3.3.3) và `quality/invariants.md` **I-009** |
+
+**Chỗ 3 nặng nhất, vì nó chạm tiền và nằm trong ví dụ có số DUY NHẤT của §3.3.** §3.3.3 tự khai
+*"đây là chỗ duy nhất §3.3 có số"*, và `quality/invariants.md` I-009 chép đúng thao tác ấy vào mục
+*Verification* — tức **kịch bản kiểm invariant tiền của cả repo** dựa trên một câu cho hai kết quả.
+Thêm một hệ quả không ai viết ra: nâng riêng ô *Thịt thường* lên 5.000 làm nó **bằng** ô *Thịt
+nhiều* (cũng 5.000), tức **xoá mất bậc phụ thu lượng nhân +1.000** của `shop-facts.md` §4.4 — sau
+lần đổi giá ấy, *thường* và *nhiều nhân* cùng giá, và không ai chốt điều đó.
+
+**Impact:**
+- **Chỗ 1** — một bàn trống có được phép mang một phiên **đang mở** hay không, hai mục hai câu trả
+  lời. Đọc theo §3.1.1 thì mọi bàn có khách đều có phiên, kể cả bàn chưa gọi gì; đọc theo §5.3 thì
+  không. Nó chạm `quality/invariants.md` **I-001** (*một bàn thuộc nhiều nhất một phiên chưa thanh
+  toán*) và chạm cách đếm bàn trống ở quầy.
+- **Chỗ 2** — nếu đọc theo §5.4 thì người đứng quầy phải bấm *"đã ra bàn"* cho một suất **đang ở
+  nhà khách**, thứ quầy không nhìn thấy; nếu đọc theo §3.2.2 thì §5.4 thiếu một người kích hoạt.
+  Vì §5.5 buộc **mọi** việc phải `Đã ra bàn` **trước** khi đơn `Hoàn thành`, đọc sai chỗ này là
+  **đơn giao tận nơi không bao giờ `Hoàn thành` được**, hoặc quầy bấm khống một mốc.
+- **Chỗ 3** — sai **âm thầm** đúng kiểu §3.3 mô tả: hai người đọc cùng một câu, ra hai số tiền, và
+  không có lỗi nào nổ ra. Nó còn là kịch bản kiểm của I-009 ⇒ một bài kiểm viết theo nó có thể
+  **xanh trong khi sản phẩm sai**, hoặc ngược lại.
+
+**Vì sao ba vòng rà trước không bắt được — phần đáng giữ nhất của mục này:**
+Cả ba chỗ **lọt qua mọi cách đọc theo mục**, vì mỗi mục **tự nó đúng và tự nó đầy đủ**. Chỉ khi
+**diễn một scenario** — đi từ đầu đến cuối và bắt mỗi bước phải trỏ về một mục — thì hai mục mới bị
+đặt cạnh nhau và chỗ lệch mới hiện ra. BA-01…BA-10 đọc và viết **từng mục**; BA-11 là lượt đầu
+tiên đi **ngang** qua chúng.
+
+⇒ **Luật rút ra, rộng hơn ba chỗ này:** *một bộ tài liệu mà mọi mục đều đúng vẫn có thể mâu thuẫn,
+và cách duy nhất tìm ra là bắt nó diễn một ca chạy xuyên nhiều mục.* Đó chính là lý do §12 kế hoạch
+gốc đặt ba scenario **sau cùng** chứ không rải vào từng task — và là bằng chứng cổng ấy có tác
+dụng thật, không phải nghi lễ.
+
+**Và một điểm về cách nghiệm thu:** cả ba chỗ đều do **lượt đọc context sạch** (Gate 6) tìm ra,
+không do phiên viết tài liệu tìm ra. Phiên viết đã đọc cả tám file nên nó **tự vá chỗ lệch trong
+đầu** mà không nhận ra mình đang vá. Người chỉ được đọc tài liệu thì không vá được — nó tắc, và
+chỗ tắc là bằng chứng. Gate 6 không phải thủ tục thừa.
+
+**Decision / Fix:**
+**BA-11 không sửa chỗ nào** — §1–§7 nằm trong mục *Không được sửa* của
+`prompt/BA/10-acceptance-scenarios-L2.md`. Ba việc, gom vào **BA-13**:
+
+1. **Chỗ 1 — §3.1.1 bước 1 theo §5.3**, vì hai mục (§5.3 và §3.1.2) nói cùng một câu và chỉ §3.1.1
+   nói khác. Viết lại bước 1 thành *"khách ngồi vào bàn trống, và phiên mở khi lượt gọi đầu tiên
+   của bàn ấy được tạo"*. **Đừng sửa ngược** — sửa §5.3 theo §3.1.1 là chọn phe thiểu số.
+2. **Chỗ 2 — hỏi trước khi viết.** Đây **không** phải chỗ chọn giữa hai câu đã có: chủ quán chốt
+   ngày 2026-09-01 rằng *người đứng quầy* bấm cả hai mốc (U-021), và ca **đơn giao tận nơi** không
+   nằm trong câu hỏi lúc ấy. ⇒ Ghi thành một **`U-XXX` mới** ở `docs/product/99-unknowns.md` đúng
+   hình dạng ADR-007, đừng tự suy. Suy hộ ở đây là dựng một luật chủ quán chưa nói (CLAUDE.md §3.5).
+3. **Chỗ 3 — viết lại ví dụ §3.3.3 và mục *Verification* của I-009 thành một thao tác CHỈ CÓ MỘT
+   NGHĨA.** `docs/product/0-ba/ban-hang/08-scenario.md` Scenario 3 đã làm sẵn cách viết ấy: *nâng
+   **giá gốc (giá chay)** của một cái bánh cuốn từ 3.000 lên 4.000* ⇒ phụ thu §4.4 không đổi ⇒ suất
+   giò nhân thường mới = 9.000 + 4 × 5.000 = **29.000**, đúng con số §3.3.3 đã chốt, và bậc *nhiều
+   nhân* vẫn còn (6.000). Sửa **cả hai** chỗ trong cùng một lượt — để lệch một chỗ là đẻ ra đúng
+   con bug này lần nữa.
+
+**Không mở finding cho một chỗ thứ tư đã xét và loại:** mốc `Đã ra bàn` của đơn mang đi là lúc
+**trao** chứ không phải lúc **đóng gói** — §5.4 viết gộp *"đóng gói và trao"*, nhưng ghép với §5.5
+thì chỉ còn một cách đọc, nên đó là chỗ **suy ra được**, không phải chỗ hở. Ghi ra đây để lượt sau
+khỏi mở lại nó.
+
+**Related task:**
+**BA-13** (nhận cả ba việc — mở 2026-09-03) · **BA-03** (chỗ 1) · **BA-07** (chỗ 2) ·
+**BA-05** (chỗ 3) · **BA-11** (lượt phát hiện) · `quality/invariants.md` **I-001**, **I-009** ·
+**F-015** và **F-021** (cùng ngày, cùng họ: hai chỗ của một sự thật lệch nhau) ·
+**F-004** (đọc rộng hơn chữ chủ quán nói — vì sao chỗ 2 phải hỏi chứ không suy)
+
+**Status:**
+Open
