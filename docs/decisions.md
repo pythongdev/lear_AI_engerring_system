@@ -57,7 +57,7 @@ có câu trả lời mới từ người.
 
 **Không có giả định nào ở mức rủi ro CAO tính tới 2026-09-02**, nên không task System Design nào
 đang bị một `GĐ` chặn. Hai giả định còn lại đều **TRUNG BÌNH** và cả hai chờ *ai đó gặp ca thật*
-chứ không chờ một câu trả lời — vì thế chúng **không** nằm ở `docs/product.md` → *Unknowns*.
+chứ không chờ một câu trả lời — vì thế chúng **không** nằm ở `docs/product/99-unknowns.md`.
 
 Hai mục CAO từng có (**GĐ-02**, **GĐ-03**) đã được **thay bằng quy tắc thật** ngày 2026-09-02, chứ
 không phải bị hạ mức.
@@ -413,7 +413,7 @@ không tham gia vào kết luận, nên một file chưa track nằm trong scope
 ### ADR-007 — Mục *Unknowns* có hình dạng máy đọc được, và brief đọc cấu trúc đó thay vì hình dạng dòng
 
 **Decision:**
-Từ **2026-08-31** (T-021), `docs/product.md` → *Unknowns* có một hợp đồng, và
+Từ **2026-08-31** (T-021), `docs/product/99-unknowns.md` có một hợp đồng, và
 `scripts/brief.sh` đọc đúng hợp đồng đó:
 
 - **Vùng đang mở** = phần đầu mục (trước tiêu đề `###` đầu tiên) **cộng** mọi khối nằm dưới một
@@ -422,7 +422,7 @@ Từ **2026-08-31** (T-021), `docs/product.md` → *Unknowns* có một hợp đ
   **bất cứ đâu** trong gạch đầu dòng ấy, nên in đậm ở đâu cũng được.
 - **Văn xuôi trong vùng đang mở không sinh ra unknown**, và các dòng vắt của một gạch đầu dòng
   được **nối lại** thành một mục trước khi cắt ngắn để in.
-- Hợp đồng được viết ở chính `docs/product.md`, dưới tiêu đề `### Cách viết một câu ở đây` — tức
+- Hợp đồng được viết ở chính `docs/product/99-unknowns.md`, dưới tiêu đề `### Cách viết một câu ở đây` — tức
   là nằm trong vùng brief **không** đọc, nên ví dụ trong đó viết `U-` thoải mái.
 
 **Why:**
@@ -462,14 +462,14 @@ quyết định, trang trí không tham gia) mà không lấy **hình dạng** c
 **Rủi ro đã chấp nhận:**
 - **Một tiêu đề `###` mới chen vào giữa mục sẽ giấu các gạch đầu dòng dưới nó.** Đây là mặt trái
   trực tiếp của việc lấy tiêu đề làm ranh giới. Giá đã hạ xuống một mức: hợp đồng viết ngay trong
-  `docs/product.md` nên người sửa nhìn thấy, và `scripts/brief.test.sh` giữ ca U3b.
+  `docs/product/99-unknowns.md` nên người sửa nhìn thấy, và `scripts/brief.test.sh` giữ ca U3b.
 - **Brief vẫn im khi đọc ra rỗng.** `(none)` có thể nghĩa là "không còn câu nào" hoặc "hình dạng
   hỏng". Giữ nguyên vì §7.1 cấm brief chặn; ca U5 và U7 khoá hành vi `(none)` + `exit 0`.
 - **Tiêu đề dài bị cắt ở 96 ký tự.** Brief là con trỏ, không phải bản sao (§7.1) — muốn đọc đủ
-  thì mở `docs/product.md`.
+  thì mở `docs/product/99-unknowns.md`.
 
 **Applies to:**
-`scripts/brief.sh` · `scripts/brief.test.sh` · `docs/product.md` → *Unknowns* · `CLAUDE.md` §4 ·
+`scripts/brief.sh` · `scripts/brief.test.sh` · `docs/product/99-unknowns.md` · `CLAUDE.md` §4 ·
 `work/findings.md` F-008 · `work/backlog.md` T-021 · ADR-002.
 
 ---
@@ -562,12 +562,12 @@ nhận bánh gấp xong **có nằm chờ**, nên "đã làm xong" là một con
 nó (`master_plan/shop-facts.md` §5.4, §7.1; §7.2 rỗng trở lại — **tới 2026-09-01, khi T-039 mở
 **S-5** ở đúng chỗ ấy**). Từ nay được ghi như lời chủ quán,
 kèm ngày. Chỗ **chưa** chốt đã dời sang một câu hẹp hơn — bấm theo từng cái hay cả mẻ,
-`docs/product.md` → Unknowns **U-017** — và chính nó là thứ phải nêu đích danh khi viết §3.4.*
+`docs/product/99-unknowns.md` **U-017** — và chính nó là thứ phải nêu đích danh khi viết §3.4.*
 *Cập nhật 2026-09-01 (T-037): **U-017 cũng đã đóng — bấm theo MẺ** (`shop-facts.md` §5.4). §3.4
 nay không còn câu nào phải nêu là chưa chốt.*
 
 Chỗ ở của từng phần: dữ kiện quán ở `master_plan/shop-facts.md` §5.4 (ADR-001 không đổi); hành vi
-sản phẩm ở `docs/product.md` §3.4, do **BA-12** viết; câu hỏi chưa ai trả lời ở *Unknowns*
+sản phẩm ở `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4, do **BA-12** viết; câu hỏi chưa ai trả lời ở *Unknowns*
 U-008–U-011.
 
 ADR này **không** quyết định màn hình, route, bảng dữ liệu hay tên trạng thái kỹ thuật. Đề xuất
@@ -596,7 +596,7 @@ này được ghi là **dữ kiện quán**, không phải một đề xuất c�
   hình. Chỉ diễn được kết quả, không diễn được việc.
 - *Nhận nguyên khối cấu trúc `admin/live/`, `admin/production/`, cây trạng thái và mô hình dữ
   liệu của đề xuất.* Đó là tầng thiết kế. Repo này chưa chốt xong lát cắt nghiệp vụ (§3.2–§3.3,
-  §4–§8 của `docs/product.md` còn trống). Nhận cấu trúc trước là để tầng dưới quyết thay tầng
+  §4–§8 của `docs/product/0-ba/ban-hang/` còn trống). Nhận cấu trúc trước là để tầng dưới quyết thay tầng
   trên — đúng thứ chính đề xuất ấy cảnh báo ở mục 27 của nó.
 - *Đợi BA-03…BA-09 xong rồi mới ghi.* Loại vì lời chủ quán không đợi được: nói ngày 2026-08-31,
   không ghi ngay là mất (`CLAUDE.md` §7.2). Trục ghi hôm nay, hành vi viết sau, hai việc khác nhau.
@@ -622,7 +622,7 @@ này được ghi là **dữ kiện quán**, không phải một đề xuất c�
   gì phải đếm được* mà chưa mô tả được *ai đếm*. Chấp nhận: thứ tự ngược lại đòi tự đặt luật.
 
 **Applies to:**
-`master_plan/shop-facts.md` §5.4, §7.1, §7.2 (S-4) · `docs/product.md` §3.4 và *Unknowns*
+`master_plan/shop-facts.md` §5.4, §7.1, §7.2 (S-4) · `docs/product/` §3.4 và *Unknowns*
 U-008–U-011 · `work/backlog.md` BA-12, T-026 · `prompt/BA/12-production-control-L2.md` ·
 `work/proposals/admin.admiadmin/admin1.md` · ADR-001 (nhà của dữ kiện quán, không đổi).
 
@@ -753,7 +753,7 @@ này* — và câu thứ hai đổi nhiều lần trong một buổi sáng.
   liệu nêu đích danh là đang treo (§11 của nó) thay vì tự quyết.
 
 **Rủi ro đã chấp nhận:**
-- **`docs/architecture.md` viết trước khi `docs/product.md` §3.4 (BA-12) tồn tại.** Nếu BA-12 mô
+- **`docs/architecture.md` viết trước khi `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4 (BA-12) tồn tại.** Nếu BA-12 mô
   tả trục sản xuất khác đi, tài liệu kiến trúc phải sửa theo — nghiệp vụ vẫn là tầng trên. Đã hạ
   giá bằng cách không chốt lược đồ dữ liệu: §8 của nó chỉ **kể tên chỗ thiếu**, không đặt tên bảng.
 - **"Chỉ POS ghi" dồn việc vào một người.** Người đứng quầy vừa duyệt, vừa thu tiền, vừa cập nhật
@@ -835,7 +835,7 @@ không phải sửa và chỗ ấy hết là suy luận. **Doanh thu tính ngày
 hệ quả là đối soát lệch ở **hai** ngày ngược chiều nhau và `docs/architecture.md` §6.4 nay mang
 công thức đủ bốn dòng. Chi tiết ở `master_plan/shop-facts.md` §6.14.
 
-**Ảnh hưởng tới:** `docs/architecture.md` §8, §11, §12, §13 · `docs/product.md` §3.1.6 và
+**Ảnh hưởng tới:** `docs/architecture.md` §8, §11, §12, §13 · `docs/product/` §3.1.6 và
 *Unknowns* U-012 · `quality/invariants.md` I-005 · `master_plan/shop-facts.md` §6.14 (chỉ đọc).
 
 
@@ -850,7 +850,7 @@ Ba mục ấy, tính tới hôm nay:
 
 | Tài liệu | Mục admin | Mục ấy giữ gì |
 |---|---|---|
-| `docs/product.md` | **§1.6** | ranh giới nghiệp vụ của ba mảng |
+| `docs/product/0-ba/admin/01-ranh-gioi.md` | **§1.6** | ranh giới nghiệp vụ của ba mảng |
 | `docs/architecture.md` | **§14** | mặt kiến trúc, và bốn chỗ chạm với mảng bán hàng |
 | `master_plan/shop-facts.md` | **§8** | dữ kiện quán của ba mảng |
 
@@ -868,7 +868,7 @@ Chủ repo yêu cầu thẳng trong phiên 2026-09-02: *"khi cập nhật phần
 hãy làm thêm 1 mục cho admin tách riêng ra, tôi cần biết mục này là thuộc phần nào"*.
 
 Yêu cầu ấy có gốc kỹ thuật, không chỉ là sở thích. Cùng ngày, T-040 ghi lời chốt Đ-1 bằng cách viết
-chen một khối dài về nguyên liệu và chấm công vào giữa `docs/product.md` §1.4 — mục vốn tả ranh
+chen một khối dài về nguyên liệu và chấm công vào giữa `docs/product/0-ba/ban-hang/01-actors-pham-vi.md` §1.4 — mục vốn tả ranh
 giới của **mảng bán hàng**. Kết quả là một mục phục vụ hai lý do thay đổi: sửa nó vì lý do bán hàng
 thì đụng phần admin, và ngược lại. Đó đúng là hình dạng lỗi `work/findings.md` **F-001** đã ghi cho
 trường hợp hai bản của một sự thật — ở đây là hai sự thật trong một chỗ, hỏng theo cùng một cách.
@@ -881,7 +881,7 @@ một lượt, tách sau tốn một lượt cho mỗi mục.
 - *Gắn nhãn `[ADMIN]` trước từng đoạn, giữ nguyên chỗ.* Nhãn nằm trong lòng mục thì mục lục không
   thấy; người đọc vẫn phải quét cả mục mới biết đoạn nào của mảng nào — đúng cái đang hỏng.
 - *Tách hẳn thành một file riêng dưới `docs/` chỉ dành cho mảng admin.* Vi phạm CLAUDE.md §2 (một sự thật một owner): ranh
-  giới hệ thống đã có owner là `docs/product.md` §1.4, kiến trúc đã có owner là
+  giới hệ thống đã có owner là `docs/product/0-ba/ban-hang/01-actors-pham-vi.md` §1.4, kiến trúc đã có owner là
   `docs/architecture.md`. Thêm file thứ ba là tạo owner thứ hai cho cùng loại sự thật, và
   CLAUDE.md §3.8 cấm dựng tài liệu không ai yêu cầu.
 - *Chờ tới khi có luật nghiệp vụ thật rồi mới tách.* Lúc ấy đã có nhiều mục phải tách, và mỗi lần
@@ -890,7 +890,7 @@ một lượt, tách sau tốn một lượt cho mỗi mục.
   đã chốt hướng "sửa tiến, không viết lại".
 
 **Applies to:**
-`docs/product.md` §1.4 và **§1.6** · `docs/architecture.md` §10, §13 và **§14** ·
+`docs/product/0-ba/` §1.4 và **§1.6** · `docs/architecture.md` §10, §13 và **§14** ·
 `master_plan/shop-facts.md` §7.1, §7.3 và **§8** · `work/admin-questions.md` §4 · mọi task
 **ADM-01…ADM-52** sẽ mở sau này.
 
@@ -1116,8 +1116,8 @@ gọi được khách, và thứ ấy là số điện thoại.
   **hai** kênh, và đối soát cuối ngày (§4.9) không cộng nổi một đơn như thế vào nguồn nào.
 
 **Applies to:**
-`docs/product.md` §2, §2.1–§2.4 · `quality/invariants.md` I-007, I-008 ·
-`master_plan/shop-facts.md` §2, §6.5 · `docs/product.md` §7.2 dòng 2.
+`docs/product/0-ba/ban-hang/02-kenh-ban.md` §2, §2.1–§2.4 · `quality/invariants.md` I-007, I-008 ·
+`master_plan/shop-facts.md` §2, §6.5 · `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7.2 dòng 2.
 
 ---
 
@@ -1141,7 +1141,7 @@ bấm** (**U-004**, chốt 2026-08-30); chủ quán đang đứng quầy thì b�
 
 **Why:**
 Đây là câu trả lời lặp lại **năm lần cho năm câu hỏi khác nhau**, trong bốn ngày khác nhau
-(2026-08-30 → 2026-09-02, `docs/product.md` → *Unknowns* → *Đã có lời giải*). Một câu trả lời lặp
+(2026-08-30 → 2026-09-02, `docs/product/99-unknowns.md` → *Đã có lời giải*). Một câu trả lời lặp
 lại năm lần là một **luật về cách quán vận hành**, không phải năm lời chốt rời rạc. Nó có nền vật
 lý: quán chỉ có **một** máy POS, đặt ở quầy (§6.13).
 
@@ -1160,7 +1160,7 @@ không ai trả lời được sau ba ngày.
   POS được ghi**.
 
 **Applies to:**
-`docs/product.md` §1.5, §2.4, §4.6, §4.8, §5.4 · `quality/invariants.md` I-012 · ADR-011 ·
+`docs/product/0-ba/ban-hang/` §1.5, §2.4, §4.6, §4.8, §5.4 · `quality/invariants.md` I-012 · ADR-011 ·
 `master_plan/shop-facts.md` §6.2, §6.4, §6.7, §6.13, §6.14, §6.16, §6.17.
 
 ---
@@ -1203,7 +1203,7 @@ Phải hỏi **hai lần** vì lượt một chỉ nói chữ *sửa*. Đọc ch
   là quyết định đúng: lời chốt thật hoá ra **rộng hơn** cái suy ra sẽ viết.
 
 **Applies to:**
-`docs/product.md` §5.2, §5.6, §6 dòng 13 · `quality/invariants.md` I-016 ·
+`docs/product/0-ba/ban-hang/` §5.2, §5.6, §6 dòng 13 · `quality/invariants.md` I-016 ·
 `master_plan/shop-facts.md` §6.19 · thay **GĐ-04**.
 
 ---
@@ -1228,7 +1228,7 @@ chuyện tra bảng.
   làm hoá đơn hụt đi so với thứ khách nhớ mình đã gọi.
 
 **Applies to:**
-`docs/product.md` §6 dòng 5, §6.3 · `master_plan/shop-facts.md` §6.20 · thay **GĐ-02**.
+`docs/product/0-ba/ban-hang/06-ngoai-le.md` §6 dòng 5, §6.3 · `master_plan/shop-facts.md` §6.20 · thay **GĐ-02**.
 
 ---
 
@@ -1257,7 +1257,7 @@ số của một ngày đã chốt sổ. Gộp chúng thành một câu là làm
 - *Không cho nợ.* Bác 2026-08-31 — quán vẫn cho nợ dù phần mềm nói gì.
 
 **Applies to:**
-`docs/product.md` §3.1.6, §4.7, §4.9, §4.10 · `quality/invariants.md` I-005, I-014 · ADR-012 ·
+`docs/product/0-ba/ban-hang/` §3.1.6, §4.7, §4.9, §4.10 · `quality/invariants.md` I-005, I-014 · ADR-012 ·
 `master_plan/shop-facts.md` §6.14.
 
 ---
@@ -1291,7 +1291,7 @@ con số cuối cùng.
   và tách ra thì cái vết chậm hơn cái quyết định.
 
 **Applies to:**
-`docs/product.md` §4.8, §4.9, §4.10 · `quality/invariants.md` I-012, I-014 ·
+`docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.8, §4.9, §4.10 · `quality/invariants.md` I-012, I-014 ·
 `master_plan/shop-facts.md` §6.4 · ADR-017 (huỷ đơn đã `Hoàn thành` đi qua đây).
 
 ---
@@ -1320,7 +1320,7 @@ tiền* (**U-023**, chốt 2026-09-01).
   lấy, không có ai đi giao để bấm.
 
 **Applies to:**
-`docs/product.md` §2.1, §3.2.1, §5.2 · `quality/invariants.md` I-007 ·
+`docs/product/0-ba/ban-hang/` §2.1, §3.2.1, §5.2 · `quality/invariants.md` I-007 ·
 `master_plan/shop-facts.md` §6.5, §6.7, §6.12.
 
 ---
@@ -1362,8 +1362,8 @@ két có thể bị một chỗ **thừa** ở ngân hàng che mất, và lúc �
   `shop-facts.md` §1 là lựa chọn của khách, không phải luật loại trừ.
 
 **Applies to:**
-`docs/product.md` §4.6, §4.9, §4.10 · `quality/invariants.md` I-014, I-015 ·
-`master_plan/shop-facts.md` §6.10, §6.18 · `docs/product.md` §7.2 dòng 12.
+`docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.6, §4.9, §4.10 · `quality/invariants.md` I-014, I-015 ·
+`master_plan/shop-facts.md` §6.10, §6.18 · `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7.2 dòng 12.
 
 ---
 
@@ -1403,7 +1403,7 @@ dở bỗng đổi công thức là một suất không ai biết nó gồm gì.
 - *Dòng vừa sửa **giữ** giá cũ của lượt gọi.* Bác 2026-09-02 (U-026).
 
 **Applies to:**
-`docs/product.md` §3.3.1–§3.3.6, §4.4 · `quality/invariants.md` I-009, I-010, I-011, I-013 ·
+`docs/product/0-ba/ban-hang/` §3.3.1–§3.3.6, §4.4 · `quality/invariants.md` I-009, I-010, I-011, I-013 ·
 `master_plan/shop-facts.md` §4.5, §6.17, §6.19.
 
 ---
@@ -1442,11 +1442,11 @@ buổi đối soát.
   và hai tuần đối soát đầu tiên là thứ không chạy lại được.
 - *Lưu nhật ký toàn bộ thao tác của nhân viên.* **Không bác — chỉ là chưa ai chốt.** Ghi rõ ở đây
   để phiên sau không đọc ADR này thành *"đã quyết định là không bao giờ làm"*: nó nằm ở
-  `docs/product.md` §7.5 (*chưa ai cần tới*), và muốn đưa vào thì đi đường §7.8, không phải sửa
+  `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7.5 (*chưa ai cần tới*), và muốn đưa vào thì đi đường §7.8, không phải sửa
   ADR này.
 
 **Applies to:**
-`docs/product.md` §4.8, §4.9, §5.4, §7.2 dòng 12 · `quality/invariants.md` I-012 · ADR-016
+`docs/product/0-ba/ban-hang/` §4.8, §4.9, §5.4, §7.2 dòng 12 · `quality/invariants.md` I-012 · ADR-016
 (một cửa ghi là điều kiện để "ai bấm" trả lời được).
 
 ---
@@ -1480,7 +1480,7 @@ Câu kiểm chứng hỏi được vì nó hỏi **về cái quán**: *"một su
   nó; một con số tiền không được phép đứng ở tư cách suy ra.
 
 **Applies to:**
-`master_plan/shop-facts.md` §4.2, §4.3, §4.6, §7.1, §7.2 · `docs/product.md` §4.1–§4.3 ·
+`master_plan/shop-facts.md` §4.2, §4.3, §4.6, §7.1, §7.2 · `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.1–§4.3 ·
 `quality/invariants.md` I-013 · toàn bộ `prompt/BA/` (pointer đã sửa cùng ngày, T-004).
 
 ---
@@ -1488,7 +1488,7 @@ Câu kiểm chứng hỏi được vì nó hỏi **về cái quán**: *"một su
 ### ADR-026 — Vòng đời công việc trạm BỎ `Đang làm` và giữ `Đã làm xong, còn ở bếp` thay vào
 
 **Decision:**
-Vòng đời **công việc trạm** (`docs/product.md` §5.4) **không có** trạng thái `Đang làm`. Trạng thái
+Vòng đời **công việc trạm** (`docs/product/0-ba/ban-hang/05-vong-doi.md` §5.4) **không có** trạng thái `Đang làm`. Trạng thái
 giữa của nó là **`Đã làm xong, còn ở bếp`** — bếp làm ra rồi nhưng chưa bưng ra bàn.
 
 ⇒ Bảng ở quầy có **BỐN** con số cho một bàn, không phải ba: cần · chưa làm · **đã làm xong còn ở
@@ -1526,8 +1526,8 @@ giữ vì **nó có thật trong bếp**. Đây là quyết định BA-07 để 
   không khoá một danh sách ca cố định.
 
 **Applies to:**
-`docs/product.md` §5.4, §5.6 · `master_plan/shop-facts.md` §5.4 · `quality/invariants.md` I-016 ·
-**BA-12** (`docs/product.md` §3.4 dựng bảng quầy — đọc **S-5** ở `shop-facts.md` §7.2 trước, vì
+`docs/product/0-ba/ban-hang/05-vong-doi.md` §5.4, §5.6 · `master_plan/shop-facts.md` §5.4 · `quality/invariants.md` I-016 ·
+**BA-12** (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4 dựng bảng quầy — đọc **S-5** ở `shop-facts.md` §7.2 trước, vì
 *bấm "đã bưng ra bàn" theo đơn vị nào* mới chỉ là chỗ **suy ra**).
 
 ---
@@ -1554,8 +1554,8 @@ nghiệp vụ**, không phải bằng một thiết kế khéo — và đó là 
   không theo bàn và không theo lượt gọi.
 
 **Applies to:**
-`docs/product.md` §3.1.7, §5.3 · `quality/invariants.md` I-001, I-002 ·
-`master_plan/shop-facts.md` §6.16 · `docs/product.md` §7.2 dòng 4.
+`docs/product/0-ba/ban-hang/` §3.1.7, §5.3 · `quality/invariants.md` I-001, I-002 ·
+`master_plan/shop-facts.md` §6.16 · `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7.2 dòng 4.
 
 ---
 
@@ -1587,8 +1587,8 @@ chủ quán đổi giá*) cùng đúng một lúc mà không mâu thuẫn.
   không phải lựa chọn thiết kế.
 
 **Applies to:**
-`docs/product.md` §1.3, §1.5 · `master_plan/shop-facts.md` §3 · ADR-011, ADR-016 ·
-`docs/product.md` §7.2 dòng 6 (nổ việc cho **đúng năm trạm**).
+`docs/product/0-ba/ban-hang/01-actors-pham-vi.md` §1.3, §1.5 · `master_plan/shop-facts.md` §3 · ADR-011, ADR-016 ·
+`docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7.2 dòng 6 (nổ việc cho **đúng năm trạm**).
 
 ---
 
@@ -1615,7 +1615,7 @@ Note *"đem về"* phải rõ vì nó đổi **việc của bếp** (gói mang �
   không có bàn để gom vào.
 
 **Applies to:**
-`docs/product.md` §2.1, §3.1.4 · `quality/invariants.md` I-006, I-007 ·
+`docs/product/0-ba/ban-hang/` §2.1, §3.1.4 · `quality/invariants.md` I-006, I-007 ·
 `master_plan/shop-facts.md` §6.15.
 
 ---
@@ -1642,11 +1642,11 @@ nhắn** (ADR-022).
 **Rejected alternatives:**
 - *Coi "khách bấm trả trước" là đã trả.* Bác — mã tĩnh, không có báo có tự động; đây là ca thu
   thiếu tiền rẻ nhất để tạo ra và đắt nhất để phát hiện.
-- *Dùng cổng thanh toán online có webhook báo có.* Bác — ngoài phạm vi (`docs/product.md` §7.4),
+- *Dùng cổng thanh toán online có webhook báo có.* Bác — ngoài phạm vi (`docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7.4),
   và nó đổi cách quán nhận tiền chứ không chỉ đổi phần mềm.
 
 **Applies to:**
-`docs/product.md` §4.6, §4.7, §6.3 · `quality/invariants.md` I-012, I-015 ·
+`docs/product/0-ba/ban-hang/` §4.6, §4.7, §6.3 · `quality/invariants.md` I-012, I-015 ·
 `master_plan/shop-facts.md` §6.3 · GĐ-03 (đã thay bằng quy tắc, §6.21).
 
 ---
@@ -1667,7 +1667,7 @@ cần chạy với bán hàng. Bán hàng xong chạy được thì để chạy
 **Why:**
 Hai lý do độc lập cùng chỉ một hướng, và trước 2026-09-02 chỉ có lý do thứ nhất:
 
-1. **Lý do của tài liệu:** `docs/product.md` §7.2 có một điều kiện vào cửa — *§1–§6 đã mô tả nó* —
+1. **Lý do của tài liệu:** `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7.2 có một điều kiện vào cửa — *§1–§6 đã mô tả nó* —
    mà §2 tới §6 **chưa có một quy tắc nghiệp vụ nào** cho ba mảng ấy. Một hạng mục MVP không trỏ
    được về mô tả nào là một hạng mục không ai làm được.
 2. **Lý do của chủ quán:** họ vừa nói thẳng là **không cần** chúng ở bản chạy đầu.
@@ -1676,14 +1676,14 @@ Hai lý do độc lập cùng chỉ một hướng, và trước 2026-09-02 ch�
 quanh — không phải *"chưa biết bao giờ"* mà là *"sau khi luồng bán hàng chạy được"*.
 
 **Rejected alternatives:**
-- *Xếp ba mảng vào `docs/product.md` §7.4 (**đã quyết định không làm**).* Bác — chủ quán vừa mở
+- *Xếp ba mảng vào `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7.4 (**đã quyết định không làm**).* Bác — chủ quán vừa mở
   ranh giới cho chúng **hai lần**; §7.4 sẽ nói ngược lại lời họ.
 - *Xếp vào §7.5 (**chưa ai cần tới**).* Bác — **có** người cần, chỉ là cần **sau**.
 - *Mở ADM-01…ADM-52 thành task ngay bây giờ.* Bác — một task mở trước khi có luật nghiệp vụ là
   một task sẽ phải viết lại; điều kiện vào cửa §7.2 **không đổi** vì lời chốt này.
 
 **Applies to:**
-`docs/product.md` §1.6, §7.6 · `docs/architecture.md` §14 · `master_plan/shop-facts.md` §8 ·
+`docs/product/0-ba/` §1.6, §7.6 · `docs/architecture.md` §14 · `master_plan/shop-facts.md` §8 ·
 `work/admin-questions.md` §2 · ADR-013.
 
 ---
@@ -1715,7 +1715,7 @@ System Design**. Tính tới **2026-09-02**, cả mười đều đã chốt.
 ### Mọi Unknown đã mở từ BA-01 tới BA-09
 
 Ba mươi câu, **U-001 → U-030**, mở bởi các prompt 01–08 cộng BA-09. Không câu nào còn mở
-(`docs/product.md` → *Unknowns*, mục *Đang mở* rỗng tính tới 2026-09-02).
+(`docs/product/99-unknowns.md`, mục *Đang mở* rỗng tính tới 2026-09-02).
 
 | U | Câu hỏi (rút gọn) | Nằm ở |
 |---|---|---|
@@ -1754,7 +1754,7 @@ Ba mươi câu, **U-001 → U-030**, mở bởi các prompt 01–08 cộng BA-09
 > 2026-09-02 hai phiên chạy song song **cùng lấy số U-028** — sự cố ghi trong `work/backlog.md`
 > entry **T-042** (*"lần thứ sáu, và lần này CÓ thiệt hại"*) cùng với hai va chạm khác của cùng
 > ngày, và ở `work/findings.md` **F-014**. Không câu hỏi nào mang số U-028 hay U-029 trong
-> `docs/product.md` hôm nay. Phiên sau **không** tái sử dụng hai số này: câu hỏi mới lấy **U-031**.
+> `docs/product/99-unknowns.md` hôm nay. Phiên sau **không** tái sử dụng hai số này: câu hỏi mới lấy **U-031**.
 
 ### Năm chỗ SUY RA — S-1 tới S-5
 
@@ -1772,17 +1772,17 @@ chủ quán nói thẳng. Bốn chỗ đã được xác nhận và lên §7.1; 
 **S-5 không phải một `GĐ` và không phải một `U`.** Nó là chỗ *suy ra* — có một câu trả lời tạm
 (theo **bàn**, vì một mẻ phục vụ nhiều bàn còn bưng thì bưng tới một bàn) nhưng chưa ai hỏi chủ
 quán. Chỗ của nó là `master_plan/shop-facts.md` §7.2, và nó **không** vào mục *Unknowns* của
-`docs/product.md` (`work/findings.md` F-004: chỗ suy ra phải tách khỏi chỗ đã chốt).
+`docs/product/99-unknowns.md` (`work/findings.md` F-004: chỗ suy ra phải tách khỏi chỗ đã chốt).
 
 ---
 ## Giả định BA — ngoại lệ chưa có lời chốt
 
-Mục này giữ **giả định tạm thời** cho những dòng mang dấu ⚠ trong `docs/product.md` §6. Một `GĐ`
+Mục này giữ **giả định tạm thời** cho những dòng mang dấu ⚠ trong `docs/product/0-ba/ban-hang/06-ngoai-le.md` §6. Một `GĐ`
 **không phải** một quyết định: nó là chỗ ghi lại *nếu không ai trả lời thì hôm nay quán đang ngầm
 làm thế nào*, kèm **mức rủi ro** nếu giả định ấy sai. Có lời chủ quán thì `GĐ` bị **thay** bằng
 quy tắc trong owner của nó (`master_plan/shop-facts.md`), không phải sửa tại chỗ.
 
-Mọi `GĐ` dưới đây mở ngày **2026-09-02**, do **BA-08** (`docs/product.md` §6).
+Mọi `GĐ` dưới đây mở ngày **2026-09-02**, do **BA-08** (`docs/product/0-ba/ban-hang/06-ngoai-le.md` §6).
 
 **CẢ NĂM mục đã bị thay trong ngày 2026-09-02, và mục này nay không giữ giả định nào còn hiệu
 lực.** Ba mục đầu bị thay ở lượt một (T-042 — GĐ-02, GĐ-03, GĐ-04), hai mục cuối ở lượt cuối

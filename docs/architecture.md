@@ -1,7 +1,7 @@
 # Architecture — mặt quản trị của "Bánh cuốn Bà Thanh Cao Bằng"
 
 *T-029 — chốt 2026-08-31. Nguồn: `master_plan/shop-facts.md` (dữ kiện quán) ·
-`docs/product.md` §1, §2, §3 (hành vi đã chốt) · `master_plan/prompt-fullstack.md` §3.4–§3.7, §4
+`docs/product/0-ba/ban-hang/` §1, §2, §3 (hành vi đã chốt) · `master_plan/prompt-fullstack.md` §3.4–§3.7, §4
 (stack, hình dạng dữ liệu, API, route — đã chốt trước đó) · `docs/decisions.md` ADR-009, ADR-011.*
 
 > **Tài liệu này sở hữu cấu trúc hệ thống, không sở hữu dữ kiện quán.** Giá, giờ bán, số bàn, số
@@ -207,7 +207,7 @@ phải làm được:
 
 1. **Một người đang trực `quay`** ⇒ được duyệt, huỷ, thu tiền, hoàn tiền, ghi nợ.
 2. **Chủ quán vào đứng quầy** ⇒ có quyền của trạm `quay`, **và vẫn giữ** quyền quản trị (§3, §1.3
-   của `docs/product.md`) — hai vai cộng vào nhau, không thay thế nhau.
+   của `docs/product/0-ba/ban-hang/`) — hai vai cộng vào nhau, không thay thế nhau.
 3. **Mỗi lần huỷ / hoàn / ghi nợ ghi lại người đang trực lúc đó**, không ghi chức vụ — để đối soát
    truy được về một người thật.
 
@@ -256,7 +256,7 @@ F-001, lần này nằm trong dữ liệu chứ không nằm trong tài liệu.
 ⇒ Màn đổi giá nên cho thấy **đổi một thành phần thì bốn suất thành bao nhiêu**, trước khi lưu.
 
 **Đơn cũ không đổi giá.** Tên món và giá được chụp lại vào chi tiết đơn lúc đặt
-(`prompt-fullstack.md` §4 ràng buộc 2, `docs/product.md` §3.3). Không chụp thì một lần tăng giá
+(`prompt-fullstack.md` §4 ràng buộc 2, `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3). Không chụp thì một lần tăng giá
 làm sai mọi đơn cũ **và** mọi báo cáo đã in.
 
 ### 6.2 Tạm dừng nhận đơn
@@ -315,7 +315,7 @@ Khoản nợ có mục riêng ở cả ba tầng — xem §12.
 | **Hoàn tiền** | quầy quyết từng ca, không có luật cứng | người đứng quầy, **bắt buộc để lại vết** (§6.4) |
 | **Ghi nợ** | khách không trả được (§6.14) | POS, **bắt buộc ghi ai nợ + nợ bao nhiêu** |
 
-Hai điều hệ thống **không** làm (`docs/product.md` §1.4):
+Hai điều hệ thống **không** làm (`docs/product/0-ba/ban-hang/01-actors-pham-vi.md` §1.4):
 
 - **Không tự biết tiền đã về tài khoản.** VietQR ở đây là mã **tĩnh** (§1), không sinh riêng cho
   từng hoá đơn ⇒ người ở quầy nhìn báo có rồi bấm. Đừng thiết kế như thể có webhook.
@@ -336,7 +336,7 @@ tài liệu này nêu ra mà nó chưa có chỗ để cất:
 |---|---|---|
 | **Vết hoàn tiền** — bao nhiêu · đơn nào · ai bấm · lý do | §6.4 | đối soát thấy két lệch, không ai truy được |
 | **Khoản nợ** — ai nợ · bao nhiêu · phiên nào | §6.14 | đóng phiên xong khoản nợ vô chủ — hình dạng đầy đủ ở **§12.3** |
-| **Vết thao tác chạm tiền / chạm trạng thái đơn** | §6.10 · `docs/product.md` §1.4 | *"lệch 1 đồng phải tìm ra lý do"* không thực hiện được |
+| **Vết thao tác chạm tiền / chạm trạng thái đơn** | §6.10 · `docs/product/0-ba/ban-hang/01-actors-pham-vi.md` §1.4 | *"lệch 1 đồng phải tìm ra lý do"* không thực hiện được |
 | **Ai đang trực trạm nào, lúc này** | §6.13 (quyền gắn chỗ đứng) | quyền huỷ phải gán theo `role`, tức sai luật — §4 |
 | **Note "đem về"** trên một suất của phiên bàn | §6.15 | khách mang về một đĩa không gói |
 | **Đã phục vụ bao nhiêu cho từng bàn** | §5.4 | bảng quầy không hiện được *"còn thiếu gì"* |
@@ -345,7 +345,7 @@ tài liệu này nêu ra mà nó chưa có chỗ để cất:
 thứ bảy thì thêm vào đây, đừng tự thiết kế quanh nó.
 
 **Điều tài liệu này cố ý KHÔNG làm:** không đặt tên bảng, không đặt tên cột, không vẽ khoá ngoại.
-Chốt lược đồ là việc của tầng System Design, và nó phải chạy sau khi §3.4 của `docs/product.md`
+Chốt lược đồ là việc của tầng System Design, và nó phải chạy sau khi §3.4 của `docs/product/0-ba/ban-hang/03-lat-cat.md`
 (BA-12) viết xong trục sản xuất bằng ngôn ngữ nghiệp vụ.
 
 ---
@@ -399,7 +399,7 @@ xong **có nằm chờ** (chờ đủ đĩa · chờ người rảnh tay bưng �
 giữa làm xong và ra bàn"* nay sai: nó **biết**, vì quầy bấm. Nút ấy nằm ở **quầy**, không ở bếp —
 lời chốt U-009 (không có nút nào ở trạm bếp) vẫn nguyên vẹn, hai luật không mâu thuẫn.
 
-⚠️ **Chưa viết được ngay khi tài liệu này ghi dòng trên** — `docs/product.md` → *Unknowns*
+⚠️ **Chưa viết được ngay khi tài liệu này ghi dòng trên** — `docs/product/99-unknowns.md`
 **U-017** lúc ấy còn mở: quầy bấm theo **từng cái**, theo **cả mẻ**, hay theo **cả bàn**?
 
 *Cập nhật 2026-09-01 (T-037): **U-017 đã có lời giải — bấm theo MẺ*** (chủ quán chốt,
@@ -407,7 +407,7 @@ lời chốt U-009 (không có nút nào ở trạm bếp) vẫn nguyên vẹn, 
 **theo bậc mẻ**, không nhảy từng đơn vị. Mẻ là đơn vị **bấm**, bàn vẫn là đơn vị **đếm** (§5.3).
 Việc viết lại §3 vẫn là của T-036 — T-037 chỉ gỡ dòng chặn này, không viết hộ đặc tả.*
 
-**Danh sách câu hỏi nghiệp vụ đang mở** (`docs/product.md` → *Unknowns*): cuối ngày 2026-09-01 nó
+**Danh sách câu hỏi nghiệp vụ đang mở** (`docs/product/99-unknowns.md`): cuối ngày 2026-09-01 nó
 **rỗng trở lại** — U-014, U-015, U-016 (mốc đổi menu/giá), U-017 và U-018 đều đã đóng trong ngày.
 Đọc ở owner, đừng tin con số trong câu này.
 
@@ -427,7 +427,7 @@ Không tự chọn phương án rộng rồi ghi như đã chốt (`CLAUDE.md` �
 ## 12. Nợ — một phần riêng, có mục ở cả ba tầng
 
 *Chủ repo yêu cầu 2026-08-31, sau khi chủ quán chốt **cho nợ** (`shop-facts.md` §6.14,
-`docs/product.md` §3.1.6). Quyết định vì sao tách riêng: `docs/decisions.md` **ADR-012**.*
+`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.6). Quyết định vì sao tách riêng: `docs/decisions.md` **ADR-012**.*
 
 **Nợ không phải một cột trên phiên bàn.** Nếu chỉ thêm hai ô *"ai nợ / bao nhiêu"* vào lúc đóng
 phiên thì khoản nợ chết ngay tại đó: không ai tra được hôm nay còn những ai nợ, không ai thu lại
@@ -448,7 +448,7 @@ POS ghi), quyền gắn chỗ đứng (§4), bốn đường tiền (§7), đố
 | **Bếp** | **Không hiện gì.** Năm màn trạm là màn chỉ đọc về *việc phải làm* (§5); nợ là chuyện tiền, không phải chuyện bếp. |
 
 **Ghi nợ là chỗ duy nhất phiên bàn phải hỏi danh tính.** Bình thường khách ăn tại bàn ẩn danh theo
-số bàn (§2 `docs/product.md`); ô *"ai nợ"* phá điều đó, và nó **chỉ** được hỏi ở đúng ca này —
+số bàn (§2 `docs/product/0-ba/ban-hang/02-kenh-ban.md`); ô *"ai nợ"* phá điều đó, và nó **chỉ** được hỏi ở đúng ca này —
 không được biến thành ô "tên khách" hiện ra ở mọi phiên.
 
 ### 12.2 Mặt BE — bốn luật, và ai được bấm
@@ -530,13 +530,13 @@ két lệch ở **hai** ngày ngược chiều nhau — công thức đầy đ�
 | Muốn biết | Đọc |
 |---|---|
 | Dữ kiện quán — giá, giờ, bàn, nồi, quy tắc | `master_plan/shop-facts.md` |
-| Hành vi nghiệp vụ đã chốt | `docs/product.md` |
+| Hành vi nghiệp vụ đã chốt | `docs/product/` |
 | Stack, 16 bảng, API, route | `master_plan/prompt-fullstack.md` §3.4–§3.7 |
 | Vì sao hai trục | `docs/decisions.md` ADR-009 |
 | Vì sao ba mặt một miền, và vì sao chỉ POS ghi | `docs/decisions.md` ADR-011 |
 | Vì sao nợ là một phần riêng, không phải một cột | `docs/decisions.md` ADR-012 · **§12** |
 | Trục sản xuất bằng ngôn ngữ nghiệp vụ | `work/backlog.md` BA-12 — **chưa viết** |
-| **Mảng quản trị (admin)** — nguyên liệu, con người, tài chính | **§14** · `docs/product.md` §1.6 · `master_plan/shop-facts.md` §8 |
+| **Mảng quản trị (admin)** — nguyên liệu, con người, tài chính | **§14** · `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6 · `master_plan/shop-facts.md` §8 |
 | Bản tư vấn ngoài, **không phải sự thật** | `work/proposals/admin.admiadmin/admin1.md` |
 
 ---
@@ -558,7 +558,7 @@ của mảng kia.
 
 **Chủ quán chốt 2026-09-01, xác nhận lại 2026-09-02:** nguyên liệu · con người · tài chính vào
 phạm vi. Trước đó §10 xếp *"nguyên liệu, tồn kho, chấm công, kế toán"* vào **đã quyết định không
-làm**; dòng ấy đã bị xoá. Hành vi nghiệp vụ tương ứng ở `docs/product.md` §1.6; dữ kiện quán ở
+làm**; dòng ấy đã bị xoá. Hành vi nghiệp vụ tương ứng ở `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6; dữ kiện quán ở
 `master_plan/shop-facts.md` §8.
 
 ### 14.2 Hôm nay mục này CHƯA có thiết kế nào
@@ -572,7 +572,7 @@ Mở ranh giới **không** sinh ra kiến trúc. Tính tới 2026-09-02, tài l
   danh sách của nó, không cộng thêm chỗ thiếu nào vì lời chốt này.
 
 ⚠️ **Đừng đọc mục này thành lời cho phép thiết kế.** *Được phép làm* là câu của mục này; *làm ngay
-bây giờ* là câu của `docs/product.md` §7 (BA-09). Ai dựng bảng, dựng màn hay chọn tầng cho ba mảng
+bây giờ* là câu của `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7 (BA-09). Ai dựng bảng, dựng màn hay chọn tầng cho ba mảng
 này trước khi §7 chốt là đang tự quyết phạm vi MVP.
 
 ### 14.3 Chỗ mảng admin CHẠM vào mảng bán hàng — bốn chỗ đã biết

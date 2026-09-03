@@ -1109,3 +1109,198 @@ của một sự thật) · **F-004** (đọc rộng hơn chữ — vì sao U-02
 
 **Status:**
 Open
+
+---
+
+### F-016 — `shop-facts.md` tự khai là "điểm cuối, không trỏ đi đâu", trong khi nó trỏ đi năm chỗ
+
+**Date:** 2026-09-02 · phát hiện khi chạy **DOC-3** (lượt L3 chia việc) — đếm lại pointer nhóm A
+
+**Problem:**
+Banner của `master_plan/shop-facts.md` (dòng 8–11) viết:
+
+> *"Không cần mở thêm tài liệu nào khác, và file này cũng **không trỏ đi đâu** — nó là điểm cuối."*
+
+CLAUDE.md §2 nói lại đúng lời ấy: *"It is deliberately self-contained and link-free: it points
+nowhere, everything points at it."*
+
+Thực tế file có **năm** đường trỏ ra ngoài, tất cả về `docs/product.md`:
+
+| Dòng | Câu | Loại |
+|---:|---|---|
+| **501** | `docs/product.md` → *Unknowns* | pointer sống |
+| **791** | *"chỗ `docs/product.md` §4.6 viết sai **trong ngày 2026-09-01**"* | câu **lịch sử** |
+| **798** | *"cái đổi là món, số suất hoặc tuỳ chọn (`docs/product.md` §5.2)"* | pointer sống |
+| **810** | *"vòng đời đơn có thêm dòng `Hoàn thành → Huỷ` (`docs/product.md` §5.2)"* | pointer sống |
+| **955** | *"ghi ở `docs/product.md` §7"* | pointer sống |
+
+Mâu thuẫn này **có sẵn từ trước DOC-3**, không do việc tách file sinh ra. DOC-3 chỉ là lần đầu có
+người đếm.
+
+**Impact:**
+Hai cái hỏng, và cái thứ hai mới là cái đắt.
+
+- **Banner nói dối về hình dạng của chính nó.** Ai đọc banner rồi tin rằng sửa file này không kéo
+  theo gì sẽ **không grep ngược** khi đổi một dữ kiện — đúng thứ CLAUDE.md §7.2 bắt phải làm
+  (*"sau khi đổi một fact, `grep -rn` cho cái gì trỏ tới nó"*).
+- **Bốn pointer sống đang trỏ vào BẢN LƯU.** ADR-014 cấm mọi thứ trỏ về `docs/product.md`, nhưng
+  vì file cũ còn tồn tại nên **Gate 1b vẫn xanh**. `shop-facts.md` là **owner của mọi dữ kiện
+  quán** — chỗ mà một câu sai lan xa nhất.
+
+**Vì sao không cổng nào bắt được:**
+Gate 1b hỏi *"đường dẫn này mở được không"* — cả năm đều mở được, vì bản lưu vẫn nằm đó. Không
+cổng nào hỏi *"file này có được phép trỏ đi không"*, và cũng **không nên dựng** một cổng như thế
+bây giờ: CLAUDE.md §3.8 bắt chờ tới lần hỏng thứ hai.
+
+**Decision / Fix:**
+Tách làm hai, và **không sửa banner cho khớp**:
+
+1. **Bốn pointer sống (501, 798, 810, 955)** → chuyển sang `docs/product/` trong **DOC-3a**, theo
+   luật ánh xạ. Dòng **791 ở lại** — nó kể một chuyện đã xảy ra vào một ngày cụ thể.
+2. **Banner vẫn sai sau DOC-3a** (dòng 791 còn đó). Câu đúng phải nói được ý thật:
+   *"không dữ kiện nào ở đây phụ thuộc file khác"* — khác với *"không có ký tự `/` nào"*. Sửa
+   banner là **việc riêng**, chưa mở task: nó chạm CLAUDE.md §2 (đang do **DOC-4** giữ), và sửa
+   hai chỗ bằng hai task khác nhau là cách chắc chắn để chúng nói ngược nhau.
+
+**Related task:**
+DOC-3a (bốn pointer) · banner: chưa mở task, xem xét cùng DOC-4
+
+**Status:**
+Open
+
+---
+
+### F-017 — Câu `grep` "chứng minh đã xong" trong prompt lọc rỗng ở máy này, nên nó luôn báo xanh
+
+**Date:** 2026-09-02 · phát hiện ngay lượt đầu chạy **DOC-3**, khi con số đếm ra vô lý
+
+**Problem:**
+`prompt/maintenance/13-pointer-migration-L3.md` đưa lệnh này làm **bằng chứng đã xong**, và
+`prompt/maintenance/15-architecture-into-system-design-L3.md` (DOC-5) dùng lại đúng khuôn ấy:
+
+```bash
+grep -rn "docs/product\.md" --include="*.md" --include="*.sh" . \
+  | grep -v '^\./work/' | grep -v '^\./prompt/maintenance/'
+```
+
+Ba bộ lọc `^\./…` **không khớp gì cả**. `grep` trên máy này là **ugrep 7.8.4**, và nó in đường
+dẫn **không có tiền tố `./`** (`work/backlog.md:220:…`, không phải `./work/backlog.md:220:…`).
+
+Đo thật, 2026-09-02:
+
+| Lệnh | Kỳ vọng | Thực tế |
+|---|---:|---:|
+| tổng số dòng trỏ `docs/product.md` | 595 | **595** |
+| *"phần thật sự phải chuyển"* (đã lọc) | ~239 | **595** |
+
+Hai con số bằng nhau — bộ lọc không bỏ được dòng nào.
+
+**Impact:**
+Đây là **cổng nghiệm thu của cả DOC-3 và DOC-5**, và nó hỏng theo chiều nguy hiểm nhất: **luôn có
+kết quả**, không bao giờ báo lỗi.
+
+- Trước khi làm, nó **thổi phồng việc**: 595 thay vì 239. Prompt DOC-3 gốc chia nhóm theo con số
+  563 và ước lượng *"~225 dòng"* cho luật ánh xạ — hai con số không nhất quán với nhau, và chênh
+  lệch ấy **chính là dấu vết của cái bug này** ở lần đo trước.
+- Sau khi làm, nó **không bao giờ chứng minh được đã xong**: lệnh vẫn trả về hàng trăm dòng
+  `work/**` mà đề bài đã nói là **không phải việc phải làm**. Phiên chạy DOC-3a/3b/3c sẽ hoặc kết
+  luận mình thất bại trong khi đã xong, hoặc — nhiều khả năng hơn — **đi sửa cả `work/**`**, tức
+  làm hỏng đúng phần lịch sử mà CLAUDE.md §5 cố ý bảo vệ.
+
+**Bài học chung, vì nó sẽ lặp:**
+Một lệnh `grep` viết trong prompt là **hợp đồng nghiệm thu**, nhưng khác mọi cổng khác trong repo
+này, **không ai chạy thử nó trước khi giao**. `scripts/*.sh` có `scripts/*.test.sh` chấm; câu lệnh
+nằm trong khối ``` của một file `.md` thì **không cổng nào chấm** — Gate 1b còn cắt bỏ khối ```
+trước khi rà. Lệnh nghiệm thu phải được **chạy một lần lúc viết prompt**, và **dán kết quả vào
+chính prompt** làm mốc; con số dán kèm là thứ duy nhất tố cáo được một bộ lọc rỗng.
+
+**Decision / Fix:**
+Dùng bản **portable**, khớp cả có lẫn không có tiền tố `./`:
+
+```bash
+grep -rn 'docs/product\.md' --include='*.md' --include='*.sh' . \
+  | grep -vE '^(\./)?(work/|prompt/maintenance/|docs/product\.md:|docs/product/)'
+```
+
+- Ba prompt con `13a` · `13b` · `13c` đã dùng bản này và **dán số đo kèm ngày**.
+- `prompt/maintenance/13-…-L3.md` và `15-…-L3.md` còn giữ bản hỏng. Không sửa trong lượt này:
+  `prompt/maintenance/**` là sổ lịch sử (CLAUDE.md §5) và prompt 13 đã được thay thế trên thực tế
+  bởi ba prompt con. **DOC-5 thì phải sửa trước khi chạy** — nó chưa được chạy lần nào.
+
+**Related task:**
+DOC-3a · DOC-3b · DOC-3c (đã dùng bản đúng) · **DOC-5** (còn giữ bản hỏng, sửa trước khi chạy)
+
+**Status:**
+Open
+
+---
+
+### F-018 — Prompt chốt "đúng N dòng" bằng một con số ĐẾM ĐƯỢC, rồi biến nó thành điều kiện nghiệm thu
+
+**Date:** 2026-09-03 · phát hiện khi chạy **DOC-3a** (chuyển pointer nhóm A)
+
+**Problem:**
+`prompt/maintenance/13a-pointer-nhom-A-L2.md` ghi hai con số như thể chúng là **lời chốt**:
+
+- *"nhóm A còn **đúng 14 dòng**"* (Acceptance 1), kèm bảng liệt kê đích danh 14 dòng ấy;
+- *"Luật ánh xạ — dùng đúng một luật, **đã xác nhận đủ phủ** 2026-09-02"*.
+
+Chạy thật, **cả hai đều thiếu**, và thiếu theo hai kiểu khác nhau:
+
+| # | Chỗ | Prompt nói | Sự thật khi làm |
+|:--:|---|---|---|
+| 1 | `quality/invariants.md` **dòng 492** | không nằm trong bảng 14 dòng ⇒ **phải chuyển** | là **câu lịch sử**, phải **ở lại**: *"một câu sai từng nằm ở `docs/product.md` §4.6 **trong ngày 2026-09-01**"*. Đổi đường dẫn là khai rằng câu sai ấy nằm trong một file **chưa tồn tại** vào ngày đó |
+| 2 | **20 dòng** kiểu *"Ảnh hưởng tới:"* / *"Applies to:"* | luật ánh xạ *"đủ phủ"* | một đường dẫn mang **nhiều §N trải trên nhiều file con** (`§1.5, §2.4, §4.6, §4.8, §5.4`). Bảng ánh xạ chỉ có ô cho **một** §N ⇒ không ô nào áp được |
+
+Dòng 492 và `shop-facts.md` dòng 791 kể **cùng một sự việc** — cùng câu sai ở §4.6, cùng ngày
+2026-09-01. Prompt bắt được chỗ thứ hai, sót chỗ thứ nhất.
+
+**Impact:**
+Con số ấy là **Acceptance 1**, nên nó không chỉ sai — nó **ra lệnh**. Một phiên làm đúng bài sẽ
+thấy `grep` đếm ra 15 chứ không phải 14, và đường dễ nhất để "về đúng 14" là **sửa dòng 492**, tức
+là làm hỏng đúng thứ *Cạm bẫy 2* của chính prompt ấy dựng lên để bảo vệ. Cổng nghiệm thu quay ngược
+súng vào việc nó đang gác. Với chỗ thứ hai thì rẻ hơn nhưng cùng cơ chế: không có ô ánh xạ nào áp
+được, phiên phải **tự đặt luật** giữa chừng — đúng lúc nó tin rằng luật đã được xác nhận đủ.
+
+**Vì sao không cổng nào bắt được:**
+Cả hai con số ra từ `grep`, và `grep` đếm được **dòng nào có chuỗi `docs/product.md`** nhưng không
+đọc được **thì của câu**. Phân biệt *"hôm nay nó nằm ở đâu"* với *"ngày ấy nó từng nằm ở đâu"* là
+việc đọc, không phải việc đếm — cùng ranh giới F-015 đã gọi tên (*"Ranh giới là **thì của câu**,
+không phải sự có mặt của cái ID"*). Gate 1b thì mù hẳn: `docs/product.md` vẫn mở được, nên cả 15
+dòng đều xanh.
+
+**Bài học chung, vì nó sẽ lặp:**
+CLAUDE.md §7.2 đã có đúng luật này — *"**Exactly N** only when N is a decision, not your summary"*
+(F-003) — nhưng nó mới được đọc là luật cho **tài liệu nghiệp vụ**. Nó là luật cho **prompt** nữa,
+và ở prompt thì đắt hơn: một con số trong mục *Acceptance* là thứ phiên sau **phải làm cho bằng**.
+
+⇒ Khi một prompt đếm được N, viết **N kèm ngày đo và kèm lời mời tìm chỗ thứ N+1**, không viết
+*"đúng N"*. Câu *"đo 2026-09-02 ra 14 dòng ở lại; thấy dòng thứ 15 thì ghi lại, đừng ép về 14"*
+tốn thêm một dòng và gỡ hẳn cái bẫy trên.
+
+**Decision / Fix:**
+1. **Dòng 492 ở lại**, cùng lý lẽ với `shop-facts.md` 791 (CLAUDE.md §5: *một đường đã chết ở đó là
+   bằng chứng, không phải bug*). Nhóm A còn **15** dòng, không phải 14. Không sửa prompt 13a:
+   `prompt/maintenance/**` là sổ lịch sử (CLAUDE.md §5), và nó đã chạy xong.
+2. **20 dòng đa-mục → trỏ tới THƯ MỤC**, giữ nguyên mọi `§N`: `docs/product/0-ba/ban-hang/` (trải
+   §1–§8), `docs/product/0-ba/` (trải cả admin), `docs/product/` (trải cả *Unknowns*). Đây là một
+   đổi đường-dẫn-lấy-đường-dẫn nên không viết lại câu, và file con đánh số `01-`…`08-` khớp `§1`…`§8`
+   nên tra ngược vẫn chạy. Giá phải trả ghi rõ ở mục dưới.
+3. **DOC-3b, DOC-3c, DOC-5 phải đọc mục này trước khi tin con số trong prompt của chúng** — ba
+   prompt ấy đếm bằng cùng một `grep`, trong cùng lượt đo.
+
+**Giá phải trả của cách 2, ghi ra để không ai phát hiện lại:**
+`scripts/check-links.sh` chỉ nhận đường dẫn có **đuôi biết trước** (`.md`, `.sh`, …). Một đường
+kết thúc bằng `/` bị **bỏ qua hẳn** — không đỏ, mà cũng **không được chấm**. Đo sau khi chạy
+(2026-09-03): trong 99 dòng đã chuyển, **75 dòng trỏ tới một file `.md`** (Gate 1b chấm) và
+**24 dòng trỏ tới thư mục** (Gate 1b bỏ qua) — 20 dòng đa-mục ở trên, cộng bốn dòng vốn không mang
+số mục nào (`docs/architecture.md` 533 · `docs/prompt-guideline.md` 49, 161 ·
+`master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` 332). Acceptance 3 của prompt 13a nói
+*"113/114 dòng Gate 1b có chấm"*; sau DOC-3a con số thật là **90/114** (75 đã chuyển + 15 ở lại). Đừng dựng cổng mới cho việc này: CLAUDE.md §3.8 bắt chờ tới lần hỏng thứ hai.
+
+**Related task:**
+DOC-3a (đã xử lý cả hai chỗ) · **DOC-3b, DOC-3c, DOC-5** (cùng lượt đo, chưa kiểm lại) ·
+F-003 (*"exactly N"*) · F-015 (thì của câu) · F-017 (cùng lượt đo, `grep` lọc rỗng)
+
+**Status:**
+Open

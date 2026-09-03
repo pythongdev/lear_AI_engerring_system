@@ -498,7 +498,7 @@ thứ bảy thì thêm vào đây:
 sáu phần của cùng một cái nhìn đó, không phải sáu màn hình.
 
 **Ba chỗ từng để trống, chủ quán trả lời hết ngày 2026-08-31** (trước đó là U-008, U-009, U-010 ở
-`docs/product.md` → *Unknowns*):
+`docs/product/99-unknowns.md`):
 
 **1 · Không có nút bấm nào ở trạm bếp.** Câu hỏi *ai bấm "đã làm xong" và "đã bưng ra bàn", theo
 từng cái hay theo cả mẻ* được chủ quán trả lời bằng cách **bỏ bước ấy đi**: *"bỏ qua bước này, POS
@@ -795,7 +795,7 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
     **"pos sửa đơn"**. Vậy đường chính thức là **sửa**, không phải huỷ-rồi-tạo-lại, và nó đi qua
     đúng cái cửa mọi việc chạm tiền đã đi qua: **máy POS ở quầy** (§6.13).
     - **Sửa là đổi NỘI DUNG đơn, không phải đẩy đơn sang một trạng thái khác.** Đơn đang ở đâu thì
-      vẫn ở đó; cái đổi là món, số suất hoặc tuỳ chọn (`docs/product.md` §5.2).
+      vẫn ở đó; cái đổi là món, số suất hoặc tuỳ chọn (`docs/product/0-ba/ban-hang/05-vong-doi.md` §5.2).
     - **Sửa được ở BẤT KỲ trạng thái nào, và POS quyết theo tình hình thực tế** (chủ quán chốt
       2026-09-02, trả lời nốt U-022): *"quán đang ở trạng thái nào cũng sửa được. POS sẽ quyết định
       dựa trên tình hình thực tế."* **Không có mốc trạng thái cứng** — không có ranh giới kiểu
@@ -807,7 +807,7 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       giờ, ai bấm. Đây là §6.10 áp vào, không phải luật mới: sửa đơn **chạm tiền**.
     - **Vế HUỶ nay cũng đã chốt: HUỶ ĐƯỢC, kể cả đơn đã `Hoàn thành`, và POS quyết** (chủ quán
       chốt 2026-09-02, trả lời U-027): *"có thể huỷ được, để POS quyết định trong thực tế."* ⇒ Bảng
-      vòng đời đơn có thêm dòng `Hoàn thành → Huỷ` (`docs/product.md` §5.2), và ca ấy **rời** danh
+      vòng đời đơn có thêm dòng `Hoàn thành → Huỷ` (`docs/product/0-ba/ban-hang/05-vong-doi.md` §5.2), và ca ấy **rời** danh
       sách chuyển tiếp bị từ chối (§5.6).
     - ⇒ **Sửa và huỷ nay CÙNG một luật: không có mốc trạng thái nào chặn, POS quyết từng ca.** Hỏi
       hai lần, hai ngày, ra cùng một câu trả lời — đó là **luật**, không phải hai lời chốt rời.
@@ -952,7 +952,7 @@ lại điều gì.
 | 2026-09-02 | **Sửa sai bằng CẬP NHẬT, không hoàn tác; mỗi lần giữ bản trước, bản sau, lý do, người sửa** — *"để đối chiếu"* (xác nhận GĐ-01 và GĐ-05, kèm yêu cầu mới) | §6.22 |
 | 2026-09-02 | **Dòng vừa sửa lấy GIÁ ĐANG HIỆU LỰC LÚC SỬA** — sửa một dòng là đặt lại mốc khoá giá của dòng ấy; ngoại lệ có chủ ý của §6.17 (trả lời U-026) | §6.19 |
 | 2026-09-02 | **Đơn đã `Hoàn thành` cũng HUỶ được, POS quyết trong thực tế** (trả lời U-027) — cùng luật với *sửa*: không mốc trạng thái nào chặn | §6.19 |
-| 2026-09-02 | **Không mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên** — *"bán hàng xong chạy được thì để chạy trước"* (trả lời U-030) | — *phạm vi MVP, không phải dữ kiện quán; ghi ở `docs/product.md` §7* |
+| 2026-09-02 | **Không mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên** — *"bán hàng xong chạy được thì để chạy trước"* (trả lời U-030) | — *phạm vi MVP, không phải dữ kiện quán; ghi ở `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7* |
 | 2026-09-02 | **Sửa đơn được ở BẤT KỲ trạng thái nào**, POS quyết theo tình hình thực tế — không có mốc trạng thái cứng (trả lời nốt U-022; vế *huỷ* **không** được chạm tới, thành U-026) | §6.19 |
 | 2026-09-02 | **Sổ giấy: POS hoặc chủ quán giữ và nhập lại, nhập ngay khi có thể** — có điện lại giữa buổi thì làm tiếp trên hệ thống, ghi tay cập nhật sau (trả lời U-025) | §6.11 |
 | 2026-09-02 | **Món hết sau khi khách đã chọn: POS bàn với khách, quyết tại lúc thoả thuận xong** — không tự thay thế, không tự huỷ (đóng câu 3 bảng §10) | §6.20 |

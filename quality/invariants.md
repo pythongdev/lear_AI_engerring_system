@@ -41,7 +41,7 @@ không bao giờ nằm trong hai phiên còn mở.
 **Why:**
 Bàn có hai phiên mở cùng lúc thì một trong hai sẽ được đóng mà không ai nhìn tới — tiền của phiên
 kia không bao giờ được thu. Trạng thái *chờ thanh toán* là chỗ dễ vỡ nhất: nhìn thì như đã xong,
-nhưng khách vẫn gọi thêm được (`docs/product.md` §3.1.4, `master_plan/shop-facts.md` §6.1).
+nhưng khách vẫn gọi thêm được (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.4, `master_plan/shop-facts.md` §6.1).
 
 **Verification:**
 Kịch bản nghiệp vụ: mở phiên cho bàn 5 → gọi một lượt bằng QR tại bàn → quầy bấm tính tiền (phiên
@@ -49,7 +49,7 @@ sang *chờ thanh toán*) → gửi thêm một đơn QR tại bàn 5. Kỳ vọ
 chờ thanh toán, và số phiên chưa thanh toán của bàn 5 vẫn bằng 1. Kịch bản ghép: ghép bàn 4 với
 bàn 5 ⇒ **một** phiên gắn hai bàn, và mỗi bàn vẫn đếm được đúng **một** phiên chưa thanh toán —
 không bàn nào lên hai. Kiểm lại con số này sau các bước
-4, 9 và 11 của `docs/product.md` §3.1.1. Đối soát cuối ngày (`shop-facts.md` §6.10): không bàn nào
+4, 9 và 11 của `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.1. Đối soát cuối ngày (`shop-facts.md` §6.10): không bàn nào
 xuất hiện trên hai hoá đơn chưa đóng cùng lúc.
 
 *Phát hiện ở BA-03, 2026-08-31.*
@@ -85,13 +85,13 @@ Thiếu một trong hai điều kiện thì bàn chưa trống.
 **Why:**
 Hai lỗi ngược chiều nhau, cùng chặn bằng một câu. Trả bàn về trống ngay khi đóng phiên thì khách
 mới được xếp vào một cái bàn còn bẩn. Trả bàn về trống khi mới dọn mà phiên chưa đóng thì phiên
-kia mất chỗ đứng và tiền của nó không ai thu (`docs/product.md` §3.1.4, §5 quy tắc 9 của kế hoạch
+kia mất chỗ đứng và tiền của nó không ai thu (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.4, §5 quy tắc 9 của kế hoạch
 gốc).
 
 **Verification:**
 Kịch bản: đóng phiên bàn 5 nhưng chưa dọn ⇒ bàn 5 **không** được nhận khách mới. Dọn bàn 5 trong
 khi phiên còn *chờ thanh toán* ⇒ bàn 5 vẫn **không** trống. Chỉ khi cả bước 13 và bước 14 của
-`docs/product.md` §3.1.1 đã xong thì bàn mới trống. Kiểm mỗi ca: không bàn trống nào còn dính một
+`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.1 đã xong thì bàn mới trống. Kiểm mỗi ca: không bàn trống nào còn dính một
 phiên chưa đóng.
 
 *Phát hiện ở BA-03, 2026-08-31.*
@@ -111,7 +111,7 @@ phải tráng sáu cái bánh, và **mọi suất bán đều kèm bánh cuốn*
 
 **Verification:**
 Kịch bản dương: duyệt một đơn "hai suất Đầy đủ trứng tái" ở bàn 5 ⇒ đếm việc sinh ra phải khớp
-đúng ví dụ ở `docs/product.md` §3.1.5 — sáu việc trên ba trạm, bánh cuốn ×6 chứ không phải ×2, và
+đúng ví dụ ở `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.5 — sáu việc trên ba trạm, bánh cuốn ×6 chứ không phải ×2, và
 dòng giò không kèm mô tả nhân. Kịch bản âm: gửi cùng đơn ấy qua QR tại bàn và **không** duyệt ⇒
 đếm việc ở cả năm trạm bằng 0. Kịch bản phủ: với mỗi suất bán ở `shop-facts.md` §4.5, đơn duyệt
 xong phải có ít nhất một việc bánh cuốn — suất nào không có là nổ sai.
@@ -130,7 +130,7 @@ Chủ quán chốt 2026-08-31 là **cho nợ** (`master_plan/shop-facts.md` §6.
 được — không cho nợ thì một bàn quỵt tiền khoá luôn cái bàn. Nhưng đối soát cuối ngày lấy ngưỡng
 lệch là **0đ** (§6.10): nếu khoản nợ không có chủ, hoặc bị cộng vào như tiền mặt đã nhận, thì két
 lệch mà không ai truy ngược được — đúng thứ §6.10 cấm. Ghi nợ cũng là chỗ duy nhất phiên bàn phải
-bỏ tính ẩn danh theo số bàn (`docs/product.md` §2.1, §3.1.6).
+bỏ tính ẩn danh theo số bàn (`docs/product/0-ba/ban-hang/` §2.1, §3.1.6).
 
 **Verification:**
 Kịch bản: đóng phiên bàn 5 với số tiền thu được ít hơn tổng hoá đơn ⇒ thao tác **bị từ chối** nếu
@@ -159,7 +159,7 @@ Kịch bản: bàn 5 đang ăn, gọi thêm một suất đem về ⇒ số đơ
 của bàn 5 tăng đúng giá suất đó, và dòng việc xuống bếp của suất ấy mang note "đem về" đọc được.
 Kịch bản đối soát: `doanh thu phiên bàn` + `doanh thu đơn lẻ` = tổng doanh thu, và không suất đem
 về nào xuất hiện ở cả hai vế (`shop-facts.md` §6.9). Kịch bản âm: thử nối một đơn tới lấy vào phiên
-bàn 5 ⇒ phải **bị từ chối** (`docs/product.md` §2.4).
+bàn 5 ⇒ phải **bị từ chối** (`docs/product/0-ba/ban-hang/02-kenh-ban.md` §2.4).
 
 *Phát hiện ở T-028, 2026-08-31.*
 
@@ -184,7 +184,7 @@ là hai nửa của cùng một ranh giới và phải cùng đúng.
 
 **Verification:**
 Kịch bản âm: tạo một đơn tới lấy, rồi thử nối nó vào phiên đang mở của bàn 5 ⇒ thao tác phải **bị
-từ chối** (`docs/product.md` §2.4, §3.2.5). Kịch bản thật: khách đã đặt trước qua hotline nhưng
+từ chối** (`docs/product/0-ba/ban-hang/` §2.4, §3.2.5). Kịch bản thật: khách đã đặt trước qua hotline nhưng
 tới quán ngồi ăn ⇒ đường duy nhất đi được là **huỷ** đơn cũ rồi gọi lại bằng QR tại bàn; sau ca
 này, số phiên bàn của bàn ấy vẫn là 1 và đơn hotline nằm ở trạng thái đã huỷ. Kịch bản đếm: một
 khách đặt hai đơn tới lấy cách nhau mười phút ⇒ **hai** đơn, **hai** lần thu tiền, không có thao
@@ -211,7 +211,7 @@ quán phải gọi lại xin huỷ. Nửa sau cũng phải đúng: chặn nhầm
 
 **Verification:**
 Kịch bản biên: gửi một đơn lúc 05:59 và một đơn lúc 11:01 ⇒ cả hai **bị từ chối**, và khách thấy
-câu *"Quán mở cửa 6h–11h sáng"* chứ không phải một nút bấm im lặng (`docs/product.md` §3.2.6).
+câu *"Quán mở cửa 6h–11h sáng"* chứ không phải một nút bấm im lặng (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.2.6).
 Kịch bản ưu tiên: 08:00 — trong giờ bán — chủ quán bật tạm dừng ⇒ đơn mới của **cả năm** kênh đều
 bị từ chối; tắt tạm dừng thì đặt lại được ngay. Kịch bản không chạm đơn cũ: nhận một đơn giao tận
 nơi lúc 10:50, bật tạm dừng lúc 10:55 ⇒ đơn đó vẫn đi hết luồng, vẫn bấm được **đã giao và đã thu
@@ -226,7 +226,7 @@ Một đơn đã được tạo giữ nguyên **tổng tiền**, **giá từng d
 suất** đúng như tại thời điểm tạo đơn, ở mọi thời điểm về sau. Không thao tác nào của chủ quán làm
 đổi được bốn thứ đó, kể cả khi chủ quán đổi giá một thành phần, đổi mức phụ thu nhân, đổi mức phụ
 thu lượng nhân, đổi thành phần của một suất bán, hay ngừng bán hẳn món đó
-(`master_plan/shop-facts.md` §4.2, §4.4, §4.5 — bốn chiều liệt kê ở `docs/product.md` §3.3.2).
+(`master_plan/shop-facts.md` §4.2, §4.4, §4.5 — bốn chiều liệt kê ở `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3.2).
 Ranh giới là **thời điểm tạo một LƯỢT GỌI**, không phải trạng thái nó đang ở: lượt gọi đang chờ
 duyệt, đang làm ở bếp, đang giao hay chờ thanh toán đều đã khoá giá xong. Ranh giới **không** phải
 lúc mở phiên bàn và **không** phải lúc thanh toán — nên một phiên bàn vắt qua mốc đổi giá cho ra
@@ -235,7 +235,7 @@ lúc mở phiên bàn và **không** phải lúc thanh toán — nên một phi�
 
 **Một ngoại lệ, và nó KHÔNG nới invariant này ra** (chủ quán chốt 2026-09-02, trả lời U-026): khi
 người đứng quầy **sửa** một dòng, dòng ấy lấy **giá đang hiệu lực lúc sửa** — mốc khoá giá của
-chính dòng đó được **đặt lại** (`master_plan/shop-facts.md` §6.19, `docs/product.md` §4.4). Phân
+chính dòng đó được **đặt lại** (`master_plan/shop-facts.md` §6.19, `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.4). Phân
 biệt phải giữ cho sắc, vì invariant này sống hay chết ở đúng chỗ ấy:
 
 - **Cái invariant cấm là menu tự với ngược vào đơn cũ.** Chủ quán đổi giá xong, **không** dòng nào
@@ -266,10 +266,10 @@ Kịch bản gốc — đổi giá món → mở đơn cũ → tổng tiền kh�
 thường** (25.000 theo `shop-facts.md` §4.3) → chủ quán nâng giá một cái bánh nhân thường từ 4.000
 lên 5.000 → mở lại đúng đơn ấy ⇒ tổng vẫn **25.000**, không phải 29.000; và một suất giò cùng loại
 đặt **mới** ra 29.000. Kịch bản phủ bốn chiều: lặp đúng kịch bản trên cho từng chiều ở
-`docs/product.md` §3.3.2 — giá thành phần · phụ thu nhân · phụ thu lượng nhân · thành phần suất
+`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3.2 — giá thành phần · phụ thu nhân · phụ thu lượng nhân · thành phần suất
 (đổi combo "Đầy đủ" từ 3 cái bánh xuống 2) ⇒ cả bốn lần, đơn cũ giữ nguyên tổng tiền **và** giữ
 nguyên số phần bếp phải làm. Kịch bản ngừng bán: ngừng bán suất giò ⇒ đơn cũ vẫn hiện đúng tên
-*"suất giò"* và đúng giá đã bán, trong khi cả năm kênh (`docs/product.md` §2) không đặt mới được
+*"suất giò"* và đúng giá đã bán, trong khi cả năm kênh (`docs/product/0-ba/ban-hang/02-kenh-ban.md` §2) không đặt mới được
 món đó. Kiểm ngược, cuối ngày: doanh thu của **mọi ngày đã qua** đọc lại phải bằng đúng con số đã
 đối soát hôm đó, kể cả sau một lần chủ quán sửa giá (`shop-facts.md` §6.9, §6.10).
 
@@ -290,7 +290,7 @@ Một dòng đơn mang tổ hợp tuỳ chọn không hợp lệ **bị từ ch�
 hay thêm tuỳ chọn để biến nó thành hợp lệ rồi cho đơn đi tiếp. Tổ hợp không hợp lệ đã chốt là
 **Chay + Nhiều nhân**: nhóm *Lượng nhân* chỉ tồn tại khi nhân khác Chay
 (`master_plan/shop-facts.md` §4.4, §4.6 quy tắc 3, §4.8 ca 11). Luật này áp cho **mọi** kênh trong
-năm kênh của `docs/product.md` §2 — đơn khách tự bấm và đơn nhân viên nhập hộ như nhau. Khi chủ
+năm kênh của `docs/product/0-ba/ban-hang/02-kenh-ban.md` §2 — đơn khách tự bấm và đơn nhân viên nhập hộ như nhau. Khi chủ
 quán sửa menu làm một tổ hợp đang hợp lệ trở thành không hợp lệ, luật áp cho đơn **mới** kể từ lúc
 lưu; đơn **cũ** mang tổ hợp ấy không bị sửa lại và không bị đánh dấu hỏng (I-009).
 
@@ -320,7 +320,7 @@ giờ bán (06:00–11:00, `shop-facts.md` §1, múi giờ `Asia/Ho_Chi_Minh`) *
 thứ: một **lời nhắc** trước khi lưu, nói rằng đang trong giờ bán và luật là chờ hết buổi; và một
 **vết đọc được** sau khi lưu — đổi cái gì, lúc mấy giờ, ai bấm. Ba chiều còn lại của việc đổi giá
 — giá thành phần, phụ thu nhân, phụ thu lượng nhân — **không** chịu ràng buộc này: chúng đổi được
-bất kỳ lúc nào, không nhắc gì cả (`docs/product.md` §3.3.2).
+bất kỳ lúc nào, không nhắc gì cả (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3.2).
 
 **Why:**
 Chủ quán chốt hai câu, và phải đọc **cùng nhau**. Câu thứ nhất (2026-09-01, trả lời U-016,
@@ -362,7 +362,7 @@ thao tác chạm tiền, tính tới 2026-09-01: **duyệt** đơn (`shop-facts.
 · **hoàn tiền** (§6.4) · **ghi nợ** lúc đóng phiên và **thu nợ** về sau (§6.14) · **xác nhận đã
 nhận tiền** cho cả hai phương thức (§6.3) · **ghép bàn** (§6.16) · chủ quán **đổi giá** hoặc **đổi
 thành phần suất** (§6.17). Mọi thao tác trong danh sách đi qua **đúng một cửa: máy POS ở quầy**
-(`docs/product.md` §2.4, §4.6, §4.8), trừ hai ca đã chốt tên người khác: **người đi giao** bấm *đã
+(`docs/product/0-ba/ban-hang/` §2.4, §4.6, §4.8), trừ hai ca đã chốt tên người khác: **người đi giao** bấm *đã
 giao + đã thu tiền* tại chỗ khách (§6.7), và **chủ quán** bấm đổi giá / đổi thành phần suất trên
 mặt quản trị (§6.17).
 
@@ -382,10 +382,10 @@ thao tác tiền khác** cũng phải có mức đó, kể cả những thao tá
 Kịch bản phủ: chạy đủ một lượt tám thao tác trong danh sách trên, rồi **hôm sau** mở lại — mỗi
 thao tác phải đọc ra đủ bốn câu (cái gì, bao nhiêu, ai, mấy giờ). Kịch bản hoàn tiền: hoàn tiền một
 đơn đã trả trước bị huỷ ⇒ vết ghi đủ **bao nhiêu, đơn nào, ai bấm, lý do gì**
-(`docs/product.md` §4.8); thiếu lý do cũng là hỏng, vì không có luật cứng nào thay được nó. Kịch
+(`docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.8); thiếu lý do cũng là hỏng, vì không có luật cứng nào thay được nó. Kịch
 bản đối soát: dựng một ngày có **ghi nợ + thu nợ cũ + một lần hoàn + một lần chủ quán đổi giá giữa
 buổi** ⇒ bảng đối soát cuối ngày giải thích được **từng** chỗ lệch bằng đúng một thao tác có tên
-(`docs/product.md` §4.9). Kịch bản âm: không tồn tại đường nào đổi tiền mà không qua POS ở quầy,
+(`docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.9). Kịch bản âm: không tồn tại đường nào đổi tiền mà không qua POS ở quầy,
 ngoài hai ca đã chốt ở trên.
 
 *Phát hiện ở BA-06, 2026-09-01.*
@@ -398,7 +398,7 @@ khách chọn và tuỳ chọn khách chọn kèm, tra `master_plan/shop-facts.m
 giá đến **từ phía khách** không bao giờ được dùng làm giá — kể cả khi nó bằng đúng giá đúng. Công
 thức là **tổng giá các thành phần của suất** (§4.6 quy tắc 1), nên "tính lại" nghĩa là cộng lại từ
 bảng thành phần, không phải đọc một con số nằm sẵn cạnh tên món. Luật áp cho **cả năm** kênh của
-`docs/product.md` §2.
+`docs/product/0-ba/ban-hang/02-kenh-ban.md` §2.
 
 **Why:**
 `shop-facts.md` §4.6 quy tắc 9 nói thẳng hậu quả: nhận giá do khách gửi nghĩa là **có ngày khách
@@ -406,7 +406,7 @@ bảng thành phần, không phải đọc một con số nằm sẵn cạnh tê
 của khách, nên đây không phải rủi ro lý thuyết. Bước quầy duyệt (§6.2) **không** đỡ được: nó chặn
 đơn ảo, không ai đứng đó cộng lại tiền từng dòng. Và vì giá một suất là **tổng thành phần**, đọc
 một con số có sẵn cũng hỏng theo cách thứ hai: chủ quán đổi giá một cái bánh thì con số nằm sẵn ấy
-không tự đúng lại (`docs/product.md` §3.3.2).
+không tự đúng lại (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3.2).
 
 Nó là nửa còn lại của I-010: I-010 chặn **tổ hợp tuỳ chọn** vô nghĩa đi vào đơn, invariant này
 chặn **con số tiền** đi vào đơn. Hai cửa khác nhau của cùng một luật *"khách chọn món, hệ thống
@@ -415,7 +415,7 @@ quyết tiền"*.
 **Verification:**
 Kịch bản âm: gửi một đơn QR tại bàn kèm giá **0đ** cho một suất giò ⇒ đơn được tạo với giá tra từ
 `shop-facts.md` §4.3, **không** phải 0đ; lặp lại với một giá cao hơn giá đúng ⇒ vẫn ra giá đúng.
-Kịch bản kênh: lặp cả hai ca trên qua **năm** kênh của `docs/product.md` §2, kể cả quầy đặt hộ trên
+Kịch bản kênh: lặp cả hai ca trên qua **năm** kênh của `docs/product/0-ba/ban-hang/02-kenh-ban.md` §2, kể cả quầy đặt hộ trên
 POS. Kịch bản tính lại: đặt một suất giò nhân thường, rồi chủ quán đổi giá một cái bánh, rồi đặt
 **mới** một suất giò cùng loại ⇒ đơn mới ra giá **mới** (đơn cũ giữ nguyên — I-009), chứng minh giá
 được cộng lại từ bảng thành phần chứ không đọc từ một chỗ nằm sẵn. Kịch bản phủ: mười ca có số của
@@ -430,7 +430,7 @@ Doanh thu của một ngày bán = **tiền từ phiên bàn** + **tiền từ �
 nguồn, không bao giờ chỉ một. Mỗi khoản tiền thuộc **đúng một** nguồn: không khoản nào bị đếm hai
 lần, và không khoản nào rơi ra ngoài cả hai. "Hai nguồn" chia theo **đơn vị thanh toán**, không
 chia theo kênh — cả **ba** kênh mang đi (Delivery, Pickup, Đặt trước qua hotline) cùng rơi vào
-nguồn thứ hai (`master_plan/shop-facts.md` §6.9, `docs/product.md` §4.5, §4.10).
+nguồn thứ hai (`master_plan/shop-facts.md` §6.9, `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.5, §4.10).
 
 **Ngày nào tính vào doanh thu ngày ấy — hai luật NGƯỢC CHIỀU, cả hai cùng đúng:**
 
@@ -460,7 +460,7 @@ Kịch bản không trùng: liệt kê mọi khoản tiền của ngày ấy ⇒
 trên đúng **một** nguồn; suất "đem về" của khách ngồi bàn nằm ở nguồn **phiên bàn** (I-006), đơn
 Pickup nằm ở nguồn **đơn lẻ** (I-007). Kịch bản nợ: bàn 5 nợ hôm nay, trả vào ba hôm sau ⇒ doanh
 thu **hôm nay** đã có đủ khoản đó, doanh thu **hôm trả** **không** tăng, và tổng doanh thu hai ngày
-cộng lại đúng bằng số tiền một bữa ăn (`docs/product.md` §3.1.6, §4.10). Kịch bản hoàn tiền — đi
+cộng lại đúng bằng số tiền một bữa ăn (`docs/product/0-ba/ban-hang/` §3.1.6, §4.10). Kịch bản hoàn tiền — đi
 **ngược** kịch bản nợ: bán thứ Hai, hoàn thứ Tư ⇒ doanh thu **thứ Hai giữ nguyên** (mở lại phải ra
 đúng con số đã đối soát tối thứ Hai), doanh thu **thứ Tư** giảm đúng bằng khoản đã hoàn. Kịch bản
 đối soát: dựng lại doanh thu của **mọi ngày đã qua** phải ra đúng con số đã đối soát hôm đó, kể cả
@@ -499,7 +499,7 @@ Kịch bản chia: một phiên bàn thu làm hai phần — một phần tiền
 khoản, mỗi khoản có phương thức và số tiền riêng, và tổng hai khoản bằng đúng tổng hoá đơn (I-002).
 Kịch bản đối soát: cuối ngày, **tổng phần tiền mặt** của mọi lần thu khớp két và **tổng phần chuyển
 khoản** khớp tin nhắn báo có, tính riêng từng nguồn — không cộng gộp rồi so một con số
-(`docs/product.md` §4.9). Kịch bản thiếu: thu ít hơn tổng hoá đơn ⇒ phần thiếu **bắt buộc** thành
+(`docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.9). Kịch bản thiếu: thu ít hơn tổng hoá đơn ⇒ phần thiếu **bắt buộc** thành
 một khoản nợ có tên và có số tiền, đúng I-005; không có đường nào đóng phiên với tổng nhỏ hơn mà
 không ghi nợ. Kịch bản âm: thu nhiều hơn tổng hoá đơn ⇒ **bị từ chối**. Kịch bản một phần: lần thu
 chỉ một phương thức vẫn hợp lệ — đây là ca thường, không phải ngoại lệ.
@@ -509,7 +509,7 @@ chỉ một phương thức vẫn hợp lệ — đây là ca thường, không 
 ### I-016 — Chuyển trạng thái không có trong bảng §5 bị TỪ CHỐI, không bao giờ được làm ngầm
 
 **Invariant:**
-Ba vòng đời của `docs/product.md` §5 — **đơn** (§5.2), **phiên bàn và cái bàn của nó** (§5.3),
+Ba vòng đời của `docs/product/0-ba/ban-hang/05-vong-doi.md` §5 — **đơn** (§5.2), **phiên bàn và cái bàn của nó** (§5.3),
 **công việc trạm** (§5.4) — mỗi cái có một bảng chuyển tiếp đóng. Một chuyển tiếp **không có dòng**
 trong bảng của nó là **không hợp lệ** và bị **từ chối**; nó không được thực hiện im lặng, không
 được "tự sửa thành hợp lệ", và không có đường tắt nào bỏ qua một trạng thái ở giữa. **Tính tới
@@ -532,7 +532,7 @@ chứng lại được"* (kế hoạch gốc §5 quy tắc 12, I-012).
 **Ngày 2026-09-02 danh sách ba ca ấy rút xuống còn MỘT, và invariant này vẫn đúng nguyên văn.**
 Chủ quán chốt đơn **sửa được ở bất kỳ trạng thái nào** và **huỷ được kể cả khi đã `Hoàn thành`**,
 POS quyết theo tình hình thực tế (`master_plan/shop-facts.md` §6.19 — trả lời U-022 rồi U-027). ⇒
-Bảng `docs/product.md` §5.2 có thêm dòng `Hoàn thành → Huỷ`, nên ca ấy **không còn** bị từ chối;
+Bảng `docs/product/0-ba/ban-hang/05-vong-doi.md` §5.2 có thêm dòng `Hoàn thành → Huỷ`, nên ca ấy **không còn** bị từ chối;
 `Đã làm xong, còn ở bếp → Chưa làm` cũng đã rời danh sách từ 2026-09-01 (U-024). Ca duy nhất còn
 lại là **`Đã đóng` → `Đang phục vụ`** (phiên bàn), và nó bị từ chối vì **đã chốt là cấm**, không
 phải vì chưa hỏi ai.
@@ -546,7 +546,7 @@ về **sửa nội dung**, thứ đoạn ngay dưới đây chỉ ra là **khôn
 *"đơn muốn đi đâu cũng được"* là phá đúng cái invariant này bảo vệ.
 
 **Sửa đơn không phải chuyển tiếp, nên nó không nằm dưới invariant này.** Sửa đổi **nội dung** một
-đơn, không đẩy đơn sang trạng thái khác (`docs/product.md` §5.2) — từ chối nó nhân danh *"không có
+đơn, không đẩy đơn sang trạng thái khác (`docs/product/0-ba/ban-hang/05-vong-doi.md` §5.2) — từ chối nó nhân danh *"không có
 dòng nào trong bảng"* là đọc sai invariant.
 
 **Verification:**
@@ -571,7 +571,7 @@ ca bị từ chối sang dòng hợp lệ (U-024).*
 Một phiên bàn chỉ chuyển sang `Đã đóng` khi **mọi** đơn thuộc phiên đó ở `Hoàn thành` **hoặc**
 `Huỷ`. Còn một đơn ở `Mới`, `Chờ xác nhận`, `Đã xác nhận` hay `Đang thực hiện` thì thao tác đóng
 phiên **bị từ chối**. Với **nhóm ghép bàn**, "mọi đơn thuộc phiên" phủ đơn của **tất cả** các bàn
-trong nhóm (`docs/product.md` §3.1.7, `master_plan/shop-facts.md` §6.16), vì nhóm ghép vẫn là
+trong nhóm (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.7, `master_plan/shop-facts.md` §6.16), vì nhóm ghép vẫn là
 **một** phiên (I-002).
 
 **Điều kiện này nói về MÓN, không nói về TIỀN.** Phiên **vẫn** đóng được khi khách chưa trả đồng

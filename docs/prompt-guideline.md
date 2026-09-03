@@ -46,10 +46,10 @@ Trả lời 5 câu. Chỉ cần **một** câu "có" ở nhóm dưới là phả
 
 Bối cảnh tối thiểu để AI không phải đoán, và không phải đọc cả repo.
 
-Nêu: file/module liên quan, tài liệu nguồn sự thật liên quan (`docs/product.md`,
+Nêu: file/module liên quan, tài liệu nguồn sự thật liên quan (`docs/product/`,
 `docs/architecture.md`, `quality/invariants.md`), và trạng thái hiện tại.
 
-- Tốt: "Giá đơn hiện được tính ở `order/pricing.go`. Quy tắc phụ thu nằm ở `docs/product.md` mục 4."
+- Tốt: "Giá đơn hiện được tính ở `order/pricing.go`. Quy tắc phụ thu nằm ở `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` mục 4."
 - Tệ: "Đọc codebase rồi tự hiểu."
 
 Context không phải là chỗ kể lịch sử dự án. Chỉ đưa cái cần cho task này.
@@ -158,7 +158,7 @@ Verify:
 ```text
 Context:
 <file/module liên quan>
-<tài liệu nguồn sự thật liên quan: docs/product.md mục X, quality/invariants.md I-00N>
+<tài liệu nguồn sự thật liên quan: docs/product/ mục X, quality/invariants.md I-00N>
 
 Goal:
 <một kết quả nghiệp vụ>

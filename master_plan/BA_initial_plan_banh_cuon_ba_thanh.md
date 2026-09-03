@@ -329,7 +329,7 @@ Chỉ sang System Design khi:
 
 Sau khi hoàn thành BA, dự án chỉ cần có các tài liệu cấp cao:
 
-- `docs/product.md` — nghiệp vụ và phạm vi đã chốt.
+- `docs/product/` — nghiệp vụ và phạm vi đã chốt.
 - `docs/decisions.md` — các quyết định/giả định quan trọng.
 - `work/backlog.md` — master task cấp cao.
 - `work/findings.md` — vấn đề/finding nếu phát hiện.
