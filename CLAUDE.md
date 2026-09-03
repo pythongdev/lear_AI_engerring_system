@@ -26,8 +26,8 @@ is a bug to fix now.
 
 | Fact | Owner |
 |---|---|
-| Business rules, product behavior | `docs/product.md` |
-| Open business questions (unknowns) | `docs/product.md` → *Unknowns* |
+| Business rules, product behavior | `docs/product/` |
+| Open business questions (unknowns) | `docs/product/99-unknowns.md` |
 | Architecture | `docs/architecture.md` |
 | Architecture decisions (ADR) | `docs/decisions.md` |
 | Business invariants | `quality/invariants.md` |
@@ -39,6 +39,11 @@ is a bug to fix now.
 | Risk levels, repo philosophy | `README.md` |
 | Shop facts: scope, channels, prices, flows, business rules | `master_plan/shop-facts.md` |
 | Proposals about this system that were **not** adopted | `work/proposals/` |
+
+Behavior is cut by phase under `docs/product/`; which file owns which section is
+in `docs/product/00-index.md`, which owns no fact itself. `docs/product.md` is the
+pre-split archive: it owns nothing, nothing points at it, and no session reads a
+fact from it.
 
 Domain material for the current project lives in `master_plan/` and the BA prompt
 set in `prompt/BA/`. **`master_plan/shop-facts.md` is the single owner of every
@@ -58,7 +63,8 @@ is where Gate 1b does not check links (§5).
 
 ```text
 CLAUDE.md          this file — read first
-docs/              product, architecture, decisions, prompt guideline
+docs/              product/ → 00-index.md, 0-ba/…, 99-unknowns.md (behavior,
+                   by phase); architecture, decisions, prompt guideline
 work/              backlog.md, scope.txt, findings.md;
                    proposals/ — not adopted, owns nothing
 quality/           invariants.md, review-gate.md
@@ -132,7 +138,7 @@ Never let implementation silently decide an open question. Route it:
 
 | Kind | Where | Format |
 |---|---|---|
-| Open business question | `docs/product.md` → *Unknowns* | one bullet under `### Đang mở`: `U-XXX — question, who can answer, what is blocked` |
+| Open business question | `docs/product/99-unknowns.md` | one bullet under `### Đang mở`: `U-XXX — question, who can answer, what is blocked` |
 | Recurring problem or lesson | `work/findings.md` | `F-XXX` template in that file |
 | Choice between viable designs | `docs/decisions.md` | `ADR-XXX` template in that file |
 
@@ -146,7 +152,7 @@ the open list into every new session (§7.1), and it reads the *Unknowns* sectio
 it needs. Prose there is prose, and anything under a different `###` heading is not
 read. So a question written as a paragraph, or filed under the answered heading, is
 a question the next session never sees. The full contract lives with the section it
-governs, in `docs/product.md` → *Unknowns* → *Cách viết một câu ở đây*
+governs, in `docs/product/99-unknowns.md` → *Cách viết một câu ở đây*
 (`docs/decisions.md` ADR-007, `work/findings.md` F-008).
 
 ## 5. Verification
@@ -367,14 +373,15 @@ Anything true only inside your head is lost. Before finishing:
   the line where the question is actually written:
 
   ```markdown
-  **U-022** — [docs/product.md:1508](docs/product.md#L1508)
+  **U-022** — [docs/product/99-unknowns.md:61](docs/product/99-unknowns.md#L61)
   **GĐ-04** — [docs/decisions.md:844](docs/decisions.md#L844)
   ```
 
-  - **Applies to every kind of open thing you name:** `U-XXX` (`docs/product.md`
-    → *Unknowns*), `GĐ-XXX` and `ADR-XXX` (`docs/decisions.md`), `F-XXX`
-    (`work/findings.md`), `S-X` (`master_plan/shop-facts.md` §7.2), and a
-    blocked task in `work/backlog.md`.
+  - **Applies to every kind of open thing you name:** `U-XXX`
+    (`docs/product/99-unknowns.md`), `GĐ-XXX` and `ADR-XXX`
+    (`docs/decisions.md`), `F-XXX` (`work/findings.md`), `S-X`
+    (`master_plan/shop-facts.md` §7.2), and a blocked task in
+    `work/backlog.md`.
   - **Get the line number at report time**, with `grep -n`, in the same turn you
     write the report. Line numbers drift as documents grow; one copied from
     memory or from an earlier turn points at the wrong line.

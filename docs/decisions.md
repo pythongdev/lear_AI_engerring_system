@@ -29,7 +29,7 @@ có câu trả lời mới từ người.
 | ADR-011 | Ba mặt dùng chung một miền, và **chỉ POS được ghi** tiến độ | Đã chốt | — | — |
 | ADR-012 | Nợ là một **phần riêng** có mục ở cả ba tầng | Đã chốt | — | — |
 | ADR-013 | Nội dung mảng ADMIN đi vào **mục riêng có nhãn** | Đã chốt | — | — |
-| ADR-014 | `docs/product.md` tách thành folder `docs/product/` | **Đang thi hành** — lượt 2/5 xong 2026-09-02 | — | còn lượt 3, 4; lượt 5 chưa chốt |
+| ADR-014 | `docs/product.md` tách thành folder `docs/product/` | **Đang thi hành** — lượt 4/5 xong 2026-09-03 | — | chỉ còn lượt 5, **chưa chốt** |
 | **Quyết định NGHIỆP VỤ — BA-10** ||||
 | ADR-015 | Năm kênh bán là danh sách **đóng**; định danh khách khác nhau theo kênh | Đã chốt 2026-08-24→30 | — | — |
 | ADR-016 | **POS ở quầy là cửa ghi duy nhất**; quyền gắn với chỗ đứng | Đã chốt 2026-08-30→09-02 | — | — |
@@ -902,9 +902,14 @@ một lượt, tách sau tốn một lượt cho mỗi mục.
 (DOC-1): `docs/product/` đã dựng theo pha, mười mục chuyển nguyên văn, `docs/product.md` thành bản
 lưu có banner. **Lượt 2/5 xong 2026-09-02** (DOC-2): `scripts/brief.sh` đọc mục *Unknowns* ở
 `docs/product/99-unknowns.md` — tiêu đề mục, chỗ đọc, nhãn *chỗ đọc đủ* và dòng *OWNER FILES* đều
-đã sang nhà thật; bản lưu không còn xuất hiện ở chỗ nào trong `scripts/brief.sh`. **Còn lại:** lượt
-3 (DOC-3, pointer), lượt 4 (DOC-4, `CLAUDE.md`) — và lượt 5 **vẫn chưa được phép chạy**. Bảng đầy
-đủ ở *Bảng thi hành sau sửa đổi* cuối mục.
+đã sang nhà thật; bản lưu không còn xuất hiện ở chỗ nào trong `scripts/brief.sh`. **Lượt 3/5 xong
+2026-09-03** (DOC-3, chia làm ba lượt con chạy theo thứ tự DOC-3b → DOC-3a → DOC-3c): pointer của
+nhóm B (`prompt/BA/**`), nhóm A (tài liệu chỉ đường lõi) và vùng *Ready*/*In Progress* của
+`work/backlog.md` đều đã sang nhà thật. **Lượt 4/5 xong 2026-09-03** (DOC-4): `CLAUDE.md` §2, §4
+và §7.3 trỏ owner mới — bảng §2 ghi `docs/product/`, hai chỗ nói về câu hỏi mở ghi
+`docs/product/99-unknowns.md` đúng file mà `scripts/brief.sh` đang đọc, và bản lưu chỉ còn được
+nhắc **một câu, không link**, đúng là bản lưu. **Còn lại:** lượt 5 **vẫn chưa được phép chạy**.
+Bảng đầy đủ ở *Bảng thi hành sau sửa đổi* cuối mục.
 
 > **Đọc mục này từ dưới lên.** Trục cắt ban đầu là **mảng**; chủ repo đổi sang **pha** cùng
 > ngày — khối *SỬA ĐỔI 2026-09-02* ở cuối mục là bản đang có hiệu lực. Phần thân dưới đây giữ
