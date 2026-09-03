@@ -1454,6 +1454,14 @@ còn chấm gì**. Nó hỏng theo đúng chiều F-017: **luôn xanh**, không 
 Đo trong lượt DOC-5, 2026-09-03: chạy lại Gate 3 với `SCOPE_FILE` trỏ vào **chỉ scope của DOC-5**
 ra `OK` — nên lượt này không mượn gì của ba khối cũ. Nhưng đó là may, không phải do cổng chặn.
 
+Đếm chính xác ở `HEAD` cùng ngày: **13 dòng pattern, 10 đường khác nhau** (`work/backlog.md` lặp
+ba lần, `work/findings.md` hai lần). Và ba khối ấy **đã bắt đầu mục**: DOC-5 chuyển
+`docs/architecture.md` sang `docs/product/1-system-design/` cùng ngày, nên dòng allow mang tên cũ
+trong khối T-031 nay **khớp không cái gì**. Một pattern chết nằm trong một cổng đang chạy — và
+khác `scripts/check-links.ignore` (dòng ngoại lệ hết hạn thì gate ĐỎ), `scripts/check-scope.sh`
+**không có cơ chế nào tố cáo một pattern không còn khớp gì**. Đó là chỗ đường 2 và đường 3 hơn hẳn
+đường 1: chúng làm lỗi này không tái diễn được, còn đường 1 chỉ dọn một lần.
+
 **Và đây là chỗ luật tự khoá chính nó — phần đáng đọc nhất của mục này:**
 Vì các pattern **đã nằm trong git**, xoá chúng tạo ra một thay đổi **tracked** trên
 `work/scope.txt`; muốn sửa thật thì phải **commit `work/scope.txt`** — đúng cái §6 cấm, và đúng

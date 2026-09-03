@@ -146,10 +146,9 @@ lại, khối *GIẢ ĐỊNH* biến mất, **I-014** sửa và **I-015** thêm.
 ⇒ Hệ quả đáng giữ nhất: **doanh thu một ngày đã đối soát không bao giờ đổi về sau.**
 ⇒ **BA-07, BA-08 và BA-10 hết chờ hai câu này**; đọc lời giải ở §4.6, §4.8–§4.10, đừng mở lại.
 
-- [ ] T-047 `work/scope.txt` mang ba khối pattern ĐÃ COMMIT của BA-04/T-027/T-031 ⇒ Gate 3 mở toang từ 2026-08-31; và luật §6 tự khoá đường dọn (F-020) · **cần chủ repo chọn 1 trong 3 đường ghi ở F-020**
+- [ ] T-047 `work/scope.txt` mang ba khối pattern ĐÃ COMMIT ⇒ Gate 3 chấm mọi task bằng scope của người khác (F-020) · **chặn: cần chủ repo chọn đường** · chi tiết: [T-047](#t-047)
 - [ ] T-035 Brief bảo phiên mới XOÁ scope trong khi chủ thật đang chạy song song (F-014)
 
-- [ ] BA-11 `docs/product/0-ba/ban-hang/08-scenario.md` §8 — ba scenario nghiệm thu BA · cần BA-03–BA-10
 - [ ] BA-12 `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4 — lát cắt sản xuất theo mẻ · **BA-03 và BA-07 đã xong**, tên trạng thái lấy ở `docs/product/0-ba/ban-hang/05-vong-doi.md` §5.4 (**U-008–U-011, S-4, U-017, U-021, U-024 đã đóng** — quầy bấm cả hai mốc, và lùi được). Đọc trước khi dựng bảng quầy: **S-5** (`shop-facts.md` §7.2) — bấm *đã bưng ra bàn* theo **đơn vị nào** thì mới là suy ra, chưa hỏi chủ quán
 
 
@@ -181,6 +180,8 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="in-progress"></a>
 ## In Progress
+
+- [ ] BA-11 `docs/product/0-ba/ban-hang/08-scenario.md` §8 — ba scenario nghiệm thu BA + cổng chất lượng BA (9 mục §12 kế hoạch gốc) · **BA-03–BA-10 đã xong**, hết bị chặn · chi tiết: [BA-11](#ba-11) · bắt đầu 2026-09-03
 
 
 <a id="done"></a>
@@ -435,6 +436,100 @@ Luật chung ở [Vòng chạy một task L1](#vong-chay). Việc riêng: chạy
 chạm chính hai dòng BA-11/BA-12 này.
 
 **Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+
+[↑ đầu file](#top)
+
+<a id="t-047"></a>
+### T-047 — `work/scope.txt` mang ba khối pattern ĐÃ COMMIT, nên Gate 3 chấm mọi task bằng scope của người khác
+
+**Prompt:** *chưa viết — và cố ý chưa viết.* Task này **chặn ở một quyết định**, không chặn ở
+công sức: ba đường đi cho ra ba prompt khác hẳn nhau. Prompt viết sau khi chủ repo chọn đường
+(`work/findings.md` **F-020**, mục *Decision / Fix*). Mức sẽ là **L2** ở đường 1 và 2, **L3** ở
+đường 3 · **không chặn task nào**, nhưng **mọi task chạy trước nó đều được chấm bằng một cái gate
+đã tắt**.
+
+**Goal:**
+Gate 3 chấm lại được. Sau task này, `work/scope.txt` chỉ chứa scope của task **đang** chạy, và
+việc một task xong mà quên dọn scope không còn im lặng đi qua được nữa.
+
+**Nói một câu, việc phải làm là gì:**
+Đưa `work/scope.txt` về trạng thái chỉ-comment và làm cho nó **không lặp lại được** —
+việc **không** phải làm là sửa `scripts/check-scope.sh`: cổng ấy chạy đúng như thiết kế, cái sai
+nằm ở **dữ liệu nó đọc**, không ở nó.
+
+**Vì sao có task này:**
+Phát hiện 2026-09-03 khi chạy DOC-5: brief in mục `DECLARED SCOPE` ra những file mà DOC-5 không hề
+khai. Truy ra commit **`12c77f8` (T-031, 2026-08-31)** đã đưa **ba khối pattern** — của BA-04,
+T-027, T-031 — vào lịch sử git. Cả ba task ấy xong từ hôm đó, và chính ba khối ấy tự dặn
+*"GỠ NGAY SAU KHI commit"*. Không ai gỡ, và không phiên nào **có thể** gỡ hợp lệ (xem *Bẫy* dưới).
+
+Điều này `CLAUDE.md` §6 đã cấm bằng chữ — *"`work/scope.txt` is working state, not a deliverable
+— do not commit patterns"* — nên đây không phải luật còn thiếu, mà là **luật có mà không có cổng
+nào gác**. `work/backlog.md` T-016 ghi hai lần trước nó từng bị commit; đây là lần thứ ba, tức là
+luật này đã hỏng ba lần bằng đúng một cơ chế.
+
+**Không làm thì mất gì:**
+1. **Gate 3 gần như không còn chấm gì, và không ai biết.** Đo ở `HEAD` ngày 2026-09-03: **13 dòng
+   pattern, 10 đường khác nhau** — phủ đúng những file đắt nhất repo, trong đó có `CLAUDE.md`,
+   `docs/decisions.md`, `quality/invariants.md`, `work/backlog.md`. Mọi task từ 2026-08-31 tới nay
+   đều được chấm với chúng đang mở. Cổng hỏng theo chiều tệ nhất: **luôn in `OK`**, đúng hình dạng
+   của F-017 và của bộ lọc `grep` rỗng. Đếm lại trước khi tin hai con số này (F-018).
+2. **Cái gate ấy sinh ra để bắt đúng loại lỗi đang xảy ra nhiều nhất ở đây.** Nó bắt *"thay đổi
+   đúng nhưng chạm file không được phép"* — mà `work/findings.md` F-014 ghi rằng nhiều phiên chạy
+   song song trên cùng một cây đã va nhau **sáu lần**, lần nào cũng trên file dùng chung.
+3. **Nợ này tự lớn, và đã bắt đầu mục.** Mỗi task quên dọn lại thêm một khối, và mỗi khối thêm vào
+   lại làm khối trước khó thấy hơn. Ba khối hôm nay đã dài hơn phần comment hướng dẫn của chính
+   file. Bằng chứng nó đang mục: DOC-5 chuyển `docs/architecture.md` đi nơi khác ngày 2026-09-03,
+   nên dòng allow mang tên ấy trong khối T-031 **nay khớp không cái gì** — một pattern chết nằm
+   trong một cổng đang chạy, và không cổng nào kêu về nó.
+4. **Nó ăn mòn lòng tin vào cả bộ gate.** Một phiên phát hiện Gate 3 xanh vô nghĩa sẽ có lý do để
+   ngờ ba cổng còn lại — trong khi ba cổng ấy đang chạy đúng.
+
+**Đây là con bug F-020** (`work/findings.md`), họ hàng gần với **F-010** và **F-014** — cùng một
+file, cùng một chỗ đau: `work/scope.txt` có **nhiều chủ** và **không có ai dọn**. Vì sao vòng rà
+trước không bắt được: cả ba lần commit đều lọt qua Gate 3 và Gate 7b **hợp lệ**, vì Gate 3 tự miễn
+trừ `work/scope.txt` cho chính nó (`scripts/check-scope.sh`, ADR-006) và Gate 7b chỉ kêu khi file
+ấy nằm trong **khối commit của turn** — nó không nhìn `git commit` gõ tay ở terminal, đúng khoảng
+trống mà Gate 8 sinh ra để lấp cho *thông điệp* commit chứ không cho *nội dung* commit.
+
+**Bẫy hay sửa nhầm nhất:**
+- **Đừng chỉ xoá ba khối rồi commit.** Vì pattern **đã nằm trong git**, xoá chúng tạo một thay đổi
+  *tracked*; muốn sửa thật thì phải **commit `work/scope.txt`** — đúng cái §6 cấm và Gate 7b bắt.
+  Một phiên tuân thủ luật **không có đường hợp lệ nào**. Đây là lõi của task, không phải chi tiết
+  phụ: phải gỡ cái khoá ấy trước, bằng một trong ba đường ở F-020.
+- **Đừng xoá hộ khối của phiên khác theo phản xạ.** F-014 ghi đúng cái giá của việc ấy. Ba khối
+  này gỡ được **chỉ vì** cả ba task đã commit xong từ 2026-08-31 — hãy kiểm lại điều đó bằng
+  `git log` ngay trước khi gỡ, đừng tin dòng này.
+- **Đừng sửa `scripts/check-scope.sh` cho "chặt hơn".** Nó không sai. Sửa nó là chữa triệu chứng
+  và làm hỏng một cổng đang chạy đúng.
+
+**Cách hoàn thành — mười bước** (luật chung ở [Vòng chạy một task L1](#vong-chay)):
+
+1. Đọc mục này, rồi đọc **F-020** trọn vẹn — nhất là ba đường ở *Decision / Fix*. Chưa có prompt
+   để đọc; nếu đã có thì đọc cả *Constraints*.
+2. Khai `work/scope.txt`. Trớ trêu ở đây là thật: task này phải khai scope **vào đúng cái file nó
+   sắp dọn**. Thêm khối của mình **bên dưới** ba khối cũ, đừng ghi đè.
+3. Chuyển dòng T-047 từ *Ready* xuống *In Progress*.
+4. **Chưa sửa gì cho tới khi chủ repo đã chọn đường** — đây là bước mà task này khác mọi task
+   khác. Chọn xong mới viết prompt, rồi mới sửa.
+5. Không có dữ kiện nghiệp vụ nào ở đây; câu chưa rõ **duy nhất** là câu chọn đường ở bước 4, và
+   nó thuộc chủ repo chứ không thuộc chủ quán — hỏi thẳng, đừng ghi thành `U-XXX`.
+6. Chạy `./scripts/gate.sh`, dán output thật. Thêm **một phép thử riêng** mà task này bắt buộc
+   phải có: chạy lại `scripts/check-scope.sh` với `SCOPE_FILE` trỏ vào một scope **chỉ có** khối
+   của task đang chạy, và chứng minh nó cho kết quả khác trước khi dọn — đó là bằng chứng cổng đã
+   sống lại, chứ không phải dòng `OK` quen thuộc.
+7. Mỗi dòng *Acceptance* của prompt phải trỏ được tới một dòng cụ thể chứng minh nó.
+8. Ghi kết quả vào **F-020** (đổi *Status*), và `grep -rn` những chỗ trỏ tới `work/scope.txt` —
+   `CLAUDE.md` §3.4, §6, §7.1, §7.3 đều nói về file này, và đường 2 hoặc đường 3 sẽ làm vài câu
+   trong đó thành sai.
+9. Tick *Done* kèm ngày, chuyển khối này sang *Chi tiết — việc đã xong*, và **xoá sạch pattern** —
+   bước mà chính task này tồn tại vì nó đã bị quên ba lần.
+10. Khối `git commit` dán được. Chú ý: ở đường 1 và 3, `work/scope.txt` **buộc phải** có mặt trong
+    khối — trái §6.1 và Gate 7b sẽ kêu. Đó là lý do đường ấy cần một ADR cho phép, và report phải
+    nói thẳng điều đó chứ không lặng lẽ đi qua.
+
+**Acceptance · Verify:** trong file prompt, viết sau khi chọn đường (F-001 — entry này trỏ,
+prompt giữ).
 
 [↑ đầu file](#top)
 
