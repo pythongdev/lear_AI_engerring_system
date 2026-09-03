@@ -68,7 +68,7 @@ khoản hoàn rơi vào **ngày hoàn**, không sửa lại ngày bán.
 | Đang thực hiện | Đơn **giao tận nơi** đã đóng gói xong và rời quán | **Đang giao** | *Người đứng quầy*, trên POS (chủ quán chốt 2026-09-01, `shop-facts.md` §6.7) |
 | Đang thực hiện | Quầy huỷ đơn | **Huỷ** | *Người đứng quầy* (`shop-facts.md` §6.13) |
 | **Hoàn thành** | Quầy huỷ một đơn **đã xong** — ví dụ phát hiện nhầm sau khi đã trao hàng | **Huỷ** | *Người đứng quầy*, trên POS — **POS quyết từng ca**, không có mốc chặn (chủ quán chốt 2026-09-02, `shop-facts.md` §6.19) |
-| Đang giao | Nhân viên giao xong, bấm **đã giao** và **đã thu tiền** cùng lúc | **Hoàn thành** | *Nhân viên quán* đi giao (§3.2.2, `shop-facts.md` §6.7) |
+| Đang giao | Nhân viên giao xong, bấm **đã giao** và **đã thu tiền** cùng lúc | **Hoàn thành** | *Nhân viên quán* đi giao (§3.2.2, `shop-facts.md` §6.7). *Ai bấm mốc `Đã ra bàn` của từng việc trạm trong ca này thì đang mở — **U-031**, xem §5.4* |
 
 Bốn điều phải đọc kèm bảng, rồi một việc không nằm trong bảng:
 
@@ -207,6 +207,15 @@ Ba điều phải đọc kèm bảng:
   hành thật, không phải chi tiết trình bày (`shop-facts.md` §5.4). *Bấm "đã ra bàn" theo đơn vị
   nào — mẻ hay bàn — thì chủ quán chưa nói; chỗ suy ra ấy là* **S-5** *ở `shop-facts.md` §7.2, và*
   **BA-12** *cần nó trước khi dựng bảng quầy.*
+- **NGOẠI LỆ CHƯA CÓ LỜI CHỐT — đơn giao tận nơi.** Câu chủ quán trả lời ngày 2026-09-01 (U-021)
+  **không nhắc tới** ca đơn giao tận nơi, và ở ca đó người có mặt lúc suất tới tay khách là
+  *nhân viên quán* đi giao — chính người mà §5.2 và §3.2.2 giao cho hai nút *đã giao* +
+  *đã thu tiền*. ⇒ Hai mục của tài liệu này đang chỉ **hai người khác nhau** cho cùng nút
+  *"đã ra bàn"* của một đơn giao. Đây là **câu hỏi đang mở** — **U-031** ở
+  `docs/product/99-unknowns.md` — **không** phải chỗ được chọn một phe: §5.5 buộc mọi việc phải
+  `Đã ra bàn` trước khi đơn `Hoàn thành`, nên chọn sai là đơn giao **không bao giờ hoàn thành
+  được**, hoặc quầy bấm khống một mốc. Phiên System Design **dừng ở đây và hỏi chủ quán**
+  (CLAUDE.md §3.5, `work/findings.md` F-022).
 - **Bấm nhầm thì LÙI ĐƯỢC, và không có mốc thời gian cứng** (chủ quán chốt 2026-09-01, trả lời
   U-024): *"có đường lui, thời gian tuỳ theo thực tế để POS quyết định"*. Không có "trong vòng N
   phút" — người đứng quầy nhìn tình huống thật rồi quyết, đúng cùng một kiểu với quyền hoàn tiền

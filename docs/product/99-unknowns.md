@@ -21,13 +21,26 @@ chủ quán quyết theo tình hình thực tế, không có luật cứng.** L�
 thay hai giả định rủi ro CAO; lượt hai (T-043) đóng **U-027** — đơn đã `Hoàn thành` cũng **huỷ
 được** — và **U-030** — **không** mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên.
 
-**Mục này hôm nay RỖNG — không còn câu hỏi nghiệp vụ nào đang chờ chủ quán.** Bảy câu mở trong
-ngày đều đã đóng trong ngày (T-042, T-043, T-044). Chỗ chưa chắc còn lại **không** phải câu hỏi:
-hai **giả định** `docs/decisions.md` GĐ-01 và GĐ-05 (§6 dòng 4 và 14) — chúng chờ ai đó gặp ca
-thật, không chờ ai trả lời — và một chỗ **suy ra** ở `master_plan/shop-facts.md` §7.2 (**S-5**).
+**Ngày 2026-09-03, BA-13 mở lại đúng MỘT câu** — và nó mở vì hai mục **đã chốt** trả lời khác
+nhau, không vì ai quên hỏi. Bảy câu mở ngày 2026-09-02 đều đã đóng trong ngày (T-042, T-043,
+T-044). Chỗ chưa chắc còn lại **không** phải câu hỏi: cả năm **giả định** `docs/decisions.md` GĐ
+đã bị **thay bằng quy tắc thật** ngày 2026-09-02 nên không mục nào còn hiệu lực, và một chỗ
+**suy ra** ở `master_plan/shop-facts.md` §7.2 (**S-5**).
 
-Mục rỗng là trạng thái bình thường, không phải dấu hiệu quên ghi. Câu tiếp theo vào đây dưới dạng
-một gạch đầu dòng, đúng hợp đồng dưới.
+- **U-031 — với một đơn GIAO TẬN NƠI, ai bấm mốc *"đã ra bàn"* của từng việc trạm, và vào lúc
+  nào?** Chủ quán chốt 2026-09-01 (U-021) rằng *người đứng quầy* bấm **cả hai** mốc của bảng bếp,
+  nhưng câu hỏi lúc ấy **không nhắc tới ca đơn giao tận nơi**: lúc suất tới tay khách thì người
+  có mặt là *nhân viên quán* đi giao, và `05-vong-doi.md` §5.2 đã giao cho chính người ấy hai nút
+  *đã giao* + *đã thu tiền*. ⇒ Bảng §5.4 (*người đứng quầy*) và §3.2.2 + §5.2 (*người đi giao*)
+  nay chỉ **hai người khác nhau** cho cùng một nút. **Ai trả lời được:** chủ quán.
+  **Đang chặn:** §5.5 buộc **mọi** việc trạm phải ở `Đã ra bàn` **trước** khi đơn sang
+  `Hoàn thành`, nên đọc sai chỗ này là **đơn giao tận nơi không bao giờ `Hoàn thành` được**, hoặc
+  quầy bấm khống một mốc cho một suất đang ở nhà khách. Chặn phiên System Design dựng màn quầy và
+  màn người đi giao. **Đừng suy hộ** (CLAUDE.md §3.5) — chỗ này chạm mốc thu tiền.
+  *Mở 2026-09-03 · BA-13 · `work/findings.md` F-022 chỗ 2.*
+
+Câu tiếp theo vào đây dưới dạng một gạch đầu dòng, đúng hợp đồng dưới; mục này rỗng cũng là trạng
+thái bình thường, không phải dấu hiệu quên ghi.
 
 Hình dạng của mục là hợp đồng với `scripts/brief.sh` (ADR-007): **mỗi** câu trên là **một gạch đầu
 dòng**, và câu tiếp theo cũng phải vào đây dưới dạng ấy. `master_plan/shop-facts.md` §7.2 — chỗ giữ

@@ -75,8 +75,9 @@ Việc nhân viên làm:
 - **Đóng gói** đơn mang đi, và **tự đi giao** đơn giao tận nơi — quán không thuê bên thứ ba
   (`shop-facts.md` §6.7).
 - **Thu tiền lúc trao hàng** (tiền mặt hoặc VietQR) và **tự bấm xác nhận đã nhận tiền** — xem ranh giới hệ thống ở §1.4.
-  Với đơn khách **đã chọn trả trước** thì chưa rõ ai bấm xác nhận và vào lúc nào — xem
-  **U-005** ở *Unknowns*, chưa ai trả lời.
+  Với đơn khách **đã chọn trả trước** thì *người đứng quầy* bấm xác nhận **vào lúc nhận tiền**,
+  không phải lúc khách đặt (chủ quán chốt 2026-08-31, đóng **U-005**; `shop-facts.md` §6.3, và
+  §3.2.5 · §4.6 viết đủ cả hai phương thức).
 - **Đóng phiên bàn** khi khách đã trả tiền, rồi **dọn bàn** để bàn trở lại trạng thái trống.
 - **Cho nợ khi khách không trả được**, và lúc đóng phiên phải ghi **ai nợ** và **nợ bao nhiêu**
   (chủ quán chốt 2026-08-31, `shop-facts.md` §6.14). Phiên vẫn đóng, bàn vẫn được dọn và trả về

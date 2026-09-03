@@ -29,9 +29,12 @@ vào cùng một phiên.
 
 Mỗi bước ghi rõ ai làm. Tên actor dùng đúng §1, tên trạm dùng đúng năm tên ở §1.5.
 
-1. **Bàn được mở.** *Khách* ngồi vào một bàn đang trống. *Hệ thống* mở cho bàn đó **một** phiên
-   bàn, trạng thái **Mở**. Bàn nào còn một phiên chưa thanh toán thì không mở phiên thứ hai
-   (§3.1.4). Nhóm đông ngồi **ghép** hai bàn thì vẫn là **một** phiên, gắn cả hai bàn (§3.1.7).
+1. **Phiên bàn được mở.** *Khách* ngồi vào một bàn đang trống, và phiên mở khi **lượt gọi đầu
+   tiên của bàn ấy được tạo** — bằng QR tại bàn hoặc quầy đặt hộ (§3.1.2, bảng §5.3 dòng 1).
+   *Hệ thống* mở cho bàn đó **một** phiên bàn, trạng thái **Mở**. ⇒ **Một bàn có khách ngồi mà
+   chưa gọi gì thì vẫn ở `Trống`**, và quầy đếm nó là bàn trống. Bàn nào còn một phiên chưa thanh
+   toán thì không mở phiên thứ hai (§3.1.4). Nhóm đông ngồi **ghép** hai bàn thì vẫn là **một**
+   phiên, gắn cả hai bàn (§3.1.7).
 2. **Khách quét QR, hoặc nhân viên đặt hộ.** Hai đường vào, hai kênh: *Khách* quét QR tại chính
    bàn mình đang ngồi, hoặc *người đứng quầy* đặt hộ bằng Staff POS cho đúng số bàn ấy (nhánh đầy
    đủ ở §3.1.2). Cả hai đường đều đổ vào phiên của bàn đó.
@@ -511,9 +514,20 @@ Một ví dụ để thấy con số nào đứng yên. **Ví dụ này là bả
 là chỗ duy nhất §3.3 có số; đổi giá thật thì sửa nhà thật trước, rồi sửa ví dụ này theo:**
 
 > Sáng thứ Hai, khách đặt **một suất giò, nhân thịt, lượng thường** — 25.000, tức
-> 9.000 (giò) + 4 × 4.000 (bốn cái bánh nhân thường). Trưa thứ Hai, chủ quán nâng giá một cái bánh
-> nhân thường lên 5.000. Từ lúc lưu, một suất giò cùng loại đặt mới có giá 29.000.
+> 9.000 (giò) + 4 × 4.000 (bốn cái bánh nhân thường). Trưa thứ Hai, chủ quán nâng **giá gốc của
+> một cái bánh cuốn — tức ô *chay* của `shop-facts.md` §4.2 — từ 3.000 lên 4.000**; hai mức phụ
+> thu nhân ở §4.4 **không đổi**, nên cái bánh nhân thường thành 5.000 và cái bánh nhiều nhân
+> thành 6.000. Từ lúc lưu, một suất giò cùng loại đặt mới có giá **29.000** = 9.000 + 4 × 5.000.
 > **Đơn sáng thứ Hai vẫn là 25.000** — mở lại nó ngày nào cũng thấy đúng con số đó.
+
+**Vì sao ví dụ nói *"nâng giá chay"* chứ không nói *"nâng giá bánh nhân thường"*.** Giá một cái
+bánh nhân thường **không phải một ô người ta sửa được**: nó là *giá gốc chay + phụ thu nhân*
+(§4.1, `shop-facts.md` §4.6 luật 2). Câu *"nâng giá một cái bánh nhân thường lên 5.000"* vì thế có
+**hai** đường đọc — sửa ô *Thịt thường* của bảng §4.2 ra 29.000, hay sửa giá gốc ra 25.000 — và
+một trong hai đường còn **xoá mất bậc phụ thu lượng nhân** (*thường* và *nhiều nhân* cùng thành
+5.000, trái `shop-facts.md` §4.4). Bản trên là thao tác **chỉ có một nghĩa**, ra đúng con số
+29.000 đã chốt. `08-scenario.md` Scenario 3 bước 2 và `quality/invariants.md` **I-009** viết y hệt
+câu này; ba chỗ phải đổi cùng một lượt (`work/findings.md` **F-022**).
 
 Ba điều đơn cũ giữ, không chỉ một:
 

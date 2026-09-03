@@ -310,8 +310,8 @@ soát; không bày ra thì đúng luật *lệch một đồng cũng phải tìm
 
 Ba chỗ tiền không nằm trong két mà vẫn là doanh thu — **VietQR**, **nợ ghi trong ngày** và tiền
 người đi giao chưa mang về — nên "tiền trong két" không bao giờ được so thẳng với doanh thu mà
-không trừ ba khoản ấy ra. **Riêng phần VietQR thì buổi tối quán lấy gì ra đối chiếu là câu CHƯA
-CHỐT** — xem **U-019**.
+không trừ ba khoản ấy ra. **Phần VietQR đối chiếu bằng tin nhắn báo có** — nguồn thứ ba ở bảng
+đầu mục này (chủ quán chốt 2026-09-01, đóng **U-019**; `docs/decisions.md` ADR-022).
 
 ### 4.10 Doanh thu một ngày cộng từ HAI nguồn
 

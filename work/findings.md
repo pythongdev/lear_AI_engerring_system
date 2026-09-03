@@ -1153,6 +1153,54 @@ xuống dòng và chỗ không mang mã.
 giây; nếu nó lại ra kết quả sau một lượt đóng unknown khác, đó là lần hai và lúc ấy hãy dựng cổng
 (chỗ tự nhiên: thêm một bước vào `scripts/check-links.sh`, hoặc một `scripts/*.test.sh`).
 
+**ĐÃ SỬA VÀ ĐÃ DỰNG CỔNG — 2026-09-03, BA-13.** Cả bốn chỗ nay nói đúng lời chốt: §1.2 ghi
+*người đứng quầy bấm lúc nhận tiền* (U-005) · §4.9 ghi *đối chiếu bằng tin nhắn báo có* (U-019) ·
+§6.1 dòng 7 và §6.2 ghi `Hoàn thành` ⇒ `Huỷ` là **hợp lệ** (U-027).
+
+**Lượt đo thứ ba, và lần này bằng máy:** `scripts/check-doc-status.sh` (Gate 1c, `docs/decisions.md`
+**ADR-032**), chạy ở **mọi** lượt qua `scripts/gate.sh`. Kết quả đo hai chiều, dán từ lần chạy thật:
+
+- **Trên cây trước khi sửa** (bản `git archive HEAD`, cùng script): **ĐỎ, 8 báo động** — trong đó
+  đủ **cả bốn** chỗ của mục này (`01-actors-pham-vi.md:77` · `04-gia-thanh-toan.md:311` ·
+  `06-ngoai-le.md:42` · `06-ngoai-le.md:65`) cộng hai dòng bảng của **F-021**.
+- **Trên cây sau khi sửa:** **XANH** — 1213 khối, 29 mã `U-XXX`, 21 chuyển tiếp hợp lệ.
+
+**Hai chỗ câu `awk` cũ để lọt, nay bắt được — và bắt bằng đường khác, không bằng cách thêm từ khoá:**
+
+- **Chỗ 1 (xuống dòng).** Script gộp một đoạn văn / một ô bảng / một gạch đầu dòng thành **một
+  khối** rồi mới chấm, nên cụm bị cắt đôi giữa hai dòng lại liền. `check-doc-status.test.sh` ca 2b
+  kiểm đúng điều đó: nó khẳng định một `grep` theo dòng **vẫn mù** với ca ấy trong khi cổng bắt được.
+- **Chỗ 3 (không mang mã).** Không phép nào của cổng đi tìm nó bằng `U-XXX`. Phép C so **chuỗi
+  nguyên văn của từng chuyển tiếp trong bảng vòng đời §5** với những mệnh đề mang lời phủ định —
+  không dùng mã định danh nào. Ca 4b của bộ test khẳng định báo động ấy **không** chứa `U-0` nào.
+
+**Một phép đã viết rồi bỏ, ghi lại vì nó là bài học chứ không phải rác:** *"mọi ngôn ngữ còn-mở
+phải trỏ tới một thứ đang mở"* — đúng về lý, chạy thật thì ra **11 báo động, cả 11 đều giả**
+(*"danh sách quyết định chưa rõ/giả định"*, *"Câu hỏi chưa có lời giải đi vào `99-unknowns.md`"*).
+Một cổng kêu sai 11 lần là cổng bị gỡ (**F-018**). ⇒ Vế cứu cả ba phép còn lại là câu hỏi thứ hai:
+*khối này có chỗ nào nói lời chốt không* — có thì nó đang **kể lại**, không đang **khẳng định**.
+Thiếu vế ấy, mọi mục lịch sử của repo đều đỏ.
+
+**Cái cổng này KHÔNG làm được, viết ra để đừng ai tin quá:** nó là heuristic ngôn ngữ, không phải
+chứng minh. Nó không thay bước `grep -rn` của CLAUDE.md §7.2 — nó bắt lại phần bước ấy quên.
+
+**LẦN THỨ BA CỦA CÙNG CƠ CHẾ, XẢY RA NGAY TRONG LƯỢT ĐANG DỌN NÓ — và cổng mới cố ý không bắt
+được.** Lượt đọc context sạch thứ ba (Gate 6, BA-13, 2026-09-03) xác nhận cả năm chỗ đã sửa
+đúng, cộng đúng toàn bộ tiền — rồi tắc ở một chỗ **mới**: mục *Lỗ hổng* và ô mục 5 của
+`docs/product/0-ba/ban-hang/08-scenario.md` vẫn là **ảnh chụp trạng thái trước khi sửa**, nên
+người đọc sạch *"tin §8 rồi đi sửa lại những chỗ đã đúng"*.
+
+Đúng cơ chế mục này mô tả, chỉ dịch lên một tầng: chỗ **nhắc tới** một sự thật không được quét khi
+sự thật ấy đổi — và lần này chỗ nhắc tới là **chính tài liệu nghiệm thu ghi lại lỗi**. Sửa một
+finding thì phải quét cả nơi finding ấy được **kể lại**, không chỉ nơi lỗi **nằm**.
+
+**Vì sao `check-doc-status.sh` im ở đây, và đó là lựa chọn chứ không phải lỗ thủng:** cổng ấy có
+vế *"khối này có nói lời chốt không"* và một file ignore, cả hai tồn tại **để** một câu hỏng được
+trích dẫn làm bằng chứng vẫn im. Một biên bản kể lại lỗi và một tài liệu đang mắc lỗi trông giống
+hệt nhau với máy; phân biệt được hai thứ ấy là việc của người. ⇒ Cách chống duy nhất đang có là
+**viết banner nói thẳng mục này là biên bản**, đặt ở **đầu** mục chứ không ở cuối — bản đầu tiên
+của lượt này đặt banner **sau** các bảng, và người đọc sạch **đọc bảng trước, không thấy banner**.
+
 **Related task:**
 **BA-13** (nhận cả **bốn** việc sửa + dựng cổng — mở 2026-09-03) · **BA-11** (lượt đo thứ hai, tìm
 ra chỗ thứ tư và chỗ hụt của câu `awk`; không sửa gì) · **BA-01** (viết câu §1.2) ·
@@ -1161,7 +1209,7 @@ chỗ 2 và 3) · **ADR-017** và **ADR-022** (`docs/decisions.md` — lời ch�
 của một sự thật) · **F-004** (đọc rộng hơn chữ — vì sao U-027 phải hỏi riêng)
 
 **Status:**
-Open
+Fixed — 2026-09-03 (BA-13): bốn chỗ đã sửa, cổng Gate 1c dựng xong (ADR-032)
 
 ---
 
@@ -1745,13 +1793,29 @@ trả giá **hai** lần. Đây là lần **một** cho hình *"mục lục lệ
 F-015 (lần **hai** cùng ngày) ⇒ nếu BA-13 dựng cổng cho F-015, hãy hỏi cổng ấy có phủ luôn ca này
 không: cả hai đều là *"một mã định danh xuất hiện ở hai chỗ với hai trạng thái khác nhau"*.
 
+**ĐÃ SỬA — 2026-09-03, BA-13, và câu hỏi ở đoạn trên có câu trả lời: CÓ, cổng ấy phủ luôn ca này.**
+`scripts/check-doc-status.sh` phép **D** đọc từng `GĐ-XXX` ở bảng tổng hợp rồi so với dòng
+`Trạng thái:` trong thân mục nó trỏ tới — đúng phép so chuỗi rẻ mà mục này gọi tên. Chạy trên bản
+`git archive HEAD` trước khi sửa: **đỏ, đúng hai dòng 52 và 56**, mỗi dòng nêu cả số dòng của thân.
+
+Ba việc của mục *Decision / Fix* đã làm đủ: hai dòng bảng nay ghi `**Đã thay** 2026-09-02 → I-018`
+với cột rủi ro gạch ngang, đúng hình ba dòng GĐ-02/03/04 bên cạnh · đoạn văn dưới bảng nay nói
+**cả năm** đã bị thay, khớp mục mở đầu *Giả định BA* cách đó ~1830 dòng · và `grep -n 'GĐ-0'` dẫn
+tới **một chỗ thứ ba không nằm trong ba việc ấy**: `docs/product/99-unknowns.md` cũng đang kể
+GĐ-01 và GĐ-05 là *"chờ ai đó gặp ca thật"*. Đã sửa cùng lượt — đúng bước *follow the pointers*
+của CLAUDE.md §7.2, và là bằng chứng nhỏ rằng bước ấy vẫn cần người làm, cổng không thay được.
+
+Hàng tiêu đề của bảng cũng đổi: `**Giả định — chưa có lời chốt**` → `**Giả định BA — cả năm ĐÃ
+ĐƯỢC THAY bằng quy tắc thật, 2026-09-02**`. Nó không nằm trong ba việc trên, nhưng để nguyên thì
+một hàng tiêu đề vẫn dạy đúng cái sai mà cả mục này viết ra để dọn.
+
 **Related task:**
 **BA-13** (nhận việc sửa — mở 2026-09-03) · **BA-10** (owner của `docs/decisions.md`) ·
 **T-045** (lượt thay GĐ-01 và GĐ-05, để lại hai dòng bảng) · **BA-11** (lượt phát hiện) ·
 **F-015** (cùng cơ chế, khác chỗ đau) · **F-001** (hai đời của một sự thật)
 
 **Status:**
-Open
+Fixed — 2026-09-03 (BA-13); phép D của Gate 1c nay chấm lại ở mọi lượt
 
 ---
 
@@ -1828,11 +1892,35 @@ chỗ tắc là bằng chứng. Gate 6 không phải thủ tục thừa.
 thì chỉ còn một cách đọc, nên đó là chỗ **suy ra được**, không phải chỗ hở. Ghi ra đây để lượt sau
 khỏi mở lại nó.
 
+**ĐÃ XỬ — 2026-09-03, BA-13. Hai chỗ sửa, một chỗ KHÔNG sửa, và chỗ không sửa mới là chỗ đúng.**
+
+- **Chỗ 1 — sửa §3.1.1 bước 1 theo §5.3**, đúng phe đa số. Bước 1 nay đọc *"khách ngồi vào bàn
+  trống, và phiên mở khi lượt gọi đầu tiên của bàn ấy được tạo"*, kèm một câu hệ quả mà không mục
+  nào từng viết ra: **một bàn có khách ngồi mà chưa gọi gì thì vẫn ở `Trống`**, và quầy đếm nó là
+  bàn trống. Câu ấy là thứ phiên System Design cần để đếm bàn, và nó chính là chỗ hai cách đọc cũ
+  cho hai kết quả khác nhau.
+- **Chỗ 3 — sửa §3.3.3 và mục *Verification* của I-009 TRONG CÙNG một lượt**, đúng cảnh báo của
+  mục này. Cả hai nay viết *"nâng **giá gốc (giá chay)** của một cái bánh cuốn từ 3.000 lên
+  4.000"* — thao tác **chỉ có một nghĩa**, ra đúng 29.000, và bậc phụ thu *nhiều nhân* vẫn còn.
+  §3.3.3 được thêm hẳn một đoạn nói **vì sao** không viết *"nâng giá bánh nhân thường"*: giá một
+  cái bánh nhân thường **không phải một ô sửa được** mà là *giá gốc + phụ thu*. `08-scenario.md`
+  Scenario 3 bước 2 đã viết đúng từ trước ⇒ nay **ba chỗ** nói cùng một câu.
+- **Chỗ 2 — KHÔNG sửa, và đó là kết quả đúng.** Mở **U-031** ở `docs/product/99-unknowns.md`
+  (*Đang mở*), đúng hình dạng ADR-007, và `./scripts/brief.sh` in nó ra ở mục *OPEN UNKNOWNS* —
+  tức mọi phiên sau đều thấy. Ghi thêm dấu vào **cả hai** chỗ đang nói ngược nhau: một gạch đầu
+  dòng ở §5.4 (*NGOẠI LỆ CHƯA CÓ LỜI CHỐT — đơn giao tận nơi*) và một câu trong ô bảng §5.2. Trước
+  lượt này, hai mục nói hai câu khác nhau **mà không mục nào biết mình đang tranh chấp**; nay cả
+  hai đều trỏ về cùng một câu hỏi đang mở, nên phiên đọc bất kỳ mục nào cũng dừng lại đúng chỗ.
+- **Cổng cho chỗ 3? Không có, và đây là chỗ đáng nhớ nhất của mục này.** `check-doc-status.sh`
+  (ADR-032) bắt được *một mã hai trạng thái*; nó **không** bắt được *một câu tiếng Việt có hai
+  cách đọc ra hai số tiền*. Chỗ ấy chỉ lộ ra khi có người **cộng lại tiền** — và nó đã lộ ra đúng
+  như thế, ở lượt đọc context sạch của Gate 6. Đừng ai kết luận rằng cổng mới phủ cả F-022.
+
 **Related task:**
-**BA-13** (nhận cả ba việc — mở 2026-09-03) · **BA-03** (chỗ 1) · **BA-07** (chỗ 2) ·
+**BA-13** (đã làm 2026-09-03: chỗ 1 và 3 sửa, chỗ 2 thành **U-031**) · **BA-03** (chỗ 1) · **BA-07** (chỗ 2) ·
 **BA-05** (chỗ 3) · **BA-11** (lượt phát hiện) · `quality/invariants.md` **I-001**, **I-009** ·
 **F-015** và **F-021** (cùng ngày, cùng họ: hai chỗ của một sự thật lệch nhau) ·
 **F-004** (đọc rộng hơn chữ chủ quán nói — vì sao chỗ 2 phải hỏi chứ không suy)
 
 **Status:**
-Open
+Fixed — 2026-09-03 (BA-13): chỗ 1 và chỗ 3 đã sửa; chỗ 2 chuyển thành **U-031**, đang chờ chủ quán

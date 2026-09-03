@@ -48,19 +48,26 @@ có câu trả lời mới từ người.
 | ADR-029 | Suất *đem về* của khách ngồi bàn thuộc **phiên bàn** | Đã chốt 2026-08-31 | — | — |
 | ADR-030 | Trả trước: **tiền mặt hoặc VietQR**, POS xác nhận lúc **nhận tiền** | Đã chốt 2026-08-31 | — | — |
 | ADR-031 | Ba mảng quản trị **được phép**, nhưng đi **sau** bán hàng | Đã chốt 2026-09-02 | — | mốc xếp lịch cho ADM-01…ADM-52 |
-| **Giả định — chưa có lời chốt** ||||
-| GĐ-01 | Hai người cùng thao tác một bàn: **người bấm sau thắng** | **Giả định** | TRUNG BÌNH | không chặn task nào; chặn *ca khách quét QR trong lúc quầy đang bấm* |
+| ADR-032 | Cổng *một mã, hai chỗ, hai trạng thái* chạy **ở mọi lượt** (Gate 1c), không nằm trong `verify.sh` | Đã chốt 2026-09-03 | — | — |
+| **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
+| GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
 | GĐ-03 | ~~Khách nói đã chuyển khoản mà quầy chưa thấy báo có~~ | **Đã thay** 2026-09-02 | — | — |
 | GĐ-04 | ~~Đơn đã hoàn thành cần điều chỉnh~~ | **Đã thay** 2026-09-02 → ADR-017 | — | — |
-| GĐ-05 | Thao tác nhầm **ngoài** ca *bấm nhầm một mẻ*: không có nút hoàn tác | **Giả định** | TRUNG BÌNH | không chặn task nào; ca đắt nhất là **đóng phiên nhầm** |
+| GĐ-05 | ~~Thao tác nhầm ngoài ca *bấm nhầm một mẻ*: không có nút hoàn tác~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 
-**Không có giả định nào ở mức rủi ro CAO tính tới 2026-09-02**, nên không task System Design nào
-đang bị một `GĐ` chặn. Hai giả định còn lại đều **TRUNG BÌNH** và cả hai chờ *ai đó gặp ca thật*
-chứ không chờ một câu trả lời — vì thế chúng **không** nằm ở `docs/product/99-unknowns.md`.
+**CẢ NĂM mục `GĐ` đã bị thay bằng quy tắc thật trong ngày 2026-09-02, nên mục *Giả định BA* hôm
+nay không giữ giả định nào còn hiệu lực** — không có `GĐ` nào đang chặn một task System Design.
+Vì thế không mục nào trong số chúng nằm ở `docs/product/99-unknowns.md`: chúng đã có lời chốt, chứ
+không phải đang chờ một câu trả lời.
 
 Hai mục CAO từng có (**GĐ-02**, **GĐ-03**) đã được **thay bằng quy tắc thật** ngày 2026-09-02, chứ
 không phải bị hạ mức.
+
+*Hai dòng GĐ-01 và GĐ-05 của bảng trên còn ghi `**Giả định**` · TRUNG BÌNH cho tới 2026-09-03,
+trong khi thân hai mục ấy đã ghi `Trạng thái: Superseded` từ 2026-09-02 — một bảng chỉ mục nói
+ngược thân mà nó trỏ tới. **Đã sửa 2026-09-03 (BA-13)**; cơ chế sinh ra nó ở `work/findings.md` **F-021**, và
+`scripts/check-doc-status.sh` nay chấm đúng phép so ấy ở mọi lượt.*
 
 ---
 
@@ -1793,6 +1800,63 @@ quanh — không phải *"chưa biết bao giờ"* mà là *"sau khi luồng bá
 **Applies to:**
 `docs/product/0-ba/` §1.6, §7.6 · `docs/product/1-system-design/architecture.md` §14 · `master_plan/shop-facts.md` §8 ·
 `work/admin-questions.md` §2 · ADR-013.
+
+---
+
+### ADR-032 — Cổng "một mã, hai chỗ, hai trạng thái" chạy Ở MỌI LƯỢT, không nằm trong `verify.sh`
+
+**Ngày:** 2026-09-03 · **Trạng thái:** Accepted · **Người quyết:** phiên BA-13
+
+**Decision:**
+Phép kiểm *"cùng một mã định danh xuất hiện ở hai chỗ với hai trạng thái khác nhau"* sống ở
+`scripts/check-doc-status.sh`, được `scripts/gate.sh` gọi **vô điều kiện** ngay sau
+`check-links.sh` (Gate 1c) — **không** đặt trong `scripts/*.test.sh`.
+
+**Why:**
+`work/backlog.md` BA-13 đề xuất hai chỗ: một `scripts/*.test.sh`, hoặc một bước trong
+`check-links.sh`. Chỗ thứ nhất **không chạy được vào đúng lượt sinh ra lỗi**: `gate.sh` bỏ qua
+`verify.sh` khi thay đổi chỉ chạm tài liệu (ADR-005), mà lỗi loại này **chỉ sinh ra trong lượt chỉ
+đổi tài liệu** — đóng một unknown là sửa mấy file `.md`. Một cổng chấm tài liệu mà ngủ đúng vào
+lượt tài liệu đổi thì nó không phải cổng, nó là một bài test chạy nhờ.
+
+Không nhét vào `check-links.sh` vì file ấy trả lời một câu khác — *đường dẫn có mở được không* —
+và trộn hai câu vào một script làm cả hai khó đọc. Một script riêng, một dòng riêng ở `gate.sh`,
+một dòng riêng ở `CLAUDE.md` §5.
+
+**Điều kiện dựng cổng đã đủ, không phải "cho chắc":** CLAUDE.md §3.8 đòi cùng một vấn đề trả giá
+**hai** lần. `work/findings.md` F-015 đã đo hai lần — 2026-09-02 (ba chỗ, BA-10) và 2026-09-03
+(chỗ thứ tư, BA-11) — và chính F-015 viết sẵn câu *"lần hai thì dựng cổng"*.
+
+**Ba phép so, và vì sao KHÔNG có phép thứ tư:**
+Phép A (mã `U-XXX` đã đóng bị kể như còn treo) · phép C (một chuyển tiếp bảng §5 ghi là hợp lệ bị
+phủ định ngay cạnh) · phép D (dòng `GĐ-XXX` ở bảng tổng hợp vs `Trạng thái:` trong thân).
+Phép **B** — *"mọi ngôn ngữ còn-mở phải trỏ tới một thứ đang mở"* — đã viết, chạy thử, và **bỏ**:
+nó ra **11 báo động trên cây ngày 2026-09-03 và cả 11 đều giả**. Một cổng kêu sai 11 lần là cổng
+bị gỡ (F-018). Ca mà phép B định phủ — câu hỏng **không mang mã nào** — đã được phép C phủ bằng
+đường khác.
+
+**Alternatives rejected:**
+- *Chép câu `awk` của F-015 làm cổng.* Bác — chính F-015 đo lại và nó bắt **2/4** chỗ: một chỗ lọt
+  vì tài liệu **gói dòng** làm cụm khoá bị cắt đôi giữa hai dòng, một chỗ lọt vì nó **không mang
+  mã**. Một bộ lọc viết cùng lúc với các ca đã biết thì nó tả **các ca ấy**, không tả **loại lỗi**
+  (F-017, F-018). Script này vì thế **gộp khối trước khi chấm**, không đọc theo dòng.
+- *Chấm cả `work/` và `prompt/`.* Bác — ở đó một câu đã hỏng được **trích dẫn làm bằng chứng**,
+  đúng lý do Gate 1b cũng ngoảnh mặt khỏi hai thư mục ấy. Chấm chúng là đánh thuế lên đúng việc ta
+  muốn người ta làm.
+- *Không có đường ngoại lệ.* Bác — `scripts/check-doc-status.ignore` giữ chỗ trích dẫn cố ý, và
+  một dòng ignore **không còn khớp gì** thì gate ĐỎ (cùng luật với `check-links.ignore`): ignore
+  hết hạn phải gỡ, không được nằm lại làm nợ vô hình.
+
+**Cái giá, viết ra để đừng ai ngạc nhiên:**
+Ba phép đều là **heuristic ngôn ngữ**, không phải chứng minh. Chúng bỏ sót được, và chúng báo giả
+được — vế *"khối này có nói lời chốt không"* là thứ duy nhất tách một câu đang sai khỏi một mục kể
+lại lịch sử, và nó dựa vào cách viết. Cổng này **không** thay bước `grep -rn` của CLAUDE.md §7.2;
+nó chỉ bắt lại phần mà bước ấy quên.
+
+**Applies to:**
+`scripts/check-doc-status.sh` · `scripts/check-doc-status.test.sh` ·
+`scripts/check-doc-status.ignore` · `scripts/gate.sh` · `CLAUDE.md` §5 ·
+`work/findings.md` F-015, F-021, F-022 · ADR-005.
 
 ---
 

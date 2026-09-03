@@ -1,0 +1,13 @@
+# Ngoại lệ của Gate 1c (scripts/check-doc-status.sh).
+#
+# Mỗi dòng:  <file> :: <chuỗi con phải có trong khối>
+# Chỉ dành cho chỗ TRÍCH DẪN NGUYÊN VĂN một câu đã hỏng làm bằng chứng — không
+# dành cho chỗ đang sai. Dòng nào không còn khớp khối nào thì gate ĐỎ: ignore
+# hết hạn phải gỡ, không được nằm lại làm nợ vô hình (cùng luật với Gate 1b).
+
+# Bảng "Lỗ hổng phát hiện khi diễn ba scenario" của BA-11 trích lại nguyên văn
+# bốn câu hỏng mà BA-13 vừa sửa. Ba dòng kia tự thoát vì ô bên phải có ghi ngày
+# đóng; dòng §6.2 thì không — câu gốc của nó không mang mã U-XXX nào (đó chính
+# là điểm F-015 ghi lại). Giữ nguyên văn ở đây là cố ý: mất câu gốc thì mục
+# Lỗ hổng không còn là bằng chứng nữa. Gỡ dòng này khi bảng ấy được viết lại.
+docs/product/0-ba/ban-hang/08-scenario.md :: *"**không cần** đường `Hoàn thành → Huỷ`"*

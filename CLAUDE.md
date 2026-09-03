@@ -69,8 +69,8 @@ docs/              product/ → 00-index.md, 0-ba/… (behavior), 1-system-desig
 work/              backlog.md, scope.txt, findings.md;
                    proposals/ — not adopted, owns nothing
 quality/           invariants.md, review-gate.md
-scripts/           gate.sh → check-scope.sh + check-links.sh + verify.sh
-                   + check-commit-block.sh;
+scripts/           gate.sh → check-scope.sh + check-links.sh
+                   + check-doc-status.sh + verify.sh + check-commit-block.sh;
                    brief.sh (§7);
                    hooks/ → commit-msg (Gate 8, §6.2), install-hooks.sh
 master_plan/       domain facts for the current project
@@ -177,11 +177,25 @@ It runs, in order:
    quoted there is evidence, not a bug. A path that deliberately does not exist
    goes in `scripts/check-links.ignore` with its owner; an ignore line that stops
    matching turns the gate red until it is removed.
-3. `scripts/verify.sh` (Gate 1) — Go: `gofmt` check, `go build`, `go test`;
+3. `scripts/check-doc-status.sh` (Gate 1c) — **một mã định danh, hai chỗ, hai
+   trạng thái**. Also runs on **every** turn, and for the same reason as step 2:
+   this defect is *born* in documentation-only turns — closing an unknown edits
+   `.md` files and nothing else — so a check living in `verify.sh` would sleep
+   through exactly the turn that creates it (ADR-032). Three comparisons: a
+   **closed** `U-XXX` quoted as still open · a transition the §5 lifecycle
+   tables list as **valid** being denied right beside it · a `GĐ-XXX` row in the
+   `docs/decisions.md` summary table disagreeing with `Trạng thái:` in the body
+   it points at. It reads **blocks, not lines** — the documents wrap every
+   paragraph, and a line-based filter is blind to a keyword split across two
+   lines (`work/findings.md` F-015). `work/` and `prompt/` are not checked: a
+   broken sentence quoted there is evidence. A deliberate quote goes in
+   `scripts/check-doc-status.ignore` with its reason, and an ignore line that
+   stops matching turns the gate red until it is removed.
+4. `scripts/verify.sh` (Gate 1) — Go: `gofmt` check, `go build`, `go test`;
    Node: `npm test` / `lint` / `build` when present, then every
    `scripts/*.test.sh`. Skipped when the change touches documentation only.
-4. `scripts/check-commit-block.sh` (Gate 7) — **hook mode only**, and only once
-   the three above are green: tracked changes are waiting to be committed, so the
+5. `scripts/check-commit-block.sh` (Gate 7) — **hook mode only**, and only once
+   the four above are green: tracked changes are waiting to be committed, so the
    turn must hand over the commit block (§6.1). Untracked files and
    `work/scope.txt` never trigger it, and it asks once per state of the tree.
    It then asks a second question — **what is in that block** (Gate 7b,

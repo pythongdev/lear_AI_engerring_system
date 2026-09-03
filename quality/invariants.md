@@ -263,9 +263,17 @@ combo cũ theo thành phần **mới** làm sai cả tiền lẫn thứ bếp đ
 
 **Verification:**
 Kịch bản gốc — đổi giá món → mở đơn cũ → tổng tiền không đổi: đặt **một suất giò, nhân thịt, lượng
-thường** (25.000 theo `shop-facts.md` §4.3) → chủ quán nâng giá một cái bánh nhân thường từ 4.000
-lên 5.000 → mở lại đúng đơn ấy ⇒ tổng vẫn **25.000**, không phải 29.000; và một suất giò cùng loại
-đặt **mới** ra 29.000. Kịch bản phủ bốn chiều: lặp đúng kịch bản trên cho từng chiều ở
+thường** (25.000 theo `shop-facts.md` §4.3) → chủ quán nâng **giá gốc của một cái bánh cuốn — ô
+*chay* của `shop-facts.md` §4.2 — từ 3.000 lên 4.000**, hai mức phụ thu nhân ở §4.4 **không đổi**
+(⇒ bánh nhân thường thành 5.000, bánh nhiều nhân thành 6.000) → mở lại đúng đơn ấy ⇒ tổng vẫn
+**25.000**, không phải 29.000; và một suất giò cùng loại đặt **mới** ra 29.000 = 9.000 + 4 × 5.000.
+**Thao tác phải viết đúng như trên, không viết *"nâng giá một cái bánh nhân thường lên 5.000"***:
+giá một cái bánh nhân thường không phải một ô sửa được mà là *giá gốc + phụ thu*, nên câu ấy cho
+**hai** kết quả (25.000 hoặc 29.000) và một đường đọc của nó còn xoá mất bậc phụ thu lượng nhân —
+một bài kiểm viết theo nó **xanh trong khi sản phẩm sai** (`work/findings.md` **F-022**, sửa cùng
+lượt với `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3.3, 2026-09-03).
+
+Kịch bản phủ bốn chiều: lặp đúng kịch bản trên cho từng chiều ở
 `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3.2 — giá thành phần · phụ thu nhân · phụ thu lượng nhân · thành phần suất
 (đổi combo "Đầy đủ" từ 3 cái bánh xuống 2) ⇒ cả bốn lần, đơn cũ giữ nguyên tổng tiền **và** giữ
 nguyên số phần bếp phải làm. Kịch bản ngừng bán: ngừng bán suất giò ⇒ đơn cũ vẫn hiện đúng tên

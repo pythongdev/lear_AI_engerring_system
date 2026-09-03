@@ -247,7 +247,15 @@ menu rồi **sửa** một dòng"* ⇒ **chỉ dòng ấy** lấy giá mới, v�
 
 Chín mục dưới đây là nguyên văn cổng chất lượng ở `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`
 §12. **Tick là tick thật:** mục nào chưa đạt thì để trống kèm lý do, không tick trước rồi vá sau.
-Hôm nay **6/9 đạt**; ba mục còn trống đều có đường đi cụ thể ghi ngay dưới ô của nó.
+Hôm nay **9/9 đạt** (BA-11 tick 6 ngày 2026-09-03; **BA-13** tick nốt mục 6, 7 và 8 cùng ngày, sau
+khi dọn năm chỗ mà ba ô ấy trượt vì).
+
+**Chín ô xanh KHÔNG có nghĩa là không còn gì phải hỏi.** Cổng này chấm **tài liệu BA**. Tính tới
+2026-09-03 còn **một** câu đang chờ chủ quán — **U-031**, *ai bấm mốc `Đã ra bàn` cho một đơn
+**giao tận nơi*** (`docs/product/99-unknowns.md` → *Đang mở*; đánh dấu ở `05-vong-doi.md` §5.2 và
+§5.4) — và nó **chặn phiên System Design** dựng màn quầy cùng màn người đi giao, vì §5.5 buộc mọi
+việc trạm phải ở `Đã ra bàn` trước khi đơn sang `Hoàn thành`. Mục 7 xanh **vì** câu ấy được ghi ra
+đúng chỗ, không phải vì nó không tồn tại.
 
 - [x] **1. Có đủ năm kênh bán rõ ràng, đúng tên ở `master_plan/shop-facts.md` §2.**
   §2 chốt năm kênh và chia chúng thành hai nhóm theo đơn vị tính tiền (§2.1); ba scenario trên
@@ -271,34 +279,58 @@ Hôm nay **6/9 đạt**; ba mục còn trống đều có đường đi cụ th�
   (đơn) và `Hoàn thành → Huỷ` — chúng thuộc §6, và §12 không đòi một scenario cho chúng.
 - [x] **5. Có các ngoại lệ quan trọng.**
   §6.1 — mười bốn tình huống, **không dòng nào còn mang dấu ⚠** (T-045, 2026-09-02). Tick vì mục
-  này hỏi các ngoại lệ **có mặt** hay không, và mười bốn dòng đều có mặt. **Một** dòng trong đó —
-  dòng 7 — còn mang một câu đã cũ nói ngược dòng 13 của chính bảng ấy; chỗ đó bị chấm trượt ở
-  **mục 7**, không chấm trượt hai lần ở đây.
-- [ ] **6. Có danh sách quyết định chưa rõ/giả định.** — **chưa đạt.**
+  này hỏi các ngoại lệ **có mặt** hay không, và mười bốn dòng đều có mặt. *(Lượt BA-11 ghi ở đây
+  rằng dòng 7 còn mang một câu cũ nói ngược dòng 13 và giao chỗ đó cho mục 7. **BA-13 đã sửa dòng
+  7 ngày 2026-09-03**: nay dòng 7, dòng 13, §6.2 và bảng §5.2 nói cùng một câu.)*
+- [x] **6. Có danh sách quyết định chưa rõ/giả định.** — **đạt 2026-09-03 (BA-13).**
   Ba danh sách đều tồn tại (`docs/decisions.md` · `docs/product/99-unknowns.md` ·
-  `master_plan/shop-facts.md` §7.2), nhưng **bảng tổng hợp đầu `docs/decisions.md` nói ngược với
-  thân của chính nó**: nó còn xếp **GĐ-01** và **GĐ-05** là *Giả định* mức **TRUNG BÌNH** đang
-  sống, trong khi thân hai mục ấy ghi **Superseded** từ 2026-09-02. Ai đọc bảng để trả lời *"còn
-  giả định nào đang sống không"* sẽ nhận hai câu trả lời khác nhau tuỳ chỗ đọc. ⇒ **F-021**;
-  sửa thuộc **BA-10**. Tick lại được ngay khi hai dòng bảng khớp thân.
-- [ ] **7. Không còn business rule quan trọng bị suy đoán.** — **chưa đạt.**
-  Không phải vì còn câu chưa hỏi: `docs/product/99-unknowns.md` → *Đang mở* **rỗng** tính tới
-  2026-09-03, không giả định nào ở mức **CAO**, và chỗ **suy ra** duy nhất còn lại — **S-5**
-  (`master_plan/shop-facts.md` §7.2) — được §5.4 **gọi đúng tên là chỗ suy ra** và giao cho BA-12,
-  nên nó chưa thành một luật bị suy đoán. Mục này chưa đạt vì lý do khác: **§1–§7 còn bốn câu nói
-  rằng một luật đã chốt vẫn đang treo**, và một trong bốn câu **dạy ngược** luật thật
-  (§6.1 dòng 7: *"`Hoàn thành → Huỷ` hôm nay bị từ chối"*, trong khi §5.2 đã có đúng dòng ấy).
-  Một phiên System Design đọc câu đó sẽ dựng hàng rào chủ quán không đặt. ⇒ **F-015**, và ba task
-  phải mở lại: **BA-01** · **BA-06** · **BA-08**.
-- [ ] **8. Một người không biết code có thể đọc luồng và giải thích quán phải làm gì.** — **chưa đạt.**
-  Nghiệm bằng Gate 6 (`quality/review-gate.md`): **hai** lượt đọc **context sạch** ngày 2026-09-03,
-  mỗi lượt chỉ được đọc §1–§8 (lượt hai thêm `master_plan/shop-facts.md` để kiểm tiền), không lượt
-  nào được nghe giải thích thêm. **Lượt một tắc ở ba chỗ trong chính §8** — đã sửa hết: thiếu
-  chặng bếp của lượt gọi thêm, thiếu hai mốc bấm của đơn mang đi, và một câu ở Scenario 3 nói
-  ngược §3.3.6. **Lượt hai cộng lại đúng toàn bộ tiền**, nhưng vẫn tắc ở **ba chỗ nằm trong
-  §1–§7**, không nằm trong §8: §3.1.1 bước 1 nói ngược §5.3 · §5.4 và §5.2 cho hai người khác
-  nhau cùng một nút · ví dụ đổi giá của §3.3.3 cho hai kết quả. ⇒ Cả ba ở **F-022**, và mục này
-  tick lại được khi **BA-13** dọn xong. Chi tiết ở mục *Lỗ hổng*.
+  `master_plan/shop-facts.md` §7.2), và nay **cả ba nói cùng một câu**. Chỗ trượt của lượt trước —
+  bảng tổng hợp đầu `docs/decisions.md` còn xếp **GĐ-01** và **GĐ-05** là *Giả định* đang sống
+  trong khi thân hai mục ghi **Superseded** — đã sửa: hai dòng bảng, đoạn văn dưới bảng, hàng
+  tiêu đề của bảng, và một chỗ thứ ba mà `grep` tìm ra ở `docs/product/99-unknowns.md`. ⇒ trả lời
+  *"còn giả định nào đang sống không"* nay là **không**, đọc ở chỗ nào cũng thế.
+  Phép so ấy nay **do máy chấm ở mọi lượt** — `scripts/check-doc-status.sh` phép D
+  (`docs/decisions.md` **ADR-032**), nên nó không hỏng lại lặng lẽ được nữa.
+- [x] **7. Không còn business rule quan trọng bị suy đoán.** — **đạt 2026-09-03 (BA-13).**
+  Bốn câu nói rằng một luật đã chốt vẫn đang treo đã sửa hết (**F-015**): §1.2 ghi *người đứng
+  quầy bấm lúc nhận tiền* · §4.9 ghi *đối chiếu VietQR bằng tin nhắn báo có* · §6.1 dòng 7 và §6.2
+  ghi đường `Hoàn thành` ⇒ `Huỷ` là **hợp lệ**, khớp bảng §5.2 và dòng 13. Không câu nào còn dạy
+  ngược luật thật.
+  **Mục này đạt KÈM một câu hỏi đang mở, và hai điều đó không mâu thuẫn.** `99-unknowns.md` →
+  *Đang mở* nay có **U-031** (ai bấm mốc `Đã ra bàn` của một đơn **giao tận nơi**) — mở **vì**
+  BA-13 từ chối suy hộ một luật chủ quán chưa nói (CLAUDE.md §3.5). Mục này hỏi *"còn luật nào bị
+  **suy đoán**"*, và một câu hỏi **được ghi ra, được brief in vào mọi phiên mới, được đánh dấu ở
+  cả hai mục đang nói ngược nhau** là điều ngược lại với một luật bị suy đoán. Chỗ **suy ra** còn
+  lại — **S-5** (`master_plan/shop-facts.md` §7.2) — cũng vậy: §5.4 gọi đúng tên nó là chỗ suy ra
+  và giao cho BA-12. Không giả định `GĐ` nào còn hiệu lực (mục 6).
+  *Ai ký cổng thì đọc kèm:* **U-031 chặn phiên System Design dựng màn quầy và màn người đi giao** —
+  cổng này chấm **tài liệu BA**, không chấm việc U-031 đã có lời chốt hay chưa.
+- [x] **8. Một người không biết code có thể đọc luồng và giải thích quán phải làm gì.** — **đạt
+  2026-09-03 (BA-13), bằng lượt đọc context sạch THỨ BA.**
+  Nghiệm bằng Gate 6 (`quality/review-gate.md`): **ba** lượt đọc **context sạch** ngày 2026-09-03,
+  mỗi lượt chỉ được đọc §1–§8 + `master_plan/shop-facts.md` + `docs/product/99-unknowns.md`, không
+  lượt nào được nghe giải thích thêm và không lượt nào được mở `work/`, `quality/` hay
+  `docs/decisions.md`.
+  **Lượt một** (BA-11) tắc ở ba chỗ trong chính §8 — đã sửa hết. **Lượt hai** (BA-11) cộng đúng
+  toàn bộ tiền nhưng tắc ở ba chỗ nằm trong §1–§7 ⇒ **F-022**, giao cho BA-13.
+  **Lượt ba** (BA-13, sau khi sửa) trả lời **CÓ**: diễn trọn cả ba scenario, mỗi bước tra được
+  luật ở §1–§7, và **tự cộng lại toàn bộ tiền từ `shop-facts.md` §4.2/§4.4/§4.5 — khớp 100%**:
+  Scenario 1 **96.000đ** · Scenario 2 **95.000đ** · Scenario 3 **54.000đ** (kèm ca sai 58.000đ,
+  lệch 4.000đ), **tổng 245.000đ**, và cả ba ô combo của bảng §4.3 tái tạo đúng từ §4.2 + §4.5.
+  Ba chỗ vừa sửa được kiểm riêng và **cả ba khớp**: phiên bàn mở lúc lượt gọi đầu tiên (ba mục nói
+  cùng một câu) · ví dụ đổi giá §3.3.3 chỉ còn **một** nghĩa, ra 29.000 · `Hoàn thành` ⇒ `Huỷ`
+  **hợp lệ** ở cả bốn chỗ.
+  **Lượt ba dừng ở đúng MỘT chỗ, và dừng đúng cách:** ai bấm mốc `Đã ra bàn` cho một đơn **giao
+  tận nơi**. Nguyên văn báo cáo: *"tài liệu NÓI RÕ đây là chỗ chưa chốt, không im lặng"* — có ID
+  (**U-031**), có người trả lời (chủ quán), có hệ quả (§5.5). Người đọc **dừng lại và hỏi** thay
+  vì đoán, tức tài liệu làm đúng việc của nó. Mục này hỏi *người đọc có giải thích được không*,
+  không hỏi *mọi câu đã có lời chốt chưa* — cái sau là mục 7.
+  **Lượt ba còn tìm ra một chỗ hỏng MỚI, và nó nằm trong §8 chứ không trong §1–§7:** mục *Lỗ hổng*
+  và ô mục 5 lúc ấy còn là ảnh chụp của trạng thái **trước** khi sửa, nên một người đọc sạch *"tin
+  §8 rồi đi sửa lại những chỗ đã đúng"*. Đó đúng là cơ chế **F-015** ở một tầng cao hơn — chỗ nhắc
+  tới một sự thật không được quét khi sự thật ấy đổi, và lần này chỗ nhắc tới chính là §8. Đã sửa
+  trong cùng lượt: mục *Lỗ hổng* nay mở đầu bằng banner nói thẳng nó là **biên bản**, và ô mục 5
+  ghi rõ dòng 7 đã được sửa.
 - [x] **9. Ba scenario nghiệm thu BA có thể được diễn lại bằng nghiệp vụ.**
   Ba scenario ở trên, đúng ba ca §12 bắt buộc. Mỗi bước có cột *Luật ở đâu*; không bước nào mô tả
   thao tác kỹ thuật.
@@ -308,7 +340,26 @@ còn mở ở `work/backlog.md`: **BA-12** (§3.4 — lát cắt sản xuất th
 chưa được hỏi mà BA-12 cần trước khi dựng bảng quầy. Ai ký cổng này thì ký kèm một câu về hai
 việc đó.
 
-### Lỗ hổng phát hiện khi diễn ba scenario
+### Lỗ hổng phát hiện khi diễn ba scenario — BIÊN BẢN CỦA BA-11, ĐÃ XỬ XONG
+
+> ⚠️ **ĐỌC CÂU NÀY TRƯỚC KHI ĐỌC BẤT KỲ DÒNG NÀO DƯỚI ĐÂY.**
+> Mục này là **ảnh chụp ngày 2026-09-03 trước khi sửa**, giữ lại làm **bằng chứng** của lượt diễn
+> scenario. **Mọi câu §1–§7 bị trích trong mục này đều KHÔNG CÒN trong tài liệu** — chúng đã được
+> **BA-13 sửa cùng ngày**. Đừng đọc mục này như tình trạng hôm nay, và **đừng đi sửa lại** những
+> chỗ nó tố: mở chính file được nêu ra mà đọc.
+>
+> | Nhóm | Hôm nay |
+> |---|---|
+> | **1 — F-015**, bốn câu nói luật đã chốt vẫn treo | **đã sửa cả bốn** |
+> | **2 — F-022** chỗ 1 (phiên mở lúc nào) và chỗ 3 (ví dụ đổi giá) | **đã sửa**; §3.1.1 nay khớp §5.3, ví dụ §3.3.3 chỉ còn **một** nghĩa |
+> | **2 — F-022** chỗ 2 (**ai** bấm *"đã ra bàn"* của đơn **giao tận nơi**) | **CHƯA CHỐT — và đây là chỗ duy nhất của mục này còn sống.** Thành **U-031**, đang chờ **chủ quán**; ghi ở `docs/product/99-unknowns.md` → *Đang mở*, và đánh dấu ở cả `05-vong-doi.md` §5.2 lẫn §5.4. Không ai được suy hộ (CLAUDE.md §3.5) |
+> | **3 — F-021**, bảng `docs/decisions.md` nói ngược thân | **đã sửa** |
+>
+> Kèm theo là một **cổng chạy ở mọi lượt** cho *loại* lỗi này, chứ không cho năm ca này:
+> `scripts/check-doc-status.sh` (`docs/decisions.md` **ADR-032**) — **đỏ** trên bản trước khi sửa,
+> **xanh** sau khi sửa. Nó phủ nhóm 1 và nhóm 3. Nó **không** phủ chỗ *"một câu tiếng Việt có hai
+> cách đọc ra hai số tiền"* của nhóm 2: chỗ ấy chỉ lộ ra khi có người **cộng lại tiền** — tức khi
+> Gate 6 chạy, đúng như nó đã lộ ra.
 
 Ba scenario chạy hết, và **mọi bước đều trỏ được về một mục của §1–§7** — phần *luồng* không thiếu
 chỗ nào. Cái hai lượt đọc **context sạch** (Gate 6, 2026-09-03) tìm ra không phải chỗ thiếu, mà là
