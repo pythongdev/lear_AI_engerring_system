@@ -1,6 +1,26 @@
 # 15 — Bước 5/5: `docs/architecture.md` dọn vào `docs/product/1-system-design/` (L3) · DOC-5
 
-> ## ⛔ CHƯA ĐƯỢC CHẠY
+> ## ✅ ĐÃ CHẠY XONG 2026-09-03 — commit `5ddd0e9`. ĐỪNG CHẠY LẠI.
+>
+> **Đọc file này từ trên xuống, và khối này thắng.** Chủ repo chốt **đồng ý** ngày 2026-09-03, nên
+> điều kiện mở khoá 1 đã đủ và lượt 5 đã chạy. `docs/architecture.md` nay ở
+> `docs/product/1-system-design/architecture.md`.
+>
+> Mọi câu bên dưới nói *"chưa được phép chạy"*, *"chưa có lời chốt"* hay *"chủ repo chốt HOÃN"*
+> đều là **bản ghi của trạng thái trước lúc chốt**, giữ nguyên câu chữ vì chỗ nó **đoán lệch** là
+> thứ đáng đọc — nhất là ĐK3, thứ hoá ra **không mỏng** như hai lượt trước tưởng.
+>
+> **Kết quả và lý lẽ đầy đủ ở `docs/decisions.md` ADR-014, khối *SỬA ĐỔI 2026-09-03*** — nơi ghi
+> cả ba điều kiện kèm bằng chứng, luật chia 40 chuyển / 8 ở lại, vì sao chuyển trong **một** commit
+> thay vì năm task con, và số phận của `master_plan/phase_1_system_design_banh_cuon_ba_thanh.md`.
+> Dòng `- [x] DOC-5` trong `work/backlog.md` là bản tóm tắt.
+>
+> **Ba điều đã đúng khác với lúc viết prompt, đừng tin lại con số cũ:** ĐK3 thoả bằng chính luật
+> *"tạo thư mục của pha cùng lúc với dòng nội dung đầu tiên"* (`docs/product/00-index.md`) · câu
+> `grep` ở mục *Acceptance* sau khi dọn trả về **12** dòng chứ không phải 8, và cả 12 đều cố ý ·
+> con số 48 là mốc **của ngày 2026-09-03**, không phải lời chốt.
+
+> ## ⛔ CHƯA ĐƯỢC CHẠY — *(bản ghi trạng thái TRƯỚC 2026-09-03; khối ✅ ở trên thắng)*
 >
 > Chủ repo đã chốt **trục pha** (ADR-014, khối *SỬA ĐỔI 2026-09-02*). Chủ repo **chưa** chốt việc
 > `docs/architecture.md` có dọn vào folder hay không. Prompt này viết sẵn để lúc chốt là chạy được
