@@ -22,13 +22,16 @@ thay hai giả định rủi ro CAO; lượt hai (T-043) đóng **U-027** — đ
 được** — và **U-030** — **không** mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên.
 
 **Ngày 2026-09-03, BA-13 mở lại đúng MỘT câu** — và nó mở vì hai mục **đã chốt** trả lời khác
-nhau, không vì ai quên hỏi. **Cùng ngày, T-048 mở thêm một câu thứ hai — U-032** — trong lúc viết
-kế hoạch pha 1: nó mở vì ba luật *doanh thu tính ngày nào* đã chốt đều **không** phủ ca lượt bán
-nằm trên sổ giấy qua đêm. Vậy mục này đang giữ **hai** câu tính tới cuối ngày 2026-09-03; con số ấy
-là phép đếm của người viết, không phải một quyết định — đếm lại ở danh sách dưới, đừng tin câu này. Bảy câu mở ngày 2026-09-02 đều đã đóng trong ngày (T-042, T-043,
+nhau, không vì ai quên hỏi. Bảy câu mở ngày 2026-09-02 đều đã đóng trong ngày (T-042, T-043,
 T-044). Chỗ chưa chắc còn lại **không** phải câu hỏi: cả năm **giả định** `docs/decisions.md` GĐ
 đã bị **thay bằng quy tắc thật** ngày 2026-09-02 nên không mục nào còn hiệu lực, và một chỗ
 **suy ra** ở `master_plan/shop-facts.md` §7.2 (**S-5**).
+
+**Cùng ngày 2026-09-03, T-048 mở thêm một câu — U-032 — trong lúc viết kế hoạch pha 1.** Nó không
+mở vì ai quên hỏi: ba luật *doanh thu tính ngày nào* đã chốt (nợ · hoàn · sổ giấy) đều đi qua ca
+**lượt bán nằm trên sổ giấy qua đêm** mà không luật nào phủ được nó. Mục này vì thế đang giữ **hai**
+câu tính tới cuối ngày 2026-09-03 — con số ấy là phép đếm của người viết, không phải một quyết định
+(`work/findings.md` **F-003**); đếm lại ở danh sách dưới, đừng tin câu này.
 
 - **U-031 — với một đơn GIAO TẬN NƠI, ai bấm mốc *"đã ra bàn"* của từng việc trạm, và vào lúc
   nào?** Chủ quán chốt 2026-09-01 (U-021) rằng *người đứng quầy* bấm **cả hai** mốc của bảng bếp,

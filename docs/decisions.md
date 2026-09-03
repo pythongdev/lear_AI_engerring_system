@@ -49,6 +49,7 @@ có câu trả lời mới từ người.
 | ADR-030 | Trả trước: **tiền mặt hoặc VietQR**, POS xác nhận lúc **nhận tiền** | Đã chốt 2026-08-31 | — | — |
 | ADR-031 | Ba mảng quản trị **được phép**, nhưng đi **sau** bán hàng | Đã chốt 2026-09-02 | — | mốc xếp lịch cho ADM-01…ADM-52 |
 | ADR-032 | Cổng *một mã, hai chỗ, hai trạng thái* chạy **ở mọi lượt** (Gate 1c), không nằm trong `verify.sh` | Đã chốt 2026-09-03 | — | — |
+| ADR-033 | Pha 1 chạy theo **kế hoạch riêng** ở `master_plan/`, mã bước là **`P1-XX`**, đầu ra vào **file mới** cạnh `architecture.md` | Đã chốt 2026-09-03 | — | mở khoá **P1-01…P1-12** |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -1857,6 +1858,80 @@ nó chỉ bắt lại phần mà bước ấy quên.
 `scripts/check-doc-status.sh` · `scripts/check-doc-status.test.sh` ·
 `scripts/check-doc-status.ignore` · `scripts/gate.sh` · `CLAUDE.md` §5 ·
 `work/findings.md` F-015, F-021, F-022 · ADR-005.
+
+---
+
+### ADR-033 — Pha 1 có kế hoạch riêng ở `master_plan/`, mã bước là `P1-XX`, và đầu ra đi vào file MỚI cạnh `architecture.md`
+
+**Trạng thái:** Đã chốt 2026-09-03 (T-048). Chủ repo yêu cầu trong phiên: *"BA về cơ bản đã xong,
+pha tiếp theo sẽ là system design, hãy làm master plan cho system design thật kĩ và cẩn thận từng
+bước"*.
+
+**Decision:**
+Ba quyết định, và cả ba đều là quyết định về **hình dạng**, không phải về nội dung pha 1.
+
+1. **Kế hoạch pha 1 là một file MỚI ở `master_plan/`:**
+   `master_plan/SD_master_plan_banh_cuon_ba_thanh.md`. Nó là *đầu vào* của pha, đúng chỗ mà
+   `CLAUDE.md` §2 dành cho `master_plan/`, và nó **không sở hữu sự thật nào** — cùng vai với
+   `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` ở pha 0.
+2. **Mã của mỗi bước là `P1-01`…`P1-12`, không phải `SD-01`…**
+3. **Đầu ra pha 1 đi vào file mới trong `docs/product/1-system-design/`, một chủ đề một file**;
+   `architecture.md` giữ nguyên §1–§14 và chỉ được sửa **tại chỗ** ở những dòng sai.
+
+Kèm hai luật cho bảng bước, vì chúng là chỗ kế hoạch pha 0 đã trả giá:
+
+- **Bảng bước KHÔNG có cột *Trạng thái*.** Owner của *Tasks* là `work/backlog.md` (`CLAUDE.md` §2).
+- **Mười hai bước KHÔNG đổ vào *Ready* cùng lúc**; mỗi bước tạo entry lúc nhận việc.
+
+**Why:**
+
+*1 — vì sao một file mới, không sửa bản nháp.* `master_plan/phase_1_system_design_banh_cuon_ba_thanh.md`
+đã bị banner hoá 2026-09-03 (ADR-014, khối *SỬA ĐỔI*) với đúng một câu: **"Không sửa ở đây"**. Nó
+giữ `I1`–`I8`, bản đã bị `I-001`…`I-018` thay. Viết kế hoạch mới **vào** nó là hồi sinh một bản sao
+cũ hơn owner thật — đúng F-001, và là kết cục mà ADR-014 đã cân nhắc rồi bác.
+
+*2 — vì sao `P1-XX` chứ không `SD-XX`.* Bản nháp ấy dùng `SD-01`…`SD-07` làm **mã quyết định** (§1)
+**và** `SD-01`…`SD-10` làm **mã task** (§7) — hai nghĩa cho một mã, trong cùng một file, với nội
+dung khác nhau (ví dụ `SD-02` là *"một phiên bàn là một đơn vị tính tiền"* ở §1 và *"chốt các
+invariant liên quan đến tiền"* ở §7). Đặt thêm một nghĩa thứ ba là dựng đúng cái bẫy mà repo này đã
+ghi **ba** lần trong ba ngày: F-015 (một mã, hai chỗ, hai trạng thái) · F-021 (bảng nói ngược thân)
+· F-022 (hai mục đã chốt trả lời khác nhau). `P1-` còn đọc được ngay là *pha 1*, khớp trục **pha**
+mà ADR-014 đã chọn cho `docs/product/`.
+
+*3 — vì sao file mới chứ không viết thêm vào `architecture.md`.* Ba lý do, xếp theo sức nặng:
+**(a)** số mục của nó bị ghim: ADR-012 gọi *Nợ* = §12, ADR-013 gọi *admin* = §14, nên chèn mục mới
+vào giữa là làm sai hai ADR mà `grep` không bắt được — đúng lý lẽ ADR-014 đã dùng để giữ số §1–§8.
+**(b)** nó đã 592 dòng, và `work/findings.md` **F-014** đã xảy ra **năm** lần trên đúng loại file
+dùng chung như thế; pha 1 có ba bước chạy song song được (P1-04 · P1-05 · P1-06). **(c)** một file
+một chủ đề là hình dạng mà `docs/product/0-ba/ban-hang/` đang chạy đúng.
+
+*Hai luật kèm theo.* Cột *Trạng thái* trong kế hoạch pha 0 (§11) và dòng `- [x]` trong
+`work/backlog.md` là **hai bản của một sự thật**, và bản trong kế hoạch không bao giờ được cập nhật
+— F-001 ở dạng nhẹ nhất của nó. Còn *Ready* thì `scripts/brief.sh` cắt ở **sáu** mục: mười hai dòng
+đổ vào đó đẩy bảy dòng ra khỏi tầm nhìn của mọi phiên mới, đúng cơ chế đã làm `U-011` và `BA-12`
+vô hình (**F-012**).
+
+**Rejected alternatives:**
+- *Sửa thẳng vào bản nháp pha 1.* Bác — banner của nó viết *"Không sửa ở đây"*, và lý lẽ đầy đủ ở
+  ADR-014 khối *SỬA ĐỔI 2026-09-03*.
+- *Không viết kế hoạch, cứ mở task pha 1 theo nhu cầu.* Đó là cách pha 0 **không** chạy, và pha 0
+  chạy được: `BA_initial_plan…md` §11 là thứ giữ thứ tự BA-01→BA-13 suốt mười ngày. Pha 1 có ba
+  chỗ đang bị chặn (U-031 · U-032 · S-5) và hai chỗ đang sai (F-023 · F-024); không có bản đồ thì
+  mỗi phiên tự đoán một thứ tự và cả năm chỗ đó đều có cơ hội bị bước qua.
+- *Dùng lại `SD-XX` và chấp nhận trùng, vì bản nháp "không sở hữu gì".* Bác — *không sở hữu sự
+  thật* không có nghĩa là *không ai đọc*: `docs/product/00-index.md` mục *Pha 1* vẫn kể tên nó, nên
+  nó vẫn được mở ra đọc. Trùng mã không làm cổng nào đỏ; nó chỉ làm người đọc sai, tức là đúng loại
+  lỗi đắt nhất của repo này.
+- *Đổ cả mười hai bước vào `work/backlog.md` ngay hôm nay.* Bác — F-012, và thêm một lý do thực
+  dụng: bước P1-07 và P1-09 chờ **BA-12**, nên entry viết hôm nay sẽ mang những dòng *Constraints*
+  chết trước khi ai nhận việc (cùng họ với F-013 · F-017).
+
+**Applies to:**
+`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` (mới) · `docs/product/00-index.md` bảng *Pha 1* ·
+`work/backlog.md` (T-048, P1-01) · `work/findings.md` **F-023**, **F-024** (mới) ·
+`docs/product/99-unknowns.md` **U-032** (mới) · ADR-014 (bản nháp ở lại `master_plan/`) ·
+ADR-012 · ADR-013 (số mục §12, §14 bị ghim) · `docs/product/1-system-design/architecture.md` (chỉ
+sửa tại chỗ, không đánh số lại).
 
 ---
 

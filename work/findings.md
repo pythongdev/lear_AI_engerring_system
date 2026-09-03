@@ -1924,3 +1924,181 @@ khỏi mở lại nó.
 
 **Status:**
 Fixed — 2026-09-03 (BA-13): chỗ 1 và chỗ 3 đã sửa; chỗ 2 chuyển thành **U-031**, đang chờ chủ quán
+
+---
+
+### F-023 — Một ADR giao lược đồ · API · route cho hai tài liệu, mà cả hai đều tự khai không sở hữu chúng
+
+**Problem:**
+`docs/decisions.md` **ADR-014**, thân mục, viết: *"Tên bảng, tên cột, khoá ngoại, API, route vẫn
+thuộc `docs/product/1-system-design/architecture.md` và `master_plan/prompt-fullstack.md`
+§3.4–§3.7 (CLAUDE.md §2 không đổi một dòng nào)."* Đọc hai tài liệu ấy thì cả hai nói ngược:
+
+| Nơi ADR-014 giao việc | Chính nó viết gì |
+|---|---|
+| `docs/product/1-system-design/architecture.md` | §8, cuối mục: *"**Điều tài liệu này cố ý KHÔNG làm:** không đặt tên bảng, không đặt tên cột, không vẽ khoá ngoại. Chốt lược đồ là việc của tầng System Design"* |
+| `master_plan/prompt-fullstack.md` | banner đầu file: *"**Schema · API · route · bất biến CHƯA có nhà — đừng đi tìm.** Bốn thứ đó là **đầu ra của pha 1–4**… tính tới 2026-08-31 chúng chưa tồn tại ở đâu cả"* |
+
+Và câu trong ngoặc của ADR-014 — *"CLAUDE.md §2 không đổi một dòng nào"* — đúng theo nghĩa đen
+nhưng dẫn sai: bảng §2 **không có hàng nào** cho lược đồ, API hay route. Nên hôm nay ba tài liệu
+nói ba câu khác nhau về cùng một câu hỏi *"ai sở hữu lược đồ"*: **giao cho hai file** · **cả hai
+từ chối** · **§2 im lặng**.
+
+Một chi tiết nữa của cùng câu banner: nó xếp **bất biến** vào loại *"chưa có nhà"*, trong khi
+`quality/invariants.md` là owner của *Business invariants* theo `CLAUDE.md` §2 và đang giữ
+`I-001`…`I-018`. Câu ấy đúng vào 2026-08-31 và đã hết đúng từ lâu.
+
+**Impact:**
+Chỗ này nằm đúng trên đường đi của pha 2. Phiên mở pha 2 sẽ đọc ADR-014, tới
+`architecture.md` §8, thấy nó từ chối, rồi rơi vào một trong hai kết cục:
+
+- **dựng lược đồ trong `architecture.md`** — phá đúng câu §8 của chính file ấy, và bơm tên bảng
+  vào một tài liệu mà `docs/product/00-index.md` giới thiệu là *"đặc tả, không phải mã"*;
+- **hoặc coi đề xuất 16 bảng ở `prompt-fullstack.md` §3.5 là lược đồ đã chốt** — đó là một bản
+  viết **2026-08-31**, trước phần lớn quyết định của chủ quán, và `architecture.md` §8 đã đo được
+  **sáu** thứ nó chưa có chỗ cất (vết hoàn tiền · khoản nợ · vết thao tác · ai đang trực trạm nào ·
+  note *"đem về"* · đã phục vụ bao nhiêu cho từng bàn).
+
+Kết cục thứ hai đắt hơn: nó thi công một lược đồ **thiếu chỗ cất vết hoàn tiền và khoản nợ**, tức
+là đối soát ngưỡng 0đ (`shop-facts.md` §6.10) không thực hiện được — trong khi đó là cổng chất
+lượng mạnh nhất của cả dự án.
+
+**Cùng họ với F-021**, chỉ khác tầng: F-021 là *bảng chỉ mục nói ngược thân của chính nó*; đây là
+*một ADR nói ngược hai tài liệu mà nó trỏ tới*. Cổng `scripts/check-doc-status.sh` (ADR-032) không
+bắt được ca này: nó so `U-XXX` và `GĐ-XXX`, không so một câu giao sở hữu.
+
+**Decision / Fix:**
+Không sửa trong lượt phát hiện (T-048 viết kế hoạch, không thi công pha 1). Việc sửa là bước
+**P1-01** ở `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6, và nó phải làm đủ ba việc trong
+**một** lượt: (1) chốt bằng một ADR mới ai sở hữu lược đồ · API · route, theo trục pha đã có
+(pha 2 · pha 3 · pha 4); (2) sửa câu sai trong ADR-014 — sửa **tiến**, ghi một khối sửa đổi, không
+viết lại lịch sử (ADR-008); (3) `CLAUDE.md` §2 có câu trả lời cho ba thứ ấy, kể cả khi câu trả lời
+là *"chưa có owner, sinh ra ở pha N"* — một hàng nói *chưa có* vẫn hơn một bảng im lặng.
+
+**Related task:**
+**T-048** (lượt phát hiện) · **P1-01** (lượt sửa) · `docs/decisions.md` **ADR-014** · **ADR-008**
+(sửa tiến) · **F-001** (hai bản của một sự thật) · **F-021** (chỉ mục nói ngược thân)
+
+**Status:**
+Open
+
+---
+
+### F-024 — Một deliverable bị bỏ rơi vì task đóng trước khi giao nó, và ba tài liệu vẫn trỏ về task đã *Done*
+
+**Problem:**
+`docs/product/1-system-design/architecture.md` §11 viết: *"⇒ **Phương án "ba con số" ở §3 hết đúng
+và phải viết lại.**"* rồi khép lại bằng *"Việc viết lại §3 vẫn là của **T-036** — T-037 chỉ gỡ dòng
+chặn này, không viết hộ đặc tả."* Entry T-037 ở `work/backlog.md` nói cùng một câu: *"bốn con số là
+deliverable của T-036"*.
+
+**T-036 đã *Done* từ 2026-09-01 và không giao deliverable ấy.** Đo lại hôm nay 2026-09-03: §3
+(*Mặt POS*) không chứa cụm *"đã làm xong"*, *"còn ở bếp"* hay *"đã ra bàn"* ở bất kỳ dòng nào —
+`grep -n` trên cả file chỉ ra bốn dòng, và cả bốn nằm ở §9, §11 và một chú thích, không dòng nào
+trong §3. Bảng quầy ở §3 vẫn là *"CẦN LÀM (tổng)"* + *"CẦN LÀM (cho bàn nào)"*, tức phương án mà
+§11 của chính file ấy tuyên bố **hết đúng**.
+
+Không task nào đang ở *Ready* hay *In Progress* nhận việc này. Nó không nằm trong entry của T-036
+(đã đóng), không nằm trong BA-12 (BA-12 viết **mục nghiệp vụ** ở `docs/product/0-ba/`, không sửa
+đặc tả kiến trúc), và không có `F-XXX` nào trước lượt này ghi nó.
+
+**Impact:**
+Ba tài liệu cùng chỉ về một task đã đóng, nên **mỗi phiên mới đọc §11 đều kết luận rằng có người
+khác đang lo việc này** — cùng cơ chế đã làm `U-011` vô hình, chỉ khác là chỗ trống ở đây được che
+bằng một cái tên chứ bằng một dòng bị cắt (F-012).
+
+Hậu quả ở quán, nếu nó đi tiếp vào pha 2: bảng quầy không có con số *"đã làm xong, còn ở bếp"*, nên
+người đứng quầy không thấy bánh đang nằm chờ. Chủ quán đã nói thẳng là chuyện nằm chờ có thật và kể
+ba lý do (S-4, 2026-09-01) — chờ đủ đĩa · chờ người rảnh tay bưng · chờ món khác của cùng bàn. Mất
+con số ấy là mất đúng thứ đã hỏi chủ quán hai lần mới lấy được.
+
+**Vì sao vòng rà trước không bắt:** T-036 sửa **sáu pointer** trong cùng lượt, và §11 là **một**
+trong sáu — nó được sửa đúng phần *nội dung đã cũ* (*"bảng quầy không biết khoảng chờ"*) và giữ lại
+phần *giao việc* (*"vẫn là của T-036"*). Rà pointer theo *"câu này còn đúng không"* thì câu ấy đúng
+lúc viết; câu hỏi không ai đặt là *"cái tên trong câu này còn sống không"*. Đó là một phép so mới:
+**mọi câu giao việc cho một mã task phải được chấm lại khi mã ấy sang *Done***.
+
+**Decision / Fix:**
+Không sửa trong lượt phát hiện. Việc sửa là bước **P1-09** ở
+`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6: viết lại §3 với **bốn** con số (đơn vị
+**bấm** là mẻ theo U-017, đơn vị **đếm** là bàn theo §5.3), **và** gỡ câu §11 đang giao việc cho
+T-036 trong cùng một lượt. Bước ấy chờ **BA-12** và **S-5** — nên chỗ trống này còn sống thêm một
+thời gian, và đó là lý do nó phải có một mã để ai cũng thấy.
+
+**Related task:**
+**T-048** (lượt phát hiện) · **P1-09** (lượt sửa) · **T-036** (task đã đóng mà vẫn được giao việc) ·
+**T-037** (entry nhắc lại cùng câu) · **BA-12** · **S-5** (`master_plan/shop-facts.md` §7.2) ·
+`docs/decisions.md` **ADR-026** · **F-012** (chỗ trống được che, phiên sau không thấy)
+
+**Status:**
+Open
+
+---
+
+### F-025 — Phiên song song chạy `git commit` và nhặt luôn thay đổi CHƯA COMMIT của phiên kia, dưới subject của task mình
+
+**Problem:**
+Ngày **2026-09-03 lúc 22:13**, trong lúc phiên T-048 đang viết dở, một phiên song song (đang chạy
+**BA-12**) commit `39ca608` với subject **`BA-13: dọn năm chỗ nói lệch nhau, cổng chất lượng BA 9/9`**
+— **trùng từng chữ** với `1b9d238`, commit thật của BA-13 lúc 17:27 cùng ngày. Nội dung `39ca608`:
+
+| File | Dòng | Của ai |
+|---|---:|---|
+| `work/backlog.md` | +2 −1 | **của phiên BA-12** — chuyển dòng BA-12 xuống *In Progress*, đúng việc của nó |
+| `docs/product/99-unknowns.md` | +23 | **của T-048** — nguyên văn gạch đầu dòng **U-032**, bản nháp đầu, đang viết dở |
+
+Ba cổng của repo đều xanh trong lúc chuyện này xảy ra, và không cổng nào **có thể** đỏ:
+
+- **Gate 7b** (`scripts/check-commit-block.sh`, ADR-006) đọc *khối commit mà phiên viết ra* và
+  chấm nó theo `work/scope.txt`. Ở đây không có khối nào: người gõ `git commit` ở terminal, đúng
+  chỗ mà `CLAUDE.md` §6.2 đã nói Gate 7 không với tới.
+- **Gate 8** (`scripts/hooks/commit-msg`, ADR-010) chấm subject có **rỗng nghĩa** hay không. Subject
+  này không rỗng nghĩa — nó hoàn hảo, chỉ là **của task khác**.
+- **Gate 3** chấm *thay đổi trong cây* theo scope. `work/scope.txt` lúc ấy giữ **cả** khối T-048
+  **và** khối BA-12 (phiên BA-12 đã **thêm** khối của mình chứ không ghi đè — đúng luật F-014), nên
+  hợp hai khối lại thì `99-unknowns.md` nằm trong scope. Gate 3 không có khái niệm *"trong scope
+  của ai"*.
+
+Đây là **lần thứ ba** repo này có hai commit trùng subject: `0b3a337`/`1b1d5f5` (T-020, ghi ở
+**F-009**) và nay `39ca608`/`1b9d238`.
+
+**Impact:**
+- **Một task nằm trong commit mang tên task khác.** Ai đọc `git log` để tìm lúc `U-032` được mở sẽ
+  thấy nó ở một commit nói về BA-13 — trong khi `U-032` sinh ra từ T-048 và chỉ có nghĩa cùng bước
+  **P1-03**. `docs/decisions.md` **ADR-008** (sửa **tiến**, không viết lại lịch sử) nghĩa là dòng
+  sai này **ở lại vĩnh viễn**, nên cái duy nhất chữa được là một bản ghi như mục này.
+- **`git revert` mất an toàn thêm một lần nữa.** Hai commit trùng subject thì `git revert` theo tên
+  không còn xác định — đúng lý do **T-023** phải dừng lại và chờ chủ repo quyết.
+- **Phần bị nhặt là một bản NHÁP.** Bản `U-032` trong `39ca608` là bản đầu, chỗ chèn còn cắt ngang
+  một đoạn văn của mục *Đang mở*; bản đọc được nằm trong lượt commit của T-048. Nói cách khác,
+  lịch sử repo có một commit trong đó tài liệu **đang hỏng giữa câu**.
+- **Ngược lại, cái KHÔNG hỏng cũng đáng ghi:** phiên BA-12 **thêm** khối scope của mình thay vì ghi
+  đè, nên không phiên nào mất scope. Đó là luật của **F-010** · **F-014** đang chạy đúng — chuyện
+  hỏng lần này nằm ở `git add`, không ở `work/scope.txt`.
+
+**Decision / Fix:**
+Không sửa lịch sử trong lượt phát hiện (ADR-008), và không tự quyết thay chủ repo — cùng lý lẽ đã
+dừng **T-023** lại. Ba việc **đã** làm trong lượt này: (1) mục này, để `git log` có chỗ đối chiếu;
+(2) khối commit của T-048 nói rõ `U-032` **đã ở trong `39ca608`**, phần còn lại mới là của nó;
+(3) không gộp thay đổi chưa commit của phiên BA-12 (`docs/product/0-ba/ban-hang/03-lat-cat.md`) vào
+khối ấy, đúng `CLAUDE.md` §6.1.
+
+**Chỗ chưa có lời, để chủ repo quyết** — đừng phiên nào tự làm:
+
+- **Có dựng cổng thứ chín không?** Cái duy nhất chặn được ca này là một hook **`pre-commit`** hỏi
+  *"mọi file đang `git add` có thuộc **một** khối scope không"* — tức `work/scope.txt` phải mang
+  **nhãn chủ** đọc được bằng máy, thứ hôm nay chỉ là chú thích cho người. Đó là một thiết kế thật,
+  không phải một dòng sửa, và `CLAUDE.md` §3.8 nói chỉ dựng luật mới khi cùng một vấn đề đã tốn hai
+  lần — lần này là lần thứ hai của họ *"`git add` nhặt file của task khác"* (F-009 là lần đầu).
+- **Hai commit trùng subject** `39ca608`/`1b9d238` xử thế nào: để nguyên (ADR-008) hay xử như
+  T-023 đang chờ. Cùng một câu hỏi, nay có thêm một ca.
+
+**Related task:**
+**T-048** (lượt phát hiện, và là phần việc bị nhặt) · **BA-12** (phiên song song, chủ của `39ca608`) ·
+**T-023** (hai commit trùng tên, đang chờ chủ repo) · **F-009** (`git add` nhặt file ngoài task —
+lần đầu) · **F-010** · **F-014** (song song trên một cây; lần này luật ấy chạy **đúng**) ·
+`docs/decisions.md` **ADR-006** (Gate 7b) · **ADR-008** (sửa tiến) · **ADR-010** (Gate 8) ·
+`CLAUDE.md` §6.1 · §6.2
+
+**Status:**
+Open

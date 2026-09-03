@@ -53,8 +53,16 @@ thư mục rỗng không gỡ được dòng nào cho ai.
 hàm, tên file hay thư viện. **Số mục §1–§14 không đánh lại** — `docs/decisions.md` ADR-012 (mục
 *Nợ* = §12) và ADR-013 (mục *admin* = §14) gọi tên mục bằng số ấy.
 
+**Thứ tự việc còn lại của pha 1 ở `master_plan/SD_master_plan_banh_cuon_ba_thanh.md`** — kế hoạch
+pha 1, viết 2026-09-03 (`docs/decisions.md` **ADR-033**). Nó giữ mười hai bước `P1-01`…`P1-12`,
+chỗ đang bị chặn và cổng sang pha 2; nó **không sở hữu sự thật nào**, và trạng thái từng bước đọc ở
+`work/backlog.md`. Đầu ra của mỗi bước vào một **file mới** trong thư mục này, một chủ đề một file,
+kèm một dòng vào bảng trên trong cùng thay đổi (mục *Luật ghi* dưới đây).
+
 `master_plan/phase_1_system_design_banh_cuon_ba_thanh.md` là **bản nháp pha 1 và không sở hữu gì**;
-nó ở lại `master_plan/` (ADR-014, khối *SỬA ĐỔI 2026-09-03*). Đừng đọc nó như một owner.
+nó ở lại `master_plan/` (ADR-014, khối *SỬA ĐỔI 2026-09-03*). Đừng đọc nó như một owner. Nó dùng
+`SD-01`…`SD-10` làm mã task **và** `SD-01`…`SD-07` làm mã quyết định, nên kế hoạch pha 1 cố ý dùng
+tiền tố khác — `P1-XX` (ADR-033).
 
 **Câu hỏi chưa có lời giải** — [99-unknowns.md](99-unknowns.md), dùng chung cho mọi pha.
 
