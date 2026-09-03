@@ -63,6 +63,23 @@ câu tính tới cuối ngày 2026-09-03 — con số ấy là phép đếm củ
   thu của hôm mất điện, anh muốn thấy 30 suất ấy nằm trong đó, hay nằm ở hôm sau?"*
   *Mở 2026-09-03 · T-048 · `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §4 câu 2.*
 
+- **U-033 — một đơn bị HUỶ sau khi bếp đã làm xong phần của nó: chỗ bánh ấy có được tính cho một
+  bàn khác đang chờ cùng thứ, hay quán bỏ nó và làm lại từ đầu?** Câu này chạm thẳng con số
+  **nhu cầu** của §3.4: nếu chỗ đã làm ấy dùng lại được thì nhu cầu của **bàn khác** phải tụt
+  xuống ngay lúc đơn kia bị huỷ — tức một thao tác ở quầy làm đổi con số của một bàn không liên
+  quan. Ba luật quanh nó đều đã chốt mà không luật nào phủ được nó: đơn `Huỷ` rút **việc chưa
+  làm** khỏi bảng bếp (`shop-facts.md` §6.13, `05-vong-doi.md` §5.4) · quầy được huỷ đơn ở **mọi**
+  trạng thái, kể cả `Hoàn thành` (§6.19, đóng U-027) · và bảng ở quầy đếm *đã làm xong, còn ở bếp*
+  thành một con số riêng (§5.4, đóng S-4) — nhưng **không** chỗ nào nói con số ấy đi đâu khi chủ
+  của nó biến mất. **Ai trả lời được:** chủ quán. **Đang chặn:** `03-lat-cat.md` §3.4.5 đang chạy
+  bằng phương án **hẹp nhất** viết thẳng ra — *đã làm xong của bàn bị huỷ về không, nhu cầu mọi
+  bàn khác không đổi* — và phương án hẹp ấy có thể đúng là thứ quán **không** làm; pha 1 cũng
+  không tính được hao hụt nếu chưa biết chỗ bánh ấy đi đâu.
+  **Cách hỏi** (bài học S-4, `master_plan/shop-facts.md` §7.2 — hỏi về cái quán, đừng hỏi về cái
+  bảng trong máy): *"Bàn 5 huỷ đúng lúc bếp vừa tráng xong bánh của họ, mà bàn 8 đang chờ đúng
+  loại bánh ấy. Ở quán, chỗ bánh đó đi đâu?"*
+  *Mở 2026-09-03 · BA-12 · `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4.5.*
+
 Câu tiếp theo vào đây dưới dạng một gạch đầu dòng, đúng hợp đồng dưới; mục này rỗng cũng là trạng
 thái bình thường, không phải dấu hiệu quên ghi.
 

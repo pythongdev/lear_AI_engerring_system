@@ -1557,9 +1557,17 @@ file, **chạy thử** mọi câu nghiệm thu đếm tiêu đề, đừng chỉ
 - **Đừng dựng cổng mới** (CLAUDE.md §3.8) — chạy thử câu nghiệm thu sau một lượt tách là đủ. Chỉ
   khi có thêm vài finding cùng loại mới bàn tới chuyện chuẩn hoá nghiệm thu theo **cấu trúc tiêu
   đề** thay cho **đếm chữ**.
+- **Lượt đo khi BA-12 thật sự chạy (2026-09-03): BỐN chỗ, không phải ba** — và chỗ thứ tư đúng
+  là thứ dự báo không thể thấy trước, vì **nó chưa tồn tại lúc đo**: câu văn mở đầu §3.4 do chính
+  BA-12 viết ra (*"Ba lát cắt trên kể chuyện một bàn…"*). Ba chỗ cũ đổi sang **bốn** như dự báo;
+  chỗ thứ tư sửa thành *"Ba mục trên"*. ⇒ Bài học thêm một tầng, và nó **mạnh hơn** câu *"số dòng
+  không phải hợp đồng"* ở trên: một câu nghiệm thu đếm chữ trong tiêu đề còn đo cả **văn bản mà
+  chính lượt ấy sinh ra**, nên tập chỗ phải sửa **không đóng** trước khi viết xong. Cách duy nhất
+  đúng là chạy lại câu `grep` **sau** khi viết, không phải đếm trước rồi tin con số.
 
 **Related task:**
-DOC-3b (phát hiện) · **BA-12** (chịu hậu quả, chưa chạy) · **DOC-5** (đã xong 2026-09-03, là
+DOC-3b (phát hiện) · **BA-12** (chịu hậu quả, **đã chạy 2026-09-03** — xem lượt đo dưới) ·
+**DOC-5** (đã xong 2026-09-03, là
 lượt CHUYỂN file nên không dính) ·
 DOC-1 (lượt tách sinh ra H1) · **T-046** (đã trỏ prompt 15 về mục này để phiên chạy DOC-5 đọc
 trước) · F-017 (câu `grep` trong prompt không ai chạy thử) ·

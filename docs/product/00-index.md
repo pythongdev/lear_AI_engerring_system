@@ -30,7 +30,7 @@ thư mục rỗng không gỡ được dòng nào cho ai.
 |---|---|
 | §1 Actor và phạm vi hệ thống | [01-actors-pham-vi.md](0-ba/ban-hang/01-actors-pham-vi.md) |
 | §2 Kênh bán | [02-kenh-ban.md](0-ba/ban-hang/02-kenh-ban.md) |
-| §3 Ba lát cắt nghiệp vụ | [03-lat-cat.md](0-ba/ban-hang/03-lat-cat.md) |
+| §3 Bốn lát cắt nghiệp vụ | [03-lat-cat.md](0-ba/ban-hang/03-lat-cat.md) |
 | §4 Giá và thanh toán | [04-gia-thanh-toan.md](0-ba/ban-hang/04-gia-thanh-toan.md) |
 | §5 Vòng đời nghiệp vụ | [05-vong-doi.md](0-ba/ban-hang/05-vong-doi.md) |
 | §6 Ngoại lệ | [06-ngoai-le.md](0-ba/ban-hang/06-ngoai-le.md) |

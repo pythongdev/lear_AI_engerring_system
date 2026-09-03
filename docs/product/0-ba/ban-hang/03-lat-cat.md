@@ -1,19 +1,20 @@
-# §3 — Ba lát cắt nghiệp vụ
+# §3 — Bốn lát cắt nghiệp vụ
 
 > Nguyên văn `docs/product.md` §3, tách 2026-09-02 · DOC-1 · ADR-014. **Owner của mục
 > này** — bản lưu không sở hữu gì. Giữ nguyên số §3: ~180 câu trong repo trỏ theo số cũ.
 
 <!-- ==== nguyên văn docs/product.md §3, tách 2026-09-02 ==== -->
-## 3. Ba lát cắt nghiệp vụ
+## 3. Bốn lát cắt nghiệp vụ
 
 > **Quyết định gốc của mục này:** → **ADR-027** (§3.1.7 ghép bàn = một phiên, một hoá đơn) ·
 > **ADR-019** (§3.1.6 cho nợ, doanh thu tính ngày ghi nợ) · **ADR-029** (§3.1.4 suất *đem về* của
 > khách ngồi bàn) · **ADR-023** (§3.3 đổi giá giữa buổi, thành phần suất chờ hết buổi) ·
-> **ADR-021** (§3.2 luồng mang đi) · **ADR-009** (§3.4 — trục mẻ, BA-12 chưa viết).
+> **ADR-021** (§3.2 luồng mang đi) · **ADR-009** (§3.4 — trục mẻ).
 
-Ba lát cắt chạy được từ đầu đến cuối, mỗi lát do một task BA chốt: một suất tại bàn (§3.1) · một
-đơn mang đi (§3.2) · chủ quán đổi menu hoặc giá (§3.3). Hai luồng bán của quán ở
-`master_plan/shop-facts.md` §5; năm kênh ở §2 trên đây rơi vào đúng một trong hai luồng ấy.
+Bốn lát cắt chạy được từ đầu đến cuối, mỗi lát do một task BA chốt: một suất tại bàn (§3.1) · một
+đơn mang đi (§3.2) · chủ quán đổi menu hoặc giá (§3.3) · quán làm theo mẻ (§3.4). Ba lát đầu kể
+chuyện một bàn, một đơn, một lần sửa menu; lát thứ tư **cắt ngang** cả ba (ADR-009).
+Hai luồng bán của quán ở `master_plan/shop-facts.md` §5; năm kênh ở §2 trên đây rơi vào đúng một trong hai luồng ấy.
 
 ### 3.1 Một suất tại bàn
 
@@ -617,3 +618,276 @@ trước, và có vết đọc được sau, đủ để đối soát cuối ng�
 - **Ai được xem lại lịch sử đổi giá, và xem ở đâu.** Mọi thao tác chạm tiền đều phải kiểm chứng lại
   được (§1.4), nhưng màn hình nào bày ra việc đó là câu của §7 (BA-09).
 
+
+### 3.4 Quán làm theo MẺ — trục sản xuất cắt ngang mọi bàn và mọi đơn
+
+*BA-12 — chốt 2026-09-03. Nguồn: `master_plan/shop-facts.md` §5.4 (bếp làm theo mẻ, bốn con số,
+danh sách quầy phải nhìn), §5.3 (một dòng đơn nổ ra thành phần nào), §4.5 (thành phần một suất),
+§3 (năm trạm), §7.2 (**S-5** — chỗ suy ra chưa xác nhận) + `docs/decisions.md` **ADR-009** (bốn
+khái niệm của trục này). Dữ kiện quán do chủ quán chốt 2026-08-31 → 2026-09-01.*
+
+Ba mục trên kể chuyện **một** bàn (§3.1), **một** đơn (§3.2), hoặc **một** lần chủ quán sửa
+menu (§3.3). Lát cắt này kể thứ không thuộc bàn nào và không thuộc đơn nào: con số quán thật sự
+dùng để chạy bếp — *"còn phải làm bao nhiêu cái bánh"* — **cộng ngang qua mọi bàn và mọi đơn đang
+mở**. Nó không có chỗ đứng trong ba lát cắt kia, và đó là lý do nó là lát cắt thứ tư
+(`docs/decisions.md` **ADR-009**).
+
+**Đây là cách quán đang chạy hôm nay, không phải một tính năng thêm vào.** Bếp gom việc theo mẻ vì
+làm lần lượt từng suất là *mất thời gian và mất nhiệt* — lời chủ quán ngày 2026-08-31
+(`shop-facts.md` §5.4). Một thiết kế bắt bếp nhận việc theo từng suất một là thiết kế bắt quán
+chạy **chậm hơn** cách đang làm bằng tay; đó là hỏng nặng hơn thiếu một tính năng.
+
+Lát cắt này **không** thay trục đơn. Đơn vẫn có vòng đời của nó (§5) và việc trạm vẫn có vòng đời
+của nó (§5.4 của `05-vong-doi.md`); §3.4 nói **hai trục gặp nhau ở đâu** (§3.4.5) và **con số nào
+tồn tại** ở trục sản xuất.
+
+#### 3.4.1 Bốn khái niệm — mỗi cái một đơn vị, mỗi cái một câu hỏi
+
+Bốn khái niệm của **ADR-009**. Chúng **không** thay nhau được: mất một cái là mất một câu hỏi
+không còn ai trả lời.
+
+| Khái niệm | Đơn vị của nó | Câu nó trả lời |
+|---|---|---|
+| **Nhu cầu** | một **thành phần** + loại nhân + lượng nhân | quán **còn phải làm** tổng cộng bao nhiêu |
+| **Mẻ** | một **lần bếp làm** | lần này làm mấy cái, bằng thiết bị nào |
+| **Đã làm xong** | một **thành phần** | bếp **đã làm ra** bao nhiêu |
+| **Đã phục vụ** | một **thành phần**, gắn **một bàn** | khách **đã nhận** bao nhiêu |
+
+Đơn vị của *nhu cầu* và *đã làm xong* là **thành phần**, không phải suất bán: khách trả tiền theo
+suất, bếp làm theo thành phần, và một suất nổ ra nhiều thành phần (§3.1.5, `shop-facts.md` §4.5,
+§5.3). Chỉ *đã phục vụ* mới bắt buộc gắn **một bàn** — vì bưng là bưng tới một chỗ.
+
+#### 3.4.2 Bốn con số trên bảng ở quầy, và hai chữ "còn" khác nhau
+
+`shop-facts.md` §5.4 chốt bảng ở quầy có **bốn** con số, đếm được tới 2026-09-01. Con số thứ tư
+được chính chủ quán xác nhận ngày **2026-09-01** (trả lời **S-4**): bánh gấp xong **có** nằm chờ
+trước khi ra bàn — *chờ đủ đĩa*, *chờ người rảnh tay bưng*, *chờ món khác của cùng bàn*.
+
+| Con số ở quầy | Nghĩa | Nguồn |
+|---|---|---|
+| **Khách đã gọi** | tổng thành phần nổ ra từ các dòng đơn | chủ quán, 2026-08-31 |
+| **Đã làm xong, còn ở bếp** | bếp làm ra rồi nhưng chưa bưng ra | chủ quán, **2026-09-01** (S-4) |
+| **Đã bưng ra bàn** | đã tới tay khách | chủ quán, 2026-08-31 |
+| **Còn thiếu** | khách đã gọi − đã bưng ra bàn | chủ quán, 2026-08-31 |
+
+Bốn con số ấy **không** phải bốn khái niệm ở §3.4.1 đổi tên. Chúng khớp nhau qua ba trạng thái của
+một việc trạm — `Chưa làm` → `Đã làm xong, còn ở bếp` → `Đã ra bàn` (§5.4 của `05-vong-doi.md`) —
+và chỗ khớp ấy làm lộ ra **hai chữ "còn" khác nhau**, đây là chỗ dễ nhớ nhầm nhất của cả §3.4:
+
+- **Còn thiếu** — thứ **khách chưa nhận** = `Chưa làm` + `Đã làm xong, còn ở bếp`.
+  Đây là con số của **người bưng**, và là con số §5.4 định nghĩa.
+- **Nhu cầu**, tức *còn phải làm* — thứ **bếp chưa làm** = `Chưa làm`.
+  Đây là con số của **bếp**, và nó là khái niệm ở §3.4.1.
+
+Hai con số ấy lệch nhau **đúng bằng** con số thứ hai của bảng. Gộp chúng làm một là quay về bảng
+**ba** con số, tức xoá đúng cái khoảng nằm chờ mà chủ quán đã xác nhận là có thật — và hậu quả
+đọc được ngay ở quầy: bếp bị giục làm lại một cái bánh **đang nằm chờ đủ đĩa**.
+
+*Cách đọc, không phải lời chủ quán nói thẳng:* ba gạch đầu dòng trên là phép cộng của người viết
+tài liệu trên hai thứ đã chốt — bảng bốn con số (`shop-facts.md` §5.4) và ba trạng thái của việc
+trạm (§5.4 của `05-vong-doi.md`). Chủ quán chốt **bốn con số** và **ba lý do nằm chờ**; chủ quán
+không đọc ra phép trừ nào.
+
+#### 3.4.3 Nhu cầu cộng ngang qua nhiều bàn và nhiều đơn
+
+**Sáu bàn mỗi bàn một suất giống nhau là MỘT dòng nhu cầu, không phải sáu.** Đây là lý do trục này
+tồn tại: con số *"còn phải làm mười tám cái bánh"* không thuộc đơn nào cả.
+
+Ví dụ — sáu bàn cùng gọi **một combo "Đầy đủ trứng tái", thịt + mộc nhĩ, nhiều nhân**. Một combo
+gồm ba cái bánh cuốn, một quả trứng và một chiếc giò (`shop-facts.md` §4.5):
+
+```text
+Sáu đơn, sáu bàn: bàn 1 · bàn 4 · bàn 5 · bàn 7 · bàn 8 · bàn 9
+
+Nhu cầu — SÁU dòng, gom từ ba mươi sáu việc rời:
+  tráng bánh │ Bánh cuốn — thịt + mộc nhĩ, nhiều nhân   │ mười tám
+  tráng bánh │ Trứng tái — thịt + mộc nhĩ, nhiều nhân   │ sáu
+  gấp bánh   │ Bánh cuốn — thịt + mộc nhĩ, nhiều nhân   │ mười tám
+  gấp bánh   │ Trứng tái                                │ sáu
+  gấp bánh   │ Giò                                      │ sáu
+  lấy canh   │ Nước chấm                                │ sáu
+```
+
+Ba điều phải đọc kèm ví dụ:
+
+- **Bánh cuốn ra mười tám, không phải sáu.** Hoá đơn của mỗi bàn ghi *một* combo; bếp phải tráng
+  **ba** cái bánh cho mỗi combo ấy. Ai đọc con số trên hoá đơn rồi tráng theo là làm thiếu
+  (§3.1.5, `shop-facts.md` §5.3).
+- **Một cái bánh sinh việc ở HAI trạm** — tráng rồi mới gấp — nên cùng một con số mười tám có mặt
+  ở cả dòng *tráng bánh* lẫn dòng *gấp bánh*, đúng hình dạng ví dụ ở §3.1.5 và `shop-facts.md`
+  §5.3. Đó **không** phải đếm hai lần: hai dòng ấy là hai việc khác nhau trên cùng số bánh, và
+  chúng không cộng vào nhau. Trứng cũng đi qua hai trạm như vậy.
+- **Nước chấm không nhân lên theo suất.** Nó là việc **cấp đơn**: mỗi đơn đúng một việc cho trạm
+  *lấy canh* (`shop-facts.md` §6.6). Sáu đơn ⇒ sáu việc, và một bàn gọi ba suất trong **một** lượt
+  gọi vẫn chỉ sinh **một** việc nước chấm.
+- **Dòng giò không kèm mô tả nhân**, vì giò không nhận nhân (`shop-facts.md` §4.6 quy tắc 6).
+
+Nhu cầu cộng ngang cả **nhiều đơn của cùng một bàn**: một bàn gọi thêm ba lượt trong một phiên thì
+ba lượt ấy nhập vào cùng những dòng nhu cầu trên, không thành ba bảng riêng.
+
+#### 3.4.4 Gom nhưng KHÔNG mất chủ sở hữu — mọi tổng phải tách ngược về từng bàn
+
+**Mọi con số tổng ở §3.4.3 phải tách ngược về được: bàn nào bao nhiêu.** Một bảng chỉ có tổng là
+một bảng chưa đạt — gom sáu quả trứng mà không biết chúng của sáu bàn nào là **bưng nhầm bàn**
+(`shop-facts.md` §5.4).
+
+Tách ngược đúng ví dụ trên:
+
+```text
+  tráng bánh │ Bánh cuốn — thịt + mộc nhĩ… │ mười tám │ bàn 1: ba · bàn 4: ba · bàn 5: ba
+             │                            │          │ bàn 7: ba · bàn 8: ba · bàn 9: ba
+  tráng bánh │ Trứng tái — thịt + mộc nhĩ… │ sáu      │ mỗi bàn: một
+  gấp bánh   │ Bánh cuốn — thịt + mộc nhĩ… │ mười tám │ như dòng tráng bánh: mỗi bàn ba
+  gấp bánh   │ Trứng tái                   │ sáu      │ mỗi bàn: một
+  gấp bánh   │ Giò                         │ sáu      │ mỗi bàn: một
+  lấy canh   │ Nước chấm                   │ sáu      │ mỗi bàn: một
+```
+
+Cộng xuôi và tách ngược phải **khớp cả hai chiều**: sáu bàn × ba cái bánh = mười tám, và mười tám
+chia hết về sáu bàn không dư một cái nào. Chiều nào hụt là bảng sai, không phải bếp sai.
+
+Hai chỗ đáng nói vì chúng **không** phá luật này:
+
+- **Ghép bàn không đổi gì ở đây.** Việc xuống bếp luôn ghi **bàn nào gọi**, không ghi "nhóm"
+  (§3.1.7) — nhóm ghép là chuyện của **tiền**, không phải của bếp. Nên một nhóm ghép hai bàn vẫn
+  tách ngược thành **hai** dòng bàn.
+- **Suất *đem về* của khách đang ngồi bàn vẫn thuộc bàn ấy** (§3.1.4, `shop-facts.md` §5.4) — nên
+  nó **vẫn nằm** trên bảng gom việc theo bàn, và note *đem về* phải đọc ra ngay được: bếp và người
+  bưng cần biết suất nào gói lại, suất nào ăn tại chỗ.
+
+#### 3.4.5 Hai trục gặp nhau ở đâu — đơn nhập vào nhu cầu, và rút khỏi nhu cầu
+
+- **Đơn `Đã xác nhận` mới nhập vào nhu cầu.** Đơn ở `Mới` hay `Chờ xác nhận` **không** sinh một
+  việc nào ở cả năm trạm, nên nó **không** có mặt trên bảng gom việc (`shop-facts.md` §6.2, §5
+  của `05-vong-doi.md`, `quality/invariants.md` I-004). Đơn khách tự gửi mà quầy chưa duyệt thì
+  bếp chưa thấy nó.
+- **Đơn `Huỷ` rút khỏi nhu cầu.** Mọi việc **chưa làm** của đơn ấy rời bảng cùng một lúc; không ai
+  đứng ở trạm huỷ được một việc, quyền huỷ chỉ ở quầy và nó là quyền huỷ **đơn**
+  (`shop-facts.md` §6.13, §5.4 của `05-vong-doi.md`).
+- **Phần đã làm xong của một đơn bị huỷ thì rời bảng theo bàn, và nó KHÔNG biến mất khỏi cái
+  quán.** Cái đĩa bánh ấy có thật, đang nằm ở bếp. Bảng theo bàn hết chỗ ghi nó, vì bàn đã gọi nó
+  không còn gọi nữa. **Nó có được tính vào phần đã làm của một bàn khác hay không thì chưa ai
+  hỏi chủ quán — `docs/product/99-unknowns.md` U-033.** §3.4 chọn phương án **hẹp nhất**: con số
+  *đã làm xong* của **bàn bị huỷ** về không, và nhu cầu của **mọi bàn khác không đổi một đơn vị
+  nào**. Nghĩa là ở bản hẹp này, quán làm lại từ đầu cho bàn khác — đúng thứ quán có thể đang
+  **không** làm, nên đừng ghi nó thành luật đã chốt.
+- **Ba kênh không gắn bàn KHÔNG đổ vào bảng này.** Chủ quán trả lời thẳng **không** ngày 2026-08-31
+  (đóng **U-010**, `shop-facts.md` §5.4): bảng gom việc ở quầy là bảng **theo bàn**, còn
+  `delivery`, `pickup`, `phone_preorder` (§2, §3.2) thì không. Việc của chúng vẫn nổ ra thành phần
+  như mọi đơn và vẫn có vòng đời việc trạm — chỗ chúng **không** có mặt là cái bảng theo bàn.
+- **`Hoàn thành` của một đơn đọc từ trục việc trạm, không đọc từ bảng tổng.** Đơn chỉ `Hoàn thành`
+  khi **mọi** việc trạm của nó đã ở `Đã ra bàn`, kể cả nước chấm (§5.5 của `05-vong-doi.md`). Một
+  con số tổng bằng không **không** phải lời tuyên bố đơn nào đã xong: tổng bằng không nghĩa là
+  không còn gì phải làm, không nghĩa là mọi thứ đã ra bàn.
+
+#### 3.4.6 Gom theo đúng thứ khách chọn — hai dòng cùng tên không gộp được
+
+**Loại nhân và lượng nhân đi theo từng thành phần** (`shop-facts.md` §4.5, §5.4), nên khoá gom
+một dòng nhu cầu là **thành phần + loại nhân + lượng nhân**, đúng đơn vị ở §3.4.1:
+
+- **Trứng gom theo từng loại** — chín, tái, vàng. Không có con số "trứng" chung.
+- **Bánh gom theo nhân và lượng nhân.** Hai cái bánh cùng tên khác lượng nhân là **hai** dòng.
+- **Thành phần không nhận nhân thì gom theo tên trần** — chiếc giò gộp được với mọi chiếc giò khác.
+
+Thêm **bàn 10** vào ví dụ §3.4.3, gọi một combo **"Đầy đủ trứng chín", thịt, lượng thường**
+(trích dòng của trạm *tráng bánh* và hai dòng gộp; dòng của trạm *gấp bánh* đi theo y hệt):
+
+```text
+  tráng bánh │ Bánh cuốn — thịt + mộc nhĩ, nhiều nhân │ mười tám  ← sáu bàn cũ
+  tráng bánh │ Bánh cuốn — thịt, thường               │ ba        ← bàn 10, KHÔNG gộp lên dòng trên
+  tráng bánh │ Trứng tái — thịt + mộc nhĩ, nhiều nhân │ sáu       ← sáu bàn cũ
+  tráng bánh │ Trứng chín — thịt, thường              │ một       ← bàn 10, KHÔNG gộp: khác LOẠI trứng
+  gấp bánh   │ Giò                                    │ bảy       ← GỘP: giò không nhận nhân
+  lấy canh   │ Nước chấm                              │ bảy       ← GỘP: việc cấp đơn, bảy đơn
+```
+
+Đọc ví dụ này theo hai chiều thì thấy trọn luật: hai dòng bánh **không** gộp dù cùng tên món, vì
+khác nhân — trong khi dòng giò **có** gộp, vì giò không nhận nhân. Cùng một bảng, cùng một lúc.
+
+**Vì sao không được gộp cho gọn.** Bếp nhận một dòng *"Bánh cuốn — hai mươi mốt"* thì tráng đủ số
+và **sai ruột**: sáu bàn kia đã gọi bánh **nhiều nhân** còn bàn 10 gọi bánh **nhân thường**, nên
+một dòng gộp không cho ai biết cái bánh vừa tráng là của ai — và không ai biết đã hỏng ở đâu cho
+tới lúc khách nói. Gộp là **mất thông tin khách đã chọn**, không phải làm gọn bảng.
+
+#### 3.4.7 Sáu thứ người đứng quầy phải nhìn được cùng một lúc
+
+Chủ quán liệt kê ngày **2026-08-31**, đếm được **sáu** tính tới ngày đó (`shop-facts.md` §5.4).
+Sáu là **phép đếm của người viết tài liệu**, không phải một ranh giới chủ quán chốt — thấy thứ thứ
+bảy thì thêm dòng, ở nhà thật trước rồi ở đây.
+
+1. **Tổng còn phải làm, tách theo từng thành phần** — bánh cuốn · trứng theo từng loại · giò ·
+   nước chấm, kèm loại nhân và lượng nhân (đúng khoá gom ở §3.4.6).
+2. **Số ấy chia cho bàn nào** — tách ngược theo §3.4.4.
+3. **Bàn nào đang ăn, bàn nào đang chờ món.**
+4. **Mỗi bàn đã được phục vụ bao nhiêu.**
+5. **Mỗi bàn còn thiếu gì** — chữ *còn thiếu* ở đây là con số của người bưng, không phải nhu cầu
+   của bếp (§3.4.2).
+6. **Hiện tại quán đang thế nào** — bao nhiêu bàn chờ, bao nhiêu bàn đang phục vụ.
+
+Chủ quán mô tả sáu dòng ấy là **một** thứ: *"tôi cần nắm được hiện tại quán thế nào"*. Chúng là
+sáu phần của cùng một cái nhìn, **không** phải sáu màn hình — và §3.4 nói *phải nhìn được*, không
+nói *nằm ở góc nào* (§3.4.9).
+
+Một thứ §3.4 **không** nói được, và biết trước là không nói được: **bao giờ xong.** Năng lực một
+mẻ có giới hạn và **trứng với bánh tranh nhau cùng một cái nồi** — con số ở `shop-facts.md` §5.4,
+tra ở đó, §3.4 không chép về (chủ quán chốt 2026-08-31, đóng **U-008**). Nhưng máy **không** xếp
+nồi (§3.4.8), nên không có chỗ nào trong sản phẩm suy ra được thời điểm một mẻ xong. Bảng ở quầy
+trả lời *còn phải làm bao nhiêu*, không trả lời *còn mấy phút*.
+
+#### 3.4.8 Ai làm con số thay đổi — và ranh giới "máy không gom, người gom"
+
+**Máy chỉ bày ra các con số; người gom.** Chủ quán chốt 2026-08-31 (đóng **U-011**): *"máy không
+làm, để người làm"*. Hệ thống **không** tự chia mẻ, **không** tự xếp nồi, **không** tự quyết thứ
+tự làm và **không** đề xuất mẻ. Ai gom, gom mấy quả, làm trước làm sau là quyết định của người ở
+bếp và ở quầy. Đây là một **ranh giới đã chốt** (`shop-facts.md` §6.12): cho máy chia mẻ là đổi
+phạm vi, phải xin phép chủ quán.
+
+Con số chỉ thay đổi khi có người bấm, và cả hai mốc đều bấm ở **quầy**, trên POS:
+
+| Mốc | Đơn vị bấm | Ai bấm | Chốt ngày |
+|---|---|---|---|
+| **đã làm xong** | **một mẻ** | người đứng quầy | 2026-09-01 (U-017) |
+| **đã bưng ra bàn** | *chưa chốt* — xem dưới | người đứng quầy | 2026-09-01 (U-021) |
+
+- **Ba trạm bếp không bấm gì** — chủ quán bỏ mọi nút bấm ở trạm bếp ngày 2026-08-31 (đóng
+  **U-009**). Người tráng bánh, người gấp bánh và người lấy canh không nhận thêm một thao tác nào.
+  Luật ấy là luật về **bếp**; nút ở **quầy** không phá nó.
+- **Mẻ là đơn vị bấm, bàn là đơn vị đếm** (chủ quán chốt 2026-09-01, trả lời **U-017**). Một lần
+  bấm *"đã làm xong"* đẩy nhiều việc — có khi của nhiều bàn — sang `Đã làm xong, còn ở bếp` cùng
+  lúc. ⇒ Con số ở quầy **nhảy theo bậc**, cả mẻ một lần; đó là đúng, không phải lỗi đếm. Và một
+  lần bấm ấy **phải chia được** về từng bàn (§3.4.4).
+- **Đơn vị bấm của *đã bưng ra bàn* thì chưa ai hỏi chủ quán.** Chỗ suy ra là **S-5**
+  (`shop-facts.md` §7.2): *suy ra* là theo **bàn**, không theo mẻ — một mẻ phục vụ nhiều bàn, còn
+  bưng thì bưng tới **một** bàn. Chủ quán mới chỉ nói **ai** bấm, chưa nói **theo gì**. §3.4 để
+  nguyên chỗ ấy là suy ra: **đừng đọc nó thành lời chủ quán**, và đừng dựng bảng quầy như thể câu
+  ấy đã chốt.
+- **Bấm nhầm thì lùi được, và không có mốc thời gian cứng** (chủ quán chốt 2026-09-01, trả lời
+  **U-024**): *"có đường lui, thời gian tuỳ theo thực tế để POS quyết định"*. Không có "trong vòng
+  N phút" — người đứng quầy nhìn tình huống thật rồi quyết, cùng một kiểu với quyền hoàn tiền
+  (§4.8). ⇒ **Vì không có luật cứng nên mỗi lần lùi phải để lại vết**: lùi mẻ nào, lúc mấy giờ, ai
+  bấm (`quality/invariants.md` I-012, I-018).
+- ⇒ **Quầy nay gánh cả hai mốc của mỗi suất.** Đó là rủi ro vận hành thật, không phải chi tiết
+  trình bày: quầy là đôi tay bận nhất quán, thêm một nút là thêm một chỗ quên bấm
+  (`shop-facts.md` §5.4).
+- **Với đơn giao tận nơi, ai bấm mốc *đã ra bàn* thì đang mở** — **U-031**
+  (`docs/product/99-unknowns.md`). Lúc suất tới tay khách, người có mặt là *nhân viên quán* đi
+  giao, trong khi bảng ở §5.4 của `05-vong-doi.md` ghi *người đứng quầy*. §3.4 **không** chọn phe:
+  chọn sai là đơn giao **không bao giờ** `Hoàn thành` được (§5.5 của `05-vong-doi.md`), hoặc quầy
+  bấm khống một mốc cho một suất đang ở nhà khách.
+
+#### 3.4.9 Bốn việc lát cắt này cố ý không nói tới
+
+- **Bảng ở quầy trông thế nào.** §3.4 nói **con số nào phải nhìn thấy được**, không nói nó nằm ở
+  góc nào, mấy cột, màu gì. Màn hình là việc của pha thiết kế hệ thống
+  (`docs/product/1-system-design/architecture.md`) và của §7 (phạm vi).
+- **Tên trạng thái kỹ thuật, tên bảng dữ liệu, đường dẫn.** Trạng thái ở tài liệu này luôn là một
+  cụm tiếng Việt đọc được thành câu (§5.1 của `05-vong-doi.md`).
+- **Con số năng lực của hai cái nồi.** Nó ở `shop-facts.md` §5.4 và chỉ ở đó — §3.4 trỏ sang, không
+  mang về (`work/findings.md` **F-001**). Cần một tổ hợp nồi thứ tư thì **hỏi chủ quán**, đừng quy
+  ba tổ hợp đã chốt về một đơn vị chung.
+- **Cấu trúc thư mục và mô hình dữ liệu của `work/proposals/admin.admiadmin/admin1.md`.** Đề xuất
+  ấy có sẵn cả màn hình, cả cây trạng thái, cả mô hình dữ liệu; **không** thứ nào được nhận —
+  `work/proposals/` không sở hữu dữ kiện nào (ADR-009). Lấy được từ nó đúng một thứ: cách đặt
+  câu hỏi.
+
+[↑ đầu file](#top)

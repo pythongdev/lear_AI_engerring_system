@@ -661,3 +661,70 @@ kèm đủ bốn thứ trên.
 
 *Phát hiện ở T-045, 2026-09-02 — khi chủ quán xác nhận GĐ-01 và GĐ-05 và kèm theo một yêu cầu
 không ai hỏi: bản copy trước và sau.*
+
+### I-019 — Tổng nhu cầu một thành phần luôn bằng tổng phần chia về từng bàn
+
+**Invariant:**
+Với **mỗi** dòng nhu cầu ở bảng gom việc — khoá dòng là **thành phần + loại nhân + lượng nhân**
+(`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4.6) — con số tổng luôn bằng **tổng** các phần chia
+về từng bàn, không hơn một đơn vị và không kém một đơn vị. Phép gom **không** được làm mất và
+**không** được đẻ ra số lượng. Câu này đúng ở **cả hai chiều**: cộng xuôi từ các bàn ra tổng, và
+tách ngược từ tổng về các bàn, cho ra cùng một con số.
+
+Hai hệ quả nằm trong cùng invariant, không tách ra:
+- **Mọi đơn vị trong một dòng tổng đều có chủ.** Không tồn tại một cái bánh trên bảng mà không
+  bàn nào đã gọi nó.
+- **Khoá gom là ranh giới của phép cộng.** Hai thành phần khác loại nhân hoặc khác lượng nhân
+  **không** được cộng vào cùng một dòng, kể cả khi cùng tên món (`shop-facts.md` §5.4, §4.5).
+
+**Why:**
+Gom việc là cách quán đang chạy hôm nay, không phải một tính năng thêm vào (`shop-facts.md` §5.4,
+`docs/decisions.md` ADR-009). Nhưng **gom mà mất dấu chủ sở hữu là bưng nhầm bàn** — lời chủ quán
+ngày 2026-08-31: sáu quả trứng làm chung một mẻ vẫn phải về đúng sáu bàn đã gọi chúng. Một bảng
+chỉ có tổng thì nhìn có vẻ đủ, và nó hỏng đúng lúc đông khách, là lúc không ai có thời gian đi dò
+lại. Chiều ngược lại cũng hỏng thật: gộp hai dòng khác nhân cho gọn thì bếp tráng **đủ số** mà
+**sai ruột**, và không ai biết hỏng ở đâu cho tới lúc khách nói.
+
+**Verification:**
+Kịch bản cộng xuôi: sáu bàn mỗi bàn một combo "Đầy đủ trứng tái", thịt + mộc nhĩ, nhiều nhân ⇒
+dòng nhu cầu bánh cuốn bằng **ba lần** số bàn ấy, dòng trứng tái và dòng giò mỗi dòng bằng số bàn,
+đúng ví dụ ở `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4.3. Kịch bản tách ngược: lấy chính
+dòng tổng ấy chia về từng bàn ⇒ mỗi bàn ba cái bánh, một quả trứng, một chiếc giò, và **tổng phần
+chia bằng đúng dòng tổng** (§3.4.4). Kịch bản khoá gom: thêm một bàn gọi combo **trứng chín, thịt,
+thường** ⇒ bảng phải có **hai** dòng bánh và **hai** dòng trứng (không gộp), trong khi dòng **giò
+gộp** làm một vì giò không nhận nhân — gộp nhầm bất kỳ cặp nào ⇒ **sai**. Kịch bản âm: sửa tay một
+dòng tổng cho lệch khỏi tổng phần chia ⇒ bảng **không hợp lệ**. Kịch bản huỷ: huỷ một đơn ⇒ cả
+dòng tổng **và** phần chia của bàn ấy giảm cùng một lượt, hai chiều vẫn khớp (§3.4.5).
+
+*Phát hiện ở BA-12, 2026-09-03.*
+
+### I-020 — Số đã phục vụ của một bàn không bao giờ vượt số bàn ấy đã gọi
+
+**Invariant:**
+Với mỗi bàn và mỗi thành phần, **đã phục vụ ≤ đã gọi**. Không có đường nào đưa một bàn tới chỗ
+nhận nhiều hơn số nó đã gọi, kể cả khi một **mẻ** phục vụ nhiều bàn cùng lúc và một lần bấm đẩy
+nhiều việc cùng lúc (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4.8). Cùng một ràng buộc áp cho
+con số ở giữa: **đã làm xong, còn ở bếp** của một bàn cũng không vượt số bàn ấy đã gọi, và tổng
+*đã làm xong, còn ở bếp* + *đã bưng ra bàn* của một bàn không vượt số đã gọi — ba trạng thái của
+một việc trạm loại trừ nhau (`05-vong-doi.md` §5.4).
+
+**Why:**
+Con số *đã phục vụ* là thứ quầy dùng để trả lời *"bàn này còn thiếu gì"* (`shop-facts.md` §5.4,
+danh sách sáu thứ quầy phải nhìn). Vượt trần nghĩa là **còn thiếu** thành số âm, và một bàn đang
+chờ món sẽ biến mất khỏi danh sách chờ — khách ngồi đợi trong khi bảng ở quầy báo đã xong. Đường
+vào lỗi này có thật và có tên: **mẻ là đơn vị bấm, bàn là đơn vị đếm** (chủ quán chốt 2026-09-01,
+đóng U-017), nên một lần bấm chia sai về các bàn là chia thừa cho bàn này và thiếu cho bàn kia.
+Đường thứ hai là **đường lùi**: quầy bấm nhầm rồi lùi lại, không có mốc thời gian cứng
+(chủ quán chốt 2026-09-01, đóng U-024) — lùi mà không trả lại đúng phần đã cộng cũng ra cùng
+một chỗ hỏng.
+
+**Verification:**
+Kịch bản trần: một bàn gọi ba cái bánh ⇒ bấm phục vụ cái thứ tư cho bàn ấy **bị từ chối**. Kịch
+bản mẻ nhiều bàn: một mẻ phủ hai bàn, bấm *"đã làm xong"* **một** lần ⇒ phần cộng cho mỗi bàn đúng
+bằng phần bàn ấy đã gọi trong mẻ, và tổng hai phần bằng đúng số của mẻ (I-019). Kịch bản đường
+lùi: bấm *"đã làm xong"* một mẻ rồi **lùi** ⇒ con số của **mọi** bàn trong mẻ trở về đúng giá trị
+trước khi bấm, và lần lùi để lại vết đọc được (I-012, I-018). Kịch bản huỷ: huỷ một đơn đã phục vụ
+một phần ⇒ không bàn nào còn *đã phục vụ* lớn hơn *đã gọi* sau khi bảng cập nhật. Kịch bản âm của
+số âm: với mọi bàn và mọi thành phần, *còn thiếu* = đã gọi − đã bưng ra bàn **không bao giờ âm**.
+
+*Phát hiện ở BA-12, 2026-09-03.*
