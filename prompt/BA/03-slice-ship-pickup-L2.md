@@ -11,28 +11,28 @@
   `phone_preorder`**), §5 (ranh giới: không có đơn tối thiểu, không có bậc phí ship).
 - Nguồn quy tắc: `master_plan/shop-facts.md` §2, §5.2 (**luồng mang đi — sơ đồ đầy đủ**),
   §6.3 (thu tiền lúc trao hàng), §6.5 (thông tin liên hệ), §6.7 (quán tự giao), §6.8 (tạm dừng nhận đơn).
-- Đích: `docs/product.md` §3.2.
+- Đích: `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.2.
 - Đã chốt trước đó: §1 actor, §2 kênh bán; §3.1 lát cắt tại bàn (dùng để đối chiếu khác biệt).
 
 ## Goal
 
-`docs/product.md` §3.2 mô tả trọn đường đi của một **đơn mang đi** — một luồng, ba kênh
+`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.2 mô tả trọn đường đi của một **đơn mang đi** — một luồng, ba kênh
 `delivery` · `pickup` · `phone_preorder` (`shop-facts.md` §5.2), từ lúc khách đặt đến lúc đơn
 hoàn thành — và nêu rõ nó khác đơn tại bàn ở chỗ nào.
 
 ## Scope
 
 Được sửa:
-- `docs/product.md` §3.2
+- `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.2
 - `quality/invariants.md` (chỉ **thêm** invariant phát hiện từ lát cắt này)
 
 Không được sửa:
-- §3.1, §3.3, §4–§8 của `docs/product.md`
+- §3.1, §3.3, §4–§8 của `docs/product/0-ba/ban-hang/`
 - `docs/decisions.md`, `docs/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text
-docs/product.md
+docs/product/
 quality/invariants.md
 work/backlog.md
 ```
@@ -106,7 +106,7 @@ Gate 5 (L2): đọc lại invariant mới, xác nhận không mâu thuẫn invar
   trước, và đó là tuỳ chọn của khách** (chủ quán chốt 2026-08-30, `shop-facts.md` §6.3):
   mặc định vẫn thu lúc trao hàng, cả ba kênh mang đi đều được chọn trả trước, và huỷ một đơn
   đã trả trước thì hoàn tiền theo §6.4. Chưa rõ **ai bấm xác nhận đã nhận tiền** cho đơn trả
-  trước — `docs/product.md` → *Unknowns* **U-005**, đừng tự quyết.
+  trước — `docs/product/99-unknowns.md` **U-005**, đừng tự quyết.
 - Giờ hẹn pickup có khung tối thiểu không (đặt trước ít nhất bao lâu), và quá giờ hẹn thì sao?
 - Ai giao hàng — nhân viên quán hay bên thứ ba?
 

@@ -10,26 +10,26 @@
 - Nguồn số: `master_plan/shop-facts.md` §2 (**5 kênh**), **§6.12 (bảng "Ngoài phạm vi" — 4 dòng đã chốt)**.
 - Nguồn quy tắc: `master_plan/shop-facts.md` §3 (5 trạm), §6.12 (ranh giới đã chốt),
   §6.5–§6.6 (đối soát cuối ngày, sổ giấy dự phòng).
-- Đích: `docs/product.md` §7.
+- Đích: `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7.
 - Đã chốt trước đó: §1–§6.
 
 ## Goal
 
-`docs/product.md` §7 chốt danh sách năng lực có trong MVP và danh sách rõ ràng những thứ **không**
+`docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7 chốt danh sách năng lực có trong MVP và danh sách rõ ràng những thứ **không**
 làm ở giai đoạn đầu, để mọi task sau này có chỗ đối chiếu khi bị đề nghị mở rộng.
 
 ## Scope
 
 Được sửa:
-- `docs/product.md` §7
+- `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7
 
 Không được sửa:
-- §1–§6, §8 của `docs/product.md`
+- §1–§6, §8 của `docs/product/0-ba/ban-hang/`
 - `docs/decisions.md`, `quality/invariants.md`, `docs/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text
-docs/product.md
+docs/product/
 work/backlog.md
 ```
 

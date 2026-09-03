@@ -12,7 +12,7 @@ Viết theo `docs/prompt-guideline.md`. Kiểm kết quả theo `quality/review-
 | `master_plan/shop-facts.md` | **Mọi dữ kiện quán**: phạm vi bán, **5 kênh**, bảng giá thành phần, giá một suất, phụ thu, thành phần một suất bán, 5 trạm, hai luồng bán, nổ việc xuống bếp, 16 quy tắc nghiệp vụ, đối soát, sổ giấy | **Nhà duy nhất, từ 2026-08-30.** Chỗ khác nói khác ⇒ file này thắng |
 
 Kế hoạch gốc không chứa một con số nào của quán này. Chạy bộ prompt mà bỏ `shop-facts.md` sẽ ra một
-`docs/product.md` đúng khuôn nhưng áp cho quán ăn nào cũng được — tức là chưa chốt gì.
+`docs/product/` đúng khuôn nhưng áp cho quán ăn nào cũng được — tức là chưa chốt gì.
 
 ⚠️ **Cần bất kỳ dữ kiện nào của quán ⇒ tra `shop-facts.md`, và chỉ tra ở đó.** Từ 2026-08-30 nó là
 nhà duy nhất; không còn bản chép thứ hai của bất kỳ con số nào. `master_plan/00-scope.md` chỉ còn
@@ -42,7 +42,7 @@ rỗng" là pointer cũ.)* Câu hỏi
 nằm chờ thật, và **người đứng quầy bấm** nút "đã làm xong" — ba trạm bếp vẫn không bấm gì
 (§5.4, §7.1). Prompt nào còn bảo "ghi S-4 là suy luận" là **pointer cũ**.
 
-⚠️ **Nhưng lời giải ấy mở ra `docs/product.md` → *Unknowns* U-017**: quầy bấm theo **từng cái**,
+⚠️ **Nhưng lời giải ấy mở ra `docs/product/99-unknowns.md` U-017**: quầy bấm theo **từng cái**,
 theo **cả mẻ**, hay theo **cả bàn**? Chưa ai trả lời. Prompt nào chạm trục sản xuất phải ghi
 **bốn** con số và nói rõ **cách đếm con số thứ tư chưa chốt** — không tự chọn hộ
 (`work/findings.md` F-004, CLAUDE.md §3.5).
@@ -61,17 +61,17 @@ theo **cả mẻ**, hay theo **cả bàn**? Chưa ai trả lời. Prompt nào ch
 | # | Prompt | Level | Task gốc | Đầu ra chính |
 |---|---|---|---|---|
 | 00 | `00-master-L3.md` | L3 | BA-01–BA-11 | Kế hoạch BA + backlog + khung tài liệu |
-| 01 | `01-actors-channels-L1.md` | L1 | BA-01, BA-02 | `docs/product.md` §1 Actor, §2 Kênh bán |
-| 02 | `02-slice-dine-in-L2.md` | L2 | BA-03 | `docs/product.md` §3.1 Luồng ăn tại bàn |
-| 03 | `03-slice-ship-pickup-L2.md` | L2 | BA-04 | `docs/product.md` §3.2 Luồng mang đi (ba kênh) |
-| 04 | `04-slice-menu-price-change-L2.md` | L2 | BA-05 | `docs/product.md` §3.3 Đổi menu/giá |
-| 05 | `05-pricing-payment-L2.md` | L2 | BA-06 | `docs/product.md` §4 Giá & thanh toán + invariants |
-| 06 | `06-lifecycles-L2.md` | L2 | BA-07 | `docs/product.md` §5 Vòng đời + invariants |
-| 07 | `07-exceptions-L2.md` | L2 | BA-08 | `docs/product.md` §6 Ngoại lệ |
-| 08 | `08-mvp-scope-L1.md` | L1 | BA-09 | `docs/product.md` §7 Phạm vi MVP |
+| 01 | `01-actors-channels-L1.md` | L1 | BA-01, BA-02 | `docs/product/0-ba/ban-hang/` §1 Actor, §2 Kênh bán |
+| 02 | `02-slice-dine-in-L2.md` | L2 | BA-03 | `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1 Luồng ăn tại bàn |
+| 03 | `03-slice-ship-pickup-L2.md` | L2 | BA-04 | `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.2 Luồng mang đi (ba kênh) |
+| 04 | `04-slice-menu-price-change-L2.md` | L2 | BA-05 | `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3 Đổi menu/giá |
+| 05 | `05-pricing-payment-L2.md` | L2 | BA-06 | `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4 Giá & thanh toán + invariants |
+| 06 | `06-lifecycles-L2.md` | L2 | BA-07 | `docs/product/0-ba/ban-hang/05-vong-doi.md` §5 Vòng đời + invariants |
+| 07 | `07-exceptions-L2.md` | L2 | BA-08 | `docs/product/0-ba/ban-hang/06-ngoai-le.md` §6 Ngoại lệ |
+| 08 | `08-mvp-scope-L1.md` | L1 | BA-09 | `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7 Phạm vi MVP |
 | 09 | `09-decisions-assumptions-L2.md` | L2 | BA-10 | `docs/decisions.md` ADR + giả định |
-| 10 | `10-acceptance-scenarios-L2.md` | L2 | BA-11 | `docs/product.md` §8 + cổng chất lượng BA |
-| 12 | `12-production-control-L2.md` | L2 | BA-12 | `docs/product.md` §3.4 Sản xuất theo mẻ + invariants |
+| 10 | `10-acceptance-scenarios-L2.md` | L2 | BA-11 | `docs/product/0-ba/ban-hang/08-scenario.md` §8 + cổng chất lượng BA |
+| 12 | `12-production-control-L2.md` | L2 | BA-12 | `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4 Sản xuất theo mẻ + invariants |
 
 Chạy tuần tự 00–10. 02–04 phụ thuộc 01; 05–07 phụ thuộc 02–04; 10 là cổng cuối.
 

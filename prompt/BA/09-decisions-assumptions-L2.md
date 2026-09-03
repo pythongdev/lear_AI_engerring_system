@@ -27,16 +27,16 @@
 
 Được sửa:
 - `docs/decisions.md`
-- `docs/product.md` (chỉ thêm dòng tham chiếu `→ ADR-00N` tại chỗ quy tắc liên quan)
+- `docs/product/` (chỉ thêm dòng tham chiếu `→ ADR-00N` tại chỗ quy tắc liên quan)
 
 Không được sửa:
-- Nội dung nghiệp vụ đã chốt ở §1–§8 `docs/product.md` (chỉ được thêm tham chiếu)
+- Nội dung nghiệp vụ đã chốt ở §1–§8 `docs/product/0-ba/ban-hang/` (chỉ được thêm tham chiếu)
 - `quality/invariants.md`, `docs/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text
 docs/decisions.md
-docs/product.md
+docs/product/
 work/backlog.md
 ```
 
@@ -83,7 +83,7 @@ work/backlog.md
 - Mỗi GIẢ ĐỊNH có đủ: nội dung, mức rủi ro, hậu quả nếu sai, người cần trả lời.
 - Không có mục nào vừa là quyết định vừa không nói được ai đã quyết.
 - Có một bảng tổng hợp ở đầu file: ID | Trạng thái (Đã chốt / Giả định) | Rủi ro | Chặn việc gì.
-- Mỗi quy tắc trong `docs/product.md` bắt nguồn từ một quyết định đều có tham chiếu `→ ADR-00N`.
+- Mỗi quy tắc trong `docs/product/` bắt nguồn từ một quyết định đều có tham chiếu `→ ADR-00N`.
 - Không có quyết định về công nghệ/kiến trúc.
 
 ## Verify

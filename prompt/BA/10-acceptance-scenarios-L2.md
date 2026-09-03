@@ -11,29 +11,29 @@
   tổng tiền kiểm được), §4.5 (thành phần suất bán), §4.8 (11 tổ hợp kèm giá kỳ vọng).
 - Nguồn quy tắc: `master_plan/shop-facts.md` §5.3 (ví dụ nổ việc xuống bếp — số liệu cho
   scenario 1), §6.1, §7.2 (ba chỗ suy luận, S-1 chạm tiền).
-- Đích: `docs/product.md` §8.
-- Đầu vào: toàn bộ §1–§7 `docs/product.md`, `docs/decisions.md`, `quality/invariants.md`.
+- Đích: `docs/product/0-ba/ban-hang/08-scenario.md` §8.
+- Đầu vào: toàn bộ §1–§7 `docs/product/0-ba/ban-hang/`, `docs/decisions.md`, `quality/invariants.md`.
 
 ## Goal
 
-`docs/product.md` §8 có ba scenario nghiệm thu BA diễn lại được bằng nghiệp vụ thuần, và kết quả
+`docs/product/0-ba/ban-hang/08-scenario.md` §8 có ba scenario nghiệm thu BA diễn lại được bằng nghiệp vụ thuần, và kết quả
 chạy thử ba scenario đó chứng minh tài liệu BA không còn lỗ hổng chặn System Design.
 
 ## Scope
 
 Được sửa:
-- `docs/product.md` §8
+- `docs/product/0-ba/ban-hang/08-scenario.md` §8
 - `work/findings.md` (ghi lỗ hổng phát hiện khi diễn scenario)
 - `work/backlog.md` (cập nhật trạng thái BA-01–BA-11)
 
 Không được sửa:
-- §1–§7 của `docs/product.md` — nếu diễn scenario mà thấy §1–§7 sai/thiếu, **không tự sửa**:
+- §1–§7 của `docs/product/0-ba/ban-hang/` — nếu diễn scenario mà thấy §1–§7 sai/thiếu, **không tự sửa**:
   ghi finding và mở lại task BA tương ứng.
 - `docs/decisions.md`, `quality/invariants.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text
-docs/product.md
+docs/product/
 work/findings.md
 work/backlog.md
 ```
@@ -90,7 +90,7 @@ work/backlog.md
 - Mỗi bước trong cả 3 scenario có tham chiếu tới mục §1–§7 chứa quy tắc tương ứng.
 - Có checklist cổng chất lượng BA (9 mục ở §12 kế hoạch gốc) với trạng thái tick thật,
   không tick mục chưa đạt. Mục "không còn business rule quan trọng bị suy đoán" nay **không còn bị
-  S-1 chặn** (chốt 2026-08-30) — nhưng chỉ được tick khi mọi Unknown đang mở ở `docs/product.md`
+  S-1 chặn** (chốt 2026-08-30) — nhưng chỉ được tick khi mọi Unknown đang mở ở `docs/product/99-unknowns.md`
   đã đóng. **U-004 (ai được bấm huỷ đơn) đã đóng 2026-08-30**: chỉ người đứng quầy
   (`shop-facts.md` §6.13).
 - Mọi lỗ hổng phát hiện khi diễn scenario đều có finding trong `work/findings.md`, kèm task
@@ -103,10 +103,10 @@ work/backlog.md
 
 ```bash
 ./scripts/gate.sh
-grep -c '^### Scenario' docs/product.md      # = 3
-grep -n '68.000\|68000' docs/product.md      # scenario 1 có tổng tiền kiểm được
-grep -n '\[ \]\|\[x\]' docs/product.md       # checklist 9 mục cổng chất lượng
-grep -nEi 'click|button|màn hình|api|endpoint' docs/product.md   # không có kết quả
+grep -c '^### Scenario' docs/product/0-ba/ban-hang/08-scenario.md   # = 3
+grep -n '68.000\|68000' docs/product/0-ba/ban-hang/08-scenario.md   # scenario 1 có tổng tiền kiểm được
+grep -n '\[ \]\|\[x\]' docs/product/0-ba/ban-hang/08-scenario.md    # checklist 9 mục cổng chất lượng
+grep -nEi 'click|button|màn hình|api|endpoint' docs/product/0-ba/ban-hang/08-scenario.md   # không có kết quả
 git status --porcelain
 ```
 Gate 2: diễn miệng từng scenario, mỗi bước chỉ tay vào mục §1–§7 chứng minh nó.

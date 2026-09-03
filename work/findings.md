@@ -1227,8 +1227,19 @@ grep -rn 'docs/product\.md' --include='*.md' --include='*.sh' . \
   `prompt/maintenance/**` là sổ lịch sử (CLAUDE.md §5) và prompt 13 đã được thay thế trên thực tế
   bởi ba prompt con. **DOC-5 thì phải sửa trước khi chạy** — nó chưa được chạy lần nào.
 
+**Lặp lại lần hai, cơ chế khác — đo 2026-09-03 khi chạy DOC-3b:** *Verify* bước 4 của
+`prompt/maintenance/13b-pointer-nhom-B-L1.md` viết
+`git diff -- prompt/BA/ | grep -E '^[-+] *(grep|awk|…)' | grep -v '10-acceptance\|12-production'`.
+Bộ lọc cuối **không thể khớp**: dòng thân của `git diff` chỉ mang nội dung, **không mang tên
+file** — tên file nằm ở dòng `diff --git`, mà `grep -E '^[-+]…'` đã loại. Nên câu ấy in cả 8 dòng
+lệnh hợp lệ của hai file còn sống và báo đỏ một việc đã làm đúng. Bản chạy được là lọc ở **đối số
+của `git diff`**, không lọc ở đầu ra:
+`git diff -- $(ls prompt/BA/*.md | grep -v '10-acceptance\|12-production') | grep -E '^[-+] *(grep|awk|sed|wc|cat)'` — rỗng.
+⇒ Đúng bài học ở trên, lần thứ hai: **một câu `grep` trong prompt là hợp đồng nghiệm thu mà không
+ai chạy thử trước khi giao.** Ba lần khác cơ chế, cùng một nguyên nhân.
+
 **Related task:**
-DOC-3a · DOC-3b · DOC-3c (đã dùng bản đúng) · **DOC-5** (còn giữ bản hỏng, sửa trước khi chạy)
+DOC-3a · DOC-3b (lặp lại lần hai, xem trên) · DOC-3c · **DOC-5** (còn giữ bản hỏng, sửa trước khi chạy)
 
 **Status:**
 Open
@@ -1298,9 +1309,83 @@ số mục nào (`docs/architecture.md` 533 · `docs/prompt-guideline.md` 49, 16
 `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` 332). Acceptance 3 của prompt 13a nói
 *"113/114 dòng Gate 1b có chấm"*; sau DOC-3a con số thật là **90/114** (75 đã chuyển + 15 ở lại). Đừng dựng cổng mới cho việc này: CLAUDE.md §3.8 bắt chờ tới lần hỏng thứ hai.
 
+**Kiểm lại ở DOC-3b, 2026-09-03 — lệch lần nữa, đúng như mục 3 dự đoán.** Prompt
+`13b` chia 30 dòng lệnh thành *"sửa **10** dòng trong 2 file còn sống, giữ nguyên **20** dòng
+trong 11 prompt đã xong"*. Đếm thật: **8 / 22**. `prompt/BA/10-acceptance-scenarios-L2.md` có 4
+dòng lệnh và `12-production-control-L2.md` có 4, không phải 5+5. Tổng 30 thì đúng — chỗ sai là
+**chỗ cắt**. Lần này con số không đẩy phiên chạy đi phá gì (nó chỉ mô tả, không nằm trong
+*Acceptance*), nhưng nó xác nhận: mọi con số của **cùng lượt đo 2026-09-02** đều phải đếm lại
+trước khi tin. Còn **DOC-3c** (*"9 dòng, 1 ở lại"*) và **DOC-5** chưa kiểm.
+
 **Related task:**
-DOC-3a (đã xử lý cả hai chỗ) · **DOC-3b, DOC-3c, DOC-5** (cùng lượt đo, chưa kiểm lại) ·
+DOC-3a (đã xử lý cả hai chỗ) · DOC-3b (đã kiểm lại: 8/22 chứ không 10/20) ·
+**DOC-3c, DOC-5** (cùng lượt đo, chưa kiểm lại) ·
 F-003 (*"exactly N"*) · F-015 (thì của câu) · F-017 (cùng lượt đo, `grep` lọc rỗng)
+
+**Status:**
+Open
+
+---
+
+### F-019 — Tách file đẻ ra một tiêu đề THỨ HAI mang cùng chữ, và câu nghiệm thu đếm chữ ấy hụt mất nó
+
+**Date:** 2026-09-03 · phát hiện khi chạy **DOC-3b**, lúc chạy thử dòng lệnh đã đổi đường dẫn của
+prompt BA-12
+
+**Problem:**
+`prompt/BA/12-production-control-L2.md` nghiệm thu bằng một câu đếm chữ:
+
+```bash
+grep -n 'Ba lát cắt' <đích>      # phải rỗng
+```
+
+Ý nó là: BA-12 thêm §3.4 ⇒ tiêu đề §3 phải đổi từ *"Ba lát cắt nghiệp vụ"* sang *"bốn"*.
+Acceptance 12 của chính prompt ấy nói rõ chỗ phải đổi là **một** chỗ: *"Tiêu đề `## 3.` … đã đổi
+sang bốn lát cắt"*.
+
+Đo thật 2026-09-03, sau khi đổi đích sang file con:
+
+| Đích | `grep -n 'Ba lát cắt'` |
+|---|---:|
+| `docs/product.md` (bản lưu) | **2** dòng — `## 3.` (306) và một câu văn (313) |
+| `docs/product/0-ba/ban-hang/03-lat-cat.md` | **3** dòng — `# §3 —` (1) · `## 3.` (7) · câu văn (14) |
+
+Chỗ thứ ba là **tiêu đề H1 do DOC-1 sinh ra khi tách file** (`# §3 — Ba lát cắt nghiệp vụ`). Nó
+không phải nội dung nghiệp vụ, nó là **tên file viết ra thành tiêu đề** — nên không prompt nào có
+trước lượt tách biết nó tồn tại.
+
+**Impact:**
+Ai chạy BA-12 sẽ làm **đúng** Acceptance 12 (đổi `## 3.`), rồi thấy câu nghiệm thu **vẫn không
+rỗng**. Hai đường ra đều xấu: hoặc kết luận mình chưa xong trong khi đã làm đúng bài, hoặc sửa
+con số/câu lệnh cho khớp — tức là để lại một H1 nói *"Ba lát cắt"* trên một file có **bốn**.
+Tiêu đề file và nội dung file nói khác nhau là đúng con bug ADR-014 dựng `docs/product/` để tránh.
+
+Không cổng nào bắt được: Gate 1b chỉ hỏi **đường dẫn có mở được không**, còn *tiêu đề có khớp nội
+dung không* thì không có cổng nào — và cả câu lệnh này lẫn Acceptance 12 đều nằm trong khối ``` `
+của một file `.md`, vùng `scripts/check-links.sh` cắt bỏ trước khi rà.
+
+**Bài học chung, vì nó sẽ lặp:**
+Tách một tài liệu thành nhiều file **nhân đôi mọi tiêu đề mục ở tầng trên cùng**: mục §N nay có
+`# §N — <tên>` (tiêu đề file) *và* `## N. <tên>` (tiêu đề mục cũ). Mọi câu nghiệm thu đếm **chữ
+trong tiêu đề** đều lệch một đơn vị sau lượt tách, theo hướng **khó thấy nhất** — lệnh vẫn chạy,
+vẫn ra kết quả, chỉ ra sai. ⇒ Sau một lượt tách file, **chạy thử** mọi câu nghiệm thu đếm tiêu đề,
+đừng chỉ đổi đường dẫn cho chúng.
+
+**Decision / Fix:**
+- **Không sửa Acceptance 12 trong lượt này.** DOC-3b chỉ được đổi đường dẫn (Acceptance 6 của
+  `prompt/maintenance/13b-pointer-nhom-B-L1.md`: *"không câu chữ nào quanh pointer bị viết lại"*),
+  và prompt 13b nói thẳng: lệch thì **ghi finding, đừng lặng lẽ sửa con số cho khớp**.
+- **Ai chạy BA-12 đọc mục này trước:** đổi **ba** chỗ trong
+  `docs/product/0-ba/ban-hang/03-lat-cat.md` — dòng 1 (H1), dòng 7 (`## 3.`), dòng 14 (câu văn) —
+  chứ không phải một chỗ như Acceptance 12 viết. Đo 2026-09-03; số dòng trôi được, tra lại bằng
+  chính câu `grep` trên.
+- **DOC-5 sẽ gặp đúng chuyện này** khi tách `docs/architecture.md`. Đừng dựng cổng mới
+  (CLAUDE.md §3.8) — chạy thử là đủ.
+
+**Related task:**
+DOC-3b (phát hiện) · **BA-12** (chịu hậu quả, chưa chạy) · **DOC-5** (sẽ tách file tiếp) ·
+DOC-1 (lượt tách sinh ra H1) · F-017 (câu `grep` trong prompt không ai chạy thử) ·
+F-018 (con số trong prompt biến thành mệnh lệnh)
 
 **Status:**
 Open

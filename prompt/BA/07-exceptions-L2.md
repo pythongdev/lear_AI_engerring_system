@@ -9,30 +9,30 @@
   §5 quy tắc 4, 7, 10, 11, 12.
 - Nguồn dữ kiện: `master_plan/shop-facts.md` §6.1 (gọi thêm khi đang thu tiền),
   §6.3 (tạm dừng nhận đơn thắng giờ bán), **§6.6 (sổ giấy là phương án dự phòng bắt buộc)**.
-- Đích: `docs/product.md` §6.
+- Đích: `docs/product/0-ba/ban-hang/06-ngoai-le.md` §6.
 - Đã chốt trước đó: §3 các luồng, §4 tiền, §5 vòng đời — cách xử lý ngoại lệ phải trỏ về
   trạng thái có thật trong §5.
 
 ## Goal
 
-`docs/product.md` §6 chốt cách quán xử lý từng tình huống ngoại lệ quan trọng, ở mức nghiệp vụ,
+`docs/product/0-ba/ban-hang/06-ngoai-le.md` §6 chốt cách quán xử lý từng tình huống ngoại lệ quan trọng, ở mức nghiệp vụ,
 đủ để nhân viên biết phải làm gì mà không cần hỏi chủ quán.
 
 ## Scope
 
 Được sửa:
-- `docs/product.md` §6
+- `docs/product/0-ba/ban-hang/06-ngoai-le.md` §6
 - `docs/decisions.md` (ghi `GIẢ ĐỊNH` cho ngoại lệ chưa có lời giải)
 - `work/findings.md` (nếu phát hiện mâu thuẫn giữa các quy tắc đã chốt)
 
 Không được sửa:
-- §1–§5, §7–§8 của `docs/product.md`
+- §1–§5, §7–§8 của `docs/product/0-ba/ban-hang/`
 - `quality/invariants.md` (BA-08 chỉ mô tả cách xử lý, không thêm bất biến mới)
 - `docs/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text
-docs/product.md
+docs/product/
 docs/decisions.md
 work/findings.md
 work/backlog.md

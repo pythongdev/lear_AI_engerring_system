@@ -11,28 +11,28 @@
   §2 (chỉ `qr_table` và `staff_pos` gắn phiên bàn).
 - Nguồn quy tắc: `master_plan/shop-facts.md` §3 (5 trạm), §5.1 (sơ đồ luồng tại bàn),
   **§5.1 (nổ việc xuống bếp)**, **§6.1 (gọi thêm khi đang thu tiền)**.
-- Đích: `docs/product.md` §3.1.
+- Đích: `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.
 - Đã chốt trước đó: §1 actor, §2 kênh bán (BA-01, BA-02).
 
 ## Goal
 
-`docs/product.md` §3.1 mô tả trọn vòng đời một khách ăn tại quán — từ lúc bàn được mở đến lúc
+`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1 mô tả trọn vòng đời một khách ăn tại quán — từ lúc bàn được mở đến lúc
 bàn trở lại trạng thái trống — đủ để một người không biết code diễn lại được bằng nghiệp vụ.
 
 ## Scope
 
 Được sửa:
-- `docs/product.md` §3.1
+- `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1
 - `quality/invariants.md` (chỉ **thêm** invariant phát hiện từ lát cắt này)
 
 Không được sửa:
-- §3.2, §3.3, §4–§8 của `docs/product.md`
+- §3.2, §3.3, §4–§8 của `docs/product/0-ba/ban-hang/`
 - `docs/decisions.md`, `docs/architecture.md`
 - Invariant đã tồn tại của người khác trong `quality/invariants.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text
-docs/product.md
+docs/product/
 quality/invariants.md
 work/backlog.md
 ```

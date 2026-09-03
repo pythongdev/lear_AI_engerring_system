@@ -1,7 +1,7 @@
 # 00 — Master BA (L3: thiết kế & chia việc)
 
 > Level 3. Đây **không** phải prompt viết tài liệu nghiệp vụ. Đây là prompt chốt kế hoạch,
-> chia việc và dựng khung. Không viết nội dung §3–§8 của `docs/product.md` trong prompt này.
+> chia việc và dựng khung. Không viết nội dung §3–§8 của `docs/product/0-ba/ban-hang/` trong prompt này.
 
 ## Context
 
@@ -13,7 +13,7 @@
   U-1–U-4 và GD-01 đã được chủ quán trả lời hết. **Ba chỗ suy luận S-1–S-3 cũng đã được chủ quán
   xác nhận ngày 2026-08-30** (§7.1): S-1 = **×5**, suất trứng nhân thường **25.000**. §7.2 nay
   rỗng — không còn chỗ suy luận nào để mang vào backlog.
-- Nguồn sự thật cần điền: `docs/product.md`, `docs/decisions.md`, `quality/invariants.md`,
+- Nguồn sự thật cần điền: `docs/product/`, `docs/decisions.md`, `quality/invariants.md`,
   `work/backlog.md` — hiện đang là template rỗng.
 - Quy tắc viết prompt/task: `docs/prompt-guideline.md`. Quy tắc nghiệm thu: `quality/review-gate.md`.
 - Bộ prompt con đã có sẵn trong `prompt/BA/` (01 → 10), mỗi prompt một kết quả.
@@ -22,14 +22,14 @@
 ## Goal
 
 `work/backlog.md` có kế hoạch BA thực thi được: 11 task BA-01–BA-11 với thứ tự phụ thuộc,
-acceptance riêng và đầu ra kiểm chứng được, kèm khung mục lục `docs/product.md` để các
+acceptance riêng và đầu ra kiểm chứng được, kèm khung mục lục `docs/product/` để các
 prompt con điền vào mà không giẫm chân nhau.
 
 ## Scope
 
 Được sửa:
 - `work/backlog.md`
-- `docs/product.md` (chỉ dựng **mục lục và tiêu đề mục rỗng**, không viết nội dung nghiệp vụ)
+- `docs/product/` (chỉ dựng **mục lục và tiêu đề mục rỗng**, không viết nội dung nghiệp vụ)
 
 Không được sửa:
 - `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`, `master_plan/shop-facts.md`,
@@ -42,7 +42,7 @@ Không được sửa:
 Dòng chép vào `work/scope.txt`:
 ```text
 work/backlog.md
-docs/product.md
+docs/product/
 ```
 
 ## Constraints
@@ -57,21 +57,21 @@ docs/product.md
 - Mỗi task trong backlog phải revert được độc lập (mỗi task chạm một mục tài liệu riêng).
 - Giữ nguyên ID BA-01–BA-11 và quan hệ phụ thuộc trong §11 của kế hoạch gốc. Không đổi số,
   không gộp, không thêm task mới nếu không có lý do ghi rõ.
-- Khung `docs/product.md` phải khớp bảng mục ở §11 dưới đây, vì các prompt con khai scope theo nó.
+- Khung `docs/product/` phải khớp bảng mục ở §11 dưới đây, vì các prompt con khai scope theo nó.
 
 ## Deliverables
 
 1. `work/backlog.md`: 11 task BA-01–BA-11 ở mục **Ready**, mỗi task theo Task Detail Template
    sẵn có (Goal / Scope / Out of scope / Acceptance / Verify), cộng dòng `Prompt:` trỏ tới file
    prompt tương ứng trong `prompt/BA/`.
-2. `docs/product.md`: mục lục 8 mục dưới đây, mỗi mục chỉ có tiêu đề + một dòng
+2. `docs/product/`: mục lục 8 mục dưới đây, mỗi mục chỉ có tiêu đề + một dòng
    `> Chưa chốt — BA-0N` làm chỗ giữ.
 3. Danh sách 10 câu hỏi ở §10 kế hoạch gốc được phân bổ về đúng task sẽ trả lời chúng (ghi trong
    mục Acceptance hoặc Unknowns của task đó trong backlog). **U-1–U-4 đã gỡ hết** (`shop-facts.md`
    §7.1) nên không còn là vật cản. **S-1–S-3 cũng đã được xác nhận 2026-08-30**, nên backlog
    **không** còn phải mang chúng vào dạng giả định; nếu vẫn muốn ghi, ghi là *đã chốt* kèm ngày.
 
-Khung mục `docs/product.md`:
+Khung mục `docs/product/`:
 
 | Mục | Tiêu đề | Task |
 |---|---|---|
@@ -91,7 +91,7 @@ Khung mục `docs/product.md`:
   kiểu "hoạt động tốt", "rõ ràng", "đầy đủ".
 - Mỗi task có dòng `Prompt:` trỏ tới một file tồn tại trong `prompt/BA/`.
 - Thứ tự phụ thuộc trong backlog khớp cột "Cần xong trước" của §11 kế hoạch gốc.
-- `docs/product.md` có đúng 8 tiêu đề mục theo bảng trên, mỗi mục có chỗ giữ, không mục nào
+- `docs/product/` có đúng 8 tiêu đề mục theo bảng trên, mỗi mục có chỗ giữ, không mục nào
   chứa nội dung nghiệp vụ đã chốt.
 - 10 câu hỏi ở §10 kế hoạch gốc đều xuất hiện trong backlog, mỗi câu gắn với ít nhất một task.
 - Không có dòng nào trong backlog ghi S-1–S-3 là giả định chưa xác nhận (chúng đã chốt

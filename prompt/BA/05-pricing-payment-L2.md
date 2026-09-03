@@ -13,29 +13,29 @@
 - Nguồn quy tắc: `master_plan/shop-facts.md` §4.6 (chín quy tắc cấu tạo giá),
   **§4.7 (bằng chứng mô hình tổng thành phần)**, §4.8 (11 tổ hợp), §6.3 (thu tiền lúc trao hàng),
   §6.4 (hoàn tiền — quầy quyết từng ca), §6.9 (doanh thu hai nguồn), §6.10 (đối soát cuối ngày).
-- Đích: `docs/product.md` §4.
+- Đích: `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.
 - Đã chốt trước đó: §3.1 (tính tiền theo phiên bàn), §3.2 (đơn mang đi độc lập — đủ ba kênh
   `delivery` · `pickup` · `phone_preorder`, `shop-facts.md` §5.2),
   §3.3 (bất biến lịch sử giá).
 
 ## Goal
 
-`docs/product.md` §4 chốt được toàn bộ quy tắc nghiệp vụ về giá và thu tiền: giá từ đâu ra,
+`docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4 chốt được toàn bộ quy tắc nghiệp vụ về giá và thu tiền: giá từ đâu ra,
 tổng tiền xác định lúc nào, thu bằng cách nào, và đối soát dựa trên cái gì.
 
 ## Scope
 
 Được sửa:
-- `docs/product.md` §4
+- `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4
 - `quality/invariants.md` (thêm invariant về tiền)
 
 Không được sửa:
-- §1–§3, §5–§8 của `docs/product.md`
+- §1–§3, §5–§8 của `docs/product/0-ba/ban-hang/`
 - `docs/decisions.md`, `docs/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text
-docs/product.md
+docs/product/
 quality/invariants.md
 work/backlog.md
 ```
@@ -61,7 +61,7 @@ work/backlog.md
   là hệ quả, không phải ba con số rời) · **giò không nhận nhân nhưng 4 cái bánh trong suất giò thì
   có** · nhóm "Lượng nhân" chỉ tồn tại khi nhân ≠ Chay ⇒ **Chay + Nhiều nhân bị TỪ CHỐI** ·
   mặc định là **nhân Thịt, lượng Thường** · khách không bao giờ gửi giá lên.
-- **Không chép bảng giá `shop-facts.md` §4.2–§4.3 vào `docs/product.md`.** §4 trỏ tới nó và chốt
+- **Không chép bảng giá `shop-facts.md` §4.2–§4.3 vào `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md`.** §4 trỏ tới nó và chốt
   **quy tắc**; bảng giá có đúng một nhà. Chép là tạo chỗ sẽ trôi.
 - **11 tổ hợp ở `shop-facts.md` §4.8 là hợp đồng với chủ quán.** Chép danh sách **tổ hợp đầu vào**
   vào §4 làm bảng ca phải phủ, cột giá kỳ vọng ghi "tra `shop-facts.md` §4.2–§4.3".

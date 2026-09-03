@@ -12,27 +12,27 @@
   §6.12 (**món ngoài bảng §4.2 là đổi phạm vi**).
 - Nguồn quy tắc: `master_plan/shop-facts.md` §4.6 (chín quy tắc cấu tạo giá),
   §4.7 (**bằng chứng mô hình tổng thành phần**), §4.8 (11 tổ hợp giá).
-- Đích: `docs/product.md` §3.3.
+- Đích: `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3.
 - Đã chốt trước đó: §3.1, §3.2 — hai lát cắt tạo ra đơn mà lát cắt này không được phép đụng vào.
 
 ## Goal
 
-`docs/product.md` §3.3 chốt nguyên tắc lịch sử đơn hàng: đơn mới dùng menu/giá mới, đơn cũ giữ
+`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3 chốt nguyên tắc lịch sử đơn hàng: đơn mới dùng menu/giá mới, đơn cũ giữ
 nguyên tên món và giá tại thời điểm đặt, kể cả khi món bị ngừng bán.
 
 ## Scope
 
 Được sửa:
-- `docs/product.md` §3.3
+- `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3
 - `quality/invariants.md` (thêm invariant về bất biến lịch sử đơn)
 
 Không được sửa:
-- §3.1, §3.2, §4–§8 của `docs/product.md`
+- §3.1, §3.2, §4–§8 của `docs/product/0-ba/ban-hang/`
 - `docs/decisions.md`, `docs/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text
-docs/product.md
+docs/product/
 quality/invariants.md
 work/backlog.md
 ```

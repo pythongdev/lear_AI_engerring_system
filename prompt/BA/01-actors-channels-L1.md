@@ -6,28 +6,28 @@
 - Nguồn số: `master_plan/shop-facts.md` §2 (**bảng 5 kênh — nhà thật**), §1 (giờ bán, 11 bàn).
 - Nguồn quy tắc: `master_plan/shop-facts.md` §2 (hệ quả nghiệp vụ của 5 kênh),
   §3 (**5 trạm làm việc có tên**).
-- Đích: `docs/product.md` §1 và §2, hiện là chỗ giữ do BA-00 dựng.
+- Đích: `docs/product/0-ba/ban-hang/` §1 và §2, hiện là chỗ giữ do BA-00 dựng.
 - Task: `work/backlog.md` BA-01, BA-02.
 
 ## Goal
 
-`docs/product.md` §1 và §2 mô tả được: hệ thống phục vụ những ai, mỗi actor được làm gì,
+`docs/product/0-ba/ban-hang/` §1 và §2 mô tả được: hệ thống phục vụ những ai, mỗi actor được làm gì,
 quán bán qua kênh nào và mỗi kênh khác nhau ở điểm nghiệp vụ nào.
 
 ## Scope
 
 Được sửa:
-- `docs/product.md` (chỉ §1 và §2)
+- `docs/product/0-ba/ban-hang/` (chỉ §1 và §2)
 
 Không được sửa:
-- §3–§8 của `docs/product.md`
+- §3–§8 của `docs/product/0-ba/ban-hang/`
 - `docs/decisions.md`, `quality/invariants.md`, `docs/architecture.md`
 - `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`, `master_plan/shop-facts.md`
 - `work/backlog.md` (trừ ô trạng thái của BA-01, BA-02)
 
 Dòng chép vào `work/scope.txt`:
 ```text
-docs/product.md
+docs/product/
 work/backlog.md
 ```
 
@@ -77,7 +77,7 @@ grep -n 'Delivery\|Pickup\|QR\|POS\|đặt trước\|hotline' docs/product.md   
 grep -nc 'tráng bánh\|gấp bánh\|lấy canh\|dọn bàn\|quầy' docs/product.md   # đủ 5 trạm
 git status --porcelain                                # chỉ file trong Scope
 ```
-Gate 2: với mỗi dòng Acceptance, trỏ tới đoạn văn trong `docs/product.md` chứng minh nó.
+Gate 2: với mỗi dòng Acceptance, trỏ tới đoạn văn trong `docs/product/0-ba/ban-hang/` chứng minh nó.
 
 ## Unknowns
 

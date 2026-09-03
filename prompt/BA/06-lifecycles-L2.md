@@ -9,29 +9,29 @@
   §5 quy tắc 1, 4, 9, 12.
 - Nguồn dữ kiện: `master_plan/shop-facts.md` §3 (5 trạm), §5.3 (một đơn nổ thành nhiều việc),
   **§6.1 (phiên ở "Chờ thanh toán" vẫn nhận đơn mới)**.
-- Đích: `docs/product.md` §5.
+- Đích: `docs/product/0-ba/ban-hang/05-vong-doi.md` §5.
 - Đã chốt trước đó: §3.1–§3.3 (các luồng đã dùng một số tên trạng thái), §4 (thanh toán).
 
 ## Goal
 
-`docs/product.md` §5 định nghĩa ba vòng đời nghiệp vụ — đơn, phiên bàn, công việc trạm — với đầy
+`docs/product/0-ba/ban-hang/05-vong-doi.md` §5 định nghĩa ba vòng đời nghiệp vụ — đơn, phiên bàn, công việc trạm — với đầy
 đủ trạng thái, chuyển tiếp hợp lệ, ai kích hoạt mỗi chuyển tiếp, và trạng thái kết thúc.
 
 ## Scope
 
 Được sửa:
-- `docs/product.md` §5
-- `docs/product.md` §3.1–§3.3 **chỉ khi** phải sửa tên trạng thái cho khớp §5 (đổi tên, không đổi nghĩa)
+- `docs/product/0-ba/ban-hang/05-vong-doi.md` §5
+- `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1–§3.3 **chỉ khi** phải sửa tên trạng thái cho khớp §5 (đổi tên, không đổi nghĩa)
 - `quality/invariants.md` (thêm invariant về chuyển trạng thái)
 
 Không được sửa:
-- §1, §2, §4, §6–§8 của `docs/product.md`
+- §1, §2, §4, §6–§8 của `docs/product/0-ba/ban-hang/`
 - Nội dung nghiệp vụ của §3 (chỉ được đồng bộ tên trạng thái)
 - `docs/decisions.md`, `docs/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text
-docs/product.md
+docs/product/
 quality/invariants.md
 work/backlog.md
 ```

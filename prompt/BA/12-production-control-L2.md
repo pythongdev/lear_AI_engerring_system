@@ -16,12 +16,12 @@
 - Tài liệu tham khảo, **không phải nguồn sự thật**: `work/proposals/admin.admiadmin/admin1.md`.
   Nó có nhiều hình vẽ màn hình và một mô hình dữ liệu; **không** lấy tên trạng thái, tên bảng hay
   cây thư mục từ đó. Lấy được từ nó đúng một thứ: cách đặt câu hỏi.
-- Đích: `docs/product.md` **§3.4**, và đổi tiêu đề §3 từ *"Ba lát cắt nghiệp vụ"* thành **bốn**.
+- Đích: `docs/product/0-ba/ban-hang/03-lat-cat.md` **§3.4**, và đổi tiêu đề §3 từ *"Ba lát cắt nghiệp vụ"* thành **bốn**.
 - Đã chốt trước đó: §3.1 (BA-03), §3.2 (BA-04), §5 (BA-07).
 
 ## Goal
 
-`docs/product.md` §3.4 mô tả trọn một lát cắt **sản xuất**: từ lúc một đơn được duyệt, việc của nó
+`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4 mô tả trọn một lát cắt **sản xuất**: từ lúc một đơn được duyệt, việc của nó
 nhập vào tổng nhu cầu của quán, được gom thành mẻ, làm xong, rồi về đúng bàn đã gọi — đủ để người
 đứng quầy đọc xong biết bảng trước mặt mình phải hiện những con số nào và con số nào tăng giảm khi
 ai làm gì.
@@ -29,27 +29,27 @@ ai làm gì.
 ## Scope
 
 Được sửa:
-- `docs/product.md` §3.4 (mới) và tiêu đề `## 3.` (đổi số đếm lát cắt)
+- `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4 (mới) và tiêu đề `## 3.` (đổi số đếm lát cắt)
 - `quality/invariants.md` (chỉ **thêm**)
 - `work/backlog.md` (đóng BA-12)
 
 Không được sửa:
-- §1, §2, §3.1–§3.3, §4–§8 của `docs/product.md` — kể cả khi thấy chỗ nên sửa; ghi vào Report
+- §1, §2, §3.1–§3.3, §4–§8 của `docs/product/0-ba/ban-hang/` — kể cả khi thấy chỗ nên sửa; ghi vào Report
 - `master_plan/shop-facts.md` — trừ **một** trường hợp: chủ quán trả lời S-4 hoặc U-008–U-011
   **trong lúc** chạy task này, thì ghi vào §5.4 + §7.1 trước, rồi mới viết §3.4
 - `docs/decisions.md`, `docs/architecture.md`
 
 Dòng chép vào `work/scope.txt`:
 ```text
-docs/product.md
+docs/product/
 quality/invariants.md
 work/backlog.md
 ```
 
 ## Unknowns — trả lời TRƯỚC khi viết, đừng để AI tự quyết
 
-Năm câu, tất cả đều hỏi được trong một lần gặp chủ quán. Bốn câu đầu ở `docs/product.md` →
-*Unknowns*, câu thứ năm ở `master_plan/shop-facts.md` §7.2:
+Năm câu, tất cả đều hỏi được trong một lần gặp chủ quán. Bốn câu đầu ở
+`docs/product/99-unknowns.md`, câu thứ năm ở `master_plan/shop-facts.md` §7.2:
 
 | # | Câu | Không trả lời thì §3.4 hỏng ở đâu |
 |---|---|---|
@@ -76,7 +76,7 @@ thứ tư (U-017): viết bốn con số, và nói rõ chưa chốt bấm theo t
 
 ## Constraints
 
-- **Con số của chủ quán là 2 · 3 · 6** (`shop-facts.md` §5.4). Không chép chúng vào `docs/product.md`
+- **Con số của chủ quán là 2 · 3 · 6** (`shop-facts.md` §5.4). Không chép chúng vào `docs/product/0-ba/ban-hang/03-lat-cat.md`
   — tra ở owner (`work/findings.md` F-001). §3.4 nói *"năng lực một mẻ trứng có giới hạn, tra
   shop-facts §5.4"*, không viết con số.
 - **Nhu cầu cộng ngang qua nhiều bàn và nhiều đơn.** Sáu bàn mỗi bàn một combo là **một** dòng nhu
@@ -120,17 +120,17 @@ thứ tư (U-017): viết bốn con số, và nói rõ chưa chốt bấm theo t
    một bàn không bao giờ vượt số bàn đó đã gọi. Mục *Verification* của cả hai không được để trống.
 10. §3.4 **không** chứa con số 2, 3 hay 6 lấy từ `shop-facts.md` §5.4 (F-001 — trỏ, đừng chép).
 11. §3.4 không chứa tên trạng thái kiểu mã, tên bảng dữ liệu, route, hay tên thư mục.
-12. Tiêu đề `## 3.` của `docs/product.md` đã đổi sang **bốn** lát cắt, và mục lục/liên kết nội bộ
+12. Tiêu đề `## 3.` của `docs/product/0-ba/ban-hang/03-lat-cat.md` đã đổi sang **bốn** lát cắt, và mục lục/liên kết nội bộ
     (nếu có) đi theo.
 
 ## Verify
 
 ```bash
 ./scripts/gate.sh
-sed -n '/^### 3.4/,/^## 4\./p' docs/product.md | grep -nE '\b(2|3|6)\b'   # đọc tay: không phải số của §5.4
-grep -n 'Ba lát cắt' docs/product.md                                      # phải rỗng
-grep -nE '[A-Z_]{4,}|status *=|/admin/|table[s]? *\(' docs/product.md     # không có tên mã, route, bảng
-grep -n 'S-4' docs/product.md                                             # trạng thái S-4 có mặt
+sed -n '/^### 3.4/,$p' docs/product/0-ba/ban-hang/03-lat-cat.md | grep -nE '\b(2|3|6)\b'   # đọc tay: không phải số của §5.4
+grep -n 'Ba lát cắt' docs/product/0-ba/ban-hang/03-lat-cat.md   # phải rỗng
+grep -nE '[A-Z_]{4,}|status *=|/admin/|table[s]? *\(' docs/product/0-ba/ban-hang/03-lat-cat.md   # không có tên mã, route, bảng
+grep -n 'S-4' docs/product/0-ba/ban-hang/03-lat-cat.md   # trạng thái S-4 có mặt
 git status --porcelain
 ```
 
