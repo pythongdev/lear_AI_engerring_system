@@ -74,6 +74,13 @@ Cả bốn đều phải hỏi **chủ quán**, và cả bốn đã có sẵn **
 nay có lát cắt sản xuất theo mẻ, nên **P1-07 và P1-09 hết bị nó chặn**. Chính BA-12 mở ra
 **U-033**.
 
+⚠️ **Một chỗ chặn KHÔNG phải câu hỏi nghiệp vụ, nên nó không nằm trong bảng trên:
+`work/findings.md` **F-026**.** `I-019` và `I-020` sinh ra ở BA-12 ngày 2026-09-03 — **sau** khi
+kế hoạch §6 chia ba nhóm — nên chúng **không thuộc nhóm nào** của P1-04 · P1-05 · P1-06, và cổng
+chất lượng §9 vẫn đếm *"mười tám"* trong khi `quality/invariants.md` giữ **hai mươi**. Xếp chúng
+vào đâu là **quyết định của chủ repo**. Ai nhận một trong ba bước bảng ba cột đọc F-026 trước;
+đừng lặng lẽ kéo hai mệnh đề ấy vào bảng của mình, và cũng đừng lặng lẽ bỏ chúng.
+
 ---
 
 <a id="p1-01"></a>
@@ -161,8 +168,9 @@ Luật chung ở `work/backlog.md` → *Vòng chạy một task L1*; dưới đ�
 <a id="p1-02"></a>
 ### P1-02 — Quán đã chốt "mất điện thì không dừng bán", nhưng không tài liệu kiến trúc nào kể tên những thứ ngoài quán mà hệ thống đang dựa vào
 
-**Prompt:** chưa có — viết theo `docs/prompt-guideline.md` lúc nhận việc, **L2** · bước 2/12
-(kế hoạch §6) · **cần xong trước:** P1-01 · không chờ câu hỏi nào đang mở
+**Prompt:** [`prompt/SD/P1-02-ranh-gioi-he-thong-L2.md`](../prompt/SD/P1-02-ranh-gioi-he-thong-L2.md)
+(viết 2026-09-04, T-051) — **L2** · bước 2/12 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong
+2026-09-04** · không chờ câu hỏi nào đang mở
 
 **Goal:**
 Xong rồi thì có một chỗ duy nhất trả lời: hệ thống này dựa vào những gì **nằm ngoài nó**, và mỗi
@@ -231,7 +239,8 @@ Luật chung ở `work/backlog.md` → *Vòng chạy một task L1*; dưới đ�
 <a id="p1-03"></a>
 ### P1-03 — Ba luật "doanh thu tính ngày nào" đã chốt, nhưng "một ngày bán" thì chưa có định nghĩa ở đâu
 
-**Prompt:** chưa có — **L2** · bước 3/12 (kế hoạch §6) · **cần xong trước:** P1-01 ·
+**Prompt:** [`prompt/SD/P1-03-ngay-ban-L2.md`](../prompt/SD/P1-03-ngay-ban-L2.md) (viết 2026-09-04,
+T-051) — **L2** · bước 3/12 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong 2026-09-04** ·
 ⛔ **đang chặn: U-032** (`docs/product/99-unknowns.md`) — không viết mục *nhập bù* trước khi chủ
 quán trả lời
 
@@ -373,7 +382,9 @@ chạm tiền, nên chúng đi trước.
 <a id="p1-05"></a>
 ### P1-05 — Sáu invariant vòng đời bàn và đơn chưa có tầng giữ, trong khi đúng chúng là chỗ bàn và đơn bị kẹt
 
-**Prompt:** chưa có — **L2** · bước 5/12 (kế hoạch §6) · **cần xong trước:** P1-01 ·
+**Prompt:** [`prompt/SD/P1-05-invariant-vong-doi-L2.md`](../prompt/SD/P1-05-invariant-vong-doi-L2.md)
+(viết 2026-09-04, T-051) — **L2** · bước 5/12 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong
+2026-09-04** · ⚠️ **F-026**: `I-019` · `I-020` chưa thuộc nhóm nào — đọc trước khi điền bảng ·
 ⚠️ **U-031 chạm `I-017`** (ca đơn **giao tận nơi**) và **U-033 chạm `I-004`** (đơn huỷ sau khi bếp
 đã làm xong) — viết hai chỗ ấy theo phương án hẹp và ghi là đang treo · chạy song song được với
 P1-04, P1-06
@@ -438,7 +449,9 @@ Nhóm này là chỗ *bàn kẹt* và *đơn kẹt*, và nó có hai ca mà mộ
 <a id="p1-06"></a>
 ### P1-06 — Năm invariant menu · giá · vết chưa có tầng giữ, và một trong năm là mệnh đề mà máy CỐ Ý không giữ
 
-**Prompt:** chưa có — **L2** · bước 6/12 (kế hoạch §6) · **cần xong trước:** P1-01 ·
+**Prompt:** [`prompt/SD/P1-06-invariant-menu-gia-vet-L2.md`](../prompt/SD/P1-06-invariant-menu-gia-vet-L2.md)
+(viết 2026-09-04, T-051) — **L2** · bước 6/12 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong
+2026-09-04** · ⚠️ **F-026**: `I-019` · `I-020` chưa thuộc nhóm nào — đọc trước khi điền bảng ·
 chạy song song được với P1-04, P1-05
 
 **Goal:**
@@ -628,7 +641,8 @@ debug nhất dự án*, và nó đúng.
 <a id="p1-09"></a>
 ### P1-09 — §3 vẫn là phương án ba con số mà §11 của chính nó tuyên bố đã hết đúng, và việc viết lại đang được giao cho một task đã *Done*
 
-**Prompt:** chưa có — **L2** · bước 9/12 (kế hoạch §6) · **BA-12 đã xong 2026-09-04** ⇒ chỉ còn
+**Prompt:** [`prompt/SD/P1-09-bang-quay-bon-con-so-L2.md`](../prompt/SD/P1-09-bang-quay-bon-con-so-L2.md)
+(viết 2026-09-04, T-051) — **L2** · bước 9/12 (kế hoạch §6) · **BA-12 đã xong 2026-09-04** ⇒ chỉ còn
 chờ **S-5**, và đọc **U-033** trước khi viết con số thứ tư · độc lập với cả dãy P1 còn lại ·
 đây là con bug **F-024**
 

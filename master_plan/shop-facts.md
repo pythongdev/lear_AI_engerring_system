@@ -958,6 +958,7 @@ lại điều gì.
 | 2026-09-02 | **Món hết sau khi khách đã chọn: POS bàn với khách, quyết tại lúc thoả thuận xong** — không tự thay thế, không tự huỷ (đóng câu 3 bảng §10) | §6.20 |
 | 2026-09-02 | **Khách nói đã chuyển khoản mà chưa thấy báo có: POS bàn với khách, quyết ngay lúc đó** — hai đường ra là ghi nợ (§6.14) hoặc chờ tin nhắn (§6.3) | §6.21 |
 | 2026-09-01 | **Ba mảng quản trị vào phạm vi phần mềm**: nguyên liệu · con người · tài chính — lật ngược ranh giới cũ *"không quản lý nguyên liệu, tồn kho, chấm công, kế toán"*; chủ quán **xác nhận lại 2026-09-02** | **§8** |
+| 2026-09-04 | **Mảng nguyên liệu làm ở mức SỔ GHI TAY ĐIỆN TỬ** — máy **không** tự trừ tồn theo công thức, nên phần mềm không cần định lượng từng thành phần; kèm **một mục tổng nhập hàng ngày, chủ quán tự nhập số liệu** | **§8.4** |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **một mục, tính tới 2026-09-01**
 
@@ -1032,13 +1033,16 @@ Trước ngày đó, phần mềm được mô tả là **không** làm ba mản
 
 ### 8.2 Mở ranh giới chưa phải là có luật
 
-Tới hôm nay mục này **chỉ có ranh giới, chưa có một quy tắc nghiệp vụ nào**. Ba mảng ấy mới **được
-phép** có mặt:
+Tới **2026-09-03** mục này chỉ có ranh giới, chưa một quy tắc nghiệp vụ nào. Ngày **2026-09-04**
+mảng **nguyên liệu** có mức sâu của nó (§8.4); **hai mảng còn lại — con người và tài chính — vẫn
+đúng như đoạn dưới đây tả**, và đoạn ấy đọc cho hai mảng đó, không đọc cho mảng nguyên liệu:
 
-- **Mức sâu của từng mảng chưa chốt ở đây.** Mảng nguyên liệu làm tới đâu, mảng con người làm tới
-  đâu — chưa có dòng nào trong tài liệu này trả lời, nên đừng suy ra hộ.
-- **Chưa có con số nào.** Không danh mục nguyên liệu, không đơn vị tính, không số người, không đơn
-  giá công, không khoản chi. Mọi con số cho ba mảng này còn phải hỏi chủ quán.
+- **Mức sâu: mảng nguyên liệu ĐÃ chốt, hai mảng kia thì chưa.** Mảng nguyên liệu làm ở mức *sổ ghi
+  tay điện tử* — lời chốt và ranh giới của nó ở **§8.4**. Mảng con người làm tới đâu, mảng tài
+  chính làm tới đâu — chưa có dòng nào trong tài liệu này trả lời, nên đừng suy ra hộ.
+- **Chưa có con số nào — kể cả cho mảng nguyên liệu.** Không danh mục nguyên liệu, không đơn vị
+  tính, không số người, không đơn giá công, không khoản chi. §8.4 chốt *cách ghi*, không chốt
+  *ghi cái gì*: mọi con số cho ba mảng này còn phải hỏi chủ quán.
 - **Bốn ranh giới ở §6.12 không bị lời chốt này chạm tới** — kênh bán thứ sáu, đơn tối
   thiểu và bậc phí ship, số tài khoản cứng trong sản phẩm, món ngoài bảng giá. Cả bốn vẫn là *đã
   quyết định không làm*.
@@ -1050,3 +1054,41 @@ Vào **mục này**, đánh số tiếp §8.4, §8.5…, rồi thêm một dòng
 quy tắc bán hàng đã có: hết nguyên liệu và tạm dừng nhận đơn là hai việc khác nhau, một cái ở mục
 này, một cái ở §6.
 
+### 8.4 Mảng NGUYÊN LIỆU — mức **sổ ghi tay điện tử**, và một mục nhập tổng hàng ngày
+
+**Chủ quán chốt 2026-09-01, xác nhận lại 2026-09-04.** Mảng nguyên liệu làm ở mức **sổ ghi tay
+điện tử**: máy là chỗ **chép lại** con số người ghi, không phải chỗ **tự tính ra** con số.
+
+| Máy làm | Máy KHÔNG làm |
+|---|---|
+| nhận con số người nhập bằng tay, giữ lại, cộng lại, hiện ra | tự trừ tồn mỗi lần bán một suất |
+| ghi lại ai nhập và nhập ngày nào | quy một suất bán ra thành lượng nguyên liệu đã dùng |
+
+**Hệ quả: phần mềm không cần biết một suất bánh ăn hết bao nhiêu gam gạo.** Định lượng từng thành
+phần là kiến thức của người làm, không phải tham số của phần mềm. Cùng lối nghĩ với lời chốt
+*"máy không gom, người gom"* (2026-08-31, §5.4): máy giữ con số, người quyết con số.
+
+**Mục tổng lưu trữ hàng ngày — chủ quán chốt 2026-09-04.** Nguyên văn lời chủ quán:
+*"có mục tổng lưu trữ hàng ngày tôi sẽ nhập số liệu"*. Ba điều nói thẳng, không suy:
+
+1. có **một mục tổng** cho nguyên liệu — không phải ghi theo từng lần bán;
+2. nhịp của nó là **hàng ngày**;
+3. người nhập là **chủ quán**, và nhập **bằng tay**.
+
+**Điều KHÔNG được nói, và đừng suy hộ:** *"số liệu"* ấy là con số gì — đồ **còn lại** cuối buổi,
+đồ **mua vào** trong ngày, hay đồ **đã dùng** — và mục tổng ấy ghi những thứ nào, theo đơn vị nào.
+Ba đường ấy dẫn tới ba cách ghi khác nhau và chỉ chủ quán trả lời được ⇒ **U-034**
+(`docs/product/99-unknowns.md`). Ai dựng mục này trước khi U-034 có lời giải là tự quyết thay chủ
+quán (`CLAUDE.md` §3.5).
+
+**Ba ranh giới của chính §8.4:**
+
+- **Chốt *cách ghi*, không chốt *ghi cái gì*.** Danh mục nguyên liệu, đơn vị tính, ngưỡng nhắc sắp
+  hết — cả ba vẫn chưa có dữ kiện nào, đúng như §8.2 nói.
+- **Không nói mảng này có vào bản chạy đầu tiên hay không.** Đó là câu của
+  `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7, và câu ấy đã chốt riêng ngày 2026-09-02
+  (U-030): **không** mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên.
+- **Mở lại được, và có đúng một cửa để mở.** Muốn biết **giá vốn một suất** thì phải chốt định
+  lượng từng thành phần, tức lật ngược mức sổ tay ở trên. Hôm nay chưa ai hỏi câu ấy
+  (`work/admin-questions.md` câu **B22**); hỏi rồi mà chủ quán trả lời *"có"* thì mục này phải
+  viết lại, không phải viết thêm.

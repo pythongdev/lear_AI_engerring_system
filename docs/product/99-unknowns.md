@@ -33,6 +33,11 @@ mở vì ai quên hỏi: ba luật *doanh thu tính ngày nào* đã chốt (n�
 câu tính tới cuối ngày 2026-09-03 — con số ấy là phép đếm của người viết, không phải một quyết định
 (`work/findings.md` **F-003**); đếm lại ở danh sách dưới, đừng tin câu này.
 
+**Ngày 2026-09-04, T-050 mở U-034 trong lúc chuyển một lời chốt về owner.** Chủ quán chốt mảng
+nguyên liệu ở mức *sổ ghi tay điện tử* và kèm theo một mục nhập tổng hàng ngày; lời chốt nói **ai
+nhập** và **nhịp nào**, nhưng không nói **nhập con số gì**. Chỗ hở ấy không được lấp bằng suy luận
+vì một trong ba đường ra sẽ lật ngược chính lời chốt vừa nói.
+
 - **U-031 — với một đơn GIAO TẬN NƠI, ai bấm mốc *"đã ra bàn"* của từng việc trạm, và vào lúc
   nào?** Chủ quán chốt 2026-09-01 (U-021) rằng *người đứng quầy* bấm **cả hai** mốc của bảng bếp,
   nhưng câu hỏi lúc ấy **không nhắc tới ca đơn giao tận nơi**: lúc suất tới tay khách thì người
@@ -79,6 +84,23 @@ câu tính tới cuối ngày 2026-09-03 — con số ấy là phép đếm củ
   bảng trong máy): *"Bàn 5 huỷ đúng lúc bếp vừa tráng xong bánh của họ, mà bàn 8 đang chờ đúng
   loại bánh ấy. Ở quán, chỗ bánh đó đi đâu?"*
   *Mở 2026-09-03 · BA-12 · `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4.5.*
+
+- **U-034 — mục *tổng lưu trữ hàng ngày* mà chủ quán sẽ tự nhập, ghi con số GÌ: đồ còn lại cuối
+  buổi, đồ mua vào trong ngày, hay đồ đã dùng trong ngày?** Ngày 2026-09-04 chủ quán chốt mảng
+  nguyên liệu làm ở mức **sổ ghi tay điện tử** và nói thêm *"có mục tổng lưu trữ hàng ngày tôi sẽ
+  nhập số liệu"* (`master_plan/shop-facts.md` §8.4). Câu ấy nói **có mục gì**, **nhịp nào** và
+  **ai nhập** — nhưng không nói **nhập cái gì**, và ba đường ra là ba mục khác hẳn nhau: *còn lại*
+  là một lần đếm cuối buổi · *mua vào* là một phiếu nhập có giá và có người bán · *đã dùng* là con
+  số duy nhất **không** đếm được bằng mắt ở mức sổ tay, vì muốn có nó thì phải trừ theo công thức
+  — đúng thứ lời chốt vừa nói là máy **không** làm. **Ai trả lời được:** chủ quán.
+  **Đang chặn:** `work/admin-questions.md` nhánh B (**ADM-10** danh mục và đơn vị tính · **ADM-11**
+  phiếu nhập · **ADM-12** ghi hao hụt · **ADM-13** tồn ước tính và nhắc sắp hết) — cả bốn đều phải
+  biết con số nền là gì trước khi có hình dạng, và đường *đã dùng* còn lật ngược chính mức sổ tay.
+  **Đừng suy hộ** (`CLAUDE.md` §3.5): đây là dữ kiện quán, không phải chỗ để phần mềm tự chọn.
+  **Cách hỏi** (bài học S-4, `master_plan/shop-facts.md` §7.2 — hỏi về cái quán, đừng hỏi về cái
+  bảng trong máy): *"Cuối buổi hôm nay anh ngồi xuống nhập số vào máy. Anh nhập con số anh vừa đếm
+  được trong kho, hay con số anh đã mua sáng nay ở chợ?"*
+  *Mở 2026-09-04 · T-050 · `master_plan/shop-facts.md` §8.4.*
 
 Câu tiếp theo vào đây dưới dạng một gạch đầu dòng, đúng hợp đồng dưới; mục này rỗng cũng là trạng
 thái bình thường, không phải dấu hiệu quên ghi.

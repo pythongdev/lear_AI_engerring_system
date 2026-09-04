@@ -192,9 +192,18 @@ luật ấy — và nó trả lại một thứ: đọc một file là thấy h�
 **Mô tả từng bước — vì sao có nó, hỏng thì mất gì, chạy mười bước thế nào — ở `work/backlog_SD.md`.**
 Bảng trên giữ thứ tự, mức và đầu ra kiểm chứng được; nó không kể lại nội dung entry.
 
-**Mỗi bước có một file prompt viết theo `docs/prompt-guideline.md`** (sáu khối), viết lúc nhận việc.
-Kế hoạch này không viết prompt hộ: một prompt viết trước khi biết bước trước đã ra kết quả gì sẽ
-mang những câu *Constraints* đã chết, đúng loại lỗi mà `work/findings.md` **F-013** · **F-017** ghi.
+**Mỗi bước có một file prompt viết theo `docs/prompt-guideline.md`** (sáu khối), ở lane
+`prompt/SD/` — một file một bước. Kế hoạch này không viết prompt hộ: một prompt viết trước khi biết
+bước trước đã ra kết quả gì sẽ mang những câu *Constraints* đã chết, đúng loại lỗi mà
+`work/findings.md` **F-013** · **F-017** ghi.
+
+*(Đổi 2026-09-04, T-051, chủ repo chốt trong phiên. Bản đầu của đoạn này viết **"viết lúc nhận
+việc"**, và câu ấy trộn hai thứ khác nhau: **lúc nào được viết** với **cái gì đã biết**. Lý do thật
+là vế sau — nên luật nay đọc được: **viết được prompt của một bước khi mọi bước ở cột *Cần xong
+trước* của nó đã `Done`.** Khi ấy đầu ra để viết *Constraints* và *Verify* đã có thật, không phải
+đoán, và F-013 · F-017 không có chỗ tái phát. Bước còn tiền đề chưa xong thì **vẫn không** được
+viết trước — đó là phần của luật cũ không đổi. Bảng đối chiếu bước nào đã có prompt ở
+`prompt/SD/README.md`.)*
 
 ---
 

@@ -2123,12 +2123,101 @@ khối ấy, đúng `CLAUDE.md` §6.1.
 - **Hai commit trùng subject** `39ca608`/`1b9d238` xử thế nào: để nguyên (ADR-008) hay xử như
   T-023 đang chờ. Cùng một câu hỏi, nay có thêm một ca.
 
+**LẦN THỨ HAI CỦA CHÍNH F-025 — 2026-09-04, và lần này ca xảy ra ĐÚNG NHƯ MỤC NÀY DỰ BÁO.**
+Trong lúc phiên **T-050** đang viết dở (chuyển lời chốt Đ-3 về owner), một phiên song song đang
+chạy **P1-01** commit **`da7dd2f`** — subject `P1-01: ADR-035 chốt sở hữu theo pha, đóng F-023` —
+và nhặt luôn **cả ba khối `work/backlog.md` của T-050**: dòng bảng mục lục, dòng `[x] T-050` ở
+*Done*, và toàn bộ entry `<a id="t-050">`. Ba khác biệt so với ca ngày 2026-09-03, cả ba đều đáng
+ghi:
+
+- **Phần bị nhặt lần này KHÔNG hỏng giữa câu.** Ba khối vào commit ở trạng thái đã viết xong, đọc
+  được. Cái hỏng chỉ là **tên commit**: ai đọc `git log` tìm lúc Đ-3 về owner sẽ thấy nó dưới một
+  subject nói về P1-01.
+- **`work/scope.txt` cũng bị `git add`**, tức pattern suýt vào lịch sử — đúng thứ `CLAUDE.md` §6
+  cấm. Nó **không** lọt vào `da7dd2f` (commit ấy chỉ lấy 10 file), nhưng nó **ở lại trong index**
+  cùng bốn file nội dung của T-050; phiên T-050 phải `git restore --staged work/scope.txt` để gỡ.
+  Hai lần trước chưa có vế này.
+- **Lần thứ ba của họ *"`git add` nhặt file của task khác"*** — F-009 (lần 1) · F-025 ca
+  `39ca608` (lần 2) · nay `da7dd2f`. Mục *Chỗ chưa có lời* dưới đây dẫn `CLAUDE.md` §3.8 —
+  *chỉ dựng luật mới khi cùng một vấn đề đã tốn hai lần* — và viết *"lần này là lần thứ hai"*.
+  **Ngưỡng ấy nay đã qua**: đủ điều kiện dựng cổng `pre-commit`, và câu hỏi *có dựng không* vẫn là
+  câu của chủ repo, không phiên nào tự quyết.
+
 **Related task:**
+**T-050** (lượt bị nhặt lần hai) · **P1-01** (phiên song song, chủ của `da7dd2f`) ·
 **T-048** (lượt phát hiện, và là phần việc bị nhặt) · **BA-12** (phiên song song, chủ của `39ca608`) ·
 **T-023** (hai commit trùng tên, đang chờ chủ repo) · **F-009** (`git add` nhặt file ngoài task —
 lần đầu) · **F-010** · **F-014** (song song trên một cây; lần này luật ấy chạy **đúng**) ·
 `docs/decisions.md` **ADR-006** (Gate 7b) · **ADR-008** (sửa tiến) · **ADR-010** (Gate 8) ·
 `CLAUDE.md` §6.1 · §6.2
+
+**Status:**
+Open
+
+---
+
+### F-026 — Hai invariant sinh SAU khi kế hoạch chia nhóm, nên không nhóm nào của pha 1 nhận chúng
+
+**Problem:**
+`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6 chia mười tám mệnh đề bất biến thành **ba
+nhóm**, mỗi nhóm một bước: **P1-04** nhóm TIỀN (`I-002` `I-005` `I-007` `I-012` `I-013` `I-014`
+`I-015`) · **P1-05** nhóm VÒNG ĐỜI (`I-001` `I-003` `I-004` `I-006` `I-016` `I-017`) · **P1-06**
+nhóm MENU·GIÁ·VẾT (`I-008` `I-009` `I-010` `I-011` `I-018`). Bảy + sáu + năm = **mười tám**, và
+cổng chất lượng §9 mở bằng câu *"Mười tám `I-0xx` **đều** có tầng bảo vệ và phép đối chiếu"*.
+
+Kế hoạch ấy viết **2026-09-03**. Ngày **2026-09-03**, trong cùng lượt, **BA-12** thêm hai mệnh đề
+vào `quality/invariants.md`: **`I-019`** (tổng nhu cầu một thành phần luôn bằng tổng phần chia về
+từng bàn, cả hai chiều) và **`I-020`** (số đã phục vụ của một bàn không bao giờ vượt số bàn ấy đã
+gọi). Cả hai mang dòng *"Phát hiện ở BA-12, 2026-09-03"*.
+
+⇒ `quality/invariants.md` giữ **hai mươi** mệnh đề, và **hai trong hai mươi không thuộc nhóm nào**.
+Không bước nào của pha 1 nhận chúng, và cổng §9 vẫn đếm mười tám. Đo lại 2026-09-04 (T-051):
+`grep -n '^### I-0' quality/invariants.md` trả về hai mươi dòng; `grep -rn 'I-019\|I-020'` không
+ra một dòng nào ở §6 hay §9 của kế hoạch.
+
+**Impact:**
+Cổng chất lượng pha 1 **tick xanh được trong khi hai mệnh đề chưa có tầng giữ nào** — đúng loại
+hỏng mà cổng ấy được dựng để chặn. Nó xanh không phải vì ai bấm bừa, mà vì phép đo của nó
+(*"mười tám"*) đã hết đúng từ hôm sau ngày nó được viết.
+
+Hậu quả ở quán, nếu nó đi tiếp vào pha 2: `I-019` và `I-020` là **trục sản xuất theo mẻ** — đúng
+chỗ mà một mẻ phục vụ nhiều bàn và một lần bấm đẩy nhiều việc cùng lúc. Không ai viết ra *tầng nào
+giữ chúng* thì pha 2 dựng lược đồ không có ràng buộc nào cho phép cộng ngang và phép tách ngược,
+và chỗ hỏng — bánh cộng cho bàn này, thiếu cho bàn kia — chỉ lộ ra vào lúc đông khách, là lúc
+không ai có thời gian đi dò lại. `I-020` còn phủ **đường lùi** (quầy bấm nhầm rồi lùi), thứ không
+có ràng buộc nào thì im lặng sai.
+
+**Vì sao vòng rà trước không bắt:** cùng một hình với **F-024** — một con số đúng lúc viết, và
+không ai đặt lại câu hỏi khi thứ nó đếm thay đổi. Khác một chỗ đáng ghi: ở F-024 chỗ trống được che
+bằng một **cái tên task đã chết**; ở đây nó được che bằng một **con số đã hết đúng**. Cả hai đều
+đọc như một lời khẳng định đã kiểm.
+
+**Decision / Fix:**
+**Không sửa trong lượt phát hiện** (T-051 viết prompt, không thi công pha 1), và **không xếp nhóm
+hộ**: `I-019` và `I-020` thuộc trục sản xuất theo mẻ, gần nhóm VÒNG ĐỜI nhất nhưng cũng có thể là
+một **nhóm thứ tư** — chọn đường nào là quyết định của **chủ repo**, không phải của một phiên
+(`CLAUDE.md` §3.5 · §4: chọn giữa hai thiết kế cùng đứng được ⇒ ADR, do người quyết).
+
+Ba đường đang thấy, ghi ra để lần quyết định không phải bắt đầu từ đầu:
+
+1. **Gấp vào P1-05.** Rẻ nhất, và `I-020` đúng là một câu vòng đời (*đã phục vụ ≤ đã gọi*). Nhưng
+   `I-019` là một câu về **phép cộng**, không về vòng đời của một thực thể nào.
+2. **Mở một bước thứ mười ba, nhóm SẢN XUẤT.** Trung thực nhất với nội dung, đắt nhất: nó đổi số
+   bước của cả pha, và mọi pointer đang viết *"mười hai bước"* thành sai trong cùng ngày.
+3. **Gấp vào P1-07** (yêu cầu hình dạng dữ liệu), vì cả hai mệnh đề nói về *cái gì phải không xảy
+   ra được* của trục sản xuất. Nhưng P1-07 viết **yêu cầu cho pha 2**, không điền **bảng ba cột** —
+   trộn hai thứ ấy là làm bảng ba cột thiếu hai hàng mà không ai thấy.
+
+Cho tới khi có quyết định: **ba prompt `P1-04` · `P1-05` · `P1-06` phải nhắc mã này ở mục
+*Unknowns*** — đã làm cho P1-05 và P1-06 trong lượt này; P1-04 khi nào viết prompt thì mang theo.
+Và câu *"mười tám"* ở cổng §9 **không được tick** cho tới khi hai mệnh đề ấy có chỗ.
+
+**Related task:**
+**T-051** (lượt phát hiện, viết prompt lane `prompt/SD/`) · **BA-12** (lượt sinh ra `I-019` ·
+`I-020`) · **T-048** (lượt viết kế hoạch pha 1, chia ba nhóm) · **P1-04** · **P1-05** · **P1-06**
+(ba bước điền bảng ba cột) · **F-024** (cùng hình: một phép đo đúng lúc viết, không ai chấm lại) ·
+**F-018** (số đếm động dùng như một invariant) · `docs/decisions.md` **ADR-035** (pha 1 sở hữu
+tầng bảo vệ của từng `I-0xx`)
 
 **Status:**
 Open

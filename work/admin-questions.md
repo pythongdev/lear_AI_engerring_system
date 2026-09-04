@@ -14,7 +14,8 @@
 > và nó là **working state** giống `work/scope.txt`, không phải tài liệu xuất bản.
 >
 > **Mở:** 2026-09-02 · **theo yêu cầu của:** chủ quán · **trạng thái:** 4 câu đã chốt — **Đ-1 đã về owner
-> 2026-09-02 (T-040)**, Đ-2/Đ-3/Đ-4 chưa — và **55 câu đang chờ**
+> 2026-09-02 (T-040)**, **Đ-3 đã về owner 2026-09-04 (T-050)**, Đ-2/Đ-4 chưa — và **54 câu đang
+> chờ** (B18 đã trả lời một nửa)
 
 ---
 
@@ -35,14 +36,17 @@ Chủ quán chốt trong phiên ngày 2026-09-01. Lúc ấy **chưa file nào gh
 ở `work/findings.md` (F-013, F-014).
 
 **2026-09-02 — chủ quán xác nhận lại Đ-1** (*"Đ-1 → trả lời đồng ý theo lời chốt"*) và **T-040 đã
-chuyển nó về owner**. Ba lời còn lại **chưa được xác nhận lại và chưa đi đâu cả**: chúng vẫn chỉ
-tồn tại trong file này, mà file này không sở hữu sự thật nào.
+chuyển nó về owner**. **2026-09-04 — chủ quán xác nhận lại Đ-3** (*"Đ-3 hãy làm. có mục tổng lưu
+trữ hàng ngày tôi sẽ nhập số liệu"*) và **T-050 đã chuyển nó về owner**, kèm một dữ kiện mới chưa
+ai hỏi: **mục tổng nhập hàng ngày, chủ quán tự nhập**. Hai lời còn lại — **Đ-2** và **Đ-4** —
+**chưa được xác nhận lại và chưa đi đâu cả**: chúng vẫn chỉ tồn tại trong file này, mà file này
+không sở hữu sự thật nào.
 
 | # | Câu | Lời chốt | Phải về đâu |
 |---|---|---|---|
 | ~~Đ-1~~ | Có mở lại ranh giới hệ thống không? | **Mở cả ba** — nguyên liệu, con người, tài chính vào phạm vi | ✅ **đã về owner 2026-09-02 (T-040)**: `docs/product.md` §1.4 · `docs/architecture.md` §10 · `master_plan/shop-facts.md` §7.1 |
 | Đ-2 | Thứ tự làm | **Đóng nốt BA-08 → BA-12 trước**, rồi mới chạy nhánh admin | `work/backlog.md` |
-| Đ-3 | Nguyên liệu làm ở mức nào | **Sổ ghi tay điện tử** — máy **không** tự trừ kho theo công thức | `master_plan/shop-facts.md` **§8** · `docs/product.md` **§1.6** (mục admin, ADR-013) |
+| ~~Đ-3~~ | Nguyên liệu làm ở mức nào | **Sổ ghi tay điện tử** — máy **không** tự trừ kho theo công thức; **kèm một mục tổng nhập hàng ngày, chủ quán tự nhập** (thêm 2026-09-04) | ✅ **đã về owner 2026-09-04 (T-050)**: `master_plan/shop-facts.md` §8.4 · `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6 · mở **U-034** |
 | Đ-4 | Con người làm tới đâu | **Cả ba mức**: ai đang trực trạm + chấm công + tính lương | `master_plan/shop-facts.md` **§8** · `docs/architecture.md` **§14** (mục admin, ADR-013) |
 
 **Đ-1 lật ngược một câu đang nằm trong tài liệu — và câu ấy nay đã sửa (T-040, 2026-09-02).**
@@ -56,6 +60,12 @@ owner của chính nó** — nhưng mở ranh giới mới chỉ là *được p
 bánh ăn hết bao nhiêu gam gạo**. Định lượng từng thành phần là kiến thức của người làm, không phải
 tham số của phần mềm — cùng một lối nghĩ với lời chốt *"máy không gom, người gom"* (2026-08-31).
 Muốn biết giá vốn một suất thì phải mở lại câu này (**B22** bên dưới).
+
+**Và Đ-3 mở ra một câu mới, đúng lúc nó được xác nhận.** Lời chủ quán ngày 2026-09-04 nói **có mục
+gì** (một mục tổng), **nhịp nào** (hàng ngày) và **ai nhập** (chủ quán, bằng tay) — nhưng không
+nói **nhập con số gì**. Đó là **U-034**, và nó chặn cả nhánh B dưới đây: ba đường ra *còn lại /
+mua vào / đã dùng* dẫn tới ba mục khác hẳn nhau, và đường *đã dùng* còn lật ngược chính mức sổ tay
+vừa chốt. Không suy hộ (`CLAUDE.md` §3.5).
 
 ---
 
@@ -83,7 +93,13 @@ Cột **L** là mức rủi ro `CLAUDE.md` §3 (L0 không giấy tờ → L3 ph�
 | ADM-03 | **Sức chứa & khách chờ bàn** | L1 | "khách vào khách ra" hiện chỉ có nửa *trong quán* |
 | ADM-04 | Màn **tổng quan buổi bán cho chủ quán**, khác màn POS của quầy | L1 | chủ quán không đứng quầy vẫn muốn liếc một cái |
 
-### Nhánh B — Nguyên liệu · mức **sổ ghi tay điện tử** (Đ-3)
+### Nhánh B — Nguyên liệu · mức **sổ ghi tay điện tử** (Đ-3, đã về owner 2026-09-04)
+
+⚠️ **Bốn trong sáu việc dưới đây đang chờ U-034** (mục tổng hàng ngày ghi con số gì): ADM-10,
+ADM-11, ADM-12, ADM-13 — cả bốn đều phải biết con số nền là gì trước khi có hình dạng. **ADM-14**
+(nối *hết nguyên liệu* với nút tạm dừng) và **ADM-15** (công nợ nhà cung cấp) **không** chờ nó.
+Mở task trước khi có lời giải là mở một task sẽ phải viết lại — đúng lý do §2 này chưa cái nào vào
+`work/backlog.md`.
 
 | # | Việc | L |
 |---|---|:--:|
@@ -131,13 +147,13 @@ Cột **L** là mức rủi ro `CLAUDE.md` §3 (L0 không giấy tờ → L3 ph�
 | ADM-50 | **Vết thao tác** — ai · lúc nào · sửa gì · giá trị cũ (chỗ thiếu `architecture.md` §8) | **L3** |
 | ADM-51 | Phân quyền màn quản trị: ai xem được lương, giá vốn, báo cáo | L2 |
 | ADM-52 | **Nhập bù sau khi mất điện** — quán bán bằng sổ giấy rồi nhập lại (`shop-facts.md` §6.11) | L2 |
-| ~~**ADM-53**~~ | ~~Sửa `docs/product.md` §1.4 + `architecture.md` §10 + `shop-facts.md` §7.1 để ghi bốn lời chốt ở §1~~ — **phần Đ-1 xong 2026-09-02 (T-040)**; còn lại **Đ-2** (thứ tự làm → `work/backlog.md`), **Đ-3** và **Đ-4** (mức sâu của mảng nguyên liệu và mảng con người → `shop-facts.md`, mục mới) | L1 |
+| ~~**ADM-53**~~ | ~~Sửa `docs/product.md` §1.4 + `architecture.md` §10 + `shop-facts.md` §7.1 để ghi bốn lời chốt ở §1~~ — **phần Đ-1 xong 2026-09-02 (T-040)**, **phần Đ-3 xong 2026-09-04 (T-050)** (`shop-facts.md` §8.4 + `01-ranh-gioi.md` §1.6); còn lại **Đ-2** (thứ tự làm → `work/backlog.md`) và **Đ-4** (mức sâu của mảng con người → `shop-facts.md` §8.5, mục mới) | L1 |
 
 ⇒ **Phần chặn nhất của ADM-53 đã xong**: BA-09 nay đọc được ranh giới đúng ở `docs/product.md`
 §1.4, nên nó không còn nguy cơ chốt "MVP gồm những gì" theo ranh giới cũ rồi phải viết lại lần hai.
-Phần còn lại của ADM-53 — Đ-2, Đ-3, Đ-4 — **chờ chủ quán xác nhận lại** đúng cách Đ-1 vừa được xác
-nhận; chưa xác nhận thì chưa chuyển, vì chuyển một lời chốt cũ mà chủ quán không nhắc lại là tự
-quyết thay chủ quán (`CLAUDE.md` §3.5).
+Phần còn lại của ADM-53 — **Đ-2 và Đ-4** — **chờ chủ quán xác nhận lại** đúng cách Đ-1 và Đ-3 đã
+được xác nhận; chưa xác nhận thì chưa chuyển, vì chuyển một lời chốt cũ mà chủ quán không nhắc lại
+là tự quyết thay chủ quán (`CLAUDE.md` §3.5).
 
 ---
 
@@ -203,7 +219,9 @@ Trả lời theo mã câu cho nhanh — *"A5: bàn nào món xong trước thì 
 > **Trả lời:**
 
 **B18.** Cuối buổi quán có **đếm lại đồ thừa** không? Đếm những thứ gì?
-> **Trả lời:**
+> **Trả lời (2026-09-04, một nửa):** có một **mục tổng nhập hàng ngày**, chủ quán tự nhập số liệu.
+> Vế *"đếm những thứ gì"* — và cả việc con số ấy có phải *đồ thừa* hay không — **chưa trả lời**:
+> đó là **U-034** (`docs/product/99-unknowns.md`). Ghi ở `master_plan/shop-facts.md` §8.4.
 
 **B19.** **Đồ thừa** hôm nay để mai bán tiếp hay bỏ? Thứ nào để được, thứ nào không?
 > **Trả lời:**
