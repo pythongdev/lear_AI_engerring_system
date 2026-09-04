@@ -38,6 +38,11 @@ nguyên liệu ở mức *sổ ghi tay điện tử* và kèm theo một mục n
 nhập** và **nhịp nào**, nhưng không nói **nhập con số gì**. Chỗ hở ấy không được lấp bằng suy luận
 vì một trong ba đường ra sẽ lật ngược chính lời chốt vừa nói.
 
+**Cùng ngày 2026-09-04, P1-02 mở U-035 trong lúc viết danh sách phụ thuộc ngoài của pha 1.** Nó
+không mở vì ai quên hỏi: lời chốt *"mất điện thì không dừng bán"* (§6.11) phủ đúng phần quán bán
+**tại chỗ**, còn ca **quán mù mà hệ thống vẫn sống** thì chưa luật nào chạm tới — và đó là ca mà
+khách vẫn đặt được.
+
 - **U-031 — với một đơn GIAO TẬN NƠI, ai bấm mốc *"đã ra bàn"* của từng việc trạm, và vào lúc
   nào?** Chủ quán chốt 2026-09-01 (U-021) rằng *người đứng quầy* bấm **cả hai** mốc của bảng bếp,
   nhưng câu hỏi lúc ấy **không nhắc tới ca đơn giao tận nơi**: lúc suất tới tay khách thì người
@@ -101,6 +106,29 @@ vì một trong ba đường ra sẽ lật ngược chính lời chốt vừa n�
   bảng trong máy): *"Cuối buổi hôm nay anh ngồi xuống nhập số vào máy. Anh nhập con số anh vừa đếm
   được trong kho, hay con số anh đã mua sáng nay ở chợ?"*
   *Mở 2026-09-04 · T-050 · `master_plan/shop-facts.md` §8.4.*
+
+- **U-035 — quán MẤT MẠNG giữa buổi trong khi hệ thống vẫn sống: khách vẫn đặt được trên web, quán
+  không nhìn thấy đơn nào. Quán muốn đơn ấy vẫn vào rồi làm bù khi có mạng lại, hay muốn web ngừng
+  nhận đơn cho tới lúc quán nhìn thấy được?** Chỗ này khác hẳn ca mất điện đã chốt: §6.11 (chủ quán
+  chốt 2026-09-02) nói quán chuyển sang **sổ giấy** và **không dừng bán** — luật ấy phủ đúng phần
+  quán **bán tại chỗ**, và nó phủ được vì người ở quán vẫn nhìn thấy khách. Ba kênh không gắn bàn
+  thì không: `delivery` và `pickup` là khách bấm trên web (`shop-facts.md` §2), nên khi quán mất
+  mạng mà máy chủ vẫn sống thì **đơn vẫn được tạo, chỉ không ai ở quán nhìn thấy nó**. Nút
+  *"Tạm dừng nhận đơn"* — thứ chủ quán vẫn dùng khi hết nguyên liệu (§6.8) — **không bấm được**
+  trong ca này, vì nó cũng nằm sau đúng đường mạng vừa mất. **Ai trả lời được:** chủ quán.
+  **Đang chặn:** dòng suy giảm của **PT-1** ở
+  `docs/product/1-system-design/01-ranh-gioi-he-thong.md` §3 chỉ viết được vế *quán bán bằng sổ
+  giấy*, vế *khách web* để trống; và **P1-08** (đường kéo dự phòng —
+  `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6) không chốt được nó phải bù cho ai. Hai
+  đường ra đều mất một thứ: cứ nhận thì **khách `pickup` tới đúng giờ hẹn mà quán chưa làm gì**
+  (giờ hẹn là dữ kiện đã chốt, `shop-facts.md` §5.2 điểm 5); ngừng nhận thì quán **mất doanh thu
+  của cả khoảng mất mạng** và mất nó một cách âm thầm. **Đừng suy hộ** (`CLAUDE.md` §3.5) — chỗ
+  này quyết một khách có được phục vụ hay không.
+  **Cách hỏi** (bài học S-4, `master_plan/shop-facts.md` §7.2 — hỏi về cái quán, đừng hỏi về cái
+  bảng trong máy): *"Sáng nay quán mất mạng nửa tiếng, nhưng khách ở nhà vẫn vào web đặt được và
+  hẹn 7h tới lấy. Anh muốn tới lúc có mạng lại thì quán thấy mấy đơn ấy và làm bù, hay muốn web nói
+  luôn với khách là lúc này quán không nhận đơn?"*
+  *Mở 2026-09-04 · P1-02 · `docs/product/1-system-design/01-ranh-gioi-he-thong.md` §2.*
 
 Câu tiếp theo vào đây dưới dạng một gạch đầu dòng, đúng hợp đồng dưới; mục này rỗng cũng là trạng
 thái bình thường, không phải dấu hiệu quên ghi.

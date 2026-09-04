@@ -14,8 +14,12 @@
 > và nó là **working state** giống `work/scope.txt`, không phải tài liệu xuất bản.
 >
 > **Mở:** 2026-09-02 · **theo yêu cầu của:** chủ quán · **trạng thái:** 4 câu đã chốt — **Đ-1 đã về owner
-> 2026-09-02 (T-040)**, **Đ-3 đã về owner 2026-09-04 (T-050)**, Đ-2/Đ-4 chưa — và **54 câu đang
-> chờ** (B18 đã trả lời một nửa)
+> 2026-09-02 (T-040)**, **Đ-3 đã về owner 2026-09-04 (T-050)**, Đ-2/Đ-4 chưa (việc đi hỏi:
+> **ADM-53**) — và **54 câu đang chờ** (B18 đã trả lời một nửa)
+>
+> **2026-09-04 — §2 đã chuyển đi.** Danh sách việc `ADM-01`…`ADM-53` nay ở **`work/backlog_AD.md`**
+> (T-052, `docs/decisions.md` **ADR-036**). File này còn giữ **§1** (bốn lời chốt) và **§3** (câu
+> hỏi + chỗ trả lời), và chỉ hai thứ đó.
 
 ---
 
@@ -44,10 +48,10 @@ không sở hữu sự thật nào.
 
 | # | Câu | Lời chốt | Phải về đâu |
 |---|---|---|---|
-| ~~Đ-1~~ | Có mở lại ranh giới hệ thống không? | **Mở cả ba** — nguyên liệu, con người, tài chính vào phạm vi | ✅ **đã về owner 2026-09-02 (T-040)**: `docs/product.md` §1.4 · `docs/architecture.md` §10 · `master_plan/shop-facts.md` §7.1 |
+| ~~Đ-1~~ | Có mở lại ranh giới hệ thống không? | **Mở cả ba** — nguyên liệu, con người, tài chính vào phạm vi | ✅ **đã về owner 2026-09-02 (T-040)**: `docs/product/0-ba/ban-hang/01-actors-pham-vi.md` §1.4 · `docs/product/1-system-design/architecture.md` §10 · `master_plan/shop-facts.md` §7.1 |
 | Đ-2 | Thứ tự làm | **Đóng nốt BA-08 → BA-12 trước**, rồi mới chạy nhánh admin | `work/backlog.md` |
 | ~~Đ-3~~ | Nguyên liệu làm ở mức nào | **Sổ ghi tay điện tử** — máy **không** tự trừ kho theo công thức; **kèm một mục tổng nhập hàng ngày, chủ quán tự nhập** (thêm 2026-09-04) | ✅ **đã về owner 2026-09-04 (T-050)**: `master_plan/shop-facts.md` §8.4 · `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6 · mở **U-034** |
-| Đ-4 | Con người làm tới đâu | **Cả ba mức**: ai đang trực trạm + chấm công + tính lương | `master_plan/shop-facts.md` **§8** · `docs/architecture.md` **§14** (mục admin, ADR-013) |
+| Đ-4 | Con người làm tới đâu | **Cả ba mức**: ai đang trực trạm + chấm công + tính lương | `master_plan/shop-facts.md` **§8** · `docs/product/1-system-design/architecture.md` **§14** (mục admin, ADR-013) |
 
 **Đ-1 lật ngược một câu đang nằm trong tài liệu — và câu ấy nay đã sửa (T-040, 2026-09-02).**
 `docs/product.md` §1.4 từng viết *"Không quản lý nguyên liệu, tồn kho, chấm công hay kế toán"*, và
@@ -69,91 +73,27 @@ vừa chốt. Không suy hộ (`CLAUDE.md` §3.5).
 
 ---
 
-## 2. Việc đề xuất cho mảng admin
+## 2. Việc đề xuất cho mảng admin → đã chuyển sang `work/backlog_AD.md`
 
-**Chưa cái nào nằm trong `work/backlog.md`.** Đợi câu trả lời ở §3 rồi mới mở task, vì một task mở
-sớm trước khi biết luật là một task sẽ phải viết lại.
+**Danh sách việc `ADM-01`…`ADM-53` không còn ở đây.** Nó chuyển sang **`work/backlog_AD.md`** ngày
+2026-09-04 (T-052, `docs/decisions.md` **ADR-036**), và ở đó mỗi việc có mô tả dài: vì sao có việc,
+không làm thì mất gì, câu hỏi nào đang chặn nó.
 
-Cột **L** là mức rủi ro `CLAUDE.md` §3 (L0 không giấy tờ → L3 phải review thiết kế trước khi viết mã).
+**Vì sao chuyển đi.** File này tự khai ở banner đầu trang rằng nó **sẽ bị xoá** khi mọi câu hỏi đã
+được chuyển về owner. Một danh sách việc sống trong một file có ngày hết hạn là một danh sách sẽ
+biến mất cùng file — và biến mất im lặng.
 
-### Nhánh 0 — chạy trước, đã nằm sẵn trong backlog
+**Cái ở lại đây là §1 và §3:** bốn lời đã chốt chưa về owner hết, và **năm mươi lăm câu hỏi cho chủ
+quán cùng chỗ chủ quán viết câu trả lời**. Đó là hai việc file này còn làm.
 
-| Việc | Trạng thái hôm nay |
+| Câu hỏi | Đọc ở |
 |---|---|
-| **T-039** — chủ quán trả lời U-021 → U-024 | đang dở trong cây, **chưa commit** |
-| **BA-08** ngoại lệ · **BA-09** phạm vi MVP · **BA-10** ADR · **BA-11** scenario · **BA-12** lát cắt sản xuất theo mẻ | Ready |
-| **T-035** brief bảo phiên mới xoá scope của phiên đang chạy (F-014) | Ready |
+| Việc `ADM-XX` nào có, vì sao có, chặn bởi câu nào | `work/backlog_AD.md` |
+| Việc nào đang *Ready* · *In Progress* · *Done* | `work/backlog.md` |
+| Câu hỏi cho chủ quán, và chỗ trả lời | **§3 dưới đây** |
 
-### Nhánh A — Điều hành một buổi bán (phần còn thiếu)
-
-| # | Việc | L | Vì sao cần |
-|---|---|:--:|---|
-| ADM-01 | **Ca bán / buổi bán** — tài liệu hiện **không có** khái niệm này | L2 | doanh thu tính theo *ngày*, đối soát theo *tối*, nhưng không ai mở/đóng ca ⇒ "cuối buổi" không có mốc bắt đầu |
-| ADM-02 | **Thứ tự ưu tiên bàn** — bàn nào bưng trước | L1 | chưa có ở đâu; hôm nay chỉ có luật hiển thị *"cũ nhất lên đầu"* |
-| ADM-03 | **Sức chứa & khách chờ bàn** | L1 | "khách vào khách ra" hiện chỉ có nửa *trong quán* |
-| ADM-04 | Màn **tổng quan buổi bán cho chủ quán**, khác màn POS của quầy | L1 | chủ quán không đứng quầy vẫn muốn liếc một cái |
-
-### Nhánh B — Nguyên liệu · mức **sổ ghi tay điện tử** (Đ-3, đã về owner 2026-09-04)
-
-⚠️ **Bốn trong sáu việc dưới đây đang chờ U-034** (mục tổng hàng ngày ghi con số gì): ADM-10,
-ADM-11, ADM-12, ADM-13 — cả bốn đều phải biết con số nền là gì trước khi có hình dạng. **ADM-14**
-(nối *hết nguyên liệu* với nút tạm dừng) và **ADM-15** (công nợ nhà cung cấp) **không** chờ nó.
-Mở task trước khi có lời giải là mở một task sẽ phải viết lại — đúng lý do §2 này chưa cái nào vào
-`work/backlog.md`.
-
-| # | Việc | L |
-|---|---|:--:|
-| ADM-10 | Danh mục nguyên liệu + đơn vị tính | L1 |
-| ADM-11 | **Phiếu nhập**: mua gì · bao nhiêu · giá · của ai · ai đi mua · trả liền hay ghi nợ | L2 |
-| ADM-12 | Ghi **xuất / hao hụt / huỷ** cuối buổi, người nhập bằng tay | L2 |
-| ADM-13 | Tồn **ước tính** + nhắc sắp hết — **chỉ nhắc, không chặn** (theo tiền lệ U-018) | L1 |
-| ADM-14 | Nối *"hết nguyên liệu"* với nút **tạm dừng nhận đơn** đã có (`shop-facts.md` §6.8) | L1 |
-| ADM-15 | **Công nợ nhà cung cấp** — nợ tiền hàng, khác hẳn nợ của khách (`architecture.md` §12) | L2 |
-
-### Nhánh C — Con người · **cả ba mức** (Đ-4)
-
-| # | Việc | L |
-|---|---|:--:|
-| ADM-20 | Hồ sơ nhân viên (tên, liên hệ, ngày vào, trạm làm được) | L1 |
-| ADM-21 | **Ai đang trực trạm nào, lúc này** — bịt chỗ thiếu `architecture.md` §8, mở khoá luật quyền gắn **CHỖ ĐỨNG** | **L2** |
-| ADM-22 | **Chấm công** giờ vào / giờ ra từng buổi | L2 |
-| ADM-23 | **Bảng lương**: đơn giá công · tạm ứng · kỳ trả · số phải trả | **L3** — chạm tiền |
-| ADM-24 | Quyền xem: lương chỉ chủ quán thấy | L2 |
-
-### Nhánh D — Sản phẩm
-
-| # | Việc | L |
-|---|---|:--:|
-| ADM-30 | Màn sửa **giá thành phần** + xem trước bốn suất thành bao nhiêu (`architecture.md` §6.1) | L2 |
-| ADM-31 | Bật / tắt bán một món (luật đã chốt `docs/product.md` §3.3.4) | L1 |
-| ADM-32 | Thêm món / nhóm tuỳ chọn mới — đụng ranh giới `shop-facts.md` §6.12 | L2 |
-| ADM-33 | Ảnh, mô tả, thứ tự hiển thị món trên menu QR | L1 |
-
-### Nhánh E — Tài chính
-
-| # | Việc | L |
-|---|---|:--:|
-| ADM-40 | Báo cáo **doanh thu ngày**, cộng từ hai nguồn (luật đã chốt `docs/product.md` §4.10) | L2 |
-| ADM-41 | Màn **đối soát cuối ngày**, ngưỡng lệch 0đ, **không có** nút "đóng ca dù lệch" | **L3** |
-| ADM-42 | **Sổ chi** — nguyên liệu, lương, điện nước, thuê nhà, chi vặt | L2 |
-| ADM-43 | **Lãi / lỗ** theo ngày và theo tháng | L2 |
-| ADM-44 | **Quỹ tiền mặt & két** — tiền đầu buổi, nộp về, rút ra | **L3** |
-| ADM-45 | Báo cáo bán chạy / giờ cao điểm | L1 |
-
-### Nhánh F — Nền dùng chung cho cả bốn nhánh trên
-
-| # | Việc | L |
-|---|---|:--:|
-| ADM-50 | **Vết thao tác** — ai · lúc nào · sửa gì · giá trị cũ (chỗ thiếu `architecture.md` §8) | **L3** |
-| ADM-51 | Phân quyền màn quản trị: ai xem được lương, giá vốn, báo cáo | L2 |
-| ADM-52 | **Nhập bù sau khi mất điện** — quán bán bằng sổ giấy rồi nhập lại (`shop-facts.md` §6.11) | L2 |
-| ~~**ADM-53**~~ | ~~Sửa `docs/product.md` §1.4 + `architecture.md` §10 + `shop-facts.md` §7.1 để ghi bốn lời chốt ở §1~~ — **phần Đ-1 xong 2026-09-02 (T-040)**, **phần Đ-3 xong 2026-09-04 (T-050)** (`shop-facts.md` §8.4 + `01-ranh-gioi.md` §1.6); còn lại **Đ-2** (thứ tự làm → `work/backlog.md`) và **Đ-4** (mức sâu của mảng con người → `shop-facts.md` §8.5, mục mới) | L1 |
-
-⇒ **Phần chặn nhất của ADM-53 đã xong**: BA-09 nay đọc được ranh giới đúng ở `docs/product.md`
-§1.4, nên nó không còn nguy cơ chốt "MVP gồm những gì" theo ranh giới cũ rồi phải viết lại lần hai.
-Phần còn lại của ADM-53 — **Đ-2 và Đ-4** — **chờ chủ quán xác nhận lại** đúng cách Đ-1 và Đ-3 đã
-được xác nhận; chưa xác nhận thì chưa chuyển, vì chuyển một lời chốt cũ mà chủ quán không nhắc lại
-là tự quyết thay chủ quán (`CLAUDE.md` §3.5).
+⚠️ **Trả lời một câu ở §3 thì đọc `work/backlog_AD.md` để biết lời ấy gỡ việc nào ra.** Bảng
+*Cổng của cả lane* ở đầu file đó nối từng mã câu (`A5`, `B21`, `C36`…) với những việc nó đang chặn.
 
 ---
 
@@ -277,7 +217,7 @@ Trả lời theo mã câu cho nhanh — *"A5: bàn nào món xong trước thì 
 **C35.** Nhân viên có được xem **công của chính mình** không?
 > **Trả lời:**
 
-**C36.** Người đứng quầy **đổi giữa buổi** (A đi ăn, B thay) — quán có muốn máy ghi lại mốc đổi ấy không? *(Câu này quyết định ADM-21, và nó đang chặn luật quyền huỷ đơn / hoàn tiền: hôm nay `docs/architecture.md` §4 nói quyền gắn **chỗ đứng** chứ không gắn chức vụ, nhưng không có dữ liệu nào ghi ai đang đứng đâu.)*
+**C36.** Người đứng quầy **đổi giữa buổi** (A đi ăn, B thay) — quán có muốn máy ghi lại mốc đổi ấy không? *(Câu này quyết định ADM-21, và nó đang chặn luật quyền huỷ đơn / hoàn tiền: hôm nay `docs/product/1-system-design/architecture.md` §4 nói quyền gắn **chỗ đứng** chứ không gắn chức vụ, nhưng không có dữ liệu nào ghi ai đang đứng đâu.)*
 > **Trả lời:**
 
 ### D. Sản phẩm
@@ -295,7 +235,7 @@ Trả lời theo mã câu cho nhanh — *"A5: bàn nào món xong trước thì 
 **D40.** Ai được đổi giá — **chỉ chủ quán**, hay người đứng quầy cũng được?
 > **Trả lời:**
 
-**D41.** Có bao giờ **bán giá khác cho khách quen**, hoặc giảm giá không? *(Hôm nay hệ thống **cấm** chuyện này: `docs/product.md` §4.2 nói giá do hệ thống xác định, khách và nhân viên không đặt được giá. Trả lời "có" là mở lại một luật đã chốt.)*
+**D41.** Có bao giờ **bán giá khác cho khách quen**, hoặc giảm giá không? *(Hôm nay hệ thống **cấm** chuyện này: `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.2 nói giá do hệ thống xác định, khách và nhân viên không đặt được giá. Trả lời "có" là mở lại một luật đã chốt.)*
 > **Trả lời:**
 
 **D42.** Có **combo**, **suất trẻ em**, hay **suất lớn / suất nhỏ** không?
@@ -354,13 +294,20 @@ Không có câu trả lời nào ở lại file này. Bảng đường đi (`CLA
 
 | Loại lời giải | Về owner nào |
 |---|---|
-| Dữ kiện về cái quán — giá, giờ, số người, cách làm | `master_plan/shop-facts.md` |
-| Luật nghiệp vụ, hành vi sản phẩm | `docs/product.md` |
-| Ranh giới hệ thống làm gì / không làm gì | `docs/product.md` §1.4 + `docs/architecture.md` §10 |
+| Dữ kiện về cái quán — giá, giờ, số người, cách làm | `master_plan/shop-facts.md` (mảng admin: **§8**) |
+| Luật nghiệp vụ, hành vi sản phẩm | `docs/product/0-ba/` — mảng admin vào `0-ba/admin/01-ranh-gioi.md` |
+| Ranh giới hệ thống làm gì / không làm gì | `docs/product/0-ba/admin/01-ranh-gioi.md` **§1.6** + `docs/product/1-system-design/architecture.md` **§14** |
 | Chọn giữa hai phương án đều chạy được | `docs/decisions.md` (ADR) |
 | Luật không bao giờ được vi phạm | `quality/invariants.md` |
-| Việc phải làm | `work/backlog.md` |
-| Câu hỏi hỏi rồi mà **vẫn chưa có lời giải** | `docs/product.md` → *Unknowns*, dạng `U-XXX` |
+| Việc phải làm | mô tả vào `work/backlog_AD.md`, trạng thái vào `work/backlog.md` |
+| Câu hỏi hỏi rồi mà **vẫn chưa có lời giải** | `docs/product/99-unknowns.md`, dạng `U-XXX` |
+
+⚠️ **Mười một đường dẫn chết đã sửa 2026-09-04 (T-052)** — đếm được hôm ấy, đếm lại nếu bạn nghi (`work/findings.md` **F-003**): **bốn** ở bảng ngay trên, **hai** ở bảng *mục admin* dưới, **ba** ở §1 (hàng Đ-1, hàng Đ-4) và **hai** ở §3 (câu `C36`, câu `D41`). Chúng trỏ về `docs/product.md` và
+`docs/architecture.md` — hai file nay là **bản lưu** và **đã dời**, sau khi `docs/product/` được cắt
+theo pha (`docs/decisions.md` **ADR-014**, năm lượt DOC-1…DOC-5, xong 2026-09-03). Một câu trả lời
+đi theo đường cũ sẽ được ghi vào bản lưu — nơi banner của chính nó viết *"Không sửa ở đây"*. File
+này nằm dưới `work/` nên Gate 1b không chấm đường dẫn của nó (`CLAUDE.md` §5); đó là lý do ba dòng
+ấy sống sót qua cả năm lượt chuyển pointer.
 
 **Và lời giải ấy vào MỤC RIÊNG của mảng admin, không chen vào mục của mảng bán hàng**
 (`docs/decisions.md` **ADR-013**, chủ repo yêu cầu 2026-09-02). Ba mục ấy đã có sẵn, cứ viết tiếp
@@ -368,8 +315,8 @@ vào đó:
 
 | Tài liệu | Mục admin | Giữ gì |
 |---|---|---|
-| `docs/product.md` | **§1.6** | ranh giới và luật nghiệp vụ của ba mảng |
-| `docs/architecture.md` | **§14** | mặt kiến trúc, và chỗ chạm với mảng bán hàng |
+| `docs/product/0-ba/admin/01-ranh-gioi.md` | **§1.6** | ranh giới và luật nghiệp vụ của ba mảng |
+| `docs/product/1-system-design/architecture.md` | **§14** | mặt kiến trúc, và bốn chỗ chạm với mảng bán hàng |
 | `master_plan/shop-facts.md` | **§8** | dữ kiện quán của ba mảng — §8.3 nói cách đánh số tiếp |
 
 Nhật ký chốt thì **không** tách: dòng ngày tháng vẫn vào `master_plan/shop-facts.md` §7.1 như mọi

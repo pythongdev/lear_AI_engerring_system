@@ -2221,3 +2221,141 @@ tầng bảo vệ của từng `I-0xx`)
 
 **Status:**
 Open
+
+---
+
+### F-027 — Hai trong năm phụ thuộc ngoài mà kế hoạch pha 1 kể tên chỉ tồn tại ở một BẢN XUẤT KHẨU
+
+**Problem:**
+`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6, bước **P1-02**, đặt đầu ra kiểm chứng được
+bằng đúng câu này: *"Mỗi phụ thuộc ngoài (Telegram · VietQR tĩnh · tin nhắn báo có · một VPS · sổ
+giấy) có đúng một dòng…"*. Đo lại 2026-09-04, lượt chạy P1-02:
+
+| Thứ kế hoạch kể tên | Có ở owner nào không |
+|---|---|
+| **VietQR tĩnh** | có — `master_plan/shop-facts.md` §1 · `docs/product/1-system-design/architecture.md` §7 |
+| **tin nhắn báo có** | có — `shop-facts.md` §6.10 (chủ quán chốt 2026-09-01) |
+| **sổ giấy** | có — `shop-facts.md` §6.11 (chủ quán chốt 2026-09-02) |
+| **Telegram** | **không** — `grep -rn 'Telegram' --include='*.md' docs/ master_plan/ quality/` chỉ ra `master_plan/prompt-fullstack.md` **§3.4** (stack đã chốt) và **§5** (lát cắt B), cộng chính dòng kế hoạch này. Không một dòng nào trong `docs/` hay `quality/` |
+| **một VPS** | **không** — `grep -rn -i 'VPS' docs/ master_plan/ quality/` chỉ ra `prompt-fullstack.md` **§6** (ràng buộc kiến trúc: *1 instance · không hàng đợi · không cache · tất cả trên 1 VPS*) và **§4** (một dòng múi giờ). Không một dòng nào trong `docs/` hay `quality/` |
+
+`master_plan/prompt-fullstack.md` là **bản xuất khẩu**, và ADR-035 (2026-09-04, P1-01) vừa chốt nó
+**không sở hữu thứ gì**: §3.4–§3.7 của nó là *đầu vào để pha 2–4 đối chiếu*, không phải đầu ra đã
+chốt, và pha 1 cũng **không được sửa hộ** nó.
+
+⇒ Pha 1 chỉ có hai đường, và cả hai đều sai: hoặc **chép tên từ bản xuất khẩu vào một file owner**
+— tức phong một câu chưa ai chốt lên thành dữ kiện kiến trúc — hoặc **bỏ hai phụ thuộc ấy đi**, tức
+viết một danh sách *phụ thuộc ngoài* thiếu đúng hai thứ mà cả hệ thống đang treo lên.
+
+Chỗ này rộng hơn P1-02. **P1-08** (§6: *chốt chiến lược realtime, đường kéo dự phòng, và dấu hiệu
+phải xem lại từng ràng buộc ẩn*) có **bốn** ràng buộc ẩn — *một instance · không hàng đợi · không
+cache · một VPS* — và **cả bốn** đều chỉ tồn tại ở cùng bản xuất khẩu ấy. Toàn bộ đầu vào của một
+bước pha 1 đang đứng trên một tài liệu tự khai không sở hữu gì.
+
+**Impact:**
+Không phải chuyện lễ nghi tài liệu — nó quyết định **cái gì được thi công**. Hai đường hỏng cụ thể:
+
+- **Bịa nhà cho một câu chưa ai chốt.** Ai đó viết *"hệ thống báo đơn về quầy qua Telegram"* vào
+  một file pha 1 thì từ hôm ấy nó là dữ kiện kiến trúc, và pha 3 dựng đường tích hợp theo nó mà
+  không ai từng hỏi chủ quán *"quán muốn nhận báo đơn ở đâu"*. Đây đúng hình của **F-023**: một
+  câu đứng trong tài liệu sai nhà, không cổng nào đỏ, cho tới lúc nó được thi công.
+- **Bỏ sót một phụ thuộc thật.** *Một chỗ chạy duy nhất* là ràng buộc **đắt nhất** của cả hệ thống
+  này: nó chết thì **cả năm kênh bán qua máy** chết cùng lúc, và hai kênh khách tự bấm mất hẳn —
+  không đơn nào để nhập bù, vì đơn ấy chưa từng tồn tại. Một danh sách *phụ thuộc ngoài* không kể
+  tên nó là danh sách nói *"mọi thứ luôn sống"* ở đúng chỗ nguy hiểm nhất.
+
+**Vì sao vòng rà trước không bắt:** cùng gốc với **F-023**, và lần này lộ ra ở chiều ngược lại.
+F-023 là *một ADR giao quyền sở hữu cho tài liệu không nhận*; F-027 là *một kế hoạch mượn nội dung
+từ tài liệu không cho*. ADR-035 đóng chiều thứ nhất ngày 2026-09-04 và **không** đóng chiều thứ
+hai: nó nói bản xuất khẩu không sở hữu gì, nhưng không nói **ai** sở hữu những câu đang nằm trong
+đó mà chưa có nhà nào khác. Không cổng nào của repo đọc được chuyện này — Gate 1b chấm đường dẫn
+mở được, không chấm *"câu này ở đúng nhà chưa"*.
+
+**Decision / Fix:**
+**Không sửa trong lượt phát hiện**, và **không tự phong nhà cho hai câu ấy** — chọn nhà là quyết
+định của **chủ repo** (`CLAUDE.md` §3.5 · §4).
+
+Việc P1-02 đã làm trong lượt này, để danh sách không thiếu mà cũng không bịa:
+`docs/product/1-system-design/01-ranh-gioi-he-thong.md` §2 ghi **cái quán dựa vào**, không ghi
+**tên của thứ đang đảm nhiệm nó** — **PT-2** là *"nơi hệ thống chạy — máy chủ và đường ra Internet
+của nó"* (không phải *"một VPS"*), **PT-5** là *"đường báo đơn web về quầy"* (không phải
+*"Telegram"*). Cả hai dòng đều mang một dấu ⚠️ trỏ về mã này. Cách viết ấy đứng được vì **sự tồn
+tại** của hai phụ thuộc thì có owner — hệ thống hỏng thì quán ghi giấy (`shop-facts.md` §6.11), và
+*hệ thống báo đơn mới về quầy* (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.2.1 bước 6) — chỉ
+**tên của cái đường** là chưa có.
+
+Ba đường đang thấy, ghi ra để lần quyết định không phải bắt đầu từ đầu:
+
+1. **Giao cho pha 5 (Deploy) và pha 3 (BE).** Hợp ADR-035 nhất — sở hữu chạy theo pha, và *cách
+   triển khai* với *đường tích hợp* là việc của hai pha ấy. Cái giá: **P1-08** phải chạy trước khi
+   nhà của bốn ràng buộc ẩn tồn tại, nên nó vẫn phải viết *dấu hiệu đo được* cho những thứ chưa ai
+   sở hữu.
+2. **Cho pha 1 nhận, như một phần của ranh giới hệ thống.** Rẻ nhất cho P1-08, và sai chiều với
+   ADR-035: pha 1 sẽ đang chốt cách triển khai.
+3. **Hỏi chủ quán trước** — *"quán muốn nhận báo đơn mới ở đâu"* là một câu về **cái quán**, hỏi
+   được theo đúng bài học S-4 (`master_plan/shop-facts.md` §7.2). Nó biến **PT-5** thành một dữ kiện
+   quán thật; nó **không** giải quyết **PT-2**, vốn là một câu kỹ thuật thuần tuý.
+
+Cho tới khi có quyết định: **prompt của P1-08 phải nhắc mã này ở mục *Unknowns*** khi nào nó được
+viết, và **ô cổng chất lượng §9** *"mỗi phụ thuộc ngoài có một đường suy giảm"* tick được — sáu
+phụ thuộc, sáu dòng — nhưng ô ấy **không** chứng minh rằng mỗi phụ thuộc đã có nhà.
+
+**Related task:**
+**P1-02** (lượt phát hiện, viết `01-ranh-gioi-he-thong.md`) · **P1-08** (bước chịu hậu quả nặng
+nhất: bốn ràng buộc ẩn cùng một gốc) · **T-048** (lượt viết kế hoạch pha 1, câu năm phụ thuộc) ·
+**F-023** (cùng gốc, chiều ngược lại) · `docs/decisions.md` **ADR-035** (bản xuất khẩu không sở hữu
+thứ gì) · **ADR-014**
+
+**Status:**
+Open
+
+---
+
+### F-028 — Một dãy mã được đọc thành một phép đếm, và con số ấy đã đứng trong một ADR hai ngày
+
+**Problem:**
+`docs/decisions.md` **ADR-013** (2026-09-02) viết trong mục *Why*: *"`work/admin-questions.md` §2
+đang chờ **52 việc** ADM"*. Đo lại 2026-09-04, lượt dựng `work/backlog_AD.md` (T-052): §2 có
+**hai mươi chín** việc, không phải năm mươi hai.
+
+Con số 52 đến từ chỗ khác: `ADM-53` là **mã lớn nhất**, và các mục khác của repo gọi lane này bằng
+**dãy** *"ADM-01…ADM-52"* — `docs/decisions.md` ADR-031 (bảng tổng hợp + thân mục), `work/backlog.md`
+entry T-040 và T-041. Dãy thì viết đúng cho ngày nó được viết; **ADR-013 đọc dãy ấy thành một phép
+đếm**, và mỗi nhánh của §2 cố ý bỏ trống một khoảng số (`ADM-05`…`ADM-09`, `ADM-16`…`ADM-19`,
+`ADM-25`…`ADM-29`, `ADM-34`…`ADM-39`, `ADM-46`…`ADM-49`) nên khoảng cách giữa mã lớn nhất và số
+việc thật là **hai mươi bốn**.
+
+Hai chỗ sai theo hai kiểu khác nhau, và chỉ một chỗ là bug:
+
+| Chỗ viết | Kiểu | Còn đúng không |
+|---|---|---|
+| ADR-031 · T-040 · T-041 — *"ADM-01…ADM-52"* | **dãy** | đúng cho 2026-09-02; **hết đủ** khi `ADM-53` ra đời cùng ngày |
+| ADR-013 — *"đang chờ 52 việc ADM"* | **phép đếm** | **sai** — số thật là 29 |
+
+**Why it matters:**
+Đây là họ lỗi **F-003** (*"đúng N" chỉ dùng khi N là quyết định, không phải phép đếm của người
+viết*) và **F-018** (*số đếm động bị dùng như một invariant*), lần thứ ba. Con số 52 không làm hỏng
+một phép tính nào hôm nay — nhưng nó là con số mà một phiên sau sẽ dùng để **xếp lịch**: *"52 việc"*
+và *"29 việc"* dẫn tới hai câu trả lời khác nhau cho *lane admin chạy song song pha 1 hay chờ pha
+1* — đúng câu mà `ADM-53` sắp hỏi chủ repo. Một con số phóng đại gần **gấp đôi** làm lane trông
+nặng hơn thực tế, và lane trông nặng thì bị hoãn.
+
+**Decision / Fix:**
+`work/backlog_AD.md` là owner mới của danh sách việc ADM (`docs/decisions.md` **ADR-036**), và mục
+*Mục lục* của nó ghi con số đo được **kèm ngày**, kèm câu mời đếm lại — đúng hình thức F-003 đòi.
+Hai chỗ còn lại **không** sửa trong lượt này, và đó là một lựa chọn có lý do:
+
+- **Thân ADR-013 và ADR-031 là lịch sử**, và **ADR-008** chốt lịch sử đã chia sẻ thì **sửa tiến**.
+  Một khối *SỬA ĐỔI* chỉ để chữa một phép đếm là ceremony (`CLAUDE.md` §3.8) — mục này là chỗ ghi.
+- **Cái phải sửa là thói quen, không phải con số:** một dãy mã (`X-01…X-nn`) **không bao giờ** được
+  đọc thành số phần tử khi dãy ấy có khoảng trống. Ai gặp lại hình dạng này thì đếm, đừng trừ.
+
+Chỗ **phải** sửa nếu ai đó viết lại: cụm *"ADM-01…ADM-52"* nay hụt mất `ADM-53`. Sửa nó thành
+*"ADM-01…ADM-53"* trong cùng lượt mà file ấy được sửa vì lý do khác — không mở task riêng.
+
+**Related task:**
+**T-052** (lượt phát hiện, dựng `work/backlog_AD.md`) · `docs/decisions.md` **ADR-013** · **ADR-031**
+· **ADR-036** · **F-003** (cùng gốc, bản gốc) · **F-018** (cùng gốc, lần thứ hai)
+
+**Status:**
+Open — vì cụm *"ADM-01…ADM-52"* vẫn còn ở bốn chỗ và chưa chỗ nào được sửa.
