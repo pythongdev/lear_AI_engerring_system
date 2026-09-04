@@ -52,6 +52,7 @@ có câu trả lời mới từ người.
 | ADR-033 | Pha 1 chạy theo **kế hoạch riêng** ở `master_plan/`, mã bước là **`P1-XX`**, đầu ra vào **file mới** cạnh `architecture.md` | Đã chốt 2026-09-03 | — | mở khoá **P1-01…P1-12** |
 | ADR-034 | Pha 1 có **sổ task riêng** `work/backlog_SD.md` giữ **mô tả**; `work/backlog.md` vẫn giữ **trạng thái** | Đã chốt 2026-09-04 | — | sửa một luật của **ADR-033** |
 | ADR-035 | Sở hữu chạy theo **pha**: lược đồ ở **pha 2**, hợp đồng API ở **pha 3**, route ở **pha 4**; **tầng bảo vệ** của từng invariant ở **pha 1** | Đã chốt 2026-09-04 | — | mở khoá **P1-02…P1-12**; sửa một câu của **ADR-014** |
+| ADR-036 | Mảng **admin** có sổ task riêng `work/backlog_AD.md` giữ **mô tả**; ranh giới giữa ba sổ nay là **LANE**, không phải pha | Đã chốt 2026-09-04 | — | sửa luật 3 của **ADR-034** |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -2032,6 +2033,18 @@ dòng, và không lúc nào đọc được *"pha này còn lại những gì"* 
   (`CLAUDE.md` §2), sổ task là việc đang chạy; gộp lại thì mỗi lần nhận việc phải sửa một file mà
   §2 xếp vào loại *domain material*, và bảng bước sẽ mọc lại cột *Trạng thái* mà ADR-033 vừa bỏ.
 
+**SỬA ĐỔI 2026-09-04 (T-052) — luật 3 đọc *pha*, và cái thứ hai cần sổ riêng lại không phải một pha**
+
+Luật 3 ở trên viết *"ranh giới giữa hai sổ là **pha**, không phải **độ dài**"*. Câu ấy đúng ở phần
+nó bác — độ dài không phải tiêu chí — và **hẹp** ở phần nó khẳng định: nó lấy *pha* làm trục vì lúc
+viết chỉ có một ứng viên. Mảng **admin** là ứng viên thứ hai, và nó **không** là một pha: nó là một
+**mảng nghiệp vụ** chạy ngang qua nhiều pha. Đọc luật 3 theo nghĩa đen thì hai mươi chín việc `ADM`
+phải viết vào `work/backlog.md` — đúng thứ lý do 1 của ADR này đã bác.
+
+**Từ nay đọc ở đâu:** **ADR-036** (cùng file, 2026-09-04). Trục là **lane**, và *pha 1* là một
+lane trong ba. Ba luật còn lại của ADR-034 — mô tả viết trước · trạng thái ở `work/backlog.md` ·
+entry ở lại sau khi xong — **không đổi**, và ADR-036 áp dụng lại cả ba nguyên văn.
+
 **Applies to:**
 `work/backlog_SD.md` (mới) · `work/backlog.md` (bảng mục lục + dòng *Ready* của P1-01 + khối chỉ
 đường thay cho entry P1-01 đã chuyển đi) · `CLAUDE.md` §2 hàng *Tasks* và cây thư mục ·
@@ -2137,6 +2150,96 @@ Kèm bốn luật, và không luật nào là hình thức:
 `docs/product/1-system-design/architecture.md` §8 · `master_plan/prompt-fullstack.md` banner ·
 `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §3 và §8 · `work/findings.md` **F-023** (Fixed)
 · mọi bước **P1-02…P1-12** · mọi việc của **pha 2–5**.
+
+---
+
+### ADR-036 — Mảng admin có sổ task riêng `work/backlog_AD.md`, và ranh giới giữa ba sổ nay là LANE chứ không phải pha
+
+**Trạng thái:** Đã chốt 2026-09-04 (T-052). Chủ repo yêu cầu trong phiên: *"hãy làm backlog_AD cho
+admin"*. Nó sửa **luật 3** của **ADR-034** (khối *SỬA ĐỔI 2026-09-04* ở mục ấy).
+
+**Vấn đề nó giải quyết.** Hai mươi chín việc `ADM-01`…`ADM-53` — ba mảng nguyên liệu · con người ·
+tài chính — sống trong `work/admin-questions.md` §2 dưới dạng **sáu cái bảng một dòng một việc**.
+File ấy tự khai *"không sở hữu sự thật nào"* và banner của nó nói nó **sẽ bị xoá** khi mọi câu hỏi
+đã chuyển đi. Nghĩa là danh sách việc của cả một mảng đang nằm trong một file có ngày hết hạn, ở độ
+sâu một dòng — không có *vì sao có việc này*, không có *không làm thì mất gì*, không có chỗ chặn.
+
+**Decision:**
+Bốn file, bốn việc:
+
+| File | Sở hữu | Không được giữ |
+|---|---|---|
+| `work/backlog.md` | **trạng thái** mọi task, kể cả `ADM-XX`: *Ready* · *In Progress* · *Done* | mô tả dài của `ADM-XX` |
+| `work/backlog_AD.md` | **mô tả** hai mươi chín việc của mảng admin | một dòng trạng thái nào; câu hỏi cho chủ quán; dữ kiện quán |
+| `work/admin-questions.md` | **câu hỏi** cho chủ quán và **chỗ chủ quán trả lời** (§3) | danh sách việc (§2 nay là một dòng chỉ đường) |
+| owner ở `CLAUDE.md` §2 | lời giải: dữ kiện quán · luật nghiệp vụ · quyết định | — |
+
+Kèm ba luật:
+
+1. **Trục là LANE, không phải pha.** Ba lane có sổ riêng tính tới hôm nay: **pha 1** ở
+   `work/backlog_SD.md` · **mảng admin** ở `work/backlog_AD.md` · **phần còn lại** ở
+   `work/backlog.md`. Một lane được tách sổ khi nó có **một dãy mã riêng** và **một chuỗi việc đọc
+   liền nhau**; hai điều kiện, và cả hai phải có.
+2. **Ba luật của ADR-034 áp dụng lại nguyên văn**: mô tả viết trước · trạng thái chỉ ở
+   `work/backlog.md` · việc xong thì entry ở lại kèm một dòng *Xong ngày…*.
+3. **Entry ở sổ admin viết tại tầng nghiệp vụ.** Không tên bảng · endpoint · route · component
+   (**ADR-035**). Chữ *"màn"* trong tên vài việc là tên gọi tắt của một **năng lực**, thừa kế từ
+   `work/admin-questions.md` §2; nó không phải một route.
+
+**Why:**
+
+*1 — vì sao không để danh sách ở `work/admin-questions.md` §2.* File ấy có **ngày hết hạn** ghi
+trong banner của chính nó. Một danh sách việc sống trong một file sẽ bị xoá là danh sách sẽ mất, và
+mất im lặng — đúng hình dạng **F-001**, chỉ khác chiều: ở F-001 bản chép trôi khỏi bản gốc, ở đây
+**bản gốc biến mất** và không còn bản nào.
+
+*2 — vì sao không đổ hai mươi chín entry vào `work/backlog.md`.* Lý lẽ của ADR-034 nguyên vẹn, chỉ
+đổi con số: file ấy đã **4.700+ dòng**, là file **mọi** phiên đều sửa, và **F-014** đã xảy ra năm
+lần trên đúng loại file dùng chung ấy. Hai mươi chín entry cộng thêm khoảng 900 dòng.
+
+*3 — vì sao trục là lane chứ không phải pha.* Mảng admin đi ngang **mọi** pha: nó có phần BA (luật
+nghiệp vụ), phần system design (hình dạng dữ liệu, quyền), rồi DB · BE · FE. Xếp nó vào một pha là
+xếp sai; để nó không có sổ vì nó không phải pha là để trục thắng nhu cầu. Trục **lane** phủ được cả
+hai ứng viên đang có, và nó cũng là trục mà `work/admin-questions.md` §2 và **ADR-013** đã dùng khi
+gọi tên *mảng*.
+
+*4 — cái đo được ngay khi dựng sổ.* Viết mô tả cho cả hai mươi chín việc lộ ra hai điều mà danh
+sách một dòng không thể lộ: **hai mươi ba việc bị chặn bởi câu hỏi chưa hỏi chủ quán**, và **năm
+việc không còn phần nghiệp vụ nào** — luật của chúng đã chốt sẵn ở mảng bán hàng, phần còn lại
+thuộc pha 2–4. Không có sổ thì cả hai con số ấy chỉ lộ ra vào lúc ai đó nhận nhầm một việc.
+
+**Rejected alternatives:**
+- *Viết mô tả thẳng vào `work/admin-questions.md` §2.* Bác — lý do 1 (file có ngày hết hạn), và nó
+  còn trộn hai việc khác nhau trong một file: chỗ **hỏi** và chỗ **giữ việc**.
+- *Không tạo sổ mới, đổ hai mươi chín entry vào `work/backlog.md`.* Bác — lý do 2.
+- *Tách theo **pha** cho mảng admin: phần BA vào một sổ, phần system design vào sổ khác.* Bác — nó
+  cắt một chuỗi việc đọc liền nhau thành nhiều mảnh, và người nhận việc phải ghép lại ở trong đầu.
+  Chỗ mảng admin chạm pha 1 được xử bằng **một bảng sáu hàng** ở đầu `work/backlog_AD.md`, không
+  bằng cách chia đôi sổ.
+- *Chờ chủ quán trả lời hết 54 câu rồi mới dựng sổ.* Bác, và đây là đường trông cẩn thận nhất mà
+  hỏng nặng nhất: **chính cái sổ** là thứ nói ra câu nào chặn việc nào. Không có nó thì 54 câu là
+  một danh sách phẳng, không ai biết hỏi câu nào trước.
+- *Cho `scripts/brief.sh` đọc cả ba sổ trong cùng lượt này.* Bác — cùng lý lẽ ADR-034 đã dùng:
+  brief là thứ mọi phiên mới đọc đầu tiên, sửa nó là **L2** có ca kiểm riêng
+  (`scripts/brief.test.sh`), gộp vào đây là trộn hai task. Cái giá của việc bác: một việc `ADM`
+  không có dòng ở `work/backlog.md` là một việc brief không thấy — nên luật 1 của ADR-034 (trạng
+  thái **chỉ** ở `work/backlog.md`) là thứ giữ cho cái giá ấy bằng không.
+
+**Rủi ro còn lại, ghi ra để phiên sau khỏi dò:**
+- **Ba sổ là ba chỗ phải nhớ.** Phiên mới đọc brief thấy trạng thái, nhưng phải biết mô tả nằm ở
+  sổ nào. Cái chấm là bảng mục lục đầu `work/backlog.md` và hai khối chỉ đường trong đó — không
+  cổng nào kiểm được chuyện này.
+- **Không cổng nào đọc được ranh giới lane.** Một entry `ADM` viết vào `work/backlog.md`, hay một
+  dòng trạng thái viết vào `work/backlog_AD.md`, đi qua cả năm cổng mà không cổng nào đỏ. Giống
+  hệt vùng mù mà **ADR-035** ghi cho ranh giới pha, và cách chấm cũng giống: mắt người.
+
+**Applies to:**
+`work/backlog_AD.md` (mới) · `work/backlog.md` (bảng mục lục + khối chỉ đường + dòng *Ready* của
+ADM-53) · `work/admin-questions.md` §2 · `CLAUDE.md` §2 hàng *Tasks* và cây thư mục · **ADR-034**
+(khối *SỬA ĐỔI 2026-09-04*) · **ADR-013** (mục riêng có nhãn — không đổi) · **ADR-031** (ba mảng đi
+sau bán hàng — không đổi) · **ADR-002** (brief đẩy trạng thái) · `work/findings.md` **F-001** ·
+**F-012** · **F-014** · **F-028**.
+
 ---
 
 <a id="ban-do"></a>

@@ -32,11 +32,14 @@ is a bug to fix now.
 | Architecture decisions (ADR) | `docs/decisions.md` |
 | Business invariants | `quality/invariants.md` |
 | Tầng bảo vệ của từng invariant + phép đối chiếu | `docs/product/1-system-design/` — pha 1, sinh ra ở P1-04…P1-06 (ADR-035) |
+| Phụ thuộc ngoài của hệ thống + đường suy giảm của từng cái | `docs/product/1-system-design/01-ranh-gioi-he-thong.md` — pha 1, sinh ra ở P1-02 |
 | Schema: tên bảng, tên cột, khoá ngoại | **chưa có owner** — sinh ra ở **pha 2**, cùng `docs/product/2-db/` (ADR-035) |
 | Hợp đồng API: endpoint, quyền theo vai, chữ ký | **chưa có owner** — sinh ra ở **pha 3**, cùng `docs/product/3-be/` (ADR-035) |
 | Route, component | **chưa có owner** — sinh ra ở **pha 4**, cùng `docs/product/4-fe/` (ADR-035) |
 | Tasks — trạng thái của **mọi** task (`Ready`/`In Progress`/`Done`) | `work/backlog.md` |
 | Tasks — mô tả dài của **pha 1**, `P1-01`…`P1-12` | `work/backlog_SD.md` |
+| Tasks — mô tả dài của **mảng admin**, `ADM-01`…`ADM-53` | `work/backlog_AD.md` |
+| Câu hỏi cho chủ quán về mảng admin, và chỗ chủ quán trả lời | `work/admin-questions.md` §3 |
 | Scope of the task in progress | `work/scope.txt` |
 | Recurring problems, lessons | `work/findings.md` |
 | How to write a prompt/task | `docs/prompt-guideline.md` |
@@ -81,7 +84,8 @@ docs/              product/ → 00-index.md, 0-ba/… (behavior), 1-system-desig
                    (architecture), 99-unknowns.md — all by phase;
                    decisions, prompt guideline
 work/              backlog.md (trạng thái mọi task), backlog_SD.md (mô tả pha 1),
-                   scope.txt, findings.md;
+                   backlog_AD.md (mô tả mảng admin), admin-questions.md (câu hỏi
+                   chủ quán), scope.txt, findings.md;
                    proposals/ — not adopted, owns nothing
 quality/           invariants.md, review-gate.md
 scripts/           gate.sh → check-scope.sh + check-links.sh

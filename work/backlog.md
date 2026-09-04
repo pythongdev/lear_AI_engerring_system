@@ -11,12 +11,15 @@ hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 | [In Progress](#in-progress) | task đang chạy |
 | [Done](#done) | việc đã xong |
 | [Chi tiết — việc cần làm](#chi-tiet-can-lam) | bảng mười câu hỏi §10 + mô tả dài T-019…T-047 (BA-05, BA-06, BA-08, **BA-09**, **BA-11**, **BA-12** và **BA-13** đã chuyển sang mục đã xong) |
-| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-051…T-002 |
+| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-052…T-002 |
 | [Vòng chạy một task L1](#vong-chay) | mười bước thủ tục từ nhận task tới khối commit |
 | [Task Detail Template](#template) | khuôn viết một task mới |
 
-**Pha 1 (System design) có sổ riêng: `work/backlog_SD.md`.** Mười hai bước `P1-01`…`P1-12` giữ mô
-tả ở đó; file này vẫn là nơi duy nhất giữ **trạng thái** của chúng (`docs/decisions.md` **ADR-034**).
+**Ba sổ, một chỗ giữ trạng thái.** Ranh giới giữa chúng là **lane** (`docs/decisions.md`
+**ADR-036**): pha 1 (`P1-01`…`P1-12`) giữ mô tả ở **`work/backlog_SD.md`** (**ADR-034**) · mảng
+admin (`ADM-01`…`ADM-53`) giữ mô tả ở **`work/backlog_AD.md`** · mọi thứ còn lại ở file này. Dù mô
+tả nằm ở sổ nào, **file này vẫn là nơi duy nhất giữ trạng thái** — đó là file `scripts/brief.sh`
+đọc và đẩy vào mọi phiên mới (**ADR-002**).
 
 Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
@@ -149,6 +152,7 @@ lại, khối *GIẢ ĐỊNH* biến mất, **I-014** sửa và **I-015** thêm.
 ⇒ Hệ quả đáng giữ nhất: **doanh thu một ngày đã đối soát không bao giờ đổi về sau.**
 ⇒ **BA-07, BA-08 và BA-10 hết chờ hai câu này**; đọc lời giải ở §4.6, §4.8–§4.10, đừng mở lại.
 
+- [ ] ADM-53 Hai lời chủ quán chốt 2026-09-01 — **Đ-2** (thứ tự làm) và **Đ-4** (mảng con người làm cả ba mức) — vẫn chỉ sống trong `work/admin-questions.md` §1, file tự khai sẽ bị xoá · **L1**, việc rẻ nhất và mở khoá nhiều nhất của lane admin: nó gỡ cả nhánh C và trả lời câu *lane admin chạy song song pha 1 hay chờ pha 1* · chi tiết: [ADM-53](#adm-53) → `work/backlog_AD.md`
 - [ ] T-047 `work/scope.txt` mang ba khối pattern ĐÃ COMMIT ⇒ Gate 3 chấm mọi task bằng scope của người khác (F-020) · **hết bị chặn 2026-09-03: chủ repo chốt đường 2** (bảy bước ở F-020 → *Decision / Fix*) · **L2** · chi tiết: [T-047](#t-047)
 - [ ] T-035 Brief bảo phiên mới XOÁ scope trong khi chủ thật đang chạy song song (F-014)
 
@@ -186,6 +190,8 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] T-052 **Mảng admin có sổ task riêng: `work/backlog_AD.md`** — hai mươi chín entry `ADM-01`…`ADM-53` — mỗi entry có dòng **mức · loại**, khối *Không làm thì mất gì*, một khối nói vì sao nó ở trạng thái ấy (*Chặn bởi* · *Luật đã ở đâu* · *Cách hoàn thành*) và dòng *Acceptance · Verify*, đo 29/29 — một bảng nối **54 câu hỏi đang mở** với việc chúng chặn, và một bảng **sáu chỗ lane này chạm pha 1** (P1-03 · P1-07 · P1-04 · P1-09). **ADR-036** chốt ranh giới giữa ba sổ nay là **LANE**, không phải pha — sửa luật 3 của **ADR-034** bằng một khối *SỬA ĐỔI*. Dựng sổ **lộ ra hai con số mà một danh sách một dòng không thể lộ**: **23/29 việc bị chặn** bởi câu chưa hỏi chủ quán, và **5 việc không còn phần nghiệp vụ nào** (ADM-30 · ADM-31 · ADM-40 · ADM-41 · ADM-50 — luật của chúng đã chốt sẵn ở mảng bán hàng, phần còn lại thuộc pha 2–4) ⇒ chỉ **một** việc vào *Ready*: **ADM-53**. `work/admin-questions.md` §2 thành chỗ chỉ đường và **mười một đường dẫn chết** trong đó hết trỏ về bản lưu — chúng sống sót qua cả năm lượt DOC-1…DOC-5 vì `work/` không bị Gate 1b chấm. **Mở F-028** — ADR-013 đọc dãy *"ADM-01…ADM-52"* thành phép đếm *"52 việc"*, số thật là **29**; lần thứ ba của họ lỗi **F-003** · **F-018**.
+- [x] P1-02 **Pha 1 nay kể tên những thứ NGOÀI hệ thống mà hệ thống đang dựa vào, và nói mất từng thứ thì quán làm gì** — `docs/product/1-system-design/01-ranh-gioi-he-thong.md` (file **mới**, bước 2/12, bản đồ file ở kế hoạch §5) + **một** dòng vào bảng *Pha 1* của `docs/product/00-index.md` trong cùng thay đổi. **Sáu phụ thuộc `PT-1`…`PT-6`, sáu dòng suy giảm**, mỗi dòng đủ ba vế *quán làm gì · ai bù · bù lúc nào*: **PT-1** điện·mạng·thiết bị POS tại quán · **PT-2** nơi hệ thống chạy · **PT-3** ngân hàng qua **VietQR tĩnh** · **PT-4** tin nhắn báo có · **PT-5** đường báo đơn web về quầy · **PT-6** sổ giấy. **Chỗ đáng giá nhất là chỗ tách PT-1 khỏi PT-2**: quán mất mạng thì hệ thống **vẫn sống**, nên **khách web vẫn đặt được** trong lúc quán mù, và nút *"Tạm dừng nhận đơn"* (`shop-facts.md` §6.8) cũng nằm sau đúng đường mạng vừa mất ⇒ **U-035** (mở trong lượt này, chặn vế *khách web* của PT-1 và chặn **P1-08**); hệ thống chết thì cả hai bên cùng mù và hai kênh khách tự bấm **mất hẳn** — không đơn nào để nhập bù vì đơn ấy chưa từng tồn tại. **Actor TRỎ về pha 0** (`01-actors-pham-vi.md` §1.2·§1.4·§1.5), không chép — mục chỉ dẫn lại đúng một câu §1.4 (*"không phải chỗ dựa duy nhất để bán hàng"*) vì cả mục dựng trên nó, cộng §1.1 (*POS là nơi duy nhất ghi*): hai câu ấy cho ra hình dạng của cả file — **một cái máy ở quầy đứng giữa quán và hệ thống**, nên mọi thứ ngoài kia chết thì chỗ hứng luôn là **người đứng quầy**. **Ba chỗ một đường suy giảm không được đi qua**, viết thẳng vào §3: không mở nút *"đóng ca dù lệch"* (ngưỡng 0đ — ADR-022) · không đánh mất vết (**I-012**, kể cả lượt nhập bù từ giấy) · không cộng gộp hai nguồn tiền để lấp một chỗ mất (**I-014** + §6.10 chia theo **phương thức**). **Mở F-027 — chỗ mà bước này KHÔNG tự quyết được:** kế hoạch §6 đặt đầu ra bằng **năm** phụ thuộc kể tên, mà **hai** trong năm (**Telegram** · **một VPS**) `grep` ra **không một dòng nào** ở `docs/`/`quality/` — chúng chỉ sống ở `master_plan/prompt-fullstack.md`, đúng tài liệu mà **ADR-035** vừa chốt là **không sở hữu thứ gì** ⇒ pha 1 chỉ có hai đường và cả hai đều sai (bịa nhà cho một câu chưa ai chốt, hoặc bỏ sót phụ thuộc đắt nhất). Đường đã đi: bảng §2 ghi **cái quán dựa vào**, không ghi **tên của thứ đang đảm nhiệm nó** — PT-2 là *"nơi hệ thống chạy"* chứ không phải *"một VPS"*, PT-5 là *"đường báo đơn web về quầy"* chứ không phải *"Telegram"*, cả hai mang một dấu ⚠️ trỏ về F-027. Chỗ này rộng hơn P1-02: **cả bốn ràng buộc ẩn của P1-08** (*một instance · không hàng đợi · không cache · một VPS*) đều đứng trên cùng bản xuất khẩu ấy. **Không chốt hộ `U-032`** — PT-6 viết *"quán ghi giấy, nhập bù khi máy sống lại"* rồi dừng; *doanh thu ngày nào* là câu của **P1-03**. **Không thiết kế một cơ chế nào** (retry · hàng đợi · cache · đồng bộ ngược — lệnh chưa lọc **172** dòng thêm, lệnh đã lọc còn **hai** dòng và cả hai là câu **từ chối**: *"Thử lại, hàng đợi, bộ nhớ đệm… là việc của P1-08"* và hàng *Pha 3 · pha 5* của §5 — một tài liệu **kể tên** một cơ chế để từ chối nó không phải là thiết kế nó, **F-018**; F-017), **không một tên bảng · cột · endpoint · route · component nào** (ADR-035), **không chép một dữ kiện quán nào** (ADR-001). **`CLAUDE.md` §2 thêm một hàng** cho owner mới — ngoài bốn dòng scope của prompt, nói ra chứ không sửa lén (§3.4): một owner mà §2 không kể là owner không ai tìm ra (§7.2). ⇒ **P1-08 hết bị P1-02 chặn**; ô thứ tư của cổng chất lượng §9 tick được, kèm câu F-027 rằng nó **không** chứng minh mỗi phụ thuộc đã có nhà. Gate xanh (2026-09-04)
 - [x] T-051 **Lane `prompt/SD/` nay có sáu file, không phải một.** Năm prompt L2 cho năm bước mà cột *Cần xong trước* chỉ còn những bước **đã `Done`** — **P1-02** (ranh giới hệ thống · phụ thuộc ngoài · đường suy giảm) · **P1-03** (nguồn thời gian và định nghĩa NGÀY BÁN) · **P1-05** (bảng ba cột nhóm VÒNG ĐỜI) · **P1-06** (bảng ba cột nhóm MENU·GIÁ·VẾT) · **P1-09** (bảng quầy bốn con số, con bug F-024) — cộng **`prompt/SD/README.md`** cho cả lane. **Phạm vi do chủ repo chốt trong phiên**, chọn giữa ba đường: viết cả mười một bước còn lại · viết năm bước đã đủ tiền đề · viết một bước kế tiếp. **Sáu bước còn lại cố ý KHÔNG viết** (P1-04, P1-07, P1-08, P1-10, P1-11, P1-12): tiền đề của chúng chưa tồn tại, và một *Constraints* viết trước đầu ra là câu chết (**F-013** · **F-017**). **Kế hoạch §6 sửa TIẾN** (ADR-008), vì câu cũ *"prompt viết lúc nhận việc"* nói ngược việc vừa làm: nó trộn **lúc nào được viết** với **cái gì đã biết**, và lý do thật là vế sau ⇒ luật nay đọc được là **viết được prompt của một bước khi mọi bước ở cột *Cần xong trước* của nó đã `Done`**; vế *bước còn tiền đề chưa xong thì vẫn không được viết trước* **không đổi**. **Mở F-026 — một chỗ chặn mà không cổng nào thấy:** `I-019` và `I-020` sinh ở BA-12 ngày 2026-09-03, **sau** khi kế hoạch §6 chia ba nhóm, nên **hai trong hai mươi mệnh đề không thuộc nhóm nào** của P1-04·P1-05·P1-06, và cổng chất lượng §9 vẫn đếm *"mười tám"* ⇒ **cổng ấy tick xanh được trong khi hai mệnh đề chưa có tầng giữ nào**. Cùng hình với **F-024**, khác chỗ che: ở F-024 là một **tên task đã chết**, ở đây là một **con số đã hết đúng**. **Không xếp nhóm hộ** — ba đường (gấp vào P1-05 · mở bước thứ mười ba nhóm SẢN XUẤT · gấp vào P1-07) ghi sẵn trong F-026, quyết định là của chủ repo. Cảnh báo ấy đi vào prompt P1-05, P1-06, `prompt/SD/README.md` và `work/backlog_SD.md` ngay dưới bảng *Chỗ đang chặn* — bốn chỗ, vì brief chỉ in **mã** finding chứ không in nội dung. **Luật riêng của lane, viết vào README vì Gate 1b chấm `prompt/SD/`** (P1-01 đã thêm nó vào `scripts/check-links.sh`): đường dẫn của một file **đầu ra chưa tồn tại** không được viết dạng `thư-mục/tên.md` — viết **tên trần** cạnh thư mục chứa nó, nếu không Gate 1b đỏ ngay khi prompt được `git add`. Năm dòng **Prompt:** ở `work/backlog_SD.md` hết nói *chưa có* (pointer sai là bug của cùng lượt — §7.2). **Không thi công pha 1**: không một dòng đặc tả nào vào `docs/product/1-system-design/`, `quality/invariants.md` và `master_plan/shop-facts.md` không đổi một chữ. Gate xanh (2026-09-04)
 - [x] P1-01 **Ranh giới sở hữu của pha 1 đã có một câu trả lời, và không tài liệu nào còn nói ngược nó.** **ADR-035** chốt sở hữu chạy theo **trục pha đã có** (bảng sáu pha `master_plan/prompt-fullstack.md` §7 — không dựng trục thứ hai): **lược đồ** → pha 2 · **hợp đồng API** → pha 3 · **route · component** → pha 4 · **tầng bảo vệ của từng `I-0xx` + phép đối chiếu** → **pha 1** (P1-04…P1-06) · **yêu cầu hình dạng dữ liệu** → pha 1 (P1-07); mệnh đề `I-0xx` thì owner không đổi (`quality/invariants.md`, `I-001`…`I-020`). Kèm bốn luật, trong đó hai luật là chỗ dễ hỏng nhất: **hàng *chưa có owner* đổi thành tên file thật trong CÙNG thay đổi mở thư mục của pha ấy** (không mở thư mục trước, không file giữ chỗ — ADR-014 khối *SỬA ĐỔI 2026-09-02* đã bác `00-chua-co-gi.md` một lần), và **`master_plan/prompt-fullstack.md` §3.4–§3.7 không sở hữu thứ gì** — đề xuất 16 bảng ở đó là **đầu vào để pha 2–4 đối chiếu**, không phải đầu ra đã chốt, nên pha 1 cũng **không được sửa hộ** nó (gặp chỗ thiếu ⇒ viết yêu cầu ở P1-07). **Bốn đường bị bác, đường nguy hiểm nhất là đường rẻ nhất:** ghi §3.5 là owner của lược đồ vì nó là chỗ duy nhất hôm nay **thật sự có** 16 bảng — bác vì nó là bản xuất khẩu tự khai *"không phải nhà của sự thật nào"*, viết **2026-08-31** trước hơn hai mươi lời chốt của chủ quán, và `architecture.md` §8 đã đo **sáu** chỗ nó chưa cất được (vết hoàn tiền · nợ · vết thao tác · ai đang trực · note *đem về* · đã phục vụ) ⇒ thi công nó là làm **đối soát ngưỡng 0đ** (ADR-022) không thực hiện được. Ba đường còn lại: đọc ADR-014 theo nghĩa đen (phải sửa **cả** §8 lẫn `00-index.md`, tức viết lại ranh giới pha 0–1 để đổi lấy một owner không ai xin) · mở sẵn ba thư mục pha 2–4 với file giữ chỗ · để lửng cho pha 2 tự quyết — **đường thứ tư chính là hiện trạng F-023**, đứng từ 2026-09-02 tới 2026-09-04 mà không cổng nào đỏ. **ADR-014 sửa TIẾN** (ADR-008): câu cũ ở lại **nguyên văn** — đo bằng phép đọc theo **khối** vì nó **gói dòng** giữa *"vẫn thuộc"* và đường dẫn, đúng chỗ mà một `grep` theo dòng trả 0 và trông y hệt *"câu đã bị xoá"* (**F-015**) — khối *SỬA ĐỔI 2026-09-04* nói nó sai ở đâu và **giữ lại phần vẫn đúng**: mục đích của câu ấy là chặn folder `docs/product/` thành owner thứ hai của kiến trúc (F-001), mục đích đứng nguyên, chỉ **cái đích** nó chỉ vào là sai. **`CLAUDE.md` §2 bốn hàng mới**, ba hàng ghi thẳng *chưa có owner — sinh ra ở pha N*: một hàng nói *chưa có* biến câu hỏi thành việc có lịch; một bảng im lặng biến nó thành chỗ trống ai đi qua cũng có quyền lấp. **Hai pointer nói ngược quyết định mới sửa trong CÙNG lượt** (§7.2): `architecture.md` §8 hết giao việc chốt lược đồ cho *"tầng System Design"* (nay pha 2 · DB; điều kiện BA-12 mà câu cũ đặt ra cũng **đã đủ từ 2026-09-04**), banner `prompt-fullstack.md` hết xếp **bất biến** vào loại *chưa có nhà*. Câu *"cố ý KHÔNG làm"* của §8 **ở lại** — nó đúng, và chỗ sai là câu **giao việc**, không phải câu **từ chối**. **Hai lệnh Verify của chính prompt này viết sai và bị chính nó bắt** — ghi ra vì đó là lần lặp thứ ba của cùng bài học: lệnh (2) lọc theo **dòng** một câu **gói dòng** (**F-015**) ⇒ báo 0 = *"đã xoá"*, sự thật là còn nguyên; lệnh (4) lọc cụm *"tầng System Design"* mà chính khối sửa đổi phải **nhắc lại** cụm ấy để kể được chỗ sai (**F-018**) ⇒ báo đỏ vì đúng cái việc vừa làm. Cả hai đã sửa trong file prompt, và bộ lọc tên bảng/endpoint/route in **cả lệnh chưa lọc** (**244** dòng thêm) cạnh lệnh đã lọc (**rỗng**) — một bộ lọc rỗng vì viết sai trông y hệt một bộ lọc rỗng vì không có lỗi (**F-017**). **Lane prompt mới `prompt/SD/`** (pha 1, một file một bước `P1-XX`) và **một dòng vào `scripts/check-links.sh`** để Gate 1b chấm nó — ngoài bốn dòng scope entry khai, nói ra chứ không sửa lén (§3.4): một lane prompt không nằm trong tập file Gate 1b chấm là một lane pointer không cổng nào chấm, đúng thứ **F-007** dựng gate này để bắt. **Rủi ro còn lại, ghi trong chính ADR-035:** ba hàng *chưa có owner* trỏ vào đường **chưa tồn tại** nên Gate 1b không chấm được chúng, và **không cổng nào của repo đọc được ranh giới pha** — một tên bảng viết vào file pha 1 đi qua cả năm cổng mà không cổng nào đỏ; phép rà duy nhất là **P1-12**, chạy một lần, cuối pha. **F-023 → Fixed**; §8 kế hoạch pha 1 gạch nó chứ không xoá. ⇒ **mười một bước còn lại của pha 1 hết bị P1-01 chặn.** Gate xanh toàn phần (2026-09-04)
 - [x] T-050 **Đ-3 về owner**: mảng nguyên liệu làm ở mức **sổ ghi tay điện tử** — `master_plan/shop-facts.md` **§8.4** (mới) + một dòng nhật ký §7.1, `docs/product/0-ba/admin/01-ranh-gioi.md` **§1.6** (hệ quả về hành vi). Chủ quán xác nhận lại lời chốt 2026-09-01 và **thêm một dữ kiện chưa ai hỏi**: *"có mục tổng lưu trữ hàng ngày tôi sẽ nhập số liệu"* ⇒ có **một mục tổng**, nhịp **hàng ngày**, người nhập là **chủ quán**, nhập **bằng tay**. **Chia đôi lời với suy luận (CLAUDE.md §7.2, F-004):** ba điều trên là lời chủ quán nói thẳng; *"số liệu"* ấy là con số **gì** thì **không** ai nói ⇒ **U-034**, không suy hộ — ba đường ra (*còn lại* / *mua vào* / *đã dùng*) là ba mục khác hẳn nhau, và đường **đã dùng** chỉ có được bằng cách trừ theo công thức, **đúng thứ lời chốt vừa nói là máy không làm**. **Hai pointer đã sai vì lời chốt này, sửa trong cùng lần** (`grep` ra bốn chỗ, hai chỗ sống): `shop-facts.md` §8.2 *"mức sâu của từng mảng chưa chốt ở đây"* và `01-ranh-gioi.md` §1.6 *"sâu tới đâu… chưa được ghi vào owner nào"* — cả hai nay đọc cho **mảng con người và mảng tài chính**, không đọc cho mảng nguyên liệu; hai chỗ còn lại nằm ở bản lưu `docs/product.md` nên **không** sửa (banner *"Không sửa ở đây"*). **Không mở ADR** — đây là lời chủ quán, không phải lựa chọn giữa hai thiết kế khả thi (CLAUDE.md §4); **không** chạm `docs/product/1-system-design/architecture.md` §14 (mục ấy nói *chưa có thiết kế nào*, và §8.4 chốt mức sâu chứ không dựng thiết kế) và **không** chạm `quality/invariants.md` (chưa có mã để hồi quy). `work/admin-questions.md`: Đ-3 gạch khỏi bảng §1, nhánh B mang cảnh báo *chờ U-034*, **B18 ghi là đã trả lời một nửa** — có mục tổng, còn *đếm những thứ gì* thì chưa. Gate xanh (2026-09-04)
@@ -283,6 +289,25 @@ có bước, hỏng thì mất gì, chạy mười bước thế nào) · `maste
 
 **Chỉ bước nào nhận được ngay mới có dòng ở *Ready*.** Mười hai dòng đổ vào đó đẩy bảy dòng ra
 khỏi tầm nhìn của mọi phiên mới — `brief.sh` cắt *Ready* ở sáu mục (**F-012**).
+
+[↑ đầu file](#top)
+
+<a id="adm-53"></a>
+### Hai mươi chín việc của mảng admin — mô tả dài ở `work/backlog_AD.md`
+
+**`ADM-01`…`ADM-53` không có mô tả ở file này.** Chúng nằm ở **`work/backlog_AD.md`** — sổ task
+riêng của mảng admin, dựng 2026-09-04 (T-052, `docs/decisions.md` **ADR-036**). Neo `#adm-53` giữ
+ở đây vì dòng *Ready* của ADM-53 trỏ qua nó; đọc entry thật ở file kia.
+
+**Chia việc giữa bốn file, một câu:** file này giữ **trạng thái** · `work/backlog_AD.md` giữ **mô
+tả** (vì sao có việc, hỏng thì mất gì, chặn bởi câu hỏi nào) · `work/admin-questions.md` §3 giữ
+**câu hỏi cho chủ quán và chỗ chủ quán trả lời** · lời giải đi về **owner** ở `CLAUDE.md` §2, vào
+mục riêng có nhãn của mảng admin (**ADR-013**). Bốn chỗ, bốn việc, không chỗ nào chép chỗ nào
+(`work/findings.md` **F-001**).
+
+**Chỉ một việc có dòng ở *Ready*: ADM-53.** Hai mươi ba việc còn lại chờ câu trả lời của chủ quán
+(54 câu đang mở), và năm việc đã đủ luật từ trước — phần còn lại của chúng thuộc pha 2–4, không
+thuộc lane này. Ba loại ấy đọc ở mục *Cổng của cả lane* đầu `work/backlog_AD.md`.
 
 [↑ đầu file](#top)
 
@@ -737,6 +762,77 @@ git status --porcelain
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+<a id="t-052"></a>
+### T-052 — Hai mươi chín việc của cả một mảng sống ở độ sâu MỘT DÒNG, trong một file tự khai là sẽ bị xoá
+
+**Xong 2026-09-04.** **L2** · yêu cầu của chủ repo trong phiên: *"hãy làm backlog_AD cho admin"*.
+Đầu ra: `work/backlog_AD.md` (mới, 29 entry) · `docs/decisions.md` **ADR-036** + một hàng bảng tổng
+hợp + khối *SỬA ĐỔI* của **ADR-034** · `CLAUDE.md` §2 hai hàng mới + cây thư mục ·
+`work/admin-questions.md` §2 và §4 · `work/findings.md` **F-028** · file này (mục lục, khối chỉ
+đường, dòng *Ready* của ADM-53).
+
+**Vì sao có task này.** `work/admin-questions.md` §2 giữ danh sách việc `ADM-01`…`ADM-53` dưới dạng
+sáu cái bảng **một dòng một việc** — không có *vì sao có việc*, không có *không làm thì mất gì*,
+không có chỗ chặn. Và banner của chính file ấy nói nó **sẽ bị xoá** khi mọi câu hỏi đã chuyển về
+owner. Danh sách việc của cả một mảng đang nằm trong một file có ngày hết hạn.
+
+**Ranh giới giữa các sổ đổi trục, và đó là quyết định của lượt này.** **ADR-034** (2026-09-04,
+T-049) viết luật 3: *"ranh giới giữa hai sổ là **pha**, không phải **độ dài**"*. Mảng admin **không**
+là một pha — nó đi ngang mọi pha. Đọc luật 3 theo nghĩa đen thì 29 entry phải vào file này, đúng
+thứ lý do 1 của ADR-034 đã bác. **ADR-036** đổi trục sang **lane** và giữ nguyên ba luật còn lại
+của ADR-034; ADR-034 nhận một khối *SỬA ĐỔI* thay vì bị viết lại (**ADR-008**).
+
+**Việc dựng sổ đo được hai thứ mà danh sách một dòng không đo được:**
+
+| Loại | Đếm | Nghĩa là gì |
+|---|:--:|---|
+| **1 — thiếu LUẬT** | 23 | phải hỏi chủ quán trước; không phiên nào được suy hộ (§3.5) |
+| **2 — luật ĐÃ ĐỦ, thiếu THI CÔNG** | 5 | ADM-30 · ADM-31 · ADM-40 · ADM-41 · ADM-50 — luật đã chốt ở mảng bán hàng, phần còn lại thuộc pha 2–4, **không** thuộc lane này |
+| **3 — việc của chính lane** | 1 | **ADM-53** |
+
+Loại 2 là chỗ dễ hỏng nhất: entry của chúng nằm trong sổ trông như việc chưa làm, và phiên nhận
+chúng sẽ **viết lại** một luật đã có owner — bản thứ hai (**F-001**), lần này còn kèm vi phạm
+**ADR-013** theo chiều ngược (nội dung bán hàng chảy vào mục admin). Nên entry của chúng không có
+mục *Cách hoàn thành*; nó có mục *Luật đã ở đâu, còn thiếu gì*.
+
+**Bảng sáu chỗ chạm pha 1 là phần đắt nhất của file mới.** Pha 1 đang chạy song song, và sáu chỗ —
+`P1-03` (một ngày bán · `U-032`), `P1-07` (hình dạng *ai đang trực trạm* · vết thao tác), `P1-04`
+(invariant nhóm TIỀN), `P1-09` (bảng quầy) — là nơi hai lane viết về **cùng một thứ**. Ở mỗi chỗ
+pha 1 đi trước. Không cổng nào của repo đọc được ranh giới này, giống hệt vùng mù mà **ADR-035**
+ghi cho ranh giới pha.
+
+**Câu có đòn bẩy lớn nhất, đo trong lượt này: `C36`.** *Người đứng quầy đổi giữa buổi thì máy có
+ghi lại mốc đổi ấy không.* Một câu, và nó gỡ **ADM-21** + vế *ai* của **ADM-50**; không có nó thì
+`architecture.md` §4 (*quyền gắn chỗ đứng, không gắn chức vụ*, **ADR-016**) không có dữ kiện nào để
+đứng, và pha 2–4 buộc phải gán quyền theo chức vụ — tức thi công ngược một quyết định đã chốt.
+
+**Hai chỗ mở rộng có chủ ý, nói ra chứ không sửa lén (§3.4):**
+- `work/admin-questions.md` **§1 · §3 · §4** — **mười một** đường dẫn còn trỏ `docs/product.md` và
+  `docs/architecture.md`, hai file nay là **bản lưu**. Chúng sống sót qua cả năm lượt DOC-1…DOC-5
+  vì `work/` không bị Gate 1b chấm (`CLAUDE.md` §5). Để nguyên là vừa dựng §2 thành chỗ chỉ đường,
+  vừa để §4 chỉ tới cái hố. Ba đường dẫn ở §1 mô tả **lịch sử** (*"§1.4 từng viết…"*) thì **giữ
+  nguyên** — chúng đúng cho ngày chúng nói tới.
+- `work/findings.md` **F-028** — không nằm trong bốn dòng khai đầu; mở vì phép đếm 29 chỉ đo được
+  khi dựng sổ.
+
+**Phiên song song trong cùng cây: P1-02.** Nó chạy giữa lượt này và chạm bốn file dùng chung —
+`work/backlog.md`, `CLAUDE.md` §2, `work/findings.md`, `work/scope.txt`. Hai bên đã tránh số:
+P1-02 giữ **F-027**, T-052 lấy **F-028** (đúng ca đụng số U-028/T-040 ngày 2026-09-02, entry T-042).
+Khối commit của T-052 **không** nhặt file của P1-02 (**F-025**).
+
+**Acceptance · Verify:** không có file prompt — task đến thẳng từ yêu cầu của chủ repo trong phiên.
+Bốn câu nghiệm thu, cả bốn đo bằng lệnh và cả bốn đã chạy trong lượt này:
+
+| Nghiệm thu | Đo bằng | Kết quả |
+|---|---|---|
+| `work/backlog_AD.md` có đúng **29** entry | `grep -c 'a id="adm-'` | **29** |
+| mỗi entry có khối *Không làm thì mất gì* **và** dòng *Acceptance · Verify* | script tách theo neo, kiểm từng entry | **29/29** |
+| mỗi entry có một khối nói vì sao nó ở trạng thái ấy — *Chặn bởi* · *Luật đã ở đâu* · *Cách hoàn thành* | cùng script | **29/29** |
+| không một `endpoint` · `component` · `khoá ngoại` · `/api/` nào ngoài chính câu luật cấm chúng (**ADR-035**) | `grep -nioE` | chỉ **2** dòng, cả hai nằm trong luật 5 đầu file |
+| bốn cổng | `./scripts/gate.sh` | xanh |
+
+[↑ đầu file](#top)
+
 <a id="t-051"></a>
 ### T-051 — Lane `prompt/SD/` có ĐÚNG MỘT file, trong khi năm bước đã đủ tiền đề vẫn ghi "chưa có prompt"
 
