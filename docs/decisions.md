@@ -50,6 +50,8 @@ có câu trả lời mới từ người.
 | ADR-031 | Ba mảng quản trị **được phép**, nhưng đi **sau** bán hàng | Đã chốt 2026-09-02 | — | mốc xếp lịch cho ADM-01…ADM-52 |
 | ADR-032 | Cổng *một mã, hai chỗ, hai trạng thái* chạy **ở mọi lượt** (Gate 1c), không nằm trong `verify.sh` | Đã chốt 2026-09-03 | — | — |
 | ADR-033 | Pha 1 chạy theo **kế hoạch riêng** ở `master_plan/`, mã bước là **`P1-XX`**, đầu ra vào **file mới** cạnh `architecture.md` | Đã chốt 2026-09-03 | — | mở khoá **P1-01…P1-12** |
+| ADR-034 | Pha 1 có **sổ task riêng** `work/backlog_SD.md` giữ **mô tả**; `work/backlog.md` vẫn giữ **trạng thái** | Đã chốt 2026-09-04 | — | sửa một luật của **ADR-033** |
+| ADR-035 | Sở hữu chạy theo **pha**: lược đồ ở **pha 2**, hợp đồng API ở **pha 3**, route ở **pha 4**; **tầng bảo vệ** của từng invariant ở **pha 1** | Đã chốt 2026-09-04 | — | mở khoá **P1-02…P1-12**; sửa một câu của **ADR-014** |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -1183,6 +1185,33 @@ nên gate xanh ngay sau khi revert mà không phải dọn tay. Đây chính là
 `/`, nên dòng `docs/product/1-system-design/` trong `scripts/brief.sh` và mọi câu trỏ thư mục là
 vùng mù — bằng chứng duy nhất cho chúng là **chạy thử**, đã chạy trong lượt này.
 
+**SỬA ĐỔI 2026-09-04 (P1-01) — câu giao "tên bảng · tên cột · khoá ngoại · API · route" cho hai tài liệu đã SAI; từ nay ADR-035 giữ câu ấy**
+
+Câu trong mục *Decision* ở trên viết: *"Tên bảng, tên cột, khoá ngoại, API, route **vẫn thuộc**
+`docs/product/1-system-design/architecture.md` và `master_plan/prompt-fullstack.md` §3.4–§3.7
+(CLAUDE.md §2 không đổi một dòng nào)."* Câu ấy **ở lại nguyên văn** — sửa **tiến**, không viết lại
+lịch sử (**ADR-008**) — và đây là chỗ nói nó sai ở đâu.
+
+**Nó sai ở hai chỗ, đo 2026-09-03** (`work/findings.md` **F-023**):
+
+| Nơi ADR này giao việc | Chính nó viết gì |
+|---|---|
+| `docs/product/1-system-design/architecture.md` | §8, câu cuối: *"Điều tài liệu này **cố ý KHÔNG làm**: không đặt tên bảng, không đặt tên cột, không vẽ khoá ngoại"* |
+| `master_plan/prompt-fullstack.md` | banner đầu file: *"Schema · API · route · bất biến **CHƯA có nhà** — đừng đi tìm"* |
+
+Và vế trong ngoặc — *"CLAUDE.md §2 không đổi một dòng nào"* — đúng theo nghĩa đen nhưng **dẫn
+sai**: bảng §2 lúc ấy không có hàng nào cho ba thứ đó, nên câu này đọc thành *"§2 đã có câu trả
+lời rồi"* trong khi §2 im lặng.
+
+**Phần vẫn đúng, và là lý do câu ấy được viết ra:** mục đích của nó là chặn folder `docs/product/`
+mới thành **owner thứ hai của kiến trúc** (F-001). Mục đích ấy đứng nguyên; chỉ **cái đích** nó
+chỉ vào là sai. Bốn file `db/` `be/` `fe/` `system-design/` vẫn giữ *yêu cầu sản phẩm cho tầng đó,
+không giữ thiết kế* — đúng như thân mục viết.
+
+**Từ nay đọc ở đâu:** **ADR-035** (cùng file, 2026-09-04) — lược đồ là **pha 2**, hợp đồng API là
+**pha 3**, route là **pha 4**, và *tầng bảo vệ* của từng invariant là **pha 1**; `CLAUDE.md` §2 có
+bốn hàng cho chúng, ba hàng ghi thẳng *chưa có owner, sinh ra ở pha N*.
+
 ---
 
 ## Quyết định NGHIỆP VỤ — BA-10
@@ -1882,6 +1911,8 @@ Kèm hai luật cho bảng bước, vì chúng là chỗ kế hoạch pha 0 đã
 
 - **Bảng bước KHÔNG có cột *Trạng thái*.** Owner của *Tasks* là `work/backlog.md` (`CLAUDE.md` §2).
 - **Mười hai bước KHÔNG đổ vào *Ready* cùng lúc**; mỗi bước tạo entry lúc nhận việc.
+  *(Vế **entry** đã đổi 2026-09-04 — xem khối **SỬA ĐỔI** cuối mục này. Vế ***Ready*** thì không
+  đổi một chữ nào, và nó mới là vế mang lý do.)*
 
 **Why:**
 
@@ -1933,6 +1964,179 @@ vô hình (**F-012**).
 ADR-012 · ADR-013 (số mục §12, §14 bị ghim) · `docs/product/1-system-design/architecture.md` (chỉ
 sửa tại chỗ, không đánh số lại).
 
+**SỬA ĐỔI 2026-09-04 — mô tả của cả mười hai bước được viết TRƯỚC, ở một file riêng (ADR-034)**
+
+Luật thứ hai ở trên gộp hai thứ vào một câu: *mô tả* và *dòng trạng thái*. Chủ repo yêu cầu
+2026-09-04 một sổ task riêng cho pha 1, và lượt T-049 tách hai thứ ấy ra:
+
+- **Mô tả** cả mười hai bước viết **trước**, ở `work/backlog_SD.md`.
+- **Dòng trạng thái** vẫn chỉ tạo lúc nhận việc, vẫn ở `work/backlog.md` → *Ready*.
+
+Lý do của luật cũ **không mất**: thứ phải giữ là danh sách *Ready* mà `scripts/brief.sh` in ra, và
+nó vẫn được giữ nguyên. Chi tiết ở **ADR-034**.
+
+---
+
+### ADR-034 — Pha 1 có sổ task riêng `work/backlog_SD.md`, và nó giữ MÔ TẢ trong khi `work/backlog.md` giữ TRẠNG THÁI
+
+**Trạng thái:** Đã chốt 2026-09-04 (T-049). Chủ repo yêu cầu trong phiên: *"make me a backlog_SD
+file for design system based on at least master plan design system and
+`docs/product/1-system-design/architecture.md` and other as well"*.
+
+**Decision:**
+Ba câu, và ranh giới giữa chúng là thứ quyết định file nào được sửa khi có việc mới:
+
+| File | Sở hữu | Không được giữ |
+|---|---|---|
+| `work/backlog.md` | **trạng thái** mọi task, kể cả `P1-XX`: *Ready* · *In Progress* · *Done* | mô tả dài của `P1-XX` |
+| `work/backlog_SD.md` | **mô tả** mười hai bước pha 1: vì sao có bước, hỏng thì mất gì, mười bước chạy thế nào, bẫy | một dòng trạng thái nào |
+| `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6 | **thứ tự · mức · đầu ra kiểm chứng được** | mô tả và trạng thái |
+
+Kèm ba luật:
+
+1. **Mô tả cả mười hai viết trước; dòng trạng thái chỉ tạo lúc nhận việc.** Đây là chỗ sửa vế
+   *entry* của ADR-033 (khối *SỬA ĐỔI 2026-09-04* ở mục ấy).
+2. **Bước xong thì entry ở lại `work/backlog_SD.md`** kèm một dòng *Xong ngày…*; dòng `- [x]` đi
+   vào `work/backlog.md` → *Done*. Không có mục *đã xong* riêng ở sổ pha 1.
+3. **Ranh giới giữa hai sổ là *pha*, không phải *độ dài*.** Task không thuộc pha 1 vẫn viết đủ ở
+   `work/backlog.md`.
+
+**Why:**
+
+*1 — vì sao KHÔNG viết mười hai entry vào `work/backlog.md`.* File ấy đã **4.600+ dòng**, và mười
+hai entry của pha 1 sẽ cộng thêm khoảng 800. Nặng hơn con số: nó là file mà **mọi** phiên đều sửa,
+và `work/findings.md` **F-014** đã xảy ra **năm** lần trên đúng loại file dùng chung như thế — riêng
+trong hai ngày 2026-09-03 và 2026-09-04, ba phiên (T-048, BA-12, T-049) cùng chạm nó.
+
+*2 — vì sao KHÔNG để trạng thái ở file mới.* `scripts/brief.sh` đọc `work/backlog.md` để in
+*Ready* · *In Progress* vào **mọi** phiên mới (**ADR-002**). Một dòng trạng thái viết ở
+`work/backlog_SD.md` là một dòng **không phiên nào thấy** — đúng họ lỗi **F-012**, nơi một mục nằm
+ngoài tầm brief trở thành vô hình kể từ dòng đầu tiên nó được viết ra. Sửa `brief.sh` để đọc thêm
+một file là một task khác, có ca kiểm riêng; ADR này **không** làm việc đó.
+
+*3 — vì sao viết trước cả mười hai, ngược với ADR-033.* Lý do gốc của luật cũ là **danh sách
+*Ready* bị cắt ở sáu mục**, không phải chỗ cất mô tả. Tách hai thứ ra thì giữ được cả hai: brief
+vẫn chỉ thấy những bước nhận được ngay, còn người đọc thấy hết đường đi của pha trong một file. Cái
+được thêm là thứ pha 0 không có: BA chạy mười ngày với mười ba entry nằm rải trong một file 4.600
+dòng, và không lúc nào đọc được *"pha này còn lại những gì"* trong một lần.
+
+**Rejected alternatives:**
+- *Để `work/backlog_SD.md` giữ luôn trạng thái.* Bác — brief mù với nó (lý do 2). Đây là phương án
+  trông gọn nhất và hỏng nặng nhất.
+- *Không tạo file mới, viết mười hai entry vào `work/backlog.md`.* Bác — lý do 1, và nó cũng làm
+  bảng mục lục đầu file ấy phải kể thêm một dãy mã của một pha khác.
+- *Đổi `scripts/brief.sh` cho đọc cả hai sổ trong cùng lượt này.* Bác — brief là thứ mọi phiên mới
+  đọc đầu tiên; sửa nó là **L2** có ca kiểm riêng (`scripts/brief.test.sh`), gộp vào đây là trộn
+  hai task. Nếu sau này pha 2–5 cũng có sổ riêng thì đó là lúc việc ấy đáng làm.
+- *Gộp kế hoạch và sổ task làm một.* Bác — kế hoạch ở `master_plan/` là **đầu vào** của pha
+  (`CLAUDE.md` §2), sổ task là việc đang chạy; gộp lại thì mỗi lần nhận việc phải sửa một file mà
+  §2 xếp vào loại *domain material*, và bảng bước sẽ mọc lại cột *Trạng thái* mà ADR-033 vừa bỏ.
+
+**Applies to:**
+`work/backlog_SD.md` (mới) · `work/backlog.md` (bảng mục lục + dòng *Ready* của P1-01 + khối chỉ
+đường thay cho entry P1-01 đã chuyển đi) · `CLAUDE.md` §2 hàng *Tasks* và cây thư mục ·
+`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6 · **ADR-033** (khối *SỬA ĐỔI 2026-09-04*) ·
+**ADR-002** (brief đẩy trạng thái) · `work/findings.md` **F-012** · **F-014**.
+
+---
+
+### ADR-035 — Ranh giới sở hữu chạy theo PHA: lược đồ ở pha 2, hợp đồng API ở pha 3, route ở pha 4; pha 1 sở hữu TẦNG BẢO VỆ
+
+**Trạng thái:** Đã chốt 2026-09-04 (**P1-01**, bước 1/12 của pha 1 — `master_plan/SD_master_plan_banh_cuon_ba_thanh.md`
+§6, ADR-033). Nó sửa một câu của **ADR-014** (khối *SỬA ĐỔI 2026-09-04* ở mục ấy) và đóng
+`work/findings.md` **F-023**.
+
+**Vấn đề nó giải quyết — ba tài liệu nói ba câu khác nhau về cùng một câu hỏi.** Đo 2026-09-03
+(T-048), ghi thành F-023: ADR-014 **giao** tên bảng · tên cột · khoá ngoại · API · route cho hai
+tài liệu; `docs/product/1-system-design/architecture.md` §8 **từ chối** ba thứ đầu (*"Điều tài liệu
+này cố ý KHÔNG làm"*); banner `master_plan/prompt-fullstack.md` khai cả bốn thứ *"CHƯA có nhà"*;
+và bảng `CLAUDE.md` §2 **im lặng** — không có hàng nào cho chúng.
+
+**Decision:**
+Sở hữu chạy theo **trục pha**, đúng trục mà bảng sáu pha (`master_plan/prompt-fullstack.md` §7) đã
+dùng. Sáu hàng, và ba hàng giữa cố ý **chưa có owner**:
+
+| Thứ | Ai sở hữu | Hôm nay nằm ở đâu |
+|---|---|---|
+| Mệnh đề bất biến `I-0xx` | **owner đã có** | `quality/invariants.md` — `I-001`…`I-020` (`CLAUDE.md` §2) |
+| **Tầng bảo vệ** của từng `I-0xx` + phép đối chiếu | **pha 1** | `docs/product/1-system-design/` — file sinh ra ở **P1-04…P1-06** |
+| **Yêu cầu hình dạng dữ liệu** viết bằng ngôn ngữ nghiệp vụ | **pha 1** | `docs/product/1-system-design/` — file sinh ra ở **P1-07** |
+| **Lược đồ**: tên bảng, tên cột, khoá ngoại, quan hệ, thứ tự migration | **pha 2 · DB** | **chưa có owner** — sinh ra cùng `docs/product/2-db/` |
+| **Hợp đồng API**: endpoint, quyền theo vai, chữ ký | **pha 3 · BE** | **chưa có owner** — sinh ra cùng `docs/product/3-be/` |
+| **Route · component** | **pha 4 · FE** | **chưa có owner** — sinh ra cùng `docs/product/4-fe/` |
+
+Kèm bốn luật, và không luật nào là hình thức:
+
+1. **Một tài liệu của pha sớm hơn nêu tên bảng · endpoint · route là bug**, kể cả khi mọi cổng
+   xanh — không cổng nào của repo này đọc được ranh giới ấy. Cái chấm là **P1-12** (bộ lọc trên
+   mọi file pha 1) và mắt người.
+2. **Hàng *chưa có owner* đổi thành tên file thật trong CÙNG thay đổi mở thư mục của pha ấy.**
+   Không mở thư mục trước, không tạo file giữ chỗ (`docs/product/00-index.md` mục *Luật ghi*;
+   ADR-014 khối *SỬA ĐỔI 2026-09-02* đã bác `00-chua-co-gi.md`).
+3. **`master_plan/prompt-fullstack.md` §3.4–§3.7 không sở hữu thứ gì.** Đề xuất stack · 16 bảng ·
+   API · route ở đó là **đầu vào để pha 2–4 đối chiếu**, không phải đầu ra đã chốt. Bản ấy viết
+   **2026-08-31**, trước phần lớn quyết định của chủ quán, và banner của chính nó đã tự khai
+   *"không phải nhà của sự thật nào"*.
+4. **Pha 1 không sở hữu lược đồ, nên nó cũng không được phép sửa đề xuất ấy.** Gặp chỗ đề xuất
+   thiếu ⇒ viết **yêu cầu** để pha 2 tự đối chiếu (P1-07), không sửa hộ.
+
+**Why:**
+
+- **Trục pha đã có, và đã kèm sẵn luật chống chép.** Bảng sáu pha §7 kết bằng đúng câu ranh giới
+  cứng: *"pha 0–1 **không** nhắc tên bảng; pha 2 **không** nhắc endpoint; pha 3 **không** nhắc
+  component; pha 4 **không** đổi hợp đồng API"*. Quyết định này **không dựng trục mới** — nó chép
+  trục đang chạy vào owner, lần đầu. Đây cũng là lý lẽ ADR-014 khối *SỬA ĐỔI 2026-09-02* đã dùng
+  để chọn pha thay vì mảng: bắt cả repo học một trục thứ hai là cái giá không ai trả.
+- **Một hàng nói *chưa có* vẫn hơn một bảng im lặng.** Bảng §2 im lặng biến câu hỏi thành một chỗ
+  trống mà ai đi qua cũng có quyền lấp; một hàng ghi *sinh ra ở pha 2* biến nó thành một việc có
+  lịch và có người. Đây là điều kiện thứ ba mà F-023 → *Decision / Fix* đòi.
+- **Chỗ này nằm đúng trên đường đi của pha 2, và cái giá đo được.** Phiên mở pha 2 đọc ADR-014,
+  tới §8, thấy nó từ chối, rồi hoặc **bơm tên bảng vào `architecture.md`** — phá đúng câu §8 của
+  chính nó và biến một tài liệu mà `docs/product/00-index.md` giới thiệu là *"đặc tả, không phải
+  mã"* thành nửa lược đồ — hoặc **thi công đề xuất 16 bảng như một lược đồ đã chốt**, mà
+  `architecture.md` §8 đã đo **sáu** thứ nó chưa có chỗ cất, trong đó có **vết hoàn tiền** và
+  **khoản nợ**. Thiếu hai thứ ấy thì đối soát ngưỡng lệch **0đ** không thực hiện được (ADR-022 ·
+  `master_plan/shop-facts.md` §6.10) — cổng chất lượng mạnh nhất của cả dự án.
+- **Nó mở khoá mười bước còn lại của pha 1.** Mười trong mười một bước ở §6 kế hoạch ghi *Cần xong
+  trước: P1-01*, và cổng P1-12 (*không tên bảng nào lọt vào file pha 1*) không có gì để chấm cho
+  tới khi ranh giới này được viết ra.
+
+**Rejected alternatives:**
+
+- *Đọc ADR-014 theo nghĩa đen: giao lược đồ · API · route cho `architecture.md`.* Bác. §8 của
+  chính file ấy cấm, và `docs/product/00-index.md` giới thiệu nó là *"đặc tả, không phải mã…
+  không nói tên hàm, tên file hay thư viện"*. Chọn đường này là phải sửa **cả hai** câu ấy, tức
+  viết lại ranh giới pha 0–1 của bảng sáu pha — một quyết định lớn hơn nhiều lần cái nó sửa, để
+  đổi lấy một owner mà không ai xin.
+- *Ghi `master_plan/prompt-fullstack.md` §3.5 là owner của lược đồ, vì nó là chỗ **duy nhất** hôm
+  nay thật sự có 16 bảng.* Bác, và đây là đường nguy hiểm nhất vì nó **rẻ và trông đúng**. Ba lý
+  do: nó là **bản xuất khẩu**, banner của chính nó viết *"không phải nhà của sự thật nào… là bản
+  chép nên nó sẽ trôi"* (F-001); nó viết **2026-08-31**, trước hơn hai mươi lời chốt của chủ quán;
+  và `architecture.md` §8 đã đo được **sáu** chỗ nó chưa cất được. Cụ thể hơn mọi thứ khác không
+  có nghĩa là đã chốt.
+- *Mở sẵn `docs/product/2-db/`, `3-be/`, `4-fe/` với một file giữ chỗ, để mỗi hàng §2 có một owner
+  thật ngay hôm nay.* Bác. `docs/product/00-index.md` mục *Luật ghi* và ADR-014 khối *SỬA ĐỔI
+  2026-09-02* đã bác đúng cái này một lần (`00-chua-co-gi.md`): một file tên *"chưa có gì"* là tài
+  liệu nghi lễ (`CLAUDE.md` §3.8), và một thư mục rỗng không gỡ được dòng nào cho ai. Cái giá của
+  việc bác: ba hàng §2 trỏ vào một đường **chưa tồn tại**, nên Gate 1b không chấm được chúng —
+  ghi ra ở *Rủi ro còn lại* dưới đây.
+- *Để lửng, chờ phiên mở pha 2 tự quyết.* Bác — đó **chính là** hiện trạng mà F-023 mô tả, và nó
+  đã đứng đó từ 2026-09-02 tới 2026-09-04 mà không cổng nào đỏ.
+
+**Rủi ro còn lại, ghi ra để phiên sau khỏi dò:**
+
+- **Ba hàng *chưa có owner* là vùng mù của Gate 1b.** `scripts/check-links.sh` chỉ chấm đường dẫn
+  có đuôi biết trước, nên `docs/product/2-db/` không bị chấm — cố ý, vì nó chưa tồn tại. Đổi lại,
+  không cổng nào nhắc khi pha 2 mở ra mà quên đổi hàng ấy. Cái chấm là **luật 2** ở trên và mắt
+  người.
+- **Không cổng nào của repo đọc được ranh giới pha.** Một tên bảng viết vào file pha 1 đi qua cả
+  năm cổng mà không cổng nào đỏ. P1-12 là phép rà duy nhất, và nó chạy **một lần, cuối pha**.
+
+**Applies to:**
+`CLAUDE.md` §2 (bốn hàng mới) · **ADR-014** khối *SỬA ĐỔI 2026-09-04* ·
+`docs/product/1-system-design/architecture.md` §8 · `master_plan/prompt-fullstack.md` banner ·
+`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §3 và §8 · `work/findings.md` **F-023** (Fixed)
+· mọi bước **P1-02…P1-12** · mọi việc của **pha 2–5**.
 ---
 
 <a id="ban-do"></a>

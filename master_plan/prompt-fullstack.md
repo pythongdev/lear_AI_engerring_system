@@ -11,9 +11,17 @@
 > định nghĩa XONG [CLAUDE.md §8](../CLAUDE.md) + [quality/review-gate.md](../quality/review-gate.md).
 > Là bản chép nên nó **sẽ trôi** — rủi ro ghi ở [work/findings.md](../work/findings.md) F-001.
 >
-> **Schema · API · route · bất biến CHƯA có nhà — đừng đi tìm.** Bốn thứ đó là **đầu ra của pha 1–4**
-> (§7), do chính prompt này sinh ra; tính tới 2026-08-31 chúng chưa tồn tại ở đâu cả. Gặp chỗ cần
-> chúng thì đó là việc phải làm, không phải nguồn để tra.
+> **Schema · API · route có chủ theo PHA; bất biến thì đã có nhà thật.** *Cập nhật 2026-09-04 —
+> `docs/decisions.md` **ADR-035**, bước **P1-01**. Câu cũ ở đây xếp cả **bốn** thứ vào loại "chưa
+> có nhà"; đó là một trong ba chỗ nói lệch nhau mà `work/findings.md` **F-023** ghi.* Đọc đúng là:
+> **bất biến** đã có owner từ lâu — `quality/invariants.md`, đang giữ `I-001`…`I-020`; **lược đồ**
+> là đầu ra của **pha 2**, **hợp đồng API** của **pha 3**, **route · component** của **pha 4** (§7),
+> và mỗi thứ nhận owner thật vào đúng ngày thư mục của pha ấy mở ra — ba hàng trong bảng
+> [CLAUDE.md §2](../CLAUDE.md) giữ chỗ cho tới lúc đó.
+>
+> **§3.4–§3.7 của chính file này không sở hữu thứ gì.** Đề xuất stack · 16 bảng · API · route ở đó
+> là **đầu vào để pha 2–4 đối chiếu**, viết 2026-08-31 — trước phần lớn quyết định của chủ quán —
+> không phải đầu ra đã chốt. Gặp chỗ cần chúng thì đó là việc phải làm, không phải nguồn để tra.
 
 **Cách dùng.** Agent **đã** ở trong repo này ⇒ đừng dùng file này, dùng [CLAUDE.md](../CLAUDE.md).
 Agent **ngoài** repo ⇒ copy **nguyên §1 → §10** làm prompt hệ thống, gửi **từng pha một** (§7).

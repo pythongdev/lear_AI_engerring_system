@@ -1984,11 +1984,33 @@ viết lại lịch sử (ADR-008); (3) `CLAUDE.md` §2 có câu trả lời cho
 là *"chưa có owner, sinh ra ở pha N"* — một hàng nói *chưa có* vẫn hơn một bảng im lặng.
 
 **Related task:**
-**T-048** (lượt phát hiện) · **P1-01** (lượt sửa) · `docs/decisions.md` **ADR-014** · **ADR-008**
-(sửa tiến) · **F-001** (hai bản của một sự thật) · **F-021** (chỉ mục nói ngược thân)
+**T-048** (lượt phát hiện) · **P1-01** (lượt sửa) · `docs/decisions.md` **ADR-014** · **ADR-035**
+(quyết định thay nó) · **ADR-008** (sửa tiến) · **F-001** (hai bản của một sự thật) · **F-021**
+(chỉ mục nói ngược thân)
 
 **Status:**
-Open
+**Fixed 2026-09-04 (P1-01)** — đủ cả ba việc mà mục *Decision / Fix* đòi, trong một lượt:
+
+1. **`docs/decisions.md` ADR-035** chốt sở hữu theo trục **pha**: lược đồ → pha 2 · hợp đồng API →
+   pha 3 · route/component → pha 4 · **tầng bảo vệ** của từng `I-0xx` → pha 1; và ghi thẳng rằng
+   `master_plan/prompt-fullstack.md` §3.4–§3.7 **không sở hữu thứ gì** — nó là đầu vào để đối
+   chiếu, không phải đầu ra đã chốt.
+2. **ADR-014** có khối *SỬA ĐỔI 2026-09-04*: câu cũ ở lại nguyên văn (ADR-008 — sửa tiến), khối mới
+   nói nó sai ở đâu, giữ lại phần vẫn đúng (mục đích chặn folder `docs/product/` thành owner thứ
+   hai của kiến trúc), và trỏ sang ADR-035.
+3. **`CLAUDE.md` §2 có bốn hàng mới**, ba hàng ghi thẳng *chưa có owner — sinh ra ở pha N*, kèm
+   luật: hàng ấy đổi thành tên file thật trong **cùng thay đổi** mở thư mục của pha đó.
+
+**Hai câu pointer nói ngược quyết định mới cũng sửa trong cùng lượt** (`CLAUDE.md` §7.2 — pointer
+lệch là bug của lượt này): `docs/product/1-system-design/architecture.md` §8 không còn giao việc
+chốt lược đồ cho *"tầng System Design"* (nay là pha 2), và banner `master_plan/prompt-fullstack.md`
+không còn xếp **bất biến** vào loại *chưa có nhà* — `quality/invariants.md` giữ `I-001`…`I-020`.
+Câu *"cố ý KHÔNG làm"* của §8 thì **ở lại**: nó đúng, và nó luôn đúng — chỗ sai là câu giao việc,
+không phải câu từ chối.
+
+**Cái finding này KHÔNG chữa được, ghi ra để đừng ai tưởng đã có cổng:** không cổng nào của repo
+đọc được ranh giới pha. Một tên bảng viết vào file pha 1 đi qua cả năm cổng mà không cổng nào đỏ;
+phép rà duy nhất là **P1-12**, và nó chạy một lần, cuối pha.
 
 ---
 

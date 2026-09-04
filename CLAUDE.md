@@ -31,7 +31,12 @@ is a bug to fix now.
 | Architecture | `docs/product/1-system-design/architecture.md` |
 | Architecture decisions (ADR) | `docs/decisions.md` |
 | Business invariants | `quality/invariants.md` |
-| Tasks | `work/backlog.md` |
+| Tầng bảo vệ của từng invariant + phép đối chiếu | `docs/product/1-system-design/` — pha 1, sinh ra ở P1-04…P1-06 (ADR-035) |
+| Schema: tên bảng, tên cột, khoá ngoại | **chưa có owner** — sinh ra ở **pha 2**, cùng `docs/product/2-db/` (ADR-035) |
+| Hợp đồng API: endpoint, quyền theo vai, chữ ký | **chưa có owner** — sinh ra ở **pha 3**, cùng `docs/product/3-be/` (ADR-035) |
+| Route, component | **chưa có owner** — sinh ra ở **pha 4**, cùng `docs/product/4-fe/` (ADR-035) |
+| Tasks — trạng thái của **mọi** task (`Ready`/`In Progress`/`Done`) | `work/backlog.md` |
+| Tasks — mô tả dài của **pha 1**, `P1-01`…`P1-12` | `work/backlog_SD.md` |
 | Scope of the task in progress | `work/scope.txt` |
 | Recurring problems, lessons | `work/findings.md` |
 | How to write a prompt/task | `docs/prompt-guideline.md` |
@@ -39,6 +44,15 @@ is a bug to fix now.
 | Risk levels, repo philosophy | `README.md` |
 | Shop facts: scope, channels, prices, flows, business rules | `master_plan/shop-facts.md` |
 | Proposals about this system that were **not** adopted | `work/proposals/` |
+
+Four of the rows above are the **phase ownership boundary** (`docs/decisions.md`
+ADR-035, 2026-09-04). Three of them say *chưa có owner* on purpose: the folder of
+a phase is created together with that phase's first line of content, never before
+— so when `docs/product/2-db/` opens, the row changes to the real file name **in
+the same change**. Until then no document may name a table, an endpoint or a
+route: a phase writing what a later phase owns is a bug even when every gate is
+green, because no gate here can read that boundary. P1-12 and human eyes are the
+only check.
 
 Behavior is cut by phase under `docs/product/`; which file owns which section is
 in `docs/product/00-index.md`, which owns no fact itself. `docs/product.md` is the
@@ -66,7 +80,8 @@ CLAUDE.md          this file — read first
 docs/              product/ → 00-index.md, 0-ba/… (behavior), 1-system-design/
                    (architecture), 99-unknowns.md — all by phase;
                    decisions, prompt guideline
-work/              backlog.md, scope.txt, findings.md;
+work/              backlog.md (trạng thái mọi task), backlog_SD.md (mô tả pha 1),
+                   scope.txt, findings.md;
                    proposals/ — not adopted, owns nothing
 quality/           invariants.md, review-gate.md
 scripts/           gate.sh → check-scope.sh + check-links.sh

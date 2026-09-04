@@ -178,10 +178,19 @@ Sáu cột. Không có cột *Trạng thái*: nó ở `work/backlog.md`. Cột *
 phiên chạy song song thì `work/scope.txt` là **một file, nhiều chủ**: phiên vào sau **thêm** khối
 của mình, không ghi đè (F-010 · F-014).
 
-**Mỗi bước tạo entry riêng ở `work/backlog.md` lúc nhận việc, không tạo trước cả mười hai.** Lý do
-đo được: `scripts/brief.sh` cắt danh sách *Ready* ở sáu mục, và mười hai dòng đổ vào đó sẽ đẩy
-bảy dòng ra ngoài tầm nhìn của mọi phiên mới — đúng cơ chế đã làm `U-011` và `BA-12` vô hình
-(`work/findings.md` **F-012**).
+**Mô tả dài của cả mười hai bước ở `work/backlog_SD.md`; dòng TRẠNG THÁI thì chỉ tạo lúc nhận
+việc.** *(Đổi 2026-09-04, T-049 · `docs/decisions.md` **ADR-034**, theo yêu cầu chủ repo. Bản đầu
+của đoạn này nói **mô tả** cũng chỉ viết lúc nhận việc — chỗ đó đã hết đúng, và lý do dưới đây là
+lý do vẫn còn nguyên giá trị.)*
+
+Cái phải giữ là **danh sách *Ready* mà brief in ra**, không phải chỗ cất mô tả: `scripts/brief.sh`
+cắt *Ready* ở sáu mục, nên mười hai dòng đổ vào đó sẽ đẩy bảy dòng ra ngoài tầm nhìn của mọi phiên
+mới — đúng cơ chế đã làm `U-011` và `BA-12` vô hình (`work/findings.md` **F-012**). Mô tả nằm ở
+`work/backlog_SD.md` thì không chiếm chỗ nào của brief, nên viết trước cả mười hai **không** phá
+luật ấy — và nó trả lại một thứ: đọc một file là thấy hết đường đi của pha.
+
+**Mô tả từng bước — vì sao có nó, hỏng thì mất gì, chạy mười bước thế nào — ở `work/backlog_SD.md`.**
+Bảng trên giữ thứ tự, mức và đầu ra kiểm chứng được; nó không kể lại nội dung entry.
 
 **Mỗi bước có một file prompt viết theo `docs/prompt-guideline.md`** (sáu khối), viết lúc nhận việc.
 Kế hoạch này không viết prompt hộ: một prompt viết trước khi biết bước trước đã ra kết quả gì sẽ
@@ -217,16 +226,19 @@ Ba luật khi điền:
 
 ---
 
-## 8. Bốn thứ đang chặn, và hai thứ đang sai
+## 8. Chỗ đang chặn, và hai thứ đang sai
 
-**Đang chặn — không bước nào được tự quyết thay** (`CLAUDE.md` §3.5):
+**Đang chặn — không bước nào được tự quyết thay** (`CLAUDE.md` §3.5). Bảng đo lại **2026-09-04**;
+số dòng ở đây là phép đếm của người viết, đếm lại ở `docs/product/99-unknowns.md` và
+`master_plan/shop-facts.md` §7.2 (**F-003**):
 
 | Mã | Câu hỏi | Chặn bước | Ai trả lời |
 |---|---|---|---|
 | **U-031** | với đơn **giao tận nơi**, ai bấm mốc *"đã ra bàn"* của từng việc trạm, lúc nào | P1-05 (`I-017`) · P1-07 · P1-09 | chủ quán |
 | **U-032** | lượt bán ghi trên **sổ giấy** hôm mất điện, hôm sau mới nhập — doanh thu tính ngày nào | **P1-03** · P1-04 (`I-014`) | chủ quán |
 | **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** (`shop-facts.md` §7.2 — chỗ **suy ra**, chưa hỏi) | P1-07 · P1-09 | chủ quán |
-| **BA-12** | lát cắt sản xuất theo mẻ chưa có mục nào trong `docs/product/` | P1-07 · P1-09 | task ở `work/backlog.md`, không phải câu hỏi |
+| ~~**BA-12**~~ | ~~lát cắt sản xuất theo mẻ chưa có mục nào~~ — **xong 2026-09-04** (`31fb071`), §3.4 đã có; P1-07 và P1-09 hết bị nó chặn | — | — |
+| **U-033** | đơn bị **huỷ** sau khi bếp đã làm xong phần của nó: chỗ ấy tính cho bàn khác đang chờ, hay bỏ và làm lại? *(mở 2026-09-03 bởi chính BA-12)* | P1-05 · P1-07 · P1-09 | chủ quán |
 
 **Cách hỏi, không phải chuyện lễ nghi — nó đã hỏng một lần và tốn một ngày.** Câu hỏi `S-4` ngày
 2026-08-31 hỏi *"bảng ở quầy hiện bàn 5 còn thiếu 3 hay đã đủ"* và chủ quán trả lời **"tôi không
@@ -235,11 +247,16 @@ có khi nào nó nằm chờ không"* — thì được trả lời ngay, kèm b
 quán thì được trả lời; hỏi về cái bảng trong máy thì không** (`shop-facts.md` §7.2). Pha 1 là pha
 dễ vi phạm luật này nhất, vì mọi câu nó cần đều là câu về máy.
 
-**Đang sai — hai chỗ, sửa trong bước tương ứng chứ không mở task riêng:**
+**Đang sai — hai chỗ, sửa trong bước tương ứng chứ không mở task riêng.** Chỗ thứ nhất đã sửa
+2026-09-04; nó ở lại đây gạch ngang chứ không bị xoá, để phiên sau đọc được vì sao bước P1-01 tồn
+tại:
 
-- **F-023** — `docs/decisions.md` ADR-014 giao tên bảng · tên cột · khoá ngoại · API · route cho
-  `architecture.md`, trong khi §8 của chính file ấy viết *"Điều tài liệu này cố ý KHÔNG làm"* đúng
-  ba thứ đầu, và bản xuất khẩu thì khai cả bốn thứ *"chưa có nhà"*. ⇒ **P1-01**.
+- ~~**F-023**~~ — ~~ADR-014 giao tên bảng · tên cột · khoá ngoại · API · route cho
+  `architecture.md`, trong khi §8 của chính file ấy từ chối ba thứ đầu và bản xuất khẩu khai cả
+  bốn thứ *"chưa có nhà"*~~ — **sửa xong 2026-09-04 bởi P1-01**. Sở hữu nay chạy theo **pha**
+  (`docs/decisions.md` **ADR-035**): lược đồ → **pha 2** · hợp đồng API → **pha 3** · route →
+  **pha 4** · **tầng bảo vệ** của từng `I-0xx` → **pha 1**; `CLAUDE.md` §2 có bốn hàng cho chúng.
+  ⇒ **mười một bước còn lại của pha 1 hết bị P1-01 chặn**.
 - **F-024** — `architecture.md` §11 giao việc viết lại §3 (bảng quầy bốn con số) cho `T-036`, mà
   `T-036` đã *Done* từ 2026-09-01 mà không giao nó. ⇒ **P1-09**.
 

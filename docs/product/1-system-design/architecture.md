@@ -345,8 +345,14 @@ tài liệu này nêu ra mà nó chưa có chỗ để cất:
 thứ bảy thì thêm vào đây, đừng tự thiết kế quanh nó.
 
 **Điều tài liệu này cố ý KHÔNG làm:** không đặt tên bảng, không đặt tên cột, không vẽ khoá ngoại.
-Chốt lược đồ là việc của tầng System Design, và nó phải chạy sau khi §3.4 của `docs/product/0-ba/ban-hang/03-lat-cat.md`
-(BA-12) viết xong trục sản xuất bằng ngôn ngữ nghiệp vụ.
+Chốt lược đồ là việc của **pha 2 · DB** — không phải của tài liệu này, và cũng không phải của pha 1
+(`docs/decisions.md` **ADR-035**, 2026-09-04, bước **P1-01**). Câu cũ ở chỗ này giao việc ấy cho
+*"tầng System Design"*, tức pha 1; đó là một trong ba chỗ nói lệch nhau mà `work/findings.md`
+**F-023** ghi. Pha 1 viết **yêu cầu** hình dạng dữ liệu bằng ngôn ngữ nghiệp vụ — *phải ghi lại
+được X* / *phải không thể xảy ra Y* — ở bước **P1-07**, rồi pha 2 tự đối chiếu đề xuất 16 bảng với
+bảng sáu chỗ thiếu ở trên. Điều kiện mà câu cũ đặt ra — §3.4 của
+`docs/product/0-ba/ban-hang/03-lat-cat.md` (BA-12) phải viết xong trục sản xuất bằng ngôn ngữ
+nghiệp vụ — **đã đủ từ 2026-09-04**.
 
 ---
 
