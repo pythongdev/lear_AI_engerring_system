@@ -33,6 +33,7 @@ is a bug to fix now.
 | Business invariants | `quality/invariants.md` |
 | Tầng bảo vệ của từng invariant + phép đối chiếu | `docs/product/1-system-design/` — pha 1, sinh ra ở P1-04…P1-06 (ADR-035) |
 | Phụ thuộc ngoài của hệ thống + đường suy giảm của từng cái | `docs/product/1-system-design/01-ranh-gioi-he-thong.md` — pha 1, sinh ra ở P1-02 |
+| Định nghĩa **một ngày bán** cho phép cộng tiền + mốc tính tiền + nguồn thời gian | `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` — pha 1, sinh ra ở P1-03 |
 | Schema: tên bảng, tên cột, khoá ngoại | **chưa có owner** — sinh ra ở **pha 2**, cùng `docs/product/2-db/` (ADR-035) |
 | Hợp đồng API: endpoint, quyền theo vai, chữ ký | **chưa có owner** — sinh ra ở **pha 3**, cùng `docs/product/3-be/` (ADR-035) |
 | Route, component | **chưa có owner** — sinh ra ở **pha 4**, cùng `docs/product/4-fe/` (ADR-035) |

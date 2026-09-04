@@ -43,6 +43,12 @@ không mở vì ai quên hỏi: lời chốt *"mất điện thì không dừng 
 **tại chỗ**, còn ca **quán mù mà hệ thống vẫn sống** thì chưa luật nào chạm tới — và đó là ca mà
 khách vẫn đặt được.
 
+**Cùng ngày 2026-09-04, P1-03 mở U-036 trong lúc định nghĩa *một ngày bán*.** Nó cũng không mở vì
+ai quên hỏi: `shop-facts.md` §6.14 chốt chiều tiền về **sau** một lần bán đã xong (nợ ⇒ ngày ghi
+nợ), và không lời chốt nào phủ chiều ngược lại — tiền về **trước** một lần bán chưa xong. Chừng nào
+hai mốc ấy còn có thể rơi vào hai ngày khác nhau, bảng §2 của
+`docs/product/1-system-design/02-thoi-gian-ngay-ban.md` còn một hàng để trống.
+
 - **U-031 — với một đơn GIAO TẬN NƠI, ai bấm mốc *"đã ra bàn"* của từng việc trạm, và vào lúc
   nào?** Chủ quán chốt 2026-09-01 (U-021) rằng *người đứng quầy* bấm **cả hai** mốc của bảng bếp,
   nhưng câu hỏi lúc ấy **không nhắc tới ca đơn giao tận nơi**: lúc suất tới tay khách thì người
@@ -136,6 +142,28 @@ thái bình thường, không phải dấu hiệu quên ghi.
 Hình dạng của mục là hợp đồng với `scripts/brief.sh` (ADR-007): **mỗi** câu trên là **một gạch đầu
 dòng**, và câu tiếp theo cũng phải vào đây dưới dạng ấy. `master_plan/shop-facts.md` §7.2 — chỗ giữ
 các mục **suy ra** chưa xác nhận — giữ **S-5** (bấm *"đã bưng ra bàn"* theo đơn vị nào); đó là chỗ
+- **U-036 — một khoản khách TRẢ TRƯỚC mà quán nhận hôm nay, cho đơn giao vào một ngày khác, thì
+  doanh thu tính vào ngày nào: ngày quán nhận tiền, hay ngày quán giao hàng?** Và trước đó một
+  bước: **quán có nhận đơn đặt trước cho một ngày sau không?** `shop-facts.md` §6.3 cho khách của
+  cả ba kênh mang đi chọn **trả trước**, và chốt rằng POS xác nhận *"vào lúc tiền thật sự tới tay
+  quán"*; §5.2 điểm 5 nói `pickup` có **giờ hẹn lấy** và `phone_preorder` là **đơn đặt trước** —
+  không câu nào buộc giờ hẹn ấy nằm trong cùng ngày. **Đây là chiều NGƯỢC của §6.14.** Luật nợ chốt
+  ca tiền về **sau** một lần bán đã xong (⇒ ngày ghi nợ, `shop-facts.md` §6.14); ca tiền về
+  **trước** một lần bán chưa xong thì chưa ai chốt, và luật hoàn ở §6.4 cũng không phủ nó.
+  **Ai trả lời được:** chủ quán. **Đang chặn:** hàng cuối bảng §2 của
+  `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` (**P1-03**), và qua đó cột *phép đối
+  chiếu* của `I-014` ở **P1-04**. **Vì sao không được suy hộ** (`CLAUDE.md` §3.5): cả hai đường ra
+  đều động vào cùng thứ mà `U-032` đang đe doạ. Tính doanh thu về **ngày giao hàng** thì ngày nhận
+  tiền có tiền trong két mà không có doanh thu ⇒ ngưỡng lệch **0đ** (§6.10) báo lệch, trừ khi công
+  thức đối soát `architecture.md` §6.4 mọc thêm một dòng — mà thêm dòng vào cổng chất lượng mạnh
+  nhất của dự án là quyết định của chủ quán, không phải của pha 1. Tính về **ngày nhận tiền** thì
+  doanh thu được ghi cho một bữa ăn **chưa bán**, và một lần huỷ hôm sau (§6.3 ⇒ hoàn theo §6.4,
+  rơi vào ngày hoàn) để lại doanh thu ảo ở ngày trước đó.
+  **Cách hỏi** (bài học S-4, `shop-facts.md` §7.2 — hỏi về cái quán, đừng hỏi về cái bảng trong
+  máy): *"Có khách nào gọi điện tối nay đặt bánh cho sáng mai, và trả tiền luôn tối nay không? Nếu
+  có, khi anh xem doanh thu, anh muốn tiền ấy nằm ở ngày anh nhận tiền hay ngày anh đưa bánh?"*
+  *Mở 2026-09-04 · P1-03 · `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` §4.*
+
 **suy ra**, không phải câu hỏi đang mở, nên nó không nằm ở đây.
 
 <a id="cach-viet"></a>

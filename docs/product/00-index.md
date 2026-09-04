@@ -48,6 +48,8 @@ thư mục rỗng không gỡ được dòng nào cho ai.
 | Nội dung | File |
 |---|---|
 | §1–§14 — cấu trúc hệ thống, ba mặt, quyền, tiền, nợ, mảng admin | [1-system-design/architecture.md](1-system-design/architecture.md) |
+| Ranh giới hệ thống — actor (trỏ pha 0) · **phụ thuộc ngoài** · **đường suy giảm** của từng phụ thuộc | [1-system-design/01-ranh-gioi-he-thong.md](1-system-design/01-ranh-gioi-he-thong.md) |
+| Thời gian — định nghĩa **một ngày bán** cho mọi phép cộng tiền · **mốc tính tiền** của từng việc · **nguồn thời gian** | [1-system-design/02-thoi-gian-ngay-ban.md](1-system-design/02-thoi-gian-ngay-ban.md) |
 
 Đây là **đặc tả, không phải mã**: nó nói *cái gì phải đúng* và *ai được ghi cái gì*, không nói tên
 hàm, tên file hay thư viện. **Số mục §1–§14 không đánh lại** — `docs/decisions.md` ADR-012 (mục

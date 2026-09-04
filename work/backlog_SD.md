@@ -64,6 +64,7 @@ con số trong câu này (`work/findings.md` **F-003**):
 |---|---|---|
 | **U-031** | đơn **giao tận nơi**: ai bấm mốc *"đã ra bàn"*, lúc nào | P1-05 · P1-07 · P1-09 |
 | **U-032** | lượt bán trên **sổ giấy** nhập bù tính doanh thu **ngày nào** | P1-03 · P1-04 |
+| **U-036** | khoản **trả trước** nhận ngày này, hàng giao ngày khác — doanh thu **ngày nào** *(mở 2026-09-04 bởi chính P1-03)* | P1-03 · P1-04 |
 | **U-033** | đơn bị **huỷ** sau khi bếp đã làm xong phần của nó thì chỗ ấy đi đâu | P1-05 · P1-07 · P1-09 |
 | **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** (chỗ **suy ra**, chưa hỏi) | P1-07 · P1-09 |
 
@@ -168,6 +169,17 @@ Luật chung ở `work/backlog.md` → *Vòng chạy một task L1*; dưới đ�
 <a id="p1-02"></a>
 ### P1-02 — Quán đã chốt "mất điện thì không dừng bán", nhưng không tài liệu kiến trúc nào kể tên những thứ ngoài quán mà hệ thống đang dựa vào
 
+✅ **Xong ngày 2026-09-04** — `docs/product/1-system-design/01-ranh-gioi-he-thong.md` (mới):
+**sáu** phụ thuộc ngoài `PT-1`…`PT-6`, **sáu** dòng đường suy giảm đủ ba vế *quán làm gì · ai bù ·
+bù lúc nào*, actor **trỏ** về pha 0 chứ không chép. Mở **U-035** (quán mất mạng mà hệ thống vẫn
+sống: khách web vẫn đặt được, quán không thấy) và **F-027** (hai trong năm phụ thuộc mà kế hoạch §6
+kể tên — Telegram · một VPS — chỉ có ở bản xuất khẩu, thứ ADR-035 vừa chốt là không sở hữu gì; nó
+là đầu vào của cả bốn ràng buộc ẩn ở **P1-08**). ⇒ **P1-08 hết bị P1-02 chặn** (P1-11 vẫn chờ
+P1-03 → P1-10); ô thứ tư của cổng chất lượng §9 — *mỗi phụ thuộc ngoài có một đường suy giảm* —
+**tick được**, nhưng nó không chứng minh mỗi phụ thuộc đã có nhà: đó là F-027.
+Entry ở lại đây theo luật 3 đầu file; dòng `- [x]` ở
+`work/backlog.md` → *Done*.
+
 **Prompt:** [`prompt/SD/P1-02-ranh-gioi-he-thong-L2.md`](../prompt/SD/P1-02-ranh-gioi-he-thong-L2.md)
 (viết 2026-09-04, T-051) — **L2** · bước 2/12 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong
 2026-09-04** · không chờ câu hỏi nào đang mở
@@ -238,6 +250,20 @@ Luật chung ở `work/backlog.md` → *Vòng chạy một task L1*; dưới đ�
 
 <a id="p1-03"></a>
 ### P1-03 — Ba luật "doanh thu tính ngày nào" đã chốt, nhưng "một ngày bán" thì chưa có định nghĩa ở đâu
+
+✅ **Xong ngày 2026-09-04** — `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` (mới):
+**một ngày bán = một ngày lịch trong múi giờ quán**, đóng ở mốc đầu và mở ở mốc cuối, phủ **cả hai
+mươi tư giờ** chứ không phải giờ bán 06:00–11:00 — nên thu nợ và hoàn tiền lúc 14h đều có ngày.
+Kèm bảng **mốc tính tiền** (mỗi việc chạm tiền đúng **một** mốc; ba luật đã chốt **trỏ** về đây chứ
+không được nhắc lại bằng lời khác) và mục **nguồn thời gian** (một nguồn, cấp ở nơi ghi, không lấy
+từ máy khách — viết bằng ngôn ngữ tầng, không tên cột, không kiểu dữ liệu). `I-014` và `I-015`
+**không đổi một chữ**; công thức `architecture.md` §6.4 **không bị viết lại**.
+Mở **U-036** — khoản **trả trước** nhận ngày này cho đơn giao ngày khác tính doanh thu ngày nào:
+chiều **ngược** của luật nợ §6.14, và không lời chốt nào phủ nó. ⇒ **P1-04 hết bị P1-03 chặn**,
+nhưng ô `I-014` của nó phải mang **hai** mã đang mở (`U-032` · `U-036`), không được tick trơn.
+Ô thứ ba của cổng chất lượng §9 — *định nghĩa ngày bán có đúng một chỗ* — **tick được**; tick nó là
+việc của P1-11/P1-12, lượt này không tick hộ.
+Entry ở lại đây theo luật 3 đầu file; dòng `- [x]` ở `work/backlog.md` → *Done*.
 
 **Prompt:** [`prompt/SD/P1-03-ngay-ban-L2.md`](../prompt/SD/P1-03-ngay-ban-L2.md) (viết 2026-09-04,
 T-051) — **L2** · bước 3/12 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong 2026-09-04** ·
@@ -312,8 +338,10 @@ công thức ấy chỉ đọc được khi *một ngày* đã có nghĩa.
 <a id="p1-04"></a>
 ### P1-04 — Bảy invariant chạm TIỀN chỉ có cách kiểm bằng kịch bản người; không mục nào nói tầng nào giữ chúng
 
-**Prompt:** chưa có — **L2** · bước 4/12 (kế hoạch §6) · **cần xong trước:** P1-01 · **P1-03**
-(cột *phép đối chiếu* của `I-014` cần định nghĩa *ngày bán*) · chạy song song được với P1-05, P1-06
+**Prompt:** chưa có — **L2** · bước 4/12 (kế hoạch §6) · **cần xong trước:** P1-01 · **P1-03**,
+**cả hai đã xong 2026-09-04** (định nghĩa *ngày bán* ở
+[`docs/product/1-system-design/02-thoi-gian-ngay-ban.md`](../docs/product/1-system-design/02-thoi-gian-ngay-ban.md))
+· chạy song song được với P1-05, P1-06 · ⛔ ô `I-014` còn **hai** mã đang mở: `U-032` · `U-036`
 
 **Goal:**
 Xong rồi thì bảy mệnh đề chạm tiền — `I-002` `I-005` `I-007` `I-012` `I-013` `I-014` `I-015` —
@@ -368,7 +396,10 @@ chạm tiền, nên chúng đi trước.
   gửi pha 2**, chính nó nói vậy — đừng đọc thành *đã chốt*.
 - **`I-014` (doanh thu hai nguồn) có hai vế**: cộng đủ hai nguồn, **và** không khoản nào đứng ở cả
   hai. Vế thứ hai mới là vế database giữ được; vế thứ nhất là một phép cộng, và nó chỉ đúng khi
-  *ngày bán* đã có nghĩa (P1-03).
+  *ngày bán* đã có nghĩa — **P1-03 xong 2026-09-04**, định nghĩa ở
+  [`docs/product/1-system-design/02-thoi-gian-ngay-ban.md`](../docs/product/1-system-design/02-thoi-gian-ngay-ban.md)
+  §1, và bảng §2 của file ấy còn **hai hàng để trống** (`U-032` · `U-036`) ⇒ ô của `I-014` phải
+  mang hai mã đó, không tick trơn.
 - **`I-015` (một lần thu chia hai phương thức) đừng gộp với `I-002`.** Một cái nói *tổng các phần
   bằng số phải trả*, cái kia nói *tổng phiên bằng tổng đơn* — hai phép cộng khác nhau, và đối soát
   chia theo **phương thức** (`shop-facts.md` §6.10) chỉ đọc được cái thứ nhất.

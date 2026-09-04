@@ -248,6 +248,8 @@ số dòng ở đây là phép đếm của người viết, đếm lại ở `d
 | **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** (`shop-facts.md` §7.2 — chỗ **suy ra**, chưa hỏi) | P1-07 · P1-09 | chủ quán |
 | ~~**BA-12**~~ | ~~lát cắt sản xuất theo mẻ chưa có mục nào~~ — **xong 2026-09-04** (`31fb071`), §3.4 đã có; P1-07 và P1-09 hết bị nó chặn | — | — |
 | **U-033** | đơn bị **huỷ** sau khi bếp đã làm xong phần của nó: chỗ ấy tính cho bàn khác đang chờ, hay bỏ và làm lại? *(mở 2026-09-03 bởi chính BA-12)* | P1-05 · P1-07 · P1-09 | chủ quán |
+| **U-035** | quán **mất mạng** giữa buổi trong khi hệ thống vẫn sống: khách web vẫn đặt được, quán không thấy, và nút *Tạm dừng nhận đơn* nằm sau đúng đường mạng vừa mất *(mở 2026-09-04 bởi chính P1-02)* | P1-08 | chủ quán |
+| **U-036** | khoản **trả trước** nhận hôm nay cho đơn giao ngày khác tính doanh thu ngày nào — chiều **ngược** của luật nợ §6.14 *(mở 2026-09-04 bởi chính P1-03)* | **P1-03** (hàng cuối bảng §2) · P1-04 (`I-014`) | chủ quán |
 
 **Cách hỏi, không phải chuyện lễ nghi — nó đã hỏng một lần và tốn một ngày.** Câu hỏi `S-4` ngày
 2026-08-31 hỏi *"bảng ở quầy hiện bàn 5 còn thiếu 3 hay đã đủ"* và chủ quán trả lời **"tôi không
@@ -256,9 +258,10 @@ có khi nào nó nằm chờ không"* — thì được trả lời ngay, kèm b
 quán thì được trả lời; hỏi về cái bảng trong máy thì không** (`shop-facts.md` §7.2). Pha 1 là pha
 dễ vi phạm luật này nhất, vì mọi câu nó cần đều là câu về máy.
 
-**Đang sai — hai chỗ, sửa trong bước tương ứng chứ không mở task riêng.** Chỗ thứ nhất đã sửa
-2026-09-04; nó ở lại đây gạch ngang chứ không bị xoá, để phiên sau đọc được vì sao bước P1-01 tồn
-tại:
+**Đang sai — ba chỗ tính tới 2026-09-04, sửa trong bước tương ứng chứ không mở task riêng.** Con số
+ấy là phép đếm của lượt viết, không phải một quyết định (**F-003**) — đếm lại danh sách dưới. Chỗ
+thứ nhất đã sửa 2026-09-04; nó ở lại đây gạch ngang chứ không bị xoá, để phiên sau đọc được vì sao
+bước P1-01 tồn tại:
 
 - ~~**F-023**~~ — ~~ADR-014 giao tên bảng · tên cột · khoá ngoại · API · route cho
   `architecture.md`, trong khi §8 của chính file ấy từ chối ba thứ đầu và bản xuất khẩu khai cả
@@ -268,6 +271,16 @@ tại:
   ⇒ **mười một bước còn lại của pha 1 hết bị P1-01 chặn**.
 - **F-024** — `architecture.md` §11 giao việc viết lại §3 (bảng quầy bốn con số) cho `T-036`, mà
   `T-036` đã *Done* từ 2026-09-01 mà không giao nó. ⇒ **P1-09**.
+- **F-027** — *(mở 2026-09-04 bởi **P1-02**, lượt chạy chính bước ấy)* cột *Đầu ra kiểm chứng được*
+  của **P1-02** ở §6 kể tên **năm** phụ thuộc ngoài, và **hai** trong năm — **Telegram** và
+  **một VPS** — không có một dòng nào ở `docs/` hay `quality/`: chúng chỉ sống ở
+  `master_plan/prompt-fullstack.md`, đúng tài liệu mà **ADR-035** vừa chốt là **không sở hữu thứ
+  gì**. P1-02 vì thế ghi **cái quán dựa vào** thay cho **tên của thứ đang đảm nhiệm nó**
+  (`docs/product/1-system-design/01-ranh-gioi-he-thong.md` §2: `PT-2` *nơi hệ thống chạy* ·
+  `PT-5` *đường báo đơn web về quầy*), và **không** tự phong nhà cho hai cái tên ấy. ⇒ Chỗ này
+  rộng hơn P1-02: **cả bốn ràng buộc ẩn của P1-08** (*một instance · không hàng đợi · không cache ·
+  một VPS*) đều đứng trên cùng bản xuất khẩu ấy. Ai nhận **P1-08** đọc `work/findings.md` **F-027**
+  trước; chọn nhà cho chúng là quyết định của **chủ repo**.
 
 ---
 
