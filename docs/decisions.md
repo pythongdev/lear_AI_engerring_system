@@ -58,6 +58,7 @@ có câu trả lời mới từ người.
 | ADR-039 | `CLAUDE.md` §2.2 có thêm dòng chủ **quy ước code** (pha 2) và Gate 1d (`check-phase-boundary.sh`) chấm máy phần phổ biến nhất của ranh giới pha; §3 có cột **Cưỡng chế bởi**; §8 hết mâu thuẫn "bốn dòng" | Đã chốt 2026-09-06 | — | sửa một câu của **ADR-035** |
 | ADR-040 | Trả trước cho đơn đặt trước ngày SAU tính doanh thu vào **ngày GIAO**, không phải ngày nhận tiền; quán nhận đặt trước **tối đa một ngày** | Đã chốt 2026-09-06 | — | công thức đối soát `architecture.md` §6.4 cần thêm một dòng; **U-036** đóng |
 | ADR-041 | Đặt tên chủ cho **PT-5** (đường báo đơn web về quầy = **Telegram**) và **PT-2** (nơi hệ thống chạy = **một VPS**) | Đã chốt 2026-09-07 | — | đóng một phần **F-027**; **shop-facts.md §1** giữ tên cụ thể |
+| ADR-042 | Mở **bước thứ mười ba** của pha 1 (`P1-13`), nhóm **SẢN XUẤT THEO MẺ**, cho `I-019`/`I-020` — hai mệnh đề mồ côi vì sinh sau khi kế hoạch chia ba nhóm | Đã chốt 2026-09-07 | — | đóng **F-026**; kế hoạch §6/§7/§9 và `03-bao-ve-invariant.md` thêm §4 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -2796,4 +2797,65 @@ kiện kiến trúc; bỏ tên ⇒ thiếu đúng phụ thuộc đắt nhất). 
 `master_plan/shop-facts.md` §1 (hai dòng mới) · §7.1 (dòng nhật ký) ·
 `docs/product/1-system-design/01-ranh-gioi-he-thong.md` §2 (cột *Đã chốt ở* của PT-2/PT-5) · §4 ·
 §5 · `work/findings.md` **F-027** (đóng một phần).
+
+### ADR-042 — Mở bước thứ mười ba của pha 1 (P1-13), nhóm SẢN XUẤT THEO MẺ, đóng F-026
+
+**Trạng thái:** Đã chốt 2026-09-07, sau khi chủ repo yêu cầu thẳng trong phiên: *"hãy làm thêm
+nhóm trục sản xuất theo mẻ"*.
+
+**Vấn đề nó giải quyết.**
+`work/findings.md` **F-026** (mở 2026-09-03/04, đo lại 2026-09-06): kế hoạch pha 1 §6 chia mười
+tám mệnh đề bất biến ban đầu thành ba nhóm — **P1-04** TIỀN, **P1-05** VÒNG ĐỜI, **P1-06**
+MENU·GIÁ·VẾT. Cùng ngày kế hoạch ấy viết xong, **BA-12** thêm hai mệnh đề mới vào
+`quality/invariants.md` — `I-019` (tổng nhu cầu một thành phần luôn bằng tổng phần chia về từng
+bàn, cả hai chiều) và `I-020` (số đã phục vụ của một bàn không bao giờ vượt số bàn ấy đã gọi) —
+**sau** khi ba nhóm đã chia, nên không nhóm nào nhận chúng. Cổng chất lượng §9 vẫn đếm *"mười
+tám"* trong khi `quality/invariants.md` giữ hai mươi mệnh đề, và cổng ấy tick xanh được đúng khi
+hai mệnh đề chưa có tầng giữ nào — loại hỏng nó được dựng để chặn.
+
+F-026 tự liệt ba đường và cố ý không tự chọn (quyết định thuộc chủ repo, `CLAUDE.md` §3.5):
+
+| Đường | Vì sao không chọn / chọn |
+|---|---|
+| 1. Gấp `I-019`/`I-020` vào P1-05 (VÒNG ĐỜI) | **Bác.** Rẻ nhất, và `I-020` đọc gần giống một câu vòng đời. Nhưng `I-019` là một câu về **phép cộng** giữa nhiều bàn qua một khoá gom, không nói về vòng đời của bất kỳ thực thể nào — gấp vào sẽ buộc nó mượn một tầng nó không có |
+| 2. ✅ Mở bước thứ mười ba, nhóm **SẢN XUẤT** | **Chọn.** Trung thực nhất với nội dung — cả hai mệnh đề đứng trên trục *sản xuất theo mẻ* (mẻ là đơn vị bấm, bàn là đơn vị đếm — chủ quán chốt 2026-09-01, đóng `U-017`). Đắt nhất: đổi tổng số bước pha 1 từ mười hai sang mười ba, kéo theo sửa mọi pointer đang viết *"mười hai bước"* |
+| 3. Gấp vào P1-07 (yêu cầu hình dạng dữ liệu) | **Bác.** P1-07 viết **yêu cầu cho pha 2**, không điền **bảng ba cột** — trộn hai việc ấy làm bảng ba cột thiếu hai hàng mà không ai thấy |
+
+**Decision:**
+
+1. **Pha 1 có mười ba bước, không phải mười hai.** `P1-13` — Bảng ba cột, nhóm **SẢN XUẤT THEO
+   MẺ**: `I-019` · `I-020` — nối vào cuối danh sách hiện có (`master_plan/SD_master_plan_banh_cuon_ba_thanh.md`
+   §6). **`P1-01`…`P1-12` giữ nguyên ID**, không renumber — tránh vỡ mọi neo `#p1-0x` đang tồn tại
+   trong repo (bảy khối rủi ro renumbering: `work/backlog_SD.md`, `prompt/SD/README.md`, các file
+   prompt đã commit, `docs/product/00-index.md`…).
+2. **`docs/product/1-system-design/03-bao-ve-invariant.md` có thêm §4**, viết theo đúng khuôn ba
+   cột và năm tầng của §1/§2/§3 (kế hoạch §7, nay đọc là *bốn* bước dùng chung từ vựng, không phải
+   ba).
+3. **Cổng chất lượng §9 của kế hoạch bỏ số đếm cứng.** Câu *"Mười tám `I-0xx` đều có tầng bảo vệ"*
+   đổi thành đối chiếu **danh sách mã** giữa `quality/invariants.md` và
+   `03-bao-ve-invariant.md` — không đếm số lượng. Đây là sửa đúng lỗi F-026 mô tả: một con số đếm
+   động đã tự hết đúng một lần (F-018 cùng loại), sửa theo hướng đếm-động sẽ chỉ lặp lại nó.
+4. **Mọi pointer đang viết *"mười hai bước"* hoặc *"P1-01…P1-12"* như tổng số bước của pha 1 được
+   sửa thành *"mười ba bước"* / *"P1-01…P1-13"`** trong các tài liệu **sống** (kế hoạch, sổ mô tả,
+   README prompt, mục lục `docs/product/`). **Không sửa** các mục ghi log lịch sử (entry *Done* ở
+   `work/backlog.md`, các file prompt đã chạy) — đó là bản ghi tại thời điểm nó đúng, sửa tiến
+   không phải sửa lùi (ADR-008).
+
+**Why.**
+Đường 1 rẻ nhưng sai hình dạng: gấp một câu về phép cộng vào nhóm vòng đời làm mất khả năng nói
+đúng cơ chế của nó (không có "vòng đời" nào cho một dòng nhu cầu tổng). Đường 3 nhầm lẫn hai loại
+đầu ra khác nhau của pha 1 (yêu cầu hình dạng dữ liệu ≠ bảng ba cột). Đường 2 tốn nhất nhưng là chi
+phí một lần — và nó sửa luôn nguyên nhân gốc mà F-026 chỉ ra: kế hoạch dùng một **số đếm tĩnh**
+("mười tám", "mười hai bước") làm sự thật, trong khi tập nó đếm còn đổi. Cổng §9 sau ADR này đối
+chiếu danh sách thay vì đếm số, nên một mệnh đề thứ hai mươi mốt sinh ra ngày mai sẽ tự động bị bắt
+là "vắng mặt ở bảng ba cột" thay vì âm thầm lọt qua một con số đã cũ.
+
+**Applies to:**
+`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6 (tiêu đề, hàng P1-13, dòng song song, hàng
+P1-07/P1-10) · §7 (tiêu đề) · §9 (câu đầu) ·
+`docs/product/1-system-design/03-bao-ve-invariant.md` (banner + §4 mới) ·
+`work/backlog_SD.md` (intro, luật 1/3, Mục lục, callout, entry P1-06, entry P1-13 mới) ·
+`prompt/SD/README.md` (bảng mười ba bước, callout, tiêu đề từ vựng năm tầng) ·
+`prompt/SD/P1-13-invariant-san-xuat-theo-me-L2.md` (mới) ·
+`docs/product/00-index.md` (một dòng) · `work/findings.md` **F-026** (đóng).
 

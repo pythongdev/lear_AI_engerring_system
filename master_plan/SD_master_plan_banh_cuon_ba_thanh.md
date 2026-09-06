@@ -153,7 +153,7 @@ Ba luật cho bản đồ này, không cái nào là hình thức:
 
 ---
 
-## 6. Mười hai bước — master task pha 1
+## 6. Mười ba bước — master task pha 1
 
 Sáu cột. Không có cột *Trạng thái*: nó ở `work/backlog.md`. Cột **Mức** thì ở đây, vì nó quyết
 định ceremony của bước và phải đọc được trước khi ai nhận việc.
@@ -166,19 +166,21 @@ Sáu cột. Không có cột *Trạng thái*: nó ở `work/backlog.md`. Cột *
 | **P1-04** | Bảng ba cột — nhóm **TIỀN**: `I-002` `I-005` `I-007` `I-012` `I-013` `I-014` `I-015` | P1-01 · P1-03 | Bảy mệnh đề, mỗi mệnh đề đủ ba ô, **không ô nào trống**; ô nào chỉ tới tầng 4–5 (§7) phải nói thẳng *"máy không ngăn được"* | Thu sai tiền mà không cơ chế nào chặn và không phép kiểm nào bắt | L2 |
 | **P1-05** | Bảng ba cột — nhóm **VÒNG ĐỜI**: `I-001` `I-003` `I-004` `I-006` `I-016` `I-017` | P1-01 | Sáu mệnh đề đủ ba ô; riêng `I-001` phải nói được cả ca **ghép bàn** (một phiên, nhiều bàn — ADR-027) | Đơn hoặc bàn bị kẹt; hai phiên trên một bàn ⇒ một hoá đơn không ai thu | L2 |
 | **P1-06** | Bảng ba cột — nhóm **MENU · GIÁ · VẾT**: `I-008` `I-009` `I-010` `I-011` `I-018` | P1-01 | Năm mệnh đề đủ ba ô; `I-011` phải giữ đúng lời chốt *máy chỉ **nhắc**, vẫn cho lưu* (U-018) — không được siết thành *máy chặn* | Đơn cũ đổi giá theo menu mới ⇒ doanh thu lịch sử tự đổi, không đối soát được | L2 |
-| **P1-07** | Viết **yêu cầu hình dạng dữ liệu** bằng ngôn ngữ nghiệp vụ: sáu chỗ thiếu ở `architecture.md` §8 + nợ (§12.3) + vết (`I-012` `I-018`) + ai đang trực trạm nào (§4) | P1-04 · P1-05 · P1-06 · **BA-12** | Mỗi dòng của §8 có **đúng một** dòng yêu cầu dạng *phải ghi lại được X* / *phải không thể xảy ra Y*; bộ lọc tên bảng và tên cột trong file mới trả về **rỗng** | Pha 2 dựng lược đồ không cất được vết hoàn tiền và khoản nợ ⇒ đối soát 0đ không thực hiện được | L2 |
+| **P1-07** | Viết **yêu cầu hình dạng dữ liệu** bằng ngôn ngữ nghiệp vụ: sáu chỗ thiếu ở `architecture.md` §8 + nợ (§12.3) + vết (`I-012` `I-018`) + ai đang trực trạm nào (§4) | P1-04 · P1-05 · P1-06 · **P1-13** · **BA-12** | Mỗi dòng của §8 có **đúng một** dòng yêu cầu dạng *phải ghi lại được X* / *phải không thể xảy ra Y*; bộ lọc tên bảng và tên cột trong file mới trả về **rỗng** | Pha 2 dựng lược đồ không cất được vết hoàn tiền và khoản nợ ⇒ đối soát 0đ không thực hiện được | L2 |
 | **P1-08** | Chốt chiến lược realtime, đường kéo dự phòng, và **dấu hiệu phải xem lại** từng ràng buộc ẩn | P1-02 | Bốn ràng buộc ẩn (một instance · không hàng đợi · không cache · một VPS) mỗi cái có một **dấu hiệu đo được**, không phải một lời hứa | Mất SSE ⇒ trạm không nhận việc; thêm replica ⇒ trạm mất việc ngẫu nhiên, chỗ khó debug nhất dự án | L2 |
 | **P1-09** | Viết lại `architecture.md` §3 — bảng quầy **bốn** con số, đơn vị **bấm** là mẻ, đơn vị **đếm** là bàn; và gỡ câu §11 đang giao việc này cho một task đã *Done* (F-024) | **BA-12** · **S-5** | §3 nêu đủ bốn con số và nói rõ con số thứ tư nhảy theo bậc mẻ; không còn câu nào giao việc cho `T-036` | Quầy không thấy bánh đang nằm chờ ⇒ khách chờ món không bao giờ tới, và không ai biết vì sao | L2 |
-| **P1-10** | Dựng sổ rủi ro: năm rủi ro lớn nhất, kèm cơ chế chặn, ai chịu, và dấu hiệu nó **đang** xảy ra | P1-04 · P1-05 · P1-06 | Năm dòng, mỗi dòng chỉ tên đúng một cơ chế đã viết ở bước trước — không rủi ro nào được chặn bằng *"cẩn thận hơn"* | Rủi ro lớn không có người chặn, và lần đầu nó xảy ra là lần đầu ai đó nghĩ về nó | L1 |
+| **P1-10** | Dựng sổ rủi ro: năm rủi ro lớn nhất, kèm cơ chế chặn, ai chịu, và dấu hiệu nó **đang** xảy ra | P1-04 · P1-05 · P1-06 · **P1-13** | Năm dòng, mỗi dòng chỉ tên đúng một cơ chế đã viết ở bước trước — không rủi ro nào được chặn bằng *"cẩn thận hơn"* | Rủi ro lớn không có người chặn, và lần đầu nó xảy ra là lần đầu ai đó nghĩ về nó | L1 |
 | **P1-11** | **Diễn ba scenario nghiệm thu BA qua thiết kế** (`docs/product/0-ba/ban-hang/08-scenario.md` §8) và chốt cổng sang pha 2 | P1-02 → P1-10 | Mỗi **bước** của ba scenario trỏ được tới một cơ chế bảo vệ đã viết ra; chỗ không trỏ được ghi thành `F-XXX`/`U-XXX`, **không** tự thiết kế bù | Thiết kế đẹp mà không chạy được nghiệp vụ — đúng cách BA-11 tìm ra năm chỗ nói lệch nhau | L2 |
 | **P1-12** | Rà chéo ranh giới pha và pointer | P1-11 | Bộ lọc *tên bảng · tên cột · endpoint · route · component* trên mọi file pha 1 trả về **rỗng**, và mỗi lần rỗng có in cả lệnh chưa lọc để chứng minh bộ lọc không tự rỗng (F-017); `./scripts/gate.sh` xanh | Pha 1 âm thầm quyết việc của pha 2, và không ai rà lại vì mọi cổng đều xanh | L1 |
+| **P1-13** | Bảng ba cột — nhóm thứ tư **SẢN XUẤT THEO MẺ**: `I-019` `I-020` — mở ra **sau** khi ba nhóm ban đầu đã chia (`work/findings.md` F-026, `docs/decisions.md` ADR-042) | P1-01 | Hai mệnh đề đủ ba ô, không ô nào trống; `I-019`/`I-020` dùng chung một cơ chế khoá gom, và hàng nào chỉ tới tầng 4 phải nói thẳng *"máy không ngăn được"* | Bánh cộng cho bàn này, thiếu cho bàn kia, đúng lúc đông khách và không ai có thời gian dò lại | L2 |
 
-**Chạy song song được:** P1-02 · P1-03 sau khi P1-01 xong · P1-04 · P1-05 · P1-06 độc lập với nhau
-(ba nhóm không dùng chung mệnh đề nào) · P1-09 độc lập với cả dãy, nó chỉ chờ BA-12 và S-5. Hai
+**Chạy song song được:** P1-02 · P1-03 sau khi P1-01 xong · P1-04 · P1-05 · P1-06 · **P1-13** độc
+lập với nhau (bốn nhóm không dùng chung mệnh đề nào) · P1-09 độc lập với cả dãy, nó chỉ chờ BA-12
+và S-5. Hai
 phiên chạy song song thì `work/scope.txt` là **một file, nhiều chủ**: phiên vào sau **thêm** khối
 của mình, không ghi đè (F-010 · F-014).
 
-**Mô tả dài của cả mười hai bước ở `work/backlog_SD.md`; dòng TRẠNG THÁI thì chỉ tạo lúc nhận
+**Mô tả dài của cả mười ba bước ở `work/backlog_SD.md`; dòng TRẠNG THÁI thì chỉ tạo lúc nhận
 việc.** *(Đổi 2026-09-04, T-049 · `docs/decisions.md` **ADR-034**, theo yêu cầu chủ repo. Bản đầu
 của đoạn này nói **mô tả** cũng chỉ viết lúc nhận việc — chỗ đó đã hết đúng, và lý do dưới đây là
 lý do vẫn còn nguyên giá trị.)*
@@ -207,11 +209,12 @@ viết trước — đó là phần của luật cũ không đổi. Bảng đố
 
 ---
 
-## 7. Năm tầng bảo vệ — từ vựng bắt buộc của ba bước P1-04 → P1-06
+## 7. Năm tầng bảo vệ — từ vựng bắt buộc của bốn bước P1-04, P1-05, P1-06, P1-13
 
-Ba bước ấy viết ra ba mảnh của **một** bảng. Không có từ vựng chung thì ba mảnh không so được với
-nhau, và cột giữa sẽ đầy những chữ như *"xử lý cẩn thận"*. Nên cột giữa chỉ được nhận đúng một
-trong năm giá trị dưới đây, xếp **mạnh dần**:
+Bốn bước ấy viết ra bốn mảnh của **một** bảng (`docs/product/1-system-design/03-bao-ve-invariant.md`
+§1–§4). Không có từ vựng chung thì các mảnh không so được với nhau, và cột giữa sẽ đầy những chữ
+như *"xử lý cẩn thận"*. Nên cột giữa chỉ được nhận đúng một trong năm giá trị dưới đây, xếp
+**mạnh dần**:
 
 | Tầng | Nghĩa | Đúng cả khi… |
 |:--:|---|---|
@@ -293,8 +296,11 @@ nội dung. Bài học của BA-11: một cổng tick **6/9 kèm lý do cho ba �
 dùng được; một cổng tick 9/9 bằng cảm giác thì không chặn được gì. Nên mỗi ô dưới đây kèm sẵn
 **cách chứng minh**.
 
-- [ ] Mười tám `I-0xx` **đều** có tầng bảo vệ và phép đối chiếu → mở `03-bao-ve-invariant.md`, đếm:
-      không ô nào trống, và mỗi tầng là một trong năm giá trị §7.
+- [ ] **Mọi** `I-0xx` của `quality/invariants.md` đều có tầng bảo vệ và phép đối chiếu → mở
+      `03-bao-ve-invariant.md`, đối chiếu **danh sách mã** giữa hai file (không đếm số lượng —
+      một con số đếm động đã tự hết đúng một lần, `work/findings.md` **F-026**): không mã nào ở
+      `quality/invariants.md` vắng mặt ở đây, không ô nào trống, và mỗi tầng là một trong năm
+      giá trị §7.
 - [ ] Mỗi mệnh đề chỉ được giữ ở **tầng 4 hoặc 5** đã nói thẳng ra điều đó → lọc chữ *"máy không
       ngăn được"*, đối chiếu với danh sách các mục thuộc hai tầng ấy.
 - [ ] Định nghĩa **ngày bán** có đúng một chỗ, và ba phép cộng tiền trỏ về nó → `grep` ba luật

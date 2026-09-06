@@ -57,7 +57,7 @@ hàm, tên file hay thư viện. **Số mục §1–§14 không đánh lại** �
 *Nợ* = §12) và ADR-013 (mục *admin* = §14) gọi tên mục bằng số ấy.
 
 **Thứ tự việc còn lại của pha 1 ở `master_plan/SD_master_plan_banh_cuon_ba_thanh.md`** — kế hoạch
-pha 1, viết 2026-09-03 (`docs/decisions.md` **ADR-033**). Nó giữ mười hai bước `P1-01`…`P1-12`,
+pha 1, viết 2026-09-03 (`docs/decisions.md` **ADR-033**). Nó giữ mười ba bước `P1-01`…`P1-13`,
 chỗ đang bị chặn và cổng sang pha 2; nó **không sở hữu sự thật nào**, và trạng thái từng bước đọc ở
 `work/backlog.md`. Đầu ra của mỗi bước vào một **file mới** trong thư mục này, một chủ đề một file,
 kèm một dòng vào bảng trên trong cùng thay đổi (mục *Luật ghi* dưới đây).

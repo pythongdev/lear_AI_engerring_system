@@ -1,10 +1,13 @@
 # Bảo vệ invariant — tầng nào giữ từng mệnh đề, và phép đối chiếu nào bắt nó khi hỏng
 
-*Bước 4/12 · 5/12 · 6/12 của pha 1 — **một file, ba chủ**
+*Bước 4/13 · 5/13 · 6/13 · 13/13 của pha 1 — **một file, bốn chủ**
 (`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §5 · §6 · `docs/decisions.md` **ADR-033**).
 Mở đầu và **§1 — nhóm TIỀN** viết ở **P1-04**, 2026-09-06. **§2 — nhóm VÒNG ĐỜI** là của **P1-05**,
-**§3 — nhóm MENU · GIÁ · VẾT** là của **P1-06**; hai mục ấy chưa có, và bước nào viết mục ấy thì
-**thêm** mục của mình, không sửa mục của người khác (`work/findings.md` **F-010** · **F-014**).*
+**§3 — nhóm MENU · GIÁ · VẾT** viết ở **P1-06**, 2026-09-07. **§4 — nhóm SẢN XUẤT THEO MẺ** là của
+**P1-13**, 2026-09-07 — bước thứ mười ba, mở ra
+sau khi `I-019`/`I-020` sinh **sau** kế hoạch chia ba nhóm ban đầu (`work/findings.md` **F-026**,
+`docs/decisions.md` **ADR-042**). Không sửa mục của người khác (`work/findings.md` **F-010** ·
+**F-014**).*
 
 > **Mục này sở hữu đúng hai thứ cho mỗi mệnh đề bất biến:** **tầng bảo vệ** đang giữ nó, và **phép
 > đối chiếu** bắt được nó khi nó đã hỏng (`CLAUDE.md` §2, hàng *Tầng bảo vệ của từng invariant* —
@@ -221,3 +224,103 @@ chưa đủ, nên câu đúng vẫn là *"đang treo"*, không phải một tầ
 | **P1-11** — diễn ba scenario | mỗi bước chạm vòng đời trỏ được vào một ô cột giữa ở đây; chỗ phải dừng là `I-004` vế tầng 4 (POS chọn bàn nhận) và `I-017` với `S-6` |
 | **P1-12** — rà ranh giới pha | §2 không có tên bảng · cột · ràng buộc · endpoint · route · component; câu *"phải không tồn tại được ở tầng cơ sở dữ liệu"* là câu về tầng |
 | **Pha 2** | **cái gì bắt buộc do cơ sở dữ liệu giữ**: `I-001` (một bàn một phiên chưa thanh toán, phủ cả chờ thanh toán) · `I-004` vế chưa duyệt (không việc trạm nào cho đơn Mới/Chờ xác nhận) · `I-006`/`I-007` (ranh giới phiên bàn ↔ ba kênh không gắn bàn, một cơ chế cho cả hai). Và **cái gì cần một giao dịch, không chỉ một ràng buộc**: `I-004` vế đủ việc (nổ đơn) và vế chuyển nhu cầu sau khi POS chọn bàn nhận · `I-017` (đọc rồi ghi trong cùng một giao dịch) |
+
+---
+
+## 3. Nhóm MENU · GIÁ · VẾT — năm mệnh đề (P1-06, 2026-09-07)
+
+Nhóm này chứa **ca dạy được nhiều nhất của cả pha**: `I-011` từng được viết là *"thành phần suất
+không đổi trong giờ bán"*, và câu đó **sai** kể từ khi chủ quán trả lời `U-018` (2026-09-01) — máy
+**chỉ nhắc một câu rồi vẫn cho lưu**, vì luật *"chờ hết buổi"* là luật cho **người**, không phải
+hàng rào của máy. Một invariant hệ thống không giữ nổi thì không phải invariant; thứ sản phẩm giữ
+được là chuyện đó không xảy ra **âm thầm** (`docs/product/99-unknowns.md` mục *Đã có lời giải*,
+`U-018`). Bốn mệnh đề còn lại mỗi cái một chỗ dễ sai riêng, ghi ở §3.1.
+
+**Cột *Mệnh đề* trỏ về `quality/invariants.md`** — nhãn sau mỗi mã chỉ để nhận ra hàng, **không**
+phải câu mệnh đề; lời của từng mệnh đề đọc ở nhà của nó (**F-001**).
+
+| Mệnh đề | Bảo vệ bằng | Phép đối chiếu — *tập này phải rỗng* |
+|---|---|---|
+| **`I-008`** — ngoài giờ bán, đang tạm dừng, hoặc quán mất kết nối thì không đơn nào được tạo | **Tầng 3, đúng một cửa tạo lượt gọi** ([`architecture.md`](architecture.md) §6.2, cùng kiểu cửa ghi duy nhất với `I-013`), cửa ấy xét đủ ba điều kiện **theo đúng thứ tự**, không gộp thành một điều kiện: **(1)** đang bật *tạm dừng nhận đơn* ⇒ **chặn ngay, không xét tiếp** — nút này thắng giờ mở cửa (`shop-facts.md` §6.8); **(2)** không tạm dừng ⇒ mới xét **thời điểm tạo có nằm trong giờ bán** (06:00–11:00, `Asia/Ho_Chi_Minh`) hay không; **(3)** quán có đang **nhìn thấy được đơn mới** hay không — điều kiện này khác hai cái trên ở chỗ **không ai bấm được nó**: nó tắt đúng lúc không ai ở quán bấm được gì. **Cách máy biết quán đang mất kết nối là một cơ chế của P1-08/pha 3, chưa thiết kế ở bước này** — mệnh đề chỉ yêu cầu: một khi hệ thống đã xác định quán đang mù, cửa tạo lượt gọi phải chặn đúng **ba** kênh khách tự bấm (`delivery`, `pickup`, `qr_table`) và **không** chặn `staff_pos`/`phone_preorder` (hai kênh ấy vẫn nhận đơn qua hotline, ghi giấy). Đơn đã tạo **trước** một trong ba điều kiện đóng lại không bị chạm tới. | Mọi đơn có thời điểm tạo nằm ngoài 06:00–11:00. · Mọi đơn có thời điểm tạo rơi vào một khoảng *tạm dừng nhận đơn* đang bật. · Mọi đơn của ba kênh khách tự bấm (`delivery`, `pickup`, `qr_table`) có thời điểm tạo rơi vào một khoảng quán đã được xác nhận là mất kết nối. · Mọi đơn của `staff_pos`/`phone_preorder` bị chặn nhầm trong đúng khoảng mất kết nối ấy — chặn nhầm hai kênh này cũng là một chỗ hỏng, không riêng gì lọt đơn qua ba kênh kia. **Mọi tập kể trên phải rỗng.** |
+| **`I-009`** — đơn đã tạo không đổi giá, tên món và thành phần khi chủ quán sửa menu | **Tầng 1 cho vế lưu bản sao**: một dòng đơn thiếu giá, tên món hoặc thành phần **đã chụp tại thời điểm tạo** — tức đọc theo bảng giá/menu **hiện hành** thay vì theo bản đã khoá — **phải không tồn tại được** ở tầng cơ sở dữ liệu; đây là **yêu cầu** gửi pha 2 (mục 0 luật 4), pha 2 chưa mở. **Tầng 3 cho vế mốc khoá**: chỉ **một cửa tạo lượt gọi** (cùng cửa `I-013`) đọc giá tại đúng mốc rồi khoá vào dòng đơn, và mốc ấy là **từng lượt gọi** (`docs/decisions.md` **ADR-023**) — **không phải** lúc mở hay đóng phiên bàn. Vì mốc là lượt gọi, một phiên bàn vắt qua một lần chủ quán đổi giá giữa buổi cho ra **đúng hai mức giá trên cùng một hoá đơn**, và đó là **kết quả đúng**, không phải một chỗ hỏng cần chặn (`shop-facts.md` §6.17). **Một ngoại lệ đã chốt, tầng 4**: khi người đứng quầy chủ động **sửa** một dòng, dòng ấy lấy giá **đang hiệu lực lúc sửa** — mốc khoá của riêng dòng đó được **đặt lại** (trả lời `U-026`, 2026-09-02); máy không tự làm điều này, nó chỉ xảy ra khi có một thao tác sửa của người. Đi kèm bắt buộc, **tầng 2**: vết của lần sửa ấy ghi **cả giá cũ lẫn giá mới** trong **cùng một giao dịch** với chính lần sửa (`I-012`, `I-018`) — thiếu vết ấy thì không ai phân biệt được "đổi giá menu không đụng đơn" với "sửa tay một dòng". | Mọi dòng đơn có giá, tên món hoặc thành phần đọc ra **khác** với giá trị đã khoá tại mốc tạo lượt gọi của chính nó, **trừ** đúng dòng vừa có một lần **sửa** còn để lại vết giá cũ/giá mới (`I-012`/`I-018`). · Mọi phiên bàn vắt qua một lần đổi giá giữa buổi mà **chỉ** mang một mức giá cho món đã đổi — đây **mới** là điều kiện lệch; **hai mức giá trên một hoá đơn không phải điều kiện lệch**. · Mọi lần sửa một dòng không để lại vết giá cũ/giá mới. **Mọi tập kể trên phải rỗng.** |
+| **`I-010`** — tổ hợp món/tuỳ chọn không hợp lệ bị TỪ CHỐI, không bao giờ được sửa hộ | **Tầng 3, đúng một cửa** (cùng cửa `I-013`/`I-009` tính giá và khoá menu) kiểm tổ hợp tuỳ chọn **trước khi** tạo dòng đơn: hợp lệ ⇒ tạo; **không hợp lệ ⇒ từ chối toàn bộ**, không có đường nào tự bỏ bớt, đổi hay thêm tuỳ chọn rồi cho đơn đi tiếp. Danh sách tổ hợp không hợp lệ tra theo **luật**, không theo một danh sách case mã cứng — cùng lý do `I-016` (§2) chọn tầng 3 thay vì một ràng buộc cứng từng cặp: tổ hợp *Chay + Nhiều nhân* không hợp lệ **hôm nay** (`shop-facts.md` §4.4, §4.6 quy tắc 3), chủ quán sửa menu có thể đổi danh sách này mà mệnh đề không cần sửa một chữ. Cửa này áp cho **mọi** kênh trong năm kênh như nhau — đơn khách tự bấm và đơn nhân viên nhập hộ không có đường nào khác để bỏ qua bước kiểm. | Mọi dòng đơn tồn tại mang một tổ hợp không hợp lệ theo danh sách đang hiệu lực **tại đúng mốc tạo lượt gọi** của nó. · Mọi dòng đơn mang một tổ hợp **khác** với tổ hợp khách đã gửi ban đầu mà không phải do người sửa tay có vết (`I-018`) — dấu hiệu của một lần "sửa hộ" cho hợp lệ. · Mọi yêu cầu tạo đơn bị từ chối vì tổ hợp không hợp lệ mà vẫn có một dòng đơn được tạo ra ngay sau đó cho cùng yêu cầu ấy. **Mọi tập kể trên phải rỗng.** |
+| **`I-011`** — đổi thành phần suất trong giờ bán không bao giờ xảy ra ÂM THẦM | **Tầng 4 — máy không ngăn được, và đây là ca mẫu của cả nhóm.** Chủ quán chốt ngược với bản đầu của mệnh đề này (`U-016` rồi `U-018`, cả hai 2026-09-01): đổi thành phần suất **phải** chờ hết buổi, nhưng máy **chỉ nhắc một câu** trước khi lưu rồi **vẫn cho lưu** nếu người bấm tiếp tục — **không có đường nào ngăn được việc lưu**, và tự dựng một đường ngăn là tự đặt luật nghiệp vụ
+(`CLAUDE.md` §3.5). Cái máy **có** giữ thay vào, hai thứ: **lời nhắc** — tầng 3, một cửa sửa thành phần suất luôn hỏi trước khi ghi bất kỳ thay đổi nào rơi vào giờ bán (06:00–11:00); và **cái vết** — tầng 1 + tầng 2, mọi lần lưu (kể cả sau khi người bấm bỏ qua lời nhắc) ghi lại **đổi cái gì, lúc mấy giờ, ai bấm** trong cùng giao dịch với chính lần cập nhật (`I-018`). Ba chiều đổi giá khác — giá thành phần, phụ thu nhân, phụ thu lượng nhân — **không** chịu ràng buộc lời nhắc này, đổi được bất kỳ lúc nào, không nhắc gì cả; đừng bắt nhầm luật này sang ba chiều tiền. | Mọi lần đổi thành phần của một suất bán xảy ra trong giờ bán mà **không** có một vết ghi lại đổi cái gì/lúc mấy giờ/ai bấm (`I-018`). · Mọi lần đổi thành phần trong giờ bán mà không có bằng chứng lời nhắc đã hiện trước khi lưu (lời nhắc là điều kiện bắt buộc **hiện ra**, không phải điều kiện **được tuân theo** — người vẫn được bấm bỏ qua). · Mọi lần đổi **giá** (không phải thành phần) bị hệ thống nhắc nhầm như một lần đổi thành phần. **Mọi tập kể trên phải rỗng** — và tập đầu tiên có phần tử **không** có nghĩa mệnh đề bị vi phạm nếu lời nhắc đã hiện đúng lúc lưu; nó chỉ có nghĩa khi thiếu cả lời nhắc **và** vết. |
+| **`I-018`** — mỗi lần CẬP NHẬT giữ được bản trước, bản sau, lý do và người sửa | **Tầng 1 cho hình dạng bản ghi**: một lần cập nhật thiếu **một trong bốn** thứ — bản ghi trước, bản ghi sau, lý do, người sửa — **phải không tồn tại được** ở tầng lưu trữ; đây là **yêu cầu** gửi pha 2 (mục 0 luật 4), pha 2 chưa mở. **Tầng 2 cho vế đồng thời**: việc ghi đủ bốn thứ ấy xảy ra trong **cùng một giao dịch** với chính lần cập nhật — đứt giữa chừng thì bản ghi chính và bản ghi vết lệch nhau, đúng trạng thái mệnh đề này cấm. Áp cho **mọi** lần sửa một bản ghi đã tồn tại, không riêng thao tác chạm tiền (khác `I-012` — hai tập không trùng nhau, xem `quality/invariants.md` mục *Quan hệ với I-012*): sửa nội dung đơn, huỷ đơn đã `Hoàn thành`, sửa sau khi duyệt/huỷ/đóng phiên nhầm, ghi đè khi hai người cùng thao tác một bàn (người bấm sau thắng, nhưng lần đè vẫn phải giữ bản của người trước), lùi một mẻ bấm nhầm, chủ quán đổi giá hoặc thành phần suất. **Không có nút hoàn tác** (trừ đúng ca lùi một mẻ) — mệnh đề này là thứ **thay thế** cho hoàn tác: quán chấp nhận không quay ngược được, đổi lại đòi dựng lại được. | Mọi lần cập nhật một bản ghi đã tồn tại mà thiếu một trong bốn thứ: bản trước, bản sau, lý do, người sửa. · Mọi lần ghi đè do hai người cùng thao tác một bàn mà không dựng lại được trạng thái của người bấm trước. · Mọi lần đổi giá hoặc thành phần suất giữa buổi rồi sửa một dòng đơn cũ mà bảng đối soát (`shop-facts.md` §6.10) không đọc ra được cả giá trị **trước** lẫn **sau** của đúng dòng ấy (`I-009`). **Mọi tập kể trên phải rỗng.** |
+
+### 3.1 Bốn chỗ hàng trên dễ bị ghi sai tầng
+
+- **`I-011` không được ghi tầng 1, kể cả để bảng "đẹp".** Bản đầu của mệnh đề này —
+  *"thành phần suất không đổi trong giờ bán"* — viết đúng tầng 1, và bản đó **sai** kể từ lời chốt
+  `U-018`. Ghi hàng này tầng 1 hôm nay là nói dối pha 2: pha 2 sẽ dựng một ràng buộc chặn thật, và
+  quán mất khả năng sửa thành phần giữa buổi — đúng thứ chủ quán cố ý giữ lại cho mình.
+- **`I-009` không phải "khoá giá theo phiên".** Mốc khoá là **từng lượt gọi**
+  (`docs/decisions.md` **ADR-023**), nên một hoá đơn phiên bàn mang **hai mức giá** vì vắt qua một
+  lần đổi giá là **kết quả đúng**, không phải một chỗ hỏng cần một ràng buộc chặn.
+- **`I-010` là *từ chối*, không phải *sửa hộ*.** Không dòng nào của cột giữa được đọc thành một cơ
+  chế tự bỏ bớt hay đổi tuỳ chọn để tổ hợp *Chay + Nhiều nhân* thành hợp lệ rồi cho đơn đi tiếp.
+- **`I-008` có hai cửa NGƯỜI bấm được, có thứ tự, cộng một điều kiện KHÔNG ai bấm được.** Tạm dừng
+  luôn được xét **trước** giờ bán vì nó thắng giờ mở cửa; gộp ba điều kiện thành một câu làm mất
+  đúng cái thứ tự ấy, và cũng làm mất chỗ khác nhau giữa "người bấm" và "không ai bấm được".
+
+### 3.2 Bước sau đọc gì ở §3
+
+| Bước | Lấy gì từ mục này |
+|---|---|
+| **P1-07** — yêu cầu hình dạng dữ liệu | vế lưu bản sao của `I-009` và vế hình dạng bản ghi của `I-018` là hai **yêu cầu** gửi pha 2 (mục 0 luật 4); `I-008` cần một chỗ hệ thống đọc được trạng thái *tạm dừng* và *đang mất kết nối* trước khi tạo lượt gọi |
+| **P1-08** — realtime, đường kéo dự phòng, ràng buộc ẩn | cơ chế **phát hiện** quán đang mất kết nối (input cho điều kiện thứ ba của `I-008`) là việc của bước này, không phải của §3 — §3 chỉ nói máy phải chặn đúng ba kênh khi đã biết |
+| **P1-10** — sổ rủi ro | `I-011` là **tầng 4** của nhóm này — chủ quán tự phá luật của chính mình là **máy không ngăn được**, cùng loại rủi ro với `I-012`/`I-015` (§1) và `I-004` (§2), khác ba loại đó ở chỗ nó là rủi ro **cố ý chấp nhận**, không phải một giới hạn kỹ thuật |
+| **P1-11** — diễn ba scenario | mỗi bước chạm menu/giá/vết trỏ được vào một ô cột giữa ở đây; chỗ phải diễn đúng là kịch bản `I-011` (nhắc rồi vẫn cho lưu) và kịch bản `I-009` (một hoá đơn hai mức giá là đúng) |
+| **P1-12** — rà ranh giới pha | §3 không có tên bảng · cột · ràng buộc · endpoint · route · component; câu *"phải không tồn tại được ở tầng cơ sở dữ liệu"* và *"đúng một cửa"* là câu về tầng |
+| **Pha 2** | **cái gì bắt buộc do cơ sở dữ liệu giữ**: `I-009` (dòng đơn lưu bản sao giá/tên/thành phần, không tham chiếu động) · `I-018` (một lần cập nhật thiếu một trong bốn thứ là không hợp lệ). Và **cái gì không cơ chế nào giữ được, chỉ có lời nhắc + vết**: `I-011` (hàng P1-10 trên) |
+
+---
+
+## 4. Nhóm SẢN XUẤT THEO MẺ — hai mệnh đề (P1-13, 2026-09-07)
+
+`I-019` và `I-020` sinh ở **BA-12, 2026-09-03** — **sau** khi kế hoạch §6 đã chia mười tám mệnh đề
+ban đầu thành ba nhóm — nên không nhóm nào trong ba nhóm TIỀN · VÒNG ĐỜI · MENU·GIÁ·VẾT nhận chúng
+(`work/findings.md` **F-026**). Chủ repo chốt đường thứ hai trong ba đường F-026 liệt: mở **bước
+thứ mười ba**, nhóm riêng (`docs/decisions.md` **ADR-042**). Trục chung của cả hai mệnh đề là
+**sản xuất theo mẻ** — *mẻ là đơn vị bấm, bàn là đơn vị đếm* (chủ quán chốt 2026-09-01, đóng
+`U-017`) — không phải tiền và không phải vòng đời của một thực thể.
+
+| Mệnh đề | Bảo vệ bằng | Phép đối chiếu |
+|---|---|---|
+| **`I-019`** — tổng nhu cầu một thành phần luôn bằng tổng phần chia về từng bàn, cả hai chiều | **Hai vế, hai tầng.** · **Vế *tổng luôn khớp tổng phần chia*: tầng 1** — trạng thái *con số tổng của một dòng nhu cầu (khoá: thành phần + loại nhân + lượng nhân) lệch khỏi tổng các phần đã chia về từng bàn* **phải không tồn tại được** ở tầng lưu trữ: tổng phải là một sự thật suy ra được từ các phần chia (hoặc ngược lại), không phải hai con số ghi độc lập ở hai chỗ. Nếu vì hiệu năng vẫn cần một con số tổng lưu riêng (bản đệm), thì mọi lần một phần chia của một bàn đổi phải cộng/trừ đúng lượng ấy vào tổng trong **cùng một giao dịch** (**tầng 2**) — không có bước giữa chừng nào để hai con số đứng lệch nhau, kể cả khi mất điện giữa hai bước ghi. · **Vế *khoá gom là ranh giới phép cộng*: tầng 3** — đúng **một** hàm gom nhận lượt gọi của từng bàn và xếp vào đúng dòng theo khoá; mọi lời gọi tạo hoặc sửa một dòng nhu cầu đi qua đúng hàm đó, không có đường tắt tự gộp hai khoá khác nhau cho gọn hay tự tách một khoá làm hai dòng. | Với **mỗi** dòng nhu cầu (một khoá gom): tổng các phần chia về từng bàn phải bằng đúng con số tổng của dòng — tính **cả hai chiều**, cộng xuôi (các phần → tổng) và tách ngược (tổng → đúng các phần đã ghi). Và: không tồn tại hai dòng khác nhau cùng chung một khoá gom (gộp nhầm bỏ sót), cũng không tồn tại một khoá gom bị tách thành hai dòng (tách nhầm sinh thừa). **Cả hai tập phải rỗng.** |
+| **`I-020`** — số đã phục vụ của một bàn không bao giờ vượt số bàn ấy đã gọi | **Bốn vế, ba tầng.** · **Vế *trần trên, kể cả trạng thái giữa*: tầng 1** — với mỗi bàn và mỗi thành phần, trạng thái *đã bưng ra bàn vượt số đã gọi* **phải không tồn tại được** ở tầng lưu trữ; cùng ràng buộc áp cho *đã làm xong còn ở bếp* cộng *đã bưng ra bàn* không vượt số đã gọi — ba trạng thái của một việc trạm loại trừ nhau. · **Vế *một mẻ phủ nhiều bàn, một lần bấm*: tầng 2** — bấm *"đã làm xong"* cho một mẻ phủ N bàn thì phần cộng cho **mỗi** bàn (đúng bằng phần bàn ấy đã gọi trong mẻ, dùng lại chính khoá gom của `I-019`) phải ghi trong **cùng một giao dịch** — không có trạng thái giữa chừng nơi vài bàn đã được cộng còn bàn khác chưa. · **Vế *đường lùi*: tầng 2** — một lần lùi phải là giao dịch nghịch đảo đúng những gì giao dịch tiến đã cộng, cho **mọi** bàn trong mẻ, cùng lúc; không lùi được một phần của mẻ mà để phần còn lại đứng nguyên. · **Vế *ba trạng thái loại trừ nhau*: tầng 3, trỏ sang `I-016`** — đúng một cửa chuyển trạng thái giữ cho *chưa làm* / *đã xong còn ở bếp* / *đã ra bàn* không lẫn vào nhau; hàng này không mô tả lại cơ chế đã viết ở `I-016` (§2). Vết của mỗi lần lùi là **tầng 4**, trỏ sang `I-012`/`I-018`: máy không ngăn được người bấm lùi sai bối cảnh, cái máy **có** giữ là một vết đọc được. | Với **mọi** bàn và **mọi** thành phần: *còn thiếu* = đã gọi − đã bưng ra bàn **không bao giờ âm**; và *đã làm xong còn ở bếp* + *đã bưng ra bàn* của một bàn **không vượt** số đã gọi. **Cả hai tập phải rỗng**, đo lại sau mỗi lần huỷ đơn và sau mỗi lần bấm lùi. |
+
+### 4.1 Vì sao là nhóm thứ tư, không gấp vào VÒNG ĐỜI (P1-05)
+
+`I-020` trông có dáng một câu vòng đời — *đã phục vụ ≤ đã gọi* đọc gần giống trần trên của một
+thực thể, kiểu `I-001`/`I-017`. Nhưng `I-019` là một câu về **phép cộng** giữa nhiều bàn qua một
+khoá gom, không nói về vòng đời của bất kỳ thực thể nào — gấp cả hai vào P1-05 sẽ buộc `I-019`
+mượn một tầng nó không có (F-026, đường 1 đã bác vì lý do này). Hai mệnh đề cũng **không độc lập
+với nhau**: cơ chế tầng 2 của `I-020` (chia đúng phần cho từng bàn trong một mẻ) **dùng lại đúng**
+khoá gom mà `I-019` giữ — chia sai theo khoá gom tự động kéo `I-020` sai theo. Đó là lý do cả hai
+đứng chung một nhóm riêng thay vì tách mỗi mệnh đề vào nhóm nó "giống" nhất.
+
+### 4.2 Bốn chỗ dễ đọc sai
+
+- **`I-019` ràng buộc theo KHOÁ GOM, không theo tên món.** Hai combo cùng tên nhưng khác loại nhân
+  hoặc khác lượng nhân là **hai dòng khác nhau** — gộp chúng lại cho gọn là đúng loại lỗi mệnh đề
+  này cấm (`shop-facts.md` §5.4, §4.5).
+- **`I-019` đúng ở CẢ HAI CHIỀU.** Ràng buộc chỉ chiều cộng (các phần → tổng) mà bỏ qua chiều tách
+  (tổng → đúng các phần đã ghi) để lại một khe: hai chiều có thể lệch nhau nếu chỉ một chiều được
+  giữ.
+- **`I-020` không chỉ nói về trạng thái CUỐI.** Nó áp cho cả trạng thái **giữa** (*đã làm xong,
+  còn ở bếp*) cộng dồn với *đã bưng ra bàn* — một cơ chế chỉ chặn *đã bưng ra bàn* mà bỏ qua tổng
+  hai trạng thái là chặn thiếu một nửa.
+- **Đường lùi của `I-020` là một GIAO DỊCH, không phải một API xoá dòng.** Lùi một phần của mẻ mà
+  để phần còn lại đứng nguyên phá đúng vế *mọi bàn trong mẻ, cùng lúc*.
+
+### 4.3 Bước sau đọc gì ở §4
+
+| Bước | Lấy gì từ mục này |
+|---|---|
+| **P1-07** — yêu cầu hình dạng dữ liệu | mọi câu tầng 1 ở đây (`I-019` tổng khớp phần chia, `I-020` trần trên) là **yêu cầu** gửi pha 2; `I-019` cần thêm một yêu cầu riêng — pha 2 phải quyết định tổng là **suy ra** hay **lưu đệm cùng giao dịch**, không được để ngỏ |
+| **P1-09** — bảng quầy bốn con số | con số thứ tư (*đã làm xong, còn ở bếp*) đọc trực tiếp từ cơ chế `I-020` giữ ở đây — mẻ là đơn vị bấm, bàn là đơn vị đếm |
+| **P1-10** — sổ rủi ro | chia sai phần theo khoá gom (`I-019`) tự động kéo `I-020` sai theo — một rủi ro, hai mệnh đề (§4.1); đường lùi thiếu tầng 2 là rủi ro thứ hai của nhóm này |
+| **P1-11** — diễn ba scenario | scenario chạm mẻ phủ nhiều bàn phải trỏ được vào cơ chế tầng 2 ở đây, cả chiều tiến lẫn chiều lùi |
+| **P1-12** — rà ranh giới pha | §4 không có tên bảng · cột · ràng buộc · endpoint · route · component |
+| **Pha 2** | **cái gì bắt buộc do cơ sở dữ liệu giữ**: `I-020` vế trần trên (đã bưng ra bàn ≤ đã gọi). Và **cái gì cần một giao dịch, không chỉ một ràng buộc**: `I-019` (cộng/trừ một phần chia và tổng cùng lúc) · `I-020` (cộng cho mọi bàn của một mẻ trong cùng giao dịch, và đường lùi là giao dịch nghịch đảo của đúng giao dịch tiến) |

@@ -33,7 +33,7 @@ cổng chạy đúng — và vì một ví dụ về đường chết vẫn là 
 
 | Nguồn | Cho cái gì | Ai là nhà thật |
 |---|---|---|
-| `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` | **thứ tự · mức · đầu ra kiểm chứng được** của mười hai bước, năm tầng bảo vệ (§7), cổng sang pha 2 (§9) | kế hoạch — **không sở hữu sự thật nào** |
+| `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` | **thứ tự · mức · đầu ra kiểm chứng được** của mười ba bước, năm tầng bảo vệ (§7), cổng sang pha 2 (§9) | kế hoạch — **không sở hữu sự thật nào** |
 | `work/backlog_SD.md` | **mô tả dài** của từng bước: vì sao có nó, hỏng thì mất gì, mười bước chạy | sổ task pha 1 — không giữ trạng thái |
 | `work/backlog.md` | **trạng thái** *Ready* / *In Progress* / *Done* của mọi bước | owner của Tasks (`docs/decisions.md` **ADR-002** · **ADR-034**) |
 
@@ -60,7 +60,7 @@ và luôn in **cả lệnh chưa lọc** cạnh lệnh đã lọc (`work/finding
 **Pha 1 cũng không mở lại nghiệp vụ.** Gặp chỗ nghiệp vụ chưa rõ ⇒ hỏi chủ quán, hoặc ghi `U-XXX`
 (`CLAUDE.md` §3.5 · §4). Luật này không có mức L0.
 
-## Năm tầng bảo vệ — từ vựng bắt buộc của P1-04 · P1-05 · P1-06
+## Năm tầng bảo vệ — từ vựng bắt buộc của P1-04 · P1-05 · P1-06 · P1-13
 
 Ba bước ấy viết ba mảnh của **một** bảng, nên cột giữa chỉ nhận đúng một trong năm giá trị, xếp
 mạnh dần: **1** cơ sở dữ liệu giữ · **2** một giao dịch giữ · **3** miền nghiệp vụ giữ · **4**
@@ -69,7 +69,7 @@ người + thủ tục giữ (máy chỉ nhắc, để vết) · **5** phép đ�
 Định nghĩa đầy đủ và ba luật khi điền ở kế hoạch §7 — **đọc ở đó, đừng đọc bản tóm này**. Luật
 đắt nhất: *ghi tầng CAO NHẤT thật sự đang giữ nó, không ghi tầng mình muốn nó ở*.
 
-## Mười hai bước — bước nào đã có prompt
+## Mười ba bước — bước nào đã có prompt
 
 | Bước | Mức | Prompt | Cần xong trước |
 |---|:--:|---|---|
@@ -79,12 +79,13 @@ người + thủ tục giữ (máy chỉ nhắc, để vết) · **5** phép đ�
 | P1-04 | L2 | [`P1-04-invariant-tien-L2.md`](P1-04-invariant-tien-L2.md) | P1-01 ✔ · P1-03 ✔ · `U-036` ✔ · `U-037` ✔ (đóng 2026-09-06) · **F-026** |
 | P1-05 | L2 | [`P1-05-invariant-vong-doi-L2.md`](P1-05-invariant-vong-doi-L2.md) | P1-01 ✔ |
 | P1-06 | L2 | [`P1-06-invariant-menu-gia-vet-L2.md`](P1-06-invariant-menu-gia-vet-L2.md) | P1-01 ✔ |
-| P1-07 | L2 | **chưa viết** — chờ ba bảng ba cột | P1-04 · P1-05 · P1-06 |
+| P1-07 | L2 | **chưa viết** — chờ bốn bảng ba cột | P1-04 · P1-05 · P1-06 · P1-13 ✔ |
 | P1-08 | L2 | **chưa viết** — chờ danh sách phụ thuộc ngoài của P1-02 | P1-02 |
 | P1-09 | L2 | [`P1-09-bang-quay-bon-con-so-L2.md`](P1-09-bang-quay-bon-con-so-L2.md) | BA-12 ✔ · ⚠️ **S-5** |
-| P1-10 | L1 | **chưa viết** — mỗi rủi ro phải chỉ tên một cơ chế đã viết ra | P1-04 · P1-05 · P1-06 |
+| P1-10 | L1 | **chưa viết** — mỗi rủi ro phải chỉ tên một cơ chế đã viết ra | P1-04 · P1-05 · P1-06 · P1-13 ✔ |
 | P1-11 | L2 | **chưa viết** | P1-02 → P1-10 |
 | P1-12 | L1 | **chưa viết** | P1-11 |
+| P1-13 | L2 | [`P1-13-invariant-san-xuat-theo-me-L2.md`](P1-13-invariant-san-xuat-theo-me-L2.md) — **đã chạy 2026-09-07** | P1-01 ✔ |
 
 **Vì sao năm bước còn lại chưa có prompt, và đó không phải nợ.** Kế hoạch §6 cấm viết prompt hộ:
 *"một prompt viết trước khi biết bước trước đã ra kết quả gì sẽ mang những câu Constraints đã chết"*
@@ -94,10 +95,11 @@ viết Constraints và Verify khi ấy đã có thật, không phải đoán. S�
 tới hôm nay — **P1-04 vào tập ngày 2026-09-04, đúng hôm P1-03 `Done`** (T-057); năm bước còn lại
 viết khi tiền đề của chúng xong.
 
-⚠️ **Một câu hỏi đang mở đè lên ba bước bảng ba cột:** `work/findings.md` **F-026** — `I-019` và
-`I-020` sinh ra ở BA-12 ngày 2026-09-03, **sau** khi kế hoạch chia nhóm, nên chúng **không thuộc
-nhóm nào** của P1-04 · P1-05 · P1-06, và cổng chất lượng §9 vẫn đếm *"mười tám"* trong khi
-`quality/invariants.md` giữ **hai mươi**. Ai nhận P1-04 · P1-05 · P1-06 đọc F-026 trước.
+✅ **F-026 đã đóng 2026-09-07:** `I-019` và `I-020` sinh ra ở BA-12 ngày 2026-09-03, **sau** khi kế
+hoạch chia ba nhóm ban đầu, nên không thuộc P1-04 · P1-05 · P1-06 nào. Chủ repo chốt mở **P1-13**,
+nhóm thứ tư **SẢN XUẤT THEO MẺ** (`docs/decisions.md` **ADR-042**) — bảng đã có ở
+`docs/product/1-system-design/03-bao-ve-invariant.md` §4, prompt ở
+[`P1-13-invariant-san-xuat-theo-me-L2.md`](P1-13-invariant-san-xuat-theo-me-L2.md).
 
 ## Cách dùng một prompt
 

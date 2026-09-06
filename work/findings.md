@@ -46,6 +46,57 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ---
 
+## Mục lục
+
+Tổng: 32 finding — 20 Fixed/Resolved, 12 Open (đo lại 2026-09-07). Cột **Status** ở đây là một bản
+chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
+`scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
+trôi (bài học F-001, F-005, F-006).
+
+**Ghi chú dựng bảng này:** file đang có nhiều phiên khác cùng sửa song song (đúng rủi ro F-025 mô
+tả) — số đo đổi giữa hai lần đọc cách nhau vài phút (F-030 chuyển Fixed, F-032 xuất hiện). Bảng dưới
+là số đo sau cùng lúc bảng được ghi. Nhân tiện đã cắt hai dòng `**Status:**` (F-020, F-028) về đúng
+một chữ `Open` — trước đó chúng viết thêm chữ sau "Open", phá đúng hợp đồng ở đầu file khiến
+`scripts/brief.sh` không nhận ra hai mục này là đang mở (họ lỗi F-008, lần này rơi vào Status của
+F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn ở *Decision / Fix* của cả hai.
+
+| ID | Tiêu đề | Status |
+|---|---|---|
+| F-001 | Bảng giá hai bản: `00-scope.md` và `shop-facts.md` | Fixed |
+| F-002 | Ba ca giá 5–7 ghi nhầm "đã đối chiếu khớp" | Fixed |
+| F-003 | Đếm "đúng N": quyết định hay bẫy | Fixed |
+| F-004 | Suy ra từ luật chốt phải tách khỏi lời chủ quán | Fixed |
+| F-005 | Đổi số ở shop-facts.md phải grep cả tài liệu khung | Fixed |
+| F-006 | Rà theo con số không bắt được chỗ lệch không có số | Fixed |
+| F-007 | Bản xuất khẩu trỏ bảy đường không tồn tại | Fixed |
+| F-008 | Brief đọc Unknowns theo hình dạng dòng | Resolved |
+| F-009 | Hai cổng ngoảnh mặt khỏi file chưa track (`git add -A`) | Fixed |
+| F-010 | Scope quên dọn ⇒ phiên sau bị chấm bằng scope người khác | Fixed |
+| F-011 | `0704139 "dsfg"` — cổng không chặn commit ngoài phiên | Fixed |
+| F-012 | Brief cắt danh sách ở 6 mà không báo đã cắt | Fixed |
+| F-013 | Bản xuất khẩu vẫn thiết kế nút "Xong" đã bị bỏ | Fixed |
+| F-014 | Cảnh báo "scope bẩn" bảo XOÁ trong khi chủ thật đang chạy | Open |
+| F-015 | Đóng unknown chỉ sửa chỗ trả lời, không sửa chỗ được nhắc tới | Fixed |
+| F-016 | shop-facts.md tự khai "không trỏ đi đâu" nhưng trỏ 5 chỗ | Open |
+| F-017 | Câu `grep` "chứng minh xong" trong prompt lọc rỗng | Open |
+| F-018 | Số đếm động dùng như invariant | Open |
+| F-019 | Tách file đẻ tiêu đề thứ hai trùng chữ, nghiệm thu đếm hụt | Open |
+| F-020 | Ba khối `work/scope.txt` bị commit, Gate 3 mở toang — đường đã chốt, chờ T-047 | Open |
+| F-021 | Bảng tổng hợp decisions.md nói ngược thân của chính nó | Fixed |
+| F-022 | Hai mục ĐÃ CHỐT trả lời khác nhau cùng một câu hỏi | Fixed |
+| F-023 | Một ADR giao lược đồ/API/route cho hai tài liệu tự khai không sở hữu | Fixed |
+| F-024 | Deliverable bị bỏ rơi vì task đóng trước khi giao | Open |
+| F-025 | Phiên song song `git commit` nhặt luôn thay đổi chưa commit của phiên khác | Open |
+| F-026 | Hai invariant sinh sau khi kế hoạch chia nhóm — I-019/I-020 đã xếp nhóm (ADR-042), I-021 vẫn mồ côi | Open |
+| F-027 | Hai phụ thuộc ngoài chỉ tồn tại ở bản xuất khẩu | Fixed |
+| F-028 | Một dãy mã bị đọc thành phép đếm, đã đứng trong ADR hai ngày | Open |
+| F-029 | Tiền đề "không tài liệu nào nói X" viết mà không grep | Fixed |
+| F-030 | Gate 1c coi mọi U-XXX nhắc trong gạch đầu dòng đang mở là "đang mở" | Fixed |
+| F-031 | Lần thứ tư: subject trùng commit trước, nội dung không khớp | Open |
+| F-032 | Mục lục `backlog_SD.md` ghi Trạng thái "Đóng" cho hai bước còn thiếu dòng luật đòi | Open |
+
+---
+
 ### F-001 — Bảng giá nay có hai bản: `00-scope.md` và `master_plan/shop-facts.md`
 
 **Problem:**
@@ -1733,7 +1784,7 @@ báo cáo) · `CLAUDE.md` §3.4, §5, §6, §6.1, §7.3 · ADR-003 (đỏ vì l�
 ngữ nghĩa pattern một chủ) · ADR-010 (giới hạn của bước cài tay mỗi clone)
 
 **Status:**
-Open — đường đã chốt 2026-09-03, chờ T-047 thi hành
+Open
 
 ---
 
@@ -2225,6 +2276,18 @@ vào (bảy hàng là bảy hàng, xếp nhóm là quyết định của chủ r
 `docs/product/1-system-design/03-bao-ve-invariant.md` §1.3, kèm **một đề xuất** — `I-021` vào nhóm
 TIỀN thì bảng ấy thêm **một** hàng, và cổng §9 đếm lại.
 
+**Đóng 2026-09-07 — chủ repo chọn đường 2 cho `I-019`/`I-020`.** Chủ repo yêu cầu thẳng: *"hãy làm
+thêm nhóm trục sản xuất theo mẻ"* — chốt đường thứ hai trong ba đường liệt ở trên: mở **bước thứ
+mười ba** (`P1-13`), nhóm riêng **SẢN XUẤT THEO MẺ**, quyết định đầy đủ ở `docs/decisions.md`
+**ADR-042**. `I-019` và `I-020` nay có bảng ba cột ở
+`docs/product/1-system-design/03-bao-ve-invariant.md` §4, prompt ở
+`prompt/SD/P1-13-invariant-san-xuat-theo-me-L2.md`. Cổng §9 của kế hoạch không còn đếm một con số
+cứng ("mười tám") — nó đối chiếu **danh sách mã** giữa `quality/invariants.md` và bảng ba cột, nên
+không mồ côi thêm lần nữa theo cùng cơ chế (một mệnh đề mới sinh sau sẽ tự bị bắt là "vắng mặt",
+không cần ai nhớ cập nhật một con số). `I-021` — mệnh đề mồ côi thứ ba, chạm nhóm TIỀN — **vẫn
+đang mở**, ngoài phạm vi lượt này (chủ repo chỉ yêu cầu nhóm sản xuất theo mẻ); đề xuất của P1-04
+ở §1.3 vẫn đứng, chờ quyết định riêng. **Status: Fixed** cho phần `I-019`/`I-020`.
+
 ⇒ Cái phải quyết nay có **hai** câu, không phải một: (a) `I-019` · `I-020` đi đâu — ba đường ở trên;
 (b) `I-021` có vào nhóm TIỀN không. Và một câu thứ ba lộ ra từ chính lần lặp này: **phép đếm cố định
 ở cổng §9 là chỗ hỏng, không phải danh sách** — một cổng đếm *"mười tám"* sẽ hết đúng lần sau nữa
@@ -2383,7 +2446,7 @@ Chỗ **phải** sửa nếu ai đó viết lại: cụm *"ADM-01…ADM-52"* nay
 · **ADR-036** · **F-003** (cùng gốc, bản gốc) · **F-018** (cùng gốc, lần thứ hai)
 
 **Status:**
-Open — vì cụm *"ADM-01…ADM-52"* vẫn còn ở bốn chỗ và chưa chỗ nào được sửa.
+Open
 
 ---
 
@@ -2527,12 +2590,23 @@ không phải lỗi của lượt ấy.
 **T-055** (lượt phát hiện, đóng `U-031`) · **BA-12** (lượt viết ô bảng, `31fb071`) · **BA-13** +
 `docs/decisions.md` **ADR-032** (lượt dựng Gate 1c) · **ADR-007** (hợp đồng hình dạng mục
 *Unknowns*) · **F-012** · **F-017** · **F-018** (cùng chủ đề: một cổng nói sai về chính nó) ·
-`scripts/check-doc-status.sh` bước 1
+`scripts/check-doc-status.sh` bước 1 · **T-063** (sửa cổng, đóng finding)
 
 **Status:**
-Open — ô bảng đã sửa 2026-09-04, **cổng chưa đổi**. Đóng khi phép đo lần thứ hai xảy ra và bước 1
-chỉ còn nhận mã của chính gạch đầu dòng; hoặc đóng bằng một quyết định *chấp nhận ca này* nếu ba
-câu mở còn lại đóng hết mà không lần nào phát sinh thêm báo động ngủ.
+Fixed — 2026-09-07 (T-063), theo đúng đường đã ghi ở *Decision / Fix* phía trên: chủ repo yêu cầu
+sửa cổng ngay (không đợi lần đo thứ hai xuất hiện tự nhiên — coi lần yêu cầu này là lần đủ điều kiện
+theo `CLAUDE.md` §3.8, vì cơ chế hỏng và đường sửa đã được đo và ghi rõ từ 2026-09-04).
+
+Bước 1 của `scripts/check-doc-status.sh` nay gộp cả gạch đầu dòng (kể cả dòng vắt) thành MỘT khối
+trước khi đọc mã, và chỉ mã ĐẦU TIÊN trong khối đó được tính là mã CỦA câu hỏi ấy — mọi mã xuất
+hiện sau trong cùng gạch đầu dòng là trích dẫn, không đẩy trạng thái "open" sang cho chúng. Không
+đổi hợp đồng hình dạng của `99-unknowns.md` (ADR-007 nguyên vẹn), không đụng phép C hay phép D.
+
+Ca hồi quy `scripts/check-doc-status.test.sh` ca 11: một gạch đầu dòng mở (`U-101`) trích dẫn một
+mã đã đóng (`U-005`); trước bản vá, `U-005` bị đẩy lên "open" nên một chỗ khác nói sai về nó
+("chưa rõ… chưa ai trả lời") bị bỏ lọt — sau bản vá, phép A bắt đúng chỗ đó (`exit 1`,
+`"ĐÃ ĐÓNG: U-005"`). Chạy lại toàn bộ `check-doc-status.test.sh` (11 ca) và
+`./scripts/check-doc-status.sh` trên cây thật: cả hai xanh.
 
 ---
 
@@ -2576,6 +2650,36 @@ lại **bốn lần** là quyết định của chủ repo, không phải việc
 **T-062** (lượt phát hiện) · **T-061** (task thật đứng sau `0159d2e`, deliverable còn thiếu một
 nửa) · **F-009** (lần thứ nhất/thứ hai, `0b3a337`/`1b1d5f5`) · **F-025** (lần thứ ba, `39ca608`) ·
 **F-024** (cùng hình dạng "giao thiếu" nhìn từ góc task đóng sớm).
+
+**Status:**
+Open
+
+### F-032 — Mục lục `backlog_SD.md` ghi Trạng thái "Đóng" cho hai bước, dù chính luật của file đòi một dòng mà cả hai đều thiếu
+
+**Problem:**
+Luật 3 đầu `work/backlog_SD.md`: *"Bước xong thì entry ở lại đây, thêm một dòng Xong ngày… ở đầu
+entry."* Mục *Mục lục* nói rõ hơn: cột **Trạng thái** *"chỉ đọc entry ở file này đã có dòng ✅ Xong
+ngày… / XONG… ở đầu hay chưa"*. Đo 2026-09-07 (lượt P1-06): entry `P1-01`, `P1-02`, `P1-03` đều có
+dòng `✅ Xong ngày…` ngay sau khối *Prompt*; entry `P1-04` và `P1-05` thì **không** — cả hai đi
+thẳng từ khối *Prompt* sang **Goal** mà không qua dòng nào như thế. Nhưng Mục lục vẫn ghi cả hai là
+**Đóng**, và `work/backlog.md` xác nhận cả hai đã `[x]` từ 2026-09-06. Theo đúng luật của chính
+file, cột ấy hôm nay đang nói sai cho hai dòng.
+
+**Impact:**
+`scripts/check-doc-status.sh` không canh mẫu `P1-XX` (chỉ canh `U-XXX`/`GĐ-XXX`/ADR), nên gate xanh
+xuyên suốt trong khi bảng tự mâu thuẫn với đúng luật nó tự đặt ra — cùng hình dạng "một mã định
+danh, hai chỗ, hai trạng thái" mà Gate 1c dựng lên để bắt, chỉ khác domain. Một phiên đọc Mục lục
+để biết bước nào đã có tóm tắt kết quả ngay đầu entry (mục đích dòng `Xong ngày…`) sẽ không thấy gì
+ở `P1-04`/`P1-05` dù cột Trạng thái nói đã xong.
+
+**Decision / Fix:**
+Ghi lại, không tự sửa hai entry đó trong lượt này — chúng thuộc phiên khác, và thêm dòng `Xong
+ngày…` hồi tố nên do phiên biết rõ nội dung P1-04/P1-05 làm, hoặc chờ chủ repo xác nhận. Đường rẻ
+nhất cho phiên sau: thêm hai dòng `✅ Xong ngày 2026-09-06` ngắn, trỏ lại đúng nội dung đã có ở
+`work/backlog.md` → Done, không viết lại nội dung.
+
+**Related task:**
+P1-06 (lượt phát hiện, 2026-09-07).
 
 **Status:**
 Open
