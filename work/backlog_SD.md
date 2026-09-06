@@ -39,38 +39,46 @@ quyết định vì sao nó là một file riêng: `docs/decisions.md` **ADR-034
 
 ## Mục lục
 
-| Bước | Entry |
-|---|---|
-| P1-01 | [Ai sở hữu lược đồ · API · route](#p1-01) |
-| P1-02 | [Ranh giới hệ thống và phụ thuộc ngoài](#p1-02) |
-| P1-03 | [Định nghĩa một NGÀY BÁN](#p1-03) |
-| P1-04 | [Bảng ba cột — nhóm TIỀN](#p1-04) |
-| P1-05 | [Bảng ba cột — nhóm VÒNG ĐỜI](#p1-05) |
-| P1-06 | [Bảng ba cột — nhóm MENU · GIÁ · VẾT](#p1-06) |
-| P1-07 | [Yêu cầu hình dạng dữ liệu](#p1-07) |
-| P1-08 | [Realtime, đường kéo dự phòng, ràng buộc ẩn](#p1-08) |
-| P1-09 | [Bảng quầy bốn con số](#p1-09) |
-| P1-10 | [Sổ rủi ro](#p1-10) |
-| P1-11 | [Diễn ba scenario qua thiết kế](#p1-11) |
-| P1-12 | [Rà chéo ranh giới pha](#p1-12) |
+Cột **Trạng thái** chỉ đọc **entry ở file này** đã có dòng *✅ Xong ngày…* / *XONG…* ở đầu hay
+chưa (luật 3 đầu file) — nó **không** phải Ready/In Progress/Done. Ba trạng thái ấy chỉ sống ở
+`work/backlog.md` (banner đầu file), nên khi cần biết một bước có đang *In Progress* hay không,
+đọc ở đó; cột này chỉ giúp quét nhanh bước nào còn mở trong sổ mô tả. Cập nhật cột này **cùng
+lượt** với dòng *Xong ngày…* của entry (xem *Khuôn viết một bước mới* cuối file) — lệch giữa hai
+chỗ trong cùng file là bug của lượt vừa sửa entry, không phải lượt sau.
+
+| Bước | Entry | Trạng thái |
+|---|---|---|
+| P1-01 | [Ai sở hữu lược đồ · API · route](#p1-01) | Đóng |
+| P1-02 | [Ranh giới hệ thống và phụ thuộc ngoài](#p1-02) | Đóng |
+| P1-03 | [Định nghĩa một NGÀY BÁN](#p1-03) | Đóng |
+| P1-04 | [Bảng ba cột — nhóm TIỀN](#p1-04) | Đóng |
+| P1-05 | [Bảng ba cột — nhóm VÒNG ĐỜI](#p1-05) | Đóng |
+| P1-06 | [Bảng ba cột — nhóm MENU · GIÁ · VẾT](#p1-06) | Mở |
+| P1-07 | [Yêu cầu hình dạng dữ liệu](#p1-07) | Mở |
+| P1-08 | [Realtime, đường kéo dự phòng, ràng buộc ẩn](#p1-08) | Mở |
+| P1-09 | [Bảng quầy bốn con số](#p1-09) | Mở |
+| P1-10 | [Sổ rủi ro](#p1-10) | Mở |
+| P1-11 | [Diễn ba scenario qua thiết kế](#p1-11) | Mở |
+| P1-12 | [Rà chéo ranh giới pha](#p1-12) | Mở |
 
 **Thứ tự lấy việc, và cái gì chạy song song được: kế hoạch §6.** Đừng đọc thứ tự từ mục lục trên —
 nó xếp theo số, còn phụ thuộc thật thì không.
 
-**Chỗ đang chặn, đo lại 2026-09-04** — mỗi chỗ ghi ở owner của nó, đếm lại ở đó chứ đừng tin
+**Chỗ đang chặn, đo lại 2026-09-06** — mỗi chỗ ghi ở owner của nó, đếm lại ở đó chứ đừng tin
 con số trong câu này (`work/findings.md` **F-003**):
 
 | Mã | Câu hỏi | Chặn bước |
 |---|---|---|
 | ~~**U-031**~~ | ~~đơn **giao tận nơi**: ai bấm mốc *"đã ra bàn"*~~ — **đóng 2026-09-04** (T-055, *"pos"*); vế *lúc nào* thành **S-6** (`shop-facts.md` §7.2) | — |
 | ~~**U-032**~~ | ~~lượt bán trên **sổ giấy** nhập bù tính doanh thu **ngày nào**~~ — **chủ quán trả lời 2026-09-04: *ngày BÁN*** (T-054 · **ADR-037**) | ~~P1-03 · P1-04~~ hết bị chặn |
-| **U-037** | nhập bù xong thì **ai** đối soát lại ngày mất điện, **lúc nào** *(mở 2026-09-04, do chính lời chốt U-032 đẻ ra)* | P1-04 (`I-014`) |
-| **U-036** | khoản **trả trước** nhận ngày này, hàng giao ngày khác — doanh thu **ngày nào** *(mở 2026-09-04 bởi chính P1-03)* | P1-03 · P1-04 |
-| **U-033** | đơn bị **huỷ** sau khi bếp đã làm xong phần của nó thì chỗ ấy đi đâu | P1-05 · P1-07 · P1-09 |
+| ~~**U-037**~~ | ~~nhập bù xong thì **ai** đối soát lại ngày mất điện, **lúc nào**~~ — **đóng 2026-09-06: POS hoặc chủ quán, cuối buổi bán hàng** | ~~P1-04 (`I-014`)~~ hết bị chặn |
+| ~~**U-036**~~ | ~~khoản **trả trước** nhận ngày này, hàng giao ngày khác — doanh thu **ngày nào**~~ — **đóng 2026-09-06: ngày GIAO, ADR-040** | ~~P1-03 · P1-04~~ hết bị chặn |
+| ~~**U-033**~~ | ~~đơn bị **huỷ** sau khi bếp đã làm xong phần của nó thì chỗ ấy đi đâu~~ — **đóng 2026-09-06: tính cho bàn khác, POS chọn và cập nhật** | ~~P1-05 · P1-07 · P1-09~~ hết bị chặn |
 | **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** (chỗ **suy ra**, chưa hỏi) | P1-07 · P1-09 |
 
-Cả bốn đều phải hỏi **chủ quán**, và cả bốn đã có sẵn **câu hỏi soạn theo bài học S-4** — hỏi về
-**cái quán**, đừng hỏi về cái bảng trong máy (`master_plan/shop-facts.md` §7.2).
+Bốn mã `U-XXX` trên đều đóng tính tới 2026-09-06; chỉ **S-5** — một chỗ **suy ra**, không phải câu
+hỏi nghiệp vụ — còn sống trong bảng này. Câu hỏi hiện dùng **cái quán**, đừng hỏi về cái bảng trong
+máy (`master_plan/shop-facts.md` §7.2), vẫn là bài học cho câu tiếp theo mở ra ở bảng này.
 
 ✅ **BA-12 đã xong 2026-09-04** (commit `31fb071`): `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4
 nay có lát cắt sản xuất theo mẻ, nên **P1-07 và P1-09 hết bị nó chặn**. Chính BA-12 mở ra
@@ -267,6 +275,9 @@ việc của P1-11/P1-12, lượt này không tick hộ.
 *⚠️ **Cập nhật cùng ngày, T-054:** câu *"`I-014` không đổi một chữ"* ở trên đúng cho **lượt P1-03**,
 và hết đúng vài giờ sau: chủ quán trả lời `U-032` (*"bán"*) ⇒ `I-014` nay có **ba** dòng và một
 ngoại lệ có tên (**ADR-037**), hàng *nhập bù* của bảng §2 hết trống, và `U-037` mở ra.*
+*⚠️ **Cập nhật 2026-09-06:** `U-036` và `U-037` cả hai đã đóng — `I-014` nay có **bốn** dòng
+(**ADR-040**), và hàng *trả trước* của bảng §2 cũng hết trống. Câu *"không được tick trơn"* ở trên
+là lịch sử của lúc ô ấy còn mở.*
 Entry ở lại đây theo luật 3 đầu file; dòng `- [x]` ở `work/backlog.md` → *Done*.
 
 **Prompt:** [`prompt/SD/P1-03-ngay-ban-L2.md`](../prompt/SD/P1-03-ngay-ban-L2.md) (viết 2026-09-04,
@@ -346,7 +357,8 @@ công thức ấy chỉ đọc được khi *một ngày* đã có nghĩa.
 (viết 2026-09-04, T-057) — **L2** · bước 4/12 (kế hoạch §6) · **cần xong trước:** P1-01 · **P1-03**,
 **cả hai đã xong 2026-09-04** (định nghĩa *ngày bán* ở
 [`docs/product/1-system-design/02-thoi-gian-ngay-ban.md`](../docs/product/1-system-design/02-thoi-gian-ngay-ban.md))
-· chạy song song được với P1-05, P1-06 · ⛔ ô `I-014` còn **hai** mã đang mở: `U-036` · `U-037`
+· chạy song song được với P1-05, P1-06 · ô `I-014` từng còn **hai** mã đang mở (`U-036` · `U-037`),
+cả hai đã đóng 2026-09-06
 
 **Goal:**
 Xong rồi thì bảy mệnh đề chạm tiền — `I-002` `I-005` `I-007` `I-012` `I-013` `I-014` `I-015` —
@@ -411,6 +423,15 @@ chạm tiền, nên chúng đi trước.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 
+**XONG 2026-09-06.** Đầu ra: [`docs/product/1-system-design/03-bao-ve-invariant.md`](../docs/product/1-system-design/03-bao-ve-invariant.md)
+— file **mới**, mở đầu + **§1 nhóm TIỀN** với **bảy** hàng, ba ô mỗi hàng. Ba ô chỉ tới được tầng 4
+hoặc 5 và đều nói thẳng *"máy không ngăn được"*: `I-012` (chỗ đứng dùng chung) · `I-014` (vế *cộng
+đủ hai nguồn*) · `I-015` (vế *tiền đã thật sự vào tài khoản* — VietQR **tĩnh**). Ô `I-014` mang cả
+`U-036` và `U-037`, kèm phương án hẹp: ngày còn khoản chưa có mốc hoặc còn lượt bán trên giấy chưa
+nhập thì phép đối chiếu **không kết luận**. `I-019` · `I-020` · `I-021` để nguyên **ngoài** bảng,
+có tên ở §1.3, và **F-026** được đo lại (**ba** mệnh đề mồ côi, một trong ba chạm tiền).
+§2 (**P1-05**) và §3 (**P1-06**) của file ấy còn trống — hai bước ấy **thêm** mục của mình.
+
 [↑ đầu file](#top)
 
 ---
@@ -423,8 +444,10 @@ chạm tiền, nên chúng đi trước.
 2026-09-04** · ⚠️ **F-026**: `I-019` · `I-020` chưa thuộc nhóm nào — đọc trước khi điền bảng ·
 ⚠️ **U-031 ĐÃ ĐÓNG 2026-09-04** (T-055, *"pos"*) ⇒ ca đơn **giao tận nơi** của `I-017` nay có lời,
 viết thẳng, **không** còn là chỗ treo; vế *lúc nào* là **S-6** (`shop-facts.md` §7.2) và vế ấy vẫn
-viết theo phương án hẹp · **U-033 vẫn chạm `I-004`** (đơn huỷ sau khi bếp đã làm xong) — viết theo
-phương án hẹp và ghi là đang treo · chạy song song được với P1-04, P1-06
+viết theo phương án hẹp · ~~U-033 vẫn chạm `I-004` (đơn huỷ sau khi bếp đã làm xong) — viết theo
+phương án hẹp và ghi là đang treo~~ — **chủ quán trả lời 2026-09-06** (*"tính vào bàn khác, pos sẽ
+cập nhật"*, `shop-facts.md` §5.4): chỗ đã làm xong chuyển sang bàn khác đang chờ, POS chọn — tầng 4,
+không còn là chỗ treo · chạy song song được với P1-04, P1-06
 
 **Goal:**
 Xong rồi thì sáu mệnh đề vòng đời — `I-001` `I-003` `I-004` `I-006` `I-016` `I-017` — mỗi mệnh đề
@@ -482,6 +505,34 @@ Nhóm này là chỗ *bàn kẹt* và *đơn kẹt*, và nó có hai ca mà mộ
   thái cuối là bất biến"*.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
+
+**XONG 2026-09-06.** Đầu ra: [`docs/product/1-system-design/03-bao-ve-invariant.md`](../docs/product/1-system-design/03-bao-ve-invariant.md)
+§2 (mới) — **sáu** hàng, ba ô mỗi hàng, không ô nào trống. `I-001` nói được cả ca ghép bàn (ràng buộc
+buộc theo **từng bàn**, không theo từng phiên, nên tự nhiên cho phép một phiên nhiều bàn) và ca chờ
+thanh toán (ràng buộc phải phủ cả trạng thái ấy, không chỉ trạng thái đang mở).
+
+⚠️ **Sự thật đổi hình NGAY GIỮA lượt này: `U-033` được chủ quán trả lời 2026-09-06** (cùng ngày, một
+lượt khác — bảy câu còn mở cùng lúc, `docs/product/99-unknowns.md` → *Đã có lời giải*) — **sau** khi
+warning ở đầu entry này viết *"U-033 vẫn chạm I-004 ... ghi là đang treo"**. Phát hiện được vì brief
+đầu phiên báo `U-033` còn mở trong khi `99-unknowns.md`/`shop-facts.md` sống (uncommitted, cùng cây)
+đã có lời giải — hai nguồn lệch nhau đúng bởi một lượt khác chưa commit. Đã sửa lại theo sự thật
+**hiện tại**, không theo khung của prompt viết trước đó (`CLAUDE.md`: khi bộ nhớ và thực tế sống lệch
+nhau, tin thực tế sống). `I-004` vì thế có **bốn vế, ba tầng** — chưa duyệt không việc (tầng 1) · đã
+duyệt đủ việc (tầng 2) · huỷ rút nhu cầu việc chưa xong (tầng 3) · **huỷ SAU KHI đã làm xong (tầng
+4, không còn "đang treo")**: chỗ đã làm xong chuyển sang bàn khác đang chờ đúng thứ ấy, **POS chọn
+bàn nhận và cập nhật** — tầng 4 vì chọn là quyết định của người, máy chỉ bày ra ai đang chờ; máy
+không ngăn được một lần chọn nhầm bàn. `I-006` **trỏ** sang cơ chế tầng 1 đã viết ở `I-007` (§1, cùng
+một ranh giới) thay vì mô tả lại, và thêm tầng 3 cho vế suất "đem về" đi đúng vào phiên bàn. `I-016`
+là tầng 3 kiểu "đúng một cửa", nói rõ vì sao nó khoá một **luật** chứ không phải một danh sách case
+cố định (danh sách đã đổi ba lần mà mệnh đề không sửa một chữ). `I-017` là tầng 2 (đọc rồi ghi trong
+cùng một giao dịch), không chứa câu nào nói trạng thái cuối bất biến (đơn `Hoàn thành` vẫn huỷ được —
+ADR-017), và phần đơn giao tận nơi viết thẳng — quầy bấm mốc "đã ra bàn" không ngoại lệ (U-031, đã
+đóng) — chỉ vế **lúc nào** còn treo, chờ **`S-6`** (tính tới 2026-09-06 vẫn *"chưa hỏi"* — **mã treo
+duy nhất còn lại** của cả nhóm, khác lúc viết prompt khi còn hai mã). **Không sửa một chữ nào của
+`quality/invariants.md`** (`git diff --stat` rỗng), không chạm `05-vong-doi.md` §5 hay
+`architecture.md` §2 · §3.1, không sửa mở đầu hay §1 của file dùng chung (F-010 · F-014), không một
+tên bảng · cột · ràng buộc · endpoint · route · component nào (ADR-035). **F-026 không được kéo vào**
+(I-019 · I-020 để nguyên ngoài §2, đúng luật của prompt). Gate xanh (2026-09-06).
 
 [↑ đầu file](#top)
 
@@ -925,6 +976,7 @@ ba khác biệt của file này:
 1. Dòng **Prompt** ghi thêm *bước N/12 (kế hoạch §6)* và **chỗ đang chặn** nếu có.
 2. Bước 3 và bước 9 của *Cách hoàn thành* nói tới `work/backlog.md` — đó là nơi dòng trạng thái
    sống, không phải file này.
-3. Bước xong thì entry **ở lại đây** kèm một dòng *Xong ngày…* ở đầu, không chuyển mục.
+3. Bước xong thì entry **ở lại đây** kèm một dòng *Xong ngày…* ở đầu, không chuyển mục — và
+   **cùng lượt**, đổi cột *Trạng thái* của dòng đó ở bảng *Mục lục* thành **Đóng**.
 
 [↑ đầu file](#top)
