@@ -191,29 +191,51 @@ khách đặt hai đơn tới lấy cách nhau mười phút ⇒ **hai** đơn, 
 tác nào gộp chúng. Đối soát cuối ngày (`shop-facts.md` §6.10): `doanh thu phiên bàn` +
 `doanh thu đơn lẻ` = tổng doanh thu, và không đơn nào xuất hiện ở cả hai vế.
 
-*Phát hiện ở BA-04, 2026-08-31.*
+*Phát hiện ở BA-04, 2026-08-31. **Sửa ở T-054, 2026-09-04** — bản đầu viết "cả hai điều kiện";
+chủ quán trả lời U-035 cùng ngày và thêm điều kiện thứ ba (`shop-facts.md` §6.11).*
 
-### I-008 — Ngoài giờ bán hoặc đang tạm dừng nhận đơn thì không đơn nào được tạo
+### I-008 — Ngoài giờ bán, đang tạm dừng nhận đơn, hoặc quán đang mất kết nối thì không đơn nào được tạo
 
 **Invariant:**
-Một đơn mới chỉ được tạo khi **cả hai** điều kiện cùng mở: thời điểm tạo nằm trong giờ bán
-(`master_plan/shop-facts.md` §1, múi giờ `Asia/Ho_Chi_Minh`) **và** chủ quán không đang bật "tạm
-dừng nhận đơn". Nút tạm dừng có ưu tiên **cao hơn** giờ mở cửa: đang giữa giờ bán mà nút bật thì
-vẫn không đơn nào được tạo. Luật này áp cho **mọi** kênh, không riêng ba kênh mang đi. Đơn đã tạo
-**trước** đó không bị chạm tới: nó vẫn được làm, đóng gói, giao và thu tiền.
+Một đơn mới chỉ được tạo khi **cả ba** điều kiện cùng mở: thời điểm tạo nằm trong giờ bán
+(`master_plan/shop-facts.md` §1, múi giờ `Asia/Ho_Chi_Minh`) · chủ quán không đang bật "tạm
+dừng nhận đơn" · và **quán đang nhìn thấy được đơn mới** (§6.11, chủ quán chốt 2026-09-04). Nút
+tạm dừng có ưu tiên **cao hơn** giờ mở cửa: đang giữa giờ bán mà nút bật thì vẫn không đơn nào
+được tạo. Luật này áp cho **mọi** kênh, không riêng ba kênh mang đi. Đơn đã tạo **trước** đó không
+bị chạm tới: nó vẫn được làm, đóng gói, giao và thu tiền.
+
+**Điều kiện thứ ba khác hai điều kiện kia ở chỗ KHÔNG AI BẤM ĐƯỢC NÓ.** Giờ bán là đồng hồ, nút tạm
+dừng là chủ quán bấm; còn *"quán đang nhìn thấy được đơn mới"* tắt đi vào đúng lúc **không ai ở quán
+bấm được gì** — quán mất mạng thì nút tạm dừng cũng nằm sau đúng đường mạng vừa mất. Ba kênh khách
+tự bấm (`delivery`, `pickup`, `qr_table`) dừng; hai kênh do người của quán nhập (`staff_pos`,
+`phone_preorder`) **không** dừng — mất mạng thì họ ghi giấy (§6.11). Khách được nhìn thấy **một dòng
+thông báo** trên web, và **câu chữ của dòng ấy chưa chốt** — đừng tự viết
+(`docs/product/99-unknowns.md` là chỗ ghi nếu cần hỏi).
+
+**Máy làm sao biết quán đang mất kết nối là CƠ CHẾ, không thuộc mệnh đề này** —
+`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6 bước **P1-08** và pha 3. Mệnh đề chỉ nói:
+đơn tạo ra trong lúc quán mù là đơn **không được phép tồn tại**.
 
 **Why:**
 Hai quy tắc của kế hoạch gốc (§5 quy tắc 10 và 11) nằm cạnh nhau mà không nói cái nào thắng; chủ
 quán chốt thứ tự đó (`shop-facts.md` §6.8): nút tạm dừng dùng khi **hết nguyên liệu giữa buổi**,
 nên một đơn lọt qua trong lúc tạm dừng là một đơn quán **không có gì để làm** — khách chờ, rồi
-quán phải gọi lại xin huỷ. Nửa sau cũng phải đúng: chặn nhầm cả đơn đã nhận thì tới 11:00 mọi đơn
+quán phải gọi lại xin huỷ. Điều kiện thứ ba có **cùng một cái hỏng và nặng hơn**:
+đơn lọt qua trong lúc quán mù thì quán **không biết là có nó** — không phải *không có gì để làm* mà
+là *không ai biết phải làm*. Khách `pickup` tới đúng giờ hẹn (`shop-facts.md` §5.2 điểm 5) và không
+ai ở quán từng nhìn thấy đơn ấy. Chủ quán chọn **chặn** thay vì nhận rồi làm bù, và câu ấy đóng
+**U-035** ngày 2026-09-04. Nửa sau cũng phải đúng: chặn nhầm cả đơn đã nhận thì tới 11:00 mọi đơn
 đang trên đường giao bỗng không thu được tiền.
 
 **Verification:**
 Kịch bản biên: gửi một đơn lúc 05:59 và một đơn lúc 11:01 ⇒ cả hai **bị từ chối**, và khách thấy
 câu *"Quán mở cửa 6h–11h sáng"* chứ không phải một nút bấm im lặng (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.2.6).
 Kịch bản ưu tiên: 08:00 — trong giờ bán — chủ quán bật tạm dừng ⇒ đơn mới của **cả năm** kênh đều
-bị từ chối; tắt tạm dừng thì đặt lại được ngay. Kịch bản không chạm đơn cũ: nhận một đơn giao tận
+bị từ chối; tắt tạm dừng thì đặt lại được ngay. Kịch bản mất kết nối: 08:00, quán mất mạng
+trong khi hệ thống vẫn sống ⇒ ba kênh khách tự bấm (`delivery`, `pickup`, `qr_table`) **bị từ
+chối** và khách thấy **một dòng thông báo**, trong khi `staff_pos` và `phone_preorder` **không** bị
+chặn — quán vẫn nhận đơn qua hotline và ghi giấy; có mạng lại thì ba kênh kia mở lại ngay, và
+**không đơn nào của khoảng mất mạng nằm chờ trong máy mà quán chưa từng nhìn thấy**. Kịch bản không chạm đơn cũ: nhận một đơn giao tận
 nơi lúc 10:50, bật tạm dừng lúc 10:55 ⇒ đơn đó vẫn đi hết luồng, vẫn bấm được **đã giao và đã thu
 tiền** sau 11:00. Kiểm ngược, cuối ngày: không đơn nào có thời điểm tạo nằm ngoài 06:00–11:00.
 
@@ -440,16 +462,29 @@ lần, và không khoản nào rơi ra ngoài cả hai. "Hai nguồn" chia theo 
 chia theo kênh — cả **ba** kênh mang đi (Delivery, Pickup, Đặt trước qua hotline) cùng rơi vào
 nguồn thứ hai (`master_plan/shop-facts.md` §6.9, `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.5, §4.10).
 
-**Ngày nào tính vào doanh thu ngày ấy — hai luật NGƯỢC CHIỀU, cả hai cùng đúng:**
+**Ngày nào tính vào doanh thu ngày ấy — BA luật, hai trong ba ngược chiều nhau, cả ba cùng đúng:**
 
 | Việc | Rơi vào ngày | Nguồn |
 |---|---|---|
 | **Bán**, kể cả khoản khách **nợ** | **ngày bán** = ngày ghi nợ, không phải ngày thu được tiền | `shop-facts.md` §6.14 |
 | **Hoàn tiền** | **ngày hoàn**, không phải ngày bán gốc | `shop-facts.md` §6.4, chủ quán chốt 2026-09-01 |
+| **Lượt bán ghi trên SỔ GIẤY, nhập bù sau** | **ngày quán bán**, không phải ngày gõ vào máy | `shop-facts.md` §6.11, chủ quán chốt 2026-09-04 (U-032) |
 
 ⇒ **Một lần trả nợ không bao giờ là một khoản bán mới**, và **một lần hoàn không bao giờ sửa lại
-doanh thu của một ngày đã đóng sổ**. Hệ quả chung của hai luật: **doanh thu của một ngày đã đối soát
-không đổi về sau** — cùng ràng buộc mà I-009 giữ cho từng đơn, ở mức một ngày bán.
+doanh thu của một ngày đã đóng sổ**.
+
+**Hệ quả chung của hai luật đầu — và một ngoại lệ mà luật thứ ba mở ra, có chủ ý:**
+
+> **Doanh thu của một ngày đã đối soát không đổi về sau, TRỪ đúng một ca: lượt bán ghi trên sổ giấy
+> chưa được nhập vào máy.** Ca ấy **phải nhìn thấy được trước khi đóng sổ** — bảng đối soát của ngày
+> đó đọc được *"còn N lượt bán trên giấy chưa nhập"* (`shop-facts.md` §6.11), nên **một ngày còn
+> `N > 0` là một ngày CHƯA đối soát xong**, không phải một ngày đã đóng rồi bị sửa trộm.
+
+Ngoài ca ấy, ràng buộc cũ đứng nguyên — cùng ràng buộc mà I-009 giữ cho từng đơn, ở mức một ngày
+bán. Vì sao ngoại lệ này không phá ngưỡng **0đ**, và ai nhìn lại con số sau khi nhập xong:
+`docs/decisions.md` **ADR-037** · `docs/product/99-unknowns.md` **U-037** (chưa chốt).
+**Đừng đọc ngoại lệ này rộng ra:** nó chỉ áp cho lượt bán **đã xảy ra thật ở quán** và có mặt trên
+sổ giấy. Không ca nào khác được sửa doanh thu một ngày đã qua.
 
 **Why:**
 I-006 và I-007 chốt **một đơn thuộc nguồn nào**; invariant này chốt **phép cộng ở trên** — và hai
@@ -473,10 +508,20 @@ cộng lại đúng bằng số tiền một bữa ăn (`docs/product/0-ba/ban-h
 đúng con số đã đối soát tối thứ Hai), doanh thu **thứ Tư** giảm đúng bằng khoản đã hoàn. Kịch bản
 đối soát: dựng lại doanh thu của **mọi ngày đã qua** phải ra đúng con số đã đối soát hôm đó, kể cả
 sau một lần hoàn tiền và một lần thu nợ (`shop-facts.md` §6.10, cùng ràng buộc với I-009).
+Kịch bản nhập bù — **ca duy nhất con số của một ngày đã qua được phép đổi**: hôm mất điện quán bán
+30 suất ghi giấy, tối ấy đối soát ⇒ bảng của ngày đó đọc được *"còn 30 lượt bán trên giấy chưa
+nhập"* và ngày đó **chưa đóng sổ**; hôm sau nhập đủ 30 ⇒ doanh thu của **ngày mất điện** tăng đúng
+30 suất, doanh thu của **ngày gõ** **không** tăng một đồng nào, và `N` về 0 ⇒ ngày ấy mới đối soát
+xong. Kiểm ngược: nhập 20 trong 30 thì `N` = 10 và ngày ấy **vẫn chưa đóng được** — không có đường
+nào đóng sổ một ngày còn `N > 0`.
 
 *Phát hiện ở BA-06, 2026-09-01. **Sửa ở T-038, 2026-09-01** — bản đầu chỉ có luật "tính vào ngày
 bán", đúng cho nợ nhưng **sai cho hoàn tiền**: lời chốt U-019 cùng ngày đặt hoàn tiền vào ngày
-hoàn. Nay là bảng hai dòng ngược chiều, không phải một câu.*
+hoàn. Nay là bảng ba dòng, không phải một câu.*
+***Sửa lần hai ở T-054, 2026-09-04*** — *chủ quán trả lời **U-032**: lượt nhập bù từ sổ giấy tính
+vào **ngày bán**. Bảng nay có dòng thứ ba, và câu hệ quả "doanh thu một ngày đã đối soát không đổi
+về sau" — đúng từ 2026-09-01 tới 2026-09-04 — nay mang **một ngoại lệ có tên**. Để nguyên câu cũ là
+để một mệnh đề sai nằm trong file bất biến (`docs/decisions.md` **ADR-037**).*
 
 ### I-015 — Một lần thu chia được nhiều phương thức, nhưng tổng luôn khớp và từng phần luôn ghi riêng
 
@@ -728,3 +773,62 @@ một phần ⇒ không bàn nào còn *đã phục vụ* lớn hơn *đã gọi
 số âm: với mọi bàn và mọi thành phần, *còn thiếu* = đã gọi − đã bưng ra bàn **không bao giờ âm**.
 
 *Phát hiện ở BA-12, 2026-09-03.*
+
+### I-021 — Tiền mặt đếm được trong két cuối ngày trừ đi TIỀN ĐẦU KÉT phải bằng doanh thu tiền mặt của ngày bán đó
+
+**Invariant:**
+Với mỗi **ngày bán** (định nghĩa ở `docs/product/1-system-design/02-thoi-gian-ngay-ban.md`, pha 1):
+
+```
+(tiền mặt đếm trong két cuối ngày)  −  (tiền đầu két của ngày bán đó)
+      =  (doanh thu TIỀN MẶT của ngày bán đó)
+```
+
+Hai vế bằng nhau **đúng bằng 0đ**, không có ngưỡng dung sai — cùng ngưỡng §6.10 của
+`master_plan/shop-facts.md` (**ADR-022**). Invariant này chỉ nói về phần **tiền mặt**: phần chuyển
+khoản đối chiếu với tin nhắn báo có và **không** được cộng gộp vào phép trừ này (§6.10, **I-014**).
+
+Ba điều kiện biên của cùng mệnh đề:
+
+- **Mỗi ngày bán có đúng MỘT con số tiền đầu két** — mặc định cố định, sửa được
+  (`shop-facts.md` §8.5). Một ngày **không có** con số ấy thì phép trừ không chạy được, và ngày ấy
+  **chưa** đối soát xong; nó không được coi là *"lệch"*.
+- **Không có khoản rút giữa buổi nào phải cộng lại.** Quán không có nghiệp vụ nộp bớt tiền giữa
+  buổi (chủ quán chốt 2026-09-04, `A4` ⇒ §8.5). Nếu luật ấy đổi thì công thức trên **thiếu một
+  hạng tử**, và invariant này phải viết lại chứ không phải viết thêm.
+- **Tiền đầu két KHÔNG phải doanh thu.** Nó không bao giờ được cộng vào bất kỳ con số doanh thu
+  nào, kể cả con số *dự tính* ở mục tổng quan của chủ quán (§8.6, vế 5).
+
+**Why:**
+Két cuối ngày **đã chứa** tiền đầu két. So thẳng nó với doanh thu tiền mặt thì lệch **đúng bằng**
+tiền đầu két, **mọi ngày** — và cái vỡ không phải một con số, mà là **cổng chất lượng mạnh nhất
+của cả dự án**: ngưỡng *lệch 1 đồng cũng phải tìm ra lý do* (§6.10) báo đỏ mỗi ngày vì một lý do
+đã biết trước, nên người dùng học cách bỏ qua nó — và từ hôm ấy một chỗ mất tiền **thật** cũng đi
+qua cùng cái đỏ ấy mà không ai nhìn. `docs/product/1-system-design/architecture.md` §14.3 đã gọi
+tên chỗ trống này trước khi có lời chủ quán: *"tiền đầu buổi và tiền nộp về chưa nằm trong phép
+tính đối soát"*.
+
+Mệnh đề gắn vào **ngày bán** chứ không vào một biến cố *mở ca*, vì quán **không có** khái niệm mở
+ca / đóng ca (chủ quán chốt 2026-09-04, `A2` ⇒ §6.23, `docs/decisions.md` **ADR-038**).
+
+**Verification:**
+Kịch bản cơ sở: một ngày bán, tiền đầu két **1.200.000**, bán **800.000** toàn bộ bằng tiền mặt ⇒
+két đếm được **2.000.000**, phép trừ ra **800.000**, khớp doanh thu tiền mặt ⇒ **xanh**. Kịch bản
+quên trừ: cùng số liệu nhưng phép so bỏ qua tiền đầu két ⇒ lệch **1.200.000** ⇒ phải **đỏ**, và
+đỏ với lý do gọi tên được, không phải một con số lệch vô danh. Kịch bản hai phương thức: ngày ấy có
+thêm **500.000** chuyển khoản ⇒ phép trừ trên **không đổi** (vẫn ra 800.000) và phần 500.000 đối
+chiếu riêng với tin nhắn báo có; cộng gộp hai phương thức rồi so một con số tổng ⇒ phải **đỏ**
+(I-014, §6.10). Kịch bản sửa con số mặc định: một ngày chủ quán bỏ vào **1.000.000** thay vì mặc
+định ⇒ phép trừ dùng con số **của ngày ấy**, không dùng mặc định. Kịch bản thiếu dữ kiện: một ngày
+**chưa** có con số tiền đầu két ⇒ ngày ấy báo **chưa đối soát xong**, **không** báo lệch — cùng
+hình dạng với ngày còn `N > 0` lượt bán trên giấy chưa nhập (**ADR-037**). Kịch bản không có rút
+giữa buổi: không đường nào trong hệ thống làm giảm tiền két trong buổi mà không phải một lần
+hoàn tiền có vết (§6.4, I-012).
+
+⛔ **Phép đếm ở vế trái còn một câu chưa có lời: đếm MỘT TỔNG hay đếm TỪNG MỆNH GIÁ** — **U-038**
+(`docs/product/99-unknowns.md`). Invariant này đúng cho cả hai đường ra, nhưng *cách chứng minh nó*
+thì khác nhau: một tổng thì một con số, một bảng mệnh giá thì phải khớp từng dòng — và lúc ấy một
+lần đổi tiền thối trong buổi làm bảng lệch trong khi tổng vẫn khớp. Đừng viết phép kiểm theo mệnh
+giá trước khi U-038 có lời.
+
+*Phát hiện ở T-056, 2026-09-04, từ lời chủ quán trả lời `A3` và `A4`.*

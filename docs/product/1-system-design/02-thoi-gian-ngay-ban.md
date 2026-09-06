@@ -96,7 +96,7 @@ câu đó do ba luật đã chốt trả lời, và mục này chỉ **gom chún
 | **Bán** — đóng một đơn vị tính tiền (phiên bàn hoặc đơn lẻ), **kể cả** hoá đơn ghi nợ | mốc **đóng** đơn vị tính tiền ấy | `shop-facts.md` §6.14 · [`architecture.md`](architecture.md) §6.4 (*"hoá đơn đóng hôm nay, kể cả hoá đơn ghi nợ"*) |
 | **Hoàn tiền** | mốc **hoàn** — không phải mốc bán gốc | `shop-facts.md` §6.4 (chủ quán chốt 2026-09-01, U-019) |
 | **Thu nợ cũ** | mốc **thu** — và khoản ấy **không** vào doanh thu ngày nào cả, nó chỉ là dòng *nợ cũ thu được hôm nay* của bảng đối soát | `shop-facts.md` §6.14 · [`architecture.md`](architecture.md) §6.4 · §12.3 (hai mốc, hai câu hỏi) |
-| **Nhập bù một lượt bán từ sổ giấy** | ⛔ **CHƯA CHỐT — đang chờ [`U-032`](../99-unknowns.md)** | — |
+| **Nhập bù một lượt bán từ sổ giấy** | mốc **quán bán thật**, không phải mốc gõ vào máy — lượt ấy mang ngày của **buổi bán trên giấy** | `shop-facts.md` §6.11 (chủ quán chốt 2026-09-04, U-032) · `docs/decisions.md` **ADR-037** |
 | **Trả trước nhận trước ngày giao hàng** | ⛔ **CHƯA CHỐT — đang chờ [`U-036`](../99-unknowns.md)** | — |
 
 **Ba luật đã chốt không được nhắc lại bằng lời của mục này.** Bảng trên nói *mốc nào*, và trỏ về
@@ -156,24 +156,31 @@ Ba câu hệ quả, mỗi câu chặn một đường hỏng đã biết:
 **Một chỗ luật này KHÔNG với tới, và phải nói thẳng.** Lượt bán trên **sổ giấy** (**PT-6**,
 [`01-ranh-gioi-he-thong.md`](01-ranh-gioi-he-thong.md) §2 · §3) xảy ra khi hệ thống không có mặt:
 mốc thật của nó nằm trên giấy, do **người** ghi. Hệ thống không cấp được mốc cho một việc nó không
-chứng kiến. Đây chính là chỗ [`U-032`](../99-unknowns.md) đang đứng, và nó là **câu của chủ quán**,
-không phải chỗ cho một luật kỹ thuật lấp vào.
+chứng kiến. Chỗ này từng là chỗ `U-032` đứng, và **chủ quán đã lấp nó ngày 2026-09-04**: lượt nhập
+bù mang mốc của **buổi bán trên giấy**, không phải mốc gõ (§2). ⇒ **Đây là ca duy nhất một mốc tính
+tiền đi vào hệ thống mà KHÔNG do hệ thống cấp** — nó do **người nhập bù khai lại**, và vì thế nó là
+ca duy nhất phải để lại vết ai khai (`quality/invariants.md` **I-012**). Luật kỹ thuật ở mục này
+không lấp được chỗ ấy, và nay cũng không cần: nó có một lời chốt.
 
 **Ở đây không có tên cột, không có kiểu dữ liệu.** *Nguồn thời gian* là một câu về **tầng**: ai cấp
 mốc và cấp ở đâu. Cất nó **thế nào** là việc của **pha 2** (**ADR-035**).
 
 ---
 
-## 4. Chỗ cố ý để trống — hai mã, và không mã nào được quyết ở đây
+## 4. Chỗ cố ý để trống — hai mã đang mở, và không mã nào được quyết ở đây
 
-Kế hoạch pha 1 §9: *một ô không tick được thì để trống kèm mã của chỗ đang chặn*. Hai ô dưới đây để
-trống, và cả hai đều là **câu của chủ quán** (`CLAUDE.md` §3.5).
+Kế hoạch pha 1 §9: *một ô không tick được thì để trống kèm mã của chỗ đang chặn*. Mục này mở ra với
+**hai** ô trống ngày 2026-09-04; **`U-032` đã đóng trong ngày** và ô của nó nay có lời, còn lại
+**`U-036`** — cộng **`U-037`**, câu mà chính lời chốt của `U-032` đẻ ra. Cả ba đều là **câu của chủ
+quán** (`CLAUDE.md` §3.5).
 
-- **`U-032` — nhập bù một lượt bán từ sổ giấy tính doanh thu ngày nào.** Đang mở từ 2026-09-03.
-  Hai đường ra đều phá một thứ đang có: về **ngày gõ** thì doanh thu ngày mất điện sai mãi mãi;
-  về **ngày bán** thì một ngày **đã đối soát** đổi về sau, tức mất đúng câu **I-014** đang giữ và
-  ngưỡng **0đ** hết nghĩa. Định nghĩa ở §1 **không quyết hộ** nó: §1 nói một ngày dài từ đâu tới
-  đâu, `U-032` hỏi lượt nhập bù mang **mốc** nào — hai câu khác nhau, và câu thứ hai chạm tiền.
+- ~~**`U-032`**~~ — **ĐÃ ĐÓNG 2026-09-04** (T-054). Chủ quán trả lời bằng đúng một từ — *"bán"* —
+  nên hàng cuối thứ nhất của bảng §2 **hết trống**: lượt nhập bù mang mốc **quán bán thật**. Đường
+  ấy là đường *"một ngày đã đối soát đổi về sau"*, và **ADR-037** trả lời chỗ đó không phá ngưỡng
+  **0đ** bằng cách nào: **ngày còn lượt chưa nhập là ngày CHƯA đối soát xong**, không phải ngày đã
+  đóng rồi bị sửa. `quality/invariants.md` **I-014** nay có ba dòng và một ngoại lệ có tên.
+  ⇒ **Câu mới mở ra từ chính lời chốt ấy: `U-037`** — khi `N` về 0 thì **ai** ngồi lại chấm con số
+  của ngày ấy, và **lúc nào**. Mục này **không quyết hộ**; nó chỉ cấp cái ngày.
   Đọc nguyên văn ở [`docs/product/99-unknowns.md`](../99-unknowns.md).
 - **`U-036` — khoản TRẢ TRƯỚC nhận hôm nay cho đơn giao hôm khác tính doanh thu ngày nào.**
   **Mở trong chính lượt này.** `shop-facts.md` §6.3 cho khách mang đi chọn **trả trước**, và POS
@@ -195,11 +202,11 @@ chưa biết có cần hay không, và viết trước là chốt hộ.
 
 | Bước | Lấy gì từ mục này |
 |---|---|
-| **P1-04** — bảng ba cột nhóm **TIỀN** | cột *phép đối chiếu* của `I-014` nay có nghĩa: *"cộng trong một ngày"* = §1, và *"ngày nào"* = bảng §2. Hai hàng cuối bảng §2 còn trống ⇒ ô của `I-014` phải mang mã `U-032` · `U-036`, không được tick trơn |
+| **P1-04** — bảng ba cột nhóm **TIỀN** | cột *phép đối chiếu* của `I-014` nay có nghĩa: *"cộng trong một ngày"* = §1, và *"ngày nào"* = bảng §2. Hàng cuối bảng §2 còn trống ⇒ ô của `I-014` phải mang mã `U-036`, và mang thêm **`U-037`** (ai chấm lại một ngày sau khi nhập bù) — không được tick trơn |
 | **P1-07** — yêu cầu hình dạng dữ liệu | §2 đòi **một** mốc tính tiền cho mỗi việc chạm tiền, §2.1 đòi mọi phần của một lần thu dùng chung mốc, §2.2 đòi mốc đã ghi không dời. Ba câu ấy là **yêu cầu**, pha 2 chọn hình dạng |
 | **P1-08** — realtime và ràng buộc ẩn | §3 nói mốc do **một** nguồn cấp ở nơi ghi. Nhiều nơi cùng ghi thì câu ấy hỏng ⇒ đây là một đầu vào của ràng buộc *một instance* |
 | **P1-09** — bảng quầy | bảng quầy đếm **trong ngày**; ngày ấy là §1 |
-| **P1-11** — diễn ba scenario | scenario nào đi qua một buổi mất điện đều dừng ở `U-032`; nói ra chỗ dừng, đừng bước qua |
+| **P1-11** — diễn ba scenario | scenario đi qua một buổi mất điện nay **đi hết được**: lượt nhập bù mang mốc ngày bán (§2). Chỗ còn phải dừng là **`U-037`** — ai chấm lại con số của ngày ấy — và `U-036` với đơn trả trước; nói ra chỗ dừng, đừng bước qua |
 | **Pha 2** | cất mốc **thế nào**, kiểu gì, cột nào — mục này cố ý không nói (**ADR-035**) |
 
 **Mâu thuẫn với [`architecture.md`](architecture.md) thì sửa `architecture.md`, không viết bản thứ

@@ -250,7 +250,10 @@ Chín mục dưới đây là nguyên văn cổng chất lượng ở `master_pl
 Hôm nay **9/9 đạt** (BA-11 tick 6 ngày 2026-09-03; **BA-13** tick nốt mục 6, 7 và 8 cùng ngày, sau
 khi dọn năm chỗ mà ba ô ấy trượt vì).
 
-**Chín ô xanh KHÔNG có nghĩa là không còn gì phải hỏi.** Cổng này chấm **tài liệu BA**. Tính tới
+**Chín ô xanh KHÔNG có nghĩa là không còn gì phải hỏi.** *(Câu **U-031** dưới đây **đã đóng
+2026-09-04** — T-055, chủ quán trả lời "pos": quầy bấm, kể cả với đơn giao. Đoạn này giữ nguyên
+trạng thái **ngày ký cổng**, không viết lại; lời giải ở `docs/product/99-unknowns.md` → *Đã có lời
+giải*.)* Cổng này chấm **tài liệu BA**. Tính tới
 2026-09-03 còn **một** câu đang chờ chủ quán — **U-031**, *ai bấm mốc `Đã ra bàn` cho một đơn
 **giao tận nơi*** (`docs/product/99-unknowns.md` → *Đang mở*; đánh dấu ở `05-vong-doi.md` §5.2 và
 §5.4) — và nó **chặn phiên System Design** dựng màn quầy cùng màn người đi giao, vì §5.5 buộc mọi
@@ -296,14 +299,17 @@ việc trạm phải ở `Đã ra bàn` trước khi đơn sang `Hoàn thành`. 
   quầy bấm lúc nhận tiền* · §4.9 ghi *đối chiếu VietQR bằng tin nhắn báo có* · §6.1 dòng 7 và §6.2
   ghi đường `Hoàn thành` ⇒ `Huỷ` là **hợp lệ**, khớp bảng §5.2 và dòng 13. Không câu nào còn dạy
   ngược luật thật.
-  **Mục này đạt KÈM một câu hỏi đang mở, và hai điều đó không mâu thuẫn.** `99-unknowns.md` →
+  **Mục này đạt KÈM một câu hỏi đang mở, và hai điều đó không mâu thuẫn.** *(Câu ấy — **U-031** —
+  **đã đóng 2026-09-04**, T-055, "pos". Đoạn dưới giữ nguyên trạng thái ngày ký cổng.)*
+  `99-unknowns.md` →
   *Đang mở* nay có **U-031** (ai bấm mốc `Đã ra bàn` của một đơn **giao tận nơi**) — mở **vì**
   BA-13 từ chối suy hộ một luật chủ quán chưa nói (CLAUDE.md §3.5). Mục này hỏi *"còn luật nào bị
   **suy đoán**"*, và một câu hỏi **được ghi ra, được brief in vào mọi phiên mới, được đánh dấu ở
   cả hai mục đang nói ngược nhau** là điều ngược lại với một luật bị suy đoán. Chỗ **suy ra** còn
   lại — **S-5** (`master_plan/shop-facts.md` §7.2) — cũng vậy: §5.4 gọi đúng tên nó là chỗ suy ra
   và giao cho BA-12. Không giả định `GĐ` nào còn hiệu lực (mục 6).
-  *Ai ký cổng thì đọc kèm:* **U-031 chặn phiên System Design dựng màn quầy và màn người đi giao** —
+  *Ai ký cổng thì đọc kèm — câu này đúng tới **2026-09-03**, và **U-031 đã đóng 2026-09-04**
+  (T-055, *"pos"*):* **U-031 chặn phiên System Design dựng màn quầy và màn người đi giao** —
   cổng này chấm **tài liệu BA**, không chấm việc U-031 đã có lời chốt hay chưa.
 - [x] **8. Một người không biết code có thể đọc luồng và giải thích quán phải làm gì.** — **đạt
   2026-09-03 (BA-13), bằng lượt đọc context sạch THỨ BA.**
@@ -321,7 +327,9 @@ việc trạm phải ở `Đã ra bàn` trước khi đơn sang `Hoàn thành`. 
   cùng một câu) · ví dụ đổi giá §3.3.3 chỉ còn **một** nghĩa, ra 29.000 · `Hoàn thành` ⇒ `Huỷ`
   **hợp lệ** ở cả bốn chỗ.
   **Lượt ba dừng ở đúng MỘT chỗ, và dừng đúng cách:** ai bấm mốc `Đã ra bàn` cho một đơn **giao
-  tận nơi**. Nguyên văn báo cáo: *"tài liệu NÓI RÕ đây là chỗ chưa chốt, không im lặng"* — có ID
+  tận nơi** — chỗ ấy **đã đóng 2026-09-04** (T-055, chủ quán trả lời *"pos"*); đoạn dưới giữ
+  nguyên trạng thái ngày ký cổng. Nguyên văn báo cáo: *"tài liệu NÓI RÕ đây là chỗ chưa chốt,
+  không im lặng"* — có ID
   (**U-031**), có người trả lời (chủ quán), có hệ quả (§5.5). Người đọc **dừng lại và hỏi** thay
   vì đoán, tức tài liệu làm đúng việc của nó. Mục này hỏi *người đọc có giải thích được không*,
   không hỏi *mọi câu đã có lời chốt chưa* — cái sau là mục 7.
@@ -352,7 +360,7 @@ việc đó.
 > |---|---|
 > | **1 — F-015**, bốn câu nói luật đã chốt vẫn treo | **đã sửa cả bốn** |
 > | **2 — F-022** chỗ 1 (phiên mở lúc nào) và chỗ 3 (ví dụ đổi giá) | **đã sửa**; §3.1.1 nay khớp §5.3, ví dụ §3.3.3 chỉ còn **một** nghĩa |
-> | **2 — F-022** chỗ 2 (**ai** bấm *"đã ra bàn"* của đơn **giao tận nơi**) | **CHƯA CHỐT — và đây là chỗ duy nhất của mục này còn sống.** Thành **U-031**, đang chờ **chủ quán**; ghi ở `docs/product/99-unknowns.md` → *Đang mở*, và đánh dấu ở cả `05-vong-doi.md` §5.2 lẫn §5.4. Không ai được suy hộ (CLAUDE.md §3.5) |
+> | **2 — F-022** chỗ 2 (**ai** bấm *"đã ra bàn"* của đơn **giao tận nơi**) | **ĐÃ CHỐT 2026-09-04** (T-055, *"pos"*) — ô này giữ nguyên văn **ngày 2026-09-03** làm bằng chứng: **CHƯA CHỐT — và đây là chỗ duy nhất của mục này còn sống.** Thành **U-031**, đang chờ **chủ quán**; ghi ở `docs/product/99-unknowns.md` → *Đang mở*, và đánh dấu ở cả `05-vong-doi.md` §5.2 lẫn §5.4. Không ai được suy hộ (CLAUDE.md §3.5) |
 > | **3 — F-021**, bảng `docs/decisions.md` nói ngược thân | **đã sửa** |
 >
 > Kèm theo là một **cổng chạy ở mọi lượt** cho *loại* lỗi này, chứ không cho năm ca này:

@@ -3,6 +3,11 @@
 > Bước **3/12** của pha 1 — `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6. Mô tả dài ở
 > `work/backlog_SD.md` → **P1-03**; trạng thái ở `work/backlog.md`.
 > **Cần xong trước:** P1-01 — **đã xong 2026-09-04** (`docs/decisions.md` **ADR-035**).
+> ✅ **Bước này đã CHẠY XONG 2026-09-04** (`docs/product/1-system-design/02-thoi-gian-ngay-ban.md`),
+> và **`U-032` đã đóng cùng ngày** — chủ quán trả lời *"bán"* (T-054 · `master_plan/shop-facts.md`
+> §6.11 · `docs/decisions.md` **ADR-037**). Mọi câu *"đang chờ U-032"* dưới đây là **bản ghi của
+> lượt chạy ấy**, không phải việc còn phải làm.
+>
 > ⛔ **Đang bị chặn một phần: `U-032`** (`docs/product/99-unknowns.md`). Mục *nhập bù từ sổ giấy*
 > **để trống có chủ ý** cho tới khi chủ quán trả lời — đọc mục *Unknowns* dưới đây trước khi viết.
 > Bước này **mở khoá P1-04**: cột *phép đối chiếu* của `I-014` rỗng nghĩa cho tới khi nó xong.

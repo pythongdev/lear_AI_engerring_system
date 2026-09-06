@@ -3,8 +3,11 @@
 > Bước **5/12** của pha 1 — `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6. Mô tả dài ở
 > `work/backlog_SD.md` → **P1-05**; trạng thái ở `work/backlog.md`.
 > **Cần xong trước:** P1-01 — **đã xong 2026-09-04** (`docs/decisions.md` **ADR-035**).
-> ⚠️ **`U-031` chạm `I-017`** (đơn giao tận nơi) và **`U-033` chạm `I-004`** (đơn huỷ sau khi bếp
-> đã làm xong) — viết hai chỗ ấy theo **phương án hẹp nhất** và ghi thẳng là đang treo.
+> ⚠️ **`U-031` ĐÃ ĐÓNG 2026-09-04** (T-055, chủ quán trả lời *"pos"*): ca **đơn giao tận nơi** của
+> `I-017` nay viết **thẳng** — quầy bấm mốc *"đã ra bàn"*, không có ngoại lệ. Chỗ còn treo của
+> đúng ca ấy là **`S-6`** (`master_plan/shop-facts.md` §7.2): quầy bấm **lúc nào**.
+> ⚠️ **`U-033` chạm `I-004`** (đơn huỷ sau khi bếp đã làm xong) — viết hai chỗ treo (`S-6` ·
+> `U-033`) theo **phương án hẹp nhất** và ghi thẳng là đang treo.
 > Chạy song song được với P1-04 và P1-06: ba nhóm **không dùng chung mệnh đề nào**.
 
 ## Context
@@ -32,8 +35,9 @@ Nhóm này là chỗ **bàn kẹt** và **đơn kẹt**, và nó có hai ca mà 
 
 Đọc trước khi viết dòng đầu tiên: kế hoạch §7 · sáu mục `I-0xx` ở `quality/invariants.md` ·
 `docs/product/0-ba/ban-hang/05-vong-doi.md` §5 (bảng chuyển trạng thái — **đã chốt, không vẽ lại**) ·
-`docs/product/1-system-design/architecture.md` §2 · §3.1, và hai câu đang mở `U-031` · `U-033` ở
-`docs/product/99-unknowns.md`.
+`docs/product/1-system-design/architecture.md` §2 · §3.1, câu đang mở `U-033` ở
+`docs/product/99-unknowns.md`, và chỗ **suy ra** `S-6` ở `master_plan/shop-facts.md` §7.2
+(`U-031` **đã đóng 2026-09-04** — đọc lời giải ở `99-unknowns.md` → *Đã có lời giải*).
 
 ## Goal
 
@@ -109,9 +113,10 @@ Không được sửa:
    đi (**ADR-029**).
 9. Hàng `I-017` **không** chứa câu nào nói trạng thái cuối là bất biến; ca *đơn đã `Hoàn thành` vẫn
    huỷ được* (**ADR-017**) đọc được từ hàng ấy.
-10. Phần `I-017` liên quan **đơn giao tận nơi** viết theo **phương án hẹp nhất** và ghi thẳng
-    *"đang chờ `U-031`"*; phần `I-004` liên quan **đơn huỷ sau khi bếp đã làm xong** ghi thẳng
-    *"đang chờ `U-033`"*.
+10. Phần `I-017` liên quan **đơn giao tận nơi** viết **thẳng** — *người đứng quầy* bấm mốc
+    *"đã ra bàn"* kể cả với đơn giao (`U-031`, chủ quán chốt 2026-09-04) — và chỉ vế **lúc nào**
+    mới viết theo **phương án hẹp nhất**, ghi thẳng *"đang chờ `S-6`"*; phần `I-004` liên quan
+    **đơn huỷ sau khi bếp đã làm xong** ghi thẳng *"đang chờ `U-033`"*.
 11. `quality/invariants.md` **không đổi một chữ nào** trong lượt này.
 12. Không dòng nào chứa tên bảng · tên cột · tên ràng buộc · endpoint · route · component.
 13. `./scripts/gate.sh` xanh, **Gate 1c** gồm.
@@ -131,7 +136,7 @@ grep -n -i 'tầng 4\|tầng 5'        docs/product/1-system-design/<FILE>
 grep -n    'máy không ngăn được'   docs/product/1-system-design/<FILE>
 
 # (4) hai chỗ đang treo phải nói ra mã của thứ chặn chúng
-grep -n 'U-031\|U-033' docs/product/1-system-design/<FILE>
+grep -n 'S-6\|U-033' docs/product/1-system-design/<FILE>
 
 # (5) mệnh đề KHÔNG bị sửa lời ở lượt này
 git diff --stat -- quality/invariants.md            # rỗng
@@ -160,10 +165,12 @@ git diff --unified=0 -- docs/product/1-system-design/ docs/product/00-index.md \
 Hai câu đang mở chạm vào nhóm này. **Không câu nào được tự quyết** (`CLAUDE.md` §3.5); đọc nguyên
 văn ở `docs/product/99-unknowns.md` vùng *Đang mở*, đừng đọc bản tóm này thay cho nó.
 
-- **`U-031`** — với một đơn **giao tận nơi**, ai bấm mốc *"đã ra bàn"* của từng việc trạm, và vào
-  lúc nào. Chạm `I-017`. Hai đường ra đều xấu và cả hai đều chạm mốc thu tiền: đơn giao tận nơi
-  **không bao giờ `Hoàn thành` được**, hoặc quầy **bấm khống** một mốc cho suất đang ở nhà khách.
-  ⇒ viết phương án hẹp nhất, ghi thẳng là đang treo.
+- **`S-6`** (`master_plan/shop-facts.md` §7.2 — chỗ **suy ra**, không phải câu hỏi đang mở) — với
+  một đơn **giao tận nơi**, quầy bấm mốc *"đã ra bàn"* **lúc nào**. Chạm `I-017`. Vế **ai bấm** đã
+  chốt 2026-09-04 (`U-031`, *"pos"*: quầy bấm, không có ngoại lệ) nên hai đường ra xấu cũ — *đơn
+  giao không bao giờ `Hoàn thành` được* / *quầy bấm khống một mốc* — nay chỉ còn là câu hỏi **lúc
+  nào**, và nó vẫn chạm mốc thu tiền. ⇒ vế *lúc nào* viết phương án hẹp nhất, ghi thẳng là đang
+  treo.
 - **`U-033`** — một đơn bị **huỷ** sau khi bếp đã làm xong phần của nó: chỗ bánh ấy có được tính
   cho một bàn khác đang chờ không, hay bỏ và làm lại. Mở 2026-09-03 bởi chính BA-12. Chạm `I-004`
   ở đúng chỗ hai trục gặp nhau. ⇒ viết phương án hẹp nhất, ghi thẳng là đang treo.
@@ -185,8 +192,8 @@ lặng lẽ kéo chúng vào bảng của mình, và cũng đừng lặng lẽ b
 2. Hàng nào rơi vào tầng 4 hoặc 5, và câu *"máy không ngăn được"* viết ở đâu.
 3. `I-001`: cơ chế viết ra có chặn nhầm ca ghép bàn không, và nó phủ trạng thái *chờ thanh toán*
    bằng cách nào.
-4. Hai chỗ đang treo (`U-031` · `U-033`): phương án hẹp đã chọn là gì, và câu nào trong file nói
-   ra rằng nó đang treo.
+4. Hai chỗ đang treo (`S-6` · `U-033`): phương án hẹp đã chọn là gì, và câu nào trong file nói
+   ra rằng nó đang treo. (`U-031` **không** còn nằm ở đây — đóng 2026-09-04.)
 5. `F-026`: đã đọc chưa, và `I-019` · `I-020` được để nguyên ngoài bảng hay có đề xuất gì cho chủ
    repo — **đề xuất**, không phải quyết định.
 6. Output thật của mục *Verify*, của `./scripts/check-doc-status.sh` và của `./scripts/gate.sh`.

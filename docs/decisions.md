@@ -53,6 +53,8 @@ có câu trả lời mới từ người.
 | ADR-034 | Pha 1 có **sổ task riêng** `work/backlog_SD.md` giữ **mô tả**; `work/backlog.md` vẫn giữ **trạng thái** | Đã chốt 2026-09-04 | — | sửa một luật của **ADR-033** |
 | ADR-035 | Sở hữu chạy theo **pha**: lược đồ ở **pha 2**, hợp đồng API ở **pha 3**, route ở **pha 4**; **tầng bảo vệ** của từng invariant ở **pha 1** | Đã chốt 2026-09-04 | — | mở khoá **P1-02…P1-12**; sửa một câu của **ADR-014** |
 | ADR-036 | Mảng **admin** có sổ task riêng `work/backlog_AD.md` giữ **mô tả**; ranh giới giữa ba sổ nay là **LANE**, không phải pha | Đã chốt 2026-09-04 | — | sửa luật 3 của **ADR-034** |
+| ADR-037 | Lượt bán trên **sổ giấy** tính doanh thu **ngày bán** ⇒ ngày còn `N > 0` là ngày **chưa đối soát xong**; ngưỡng **0đ** giữ nguyên | Đã chốt 2026-09-04 | — | sửa câu hệ quả của **I-014**; **U-037** còn mở |
+| ADR-038 | Quán **không có mở ca / đóng ca** ⇒ mốc gom tiền nhỏ nhất là **ngày bán**, và **tiền đầu két gắn vào ngày bán** chứ không vào một biến cố ca | Đã chốt 2026-09-04 | — | **I-021** mới; **U-038** còn mở; ADM-01 co lại |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -2480,3 +2482,135 @@ hơn chữ của nó.
 
 **Câu phải hỏi chủ quán.** *"Quầy lỡ bấm đóng phiên một bàn khách vẫn đang ăn thì lúc đó làm thế
 nào?"*
+
+---
+
+### ADR-037 — Lượt bán trên sổ giấy tính doanh thu NGÀY BÁN, nên một ngày còn lượt chưa nhập là ngày CHƯA đối soát xong
+
+**Trạng thái:** Đã chốt 2026-09-04 (T-054), sau khi **chủ quán trả lời `U-032`** bằng đúng một từ:
+*"bán"*. Nó **sửa câu hệ quả** của `quality/invariants.md` **I-014**, không sửa mệnh đề của I-014.
+
+**Vấn đề nó giải quyết.**
+`U-032` hỏi: một lượt bán ghi trên sổ giấy hôm mất điện, hôm sau mới gõ vào máy, thì doanh thu rơi
+vào **ngày quán bán** hay **ngày gõ**. Câu ấy mở ngày 2026-09-03 (T-048) kèm một nhận xét mà lượt
+này phải xử lý chứ không được lờ đi: **hai đường ra đều phá một thứ đang đứng.**
+
+- Về **ngày gõ**: doanh thu của ngày mất điện **sai vĩnh viễn** — 30 suất quán thật sự bán hôm ấy
+  nằm ở một ngày khác, và không bao giờ có ai sửa.
+- Về **ngày bán**: doanh thu của một ngày **đã đối soát** đổi về sau ⇒ mất đúng câu mà I-014 đang
+  giữ (*"doanh thu một ngày đã đối soát không đổi về sau"*), và ngưỡng lệch **0đ** của
+  `master_plan/shop-facts.md` §6.10 — cổng chất lượng mạnh nhất của cả dự án (**ADR-022**) — trông
+  như hết nghĩa.
+
+Chủ quán chọn **ngày bán**. Việc còn lại của lượt này không phải chọn hộ, mà là trả lời: **ngưỡng
+0đ sống bằng cách nào khi con số của một ngày đã qua có thể đổi.**
+
+**Decision:**
+
+1. **Doanh thu của lượt nhập bù rơi vào ngày quán bán** (`shop-facts.md` §6.11, chủ quán chốt
+   2026-09-04). Cùng chiều với luật nợ ở §6.14: **tiền về lúc nào không đổi được ngày bán.**
+2. **Một ngày còn lượt bán trên giấy chưa nhập là một ngày CHƯA đối soát xong.** Con số `N` —
+   *"còn N lượt bán trên giấy chưa nhập"* — đã là một đòi hỏi của §6.11 từ 2026-09-02; ADR này nâng
+   nó từ **một dòng bày ra** thành **điều kiện đóng sổ**: `N > 0` ⇒ ngày ấy chưa đóng.
+3. ⇒ **Ngưỡng 0đ không đổi một chữ, và không có nút *"đóng ca dù lệch"*.** Ngày mất điện không
+   *"lệch rồi được tha"*; nó **chưa tới lúc** được chấm. Chỗ lệch của nó có tên, có số, và có một
+   việc cụ thể để hết lệch: gõ nốt chỗ giấy.
+4. **I-014 mang một ngoại lệ có tên**, không phải mất câu hệ quả: *doanh thu một ngày đã đối soát
+   không đổi về sau, **trừ** lượt bán trên sổ giấy chưa nhập*. Ngoại lệ đọc theo nghĩa hẹp nhất —
+   chỉ lượt bán **đã xảy ra thật ở quán** và **có mặt trên sổ giấy**. Không ca nào khác được sửa
+   doanh thu một ngày đã qua.
+
+**Why.**
+Cả hai đường của `U-032` đều mất một thứ, nên câu hỏi thật là **mất thứ nào thì sửa lại được**.
+Đường *ngày gõ* mất **sự thật của một ngày** và mất vĩnh viễn: không ai đi tìm một chỗ sai mà mọi
+con số đều tự khớp. Đường *ngày bán* mất **tính bất động của một con số đã chốt** — nhưng chỉ mất
+trong khoảng thời gian có tên, có số đếm, và tự đóng lại khi `N` về 0. Cái thứ hai **quan sát
+được**; cái thứ nhất thì không. Đối soát ngưỡng 0đ tồn tại để *"lệch 1 đồng cũng tìm ra lý do"*
+(§6.10) — một ngày mất điện với `N = 30` **có** lý do, và lý do ấy đọc được ngay trên bảng.
+
+Đây cũng là chỗ lời chủ quán ngày 2026-09-02 và ngày 2026-09-04 khớp vào nhau: *"nhập ngay khi có
+thể, không có mốc giờ cứng"* chỉ đứng được nếu **không nhập xong thì chưa đóng sổ**. Nếu ngày ấy
+đóng được lúc `N > 0`, câu *"nhập ngay khi có thể"* biến thành *"nhập lúc nào cũng được, không ai
+đợi"* — và phần ghi tay sẽ là phần bị bỏ quên đầu tiên vào ngày bận nhất.
+
+**Rejected alternatives:**
+- *Doanh thu tính **ngày gõ**.* Bác — **chủ quán chốt ngược lại**, và nó làm doanh thu ngày mất điện
+  sai vĩnh viễn.
+- *Tính **ngày bán**, nhưng đóng sổ ngày ấy như thường và sửa số lặng lẽ khi nhập bù.* Bác — đây là
+  đường **rẻ nhất và nguy hiểm nhất**: nó giữ được cả hai câu chữ (*"tính ngày bán"* và *"tối nào
+  cũng đối soát xong"*) bằng cách cho một con số **đã chốt** đổi mà không ai chứng kiến. Ngưỡng 0đ
+  khi đó chỉ còn là một dòng chữ trong tài liệu.
+- *Giữ nguyên I-014 và coi ca nhập bù là **ngoại lệ vận hành**, không phải chuyện của bất biến.*
+  Bác — một mệnh đề bất biến mà thực tế có một ca phá nó thì mệnh đề ấy **sai**, không phải *"gần
+  đúng"*. `work/findings.md` **F-022** đã ghi đúng hình này: hai mục cùng chốt nói ngược nhau và chỉ
+  lộ ra khi có người **diễn** một scenario.
+- *Nới ngưỡng lệch cho riêng ngày mất điện.* Bác — thẳng vào luật 3 của
+  `docs/product/1-system-design/architecture.md` §6.4 (*không có nút "đóng ca dù lệch"*) và vào
+  **ADR-022**.
+
+**Applies to:**
+`quality/invariants.md` **I-014** (bảng ba dòng + câu hệ quả có ngoại lệ) ·
+`master_plan/shop-facts.md` §6.11 · §7.1 ·
+`docs/product/1-system-design/02-thoi-gian-ngay-ban.md` §2 (hàng *nhập bù*) ·
+`docs/product/1-system-design/01-ranh-gioi-he-thong.md` §3 (**PT-6**) ·
+**ADR-022** (ngưỡng 0đ — không đổi) · **ADR-019** (luật nợ — cùng chiều).
+
+**Chỗ còn hở, ghi thẳng ở đây.** ADR này nói *ngày ấy chưa đóng sổ khi `N > 0`*; nó **không** nói
+**ai** ngồi lại đối soát ngày ấy sau khi nhập xong, và **lúc nào**. Đó là `U-037`
+(`docs/product/99-unknowns.md`) — câu của **chủ quán**, không phải chỗ để pha 1 tự chọn.
+
+### ADR-038 — Quán không có "mở ca / đóng ca", nên tiền đầu két gắn vào NGÀY BÁN chứ không vào một biến cố ca
+
+**Trạng thái:** Đã chốt 2026-09-04 (T-056), sau khi **chủ quán trả lời `A2`** bằng một câu:
+*"cứ đến giờ là bán rồi tối đếm tiền"*, và `A3` · `A4` bằng hai câu về tiền trong két.
+
+**Vấn đề nó giải quyết.**
+`work/backlog_AD.md` **ADM-01** mở ra vì `master_plan/shop-facts.md` §6.10 chốt đối soát cuối ngày
+ngưỡng lệch **0đ** mà không mục nào nói **con số tiền lẻ đầu két** ở đâu — đúng chỗ trống mà
+`docs/product/1-system-design/architecture.md` §14.3 gọi tên: *"tiền đầu buổi và tiền nộp về chưa
+nằm trong phép tính đối soát"*. Cách sửa **mặc định** cho một chỗ như thế là dựng một biến cố *mở
+ca* để treo con số vào — và ADM-01 được viết đúng theo giả định ấy, với một *"mốc mở"* và một
+*"mốc đóng"* trong mục **Goal** của nó.
+
+Chủ quán ngày 2026-09-04 nói rằng biến cố ấy **không tồn tại ở quán**. Không ai bấm mở, không ai
+bấm đóng; đến giờ thì bán, tối thì đếm tiền. Nên câu phải trả lời là: **con số tiền đầu két gắn vào
+cái gì, khi không có ca để gắn vào.**
+
+**Ba đường, và hai đường đầu đều sai theo một kiểu khác nhau:**
+
+| Đường | Hỏng ở đâu |
+|---|---|
+| **Dựng một biến cố *mở ca* dù quán không có** | Bắt người đứng quầy bấm một nút không tương ứng với việc gì ngoài đời. Nút ấy sẽ bị bấm sai giờ, bấm hộ, hoặc quên bấm — và mỗi lần quên là một ngày **không có** tiền đầu két, tức một ngày đối soát lệch mà không ai biết vì sao. Đây là *máy quyết thay người*, ngược §5.4 (*"máy không gom, người gom"*) |
+| **Bỏ tiền đầu két ra ngoài phép đối soát** | Phép so lệch **đúng bằng** tiền đầu két, **mọi ngày**. Ngưỡng 0đ — **ADR-022**, cổng chất lượng mạnh nhất của dự án — mất hết nghĩa, và người dùng học cách bỏ qua chỗ lệch. Đúng hậu quả ADM-01 đã viết ra trước khi có lời chủ quán |
+| ✅ **Gắn tiền đầu két vào NGÀY BÁN** | mốc đã có định nghĩa riêng, ở pha 1, do một bước khác sở hữu |
+
+**Decision:**
+
+1. **Quán không có khái niệm *mở ca / đóng ca***, và không tài liệu nào của repo được dựng một
+   biến cố như thế (`shop-facts.md` §6.23). Mốc vận hành **nhỏ nhất** quán có là **một ngày bán**.
+2. **Đơn vị gom tiền là *một ngày bán*** — định nghĩa ở
+   `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` (**P1-03**, pha 1). ADR này **không**
+   định nghĩa lại nó và không được đọc như một định nghĩa thứ hai (`work/findings.md` **F-001**).
+3. **Tiền đầu két là một dữ kiện CỦA MỘT NGÀY BÁN**, không phải của một biến cố: một ngày bán có
+   đúng một con số tiền đầu két, mặc định cố định và **sửa được** (`shop-facts.md` §8.5).
+4. **Phép đối soát §6.10 phải trừ tiền đầu két khỏi tiền mặt đếm trong két trước khi so với doanh
+   thu tiền mặt** — mệnh đề này là `quality/invariants.md` **I-021**, và nó là điều kiện để ngưỡng
+   0đ có nghĩa. Chia theo **phương thức** của §6.10 không đổi: tiền đầu két chỉ chạm phần **tiền
+   mặt**, không chạm phần chuyển khoản.
+5. **Không có nghiệp vụ nộp bớt tiền giữa buổi** (`A4`) ⇒ phép đối soát không phải cộng lại các
+   lần rút giữa chừng. Đây là chỗ ADR này làm việc **ít đi**, và nó ít đi vì chủ quán nói vậy,
+   không vì ai chọn cho gọn.
+
+**Hệ quả cho ADM-01, và đây là hệ quả đáng ghi nhất.** Việc ấy được viết như một việc **thiếu luật**
+(loại 1 của `work/backlog_AD.md`). Lời chủ quán không *trả lời* nó — nó **làm mất một nửa câu hỏi**:
+không có mốc mở và mốc đóng nào để định nghĩa, vì quán không có hai mốc ấy. Nửa còn lại (tiền đầu
+két) nay đã có luật ở §8.5 và I-021. ⇒ ADM-01 chuyển sang **loại 2** — luật đã đủ, phần còn lại
+thuộc pha 2–4.
+
+**Chỗ ADR này KHÔNG chốt:**
+- **Con số tiền đầu két nhập vào máy là một tổng hay một bảng theo mệnh giá** — **U-038**, và nó
+  quyết định cách đếm cuối ngày ở ngưỡng 0đ. ADR này đúng cho cả hai đường ra.
+- **Ai nhập con số ấy, và nhập lúc nào.** Chủ quán nói *ai bỏ tiền vào két* (chính chủ quán), không
+  nói *ai gõ nó vào máy*. Không suy hộ (`CLAUDE.md` §3.5).
+- **Tên bảng, tên cột, endpoint, route** — pha 2, 3, 4 (**ADR-035**).
+

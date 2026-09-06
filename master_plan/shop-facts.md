@@ -476,6 +476,16 @@ U-024). Hai câu này khép nốt bảng bốn con số:
   lại vết** — lùi mẻ nào, lúc mấy giờ, ai bấm. Đây không phải luật mới mà là §6.4 áp cho cùng một
   hình dạng: chỗ nào người quyết từng ca thay cho luật cứng, chỗ đó phải truy ngược được (§6.10,
   lệch 1 đồng cũng phải tìm ra lý do).
+- **Đơn GIAO TẬN NƠI cũng vậy — vẫn là POS bấm** (chủ quán chốt **2026-09-04**, trả lời U-031).
+  Lần hỏi 2026-09-01 không nhắc tới ca này, và ca này là ca duy nhất mà lúc suất tới tay khách thì
+  người có mặt **không** phải người đứng quầy: *nhân viên quán* đi giao, người đã giữ hai nút
+  *đã giao* + *đã thu tiền* (§6.7). Lời chủ quán 2026-09-04 chỉ có một từ — *"pos"* — và nó khép
+  ca ấy lại: **không** có ngoại lệ, mốc *"đã ra bàn"* của mọi việc trạm đều do quầy bấm, kể cả khi
+  suất ấy sắp rời quán. ⇒ *Người đi giao vẫn không bấm mốc nào của bảng bếp*, đúng hình dạng
+  U-009: người ở ngoài quầy không nhận thêm thao tác nào.
+- ⇒ *Cách đọc, không phải lời chủ quán nói thẳng:* **lúc nào** quầy bấm mốc ấy cho một đơn giao
+  thì lời 2026-09-04 **không** nói. Chỗ suy ra là **S-6** ở §7.2 — đừng đọc nó thành lời chủ quán,
+  và đừng dựng màn người đi giao như thể câu ấy đã chốt.
 - ⇒ *Phép đếm của người viết tài liệu, không phải lời chủ quán:* *"đã bưng ra bàn"* là thao tác
   **thứ bảy** người đứng quầy gánh, sau *"đã làm xong"* là thứ sáu. Con số bảy không phải một
   ranh giới; nó ghi ở đây vì nó là rủi ro vận hành thật — quầy là đôi tay bận nhất quán, và nay
@@ -534,7 +544,7 @@ tự xếp nồi, **không** tự quyết thứ tự làm và **không** đề x
 gom, gom mấy quả, làm trước làm sau là quyết định của người ở bếp và ở quầy. Đây là một **ranh
 giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ là đổi phạm vi, phải xin phép chủ quán.
 
-## 6. Hai mươi hai quy tắc nghiệp vụ phải đúng
+## 6. Hai mươi lăm quy tắc nghiệp vụ phải đúng
 
 1. **Khách gọi thêm khi quầy đã bắt đầu thu tiền vẫn thuộc CÙNG phiên, CÙNG một hoá đơn.** Phiên
    ở trạng thái "chờ thanh toán" **chưa** giải phóng bàn. Tách ra hoá đơn thứ hai ⇒ **thu thiếu
@@ -636,6 +646,35 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       (§6.10) có thể chạy khi phần ghi tay chưa vào máy hết**. Ngày mất điện là ngày bảng đối soát
       phải đọc được *"còn N lượt bán trên giấy chưa nhập"*, nếu không thì ngưỡng **0đ** sẽ báo lệch
       mà lý do chỉ là chưa gõ xong. Đây là hệ quả của lời chốt, phải nói ra chứ đừng để §6.10 tự vỡ.
+    - **Lượt bán ghi trên giấy tính doanh thu vào NGÀY QUÁN BÁN, không phải ngày gõ vào máy**
+      (chủ quán chốt **2026-09-04**, trả lời **U-032** — nguyên văn: *"bán"*). Hôm mất điện quán
+      bán 30 suất ghi giấy, hôm sau mới nhập ⇒ 30 suất ấy nằm trong doanh thu của **hôm mất điện**.
+      Cùng chiều với luật nợ (§6.14, *doanh thu tính ngày ghi nợ*): tiền về lúc nào không đổi được
+      **ngày bán**.
+    - ⇒ *Cách đọc, không phải lời chủ quán nói thẳng:* hai lời chốt trên gộp lại thì **doanh thu
+      của một ngày đã đối soát CÓ đổi về sau** — đúng một ca, và là ca này. Nên **một ngày còn lượt
+      bán trên giấy chưa nhập là một ngày CHƯA đối soát xong**: dòng *"còn N lượt bán trên giấy chưa
+      nhập"* ở trên không phải một lời chú thích, nó là **điều kiện** để ngưỡng **0đ** của §6.10 còn
+      nghĩa. Nhập xong thì con số của ngày ấy đổi, và ai đó phải nhìn lại nó — **ai nhìn lại và lúc
+      nào thì chưa chốt** (`docs/product/99-unknowns.md` **U-037**). Hệ quả cho `quality/invariants.md`
+      **I-014** ghi ở `docs/decisions.md` **ADR-037**.
+    - **Mất mạng mà hệ thống vẫn sống thì WEB NGỪNG NHẬN ĐƠN, và trên web có một dòng thông báo cho
+      khách** (chủ quán chốt **2026-09-04**, trả lời **U-035** — nguyên văn: *"không cho đặt qua web
+      cho đặt qua hotline và ghi giấy trực tiếp với pos, trên web có dòng thông báo"*). Khách muốn
+      đặt thì **gọi hotline**; quán **ghi giấy trực tiếp cùng POS** như mọi ca ở mục này.
+      - Đây là **điều kiện thứ ba** để một đơn được tạo, đứng cạnh *trong giờ bán* và *chủ quán
+        không bấm tạm dừng* (§6.8) — nay ở `quality/invariants.md` **I-008**. Nó khác hai điều kiện
+        kia ở một chỗ: hai điều kiện kia do **người** bật, điều kiện này thì **không ai bấm được**,
+        vì lúc quán mất mạng thì nút tạm dừng cũng nằm sau đúng đường mạng vừa mất.
+      - **Ba kênh khách tự bấm cùng dừng**: `delivery`, `pickup` và `qr_table` (§2). ⇒ *Cách đọc:*
+        chủ quán nói *"web"*; `qr_table` cũng là trang web khách mở trên điện thoại của họ, và khách
+        ngồi bàn thì gọi nhân viên — đúng vế *"ghi giấy trực tiếp với POS"*. Hai kênh còn lại
+        (`staff_pos`, `phone_preorder`) là **người của quán** nhập nên không dừng: mất mạng thì họ
+        ghi giấy.
+      - **Câu chữ của dòng thông báo chưa chốt** — chủ quán mới nói *có một dòng*, chưa đọc nội
+        dung. Đừng tự viết một câu rồi coi là đã chốt (`CLAUDE.md` §3.5); hỏi khi dựng màn (pha 4).
+      - **Máy làm sao biết quán đang mất kết nối** là **cơ chế**, không phải dữ kiện quán: nó thuộc
+        `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6 bước **P1-08** và pha 3.
 12. **Bốn ranh giới đã chốt — đây là quyết định, không phải chỗ trống chờ ai điền:**
 
     | Không làm | Vì sao |
@@ -887,15 +926,66 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       đơn và một lần sửa vì bấm nhầm nhìn giống hệt nhau trong bản ghi, và cái phân biệt chúng
       **chính là** ô lý do. Chủ quán nói khác đi thì sửa lại chỗ này.
 
+23. **Một ngày quán bán ĐÚNG MỘT BUỔI — buổi sáng — và quán KHÔNG có khái niệm "mở ca / đóng ca"**
+    (chủ quán chốt 2026-09-04, trả lời `A1` và `A2`). Nguyên văn: *"quán chỉ bán buổi sáng"* và
+    *"cứ đến giờ là bán rồi tối đếm tiền"*.
+    - **Không có biến cố nào để bấm.** Không ai bấm *mở*, không ai bấm *đóng*. Cửa sổ giờ ở §1 —
+      **06:00 – 11:00, tất cả các ngày** — là mốc duy nhất quán có, và nó là một hằng số trên đồng
+      hồ chứ không phải một việc ai đó làm.
+    - **Việc đếm tiền xảy ra BUỔI TỐI**, cách giờ bán nhiều tiếng. Khớp với §6.10, vốn đã viết
+      *"mỗi tối đối chiếu"* — hai câu nói cùng một việc, không phải hai việc.
+    - ⇒ **Mốc gom tiền là NGÀY BÁN, không phải một ca.** Định nghĩa *một ngày bán* cho phép cộng
+      tiền là của pha 1 (`docs/product/1-system-design/02-thoi-gian-ngay-ban.md`); quy tắc này chỉ
+      nói rằng ở quán **không có** một mốc vận hành nào nhỏ hơn nó. Xem `docs/decisions.md`
+      **ADR-038**.
+    - *Cách đọc, không phải lời chủ quán nói thẳng:* chủ quán nói *"chỉ bán buổi sáng"*; đọc cửa sổ
+      **06:00–11:00** của §1 **chính là** một buổi ấy là **suy ra** — §7.2 **S-7**. Chủ quán nói
+      khác đi thì sửa lại chỗ này.
+
+24. **Thứ tự bưng do NGƯỜI ĐỨNG QUẦY quyết trên POS; luật cơ sở là ai tới trước ăn trước, và ưu
+    tiên khách vội là ngoại lệ do người quyết từng ca** (chủ quán chốt 2026-09-04, trả lời `A5` và
+    `A6`). Nguyên văn: *"pos quyết định. nhưng cơ bản là ai tới trước ăn trước"* và *"đôi khi ưu
+    tiên cho khách vội"*.
+    - **Máy KHÔNG tự xếp thứ tự bưng thay người.** Nó bày ra cái đang có; ai được bưng trước là
+      quyết định của người đứng quầy. Cùng lối nghĩ với *"máy không gom, người gom"* (§5.4).
+    - **Luật cơ sở là thời điểm khách tới**, không phải thời điểm món chín. Quy tắc này **không**
+      mâu thuẫn với §5.4 (*bếp làm theo mẻ*): mẻ quyết **cái gì chín trước**, quy tắc này quyết
+      **bưng cho ai trước**. Hai câu hỏi khác nhau, và chỉ câu thứ hai có ưu tiên của con người.
+    - **Ngoại lệ có thật và có tên: khách vội.** Nó là *đôi khi*, không phải luôn — nên nó là một
+      quyết định người, không phải một luật máy chạy được.
+    - *Cách đọc, không phải lời chủ quán nói thẳng:* một lần ưu tiên là đúng hình dạng mà §6.22 và
+      §6.4 đã gọi tên — *chỗ nào người quyết từng ca thay cho luật cứng, chỗ đó phải truy ngược
+      được*. Áp luật để-lại-vết ấy cho lần đảo thứ tự bưng là **suy ra**, không phải lời chốt.
+      Chủ quán chưa được hỏi câu này.
+
+25. **Khách tự chọn bàn, và đôi khi nhân viên xếp chỗ — cả hai đều đúng; đông khách thì ngoài đời
+    CÓ người đứng chờ và quán xếp hàng chờ** (chủ quán chốt 2026-09-04, trả lời `A8` và `A9`).
+    Nguyên văn: *"cả 2 khách tự chọn đôi khi nhân viên xếp"* và *"có khách đứng chờ, xếp hàng
+    chờ"*.
+    - **Không có một luật xếp chỗ duy nhất để mã hoá.** Hệ thống phải chịu được cả hai đường, và
+      không được bắt buộc một trong hai.
+    - **Hàng chờ tồn tại ở ngoài đời.** Đây là dữ kiện, không phải một tính năng: chủ quán xác nhận
+      có người đứng chờ và quán có xếp hàng.
+    - ⛔ **Quán có muốn MÁY giữ hàng chờ ấy không thì chưa ai trả lời** — câu `A8` hỏi ba vế, chủ
+      quán trả lời vế *có người chờ không*, không trả lời vế *máy có giữ không* và vế *ai nhớ ai
+      tới trước*. Đó là **U-039**, và không phiên nào được suy hộ (`CLAUDE.md` §3.5).
+    - ⛔ **Mười một cái bàn ấy mỗi cái mấy chỗ ngồi, và đã đánh số sẵn chưa, cũng chưa ai trả
+      lời** — **U-040**. Số bàn **11** đã là dữ kiện ở §1 từ 2026-08-30.
+
 ## 7. Nhật ký chốt
 
-**Tính tới 2026-09-01 §7.2 giữ đúng MỘT chỗ suy ra chưa xác nhận — S-5.** Bảng giá đã đầy, cả
-năm kênh đều có luồng, ba mục suy luận S-1–S-3 đã được chủ quán trả lời thẳng ngày 2026-08-30
-(§7.1, ba dòng đánh dấu *xác nhận S-*), và **S-4** — chỗ suy ra sinh ngày 2026-08-31 từ lời chủ
-quán về cách bếp gom việc (§5.4) — đã được trả lời ngày **2026-09-01**. Cùng ngày, lời chốt cho
-U-021 đẻ ra **S-5** (bấm *"đã bưng ra bàn"* theo đơn vị nào), nên mục §7.2 lại có một dòng. Mục này
-giữ lại **ai chốt cái gì, ngày nào**, để phiên sau muốn lật lại một quyết định thì biết đang lật
-lại điều gì.
+**§7.2 luôn giữ ít nhất một chỗ suy ra chưa xác nhận, và mục này KHÔNG nói con số ấy là bao nhiêu**
+— con số đúng đọc ở tiêu đề §7.2 rồi đếm lại ở bảng của nó (`work/findings.md` **F-003**: một phép
+đếm của người viết không phải một quyết định, và một dòng chép lại nó ở đây là bản thứ hai sẽ trôi
+— **F-001**).
+
+Đường đi tới nay: bảng giá đã đầy, cả năm kênh đều có luồng, ba mục suy luận S-1–S-3 đã được chủ
+quán trả lời thẳng ngày 2026-08-30 (§7.1, ba dòng đánh dấu *xác nhận S-*), và **S-4** — chỗ suy ra
+sinh ngày 2026-08-31 từ lời chủ quán về cách bếp gom việc (§5.4) — đã được trả lời ngày
+**2026-09-01**. Cùng ngày, lời chốt cho U-021 đẻ ra **S-5** (bấm *"đã bưng ra bàn"* theo đơn vị
+nào); ngày **2026-09-04**, lời chốt cho U-031 đẻ ra **S-6** theo đúng một kiểu — chủ quán trả lời
+**ai bấm**, câu hỏi còn vế **bấm theo gì / bấm lúc nào**. Mục này giữ lại **ai chốt cái gì, ngày
+nào**, để phiên sau muốn lật lại một quyết định thì biết đang lật lại điều gì.
 
 ### 7.1 Chủ quán đã chốt những gì
 
@@ -958,13 +1048,26 @@ lại điều gì.
 | 2026-09-02 | **Món hết sau khi khách đã chọn: POS bàn với khách, quyết tại lúc thoả thuận xong** — không tự thay thế, không tự huỷ (đóng câu 3 bảng §10) | §6.20 |
 | 2026-09-02 | **Khách nói đã chuyển khoản mà chưa thấy báo có: POS bàn với khách, quyết ngay lúc đó** — hai đường ra là ghi nợ (§6.14) hoặc chờ tin nhắn (§6.3) | §6.21 |
 | 2026-09-01 | **Ba mảng quản trị vào phạm vi phần mềm**: nguyên liệu · con người · tài chính — lật ngược ranh giới cũ *"không quản lý nguyên liệu, tồn kho, chấm công, kế toán"*; chủ quán **xác nhận lại 2026-09-02** | **§8** |
+| 2026-09-04 | **Lượt bán ghi trên giấy tính doanh thu vào NGÀY QUÁN BÁN**, không phải ngày gõ vào máy (trả lời **U-032**) — ⇒ doanh thu một ngày **đã đối soát** có đổi về sau, đúng một ca; xem ADR-037 | §6.11 |
+| 2026-09-04 | **Mất mạng mà hệ thống vẫn sống ⇒ WEB NGỪNG NHẬN ĐƠN**, có một dòng thông báo; khách đặt qua **hotline**, quán **ghi giấy trực tiếp với POS** (trả lời **U-035**) — điều kiện thứ ba của I-008 | §6.11 |
+| 2026-09-04 | **Đơn GIAO TẬN NƠI không có ngoại lệ: POS vẫn bấm mốc *"đã ra bàn"* của từng việc trạm** — nguyên văn *"pos"*; người đi giao vẫn chỉ giữ *đã giao* + *đã thu tiền* (trả lời **U-031**). *Vế **lúc nào** bấm thì chưa nói ⇒ **S-6** ở §7.2* | §5.4 · §6.7 |
 | 2026-09-04 | **Mảng nguyên liệu làm ở mức SỔ GHI TAY ĐIỆN TỬ** — máy **không** tự trừ tồn theo công thức, nên phần mềm không cần định lượng từng thành phần; kèm **một mục tổng nhập hàng ngày, chủ quán tự nhập số liệu** | **§8.4** |
+| 2026-09-04 | **Một ngày bán ĐÚNG MỘT BUỔI — buổi sáng — và quán KHÔNG có mở ca / đóng ca**: *"cứ đến giờ là bán rồi tối đếm tiền"* (trả lời `A1` `A2`) ⇒ không có mốc vận hành nào nhỏ hơn **ngày bán**; xem **ADR-038**. *Vế cửa sổ 06:00–11:00 của §1 **chính là** một buổi ấy là suy ra ⇒ **S-7** ở §7.2* | §6.23 |
+| 2026-09-04 | **Thứ tự bưng do POS quyết, luật cơ sở là ai tới trước ăn trước, ưu tiên khách vội là ngoại lệ *đôi khi*** (trả lời `A5` `A6`) — máy **không** xếp thứ tự thay người; không mâu thuẫn §5.4 vì mẻ quyết *cái gì chín trước*, luật này quyết *bưng cho ai trước* | §6.24 |
+| 2026-09-04 | **Tiền đầu két có thật: chủ quán bỏ tiền lẻ cho POS lấy tiền thối, máy giữ một số mặc định SỬA ĐƯỢC; giữa buổi KHÔNG ai lấy tiền ra** (trả lời `A3` `A4`) ⇒ vế còn thiếu của đối soát 0đ §6.10, và là **I-021**. Cộng **mục tổng quan của chủ quán** — sáu con số (trả lời `A10`) | **§8.5** · **§8.6** · §6.25 |
 
-### 7.2 Chỗ suy ra chưa xác nhận — **một mục, tính tới 2026-09-01**
+### 7.2 Chỗ suy ra chưa xác nhận — **ba mục, tính tới 2026-09-04**
 
 Mục này giữ những chỗ được **suy ra** từ luật đã chốt chứ không phải lời chủ quán nói thẳng. Bốn
-mục S-1–S-4 từng nằm đây đều đã được chủ quán xác nhận và đã lên §7.1; **S-5 mở ngày 2026-09-01**
-(T-039) và là mục duy nhất còn chưa xác nhận.
+mục S-1–S-4 từng nằm đây đều đã được chủ quán xác nhận và đã lên §7.1; còn **ba** mục chưa xác
+nhận — **S-5** (2026-09-01, T-039) · **S-6** (2026-09-04, T-055) · **S-7** (2026-09-04, T-056).
+
+S-5 và S-6 sinh ra cùng một kiểu: chủ quán trả lời **ai bấm**, và câu hỏi còn một vế **bấm theo gì
+/ bấm lúc nào** mà lời ấy không chạm tới. **S-7 là kiểu thứ hai**: chủ quán trả lời về **cả ngày**
+(*"chỉ bán buổi sáng"*), và chỗ suy ra là việc đọc câu ấy thành một mệnh đề về **một buổi**.
+
+⚠️ Con số *ba* ở tiêu đề là **phép đếm của phiên, không phải một quyết định** — đếm lại ở bảng dưới
+chứ đừng tin câu này (`work/findings.md` **F-003** · **F-018**).
 
 | Chỗ suy ra | Hỏi ngày | Lời giải | Nay ở |
 |---|---|---|---|
@@ -973,6 +1076,8 @@ mục S-1–S-4 từng nằm đây đều đã được chủ quán xác nhận 
 | **S-3** — hoàn tiền phải ghi vết, ai ghi | 2026-08-30 | **người đứng quầy** vừa quyết vừa ghi | §6.4 |
 | **S-4** — *"đã làm xong, còn ở bếp"* có phải một con số riêng | 2026-08-31 (hỏng) → **2026-09-01** | **có** — bánh nằm chờ thật; bảng quầy **bốn** con số, **người đứng quầy bấm** | §5.4 |
 | **S-5** — *"đã bưng ra bàn"* bấm theo **đơn vị nào** | **2026-09-01**, chưa hỏi | *suy ra:* theo **bàn**, không theo mẻ — một mẻ phục vụ nhiều bàn (§5.4), còn bưng thì bưng tới **một** bàn. Chủ quán mới chỉ nói **ai** bấm, chưa nói **theo gì** | §5.4 · **BA-12** cần trước khi dựng bảng quầy |
+| **S-6** — với đơn **giao tận nơi**, quầy bấm *"đã ra bàn"* **lúc nào** | **2026-09-04**, chưa hỏi | *suy ra:* **lúc đơn rời quán** — cùng mốc quầy đã bấm để đưa đơn sang `Đang giao` (§6.7, chốt 2026-09-01 trả lời U-023), vì quầy chỉ nhìn thấy suất ấy tới lúc đó. Chủ quán 2026-09-04 mới chỉ nói **ai** bấm (*"pos"*, U-031), chưa nói **lúc nào**. ⇒ Nếu suy ra này sai thì mốc *"đã ra bàn"* của đơn giao nghĩa là **tới tay khách**, và quầy phải chờ người đi giao báo về mới bấm được | §5.4 · §6.7 · `docs/product/0-ba/ban-hang/05-vong-doi.md` §5.2 |
+| **S-7** — cửa sổ **06:00–11:00** của §1 có phải **đúng một buổi bán** | **2026-09-04**, chưa hỏi | *suy ra:* **có** — chủ quán nói *"quán chỉ bán buổi sáng"* (`A1`) và *"cứ đến giờ là bán"* (`A2`), nên cửa sổ giờ duy nhất quán có cũng là buổi duy nhất quán bán. Chủ quán **không** đọc ra một mốc bắt đầu và một mốc kết thúc của *buổi*; hai câu ấy nói về **cả ngày** chứ không nói về một buổi trong nhiều buổi. ⇒ Nếu suy ra này sai thì có buổi thứ hai ngoài 06:00–11:00, và §6.23 · **ADR-038** · **I-021** đều phải viết lại | §1 · §6.23 · **ADR-038** |
 
 Mục này **không xoá** kể cả khi rỗng: chỗ suy ra tiếp theo phải nằm ở đây, tách khỏi §7.1
 (`work/findings.md` F-004). Thấy dòng nào trong repo còn nói *"§7.2 rỗng"* ⇒ đó là pointer cũ, sửa
@@ -1092,3 +1197,66 @@ quán (`CLAUDE.md` §3.5).
   lượng từng thành phần, tức lật ngược mức sổ tay ở trên. Hôm nay chưa ai hỏi câu ấy
   (`work/admin-questions.md` câu **B22**); hỏi rồi mà chủ quán trả lời *"có"* thì mục này phải
   viết lại, không phải viết thêm.
+
+### 8.5 Mảng TÀI CHÍNH — tiền đầu két, và tiền nằm trong két tới cuối buổi
+
+**Chủ quán chốt 2026-09-04** (trả lời `A3` và `A4`). Đây là hai dữ kiện mà phép đối soát ngưỡng
+lệch **0đ** ở §6.10 đang thiếu, và là đúng chỗ trống mà tài liệu kiến trúc §14.3 đã gọi tên:
+*"tiền đầu buổi và tiền nộp về chưa nằm trong phép tính đối soát"*.
+
+**Đầu buổi, chủ quán bỏ tiền lẻ vào két cho POS lấy tiền thối.** Nguyên văn: *"chủ quán để tiền cho
+pos khoảng 1 triệu tiêng 50k, 20k, 10k. 100k tiền 5k, 100k tiêng 2k và 1k. để số cố định nhưng có
+thể sửa có những không như thế."*
+
+| Phần | Con số | Loại con số (§0 luật 3 của `work/admin-questions.md`) |
+|---|---|---|
+| mệnh giá 50.000 · 20.000 · 10.000 | **khoảng 1.000.000** | **ước lượng** — chữ *"khoảng"* là của chủ quán, phiên sau được phép hỏi lại |
+| mệnh giá 5.000 | **100.000** | nói thẳng |
+| mệnh giá 2.000 và 1.000 | **100.000** | nói thẳng |
+
+⚠️ **Tổng ≈ 1.200.000đ là PHÉP CỘNG CỦA PHIÊN, không phải con số chủ quán nói.** Chủ quán chưa bao
+giờ đọc ra một con số tổng. Đừng viết *"đúng 1.200.000"* ở bất kỳ đâu (`work/findings.md` **F-003**).
+
+**Máy giữ con số ấy như một số mặc định CỐ ĐỊNH, và người dùng SỬA được.** Nguyên văn: *"để số cố
+định nhưng có thể sửa có những không như thế"* — tức có ngày số tiền bỏ vào không đúng như trên, và
+máy phải nhận con số của ngày hôm ấy.
+
+**Giữa buổi KHÔNG ai lấy tiền ra; tiền nằm trong két tới cuối buổi.** Nguyên văn: *"không có ai lấy
+tiền tiền nằm trong két tới cuối buổi."* ⇒ **quán không có nghiệp vụ nộp bớt tiền giữa buổi**, nên
+phép đối soát không phải cộng lại các lần rút giữa chừng. Đây là một câu trả lời **đóng**: nó làm
+việc ít đi, không nhiều thêm.
+
+**Hệ quả cho phép đối soát — đây là chỗ đắt nhất của cả mục:** tiền mặt đếm được trong két cuối
+ngày **đã bao gồm** tiền đầu két. So thẳng nó với doanh thu tiền mặt thì lệch **đúng bằng** số tiền
+đầu két, **mọi ngày**, và ngưỡng 0đ của §6.10 mất hết ý nghĩa — người dùng sẽ học cách bỏ qua chỗ
+lệch ấy. Mệnh đề này là `quality/invariants.md` **I-021**.
+
+⛔ **Chưa ai trả lời: con số nhập vào máy là MỘT số tổng hay một bảng theo TỪNG MỆNH GIÁ.** Chủ quán
+kể ra mệnh giá nhưng nói *"để số"* ở số ít. Hai đường ra dẫn tới hai cách đếm cuối ngày khác hẳn
+nhau ở ngưỡng 0đ. Đó là **U-038**, không suy hộ (`CLAUDE.md` §3.5).
+
+### 8.6 Mục TỔNG QUAN của chủ quán khi không đứng quầy
+
+**Chủ quán chốt 2026-09-04** (trả lời `A10`). Nguyên văn: *"nhìn thấy bảng tổng quan của quán có
+đang làm cho bao nhiêu người ăn, đưa ra dc bao nhiêu còn thiếu bao nhiêu bán dc như nào rồi số tiền
+dự tính đã bán dc. có bao nhiêu người đang làm còn thiếu gì không"*.
+
+Sáu thứ chủ quán gọi tên, viết ở tầng nghiệp vụ — **không** phải một màn, **không** phải một route
+(`docs/decisions.md` ADR-035):
+
+| # | Chủ quán muốn thấy | Ghi chú |
+|---|---|---|
+| 1 | đang làm cho **bao nhiêu người ăn** | số khách đang được phục vụ |
+| 2 | **đưa ra được bao nhiêu** | phần đã ra bàn |
+| 3 | **còn thiếu bao nhiêu** | phần chưa ra bàn — cùng cặp với số 2 |
+| 4 | **bán được như nào rồi** | tiến độ bán trong buổi |
+| 5 | **số tiền dự tính đã bán được** | ⚠️ chữ *dự tính* là của chủ quán: đây là con số **tạm tính trong buổi**, **không** phải doanh thu đã đối soát (§6.10) và không bao giờ được bày ra như thể đã đối soát |
+| 6 | có **bao nhiêu người đang làm** | ⛔ đứng trên câu *ai đang trực trạm nào*, thứ chưa có dữ liệu nào ghi — `work/admin-questions.md` câu **C36**, và `work/backlog_AD.md` ADM-21 |
+
+⛔ **Vế thứ bảy chủ quán nói mà chưa ai hiểu là gì: *"còn thiếu gì không"*.** Thiếu **nguyên liệu**,
+thiếu **người**, hay thiếu **món trên menu** — ba đường ra dẫn tới ba mục khác hẳn nhau, và đường
+*nguyên liệu* còn đụng thẳng mức **sổ ghi tay điện tử** của §8.4 (máy không tự trừ tồn thì máy
+không tự biết sắp hết). Đó là **U-041**, không suy hộ.
+
+**Mục này chốt TẬP CON SỐ, không chốt cách bày và không chốt nhịp cập nhật.** Bày thế nào là pha 4;
+đẩy dữ liệu về máy chủ quán bằng đường nào là **P1-08** của pha 1. Cả hai đều không được viết ở đây.

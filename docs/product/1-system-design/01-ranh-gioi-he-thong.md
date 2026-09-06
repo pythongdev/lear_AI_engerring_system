@@ -64,10 +64,14 @@ trỏ được vào đúng một dòng. Nó không phải một mã dùng chung 
 
 **PT-1 và PT-2 không phải một thứ**, và chỗ khác nhau của chúng là chỗ dễ thiết kế sai nhất:
 
-- **PT-1 chết, hệ thống vẫn sống.** Quán mù, nhưng **khách web vẫn đặt được** — đơn `delivery`,
-  `pickup`, `phone_preorder` vẫn vào hệ thống mà không ai ở quán nhìn thấy. Chủ quán cũng **không
-  bấm được** nút *"Tạm dừng nhận đơn"* (`shop-facts.md` §6.8) vì nút ấy cũng nằm sau cùng đường
-  mạng vừa mất. ⇒ Ca này còn một câu chưa ai trả lời: **U-035** (§4).
+- **PT-1 chết, hệ thống vẫn sống.** Quán mù, và **hệ thống thì không**: nếu không có luật nào,
+  khách vẫn đặt được trên web trong khi không ai ở quán nhìn thấy đơn. Chủ quán cũng **không bấm
+  được** nút *"Tạm dừng nhận đơn"* (`shop-facts.md` §6.8) vì nút ấy nằm sau đúng đường mạng vừa
+  mất. ⇒ **Chủ quán chốt 2026-09-04** (đóng `U-035`, `shop-facts.md` §6.11): **web NGỪNG nhận đơn
+  và hiện một dòng thông báo**; khách đặt qua **hotline**, quán **ghi giấy trực tiếp với POS**. Đây
+  là **điều kiện thứ ba** của `quality/invariants.md` **I-008** — và là điều kiện duy nhất **không
+  ai bấm được**, vì nó tắt đúng lúc không ai ở quán bấm được gì. **Máy làm sao biết quán đang mất
+  kết nối** là cơ chế ⇒ **P1-08** và pha 3, không phải chỗ này.
 - **PT-2 chết, cả hai bên đều mù.** Khách không đặt được, quán không ghi được. Quán vẫn bán bằng
   tay tại chỗ và qua điện thoại; hai kênh khách tự bấm thì **mất hẳn** trong khoảng thời gian ấy —
   không có đường nào bù được một đơn chưa bao giờ tồn tại.
@@ -88,12 +92,12 @@ thêm dòng.
 
 | Mã | Mất nó thì **quán làm gì** | **Ai bù** | **Bù lúc nào** |
 |---|---|---|---|
-| **PT-1** | **Không dừng bán.** Chuyển sang **sổ giấy** (PT-6): đơn và phiên vẫn chạy đúng các trạng thái của `05-vong-doi.md`, chỉ ghi trên giấy thay vì trên máy. Ca **khách web đặt trong lúc quán mù** thì chưa có luật — **U-035**, đừng suy hộ | **POS hoặc chủ quán** giữ sổ và nhập lại — không giao cho trạm bếp nào, vẫn đúng một cửa như mọi việc chạm tiền (`shop-facts.md` §6.11 · §6.13) | **Ngay khi có thể, không có mốc giờ cứng.** Có điện lại giữa buổi thì quay lại làm trên hệ thống **ngay**, phần ghi tay nhập sau — bán tiếp là việc gấp, nhập bù là việc sau (§6.11) |
+| **PT-1** | **Không dừng bán.** Chuyển sang **sổ giấy** (PT-6): đơn và phiên vẫn chạy đúng các trạng thái của `05-vong-doi.md`, chỉ ghi trên giấy thay vì trên máy. **Ba kênh khách tự bấm dừng lại** — web hiện một dòng thông báo, khách đặt qua **hotline** (chủ quán chốt 2026-09-04, `U-035`); hai kênh do người của quán nhập thì không dừng, họ ghi giấy | **POS hoặc chủ quán** giữ sổ và nhập lại — không giao cho trạm bếp nào, vẫn đúng một cửa như mọi việc chạm tiền (`shop-facts.md` §6.11 · §6.13) | **Ngay khi có thể, không có mốc giờ cứng.** Có điện lại giữa buổi thì quay lại làm trên hệ thống **ngay**, phần ghi tay nhập sau — bán tiếp là việc gấp, nhập bù là việc sau (§6.11) |
 | **PT-2** | **Không dừng bán**, y hệt PT-1 — nhưng hai kênh khách tự bấm (`qr_table`, `delivery`/`pickup` trên web) **không có gì để bù**: đơn ấy chưa từng tồn tại. Quán bán tại chỗ và qua điện thoại, ghi giấy | **POS hoặc chủ quán** (§6.11). Phần khách web mất thì **không ai bù được** — đó là cái giá, không phải một chỗ trống chờ thiết kế | **Ngay khi có thể** sau khi hệ thống sống lại (§6.11). Dấu hiệu đo được của ràng buộc *một chỗ chạy duy nhất* là việc của **P1-08** |
 | **PT-3** | **Quầy không bấm *"đã thu"* khi chưa nhìn thấy tiền về.** Hệ thống **không tự biết tiền đã về tài khoản** — đó là một tính chất cố định, không phải một chỗ chưa làm xong (xem khung dưới bảng). Khách không chuyển được thì trả **tiền mặt**, hoặc **ghi nợ** (§6.14) | **Người đứng quầy** — người trao hàng bấm (`architecture.md` §7); hệ thống chỉ **ghi lại** quyết định đó, không quyết thay | **Tại chỗ, trước khi khách rời quán hoặc trước khi người giao rời chỗ khách.** Không có đường bấm bù sau lưng khách |
 | **PT-4** | Phần **tiền mặt** vẫn đối soát với **két** như thường; phần **chuyển khoản** của ngày ấy **không có nguồn đối chiếu độc lập**. **Không cộng gộp hai phần lại** để một chỗ thừa che một chỗ thiếu (§6.10), và **không có nút *"đóng ca dù lệch"*** (`architecture.md` §6.4 luật 3) | **Chủ quán** — đối chiếu bằng chính bản ghi của tài khoản ấy (cùng ngân hàng ở PT-3, không phải một nguồn thứ tư), rồi ghi lý do lệch | **Ngay tối hôm ấy**, cùng lượt đối soát cuối ngày — ngưỡng lệch là **0đ** và *"lệch 1 đồng cũng phải tìm ra lý do"* (§6.10) |
 | **PT-5** | Đơn web **vẫn vào hệ thống**, chỉ là **không ai được báo**. Quầy **tự mở danh sách đơn chờ xác nhận** trên POS thay vì chờ báo — đơn chưa duyệt vẫn **không sinh việc ở trạm nào** (`shop-facts.md` §6.2), nên chỗ hỏng là **khách chờ**, không phải bếp làm sai | **Người đứng quầy** — vẫn là người nhìn thấy đơn đầu tiên (`03-lat-cat.md` §3.2.1 bước 6) | **Trong buổi bán, trước giờ hẹn của đơn sớm nhất**: `pickup` và `phone_preorder` đều mang mốc giờ khách cần hàng (`shop-facts.md` §5.2 điểm 5). Chờ tới cuối buổi là trễ hẹn |
-| **PT-6** | Bảng đối soát cuối ngày phải đọc được ***"còn N lượt bán trên giấy chưa nhập"*** — không có dòng ấy thì ngưỡng **0đ** báo lệch mà lý do chỉ là *chưa gõ xong* (§6.11) | **POS hoặc chủ quán** — người giữ sổ cũng là người nhập lại (§6.11) | **Ngay khi có thể** (§6.11). **Doanh thu của lượt nhập bù tính vào ngày nào thì CHƯA CHỐT — `U-032`**, và mục này không quyết hộ: nó chặn **P1-03** |
+| **PT-6** | Bảng đối soát cuối ngày phải đọc được ***"còn N lượt bán trên giấy chưa nhập"*** — không có dòng ấy thì ngưỡng **0đ** báo lệch mà lý do chỉ là *chưa gõ xong* (§6.11) | **POS hoặc chủ quán** — người giữ sổ cũng là người nhập lại (§6.11) | **Ngay khi có thể** (§6.11). Doanh thu của lượt nhập bù rơi vào **ngày quán bán**, không phải ngày gõ (chủ quán chốt 2026-09-04, `U-032`) ⇒ **ngày còn lượt chưa nhập là ngày chưa đối soát xong** (`docs/decisions.md` **ADR-037**). *Ai chấm lại con số ấy: `U-037`* |
 
 **Sáu dòng trên KHÔNG cùng một loại: ba dòng là lời chốt, một dòng chốt một nửa, hai dòng là SUY
 RA.** Trộn hai loại ấy vào nhau đúng là chỗ `work/findings.md` **F-004** đã ghi, và `CLAUDE.md` §7.2
@@ -101,9 +105,9 @@ RA.** Trộn hai loại ấy vào nhau đúng là chỗ `work/findings.md` **F-0
 
 | Dòng | Loại | Đo bằng gì |
 |---|---|---|
-| **PT-1** · **PT-6** | **lời chốt** | chủ quán chốt 2026-09-02, `shop-facts.md` §6.11 nói đủ cả ba vế: ai giữ sổ · nhập lại lúc nào · làm gì khi có điện lại giữa buổi |
+| **PT-1** · **PT-6** | **lời chốt** | chủ quán chốt 2026-09-02, `shop-facts.md` §6.11 nói đủ cả ba vế: ai giữ sổ · nhập lại lúc nào · làm gì khi có điện lại giữa buổi. **Chốt thêm 2026-09-04**: ba kênh khách tự bấm **dừng** khi quán mất kết nối (`U-035`) · doanh thu lượt nhập bù rơi vào **ngày bán** (`U-032`) |
 | **PT-3** | **lời chốt** | `architecture.md` §7 (người trao hàng bấm) · `shop-facts.md` §6.3 (POS xác nhận **lúc nhận được tiền**, ADR-030) · §6.14 (đường ghi nợ) |
-| **PT-2** | **một nửa chốt, một nửa suy ra** | *"máy hỏng ⇒ ghi giấy, không dừng bán"* là lời chốt (§6.11). *"Hai kênh khách tự bấm mất hẳn, không có gì để bù"* là **suy ra** từ §2 (hai kênh ấy do **khách** bấm trên web) — chủ quán chưa được hỏi câu này |
+| **PT-2** | **một nửa chốt, một nửa suy ra** | *"máy hỏng ⇒ ghi giấy, không dừng bán"* là lời chốt (§6.11). *"Đơn của khách tự bấm mất hẳn, không có gì để bù"* vẫn là **suy ra**: lời chốt 2026-09-04 (`U-035`) nói ca **quán mù mà hệ thống sống**, còn ca này ngược lại — hệ thống chết thì không có cái web nào để hiện một dòng thông báo |
 | **PT-4** | **suy ra** | chủ quán chốt tin nhắn báo có **là** nguồn thứ ba (§6.10, 2026-09-01), nhưng **chưa ai hỏi** mất nó thì làm gì. Dòng suy giảm ở đây chỉ là hệ quả bắt buộc của hai luật đang đứng: đối soát **chia theo phương thức** (§6.10) và **không có nút *"đóng ca dù lệch"*** (`architecture.md` §6.4 luật 3) |
 | **PT-5** | **suy ra** | *"hệ thống báo đơn mới về quầy"* và *"người đứng quầy là người nhìn thấy đơn đầu tiên"* là lời chốt (`03-lat-cat.md` §3.2.1 bước 6); *"mất đường báo thì quầy tự mở danh sách"* là **suy ra** — nó đứng được vì đơn chưa duyệt **không sinh việc ở trạm nào** (`shop-facts.md` §6.2), nên chỗ hỏng chỉ nằm ở **khách chờ** |
 
@@ -134,17 +138,21 @@ người nhớ mở danh sách đơn web ra xem"* (**PT-5**). Trả lời xong t
 
 ---
 
-## 4. Chỗ cố ý để trống — hai mã, và không mã nào được quyết ở đây
+## 4. Chỗ cố ý để trống — một mã, và nó không được quyết ở đây
 
-- **`U-032`** — lượt bán ghi trên **sổ giấy** hôm mất điện, hôm sau mới nhập, thì doanh thu tính
-  vào **ngày nào**. Chạm **PT-6**. Hai đường ra đều phá một thứ đang có, nên mục này viết *"quán
-  ghi giấy, nhập bù khi máy sống lại"* và **dừng ở đó**; câu *ngày nào* là của **P1-03**.
-  Đọc ở [`docs/product/99-unknowns.md`](../99-unknowns.md).
-- **`U-035`** — **mở trong chính lượt này.** Quán mất mạng mà hệ thống vẫn sống (**PT-1**): khách
-  web vẫn đặt được, quán không nhìn thấy, và nút *"Tạm dừng nhận đơn"* cũng nằm sau đúng đường mạng
-  vừa mất. Quán muốn ca ấy đi đường nào là **câu của chủ quán**, không phải chỗ để pha 1 tự chọn.
-  Nó chặn vế *khách web* của dòng suy giảm **PT-1**, và chặn **P1-08**.
-  Đọc ở [`docs/product/99-unknowns.md`](../99-unknowns.md).
+**Hai mã từng đứng ở mục này đã ĐÓNG ngày 2026-09-04**, cùng một lượt chủ quán trả lời (T-054) —
+giữ lại ở đây để phiên sau đọc được lời chốt đã đi vào dòng nào:
+
+| Mã | Lời chốt | Nó đổi dòng nào của mục này |
+|---|---|---|
+| ~~`U-032`~~ | doanh thu lượt nhập bù rơi vào **ngày quán bán** | **PT-6** ở §3 — và mở ra `U-037` dưới đây |
+| ~~`U-035`~~ | quán mất kết nối ⇒ **web ngừng nhận đơn**, khách gọi **hotline**, quán ghi giấy với POS | **PT-1** ở §2 và §3 |
+
+- **`U-037` — mở trong lượt đóng `U-032`.** Doanh thu rơi vào **ngày bán** nghĩa là con số của một
+  ngày **đã đối soát** đổi được về sau; `docs/decisions.md` **ADR-037** chốt hệ quả bắt buộc — *ngày
+  còn lượt chưa nhập là ngày **chưa** đối soát xong* — nhưng **ai ngồi lại chấm con số ấy khi `N` về
+  0, và lúc nào**, thì chưa ai nói. Chạm **PT-6**. Là **câu của chủ quán**, không phải chỗ để pha 1
+  tự chọn. Đọc ở [`docs/product/99-unknowns.md`](../99-unknowns.md).
 
 Một chỗ nữa **không phải câu hỏi nghiệp vụ**, nên nó không nằm trong `99-unknowns.md`:
 **`work/findings.md` F-027** — **PT-2** (*một máy chạy duy nhất*) và **PT-5** (*tên đường báo đơn*)

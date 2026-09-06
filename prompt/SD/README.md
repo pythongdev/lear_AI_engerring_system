@@ -75,8 +75,8 @@ người + thủ tục giữ (máy chỉ nhắc, để vết) · **5** phép đ�
 |---|:--:|---|---|
 | P1-01 | L2 | [`P1-01-ranh-gioi-so-huu-L2.md`](P1-01-ranh-gioi-so-huu-L2.md) — **đã chạy 2026-09-04** | — |
 | P1-02 | L2 | [`P1-02-ranh-gioi-he-thong-L2.md`](P1-02-ranh-gioi-he-thong-L2.md) | P1-01 ✔ |
-| P1-03 | L2 | [`P1-03-ngay-ban-L2.md`](P1-03-ngay-ban-L2.md) | P1-01 ✔ · ⛔ **U-032** |
-| P1-04 | L2 | **chưa viết** — chờ P1-03 ra định nghĩa *ngày bán* | P1-01 ✔ · P1-03 |
+| P1-03 | L2 | [`P1-03-ngay-ban-L2.md`](P1-03-ngay-ban-L2.md) | P1-01 ✔ · ~~⛔ U-032~~ **đã đóng 2026-09-04** |
+| P1-04 | L2 | [`P1-04-invariant-tien-L2.md`](P1-04-invariant-tien-L2.md) | P1-01 ✔ · P1-03 ✔ · ⚠️ `U-036` · `U-037` · **F-026** |
 | P1-05 | L2 | [`P1-05-invariant-vong-doi-L2.md`](P1-05-invariant-vong-doi-L2.md) | P1-01 ✔ |
 | P1-06 | L2 | [`P1-06-invariant-menu-gia-vet-L2.md`](P1-06-invariant-menu-gia-vet-L2.md) | P1-01 ✔ |
 | P1-07 | L2 | **chưa viết** — chờ ba bảng ba cột | P1-04 · P1-05 · P1-06 |
@@ -86,12 +86,13 @@ người + thủ tục giữ (máy chỉ nhắc, để vết) · **5** phép đ�
 | P1-11 | L2 | **chưa viết** | P1-02 → P1-10 |
 | P1-12 | L1 | **chưa viết** | P1-11 |
 
-**Vì sao sáu bước còn lại chưa có prompt, và đó không phải nợ.** Kế hoạch §6 cấm viết prompt hộ:
+**Vì sao năm bước còn lại chưa có prompt, và đó không phải nợ.** Kế hoạch §6 cấm viết prompt hộ:
 *"một prompt viết trước khi biết bước trước đã ra kết quả gì sẽ mang những câu Constraints đã chết"*
 (`work/findings.md` **F-013** · **F-017**). Chủ repo chốt 2026-09-04 cách đọc luật ấy cho được:
 **viết được prompt của một bước khi mọi bước ở cột *Cần xong trước* của nó đã *Done*** — đầu ra để
-viết Constraints và Verify khi ấy đã có thật, không phải đoán. Năm prompt trên là đúng tập ấy tính
-tới hôm nay; sáu bước còn lại viết khi tiền đề của chúng xong.
+viết Constraints và Verify khi ấy đã có thật, không phải đoán. Sáu prompt trên là đúng tập ấy tính
+tới hôm nay — **P1-04 vào tập ngày 2026-09-04, đúng hôm P1-03 `Done`** (T-057); năm bước còn lại
+viết khi tiền đề của chúng xong.
 
 ⚠️ **Một câu hỏi đang mở đè lên ba bước bảng ba cột:** `work/findings.md` **F-026** — `I-019` và
 `I-020` sinh ra ở BA-12 ngày 2026-09-03, **sau** khi kế hoạch chia nhóm, nên chúng **không thuộc

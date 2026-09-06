@@ -847,7 +847,7 @@ Con số chỉ thay đổi khi có người bấm, và cả hai mốc đều b�
 | Mốc | Đơn vị bấm | Ai bấm | Chốt ngày |
 |---|---|---|---|
 | **đã làm xong** | **một mẻ** | người đứng quầy | 2026-09-01 (U-017) |
-| **đã bưng ra bàn** | *chưa chốt* — xem dưới | người đứng quầy | 2026-09-01 (U-021) |
+| **đã bưng ra bàn** | **S-5** — *suy ra*, chưa xác nhận; xem dưới | người đứng quầy | 2026-09-01 (U-021) |
 
 - **Ba trạm bếp không bấm gì** — chủ quán bỏ mọi nút bấm ở trạm bếp ngày 2026-08-31 (đóng
   **U-009**). Người tráng bánh, người gấp bánh và người lấy canh không nhận thêm một thao tác nào.
@@ -869,11 +869,12 @@ Con số chỉ thay đổi khi có người bấm, và cả hai mốc đều b�
 - ⇒ **Quầy nay gánh cả hai mốc của mỗi suất.** Đó là rủi ro vận hành thật, không phải chi tiết
   trình bày: quầy là đôi tay bận nhất quán, thêm một nút là thêm một chỗ quên bấm
   (`shop-facts.md` §5.4).
-- **Với đơn giao tận nơi, ai bấm mốc *đã ra bàn* thì đang mở** — **U-031**
-  (`docs/product/99-unknowns.md`). Lúc suất tới tay khách, người có mặt là *nhân viên quán* đi
-  giao, trong khi bảng ở §5.4 của `05-vong-doi.md` ghi *người đứng quầy*. §3.4 **không** chọn phe:
-  chọn sai là đơn giao **không bao giờ** `Hoàn thành` được (§5.5 của `05-vong-doi.md`), hoặc quầy
-  bấm khống một mốc cho một suất đang ở nhà khách.
+- **Với đơn giao tận nơi cũng là quầy bấm mốc *đã ra bàn*** (chủ quán chốt **2026-09-04**, trả lời
+  **U-031**, nguyên văn *"pos"*). Chỗ này từng mở vì lúc suất tới tay khách, người có mặt là
+  *nhân viên quán* đi giao, trong khi bảng ở §5.4 của `05-vong-doi.md` ghi *người đứng quầy*. Lời
+  chốt bỏ hẳn ngoại lệ: **không** có ca nào mốc ấy rời khỏi quầy, nên §5.5 của `05-vong-doi.md`
+  chạy được cho đơn giao. *Vế **lúc nào** quầy bấm thì chưa chốt — chỗ suy ra là **S-6** ở
+  `master_plan/shop-facts.md` §7.2; §3.4 vẫn **không** dựng bảng quầy như thể vế ấy đã có lời.*
 
 #### 3.4.9 Bốn việc lát cắt này cố ý không nói tới
 

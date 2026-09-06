@@ -62,8 +62,9 @@ con số trong câu này (`work/findings.md` **F-003**):
 
 | Mã | Câu hỏi | Chặn bước |
 |---|---|---|
-| **U-031** | đơn **giao tận nơi**: ai bấm mốc *"đã ra bàn"*, lúc nào | P1-05 · P1-07 · P1-09 |
-| **U-032** | lượt bán trên **sổ giấy** nhập bù tính doanh thu **ngày nào** | P1-03 · P1-04 |
+| ~~**U-031**~~ | ~~đơn **giao tận nơi**: ai bấm mốc *"đã ra bàn"*~~ — **đóng 2026-09-04** (T-055, *"pos"*); vế *lúc nào* thành **S-6** (`shop-facts.md` §7.2) | — |
+| ~~**U-032**~~ | ~~lượt bán trên **sổ giấy** nhập bù tính doanh thu **ngày nào**~~ — **chủ quán trả lời 2026-09-04: *ngày BÁN*** (T-054 · **ADR-037**) | ~~P1-03 · P1-04~~ hết bị chặn |
+| **U-037** | nhập bù xong thì **ai** đối soát lại ngày mất điện, **lúc nào** *(mở 2026-09-04, do chính lời chốt U-032 đẻ ra)* | P1-04 (`I-014`) |
 | **U-036** | khoản **trả trước** nhận ngày này, hàng giao ngày khác — doanh thu **ngày nào** *(mở 2026-09-04 bởi chính P1-03)* | P1-03 · P1-04 |
 | **U-033** | đơn bị **huỷ** sau khi bếp đã làm xong phần của nó thì chỗ ấy đi đâu | P1-05 · P1-07 · P1-09 |
 | **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** (chỗ **suy ra**, chưa hỏi) | P1-07 · P1-09 |
@@ -260,15 +261,18 @@ từ máy khách — viết bằng ngôn ngữ tầng, không tên cột, không
 **không đổi một chữ**; công thức `architecture.md` §6.4 **không bị viết lại**.
 Mở **U-036** — khoản **trả trước** nhận ngày này cho đơn giao ngày khác tính doanh thu ngày nào:
 chiều **ngược** của luật nợ §6.14, và không lời chốt nào phủ nó. ⇒ **P1-04 hết bị P1-03 chặn**,
-nhưng ô `I-014` của nó phải mang **hai** mã đang mở (`U-032` · `U-036`), không được tick trơn.
+nhưng ô `I-014` của nó phải mang **hai** mã đang mở (`U-036` · `U-037`), không được tick trơn.
 Ô thứ ba của cổng chất lượng §9 — *định nghĩa ngày bán có đúng một chỗ* — **tick được**; tick nó là
 việc của P1-11/P1-12, lượt này không tick hộ.
+*⚠️ **Cập nhật cùng ngày, T-054:** câu *"`I-014` không đổi một chữ"* ở trên đúng cho **lượt P1-03**,
+và hết đúng vài giờ sau: chủ quán trả lời `U-032` (*"bán"*) ⇒ `I-014` nay có **ba** dòng và một
+ngoại lệ có tên (**ADR-037**), hàng *nhập bù* của bảng §2 hết trống, và `U-037` mở ra.*
 Entry ở lại đây theo luật 3 đầu file; dòng `- [x]` ở `work/backlog.md` → *Done*.
 
 **Prompt:** [`prompt/SD/P1-03-ngay-ban-L2.md`](../prompt/SD/P1-03-ngay-ban-L2.md) (viết 2026-09-04,
 T-051) — **L2** · bước 3/12 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong 2026-09-04** ·
-⛔ **đang chặn: U-032** (`docs/product/99-unknowns.md`) — không viết mục *nhập bù* trước khi chủ
-quán trả lời
+~~⛔ đang chặn: U-032~~ — **chủ quán trả lời 2026-09-04 (*"bán"*)**, mục *nhập bù* nay có lời;
+`U-037` mở ra từ chính lời chốt ấy (T-054)
 
 **Goal:**
 Xong rồi thì mọi phép cộng tiền trong hệ thống — doanh thu, nợ, hoàn, đối soát — dùng **cùng một**
@@ -338,10 +342,11 @@ công thức ấy chỉ đọc được khi *một ngày* đã có nghĩa.
 <a id="p1-04"></a>
 ### P1-04 — Bảy invariant chạm TIỀN chỉ có cách kiểm bằng kịch bản người; không mục nào nói tầng nào giữ chúng
 
-**Prompt:** chưa có — **L2** · bước 4/12 (kế hoạch §6) · **cần xong trước:** P1-01 · **P1-03**,
+**Prompt:** [`prompt/SD/P1-04-invariant-tien-L2.md`](../prompt/SD/P1-04-invariant-tien-L2.md)
+(viết 2026-09-04, T-057) — **L2** · bước 4/12 (kế hoạch §6) · **cần xong trước:** P1-01 · **P1-03**,
 **cả hai đã xong 2026-09-04** (định nghĩa *ngày bán* ở
 [`docs/product/1-system-design/02-thoi-gian-ngay-ban.md`](../docs/product/1-system-design/02-thoi-gian-ngay-ban.md))
-· chạy song song được với P1-05, P1-06 · ⛔ ô `I-014` còn **hai** mã đang mở: `U-032` · `U-036`
+· chạy song song được với P1-05, P1-06 · ⛔ ô `I-014` còn **hai** mã đang mở: `U-036` · `U-037`
 
 **Goal:**
 Xong rồi thì bảy mệnh đề chạm tiền — `I-002` `I-005` `I-007` `I-012` `I-013` `I-014` `I-015` —
@@ -398,7 +403,7 @@ chạm tiền, nên chúng đi trước.
   hai. Vế thứ hai mới là vế database giữ được; vế thứ nhất là một phép cộng, và nó chỉ đúng khi
   *ngày bán* đã có nghĩa — **P1-03 xong 2026-09-04**, định nghĩa ở
   [`docs/product/1-system-design/02-thoi-gian-ngay-ban.md`](../docs/product/1-system-design/02-thoi-gian-ngay-ban.md)
-  §1, và bảng §2 của file ấy còn **hai hàng để trống** (`U-032` · `U-036`) ⇒ ô của `I-014` phải
+  §1, và bảng §2 của file ấy còn **một hàng để trống** (`U-036`) ⇒ ô của `I-014` phải
   mang hai mã đó, không tick trơn.
 - **`I-015` (một lần thu chia hai phương thức) đừng gộp với `I-002`.** Một cái nói *tổng các phần
   bằng số phải trả*, cái kia nói *tổng phiên bằng tổng đơn* — hai phép cộng khác nhau, và đối soát
@@ -416,9 +421,10 @@ chạm tiền, nên chúng đi trước.
 **Prompt:** [`prompt/SD/P1-05-invariant-vong-doi-L2.md`](../prompt/SD/P1-05-invariant-vong-doi-L2.md)
 (viết 2026-09-04, T-051) — **L2** · bước 5/12 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong
 2026-09-04** · ⚠️ **F-026**: `I-019` · `I-020` chưa thuộc nhóm nào — đọc trước khi điền bảng ·
-⚠️ **U-031 chạm `I-017`** (ca đơn **giao tận nơi**) và **U-033 chạm `I-004`** (đơn huỷ sau khi bếp
-đã làm xong) — viết hai chỗ ấy theo phương án hẹp và ghi là đang treo · chạy song song được với
-P1-04, P1-06
+⚠️ **U-031 ĐÃ ĐÓNG 2026-09-04** (T-055, *"pos"*) ⇒ ca đơn **giao tận nơi** của `I-017` nay có lời,
+viết thẳng, **không** còn là chỗ treo; vế *lúc nào* là **S-6** (`shop-facts.md` §7.2) và vế ấy vẫn
+viết theo phương án hẹp · **U-033 vẫn chạm `I-004`** (đơn huỷ sau khi bếp đã làm xong) — viết theo
+phương án hẹp và ghi là đang treo · chạy song song được với P1-04, P1-06
 
 **Goal:**
 Xong rồi thì sáu mệnh đề vòng đời — `I-001` `I-003` `I-004` `I-006` `I-016` `I-017` — mỗi mệnh đề
@@ -442,8 +448,9 @@ Nhóm này là chỗ *bàn kẹt* và *đơn kẹt*, và nó có hai ca mà mộ
 **Không làm thì mất gì:**
 - **Hai phiên trên một bàn** ⇒ một hoá đơn không ai thu; đây là ca `master_plan/prompt-fullstack.md`
   §3.5 chi tiết 4 đã kể tên trước cả khi có dự án này.
-- **Đơn giao tận nơi không bao giờ `Hoàn thành` được**, hoặc quầy bấm khống một mốc cho suất đang
-  ở nhà khách — cả hai đường đều nằm trong **U-031**, và cả hai đều chạm mốc thu tiền.
+- ~~**Đơn giao tận nơi không bao giờ `Hoàn thành` được**, hoặc quầy bấm khống một mốc cho suất
+  đang ở nhà khách~~ — hai đường ấy nằm trong **U-031**, **đóng 2026-09-04**: quầy bấm, không có
+  ngoại lệ. Chỗ còn lại của cùng ca này là **S-6** — quầy bấm **lúc nào** (`shop-facts.md` §7.2).
 - **Bàn báo trống trong khi phiên còn mở** ⇒ khách mới bị gán vào bàn đang có khách (`I-003`).
 
 **Cách hoàn thành — đủ mười bước, 1 tới 10.**
@@ -454,8 +461,11 @@ Nhóm này là chỗ *bàn kẹt* và *đơn kẹt*, và nó có hai ca mà mộ
 3. Chuyển dòng P1-05 sang *In Progress*.
 4. Điền sáu hàng. `I-001` phải nói được cả ca ghép bàn; `I-016` phải nói rõ *"chuyển trạng thái
    ngoài bảng §5 bị từ chối"* là tầng nào giữ.
-5. **U-031 chưa có lời** ⇒ phần `I-017` liên quan đơn giao tận nơi viết theo **phương án hẹp
-   nhất** và ghi thẳng là đang treo (`CLAUDE.md` §3.5, và đúng cách `architecture.md` §11 dặn).
+5. **U-031 đã có lời 2026-09-04** (*"pos"* — quầy bấm mốc *"đã ra bàn"* kể cả với đơn giao) ⇒
+   phần `I-017` liên quan đơn giao tận nơi viết **thẳng**, không còn treo. Chỗ **còn** treo của ca
+   ấy là **S-6** — quầy bấm **lúc nào** (`shop-facts.md` §7.2, chỗ **suy ra**): vế đó viết theo
+   **phương án hẹp nhất** và ghi thẳng là đang treo (`CLAUDE.md` §3.5, đúng cách `architecture.md`
+   §11 dặn).
 6. `./scripts/gate.sh`.
 7. Gate 2: sáu hàng, không ô trống.
 8. `grep -rn "một bàn một phiên"` — mọi chỗ diễn đạt tắt câu ấy phải khớp bản không đối xứng của
@@ -546,8 +556,8 @@ thứ chỉ lộ ra sau vài tuần; `I-010` là *từ chối*, **không bao gi�
 ### P1-07 — Sáu chỗ thiếu ở §8 mới là một DANH SÁCH; pha 2 không có câu yêu cầu nào để đối chiếu lược đồ
 
 **Prompt:** chưa có — **L2** · bước 7/12 (kế hoạch §6) · **cần xong trước:** P1-04 · P1-05 ·
-P1-06 · **BA-12 đã xong 2026-09-04** ⇒ hết bị chặn · ⚠️ chạm **U-031**, **U-033** và **S-5** ở
-phần *đã phục vụ cho từng bàn*
+P1-06 · **BA-12 đã xong 2026-09-04** ⇒ hết bị chặn · ⚠️ chạm **U-033**, **S-5** và **S-6** ở
+phần *đã phục vụ cho từng bàn* (**U-031 đã đóng 2026-09-04**; chỗ còn lại của ca ấy là **S-6**)
 
 **Goal:**
 Xong rồi thì pha 2 có một danh sách **yêu cầu** — *phải ghi lại được X* / *phải không thể xảy ra
@@ -586,7 +596,8 @@ Progress*) và **S-5** (bấm *"đã bưng ra bàn"* theo đơn vị nào — su
 2. Khai `work/scope.txt`: file yêu cầu dữ liệu của pha 1 + `docs/product/00-index.md`.
 3. Chuyển dòng P1-07 sang *In Progress*.
 4. Mỗi dòng của §8 sinh **đúng một** dòng yêu cầu. Thêm ba nhóm §8 chưa kể: nợ · vết · trực trạm.
-5. **Đừng suy hộ S-5 và U-031.** Chỗ *"đã phục vụ cho từng bàn"* viết theo phương án hẹp, ghi rõ
+5. **Đừng suy hộ S-5 và S-6** (U-031 đã đóng 2026-09-04; vế *lúc nào* của nó là S-6). Chỗ
+   *"đã phục vụ cho từng bàn"* viết theo phương án hẹp, ghi rõ
    đơn vị đếm là **bàn** và đơn vị bấm là **mẻ** (`U-017` đã chốt), rồi đánh dấu phần chưa chắc.
 6. `./scripts/gate.sh`.
 7. Gate 2: mỗi dòng §8 có đúng một dòng yêu cầu; bộ lọc tên bảng/tên cột trong file mới **rỗng**,

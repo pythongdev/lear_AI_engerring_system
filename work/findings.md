@@ -2359,3 +2359,152 @@ Chỗ **phải** sửa nếu ai đó viết lại: cụm *"ADM-01…ADM-52"* nay
 
 **Status:**
 Open — vì cụm *"ADM-01…ADM-52"* vẫn còn ở bốn chỗ và chưa chỗ nào được sửa.
+
+---
+
+### F-029 — Tiền đề "không tài liệu nào nói X" được viết mà không grep, nên hai việc bị chặn bởi một câu hỏi đã có lời năm ngày trước
+
+**Problem:**
+`work/backlog_AD.md` dựng ngày 2026-09-04 (T-052) mở hai việc trên một tiền đề đo được là **sai**:
+
+| Việc | Tiền đề đã viết | Sự thật, đo 2026-09-04 |
+|---|---|---|
+| **ADM-01** | tiêu đề: *"không tài liệu nào nói một buổi bán bắt đầu và kết thúc lúc nào"*; thân: *"không mục nào của repo nói cái gì bắt đầu"* | `master_plan/shop-facts.md` **§1** — **Giờ bán 06:00 – 11:00, tất cả các ngày** + múi giờ `Asia/Ho_Chi_Minh`; **§6.8** nhắc lại cùng cửa sổ ở phía web |
+| **ADM-03** | *"số bàn và số chỗ ngồi chưa là dữ kiện ở `shop-facts.md`"* | `master_plan/shop-facts.md` **§1** — **Số bàn: 11** |
+
+Cả ba dòng dữ kiện ấy vào repo trong **cùng một commit**, `397a8e9` ngày **2026-08-30** — tức
+**năm ngày** trước lượt viết tiền đề, và **ba ngày** trước khi năm mươi lăm câu hỏi ở
+`work/admin-questions.md` §3 được viết (2026-09-02). Không phải dữ kiện dời chỗ sau đó; nó đã ở đó
+suốt.
+
+Hệ quả đi xa hơn hai câu văn: **hai câu hỏi cho chủ quán hỏi lại một dữ kiện đã có chủ.** `A1` hỏi
+*"mấy giờ tới mấy giờ"* và `A7` hỏi *"bao nhiêu bàn"* — hai vế `shop-facts.md` §1 đã trả lời.
+
+**Why it matters:**
+Chỗ đau **không** phải là hai câu văn sai. Ba chỗ, xếp theo giá:
+
+1. **Chủ quán trả lời lại một dữ kiện đã có chủ ⇒ bản thứ hai, và bản thứ hai luôn trôi (F-001).**
+   Đây là con đường **F-001 chưa từng đi**: mọi lần trước, bản thứ hai do một phiên chép ra. Lần
+   này nó sẽ do **chủ quán** viết ra, vào một file (`admin-questions.md`) mà chính banner của nó
+   khai là **sẽ bị xoá**. Và nếu lời mới lệch lời cũ — *"à giờ bán tới 11h30"* — thì repo có hai
+   owner nói hai con số, mà `work/` không bị Gate 1b lẫn Gate 1c chấm (`CLAUDE.md` §5). Không cổng
+   nào đỏ.
+2. **Một việc bị chặn rộng hơn thực tế.** ADM-01 khai *"chặn bởi `A1` `A2` `A3` `A4`"* — bốn câu.
+   Đo lại: `A1` chỉ còn sống một nửa, và nửa ấy trùng `A2`. Chặn rộng hơn thực tế là chi phí
+   **thật**: `docs/decisions.md` **ADR-031** đặt lane này **sau** mảng bán hàng, và câu *lane admin
+   chạy song song pha 1 hay chờ pha 1* (`ADM-53`) sẽ được trả lời bằng cách **nhìn xem lane còn nợ
+   bao nhiêu câu hỏi**. Cùng cơ chế **F-028** vừa ghi cho con số 52: **lane trông nặng thì bị
+   hoãn.**
+3. **Chỗ thiếu thật bị một câu sai che mất.** ADM-01 không thiếu *giờ*; nó thiếu **mốc vận hành** —
+   ai bấm mở, ai bấm đóng, mở/đóng thì con số nào bị chốt. ADM-03 không thiếu *số bàn*; nó thiếu
+   **danh sách bàn gọi tên được**, thứ **ADR-027** (*chỉ ghép sang bàn trống*) cần để kiểm chứng.
+   Một cửa sổ giờ là hằng số trên đồng hồ, không phải một biến cố để treo số tiền vào; một con số
+   **11** không phải một danh sách. Ai đọc tiền đề cũ rồi đi trả lời nó sẽ trả lời **đúng câu sai**.
+
+**Đây là họ lỗi của F-016, nhìn từ chiều ngược lại.** F-016 ghi một tài liệu **tự khai** một tính
+chất mà chính nó không có (*"điểm cuối, không trỏ đi đâu"* — trong khi nó trỏ đi năm chỗ). Ở đây
+một tài liệu khai một tính chất của **tài liệu khác** (*"không tài liệu nào nói X"*) mà không mở
+tài liệu ấy ra. Hai chiều, cùng một gốc: **một mệnh đề phủ định toàn phần được viết mà không đo.**
+Và nó khác **F-024** ở chỗ che: F-024 là một **tên task đã chết**, F-028 là một **con số đã hết
+đúng**, còn đây là một mệnh đề **chưa bao giờ đúng**.
+
+**Decision / Fix:**
+Sửa hai tiền đề tại chỗ trong lượt phát hiện (T-053) — pointer trỏ vào một sự thật đã có chủ là bug
+của cùng lượt, không phải task sau (`CLAUDE.md` §7.2). Cụ thể: tiêu đề + mục *Vì sao* + mục *Chặn
+bởi* của **ADM-01** và **ADM-03**, mỗi chỗ mang một bảng **hai cột — *đã có chủ* / *còn thiếu*** để
+lần sau đọc là thấy ranh giới; và **A1**, **A7** ở `work/admin-questions.md` §3 mỗi câu mang một
+dòng ⚠️ *ĐÃ CÓ LỜI cho vế…, đừng trả lời lại vế đó*, kèm đường dẫn tới owner. **Câu hỏi không bị
+xoá và không bị viết lại** (§0 luật 4 của file ấy: đừng sửa câu hỏi) — chỉ thêm một dòng chỉ đường,
+và vẫn mời chủ quán nói nếu con số đã đổi.
+
+**Bảng *Cổng của cả lane* không đổi con số 23/29:** cả hai việc **vẫn** bị chặn. Cái đổi là **độ
+rộng** của chỗ chặn, không phải việc có bị chặn hay không — nên không có gì để đếm lại (**F-003**).
+
+**Luật rút ra, và nó rẻ:** **một mệnh đề phủ định toàn phần — *"không tài liệu nào…"*, *"chưa là dữ
+kiện ở…"*, *"không mục nào của repo…"* — chỉ được viết sau khi `grep` vào owner của nó, và câu
+`grep` ấy đi vào lượt viết chứ không đi vào bộ nhớ.** Chỗ phải grep có sẵn ở `CLAUDE.md` §2: một
+mệnh đề phủ định về **dữ kiện quán** grep `master_plan/shop-facts.md`, về **luật nghiệp vụ** grep
+`docs/product/`. Chi phí một lệnh; giá của việc không chạy nó là một câu hỏi gửi tới chủ quán.
+
+**Không dựng cổng cho chỗ này** (`CLAUDE.md` §3.8): không cổng nào của repo có thể đọc *"mệnh đề
+phủ định này đã được đo chưa"* — nó cần biết owner của mệnh đề, đúng vùng mù mà **ADR-035** luật 1
+đã ghi cho ranh giới pha. Chấm là mắt người, và lần thứ hai của họ lỗi này mới đáng bàn tới một
+cổng.
+
+**Related task:**
+**T-053** (lượt phát hiện và sửa) · **T-052** (lượt viết ra hai tiền đề) · `work/backlog_AD.md`
+**ADM-01** · **ADM-03** · `work/admin-questions.md` §3 `A1` · `A7` · `master_plan/shop-facts.md` §1
+· §6.8 · `docs/decisions.md` **ADR-027** · **ADR-031** · **F-001** (bản thứ hai luôn trôi) ·
+**F-016** (cùng gốc, chiều ngược) · **F-024** · **F-028** (cùng cơ chế *lane trông nặng thì bị
+hoãn*)
+
+**Status:**
+Fixed 2026-09-04 (T-053) — hai tiền đề đã sửa, `A1` và `A7` đã mang dòng chỉ đường. Mở lại nếu một
+mệnh đề phủ định toàn phần chưa đo lại xuất hiện: lần thứ hai là lúc bàn tới một cổng.
+
+
+### F-030 — Gate 1c coi MỌI mã U-XXX nhắc trong một gạch đầu dòng đang mở là "đang mở", nên đóng một câu hỏi làm bật dậy cả loạt lỗi đã ngủ ở chỗ khác
+
+**Problem:**
+Đóng `U-031` ngày 2026-09-04 (T-055) làm `./scripts/check-doc-status.sh` **đỏ ở một file mà lượt
+ấy không sửa một chữ nào** — `docs/product/0-ba/ban-hang/03-lat-cat.md:850`, ô bảng:
+
+```
+| **đã bưng ra bàn** | *chưa chốt* — xem dưới | người đứng quầy | 2026-09-01 (U-021) |
+```
+
+Ô này đã ở đó từ **BA-12** (2026-09-04, `31fb071`) và mọi lượt từ đó tới nay đều xanh. Nó đỏ đúng
+vào lượt đóng `U-031`, và cơ chế nằm ở **bước 1** của chính cổng:
+
+- Cổng đọc trạng thái `U-XXX` từ `docs/product/99-unknowns.md`. Trong vùng *Đang mở*, nó lấy **mọi**
+  mã xuất hiện trong **một gạch đầu dòng** và đánh dấu là `open` — không phân biệt *mã của câu hỏi
+  này* với *mã được câu hỏi này trích dẫn*.
+- Gạch đầu dòng `U-031` mở bằng câu *"Chủ quán chốt 2026-09-01 (**U-021**) rằng…"*. ⇒ `U-021` bị
+  đọc là **đang mở**, mà quy tắc gộp còn ghi thẳng *"một mã vừa mở vừa đóng ⇒ tính là ĐANG MỞ"*.
+- Phép A chỉ chấm những mã **đã đóng**. `U-021` đang được coi là mở ⇒ ô bảng trên **được miễn**.
+- Xoá gạch đầu dòng `U-031` ⇒ `U-021` trở về `closed` ⇒ ô bảng đỏ ngay, sau **chín ngày** nằm im.
+
+Ô ấy đọc kỹ thì **không sai**: *"chưa chốt"* nói về **đơn vị bấm** (chỗ suy ra `S-5`), không nói về
+`U-021` — nhưng cổng đọc theo **khối**, và trong một khối thì hai chữ ấy đứng cạnh nhau. Đã sửa
+bằng cách gọi đúng tên chỗ chưa chắc: `| **S-5** — *suy ra*, chưa xác nhận; xem dưới |`.
+
+**Why it matters:**
+Đây **không** phải một ca lẻ, và cũng không phải lỗi của lượt làm nó đỏ:
+
+1. **Cổng báo THIẾU trong khi một câu hỏi còn mở.** Mỗi gạch đầu dòng đang mở trích dẫn trung bình
+   vài mã cũ để giải thích bối cảnh — `U-031` trích `U-021`, `U-032` trích `U-027`, `U-034` trích
+   `U-030`. Mọi mã được trích như thế đang **tắt phép A** cho toàn repo, ở đúng khoảng thời gian
+   người ta hay viết sai về chúng nhất.
+2. **Giá bị dời sang lượt sau, và dời sang người khác.** Lượt gây ra lỗi (BA-12 viết ô bảng) xanh;
+   lượt **đóng một câu hỏi không liên quan** phải trả. Cổng vì thế dạy sai: nó làm người ta tin
+   *"đóng một unknown thì hay làm hỏng chỗ khác"*, trong khi sự thật là *"chỗ khác đã hỏng từ lâu"*.
+3. **Nó lớn dần.** `docs/product/99-unknowns.md` đang có bốn câu mở; mỗi câu đóng lại là một lần
+   một nhóm mã rơi từ `open` về `closed` cùng lúc. Ba câu còn lại (`U-033` · `U-036` · `U-037`) sẽ
+   lặp lại đúng lượt này.
+
+Cùng họ với **F-012** (một cái nhìn bị cắt mà không nói là đã cắt) và **F-017** (một bộ lọc rỗng vì
+không đọc gì trông y hệt một bộ lọc rỗng vì không có lỗi): cổng **im lặng vì lý do sai**.
+
+**Decision / Fix:**
+**Chưa sửa cổng — đây là lần đo THỨ NHẤT** (`CLAUDE.md` §3.8: một quy tắc mới chỉ được thêm sau khi
+cùng một vấn đề tốn tiền **hai** lần). Lượt này chỉ sửa **ô bảng** đã lộ ra, và ghi lại cơ chế.
+
+Đường sửa, khi có lần thứ hai — **chỉ nhận mã của CHÍNH gạch đầu dòng ấy**, tức mã đầu tiên xuất
+hiện trong gạch đầu dòng (hợp đồng ADR-007 đã buộc mỗi gạch đầu dòng là **một** câu hỏi), và coi
+mọi mã sau đó trong cùng gạch đầu dòng là **trích dẫn**, không phải khai báo. Không đổi hợp đồng
+hình dạng của `99-unknowns.md`, không đụng phép C và phép D.
+
+**Cách đo lại rẻ nhất, cho lượt sau:** trước khi xoá một gạch đầu dòng khỏi vùng *Đang mở*, chạy
+`./scripts/check-doc-status.sh`, xoá, chạy lại — mọi báo động **mới** đều là lỗi ngủ vừa bật dậy,
+không phải lỗi của lượt ấy.
+
+**Related task:**
+**T-055** (lượt phát hiện, đóng `U-031`) · **BA-12** (lượt viết ô bảng, `31fb071`) · **BA-13** +
+`docs/decisions.md` **ADR-032** (lượt dựng Gate 1c) · **ADR-007** (hợp đồng hình dạng mục
+*Unknowns*) · **F-012** · **F-017** · **F-018** (cùng chủ đề: một cổng nói sai về chính nó) ·
+`scripts/check-doc-status.sh` bước 1
+
+**Status:**
+Open — ô bảng đã sửa 2026-09-04, **cổng chưa đổi**. Đóng khi phép đo lần thứ hai xảy ra và bước 1
+chỉ còn nhận mã của chính gạch đầu dòng; hoặc đóng bằng một quyết định *chấp nhận ca này* nếu ba
+câu mở còn lại đóng hết mà không lần nào phát sinh thêm báo động ngủ.

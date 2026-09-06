@@ -101,38 +101,35 @@ quán cùng chỗ chủ quán viết câu trả lời**. Đó là hai việc fil
 
 Trả lời theo mã câu cho nhanh — *"A5: bàn nào món xong trước thì bưng trước"*.
 
-### A. Một buổi bán hàng
-*Nhóm này mở khoá: ADM-01 → ADM-04, và BA-12.*
+### ~~A. Một buổi bán hàng~~ — ĐÃ TRẢ LỜI CẢ MƯỜI CÂU, 2026-09-04
 
-**A1.** Một ngày quán bán **mấy buổi**? Chỉ buổi sáng, hay có cả chiều/tối? Mấy giờ tới mấy giờ?
-> **Trả lời:**
+**Chủ quán trả lời `A1`…`A10` trong một lượt ngày 2026-09-04, và T-056 đã chuyển cả mười lời về
+owner.** Nhóm này **đóng**: đừng trả lời lại ở đây, và đừng đọc một dữ kiện nào từ chỗ này — nguyên
+văn lời chủ quán nằm ở owner bên dưới, một chỗ, không có bản thứ hai (`work/findings.md` **F-001**).
 
-**A2.** Quán có khái niệm **"mở ca / đóng ca"** không, hay cứ đến giờ là bán rồi tối đếm tiền?
-> **Trả lời:**
+| Mã | Lời chủ quán, rất gọn | Nay đọc ở |
+|---|---|---|
+| ~~`A1`~~ | chỉ bán **buổi sáng** — một buổi một ngày | `master_plan/shop-facts.md` **§6.23** · §1 (giờ **06:00–11:00**) · chỗ suy ra **S-7** ở §7.2 |
+| ~~`A2`~~ | **không** có mở ca / đóng ca — *"cứ đến giờ là bán rồi tối đếm tiền"* | **§6.23** · `docs/decisions.md` **ADR-038** |
+| ~~`A3`~~ | **có** tiền đầu két cho POS lấy tiền thối; máy giữ số mặc định **sửa được** | **§8.5** · `quality/invariants.md` **I-021** · còn mở: **U-038** |
+| ~~`A4`~~ | **không** ai lấy tiền giữa buổi; tiền ở két tới cuối buổi | **§8.5** · **I-021** |
+| ~~`A5`~~ | **POS quyết**, luật cơ sở **ai tới trước ăn trước** | **§6.24** |
+| ~~`A6`~~ | **đôi khi** ưu tiên **khách vội** | **§6.24** |
+| ~~`A7`~~ | **11 bàn** — đúng con số §1 đã có từ 2026-08-30 | §1 · **§6.25** · còn mở: **U-040** (mấy chỗ ngồi · đã đánh số chưa) |
+| ~~`A8`~~ | **có** khách đứng chờ, quán xếp hàng chờ | **§6.25** · còn mở: **U-039** (máy có giữ hàng chờ không · ai nhớ thứ tự) |
+| ~~`A9`~~ | **cả hai** — khách tự chọn, đôi khi nhân viên xếp | **§6.25** |
+| ~~`A10`~~ | **sáu con số** cho mục tổng quan của chủ quán | **§8.6** · còn mở: **U-041** (*"còn thiếu gì"* là thiếu gì) |
 
-**A3.** Đầu buổi có ai **đếm tiền lẻ trong két** để lấy tiền thối không? Khoảng bao nhiêu? Con số đó có cần nhập vào máy không?
-> **Trả lời:**
+⚠️ **Bốn vế chủ quán KHÔNG chạm tới đã thành câu hỏi có mã, không thành suy luận** —
+**U-038** · **U-039** · **U-040** · **U-041** ở `docs/product/99-unknowns.md`. Chúng ở đó chứ không
+ở đây, vì file này sẽ bị xoá còn `99-unknowns.md` thì không, và vì `scripts/brief.sh` đẩy danh sách
+unknown vào mọi phiên mới (`CLAUDE.md` §7.1).
 
-**A4.** Giữa buổi có ai **nộp bớt tiền** cho chủ quán không, hay tiền nằm trong két tới cuối buổi?
-> **Trả lời:**
-
-**A5.** **Bàn nào bưng trước?** Bàn gọi trước ra trước · bàn nào món xong trước thì bưng trước · hay người bưng tự nhìn mà quyết?
-> **Trả lời:**
-
-**A6.** Có ca nào quán **cố ý ưu tiên** không — khách quen, người già, đoàn đông người, khách nói đang vội?
-> **Trả lời:**
-
-**A7.** Quán có **bao nhiêu bàn**, mỗi bàn mấy chỗ ngồi? Bàn đã đánh số sẵn chưa?
-> **Trả lời:**
-
-**A8.** Đông khách quá thì có **khách đứng chờ bàn** không? Ai nhớ ai tới trước? Quán có muốn máy giữ hàng chờ ấy không?
-> **Trả lời:**
-
-**A9.** Khách vào **tự chọn bàn** hay nhân viên xếp chỗ?
-> **Trả lời:**
-
-**A10.** Chủ quán lúc **không đứng quầy** thì muốn nhìn thấy gì trên điện thoại của mình?
-> **Trả lời:**
+⚠️ **`A7` là bằng chứng sống của `work/findings.md` F-029.** Câu ấy hỏi ba vế; chủ quán trả lời đúng
+**vế đã có chủ** — *"quán có 11 bàn"*, con số nằm ở §1 từ **2026-08-30** — và không chạm hai vế còn
+sống. Đó chính là chỗ F-029 đoán trước: hỏi lại một dữ kiện đã có chủ thì lời đáp quay về đúng dữ
+kiện ấy, còn chỗ thật sự thiếu vẫn thiếu. Dòng cảnh báo T-053 thêm vào câu `A7` **đã kịp** ngăn một
+bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 
 ### B. Nguyên liệu
 *Đã chốt mức: **sổ ghi tay điện tử**, máy không tự trừ (Đ-3). Nhóm này mở khoá ADM-10 → ADM-15.*
