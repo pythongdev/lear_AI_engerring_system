@@ -192,6 +192,35 @@ d="$(newrepo c10)"
 printf 'docs/product/0-ba/ban-hang/kh.md :: chuoi khong bao gio khop\n' > "$d/ign.txt"
 check "10. ignore hết hạn ⇒ đỏ" 1 "IGNORE HẾT HẠN" "$(run "$d")"
 
+echo "[check-doc-status] F-030 — mã TRÍCH DẪN trong một gạch đầu dòng đang mở không phải mã đang mở"
+
+# Ca 11 — gạch đầu dòng đang mở (U-101) trích dẫn U-005, một mã ĐÃ ĐÓNG (bảng ở
+# newrepo). Trước T-063, U-005 bị đẩy lên "open" chỉ vì đứng trong gạch đầu dòng
+# này ⇒ phép A im re với chỗ khác đang nói sai về U-005 (ca 11b). Nay chỉ U-101 —
+# mã đầu tiên của chính gạch đầu dòng — được tính là open; U-005 vẫn "closed".
+d="$(newrepo c11)"
+cat > "$d/docs/product/99-unknowns.md" <<'EOF'
+## Unknowns
+
+### Đang mở
+
+- **U-100** — câu này còn treo thật, ai đó phải hỏi chủ quán.
+- **U-101** — câu mới, sinh ra từ chính câu trả lời của
+  **U-005** ở trên.
+
+### Đã có lời giải
+
+| Câu hỏi cũ | Lời giải |
+|---|---|
+| ~~U-005 — ai bấm xác nhận đơn trả trước~~ | POS, lúc nhận tiền |
+EOF
+cat > "$d/docs/product/0-ba/ban-hang/06-ngoai-le.md" <<'EOF'
+### 6.9 Chỗ nói sai
+
+Ai xác nhận đơn trả trước thì **chưa rõ** — xem **U-005** ở *Unknowns*, chưa ai trả lời.
+EOF
+check "11. U-101 trích U-005 (đã đóng) ⇒ U-005 vẫn đóng, chỗ nói sai bị bắt" 1 "ĐÃ ĐÓNG: U-005" "$(run "$d")"
+
 echo
 if [ "$fails" -eq 0 ]; then
   echo "check-doc-status.test: tất cả ca qua."

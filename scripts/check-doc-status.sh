@@ -40,6 +40,16 @@
 #   gộp một đoạn văn / một ô bảng / một gạch đầu dòng thành MỘT khối rồi mới
 #   chấm. Khối ``` bị cắt bỏ trước: trong đó là ví dụ, không phải lời khẳng định.
 #
+# MÃ TRÍCH DẪN TRONG MỘT GẠCH ĐẦU DÒNG ĐANG MỞ KHÔNG PHẢI MÃ ĐANG MỞ (F-030)
+#   Bước 1 từng lấy MỌI mã U-XXX xuất hiện trong một gạch đầu dòng đang mở làm
+#   "open" — kể cả mã một câu khác trích dẫn để giải thích bối cảnh
+#   ("U-042 — … Mở ra từ chính câu trả lời U-040", trong khi U-040 đã đóng).
+#   Hậu quả: mã bị trích dẫn được coi là "open" trong lúc gạch đầu dòng trích nó
+#   còn ở vùng mở, nên phép A im re với mọi chỗ khác đang nói sai về mã đó — và
+#   chỉ đỏ lên đột ngột khi gạch đầu dòng ấy được đóng/xoá (đo được 2026-09-04,
+#   T-055). Nay chỉ mã ĐẦU TIÊN trong cả gạch đầu dòng (đã gộp dòng vắt) là mã
+#   CỦA câu hỏi đó; mã nào xuất hiện sau trong cùng gạch đầu dòng là trích dẫn.
+#
 # IGNORE CÓ HẠN — scripts/check-doc-status.ignore
 #   Mỗi dòng "<file> :: <chuỗi con>" kèm lý do, cho những chỗ TRÍCH DẪN một câu
 #   đã hỏng làm bằng chứng. Dòng ignore không còn khớp gì thì gate ĐỎ — cùng
@@ -76,27 +86,40 @@ say() { printf '%s\n' "$*"; }
 #   trong vùng mở, MỘT GẠCH ĐẦU DÒNG là một câu đang mở (văn xuôi thì không)
 #   mọi U-XXX ngoài vùng mở = đã đóng
 if [ -f "$UNKNOWNS" ]; then
+  # Một gạch đầu dòng đang mở có thể VẮT NHIỀU DÒNG, và có thể TRÍCH DẪN mã cũ để
+  # giải thích bối cảnh (F-030: "U-042 — … Mở ra từ chính câu trả lời U-040").
+  # Chỉ mã ĐẦU TIÊN trong cả gạch đầu dòng (đã gộp mọi dòng vắt) là mã CỦA chính
+  # câu hỏi đó (hợp đồng ADR-007: một gạch đầu dòng là một unknown); mọi mã xuất
+  # hiện sau trong CÙNG gạch đầu dòng là trích dẫn, không phải khai báo — không
+  # được đẩy trạng thái "open" sang cho chúng.
   awk '
+    function flush(   s) {
+      if (buf == "") return
+      s = buf
+      if (match(s, /U-[0-9][0-9][0-9]/)) print substr(s, RSTART, RLENGTH) "\topen"
+      buf = ""
+    }
     /^## Unknowns/            { inunk=1; region="open"; next }
-    /^## / && inunk           { inunk=0; region="" }
+    /^## / && inunk           { inunk=0; region=""; flush() }
     !inunk                    { next }
-    /^### /                   { region = ($0 ~ /Đang mở/) ? "open" : "closed"; bullet=0; next }
+    /^### /                   { flush(); region = ($0 ~ /Đang mở/) ? "open" : "closed"; bullet=0; next }
     /^```/                    { fence = !fence; next }
     fence                     { next }
     {
       if (region == "open") {
-        if ($0 ~ /^[[:space:]]*[-*][[:space:]]/) bullet = 1
-        else if ($0 ~ /^[[:space:]]*$/)          bullet = 0
-        else if ($0 !~ /^[[:space:]]+/)          bullet = 0
-        if (!bullet) next
-        state = "open"
-      } else state = "closed"
+        if ($0 ~ /^[[:space:]]*[-*][[:space:]]/) { flush(); bullet = 1; buf = $0; next }
+        else if ($0 ~ /^[[:space:]]*$/)          { flush(); bullet = 0; next }
+        else if ($0 !~ /^[[:space:]]+/)          { flush(); bullet = 0; next }
+        else if (bullet)                         { buf = buf " " $0; next }
+        else next
+      }
       s = $0
       while (match(s, /U-[0-9][0-9][0-9]/)) {
-        print substr(s, RSTART, RLENGTH) "\t" state
+        print substr(s, RSTART, RLENGTH) "\tclosed"
         s = substr(s, RSTART + RLENGTH)
       }
     }
+    END { flush() }
   ' "$UNKNOWNS" | sort -u > "$TMP/u.raw"
   # Một mã vừa mở vừa đóng (mở lại một câu cũ) ⇒ tính là ĐANG MỞ.
   awk -F'\t' '{ if ($2=="open") o[$1]=1; else c[$1]=1 }
