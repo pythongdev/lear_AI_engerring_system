@@ -2212,6 +2212,24 @@ Cho tới khi có quyết định: **ba prompt `P1-04` · `P1-05` · `P1-06` ph�
 *Unknowns*** — đã làm cho P1-05 và P1-06 trong lượt này; P1-04 khi nào viết prompt thì mang theo.
 Và câu *"mười tám"* ở cổng §9 **không được tick** cho tới khi hai mệnh đề ấy có chỗ.
 
+**Đo lại 2026-09-06 (P1-04, lượt điền bảng ba cột nhóm TIỀN) — con số đã đi từ HAI lên BA, và mệnh
+đề thứ ba là một mệnh đề CHẠM TIỀN.** `grep -c '^### I-0' quality/invariants.md` nay trả **21**:
+`I-021` (*két cuối ngày − tiền đầu két = doanh thu tiền mặt*) sinh ở **T-056**, **2026-09-04**, sau
+khi finding này được viết. Cùng cơ chế, lần thứ hai trong hai ngày.
+
+Chỗ này đắt hơn hai mệnh đề đầu, và phải nói ra: `I-019` · `I-020` là trục **sản xuất theo mẻ**, xa
+cả ba nhóm; `I-021` thì đứng **ngay giữa** nhóm TIỀN — nó là một phép cộng tiền của một **ngày bán**
+(P1-03), và ô `I-015` của bảng ba cột **phải trỏ vào nó** để nói được vế *phần tiền mặt so với két*.
+Nghĩa là bảng nhóm TIỀN hôm nay có một hàng **bị trỏ tới mà không tồn tại**. P1-04 **không** kéo nó
+vào (bảy hàng là bảy hàng, xếp nhóm là quyết định của chủ repo) và **không** bỏ lửng: nó có tên ở
+`docs/product/1-system-design/03-bao-ve-invariant.md` §1.3, kèm **một đề xuất** — `I-021` vào nhóm
+TIỀN thì bảng ấy thêm **một** hàng, và cổng §9 đếm lại.
+
+⇒ Cái phải quyết nay có **hai** câu, không phải một: (a) `I-019` · `I-020` đi đâu — ba đường ở trên;
+(b) `I-021` có vào nhóm TIỀN không. Và một câu thứ ba lộ ra từ chính lần lặp này: **phép đếm cố định
+ở cổng §9 là chỗ hỏng, không phải danh sách** — một cổng đếm *"mười tám"* sẽ hết đúng lần sau nữa
+(**F-018**: số đếm động dùng như một invariant).
+
 **Related task:**
 **T-051** (lượt phát hiện, viết prompt lane `prompt/SD/`) · **BA-12** (lượt sinh ra `I-019` ·
 `I-020`) · **T-048** (lượt viết kế hoạch pha 1, chia ba nhóm) · **P1-04** · **P1-05** · **P1-06**

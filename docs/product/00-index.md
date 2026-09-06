@@ -50,6 +50,7 @@ thư mục rỗng không gỡ được dòng nào cho ai.
 | §1–§14 — cấu trúc hệ thống, ba mặt, quyền, tiền, nợ, mảng admin | [1-system-design/architecture.md](1-system-design/architecture.md) |
 | Ranh giới hệ thống — actor (trỏ pha 0) · **phụ thuộc ngoài** · **đường suy giảm** của từng phụ thuộc | [1-system-design/01-ranh-gioi-he-thong.md](1-system-design/01-ranh-gioi-he-thong.md) |
 | Thời gian — định nghĩa **một ngày bán** cho mọi phép cộng tiền · **mốc tính tiền** của từng việc · **nguồn thời gian** | [1-system-design/02-thoi-gian-ngay-ban.md](1-system-design/02-thoi-gian-ngay-ban.md) |
+| Bảo vệ invariant — **tầng** giữ từng mệnh đề `I-0xx` và **phép đối chiếu** bắt nó khi hỏng (một file, ba chủ: P1-04 · P1-05 · P1-06) | [1-system-design/03-bao-ve-invariant.md](1-system-design/03-bao-ve-invariant.md) |
 
 Đây là **đặc tả, không phải mã**: nó nói *cái gì phải đúng* và *ai được ghi cái gì*, không nói tên
 hàm, tên file hay thư viện. **Số mục §1–§14 không đánh lại** — `docs/decisions.md` ADR-012 (mục
