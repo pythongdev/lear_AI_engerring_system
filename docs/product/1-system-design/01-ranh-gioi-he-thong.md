@@ -56,10 +56,10 @@ trỏ được vào đúng một dòng. Nó không phải một mã dùng chung 
 | Mã | Thứ nằm ngoài hệ thống | Hệ thống dựa vào nó để làm gì | Đã chốt ở |
 |---|---|---|---|
 | **PT-1** | **Điện · mạng tại quán · thiết bị POS** | mọi thao tác **ghi** đều đi qua một máy ở quầy (`architecture.md` §1.1) | `shop-facts.md` §6.11 · `06-ngoai-le.md` dòng 11–12 · `01-actors-pham-vi.md` §1.4 |
-| **PT-2** | **Nơi hệ thống chạy** — máy chủ và đường ra Internet của nó | năm kênh bán ở `shop-facts.md` §2 đều là kênh **qua máy**; hệ thống chết thì cả năm chết | `shop-facts.md` §6.11 (*"máy hỏng"*) · `01-actors-pham-vi.md` §1.4 · ⚠️ **số máy và hình thức triển khai chưa có owner** — `work/findings.md` **F-027** |
+| **PT-2** | **Nơi hệ thống chạy** — máy chủ và đường ra Internet của nó | năm kênh bán ở `shop-facts.md` §2 đều là kênh **qua máy**; hệ thống chết thì cả năm chết | `shop-facts.md` §6.11 (*"máy hỏng"*) · `01-actors-pham-vi.md` §1.4 · tên cụ thể: `shop-facts.md` §1 · `docs/decisions.md` **ADR-041** (chốt 2026-09-07) |
 | **PT-3** | **Ngân hàng, qua mã VietQR TĨNH** | một trong hai phương thức thu tiền của quán | `shop-facts.md` §1 · `architecture.md` §7 · `01-actors-pham-vi.md` §1.4 |
 | **PT-4** | **Tin nhắn báo có của ngân hàng** | nguồn đối soát **thứ ba**: phần khách chuyển khoản, thứ mà két không giữ | `shop-facts.md` §6.10 (chủ quán chốt 2026-09-01) · `architecture.md` §6.4 |
-| **PT-5** | **Đường báo đơn web về quầy** | quầy biết có đơn mới của ba kênh không gắn bàn mà **không phải ngồi canh màn hình** | `03-lat-cat.md` §3.2.1 bước 6 · `07-pham-vi-mvp.md` §7.7 dòng *Thông báo đơn* · ⚠️ **tên đường cụ thể chưa có owner** — **F-027** |
+| **PT-5** | **Đường báo đơn web về quầy** | quầy biết có đơn mới của ba kênh không gắn bàn mà **không phải ngồi canh màn hình** | `03-lat-cat.md` §3.2.1 bước 6 · `07-pham-vi-mvp.md` §7.7 dòng *Thông báo đơn* · tên cụ thể: `shop-facts.md` §1 · `docs/decisions.md` **ADR-041** (chốt 2026-09-07) |
 | **PT-6** | **Sổ giấy** — quy trình của **người**, không phải một tính năng | ngày mất điện, doanh thu chỉ tồn tại trên giấy cho tới lúc nhập bù; và nó là nguồn đối soát **thứ nhất** | `shop-facts.md` §6.11 · §6.10 (chủ quán chốt 2026-09-02 · 2026-09-01) |
 
 **PT-1 và PT-2 không phải một thứ**, và chỗ khác nhau của chúng là chỗ dễ thiết kế sai nhất:
@@ -150,11 +150,15 @@ giữ lại ở đây để phiên sau đọc được lời chốt đã đi và
 | ~~`U-037`~~ | **ai ngồi lại chấm con số của một ngày sau khi nhập bù, và lúc nào: POS hoặc chủ quán, cuối buổi bán hàng** (đóng 2026-09-06) | **PT-6** ở §3 |
 
 Một chỗ nữa **không phải câu hỏi nghiệp vụ**, nên nó không nằm trong `99-unknowns.md`:
-**`work/findings.md` F-027** — **PT-2** (*một máy chạy duy nhất*) và **PT-5** (*tên đường báo đơn*)
-hôm nay chỉ có ở `master_plan/prompt-fullstack.md`, một **bản xuất khẩu tự khai không sở hữu sự
-thật nào** (`docs/decisions.md` **ADR-035**). Bảng §2 vì thế ghi **cái quán dựa vào**, không ghi
-**tên của thứ đang đảm nhiệm nó**. Ai nhận **P1-08** đọc F-027 trước: cả bốn ràng buộc ẩn của bước
-ấy đều đứng trên cùng một bản xuất khẩu.
+**`work/findings.md` F-027** (mở 2026-09-04) đo được rằng **PT-2** (*một máy chạy duy nhất*) và
+**PT-5** (*tên đường báo đơn*) khi đó chỉ có ở `master_plan/prompt-fullstack.md`, một **bản xuất
+khẩu tự khai không sở hữu sự thật nào** (`docs/decisions.md` **ADR-035**). Bảng §2 vì thế ghi **cái
+quán dựa vào**, không ghi **tên của thứ đang đảm nhiệm nó** — cách viết đó **vẫn giữ nguyên** dù
+F-027 đã có owner: ranh giới pha (ADR-035) không đổi, chỉ cột *Đã chốt ở* của PT-2/PT-5 nay trỏ
+sang tên thật. **Chủ repo đặt tên 2026-09-07** (`docs/decisions.md` **ADR-041**): PT-5 là
+**Telegram**, PT-2 là **một VPS** — đóng F-027 **một phần**. Ai nhận **P1-08** vẫn phải đọc F-027
+và ADR-041 trước: ba trong bốn ràng buộc ẩn của bước ấy (*một instance · không hàng đợi · không
+cache*) **vẫn** chỉ đứng trên bản xuất khẩu, chưa có owner.
 
 ---
 
@@ -162,7 +166,7 @@ thật nào** (`docs/decisions.md` **ADR-035**). Bảng §2 vì thế ghi **cái
 
 | Bước | Lấy gì từ mục này |
 |---|---|
-| **P1-08** — realtime, đường kéo dự phòng, ràng buộc ẩn | **PT-2** và **PT-5**: mục này nói *mất nó thì quán làm gì*; P1-08 nói *máy làm gì* và đặt **dấu hiệu đo được** cho từng ràng buộc. Đọc **F-027** trước |
+| **P1-08** — realtime, đường kéo dự phòng, ràng buộc ẩn | **PT-2** và **PT-5**: mục này nói *mất nó thì quán làm gì*; P1-08 nói *máy làm gì* và đặt **dấu hiệu đo được** cho từng ràng buộc. Đọc **F-027** và **ADR-041** trước — tên đã có (Telegram · một VPS), ba ràng buộc ẩn còn lại (một instance · không hàng đợi · không cache) thì chưa |
 | **P1-10** — sổ rủi ro | mỗi dòng §3 là một rủi ro đã có người chịu; sổ rủi ro trỏ về đây thay vì viết lại |
 | **P1-11** — diễn ba scenario | ba scenario của `08-scenario.md` §8 phải đi qua được **PT-1** và **PT-6**, tức đi qua được một buổi mất điện |
 | **Pha 3 · pha 5** | cơ chế thật (thử lại, hàng đợi, bộ nhớ đệm, triển khai) — mục này **không** chốt cái nào, và không được đọc như thể có chốt |

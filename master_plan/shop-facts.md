@@ -26,6 +26,19 @@
 | Múi giờ | `Asia/Ho_Chi_Minh` |
 | Số bàn | **15** |
 | Thanh toán | Tiền mặt tại quầy · Chuyển khoản **VietQR tĩnh** |
+| Báo đơn web mới về quầy | **Telegram** — bot gửi tin nhắn báo đơn mới vào quầy |
+| Hạ tầng vận hành | **Một VPS** duy nhất chạy toàn bộ hệ thống |
+
+**Hai dòng "Báo đơn web mới" và "Hạ tầng vận hành" chốt 2026-09-07 (chủ repo).** Đây là chỗ đặt
+tên cho hai phụ thuộc mà `docs/product/1-system-design/01-ranh-gioi-he-thong.md` gọi là **PT-5**
+(*đường báo đơn web về quầy*) và **PT-2** (*nơi hệ thống chạy*) — bảng đó ghi **cái quán dựa vào**
+chứ không ghi **tên của thứ đảm nhiệm nó**, và `work/findings.md` **F-027** (2026-09-04) từng đo
+được rằng hai cái tên ấy trước đó chỉ sống ở `master_plan/prompt-fullstack.md`, một bản xuất khẩu
+tự khai **không sở hữu sự thật nào** (`docs/decisions.md` ADR-035). Ghi ở đây là **owner thật** cho
+hai cái tên, đúng đường đã chọn ở F-027: pha 1 giữ nguyên cách viết trừu tượng, tên cụ thể sống ở
+`shop-facts.md` — xem `docs/decisions.md` **ADR-041**. **Chưa chốt**: token/cấu hình bot Telegram,
+nhà cung cấp và cấu hình VPS cụ thể — đó là việc của pha 3 (BE) và pha 5 (Deploy), không phải một
+dữ kiện quán (ADR-035).
 
 **VietQR tĩnh nghĩa là mã cố định** — không phải mã sinh riêng cho từng hoá đơn. Hệ quả: hệ thống
 **không tự biết tiền đã về tài khoản**; người ở quầy phải tự nhìn báo có rồi bấm xác nhận đã nhận
@@ -1112,6 +1125,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-09-06 | **Tiền đầu két nhập CẢ HAI: bảng theo từng mệnh giá VÀ tổng cộng** (trả lời **U-038**) — nguyên văn *"tổng của từng mệnh giá và tổng của tất cả các mệnh giá cộng lại với nhau"* | §8.5 |
 | 2026-09-06 | **Máy KHÔNG giữ hàng chờ bàn; POS tự điều phối khi cần** (trả lời **U-039**) — nguyên văn *"không. pos sẽ điều phối khách nếu cần"* | §6.25 |
 | 2026-09-06 | **Mười một bàn ban đầu: 4 chỗ/bàn, đã đánh số; quán vừa mua thêm bàn ⇒ Số bàn 11 → 15** (trả lời **U-040**) — nguyên văn *"11 bàn mỗi bàn 4 chỗ, đã đánh số, hôm nay tôi mua thêm bàn, hãy để 15 bàn"*. *Chỗ ngồi/đánh số của 4 bàn mới **chưa** trả lời ⇒ **U-042*** | §1 · §6.25 |
+| 2026-09-07 | **Đặt tên chủ cho hai phụ thuộc PT-5/PT-2: đường báo đơn web về quầy là Telegram, hạ tầng vận hành là một VPS duy nhất** (chốt bởi chủ repo, không phải một câu hỏi U-XXX — đóng một phần **F-027**) — xem **ADR-041** | §1 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **ba mục, tính tới 2026-09-04**
 

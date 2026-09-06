@@ -2322,10 +2322,17 @@ phụ thuộc, sáu dòng — nhưng ô ấy **không** chứng minh rằng mỗ
 **P1-02** (lượt phát hiện, viết `01-ranh-gioi-he-thong.md`) · **P1-08** (bước chịu hậu quả nặng
 nhất: bốn ràng buộc ẩn cùng một gốc) · **T-048** (lượt viết kế hoạch pha 1, câu năm phụ thuộc) ·
 **F-023** (cùng gốc, chiều ngược lại) · `docs/decisions.md` **ADR-035** (bản xuất khẩu không sở hữu
-thứ gì) · **ADR-014**
+thứ gì) · **ADR-014** · **T-062** (đóng một phần, ADR-041)
+
+**Đóng một phần — 2026-09-07 (T-062):** chủ repo yêu cầu thẳng *"Telegram ... hãy thêm thông tin
+vào hệ thống"* và *"một VPS hãy thêm thông tin vào hệ thống"* — chọn **đường 2** trong ba đường đã
+liệt ở *Decision/Fix*: cho pha 1 giữ cách viết trừu tượng, tên thật đặt ở `master_plan/shop-facts.md`
+§1, quyết định ghi ở `docs/decisions.md` **ADR-041**. Đóng đúng vế **đặt tên chủ cho PT-2/PT-5**.
+**Vẫn mở**: ba ràng buộc ẩn còn lại của **P1-08** (*một instance · không hàng đợi · không cache*) —
+ADR-041 tự khai rõ nó không chốt hộ ba vế này; chỉ **một VPS** (vế thứ tư) vừa có owner.
 
 **Status:**
-Open
+Fixed
 
 ---
 
@@ -2526,3 +2533,49 @@ không phải lỗi của lượt ấy.
 Open — ô bảng đã sửa 2026-09-04, **cổng chưa đổi**. Đóng khi phép đo lần thứ hai xảy ra và bước 1
 chỉ còn nhận mã của chính gạch đầu dòng; hoặc đóng bằng một quyết định *chấp nhận ca này* nếu ba
 câu mở còn lại đóng hết mà không lần nào phát sinh thêm báo động ngủ.
+
+---
+
+### F-031 — Lần thứ tư: một commit mang subject TRÙNG một commit trước đó, và nội dung thật của nó không khớp một chữ nào với subject ấy
+
+**Problem:**
+Đo lại 2026-09-07 (T-062), trong lúc chuẩn bị commit của chính lượt này: `HEAD` (`0159d2e`) mang
+subject **trùng từng chữ** với một commit trước đó bốn bước, `8bea106` — cả hai đều là
+`"P1-04: bảng ba cột nhóm TIỀN, bảy mệnh đề chạm tiền"`. Nhưng nội dung thật của `0159d2e` (so với
+cha của nó, `f2d86e5`) chỉ đổi **một file, một dòng**: `work/backlog.md` +1 dòng — đúng dòng entry
+`T-061` (*"Danh mục nguyên liệu bắt đầu có TÊN..."*). Thân commit `0159d2e` thì mô tả chi tiết công
+việc của P1-04 (tầng bảo vệ, ô I-014 mang U-036/U-037, F-026 đo lại...) — **không một chữ nào** nói
+về T-061 hay danh mục nguyên liệu. Ai đọc `git log` sẽ đọc được một sự thật không tồn tại: rằng
+lượt "P1-04" xảy ra hai lần, trong khi lượt thật đã xảy ra là **T-061**, ẩn dưới một cái tên khác.
+
+**Impact:**
+Đây là **lần thứ tư** repo này có hai commit trùng subject (sau `0b3a337`/`1b1d5f5` ở F-009/T-016,
+và `39ca608`/`1b9d238` ở F-025) — cùng một cơ chế: ai đó gõ `git commit -m "..."` ngoài một lượt
+phiên (Gate 7 chỉ sống trong lượt phiên, không chặn được terminal), rất có thể copy nhầm message
+của một commit trước đó thay vì viết message cho đúng thay đổi đang commit. Hậu quả nặng hơn F-025:
+lần này **không** phải một phiên nhặt nhầm file của phiên khác — nó là **đúng một dòng, đúng file,
+sai hẳn message**, nên `git log --grep` hay bất kỳ ai tìm sửa đổi của P1-04 qua subject sẽ thấy hai
+commit, tưởng có hai lượt việc, trong khi một trong hai không liên quan gì tới P1-04. Đồng thời,
+phần còn lại của T-061 (thay đổi ở `master_plan/shop-facts.md` §8.4/§8.2) **vẫn chưa hề được
+commit** — T-061 tự khai *Done* ở `work/backlog.md` nhưng nội dung nghiệp vụ nó mang tới nay vẫn
+chỉ sống trong working tree, đúng hình dạng **F-024** (deliverable bị bỏ rơi vì task đóng trước khi
+giao nó) nhìn từ một góc mới: lần này giao **một nửa**, không phải giao **trễ**.
+
+**Decision / Fix:**
+**Không sửa lịch sử** (`docs/decisions.md` ADR-008) — không revert, không rebase, không amend
+`0159d2e`. Ghi lại để phiên sau đọc `git log` biết subject không đáng tin ở đúng hai chỗ này. Lượt
+T-062 **không gộp** phần còn thiếu của T-061 (`shop-facts.md` §8.4/§8.2) vào commit của mình — commit
+T-062 chỉ mang đúng hai dòng T-062 thêm vào `shop-facts.md` (tách bằng patch thủ công), để phần nợ
+của T-061 tiếp tục đứng riêng, chờ đúng người của nó commit với đúng message. **Chưa siết cơ chế** —
+ba lần trước (F-009, F-025) đều dừng ở "ghi lại", và Gate 8 (commit-msg hook) chỉ chặn subject rỗng
+nghĩa, không chặn subject trùng một commit khác; viết thêm một cơ chế sau khi cùng một dạng lỗi lặp
+lại **bốn lần** là quyết định của chủ repo, không phải việc tự thêm của lượt này (`CLAUDE.md` §3.8
+đòi hai lần để thêm luật — dạng lỗi này đã qua ngưỡng đó từ F-025, chủ repo vẫn chưa được hỏi).
+
+**Related task:**
+**T-062** (lượt phát hiện) · **T-061** (task thật đứng sau `0159d2e`, deliverable còn thiếu một
+nửa) · **F-009** (lần thứ nhất/thứ hai, `0b3a337`/`1b1d5f5`) · **F-025** (lần thứ ba, `39ca608`) ·
+**F-024** (cùng hình dạng "giao thiếu" nhìn từ góc task đóng sớm).
+
+**Status:**
+Open

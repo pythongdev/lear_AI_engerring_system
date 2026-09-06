@@ -57,6 +57,7 @@ có câu trả lời mới từ người.
 | ADR-038 | Quán **không có mở ca / đóng ca** ⇒ mốc gom tiền nhỏ nhất là **ngày bán**, và **tiền đầu két gắn vào ngày bán** chứ không vào một biến cố ca | Đã chốt 2026-09-04 | — | **I-021** mới; **U-038** đóng 2026-09-06 — nhập cả bảng mệnh giá lẫn tổng; ADM-01 co lại |
 | ADR-039 | `CLAUDE.md` §2.2 có thêm dòng chủ **quy ước code** (pha 2) và Gate 1d (`check-phase-boundary.sh`) chấm máy phần phổ biến nhất của ranh giới pha; §3 có cột **Cưỡng chế bởi**; §8 hết mâu thuẫn "bốn dòng" | Đã chốt 2026-09-06 | — | sửa một câu của **ADR-035** |
 | ADR-040 | Trả trước cho đơn đặt trước ngày SAU tính doanh thu vào **ngày GIAO**, không phải ngày nhận tiền; quán nhận đặt trước **tối đa một ngày** | Đã chốt 2026-09-06 | — | công thức đối soát `architecture.md` §6.4 cần thêm một dòng; **U-036** đóng |
+| ADR-041 | Đặt tên chủ cho **PT-5** (đường báo đơn web về quầy = **Telegram**) và **PT-2** (nơi hệ thống chạy = **một VPS**) | Đã chốt 2026-09-07 | — | đóng một phần **F-027**; **shop-facts.md §1** giữ tên cụ thể |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -2747,4 +2748,52 @@ không xảy ra (khách huỷ), nên con số hôm nhận tiền phải chờ ng
 
 **Chỗ ADR này KHÔNG chốt:** câu chữ và cơ chế của dòng mới trong công thức đối soát §6.4 — đó là
 việc của bước đọc §2 của `02-thoi-gian-ngay-ban.md` (P1-04 trở đi), không phải của ADR này.
+
+### ADR-041 — Đặt tên chủ cho PT-5 (Telegram) và PT-2 (một VPS), đóng một phần F-027
+
+**Trạng thái:** Đã chốt 2026-09-07, sau khi chủ repo yêu cầu trong phiên: *"Telegram ... hãy thêm
+thông tin vào hệ thống"* và *"một VPS hãy thêm thông tin vào hệ thống"*.
+
+**Vấn đề nó giải quyết.**
+`work/findings.md` **F-027** (mở 2026-09-04, P1-02) đo được rằng kế hoạch pha 1 kể tên **năm** phụ
+thuộc ngoài, nhưng hai trong năm — **Telegram** và **một VPS** — không có owner nào trong `docs/`
+hay `quality/`: chúng chỉ sống ở `master_plan/prompt-fullstack.md`, và ADR-035 đã chốt tài liệu đó
+**không sở hữu thứ gì**. Pha 1 (`01-ranh-gioi-he-thong.md` §2) né vấn đề bằng cách ghi **PT-2** là
+*"nơi hệ thống chạy"* và **PT-5** là *"đường báo đơn web về quầy"* — đúng theo ranh giới pha
+(ADR-035), nhưng không đặt tên. F-027 tự khai rõ: chọn owner cho hai cái tên là quyết định của chủ
+repo, không phải việc pha 1 tự quyết.
+
+**Decision:**
+
+1. **PT-5 = Telegram** — hệ thống báo đơn mới về quầy bằng bot Telegram. Ghi ở
+   `master_plan/shop-facts.md` §1 (dòng *Báo đơn web mới về quầy*).
+2. **PT-2 = một VPS** — toàn bộ hệ thống chạy trên đúng một VPS. Ghi ở `shop-facts.md` §1 (dòng
+   *Hạ tầng vận hành*). Đây khớp với một trong bốn ràng buộc ẩn mà **P1-08** phải chốt chiến lược
+   xử lý (*một instance · không hàng đợi · không cache · một VPS*, cũng nêu ở F-027) — quyết định
+   này xác nhận vế **một VPS**, nhưng **không** xác nhận ba vế còn lại.
+3. `docs/product/1-system-design/01-ranh-gioi-he-thong.md` **giữ nguyên cách viết trừu tượng** ở
+   bảng §2 (không chép "Telegram" / "VPS" vào tài liệu pha 1) — chỉ đổi cột *Đã chốt ở* từ ⚠️ *"chưa
+   có owner"* thành pointer về `shop-facts.md` §1 và ADR này. Ranh giới sở hữu theo pha (ADR-035)
+   không đổi: tên công nghệ cụ thể là dữ kiện quán/hạ tầng, sống ở `shop-facts.md`, không sống
+   trong tài liệu pha 1.
+
+**Why.**
+F-027 đã liệt hai đường và bác cả hai (chép tên vào pha 1 ⇒ phong một câu chưa ai chốt thành dữ
+kiện kiến trúc; bỏ tên ⇒ thiếu đúng phụ thuộc đắt nhất). Đường thứ ba — chủ repo chốt tên ở
+`shop-facts.md`, ghi quyết định ở đây, pha 1 chỉ trỏ vào — giữ được cả ranh giới pha lẫn tên đầy
+đủ, không đường nào trong hai đường bị bác phải dùng.
+
+**Chỗ ADR này KHÔNG chốt:**
+- **Cấu hình cụ thể** — token bot, nhóm/chat Telegram nhận báo đơn, nhà cung cấp VPS, cấu hình máy
+  chủ. Đó là việc của pha 3 (BE) và pha 5 (Deploy) khi hai phase ấy mở (ADR-035).
+- **Ba ràng buộc ẩn còn lại của P1-08** (một instance · không hàng đợi · không cache) — F-027 vẫn
+  **mở một phần** cho tới khi P1-08 tự chốt chúng; ADR này chỉ đóng vế đặt tên cho PT-2/PT-5.
+- **Cơ chế** — máy làm sao gửi tin nhắn Telegram, làm sao chịu được khi VPS quá tải. Đó vẫn là
+  việc của P1-08 và pha 3/5, không phải của ADR này (F-018: kể tên một cơ chế để từ chối nó không
+  phải là thiết kế nó).
+
+**Applies to:**
+`master_plan/shop-facts.md` §1 (hai dòng mới) · §7.1 (dòng nhật ký) ·
+`docs/product/1-system-design/01-ranh-gioi-he-thong.md` §2 (cột *Đã chốt ở* của PT-2/PT-5) · §4 ·
+§5 · `work/findings.md` **F-027** (đóng một phần).
 

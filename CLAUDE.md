@@ -18,6 +18,12 @@ at their single owner. Mechanism detail for a given gate lives in that script's
 own header comment, not here — this file loads into every session, so every
 extra line is fixed tax.
 
+**Ngôn ngữ trả lời:** người dùng dùng tiếng Việt. Mọi câu trả lời trực tiếp cho
+người dùng viết bằng tiếng Việt, dạng văn xuôi (câu hoàn chỉnh, không liệt kê
+gạch đầu dòng trừ khi nội dung thật sự cần danh sách). Quy tắc này chỉ áp dụng
+cho lời trả lời trong hội thoại — không đổi ngôn ngữ hay văn phong của tài
+liệu, code, tên biến, hay bất cứ nội dung nào có owner riêng ở §2.
+
 Ceremony scales with risk (L0–L3): most changes owe almost nothing, a few owe a
 lot. The levels are defined in `README.md`, what each one costs here is §3, and
 how to write a prompt at each level is in `docs/prompt-guideline.md`.
