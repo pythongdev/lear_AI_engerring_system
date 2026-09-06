@@ -171,7 +171,7 @@ Hai chi tiết đi kèm, đều là luật: thành phần **không nhận nhân*
 #### 3.1.7 Ghép bàn — một phiên, một hoá đơn
 
 *Chủ quán chốt 2026-08-31 (`shop-facts.md` §6.16). Ghép bàn là chuyện có thật ở quán, không phải
-ca hiếm: quán có mười một bàn và nhóm đông thì ngồi tràn sang bàn bên.*
+ca hiếm: quán có nhiều bàn (15, `shop-facts.md` §1) và nhóm đông thì ngồi tràn sang bàn bên.*
 
 Nhiều bàn ghép lại được phục vụ bằng **một** phiên và trả **một** hoá đơn:
 
@@ -766,11 +766,13 @@ Hai chỗ đáng nói vì chúng **không** phá luật này:
   (`shop-facts.md` §6.13, §5.4 của `05-vong-doi.md`).
 - **Phần đã làm xong của một đơn bị huỷ thì rời bảng theo bàn, và nó KHÔNG biến mất khỏi cái
   quán.** Cái đĩa bánh ấy có thật, đang nằm ở bếp. Bảng theo bàn hết chỗ ghi nó, vì bàn đã gọi nó
-  không còn gọi nữa. **Nó có được tính vào phần đã làm của một bàn khác hay không thì chưa ai
-  hỏi chủ quán — `docs/product/99-unknowns.md` U-033.** §3.4 chọn phương án **hẹp nhất**: con số
-  *đã làm xong* của **bàn bị huỷ** về không, và nhu cầu của **mọi bàn khác không đổi một đơn vị
-  nào**. Nghĩa là ở bản hẹp này, quán làm lại từ đầu cho bàn khác — đúng thứ quán có thể đang
-  **không** làm, nên đừng ghi nó thành luật đã chốt.
+  không còn gọi nữa. **Nó ĐƯỢC tính cho một bàn khác đang chờ đúng thứ đó** (chủ quán chốt
+  2026-09-06, đóng `docs/product/99-unknowns.md` **U-033**; nguyên văn: *"tính vào bàn khác, pos sẽ
+  cập nhật bánh này đem ra cho bàn nào"*). Người đứng quầy trên POS **chọn bàn nhận và cập nhật lại**
+  — máy không tự gán. Nhu cầu (*còn thiếu*) của **bàn nhận** giảm đúng phần vừa nhận; phần đã huỷ
+  không còn tính vào nhu cầu của bàn cũ. Chỉ áp dụng khi có bàn khác đang chờ đúng thứ đã làm — chủ
+  quán không nói tới ca không bàn nào chờ, ca ấy chưa có luật. Ghi ở `master_plan/shop-facts.md`
+  §5.4.
 - **Ba kênh không gắn bàn KHÔNG đổ vào bảng này.** Chủ quán trả lời thẳng **không** ngày 2026-08-31
   (đóng **U-010**, `shop-facts.md` §5.4): bảng gom việc ở quầy là bảng **theo bàn**, còn
   `delivery`, `pickup`, `phone_preorder` (§2, §3.2) thì không. Việc của chúng vẫn nổ ra thành phần

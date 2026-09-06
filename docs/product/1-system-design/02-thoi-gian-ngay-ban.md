@@ -97,7 +97,7 @@ câu đó do ba luật đã chốt trả lời, và mục này chỉ **gom chún
 | **Hoàn tiền** | mốc **hoàn** — không phải mốc bán gốc | `shop-facts.md` §6.4 (chủ quán chốt 2026-09-01, U-019) |
 | **Thu nợ cũ** | mốc **thu** — và khoản ấy **không** vào doanh thu ngày nào cả, nó chỉ là dòng *nợ cũ thu được hôm nay* của bảng đối soát | `shop-facts.md` §6.14 · [`architecture.md`](architecture.md) §6.4 · §12.3 (hai mốc, hai câu hỏi) |
 | **Nhập bù một lượt bán từ sổ giấy** | mốc **quán bán thật**, không phải mốc gõ vào máy — lượt ấy mang ngày của **buổi bán trên giấy** | `shop-facts.md` §6.11 (chủ quán chốt 2026-09-04, U-032) · `docs/decisions.md` **ADR-037** |
-| **Trả trước nhận trước ngày giao hàng** | ⛔ **CHƯA CHỐT — đang chờ [`U-036`](../99-unknowns.md)** | — |
+| **Trả trước nhận trước ngày giao hàng** | mốc **giao/lấy hàng**, không phải mốc nhận tiền | `shop-facts.md` §6.26 (chủ quán chốt 2026-09-06, [`U-036`](../99-unknowns.md)) · `docs/decisions.md` **ADR-040** |
 
 **Ba luật đã chốt không được nhắc lại bằng lời của mục này.** Bảng trên nói *mốc nào*, và trỏ về
 nhà của từng luật. Chỗ duy nhất đọc được cả ba cạnh nhau là `quality/invariants.md` **I-014**;
@@ -167,12 +167,12 @@ mốc và cấp ở đâu. Cất nó **thế nào** là việc của **pha 2** (
 
 ---
 
-## 4. Chỗ cố ý để trống — hai mã đang mở, và không mã nào được quyết ở đây
+## 4. Chỗ cố ý để trống — lịch sử ba mã, cả ba nay đã đóng
 
 Kế hoạch pha 1 §9: *một ô không tick được thì để trống kèm mã của chỗ đang chặn*. Mục này mở ra với
-**hai** ô trống ngày 2026-09-04; **`U-032` đã đóng trong ngày** và ô của nó nay có lời, còn lại
-**`U-036`** — cộng **`U-037`**, câu mà chính lời chốt của `U-032` đẻ ra. Cả ba đều là **câu của chủ
-quán** (`CLAUDE.md` §3.5).
+**hai** ô trống ngày 2026-09-04 (`U-036`, `U-037`) cạnh `U-032` đã đóng trong ngày; cả ba đều là
+**câu của chủ quán** (`CLAUDE.md` §3.5), và cả ba nay đều có lời — `U-036` và `U-037` đóng
+2026-09-06. Mục này giữ lại **lịch sử** của khoảng trống, không phải một ô trống còn sống.
 
 - ~~**`U-032`**~~ — **ĐÃ ĐÓNG 2026-09-04** (T-054). Chủ quán trả lời bằng đúng một từ — *"bán"* —
   nên hàng cuối thứ nhất của bảng §2 **hết trống**: lượt nhập bù mang mốc **quán bán thật**. Đường
@@ -182,19 +182,17 @@ quán** (`CLAUDE.md` §3.5).
   ⇒ **Câu mới mở ra từ chính lời chốt ấy: `U-037`** — khi `N` về 0 thì **ai** ngồi lại chấm con số
   của ngày ấy, và **lúc nào**. Mục này **không quyết hộ**; nó chỉ cấp cái ngày.
   Đọc nguyên văn ở [`docs/product/99-unknowns.md`](../99-unknowns.md).
-- **`U-036` — khoản TRẢ TRƯỚC nhận hôm nay cho đơn giao hôm khác tính doanh thu ngày nào.**
-  **Mở trong chính lượt này.** `shop-facts.md` §6.3 cho khách mang đi chọn **trả trước**, và POS
-  xác nhận **lúc tiền thật sự tới tay quán**; §5.2 điểm 5 nói `pickup` có **giờ hẹn lấy** và
-  `phone_preorder` là **đơn đặt trước**. Không luật nào nói hai mốc ấy có được rơi vào hai ngày
-  khác nhau không, và nếu có thì doanh thu thuộc ngày nào. Đây là **chiều ngược của §6.14**: nợ là
-  tiền về **sau** một lần bán đã xong, trả trước là tiền về **trước** một lần bán chưa xong — §6.14
-  chốt chiều thứ nhất và không ai chốt chiều thứ hai. Nó chặn đúng hàng cuối bảng §2.
-  Đọc nguyên văn ở [`docs/product/99-unknowns.md`](../99-unknowns.md).
+- ~~**`U-036`**~~ — **ĐÃ ĐÓNG 2026-09-06.** Chủ quán trả lời: doanh thu rơi vào **ngày giao/lấy
+  hàng**, không phải ngày nhận tiền; và quán chỉ nhận đặt trước **tối đa một ngày**. Đây là chiều
+  **đối xứng** của §6.14 (nợ là tiền về **sau** một lần bán đã xong; trả trước là tiền về **trước**
+  một lần bán chưa xong — cả hai lấy mốc theo ngày việc bán thật sự xảy ra). Hàng cuối bảng §2
+  **hết trống**. Xem `docs/decisions.md` **ADR-040**. Đọc nguyên văn ở
+  [`docs/product/99-unknowns.md`](../99-unknowns.md).
 
-**Hai mã trên có thể đòi công thức đối soát §6.4 của [`architecture.md`](architecture.md) thêm một
+**Hai mã trên đòi công thức đối soát §6.4 của [`architecture.md`](architecture.md) thêm một
 dòng** — dòng cho khoản tiền đã vào két mà chưa vào doanh thu, đúng hình của dòng *nợ ghi trong
-ngày* nhưng ngược chiều. Mục này **không** thêm dòng ấy: chưa có lời chủ quán thì
-chưa biết có cần hay không, và viết trước là chốt hộ.
+ngày* nhưng ngược chiều. Mục này **không** viết câu chữ hay cơ chế của dòng ấy: đó là việc của bước
+đọc mục này (P1-04 trở đi), không phải của lời chốt vừa nhận.
 
 ---
 
@@ -202,11 +200,11 @@ chưa biết có cần hay không, và viết trước là chốt hộ.
 
 | Bước | Lấy gì từ mục này |
 |---|---|
-| **P1-04** — bảng ba cột nhóm **TIỀN** | cột *phép đối chiếu* của `I-014` nay có nghĩa: *"cộng trong một ngày"* = §1, và *"ngày nào"* = bảng §2. Hàng cuối bảng §2 còn trống ⇒ ô của `I-014` phải mang mã `U-036`, và mang thêm **`U-037`** (ai chấm lại một ngày sau khi nhập bù) — không được tick trơn |
+| **P1-04** — bảng ba cột nhóm **TIỀN** | cột *phép đối chiếu* của `I-014` nay có nghĩa: *"cộng trong một ngày"* = §1, và *"ngày nào"* = bảng §2. Hàng cuối bảng §2 **hết trống** — `U-036` và `U-037` đã đóng 2026-09-06, xem §4 |
 | **P1-07** — yêu cầu hình dạng dữ liệu | §2 đòi **một** mốc tính tiền cho mỗi việc chạm tiền, §2.1 đòi mọi phần của một lần thu dùng chung mốc, §2.2 đòi mốc đã ghi không dời. Ba câu ấy là **yêu cầu**, pha 2 chọn hình dạng |
 | **P1-08** — realtime và ràng buộc ẩn | §3 nói mốc do **một** nguồn cấp ở nơi ghi. Nhiều nơi cùng ghi thì câu ấy hỏng ⇒ đây là một đầu vào của ràng buộc *một instance* |
 | **P1-09** — bảng quầy | bảng quầy đếm **trong ngày**; ngày ấy là §1 |
-| **P1-11** — diễn ba scenario | scenario đi qua một buổi mất điện nay **đi hết được**: lượt nhập bù mang mốc ngày bán (§2). Chỗ còn phải dừng là **`U-037`** — ai chấm lại con số của ngày ấy — và `U-036` với đơn trả trước; nói ra chỗ dừng, đừng bước qua |
+| **P1-11** — diễn ba scenario | scenario đi qua một buổi mất điện nay **đi hết được**: lượt nhập bù mang mốc ngày bán (§2), và `U-037`/`U-036` đã đóng 2026-09-06 nên không còn chỗ nào phải dừng ở §4 |
 | **Pha 2** | cất mốc **thế nào**, kiểu gì, cột nào — mục này cố ý không nói (**ADR-035**) |
 
 **Mâu thuẫn với [`architecture.md`](architecture.md) thì sửa `architecture.md`, không viết bản thứ

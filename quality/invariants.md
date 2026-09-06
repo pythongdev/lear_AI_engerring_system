@@ -462,13 +462,14 @@ lần, và không khoản nào rơi ra ngoài cả hai. "Hai nguồn" chia theo 
 chia theo kênh — cả **ba** kênh mang đi (Delivery, Pickup, Đặt trước qua hotline) cùng rơi vào
 nguồn thứ hai (`master_plan/shop-facts.md` §6.9, `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.5, §4.10).
 
-**Ngày nào tính vào doanh thu ngày ấy — BA luật, hai trong ba ngược chiều nhau, cả ba cùng đúng:**
+**Ngày nào tính vào doanh thu ngày ấy — BỐN luật, hai trong bốn ngược chiều nhau, cả bốn cùng đúng:**
 
 | Việc | Rơi vào ngày | Nguồn |
 |---|---|---|
 | **Bán**, kể cả khoản khách **nợ** | **ngày bán** = ngày ghi nợ, không phải ngày thu được tiền | `shop-facts.md` §6.14 |
 | **Hoàn tiền** | **ngày hoàn**, không phải ngày bán gốc | `shop-facts.md` §6.4, chủ quán chốt 2026-09-01 |
 | **Lượt bán ghi trên SỔ GIẤY, nhập bù sau** | **ngày quán bán**, không phải ngày gõ vào máy | `shop-facts.md` §6.11, chủ quán chốt 2026-09-04 (U-032) |
+| **Trả trước cho đơn đặt trước NGÀY SAU** | **ngày giao/lấy hàng**, không phải ngày nhận tiền | `shop-facts.md` §6.26, chủ quán chốt 2026-09-06 (U-036) · `docs/decisions.md` **ADR-040** |
 
 ⇒ **Một lần trả nợ không bao giờ là một khoản bán mới**, và **một lần hoàn không bao giờ sửa lại
 doanh thu của một ngày đã đóng sổ**.
@@ -481,8 +482,9 @@ doanh thu của một ngày đã đóng sổ**.
 > `N > 0` là một ngày CHƯA đối soát xong**, không phải một ngày đã đóng rồi bị sửa trộm.
 
 Ngoài ca ấy, ràng buộc cũ đứng nguyên — cùng ràng buộc mà I-009 giữ cho từng đơn, ở mức một ngày
-bán. Vì sao ngoại lệ này không phá ngưỡng **0đ**, và ai nhìn lại con số sau khi nhập xong:
-`docs/decisions.md` **ADR-037** · `docs/product/99-unknowns.md` **U-037** (chưa chốt).
+bán. Vì sao ngoại lệ này không phá ngưỡng **0đ**: `docs/decisions.md` **ADR-037**. **Ai nhìn lại
+con số sau khi nhập xong, và lúc nào — POS hoặc chủ quán, vào cuối buổi bán hàng** (chủ quán chốt
+2026-09-06, `docs/product/99-unknowns.md` **U-037**, đóng).
 **Đừng đọc ngoại lệ này rộng ra:** nó chỉ áp cho lượt bán **đã xảy ra thật ở quán** và có mặt trên
 sổ giấy. Không ca nào khác được sửa doanh thu một ngày đã qua.
 
@@ -522,6 +524,9 @@ hoàn. Nay là bảng ba dòng, không phải một câu.*
 vào **ngày bán**. Bảng nay có dòng thứ ba, và câu hệ quả "doanh thu một ngày đã đối soát không đổi
 về sau" — đúng từ 2026-09-01 tới 2026-09-04 — nay mang **một ngoại lệ có tên**. Để nguyên câu cũ là
 để một mệnh đề sai nằm trong file bất biến (`docs/decisions.md` **ADR-037**).*
+***Sửa lần ba ở 2026-09-06*** — *chủ quán trả lời **U-036**: trả trước cho một đơn đặt trước ngày
+sau tính doanh thu vào **ngày giao**, đối xứng với chiều nợ. Bảng nay có dòng thứ tư
+(`docs/decisions.md` **ADR-040**).*
 
 ### I-015 — Một lần thu chia được nhiều phương thức, nhưng tổng luôn khớp và từng phần luôn ghi riêng
 

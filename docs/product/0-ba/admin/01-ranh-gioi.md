@@ -47,8 +47,9 @@ tồn theo công thức** mỗi lần bán một suất. Hai hệ quả về **h
   hoàn một lần tiền — không việc nào trong số đó được tự động cộng trừ kho. Đường duy nhất để một
   con số nguyên liệu đổi là **có người nhập nó**.
 - **Có một mục tổng, nhập theo ngày, do chủ quán tự nhập** (*"có mục tổng lưu trữ hàng ngày tôi sẽ
-  nhập số liệu"*, 2026-09-04). *"Số liệu"* ấy là con số gì thì chủ quán **chưa nói** — còn lại,
-  mua vào, hay đã dùng — nên đừng suy hộ: **U-034** ở [99-unknowns.md](../../99-unknowns.md).
+  nhập số liệu"*, 2026-09-04). *"Số liệu"* ấy là **HAI con số** — đồ mua vào trong ngày, và đồ đã
+  dùng trong ngày, để chủ quán tự biết thừa/thiếu (chủ quán chốt 2026-09-06, đóng **U-034** ở
+  [99-unknowns.md](../../99-unknowns.md)). Danh mục cụ thể — thứ nào, đơn vị gì — **vẫn chưa chốt**.
 
 Dữ kiện đầy đủ của lời chốt này — gồm cả cửa mở lại nó — ở `master_plan/shop-facts.md` **§8.4**.
 Mảng **con người** (câu Đ-4) và mảng **tài chính** chưa có lời chốt tương ứng.

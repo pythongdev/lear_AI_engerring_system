@@ -79,7 +79,8 @@ phải chỗ tài liệu còn thiếu: sản phẩm không được dựng hàng
 - **Lượt bán ghi trên giấy tính doanh thu NGÀY QUÁN BÁN** (đóng **U-032**) — không phải ngày gõ vào
   máy. ⇒ Doanh thu một ngày **đã đối soát** đổi được về sau, **đúng một ca**, nên ngày còn lượt chưa
   nhập là ngày **chưa đối soát xong** (`docs/decisions.md` **ADR-037**). Ngưỡng lệch **0đ** của §4.9
-  không đổi một chữ. *Ai ngồi lại chấm con số ấy sau khi nhập xong: **U-037**, chưa chốt.*
+  không đổi một chữ. *Ai ngồi lại chấm con số ấy sau khi nhập xong: **POS hoặc chủ quán, cuối buổi
+  bán hàng*** (chủ quán chốt 2026-09-06, đóng **U-037**).
 
 **Không còn chỗ nào ⚠ — cả mười bốn dòng đều có lời chốt** kể từ 2026-09-02. Hai dòng cuối cùng
 (4 và 14) được chủ quán xác nhận đúng như hai giả định GĐ-01 và GĐ-05 đã đoán, **nhưng kèm một yêu

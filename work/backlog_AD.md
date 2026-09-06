@@ -62,25 +62,30 @@ phải kỹ thuật: nó là câu hỏi chưa hỏi được chủ quán. Con s�
 ⚠️ **Nhánh A đóng ngày 2026-09-04 (T-056).** Chủ quán trả lời cả mười câu `A1`…`A10`; lời chốt đã
 về owner và nhóm A đã bị gạch khỏi `work/admin-questions.md` §3. Số câu chưa trả lời đi từ **54**
 xuống **44** (đếm bằng `grep -c '^> \*\*Trả lời:\*\*$'`), và **ADM-01 · ADM-02 chuyển từ loại 1
-sang loại 2**. Bốn vế chủ quán không chạm tới thành **U-038** · **U-039** · **U-040** · **U-041** —
-chúng chặn ADM-03 và ADM-04, nên hai việc ấy **vẫn** loại 1.
+sang loại 2**. Bốn vế chủ quán không chạm tới thành **U-038** · **U-039** · **U-040** · **U-041**.
+
+⚠️ **Ngày 2026-09-06, chủ quán đóng thêm `U-034` · `U-038` · `U-039` · `U-040`** (chỉ `U-041` còn
+mở). ⇒ **ADM-03 hết chặn** (U-039 · U-040 cả hai đã có lời) → chuyển **loại 2**; **ADM-10 · ADM-12 ·
+ADM-13** hẹp bớt một vế chặn (`U-034` đóng, nhưng các câu `B11`…`B21` của chính nhánh B vẫn chưa có
+lời — ba việc **vẫn** loại 1); **ADM-04** vẫn loại 1, chặn bởi `U-041` (chưa trả lời) và `F52`·`F53`.
 
 | Nhánh | Câu hỏi ở `admin-questions.md` §3 | Việc bị chặn |
 |---|---|---|
-| ~~**A** — một buổi bán~~ | ~~`A1`…`A10`~~ **ĐÃ TRẢ LỜI CẢ MƯỜI, 2026-09-04** (T-056) — còn lại **U-038** · **U-039** · **U-040** · **U-041** | **hết chặn:** ADM-01 · ADM-02 → loại 2 · **còn chặn:** ADM-03 (U-039 · U-040) · ADM-04 (U-041) |
-| **B** — nguyên liệu | `B11`…`B22` (12 câu, `B18` trả lời **một nửa**) + **U-034** | ADM-10 · ADM-11 · ADM-12 · ADM-13 · ADM-14 · ADM-15 |
+| ~~**A** — một buổi bán~~ | ~~`A1`…`A10`~~ **ĐÃ TRẢ LỜI CẢ MƯỜI, 2026-09-04** (T-056) — còn lại **U-041** (`U-038`·`U-039`·`U-040` đóng 2026-09-06) | **hết chặn:** ADM-01 · ADM-02 · ADM-03 → loại 2 · **còn chặn:** ADM-04 (U-041) |
+| **B** — nguyên liệu | `B11`…`B22` (12 câu, `B18` trả lời **một nửa**) — **U-034 đóng 2026-09-06** | ADM-10 · ADM-11 · ADM-12 · ADM-13 · ADM-14 · ADM-15 |
 | **C** — con người | `C23`…`C36` (14 câu, **chưa câu nào**) | ADM-20 · ADM-21 · ADM-22 · ADM-23 · ADM-24 |
 | **D** — sản phẩm | `D37`…`D43` (7 câu, **chưa câu nào**) | ADM-32 · ADM-33 (ADM-30 chỉ vướng vế quyền, ADM-31 không vướng) |
 | **E** — tài chính | `E44`…`E51` (8 câu, **chưa câu nào**) | ADM-42 · ADM-43 · ADM-44 · ADM-45 |
 | **F** — chung | `F52`…`F55` (4 câu, **chưa câu nào**) | ADM-51 · ADM-52 (ADM-50 chỉ vướng vế *ai*) |
 
-**Không phải việc nào không bị chặn cũng là việc của lane này.** Đo ngày 2026-09-04, hai mươi chín
-việc chia làm **ba loại**, và loại quyết định ai nhận nó:
+**Không phải việc nào không bị chặn cũng là việc của lane này.** Đo lại 2026-09-06 (chủ quán đóng
+`U-034`·`U-038`·`U-039`·`U-040` cùng ngày), hai mươi chín việc chia làm **ba loại**, và loại quyết
+định ai nhận nó:
 
 | Loại | Nghĩa là gì | Gồm |
 |---|---|---|
-| **1 — thiếu LUẬT** | phải hỏi chủ quán trước, không phiên nào được suy hộ (`CLAUDE.md` §3.5) | **hai mươi mốt** việc: **ADM-03 · ADM-04** (nhánh A còn lại), cả nhánh **B** (6) · **C** (5), ADM-32 · ADM-33 · ADM-42 · ADM-43 · ADM-44 · ADM-45 · ADM-51 · ADM-52 |
-| **2 — luật ĐÃ ĐỦ, thiếu THI CÔNG** | phần nghiệp vụ đã chốt sẵn; cái còn lại thuộc pha 2–4, **không** thuộc lane này | **bảy** việc: **ADM-01** · **ADM-02** (mới, 2026-09-04 — T-056) · ADM-30 · ADM-31 · ADM-40 · ADM-41 · ADM-50 (ADM-52 nằm một nửa ở đây) |
+| **1 — thiếu LUẬT** | phải hỏi chủ quán trước, không phiên nào được suy hộ (`CLAUDE.md` §3.5) | **hai mươi** việc: **ADM-04** (nhánh A còn lại — U-041), cả nhánh **B** (6) · **C** (5), ADM-32 · ADM-33 · ADM-42 · ADM-43 · ADM-44 · ADM-45 · ADM-51 · ADM-52 |
+| **2 — luật ĐÃ ĐỦ, thiếu THI CÔNG** | phần nghiệp vụ đã chốt sẵn; cái còn lại thuộc pha 2–4, **không** thuộc lane này | **tám** việc: **ADM-01** · **ADM-02** (2026-09-04 — T-056) · **ADM-03** (mới, 2026-09-06 — U-039/U-040 đóng) · ADM-30 · ADM-31 · ADM-40 · ADM-41 · ADM-50 (ADM-52 nằm một nửa ở đây) |
 | **3 — việc của chính lane** | nhận được ngay, không chờ ai | **một** việc: **ADM-53** |
 
 Loại 2 là chỗ dễ hiểu nhầm nhất của cả file. `work/admin-questions.md` §2 được viết ngày 2026-09-02
@@ -114,13 +119,16 @@ Bảng này là **chỗ dễ vỡ nhất** của việc chạy hai lane cùng l�
 được nó — Gate 1b chỉ kiểm đường dẫn mở được, Gate 1c chỉ kiểm một mã hai trạng thái. Cái chấm là
 mắt người, đúng như **ADR-035** luật 1 đã nói cho ranh giới pha.
 
-## Ba lời đang treo, và không lời nào được chuyển hộ
+## Hai lời đang treo, và không lời nào được chuyển hộ
 
 | Mã | Nội dung | Trạng thái hôm nay |
 |---|---|---|
 | **Đ-2** | thứ tự làm: đóng nốt chuỗi BA trước, rồi mới chạy nhánh admin | **điều kiện đã đủ** — BA-08…BA-13 đều `Done` tính tới 2026-09-04 — nhưng lời chốt **chưa được chủ quán xác nhận lại**, nên nó vẫn nằm ở `work/admin-questions.md` §1 |
 | **Đ-4** | mảng con người làm tới **cả ba mức**: trực trạm + chấm công + lương | **chưa xác nhận lại**, chưa về owner nào |
-| **U-034** | mục tổng nhập hàng ngày ghi **con số gì** | đang mở ở `docs/product/99-unknowns.md` — chặn bốn việc nhánh B |
+
+~~**U-034**~~ — mục tổng nhập hàng ngày ghi **con số gì** — **đóng 2026-09-06**: HAI con số, mua
+vào và đã dùng (`master_plan/shop-facts.md` §8.4). Bốn việc nhánh B (**ADM-10**…**ADM-13**) vẫn
+chặn bởi các câu `B11`…`B21` của chính nhánh B, chưa hết chặn.
 
 **Không phiên nào được chuyển Đ-2 hay Đ-4 về owner khi chủ quán chưa nhắc lại chúng** (`CLAUDE.md`
 §3.5). Đ-1 và Đ-3 đều đã đi qua đúng cửa ấy: chủ quán xác nhận lại rồi mới có T-040 và T-050. Việc
@@ -226,12 +234,12 @@ hai thứ không tồn tại. Nửa còn lại, **tiền đầu buổi**, thì c
 | giữa buổi có nộp bớt tiền không | **§8.5** — **không**, tiền ở két tới cuối buổi |
 | chỗ tiền đầu két đi vào phép đối soát 0đ | `quality/invariants.md` **I-021** (mới) — công thức, năm kịch bản kiểm |
 
-**Còn thiếu gì — và cả hai chỗ đều KHÔNG thuộc lane này:**
-- **U-038** — con số nhập vào máy là **một tổng** hay một **bảng theo mệnh giá**. Nó không đổi luật
-  ở §8.5 hay I-021; nó đổi **cách chứng minh** I-021 (một con số, hay khớp từng dòng). Câu của chủ
-  quán, không phải của lane.
+**Còn thiếu gì — và chỗ này KHÔNG thuộc lane này:**
+- ~~**U-038**~~ — con số nhập vào máy là một tổng hay một bảng theo mệnh giá — **đóng 2026-09-06:
+  CẢ HAI.** Không đổi luật ở §8.5 hay I-021; đổi **cách chứng minh** I-021 (tổng cộng dùng cho phép
+  trừ, bảng mệnh giá là cách đếm/kiểm). Ghi ở `master_plan/shop-facts.md` §8.5.
 - **Ai gõ con số ấy vào máy và gõ lúc nào.** Chủ quán nói *ai bỏ tiền vào két* (chính chủ quán),
-  không nói *ai gõ*. Không suy hộ (`CLAUDE.md` §3.5).
+  không nói *ai gõ*. Không suy hộ (`CLAUDE.md` §3.5) — vẫn chưa có lời.
 
 ⇒ **Phần nghiệp vụ của việc này xong.** Cái còn lại là chỗ cất con số và chỗ hiện nó ra — pha 2, 3,
 4 (**ADR-035**). Đừng viết lại luật ở đây: nó đã có owner (**F-001**).
@@ -299,7 +307,7 @@ tới, và **không** tự xếp thứ tự bưng.
 <a id="adm-03"></a>
 ### ADM-03 — "Khách vào khách ra" mới có nửa TRONG QUÁN; khách đứng chờ bàn không tồn tại ở đâu
 
-**L1** · nhánh A · **vẫn loại 1 — chặn bởi `U-039` `U-040`** (hẹp lại 2026-09-04, T-056: `A8` và `A9` đã có lời, `A7` chỉ trả lời vế đã có chủ)
+**L1** · nhánh A · **loại 2 — luật ĐÃ ĐỦ, thi công thuộc pha 2–4** (đóng 2026-09-06: `U-039` và `U-040` cả hai đã có lời)
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -316,49 +324,28 @@ Phiên bàn là khái niệm trung tâm của luồng ăn tại bàn (`architect
 nhất"*). Ghép bàn đã có luật (**ADR-027**: một phiên, một hoá đơn, chỉ ghép sang bàn **trống**) —
 luật ấy nói về *bàn trống*, tức nó đã giả định một **danh sách bàn** tồn tại.
 
-⚠️ **Sửa 2026-09-04 (T-053): tiền đề của việc này từng viết sai.** Bản đầu (T-052) viết *"số bàn
-và số chỗ ngồi chưa là dữ kiện ở `shop-facts.md`"*. Đo lại: **số bàn thì có**.
-`master_plan/shop-facts.md` **§1** chốt **Số bàn: 11**, cùng dòng bảng với giờ bán và múi giờ, và
-cũng từ **2026-08-30** (`397a8e9`). Còn thiếu **hai** thứ khác, không phải cả ba:
+⚠️ **Lịch sử tiền đề: sửa 2026-09-04 (T-053), hẹp lại 2026-09-04 (T-056), đóng 2026-09-06.**
+`master_plan/shop-facts.md` **§1** chốt **Số bàn** từ **2026-08-30** (`397a8e9`); ngày 2026-09-06
+chủ quán trả lời nốt hai vế còn thiếu, và cùng câu ấy báo một dữ kiện quán vừa đổi:
 
-| | Đã có chủ | Còn thiếu |
-|---|---|---|
-| **Số bàn** | `shop-facts.md` §1 — **11** | — |
-| **Số chỗ ngồi mỗi bàn** | — | ✗ |
-| **Bàn đã đánh số sẵn chưa** | — | ✗ — và đây là vế mà **ADR-027** cần |
+| | Trạng thái hôm nay |
+|---|---|
+| **Số bàn** | `shop-facts.md` §1 — **15** (đổi từ **11** ngày 2026-09-06: *"hôm nay tôi mua thêm bàn, hãy để 15 bàn"*) |
+| **Số chỗ ngồi mỗi bàn** | **4 chỗ/bàn** cho **mười một** bàn ban đầu (chủ quán chốt 2026-09-06, U-040). Bốn bàn mới **chưa** xác nhận — **U-042** (mới) |
+| **Bàn đã đánh số sẵn chưa** | **Đã đánh số**, cho mười một bàn ban đầu (U-040) — vế **ADR-027** cần coi như đủ cho 11 bàn cũ; bốn bàn mới chưa xác nhận cách đánh số — **U-042** |
 
-Chỗ đắt nhất là vế thứ ba: **một con số 11 không phải một danh sách bàn.** *"Chỉ ghép sang bàn
-trống"* cần gọi tên được **từng** bàn; biết có mười một cái mà không biết chúng tên gì thì luật ấy
-vẫn không kiểm chứng được. Đừng hỏi lại số bàn, và đừng để chủ quán trả lời lại nó (**F-029**).
+**Luật đã ở đâu, còn thiếu gì** (việc này chuyển sang **loại 2** — luật nghiệp vụ đủ, phần còn lại
+là thi công):
+- **Sức chứa** (bao nhiêu bàn, mấy chỗ mỗi bàn) và **có/không hàng chờ trong dữ liệu** — cả hai đã
+  chốt: **15 bàn**, **không** hàng chờ trong máy (POS tự điều phối, U-039, `shop-facts.md` §6.25).
+- **ADR-027 kiểm chứng được cho 11 bàn ban đầu** — có danh sách bàn gọi tên được (đã đánh số). Còn
+  hở cho **bốn bàn mới**: **U-042** (`docs/product/99-unknowns.md`), câu của chủ quán, không suy hộ
+  (`CLAUDE.md` §3.5) — đừng tự đánh số 12–15 hay giả định chúng cũng 4 chỗ.
+- **ADM-04** (tổng quan buổi sán) nay có mẫu số cho *"còn mấy bàn trống"* — 15, trừ số bàn có phiên
+  đang mở.
 
-**Không làm thì mất gì:**
-- **ADR-027 không kiểm chứng được**: có con số **11** (`shop-facts.md` §1) nhưng không có
-  **danh sách** bàn gọi tên được thì không có khái niệm *bàn trống* để so.
-- **ADM-04 (tổng quan buổi bán) không có mẫu số** — *"còn mấy bàn trống"* là con số đầu tiên bất
-  kỳ ai liếc màn tổng quan cũng tìm.
-
-**Chặn bởi — hỏi gì trước** (viết lại 2026-09-04, T-056, sau khi chủ quán trả lời nhóm A):
-
-**Đã có lời, và đã về owner** — `master_plan/shop-facts.md` **§6.25**:
-- `A9` → **cả hai đường đều đúng**: khách tự chọn bàn, đôi khi nhân viên xếp. ⇒ hệ thống **không
-  được** bắt buộc một trong hai.
-- `A8`, vế thứ nhất → **hàng chờ có thật ngoài đời**: có khách đứng chờ, quán xếp hàng chờ.
-- `A7`, vế *bao nhiêu bàn* → **11**, và con số ấy đã ở §1 từ **2026-08-30**.
-
-**Còn chặn — hai câu, và cả hai là câu của chủ quán:**
-- **U-039** (`docs/product/99-unknowns.md`) — *quán có muốn **máy** giữ hàng chờ không, và ai nhớ ai
-  tới trước.* Câu `A8` hỏi ba vế, chủ quán trả lời một. Hai đường ra là **hai hệ thống khác nhau**:
-  máy không giữ ⇒ hàng chờ không tồn tại trong dữ liệu; máy giữ ⇒ sinh một khái niệm mới, *khách
-  chưa có bàn*, đứng **trước** cả phiên bàn.
-- **U-040** — *mỗi bàn mấy chỗ ngồi, và 11 bàn đã đánh số sẵn chưa.* Chủ quán trả lời đúng vế đã có
-  chủ và không chạm hai vế này — **đúng chỗ `work/findings.md` F-029 đoán trước**. Vế *đã đánh số
-  chưa* là vế **ADR-027** đang cần: *chỉ ghép sang bàn trống* phải gọi tên được **từng** bàn.
-
-⚠️ **Đừng đặt tên bàn hộ chủ quán.** Đánh số 1…11 là dựng một dữ kiện quán chưa ai xác nhận; quán
-có thể đang gọi bàn theo chỗ (*bàn trong*, *bàn ngoài hiên*), và một cái tên sai thì người đứng quầy
-gõ sai bàn — tức món bưng sai chỗ (`CLAUDE.md` §3.5).
-
-**Acceptance · Verify:** trong file prompt viết lúc nhận việc.
+**Acceptance · Verify:** trong file prompt viết lúc nhận việc — bao gồm việc dựng danh sách 15 bàn
+(11 bàn cũ đã đánh số + 4 bàn mới, chờ **U-042**).
 
 [↑ đầu file](#top)
 
@@ -418,7 +405,7 @@ quán: con số ấy là **tạm tính trong buổi**, và không bao giờ đư
 <a id="adm-10"></a>
 ### ADM-10 — Mức "sổ ghi tay điện tử" đã chốt, nhưng cuốn sổ ấy ghi những dòng gì thì chưa ai kể tên
 
-**L1** · nhánh B · **chưa nhận được — chặn bởi `B11` `B12` và `U-034`**
+**L1** · nhánh B · **chưa nhận được — chặn bởi `B11` `B12`** (`U-034` đóng 2026-09-06, xem dưới)
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -443,9 +430,9 @@ tử** — người nhập con số, máy giữ và cộng, **máy không tự t
   nhập số thật và không tìm thấy dòng mình cần.
 
 **Chặn bởi — hỏi gì trước:**
-`B11` (kể tên thứ quán mua vào) · `B12` (mỗi thứ đơn vị gì) · và **U-034** — mục tổng hàng ngày ghi
-con số gì. `U-034` chặn thật chứ không chặn hình thức: ba đường ra *còn lại · mua vào · đã dùng*
-dẫn tới ba danh mục khác nhau, và đường *đã dùng* còn lật ngược chính mức sổ tay vừa chốt.
+`B11` (kể tên thứ quán mua vào) · `B12` (mỗi thứ đơn vị gì). ~~`U-034`~~ **đóng 2026-09-06**: mục
+tổng ghi HAI con số — mua vào và đã dùng (`master_plan/shop-facts.md` §8.4) — nên danh mục vẫn cần
+đủ **hai** con số ấy cho mỗi dòng, nhưng loại con số không còn là câu hỏi mở.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 
@@ -456,7 +443,7 @@ dẫn tới ba danh mục khác nhau, và đường *đã dùng* còn lật ngư
 <a id="adm-11"></a>
 ### ADM-11 — Tiền mua hàng đi ra khỏi quán mỗi ngày và không có một dòng nào trong hệ thống ghi lại
 
-**L2** · nhánh B · **chưa nhận được — chặn bởi `B13` `B14` `B15` `B16` `B17` và `U-034`**
+**L2** · nhánh B · **chưa nhận được — chặn bởi `B13` `B14` `B15` `B16` `B17`** (`U-034` đóng 2026-09-06)
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -495,7 +482,7 @@ này lên L2 chạm tiền thật.
 <a id="adm-12"></a>
 ### ADM-12 — Đồ hỏng, đồ đổ, đồ thừa cuối buổi là chi phí thật của quán và hôm nay không có chỗ nào nhận con số ấy
 
-**L2** · nhánh B · **chưa nhận được — chặn bởi `B18` (vế còn lại) `B19` `B20` và `U-034`**
+**L2** · nhánh B · **chưa nhận được — chặn bởi `B18` (vế còn lại) `B19` `B20`** (`U-034` đóng 2026-09-06)
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -509,18 +496,21 @@ một con số nguyên liệu đổi là có người nhập nó*.
 
 **Vì sao có việc này:**
 Chủ quán đã trả lời **một nửa** của `B18` ngày 2026-09-04: có **một mục tổng nhập hàng ngày, chủ
-quán tự nhập**. Nửa còn lại — *đếm những thứ gì*, và con số ấy có phải *đồ thừa* hay không — là
-**U-034**, đang mở. Đây là việc gần lời chốt nhất của cả nhánh B và cũng là việc dễ làm sai nhất:
-một mục nhập tổng làm đúng thì đóng cả `B18`, làm sai thì thành cái sổ không ai nhập.
+quán tự nhập**. Nửa còn lại — *đếm những thứ gì*, và con số ấy có phải *đồ thừa* hay không — chạm
+`U-034`, **đóng 2026-09-06**: mục tổng ghi **mua vào** và **đã dùng**, không ghi *đồ thừa* như một
+mục riêng. Đây là việc gần lời chốt nhất của cả nhánh B và cũng là việc dễ làm sai nhất: một mục
+nhập tổng làm đúng thì đóng cả `B18`, làm sai thì thành cái sổ không ai nhập.
 
 **Không làm thì mất gì:**
 - **Mục tổng hàng ngày mà chủ quán đã yêu cầu không có luật để dựng.** Chủ quán đã nói *sẽ nhập số
   liệu*; không có việc này thì lời hứa ấy không có chỗ đáp.
-- **ADM-13 (tồn ước tính) không có vế trừ.** Nhập vào có, dùng ra không, thì con số tồn chỉ tăng.
+- **ADM-13 (tồn ước tính) có vế trừ rồi, nhưng chưa có danh mục để chạy nó.** `U-034` đóng cho biết
+  *đã dùng* là số nhập tay, không phải số máy suy ra — nên tồn ước tính = cộng dồn (mua − dùng) là
+  làm được, miễn danh mục (`B11`/`B12`) đã có.
 
 **Chặn bởi — hỏi gì trước:**
 Vế còn lại của `B18` (đếm những thứ gì) · `B19` (đồ thừa để mai hay bỏ) · `B20` (hỏng/đổ/cháy giữa
-buổi có ai ghi không) · và **U-034**. Đọc `U-034` trước cả ba câu kia: nó quyết **con số nền**, và
+buổi có ai ghi không). ~~`U-034`~~ đã đóng, xem trên — nó quyết **con số nền**, và
 ba câu kia chỉ có nghĩa sau khi biết con số nền là gì.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
@@ -532,7 +522,7 @@ ba câu kia chỉ có nghĩa sau khi biết con số nền là gì.
 <a id="adm-13"></a>
 ### ADM-13 — Không có tồn thì không có "sắp hết", và không có "sắp hết" thì nút tạm dừng nhận đơn phải bấm bằng trí nhớ
 
-**L1** · nhánh B · **chưa nhận được — chặn bởi `B21` và `U-034`**
+**L1** · nhánh B · **chưa nhận được — chặn bởi `B21`** (`U-034` đóng 2026-09-06)
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -555,8 +545,9 @@ im lặng — người dùng tin nó đúng một lần, mất hàng một lần
   ở **L1** chứ không phải L2 — làm sai thì phiền, không mất tiền.
 
 **Chặn bởi — hỏi gì trước:**
-`B21` (nhắc dựa vào cái gì: chủ quán tự đặt ngưỡng, hay đếm tay rồi nhập) · và **U-034**. Trả lời
-*"tự đặt ngưỡng"* thì việc này rất rẻ; trả lời *"đếm tay rồi nhập"* thì nó gộp vào ADM-12.
+`B21` (nhắc dựa vào cái gì: chủ quán tự đặt ngưỡng, hay đếm tay rồi nhập). Trả lời *"tự đặt
+ngưỡng"* thì việc này rất rẻ; trả lời *"đếm tay rồi nhập"* thì nó gộp vào ADM-12. (`U-034` đóng
+2026-09-06 — con số nền nay là mua/dùng cộng dồn, xem ADM-12.)
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 

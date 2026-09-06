@@ -76,7 +76,7 @@ người + thủ tục giữ (máy chỉ nhắc, để vết) · **5** phép đ�
 | P1-01 | L2 | [`P1-01-ranh-gioi-so-huu-L2.md`](P1-01-ranh-gioi-so-huu-L2.md) — **đã chạy 2026-09-04** | — |
 | P1-02 | L2 | [`P1-02-ranh-gioi-he-thong-L2.md`](P1-02-ranh-gioi-he-thong-L2.md) | P1-01 ✔ |
 | P1-03 | L2 | [`P1-03-ngay-ban-L2.md`](P1-03-ngay-ban-L2.md) | P1-01 ✔ · ~~⛔ U-032~~ **đã đóng 2026-09-04** |
-| P1-04 | L2 | [`P1-04-invariant-tien-L2.md`](P1-04-invariant-tien-L2.md) | P1-01 ✔ · P1-03 ✔ · ⚠️ `U-036` · `U-037` · **F-026** |
+| P1-04 | L2 | [`P1-04-invariant-tien-L2.md`](P1-04-invariant-tien-L2.md) | P1-01 ✔ · P1-03 ✔ · `U-036` ✔ · `U-037` ✔ (đóng 2026-09-06) · **F-026** |
 | P1-05 | L2 | [`P1-05-invariant-vong-doi-L2.md`](P1-05-invariant-vong-doi-L2.md) | P1-01 ✔ |
 | P1-06 | L2 | [`P1-06-invariant-menu-gia-vet-L2.md`](P1-06-invariant-menu-gia-vet-L2.md) | P1-01 ✔ |
 | P1-07 | L2 | **chưa viết** — chờ ba bảng ba cột | P1-04 · P1-05 · P1-06 |

@@ -50,7 +50,7 @@ không sở hữu sự thật nào.
 |---|---|---|---|
 | ~~Đ-1~~ | Có mở lại ranh giới hệ thống không? | **Mở cả ba** — nguyên liệu, con người, tài chính vào phạm vi | ✅ **đã về owner 2026-09-02 (T-040)**: `docs/product/0-ba/ban-hang/01-actors-pham-vi.md` §1.4 · `docs/product/1-system-design/architecture.md` §10 · `master_plan/shop-facts.md` §7.1 |
 | Đ-2 | Thứ tự làm | **Đóng nốt BA-08 → BA-12 trước**, rồi mới chạy nhánh admin | `work/backlog.md` |
-| ~~Đ-3~~ | Nguyên liệu làm ở mức nào | **Sổ ghi tay điện tử** — máy **không** tự trừ kho theo công thức; **kèm một mục tổng nhập hàng ngày, chủ quán tự nhập** (thêm 2026-09-04) | ✅ **đã về owner 2026-09-04 (T-050)**: `master_plan/shop-facts.md` §8.4 · `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6 · mở **U-034** |
+| ~~Đ-3~~ | Nguyên liệu làm ở mức nào | **Sổ ghi tay điện tử** — máy **không** tự trừ kho theo công thức; **kèm một mục tổng nhập hàng ngày, chủ quán tự nhập** (thêm 2026-09-04) | ✅ **đã về owner 2026-09-04 (T-050)**: `master_plan/shop-facts.md` §8.4 · `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6 · mở **U-034** (đóng 2026-09-06) |
 | Đ-4 | Con người làm tới đâu | **Cả ba mức**: ai đang trực trạm + chấm công + tính lương | `master_plan/shop-facts.md` **§8** · `docs/product/1-system-design/architecture.md` **§14** (mục admin, ADR-013) |
 
 **Đ-1 lật ngược một câu đang nằm trong tài liệu — và câu ấy nay đã sửa (T-040, 2026-09-02).**
@@ -65,11 +65,11 @@ bánh ăn hết bao nhiêu gam gạo**. Định lượng từng thành phần l�
 tham số của phần mềm — cùng một lối nghĩ với lời chốt *"máy không gom, người gom"* (2026-08-31).
 Muốn biết giá vốn một suất thì phải mở lại câu này (**B22** bên dưới).
 
-**Và Đ-3 mở ra một câu mới, đúng lúc nó được xác nhận.** Lời chủ quán ngày 2026-09-04 nói **có mục
-gì** (một mục tổng), **nhịp nào** (hàng ngày) và **ai nhập** (chủ quán, bằng tay) — nhưng không
-nói **nhập con số gì**. Đó là **U-034**, và nó chặn cả nhánh B dưới đây: ba đường ra *còn lại /
-mua vào / đã dùng* dẫn tới ba mục khác hẳn nhau, và đường *đã dùng* còn lật ngược chính mức sổ tay
-vừa chốt. Không suy hộ (`CLAUDE.md` §3.5).
+**Và Đ-3 mở ra một câu mới, đúng lúc nó được xác nhận — đóng 2026-09-06.** Lời chủ quán ngày
+2026-09-04 nói **có mục gì** (một mục tổng), **nhịp nào** (hàng ngày) và **ai nhập** (chủ quán,
+bằng tay) — nhưng không nói **nhập con số gì**. Đó là **U-034**; chủ quán trả lời ngày 2026-09-06:
+mục tổng ghi **HAI** con số — **mua vào** và **đã dùng** — để biết thừa/thiếu. Ghi ở
+`master_plan/shop-facts.md` §8.4.
 
 ---
 
@@ -111,12 +111,12 @@ văn lời chủ quán nằm ở owner bên dưới, một chỗ, không có b�
 |---|---|---|
 | ~~`A1`~~ | chỉ bán **buổi sáng** — một buổi một ngày | `master_plan/shop-facts.md` **§6.23** · §1 (giờ **06:00–11:00**) · chỗ suy ra **S-7** ở §7.2 |
 | ~~`A2`~~ | **không** có mở ca / đóng ca — *"cứ đến giờ là bán rồi tối đếm tiền"* | **§6.23** · `docs/decisions.md` **ADR-038** |
-| ~~`A3`~~ | **có** tiền đầu két cho POS lấy tiền thối; máy giữ số mặc định **sửa được** | **§8.5** · `quality/invariants.md` **I-021** · còn mở: **U-038** |
+| ~~`A3`~~ | **có** tiền đầu két cho POS lấy tiền thối; máy giữ số mặc định **sửa được** | **§8.5** · `quality/invariants.md` **I-021** · mở U-038, đóng 2026-09-06: nhập cả bảng mệnh giá lẫn tổng |
 | ~~`A4`~~ | **không** ai lấy tiền giữa buổi; tiền ở két tới cuối buổi | **§8.5** · **I-021** |
 | ~~`A5`~~ | **POS quyết**, luật cơ sở **ai tới trước ăn trước** | **§6.24** |
 | ~~`A6`~~ | **đôi khi** ưu tiên **khách vội** | **§6.24** |
-| ~~`A7`~~ | **11 bàn** — đúng con số §1 đã có từ 2026-08-30 | §1 · **§6.25** · còn mở: **U-040** (mấy chỗ ngồi · đã đánh số chưa) |
-| ~~`A8`~~ | **có** khách đứng chờ, quán xếp hàng chờ | **§6.25** · còn mở: **U-039** (máy có giữ hàng chờ không · ai nhớ thứ tự) |
+| ~~`A7`~~ | **11 bàn** — đúng con số §1 đã có từ 2026-08-30 | §1 · **§6.25** · mở U-040, đóng 2026-09-06: 4 chỗ/bàn, đã đánh số — và số bàn đổi **11 → 15** trong cùng lời đáp; xem U-042 |
+| ~~`A8`~~ | **có** khách đứng chờ, quán xếp hàng chờ | **§6.25** · mở U-039, đóng 2026-09-06: **không**, POS tự điều phối |
 | ~~`A9`~~ | **cả hai** — khách tự chọn, đôi khi nhân viên xếp | **§6.25** |
 | ~~`A10`~~ | **sáu con số** cho mục tổng quan của chủ quán | **§8.6** · còn mở: **U-041** (*"còn thiếu gì"* là thiếu gì) |
 
@@ -157,8 +157,9 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 
 **B18.** Cuối buổi quán có **đếm lại đồ thừa** không? Đếm những thứ gì?
 > **Trả lời (2026-09-04, một nửa):** có một **mục tổng nhập hàng ngày**, chủ quán tự nhập số liệu.
-> Vế *"đếm những thứ gì"* — và cả việc con số ấy có phải *đồ thừa* hay không — **chưa trả lời**:
-> đó là **U-034** (`docs/product/99-unknowns.md`). Ghi ở `master_plan/shop-facts.md` §8.4.
+> **Loại con số ấy đã chốt 2026-09-06 (U-034, đóng):** mua vào và đã dùng — không phải một mục
+> *đồ thừa* riêng. Vế *"đếm những thứ gì"* (danh mục cụ thể) **vẫn chưa trả lời**. Ghi ở
+> `master_plan/shop-facts.md` §8.4.
 
 **B19.** **Đồ thừa** hôm nay để mai bán tiếp hay bỏ? Thứ nào để được, thứ nào không?
 > **Trả lời:**

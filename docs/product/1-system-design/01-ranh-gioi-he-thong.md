@@ -97,7 +97,7 @@ thêm dòng.
 | **PT-3** | **Quầy không bấm *"đã thu"* khi chưa nhìn thấy tiền về.** Hệ thống **không tự biết tiền đã về tài khoản** — đó là một tính chất cố định, không phải một chỗ chưa làm xong (xem khung dưới bảng). Khách không chuyển được thì trả **tiền mặt**, hoặc **ghi nợ** (§6.14) | **Người đứng quầy** — người trao hàng bấm (`architecture.md` §7); hệ thống chỉ **ghi lại** quyết định đó, không quyết thay | **Tại chỗ, trước khi khách rời quán hoặc trước khi người giao rời chỗ khách.** Không có đường bấm bù sau lưng khách |
 | **PT-4** | Phần **tiền mặt** vẫn đối soát với **két** như thường; phần **chuyển khoản** của ngày ấy **không có nguồn đối chiếu độc lập**. **Không cộng gộp hai phần lại** để một chỗ thừa che một chỗ thiếu (§6.10), và **không có nút *"đóng ca dù lệch"*** (`architecture.md` §6.4 luật 3) | **Chủ quán** — đối chiếu bằng chính bản ghi của tài khoản ấy (cùng ngân hàng ở PT-3, không phải một nguồn thứ tư), rồi ghi lý do lệch | **Ngay tối hôm ấy**, cùng lượt đối soát cuối ngày — ngưỡng lệch là **0đ** và *"lệch 1 đồng cũng phải tìm ra lý do"* (§6.10) |
 | **PT-5** | Đơn web **vẫn vào hệ thống**, chỉ là **không ai được báo**. Quầy **tự mở danh sách đơn chờ xác nhận** trên POS thay vì chờ báo — đơn chưa duyệt vẫn **không sinh việc ở trạm nào** (`shop-facts.md` §6.2), nên chỗ hỏng là **khách chờ**, không phải bếp làm sai | **Người đứng quầy** — vẫn là người nhìn thấy đơn đầu tiên (`03-lat-cat.md` §3.2.1 bước 6) | **Trong buổi bán, trước giờ hẹn của đơn sớm nhất**: `pickup` và `phone_preorder` đều mang mốc giờ khách cần hàng (`shop-facts.md` §5.2 điểm 5). Chờ tới cuối buổi là trễ hẹn |
-| **PT-6** | Bảng đối soát cuối ngày phải đọc được ***"còn N lượt bán trên giấy chưa nhập"*** — không có dòng ấy thì ngưỡng **0đ** báo lệch mà lý do chỉ là *chưa gõ xong* (§6.11) | **POS hoặc chủ quán** — người giữ sổ cũng là người nhập lại (§6.11) | **Ngay khi có thể** (§6.11). Doanh thu của lượt nhập bù rơi vào **ngày quán bán**, không phải ngày gõ (chủ quán chốt 2026-09-04, `U-032`) ⇒ **ngày còn lượt chưa nhập là ngày chưa đối soát xong** (`docs/decisions.md` **ADR-037**). *Ai chấm lại con số ấy: `U-037`* |
+| **PT-6** | Bảng đối soát cuối ngày phải đọc được ***"còn N lượt bán trên giấy chưa nhập"*** — không có dòng ấy thì ngưỡng **0đ** báo lệch mà lý do chỉ là *chưa gõ xong* (§6.11) | **POS hoặc chủ quán** — người giữ sổ cũng là người nhập lại (§6.11) | **Ngay khi có thể** (§6.11). Doanh thu của lượt nhập bù rơi vào **ngày quán bán**, không phải ngày gõ (chủ quán chốt 2026-09-04, `U-032`) ⇒ **ngày còn lượt chưa nhập là ngày chưa đối soát xong** (`docs/decisions.md` **ADR-037**). **Ai chấm lại con số ấy: POS hoặc chủ quán, cuối buổi bán hàng** (chủ quán chốt 2026-09-06, `U-037`, đóng) |
 
 **Sáu dòng trên KHÔNG cùng một loại: ba dòng là lời chốt, một dòng chốt một nửa, hai dòng là SUY
 RA.** Trộn hai loại ấy vào nhau đúng là chỗ `work/findings.md` **F-004** đã ghi, và `CLAUDE.md` §7.2
@@ -145,14 +145,9 @@ giữ lại ở đây để phiên sau đọc được lời chốt đã đi và
 
 | Mã | Lời chốt | Nó đổi dòng nào của mục này |
 |---|---|---|
-| ~~`U-032`~~ | doanh thu lượt nhập bù rơi vào **ngày quán bán** | **PT-6** ở §3 — và mở ra `U-037` dưới đây |
+| ~~`U-032`~~ | doanh thu lượt nhập bù rơi vào **ngày quán bán** | **PT-6** ở §3 — và mở ra `U-037`, đóng 2026-09-06 |
 | ~~`U-035`~~ | quán mất kết nối ⇒ **web ngừng nhận đơn**, khách gọi **hotline**, quán ghi giấy với POS | **PT-1** ở §2 và §3 |
-
-- **`U-037` — mở trong lượt đóng `U-032`.** Doanh thu rơi vào **ngày bán** nghĩa là con số của một
-  ngày **đã đối soát** đổi được về sau; `docs/decisions.md` **ADR-037** chốt hệ quả bắt buộc — *ngày
-  còn lượt chưa nhập là ngày **chưa** đối soát xong* — nhưng **ai ngồi lại chấm con số ấy khi `N` về
-  0, và lúc nào**, thì chưa ai nói. Chạm **PT-6**. Là **câu của chủ quán**, không phải chỗ để pha 1
-  tự chọn. Đọc ở [`docs/product/99-unknowns.md`](../99-unknowns.md).
+| ~~`U-037`~~ | **ai ngồi lại chấm con số của một ngày sau khi nhập bù, và lúc nào: POS hoặc chủ quán, cuối buổi bán hàng** (đóng 2026-09-06) | **PT-6** ở §3 |
 
 Một chỗ nữa **không phải câu hỏi nghiệp vụ**, nên nó không nằm trong `99-unknowns.md`:
 **`work/findings.md` F-027** — **PT-2** (*một máy chạy duy nhất*) và **PT-5** (*tên đường báo đơn*)

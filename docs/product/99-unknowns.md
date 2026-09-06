@@ -58,140 +58,6 @@ nợ), và không lời chốt nào phủ chiều ngược lại — tiền về
 hai mốc ấy còn có thể rơi vào hai ngày khác nhau, bảng §2 của
 `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` còn một hàng để trống.
 
-- **U-033 — một đơn bị HUỶ sau khi bếp đã làm xong phần của nó: chỗ bánh ấy có được tính cho một
-  bàn khác đang chờ cùng thứ, hay quán bỏ nó và làm lại từ đầu?** Câu này chạm thẳng con số
-  **nhu cầu** của §3.4: nếu chỗ đã làm ấy dùng lại được thì nhu cầu của **bàn khác** phải tụt
-  xuống ngay lúc đơn kia bị huỷ — tức một thao tác ở quầy làm đổi con số của một bàn không liên
-  quan. Ba luật quanh nó đều đã chốt mà không luật nào phủ được nó: đơn `Huỷ` rút **việc chưa
-  làm** khỏi bảng bếp (`shop-facts.md` §6.13, `05-vong-doi.md` §5.4) · quầy được huỷ đơn ở **mọi**
-  trạng thái, kể cả `Hoàn thành` (§6.19, đóng U-027) · và bảng ở quầy đếm *đã làm xong, còn ở bếp*
-  thành một con số riêng (§5.4, đóng S-4) — nhưng **không** chỗ nào nói con số ấy đi đâu khi chủ
-  của nó biến mất. **Ai trả lời được:** chủ quán. **Đang chặn:** `03-lat-cat.md` §3.4.5 đang chạy
-  bằng phương án **hẹp nhất** viết thẳng ra — *đã làm xong của bàn bị huỷ về không, nhu cầu mọi
-  bàn khác không đổi* — và phương án hẹp ấy có thể đúng là thứ quán **không** làm; pha 1 cũng
-  không tính được hao hụt nếu chưa biết chỗ bánh ấy đi đâu.
-  **Cách hỏi** (bài học S-4, `master_plan/shop-facts.md` §7.2 — hỏi về cái quán, đừng hỏi về cái
-  bảng trong máy): *"Bàn 5 huỷ đúng lúc bếp vừa tráng xong bánh của họ, mà bàn 8 đang chờ đúng
-  loại bánh ấy. Ở quán, chỗ bánh đó đi đâu?"*
-  *Mở 2026-09-03 · BA-12 · `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4.5.*
-
-- **U-034 — mục *tổng lưu trữ hàng ngày* ghi con số gì cho TỪNG THỨ trong danh mục: đồ còn lại
-  cuối buổi, đồ mua vào trong ngày, hay đồ đã dùng trong ngày?** *Thu hẹp 2026-09-04 (T-055), sau
-  khi chủ quán trả lời một nửa.* Câu gốc hỏi **một** con số cho cả mục; lời chủ quán bỏ đúng giả
-  định ấy — *"tuỳ từng nguyên liệu"* ⇒ mục tổng **không** có một loại số dùng chung, mỗi thứ trong
-  danh mục mang loại của riêng nó. Phần còn mở vì thế là **thứ nào mang loại nào**, và nó không nhỏ
-  đi: chưa thứ nào có lời. Ba đường ra vẫn khác hẳn nhau — *còn lại* là một lần đếm cuối buổi ·
-  *mua vào* là một phiếu nhập có giá và có người bán · *đã dùng* là con số duy nhất **không** đếm
-  được bằng mắt ở mức sổ tay, vì muốn có nó thì phải trừ theo công thức, đúng thứ lời chốt §8.4 nói
-  máy **không** làm.
-  **Cùng lượt ấy chủ quán kể ra danh mục, và nó rộng hơn hai chữ *nguyên liệu*** — ba nhóm nằm
-  chung một mục: **thực phẩm** (gạo · xương · mì chính · hạt nêm · rau…), **vật tư tiêu hao và bao
-  bì** (găng tay · cốc và nắp đựng canh · hộp đựng bánh cuốn · túi · khăn lau bàn · giấy ăn), và
-  **số điện · số nước** — nhóm thứ ba là **chỉ số công tơ**, không phải hàng có tồn, nên nó không
-  nhận được cả ba đường ra ở trên. Nguyên văn, giữ ở đây vì nó **chưa** được chép vào
-  `master_plan/shop-facts.md`: *"tuỳ từng nguyên liệu tôi sẽ tự nhập các nguyên liệu gồm gạo theo
-  kg, xương theo kg , mì chính theo goi hat nêm găng tay , số điện số nước, ra mùi tau , quát ,
-  cốc đụng canh nắp đựng cacnh , hộp đựng bánh cuốn túi chư T, túi z về cơ khăn lau bạn giấy ăn
-  về c"*. Câu ấy **đứt giữa chừng** và sai chính tả nhiều chỗ, nên đưa nó vào owner là dựng một dữ
-  kiện quán chưa ai đọc lại (`CLAUDE.md` §3.5 · §7.2, `work/findings.md` **F-001**): danh mục chỉ
-  lên `shop-facts.md` §8 sau khi chủ quán xác nhận lại **từng dòng** và **đơn vị tính** của nó.
-  **Ai trả lời được:** chủ quán. **Đang chặn:** `work/backlog_AD.md` nhánh B (**ADM-10** danh mục
-  và đơn vị tính · **ADM-11** phiếu nhập · **ADM-12** ghi hao hụt · **ADM-13** tồn ước tính và
-  nhắc sắp hết) — cả bốn đều phải biết con số nền của từng thứ trước khi có hình dạng, và đường
-  *đã dùng* còn lật ngược chính mức sổ tay của §8.4.
-  **Đừng suy hộ** (`CLAUDE.md` §3.5): đây là dữ kiện quán, không phải chỗ để phần mềm tự chọn — và
-  *"tuỳ từng nguyên liệu"* làm chỗ suy hộ **rẻ hơn** chứ không đắt hơn, vì nay chỉ cần đoán sai một
-  dòng là sai một dòng, không ai thấy.
-  **Cách hỏi** (bài học S-4, `master_plan/shop-facts.md` §7.2 — hỏi về cái quán, đừng hỏi về cái
-  bảng trong máy), nay hỏi **theo từng thứ**, không hỏi một câu chung: *"Cuối buổi anh ngồi xuống
-  nhập. Với gạo, anh nhập số cân còn lại trong thùng, hay số cân anh mua sáng nay? Với găng tay
-  thì anh nhập số nào? Còn số điện số nước — anh chép chỉ số trên công tơ, đúng không?"*
-  *Mở 2026-09-04 · T-050 · thu hẹp cùng ngày · T-055 · `master_plan/shop-facts.md` §8.4.*
-
-- **U-037 — hôm sau nhập bù xong chỗ bán trên sổ giấy, AI ngồi lại đối soát ngày mất điện một lần
-  nữa, và lúc nào?** Ngày 2026-09-04 chủ quán chốt lượt bán trên giấy tính doanh thu **ngày quán
-  bán** (`master_plan/shop-facts.md` §6.11, trả lời `U-032`). Hệ quả bắt buộc, đã ghi thành
-  `docs/decisions.md` **ADR-037**: **một ngày còn lượt chưa nhập là một ngày chưa đối soát xong**,
-  nên khi `N` về 0 thì con số của ngày ấy đổi và **phải có người chấm lại nó** — nếu không thì
-  ngưỡng lệch **0đ** (§6.10) chỉ được chạy trên một con số mà ai cũng biết là chưa đủ. Lời chốt nói
-  **doanh thu rơi vào ngày nào**; nó **không** nói ai chấm lại và lúc nào. **Ai trả lời được:** chủ
-  quán. **Đang chặn:** `quality/invariants.md` **I-014** (kịch bản *nhập bù* mới thêm nói ngày ấy
-  *"mới đối soát xong"* mà chưa nói ai làm việc ấy) · **P1-04** (bảng ba cột nhóm TIỀN — ô *phép đối
-  chiếu* của `I-014`) · và màn đối soát ở `docs/product/1-system-design/architecture.md` §6.4.
-  **Đừng suy hộ** (`CLAUDE.md` §3.5): chỗ này quyết một ngày tiền được coi là đã chốt hay chưa.
-  **Cách hỏi** (bài học S-4, `master_plan/shop-facts.md` §7.2 — hỏi về cái quán, đừng hỏi về cái
-  bảng trong máy): *"Tối hôm mất điện anh đối soát rồi, nhưng còn 30 suất trên giấy chưa gõ. Sáng
-  hôm sau gõ xong, anh có ngồi xuống soát lại tiền của hôm mất điện một lần nữa không, hay thôi?"*
-  *Mở 2026-09-04 · T-054 · `docs/decisions.md` **ADR-037**.*
-
-Câu tiếp theo vào đây dưới dạng một gạch đầu dòng, đúng hợp đồng dưới; mục này rỗng cũng là trạng
-thái bình thường, không phải dấu hiệu quên ghi.
-
-Hình dạng của mục là hợp đồng với `scripts/brief.sh` (ADR-007): **mỗi** câu trên là **một gạch đầu
-dòng**, và câu tiếp theo cũng phải vào đây dưới dạng ấy. `master_plan/shop-facts.md` §7.2 — chỗ giữ
-các mục **suy ra** chưa xác nhận — giữ **S-5** (bấm *"đã bưng ra bàn"* theo đơn vị nào); đó là chỗ
-- **U-036 — một khoản khách TRẢ TRƯỚC mà quán nhận hôm nay, cho đơn giao vào một ngày khác, thì
-  doanh thu tính vào ngày nào: ngày quán nhận tiền, hay ngày quán giao hàng?** Và trước đó một
-  bước: **quán có nhận đơn đặt trước cho một ngày sau không?** `shop-facts.md` §6.3 cho khách của
-  cả ba kênh mang đi chọn **trả trước**, và chốt rằng POS xác nhận *"vào lúc tiền thật sự tới tay
-  quán"*; §5.2 điểm 5 nói `pickup` có **giờ hẹn lấy** và `phone_preorder` là **đơn đặt trước** —
-  không câu nào buộc giờ hẹn ấy nằm trong cùng ngày. **Đây là chiều NGƯỢC của §6.14.** Luật nợ chốt
-  ca tiền về **sau** một lần bán đã xong (⇒ ngày ghi nợ, `shop-facts.md` §6.14); ca tiền về
-  **trước** một lần bán chưa xong thì chưa ai chốt, và luật hoàn ở §6.4 cũng không phủ nó.
-  **Ai trả lời được:** chủ quán. **Đang chặn:** hàng cuối bảng §2 của
-  `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` (**P1-03**), và qua đó cột *phép đối
-  chiếu* của `I-014` ở **P1-04**. **Vì sao không được suy hộ** (`CLAUDE.md` §3.5): cả hai đường ra
-  đều động vào cùng thứ mà `U-032` đang đe doạ. Tính doanh thu về **ngày giao hàng** thì ngày nhận
-  tiền có tiền trong két mà không có doanh thu ⇒ ngưỡng lệch **0đ** (§6.10) báo lệch, trừ khi công
-  thức đối soát `architecture.md` §6.4 mọc thêm một dòng — mà thêm dòng vào cổng chất lượng mạnh
-  nhất của dự án là quyết định của chủ quán, không phải của pha 1. Tính về **ngày nhận tiền** thì
-  doanh thu được ghi cho một bữa ăn **chưa bán**, và một lần huỷ hôm sau (§6.3 ⇒ hoàn theo §6.4,
-  rơi vào ngày hoàn) để lại doanh thu ảo ở ngày trước đó.
-  **Cách hỏi** (bài học S-4, `shop-facts.md` §7.2 — hỏi về cái quán, đừng hỏi về cái bảng trong
-  máy): *"Có khách nào gọi điện tối nay đặt bánh cho sáng mai, và trả tiền luôn tối nay không? Nếu
-  có, khi anh xem doanh thu, anh muốn tiền ấy nằm ở ngày anh nhận tiền hay ngày anh đưa bánh?"*
-  *Mở 2026-09-04 · P1-03 · `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` §4.*
-
-- **U-038 — tiền đầu két nhập vào máy là MỘT con số tổng, hay một bảng theo TỪNG MỆNH GIÁ?** Chủ
-  quán ngày 2026-09-04 (`A3`) kể ra mệnh giá — *"khoảng 1 triệu tiêng 50k, 20k, 10k. 100k tiền 5k,
-  100k tiêng 2k và 1k"* — nhưng nói **"để số cố định"** ở **số ít**. Hai cách đọc, và chúng không
-  cùng một hệ thống. **Ai trả lời được:** chủ quán. **Đang chặn:** `master_plan/shop-facts.md`
-  §8.5, `quality/invariants.md` **I-021** (phép trừ tiền đầu két khỏi tiền két), và
-  `work/backlog_AD.md` **ADM-41** · **ADM-44**. **Vì sao không được suy hộ** (`CLAUDE.md` §3.5):
-  đây là câu quyết định **cách đếm cuối ngày ở ngưỡng 0đ** (§6.10). Một **số tổng** thì cuối ngày
-  người đếm chỉ cần một con số, và một tờ 50k đổi thành năm tờ 10k trong buổi **không** làm lệch gì.
-  Một **bảng theo mệnh giá** thì cuối ngày phải đếm từng mệnh giá, và đúng lần đổi tiền thối ấy làm
-  bảng lệch trong khi tổng vẫn khớp — tức ngưỡng 0đ báo đỏ ở một ca **không phải mất tiền**. Chọn
-  sai đường thì cổng chất lượng mạnh nhất của dự án kêu oan mỗi ngày, và người dùng học cách bỏ qua
-  nó. **Cách hỏi** (bài học S-4 — hỏi về cái quán): *"Tối đếm két, anh đếm một lượt ra tổng bao
-  nhiêu, hay anh đếm riêng từng loại tờ 50, tờ 20, tờ 10?"*
-  *Mở 2026-09-04 · T-056 · `master_plan/shop-facts.md` §8.5.*
-
-- **U-039 — quán có muốn MÁY giữ hàng chờ bàn không, và ai nhớ ai tới trước?** Câu `A8` hỏi ba vế;
-  chủ quán ngày 2026-09-04 trả lời **một** vế — *"có khách đứng chờ, xếp hàng chờ"* — tức hàng chờ
-  **có thật ngoài đời**. Hai vế còn lại chưa có lời: **máy có giữ nó không**, và **ai là người nhớ
-  thứ tự**. **Ai trả lời được:** chủ quán. **Đang chặn:** `work/backlog_AD.md` **ADM-03**, và vế
-  *"còn mấy bàn trống"* của **ADM-04**. **Vì sao không được suy hộ:** hai đường ra là hai hệ thống
-  khác nhau, không phải hai mức chi tiết của một hệ thống. **Máy không giữ** thì hàng chờ không tồn
-  tại trong dữ liệu và §6.24 (*ai tới trước ăn trước*) chỉ áp cho khách **đã ngồi**. **Máy giữ**
-  thì sinh ra một khái niệm mới — *khách chưa có bàn* — đứng trước cả phiên bàn, thứ
-  `architecture.md` §3.1 gọi là *"chỗ dễ mất tiền nhất"*, và nó phải có luật cho ca khách bỏ đi.
-  **Cách hỏi:** *"Lúc đông, có ai ghi lại thứ tự người đứng chờ không, hay mọi người tự nhớ? Anh có
-  muốn máy nhắc anh ai tới trước không?"*
-  *Mở 2026-09-04 · T-056 · `master_plan/shop-facts.md` §6.25.*
-
-- **U-040 — mười một cái bàn ấy mỗi cái mấy CHỖ NGỒI, và đã ĐÁNH SỐ sẵn chưa?** Câu `A7` hỏi ba
-  vế; chủ quán ngày 2026-09-04 trả lời đúng **vế đã có chủ** — *"quán có 11 bàn"*, con số đã nằm ở
-  `master_plan/shop-facts.md` §1 từ **2026-08-30**. Hai vế còn sống thì không. **Ai trả lời được:**
-  chủ quán. **Đang chặn:** `work/backlog_AD.md` **ADM-03** (sức chứa), và **`docs/decisions.md`
-  ADR-027** — luật *một phiên, một hoá đơn, chỉ ghép sang bàn **trống*** cần gọi tên được **từng**
-  bàn, mà **một con số 11 không phải một danh sách bàn**. **Vì sao không được suy hộ:** đánh số
-  1…11 hộ chủ quán là dựng một dữ kiện quán chưa ai xác nhận — quán có thể đang gọi bàn theo chỗ
-  (*bàn trong*, *bàn ngoài hiên*), và một cái tên sai thì người đứng quầy gõ sai bàn, tức món bưng
-  sai chỗ. **Cách hỏi:** *"Anh gọi các bàn là gì — bàn 1 bàn 2, hay bàn trong bàn ngoài? Mỗi bàn
-  ngồi được mấy người?"*
-  *Mở 2026-09-04 · T-056 · `master_plan/shop-facts.md` §6.25 · §1.*
-
 - **U-041 — mục tổng quan bày *"còn thiếu gì không"*: thiếu NGUYÊN LIỆU, thiếu NGƯỜI, hay thiếu
   MÓN trên menu?** Chủ quán ngày 2026-09-04 (`A10`) kết câu trả lời bằng đúng bốn chữ ấy và không
   nói thêm. **Ai trả lời được:** chủ quán. **Đang chặn:** `master_plan/shop-facts.md` §8.6 (vế thứ
@@ -204,7 +70,23 @@ các mục **suy ra** chưa xác nhận — giữ **S-5** (bấm *"đã bưng ra
   hàng để làm, thiếu người làm, hay hết món để bán?"*
   *Mở 2026-09-04 · T-056 · `master_plan/shop-facts.md` §8.6.*
 
-**suy ra**, không phải câu hỏi đang mở, nên nó không nằm ở đây.
+**Ngày 2026-09-06, chủ quán trả lời cả BẢY câu còn mở lúc đó trong một lượt** — `U-033`, `U-034`,
+`U-036`, `U-037`, `U-038`, `U-039`, `U-040` — đóng nốt xuống [Đã có lời giải](#da-co-loi-giai) ngay
+dưới đây; nguyên văn và chi tiết từng câu ở đó. Chỉ `U-041` ở trên là còn sống từ trước lượt này.
+Cùng lượt ấy, câu trả lời `U-040` làm lộ một dữ kiện quán vừa đổi — số bàn tăng từ 11 lên 15 — mà
+chỗ ngồi và cách đánh số của bốn bàn mới thì chưa ai hỏi; đó mở ra **U-042** ngay dưới đây.
+
+- **U-042 — bốn bàn quán vừa mua thêm (nâng tổng từ 11 lên 15): mỗi bàn mấy CHỖ NGỒI, và đánh số
+  nối tiếp (12–15) hay theo cách khác?** Mở ra từ chính câu trả lời `U-040`: chủ quán trả lời đủ ba
+  vế của câu hỏi gốc cho **mười một** bàn ban đầu (4 chỗ/bàn, đã đánh số), rồi tự thêm một dữ kiện
+  mới — *"hôm nay tôi mua thêm bàn, hãy để 15 bàn"* — mà không nói gì về hình dạng của bốn bàn
+  thêm. **Đừng suy hộ** (`CLAUDE.md` §3.5): đừng đọc bốn bàn mới là "cũng 4 chỗ", đừng tự đánh số
+  12–15 — quán có thể đặt bàn mới ở một khu riêng và gọi tên khác hẳn. **Ai trả lời được:** chủ
+  quán. **Đang chặn:** `docs/decisions.md` **ADR-027** (*chỉ ghép sang bàn **trống*** cần gọi tên
+  được **từng** bàn — vế này giờ đủ cho 11 bàn cũ, còn hở cho 4 bàn mới) và `work/backlog_AD.md`
+  **ADM-03** (sức chứa). **Cách hỏi** (bài học S-4 — hỏi về cái quán): *"Bốn bàn mới anh vừa mua,
+  mỗi bàn ngồi được mấy người, và anh định gọi chúng là bàn số mấy?"*
+  *Mở 2026-09-06 · trả lời `U-040` · `master_plan/shop-facts.md` §1 · §6.25.*
 
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
@@ -224,6 +106,26 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Ngày 2026-09-06, chủ quán trả lời cả BẢY câu còn mở trong một lượt, và mục *Đang mở* chỉ còn lại
+`U-041` cũ cộng `U-042` mới mở ra từ chính lượt này.** Bảy câu đóng chạm năm chỗ khác nhau của
+nghiệp vụ: một ca huỷ đơn ở bếp, một mục nhập nguyên liệu, một luật doanh thu mới, một câu hỏi
+"ai chấm lại", một cách đếm tiền, một luật hàng chờ, và một dữ kiện quán (số bàn) vừa đổi ngay
+trong câu trả lời.
+
+| Câu hỏi cũ | Lời giải (chủ quán, 2026-09-06) | Ghi ở |
+|---|---|---|
+| ~~U-033 — đơn HUỶ sau khi bếp đã làm xong phần của nó: chỗ bánh ấy đi đâu~~ | **Tính cho một bàn khác đang chờ đúng thứ đó; POS chọn bàn nhận và cập nhật** — nguyên văn: *"tính vào bàn khác, pos sẽ cập nhật bánh này đem ra cho bàn nào."* Nhu cầu của bàn nhận giảm đúng phần vừa nhận; phần đã huỷ không còn tính vào nhu cầu của bàn cũ. | `shop-facts.md` §5.4 |
+| ~~U-034 — mục tổng hàng ngày ghi con số gì cho từng thứ~~ | **HAI con số: đồ MUA VÀO trong ngày, và đồ ĐÃ DÙNG trong ngày** — để chủ quán tự biết thừa/thiếu; nguyên văn: *"đồ mua trong ngày và đồ dùng trong ngày để tôi biết còn thừa thiếu bao nhiêu."* "Đã dùng" là số chủ quán tự ước lượng và nhập tay, không phải số máy suy ra — không lật ngược mức sổ tay của §8.4. Danh mục cụ thể (thứ nào, đơn vị gì) **vẫn chưa chốt**. | `shop-facts.md` §8.4 |
+| ~~U-036 — trả trước hôm nay cho đơn giao ngày khác, doanh thu tính ngày nào~~ | **Ngày GIAO hàng**, không phải ngày nhận tiền; và quán chỉ nhận đặt trước **tối đa MỘT ngày** — nguyên văn: *"quán nhận đơn trước 1 ngày, doanh thu tính vào ngày đem hàng cho khách."* Chiều ngược và đối xứng với luật nợ (§6.14). ⇒ Công thức đối soát §6.4 cần thêm một dòng cho khoản đã vào két nhưng chưa vào doanh thu. | `shop-facts.md` §6.26 · `docs/decisions.md` **ADR-040** · `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` §2 |
+| ~~U-037 — sau khi nhập bù xong, ai chấm lại ngày mất điện, lúc nào~~ | **POS hoặc chủ quán, vào CUỐI BUỔI BÁN HÀNG** — nguyên văn: *"pos hoặc chủ quán cuối buổi bán hàng."* Cùng người, cùng nhịp đã làm việc đối soát hằng ngày ở §6.10 — không phải vai trò mới. | `shop-facts.md` §6.27 · `quality/invariants.md` **I-014** |
+| ~~U-038 — tiền đầu két nhập MỘT tổng hay bảng theo mệnh giá~~ | **CẢ HAI** — bảng theo từng mệnh giá VÀ tổng cộng — nguyên văn: *"tổng của từng mệnh giá và tổng của tất cả các mệnh giá cộng lại với nhau."* Phép trừ của I-021 dùng tổng cộng; bảng mệnh giá chỉ là cách đếm/kiểm. | `shop-facts.md` §8.5 |
+| ~~U-039 — quán có muốn MÁY giữ hàng chờ bàn không, ai nhớ ai tới trước~~ | **KHÔNG — POS tự điều phối khách chờ khi cần** — nguyên văn: *"không. pos sẽ điều phối khách nếu cần."* Khách chưa có bàn không phải một khái niệm dữ liệu; §6.24 vẫn chỉ áp cho khách đã ngồi. | `shop-facts.md` §6.25 |
+| ~~U-040 — mỗi bàn mấy chỗ ngồi, đã đánh số sẵn chưa~~ | **4 chỗ/bàn (11 bàn ban đầu), đã đánh số** — nguyên văn: *"11 bàn mỗi bàn 4 chỗ, đã đánh số."* **Cùng câu, chủ quán báo một dữ kiện vừa đổi:** *"hôm nay tôi mua thêm bàn, hãy để 15 bàn"* ⇒ Số bàn **11 → 15**. *Chỗ ngồi/đánh số của 4 bàn mới **chưa** trả lời ⇒ mở **U-042**.* | `shop-facts.md` §1 · §6.25 |
+
+**Đừng đọc bảy dòng trên như bảy chỗ độc lập:** `U-040` tự mở ra `U-042` ngay trong lời đáp của nó
+(bảng trên, dòng cuối) — đúng hình dạng mà `U-032` từng mở ra `U-037` ngày 2026-09-04. Một câu trả
+lời đầy đủ cho câu hỏi cũ vẫn có thể để lộ một câu hỏi mới; đóng câu cũ không có nghĩa hết việc.
 
 **Ngày 2026-09-04, chủ quán trả lời HAI câu trong một lượt** (T-054). Hai câu ở hai đầu khác nhau
 của cùng một buổi mất điện — một câu về **đơn nào được vào**, một câu về **tiền rơi vào ngày nào** —

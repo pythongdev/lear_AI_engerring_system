@@ -237,7 +237,7 @@ Ba luật khi điền:
 
 ## 8. Chỗ đang chặn, và hai thứ đang sai
 
-**Đang chặn — không bước nào được tự quyết thay** (`CLAUDE.md` §3.5). Bảng đo lại **2026-09-04**;
+**Đang chặn — không bước nào được tự quyết thay** (`CLAUDE.md` §3.5). Bảng đo lại **2026-09-06**;
 số dòng ở đây là phép đếm của người viết, đếm lại ở `docs/product/99-unknowns.md` và
 `master_plan/shop-facts.md` §7.2 (**F-003**):
 
@@ -246,12 +246,12 @@ số dòng ở đây là phép đếm của người viết, đếm lại ở `d
 | ~~**U-031**~~ | ~~với đơn **giao tận nơi**, ai bấm mốc *"đã ra bàn"* của từng việc trạm~~ — **đóng 2026-09-04** (T-055, *"pos"*: quầy bấm, không có ngoại lệ); P1-05 · P1-07 · P1-09 hết bị nó chặn. *Vế **lúc nào** thành **S-6** ở `shop-facts.md` §7.2 — chỗ **suy ra**, vẫn không được dựng màn như thể đã chốt* | — | — |
 | ~~**U-032**~~ | ~~lượt bán ghi trên **sổ giấy** hôm mất điện, hôm sau mới nhập — doanh thu tính ngày nào~~ — **chủ quán trả lời 2026-09-04: *ngày BÁN*** (T-054, `shop-facts.md` §6.11 · **ADR-037**) ⇒ P1-03 và P1-04 hết bị nó chặn | — | — |
 | ~~**U-035**~~ | ~~quán mất mạng mà hệ thống vẫn sống: khách web vẫn đặt được, quán không thấy~~ *(mở 2026-09-04 bởi P1-02)* — **chủ quán trả lời cùng ngày: *web ngừng nhận đơn, khách gọi hotline*** (T-054, `quality/invariants.md` **I-008**) ⇒ chưa kịp chặn bước nào | — | — |
-| **U-037** | nhập bù xong thì **ai** ngồi lại đối soát ngày mất điện, **lúc nào** *(mở 2026-09-04, do chính lời chốt U-032 đẻ ra — **ADR-037**)* | P1-04 (`I-014`) | chủ quán |
+| ~~**U-037**~~ | ~~nhập bù xong thì **ai** ngồi lại đối soát ngày mất điện, **lúc nào**~~ — **đóng 2026-09-06: POS hoặc chủ quán, cuối buổi bán hàng** ⇒ P1-04 hết bị nó chặn | — | — |
 | **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** (`shop-facts.md` §7.2 — chỗ **suy ra**, chưa hỏi) | P1-07 · P1-09 | chủ quán |
 | ~~**BA-12**~~ | ~~lát cắt sản xuất theo mẻ chưa có mục nào~~ — **xong 2026-09-04** (`31fb071`), §3.4 đã có; P1-07 và P1-09 hết bị nó chặn | — | — |
-| **U-033** | đơn bị **huỷ** sau khi bếp đã làm xong phần của nó: chỗ ấy tính cho bàn khác đang chờ, hay bỏ và làm lại? *(mở 2026-09-03 bởi chính BA-12)* | P1-05 · P1-07 · P1-09 | chủ quán |
+| ~~**U-033**~~ | ~~đơn bị **huỷ** sau khi bếp đã làm xong phần của nó: chỗ ấy tính cho bàn khác đang chờ, hay bỏ và làm lại?~~ — **đóng 2026-09-06: tính cho bàn khác đang chờ, POS chọn bàn nhận và cập nhật** ⇒ P1-05 · P1-07 · P1-09 hết bị nó chặn | — | — |
 | **U-035** | quán **mất mạng** giữa buổi trong khi hệ thống vẫn sống: khách web vẫn đặt được, quán không thấy, và nút *Tạm dừng nhận đơn* nằm sau đúng đường mạng vừa mất *(mở 2026-09-04 bởi chính P1-02)* | P1-08 | chủ quán |
-| **U-036** | khoản **trả trước** nhận hôm nay cho đơn giao ngày khác tính doanh thu ngày nào — chiều **ngược** của luật nợ §6.14 *(mở 2026-09-04 bởi chính P1-03)* | **P1-03** (hàng cuối bảng §2) · P1-04 (`I-014`) | chủ quán |
+| ~~**U-036**~~ | ~~khoản **trả trước** nhận hôm nay cho đơn giao ngày khác tính doanh thu ngày nào~~ — **đóng 2026-09-06: ngày GIAO, đối xứng với luật nợ §6.14 (ADR-040)** ⇒ P1-03 · P1-04 hết bị nó chặn | — | — |
 
 **Cách hỏi, không phải chuyện lễ nghi — nó đã hỏng một lần và tốn một ngày.** Câu hỏi `S-4` ngày
 2026-08-31 hỏi *"bảng ở quầy hiện bàn 5 còn thiếu 3 hay đã đủ"* và chủ quán trả lời **"tôi không
