@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Quality gate — runs Gate 3 (scope), Gate 1b (links), Gate 1c (doc status),
-# Gate 1 (verify), then Gate 7 (commit).
+# Gate 1d (phase boundary), Gate 1 (verify), then Gate 7 (commit).
 #
 # Wired as a Stop hook in .claude/settings.json, which calls it as
 #   ./scripts/gate.sh --hook
@@ -12,6 +12,9 @@
 # check-links.sh và check-doc-status.sh KHÔNG bị bỏ qua: tài liệu là thứ repo này
 # sản xuất, nên lượt chỉ đổi tài liệu là lượt duy nhất trước đây không bị máy chấm
 # gì cả (ADR-005) — và cũng đúng là lượt sinh ra lỗi mà Gate 1c bắt (ADR-032).
+# check-phase-boundary.sh (Gate 1d, CLAUDE.md §2.2, ADR-039) runs right after
+# doc-status for the same reason: it too only lives in docs/product/1-system-design/
+# and would sleep through a documentation-only turn if it sat in verify.sh.
 # check-commit-block.sh runs only in hook mode (it needs the transcript) and only
 # after the gate is green: no point asking for a commit message for a red change.
 
@@ -49,6 +52,13 @@ else
 fi
 
 if out="$(./scripts/check-doc-status.sh 2>&1)"; then
+  report="$report"$'\n'"$out"
+else
+  report="$report"$'\n'"$out"
+  failed=1
+fi
+
+if out="$(./scripts/check-phase-boundary.sh 2>&1)"; then
   report="$report"$'\n'"$out"
 else
   report="$report"$'\n'"$out"

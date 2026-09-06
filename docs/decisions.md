@@ -53,8 +53,10 @@ có câu trả lời mới từ người.
 | ADR-034 | Pha 1 có **sổ task riêng** `work/backlog_SD.md` giữ **mô tả**; `work/backlog.md` vẫn giữ **trạng thái** | Đã chốt 2026-09-04 | — | sửa một luật của **ADR-033** |
 | ADR-035 | Sở hữu chạy theo **pha**: lược đồ ở **pha 2**, hợp đồng API ở **pha 3**, route ở **pha 4**; **tầng bảo vệ** của từng invariant ở **pha 1** | Đã chốt 2026-09-04 | — | mở khoá **P1-02…P1-12**; sửa một câu của **ADR-014** |
 | ADR-036 | Mảng **admin** có sổ task riêng `work/backlog_AD.md` giữ **mô tả**; ranh giới giữa ba sổ nay là **LANE**, không phải pha | Đã chốt 2026-09-04 | — | sửa luật 3 của **ADR-034** |
-| ADR-037 | Lượt bán trên **sổ giấy** tính doanh thu **ngày bán** ⇒ ngày còn `N > 0` là ngày **chưa đối soát xong**; ngưỡng **0đ** giữ nguyên | Đã chốt 2026-09-04 | — | sửa câu hệ quả của **I-014**; **U-037** còn mở |
-| ADR-038 | Quán **không có mở ca / đóng ca** ⇒ mốc gom tiền nhỏ nhất là **ngày bán**, và **tiền đầu két gắn vào ngày bán** chứ không vào một biến cố ca | Đã chốt 2026-09-04 | — | **I-021** mới; **U-038** còn mở; ADM-01 co lại |
+| ADR-037 | Lượt bán trên **sổ giấy** tính doanh thu **ngày bán** ⇒ ngày còn `N > 0` là ngày **chưa đối soát xong**; ngưỡng **0đ** giữ nguyên | Đã chốt 2026-09-04 | — | sửa câu hệ quả của **I-014**; **U-037** đóng 2026-09-06 — POS/chủ quán, cuối buổi bán hàng |
+| ADR-038 | Quán **không có mở ca / đóng ca** ⇒ mốc gom tiền nhỏ nhất là **ngày bán**, và **tiền đầu két gắn vào ngày bán** chứ không vào một biến cố ca | Đã chốt 2026-09-04 | — | **I-021** mới; **U-038** đóng 2026-09-06 — nhập cả bảng mệnh giá lẫn tổng; ADM-01 co lại |
+| ADR-039 | `CLAUDE.md` §2.2 có thêm dòng chủ **quy ước code** (pha 2) và Gate 1d (`check-phase-boundary.sh`) chấm máy phần phổ biến nhất của ranh giới pha; §3 có cột **Cưỡng chế bởi**; §8 hết mâu thuẫn "bốn dòng" | Đã chốt 2026-09-06 | — | sửa một câu của **ADR-035** |
+| ADR-040 | Trả trước cho đơn đặt trước ngày SAU tính doanh thu vào **ngày GIAO**, không phải ngày nhận tiền; quán nhận đặt trước **tối đa một ngày** | Đã chốt 2026-09-06 | — | công thức đối soát `architecture.md` §6.4 cần thêm một dòng; **U-036** đóng |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -2555,9 +2557,12 @@ thể, không có mốc giờ cứng"* chỉ đứng được nếu **không nh�
 `docs/product/1-system-design/01-ranh-gioi-he-thong.md` §3 (**PT-6**) ·
 **ADR-022** (ngưỡng 0đ — không đổi) · **ADR-019** (luật nợ — cùng chiều).
 
-**Chỗ còn hở, ghi thẳng ở đây.** ADR này nói *ngày ấy chưa đóng sổ khi `N > 0`*; nó **không** nói
-**ai** ngồi lại đối soát ngày ấy sau khi nhập xong, và **lúc nào**. Đó là `U-037`
-(`docs/product/99-unknowns.md`) — câu của **chủ quán**, không phải chỗ để pha 1 tự chọn.
+**Chỗ hở đã lấp, 2026-09-06.** ADR này nói *ngày ấy chưa đóng sổ khi `N > 0`*; nó không nói **ai**
+ngồi lại đối soát ngày ấy sau khi nhập xong, và **lúc nào** — đó là `U-037`
+(`docs/product/99-unknowns.md`). Chủ quán trả lời: **POS hoặc chủ quán, vào cuối buổi bán hàng**
+— nguyên văn *"pos hoặc chủ quán cuối buổi bán hàng."* Cùng người, cùng nhịp đã làm việc đối soát
+hằng ngày ở `shop-facts.md` §6.10 — không phải một vai trò mới, không phải một mốc vận hành mới.
+Ghi ở `master_plan/shop-facts.md` §6.27.
 
 ### ADR-038 — Quán không có "mở ca / đóng ca", nên tiền đầu két gắn vào NGÀY BÁN chứ không vào một biến cố ca
 
@@ -2607,10 +2612,139 @@ không có mốc mở và mốc đóng nào để định nghĩa, vì quán khô
 két) nay đã có luật ở §8.5 và I-021. ⇒ ADM-01 chuyển sang **loại 2** — luật đã đủ, phần còn lại
 thuộc pha 2–4.
 
-**Chỗ ADR này KHÔNG chốt:**
-- **Con số tiền đầu két nhập vào máy là một tổng hay một bảng theo mệnh giá** — **U-038**, và nó
-  quyết định cách đếm cuối ngày ở ngưỡng 0đ. ADR này đúng cho cả hai đường ra.
+**Chỗ ADR này KHÔNG chốt, và một chỗ đã lấp sau đó:**
+- ~~Con số tiền đầu két nhập vào máy là một tổng hay một bảng theo mệnh giá~~ — **U-038, đóng
+  2026-09-06: CẢ HAI.** Nguyên văn: *"tổng của từng mệnh giá và tổng của tất cả các mệnh giá cộng
+  lại với nhau."* Máy giữ một bảng theo mệnh giá **và** hiện tổng cộng; phép trừ của I-021 dùng
+  tổng cộng, bảng mệnh giá là cách đếm/kiểm cuối ngày. Ghi ở `master_plan/shop-facts.md` §8.5.
 - **Ai nhập con số ấy, và nhập lúc nào.** Chủ quán nói *ai bỏ tiền vào két* (chính chủ quán), không
-  nói *ai gõ nó vào máy*. Không suy hộ (`CLAUDE.md` §3.5).
+  nói *ai gõ nó vào máy*. Không suy hộ (`CLAUDE.md` §3.5) — vẫn chưa có lời.
 - **Tên bảng, tên cột, endpoint, route** — pha 2, 3, 4 (**ADR-035**).
+
+### ADR-039 — Gate 1d chấm máy phần phổ biến nhất của ranh giới pha; `CLAUDE.md` thêm chủ cho quy ước code, cột *Cưỡng chế bởi*, và hết mâu thuẫn ở §8
+
+**Trạng thái:** Đã chốt 2026-09-06 (T-059), sau khi chủ repo yêu cầu đọc kỹ một vòng rà soát
+`CLAUDE.md` (bên ngoài, dạng hội thoại) cộng hai file nháp đưa kèm trong phiên — một bản viết lại
+`CLAUDE.md` và một script gate mới — rồi cập nhật `CLAUDE.md` và thêm lệnh mới. Hai file nháp đó
+nằm ngoài cấu trúc repo (không phải `work/proposals/`, chưa từng được git track); nội dung của
+chúng đã hợp nhất vào `CLAUDE.md` và `scripts/` theo mô tả ở mục *Decision* dưới đây, nên hai file
+gốc không còn lý do để giữ lại — xoá chúng không mất dữ kiện nào, chỉ chưa ai bấm xoá.
+
+**Vấn đề nó giải quyết.**
+`ADR-035` (2026-09-04) chốt ranh giới sở hữu chạy theo pha, và tự thừa nhận một lỗ hổng ngay trong
+câu chữ của nó: *"no gate here can read that boundary. P1-12 and human eyes are the only check."*
+Một LLM viết tài liệu pha 1 rất dễ trượt đúng chỗ này — nó *biết* schema, endpoint, route trông thế
+nào, nên câu nó viết ra rất hợp lý dù sai chủ. Vòng rà soát cũng chỉ ra ba chỗ khác đã mục nát trong
+`CLAUDE.md`: (1) không dòng nào sở hữu **quy ước code** (stack, cấu trúc thư mục, đặt tên, khung
+test) dù pha 2 sắp mở và sẽ cần nó; (2) bảng nghĩa vụ ở §3 không phân biệt luật có script chặn với
+luật chỉ trông chờ tự giác; (3) §8 tự mâu thuẫn — nói *"L0 xong sau bốn dòng"* trong khi khối
+*Every level* mang **sáu** dòng, hai trong số đó (*Handed off*, *Report kèm link câu hỏi mở*) là
+nghĩa vụ của backlog/scope mà một task L0 (không entry, không scope) không thể đáp ứng.
+
+**Ba đường, và vì sao chọn đường thứ ba cho từng chỗ:**
+
+| Chỗ hổng | Đường bị bác | Đường chọn |
+|---|---|---|
+| Ranh giới pha không ai canh | Không làm gì thêm — giữ nguyên "P1-12 và mắt người" | Cố ý bảo thủ, không định lượng hết: viết **Gate 1d**, một cổng bắt lớp vi phạm phổ biến nhất (từ khoá SQL, `GET/POST/... + /api/`, thẻ JSX) trong `docs/product/1-system-design/`, và **im lặng khi không chắc** — không thay P1-12, chỉ hẹp phần việc lại cho nó |
+| Quy ước code chưa có chủ | Để trống tới khi pha 2 mở | Thêm dòng *chưa có owner* vào bảng §2.2 **ngay bây giờ**, cùng nhóm với schema — vì lỗ hổng chỉ lộ ra **sau khi** phiên đầu tiên đã bịa xong, lúc đó sửa là viết lại chứ không phải khai chủ |
+| Luật tự giác và luật có script trộn lẫn trong một bảng | Giữ nguyên, tin rằng đọc kỹ sẽ phân biệt được | Thêm cột **Cưỡng chế bởi** — tách hai loại tường minh, vì đúng lúc context đầy và task dài là lúc luật *tự giác* rơi trước, và người đọc cần biết trước cái nào |
+| §8 nói bốn dòng, có sáu | Đổi câu chữ cho khớp sáu dòng | Đổi khối **L0** cho khớp bốn dòng thật, và chuyển hai dòng backlog/scope xuống **L1 trở lên** — đúng chỗ chúng có nghĩa (L0 không có entry, không có scope) |
+
+**Decision:**
+
+1. **`scripts/check-phase-boundary.sh` (Gate 1d)** chạy trong `./scripts/gate.sh`, ngay sau
+   `check-doc-status.sh` (Gate 1c) và trước `verify.sh` — cùng lý do ADR-032 đặt Gate 1c ở đó: lỗi
+   này chỉ sống trong tài liệu pha 1, và một lượt chỉ đổi tài liệu là lượt `verify.sh` bỏ qua. Gate
+   tự thoát sớm (exit 0) khi không có gì trong `docs/product/1-system-design/` đổi trong lượt này;
+   chấm cả file **git đang theo dõi** (thay đổi chưa commit) lẫn file **chưa track** trong thư mục
+   đó, cùng luật ADR-003 áp dụng cho từng loại. Một trích dẫn cố ý đi vào
+   `scripts/check-phase-boundary.ignore`, mỗi dòng một chuỗi con kèm lý do — cùng khuôn với
+   `check-links.ignore`.
+2. **`CLAUDE.md` §2.2** ("chưa có chủ") có thêm dòng **quy ước code: stack, cấu trúc thư mục, đặt
+   tên, khung test**, sinh ra cùng lúc với schema ở pha 2 — sửa một câu của **ADR-035**, vốn chỉ
+   liệt kê ba dòng (schema, hợp đồng API, route/component) mà bỏ sót quy ước code.
+3. **`CLAUDE.md` §3** có thêm cột **Cưỡng chế bởi**, ghi tên gate/hook cho nghĩa vụ có script chặn,
+   và *"tự giác"* cho nghĩa vụ không có gì đỡ.
+4. **`CLAUDE.md` §8** khối **L0** rút còn đúng bốn dòng (gate xanh, đọc diff, dữ kiện bền đã ghi,
+   khối commit); *"backlog và scope khớp thực tế"* và *"báo cáo kèm link câu hỏi mở"* chuyển xuống
+   **L1 trở lên**, nơi backlog entry và scope thật sự tồn tại.
+5. **`CLAUDE.md` §6.1** khối commit thêm một dòng lệnh `git diff --name-only HEAD` để lấy danh sách
+   file **từ git**, không từ trí nhớ của phiên — một phiên dài, nhiều file dễ nhớ sót hoặc nhớ thừa,
+   còn máy thì không.
+6. Số ghi ở CLAUDE.md §1 mở đầu bằng một dòng nói sản phẩm là gì (bán hàng + quản trị cho một quán
+   ăn, chi tiết ở `master_plan/shop-facts.md`) — trước đó file này không câu nào nói, và một phiên
+   cold nhận quy trình trước khi biết đang xây gì.
+
+**Applies to:**
+`CLAUDE.md` §1 · §2.2 · §3 · §5 · §6.1 · §8 · `scripts/gate.sh` · `scripts/check-phase-boundary.sh`
+(mới) · `scripts/check-phase-boundary.test.sh` (mới) · **ADR-035** (sửa một câu).
+
+**Chỗ ADR này KHÔNG chốt:**
+- **Gate 1d không bắt hết mọi vi phạm ranh giới pha** — nó cố ý bảo thủ (từ khoá SQL, verb HTTP +
+  `/api/`, thẻ JSX-giống). Một câu văn mô tả bảng hay endpoint bằng lời, không bằng cú pháp, vẫn lọt
+  qua máy; P1-12 và mắt người vẫn là lớp cuối, không đổi so với ADR-035.
+- **Nội dung thật của quy ước code** (stack cụ thể, tên thư mục) — dòng mới ở §2.2 chỉ khai **chủ**,
+  không viết quy ước; nội dung đến ở pha 2, cùng `docs/product/2-db/` (ADR-035).
+- **Không viết lại toàn bộ `CLAUDE.md` sang tiếng Việt hay đổi số mục** — bản nháp do chủ repo đưa
+  có làm việc đó; ADR này áp dụng đúng phần sửa lỗi đã đo được (bốn chỗ ở trên) trên bản hiện hành,
+  giữ nguyên số mục §1…§8 vì gần 200 chỗ khác trong repo
+  trỏ `CLAUDE.md §X.Y` và không chỗ nào trỏ theo số dòng — đổi số mục sẽ không làm gate nào đỏ (Gate
+  1b chỉ chấm đường dẫn, không chấm số mục) nhưng âm thầm làm sai ngữ cảnh của gần 200 trích dẫn đó.
+
+### ADR-040 — Trả trước cho một đơn đặt trước NGÀY SAU tính doanh thu vào NGÀY GIAO, không phải ngày nhận tiền
+
+**Trạng thái:** Đã chốt 2026-09-06, sau khi **chủ quán trả lời `U-036`** bằng một câu: *"quán nhận
+đơn trước 1 ngày, doanh thu tính vào ngày đem hàng cho khách."*
+
+**Vấn đề nó giải quyết.**
+`U-036` mở ra ngày 2026-09-04 (P1-03, trong lúc định nghĩa *một ngày bán*) và hỏi đúng chiều ngược
+của luật nợ ở `shop-facts.md` §6.14: nợ là tiền về **sau** một lần bán **đã xong** (⇒ tính vào ngày
+bán); trả trước cho một đơn đặt trước ngày khác là tiền về **trước** một lần bán **chưa xong**, và
+không luật nào chốt sẵn nó rơi vào ngày nào. Trước đó một bước, câu hỏi còn treo cả tiền đề: **quán
+có nhận đặt trước cho một ngày sau không?**
+
+Hai đường ra, và cả hai đều động vào ngưỡng lệch **0đ** (`shop-facts.md` §6.10, **ADR-022**) — đúng
+hình dạng mà `U-032`/**ADR-037** đã gặp:
+
+| Đường | Hỏng ở đâu |
+|---|---|
+| Tính vào **ngày nhận tiền** | Doanh thu được ghi cho một bữa ăn **chưa bán**; một lần khách huỷ hôm sau (hoàn theo §6.4, rơi vào ngày hoàn) để lại doanh thu ảo ở ngày đã nhận tiền |
+| ✅ Tính vào **ngày giao/lấy hàng** | Đúng chiều với mọi luật *doanh thu tính ngày việc bán thật sự xảy ra* đã có (nợ, hoàn, sổ giấy) — nhưng để lại một khoản đã vào két mà chưa vào doanh thu, đúng một ngày |
+
+**Decision:**
+
+1. **Doanh thu của một khoản trả trước rơi vào NGÀY GIAO/LẤY hàng**, không phải ngày quán nhận
+   tiền (`shop-facts.md` §6.26, chủ quán chốt 2026-09-06). Đây là chiều **đối xứng** của luật nợ ở
+   §6.14 — cả hai đều lấy mốc theo **ngày việc bán thật sự xảy ra**, không theo ngày tiền đổi tay.
+2. **Quán chỉ nhận đặt trước cho TỐI ĐA một ngày sau**, không xa hơn. Không có ca "trả trước hôm
+   nay cho đơn ba ngày sau" — câu hỏi tiền đề của `U-036` đóng bằng giới hạn này.
+3. **Một khoản trả trước nhận hôm nay cho đơn giao ngày mai nằm trong két hôm nay nhưng KHÔNG vào
+   doanh thu hôm nay.** Công thức đối soát §6.4 (`docs/product/1-system-design/architecture.md`)
+   cần thêm một dòng cho khoản này — đối xứng với dòng *nợ ghi trong ngày* nhưng ngược chiều: nợ là
+   một khoản **thiếu** trong doanh thu hôm nay mà đã tính; trả trước là một khoản **thừa** trong két
+   hôm nay mà chưa tính.
+
+**Why.**
+Nợ và trả trước là hai mặt của cùng một trục — *tiền và việc bán không xảy ra cùng lúc* — và trục ấy
+đã có một chiều được chốt (nợ ⇒ ngày bán). Chốt chiều còn lại theo **cùng nguyên tắc** (ngày việc
+bán, không phải ngày tiền) giữ cho I-014 chỉ có **một** ý tưởng thay vì hai ý tưởng ngược nhau tuỳ
+chiều tiền chảy. Đường *ngày nhận tiền* phá đúng điều I-014 đang giữ — *doanh thu một ngày đã đối
+soát không bao giờ đổi về sau* — theo một cách mới: nó ghi trước một khoản mà việc bán còn có thể
+không xảy ra (khách huỷ), nên con số hôm nhận tiền phải chờ ngày mai mới biết có đúng không.
+
+**Rejected alternatives:**
+- *Doanh thu tính ngày nhận tiền.* Bác — chủ quán chốt ngược lại, và nó ghi doanh thu cho một bữa
+  ăn chưa chắc xảy ra.
+- *Không giới hạn khoảng cách nhận đặt trước.* Bác — chủ quán tự giới hạn **một ngày**; giữ nguyên
+  giới hạn ấy thay vì suy rộng ra, đúng luật *"chính xác N chỉ khi N là quyết định"* (`CLAUDE.md`
+  §7.2).
+
+**Applies to:**
+`master_plan/shop-facts.md` §6.26 · `quality/invariants.md` **I-014** (hàng thứ tư của bảng ngày) ·
+`docs/product/1-system-design/02-thoi-gian-ngay-ban.md` §2 (hàng *trả trước*) ·
+`docs/product/1-system-design/architecture.md` §6.4 (công thức đối soát, dòng mới) · **ADR-037**
+(cùng trục, chiều nợ).
+
+**Chỗ ADR này KHÔNG chốt:** câu chữ và cơ chế của dòng mới trong công thức đối soát §6.4 — đó là
+việc của bước đọc §2 của `02-thoi-gian-ngay-ban.md` (P1-04 trở đi), không phải của ADR này.
 

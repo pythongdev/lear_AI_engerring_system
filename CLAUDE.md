@@ -2,14 +2,21 @@
 
 ## 1. Overview
 
+**Product:** hệ thống bán hàng + quản trị cho một quán ăn duy nhất — bán tại
+quầy, giao hàng, mang đi, đặt trước qua điện thoại — qua năm kênh bán, phục vụ
+cả luồng bán hàng và ba mảng quản trị (nguyên liệu, con người, tài chính). Dữ
+kiện đầy đủ: `master_plan/shop-facts.md`.
+
 This repository is an AI-assisted development operating system: a small set of
-canonical documents, a task backlog, and three shell gates that make every
-change verifiable.
+canonical documents, a task backlog, and shell gates that make every change
+verifiable.
 
 This file is the entry point for any AI session working in this repo. Read it
 first, every session, before touching anything else. It says where facts live,
 how to work, and what "done" means. It does not repeat those facts — it points
-at their single owner.
+at their single owner. Mechanism detail for a given gate lives in that script's
+own header comment, not here — this file loads into every session, so every
+extra line is fixed tax.
 
 Ceremony scales with risk (L0–L3): most changes owe almost nothing, a few owe a
 lot. The levels are defined in `README.md`, what each one costs here is §3, and
@@ -35,6 +42,7 @@ is a bug to fix now.
 | Phụ thuộc ngoài của hệ thống + đường suy giảm của từng cái | `docs/product/1-system-design/01-ranh-gioi-he-thong.md` — pha 1, sinh ra ở P1-02 |
 | Định nghĩa **một ngày bán** cho phép cộng tiền + mốc tính tiền + nguồn thời gian | `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` — pha 1, sinh ra ở P1-03 |
 | Schema: tên bảng, tên cột, khoá ngoại | **chưa có owner** — sinh ra ở **pha 2**, cùng `docs/product/2-db/` (ADR-035) |
+| Quy ước code: stack, cấu trúc thư mục, đặt tên, khung test | **chưa có owner** — sinh ra ở **pha 2**, cùng `docs/product/2-db/` (ADR-035, ADR-039). Không ai sở hữu dòng này thì phiên đầu tiên viết code sẽ tự bịa quy ước, và cái bịa đó thành fact vì không có chủ để đối chiếu |
 | Hợp đồng API: endpoint, quyền theo vai, chữ ký | **chưa có owner** — sinh ra ở **pha 3**, cùng `docs/product/3-be/` (ADR-035) |
 | Route, component | **chưa có owner** — sinh ra ở **pha 4**, cùng `docs/product/4-fe/` (ADR-035) |
 | Tasks — trạng thái của **mọi** task (`Ready`/`In Progress`/`Done`) | `work/backlog.md` |
@@ -49,14 +57,16 @@ is a bug to fix now.
 | Shop facts: scope, channels, prices, flows, business rules | `master_plan/shop-facts.md` |
 | Proposals about this system that were **not** adopted | `work/proposals/` |
 
-Four of the rows above are the **phase ownership boundary** (`docs/decisions.md`
-ADR-035, 2026-09-04). Three of them say *chưa có owner* on purpose: the folder of
+Five of the rows above are the **phase ownership boundary** (`docs/decisions.md`
+ADR-035, 2026-09-04). Four of them say *chưa có owner* on purpose: the folder of
 a phase is created together with that phase's first line of content, never before
 — so when `docs/product/2-db/` opens, the row changes to the real file name **in
 the same change**. Until then no document may name a table, an endpoint or a
 route: a phase writing what a later phase owns is a bug even when every gate is
-green, because no gate here can read that boundary. P1-12 and human eyes are the
-only check.
+green. `scripts/check-phase-boundary.sh` (Gate 1d, §5, ADR-039) catches the most
+common shape of this inside `docs/product/1-system-design/` — SQL keywords, HTTP
+verbs + `/api/`, JSX-looking tags — but it is deliberately conservative and does
+not catch everything. P1-12 and human eyes remain the last layer.
 
 Behavior is cut by phase under `docs/product/`; which file owns which section is
 in `docs/product/00-index.md`, which owns no fact itself. `docs/product.md` is the
@@ -90,8 +100,8 @@ work/              backlog.md (trạng thái mọi task), backlog_SD.md (mô t�
                    proposals/ — not adopted, owns nothing
 quality/           invariants.md, review-gate.md
 scripts/           gate.sh → check-scope.sh + check-links.sh
-                   + check-doc-status.sh + verify.sh + check-commit-block.sh;
-                   brief.sh (§7);
+                   + check-doc-status.sh + check-phase-boundary.sh + verify.sh
+                   + check-commit-block.sh; brief.sh (§7);
                    hooks/ → commit-msg (Gate 8, §6.2), install-hooks.sh
 master_plan/       domain facts for the current project
 prompt/            prompt sets built from master_plan/
@@ -103,15 +113,21 @@ prompt/            prompt sets built from master_plan/
 Ceremony follows risk. Pick the level by what breaks if the change is wrong, not
 by the size of the diff (levels: `README.md`). **Most changes are L0 or L1.**
 
-| Obligation | L0 | L1 | L2 | L3 |
-|---|:--:|:--:|:--:|:--:|
-| `./scripts/gate.sh` passes | ✓ | ✓ | ✓ | ✓ |
-| Entry in `work/backlog.md` | — | ✓ | ✓ | ✓, split into L1/L2 |
-| `work/scope.txt` declared | — | ✓ | ✓ | ✓ |
-| Acceptance written *before* the change | — | ✓ | ✓ | ✓ |
-| Regression test for the related invariant | — | — | ✓ | ✓ |
-| ADR in `docs/decisions.md` | — | — | if a design choice was made | ✓ |
-| Design reviewed before any code | — | — | — | ✓ |
+| Obligation | L0 | L1 | L2 | L3 | Enforced by |
+|---|:--:|:--:|:--:|:--:|---|
+| `./scripts/gate.sh` passes | ✓ | ✓ | ✓ | ✓ | Stop hook |
+| Entry in `work/backlog.md` | — | ✓ | ✓ | ✓, split into L1/L2 | *self-discipline* |
+| `work/scope.txt` declared | — | ✓ | ✓ | ✓ | Gate 3 (partial) |
+| Acceptance written *before* the change | — | ✓ | ✓ | ✓ | *self-discipline* |
+| Regression test for the related invariant | — | — | ✓ | ✓ | Gate 1, if the test exists |
+| ADR in `docs/decisions.md` | — | — | if a design choice was made | ✓ | *self-discipline* |
+| Design reviewed before any code | — | — | — | ✓ | *self-discipline* |
+
+The last column is the most important one in this table. An obligation with a
+script behind it does not need to be remembered — the script will say so. An
+obligation marked *self-discipline* has nothing catching it: when context is
+full and the task is long, those are exactly the ones that get dropped first.
+Re-read that column before starting an L2+ task.
 
 L0 is a real level, not a loophole: a typo, a formatting run, a mechanical rename
 is *change → gate → done*, no paperwork. A change is L1+ once it alters behavior,
@@ -192,8 +208,8 @@ It runs, in order:
    delete it; nothing else will stop you.
 2. `scripts/check-links.sh` (Gate 1b) — every path a **pointer document** names
    must open. Runs on **every** turn, including documentation-only ones: docs are
-   what this repo produces, and step 3 is skipped for exactly those turns
-   (ADR-005). `work/` and `prompt/maintenance/` are not checked — a dead path
+   what this repo produces, and step 5 (`verify.sh`) is skipped for exactly those
+   turns (ADR-005). `work/` and `prompt/maintenance/` are not checked — a dead path
    quoted there is evidence, not a bug. A path that deliberately does not exist
    goes in `scripts/check-links.ignore` with its owner; an ignore line that stops
    matching turns the gate red until it is removed.
@@ -211,11 +227,20 @@ It runs, in order:
    broken sentence quoted there is evidence. A deliberate quote goes in
    `scripts/check-doc-status.ignore` with its reason, and an ignore line that
    stops matching turns the gate red until it is removed.
-4. `scripts/verify.sh` (Gate 1) — Go: `gofmt` check, `go build`, `go test`;
+4. `scripts/check-phase-boundary.sh` (Gate 1d) — a conservative pattern check
+   inside `docs/product/1-system-design/`: it fails a phase-1 file that names a
+   table, a column, an HTTP verb + `/api/`, or a JSX-looking tag — the shapes
+   §2 says belong to phase 2/3/4 (ADR-035, ADR-039). Runs on every turn, exits 0
+   immediately when nothing in that directory changed; deliberately catches only
+   the common shapes and stays silent when unsure — P1-12 and human eyes are
+   still the last layer (§2). A deliberate quote goes in
+   `scripts/check-phase-boundary.ignore`, one substring per line with a reason
+   comment above it.
+5. `scripts/verify.sh` (Gate 1) — Go: `gofmt` check, `go build`, `go test`;
    Node: `npm test` / `lint` / `build` when present, then every
    `scripts/*.test.sh`. Skipped when the change touches documentation only.
-5. `scripts/check-commit-block.sh` (Gate 7) — **hook mode only**, and only once
-   the four above are green: tracked changes are waiting to be committed, so the
+6. `scripts/check-commit-block.sh` (Gate 7) — **hook mode only**, and only once
+   the five above are green: tracked changes are waiting to be committed, so the
    turn must hand over the commit block (§6.1). Untracked files and
    `work/scope.txt` never trigger it, and it asks once per state of the tree.
    It then asks a second question — **what is in that block** (Gate 7b,
@@ -251,13 +276,19 @@ So the closing report of **every task**, and of **every session** for whatever i
 still uncommitted, ends with:
 
 ```bash
+# get the candidate list from git, don't reconstruct it from memory:
+git diff --name-only HEAD | grep -v '^work/scope\.txt$'
+
 git add CLAUDE.md work/backlog.md
 git commit -m "T-XXX: what changed" -m "Why it changed.
 Verified: ./scripts/gate.sh green."
 ```
 
-- **List the files, one by one.** Never `git add -A`, never `.` — the block must
-  stage this task's files and nothing that happened to be lying around.
+- **List the files, one by one, taken from the command above.** Never
+  `git add -A`, never `.` — the block must stage this task's files and nothing
+  that happened to be lying around. Read the list off git, not off memory: a
+  session that recalls which files it touched will occasionally miss one or
+  add one that isn't there; `git diff --name-only HEAD` doesn't.
 - **`work/scope.txt` is never in the block** (§6 above; the two times it was
   committed are `work/backlog.md` T-016).
 - **Subject follows §6:** `T-XXX: what changed`, imperative, ≤ 72 chars, written
@@ -428,17 +459,12 @@ Anything true only inside your head is lost. Before finishing:
 
 Tiered like §3 — an L0 change is done after four lines, not eleven.
 
-**Every level**
+**L0 — four lines**
 
 - [ ] `./scripts/gate.sh` passes (§5).
 - [ ] You read your own diff.
-- [ ] Any rule, decision, invariant, or unknown you hit is recorded in its owner
-      (§2, §4), written so the next session can trust it (§7.2).
-- [ ] Handed off: backlog and `work/scope.txt` match reality (§7.3).
+- [ ] Any durable fact you hit (if any) is recorded in its owner (§2, §4, §7.2).
 - [ ] Commit content handed over as a paste-ready block (§6.1).
-- [ ] Report: what changed, how it was verified (with command output), what is
-      still unresolved — each open question named there carries a link to the
-      line it is written on, grepped in this turn (§7.3).
 
 **L1 and up, additionally**
 
@@ -446,6 +472,10 @@ Tiered like §3 — an L0 change is done after four lines, not eleven.
       output pasted (`quality/review-gate.md` Gate 2).
 - [ ] Diff checked against the red-flag table in Gate 4.
 - [ ] Task moved to *Done* in `work/backlog.md`; `work/scope.txt` cleared.
+- [ ] Handed off: backlog and `work/scope.txt` match reality (§7.3).
+- [ ] Report: what changed, how it was verified (with command output), what is
+      still unresolved — each open question named there carries a link to the
+      line it is written on, grepped in this turn (§7.3).
 
 **L2 and up, additionally**
 
