@@ -4,6 +4,16 @@
 > Đọc `docs/decisions.md` **ADR-014**, và đọc **khối *SỬA ĐỔI 2026-09-02* ở cuối mục ấy trước** —
 > phần thân của ADR còn nói trục *mảng*, khối sửa đổi mới là bản có hiệu lực (trục **pha**).
 
+> ## 📕 F-019 — đọc trước khi tin bất cứ câu nghiệm thu đếm chữ nào sau lượt này
+>
+> Chính banner `# §N — <tên>` mà lượt này gắn lên đầu mỗi file con (*Constraints* → *Chuyển
+> nguyên văn*) là nguồn sinh ra bug: nó đẻ thêm một tiêu đề **H1** mang **cùng chữ** với tiêu đề
+> `## N.` vốn đã có trong nội dung chuyển nguyên văn. Từ đây, mọi câu nghiệm thu ở các prompt khác
+> đếm chữ trong tiêu đề (`grep '<chữ>'  # phải rỗng`) đều có nguy cơ hụt — xem `work/findings.md`
+> **F-019** (bài học đầy đủ, đo thật trên §3). Ai chạy lại lượt tách kiểu này (dựng thêm H1 khi
+> chuyển nguyên văn một mục) thì **chạy thử** mọi câu nghiệm thu đếm tiêu đề của các prompt liên
+> quan **sau khi** banner đã lên, đừng chỉ tin số chỗ đã đếm trước đó.
+
 ## Context
 
 - `docs/product.md` đo **2026-09-02: 1998 dòng**, và còn tăng mỗi ngày chuỗi BA còn chạy. Nó là

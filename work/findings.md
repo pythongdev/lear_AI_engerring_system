@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 32 finding — 21 Fixed/Resolved, 11 Open (đo lại 2026-09-07, sau khi T-035 đóng F-014). Cột **Status** ở đây là một bản
+Tổng: 32 finding — 24 Fixed/Resolved, 8 Open (đo lại 2026-09-07, sau khi đóng F-018). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -79,13 +79,13 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-015 | Đóng unknown chỉ sửa chỗ trả lời, không sửa chỗ được nhắc tới | Fixed |
 | F-016 | shop-facts.md tự khai "không trỏ đi đâu" nhưng trỏ 5 chỗ | Fixed |
 | F-017 | Câu `grep` "chứng minh xong" trong prompt lọc rỗng | Fixed |
-| F-018 | Số đếm động dùng như invariant | Open |
+| F-018 | Số đếm động dùng như invariant | Fixed |
 | F-019 | Tách file đẻ tiêu đề thứ hai trùng chữ, nghiệm thu đếm hụt | Open |
-| F-020 | Ba khối `work/scope.txt` bị commit, Gate 3 mở toang — đường đã chốt, chờ T-047 | Open |
+| F-020 | Ba khối `work/scope.txt` bị commit, Gate 3 mở toang — đường đã chốt, chờ T-047 | Fixed |
 | F-021 | Bảng tổng hợp decisions.md nói ngược thân của chính nó | Fixed |
 | F-022 | Hai mục ĐÃ CHỐT trả lời khác nhau cùng một câu hỏi | Fixed |
 | F-023 | Một ADR giao lược đồ/API/route cho hai tài liệu tự khai không sở hữu | Fixed |
-| F-024 | Deliverable bị bỏ rơi vì task đóng trước khi giao | Open |
+| F-024 | Deliverable bị bỏ rơi vì task đóng trước khi giao | Fixed |
 | F-025 | Phiên song song `git commit` nhặt luôn thay đổi chưa commit của phiên khác | Open |
 | F-026 | Hai invariant sinh sau khi kế hoạch chia nhóm — I-019/I-020 đã xếp nhóm (ADR-042), I-021 vẫn mồ côi | Open |
 | F-027 | Hai phụ thuộc ngoài chỉ tồn tại ở bản xuất khẩu | Fixed |
@@ -1238,7 +1238,7 @@ giây; nếu nó lại ra kết quả sau một lượt đóng unknown khác, đ
 **Một phép đã viết rồi bỏ, ghi lại vì nó là bài học chứ không phải rác:** *"mọi ngôn ngữ còn-mở
 phải trỏ tới một thứ đang mở"* — đúng về lý, chạy thật thì ra **11 báo động, cả 11 đều giả**
 (*"danh sách quyết định chưa rõ/giả định"*, *"Câu hỏi chưa có lời giải đi vào `99-unknowns.md`"*).
-Một cổng kêu sai 11 lần là cổng bị gỡ (**F-018**). ⇒ Vế cứu cả ba phép còn lại là câu hỏi thứ hai:
+Một cổng kêu sai 11 lần là cổng bị gỡ. ⇒ Vế cứu cả ba phép còn lại là câu hỏi thứ hai:
 *khối này có chỗ nào nói lời chốt không* — có thì nó đang **kể lại**, không đang **khẳng định**.
 Thiếu vế ấy, mọi mục lịch sử của repo đều đỏ.
 
@@ -1562,10 +1562,29 @@ cùng cơ chế hỏng ấy tái diễn **sau khi luật trên đã được áp
 
 **Related task:**
 DOC-3a · DOC-3b · DOC-3c · T-046 / DOC-5 · F-003 (*"exactly N"*) · F-015 (thì của câu) ·
-F-017 (bộ lọc `grep` không mô tả đúng tập cần đo)
+F-017 (bộ lọc `grep` không mô tả đúng tập cần đo) — cả bốn task nay **Done**
+(`work/backlog.md`).
+
+**Đóng — 2026-09-07.** Bốn lần xảy ra đều đã sửa tại nguồn, không phải qua một cổng máy mới
+(quyết định "Không mở cổng mới cho chính F-018" ở trên vẫn đứng): DOC-3a/3b/3c chia lại đúng chỗ
+cắt theo ngữ nghĩa (dòng `- [x] DOC-3a/3b/3c` trong `work/backlog.md`), và T-046 vá chính hai chỗ
+prompt DOC-5 dùng số `99` làm Acceptance — thay bằng số đo kèm ngày, kèm câu "đây là baseline,
+không phải lời hứa đã đủ", đúng luật 1 và luật 3 ở *Decision/Fix* trên. Grep lại prompt **chưa
+chạy** (những cái còn có thể trở thành cổng nghiệm thu của một phiên sau):
+
+```bash
+grep -rn "đúng [0-9]\+\|[Ee]xactly [0-9]\+" prompt/SD/ prompt/AD/
+```
+
+Rỗng — không còn prompt hiện hành nào biến một con số đếm được thành `Exactly N`. `prompt/BA/**`
+vẫn còn sáu chỗ viết "đúng N" (`5 trạm`, `2 phương thức thanh toán`, `3 nhóm actor`, `3 scenario`…)
+nhưng đó là loại **quyết định của chủ quán/BA**, đúng loại F-003 cho phép viết "đúng N" — không
+phải loại F-018 cấm (kết quả `grep` trên một tập còn đổi). `prompt/maintenance/13-pointer-migration-L3.md`
+còn giữ con số cũ nhưng đã **chạy xong** (DOC-3 Done) nên là sổ lịch sử, không sửa — cùng luật đã
+dùng để đóng F-017.
 
 **Status:**
-Open
+Fixed
 
 ---
 
@@ -1610,7 +1629,7 @@ con số/câu lệnh cho khớp — tức là để lại một H1 nói *"Ba lá
 Tiêu đề file và nội dung file nói khác nhau là đúng con bug ADR-014 dựng `docs/product/` để tránh.
 
 Không cổng nào bắt được: Gate 1b chỉ hỏi **đường dẫn có mở được không**, còn *tiêu đề có khớp nội
-dung không* thì không có cổng nào — và cả câu lệnh này lẫn Acceptance 12 đều nằm trong khối ``` `
+dung không* thì không có cổng nào — và cả câu lệnh này lẫn Acceptance 12 đều nằm trong khối `` ``` ``
 của một file `.md`, vùng `scripts/check-links.sh` cắt bỏ trước khi rà.
 
 **Bài học chung, vì nó sẽ lặp:**
@@ -1807,14 +1826,39 @@ tái diễn là **quyền sở hữu + hình bất biến + hai cổng thi hành
 cả bảy bước xong.
 
 **Related task:**
-T-047 (mở cùng ngày, **hết bị chặn từ 2026-09-03** — đường đã chọn) · F-010 và F-014 (cùng file,
-cùng chỗ đau: nhiều phiên một `scope.txt`) · F-017 (cùng hình dạng hỏng: cổng luôn xanh) ·
-F-001 (vì sao không dựng file baseline thứ hai) · F-011 (vì sao cổng không được tin một chữ trong
-báo cáo) · `CLAUDE.md` §3.4, §5, §6, §6.1, §7.3 · ADR-003 (đỏ vì lý do sai) · ADR-006 (Gate 7b,
-ngữ nghĩa pattern một chủ) · ADR-010 (giới hạn của bước cài tay mỗi clone)
+T-047 (mở cùng ngày, **hết bị chặn từ 2026-09-03** — đường đã chọn, **Done 2026-09-07**) · F-010 và
+F-014 (cùng file, cùng chỗ đau: nhiều phiên một `scope.txt`) · F-017 (cùng hình dạng hỏng: cổng luôn
+xanh) · F-001 (vì sao không dựng file baseline thứ hai) · F-011 (vì sao cổng không được tin một chữ
+trong báo cáo) · `CLAUDE.md` §3.4, §5, §6, §6.1, §7.3 · ADR-003 (đỏ vì lý do sai) · ADR-006 (Gate 7b,
+ngữ nghĩa pattern một chủ) · ADR-010 (giới hạn của bước cài tay mỗi clone) · **ADR-043** (quyết định
+đã thi hành, ghi lại ba đường)
+
+**Đóng — 2026-09-07 (T-047).** Cả bảy bước ở *Decision / Fix* trên đã chạy, theo đúng thứ tự bắt
+buộc (sửa hai script trước, dọn `work/scope.txt` sau):
+
+1. `scripts/check-scope.sh` — thêm phép chấm baseline: FAIL khi `HEAD:work/scope.txt` còn pattern
+   mà cây làm việc vẫn giữ; `note:` khi `HEAD` nợ nhưng cây đã sạch; im lặng khi `HEAD` sạch. Cách
+   đọc/khớp pattern hiện có không đổi một dòng.
+2. `scripts/check-commit-block.sh` — luật 3 (Gate 7b) đổi vị ngữ: kêu khi nội dung `work/scope.txt`
+   sẽ được `git add` còn pattern, im khi chỉ-comment (trước đó kêu bất kể nội dung).
+3. `scripts/check-scope.test.sh` (file mới) — năm ca: nền → PASS · `HEAD` có pattern còn nguyên
+   trong cây → FAIL · `HEAD` nợ, cây đã sạch → `note:` + exit 0 · pattern chết → exit 0 · pattern
+   lặp → exit 0. `scripts/check-commit-block.test.sh` thêm hai ca A9/A10 (scope.txt chỉ-comment
+   trong khối → im · còn pattern → kêu), tám ca A1–A8 cũ vẫn qua nguyên.
+4. `CLAUDE.md` §5 (mục 1, mục 6), §6, §6.1 sửa lại — gạch đầu dòng *"never in the block"* (tuyệt đối
+   theo sự có mặt) đổi thành nội dung-hoá; lệnh mẫu ở §6.1 bỏ `grep -v` chặn cứng `work/scope.txt`
+   khỏi danh sách ứng viên commit.
+5. **ADR-043** ghi ba đường, đường 2 được chọn và vì sao, hai đường kia bị loại và vì sao.
+6. `./scripts/gate.sh` chạy xanh sau khi dọn (bằng chứng dán trong commit T-047); phép thử riêng
+   `SCOPE_FILE` trỏ vào scope chỉ có khối T-047 cho kết quả khác — FAIL vì lý do khác (file ngoài
+   scope) thay vì FAIL vì nợ baseline — chứng minh gate phân biệt được lý do, không còn luôn in
+   `OK` vô nghĩa.
+7. `work/scope.txt` về **0 dòng pattern** trong khối commit cuối — không chỉ ba khối BA-04/T-027/
+   T-031 mà F-020 chỉ đích danh, mà cả nợ đã phát sinh thêm từ 2026-09-03 tới nay (cùng cơ chế, đo
+   lại lúc T-047 chạy: 57 dòng pattern ở `HEAD`, không phải 13 dòng như lúc F-020 mở).
 
 **Status:**
-Open
+Fixed
 
 ---
 
@@ -2141,8 +2185,21 @@ thời gian, và đó là lý do nó phải có một mã để ai cũng thấy.
 **T-037** (entry nhắc lại cùng câu) · **BA-12** · **S-5** (`master_plan/shop-facts.md` §7.2) ·
 `docs/decisions.md` **ADR-026** · **F-012** (chỗ trống được che, phiên sau không thấy)
 
+**Đóng 2026-09-07 (P1-09).** `docs/product/1-system-design/architecture.md` §3 có thêm **§3.4**:
+bốn con số (khách đã gọi · đã làm xong, còn ở bếp · đã bưng ra bàn · còn thiếu), phân biệt *còn
+thiếu* (người bưng) với *nhu cầu* (bếp), và con số thứ tư nhảy theo bậc mẻ (U-017). §11 hết câu
+giao việc cho `T-036` — câu kể lại lịch sử S-4/U-017 ở lại nguyên văn (**ADR-008**). Hai chỗ từng
+"đang chờ" lúc mở finding nay đã khác: **BA-12 xong 2026-09-04** nên nền nghiệp vụ
+(`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4) có sẵn; **`U-033` đóng 2026-09-06** (tính cho bàn
+khác đang chờ, quầy chọn và cập nhật) nên §3.4 viết thẳng luật ấy thay vì "đang treo" như prompt
+gốc dự kiến. **`S-5` vẫn còn treo** — bấm *"đã bưng ra bàn"* theo đơn vị nào chưa hỏi chủ quán
+(`shop-facts.md` §7.2) — §3.4 viết theo phương án hẹp (**theo bàn**) và đánh dấu rõ là chỗ suy ra;
+S-5 có lời khác thì cột ấy viết lại. `grep -rn "ba con số"` sau khi sửa: mọi chỗ còn lại đều kể lại
+lịch sử (`docs/decisions.md`, §11 và §3.4 của chính `architecture.md`), không chỗ nào trình bày nó
+như phương án đang hiệu lực (**F-018**). `./scripts/gate.sh` xanh.
+
 **Status:**
-Open
+Fixed (2026-09-07, P1-09)
 
 ---
 
