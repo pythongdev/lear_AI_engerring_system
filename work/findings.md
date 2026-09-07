@@ -78,7 +78,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-014 | Cảnh báo "scope bẩn" bảo XOÁ trong khi chủ thật đang chạy | Fixed |
 | F-015 | Đóng unknown chỉ sửa chỗ trả lời, không sửa chỗ được nhắc tới | Fixed |
 | F-016 | shop-facts.md tự khai "không trỏ đi đâu" nhưng trỏ 5 chỗ | Open |
-| F-017 | Câu `grep` "chứng minh xong" trong prompt lọc rỗng | Open |
+| F-017 | Câu `grep` "chứng minh xong" trong prompt lọc rỗng | Fixed |
 | F-018 | Số đếm động dùng như invariant | Open |
 | F-019 | Tách file đẻ tiêu đề thứ hai trùng chữ, nghiệm thu đếm hụt | Open |
 | F-020 | Ba khối `work/scope.txt` bị commit, Gate 3 mở toang — đường đã chốt, chờ T-047 | Open |
@@ -1325,10 +1325,18 @@ Tách làm hai, và **không sửa banner cho khớp**:
    hai chỗ bằng hai task khác nhau là cách chắc chắn để chúng nói ngược nhau.
 
 **Related task:**
-DOC-3a (bốn pointer) · banner: chưa mở task, xem xét cùng DOC-4
+DOC-3a (bốn pointer, đã xong) · T-064 (banner + `CLAUDE.md` §2)
+
+**Đóng 2026-09-07, T-064.** Phần bốn pointer sống đã đóng từ DOC-3a như dự kiến (chỉ còn dòng lịch
+sử ở lại đúng ý ban đầu). Phần banner — sửa cùng một task với `CLAUDE.md` §2 như *Decision/Fix* dặn,
+không tách hai task khác nhau. Đo lại lúc đóng: file thực tế đã tích thêm nhiều pointer hơn nữa
+trong lúc chờ (từ năm chỗ lúc mở lên khoảng 38 dòng, tám owner khác) — con số trong *Problem* ở trên
+vì vậy chỉ còn đúng cho ngày mở (2026-09-02), không phải hiện trạng; giữ nguyên không sửa lại vì đó
+là ảnh chụp lúc phát hiện. Câu banner mới nói đúng bất biến "không dữ kiện quán nào phụ thuộc file
+khác" thay vì "không trỏ đi đâu", nên số dòng trích dẫn tăng thêm không còn mâu thuẫn với banner.
 
 **Status:**
-Open
+Fixed
 
 ---
 
@@ -1408,9 +1416,21 @@ ai chạy thử trước khi giao.** Ba lần khác cơ chế, cùng một nguy�
 
 **Related task:**
 DOC-3a · DOC-3b (lặp lại lần hai, xem trên) · DOC-3c · **DOC-5** (còn giữ bản hỏng, sửa trước khi chạy)
+— cả bốn nay **Done** (`work/backlog.md`).
+
+**Đóng — 2026-09-07.** Cả ba nơi cổng nghiệm thu này còn có thể chạy đều đã dùng bản portable:
+`13a` · `13b` · `13c` (đo lúc viết prompt) và `15-…-L3.md` qua T-046, rồi tự DOC-5 chạy xong dùng
+đúng bản đó (dòng `- [x] DOC-5` trong `work/backlog.md`). Hai bản còn giữ nguyên câu lệnh hỏng —
+`13-pointer-migration-L3.md` (bug thứ nhất) và bước 4 *Verify* của `13b-pointer-nhom-B-L1.md` (bug
+thứ hai, "lặp lại lần hai" ở trên) — không phải việc dở dang: cả hai prompt đã **chạy xong** (DOC-3b
+Done), nên `prompt/maintenance/**` với chúng nay là sổ lịch sử, và luật đã có tiền lệ
+(`work/findings.md` dòng ghi *"Không sửa `prompt/maintenance/` — đó là ghi chép lịch sử của các
+task đã chạy"`, dùng ở T-028/T-031) cấm sửa đúng hai chỗ này. Không còn prompt nào **chưa chạy** mà
+mang bộ lọc rỗng — đó là điều kiện đóng phát biểu, giờ mới grep lại xác nhận:
+`grep -rn "grep -v '\^\\\\./work/'" --include='*.md' .` chỉ còn khớp hai chỗ trên, cả hai đã chạy.
 
 **Status:**
-Open
+Fixed
 
 ---
 
