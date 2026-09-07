@@ -2281,13 +2281,40 @@ ghi:
   **Ngưỡng ấy nay đã qua**: đủ điều kiện dựng cổng `pre-commit`, và câu hỏi *có dựng không* vẫn là
   câu của chủ repo, không phiên nào tự quyết.
 
+**LẦN THỨ BA — 2026-09-07, giữa lúc phiên P1-09 đang viết dở.** Commit `a1832cd` (subject
+*"Trỏ DOC-1 về F-019 (tách file), sửa backtick gãy trong finding"*) mang đúng thay đổi subject của
+nó tả (`prompt/maintenance/11-product-folder-pha-L2.md`, +10 dòng) — **nhưng cũng nhặt luôn**
+`work/findings.md` với **87 dòng thay đổi** không hề thuộc F-019: khối *Đóng* của **F-018** và
+**F-020** (việc của phiên khác — T-047/F-018 đang chạy song song) **và** khối *Đóng* của **F-024**
+mà chính phiên P1-09 đang viết dở lúc đó, chưa kịp giao khối commit riêng của mình.
+
+- **Không mất nội dung** — khác ca `39ca608` (2026-09-03), cả ba khối *Đóng* đều ở trạng thái viết
+  xong, đọc được. Cái hỏng lần này thuần là **quy về sai subject**: ai `git log` tìm lúc F-024 đóng
+  sẽ thấy nó dưới một commit nói về F-019.
+- **Phiên P1-09 xác nhận qua `git diff HEAD -- work/findings.md` rỗng** ngay sau khi phát hiện —
+  bằng chứng nội dung đã nằm trong `a1832cd`, không cần viết lại. Phần còn thiếu (đặc tả §3.4 ở
+  `architecture.md`, dòng Done ở `work/backlog.md`, dòng trạng thái P1-09 ở `work/backlog_SD.md`)
+  được tách thành một patch **chỉ chứa đúng khối của P1-09** (`git apply --cached` trên một diff
+  tay, vì `work/backlog.md` lúc đó cũng đang mang một khối Done khác của T-047 chưa commit, nằm
+  sát ngay cạnh) rồi commit riêng (`53febdd`) — không gộp `work/scope.txt`,
+  `CLAUDE.md`, `docs/decisions.md`, `scripts/check-commit-block.sh` hay `scripts/check-scope.sh`
+  dù cả năm đang là thay đổi CHƯA COMMIT nằm sẵn trong cây (nợ của T-047 và các phiên khác, không
+  phải của P1-09) — đúng luật *"uncommitted work that is not yours is not folded in"* (`CLAUDE.md`
+  §6.1).
+- **Đây là lần thứ ba của chính F-025** — sau `39ca608` (2026-09-03) và `da7dd2f` (2026-09-04),
+  nay `a1832cd` (2026-09-07), ba ngày khác nhau chứ không cùng một ngày. Ngưỡng *"hai lần thì dựng
+  luật"* (`CLAUDE.md` §3.8) đã bị vượt từ lần thứ hai; cổng `pre-commit` được đề xuất ở trên **vẫn
+  chưa dựng** tính tới lượt này — quyết định vẫn thuộc chủ repo.
+
 **Related task:**
 **T-050** (lượt bị nhặt lần hai) · **P1-01** (phiên song song, chủ của `da7dd2f`) ·
 **T-048** (lượt phát hiện, và là phần việc bị nhặt) · **BA-12** (phiên song song, chủ của `39ca608`) ·
-**T-023** (hai commit trùng tên, đang chờ chủ repo) · **F-009** (`git add` nhặt file ngoài task —
-lần đầu) · **F-010** · **F-014** (song song trên một cây; lần này luật ấy chạy **đúng**) ·
+**P1-09** (lượt bị nhặt lần ba, phần còn lại tách commit riêng `53febdd`) · **T-047** (phiên song
+song lần ba, phần F-020 của nó cũng bị nhặt cùng lúc) · **T-023** (hai commit trùng tên, đang chờ
+chủ repo) · **F-009** (`git add` nhặt file ngoài task — lần đầu) · **F-010** · **F-014** (song song
+trên một cây; lần này luật ấy chạy **đúng**) · **F-024** (nội dung bị nhặt lần ba) ·
 `docs/decisions.md` **ADR-006** (Gate 7b) · **ADR-008** (sửa tiến) · **ADR-010** (Gate 8) ·
-`CLAUDE.md` §6.1 · §6.2
+`CLAUDE.md` §6.1 · §6.2 · §3.8 (ngưỡng "hai lần" đã qua từ trước)
 
 **Status:**
 Open
