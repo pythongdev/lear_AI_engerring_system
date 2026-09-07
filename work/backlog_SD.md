@@ -58,7 +58,7 @@ chỗ trong cùng file là bug của lượt vừa sửa entry, không phải l�
 | P1-06 | [Bảng ba cột — nhóm MENU · GIÁ · VẾT](#p1-06) | Đóng |
 | P1-07 | [Yêu cầu hình dạng dữ liệu](#p1-07) | Mở |
 | P1-08 | [Realtime, đường kéo dự phòng, ràng buộc ẩn](#p1-08) | Mở |
-| P1-09 | [Bảng quầy bốn con số](#p1-09) | Mở |
+| P1-09 | [Bảng quầy bốn con số](#p1-09) | Đóng |
 | P1-10 | [Sổ rủi ro](#p1-10) | Mở |
 | P1-11 | [Diễn ba scenario qua thiết kế](#p1-11) | Mở |
 | P1-12 | [Rà chéo ranh giới pha](#p1-12) | Mở |
@@ -745,6 +745,11 @@ debug nhất dự án*, và nó đúng.
 
 <a id="p1-09"></a>
 ### P1-09 — §3 vẫn là phương án ba con số mà §11 của chính nó tuyên bố đã hết đúng, và việc viết lại đang được giao cho một task đã *Done*
+
+✅ **Xong ngày 2026-09-07.** §3 của `architecture.md` nay có §3.4 (bốn con số + phân biệt *còn
+thiếu*/*nhu cầu*), §11 hết câu giao việc cho `T-036`. `S-5` vẫn treo (đúng phương án hẹp — theo
+bàn); `U-033` đã đóng 2026-09-06 trong lúc chờ, nên §3.4 viết luật của nó thẳng thay vì "đang chờ".
+**Đóng F-024.**
 
 **Prompt:** [`prompt/SD/P1-09-bang-quay-bon-con-so-L2.md`](../prompt/SD/P1-09-bang-quay-bon-con-so-L2.md)
 (viết 2026-09-04, T-051) — **L2** · bước 9/13 (kế hoạch §6) · **BA-12 đã xong 2026-09-04** ⇒ chỉ còn

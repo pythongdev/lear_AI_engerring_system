@@ -189,6 +189,22 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] P1-09 **Bảng quầy `architecture.md` §3 nay có BỐN con số, và §11 hết giao việc cho một task đã *Done* — đóng F-024** — bước 9/13 (kế hoạch §6), độc lập với dãy P1 còn lại, con bug ghi ở
+  `work/findings.md` **F-024**: §11 tuyên bố *"phương án ba con số hết đúng"* rồi giao việc viết
+  lại cho `T-036`, nhưng `T-036` đã *Done* từ 2026-09-01 mà không giao — ba tài liệu cùng trỏ về
+  một task chết. §3 có thêm **§3.4** (mới): bảng khách đã gọi · đã làm xong-còn ở bếp · đã bưng ra
+  bàn · còn thiếu, kèm phân biệt **hai chữ "còn"** — *còn thiếu* (con số người bưng) khác *nhu cầu*
+  (con số bếp), lệch nhau đúng bằng *đã làm xong, còn ở bếp*
+  (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4.2, BA-12). Con số thứ tư nhảy **theo bậc mẻ**
+  (U-017); **đã bưng ra bàn** viết theo phương án hẹp — **theo bàn** — vì `S-5` vẫn là chỗ suy ra
+  chưa hỏi chủ quán (`shop-facts.md` §7.2), đánh dấu rõ trong §3.4. Câu về **đơn huỷ sau khi bếp đã
+  làm xong** (`U-033`) không còn viết "đang treo" như prompt gốc dự kiến — `U-033` **đã đóng
+  2026-09-06** trong lúc P1-09 còn chờ S-5, nên §3.4 viết thẳng luật: tính cho bàn khác đang chờ,
+  quầy chọn và cập nhật (không tự gán). §11 giữ nguyên phần kể lại lịch sử S-4/U-017 (**ADR-008**,
+  sửa tiến không xoá dấu vết), chỉ thay câu **giao việc cho T-036**. Không đụng số mục §1–§14
+  (**ADR-012**, **ADR-013**); không tên bảng · cột · endpoint · route · component (**ADR-035**);
+  `quality/invariants.md` không đổi một chữ. **Đóng F-024** (`work/findings.md`, kèm khối *Fixed*).
+  Gate xanh (2026-09-07)
 - [x] T-064 **Sửa banner `shop-facts.md` hết tự khai "không trỏ đi đâu", đóng phần còn lại của
   F-016** — banner (dòng 8–11) và `CLAUDE.md` §2 cùng nói một câu sai — *"không trỏ đi đâu, nó là
   điểm cuối"* / *"self-contained and link-free: it points nowhere"* — trong khi file thật trích dẫn

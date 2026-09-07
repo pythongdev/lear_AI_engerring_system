@@ -122,9 +122,10 @@ Bốn khối, cùng một màn:
 
 ```
 ┌─ QUÁN ĐANG THẾ NÀO ──────────── bàn đang ăn · chờ món · chờ thanh toán · trống
-├─ CẦN LÀM (tổng) ─────────────── bánh · trứng CHÍN/TÁI/VÀNG · giò · nước chấm
-│                                 tách theo nhân + lượng nhân
-├─ CẦN LÀM (cho bàn nào) ──────── mỗi dòng tổng ở trên tách ngược về từng bàn
+├─ CẦN LÀM — BỐN CON SỐ MỖI DÒNG ─ khách đã gọi · đã làm xong (còn ở bếp) ·
+│                                  đã bưng ra bàn · còn thiếu — tách theo nhân
+│                                  + lượng nhân (§3.4 dưới)
+├─ CẦN LÀM (cho bàn nào) ──────── mỗi dòng ở trên tách ngược về từng bàn, cả bốn con số
 └─ CẦN CHÚ Ý ─────────────────── đơn chờ duyệt · đơn đang giao · phiên chờ thu
 ```
 
@@ -181,6 +182,56 @@ trên đường mặc định.
 
 Ba việc này đi qua **đúng một cửa: máy POS ở quầy**, nên mọi thao tác chạm tiền đều truy được về
 một người khi đối soát cuối ngày (§6.10).
+
+### 3.4 Khối CẦN LÀM — bốn con số, không phải ba
+
+*Viết lại 2026-09-07 (P1-09), đóng con bug `work/findings.md` **F-024**: bản trước của §3 dừng ở
+**ba** con số trong khi §11 của chính file này đã tuyên bố phương án ba con số hết đúng từ
+2026-09-01. Nguồn: `master_plan/shop-facts.md` §5.4, §7.2 (S-4, S-5) và nền nghiệp vụ
+`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4 (BA-12).*
+
+Mỗi dòng của khối *CẦN LÀM* — một thành phần (bánh cuốn · trứng theo loại · giò · nước chấm), tách
+theo nhân và lượng nhân đúng khoá gom ở `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4.6 — mang
+**bốn** con số:
+
+| Con số | Nghĩa | Ai/cái gì làm nó đổi |
+|---|---|---|
+| **Khách đã gọi** | tổng thành phần nổ ra từ các dòng đơn **đã duyệt** | hệ thống suy ra khi đơn sang `Đã xác nhận` |
+| **Đã làm xong, còn ở bếp** | bếp làm ra rồi nhưng chưa bưng ra bàn | quầy bấm, theo **mẻ** |
+| **Đã bưng ra bàn** | đã tới tay khách | quầy bấm, theo **bàn** (chỗ suy ra — xem dưới) |
+| **Còn thiếu** | khách đã gọi − đã bưng ra bàn | hệ thống tính, không ai bấm riêng |
+
+Con số thứ tư (**đã làm xong, còn ở bếp**) chốt ngày 2026-09-01, trả lời **S-4**
+(`master_plan/shop-facts.md` §5.4): bánh gấp xong **có** nằm chờ trước khi ra bàn — chờ đủ đĩa ·
+chờ người rảnh tay bưng · chờ món khác của cùng bàn. Thiếu con số này thì khoảng nằm chờ ấy vô hình
+với quầy, và bếp bị giục làm lại một cái bánh đang chờ đủ đĩa.
+
+**Đã làm xong, còn ở bếp nhảy theo bậc mẻ, không nhảy từng đơn vị.** Một lần quầy bấm *"đã làm
+xong"* đẩy nhiều việc — có khi của nhiều bàn — sang cùng lúc: **mẻ là đơn vị bấm, bàn vẫn là đơn vị
+đếm** (U-017, `shop-facts.md` §5.4). Mỗi lần bấm ấy phải chia được về từng bàn ngay
+(`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4.4).
+
+**Hai chữ "còn" khác nhau — chỗ dễ gộp nhầm nhất của cả khối:**
+
+- **Còn thiếu** = khách đã gọi − đã bưng ra bàn. Con số của **người bưng**: thứ khách vẫn chưa
+  nhận, gồm cả phần bếp chưa làm lẫn phần đã làm xong nhưng còn nằm ở bếp.
+- **Nhu cầu** (bếp còn phải làm) = còn thiếu − đã làm xong, còn ở bếp. Con số của **bếp**: chỉ phần
+  bếp thật sự chưa động tới.
+
+Hai con số lệch nhau **đúng bằng** *đã làm xong, còn ở bếp*. Gộp chúng làm một là quay lại phương
+án ba con số cũ (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4.2).
+
+⚠️ **Đơn vị bấm của "đã bưng ra bàn" vẫn là chỗ suy ra, chưa hỏi chủ quán — `S-5`**
+(`master_plan/shop-facts.md` §7.2). Phương án hẹp đang dùng ở bảng trên: theo **bàn**, không theo
+mẻ — một mẻ phục vụ nhiều bàn, còn bưng thì bưng tới một bàn. Chủ quán mới chỉ nói **ai** bấm, chưa
+nói **theo gì**; nếu lời trả lời khác đi thì cột này viết lại.
+
+**Đơn bị huỷ sau khi bếp đã làm xong phần của nó** (chủ quán chốt 2026-09-06, đóng `U-033`, nguyên
+văn *"tính vào bàn khác, pos sẽ cập nhật bánh này đem ra cho bàn nào"*): phần đã làm xong **không**
+biến mất khỏi khối này — nó được tính cho **một bàn khác đang chờ đúng thứ đó**, quầy chọn bàn nhận
+và cập nhật trên POS, máy không tự gán. *Còn thiếu* của bàn nhận giảm đúng phần vừa nhận; phần đã
+huỷ không còn tính vào *còn thiếu* của bàn cũ. Chỉ áp dụng khi có bàn khác đang chờ đúng thứ đã
+làm — ca không bàn nào chờ chưa có luật.
 
 ---
 
@@ -411,7 +462,11 @@ lời chốt U-009 (không có nút nào ở trạm bếp) vẫn nguyên vẹn, 
 *Cập nhật 2026-09-01 (T-037): **U-017 đã có lời giải — bấm theo MẺ*** (chủ quán chốt,
 `master_plan/shop-facts.md` §5.4). §3 nay viết được đủ: **bốn** con số, và con số thứ tư nhảy
 **theo bậc mẻ**, không nhảy từng đơn vị. Mẻ là đơn vị **bấm**, bàn vẫn là đơn vị **đếm** (§5.3).
-Việc viết lại §3 vẫn là của T-036 — T-037 chỉ gỡ dòng chặn này, không viết hộ đặc tả.*
+T-037 chỉ gỡ dòng chặn này, không viết hộ đặc tả.*
+
+**§3 đã viết lại 2026-09-07 (P1-09) — bốn con số nay đứng trong §3.4, kèm phân biệt *còn thiếu* /
+*nhu cầu*.** Câu giao việc cho `T-036` (đã *Done* từ 2026-09-01 mà không giao) là con bug ghi ở
+`work/findings.md` **F-024**, nay *Fixed*.
 
 **Danh sách câu hỏi nghiệp vụ đang mở** (`docs/product/99-unknowns.md`): cuối ngày 2026-09-01 nó
 **rỗng trở lại** — U-014, U-015, U-016 (mốc đổi menu/giá), U-017 và U-018 đều đã đóng trong ngày.
