@@ -189,6 +189,15 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] T-064 **Sửa banner `shop-facts.md` hết tự khai "không trỏ đi đâu", đóng phần còn lại của
+  F-016** — banner (dòng 8–11) và `CLAUDE.md` §2 cùng nói một câu sai — *"không trỏ đi đâu, nó là
+  điểm cuối"* / *"self-contained and link-free: it points nowhere"* — trong khi file thật trích dẫn
+  khoảng 38 dòng tới tám owner khác (`docs/product/…`, `docs/decisions.md`, `work/findings.md`,
+  `quality/invariants.md`, …), đông hơn nhiều so với "năm chỗ" F-016 đo lúc mở (2026-09-02). Sửa cả
+  hai chỗ **trong cùng một task** đúng như F-016 → *Decision/Fix* dặn (sửa riêng lẻ là cách chắc chắn
+  để chúng nói ngược nhau): câu mới nói đúng bất biến — *không dữ kiện quán nào phụ thuộc file
+  khác* — khác với *"không có ký tự `/` nào"*. Không đổi một dữ kiện quán nào (giá, luật nghiệp vụ).
+  Đóng **F-016**. Gate xanh (2026-09-07)
 - [x] T-035 **Đổi lời cảnh báo "scope bẩn" của `scripts/brief.sh`, đóng F-014** — điều kiện kích
   hoạt giữ nguyên (scope còn pattern + không task nào In Progress); câu ra lệnh **"dọn nó TRƯỚC khi
   bắt task mới"** đổi thành **"THÊM khối của bạn vào CUỐI file; chỉ gỡ khối nào ghi rõ đã commit"**,
@@ -751,6 +760,52 @@ git status --porcelain
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+<a id="t-064"></a>
+### T-064 — Banner `shop-facts.md` tự khai "không trỏ đi đâu", đóng phần còn lại của F-016
+
+**Mức:** L1 · **Trạng thái:** Done 2026-09-07
+
+**Vấn đề (`work/findings.md` F-016):** Banner `master_plan/shop-facts.md` (dòng 8–11) và `CLAUDE.md`
+§2 cùng khai file này *"không trỏ đi đâu — nó là điểm cuối"* / *"self-contained and link-free: it
+points nowhere"*. F-016 (2026-09-02) đã đóng phần thứ nhất — chuyển bốn pointer sống về
+`docs/product.md` sang `docs/product/` (DOC-3a) — nhưng để ngỏ phần banner, *"xem xét cùng DOC-4"*.
+DOC-4 xong nhưng không đụng banner này. Đo lại hôm nay (T-064): `shop-facts.md` hiện có **~38 dòng**
+trích dẫn tới **tám owner khác** (`docs/product/…`, `docs/decisions.md`, `work/findings.md`,
+`quality/invariants.md`, `work/admin-questions.md`, `work/backlog_AD.md`, `CLAUDE.md`,
+`master_plan/prompt-fullstack.md`, `master_plan/SD_master_plan_banh_cuon_ba_thanh.md`) — nhiều hơn
+hẳn "năm chỗ" F-016 đo lúc mở, vì file tiếp tục tích luỹ pointer trong các lần sửa khác trong khi
+banner đứng yên.
+
+**Acceptance (viết trước khi sửa):**
+- Banner `shop-facts.md` hết dùng cụm "không trỏ đi đâu" / "điểm cuối".
+- `CLAUDE.md` §2 hết dùng cụm "link-free: it points nowhere", sửa cùng một task với banner (không
+  tách hai task khác nhau — đúng lo ngại F-016 → *Decision/Fix*).
+- Câu thay thế nói đúng bất biến thật: không dữ kiện quán nào ở đây phụ thuộc việc mở file khác mới
+  hiểu đúng — khác với "không có ký tự `/` nào".
+- Không đổi bất kỳ dữ kiện quán nào (giá, luật nghiệp vụ, kênh bán…).
+- `./scripts/gate.sh` xanh.
+- F-016 chuyển `Status` → Fixed, có ngày và số task đóng.
+
+**Fix:** Banner (`master_plan/shop-facts.md` dòng 8–11) đổi câu cuối thành: *"không cần mở thêm tài
+liệu nào khác để hiểu một dữ kiện quán. File này có thể trích dẫn nơi khác (câu hỏi mở, quyết định,
+một lần sửa trong quá khứ) để chỉ đường, nhưng không dữ kiện quán nào ở đây phụ thuộc vào việc mở
+file khác mới hiểu đúng"* — thay cho *"không trỏ đi đâu — nó là điểm cuối"*. `CLAUDE.md` §2 (dòng
+85–86) đổi câu song song: *"deliberately self-contained: every shop fact stands on its own there,
+none of them depends on another file, even though the file does cite other owners … to point the
+way"* — thay cho *"self-contained and link-free: it points nowhere, everything points at it"*. Hai
+chỗ sửa trong cùng một commit.
+
+**Evidence:**
+```
+$ ./scripts/gate.sh
+```
+(xem output cuối report)
+
+**Related:** `work/findings.md` **F-016** (đóng) · DOC-3a, DOC-4 (phần đã đóng trước đó của cùng
+finding).
+
+[↑ đầu file](#top)
 
 <a id="t-035"></a>
 ### T-035 — Brief ra lệnh xoá `work/scope.txt` trong khi chủ thật của nó đang chạy song song

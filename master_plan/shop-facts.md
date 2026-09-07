@@ -7,8 +7,9 @@
 >
 > **File này tự đứng một mình.** Ai chưa từng biết quán, đọc hết file này là nắm được: quán bán
 > gì, bán cho ai qua đường nào, giá bao nhiêu, bếp làm ra cái gì, và tiền đi đường nào từ lúc
-> khách gọi tới lúc bàn trống. Không cần mở thêm tài liệu nào khác, và file này cũng không trỏ
-> đi đâu — nó là điểm cuối.
+> khách gọi tới lúc bàn trống — không cần mở thêm tài liệu nào khác để hiểu một dữ kiện quán. File
+> này có thể trích dẫn nơi khác (câu hỏi mở, quyết định, một lần sửa trong quá khứ) để chỉ đường,
+> nhưng không dữ kiện quán nào ở đây phụ thuộc vào việc mở file khác mới hiểu đúng.
 >
 > **Hai mảng, hai chỗ.** §1–§7 là mảng **bán hàng**; **§8 là mảng quản trị (admin)** — nguyên liệu,
 > con người, tài chính. Đọc số mục là biết mình đang ở mảng nào, và dữ kiện admin mới **chỉ** được
@@ -1125,6 +1126,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-09-06 | **Tiền đầu két nhập CẢ HAI: bảng theo từng mệnh giá VÀ tổng cộng** (trả lời **U-038**) — nguyên văn *"tổng của từng mệnh giá và tổng của tất cả các mệnh giá cộng lại với nhau"* | §8.5 |
 | 2026-09-06 | **Máy KHÔNG giữ hàng chờ bàn; POS tự điều phối khi cần** (trả lời **U-039**) — nguyên văn *"không. pos sẽ điều phối khách nếu cần"* | §6.25 |
 | 2026-09-06 | **Mười một bàn ban đầu: 4 chỗ/bàn, đã đánh số; quán vừa mua thêm bàn ⇒ Số bàn 11 → 15** (trả lời **U-040**) — nguyên văn *"11 bàn mỗi bàn 4 chỗ, đã đánh số, hôm nay tôi mua thêm bàn, hãy để 15 bàn"*. *Chỗ ngồi/đánh số của 4 bàn mới **chưa** trả lời ⇒ **U-042*** | §1 · §6.25 |
+| 2026-09-06 | **Danh mục nguyên liệu bắt đầu có TÊN — mười bốn thứ đầu tiên, còn bổ sung dần** (chủ quán tự liệt kê, không trả lời riêng một U-XXX nào) — nguyên văn *"nhân thịt, nhân thịt mộc nhĩ, rau mùi tàu, quất, hành tây, mì chính, hạt nêm, đường trắng, đường đen, gạo, bột bánh cuốn, hạt tiêu, nước mắm, dầu rửa bát"*; đơn vị tính và ngưỡng nhắc sắp hết vẫn chưa có | §8.4 |
 | 2026-09-07 | **Đặt tên chủ cho hai phụ thuộc PT-5/PT-2: đường báo đơn web về quầy là Telegram, hạ tầng vận hành là một VPS duy nhất** (chốt bởi chủ repo, không phải một câu hỏi U-XXX — đóng một phần **F-027**) — xem **ADR-041** | §1 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **ba mục, tính tới 2026-09-04**
@@ -1267,14 +1269,27 @@ không phải suy ra.
 - **Nhóm "số điện, số nước" vẫn đứng ngoài cặp mua/dùng này** — nhóm đó là **chỉ số công tơ**
   (chốt 2026-09-04, `work/findings.md` bối cảnh T-055), không phải hàng có tồn, nên không nhận
   cặp số này.
-- **Danh mục cụ thể (thứ nào, đơn vị gì) vẫn CHƯA chốt** — U-034 chỉ trả lời **loại con số**, không
-  trả lời **ghi cái gì**; xem "Ba ranh giới của chính §8.4" ngay dưới đây, ranh giới đầu tiên chưa
-  đổi.
+- **Danh mục cụ thể (thứ nào, đơn vị gì) vẫn CHƯA chốt xong** — U-034 chỉ trả lời **loại con số**,
+  không trả lời **ghi cái gì**; chủ quán đã bắt đầu liệt kê **tên** (ngay dưới đây, 2026-09-06),
+  nên ranh giới đầu tiên của "Ba ranh giới của chính §8.4" đổi một phần — xem ngay dưới.
+
+**Danh mục nguyên liệu — chủ quán bắt đầu liệt kê 2026-09-06, còn bổ sung dần.** Nguyên văn:
+*"nhân thịt, nhân thịt mộc nhĩ, rau mùi tàu, quất, hành tây, mì chính, hạt nêm, đường trắng, đường
+đen, gạo, bột bánh cuốn, hạt tiêu, nước mắm, dầu rửa bát"* — mười bốn thứ đầu tiên. Chủ quán nói
+thẳng đây là **hạng mục quan trọng** và sẽ **bổ sung dần dần**, nên đừng đọc mười bốn thứ này như
+một danh mục đã đủ.
+
+- **Đây mới chỉ là TÊN, chưa có đơn vị tính hay ngưỡng nhắc sắp hết cho bất kỳ thứ nào** — đúng
+  ranh giới thứ nhất dưới đây: *ghi cái gì* mới có phần **tên**, hai phần còn lại (đơn vị, ngưỡng)
+  vẫn như §8.2 đã nói, chưa có dữ kiện nào. Đừng tự suy đơn vị (vd "gạo" tính theo kg hay theo bao).
+- **Danh sách CHƯA đầy đủ — đừng coi mười bốn thứ này là toàn bộ nguyên liệu quán dùng.** Chủ quán
+  nói sẽ thêm dần; mỗi lần thêm, nối tiếp vào đây kèm ngày, đừng viết đè lên danh sách cũ.
 
 **Ba ranh giới của chính §8.4:**
 
-- **Chốt *cách ghi*, không chốt *ghi cái gì*.** Danh mục nguyên liệu, đơn vị tính, ngưỡng nhắc sắp
-  hết — cả ba vẫn chưa có dữ kiện nào, đúng như §8.2 nói.
+- **Chốt *cách ghi*, không chốt *ghi cái gì*.** Danh mục nguyên liệu **bắt đầu có tên** (xem ngay
+  trên, 2026-09-06, còn bổ sung dần); đơn vị tính và ngưỡng nhắc sắp hết thì vẫn chưa có dữ kiện
+  nào, đúng như §8.2 nói.
 - **Không nói mảng này có vào bản chạy đầu tiên hay không.** Đó là câu của
   `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7, và câu ấy đã chốt riêng ngày 2026-09-02
   (U-030): **không** mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên.

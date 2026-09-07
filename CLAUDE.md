@@ -82,9 +82,11 @@ fact from it.
 Domain material for the current project lives in `master_plan/` and the BA prompt
 set in `prompt/BA/`. **`master_plan/shop-facts.md` is the single owner of every
 shop fact** — selling scope, channels, prices, surcharges, portion composition,
-operating flows, business rules. It is deliberately self-contained and link-free:
-it points nowhere, everything points at it. `master_plan/00-scope.md` is a
-redirect stub kept only so older links resolve; it owns nothing.
+operating flows, business rules. It is deliberately self-contained: every shop
+fact stands on its own there, none of them depends on another file, even though
+the file does cite other owners (open questions, decisions, history) to point
+the way. `master_plan/00-scope.md` is a redirect stub kept only so older links
+resolve; it owns nothing.
 
 `work/proposals/` holds documents that say what this repo *should* look like —
 outside advice, blueprints, redesigns — none of it adopted. Nothing in there is a

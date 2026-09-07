@@ -77,7 +77,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-013 | Bản xuất khẩu vẫn thiết kế nút "Xong" đã bị bỏ | Fixed |
 | F-014 | Cảnh báo "scope bẩn" bảo XOÁ trong khi chủ thật đang chạy | Fixed |
 | F-015 | Đóng unknown chỉ sửa chỗ trả lời, không sửa chỗ được nhắc tới | Fixed |
-| F-016 | shop-facts.md tự khai "không trỏ đi đâu" nhưng trỏ 5 chỗ | Open |
+| F-016 | shop-facts.md tự khai "không trỏ đi đâu" nhưng trỏ 5 chỗ | Fixed |
 | F-017 | Câu `grep` "chứng minh xong" trong prompt lọc rỗng | Fixed |
 | F-018 | Số đếm động dùng như invariant | Open |
 | F-019 | Tách file đẻ tiêu đề thứ hai trùng chữ, nghiệm thu đếm hụt | Open |
