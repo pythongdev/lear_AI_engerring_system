@@ -144,14 +144,43 @@ hàng (pha 0 · BA) đóng ngày 2026-09-04, và cùng ngày **pha 1 · System d
 
 ## Mục lục
 
-| Nhánh | Việc | Loại (xem *Cổng của cả lane*) |
-|---|---|:--:|
-| **A — một buổi bán** | [ADM-01](#adm-01) ca bán · [ADM-02](#adm-02) thứ tự bưng · [ADM-03](#adm-03) sức chứa · [ADM-04](#adm-04) tổng quan buổi bán | **2: 01 · 02** · 1: 03 · 04 |
-| **B — nguyên liệu** | [ADM-10](#adm-10) danh mục · [ADM-11](#adm-11) phiếu nhập · [ADM-12](#adm-12) hao hụt · [ADM-13](#adm-13) tồn ước tính · [ADM-14](#adm-14) nối nút tạm dừng · [ADM-15](#adm-15) công nợ nhà cung cấp | 1 |
-| **C — con người** | [ADM-20](#adm-20) hồ sơ · [ADM-21](#adm-21) ai đang trực trạm · [ADM-22](#adm-22) chấm công · [ADM-23](#adm-23) bảng lương · [ADM-24](#adm-24) quyền xem lương | 1 |
-| **D — sản phẩm** | [ADM-30](#adm-30) sửa giá thành phần · [ADM-31](#adm-31) bật/tắt món · [ADM-32](#adm-32) thêm món · [ADM-33](#adm-33) ảnh và thứ tự | 2: 30 · 31 · 1: 32 · 33 |
-| **E — tài chính** | [ADM-40](#adm-40) doanh thu ngày · [ADM-41](#adm-41) đối soát cuối ngày · [ADM-42](#adm-42) sổ chi · [ADM-43](#adm-43) lãi/lỗ · [ADM-44](#adm-44) quỹ và két · [ADM-45](#adm-45) bán chạy | 2: 40 · 41 · 1: 42–45 |
-| **F — nền dùng chung** | [ADM-50](#adm-50) vết thao tác · [ADM-51](#adm-51) phân quyền · [ADM-52](#adm-52) nhập bù · [ADM-53](#adm-53) đưa Đ-2 và Đ-4 về owner | **3: 53** · 2: 50 · 52 · 1: 51 |
+Một dòng một việc, hai mươi chín dòng. **Loại** đọc ở bảng *Cổng của cả lane* (đầu file): **1** =
+thiếu luật, chờ chủ quán · **2** = luật đã đủ, chỉ còn thi công pha 2–4 (không thuộc lane này) ·
+**3** = việc của chính lane, nhận được ngay. Cột **Đang chặn bởi** là bản tóm của đúng dòng đầu
+entry đó — mở link để đọc đủ; sửa status thì sửa **cả hai chỗ trong cùng một lượt** (entry + dòng
+này), đừng để bảng này trôi khỏi entry nó tóm tắt (`work/findings.md` F-001 là loại lỗi này).
+
+| Mã | Việc | Nhánh | Loại | Đang chặn bởi |
+|---|---|:--:|:--:|---|
+| [ADM-01](#adm-01) | ca bán | A | 2 | *hết chặn* — chờ thi công pha 2–4 |
+| [ADM-02](#adm-02) | thứ tự bưng | A | 2 | *hết chặn* — chờ thi công pha 2–4 |
+| [ADM-03](#adm-03) | sức chứa | A | 2 | *hết chặn* (đóng 2026-09-06: `U-039` `U-040`) |
+| [ADM-04](#adm-04) | tổng quan buổi bán | A | 1 | `U-041` · `F52` · `F53` |
+| [ADM-10](#adm-10) | danh mục nguyên liệu | B | 1 | `B11` `B12` |
+| [ADM-11](#adm-11) | phiếu nhập hàng | B | 1 | `B13`…`B17` |
+| [ADM-12](#adm-12) | hao hụt / đồ thừa | B | 1 | vế còn lại của `B18` · `B19` `B20` |
+| [ADM-13](#adm-13) | tồn ước tính | B | 1 | `B21` |
+| [ADM-14](#adm-14) | nối nút tạm dừng | B | 1 | `B21` + **ADM-13** |
+| [ADM-15](#adm-15) | công nợ nhà cung cấp | B | 1 | `B16` + **ADM-11** |
+| [ADM-20](#adm-20) | hồ sơ nhân viên | C | 1 | `C23` `C24` `C25` + **Đ-4** chưa về owner |
+| [ADM-21](#adm-21) | ai đang trực trạm | C | 1 | `C36` ⚠️ **đòn bẩy lớn nhất cả lane** |
+| [ADM-22](#adm-22) | chấm công | C | 1 | `C30` `C31` `C32` + **Đ-4** chưa về owner |
+| [ADM-23](#adm-23) | bảng lương | C | 1 | `C24` `C26`…`C29` `C33` + **ADM-22** + **Đ-4** |
+| [ADM-24](#adm-24) | quyền xem lương | C | 1 | `C34` `C35` `F55` + **ADM-23** |
+| [ADM-30](#adm-30) | ai được sửa giá thành phần | D | 2 | nửa còn chặn: `D40` |
+| [ADM-31](#adm-31) | bật/tắt món | D | 2 | *hết chặn* — không thiếu gì |
+| [ADM-32](#adm-32) | thêm món mới | D | 1 | `D37` `D38` `D42` + lời mở lại ranh giới sản phẩm |
+| [ADM-33](#adm-33) | menu QR: ảnh và thứ tự | D | 1 | `D43` |
+| [ADM-40](#adm-40) | doanh thu ngày | E | 2 | nửa còn chặn: `E47` |
+| [ADM-41](#adm-41) | đối soát cuối ngày | E | **2 + L3** | nửa dưới chặn: `A3` `A4` |
+| [ADM-42](#adm-42) | sổ chi | E | 1 | `E44` `E45` `E46` + **ADM-11** |
+| [ADM-43](#adm-43) | lãi/lỗ | E | 1 | `E47` + **ADM-42** + **ADM-23** + **ADM-11** |
+| [ADM-44](#adm-44) | quỹ và két | E | **1 + L3** | `A3` `A4` `E49` + **ADM-01** |
+| [ADM-45](#adm-45) | bán chạy / giờ cao điểm | E | 1 | `E48` |
+| [ADM-50](#adm-50) | vết thao tác | F | **2 + L3** | vế *ai* chặn bởi `C36` → **ADM-21** |
+| [ADM-51](#adm-51) | phân quyền mảng quản trị | F | 1 | `C34` `C35` `F52` `F53` `F55` |
+| [ADM-52](#adm-52) | nhập bù (mất điện) | F | 1 | nửa dưới chặn: `U-032` `F54` |
+| [ADM-53](#adm-53) | đưa Đ-2 và Đ-4 về owner | F | **3** | *hết chặn* — nhận được ngay, mở khoá cả nhánh C |
 
 **Mã số không đánh lại.** `ADM-05`…`ADM-09`, `ADM-16`…`ADM-19`, `ADM-25`…`ADM-29`, `ADM-34`…`ADM-39`
 và `ADM-46`…`ADM-49` **cố ý trống**: mỗi nhánh giữ một dãy số riêng để việc mới chèn vào đúng nhánh
