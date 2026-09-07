@@ -97,10 +97,11 @@ if [ -f work/scope.txt ]; then
     else
       npat="$(printf '%s\n' "$scope" | grep -c .)"
       printf '  → CẢNH BÁO: work/scope.txt còn %s pattern nhưng work/backlog.md không có\n' "$npat"
-      printf '    task nào ở In Progress. Scope của task đã xong chưa được dọn (CLAUDE.md §7.3).\n'
-      printf '    Dọn nó TRƯỚC khi bắt task mới: Gate 3 sẽ chấm bạn bằng scope của người khác,\n'
-      printf '    và §6 cấm pattern đi vào commit. Nếu bạn đang giữa một task: mở lại nó ở\n'
-      printf '    In Progress, đừng xoá scope.\n'
+      printf '    task nào ở In Progress. Có thể là scope của task đã xong chưa được dọn\n'
+      printf '    (CLAUDE.md §7.3) — hoặc một phiên khác đang chạy song song trên cùng cây,\n'
+      printf '    và brief không có cách nào biết đâu là ca nào (work/findings.md F-014).\n'
+      printf '    THÊM khối của bạn vào CUỐI file; chỉ gỡ khối nào ghi rõ đã commit. Nếu bạn\n'
+      printf '    đang giữa một task: mở lại nó ở In Progress, đừng xoá scope.\n'
     fi
   else
     printf '  (not declared — no task in flight, or an L0 change)\n'

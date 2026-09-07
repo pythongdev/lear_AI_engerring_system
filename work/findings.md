@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 32 finding — 20 Fixed/Resolved, 12 Open (đo lại 2026-09-07). Cột **Status** ở đây là một bản
+Tổng: 32 finding — 21 Fixed/Resolved, 11 Open (đo lại 2026-09-07, sau khi T-035 đóng F-014). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -75,7 +75,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-011 | `0704139 "dsfg"` — cổng không chặn commit ngoài phiên | Fixed |
 | F-012 | Brief cắt danh sách ở 6 mà không báo đã cắt | Fixed |
 | F-013 | Bản xuất khẩu vẫn thiết kế nút "Xong" đã bị bỏ | Fixed |
-| F-014 | Cảnh báo "scope bẩn" bảo XOÁ trong khi chủ thật đang chạy | Open |
+| F-014 | Cảnh báo "scope bẩn" bảo XOÁ trong khi chủ thật đang chạy | Fixed |
 | F-015 | Đóng unknown chỉ sửa chỗ trả lời, không sửa chỗ được nhắc tới | Fixed |
 | F-016 | shop-facts.md tự khai "không trỏ đi đâu" nhưng trỏ 5 chỗ | Open |
 | F-017 | Câu `grep` "chứng minh xong" trong prompt lọc rỗng | Open |
@@ -1064,8 +1064,18 @@ chạy*)** · F-010 (scope quên dọn — cùng file, ngược chiều) · F-00
 (Gate 7b + cảnh báo scope) · **ADR-008 (đã push thì sửa tiến — vì sao `ffc2997` không được viết
 lại)**
 
+**Đóng 2026-09-07, T-035.** Bốn ràng buộc ở *Decision / Fix* trên đều đã áp dụng vào
+`scripts/brief.sh`: câu ra lệnh **"Dọn nó TRƯỚC khi bắt task mới"** đổi thành **"THÊM khối của bạn
+vào CUỐI file; chỉ gỡ khối nào ghi rõ đã commit"**, cộng một câu nói thẳng brief **không có cách
+nào biết** có phiên khác đang chạy song song hay không — đúng ràng buộc thứ ba, và không đổi điều
+kiện kích hoạt cảnh báo (ràng buộc thứ hai) hay hình dạng `work/scope.txt` (ràng buộc thứ tư, vẫn
+để ngỏ cho một ADR riêng nếu sau này cần). Ca hồi quy mới ở `scripts/brief.test.sh` (B1b) xác nhận
+cả ba: còn lời THÊM khối, hết lời ra lệnh xoá cũ, có câu "không có cách nào biết". **Đóng phần
+`scripts/brief.sh`.** Ba lần thứ hai/ba/tư mô tả ở trên (commit nuốt việc của phiên khác) vẫn chưa
+có gate nào chặn — đó là khoảng trống F-011 và F-025 đã ghi, không phải việc của T-035.
+
 **Status:**
-Open
+Fixed
 
 ---
 

@@ -95,6 +95,24 @@ case "$out" in
   *) echo "  FAIL B1 — không nêu 'work/scope.txt còn 2 pattern'"; fails=$((fails + 1)) ;;
 esac
 
+# B1b. F-014: cảnh báo phải bảo THÊM khối, không được ra lệnh XOÁ trước — brief
+# không có cách nào biết scope là của task đã xong hay của một phiên khác đang
+# chạy song song, nên nó chỉ được nói ra rằng nó không biết.
+case "$out" in
+  *"THÊM khối của bạn"*) echo "  ok   B1b dùng lời THÊM khối, không ra lệnh xoá (F-014)" ;;
+  *) echo "  FAIL B1b — thiếu lời 'THÊM khối của bạn' (F-014)"; fails=$((fails + 1)) ;;
+esac
+case "$out" in
+  *"Dọn nó TRƯỚC khi bắt task mới"*)
+    echo "  FAIL B1b — vẫn còn lời ra lệnh xoá cũ đã gây mất scope T-027/T-031 (F-014)"
+    fails=$((fails + 1)) ;;
+  *) echo "  ok   B1b không còn lời ra lệnh xoá cũ" ;;
+esac
+case "$out" in
+  *"không có cách nào biết"*) echo "  ok   B1b brief nói rõ nó không biết có phiên khác đang chạy (F-014)" ;;
+  *) echo "  FAIL B1b — brief không nói rõ nó không biết (F-014)"; fails=$((fails + 1)) ;;
+esac
+
 # B2. cùng scope đó + CÓ task In Progress → im, và giữ nguyên dòng cũ
 r="$(newrepo b2 yes)"; setscope "$r" "docs/x.md" "scripts/"
 brief "$r"
