@@ -56,7 +56,7 @@ Bốn đầu ra bắt buộc mà bảng sáu pha đòi ở pha 1, cộng một t
 | 1 | Bảng bất biến **ba cột**: mệnh đề · bảo vệ bằng · phép đối chiếu | **chưa** — xem §4 |
 | 2 | Ràng buộc kiến trúc ẩn + **dấu hiệu phải xem lại** từng cái | **xong 2026-09-08** — P1-08: `docs/product/1-system-design/05-realtime-va-du-phong.md` §2, bốn ràng buộc `RB-1`…`RB-4`, mỗi cái một dấu hiệu đo được (**ADR-045**, đóng nốt **F-027**) |
 | 3 | Nguồn thời gian | dữ kiện có (`shop-facts.md` §1); **định nghĩa NGÀY BÁN cho phép cộng tiền thì chưa** |
-| 4 | Năm rủi ro lớn nhất kèm cách chặn | chỉ có ở bản nháp §6, và nó viết trước khi có nợ · hoàn tiền · đối soát ba nguồn |
+| 4 | Những rủi ro lớn nhất kèm cách chặn | **xong 2026-09-08** — P1-10: `docs/product/1-system-design/06-so-rui-ro.md` §1, chín dòng `RR-1`…`RR-9`, mỗi dòng một cơ chế đã viết ra ở một mục pha 1 — trừ `RR-9` (*mất hẳn bản ghi đã ghi*) ghi thẳng **chưa có cơ chế**, mã `work/findings.md` **F-034**. Ba dòng bản nháp §6 không có là ba luật đường tiền chốt sau nó (nợ · hoàn tiền · đối soát ba nguồn) |
 | 5 | **Đường suy giảm** — mất điện, mất mạng, hỏng máy | luật nghiệp vụ có (`shop-facts.md` §6.11); hệ quả kiến trúc thì chưa |
 
 Thứ năm không có trong bảng sáu pha, và nó ở đây vì chủ quán đã chốt một câu mà hầu hết hệ thống
@@ -147,7 +147,7 @@ docs/product/1-system-design/
   03-bao-ve-invariant.md       P1-04 · P1-05 · P1-06 — bảng ba cột, 18 mệnh đề
   04-yeu-cau-du-lieu.md        P1-07 — cái gì phải ghi được, cái gì phải không xảy ra được
   05-realtime-va-du-phong.md   P1-08 — đường đẩy, đường kéo, ràng buộc một instance
-  06-so-rui-ro.md              P1-10 — năm rủi ro + cơ chế chặn + dấu hiệu
+  06-so-rui-ro.md              P1-10 — rủi ro + cơ chế chặn + người chịu + dấu hiệu
   07-cong-chat-luong-pha-1.md  P1-11 — diễn ba scenario qua thiết kế, và cổng sang pha 2
 ```
 
@@ -179,7 +179,7 @@ Sáu cột. Không có cột *Trạng thái*: nó ở `work/backlog.md`. Cột *
 | **P1-07** | Viết **yêu cầu hình dạng dữ liệu** bằng ngôn ngữ nghiệp vụ: mọi chỗ thiếu ở `architecture.md` §8 + nợ (§12.3) + vết (`I-012` `I-018`) + ai đang trực trạm nào (§4) | P1-04 · P1-05 · P1-06 · **P1-13** · **P1-14** · **BA-12** | Mỗi dòng của §8 có **đúng một** dòng yêu cầu dạng *phải ghi lại được X* / *phải không thể xảy ra Y* (đếm ở bảng §8, đừng đếm ở tiêu đề — **F-018**); bộ lọc tên bảng và tên cột trong file mới trả về **rỗng** | Pha 2 dựng lược đồ không cất được vết hoàn tiền và khoản nợ ⇒ đối soát 0đ không thực hiện được | L2 |
 | **P1-08** | Chốt chiến lược realtime, đường kéo dự phòng, và **dấu hiệu phải xem lại** từng ràng buộc ẩn | P1-02 | Bốn ràng buộc ẩn (một instance · không hàng đợi · không cache · một VPS) mỗi cái có một **dấu hiệu đo được**, không phải một lời hứa | Mất SSE ⇒ trạm không nhận việc; thêm replica ⇒ trạm mất việc ngẫu nhiên, chỗ khó debug nhất dự án | L2 |
 | **P1-09** | Viết lại `architecture.md` §3 — bảng quầy **bốn** con số, đơn vị **bấm** là mẻ, đơn vị **đếm** là bàn; và gỡ câu §11 đang giao việc này cho một task đã *Done* (F-024) | **BA-12** · **S-5** | §3 nêu đủ bốn con số và nói rõ con số thứ tư nhảy theo bậc mẻ; không còn câu nào giao việc cho `T-036` | Quầy không thấy bánh đang nằm chờ ⇒ khách chờ món không bao giờ tới, và không ai biết vì sao | L2 |
-| **P1-10** | Dựng sổ rủi ro: năm rủi ro lớn nhất, kèm cơ chế chặn, ai chịu, và dấu hiệu nó **đang** xảy ra | P1-04 · P1-05 · P1-06 · **P1-13** · **P1-14** | Năm dòng, mỗi dòng chỉ tên đúng một cơ chế đã viết ở bước trước — không rủi ro nào được chặn bằng *"cẩn thận hơn"* | Rủi ro lớn không có người chặn, và lần đầu nó xảy ra là lần đầu ai đó nghĩ về nó | L1 |
+| **P1-10** | Dựng sổ rủi ro: những rủi ro lớn nhất, kèm cơ chế chặn, ai chịu, và dấu hiệu nó **đang** xảy ra | P1-04 · P1-05 · P1-06 · **P1-13** · **P1-14** | Mỗi rủi ro một dòng — **đếm ở sổ, đừng đếm ở đây** (**F-018**) — và mỗi dòng chỉ tên đúng một cơ chế đã viết ở bước trước, hoặc nói thẳng *chưa có cơ chế* kèm mã; không rủi ro nào được chặn bằng *"cẩn thận hơn"* | Rủi ro lớn không có người chặn, và lần đầu nó xảy ra là lần đầu ai đó nghĩ về nó | L1 |
 | **P1-11** | **Diễn ba scenario nghiệm thu BA qua thiết kế** (`docs/product/0-ba/ban-hang/08-scenario.md` §8) và chốt cổng sang pha 2 | P1-02 → P1-10 | Mỗi **bước** của ba scenario trỏ được tới một cơ chế bảo vệ đã viết ra; chỗ không trỏ được ghi thành `F-XXX`/`U-XXX`, **không** tự thiết kế bù | Thiết kế đẹp mà không chạy được nghiệp vụ — đúng cách BA-11 tìm ra năm chỗ nói lệch nhau | L2 |
 | **P1-12** | Rà chéo ranh giới pha và pointer | P1-11 | Bộ lọc *tên bảng · tên cột · endpoint · route · component* trên mọi file pha 1 trả về **rỗng**, và mỗi lần rỗng có in cả lệnh chưa lọc để chứng minh bộ lọc không tự rỗng (F-017); `./scripts/gate.sh` xanh | Pha 1 âm thầm quyết việc của pha 2, và không ai rà lại vì mọi cổng đều xanh | L1 |
 | **P1-13** | Bảng ba cột — nhóm thứ tư **SẢN XUẤT THEO MẺ**: `I-019` `I-020` — mở ra **sau** khi ba nhóm ban đầu đã chia (`work/findings.md` F-026, `docs/decisions.md` ADR-042) | P1-01 | Hai mệnh đề đủ ba ô, không ô nào trống; `I-019`/`I-020` dùng chung một cơ chế khoá gom, và hàng nào chỉ tới tầng 4 phải nói thẳng *"máy không ngăn được"* | Bánh cộng cho bàn này, thiếu cho bàn kia, đúng lúc đông khách và không ai có thời gian dò lại | L2 |
@@ -266,6 +266,7 @@ số dòng ở đây là phép đếm của người viết, đếm lại ở `d
 | ~~**BA-12**~~ | ~~lát cắt sản xuất theo mẻ chưa có mục nào~~ — **xong 2026-09-04** (`31fb071`), §3.4 đã có; P1-07 và P1-09 hết bị nó chặn | — | — |
 | ~~**U-033**~~ | ~~đơn bị **huỷ** sau khi bếp đã làm xong phần của nó: chỗ ấy tính cho bàn khác đang chờ, hay bỏ và làm lại?~~ — **đóng 2026-09-06: tính cho bàn khác đang chờ, POS chọn bàn nhận và cập nhật** ⇒ P1-05 · P1-07 · P1-09 hết bị nó chặn | — | — |
 | **U-043** | mất tín hiệu **bao lâu** thì web ngừng nhận đơn — `I-008` đã có điều kiện thứ ba, `05-realtime-va-du-phong.md` §3 đã chốt ai phán quyết và dựa vào đường nào, chỉ còn **độ dài cửa sổ** *(mở 2026-09-08 bởi chính P1-08)* | **pha 3**, không chặn bước nào của pha 1 | chủ quán |
+| **U-044** | hoàn tiền cho một khoản khách đã **chuyển khoản** thì quán trả lại bằng gì — tiền mặt lấy trong két, hay chuyển khoản lại? Trả bằng tiền mặt là một đường **rút tiền khỏi két giữa buổi**, và điều kiện biên thứ hai của `quality/invariants.md` **I-021** hết đúng *(mở 2026-09-08 bởi chính P1-10)* | **không chặn bước nào của pha 1**; nó chạm công thức đối soát `architecture.md` §6.4 và dòng `RR-3` của sổ rủi ro | chủ quán |
 | ~~**U-036**~~ | ~~khoản **trả trước** nhận hôm nay cho đơn giao ngày khác tính doanh thu ngày nào~~ — **đóng 2026-09-06: ngày GIAO, đối xứng với luật nợ §6.14 (ADR-040)** ⇒ P1-03 · P1-04 hết bị nó chặn | — | — |
 
 **Cách hỏi, không phải chuyện lễ nghi — nó đã hỏng một lần và tốn một ngày.** Câu hỏi `S-4` ngày
@@ -322,7 +323,13 @@ dùng được; một cổng tick 9/9 bằng cảm giác thì không chặn đư
       (bán · nợ · hoàn), cả ba trỏ cùng một mục.
 - [ ] Mỗi phụ thuộc ngoài có một đường suy giảm → đếm số phụ thuộc và số dòng suy giảm, hai số bằng nhau.
 - [ ] Bốn ràng buộc kiến trúc ẩn có **dấu hiệu đo được** → không dòng nào chứa *"khi cần"* hoặc *"nếu chậm"*.
-- [ ] Năm rủi ro có cơ chế chặn **đã tồn tại ở một mục pha 1** → mỗi dòng rủi ro trỏ được tới một mục cụ thể.
+- [ ] **Mọi** rủi ro của sổ rủi ro có cơ chế chặn **đã tồn tại ở một mục pha 1** → mở
+      `docs/product/1-system-design/06-so-rui-ro.md` §1, đọc **từng dòng `RR-x`** (không đếm số
+      lượng — một con số đếm động đã tự hết đúng một lần, `work/findings.md` **F-026** · **F-018**):
+      mỗi dòng hoặc trỏ được tới một mục pha 1 cụ thể, hoặc nói thẳng **chưa có cơ chế** kèm mã của
+      chỗ đang thiếu. Không dòng nào được chặn bằng *"cẩn thận hơn"*. **Tính tới 2026-09-08 ô này
+      tick kèm lý do, không tick trơn**: `RR-9` (mất hẳn bản ghi đã ghi) là dòng chưa có cơ chế,
+      mã `F-034`.
 - [ ] Ba scenario BA đi hết được qua thiết kế → P1-11, mỗi bước trỏ được một cơ chế.
 - [ ] Trục sản xuất theo mẻ đã có mục nghiệp vụ (**BA-12**) và §3 đã viết lại (**P1-09**).
 - [ ] Không câu hỏi nghiệp vụ nào đang mở mà một bước pha 1 phải đoán thay → `./scripts/brief.sh`

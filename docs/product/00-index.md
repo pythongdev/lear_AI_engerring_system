@@ -50,9 +50,10 @@ thư mục rỗng không gỡ được dòng nào cho ai.
 | §1–§14 — cấu trúc hệ thống, ba mặt, quyền, tiền, nợ, mảng admin | [1-system-design/architecture.md](1-system-design/architecture.md) |
 | Ranh giới hệ thống — actor (trỏ pha 0) · **phụ thuộc ngoài** · **đường suy giảm** của từng phụ thuộc | [1-system-design/01-ranh-gioi-he-thong.md](1-system-design/01-ranh-gioi-he-thong.md) |
 | Thời gian — định nghĩa **một ngày bán** cho mọi phép cộng tiền · **mốc tính tiền** của từng việc · **nguồn thời gian** | [1-system-design/02-thoi-gian-ngay-ban.md](1-system-design/02-thoi-gian-ngay-ban.md) |
-| Bảo vệ invariant — **tầng** giữ từng mệnh đề `I-0xx` và **phép đối chiếu** bắt nó khi hỏng (một file, ba chủ: P1-04 · P1-05 · P1-06) | [1-system-design/03-bao-ve-invariant.md](1-system-design/03-bao-ve-invariant.md) |
+| Bảo vệ invariant — **tầng** giữ từng mệnh đề `I-0xx` và **phép đối chiếu** bắt nó khi hỏng (một file, năm chủ: P1-04 · P1-05 · P1-06 · P1-13 · P1-14) | [1-system-design/03-bao-ve-invariant.md](1-system-design/03-bao-ve-invariant.md) |
 | Yêu cầu hình dạng dữ liệu — mỗi chỗ thiếu ở [`architecture.md`](1-system-design/architecture.md) §8 một câu *phải ghi lại được X* / *phải không thể xảy ra Y*, cộng nợ · vết · trực trạm · mốc tính tiền (P1-07) | [1-system-design/04-yeu-cau-du-lieu.md](1-system-design/04-yeu-cau-du-lieu.md) |
 | Realtime và đường dự phòng — **đường đẩy** · **đường kéo** tự chạy · **bốn ràng buộc kiến trúc** `RB-1`…`RB-4` mỗi cái một **dấu hiệu đo được** · hệ thống dựa vào cái gì để nói *quán đang mất kết nối* (P1-08) | [1-system-design/05-realtime-va-du-phong.md](1-system-design/05-realtime-va-du-phong.md) |
+| Sổ rủi ro — **chín rủi ro** `RR-1`…`RR-9`, mỗi rủi ro một **cơ chế chặn đã viết ra ở một mục pha 1** (hoặc một dòng ⛔ *chưa có cơ chế*), **người chịu** và **dấu hiệu nó đang xảy ra** (P1-10) | [1-system-design/06-so-rui-ro.md](1-system-design/06-so-rui-ro.md) |
 
 Đây là **đặc tả, không phải mã**: nó nói *cái gì phải đúng* và *ai được ghi cái gì*, không nói tên
 hàm, tên file hay thư viện. **Số mục §1–§14 không đánh lại** — `docs/decisions.md` ADR-012 (mục

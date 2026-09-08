@@ -61,7 +61,7 @@ chỗ trong cùng file là bug của lượt vừa sửa entry, không phải l�
 | P1-07 | [Yêu cầu hình dạng dữ liệu](#p1-07) | Đóng |
 | P1-08 | [Realtime, đường kéo dự phòng, ràng buộc ẩn](#p1-08) | Đóng |
 | P1-09 | [Bảng quầy bốn con số](#p1-09) | Đóng |
-| P1-10 | [Sổ rủi ro](#p1-10) | Mở |
+| P1-10 | [Sổ rủi ro](#p1-10) | Đóng |
 | P1-11 | [Diễn ba scenario qua thiết kế](#p1-11) | Mở |
 | P1-12 | [Rà chéo ranh giới pha](#p1-12) | Mở |
 | P1-13 | [Bảng ba cột — nhóm SẢN XUẤT THEO MẺ](#p1-13) | Đóng |
@@ -867,8 +867,20 @@ hết đúng và phải viết lại"*, rồi giao việc cho `T-036`. **T-036 �
 <a id="p1-10"></a>
 ### P1-10 — Năm rủi ro lớn nhất chỉ có ở một bản nháp bị đóng băng, và bản ấy viết trước khi có nợ · hoàn tiền · đối soát ba nguồn
 
-**Prompt:** chưa có — **L1** · bước 10/14 (kế hoạch §6) · **cần xong trước:** P1-04 · P1-05 ·
-P1-06 · **P1-13** ✔ (đã xong 2026-09-07) (mỗi rủi ro phải chỉ tên được một cơ chế đã viết ra)
+✅ **Xong ngày 2026-09-08.** `docs/product/1-system-design/06-so-rui-ro.md` (mới, một chủ) có
+**chín** dòng `RR-1`…`RR-9`, mỗi dòng đủ sáu ô. **Chín, không phải năm** — ba luật đường tiền chốt
+sau bản nháp (nợ · hoàn tiền · đối soát ba nguồn) sinh ra ba dòng bản nháp không có, và con số ấy
+ghi thẳng là **phép đếm ngày 2026-09-08**, không phải một quyết định (**F-003**). **Một dòng ⛔
+chưa có cơ chế:** `RR-9` — *mất hẳn bản ghi đã ghi* — cơ chế duy nhất được nhắc trong repo nằm ở
+bản xuất khẩu **không sở hữu gì**, ghi thành `work/findings.md` **F-034** (lần thứ hai của F-027),
+ba đường ra để cho chủ repo chọn. Mở thêm `docs/product/99-unknowns.md` **U-044** (hoàn tiền cho
+khoản đã chuyển khoản trả lại bằng gì — chạm điều kiện biên của `I-021`). Kế hoạch §9 ô thứ sáu và
+§6 hàng P1-10 **bỏ số đếm cứng** (**F-018**, cùng đường ADR-042 đã đi cho cổng invariant).
+
+**Prompt:** [`prompt/SD/P1-10-so-rui-ro-L1.md`](../prompt/SD/P1-10-so-rui-ro-L1.md)
+(viết 2026-09-08, cùng lượt nhận việc) — **L1** · bước 10/14 (kế hoạch §6) · **cần xong trước:**
+P1-04 ✔ · P1-05 ✔ · P1-06 ✔ · **P1-13** ✔ · **P1-14** ✔ (mỗi rủi ro phải chỉ tên được một cơ chế
+đã viết ra)
 
 **Goal:**
 Xong rồi thì pha 1 có một sổ rủi ro trong đó **mỗi** rủi ro có: cơ chế chặn **đã tồn tại** ở một

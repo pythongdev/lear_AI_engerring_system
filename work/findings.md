@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 33 finding — 28 Fixed/Resolved, 5 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-08, sau khi P1-08 mở F-033; phép đếm ngày 2026-09-07 ra *32 — 28/4*, con số cũ hơn nữa *24/8* đã trôi từ trước lượt ấy). Cột **Status** ở đây là một bản
+Tổng: 34 finding — 28 Fixed/Resolved, 6 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-08, sau khi P1-10 mở F-034; phép đếm ngày 2026-09-07 ra *32 — 28/4*, con số cũ hơn nữa *24/8* đã trôi từ trước lượt ấy). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -95,6 +95,8 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-031 | Lần thứ năm: subject trùng commit trước, nội dung không khớp | Open |
 | F-032 | Mục lục `backlog_SD.md` ghi Trạng thái "Đóng" cho hai bước còn thiếu dòng luật đòi | Fixed |
 | F-033 | Ảnh chụp *"hôm nay có chưa"* của kế hoạch pha 1 vẫn ghi **chưa** cho bốn thứ đã xong | Open |
+| F-034 | Cơ chế chặn *mất hẳn dữ liệu* chỉ sống ở tài liệu không sở hữu gì — lần thứ hai của F-027 | Open |
+| F-035 | Gate 7b đọc index bằng encoding KHÁC mọi chỗ đọc khác trong chính nó ⇒ kêu một file scope đã phủ | Closed |
 
 ---
 
@@ -2985,3 +2987,120 @@ cột trạng thái chép tay trong một kế hoạch tự khai *"không sở h
 
 **Status:**
 Open
+
+---
+
+### F-034 — Cơ chế duy nhất chặn *mất hẳn dữ liệu* chỉ sống ở tài liệu đã chốt là KHÔNG sở hữu gì
+
+**Problem:**
+Sổ rủi ro pha 1 (`docs/product/1-system-design/06-so-rui-ro.md`, bước **P1-10**, 2026-09-08) đòi
+mỗi rủi ro chỉ tên được **một cơ chế đã viết ra ở một mục pha 1**. Dòng `RR-9` — *mất hẳn bản ghi
+đã ghi*, tức dữ liệu của những ngày đã bán không còn — **không có mục nào để chỉ tên**. Đo bằng một
+lệnh, 2026-09-08:
+
+```bash
+grep -rni 'sao lưu\|backup\|phục hồi\|mất dữ liệu' --include='*.md' .
+```
+
+Bốn dòng trong `master_plan/prompt-fullstack.md` (§5 và hai dòng checklist), một dòng
+`master_plan/phase_1_system_design_banh_cuon_ba_thanh.md` §6 hàng `R4` (*"Backup + snapshot +
+verification"*). **Không một dòng nào ở `docs/` hay `quality/`.** Cả hai file có kết quả đều là tài
+liệu **không sở hữu sự thật nào**: bản xuất khẩu (`docs/decisions.md` **ADR-035**) và bản nháp pha 1
+(**ADR-014**).
+
+**Impact:**
+Đây là **lần thứ hai cùng một hình dạng** — **F-027** đã ghi đúng ca này cho *Telegram* và *một
+VPS*: một thứ mà cả hệ thống dựa vào, được nhắc tên ở một tài liệu không ai chịu trách nhiệm, nên
+mọi phiên đọc qua đều tưởng nó *đã có người lo*. Hậu quả riêng của lần này nặng hơn F-027 ở một
+điểm: mất kết nối có **đường lùi** (sổ giấy, `01-ranh-gioi-he-thong.md` §3 `PT-6`), còn mất bản ghi
+thì **không có đường lùi nào** — sổ giấy chỉ có những ngày quán ghi tay. Và nó phá đúng thứ pha 1
+vừa dựng xong: cả bảng bảo vệ invariant lẫn cổng đối soát 0đ đều đứng trên giả định *"cái đã ghi
+thì còn đó"*.
+
+**Vì sao vòng rà trước không bắt:**
+Không cổng nào chấm mẫu này, y như F-027. Gate 1b chấm **đường dẫn chết**, không chấm **một sự thật
+không có nhà**; Gate 1c chấm mã đã đóng bị trích như đang mở. Một cơ chế được nhắc bằng văn xuôi ở
+một file mà `CLAUDE.md` §2 không cho là owner thì **không mã nào để so**. Kế hoạch pha 1 §6 cũng
+không có bước nào nhận phần này: mười bốn bước phủ ranh giới, thời gian, invariant, dữ liệu,
+realtime, rủi ro — không bước nào phủ *dữ liệu đã ghi có còn không*.
+
+**Decision / Fix:**
+Lượt P1-10 **ghi lại, không sửa hộ**, đúng tiền lệ F-032 · F-033. Cụ thể lượt này đã làm:
+`RR-9` nằm trong bảng §1 với cột cơ chế ghi thẳng **⛔ chưa có cơ chế**, cột người chịu ghi **chưa
+có**, cột dấu hiệu ghi **chưa đo được** — để nó không bao giờ đọc được thành *"đã chặn"*
+(`06-so-rui-ro.md` §1.2 luật 4).
+
+**Ba đường ra, không đường nào được chọn hộ — đây là quyết định của chủ repo:**
+
+1. **Mở một bước pha 1 thứ mười lăm** cho *dữ liệu đã ghi có còn không*. Rẻ nhất về thủ tục, nhưng
+   đáng ngờ về ranh giới: pha 1 nói *cái gì phải đúng*, còn sao lưu là **cách chạy**, và **ADR-035**
+   giao cách chạy cho pha sau.
+2. **Giao thẳng cho pha vận hành** và ghi một dòng ở sổ rủi ro trỏ tới đó. Đúng ranh giới, nhưng
+   để một ô trống chạm dữ liệu đi qua **cổng sang pha 2** — thứ kế hoạch §9 cấm với ô chạm tiền.
+3. **Đặt một câu yêu cầu ở pha 1 mà không thiết kế cơ chế** — dạng *"phải khôi phục lại được bản
+   ghi của một ngày đã bán"*, cùng hình với các câu *phải ghi lại được X* của
+   `docs/product/1-system-design/04-yeu-cau-du-lieu.md`. Giữ được ranh giới **và** để lại một câu
+   cho pha sau đối chiếu; cái giá là mở thêm một mục trong pha 1 khi pha 1 sắp đóng.
+
+**Related task:**
+**P1-10** (lượt phát hiện, 2026-09-08) · **F-027** (cùng hình dạng, đã đóng) · **F-001** ·
+`docs/decisions.md` **ADR-035** · **ADR-014**.
+
+**Status:**
+Open
+
+### F-035 — Cùng một script đọc đường dẫn bằng HAI encoding, và cổng kêu một file mà scope đã phủ
+
+**Problem:**
+Ngày 2026-09-08, cuối lượt **T-067**, Gate 7b (`scripts/check-commit-block.sh`) chặn lượt với lý do
+*"khối commit nhặt thứ nằm ngoài việc được giao"* và nêu đích danh:
+
+```text
+- "new_claude/check-ph\303\241e-boundary.sh"
+```
+
+Nhưng `work/scope.txt` **đã** khai `new_claude/` (khối của phiên P1-10), và Gate 3 chấm đúng file ấy
+là **trong scope**. Hai cổng nói ngược nhau về cùng một đường dẫn. Nguyên nhân nằm gọn trong một
+dòng của chính `check-commit-block.sh`: nó đọc index bằng
+
+```bash
+git diff --cached --name-only        # KHÔNG có core.quotepath=false
+```
+
+trong khi chỗ đọc `git status --porcelain` ở **đầu cùng script ấy** thì có. Không có cờ đó, git bọc
+tên phi-ASCII vào ngoặc kép và escape từng byte UTF-8 (`á` → `\303\241`), nên chuỗi đem đi so
+pattern là `"new_claude/check-ph\303\241e-boundary.sh"` — bắt đầu bằng dấu `"`, không pattern nào
+khớp được. Đo hai chiều trong lượt phát hiện:
+
+```bash
+git diff --cached --name-only | grep new_claude
+#   "new_claude/check-ph\303\241e-boundary.sh"
+git -c core.quotepath=false diff --cached --name-only | grep new_claude
+#   new_claude/check-pháe-boundary.sh
+```
+
+**Impact:**
+Đây là **cổng đỏ vì lý do sai**, đúng thứ **F-018** ghi là cách chắc chắn nhất để người ta gỡ cổng:
+lượt đã khai scope đúng, khối commit đã liệt kê đúng ba file của mình, và cổng vẫn chặn — không có
+cách nào sửa từ phía người dùng ngoài việc thêm một pattern kỳ dị chép lại dạng escaped, tức dạy
+người ta viết `work/scope.txt` sai. Điều kiện kích hoạt hẹp nhưng không hiếm: **một file có dấu
+tiếng Việt trong tên đang nằm ở index**. Repo này viết tài liệu bằng tiếng Việt, nên đó là chuyện
+sẽ còn xảy ra.
+
+Ca này cũng cho thấy một hình chung, đáng giữ hơn con bug: **một script đọc cùng một loại dữ liệu ở
+hai chỗ thì hai chỗ phải đọc bằng cùng một cách.** Chỗ `porcelain` được viết đúng từ đầu; chỗ
+`--cached` thêm vào sau (T-016 · ADR-006, chế độ đọc index thật) và không ai đối chiếu ngược lên.
+
+**Decision / Fix:**
+Sửa ngay trong lượt phát hiện — một token, và không đổi ngữ nghĩa của cổng:
+`git diff --cached --name-only` → `git -c core.quotepath=false diff --cached --name-only`
+(`scripts/check-commit-block.sh`). **Ca hồi quy A7b** ở `scripts/check-commit-block.test.sh`: một
+file tên có dấu, đã stage, **nằm trong scope** ⇒ cổng phải im. Đo hai chiều trước khi đóng: bỏ bản
+sửa ra thì A7b **FAIL** (*mong đợi exit 0, nhận 2*), lắp lại thì xanh.
+
+Không mở rộng thành một luật chung *"mọi lệnh git phải kèm cờ ấy"* — mới đo **một** lần, và
+`CLAUDE.md` §3.8 đòi hai. Chỗ đáng ngó lần sau là bất kỳ cổng nào đọc đường dẫn từ git: hôm nay chỉ
+có hai script làm việc đó (`check-scope.sh` nhận path từ người gọi, `check-commit-block.sh` tự đọc).
+
+**Status:**
+Closed — sửa và có ca hồi quy trong cùng lượt phát hiện (2026-09-08, T-067).

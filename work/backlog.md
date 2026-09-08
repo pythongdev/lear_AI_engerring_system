@@ -184,10 +184,81 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="in-progress"></a>
 ## In Progress
+- [ ] P1-11 **Diễn ba scenario nghiệm thu BA qua thiết kế pha 1, và ký cổng sang pha 2** — bước
+  11/14 (kế hoạch §6), **L2**, **cổng của cả pha**; tiền đề P1-02 → P1-10 đã `Done`. Chi tiết:
+  [P1-11](#p1-11) → `work/backlog_SD.md`
 
 
 <a id="done"></a>
 ## Done
+- [x] T-068 **Chủ quán đọc ra MENU thành một danh sách — bảy tên khớp đúng bảng giá đang có, hai
+  tên là thứ §4 chưa từng có** — **L1**, lời bổ sung cho `U-041` (câu ấy **vẫn đóng**, T-067 cùng
+  ngày). Nguyên văn 2026-09-08: *"đối với nguyên liệu và con người đã có. đối với menu: tôi muốn có
+  suất đầy đủ trứng tai, đầy đủ trứng chín, đầy đủ trứng vàng, suất giò, suất trứng chín, suất
+  trứng tái, suất trứng vàng. bánh cuốn khách sẽ lựa chọn ăn bao nhiêu cái thì tuỳ. giò: khách có
+  thể gọi bao nhiêu cũng được. canh bánh cuốn."* **Đây là lần đầu có một lời chủ quán nói *menu gồm
+  những gì*** — trước lượt này `master_plan/shop-facts.md` §4.3 có bốn dòng giá, nhưng không lời
+  nào nói bốn dòng ấy **là** menu. Đầu ra: **§4.9** (mới, mười dòng, mỗi dòng ghi rõ *đã có ở §4.3
+  chưa*) + một hàng nhật ký §7.1 + **S-8** ở §7.2 + §8.6 hàng 7 rộng ra. **Bảy tên đầu khớp từng
+  chữ với §4.3, không thừa không thiếu** — đó là phép đối chiếu của phiên, chủ quán **không** nói
+  *"đúng bảy"*, nên tên thứ tám sau này không cần ai cho phép (**F-003**). **Hai chỗ danh sách vượt
+  ra ngoài §4 hôm nay, và cả hai chạm tiền nên không được suy hộ** (`CLAUDE.md` §3.5): **U-046** —
+  *canh bánh cuốn* là món **tính tiền** hay chính bát canh trạm `canh` đang bưng kèm mọi đơn (§3 ·
+  §5.3 · §6.6); nếu có giá thì §4.2 mọc thêm một thành phần, §4.3 thêm một dòng suất bán, số **bốn
+  suất bán** phải đếm lại ở **năm** chỗ đang chép nó (§4.5 · §7.1 · `architecture.md` §6.1 ·
+  `0-ba/ban-hang/03-lat-cat.md` · `08-scenario.md`), §4.8 thêm ca thứ mười hai. **U-047** — *"bao
+  nhiêu cái thì tuỳ"* / *"gọi bao nhiêu cũng được"* là **số lượng món bán rời**, hay số bánh **trong
+  một suất** cũng đổi được; đọc thứ hai thì con số **4** trong suất giò/suất trứng hết là hằng số
+  và §4.3 · §4.5 · §4.6 · §4.8 đều phải viết lại. Kèm theo, §4.3 **chưa từng có dòng giò bán rời**
+  — §4.2 có giá 1 chiếc giò 9.000 nhưng đó là giá **thành phần**, lấy nó thu tiền như giá suất là
+  **thu thiếu tiền** (`docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.1). **Chỗ suy ra tách
+  riêng, không trộn vào lời chốt** (**F-004**): việc đọc trật tự câu trả lời (*nguyên liệu và con
+  người đã có — đối với menu…*) thành *"mục tổng quan bày cả ba đường"* là suy luận của phiên, ghi
+  thành **S-8** ở §7.2 (§7.2 nay **bốn** mục) kèm hậu quả nếu nó sai. §8.6 hàng 7 vì thế ghi
+  **nguyên liệu + món trên menu**, đường *người* ghi đúng chữ chủ quán dùng (*"đã có"*), và **không
+  câu nào loại trừ đường nào** (**F-004**). **Không làm:** không sửa một dòng nào của §4.2 · §4.3 ·
+  §4.5 · §4.8 (`git diff` các bảng ấy rỗng), không đặt giá tạm cho *canh bánh cuốn*, không đoán nó
+  miễn phí, không dựng dòng menu rỗng (`CLAUDE.md` §3.8), không đếm lại *bốn suất bán* trước khi
+  `U-046` có lời, không chạm `U-045` của T-067 hay `U-044` của P1-10. Gate xanh — `./scripts/brief.sh`
+  in cả `U-046` và `U-047` (2026-09-08)
+- [x] T-067 **Chủ quán đóng `U-041`: vế *"còn thiếu gì không"* của mục tổng quan là thiếu NGUYÊN
+  LIỆU — và lời đáp mở ra ngay câu `U-041` đã báo trước, thành `U-045`** — **L1**. Nguyên văn
+  2026-09-08: *"về nguyên liệu hãy tham khảo «Danh mục nguyên liệu» tại `master_plan/shop-facts.md`"*
+  ⇒ trong ba đường ra `U-041` hỏi (nguyên liệu · người · món trên menu), chủ quán chọn **nguyên
+  liệu**, và chỉ thẳng tập nguyên liệu là **Danh mục nguyên liệu** §8.4 — nên vế này **lớn lên theo
+  danh mục ấy**, không có danh sách thứ hai ở §8.6 (**F-001**). Lời chốt về đúng owner
+  (`master_plan/shop-facts.md` §8.6 · §8.4 · một hàng nhật ký §7.1). **§8.6 nay đếm BẢY, không còn
+  sáu**: thứ thứ bảy nằm trong nguyên văn `A10` từ 2026-09-04 nhưng không có nghĩa nên không có
+  hàng; nay có nghĩa nên có hàng — con số **bảy** viết kèm câu mời đếm lại (**F-003**).
+  **Chỗ đắt nhất là chỗ KHÔNG viết, hai chỗ:** (1) hai đường ra kia **không** bị loại bằng lời —
+  chủ quán nói về nguyên liệu, không câu nào nói *"không bao giờ hiện thiếu người / thiếu món"*,
+  nên tài liệu ghi đúng thế và không viết hộ một lời loại trừ (**F-004**); riêng đường *người* thì
+  hàng số 6 của §8.6 đã giữ một con số riêng từ trước. (2) Lời ấy chốt *thiếu **cái gì***, **không**
+  chốt *máy biết bằng **cách nào*** — §8.4 giữ máy ở mức **sổ ghi tay điện tử** (máy không tự trừ
+  tồn) và danh mục hôm nay mới chỉ có **tên**, chưa thứ nào có **đơn vị tính** hay **ngưỡng nhắc
+  sắp hết** ⇒ mục tổng quan chưa có nguồn nào sinh ra chữ *thiếu*. Đó là **U-045** (mới), đúng hai
+  đường ra mà `U-041` đã gọi tên từ lúc mở — lật ngược §8.4, hoặc một ngưỡng người tự nhập — và
+  lượt này **không chọn hộ** một trong hai (`CLAUDE.md` §3.5). **Lần thứ ba trong bốn ngày một câu
+  trả lời đầy đủ để lộ một câu hỏi mới** (`U-032`→`U-037`, `U-040`→`U-042`, nay `U-041`→`U-045`).
+  **VA CHẠM MÃ, và đây là dữ kiện đáng giữ của lượt:** phiên **P1-10** chạy song song mở `U-044`
+  (hoàn tiền cho khoản đã chuyển khoản) **trong lúc** lượt này đang viết — hai phiên cùng lấy số
+  kế tiếp từ cùng một file. Lượt này **nhường số**, đổi câu của mình `U-044` → **U-045**, vì câu
+  của P1-10 đã được trỏ tới từ `06-so-rui-ro.md` (ngoài scope lượt này) còn câu này thì chưa
+  (**F-010** · **F-014**: đừng ghi đè việc của phiên song song). **ADM-04 KHÔNG đổi loại** — vẫn
+  loại 1, nay chặn bởi `U-045` · `F52` · `F53`; con số ba loại của lane admin **không đổi**
+  (20 · 8 · 1), đếm lại chứ không trừ (**F-003**). **Không làm:** không vẽ màn tổng quan, không
+  chọn ngưỡng cho bất kỳ nguyên liệu nào, không suy đơn vị tính, không chép danh mục nguyên liệu
+  xuống §8.6, không chạm `U-044` của phiên P1-10. **Lượt này còn đóng `work/findings.md` F-035, mở
+  ra từ chính Gate 7b lúc bàn giao:** cổng chặn lượt vì một file mà `work/scope.txt` **đã** phủ —
+  nó đọc index bằng `git diff --cached --name-only` **không** kèm `core.quotepath=false`, nên tên
+  có dấu về dạng escaped `"…\303\241…"` và không pattern nào khớp, trong khi chỗ đọc
+  `git status --porcelain` ở đầu **cùng script** thì có cờ ấy — hai chỗ đọc, hai encoding, hai kết
+  luận ngược nhau về một đường dẫn (Gate 3 nói *trong scope*, Gate 7b nói *ngoài*). Sửa một token +
+  ca hồi quy **A7b** (`scripts/check-commit-block.test.sh`), đo hai chiều: bỏ bản sửa ⇒ A7b **FAIL**
+  (*mong đợi 0, nhận 2*), lắp lại ⇒ xanh. `work/scope.txt` mở rộng giữa chừng và nói rõ lý do
+  (`CLAUDE.md` §3.4). Gate xanh — `check-doc-status` 43 mã U-XXX, `./scripts/brief.sh` in `U-045`
+  và không còn in `U-041` (2026-09-08)
+- [x] P1-10 **Năm rủi ro lớn nhất nay là CHÍN, và mỗi dòng chỉ tên được một cơ chế đã viết ra — trừ một dòng nói thẳng là CHƯA CÓ** — bước 10/14 (kế hoạch §6), **L1**, tiền đề `P1-04` · `P1-05` · `P1-06` · `P1-13` · `P1-14` ✔. Đầu ra: `docs/product/1-system-design/06-so-rui-ro.md` (**mới**, một chủ) + **một** dòng vào bảng *Pha 1* của `docs/product/00-index.md` trong cùng thay đổi. **Chín dòng `RR-1`…`RR-9`, mỗi dòng sáu ô, không ô nào trống**: rủi ro · hậu quả **ở quán** · cơ chế chặn **kèm chỗ đọc** · người chịu · dấu hiệu **nó đang xảy ra**. **Chín chứ không phải năm, và lý do là ba luật đường tiền chốt SAU bản nháp**: cho nợ (`shop-facts.md` §6.14, 2026-08-31) · hoàn tiền tính **ngày hoàn** (§6.4, 2026-09-01) · đối soát **ba nguồn** ngưỡng 0đ (§6.10, 2026-09-01) ⇒ `RR-2` (trả nợ ghi thành khoản bán mới ⇒ doanh thu tính hai lần) · `RR-3` (hoàn tiền mất vết hoặc trừ nhầm ngày) · `RR-5` (**ngưỡng 0đ bị bào mòn** — rủi ro của chính cổng chất lượng mạnh nhất dự án) là ba dòng bản nháp **không có**. Con số chín ghi thẳng trong file là **phép đếm ngày 2026-09-08**, không phải một quyết định (**F-003**). **Bốn dòng chỉ tới tầng 4/5 gọi tên chứ không đếm** (**F-018**): `RR-1` VietQR tĩnh · `RR-3` vế vết · `RR-4` cộng thiếu một nguồn (tầng 5, thiếu **im lặng**) · `RR-6` vết mang tên một **chỗ đứng** chứ không một người — và §1.2 luật 1 cấm đọc *"đã có cơ chế"* thành *"đã an toàn"*. **`RR-8` (mất điện/mất mạng) xuống CUỐI bảng có chủ ý** — nó là rủi ro duy nhất có đường kéo dự phòng và đường suy giảm đủ ba vế viết ra, còn thu sai tiền thì không có đường lùi nào; bản nháp xếp hai thứ ấy cùng một bảng. **Một dòng ⛔ *chưa có cơ chế*, và nó không được làm cho trông như đã chặn**: `RR-9` — *mất hẳn bản ghi đã ghi* — cả ba ô cơ chế · người chịu · dấu hiệu đều ghi **chưa có / chưa đo được**, vì `grep -rni 'sao lưu|backup|phục hồi|mất dữ liệu'` chỉ ra kết quả ở `master_plan/prompt-fullstack.md` và bản nháp — **hai tài liệu ADR-035/ADR-014 đã chốt là không sở hữu gì**, đúng hình dạng **F-027**. Ghi thành `work/findings.md` **F-034** với **ba đường ra** (mở bước thứ mười lăm · giao pha vận hành · đặt một câu yêu cầu ở pha 1) và **không chọn hộ** — quyết định của chủ repo. **Mở `docs/product/99-unknowns.md` U-044**: hoàn tiền cho một khoản khách đã **chuyển khoản** thì trả lại bằng gì — trả bằng tiền mặt là một đường **rút tiền khỏi két giữa buổi**, và điều kiện biên thứ hai của `I-021` hết đúng (chính `I-021` nói luật ấy đổi thì mệnh đề **viết lại**, không viết thêm). **Kế hoạch bỏ hai số đếm cứng** (**F-018**, cùng đường **ADR-042** đã đi cho cổng invariant): §9 ô thứ sáu nay đọc **từng dòng `RR-x`** thay vì đếm *"năm rủi ro"*, và ghi rõ ô ấy **tick kèm lý do, không tick trơn** vì `RR-9`; §6 hàng P1-10 (ô *Việc* và ô *Đầu ra kiểm chứng được*) cũng vậy; §5 dòng bản đồ file bỏ chữ *năm*; §8 thêm một hàng `U-044`. **Không sửa một chữ nào** của `quality/invariants.md`, `master_plan/shop-facts.md` (`git diff --stat` rỗng cả hai), của bốn mục bảng ba cột (`03-bao-ve-invariant.md` §1–§4) hay của bản nháp bị đóng băng — sổ rủi ro **trỏ**, không viết lại (**F-001**). Nhân tiện sửa **một pointer đã hết đúng** trong file cùng lượt này chạm: `00-index.md` ghi bảng ba cột là *"một file, ba chủ"* trong khi nó đã có **năm** chủ từ P1-13/P1-14. Không tên bảng · cột · ràng buộc · endpoint · route · component (Gate 1d xanh; lệnh chưa lọc in cạnh lệnh đã lọc, **F-017**). Prompt: `prompt/SD/P1-10-so-rui-ro-L1.md` (viết cùng lượt nhận việc — tiền đề đã `Done` hết, đúng luật T-051). Gate xanh (2026-09-08)
 - [x] P1-08 **Bốn ràng buộc quyết định hình dạng cả hệ thống nay có nhà trong pha 1, mỗi cái một dấu hiệu ĐO ĐƯỢC — đóng nốt F-027** — bước 8/14 (kế hoạch §6), **L2**, tiền đề `P1-02` ✔; `U-035` — câu duy nhất từng chặn bước này — đã đóng 2026-09-04. Đầu ra: `docs/product/1-system-design/05-realtime-va-du-phong.md` (**mới**, một chủ) + **một** dòng vào bảng *Pha 1* của `docs/product/00-index.md` trong cùng thay đổi. **§2 là chỗ đáng giá nhất: bốn ràng buộc `RB-1`…`RB-4` và bốn dấu hiệu, mỗi dấu hiệu kèm cột *ai đo, bằng cái gì đã có*.** Hai dấu hiệu **nhận nguyên** con số đã có ở bản xuất khẩu (*chờ quá 500ms sau khi bấm duyệt* · *menu vượt 200 dòng suất bán*) thay vì nghĩ ra con số mới; hai dấu hiệu còn thiếu đặt mới và cố ý đo bằng thứ **đã tồn tại** — **nhật ký khởi động** của hệ thống (`RB-1`: phải khởi động lại trong giờ bán quá một lần/tháng) và **dòng *"còn N lượt bán trên giấy chưa nhập"*** của bảng đối soát cuối ngày (`RB-4`: quán phải chuyển sang sổ giấy vì hệ thống chết quá một buổi bán/tháng, `shop-facts.md` §6.11). Một dấu hiệu phải dựng thêm phép đo mới đo được là một dấu hiệu không ai đo — **F-012** cùng hình. **Ba luật đọc bảng**, luật đắt nhất ở `RB-1`: dấu hiệu bật **không** cho phép thêm tiến trình thứ hai ngay — chỗ chung giữ *"màn nào đang nối"* phải có **trước**, nếu không thì việc nới ràng buộc chính là dựng ra cái hỏng ngẫu nhiên mà ràng buộc ấy sinh ra để chặn. **§1.3 là chỗ chỉ lộ ra khi đọc ADR-011 cạnh §5**: vì màn trạm **không có nút nào**, một màn *rỗng vì hết việc* trông **y hệt** *rỗng vì mất kết nối* ⇒ luật *màn chỉ đọc phải cho biết nó vừa lấy lại lúc nào*, viết bằng ngôn ngữ **cái gì phải đúng**, không mô tả một cái nhãn nào (pha 4). **§3 trả phần cơ chế mà `I-008` giao thẳng cho bước này** — bốn câu luật, đắt nhất là câu 1 (*phán quyết đứng ở phía hệ thống, vì đúng lúc phải phán quyết thì quán là bên đã mất tiếng nói*) và câu 2 (*dấu hiệu phải chạy trên chính đường việc và đơn đang đi* — một đường kiểm riêng có ngày còn sống trong khi đường thật đã chết). **Không chốt một con số chu kỳ nào** (pha 3), **không một tên công nghệ · thư viện · giao thức nào** trong file mới (bộ lọc rỗng, xem Gate 2), **không sửa một chữ của `quality/invariants.md`**. **Mở `U-043`** — *mất tín hiệu bao lâu thì web ngừng nhận đơn*: §3 chốt được *ai phán quyết* và *dựa vào đường nào* nhưng **độ dài cửa sổ** là đánh đổi của **quán** (ngắn quá cắt mất khách đang đặt dở, dài quá thì đơn rơi vào cái quán không ai nhìn thấy), nên để ngỏ có tên thay vì để pha 3 tự chọn hộ chủ quán. **Mở `F-033`** — bảng *"Hôm nay có chưa"* ở kế hoạch §2 và ba câu §4 là ảnh chụp ngày 2026-09-03: bốn ô còn ghi *chưa* cho những thứ P1-02 · P1-03 · P1-04…P1-14 đã làm xong; lượt này sửa **đúng hai ô của mình** và ghi lại phần còn lại, không sửa hộ bước của phiên khác (tiền lệ **F-032**). **Bốn pointer sửa trong cùng lượt** (§7.2): hàng `P1-08` ở bảng *bước sau đọc gì* của `01-ranh-gioi-he-thong.md` · `02-thoi-gian-ngay-ban.md` · `03-bao-ve-invariant.md`, cộng `architecture.md` §5 (câu realtime nay có nhà) + §13; và **một hàng U-035 thừa** ở kế hoạch §8 — bảng ấy mang **hai** hàng cùng mã, một gạch ngang và một còn sống ghi *"chặn P1-08"*, viết trước khi biết câu đã đóng cùng ngày. Quyết định: `docs/decisions.md` **ADR-045**. **Gate 2**: `RB-1`…`RB-4` đếm tay ra bốn ràng buộc/bốn dấu hiệu; `grep 'khi cần\|nếu chậm'` trên file mới ⇒ **rỗng** (ô thứ năm của cổng chất lượng §9 tick được — lượt này **không tick hộ**, việc của P1-11/P1-12); bộ lọc tên công nghệ và bộ lọc bảng/cột/endpoint ⇒ **rỗng**, lệnh **chưa lọc** chạy trên cùng file trả về **179** dòng nên bộ lọc không tự rỗng (**F-017**); bộ lọc *nút bấm ở trạm* trả về **đúng một** dòng và đó là câu **từ chối** (*"trạm bấm tải lại" là phá đúng lời chủ quán đã chốt*) — kể tên một cơ chế để bác nó không phải là thiết kế nó (**F-018**). Gate xanh (2026-09-08)
 - [x] T-066 **Chủ quán trả lời NỬA câu `U-042`: bốn bàn mới cũng 4 chỗ/bàn — vế ĐÁNH SỐ vẫn chưa
   có lời, nên câu hỏi HẸP LẠI chứ không đóng** — **L1**. Nguyên văn: *"thêm 4 bàn mới mỗi bàn 4

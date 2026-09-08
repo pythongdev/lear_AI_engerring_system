@@ -58,21 +58,10 @@ nợ), và không lời chốt nào phủ chiều ngược lại — tiền về
 hai mốc ấy còn có thể rơi vào hai ngày khác nhau, bảng §2 của
 `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` còn một hàng để trống.
 
-- **U-041 — mục tổng quan bày *"còn thiếu gì không"*: thiếu NGUYÊN LIỆU, thiếu NGƯỜI, hay thiếu
-  MÓN trên menu?** Chủ quán ngày 2026-09-04 (`A10`) kết câu trả lời bằng đúng bốn chữ ấy và không
-  nói thêm. **Ai trả lời được:** chủ quán. **Đang chặn:** `master_plan/shop-facts.md` §8.6 (vế thứ
-  bảy của mục tổng quan) và `work/backlog_AD.md` **ADM-04**. **Vì sao không được suy hộ:** đường
-  *nguyên liệu* đụng thẳng mức **sổ ghi tay điện tử** đã chốt ở §8.4 — máy **không** tự trừ tồn
-  theo công thức, nên máy **không tự biết** cái gì sắp hết; trả lời được vế ấy thì hoặc phải lật
-  ngược §8.4, hoặc phải có một ngưỡng người tự nhập. Đường *người* thì đứng trên câu **C36** (*ai
-  đang trực trạm nào*), thứ chưa dữ liệu nào ghi. Ba đường ra là ba mục khác hẳn nhau.
-  **Cách hỏi:** *"Lúc anh nhìn điện thoại mà thấy «còn thiếu» thì anh đang lo thiếu cái gì — thiếu
-  hàng để làm, thiếu người làm, hay hết món để bán?"*
-  *Mở 2026-09-04 · T-056 · `master_plan/shop-facts.md` §8.6.*
-
 **Ngày 2026-09-06, chủ quán trả lời cả BẢY câu còn mở lúc đó trong một lượt** — `U-033`, `U-034`,
 `U-036`, `U-037`, `U-038`, `U-039`, `U-040` — đóng nốt xuống [Đã có lời giải](#da-co-loi-giai) ngay
-dưới đây; nguyên văn và chi tiết từng câu ở đó. Chỉ `U-041` ở trên là còn sống từ trước lượt này.
+dưới đây; nguyên văn và chi tiết từng câu ở đó. Lúc ấy chỉ `U-041` là còn sống từ trước lượt này —
+câu đó nay **đã có lời giải** (chủ quán chốt 2026-09-08, xem mục dưới).
 Cùng lượt ấy, câu trả lời `U-040` làm lộ một dữ kiện quán vừa đổi — số bàn tăng từ 11 lên 15 — mà
 chỗ ngồi và cách đánh số của bốn bàn mới thì **lúc ấy** chưa ai hỏi; đó mở ra **U-042** ngay dưới
 đây (vế chỗ ngồi đã có lời 2026-09-08, xem đoạn kế tiếp).
@@ -117,6 +106,93 @@ chưa lời nào chạm tới, và đó đúng là chỗ quyết định lúc n�
   ngay, hay cứ để khách đặt vì lát nữa quán vẫn thấy?"*
   *Mở 2026-09-08 · P1-08 · `docs/product/1-system-design/05-realtime-va-du-phong.md` §3 · §4.*
 
+**Cùng ngày 2026-09-08, chủ quán đóng `U-041` — và lời đáp mở ra đúng câu hỏi mà `U-041` đã báo
+trước từ lúc mở.** Vế *"còn thiếu gì không"* của mục tổng quan là thiếu **NGUYÊN LIỆU**, tập
+nguyên liệu là **Danh mục nguyên liệu** `master_plan/shop-facts.md` §8.4; chi tiết ở
+[Đã có lời giải](#da-co-loi-giai). Nhưng §8.4 chốt máy ở mức **sổ ghi tay điện tử** và danh mục
+hôm nay mới chỉ có **tên**, nên chọn xong đường ra rồi mà vẫn chưa có nguồn nào sinh ra chữ
+*thiếu*. Đó là `U-045` ngay dưới — cùng hình dạng `U-040` mở ra `U-042` ngày 2026-09-06: đóng câu
+cũ không có nghĩa hết việc.
+
+- **U-045 — máy biết một nguyên liệu đang THIẾU bằng cách nào: một NGƯỠNG người tự nhập cho từng
+  thứ, hay chủ quán tự đọc hai con số rồi tự kết luận?** `U-041` đóng 2026-09-08 chốt *thiếu cái
+  gì* (nguyên liệu) nhưng không chốt *biết bằng cách nào*. **Vì sao không được suy hộ**
+  (`CLAUDE.md` §3.5): `master_plan/shop-facts.md` §8.4 chốt máy **không** tự trừ tồn theo công thức
+  bán hàng, và danh mục nguyên liệu hôm nay mới có **tên** — chưa thứ nào có **đơn vị tính**, chưa
+  thứ nào có **ngưỡng nhắc sắp hết**. Hai đường ra chính `U-041` đã gọi tên: hoặc **lật ngược
+  §8.4** (máy tự trừ tồn ⇒ phải chốt định lượng từng thành phần, đúng cái cửa duy nhất §8.4 nói là
+  mở lại được — `work/admin-questions.md` câu **B22**), hoặc **một ngưỡng người tự nhập** cho từng
+  nguyên liệu (giữ nguyên mức sổ tay, nhưng danh mục phải mọc thêm hai cột dữ kiện mà hôm nay chưa
+  ai đọc ra). Chọn hộ một trong hai là quyết thay chủ quán **mức của cả mảng nguyên liệu**, không
+  phải chọn một tham số. **Ai trả lời được:** chủ quán. **Đang chặn:** hàng số **7** của
+  `master_plan/shop-facts.md` §8.6, hai chỗ hở *đơn vị · ngưỡng* của §8.4, và
+  `work/backlog_AD.md` **ADM-04**. **Cách hỏi** (bài học `S-4` — hỏi về cái quán, đừng hỏi về cái
+  máy): *"Sáng nay anh biết sắp hết mắm là biết bằng cách nào — nhìn thấy chai gần cạn, hay anh
+  nhẩm trong đầu một mức «dưới chừng này là phải mua»? Nếu có mức ấy thì mỗi thứ một mức khác nhau
+  đúng không?"*
+  *Mở 2026-09-08 · trả lời `U-041` · `master_plan/shop-facts.md` §8.6 · §8.4.*
+
+**Cùng ngày 2026-09-08, bước P1-10 mở một câu trong lúc dựng sổ rủi ro.** Nó cũng không mở vì ai
+quên hỏi: chủ quán đã chốt **được phép hoàn tiền** và **ai quyết** (`master_plan/shop-facts.md`
+§6.4, 2026-08-30) và **hoàn tính vào ngày hoàn** (2026-09-01), nhưng **trả lại bằng cách nào** thì
+chưa lời nào chạm tới — và vế ấy quyết định phép trừ hai hạng tử của `quality/invariants.md`
+**I-021** còn đủ hạng tử hay không.
+
+- **U-044 — hoàn tiền cho một khoản khách đã CHUYỂN KHOẢN thì quán trả lại bằng gì: tiền mặt lấy
+  trong két, hay chuyển khoản lại?** **Vì sao không được suy hộ** (`CLAUDE.md` §3.5): nếu trả bằng
+  **tiền mặt** thì đó là một đường **rút tiền khỏi két giữa buổi**, trong khi chủ quán đã chốt
+  2026-09-04 (`A4` ⇒ `master_plan/shop-facts.md` §8.5) rằng *"không có ai lấy tiền, tiền nằm trong
+  két tới cuối buổi"* — và chính `I-021` viết sẵn hậu quả: luật ấy đổi thì công thức *két cuối ngày
+  − tiền đầu két* **thiếu một hạng tử**, và mệnh đề phải **viết lại**, không phải viết thêm. Thêm
+  một chỗ nữa: phần tiền mặt và phần chuyển khoản đối soát bằng **hai nguồn khác nhau** (§6.10), nên
+  một lần hoàn đi ra ở phương thức này cho một lần thu ở phương thức kia làm lệch **cả hai** phép
+  đối chiếu cùng lúc. **Ai trả lời được:** chủ quán. **Đang chặn:** không bước nào của pha 1 — nó
+  chạm công thức đối soát `docs/product/1-system-design/architecture.md` §6.4, điều kiện biên thứ
+  hai của `I-021`, và dòng `RR-3` của
+  `docs/product/1-system-design/06-so-rui-ro.md`. **Cách hỏi** (bài học `S-4` — hỏi về cái quán):
+  *"Khách chuyển khoản rồi mà mình phải trả lại tiền cho người ta, anh thường đưa tiền mặt luôn tại
+  quầy hay chuyển khoản lại cho khách?"*
+  *Mở 2026-09-08 · P1-10 · `master_plan/shop-facts.md` §6.4 · §8.5 · `quality/invariants.md`
+  **I-021**.*
+
+**Cùng ngày 2026-09-08, lượt sau, chủ quán đọc ra MENU thành một danh sách — và hai trong mười tên
+ấy là thứ §4 chưa từng có.** Đây là lời bổ sung cho `U-041` (câu ấy vẫn đóng, xem
+[Đã có lời giải](#da-co-loi-giai)): chủ quán chạm nốt hai đường còn lại của vế *"còn thiếu gì"* —
+*"đối với nguyên liệu và con người đã có"* — rồi đọc ra từng món của menu. Bảy tên đầu khớp đúng
+từng chữ với bảng giá `master_plan/shop-facts.md` §4.3; tất cả nay ở **§4.9** của file ấy. Hai câu
+dưới đây là hai chỗ danh sách ấy vượt ra ngoài những gì §4 đang có, và không chỗ nào lấp được bằng
+suy luận vì cả hai đều **chạm tiền**.
+
+- **U-046 — *"canh bánh cuốn"* trên menu là món khách TRẢ TIỀN, hay chính bát canh quán đang bưng
+  kèm sẵn? Nếu tính tiền thì bao nhiêu một bát, và nó có nhận nhân / lượng nhân không?** **Vì sao
+  không được suy hộ** (`CLAUDE.md` §3.5): `master_plan/shop-facts.md` §3 đã có một **trạm** tên
+  `canh` — việc của nó là *"Nước chấm, canh"* — và §5.3 xếp việc trạm ấy vào **mọi** đơn, kể cả
+  đơn mang đi (§6.6, nước chấm gói riêng). Nên hôm nay canh đã là thứ **đi kèm không tính tiền**.
+  Đọc dòng menu mới thành *"một món có giá"* là tự dựng một dòng doanh thu chưa ai chốt; đọc nó
+  thành *"chính cái đang kèm"* là bỏ mất một món chủ quán vừa gọi tên. Hai đường ra khác nhau ở
+  chỗ đắt nhất: nếu **có giá**, §4.2 mọc thêm một thành phần, §4.3 mọc thêm một dòng suất bán, số
+  **bốn suất bán** ở §4.5 phải đếm lại ở cả năm chỗ đang chép nó, và §4.8 phải thêm ca thứ mười
+  hai. **Ai trả lời được:** chủ quán. **Đang chặn:** ba dòng cuối bảng §4.9, và bất cứ bước nào
+  sau này dựng danh sách món để bán. **Cách hỏi** (bài học `S-4` — hỏi về cái quán): *"Khách gọi
+  một suất trứng thì có bát canh bưng kèm luôn đúng không? Vậy «canh bánh cuốn» anh ghi trên menu
+  là bát canh ấy, hay là một bát riêng khách gọi thêm và trả tiền?"*
+  *Mở 2026-09-08 · T-068 · `master_plan/shop-facts.md` §4.9 · §3 · §5.3.*
+
+- **U-047 — *"bánh cuốn khách ăn bao nhiêu cái thì tuỳ"* và *"giò khách gọi bao nhiêu cũng được"*:
+  đó là SỐ LƯỢNG khách gọi món bán rời, hay số bánh / số giò TRONG MỘT SUẤT cũng đổi được?** **Vì
+  sao không được suy hộ** (`CLAUDE.md` §3.5): hai cách đọc cho hai hệ thống giá khác hẳn nhau.
+  Đọc thứ nhất — bán rời theo cái, theo chiếc — thì bánh cuốn đã đúng như `master_plan/shop-facts.md`
+  §4.3 hôm nay (1 cái, 3.000, khách gọi mấy cái thì nhân lên), và chỉ còn thiếu **một dòng giò bán
+  rời** mà §4.3 chưa có (§4.2 có giá 1 chiếc giò 9.000, nhưng đó là giá **thành phần** — lấy nó thu
+  tiền như giá suất là **thu thiếu tiền**, đúng cái bẫy `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md`
+  §4.1 dựng ra để chặn). Đọc thứ hai — số bánh trong suất đổi được — thì **con số 4 trong *suất giò*
+  và *suất trứng* không còn là hằng số**, và cả §4.3, §4.5, chín quy tắc §4.6, mười một tổ hợp §4.8
+  đều phải viết lại: giá suất hết là một ô tra được, phụ thu ×4 / ×5 hết là hệ quả cố định. **Ai
+  trả lời được:** chủ quán. **Đang chặn:** dòng 8 và dòng 9 của bảng §4.9. **Cách hỏi** (bài học
+  `S-4`): *"Khách gọi «cho tôi 3 cái bánh cuốn» thì tính 3 cái riêng lẻ đúng không? Còn suất giò
+  thì vẫn luôn 4 cái bánh, hay khách bảo «suất giò nhưng 6 cái bánh» cũng được?"*
+  *Mở 2026-09-08 · T-068 · `master_plan/shop-facts.md` §4.9 · §4.3 · §4.5.*
+
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
 
@@ -136,8 +212,29 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
 
-**Ngày 2026-09-06, chủ quán trả lời cả BẢY câu còn mở trong một lượt, và mục *Đang mở* chỉ còn lại
-`U-041` cũ cộng `U-042` mới mở ra từ chính lượt này.** Bảy câu đóng chạm năm chỗ khác nhau của
+**Ngày 2026-09-08, chủ quán đóng `U-041` — câu cuối cùng còn sống từ lượt 2026-09-04.** Nguyên
+văn: *"về nguyên liệu hãy tham khảo «Danh mục nguyên liệu» tại `master_plan/shop-facts.md`"*.
+
+**Cùng ngày, lượt sau, chủ quán bổ sung nốt hai đường còn lại** (T-068): *"đối với nguyên liệu và
+con người đã có. đối với menu: tôi muốn có …"* rồi đọc ra cả danh sách món. Câu `U-041` **vẫn
+đóng** — lượt này không mở lại nó, mà làm vế thứ bảy của `master_plan/shop-facts.md` §8.6 rộng ra:
+thêm đường **món trên menu**, tập món ở **§4.9** (mới). Chỗ đọc trật tự câu trả lời thành *"mục
+tổng quan bày cả ba"* là **suy ra**, ghi ở §7.2 thành **S-8**, không phải lời chốt
+(`work/findings.md` **F-004**). Hai chỗ danh sách ấy vượt ra ngoài §4 hôm nay thành **U-046** ·
+**U-047** ở mục *Đang mở*.
+
+| Câu hỏi cũ | Lời giải (chủ quán, 2026-09-08) | Ghi ở |
+|---|---|---|
+| ~~U-041 — mục tổng quan bày *"còn thiếu gì không"*: thiếu NGUYÊN LIỆU, thiếu NGƯỜI, hay thiếu MÓN trên menu~~ | **Thiếu NGUYÊN LIỆU**, và tập nguyên liệu là **Danh mục nguyên liệu** §8.4 (mở 2026-09-06, mười bốn tên, **còn bổ sung dần**) ⇒ vế này lớn lên theo danh mục ấy, không có danh sách thứ hai ở §8.6 (**F-001**). *Chủ quán chọn một trong ba đường; hai đường kia **không** bị loại bằng lời — đừng viết một câu loại trừ chủ quán chưa nói (**F-004**). Đường **người** thì số 6 của bảng §8.6 đã giữ một con số riêng.* **Lời này KHÔNG nói máy biết một nguyên liệu đang thiếu bằng cách nào ⇒ mở `U-045`.** | `shop-facts.md` §8.6 (hàng 7) · §8.4 |
+
+**Đây là lần thứ ba trong bốn ngày một câu trả lời đầy đủ để lộ một câu hỏi mới** — `U-032` → `U-037`
+(2026-09-04), `U-040` → `U-042` (2026-09-06), nay `U-041` → `U-045`. Ba lần cùng một hình: lời chốt
+trả lời đúng câu **đã hỏi**, và câu chưa ai hỏi nằm ngay sau nó. Đếm ba lần này là phép đếm của
+người viết (**F-003**), không phải một quy luật.
+
+**Ngày 2026-09-06, chủ quán trả lời cả BẢY câu còn mở trong một lượt, và mục *Đang mở* lúc ấy chỉ
+còn lại `U-041` cũ cộng `U-042` mới mở ra từ chính lượt này** (`U-041` đã đóng 2026-09-08, xem
+đoạn mở đầu mục này). Bảy câu đóng chạm năm chỗ khác nhau của
 nghiệp vụ: một ca huỷ đơn ở bếp, một mục nhập nguyên liệu, một luật doanh thu mới, một câu hỏi
 "ai chấm lại", một cách đếm tiền, một luật hàng chờ, và một dữ kiện quán (số bàn) vừa đổi ngay
 trong câu trả lời.

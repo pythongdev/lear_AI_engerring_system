@@ -82,7 +82,7 @@ người + thủ tục giữ (máy chỉ nhắc, để vết) · **5** phép đ�
 | P1-07 | L2 | **chưa viết** — chờ bốn bảng ba cột | P1-04 · P1-05 · P1-06 · P1-13 ✔ · P1-14 ✔ |
 | P1-08 | L2 | [`P1-08-realtime-du-phong-L2.md`](P1-08-realtime-du-phong-L2.md) — **đã chạy 2026-09-08** | P1-02 ✔ |
 | P1-09 | L2 | [`P1-09-bang-quay-bon-con-so-L2.md`](P1-09-bang-quay-bon-con-so-L2.md) | BA-12 ✔ · ⚠️ **S-5** |
-| P1-10 | L1 | **chưa viết** — mỗi rủi ro phải chỉ tên một cơ chế đã viết ra | P1-04 · P1-05 · P1-06 · P1-13 ✔ · P1-14 ✔ |
+| P1-10 | L1 | [`P1-10-so-rui-ro-L1.md`](P1-10-so-rui-ro-L1.md) — **đã chạy 2026-09-08** | P1-04 ✔ · P1-05 ✔ · P1-06 ✔ · P1-13 ✔ · P1-14 ✔ |
 | P1-11 | L2 | **chưa viết** | P1-02 → P1-10 |
 | P1-12 | L1 | **chưa viết** | P1-11 |
 | P1-13 | L2 | [`P1-13-invariant-san-xuat-theo-me-L2.md`](P1-13-invariant-san-xuat-theo-me-L2.md) — **đã chạy 2026-09-07** | P1-01 ✔ |
