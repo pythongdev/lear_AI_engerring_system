@@ -50,8 +50,10 @@ tiền. Số tài khoản do chủ quán nhập sau trong phần quản trị, k
 thêm bàn, hãy để 15 bàn"* (trả lời một phần của `U-040`, `docs/product/99-unknowns.md`). Con số
 **11** đứng từ 2026-08-30 tới 2026-09-06; **15** là con số hiện hành — mọi chỗ trong repo còn nói
 *"11 bàn"* là pointer cũ, cần sửa theo (`CLAUDE.md` §7.2: theo dấu con trỏ sau khi đổi một dữ kiện).
-Mười một bàn ban đầu mỗi bàn **4 chỗ ngồi**, và **đã đánh số sẵn** — chi tiết và phần còn hở của bốn
-bàn mới ở §6.25.
+Mười một bàn ban đầu mỗi bàn **4 chỗ ngồi**, và **đã đánh số sẵn**; **bốn bàn mới cũng 4 chỗ mỗi
+bàn** — chủ quán chốt **2026-09-08**, nguyên văn: *"thêm 4 bàn mới mỗi bàn 4 chỗ"* (trả lời vế thứ
+nhất của `U-042`) ⇒ **cả mười lăm bàn đều 4 chỗ/bàn**. **Cách đánh số bốn bàn mới thì vẫn chưa có
+lời** — đừng tự đặt là 12–15; chi tiết và phần còn hở ở §6.25.
 
 ## 2. Năm kênh bán — đúng năm, không có kênh thứ sáu
 
@@ -1010,9 +1012,18 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       *bàn gọi tên được từng cái* — coi như đủ cho **mười một** bàn ban đầu.
       - **Cùng câu, chủ quán báo một dữ kiện quán vừa đổi:** *"hôm nay tôi mua thêm bàn, hãy để 15
         bàn."* ⇒ §1 sửa **Số bàn: 11 → 15** (2026-09-06, chi tiết ở §1).
-      - ⛔ **Bốn bàn mới KHÔNG được xác nhận chỗ ngồi hay số thứ tự — đừng suy hộ.** Đừng đọc chúng
-        là "cũng 4 chỗ", đừng tự đánh số 12–15: chủ quán chỉ nói **số bàn**, không nói **hình dạng**
-        của bốn bàn mới (`CLAUDE.md` §3.5). Đó là **U-042** (`docs/product/99-unknowns.md`).
+      - **Bốn bàn mới cũng 4 CHỖ NGỒI mỗi bàn** (chủ quán chốt 2026-09-08, trả lời vế thứ nhất của
+        `U-042`). Nguyên văn: *"thêm 4 bàn mới mỗi bàn 4 chỗ."* ⇒ **cả mười lăm bàn đều 4 chỗ/bàn**,
+        không còn hai loại bàn khác nhau về sức chứa.
+        - *Phép nhân của người viết, không phải lời chủ quán:* 15 × 4 = **60 chỗ ngồi** (tính
+          2026-09-08). Chủ quán chưa nói con số 60 lần nào — đếm lại, đừng trích nó như một lời
+          chốt (`work/findings.md` **F-003**).
+      - ⛔ **CÁCH ĐÁNH SỐ bốn bàn mới vẫn CHƯA có lời — đừng suy hộ.** Đừng tự đánh số 12–15: chủ
+        quán trả lời đúng vế chỗ ngồi và không chạm tới tên bàn; quán có thể đặt bàn mới ở một khu
+        riêng và gọi tên khác hẳn (`CLAUDE.md` §3.5). **U-042 ở lại** với phạm vi hẹp hơn — đúng
+        một vế ấy (`docs/product/99-unknowns.md`), cùng hình dạng `U-034` từng ở lại 2026-09-04.
+        ⇒ Vế mà **ADR-027** cần (*gọi tên được từng bàn*) **vẫn hở cho bốn bàn mới**; chỗ ngồi đủ
+        rồi không có nghĩa là danh sách bàn đã đủ.
 
 26. **Trả trước cho một đơn ĐẶT TRƯỚC giao/lấy vào một ngày SAU: doanh thu tính vào NGÀY GIAO/LẤY
     hàng, không phải ngày nhận tiền; và quán chỉ nhận đặt trước cho TỐI ĐA một ngày sau** (chủ quán
@@ -1128,6 +1139,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-09-06 | **Mười một bàn ban đầu: 4 chỗ/bàn, đã đánh số; quán vừa mua thêm bàn ⇒ Số bàn 11 → 15** (trả lời **U-040**) — nguyên văn *"11 bàn mỗi bàn 4 chỗ, đã đánh số, hôm nay tôi mua thêm bàn, hãy để 15 bàn"*. *Chỗ ngồi/đánh số của 4 bàn mới **chưa** trả lời ⇒ **U-042*** | §1 · §6.25 |
 | 2026-09-06 | **Danh mục nguyên liệu bắt đầu có TÊN — mười bốn thứ đầu tiên, còn bổ sung dần** (chủ quán tự liệt kê, không trả lời riêng một U-XXX nào) — nguyên văn *"nhân thịt, nhân thịt mộc nhĩ, rau mùi tàu, quất, hành tây, mì chính, hạt nêm, đường trắng, đường đen, gạo, bột bánh cuốn, hạt tiêu, nước mắm, dầu rửa bát"*; đơn vị tính và ngưỡng nhắc sắp hết vẫn chưa có | §8.4 |
 | 2026-09-07 | **Đặt tên chủ cho hai phụ thuộc PT-5/PT-2: đường báo đơn web về quầy là Telegram, hạ tầng vận hành là một VPS duy nhất** (chốt bởi chủ repo, không phải một câu hỏi U-XXX — đóng một phần **F-027**) — xem **ADR-041** | §1 |
+| 2026-09-08 | **Bốn bàn mới cũng 4 chỗ/bàn ⇒ cả 15 bàn đều 4 chỗ** (trả lời vế **chỗ ngồi** của **U-042**) — nguyên văn *"thêm 4 bàn mới mỗi bàn 4 chỗ"*. *Vế **cách đánh số** bốn bàn mới **vẫn chưa** trả lời ⇒ **U-042** ở lại, hẹp hơn* | §1 · §6.25 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **ba mục, tính tới 2026-09-04**
 

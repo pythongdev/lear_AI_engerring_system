@@ -1,10 +1,12 @@
 <a id="top"></a>
 # Backlog — pha 1 · System design
 
-Mô tả dài của mười ba bước `P1-01`…`P1-13`. Dựng 2026-09-04 (T-049) theo yêu cầu chủ repo;
+Mô tả dài của mười bốn bước `P1-01`…`P1-14`. Dựng 2026-09-04 (T-049) theo yêu cầu chủ repo;
 quyết định vì sao nó là một file riêng: `docs/decisions.md` **ADR-034**. Bước thứ mười ba
 (`P1-13`) nối vào 2026-09-07, sau khi chủ repo chốt đường mở nhóm thứ tư cho `I-019`/`I-020`
-(`work/findings.md` **F-026**, `docs/decisions.md` **ADR-042**).
+(`work/findings.md` **F-026**, `docs/decisions.md` **ADR-042**); bước thứ mười bốn (`P1-14`) nối
+vào cùng ngày, cho mệnh đề mồ côi thứ ba `I-021` — nó **không** mở nhóm mới, nó thêm một hàng vào
+nhóm TIỀN đã có (**ADR-044**).
 
 > **File này giữ MÔ TẢ, không giữ TRẠNG THÁI.** Task nào đang *Ready*, *In Progress* hay *Done*
 > đọc ở `work/backlog.md` — đó là file `scripts/brief.sh` đọc và đẩy vào mọi phiên mới
@@ -26,7 +28,7 @@ quyết định vì sao nó là một file riêng: `docs/decisions.md` **ADR-034
 
 ## Luật của file này — bốn câu
 
-1. **Mô tả cả mười ba bước được viết trước; dòng trạng thái thì không.** Chỉ bước nào **nhận
+1. **Mô tả cả mười bốn bước được viết trước; dòng trạng thái thì không.** Chỉ bước nào **nhận
    được ngay** mới có một dòng ở `work/backlog.md` → *Ready*. Lý do đo được: `brief.sh` cắt danh
    sách *Ready* ở sáu mục, nên mười hai dòng đổ vào đó đẩy bảy dòng ra khỏi tầm nhìn của mọi phiên
    mới — đúng cơ chế đã làm `U-011` và `BA-12` vô hình (**F-012**). Mô tả nằm ở file này thì không
@@ -34,7 +36,7 @@ quyết định vì sao nó là một file riêng: `docs/decisions.md` **ADR-034
 2. **Entry TRỎ, prompt GIỮ.** *Acceptance* và *Verify* nằm trong file prompt viết lúc nhận việc,
    không nằm ở đây — cùng luật với `work/backlog.md` → *Task Detail Template*.
 3. **Bước xong thì entry ở lại đây**, thêm một dòng *Xong ngày…* ở đầu entry; dòng `- [x]` đi vào
-   `work/backlog.md` → *Done*. Không có mục *đã xong* riêng ở file này: mười ba bước là một pha,
+   `work/backlog.md` → *Done*. Không có mục *đã xong* riêng ở file này: mười bốn bước là một pha,
    tách đôi làm mất đường đọc từ P1-01 tới P1-13.
 4. **Bước mới của pha 1 vào đây, không vào `work/backlog.md`.** Task không thuộc pha 1 thì ngược
    lại. Ranh giới là *pha*, không phải *độ dài*.
@@ -56,13 +58,14 @@ chỗ trong cùng file là bug của lượt vừa sửa entry, không phải l�
 | P1-04 | [Bảng ba cột — nhóm TIỀN](#p1-04) | Đóng |
 | P1-05 | [Bảng ba cột — nhóm VÒNG ĐỜI](#p1-05) | Đóng |
 | P1-06 | [Bảng ba cột — nhóm MENU · GIÁ · VẾT](#p1-06) | Đóng |
-| P1-07 | [Yêu cầu hình dạng dữ liệu](#p1-07) | Mở |
-| P1-08 | [Realtime, đường kéo dự phòng, ràng buộc ẩn](#p1-08) | Mở |
+| P1-07 | [Yêu cầu hình dạng dữ liệu](#p1-07) | Đóng |
+| P1-08 | [Realtime, đường kéo dự phòng, ràng buộc ẩn](#p1-08) | Đóng |
 | P1-09 | [Bảng quầy bốn con số](#p1-09) | Đóng |
 | P1-10 | [Sổ rủi ro](#p1-10) | Mở |
 | P1-11 | [Diễn ba scenario qua thiết kế](#p1-11) | Mở |
 | P1-12 | [Rà chéo ranh giới pha](#p1-12) | Mở |
 | P1-13 | [Bảng ba cột — nhóm SẢN XUẤT THEO MẺ](#p1-13) | Đóng |
+| P1-14 | [Bảng ba cột — một hàng `I-021` vào nhóm TIỀN](#p1-14) | Đóng |
 
 **Thứ tự lấy việc, và cái gì chạy song song được: kế hoạch §6.** Đừng đọc thứ tự từ mục lục trên —
 nó xếp theo số, còn phụ thuộc thật thì không.
@@ -77,7 +80,7 @@ con số trong câu này (`work/findings.md` **F-003**):
 | ~~**U-037**~~ | ~~nhập bù xong thì **ai** đối soát lại ngày mất điện, **lúc nào**~~ — **đóng 2026-09-06: POS hoặc chủ quán, cuối buổi bán hàng** | ~~P1-04 (`I-014`)~~ hết bị chặn |
 | ~~**U-036**~~ | ~~khoản **trả trước** nhận ngày này, hàng giao ngày khác — doanh thu **ngày nào**~~ — **đóng 2026-09-06: ngày GIAO, ADR-040** | ~~P1-03 · P1-04~~ hết bị chặn |
 | ~~**U-033**~~ | ~~đơn bị **huỷ** sau khi bếp đã làm xong phần của nó thì chỗ ấy đi đâu~~ — **đóng 2026-09-06: tính cho bàn khác, POS chọn và cập nhật** | ~~P1-05 · P1-07 · P1-09~~ hết bị chặn |
-| **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** (chỗ **suy ra**, chưa hỏi) | P1-07 · P1-09 |
+| **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** (chỗ **suy ra**, chưa hỏi) | ~~P1-07 · P1-09~~ — cả hai **đã đóng 2026-09-07** và cả hai xử bằng cách **để trống có tên**, không suy hộ; S-5 vẫn sống, bước nào dựng bảng quầy thật mới cần nó |
 
 Bốn mã `U-XXX` trên đều đóng tính tới 2026-09-06; chỉ **S-5** — một chỗ **suy ra**, không phải câu
 hỏi nghiệp vụ — còn sống trong bảng này. Câu hỏi hiện dùng **cái quán**, đừng hỏi về cái bảng trong
@@ -87,12 +90,15 @@ máy (`master_plan/shop-facts.md` §7.2), vẫn là bài học cho câu tiếp t
 nay có lát cắt sản xuất theo mẻ, nên **P1-07 và P1-09 hết bị nó chặn**. Chính BA-12 mở ra
 **U-033**.
 
-✅ **F-026 ĐÃ ĐÓNG 2026-09-07** (`work/findings.md` **F-026**, `docs/decisions.md` **ADR-042**):
-`I-019` và `I-020` sinh ra ở BA-12 ngày 2026-09-03 — **sau** khi kế hoạch §6 chia ba nhóm ban đầu —
-nên không thuộc P1-04 · P1-05 · P1-06 nào. Chủ repo chốt đường thứ hai trong ba đường F-026 liệt:
-mở **bước thứ mười ba**, nhóm riêng **SẢN XUẤT THEO MẺ** (`#p1-13` dưới đây). Cổng chất lượng §9
-của kế hoạch không còn đếm một con số cứng — nó đối chiếu **danh sách mã**, nên không mồ côi thêm
-lần nữa theo cùng cơ chế.
+✅ **F-026 ĐÃ ĐÓNG HẲN 2026-09-07** (`work/findings.md` **F-026**, `docs/decisions.md`
+**ADR-042** + **ADR-044**): **ba** mệnh đề sinh **sau** khi kế hoạch §6 chia ba nhóm ban đầu nên
+không thuộc P1-04 · P1-05 · P1-06 nào, và cả ba nay đã có nhà. `I-019` · `I-020` (BA-12,
+2026-09-03) — chủ repo chốt đường thứ hai trong ba đường F-026 liệt: mở **bước thứ mười ba**, nhóm
+riêng **SẢN XUẤT THEO MẺ** (`#p1-13` dưới đây). `I-021` (T-056, 2026-09-04) — **không** mở nhóm
+mới: nó là phép cộng tiền của một ngày bán và ô `I-015` đã trỏ vào nó, nên nó vào **nhóm TIỀN đã
+có**, một hàng thêm vào §1, bước **`P1-14`** (`#p1-14` dưới đây). Cổng chất lượng §9 của kế hoạch
+không còn đếm một con số cứng — nó đối chiếu **danh sách mã**, nên không mồ côi thêm lần nữa theo
+cùng cơ chế.
 
 ---
 
@@ -106,7 +112,7 @@ pha 1 hết bị chặn.** Entry ở lại đây theo luật 3 đầu file; dòn
 
 **Prompt:** [`prompt/SD/P1-01-ranh-gioi-so-huu-L2.md`](../prompt/SD/P1-01-ranh-gioi-so-huu-L2.md)
 (viết 2026-09-04 lúc nhận việc, sáu khối theo `docs/prompt-guideline.md`), **L2** ·
-bước 1/13 của `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6 (ADR-033) ·
+bước 1/14 của `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6 (ADR-033) ·
 **không bị chỗ nào chặn** ·
 **mở khoá** mọi bước còn lại của pha 1 (§6: mười bước trong mười một bước còn lại ghi *Cần xong
 trước: P1-01*)
@@ -193,7 +199,7 @@ Entry ở lại đây theo luật 3 đầu file; dòng `- [x]` ở
 `work/backlog.md` → *Done*.
 
 **Prompt:** [`prompt/SD/P1-02-ranh-gioi-he-thong-L2.md`](../prompt/SD/P1-02-ranh-gioi-he-thong-L2.md)
-(viết 2026-09-04, T-051) — **L2** · bước 2/13 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong
+(viết 2026-09-04, T-051) — **L2** · bước 2/14 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong
 2026-09-04** · không chờ câu hỏi nào đang mở
 
 **Goal:**
@@ -284,7 +290,7 @@ là lịch sử của lúc ô ấy còn mở.*
 Entry ở lại đây theo luật 3 đầu file; dòng `- [x]` ở `work/backlog.md` → *Done*.
 
 **Prompt:** [`prompt/SD/P1-03-ngay-ban-L2.md`](../prompt/SD/P1-03-ngay-ban-L2.md) (viết 2026-09-04,
-T-051) — **L2** · bước 3/13 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong 2026-09-04** ·
+T-051) — **L2** · bước 3/14 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong 2026-09-04** ·
 ~~⛔ đang chặn: U-032~~ — **chủ quán trả lời 2026-09-04 (*"bán"*)**, mục *nhập bù* nay có lời;
 `U-037` mở ra từ chính lời chốt ấy (T-054)
 
@@ -356,8 +362,16 @@ công thức ấy chỉ đọc được khi *một ngày* đã có nghĩa.
 <a id="p1-04"></a>
 ### P1-04 — Bảy invariant chạm TIỀN chỉ có cách kiểm bằng kịch bản người; không mục nào nói tầng nào giữ chúng
 
+✅ **Xong ngày 2026-09-06** — `docs/product/1-system-design/03-bao-ve-invariant.md` **§1** (file
+mới, bước 4/14, mục nhóm TIỀN) + một dòng vào bảng *Pha 1* của `docs/product/00-index.md`: bảy
+mệnh đề `I-002` `I-005` `I-007` `I-012` `I-013` `I-014` `I-015` nay mỗi mệnh đề có một tầng giữ và
+một phép đối chiếu ra rỗng; ba trong bảy chỉ tới được tầng 4/5 và nói thẳng *"máy không ngăn
+được"* kèm cái máy CÓ giữ thay vào. Toàn bộ kết quả đọc ở `work/backlog.md` → *Done*, dòng
+`- [x] P1-04` — không chép lại ở đây (**F-001**). *Dòng này viết bù ngày 2026-09-07 (T-065, đóng
+`work/findings.md` **F-032**); ngày ghi ở trên là ngày lượt P1-04 thật sự xong.*
+
 **Prompt:** [`prompt/SD/P1-04-invariant-tien-L2.md`](../prompt/SD/P1-04-invariant-tien-L2.md)
-(viết 2026-09-04, T-057) — **L2** · bước 4/13 (kế hoạch §6) · **cần xong trước:** P1-01 · **P1-03**,
+(viết 2026-09-04, T-057) — **L2** · bước 4/14 (kế hoạch §6) · **cần xong trước:** P1-01 · **P1-03**,
 **cả hai đã xong 2026-09-04** (định nghĩa *ngày bán* ở
 [`docs/product/1-system-design/02-thoi-gian-ngay-ban.md`](../docs/product/1-system-design/02-thoi-gian-ngay-ban.md))
 · chạy song song được với P1-05, P1-06 · ô `I-014` từng còn **hai** mã đang mở (`U-036` · `U-037`),
@@ -442,9 +456,18 @@ có tên ở §1.3, và **F-026** được đo lại (**ba** mệnh đề mồ c
 <a id="p1-05"></a>
 ### P1-05 — Sáu invariant vòng đời bàn và đơn chưa có tầng giữ, trong khi đúng chúng là chỗ bàn và đơn bị kẹt
 
+✅ **Xong ngày 2026-09-06** — `docs/product/1-system-design/03-bao-ve-invariant.md` **§2** (bước
+5/13, mục nhóm VÒNG ĐỜI của file dùng chung): sáu mệnh đề `I-001` `I-003` `I-004` `I-006` `I-016`
+`I-017` nay mỗi mệnh đề có một tầng giữ và một phép đối chiếu ra rỗng. `I-004` đổi hình ngay giữa
+lượt vì chủ quán trả lời `U-033` đúng ngày ấy, nên vế thứ tư viết thẳng cơ chế thật (**tầng 4**)
+thay vì "đang treo"; `S-6` là mã treo duy nhất còn lại của nhóm. Toàn bộ kết quả đọc ở
+`work/backlog.md` → *Done*, dòng `- [x] P1-05` — không chép lại ở đây (**F-001**). *Dòng này viết
+bù ngày 2026-09-07 (T-065, đóng `work/findings.md` **F-032**); ngày ghi ở trên là ngày lượt P1-05
+thật sự xong.*
+
 **Prompt:** [`prompt/SD/P1-05-invariant-vong-doi-L2.md`](../prompt/SD/P1-05-invariant-vong-doi-L2.md)
-(viết 2026-09-04, T-051) — **L2** · bước 5/13 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong
-2026-09-04** · ⚠️ **F-026**: `I-019` · `I-020` chưa thuộc nhóm nào — đọc trước khi điền bảng ·
+(viết 2026-09-04, T-051) — **L2** · bước 5/14 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong
+2026-09-04** · ✅ **F-026 đã đóng hẳn 2026-09-07**: `I-019` · `I-020` sang `P1-13`, `I-021` sang `P1-14` — không mệnh đề nào trong ba cái thuộc bảng này ·
 ⚠️ **U-031 ĐÃ ĐÓNG 2026-09-04** (T-055, *"pos"*) ⇒ ca đơn **giao tận nơi** của `I-017` nay có lời,
 viết thẳng, **không** còn là chỗ treo; vế *lúc nào* là **S-6** (`shop-facts.md` §7.2) và vế ấy vẫn
 viết theo phương án hẹp · ~~U-033 vẫn chạm `I-004` (đơn huỷ sau khi bếp đã làm xong) — viết theo
@@ -545,12 +568,12 @@ tên bảng · cột · ràng buộc · endpoint · route · component nào (ADR
 ### P1-06 — Năm invariant menu · giá · vết chưa có tầng giữ, và một trong năm là mệnh đề mà máy CỐ Ý không giữ
 
 **Prompt:** [`prompt/SD/P1-06-invariant-menu-gia-vet-L2.md`](../prompt/SD/P1-06-invariant-menu-gia-vet-L2.md)
-(viết 2026-09-04, T-051) — **L2** · bước 6/13 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong
-2026-09-04** · ✅ **F-026 đã đóng 2026-09-07**: `I-019` · `I-020` nay có nhóm riêng, `P1-13`
-(`#p1-13`) — không thuộc bảng này · chạy song song được với P1-04, P1-05, P1-13
+(viết 2026-09-04, T-051) — **L2** · bước 6/14 (kế hoạch §6) · **cần xong trước:** P1-01, **đã xong
+2026-09-04** · ✅ **F-026 đã đóng hẳn 2026-09-07**: `I-019` · `I-020` nay có nhóm riêng, `P1-13`
+(`#p1-13`); `I-021` vào nhóm TIỀN ở `P1-14` (`#p1-14`) — không cái nào thuộc bảng này · chạy song song được với P1-04, P1-05, P1-13
 
 ✅ **Xong ngày 2026-09-07** — `docs/product/1-system-design/03-bao-ve-invariant.md` **§3** (mới,
-bước 6/13, file dùng chung bốn chủ): năm mệnh đề `I-008` `I-009` `I-010` `I-011` `I-018` nay có
+bước 6/14, file dùng chung bốn chủ): năm mệnh đề `I-008` `I-009` `I-010` `I-011` `I-018` nay có
 tầng giữ và một phép đối chiếu ra rỗng. `I-011` ghi đúng **tầng 4 — máy không ngăn được**, giữ
 thay bằng lời nhắc trước khi lưu và một vết đọc được sau (`I-018`), không bị nâng lên tầng máy dù
 bảng sẽ đẹp hơn nếu ghi tầng 1. `I-009` đọc rõ mốc khoá giá là **từng lượt gọi** nên một hoá đơn
@@ -617,10 +640,29 @@ thứ chỉ lộ ra sau vài tuần; `I-010` là *từ chối*, **không bao gi�
 <a id="p1-07"></a>
 ### P1-07 — Sáu chỗ thiếu ở §8 mới là một DANH SÁCH; pha 2 không có câu yêu cầu nào để đối chiếu lược đồ
 
-**Prompt:** chưa có — **L2** · bước 7/13 (kế hoạch §6) · **cần xong trước:** P1-04 · P1-05 ·
-P1-06 · **P1-13** ✔ (đã xong 2026-09-07) · **BA-12 đã xong 2026-09-04** ⇒ hết bị chặn · ⚠️ chạm
-**U-033**, **S-5** và **S-6** ở
-phần *đã phục vụ cho từng bàn* (**U-031 đã đóng 2026-09-04**; chỗ còn lại của ca ấy là **S-6**)
+**Prompt:** chưa có — **L2** · bước 7/14 (kế hoạch §6) · **cần xong trước:** P1-04 ✔ · P1-05 ✔ ·
+P1-06 ✔ · **P1-13** ✔ · **P1-14** ✔ (cả năm xong tính tới 2026-09-07) · **BA-12 đã xong
+2026-09-04** ⇒ hết bị chặn · ⚠️ chạm **S-5** và **S-6** ở phần *đã phục vụ cho từng bàn*
+(**U-031** và **U-033** đều đã đóng; chỗ còn lại của hai ca ấy là **S-6** và ca *không bàn nào
+đang chờ đúng thứ đã làm*)
+
+✅ **Xong ngày 2026-09-07** — [`docs/product/1-system-design/04-yeu-cau-du-lieu.md`](../docs/product/1-system-design/04-yeu-cau-du-lieu.md)
+(mới, bước 7/14, **một chủ**): **hai mươi** dòng yêu cầu `YC-01`…`YC-20`, mỗi dòng viết bằng đúng
+hai dạng câu *phải ghi lại được X* / *phải không thể xảy ra Y*. §1 khớp **một-đối-một** với bảng
+chỗ thiếu ở `architecture.md` §8, và đó là phép chấm giữ hai danh sách khỏi trôi khỏi nhau; §2 nợ
+(trỏ §12.3, **không chép**), §3 vết (`I-012` và `I-018` giữ nguyên **hai** mệnh đề), §4 trực trạm
+(ba việc §4 đòi), §5 ba câu `02-thoi-gian-ngay-ban.md` §5 giao sang, §6 ba chỗ chưa chắc để trống
+có tên.
+
+⚠️ **Bước 8 tìm ra chỗ thiếu thứ BẢY và thứ TÁM, và cả hai đã vào `architecture.md` §8 trong cùng
+lượt** — đúng câu §8 tự dặn. Cả hai là lời chốt của chủ quán **sau** ngày đo cũ của §8
+(2026-08-31), nên §8 không thể có chúng lúc viết: **mẻ + con số *đã làm xong, còn ở bếp*** (chốt
+2026-09-01, cộng ca đổi chủ 2026-09-06) và **lượt bán nhập bù từ sổ giấy** (chốt 2026-09-04,
+`ADR-037`). Tiêu đề §8 vì thế **bỏ số đếm cứng** — *Sáu chỗ…* → *Những chỗ…*, gọi tên thay vì đếm
+(`work/findings.md` **F-003** · **F-018**) — và bốn pointer đếm *"sáu"* dọn trong cùng thay đổi
+(`architecture.md` §12.3 · §14.2, kế hoạch pha 1 §4.4 · §6, `work/backlog_AD.md` ADM-21). Hai
+pointer chết khác trong `architecture.md` §13 cũng sửa: BA-12 *"chưa viết"* (xong 2026-09-04) và
+một hàng mới trỏ về file của bước này.
 
 **Goal:**
 Xong rồi thì pha 2 có một danh sách **yêu cầu** — *phải ghi lại được X* / *phải không thể xảy ra
@@ -639,8 +681,9 @@ phục vụ bao nhiêu cho từng bàn — và nói thẳng đó là *"danh sác
 2026-08-31, không phải lời hứa là đã đủ"*. Danh sách ấy nói *thiếu cái gì*; nó **không** nói
 *phải đúng cái gì*, nên pha 2 không dùng nó để chấm được.
 
-Hai chỗ trong sáu chỗ ấy phụ thuộc việc chưa xong: **BA-12** (lát cắt sản xuất theo mẻ, đang *In
-Progress*) và **S-5** (bấm *"đã bưng ra bàn"* theo đơn vị nào — suy ra, chưa hỏi chủ quán).
+Hai chỗ trong danh sách ấy phụ thuộc việc chưa xong lúc entry này được viết: **BA-12** (lát cắt
+sản xuất theo mẻ — **đã xong 2026-09-04**) và **S-5** (bấm *"đã bưng ra bàn"* theo đơn vị nào —
+suy ra, **vẫn chưa hỏi chủ quán**).
 
 **Không làm thì mất gì:**
 - **Lược đồ pha 2 không cất được vết hoàn tiền và khoản nợ** ⇒ đối soát ngưỡng 0đ không thực hiện
@@ -685,8 +728,17 @@ Progress*) và **S-5** (bấm *"đã bưng ra bàn"* theo đơn vị nào — su
 <a id="p1-08"></a>
 ### P1-08 — Bốn ràng buộc kiến trúc ẩn chỉ sống ở một bản xuất khẩu, và không cái nào có dấu hiệu xem lại đo được
 
-**Prompt:** chưa có — **L2** · bước 8/13 (kế hoạch §6) · **cần xong trước:** P1-02 ·
-không chờ câu hỏi nào đang mở
+✅ **Xong ngày 2026-09-08** — [`docs/product/1-system-design/05-realtime-va-du-phong.md`](../docs/product/1-system-design/05-realtime-va-du-phong.md)
+(file mới): §1 hai đường xuống trạm · §2 bốn ràng buộc `RB-1`…`RB-4` mỗi cái một **dấu hiệu đo
+được** kèm *ai đo bằng cái gì đã có* · §3 bốn câu luật cho *hệ thống dựa vào cái gì để nói quán
+đang mất kết nối* (đầu vào cho điều kiện thứ ba của `I-008`) · §4 ba chỗ để trống có tên.
+Quyết định: `docs/decisions.md` **ADR-045** — **đóng nốt `work/findings.md` F-027**. Mở **`U-043`**
+(mất tín hiệu bao lâu thì web ngừng nhận đơn — câu của chủ quán) và **F-033** (ảnh chụp *"hôm nay
+có chưa"* của kế hoạch §2 · §4 đã trôi). Phần kết quả đầy đủ ở `work/backlog.md` → *Done*.
+
+**Prompt:** [`prompt/SD/P1-08-realtime-du-phong-L2.md`](../prompt/SD/P1-08-realtime-du-phong-L2.md)
+(viết 2026-09-08, cùng lượt nhận việc) — **L2** · bước 8/14 (kế hoạch §6) · **cần xong trước:**
+P1-02 ✔ · không chờ câu hỏi nào đang mở
 
 **Goal:**
 Xong rồi thì bốn ràng buộc — **một** instance BE · **không** hàng đợi · **không** cache · tất cả
@@ -752,7 +804,7 @@ bàn); `U-033` đã đóng 2026-09-06 trong lúc chờ, nên §3.4 viết luật
 **Đóng F-024.**
 
 **Prompt:** [`prompt/SD/P1-09-bang-quay-bon-con-so-L2.md`](../prompt/SD/P1-09-bang-quay-bon-con-so-L2.md)
-(viết 2026-09-04, T-051) — **L2** · bước 9/13 (kế hoạch §6) · **BA-12 đã xong 2026-09-04** ⇒ chỉ còn
+(viết 2026-09-04, T-051) — **L2** · bước 9/14 (kế hoạch §6) · **BA-12 đã xong 2026-09-04** ⇒ chỉ còn
 chờ **S-5**, và đọc **U-033** trước khi viết con số thứ tư · độc lập với cả dãy P1 còn lại ·
 đây là con bug **F-024**
 
@@ -815,7 +867,7 @@ hết đúng và phải viết lại"*, rồi giao việc cho `T-036`. **T-036 �
 <a id="p1-10"></a>
 ### P1-10 — Năm rủi ro lớn nhất chỉ có ở một bản nháp bị đóng băng, và bản ấy viết trước khi có nợ · hoàn tiền · đối soát ba nguồn
 
-**Prompt:** chưa có — **L1** · bước 10/13 (kế hoạch §6) · **cần xong trước:** P1-04 · P1-05 ·
+**Prompt:** chưa có — **L1** · bước 10/14 (kế hoạch §6) · **cần xong trước:** P1-04 · P1-05 ·
 P1-06 · **P1-13** ✔ (đã xong 2026-09-07) (mỗi rủi ro phải chỉ tên được một cơ chế đã viết ra)
 
 **Goal:**
@@ -870,7 +922,7 @@ ro không có chúng là sổ của một hệ thống khác.
 <a id="p1-11"></a>
 ### P1-11 — Chưa ai diễn ba scenario nghiệm thu BA qua thiết kế, nên không ai biết thiết kế có chạy được nghiệp vụ không
 
-**Prompt:** chưa có — **L2** · bước 11/13 (kế hoạch §6) · **cần xong trước:** P1-02 → P1-10 ·
+**Prompt:** chưa có — **L2** · bước 11/14 (kế hoạch §6) · **cần xong trước:** P1-02 → P1-10 ·
 đây là **cổng** của cả pha
 
 **Goal:**
@@ -927,7 +979,7 @@ chạy nó.
 <a id="p1-12"></a>
 ### P1-12 — Không cổng nào chấm ranh giới pha: một tên bảng lọt vào tài liệu pha 1 thì mọi gate vẫn xanh
 
-**Prompt:** chưa có — **L1** · bước 12/13 (kế hoạch §6) · **cần xong trước:** P1-11 ·
+**Prompt:** chưa có — **L1** · bước 12/14 (kế hoạch §6) · **cần xong trước:** P1-11 ·
 bước cuối, chạy ngay trước khi mở pha 2
 
 **Goal:**
@@ -993,7 +1045,7 @@ tên**, không phải như một lỗi — và cũng không được im lặng b
 Entry ở lại đây theo luật 3 đầu file; dòng `- [x]` ở `work/backlog.md` → *Done*.
 
 **Prompt:** [`prompt/SD/P1-13-invariant-san-xuat-theo-me-L2.md`](../prompt/SD/P1-13-invariant-san-xuat-theo-me-L2.md)
-(viết 2026-09-07) — **L2** · bước 13/13 (kế hoạch §6) · **cần xong trước:** P1-01 ✔ · **đóng
+(viết 2026-09-07) — **L2** · bước 13/14 (kế hoạch §6) · **cần xong trước:** P1-01 ✔ · **đóng
 F-026** · chạy song song được với P1-04, P1-05, P1-06 (bốn nhóm không dùng chung mệnh đề nào)
 
 **Goal:**
@@ -1064,12 +1116,96 @@ cột).
 
 ---
 
+<a id="p1-14"></a>
+### P1-14 — Mệnh đề mồ côi thứ ba đã bị chính bảng nhóm TIỀN trỏ vào, mà hàng ấy chưa tồn tại
+
+✅ **Xong ngày 2026-09-07** — `docs/decisions.md` **ADR-044** (`I-021` vào nhóm TIỀN đã có, không
+mở nhóm thứ năm; `P1-01`…`P1-13` giữ nguyên ID), `work/findings.md` **F-026** → *Fixed* (đóng
+hẳn, cả ba mệnh đề mồ côi). Entry ở lại đây theo luật 3 đầu file; dòng `- [x]` ở `work/backlog.md`
+→ *Done*.
+
+**Prompt:** **cố ý không có file prompt** — **L2** · bước 14/14 (kế hoạch §6) · **cần xong trước:**
+P1-04 ✔ · **đóng hẳn F-026** · **không** chạy song song được với phiên nào đang sửa §1 của
+`03-bao-ve-invariant.md`. Lý do không có prompt ở **ADR-044** điểm 3: bước này được thi hành ngay
+trong lượt chốt ADR ấy, nên một file prompt sẽ được viết rồi tự đọc trong cùng một lượt — đúng loại
+tài liệu nghi lễ `CLAUDE.md` §3.8 cấm.
+
+**Goal:**
+Xong rồi thì `I-021` — *két cuối ngày − tiền đầu két = doanh thu tiền mặt* — có tầng giữ và phép
+đối chiếu như bảy mệnh đề còn lại của nhóm TIỀN, và ô `I-015` hết trỏ tới một hàng không tồn tại.
+
+**Nói một câu, việc phải làm là gì:**
+Thêm **đúng một hàng** vào §1 của `docs/product/1-system-design/03-bao-ve-invariant.md`, cộng phần
+dọn pointer: §1.3 đang viết *"ba mệnh đề không thuộc nhóm nào"* và ô `I-015` đang viết *"nó không
+thuộc nhóm này"* — hai câu ấy hết đúng ngay khi hàng mới xuất hiện. Việc **không** phải làm: không
+mở nhóm thứ năm, không sửa lời `I-021` ở `quality/invariants.md`, không renumber `P1-01`…`P1-13`.
+
+**Vì sao có task này:**
+`work/findings.md` **F-026** đóng một nửa ngày 2026-09-07 (**ADR-042**, `P1-13`): `I-019`/`I-020`
+có nhóm thứ tư. Mệnh đề mồ côi **thứ ba** thì không — `I-021` sinh ở **T-056**, 2026-09-04, cũng
+sau khi kế hoạch §6 chia nhóm. Khác hai mệnh đề kia ở một chỗ làm nó gấp hơn: nó **đã bị trỏ vào**
+— ô `I-015` nêu tên nó để nói được vế *phần tiền mặt so với két* — nên từ 2026-09-06 bảng nhóm TIỀN
+mang một hàng bị trỏ tới mà không tồn tại.
+
+**Không làm thì mất gì:**
+- **Một pointer trỏ vào chỗ trống trong tài liệu mà pha 2 sẽ đọc để dựng ràng buộc.** Người đọc ô
+  `I-015` đi tìm `I-021` trong bảng và không thấy gì.
+- **Hậu quả ở quán:** đối soát cuối ngày lệch **đúng bằng** tiền đầu két **mọi ngày** nếu pha 2
+  không biết phải trừ nó — và cái vỡ không phải một con số, mà là ngưỡng 0đ (`shop-facts.md` §6.10):
+  báo đỏ mỗi ngày vì một lý do đã biết trước thì người dùng học cách bỏ qua, và từ hôm ấy một chỗ
+  mất tiền thật cũng đi qua cùng cái đỏ ấy.
+- **Chỗ *máy không ngăn được* của hàng này không được nói ra** — con số két cuối ngày do **người
+  đếm rồi nhập**. Một bảng ghi nó là tầng 1 vì nhìn thấy một phép trừ chính xác dạy pha 2 rằng chỗ
+  này đã có máy giữ: đúng **rủi ro lớn nhất của cả pha 1** (kế hoạch §10).
+
+**Cách hoàn thành — chín bước.**
+
+1. Đọc **F-026** nguyên văn, `quality/invariants.md` mục `I-021` (công thức, ba điều kiện biên, năm
+   kịch bản kiểm), `master_plan/shop-facts.md` §8.5 · §8.6 · §6.10, và kế hoạch §7 (từ vựng năm
+   tầng).
+2. Khai `work/scope.txt`: khối P1-14 — **thêm**, không ghi đè khối của phiên khác (**F-010** ·
+   **F-014**).
+3. Chuyển dòng P1-14 sang *In Progress* ở `work/backlog.md`.
+4. Thêm **một** hàng `I-021` vào cuối bảng §1: tầng 1 (một ngày bán một con số tiền đầu két; tiền
+   đầu két không nằm trong tập tiền đã thu) · tầng 3 (không đường nào rút tiền khỏi két giữa buổi,
+   `A4` ⇒ §8.5) · **tầng 4** cho vế *con số két cuối ngày là số người đếm rồi nhập*, có câu *"máy
+   không ngăn được"* kèm cái máy **có** giữ thay vào.
+5. Dọn pointer trong cùng file: tiêu đề §1 (bảy → tám mệnh đề), ô `I-015`, §1.3 viết lại thành bản
+   ghi lịch sử của cả ba mệnh đề mồ côi, §1.4 (hàng P1-07 · P1-10 · Pha 2), thêm **§1.5** — ba chỗ
+   hàng mới dễ đọc sai. Khối mở đầu đổi *bốn chủ* → *năm chủ*.
+6. Sửa kế hoạch §6 (tiêu đề *mười bốn bước*, hàng P1-14, dòng song song, cột *Cần xong trước* của
+   P1-07/P1-10), §7 (tiêu đề — năm bước). **§9 không đổi một chữ**: nó đã bỏ số đếm cứng ở ADR-042.
+7. Sửa pointer ngoài: `work/backlog_SD.md` (intro, Mục lục, callout F-026, hai dòng cảnh báo,
+   mẫu số *N/13* → *N/14*), `prompt/SD/README.md`, `docs/product/00-index.md`, và hai chỗ P1-13
+   quét sót vẫn viết *"mười hai bước"* (`prompt/AD/README.md`, `work/backlog_AD.md`).
+8. Viết `docs/decisions.md` **ADR-044** + một hàng bảng tổng hợp; đóng **F-026** bằng một khối
+   *Đóng hẳn* thêm vào cuối mục, **Status: Fixed** — không sửa *Problem*/*Impact* cũ (ADR-008).
+9. `./scripts/gate.sh`; Gate 2 soi từng dòng Acceptance; tick P1-14 → *Done*, dọn khối scope.
+
+**Bẫy hay sửa nhầm nhất:**
+- **Đừng lặp hình thức của ADR-042.** Mở một nhóm thứ năm cho đúng một mệnh đề nghe "đối xứng"
+  nhưng bỏ mất **lý do** của ADR-042 (trục nội dung khác hẳn ba nhóm cũ). `I-021` là tiền, đúng
+  nghĩa đen.
+- **Đừng ghi hàng này là tầng 1 vì công thức trông chính xác.** Phép trừ chính xác không làm cho
+  con số **đầu vào** đúng: két đếm bằng tay.
+- **Đừng gộp tiền mặt với chuyển khoản** để "so một con số tổng cho gọn" — hỏng cả hai phép đối
+  chiếu cùng lúc (`I-014`, §6.10).
+- **Đừng sửa một chữ nào của `quality/invariants.md`.** Lời mệnh đề có nhà ở đó; bảng này chỉ sở
+  hữu tầng và phép đối chiếu (**ADR-035** · **F-001**).
+
+**Acceptance · Verify:** ghi ở `work/backlog.md` dòng `- [x] P1-14` và ở báo cáo cuối lượt — bước
+này không có file prompt riêng (ADR-044 điểm 3).
+
+[↑ đầu file](#top)
+
+---
+
 ## Khuôn viết một bước mới của pha 1
 
 Dùng nguyên **Khuôn L1+ — bảy khối bắt buộc** ở `work/backlog.md` → *Task Detail Template*, kèm
 ba khác biệt của file này:
 
-1. Dòng **Prompt** ghi thêm *bước N/12 (kế hoạch §6)* và **chỗ đang chặn** nếu có.
+1. Dòng **Prompt** ghi thêm *bước N/14 (kế hoạch §6)* và **chỗ đang chặn** nếu có.
 2. Bước 3 và bước 9 của *Cách hoàn thành* nói tới `work/backlog.md` — đó là nơi dòng trạng thái
    sống, không phải file này.
 3. Bước xong thì entry **ở lại đây** kèm một dòng *Xong ngày…* ở đầu, không chuyển mục — và

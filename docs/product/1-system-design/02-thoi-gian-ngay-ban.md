@@ -202,7 +202,7 @@ ngày* nhưng ngược chiều. Mục này **không** viết câu chữ hay cơ 
 |---|---|
 | **P1-04** — bảng ba cột nhóm **TIỀN** | cột *phép đối chiếu* của `I-014` nay có nghĩa: *"cộng trong một ngày"* = §1, và *"ngày nào"* = bảng §2. Hàng cuối bảng §2 **hết trống** — `U-036` và `U-037` đã đóng 2026-09-06, xem §4 |
 | **P1-07** — yêu cầu hình dạng dữ liệu | §2 đòi **một** mốc tính tiền cho mỗi việc chạm tiền, §2.1 đòi mọi phần của một lần thu dùng chung mốc, §2.2 đòi mốc đã ghi không dời. Ba câu ấy là **yêu cầu**, pha 2 chọn hình dạng |
-| **P1-08** — realtime và ràng buộc ẩn | §3 nói mốc do **một** nguồn cấp ở nơi ghi. Nhiều nơi cùng ghi thì câu ấy hỏng ⇒ đây là một đầu vào của ràng buộc *một instance* |
+| ~~**P1-08**~~ — realtime và ràng buộc ẩn — **xong 2026-09-08** | §3 nói mốc do **một** nguồn cấp ở nơi ghi. Nhiều nơi cùng ghi thì câu ấy hỏng ⇒ đây là một đầu vào của ràng buộc **RB-1** (*đúng một tiến trình*) ở [`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §2 |
 | **P1-09** — bảng quầy | bảng quầy đếm **trong ngày**; ngày ấy là §1 |
 | **P1-11** — diễn ba scenario | scenario đi qua một buổi mất điện nay **đi hết được**: lượt nhập bù mang mốc ngày bán (§2), và `U-037`/`U-036` đã đóng 2026-09-06 nên không còn chỗ nào phải dừng ở §4 |
 | **Pha 2** | cất mốc **thế nào**, kiểu gì, cột nào — mục này cố ý không nói (**ADR-035**) |

@@ -166,7 +166,7 @@ cache*) **vẫn** chỉ đứng trên bản xuất khẩu, chưa có owner.
 
 | Bước | Lấy gì từ mục này |
 |---|---|
-| **P1-08** — realtime, đường kéo dự phòng, ràng buộc ẩn | **PT-2** và **PT-5**: mục này nói *mất nó thì quán làm gì*; P1-08 nói *máy làm gì* và đặt **dấu hiệu đo được** cho từng ràng buộc. Đọc **F-027** và **ADR-041** trước — tên đã có (Telegram · một VPS), ba ràng buộc ẩn còn lại (một instance · không hàng đợi · không cache) thì chưa |
+| ~~**P1-08**~~ — realtime, đường kéo dự phòng, ràng buộc ẩn — **xong 2026-09-08** | **PT-2** và **PT-5**: mục này nói *mất nó thì quán làm gì*; [`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) nói *máy làm gì* và đặt **dấu hiệu đo được** cho từng ràng buộc (§2, `RB-1`…`RB-4`). Dấu hiệu của **RB-4** đo bằng chính dòng *"còn N lượt bán trên giấy chưa nhập"* mà **PT-6** ở §3 đã đòi. **F-027 đóng nốt** cùng ngày (`docs/decisions.md` **ADR-045**) |
 | **P1-10** — sổ rủi ro | mỗi dòng §3 là một rủi ro đã có người chịu; sổ rủi ro trỏ về đây thay vì viết lại |
 | **P1-11** — diễn ba scenario | ba scenario của `08-scenario.md` §8 phải đi qua được **PT-1** và **PT-6**, tức đi qua được một buổi mất điện |
 | **Pha 3 · pha 5** | cơ chế thật (thử lại, hàng đợi, bộ nhớ đệm, triển khai) — mục này **không** chốt cái nào, và không được đọc như thể có chốt |

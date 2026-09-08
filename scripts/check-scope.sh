@@ -33,6 +33,22 @@
 # commit có thuộc scope không" mà KHÔNG phải chép lại ngữ nghĩa pattern: hai bản
 # so khớp sẽ trôi khỏi nhau, đúng họ lỗi work/findings.md F-001.
 # Cách đọc pattern không đổi một dòng nào — Gate 3 vẫn hành xử y như trước.
+#
+# PHÉP CHẤM BASELINE (thêm 2026-09-07, T-047 — work/findings.md F-020, docs/
+# decisions.md ADR-043): ngoài việc chấm file thay đổi có khớp scope không, Gate
+# 3 (chế độ "gate", không phải --match) nay còn giữ MỘT hình bất biến của chính
+# work/scope.txt: bản ĐÃ COMMIT (HEAD) chỉ được chứa comment — pattern là trạng
+# thái phiên đang chạy, không bao giờ được đi vào git (CLAUDE.md §6). Vị ngữ:
+#   - HEAD còn pattern MÀ cây làm việc vẫn giữ nguyên ⇒ FAIL. Đây đúng là lỗ
+#     hổng F-020 mô tả: một pattern đã lọt vào một commit và không ai gỡ.
+#   - HEAD còn pattern nhưng cây làm việc đã sạch (đang dọn, chưa commit) ⇒
+#     không FAIL, chỉ in `note:` nhắc đưa work/scope.txt vào khối commit của
+#     lượt này để xoá nợ. Đây là điểm hở duy nhất luật cho phép — dọn xong
+#     trong cây là xanh ngay, không phải chờ tới sau khi commit.
+#   - HEAD sạch ⇒ im lặng, không có gì để chấm.
+# Đếm pattern ở HEAD dùng ĐÚNG một phép — bỏ phần từ `#`, cắt khoảng trắng, còn
+# khác rỗng — như phần đọc $SCOPE_FILE ở dưới; không dựng file mẫu thứ hai để so
+# (work/findings.md F-001). Cách đọc/khớp pattern của cây làm việc không đổi.
 
 set -uo pipefail
 
@@ -66,9 +82,42 @@ while IFS= read -r line || [ -n "$line" ]; do
   esac
 done < "$SCOPE_FILE"
 
+# --- Phép chấm baseline: bản ĐÃ COMMIT của $SCOPE_FILE chỉ được chứa comment --
+# Chạy TRƯỚC early-exit "scope not declared" ở dưới, vì ca cần bắt đúng là: cây
+# làm việc đã sạch (nên allow/deny rỗng) nhưng HEAD vẫn còn nợ pattern cũ. Không
+# chạy ở chế độ --match (Gate 7b tự có luật riêng cho work/scope.txt).
+baseline_fail=0
+if [ "$MODE" = "gate" ]; then
+  head_content="$(git show "HEAD:$SCOPE_FILE" 2>/dev/null || true)"
+  if [ -n "$head_content" ]; then
+    head_dirty=0
+    while IFS= read -r hline || [ -n "$hline" ]; do
+      hline="${hline%%#*}"
+      hline="${hline#"${hline%%[![:space:]]*}"}"
+      hline="${hline%"${hline##*[![:space:]]}"}"
+      [ -n "$hline" ] && head_dirty=1
+    done <<< "$head_content"
+
+    if [ "$head_dirty" -eq 1 ]; then
+      if [ ${#allow[@]} -gt 0 ] || [ ${#deny[@]} -gt 0 ]; then
+        echo "check-scope: FAIL — bản đã commit (HEAD) của $SCOPE_FILE còn mang pattern, và cây"
+        echo "  làm việc vẫn giữ nguyên. Bản đã commit chỉ được chứa comment (CLAUDE.md §6 ·"
+        echo "  work/findings.md F-020). Gỡ pattern khỏi $SCOPE_FILE trong cây làm việc, rồi đưa"
+        echo "  file vào khối commit của lượt này."
+        baseline_fail=1
+      else
+        echo "check-scope: note — $SCOPE_FILE ở HEAD còn nợ pattern cũ (đã commit), nhưng cây làm"
+        echo "  việc đã sạch. Đưa $SCOPE_FILE vào khối commit của lượt này để xoá nợ"
+        echo "  (work/findings.md F-020)."
+      fi
+    fi
+  fi
+fi
+
 if [ ${#allow[@]} -eq 0 ] && [ ${#deny[@]} -eq 0 ]; then
   [ "$MODE" = "match" ] && exit 0
   echo "check-scope: $SCOPE_FILE has no patterns — scope not declared, skipping"
+  [ "$baseline_fail" -eq 1 ] && exit 1
   exit 0
 fi
 
@@ -141,6 +190,10 @@ if [ ${#violations[@]} -gt 0 ]; then
   echo "check-scope: FAIL — files changed outside the scope declared in $SCOPE_FILE:"
   printf '  - %s\n' "${violations[@]}"
   echo "Revert them, or update $SCOPE_FILE if the task scope genuinely changed."
+  exit 1
+fi
+
+if [ "$baseline_fail" -eq 1 ]; then
   exit 1
 fi
 

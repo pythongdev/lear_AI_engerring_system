@@ -26,7 +26,14 @@
 #      `check-scope.sh --match` — ngữ nghĩa pattern chỉ có một chủ);
 #   2. `git add -A` / `git add .` — CLAUDE.md §6.1 cấm, và đây là cái đã nuốt
 #      1096 dòng vào commit `0b3a337`;
-#   3. `work/scope.txt` nằm trong khối — §6.1 cấm, đã hỏng ở `5c41f65`, `25f0f88`.
+#   3. `work/scope.txt` trong khối MANG PATTERN (sửa 2026-09-07, T-047 — work/
+#      findings.md F-020, docs/decisions.md ADR-043; trước đó luật này chấm sự
+#      CÓ MẶT của file, không chấm nội dung). Bản đã commit của work/scope.txt
+#      chỉ được chứa comment — pattern không bao giờ được đi vào git. Vị ngữ áp
+#      đúng phép đếm ở check-scope.sh (bỏ `#` trở đi, cắt khoảng trắng, còn khác
+#      rỗng) lên NỘI DUNG cây làm việc — tức bản sẽ thực sự được `git add`. File
+#      chỉ-comment trong khối là im lặng hợp lệ: đó chính là bước xoá nợ CLAUDE.md
+#      §7.3 đòi, không phải một ngoại lệ phải nhớ cho commit "migration".
 # Nó chấm **danh sách file người ta vừa cố ý chọn**, không chấm cây làm việc, nên
 # ADR-003 không bị lật: trạng thái track không tham gia vào kết luận.
 # Scope chưa khai ⇒ im lặng: không có gì để đối chiếu, và đoán thì tệ hơn im.
@@ -130,6 +137,21 @@ add_lines="$(printf '%s\n' "$raw" | sed -n 's/^ADD //p')"
 # Căn cứ là **danh sách file vừa được cố ý chọn**: các dòng `git add …` của khối,
 # cộng index thật nếu có ai đã `git add` trong phiên. Không hỏi git file này có
 # đang được theo dõi không — nên ADR-003 không bị đụng tới.
+# work/scope.txt trong khối chỉ đáng kêu khi NỘI DUNG cây làm việc còn pattern
+# (F-020, ADR-043) — không phải vì nó có mặt. Đếm đúng phép check-scope.sh dùng:
+# bỏ `#` trở đi, cắt khoảng trắng, còn khác rỗng.
+scope_txt_has_pattern() {
+  [ -f "work/scope.txt" ] || return 1
+  local sline
+  while IFS= read -r sline || [ -n "$sline" ]; do
+    sline="${sline%%#*}"
+    sline="${sline#"${sline%%[![:space:]]*}"}"
+    sline="${sline%"${sline##*[![:space:]]}"}"
+    [ -n "$sline" ] && return 0
+  done < "work/scope.txt"
+  return 1
+}
+
 cand=""        # path ứng viên, mỗi dòng một cái
 bad_form=""    # dạng lệnh quét cả cây, CLAUDE.md §6.1 cấm
 scope_in_block=""
@@ -146,7 +168,9 @@ while IFS= read -r a; do
     tok="${tok%\"}"; tok="${tok#\"}"
     tok="${tok%\'}"; tok="${tok#\'}"
     [ -n "$tok" ] || continue
-    [ "$tok" = "work/scope.txt" ] && scope_in_block="yes"
+    if [ "$tok" = "work/scope.txt" ] && scope_txt_has_pattern; then
+      scope_in_block="yes"
+    fi
     cand="$cand$tok"$'\n'
   done
 done <<EOF
@@ -155,7 +179,9 @@ EOF
 
 while IFS= read -r f; do
   [ -n "$f" ] || continue
-  [ "$f" = "work/scope.txt" ] && scope_in_block="yes"
+  if [ "$f" = "work/scope.txt" ] && scope_txt_has_pattern; then
+    scope_in_block="yes"
+  fi
   cand="$cand$f"$'\n'
 done < <(git diff --cached --name-only 2>/dev/null)
 
@@ -178,7 +204,7 @@ if [ -n "$outside" ] || [ -n "$bad_form" ] || [ -n "$scope_in_block" ]; then
   [ -n "$outside" ] && warn="$warn"$'\n'"  ngoài scope đã khai ở work/scope.txt:"$'\n'"$(
       printf '%s\n' "$outside" | sed 's/^/    - /')"
   [ -n "$bad_form" ] && warn="$warn"$'\n'"  dạng quét cả cây, §6.1 cấm: git add ${bad_form% }"
-  [ -n "$scope_in_block" ] && warn="$warn"$'\n'"  work/scope.txt nằm trong khối — nó là working state, §6 cấm commit pattern."
+  [ -n "$scope_in_block" ] && warn="$warn"$'\n'"  work/scope.txt trong khối còn mang pattern — bản đã commit chỉ được chứa"$'\n'"  comment (§6 · F-020). Xoá pattern trước, hoặc bỏ file khỏi khối."
   warn="$warn"$'\n'"Viết lại khối: liệt kê từng file của task này, không hơn. Nếu task thật sự cần"
   warn="$warn"$'\n'"chạm những file trên thì cập nhật work/scope.txt và nói rõ trong báo cáo (§3.4)."
 fi

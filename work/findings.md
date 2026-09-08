@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 32 finding — 24 Fixed/Resolved, 8 Open (đo lại 2026-09-07, sau khi đóng F-018). Cột **Status** ở đây là một bản
+Tổng: 33 finding — 28 Fixed/Resolved, 5 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-08, sau khi P1-08 mở F-033; phép đếm ngày 2026-09-07 ra *32 — 28/4*, con số cũ hơn nữa *24/8* đã trôi từ trước lượt ấy). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -87,13 +87,14 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-023 | Một ADR giao lược đồ/API/route cho hai tài liệu tự khai không sở hữu | Fixed |
 | F-024 | Deliverable bị bỏ rơi vì task đóng trước khi giao | Fixed |
 | F-025 | Phiên song song `git commit` nhặt luôn thay đổi chưa commit của phiên khác | Open |
-| F-026 | Hai invariant sinh sau khi kế hoạch chia nhóm — I-019/I-020 đã xếp nhóm (ADR-042), I-021 vẫn mồ côi | Open |
+| F-026 | Ba invariant sinh sau khi kế hoạch chia nhóm, không nhóm nào nhận — cả ba đã xếp xong (ADR-042 · ADR-044) | Fixed |
 | F-027 | Hai phụ thuộc ngoài chỉ tồn tại ở bản xuất khẩu | Fixed |
 | F-028 | Một dãy mã bị đọc thành phép đếm, đã đứng trong ADR hai ngày | Open |
 | F-029 | Tiền đề "không tài liệu nào nói X" viết mà không grep | Fixed |
 | F-030 | Gate 1c coi mọi U-XXX nhắc trong gạch đầu dòng đang mở là "đang mở" | Fixed |
-| F-031 | Lần thứ tư: subject trùng commit trước, nội dung không khớp | Open |
-| F-032 | Mục lục `backlog_SD.md` ghi Trạng thái "Đóng" cho hai bước còn thiếu dòng luật đòi | Open |
+| F-031 | Lần thứ năm: subject trùng commit trước, nội dung không khớp | Open |
+| F-032 | Mục lục `backlog_SD.md` ghi Trạng thái "Đóng" cho hai bước còn thiếu dòng luật đòi | Fixed |
+| F-033 | Ảnh chụp *"hôm nay có chưa"* của kế hoạch pha 1 vẫn ghi **chưa** cho bốn thứ đã xong | Open |
 
 ---
 
@@ -2227,8 +2228,9 @@ Ba cổng của repo đều xanh trong lúc chuyện này xảy ra, và không c
   hợp hai khối lại thì `99-unknowns.md` nằm trong scope. Gate 3 không có khái niệm *"trong scope
   của ai"*.
 
-Đây là **lần thứ ba** repo này có hai commit trùng subject: `0b3a337`/`1b1d5f5` (T-020, ghi ở
-**F-009**) và nay `39ca608`/`1b9d238`.
+Đây là **lần thứ tư** repo này có hai commit trùng subject — đo lại bằng git 2026-09-07, bảng đủ
+năm nhóm ở **F-031**: `1b1d5f5`/`0b3a337` (T-020, ghi ở **F-009**), rồi `BA-06` và `BA-09` (hai
+nhóm chưa được ghi ở đâu), rồi nay `1b9d238`/`39ca608`.
 
 **Impact:**
 - **Một task nằm trong commit mang tên task khác.** Ai đọc `git log` để tìm lúc `U-032` được mở sẽ
@@ -2321,7 +2323,7 @@ Open
 
 ---
 
-### F-026 — Hai invariant sinh SAU khi kế hoạch chia nhóm, nên không nhóm nào của pha 1 nhận chúng
+### F-026 — Ba invariant sinh SAU khi kế hoạch chia nhóm, nên không nhóm nào của pha 1 nhận chúng
 
 **Problem:**
 `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6 chia mười tám mệnh đề bất biến thành **ba
@@ -2407,15 +2409,35 @@ không cần ai nhớ cập nhật một con số). `I-021` — mệnh đề m�
 ở cổng §9 là chỗ hỏng, không phải danh sách** — một cổng đếm *"mười tám"* sẽ hết đúng lần sau nữa
 (**F-018**: số đếm động dùng như một invariant).
 
+**Đóng hẳn 2026-09-07 (câu (b)) — chủ repo chốt `I-021` vào NHÓM TIỀN ĐÃ CÓ, không mở nhóm thứ
+năm.** Quyết định đầy đủ ở `docs/decisions.md` **ADR-044**, thi hành ở bước **`P1-14`**: `I-021` là
+hàng thứ tám của `docs/product/1-system-design/03-bao-ve-invariant.md` §1 — tầng 1 (*một ngày bán
+có đúng một con số tiền đầu két*; *tiền đầu két không nằm trong tập tiền đã thu*), tầng 3 (*không
+đường nào rút tiền khỏi két giữa buổi*, `shop-facts.md` §8.5), và **tầng 4** cho vế *con số két
+cuối ngày là số người đếm rồi nhập* — ô ấy nói thẳng **"máy không ngăn được"** kèm cái máy có giữ
+thay vào (doanh thu tiền mặt dựng lại được từ từng phần thu mang phương thức, `I-015`; mỗi lần bấm
+để lại vết có tên, `I-012`). Ô `I-015` hết trỏ tới một hàng không tồn tại, và §1.3 đổi từ *"ba mệnh
+đề không thuộc nhóm nào"* thành bản ghi lịch sử của cả ba. Đường *"nhóm thứ năm riêng, đối xứng với
+ADR-042"* bị **bác**: nó lặp hình thức của ADR-042 mà bỏ mất **lý do** của ADR-042 —
+`I-019`/`I-020` cần nhóm riêng vì trục **sản xuất theo mẻ** không phải tiền cũng không phải vòng
+đời; `I-021` thì là tiền, đúng nghĩa đen, và `I-015` đã cần nó đứng cạnh mình.
+
+**Chỗ đáng giữ nhất của finding này, đo sau khi cả ba mệnh đề đã có nhà:** thứ giấu chúng không
+phải sự cẩu thả của một lượt nào, mà là **một phép đếm cố định đứng làm điều kiện nghiệm thu**
+trong khi tập nó đếm còn đang lớn. Bản sửa ở ADR-042 (cổng §9 đối chiếu **danh sách mã**, không
+đếm số lượng) đã được thử ngay trong ba ngày: lần này, khi hàng `I-021` thêm vào, **cổng không
+phải sửa theo** — đó là bằng chứng đường sửa ấy đúng, không phải một lời hứa.
+
 **Related task:**
 **T-051** (lượt phát hiện, viết prompt lane `prompt/SD/`) · **BA-12** (lượt sinh ra `I-019` ·
-`I-020`) · **T-048** (lượt viết kế hoạch pha 1, chia ba nhóm) · **P1-04** · **P1-05** · **P1-06**
-(ba bước điền bảng ba cột) · **F-024** (cùng hình: một phép đo đúng lúc viết, không ai chấm lại) ·
-**F-018** (số đếm động dùng như một invariant) · `docs/decisions.md` **ADR-035** (pha 1 sở hữu
-tầng bảo vệ của từng `I-0xx`)
+`I-020`) · **T-056** (lượt sinh ra `I-021`) · **T-048** (lượt viết kế hoạch pha 1, chia ba nhóm) ·
+**P1-04** · **P1-05** · **P1-06** (ba bước điền bảng ba cột) · **P1-13** (nhóm thứ tư cho
+`I-019`/`I-020`, **ADR-042**) · **P1-14** (hàng `I-021` vào nhóm TIỀN, **ADR-044**) · **F-024**
+(cùng hình: một phép đo đúng lúc viết, không ai chấm lại) · **F-018** (số đếm động dùng như một
+invariant) · `docs/decisions.md` **ADR-035** (pha 1 sở hữu tầng bảo vệ của từng `I-0xx`)
 
 **Status:**
-Open
+Fixed
 
 ---
 
@@ -2507,6 +2529,17 @@ liệt ở *Decision/Fix*: cho pha 1 giữ cách viết trừu tượng, tên th
 §1, quyết định ghi ở `docs/decisions.md` **ADR-041**. Đóng đúng vế **đặt tên chủ cho PT-2/PT-5**.
 **Vẫn mở**: ba ràng buộc ẩn còn lại của **P1-08** (*một instance · không hàng đợi · không cache*) —
 ADR-041 tự khai rõ nó không chốt hộ ba vế này; chỉ **một VPS** (vế thứ tư) vừa có owner.
+
+**Đóng NỐT — 2026-09-08 (P1-08):** ba ràng buộc còn lại nay có owner là pha 1 —
+`docs/product/1-system-design/05-realtime-va-du-phong.md` §2, mã `RB-1`…`RB-4` — và **mỗi cái mang
+một dấu hiệu đo được** kèm *ai đo, bằng cái gì đã có*, đúng đầu ra mà kế hoạch §6 đặt cho bước này.
+Quyết định ghi ở `docs/decisions.md` **ADR-045**; nó nhận hai con số dấu hiệu có sẵn ở bản xuất
+khẩu (*500ms* · *200 dòng suất bán*) thay vì nghĩ ra con số mới, và đặt mới hai dấu hiệu còn thiếu
+bằng thứ đã tồn tại — nhật ký khởi động của hệ thống (`RB-1`) và dòng *"còn N lượt bán trên giấy
+chưa nhập"* của bảng đối soát cuối ngày (`RB-4`, `master_plan/shop-facts.md` §6.11).
+**Ranh giới pha không đổi một chữ**: file mới viết **tính chất** sinh ra ràng buộc, không viết tên
+công nghệ nào (ADR-035 · ADR-041 điểm 3), và không chốt con số chu kỳ nào — đó vẫn là pha 3.
+⇒ Cả hai vế của F-027 đã có nhà; mã này hết là chỗ chặn của bước nào.
 
 **Status:**
 Fixed
@@ -2724,46 +2757,131 @@ mã đã đóng (`U-005`); trước bản vá, `U-005` bị đẩy lên "open" n
 
 ---
 
-### F-031 — Lần thứ tư: một commit mang subject TRÙNG một commit trước đó, và nội dung thật của nó không khớp một chữ nào với subject ấy
+### F-031 — Lần thứ năm repo có hai commit trùng subject, và commit ấy không nói một chữ nào về việc nó thật sự mang
 
 **Problem:**
-Đo lại 2026-09-07 (T-062), trong lúc chuẩn bị commit của chính lượt này: `HEAD` (`0159d2e`) mang
-subject **trùng từng chữ** với một commit trước đó bốn bước, `8bea106` — cả hai đều là
-`"P1-04: bảng ba cột nhóm TIỀN, bảy mệnh đề chạm tiền"`. Nhưng nội dung thật của `0159d2e` (so với
-cha của nó, `f2d86e5`) chỉ đổi **một file, một dòng**: `work/backlog.md` +1 dòng — đúng dòng entry
-`T-061` (*"Danh mục nguyên liệu bắt đầu có TÊN..."*). Thân commit `0159d2e` thì mô tả chi tiết công
-việc của P1-04 (tầng bảo vệ, ô I-014 mang U-036/U-037, F-026 đo lại...) — **không một chữ nào** nói
-về T-061 hay danh mục nguyên liệu. Ai đọc `git log` sẽ đọc được một sự thật không tồn tại: rằng
-lượt "P1-04" xảy ra hai lần, trong khi lượt thật đã xảy ra là **T-061**, ẩn dưới một cái tên khác.
+Đo lần đầu 2026-09-07 (T-062), trong lúc chuẩn bị commit của chính lượt ấy: `HEAD` (`0159d2e`,
+2026-09-07 06:11) mang subject **trùng từng chữ** với một commit trước đó, `8bea106`
+(2026-09-06 21:47) — cả hai đều là `"P1-04: bảng ba cột nhóm TIỀN, bảy mệnh đề chạm tiền"`. Nội
+dung thật của `0159d2e` (so với cha của nó, `f2d86e5`) chỉ đổi **một file, một dòng**:
+`work/backlog.md` +1 dòng — đúng dòng entry `T-061` (*"Danh mục nguyên liệu bắt đầu có TÊN..."*).
+Thân commit `0159d2e` thì mô tả chi tiết công việc của P1-04 (tầng bảo vệ, ô I-014 mang
+U-036/U-037, F-026 đo lại...) — **không một chữ nào** nói về T-061 hay danh mục nguyên liệu. Ai đọc
+`git log` sẽ đọc được một sự thật không tồn tại: rằng lượt "P1-04" xảy ra hai lần, trong khi lượt
+thật đã xảy ra là **T-061**, ẩn dưới một cái tên khác.
+
+Hai con số của bản ghi đầu tiên **sai, đã sửa 2026-09-07 bằng cách đo lại bằng git**:
+
+- *"cách nhau bốn bước"* → **ba** bước: `git rev-list --count 8bea106..0159d2e` = `3`, giữa hai
+  commit chỉ có `ba4bafb` (T-059) và `f2d86e5` (T-060).
+- *"lần thứ tư"* (bản gốc, `7ffabb7`), rồi một lượt sau sửa xuống *"lần thứ ba"* trong cây làm
+  việc — cả hai đều viết ra mà không đo → **lần thứ năm**.
+  `git log --format='%s' | sort | uniq -cd` (chạy 2026-09-07) cho đủ danh sách:
+
+| # | Subject bị dùng lại | Các commit mang nó | Ghi ở đâu |
+|---|---|---|---|
+| 1 | `T-020: đơn mang đi được trả trước, §6.3 hết câu tuyệt đối` | `1b1d5f5` (08-30 18:59) · `0b3a337` (08-30 19:04) | **F-009** |
+| 2 | `BA-06: docs/product.md §4 chốt quy tắc giá và thanh toán` | `3f579f9` (09-01 16:22) · `30abf8f` (09-01 16:33) | **chưa ghi ở đâu** |
+| 3 | `BA-09: docs/product.md §7 chốt phạm vi MVP` | `b296268` (09-02 07:05) · `510f092` (09-02 07:13) · `c4576f2` (09-02 14:22) | **chưa ghi ở đâu** |
+| 4 | `BA-13: dọn năm chỗ nói lệch nhau, cổng chất lượng BA 9/9` | `1b9d238` (09-03 17:27) · `39ca608` (09-03 22:13) | **F-025** |
+| 5 | `P1-04: bảng ba cột nhóm TIỀN, bảy mệnh đề chạm tiền` | `8bea106` (09-06 21:47) · `0159d2e` (09-07 06:11) | **F-031** (finding này) |
+
+Nhóm 2 và nhóm 3 **chưa từng được ghi ở đâu**, và nhóm 3 nặng hơn cả nhóm 5: **ba** commit trùng
+nhau cả subject **lẫn thân**, ở hai chặng cách nhau bảy tiếng (07:05 · 07:13, rồi 14:22), mà nội
+dung ba lần khác hẳn nhau (245+354 dòng · 54 dòng · 66+48 dòng) — nhiều nhất **một** trong ba nói
+đúng về chính nó. Ba commit `sdfg` (2026-08-30, 06:49 · 09:02 · 11:18) cũng trùng subject nhau
+nhưng thuộc dạng khác — subject rỗng nghĩa, **F-011**, Gate 8 nay chặn — nên không nằm trong bảng;
+đếm cả chúng thì `P1-04` là nhóm **thứ sáu**.
 
 **Impact:**
-Đây là **lần thứ tư** repo này có hai commit trùng subject (sau `0b3a337`/`1b1d5f5` ở F-009/T-016,
-và `39ca608`/`1b9d238` ở F-025) — cùng một cơ chế: ai đó gõ `git commit -m "..."` ngoài một lượt
-phiên (Gate 7 chỉ sống trong lượt phiên, không chặn được terminal), rất có thể copy nhầm message
-của một commit trước đó thay vì viết message cho đúng thay đổi đang commit. Hậu quả nặng hơn F-025:
-lần này **không** phải một phiên nhặt nhầm file của phiên khác — nó là **đúng một dòng, đúng file,
-sai hẳn message**, nên `git log --grep` hay bất kỳ ai tìm sửa đổi của P1-04 qua subject sẽ thấy hai
-commit, tưởng có hai lượt việc, trong khi một trong hai không liên quan gì tới P1-04. Đồng thời,
-phần còn lại của T-061 (thay đổi ở `master_plan/shop-facts.md` §8.4/§8.2) **vẫn chưa hề được
-commit** — T-061 tự khai *Done* ở `work/backlog.md` nhưng nội dung nghiệp vụ nó mang tới nay vẫn
-chỉ sống trong working tree, đúng hình dạng **F-024** (deliverable bị bỏ rơi vì task đóng trước khi
-giao nó) nhìn từ một góc mới: lần này giao **một nửa**, không phải giao **trễ**.
+Cái chung của cả năm nhóm chỉ là một câu: **message được chép lại thay vì viết cho đúng thay đổi
+đang commit**. **Ai** gõ nó thì mỗi nhóm một khác, và git không nói ra — chỗ này đừng suy: F-025
+ghi rõ nhóm 4 (`39ca608`) do **một phiên song song** commit chứ không phải người gõ ở terminal;
+nhóm 2 và nhóm 3 không có bản ghi nào nói ai gõ, nên không gán cho ai. Điều chắc chắn là **không
+cổng nào đứng ở cả hai cửa**: Gate 7 chỉ sống trong lượt phiên nên một dòng `git commit -m` gõ
+thẳng ở terminal đi lọt, còn Gate 8 chấm được mọi commit nhưng chỉ hỏi subject có rỗng nghĩa
+không — trùng một subject đã dùng thì nó cho qua.
+
+Hậu quả của nhóm 5 **khác** F-025 chứ không nhẹ hơn: F-025 là một commit nuốt **thừa** file của
+phiên khác, còn ở đây `0159d2e` mang **đúng một dòng, đúng file** — chỉ mỗi message là sai hẳn.
+Nên `git log --grep` hay bất kỳ ai tìm sửa đổi của P1-04 qua subject sẽ thấy hai commit, tưởng có
+hai lượt việc, trong khi một trong hai không liên quan gì tới P1-04. (Rồi nửa còn lại của T-061
+**cũng** bị nuốt đúng kiểu F-025 — đoạn ngay dưới.)
+
+**Phần còn lại của T-061 nay đã vào git — nhưng lại dưới tên của một task khác.** Bản ghi đầu tiên
+nói nó *"vẫn chưa hề được commit"*; điều đó đúng tới 2026-09-07 09:23, khi `ffada33`
+(*"T-064: shop-facts.md hết tự khai không trỏ đi đâu, đóng F-016"*, ba tiếng sau) mang luôn hai chỗ
+`master_plan/shop-facts.md` của T-061 — §8.4 (danh mục mười bốn nguyên liệu) và dòng nhật ký §7.1
+(`git log -S "dầu rửa bát" -- master_plan/shop-facts.md` chỉ ra đúng một commit: `ffada33`). ⇒ nợ
+đóng, nhưng **cả hai nửa** của T-061 nay đều nằm dưới subject của task khác: nửa `work/backlog.md`
+dưới tên `P1-04`, nửa nội dung nghiệp vụ dưới tên `T-064`. Đúng hình dạng **F-025** (một phiên
+commit nhặt luôn thay đổi chưa commit của phiên kia), và **F-024** nhìn từ góc task đóng trước khi
+giao — không còn là "giao một nửa" như bản ghi đầu tiên viết, mà là **giao đủ, dưới hai cái tên
+đều sai**.
+
+**Phép đếm trong chính finding này cũng là một ca của F-028.** *"Lần thứ tư"* rồi *"lần thứ ba"*
+được viết ra hai lượt liền mà không lượt nào chạy một lệnh nào — con số lấy từ **số finding đã
+ghi** (F-009, F-025), không phải từ lịch sử git; hai nhóm chưa ai ghi thì không ai đếm, nên đếm
+bằng cách ấy sẽ luôn thiếu đúng những lần tệ nhất. Cùng hình dạng **F-028** (một dãy mã được đọc
+thành một phép đếm): một con số đứng trong tài liệu, đọc như đã đo, thật ra chưa từng được đo.
+
+**Và chính finding này ra đời trong một commit nói sai về nó.** `7ffabb7` (2026-09-07 06:48) mang
+subject *"Thêm quy tắc trả lời bằng tiếng Việt, dạng văn xuôi"* và một thân nói đúng về quy tắc
+ấy — nhưng nội dung là 137 dòng của cả lượt T-062: ADR-041, `shop-facts.md` §1, entry backlog, và
+**cả mục F-031 này**. Sáu dòng trong `CLAUDE.md` khớp subject; phần còn lại không. Subject không
+trùng commit nào nên bảng trên không đếm nó, nhưng cùng một cơ chế: message viết cho **một** việc,
+commit mang **nhiều** việc.
 
 **Decision / Fix:**
 **Không sửa lịch sử** (`docs/decisions.md` ADR-008) — không revert, không rebase, không amend
-`0159d2e`. Ghi lại để phiên sau đọc `git log` biết subject không đáng tin ở đúng hai chỗ này. Lượt
-T-062 **không gộp** phần còn thiếu của T-061 (`shop-facts.md` §8.4/§8.2) vào commit của mình — commit
-T-062 chỉ mang đúng hai dòng T-062 thêm vào `shop-facts.md` (tách bằng patch thủ công), để phần nợ
-của T-061 tiếp tục đứng riêng, chờ đúng người của nó commit với đúng message. **Chưa siết cơ chế** —
-ba lần trước (F-009, F-025) đều dừng ở "ghi lại", và Gate 8 (commit-msg hook) chỉ chặn subject rỗng
-nghĩa, không chặn subject trùng một commit khác; viết thêm một cơ chế sau khi cùng một dạng lỗi lặp
-lại **bốn lần** là quyết định của chủ repo, không phải việc tự thêm của lượt này (`CLAUDE.md` §3.8
-đòi hai lần để thêm luật — dạng lỗi này đã qua ngưỡng đó từ F-025, chủ repo vẫn chưa được hỏi).
+`0159d2e`, và **không** đụng tới bốn nhóm còn lại. Ghi lại để phiên sau đọc `git log` biết subject
+không đáng tin ở đúng những chỗ bảng trên liệt kê. Lượt T-062 **không gộp** phần còn thiếu của
+T-061 vào commit của mình — commit T-062 chỉ mang đúng hai dòng T-062 thêm vào `shop-facts.md`
+(tách bằng patch thủ công), để phần nợ của T-061 đứng riêng chờ đúng người của nó; điều đó **đã
+không xảy ra**: `ffada33` nhặt nó vào cùng ngày, dưới tên T-064.
+
+**Luật của riêng finding này, từ 2026-09-07:** con số *"lần thứ mấy"* ở đây chỉ được viết sau khi
+chạy `git log --format='%s' | sort | uniq -cd` trong đúng lượt viết, và bảng ở trên là chỗ ghi kết
+quả — không suy con số ra từ số finding đã có. **Không mở finding mới cho nhóm 2 và nhóm 3**
+(`CLAUDE.md` §3.8): chúng cùng một cơ chế, chỗ của chúng là bảng trên.
+
+**Chưa siết cơ chế** — bốn lần trước không lần nào đi xa hơn "ghi lại" (hai lần được ghi ở F-009 và
+F-025, hai lần không được ghi ở đâu), và Gate 8 (commit-msg hook) chỉ chặn subject rỗng nghĩa,
+không chặn subject trùng một commit đã có trong lịch sử. Dựng cơ chế cho việc này là quyết định của
+chủ repo, không phải việc tự thêm của một lượt (`CLAUDE.md` §3.8 đòi hai lần để thêm luật — dạng
+lỗi này qua ngưỡng đó từ 2026-09-01, và nay có cơ sở đo được là **năm** nhóm chứ không phải ba).
+
+**Còn một chỗ nói sai chưa sửa được trong lượt này:** entry `T-062` ở `work/backlog.md` vẫn ghi
+*"trùng ... bốn bước"* và *"lần thứ tư repo có hai commit trùng subject"*. File đó đang mang thay
+đổi **chưa commit của phiên khác** (đo 2026-09-07, và con số dòng đổi liên tục trong lúc các phiên
+song song còn chạy — nên ở đây không ghi con số nào), nên sửa vào đó sẽ trộn hai việc vào một
+commit (**F-010** · **F-014**). Phiên nào commit `work/backlog.md` tiếp theo sửa hai con số ấy
+thành **ba bước** và **lần thứ năm**, trỏ về bảng trên.
 
 **Related task:**
-**T-062** (lượt phát hiện) · **T-061** (task thật đứng sau `0159d2e`, deliverable còn thiếu một
-nửa) · **F-009** (lần thứ nhất/thứ hai, `0b3a337`/`1b1d5f5`) · **F-025** (lần thứ ba, `39ca608`) ·
-**F-024** (cùng hình dạng "giao thiếu" nhìn từ góc task đóng sớm).
+**T-062** (lượt phát hiện) · lượt đo lại 2026-09-07 (sửa hai con số, dựng bảng năm nhóm) ·
+**T-061** (task thật đứng sau `0159d2e`) · **T-064** / `ffada33` (chỗ nửa còn lại của T-061 thật sự
+đi vào git, dưới tên khác) · **F-009** (nhóm 1) · **F-025** (nhóm 4) · **F-024** (cùng hình dạng
+"giao dưới tên sai") · **F-028** (cùng hình dạng "một con số chưa từng được đo") · **F-011** +
+Gate 8 (`scripts/hooks/commit-msg` — cổng đứng ở chỗ Gate 7 không với tới, nhưng không chấm trùng
+lặp).
+
+**Rà lần hai, 2026-09-07 (cùng ngày):** chạy lại `git log --format='%s' | sort | uniq -cd` — vẫn
+đúng **năm** nhóm, không nhóm nào mới. Sửa ba chỗ nói quá trong bản vừa viết: câu *"ai đó gõ
+`git commit -m` ngoài một lượt phiên"* gán cơ chế cho **người gõ ở terminal** cho cả năm nhóm,
+trong khi F-025 ghi rõ nhóm 4 do một **phiên** commit — nay chỉ nói phần git chứng minh được và
+ghi thẳng phần không suy được; *"hai lượt"* của nhóm 3 hạ xuống *"hai chặng"* (giờ commit thì đo
+được, "lượt phiên" thì không); và con số dòng của `work/backlog.md` bỏ đi vì nó trôi mỗi phút khi
+các phiên song song còn chạy.
+
+**Đo lại 2026-09-07 (cùng ngày):** *bốn bước* → **ba bước**, *lần thứ ba / lần thứ tư* → **lần
+thứ năm**, thêm bảng đủ năm nhóm, và cập nhật vế *"phần còn lại của T-061 chưa được commit"* (nay
+đã ở trong `ffada33`, dưới tên T-064). Finding vẫn **Open** vì phần chưa xong không đổi: chưa có
+cơ chế nào chặn một subject đã dùng, và hai con số sai vẫn còn trong entry `T-062` của
+`work/backlog.md`. *(Đoạn này vốn nằm ngay dưới `**Status:**`, biến dòng ấy thành `Open — …`;
+T-065 chuyển nó lên đây ngày 2026-09-07 để dòng Status về đúng một chữ `Open` — hợp đồng với
+`scripts/brief.sh` ghi ở đầu file, đúng lỗi **F-008** từng giấu **F-011** ngay trong lượt nó ra
+đời. Nếu phiên chủ của F-031 muốn viết thêm, viết ở đây, đừng viết vào dòng Status.)*
 
 **Status:**
 Open
@@ -2787,13 +2905,83 @@ danh, hai chỗ, hai trạng thái" mà Gate 1c dựng lên để bắt, chỉ k
 ở `P1-04`/`P1-05` dù cột Trạng thái nói đã xong.
 
 **Decision / Fix:**
-Ghi lại, không tự sửa hai entry đó trong lượt này — chúng thuộc phiên khác, và thêm dòng `Xong
-ngày…` hồi tố nên do phiên biết rõ nội dung P1-04/P1-05 làm, hoặc chờ chủ repo xác nhận. Đường rẻ
-nhất cho phiên sau: thêm hai dòng `✅ Xong ngày 2026-09-06` ngắn, trỏ lại đúng nội dung đã có ở
-`work/backlog.md` → Done, không viết lại nội dung.
+Ghi lại, không tự sửa hai entry đó trong lượt phát hiện — chúng thuộc phiên khác, và thêm dòng
+`Xong ngày…` hồi tố nên do phiên biết rõ nội dung P1-04/P1-05 làm, hoặc chờ chủ repo xác nhận.
+Đường rẻ nhất cho phiên sau: thêm hai dòng `✅ Xong ngày 2026-09-06` ngắn, trỏ lại đúng nội dung
+đã có ở `work/backlog.md` → Done, không viết lại nội dung.
+
+**ĐÓNG 2026-09-07 (T-065) — chủ repo yêu cầu sửa, đã đi đúng đường rẻ nhất ở trên.** `P1-04` và
+`P1-05` nay mỗi entry mở đầu bằng một dòng `✅ **Xong ngày 2026-09-06**` đặt ngay dưới tiêu đề
+(cùng chỗ với `P1-01`…`P1-03`, `P1-09`, `P1-13`): dòng ấy nói file và mục đã sinh ra
+(`03-bao-ve-invariant.md` §1 và §2), tên các mệnh đề đã điền, chỗ đáng nhớ nhất của mỗi lượt, rồi
+**trỏ** về `work/backlog.md` → *Done* cho phần còn lại — không chép nội dung sang bản thứ hai
+(**F-001**). Mỗi dòng tự khai là **viết bù ngày 2026-09-07**, để ngày `2026-09-06` trong đó đọc
+được là ngày lượt kia xong chứ không phải ngày dòng này được gõ (`CLAUDE.md` §7.2: fact phải mang
+ngày và ai ghi). Mục lục **không đổi**: hai ô ấy vẫn là *Đóng*, và giờ đúng — chữa cột trạng thái
+xuống *Mở* mới là chữa nhầm chỗ, vì `work/backlog.md` đã `[x]` cả hai từ 2026-09-06. Đếm lại sau
+lượt này: tám bước có dòng `Xong ngày…` (P1-01…P1-06, P1-09, P1-13) khớp đúng tám ô *Đóng* của
+Mục lục, năm bước còn lại không có dòng nào và ghi *Mở*.
+
+**Cái KHÔNG đóng theo, và cố ý:** vẫn không cổng nào canh mẫu `P1-XX` —
+`scripts/check-doc-status.sh` chỉ chấm `U-XXX`/`GĐ-XXX`/`ADR-XXX`, nên lần trôi sau cũng sẽ xanh
+y hệt lần này. Đây mới là lần **thứ nhất** của dạng lỗi ấy trong sổ mô tả pha 1, nên chưa thêm
+luật hay cổng (`CLAUDE.md` §3.8: hai lần mới đổi cơ chế). Nếu tái phát, đường đã biết: thêm một
+phép so thứ tư vào Gate 1c — đọc cột *Trạng thái* của Mục lục `work/backlog_SD.md` và đối chiếu
+với việc entry cùng mã có dòng `✅ Xong ngày…` / `XONG…` ở đầu hay không, đúng hình dạng "một mã
+định danh, hai chỗ, hai trạng thái" mà cổng ấy đã dựng sẵn.
 
 **Related task:**
-P1-06 (lượt phát hiện, 2026-09-07).
+**T-065** (lượt sửa, 2026-09-07) · **P1-06** (lượt phát hiện, 2026-09-07) · **F-001** (lý do dòng
+`Xong ngày…` trỏ chứ không chép) · **F-021** (cùng hình dạng: bảng tóm tắt nói ngược thân của
+chính file mình).
+
+**Status:**
+Fixed
+
+### F-033 — Bảng *"hôm nay có chưa"* của kế hoạch pha 1 vẫn ghi **chưa** cho những thứ đã xong từ lâu
+
+**Problem:**
+`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §2 có bảng **năm đầu ra bắt buộc của pha 1** với
+một cột tên là *"Hôm nay có chưa"*, và §4 có ba câu *"bảng sáu pha đòi mà hôm nay chưa ai trả
+lời"*. Cả hai viết ngày **2026-09-03** (T-048), lúc pha 1 chưa có bước nào chạy. Đo lại
+**2026-09-08**, lượt P1-08:
+
+| Dòng | Ô ghi | Thật ra |
+|---|---|---|
+| §2 hàng 1 — bảng bất biến ba cột | *"**chưa** — xem §4"* | xong: `03-bao-ve-invariant.md` §1–§4 (P1-04 · P1-05 · P1-06 · P1-13 · P1-14) |
+| §2 hàng 3 — nguồn thời gian + định nghĩa ngày bán | *"định nghĩa NGÀY BÁN thì **chưa**"* | xong 2026-09-04: `02-thoi-gian-ngay-ban.md` (P1-03) |
+| §2 hàng 5 — đường suy giảm | *"hệ quả kiến trúc thì **chưa**"* | xong 2026-09-04: `01-ranh-gioi-he-thong.md` §3 (P1-02) |
+| §4 câu 1 — mỗi `I-0xx` giữ bởi tầng nào | *"không mục nào có cột ấy"*, và đếm *"mười tám"* mệnh đề | cả hai vế đã hết đúng (bảng ba cột đã đầy; `quality/invariants.md` nay tới `I-021`) |
+
+Hàng 2 (**ràng buộc kiến trúc ẩn**) và câu 3 (**mất kết nối thì mỗi mặt xử sự thế nào**) là hai ô
+mà chính lượt P1-08 vừa làm xong, nên lượt này sửa **hai ô đó** và ghi lại phần còn lại ở đây.
+
+**Impact:**
+Đây là bảng mà một phiên mới đọc để biết **pha 1 còn nợ gì**, và nó đang nói pha 1 chưa làm được
+gần như thứ gì. Hậu quả không phải mất mặt tài liệu mà là **làm lại**: một phiên tin ô *"chưa"* sẽ
+đi viết lại một mục đã có owner, và bản thứ hai luôn thắng trong đầu người viết
+(**F-001**). Cùng họ với **F-024** (một cái tên task đã chết che một chỗ trống) và **F-012** (một
+danh sách bị cắt trông y hệt một danh sách đủ): chỗ hỏng nằm ở **một câu tự khai ngày đo mà không
+cổng nào nhắc đọc lại**.
+
+**Vì sao vòng rà trước không bắt:**
+Không cổng nào chấm mẫu này. Gate 1c chỉ đối chiếu `U-XXX` · `GĐ-XXX` · `ADR-XXX`; một ô văn xuôi
+ghi *"chưa"* thì không mã nào để so. `work/backlog.md` mới là owner của trạng thái, và kế hoạch
+**không** trỏ về đó ở hai chỗ này — nó tự trả lời.
+
+**Decision / Fix:**
+Lượt P1-08 sửa **đúng hai ô của mình** (§2 hàng 2 · §4 câu 3) và cắm một cảnh báo ⚠️ ngay dưới ba
+câu §4, trỏ về mã này. **Không tự sửa bốn ô còn lại**: chúng là kết quả của những bước do phiên
+khác chạy, và F-032 vừa dựng đúng tiền lệ ấy — ghi lại, không sửa hộ entry của phiên khác.
+
+Đường rẻ nhất cho phiên sau (hoặc cho chủ repo): thay cả cột *"Hôm nay có chưa"* bằng một cột
+**trỏ** — mỗi hàng ghi mã bước sở hữu nó (`P1-0x`) và để `work/backlog.md` trả lời trạng thái. Một
+cột trạng thái chép tay trong một kế hoạch tự khai *"không sở hữu sự thật nào"* là bản sao thứ hai
+đúng nghĩa (**F-001**), và nó sẽ trôi lại lần nữa dù lượt này có sửa hết bốn ô.
+
+**Related task:**
+**P1-08** (lượt phát hiện, 2026-09-08) · **T-048** (lượt viết bảng, 2026-09-03) · **F-001** ·
+**F-012** · **F-024** · **F-032** (cùng đường xử: ghi lại, không sửa hộ).
 
 **Status:**
 Open

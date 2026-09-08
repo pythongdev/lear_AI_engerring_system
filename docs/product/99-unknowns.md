@@ -74,19 +74,48 @@ hai mốc ấy còn có thể rơi vào hai ngày khác nhau, bảng §2 của
 `U-036`, `U-037`, `U-038`, `U-039`, `U-040` — đóng nốt xuống [Đã có lời giải](#da-co-loi-giai) ngay
 dưới đây; nguyên văn và chi tiết từng câu ở đó. Chỉ `U-041` ở trên là còn sống từ trước lượt này.
 Cùng lượt ấy, câu trả lời `U-040` làm lộ một dữ kiện quán vừa đổi — số bàn tăng từ 11 lên 15 — mà
-chỗ ngồi và cách đánh số của bốn bàn mới thì chưa ai hỏi; đó mở ra **U-042** ngay dưới đây.
+chỗ ngồi và cách đánh số của bốn bàn mới thì **lúc ấy** chưa ai hỏi; đó mở ra **U-042** ngay dưới
+đây (vế chỗ ngồi đã có lời 2026-09-08, xem đoạn kế tiếp).
 
-- **U-042 — bốn bàn quán vừa mua thêm (nâng tổng từ 11 lên 15): mỗi bàn mấy CHỖ NGỒI, và đánh số
-  nối tiếp (12–15) hay theo cách khác?** Mở ra từ chính câu trả lời `U-040`: chủ quán trả lời đủ ba
-  vế của câu hỏi gốc cho **mười một** bàn ban đầu (4 chỗ/bàn, đã đánh số), rồi tự thêm một dữ kiện
-  mới — *"hôm nay tôi mua thêm bàn, hãy để 15 bàn"* — mà không nói gì về hình dạng của bốn bàn
-  thêm. **Đừng suy hộ** (`CLAUDE.md` §3.5): đừng đọc bốn bàn mới là "cũng 4 chỗ", đừng tự đánh số
-  12–15 — quán có thể đặt bàn mới ở một khu riêng và gọi tên khác hẳn. **Ai trả lời được:** chủ
-  quán. **Đang chặn:** `docs/decisions.md` **ADR-027** (*chỉ ghép sang bàn **trống*** cần gọi tên
-  được **từng** bàn — vế này giờ đủ cho 11 bàn cũ, còn hở cho 4 bàn mới) và `work/backlog_AD.md`
-  **ADM-03** (sức chứa). **Cách hỏi** (bài học S-4 — hỏi về cái quán): *"Bốn bàn mới anh vừa mua,
-  mỗi bàn ngồi được mấy người, và anh định gọi chúng là bàn số mấy?"*
-  *Mở 2026-09-06 · trả lời `U-040` · `master_plan/shop-facts.md` §1 · §6.25.*
+**Ngày 2026-09-08, chủ quán trả lời MỘT trong hai vế của `U-042`** — *"thêm 4 bàn mới mỗi bàn 4
+chỗ"* ⇒ **cả mười lăm bàn đều 4 chỗ/bàn** (`master_plan/shop-facts.md` §1 · §6.25 · §7.1, T-066).
+Câu hỏi **không đóng**: vế **cách đánh số** bốn bàn mới thì lời ấy không chạm tới, nên `U-042` **ở
+lại đây với phạm vi hẹp hơn** — đúng hình dạng `U-034` từng ở lại ngày 2026-09-04. Một lời chốt trả
+lời được nửa câu hỏi vẫn là nửa câu hỏi.
+
+- **U-042 — bốn bàn quán vừa mua thêm (nâng tổng từ 11 lên 15) được ĐÁNH SỐ thế nào: nối tiếp
+  12–15, hay theo cách khác?** **Hẹp lại 2026-09-08** (T-066): vế *mỗi bàn mấy chỗ ngồi* **đã có
+  lời** — *"thêm 4 bàn mới mỗi bàn 4 chỗ"*, cả mười lăm bàn đều 4 chỗ/bàn — nên chỉ còn **tên/số
+  của bốn bàn mới** là chưa ai nói. Câu này mở ra từ chính câu trả lời `U-040` ngày 2026-09-06:
+  chủ quán chốt đủ ba vế cho **mười một** bàn ban đầu rồi tự thêm *"hôm nay tôi mua thêm bàn, hãy
+  để 15 bàn"* mà không nói hình dạng của bốn bàn thêm. **Đừng suy hộ** (`CLAUDE.md` §3.5): đừng tự
+  đánh số 12–15 — quán có thể đặt bàn mới ở một khu riêng và gọi tên khác hẳn; hai lần chủ quán nói
+  về bốn bàn ấy đều **chỉ** nói số lượng và chỗ ngồi. **Ai trả lời được:** chủ quán. **Đang chặn:**
+  `docs/decisions.md` **ADR-027** (*chỉ ghép sang bàn **trống*** cần gọi tên được **từng** bàn — đủ
+  cho 11 bàn cũ, còn hở cho 4 bàn mới) và `work/backlog_AD.md` **ADM-03** (danh sách bàn gọi tên
+  được; vế *sức chứa* thì hết hở từ 2026-09-08). **Cách hỏi** (bài học S-4 — hỏi về cái quán):
+  *"Bốn bàn mới anh vừa mua, anh định gọi chúng là bàn số mấy — 12, 13, 14, 15, hay tên khác?"*
+  *Mở 2026-09-06 · trả lời `U-040` · hẹp lại 2026-09-08 · `master_plan/shop-facts.md` §1 · §6.25.*
+
+**Cùng ngày 2026-09-08, bước P1-08 mở một câu trong lúc chốt cách hệ thống biết quán đang mất kết
+nối.** Nó không mở vì ai quên hỏi: chủ quán đã chốt **cái gì xảy ra** khi quán mù — web ngừng nhận
+đơn, khách gọi hotline (`U-035`, 2026-09-04) — nhưng **mất tín hiệu bao lâu mới gọi là mù** thì
+chưa lời nào chạm tới, và đó đúng là chỗ quyết định lúc nào quán ngừng bán trên web.
+
+- **U-043 — mất tín hiệu bao lâu thì web NGỪNG nhận đơn?** `quality/invariants.md` **I-008** đã có
+  điều kiện thứ ba (*quán đang nhìn thấy được đơn mới*), và
+  `docs/product/1-system-design/05-realtime-va-du-phong.md` §3 vừa chốt **ai phán quyết** (phía hệ
+  thống, vì lúc ấy quán là bên đã mất tiếng nói) cùng **đường nào được dùng để biết** (chính đường
+  việc và đơn đang đi) — chỉ còn **độ dài cửa sổ** là chưa ai nói. **Vì sao không được suy hộ**
+  (`CLAUDE.md` §3.5): ngắn quá thì một lần mạng chập chờn một phút cắt mất khách đang đặt dở; dài
+  quá thì đơn rơi vào một cái quán không ai nhìn thấy — đúng cái `I-008` sinh ra để chặn. Đây là
+  đánh đổi của **quán**, không phải một tham số kỹ thuật, và nếu ở đây không có con số thì pha 3 sẽ
+  tự chọn một con số thay chủ quán. **Ai trả lời được:** chủ quán. **Đang chặn:** con số cửa sổ ở
+  **pha 3**, và hàng thứ nhất của bảng §4 trong `05-realtime-va-du-phong.md`. **Cách hỏi** (bài học
+  `S-4` — hỏi về cái quán, đừng hỏi về cái đồng hồ đếm giờ trong máy): *"Mạng nhà anh có kiểu chập
+  chờn mất một hai phút rồi tự có lại không? Những lúc như thế anh muốn web tạm ngừng nhận đơn
+  ngay, hay cứ để khách đặt vì lát nữa quán vẫn thấy?"*
+  *Mở 2026-09-08 · P1-08 · `docs/product/1-system-design/05-realtime-va-du-phong.md` §3 · §4.*
 
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây

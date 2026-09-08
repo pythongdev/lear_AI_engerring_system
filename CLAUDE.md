@@ -213,7 +213,12 @@ It runs, in order:
    unauthorized files. An untracked file outside scope is printed as a `note:`
    and does **not** fail the gate — git cannot tell whether it predates the task
    (ADR-003). If the note lists a file *your* task created, put it in scope or
-   delete it; nothing else will stop you.
+   delete it; nothing else will stop you. It also holds `work/scope.txt` itself
+   to one invariant: the **committed** version may hold only comments (§6,
+   `work/findings.md` F-020, ADR-043). If `HEAD` still carries a pattern the
+   working tree hasn't cleared, the gate fails; once the working tree is clean
+   it prints a `note:` to fold the file into this turn's commit, and does not
+   block.
 2. `scripts/check-links.sh` (Gate 1b) — every path a **pointer document** names
    must open. Runs on **every** turn, including documentation-only ones: docs are
    what this repo produces, and step 5 (`verify.sh`) is skipped for exactly those
@@ -254,8 +259,10 @@ It runs, in order:
    It then asks a second question — **what is in that block** (Gate 7b,
    ADR-006): it reads the block's `git add` lines, plus the real index when
    something is staged, and names any file outside `work/scope.txt`, any
-   `git add -A` / `git add .`, and `work/scope.txt` itself if it appears there.
-   It judges the file list you deliberately chose, never the working tree, so
+   `git add -A` / `git add .`, and `work/scope.txt` itself if the working-tree
+   content it would add still carries a pattern (F-020, ADR-043) — comment-only
+   is fine, even required, to close a scope-state debt. It judges the file list
+   you deliberately chose, never the working tree, so
    ADR-003 stands: an untracked file inside scope stays silent. Scope not
    declared ⇒ silent. Like the rest of Gate 7, it speaks at most once per state
    of the tree, and what it sends back is the *report text* to rewrite — not the
@@ -273,7 +280,9 @@ review, cold-context review — are in `quality/review-gate.md`.
 - Work on a branch off `main`; never commit directly to `main`.
 - Commit or push only when the user asks.
 - One task per commit. Subject: `T-XXX: what changed` (imperative, ≤ 72 chars).
-- `work/scope.txt` is working state, not a deliverable — do not commit patterns.
+- `work/scope.txt` stays in git as working state: the **committed** version holds
+  only comments — a pattern is session state, and never reaches a commit
+  (Gate 3, Gate 7b; `work/findings.md` F-020, ADR-043).
 
 ### 6.1 Hand over the commit, ready to paste
 
@@ -285,7 +294,7 @@ still uncommitted, ends with:
 
 ```bash
 # get the candidate list from git, don't reconstruct it from memory:
-git diff --name-only HEAD | grep -v '^work/scope\.txt$'
+git diff --name-only HEAD
 
 git add CLAUDE.md work/backlog.md
 git commit -m "T-XXX: what changed" -m "Why it changed.
@@ -297,8 +306,13 @@ Verified: ./scripts/gate.sh green."
   that happened to be lying around. Read the list off git, not off memory: a
   session that recalls which files it touched will occasionally miss one or
   add one that isn't there; `git diff --name-only HEAD` doesn't.
-- **`work/scope.txt` is never in the block** (§6 above; the two times it was
-  committed are `work/backlog.md` T-016).
+- **`work/scope.txt` only belongs in the block when its diff against `HEAD`
+  leaves it comment-only** (§6 above; F-020, ADR-043). Clearing a task's own
+  patterns normally nets back to the same comment-only file already in `HEAD`,
+  so it drops out of the command above on its own — nothing to stage. The one
+  time it *does* show up with a real diff is closing a scope-state debt (a
+  pattern that reached a commit, `work/backlog.md` T-016 and T-047): stage it
+  then, once it's clean, never while it still carries a pattern.
 - **Subject follows §6:** `T-XXX: what changed`, imperative, ≤ 72 chars, written
   in the language the change itself is written in. An L0 change with no task ID
   drops the `T-XXX:` prefix.

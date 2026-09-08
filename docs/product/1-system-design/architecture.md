@@ -291,6 +291,11 @@ xa · cũ nhất lên đầu · màu theo thời gian chờ. Nút `Xong` thì đ
 **Realtime không được là đường duy nhất** (`prompt-fullstack.md` §4 ràng buộc 9): màn trạm vẫn phải
 tự lấy lại dữ liệu theo chu kỳ. Mất kết nối mà màn hình đứng im là bếp làm thiếu mà không ai biết.
 
+**Câu trên nay có nhà, và nhà ấy nói đủ hơn một câu:**
+[`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) — hai đường xuống trạm và luật giữa
+chúng (§1), **bốn ràng buộc kiến trúc** kèm dấu hiệu đo được phải xem lại (§2), và cách hệ thống
+biết *quán đang mất kết nối* (§3). P1-08, 2026-09-08.
+
 ---
 
 ## 6. Mặt CHỦ QUÁN — cấu hình, tiền, báo cáo
@@ -377,11 +382,13 @@ nợ bắt buộc có tên hoặc cách gọi lại được. Đó là cái giá
 
 ---
 
-## 8. Sáu chỗ hình dạng dữ liệu hiện có chưa với tới
+## 8. Những chỗ hình dạng dữ liệu hiện có chưa với tới
 
 `master_plan/prompt-fullstack.md` §3.5 chốt **16 bảng, 4 nhóm**, và nó vẫn là nền đúng. Nhưng nó
-được viết **trước** một loạt quyết định của chủ quán ngày 2026-08-30 và 2026-08-31, nên có sáu thứ
-tài liệu này nêu ra mà nó chưa có chỗ để cất:
+được viết **trước** một loạt quyết định của chủ quán — 2026-08-30 và 2026-08-31 lúc đầu, rồi thêm
+2026-09-01, 2026-09-04 và 2026-09-06 — nên có những thứ tài liệu này nêu ra mà nó chưa có chỗ để
+cất. **Số dòng của bảng không phải một ranh giới đã chốt**, nó là phép đếm của người viết tài liệu
+tại ngày đo (`work/findings.md` **F-003** · **F-018**); đếm ở bảng, đừng đếm ở tiêu đề:
 
 | Thiếu cái gì | Vì luật nào | Không có thì hỏng thế nào |
 |---|---|---|
@@ -391,17 +398,27 @@ tài liệu này nêu ra mà nó chưa có chỗ để cất:
 | **Ai đang trực trạm nào, lúc này** | §6.13 (quyền gắn chỗ đứng) | quyền huỷ phải gán theo `role`, tức sai luật — §4 |
 | **Note "đem về"** trên một suất của phiên bàn | §6.15 | khách mang về một đĩa không gói |
 | **Đã phục vụ bao nhiêu cho từng bàn** | §5.4 | bảng quầy không hiện được *"còn thiếu gì"* |
+| **Mẻ, và con số *"đã làm xong, còn ở bếp"*** — một lần bấm ứng với một mẻ, chia được về từng bàn; phần đã làm xong của đơn huỷ đổi chủ sang bàn khác | §5.4 (chủ quán chốt 2026-09-01 và 2026-09-06) | bếp bị giục làm lại cái bánh **đang nằm chờ đủ đĩa**, và cái đĩa của một đơn vừa huỷ không còn chỗ nào ghi nó đã đi đâu |
+| **Lượt bán nhập bù từ sổ giấy** — ngày quán bán thật, tách khỏi lúc gõ vào máy; ai nhập bù; một ngày còn bao nhiêu lượt chưa nhập | §6.11 (chủ quán chốt 2026-09-04) · `docs/decisions.md` **ADR-037** | doanh thu hôm mất điện rơi vào ngày gõ, và ngưỡng lệch **0đ** báo động giả mọi lần quán phải ghi tay |
 
-Đây là **danh sách chỗ thiếu đã biết tính tới 2026-08-31**, không phải lời hứa là đã đủ. Gặp chỗ
-thứ bảy thì thêm vào đây, đừng tự thiết kế quanh nó.
+Đây là **danh sách chỗ thiếu đã biết tính tới 2026-09-07**, không phải lời hứa là đã đủ. Gặp chỗ
+tiếp theo thì thêm vào đây, đừng tự thiết kế quanh nó — **và thêm một dòng yêu cầu tương ứng vào**
+[`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) **§1 trong cùng thay đổi**: hai danh sách ấy khớp
+một-đối-một, và đó là phép chấm duy nhất giữ chúng khỏi trôi khỏi nhau.
+
+**Hai dòng cuối vào bảng ngày 2026-09-07, ở bước P1-07.** Cả hai là lời chốt của chủ quán **sau**
+ngày đo cũ (2026-08-31), nên bảng không thể có chúng lúc viết; không ai quay lại thêm dòng cho tới
+lúc P1-07 đọc lại toàn bộ danh sách. Đó là cái giá của một danh sách tự khai ngày đo mà không có
+cổng nào nhắc đọc lại.
 
 **Điều tài liệu này cố ý KHÔNG làm:** không đặt tên bảng, không đặt tên cột, không vẽ khoá ngoại.
 Chốt lược đồ là việc của **pha 2 · DB** — không phải của tài liệu này, và cũng không phải của pha 1
 (`docs/decisions.md` **ADR-035**, 2026-09-04, bước **P1-01**). Câu cũ ở chỗ này giao việc ấy cho
 *"tầng System Design"*, tức pha 1; đó là một trong ba chỗ nói lệch nhau mà `work/findings.md`
 **F-023** ghi. Pha 1 viết **yêu cầu** hình dạng dữ liệu bằng ngôn ngữ nghiệp vụ — *phải ghi lại
-được X* / *phải không thể xảy ra Y* — ở bước **P1-07**, rồi pha 2 tự đối chiếu đề xuất 16 bảng với
-bảng sáu chỗ thiếu ở trên. Điều kiện mà câu cũ đặt ra — §3.4 của
+được X* / *phải không thể xảy ra Y* — ở bước **P1-07**, **xong 2026-09-07**, và những câu ấy nay ở
+[`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md); pha 2 tự đối chiếu đề xuất 16 bảng với bảng chỗ
+thiếu ở trên và với danh sách yêu cầu ấy. Điều kiện mà câu cũ đặt ra — §3.4 của
 `docs/product/0-ba/ban-hang/03-lat-cat.md` (BA-12) phải viết xong trục sản xuất bằng ngôn ngữ
 nghiệp vụ — **đã đủ từ 2026-09-04**.
 
@@ -534,7 +551,7 @@ GET    staff/reports/debts?date=     nợ ghi trong ngày · nợ thu trong ngà
 
 ### 12.3 Mặt DB — cất cái gì, và ràng buộc nào phải do database giữ
 
-§8 liệt kê **Khoản nợ** là một trong sáu chỗ mô hình 16 bảng chưa với tới. Đây là hình dạng nhỏ
+§8 liệt kê **Khoản nợ** là một trong những chỗ mô hình 16 bảng chưa với tới. Đây là hình dạng nhỏ
 nhất đủ dùng, treo vào `table_sessions` đã có:
 
 | Phải cất | Vì luật nào |
@@ -596,7 +613,9 @@ két lệch ở **hai** ngày ngược chiều nhau — công thức đầy đ�
 | Vì sao hai trục | `docs/decisions.md` ADR-009 |
 | Vì sao ba mặt một miền, và vì sao chỉ POS ghi | `docs/decisions.md` ADR-011 |
 | Vì sao nợ là một phần riêng, không phải một cột | `docs/decisions.md` ADR-012 · **§12** |
-| Trục sản xuất bằng ngôn ngữ nghiệp vụ | `work/backlog.md` BA-12 — **chưa viết** |
+| Trục sản xuất bằng ngôn ngữ nghiệp vụ | [`03-lat-cat.md`](../0-ba/ban-hang/03-lat-cat.md) §3.4 — BA-12, **xong 2026-09-04** |
+| **Yêu cầu hình dạng dữ liệu** — mỗi chỗ thiếu ở §8 một câu *phải ghi lại được X* / *phải không thể xảy ra Y* | [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) — P1-07 |
+| **Realtime, đường kéo dự phòng, bốn ràng buộc kiến trúc** kèm dấu hiệu đo được | [`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) — P1-08 |
 | **Mảng quản trị (admin)** — nguyên liệu, con người, tài chính | **§14** · `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6 · `master_plan/shop-facts.md` §8 |
 | Bản tư vấn ngoài, **không phải sự thật** | `work/proposals/admin.admiadmin/admin1.md` |
 
@@ -629,7 +648,7 @@ Mở ranh giới **không** sinh ra kiến trúc. Tính tới 2026-09-02, tài l
 - không mặt nào trong §1 (*Một hệ thống, ba mặt*) được giao thêm việc — POS, BẾP và CHỦ QUÁN vẫn
   đúng những màn đã tả;
 - không trục thứ ba nào ở §2 — hai trục *đơn* và *nhu cầu sản xuất* vẫn là tất cả;
-- không hình dạng dữ liệu nào; §8 (*Sáu chỗ hình dạng dữ liệu hiện có chưa với tới*) giữ nguyên
+- không hình dạng dữ liệu nào; §8 (*Những chỗ hình dạng dữ liệu hiện có chưa với tới*) giữ nguyên
   danh sách của nó, không cộng thêm chỗ thiếu nào vì lời chốt này.
 
 ⚠️ **Đừng đọc mục này thành lời cho phép thiết kế.** *Được phép làm* là câu của mục này; *làm ngay

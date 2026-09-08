@@ -59,6 +59,9 @@ có câu trả lời mới từ người.
 | ADR-040 | Trả trước cho đơn đặt trước ngày SAU tính doanh thu vào **ngày GIAO**, không phải ngày nhận tiền; quán nhận đặt trước **tối đa một ngày** | Đã chốt 2026-09-06 | — | công thức đối soát `architecture.md` §6.4 cần thêm một dòng; **U-036** đóng |
 | ADR-041 | Đặt tên chủ cho **PT-5** (đường báo đơn web về quầy = **Telegram**) và **PT-2** (nơi hệ thống chạy = **một VPS**) | Đã chốt 2026-09-07 | — | đóng một phần **F-027**; **shop-facts.md §1** giữ tên cụ thể |
 | ADR-042 | Mở **bước thứ mười ba** của pha 1 (`P1-13`), nhóm **SẢN XUẤT THEO MẺ**, cho `I-019`/`I-020` — hai mệnh đề mồ côi vì sinh sau khi kế hoạch chia ba nhóm | Đã chốt 2026-09-07 | — | đóng **F-026**; kế hoạch §6/§7/§9 và `03-bao-ve-invariant.md` thêm §4 |
+| ADR-043 | Bản **đã commit** của `work/scope.txt` chỉ được chứa comment; pattern là trạng thái phiên chạy, Gate 3 và Gate 7b cùng thi hành | Đã chốt 2026-09-03, thi hành 2026-09-07 | — | đóng **F-020**; sửa một câu của `CLAUDE.md` §6, §6.1 |
+| ADR-044 | `I-021` vào **nhóm TIỀN đã có** (§1 của bảng ba cột), **không** mở nhóm thứ năm; hàng ấy có chủ là bước mới **P1-14** | Đã chốt 2026-09-07 | — | đóng **hẳn F-026**; kế hoạch §6/§7, `03-bao-ve-invariant.md` §1 thêm một hàng và §1.5 |
+| ADR-045 | **Bốn ràng buộc kiến trúc ẩn có nhà ở pha 1**, mỗi cái một **dấu hiệu đo được**; ba cái chưa có chủ (*một tiến trình · không hàng đợi · không bộ nhớ đệm*) được chốt ở bước **P1-08** | Đã chốt 2026-09-08 | — | đóng **nốt F-027**; file mới `05-realtime-va-du-phong.md` §2 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -2859,3 +2862,187 @@ P1-07/P1-10) · §7 (tiêu đề) · §9 (câu đầu) ·
 `prompt/SD/P1-13-invariant-san-xuat-theo-me-L2.md` (mới) ·
 `docs/product/00-index.md` (một dòng) · `work/findings.md` **F-026** (đóng).
 
+---
+
+### ADR-043 — Bản đã commit của `work/scope.txt` chỉ được chứa comment; pattern không bao giờ đi vào git
+
+**Trạng thái:** Đường chốt 2026-09-03 (chủ repo, ngay trong phiên phát hiện `work/findings.md`
+**F-020**); thi hành 2026-09-07 (T-047).
+
+**Vấn đề nó giải quyết.**
+`CLAUDE.md` §6 đã cấm bằng chữ từ trước: *"`work/scope.txt` is working state, not a deliverable —
+do not commit patterns."* Luật có, nhưng không cổng nào gác nó, và nó đã hỏng **ba lần** bằng đúng
+một cơ chế (`work/backlog.md` T-016 ghi hai lần đầu; F-020 là lần thứ ba, qua commit `12c77f8`,
+T-031, 2026-08-31). Một khi pattern đã lọt vào một commit, phiên tuân thủ luật **không có đường hợp
+lệ nào** để dọn: gỡ nó tạo một thay đổi *tracked* trên `work/scope.txt`, và commit thay đổi đó là
+đúng cái §6 cấm và Gate 7b bắt — luật tự khoá chính nó.
+
+**Ba đường, F-020 tự liệt và cố ý không tự chọn** (`CLAUDE.md` §3.5 — quyết định thuộc chủ repo):
+
+| Đường | Vì sao không chọn / chọn |
+|---|---|
+| 1. Dọn một lần, không dựng cơ chế | **Bác.** Rẻ nhất, nhưng đây đã là lần dọn **thứ ba** cho cùng một lỗi (`work/backlog.md` T-016 ghi hai lần trước) — dọn một lần không làm nó thôi tái diễn |
+| 2. ✅ Bản đã commit chỉ mang trạng thái nền (chỉ comment); Gate 3 + Gate 7b thi hành | **Chọn.** Không cần file mẫu thứ hai để so (tránh lặp `work/findings.md` F-001); định nghĩa "trạng thái nền" bằng chính parser đang đọc pattern, nên ngữ nghĩa pattern vẫn chỉ có một chủ (ADR-006) |
+| 3. Dựng `work/scope.txt.example`, `.gitignore` bản thật | **Bác.** Đẻ ra `work/scope.txt.example` — một bản sao thứ hai của cùng nội dung, đúng loại lỗi F-001 — cộng một bước chép file mỗi clone mà không gì ép được, vượt quá giới hạn ADR-010 đã chấp nhận cho `install-hooks.sh` |
+
+**Decision:**
+
+1. **Hình bất biến:** bản `HEAD` của `work/scope.txt` chỉ được chứa comment. Pattern là trạng thái
+   của phiên đang chạy, không bao giờ đi vào git.
+2. **Gate 3** (`scripts/check-scope.sh`) thêm một phép chấm — không đổi cách đọc/khớp pattern đang
+   chạy đúng (ADR-006 vẫn đứng): ĐỎ khi bản `work/scope.txt` ở `HEAD` mang pattern **mà cây làm việc
+   VẪN còn giữ**; `note:` (không chặn) khi `HEAD` còn nợ nhưng cây làm việc đã sạch — dọn xong trong
+   cây là xanh ngay trong chính lượt đó, không cần đợi tới sau khi commit; im lặng khi `HEAD` sạch.
+3. **Gate 7b** (`scripts/check-commit-block.sh`, luật 3) đổi vị ngữ từ *"`work/scope.txt` có mặt
+   trong khối commit không"* sang *"nội dung sẽ được `git add` có còn pattern không"* — áp cùng phép
+   đếm ở điểm 2. Không có "ngoại lệ commit migration": một cổng không xác minh được loại commit, và
+   tin một chữ trong báo cáo là đúng giá `work/findings.md` F-011 đã trả (chữ `ádg`).
+4. **Pattern chết** (khớp không file nào đang đổi — một task khai đường dẫn file **sắp** tạo ra là
+   hợp lệ) và **pattern lặp** không phải lỗi mới phải bắt: cách đọc pattern của Gate 3 không sai,
+   task thi hành đường này **không được** "siết" nó (ADR-003 — đỏ vì lý do sai dạy người ta bỏ qua
+   gate).
+5. `CLAUDE.md` §5, §6, §6.1 sửa lại cho khớp: câu *"`work/scope.txt` is never in the block"* (tuyệt
+   đối theo sự-có-mặt) sai dưới luật mới — đúng phải là *"không bao giờ mang pattern vào khối"* —
+   file **chỉ-comment** trong khối là hợp lệ, và đó chính là bước đóng nợ CLAUDE.md §7.3 đòi.
+
+**Why.**
+Đường 2 tốn nhất trong ba đường (sửa hai script, viết test cho cả hai) nhưng là chi phí một lần và
+sửa đúng nguyên nhân gốc: luật đã có từ đầu (§6), cái thiếu là cổng gác nó. Một hình bất biến định
+nghĩa bằng chính parser đang chạy (không phải một file mẫu thứ hai) nghĩa là ngữ nghĩa pattern không
+bao giờ trôi khỏi nhau giữa hai chỗ đọc nó — đúng bài học `work/findings.md` F-001. Vị ngữ "cây làm
+việc vẫn giữ nguyên" (không phải "HEAD thuần") là chỗ dễ sai nhất: chấm bằng `HEAD` thuần sẽ khoá
+đúng lượt đi dọn debt — không ai gỡ nổi nợ vì gỡ luôn khiến gate đỏ ngay khi vừa sửa.
+
+**Rejected alternatives:** xem bảng ba đường ở trên.
+
+**Applies to:**
+`scripts/check-scope.sh` (phép chấm baseline mới) · `scripts/check-scope.test.sh` (file mới) ·
+`scripts/check-commit-block.sh` (luật 3, vị ngữ mới) · `scripts/check-commit-block.test.sh` (hai ca
+mới) · `CLAUDE.md` §5 mục 1 và mục 6, §6, §6.1 · `work/findings.md` **F-020** (đóng) ·
+`prompt/maintenance/16-scope-txt-baseline-migration-L2.md` (mới).
+
+
+---
+
+### ADR-044 — I-021 vào nhóm TIỀN đã có, không mở nhóm thứ năm; hàng ấy có chủ là bước P1-14
+
+**Trạng thái:** Đã chốt 2026-09-07 (chủ repo, trong phiên).
+
+**Vấn đề nó giải quyết.**
+`work/findings.md` **F-026** đóng **một nửa** ngày 2026-09-07: `I-019`/`I-020` đã có nhóm thứ tư
+(**ADR-042**, bước `P1-13`). Mệnh đề mồ côi **thứ ba** thì không: `I-021` (*két cuối ngày − tiền
+đầu két = doanh thu tiền mặt*) sinh ở **T-056**, 2026-09-04, cũng sau khi kế hoạch §6 chia ba nhóm,
+và không bước nào nhận nó. Chỗ đau khác hai mệnh đề kia: `I-021` **đã bị trỏ vào** — ô `I-015` của
+bảng ba cột nhóm TIỀN nêu tên nó để nói được vế *phần tiền mặt so với két*, nên từ 2026-09-06 bảng
+ấy mang một hàng **bị trỏ tới mà không tồn tại**.
+
+**Hai đường, chủ repo chọn đường 1:**
+
+| Đường | Vì sao chọn / không chọn |
+|---|---|
+| 1. ✅ Vào **nhóm TIỀN đã có**, thêm một hàng vào §1 | **Chọn.** `I-021` là một phép cộng tiền của một **ngày bán**, đứng cùng chỗ với `I-014` và `I-015`, và đã bị `I-015` trỏ vào — nó không mở một trục mới nào cả |
+| 2. Nhóm thứ năm riêng (KÉT · TIỀN MẶT), đối xứng với ADR-042 | **Bác.** Đối xứng về hình thức, sai về nội dung: `I-019`/`I-020` phải có nhóm riêng vì trục **sản xuất theo mẻ** không phải tiền cũng không phải vòng đời (ADR-042, §4.1); `I-021` thì không xa nhóm nào — một nhóm cho đúng một mệnh đề vốn thuộc nhóm bên cạnh chỉ làm bảng khó đọc thêm |
+
+**Decision:**
+
+1. **`I-021` là hàng thứ tám của §1 — nhóm TIỀN**, đủ ba ô như bảy hàng còn lại: tầng 1 cho *một
+   ngày bán một con số tiền đầu két* và *tiền đầu két không nằm trong tập tiền đã thu*, tầng 3 cho
+   *không đường nào rút tiền khỏi két giữa buổi* (`shop-facts.md` §8.5), **tầng 4** cho *con số két
+   cuối ngày là số người đếm rồi nhập* — ô này nói thẳng **"máy không ngăn được"** kèm cái máy có
+   giữ thay vào, đúng luật 3 của §0.
+2. **Hàng ấy có chủ: bước mới `P1-14`**, không sửa lùi entry `P1-04` đã `Done` (**ADR-008**). Pha 1
+   vì thế có **mười bốn bước**; `P1-01`…`P1-13` **giữ nguyên ID**, `P1-14` chỉ nối vào cuối — cùng
+   lý do đã ghi ở ADR-042: renumber làm vỡ mọi neo đang tồn tại.
+3. **`P1-14` không có file prompt riêng.** Luật lane `prompt/SD/` là *viết được prompt của một bước
+   khi mọi bước ở cột **Cần xong trước** của nó đã `Done`* (T-051); ở đây tiền đề (`P1-04`) đã xong
+   và bước được thi hành **ngay trong lượt chốt ADR này**, nên một file prompt sẽ được viết rồi tự
+   đọc trong cùng một lượt — đúng loại tài liệu nghi lễ `CLAUDE.md` §3.8 cấm. `prompt/SD/README.md`
+   ghi thẳng chỗ trống ấy và lý do, thay vì để người sau tưởng là bỏ sót.
+4. **Cổng chất lượng §9 không đổi một chữ** — nó đã bỏ số đếm cứng ở ADR-042 và nay đối chiếu
+   **danh sách mã**, nên hàng `I-021` xuất hiện là nó tự hết vắng mặt. Đây là bằng chứng đường sửa
+   của ADR-042 đúng: cùng một dạng lỗi lặp lại lần thứ hai trong ba ngày, và lần này cổng **không**
+   phải sửa theo.
+
+**Why.**
+Đường 2 nghe an toàn hơn vì nó lặp lại đúng cái vừa làm cho `I-019`/`I-020`, nhưng lặp hình thức
+của một quyết định mà bỏ **lý do** của nó là cách nhanh nhất để sinh ra một bảng đúng luật mà vô
+nghĩa. Lý do của ADR-042 là *trục nội dung khác hẳn ba nhóm có sẵn*; `I-021` không có lý do ấy —
+nó là tiền, đúng nghĩa đen, và ô `I-015` đã cần nó đứng cạnh mình.
+
+Phần đắt nhất của hàng mới **không** phải công thức, mà là chỗ nó **chỉ tới tầng 4**: hệ thống
+không có đường nào biết trong két thật có bao nhiêu tiền. Một bảng ghi hàng này là *tầng 1* vì nhìn
+thấy một phép trừ chính xác sẽ dạy pha 2 rằng chỗ này đã được máy giữ — đúng **rủi ro lớn nhất của
+cả pha 1** mà kế hoạch §10 gọi tên, và đúng thứ ô cổng §9 thứ hai tồn tại để bắt.
+
+**Ảnh hưởng:**
+`docs/product/1-system-design/03-bao-ve-invariant.md` (khối mở đầu · tiêu đề §1 · **một hàng mới**
+`I-021` · ô `I-015` sửa pointer · §1.3 viết lại · §1.4 hai hàng · **§1.5 mới**) ·
+`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6 (tiêu đề, hàng `P1-14`, dòng chạy song song,
+cột *Cần xong trước* của P1-07/P1-10) · §7 (tiêu đề) · `work/backlog.md` · `work/backlog_SD.md` ·
+`prompt/SD/README.md` · `docs/product/00-index.md` (một dòng) · `prompt/AD/README.md` và
+`work/backlog_AD.md` (hai pointer P1-13 quét sót, vẫn viết *"mười hai bước"*) ·
+`work/findings.md` **F-026** (đóng hẳn).
+
+### ADR-045 — Bốn ràng buộc kiến trúc ẩn có nhà ở pha 1, mỗi cái một dấu hiệu đo được; đóng nốt F-027
+
+**Trạng thái:** Đã chốt 2026-09-08, bước **P1-08** (`master_plan/SD_master_plan_banh_cuon_ba_thanh.md`
+§6). **ADR-041** (điểm 3) giao thẳng ba vế còn lại cho bước này chốt.
+
+**Vấn đề nó giải quyết.**
+`work/findings.md` **F-027** (mở 2026-09-04, P1-02) đo được rằng **bốn** ràng buộc quyết định hình
+dạng của cả hệ thống — *một tiến trình · không hàng đợi · không bộ nhớ đệm · một chỗ chạy duy nhất*
+— chỉ tồn tại ở `master_plan/prompt-fullstack.md` §6.8, một **bản xuất khẩu** mà **ADR-035** đã
+chốt là **không sở hữu thứ gì**. **ADR-041** (2026-09-07) đặt tên chủ cho vế thứ tư và nói rõ nó
+**không** chốt hộ ba vế kia. Cùng lúc, hai trong bốn ràng buộc ở bản xuất khẩu có kèm một dấu hiệu
+xem lại (*confirm đơn > 500ms* · *menu > 200 món*) và hai cái còn lại **không có gì** — mà một ràng
+buộc không có dấu hiệu thì hoặc được giữ mãi vì không ai dám bỏ, hoặc bị bỏ vì cảm tính.
+
+**Decision:**
+
+1. **Bốn ràng buộc có owner là pha 1**, ở `docs/product/1-system-design/05-realtime-va-du-phong.md`
+   §2, mang mã cục bộ `RB-1`…`RB-4`. Chúng là **tính chất và giới hạn**, không phải cách triển
+   khai: bảng §7 của `prompt-fullstack.md` xếp *"ràng buộc kiến trúc ẩn + dấu hiệu phải xem lại"*
+   vào đầu ra bắt buộc của pha 1, và giữ nguyên cách chia ấy.
+2. **Mỗi ràng buộc có đúng một dấu hiệu đo được**, kèm **ai đo và bằng cái gì đã có**. Hai dấu hiệu
+   của bản xuất khẩu (500ms · 200 dòng suất bán) được **nhận** làm dấu hiệu chính thức — bước này
+   không nghĩ ra con số mới ở chỗ đã có một con số dùng được. Hai dấu hiệu còn lại đặt mới, và cả
+   hai cố ý đo bằng thứ **đã tồn tại**: nhật ký khởi động của hệ thống (`RB-1`), và dòng *"còn N
+   lượt bán trên giấy chưa nhập"* của bảng đối soát cuối ngày (`RB-4`, `master_plan/shop-facts.md`
+   §6.11).
+3. **Dấu hiệu bật ⇒ mở lại quyết định, không tự động bỏ ràng buộc**, và bỏ thì ghi một ADR mới.
+   Riêng `RB-1`: dấu hiệu bật **không** cho phép thêm tiến trình thứ hai ngay — chỗ chung giữ
+   *"màn nào đang nối"* phải có **trước**, nếu không thì việc nới ràng buộc chính là dựng ra cái
+   hỏng mà ràng buộc ấy sinh ra để chặn.
+4. **Tên công nghệ vẫn không vào pha 1** (**ADR-035** · **ADR-041** điểm 3): §1.1 của file mới viết
+   *tính chất* của đường đẩy (giữ kết nối mở trong bộ nhớ tiến trình) chứ không viết tên giao thức;
+   tên của *chỗ chạy duy nhất* ở `master_plan/shop-facts.md` §1.
+
+**Rejected alternatives:**
+
+- **Chép bốn ràng buộc từ bản xuất khẩu vào pha 1 y nguyên, không đặt dấu hiệu.** Bác — đó đúng là
+  trạng thái hôm nay, chỉ đổi chỗ ở: kế hoạch §6 đặt đầu ra kiểm chứng được của P1-08 bằng
+  *"mỗi cái có một dấu hiệu đo được, không phải một lời hứa"*.
+- **Giao cả bốn cho pha 5 (Deploy) và pha 3 (BE)** — đường 1 mà F-027 đã liệt. Bác: P1-08 chạy
+  **trước** hai pha ấy, nên nó vẫn phải viết dấu hiệu cho những thứ chưa ai sở hữu; và ràng buộc
+  *một tiến trình* không phải một lựa chọn triển khai, nó là hệ quả trực tiếp của cách đường đẩy
+  giữ kết nối.
+- **Đặt dấu hiệu bằng một phép đo phải dựng thêm mới đo được** (số kết nối đang mở, độ trễ trung
+  bình mỗi phút). Bác: một dấu hiệu không ai đo là một dấu hiệu không tồn tại — cùng bài học với
+  `work/findings.md` **F-012**, chỗ trống được che bằng một cái tên.
+- **Chốt luôn cửa sổ thời gian gọi là *quán mất kết nối*.** Bác — nó quyết định lúc nào quán ngừng
+  bán trên web, tức một đánh đổi của **quán** (`CLAUDE.md` §3.5). Mở `U-043` thay vì tự chọn.
+
+**Chỗ ADR này KHÔNG chốt:**
+- **Con số chu kỳ** của đường kéo dự phòng — pha 3 (file mới §1.2).
+- **Cách chạy** ở chỗ duy nhất ấy: theo dõi, khởi động lại, triển khai — pha 5.
+- **Cửa sổ thời gian** để gọi là *quán đang mất kết nối* — `docs/product/99-unknowns.md` **U-043**.
+- **Câu chữ dòng thông báo** cho khách khi ba kênh tự bấm dừng — chưa chốt (`quality/invariants.md`
+  **I-008**), hỏi khi dựng màn ở pha 4.
+
+**Applies to:**
+`docs/product/1-system-design/05-realtime-va-du-phong.md` (file mới) ·
+`docs/product/00-index.md` (một dòng bảng *Pha 1*) ·
+`docs/product/1-system-design/architecture.md` §5 (một dòng trỏ) · §13 (một hàng) ·
+`01-ranh-gioi-he-thong.md` §5 · `02-thoi-gian-ngay-ban.md` §5 · `03-bao-ve-invariant.md` §5
+(hàng **P1-08** của ba bảng *bước sau đọc gì*) · `work/findings.md` **F-027** (đóng nốt) ·
+`docs/product/99-unknowns.md` (**U-043** mới) · **ADR-041** (vế thứ tư đã chốt từ trước).

@@ -1,13 +1,15 @@
 # Bảo vệ invariant — tầng nào giữ từng mệnh đề, và phép đối chiếu nào bắt nó khi hỏng
 
-*Bước 4/13 · 5/13 · 6/13 · 13/13 của pha 1 — **một file, bốn chủ**
+*Bước 4/14 · 5/14 · 6/14 · 13/14 · 14/14 của pha 1 — **một file, năm chủ**
 (`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §5 · §6 · `docs/decisions.md` **ADR-033**).
 Mở đầu và **§1 — nhóm TIỀN** viết ở **P1-04**, 2026-09-06. **§2 — nhóm VÒNG ĐỜI** là của **P1-05**,
 **§3 — nhóm MENU · GIÁ · VẾT** viết ở **P1-06**, 2026-09-07. **§4 — nhóm SẢN XUẤT THEO MẺ** là của
 **P1-13**, 2026-09-07 — bước thứ mười ba, mở ra
 sau khi `I-019`/`I-020` sinh **sau** kế hoạch chia ba nhóm ban đầu (`work/findings.md` **F-026**,
-`docs/decisions.md` **ADR-042**). Không sửa mục của người khác (`work/findings.md` **F-010** ·
-**F-014**).*
+`docs/decisions.md` **ADR-042**). **Hàng `I-021` của §1 và mục §1.5** là của **P1-14**, 2026-09-07 —
+mệnh đề mồ côi thứ ba, sinh ở T-056 sau khi kế hoạch ấy đã chia nhóm, và nó đứng giữa nhóm TIỀN
+chứ không mở một nhóm mới (`docs/decisions.md` **ADR-044**). Không sửa mục của người khác
+(`work/findings.md` **F-010** · **F-014**).*
 
 > **Mục này sở hữu đúng hai thứ cho mỗi mệnh đề bất biến:** **tầng bảo vệ** đang giữ nó, và **phép
 > đối chiếu** bắt được nó khi nó đã hỏng (`CLAUDE.md` §2, hàng *Tầng bảo vệ của từng invariant* —
@@ -60,7 +62,7 @@ Bốn luật đọc, ba luật đầu là của kế hoạch §7, luật thứ t
 
 ---
 
-## 1. Nhóm TIỀN — bảy mệnh đề (P1-04, 2026-09-06)
+## 1. Nhóm TIỀN — tám mệnh đề (P1-04, 2026-09-06 · hàng `I-021` thêm ở P1-14, 2026-09-07)
 
 Nhóm này đi trước hai nhóm kia vì nó là nhóm **mất tiền**, và vì nó là chỗ rủi ro lớn nhất của cả
 pha đang nằm (kế hoạch §10).
@@ -76,7 +78,8 @@ phải câu mệnh đề; lời của từng mệnh đề đọc ở nhà của 
 | **`I-012`** — vết của mọi thao tác chạm tiền | **Tầng 1** cho *hình dạng của vết*: trạng thái *một thao tác chạm tiền đã ghi mà thiếu một trong bốn câu — cái gì đổi, bao nhiêu, ai bấm, lúc mấy giờ* **phải không tồn tại được**. · **Tầng 3** cho *đúng một cửa*: mọi thao tác trong danh sách đi qua cửa ghi duy nhất ([`architecture.md`](architecture.md) §1.1), **trừ hai ca đã chốt tên người khác** — người đi giao bấm *đã giao + đã thu tiền* tại chỗ khách (`shop-facts.md` §6.7) và **chủ quán** đổi giá hoặc đổi thành phần suất trên mặt quản trị (§6.17). Hai ca ấy **không phải lỗ thủng**: chúng có tên, và chúng cũng để lại vết. · **Tầng 4** cho vế *cái tên trong vết là người thật đã bấm*: quyền gắn **chỗ đứng**, không gắn chức vụ ([`architecture.md`](architecture.md) §4), nên **máy không ngăn được** hai người dùng chung một chỗ đứng. Cái máy **có** giữ thay vào: mọi thao tác chạm tiền đều mang **một chỗ đứng và một mốc**, đủ để đối soát cuối ngày chỉ đúng **một** hàng khi lệch — mà đó đúng là giá trị duy nhất của tầng này. Vế *đọc được sau nhiều ngày* là **yêu cầu hình dạng dữ liệu** ⇒ **P1-07**; hàng này không thiết kế chỗ cất vết. | Mọi thao tác chạm tiền của một ngày mà thiếu một trong bốn câu. · Mọi chỗ lệch trong bảng đối soát cuối ngày không chỉ ra được **đúng một** thao tác có tên (`shop-facts.md` §6.10, ngưỡng 0đ). · Mọi đường làm đổi số tiền của quán mà không đi qua ba chỗ bấm đã kể tên ở cột giữa. · Mọi lần hoàn tiền không đọc ra đủ *bao nhiêu · đơn nào · ai bấm · lý do gì*. **Mọi tập kể trên phải rỗng.** |
 | **`I-013`** — giá do hệ thống tính lại | **Tầng 3, và tầng 3 là trần thật của hàng này.** Chỉ **một chỗ** trong hệ thống được tính giá của một dòng đơn, và **mọi** đường đặt món của **cả năm** kênh (`shop-facts.md` §2) đi qua chỗ ấy; con số giá đến từ phía khách bị **bỏ**, không bao giờ được dùng, kể cả khi nó bằng đúng giá đúng. Cơ sở dữ liệu **không** giữ được vế này: nó không đọc được một con số **đến từ đâu**. Và **bước quầy duyệt không phải cơ chế giữ nó** — bước ấy chặn đơn ảo, không ai đứng đó cộng lại tiền từng dòng (`shop-facts.md` §6.2 · `I-013` mục *Why*). Giới hạn đã biết của tầng 3: nó không đúng khi có người sửa dữ liệu bằng tay. | Mọi dòng đơn mà số tiền của nó khác **tổng giá các thành phần** của suất ấy (`shop-facts.md` §4.2 · §4.6 quy tắc 1) theo mức giá **đang có hiệu lực tại mốc tạo lượt gọi** — mốc: [`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §2; một hoá đơn mang hai mức giá vì chủ quán đổi giá giữa buổi là **đúng**, không phải lệch (`shop-facts.md` §6.17). · Mọi dòng đơn có giá **0đ** cho một suất mà suất ấy không có giá 0đ. · Mọi kênh trong năm kênh không có ít nhất một lượt kiểm ra đúng giá kỳ vọng của `shop-facts.md` §4.8. **Mọi tập kể trên phải rỗng.** |
 | **`I-014`** — doanh thu một ngày cộng từ đủ hai nguồn | **Hai vế, hai tầng khác nhau — đừng gộp.** · **Vế *không khoản nào đứng ở cả hai nguồn*: tầng 1.** Trạng thái *một khoản tiền gắn với hơn một đơn vị tính tiền* **phải không tồn tại được** (`shop-facts.md` §6.9). · **Vế *cộng đủ hai nguồn*: tầng 5.** Ở đây **máy không ngăn được** một báo cáo cộng thiếu một nguồn: không ràng buộc nào biết một phép cộng đã bỏ sót cái gì, và nó thiếu một cách im lặng — không thao tác nào sai, chỉ có một con số nhỏ hơn sự thật. Cái máy **có** giữ thay vào: mỗi khoản tiền có **đúng một** nguồn (tầng 1 ở trên) và **đúng một** mốc tính tiền ([`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §1 · §2), nên con số của một ngày **dựng lại được từ đầu** và đem so được với ba nguồn ngoài của `shop-facts.md` §6.10. **Hai mã từng mở ở chính ô này, cả hai đã đóng 2026-09-06** (`CLAUDE.md` §3.5): ~~`U-036`~~ (khoản trả trước nhận ngày này cho đơn giao ngày khác — nay **có** mốc tính tiền: ngày giao/lấy hàng, **ADR-040**) và ~~`U-037`~~ (nhập bù xong thì **ai** chấm lại ngày ấy, **lúc nào** — POS hoặc chủ quán, cuối buổi bán hàng). **Phương án hẹp nhất đã chọn khi cả hai còn mở nay là mệnh đề chính thức** — nó là một câu về *phép đối chiếu*, không phải một luật mới: ngày nào còn một khoản chưa có mốc, hoặc còn lượt bán trên giấy chưa nhập, thì phép đối chiếu **không kết luận** — ngày ấy đọc là **chưa đối soát xong**, không đọc là **lệch** (**ADR-037**). Chi tiết ở §1.2. | Mọi khoản tiền của một ngày xuất hiện ở **hơn một** nguồn. · Mọi khoản tiền của ngày ấy không xuất hiện ở **nguồn nào**. · Mọi ngày mà tổng báo cáo khác *tổng nguồn phiên bàn + tổng nguồn đơn lẻ*, trong đó cả ba kênh mang đi cùng rơi vào nguồn thứ hai. · Mọi lần trả nợ được đếm như một khoản bán mới. · Mọi ngày **đã đối soát xong** mà vẫn còn lượt bán trên giấy chưa nhập, hoặc còn một khoản chạm tiền không có mốc tính tiền. · Mọi ngày đã qua mà con số dựng lại hôm nay khác con số đã đối soát hôm ấy, **trừ** đúng ca nhập bù từ sổ giấy (**ADR-037**). **Mọi tập kể trên phải rỗng.** |
-| **`I-015`** — một lần thu chia nhiều phương thức | **Ba vế, ba tầng.** · **Tầng 1** cho *tổng khớp* và *ghi riêng từng phần*: trạng thái *tổng các phần đã thu vượt số phải trả* và trạng thái *một phần đã thu không mang đúng một phương thức trong hai phương thức của `shop-facts.md` §1* đều **phải không tồn tại được**; thu thiếu thì phần thiếu **phải** thành một khoản nợ theo **`I-005`**. · **Tầng 2** cho *các phần của một lần thu cùng sống hoặc cùng chết*: đứt giữa hai phần ghi thì tổng hết khớp và phần đã ghi trông y hệt một lần thu thiếu — mà một lần thu thiếu thì `I-005` đòi một khoản nợ có tên, nên chỗ hỏng này đẻ ra một khoản nợ không có thật. Mọi phần cũng dùng chung **một** mốc tính tiền ([`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §2.1). · **Vế *tiền đã thật sự vào tài khoản*: tầng 4 — và đây là ô nói thẳng nhất của cả bảng.** VietQR ở quán là mã **TĨNH**, không có đường nào báo tiền về ([`architecture.md`](architecture.md) §7 · `shop-facts.md` §1): hệ thống **không tự biết** tiền đã vào tài khoản, nên **máy không ngăn được** một lần bấm *đã nhận tiền* khi tiền chưa về. Câu ấy do **người đứng quầy** nhìn tin nhắn báo có rồi nói, và hệ thống chỉ **ghi lại lời ấy**. Cái máy **có** giữ thay vào là ba thứ khác: *tổng các phần = số phải trả*, *từng phần ghi riêng theo phương thức*, và *lần bấm ấy để lại vết có tên* (**`I-012`**) — đủ để cuối ngày so **phần chuyển khoản** với **tin nhắn báo có** và chỉ ra đúng một người khi lệch. **Đừng thiết kế một cơ chế để nâng vế này lên**: mã tĩnh là dữ kiện quán, đổi nó là câu của chủ quán, không phải của pha 1. | Mọi lần thu mà tổng các phần khác số phải trả và phần thiếu **không** có một khoản nợ đúng bằng nó. · Mọi lần thu có một phần không mang phương thức nào, hoặc ghi gộp thành một con số tổng. · Mọi lần thu có các phần rơi vào **hai** ngày bán khác nhau. · Mọi ngày mà **tổng phần chuyển khoản** khác tổng tin nhắn báo có của ngày ấy — tính riêng, **không** cộng gộp với phần tiền mặt (`shop-facts.md` §6.10). · Mọi ngày mà **tổng phần tiền mặt** không khớp két theo phép trừ tiền đầu két — mệnh đề ấy là **`I-021`**, và nó **không** thuộc nhóm này (§1.3). **Mọi tập kể trên phải rỗng.** |
+| **`I-015`** — một lần thu chia nhiều phương thức | **Ba vế, ba tầng.** · **Tầng 1** cho *tổng khớp* và *ghi riêng từng phần*: trạng thái *tổng các phần đã thu vượt số phải trả* và trạng thái *một phần đã thu không mang đúng một phương thức trong hai phương thức của `shop-facts.md` §1* đều **phải không tồn tại được**; thu thiếu thì phần thiếu **phải** thành một khoản nợ theo **`I-005`**. · **Tầng 2** cho *các phần của một lần thu cùng sống hoặc cùng chết*: đứt giữa hai phần ghi thì tổng hết khớp và phần đã ghi trông y hệt một lần thu thiếu — mà một lần thu thiếu thì `I-005` đòi một khoản nợ có tên, nên chỗ hỏng này đẻ ra một khoản nợ không có thật. Mọi phần cũng dùng chung **một** mốc tính tiền ([`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §2.1). · **Vế *tiền đã thật sự vào tài khoản*: tầng 4 — và đây là ô nói thẳng nhất của cả bảng.** VietQR ở quán là mã **TĨNH**, không có đường nào báo tiền về ([`architecture.md`](architecture.md) §7 · `shop-facts.md` §1): hệ thống **không tự biết** tiền đã vào tài khoản, nên **máy không ngăn được** một lần bấm *đã nhận tiền* khi tiền chưa về. Câu ấy do **người đứng quầy** nhìn tin nhắn báo có rồi nói, và hệ thống chỉ **ghi lại lời ấy**. Cái máy **có** giữ thay vào là ba thứ khác: *tổng các phần = số phải trả*, *từng phần ghi riêng theo phương thức*, và *lần bấm ấy để lại vết có tên* (**`I-012`**) — đủ để cuối ngày so **phần chuyển khoản** với **tin nhắn báo có** và chỉ ra đúng một người khi lệch. **Đừng thiết kế một cơ chế để nâng vế này lên**: mã tĩnh là dữ kiện quán, đổi nó là câu của chủ quán, không phải của pha 1. | Mọi lần thu mà tổng các phần khác số phải trả và phần thiếu **không** có một khoản nợ đúng bằng nó. · Mọi lần thu có một phần không mang phương thức nào, hoặc ghi gộp thành một con số tổng. · Mọi lần thu có các phần rơi vào **hai** ngày bán khác nhau. · Mọi ngày mà **tổng phần chuyển khoản** khác tổng tin nhắn báo có của ngày ấy — tính riêng, **không** cộng gộp với phần tiền mặt (`shop-facts.md` §6.10). · Mọi ngày mà **tổng phần tiền mặt** không khớp két theo phép trừ tiền đầu két — mệnh đề ấy là **`I-021`** — **hàng cuối của chính bảng này** từ 2026-09-07 (P1-14, §1.3); lúc ô này được viết nó còn đứng ngoài mọi nhóm. **Mọi tập kể trên phải rỗng.** |
+| **`I-021`** — két cuối ngày trừ tiền đầu két bằng doanh thu tiền mặt | **Ba vế, ba tầng — và vế đắt nhất chỉ tới tầng 4.** · **Vế *mỗi ngày bán có đúng MỘT con số tiền đầu két, và con số ấy KHÔNG phải doanh thu*: tầng 1.** Hai trạng thái **phải không tồn tại được** ở tầng cơ sở dữ liệu: *một ngày bán mang hơn một con số tiền đầu két*, và *tiền đầu két nằm trong tập tiền đã thu của một ngày*. Vế thứ hai cùng hình dạng với vế *một khoản nợ nằm trong tập tiền đã thu* của **`I-005`**, và cùng lý do: một con số đứng nhầm tập thì mọi phép cộng phía sau sai trong khi **không thao tác nào sai**. · **Vế *không đường nào làm giảm tiền trong két giữa buổi*: tầng 3.** Quán **không có** nghiệp vụ nộp bớt tiền giữa buổi (chủ quán chốt 2026-09-04, `A4` ⇒ `shop-facts.md` §8.5), nên miền nghiệp vụ không có thao tác nào rút tiền khỏi két trong buổi — đó là thứ làm phép trừ **hai hạng tử** ở cột phải đủ. Nếu lời chủ quán ấy đổi thì công thức **thiếu một hạng tử**, và mệnh đề phải **viết lại**, không phải viết thêm (`quality/invariants.md` **`I-021`**, điều kiện biên thứ hai). · **Vế *con số két cuối ngày là số ĐẾM ĐƯỢC thật*: tầng 4 — máy không ngăn được.** Không có đường nào cho hệ thống biết trong két thật đang có bao nhiêu tiền: con số ấy do **người đếm rồi nhập**. Một lần đếm nhầm, hoặc một lần nhập lại đúng con số hệ thống đang chờ thay vì con số vừa đếm, cho phép trừ ra **0đ** trông y hệt một ngày khớp thật. Cái máy **có** giữ thay vào là ba thứ: doanh thu tiền mặt của vế phải **dựng lại được từ từng phần thu mang phương thức** (**`I-015`** tầng 1), mỗi lần bấm chạm tiền để lại **vết có tên** (**`I-012`**) nên khi hai vế lệch thì chỉ ra được đúng một hàng, và lần **sửa** con số tiền đầu két mặc định của một ngày cũng là một thao tác chạm tiền, mang vết như thế. **Đừng thiết kế một cơ chế để nâng vế này lên**: đếm két là việc của người và của thủ tục: rủi ro ấy có tên ở **P1-10**, không có ở đây. | Mọi **ngày bán** mà *(tiền mặt đếm trong két cuối ngày) − (tiền đầu két của ngày ấy)* khác **doanh thu tiền mặt** của ngày ấy — ngưỡng **0đ**, không dung sai (`shop-facts.md` §6.10). · Mọi ngày bán mang số lượng con số tiền đầu két khác **một**. · Mọi ngày **chưa** có con số tiền đầu két mà bị đọc là **lệch** thay vì **chưa đối soát xong** — cùng hình dạng với ngày còn lượt bán trên giấy chưa nhập (**ADR-037**, ô **`I-014`**). · Mọi lần phép trừ trên chạy trên một tổng **gộp** cả phần chuyển khoản thay vì chỉ phần tiền mặt (**`I-014`** · `shop-facts.md` §6.10). · Mọi con số doanh thu — kể cả con số **dự tính** ở mục tổng quan của chủ quán (`shop-facts.md` §8.6) — có cộng tiền đầu két vào. · Mọi lần sửa con số tiền đầu két của một ngày mà không đọc ra được *ai bấm · lúc mấy giờ · từ bao nhiêu sang bao nhiêu* (**`I-012`**). **Mọi tập kể trên phải rỗng.** |
 
 ### 1.1 Ba chỗ hàng trên dễ bị đọc rộng ra
 
@@ -121,34 +124,59 @@ doanh thu (đối xứng với dòng *nợ ghi trong ngày* nhưng ngược chi�
 nhưng câu chữ và cơ chế của dòng ấy là việc của bước đọc mục này tiếp theo, không phải của bảng
 này.
 
-### 1.3 Ba mệnh đề chạm bảng này mà không thuộc nhóm nào — `I-019` · `I-020` · `I-021`
+### 1.3 Ba mệnh đề từng đứng ngoài mọi nhóm — nay cả ba đã có nhà (đóng 2026-09-07)
 
-**Đo lại 2026-09-06:** `quality/invariants.md` giữ **hai mươi mốt** mệnh đề, trong khi kế hoạch §6
-chia **mười tám** thành ba nhóm và cổng §9 vẫn đếm *"mười tám"*. Ba mệnh đề ngoài nhóm:
-`I-019` · `I-020` (sinh ở BA-12, 2026-09-03) và **`I-021`** (sinh ở T-056, 2026-09-04). Đây là
-`work/findings.md` **F-026**, đang **Open**.
+**Lịch sử, giữ lại vì nó là bài học chứ không phải trạng thái đang chạy** (`work/findings.md`
+**F-026**, `docs/decisions.md` **ADR-042** · **ADR-044**). Kế hoạch §6 chia **mười tám** mệnh đề
+thành ba nhóm vào 2026-09-03; ba mệnh đề sinh **sau** ngày ấy nên không nhóm nào nhận chúng, trong
+khi cổng chất lượng §9 vẫn đếm *"mười tám"* và vì thế **tick xanh được** trong lúc ba mệnh đề chưa
+có tầng giữ nào. Đo lại 2026-09-06 (lượt viết §1 này): `quality/invariants.md` đã giữ **hai mươi
+mốt** mệnh đề.
 
-**Bước này không kéo cái nào vào bảng của mình và cũng không lặng lẽ bỏ chúng** — xếp nhóm là quyết
-định của **chủ repo** (F-026 mục *Decision / Fix*, ba đường đã ghi sẵn ở đó). Một câu **đề xuất**,
-không phải một quyết định: **`I-021` gần nhóm TIỀN hơn hai mệnh đề kia rất nhiều** — nó là phép trừ
-*két cuối ngày − tiền đầu két = doanh thu tiền mặt*, đứng cùng chỗ với `I-014` và `I-015` và bị ô
-`I-015` của bảng trên **trỏ vào** vì không có nó thì vế *phần tiền mặt so với két* không đọc được.
-Chủ repo quyết thì bảng này thêm **một** hàng vào §1; tới lúc đó nó đứng ngoài, có tên, ở đây.
+Chủ repo chốt chỗ đứng của cả ba, mỗi lần một quyết định riêng vì hai ca không giống nhau:
+
+- **`I-019` · `I-020`** (sinh ở **BA-12**, 2026-09-03) — trục **sản xuất theo mẻ**, xa cả ba nhóm
+  ban đầu ⇒ **nhóm thứ tư của riêng chúng**, **§4** của chính file này
+  (bước **P1-13**, **ADR-042**, 2026-09-07).
+- **`I-021`** (sinh ở **T-056**, 2026-09-04) — **không** mở nhóm mới: nó là phép trừ *két cuối ngày
+  − tiền đầu két = doanh thu tiền mặt*, đứng cùng chỗ với `I-014` và `I-015`, và ô `I-015` của bảng
+  trên đã **trỏ vào nó** từ lúc bảng được viết ⇒ nó vào **chính bảng này**, hàng cuối §1, viết ở
+  bước **P1-14** (**ADR-044**, 2026-09-07). Ba chỗ hàng ấy dễ đọc sai ở **§1.5**.
+
+**Cái đáng giữ không phải ba cái tên, mà là cơ chế đã giấu chúng:** một cổng đếm *"mười tám"* đọc
+xanh trong khi tập nó đếm đã đổi. Cổng §9 nay đối chiếu **danh sách mã** giữa `quality/invariants.md`
+và bảng này, không đếm số lượng — mệnh đề thứ hai mươi hai sinh ra ngày mai sẽ tự bị bắt là *vắng
+mặt*, không cần ai nhớ cập nhật một con số (`work/findings.md` **F-018** · **F-026**).
 
 ### 1.4 Bước sau đọc gì ở §1
 
 | Bước | Lấy gì từ mục này |
 |---|---|
-| **P1-07** — yêu cầu hình dạng dữ liệu | mọi câu *"trạng thái này phải không tồn tại được"* ở cột giữa là một **yêu cầu** gửi pha 2; và vế *vết đọc được sau nhiều ngày* của `I-012` là của P1-07, §1 cố ý không thiết kế chỗ cất vết |
-| **P1-10** — sổ rủi ro | hai ô tầng 4 (`I-012` chỗ đứng dùng chung · `I-015` VietQR tĩnh) và một vế tầng 5 (`I-014` cộng thiếu một nguồn) là ba chỗ **máy không ngăn được** của nhóm tiền — rủi ro có tên sẵn, không phải *"cẩn thận hơn"* |
+| **P1-07** — yêu cầu hình dạng dữ liệu | mọi câu *"trạng thái này phải không tồn tại được"* ở cột giữa là một **yêu cầu** gửi pha 2; vế *vết đọc được sau nhiều ngày* của `I-012` là của P1-07, §1 cố ý không thiết kế chỗ cất vết; và `I-021` thêm hai yêu cầu nữa — **một ngày bán mang đúng một con số tiền đầu két**, và **tiền đầu két không nằm trong tập tiền đã thu** |
+| **P1-10** — sổ rủi ro | các chỗ **máy không ngăn được** của nhóm tiền, gọi tên chứ không đếm (**F-018**): `I-012` chỗ đứng dùng chung · `I-015` VietQR tĩnh · `I-021` con số két cuối ngày do người đếm rồi nhập — ba ô **tầng 4**; cộng vế **tầng 5** của `I-014` (cộng thiếu một nguồn, thiếu một cách im lặng). Rủi ro có tên sẵn, không phải *"cẩn thận hơn"* |
 | **P1-11** — diễn ba scenario | mỗi bước chạm tiền trỏ được vào một ô cột giữa ở đây; `U-036` và `U-037` đã đóng 2026-09-06 nên không còn chỗ nào phải dừng ở ô `I-014` |
 | **P1-12** — rà ranh giới pha | §1 không có tên bảng · cột · ràng buộc · endpoint · route · component; câu *"phải do cơ sở dữ liệu giữ"* là câu về tầng |
-| **Pha 2** | **cái gì bắt buộc do cơ sở dữ liệu giữ**: `I-002` (một phiên một hoá đơn) · `I-005` (nợ có chủ, nợ không phải tiền đã thu) · `I-007` (đơn mang đi không dính phiên bàn) · `I-012` (vết đủ bốn câu) · `I-014` (một khoản một nguồn) · `I-015` (tổng khớp, từng phần có phương thức). Và **cái gì không cơ chế nào giữ được**: ba chỗ ở hàng P1-10 trên |
+| **Pha 2** | **cái gì bắt buộc do cơ sở dữ liệu giữ**: `I-002` (một phiên một hoá đơn) · `I-005` (nợ có chủ, nợ không phải tiền đã thu) · `I-007` (đơn mang đi không dính phiên bàn) · `I-012` (vết đủ bốn câu) · `I-014` (một khoản một nguồn) · `I-015` (tổng khớp, từng phần có phương thức) · `I-021` (một ngày bán một con số tiền đầu két; tiền đầu két không phải tiền đã thu). Và **cái gì không cơ chế nào giữ được**: các chỗ ở hàng P1-10 trên |
 
 **Mâu thuẫn với [`architecture.md`](architecture.md) thì sửa `architecture.md`, không viết bản thứ
 hai ở đây** (kế hoạch §5). Đo lại 2026-09-06: §1.1, §3.3, §4, §6.3, §6.4, §7, §12.2 và §12.3 không
 chỗ nào nói ngược bảng trên — §12.3 nói **hình dạng** của phần nợ và tự khai là đề xuất pha 2, còn
 bảng trên nói **tầng**, hai câu khác nhau về cùng một mệnh đề.
+
+### 1.5 Ba chỗ hàng `I-021` dễ bị đọc sai (P1-14)
+
+- **Phép trừ này chỉ nói về TIỀN MẶT.** Phần chuyển khoản đối chiếu với **tin nhắn báo có** và
+  **không** được cộng gộp vào (`shop-facts.md` §6.10 · ô `I-014`). Gộp hai phương thức rồi so một
+  con số tổng là làm hỏng cả hai phép đối chiếu cùng lúc: lệch ở phương thức nào cũng không đọc ra
+  được nữa.
+- **Tiền đầu két KHÔNG BAO GIỜ là doanh thu**, kể cả trong con số *dự tính* ở mục tổng quan của chủ
+  quán (`shop-facts.md` §8.6). Đây là chỗ dễ hỏng nhất vì nó hỏng **im lặng**: cộng nhầm nó vào thì
+  mọi con số vẫn có, chỉ lớn hơn sự thật đúng bằng một hằng số quen mắt.
+- **Một ngày thiếu con số tiền đầu két là *chưa đối soát xong*, không phải *lệch*.** Đọc nó thành
+  lệch là dạy đúng cái mà mệnh đề này sinh ra để chặn: một ngưỡng 0đ báo đỏ vì một lý do đã biết
+  trước sẽ được người dùng học cách bỏ qua, và từ hôm ấy một chỗ mất tiền **thật** cũng đi qua cùng
+  cái đỏ ấy mà không ai nhìn (`quality/invariants.md` `I-021` mục *Why*; cùng hình dạng với ngày còn
+  lượt bán trên giấy chưa nhập, **ADR-037**).
 
 ---
 
@@ -268,7 +296,7 @@ phải câu mệnh đề; lời của từng mệnh đề đọc ở nhà của 
 | Bước | Lấy gì từ mục này |
 |---|---|
 | **P1-07** — yêu cầu hình dạng dữ liệu | vế lưu bản sao của `I-009` và vế hình dạng bản ghi của `I-018` là hai **yêu cầu** gửi pha 2 (mục 0 luật 4); `I-008` cần một chỗ hệ thống đọc được trạng thái *tạm dừng* và *đang mất kết nối* trước khi tạo lượt gọi |
-| **P1-08** — realtime, đường kéo dự phòng, ràng buộc ẩn | cơ chế **phát hiện** quán đang mất kết nối (input cho điều kiện thứ ba của `I-008`) là việc của bước này, không phải của §3 — §3 chỉ nói máy phải chặn đúng ba kênh khi đã biết |
+| ~~**P1-08**~~ — realtime, đường kéo dự phòng, ràng buộc ẩn — **xong 2026-09-08** | cơ chế **phát hiện** quán đang mất kết nối (input cho điều kiện thứ ba của `I-008`) đã có nhà: [`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §3 — bốn câu luật, và **độ dài cửa sổ** thì để ngỏ có tên (`U-043`). §3 ở đây vẫn chỉ nói máy phải chặn đúng ba kênh khi đã biết |
 | **P1-10** — sổ rủi ro | `I-011` là **tầng 4** của nhóm này — chủ quán tự phá luật của chính mình là **máy không ngăn được**, cùng loại rủi ro với `I-012`/`I-015` (§1) và `I-004` (§2), khác ba loại đó ở chỗ nó là rủi ro **cố ý chấp nhận**, không phải một giới hạn kỹ thuật |
 | **P1-11** — diễn ba scenario | mỗi bước chạm menu/giá/vết trỏ được vào một ô cột giữa ở đây; chỗ phải diễn đúng là kịch bản `I-011` (nhắc rồi vẫn cho lưu) và kịch bản `I-009` (một hoá đơn hai mức giá là đúng) |
 | **P1-12** — rà ranh giới pha | §3 không có tên bảng · cột · ràng buộc · endpoint · route · component; câu *"phải không tồn tại được ở tầng cơ sở dữ liệu"* và *"đúng một cửa"* là câu về tầng |

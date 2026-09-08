@@ -11,7 +11,7 @@ Viết theo `docs/prompt-guideline.md`. Kiểm kết quả theo `quality/review-
 | Lane | Nội dung |
 |---|---|
 | `prompt/BA/` | pha 0 · BA — hành vi nghiệp vụ của mảng **bán hàng** |
-| `prompt/SD/` | pha 1 · System design — *cái gì bảo vệ cái gì*, mười hai bước `P1-XX` |
+| `prompt/SD/` | pha 1 · System design — *cái gì bảo vệ cái gì*, mười bốn bước `P1-XX` |
 | **`prompt/AD/`** | **lane admin — mảng quản trị, mã việc `ADM-XX`** |
 | `prompt/maintenance/` | sửa chính cái repo này, không thuộc lane nào |
 

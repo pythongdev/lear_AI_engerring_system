@@ -212,6 +212,23 @@ transcript_add "$t" "git add a.txt nhap.txt"
 echo two > "$r/a.txt"; echo x > "$r/nhap.txt"
 check "A8 file chưa track nhưng trong scope" 0 "$(run "$r" "$t")"
 
+# A9. khối liệt kê work/scope.txt nhưng NỘI DUNG chỉ còn comment → im (T-047,
+#     work/findings.md F-020: vị ngữ đổi từ "có mặt trong khối" sang "mang
+#     pattern trong khối" — bản đã commit chỉ được chứa comment, nên đưa file
+#     đã dọn sạch vào khối đúng là bước CLAUDE.md §7.3 đòi, không bị cấm)
+r="$(newrepo a9)"; t="$r/tr.jsonl"; setscope "$r" "a.txt"
+printf '%s\n' "# scope" > "$r/work/scope.txt"   # dọn sạch, chỉ còn comment
+transcript_add "$t" "git add a.txt work/scope.txt"
+echo two > "$r/a.txt"
+check "A9 scope.txt chỉ-comment trong khối → im" 0 "$(run "$r" "$t")"
+
+# A10. khối liệt kê work/scope.txt còn mang pattern → vẫn kêu (đối chứng của
+#      A9 — khác nhau đúng một chỗ: nội dung work/scope.txt)
+r="$(newrepo a10)"; t="$r/tr.jsonl"; setscope "$r" "a.txt"
+transcript_add "$t" "git add a.txt work/scope.txt"
+echo two > "$r/a.txt"
+check "A10 scope.txt còn pattern trong khối → kêu" 2 "$(run "$r" "$t")"
+
 if [ "$fails" -ne 0 ]; then
   echo "check-commit-block: $fails ca FAIL"; exit 1
 fi
