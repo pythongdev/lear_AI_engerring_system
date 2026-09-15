@@ -184,13 +184,158 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="in-progress"></a>
 ## In Progress
-- [ ] P1-11 **Diễn ba scenario nghiệm thu BA qua thiết kế pha 1, và ký cổng sang pha 2** — bước
-  11/14 (kế hoạch §6), **L2**, **cổng của cả pha**; tiền đề P1-02 → P1-10 đã `Done`. Chi tiết:
-  [P1-11](#p1-11) → `work/backlog_SD.md`
-
+- [ ] T-072 **Chủ quán đóng `U-048`: KHÔNG suất nào bưng kèm canh, số bát bếp bưng đúng bằng
+  lựa chọn của khách** — **L1**. Đang chạy. Mã là **T-072** vì `T-071` đã được phiên đóng `U-049`
+  nhận trong `work/scope.txt` (**F-014**).
+- [ ] T-074 **Chủ quán đóng `U-045`: máy KHÔNG kết luận một nguyên liệu đang thiếu — chủ quán tự đọc
+  hai con số rồi tự kết luận** — **L1**. Đang chạy (2026-09-15). Mã là **T-074** vì `T-072` ·
+  `T-073` đã được hai phiên khác nhận trong `work/scope.txt` (**F-014**).
+- [ ] T-073 **Chủ quán đóng `U-044`: hoàn tiền cho khoản đã chuyển khoản trả lại bằng gì — không có
+  luật cứng, POS quyết từng ca** — **L1**. Đang chạy (nhận 2026-09-08, tiếp tục 2026-09-15).
+- [ ] T-075 **Chủ quán đóng `U-050`: người đứng quầy (POS) gánh trạm của người đi giao, và khoảng
+  trống ấy KHÔNG là thiếu người vì đi giao lúc quán vắng** — **L1**. Đang chạy (2026-09-15). Mã là
+  **T-075** vì `T-072` · `T-073` · `T-074` đã được ba phiên khác nhận (**F-014**).
 
 <a id="done"></a>
 ## Done
+- [x] T-071 **Chủ quán đóng `U-049` — người ĐI GIAO là một trong bốn vai của §3, không phải người
+  thứ năm — nên con số nhân sự thật của quán đóng lại, còn CHỖ TRỐNG người ấy để lại thì không** —
+  **L1**. Nguyên văn: *"1 trong bốn vai trên có thể là bất cứ ai pos sẽ chỉ định."* Hai điều lời ấy
+  chốt: (1) **không có vai thứ năm** — bốn vai của `master_plan/shop-facts.md` §3 cộng chủ quán
+  ngoài năm trạm là hết, *đi giao* không thành trạm thứ sáu và không thêm dòng nào vào bảng ca hay
+  bảng lương; (2) **ai đi là POS chỉ định từng lần**, không luật cứng — cùng hình dạng *POS quyết
+  từng ca* ở §5.4 · §6.24, nên theo §6.10 việc chỉ định phải để lại vết. ⇒ Số **6** của §8.6
+  (*bao nhiêu người đang làm*) nay có nguồn; `C23` chỉ còn hỏi đầu người.
+  **Chỗ để hở ⇒ `U-050`:** lời chốt đi đúng vào nhánh mà chính `U-049` đã cảnh báo lúc còn mở —
+  *"lúc người ấy đi giao, trạm của họ trống"* — mà **không** nói ai gánh chỗ trống ấy, trong khi §3
+  đã chốt `quay` · `trang_banh` · `gap_banh` là **trạm riêng, không kiêm**. Không suy hộ (**F-004**):
+  ba đường ra đều lật một luật ở chỗ khác. Nên số **7** của §8.6 (*đang thiếu người hay không*) vẫn
+  chưa có nguồn, và vế chặn của ADM-04 · ADM-21 **chuyển chủ chứ không mất**: `U-049` ⇒ `U-050`;
+  số ba loại của lane admin **không đổi** (20 · 8 · 1).
+  *Kèm theo, L0:* mọi link `#L` từ `work/backlog_AD.md` sang `work/admin-questions.md` và
+  `docs/product/99-unknowns.md` đã trôi (C24…F55 lệch tới 7 dòng, `U-039`·`U-040`·`U-032` lệch
+  hàng trăm) — chỉnh lại đúng dòng trong cùng lượt (CLAUDE.md §7.2, *theo dấu con trỏ*).
+  *Nghiệm thu:* `./scripts/gate.sh` xanh; `./scripts/brief.sh` in `U-050` ở *Đang mở* và **không**
+  in `U-049`; `U-049` nằm ở *Đã có lời giải* với nguyên văn lời chủ quán.
+  Ghi ở: `master_plan/shop-facts.md` **§3** · §6.7 · §7.1 · §8.6 ·
+  `docs/product/99-unknowns.md` · `work/admin-questions.md` (A10 · C23) ·
+  `work/backlog_AD.md` (ADM-04 · ADM-21).
+
+- [x] T-070 **Gate 7b chặn một khối bàn giao HỢP LỆ vì một "file" tên `\` — và cùng phép lọc ấy
+  đang bỏ qua bảy trên mười file của chính khối đó** — **L1**, mở giữa lượt T-069 (`CLAUDE.md`
+  §3.4), đóng `work/findings.md` **F-039**. `scripts/check-commit-block.sh` đọc transcript **theo
+  từng dòng** và chỉ nhận dòng bắt đầu bằng `git add `. Nhưng `CLAUDE.md` §6.1 đòi **liệt kê từng
+  file**, nên mọi khối thật đều nối dòng bằng `\` — và cổng vì thế **(1) kêu nhầm**, dấu `\` cuối
+  dòng thành một token rồi thành một path "ngoài scope", **(2) chấm sót trong im lặng**, các dòng
+  từ thứ hai trở đi không khớp `git add ` nên không được nhìn thấy lấy một lần. Vế 2 là chỗ đắt:
+  nó mở lại đúng lỗ hổng **F-009** mà Gate 7b sinh ra để bịt — một file lạ nằm ở dòng thứ hai đi
+  qua cổng không ai chấm. **Sửa:** gộp dòng nối `\` **trước** khi tìm `git add ` (khối Python đọc
+  transcript) + một phòng hộ ở tầng shell để token `\` không bao giờ thành path. **Hai ca hồi quy,
+  mỗi ca bắt một vế**: **A7c** (khối nối dòng, mọi file trong scope ⇒ phải **im**) và **A7d** (file
+  ở **dòng thứ hai** ngoài scope ⇒ phải **kêu và nêu đích danh**) — ca A7d là ca mà một bản sửa chỉ
+  lo "hết kêu nhầm" sẽ trượt. **Đo hai chiều**: bỏ bản sửa ⇒ A7c FAIL (mong đợi 0, nhận 2) và A7d
+  không nêu được tên file; lắp lại ⇒ **20/20 ca qua**. **Lần thứ hai trong một ngày cổng này bắt
+  nhầm một khối hợp lệ** (F-035 sáng cùng ngày: hai encoding cho một đường dẫn) — hai nguyên nhân
+  khác nhau, một hình dạng: script đọc văn bản bằng phép lọc hẹp hơn thứ nó phải hiểu, rồi kết luận
+  như đã đọc hết. Bài học ghi trong F-039: khi một cổng bắt nhầm, câu đáng hỏi thứ hai là *nó còn
+  bỏ sót gì bằng chính phép lọc ấy* — ở đây là bảy trong mười file. **Không làm:** không nới lỏng
+  Gate 7b, không đụng ngữ nghĩa pattern (vẫn một chủ, `check-scope.sh --match`), không sửa khối
+  commit của T-069 để né cổng. Mục lục `work/findings.md` đếm lại: **39 finding — 30
+  Fixed/Resolved/Closed, 9 Open** (F-003). Gate xanh (2026-09-08)
+- [x] T-076 **Vế NGƯỜI của `U-041` cuối cùng cũng có tập để trỏ vào — bảng phân vai §3 — và lộ ra
+  rằng con số nhân sự thật của quán CHƯA đóng** — **L1**. *Mã cũ **T-070**, trùng với việc F-039 ngay
+  trên — đổi thành T-076 ngày 2026-09-15 (**F-014**); khối commit bàn giao 2026-09-08 ghi `T-070:` là sai.* Lượt trước chủ quán chỉ nói *"con người
+  đã có"*: nhận là có, nhưng không nói đường ấy **đọc vào đâu**, nên hàng 7 của `shop-facts.md`
+  §8.6 để trống đúng chỗ ấy trong khi hai đường kia đã có tập (nguyên liệu → §8.4, món → §4.9).
+  Lượt này chủ repo chỉ thẳng: tập của vế *người* là **§3** — năm trạm việc gộp thành bốn vai
+  (chủ quán chốt 2026-08-30), cộng chủ quán là vai riêng ngoài năm trạm. `U-041` **vẫn đóng**;
+  đây là đường thứ ba được hoàn tất, không phải một lần mở lại. Hai điều lượt này làm rõ và **không**
+  phải lời chủ quán (**F-004**): số **6** của bảng §8.6 (*bao nhiêu người đang làm*) khác số **7**
+  (*đang thiếu người hay không*) — gộp lại là mất đúng câu chủ quán hỏi; và chữ *thiếu người* **không
+  đồng đều giữa năm trạm**, vì §3 cho `canh` + `don_ban` chung một đôi tay còn ba trạm kia thì riêng.
+  **Chỗ để hở ⇒ `U-049`:** §3 chia bốn vai cho **năm trạm việc**, mà *đi giao* không phải một trạm,
+  còn §6.7 chỉ gọi người đi giao là *"nhân viên quán"* — không lời nào nói đó là một trong bốn vai
+  rời quán hay **người thứ năm**, và hai cách đọc cho hai con số nhân sự khác nhau mà cả nhánh **C**
+  (lương, ca, chấm công) đứng lên. Câu `C23` hỏi **tổng số**, không trả lời vế này — đã ghi cảnh báo
+  ngay dưới C23. Lane admin: **ADM-04 và ADM-21 không còn tách rời được** (vế *thiếu người* của mục
+  tổng quan đứng trên `C36`), số ba loại **không đổi** (20 · 8 · 1).
+  *Nghiệm thu:* `./scripts/gate.sh` xanh; `./scripts/brief.sh` in `U-049` ở *Đang mở*; `U-041` vẫn
+  nằm ở *Đã có lời giải* và bản ghi của nó nay kể cả ba đường.
+  Ghi ở: `master_plan/shop-facts.md` §8.6 · §6.7 · `docs/product/99-unknowns.md` ·
+  `work/admin-questions.md` (A10 · C23) · `work/backlog_AD.md` (ADM-04 · ADM-21).
+
+- [x] T-069 **Chủ quán đóng `U-046` và `U-047` trong một lượt — menu đi từ BỐN lên SÁU dòng, và một
+  trong hai dòng mới KHÔNG sinh một đồng doanh thu nào** — **L1**. Hai đáp án đều là **luật**, không
+  phải con số lẻ. **`U-047`**: *"đó là SỐ LƯỢNG khách gọi món bán rời. số bánh / số giò TRONG MỘT
+  SUẤT là không đổi."* ⇒ suất giò 4 bánh · suất trứng 4 bánh · combo 3 bánh là **hằng số chủ quán
+  nói thẳng** (trước lượt này chúng chỉ là dữ kiện 2026-08-19 chưa ai thử lật), nên §4.5 · §4.6 ·
+  §4.8 giữ nguyên từng chữ — và **giò thành một dòng menu bán rời**, thứ §4.3 chưa từng có.
+  **`U-046`**: *"canh bánh cuốn bưng kèm sẵn không tính tiền nhưng cần có trong menu để khách chọn
+  vì đôi khi 1 suất đầy đủ khách muốn có 2 bát canh, 1 bát cho con và 1 bát cho mẹ."* ⇒ một **dòng
+  menu 0đ có số lượng** — hình dạng chưa bảng nào trong repo có chỗ chứa. Đầu ra ở
+  `master_plan/shop-facts.md`: **§4.2** (hàng *1 bát canh = 0*, để luật 1 §4.6 vẫn cộng được) ·
+  **§4.3** (hai dòng mới) · **§4.5** (hai hàng thành phần, *sáu dòng menu*, bốn hàng cũ nguyên vẹn)
+  · **§4.8** (mười một ca → **mười ba**) · **§4.9** (ba dòng cuối nay có lời) · **§5.3** (dòng
+  `canh ×?`) · hai hàng nhật ký §7.1 · **S-9** §7.2. **Chỗ đắt nhất của lượt là §5.3**: trạm `canh`
+  tới hôm nay là *việc cấp ĐƠN, mọi đơn đều có*, số lượng suy ra bằng `số suất × số thành phần` —
+  lời chốt `U-046` làm phép nhân ấy **hết đúng** cho canh, nên trạm ấy nay có **hai** loại việc
+  trên cùng một đơn (nước chấm: cấp đơn, không số lượng · canh: có số lượng khách chọn). Không sửa
+  chỗ này thì bát canh thứ hai của khách không có đường nào xuống tới bếp. **Ô ⚠ đầu tiên quay lại
+  bảng giá kể từ 2026-08-30**: giá **9.000** của *giò bán rời* là **hệ quả tính từ luật 1 §4.6**
+  (một chiếc giò rời = một thành phần = 9.000), chủ quán **chưa đọc con số ấy thành lời** ⇒ **S-9**,
+  đúng hình dạng `S-1` ngày 2026-08-30 (**F-004**) — ba ô ấy mang dấu ⚠ chứ không được viết như đã
+  chốt. **Năm chỗ trong repo chép chữ *"bốn suất bán"* sửa trong CÙNG lần sửa** (`CLAUDE.md` §7.2):
+  `architecture.md` §6.1 (hai chỗ) · `0-ba/ban-hang/03-lat-cat.md` §3 · `08-scenario.md` ·
+  `work/backlog_AD.md`. Chỗ đáng nhất là **03-lat-cat.md**: câu *"Mọi suất bán đều kèm bánh cuốn"*
+  **thành sai** ngày hôm nay — giò bán rời và canh không kèm bánh cuốn — nên nó được viết lại thành
+  *mọi **SUẤT** đều kèm bánh, còn menu không chỉ có suất*. **Bốn chỗ sửa theo hướng bỏ số đếm cứng,
+  không thay bốn bằng sáu** (**F-018**, cùng đường ADR-042): tài liệu nay đọc *"từng dòng menu ở
+  §4.3"*, nên lần sau menu dài ra thì không chỗ nào phải sửa lại. **Hai chỗ CỐ Ý không sửa:**
+  `docs/product.md` (bản lưu trước khi tách — không sở hữu gì, ADR-014) và hàng nhật ký §7.1 ngày
+  **2026-08-19** (nó ghi đúng cái đã chốt hôm ấy; sửa nó là sửa lịch sử). **Mở `U-048`**: mỗi suất
+  kèm sẵn mấy bát canh, và con số khách chọn là **tổng số bát** hay **số bát thêm** — khách gọi 1
+  suất đầy đủ + *canh ×2* thì bếp múc **2** hay **3** bát; hai cách đọc cho hai số bát khác nhau
+  trên cùng một đơn, và đây là đôi tay đang kiêm cả `don_ban` (§3). Dấu `×?` ở ví dụ §5.3 đứng đó
+  chờ câu ấy, **không** điền số hộ (`CLAUDE.md` §3.5). **Lần thứ tư trong năm ngày một câu trả lời
+  đầy đủ để lộ một câu hỏi mới** (`U-032`→`U-037`, `U-040`→`U-042`, `U-041`→`U-045`, nay
+  `U-046`→`U-048`) — phép đếm, không phải quy luật (**F-003**). **Không làm:** không đặt giá cho
+  bát canh, không suy số bát kèm sẵn, không cho canh nhận nhân (chủ quán không nói gì về nhân cho
+  canh), không đổi một con số nào trong bốn hàng suất của §4.5, không chạm `U-044` · `U-045` của
+  hai phiên khác. Gate xanh — `./scripts/brief.sh` in `U-048`, không còn in `U-046` · `U-047`
+  (2026-09-08)
+- [x] P1-11 **Ba scenario nghiệm thu BA nay đã được diễn qua thiết kế, và cổng sang pha 2 ký 9/10 —
+  cả chín ô kèm lý do, ba chỗ không trỏ được có mã** — bước 11/14 (kế hoạch §6), **L2**, **cổng của
+  cả pha**; tiền đề P1-02 → P1-10 ✔. Đầu ra:
+  `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` (**mới**, một chủ) + **một** dòng vào
+  bảng *Pha 1* của `docs/product/00-index.md` trong cùng thay đổi. **Diễn 41 bước của ba scenario
+  (17 + 14 + 10), cộng 7 bước của một lát thứ tư mà ba scenario không có — một buổi mất kết nối**,
+  lát mà `01-ranh-gioi-he-thong.md` §5 đòi thẳng ở hàng P1-11 (*ba scenario phải đi qua được `PT-1`
+  và `PT-6`*); lát ấy **đi hết, không chỗ nào dừng**. **Tiền cộng lại từ `master_plan/shop-facts.md`
+  §4.2 · §4.4, không đọc con số của scenario** — mười ba dòng khớp **từng đồng**, kể cả ba bậc phụ
+  thu **×1 · ×4 · ×5** (suất trứng ×5 vì quả trứng cũng nhận nhân, suất giò ×4 vì giò **không**
+  nhận). Đây là phép duy nhất bắt được loại **F-022**, và là lý do `I-013` chỉ tới **tầng 3**: không
+  ràng buộc nào đọc được một con số **đến từ đâu**. **Ba chỗ KHÔNG trỏ được — ghi mã, KHÔNG lấp**,
+  đúng luật của bước: **`F-036`** phép đối chiếu hẹp hơn mệnh đề nó nhận giữ (`I-004` việc **cấp
+  đơn** nước chấm · `I-009` vế **ngừng bán**) — và **ô cổng thứ nhất vẫn tick xanh** vì phép chứng
+  minh của nó là *đối chiếu **danh sách mã***, không phải **vế** (cùng họ **F-012**); **`F-037`**
+  khoản **trả trước** có mốc tính tiền (**ADR-040**) mà không có dòng nào trong công thức đối soát
+  để đứng — `02-thoi-gian-ngay-ban.md` §4 giao dòng ấy cho *"P1-04 trở đi"* từ 2026-09-04 và **không
+  bước nào nhận** (cùng họ **F-024** · **F-027**), đường trực tiếp tới `RR-5`; **`F-038`** *"thiếu
+  một trường bắt buộc thì đơn không tạo được"* — luật pha 0 đã chốt (§3.2.4) mà không mệnh đề
+  `I-0xx` nào, không ô bảng bảo vệ nào, không dòng `YC-XX` nào nói, nên **không ô cổng nào** nhìn
+  thấy nó. **Hai chỗ dừng không tính là phát hiện** (`03-bao-ve-invariant.md` §2.2 · §2.3 đã báo
+  trước): **`S-6`** và `I-004` vế **tầng 4**. **Chỗ ký cổng ở file mới §7, KHÔNG ở kế hoạch §9** —
+  kế hoạch nhận **một** khối trỏ sang và mười hộp `- [ ]` của nó ở lại nguyên, vì hai bản tick sẽ
+  trôi khỏi nhau (**F-001** · **F-033**); đúng cách chín hộp cổng BA vẫn `- [ ]` ở
+  `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §12 trong khi chỗ ký là `08-scenario.md`.
+  **Không sửa một chữ** của `quality/invariants.md` · `master_plan/shop-facts.md` ·
+  `docs/product/0-ba/` · sáu file pha 1 của các bước trước · `architecture.md` (`git diff --stat`
+  rỗng ở cả bảy) — ba scenario là **đầu vào**, sửa chúng để chúng đi qua được thiết kế là chạy phép
+  thử ngược. **Không sinh ADR** (bước này **đo**, không chọn giữa hai thiết kế) và **không sửa hộ**
+  bốn ô còn lại của **F-033** (tiền lệ **F-032**) — chỉ **thêm một hàng đo được** vào chính F-033:
+  hàng `S-5` của kế hoạch §8 còn ghi *chặn P1-07 · P1-09* trong khi cả hai đã `Done`. ⇒ **P1-12 hết
+  bị P1-11 chặn**; nó nhận đúng **một** ô cổng chưa ký, và file mới này vào tập bị rà. Gate xanh
+  (2026-09-08)
 - [x] T-068 **Chủ quán đọc ra MENU thành một danh sách — bảy tên khớp đúng bảng giá đang có, hai
   tên là thứ §4 chưa từng có** — **L1**, lời bổ sung cho `U-041` (câu ấy **vẫn đóng**, T-067 cùng
   ngày). Nguyên văn 2026-09-08: *"đối với nguyên liệu và con người đã có. đối với menu: tôi muốn có

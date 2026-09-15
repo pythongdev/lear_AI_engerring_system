@@ -62,16 +62,39 @@ phải kỹ thuật: nó là câu hỏi chưa hỏi được chủ quán. Con s�
 ⚠️ **Nhánh A đóng ngày 2026-09-04 (T-056).** Chủ quán trả lời cả mười câu `A1`…`A10`; lời chốt đã
 về owner và nhóm A đã bị gạch khỏi `work/admin-questions.md` §3. Số câu chưa trả lời đi từ **54**
 xuống **44** (đếm bằng `grep -c '^> \*\*Trả lời:\*\*$'`), và **ADM-01 · ADM-02 chuyển từ loại 1
-sang loại 2**. Bốn vế chủ quán không chạm tới thành **U-038** · **U-039** · **U-040** · **U-041**.
+sang loại 2**. Bốn vế chủ quán không chạm tới thành **U-038** · **U-039** · **U-040** · **U-041**
+(cả bốn nay đã đóng — `U-041` là câu cuối, đóng 2026-09-08).
 
-⚠️ **Ngày 2026-09-06, chủ quán đóng thêm `U-034` · `U-038` · `U-039` · `U-040`** (chỉ `U-041` còn
-mở). ⇒ **ADM-03 hết chặn** (U-039 · U-040 cả hai đã có lời) → chuyển **loại 2**; **ADM-10 · ADM-12 ·
-ADM-13** hẹp bớt một vế chặn (`U-034` đóng, nhưng các câu `B11`…`B21` của chính nhánh B vẫn chưa có
-lời — ba việc **vẫn** loại 1); **ADM-04** vẫn loại 1, chặn bởi `U-041` (chưa trả lời) và `F52`·`F53`.
+⚠️ **Ngày 2026-09-06, chủ quán đóng thêm `U-034` · `U-038` · `U-039` · `U-040`** (lúc ấy chỉ
+`U-041` còn mở). ⇒ **ADM-03 hết chặn** (U-039 · U-040 cả hai đã có lời) → chuyển **loại 2**;
+**ADM-10 · ADM-12 · ADM-13** hẹp bớt một vế chặn (`U-034` đóng, nhưng các câu `B11`…`B21` của chính
+nhánh B vẫn chưa có lời — ba việc **vẫn** loại 1).
+
+⚠️ **Ngày 2026-09-08, chủ quán đóng `U-041`** — vế *"còn thiếu gì không"* của mục tổng quan là
+thiếu **NGUYÊN LIỆU**, tập nguyên liệu là *Danh mục nguyên liệu* `master_plan/shop-facts.md` §8.4
+(T-067). **ADM-04 KHÔNG đổi loại:** lời ấy chốt *thiếu cái gì* nhưng không chốt *máy biết bằng cách
+nào* ⇒ mở **U-045**, nên ADM-04 **vẫn loại 1**, nay chặn bởi `U-045` · `F52` · `F53`. Con số ba
+loại ở bảng dưới **không đổi** (20 · 8 · 1).
+
+⚠️ **Hai lượt sau, cùng ngày, vế ấy hoá ra có CẢ BA đường** — thêm **món** (tập ở `shop-facts.md`
+§4.9, T-068) và **người** (tập ở **bảng phân vai §3**, T-076). **ADM-04 vẫn loại 1** và vẫn đúng ba
+vế chặn cũ — nhưng đường *người* kéo **ADM-21 vào cùng một màn**: vế *thiếu người* của mục tổng
+quan đứng trên `C36` (*ai đang trực trạm nào*), và trên **`U-049`** (*người đi giao là một trong
+bốn vai của §3 hay người thứ năm*). ⇒ **ADM-04 và ADM-21 không còn tách rời được**: làm xong ADM-04
+mà `C36` chưa có lời thì hàng 7 của §8.6 hiện được hai phần ba, thiếu đúng phần *người*. Con số ba
+loại **không đổi** (20 · 8 · 1) — `U-049` không đẻ ra việc mới, nó làm rộng vế chặn của việc đã có.
+
+⚠️ **Cùng ngày 2026-09-08, lượt kế tiếp, chủ quán ĐÓNG `U-049`** (T-071): người đi giao là **một
+trong bốn vai** của `master_plan/shop-facts.md` §3, **POS chỉ định** từng lần — nguyên văn *"1
+trong bốn vai trên có thể là bất cứ ai pos sẽ chỉ định."* ⇒ **con số nhân sự thật của nhánh C đóng
+lại: bốn vai + chủ quán**, không có dòng thứ năm nào cho việc đi giao, nên `C23` nay chỉ còn hỏi
+đầu người. **Nhưng lời ấy mở `U-050`** — *lúc một vai rời quán đi giao thì trạm của người ấy ai
+gánh* — và vế chặn của ADM-04 · ADM-21 **chuyển chủ chứ không mất**: `U-049` ⇒ `U-050`. Con số ba
+loại vẫn **không đổi** (20 · 8 · 1).
 
 | Nhánh | Câu hỏi ở `admin-questions.md` §3 | Việc bị chặn |
 |---|---|---|
-| ~~**A** — một buổi bán~~ | ~~`A1`…`A10`~~ **ĐÃ TRẢ LỜI CẢ MƯỜI, 2026-09-04** (T-056) — còn lại **U-041** (`U-038`·`U-039`·`U-040` đóng 2026-09-06) | **hết chặn:** ADM-01 · ADM-02 · ADM-03 → loại 2 · **còn chặn:** ADM-04 (U-041) |
+| ~~**A** — một buổi bán~~ | ~~`A1`…`A10`~~ **ĐÃ TRẢ LỜI CẢ MƯỜI, 2026-09-04** (T-056); bốn vế bỏ trống nay cũng đóng hết (`U-038`·`U-039`·`U-040` 2026-09-06 · **`U-041` 2026-09-08**) | **hết chặn:** ADM-01 · ADM-02 · ADM-03 → loại 2 · **còn chặn:** ADM-04 — nhưng bằng **U-045** (mở ra từ chính lời đáp `U-041`), không còn bằng câu nhánh A nào |
 | **B** — nguyên liệu | `B11`…`B22` (12 câu, `B18` trả lời **một nửa**) — **U-034 đóng 2026-09-06** | ADM-10 · ADM-11 · ADM-12 · ADM-13 · ADM-14 · ADM-15 |
 | **C** — con người | `C23`…`C36` (14 câu, **chưa câu nào**) | ADM-20 · ADM-21 · ADM-22 · ADM-23 · ADM-24 |
 | **D** — sản phẩm | `D37`…`D43` (7 câu, **chưa câu nào**) | ADM-32 · ADM-33 (ADM-30 chỉ vướng vế quyền, ADM-31 không vướng) |
@@ -84,7 +107,7 @@ lời — ba việc **vẫn** loại 1); **ADM-04** vẫn loại 1, chặn bởi
 
 | Loại | Nghĩa là gì | Gồm |
 |---|---|---|
-| **1 — thiếu LUẬT** | phải hỏi chủ quán trước, không phiên nào được suy hộ (`CLAUDE.md` §3.5) | **hai mươi** việc: **ADM-04** (nhánh A còn lại — U-041), cả nhánh **B** (6) · **C** (5), ADM-32 · ADM-33 · ADM-42 · ADM-43 · ADM-44 · ADM-45 · ADM-51 · ADM-52 |
+| **1 — thiếu LUẬT** | phải hỏi chủ quán trước, không phiên nào được suy hộ (`CLAUDE.md` §3.5) | **hai mươi** việc: **ADM-04** (nhánh A hết chặn 2026-09-08, nay chặn bởi **U-045**), cả nhánh **B** (6) · **C** (5), ADM-32 · ADM-33 · ADM-42 · ADM-43 · ADM-44 · ADM-45 · ADM-51 · ADM-52 |
 | **2 — luật ĐÃ ĐỦ, thiếu THI CÔNG** | phần nghiệp vụ đã chốt sẵn; cái còn lại thuộc pha 2–4, **không** thuộc lane này | **tám** việc: **ADM-01** · **ADM-02** (2026-09-04 — T-056) · **ADM-03** (mới, 2026-09-06 — U-039/U-040 đóng) · ADM-30 · ADM-31 · ADM-40 · ADM-41 · ADM-50 (ADM-52 nằm một nửa ở đây) |
 | **3 — việc của chính lane** | nhận được ngay, không chờ ai | **một** việc: **ADM-53** |
 
@@ -160,32 +183,32 @@ hàng thì lấy lại số bằng `grep -n` ngay lượt ấy, đừng chép t�
 |---|---|:--:|:--:|---|
 | [ADM-01](#adm-01) | ca bán | A | 2 | *hết chặn* — chờ thi công pha 2–4 |
 | [ADM-02](#adm-02) | thứ tự bưng | A | 2 | *hết chặn* — chờ thi công pha 2–4 |
-| [ADM-03](#adm-03) | sức chứa | A | 2 | *hết chặn* (đóng 2026-09-06: [`U-039`](../docs/product/99-unknowns.md#L123) [`U-040`](../docs/product/99-unknowns.md#L124)) |
-| [ADM-04](#adm-04) | tổng quan buổi bán | A | 1 | [`U-041`](../docs/product/99-unknowns.md#L61) · [`F52`](admin-questions.md#L275) · [`F53`](admin-questions.md#L278) |
-| [ADM-10](#adm-10) | danh mục nguyên liệu | B | 1 | [`B11`](admin-questions.md#L137) [`B12`](admin-questions.md#L140) |
-| [ADM-11](#adm-11) | phiếu nhập hàng | B | 1 | [`B13`](admin-questions.md#L143)…[`B17`](admin-questions.md#L155) |
-| [ADM-12](#adm-12) | hao hụt / đồ thừa | B | 1 | vế còn lại của [`B18`](admin-questions.md#L158) · [`B19`](admin-questions.md#L164) [`B20`](admin-questions.md#L167) |
-| [ADM-13](#adm-13) | tồn ước tính | B | 1 | [`B21`](admin-questions.md#L170) |
-| [ADM-14](#adm-14) | nối nút tạm dừng | B | 1 | [`B21`](admin-questions.md#L170) + [**ADM-13**](#adm-13) |
-| [ADM-15](#adm-15) | công nợ nhà cung cấp | B | 1 | [`B16`](admin-questions.md#L152) + [**ADM-11**](#adm-11) |
-| [ADM-20](#adm-20) | hồ sơ nhân viên | C | 1 | [`C23`](admin-questions.md#L179) [`C24`](admin-questions.md#L182) [`C25`](admin-questions.md#L185) + [**Đ-4**](admin-questions.md#L54) chưa về owner |
-| [ADM-21](#adm-21) | ai đang trực trạm | C | 1 | [`C36`](admin-questions.md#L218) ⚠️ **đòn bẩy lớn nhất cả lane** |
-| [ADM-22](#adm-22) | chấm công | C | 1 | [`C30`](admin-questions.md#L200) [`C31`](admin-questions.md#L203) [`C32`](admin-questions.md#L206) + [**Đ-4**](admin-questions.md#L54) chưa về owner |
-| [ADM-23](#adm-23) | bảng lương | C | 1 | [`C24`](admin-questions.md#L182) [`C26`](admin-questions.md#L188)…[`C29`](admin-questions.md#L197) [`C33`](admin-questions.md#L209) + [**ADM-22**](#adm-22) + [**Đ-4**](admin-questions.md#L54) |
-| [ADM-24](#adm-24) | quyền xem lương | C | 1 | [`C34`](admin-questions.md#L212) [`C35`](admin-questions.md#L215) [`F55`](admin-questions.md#L284) + [**ADM-23**](#adm-23) |
-| [ADM-30](#adm-30) | ai được sửa giá thành phần | D | 2 | nửa còn chặn: [`D40`](admin-questions.md#L233) |
+| [ADM-03](#adm-03) | sức chứa | A | 2 | *hết chặn* (đóng 2026-09-06: [`U-039`](../docs/product/99-unknowns.md#L296) [`U-040`](../docs/product/99-unknowns.md#L297)) |
+| [ADM-04](#adm-04) | tổng quan buổi bán | A | 1 | [`U-045`](../docs/product/99-unknowns.md#L117) · [`F52`](admin-questions.md#L282) · [`F53`](admin-questions.md#L285) — *`U-041` đóng 2026-09-08, cả ba đường*; vế **người** còn đứng trên [`C36`](admin-questions.md#L225) → [ADM-21](#adm-21) và [`U-050`](../docs/product/99-unknowns.md#L191) (*`U-049` đóng cùng ngày*) |
+| [ADM-10](#adm-10) | danh mục nguyên liệu | B | 1 | [`B11`](admin-questions.md#L138) [`B12`](admin-questions.md#L141) |
+| [ADM-11](#adm-11) | phiếu nhập hàng | B | 1 | [`B13`](admin-questions.md#L144)…[`B17`](admin-questions.md#L156) |
+| [ADM-12](#adm-12) | hao hụt / đồ thừa | B | 1 | vế còn lại của [`B18`](admin-questions.md#L159) · [`B19`](admin-questions.md#L165) [`B20`](admin-questions.md#L168) |
+| [ADM-13](#adm-13) | tồn ước tính | B | 1 | [`B21`](admin-questions.md#L171) |
+| [ADM-14](#adm-14) | nối nút tạm dừng | B | 1 | [`B21`](admin-questions.md#L171) + [**ADM-13**](#adm-13) |
+| [ADM-15](#adm-15) | công nợ nhà cung cấp | B | 1 | [`B16`](admin-questions.md#L153) + [**ADM-11**](#adm-11) |
+| [ADM-20](#adm-20) | hồ sơ nhân viên | C | 1 | [`C23`](admin-questions.md#L180) [`C24`](admin-questions.md#L189) [`C25`](admin-questions.md#L192) + [**Đ-4**](admin-questions.md#L54) chưa về owner |
+| [ADM-21](#adm-21) | ai đang trực trạm | C | 1 | [`C36`](admin-questions.md#L225) ⚠️ **đòn bẩy lớn nhất cả lane** — nay đỡ thêm vế *thiếu người* của [ADM-04](#adm-04); con số nhân sự thật **đã đóng 2026-09-08** (`U-049`: bốn vai, POS chỉ định người đi giao), chỗ còn chờ là [`U-050`](../docs/product/99-unknowns.md#L191) — trạm bị bỏ trống lúc đi giao |
+| [ADM-22](#adm-22) | chấm công | C | 1 | [`C30`](admin-questions.md#L207) [`C31`](admin-questions.md#L210) [`C32`](admin-questions.md#L213) + [**Đ-4**](admin-questions.md#L54) chưa về owner |
+| [ADM-23](#adm-23) | bảng lương | C | 1 | [`C24`](admin-questions.md#L189) [`C26`](admin-questions.md#L195)…[`C29`](admin-questions.md#L204) [`C33`](admin-questions.md#L216) + [**ADM-22**](#adm-22) + [**Đ-4**](admin-questions.md#L54) |
+| [ADM-24](#adm-24) | quyền xem lương | C | 1 | [`C34`](admin-questions.md#L219) [`C35`](admin-questions.md#L222) [`F55`](admin-questions.md#L291) + [**ADM-23**](#adm-23) |
+| [ADM-30](#adm-30) | ai được sửa giá thành phần | D | 2 | nửa còn chặn: [`D40`](admin-questions.md#L240) |
 | [ADM-31](#adm-31) | bật/tắt món | D | 2 | *hết chặn* — không thiếu gì |
-| [ADM-32](#adm-32) | thêm món mới | D | 1 | [`D37`](admin-questions.md#L224) [`D38`](admin-questions.md#L227) [`D42`](admin-questions.md#L239) + lời mở lại ranh giới sản phẩm |
-| [ADM-33](#adm-33) | menu QR: ảnh và thứ tự | D | 1 | [`D43`](admin-questions.md#L242) |
-| [ADM-40](#adm-40) | doanh thu ngày | E | 2 | nửa còn chặn: [`E47`](admin-questions.md#L257) |
+| [ADM-32](#adm-32) | thêm món mới | D | 1 | [`D37`](admin-questions.md#L231) [`D38`](admin-questions.md#L234) [`D42`](admin-questions.md#L246) + lời mở lại ranh giới sản phẩm |
+| [ADM-33](#adm-33) | menu QR: ảnh và thứ tự | D | 1 | [`D43`](admin-questions.md#L249) |
+| [ADM-40](#adm-40) | doanh thu ngày | E | 2 | nửa còn chặn: [`E47`](admin-questions.md#L264) |
 | [ADM-41](#adm-41) | đối soát cuối ngày | E | **2 + L3** | nửa dưới chặn: [`A3`](admin-questions.md#L114) [`A4`](admin-questions.md#L115) |
-| [ADM-42](#adm-42) | sổ chi | E | 1 | [`E44`](admin-questions.md#L248) [`E45`](admin-questions.md#L251) [`E46`](admin-questions.md#L254) + [**ADM-11**](#adm-11) |
-| [ADM-43](#adm-43) | lãi/lỗ | E | 1 | [`E47`](admin-questions.md#L257) + [**ADM-42**](#adm-42) + [**ADM-23**](#adm-23) + [**ADM-11**](#adm-11) |
-| [ADM-44](#adm-44) | quỹ và két | E | **1 + L3** | [`A3`](admin-questions.md#L114) [`A4`](admin-questions.md#L115) [`E49`](admin-questions.md#L263) + [**ADM-01**](#adm-01) |
-| [ADM-45](#adm-45) | bán chạy / giờ cao điểm | E | 1 | [`E48`](admin-questions.md#L260) |
-| [ADM-50](#adm-50) | vết thao tác | F | **2 + L3** | vế *ai* chặn bởi [`C36`](admin-questions.md#L218) → [**ADM-21**](#adm-21) |
-| [ADM-51](#adm-51) | phân quyền mảng quản trị | F | 1 | [`C34`](admin-questions.md#L212) [`C35`](admin-questions.md#L215) [`F52`](admin-questions.md#L275) [`F53`](admin-questions.md#L278) [`F55`](admin-questions.md#L284) |
-| [ADM-52](#adm-52) | nhập bù (mất điện) | F | 1 | nửa dưới chặn: [`U-032`](../docs/product/99-unknowns.md#L136) [`F54`](admin-questions.md#L281) |
+| [ADM-42](#adm-42) | sổ chi | E | 1 | [`E44`](admin-questions.md#L255) [`E45`](admin-questions.md#L258) [`E46`](admin-questions.md#L261) + [**ADM-11**](#adm-11) |
+| [ADM-43](#adm-43) | lãi/lỗ | E | 1 | [`E47`](admin-questions.md#L264) + [**ADM-42**](#adm-42) + [**ADM-23**](#adm-23) + [**ADM-11**](#adm-11) |
+| [ADM-44](#adm-44) | quỹ và két | E | **1 + L3** | [`A3`](admin-questions.md#L114) [`A4`](admin-questions.md#L115) [`E49`](admin-questions.md#L270) + [**ADM-01**](#adm-01) |
+| [ADM-45](#adm-45) | bán chạy / giờ cao điểm | E | 1 | [`E48`](admin-questions.md#L267) |
+| [ADM-50](#adm-50) | vết thao tác | F | **2 + L3** | vế *ai* chặn bởi [`C36`](admin-questions.md#L225) → [**ADM-21**](#adm-21) |
+| [ADM-51](#adm-51) | phân quyền mảng quản trị | F | 1 | [`C34`](admin-questions.md#L219) [`C35`](admin-questions.md#L222) [`F52`](admin-questions.md#L282) [`F53`](admin-questions.md#L285) [`F55`](admin-questions.md#L291) |
+| [ADM-52](#adm-52) | nhập bù (mất điện) | F | 1 | nửa dưới chặn: [`U-032`](../docs/product/99-unknowns.md#L309) [`F54`](admin-questions.md#L288) |
 | [ADM-53](#adm-53) | đưa Đ-2 và Đ-4 về owner | F | **3** | *hết chặn* — nhận được ngay, mở khoá cả nhánh C |
 
 **Mã số không đánh lại.** `ADM-05`…`ADM-09`, `ADM-16`…`ADM-19`, `ADM-25`…`ADM-29`, `ADM-34`…`ADM-39`
@@ -392,7 +415,7 @@ là thi công):
 <a id="adm-04"></a>
 ### ADM-04 — Chủ quán không đứng quầy thì hôm nay không có gì để nhìn, vì mọi màn đã tả đều là màn của người đang làm việc
 
-**L1** · nhánh A · **vẫn loại 1 — chặn bởi `U-041`, và một nửa nằm ở `F52` `F53`** (hẹp lại 2026-09-04, T-056: `A10` đã có lời)
+**L1** · nhánh A · **vẫn loại 1 — chặn bởi `U-045`, và một nửa nằm ở `F52` `F53`** (hẹp lại 2026-09-04, T-056: `A10` đã có lời; hẹp lại lần hai 2026-09-08, T-067: `U-041` đã có lời, `U-045` thế chỗ)
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -416,16 +439,20 @@ hỏi chủ quán cần gì.
 
 **Chặn bởi — hỏi gì trước** (viết lại 2026-09-04, T-056, sau khi chủ quán trả lời `A10`):
 
-**Đã có lời, và đã về owner** — `master_plan/shop-facts.md` **§8.6** giữ **sáu con số** chủ quán gọi
-tên: đang làm cho bao nhiêu người ăn · đưa ra được bao nhiêu · còn thiếu bao nhiêu · bán được như
-nào rồi · **số tiền dự tính** đã bán được · có bao nhiêu người đang làm. Chữ *dự tính* là của chủ
-quán: con số ấy là **tạm tính trong buổi**, và không bao giờ được bày như thể đã đối soát (§6.10).
+**Đã có lời, và đã về owner** — `master_plan/shop-facts.md` **§8.6** giữ **bảy con số** chủ quán
+gọi tên: đang làm cho bao nhiêu người ăn · đưa ra được bao nhiêu · còn thiếu bao nhiêu · bán được
+như nào rồi · **số tiền dự tính** đã bán được · có bao nhiêu người đang làm · **còn thiếu gì không**
+(hàng thứ bảy, có nghĩa từ 2026-09-08). Chữ *dự tính* là của chủ quán: con số ấy là **tạm tính
+trong buổi**, và không bao giờ được bày như thể đã đối soát (§6.10).
 
 **Còn chặn — ba câu:**
-- **U-041** (`docs/product/99-unknowns.md`) — vế thứ bảy chủ quán nói mà chưa ai hiểu:
-  *"còn thiếu gì không"*. Thiếu **nguyên liệu**, thiếu **người**, hay thiếu **món**? Đường *nguyên
-  liệu* đụng thẳng mức **sổ ghi tay điện tử** của §8.4 — máy không tự trừ tồn thì máy **không tự
-  biết** cái gì sắp hết.
+- **U-045** (`docs/product/99-unknowns.md`) — vế thứ bảy **đã biết là thiếu gì, chưa biết máy nhìn
+  ra bằng cách nào.** `U-041` đóng 2026-09-08: *"còn thiếu gì không"* là thiếu **nguyên liệu**, và
+  tập nguyên liệu là *Danh mục nguyên liệu* §8.4. Chỗ còn hở là chỗ `U-041` đã báo trước — §8.4 giữ
+  máy ở mức **sổ ghi tay điện tử** (máy không tự trừ tồn) và danh mục mới chỉ có **tên**, chưa có
+  **đơn vị tính** và **ngưỡng nhắc sắp hết**, nên hàng số 7 chưa có nguồn nào sinh ra chữ *thiếu*.
+  Hai đường ra — lật ngược §8.4, hoặc một ngưỡng người tự nhập — là câu của **chủ quán**, không
+  phải của việc này.
 - `F52` (phần quản trị chạy trên máy gì) · `F53` (có muốn xem từ nhà, ngoài giờ bán không). `F53`
   trả lời *"có"* thì việc này kéo theo **ADM-51** (ai được xem gì) và không còn là L1.
 
@@ -888,7 +915,7 @@ tạo giá vào bất kỳ file admin nào — nó đã có owner và bản th�
 | Vế | Đã chốt ở | Trạng thái |
 |---|---|---|
 | giá một suất = **tổng giá thành phần**, nên màn quản trị sửa **thành phần** | `master_plan/shop-facts.md` §4.6 quy tắc 1 · `docs/product/1-system-design/architecture.md` §6.1 | ✅ đủ |
-| màn phải cho **xem trước bốn suất thành bao nhiêu** trước khi lưu | `architecture.md` §6.1 | ✅ đủ |
+| màn phải cho **xem trước từng dòng menu thành bao nhiêu** trước khi lưu | `architecture.md` §6.1 | ✅ đủ |
 | đơn cũ **không** đổi giá; tên và giá chụp lại lúc đặt | `architecture.md` §6.1 · `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3 | ✅ đủ |
 | đổi giá được **giữa buổi**; mốc khoá giá là **từng dòng** | `docs/decisions.md` **ADR-023** | ✅ đủ |
 | **ai** được bấm | — | ❌ **`D40`** |

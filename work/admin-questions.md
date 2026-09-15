@@ -118,10 +118,11 @@ văn lời chủ quán nằm ở owner bên dưới, một chỗ, không có b�
 | ~~`A7`~~ | **11 bàn** — đúng con số §1 đã có từ 2026-08-30 | §1 · **§6.25** · mở U-040, đóng 2026-09-06: 4 chỗ/bàn, đã đánh số — và số bàn đổi **11 → 15** trong cùng lời đáp; xem U-042 |
 | ~~`A8`~~ | **có** khách đứng chờ, quán xếp hàng chờ | **§6.25** · mở U-039, đóng 2026-09-06: **không**, POS tự điều phối |
 | ~~`A9`~~ | **cả hai** — khách tự chọn, đôi khi nhân viên xếp | **§6.25** |
-| ~~`A10`~~ | **sáu con số** cho mục tổng quan của chủ quán | **§8.6** · còn mở: **U-041** (*"còn thiếu gì"* là thiếu gì) |
+| ~~`A10`~~ | **sáu con số** cho mục tổng quan của chủ quán | **§8.6** · mở U-041, đóng 2026-09-08 qua **ba lượt**: *"còn thiếu gì"* là **cả ba** đường — nguyên liệu (Danh mục §8.4) · **người** (bảng phân vai §3) · món (§4.9) ⇒ §8.6 nay **bảy** hàng; *máy biết bằng cách nào*: nguyên liệu **đóng 2026-09-15** — máy không biết, chủ quán tự đọc hai con số rồi tự kết luận (**U-045**; mục tổng quan bày gì thì còn **U-051**), người **C36** + **U-050** (**U-049** đóng cùng ngày: người đi giao là một trong bốn vai, POS chỉ định) |
 
 ⚠️ **Bốn vế chủ quán KHÔNG chạm tới đã thành câu hỏi có mã, không thành suy luận** —
-**U-038** · **U-039** · **U-040** · **U-041** ở `docs/product/99-unknowns.md`. Chúng ở đó chứ không
+**U-038** · **U-039** · **U-040** · **U-041** ở `docs/product/99-unknowns.md`. *Cả bốn nay đã có
+lời (`U-041` là câu cuối, đóng 2026-09-08 — và lời đáp của nó mở ra **U-045**, đóng 2026-09-15, lời đáp ấy lại mở **U-051**).* Chúng ở đó chứ không
 ở đây, vì file này sẽ bị xoá còn `99-unknowns.md` thì không, và vì `scripts/brief.sh` đẩy danh sách
 unknown vào mọi phiên mới (`CLAUDE.md` §7.1).
 
@@ -138,6 +139,9 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > **Trả lời:**
 
 **B12.** Mỗi thứ mua theo **đơn vị gì** (kg, quả, bó, chai, thùng, con)?
+> ⚠️ Từ 2026-09-15 đây là chỗ hở **duy nhất** còn lại của danh mục nguyên liệu `shop-facts.md`
+> §8.4: phần *ngưỡng* đã đóng (`U-045` — không có ngưỡng), phần *đơn vị* thì không, và nó không
+> còn mã `U-XXX` nào giữ hộ — chỉ còn câu này.
 > **Trả lời:**
 
 **B13.** Quán **mấy ngày mua một lần**? Sáng nào cũng mua, hay mua theo tuần?
@@ -168,7 +172,10 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > **Trả lời:**
 
 **B21.** Muốn máy **nhắc "sắp hết X"** thì dựa vào cái gì — chủ quán tự đặt ngưỡng, hay đếm tay rồi nhập vào?
-> **Trả lời:**
+> **Trả lời (2026-09-15, qua `U-045`, đóng):** *"chủ quán tự đọc rôi đưa ra kết luận"* — **không
+> có ngưỡng**, máy **không** nhắc *sắp hết*; chủ quán đọc cặp số mua vào · đã dùng rồi tự kết
+> luận. Ghi ở `master_plan/shop-facts.md` §8.4. Chủ quán đọc ở màn nào, con số nào ⇒
+> `docs/product/99-unknowns.md` **U-051**.
 
 **B22.** Có muốn biết **giá vốn một suất bánh cuốn** không? *(Trả lời "có" là **mở lại Đ-3**: phải chốt định lượng từng thành phần cho từng suất — thứ hôm nay chưa có dữ kiện nào.)*
 > **Trả lời:**
@@ -177,6 +184,12 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 *Đã chốt: làm **cả ba mức** (Đ-4). Nhóm này mở khoá ADM-20 → ADM-24, và bịt chỗ thiếu `architecture.md` §8.*
 
 **C23.** Quán có **bao nhiêu người** làm, kể cả người nhà?
+> ⚠️ Câu này hỏi **tổng số**. Vế *người đi giao nằm trong hay ngoài bốn vai của
+> `master_plan/shop-facts.md` §3* thì **đã có lời** — chủ quán chốt 2026-09-08 (`U-049`, đóng):
+> **một trong bốn vai**, POS chỉ định từng lần, không có người thứ năm. Nên C23 nay chỉ còn hỏi
+> đúng phần nó hỏi: **đầu người thật**, kể cả người nhà. ⚠️ Chỗ vẫn chưa có lời và vẫn chặn việc
+> xếp ca là `docs/product/99-unknowns.md` **U-050** — *lúc một vai rời quán đi giao thì trạm của
+> người ấy ai gánh*. Hỏi C23 xong mà quên U-050 thì vẫn không xếp được ca.
 > **Trả lời:**
 
 **C24.** Người nhà làm **không lương** có phải nằm trong bảng lương không?

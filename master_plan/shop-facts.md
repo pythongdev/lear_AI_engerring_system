@@ -119,6 +119,38 @@ Chủ quán (`owner`) là một vai riêng, **ngoài** năm trạm trên — nh�
 quầy** (chốt 2026-08-30), tức làm đúng việc của trạm `quay`. Chủ quán đứng quầy vẫn là chủ quán;
 vai quản trị không mất đi.
 
+**Người ĐI GIAO là MỘT TRONG BỐN VAI trên, không phải người thứ năm — và ai đi là do POS chỉ định
+từng lần** (chủ quán chốt **2026-09-08**, trả lời `U-049`). Nguyên văn: *"1 trong bốn vai trên có
+thể là bất cứ ai pos sẽ chỉ định."*
+
+- **Con số người của quán đóng lại ở đây: bốn vai, cộng chủ quán ngoài năm trạm.** Việc đi giao
+  **không** thêm một dòng nào vào bảng ca hay bảng lương.
+- ***Đi giao* không phải trạm thứ sáu, cũng không phải một vai thứ năm.** Nó là **việc rời quán
+  giao cho một vai đang có mặt**, từng lần một — nên §3 vẫn là năm trạm, bốn vai, không sửa bảng.
+- **Ai đi thì không có luật cứng — POS quyết từng lần.** Đúng hình dạng đã gặp nhiều lần ở quán
+  này: *"máy không gom, người gom"* và *POS chọn bàn nhận phần đã làm xong* (§5.4), *POS quyết thứ
+  tự phục vụ* (§6.24), *POS quyết đường lùi* (§5.4). ⇒ Theo §6.10, chỗ nào người quyết từng ca thay
+  cho luật cứng, chỗ đó phải **để lại vết**.
+- **Lúc một vai rời quán đi giao, NGƯỜI ĐỨNG QUẦY (`quay`, POS) gánh trạm của người ấy — và khoảng
+  trống ấy KHÔNG là *thiếu người*** (chủ quán chốt **2026-09-15**, trả lời `U-050`). Nguyên văn:
+  *"pos gánh, không thiếu người vì đi ship luc quán vắng."*
+  - ⇒ **Ba trạm riêng có một ngoại lệ, và chỉ một:** trong lúc có người đi giao, `quay` **kiêm**
+    trạm bị bỏ trống tới lúc người kia về. Ngoài lúc ấy, câu *"ba trạm đầu không kiêm sang trạm
+    khác"* ở trên vẫn đúng nguyên chữ. Quán **không** dừng trạm nào, và chủ quán **không** phải đứng
+    vào.
+  - ⇒ **Khoảng trống do đi giao không tính vào số 7 của §8.6** (*đang thiếu người hay không*).
+    Lý do chủ quán đưa ra: quán **chỉ cho đi giao lúc vắng**. Đó là **lý do**, không phải một luật
+    cấm giao lúc đông — không lời nào nói máy chặn hay cảnh báo một chuyến giao lúc quán đông, nên
+    đừng viết luật ấy (`work/findings.md` **F-004**).
+  - ⇒ *Chỗ lời chốt KHÔNG nói — đừng suy hộ* (`CLAUDE.md` §3.5): lời *"pos gánh"* **va** lời chốt
+    ngay trên — người đi giao là *"bất cứ ai"* trong bốn vai, **kể cả người đứng quầy**. Khi chính
+    người đứng quầy đi giao thì không còn POS ở quầy để gánh ⇒ **U-052**
+    (`docs/product/99-unknowns.md`).
+- ⇒ *Chỗ chưa ai hỏi:* máy có **ghi lại** POS đã chỉ định ai cho đơn giao nào không. Không lời nào
+  nói, và không mục nào hôm nay cần nó để chạy (§6.7 — hai nút *đã giao* + *đã thu tiền* không hỏi
+  người bấm là ai). Hai câu đã có sẵn chạm tới nó khi lane admin tới lượt: **C36** (*ai đang trực
+  trạm nào*) và **E51** (*người đi giao nộp tiền về*), cả hai ở `work/admin-questions.md` §3.
+
 ## 4. Menu, giá và tuỳ chọn
 
 ### 4.1 Công thức
@@ -137,8 +169,24 @@ thành phần** của suất đó theo §4.5.
 | Bánh cuốn | 1 cái bánh cuốn | 3.000 | 4.000 | 5.000 |
 | Bánh cuốn | 1 quả trứng chín / tái / vàng | 8.000 | 9.000 | 10.000 |
 | Ăn kèm | 1 chiếc giò | **9.000** | **9.000** | **9.000** |
+| Ăn kèm | **1 bát canh bánh cuốn** | **0** | **0** | **0** |
 
 Giò **không nhận nhân** nên một giá cho cả ba cột.
+
+**Bát canh là 0đ, và con số 0 ấy là một lời chốt chứ không phải chỗ trống** — chủ quán 2026-09-08:
+*"canh bánh cuốn bưng kèm sẵn không tính tiền nhưng cần có trong menu để khách chọn"*. Nó đứng
+trong bảng này vì luật 1 §4.6 đòi mọi thứ bếp làm ra phải có một giá để cộng; 0 cộng vào không đổi
+tổng, nhưng thiếu hàng này thì bát canh thứ hai của khách không có chỗ nào ghi. Canh **không nhận
+nhân** — chủ quán không nói gì về nhân cho canh, và không lời nào cho phép suy ra một mức phụ thu
+(`work/findings.md` **F-004**).
+
+⚠️ **Chữ *"bưng kèm sẵn"* trong câu trên chỉ có nghĩa KHÔNG TÍNH TIỀN, không có nghĩa bếp tự động
+bưng ra.** Cùng ngày **2026-09-08**, lượt sau, chủ quán nói thẳng: *"mỗi suất bếp sẽ không bưng
+kèm theo canh. bếp bưng canh như nào dựa vào lựa chọn thực tế của khách"* (đóng `U-048`). Đây là
+**lời chốt phủ một cách đọc**, không phải suy luận của người viết: vế *không tính tiền* đứng
+nguyên (nên ô 0đ ở bảng trên không đổi một chữ), còn vế *tự động bưng* thì bị chính chủ quán bỏ.
+⇒ **không suất nào ở §4.5 mang sẵn một bát canh**, và số bát bếp bưng đúng bằng con số khách chọn
+trên dòng *canh bánh cuốn* — xem §4.5 và §5.3.
 
 ### 4.3 Giá một SUẤT BÁN — tính từ bảng §4.2
 
@@ -148,6 +196,8 @@ Giò **không nhận nhân** nên một giá cho cả ba cột.
 | **Suất giò** | 1 giò + 4 bánh | **21.000** | **25.000** | **29.000** |
 | Combo "Đầy đủ" trứng chín / tái / vàng | 3 bánh + 1 trứng + 1 giò | 26.000 | **30.000** | 34.000 |
 | **Suất trứng** chín / tái / vàng | 1 trứng + 4 bánh | **20.000** | **25.000** | **30.000** |
+| **Giò bán rời** | 1 giò | ⚠️ **9.000** | ⚠️ **9.000** | ⚠️ **9.000** |
+| **Canh bánh cuốn** | 1 bát canh | **0** | **0** | **0** |
 
 **Suất giò, chủ quán chốt 2026-08-29:** *"1 cái giò là 9.000, tính thêm tiền số lượng bánh là ra
 số tiền của suất"* ⇒ 9.000 + 4 × giá bánh theo nhân đã chọn.
@@ -157,7 +207,23 @@ thành phần** như suất giò, bánh tính theo mức nhân đã chọn ⇒ g
 **Quả trứng cũng lên giá theo mức nhân đã chọn** (chủ quán xác nhận 2026-08-30, trả lời thẳng câu
 hỏi *"suất trứng nhân thường là 25.000 hay 24.000"* ⇒ **25.000**). Nên phụ thu suất trứng là **×5**,
 không phải ×4 — xem §4.6 luật 5. Đây **không còn là suy luận**.
-Đây là ô cuối cùng còn trống của bảng giá; **từ 2026-08-30 bảng giá đã đầy, không còn ô ⚠ nào.**
+**Giò bán rời và canh bánh cuốn, chủ quán chốt 2026-09-08** (trả lời `U-047` và `U-046`): cả hai là
+**dòng menu thật**, khách gọi bao nhiêu cũng được, và con số khách gọi là **số lượng món bán rời**
+— **không** phải số giò hay số bánh bên trong một suất. Số thành phần **trong** một suất là **hằng
+số**, chủ quán nói thẳng: *"số bánh / số giò TRONG MỘT SUẤT là không đổi"* ⇒ *suất giò* vẫn đúng 4
+bánh, *suất trứng* vẫn đúng 4 bánh, *combo* vẫn đúng 3 bánh, và §4.5 · §4.6 · §4.8 không đổi một
+chữ nào vì lời chốt này.
+
+⚠️ **Ô giá của *giò bán rời* là ô ⚠ đầu tiên kể từ 2026-08-30** — bảng giá lại có một ô chưa được
+chủ quán đọc thành lời. **9.000** ở đó là **hệ quả tính ra** từ luật 1 §4.6 (giá suất = tổng giá
+thành phần; một chiếc giò rời gồm đúng một chiếc giò, §4.2 ⇒ 9.000), **không** phải con số chủ quán
+nói. Cùng hình dạng **S-1** ngày 2026-08-30 — ô suất trứng cũng từng là hệ quả tính ra, và phải hỏi
+mới thành fact. Ghi ở §7.2 thành **S-9**; đừng đọc ba ô ấy như đã chốt.
+
+Bát canh thì **không** có ô ⚠: chủ quán nói thẳng *"không tính tiền"*.
+
+Đây là ô cuối cùng còn trống của bảng giá; **từ 2026-08-30 bảng giá đã đầy** — rồi **2026-09-08 mở
+lại một ô ⚠** cho giò bán rời (S-9), là ô ⚠ duy nhất hiện nay.
 
 ### 4.4 Nhóm tuỳ chọn và phụ thu
 
@@ -180,8 +246,9 @@ Hai cột "Món lẻ" và "Combo" ở trên chỉ là hai trường hợp hay g�
 
 ### 4.5 Thành phần một suất bán — chủ quán chốt 2026-08-19
 
-Đây là thứ **bếp làm ra**, khác với thứ khách trả tiền. Bốn suất bán, và mỗi suất bếp làm ra
-**nhiều thứ hơn tên món**:
+Đây là thứ **bếp làm ra**, khác với thứ khách trả tiền. **Sáu dòng menu tính tới 2026-09-08** (đếm
+bảng ngay dưới, đừng tin câu này — `work/findings.md` **F-003**), và **bốn** trong sáu dòng ấy bếp
+làm ra **nhiều thứ hơn tên món**:
 
 | Suất bán | Bếp làm ra | Phần **nhận** tuỳ chọn nhân |
 |---|---|---|
@@ -189,8 +256,34 @@ Hai cột "Món lẻ" và "Combo" ở trên chỉ là hai trường hợp hay g�
 | Suất **trứng** (chín / tái / vàng) | **1 quả trứng + 4 cái bánh cuốn** | 4 cái bánh **và** quả trứng |
 | Suất **giò** | **1 chiếc giò + 4 cái bánh cuốn** | 4 cái bánh (giò **không** nhận nhân) |
 | **Combo "Đầy đủ"** | **3 cái bánh cuốn + 1 quả trứng + 1 chiếc giò** | 3 cái bánh **và** quả trứng |
+| **Giò bán rời** | 1 chiếc giò | **không phần nào** — giò không nhận nhân (§4.6 luật 6) |
+| **Canh bánh cuốn** | 1 bát canh | **không phần nào** |
 
 Khách gọi "1 suất trứng" thì bếp làm **5 thứ**, không phải 1. Đây là chỗ hay bị làm thiếu nhất.
+
+**Hai dòng cuối vào bảng ngày 2026-09-08 (`U-046` · `U-047`) là THÊM DÒNG MENU, không đổi cấu tạo
+của suất nào đang có** — bốn hàng trên đứng nguyên từng chữ, và con số 3 · 4 bánh trong đó là hằng
+số chủ quán vừa xác nhận thẳng (§4.3). Vì thế lời chốt này **không** rơi vào luật *"đổi thành phần
+thì chờ hết buổi bán"* ở đoạn dưới: nó không đổi thành phần nào.
+
+**Bát canh là dòng menu duy nhất bếp làm ra mà khách KHÔNG trả tiền, và nó vẫn là việc thật của
+trạm `canh`** (§3). Chủ quán 2026-09-08: *"đôi khi 1 suất đầy đủ khách muốn có 2 bát canh, 1 bát
+cho con và 1 bát cho mẹ"* ⇒ số bát canh **không** suy ra được từ số suất, nên §5.3 hết đọc được
+việc trạm `canh` như một việc cấp đơn không có số lượng.
+
+**Không suất nào kèm sẵn một bát canh — chủ quán chốt 2026-09-08** (đóng `U-048`), nguyên văn:
+*"mỗi suất bếp sẽ không bưng kèm theo canh. bếp bưng canh như nào dựa vào lựa chọn thực tế của
+khách"*. Hai điều luật ấy chốt, và cả hai đều đọc thẳng ra từ câu trên:
+
+1. **Phần kèm sẵn là KHÔNG bát nào.** Bốn hàng suất của bảng ngay trên **không** mọc thêm một
+   thành phần *bát canh* nào; cột *Bếp làm ra* của chúng đứng nguyên từng chữ.
+2. **Con số khách chọn trên dòng *canh bánh cuốn* là TỔNG số bát bếp bưng**, vì không còn phần nền
+   nào để cộng thêm vào. Khách gọi 1 suất đầy đủ + *canh ×2* ⇒ bếp múc **đúng 2** bát. Không chọn
+   dòng canh ⇒ **0 bát**, và đơn ấy không có việc *canh* nào xuống bếp (việc **nước chấm** thì vẫn
+   có, mọi đơn đều có — §5.3).
+
+⇒ trạm `canh` **đọc con số trên dòng đơn**, không nhân từ số suất và không cộng thêm gì. Chữ
+*"bưng kèm sẵn"* của lời chốt `U-046` cùng ngày vì thế chỉ còn nghĩa **không tính tiền** (§4.2).
 
 Một dòng đơn chọn **một** loại nhân + **một** lượng nhân, áp cho mọi phần nhận nhân của suất đó;
 mặc định là **nhân thịt, lượng thường**.
@@ -258,10 +351,59 @@ bất kỳ tài liệu nào, **đó là bug**, không phải quy tắc.
 | 9 | Combo Đầy đủ chín | Thịt | Thường | **30.000** | combo: phụ thu ×4 |
 | 10 | Combo Đầy đủ tái | Thịt + mộc nhĩ | Nhiều | **34.000** | |
 | 11 | Bánh cuốn | Chay | Nhiều | **PHẢI BỊ TỪ CHỐI** | không phải một giá, mà là luật ở §4.6.3 |
+| 12 | **Giò bán rời ×3** | — | — | ⚠️ **27.000** | 3 × 9.000; giò không nhận nhân nên **nhóm nhân không được hiện** — ô giá còn ⚠ (**S-9**) |
+| 13 | **Canh bánh cuốn ×2** | — | — | **0** | dòng 0đ **vẫn phải nằm trên đơn**: nó là việc của trạm `canh` (§4.5) và là thứ khách chọn số lượng. Một đơn *chỉ* có canh vẫn là đơn hợp lệ, tổng **0đ** |
 
-**Cả mười ca có số (1–10) đều tính được và đã đối chiếu khớp bảng giá §4.3** — từ 2026-08-30 không
-còn ca nào treo. Ca 11 là ca duy nhất có kết quả không phải một con số. Mười một ca này là **hợp
-đồng với chủ quán**: đủ mười một mới được coi là tính giá đúng.
+**Mười ba ca tính tới 2026-09-08** — đếm bảng, đừng tin câu này (`work/findings.md` **F-003**). Ca
+1–10 đều tính được và đã đối chiếu khớp bảng giá §4.3 từ 2026-08-30. Ca 11 là ca duy nhất có kết
+quả không phải một con số. **Ca 12 và ca 13 vào bảng ngày 2026-09-08** cùng hai dòng menu mới, và
+mỗi ca canh đúng một chỗ dễ hỏng của chúng: ca 12 canh việc **hiện nhóm tuỳ chọn cho một món không
+nhận nhân**, ca 13 canh việc **một dòng 0đ bị lặng lẽ bỏ khỏi đơn** vì nó không cộng thêm tiền —
+bỏ nó đi thì trạm `canh` không thấy bát canh thứ hai, và đó chính là ca chủ quán kể ra khi chốt
+`U-046`. Mười ba ca này là **hợp đồng với chủ quán**: đủ cả mười ba mới được coi là tính giá đúng.
+
+### 4.9 MENU — chủ quán tự gọi tên từng món, 2026-09-08
+
+**Đây là lần đầu chủ quán đọc ra *menu gồm những gì* thành một danh sách.** Trước lượt này §4.3 có
+bốn dòng giá, nhưng không lời chủ quán nào nói bốn dòng ấy **là** menu, hay menu còn món khác.
+Nguyên văn 2026-09-08: *"đối với menu: tôi muốn có suất đầy đủ trứng tai, đầy đủ trứng chín, đầy
+đủ trứng vàng, suất giò, suất trứng chín, suất trứng tái, suất trứng vàng. bánh cuốn khách sẽ lựa
+chọn ăn bao nhiêu cái thì tuỳ. giò: khách có thể gọi bao nhiêu cũng được. canh bánh cuốn."*
+
+Mục này chỉ ghi **món nào có mặt trên menu**. Giá và cách tính vẫn ở §4.2–§4.3, thành phần bếp làm
+ra vẫn ở §4.5 — không chép một ô nào của chúng xuống đây (`work/findings.md` **F-001**).
+
+| # | Chủ quán gọi tên | Đã có ở §4.3 chưa | Ghi chú |
+|---|---|---|---|
+| 1 | *đầy đủ trứng chín* | ✅ Combo "Đầy đủ" trứng chín | |
+| 2 | *đầy đủ trứng tái* | ✅ Combo "Đầy đủ" trứng tái | chủ quán viết *"tai"*, đọc là **tái** — cùng ba loại trứng chín/tái/vàng của §4.2 |
+| 3 | *đầy đủ trứng vàng* | ✅ Combo "Đầy đủ" trứng vàng | |
+| 4 | *suất giò* | ✅ Suất giò | |
+| 5 | *suất trứng chín* | ✅ Suất trứng chín | |
+| 6 | *suất trứng tái* | ✅ Suất trứng tái | |
+| 7 | *suất trứng vàng* | ✅ Suất trứng vàng | |
+| 8 | *bánh cuốn — khách ăn bao nhiêu cái thì tuỳ* | ✅ Suất bánh cuốn (1 cái, giá theo cái) | **`U-047` đóng 2026-09-08**: đó là **số lượng khách gọi**, đúng như §4.3 đang làm — không đổi gì |
+| 9 | *giò — khách gọi bao nhiêu cũng được* | ✅ **Giò bán rời**, thêm vào §4.2 · §4.3 · §4.5 ngày 2026-09-08 | **`U-047` đóng**: giò là **món bán rời**, khách gọi bao nhiêu chiếc cũng được. ⚠️ Ô giá **9.000** là hệ quả tính từ luật 1 §4.6, chủ quán chưa đọc thành lời ⇒ **S-9** §7.2 |
+| 10 | *canh bánh cuốn* | ✅ **Canh bánh cuốn 0đ**, thêm vào §4.2 · §4.3 · §4.5 ngày 2026-09-08 | **`U-046` đóng**: *"bưng kèm sẵn không tính tiền nhưng cần có trong menu để khách chọn"* — dòng menu **0đ có số lượng**, vì một suất đầy đủ đôi khi cần 2 bát. **`U-048` đóng cùng ngày, lượt sau**: **không suất nào bưng kèm canh**, nên con số khách chọn ở dòng này là **TỔNG số bát** bếp bưng (§4.5 · §5.3) |
+
+**Bảy dòng đầu khớp đúng từng chữ với §4.3, không thừa không thiếu** — đây là phép đếm và phép đối
+chiếu của phiên viết, không phải lời chủ quán (`work/findings.md` **F-003**): chủ quán liệt kê
+bảy tên, không nói *"đúng bảy"*, nên một tên thứ tám xuất hiện sau này **không** cần ai cho phép.
+
+**Ba dòng cuối (8 · 9 · 10) đều có lời trong ngày** — `U-047` rồi `U-046`, cùng 2026-09-08, lượt
+sau nữa. Hai điều lời đáp ấy chốt, và cả hai đều là **luật**, không phải một con số lẻ:
+
+- **Số thành phần TRONG một suất là hằng số.** Nguyên văn: *"số bánh / số giò TRONG MỘT SUẤT là
+  không đổi"* ⇒ suất giò 4 bánh, suất trứng 4 bánh, combo 3 bánh — §4.5 · §4.6 · §4.8 giữ nguyên
+  từng chữ. Con số khách gọi là **số lượng món bán rời**, việc của dòng đơn, không phải của cấu
+  tạo suất.
+- **Menu có hai dòng mới, và một trong hai không sinh một đồng doanh thu nào**: *giò bán rời*
+  (⚠️ giá là hệ quả tính ra, **S-9**) và *canh bánh cuốn* (**0đ**, chủ quán nói thẳng). Menu vì thế
+  đi từ **bốn** lên **sáu** dòng, và mọi chỗ trong repo còn chép chữ *"bốn suất bán"* đã được sửa
+  trong cùng lần sửa này (`CLAUDE.md` §7.2) — `architecture.md` §6.1 ·
+  `docs/product/0-ba/ban-hang/03-lat-cat.md` §3 · `08-scenario.md`. Hàng nhật ký §7.1 ngày
+  2026-08-19 **không** sửa: nó ghi đúng cái đã chốt hôm ấy.
+- §4.8 đi từ mười một lên **mười ba** ca, hai ca mới canh hai chỗ dễ hỏng riêng của hai dòng này.
 
 ## 5. Hai luồng bán
 
@@ -362,11 +504,12 @@ hứa là đã đủ** — gặp điểm khác thứ tám thì ghi thêm vào đ
 
 ### 5.3 Việc xuống bếp phải "nổ" ra thành phần
 
-Khách gọi **2 suất "Đầy đủ trứng tái", thịt + mộc nhĩ, nhiều nhân**:
+Khách gọi **2 suất "Đầy đủ trứng tái", thịt + mộc nhĩ, nhiều nhân**, và chọn **2 bát canh**:
 
 ```
 Khách trả tiền theo: [Đầy đủ trứng tái ×2 — Thịt+mộc nhĩ, Nhiều nhân — 34.000 × 2 = 68.000]
-                                                          ↑ 1 dòng trên hoá đơn
+                     [Canh bánh cuốn ×2  — 0 × 2 = 0]  ← 0đ nhưng VẪN là một dòng khách chọn
+                                                          ↑ 2 dòng trên hoá đơn
 
 Bếp phải thấy:
   trang_banh │ Bánh cuốn ×6 — thịt+mộc nhĩ, nhiều nhân
@@ -376,11 +519,28 @@ Bếp phải thấy:
   gap_banh   │ Giò ×2                    ← thành phần không nhận nhân thì KHÔNG kèm mô tả nhân
   canh       │ Nước chấm — bàn 5, 2 suất ← việc cấp ĐƠN, MỌI đơn đều có,
                                             đơn mang đi thì gói riêng thay vì bưng ra bàn
+  canh       │ Canh bánh cuốn ×2         ← SỐ LƯỢNG RIÊNG, khách chọn (2026-09-08),
+                                            KHÔNG suy ra từ số suất; đây là TỔNG số bát,
+                                            không suất nào kèm sẵn — xem ngay dưới.
+                                            Khách không chọn canh ⇒ KHÔNG có dòng này
 ```
 
 Số lượng = `số suất × số thành phần trong suất` (§4.5: combo = 3 bánh ⇒ 2 combo = 6 bánh).
 **Bếp không bao giờ được thấy một dòng "Combo ×2" mơ hồ** — nhìn dòng đó thì không ai biết phải
 tráng mấy cái bánh.
+
+⚠️ **Bát canh là ngoại lệ của phép nhân trên, từ 2026-09-08.** Chủ quán chốt canh là một **dòng
+menu khách chọn số lượng** (`U-046`): *"đôi khi 1 suất đầy đủ khách muốn có 2 bát canh"* ⇒ số bát
+**không** nhân ra từ số suất, nó là con số khách gọi. Nên trạm `canh` có **hai** loại việc khác
+nhau trên cùng một đơn: **nước chấm** — cấp đơn, mọi đơn đều có, không có số lượng riêng — và
+**canh** — có số lượng riêng.
+
+**Con số ấy là TỔNG số bát, không phải phần thêm — chủ quán chốt 2026-09-08** (đóng `U-048`),
+nguyên văn: *"mỗi suất bếp sẽ không bưng kèm theo canh. bếp bưng canh như nào dựa vào lựa chọn
+thực tế của khách"*. Nên trạm `canh` **múc đúng con số trên dòng đơn**: `×2` ở ví dụ trên là **2**
+bát cho cả đơn, không phải 2 bát thêm vào một phần kèm sẵn nào — không có phần kèm sẵn nào cả.
+Đơn nào khách **không** chọn canh thì **không có dòng canh** xuống bếp; dòng **nước chấm** thì vẫn
+còn, vì nó là việc cấp đơn của mọi đơn (§4.5).
 
 Nếu thành phần một suất đổi thì **sửa §4.5 trước**, rồi sửa ví dụ này cho khớp.
 
@@ -522,6 +682,13 @@ U-024). Hai câu này khép nốt bảng bốn con số:
 - ⇒ *Cách đọc, không phải lời chủ quán nói thẳng:* **lúc nào** quầy bấm mốc ấy cho một đơn giao
   thì lời 2026-09-04 **không** nói. Chỗ suy ra là **S-6** ở §7.2 — đừng đọc nó thành lời chủ quán,
   và đừng dựng màn người đi giao như thể câu ấy đã chốt.
+- ⇒ *Chỗ từng chưa có lời, nay đã chốt — **U-049**, đóng **2026-09-08**:* tài liệu ở đây gọi người
+  đi giao là *"nhân viên quán"* và không nói thêm; §3 chia **bốn vai** cho **năm trạm việc**, mà
+  *đi giao* **không** phải một trạm. Chủ quán đã trả lời: **người đi giao là một trong bốn vai của
+  §3**, không phải người thứ năm, và **POS chỉ định** ai đi từng lần — nguyên văn *"1 trong bốn vai
+  trên có thể là bất cứ ai pos sẽ chỉ định."* Lời chốt và hệ quả của nó ở **§3**; đừng chép xuống
+  đây (`work/findings.md` **F-001**). Vế §6.7 **không đổi một chữ**: hai nút *đã giao* + *đã thu
+  tiền* vẫn không hỏi người bấm là ai, đúng như U-049 tự khai *"chưa chặn"* lúc còn mở.
 - ⇒ *Phép đếm của người viết tài liệu, không phải lời chủ quán:* *"đã bưng ra bàn"* là thao tác
   **thứ bảy** người đứng quầy gánh, sau *"đã làm xong"* là thứ sáu. Con số bảy không phải một
   ranh giới; nó ghi ở đây vì nó là rủi ro vận hành thật — quầy là đôi tay bận nhất quán, và nay
@@ -627,6 +794,20 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
    - ⇒ **Doanh thu của một ngày đã đối soát xong không bao giờ đổi về sau.** Đây là hệ quả đắt nhất
      của lời chốt này: mọi thứ xảy ra sau khi đóng sổ một ngày đều rơi vào ngày mới, nên con số đã
      ký hôm qua đọc lại lúc nào cũng bằng chính nó.
+   - **Trả lại bằng gì — cũng không có luật cứng, POS quyết từng ca** (chủ quán chốt 2026-09-08,
+     trả lời `U-044`). Nguyên văn: *"tuỳ vào tình hình thực tế, pos quyết định."* Khách đã chuyển
+     khoản mà cần hoàn thì quầy có thể đưa **tiền mặt lấy trong két**, cũng có thể **chuyển khoản
+     lại** — không đường nào bị cấm, không đường nào là mặc định. Cùng hình dạng với quyền hoàn ở
+     trên: người đứng quầy nhìn tình huống thật rồi quyết.
+   - ⇒ *Cách đọc, không phải lời chủ quán nói thẳng:* **vết hoàn tiền phải ghi thêm một câu thứ năm
+     — trả lại bằng phương thức nào.** Phần tiền mặt và phần chuyển khoản đối soát bằng **hai nguồn
+     khác nhau** (§6.10), nên một lần hoàn trả ra ở phương thức **khác** với phương thức đã thu làm
+     lệch **cả hai** phép đối chiếu cùng lúc, ngược chiều nhau: hoàn tiền mặt cho khoản đã chuyển
+     khoản ⇒ két **vơi** đi một khoản mà doanh thu tiền mặt không hề chứa; hoàn chuyển khoản cho
+     khoản đã thu tiền mặt ⇒ két **giữ nguyên** trong khi doanh thu tiền mặt bị trừ. Không ghi
+     phương thức thì chỗ lệch ấy không truy ra được — đúng thứ ngưỡng 0đ cấm. Hệ quả cho phép trừ
+     tiền két: `quality/invariants.md` **I-021** (viết lại 2026-09-15, `docs/decisions.md`
+     **ADR-046**).
 5. **Thông tin liên hệ cho ba kênh không gắn bàn.** Hai trường **bắt buộc**, phần còn lại người ở
    quầy điền theo tình huống thật lúc đó (chủ quán chốt 2026-08-30):
 
@@ -1140,16 +1321,32 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-09-06 | **Danh mục nguyên liệu bắt đầu có TÊN — mười bốn thứ đầu tiên, còn bổ sung dần** (chủ quán tự liệt kê, không trả lời riêng một U-XXX nào) — nguyên văn *"nhân thịt, nhân thịt mộc nhĩ, rau mùi tàu, quất, hành tây, mì chính, hạt nêm, đường trắng, đường đen, gạo, bột bánh cuốn, hạt tiêu, nước mắm, dầu rửa bát"*; đơn vị tính và ngưỡng nhắc sắp hết vẫn chưa có | §8.4 |
 | 2026-09-07 | **Đặt tên chủ cho hai phụ thuộc PT-5/PT-2: đường báo đơn web về quầy là Telegram, hạ tầng vận hành là một VPS duy nhất** (chốt bởi chủ repo, không phải một câu hỏi U-XXX — đóng một phần **F-027**) — xem **ADR-041** | §1 |
 | 2026-09-08 | **Bốn bàn mới cũng 4 chỗ/bàn ⇒ cả 15 bàn đều 4 chỗ** (trả lời vế **chỗ ngồi** của **U-042**) — nguyên văn *"thêm 4 bàn mới mỗi bàn 4 chỗ"*. *Vế **cách đánh số** bốn bàn mới **vẫn chưa** trả lời ⇒ **U-042** ở lại, hẹp hơn* | §1 · §6.25 |
+| 2026-09-08 | **Vế *"còn thiếu gì không"* của mục tổng quan là thiếu NGUYÊN LIỆU, và tập nguyên liệu là Danh mục §8.4** (trả lời **U-041**) — nguyên văn *"về nguyên liệu hãy tham khảo «Danh mục nguyên liệu» tại `master_plan/shop-facts.md`"*. *Máy biết một nguyên liệu đang thiếu **bằng cách nào** thì lời ấy không nói — danh mục mới có tên, chưa có đơn vị và ngưỡng ⇒ **U-045*** | **§8.6** · §8.4 |
+| 2026-09-08 | **Menu có tên từng món, và vế *"còn thiếu gì"* chạm nốt hai đường còn lại** (bổ sung cho **U-041**, cùng ngày, lượt sau) — nguyên văn *"đối với nguyên liệu và con người đã có. đối với menu: tôi muốn có suất đầy đủ trứng tai, đầy đủ trứng chín, đầy đủ trứng vàng, suất giò, suất trứng chín, suất trứng tái, suất trứng vàng. bánh cuốn khách sẽ lựa chọn ăn bao nhiêu cái thì tuỳ. giò: khách có thể gọi bao nhiêu cũng được. canh bánh cuốn."* Bảy tên đầu khớp §4.3; **giò bán rời** và **canh bánh cuốn** thì §4 chưa từng có ⇒ **U-046** · **U-047**. *Việc mục tổng quan bày cả ba đường là suy ra ⇒ **S-8** ở §7.2* | **§4.9** · §8.6 |
+| 2026-09-08 | **Số thành phần TRONG một suất là HẰNG SỐ; "bao nhiêu cũng được" là số lượng món bán rời** (đóng **U-047**) — nguyên văn *"đó là SỐ LƯỢNG khách gọi món bán rời. số bánh / số giò TRONG MỘT SUẤT là không đổi"* ⇒ suất giò 4 bánh · suất trứng 4 bánh · combo 3 bánh đứng nguyên, và **giò bán rời** thành một dòng menu. *Giá 9.000 của dòng ấy là hệ quả tính từ luật 1 §4.6, chủ quán chưa đọc thành lời ⇒ **S-9*** | §4.3 · §4.5 · §4.9 |
+| 2026-09-08 | **Canh bánh cuốn: bưng kèm sẵn, KHÔNG tính tiền, nhưng vẫn phải là một dòng menu khách chọn SỐ LƯỢNG** (đóng **U-046**) — nguyên văn *"canh bánh cuốn bưng kèm sẵn không tính tiền nhưng cần có trong menu để khách chọn vì đôi khi 1 suất đầy đủ khách muốn có 2 bát canh, 1 bát cho con và 1 bát cho mẹ"* ⇒ dòng menu **0đ có số lượng**, và việc trạm `canh` hết suy ra được từ số suất (§5.3). *Kèm sẵn mấy bát, và con số khách chọn là tổng hay phần thêm ⇒ **U-048*** | §4.2 · §4.3 · §4.5 · §5.3 |
+| 2026-09-08 | **KHÔNG suất nào bưng kèm canh; số bát bếp bưng đúng bằng lựa chọn của khách** (đóng **U-048**, mở cùng ngày) — nguyên văn *"mỗi suất bếp sẽ không bưng kèm theo canh. bếp bưng canh như nào dựa vào lựa chọn thực tế của khách"* ⇒ phần kèm sẵn là **0 bát**, nên con số ở dòng *canh bánh cuốn* là **TỔNG số bát**, không phải phần thêm; không chọn ⇒ **0 bát** và đơn ấy không có việc *canh* nào xuống bếp. Chữ *"bưng kèm sẵn"* của lời chốt `U-046` cùng ngày vì thế chỉ còn nghĩa **không tính tiền** — ô 0đ §4.2 · §4.3 đứng nguyên | §4.2 · §4.5 · §4.9 · §5.3 |
+| 2026-09-08 | **Người ĐI GIAO là một trong BỐN VAI của §3, không phải người thứ năm — và POS chỉ định ai đi từng lần** (đóng **U-049**) — nguyên văn *"1 trong bốn vai trên có thể là bất cứ ai pos sẽ chỉ định."* ⇒ con số người của quán đóng lại ở **bốn vai + chủ quán**; *đi giao* không thành trạm thứ sáu, không thêm dòng nào vào bảng ca/bảng lương. *Lúc người ấy rời quán thì **trạm của họ ai gánh** — lời chốt không nói ⇒ **U-050*** | **§3** · §6.7 · §8.6 |
+| 2026-09-08 | **Hoàn tiền trả lại bằng gì cũng không có luật cứng — POS quyết từng ca** (đóng **U-044**) — nguyên văn *"tuỳ vào tình hình thực tế, pos quyết định"* ⇒ khách đã chuyển khoản có thể được hoàn bằng **tiền mặt lấy trong két** hoặc **chuyển khoản lại**, và ngược lại. *Vết hoàn tiền phải ghi thêm **phương thức trả lại** là suy ra từ §6.10, không phải lời chủ quán*; hệ quả cho phép trừ tiền két: **I-021** viết lại, **ADR-046** | **§6.4** · §8.5 |
+| 2026-09-15 | **Lúc một vai rời quán đi giao, NGƯỜI ĐỨNG QUẦY (POS) gánh trạm của người ấy — và khoảng trống ấy KHÔNG là thiếu người** (đóng **U-050**) — nguyên văn *"pos gánh, không thiếu người vì đi ship luc quán vắng."* ⇒ ba trạm riêng có **một** ngoại lệ: `quay` kiêm trạm bị bỏ trống trong lúc có người đi giao; khoảng trống ấy không tính vào số 7 của §8.6 — *"lúc quán vắng"* là lý do, không phải luật cấm giao lúc đông. *Khi chính người đứng quầy đi giao thì ai gánh `quay` — lời chốt va lời `U-049` (*"bất cứ ai"*) ⇒ **U-052*** | **§3** · §8.6 |
+| 2026-09-15 | **KHÔNG có ngưỡng nhắc sắp hết: chủ quán tự đọc hai con số mua vào · đã dùng rồi tự kết luận thiếu hay đủ** (đóng **U-045**) — nguyên văn *"chủ quán tự đọc rôi đưa ra kết luận"* ⇒ máy không kết luận, không nhắc; danh mục §8.4 không mọc cột *ngưỡng*; §8.4 đứng nguyên ở mức sổ ghi tay điện tử. *Mục tổng quan bày gì cho vế nguyên liệu thì lời ấy không nói ⇒ **U-051**; đơn vị tính vẫn ở câu **B12*** | **§8.4** · §8.6 |
 
-### 7.2 Chỗ suy ra chưa xác nhận — **ba mục, tính tới 2026-09-04**
+### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
 Mục này giữ những chỗ được **suy ra** từ luật đã chốt chứ không phải lời chủ quán nói thẳng. Bốn
-mục S-1–S-4 từng nằm đây đều đã được chủ quán xác nhận và đã lên §7.1; còn **ba** mục chưa xác
-nhận — **S-5** (2026-09-01, T-039) · **S-6** (2026-09-04, T-055) · **S-7** (2026-09-04, T-056).
+mục S-1–S-4 từng nằm đây đều đã được chủ quán xác nhận và đã lên §7.1; còn **bốn** mục chưa xác
+nhận — **S-5** (2026-09-01, T-039) · **S-6** (2026-09-04, T-055) · **S-7** (2026-09-04, T-056) ·
+**S-8** (2026-09-08, T-068) · **S-9** (2026-09-08, T-069).
 
 S-5 và S-6 sinh ra cùng một kiểu: chủ quán trả lời **ai bấm**, và câu hỏi còn một vế **bấm theo gì
 / bấm lúc nào** mà lời ấy không chạm tới. **S-7 là kiểu thứ hai**: chủ quán trả lời về **cả ngày**
 (*"chỉ bán buổi sáng"*), và chỗ suy ra là việc đọc câu ấy thành một mệnh đề về **một buổi**.
+**S-8 là kiểu thứ ba**: chủ quán trả lời **từng vế của câu hỏi theo thứ tự câu hỏi đưa ra**, và
+chỗ suy ra là việc đọc trật tự ấy thành một mệnh đề *cả ba vế cùng nằm trong một chỗ*. **S-9 là
+kiểu thứ tư, và là kiểu nguy hiểm nhất vì nó ra một CON SỐ TIỀN**: luật tính giá đã chốt cho ra
+đúng một đáp số, nên đáp số ấy trông như một fact — nhưng chủ quán chưa từng đọc nó. **S-1** ngày
+2026-08-30 là cùng kiểu, và hỏi ra thì đúng; điều đó không làm kiểu này an toàn, nó chỉ cho thấy
+hỏi là rẻ.
 
 ⚠️ Con số *ba* ở tiêu đề là **phép đếm của phiên, không phải một quyết định** — đếm lại ở bảng dưới
 chứ đừng tin câu này (`work/findings.md` **F-003** · **F-018**).
@@ -1163,6 +1360,8 @@ chứ đừng tin câu này (`work/findings.md` **F-003** · **F-018**).
 | **S-5** — *"đã bưng ra bàn"* bấm theo **đơn vị nào** | **2026-09-01**, chưa hỏi | *suy ra:* theo **bàn**, không theo mẻ — một mẻ phục vụ nhiều bàn (§5.4), còn bưng thì bưng tới **một** bàn. Chủ quán mới chỉ nói **ai** bấm, chưa nói **theo gì** | §5.4 · **BA-12** cần trước khi dựng bảng quầy |
 | **S-6** — với đơn **giao tận nơi**, quầy bấm *"đã ra bàn"* **lúc nào** | **2026-09-04**, chưa hỏi | *suy ra:* **lúc đơn rời quán** — cùng mốc quầy đã bấm để đưa đơn sang `Đang giao` (§6.7, chốt 2026-09-01 trả lời U-023), vì quầy chỉ nhìn thấy suất ấy tới lúc đó. Chủ quán 2026-09-04 mới chỉ nói **ai** bấm (*"pos"*, U-031), chưa nói **lúc nào**. ⇒ Nếu suy ra này sai thì mốc *"đã ra bàn"* của đơn giao nghĩa là **tới tay khách**, và quầy phải chờ người đi giao báo về mới bấm được | §5.4 · §6.7 · `docs/product/0-ba/ban-hang/05-vong-doi.md` §5.2 |
 | **S-7** — cửa sổ **06:00–11:00** của §1 có phải **đúng một buổi bán** | **2026-09-04**, chưa hỏi | *suy ra:* **có** — chủ quán nói *"quán chỉ bán buổi sáng"* (`A1`) và *"cứ đến giờ là bán"* (`A2`), nên cửa sổ giờ duy nhất quán có cũng là buổi duy nhất quán bán. Chủ quán **không** đọc ra một mốc bắt đầu và một mốc kết thúc của *buổi*; hai câu ấy nói về **cả ngày** chứ không nói về một buổi trong nhiều buổi. ⇒ Nếu suy ra này sai thì có buổi thứ hai ngoài 06:00–11:00, và §6.23 · **ADR-038** · **I-021** đều phải viết lại | §1 · §6.23 · **ADR-038** |
+| **S-8** — mục tổng quan §8.6 có bày **cả ba** đường của vế *"còn thiếu gì"* (nguyên liệu · người · món) không | **2026-09-08**, chưa hỏi | *suy ra:* **có** — chủ quán trả lời đúng ba vế câu hỏi đã đưa ra, theo thứ tự ấy (*"nguyên liệu và con người đã có, đối với menu…"*), nên ba vế được đọc là ba thứ mục tổng quan bày. Chủ quán **không** nói thẳng *"mục tổng quan hiện cả ba"*, và chữ *"đã có"* cũng có thể chỉ nghĩa là *hai thứ ấy hệ thống ghi ở đâu đó rồi*. ⇒ Nếu suy ra này sai thì §8.6 hàng 7 chỉ còn **một** đường (nguyên liệu), và §4.9 vẫn đứng nguyên vì nó là **menu**, không phải một dòng của mục tổng quan | §8.6 · §4.9 |
+| **S-9** — giá một chiếc **giò bán rời** có đúng bằng **9.000** không | **2026-09-08**, chưa hỏi | *suy ra:* **có** — luật 1 §4.6 nói giá một suất là **tổng giá các thành phần**, dòng *giò bán rời* gồm đúng một chiếc giò, và §4.2 định giá chiếc giò là 9.000 cho cả ba cột (giò không nhận nhân). Chủ quán 2026-09-08 chốt giò là **món bán rời khách gọi bao nhiêu cũng được**, nhưng **không** đọc ra giá của nó. ⇒ Nếu suy ra này sai — quán bán lẻ một chiếc giò đắt hơn giá nó đứng trong suất — thì ba ô ⚠ ở §4.3 sai, ca **12** của §4.8 sai, và luật 1 §4.6 có ngoại lệ đầu tiên kể từ khi được viết | §4.3 · §4.2 · §4.8 ca 12 |
 
 Mục này **không xoá** kể cả khi rỗng: chỗ suy ra tiếp theo phải nằm ở đây, tách khỏi §7.1
 (`work/findings.md` F-004). Thấy dòng nào trong repo còn nói *"§7.2 rỗng"* ⇒ đó là pointer cũ, sửa
@@ -1291,17 +1490,44 @@ không phải suy ra.
 thẳng đây là **hạng mục quan trọng** và sẽ **bổ sung dần dần**, nên đừng đọc mười bốn thứ này như
 một danh mục đã đủ.
 
-- **Đây mới chỉ là TÊN, chưa có đơn vị tính hay ngưỡng nhắc sắp hết cho bất kỳ thứ nào** — đúng
-  ranh giới thứ nhất dưới đây: *ghi cái gì* mới có phần **tên**, hai phần còn lại (đơn vị, ngưỡng)
-  vẫn như §8.2 đã nói, chưa có dữ kiện nào. Đừng tự suy đơn vị (vd "gạo" tính theo kg hay theo bao).
+- **Đây mới chỉ là TÊN, chưa có đơn vị tính cho bất kỳ thứ nào** — đúng ranh giới thứ nhất dưới
+  đây: *ghi cái gì* mới có phần **tên**; phần **đơn vị** vẫn như §8.2 đã nói, chưa có dữ kiện nào
+  (`work/admin-questions.md` câu **B12**). Đừng tự suy đơn vị (vd "gạo" tính theo kg hay theo bao).
+  Phần **ngưỡng nhắc sắp hết** thì **không bao giờ có** — xem khối *không có ngưỡng* ngay dưới
+  (chủ quán chốt 2026-09-15).
 - **Danh sách CHƯA đầy đủ — đừng coi mười bốn thứ này là toàn bộ nguyên liệu quán dùng.** Chủ quán
   nói sẽ thêm dần; mỗi lần thêm, nối tiếp vào đây kèm ngày, đừng viết đè lên danh sách cũ.
+- **Từ 2026-09-08, danh mục này có một người ĐỌC nó ngoài mục §8.4:** mục tổng quan §8.6 — vế
+  *"còn thiếu gì không"* của chủ quán chỉ thẳng vào danh mục này. ⇒ Danh mục dài ra thì vế ấy dài
+  ra theo, không có danh sách thứ hai ở §8.6 (**F-001**). Chỗ hở *đơn vị tính · ngưỡng nhắc sắp
+  hết* từng mang mã `docs/product/99-unknowns.md` **U-045** vì nó chặn §8.6 bày được chữ *thiếu*;
+  câu ấy đóng 2026-09-15 — ngay dưới.
+
+**Không có ngưỡng: CHỦ QUÁN tự đọc hai con số rồi tự kết luận thiếu hay đủ — chủ quán chốt
+2026-09-15, trả lời `U-045`.** Nguyên văn: *"chủ quán tự đọc rôi đưa ra kết luận"* — trả lời câu
+*"một ngưỡng người tự nhập cho từng thứ, hay chủ quán tự đọc hai con số rồi tự kết luận?"*. Hai
+con số là cặp **mua vào · đã dùng** ở trên (`U-034`, 2026-09-06).
+
+| Máy làm | Máy KHÔNG làm |
+|---|---|
+| giữ và hiện hai con số người nhập cho từng thứ trong danh mục | giữ một **ngưỡng nhắc sắp hết** cho bất kỳ thứ nào |
+| | tự kết luận một thứ đang **thiếu** hay **sắp hết**, tự nhắc, tự báo |
+
+- **Bảng này thêm vào bảng *máy làm / máy KHÔNG làm* đầu §8.4, không thay nó**: §8.4 đứng nguyên
+  ở mức **sổ ghi tay điện tử**. Lời chốt đi đúng đường **không** lật ngược §8.4 — nên cửa duy nhất
+  mở lại được mức ấy (câu **B22**, giá vốn một suất) vẫn chưa ai mở.
+- **Danh mục nguyên liệu KHÔNG mọc cột *ngưỡng*.** Chỗ hở còn lại của danh mục chỉ là **đơn vị
+  tính** (câu **B12**) — nó từng nằm chung trong `U-045`, nhưng lời chốt này **không** đóng nó.
+- ⛔ **Lời chốt KHÔNG nói chủ quán đọc hai con số ấy Ở ĐÂU** — trên mục tổng quan §8.6, hay trong
+  chính mục nhập hàng ngày — và nếu trên mục tổng quan thì **con số nào**: cặp số của hôm nay, số
+  còn lại cộng dồn, hay không bày gì. Đó là `docs/product/99-unknowns.md` **U-051**. Không suy
+  hộ (`CLAUDE.md` §3.5).
 
 **Ba ranh giới của chính §8.4:**
 
 - **Chốt *cách ghi*, không chốt *ghi cái gì*.** Danh mục nguyên liệu **bắt đầu có tên** (xem ngay
-  trên, 2026-09-06, còn bổ sung dần); đơn vị tính và ngưỡng nhắc sắp hết thì vẫn chưa có dữ kiện
-  nào, đúng như §8.2 nói.
+  trên, 2026-09-06, còn bổ sung dần); đơn vị tính thì vẫn chưa có dữ kiện nào, đúng như §8.2 nói.
+  Ngưỡng nhắc sắp hết thì **không có** — chủ quán tự kết luận (2026-09-15, ngay trên).
 - **Không nói mảng này có vào bản chạy đầu tiên hay không.** Đó là câu của
   `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7, và câu ấy đã chốt riêng ngày 2026-09-02
   (U-030): **không** mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên.
@@ -1337,6 +1563,10 @@ máy phải nhận con số của ngày hôm ấy.
 tiền tiền nằm trong két tới cuối buổi."* ⇒ **quán không có nghiệp vụ nộp bớt tiền giữa buổi**, nên
 phép đối soát không phải cộng lại các lần rút giữa chừng. Đây là một câu trả lời **đóng**: nó làm
 việc ít đi, không nhiều thêm.
+⚠️ **Một đường tiền rời két giữa buổi có tồn tại, và nó KHÔNG phải một lần nộp bớt:** POS hoàn
+bằng **tiền mặt** cho một khoản khách đã **chuyển khoản** (chủ quán chốt 2026-09-08, trả lời
+`U-044` ⇒ §6.4). Lời chốt ở trên vẫn đúng nguyên văn — không ai *lấy* tiền ra — nhưng phép trừ của
+`quality/invariants.md` **I-021** nay mang hạng tử cho đúng ca ấy (viết lại 2026-09-15, **ADR-046**).
 
 **Hệ quả cho phép đối soát — đây là chỗ đắt nhất của cả mục:** tiền mặt đếm được trong két cuối
 ngày **đã bao gồm** tiền đầu két. So thẳng nó với doanh thu tiền mặt thì lệch **đúng bằng** số tiền
@@ -1357,8 +1587,11 @@ soát 0đ báo đỏ vì I-021 chỉ so **tổng**.
 đang làm cho bao nhiêu người ăn, đưa ra dc bao nhiêu còn thiếu bao nhiêu bán dc như nào rồi số tiền
 dự tính đã bán dc. có bao nhiêu người đang làm còn thiếu gì không"*.
 
-Sáu thứ chủ quán gọi tên, viết ở tầng nghiệp vụ — **không** phải một màn, **không** phải một route
-(`docs/decisions.md` ADR-035):
+**Bảy** thứ chủ quán gọi tên, viết ở tầng nghiệp vụ — **không** phải một màn, **không** phải một
+route (`docs/decisions.md` ADR-035). *Con số **bảy** là phép đếm của bảng ngay dưới, không phải lời
+chủ quán — đếm lại, đừng tin câu này (`work/findings.md` **F-003**). Tới 2026-09-07 mục này đếm
+**sáu**: thứ thứ bảy nằm trong nguyên văn từ đầu nhưng chưa ai hiểu nó là gì, và chỉ có nghĩa từ
+2026-09-08.*
 
 | # | Chủ quán muốn thấy | Ghi chú |
 |---|---|---|
@@ -1368,11 +1601,63 @@ Sáu thứ chủ quán gọi tên, viết ở tầng nghiệp vụ — **không*
 | 4 | **bán được như nào rồi** | tiến độ bán trong buổi |
 | 5 | **số tiền dự tính đã bán được** | ⚠️ chữ *dự tính* là của chủ quán: đây là con số **tạm tính trong buổi**, **không** phải doanh thu đã đối soát (§6.10) và không bao giờ được bày ra như thể đã đối soát |
 | 6 | có **bao nhiêu người đang làm** | ⛔ đứng trên câu *ai đang trực trạm nào*, thứ chưa có dữ liệu nào ghi — `work/admin-questions.md` câu **C36**, và `work/backlog_AD.md` ADM-21 |
+| 7 | **còn thiếu gì không** | **cả BA đường, không phải một** (chốt 2026-09-08, ba lượt): thiếu **NGUYÊN LIỆU** · thiếu **NGƯỜI** · thiếu **MÓN trên menu** — xem ngay dưới. Mỗi đường trỏ vào một tập **đã có chủ ở chỗ khác**, không đường nào có danh sách riêng ở đây (**F-001**): nguyên liệu → **Danh mục nguyên liệu** §8.4 · người → **bảng phân vai** §3 · món → **§4.9**. Chữ *thiếu* từ đâu ra: **nguyên liệu — máy KHÔNG kết luận, chủ quán tự đọc hai con số mua vào · đã dùng rồi tự kết luận** (chốt 2026-09-15, đóng `U-045`, §8.4); ⛔ mục tổng quan bày gì cho vế ấy thì chưa — `docs/product/99-unknowns.md` **U-051**. ⛔ **Người** thì **không** lời nào nói máy biết bằng cách nào: câu **C36** (`work/backlog_AD.md` ADM-21) — *U-049 đóng 2026-09-08 (người đi giao là một trong bốn vai, POS chỉ định) và U-050 đóng 2026-09-15 (POS gánh trạm bị bỏ trống, khoảng trống do đi giao **không** là thiếu người) — cả hai ở §3* |
 
-⛔ **Vế thứ bảy chủ quán nói mà chưa ai hiểu là gì: *"còn thiếu gì không"*.** Thiếu **nguyên liệu**,
-thiếu **người**, hay thiếu **món trên menu** — ba đường ra dẫn tới ba mục khác hẳn nhau, và đường
-*nguyên liệu* còn đụng thẳng mức **sổ ghi tay điện tử** của §8.4 (máy không tự trừ tồn thì máy
-không tự biết sắp hết). Đó là **U-041**, không suy hộ.
+**Vế thứ bảy — *"còn thiếu gì không"* — chủ quán chốt 2026-09-08: thiếu NGUYÊN LIỆU.** Nguyên văn
+lượt ấy: *"về nguyên liệu hãy tham khảo «Danh mục nguyên liệu» tại `master_plan/shop-facts.md`"* ⇒
+trong ba đường ra mà `U-041` hỏi (nguyên liệu · người · món trên menu), chủ quán chọn đường
+**nguyên liệu**, và chỉ thẳng tập nguyên liệu là **Danh mục nguyên liệu** ở §8.4 — mười bốn tên mở
+2026-09-06, **còn bổ sung dần**, nên vế này lớn lên theo danh mục ấy chứ không có danh sách riêng
+của mình (`work/findings.md` **F-001**: đừng chép danh mục xuống đây).
+
+**Cùng ngày 2026-09-08, lượt sau, chủ quán chạm nốt hai đường còn lại.** Nguyên văn: *"đối với
+nguyên liệu và con người đã có. đối với menu: tôi muốn có …"* rồi đọc ra cả danh sách món (nay ở
+**§4.9**). Nên vế thứ bảy **không** chỉ là nguyên liệu:
+
+- **Đường *món trên menu* nay có tập của nó — §4.9.** Trước lượt ấy không lời nào nói menu gồm
+  những gì; nay có, nên chữ *thiếu món* đã có chỗ để trỏ vào. Như với nguyên liệu, vế này **lớn
+  lên theo §4.9**, không có danh sách thứ hai ở đây (`work/findings.md` **F-001**), và ba dòng cuối
+  của §4.9 còn đang chờ **U-046** · **U-047**.
+- **Đường *người* nay cũng có tập của nó — bảng phân vai §3** (chủ repo chỉ chỗ 2026-09-08, lượt
+  thứ ba). Chủ quán đã nói *"đã có"* ở lượt trước; chỗ còn thiếu là **đường ấy đọc vào đâu**, và
+  câu trả lời là **§3**: **năm trạm việc**, gộp thành **bốn vai người** (chủ quán chốt 2026-08-30),
+  cộng **chủ quán** là vai riêng đứng ngoài năm trạm. Như hai đường kia, vế này **lớn lên theo §3**
+  chứ không có bảng vai thứ hai ở đây (**F-001**).
+  - **Chỗ §3 đáng nhớ nhất cho vế *thiếu người*:** ba trạm `quay` · `trang_banh` · `gap_banh` là
+    **trạm riêng**, còn `canh` + `don_ban` **chung một đôi tay** — nên khi bếp đông, hai loại việc
+    ấy tranh nhau người còn ba trạm kia thì không. Chữ *thiếu người* vì thế **không** đồng đều giữa
+    năm trạm; đó là dữ kiện của §3, không phải một luật mới của mục này.
+  - **Số 6 và số 7 là HAI con số khác nhau, đừng gộp** (phép đọc của phiên viết, không phải lời chủ
+    quán — **F-004**): số 6 là *bao nhiêu người **đang** làm* (đếm người có mặt), số 7 là *đang
+    **thiếu** người hay không* (so cái có mặt với cái cần). Gộp hai cái thì mục tổng quan mất đúng
+    câu chủ quán hỏi.
+  - ✅ **Con số người thật của quán ĐÃ đóng, 2026-09-08** (chủ quán, trả lời `U-049`): người **đi
+    giao** là **một trong bốn vai** của §3 rời quán đi giao, **không** phải người thứ năm, và **POS
+    chỉ định** ai đi từng lần. ⇒ Số **6** (*bao nhiêu người đang làm*) đếm trên **bốn vai** của §3
+    cộng chủ quán, không có dòng thứ năm nào cho việc đi giao. Lời chốt ở **§3**.
+  - ✅ **Khoảng trống do đi giao KHÔNG là thiếu người, 2026-09-15** (chủ quán, trả lời `U-050`):
+    *"pos gánh, không thiếu người vì đi ship luc quán vắng."* ⇒ một chuyến giao rút một đôi tay
+    ra khỏi năm trạm nhưng **không** làm số **7** bật lên; người đứng quầy gánh trạm bị bỏ trống.
+    Lời chốt ở **§3**.
+  - ⛔ **Máy biết đang thiếu người bằng cách nào thì vẫn chưa ai nói** — nay chỗ hở chỉ còn **một**
+    câu: **C36** — *ai đang trực trạm nào* (`work/admin-questions.md`, `work/backlog_AD.md`
+    ADM-21). Chừng nào chưa có lời, số **7** vẫn chưa có nguồn — dù số **6** thì có rồi. (`U-052` —
+    ai gánh `quay` khi chính người đứng quầy đi giao — **không** chặn số 7: lời `U-050` đã loại
+    khoảng trống do đi giao khỏi chữ *thiếu người*, bất kể ai đi.)
+- ⚠️ **Chỗ suy ra:** rằng mục tổng quan **bày cả ba** đường cùng một chỗ là cách phiên viết đọc câu
+  *"nguyên liệu và con người đã có, đối với menu…"*; chủ quán **không** nói thẳng *"mục tổng quan
+  hiện cả ba"* (`work/findings.md` **F-004**). Ghi ở §7.2 thành **S-8** — đừng đọc nó như một lời
+  chốt.
+- **Không đường nào bị loại bằng lời** (**F-004**): không câu nào nói *"không bao giờ hiện thiếu
+  người"*. Đừng viết một lời loại trừ mà chủ quán chưa nói.
+- ✅ **Máy biết một nguyên liệu đang thiếu bằng cách nào — ĐÃ đóng, 2026-09-15: máy KHÔNG biết,
+  và không cần biết.** Chủ quán trả lời `U-045`: *"chủ quán tự đọc rôi đưa ra kết luận"* ⇒ không
+  có ngưỡng, máy không bày chữ *thiếu*; người đọc cặp số **mua vào · đã dùng** rồi tự kết luận
+  (§8.4, khối *không có ngưỡng*). ⛔ Chỗ còn hở: vế nguyên liệu của hàng 7 **bày gì** trên mục
+  tổng quan — cặp số hôm nay, số còn lại cộng dồn, hay không bày gì — là **`U-051`**. Lúc
+  `U-045` còn mở (2026-09-08) có hai đường ra: **lật ngược §8.4** (máy tự trừ tồn) hoặc **một
+  ngưỡng người tự nhập**; chủ quán không chọn đường nào trong hai — chọn đường thứ ba câu hỏi đưa
+  ra, **người đọc và người kết luận**, nên §8.4 đứng nguyên.
 
 **Mục này chốt TẬP CON SỐ, không chốt cách bày và không chốt nhịp cập nhật.** Bày thế nào là pha 4;
 đẩy dữ liệu về máy chủ quán bằng đường nào là **P1-08** của pha 1. Cả hai đều không được viết ở đây.
