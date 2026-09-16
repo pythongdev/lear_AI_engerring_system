@@ -187,6 +187,17 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] T-077 **`docs/product/99-unknowns.md` có mục lục — file hơn bốn trăm dòng, ba tiêu đề `###`,
+  không có đường vào nào ngoài cuộn tay** — **L1**, xong 2026-09-16. Mục lục **đứng trên** tiêu đề
+  `## Unknowns` có chủ ý: `scripts/brief.sh` và `scripts/check-doc-status.sh` đọc từ dòng ấy trở
+  xuống và coi **một gạch đầu dòng trong vùng đang mở là một câu đang mở** (ADR-007 · **F-008**),
+  nên mấy dòng mục lục đặt nhầm chỗ sẽ thành câu hỏi ma. Neo `<a id="…">` thêm cho `### Đang mở`
+  và cho bốn gạch đầu dòng đang mở (`u-042`, `u-043`, `u-051`, `u-052`), cùng lối viết neo đã có
+  của file (`cach-viet`, `da-co-loi-giai`). Mục *Cách viết một câu ở đây* — owner của hợp đồng
+  hình dạng — mọc thêm một luật: **mở hay đóng một câu thì sửa mục lục trong cùng thay đổi ấy**,
+  vì mục lục là bản sao thứ hai của danh sách đang mở và **không cổng nào chấm nó**. Nghiệm thu:
+  `./scripts/gate.sh` xanh, và `./scripts/brief.sh` in **đúng bốn** câu đang mở y như trước thay
+  đổi — hợp đồng máy đọc không xê dịch.
 - [x] P1-12 **Ranh giới pha được ĐO lần đầu trên cả pha 1 — và câu trả lời là KHÔNG: ba chỗ lọt ra,
   chỉ một trong ba có tên trong ngoại lệ** — bước 12/14 (kế hoạch §6), **L1**, tiền đề `P1-11` ✔.
   Nhận và xong 2026-09-16. Đầu ra: **ô 10** của

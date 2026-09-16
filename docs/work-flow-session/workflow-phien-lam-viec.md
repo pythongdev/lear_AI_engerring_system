@@ -160,7 +160,7 @@ Ba hình prompt hay gặp và phản ứng của tôi:
 
 ---
 
-## 4. Lấy context — luật là *đọc theo nhu cầu*, không phải *đọc cho chắc*
+## 4. Lấy context — chọn theo **chủ quyền**, không theo **độ liên quan**
 
 Mặc định của repo này viết thẳng trong `README.md`: **không đọc cả repo**. Lý do
 không phải tiết kiệm — mà là chất lượng. Context đầy thì thứ rụng trước tiên
@@ -168,7 +168,33 @@ chính là các nghĩa vụ *self-discipline* ở §3, tức những thứ khôn
 được. Một phiên đọc 30 file rồi quên dọn `work/scope.txt` tệ hơn một phiên đọc 4
 file và bàn giao sạch.
 
-Thứ tự tôi đọc, dừng ngay khi đã đủ để làm:
+### 4.1 Câu hỏi tôi đặt, và câu hỏi tôi cố ý không đặt
+
+Câu hỏi sai là **"file nào liên quan tới task này?"**. Trong một repo mà mọi tài
+liệu nói về cùng một quán ăn, gần như file nào cũng *liên quan một chút* — nên câu
+ấy không có điểm dừng, và nó luôn trả lời bằng "đọc thêm cho chắc".
+
+Câu hỏi đúng là **"dữ kiện tôi đang cần có chủ là ai?"**. Câu ấy có đúng một câu
+trả lời, và câu trả lời nằm ở bảng owner `CLAUDE.md` §2 — tra bảng chứ không tìm
+kiếm. Chọn context ở repo này là một phép **tra chủ quyền**, không phải một phép
+đo độ giống nhau.
+
+Hệ quả thực tế: tôi liệt kê ra *các dữ kiện* task cần trước, rồi mới suy ra danh
+sách file — chứ không liệt kê file rồi đọc xem trong đó có gì dùng được.
+
+### 4.2 Bốn phép thử cho một file đang cân nhắc
+
+| Phép thử | Câu hỏi | Nếu câu trả lời là "không" |
+|---|---|---|
+| **Chủ quyền** | §2 có chỉ file này làm chủ dữ kiện tôi cần không? | Nó là bản sao hoặc bằng chứng. Đọc để hiểu bối cảnh thì được; **lấy dữ kiện ra khỏi nó thì không** — dữ kiện lấy ở owner |
+| **Câu hỏi cụ thể** | Tôi mở nó để trả lời câu nào? Viết được câu ấy ra thành một câu hoàn chỉnh không? | Viết không ra thì đó là *đọc cho chắc*. Bỏ |
+| **Hậu quả** | Nếu tôi đoán sai chỗ này, gate hay test có bắt được không? | Bắt được ⇒ đọc sau cũng kịp. **Không bắt được** — tiền, dữ kiện nghiệp vụ, nghĩa vụ *self-discipline* — ⇒ đọc **trước** lần sửa đầu tiên |
+| **Bậc** | Task này có phải L0 không? | L0 thì gần như không đọc gì: diff của chính mình và `./scripts/gate.sh`. Đọc thêm ở L0 là ceremony rỗng |
+
+Phép thử **hậu quả** là phép thử tôi dùng để xếp thứ tự, không chỉ để loại: nó nói
+file nào phải đọc *trước khi gõ*, file nào đọc lúc cần cũng được.
+
+### 4.3 Thứ tự đọc — dừng ngay khi đã đủ để làm
 
 1. **Brief** (đã có sẵn) — trạng thái hôm nay.
 2. **Entry của task** ở `work/backlog.md`. Mô tả dài có thể nằm ở sổ khác:
@@ -188,10 +214,71 @@ Ba thứ tôi **cố ý không** đọc: `work/proposals/` (đề xuất chưa �
 phải dữ kiện), `docs/product.md` (bản lưu trước khi tách, không sở hữu gì), và
 lịch sử commit xa — brief đã in đúng phần cần.
 
+### 4.4 Nhiều file mang cùng một chữ — chỗ tôi mở sai dễ nhất
+
+Đây là bảng quan trọng nhất của mục này. Mọi lần chọn sai context ở repo này đều
+là chọn **đúng chủ đề, sai chủ quyền**: file mở ra nói về thứ tôi cần, nhưng nó
+không phải nhà của thứ ấy.
+
+| Khi tôi cần | Mở | Đừng lấy dữ kiện ở đây, và vì sao |
+|---|---|---|
+| **Trạng thái** một task (`Ready`/`In Progress`/`Done`) | `work/backlog.md` | `work/backlog_SD.md`, `work/backlog_AD.md` — hai file ấy chỉ giữ *mô tả dài*; trạng thái viết ở đó là bản sao |
+| **Mô tả dài** của một task pha 1 / admin | `work/backlog_SD.md` · `work/backlog_AD.md` | `work/backlog.md` — ở đó task chỉ có một dòng, đọc một dòng rồi tự suy phần còn lại là cách bịa ra yêu cầu |
+| Một **luật của quán** (giá, kênh, phụ thu, luồng) | `master_plan/shop-facts.md` | `master_plan/00-scope.md` là stub chuyển hướng, không sở hữu gì; các file `*_plan_*.md` và `to_do_list.md` là kế hoạch/ảnh chụp, không phải chủ của luật |
+| **Hành vi sản phẩm** theo pha | `docs/product/00-index.md` để định tuyến, rồi đúng file nó chỉ | `docs/product.md` — bản lưu trước khi tách; nó không sở hữu gì và không ai trỏ vào nó |
+| **Vì sao** một thiết kế được chọn | `docs/decisions.md` (ADR) | `architecture.md` nói *hiện trạng*, không nói *vì sao*; suy ngược lý do từ hiện trạng là bịa một ADR |
+| Ràng buộc về **tiền / dữ liệu không được sai** | `quality/invariants.md` | bất cứ file nào nhắc lại con số ấy — nhắc lại là bản sao |
+| Một **câu chưa có lời** | `docs/product/99-unknowns.md` | báo cáo cũ, prompt cũ, hay ADR trích lại câu ấy — Gate 1c tồn tại đúng vì lỗi này |
+| Ai đó **đề xuất đổi** chính hệ thống này | `work/proposals/` — đọc như ý kiến | không bao giờ là dữ kiện; chỗ nào nó trái §2 thì **§2 thắng** |
+| Việc phải làm trong task | `prompt/` | prompt mô tả *việc*, không sở hữu *dữ kiện nghiệp vụ*; số trong prompt vẫn phải đối chiếu owner |
+
+Thêm một luật cứng đứng trên cả bảng trên: bốn dòng §2 ghi **chưa có owner**
+(schema, quy ước code, hợp đồng API, route) nghĩa là *không có file nào* được đọc
+để lấy những thứ ấy — chúng chưa tồn tại. Đi tìm context cho một câu hỏi thuộc pha
+sau là bước đầu của việc bịa ra nó.
+
+### 4.5 Trong một file lớn, tôi không đọc cả file
+
+Chọn context không chỉ là chọn file, mà là chọn **khối** trong file.
+
+- `grep -n` mã định danh hoặc tiêu đề trước (`U-0`, `F-0`, `ADR-0`, `I-0`,
+  `### `), rồi đọc quanh chỗ khớp.
+- Đọc theo **khối, không theo dòng**: tài liệu ở đây ngắt dòng giữa câu, nên một
+  phép đọc theo dòng sẽ mù với từ khoá bị cắt qua hai dòng — đúng cái đã sinh ra
+  `work/findings.md` F-015.
+- `docs/product/00-index.md` là bảng định tuyến: nó không sở hữu dữ kiện nào, và
+  đọc nó rẻ hơn mở ba file để xem file nào đúng.
+- Đọc trọn một file chỉ khi tôi **sắp sửa** nó — sửa một đoạn mà không biết phần
+  còn lại nói gì là cách tạo ra hai câu trái nhau trong cùng một file.
+
 Một phản xạ nữa, rẻ và cứu nhiều lần: sau khi đọc một dữ kiện, tôi `grep -rn`
 xem **những chỗ nào đang trỏ tới nó**. Cả ba họ lỗi nặng nhất của repo này đều
 cùng một hình — *dữ kiện đổi ở một chỗ, bản sao ở chỗ khác không đổi theo*.
 
+### 4.6 Khi nào tôi dừng đọc
+
+Không phải khi hết file, mà khi viết ra được ba thứ:
+
+1. từng dòng **Acceptance** của task;
+2. **owner** mà mỗi dữ kiện mới sẽ về (§2), tên file cụ thể;
+3. các **pattern** của `work/scope.txt`.
+
+Thiếu một trong ba thì tôi thiếu context — nhưng thiếu **đúng cái đó**, và chính
+nó chỉ ra file tiếp theo phải mở. Viết ra được cả ba mà vẫn muốn mở thêm file thì
+đó là *đọc cho chắc*: dừng.
+
+### 4.7 Dấu hiệu tôi đã lấy sai context
+
+Nhìn ra sau khi đã sai, nhưng rẻ và đáng kiểm trước khi kết lượt:
+
+- Tôi viết ra một dữ kiện mà **không chỉ được owner** của nó ⇒ tôi lấy nó từ một
+  bản sao.
+- Tôi gọi tên **bảng, cột, endpoint, route** trong một việc thuộc pha 1 ⇒ hoặc
+  tôi đọc file của pha sau, hoặc tôi vừa bịa (Gate 1d bắt các hình phổ biến).
+- Tôi trích một `U-XXX` **đã đóng** như còn mở ⇒ tôi đọc bản sao cũ thay vì
+  `docs/product/99-unknowns.md` (Gate 1c bắt).
+- Báo cáo của tôi **nhắc lại nội dung** thay vì trỏ vào dòng của owner ⇒ tôi vừa
+  tạo bản sao thứ hai, đúng thứ `work/findings.md` F-001 nói tới.
 ---
 
 ## 5. Khai scope — trước lần sửa đầu tiên, không phải sau
@@ -488,6 +575,10 @@ nghiêm quá mức không bảo vệ được gì — nó chỉ dạy người t
 Chỗ dễ hỏng nhất trong ví dụ này là **bước 2**, và nó nằm hoàn toàn ngoài tầm
 với của mọi script.
 
+Ví dụ trên là ví dụ **dựng**. Một ca **có thật**, mổ từ brief tới khối commit — kể
+cả chỗ nó kết thúc bằng một ô cổng **không tick được** — ở
+[`vi-du-mot-task-chay-that-P1-12.md`](vi-du-mot-task-chay-that-P1-12.md).
+
 ---
 
 ## 12. Chỗ hệ thống không đỡ được bạn
@@ -524,6 +615,7 @@ Và ba thứ **chỉ bạn** làm được, không phải tôi:
 | Bốn bậc rủi ro, triết lý repo | `README.md` |
 | Cách viết một prompt cho từng bậc | `docs/prompt-guideline.md` |
 | Cách chấm kết quả sau khi tôi chạy xong | `quality/review-gate.md` |
+| Một task có thật, mổ từng bước | [`vi-du-mot-task-chay-that-P1-12.md`](vi-du-mot-task-chay-that-P1-12.md) |
 | Mười bước thủ tục của một task L1 | `work/backlog.md` → *Vòng chạy một task L1* |
 | Vì sao mỗi cổng tồn tại | comment ở đầu chính script đó trong `scripts/` |
 | Dữ kiện của quán | `master_plan/shop-facts.md` |

@@ -178,7 +178,7 @@ trên đường mặc định.
 |---|---|---|
 | **Duyệt đơn** | đơn khách tự gửi phải duyệt; đơn nhân viên nhập thì không (§6.2) | ai duyệt, lúc nào |
 | **Huỷ đơn** | **chỉ người đứng quầy** (§6.13) | ai bấm, lý do |
-| **Hoàn tiền** | không có luật cứng — quầy quyết từng ca (§6.4) | hoàn bao nhiêu · cho đơn nào · ai bấm · lý do gì |
+| **Hoàn tiền** | không có luật cứng — quầy quyết từng ca, **kể cả trả lại bằng gì** (§6.4) | hoàn bao nhiêu · cho đơn nào · ai bấm · lý do gì · **trả lại bằng gì** |
 
 Ba việc này đi qua **đúng một cửa: máy POS ở quầy**, nên mọi thao tác chạm tiền đều truy được về
 một người khi đối soát cuối ngày (§6.10).
@@ -303,13 +303,15 @@ biết *quán đang mất kết nối* (§3). P1-08, 2026-09-08.
 ### 6.1 Menu và giá — sửa THÀNH PHẦN, không sửa giá suất
 
 `shop-facts.md` §4.6 quy tắc 1: **giá một suất = tổng giá các thành phần**. Nên màn quản trị giá
-phải cho sửa **giá thành phần** và bảng phụ thu; giá bốn suất bán là **kết quả tính ra**, không
-phải bốn ô nhập tay.
+phải cho sửa **giá thành phần** và bảng phụ thu; giá **mỗi** dòng menu là **kết quả tính ra**,
+không phải một ô nhập tay. *Không đếm số dòng menu ở đây* — nó đi từ bốn lên sáu ngày 2026-09-08
+(`shop-facts.md` §4.9) và sẽ còn đổi; đọc §4.3 lúc cần con số (`work/findings.md` **F-018**).
 
 Cho nhập tay giá suất là mở đường cho hai bảng giá lệch nhau — đúng họ lỗi `work/findings.md`
 F-001, lần này nằm trong dữ liệu chứ không nằm trong tài liệu.
 
-⇒ Màn đổi giá nên cho thấy **đổi một thành phần thì bốn suất thành bao nhiêu**, trước khi lưu.
+⇒ Màn đổi giá nên cho thấy **đổi một thành phần thì từng dòng menu thành bao nhiêu**, trước khi
+lưu — **từng dòng đang có ở §4.3**, không phải một số dòng cố định nào.
 
 **Đơn cũ không đổi giá.** Tên món và giá được chụp lại vào chi tiết đơn lúc đặt
 (`prompt-fullstack.md` §4 ràng buộc 2, `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3). Không chụp thì một lần tăng giá
@@ -346,8 +348,15 @@ tiền thực nhận trong ngày  ( mặt + chuyển khoản, đếm được tr
   =  doanh thu trong ngày          hoá đơn đóng hôm nay, kể cả hoá đơn ghi nợ
   −  nợ ghi trong ngày             đã tính doanh thu, CHƯA có tiền  ⇒ két thiếu
   +  nợ cũ thu được hôm nay        có tiền, doanh thu đã tính hôm TRƯỚC ⇒ két thừa
-  −  hoàn tiền trong ngày          từng khoản có vết: ai, lý do (§6.4)
+  −  hoàn tiền trong ngày          từng khoản có vết: ai, lý do, TRẢ LẠI BẰNG GÌ (§6.4)
 ```
+
+**Dòng hoàn tiền phải tách theo PHƯƠNG THỨC TRẢ LẠI, không gộp một con số.** Chủ quán chốt
+2026-09-08 (`shop-facts.md` §6.4) rằng trả lại bằng **tiền mặt** hay **chuyển khoản lại** là do POS
+quyết từng ca — kể cả cho một khoản đã thu bằng phương thức kia. Một lần hoàn **chéo** như thế làm
+lệch **cả hai** phép đối chiếu cùng lúc và ngược chiều nhau, vì phần tiền mặt và phần chuyển khoản
+đối soát bằng hai nguồn khác nhau (§6.10). Phép trừ tiền két vì thế mang hai hạng tử riêng cho ca
+ấy: `quality/invariants.md` **I-021**, `docs/decisions.md` **ADR-046**.
 
 Ba luật của màn này:
 
@@ -392,7 +401,7 @@ tại ngày đo (`work/findings.md` **F-003** · **F-018**); đếm ở bảng, 
 
 | Thiếu cái gì | Vì luật nào | Không có thì hỏng thế nào |
 |---|---|---|
-| **Vết hoàn tiền** — bao nhiêu · đơn nào · ai bấm · lý do | §6.4 | đối soát thấy két lệch, không ai truy được |
+| **Vết hoàn tiền** — bao nhiêu · đơn nào · ai bấm · lý do · **trả lại bằng gì** | §6.4 | đối soát thấy két lệch, không ai truy được |
 | **Khoản nợ** — ai nợ · bao nhiêu · phiên nào | §6.14 | đóng phiên xong khoản nợ vô chủ — hình dạng đầy đủ ở **§12.3** |
 | **Vết thao tác chạm tiền / chạm trạng thái đơn** | §6.10 · `docs/product/0-ba/ban-hang/01-actors-pham-vi.md` §1.4 | *"lệch 1 đồng phải tìm ra lý do"* không thực hiện được |
 | **Ai đang trực trạm nào, lúc này** | §6.13 (quyền gắn chỗ đứng) | quyền huỷ phải gán theo `role`, tức sai luật — §4 |

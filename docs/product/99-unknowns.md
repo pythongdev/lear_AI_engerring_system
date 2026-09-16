@@ -5,6 +5,26 @@
 > `docs/decisions.md` **ADR-007** dựa vào nó. `scripts/brief.sh` còn đọc bản lưu cho tới
 > khi DOC-2 trỏ nó sang file này.
 
+<a id="muc-luc"></a>
+## Mục lục
+
+<!-- Mục lục ĐỨNG TRÊN tiêu đề `## Unknowns` có chủ ý (thêm 2026-09-16):
+     scripts/brief.sh và scripts/check-doc-status.sh đọc từ dòng `## Unknowns`
+     trở xuống, và trong vùng đang mở MỘT GẠCH ĐẦU DÒNG LÀ MỘT CÂU ĐANG MỞ
+     (docs/decisions.md ADR-007 · work/findings.md F-008). Chuyển mấy dòng dưới
+     đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
+
+- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
+  - [U-042](#u-042) — bốn bàn mới (11 → 15) được đánh số thế nào
+  - [U-043](#u-043) — mất tín hiệu bao lâu thì web ngừng nhận đơn
+  - [U-051](#u-051) — mục tổng quan bày gì ở vế nguyên liệu, khi máy không kết luận *thiếu* nữa
+  - [U-052](#u-052) — người đứng quầy đi giao thì trạm `quay` do ai gánh
+- [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
+  đọc nó trước khi thêm, sửa hay đóng một câu
+- [Đã có lời giải](#da-co-loi-giai) — câu đã đóng, xếp theo lượt trả lời của chủ quán, kèm nguyên
+  văn lời chốt và chỗ lời ấy đã đi vào owner. Tìm một mã cụ thể bằng
+  `grep -n 'U-0[0-9][0-9]' docs/product/99-unknowns.md` — đừng đếm bằng mắt.
+
 <!-- ==== nguyên văn docs/product.md §Unknowns, tách 2026-09-02 ==== -->
 ## Unknowns
 
@@ -14,6 +34,7 @@ Câu hỏi nghiệp vụ chưa có lời giải. Không để việc thực hi�
 mục là một hợp đồng, không phải chuyện trình bày — cách viết ở
 [Cách viết một câu ở đây](#cach-viet) bên dưới.
 
+<a id="dang-mo"></a>
 ### Đang mở
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
@@ -72,6 +93,7 @@ Câu hỏi **không đóng**: vế **cách đánh số** bốn bàn mới thì l
 lại đây với phạm vi hẹp hơn** — đúng hình dạng `U-034` từng ở lại ngày 2026-09-04. Một lời chốt trả
 lời được nửa câu hỏi vẫn là nửa câu hỏi.
 
+<a id="u-042"></a>
 - **U-042 — bốn bàn quán vừa mua thêm (nâng tổng từ 11 lên 15) được ĐÁNH SỐ thế nào: nối tiếp
   12–15, hay theo cách khác?** **Hẹp lại 2026-09-08** (T-066): vế *mỗi bàn mấy chỗ ngồi* **đã có
   lời** — *"thêm 4 bàn mới mỗi bàn 4 chỗ"*, cả mười lăm bàn đều 4 chỗ/bàn — nên chỉ còn **tên/số
@@ -91,6 +113,7 @@ nối.** Nó không mở vì ai quên hỏi: chủ quán đã chốt **cái gì 
 đơn, khách gọi hotline (`U-035`, 2026-09-04) — nhưng **mất tín hiệu bao lâu mới gọi là mù** thì
 chưa lời nào chạm tới, và đó đúng là chỗ quyết định lúc nào quán ngừng bán trên web.
 
+<a id="u-043"></a>
 - **U-043 — mất tín hiệu bao lâu thì web NGỪNG nhận đơn?** `quality/invariants.md` **I-008** đã có
   điều kiện thứ ba (*quán đang nhìn thấy được đơn mới*), và
   `docs/product/1-system-design/05-realtime-va-du-phong.md` §3 vừa chốt **ai phán quyết** (phía hệ
@@ -114,6 +137,7 @@ thay người; chi tiết ở [Đã có lời giải](#da-co-loi-giai). Nhưng m
 mục tổng quan, ở vế nguyên liệu, **bày cái gì** cho người đọc — chưa lời nào nói. Đó là `U-051`
 ngay dưới.
 
+<a id="u-051"></a>
 - **U-051 — máy không kết luận "thiếu" nữa, vậy mục tổng quan của chủ quán bày GÌ ở vế nguyên
   liệu: hai con số mua vào · đã dùng của từng thứ, số còn lại cộng dồn, hay KHÔNG bày gì — chủ
   quán tự mở mục nhập hàng ngày để đọc?** `U-045` đóng 2026-09-15 chốt *ai kết luận* (chủ quán,
@@ -147,6 +171,7 @@ luc quán vắng."* ⇒ trạm bị bỏ trống do **người đứng quầy** 
 `U-049` đã chốt người đi giao là *"bất cứ ai pos sẽ chỉ định"* trong bốn vai — tức **có thể là chính
 người đứng quầy**, và lúc ấy POS không gánh được trạm của chính mình. Đó là `U-052` ngay dưới.
 
+<a id="u-052"></a>
 - **U-052 — khi POS chỉ định CHÍNH NGƯỜI ĐỨNG QUẦY đi giao thì trạm `quay` do ai gánh — hay người
   đứng quầy không bao giờ là người đi giao?** Hai lời chốt của chủ quán, đọc cạnh nhau, không khép
   được ca này: `U-049` (2026-09-08) — người đi giao là *"1 trong bốn vai trên có thể là **bất cứ ai**
@@ -180,6 +205,11 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
   viết thành câu văn, đừng gạch đầu dòng.
 - Trả lời xong một câu thì **chuyển gạch đầu dòng ấy xuống mục đã có lời giải**, đừng chỉ gạch
   ngang tại chỗ.
+- **Mở hay đóng một câu thì sửa [Mục lục](#muc-luc) ở đầu file trong CÙNG thay đổi ấy** — thêm
+  (hoặc gỡ) dòng của mã đó, và thêm (hoặc gỡ) cái neo `<a id="u-xxx"></a>` ngay trên gạch đầu
+  dòng. Mục lục là bản sao thứ hai của danh sách đang mở: bản sao nào không được sửa cùng lúc với
+  bản gốc thì thành lời nói dối (`work/findings.md` **F-001**). Máy **không** chấm chỗ này — cả
+  Gate 1b lẫn Gate 1c đều không đọc phần trên tiêu đề `## Unknowns`.
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
