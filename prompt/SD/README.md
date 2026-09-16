@@ -83,8 +83,8 @@ người + thủ tục giữ (máy chỉ nhắc, để vết) · **5** phép đ�
 | P1-08 | L2 | [`P1-08-realtime-du-phong-L2.md`](P1-08-realtime-du-phong-L2.md) — **đã chạy 2026-09-08** | P1-02 ✔ |
 | P1-09 | L2 | [`P1-09-bang-quay-bon-con-so-L2.md`](P1-09-bang-quay-bon-con-so-L2.md) | BA-12 ✔ · ⚠️ **S-5** |
 | P1-10 | L1 | [`P1-10-so-rui-ro-L1.md`](P1-10-so-rui-ro-L1.md) — **đã chạy 2026-09-08** | P1-04 ✔ · P1-05 ✔ · P1-06 ✔ · P1-13 ✔ · P1-14 ✔ |
-| P1-11 | L2 | **chưa viết** | P1-02 → P1-10 |
-| P1-12 | L1 | **chưa viết** | P1-11 |
+| P1-11 | L2 | [`P1-11-cong-chat-luong-pha-1-L2.md`](P1-11-cong-chat-luong-pha-1-L2.md) — **đã chạy 2026-09-08** | P1-02 → P1-10 ✔ |
+| P1-12 | L1 | **chưa viết** | P1-11 ✔ |
 | P1-13 | L2 | [`P1-13-invariant-san-xuat-theo-me-L2.md`](P1-13-invariant-san-xuat-theo-me-L2.md) — **đã chạy 2026-09-07** | P1-01 ✔ |
 | P1-14 | L2 | **cố ý không có file prompt** — bước chạy ngay trong lượt chốt `docs/decisions.md` **ADR-044** (điểm 3); một prompt viết rồi tự đọc trong cùng một lượt là tài liệu nghi lễ, `CLAUDE.md` §3.8 | P1-04 ✔ |
 
@@ -94,7 +94,8 @@ người + thủ tục giữ (máy chỉ nhắc, để vết) · **5** phép đ�
 **viết được prompt của một bước khi mọi bước ở cột *Cần xong trước* của nó đã *Done*** — đầu ra để
 viết Constraints và Verify khi ấy đã có thật, không phải đoán. Tập prompt ở bảng trên là đúng tập
 ấy tính tới hôm nay — **P1-04 vào tập ngày 2026-09-04, đúng hôm P1-03 `Done`** (T-057), **P1-08
-ngày 2026-09-08, cùng lượt nhận việc**; bước nào còn thiếu thì viết khi tiền đề của nó xong.
+ngày 2026-09-08, cùng lượt nhận việc**, **P1-11 cùng ngày ngay sau khi P1-10 `Done`**; bước nào
+còn thiếu thì viết khi tiền đề của nó xong.
 **Đếm ở bảng trên, đừng đếm ở câu này** — câu cũ ở đây ghi cứng *"sáu prompt"* và *"năm bước còn
 lại"*, hai con số đã hết đúng mà không ai sửa (**F-003** · **F-018**).
 

@@ -266,7 +266,7 @@ số dòng ở đây là phép đếm của người viết, đếm lại ở `d
 | ~~**BA-12**~~ | ~~lát cắt sản xuất theo mẻ chưa có mục nào~~ — **xong 2026-09-04** (`31fb071`), §3.4 đã có; P1-07 và P1-09 hết bị nó chặn | — | — |
 | ~~**U-033**~~ | ~~đơn bị **huỷ** sau khi bếp đã làm xong phần của nó: chỗ ấy tính cho bàn khác đang chờ, hay bỏ và làm lại?~~ — **đóng 2026-09-06: tính cho bàn khác đang chờ, POS chọn bàn nhận và cập nhật** ⇒ P1-05 · P1-07 · P1-09 hết bị nó chặn | — | — |
 | **U-043** | mất tín hiệu **bao lâu** thì web ngừng nhận đơn — `I-008` đã có điều kiện thứ ba, `05-realtime-va-du-phong.md` §3 đã chốt ai phán quyết và dựa vào đường nào, chỉ còn **độ dài cửa sổ** *(mở 2026-09-08 bởi chính P1-08)* | **pha 3**, không chặn bước nào của pha 1 | chủ quán |
-| **U-044** | hoàn tiền cho một khoản khách đã **chuyển khoản** thì quán trả lại bằng gì — tiền mặt lấy trong két, hay chuyển khoản lại? Trả bằng tiền mặt là một đường **rút tiền khỏi két giữa buổi**, và điều kiện biên thứ hai của `quality/invariants.md` **I-021** hết đúng *(mở 2026-09-08 bởi chính P1-10)* | **không chặn bước nào của pha 1**; nó chạm công thức đối soát `architecture.md` §6.4 và dòng `RR-3` của sổ rủi ro | chủ quán |
+| ~~**U-044**~~ | ~~hoàn tiền cho một khoản khách đã **chuyển khoản** thì quán trả lại bằng gì — tiền mặt lấy trong két, hay chuyển khoản lại?~~ — **đóng 2026-09-08 (mở cùng ngày bởi chính P1-10): tuỳ ca, POS quyết — cả hai đường đều được** (`shop-facts.md` §6.4). Điều kiện biên thứ hai của `quality/invariants.md` **I-021** hết đúng, đúng như dòng này đã viết sẵn lúc câu còn mở ⇒ **I-021 viết lại** với hai hạng tử cho lần hoàn **chéo** phương thức (**ADR-046**, 2026-09-15) | — | — |
 | ~~**U-036**~~ | ~~khoản **trả trước** nhận hôm nay cho đơn giao ngày khác tính doanh thu ngày nào~~ — **đóng 2026-09-06: ngày GIAO, đối xứng với luật nợ §6.14 (ADR-040)** ⇒ P1-03 · P1-04 hết bị nó chặn | — | — |
 
 **Cách hỏi, không phải chuyện lễ nghi — nó đã hỏng một lần và tốn một ngày.** Câu hỏi `S-4` ngày
@@ -311,6 +311,15 @@ Cổng này chép **hình dạng** của cổng BA (`docs/product/0-ba/ban-hang/
 nội dung. Bài học của BA-11: một cổng tick **6/9 kèm lý do cho ba ô còn lại** thì trung thực và
 dùng được; một cổng tick 9/9 bằng cảm giác thì không chặn được gì. Nên mỗi ô dưới đây kèm sẵn
 **cách chứng minh**.
+
+> **Mười ô dưới đây là LỜI của cổng; chỗ nó được KÝ thì không ở file này.** Trạng thái đã ký, kèm
+> bằng chứng của từng ô, ở
+> [`docs/product/1-system-design/07-cong-chat-luong-pha-1.md`](../docs/product/1-system-design/07-cong-chat-luong-pha-1.md)
+> §7 — **9/10 tính tới 2026-09-08** (P1-11), ô thứ mười chờ **P1-12**. Mười hộp `- [ ]` ở đây vì thế
+> **không** phải một phép đếm và không được tick: kế hoạch này **không sở hữu sự thật nào**, và hai
+> bản tick sẽ trôi khỏi nhau (`work/findings.md` **F-001** · **F-033**). Đúng cách cổng chất lượng
+> BA đứng: chín hộp ở `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §12 tới nay vẫn `- [ ]`,
+> còn chỗ ký là `docs/product/0-ba/ban-hang/08-scenario.md`.
 
 - [ ] **Mọi** `I-0xx` của `quality/invariants.md` đều có tầng bảo vệ và phép đối chiếu → mở
       `03-bao-ve-invariant.md`, đối chiếu **danh sách mã** giữa hai file (không đếm số lượng —

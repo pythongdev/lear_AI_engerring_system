@@ -54,6 +54,7 @@ thư mục rỗng không gỡ được dòng nào cho ai.
 | Yêu cầu hình dạng dữ liệu — mỗi chỗ thiếu ở [`architecture.md`](1-system-design/architecture.md) §8 một câu *phải ghi lại được X* / *phải không thể xảy ra Y*, cộng nợ · vết · trực trạm · mốc tính tiền (P1-07) | [1-system-design/04-yeu-cau-du-lieu.md](1-system-design/04-yeu-cau-du-lieu.md) |
 | Realtime và đường dự phòng — **đường đẩy** · **đường kéo** tự chạy · **bốn ràng buộc kiến trúc** `RB-1`…`RB-4` mỗi cái một **dấu hiệu đo được** · hệ thống dựa vào cái gì để nói *quán đang mất kết nối* (P1-08) | [1-system-design/05-realtime-va-du-phong.md](1-system-design/05-realtime-va-du-phong.md) |
 | Sổ rủi ro — **chín rủi ro** `RR-1`…`RR-9`, mỗi rủi ro một **cơ chế chặn đã viết ra ở một mục pha 1** (hoặc một dòng ⛔ *chưa có cơ chế*), **người chịu** và **dấu hiệu nó đang xảy ra** (P1-10) | [1-system-design/06-so-rui-ro.md](1-system-design/06-so-rui-ro.md) |
+| Cổng chất lượng pha 1 — **biên bản lượt diễn** ba scenario nghiệm thu BA qua thiết kế (mỗi bước trỏ vào cơ chế giữ nó, hoặc một mã `F-XXX`), tiền cộng lại từ nhà thật, và **mười ô cổng sang pha 2** đã ký kèm bằng chứng (P1-11) | [1-system-design/07-cong-chat-luong-pha-1.md](1-system-design/07-cong-chat-luong-pha-1.md) |
 
 Đây là **đặc tả, không phải mã**: nó nói *cái gì phải đúng* và *ai được ghi cái gì*, không nói tên
 hàm, tên file hay thư viện. **Số mục §1–§14 không đánh lại** — `docs/decisions.md` ADR-012 (mục

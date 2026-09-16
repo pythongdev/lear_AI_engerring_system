@@ -62,7 +62,7 @@ chỗ trong cùng file là bug của lượt vừa sửa entry, không phải l�
 | P1-08 | [Realtime, đường kéo dự phòng, ràng buộc ẩn](#p1-08) | Đóng |
 | P1-09 | [Bảng quầy bốn con số](#p1-09) | Đóng |
 | P1-10 | [Sổ rủi ro](#p1-10) | Đóng |
-| P1-11 | [Diễn ba scenario qua thiết kế](#p1-11) | Mở |
+| P1-11 | [Diễn ba scenario qua thiết kế](#p1-11) | Đóng |
 | P1-12 | [Rà chéo ranh giới pha](#p1-12) | Mở |
 | P1-13 | [Bảng ba cột — nhóm SẢN XUẤT THEO MẺ](#p1-13) | Đóng |
 | P1-14 | [Bảng ba cột — một hàng `I-021` vào nhóm TIỀN](#p1-14) | Đóng |
@@ -934,8 +934,39 @@ ro không có chúng là sổ của một hệ thống khác.
 <a id="p1-11"></a>
 ### P1-11 — Chưa ai diễn ba scenario nghiệm thu BA qua thiết kế, nên không ai biết thiết kế có chạy được nghiệp vụ không
 
-**Prompt:** chưa có — **L2** · bước 11/14 (kế hoạch §6) · **cần xong trước:** P1-02 → P1-10 ·
-đây là **cổng** của cả pha
+**Prompt:** [`prompt/SD/P1-11-cong-chat-luong-pha-1-L2.md`](../prompt/SD/P1-11-cong-chat-luong-pha-1-L2.md)
+— **L2** · bước 11/14 (kế hoạch §6) · **cần xong trước:** P1-02 → P1-10 ✔ · đây là **cổng** của cả pha
+
+✅ **Xong ngày 2026-09-08** — `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` (file
+**mới**, một chủ) + một dòng vào bảng *Pha 1* của `docs/product/00-index.md` trong cùng thay đổi.
+**Diễn 41 bước của ba scenario, cộng 7 bước một lát thứ tư mà ba scenario không có — một buổi mất
+kết nối** (`01-ranh-gioi-he-thong.md` §5 đòi thẳng lát ấy: ba scenario phải đi qua được `PT-1` và
+`PT-6`). **Tiền cộng lại từ `master_plan/shop-facts.md` §4.2 · §4.4, không đọc con số của
+scenario** — mười ba dòng, khớp từng đồng, kể cả ba bậc phụ thu **×1 · ×4 · ×5** (§5 của file mới);
+đây là phép duy nhất bắt được loại **F-022**, và nó là lý do `I-013` chỉ tới **tầng 3**: không ràng
+buộc nào đọc được một con số **đến từ đâu**. **Cổng ký 9/10, cả chín ô tick KÈM LÝ DO, không ô nào
+tick trơn**; ô thứ mười để trống kèm mã chỗ chặn — **P1-12**. Chỗ ký ở file mới §7, **không** ở kế
+hoạch §9: kế hoạch nhận **một** khối trỏ sang, và mười hộp `- [ ]` ở đó ở lại nguyên vì hai bản
+tick sẽ trôi khỏi nhau (**F-001** · **F-033**) — đúng cách chín hộp của cổng BA vẫn `- [ ]` ở
+`master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §12 trong khi chỗ ký là `08-scenario.md`.
+**Ba chỗ KHÔNG trỏ được, ghi thành ba finding và KHÔNG lấp** (luật của chính bước này):
+**`F-036`** — phép đối chiếu hẹp hơn mệnh đề nó nhận giữ, hai ca (`I-004` việc **cấp đơn** nước
+chấm · `I-009` vế **ngừng bán**), và **ô cổng thứ nhất vẫn xanh** vì nó chấm **danh sách mã**, không
+chấm **vế** (họ **F-012**); **`F-037`** — khoản **trả trước** có mốc tính tiền (**ADR-040**) nhưng
+không có dòng nào trong công thức đối soát để đứng, trong khi `02-thoi-gian-ngay-ban.md` §4 đã giao
+dòng ấy cho *"P1-04 trở đi"* từ 2026-09-04 và **không bước nào nhận** (họ **F-024** · **F-027**);
+**`F-038`** — *"thiếu một trường bắt buộc thì đơn không tạo được"* là luật đã chốt của pha 0
+(§3.2.4) mà **không** mệnh đề `I-0xx` nào, **không** ô bảng bảo vệ nào, **không** dòng `YC-XX` nào
+nói. **Hai chỗ dừng KHÔNG tính là phát hiện** vì `03-bao-ve-invariant.md` §2.2 · §2.3 đã báo trước:
+`S-6` (lúc nào quầy bấm mốc *đã ra bàn* của đơn giao) và `I-004` vế **tầng 4** (POS chọn bàn nhận
+chỗ đã làm xong của đơn huỷ — ba scenario không có bước huỷ nào). **Không sửa một chữ** của
+`quality/invariants.md`, `master_plan/shop-facts.md`, `docs/product/0-ba/`, sáu file pha 1 của các
+bước trước và `architecture.md` (`git diff --stat` rỗng ở cả bảy) — gặp chỗ hụt thì ghi mã, vì sửa
+mục của bước khác là **F-010** · **F-014**, và lấp ngay trong lượt diễn là làm mất chính phép
+nghiệm thu. **Không sinh ADR:** bước này **đo**, nó không chọn giữa hai thiết kế. **Bốn ô còn lại
+của F-033 không sửa hộ** (tiền lệ **F-032**); lượt này chỉ **thêm một hàng đo được** vào F-033 —
+hàng `S-5` của kế hoạch §8 còn ghi *chặn P1-07 · P1-09* trong khi cả hai đã `Done`. ⇒ **P1-12 hết
+bị P1-11 chặn**, và nó nhận đúng **một** ô cổng chưa ký cộng chính file mới này vào tập bị rà.
 
 **Goal:**
 Xong rồi thì mỗi **bước** của ba scenario ở `docs/product/0-ba/ban-hang/08-scenario.md` §8 trỏ
