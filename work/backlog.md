@@ -184,20 +184,131 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="in-progress"></a>
 ## In Progress
-- [ ] T-072 **Chủ quán đóng `U-048`: KHÔNG suất nào bưng kèm canh, số bát bếp bưng đúng bằng
-  lựa chọn của khách** — **L1**. Đang chạy. Mã là **T-072** vì `T-071` đã được phiên đóng `U-049`
-  nhận trong `work/scope.txt` (**F-014**).
-- [ ] T-074 **Chủ quán đóng `U-045`: máy KHÔNG kết luận một nguyên liệu đang thiếu — chủ quán tự đọc
-  hai con số rồi tự kết luận** — **L1**. Đang chạy (2026-09-15). Mã là **T-074** vì `T-072` ·
-  `T-073` đã được hai phiên khác nhận trong `work/scope.txt` (**F-014**).
-- [ ] T-073 **Chủ quán đóng `U-044`: hoàn tiền cho khoản đã chuyển khoản trả lại bằng gì — không có
-  luật cứng, POS quyết từng ca** — **L1**. Đang chạy (nhận 2026-09-08, tiếp tục 2026-09-15).
-- [ ] T-075 **Chủ quán đóng `U-050`: người đứng quầy (POS) gánh trạm của người đi giao, và khoảng
-  trống ấy KHÔNG là thiếu người vì đi giao lúc quán vắng** — **L1**. Đang chạy (2026-09-15). Mã là
-  **T-075** vì `T-072` · `T-073` · `T-074` đã được ba phiên khác nhận (**F-014**).
 
 <a id="done"></a>
 ## Done
+- [x] T-073 **Chủ quán đóng `U-044`: hoàn tiền trả lại bằng gì cũng KHÔNG có luật cứng — POS quyết
+  từng ca, và hệ quả là `I-021` phải viết lại** — **L1**, nhận 2026-09-08, đóng 2026-09-16. Nguyên
+  văn lời chủ quán: *"tuỳ vào tình hình thực tế, pos quyết định."* ⇒ khách đã **chuyển khoản** mà
+  cần hoàn thì quầy đưa **tiền mặt trong két** hay **chuyển khoản lại** đều được; không đường nào
+  mặc định, không đường nào bị cấm — cùng hình dạng quyền hoàn tiền `shop-facts.md` §6.4 (2026-08-30)
+  và `U-049` (2026-09-08). **Lời chốt vào owner:** `master_plan/shop-facts.md` §6.4 (một gạch đầu
+  dòng mới), §7.1 (một hàng nhật ký), §8.5 (ô ⚠️ — câu *"giữa buổi không ai lấy tiền ra"* vẫn đúng
+  nguyên văn, nhưng nay có một đường tiền **rời két** không phải một lần nộp bớt). **`U-044` đóng**
+  ở `docs/product/99-unknowns.md`, gạch đầu dòng chuyển hẳn xuống *Đã có lời giải* (không gạch
+  ngang tại chỗ — hợp đồng của mục ấy). **Việc đắt nhất của lượt không phải chép lời, mà là mệnh đề
+  tiền:** `quality/invariants.md` **I-021** tự khai từ 2026-09-04 rằng luật *không có khoản rút giữa
+  buổi* mà đổi thì công thức **thiếu một hạng tử** và mệnh đề phải **viết lại, không phải viết
+  thêm** — lời chốt này làm đúng điều ấy, nên I-021 nay mang **hai hạng tử** cho lần hoàn **chéo
+  phương thức** (trừ *hoàn tiền mặt cho khoản đã thu chuyển khoản*, cộng *hoàn chuyển khoản cho
+  khoản đã thu tiền mặt*), kèm **hai kịch bản nghiệm** mới đo hai chiều và một ca *thiếu phương
+  thức ⇒ ngày chưa đối soát xong, không phải lệch*. Hoàn **cùng** phương thức không sinh hạng tử
+  nào — *doanh thu tiền mặt* **giữ nguyên nghĩa**, đó là chỗ **ADR-046** chọn đường và ghi lại ba
+  đường bị bác (định nghĩa lại doanh thu tiền mặt theo phương thức trả ra · coi hoàn tiền mặt là
+  một khoản *rút giữa buổi* — lật ngược §8.5 · cấm hoàn chéo cho gọn công thức — lật ngược chính
+  lời chủ quán). **Một chỗ là SUY RA, không phải lời chủ quán** (**F-004**): vết hoàn tiền phải ghi
+  thêm **phương thức trả lại** — câu thứ năm cạnh *bao nhiêu · đơn nào · ai bấm · lý do* — vì không
+  có nó thì hai hạng tử mới không mở ra được thành danh sách từng khoản (`architecture.md` §6.4 luật
+  2); chỗ này ghi rõ *cách đọc* ở §6.4 và ở điểm 3 của ADR. **Năm chỗ chép/trỏ vào câu hỏi sửa
+  trong CÙNG lần sửa** (`CLAUDE.md` §7.2): `architecture.md` §6.4 (dòng *hoàn tiền trong ngày* +
+  một đoạn tách theo phương thức) · §7 (hàng *Hoàn tiền*) · §8 (hàng *Vết hoàn tiền*) ·
+  `06-so-rui-ro.md` (`RR-3` bỏ ô ⚠️ *chưa có luật*, §1.3 từ **hai mã** còn **một**, §2 hàng *Chủ
+  quán*) · `SD_master_plan…md` §8 (hàng `U-044` gạch ngang). **Một chỗ CỐ Ý không đổi trạng thái:**
+  ô số **9** của `07-cong-chat-luong-pha-1.md` — nó ghi *trả lời tại mốc ký 2026-09-08*, tức lịch
+  sử, nên lượt này chỉ **thêm** lời *"câu này đã có lời ngay trong ngày"*, không viết lại phán quyết
+  của mốc ấy. **Chỗ ADR KHÔNG chốt, và nó là chỗ hở thật:** một lần hoàn **chuyển khoản** là tiền
+  **ra**, trong khi §6.10 hôm nay chỉ đối chiếu phần chuyển khoản với **tin nhắn báo có** — tiền
+  **vào**; chưa lời nào nói nó đối chiếu với nguồn gì. Không chặn bước nào của pha 1, phải chốt
+  trước khi dựng màn đối soát. **Không làm:** không đặt luật cho POS chọn phương thức nào, không
+  đụng `I-014` (nó nói về **nguồn** doanh thu, không về phương thức), không sửa `shop-facts.md`
+  §6.10, không mở câu hỏi mới. **Va chạm phiên song song, đo được:** commit `66798b8` của phiên
+  `T-076` đã **nhặt** phần đã viết của lượt này (`shop-facts.md`, `99-unknowns.md`, `work/backlog.md`)
+  vào subject của nó — **lần thứ tư của `work/findings.md` F-025**, đã có mục ghi sẵn ở đó, lượt này
+  **không** ghi lần thứ năm chồng lên. Gate xanh 2026-09-16 (`check-doc-status` 1922 khối, 50 mã
+  U-XXX; `./scripts/gate.sh` → *Verification passed*)
+- [x] T-072 **Chủ quán đóng `U-048` — KHÔNG suất nào bưng kèm canh, nên con số khách chọn trên
+  dòng canh là TỔNG số bát, và chữ *kèm sẵn* của lời chốt hôm trước chỉ còn nghĩa *không tính
+  tiền*** — **L1**. Nguyên văn: *"mỗi suất bếp sẽ không bưng kèm theo canh. bếp bưng canh như nào
+  dựa vào lựa chọn thực tế của khách."* Câu hỏi có **hai** vế và lời đáp đóng cả hai bằng một
+  đường: phần kèm sẵn là **0 bát**, nên hai cách đọc của vế thứ hai (*tổng* hay *phần thêm*) **trùng
+  nhau** — khách gọi 1 suất đầy đủ + *canh ×2* thì bếp múc **đúng 2** bát, không phải 3. Không chọn
+  canh ⇒ **0 bát**, và đơn ấy **không có việc `canh` nào** xuống bếp; việc **nước chấm** thì vẫn
+  còn, vì nó là việc cấp đơn của mọi đơn. **Chỗ đáng nhất của lượt này là một lời chốt PHỦ một cách
+  đọc của lời chốt cùng ngày**: `U-046` được ghi lại bằng chữ *"canh bánh cuốn bưng kèm sẵn không
+  tính tiền"*, và câu hôm nay bỏ vế *tự động bưng* trong khi giữ nguyên vế *không tính tiền* — nên ô
+  **0đ** ở `master_plan/shop-facts.md` §4.2 · §4.3 **không đổi một chữ**, còn §4.5 · §5.3 thì đổi.
+  Đây là **lời chốt**, không phải suy luận của phiên (**F-004**): chủ quán nói thẳng *"không bưng
+  kèm theo"*. **Năm chỗ sửa trong cùng lần sửa** (`CLAUDE.md` §7.2): §4.2 (thêm câu cảnh báo cách
+  đọc chữ *kèm sẵn*) · §4.5 (hai luật, thay khối ⛔) · §4.9 dòng 10 · §5.3 (ví dụ `×?` → `×2`, và
+  dòng hoá đơn thứ hai để con số ấy truy được về đâu) · §7.1 (một hàng nhật ký). **Lời đáp này
+  KHÔNG mở câu hỏi nào mới** — khác ba lượt liền trước nó, nhưng đó là quan sát của phiên chứ không
+  phải một quy luật (**F-003**). **Hai chỗ trỏ vào `U-048` sửa theo:**
+  `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §1 (file CHƯA COMMIT của phiên P1-11 —
+  sửa vì Gate 1c chấm `docs/product/`, và chỗ ấy nay đọc được thêm một điều: một đơn khách **không**
+  chọn canh thì bảng sáu việc của Scenario 1 **đúng**, nó chỉ không cho thấy dòng canh **khi** khách
+  có chọn) · `work/findings.md` **F-036** vế *canh* hết bị chặn — phép đối chiếu cho vế ấy nay viết
+  được, và lượt này **không** viết nó (đó là việc 1 của F-036, thuộc bước sửa hai hàng P1-05 ·
+  P1-06). **Không làm:** không đặt giá cho bát canh, không cho canh nhận nhân, không đổi một con số
+  nào trong bốn hàng suất của §4.5, không sửa lời `I-004` ở `quality/invariants.md` (F-036 đã chốt
+  đó là việc của pha 0), không chạm `U-051` · `U-052` của hai phiên khác. **Việc của lượt này đã
+  nằm trong commit `66798b8` dưới subject `T-076`** — phiên song song nhặt cả ba file chưa commit
+  (`shop-facts.md` · `99-unknowns.md` · `backlog.md`), đúng hình **F-025** lần thứ tư, và F-025 đã
+  ghi lại ca ấy. Gate xanh — `./scripts/gate.sh` exit 0, `check-doc-status` xanh, `./scripts/brief.sh`
+  không còn in `U-048` (2026-09-08, dọn nốt 2026-09-16)
+- [x] T-075 **Chủ quán đóng `U-050` — NGƯỜI ĐỨNG QUẦY gánh trạm của người đi giao, và khoảng trống
+  ấy KHÔNG là *thiếu người*: cả hai vế trong một câu** — **L1**. Nguyên văn: *"pos gánh, không thiếu
+  người vì đi ship luc quán vắng."* **(1) Ai gánh:** trạm `quay` **kiêm** trạm bị bỏ trống tới lúc
+  người kia về ⇒ câu *"ba trạm đầu là trạm riêng, không kiêm sang trạm khác"* của
+  `master_plan/shop-facts.md` §3 nay có **một ngoại lệ có tên**, và hai đường ra kia mà `U-050` liệt
+  kê lúc còn mở — quán **dừng** trạm ấy, hoặc **chủ quán** đứng vào — đều **không** phải đường chủ
+  quán chọn. **(2) Thiếu người:** khoảng trống do đi giao **không** tính vào số **7** của §8.6 ⇒ số 7
+  hết đứng trên một câu về việc đi giao, nó chỉ còn đứng trên **C36** (*ai đang trực trạm nào*), đúng
+  một câu. **Chỗ KHÔNG được đọc rộng ra (F-004):** *"vì đi ship lúc quán vắng"* là **lý do** chủ quán
+  đưa ra, **không** phải luật cấm giao lúc đông — không lời nào nói máy chặn hay cảnh báo một chuyến
+  giao lúc quán đông, nên đừng viết luật ấy.
+  **Chỗ để hở ⇒ `U-052`:** lời *"pos gánh"* **va** chính lời chốt `U-049` bảy ngày trước — người đi
+  giao là *"bất cứ ai"* trong bốn vai, **kể cả người đứng quầy**; lúc ấy không còn POS ở quầy để
+  gánh. Không suy hộ (**F-004**): ba đường ra (quầy không bao giờ đi giao ⇒ *"bất cứ ai"* hẹp lại
+  còn ba vai · chủ quán đứng vào · `quay` để trống) đều là luật mới. `U-052` chạm việc **xếp ca**
+  (ADM-21), **không** chạm số 7 của mục tổng quan.
+  *Va chạm phiên song song:* mã là **T-075** vì `T-072`·`T-073`·`T-074` đã có chủ (**F-014**), và
+  câu mới phải đổi từ `U-051` sang **`U-052`** vì phiên T-074 mở `U-051` trong cùng file, cùng lúc —
+  **F-014 lần thứ hai trong một ngày, lần này trên một mã `U-XXX` chứ không phải `T-XXX`**. Thay đổi
+  của lượt này ở `shop-facts.md` · `99-unknowns.md` · `backlog.md` cũng đã bị commit `66798b8` của
+  phiên khác cuốn đi (**F-025**, lần thứ tư).
+  *Nghiệm thu:* `./scripts/gate.sh` xanh; `./scripts/brief.sh` **không** in `U-050` ở *Đang mở* và
+  in `U-052`; `U-050` nằm ở *Đã có lời giải* với nguyên văn lời chủ quán.
+  Ghi ở: `master_plan/shop-facts.md` **§3** · §7.1 · §8.6 (hàng 7) ·
+  `docs/product/99-unknowns.md` · `work/admin-questions.md` (A10 · C23) ·
+  `work/backlog_AD.md` (ADM-04 · ADM-21). (2026-09-15)
+- [x] T-074 **Chủ quán đóng `U-045` — chữ *thiếu* của mục tổng quan KHÔNG do máy nghĩ ra: không có
+  ngưỡng cho thứ nào, chủ quán tự đọc hai con số rồi tự kết luận** — **L1**, 2026-09-15. Nguyên
+  văn: *"chủ quán tự đọc rôi đưa ra kết luận"* — chủ quán chọn đúng một trong hai đường câu hỏi
+  đưa ra. Hai con số là cặp **mua vào · đã dùng** mà `U-034` chốt 2026-09-06. **Ba thứ lời ấy
+  chốt:** máy **không** giữ ngưỡng nhắc sắp hết cho bất kỳ nguyên liệu nào · máy **không** tự bày
+  chữ *thiếu* / *sắp hết* / không nhắc · danh mục §8.4 **không** mọc cột *ngưỡng*. **Thứ lời ấy
+  giữ nguyên:** §8.4 đứng nguyên ở mức **sổ ghi tay điện tử** — lời chốt đi đường *không* lật
+  ngược nó, nên cửa duy nhất mở lại được mức ấy (`B22`, giá vốn một suất) vẫn chưa ai mở, đúng
+  hình dạng *"máy không gom, người gom"* (§5.4). **Chỗ để hở ⇒ `U-051`:** máy không kết luận nữa
+  thì mục tổng quan **bày gì** ở vế nguyên liệu — cặp số của hôm nay cho từng thứ, số còn lại cộng
+  dồn, hay không bày gì (chủ quán tự mở mục nhập hàng ngày) — ba cách đọc cho ba tập con số khác
+  nhau, mà §8.6 chốt **tập con số**. **Một chỗ CỐ Ý không đóng theo:** chỗ hở **đơn vị tính** của
+  danh mục §8.4 chỉ từng nằm chung trong `U-045`; lời chốt này không chạm nó, nên nó về đứng một
+  mình ở câu `B12` (`work/admin-questions.md`) và vẫn là vế chặn của ADM-10 — đừng đọc `U-045`
+  đóng thành *danh mục đã đủ dữ kiện*. **Lane admin:** cùng lời ấy trả lời luôn câu `B21` (*máy
+  nhắc dựa vào cái gì*) ⇒ **ADM-13** mất hẳn nửa *ngưỡng + lời nhắc* và nửa còn lại (con số tồn
+  ước tính) chuyển sang đứng trên `U-051`; **ADM-14** hẹp lại còn đúng vế *người nào bấm nút tạm
+  dừng*, vì máy không còn tín hiệu nào để bấm theo; **ADM-04** vẫn loại 1, vế chặn đổi chủ `U-045`
+  ⇒ `U-051`. Con số ba loại **không đổi** (20 · 8 · 1) — không việc nào sinh ra, không việc nào
+  mất đi. **Không làm:** không tự chọn con số nào cho mục tổng quan, không đặt đơn vị tính hộ cho
+  thứ nào trong mười bốn tên, không mở lại §8.4.
+  *Nghiệm thu:* `./scripts/gate.sh` xanh; `./scripts/brief.sh` in `U-051` ở *Đang mở* và **không**
+  in `U-045`; `U-045` nằm ở *Đã có lời giải* kèm nguyên văn.
+  Ghi ở: `master_plan/shop-facts.md` §8.4 (khối *không có ngưỡng*) · §8.6 (hàng 7) · §7.1 ·
+  `docs/product/99-unknowns.md` · `work/admin-questions.md` (A10 · B12 · B21) ·
+  `work/backlog_AD.md` (ADM-04 · ADM-13 · ADM-14).
+  ⚠️ **Phần sửa tài liệu của task này đã bị commit `66798b8` (subject `T-076`) cuốn theo** trước
+  khi task đóng — lần thứ N của `work/findings.md` **F-025**, hai phiên cùng cây.
 - [x] T-071 **Chủ quán đóng `U-049` — người ĐI GIAO là một trong bốn vai của §3, không phải người
   thứ năm — nên con số nhân sự thật của quán đóng lại, còn CHỖ TRỐNG người ấy để lại thì không** —
   **L1**. Nguyên văn: *"1 trong bốn vai trên có thể là bất cứ ai pos sẽ chỉ định."* Hai điều lời ấy

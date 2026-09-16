@@ -92,10 +92,34 @@ lại: bốn vai + chủ quán**, không có dòng thứ năm nào cho việc đ
 gánh* — và vế chặn của ADM-04 · ADM-21 **chuyển chủ chứ không mất**: `U-049` ⇒ `U-050`. Con số ba
 loại vẫn **không đổi** (20 · 8 · 1).
 
+✅ **Ngày 2026-09-15, chủ quán ĐÓNG nốt `U-050`** (T-075) — nguyên văn *"pos gánh, không thiếu người
+vì đi ship luc quán vắng."* ⇒ **người đứng quầy gánh** trạm bị bỏ trống, và khoảng trống ấy **không**
+là *thiếu người*. Vế *thiếu người* của **ADM-04** vì thế hết đứng trên một câu về việc đi giao: nó
+chỉ còn đứng trên `C36` → **ADM-21**, đúng một câu. Lời ấy mở `U-052` (*khi chính người đứng quầy đi
+giao thì ai gánh `quay`*), nhưng `U-052` **không** chặn ADM-04: nó chạm việc **xếp ca** của ADM-21,
+không chạm con số nào của mục tổng quan. Con số ba loại vẫn **không đổi** (20 · 8 · 1).
+
+⚠️ **Ngày 2026-09-15, chủ quán đóng `U-045`** (T-074): *"chủ quán tự đọc rôi đưa ra kết luận"* ⇒
+**không có ngưỡng**, máy **không** kết luận một nguyên liệu đang thiếu, không nhắc *sắp hết*; chủ
+quán đọc cặp số **mua vào · đã dùng** rồi tự kết luận (`master_plan/shop-facts.md` §8.4). Lời ấy
+chạm **ba** việc của lane này, và không việc nào đổi loại:
+- **ADM-04 vẫn loại 1**, vế chặn **đổi chủ chứ không mất**: `U-045` ⇒ **`U-051`** (*mục tổng quan
+  bày GÌ ở vế nguyên liệu — cặp số hôm nay, số còn lại cộng dồn, hay không bày gì*), cộng `F52` ·
+  `F53` như cũ.
+- **Cùng lời ấy trả lời luôn câu `B21`** của nhánh B — câu hỏi *máy nhắc dựa vào cái gì*. ⇒
+  **ADM-13** mất nửa *ngưỡng + lời nhắc* (chủ quán bác: máy không nhắc), nửa còn lại — **con số
+  tồn ước tính** — đứng nguyên và nay đứng trên `U-051` chứ không trên `B21`; **ADM-14** hẹp lại
+  còn đúng vế entry của nó đã viết sẵn: **người nào** được bấm nút tạm dừng, vì máy không bao giờ
+  là người phát tín hiệu.
+- **Chỗ hở *đơn vị tính* của danh mục KHÔNG đóng theo** — nó chỉ từng nằm chung trong `U-045`, nay
+  đứng một mình ở câu `B12`, và `B12` vẫn là vế chặn của **ADM-10**.
+
+Con số ba loại **không đổi** (20 · 8 · 1): lời chốt này không đẻ ra việc mới và không gỡ việc nào.
+
 | Nhánh | Câu hỏi ở `admin-questions.md` §3 | Việc bị chặn |
 |---|---|---|
-| ~~**A** — một buổi bán~~ | ~~`A1`…`A10`~~ **ĐÃ TRẢ LỜI CẢ MƯỜI, 2026-09-04** (T-056); bốn vế bỏ trống nay cũng đóng hết (`U-038`·`U-039`·`U-040` 2026-09-06 · **`U-041` 2026-09-08**) | **hết chặn:** ADM-01 · ADM-02 · ADM-03 → loại 2 · **còn chặn:** ADM-04 — nhưng bằng **U-045** (mở ra từ chính lời đáp `U-041`), không còn bằng câu nhánh A nào |
-| **B** — nguyên liệu | `B11`…`B22` (12 câu, `B18` trả lời **một nửa**) — **U-034 đóng 2026-09-06** | ADM-10 · ADM-11 · ADM-12 · ADM-13 · ADM-14 · ADM-15 |
+| ~~**A** — một buổi bán~~ | ~~`A1`…`A10`~~ **ĐÃ TRẢ LỜI CẢ MƯỜI, 2026-09-04** (T-056); bốn vế bỏ trống nay cũng đóng hết (`U-038`·`U-039`·`U-040` 2026-09-06 · **`U-041` 2026-09-08**) | **hết chặn:** ADM-01 · ADM-02 · ADM-03 → loại 2 · **còn chặn:** ADM-04 — nhưng bằng **U-051** (`U-045` đóng 2026-09-15, và chính lời đáp ấy mở `U-051`), không còn bằng câu nhánh A nào |
+| **B** — nguyên liệu | `B11`…`B22` (12 câu, `B18` trả lời **một nửa**, **`B21` có lời 2026-09-15** qua `U-045`: không ngưỡng, máy không nhắc) — **U-034 đóng 2026-09-06** | ADM-10 · ADM-11 · ADM-12 · ADM-13 · ADM-14 · ADM-15 |
 | **C** — con người | `C23`…`C36` (14 câu, **chưa câu nào**) | ADM-20 · ADM-21 · ADM-22 · ADM-23 · ADM-24 |
 | **D** — sản phẩm | `D37`…`D43` (7 câu, **chưa câu nào**) | ADM-32 · ADM-33 (ADM-30 chỉ vướng vế quyền, ADM-31 không vướng) |
 | **E** — tài chính | `E44`…`E51` (8 câu, **chưa câu nào**) | ADM-42 · ADM-43 · ADM-44 · ADM-45 |
@@ -107,7 +131,7 @@ loại vẫn **không đổi** (20 · 8 · 1).
 
 | Loại | Nghĩa là gì | Gồm |
 |---|---|---|
-| **1 — thiếu LUẬT** | phải hỏi chủ quán trước, không phiên nào được suy hộ (`CLAUDE.md` §3.5) | **hai mươi** việc: **ADM-04** (nhánh A hết chặn 2026-09-08, nay chặn bởi **U-045**), cả nhánh **B** (6) · **C** (5), ADM-32 · ADM-33 · ADM-42 · ADM-43 · ADM-44 · ADM-45 · ADM-51 · ADM-52 |
+| **1 — thiếu LUẬT** | phải hỏi chủ quán trước, không phiên nào được suy hộ (`CLAUDE.md` §3.5) | **hai mươi** việc: **ADM-04** (nhánh A hết chặn 2026-09-08, nay chặn bởi **U-051** — `U-045` đóng 2026-09-15), cả nhánh **B** (6) · **C** (5), ADM-32 · ADM-33 · ADM-42 · ADM-43 · ADM-44 · ADM-45 · ADM-51 · ADM-52 |
 | **2 — luật ĐÃ ĐỦ, thiếu THI CÔNG** | phần nghiệp vụ đã chốt sẵn; cái còn lại thuộc pha 2–4, **không** thuộc lane này | **tám** việc: **ADM-01** · **ADM-02** (2026-09-04 — T-056) · **ADM-03** (mới, 2026-09-06 — U-039/U-040 đóng) · ADM-30 · ADM-31 · ADM-40 · ADM-41 · ADM-50 (ADM-52 nằm một nửa ở đây) |
 | **3 — việc của chính lane** | nhận được ngay, không chờ ai | **một** việc: **ADM-53** |
 
@@ -184,15 +208,15 @@ hàng thì lấy lại số bằng `grep -n` ngay lượt ấy, đừng chép t�
 | [ADM-01](#adm-01) | ca bán | A | 2 | *hết chặn* — chờ thi công pha 2–4 |
 | [ADM-02](#adm-02) | thứ tự bưng | A | 2 | *hết chặn* — chờ thi công pha 2–4 |
 | [ADM-03](#adm-03) | sức chứa | A | 2 | *hết chặn* (đóng 2026-09-06: [`U-039`](../docs/product/99-unknowns.md#L296) [`U-040`](../docs/product/99-unknowns.md#L297)) |
-| [ADM-04](#adm-04) | tổng quan buổi bán | A | 1 | [`U-045`](../docs/product/99-unknowns.md#L117) · [`F52`](admin-questions.md#L282) · [`F53`](admin-questions.md#L285) — *`U-041` đóng 2026-09-08, cả ba đường*; vế **người** còn đứng trên [`C36`](admin-questions.md#L225) → [ADM-21](#adm-21) và [`U-050`](../docs/product/99-unknowns.md#L191) (*`U-049` đóng cùng ngày*) |
+| [ADM-04](#adm-04) | tổng quan buổi bán | A | 1 | [`U-051`](../docs/product/99-unknowns.md#L117) · [`F52`](admin-questions.md#L282) · [`F53`](admin-questions.md#L285) — *`U-041` đóng 2026-09-08, cả ba đường; `U-045` đóng 2026-09-15 — máy không kết luận, chủ quán tự đọc*; vế **người** nay chỉ còn đứng trên [`C36`](admin-questions.md#L233) → [ADM-21](#adm-21) (*`U-049` đóng 2026-09-08, `U-050` đóng 2026-09-15: POS gánh trạm bị bỏ trống, khoảng trống ấy không là thiếu người*) |
 | [ADM-10](#adm-10) | danh mục nguyên liệu | B | 1 | [`B11`](admin-questions.md#L138) [`B12`](admin-questions.md#L141) |
 | [ADM-11](#adm-11) | phiếu nhập hàng | B | 1 | [`B13`](admin-questions.md#L144)…[`B17`](admin-questions.md#L156) |
 | [ADM-12](#adm-12) | hao hụt / đồ thừa | B | 1 | vế còn lại của [`B18`](admin-questions.md#L159) · [`B19`](admin-questions.md#L165) [`B20`](admin-questions.md#L168) |
-| [ADM-13](#adm-13) | tồn ước tính | B | 1 | [`B21`](admin-questions.md#L171) |
-| [ADM-14](#adm-14) | nối nút tạm dừng | B | 1 | [`B21`](admin-questions.md#L171) + [**ADM-13**](#adm-13) |
+| [ADM-13](#adm-13) | tồn ước tính | B | 1 | [`U-051`](../docs/product/99-unknowns.md#L117) — [`B21`](admin-questions.md#L174) **đã có lời 2026-09-15**: không ngưỡng, máy không nhắc ⇒ chỉ còn nửa *con số tồn ước tính* |
+| [ADM-14](#adm-14) | nối nút tạm dừng | B | 1 | [**ADM-13**](#adm-13) — [`B21`](admin-questions.md#L174) **đã có lời 2026-09-15**: máy không phát tín hiệu *sắp hết*, nên chỉ còn vế **người nào bấm** |
 | [ADM-15](#adm-15) | công nợ nhà cung cấp | B | 1 | [`B16`](admin-questions.md#L153) + [**ADM-11**](#adm-11) |
 | [ADM-20](#adm-20) | hồ sơ nhân viên | C | 1 | [`C23`](admin-questions.md#L180) [`C24`](admin-questions.md#L189) [`C25`](admin-questions.md#L192) + [**Đ-4**](admin-questions.md#L54) chưa về owner |
-| [ADM-21](#adm-21) | ai đang trực trạm | C | 1 | [`C36`](admin-questions.md#L225) ⚠️ **đòn bẩy lớn nhất cả lane** — nay đỡ thêm vế *thiếu người* của [ADM-04](#adm-04); con số nhân sự thật **đã đóng 2026-09-08** (`U-049`: bốn vai, POS chỉ định người đi giao), chỗ còn chờ là [`U-050`](../docs/product/99-unknowns.md#L191) — trạm bị bỏ trống lúc đi giao |
+| [ADM-21](#adm-21) | ai đang trực trạm | C | 1 | [`C36`](admin-questions.md#L225) ⚠️ **đòn bẩy lớn nhất cả lane** — nay đỡ thêm vế *thiếu người* của [ADM-04](#adm-04); con số nhân sự thật **đã đóng 2026-09-08** (`U-049`: bốn vai, POS chỉ định người đi giao), trạm bị bỏ trống lúc đi giao **cũng đã đóng 2026-09-15** (`U-050`: POS gánh, không là thiếu người), chỗ còn chờ cho việc xếp ca là [`U-052`](../docs/product/99-unknowns.md#L150) — ca chính người đứng quầy đi giao |
 | [ADM-22](#adm-22) | chấm công | C | 1 | [`C30`](admin-questions.md#L207) [`C31`](admin-questions.md#L210) [`C32`](admin-questions.md#L213) + [**Đ-4**](admin-questions.md#L54) chưa về owner |
 | [ADM-23](#adm-23) | bảng lương | C | 1 | [`C24`](admin-questions.md#L189) [`C26`](admin-questions.md#L195)…[`C29`](admin-questions.md#L204) [`C33`](admin-questions.md#L216) + [**ADM-22**](#adm-22) + [**Đ-4**](admin-questions.md#L54) |
 | [ADM-24](#adm-24) | quyền xem lương | C | 1 | [`C34`](admin-questions.md#L219) [`C35`](admin-questions.md#L222) [`F55`](admin-questions.md#L291) + [**ADM-23**](#adm-23) |
@@ -415,7 +439,7 @@ là thi công):
 <a id="adm-04"></a>
 ### ADM-04 — Chủ quán không đứng quầy thì hôm nay không có gì để nhìn, vì mọi màn đã tả đều là màn của người đang làm việc
 
-**L1** · nhánh A · **vẫn loại 1 — chặn bởi `U-045`, và một nửa nằm ở `F52` `F53`** (hẹp lại 2026-09-04, T-056: `A10` đã có lời; hẹp lại lần hai 2026-09-08, T-067: `U-041` đã có lời, `U-045` thế chỗ)
+**L1** · nhánh A · **vẫn loại 1 — chặn bởi `U-051`, và một nửa nằm ở `F52` `F53`** (hẹp lại 2026-09-04, T-056: `A10` đã có lời; hẹp lại lần hai 2026-09-08, T-067: `U-041` đã có lời, `U-045` thế chỗ; hẹp lại lần ba 2026-09-15, T-074: `U-045` đã có lời — máy **không** kết luận — và `U-051` thế chỗ)
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -446,13 +470,14 @@ như nào rồi · **số tiền dự tính** đã bán được · có bao nhi�
 trong buổi**, và không bao giờ được bày như thể đã đối soát (§6.10).
 
 **Còn chặn — ba câu:**
-- **U-045** (`docs/product/99-unknowns.md`) — vế thứ bảy **đã biết là thiếu gì, chưa biết máy nhìn
-  ra bằng cách nào.** `U-041` đóng 2026-09-08: *"còn thiếu gì không"* là thiếu **nguyên liệu**, và
-  tập nguyên liệu là *Danh mục nguyên liệu* §8.4. Chỗ còn hở là chỗ `U-041` đã báo trước — §8.4 giữ
-  máy ở mức **sổ ghi tay điện tử** (máy không tự trừ tồn) và danh mục mới chỉ có **tên**, chưa có
-  **đơn vị tính** và **ngưỡng nhắc sắp hết**, nên hàng số 7 chưa có nguồn nào sinh ra chữ *thiếu*.
-  Hai đường ra — lật ngược §8.4, hoặc một ngưỡng người tự nhập — là câu của **chủ quán**, không
-  phải của việc này.
+- **U-051** (`docs/product/99-unknowns.md`) — vế thứ bảy **đã biết là thiếu gì và đã biết AI kết
+  luận, chưa biết mục tổng quan BÀY GÌ.** Hai lời chốt đã có: `U-041` đóng 2026-09-08 (*"còn thiếu
+  gì không"* là thiếu **nguyên liệu**, tập ở *Danh mục nguyên liệu* §8.4) và `U-045` đóng
+  2026-09-15 — *"chủ quán tự đọc rôi đưa ra kết luận"* ⇒ **không có ngưỡng**, máy **không** bày
+  chữ *thiếu*, người đọc cặp số **mua vào · đã dùng** rồi tự kết luận. Vì thế việc này **không
+  còn** phải chờ một cơ chế phát hiện thiếu — nó chờ đúng một câu: chủ quán đọc hai con số ấy **ở
+  đâu** và **con số nào** (cặp số hôm nay · số còn lại cộng dồn · không bày gì). Đó là câu của
+  **chủ quán**, không phải của việc này.
 - `F52` (phần quản trị chạy trên máy gì) · `F53` (có muốn xem từ nhà, ngoài giờ bán không). `F53`
   trả lời *"có"* thì việc này kéo theo **ADM-51** (ai được xem gì) và không còn là L1.
 
@@ -587,7 +612,7 @@ ba câu kia chỉ có nghĩa sau khi biết con số nền là gì.
 <a id="adm-13"></a>
 ### ADM-13 — Không có tồn thì không có "sắp hết", và không có "sắp hết" thì nút tạm dừng nhận đơn phải bấm bằng trí nhớ
 
-**L1** · nhánh B · **chưa nhận được — chặn bởi `B21`** (`U-034` đóng 2026-09-06)
+**L1** · nhánh B · **chưa nhận được — nay chặn bởi `U-051`** (`U-034` đóng 2026-09-06; **`B21` đã có lời 2026-09-15** — xem *Chặn bởi* ở dưới)
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -610,9 +635,13 @@ im lặng — người dùng tin nó đúng một lần, mất hàng một lần
   ở **L1** chứ không phải L2 — làm sai thì phiền, không mất tiền.
 
 **Chặn bởi — hỏi gì trước:**
-`B21` (nhắc dựa vào cái gì: chủ quán tự đặt ngưỡng, hay đếm tay rồi nhập). Trả lời *"tự đặt
-ngưỡng"* thì việc này rất rẻ; trả lời *"đếm tay rồi nhập"* thì nó gộp vào ADM-12. (`U-034` đóng
-2026-09-06 — con số nền nay là mua/dùng cộng dồn, xem ADM-12.)
+~~`B21`~~ **đã có lời 2026-09-15** (chủ quán, qua `U-045`): *"chủ quán tự đọc rôi đưa ra kết
+luận"* ⇒ **không có ngưỡng và máy không nhắc**. Việc này vì thế **mất hẳn nửa *lời nhắc*** — đừng
+viết một dòng nào về ngưỡng hay cảnh báo nữa, đó là thứ chủ quán đã bác (`master_plan/shop-facts.md`
+§8.4). Nửa còn lại — **con số tồn ước tính**, tức mua/dùng cộng dồn (`U-034` đóng 2026-09-06, con
+số nền ở ADM-12) — đứng nguyên, và nay chặn bởi **`U-051`**: chủ quán đọc con số ấy ở đâu, và đọc
+cặp số hôm nay hay số còn lại cộng dồn. Cả *Goal* lẫn *Nói một câu* ở trên viết từ 2026-09-06 vẫn
+còn chữ *ngưỡng nhắc*: đọc chúng cùng đoạn này, phần ngưỡng đã chết.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 
@@ -623,7 +652,7 @@ ngưỡng"* thì việc này rất rẻ; trả lời *"đếm tay rồi nhập"*
 <a id="adm-14"></a>
 ### ADM-14 — Nút tạm dừng nhận đơn đã có từ lâu, và tới hôm nay vẫn không ai viết được ai bấm nó theo cái gì
 
-**L1** · nhánh B · **chưa nhận được — chặn bởi `B21` và ADM-13**
+**L1** · nhánh B · **chưa nhận được — chặn bởi ADM-13** (**`B21` đã có lời 2026-09-15**, xem *Chặn bởi*)
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -647,9 +676,11 @@ chưa"*. Nút nằm ở `master_plan/shop-facts.md` §6.8 và đã chốt từ t
   lại gặp lại đúng câu ấy.
 
 **Chặn bởi — hỏi gì trước:**
-`B21` (cái gì phát tín hiệu *sắp hết*) và bản thân **ADM-13**. Nếu chủ quán trả lời rằng không cần
-tồn ước tính, việc này vẫn còn giá trị ở mức nhỏ nhất: một luật nói **người nào** được bấm nút và
-bấm thì cái gì đổi.
+~~`B21`~~ **đã có lời 2026-09-15** (chủ quán, qua `U-045`): máy **không** giữ ngưỡng và **không**
+phát tín hiệu *sắp hết* — người đọc hai con số rồi tự kết luận. ⇒ Việc này rơi đúng vào nhánh nhỏ
+nhất mà chính đoạn này đã viết sẵn từ 2026-09-06: còn lại một luật nói **người nào** được bấm nút
+tạm dừng và bấm thì cái gì đổi. Vế *máy tự bấm* nay không chỉ bị `U-018` bác, nó còn **không có
+tín hiệu nào để bấm theo**. Vẫn chặn bởi **ADM-13** cho vế con số.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 
