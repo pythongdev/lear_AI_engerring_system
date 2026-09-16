@@ -118,7 +118,7 @@ văn lời chủ quán nằm ở owner bên dưới, một chỗ, không có b�
 | ~~`A7`~~ | **11 bàn** — đúng con số §1 đã có từ 2026-08-30 | §1 · **§6.25** · mở U-040, đóng 2026-09-06: 4 chỗ/bàn, đã đánh số — và số bàn đổi **11 → 15** trong cùng lời đáp; xem U-042 |
 | ~~`A8`~~ | **có** khách đứng chờ, quán xếp hàng chờ | **§6.25** · mở U-039, đóng 2026-09-06: **không**, POS tự điều phối |
 | ~~`A9`~~ | **cả hai** — khách tự chọn, đôi khi nhân viên xếp | **§6.25** |
-| ~~`A10`~~ | **sáu con số** cho mục tổng quan của chủ quán | **§8.6** · mở U-041, đóng 2026-09-08 qua **ba lượt**: *"còn thiếu gì"* là **cả ba** đường — nguyên liệu (Danh mục §8.4) · **người** (bảng phân vai §3) · món (§4.9) ⇒ §8.6 nay **bảy** hàng; *máy biết bằng cách nào*: nguyên liệu **đóng 2026-09-15** — máy không biết, chủ quán tự đọc hai con số rồi tự kết luận (**U-045**; mục tổng quan bày gì thì còn **U-051**), người **C36** + **U-050** (**U-049** đóng cùng ngày: người đi giao là một trong bốn vai, POS chỉ định) |
+| ~~`A10`~~ | **sáu con số** cho mục tổng quan của chủ quán | **§8.6** · mở U-041, đóng 2026-09-08 qua **ba lượt**: *"còn thiếu gì"* là **cả ba** đường — nguyên liệu (Danh mục §8.4) · **người** (bảng phân vai §3) · món (§4.9) ⇒ §8.6 nay **bảy** hàng; *máy biết bằng cách nào*: nguyên liệu **đóng 2026-09-15** — máy không biết, chủ quán tự đọc hai con số rồi tự kết luận (**U-045**; mục tổng quan bày gì thì còn **U-051**), người **C36** (**U-049** đóng 2026-09-08: người đi giao là một trong bốn vai, POS chỉ định; **U-050** đóng 2026-09-15: POS gánh trạm bị bỏ trống, khoảng trống ấy **không** là thiếu người — còn **U-052** cho ca chính người đứng quầy đi giao) |
 
 ⚠️ **Bốn vế chủ quán KHÔNG chạm tới đã thành câu hỏi có mã, không thành suy luận** —
 **U-038** · **U-039** · **U-040** · **U-041** ở `docs/product/99-unknowns.md`. *Cả bốn nay đã có
@@ -187,9 +187,11 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > ⚠️ Câu này hỏi **tổng số**. Vế *người đi giao nằm trong hay ngoài bốn vai của
 > `master_plan/shop-facts.md` §3* thì **đã có lời** — chủ quán chốt 2026-09-08 (`U-049`, đóng):
 > **một trong bốn vai**, POS chỉ định từng lần, không có người thứ năm. Nên C23 nay chỉ còn hỏi
-> đúng phần nó hỏi: **đầu người thật**, kể cả người nhà. ⚠️ Chỗ vẫn chưa có lời và vẫn chặn việc
-> xếp ca là `docs/product/99-unknowns.md` **U-050** — *lúc một vai rời quán đi giao thì trạm của
-> người ấy ai gánh*. Hỏi C23 xong mà quên U-050 thì vẫn không xếp được ca.
+> đúng phần nó hỏi: **đầu người thật**, kể cả người nhà. ✅ Vế *trạm bị bỏ trống lúc người ấy đi*
+> cũng **đã có lời** — chủ quán chốt 2026-09-15 (`U-050`, đóng): **người đứng quầy (POS) gánh**, và
+> khoảng trống ấy **không** là *thiếu người*. ⚠️ Chỗ còn hở cho việc xếp ca là
+> `docs/product/99-unknowns.md` **U-052** — *khi POS chỉ định chính người đứng quầy đi giao thì ai
+> gánh trạm `quay`*; hỏi C23 xong mà quên U-052 thì ca ấy vẫn không xếp được.
 > **Trả lời:**
 
 **C24.** Người nhà làm **không lương** có phải nằm trong bảng lương không?

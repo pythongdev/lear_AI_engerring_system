@@ -2407,6 +2407,21 @@ Open
 
 ---
 
+**LẦN THỨ NĂM — `b3c7c6e` (2026-09-16), CÙNG MỘT PHIÊN BỊ NHẶT HAI LẦN TRONG HAI NGÀY LIỀN.**
+Commit mang subject **`T-074: U-045 dong — may khong ket luan thieu, chu quan tu doc`** và hai file
+của nó (`work/backlog.md`, `work/backlog_AD.md`) chứa **toàn bộ** phần của **T-075** (đóng `U-050`):
+dòng `- [x] T-075` ở *Done*, và hai hàng `ADM-04` · `ADM-21` vừa được viết lại. Trước đó vài phút,
+`6db4d44` cũng đã mang đi khối *lần thứ năm của F-014* mà T-075 vừa viết vào `work/findings.md`.
+
+- **Phiên T-075 đã bị nhặt một lần rồi, ngày hôm trước** (`66798b8`, lần thứ tư ở trên) — nên đây
+  là ca đầu tiên đo được rằng *bị nhặt* không phải tai nạn một lần: cùng một phiên, hai ngày, hai
+  commit của hai phiên khác nhau, ba file khác nhau.
+- **Không mất nội dung, và cả hai lần đều quy về sai subject.** Ai `git log` tìm lúc `U-050` đóng
+  sẽ thấy nó dưới một commit nói về `U-045`.
+- ⇒ Cùng kết luận với bốn lần trên, thêm một bằng chứng cho **ngưỡng đã vượt từ lâu**: đường vá
+  bằng kỷ luật (*đọc `git diff --cached` trước khi commit*) đã thất bại lần thứ tư và lần thứ năm.
+  Quyết định dựng `pre-commit` hay tách `git worktree` vẫn thuộc chủ repo.
+
 ### F-026 — Ba invariant sinh SAU khi kế hoạch chia nhóm, nên không nhóm nào của pha 1 nhận chúng
 
 **Problem:**
