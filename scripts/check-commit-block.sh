@@ -120,8 +120,21 @@ if "git commit -m" not in joined:
     out("no")
 
 # Khối có rồi — trả thêm mọi dòng `git add …` để Gate 7b chấm nội dung khối.
-print("yes")
+# CLAUDE.md §6.1 đòi liệt kê TỪNG file, nên một khối thật gần như luôn phải nối
+# dòng bằng `\`. Gộp các dòng nối lại TRƯỚC khi tìm `git add`, nếu không thì
+# (1) `\` bị đọc thành một path tên `\` và cổng kêu một file không tồn tại, và
+# (2) — chỗ đắt hơn nhiều — mọi file từ dòng thứ hai trở đi KHÔNG bắt đầu bằng
+# `git add ` nên không được Gate 7b chấm lấy một lần: cổng im lặng đúng vào khối
+# dài, thứ nó sinh ra để canh (F-009). Xem work/findings.md F-039.
+lines = []
 for line in joined.splitlines():
+    if lines and lines[-1].rstrip().endswith("\\"):
+        lines[-1] = lines[-1].rstrip()[:-1].rstrip() + " " + line.strip()
+    else:
+        lines.append(line)
+
+print("yes")
+for line in lines:
     t = line.strip().lstrip("$").strip()
     if t.startswith("git add "):
         print("ADD " + t[8:].strip())
@@ -164,6 +177,7 @@ while IFS= read -r a; do
     case "$tok" in
       -A|--all|-u|--update|.|./|'*')  bad_form="$bad_form$tok " ; continue ;;
       -*|'<'*)                        continue ;;   # cờ khác, và chỗ điền mẫu
+      '\\')                          continue ;;   # nối dòng shell (F-039)
     esac
     tok="${tok%\"}"; tok="${tok#\"}"
     tok="${tok%\'}"; tok="${tok#\'}"
@@ -183,7 +197,7 @@ while IFS= read -r f; do
     scope_in_block="yes"
   fi
   cand="$cand$f"$'\n'
-done < <(git diff --cached --name-only 2>/dev/null)
+done < <(git -c core.quotepath=false diff --cached --name-only 2>/dev/null)
 
 paths=()
 while IFS= read -r x; do

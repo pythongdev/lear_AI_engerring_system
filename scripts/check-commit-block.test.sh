@@ -205,6 +205,45 @@ check "A7 index ngoài scope" 2 "$(run "$r" "$t")"
 rm -f "$r/.git/lean-ai-commit-block"
 contains "A7 nêu đích danh docs/y.md" "docs/y.md" "$(run_err "$r" "$t")"
 
+# A7b. index có file TÊN CÓ DẤU nằm TRONG scope → im. Ca hồi quy của F-035:
+#      `git diff --cached --name-only` KHÔNG kèm core.quotepath=false trả tên
+#      phi-ASCII về dạng escaped có ngoặc kép (`"a/ph\303\241e.sh"`), không khớp
+#      pattern nào, nên cổng kêu một file scope ĐÃ phủ. Đọc porcelain ở đầu file
+#      cùng script vốn đã kèm cờ ấy — hai chỗ đọc, hai encoding.
+r="$(newrepo a7b)"; t="$r/tr.jsonl"; setscope "$r" "a.txt" "dau/"
+transcript_add "$t" "git add a.txt"
+echo two > "$r/a.txt"
+mkdir -p "$r/dau"; echo x > "$r/dau/pháe.sh"; git -C "$r" add "dau/pháe.sh"
+check "A7b tên có dấu, trong scope → im" 0 "$(run "$r" "$t")"
+
+# A7c. khối `git add` NỐI DÒNG bằng `\`, mọi file đều trong scope → im.
+#      Ca hồi quy của F-039, hai lỗi trong một: dấu `\` cuối dòng bị đọc thành
+#      một path tên `\` (cổng kêu một file không tồn tại), và các dòng tiếp theo
+#      không bắt đầu bằng `git add ` nên KHÔNG được chấm — khối càng dài, cổng
+#      càng mù. CLAUDE.md §6.1 đòi liệt kê từng file, nên nối dòng là dạng viết
+#      thường gặp nhất của một khối thật.
+r="$(newrepo a7c)"; t="$r/tr.jsonl"; setscope "$r" "a.txt" "b.txt" "c.txt"
+transcript_add "$t" "git add a.txt \\
+        b.txt c.txt"
+echo two > "$r/a.txt"
+check "A7c khối nối dòng, trong scope → im" 0 "$(run "$r" "$t")"
+
+# A7d. cùng dạng nối dòng, nhưng một file ở DÒNG THỨ HAI nằm NGOÀI scope → kêu.
+#      Nửa còn lại của F-039: sửa xong thì cổng phải thật sự chấm dòng thứ hai,
+#      không phải chỉ hết kêu nhầm.
+r="$(newrepo a7d)"; t="$r/tr.jsonl"; setscope "$r" "a.txt"
+transcript_add "$t" "git add a.txt \\
+        ngoai/kia.md"
+echo two > "$r/a.txt"
+check "A7d file ở dòng hai ngoài scope → kêu" 2 "$(run "$r" "$t")"
+# repo mới cho phép đo nội dung: cổng chỉ nói MỘT lần mỗi trạng thái cây, nên
+# lần chạy thứ hai trên cùng repo im theo thiết kế (ca A6).
+r="$(newrepo a7d2)"; t="$r/tr.jsonl"; setscope "$r" "a.txt"
+transcript_add "$t" "git add a.txt \\
+        ngoai/kia.md"
+echo two > "$r/a.txt"
+contains "A7d nêu đích danh file ở dòng thứ hai" "ngoai/kia.md" "$(run_err "$r" "$t")"
+
 # A8. file CHƯA TRACK nhưng nằm trong scope → im. ADR-003 không bị lật: căn cứ
 #     ở đây là scope, trạng thái track không tham gia vào kết luận.
 r="$(newrepo a8)"; t="$r/tr.jsonl"; setscope "$r" "a.txt" "nhap.txt"

@@ -420,7 +420,7 @@ mất luôn cái đắt nhất: **cả năm chỗ là MỘT loại lỗi và c�
 **Một chỗ KHÔNG phải lỗ hổng, ghi ra để không ai mở lại:** lượt đọc context sạch đầu tiên không
 kiểm được tiền vì nó không có `master_plan/shop-facts.md`. Giá từng thành phần — kể cả giá **một
 quả trứng** — **cố ý không** được chép vào §1–§8 (ADR-001, `work/findings.md` F-001); §4.3 có sẵn
-giá bốn suất bán để **tra**, còn muốn **tái tạo** chúng thì phải mở §4.2. Lượt đọc thứ hai có
+giá từng dòng menu để **tra**, còn muốn **tái tạo** chúng thì phải mở §4.2. Lượt đọc thứ hai có
 `shop-facts.md` và cộng ra **đúng toàn bộ** con số của cả ba scenario. Đó là thiết kế, không phải
 chỗ thiếu.
 

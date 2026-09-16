@@ -139,8 +139,12 @@ Cùng một đơn có hai cách nhìn, cả hai đều đúng:
 - **Bếp** nhìn theo **thành phần** — thứ từng trạm thật sự làm ra. Số lượng thành phần = số suất ×
   số thành phần trong suất (`shop-facts.md` §4.5).
 
-**Mọi suất bán đều kèm bánh cuốn, không riêng combo.** Cả bốn suất bán ở `shop-facts.md` §4.5 đều
-có bánh cuốn trong thành phần: suất trứng và suất giò mỗi suất kèm bốn cái bánh, combo kèm ba.
+**Mọi SUẤT đều kèm bánh cuốn, không riêng combo — nhưng menu không chỉ có suất.** Bốn hàng *suất*
+ở `shop-facts.md` §4.5 đều có bánh cuốn trong thành phần: suất trứng và suất giò mỗi suất kèm bốn
+cái bánh, combo kèm ba. Hai dòng menu thêm ngày 2026-09-08 — **giò bán rời** và **canh bánh
+cuốn** — thì **không** kèm bánh cuốn: chúng là một thành phần bán thẳng, không phải một suất
+(§4.9). Nên câu *"suất nào cũng có bánh"* đúng với **suất**, và đọc nó thành *"dòng menu nào cũng
+có bánh"* là sai kể từ ngày ấy.
 Nên khách gọi "một suất trứng" thì bếp làm **năm** thứ, không phải một — đây là chỗ hay bị làm
 thiếu nhất. Việc xuống bếp **không bao giờ** được là một dòng "Combo ×2" mơ hồ: nhìn dòng đó thì
 không trạm nào biết phải tráng mấy cái bánh (`shop-facts.md` §5.3).
