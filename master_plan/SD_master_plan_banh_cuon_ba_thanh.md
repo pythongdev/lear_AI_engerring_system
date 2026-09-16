@@ -181,7 +181,7 @@ Sáu cột. Không có cột *Trạng thái*: nó ở `work/backlog.md`. Cột *
 | **P1-09** | Viết lại `architecture.md` §3 — bảng quầy **bốn** con số, đơn vị **bấm** là mẻ, đơn vị **đếm** là bàn; và gỡ câu §11 đang giao việc này cho một task đã *Done* (F-024) | **BA-12** · **S-5** | §3 nêu đủ bốn con số và nói rõ con số thứ tư nhảy theo bậc mẻ; không còn câu nào giao việc cho `T-036` | Quầy không thấy bánh đang nằm chờ ⇒ khách chờ món không bao giờ tới, và không ai biết vì sao | L2 |
 | **P1-10** | Dựng sổ rủi ro: những rủi ro lớn nhất, kèm cơ chế chặn, ai chịu, và dấu hiệu nó **đang** xảy ra | P1-04 · P1-05 · P1-06 · **P1-13** · **P1-14** | Mỗi rủi ro một dòng — **đếm ở sổ, đừng đếm ở đây** (**F-018**) — và mỗi dòng chỉ tên đúng một cơ chế đã viết ở bước trước, hoặc nói thẳng *chưa có cơ chế* kèm mã; không rủi ro nào được chặn bằng *"cẩn thận hơn"* | Rủi ro lớn không có người chặn, và lần đầu nó xảy ra là lần đầu ai đó nghĩ về nó | L1 |
 | **P1-11** | **Diễn ba scenario nghiệm thu BA qua thiết kế** (`docs/product/0-ba/ban-hang/08-scenario.md` §8) và chốt cổng sang pha 2 | P1-02 → P1-10 | Mỗi **bước** của ba scenario trỏ được tới một cơ chế bảo vệ đã viết ra; chỗ không trỏ được ghi thành `F-XXX`/`U-XXX`, **không** tự thiết kế bù | Thiết kế đẹp mà không chạy được nghiệp vụ — đúng cách BA-11 tìm ra năm chỗ nói lệch nhau | L2 |
-| **P1-12** | Rà chéo ranh giới pha và pointer | P1-11 | Bộ lọc *tên bảng · tên cột · endpoint · route · component* trên mọi file pha 1 trả về **rỗng**, và mỗi lần rỗng có in cả lệnh chưa lọc để chứng minh bộ lọc không tự rỗng (F-017); `./scripts/gate.sh` xanh | Pha 1 âm thầm quyết việc của pha 2, và không ai rà lại vì mọi cổng đều xanh | L1 |
+| **P1-12** | Rà chéo ranh giới pha và pointer — **đã chạy 2026-09-16** | P1-11 ✔ | Bộ lọc *tên bảng · tên cột · endpoint · route · component* chạy trên **cả tám** file pha 1, mỗi lượt in cả lệnh chưa lọc để chứng minh bộ lọc không tự rỗng (F-017). **Kết quả KHÔNG rỗng**: bảy file sạch, `architecture.md` ba chỗ — một có tên trong ngoại lệ (§12.3), hai không (**F-040**), và Gate 1d mù với chỗ rõ nhất (**F-041**). Chỗ lọt ra **trả về bước đã viết nó**, lượt đo không sửa hộ. `./scripts/gate.sh` xanh | Pha 1 âm thầm quyết việc của pha 2, và không ai rà lại vì mọi cổng đều xanh | L1 |
 | **P1-13** | Bảng ba cột — nhóm thứ tư **SẢN XUẤT THEO MẺ**: `I-019` `I-020` — mở ra **sau** khi ba nhóm ban đầu đã chia (`work/findings.md` F-026, `docs/decisions.md` ADR-042) | P1-01 | Hai mệnh đề đủ ba ô, không ô nào trống; `I-019`/`I-020` dùng chung một cơ chế khoá gom, và hàng nào chỉ tới tầng 4 phải nói thẳng *"máy không ngăn được"* | Bánh cộng cho bàn này, thiếu cho bàn kia, đúng lúc đông khách và không ai có thời gian dò lại | L2 |
 | **P1-14** | Bảng ba cột — **một hàng** `I-021` thêm vào nhóm **TIỀN** (§1), mệnh đề mồ côi thứ ba, sinh ở T-056 **sau** khi kế hoạch chia nhóm (`work/findings.md` F-026, `docs/decisions.md` ADR-044) | P1-04 | Một mệnh đề đủ ba ô; vế *con số két cuối ngày do người đếm rồi nhập* phải nói thẳng *"máy không ngăn được"*; ô `I-015` hết trỏ tới một hàng không tồn tại | Đối soát 0đ báo đỏ **mọi ngày** đúng bằng tiền đầu két ⇒ người dùng học cách bỏ qua cổng chất lượng mạnh nhất của dự án | L2 |
 
@@ -315,7 +315,8 @@ dùng được; một cổng tick 9/9 bằng cảm giác thì không chặn đư
 > **Mười ô dưới đây là LỜI của cổng; chỗ nó được KÝ thì không ở file này.** Trạng thái đã ký, kèm
 > bằng chứng của từng ô, ở
 > [`docs/product/1-system-design/07-cong-chat-luong-pha-1.md`](../docs/product/1-system-design/07-cong-chat-luong-pha-1.md)
-> §7 — **9/10 tính tới 2026-09-08** (P1-11), ô thứ mười chờ **P1-12**. Mười hộp `- [ ]` ở đây vì thế
+> §7 — **9/10 tính tới 2026-09-16**, ô thứ mười **đã đo** (P1-12, 2026-09-16) và **để trống kèm mã**:
+> `work/findings.md` **F-040** · **F-041**. Mười hộp `- [ ]` ở đây vì thế
 > **không** phải một phép đếm và không được tick: kế hoạch này **không sở hữu sự thật nào**, và hai
 > bản tick sẽ trôi khỏi nhau (`work/findings.md` **F-001** · **F-033**). Đúng cách cổng chất lượng
 > BA đứng: chín hộp ở `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §12 tới nay vẫn `- [ ]`,
@@ -345,7 +346,10 @@ dùng được; một cổng tick 9/9 bằng cảm giác thì không chặn đư
       mục *OPEN UNKNOWNS*, đối chiếu với §8 của kế hoạch này.
 - [ ] Không tên bảng · cột · endpoint · route · component nào lọt vào file pha 1 → **P1-12**, và
       dán cả lệnh **chưa lọc** cạnh lệnh đã lọc: một bộ lọc rỗng vì viết sai thì trông y hệt một
-      bộ lọc rỗng vì không có lỗi (`work/findings.md` **F-017**).
+      bộ lọc rỗng vì không có lỗi (`work/findings.md` **F-017**). **Đã đo 2026-09-16 và ô KHÔNG
+      tick được**: `architecture.md` §3.1 · §4 · §12.2 mang tên cột, `bảng.cột` và một hợp đồng API
+      bốn dòng, ngoài ngoại lệ §12.3 đã tự khai — **F-040**; cổng lẽ ra bắt chúng thì mù — **F-041**.
+      Phép đo đầy đủ ở chỗ ký, không ở đây.
 
 **Một ô không tick được thì để trống kèm lý do và mã của chỗ đang chặn.** Không tick hộ, không xoá
 ô, và không sang pha 2 với một ô trống chạm tiền.

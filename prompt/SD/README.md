@@ -84,7 +84,7 @@ người + thủ tục giữ (máy chỉ nhắc, để vết) · **5** phép đ�
 | P1-09 | L2 | [`P1-09-bang-quay-bon-con-so-L2.md`](P1-09-bang-quay-bon-con-so-L2.md) | BA-12 ✔ · ⚠️ **S-5** |
 | P1-10 | L1 | [`P1-10-so-rui-ro-L1.md`](P1-10-so-rui-ro-L1.md) — **đã chạy 2026-09-08** | P1-04 ✔ · P1-05 ✔ · P1-06 ✔ · P1-13 ✔ · P1-14 ✔ |
 | P1-11 | L2 | [`P1-11-cong-chat-luong-pha-1-L2.md`](P1-11-cong-chat-luong-pha-1-L2.md) — **đã chạy 2026-09-08** | P1-02 → P1-10 ✔ |
-| P1-12 | L1 | **chưa viết** | P1-11 ✔ |
+| P1-12 | L1 | [`P1-12-ra-cheo-ranh-gioi-pha-L1.md`](P1-12-ra-cheo-ranh-gioi-pha-L1.md) — **đã chạy 2026-09-16** | P1-11 ✔ |
 | P1-13 | L2 | [`P1-13-invariant-san-xuat-theo-me-L2.md`](P1-13-invariant-san-xuat-theo-me-L2.md) — **đã chạy 2026-09-07** | P1-01 ✔ |
 | P1-14 | L2 | **cố ý không có file prompt** — bước chạy ngay trong lượt chốt `docs/decisions.md` **ADR-044** (điểm 3); một prompt viết rồi tự đọc trong cùng một lượt là tài liệu nghi lễ, `CLAUDE.md` §3.8 | P1-04 ✔ |
 

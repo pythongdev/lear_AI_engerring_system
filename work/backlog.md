@@ -187,6 +187,40 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] P1-12 **Ranh giới pha được ĐO lần đầu trên cả pha 1 — và câu trả lời là KHÔNG: ba chỗ lọt ra,
+  chỉ một trong ba có tên trong ngoại lệ** — bước 12/14 (kế hoạch §6), **L1**, tiền đề `P1-11` ✔.
+  Nhận và xong 2026-09-16. Đầu ra: **ô 10** của
+  `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §7 — mang toàn bộ phép đo, và **để
+  trống kèm mã** thay vì tick. **Tập bị rà nêu đích danh**: tám file `docs/product/1-system-design/*.md`,
+  **2385** dòng, không đếm `work/` hay `prompt/maintenance/` (**F-018**). **Năm lượt lọc, mỗi lượt
+  in cả hai con số** (**F-017**): bộ mẫu **nguyên văn** của Gate 1d chạy trên cả tám file (1 dòng
+  khớp, và dòng ấy đã nằm trong ignore) · động từ HTTP + đường dẫn **không** mở đầu bằng `/` (**4**)
+  · ràng buộc SQL (**3**) · `snake_case` + `bảng.cột` (**14 + 1**) · pha 4 route/component (**12 + 0**).
+  **Lượt pha 4 là chỗ chứng minh bộ lọc không tự rỗng**: mười hai dòng nó bắt được đều là chính
+  những câu **tự khai ranh giới** — bộ lọc chạy, nó chỉ không có route nào để bắt. **Ba nhóm phân
+  loại, không chỗ nào để lửng**: (1) ngoại lệ **có tên** — `architecture.md` §12.3, kể ra kèm
+  **ranh giới của chính nó** (câu ⚠️ ấy khai đúng *tên bảng, tên cột* và đúng **một** mục; nó
+  **không** phủ endpoint); (2) **định danh nghiệp vụ pha 0 sở hữu, không phải tên bảng** —
+  `qr_table` · `staff_pos` · `phone_preorder` là kênh bán, `trang_banh` · `gap_banh` · `don_ban` là
+  trạm, cả sáu có nhà ở `master_plan/shop-facts.md` §5 · §3; (3) **chỗ lọt ra thật — ba chỗ, tất cả
+  ở `architecture.md`, bảy file kia sạch**: §12.2 một **hợp đồng API bốn dòng** (động từ, đường dẫn,
+  tên trường thân yêu cầu, tham số truy vấn) · §3.1 `UNIQUE` trên generated column kèm **chỉ định**
+  phải gồm trạng thái `billing` · §4 `staff.role`. **Cả ba `git blame` về `cf8bd83`, 2026-08-31 —
+  TRƯỚC ADR-035** (2026-09-04, P1-01): `architecture.md` viết trước khi có ranh giới, và lúc P1-01
+  dựng ranh giới thì **chỉ §8** được viết lại cho khớp. Nên chúng không trả về một bước pha 1 nào —
+  chúng là quyết định của **chủ repo**: **F-040**, ba đường ra ghi sẵn, **không chọn hộ**. Cộng
+  **F-041**: `scripts/check-phase-boundary.sh` **im hoàn toàn** trên cả tập vì mẫu `PAT_API` đòi dấu
+  `/` **ngay sau** động từ, mà §12.2 viết `staff/debts` chứ không `/staff/debts` — một dấu gạch chéo
+  thiếu ở đầu chuỗi là toàn bộ khoảng cách giữa *bắt được* và *không thấy gì*; và dòng ignore duy
+  nhất ghi lý do là *"§12.3"* trong khi dòng nó che nằm ở **§12.2**. **Lần thứ ba trong tuần một
+  script đọc văn bản bằng phép lọc hẹp hơn thứ nó phải hiểu** (**F-035** · **F-039**). **Pointer rà
+  lần cuối**: `check-links.sh` xanh, **196** pointer (số chưa lọc), **không** pointer trỏ thư mục
+  (Gate 1b mù với đuôi `/` — **F-018**), neo `#` chỉ có `](#top)` và bốn file dùng nó đều tự định
+  nghĩa `id="top"`. **Lượt này không sửa một chữ nào** trong bảy file nội dung pha 1 và trong
+  `scripts/`: P1-12 là **phép đo**, không phải lượt dọn (`work/backlog_SD.md` → P1-12 bước 5), và
+  `CLAUDE.md` §3.8 cấm dựng cổng mới ở lần đo đầu tiên. **Ô 10 KHÔNG tick, cổng vẫn 9/10, pha 1
+  CHƯA đóng** — bảng *Sáu pha* của `docs/product/00-index.md` vì thế **không đổi**: ký là quyền chủ
+  repo, đúng như §8 của chính file cổng đã ghi. Mô tả dài: [P1-12](#p1-12) → `work/backlog_SD.md`.
 - [x] T-073 **Chủ quán đóng `U-044`: hoàn tiền trả lại bằng gì cũng KHÔNG có luật cứng — POS quyết
   từng ca, và hệ quả là `I-021` phải viết lại** — **L1**, nhận 2026-09-08, đóng 2026-09-16. Nguyên
   văn lời chủ quán: *"tuỳ vào tình hình thực tế, pos quyết định."* ⇒ khách đã **chuyển khoản** mà

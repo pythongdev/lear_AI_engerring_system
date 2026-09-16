@@ -101,6 +101,8 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-037 | Khoản trả trước có mốc tính tiền nhưng không có dòng nào trong bảng đối soát để đứng | Open |
 | F-038 | *"Thiếu một trường bắt buộc thì đơn không tạo được"* — luật đã chốt của pha 0, pha 1 không có mệnh đề nào | Open |
 | F-039 | Gate 7b đọc khối commit theo từng dòng ⇒ khối nối dòng `\` vừa bị kêu nhầm vừa bị chấm sót bảy trên mười file | Fixed |
+| F-040 | Ba chỗ vượt ranh giới pha trong `architecture.md`, chỉ một có tên trong ngoại lệ — cả ba sinh TRƯỚC ADR-035 | Open |
+| F-041 | Gate 1d mù với khối API rõ nhất repo (mẫu đòi `/` ngay sau động từ), và dòng ignore ghi sai mục | Open |
 
 ---
 
@@ -3522,3 +3524,117 @@ cái gì bằng chính phép lọc ấy?* Ở đây câu trả lời là bảy t
 
 **Status:**
 Fixed
+
+---
+
+### F-040 — Ba chỗ vượt ranh giới pha trong `architecture.md`, và chỉ MỘT trong ba có tên trong ngoại lệ
+
+**Problem:**
+Ngày 2026-09-16, bước **P1-12** chạy phép đo ranh giới pha lần đầu tiên trên **cả tám** file pha 1
+(`docs/product/1-system-design/*.md`, 2385 dòng). Bảy file sạch. `architecture.md` có **ba** chỗ
+mang thứ pha 2/3 sở hữu (`docs/decisions.md` **ADR-035**), và **chỉ một** trong ba được khai:
+
+| Mục | Dòng | Nó viết ra cái gì | Có tên trong ngoại lệ chưa |
+|---|---|---|---|
+| **§12.3** Mặt DB | 564 · 575 · 578 · 580 · 581 | `table_sessions` · `open_key` · `payments` · `UNIQUE` · `CHECK` | ✅ **có** — ⚠️ ngay trong mục: *"cố ý vượt ranh giới §8 đặt ra… chủ repo yêu cầu thẳng một mục DB cho phần nợ"* |
+| **§12.2** Mặt BE | 552 · 555–558 | `/api/v1`, rồi **một hợp đồng API bốn dòng**: động từ + đường dẫn + tên trường thân yêu cầu (`paid`, `debtor`, `debt_amount`) + tham số truy vấn (`status=open`, `date=`) | ⛔ **chưa** |
+| **§3.1** Phiên bàn | 161–163 | `UNIQUE` trên *generated column*, và **chỉ định** ràng buộc ấy phải gồm trạng thái `billing` chứ không chỉ `open` | ⛔ **chưa** |
+| **§4** Quyền | 238 | `staff.role` — một `bảng.cột` trong tiêu đề mục | ⛔ **chưa** |
+
+**Ngoại lệ có tên không phủ ba chỗ kia, và nó không tự nhận là phủ.** Câu ⚠️ của §12.3 khai đúng hai
+thứ — *tên bảng, tên cột* — và đúng **một** mục: chính nó. Nó không nói gì về **endpoint**, và
+không nói gì về §12.2, §3.1 hay §4. Đọc nó thành *"phần nợ được miễn"* là đúng cái tiền lệ mà
+`work/backlog_SD.md` → P1-12 đã báo trước: *ngoại lệ không có tên thì lần sau thành tiền lệ*.
+
+**Cả ba sinh cùng một ngày, và ngày ấy TRƯỚC luật.** `git blame` cả bốn dòng ⇒ **`cf8bd83`,
+2026-08-31** (*"T-033: U-012 và U-013 đóng nốt"*). **ADR-035** — cái chốt *lược đồ → pha 2 · hợp
+đồng API → pha 3* — ra đời **2026-09-04**, ở bước **P1-01**. Nên đây **không** phải một bước pha 1
+vượt rào: đây là `architecture.md` viết trước khi có ranh giới, và lúc P1-01 dựng ranh giới thì chỉ
+**§8** được viết lại cho khớp (*"Điều tài liệu này cố ý KHÔNG làm: không đặt tên bảng…"*) — §3.1,
+§4, §12.2 không ai quét.
+
+**Vì sao đắt:** §12.2 không phải một trích dẫn, nó là một **hợp đồng API được kê ra** trong tài liệu
+mà pha 2 và pha 3 sẽ đọc như đầu vào đã chốt. Đúng ca `F-023` mô tả, chỉ khác chiều.
+
+**Lượt P1-12 cố ý KHÔNG sửa.** Bước này là một **phép đo**; `work/backlog_SD.md` → P1-12 bước 5 viết
+thẳng *"chỗ lọt ra trả về bước đã viết nó, không tự sửa hộ ở đây"*, và người viết mục ấy mới biết câu
+đúng phải là gì. Ba đường ra — **không chọn hộ**, đây là quyết định của chủ repo:
+
+1. **Khai thêm vào ngoại lệ** — §12.2 và §3.1 tự khai như §12.3 đã làm, và câu ⚠️ của §12.3 mở rộng
+   để nói cả *endpoint*. Rẻ nhất, nhưng nó biến ngoại lệ thành một vùng.
+2. **Viết lại bằng ngôn ngữ tầng** — kế hoạch §3 đã cho sẵn khuôn: *"trạng thái này phải do **cơ sở
+   dữ liệu** giữ"* thay cho `UNIQUE`; *"chỉ **một** chỗ trong hệ thống được ghi nợ"* thay cho bốn
+   dòng endpoint. Đắt hơn, và là thứ ADR-035 thật sự đòi.
+3. **Mở pha 3 sớm** — nếu hợp đồng API kia thật sự đã chốt thì nhà của nó là `docs/product/3-be/`,
+   kèm một dòng chủ sở hữu ở `CLAUDE.md` §2 **trong cùng thay đổi**. Đắt nhất, và mở một pha chỉ để
+   chứa bốn dòng là mở sai lý do.
+
+**Chỗ đọc:** `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §7 **ô 10** — ô này để
+trống vì đúng ba chỗ trên.
+
+**Liên quan:**
+**F-041** (cổng lẽ ra phải bắt §12.2 thì mù với nó) · **F-023** (một ADR giao lược đồ/API/route cho
+tài liệu không sở hữu) · **ADR-035** (ranh giới pha) · **ADR-039** (Gate 1d) ·
+`work/backlog_SD.md` → **P1-12**.
+
+**Status:**
+Open
+
+---
+
+### F-041 — Cổng ranh giới pha mù với khối API rõ ràng nhất repo, và dòng ignore duy nhất ghi sai mục
+
+**Problem:**
+`scripts/check-phase-boundary.sh` (Gate 1d, **ADR-039**) sinh ra để bắt *pha 1 đặt tên thứ pha sau
+sở hữu*. Ngày 2026-09-16 bước **P1-12** chạy **nguyên văn** bộ mẫu của nó trên cả tám file pha 1:
+khớp **đúng một** dòng — `architecture.md:552` — và dòng ấy nằm sẵn trong
+`scripts/check-phase-boundary.ignore`. Tức Gate 1d **im hoàn toàn** trên cả tập.
+
+Bốn dòng ngay dưới dòng 552 là một hợp đồng API kê thẳng ra:
+
+```text
+POST   staff/sessions/:id/close      body có { paid, debtor, debt_amount } khi thu thiếu
+GET    staff/debts?status=open       danh sách nợ chưa thu — màn Nợ ở POS
+POST   staff/debts/:id/collect       thu nợ; ghi vết người đang trực quay
+GET    staff/reports/debts?date=     nợ ghi trong ngày · nợ thu trong ngày — cho §6.3, §6.4
+```
+
+**Vì sao cổng không thấy:** mẫu của nó là
+
+```bash
+PAT_API='\b(GET|POST|PUT|PATCH|DELETE)[[:space:]]+/'
+```
+
+— nó đòi dấu `/` **ngay sau** động từ. Bốn dòng trên viết đường dẫn **không** có dấu `/` mở đầu
+(`staff/debts`, không phải `/staff/debts`), và trong bốn dòng ấy không dòng nào chứa `/api/`. Một
+dấu gạch chéo thiếu ở đầu chuỗi là toàn bộ khoảng cách giữa *bắt được* và *không thấy gì*.
+
+Bộ mẫu bắt được nếu nới thành `\b(GET|POST|PUT|PATCH|DELETE)[[:space:]]+[A-Za-z/]` — lượt đo đã chạy
+biến thể ấy và nó trả về đúng bốn dòng, không dòng nào khác trong cả tám file. Nhưng **lượt này
+không sửa `scripts/`**: P1-12 là phép đo, và `CLAUDE.md` §3.8 nói luật chỉ được dựng sau khi cùng
+một vấn đề đã tốn hai lần.
+
+**Vế thứ hai, rẻ hơn nhưng cùng họ:** dòng ignore duy nhất của file ấy mang lý do
+
+> *"`architecture.md` §12.3 tự khai 'cố ý vượt ranh giới'… (dòng ngay trên đoạn API)"*
+
+Dòng nó thật sự che — 552 — nằm ở **§12.2**, không ở §12.3 (§12.2 bắt đầu ở dòng 541, §12.3 ở 561).
+Câu ⚠️ tự khai của §12.3 vì thế đang **đứng tên cho một dòng ngoài mục mình**, và đó chính là cơ chế
+biến một ngoại lệ có tên thành một vùng miễn trừ không ai để ý — vế tài liệu của việc này là
+**F-040**.
+
+**Cùng hình với hai lần đã ghi trong tuần:** **F-035** (Gate 7b đọc đường dẫn bằng một encoding khác
+mọi chỗ khác trong chính nó) · **F-039** (Gate 7b đọc khối commit theo từng dòng nên mù từ dòng thứ
+hai). Ba lần, một hình: **một script đọc văn bản bằng phép lọc hẹp hơn thứ nó phải hiểu, rồi phát
+biểu kết luận như thể đã đọc hết.** Lần này cái im lặng đứng ngay cạnh thứ nó sinh ra để bắt.
+
+**Đường ra — không chọn hộ:** nới `PAT_API`, cộng **một ca hồi quy** dùng đúng bốn dòng trên làm đầu
+vào (không có ca hồi quy thì lần nới sau lại đóng lại), và sửa lý do dòng ignore cho đúng mục. Việc
+ấy thuộc `scripts/`, ngoài scope của P1-12.
+
+**Liên quan:**
+**F-040** (vế tài liệu) · **F-035** · **F-039** (cùng hình, cùng tuần) · **ADR-039** (Gate 1d) ·
+`work/backlog_SD.md` → **P1-12**.
+
+**Status:**
+Open

@@ -63,7 +63,7 @@ chỗ trong cùng file là bug của lượt vừa sửa entry, không phải l�
 | P1-09 | [Bảng quầy bốn con số](#p1-09) | Đóng |
 | P1-10 | [Sổ rủi ro](#p1-10) | Đóng |
 | P1-11 | [Diễn ba scenario qua thiết kế](#p1-11) | Đóng |
-| P1-12 | [Rà chéo ranh giới pha](#p1-12) | Mở |
+| P1-12 | [Rà chéo ranh giới pha](#p1-12) | Đóng |
 | P1-13 | [Bảng ba cột — nhóm SẢN XUẤT THEO MẺ](#p1-13) | Đóng |
 | P1-14 | [Bảng ba cột — một hàng `I-021` vào nhóm TIỀN](#p1-14) | Đóng |
 
@@ -1022,7 +1022,22 @@ chạy nó.
 <a id="p1-12"></a>
 ### P1-12 — Không cổng nào chấm ranh giới pha: một tên bảng lọt vào tài liệu pha 1 thì mọi gate vẫn xanh
 
-**Prompt:** chưa có — **L1** · bước 12/14 (kế hoạch §6) · **cần xong trước:** P1-11 ·
+✅ **Xong ngày 2026-09-16** — phép đo đã chạy trên **cả tám** file pha 1 và kết quả dán ở
+`docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §7 **ô 10**. Entry ở lại đây theo luật 3
+đầu file; dòng ở `work/backlog.md` → *Done*.
+
+⚠️ **Task `Đóng` ≠ ô cổng xanh, và lần này hai thứ ấy khác nhau.** Đầu ra của bước này là **một
+phép đo**, không phải một ô xanh — và phép đo trả lời **không**: `architecture.md` **§3.1** (`UNIQUE`
+trên generated column, chỉ định gồm trạng thái `billing`) · **§4** (`staff.role`) · **§12.2** (một
+hợp đồng API bốn dòng) mang thứ pha 2/3 sở hữu, ngoài ngoại lệ **§12.3** đã tự khai. Cả ba `git blame`
+về **`cf8bd83`, 2026-08-31** — **trước ADR-035** (2026-09-04, P1-01) — nên chúng không trả về một
+bước pha 1 nào; chúng trả về một quyết định của **chủ repo**, ghi ở `work/findings.md` **F-040** kèm
+ba đường ra **không chọn hộ**. Cộng **F-041**: `scripts/check-phase-boundary.sh` mù với chính khối
+API ấy (mẫu đòi `/` ngay sau động từ) và dòng ignore duy nhất ghi lý do sai mục. **Cổng 9/10, pha 1
+chưa đóng** — ký là quyền chủ repo, không phải hệ quả của một task `Done`.
+
+**Prompt:** [`prompt/SD/P1-12-ra-cheo-ranh-gioi-pha-L1.md`](../prompt/SD/P1-12-ra-cheo-ranh-gioi-pha-L1.md)
+(viết 2026-09-16) — **L1** · bước 12/14 (kế hoạch §6) · **cần xong trước:** P1-11 ✔ ·
 bước cuối, chạy ngay trước khi mở pha 2
 
 **Goal:**
