@@ -779,7 +779,7 @@ số âm: với mọi bàn và mọi thành phần, *còn thiếu* = đã gọi 
 
 *Phát hiện ở BA-12, 2026-09-03.*
 
-### I-021 — Tiền mặt đếm được trong két cuối ngày trừ đi TIỀN ĐẦU KÉT phải bằng doanh thu tiền mặt của ngày bán đó
+### I-021 — Tiền mặt đếm được trong két cuối ngày trừ đi TIỀN ĐẦU KÉT phải bằng doanh thu tiền mặt của ngày bán đó, sau khi bù các lần hoàn CHÉO phương thức
 
 **Invariant:**
 Với mỗi **ngày bán** (định nghĩa ở `docs/product/1-system-design/02-thoi-gian-ngay-ban.md`, pha 1):
@@ -787,7 +787,16 @@ Với mỗi **ngày bán** (định nghĩa ở `docs/product/1-system-design/02-
 ```
 (tiền mặt đếm trong két cuối ngày)  −  (tiền đầu két của ngày bán đó)
       =  (doanh thu TIỀN MẶT của ngày bán đó)
+      −  (hoàn trả bằng TIỀN MẶT trong ngày, cho khoản đã thu bằng CHUYỂN KHOẢN)
+      +  (hoàn trả bằng CHUYỂN KHOẢN trong ngày, cho khoản đã thu bằng TIỀN MẶT)
 ```
+
+*Viết lại 2026-09-15 (T-073, `docs/decisions.md` **ADR-046**)* — đúng như điều kiện biên thứ hai
+dưới đây đã viết sẵn từ 2026-09-04: chủ quán chốt 2026-09-08 (`U-044` ⇒ `master_plan/shop-facts.md`
+§6.4) rằng hoàn tiền **trả lại bằng gì** cũng do POS quyết từng ca, nên có tiền rời két trong buổi
+mà doanh thu tiền mặt không chứa. *Doanh thu tiền mặt* giữ nguyên nghĩa cũ: một lần hoàn trừ vào
+doanh thu của **phương thức đã thu**, nên hoàn **cùng** phương thức không cần hạng tử nào — hai hạng
+tử mới chỉ khác 0 ở ca **chéo**.
 
 Hai vế bằng nhau **đúng bằng 0đ**, không có ngưỡng dung sai — cùng ngưỡng §6.10 của
 `master_plan/shop-facts.md` (**ADR-022**). Invariant này chỉ nói về phần **tiền mặt**: phần chuyển
@@ -798,9 +807,14 @@ Ba điều kiện biên của cùng mệnh đề:
 - **Mỗi ngày bán có đúng MỘT con số tiền đầu két** — mặc định cố định, sửa được
   (`shop-facts.md` §8.5). Một ngày **không có** con số ấy thì phép trừ không chạy được, và ngày ấy
   **chưa** đối soát xong; nó không được coi là *"lệch"*.
-- **Không có khoản rút giữa buổi nào phải cộng lại.** Quán không có nghiệp vụ nộp bớt tiền giữa
-  buổi (chủ quán chốt 2026-09-04, `A4` ⇒ §8.5). Nếu luật ấy đổi thì công thức trên **thiếu một
-  hạng tử**, và invariant này phải viết lại chứ không phải viết thêm.
+- **Đường duy nhất làm tiền két vơi trong buổi mà doanh thu tiền mặt không chứa là một lần hoàn
+  tiền MẶT cho khoản đã CHUYỂN KHOẢN** — và nó đã có hạng tử của nó ở trên. Quán **không** có
+  nghiệp vụ nộp bớt tiền giữa buổi (chủ quán chốt 2026-09-04, `A4` ⇒ §8.5), nên ngoài hạng tử ấy
+  **không** có khoản rút nào phải cộng lại. Mỗi lần hoàn chéo phải đọc ra được từ vết hoàn tiền —
+  vết ấy nay ghi cả **phương thức trả lại** (§6.4) — nên hai hạng tử mới mở ra được thành danh sách
+  từng khoản có người đứng tên, không phải một con số tự khai lúc đếm két. Nếu một ngày quán có
+  thêm một đường tiền rời két nữa thì công thức lại **thiếu một hạng tử**, và invariant này phải
+  viết lại, không phải viết thêm.
 - **Tiền đầu két KHÔNG phải doanh thu.** Nó không bao giờ được cộng vào bất kỳ con số doanh thu
   nào, kể cả con số *dự tính* ở mục tổng quan của chủ quán (§8.6, vế 5).
 
@@ -828,7 +842,15 @@ chiếu riêng với tin nhắn báo có; cộng gộp hai phương thức rồi
 **chưa** có con số tiền đầu két ⇒ ngày ấy báo **chưa đối soát xong**, **không** báo lệch — cùng
 hình dạng với ngày còn `N > 0` lượt bán trên giấy chưa nhập (**ADR-037**). Kịch bản không có rút
 giữa buổi: không đường nào trong hệ thống làm giảm tiền két trong buổi mà không phải một lần
-hoàn tiền có vết (§6.4, I-012).
+hoàn tiền có vết (§6.4, I-012). Kịch bản hoàn **chéo** (thêm 2026-09-15, ADR-046): cùng ngày cơ
+sở, một khách đã chuyển khoản **60.000** được POS hoàn bằng **tiền mặt** lấy trong két ⇒ két đếm
+được **1.940.000**, phép trừ ra **740.000**; doanh thu tiền mặt vẫn **800.000**, hạng tử hoàn chéo
+**60.000** ⇒ vế phải **740.000** ⇒ **xanh**. Cùng số liệu mà bỏ hạng tử hoàn chéo ⇒ lệch
+**60.000** ⇒ phải **đỏ**, và lý do gọi tên được là *một lần hoàn chéo chưa được bù*. Chiều ngược:
+một khách đã trả tiền mặt **60.000** được hoàn bằng **chuyển khoản** ⇒ két **vẫn** 2.000.000,
+doanh thu tiền mặt còn **740.000**, hạng tử cộng **60.000** ⇒ vế phải **800.000** ⇒ **xanh**. Một
+lần hoàn mà vết **không** ghi phương thức trả lại ⇒ ngày ấy **chưa** đối soát xong, không phải
+*"lệch"* — cùng hình dạng ngày chưa có tiền đầu két.
 
 ⛔ **Phép đếm ở vế trái còn một câu chưa có lời: đếm MỘT TỔNG hay đếm TỪNG MỆNH GIÁ** — **U-038**
 (`docs/product/99-unknowns.md`). Invariant này đúng cho cả hai đường ra, nhưng *cách chứng minh nó*
@@ -837,3 +859,4 @@ lần đổi tiền thối trong buổi làm bảng lệch trong khi tổng vẫ
 giá trước khi U-038 có lời.
 
 *Phát hiện ở T-056, 2026-09-04, từ lời chủ quán trả lời `A3` và `A4`.*
+*Viết lại ở T-073, 2026-09-15, từ lời chủ quán trả lời `U-044` (2026-09-08).*

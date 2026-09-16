@@ -62,6 +62,7 @@ có câu trả lời mới từ người.
 | ADR-043 | Bản **đã commit** của `work/scope.txt` chỉ được chứa comment; pattern là trạng thái phiên chạy, Gate 3 và Gate 7b cùng thi hành | Đã chốt 2026-09-03, thi hành 2026-09-07 | — | đóng **F-020**; sửa một câu của `CLAUDE.md` §6, §6.1 |
 | ADR-044 | `I-021` vào **nhóm TIỀN đã có** (§1 của bảng ba cột), **không** mở nhóm thứ năm; hàng ấy có chủ là bước mới **P1-14** | Đã chốt 2026-09-07 | — | đóng **hẳn F-026**; kế hoạch §6/§7, `03-bao-ve-invariant.md` §1 thêm một hàng và §1.5 |
 | ADR-045 | **Bốn ràng buộc kiến trúc ẩn có nhà ở pha 1**, mỗi cái một **dấu hiệu đo được**; ba cái chưa có chủ (*một tiến trình · không hàng đợi · không bộ nhớ đệm*) được chốt ở bước **P1-08** | Đã chốt 2026-09-08 | — | đóng **nốt F-027**; file mới `05-realtime-va-du-phong.md` §2 |
+| ADR-046 | Hoàn tiền **chéo phương thức** vào `I-021` bằng **hai hạng tử riêng**; *doanh thu tiền mặt* giữ nguyên nghĩa, vết hoàn tiền ghi thêm **phương thức trả lại** | Đã chốt 2026-09-15 | — | viết lại **I-021**; **U-044** đóng — POS quyết từng ca |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3046,3 +3047,56 @@ buộc không có dấu hiệu thì hoặc được giữ mãi vì không ai dá
 `01-ranh-gioi-he-thong.md` §5 · `02-thoi-gian-ngay-ban.md` §5 · `03-bao-ve-invariant.md` §5
 (hàng **P1-08** của ba bảng *bước sau đọc gì*) · `work/findings.md` **F-027** (đóng nốt) ·
 `docs/product/99-unknowns.md` (**U-043** mới) · **ADR-041** (vế thứ tư đã chốt từ trước).
+
+### ADR-046 — Hoàn tiền chéo phương thức vào I-021 bằng hai hạng tử riêng, không đổi nghĩa *doanh thu tiền mặt*
+
+**Trạng thái:** Đã chốt 2026-09-15, T-073. Nguồn là lời chủ quán 2026-09-08 đóng
+`docs/product/99-unknowns.md` **U-044**: *"tuỳ vào tình hình thực tế, pos quyết định."*
+
+**Vấn đề nó giải quyết.**
+`master_plan/shop-facts.md` §6.4 nay chốt rằng hoàn tiền **trả lại bằng gì** cũng không có luật
+cứng: khách đã chuyển khoản có thể được hoàn bằng tiền mặt lấy trong két, và ngược lại. `quality/invariants.md`
+**I-021** viết từ 2026-09-04 đã tự khai hậu quả: có một đường tiền rời két giữa buổi thì phép trừ
+*két cuối ngày − tiền đầu két* **thiếu một hạng tử**, và mệnh đề phải **viết lại**. Câu hỏi của ADR
+này là hạng tử ấy vào công thức bằng hình dạng nào — vì có hơn một cách viết đúng số học, và chúng
+khác nhau ở chỗ màn đối soát còn **tìm ra lý do** được hay không (§6.10).
+
+**Decision:**
+
+1. **Hai hạng tử riêng, đặt tên theo ca chéo**: trừ *hoàn trả bằng tiền mặt cho khoản đã thu bằng
+   chuyển khoản*, cộng *hoàn trả bằng chuyển khoản cho khoản đã thu bằng tiền mặt*. Hoàn **cùng**
+   phương thức không sinh hạng tử nào — nó đã nằm trong doanh thu tiền mặt như từ trước tới nay.
+2. ***Doanh thu tiền mặt* giữ nguyên nghĩa**: một lần hoàn trừ vào doanh thu của **phương thức đã
+   thu**, rơi vào **ngày hoàn** (§6.4, chốt 2026-09-01). Không con số doanh thu nào đổi định nghĩa
+   vì ADR này.
+3. **Vết hoàn tiền ghi thêm phương thức trả lại** — câu thứ năm cạnh *bao nhiêu · đơn nào · ai bấm ·
+   lý do*. Đây là **suy ra**, không phải lời chủ quán (§6.4 ghi rõ *cách đọc*): không có nó thì hai
+   hạng tử ở điểm 1 không mở ra được thành danh sách từng khoản (`architecture.md` §6.4 luật 2).
+4. **Một lần hoàn thiếu phương thức trả lại ⇒ ngày ấy CHƯA đối soát xong, không phải *lệch*** —
+   cùng hình dạng ngày chưa có tiền đầu két (I-021) và ngày còn `N > 0` lượt trên giấy (**ADR-037**).
+
+**Rejected alternatives:**
+
+- **Định nghĩa lại *doanh thu tiền mặt* theo phương thức TRẢ RA** (hoàn tiền mặt thì trừ vào doanh
+  thu tiền mặt, bất kể đã thu bằng gì). Số học khớp, nhưng lần hoàn chéo **biến mất** vào trong một
+  con số tổng — đúng thứ `architecture.md` §6.4 luật 2 cấm — và *doanh thu tiền mặt* thành một con
+  số dòng tiền chứ không còn là doanh thu.
+- **Coi hoàn tiền mặt là một *khoản rút giữa buổi***. Bác: chủ quán chốt quán **không** có nghiệp
+  vụ nộp bớt tiền giữa buổi (§8.5, 2026-09-04); gộp hai thứ vào một chữ là mở cửa cho một nghiệp vụ
+  chủ quán đã nói không tồn tại.
+- **Cấm hoàn chéo phương thức cho gọn công thức.** Bác — lật ngược lời chủ quán vừa chốt
+  (`CLAUDE.md` §3.5).
+- **Chỉ ghi thêm một dòng cảnh báo cạnh mệnh đề cũ.** Bác — chính I-021 viết *"viết lại chứ không
+  phải viết thêm"*.
+
+**Chỗ ADR này KHÔNG chốt:**
+- **Phía chuyển khoản đối chiếu một lần hoàn chuyển khoản với nguồn nào.** §6.10 đối chiếu phần
+  chuyển khoản với **tin nhắn báo có** — tức tiền **vào**; một lần hoàn chuyển khoản là tiền **ra**,
+  và chưa lời nào nói nó được đối chiếu với cái gì. Chưa chặn bước nào của pha 1; phải chốt trước
+  khi dựng màn đối soát.
+- **Con số trên màn đối soát trông thế nào** — pha 4.
+
+**Applies to:**
+`quality/invariants.md` **I-021** (viết lại) · `master_plan/shop-facts.md` §6.4 · §7.1 · §8.5 ·
+`docs/product/1-system-design/architecture.md` §6.4 · `06-so-rui-ro.md` `RR-3` ·
+`docs/product/99-unknowns.md` (**U-044** đóng).
