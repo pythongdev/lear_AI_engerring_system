@@ -65,6 +65,7 @@ có câu trả lời mới từ người.
 | ADR-046 | Hoàn tiền **chéo phương thức** vào `I-021` bằng **hai hạng tử riêng**; *doanh thu tiền mặt* giữ nguyên nghĩa, vết hoàn tiền ghi thêm **phương thức trả lại** | Đã chốt 2026-09-15 | — | viết lại **I-021**; **U-044** đóng — POS quyết từng ca |
 | ADR-047 | **Dừng nhận đơn web khi mất kết nối là quyết định của NGƯỜI, không của đồng hồ**: máy **báo**, **POS quyết**, mở lại bằng **nút** — lật luật 1 của `05-realtime-va-du-phong.md` §3 và một câu *Verification* của `I-008` | Đã chốt 2026-09-16 | — | **U-043** đóng; mở **U-053** — ai dừng khi quán mất mạng hẳn |
 | ADR-048 | **Ba chỗ pha 1 viết hộ pha 2/3 được VIẾT LẠI BẰNG NGÔN NGỮ TẦNG, không được khai thành ngoại lệ**: `architecture.md` §3.1 · §4 · §12.2 giữ nguyên nghĩa, bỏ tên cột · `bảng.cột` · hợp đồng API; `PAT_API` của Gate 1d nới kèm ca hồi quy | Đã chốt 2026-09-20 | — | **F-040** · **F-041** đóng; ô 10 cổng pha 1 tick ⇒ **10/10** |
+| ADR-049 | Pha 2 chạy theo **kế hoạch riêng** ở `master_plan/`, mã bước là **`P2-XX`**, đầu ra vào thư mục **mới** `docs/product/2-db/` mở cùng dòng nội dung đầu tiên; năm tầng của pha 1 dịch sang pha 2 thành **ràng buộc · giao dịch · một đường ghi · chỗ cất vết · câu truy vấn** | Đã chốt 2026-09-20 | — | mở khoá **P2-01…P2-14**; chép hình dạng của **ADR-033** |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3225,3 +3226,73 @@ mười ô **không** phải câu *"được, sang pha 2"* — ký chuyển pha 
 `docs/work-flow-session/vi-du-mot-task-chay-that-P1-12.md` §10 ·
 `work/backlog_AD.md` (hai pointer trỏ vào tiêu đề §4) ·
 `work/findings.md` (**F-040** · **F-041** đóng).
+
+### ADR-049 — Pha 2 có kế hoạch riêng ở `master_plan/`, mã bước là `P2-XX`, và đầu ra đi vào thư mục MỚI `docs/product/2-db/`
+
+**Trạng thái:** Đã chốt 2026-09-20 (T-080). Chủ repo yêu cầu trong phiên: *"chuyển sang pha 2, hãy
+làm master plan: mục tiêu của pha 2 là gì, làm thế nào để kiểm tra, các bước thực hiện pha 2, mục
+tiêu các bước, cách kiểm tra"*. Nó **chép hình dạng** của **ADR-033** (kế hoạch pha 1) và **không**
+sửa một câu nào của **ADR-035** hay **ADR-039** — hai ADR ấy đã đặt sẵn chỗ cho pha 2, quyết định
+này chỉ dựng đường đi tới đó.
+
+**Decision:**
+
+1. **Kế hoạch pha 2 ở `master_plan/DB_master_plan_banh_cuon_ba_thanh.md`**, cạnh kế hoạch pha 1,
+   và nó **không sở hữu sự thật nào**: thứ tự · mức · đầu ra kiểm chứng được là của nó; trạng thái
+   là của `work/backlog.md`; lược đồ là của pha 2 khi pha 2 viết ra.
+2. **Mã bước là `P2-01`…`P2-14`**, cùng hình với `P1-XX` (ADR-033). Không dùng `DB-XX`: bản nháp
+   pha 1 đã cho thấy một tiền tố mang **hai** nghĩa (mã task và mã quyết định) là cái bẫy
+   `work/findings.md` **F-015** · **F-021** · **F-022** ghi lại.
+3. **Đầu ra vào thư mục mới `docs/product/2-db/`**, một chủ đề một file, và thư mục ấy **ra đời
+   cùng dòng nội dung đầu tiên** — ở `P2-03`, không sớm hơn (`docs/product/00-index.md` → *Luật
+   ghi*; **ADR-035** luật 2).
+4. **Năm tầng bảo vệ của pha 1 dịch sang pha 2 thành năm thứ dựng được** — ràng buộc trong lược đồ ·
+   ranh giới giao dịch · một đường ghi duy nhất · chỗ cất vết · một câu truy vấn ra 0 dòng — và
+   **không được tự hạ tầng**: dựng không nổi ràng buộc cho một hàng *tầng 1* là một `F-XXX` gửi
+   ngược pha 1, không phải lý do để hàng ấy tụt tầng (kế hoạch pha 2 §7).
+5. **Mảng admin không nằm trong mười bốn bước**; nó chạy theo lane của nó (**ADR-036**). Hai chỗ
+   giao nhau — *người và chỗ đứng theo thời điểm*, *quy ước dữ liệu* — được gọi tên trong kế hoạch
+   §3 để không ai lấn.
+
+**Why:**
+
+- **Hình dạng đã chạy một pha và đã bắt được lỗi thật.** Kế hoạch pha 1 với sáu cột, từ vựng bắt
+  buộc và cổng *mỗi ô một cách chứng minh* là thứ đã làm ô 10 của cổng pha 1 **không tick được**
+  ngày 2026-09-16 thay vì tick trơn (**F-040** · **F-041**, đóng ở **ADR-048**). Chép hình dạng ấy
+  rẻ hơn nhiều lần việc nghĩ ra một hình mới cho pha 2.
+- **Pha 2 là pha đầu tiên đụng vào dữ liệu thật, nên chỗ sai đắt hơn hẳn.** Một quyết định pha 1
+  viết sai thì sửa bằng cách sửa một đoạn văn; một lược đồ sai sau vài tuần quán chạy thật thì sửa
+  bằng cách mang theo dữ liệu bán hàng thật qua một lần đổi lược đồ.
+- **Cột *bước nào sinh ra nó* thay cho cột *hôm nay có chưa*.** Bảng §2 của kế hoạch pha 1 dùng cột
+  trạng thái và cột ấy đã hết đúng mà không ai cập nhật — `work/findings.md` **F-033**. Một cột nói
+  về **kế hoạch** thì không trôi; một cột nói về **trạng thái** trong một file không sở hữu trạng
+  thái thì luôn trôi (**F-001**).
+- **Gate 1d hôm nay mù với pha 2.** `scripts/check-phase-boundary.sh` chỉ đọc
+  `docs/product/1-system-design/`, và bộ mẫu SQL của nó sẽ **đỏ** với đúng thứ pha 2 phải viết. Nên
+  `P2-02` là một bước riêng trong bảng, không phải một ghi chú: không có nó, cả pha 2 viết endpoint
+  mà không cổng nào đỏ — đúng hình **F-041**, lần này không có ai đứng đọc.
+
+**Rejected alternatives:**
+
+- *Không cần kế hoạch, cứ mở `docs/product/2-db/` rồi dựng lược đồ theo đề xuất 16 bảng.* Bác.
+  `docs/product/1-system-design/architecture.md` §8 đã đo **tám** chỗ đề xuất ấy chưa có chỗ cất
+  (vết hoàn tiền · nợ · vết thao tác · ai đang trực · note *đem về* · đã phục vụ · mẻ · lượt nhập
+  bù). Thi công nó như một lược đồ đã chốt là rủi ro lớn nhất của cả pha (kế hoạch §10).
+- *Gộp mười bốn bước thành bốn bước lớn theo bốn nhóm bảng của đề xuất.* Bác: biên nhận của một
+  bước như thế là *"đã tạo xong nhóm bảng"*, thứ không chứng minh gì. Chẻ theo **nhóm mệnh đề** thì
+  mỗi bước có sẵn phép chấm — cố tình dựng trạng thái sai và xem database có từ chối không.
+- *Để mô tả dài của `P2-XX` ngay trong `work/backlog.md`.* Bác, cùng lý lẽ **ADR-034** và
+  **ADR-036**: `scripts/brief.sh` cắt *Ready* ở sáu mục, nên mười bốn dòng đổ vào đó đẩy tám dòng
+  ra khỏi tầm nhìn của mọi phiên mới (**F-012**).
+- *Kéo lược đồ mảng admin vào cùng pha 2 cho đủ một lần.* Bác **tạm thời**: phần lớn lane admin
+  đang chờ lời chủ quán, nên một lược đồ admin dựng hôm nay là một lược đồ đoán. Đây là chỗ kế
+  hoạch **suy ra**, không phải lời chủ repo (kế hoạch §8) — chủ repo muốn ngược lại thì bảng §6 dài
+  thêm, không bước nào đổi nghĩa.
+
+**Ba chỗ quyết định này CHƯA chốt, và cố ý để lại cho chủ repo** (kế hoạch §8): lược đồ admin đi
+cùng pha 2 hay đi theo lane của nó · ba hàng `CLAUDE.md` §2 đổi ở ba bước khác nhau hay đổi hết ở
+lượt mở thư mục · nhà cho `work/findings.md` **F-034** (*mất hẳn bản ghi đã ghi*) là `P2-09`, pha 5,
+hay một bước riêng.
+
+**Pointer sửa trong cùng thay đổi** (`CLAUDE.md` §7.2): `CLAUDE.md` §2 (hàng *Schema* trỏ sang kế
+hoạch pha 2) · `docs/product/00-index.md` (bảng *Sáu pha*) · `work/backlog.md` (T-080).

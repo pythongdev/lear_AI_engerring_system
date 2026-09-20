@@ -262,3 +262,17 @@ với bằng chứng thật; output lệnh mới là bằng chứng, không ph�
 [ví dụ P1-12](vi-du-mot-task-chay-that-P1-12.md),
 [prompt guideline](../prompt-guideline.md) và
 [review gate](../../quality/review-gate.md) trước khi vận hành repo lần đầu.
+
+
+đánh giá về cách xây hệ thống
+Đánh giá ngắn: cách xây hệ thống này rất mạnh ở phần làm rõ nghiệp vụ, kiểm soát rủi ro và tránh AI tự bịa; khoảng **8/10 cho giai đoạn khám phá/thiết kế**. Nó chưa thể được chấm về chất lượng sản phẩm chạy thật vì pha DB, backend, frontend và deploy chưa mở.
+
+Điểm mạnh lớn nhất là kỷ luật “một fact, một owner”. Dữ kiện quán, hành vi BA, invariant, ADR, task và finding đều có nơi sở hữu rõ; điều này đặc biệt phù hợp với bài toán tiền, đơn hàng và nhiều quyết định vận hành thủ công. Ba scenario BA, 21 invariant, đường suy giảm khi mất điện/mạng và đối soát lệch 0đ cho thấy thiết kế bám sát quán thật, không chỉ vẽ kiến trúc đẹp. Cổng pha 1 đạt 10/10 cũng cho thấy ranh giới pha đã được rà kỹ.
+
+Kiến trúc lựa chọn khá đúng tỷ lệ với quán nhỏ: một miền nghiệp vụ, POS là cửa ghi chính, bếp chỉ đọc, realtime có đường kéo dự phòng, vẫn bán bằng sổ giấy khi hệ thống hỏng. Việc không vội chọn schema, API hay công nghệ trước pha tương ứng là một điểm tốt.
+
+Điểm yếu chính là chi phí tài liệu và điều hướng đã cao. Một số tài liệu là ảnh chụp lịch sử hoặc chỉ mục cũ, thậm chí bảng mục lục finding chưa phản ánh trạng thái đóng của F-040/F-041. Điều đó không làm sai owner gốc, nhưng làm người mới dễ đọc nhầm. Nếu tiếp tục tăng độ dài mà không tối giản đường vào, hệ thống sẽ tốn thời gian “vận hành tài liệu” hơn xây sản phẩm.
+
+Các rủi ro cần xử lý trước khi mở pha 2/3 là `U-053` (dừng đơn web khi quán mất mạng hẳn), `F-034` (chống mất hẳn bản ghi), `F-037` (trả trước trong đối soát), `F-038` (trường liên hệ bắt buộc), cùng các suy ra `S-5`/`S-6` chạm trực tiếp tới tiến độ phục vụ. Đây là các chỗ có thể gây mất đơn, sai tiền hoặc vận hành không thống nhất.
+
+Khuyến nghị: chủ repo nên ký rõ quyết định chuyển pha 1 → pha 2, sau đó mở pha DB với phạm vi tối thiểu, dùng trực tiếp `YC-01…YC-20` và invariant làm acceptance. Đồng thời tạo task riêng để dọn các chỉ mục trạng thái cũ; không nên tiện tay sửa trong task DB.

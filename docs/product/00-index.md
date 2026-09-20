@@ -22,6 +22,12 @@ Thư mục của pha **2–5** chưa tồn tại và cố ý chưa tồn tại: 
 của pha ấy, không sớm hơn. Một file "chưa có gì" là tài liệu nghi lễ (`CLAUDE.md` §3.8), và một
 thư mục rỗng không gỡ được dòng nào cho ai.
 
+**Pha 2 đã có kế hoạch, chưa có nội dung.** Thứ tự mười bốn bước `P2-01`…`P2-14`, mức của từng
+bước, đầu ra kiểm chứng được và cổng sang pha 3 ở
+`master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (viết 2026-09-20, `docs/decisions.md`
+**ADR-049**). Kế hoạch ấy **không sở hữu sự thật nào** và **không mở thư mục nào**: hàng *Pha 2* ở
+trên đổi sang **đang mở** ở bước `P2-03`, lượt viết dòng nội dung đầu tiên.
+
 ## Pha 0 — BA
 
 **Mảng bán hàng** — [`0-ba/ban-hang/`](0-ba/ban-hang/01-actors-pham-vi.md)
