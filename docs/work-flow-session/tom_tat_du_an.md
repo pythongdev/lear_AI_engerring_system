@@ -184,14 +184,16 @@ vẫn ghi pha 0 và 1 là “đang mở”, vì admin và quyết định chuy�
 
 ### Công việc sẵn sàng tiếp theo
 
-Task Ready duy nhất là **ADM-53**. Task này phải hỏi chủ quán xác nhận lại hai
-lời chốt đang chỉ sống trong file nháp: mảng con người có làm đủ ba mức hay
-không, và lane admin được chạy song song hay chỉ sau pha 1. Cùng lượt nên hỏi
-`C36` — ai trực trạm nào. Chưa có câu trả lời thì không được tự chuyển chúng về
-owner hay triển khai các nhánh admin phụ thuộc.
+**Cả hai task Ready của lane admin đã xong ngày 2026-09-20**: `ADM-53` (đưa hai
+lời chốt Đ-2 · Đ-4 về owner, và hỏi được `C36`) rồi `ADM-21` (đưa lời `C36` về
+owner — mỗi lần đổi người **ở quầy** là một mốc có giờ, `master_plan/shop-facts.md`
+§8.8). Lane admin vì thế **không còn việc nào nhận được ngay**: việc mở lại nó là
+một lượt **hỏi chủ quán**, không phải một lượt viết.
 
-Xem [entry ADM-53](../../work/backlog_AD.md) và
-[prompt của task](../../prompt/AD/ADM-53-hai-loi-ve-owner-L1.md).
+Trạng thái task đọc ở [work/backlog.md](../../work/backlog.md); mô tả dài ở
+[work/backlog_AD.md](../../work/backlog_AD.md). Hai prompt đã chạy:
+[ADM-53](../../prompt/AD/ADM-53-hai-loi-ve-owner-L1.md) ·
+[ADM-21](../../prompt/AD/ADM-21-loi-c36-ve-owner-L2.md).
 
 ## 6. Các điểm còn mở cần biết
 
@@ -203,6 +205,12 @@ Xem [entry ADM-53](../../work/backlog_AD.md) và
 2. **U-054** — “tổng đã nhập trừ tổng đã dùng” của nguyên liệu cộng dồn từ mốc
    nào: từ đầu sổ, đầu tháng hay trong ngày? Câu này chặn nghĩa của số thiếu trên
    tổng quan admin.
+3. **U-055** — bốn trạm ngoài quầy có ghi mốc đổi người không, hay chỉ trạm quầy?
+   Lời chốt `C36` (2026-09-20) phủ đúng trạm quầy; câu này chặn con số *bao nhiêu
+   người đang làm* của tổng quan admin.
+4. **U-056** — ai khai cái mốc đổi người ở quầy: người vào, người ra, hay POS?
+5. **U-057** — hai cửa ghi ngoài quầy (người đi giao bấm đã thu tiền, chủ quán đổi
+   giá) lấy tên người từ đâu? Câu này chặn vế *ai* của vết thao tác.
 
 Đọc nguyên văn và người trả lời ở [Unknowns](../product/99-unknowns.md), không
 đoán từ bản tóm tắt này.

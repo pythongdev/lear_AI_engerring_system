@@ -17,6 +17,9 @@
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
   - [U-053](#u-053) — quán mất mạng HẲN thì ai bấm dừng ba kênh, khi POS không bấm được gì
   - [U-054](#u-054) — hai con số *tổng* của vế nguyên liệu cộng dồn từ mốc nào
+  - [U-055](#u-055) — bốn trạm ngoài quầy có ghi mốc đổi người không
+  - [U-056](#u-056) — **ai khai** cái mốc đổi người ở quầy
+  - [U-057](#u-057) — vế *ai bấm* của hai cửa ghi **ngoài** quầy
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
 - [Đã có lời giải](#da-co-loi-giai) — câu đã đóng, xếp theo lượt trả lời của chủ quán, kèm nguyên
@@ -159,6 +162,65 @@ Nguyên văn cả bốn lời đáp ở [Đã có lời giải](#da-co-loi-giai)
   (bài học `S-4` — hỏi về cái quán): *"Con số còn lại anh muốn cộng từ lúc nào — cộng hết từ trước
   tới nay, từ đầu tháng, hay chỉ tính riêng trong ngày hôm nay?"*
   *Mở 2026-09-16 · T-078 · trả lời `U-051` · `master_plan/shop-facts.md` §8.4 · §8.6.*
+
+**Ngày 2026-09-20, chủ quán trả lời `C36` và lời đáp để lộ BA vế chưa ai hỏi** (ADM-53 hỏi,
+**ADM-21** chuyển lời về owner trong cùng ngày). Cả ba đều không mở vì ai quên hỏi: câu `C36` hỏi
+về **người đứng quầy**, và lời đáp — *"Có — ghi cả mốc đổi, ai vào ai ra lúc mấy giờ"* — trả lời
+đúng vế ấy. Nhưng chỗ trống mà ba tài liệu gọi tên rộng hơn câu hỏi: `master_plan/shop-facts.md`
+§8.7 chốt mức 1 cho **năm** trạm, §8.6 hàng 6 hỏi **bao nhiêu người đang làm**, và
+`quality/invariants.md` **I-012** đòi *ai bấm* ở **hai cửa ghi ngoài quầy**. Nguyên văn lời đáp và
+phạm vi của nó ở `master_plan/shop-facts.md` **§8.8**.
+
+<a id="u-055"></a>
+- **U-055 — bốn trạm ngoài quầy (`trang_banh` · `gap_banh` · `canh`+`don_ban`) có ghi mốc đổi
+  người không, hay chỉ trạm `quay` mới ghi?** Lời chốt `C36` (2026-09-20,
+  `master_plan/shop-facts.md` **§8.8**) nói mỗi lần đổi người **ở quầy** là một mốc có giờ. Nhưng
+  §8.7 chốt mức 1 của mảng con người là *ai đang trực trạm nào* trên **cả năm** trạm §3, nên bốn
+  trạm kia còn trống đúng chỗ trạm `quay` vừa được lấp. **Vì sao không được suy hộ**
+  (`CLAUDE.md` §3.5): hai đường ra là hai cái quán khác nhau — hoặc **cả năm trạm** đều ghi mốc
+  đổi, tức mỗi người ở bếp cũng phải khai vào/ra và quán gánh thêm một thao tác mỗi buổi; hoặc
+  **chỉ quầy** ghi vì quầy là nơi duy nhất chạm tiền (**ADR-016**), còn bếp thì không ai cần truy
+  ngược. Đường sau rẻ hơn hẳn cho quán, nhưng chọn nó là quyết hộ nghĩa của số **6** ở §8.6.
+  **Ai trả lời được:** chủ quán. **Đang chặn:** số **6** (*bao nhiêu người đang làm*) và vế *người*
+  của số **7** ở `master_plan/shop-facts.md` §8.6, `work/backlog_AD.md` **ADM-04**, và phạm vi đầy
+  đủ của mức 1 ở §8.7. **Chưa chặn:** luật quyền huỷ / hoàn tiền — luật ấy sống ở trạm `quay` và
+  §8.8 đã đỡ được nó. **Cách hỏi** (bài học `S-4` — hỏi về cái quán): *"Ngoài người đứng quầy, mấy
+  người ở bếp đổi chỗ cho nhau giữa buổi thì anh có muốn máy ghi lại không, hay chỉ cần biết ai
+  đang đứng quầy là đủ?"*
+  *Mở 2026-09-20 · ADM-21 · trả lời `C36` · `master_plan/shop-facts.md` **§8.8** · §8.6 · §8.7.*
+
+<a id="u-056"></a>
+- **U-056 — AI khai cái mốc đổi người ở quầy: người vào tự bấm, người ra bấm, hay POS bấm hộ?**
+  Lời chốt `C36` (2026-09-20, `master_plan/shop-facts.md` **§8.8**) nói máy **ghi** mốc đổi; nó
+  không nói ai **khai** mốc ấy. **Vì sao không được suy hộ** (`CLAUDE.md` §3.5): ba đường ra cho ba
+  luật khác nhau, và một trong ba lật chính lời vừa chốt — nếu **người vào tự bấm** thì có ca hai
+  người cùng nhận mình đang đứng quầy, nếu **người ra bấm** thì có ca người ra quên bấm và quầy
+  thành trống trong máy giữa lúc đang bán, nếu **POS bấm hộ** thì cái mốc lại do chính chỗ đứng nó
+  ghi lại xác nhận, và quán phải chấp nhận điều đó. Không đường nào suy được từ chữ đã có.
+  **Ai trả lời được:** chủ quán. **Đang chặn:** vế *đổi lúc nào thì ai chịu trách nhiệm từ lúc nào*
+  của `work/backlog_AD.md` **ADM-21** khi nó đi tiếp, và **ADM-51** (phân quyền). **Chưa chặn:**
+  pha 2 — chỗ cất một cái mốc không đổi theo người khai nó (**ADR-035**). **Cách hỏi** (bài học
+  `S-4` — hỏi về cái quán): *"Lúc B thay A ở quầy, ai là người bấm vào máy cái mốc đổi ấy — người
+  vừa vào, người vừa ra, hay ai đang cầm máy cũng được?"*
+  *Mở 2026-09-20 · ADM-21 · trả lời `C36` · `master_plan/shop-facts.md` **§8.8**.*
+
+<a id="u-057"></a>
+- **U-057 — hai cửa ghi NGOÀI quầy lấy tên người từ đâu: người đi giao bấm *đã giao + đã thu tiền*
+  tại chỗ khách, và chủ quán đổi giá / đổi thành phần suất trên mặt quản trị?**
+  `quality/invariants.md` **I-012** đòi mọi thao tác chạm tiền để lại vết có đủ *ai bấm*, và chính
+  I-012 chốt hai ca này nằm **ngoài** cửa POS ở quầy (`master_plan/shop-facts.md` §6.7 · §6.17).
+  Lời chốt `C36` (2026-09-20, **§8.8**) chỉ cho biết ai đang đứng **quầy**, nên hai cửa kia vẫn
+  không có nguồn cho vế *ai*. **Vì sao không được suy hộ** (`CLAUDE.md` §3.5): với người đi giao,
+  §3 chốt POS **chỉ định từng lần** và không lời nào nói máy có ghi lại lần chỉ định ấy không — lấy
+  cái vết ra từ một quyết định miệng là bịa; với chủ quán, đường ra đụng vào một luật đã chốt, vì
+  gán tên theo **chức vụ** là đúng thứ §4 của `docs/product/1-system-design/architecture.md` cấm.
+  **Ai trả lời được:** chủ quán. **Đang chặn:** vế *ai* của `work/backlog_AD.md` **ADM-50** (vết
+  thao tác), và phần *Kịch bản phủ* của **I-012** ở hai ca ngoài quầy. **Chưa chặn:** mọi thao tác
+  đi qua POS ở quầy — §8.8 đã đỡ. **Cách hỏi** (bài học `S-4` — hỏi về cái quán): *"Lúc người đi
+  giao bấm đã thu tiền ở nhà khách, và lúc anh tự sửa giá ở nhà, anh có muốn máy ghi lại đó là ai
+  bấm không — hay chỉ cần biết là 'người đi giao' và 'chủ quán' là đủ?"*
+  *Mở 2026-09-20 · ADM-21 · trả lời `C36` · `quality/invariants.md` **I-012** ·
+  `master_plan/shop-facts.md` **§8.8** · §6.7 · §6.17.*
 
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây

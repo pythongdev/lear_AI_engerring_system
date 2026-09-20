@@ -52,7 +52,8 @@ is a bug to fix now.
 | Hợp đồng API: endpoint, quyền theo vai, chữ ký | **chưa có owner** — sinh ra ở **pha 3**, cùng `docs/product/3-be/` (ADR-035) |
 | Route, component | **chưa có owner** — sinh ra ở **pha 4**, cùng `docs/product/4-fe/` (ADR-035) |
 | Tasks — trạng thái của **mọi** task (`Ready`/`In Progress`/`Done`) | `work/backlog.md` |
-| Tasks — mô tả dài của **pha 1**, `P1-01`…`P1-12` | `work/backlog_SD.md` |
+| Tasks — mô tả dài của **pha 1**, `P1-01`…`P1-14` | `work/backlog_SD.md` |
+| Tasks — mô tả dài của **pha 2**, `P2-01`…`P2-14` | `work/backlog_DB.md` |
 | Tasks — mô tả dài của **mảng admin**, `ADM-01`…`ADM-53` | `work/backlog_AD.md` |
 | Câu hỏi cho chủ quán về mảng admin, và chỗ chủ quán trả lời | `work/admin-questions.md` §3 |
 | Scope of the task in progress | `work/scope.txt` |
@@ -103,8 +104,8 @@ docs/              product/ → 00-index.md, 0-ba/… (behavior), 1-system-desig
                    (architecture), 99-unknowns.md — all by phase;
                    decisions, prompt guideline
 work/              backlog.md (trạng thái mọi task), backlog_SD.md (mô tả pha 1),
-                   backlog_AD.md (mô tả mảng admin), admin-questions.md (câu hỏi
-                   chủ quán), scope.txt, findings.md;
+                   backlog_DB.md (mô tả pha 2), backlog_AD.md (mô tả mảng admin),
+                   admin-questions.md (câu hỏi chủ quán), scope.txt, findings.md;
                    proposals/ — not adopted, owns nothing
 quality/           invariants.md, review-gate.md
 scripts/           gate.sh → check-scope.sh + check-links.sh

@@ -676,7 +676,7 @@ bốn **chưa có luật**:
 | Chỗ chạm | Vì sao nó là chỗ chạm |
 |---|---|
 | Hết nguyên liệu → **tạm dừng nhận đơn** | nút tạm dừng đã có ở §6.2; ai bấm và bấm theo cái gì thì chưa |
-| **Ai đang trực trạm nào** → quyền huỷ đơn / hoàn tiền | §4 nói quyền gắn **chỗ đứng**, mà không dữ liệu nào ghi ai đang đứng đâu (§8 chỗ thiếu). *Câu `C36` **đã có lời 2026-09-20** nhưng **chưa về owner nào** — chỗ chuyển là `work/backlog_AD.md` **ADM-21**; tới lúc đó chỗ chạm này vẫn chưa có luật* |
+| **Ai đang trực trạm nào** → quyền huỷ đơn / hoàn tiền | §4 nói quyền gắn **chỗ đứng**, mà không dữ liệu nào ghi ai đang đứng đâu (§8 chỗ thiếu). ✅ **Chỗ chạm này CÓ LUẬT từ 2026-09-20** — chủ quán chốt mỗi lần đổi người **ở quầy** là một mốc có giờ (`master_plan/shop-facts.md` **§8.8**, câu `C36` về owner qua `work/backlog_AD.md` **ADM-21**). Luật quyền của §4 **không đổi một chữ**; cái đổi là nó hết rỗng. Xem **§14.5** |
 | **Sổ chi** → báo cáo lãi lỗ | §6.3 mới cộng doanh thu; chi phí chưa có ở đâu |
 | **Quỹ tiền mặt** → đối soát cuối ngày | §6.4 chốt ngưỡng lệch 0đ; tiền đầu buổi và tiền nộp về chưa nằm trong phép tính đó |
 
@@ -704,6 +704,42 @@ một hình dạng dữ liệu nào. Chỗ cất là pha 2, màn hình là pha 4
 **Điều mức sâu của mảng con người ĐỔI ở tài liệu này là ĐỘ NẶNG của một chỗ thiếu đã biết, không
 phải danh sách chỗ thiếu.** §8 đã đo rằng không chỗ nào ghi *ai đang đứng trạm nào*, và §4 đã chốt
 quyền gắn **chỗ đứng chứ không gắn chức vụ**. Lời *cả ba mức* xác nhận rằng chỗ hở ấy **phải** được
-lấp chứ không thể bỏ qua — nhưng lấp bằng hình dạng nào thì vẫn là câu của pha sau, và nó còn đứng
-sau một câu chưa về owner (`C36`, hàng giữa của bảng §14.3).
+lấp chứ không thể bỏ qua — nhưng lấp bằng hình dạng nào thì vẫn là câu của pha sau. Câu `C36`, thứ
+mục này ngày 2026-09-20 còn ghi là *chưa về owner*, **đã về owner cùng ngày** qua `ADM-21`: đọc
+**§14.5** ngay dưới.
 
+### 14.5 Luật ghi *ai đang đứng quầy* — chỗ chạm thứ hai của §14.3 hết rỗng
+
+**Chủ quán chốt 2026-09-20** (câu `C36`; hỏi qua `work/backlog_AD.md` **ADM-53**, về owner qua
+**ADM-21**). Dữ kiện đầy đủ — nguyên văn lời đáp, phạm vi của nó, và ba vế nó **không** nói — ở
+`master_plan/shop-facts.md` **§8.8**. Mục này **trỏ**, không chép (`work/findings.md` **F-001**);
+hành vi nghiệp vụ tương ứng ở `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6.
+
+**Điều lời chốt này đổi ở tài liệu này, và chỉ điều ấy:**
+
+| Mục | Trước 2026-09-20 | Sau |
+|---|---|---|
+| **§4** — quyền gắn chỗ đứng | luật đúng, nhưng không dữ kiện nào nói ai đang đứng đâu | luật **không đổi một chữ**; nó nay đứng trên một lời chốt thật, **cho trạm quầy** |
+| **§14.3**, hàng giữa | chỗ chạm **chưa có luật** | chỗ chạm **có luật** cho trạm quầy |
+| **§8**, hàng *Ai đang trực trạm nào* | ❌ **không mất hàng nào** | vẫn thiếu: lời chốt là **luật ghi**, chỗ cất vẫn là pha 2 (**ADR-035**) |
+
+**Vì sao một lời chỉ nói về quầy lại đủ cho luật quyền.** `docs/decisions.md` **ADR-016** chốt POS
+ở quầy là **cửa ghi duy nhất**, và `shop-facts.md` §6.13 gắn quyền huỷ / hoàn tiền vào chỗ đứng ấy.
+Ba việc §4 đòi — trực trạm đọc được theo thời điểm, chủ quán đứng quầy thì hai vai cộng vào nhau,
+mỗi lần huỷ / hoàn / ghi nợ ghi lại **người đang trực** — đều hỏi về trạm `quay`. Đó là lý do một
+lời đáp hẹp lại lấp được đúng chỗ hở rộng nhất.
+
+**Ba chỗ nó KHÔNG lấp — đừng đọc mục này rộng hơn:**
+
+- **Bốn trạm ngoài quầy** chưa có luật ghi mốc đổi người ⇒ `U-055`
+  ([99-unknowns.md](../99-unknowns.md)). Mức 1 của `shop-facts.md` §8.7 vì thế mới có **một** trong
+  năm trạm.
+- **Ai khai cái mốc** ⇒ `U-056`.
+- **Vế *ai bấm* của hai cửa ghi ngoài quầy** — người đi giao (`shop-facts.md` §6.7) và chủ quán đổi
+  giá (§6.17) ⇒ `U-057`. `quality/invariants.md` **I-012** đòi *ai bấm* cho cả hai; lời `C36` không
+  phủ chúng, nên **vế *ai* của vết thao tác vẫn chưa xong**.
+
+**`YC-15` không đổi.** [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §4 viết từ **P1-07**
+(2026-09-07) rằng trực trạm phải đọc được **theo thời điểm**; lời `C36` **xác nhận** câu ấy bằng
+một lời chốt của chủ quán, không thêm một yêu cầu nào. Bảng §8 và §1 của file ấy vì thế vẫn khớp
+một-đối-một.

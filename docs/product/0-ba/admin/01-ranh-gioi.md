@@ -65,8 +65,22 @@ quả về **hành vi** — thứ mục này sở hữu:
 - **Lời chốt này chốt MỨC, không chốt con số.** Đơn giá công, kỳ trả lương, quyền xem bảng lương —
   không câu nào có lời (`work/admin-questions.md` §3, các câu `C23`…`C35`). Đọc sự im lặng ấy thành
   *"chưa quyết"*, đừng đọc thành *"không làm"*.
-- **Mức *ai đang trực trạm nào* còn đứng trên câu `C36`**, và `C36` **chưa về owner nào** dù đã có
-  lời ngày 2026-09-20 — chỗ chuyển là `work/backlog_AD.md` **ADM-21**.
+- **Mức *ai đang trực trạm nào* nay có luật, nhưng chỉ cho TRẠM QUẦY** — câu `C36` có lời ngày
+  2026-09-20 và lời ấy đã về owner cùng ngày (`work/backlog_AD.md` **ADM-21**). Dữ kiện đầy đủ ở
+  `master_plan/shop-facts.md` **§8.8**; mục này không nhắc lại nó bằng lời của mình (**F-001**).
+
+**Hệ quả về HÀNH VI của lời `C36` — thứ mục này sở hữu, viết 2026-09-20:**
+
+- **Quyền huỷ đơn và hoàn tiền lần đầu tiên đứng được trên một dữ kiện thật.** §2–§6 và
+  `docs/product/1-system-design/architecture.md` §4 chốt quyền gắn **chỗ đứng** chứ không gắn chức
+  vụ; tới trước ngày này không có gì ghi ai đang đứng đâu. Luật quyền **không đổi một chữ** — cái
+  đổi là nó hết rỗng.
+- **Lời chốt này KHÔNG thêm một thao tác nào vào luồng bán hàng của §2–§6.** Ghi mốc đổi người là
+  việc của mảng con người; không đơn nào, không phiên bàn nào, không nút nào ở §2–§6 đổi vì nó.
+- **Phạm vi là trạm `quay`. Bốn trạm còn lại chưa có lời** ⇒ `U-055`
+  ([99-unknowns.md](../../99-unknowns.md)). **Ai khai cái mốc** ⇒ `U-056`. **Hai cửa ghi ngoài
+  quầy** — người đi giao và chủ quán đổi giá ⇒ `U-057`. Đọc sự im lặng ấy thành *"chưa quyết"*,
+  đừng đọc thành *"không làm"*, và đừng đọc thành *"cả năm trạm"*.
 
 Mảng **tài chính** vẫn chưa có lời chốt mức sâu tương ứng.
 

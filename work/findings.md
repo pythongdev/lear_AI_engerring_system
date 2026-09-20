@@ -75,7 +75,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-011 | `0704139 "dsfg"` — cổng không chặn commit ngoài phiên | Fixed |
 | F-012 | Brief cắt danh sách ở 6 mà không báo đã cắt | Fixed |
 | F-013 | Bản xuất khẩu vẫn thiết kế nút "Xong" đã bị bỏ | Fixed |
-| F-014 | Cảnh báo "scope bẩn" bảo XOÁ trong khi chủ thật đang chạy | Fixed |
+| F-014 | Cảnh báo "scope bẩn" bảo XOÁ trong khi chủ thật đang chạy | Fixed *(lời cảnh báo đã sửa; **hậu quả vẫn tái diễn** — lần thứ sáu 2026-09-20, đường xoá là `git checkout -- work/scope.txt`. Đọc bản thân mục F-014)* |
 | F-015 | Đóng unknown chỉ sửa chỗ trả lời, không sửa chỗ được nhắc tới | Fixed |
 | F-016 | shop-facts.md tự khai "không trỏ đi đâu" nhưng trỏ 5 chỗ | Fixed |
 | F-017 | Câu `grep` "chứng minh xong" trong prompt lọc rỗng | Fixed |
@@ -1110,6 +1110,31 @@ xuống giữa hai lượt tool của mình; nó đổi câu của mình sang **
   một cây làm việc, **mọi thứ được cấp phát bằng "đọc rồi cộng một" đều va** — mã task `T-XXX`
   (2026-09-08), nay mã unknown `U-XXX`. Đường ra vẫn là `git worktree` riêng cho phiên thứ hai;
   đường vá tạm là **grep lại mã ngay trước khi giao khối commit**.
+
+**Lần thứ sáu, và đường xoá là `git checkout --`, không phải một lần ghi đè (2026-09-20).** Phiên
+**ADM-21** chạy song song với phiên **T-081** (sổ mô tả pha 2). ADM-21 khai khối của mình đúng luật
+— **thêm** xuống cuối, không đụng khối ai — nhưng khi dọn, nó chạy
+`git checkout -- work/scope.txt` để đưa file về đúng bản `HEAD` comment-only. Lệnh ấy **xoá cả khối
+của T-081**, thứ vừa được khai giữa hai lượt tool của ADM-21. T-081 dựng lại khối của mình và để
+lại một dòng ghi chú ngay trong file.
+
+- **Cái mới so với năm lần trên:** bốn lần đầu là **ghi đè** (viết cả file), lần thứ năm là **va mã
+  định danh**. Lần này là một lệnh git **đúng theo mọi nghĩa khác** — `git checkout -- <file>` là
+  cách chuẩn để bỏ thay đổi cục bộ của một file — nhưng trên `work/scope.txt` nó **luôn** xoá sạch
+  mọi khối của mọi phiên, vì bản `HEAD` của file này theo thiết kế chỉ có comment (**ADR-043** ·
+  **F-020**). Nói cách khác: **hình bất biến giữ cho scope không bị commit cũng biến mọi lệnh
+  "khôi phục file" thành một lệnh "xoá scope của tất cả các phiên"**.
+- **Vì sao nó lọt:** phiên đang làm một việc *dọn dẹp*, không phải một việc *ghi*. Luật hiện có —
+  brief nói *"THÊM khối của bạn; chỉ gỡ khối nào ghi rõ đã commit"* và chính `work/scope.txt` tự
+  dặn *"đừng ghi đè khối của phiên khác"* — đều viết về **cách ghi**, nên không câu nào đọc thành
+  một lệnh cấm cho `git checkout`.
+- **Cái đã cứu lần này vẫn là thói quen, không phải cổng:** phiên T-081 đọc lại file và dựng lại
+  khối của nó. Không cổng nào kêu — Gate 3 xanh cả trước lẫn sau khi một khối biến mất, vì nó chỉ
+  hỏi *"thay đổi có nằm trong scope đã khai không"*, không hỏi *"scope vừa mất khối của ai"*.
+- ⇒ **Luật đọc được cho mọi phiên sau, cho tới khi có `git worktree` riêng:** trên
+  `work/scope.txt`, **chỉ sửa bằng cách thêm hoặc xoá đúng khối của mình**. Không
+  `git checkout --`, không `git restore`, không ghi lại cả file — ba lệnh ấy trên file này đều là
+  *xoá scope của tất cả*.
 
 ### F-015 — Đóng một unknown chỉ sửa chỗ câu trả lời rơi vào, không sửa chỗ câu hỏi được NHẮC TỚI
 

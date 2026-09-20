@@ -49,7 +49,7 @@ trôi (**F-001**).
 |---|---|---|
 | **1 — thiếu LUẬT** | phải hỏi chủ quán trước | **không.** Viết mười bước cho một việc chưa có luật là tự quyết thay chủ quán — `CLAUDE.md` §3.5, luật **không có mức L0** |
 | **2 — luật ĐÃ ĐỦ, thiếu THI CÔNG** | phần nghiệp vụ đã chốt sẵn ở mảng bán hàng; phần còn lại thuộc pha 2–4 hoặc `P1-07` | **không cần.** Prompt của nó là prompt của pha nhận nó, không phải của lane này |
-| **3 — việc của chính lane** | nhận được ngay, không chờ ai | **có.** 2026-09-04: đúng một việc, `ADM-53`. **2026-09-20: `ADM-53` ✅ `Done`, và `ADM-21` thế vào chỗ nó** — `C36` đã có lời, việc còn lại là chuyển lời ấy về owner |
+| **3 — việc của chính lane** | nhận được ngay, không chờ ai | **có.** 2026-09-04: đúng một việc, `ADM-53`. **2026-09-20: `ADM-53` và `ADM-21` đều ✅ `Done`** ⇒ loại này nay **RỖNG**, và thư mục này có **hai** prompt. Mở lại nó là một lượt **hỏi chủ quán**, không phải một lượt viết |
 
 Đây là luật 6 đầu `work/backlog_AD.md`, và nó là bài học **T-051** ngày 2026-09-04 đọc sang lane
 này: một mục *Constraints* viết **trước** khi biết đầu ra của tiền đề là một **câu chết**
@@ -84,7 +84,7 @@ thì **`work/backlog_AD.md` đúng** và bảng này là bug phải sửa. Mã `
 | ADM-15 công nợ nhà cung cấp | L2 | 1 | chưa viết được | `B16` · ADM-11 |
 | **C — con người** | | | | |
 | ADM-20 hồ sơ | L1 | 1 | chưa viết được | `C23` `C24` `C25` *(**Đ-4** đã về owner 2026-09-20)* |
-| ADM-21 ai đang trực trạm | L2 | **3** | ✅ **viết được từ 2026-09-20** — chưa ai viết | **`C36` đã có lời 2026-09-20** (`work/admin-questions.md` §3), **chưa về owner** — và chuyển nó về owner chính là việc này |
+| ~~ADM-21 ai đang trực trạm~~ | L2 | **3** | ✅ [`ADM-21-loi-c36-ve-owner-L2.md`](ADM-21-loi-c36-ve-owner-L2.md) — viết và **chạy xong 2026-09-20** | ✅ **`Done`** — `C36` đã về owner: `master_plan/shop-facts.md` **§8.8**. Lời chốt phủ **trạm `quay`**; ba vế còn hở là `U-055` · `U-056` · `U-057` |
 | ADM-22 chấm công | L2 | 1 | chưa viết được | `C30` `C31` `C32` *(**Đ-4** đã về owner 2026-09-20)* |
 | ADM-23 bảng lương | L3 | 1 | chưa viết được | `C24` `C26` `C27` `C28` `C29` `C33` · ADM-22 *(**Đ-4** đã về owner 2026-09-20)* |
 | ADM-24 quyền xem lương | L2 | 1 | chưa viết được | `C34` `C35` `F55` · ADM-23 |
@@ -101,7 +101,7 @@ thì **`work/backlog_AD.md` đúng** và bảng này là bug phải sửa. Mã `
 | ADM-44 quỹ và két | L3 | 1 | chưa viết được | `A3` `A4` `E49` · ADM-01 |
 | ADM-45 bán chạy | L1 | 1 | chưa viết được | `E48` |
 | **F — nền dùng chung** | | | | |
-| ADM-50 vết thao tác | L3 | 2 | không cần cho phần nghiệp vụ; hình dạng dữ liệu do **P1-07** viết | vế *ai*: `C36` → **ADM-21** (lời có 2026-09-20, chưa về owner) |
+| ADM-50 vết thao tác | L3 | 2 | không cần cho phần nghiệp vụ; hình dạng dữ liệu do **P1-07** viết | vế *ai*: **hết chặn ở cửa POS ở quầy** 2026-09-20 (ADM-21 ⇒ `shop-facts.md` **§8.8**); còn chặn ở hai cửa ghi **ngoài** quầy — `U-057` |
 | ADM-51 phân quyền | L2 | 1 | chưa viết được | `C34` `C35` `F52` `F53` `F55` |
 | ADM-52 nhập bù | L2 | 2 nửa trên | chưa viết được cho nửa dưới | `F54` (`U-032` đã đóng 2026-09-04 — đọc lại ở owner) |
 | ~~**ADM-53 đưa Đ-2 và Đ-4 về owner**~~ | **L1** | **3** | ✅ [`ADM-53-hai-loi-ve-owner-L1.md`](ADM-53-hai-loi-ve-owner-L1.md) — **chạy xong 2026-09-20**, nhánh B | ✅ **`Done`** — cả hai lời đã về owner |
@@ -112,17 +112,23 @@ mở khoá phải được sửa trong cùng lượt** đưa lời ấy về own
 sự thật đã dịch chuyển là bug của lượt đó, không phải task sau). Trước khi tin một hàng ở đây, mở
 `work/backlog_AD.md` và `work/admin-questions.md` §3.
 
-## `ADM-53` đã chạy 2026-09-20 — việc đầu tiên bây giờ là `ADM-21`
+## `ADM-53` và `ADM-21` đã chạy 2026-09-20 — loại 3 nay RỖNG
 
 `ADM-53` làm đúng ba việc nó hứa, trong một lượt: đưa **Đ-2** và **Đ-4** về owner, và **hỏi được
 `C36`**. Câu *lane admin chạy song song hay chờ* nay có lời — **song song pha 2, ở nghĩa thu luật**
 (`work/backlog.md` → *Thứ tự làm giữa lane admin và các pha*); chữ *thi công* thì vẫn đi sau
 (**ADR-031**).
 
-⇒ **Việc nhận được ngay của lane bây giờ là `ADM-21`.** `C36` có lời nhưng lời ấy còn nằm ở
-`work/admin-questions.md` §3, chưa về owner nào — và chuyển nó là đúng việc của ADM-21. Nó vẫn là
-việc đòn bẩy lớn nhất: `docs/product/1-system-design/architecture.md` §4 chốt quyền gắn **chỗ
-đứng**, §8 đo rằng không dữ liệu nào ghi ai đang đứng đâu, và vế *ai* của ADM-50 đứng sau nó.
+⇒ **`ADM-21` chạy ngay sau, trong cùng ngày, và cũng ✅ `Done`.** Nó đưa lời `C36` về owner:
+`master_plan/shop-facts.md` **§8.8** · `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6 ·
+`docs/product/1-system-design/architecture.md` **§14.5**. `architecture.md` §4 chốt quyền gắn **chỗ
+đứng** và §8 đo rằng không dữ liệu nào ghi ai đang đứng đâu — luật ấy nay đứng trên một lời chốt
+thật, **cho trạm `quay`**. Ba vế lời đáp không chạm tới thành `U-055` (bốn trạm ngoài quầy) ·
+`U-056` (ai khai mốc) · `U-057` (vế *ai* của hai cửa ghi ngoài quầy).
+
+⇒ **Loại 3 nay RỖNG: lane này không còn việc nào nhận được ngay.** Mọi việc còn lại chờ một câu của
+chủ quán (loại 1) hoặc chờ pha 2–4 (loại 2) — đếm lại ở `work/backlog_AD.md`, mục *Cổng của cả
+lane* (**F-003**).
 
 ⇒ **Song song đó, hai mươi việc *loại 1* được phép đem câu của chúng đi hỏi chủ quán ngay**, không
 phải chờ pha 2 đóng — đó chính là nửa *thu luật* của lời Đ-2.

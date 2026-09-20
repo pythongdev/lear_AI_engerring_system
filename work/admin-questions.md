@@ -15,10 +15,10 @@
 >
 > **Mở:** 2026-09-02 · **theo yêu cầu của:** chủ quán · **trạng thái:** **cả bốn lời chốt §1 đã về
 > owner** — Đ-1 (2026-09-02, T-040) · Đ-3 (2026-09-04, T-050) · **Đ-2 và Đ-4 (2026-09-20, ADM-53)**
-> ⇒ §1 nay chỉ còn **một dòng lịch sử trỏ tới owner**. Còn lại ở đây là **§3**: **42 câu để trống**
-> (đo 2026-09-20 bằng `grep -c '^> \*\*Trả lời:\*\*$'` — **đếm lại, đừng tin con số này**,
-> `work/findings.md` **F-003**), cộng `C36` **đã có lời 2026-09-20 nhưng CHƯA về owner** (chỗ
-> chuyển: `work/backlog_AD.md` **ADM-21**) và `B18` mới trả lời một nửa
+> ⇒ §1 nay chỉ còn **một dòng lịch sử trỏ tới owner**. **`C36` cũng đã về owner 2026-09-20**
+> (ADM-21) ⇒ đọc lời ấy ở `master_plan/shop-facts.md` **§8.8**, không đọc ở đây. Còn lại ở đây là
+> **§3**: **42 câu để trống** (đo 2026-09-20 bằng `grep -c '^> \*\*Trả lời:\*\*$'` — **đếm lại,
+> đừng tin con số này**, `work/findings.md` **F-003**), cộng `B18` mới trả lời một nửa
 >
 > **2026-09-04 — §2 đã chuyển đi.** Danh sách việc `ADM-01`…`ADM-53` nay ở **`work/backlog_AD.md`**
 > (T-052, `docs/decisions.md` **ADR-036**). Sau ADM-53 (2026-09-20) file này chỉ còn **một** việc
@@ -104,7 +104,7 @@ văn lời chủ quán nằm ở owner bên dưới, một chỗ, không có b�
 | ~~`A7`~~ | **11 bàn** — đúng con số §1 đã có từ 2026-08-30 | §1 · **§6.25** · mở U-040, đóng 2026-09-06: 4 chỗ/bàn, đã đánh số — và số bàn đổi **11 → 15** trong cùng lời đáp; **U-042 đóng nốt 2026-09-16**: bốn bàn mới đánh số **nối tiếp 12–15** ⇒ danh sách bàn là **1…15** |
 | ~~`A8`~~ | **có** khách đứng chờ, quán xếp hàng chờ | **§6.25** · mở U-039, đóng 2026-09-06: **không**, POS tự điều phối |
 | ~~`A9`~~ | **cả hai** — khách tự chọn, đôi khi nhân viên xếp | **§6.25** |
-| ~~`A10`~~ | **sáu con số** cho mục tổng quan của chủ quán | **§8.6** · mở U-041, đóng 2026-09-08 qua **ba lượt**: *"còn thiếu gì"* là **cả ba** đường — nguyên liệu (Danh mục §8.4) · **người** (bảng phân vai §3) · món (§4.9) ⇒ §8.6 nay **bảy** hàng; *máy biết bằng cách nào*: nguyên liệu **đóng 2026-09-15** — máy không biết, chủ quán tự đọc hai con số rồi tự kết luận (**U-045**; mục tổng quan bày gì **đóng 2026-09-16** — **U-051**: thời gian nhập · tổng đã dùng · số thiếu máy tự trừ, còn mốc cộng dồn là **U-054**), người **C36** (**U-049** đóng 2026-09-08: người đi giao là một trong bốn vai, POS chỉ định; **U-050** đóng 2026-09-15: POS gánh trạm bị bỏ trống, khoảng trống ấy **không** là thiếu người — **U-052 đóng 2026-09-16**: người đứng quầy **không** đi giao, chữ *"bất cứ ai"* hẹp lại còn ba vai) |
+| ~~`A10`~~ | **sáu con số** cho mục tổng quan của chủ quán | **§8.6** · mở U-041, đóng 2026-09-08 qua **ba lượt**: *"còn thiếu gì"* là **cả ba** đường — nguyên liệu (Danh mục §8.4) · **người** (bảng phân vai §3) · món (§4.9) ⇒ §8.6 nay **bảy** hàng; *máy biết bằng cách nào*: nguyên liệu **đóng 2026-09-15** — máy không biết, chủ quán tự đọc hai con số rồi tự kết luận (**U-045**; mục tổng quan bày gì **đóng 2026-09-16** — **U-051**: thời gian nhập · tổng đã dùng · số thiếu máy tự trừ, còn mốc cộng dồn là **U-054**), người **C36** — **đã có lời và về owner 2026-09-20** (**§8.8**: mốc đổi người **ở quầy**), chỗ hở còn lại của vế người là **U-055** (bốn trạm ngoài quầy); (**U-049** đóng 2026-09-08: người đi giao là một trong bốn vai, POS chỉ định; **U-050** đóng 2026-09-15: POS gánh trạm bị bỏ trống, khoảng trống ấy **không** là thiếu người — **U-052 đóng 2026-09-16**: người đứng quầy **không** đi giao, chữ *"bất cứ ai"* hẹp lại còn ba vai) |
 
 ⚠️ **Bốn vế chủ quán KHÔNG chạm tới đã thành câu hỏi có mã, không thành suy luận** —
 **U-038** · **U-039** · **U-040** · **U-041** ở `docs/product/99-unknowns.md`. *Cả bốn nay đã có
@@ -172,6 +172,8 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 ### C. Con người
 *Mức sâu đã chốt: **cả ba mức** (**Đ-4**) — **về owner 2026-09-20**, đọc ở `master_plan/shop-facts.md` **§8.7**,
 đừng đọc ở đây. Nhóm này mở khoá ADM-20 → ADM-24, và bịt chỗ thiếu `architecture.md` §8.*
+*✅ **`C36` đã trả lời và đã về owner 2026-09-20** (§8.8) ⇒ **ADM-21 `Done`**. Mười ba câu
+`C23`…`C35` còn lại chưa câu nào có lời.*
 
 **C23.** Quán có **bao nhiêu người** làm, kể cả người nhà?
 > ⚠️ Câu này hỏi **tổng số**. Vế *người đi giao nằm trong hay ngoài bốn vai của
@@ -221,16 +223,22 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 **C35.** Nhân viên có được xem **công của chính mình** không?
 > **Trả lời:**
 
-**C36.** Người đứng quầy **đổi giữa buổi** (A đi ăn, B thay) — quán có muốn máy ghi lại mốc đổi ấy không? *(Câu này quyết định ADM-21, và nó đang chặn luật quyền huỷ đơn / hoàn tiền: hôm nay `docs/product/1-system-design/architecture.md` §4 nói quyền gắn **chỗ đứng** chứ không gắn chức vụ, nhưng không có dữ liệu nào ghi ai đang đứng đâu.)*
-> **Trả lời (2026-09-20, ADM-53 hỏi nhân thể):** **CÓ — ghi cả mốc đổi, ai vào ai ra lúc mấy giờ.**
-> Chủ quán chọn phương án *"Có — ghi cả mốc đổi, ai vào ai ra lúc mấy giờ"*, tả là: mỗi lần đổi
-> người ở quầy là một mốc **có giờ**; đơn nào, huỷ nào, hoàn tiền nào cũng truy ra được người đang
-> đứng lúc ấy.
+~~**C36.**~~ **ĐÃ TRẢ LỜI 2026-09-20 · ĐÃ VỀ OWNER 2026-09-20 (ADM-21) — đừng trả lời lại, và
+đừng đọc một dữ kiện nào từ đây.**
+
+> Câu hỏi cũ: *người đứng quầy đổi giữa buổi (A đi ăn, B thay) — quán có muốn máy ghi lại mốc đổi
+> ấy không?* Chủ quán trả lời **có**; **ADM-53** hỏi, **ADM-21** chuyển lời về owner cùng ngày.
 >
-> ⚠️ **Lời này CHƯA về owner nào.** ADM-53 chỉ được hỏi và ghi lại, không được chuyển và không được
-> thiết kế quyền theo nó — chỗ chuyển là **ADM-21** (và vế *ai* của **ADM-50**), việc thiết kế
-> tầng quyền là **P1-07**. Phiên nào nhận ADM-21 thì đọc lời trên, chuyển về owner, rồi gạch câu
-> này khỏi đây.
+> **Nguyên văn lời đáp, phạm vi của nó, và ba vế nó KHÔNG nói: `master_plan/shop-facts.md` §8.8.**
+> Hành vi nghiệp vụ: `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6 · hệ quả kiến trúc:
+> `docs/product/1-system-design/architecture.md` §14.5. Một chỗ, không có bản thứ hai
+> (`work/findings.md` **F-001**).
+>
+> ⚠️ **Ba vế chủ quán KHÔNG chạm tới đã thành câu hỏi có mã, không thành suy luận** — **U-055**
+> (bốn trạm ngoài quầy) · **U-056** (ai khai cái mốc) · **U-057** (vế *ai bấm* của hai cửa ghi
+> ngoài quầy), cả ba ở `docs/product/99-unknowns.md`. Chúng ở đó chứ không ở đây, vì file này sẽ bị
+> xoá còn `99-unknowns.md` thì không, và vì `scripts/brief.sh` đẩy danh sách unknown vào mọi phiên
+> mới (`CLAUDE.md` §7.1).
 
 ### D. Sản phẩm
 *Nhóm này mở khoá ADM-30 → ADM-33.*
