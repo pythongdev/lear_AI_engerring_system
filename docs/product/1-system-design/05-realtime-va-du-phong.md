@@ -125,15 +125,23 @@ tên của chỗ ấy ở `master_plan/shop-facts.md` §1).
 mạng thì nút *"Tạm dừng nhận đơn"* cũng nằm sau đúng đường mạng vừa mất. I-008 giao thẳng phần
 **cơ chế** cho bước này. Bước này trả lời bằng **bốn câu luật**, không bằng một cơ chế:
 
-1. **Phán quyết đứng ở phía hệ thống, không phía quán.** Đúng lúc phải phán quyết thì quán là bên
-   đã mất tiếng nói — mọi thiết kế chờ quán *báo* rằng mình đang mù đều hỏng ở đúng ca nó sinh ra
-   để xử.
+1. **Hệ thống PHÁT HIỆN và BÁO; POS quyết dừng — chủ quán chốt 2026-09-16** (`U-043`, nguyên văn:
+   *"hiên thông báo để pos quyết định nếu dừng cần có nut mở lại"*). Bước này trước đó viết ngược
+   lại — *phán quyết đứng ở phía hệ thống, không phía quán* — vì lý do vẫn đúng: đúng lúc phải phán
+   quyết thì quán là bên đã mất tiếng nói. Lời chủ quán **thắng** (`docs/decisions.md` **ADR-047**),
+   nên luật này nay tách làm hai vế: **phát hiện** vẫn ở phía hệ thống và vẫn không chờ quán báo;
+   **quyết dừng** thì ở phía **POS**, và hệ thống hiện cho quầy một thông báo để POS quyết.
+   ⛔ Cái lý do cũ **không biến mất** — nó thành một câu hỏi có tên: ca quán **mất mạng hẳn**, POS
+   không nhìn thấy thông báo và không bấm được gì, là ca `quality/invariants.md` **I-008** sinh ra
+   để chặn, và ai dừng trong ca ấy thì chưa có lời ⇒ **`U-053`** (§4).
 2. **Dấu hiệu *quán còn nhìn thấy* phải chạy trên CÙNG đường mà việc và đơn đang đi** (§1). Dùng
    một đường riêng để kiểm thì có ngày đường kiểm còn sống trong khi đường thật đã chết, và hệ
    thống sẽ nhận đơn cho một cái quán đang mù.
 3. **Phán quyết ấy chỉ chạm ba kênh khách tự bấm.** Hai kênh do người của quán nhập **không** dừng
-   — họ ghi giấy (**I-008**, chủ quán chốt 2026-09-04). Có tín hiệu trở lại thì ba kênh kia **mở
-   lại ngay**; không có luật chờ thêm nào, và mục này không mở ra luật ấy.
+   — họ ghi giấy (**I-008**, chủ quán chốt 2026-09-04). **Mở lại là một NÚT người bấm, không tự mở
+   lại khi tín hiệu về** (chủ quán chốt 2026-09-16, cùng lời `U-043`) — câu *"có tín hiệu trở lại
+   thì ba kênh kia mở lại ngay"* viết ở đây trước lời chốt ấy nay **sai**, và `I-008` sửa theo
+   trong cùng thay đổi (**ADR-047**).
 4. **Mỗi lần hệ thống tự chuyển sang *quán đang mù* phải đọc lại được sau nhiều ngày** — bắt đầu
    lúc nào, kết thúc lúc nào. Một lần web ngừng nhận đơn mười lăm phút mà không để lại gì là một
    khoản doanh thu không ai từng biết là đã mất. *Câu này là một **yêu cầu hình dạng dữ liệu**, và
@@ -141,16 +149,23 @@ mạng thì nút *"Tạm dừng nhận đơn"* cũng nằm sau đúng đường 
    khớp một-đối-một với một dòng của [`architecture.md`](architecture.md) §8 (luật của **P1-07**).
    Bước này **không** tự thêm dòng vào hai file ấy; nó ghi ra chỗ trống, có tên, ở §4.*
 
-**Bao lâu không thấy tín hiệu thì gọi là mất kết nối** — mục này **không** chốt, và cũng không để
-pha 3 tự chốt: xem `U-043` ở §4.
+**Bao lâu không thấy tín hiệu thì gọi là mất kết nối** — câu ấy (`U-043`) **đóng 2026-09-16 bằng
+cách bỏ chính giả định của nó**: không có con số cửa sổ nào, vì việc dừng không do đồng hồ quyết mà
+do **POS** quyết sau khi máy báo (luật 1 ở trên · `master_plan/shop-facts.md` §6.11). Chỗ để trống
+còn lại của mục này là **ai dừng khi quán mất mạng hẳn** — `U-053`, §4.
 
 ---
 
-## 4. Chỗ cố ý để trống — ba chỗ, mỗi chỗ một cái tên
+## 4. Chỗ cố ý để trống — mỗi chỗ một cái tên
+
+*Bảng này mở ngày 2026-09-08 với **ba** hàng. Ngày **2026-09-16** hàng thứ nhất (`U-043`) **đóng**,
+và chính lời đáp ấy mở một hàng mới (`U-053`) — hàng đã đóng ở lại, gạch ngang, để đừng ai dựng lại
+câu hỏi cũ. Đếm hàng chứ đừng tin một con số viết sẵn (`work/findings.md` **F-003**).*
 
 | Chỗ trống | Vì sao không tự quyết | Ai đóng được |
 |---|---|---|
-| **Cửa sổ thời gian** để gọi là *quán đang mất kết nối* — mất tín hiệu bao lâu thì web ngừng nhận đơn | Con số này quyết định **lúc nào quán ngừng bán trên web**: ngắn quá thì một lần mạng chập chờn cắt mất khách đang đặt; dài quá thì đơn rơi vào một cái quán không ai nhìn thấy — đúng cái `I-008` sinh ra để chặn. Đây là đánh đổi của **quán**, không phải một tham số kỹ thuật (`CLAUDE.md` §3.5) | **Chủ quán** — `docs/product/99-unknowns.md` **`U-043`**, mở trong lượt này. Có lời chốt thì con số vào `master_plan/shop-facts.md`, pha 3 thi hành |
+| ~~**Cửa sổ thời gian** để gọi là *quán đang mất kết nối*~~ — **hết trống 2026-09-16**: không có con số nào cả | Chủ quán bỏ chính giả định của câu hỏi (`U-043`): máy **báo**, **POS quyết** dừng, và đã dừng thì mở lại bằng **nút** — cùng hình dạng *POS quyết theo tình hình thực tế* của `master_plan/shop-facts.md` §5.4 · §6.4 | ~~Chủ quán~~ **đã chốt 2026-09-16** — lời chốt ở `master_plan/shop-facts.md` §6.11; pha 3 thi hành **luật**, không thi hành một con số |
+| **Ai dừng ba kênh khi quán MẤT MẠNG HẲN** — lúc POS không nhìn thấy thông báo và không bấm được gì | Đó đúng là ca điều kiện thứ ba của `I-008` sinh ra để chặn; giao cho POS thì ca ấy không có người quyết, mà để máy tự dừng thì là một luật chủ quán chưa nói. Hai đường ra là hai luật khác nhau, không đường nào suy được từ chữ đã có (`CLAUDE.md` §3.5) | **Chủ quán** — `docs/product/99-unknowns.md` **`U-053`**, mở 2026-09-16 từ chính lời đáp `U-043` |
 | **Câu chữ dòng thông báo** khách nhìn thấy khi ba kênh tự bấm dừng | Chủ quán mới nói *có một dòng*, chưa đọc nội dung (`quality/invariants.md` **I-008**) — tự viết một câu rồi coi là đã chốt là bịa một dữ kiện quán | **Chủ quán**, hỏi khi dựng màn (**pha 4**) |
 | **Dòng yêu cầu dữ liệu cho vết của mỗi lần tự chuyển sang *quán đang mù*** (§3 luật 4) | Nhà của loại câu ấy là [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §1, và mỗi dòng ở đó phải khớp một-đối-một với một dòng [`architecture.md`](architecture.md) §8 — luật của **P1-07**. Thêm hộ một dòng vào hai file của bước khác là phá đúng phép chấm ấy | **P1-07** (thêm một cặp dòng), hoặc **pha 2** khi nó đọc §3 luật 4 ở đây |
 
@@ -168,7 +183,7 @@ duy nhất ấy (**pha 5**) · hình dạng của màn khi nó rỗng (**pha 4**
 | **P1-11** — diễn ba scenario | Một buổi mất kết nối phải đi qua được §3 (ba kênh dừng, hai kênh không) và §1.2 (màn trạm trễ nhưng vẫn đúng) |
 | **P1-12** — rà chéo ranh giới pha | Mục này là chỗ dễ lọt tên công nghệ nhất của cả pha 1. Bộ lọc gợi ý ở `prompt/SD/P1-08-realtime-du-phong-L2.md` mục *Verify* |
 | **Pha 2** | §3 luật 4 — vết của mỗi lần hệ thống tự chuyển sang *quán đang mù* phải đọc lại được sau nhiều ngày |
-| **Pha 3** | §1.1 ba tính chất bắt buộc của đường đẩy · §1.2 ba luật của đường kéo và con số chu kỳ · §3 bốn luật phán quyết, **sau khi** `U-043` có lời chốt |
+| **Pha 3** | §1.1 ba tính chất bắt buộc của đường đẩy · §1.2 ba luật của đường kéo và con số chu kỳ · §3 bốn luật phán quyết — `U-043` **đã có lời chốt 2026-09-16** (máy báo, POS quyết, mở lại bằng nút), còn ca quán mất mạng hẳn thì chờ `U-053` |
 | **Pha 5** | **RB-1** và **RB-4** — và luật 2 của §2: bỏ một ràng buộc thì ghi ADR, không sửa lặng |
 
 **Mâu thuẫn với [`architecture.md`](architecture.md) thì sửa `architecture.md`, không viết bản thứ

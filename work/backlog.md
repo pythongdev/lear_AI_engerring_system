@@ -187,6 +187,30 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] T-078 **Chủ quán trả lời BỐN câu trong một lượt — `U-042` · `U-043` · `U-051` · `U-052` — và
+  hai lời đáp mở `U-053` · `U-054`** — **L1**, xong 2026-09-16. Nguyên văn từng lời và hệ quả ở
+  `docs/product/99-unknowns.md` → *Đã có lời giải* (bảng 2026-09-16). **Bốn lời chốt:** bốn bàn mới
+  đánh số **nối tiếp 12–15** ⇒ danh sách bàn là **1…15**, `ADR-027` và **ADM-03** hết hở · web ngừng
+  nhận đơn **không do đồng hồ**: máy **báo**, **POS quyết**, mở lại bằng **nút** · mục tổng quan bày
+  **thời gian nhập** · **tổng đã dùng** · **số thiếu = tổng đã nhập − tổng đã dùng** (máy trừ hộ,
+  vẫn không có ngưỡng — `U-045` đứng nguyên) · **người đứng quầy không đi giao** ⇒ *"bất cứ ai"* của
+  `U-049` hẹp lại còn **ba** vai. **Chỗ đắt nhất của lượt này là `U-043`:** lời chủ quán **lật** hai
+  câu đã viết trước khi có nó — luật 1 của `05-realtime-va-du-phong.md` §3 (*phán quyết đứng ở phía
+  hệ thống*) và câu *"có mạng lại thì ba kênh kia mở lại ngay"* ở *Verification* của `I-008`. Cả hai
+  sửa theo lời chốt trong cùng thay đổi, và **lý do cũ không bị xoá** mà thành câu hỏi có tên:
+  `U-053` — ai dừng khi quán **mất mạng hẳn**, lúc POS không thấy thông báo và không bấm được gì.
+  Quyết định: `docs/decisions.md` **ADR-047**. Mệnh đề `I-008` **không đổi một chữ** — thứ đổi là
+  cơ chế, và cơ chế chưa bao giờ thuộc mệnh đề ấy. **Pointer sửa trong cùng lượt** (CLAUDE.md §7.2):
+  `master_plan/shop-facts.md` §1 · §3 · §6.11 · §6.25 · §8.4 · §8.6 · §7.1 (bốn hàng mới) ·
+  `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §8 · `quality/invariants.md` **I-008** ·
+  `03-bao-ve-invariant.md` §3 · `07-cong-chat-luong-pha-1.md` §4 · §7 · §8 ·
+  `work/admin-questions.md` (`A7` · `A10` · `B21` · `C23`) · `work/backlog_AD.md` (ADM-03 · ADM-04 ·
+  ADM-13 · ADM-21). **Nghiệm thu:** `./scripts/gate.sh` xanh (Gate 1c: 0 mã đóng bị nhắc như còn
+  mở) · `./scripts/brief.sh` in **đúng hai** câu đang mở, `U-053` và `U-054`, và **không** in bốn mã
+  vừa đóng · `grep -rn "U-042\|U-051\|U-052"` trên `docs/product` · `quality` · `master_plan` ·
+  `work` không còn chỗ nào nói chúng đang mở. **Món nợ scope dọn luôn trong lượt này:** bản `HEAD`
+  của `work/scope.txt` mang **73** pattern của những task đã xong (Gate 3 đỏ từ trước lượt này,
+  cùng hình **F-020** · **ADR-043**) — cây làm việc nay comment-only và file vào khối commit.
 - [x] T-077 **`docs/product/99-unknowns.md` có mục lục — file hơn bốn trăm dòng, ba tiêu đề `###`,
   không có đường vào nào ngoài cuộn tay** — **L1**, xong 2026-09-16. Mục lục **đứng trên** tiêu đề
   `## Unknowns` có chủ ý: `scripts/brief.sh` và `scripts/check-doc-status.sh` đọc từ dòng ấy trở

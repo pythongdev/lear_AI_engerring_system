@@ -63,6 +63,7 @@ có câu trả lời mới từ người.
 | ADR-044 | `I-021` vào **nhóm TIỀN đã có** (§1 của bảng ba cột), **không** mở nhóm thứ năm; hàng ấy có chủ là bước mới **P1-14** | Đã chốt 2026-09-07 | — | đóng **hẳn F-026**; kế hoạch §6/§7, `03-bao-ve-invariant.md` §1 thêm một hàng và §1.5 |
 | ADR-045 | **Bốn ràng buộc kiến trúc ẩn có nhà ở pha 1**, mỗi cái một **dấu hiệu đo được**; ba cái chưa có chủ (*một tiến trình · không hàng đợi · không bộ nhớ đệm*) được chốt ở bước **P1-08** | Đã chốt 2026-09-08 | — | đóng **nốt F-027**; file mới `05-realtime-va-du-phong.md` §2 |
 | ADR-046 | Hoàn tiền **chéo phương thức** vào `I-021` bằng **hai hạng tử riêng**; *doanh thu tiền mặt* giữ nguyên nghĩa, vết hoàn tiền ghi thêm **phương thức trả lại** | Đã chốt 2026-09-15 | — | viết lại **I-021**; **U-044** đóng — POS quyết từng ca |
+| ADR-047 | **Dừng nhận đơn web khi mất kết nối là quyết định của NGƯỜI, không của đồng hồ**: máy **báo**, **POS quyết**, mở lại bằng **nút** — lật luật 1 của `05-realtime-va-du-phong.md` §3 và một câu *Verification* của `I-008` | Đã chốt 2026-09-16 | — | **U-043** đóng; mở **U-053** — ai dừng khi quán mất mạng hẳn |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3037,6 +3038,8 @@ buộc không có dấu hiệu thì hoặc được giữ mãi vì không ai dá
 - **Con số chu kỳ** của đường kéo dự phòng — pha 3 (file mới §1.2).
 - **Cách chạy** ở chỗ duy nhất ấy: theo dõi, khởi động lại, triển khai — pha 5.
 - **Cửa sổ thời gian** để gọi là *quán đang mất kết nối* — `docs/product/99-unknowns.md` **U-043**.
+  *Đã có lời chủ quán **2026-09-16**: không có cửa sổ nào — máy **báo**, **POS quyết**, mở lại bằng
+  **nút**; lời ấy lật luật 1 của §3 mà ADR này dựng ⇒ **ADR-047**, và chỗ trống còn lại là `U-053`.*
 - **Câu chữ dòng thông báo** cho khách khi ba kênh tự bấm dừng — chưa chốt (`quality/invariants.md`
   **I-008**), hỏi khi dựng màn ở pha 4.
 
@@ -3100,3 +3103,63 @@ khác nhau ở chỗ màn đối soát còn **tìm ra lý do** được hay khô
 `quality/invariants.md` **I-021** (viết lại) · `master_plan/shop-facts.md` §6.4 · §7.1 · §8.5 ·
 `docs/product/1-system-design/architecture.md` §6.4 · `06-so-rui-ro.md` `RR-3` ·
 `docs/product/99-unknowns.md` (**U-044** đóng).
+
+---
+
+### ADR-047 — Dừng nhận đơn web khi mất kết nối là quyết định của NGƯỜI, không của một cửa sổ thời gian
+
+**Trạng thái:** Đã chốt 2026-09-16, T-078. Nguồn là lời chủ quán cùng ngày đóng
+`docs/product/99-unknowns.md` **U-043**: *"hiên thông báo để pos quyết định nếu dừng cần có nut mở
+lại"*.
+
+**Vấn đề nó giải quyết.**
+`docs/product/1-system-design/05-realtime-va-du-phong.md` §3 (viết 2026-09-08, **ADR-045**) chốt
+**bốn câu luật** cho cơ chế mà `quality/invariants.md` **I-008** giao lại, và câu luật thứ nhất
+viết thẳng: *phán quyết đứng ở phía hệ thống, không phía quán* — lý do là đúng lúc phải phán quyết
+thì quán là bên đã mất tiếng nói. Bước ấy **không tự chọn** độ dài cửa sổ; nó mở `U-043` và để chủ
+quán trả lời. Lời chủ quán về **không** trả lời con số: nó trả lời rằng **không có con số nào cả**,
+vì người quyết dừng là **POS**, không phải một cái đồng hồ. Hai câu — luật 1 của §3 và câu
+*"có mạng lại thì ba kênh kia mở lại ngay"* ở phần *Verification* của `I-008` — nay **mâu thuẫn với
+lời chủ quán**, và ADR này ghi lại chuyện xử chúng thế nào.
+
+**Decision:**
+
+1. **Lời chủ quán thắng lời của tài liệu thiết kế.** Hai câu trên sửa theo lời chốt, trong cùng
+   thay đổi đóng `U-043` (`CLAUDE.md` §2: một sự thật, một chủ — hai chỗ nói ngược nhau là bug sửa
+   ngay, không phải task sau).
+2. **Luật 1 của §3 tách làm hai vế, không bị xoá.** *Phát hiện* vẫn ở phía hệ thống và vẫn không
+   chờ quán báo — lý do cũ vẫn đúng. *Quyết dừng* thì ở phía **POS**: máy hiện một thông báo ở
+   quầy, POS quyết ba kênh khách tự bấm có dừng hay không.
+3. **Mở lại là một nút người bấm.** Không có đường tự mở lại khi tín hiệu về — đây là lời chủ quán
+   nói thẳng, không phải suy ra.
+4. **`I-008` KHÔNG đổi một chữ ở mệnh đề.** Đơn tạo ra trong lúc quán mù vẫn là đơn không được phép
+   tồn tại; thứ đổi là **cơ chế**, và cơ chế chưa bao giờ thuộc mệnh đề ấy.
+5. **Chỗ lý do cũ để lại thành một câu hỏi có tên, không thành một luật tự chọn.** Ca quán **mất
+   mạng hẳn** — POS không nhìn thấy thông báo và không bấm được gì — là đúng ca `I-008` sinh ra để
+   chặn, và nay không có người quyết. Đó là **`U-053`**, câu của chủ quán, đang chặn luật 1 của §3
+   và **pha 3**.
+
+**Rejected alternatives:**
+
+- **Giữ nguyên luật 1 và đọc lời chủ quán như *chỉ nói về ca chập chờn*.** Bác: đó là đọc hộ chủ
+  quán một điều kiện mà lời chốt không có (`CLAUDE.md` §3.5), và nó để hai câu ngược nhau cùng sống
+  trong repo — đúng hình `work/findings.md` **F-001**.
+- **Suy ra một đường lai: máy tự dừng sau X phút, POS được bấm mở lại sớm hơn.** Bác: chữ **X** ấy
+  chính là con số chủ quán vừa từ chối đọc ra.
+- **Xoá hẳn luật 1 vì nó đã sai.** Bác: lý do của nó vẫn đúng và vẫn cần người trả lời — xoá đi thì
+  ca *quán mất mạng hẳn* biến mất khỏi tài liệu thay vì thành `U-053`.
+- **Chờ `U-053` có lời rồi sửa cả hai chỗ một lần.** Bác: trong lúc chờ, hai câu đã biết là sai vẫn
+  đang được đọc như thiết kế đã chốt.
+
+**Chỗ ADR này KHÔNG chốt:**
+- **Ai dừng khi quán mất mạng hẳn** — `U-053`, câu của **chủ quán**.
+- **Thông báo ở quầy trông thế nào, POS bấm ở đâu** — pha 4.
+- **Máy dựa vào dấu hiệu nào để nói *đang mất kết nối*** — luật 2 của §3 (chạy trên chính đường
+  việc và đơn đang đi) đứng nguyên; con số chu kỳ vẫn là **pha 3**.
+
+**Applies to:**
+`docs/product/1-system-design/05-realtime-va-du-phong.md` §3 · §4 · §5 ·
+`docs/product/1-system-design/03-bao-ve-invariant.md` §3 (bảng *bước sau*) ·
+`docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §4 · §7 · §8 ·
+`quality/invariants.md` **I-008** · `master_plan/shop-facts.md` §6.11 · §7.1 ·
+`docs/product/99-unknowns.md` (**U-043** đóng, **U-053** mở).

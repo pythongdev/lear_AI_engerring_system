@@ -115,14 +115,14 @@ văn lời chủ quán nằm ở owner bên dưới, một chỗ, không có b�
 | ~~`A4`~~ | **không** ai lấy tiền giữa buổi; tiền ở két tới cuối buổi | **§8.5** · **I-021** |
 | ~~`A5`~~ | **POS quyết**, luật cơ sở **ai tới trước ăn trước** | **§6.24** |
 | ~~`A6`~~ | **đôi khi** ưu tiên **khách vội** | **§6.24** |
-| ~~`A7`~~ | **11 bàn** — đúng con số §1 đã có từ 2026-08-30 | §1 · **§6.25** · mở U-040, đóng 2026-09-06: 4 chỗ/bàn, đã đánh số — và số bàn đổi **11 → 15** trong cùng lời đáp; xem U-042 |
+| ~~`A7`~~ | **11 bàn** — đúng con số §1 đã có từ 2026-08-30 | §1 · **§6.25** · mở U-040, đóng 2026-09-06: 4 chỗ/bàn, đã đánh số — và số bàn đổi **11 → 15** trong cùng lời đáp; **U-042 đóng nốt 2026-09-16**: bốn bàn mới đánh số **nối tiếp 12–15** ⇒ danh sách bàn là **1…15** |
 | ~~`A8`~~ | **có** khách đứng chờ, quán xếp hàng chờ | **§6.25** · mở U-039, đóng 2026-09-06: **không**, POS tự điều phối |
 | ~~`A9`~~ | **cả hai** — khách tự chọn, đôi khi nhân viên xếp | **§6.25** |
-| ~~`A10`~~ | **sáu con số** cho mục tổng quan của chủ quán | **§8.6** · mở U-041, đóng 2026-09-08 qua **ba lượt**: *"còn thiếu gì"* là **cả ba** đường — nguyên liệu (Danh mục §8.4) · **người** (bảng phân vai §3) · món (§4.9) ⇒ §8.6 nay **bảy** hàng; *máy biết bằng cách nào*: nguyên liệu **đóng 2026-09-15** — máy không biết, chủ quán tự đọc hai con số rồi tự kết luận (**U-045**; mục tổng quan bày gì thì còn **U-051**), người **C36** (**U-049** đóng 2026-09-08: người đi giao là một trong bốn vai, POS chỉ định; **U-050** đóng 2026-09-15: POS gánh trạm bị bỏ trống, khoảng trống ấy **không** là thiếu người — còn **U-052** cho ca chính người đứng quầy đi giao) |
+| ~~`A10`~~ | **sáu con số** cho mục tổng quan của chủ quán | **§8.6** · mở U-041, đóng 2026-09-08 qua **ba lượt**: *"còn thiếu gì"* là **cả ba** đường — nguyên liệu (Danh mục §8.4) · **người** (bảng phân vai §3) · món (§4.9) ⇒ §8.6 nay **bảy** hàng; *máy biết bằng cách nào*: nguyên liệu **đóng 2026-09-15** — máy không biết, chủ quán tự đọc hai con số rồi tự kết luận (**U-045**; mục tổng quan bày gì **đóng 2026-09-16** — **U-051**: thời gian nhập · tổng đã dùng · số thiếu máy tự trừ, còn mốc cộng dồn là **U-054**), người **C36** (**U-049** đóng 2026-09-08: người đi giao là một trong bốn vai, POS chỉ định; **U-050** đóng 2026-09-15: POS gánh trạm bị bỏ trống, khoảng trống ấy **không** là thiếu người — **U-052 đóng 2026-09-16**: người đứng quầy **không** đi giao, chữ *"bất cứ ai"* hẹp lại còn ba vai) |
 
 ⚠️ **Bốn vế chủ quán KHÔNG chạm tới đã thành câu hỏi có mã, không thành suy luận** —
 **U-038** · **U-039** · **U-040** · **U-041** ở `docs/product/99-unknowns.md`. *Cả bốn nay đã có
-lời (`U-041` là câu cuối, đóng 2026-09-08 — và lời đáp của nó mở ra **U-045**, đóng 2026-09-15, lời đáp ấy lại mở **U-051**).* Chúng ở đó chứ không
+lời (`U-041` là câu cuối, đóng 2026-09-08 — và lời đáp của nó mở ra **U-045**, đóng 2026-09-15, lời đáp ấy lại mở **U-051**, đóng 2026-09-16, và lời đáp ấy mở **U-054**).* Chúng ở đó chứ không
 ở đây, vì file này sẽ bị xoá còn `99-unknowns.md` thì không, và vì `scripts/brief.sh` đẩy danh sách
 unknown vào mọi phiên mới (`CLAUDE.md` §7.1).
 
@@ -174,8 +174,11 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 **B21.** Muốn máy **nhắc "sắp hết X"** thì dựa vào cái gì — chủ quán tự đặt ngưỡng, hay đếm tay rồi nhập vào?
 > **Trả lời (2026-09-15, qua `U-045`, đóng):** *"chủ quán tự đọc rôi đưa ra kết luận"* — **không
 > có ngưỡng**, máy **không** nhắc *sắp hết*; chủ quán đọc cặp số mua vào · đã dùng rồi tự kết
-> luận. Ghi ở `master_plan/shop-facts.md` §8.4. Chủ quán đọc ở màn nào, con số nào ⇒
-> `docs/product/99-unknowns.md` **U-051**.
+> luận. Ghi ở `master_plan/shop-facts.md` §8.4. ✅ *Chủ quán đọc ở màn nào, con số nào* cũng
+> **đã có lời** — chủ quán chốt **2026-09-16** (`U-051`, đóng): mục tổng quan bày **thời gian
+> nhập** · **tổng đã dùng** · **số thiếu = tổng đã nhập − tổng đã dùng** (máy trừ hộ, vẫn không
+> kết luận). ⚠️ Chỗ còn hở: hai con số *tổng* ấy cộng dồn **từ mốc nào** ⇒
+> `docs/product/99-unknowns.md` **U-054**.
 
 **B22.** Có muốn biết **giá vốn một suất bánh cuốn** không? *(Trả lời "có" là **mở lại Đ-3**: phải chốt định lượng từng thành phần cho từng suất — thứ hôm nay chưa có dữ kiện nào.)*
 > **Trả lời:**
@@ -189,9 +192,10 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > **một trong bốn vai**, POS chỉ định từng lần, không có người thứ năm. Nên C23 nay chỉ còn hỏi
 > đúng phần nó hỏi: **đầu người thật**, kể cả người nhà. ✅ Vế *trạm bị bỏ trống lúc người ấy đi*
 > cũng **đã có lời** — chủ quán chốt 2026-09-15 (`U-050`, đóng): **người đứng quầy (POS) gánh**, và
-> khoảng trống ấy **không** là *thiếu người*. ⚠️ Chỗ còn hở cho việc xếp ca là
-> `docs/product/99-unknowns.md` **U-052** — *khi POS chỉ định chính người đứng quầy đi giao thì ai
-> gánh trạm `quay`*; hỏi C23 xong mà quên U-052 thì ca ấy vẫn không xếp được.
+> khoảng trống ấy **không** là *thiếu người*. ✅ Ca cuối cùng của việc xếp ca cũng **đã có lời** — chủ quán chốt
+> **2026-09-16** (`U-052`, đóng): **người đứng quầy không đi giao**, nên chữ *"bất cứ ai"* của
+> `U-049` hẹp lại còn **ba** vai (`trang_banh` · `gap_banh` · `canh`+`don_ban`) và trạm `quay`
+> không bao giờ trống vì đi giao. C23 nay không còn câu U-XXX nào đứng cạnh.
 > **Trả lời:**
 
 **C24.** Người nhà làm **không lương** có phải nằm trong bảng lương không?

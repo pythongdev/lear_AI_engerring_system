@@ -15,10 +15,8 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
-  - [U-042](#u-042) — bốn bàn mới (11 → 15) được đánh số thế nào
-  - [U-043](#u-043) — mất tín hiệu bao lâu thì web ngừng nhận đơn
-  - [U-051](#u-051) — mục tổng quan bày gì ở vế nguyên liệu, khi máy không kết luận *thiếu* nữa
-  - [U-052](#u-052) — người đứng quầy đi giao thì trạm `quay` do ai gánh
+  - [U-053](#u-053) — quán mất mạng HẲN thì ai bấm dừng ba kênh, khi POS không bấm được gì
+  - [U-054](#u-054) — hai con số *tổng* của vế nguyên liệu cộng dồn từ mốc nào
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
 - [Đã có lời giải](#da-co-loi-giai) — câu đã đóng, xếp theo lượt trả lời của chủ quán, kèm nguyên
@@ -88,72 +86,23 @@ chỗ ngồi và cách đánh số của bốn bàn mới thì **lúc ấy** ch�
 đây (vế chỗ ngồi đã có lời 2026-09-08, xem đoạn kế tiếp).
 
 **Ngày 2026-09-08, chủ quán trả lời MỘT trong hai vế của `U-042`** — *"thêm 4 bàn mới mỗi bàn 4
-chỗ"* ⇒ **cả mười lăm bàn đều 4 chỗ/bàn** (`master_plan/shop-facts.md` §1 · §6.25 · §7.1, T-066).
-Câu hỏi **không đóng**: vế **cách đánh số** bốn bàn mới thì lời ấy không chạm tới, nên `U-042` **ở
-lại đây với phạm vi hẹp hơn** — đúng hình dạng `U-034` từng ở lại ngày 2026-09-04. Một lời chốt trả
-lời được nửa câu hỏi vẫn là nửa câu hỏi.
+chỗ"* ⇒ cả mười lăm bàn đều 4 chỗ/bàn — **và ngày 2026-09-16 trả lời nốt vế kia**: bốn bàn mới
+đánh số **nối tiếp 12–15**. Câu ấy nay ở [Đã có lời giải](#da-co-loi-giai), kèm nguyên văn cả hai
+lượt. Một lời chốt trả lời được nửa câu hỏi vẫn là nửa câu hỏi — nửa còn lại ở đây tám ngày.
 
-<a id="u-042"></a>
-- **U-042 — bốn bàn quán vừa mua thêm (nâng tổng từ 11 lên 15) được ĐÁNH SỐ thế nào: nối tiếp
-  12–15, hay theo cách khác?** **Hẹp lại 2026-09-08** (T-066): vế *mỗi bàn mấy chỗ ngồi* **đã có
-  lời** — *"thêm 4 bàn mới mỗi bàn 4 chỗ"*, cả mười lăm bàn đều 4 chỗ/bàn — nên chỉ còn **tên/số
-  của bốn bàn mới** là chưa ai nói. Câu này mở ra từ chính câu trả lời `U-040` ngày 2026-09-06:
-  chủ quán chốt đủ ba vế cho **mười một** bàn ban đầu rồi tự thêm *"hôm nay tôi mua thêm bàn, hãy
-  để 15 bàn"* mà không nói hình dạng của bốn bàn thêm. **Đừng suy hộ** (`CLAUDE.md` §3.5): đừng tự
-  đánh số 12–15 — quán có thể đặt bàn mới ở một khu riêng và gọi tên khác hẳn; hai lần chủ quán nói
-  về bốn bàn ấy đều **chỉ** nói số lượng và chỗ ngồi. **Ai trả lời được:** chủ quán. **Đang chặn:**
-  `docs/decisions.md` **ADR-027** (*chỉ ghép sang bàn **trống*** cần gọi tên được **từng** bàn — đủ
-  cho 11 bàn cũ, còn hở cho 4 bàn mới) và `work/backlog_AD.md` **ADM-03** (danh sách bàn gọi tên
-  được; vế *sức chứa* thì hết hở từ 2026-09-08). **Cách hỏi** (bài học S-4 — hỏi về cái quán):
-  *"Bốn bàn mới anh vừa mua, anh định gọi chúng là bàn số mấy — 12, 13, 14, 15, hay tên khác?"*
-  *Mở 2026-09-06 · trả lời `U-040` · hẹp lại 2026-09-08 · `master_plan/shop-facts.md` §1 · §6.25.*
+**Cùng ngày 2026-09-08, bước P1-08 mở `U-043`** — *mất tín hiệu bao lâu thì web ngừng nhận đơn* —
+**và chủ quán đóng nó 2026-09-16 bằng cách bỏ chính giả định của câu hỏi**: không có con số cửa sổ
+nào, máy **báo** còn **POS quyết**, đã dừng thì mở lại bằng **nút**. Câu ấy nay ở
+[Đã có lời giải](#da-co-loi-giai); lời đáp lật luật 1 của
+`docs/product/1-system-design/05-realtime-va-du-phong.md` §3 (`docs/decisions.md` **ADR-047**) và
+để hở đúng ca `quality/invariants.md` **I-008** sinh ra để chặn ⇒ **U-053** ngay dưới.
 
-**Cùng ngày 2026-09-08, bước P1-08 mở một câu trong lúc chốt cách hệ thống biết quán đang mất kết
-nối.** Nó không mở vì ai quên hỏi: chủ quán đã chốt **cái gì xảy ra** khi quán mù — web ngừng nhận
-đơn, khách gọi hotline (`U-035`, 2026-09-04) — nhưng **mất tín hiệu bao lâu mới gọi là mù** thì
-chưa lời nào chạm tới, và đó đúng là chỗ quyết định lúc nào quán ngừng bán trên web.
-
-<a id="u-043"></a>
-- **U-043 — mất tín hiệu bao lâu thì web NGỪNG nhận đơn?** `quality/invariants.md` **I-008** đã có
-  điều kiện thứ ba (*quán đang nhìn thấy được đơn mới*), và
-  `docs/product/1-system-design/05-realtime-va-du-phong.md` §3 vừa chốt **ai phán quyết** (phía hệ
-  thống, vì lúc ấy quán là bên đã mất tiếng nói) cùng **đường nào được dùng để biết** (chính đường
-  việc và đơn đang đi) — chỉ còn **độ dài cửa sổ** là chưa ai nói. **Vì sao không được suy hộ**
-  (`CLAUDE.md` §3.5): ngắn quá thì một lần mạng chập chờn một phút cắt mất khách đang đặt dở; dài
-  quá thì đơn rơi vào một cái quán không ai nhìn thấy — đúng cái `I-008` sinh ra để chặn. Đây là
-  đánh đổi của **quán**, không phải một tham số kỹ thuật, và nếu ở đây không có con số thì pha 3 sẽ
-  tự chọn một con số thay chủ quán. **Ai trả lời được:** chủ quán. **Đang chặn:** con số cửa sổ ở
-  **pha 3**, và hàng thứ nhất của bảng §4 trong `05-realtime-va-du-phong.md`. **Cách hỏi** (bài học
-  `S-4` — hỏi về cái quán, đừng hỏi về cái đồng hồ đếm giờ trong máy): *"Mạng nhà anh có kiểu chập
-  chờn mất một hai phút rồi tự có lại không? Những lúc như thế anh muốn web tạm ngừng nhận đơn
-  ngay, hay cứ để khách đặt vì lát nữa quán vẫn thấy?"*
-  *Mở 2026-09-08 · P1-08 · `docs/product/1-system-design/05-realtime-va-du-phong.md` §3 · §4.*
-
-**Ngày 2026-09-15, chủ quán đóng `U-045` — và lời đáp dời chữ *thiếu* ra khỏi máy.** `U-045` mở
-2026-09-08 từ chính lời đáp `U-041`: vế *"còn thiếu gì không"* của mục tổng quan là thiếu
-**nguyên liệu**, nhưng máy biết một thứ đang thiếu **bằng cách nào** thì chưa ai nói. Nguyên văn
-lời đáp: *"chủ quán tự đọc rôi đưa ra kết luận"* ⇒ **không có ngưỡng**, máy **không** kết luận
-thay người; chi tiết ở [Đã có lời giải](#da-co-loi-giai). Nhưng máy không kết luận thì hàng 7 của
-mục tổng quan, ở vế nguyên liệu, **bày cái gì** cho người đọc — chưa lời nào nói. Đó là `U-051`
-ngay dưới.
-
-<a id="u-051"></a>
-- **U-051 — máy không kết luận "thiếu" nữa, vậy mục tổng quan của chủ quán bày GÌ ở vế nguyên
-  liệu: hai con số mua vào · đã dùng của từng thứ, số còn lại cộng dồn, hay KHÔNG bày gì — chủ
-  quán tự mở mục nhập hàng ngày để đọc?** `U-045` đóng 2026-09-15 chốt *ai kết luận* (chủ quán,
-  tự đọc hai con số) nhưng không chốt *đọc ở đâu* và *đọc con số nào*. **Vì sao không được suy
-  hộ** (`CLAUDE.md` §3.5): `master_plan/shop-facts.md` §8.6 chốt **tập con số** của một cái liếc,
-  và ba cách đọc cho ba tập khác nhau — mười bốn cặp số trở lên (danh mục §8.4 **còn bổ sung
-  dần**), mười bốn số còn lại, hay không số nào; chọn hộ là quyết thay chủ quán việc cái liếc ấy
-  dài bao nhiêu. Thêm một chỗ: §8.4 nói hai con số là để chủ quán **tự cộng dồn** — nên *máy cộng
-  dồn hộ rồi bày ra* cũng là một đường mà lời chốt chưa chạm tới. **Ai trả lời được:** chủ quán.
-  **Đang chặn:** vế nguyên liệu của hàng số **7** `master_plan/shop-facts.md` §8.6, và
-  `work/backlog_AD.md` **ADM-04**. **Chưa chặn:** không bước nào của pha 1 — không mục nào của pha
-  1 dựa vào danh mục nguyên liệu. **Cách hỏi** (bài học `S-4` — hỏi về cái quán, đừng hỏi về cái
-  máy): *"Lúc anh ở nhà mở máy ra xem quán, phần nguyên liệu anh muốn thấy luôn từng thứ hôm nay
-  mua bao nhiêu dùng bao nhiêu, hay chỉ cần thấy mỗi thứ còn lại bao nhiêu, hay chuyện nguyên liệu
-  thì lúc nào cần anh tự mở sổ ra xem?"*
-  *Mở 2026-09-15 · T-074 · trả lời `U-045` · `master_plan/shop-facts.md` §8.6 · §8.4.*
+**Ngày 2026-09-15, chủ quán đóng `U-045` — và lời đáp dời chữ *thiếu* ra khỏi máy.** Nguyên văn:
+*"chủ quán tự đọc rôi đưa ra kết luận"* ⇒ **không có ngưỡng**, máy **không** kết luận thay người.
+Chỗ lời ấy để hở — mục tổng quan **bày cái gì** ở vế nguyên liệu — thành `U-051`, và **chủ quán
+đóng nốt nó 2026-09-16**: bày **thời gian nhập** cùng **tổng đã dùng**, còn số thiếu thì **máy
+trừ**. Cả hai câu nay ở [Đã có lời giải](#da-co-loi-giai); chỗ lời đáp mới để hở — chữ *tổng* cộng
+dồn từ mốc nào — là **U-054** ngay dưới.
 
 **Cùng ngày 2026-09-08, bước P1-10 mở `U-044` trong lúc dựng sổ rủi ro, và chủ quán đóng nó cùng
 ngày** — *trả lại bằng gì* cũng do POS quyết từng ca. Câu ấy nay ở
@@ -164,31 +113,52 @@ ngày** — *trả lại bằng gì* cũng do POS quyết từng ca. Câu ấy n
 `U-047` ở một lượt, rồi `U-048` (*mỗi suất kèm sẵn mấy bát canh*) ở lượt sau nữa. Cả ba nay ở
 [Đã có lời giải](#da-co-loi-giai); mục *Đang mở* không còn câu nào chạm menu.
 
-**Ngày 2026-09-15, chủ quán đóng `U-050` bằng một câu — cả hai vế trong một lượt, và câu ấy va
-đúng vào lời chốt `U-049` bảy ngày trước.** Nguyên văn: *"pos gánh, không thiếu người vì đi ship
-luc quán vắng."* ⇒ trạm bị bỏ trống do **người đứng quầy** (`quay`, POS) gánh, và khoảng trống ấy
-**không** là *thiếu người* của mục tổng quan. Chi tiết ở [Đã có lời giải](#da-co-loi-giai). Nhưng
-`U-049` đã chốt người đi giao là *"bất cứ ai pos sẽ chỉ định"* trong bốn vai — tức **có thể là chính
-người đứng quầy**, và lúc ấy POS không gánh được trạm của chính mình. Đó là `U-052` ngay dưới.
+**Ngày 2026-09-15, chủ quán đóng `U-050` bằng một câu** — *"pos gánh, không thiếu người vì đi ship
+luc quán vắng."* — **và câu ấy va đúng vào lời chốt `U-049` bảy ngày trước**: người đi giao là
+*"bất cứ ai"* trong bốn vai, kể cả chính người đứng quầy, mà lúc ấy POS không gánh được trạm của
+chính mình. Chỗ va ấy là `U-052`, và **chủ quán đóng nó ngày 2026-09-16** bằng đúng một câu —
+*người đứng quầy không đi giao*. Cả hai nay ở [Đã có lời giải](#da-co-loi-giai).
 
-<a id="u-052"></a>
-- **U-052 — khi POS chỉ định CHÍNH NGƯỜI ĐỨNG QUẦY đi giao thì trạm `quay` do ai gánh — hay người
-  đứng quầy không bao giờ là người đi giao?** Hai lời chốt của chủ quán, đọc cạnh nhau, không khép
-  được ca này: `U-049` (2026-09-08) — người đi giao là *"1 trong bốn vai trên có thể là **bất cứ ai**
-  pos sẽ chỉ định"*, nên người đứng quầy nằm trong tập được chỉ định; `U-050` (2026-09-15) —
-  *"**pos gánh**"* trạm bị bỏ trống. Người đứng quầy rời quán thì không còn POS ở quầy để gánh.
-  **Vì sao không được suy hộ** (`CLAUDE.md` §3.5): cả ba đường ra đều là luật mới, không đường nào
-  suy được từ chữ đã có — hoặc người đứng quầy **không bao giờ** đi giao (thì chữ *"bất cứ ai"* của
-  `U-049` hẹp lại còn **ba** vai), hoặc **chủ quán** đứng vào (§3 đã nói chủ quán *thỉnh thoảng
-  đứng quầy*, nhưng chưa nói là để thay người đi giao), hoặc trạm `quay` **để trống** tới lúc người
-  kia về — mà `quay` là chỗ nhận đơn và thu tiền. **Ai trả lời được:** chủ quán. **Đang chặn:** vế
-  *ai gánh* của `master_plan/shop-facts.md` §3 cho đúng một ca — ca người đi giao là người đứng
-  quầy; và câu **C36** (*ai đang trực trạm nào*, `work/admin-questions.md`) — ca ấy là ca duy nhất
-  trạm `quay` không có người. **Chưa chặn:** số **7** của §8.6 — lời chốt `U-050` đã nói khoảng trống
-  do đi giao **không** là thiếu người, bất kể ai đi; và §6.7, vì hai nút *đã giao* + *đã thu tiền*
-  không hỏi người bấm là ai. **Cách hỏi** (bài học `S-4` — hỏi về cái quán): *"Có khi nào chính
-  người đứng quầy phải cầm đồ đi giao không? Nếu có thì lúc đó ai ra quầy nhận khách và thu tiền?"*
-  *Mở 2026-09-15 · T-075 · `master_plan/shop-facts.md` §3.*
+**Ngày 2026-09-16, chủ quán trả lời BỐN câu trong một lượt — và hai trong bốn lời đáp để lộ hai câu
+chưa ai hỏi** (T-078). Cả hai đều không mở vì ai quên hỏi: `U-043` chuyển quyền **dừng web** sang
+**POS**, nên đúng ca *quán mất mạng hẳn, POS không bấm được gì* — ca `quality/invariants.md`
+**I-008** sinh ra để chặn — hết người quyết; `U-051` bảo máy **trừ hai con số tổng**, mà
+`master_plan/shop-facts.md` §8.4 ghi hai con số ấy theo **từng ngày**, nên chữ *tổng* chưa có mốc.
+Nguyên văn cả bốn lời đáp ở [Đã có lời giải](#da-co-loi-giai).
+
+<a id="u-053"></a>
+- **U-053 — quán mất mạng HẲN thì ba kênh khách tự bấm có TỰ dừng không, khi POS không nhìn thấy
+  thông báo và cũng không bấm được nút nào?** Lời chốt `U-043` (2026-09-16) giao quyền dừng cho
+  **POS**: máy hiện thông báo, POS quyết. Nhưng điều kiện thứ ba của `quality/invariants.md`
+  **I-008** sinh ra cho đúng ca **không ai ở quán bấm được gì** — *"quán mất mạng thì nút tạm dừng
+  cũng nằm sau đúng đường mạng vừa mất"* (I-008 · `master_plan/shop-facts.md` §6.11). Đọc hai lời
+  cạnh nhau thì hở đúng ca ấy: máy thấy quán mù, thông báo không ai đọc, không ai bấm dừng, và đơn
+  web vẫn rơi vào một cái quán không ai nhìn thấy. **Vì sao không được suy hộ** (`CLAUDE.md` §3.5):
+  hai đường ra là hai luật khác nhau, không đường nào suy được từ chữ đã có — hoặc **máy tự dừng**
+  ba kênh khi quán mù còn POS chỉ quyết ở ca chập chờn mà quầy vẫn nhìn thấy, hoặc **máy không bao
+  giờ tự dừng** và quán chấp nhận đơn rơi vào khoảng mù rồi xử sau, mà đường sau lật chính `I-008`.
+  **Ai trả lời được:** chủ quán. **Đang chặn:** luật 1 của
+  `docs/product/1-system-design/05-realtime-va-du-phong.md` §3, hàng thứ nhất bảng §4 của file ấy,
+  và vế **cơ chế** của `I-008` — tức cả **pha 3**. **Cách hỏi** (bài học `S-4` — hỏi về cái quán):
+  *"Lúc quán mất mạng hẳn, không ai ở quán bấm được gì: anh muốn máy tự ngừng nhận đơn trên web cho
+  tới khi có người bấm mở lại, hay cứ để khách đặt rồi lát nữa quán xem lại?"*
+  *Mở 2026-09-16 · T-078 · trả lời `U-043` · `quality/invariants.md` **I-008** ·
+  `docs/product/1-system-design/05-realtime-va-du-phong.md` §3.*
+
+<a id="u-054"></a>
+- **U-054 — hai con số *tổng* mà mục tổng quan lấy hiệu — *tổng đã nhập* trừ *tổng đã dùng* — cộng
+  dồn TỪ MỐC NÀO: từ ngày đầu tiên có sổ, từ đầu tháng, hay chỉ trong ngày hôm nay?** Lời chốt
+  `U-051` (2026-09-16) bảo máy trừ hai con số **tổng**; `master_plan/shop-facts.md` §8.4 thì ghi
+  hai con số **mua vào · đã dùng** theo **từng ngày** (`U-034`, 2026-09-06). Chữ *tổng* vì thế có
+  ít nhất ba nghĩa, và mỗi nghĩa cho một con số khác hẳn trên cùng một màn. **Vì sao không được
+  suy hộ** (`CLAUDE.md` §3.5): đây là con số chủ quán nhìn để quyết **có phải đi mua hàng không**
+  — chọn hộ cái mốc là quyết hộ nghĩa của chữ *thiếu*, đúng thứ `U-045` vừa dời ra khỏi máy
+  (2026-09-15). **Ai trả lời được:** chủ quán. **Đang chặn:** vế nguyên liệu của hàng số **7**
+  `master_plan/shop-facts.md` §8.6, và `work/backlog_AD.md` **ADM-04** · **ADM-13**. **Chưa chặn:**
+  không bước nào của pha 1 — không mục nào của pha 1 dựa vào danh mục nguyên liệu. **Cách hỏi**
+  (bài học `S-4` — hỏi về cái quán): *"Con số còn lại anh muốn cộng từ lúc nào — cộng hết từ trước
+  tới nay, từ đầu tháng, hay chỉ tính riêng trong ngày hôm nay?"*
+  *Mở 2026-09-16 · T-078 · trả lời `U-051` · `master_plan/shop-facts.md` §8.4 · §8.6.*
 
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
@@ -213,6 +183,19 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Ngày 2026-09-16, chủ quán trả lời BỐN câu trong một lượt — `U-042` · `U-043` · `U-051` · `U-052`**
+(T-078) — cả bốn câu đang mở lúc ấy, đóng trong cùng một lượt. Hai lời trong đó **để lộ hai câu
+mới** — `U-053` · `U-054`, nay ở [Đang mở](#dang-mo); hai lời còn lại (`U-042`, `U-052`) đóng hẳn,
+không để hở chỗ nào.
+
+| Câu hỏi cũ | Lời giải (chủ quán, 2026-09-16) | Ghi ở |
+|---|---|---|
+| ~~U-042 — bốn bàn quán vừa mua thêm (11 → 15) được ĐÁNH SỐ thế nào: nối tiếp 12–15, hay theo cách khác~~ | **Nối tiếp 12–15** — nguyên văn: *"trả lời nối tiếp 12–15"*. ⇒ mười lăm bàn mang tên **1…15**; bốn bàn mới là **12 · 13 · 14 · 15**, không khu riêng, không cách gọi khác. Câu này đóng **vế cuối** của `U-042` — vế *chỗ ngồi* đã đóng 2026-09-08 (*"thêm 4 bàn mới mỗi bàn 4 chỗ"*) — nên `U-042` hết là câu hỏi sau **mười ngày** và hai lượt. ⇒ `docs/decisions.md` **ADR-027** (*chỉ ghép sang bàn **trống***) nay gọi tên được **từng** bàn trong cả mười lăm, và `work/backlog_AD.md` **ADM-03** (danh sách bàn) hết chỗ hở. Không lời nào nói bàn có **tên** ngoài số, cũng không lời nào nói thứ tự ấy gắn với chỗ ngồi trong quán — đừng đọc thêm. | `shop-facts.md` **§1** · §6.25 · §7.1 · `work/backlog_AD.md` **ADM-03** |
+| ~~U-043 — mất tín hiệu BAO LÂU thì web NGỪNG nhận đơn~~ | **Không có con số cửa sổ nào: máy BÁO, POS QUYẾT, và đã dừng thì mở lại bằng NÚT** — nguyên văn: *"hiên thông báo để pos quyết định nếu dừng cần có nut mở lại"*. ⇒ câu hỏi đóng bằng cách **bỏ chính giả định của nó**, đúng hình dạng bảy câu ngày 2026-09-02 và `U-044`: không luật cứng, người quyết theo tình hình. **Ba điều lời này chốt:** (1) thấy dấu hiệu mất kết nối thì máy **hiện một thông báo** ở quầy, không tự kết luận thay người; (2) **POS** là người quyết ba kênh khách tự bấm có dừng hay không; (3) đã dừng thì **mở lại là một nút người bấm**, **không** tự mở lại khi tín hiệu về. ⚠️ Lời này **lật hai câu đã viết trước khi có nó**: luật 1 của `05-realtime-va-du-phong.md` §3 (*phán quyết đứng ở phía hệ thống, không phía quán*) và câu *"có mạng lại thì ba kênh kia mở lại ngay"* ở phần **Verification** của `I-008` — cả hai sửa theo lời chủ quán trong cùng thay đổi này (`docs/decisions.md` **ADR-047**). ⚠️ Lời này **KHÔNG** nói ca quán **mất mạng hẳn** — lúc POS không nhìn thấy thông báo và không bấm được gì, đúng ca `I-008` sinh ra để chặn ⇒ mở **`U-053`**. | `shop-facts.md` **§6.11** · `quality/invariants.md` **I-008** · `docs/product/1-system-design/05-realtime-va-du-phong.md` §3 · §4 · `docs/decisions.md` **ADR-047** |
+| ~~U-051 — máy không kết luận *thiếu* nữa, vậy mục tổng quan bày GÌ ở vế nguyên liệu~~ | **Bày THỜI GIAN NHẬP và TỔNG ĐÃ DÙNG; số thiếu thì MÁY TRỪ — thiếu = tổng đã nhập − tổng đã dùng** — nguyên văn: *"thời gian nhâp sản phẩm và tổng đã sử dụng lấy thiếu bằng tổng đã nhập trừ đi sử dụng"*. ⇒ trong ba đường câu hỏi đưa ra, chủ quán chọn **đường thứ tư**: không phải cặp *mua vào · đã dùng* của từng thứ, không phải *không bày gì* — mà **máy cộng dồn hộ rồi bày hiệu số**, kèm **thời gian nhập** (thứ chưa mục nào của §8.4 từng nói tới). **Không lật §8.4 và không lật `U-045`:** bảng *máy làm* của §8.4 vốn đã cho máy *"nhận con số người nhập, giữ lại, **cộng lại**, hiện ra"*, và máy vẫn **không** có ngưỡng, **không** tự kết luận *sắp hết*, **không** nhắc. *Chữ **thiếu** trong lời chủ quán ở đây là **tên của hiệu số**, không phải một phán quyết — cách đọc của phiên viết, không phải lời chủ quán (**F-004**).* ⚠️ Lời này **KHÔNG** nói hai con số *tổng* cộng dồn **từ mốc nào** ⇒ mở **`U-054`**; và cũng không nói bày **cả mười bốn thứ** của danh mục hay chỉ thứ có động — chỗ ấy là hình dạng màn, **pha 4**. | `shop-facts.md` **§8.4** · §8.6 (hàng 7) · §7.1 |
+| ~~U-052 — khi POS chỉ định CHÍNH NGƯỜI ĐỨNG QUẦY đi giao thì trạm `quay` do ai gánh~~ | **Người đứng quầy KHÔNG BAO GIỜ là người đi giao** — nguyên văn: *"người đứng quầy khônng đi giao"*. ⇒ chủ quán chọn đúng **đường thứ nhất** trong ba đường câu hỏi đưa ra: chữ *"bất cứ ai"* của `U-049` (2026-09-08) **hẹp lại còn BA vai** — `trang_banh` · `gap_banh` · `canh`+`don_ban`. Trạm `quay` vì thế **không bao giờ** là trạm bị bỏ trống vì đi giao, nên lời *"pos gánh"* của `U-050` (2026-09-15) luôn có người để gánh: ca duy nhất §3 chưa khép nay khép, và câu **C36** (*ai đang trực trạm nào*) hết phải chờ nó để xếp ca. ⚠️ Lời này **không** đụng tới chủ quán: §3 vẫn để chủ quán *thỉnh thoảng đứng quầy*, và không lời nào nói chủ quán có đi giao hay không — đừng đọc thành luật (**F-004**). | `shop-facts.md` **§3** · §8.6 · §7.1 · `work/admin-questions.md` **C23** |
+
 
 **Ngày 2026-09-08, chủ quán đóng `U-044` — mở và đóng trong cùng ngày** (ghi vào owner 2026-09-15,
 T-073). Lời đáp cùng hình dạng với bảy câu ngày 2026-09-02 và với `U-049`: **không có luật cứng,

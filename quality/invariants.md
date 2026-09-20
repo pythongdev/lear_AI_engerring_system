@@ -216,6 +216,15 @@ thông báo** trên web, và **câu chữ của dòng ấy chưa chốt** — đ
 `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6 bước **P1-08** và pha 3. Mệnh đề chỉ nói:
 đơn tạo ra trong lúc quán mù là đơn **không được phép tồn tại**.
 
+**AI BẤM DỪNG — chủ quán chốt 2026-09-16** (`docs/product/99-unknowns.md` `U-043`, nguyên văn:
+*"hiên thông báo để pos quyết định nếu dừng cần có nut mở lại"*): hệ thống **hiện một thông báo** ở
+quầy, **POS quyết** dừng ba kênh khách tự bấm, và đã dừng thì **mở lại là một nút người bấm** —
+không tự mở lại khi tín hiệu về (`master_plan/shop-facts.md` §6.11 · `docs/decisions.md`
+**ADR-047**). ⛔ **Mệnh đề trên KHÔNG đổi một chữ, và chỗ hở nằm ở cơ chế:** ca quán **mất mạng
+hẳn** là ca POS không nhìn thấy thông báo và không bấm được gì — đúng ca điều kiện thứ ba sinh ra
+để chặn. Máy có **tự** dừng trong ca ấy không là `docs/product/99-unknowns.md` **U-053**, và chừng
+nào chưa có lời thì **không phiên nào được tự chọn một đường** (`CLAUDE.md` §3.5).
+
 **Why:**
 Hai quy tắc của kế hoạch gốc (§5 quy tắc 10 và 11) nằm cạnh nhau mà không nói cái nào thắng; chủ
 quán chốt thứ tự đó (`shop-facts.md` §6.8): nút tạm dừng dùng khi **hết nguyên liệu giữa buổi**,
@@ -234,7 +243,8 @@ Kịch bản ưu tiên: 08:00 — trong giờ bán — chủ quán bật tạm d
 bị từ chối; tắt tạm dừng thì đặt lại được ngay. Kịch bản mất kết nối: 08:00, quán mất mạng
 trong khi hệ thống vẫn sống ⇒ ba kênh khách tự bấm (`delivery`, `pickup`, `qr_table`) **bị từ
 chối** và khách thấy **một dòng thông báo**, trong khi `staff_pos` và `phone_preorder` **không** bị
-chặn — quán vẫn nhận đơn qua hotline và ghi giấy; có mạng lại thì ba kênh kia mở lại ngay, và
+chặn — quán vẫn nhận đơn qua hotline và ghi giấy; có mạng lại thì ba kênh kia mở lại **khi POS bấm
+nút mở** (chủ quán chốt 2026-09-16 — **không** tự mở lại), và
 **không đơn nào của khoảng mất mạng nằm chờ trong máy mà quán chưa từng nhìn thấy**. Kịch bản không chạm đơn cũ: nhận một đơn giao tận
 nơi lúc 10:50, bật tạm dừng lúc 10:55 ⇒ đơn đó vẫn đi hết luồng, vẫn bấm được **đã giao và đã thu
 tiền** sau 11:00. Kiểm ngược, cuối ngày: không đơn nào có thời điểm tạo nằm ngoài 06:00–11:00.

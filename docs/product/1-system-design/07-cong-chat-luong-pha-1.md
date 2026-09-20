@@ -163,7 +163,7 @@ scenario ở §8 pha 0 **không** có bước nào mất kết nối, nên lư�
 | # | Bước ở quán | Cơ chế pha 1 giữ nó |
 |:--:|---|---|
 | 1 | Quán mất điện/mất mạng giữa buổi; **hệ thống vẫn sống** ⇒ quán mù, khách web **không** mù | `PT-1` §2 · đường suy giảm đủ ba vế ở §3 ([`01-ranh-gioi-he-thong.md`](01-ranh-gioi-he-thong.md)) · `RR-8` ([`06-so-rui-ro.md`](06-so-rui-ro.md) §1) |
-| 2 | **Ba kênh khách tự bấm dừng**; hai kênh người của quán nhập **không** dừng | `I-008` **điều kiện thứ ba, tầng 3** — và nó là điều kiện **duy nhất không ai bấm được** ([`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) §3 · §3.1) · bốn câu luật *ai phán quyết và dựa vào đường nào* ([`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §3) · **chỗ để trống có tên:** độ dài cửa sổ là `U-043`, câu của **chủ quán** (§4) |
+| 2 | **Ba kênh khách tự bấm dừng**; hai kênh người của quán nhập **không** dừng | `I-008` **điều kiện thứ ba, tầng 3** — và nó là điều kiện **duy nhất không ai bấm được** ([`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) §3 · §3.1) · bốn câu luật *ai phán quyết và dựa vào đường nào* ([`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §3) · **chỗ để trống có tên:** `U-043` **đã đóng 2026-09-16** — không có độ dài cửa sổ nào, máy báo và **POS quyết** (**ADR-047**); chỗ trống nay là ca quán **mất mạng hẳn**, `U-053`, câu của **chủ quán** (§4) |
 | 3 | Khách đặt qua **hotline**; quán **ghi giấy trực tiếp với POS** | `PT-6` — sổ giấy là quy trình của **người** (§2), đường suy giảm §3 · `RB-4` chỉ đứng được **vì** có đường bán không đi qua máy ([`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §2) |
 | 4 | Màn trạm mất đường đẩy nhưng **vẫn đúng, chỉ trễ hơn** — và **rỗng thì nói được vì sao nó rỗng** | đường **kéo** tự chạy, ba luật, và nó **không** phải một cái nút — **ADR-011**, màn trạm không có nút nào ([`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §1.2) · luật *màn chỉ đọc phải cho biết nó vừa lấy lại lúc nào* (§1.3) · `RR-7` là rủi ro của đúng chỗ này và cột *Cơ chế chặn* của nó trỏ về §1.3 ([`06-so-rui-ro.md`](06-so-rui-ro.md) §1) · `RB-1` là ràng buộc sinh ra từ tính chất của đường đẩy (§2) |
 | 5 | Có điện lại ⇒ bán tiếp **ngay** trên hệ thống; phần ghi tay **nhập bù sau** | `PT-1` cột *bù lúc nào* §3 · mốc tính tiền của lượt nhập bù là **mốc quán bán thật** ([`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §2 · §3, ca **duy nhất** một mốc vào hệ thống mà **không** do hệ thống cấp) · `YC-08` ([`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §1) |
@@ -171,8 +171,10 @@ scenario ở §8 pha 0 **không** có bước nào mất kết nối, nên lư�
 | 7 | Ngày mất điện đọc lại về sau vẫn bằng chính nó | `I-014` phép đối chiếu, hàng cuối: *mọi ngày đã qua mà con số dựng lại hôm nay khác con số đã đối soát hôm ấy*, **trừ** đúng ca nhập bù (**ADR-037**) |
 
 **Lát này đi hết, không chỗ nào dừng** — sáu trong bảy bước trỏ được vào **hai** mục khác nhau, và
-chỗ để trống duy nhất (`U-043`) là một con số của **chủ quán**, đã có tên và đã có người trả lời,
-không phải một chỗ pha 1 phải đoán.
+chỗ để trống duy nhất là câu của **chủ quán**, có tên và có người trả lời, không phải một chỗ pha 1
+phải đoán. *Viết 2026-09-08 khi câu ấy là `U-043` (độ dài cửa sổ); `U-043` đóng **2026-09-16** —
+không có con số nào, máy báo và POS quyết — và cùng lời đáp mở `U-053` (ai dừng khi quán mất mạng
+hẳn), nên chỗ trống đổi mã chứ không mất.*
 
 ---
 
@@ -347,7 +349,10 @@ mang thứ pha 2/3 sở hữu, và chỉ một trong ba có tên trong một ngo
   sống ở đó**, không ở đây — rồi hỏi từng câu **một** câu: *có mục nào trong bảy mục pha 1 phải
   đoán thay câu này để viết được một dòng của mình?* Ô này tick khi câu trả lời là **không** cho
   mọi câu đang mở.
-  **Trả lời tại mốc ký, 2026-09-08, sáu câu:** **`U-043`** (độ dài cửa sổ mất kết nối) — kế hoạch
+  **Trả lời tại mốc ký, 2026-09-08, sáu câu** *(cả sáu nay **đã có lời chủ quán**: `U-043` và
+  `U-042` đóng **2026-09-16**, `U-044` · `U-045` · `U-048` · `U-049` đóng trước đó — mốc ký vẫn
+  đứng nguyên, phần dưới đây là phép đo của ngày 2026-09-08, không phải trạng thái hôm nay)**:**
+  **`U-043`** (độ dài cửa sổ mất kết nối) — kế hoạch
   §8 ghi *pha 3, không chặn bước nào của pha 1*, và
   [`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §3 · §4 đã chốt được *ai phán quyết*
   và *dựa vào đường nào* mà không cần con số · **`U-044`** (hoàn tiền cho khoản đã chuyển khoản) —
@@ -497,7 +502,7 @@ Ai đọc cổng này thì đọc kèm câu đó.
 | **Phiên nhận `F-036`** | hai ca cụ thể, và câu hỏi thật: phép đối chiếu của một mệnh đề phải phủ **mọi vế** của mệnh đề ấy, không chỉ vế chính |
 | **Phiên nhận `F-037`** | [`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §4 đã tả sẵn hình của dòng còn thiếu — *đúng hình của dòng nợ ghi trong ngày nhưng ngược chiều* — cộng luật một-đối-một giữa [`architecture.md`](architecture.md) §8 và [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §1 |
 | **Phiên nhận `F-038`** | [`../0-ba/ban-hang/03-lat-cat.md`](../0-ba/ban-hang/03-lat-cat.md) §3.2.4 là nhà của luật; chỗ thiếu là một **mệnh đề** và một **tầng**, không phải một luật mới |
-| **Chủ quán** | không câu mới nào từ lượt này. Bốn câu đang mở của mảng admin và `U-043` vẫn ở `docs/product/99-unknowns.md`; `U-044` **đã đóng 2026-09-08** — POS quyết từng ca |
+| **Chủ quán** | không câu mới nào từ lượt này. *Viết 2026-09-08: lúc ấy `U-043` còn mở. Chủ quán đã trả lời nó **2026-09-16** — máy báo, POS quyết, mở lại bằng nút (**ADR-047**) — và cùng lượt đóng nốt `U-042` · `U-051` · `U-052`; hai câu mới `U-053` · `U-054` thế chỗ ở `docs/product/99-unknowns.md`.* `U-044` **đã đóng 2026-09-08** — POS quyết từng ca |
 
 **Mâu thuẫn với [`architecture.md`](architecture.md) thì sửa `architecture.md`, không viết bản thứ
 hai ở đây** (kế hoạch pha 1 §5). Đo lại 2026-09-08: không có chỗ nào mâu thuẫn — chỗ duy nhất mục
