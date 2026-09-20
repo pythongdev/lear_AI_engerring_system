@@ -157,10 +157,12 @@ Trống ──► Mở ──► Đang phục vụ ──► Chờ thanh toán �
   2026-08-31, `shop-facts.md` §6.16). Người đứng quầy bấm, trên POS; bàn đang có phiên mở thì
   **không** ghép được. ⇒ Hệ thống **không cần** và **không được** có đường trộn tiền của hai
   hoá đơn đã mở — ca đắt nhất của ghép bàn đã bị đóng bằng quyết định, không phải bằng mã.
-- Ràng buộc này phải được **database giữ**, không phải mã ứng dụng giữ:
-  `master_plan/prompt-fullstack.md` §3.5 chi tiết 4 dùng generated column + `UNIQUE`, và nó
-  **phải gồm cả trạng thái `billing`** — nếu chỉ tính `open`, lúc quầy bấm thu tiền ràng buộc nhả
-  ra và lượt gọi thêm rơi vào hoá đơn thứ hai.
+- Ràng buộc này phải được **database giữ**, không phải mã ứng dụng giữ — và nó **phải phủ cả
+  trạng thái đang thu tiền**, không chỉ trạng thái đang mở: nếu chỉ tính lúc phiên còn mở thì đúng
+  lúc quầy bấm thu tiền ràng buộc **nhả ra**, và lượt gọi thêm rơi vào hoá đơn thứ hai. Hình dạng
+  kỹ thuật của ràng buộc là việc của **pha 2** (**ADR-035**); phác thảo có sẵn ở
+  `master_plan/prompt-fullstack.md` §3.5 chi tiết 4, và pha 2 đọc nó như đề xuất, không như lược
+  đồ đã chốt.
 
 ### 3.2 Đơn mang đi — màn riêng, ba kênh
 
@@ -235,7 +237,7 @@ làm — ca không bàn nào chờ chưa có luật.
 
 ---
 
-## 4. Quyền gắn CHỖ ĐỨNG, không gắn chức vụ — và vì sao `staff.role` không đủ
+## 4. Quyền gắn CHỖ ĐỨNG, không gắn chức vụ — và vì sao một chức vụ ghi cố định không đủ
 
 Đây là chỗ đặc tả này khác rõ nhất với một hệ thống phân quyền thông thường.
 
@@ -249,9 +251,9 @@ Chức vụ    : owner               Chức vụ    : nhân viên
 Huỷ được?  : KHÔNG               Huỷ được?  : ĐƯỢC
 ```
 
-⇒ **Một cột `role` cố định trên bảng nhân viên không diễn được luật này.** `role` trả lời *người
-này là ai*; luật hỏi *người này đang đứng đâu, lúc này*. Hai câu khác nhau, và câu thứ hai đổi
-nhiều lần trong một buổi sáng.
+⇒ **Một chức vụ ghi cố định trên hồ sơ một người không diễn được luật này.** Chức vụ trả lời
+*người này là ai*; luật hỏi *người này đang đứng đâu, lúc này*. Hai câu khác nhau, và câu thứ
+hai đổi nhiều lần trong một buổi sáng.
 
 Hệ thống vì thế cần một khái niệm nữa: **ai đang trực trạm nào, tính tới lúc này**. Ba điều nó
 phải làm được:
@@ -404,7 +406,7 @@ tại ngày đo (`work/findings.md` **F-003** · **F-018**); đếm ở bảng, 
 | **Vết hoàn tiền** — bao nhiêu · đơn nào · ai bấm · lý do · **trả lại bằng gì** | §6.4 | đối soát thấy két lệch, không ai truy được |
 | **Khoản nợ** — ai nợ · bao nhiêu · phiên nào | §6.14 | đóng phiên xong khoản nợ vô chủ — hình dạng đầy đủ ở **§12.3** |
 | **Vết thao tác chạm tiền / chạm trạng thái đơn** | §6.10 · `docs/product/0-ba/ban-hang/01-actors-pham-vi.md` §1.4 | *"lệch 1 đồng phải tìm ra lý do"* không thực hiện được |
-| **Ai đang trực trạm nào, lúc này** | §6.13 (quyền gắn chỗ đứng) | quyền huỷ phải gán theo `role`, tức sai luật — §4 |
+| **Ai đang trực trạm nào, lúc này** | §6.13 (quyền gắn chỗ đứng) | quyền huỷ phải gán theo **chức vụ ghi cố định**, tức sai luật — §4 |
 | **Note "đem về"** trên một suất của phiên bàn | §6.15 | khách mang về một đĩa không gói |
 | **Đã phục vụ bao nhiêu cho từng bàn** | §5.4 | bảng quầy không hiện được *"còn thiếu gì"* |
 | **Mẻ, và con số *"đã làm xong, còn ở bếp"*** — một lần bấm ứng với một mẻ, chia được về từng bàn; phần đã làm xong của đơn huỷ đổi chủ sang bàn khác | §5.4 (chủ quán chốt 2026-09-01 và 2026-09-06) | bếp bị giục làm lại cái bánh **đang nằm chờ đủ đĩa**, và cái đĩa của một đơn vừa huỷ không còn chỗ nào ghi nó đã đi đâu |
@@ -549,14 +551,16 @@ không được biến thành ô "tên khách" hiện ra ở mọi phiên.
    (§3.3).
 4. **Chỉ POS ghi** (§1.1). Không có đường nào khác tạo hay xoá một khoản nợ.
 
-Hợp đồng API bổ sung, cùng họ với `/api/v1` đang có (`master_plan/prompt-fullstack.md` §3.6):
+**Bốn đường BE phải mở ra cho phần nợ** — nói bằng năng lực, không bằng chữ ký. Chữ ký thật là
+việc của **pha 3** (**ADR-035**), và tới hôm nay chưa ai chốt nó:
 
-```
-POST   staff/sessions/:id/close      body có { paid, debtor, debt_amount } khi thu thiếu
-GET    staff/debts?status=open       danh sách nợ chưa thu — màn Nợ ở POS
-POST   staff/debts/:id/collect       thu nợ; ghi vết người đang trực quay
-GET    staff/reports/debts?date=     nợ ghi trong ngày · nợ thu trong ngày — cho §6.3, §6.4
-```
+1. **Đóng phiên khi thu thiếu** phải nhận được — và **bắt buộc** nhận được — *ai nợ* và *nợ bao
+   nhiêu* trong **cùng một** thao tác đóng phiên, không phải một thao tác thứ hai gọi sau.
+2. **Đọc được danh sách nợ chưa thu**, đủ cho màn Nợ ở POS (§12.1).
+3. **Thu một khoản nợ** là một đường riêng, và nó ghi vết kèm **người đang trực `quay` lúc đó**
+   (luật 3 ở trên, §4).
+4. **Đọc được nợ theo ngày** — *nợ ghi trong ngày* và *nợ thu trong ngày* tách nhau — vì §6.3 và
+   §6.4 cần đúng hai con số ấy, không cần một con số gộp.
 
 ### 12.3 Mặt DB — cất cái gì, và ràng buộc nào phải do database giữ
 

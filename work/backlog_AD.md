@@ -797,7 +797,7 @@ repo:
 
 | Tài liệu | Câu nó viết |
 |---|---|
-| `docs/product/1-system-design/architecture.md` §4 | quyền gắn **chỗ đứng**, không gắn chức vụ — và vì sao `staff.role` **không đủ** |
+| `docs/product/1-system-design/architecture.md` §4 | quyền gắn **chỗ đứng**, không gắn chức vụ — và vì sao **một chức vụ ghi cố định không đủ** (tiêu đề đổi ở **T-079** 2026-09-20, nghĩa không đổi) |
 | cùng tài liệu, §8 | *"Ai đang trực trạm nào, lúc này"* là một trong **sáu** chỗ hình dạng dữ liệu chưa với tới; không có nó thì *"quyền huỷ phải gán theo `role`, tức sai luật"* |
 | cùng tài liệu, §14.3 | chỗ chạm thứ hai giữa hai mảng: *"§4 nói quyền gắn chỗ đứng, mà không dữ liệu nào ghi ai đang đứng đâu"* |
 
@@ -1328,8 +1328,8 @@ có hệ quyền thứ hai.
 
 **Nói một câu, việc phải làm là gì:**
 Chốt **luật xem cho mảng quản trị** và nối nó vào mô hình quyền đã có. Việc **không** phải làm:
-đừng dựng vai trò mới (`role`) — `architecture.md` §4 đã viết hẳn một mục về **vì sao `staff.role`
-không đủ**, và mở lại nó bằng một mảng mới là đi ngược một quyết định đã chốt.
+đừng dựng vai trò mới — `architecture.md` §4 đã viết hẳn một mục về **vì sao một chức vụ ghi cố
+định không đủ**, và mở lại nó bằng một mảng mới là đi ngược một quyết định đã chốt.
 
 **Vì sao có việc này:**
 Quyền gắn **chỗ đứng** hoạt động vì mọi việc của mảng bán hàng đều xảy ra khi ai đó **đang đứng ở

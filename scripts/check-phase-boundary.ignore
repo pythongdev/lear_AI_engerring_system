@@ -1,9 +1,11 @@
 # Gate 1d (scripts/check-phase-boundary.sh) — trích dẫn cố ý, đã có lý do trong
 # chính tài liệu. Mỗi mục: một dòng # lý do, rồi một dòng chuỗi con cần khớp.
-
-# docs/product/1-system-design/architecture.md §12.3 tự khai "cố ý vượt ranh
-# giới §8 đặt ra... vì chủ repo yêu cầu thẳng một mục DB cho phần nợ. Nó là đề
-# xuất gửi sang pha 2, không phải lược đồ đã chốt" (dòng ngay trên đoạn API).
-# Phát hiện ở P1-09 (2026-09-07): Gate 1d quét TOÀN FILE khi architecture.md đổi,
-# không chỉ phần vừa sửa, nên bắt luôn trích dẫn có sẵn từ trước ADR-035.
-/api/v1` đang có
+#
+# HIỆN KHÔNG CÓ MỤC NÀO — và đó là trạng thái đúng kể từ T-079 (2026-09-20).
+# Mục duy nhất từng sống ở đây che chuỗi "/api/v1` đang có" ở architecture.md
+# dòng 552; T-079 đã viết lại đoạn ấy bằng ngôn ngữ tầng nên chuỗi không còn,
+# và một dòng ignore hết khớp là một dòng phải gỡ (CLAUDE.md §5). Lý do của nó
+# còn ghi sai mục nữa — nó viết "§12.3" trong khi dòng nó che nằm ở §12.2, đúng
+# cái cơ chế biến một ngoại lệ có tên thành vùng miễn trừ (work/findings.md
+# F-041). §12.3 vẫn là ngoại lệ có tên, nhưng nó tự khai TRONG THÂN MỤC và
+# không chuỗi nào của nó khớp bộ mẫu, nên nó không cần một dòng ở đây.

@@ -64,6 +64,7 @@ có câu trả lời mới từ người.
 | ADR-045 | **Bốn ràng buộc kiến trúc ẩn có nhà ở pha 1**, mỗi cái một **dấu hiệu đo được**; ba cái chưa có chủ (*một tiến trình · không hàng đợi · không bộ nhớ đệm*) được chốt ở bước **P1-08** | Đã chốt 2026-09-08 | — | đóng **nốt F-027**; file mới `05-realtime-va-du-phong.md` §2 |
 | ADR-046 | Hoàn tiền **chéo phương thức** vào `I-021` bằng **hai hạng tử riêng**; *doanh thu tiền mặt* giữ nguyên nghĩa, vết hoàn tiền ghi thêm **phương thức trả lại** | Đã chốt 2026-09-15 | — | viết lại **I-021**; **U-044** đóng — POS quyết từng ca |
 | ADR-047 | **Dừng nhận đơn web khi mất kết nối là quyết định của NGƯỜI, không của đồng hồ**: máy **báo**, **POS quyết**, mở lại bằng **nút** — lật luật 1 của `05-realtime-va-du-phong.md` §3 và một câu *Verification* của `I-008` | Đã chốt 2026-09-16 | — | **U-043** đóng; mở **U-053** — ai dừng khi quán mất mạng hẳn |
+| ADR-048 | **Ba chỗ pha 1 viết hộ pha 2/3 được VIẾT LẠI BẰNG NGÔN NGỮ TẦNG, không được khai thành ngoại lệ**: `architecture.md` §3.1 · §4 · §12.2 giữ nguyên nghĩa, bỏ tên cột · `bảng.cột` · hợp đồng API; `PAT_API` của Gate 1d nới kèm ca hồi quy | Đã chốt 2026-09-20 | — | **F-040** · **F-041** đóng; ô 10 cổng pha 1 tick ⇒ **10/10** |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3163,3 +3164,64 @@ lời chủ quán**, và ADR này ghi lại chuyện xử chúng thế nào.
 `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §4 · §7 · §8 ·
 `quality/invariants.md` **I-008** · `master_plan/shop-facts.md` §6.11 · §7.1 ·
 `docs/product/99-unknowns.md` (**U-043** đóng, **U-053** mở).
+
+---
+
+### ADR-048 — Pha 1 viết hộ pha sau thì VIẾT LẠI, không khai thành ngoại lệ
+
+**Trạng thái:** Đã chốt 2026-09-20, T-079. Chủ repo chọn **đường 2** trong ba đường
+`work/findings.md` **F-040** ghi sẵn, sau khi bước **P1-12** (2026-09-16) đo ranh giới pha lần đầu
+trên cả tám file pha 1 và **không tự sửa** — nó là một phép đo.
+
+**Vấn đề nó giải quyết.**
+**ADR-035** (2026-09-04) chia quyền sở hữu theo pha: lược đồ ở **pha 2**, hợp đồng API ở **pha 3**,
+route ở **pha 4**. `docs/product/1-system-design/architecture.md` viết **trước** ranh giới ấy
+(`cf8bd83`, 2026-08-31), và lúc P1-01 dựng ranh giới thì **chỉ §8** được viết lại cho khớp. Ba chỗ
+không ai quét còn lại: **§3.1** chỉ định sẵn hình dạng một ràng buộc database, **§4** mang một
+`bảng.cột` **trong tiêu đề mục**, **§12.2** kê thẳng một **hợp đồng API bốn dòng**. Chỗ đắt là
+§12.2: pha 2 và pha 3 sẽ đọc nó như **đầu vào đã chốt**, tức thừa kế một quyết định chưa ai ra —
+đúng ca **F-023**, ngược chiều.
+
+Ba đường ra đã ghi trong F-040: **(1)** khai thêm vào ngoại lệ §12.3 · **(2)** viết lại bằng ngôn
+ngữ tầng · **(3)** mở pha 3 sớm.
+
+**Decision:**
+
+1. **Đường 2.** Cả ba chỗ viết lại bằng **ngôn ngữ tầng** — nói *cái gì phải đúng* và *tầng nào
+   giữ*, không nói *bảng nào, cột nào, endpoint nào*. Nghĩa giữ nguyên từng vế, kể cả vế đắt nhất
+   của §3.1 (*ràng buộc phải phủ cả trạng thái đang thu tiền*), vì đó là **hành vi**, không phải
+   lược đồ.
+2. **Đường 1 bị loại, và lý do là lý do chung.** Khai thêm vào ngoại lệ thì rẻ, nhưng nó biến một
+   **ngoại lệ có tên** thành một **vùng miễn trừ** — và **F-041** vừa chứng minh chuyện ấy xảy ra
+   thật: dòng ignore duy nhất của Gate 1d ghi lý do *"§12.3"* trong khi dòng nó che nằm ở **§12.2**,
+   tức một ngoại lệ đã đứng tên cho một dòng ngoài mục mình suốt chín ngày mà không ai thấy.
+3. **Đường 3 bị loại vì nó mở pha sai lý do.** `docs/product/3-be/` mở ra khi pha 3 **bắt đầu**,
+   kèm một dòng chủ sở hữu ở `CLAUDE.md` §2 trong cùng thay đổi — không phải để chứa bốn dòng chưa
+   ai chốt.
+4. **§12.3 giữ nguyên tư cách ngoại lệ có tên.** Nó tự khai *trong thân mục* rằng nó cố ý vượt ranh
+   giới và là **đề xuất gửi sang pha 2**. Sau lượt này câu khai ấy vừa khít phạm vi nó tuyên bố:
+   đúng hai thứ (*tên bảng, tên cột*), đúng một mục, không còn gánh hộ một endpoint ở mục khác.
+5. **Một ngoại lệ sống trong THÂN TÀI LIỆU, không sống trong file ignore.** `scripts/check-phase-boundary.ignore`
+   nay **rỗng**. Ignore là chỗ khai *một dòng cố ý*, và mỗi mục ở đó phải khớp một chuỗi có thật —
+   khi chuỗi biến mất thì mục phải bị gỡ (`CLAUDE.md` §5), nếu không nó âm thầm che cả những dòng
+   sinh sau.
+6. **Cổng được vá trong cùng thay đổi, kèm ca hồi quy.** `PAT_API` nới từ
+   *động từ HTTP + `/`* thành *động từ HTTP + chữ hoặc `/`*, cộng hai ca:
+   một ca đòi **đỏ** trên đúng bốn dòng §12.2 cũ, một ca đòi **xanh** trên văn xuôi pha 1 thường.
+   Không có ca thứ hai thì lần nới sau sẽ khép lại để cho êm. Đây là lần thứ **ba** trong một tuần
+   một script đọc văn bản bằng phép lọc hẹp hơn thứ nó phải hiểu (**F-035** · **F-039** · **F-041**),
+   nên `CLAUDE.md` §3.8 — *luật chỉ dựng sau khi cùng một vấn đề đã tốn hai lần* — đã đủ điều kiện.
+
+**Hệ quả.** Ô **10** của cổng chất lượng pha 1 tick ⇒ cổng **10/10**; `F-040` và `F-041` đóng. Đủ
+mười ô **không** phải câu *"được, sang pha 2"* — ký chuyển pha vẫn là quyền chủ repo
+(`docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §8).
+
+**Pointer sửa trong cùng thay đổi** (`CLAUDE.md` §7.2):
+`docs/product/1-system-design/architecture.md` §3.1 · §4 · §12.2 ·
+`docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §7 (ô 10) · §8 ·
+`scripts/check-phase-boundary.sh` · `scripts/check-phase-boundary.ignore` ·
+`scripts/check-phase-boundary.test.sh` (ca 9 · ca 10) ·
+`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §9 ·
+`docs/work-flow-session/vi-du-mot-task-chay-that-P1-12.md` §10 ·
+`work/backlog_AD.md` (hai pointer trỏ vào tiêu đề §4) ·
+`work/findings.md` (**F-040** · **F-041** đóng).

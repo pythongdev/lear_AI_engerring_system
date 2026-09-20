@@ -3574,11 +3574,29 @@ trống vì đúng ba chỗ trên.
 
 **Liên quan:**
 **F-041** (cổng lẽ ra phải bắt §12.2 thì mù với nó) · **F-023** (một ADR giao lược đồ/API/route cho
-tài liệu không sở hữu) · **ADR-035** (ranh giới pha) · **ADR-039** (Gate 1d) ·
-`work/backlog_SD.md` → **P1-12**.
+tài liệu không sở hữu) · **ADR-035** (ranh giới pha) · **ADR-039** (Gate 1d) · **ADR-048** (đường
+ra đã chốt) · `work/backlog_SD.md` → **P1-12** · `work/backlog.md` → **T-079**.
+
+**Decision / Fix:**
+Chủ repo chốt **đường 2** ngày **2026-09-20** (**ADR-048**, T-079): cả ba chỗ viết lại bằng **ngôn
+ngữ tầng**, không chỗ nào được khai thêm vào ngoại lệ. §3.1 nay nói *ràng buộc phải do database giữ
+và phải phủ cả trạng thái đang thu tiền* — vế đắt nhất giữ nguyên từng chữ, vì đó là hành vi chứ
+không phải lược đồ. §4 đổi tiêu đề sang *vì sao một chức vụ ghi cố định không đủ*. §12.2 đổi bốn
+dòng hợp đồng thành **bốn đường BE phải mở ra**, nói bằng năng lực. **§12.3 không đụng tới** — nó
+là ngoại lệ tự khai trong thân mục, và sau lượt này câu khai ấy vừa khít phạm vi nó tuyên bố.
+Nguyên văn bốn dòng bị xoá **không mất**: chúng là đầu vào của ca hồi quy 9 trong
+`scripts/check-phase-boundary.test.sh` (xem **F-041**), tức chỗ chúng còn sống là chỗ chúng **chặn**
+được một lần lọt nữa.
+
+**Verification:**
+`grep -nEI '\b(GET|POST|PUT|PATCH|DELETE)[[:space:]]+[A-Za-z/]' docs/product/1-system-design/*.md`
+⇒ **rỗng** (trước lượt: 4 dòng) · `grep -nEI '/api/|/v[0-9]+/'` trên cùng tập ⇒ **rỗng** ·
+`bảng.cột` trong cả pha 1 ⇒ **rỗng** · từ khoá ràng buộc SQL còn **2**, cả hai trong §12.3 ·
+`./scripts/gate.sh` xanh. Biên bản đầy đủ ở
+`docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §7 ô **10**, nay đã tick.
 
 **Status:**
-Open
+Closed — 2026-09-20, T-079 (**ADR-048**). Ô 10 của cổng pha 1 tick ⇒ cổng **10/10**.
 
 ---
 
@@ -3634,7 +3652,24 @@ vào (không có ca hồi quy thì lần nới sau lại đóng lại), và sử
 
 **Liên quan:**
 **F-040** (vế tài liệu) · **F-035** · **F-039** (cùng hình, cùng tuần) · **ADR-039** (Gate 1d) ·
-`work/backlog_SD.md` → **P1-12**.
+**ADR-048** (đường ra đã chốt) · `work/backlog_SD.md` → **P1-12** · `work/backlog.md` → **T-079**.
+
+**Decision / Fix:**
+2026-09-20 (T-079, **ADR-048**) — ba việc, trong cùng một thay đổi:
+**(1)** `PAT_API` nới thành `\b(GET|POST|PUT|PATCH|DELETE)[[:space:]]+[A-Za-z/]`, đúng biến thể
+lượt đo đã thử.
+**(2)** Hai ca hồi quy trong `scripts/check-phase-boundary.test.sh`: **ca 9** lấy **nguyên văn bốn
+dòng §12.2 cũ** làm đầu vào và đòi exit 1 — đây cũng là chỗ bốn dòng ấy còn sống sau khi bị xoá
+khỏi pha 1; **ca 10** đòi exit 0 trên văn xuôi pha 1 thường, vì không có nó thì lần nới sau sẽ khép
+mẫu lại để cho êm và cái mù quay về.
+**(3)** Vế thứ hai — dòng ignore ghi sai mục — **không** được sửa lý do mà **bị gỡ hẳn**: §12.2 đã
+viết lại nên chuỗi nó che không còn tồn tại, và một dòng ignore hết khớp là một dòng phải gỡ
+(`CLAUDE.md` §5). `scripts/check-phase-boundary.ignore` nay rỗng, và đó là trạng thái đúng: §12.3
+tự khai trong thân mục, không chuỗi nào của nó khớp bộ mẫu.
+
+**Verification:**
+`./scripts/check-phase-boundary.test.sh` ⇒ **10/10 ca xanh**, gồm hai ca mới · Gate 1d chạy trên
+`architecture.md` vừa sửa ⇒ exit 0 · bộ mẫu đã nới chạy trên cả tám file pha 1 ⇒ **rỗng**.
 
 **Status:**
-Open
+Closed — 2026-09-20, T-079 (**ADR-048**).

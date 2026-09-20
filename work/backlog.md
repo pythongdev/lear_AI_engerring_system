@@ -187,6 +187,20 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] T-079 **Ô 10 của cổng pha 1 tick — cổng lên 10/10** — **L1**, xong 2026-09-20. Chủ repo chốt
+  **đường 2** trong ba đường `F-040` ghi (**ADR-048**): ba chỗ `architecture.md` §3.1 · §4 · §12.2
+  viết lại bằng **ngôn ngữ tầng**, giữ nguyên nghĩa, bỏ tên cột · `bảng.cột` · hợp đồng API bốn
+  dòng; **§12.3 không đụng tới** vì nó là ngoại lệ tự khai trong thân mục. Vế cổng: `PAT_API` của
+  Gate 1d nới cho endpoint **không** mở đầu bằng `/`, kèm **hai** ca hồi quy (ca 9 đòi đỏ trên đúng
+  bốn dòng cũ — chỗ chúng còn sống sau khi bị xoá; ca 10 đòi xanh trên văn xuôi pha 1, để lần nới
+  sau không khép mẫu lại cho êm), và `scripts/check-phase-boundary.ignore` **gỡ hẳn** mục duy nhất
+  của nó — chuỗi nó che không còn tồn tại, mà lý do nó ghi thì từ đầu đã sai mục (**F-041**).
+  **Nghiệm thu:** bộ mẫu đã nới trên cả tám file pha 1 ⇒ **rỗng** (trước: 4 dòng) · `/api/` và
+  `/vN/` ⇒ **rỗng** · `bảng.cột` trong cả pha 1 ⇒ **rỗng** · từ khoá ràng buộc SQL còn **2**, cả
+  hai ở §12.3 · `./scripts/check-phase-boundary.test.sh` **10/10 ca** · `./scripts/gate.sh` xanh.
+  **Pointer sửa trong cùng lượt** (CLAUDE.md §7.2): kế hoạch §9 · bản kể lại lượt P1-12
+  (`docs/work-flow-session/`) · hai pointer trỏ tiêu đề §4 ở `work/backlog_AD.md`. **F-040** ·
+  **F-041** đóng. Chi tiết: [T-079](#t-079)
 - [x] T-078 **Chủ quán trả lời BỐN câu trong một lượt — `U-042` · `U-043` · `U-051` · `U-052` — và
   hai lời đáp mở `U-053` · `U-054`** — **L1**, xong 2026-09-16. Nguyên văn từng lời và hệ quả ở
   `docs/product/99-unknowns.md` → *Đã có lời giải* (bảng 2026-09-16). **Bốn lời chốt:** bốn bàn mới
@@ -1109,6 +1123,67 @@ git status --porcelain
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+<a id="t-079"></a>
+### T-079 — Ô 10 của cổng pha 1 để trống vì ba chỗ trong `architecture.md`, và cổng lẽ ra bắt được chúng thì mù
+
+**Prompt:** không có file prompt — task chạy thẳng trong phiên theo yêu cầu chủ repo 2026-09-20.
+**Xong 2026-09-20**, cả bảy dòng *Acceptance* dưới đây đã chạy và xanh; đường đã chọn là
+**đường 2** (`docs/decisions.md` **ADR-048**).
+*Acceptance* vì thế nằm ngay trong entry này (ngoại lệ có tên của luật *entry trỏ, prompt giữ*,
+`work/findings.md` **F-001**): không có prompt thì không có chỗ thứ hai để nó trôi.
+
+**Goal:**
+Ô 10 của `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §7 tick được, cổng pha 1 lên
+**10/10**, và bằng chứng của ô ấy là **Gate 1d chạy được trên cả tập** chứ không còn là năm lượt
+`grep` chạy tay hết hạn ngay sau khi đo.
+
+**Nói một câu, việc phải làm là gì:**
+Gỡ ba chỗ pha 1 đang viết hộ pha 2/3 (`architecture.md` §3.1 · §4 · §12.2) bằng cách **viết lại
+bằng ngôn ngữ tầng** — giữ nguyên nghĩa, bỏ tên bảng · cột · endpoint — rồi nới `PAT_API` của Gate
+1d cho nó nhìn thấy đúng lớp vi phạm ấy. **Không** làm: đụng §12.3 (ngoại lệ đã có tên, tự khai
+trong thân mục), và **không** mở `docs/product/3-be/` chỉ để chứa bốn dòng chưa ai chốt.
+
+**Vì sao có task này:**
+Bước **P1-12** (2026-09-16) đo ranh giới pha lần đầu trên cả tám file pha 1 và tìm ra ba chỗ; nó
+**cố ý không sửa** vì nó là một phép đo (`work/backlog_SD.md` → P1-12 bước 5). Cả ba dòng sinh ở
+`cf8bd83` **2026-08-31**, trước **ADR-035** (2026-09-04) — `architecture.md` viết trước khi có ranh
+giới, và lúc P1-01 dựng ranh giới thì chỉ §8 được viết lại. Chọn đường ra là quyết định của chủ
+repo: chốt **2026-09-20**, **đường 2** trong ba đường F-040 ghi.
+
+**Không làm thì mất gì:**
+Pha 1 **không đóng được** — cổng đứng mãi ở 9/10. Nặng hơn: §12.2 là một **hợp đồng API kê thẳng
+ra** trong tài liệu mà pha 2 và pha 3 sẽ đọc như đầu vào đã chốt, nên để nguyên là để pha sau thừa
+kế một quyết định chưa ai ra (đúng ca **F-023**, ngược chiều). Và chừng nào `PAT_API` còn đòi dấu
+`/` ngay sau động từ HTTP thì lần lọt tiếp theo cũng im như lần này — **F-041** là lần thứ **ba**
+trong một tuần một script đọc văn bản bằng phép lọc hẹp hơn thứ nó phải hiểu (**F-035** · **F-039**),
+nên `CLAUDE.md` §3.8 đã đủ điều kiện để dựng luật.
+
+**Đây là con bug F-040 + F-041.** Vòng rà trước không bắt được vì Gate 1d chỉ quét **file đã đổi
+trong lượt**, mà `architecture.md` §3.1 · §4 · §12.2 không ai chạm kể từ khi ranh giới ra đời; và
+dòng khớp duy nhất của nó đã nằm trong `scripts/check-phase-boundary.ignore` với lý do ghi **§12.3**
+trong khi dòng nó che nằm ở **§12.2**.
+
+**Bẫy hay sửa nhầm nhất:**
+· Xoá `/api/v1` ở §12.2 mà quên xoá mục ignore ⇒ dòng ignore hết khớp, và `CLAUDE.md` §5 nói ignore
+hết khớp thì **gate đỏ** cho tới khi gỡ.
+· Đổi tiêu đề §4 mà quên ô bảng `architecture.md` dòng 407 còn chữ `role`.
+· Viết lại ô 10 rồi tưởng năm con số cũ vẫn đúng — chính ô ấy dặn **lượt đo sau phải trừ file
+`07-…` ra trước khi đếm**, vì biên bản kể tên chỗ hỏng thì tự nó chứa chỗ hỏng ấy.
+
+**Acceptance — mỗi dòng một phép chạy được:**
+1. `grep -nEI '\b(GET|POST|PUT|PATCH|DELETE)[[:space:]]+[A-Za-z/]' docs/product/1-system-design/*.md`
+   ⇒ **rỗng** (trước khi sửa: đúng **4** dòng, `architecture.md` 555–558).
+2. `grep -nEI '/api/|/v[0-9]+/' docs/product/1-system-design/*.md` ⇒ **rỗng**.
+3. `grep -n 'staff\.role\|UNIQUE\|generated column' docs/product/1-system-design/architecture.md`
+   ⇒ chỉ còn dòng của **§12.3** (ngoại lệ có tên), không dòng nào ở §3.1 · §4 · §12.2.
+4. `scripts/check-phase-boundary.ignore` không còn mục nào — và Gate 1d vẫn **xanh** khi
+   `architecture.md` đổi trong chính lượt này.
+5. `./scripts/check-phase-boundary.test.sh` xanh, có ca hồi quy lấy **đúng bốn dòng §12.2 cũ** làm
+   đầu vào và đòi exit 1.
+6. `./scripts/gate.sh` xanh · `./scripts/check-links.sh` xanh sau khi đổi tiêu đề §4.
+7. Ô 10 ở `07-cong-chat-luong-pha-1.md` §7 tick `[x]`, cổng ghi **10/10**; **F-040** và **F-041**
+   `Status: Đóng`; ADR ghi lựa chọn đường 2.
 
 <a id="t-047"></a>
 ### T-047 — `work/scope.txt` mang ba khối pattern ĐÃ COMMIT, nên Gate 3 chấm mọi task bằng scope của người khác

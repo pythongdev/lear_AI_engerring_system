@@ -93,6 +93,24 @@ r="$(newrepo nonmd)"
 printf 'CREATE TABLE orders (id BIGINT);\n' > "$r/$PHASE1/schema.sql"
 check "file không phải .md bị bỏ qua" 0 "" "$(run "$r")"
 
+# 9 — HỒI QUY F-041: endpoint KHÔNG mở đầu bằng '/' vẫn phải bị bắt.
+# Đầu vào là nguyên văn bốn dòng hợp đồng nợ từng sống ở architecture.md §12.2
+# (xoá ở T-079, 2026-09-20). Mẫu cũ đòi '/' ngay sau động từ nên im hoàn toàn
+# trên cả bốn dòng; không có ca này thì lần nới sau lại khép lại.
+r="$(newrepo api_noslash)"
+cat > "$r/$PHASE1/01-ranh-gioi.md" <<'EOF'
+POST   staff/sessions/:id/close      body có { paid, debtor, debt_amount } khi thu thiếu
+GET    staff/debts?status=open       danh sách nợ chưa thu — màn Nợ ở POS
+POST   staff/debts/:id/collect       thu nợ; ghi vết người đang trực quay
+GET    staff/reports/debts?date=     nợ ghi trong ngày · nợ thu trong ngày
+EOF
+check "endpoint KHÔNG có / mở đầu bị bắt (F-041)" 1 "pha 1 đang đặt tên" "$(run "$r")"
+
+# 10 — và mẫu nới KHÔNG được kêu oan văn xuôi thường của pha 1.
+r="$(newrepo prose)"
+printf 'Quầy DUYỆT đơn trước khi bếp làm; không trạm nào bấm gì.\nMột lần thu chia được hai phương thức.\n' > "$r/$PHASE1/01-ranh-gioi.md"
+check "văn xuôi pha 1 không bị kêu oan" 0 "" "$(run "$r")"
+
 if [ "$fails" -ne 0 ]; then
   echo "check-phase-boundary.test: FAIL ($fails ca)"
   exit 1

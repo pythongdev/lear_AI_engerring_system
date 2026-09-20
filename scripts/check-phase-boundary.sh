@@ -50,7 +50,10 @@ PAT_DB="$PAT_DB"'|FOREIGN[[:space:]]+KEY|PRIMARY[[:space:]]+KEY|REFERENCES[[:spa
 PAT_DB="$PAT_DB"'|\b(VARCHAR|BIGINT|SERIAL|TIMESTAMPTZ|NOT[[:space:]]+NULL)\b'
 
 # Pha 3 — hợp đồng API
-PAT_API='\b(GET|POST|PUT|PATCH|DELETE)[[:space:]]+/'
+# Đường dẫn KHÔNG mở đầu bằng '/' cũng là endpoint: bốn dòng hợp đồng nợ ở
+# architecture.md §12.2 viết 'staff/debts', và một dấu gạch chéo thiếu ở đầu
+# chuỗi là toàn bộ khoảng cách giữa BẮT ĐƯỢC và KHÔNG THẤY GÌ (F-041, T-079).
+PAT_API='\b(GET|POST|PUT|PATCH|DELETE)[[:space:]]+[A-Za-z/]'
 PAT_API="$PAT_API"'|/api/|/v[0-9]+/'
 
 # Pha 4 — route / component

@@ -267,14 +267,17 @@ chỗ ký thì ở đây, không ở kế hoạch — kế hoạch **không sở
 lượng BA được ký ở [`../0-ba/ban-hang/08-scenario.md`](../0-ba/ban-hang/08-scenario.md) chứ không
 ở `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §12.
 
-**Hôm nay 9/10, và cả chín ô đều tick KÈM LÝ DO, không ô nào tick trơn.** Ô thứ mười để trống có
-chủ ý. Một cổng 10/10 bằng cảm giác thì không chặn được gì (kế hoạch §9, bài học của `BA-11`).
+**Hôm nay 10/10, và cả mười ô đều tick KÈM LÝ DO, không ô nào tick trơn.** Đó là điều kiện của
+cổng này ngay từ đầu: một cổng 10/10 bằng cảm giác thì không chặn được gì (kế hoạch §9, bài học của
+`BA-11`), nên mỗi ô xanh ở đây đều kéo theo một câu nói rõ **nó KHÔNG đo cái gì**.
 
-**Ô 10 đổi lý do ngày 2026-09-16, không đổi trạng thái** (**P1-12**). Nó từng để trống vì *chưa ai
-đo*; nay nó để trống vì **đã đo và câu trả lời là không** — ba chỗ ở [`architecture.md`](architecture.md)
-mang thứ pha 2/3 sở hữu, và chỉ một trong ba có tên trong một ngoại lệ (`work/findings.md`
-**`F-040`**, cộng **`F-041`** cho cái cổng lẽ ra phải bắt chúng). Phép đo đầy đủ ở chính ô 10.
-**Cổng vẫn 9/10**, và pha 1 vì thế **chưa đóng**.
+**Ô 10 đi qua hai mốc, và mốc thứ hai mới là mốc ký.** Ngày **2026-09-16** (**P1-12**) nó được
+**đo** lần đầu trên cả tám file và câu trả lời là **không** — ba chỗ ở
+[`architecture.md`](architecture.md) mang thứ pha 2/3 sở hữu, chỉ một trong ba có tên trong một
+ngoại lệ ⇒ ô để trống kèm `work/findings.md` **`F-040`** · **`F-041`**. Ngày **2026-09-20**
+(**T-079**, `docs/decisions.md` **ADR-048**) cả ba chỗ được viết lại bằng ngôn ngữ tầng, `PAT_API`
+của Gate 1d được nới kèm ca hồi quy, và ô tick. **Cổng đủ mười ô** — nhưng câu *"được, sang pha 2"*
+vẫn là của **chủ repo**, không của cổng (§8).
 
 - [x] **1. Mọi `I-0xx` của `quality/invariants.md` đều có tầng bảo vệ và phép đối chiếu.**
   Đối chiếu **danh sách mã** giữa hai file (không đếm số lượng — **F-026** · **F-018**):
@@ -376,98 +379,82 @@ mang thứ pha 2/3 sở hữu, và chỉ một trong ba có tên trong một ngo
   chụp tại mốc ký**, giữ lại để đọc được *phép chấm đã chạy trên cái gì*. Một danh sách mã chép tay
   trong một tài liệu đã ký là bản sao thứ hai và nó sẽ trôi (**F-001**, và đúng hình **F-033** mà ô
   trên vừa ghi lại). Danh sách sống: `./scripts/brief.sh`.
-- [ ] **10. Không tên bảng · cột · endpoint · route · component nào lọt vào file pha 1.**
-  **⛔ Để trống — chỗ chặn: `F-040`.** Ô này **đã được đo** 2026-09-16 (**P1-12**), và câu trả lời
-  là **không**: `architecture.md` có **ba** chỗ, và chỉ **một** trong ba có tên trong một ngoại lệ.
-  Kế hoạch §9: *một ô không tick được thì để trống kèm lý do và mã của chỗ đang chặn* — nên ô này
-  **đổi lý do**, từ *"chưa ai đo"* sang *"đã đo, và đây là cái đo được"*. Cổng vẫn **9/10**.
+- [x] **10. Không tên bảng · cột · endpoint · route · component nào lọt vào file pha 1.**
+  **Đây là ô duy nhất của cổng đi qua HAI mốc.** Mốc **đo** — 2026-09-16, **P1-12** — trả lời
+  **không**: `architecture.md` có **ba** chỗ mang thứ pha 2/3 sở hữu, và chỉ **một** trong ba có tên
+  trong một ngoại lệ ⇒ ô để trống kèm **`F-040`** · **`F-041`**. Mốc **ký** — 2026-09-20, **T-079**,
+  `docs/decisions.md` **ADR-048** — sửa cả ba chỗ và sửa cái cổng lẽ ra phải bắt chúng ⇒ tick. Cổng
+  từ **9/10** lên **10/10**.
 
-  **Tập bị rà — lệnh chưa lọc, ở mức thô nhất** (`wc -l docs/product/1-system-design/*.md`): **tám**
-  file, **2385** dòng — `01-…` 177 · `02-…` 213 · `03-…` 354 · `04-…` 204 · `05-…` 179 · `06-…` 161 ·
-  `07-…` 416 · `architecture.md` 681. Chỉ thư mục này, **không** đếm `work/` hay `prompt/maintenance/`
-  (**F-018**: một con số đếm rộng hơn phạm vi thì đo hoạt động viết lách, không đo việc còn lại).
+  **Ba chỗ ấy biến mất bằng cách nào — không chỗ nào bị xoá nghĩa.** Cả ba viết lại bằng **ngôn ngữ
+  tầng**, tức đường 2 trong ba đường `F-040` ghi sẵn (đường 1 biến ngoại lệ thành một vùng; đường 3
+  mở một pha chỉ để chứa bốn dòng chưa ai chốt):
 
-  **Năm lượt lọc, mỗi lượt in cả hai con số** (**F-017** — bộ lọc rỗng vì viết sai trông y hệt bộ lọc
-  rỗng vì không có lỗi):
+  | Mục | Nó từng viết ra cái gì | Nay nó viết gì |
+  |---|---|---|
+  | **§3.1** | ràng buộc kỹ thuật **chỉ định sẵn** cho pha 2, kèm tên hai trạng thái | *ràng buộc phải do **database** giữ, và phải **phủ cả trạng thái đang thu tiền**, không chỉ trạng thái đang mở* — hậu quả nếu hụt giữ nguyên từng chữ; hình dạng kỹ thuật trả về pha 2 |
+  | **§4** | một `bảng.cột` **trong tiêu đề mục** | *vì sao **một chức vụ ghi cố định** không đủ* — cùng một lập luận, không mượn tên cột để nói |
+  | **§12.2** | một **hợp đồng API bốn dòng**: động từ, đường dẫn, tên trường thân yêu cầu, tham số truy vấn | **bốn đường BE phải mở ra**, nói bằng **năng lực**: đóng phiên thiếu tiền bắt buộc nhận *ai nợ* + *bao nhiêu* trong cùng một thao tác · đọc được nợ chưa thu · thu nợ là đường riêng có vết · đọc được nợ theo ngày, **hai** con số tách nhau |
+
+  **Bốn dòng cũ không mất.** Nguyên văn của chúng nằm trong `work/findings.md` **`F-041`** làm đầu
+  vào của một **ca hồi quy** (`scripts/check-phase-boundary.test.sh` ca 9), nên thứ bị xoá khỏi pha
+  1 là một **bản sao**, không phải lịch sử — và chỗ nó sống bây giờ là chỗ nó **chặn** được một lần
+  lọt nữa, thay vì chỗ pha 3 sẽ đọc nó như đầu vào đã chốt.
+
+  **Ngoại lệ có tên đứng nguyên, và nay nó vừa khít.** [`architecture.md`](architecture.md) **§12.3**
+  vẫn nêu tên bảng và tên cột cho phần nợ, vẫn tự khai ngay trong thân mục rằng nó *"cố ý vượt ranh
+  giới… là đề xuất gửi sang pha 2, không phải lược đồ đã chốt"*. Câu ⚠️ ấy khai đúng **hai** thứ
+  (*tên bảng, tên cột*) và đúng **một** mục — trước 2026-09-20 nó đang gánh hộ một endpoint ở mục
+  khác; nay trong cả pha 1 không còn endpoint nào để nó gánh.
+
+  **Bằng chứng của ô này nay là CỔNG, không còn là năm lượt `grep` chạy tay.** `PAT_API` của Gate 1d
+  từng đòi dấu `/` **ngay sau** động từ HTTP, nên nó mù với đúng khối API rõ nhất repo (**`F-041`**).
+  T-079 nới thành `[A-Za-z/]`, thêm **hai** ca: ca 9 đòi exit 1 trên bốn dòng cũ, ca 10 đòi exit 0
+  trên văn xuôi pha 1 thường — không có ca 10 thì lần nới sau đóng lại để cho êm.
+  `scripts/check-phase-boundary.ignore` nay **không còn mục nào**: mục duy nhất của nó che một chuỗi
+  không còn tồn tại, và một dòng ignore hết khớp là một dòng phải gỡ (`CLAUDE.md` §5).
+
+  **Đo lại tại mốc ký — BẢY file nội dung, trừ chính biên bản này** (đúng luật 3 ở dưới):
+  **1988** dòng chưa lọc.
 
   | Lượt | Bắt cái gì | Chưa lọc | Đã lọc |
   |---|---|--:|--:|
-  | **A** | bộ mẫu **nguyên văn** của `scripts/check-phase-boundary.sh` (Gate 1d), chạy trên cả tám file — Gate 1d thật chỉ quét file **đã đổi** trong lượt, nên nó chưa từng chạy trên cả tập | 2385 | **1** |
-  | **B** | động từ HTTP + đường dẫn **không** mở đầu bằng `/` — đúng chỗ mẫu của Gate 1d mù | 2385 | **4** |
-  | **C** | từ khoá ràng buộc SQL: `UNIQUE` · `CHECK` · `INDEX` · `CONSTRAINT` · `JOIN` · `SELECT` · `INSERT` | 2385 | **3** |
-  | **D** | định danh `snake_case` trong backtick + `bảng.cột` (trừ tên file `.md`) | 2385 | **14 + 1** |
-  | **E** | pha 4 — route · component · `useState` · `className` · đuôi file mã; và đường dẫn hình route | 2385 | **12 + 0** |
+  | **A** | bộ mẫu **nguyên văn** của Gate 1d sau khi nới — nay đã gộp cả lượt B của mốc trước (endpoint không mở đầu bằng `/`), vì đó chính là chỗ vừa vá | 1988 | **0** |
+  | **C** | từ khoá ràng buộc SQL | 1988 | **2** — cả hai ở **§12.3**, ngoại lệ có tên |
+  | **D** | định danh `snake_case` trong backtick + `bảng.cột` | 1988 | **20 + 0** — mười tám là **định danh nghiệp vụ pha 0**, hai còn lại ở §12.3 |
+  | **E** | pha 4 — route · component · đuôi file mã | 1988 | **0** |
 
-  **Lượt E là chỗ chứng minh bộ lọc không tự rỗng.** Mười hai dòng nó bắt được **không** phải vi
-  phạm: chúng là chính những câu **tự khai ranh giới** — *"Ở đây không có tên bảng, tên cột,
-  endpoint, route"* ở đầu `03-…`, `04-…`, `06-…`, `07-…`, bốn hàng *P1-12 — rà ranh giới pha* trong
-  bảng *Bước sau đọc gì* của `03-…` và `06-…`, hai dòng `architecture.md` trỏ sang
-  `master_plan/prompt-fullstack.md`, và chính dòng này. Bộ lọc chạy; nó chỉ không có route nào để bắt.
+  **Hai mươi cái lượt D bắt được KHÔNG phải vi phạm, và đây là lần thứ hai câu này phải viết ra.**
+  Tên **kênh bán** và tên **trạm** là định danh nghiệp vụ, nhà của chúng ở **pha 0**
+  (`master_plan/shop-facts.md` §5 và §3). Một bộ lọc kêu chúng lên là bộ lọc đo sai thứ — ghi lại ở
+  đây để lượt sau không mở lại cuộc tranh luận ấy.
 
-  **Phân loại — ba nhóm, không chỗ nào để lửng:**
+  ⚠️ **Mọi con số trên là ẢNH CHỤP TẠI MỐC ĐO, và chính ô này làm chúng hết đúng ngay lập tức** —
+  bản ghi của một phép đo **nằm trong** tập bị đo, vì `07-…` cũng là một file pha 1. Ba luật theo
+  sau, và lượt sau phải đọc chúng **trước** khi chạy lại:
 
-  1. **Ngoại lệ CÓ TÊN — một chỗ.** [`architecture.md`](architecture.md) **§12.3** (`table_sessions` ·
-     `open_key` · `payments` · `UNIQUE` · `CHECK`): mục tự khai ngay trong thân *"cố ý vượt ranh giới
-     §8 đặt ra… chủ repo yêu cầu thẳng một mục DB cho phần nợ… là **đề xuất gửi sang pha 2**, không
-     phải lược đồ đã chốt"*. Kể ra ở đây như **ngoại lệ**, không như lỗi — và kể ra kèm **ranh giới
-     của chính nó**: câu ⚠️ ấy khai đúng hai thứ (*tên bảng, tên cột*) và đúng **một** mục. Nó
-     **không** phủ endpoint, và **không** phủ mục nào khác.
-  2. **Định danh nghiệp vụ, pha 0 sở hữu — không phải tên bảng.** `qr_table` · `staff_pos` ·
-     `phone_preorder` là **kênh bán** (`master_plan/shop-facts.md` §5, bảng dòng 64–66);
-     `trang_banh` · `gap_banh` · `don_ban` là **trạm** (§3, dòng 99–102). Chúng có nhà ở pha 0. Một
-     bộ lọc kêu chúng lên là bộ lọc đo sai thứ — ghi ra đây để lượt sau không kêu lại.
-  3. **Chỗ lọt ra thật — ba chỗ, tất cả ở `architecture.md`, bảy file kia sạch.** **§12.2** dòng
-     552 · 555–558 (một **hợp đồng API bốn dòng**: động từ, đường dẫn, tên trường thân yêu cầu,
-     tham số truy vấn) · **§3.1** dòng 161–163 (`UNIQUE` trên generated column, và **chỉ định** nó
-     phải gồm trạng thái `billing`) · **§4** dòng 238 (`staff.role` — một `bảng.cột`, trong tiêu đề).
-
-  **Cả ba trả về `git blame`, không trả về một bước pha 1 nào:** bốn dòng đều sinh ở **`cf8bd83`,
-  2026-08-31** — **trước** **ADR-035** (2026-09-04, bước `P1-01`). `architecture.md` viết trước khi
-  có ranh giới; lúc P1-01 dựng ranh giới thì **chỉ §8** được viết lại cho khớp, §3.1 · §4 · §12.2
-  không ai quét. Ba đường ra đã ghi, **không chọn hộ** — đó là quyết định của chủ repo:
-  `work/findings.md` **F-040**.
-
-  ⚠️ **Và một câu về cổng lẽ ra phải bắt chỗ này: `work/findings.md` `F-041`.** Bộ mẫu của Gate 1d
-  đòi dấu `/` **ngay sau** động từ HTTP; bốn dòng §12.2 viết `staff/debts`, không `/staff/debts` —
-  nên Gate 1d **im hoàn toàn** trên cả tập, và dòng duy nhất nó khớp thì đã nằm trong
-  `scripts/check-phase-boundary.ignore`. Dòng ignore ấy còn ghi lý do là *"§12.3"* trong khi dòng nó
-  che nằm ở **§12.2** — một ngoại lệ có tên đang đứng tên cho một dòng ngoài mục mình. Lượt này
-  **không sửa `scripts/`**: P1-12 là phép đo, và `CLAUDE.md` §3.8 nói luật chỉ dựng sau khi cùng một
-  vấn đề đã tốn hai lần.
-
-  **Pointer pha 1, rà lần cuối:** `./scripts/check-links.sh` **xanh**; **196** pointer trong tám
-  file (số chưa lọc). Cộng hai phép Gate 1b **không** làm — pointer trỏ **thư mục** (nó không chấm
-  đường kết thúc bằng `/`, **F-018**): **không có cái nào** trong cả pha 1; pointer **neo `#`**:
-  chỉ `](#top)`, và bốn file dùng nó đều tự định nghĩa `id="top"`, không neo chết nào.
-
-  ⚠️ **Mọi con số trên là ẢNH CHỤP TẠI MỐC ĐO — 2026-09-16, TRƯỚC khi ô này được viết — và chính
-  ô này làm chúng hết đúng ngay lập tức.** Đo lại sau khi viết xong: tập bị rà **2459** dòng (không
-  còn 2385), lượt D **31** (không còn 14), lượt D2 **2** (không còn 1). Lý do đơn giản và không sửa
-  được: bản ghi của một phép đo **nằm trong** tập bị đo — mục này là một file pha 1. Ba thứ theo sau,
-  và lượt sau phải đọc chúng trước khi chạy lại:
-
-  1. **Đừng đọc năm con số kia như con số hôm nay.** Chúng ghi *phép đo đã chạy trên cái gì*, đúng
+  1. **Đừng đọc con số ở đây như con số hôm nay.** Chúng ghi *phép đo đã chạy trên cái gì*, đúng
      cách ô 9 giữ sáu mã của nó (`F-001` · `F-033`: một danh sách chép tay trong tài liệu đã ký là
      bản sao thứ hai và nó sẽ trôi).
-  2. **Chênh lệch ấy là TRÍCH DẪN, không phải vi phạm mới.** `table_sessions` · `open_key` ·
-     `payments` · `staff.role` · `UNIQUE` · `CHECK` xuất hiện thêm ở mục này vì ô 10 phải **gọi tên**
-     chỗ nó bắt được — một phép đo không được phép nói *"có ba chỗ"* mà giấu chúng đi, và một ngoại
-     lệ không có tên thì lần sau thành tiền lệ.
-  3. **Lượt đo sau trừ mục này ra trước khi đếm**, rồi đọc lại danh sách ba nhóm ở trên thay vì đọc
-     lại con số. Bảy file nội dung pha 1 mới là tập cần rà; `07-…` là **biên bản**, và một biên bản
-     kể tên chỗ hỏng thì tự nó chứa chỗ hỏng ấy.
+  2. **Tên xuất hiện trong chính ô này là TRÍCH DẪN.** `table_sessions` · `open_key` · `payments` ·
+     `UNIQUE` · `CHECK` còn đứng trong mục này vì ô 10 phải **gọi tên** chỗ nó đo — một phép đo
+     không được phép nói *"có ba chỗ"* rồi giấu chúng đi, và một ngoại lệ không có tên thì lần sau
+     thành tiền lệ.
+  3. **Lượt đo sau trừ mục này ra trước khi đếm**, rồi đọc bảng ba chỗ ở trên thay vì đọc lại con
+     số. Bảy file nội dung pha 1 mới là tập cần rà; `07-…` là **biên bản**, và một biên bản kể tên
+     chỗ hỏng thì tự nó chứa chỗ hỏng ấy.
 
-  **Ô này KHÔNG tick, và đó là câu trả lời thật.** Bài học `BA-11`: cổng 9/10 kèm lý do thì dùng
-  được, cổng 10/10 bằng cảm giác thì không chặn được gì. Ô 10 xanh khi **F-040** có lời — và **ai
-  nói câu *được, sang pha 2*** vẫn là quyền chủ repo, đúng như §8 mục này đã ghi cho mình.
+  **Ô này tick, nhưng nó KHÔNG nói câu *"được, sang pha 2"*.** Mười ô nói **cổng đạt tới đâu**; ký
+  là quyền của **chủ repo**, đúng như §8 mục này đã ghi cho mình.
 
-**Một câu cho người ký cổng.** Chín ô xanh **không** có nghĩa là pha 1 đã hết chỗ hụt: ô 1 xanh
+**Một câu cho người ký cổng.** Mười ô xanh **không** có nghĩa là pha 1 đã hết chỗ hụt: ô 1 xanh
 trong khi hai vế thiếu tầng (**`F-036`**), ô 3 xanh trong khi bảng đối soát thiếu một dòng
 (**`F-037`**), ô 7 xanh **vì** ba chỗ hụt được ghi ra chứ không phải vì không có chỗ hụt, và ô 6
 xanh với một dòng **⛔** trong sổ rủi ro (**`F-034`**). Bốn mã ấy cộng `S-5` · `S-6` là **cái pha 2
-phải đọc trước khi tin bất kỳ ô nào ở trên** — cộng **`F-040`** · **`F-041`**, hai mã ô 10 mở ra
-ngày 2026-09-16. Ô 10 **đã đo, chưa ký**: `architecture.md` §3.1 · §4 · §12.2 vẫn mang tên cột,
-`bảng.cột` và một hợp đồng API bốn dòng, ngoài ngoại lệ §12.3 đã khai.
+phải đọc trước khi tin bất kỳ ô nào ở trên**. Hai mã ô 10 mở ra ngày 2026-09-16 — **`F-040`** ·
+**`F-041`** — thì **đã đóng 2026-09-20** (**T-079**, **ADR-048**), và cái chúng để lại không phải
+một lời hứa mà là một **ca hồi quy**: từ nay một endpoint viết không có dấu `/` mở đầu cũng làm
+Gate 1d đỏ.
 
 ⚠️ **Và một câu về đường dẫn tới bốn mã ấy.** Đo ngay sau lượt này: `work/findings.md` có **chín**
 mục đang mở, còn `scripts/brief.sh` cắt mục *OPEN FINDINGS* ở **sáu** — nên **`F-036`** ·
@@ -488,16 +475,15 @@ Ai đọc cổng này thì đọc kèm câu đó.
   là chạy phép thử ngược.
 - **Ai nói câu *"được, sang pha 2"***. Mười ô ở §7 nói **cổng đạt tới đâu**; ký là quyền của **chủ
   repo**, đúng như cổng BA đã ghi cho mình.
-- **Cách sửa ba chỗ ô 10 đo ra.** Ô 10 ghi ba đường ra và **không chọn hộ** — chọn là quyền chủ
-  repo, và người viết `architecture.md` §3.1 · §4 · §12.2 mới biết câu đúng phải là gì
-  (`work/findings.md` **`F-040`**). Sửa `scripts/check-phase-boundary.sh` cũng không: đó là
-  **`F-041`**, và `CLAUDE.md` §3.8 nói luật chỉ dựng sau khi cùng một vấn đề đã tốn hai lần.
+- **Cách sửa ba chỗ ô 10 đo ra.** Lượt **P1-12** ghi ba đường ra và **không chọn hộ**; chọn là
+  quyền chủ repo, và chủ repo chốt **đường 2** ngày **2026-09-20** (**ADR-048**). Việc sửa vì thế
+  thuộc **T-079**, không thuộc mục này — mục này chỉ **ghi lại** kết quả ở ô 10, đúng vai một biên
+  bản.
 
 | Bước / pha | Lấy gì từ mục này |
 |---|---|
 | **P1-12** — rà chéo ranh giới pha | **đã chạy 2026-09-16**: ô **10** của §7 mang toàn bộ phép đo — tập bị rà, năm lượt lọc kèm cả hai con số, ba nhóm phân loại. Mục này nằm trong tập bị rà và **sạch** |
-| **Phiên nhận `F-040`** | ba chỗ, ba dòng `git blame` về cùng `cf8bd83` (2026-08-31, **trước ADR-035**), và ba đường ra đã ghi sẵn — khai thêm vào ngoại lệ · viết lại bằng ngôn ngữ tầng · mở pha 3. Đường 2 là thứ ADR-035 thật sự đòi |
-| **Phiên nhận `F-041`** | nới `PAT_API` **kèm một ca hồi quy** dùng đúng bốn dòng §12.2 làm đầu vào — không có ca hồi quy thì lần nới sau lại đóng lại; và sửa lý do dòng ignore cho đúng mục (§12.2, không §12.3) |
+| **`F-040` · `F-041`** | **đã đóng 2026-09-20** (**T-079**, **ADR-048**) — đường 2: ba chỗ viết lại bằng ngôn ngữ tầng, `PAT_API` nới kèm hai ca hồi quy, `scripts/check-phase-boundary.ignore` nay rỗng. Ô 10 giữ biên bản của cả hai mốc |
 | **Pha 2** | §7 câu cuối — bốn mã cộng `S-5` · `S-6` phải đọc **trước** khi tin một ô cổng nào; §6 là danh sách chỗ pha 1 **chưa** phủ, đừng đọc chúng thành yêu cầu đã có |
 | **Phiên nhận `F-036`** | hai ca cụ thể, và câu hỏi thật: phép đối chiếu của một mệnh đề phải phủ **mọi vế** của mệnh đề ấy, không chỉ vế chính |
 | **Phiên nhận `F-037`** | [`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §4 đã tả sẵn hình của dòng còn thiếu — *đúng hình của dòng nợ ghi trong ngày nhưng ngược chiều* — cộng luật một-đối-một giữa [`architecture.md`](architecture.md) §8 và [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §1 |

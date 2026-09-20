@@ -226,6 +226,11 @@ nào được chọn**. Đó là ranh giới giữa *báo cáo* và *quyết đ�
 - Ô 10 **sau** lượt này: vẫn để trống, lý do ***"đã đo, và câu trả lời là không"***, kèm `F-040`.
 - **Cổng vẫn 9/10. Pha 1 vẫn chưa đóng.**
 
+> **Hậu truyện, 2026-09-20 (T-079, `docs/decisions.md` ADR-048):** chủ repo chọn **đường 2** trong
+> ba đường `F-040` ghi — ba chỗ viết lại bằng ngôn ngữ tầng, `PAT_API` của Gate 1d nới kèm hai ca
+> hồi quy — nên **ô 10 nay đã tick và cổng là 10/10**. Bài học dưới đây không đổi một chữ: nó nói
+> về *lượt đo*, và giá trị của lượt đo là nó **không** tick khi chưa có quyền tick.
+
 Đây là chỗ hệ thống chứng minh nó không phải thủ tục trang trí. Task chạy xong,
 gate xanh, commit sạch — và ô cổng **vẫn không tick**, vì tick nó là nói dối. Bài học
 `BA-11` viết ngay cạnh: *cổng 9/10 kèm lý do thì dùng được, cổng 10/10 bằng cảm giác

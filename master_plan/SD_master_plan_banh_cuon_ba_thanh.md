@@ -316,8 +316,11 @@ dùng được; một cổng tick 9/9 bằng cảm giác thì không chặn đư
 > **Mười ô dưới đây là LỜI của cổng; chỗ nó được KÝ thì không ở file này.** Trạng thái đã ký, kèm
 > bằng chứng của từng ô, ở
 > [`docs/product/1-system-design/07-cong-chat-luong-pha-1.md`](../docs/product/1-system-design/07-cong-chat-luong-pha-1.md)
-> §7 — **9/10 tính tới 2026-09-16**, ô thứ mười **đã đo** (P1-12, 2026-09-16) và **để trống kèm mã**:
-> `work/findings.md` **F-040** · **F-041**. Mười hộp `- [ ]` ở đây vì thế
+> §7 — **10/10 tính tới 2026-09-20**. Ô thứ mười đi qua hai mốc: **đo** ngày 2026-09-16 (P1-12) ⇒
+> để trống kèm `work/findings.md` **F-040** · **F-041**; **ký** ngày 2026-09-20 (T-079,
+> `docs/decisions.md` **ADR-048**) sau khi ba chỗ vượt ranh giới được viết lại bằng ngôn ngữ tầng và
+> Gate 1d được nới kèm ca hồi quy — cả hai mã nay **đã đóng**. Đủ mười ô **không** phải câu
+> *"được, sang pha 2"*: ký chuyển pha là quyền chủ repo. Mười hộp `- [ ]` ở đây vì thế
 > **không** phải một phép đếm và không được tick: kế hoạch này **không sở hữu sự thật nào**, và hai
 > bản tick sẽ trôi khỏi nhau (`work/findings.md` **F-001** · **F-033**). Đúng cách cổng chất lượng
 > BA đứng: chín hộp ở `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §12 tới nay vẫn `- [ ]`,
