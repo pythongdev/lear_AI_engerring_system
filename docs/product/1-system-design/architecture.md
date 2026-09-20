@@ -676,10 +676,34 @@ bốn **chưa có luật**:
 | Chỗ chạm | Vì sao nó là chỗ chạm |
 |---|---|
 | Hết nguyên liệu → **tạm dừng nhận đơn** | nút tạm dừng đã có ở §6.2; ai bấm và bấm theo cái gì thì chưa |
-| **Ai đang trực trạm nào** → quyền huỷ đơn / hoàn tiền | §4 nói quyền gắn **chỗ đứng**, mà không dữ liệu nào ghi ai đang đứng đâu (§8 chỗ thiếu) |
+| **Ai đang trực trạm nào** → quyền huỷ đơn / hoàn tiền | §4 nói quyền gắn **chỗ đứng**, mà không dữ liệu nào ghi ai đang đứng đâu (§8 chỗ thiếu). *Câu `C36` **đã có lời 2026-09-20** nhưng **chưa về owner nào** — chỗ chuyển là `work/backlog_AD.md` **ADM-21**; tới lúc đó chỗ chạm này vẫn chưa có luật* |
 | **Sổ chi** → báo cáo lãi lỗ | §6.3 mới cộng doanh thu; chi phí chưa có ở đâu |
 | **Quỹ tiền mặt** → đối soát cuối ngày | §6.4 chốt ngưỡng lệch 0đ; tiền đầu buổi và tiền nộp về chưa nằm trong phép tính đó |
 
 Bốn chỗ này là lý do mảng admin **không** thể thiết kế tách rời mảng bán hàng, dù nó được viết ở
 mục riêng. Mục riêng là để **đọc** không lẫn, không phải để **thiết kế** không nhìn nhau.
+
+### 14.4 Mức sâu đã chốt của hai trong ba mảng — nguyên liệu và con người
+
+**Ranh giới nói *được phép*; mức sâu nói *sâu tới đâu*.** Hai câu khác nhau, và §14.1 chỉ trả lời
+câu thứ nhất. Tính tới **2026-09-20**, hai trong ba mảng đã có câu thứ hai:
+
+| Mảng | Mức sâu chủ quán chốt | Dữ kiện đầy đủ ở |
+|---|---|---|
+| **Nguyên liệu** | *sổ ghi tay điện tử* — người nhập con số, máy giữ và cộng lại, máy **không** tự trừ theo công thức (chốt 2026-09-01, xác nhận lại 2026-09-04) | `master_plan/shop-facts.md` **§8.4** |
+| **Con người** | **cả ba mức**: *ai đang trực trạm nào* · *chấm công* · *tính lương trên máy* (chốt 2026-09-01, xác nhận lại **2026-09-20**) | `master_plan/shop-facts.md` **§8.7** |
+| **Tài chính** | **chưa có lời** — đừng suy ra hộ | — |
+
+Hai hàng đầu **trỏ**, không chép: đọc lời chốt ở owner, không đọc ở đây (`work/findings.md`
+**F-001**). Hành vi nghiệp vụ tương ứng ở `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6.
+
+**Mức sâu vẫn KHÔNG phải thiết kế — §14.2 đứng nguyên.** Lời *cả ba mức* nói quán muốn máy làm tới
+đâu; nó **không** giao thêm việc cho mặt nào ở §1, **không** mở trục thứ ba ở §2, và **không** chốt
+một hình dạng dữ liệu nào. Chỗ cất là pha 2, màn hình là pha 4 (`docs/decisions.md` **ADR-035**).
+
+**Điều mức sâu của mảng con người ĐỔI ở tài liệu này là ĐỘ NẶNG của một chỗ thiếu đã biết, không
+phải danh sách chỗ thiếu.** §8 đã đo rằng không chỗ nào ghi *ai đang đứng trạm nào*, và §4 đã chốt
+quyền gắn **chỗ đứng chứ không gắn chức vụ**. Lời *cả ba mức* xác nhận rằng chỗ hở ấy **phải** được
+lấp chứ không thể bỏ qua — nhưng lấp bằng hình dạng nào thì vẫn là câu của pha sau, và nó còn đứng
+sau một câu chưa về owner (`C36`, hàng giữa của bảng §14.3).
 

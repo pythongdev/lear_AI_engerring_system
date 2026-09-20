@@ -13,13 +13,17 @@
 > Nó nằm dưới `work/` có lý do: Gate 1b không chấm đường dẫn ở đây (`CLAUDE.md` §5),
 > và nó là **working state** giống `work/scope.txt`, không phải tài liệu xuất bản.
 >
-> **Mở:** 2026-09-02 · **theo yêu cầu của:** chủ quán · **trạng thái:** 4 câu đã chốt — **Đ-1 đã về owner
-> 2026-09-02 (T-040)**, **Đ-3 đã về owner 2026-09-04 (T-050)**, Đ-2/Đ-4 chưa (việc đi hỏi:
-> **ADM-53**) — và **54 câu đang chờ** (B18 đã trả lời một nửa)
+> **Mở:** 2026-09-02 · **theo yêu cầu của:** chủ quán · **trạng thái:** **cả bốn lời chốt §1 đã về
+> owner** — Đ-1 (2026-09-02, T-040) · Đ-3 (2026-09-04, T-050) · **Đ-2 và Đ-4 (2026-09-20, ADM-53)**
+> ⇒ §1 nay chỉ còn **một dòng lịch sử trỏ tới owner**. Còn lại ở đây là **§3**: **42 câu để trống**
+> (đo 2026-09-20 bằng `grep -c '^> \*\*Trả lời:\*\*$'` — **đếm lại, đừng tin con số này**,
+> `work/findings.md` **F-003**), cộng `C36` **đã có lời 2026-09-20 nhưng CHƯA về owner** (chỗ
+> chuyển: `work/backlog_AD.md` **ADM-21**) và `B18` mới trả lời một nửa
 >
 > **2026-09-04 — §2 đã chuyển đi.** Danh sách việc `ADM-01`…`ADM-53` nay ở **`work/backlog_AD.md`**
-> (T-052, `docs/decisions.md` **ADR-036**). File này còn giữ **§1** (bốn lời chốt) và **§3** (câu
-> hỏi + chỗ trả lời), và chỉ hai thứ đó.
+> (T-052, `docs/decisions.md` **ADR-036**). Sau ADM-53 (2026-09-20) file này chỉ còn **một** việc
+> thật: **§3** — câu hỏi cho chủ quán và chỗ chủ quán trả lời. §1 và §2 nay là hai dòng lịch sử
+> trỏ đi chỗ khác.
 
 ---
 
@@ -33,43 +37,24 @@
 
 ---
 
-## 1. Bốn lời đã chốt ngày 2026-09-01 — Đ-1 đã về owner, ba lời còn lại thì chưa
+## 1. Bốn lời chốt ngày 2026-09-01 — **cả bốn đã về owner**, mục này chỉ còn là lịch sử
 
-Chủ quán chốt trong phiên ngày 2026-09-01. Lúc ấy **chưa file nào ghi lại**, vì `docs/product.md`
-đang có thay đổi chưa commit của phiên BA-07 và sửa chồng lên là đúng cơ chế sự cố đã ghi bốn lần
-ở `work/findings.md` (F-013, F-014).
+Chủ quán chốt bốn câu trong phiên ngày **2026-09-01**; hôm ấy **không file nào ghi lại được**, vì
+`docs/product.md` đang có thay đổi chưa commit của phiên BA-07 (`work/findings.md` **F-013** ·
+**F-014**). Cả bốn lời nay đã đi qua đúng cửa *chủ quán xác nhận lại → chuyển về owner*, nên
+**mục này không còn giữ một dữ kiện nào** — đọc lời chốt ở owner của nó, không đọc ở đây
+(`work/findings.md` **F-001**):
 
-**2026-09-02 — chủ quán xác nhận lại Đ-1** (*"Đ-1 → trả lời đồng ý theo lời chốt"*) và **T-040 đã
-chuyển nó về owner**. **2026-09-04 — chủ quán xác nhận lại Đ-3** (*"Đ-3 hãy làm. có mục tổng lưu
-trữ hàng ngày tôi sẽ nhập số liệu"*) và **T-050 đã chuyển nó về owner**, kèm một dữ kiện mới chưa
-ai hỏi: **mục tổng nhập hàng ngày, chủ quán tự nhập**. Hai lời còn lại — **Đ-2** và **Đ-4** —
-**chưa được xác nhận lại và chưa đi đâu cả**: chúng vẫn chỉ tồn tại trong file này, mà file này
-không sở hữu sự thật nào.
+| Lời | Về owner ngày | Đọc ở |
+|---|---|---|
+| **Đ-1** — mở cả ba mảng vào phạm vi | 2026-09-02 (T-040) | `master_plan/shop-facts.md` §8.1 · `docs/product/0-ba/ban-hang/01-actors-pham-vi.md` §1.4 · `docs/product/1-system-design/architecture.md` §10 |
+| **Đ-2** — thứ tự làm | **2026-09-20 (ADM-53)** | `work/backlog.md` → *Thứ tự làm giữa lane admin và các pha* |
+| **Đ-3** — nguyên liệu ở mức *sổ ghi tay điện tử* | 2026-09-04 (T-050) | `master_plan/shop-facts.md` §8.4 · `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6 |
+| **Đ-4** — mảng con người làm **cả ba mức** | **2026-09-20 (ADM-53)** | `master_plan/shop-facts.md` **§8.7** · `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6 · `docs/product/1-system-design/architecture.md` **§14.4** |
 
-| # | Câu | Lời chốt | Phải về đâu |
-|---|---|---|---|
-| ~~Đ-1~~ | Có mở lại ranh giới hệ thống không? | **Mở cả ba** — nguyên liệu, con người, tài chính vào phạm vi | ✅ **đã về owner 2026-09-02 (T-040)**: `docs/product/0-ba/ban-hang/01-actors-pham-vi.md` §1.4 · `docs/product/1-system-design/architecture.md` §10 · `master_plan/shop-facts.md` §7.1 |
-| Đ-2 | Thứ tự làm | **Đóng nốt BA-08 → BA-12 trước**, rồi mới chạy nhánh admin | `work/backlog.md` |
-| ~~Đ-3~~ | Nguyên liệu làm ở mức nào | **Sổ ghi tay điện tử** — máy **không** tự trừ kho theo công thức; **kèm một mục tổng nhập hàng ngày, chủ quán tự nhập** (thêm 2026-09-04) | ✅ **đã về owner 2026-09-04 (T-050)**: `master_plan/shop-facts.md` §8.4 · `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6 · mở **U-034** (đóng 2026-09-06) |
-| Đ-4 | Con người làm tới đâu | **Cả ba mức**: ai đang trực trạm + chấm công + tính lương | `master_plan/shop-facts.md` **§8** · `docs/product/1-system-design/architecture.md` **§14** (mục admin, ADR-013) |
-
-**Đ-1 lật ngược một câu đang nằm trong tài liệu — và câu ấy nay đã sửa (T-040, 2026-09-02).**
-`docs/product.md` §1.4 từng viết *"Không quản lý nguyên liệu, tồn kho, chấm công hay kế toán"*, và
-`docs/architecture.md` §10 xếp chúng vào *"đã quyết định không làm"*; cả hai dòng đã bị xoá, ngày
-chốt nằm ở `master_plan/shop-facts.md` §7.1. Việc trong §2 dưới đây vì thế **hết mâu thuẫn với
-owner của chính nó** — nhưng mở ranh giới mới chỉ là *được phép*: mảng nào vào MVP vẫn là câu của
-**BA-09**.
-
-**Đ-3 đóng luôn một câu chưa ai hỏi.** Chọn mức sổ tay nghĩa là hệ thống **không cần biết một suất
-bánh ăn hết bao nhiêu gam gạo**. Định lượng từng thành phần là kiến thức của người làm, không phải
-tham số của phần mềm — cùng một lối nghĩ với lời chốt *"máy không gom, người gom"* (2026-08-31).
-Muốn biết giá vốn một suất thì phải mở lại câu này (**B22** bên dưới).
-
-**Và Đ-3 mở ra một câu mới, đúng lúc nó được xác nhận — đóng 2026-09-06.** Lời chủ quán ngày
-2026-09-04 nói **có mục gì** (một mục tổng), **nhịp nào** (hàng ngày) và **ai nhập** (chủ quán,
-bằng tay) — nhưng không nói **nhập con số gì**. Đó là **U-034**; chủ quán trả lời ngày 2026-09-06:
-mục tổng ghi **HAI** con số — **mua vào** và **đã dùng** — để biết thừa/thiếu. Ghi ở
-`master_plan/shop-facts.md` §8.4.
+**Đ-2 đi một đường khác ba lời kia, và đó là chỗ dễ sửa nhầm nhất.** Nó là dữ kiện **xếp lịch của
+repo**, không phải dữ kiện của quán ⇒ nhà của nó là `work/backlog.md`, **không** phải
+`master_plan/shop-facts.md` (`docs/decisions.md` **ADR-001**).
 
 ---
 
@@ -83,8 +68,9 @@ không làm thì mất gì, câu hỏi nào đang chặn nó.
 được chuyển về owner. Một danh sách việc sống trong một file có ngày hết hạn là một danh sách sẽ
 biến mất cùng file — và biến mất im lặng.
 
-**Cái ở lại đây là §1 và §3:** bốn lời đã chốt chưa về owner hết, và **năm mươi lăm câu hỏi cho chủ
-quán cùng chỗ chủ quán viết câu trả lời**. Đó là hai việc file này còn làm.
+**Cái ở lại đây là §3:** câu hỏi cho chủ quán cùng chỗ chủ quán viết câu trả lời. Từ 2026-09-20
+(ADM-53) đó là **việc duy nhất** file này còn làm — §1 đã cạn, cả bốn lời chốt đều ở owner của
+chúng. Trả lời hết §3 thì file này bị **xoá**, đúng như banner đầu trang nói.
 
 | Câu hỏi | Đọc ở |
 |---|---|
@@ -184,7 +170,8 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > **Trả lời:**
 
 ### C. Con người
-*Đã chốt: làm **cả ba mức** (Đ-4). Nhóm này mở khoá ADM-20 → ADM-24, và bịt chỗ thiếu `architecture.md` §8.*
+*Mức sâu đã chốt: **cả ba mức** (**Đ-4**) — **về owner 2026-09-20**, đọc ở `master_plan/shop-facts.md` **§8.7**,
+đừng đọc ở đây. Nhóm này mở khoá ADM-20 → ADM-24, và bịt chỗ thiếu `architecture.md` §8.*
 
 **C23.** Quán có **bao nhiêu người** làm, kể cả người nhà?
 > ⚠️ Câu này hỏi **tổng số**. Vế *người đi giao nằm trong hay ngoài bốn vai của
@@ -235,7 +222,15 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > **Trả lời:**
 
 **C36.** Người đứng quầy **đổi giữa buổi** (A đi ăn, B thay) — quán có muốn máy ghi lại mốc đổi ấy không? *(Câu này quyết định ADM-21, và nó đang chặn luật quyền huỷ đơn / hoàn tiền: hôm nay `docs/product/1-system-design/architecture.md` §4 nói quyền gắn **chỗ đứng** chứ không gắn chức vụ, nhưng không có dữ liệu nào ghi ai đang đứng đâu.)*
-> **Trả lời:**
+> **Trả lời (2026-09-20, ADM-53 hỏi nhân thể):** **CÓ — ghi cả mốc đổi, ai vào ai ra lúc mấy giờ.**
+> Chủ quán chọn phương án *"Có — ghi cả mốc đổi, ai vào ai ra lúc mấy giờ"*, tả là: mỗi lần đổi
+> người ở quầy là một mốc **có giờ**; đơn nào, huỷ nào, hoàn tiền nào cũng truy ra được người đang
+> đứng lúc ấy.
+>
+> ⚠️ **Lời này CHƯA về owner nào.** ADM-53 chỉ được hỏi và ghi lại, không được chuyển và không được
+> thiết kế quyền theo nó — chỗ chuyển là **ADM-21** (và vế *ai* của **ADM-50**), việc thiết kế
+> tầng quyền là **P1-07**. Phiên nào nhận ADM-21 thì đọc lời trên, chuyển về owner, rồi gạch câu
+> này khỏi đây.
 
 ### D. Sản phẩm
 *Nhóm này mở khoá ADM-30 → ADM-33.*

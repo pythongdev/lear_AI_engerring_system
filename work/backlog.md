@@ -7,6 +7,7 @@ hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 
 | Mục | Nội dung |
 |---|---|
+| [Thứ tự làm lane admin vs các pha](#thu-tu-lane) | **Đ-2** — lời chủ quán về thứ tự làm; file này là owner |
 | [Ready](#ready) | việc cần làm — checklist + thứ tự lấy |
 | [In Progress](#in-progress) | task đang chạy |
 | [Done](#done) | việc đã xong |
@@ -20,6 +21,40 @@ hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 admin (`ADM-01`…`ADM-53`) giữ mô tả ở **`work/backlog_AD.md`** · mọi thứ còn lại ở file này. Dù mô
 tả nằm ở sổ nào, **file này vẫn là nơi duy nhất giữ trạng thái** — đó là file `scripts/brief.sh`
 đọc và đẩy vào mọi phiên mới (**ADR-002**).
+
+
+<a id="thu-tu-lane"></a>
+## Thứ tự làm giữa lane admin và các pha — **Đ-2**, chủ quán chốt
+
+**File này là owner của thứ tự làm.** Nó là dữ kiện **xếp lịch của repo**, không phải dữ kiện của
+quán — nên nó **không** nằm ở `master_plan/shop-facts.md` (`docs/decisions.md` **ADR-001**, và §8.3
+của file ấy chỉ nhận dữ kiện admin của quán).
+
+**Chủ quán chốt 2026-09-01, xác nhận lại và mở rộng 2026-09-20** (việc đi hỏi: `work/backlog_AD.md`
+**ADM-53**):
+
+| Vế | Lời chốt | Trạng thái |
+|---|---|---|
+| Vế cũ (2026-09-01) | **đóng nốt chuỗi BA trước**, rồi mới chạy nhánh admin | **đã xong** — BA-08…BA-13 đều `Done` từ 2026-09-04 |
+| Vế mới (2026-09-20) | lane admin chạy **SONG SONG** với pha 2: *hỏi chủ quán về admin trong khi pha 2 chạy* | **đang hiệu lực** |
+
+**Vế mới nói chính xác cái gì.** Chủ quán chọn *"Song song: hỏi chủ quán về admin trong khi pha 2
+chạy"*, và phương án ấy nói rõ hai nửa:
+
+- **Được làm song song: THU LUẬT.** Đem các câu `A`…`F` còn mở ở `work/admin-questions.md` §3 đi
+  hỏi chủ quán, và chuyển lời về owner — trong lúc pha 2 (`master_plan/DB_master_plan_banh_cuon_ba_thanh.md`)
+  đang thi công lược đồ dữ liệu của mảng bán hàng.
+- **KHÔNG làm song song: THI CÔNG ADMIN.** Lời này **không** cho phép dựng phần admin, cũng không
+  cho phép pha 2 gánh luôn lược đồ admin. Việc admin nào cũng vẫn phải qua cổng của lane nó
+  (`work/backlog_AD.md`, mục *Cổng của cả lane*).
+
+⇒ Hệ quả đọc được ngay: **23/29 việc của lane admin đang bị chặn bởi câu chưa hỏi** (đo 2026-09-04,
+`work/backlog_AD.md`) nay **được phép gỡ ngay**, không phải chờ pha 2 đóng. Việc *thi công* chúng
+thì vẫn chờ.
+
+⚠️ **`docs/decisions.md` ADR-031 nói *"ba mảng đi SAU mảng bán hàng"*** — lời ngày 2026-09-20
+**không** lật ngược câu đó: *"sau"* ở ADR-031 nói về **thi công**, còn lời này nói về **thu luật**.
+Hai chữ khác nhau; đừng đọc cái này thành phép thi công admin trước.
 
 Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
@@ -152,7 +187,6 @@ lại, khối *GIẢ ĐỊNH* biến mất, **I-014** sửa và **I-015** thêm.
 ⇒ Hệ quả đáng giữ nhất: **doanh thu một ngày đã đối soát không bao giờ đổi về sau.**
 ⇒ **BA-07, BA-08 và BA-10 hết chờ hai câu này**; đọc lời giải ở §4.6, §4.8–§4.10, đừng mở lại.
 
-- [ ] ADM-53 Hai lời chủ quán chốt 2026-09-01 — **Đ-2** (thứ tự làm) và **Đ-4** (mảng con người làm cả ba mức) — vẫn chỉ sống trong `work/admin-questions.md` §1, file tự khai sẽ bị xoá · **L1**, việc rẻ nhất và mở khoá nhiều nhất của lane admin: nó gỡ cả nhánh C và trả lời câu *lane admin chạy song song pha 1 hay chờ pha 1* · chi tiết: [ADM-53](#adm-53) → `work/backlog_AD.md`
 
 
 
@@ -187,6 +221,31 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] ADM-53 **Hai lời chủ quán chốt 2026-09-01 đã về owner — và `C36` có lời** — **L1**, xong
+  2026-09-20, **nhánh B** của *Acceptance* (chủ quán trả lời được trong lượt). Ba câu hỏi, ba lời:
+  **Đ-4** — mảng con người làm **cả ba mức** (trực trạm · chấm công · tính lương) ⇒
+  `master_plan/shop-facts.md` **§8.7** mới + một dòng nhật ký §7.1 + hai khối có nhãn ở
+  `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6 và `docs/product/1-system-design/architecture.md`
+  **§14.4** (**ADR-013**, và cả hai chỉ **trỏ** về §8.7 — **F-001**). **Đ-2** — thứ tự làm, cộng vế
+  mới: lane admin chạy **SONG SONG pha 2 ở nghĩa THU LUẬT**, thi công thì vẫn đi sau (**ADR-031**
+  không bị lật) ⇒ mục *[Thứ tự làm giữa lane admin và các pha](#thu-tu-lane)* của file này, **không**
+  vào `shop-facts.md` (nó là dữ kiện xếp lịch của repo — **ADR-001**). **`C36`** hỏi nhân thể cũng
+  có lời — *có, ghi cả mốc đổi người ở quầy, ai vào ai ra lúc mấy giờ* — nhưng lời ấy **chỉ ghi vào
+  `work/admin-questions.md` §3, CHƯA về owner**: chuyển nó là **ADM-21**, thiết kế tầng quyền theo
+  nó là **P1-07**. ⇒ `work/admin-questions.md` §1 co lại còn một bảng lịch sử; **ADM-21 đổi loại
+  1 → 3** và thành việc nhận được ngay duy nhất của lane; ba loại đo lại còn **19 · 8 · 1**. Gate
+  xanh (2026-09-20)
+- [x] T-080 **Pha 2 có kế hoạch còn sống: mười bốn bước `P2-01`…`P2-14`, và một cổng mỗi ô kèm
+  cách chứng minh** — **L2**, xong 2026-09-20, chủ repo yêu cầu trong phiên (*"chuyển sang pha 2,
+  hãy làm master plan…"*). `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (**mới**) chép hình
+  dạng kế hoạch pha 1 (**ADR-033**): sáu cột, **không** cột *Trạng thái*, từ vựng bắt buộc ở §7 —
+  **năm tầng của pha 1 dịch sang pha 2** thành ràng buộc · giao dịch · một đường ghi · chỗ cất vết ·
+  câu truy vấn ra 0 dòng — và cổng §9 mỗi ô một cách chứng minh, **không tick ở kế hoạch** (chỗ ký
+  là file cổng do `P2-13` sinh ra). **Ba chỗ cố ý để lại cho chủ repo**, ghi thẳng ở §8: lược đồ
+  admin đi cùng pha 2 hay theo lane của nó · ba hàng `CLAUDE.md` §2 đổi ở ba bước hay đổi hết ở
+  lượt mở thư mục · nhà cho **F-034**. **Không thi công pha 2**: không thư mục `docs/product/2-db/`,
+  không một tên bảng, không một dòng lược đồ (**ADR-035** luật 2 — thư mục ra đời cùng dòng nội
+  dung đầu tiên, ở `P2-03`). Quyết định hình dạng: **ADR-049**. Gate xanh (2026-09-20)
 - [x] T-079 **Ô 10 của cổng pha 1 tick — cổng lên 10/10** — **L1**, xong 2026-09-20. Chủ repo chốt
   **đường 2** trong ba đường `F-040` ghi (**ADR-048**): ba chỗ `architecture.md` §3.1 · §4 · §12.2
   viết lại bằng **ngôn ngữ tầng**, giữ nguyên nghĩa, bỏ tên cột · `bảng.cột` · hợp đồng API bốn
@@ -799,7 +858,7 @@ khỏi tầm nhìn của mọi phiên mới — `brief.sh` cắt *Ready* ở sá
 
 **`ADM-01`…`ADM-53` không có mô tả ở file này.** Chúng nằm ở **`work/backlog_AD.md`** — sổ task
 riêng của mảng admin, dựng 2026-09-04 (T-052, `docs/decisions.md` **ADR-036**). Neo `#adm-53` giữ
-ở đây vì dòng *Ready* của ADM-53 trỏ qua nó; đọc entry thật ở file kia.
+ở đây vì dòng trạng thái của ADM-53 trỏ qua nó; đọc entry thật ở file kia.
 
 **Chia việc giữa bốn file, một câu:** file này giữ **trạng thái** · `work/backlog_AD.md` giữ **mô
 tả** (vì sao có việc, hỏng thì mất gì, chặn bởi câu hỏi nào) · `work/admin-questions.md` §3 giữ
@@ -807,9 +866,15 @@ tả** (vì sao có việc, hỏng thì mất gì, chặn bởi câu hỏi nào)
 mục riêng có nhãn của mảng admin (**ADR-013**). Bốn chỗ, bốn việc, không chỗ nào chép chỗ nào
 (`work/findings.md` **F-001**).
 
-**Chỉ một việc có dòng ở *Ready*: ADM-53.** Hai mươi ba việc còn lại chờ câu trả lời của chủ quán
-(54 câu đang mở), và năm việc đã đủ luật từ trước — phần còn lại của chúng thuộc pha 2–4, không
-thuộc lane này. Ba loại ấy đọc ở mục *Cổng của cả lane* đầu `work/backlog_AD.md`.
+**ADM-53 ✅ `Done` 2026-09-20; việc nhận được ngay của lane bây giờ là ADM-21.** Chủ quán trả lời
+`C36` trong cùng lượt, nên ADM-21 đổi **loại 1 → 3**: nó hết chờ chủ quán, việc còn lại là **chuyển
+lời `C36` về owner**. Những việc khác vẫn chờ câu trả lời của chủ quán, và một nhóm đã đủ luật từ
+trước — phần còn lại của chúng thuộc pha 2–4, không thuộc lane này. **Ba loại và con số của chúng
+đọc ở mục *Cổng của cả lane* đầu `work/backlog_AD.md`** — đó là owner, đừng đếm ở đây
+(`work/findings.md` **F-003**).
+
+**Từ 2026-09-20, lane này được chạy SONG SONG pha 2 — nhưng chỉ ở nghĩa *thu luật*.** Lời **Đ-2**
+của chủ quán, đọc đủ ở mục *[Thứ tự làm giữa lane admin và các pha](#thu-tu-lane)*.
 
 [↑ đầu file](#top)
 
@@ -1123,6 +1188,66 @@ git status --porcelain
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+<a id="t-080"></a>
+### T-080 — Cổng pha 1 đủ mười ô và chủ repo chốt chuyển pha, nhưng pha 2 không có một dòng kế hoạch nào
+
+**Prompt:** không có file prompt — task chạy thẳng trong phiên theo yêu cầu chủ repo 2026-09-20.
+**Xong 2026-09-20.** *Acceptance* vì thế nằm ngay trong entry này, đúng ngoại lệ có tên mà **T-079**
+đã dùng: không có prompt thì không có chỗ thứ hai để nó trôi (`work/findings.md` **F-001**).
+
+**Vì sao có task này.** Ngày 2026-09-20, ô 10 của cổng pha 1 tick và cổng lên **10/10**
+(`docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §7, **T-079** · **ADR-048**), rồi chủ
+repo chốt chuyển pha ngay trong ngày. Lúc ấy pha 2 có **đề bài** (`04-yeu-cau-du-lieu.md`,
+`YC-01`…`YC-20`), có **tầng bảo vệ** để thi hành (`03-bao-ve-invariant.md`), có **hai đề xuất**
+(`prompt-fullstack.md` §3.5 và `architecture.md` §12.3) — và **không có thứ tự, không có mức, không
+có cổng**. Đúng chỗ trống mà **T-048** đã lấp cho pha 1.
+
+**Không làm thì mất gì.** Phiên đầu tiên của pha 2 mở ra, thấy một lược đồ 16 bảng viết sẵn ngày
+2026-08-31 và thi công nó. `architecture.md` §8 đã đo **tám** chỗ đề xuất ấy chưa có chỗ cất, trong
+đó có **vết hoàn tiền** và **khoản nợ** — thiếu hai thứ ấy thì đối soát ngưỡng lệch **0đ**
+(`master_plan/shop-facts.md` §6.10), cổng chất lượng mạnh nhất của cả dự án, không thực hiện được.
+Và chỗ sai ấy chỉ lộ ra sau vài tuần quán chạy thật, lúc sửa lược đồ đã phải mang theo dữ liệu bán
+hàng thật.
+
+**Acceptance — bảy dòng, cả bảy đã chạy:**
+
+1. Kế hoạch có **mục tiêu một dòng** của pha (§2), **ranh giới** (§3), **thứ tự mười bốn bước kèm
+   mức và đầu ra kiểm chứng được** (§6), **cổng mỗi ô một cách chứng minh** (§9).
+2. Mỗi bước ở §6 có ô *Đầu ra kiểm chứng được* nói được biên nhận bằng **một lệnh hoặc một phép đối
+   chiếu đọc được**, không ô nào ghi *"đã tạo xong bảng"*.
+3. Kế hoạch **không sở hữu sự thật nào**: không tên bảng, không tên cột, không dữ kiện quán, không
+   invariant chép lại — mọi chỗ cần một luật đều **trỏ** về owner ở `CLAUDE.md` §2.
+4. Các hộp `- [ ]` ở §9 **không được tick** và nói rõ chỗ ký ở đâu, đúng cách cổng pha 1 đứng trong
+   kế hoạch pha 1 §9 (**F-001** · **F-033**).
+5. Chỗ **suy ra** tách khỏi chỗ **được bảo**: §8 kể tên ba chỗ kế hoạch tự quyết và trả lại cho chủ
+   repo (`CLAUDE.md` §7.2).
+6. **Không thi công pha 2**: `docs/product/2-db/` không tồn tại sau lượt này (`ls` trả về *No such
+   file or directory*), `docs/product/1-system-design/`, `quality/invariants.md` và
+   `master_plan/shop-facts.md` không đổi một chữ (`git diff --stat` rỗng cả ba).
+7. `./scripts/gate.sh` xanh; `./scripts/check-links.sh` xanh — kể cả với đường dẫn của **file chưa
+   tồn tại**: tên sổ task tương lai viết **trần** cạnh thư mục chứa nó, không viết dạng
+   `thư-mục/tên.md`, đúng luật lane mà **T-051** đã rút ra.
+
+**Bẫy hay sửa nhầm nhất — ba cái, cả ba đã tránh:**
+
+- **Chép đề xuất 16 bảng vào kế hoạch cho "tiện đối chiếu".** Kế hoạch §1 **trỏ** và gọi tên hai
+  cái bẫy của hai đề xuất; nó không chép một tên bảng nào về.
+- **Dùng cột *"hôm nay có chưa"*** như bảng §2 của kế hoạch pha 1. Cột ấy đã hết đúng và không ai
+  cập nhật (**F-033**), nên bảng §2 ở đây dùng cột **bước nào sinh ra nó** — một cột nói về kế
+  hoạch thì không trôi.
+- **Tự chốt hộ ba chỗ chưa có lời chủ repo.** Cả ba nằm ở §8 dưới nhãn *kế hoạch này SUY RA*.
+
+**Cái lượt này KHÔNG làm:** không mở `docs/product/2-db/` · không dựng sổ task pha 2 (việc của
+`P2-01`/`P2-03`, và nó cần một hàng `CLAUDE.md` §2 trong cùng thay đổi) · không viết một file prompt
+nào cho `prompt/DB/` (luật **ADR-008**: viết được prompt của một bước khi mọi bước ở cột *Cần xong
+trước* của nó đã `Done`) · không đóng và không đụng vào **F-034** · **F-036** · **F-037** ·
+**F-038** — kế hoạch chỉ **định tuyến** chúng về đúng bước ở §8.
+
+**Pointer sửa trong cùng lượt** (`CLAUDE.md` §7.2): `CLAUDE.md` §2 hàng *Schema* ·
+`docs/product/00-index.md` (bảng *Sáu pha*) · `docs/decisions.md` (bảng tóm tắt + **ADR-049**).
+
+[↑ đầu file](#top)
 
 <a id="t-079"></a>
 ### T-079 — Ô 10 của cổng pha 1 để trống vì ba chỗ trong `architecture.md`, và cổng lẽ ra bắt được chúng thì mù

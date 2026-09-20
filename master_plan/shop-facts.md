@@ -1358,6 +1358,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-09-16 | **Web ngừng nhận đơn KHÔNG do đồng hồ: máy BÁO, POS QUYẾT, mở lại bằng NÚT** (đóng **U-043**) — nguyên văn *"hiên thông báo để pos quyết định nếu dừng cần có nut mở lại"* ⇒ không có con số cửa sổ nào; hệ thống hiện thông báo ở quầy, POS quyết dừng ba kênh khách tự bấm, và đã dừng thì không tự mở lại. ⇒ lật luật 1 của `docs/product/1-system-design/05-realtime-va-du-phong.md` §3 và một câu *Verification* của **I-008** (**ADR-047**). *Ca quán mất mạng hẳn — POS không bấm được gì — lời chốt không phủ ⇒ **U-053*** | **§6.11** · `quality/invariants.md` **I-008** |
 | 2026-09-16 | **Mục tổng quan bày THỜI GIAN NHẬP · TỔNG ĐÃ DÙNG · SỐ THIẾU do máy trừ** (đóng **U-051**) — nguyên văn *"thời gian nhâp sản phẩm và tổng đã sử dụng lấy thiếu bằng tổng đã nhập trừ đi sử dụng"* ⇒ *thiếu = tổng đã nhập − tổng đã dùng*; máy **cộng dồn hộ** nhưng vẫn không có ngưỡng và không kết luận (`U-045` đứng nguyên), §8.4 vẫn ở mức sổ ghi tay điện tử. *Hai con số **tổng** cộng dồn từ mốc nào thì lời ấy không nói ⇒ **U-054*** | **§8.4** · §8.6 (hàng 7) |
 | 2026-09-16 | **NGƯỜI ĐỨNG QUẦY KHÔNG BAO GIỜ ĐI GIAO** (đóng **U-052**) — nguyên văn *"người đứng quầy khônng đi giao"* ⇒ chữ *"bất cứ ai"* của `U-049` hẹp lại còn **ba** vai (`trang_banh` · `gap_banh` · `canh`+`don_ban`); trạm `quay` không bao giờ bỏ trống vì đi giao, nên lời *"pos gánh"* của `U-050` luôn có người gánh. *Lời này không đụng tới chủ quán — §3 vẫn để chủ quán thỉnh thoảng đứng quầy* | **§3** · §8.6 |
+| 2026-09-20 | **Mảng CON NGƯỜI làm tới CẢ BA MỨC: ai đang trực trạm nào · chấm công · tính lương trên máy** (xác nhận lại lời chốt **Đ-4** ngày 2026-09-01; việc đi hỏi: `work/backlog_AD.md` **ADM-53**) — chủ quán chọn *"Đúng, cả ba mức"*. *Lời này chốt **mức sâu**, không chốt một con số nào: đơn giá công, kỳ trả lương, quyền xem lương vẫn là các câu `C23`…`C35` ở `work/admin-questions.md` §3* | **§8.7** |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -1451,12 +1452,14 @@ Trước ngày đó, phần mềm được mô tả là **không** làm ba mản
 ### 8.2 Mở ranh giới chưa phải là có luật
 
 Tới **2026-09-03** mục này chỉ có ranh giới, chưa một quy tắc nghiệp vụ nào. Ngày **2026-09-04**
-mảng **nguyên liệu** có mức sâu của nó (§8.4); **hai mảng còn lại — con người và tài chính — vẫn
-đúng như đoạn dưới đây tả**, và đoạn ấy đọc cho hai mảng đó, không đọc cho mảng nguyên liệu:
+mảng **nguyên liệu** có mức sâu của nó (§8.4); ngày **2026-09-20** mảng **con người** có mức sâu của
+nó (§8.7); **mảng tài chính thì vẫn đúng như đoạn dưới đây tả**, và đoạn ấy nay đọc cho một mình
+mảng tài chính:
 
-- **Mức sâu: mảng nguyên liệu ĐÃ chốt, hai mảng kia thì chưa.** Mảng nguyên liệu làm ở mức *sổ ghi
-  tay điện tử* — lời chốt và ranh giới của nó ở **§8.4**. Mảng con người làm tới đâu, mảng tài
-  chính làm tới đâu — chưa có dòng nào trong tài liệu này trả lời, nên đừng suy ra hộ.
+- **Mức sâu: nguyên liệu và con người ĐÃ chốt, tài chính thì chưa.** Mảng nguyên liệu làm ở mức
+  *sổ ghi tay điện tử* — **§8.4**. Mảng con người làm tới **cả ba mức** — **§8.7**. Mảng tài chính
+  làm tới đâu thì chưa có dòng nào trong tài liệu này trả lời, nên đừng suy ra hộ (§8.5 chốt **tiền
+  đầu két**, đó là một dữ kiện, không phải mức sâu của cả mảng).
 - **Chưa có con số nào — kể cả cho mảng nguyên liệu.** Không danh mục nguyên liệu, không đơn vị
   tính, không số người, không đơn giá công, không khoản chi. §8.4 chốt *cách ghi*, không chốt
   *ghi cái gì*: mọi con số cho ba mảng này còn phải hỏi chủ quán.
@@ -1641,7 +1644,7 @@ chủ quán — đếm lại, đừng tin câu này (`work/findings.md` **F-003*
 | 3 | **còn thiếu bao nhiêu** | phần chưa ra bàn — cùng cặp với số 2 |
 | 4 | **bán được như nào rồi** | tiến độ bán trong buổi |
 | 5 | **số tiền dự tính đã bán được** | ⚠️ chữ *dự tính* là của chủ quán: đây là con số **tạm tính trong buổi**, **không** phải doanh thu đã đối soát (§6.10) và không bao giờ được bày ra như thể đã đối soát |
-| 6 | có **bao nhiêu người đang làm** | ⛔ đứng trên câu *ai đang trực trạm nào*, thứ chưa có dữ liệu nào ghi — `work/admin-questions.md` câu **C36**, và `work/backlog_AD.md` ADM-21 |
+| 6 | có **bao nhiêu người đang làm** | ⛔ đứng trên câu *ai đang trực trạm nào* — `work/admin-questions.md` câu **C36**, và `work/backlog_AD.md` ADM-21. *`C36` **đã có lời 2026-09-20** nhưng lời ấy **chưa về owner nào**: nguyên văn còn ở §3 của file kia, chỗ chuyển là **ADM-21**; đừng đọc dữ kiện từ đó* |
 | 7 | **còn thiếu gì không** | **cả BA đường, không phải một** (chốt 2026-09-08, ba lượt): thiếu **NGUYÊN LIỆU** · thiếu **NGƯỜI** · thiếu **MÓN trên menu** — xem ngay dưới. Mỗi đường trỏ vào một tập **đã có chủ ở chỗ khác**, không đường nào có danh sách riêng ở đây (**F-001**): nguyên liệu → **Danh mục nguyên liệu** §8.4 · người → **bảng phân vai** §3 · món → **§4.9**. Chữ *thiếu* từ đâu ra: **nguyên liệu — máy KHÔNG kết luận, chủ quán tự đọc hai con số mua vào · đã dùng rồi tự kết luận** (chốt 2026-09-15, đóng `U-045`, §8.4), và **mục tổng quan bày ba thứ**: *thời gian nhập* · *tổng đã dùng* · *số thiếu = tổng đã nhập − tổng đã dùng* (chốt 2026-09-16, đóng `U-051`, §8.4); ⛔ hai con số *tổng* ấy cộng dồn từ mốc nào thì chưa — **U-054**. ⛔ **Người** thì **không** lời nào nói máy biết bằng cách nào: câu **C36** (`work/backlog_AD.md` ADM-21) — *U-049 đóng 2026-09-08 (người đi giao là một trong bốn vai, POS chỉ định) và U-050 đóng 2026-09-15 (POS gánh trạm bị bỏ trống, khoảng trống do đi giao **không** là thiếu người) — cả hai ở §3* |
 
 **Vế thứ bảy — *"còn thiếu gì không"* — chủ quán chốt 2026-09-08: thiếu NGUYÊN LIỆU.** Nguyên văn
@@ -1680,9 +1683,11 @@ nguyên liệu và con người đã có. đối với menu: tôi muốn có …
     *"pos gánh, không thiếu người vì đi ship luc quán vắng."* ⇒ một chuyến giao rút một đôi tay
     ra khỏi năm trạm nhưng **không** làm số **7** bật lên; người đứng quầy gánh trạm bị bỏ trống.
     Lời chốt ở **§3**.
-  - ⛔ **Máy biết đang thiếu người bằng cách nào thì vẫn chưa ai nói** — nay chỗ hở chỉ còn **một**
-    câu: **C36** — *ai đang trực trạm nào* (`work/admin-questions.md`, `work/backlog_AD.md`
-    ADM-21). Chừng nào chưa có lời, số **7** vẫn chưa có nguồn — dù số **6** thì có rồi. (`U-052` —
+  - ⛔ **Máy biết đang thiếu người bằng cách nào thì vẫn chưa có owner nào giữ** — nay chỗ hở chỉ
+    còn **một** câu: **C36** — *ai đang trực trạm nào* (`work/admin-questions.md`,
+    `work/backlog_AD.md` ADM-21). *Chủ quán **đã trả lời `C36` ngày 2026-09-20** (ADM-53 hỏi nhân
+    thể), nhưng lời ấy dừng ở §3 của `work/admin-questions.md` và **chưa** được chuyển về owner —
+    ADM-21 là chỗ chuyển, không phải chỗ này.* Chừng nào chưa có lời, số **7** vẫn chưa có nguồn — dù số **6** thì có rồi. (`U-052` —
     ai gánh `quay` khi chính người đứng quầy đi giao — **đã đóng 2026-09-16**: người đứng quầy
     **không** đi giao, nên ca ấy không tồn tại; nó vốn cũng không chặn số 7, vì lời `U-050` đã loại
     khoảng trống do đi giao khỏi chữ *thiếu người*, bất kể ai đi.)
@@ -1706,3 +1711,34 @@ nguyên liệu và con người đã có. đối với menu: tôi muốn có …
 
 **Mục này chốt TẬP CON SỐ, không chốt cách bày và không chốt nhịp cập nhật.** Bày thế nào là pha 4;
 đẩy dữ liệu về máy chủ quán bằng đường nào là **P1-08** của pha 1. Cả hai đều không được viết ở đây.
+
+### 8.7 Mảng CON NGƯỜI — làm tới **cả ba mức**: ai đang trực trạm · chấm công · tính lương
+
+**Chủ quán chốt 2026-09-01, xác nhận lại 2026-09-20** (việc đi hỏi: `work/backlog_AD.md` ADM-53).
+Câu hỏi lượt xác nhận: *quán biết ai đang trực ở trạm nào · quán chấm công · quán tính lương trên
+máy — vẫn đúng cả ba chứ?*; chủ quán chọn **"Đúng, cả ba mức"**.
+
+| Mức | Máy làm gì |
+|---|---|
+| 1 | **ai đang trực trạm nào** — tại một lúc bất kỳ, quán biết được người nào đang đứng ở trạm nào trong năm trạm §3 |
+| 2 | **chấm công** — quán ghi được công của từng người trên máy |
+| 3 | **tính lương** — quán tính lương **trên máy**, không tính ngoài bằng sổ hay bảng tính riêng |
+
+**Lời này chốt MỨC SÂU, không chốt một con số nào.** Đơn giá công, cách tính một công, kỳ trả
+lương, ai được xem bảng lương, đi muộn có trừ không — **không** câu nào trong số đó có lời; chúng
+là các câu `C23`…`C35` ở `work/admin-questions.md` §3 và vẫn đang chờ. Đừng suy ra hộ một con số
+nào từ mục này (`CLAUDE.md` §3.5).
+
+**Người mà ba mức này đếm là người của §3, không phải một danh sách thứ hai.** Bốn vai cộng chủ
+quán (§3, chốt 2026-08-30 và 2026-09-08) là tập người duy nhất; mục này **không** giữ bảng người
+riêng (`work/findings.md` **F-001**). Mức 1 cũng chính là chỗ mục tổng quan §8.6 hàng 6 đang hở —
+*bao nhiêu người đang làm* đứng trên nó.
+
+**Mức 1 đứng trên một câu chưa về owner.** *Người đứng quầy đổi giữa buổi thì máy có ghi lại mốc
+đổi không* là câu **`C36`**; nó **đã có lời ngày 2026-09-20**, nhưng lời ấy còn nằm ở
+`work/admin-questions.md` §3 và **chưa** được chuyển về owner nào — chỗ chuyển là
+`work/backlog_AD.md` **ADM-21**. Cho tới lúc đó, đừng đọc một dữ kiện nào của mức 1 từ mục này.
+
+**Lời này KHÔNG nói mảng con người lưu ở đâu hay bày thế nào.** Chỗ cất dữ liệu là pha 2, màn hình
+là pha 4 (`docs/decisions.md` **ADR-035**). Mục này chỉ nói quán muốn máy làm tới đâu.
+

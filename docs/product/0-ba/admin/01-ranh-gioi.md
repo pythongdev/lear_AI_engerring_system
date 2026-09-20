@@ -29,9 +29,9 @@ nguyên liệu, tồn kho, chấm công hay kế toán"*. Lời chốt **lật n
 
 - Tài liệu này **chưa có một quy tắc nghiệp vụ nào** cho chúng — §2 tới §6 vẫn chỉ nói về việc bán
   hàng. Đọc sự im lặng đó thành *"chưa quyết"*, đừng đọc thành *"không làm"*.
-- **Sâu tới đâu là quyết định riêng: mảng nguyên liệu ĐÃ chốt 2026-09-04, mảng con người thì
-  chưa.** Mức của mảng nguyên liệu ở khối ngay dưới đây; mảng con người làm tới mức nào vẫn chưa
-  được ghi vào owner nào, và việc chuyển câu ấy về còn nằm trong `work/backlog.md`.
+- **Sâu tới đâu là quyết định riêng: nguyên liệu ĐÃ chốt 2026-09-04, con người ĐÃ chốt
+  2026-09-20, tài chính thì chưa.** Mức của hai mảng đã chốt ở hai khối có nhãn bên dưới; mảng
+  **tài chính** làm tới mức nào vẫn chưa được ghi vào owner nào.
 - **Mảng nào vào MVP là câu của §7 (BA-09)**, không phải câu của mục này. Ranh giới nói *được phép
   làm*; §7 nói *làm ngay bây giờ*. Hai câu khác nhau và không được trộn.
 
@@ -52,7 +52,23 @@ tồn theo công thức** mỗi lần bán một suất. Hai hệ quả về **h
   [99-unknowns.md](../../99-unknowns.md)). Danh mục cụ thể — thứ nào, đơn vị gì — **vẫn chưa chốt**.
 
 Dữ kiện đầy đủ của lời chốt này — gồm cả cửa mở lại nó — ở `master_plan/shop-facts.md` **§8.4**.
-Mảng **con người** (câu Đ-4) và mảng **tài chính** chưa có lời chốt tương ứng.
+
+**Mức sâu của mảng CON NGƯỜI — chủ quán chốt 2026-09-01, xác nhận lại 2026-09-20.** Mảng con người
+làm tới **cả ba mức**: *ai đang trực trạm nào* · *chấm công* · *tính lương trên máy*. Dữ kiện đầy
+đủ — ba mức ấy nói chính xác cái gì, và cái gì **không** đi kèm — ở `master_plan/shop-facts.md`
+**§8.7**; mục này **không** nhắc lại lời chốt bằng lời của mình (`work/findings.md` **F-001**). Hệ
+quả về **hành vi** — thứ mục này sở hữu:
+
+- **Mảng con người có mặt ở cả ba mức không làm đổi một luật bán hàng nào của §2–§6.** Nó là một
+  mảng đứng riêng, đọc vào bảng vai của `master_plan/shop-facts.md` §3; nó không thêm trạm, không
+  thêm vai, không đổi luật huỷ đơn hay hoàn tiền.
+- **Lời chốt này chốt MỨC, không chốt con số.** Đơn giá công, kỳ trả lương, quyền xem bảng lương —
+  không câu nào có lời (`work/admin-questions.md` §3, các câu `C23`…`C35`). Đọc sự im lặng ấy thành
+  *"chưa quyết"*, đừng đọc thành *"không làm"*.
+- **Mức *ai đang trực trạm nào* còn đứng trên câu `C36`**, và `C36` **chưa về owner nào** dù đã có
+  lời ngày 2026-09-20 — chỗ chuyển là `work/backlog_AD.md` **ADM-21**.
+
+Mảng **tài chính** vẫn chưa có lời chốt mức sâu tương ứng.
 
 **Luật viết cho mọi lần cập nhật admin sau này:** nội dung admin vào **mục riêng có nhãn**, không
 chen vào mục của mảng bán hàng — `docs/decisions.md` **ADR-013**.
