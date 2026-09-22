@@ -86,7 +86,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-022 | Hai mục ĐÃ CHỐT trả lời khác nhau cùng một câu hỏi | Fixed |
 | F-023 | Một ADR giao lược đồ/API/route cho hai tài liệu tự khai không sở hữu | Fixed |
 | F-024 | Deliverable bị bỏ rơi vì task đóng trước khi giao | Fixed |
-| F-025 | Phiên song song `git commit` nhặt luôn thay đổi chưa commit của phiên khác | Open |
+| F-025 | Phiên song song `git commit` nhặt luôn thay đổi chưa commit của phiên khác | Open *(**lần thứ sáu 2026-09-20**, `04c5a64` — lần đầu cú nhặt tự đẻ ra một cổng đỏ: `work/scope.txt` vào git kèm pattern. Đọc cuối mục F-025)* |
 | F-026 | Ba invariant sinh sau khi kế hoạch chia nhóm, không nhóm nào nhận — cả ba đã xếp xong (ADR-042 · ADR-044) | Fixed |
 | F-027 | Hai phụ thuộc ngoài chỉ tồn tại ở bản xuất khẩu | Fixed |
 | F-028 | Một dãy mã bị đọc thành phép đếm, đã đứng trong ADR hai ngày | Open |
@@ -2448,6 +2448,28 @@ dòng `- [x] T-075` ở *Done*, và hai hàng `ADM-04` · `ADM-21` vừa đượ
 - ⇒ Cùng kết luận với bốn lần trên, thêm một bằng chứng cho **ngưỡng đã vượt từ lâu**: đường vá
   bằng kỷ luật (*đọc `git diff --cached` trước khi commit*) đã thất bại lần thứ tư và lần thứ năm.
   Quyết định dựng `pre-commit` hay tách `git worktree` vẫn thuộc chủ repo.
+
+**LẦN THỨ SÁU — `04c5a64` (2026-09-20 15:25), VÀ LẦN NÀY CÚ NHẶT TỰ ĐẺ RA MỘT CỔNG ĐỎ.**
+Commit mang subject **` chuyển sang pha 2`** và chứa **toàn bộ** việc của **ADM-21** — mười một
+file, từ `master_plan/shop-facts.md` §8.8 (lời `C36` về owner) tới ba mã `U-055` · `U-056` · `U-057`
+mới mở, cộng file prompt `prompt/AD/ADM-21-loi-c36-ve-owner-L2.md`. Phiên ADM-21 đã giao khối commit
+dán được của mình theo `CLAUDE.md` §6.1, kèm câu nói rõ `CLAUDE.md` và `work/backlog_DB.md` **không**
+thuộc khối ấy; khối đó không bao giờ được dùng.
+
+- **Cái mới so với năm lần trên: cú nhặt mang theo `work/scope.txt` với pattern còn nguyên.** Hai
+  khối — T-081 và ADM-21 — đi thẳng vào git, nên **Gate 3 đỏ ở MỌI lượt** kể từ đó
+  (**F-020** · **ADR-043**). Năm lần trước chỉ đặt nội dung vào sai commit; lần này nó còn để lại
+  một cổng đỏ sống hai ngày, tới khi có phiên dọn (2026-09-22, lần thứ **ba** của món nợ ấy sau
+  T-047 và T-078).
+- **Subject nói ít hơn mọi lần trước.** Bốn lần đầu subject ít nhất còn nêu tên **một** task thật;
+  ` chuyển sang pha 2` không nêu task nào, và còn mở đầu bằng một dấu cách. Ai `git log` tìm *"lời
+  `C36` về owner lúc nào"* hay *"`U-055` mở ở đâu"* sẽ không tìm thấy bằng subject — đúng cái giá
+  **F-031** đã đo.
+- **Không mất nội dung.** Cả mười một file vào git nguyên vẹn và gate xanh ở lượt ADM-21 trước đó,
+  nên đây lại là một ca *sai chỗ*, không phải *hỏng*.
+- ⇒ Ngưỡng `CLAUDE.md` §3.8 nay đã vượt **năm** lần. Hai đường vá vẫn nguyên như mục này viết từ
+  lần thứ tư — `pre-commit` so tập file đang stage với khối `work/scope.txt`, hoặc `git worktree`
+  riêng cho mỗi phiên — và **cả hai vẫn thuộc quyết định của chủ repo**, không phiên nào tự dựng.
 
 ### F-026 — Ba invariant sinh SAU khi kế hoạch chia nhóm, nên không nhóm nào của pha 1 nhận chúng
 

@@ -34,26 +34,10 @@
 # comment-only và file đi kèm khối commit của T-078 — đúng đường CLAUDE.md §6.1
 # mô tả cho ca này. Phiên nào đang chạy song song mà cần scope thì THÊM khối mới
 # xuống dưới đây.
-
-# ==== T-081 (2026-09-20) — sổ mô tả pha 2: work/backlog_DB.md ====
-# (khối này bị một phiên song song xoá mất một lần lúc 2026-09-20 — F-010 · F-014.
-#  Phiên nào dọn scope: xoá ĐÚNG khối của mình, không xoá cả file.)
-CLAUDE.md
-work/backlog.md
-work/backlog_DB.md
-
-# ==== ADM-21 (2026-09-20) — lời `C36` về owner ====
-# Khối này GIỮ cho tới khi commit của ADM-21 được tạo: mọi file dưới đây còn là
-# thay đổi tracked chưa commit, và gỡ khối sớm làm Gate 3 chấm chúng bằng scope
-# của phiên khác (F-010 · F-014). Phiên nào dọn: xoá ĐÚNG khối của mình.
-master_plan/shop-facts.md
-docs/product/0-ba/admin/01-ranh-gioi.md
-docs/product/1-system-design/architecture.md
-docs/product/99-unknowns.md
-docs/work-flow-session/tom_tat_du_an.md
-work/admin-questions.md
-work/backlog.md
-work/backlog_AD.md
-work/findings.md
-prompt/AD/README.md
-prompt/AD/ADM-21-loi-c36-ve-owner-L2.md
+#
+# 2026-09-22: dọn MÓN NỢ TRẠNG THÁI SCOPE lần thứ ba. Commit 04c5a64 (2026-09-20)
+# mang theo work/scope.txt với hai khối pattern còn nguyên — khối T-081 và khối
+# ADM-21 — nên Gate 3 đỏ ở MỌI lượt sau đó. Cả hai task đều đã Done và đã nằm
+# TRONG chính commit ấy, nên cả hai khối là "khối ghi rõ đã commit" và được gỡ.
+# Gỡ bằng cách xoá đúng từng khối, KHÔNG bằng `git checkout --` (work/findings.md
+# F-014, lần thứ sáu: trên file này mọi lệnh khôi phục đều xoá scope của mọi phiên).

@@ -12,7 +12,7 @@ hai mục *Chi tiết* phía dưới, tách đúng theo hai phần trên.
 | [In Progress](#in-progress) | task đang chạy |
 | [Done](#done) | việc đã xong |
 | [Chi tiết — việc cần làm](#chi-tiet-can-lam) | bảng mười câu hỏi §10 + mô tả dài T-019…T-047 (BA-05, BA-06, BA-08, **BA-09**, **BA-11**, **BA-12** và **BA-13** đã chuyển sang mục đã xong) |
-| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-081…T-002 |
+| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | mô tả dài T-082…T-002 |
 | [Vòng chạy một task L1](#vong-chay) | mười bước thủ tục từ nhận task tới khối commit |
 | [Task Detail Template](#template) | khuôn viết một task mới |
 
@@ -229,6 +229,21 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] T-082 **Món nợ trạng thái scope lần thứ BA, và lần thứ SÁU một phiên song song nhặt việc của
+  phiên khác** — **L1**, xong 2026-09-22. Commit `04c5a64` (2026-09-20, subject ` chuyển sang pha
+  2`) gộp việc của **ba** phiên vào một commit và mang theo `work/scope.txt` **còn nguyên hai khối
+  pattern** (T-081 và ADM-21) ⇒ **Gate 3 đỏ ở MỌI lượt** suốt hai ngày (**F-020** · **ADR-043**).
+  Lượt này gỡ **đúng hai khối ấy** — cả hai task đã `Done` và đã nằm **trong chính commit ấy**, nên
+  cả hai là *"khối ghi rõ đã commit"* — và **không** dùng `git checkout --`, vì trên file này mọi
+  lệnh khôi phục đều xoá scope của mọi phiên (**F-014**). `work/findings.md` **F-025** nhận khối
+  *LẦN THỨ SÁU*: cái mới so với năm lần trước là cú nhặt **tự đẻ ra một cổng đỏ**, chứ không chỉ đặt
+  nội dung vào sai commit; subject cũng nói ít hơn mọi lần trước — không nêu task nào, và mở đầu
+  bằng một dấu cách (**F-031**). Không nội dung nào mất: cả mười bốn file vào git nguyên vẹn.
+  ⚠️ **Ngưỡng §3.8 đã vượt từ lâu** — hai đường vá (`pre-commit` so tập đang stage với khối
+  `work/scope.txt`, hoặc `git worktree` riêng cho mỗi phiên) vẫn **thuộc quyết định chủ repo**,
+  không phiên nào tự dựng. Lượt này **cố ý không khai scope**: đường duy nhất xoá được nợ là cây
+  làm việc comment-only rồi đưa `work/scope.txt` vào khối commit (`CLAUDE.md` §6.1), đúng cách
+  **T-047** và **T-078** đã làm. Gate xanh (2026-09-22). Chi tiết: [T-082](#t-082)
 - [x] T-081 **Pha 2 có sổ mô tả riêng: `work/backlog_DB.md`, mười bốn entry `P2-01`…`P2-14`** —
   **L1**, xong 2026-09-20, chủ repo yêu cầu trong phiên (*"hãy làm backlog_db.md"*). Kế hoạch pha 2
   (`master_plan/DB_master_plan_banh_cuon_ba_thanh.md` §5, **ADR-049**) đã chốt sổ ấy phải tồn tại
@@ -1230,6 +1245,61 @@ git status --porcelain
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+<a id="t-082"></a>
+### T-082 — `work/scope.txt` vào git kèm pattern lần thứ ba, và lần này chính cú nhặt của một phiên song song đẻ ra cổng đỏ
+
+**Prompt:** không có file prompt — việc dọn chạy thẳng trong phiên. **Xong 2026-09-22.**
+*Acceptance* vì thế nằm ngay trong entry này, đúng ngoại lệ **T-079** · **T-080** · **T-081** đã
+dùng: không có prompt thì không có chỗ thứ hai để nó trôi (`work/findings.md` **F-001**).
+
+**Vì sao có task này.** Ngày 2026-09-20, ba phiên chạy song song trên cùng cây làm việc: một phiên
+đóng **ADM-21**, một phiên dựng **T-081** (`work/backlog_DB.md`), và một lượt `git commit` gộp
+**cả hai cộng phần dở của lượt thứ ba** vào một commit duy nhất — `04c5a64`, subject
+` chuyển sang pha 2`. Cả hai phiên đều đã giao khối commit dán được của mình theo `CLAUDE.md` §6.1,
+mỗi khối nói rõ file nào **không** thuộc về nó; không khối nào được dùng. Đó là **lần thứ sáu**
+`work/findings.md` **F-025** ghi cùng một hình.
+
+Cái làm lần này khác năm lần trước: commit ấy nhặt luôn **`work/scope.txt` với hai khối pattern còn
+nguyên**. Bản `HEAD` của file ấy từ đó vi phạm hình bất biến *"bản đã commit chỉ chứa comment"*
+(**F-020** · **ADR-043**), nên `scripts/check-scope.sh` đỏ ở **mọi** lượt sau đó, không riêng lượt
+nào — suốt hai ngày, tới lượt này.
+
+**Không làm thì mất gì.**
+- **Một cổng đỏ thường trực dạy người ta bỏ qua cổng.** Gate 3 đỏ vì một lý do đã biết trước thì
+  lượt nào cũng đỏ, và từ hôm ấy một thay đổi **thật sự** ra ngoài scope cũng đi qua cùng cái đỏ
+  ấy — đúng cơ chế `master_plan/shop-facts.md` §6.10 mô tả cho ngưỡng lệch 0đ, chỉ khác chỗ áp
+  dụng.
+- **Phiên mới không khai được scope của mình.** `work/scope.txt` mang hai khối của task đã xong ⇒
+  brief cảnh báo mỗi phiên, và Gate 3 chấm thay đổi của phiên mới bằng scope của người khác
+  (**F-010**).
+- **Lịch sử git mất đường tra.** Ai `git log` tìm *"lời `C36` về owner lúc nào"* hay *"sổ pha 2
+  dựng ở commit nào"* không tìm thấy bằng subject: ` chuyển sang pha 2` không nêu task nào — đúng
+  cái giá **F-031** đã đo.
+
+**Acceptance — bốn dòng, cả bốn đã chạy:**
+
+1. Cây làm việc của `work/scope.txt` **comment-only**, và hai khối bị gỡ là **đúng** hai khối đã
+   nằm trong commit `04c5a64`. Kiểm: `./scripts/check-scope.sh` in `note:` (nợ ở `HEAD`, cây đã
+   sạch) thay vì FAIL.
+2. Việc gỡ làm bằng cách **xoá đúng từng khối**, không bằng `git checkout --` — trên file này mọi
+   lệnh khôi phục đều xoá scope của mọi phiên đang chạy (**F-014**).
+3. `work/findings.md` **F-025** có khối *LẦN THỨ SÁU* kèm ngày, mã commit, và **cái mới** so với năm
+   lần trước; hàng của nó ở bảng tổng hợp đầu file trỏ tới khối ấy. **Status vẫn `Open`** — hai
+   đường vá thuộc quyết định chủ repo, lượt này không tự dựng cái nào (**§3.8**).
+4. `./scripts/gate.sh` xanh.
+
+**Vì sao lượt này CỐ Ý không khai scope.** Đường duy nhất xoá được món nợ là: cây làm việc về
+comment-only, rồi đưa `work/scope.txt` vào khối commit của chính lượt ấy (`CLAUDE.md` §6.1, đoạn
+*"The one time it does show up with a real diff"*). Khai một khối pattern mới ở lượt này sẽ đưa
+pattern trở lại git lần thứ tư. **T-047** (2026-09-07) và **T-078** (2026-09-16) đã chạy đúng
+đường này hai lần trước.
+
+**Chỗ này KHÔNG đóng được bằng kỷ luật, và đã đo được ba lần.** F-020 đóng ở T-047 bằng cách dựng
+**cổng gác** (Gate 3 + Gate 7b, ADR-043) chứ không bằng một lời nhắc; nhưng cả hai cổng ấy sống
+**bên trong một lượt phiên**, còn `git commit` gõ tay ở terminal thì không đi qua lượt nào — đúng
+chỗ **Gate 8** (`CLAUDE.md` §6.2) được dựng ra để đứng, và nó chỉ chấm **subject**, không chấm
+**tập file**. Đó là lý do F-025 còn `Open` sau sáu lần.
 
 <a id="t-081"></a>
 ### T-081 — Pha 2 có mười bốn bước nhưng không bước nào nói vì sao có nó, hỏng thì mất gì, và chạy mười bước thế nào
