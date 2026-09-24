@@ -15,12 +15,15 @@
 #
 # CHẤM FILE NÀO
 #   Chấm  — tài liệu chỉ đường: CLAUDE.md · README.md · docs/ · quality/ ·
-#           master_plan/ · prompt/BA/ · prompt/SD/ · prompt/AD/ · .claude/
+#           master_plan/ · prompt/BA/ · prompt/SD/ · prompt/AD/ · prompt/DB/ ·
+#           .claude/
 #           (prompt/SD/ = lane prompt của pha 1, mã bước P1-XX; thêm 2026-09-04
 #            bởi P1-01, lượt tạo ra lane ấy. prompt/AD/ = lane prompt của mảng
 #            admin, mã việc ADM-XX; thêm 2026-09-04 bởi T-058, lượt tạo ra lane
-#            ấy. Một lane prompt không nằm trong danh sách này là một lane
-#            pointer không cổng nào chấm — đúng thứ F-007 dựng gate này để bắt.)
+#            ấy. prompt/DB/ = lane prompt của pha 2, mã bước P2-XX; thêm
+#            2026-09-22 bởi P2-01, lượt tạo ra lane ấy. Một lane prompt không
+#            nằm trong danh sách này là một lane pointer không cổng nào chấm —
+#            đúng thứ F-007 dựng gate này để bắt.)
 #   Đỏ   — chỉ file git ĐANG THEO DÕI. File .md chưa track có đường chết chỉ được
 #          in thành một dòng `note:` và không chặn gate — cùng lý do ADR-003:
 #          gate đỏ vì một bản nháp nằm sẵn trong cây dạy người ta bỏ qua gate.
@@ -57,7 +60,7 @@ IGNORE_FILE="${CHECK_LINKS_IGNORE:-scripts/check-links.ignore}"
 checked() {
   case "$1" in
     work/*|prompt/maintenance/*) return 1 ;;
-    CLAUDE.md|README.md|docs/*|quality/*|master_plan/*|prompt/BA/*|prompt/SD/*|prompt/AD/*|.claude/*) return 0 ;;
+    CLAUDE.md|README.md|docs/*|quality/*|master_plan/*|prompt/BA/*|prompt/SD/*|prompt/AD/*|prompt/DB/*|.claude/*) return 0 ;;
     *) return 1 ;;
   esac
 }

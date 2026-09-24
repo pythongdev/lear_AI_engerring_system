@@ -249,31 +249,23 @@ nối hai danh từ khác nhau). Pha 1 cũng chạy mười bốn bước.
 
 ---
 
-## 7. Năm tầng của pha 1 dịch sang pha 2 — từ vựng bắt buộc của năm bước lược đồ
+## 7. Năm tầng của pha 1 dịch sang pha 2 — owner là **ADR-050**, mục này chỉ trỏ
 
 Pha 1 điền cột giữa của bảng ba cột bằng **đúng một** trong năm tầng (kế hoạch pha 1 §7). Pha 2 đọc
-cột ấy và phải biết nó **nợ cái gì** cho từng tầng. Không có bảng này thì mỗi lát lược đồ tự hiểu
-chữ *"phải do cơ sở dữ liệu giữ"* một kiểu.
+cột ấy và phải biết nó **nợ cái gì** cho từng tầng, chấm **bằng gì**, và cái gì **không** phải biên
+nhận. Ba câu ấy nay có **một** nhà:
 
-| Tầng ở pha 1 | Pha 2 phải dựng ra cái gì | Chấm bằng |
-|:--:|---|---|
-| **1** — cơ sở dữ liệu giữ | một **ràng buộc thật trong lược đồ**: khoá duy nhất (kể cả khoá duy nhất chỉ áp cho vài trạng thái), điều kiện kiểm, khoá ngoại bắt buộc | cố tình chèn trạng thái sai bằng tay ⇒ **database từ chối**, dán nguyên lời từ chối |
-| **2** — một giao dịch giữ | một **ranh giới giao dịch** viết ra: các bảng nào cùng sống hoặc cùng chết trong một lần ghi | cắt giữa chừng ⇒ không nửa nào sống sót |
-| **3** — miền nghiệp vụ giữ | lược đồ **không mở đường ghi thứ hai** tới ô ấy: con số tổng **cộng lại từ chi tiết**, không đứng thành một ô ai cũng ghi được | liệt kê mọi đường ghi tới ô đó ⇒ phải đúng một |
-| **4** — người + thủ tục giữ | **chỗ cất vết**: ai · lúc nào · lý do · bản trước và bản sau, và vết **sống độc lập** với bản ghi nó nói về | xoá bản ghi gốc ⇒ vết vẫn đọc được sau nhiều ngày |
-| **5** — phép đối chiếu bắt sau khi hỏng | **đúng một câu truy vấn ra 0 dòng**, gom vào bộ chạy sau khi đóng quán (`P2-11`) | cài một lỗi thật ⇒ đúng câu ấy ra khác 0 |
+> **`docs/decisions.md` → ADR-050** — bảng năm tầng bốn cột · **ba luật khi dịch** · **ba câu pha 2
+> không được viết ra** và viết gì thay vào.
 
-Ba luật khi dịch:
+**Bản đầu của mục này (2026-09-20, T-080) GIỮ bảng ấy trong thân mục.** Ngày **2026-09-22**, bước
+`P2-01` chốt **ADR-050** và bảng có owner thật — nên mục này bỏ bản chép của mình ngay trong cùng
+thay đổi, chứ không để hai bản trôi khỏi nhau (`work/findings.md` **F-001**, `CLAUDE.md` §7.2).
+Kế hoạch **không sở hữu sự thật nào**; đó là câu chính nó viết ở banner đầu file.
 
-1. **Không tự hạ tầng.** Dựng không nổi ràng buộc cho một hàng *tầng 1* thì đó là một `F-XXX` gửi
-   ngược pha 1, **không** phải một lý do để hàng ấy tụt xuống tầng 3. Hạ tầng trong im lặng là đúng
-   thứ kế hoạch pha 1 §10 gọi là rủi ro lớn nhất của pha ấy, chỉ khác chiều.
-2. **Mỗi mệnh đề vẫn phải có câu truy vấn của nó, kể cả khi ràng buộc đã đứng ở tầng 1.** Ràng buộc
-   cũng bị người ta gỡ; câu truy vấn là thứ phát hiện ra điều đó.
-3. **Một câu truy vấn chưa bao giờ ra khác 0 là một câu truy vấn chưa được chứng minh.** Bộ đối
-   chiếu phải được chạy **một lần trên dữ liệu có lỗi cài sẵn** — đây là bản pha 2 của luật
-   *"sửa lỗi thì phải có test đỏ trước, xanh sau"* ([`prompt-fullstack.md`](prompt-fullstack.md)
-   §6.7), và không có nó thì cả bộ đối chiếu chỉ là một lời hứa xanh.
+⚠️ **Mọi chỗ trong repo viết *"kế hoạch §7"* vẫn đọc được** — chúng tới đây, và đây trỏ tiếp sang
+ADR-050. Đừng sửa những pointer ấy thành *"ADR-050"* hàng loạt: một lớp trỏ là đủ, và sửa hàng loạt
+là mở ra đúng loại việc rà mà **F-007** đã đo giá.
 
 ---
 

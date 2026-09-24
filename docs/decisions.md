@@ -66,6 +66,7 @@ có câu trả lời mới từ người.
 | ADR-047 | **Dừng nhận đơn web khi mất kết nối là quyết định của NGƯỜI, không của đồng hồ**: máy **báo**, **POS quyết**, mở lại bằng **nút** — lật luật 1 của `05-realtime-va-du-phong.md` §3 và một câu *Verification* của `I-008` | Đã chốt 2026-09-16 | — | **U-043** đóng; mở **U-053** — ai dừng khi quán mất mạng hẳn |
 | ADR-048 | **Ba chỗ pha 1 viết hộ pha 2/3 được VIẾT LẠI BẰNG NGÔN NGỮ TẦNG, không được khai thành ngoại lệ**: `architecture.md` §3.1 · §4 · §12.2 giữ nguyên nghĩa, bỏ tên cột · `bảng.cột` · hợp đồng API; `PAT_API` của Gate 1d nới kèm ca hồi quy | Đã chốt 2026-09-20 | — | **F-040** · **F-041** đóng; ô 10 cổng pha 1 tick ⇒ **10/10** |
 | ADR-049 | Pha 2 chạy theo **kế hoạch riêng** ở `master_plan/`, mã bước là **`P2-XX`**, đầu ra vào thư mục **mới** `docs/product/2-db/` mở cùng dòng nội dung đầu tiên; năm tầng của pha 1 dịch sang pha 2 thành **ràng buộc · giao dịch · một đường ghi · chỗ cất vết · câu truy vấn** | Đã chốt 2026-09-20 | — | mở khoá **P2-01…P2-14**; chép hình dạng của **ADR-033** |
+| ADR-050 | **Năm tầng của pha 1 dịch sang pha 2 thành năm thứ dựng được, mỗi thứ một phép chấm** — ràng buộc thật · ranh giới giao dịch · một đường ghi duy nhất · chỗ cất vết sống độc lập · một câu truy vấn ra 0 dòng; cộng **ba câu pha 2 không được viết ra** (endpoint · route · cơ chế vận hành) và ba luật dịch: không tự hạ tầng · mệnh đề tầng 1 vẫn có câu truy vấn · câu truy vấn chưa bao giờ đỏ là chưa được chứng minh | Đã chốt 2026-09-22 | — | mở khoá **P2-02** và **P2-03**; lane `prompt/DB/` vào Gate 1b |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3296,3 +3297,109 @@ hay một bước riêng.
 
 **Pointer sửa trong cùng thay đổi** (`CLAUDE.md` §7.2): `CLAUDE.md` §2 (hàng *Schema* trỏ sang kế
 hoạch pha 2) · `docs/product/00-index.md` (bảng *Sáu pha*) · `work/backlog.md` (T-080).
+
+---
+
+### ADR-050 — Năm tầng của pha 1 dịch sang pha 2 thành năm thứ DỰNG ĐƯỢC, mỗi thứ một phép chấm; và ba câu pha 2 không được viết ra
+
+**Trạng thái:** Đã chốt 2026-09-22 (P2-01, bước 1/14 của pha 2 —
+`master_plan/DB_master_plan_banh_cuon_ba_thanh.md` §6). Nó **không lật** một câu nào của
+**ADR-035** (ranh giới sở hữu theo pha) hay **ADR-049** (kế hoạch pha 2): ADR-049 điểm 4 đã nêu
+**tên** năm thứ ấy, quyết định này viết **nghĩa đầy đủ** và **phép chấm** của từng thứ — phần
+ADR-049 cố ý để lại cho bước đầu tiên của pha.
+
+Nó cũng **không sở hữu tầng**. Tầng giữ từng `I-0xx` là của pha 1
+(`docs/product/1-system-design/03-bao-ve-invariant.md`, **ADR-035**). Quyết định này chỉ trả lời
+một câu: *pha 2 nợ cái gì cho mỗi tầng, và biên nhận trông như thế nào.*
+
+**Decision:**
+
+**1. Từ vựng bắt buộc — năm tầng, mỗi tầng ba ô.** Mọi bước của pha 2 dùng đúng bảng này; bước nào
+thấy mình cần một ô thứ tư thì đó là một `F-XXX`, không phải một cách đọc riêng.
+
+| Tầng ở pha 1 | Pha 2 **nợ** cái gì | **Chấm** bằng | **KHÔNG** phải biên nhận |
+|:--:|---|---|---|
+| **1** — cơ sở dữ liệu giữ | một **ràng buộc thật trong lược đồ**: khoá duy nhất (kể cả khoá duy nhất chỉ áp cho vài trạng thái), điều kiện kiểm, khoá ngoại bắt buộc | cố tình dựng trạng thái sai **bằng tay** ⇒ database **từ chối**, và **dán nguyên lời từ chối** | *"đã tạo xong bảng"* · một dòng bình luận nói rằng nó sẽ từ chối · một phép kiểm nằm ở tầng ứng dụng |
+| **2** — một giao dịch giữ | một **ranh giới giao dịch viết ra**: bảng nào cùng sống hoặc cùng chết trong một lần ghi | cắt giữa chừng ⇒ **không nửa nào sống sót**, dán output | *"vì hai lệnh chạy liền nhau"* · một thứ tự ghi không ai cưỡng chế được |
+| **3** — miền nghiệp vụ giữ | lược đồ **không mở đường ghi thứ hai** tới ô ấy: con số tổng **cộng lại từ chi tiết**, không đứng thành một ô ai cũng ghi được | **liệt kê mọi đường ghi** tới ô đó ⇒ phải đúng **một** | một quy ước *"chỉ ghi qua chỗ này"* mà lược đồ vẫn để ngỏ đường thứ hai |
+| **4** — người + thủ tục giữ | một **chỗ cất vết**: ai · lúc nào · lý do · bản trước và bản sau — và vết **sống độc lập** với bản ghi nó nói về | **xoá bản ghi gốc** ⇒ vết **vẫn đọc được** sau nhiều ngày, dán output | một cột *"ghi chú"* · một vết chết theo bản ghi gốc · một bản ghi lịch sử không có **bản trước** |
+| **5** — phép đối chiếu bắt sau khi hỏng | **đúng một câu truy vấn ra 0 dòng**, gom vào bộ chạy sau khi đóng quán (`P2-11`) | **cài một lỗi thật vào dữ liệu** ⇒ đúng câu ấy ra **khác 0** | một câu truy vấn chưa bao giờ đỏ · một phép đối chiếu vẫn còn viết bằng lời |
+
+**2. Ba luật khi dịch** — không luật nào là hình thức:
+
+1. **Không tự hạ tầng.** Dựng không nổi ràng buộc cho một hàng *tầng 1* thì đó là một `F-XXX` gửi
+   ngược pha 1, **không** phải một lý do để hàng ấy tụt xuống tầng 3. Hạ tầng trong im lặng là đúng
+   thứ kế hoạch pha 1 §10 gọi là rủi ro lớn nhất của pha ấy, chỉ khác chiều: pha 1 sợ **ghi tầng
+   cao hơn sự thật**, pha 2 sợ **hạ tầng cho dễ dựng**.
+2. **Mỗi mệnh đề vẫn phải có câu truy vấn của nó, kể cả khi ràng buộc đã đứng ở tầng 1.** Ràng buộc
+   cũng bị người ta gỡ; câu truy vấn là thứ phát hiện ra điều đó. Luật này chép nguyên luật đọc số
+   2 của `03-bao-ve-invariant.md` §0 — cùng câu, đổi chiều thi hành.
+3. **Một câu truy vấn chưa bao giờ ra khác 0 là một câu truy vấn chưa được chứng minh.** Bộ đối
+   chiếu phải được chạy **một lần trên dữ liệu có lỗi cài sẵn**. Đây là bản pha 2 của luật *"sửa
+   lỗi thì phải có test đỏ trước, xanh sau"*, và không có nó thì cả bộ đối chiếu chỉ là một lời hứa
+   xanh (`work/findings.md` **F-017** — một bộ lọc rỗng vì viết sai trông y hệt một bộ lọc rỗng vì
+   không có lỗi).
+
+**3. Ba câu pha 2 KHÔNG được viết ra, và viết gì thay vào.** Cột thứ ba là chỗ quyết định này khác
+một lời cấm trơn: ranh giới chỉ giữ được khi bên bị cấm có câu để nói.
+
+| Không được viết ở pha 2 | Đầu ra của | Pha 2 viết gì thay vào |
+|---|---|---|
+| endpoint · tên hàm · chữ ký API · quyền theo vai của một đường gọi | pha 3 · BE (**ADR-035**) | *"đường ghi tới ô này phải là **một**, và lược đồ không mở đường thứ hai"* |
+| route · component · cái gì hiện ở màn nào | pha 4 · FE (**ADR-035**) | *"con số này phải **đọc ra được** bằng một phép cộng từ chi tiết"* |
+| compose · backup theo lịch · cách phục hồi khi hỏng máy | pha 5 · Deploy | *"mỗi migration phải có **đường lùi chạy thật được**"* (`P2-09`) |
+
+**4. Hai thứ pha 2 không mở lại.** Gặp chỗ **nghiệp vụ** chưa rõ ⇒ hỏi chủ quán, hoặc một `U-XXX`
+(`CLAUDE.md` §3.5 — **không có mức L0**). Gặp một hàng **tầng** sai ⇒ một `F-XXX` gửi ngược pha 1,
+**không** tự hạ tầng cho dễ dựng. Hai sổ, không bao giờ trộn.
+
+**5. Bước này không mở `docs/product/2-db/`.** Thư mục ấy ra đời cùng **dòng nội dung đầu tiên** của
+pha, ở `P2-03` (**ADR-035** luật 2 · `docs/product/00-index.md` → *Luật ghi*). Sau lượt chốt
+ADR này, **không** file nào dưới `docs/product/2-db/` tồn tại.
+
+**Why:**
+
+- **Chữ *"phải do cơ sở dữ liệu giữ"* là một câu GỬI SANG pha 2, và nó chưa có người dịch.**
+  `03-bao-ve-invariant.md` §0 luật đọc 4 nói thẳng: *"Mọi câu **"tầng 1"** ở đây là YÊU CẦU gửi pha
+  2, không phải một ràng buộc đã có."* Chừng nào câu ấy chưa được dịch thành một hình dạng chấm
+  được, mỗi lát trong năm lát lược đồ (`P2-04`…`P2-08`) sẽ tự hiểu nó một kiểu — và năm lát ấy được
+  phép **chạy song song** (kế hoạch §6), tức năm cách hiểu sẽ gặp nhau ở `P2-13` chứ không sớm hơn.
+- **Cột *KHÔNG phải biên nhận* tồn tại vì chỗ hỏng thật nằm ở đó.** Rủi ro không phải một bước quên
+  dựng ràng buộc; rủi ro là một bước dựng xong rồi tự khai là đạt bằng *"đã tạo xong bảng"* — thứ
+  không chứng minh gì (**ADR-049**, *Rejected alternatives*). Một thước chỉ đo được khi nó nói cả
+  cái **không** tính.
+- **Ba luật dịch đều là luật đã có ở nơi khác, và đều đã mất hiệu lực một lần.** Luật 2 là luật đọc
+  số 2 của pha 1; luật 3 là hình dạng của **F-017**, thứ đã để một vòng rà tin vào một bộ lọc im
+  lặng. Gom chúng vào một chỗ mà mọi bước pha 2 trích được rẻ hơn để mỗi bước tự nhớ.
+- **Cổng §9 của kế hoạch cần một thước trước khi có cái để chấm.** Ô thứ ba của cổng đòi *"dán
+  nguyên lời từ chối của database khi cố dựng trạng thái sai"*. Không có bảng ở điểm 1, ô ấy được
+  tick bằng cảm giác — đúng thứ cổng pha 1 mất nhiều lượt để bỏ (`work/findings.md` **F-033**).
+- **Hậu quả ở quán nếu bỏ bước này.** Một mệnh đề chạm tiền tụt tầng mà không ai thấy nghĩa là cái
+  duy nhất chặn nó là người thao tác nhớ đúng luật, lúc đông khách. `I-001` tụt tầng ⇒ hai phiên
+  chưa thanh toán trên một bàn ⇒ một hoá đơn không ai thu.
+
+**Rejected alternatives:**
+
+- *Để mỗi lát lược đồ tự quyết nghĩa của **tầng 1**, rồi thống nhất lại ở `P2-13`.* Bác: năm lát
+  chạy song song, nên năm cách hiểu chỉ gặp nhau ở cuối pha — lúc mỗi lát đã có pointer trỏ vào và
+  sửa phải sửa cả năm. Đây đúng hình `work/findings.md` **F-010** · **F-014** mô tả cho `work/scope.txt`,
+  chỉ khác chỗ áp dụng.
+- *Gộp bước này vào `P2-03` (quy ước dữ liệu) cho gọn.* Bác: `P2-01` đặt **thước**, `P2-03` dùng
+  thước để chốt *tiền cất bằng gì*. Một lượt vừa đặt vừa dùng thước là lượt tự chấm mình — và chữ
+  *"và"* nối hai danh từ khác nhau là dấu hiệu chẻ việc sai mà kế hoạch §6 gọi tên.
+- *Viết kèm một lược đồ mẫu nhỏ để "dễ hình dung".* Bác, và đây là phương án nguy hiểm nhất vì nó
+  hữu ích nhất trong ngắn hạn: một ví dụ `CREATE TABLE` trong ADR này sẽ được mười ba bước sau đọc
+  như lược đồ đã chốt — đúng cách đề xuất 16 bảng ngày 2026-08-31 suýt trở thành lược đồ thật (kế
+  hoạch §10 · `architecture.md` §8 đã đo **tám** chỗ đề xuất ấy chưa có chỗ cất).
+- *Cho phép hạ tầng khi dựng không nổi ràng buộc, miễn là ghi lý do.* Bác: một ngoại lệ có lý do
+  vẫn là một ngoại lệ, và pha 1 vừa trả giá cho đúng đường ấy — **ADR-048** chốt *pha 1 viết hộ pha
+  sau thì **viết lại**, không khai thành ngoại lệ*. Hạ tầng là đổi một câu của pha 1, nên nó phải
+  đi qua pha 1.
+
+**Ba chỗ quyết định này CỐ Ý không chạm, vẫn thuộc chủ repo** (**ADR-049**, kế hoạch §8): lược đồ
+admin đi cùng pha 2 hay theo lane của nó · ba hàng `CLAUDE.md` §2 đổi ở ba bước khác nhau hay đổi
+hết ở lượt mở thư mục · nhà cho `work/findings.md` **F-034** (*mất hẳn bản ghi đã ghi*).
+
+**Pointer sửa trong cùng thay đổi** (`CLAUDE.md` §7.2): `scripts/check-links.sh` (lane `prompt/DB/`
+vào danh sách Gate 1b chấm — **F-007**) · `prompt/DB/` → `README.md` mới · `work/backlog.md`
+(`P2-01` → *Done*, `P2-02` · `P2-03` → *Ready*) · `work/backlog_DB.md` (entry `P2-01` + *Mục lục*).
