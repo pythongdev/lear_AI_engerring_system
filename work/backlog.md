@@ -62,12 +62,12 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] P2-01 **Ranh giới và từ vựng của cả pha 2 — năm tầng của pha 1 dịch sang pha 2 thành cái
-  gì** — **L2**, mở 2026-09-20 (T-081). Mô tả dài: `work/backlog_DB.md` →
-  [P2-01](backlog_DB.md#p2-01); thứ tự · mức · đầu ra kiểm chứng được:
-  `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` §6. **Bước duy nhất của pha 2 không có cột
-  *Cần xong trước***, nên nó là bước duy nhất có dòng ở đây; mười ba bước kia có mô tả đầy đủ
-  nhưng **chưa** có dòng trạng thái — `brief.sh` cắt Ready ở sáu mục (**F-012**).
+- [ ] P2-03 **Quy ước dữ liệu — tiền cất bằng gì, mốc cất bằng gì; và lượt này MỞ
+  `docs/product/2-db/`** — **L2**, hết chặn 2026-09-22 (P2-01 `Done`). Mô tả dài:
+  `work/backlog_DB.md` → [P2-03](backlog_DB.md#p2-03). **Chặn sáu bước** — nhiều nhất pha 2 — nên
+  nó là dòng *Ready* duy nhất còn lại của pha 2 và là bước đáng lấy tiếp. Vùng
+  `docs/product/2-db/` mà nó mở ra nay **đã có cổng gác** (`P2-02` xong 2026-09-24), nên file đầu
+  tiên của pha 2 bị Gate 1d chấm ngay từ lượt sinh ra nó.
 
 Việc bảo trì ở mục này không việc nào chặn ai — chen vào lúc nào cũng được. Chuỗi BA nay
 không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31, T-016 xong 2026-08-31).
@@ -229,6 +229,38 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] P2-02 **Gate 1d nay chấm CẢ vùng pha 2, với một bộ mẫu riêng im lặng với SQL** — **L2**,
+  xong 2026-09-24, bước **2/14** của pha 2. Trước lượt này vùng `docs/product/2-db/` có **không**
+  cổng nào: `scripts/check-phase-boundary.sh` chỉ đọc thư mục pha 1, và bộ mẫu SQL của nó sẽ đỏ với
+  đúng thứ pha 2 phải viết. Nay **hai vùng, hai bộ mẫu** — vùng pha 1 giữ **nguyên** hành vi, vùng
+  pha 2 đỏ với **endpoint · route · component** và im lặng với SQL (**ADR-049** · **ADR-050**).
+  **Chỗ khó thật của bước, ghi ra vì nó sẽ bị "dọn cho gọn":** mẫu endpoint của pha 1 nhận `DELETE`
+  + khoảng trắng + chữ, nên dùng chung mẫu ấy cho pha 2 sẽ kêu oan `ON DELETE CASCADE` và
+  `DELETE FROM …` ở **mọi** lát lược đồ có khoá ngoại; mẫu vùng pha 2 vì thế đòi một **dấu gạch
+  chéo nằm trong đường dẫn** ngay sau động từ — vẫn bắt `POST staff/debts/:id/collect` (hồi quy
+  **F-041**) mà không kêu oan SQL. Bộ ca **10 → 18**: mười ca cũ xanh **không đổi một kỳ vọng nào**,
+  tám ca mới, trong đó ca *SQL có `DELETE` không bị kêu oan* và ca *hai vùng cùng vi phạm thì nêu cả
+  hai* là hai ca không có thì lần sửa sau im lặng ở cả hai chiều (**F-017**). Vùng pha 3 · pha 4
+  **cố ý không thêm** — thư mục chưa tồn tại, bộ mẫu cho vùng chưa có nội dung là bộ mẫu chưa bao
+  giờ được chấm. `check-phase-boundary.ignore` **không thêm mục nào**: ignore là cho một chỗ trích
+  cố ý, không phải để im một lớp lỗi. ⇒ **`P2-03` mở `docs/product/2-db/` với cổng đã sẵn sàng.**
+  Gate xanh, `verify.sh` chạy thật (2026-09-24). Mô tả dài: `work/backlog_DB.md` →
+  [P2-02](backlog_DB.md#p2-02)
+- [x] P2-01 **Ranh giới và từ vựng của cả pha 2 có owner: `docs/decisions.md` ADR-050** — **L2**,
+  xong 2026-09-22, bước **1/14** của pha 2. Bảng năm tầng nay có **bốn** cột: *pha 2 nợ cái gì* ·
+  *chấm bằng gì* · **cái gì KHÔNG phải biên nhận** — cột thứ ba tồn tại vì chỗ hỏng thật là một
+  bước dựng xong rồi tự khai đạt bằng *"đã tạo xong bảng"*. Cộng **ba luật khi dịch** (không tự hạ
+  tầng · mệnh đề tầng 1 **vẫn** có câu truy vấn của nó · một câu truy vấn chưa bao giờ ra khác 0 là
+  một câu **chưa được chứng minh**) và **ba câu pha 2 không được viết ra** (endpoint/chữ ký ·
+  route/component · cơ chế vận hành), mỗi câu kèm **viết gì thay vào**. Lane **`prompt/DB/`** dựng
+  cùng lượt và `prompt/DB/*` vào Gate 1b (`scripts/check-links.sh`) — chứng minh bằng một đường dẫn
+  cố tình sai ⇒ gate **đỏ**, sửa lại ⇒ **xanh** (**F-007**), bộ ca cũ vẫn xanh. **Một chỗ dọn phát
+  sinh giữa lượt, scope mở rộng có khai báo:** ADR-050 nhận quyền sở hữu bảng năm tầng ⇒ **§7 của
+  kế hoạch pha 2 thôi giữ bản chép và chỉ còn trỏ** (**F-001**; số hiệu ba luật giữ nguyên 1·2·3
+  nên mọi pointer *"kế hoạch §7"* vẫn đọc được). **Không** file nào dưới `docs/product/2-db/` tồn
+  tại sau lượt này — thư mục ấy vẫn là của `P2-03` (**ADR-035** luật 2). Ba chỗ **ADR-049** để lại
+  cho chủ repo **không bị trả lời hộ**. ⇒ **`P2-02` và `P2-03` hết bị chặn.** Gate xanh, `verify.sh`
+  chạy thật (2026-09-22). Mô tả dài: `work/backlog_DB.md` → [P2-01](backlog_DB.md#p2-01)
 - [x] T-082 **Món nợ trạng thái scope lần thứ BA, và lần thứ SÁU một phiên song song nhặt việc của
   phiên khác** — **L1**, xong 2026-09-22. Commit `04c5a64` (2026-09-20, subject ` chuyển sang pha
   2`) gộp việc của **ba** phiên vào một commit và mang theo `work/scope.txt` **còn nguyên hai khối

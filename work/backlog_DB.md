@@ -55,8 +55,8 @@ Cột **Trạng thái** chỉ đọc **entry ở file này** đã có dòng *✅
 
 | Bước | Entry | Mức | Trạng thái |
 |---|---|:--:|---|
-| P2-01 | [Ranh giới và từ vựng của cả pha 2](#p2-01) | L2 | Mở |
-| P2-02 | [Gate 1d học vùng pha 2](#p2-02) | L2 | Mở |
+| P2-01 | [Ranh giới và từ vựng của cả pha 2](#p2-01) | L2 | **Đóng** |
+| P2-02 | [Gate 1d học vùng pha 2](#p2-02) | L2 | **Đóng** |
 | P2-03 | [Quy ước dữ liệu — và lượt mở `docs/product/2-db/`](#p2-03) | L2 | Mở |
 | P2-04 | [Lược đồ lát bán hàng lõi](#p2-04) | L2 | Mở |
 | P2-05 | [Lược đồ menu · giá · ảnh chụp giá lúc đặt](#p2-05) | L2 | Mở |
@@ -71,8 +71,9 @@ Cột **Trạng thái** chỉ đọc **entry ở file này** đã có dòng *✅
 | P2-14 | [Rà chéo ranh giới pha và pointer](#p2-14) | L1 | Mở |
 
 **Thứ tự lấy việc, và cái gì chạy song song được: kế hoạch §6.** Đừng đọc thứ tự từ mục lục trên —
-nó xếp theo số, còn phụ thuộc thật thì không. Tính tới 2026-09-20, **`P2-01` là bước duy nhất
-không có cột *Cần xong trước***, nên nó là bước duy nhất có dòng ở `work/backlog.md` → *Ready*.
+nó xếp theo số, còn phụ thuộc thật thì không. **`P2-01` đã `Done` 2026-09-22**, nên hai bước đứng
+trên nó — **`P2-02`** và **`P2-03`** — nay có dòng ở `work/backlog.md` → *Ready*. Mười một bước còn
+lại vẫn chưa có dòng trạng thái: `brief.sh` cắt *Ready* ở sáu mục (**F-012**).
 
 **Chỗ đang chặn, đo ngày 2026-09-20** — mỗi chỗ ghi ở owner của nó, đếm lại ở đó chứ đừng tin con
 số trong câu này (`work/findings.md` **F-003**). Bảng sống ở kế hoạch §8; bảng dưới đây chỉ là bản
@@ -108,7 +109,20 @@ lane pointer **không cổng nào đọc** (**F-007**).
 <a id="p2-01"></a>
 ### P2-01 — Pha 1 viết *"phải do cơ sở dữ liệu giữ"* hai mươi mốt lần, và không chỗ nào nói câu ấy dịch sang pha 2 thành cái gì
 
-**Prompt:** `prompt/DB/P2-01-ranh-gioi-tu-vung-pha-2-L2.md` — **chưa viết**, viết lúc nhận việc ·
+✅ **Xong ngày 2026-09-22** — `docs/decisions.md` **ADR-050**: bảng năm tầng **bốn** cột (*pha 2 nợ
+cái gì* · *chấm bằng gì* · **cái gì KHÔNG phải biên nhận**), **ba luật khi dịch**, và **ba câu pha 2
+không được viết ra** kèm *viết gì thay vào*. Lane **`prompt/DB/`** dựng cùng lượt, và `prompt/DB/*`
+vào danh sách Gate 1b chấm (`scripts/check-links.sh`) — chứng minh bằng một đường dẫn cố tình sai ⇒
+gate **đỏ**, sửa lại ⇒ **xanh** (**F-007**). **Một chỗ dọn phát sinh giữa lượt:** ADR-050 nhận
+quyền sở hữu bảng năm tầng, nên **§7 của kế hoạch pha 2 thôi giữ bản chép của mình và chỉ còn trỏ**
+— bản thứ hai luôn trôi (**F-001**), và dọn nó là bug của chính lượt ấy (`CLAUDE.md` §7.2). Mọi
+pointer viết *"kế hoạch §7"* vẫn đọc được; số hiệu ba luật giữ nguyên 1 · 2 · 3.
+**Không** file nào dưới `docs/product/2-db/` tồn tại sau lượt này — thư mục ấy vẫn là của `P2-03`.
+⇒ **`P2-02` và `P2-03` hết bị chặn.** Entry ở lại đây theo luật 3 đầu file; dòng `- [x]` ở
+`work/backlog.md` → *Done*.
+
+**Prompt:** [`prompt/DB/P2-01-ranh-gioi-tu-vung-pha-2-L2.md`](../prompt/DB/P2-01-ranh-gioi-tu-vung-pha-2-L2.md)
+(viết 2026-09-22 lúc nhận việc, sáu khối theo `docs/prompt-guideline.md`) ·
 **L2** · bước 1/14 (kế hoạch §6) · **không bị bước nào chặn** — bước duy nhất như vậy của pha 2 ·
 **mở khoá** cả mười ba bước còn lại (§6: `P2-02` và `P2-03` ghi thẳng *Cần xong trước: P2-01*, và
 mọi bước sau đứng trên hai bước ấy)
@@ -192,9 +206,24 @@ giữ).
 <a id="p2-02"></a>
 ### P2-02 — Cổng duy nhất biết chặn một pha viết hộ pha sau chỉ đọc thư mục pha 1, và bộ mẫu SQL của nó sẽ đỏ với đúng thứ pha 2 phải viết
 
-**Prompt:** `prompt/DB/P2-02-gate-1d-vung-pha-2-L2.md` — **chưa viết** · **L2** · bước 2/14 (kế
-hoạch §6) · **cần xong trước:** `P2-01` · **không** chặn bước nào, nhưng mọi bước viết file pha 2
-chạy **mù** cho tới khi nó xong · chạy song song được với cả dãy
+✅ **Xong ngày 2026-09-24** — `scripts/check-phase-boundary.sh` nay đọc **hai vùng, hai bộ mẫu**:
+vùng pha 1 giữ **nguyên** hành vi cũ (đỏ với SQL · endpoint · route), vùng `docs/product/2-db/` đỏ
+với **endpoint · route · component** và **im lặng với SQL** — vì SQL là đầu ra hợp lệ của pha 2
+(**ADR-049** · **ADR-050**). Mẫu endpoint của hai vùng **khác nhau có lý do đo được**: mẫu pha 1
+nhận `DELETE` + khoảng trắng + chữ, nên ở vùng pha 2 nó sẽ kêu oan `ON DELETE CASCADE` và
+`DELETE FROM …` ở **mọi** lát lược đồ có khoá ngoại; mẫu vùng pha 2 vì thế đòi một **dấu gạch
+chéo nằm trong đường dẫn** ngay sau động từ — vẫn bắt được `POST staff/debts/:id/collect` (hồi quy
+**F-041**) mà không kêu oan SQL. Bộ ca lên **mười tám**: mười ca cũ xanh **không đổi một kỳ vọng
+nào**, tám ca mới cho vùng pha 2, trong đó ca *SQL có `DELETE` không bị kêu oan* là thứ duy nhất
+chặn việc "dọn cho gọn" bằng cách gộp hai bộ mẫu về một. Vùng pha 3 và pha 4 **cố ý không thêm**:
+thư mục của chúng chưa tồn tại, và một bộ mẫu viết cho vùng chưa có nội dung là bộ mẫu chưa bao giờ
+được chấm (**F-017**). `scripts/check-phase-boundary.ignore` **không thêm mục nào**. Entry ở lại đây
+theo luật 3 đầu file; dòng `- [x]` ở `work/backlog.md` → *Done*.
+
+**Prompt:** [`prompt/DB/P2-02-gate-1d-vung-pha-2-L2.md`](../prompt/DB/P2-02-gate-1d-vung-pha-2-L2.md)
+(viết 2026-09-24 lúc nhận việc) · **L2** · bước 2/14 (kế hoạch §6) · **cần xong trước:** `P2-01`,
+**đã xong 2026-09-22** · **không** chặn bước nào, nhưng mọi bước viết file pha 2 chạy **mù** cho
+tới khi nó xong · chạy song song được với cả dãy
 
 **Goal:**
 Xong rồi thì `scripts/check-phase-boundary.sh` đỏ khi một file pha 2 mang **endpoint · route ·

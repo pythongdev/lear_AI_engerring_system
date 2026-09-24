@@ -51,11 +51,14 @@ check() { # check <tên ca> <exit mong đợi> <chuỗi phải có trong output,
 
 echo "[test] check-phase-boundary.sh"
 
-# 1 — không có gì đổi trong pha 1 → sạch
+# 1 — SQL trong vùng PHA 2 là đầu ra hợp lệ → sạch.
+# Ca này có từ trước P2-02, lúc vùng pha 2 hoàn toàn không bị chấm. Từ
+# 2026-09-24 vùng ấy CÓ bị chấm, chỉ là bộ mẫu của nó không có SQL — nên ca này
+# nay chứng minh một điều MẠNH HƠN: cổng đọc file ấy và cố ý im lặng.
 r="$(newrepo clean)"
 mkdir -p "$r/docs/product/2-db"
 printf 'CREATE TABLE orders (id BIGINT);\n' > "$r/docs/product/2-db/schema.md"
-check "đổi ngoài pha 1 không bị chấm" 0 "" "$(run "$r")"
+check "SQL trong vùng pha 2 KHÔNG bị chấm" 0 "" "$(run "$r")"
 
 # 2 — pha 1 đổi (chưa commit), không có mẫu vi phạm → sạch
 r="$(newrepo ok)"
@@ -110,6 +113,62 @@ check "endpoint KHÔNG có / mở đầu bị bắt (F-041)" 1 "pha 1 đang đ�
 r="$(newrepo prose)"
 printf 'Quầy DUYỆT đơn trước khi bếp làm; không trạm nào bấm gì.\nMột lần thu chia được hai phương thức.\n' > "$r/$PHASE1/01-ranh-gioi.md"
 check "văn xuôi pha 1 không bị kêu oan" 0 "" "$(run "$r")"
+
+# ===== VÙNG PHA 2 — thêm 2026-09-24 bởi P2-02 ==============================
+# Hai bộ mẫu, hai vùng: pha 2 PHẢI viết SQL (ADR-049 · ADR-050), nên vùng ấy
+# đỏ với endpoint và route mà im lặng với SQL. Không có nhóm ca này thì lần sửa
+# sau rất dễ gộp hai vùng về một bộ mẫu, và cái gộp ấy im lặng ở cả hai chiều.
+PHASE2="docs/product/2-db"
+
+# 11 — pha 2 đặt tên endpoint (pha 3) → đỏ
+r="$(newrepo p2_api)"
+printf 'Đường ghi duy nhất là POST /api/orders.\n' > "$r/$PHASE2/02-luoc-do.md"
+check "pha 2: endpoint bị bắt" 1 "pha 2 đang đặt tên" "$(run "$r")"
+
+# 12 — HỒI QUY F-041 trong vùng pha 2: endpoint KHÔNG mở đầu bằng '/' vẫn phải
+# bị bắt. Đây là ca mà một mẫu chỉ đòi '/api/' sẽ im hoàn toàn.
+r="$(newrepo p2_api_noslash)"
+printf 'POST   staff/debts/:id/collect   thu nợ\n' > "$r/$PHASE2/04-duong-tien.md"
+check "pha 2: endpoint KHÔNG có / mở đầu bị bắt (F-041)" 1 "pha 2 đang đặt tên" "$(run "$r")"
+
+# 13 — pha 2 đặt tên component / route (pha 4) → đỏ
+r="$(newrepo p2_fe)"
+printf 'Màn Nợ dùng <DebtList /> để hiển thị.\n' > "$r/$PHASE2/04-duong-tien.md"
+check "pha 2: component bị bắt" 1 "pha 2 đang đặt tên" "$(run "$r")"
+
+# 14 — CA QUAN TRỌNG NHẤT CỦA NHÓM: SQL có chữ DELETE không được kêu oan.
+# Mẫu endpoint của vùng pha 1 nhận 'DELETE' + khoảng trắng + chữ, nên nếu vùng
+# pha 2 dùng chung mẫu ấy thì MỌI lát lược đồ có khoá ngoại sẽ đỏ. Ca này là
+# thứ duy nhất chặn việc "dọn cho gọn" bằng cách gộp hai mẫu.
+r="$(newrepo p2_sql_delete)"
+cat > "$r/$PHASE2/02-luoc-do.md" <<'EOF'
+Khoá ngoại của dòng đơn khai ON DELETE CASCADE về đơn của nó.
+Dọn bản nháp: DELETE FROM order_draft WHERE created_at < now();
+Ràng buộc kiểm dùng CHECK (so_luong <> 0).
+EOF
+check "pha 2: SQL có DELETE không bị kêu oan" 0 "" "$(run "$r")"
+
+# 15 — file CHƯA TRACK trong vùng pha 2 cũng bị chấm
+r="$(newrepo p2_untracked)"
+printf 'GET /api/reports/debts trả về danh sách.\n' > "$r/$PHASE2/nhap.md"
+check "pha 2: file chưa track vẫn bị chấm" 1 "pha 2 đang đặt tên" "$(run "$r")"
+
+# 16 — văn xuôi pha 2 nói về đường ghi KHÔNG bị kêu oan.
+# Đây đúng là câu ADR-050 dặn pha 2 viết THAY CHO một endpoint.
+r="$(newrepo p2_prose)"
+cat > "$r/$PHASE2/02-luoc-do.md" <<'EOF'
+Đường ghi tới ô này phải là MỘT, và lược đồ không mở đường thứ hai.
+Con số tổng phải đọc ra được bằng một phép cộng từ chi tiết.
+EOF
+check "pha 2: văn xuôi 'một đường ghi' không bị kêu oan" 0 "" "$(run "$r")"
+
+# 17 — hai vùng cùng vi phạm trong một lượt → đỏ, và output nêu CẢ HAI
+r="$(newrepo both)"
+printf 'CREATE TABLE orders (id BIGINT);\n' > "$r/$PHASE1/01-ranh-gioi.md"
+printf 'POST /api/orders tạo đơn.\n' > "$r/$PHASE2/02-luoc-do.md"
+got="$(run "$r")"
+check "hai vùng cùng vi phạm: nêu pha 1" 1 "pha 1 đang đặt tên" "$got"
+check "hai vùng cùng vi phạm: nêu pha 2" 1 "pha 2 đang đặt tên" "$got"
 
 if [ "$fails" -ne 0 ]; then
   echo "check-phase-boundary.test: FAIL ($fails ca)"
