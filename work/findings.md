@@ -103,6 +103,8 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-039 | Gate 7b đọc khối commit theo từng dòng ⇒ khối nối dòng `\` vừa bị kêu nhầm vừa bị chấm sót bảy trên mười file | Fixed |
 | F-040 | Ba chỗ vượt ranh giới pha trong `architecture.md`, chỉ một có tên trong ngoại lệ — cả ba sinh TRƯỚC ADR-035 | Open |
 | F-041 | Gate 1d mù với khối API rõ nhất repo (mẫu đòi `/` ngay sau động từ), và dòng ignore ghi sai mục | Open |
+| F-042 | Mã QR của bàn phải không đoán được và đổi được — pha 1 không có mệnh đề nào | Open |
+| F-043 | Một lần gửi đơn phải thành đúng một đơn — pha 1 không có mệnh đề nào | Open |
 
 ---
 
@@ -2471,6 +2473,13 @@ thuộc khối ấy; khối đó không bao giờ được dùng.
   lần thứ tư — `pre-commit` so tập file đang stage với khối `work/scope.txt`, hoặc `git worktree`
   riêng cho mỗi phiên — và **cả hai vẫn thuộc quyết định của chủ repo**, không phiên nào tự dựng.
 
+**LẦN THỨ BẢY — `1480aba` (2026-09-25 21:52), GHI BỞI T-097 (Claude Code).** Commit
+**`T-094: Ghi nhận lời đáp U-053–U-059`** mang theo dòng *In Progress* của **T-097** mà phiên
+T-097 vừa thêm vào `work/backlog.md` vài phút trước, khi còn đang làm. Ba commit T-096 · T-095 ·
+T-094 vào git trong bốn phút, giữa lượt làm của T-097. Không mất nội dung và `work/scope.txt` ở
+`HEAD` vẫn comment-only, nên lần này chỉ là *sai chỗ*: ai tìm lúc T-097 được nhận sẽ thấy nó dưới
+subject của T-094. ⇒ Kết luận không đổi; đường vá vẫn thuộc chủ repo.
+
 ### F-026 — Ba invariant sinh SAU khi kế hoạch chia nhóm, nên không nhóm nào của pha 1 nhận chúng
 
 **Problem:**
@@ -3724,3 +3733,62 @@ tự khai trong thân mục, không chuỗi nào của nó khớp bộ mẫu.
 
 **Status:**
 Closed — 2026-09-20, T-079 (**ADR-048**).
+
+### F-042 — Mã QR của bàn phải không đoán được và đổi được, mà pha 1 không có mệnh đề nào nói vậy
+
+**Problem:**
+Kênh `qr_table` (`master_plan/shop-facts.md` §2) gắn một lượt gọi vào phiên bàn **theo mã QR dán ở
+bàn** — khách ẩn danh, mã là thứ duy nhất nói *lượt này của bàn nào*. Rà ngày 2026-09-25 (T-097,
+`grep -n` trên `quality/invariants.md` và `docs/product/1-system-design/`): **không** mệnh đề `I-0xx`
+nào, **không** hàng bảo vệ nào, **không** dòng `YC` nào đòi mã ấy *không đoán được từ mã của bàn
+khác* hay *đổi được khi đã lộ*. Bằng chứng từ dự án cũ, không phải dữ kiện quán này
+(`work/proposals/from_old_project/data_base/nghien-cuu.md` §2.1): mã sinh bằng một hàm dựa trên thời
+gian, mười một bàn sinh cùng một lượt ⇒ có một mã là suy ra mười mã kia; và không có đường đổi mã, nên
+lộ một lần là hỏng vĩnh viễn.
+
+**Impact:**
+Mất tiền ở **phiên bàn**: một người đã từng ngồi quán gọi món ghi vào hoá đơn **bàn khác**, và bàn ấy
+trả cho thứ mình không gọi — hoặc cãi nhau với quầy lúc tính tiền, đúng lúc đông khách. Lớp người
+đang có là **quầy phải duyệt** đơn QR (`docs/product/0-ba/ban-hang/02-kenh-ban.md`), nhưng quầy duyệt
+theo *số bàn trên đơn*, không biết ai đang cầm điện thoại. Bước pha 2 phải để trống vì nó: **`P2-10`**
+(dữ liệu mồi sinh mã cho bàn) — bẫy của bước ấy trỏ về đây.
+
+**Decision / Fix:**
+Chưa quyết. Việc của **phiên nhận finding này ở pha 1**: thêm mệnh đề (hoặc nói rõ vì sao không cần)
+và chốt tầng, theo **ADR-050** — pha 2 không tự đặt luật, không tự chọn tầng. Có thể cần hỏi chủ quán
+vế *đổi mã* (in lại mã dán bàn là việc tay của quán). Finding này **không** đề xuất cơ chế.
+
+**Related task:**
+T-097 · `work/backlog_DB.md` → **P2-10** · `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` §8
+
+**Status:**
+Open
+
+### F-043 — Một lần gửi đơn phải thành đúng một đơn, mà pha 1 không có mệnh đề nào nói vậy
+
+**Problem:**
+Khách bấm gửi hai lần, hoặc mạng chập chờn khiến máy gửi lại, thì hệ thống phải ghi **một** đơn, không
+phải hai. Rà ngày 2026-09-25 (T-097, `grep -n` trên `quality/invariants.md` và
+`docs/product/1-system-design/`): **không** mệnh đề `I-0xx`, **không** hàng bảo vệ, **không** dòng
+`YC` nào giữ vế này. Các chỗ nói *"hai lần"* trong pha 1 đều nói về **tiền đếm hai lần** (`I-014`,
+nợ trả lại) — không chỗ nào nói về **đơn tạo hai lần**. Bằng chứng từ dự án cũ, không phải dữ kiện
+quán này (`work/proposals/from_old_project/data_base/nghien-cuu.md` §3.1): cả cửa khách tự bấm lẫn
+cửa nhân viên bấm lúc đông đều dính, và cách kiểm-rồi-ghi ở tầng code thua khi hai lần gửi tới gần
+như cùng lúc.
+
+**Impact:**
+Mất tiền theo hai chiều. Với **ba kênh không gắn bàn**, mỗi đơn là một đơn vị thanh toán riêng
+(`quality/invariants.md` `I-007`): đơn trùng thành **hai lần thu**, hoặc hai suất bếp làm mà chỉ một
+suất có người lấy. Với **hai kênh gắn bàn**, lượt trùng đổ vào cùng phiên (`I-001`) và khách bị tính
+gấp đôi lúc tính tiền. Cả hai đều lộ ra **sau** khi bếp đã làm. Bước pha 2 phải để trống vì nó:
+**`P2-04`** (lát bán hàng lõi) — bước 5 của entry ấy ghi một dòng *chỗ trống có tên* trỏ về đây.
+
+**Decision / Fix:**
+Chưa quyết. Việc của **phiên nhận finding này ở pha 1**: thêm mệnh đề và chốt tầng (**ADR-050**).
+Finding này **không** đề xuất tầng bảo vệ.
+
+**Related task:**
+T-097 · `work/backlog_DB.md` → **P2-04** · `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` §8
+
+**Status:**
+Open

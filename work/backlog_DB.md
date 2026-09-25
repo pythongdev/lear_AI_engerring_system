@@ -337,7 +337,25 @@ trả lời nó.
    (`P2-12` chốt), nên phép kiểm viết trên thứ không phụ thuộc DBMS: câu truy vấn trên
    `information_schema` chuẩn SQL, hoặc một lệnh đọc file migration. Mỗi phép mang mã của quy ước
    nó gác, vì `P2-11` gom chúng vào bộ đối chiếu thành một nhóm riêng. Tối thiểu sáu chủ đề kế hoạch
-   §6 kể tên — tiền · mốc và múi giờ · khoá · đặt tên · trạng thái · không xoá cứng.
+   §6 kể tên — tiền · mốc và múi giờ · khoá · đặt tên · trạng thái · không xoá cứng — **cộng một
+   chủ đề thứ bảy, *văn bản và định danh***. Ba chỗ dự án cũ đã trả giá, mỗi chỗ vào đúng chủ đề
+   của nó, kèm phép kiểm như mọi quy ước khác. Mục ghi cạnh từng ý là mục của
+   `work/proposals/from_old_project/data_base/nghien-cuu.md` — bằng chứng của dự án cũ, không phải
+   dữ kiện quán này:
+   - ***Văn bản và định danh*** (§2.2): cách so và sắp xếp chuỗi chọn **theo vai trò cột**. Văn bản
+     cho người đọc thì so và sắp xếp đúng tiếng Việt; định danh máy đọc và chuỗi băm thì so **từng
+     byte, phân biệt hoa thường**. Hậu quả nếu làm khác: hai định danh khác nhau va nhau ở một khoá
+     duy nhất, hoặc một chuỗi băm bị so lỏng; và đổi cách so **sau khi có dữ liệu** là dựng lại cả
+     bảng lẫn mọi chỉ mục — rẻ nhất đúng ở lượt này.
+   - ***Mốc*** (§1.7): kiểu cất mốc không được mang **giới hạn năm 2038** mà một số kiểu có; và mọi
+     kết nối — **kể cả kết nối của môi trường test** — đọc mốc trong **cùng một** múi giờ với môi
+     trường chạy thật. Dự án cũ lệch 7 tiếng chỉ trong test (§4.4), nên test đầu tiên của luật giờ
+     bán sẽ đỏ hoặc **xanh nhầm**. `P2-12` biến vế kết nối thành lệnh của khung test.
+   - ***Tiền*** (§2.7): quan hệ số học giữa các cột tiền **trong cùng một bản ghi** (ví dụ thành tiền
+     của một dòng = đơn giá × số lượng) do **database** giữ — bằng ràng buộc kiểm, hoặc bằng cột tự
+     tính. Hậu quả nếu làm khác: một lỗi làm tròn nằm im trong dữ liệu và được cộng vào doanh thu
+     như tiền thật. Tổng đi **qua nhiều bản ghi** không thuộc quy ước này — nó là một câu đối chiếu
+     của `P2-11`.
 5. Gặp một chỗ nghiệp vụ chưa rõ (ví dụ: đơn vị nhỏ nhất của tiền ở quán) ⇒ **hỏi chủ quán**, hoặc
    `U-XXX`. Không có mức L0 cho luật này (`CLAUDE.md` §3.5).
 6. Trong **cùng** thay đổi: `docs/product/00-index.md` thêm dòng file mới **và** đổi hàng *Pha 2*
@@ -430,7 +448,9 @@ tiên cái thiếu ấy thành một lỗ hổng chạy được.
 5. **`F-038` không được tự lấp.** Pha 2 **không** sở hữu mệnh đề và **không** sở hữu tầng
    (**ADR-035**): viết một dòng trong file lát này nói rõ lược đồ đứng thế nào khi `F-038` còn mở,
    và gửi ngược tình trạng ấy vào `work/findings.md`. Dựng ràng buộc cho một luật chưa có mệnh đề
-   là pha 2 tự viết mệnh đề.
+   là pha 2 tự viết mệnh đề. **Cùng cách cho `F-043`** (*một lần gửi đơn thành đúng một đơn* chưa
+   có mệnh đề): file lát ghi một dòng **chỗ trống có tên** — lát này chưa giữ gì cho vế ấy, vì sao,
+   và mã `F-043` — không tự dựng khoá chống trùng khi pha 1 chưa chốt tầng.
 6. Chứng minh: cố tình dựng trạng thái sai cho **từng** mệnh đề tầng 1 ⇒ **dán nguyên lời từ chối
    của database**. Rồi `./scripts/gate.sh` — Gate 1d nay chấm cả vùng pha 2 (`P2-02`).
 7. Gate 2: mỗi dòng *Acceptance* map vào một output thật, không vào một câu khẳng định.
@@ -454,6 +474,9 @@ tiên cái thiếu ấy thành một lỗ hổng chạy được.
   hàng ấy tụt xuống tầng 3 (kế hoạch §7 luật 1).
 - **Đừng chấm bằng *"đã tạo xong bảng"*.** Biên nhận của bước này là **lời từ chối của database**,
   đúng cột *Đầu ra kiểm chứng được* của kế hoạch §6.
+- **Đừng viết điều kiện của `I-001` bằng một giá trị trạng thái.** Nó phải theo **nghĩa** — *bàn
+  còn nợ tiền*, gồm cả *chờ thanh toán*. Dự án cũ chặn đúng một giá trị, và ràng buộc nhả ra đúng
+  lúc quầy bấm tính tiền (bằng chứng cũ: `nghien-cuu.md` §1.3, không phải dữ kiện quán này).
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
 - *Phạm vi:* —
@@ -514,9 +537,10 @@ không bao giờ được dùng*) đứng trên cùng chỗ cất ấy.
    dòng trong file lát này nói lược đồ đứng thế nào khi `F-036` còn mở, gửi ngược vào
    `work/findings.md`, **không** tự chọn tầng cho nó.
 6. Chứng minh, chạy thật và dán output: (a) đổi giá menu sau khi một đơn đã đặt ⇒ đọc lại đơn cũ,
-   giá **không đổi**; (b) tổ hợp cấm ⇒ **bị từ chối**, dán nguyên lời từ chối. Rồi
-   `./scripts/gate.sh`.
-7. Gate 2: hai dòng *Acceptance* trên map vào hai output thật.
+   giá **không đổi**; (b) tổ hợp cấm ⇒ **bị từ chối**, dán nguyên lời từ chối; (c) **đổi mức phụ
+   thu một lần, ở một chỗ ⇒ mọi suất nhận nhân đổi giá theo đúng công thức của `shop-facts.md` §4.6
+   luật 5, không dòng nào phải sửa tay**. Rồi `./scripts/gate.sh`.
+7. Gate 2: ba dòng *Acceptance* trên map vào ba output thật.
 8. Thêm dòng vào `docs/product/00-index.md`; hàng *Schema* ở `CLAUDE.md` §2 **thêm** tên file này,
    không ghi đè tên file của `P2-04`.
 9. Tick `P2-05` → *Done*; điền khối **Bàn giao**, kèm output phép so tên bảng `.md` ↔ migration
@@ -531,6 +555,17 @@ không bao giờ được dùng*) đứng trên cùng chỗ cất ấy.
   (**ADR-001**); `P2-10` **tra** ở đó, không chép (kế hoạch §4.4).
 - **Đừng lẫn *ngừng bán* với *tổ hợp không hợp lệ*.** `I-010` giữ tổ hợp tuỳ chọn; *món còn bán hay
   không* là vế khác, và nó đang là `F-036`.
+- **Đừng chép phụ thu thành từng con số trên từng suất.** `shop-facts.md` §4.6 luật 5 nói các hệ số
+  là **hệ quả** của một công thức. Dự án cũ chép tay nhiều dòng lặp: đổi phụ thu mà sót một dòng thì
+  một món bán sai giá, không lệnh nào kêu (`nghien-cuu.md` §2.4) — đầu ra (c) ở bước 6 chặn đúng ca ấy.
+- **Đừng cất luật *Lượng nhân* bằng một tham chiếu tới MỘT lựa chọn.** Luật 3 của §4.6 phụ thuộc một
+  **tập** (*nhân ≠ Chay*); một tham chiếu đơn chỉ giữ nửa luật, nửa kia rơi xuống code và `I-010`
+  mất tầng dữ liệu (`nghien-cuu.md` §2.5).
+- **Đừng để ảnh chụp tuỳ chọn trên dòng đơn chỉ giữ tên hiển thị.** Giữ cả **mã gốc** của tuỳ chọn:
+  chủ quán đổi tên hiển thị thì mọi phép đếm theo tuỳ chọn gãy làm đôi từ ngày đổi (`nghien-cuu.md` §2.6).
+- **Đừng dùng chung một cờ cho *ngừng bán* và *hết giữa buổi*.** Owner đã tách: ngừng bán là đổi menu
+  (`03-lat-cat.md` §3.3.4); hết giữa buổi là **tạm dừng nhận đơn** + POS bàn với khách (`shop-facts.md`
+  §6.8 · §6.20). Không có thao tác *tạm hết từng món* — cần thì hỏi chủ quán (`nghien-cuu.md` §2.9).
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
 - *Phạm vi:* —
@@ -925,6 +960,9 @@ trên, và mỗi phiên sẽ tự gõ vài món để thử — mỗi phiên m�
   lệch một đồng là một ca đỏ.
 - **Đừng dựng người thật với tên thật vào dữ liệu mồi mà không đọc `shop-facts.md` §3 trước** — số
   người và vai là dữ kiện có owner, không phải thứ tự nghĩ ra.
+- **Đừng sinh mã QR của bàn bằng một hàm dựa trên thời gian hay thứ tự.** Dự án cũ làm vậy: có một mã
+  là suy ra mười mã kia (`nghien-cuu.md` §2.1). Pha 1 chưa có mệnh đề nào đòi mã *không đoán được, đổi
+  được* — đó là **`F-042`**; dữ liệu mồi ghi chỗ trống kèm mã ấy, không tự chốt cách sinh.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
 - *Phạm vi:* —
@@ -1081,6 +1119,9 @@ là bước cuối cùng trước lúc ấy.
   không, đều đổi theo DBMS và phiên bản.
 - **Đừng tách DBMS ra một bước riêng cho nhanh.** Năm lát cần cả thư mục và cách đặt tên migration,
   không chỉ tên DBMS — phương án ấy đã bị bác ở **ADR-053**.
+- **Đừng để kết nối của khung test đọc mốc ở múi giờ khác kết nối chạy thật.** Luật nằm ở quy ước
+  *mốc* của `P2-03`; ở bước này nó phải thành **lệnh** của khung test, không thành một dòng cấu hình
+  mẫu ai cũng chép thiếu.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
 - *Phạm vi:* —
