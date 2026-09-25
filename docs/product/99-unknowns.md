@@ -20,6 +20,8 @@
   - [U-055](#u-055) — bốn trạm ngoài quầy có ghi mốc đổi người không
   - [U-056](#u-056) — **ai khai** cái mốc đổi người ở quầy
   - [U-057](#u-057) — vế *ai bấm* của hai cửa ghi **ngoài** quầy
+  - [U-058](#u-058) — giảm giá khách quen: phạm vi, quyền và cách tính
+  - [U-059](#u-059) — D42 có thay đổi suất Đầy đủ không
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
 - [Đã có lời giải](#da-co-loi-giai) — câu đã đóng, xếp theo lượt trả lời của chủ quán, kèm nguyên
@@ -37,6 +39,21 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 
 <a id="dang-mo"></a>
 ### Đang mở
+
+<a id="u-058"></a>
+- **U-058 — Giảm giá cho khách quen được thực hiện thế nào trong phần mềm?**
+  Mở 2026-09-25 (T-092), từ D41 của chủ quán, dữ kiện ở
+  `master_plan/shop-facts.md` §8.9. Cần **chủ quán** chốt có đưa vào bản bán hàng
+  đầu tiên không, ai được giảm, giảm theo số tiền hay phần trăm, áp cho từng món
+  hay cả đơn, và có giới hạn/ghi lý do không. Chặn việc chốt lại BA
+  `0-ba/ban-hang/04-gia-thanh-toan.md` §4.2 · §4.11, công thức tiền và quyền giảm;
+  không suy rằng khách hoặc nhân viên được tự gửi giá tuỳ ý.
+
+<a id="u-059"></a>
+- **U-059 — D42 “không có combo” có bỏ suất Đầy đủ hay chỉ không có combo riêng
+  ngoài các suất hiện có?** Mở 2026-09-25 (T-092). Cần **chủ quán** đối chiếu
+  lời D42 ở `master_plan/shop-facts.md` §8.9 với “Combo Đầy đủ” ở §4.3–§4.9.
+  Chặn sửa danh mục và các tổ hợp giá liên quan, không tự xoá hoặc đổi tên món.
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
 chủ quán quyết theo tình hình thực tế, không có luật cứng.** Lượt một (T-042) đóng U-022, U-025 và

@@ -240,25 +240,25 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 *Nhóm này mở khoá ADM-30 → ADM-33.*
 
 **D37.** Ngoài bánh cuốn, trứng, giò, canh — quán còn bán **nước uống** không? Nếu có thì những gì?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-092)** — `master_plan/shop-facts.md` §8.9. Còn hỏi: Dự kiến bán thêm những món/nước gì, khi nào cần đưa vào phần mềm?
 
 **D38.** Có **món theo mùa** hoặc **món chỉ bán cuối tuần** không?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-092)** — `master_plan/shop-facts.md` §8.9. Còn hỏi: Đặc sản nào, và có món chỉ bán cuối tuần không?
 
 **D39.** Quán **đổi giá bao lâu một lần**? Đổi vào lúc nào trong ngày?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-092)** — `master_plan/shop-facts.md` §8.9. Còn hỏi: Đổi giá vào lúc nào trong ngày?
 
 **D40.** Ai được đổi giá — **chỉ chủ quán**, hay người đứng quầy cũng được?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-092)** — `master_plan/shop-facts.md` §8.9.
 
-**D41.** Có bao giờ **bán giá khác cho khách quen**, hoặc giảm giá không? *(Hôm nay hệ thống **cấm** chuyện này: `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.2 nói giá do hệ thống xác định, khách và nhân viên không đặt được giá. Trả lời "có" là mở lại một luật đã chốt.)*
-> **Trả lời:**
+**D41.** Có bao giờ **bán giá khác cho khách quen**, hoặc giảm giá không? *(Luật trước lời đáp D41, nay cần xét lại qua U-058: `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.2 nói giá do hệ thống xác định, khách và nhân viên không đặt được giá. Trả lời "có" là mở lại một luật đã chốt.)*
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-092)** — `master_plan/shop-facts.md` §8.9. Còn làm rõ cơ chế và quyền giảm giá: `docs/product/99-unknowns.md` U-058.
 
 **D42.** Có **combo**, **suất trẻ em**, hay **suất lớn / suất nhỏ** không?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-092)** — `master_plan/shop-facts.md` §8.9. Còn làm rõ vế combo so với suất Đầy đủ: `docs/product/99-unknowns.md` U-059.
 
 **D43.** Menu QR cho khách có cần **ảnh món** không, hay chỉ tên và giá là đủ?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-092)** — `master_plan/shop-facts.md` §8.9.
 
 ### E. Tài chính
 *Nhóm này mở khoá ADM-40 → ADM-45.*

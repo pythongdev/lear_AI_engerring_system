@@ -304,6 +304,10 @@ khác bảng giá §4.2 và bảng phụ thu §4.4 ở đúng chỗ đó: hai b�
 
 ### 4.6 Chín quy tắc cấu tạo giá
 
+**Cập nhật 2026-09-25:** D41 mở lại vế giảm giá; D42 cần làm rõ tên combo. Đọc
+§8.9 và `docs/product/99-unknowns.md` U-058 · U-059 trước khi dùng công thức
+này làm hợp đồng đầy đủ cho các trường hợp mới.
+
 1. **Giá một suất bán = TỔNG giá các thành phần của suất** (§4.5 cho thành phần, §4.2 cho giá từng
    thành phần). Đây là luật gốc, tám luật dưới đều là hệ quả.
 2. Giá gốc của một thành phần là **giá CHAY**. Nhân là **phụ thu**, không phải một giá riêng.
@@ -1868,3 +1872,25 @@ thêm một yêu cầu nào.
 **Lời này KHÔNG chạm chấm công.** *Lúc này ai đứng quầy* và *hôm nay người này làm mấy giờ* là hai
 câu khác nhau; câu thứ hai là mức 2 của §8.7 đã có lời đáp `C30` · `C31` · `C32` ngày 2026-09-25 ở §8.7; các vế còn thiếu
 ở `work/admin-questions.md` §3.
+
+### 8.9 Sản phẩm — câu trả lời D37–D43
+
+**Chủ quán trả lời 2026-09-25 (T-092).** Đây là dữ kiện về quán; những vế chưa
+rõ bên dưới chưa đủ để chốt cách thực hiện trong phần mềm.
+
+| Câu | Dữ kiện chủ quán cung cấp |
+|---|---|
+| D37 | Hiện tại chưa bán thêm gì ngoài các món đã nêu; tương lai sẽ bán thêm. Chưa nêu tên nước uống hoặc món mới. |
+| D38 | Gần Tết sẽ bán thêm đặc sản vùng miền. Chưa nêu món cụ thể hoặc trả lời vế chỉ bán cuối tuần. |
+| D39 | Một năm đổi giá một lần. Chưa nêu thời điểm trong ngày; không suy thành máy chỉ cho đổi mỗi năm một lần. |
+| D40 | Chủ quán đổi giá. Đây là quyền đổi bảng giá, chưa phải quyền giảm giá riêng cho khách ở D41. |
+| D41 | Đôi khi giảm giá cho khách quen. Cơ chế, người được phép giảm và phạm vi phần mềm cần làm rõ tại U-058. |
+| D42 | Nguyên văn: “không.” Câu hỏi gồm combo, suất trẻ em, suất lớn / nhỏ. Vế combo khác với tên “Combo Đầy đủ” đang có ở §4.3–§4.9; cần làm rõ tại U-059 trước khi sửa danh mục. |
+| D43 | Menu QR cho khách cần ảnh món. Chưa chốt quyền sửa ảnh hoặc thứ tự hiển thị. |
+
+**Những điều chưa suy ra:** D37–D38 chưa chốt danh mục, giá, thời điểm đưa vào
+phần mềm hay mở chức năng thêm món của §6.12. D39 không tự thay luật được sửa
+giá giữa buổi (§6.17). D41 mở lại giả định không có giảm giá trong BA §4.11;
+không tự cho khách gửi giá hoặc cho người đứng quầy đặt giá tuỳ ý. D42 chưa đủ
+để xoá suất Đầy đủ. Các vế hỏi tiếp ở `work/admin-questions.md` §3 và
+`docs/product/99-unknowns.md` U-058 · U-059.

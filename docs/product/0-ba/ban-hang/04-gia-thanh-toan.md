@@ -47,6 +47,10 @@ tiền**, và thiếu đúng phần bánh mà bếp đã thật sự làm ra. C�
 
 ### 4.2 Giá do hệ thống xác định, khách không bao giờ đặt được giá
 
+**2026-09-25 — D41 mở lại vế giảm giá:** dữ kiện ở `master_plan/shop-facts.md`
+§8.9; cơ chế và quyền đang chờ U-058 (`docs/product/99-unknowns.md`). Các luật
+dưới đây chưa đặc tả giảm giá, không dùng chúng để phủ nhận lời chủ quán.
+
 - **Giá luôn do hệ thống tính lại từ bảng giá**, từ đúng hai thứ: món khách chọn, và tuỳ chọn
   khách chọn kèm. Khách **không bao giờ** gửi giá lên; giá do khách gửi tới thì bỏ, không dùng
   (`shop-facts.md` §4.6 quy tắc 9). Nhận giá từ phía khách nghĩa là có ngày khách đặt được món 0đ.
@@ -351,8 +355,10 @@ và cách bày bảng đối soát, **không** phải dữ liệu quá khứ —
 - **Màn hình nào bày ra báo cáo doanh thu, và ai xem được.** Mọi thao tác chạm tiền phải kiểm
   chứng lại được (§1.4), nhưng bày ra ở đâu là câu của §7 (BA-09).
 - **Giảm giá và khuyến mãi.** Công thức giá ở `shop-facts.md` §4.1 không có số hạng nào cho chúng,
-  và mười một tổ hợp ở §4.8 là hợp đồng đầy đủ — nên MVP **không** có giảm giá. Thêm vào là **đổi
-  phạm vi, quyền chủ quán** (`shop-facts.md` §6.12), không phải việc của mục này.
+  và mười một tổ hợp ở §4.8 là hợp đồng đầy đủ — trước D41, MVP được đặc tả **không** có giảm giá. **Ngày 2026-09-25,
+  chủ quán trả lời D41 đã mở lại vế này** (`shop-facts.md` §8.9); phạm vi đưa vào
+  phần mềm và luật thực hiện chờ **U-058**, không còn coi việc loại giảm giá là
+  kết luận đã chốt.
 - **Số tài khoản ngân hàng, và mọi chuyện tích hợp.** Số tài khoản do chủ quán nhập trong phần
   quản trị, không cứng trong sản phẩm (`shop-facts.md` §1, §6.12).
 - **Cách tính toán được viết ra sao, và tiền được lưu ở đâu.** Đó là việc của

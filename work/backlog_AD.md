@@ -148,7 +148,7 @@ Con số ba loại **không đổi** (20 · 8 · 1): lời chốt này không đ
 | ~~**A** — một buổi bán~~ | ~~`A1`…`A10`~~ **ĐÃ TRẢ LỜI CẢ MƯỜI, 2026-09-04** (T-056); bốn vế bỏ trống nay cũng đóng hết (`U-038`·`U-039`·`U-040` 2026-09-06 · **`U-041` 2026-09-08**) | **hết chặn:** ADM-01 · ADM-02 · ADM-03 → loại 2 · **còn chặn:** ADM-04 — nhưng bằng **U-054** (`U-045` đóng 2026-09-15 ⇒ `U-051`, `U-051` đóng 2026-09-16 ⇒ `U-054`), không còn bằng câu nhánh A nào |
 | **B** — nguyên liệu | `B11`…`B22` (B13/B14/B17 đã về owner 2026-09-25; B11/B12/B15/B16 trả lời một phần; B18/B20/B22 đã về owner 2026-09-25; B19 còn thiếu phân loại, **`B21` có lời 2026-09-15** qua `U-045`: không ngưỡng, máy không nhắc) — **U-034 đóng 2026-09-06** | ADM-10 · ADM-11 · ADM-12 · ADM-13 · ADM-14 · ADM-15 |
 | **C** — con người | `C23`…`C36` (14 câu; ~~`C36`~~ **có lời 2026-09-20 và ĐÃ VỀ OWNER cùng ngày** qua ADM-21 — đọc ở `master_plan/shop-facts.md` **§8.8**; C24–C35 đã nhận 2026-09-25 (T-091), xem §8.7 và các vế còn thiếu tại bảng hỏi; C23 còn trống) | ADM-20 · ~~ADM-21~~ ✅ `Done` · ADM-22 · ADM-23 · ADM-24 |
-| **D** — sản phẩm | `D37`…`D43` (7 câu, **chưa câu nào**) | ADM-32 · ADM-33 (ADM-30 chỉ vướng vế quyền, ADM-31 không vướng) |
+| **D** — sản phẩm | `D37`…`D43` đã nhận 2026-09-25, owner `master_plan/shop-facts.md` §8.9; còn các vế hỏi tiếp | ADM-32 còn danh mục/phạm vi và U-059; ADM-33 còn quyền ảnh/thứ tự; ADM-30 hết vướng D40, ADM-31 không vướng |
 | **E** — tài chính | `E44`…`E51` (8 câu, **chưa câu nào**) | ADM-42 · ADM-43 · ADM-44 · ADM-45 |
 | **F** — chung | `F52`…`F55` (4 câu, **chưa câu nào**) | ADM-51 · ADM-52 (ADM-50 chỉ vướng vế *ai*) |
 
@@ -265,10 +265,10 @@ hàng thì lấy lại số bằng `grep -n` ngay lượt ấy, đừng chép t�
 | [ADM-22](#adm-22) | chấm công | C | 1 | phần còn thiếu `C30` `C32` — *[**Đ-4**] hết chặn: về owner 2026-09-20 (ADM-53)* |
 | [ADM-23](#adm-23) | bảng lương | C | 1 | phần còn thiếu `C26` `C27` `C28` `C33` + [**ADM-22**](#adm-22) — *[**Đ-4**] hết chặn: về owner 2026-09-20 (ADM-53)* |
 | [ADM-24](#adm-24) | quyền xem lương | C | 1 | [`F55`](admin-questions.md#L298) + [**ADM-23**](#adm-23) |
-| [ADM-30](#adm-30) | ai được sửa giá thành phần | D | 2 | nửa còn chặn: [`D40`](admin-questions.md#L247) |
+| [ADM-30](#adm-30) | ai được sửa giá thành phần | D | 2 | D40 đã về shop-facts §8.9 (2026-09-25) |
 | [ADM-31](#adm-31) | bật/tắt món | D | 2 | *hết chặn* — không thiếu gì |
-| [ADM-32](#adm-32) | thêm món mới | D | 1 | [`D37`](admin-questions.md#L238) [`D38`](admin-questions.md#L241) [`D42`](admin-questions.md#L253) + lời mở lại ranh giới sản phẩm |
-| [ADM-33](#adm-33) | menu QR: ảnh và thứ tự | D | 1 | [`D43`](admin-questions.md#L256) |
+| [ADM-32](#adm-32) | thêm món mới | D | 1 | D37–D42 đã nhận ở shop-facts §8.9; còn danh mục/phạm vi và U-059 |
+| [ADM-33](#adm-33) | menu QR: ảnh và thứ tự | D | 1 | D43 đã về shop-facts §8.9; còn quyền ảnh/thứ tự |
 | [ADM-40](#adm-40) | doanh thu ngày | E | 2 | nửa còn chặn: [`E47`](admin-questions.md#L271) |
 | [ADM-41](#adm-41) | đối soát cuối ngày | E | **2 + L3** | nửa dưới chặn: [`A3`](admin-questions.md#L100) [`A4`](admin-questions.md#L101) |
 | [ADM-42](#adm-42) | sổ chi | E | 1 | [`E44`](admin-questions.md#L262) [`E45`](admin-questions.md#L265) [`E46`](admin-questions.md#L268) + [**ADM-11**](#adm-11) |
@@ -1029,40 +1029,19 @@ việc này ra khỏi lương, và đó là lý do nó phải làm cùng **ADM-5
 ---
 
 <a id="adm-30"></a>
-### ADM-30 — Luật "sửa thành phần, không sửa giá suất" đã viết đủ ở tầng kiến trúc; cái chưa ai chốt là AI được bấm nút ấy
+### ADM-30 — Quyền đổi giá đã có lời D40
 
-**L2** · nhánh D · **loại 2** — luật đã đủ, phần còn lại thuộc pha 2–4 · **một nửa còn chặn: `D40`**
-**Prompt:** không cần prompt cho phần nghiệp vụ; phần thi công đi theo prompt của pha nhận nó
+**L2** · nhánh D · **loại 2** — luật đã đủ, phần thi công thuộc pha 2–4.
+**Cập nhật 2026-09-25 (T-092):** D40 đã về `master_plan/shop-facts.md` §8.9;
+không còn chờ câu này. D39 ghi nhịp thực tế, chưa trả lời thời điểm trong ngày.
 
-**Goal:**
-Xong rồi thì không phiên nào phải viết lại luật giá — nó đã có — và câu *ai được đổi giá* có lời.
+**Goal:** thi công luật giá đã có, không viết lại một bản đặc tả admin.
+**Owner:** cấu tạo giá ở shop-facts §4.6; xem trước và giữ giá đơn cũ ở
+`docs/product/1-system-design/architecture.md` §6.1; đổi giữa buổi và khoá từng
+dòng ở ADR-023; quyền ở shop-facts §8.9. Vết ai đổi trên mặt quản trị vẫn
+chờ U-057. Quyền giảm giá riêng cho khách là U-058, không suy từ D40.
 
-**Nói một câu, việc phải làm là gì:**
-Hỏi `D40` rồi ghi lời giải về owner của luật quyền. Việc **không** phải làm: đừng viết lại luật cấu
-tạo giá vào bất kỳ file admin nào — nó đã có owner và bản thứ hai luôn trôi (**F-001**).
-
-**Luật đã ở đâu, còn thiếu gì:**
-
-| Vế | Đã chốt ở | Trạng thái |
-|---|---|---|
-| giá một suất = **tổng giá thành phần**, nên màn quản trị sửa **thành phần** | `master_plan/shop-facts.md` §4.6 quy tắc 1 · `docs/product/1-system-design/architecture.md` §6.1 | ✅ đủ |
-| màn phải cho **xem trước từng dòng menu thành bao nhiêu** trước khi lưu | `architecture.md` §6.1 | ✅ đủ |
-| đơn cũ **không** đổi giá; tên và giá chụp lại lúc đặt | `architecture.md` §6.1 · `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3 | ✅ đủ |
-| đổi giá được **giữa buổi**; mốc khoá giá là **từng dòng** | `docs/decisions.md` **ADR-023** | ✅ đủ |
-| **ai** được bấm | — | ❌ **`D40`** |
-
-⇒ **Phần nghiệp vụ của việc này gần như đã xong từ trước khi nó được viết ra.** Cái còn lại là một
-câu hỏi (`D40`) và một lượt thi công ở pha 2–4. Đừng mở nó thành một task đặc tả.
-
-**Không làm thì mất gì:**
-- **Người đứng quầy đổi giá mà chủ quán không biết.** `ADR-016` chốt quyền gắn **chỗ đứng**, và chỗ
-  đứng của người đổi giá là *quầy* — cùng chỗ đứng với người bán hàng. Không có lời `D40` thì luật
-  quyền hiện có **cho phép** người đứng quầy đổi giá, và không ai chắc chủ quán muốn thế.
-- **Mỗi lần đổi giá phải để lại vết** (`shop-facts.md` §6.10, `architecture.md` §6.4) — vết ghi
-  *ai*. Lời `C36` (2026-09-20, **§8.8**) đỡ được vế ấy cho người đứng **quầy**; chủ quán đổi giá
-  trên mặt quản trị là **cửa ghi ngoài quầy**, nên vế *ai* của ca ấy còn đứng trên **`U-057`**.
-
-**Acceptance · Verify:** phần nghiệp vụ không có gì để nghiệm thu ngoài lời `D40` nằm đúng owner.
+**Acceptance · Verify:** lời D40 nằm ở owner, phần thi công đi theo pha nhận nó.
 
 [↑ đầu file](#top)
 
@@ -1103,7 +1082,7 @@ một thay đổi file.
 <a id="adm-32"></a>
 ### ADM-32 — Thêm một món mới là ĐỔI PHẠM VI, và phạm vi đó nằm trong danh sách "đã quyết định không làm"
 
-**L2** · nhánh D · **chưa nhận được — chặn bởi `D37` `D38` `D42`, và bởi một lời mở lại ranh giới**
+**L2** · nhánh D · **còn chặn bởi danh mục/phạm vi món mới và U-059**
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -1124,11 +1103,10 @@ Ba chỗ cùng nói một câu — đây là ranh giới được canh kỹ nh�
 Không mất gì hôm nay. Việc này ở trong sổ để **giữ chỗ cho một câu hỏi**, không phải để làm: nếu
 một ngày quán bán thêm món, chỗ này là nơi ghi rằng câu trả lời phải đến từ chủ quán trước.
 
-**Chặn bởi — hỏi gì trước:**
-`D37` (có bán nước uống không) · `D38` (có món theo mùa / cuối tuần không) · `D42` (có combo, suất
-trẻ em, suất lớn/nhỏ không). Cả ba câu đều có thể trả lời *"có"*, và mỗi lần *"có"* là một lần
-**bảng giá thành phần** ở `shop-facts.md` §4.2 phải mở rộng — thứ kéo theo `§4.3`, `§4.6` và mười
-một tổ hợp giá bắt buộc phủ ở `§4.8`.
+**Cập nhật 2026-09-25 (T-092):** D37, D38, D42 đã có lời ở
+`master_plan/shop-facts.md` §8.9. Còn hỏi tên món, thời điểm/phạm vi phần mềm
+cần hỗ trợ và vế cuối tuần; U-059 làm rõ combo. Lời về kế hoạch bán thêm chưa
+đủ để đặc tả chức năng thêm món, giá hay luồng bếp.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 
@@ -1137,9 +1115,9 @@ một tổ hợp giá bắt buộc phủ ở `§4.8`.
 ---
 
 <a id="adm-33"></a>
-### ADM-33 — Menu QR là mặt khách nhìn thấy đầu tiên, và không ai chốt nó bày gì ngoài tên với giá
+### ADM-33 — Menu QR đã chốt cần ảnh; còn quyền sửa và thứ tự
 
-**L1** · nhánh D · **chưa nhận được — chặn bởi `D43`**
+**L1** · nhánh D · **D43 đã nhận; còn quyền sửa ảnh và thứ tự hiển thị**
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -1151,16 +1129,15 @@ lưu ảnh, đừng đặt tên thư mục ảnh — đó là pha 2–4 (**ADR-0
 
 **Vì sao có việc này:**
 `qr_table` là một trong năm kênh bán (**ADR-015**), và là kênh duy nhất khách **tự** gọi món. Mọi
-tài liệu hiện có nói về *luật* của kênh ấy — duyệt đơn, khoá giá, tổ hợp hợp lệ — không tài liệu
-nào nói khách **nhìn thấy gì**.
+tài liệu hiện có nói về *luật* của kênh ấy — duyệt đơn, khoá giá, tổ hợp hợp lệ — nội dung ảnh nay đã có lời D43 ở `master_plan/shop-facts.md` §8.9 (2026-09-25).
 
 **Không làm thì mất gì:**
 - **Pha 4 tự quyết**, và quyết xong thì đổi lại tốn hơn hỏi một câu hôm nay.
 - Hậu quả dừng ở đó: việc này không chạm tiền, không chạm dữ liệu đã lưu. Đó là lý do nó **L1**.
 
 **Chặn bởi — hỏi gì trước:**
-`D43` (menu QR có cần ảnh món không, hay tên và giá là đủ). Một câu, và nó có thể đóng việc này
-bằng chữ *"không cần"*.
+D43 đã có lời, không hỏi lại. Cần chốt ai được sửa ảnh và thứ tự hiển thị;
+chưa tự quyết cách lưu ảnh hoặc giao diện.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 
@@ -1439,7 +1416,8 @@ tới, và nó phải được nói ra chứ không lặng lẽ mở rộng.
 **Không làm thì mất gì:**
 - **Hai hệ quyền trong một hệ thống** — mỗi màn mới lại chọn hệ nào, và chỗ hở nằm ở đúng khe giữa
   hai hệ.
-- **ADM-24 (lương), ADM-30 (giá), ADM-43 (lãi/lỗ) đều treo** ở vế *ai được xem / ai được bấm*.
+- **ADM-24 (lương), ADM-43 (lãi/lỗ)** cần đối chiếu vế quyền với lời đã nhận;
+  **ADM-30** hết treo D40 ngày 2026-09-25, xem shop-facts §8.9.
 
 **Chặn bởi — hỏi gì trước:**
 `C34` · `C35` (ai xem được lương, nhân viên xem được công mình không) · `F52` (phần quản trị chạy
