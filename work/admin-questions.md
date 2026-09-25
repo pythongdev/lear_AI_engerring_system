@@ -145,14 +145,14 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 **B17.** Có **hoá đơn giấy** không, hay chỉ nhớ miệng?
 > **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-089)** — đọc chứng từ/trao đổi tiền hàng tại `master_plan/shop-facts.md` §8.4.
 
-**B18.** Cuối buổi quán có **đếm lại đồ thừa** không? Đếm những thứ gì?
+**B18.** Cuối buổi quán có **đếm lại đồ chưa dùng hết** không? Đếm những thứ gì?
 > **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-090)** — đọc việc kiểm đếm cuối buổi và những thứ được nêu tại `master_plan/shop-facts.md` §8.4.
 
-**B19.** **Đồ thừa** hôm nay để mai bán tiếp hay bỏ? Thứ nào để được, thứ nào không?
-> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-090)** — cách gọi và cách xử lý đã về `master_plan/shop-facts.md` §8.4. Còn hỏi: cụ thể thứ nào để được đến mai, thứ nào không?
+**B19.** **Đồ chưa dùng hết** hôm nay để mai dùng lại hay bỏ? Thứ nào để được, thứ nào không?
+> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-095, sửa lời T-090)** — cách gọi và cách xử lý đã về `master_plan/shop-facts.md` §8.4. Còn hỏi: cụ thể thứ nào để được đến mai, thứ nào không?
 
 **B20.** Hỏng / đổ / cháy giữa buổi thì có ai ghi lại không?
-> **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-090)** — đã làm rõ người ghi sự cố tại `master_plan/shop-facts.md` §8.4.
+> **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-095, thay lời T-090)** — đọc câu trả lời mới về việc ghi sự cố tại `master_plan/shop-facts.md` §8.4.
 
 **B21.** Muốn máy **nhắc "sắp hết X"** thì dựa vào cái gì — chủ quán tự đặt ngưỡng, hay đếm tay rồi nhập vào?
 > **Trả lời (2026-09-15, qua `U-045`, đóng):** *"chủ quán tự đọc rôi đưa ra kết luận"* — **không

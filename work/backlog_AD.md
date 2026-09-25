@@ -256,7 +256,7 @@ hàng thì lấy lại số bằng `grep -n` ngay lượt ấy, đừng chép t�
 | [ADM-04](#adm-04) | tổng quan buổi bán | A | 1 | [`U-054`](../docs/product/99-unknowns.md#L149) · [`F52`](admin-questions.md#L289) · [`F53`](admin-questions.md#L292) — *`U-041` đóng 2026-09-08, cả ba đường; `U-045` đóng 2026-09-15 — máy không kết luận, chủ quán tự đọc*; vế **người** nay đứng trên [`U-055`](../docs/product/99-unknowns.md) — [ADM-21](#adm-21) ✅ `Done` 2026-09-20 đưa `C36` về owner, nhưng lời ấy phủ **trạm quầy**, còn con số *bao nhiêu người đang làm* cần cả năm trạm (*`U-049` đóng 2026-09-08, `U-050` đóng 2026-09-15: POS gánh trạm bị bỏ trống, khoảng trống ấy không là thiếu người*) |
 | [ADM-10](#adm-10) | danh mục nguyên liệu | B | 1 | [`B11`](admin-questions.md#L124) [`B12`](admin-questions.md#L127) |
 | [ADM-11](#adm-11) | phiếu nhập hàng | B | 1 | [`B13`](admin-questions.md#L133)…[`B17`](admin-questions.md#L145) |
-| [ADM-12](#adm-12) | hao hụt / đồ chưa bán hết | B | 1 | `B19` (phân loại để được/không để được); B18/B20 đã về shop-facts §8.4 |
+| [ADM-12](#adm-12) | hao hụt / đồ chưa dùng hết | B | 1 | `B19` (phân loại để được/không để được); B18/B20 đã về shop-facts §8.4 |
 | [ADM-13](#adm-13) | tồn ước tính | B | 1 | [`U-054`](../docs/product/99-unknowns.md#L149) — [`B21`](admin-questions.md#L160) **đã có lời 2026-09-15**: không ngưỡng, máy không nhắc ⇒ chỉ còn nửa *con số tồn ước tính* |
 | [ADM-14](#adm-14) | nối nút tạm dừng | B | 1 | [**ADM-13**](#adm-13) — [`B21`](admin-questions.md#L160) **đã có lời 2026-09-15**: máy không phát tín hiệu *sắp hết*, nên chỉ còn vế **người nào bấm** |
 | [ADM-15](#adm-15) | công nợ nhà cung cấp | B | 1 | [`B16`](admin-questions.md#L142) + [**ADM-11**](#adm-11) |
@@ -623,23 +623,25 @@ B16 đã xác nhận có ghi nợ ngày 2026-09-25 ⇒ **ADM-15 cần làm**, c�
 ---
 
 <a id="adm-12"></a>
-### ADM-12 — Chưa có luật ghi sự cố và lượng đồ chưa bán hết cuối buổi
+### ADM-12 — Làm rõ cách ghi lượng đồ chưa dùng hết cuối buổi
 
 **L2** · nhánh B · **chưa nhận được — chặn bởi `B19` (phân loại để được/không để được)** (`U-034` đóng 2026-09-06)
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
-Xong rồi thì có luật ghi sự cố và lượng kiểm đếm cuối buổi, phân biệt hao hụt với
-đồ chưa bán hết còn để bán tiếp.
+Xong rồi thì có luật nhập lượng kiểm đếm cuối buổi, phân biệt hao hụt với
+đồ chưa dùng hết còn dùng lại được. Không mặc định có người ghi sự cố.
 
 **Nói một câu, việc phải làm là gì:**
-Chốt **luật ghi hao hụt / huỷ / đồ chưa bán hết** ở mức người nhập tay. Việc **không** phải làm: đừng cho
+Chốt **luật ghi hao hụt / huỷ / đồ chưa dùng hết** ở mức người nhập tay. Việc **không** phải làm: đừng cho
 một thao tác bán hàng nào tự sinh ra dòng hao hụt — `01-ranh-gioi.md` §1.6 chốt *đường duy nhất để
 một con số nguyên liệu đổi là có người nhập nó*.
 
 **Vì sao có việc này:**
-B18/B20 đã có lời ngày 2026-09-25 (T-090), đọc ở `master_plan/shop-facts.md` §8.4.
-B19 đã sửa cách gọi; không coi đồ chưa bán hết là hao hụt hay đồ phải huỷ.
+B18 đã có lời ngày 2026-09-25 (T-090); B19/B20 được chủ quán sửa lại cùng ngày
+(T-095), đọc ở `master_plan/shop-facts.md` §8.4. Lời B20 mới thay lời cũ, nên
+không tiếp tục thiết kế trên giả định POS ghi sự cố.
+B19 đã sửa cách gọi; không coi đồ chưa dùng hết là hao hụt hay đồ phải huỷ.
 Còn thiếu phân loại thứ nào để được/không để được và luật ghi cụ thể để dựng phần mềm.
 `U-034` đóng 2026-09-06 vẫn quyết con số nền của mục tổng; lời B18 không tự đổi cấu trúc mục ấy.
 
@@ -652,8 +654,9 @@ Còn thiếu phân loại thứ nào để được/không để được và lu
 
 **Chặn bởi — hỏi gì trước:**
 `B19`: cụ thể thứ nào để được đến mai, thứ nào không. B18/B20 đã về owner;
-không hỏi lại người ghi sự cố. Khi nhận việc cần chốt thông tin ghi sự cố và cách
-nhập lượng kiểm đếm, không suy ra từ việc quán có kiểm đếm thực tế.
+không hỏi lại người ghi sự cố. Khi nhận việc cần chốt cách nhập lượng kiểm đếm;
+nếu đề xuất chức năng ghi sự cố thì phải xác nhận nhu cầu riêng, không suy ra từ
+thực tế quán không có ai ghi.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 
