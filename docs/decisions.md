@@ -69,6 +69,7 @@ có câu trả lời mới từ người.
 | ADR-050 | **Năm tầng của pha 1 dịch sang pha 2 thành năm thứ dựng được, mỗi thứ một phép chấm** — ràng buộc thật · ranh giới giao dịch · một đường ghi duy nhất · chỗ cất vết sống độc lập · một câu truy vấn ra 0 dòng; cộng **ba câu pha 2 không được viết ra** (endpoint · route · cơ chế vận hành) và ba luật dịch: không tự hạ tầng · mệnh đề tầng 1 vẫn có câu truy vấn · câu truy vấn chưa bao giờ đỏ là chưa được chứng minh | Đã chốt 2026-09-22 | — | mở khoá **P2-02** và **P2-03**; lane `prompt/DB/` vào Gate 1b |
 | ADR-051 | **Lane pha 2 thí điểm: entry ở `work/backlog_DB.md` là hồ sơ thực thi DUY NHẤT của một bước** — Nghiệm thu và Kiểm chứng viết vào entry lúc nhận việc, không còn file prompt riêng bắt buộc; trạng thái chỉ ở `work/backlog.md` (bỏ cột *Trạng thái* của *Mục lục* và dòng *✅ Xong ngày…*); mức và thứ tự chỉ ở kế hoạch §6 | Đã chốt 2026-09-25 | — | thay luật 2 · 3 của `work/backlog_DB.md` (**ADR-034** hình dạng · **ADR-049**) cho lane pha 2; lane khác giữ nguyên tới khi thí điểm được đánh giá |
 | ADR-052 | Claude Code và Codex dùng chung luật; AGENTS.md là điểm vào mỏng | Đã chốt 2026-09-25 | — | T-088; giữ lõi Gate 7, phân biệt hook và chạy trực tiếp |
+| ADR-053 | **Pha 2 dựng trên nền gì và cái gì chứng minh nó còn đúng** — `P2-12` (có chọn DBMS + phiên bản) vào *Cần xong trước* của năm lát `P2-04`…`P2-08`; khi đã có file migration thì **migration thắng** cho tên · kiểu · ràng buộc, `.md` giữ ý định, lệch ⇒ `F-XXX`, `P2-09` biến phép đối chiếu tên bảng thành lệnh; mỗi quy ước dữ liệu của `P2-03` kèm **một phép kiểm chạy được**, gom vào bộ `P2-11` | **Đã chốt** 2026-09-25 — chủ repo xác nhận luật 2 ý 1 (*code dựng database thắng*); ý 2 · 3 là phần suy ra của phiên | — | T-096; đổi *Cần xong trước* của `P2-04`…`P2-08`; không chọn DBMS |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3501,3 +3502,123 @@ quyết nguồn scope sau Done.
 **Hệ quả:** Gate 1b kiểm tra thêm điểm vào Codex. Hai công cụ dùng chung nguồn
 và task state nhưng mức tự động hoá khác nhau. T-085 vẫn giữ việc xử lý scope;
 không tuyên bố kiểm tra bàn giao Codex đã được tự động hoá.
+
+---
+
+### ADR-053 — Pha 2 dựng trên nền gì và cái gì chứng minh nó còn đúng: DBMS chốt trước lát lược đồ đầu tiên, migration thắng tài liệu, mỗi quy ước dữ liệu một lệnh gác
+
+**Trạng thái:** **Đã chốt** 2026-09-25. Viết theo yêu cầu chủ repo trong phiên (*"làm cho tôi 2
+prompt: 1 là làm các cải tiến, 2 là thực hiện các điểm cần cải thiện db"*, rồi *"hãy đọc kĩ prompt
+trên và thực hiện từng bước"*); task **T-096**, prompt
+`prompt/maintenance/02-quy-trinh-db-tu-du-an-cu-L2.md`. **Luật 1 và luật 3** chỉ đổi thứ tự và đầu
+ra kiểm chứng của kế hoạch pha 2, đúng việc chủ repo giao, nên được thi hành từ lượt này. **Luật 2**
+đổi nghĩa một hàng của `CLAUDE.md` §2 vào lúc hàng ấy được viết ở `P2-04`, nên nó cần lời của **chủ
+repo**. Lời ấy có ngày **2026-09-25**, trong cùng phiên, khi được hỏi *"tài liệu và code dựng
+database nói khác nhau thì tin bên nào"*; nguyên văn: *"code dựng database nói khác nhau thắng"*.
+
+**Cái được bảo ≠ cái suy ra** (`CLAUDE.md` §7.2): lời ấy chốt **ý 1** của luật 2 — file migration
+thắng về tên · kiểu · ràng buộc. **Ý 2** (file `.md` giữ ý định, lý do, ánh xạ) và **ý 3** (lệch ⇒
+một dòng `F-XXX`, không lặng lẽ sửa bên nào) là phần phiên viết suy ra để ý 1 thi hành được, theo
+cách `README.md` cũ §2 làm. Chủ repo đã được giải thích cả ba ý trước khi trả lời và không bác ý
+nào, nhưng cũng không nói riêng về ý 2 · 3; ai muốn đổi hai ý ấy thì hỏi chủ repo, không cần mở lại
+ý 1.
+
+**Context:**
+Nguồn đối chiếu là năm file DB của dự án cũ ở `work/proposals/from_old_project/data_base/` (chủ yếu
+`nghien-cuu.md` và `README.md`). Chúng là **bằng chứng của dự án cũ, không phải dữ kiện của quán
+này** (`CLAUDE.md` §2, hàng *Proposals*). Không tên bảng nào của dự án ấy đi vào kế hoạch hay
+backlog pha 2. Đối chiếu với kế hoạch pha 2 ngày 2026-09-25, có ba lỗ:
+
+1. **Năm lát lược đồ có thể chạy trước khi biết DBMS.** Kế hoạch §6 cho `P2-04`…`P2-08` bắt đầu
+   sau `P2-03` (vài lát cần thêm lát khác). Stack chỉ được chốt ở `P2-12`, nhưng `P2-12` không nằm
+   trong *Cần xong trước* của lát nào, và §6 còn viết *"`P2-02` và `P2-12` độc lập với cả dãy"*.
+   Trong khi đó *Đầu ra kiểm chứng được* của năm lát đòi *cố tình dựng trạng thái sai ⇒ database từ
+   chối, dán output*, tức là cần một database thật. Bằng chứng của dự án cũ (`nghien-cuu.md` §1.3,
+   §2.7) cho thấy lời giải phụ thuộc chính DBMS: hệ họ dùng không có chỉ mục duy nhất có điều kiện
+   nên phải mô phỏng bằng cột sinh trả `NULL`, còn ràng buộc kiểm chỉ được thực thi từ phiên bản
+   8.0.16. Một ràng buộc dựng trước khi chốt DBMS và phiên bản là ràng buộc có thể phải dựng lại.
+2. **Khi đã có file migration, lược đồ có hai bản mà không luật nào nói bản nào thắng.** Tên bảng
+   và tên cột nằm cả trong `docs/product/2-db/` lẫn trong file migration. Hàng *Schema* của
+   `CLAUDE.md` §2 (đổi ở `P2-04`, kế hoạch §5) chưa nói gì về chuyện này. Dự án cũ đã trả giá ba lần
+   (`nghien-cuu.md` §4.1–§4.3): tài liệu nhắc một cột không tồn tại, gọi một cột bằng tên khác với
+   migration (`pin_code` so với `pin_hash`), và ghi *chưa seed bàn* khi seed đã có mười một bàn. Họ
+   phải thêm luật *migration thắng tài liệu*, cùng một lệnh đọc thẳng file migration (`README.md`
+   cũ §2, và phép D ở §3).
+3. **Quy ước dữ liệu chỉ đòi hậu quả, không đòi lệnh gác.** Hàng `P2-03` ở kế hoạch §6 đòi *mỗi quy
+   ước một dòng, mỗi dòng một hậu quả nếu làm khác*. Dự án cũ đã viết sẵn một câu truy vấn trên
+   `information_schema` để chặn cột tiền không phải kiểu nguyên, ghi *"thêm vào CI"*, rồi không lệnh
+   nào gọi tới nó (`nghien-cuu.md` §1.1). Chính họ kết luận: *"luật không có lệnh gác thì tự trôi"*.
+
+Ba lỗ này là **một** quyết định: *pha 2 dựng trên nền gì, và cái gì chứng minh nền ấy còn đúng*.
+
+**Decision:**
+
+1. **DBMS và phiên bản được chốt trước lát lược đồ đầu tiên, bằng cách đưa `P2-12` vào *Cần xong
+   trước* của `P2-04`…`P2-08`.** `P2-12` giữ nguyên nội dung (stack · thư mục · đặt tên · khung
+   test), nhưng **mục đầu tiên** của nó là *chọn DBMS + phiên bản*, và câu kiểm của mục ấy là một
+   lệnh in ra phiên bản đang chạy. Thứ tự mới là `P2-03` → `P2-12` → năm lát; `P2-02` vẫn độc lập.
+   Kế hoạch vẫn **mười bốn** dòng. Lượt này **không chọn DBMS**: chọn stack là việc của `P2-12` và là
+   quyết định chủ repo phải thấy (**ADR-039**).
+2. **Luật chủ sở hữu khi đã có file migration.** Ba câu, áp từ lúc file migration **đầu tiên** tồn
+   tại. Tên file và vị trí thư mục migration là đầu ra của `P2-12`, không viết ở đây.
+   1. **Tên bảng, tên cột, kiểu và ràng buộc: file migration thắng.** Nó là thứ database chạy; chữ
+      trong `.md` chỉ là bản đọc.
+   2. **File `.md` của `docs/product/2-db/` giữ ý định, lý do, và ánh xạ sang `I-0xx`/`YC-xx`**:
+      ràng buộc nào mang mệnh đề nào, cái gì hỏng nếu làm khác. File ấy được nhắc tên bảng, nhưng
+      không chép lại kiểu và ràng buộc thành bản thứ hai (**F-001**).
+   3. **Hai bản lệch nhau ⇒ một dòng `F-XXX`.** Không sửa migration cho khớp chữ, và cũng không
+      lặng lẽ sửa chữ cho khớp migration. Một chỗ lệch hoặc là ý định đã đổi (một quyết định), hoặc
+      là migration sai (một lỗi), và finding là chỗ phân xử — đúng cách `README.md` cũ §2 xử cặp
+      *luật ↔ migration*.
+
+   **Phép kiểm, mô tả bằng lời:** mọi tên bảng mà các file `.md` của `docs/product/2-db/` nhắc tới
+   đều có trong file migration, và mọi tên bảng file migration tạo ra đều được một file `.md` nhắc
+   tới. Hai danh sách tên, `comm -3` ra **rỗng**. **`P2-09`** là bước biến phép này thành lệnh và
+   nối lệnh ấy vào một cổng chạy mỗi lượt (`./scripts/gate.sh`). Lệnh phải **in cả danh sách chưa
+   lọc cạnh kết quả đã lọc** (**F-017**). Trước `P2-09`, lát nào tạo migration thì tự chạy phép so
+   này bằng tay và dán output vào khối *Bàn giao* của mình.
+
+   Khi `P2-04` đổi hàng *Schema* của `CLAUDE.md` §2 (kế hoạch §5), hàng ấy viết theo ba câu trên:
+   file migration là nhà của tên · kiểu · ràng buộc; file lát ở `docs/product/2-db/` là nhà của ý
+   định và ánh xạ.
+3. **Mỗi quy ước dữ liệu của `P2-03` kèm một phép kiểm chạy được** (một câu truy vấn hoặc một
+   lệnh), bên cạnh hậu quả nếu làm khác. Vì DBMS chưa chốt ở `P2-03`, phép kiểm viết trên thứ không
+   phụ thuộc DBMS: câu truy vấn trên `information_schema` chuẩn SQL, hoặc một lệnh đọc file
+   migration. `P2-12` chạy lại từng phép trên DBMS vừa chọn (cơ sở dữ liệu rỗng ⇒ 0 dòng); phép nào
+   không chạy nổi là bug của `P2-12`. `P2-11` **gom** các phép ấy vào bộ đối chiếu thành một nhóm
+   riêng mang mã quy ước của file `P2-03`, không trộn vào phép so danh sách mã `I-0xx`, và chứng minh
+   từng phép **biết kêu** theo **ADR-050** luật 3.
+
+**Rejected alternatives:**
+
+- *(Lỗ 1) Tách "chọn DBMS + phiên bản" thành một bước riêng, hoặc thành một mục của `P2-12` có
+  trạng thái riêng.* Bác vì năm lát cần nhiều hơn tên DBMS. Chúng viết ràng buộc vào file migration,
+  mà **thư mục và cách đặt tên** của file ấy cũng là đầu ra của `P2-12`. Tách riêng DBMS thì lát vẫn
+  phải chờ nốt phần ấy, hoặc tự đặt tên thư mục — đúng ca *phiên đầu tiên tự bịa quy ước* mà hàng §2
+  của quy ước code sinh ra để chặn. Một mục có trạng thái riêng bên trong một bước thì
+  `work/backlog.md` không chứa được, vì trạng thái đi theo bước (**ADR-051**). Còn một bước riêng
+  đẩy kế hoạch lên **mười lăm** dòng, vượt khuyến nghị mười hai thêm một dòng nữa, chỉ để phần thư
+  mục và khung test chạy song song với lát — trong khi lát cần đúng phần ấy trước khi viết dòng đầu
+  tiên.
+- *(Lỗ 1) Để nguyên, lát đầu tiên tự chọn DBMS.* Bác: chọn stack là quyết định chủ repo phải thấy
+  (**ADR-039**), và một bước L2 không được quyết thay.
+- *(Lỗ 2) Tài liệu thắng, migration phải sửa theo.* Bác: tài liệu không chạy. Dự án cũ đo ba lần chữ
+  trôi khỏi migration, và không lần nào database sai theo chữ.
+- *(Lỗ 2) Bỏ tên bảng khỏi `.md`, chỉ để migration.* Bác: mất chỗ giữ ý định và ánh xạ
+  `I-0xx`/`YC-xx`, thứ `P2-11` và `P2-13` phải đọc. File migration không nói *vì sao*.
+- *(Lỗ 2) Giao lệnh đối chiếu cho `P2-11`.* Bác: `P2-11` chấm **dữ liệu** sau khi đóng quán, còn
+  phép này chấm **chữ so với lược đồ**. Chỗ lệch sinh ra mỗi khi một migration đổi, tức ở `P2-09`,
+  bước sở hữu dãy migration. Giao cho `P2-11` là để lệnh ra đời muộn hai bước, trong khi lệch có thể
+  đã có từ `P2-04`.
+- *(Lỗ 3) Chỉ cần hậu quả, lệnh gác để `P2-11` viết.* Bác: đó đúng là hình của dự án cũ — câu truy
+  vấn nằm trong tài liệu, lời hứa *thêm vào CI*, và không lệnh nào gọi. Phép kiểm phải ra đời
+  **cùng** quy ước.
+
+**Chỗ ADR này KHÔNG chốt:**
+- **DBMS nào, phiên bản nào** — `P2-12`, chủ repo thấy. Bản ở `master_plan/prompt-fullstack.md` §3.4
+  vẫn chỉ là đề xuất để đối chiếu (**ADR-035** luật 3).
+- **Tên file và vị trí thư mục migration** — `P2-12`.
+- **Lệnh đối chiếu viết thế nào** — `P2-09`. ADR này chỉ nói nó so cái gì và phải ra cái gì.
+
+**Applies to:** `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` §5 · §6 · §8 ·
+`work/backlog_DB.md` entry `P2-03` · `P2-04`…`P2-08` · `P2-09` · `P2-11` · `P2-12`.

@@ -290,7 +290,8 @@ Trạng thái: `work/backlog.md` → *Done*.
 
 **Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 3/14 (kế hoạch
 §6) · **cần xong trước:** `P2-01` · **chặn** `P2-04` · `P2-05` · `P2-06` · `P2-07` · `P2-08` ·
-`P2-12` — sáu bước, nhiều nhất pha 2 · **lượt này MỞ `docs/product/2-db/`**
+`P2-12` — sáu bước, nhiều nhất pha 2; năm lát còn chờ thêm `P2-12` (**ADR-053** luật 1) · **lượt
+này MỞ `docs/product/2-db/`**
 
 **Goal:**
 Xong rồi thì tiền, mốc thời gian, khoá, cách đặt tên, trạng thái và luật *không xoá cứng* có **đúng
@@ -331,16 +332,22 @@ trả lời nó.
 2. Khai `work/scope.txt`: khối `P2-03` — `docs/product/2-db/`, `docs/product/00-index.md`,
    `CLAUDE.md`, `work/backlog.md`, `work/backlog_DB.md`.
 3. Chuyển `P2-03` sang *In Progress*.
-4. Viết file quy ước: **mỗi quy ước một dòng, mỗi dòng một hậu quả nếu làm khác**. Tối thiểu sáu
-   chủ đề kế hoạch §6 kể tên — tiền · mốc và múi giờ · khoá · đặt tên · trạng thái · không xoá
-   cứng.
+4. Viết file quy ước: **mỗi quy ước một dòng, mỗi dòng một hậu quả nếu làm khác và một phép kiểm
+   chạy được** — một câu truy vấn hoặc một lệnh (**ADR-053** luật 3). DBMS chưa chốt ở bước này
+   (`P2-12` chốt), nên phép kiểm viết trên thứ không phụ thuộc DBMS: câu truy vấn trên
+   `information_schema` chuẩn SQL, hoặc một lệnh đọc file migration. Mỗi phép mang mã của quy ước
+   nó gác, vì `P2-11` gom chúng vào bộ đối chiếu thành một nhóm riêng. Tối thiểu sáu chủ đề kế hoạch
+   §6 kể tên — tiền · mốc và múi giờ · khoá · đặt tên · trạng thái · không xoá cứng.
 5. Gặp một chỗ nghiệp vụ chưa rõ (ví dụ: đơn vị nhỏ nhất của tiền ở quán) ⇒ **hỏi chủ quán**, hoặc
    `U-XXX`. Không có mức L0 cho luật này (`CLAUDE.md` §3.5).
 6. Trong **cùng** thay đổi: `docs/product/00-index.md` thêm dòng file mới **và** đổi hàng *Pha 2*
    sang **đang mở**; `CLAUDE.md` §2 thêm hàng *Quy ước dữ liệu* trỏ vào file này (**ADR-035** luật
    2). Chạy `./scripts/gate.sh` — lượt này là lượt **đầu tiên** Gate 1d gặp thư mục pha 2, nên đọc
    kỹ output của nó.
-7. Gate 2: mỗi dòng *Acceptance* trỏ vào một dòng thật trong file quy ước.
+7. Gate 2: mỗi dòng *Acceptance* trỏ vào một dòng thật trong file quy ước, và **mỗi quy ước có
+   phép kiểm của nó ngay trên dòng ấy** — đếm bằng danh sách mã, không bằng một con số (**F-026**).
+   Phép kiểm chưa chạy được vì chưa có bảng nào thì ghi rõ thế; `P2-12` chạy nó lần đầu trên DBMS
+   vừa chọn, `P2-11` gom nó vào bộ và chứng minh nó biết kêu.
 8. `grep -rn 'chưa có owner'` ở `CLAUDE.md` — hàng nào nay đã có chủ mà vẫn nói *chưa có* là bug của
    **lượt này**.
 9. Tick `P2-03` → *Done*; điền khối **Bàn giao**; thêm dòng *Ready* cho năm lát vừa hết
@@ -354,6 +361,10 @@ trả lời nó.
   nội dung đầu tiên của nó.
 - **Đừng viết quy ước mà không viết hậu quả.** Một dòng *"tiền cất bằng số nguyên"* không có hậu quả
   kèm theo là một dòng ai cũng sửa được ở lát sau mà không thấy mình đang phá cái gì.
+- **Đừng để phép kiểm thành lời hứa.** Dự án cũ viết sẵn câu truy vấn chặn cột tiền không phải kiểu
+  nguyên, ghi *"thêm vào CI"*, rồi không lệnh nào gọi tới nó — bằng chứng của dự án cũ ở
+  `work/proposals/from_old_project/data_base/nghien-cuu.md` §1.1, không phải dữ kiện của quán này.
+  Một quy ước mà phép kiểm của nó chỉ nằm trong lời văn là quy ước tự trôi (**ADR-053** luật 3).
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
 - *Phạm vi:* —
@@ -370,7 +381,7 @@ trả lời nó.
 ### P2-04 — Bảy mệnh đề của lát bán hàng lõi đang chờ một ràng buộc thật, và một luật đã chốt của pha 0 (`F-038`) chưa có mệnh đề nào mang
 
 **Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 4/14 (kế hoạch
-§6) · **cần xong trước:** `P2-03` · **chặn** `P2-06` · `P2-07` · `P2-09` · `P2-10` · `P2-11` ·
+§6) · **cần xong trước:** `P2-03` · `P2-12` · **chặn** `P2-06` · `P2-07` · `P2-09` · `P2-10` · `P2-11` ·
 **chỗ đang chặn nó:** `F-038` · chạy song song được với `P2-05` · `P2-06` · `P2-07` · `P2-08`
 
 **Goal:**
@@ -407,7 +418,8 @@ tiên cái thiếu ấy thành một lỗ hổng chạy được.
 
 **Cách hoàn thành — đủ mười bước, 1 tới 10.**
 
-1. Đọc file quy ước của `P2-03`; `quality/invariants.md` bảy mệnh đề trên **nguyên văn** (cả điều
+1. Đọc file quy ước của `P2-03` và file quy ước code của `P2-12` (DBMS, phiên bản, thư mục
+   migration); `quality/invariants.md` bảy mệnh đề trên **nguyên văn** (cả điều
    kiện biên và kịch bản kiểm); `03-bao-ve-invariant.md` các hàng tương ứng — cột **tầng** là đề
    bài; `04-yeu-cau-du-lieu.md` `YC-05`; và **`F-038` nguyên văn**.
 2. Khai `work/scope.txt`: khối `P2-04` — **thêm**, vì bốn lát kia có thể đang chạy song song
@@ -423,9 +435,14 @@ tiên cái thiếu ấy thành một lỗ hổng chạy được.
    của database**. Rồi `./scripts/gate.sh` — Gate 1d nay chấm cả vùng pha 2 (`P2-02`).
 7. Gate 2: mỗi dòng *Acceptance* map vào một output thật, không vào một câu khẳng định.
 8. Thêm dòng file mới vào `docs/product/00-index.md`; đổi hàng *Schema* của `CLAUDE.md` §2 từ *chưa
-   có owner* sang file này (**ADR-035** luật 2) — các lát sau **thêm** dòng, không ghi đè.
-9. Tick `P2-04` → *Done*; điền khối **Bàn giao**; xoá **khối của mình** trong
-   `work/scope.txt`, không xoá khối của lát khác.
+   có owner* sang file này (**ADR-035** luật 2) — các lát sau **thêm** dòng, không ghi đè. Khi đổi
+   hàng *Schema* của `CLAUDE.md` §2 thì viết theo luật chủ sở hữu của **ADR-053** luật 2: file
+   migration là nhà của tên bảng · tên cột · kiểu · ràng buộc; file lát ở `docs/product/2-db/` là
+   nhà của ý định, lý do và ánh xạ `I-0xx`/`YC-xx`; lệch ⇒ `F-XXX`. Ý 1 (migration thắng) có lời chủ
+   repo 2026-09-25; ý 2 · 3 là phần suy ra — đọc ADR-053 *Trạng thái* trước khi viết hàng ấy.
+9. Tick `P2-04` → *Done*; điền khối **Bàn giao** — kèm output phép so tên bảng giữa file `.md` và
+   file migration, chạy tay cho tới khi `P2-09` biến nó thành lệnh (**ADR-053** luật 2); xoá **khối
+   của mình** trong `work/scope.txt`, không xoá khối của lát khác.
 10. Khối `git commit` dán được, liệt kê từng file.
 
 **Bẫy hay sửa nhầm nhất:**
@@ -453,7 +470,7 @@ tiên cái thiếu ấy thành một lỗ hổng chạy được.
 ### P2-05 — Giá của một đơn đã đặt chưa có chỗ cất riêng, nên sửa menu là sửa luôn doanh thu của ngày đã chốt
 
 **Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 5/14 (kế hoạch
-§6) · **cần xong trước:** `P2-03` · **chặn** `P2-10` · `P2-11` · **chỗ đang chặn nó:** `F-036` (vế
+§6) · **cần xong trước:** `P2-03` · `P2-12` · **chặn** `P2-10` · `P2-11` · **chỗ đang chặn nó:** `F-036` (vế
 *ngừng bán hẳn*) · chạy song song được với bốn lát kia
 
 **Goal:**
@@ -486,7 +503,7 @@ không bao giờ được dùng*) đứng trên cùng chỗ cất ấy.
 
 **Cách hoàn thành — đủ mười bước, 1 tới 10.**
 
-1. Đọc file quy ước `P2-03`; `quality/invariants.md` `I-009` `I-010` `I-011` `I-013` nguyên văn;
+1. Đọc file quy ước `P2-03` và file quy ước code `P2-12`; `quality/invariants.md` `I-009` `I-010` `I-011` `I-013` nguyên văn;
    `master_plan/shop-facts.md` §4.1–§4.6 (công thức giá) và §4.8 (các ca giá bắt buộc); **`F-036`
    nguyên văn**, bảng hai hàng của nó.
 2. Khai `work/scope.txt`: khối `P2-05` — **thêm**, không ghi đè.
@@ -502,7 +519,8 @@ không bao giờ được dùng*) đứng trên cùng chỗ cất ấy.
 7. Gate 2: hai dòng *Acceptance* trên map vào hai output thật.
 8. Thêm dòng vào `docs/product/00-index.md`; hàng *Schema* ở `CLAUDE.md` §2 **thêm** tên file này,
    không ghi đè tên file của `P2-04`.
-9. Tick `P2-05` → *Done*; điền khối **Bàn giao**; xoá khối scope của mình.
+9. Tick `P2-05` → *Done*; điền khối **Bàn giao**, kèm output phép so tên bảng `.md` ↔ migration
+   (**ADR-053** luật 2); xoá khối scope của mình.
 10. Khối `git commit` dán được, liệt kê từng file.
 
 **Bẫy hay sửa nhầm nhất:**
@@ -529,7 +547,7 @@ không bao giờ được dùng*) đứng trên cùng chỗ cất ấy.
 ### P2-06 — Vết hoàn tiền và khoản nợ — hai thứ mà thiếu chúng thì đối soát ngưỡng 0đ không chạy nổi — vẫn chưa có chỗ cất
 
 **Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 6/14 (kế
-hoạch §6) · **cần xong trước:** `P2-03` · `P2-04` · **chặn** `P2-08` · `P2-09` · `P2-11` · **chỗ
+hoạch §6) · **cần xong trước:** `P2-03` · `P2-04` · `P2-12` · **chặn** `P2-08` · `P2-09` · `P2-11` · **chỗ
 đang chặn nó:** `F-037` · chạy song song được với `P2-05` · `P2-07`
 
 **Goal:**
@@ -567,7 +585,7 @@ sang chỗ mới — **trong cùng thay đổi**, không phải một task sau (
 
 **Cách hoàn thành — đủ mười bước, 1 tới 10.**
 
-1. Đọc file quy ước `P2-03`; lát `P2-04`; `quality/invariants.md` năm mệnh đề trên; `YC-01` `YC-02`
+1. Đọc file quy ước `P2-03`; file quy ước code `P2-12`; lát `P2-04`; `quality/invariants.md` năm mệnh đề trên; `YC-01` `YC-02`
    `YC-09` `YC-10` `YC-11`; `architecture.md` **§12.3** và **§8**; `shop-facts.md` §6.4 · §6.10 ·
    §6.14 · §6.18 · §6.26; **`F-037` nguyên văn**.
 2. Khai `work/scope.txt`: khối `P2-06` — **thêm**.
@@ -584,7 +602,8 @@ sang chỗ mới — **trong cùng thay đổi**, không phải một task sau (
 8. **Cùng lượt**: `architecture.md` §12.3 nhận một dòng trỏ sang file mới; `00-index.md` thêm dòng;
    `CLAUDE.md` §2 hàng *Schema* **thêm** tên file. Rồi `grep -rn '§12.3'` — pointer nào còn đọc
    §12.3 như nhà thật là bug của **lượt này**.
-9. Tick `P2-06` → *Done*; điền khối **Bàn giao**; xoá khối scope của mình.
+9. Tick `P2-06` → *Done*; điền khối **Bàn giao**, kèm output phép so tên bảng `.md` ↔ migration
+   (**ADR-053** luật 2); xoá khối scope của mình.
 10. Khối `git commit` dán được, liệt kê từng file.
 
 **Bẫy hay sửa nhầm nhất:**
@@ -611,7 +630,7 @@ sang chỗ mới — **trong cùng thay đổi**, không phải một task sau (
 ### P2-07 — Một lần bấm *"đã làm xong"* đẩy việc của nhiều bàn cùng lúc, mà không chỗ nào cất phần của từng bàn
 
 **Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 7/14 (kế hoạch
-§6) · **cần xong trước:** `P2-03` · `P2-04` · **chặn** `P2-09` · `P2-11` · **chỗ đang chặn nó:**
+§6) · **cần xong trước:** `P2-03` · `P2-04` · `P2-12` · **chặn** `P2-09` · `P2-11` · **chỗ đang chặn nó:**
 `S-5` · `S-6` (**để trống, đừng điền**) · `F-036` (vế việc **cấp đơn**) · chạy song song được với
 `P2-05` · `P2-06` · `P2-08`
 
@@ -647,7 +666,7 @@ cập nhật — đó là một lần **đổi chủ**, cũng cần chỗ cất.
 
 **Cách hoàn thành — đủ mười bước, 1 tới 10.**
 
-1. Đọc file quy ước `P2-03`; lát `P2-04`; `quality/invariants.md` `I-004` `I-019` `I-020`; `YC-06`
+1. Đọc file quy ước `P2-03`; file quy ước code `P2-12`; lát `P2-04`; `quality/invariants.md` `I-004` `I-019` `I-020`; `YC-06`
    `YC-07`; `shop-facts.md` §5.4 và §7.2 (**`S-5`** · **`S-6`** nguyên văn); `03-lat-cat.md` §3.4.2
    · §3.4.3 · §3.4.4 · §3.4.5 · §3.4.8; **`F-036`** hàng `I-004`.
 2. Khai `work/scope.txt`: khối `P2-07` — **thêm**.
@@ -665,7 +684,8 @@ cập nhật — đó là một lần **đổi chủ**, cũng cần chỗ cất.
    mã**, không vào một giá trị.
 8. `00-index.md` thêm dòng; `CLAUDE.md` §2 hàng *Schema* **thêm** tên file. `grep -rn 'S-5'` — mọi
    chỗ nói `S-5` chặn `P2-07` phải còn đúng sau lượt này.
-9. Tick `P2-07` → *Done*; điền khối **Bàn giao**; xoá khối scope của mình.
+9. Tick `P2-07` → *Done*; điền khối **Bàn giao**, kèm output phép so tên bảng `.md` ↔ migration
+   (**ADR-053** luật 2); xoá khối scope của mình.
 10. Khối `git commit` dán được, liệt kê từng file.
 
 **Bẫy hay sửa nhầm nhất:**
@@ -692,7 +712,7 @@ cập nhật — đó là một lần **đổi chủ**, cũng cần chỗ cất.
 ### P2-08 — Quyền của một thao tác gắn với CHỖ ĐỨNG tại thời điểm bấm, mà không dữ liệu nào biết ai đứng đâu lúc nào
 
 **Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 8/14 (kế
-hoạch §6) · **cần xong trước:** `P2-03` · `P2-06` · **chặn** `P2-09` · `P2-11` · chạy song song
+hoạch §6) · **cần xong trước:** `P2-03` · `P2-06` · `P2-12` · **chặn** `P2-09` · `P2-11` · chạy song song
 được với `P2-05` · `P2-07` · **chỗ giao nhau với lane admin** — đọc kế hoạch §3 trước khi dựng
 
 **Goal:**
@@ -728,7 +748,7 @@ mỗi lần **cập nhật** — trong một hệ **không có nút hoàn tác**
 
 **Cách hoàn thành — đủ mười bước, 1 tới 10.**
 
-1. Đọc file quy ước `P2-03`; lát `P2-06`; `YC-03` `YC-04` `YC-08` và `YC-12`…`YC-17` nguyên văn;
+1. Đọc file quy ước `P2-03`; file quy ước code `P2-12`; lát `P2-06`; `YC-03` `YC-04` `YC-08` và `YC-12`…`YC-17` nguyên văn;
    `quality/invariants.md` `I-012` `I-018`; `shop-facts.md` §6.11 · §6.13 · §8.7; `architecture.md`
    §4; **ADR-037**; và kế hoạch §3 (hai chỗ giao nhau với lane admin).
 2. Khai `work/scope.txt`: khối `P2-08` — **thêm**. Lane admin có thể đang chạy song song ở nghĩa
@@ -746,7 +766,8 @@ mỗi lần **cập nhật** — trong một hệ **không có nút hoàn tác**
 7. Gate 2: mỗi dòng *Acceptance* map vào một output thật.
 8. `00-index.md` thêm dòng; `CLAUDE.md` §2 hàng *Schema* **thêm** tên file. `grep -rn 'YC-15\|YC-16\|YC-17'`
    — lane admin trỏ vào ba dòng này (kế hoạch §3), pointer nào hết đúng là bug của **lượt này**.
-9. Tick `P2-08` → *Done*; điền khối **Bàn giao**; xoá khối scope của mình.
+9. Tick `P2-08` → *Done*; điền khối **Bàn giao**, kèm output phép so tên bảng `.md` ↔ migration
+   (**ADR-053** luật 2); xoá khối scope của mình.
 10. Khối `git commit` dán được, liệt kê từng file.
 
 **Bẫy hay sửa nhầm nhất:**
@@ -808,11 +829,19 @@ thật, và nếu nó hỏng giữa chừng thì không có đường về. Cộ
 2. Khai `work/scope.txt`: khối `P2-09`.
 3. Chuyển `P2-09` sang *In Progress*.
 4. Viết thứ tự migration: mỗi bước một đường đi, một **đường lùi**, và thứ tự dựng lại từ số không.
+   Cùng lượt, biến phép so của **ADR-053** luật 2 thành **lệnh**: danh sách tên bảng các file `.md`
+   của `docs/product/2-db/` nhắc tới, danh sách tên bảng file migration tạo ra, `comm -3` giữa hai
+   danh sách ⇒ **rỗng**. Nối lệnh ấy vào `./scripts/gate.sh` — một lệnh chạy tay mà không cổng nào
+   gọi là đúng hình *luật không có lệnh gác thì tự trôi* (**ADR-053** luật 3). Lệch ⇒ một dòng
+   `F-XXX`, **không** sửa migration cho khớp chữ.
 5. **`F-034`: hỏi chủ repo, đừng chọn.** Nếu chưa có lời, viết **một dòng** trong file nói rõ lược
    đồ đứng thế nào khi `F-034` còn mở — đúng cách ô cổng thứ mười một của kế hoạch §9 đòi.
 6. Chứng minh, chạy thật và **dán cả ba output**: (a) chạy xuôi cả dãy trên một cơ sở dữ liệu rỗng
    ⇒ xanh; (b) chạy **lùi** một bước ⇒ xanh; (c) xuôi lại ⇒ xanh. Rồi `./scripts/gate.sh`.
-7. Gate 2: ba dòng *Acceptance* map vào ba output trên, không vào một câu khẳng định.
+7. Gate 2: ba dòng *Acceptance* map vào ba output trên, không vào một câu khẳng định. Cộng một dòng
+   *Đầu ra* thứ tư: lệnh đối chiếu tên bảng giữa file `.md` và file migration ra **rỗng**, và output
+   dán **cả lệnh chưa lọc cạnh lệnh đã lọc** — hai danh sách đầy đủ trước `comm`, rồi kết quả
+   `comm -3` (**F-017**).
 8. `00-index.md` thêm dòng. `grep -rn 'F-034'` — `work/findings.md` và sổ rủi ro cùng nói về nó;
    trạng thái ở hai chỗ phải khớp sau lượt này (Gate 1c chấm `docs/`, không chấm `work/`).
 9. Tick `P2-09` → *Done*; điền khối **Bàn giao**; xoá khối scope.
@@ -825,6 +854,11 @@ thật, và nếu nó hỏng giữa chừng thì không có đường về. Cộ
   năm lát; chạy sớm thì thứ tự phải viết lại, và bản viết lại luôn bỏ sót một bảng.
 - **Đừng nhét backup vào đây cho "đủ bộ".** `F-034` chạm pha 5; bước này chỉ nói lược đồ đứng thế
   nào khi nó còn mở.
+- **Đừng tin một phép so tên bảng ra rỗng mà không in hai danh sách.** Một danh sách rỗng vì biểu
+  thức lọc viết sai cũng cho `comm -3` rỗng (**F-017**). Dự án cũ phát hiện chữ trôi khỏi migration
+  ba lần chỉ khi đọc thẳng file migration — bằng chứng của dự án cũ,
+  `work/proposals/from_old_project/data_base/nghien-cuu.md` §4.1–§4.3, không phải dữ kiện của quán
+  này.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
 - *Phạm vi:* —
@@ -946,12 +980,16 @@ là lớp cuối cùng của cả hệ thống.
 2. Khai `work/scope.txt`: khối `P2-11`.
 3. Chuyển `P2-11` sang *In Progress*.
 4. Viết **đúng một** câu truy vấn cho mỗi phép đối chiếu, mỗi câu mang mã mệnh đề của nó; gom
-   thành **một** lệnh.
+   thành **một** lệnh. Lệnh ấy chạy thêm **nhóm phép kiểm quy ước** mà `P2-03` viết (**ADR-053**
+   luật 3), mỗi phép mang mã quy ước của nó — nhóm riêng, **không** trộn vào danh sách mã `I-0xx`
+   mà `comm -3` so.
 5. **Không sửa lời một phép đối chiếu nào.** Một phép đối chiếu hẹp hơn chính mệnh đề của nó là
    một `F-XXX` gửi ngược — đúng hình **F-036** đã ghi; pha 2 **thi hành**, không sở hữu.
 6. Chứng minh, chạy thật và dán **ba** output: (a) `comm -3` hai danh sách **mã** ⇒ rỗng; (b) cả bộ
    chạy trên dữ liệu mồi ⇒ **0 dòng**; (c) **cài một lỗi thật** vào dữ liệu ⇒ **đúng** câu của nó
-   ra khác 0. Rồi `./scripts/gate.sh`.
+   ra khác 0. Nhóm phép kiểm quy ước cũng qua (a)–(c): danh sách mã quy ước ở file `P2-03` so với
+   danh sách mã trong bộ ⇒ rỗng, và mỗi phép được cài một vi phạm thật ⇒ ra khác 0. Rồi
+   `./scripts/gate.sh`.
 7. Gate 2: ba dòng *Acceptance* map vào ba output trên.
 8. `00-index.md` thêm dòng. `grep -rn 'I-0'` trong bộ truy vấn và đối chiếu ngược với
    `quality/invariants.md` — mã nào có ở một bên mà không ở bên kia là chỗ hụt của **lượt này**.
@@ -981,8 +1019,8 @@ là lớp cuối cùng của cả hệ thống.
 ### P2-12 — Phiên đầu tiên viết code chưa có một quy ước nào để đối chiếu, và cái nó bịa ra sẽ thành fact
 
 **Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 12/14 (kế hoạch
-§6) · **cần xong trước:** `P2-03` · **độc lập với cả dãy lược đồ** — chạy song song được với
-`P2-04`…`P2-11`
+§6) · **cần xong trước:** `P2-03` · **chặn** `P2-04` · `P2-05` · `P2-06` · `P2-07` · `P2-08` (năm
+lát, **ADR-053** luật 1) — **không còn** độc lập với dãy lược đồ
 
 **Goal:**
 Xong rồi thì stack, cấu trúc thư mục, cách đặt tên và khung test có **một** chủ, và hàng *Quy ước
@@ -1013,12 +1051,17 @@ là bước cuối cùng trước lúc ấy.
    `scripts/verify.sh` (Gate 1 gọi gì cho Go và cho Node); `CLAUDE.md` §2 hàng *Quy ước code*.
 2. Khai `work/scope.txt`: khối `P2-12`.
 3. Chuyển `P2-12` sang *In Progress*.
-4. Viết file quy ước code: stack · cấu trúc thư mục · đặt tên · khung test. **Mỗi mục một câu kiểm
-   được bằng lệnh** — không có lệnh thì không phải một quy ước, mà là một lời khuyên.
+4. Viết file quy ước code. **Mục đầu tiên là DBMS + phiên bản** (**ADR-053** luật 1), vì năm lát
+   chờ đúng mục ấy; câu kiểm của nó là một lệnh in ra phiên bản đang chạy. Rồi stack · cấu trúc thư
+   mục (có thư mục migration — năm lát viết ràng buộc vào đó) · đặt tên · khung test. **Mỗi mục một
+   câu kiểm được bằng lệnh** — không có lệnh thì không phải một quy ước, mà là một lời khuyên.
 5. Chọn stack là một **quyết định thiết kế** ⇒ ADR trong `docs/decisions.md` (`CLAUDE.md` §3, hàng
    *ADR*), và nếu có hơn một đường hợp lý thì hỏi **chủ repo** trước khi ghi.
 6. Chạy `./scripts/gate.sh` và xác nhận `scripts/verify.sh` **gọi đúng** khung test vừa chốt — dán
-   output; một quy ước mà Gate 1 không gọi là một quy ước không cổng nào đọc (**F-007**).
+   output; một quy ước mà Gate 1 không gọi là một quy ước không cổng nào đọc (**F-007**). Chạy
+   **từng phép kiểm quy ước của `P2-03`** trên DBMS vừa chọn, trên một cơ sở dữ liệu rỗng ⇒ 0 dòng,
+   dán output; phép nào không chạy nổi trên DBMS đã chọn là bug của **lượt này** (**ADR-053** luật
+   3).
 7. Gate 2: mỗi mục quy ước map vào một lệnh chạy thật.
 8. `00-index.md` thêm dòng; `CLAUDE.md` §2 hàng *Quy ước code* đổi sang tên file này (**ADR-035**
    luật 2). `grep -rn 'chưa có owner'` — hàng nào nay có chủ mà còn nói *chưa có* là bug của **lượt
@@ -1031,8 +1074,13 @@ là bước cuối cùng trước lúc ấy.
   lệnh là một dòng không ai chấm được, và nó sẽ trôi ngay ở PR thứ hai.
 - **Đừng chép §3.4 nguyên khối.** Bản xuất khẩu **không sở hữu gì** (**ADR-035** luật 3) — đọc nó
   như đề xuất để đối chiếu.
-- **Đừng đợi hết pha 2 mới làm bước này.** Nó độc lập với dãy lược đồ, và làm muộn nghĩa là code
-  đầu tiên của pha 3 viết trước quy ước.
+- **Đừng đợi hết pha 2 mới làm bước này.** Nó đứng giữa `P2-03` và năm lát (**ADR-053** luật 1):
+  làm muộn nghĩa là lát đầu tiên dựng ràng buộc trên một DBMS chưa ai chọn. Bằng chứng của dự án cũ
+  (`work/proposals/from_old_project/data_base/nghien-cuu.md` §1.3 · §2.7, không phải dữ kiện của
+  quán này): cách dựng một khoá duy nhất có điều kiện, và việc ràng buộc kiểm có được thực thi hay
+  không, đều đổi theo DBMS và phiên bản.
+- **Đừng tách DBMS ra một bước riêng cho nhanh.** Năm lát cần cả thư mục và cách đặt tên migration,
+  không chỉ tên DBMS — phương án ấy đã bị bác ở **ADR-053**.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
 - *Phạm vi:* —
