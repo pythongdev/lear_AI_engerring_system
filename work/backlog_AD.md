@@ -1,4 +1,13 @@
 <a id="top"></a>
+
+> **Cập nhật phụ thuộc 2026-09-25 (T-094):** lời U-053–U-059 ở
+> `master_plan/shop-facts.md` §6.11 · §8.4 · §8.8 · §8.9. U-055/U-056/U-059
+> đã có lời; những đoạn phân tích ngày 2026-09-20 bên dưới là lịch sử.
+> ADM-04 còn nguồn số người U-060 và nguyên liệu U-054; ADM-13 còn U-054.
+> ADM-50 còn làm rõ nghĩa “POS” của U-057. ADM-32 hết vướng mâu thuẫn D42,
+> còn danh mục/phạm vi món mới. Quyền giảm giá thuộc chủ quán; U-058 còn
+> cách tính/phạm vi. Mã hỏi còn lại tra `docs/product/99-unknowns.md`.
+
 # Backlog — mảng QUẢN TRỊ (admin)
 
 Mô tả dài của **hai mươi chín** việc `ADM-01`…`ADM-53` — ba mảng *nguyên liệu · con người · tài
@@ -148,7 +157,7 @@ Con số ba loại **không đổi** (20 · 8 · 1): lời chốt này không đ
 | ~~**A** — một buổi bán~~ | ~~`A1`…`A10`~~ **ĐÃ TRẢ LỜI CẢ MƯỜI, 2026-09-04** (T-056); bốn vế bỏ trống nay cũng đóng hết (`U-038`·`U-039`·`U-040` 2026-09-06 · **`U-041` 2026-09-08**) | **hết chặn:** ADM-01 · ADM-02 · ADM-03 → loại 2 · **còn chặn:** ADM-04 — nhưng bằng **U-054** (`U-045` đóng 2026-09-15 ⇒ `U-051`, `U-051` đóng 2026-09-16 ⇒ `U-054`), không còn bằng câu nhánh A nào |
 | **B** — nguyên liệu | `B11`…`B22` (B13/B14/B17 đã về owner 2026-09-25; B11/B12/B15/B16 trả lời một phần; B18/B20/B22 đã về owner 2026-09-25; B19 còn thiếu phân loại, **`B21` có lời 2026-09-15** qua `U-045`: không ngưỡng, máy không nhắc) — **U-034 đóng 2026-09-06** | ADM-10 · ADM-11 · ADM-12 · ADM-13 · ADM-14 · ADM-15 |
 | **C** — con người | `C23`…`C36` (14 câu; ~~`C36`~~ **có lời 2026-09-20 và ĐÃ VỀ OWNER cùng ngày** qua ADM-21 — đọc ở `master_plan/shop-facts.md` **§8.8**; C24–C35 đã nhận 2026-09-25 (T-091), xem §8.7 và các vế còn thiếu tại bảng hỏi; C23 còn trống) | ADM-20 · ~~ADM-21~~ ✅ `Done` · ADM-22 · ADM-23 · ADM-24 |
-| **D** — sản phẩm | `D37`…`D43` đã nhận 2026-09-25, owner `master_plan/shop-facts.md` §8.9; còn các vế hỏi tiếp | ADM-32 còn danh mục/phạm vi và U-059; ADM-33 còn quyền ảnh/thứ tự; ADM-30 hết vướng D40, ADM-31 không vướng |
+| **D** — sản phẩm | `D37`…`D43` đã nhận 2026-09-25, owner `master_plan/shop-facts.md` §8.9; còn các vế hỏi tiếp | ADM-32 còn danh mục/phạm vi món mới; U-059 đã đóng; ADM-33 còn quyền ảnh/thứ tự; ADM-30 hết vướng D40, ADM-31 không vướng |
 | **E** — tài chính | `E44`…`E51` đã nhận 2026-09-25 (T-093), owner shop-facts §8.10; các vế hỏi tiếp ở bảng hỏi nhóm E | ADM-42 · ADM-43 · ADM-44 · ADM-45 |
 | **F** — chung | `F52`…`F55` (4 câu, **chưa câu nào**) | ADM-51 · ADM-52 (ADM-50 chỉ vướng vế *ai*) |
 
@@ -253,7 +262,7 @@ hàng thì lấy lại số bằng `grep -n` ngay lượt ấy, đừng chép t�
 | [ADM-01](#adm-01) | ca bán | A | 2 | *hết chặn* — chờ thi công pha 2–4 |
 | [ADM-02](#adm-02) | thứ tự bưng | A | 2 | *hết chặn* — chờ thi công pha 2–4 |
 | [ADM-03](#adm-03) | sức chứa | A | 2 | *hết chặn* (đóng 2026-09-06: [`U-039`](../docs/product/99-unknowns.md#L296) [`U-040`](../docs/product/99-unknowns.md#L297)) |
-| [ADM-04](#adm-04) | tổng quan buổi bán | A | 1 | [`U-054`](../docs/product/99-unknowns.md#L149) · [`F52`](admin-questions.md#L289) · [`F53`](admin-questions.md#L292) — *`U-041` đóng 2026-09-08, cả ba đường; `U-045` đóng 2026-09-15 — máy không kết luận, chủ quán tự đọc*; vế **người** nay đứng trên [`U-055`](../docs/product/99-unknowns.md) — [ADM-21](#adm-21) ✅ `Done` 2026-09-20 đưa `C36` về owner, nhưng lời ấy phủ **trạm quầy**, còn con số *bao nhiêu người đang làm* cần cả năm trạm (*`U-049` đóng 2026-09-08, `U-050` đóng 2026-09-15: POS gánh trạm bị bỏ trống, khoảng trống ấy không là thiếu người*) |
+| [ADM-04](#adm-04) | tổng quan buổi bán | A | 1 | U-054 (đã nhận “chủ quán nhập”, cần rõ nghĩa) · U-060 (nguồn số người sau lời U-055) · F52 · F53; owner shop-facts §8.4/§8.6/§8.8 |
 | [ADM-10](#adm-10) | danh mục nguyên liệu | B | 1 | [`B11`](admin-questions.md#L124) [`B12`](admin-questions.md#L127) |
 | [ADM-11](#adm-11) | phiếu nhập hàng | B | 1 | [`B13`](admin-questions.md#L133)…[`B17`](admin-questions.md#L145) |
 | [ADM-12](#adm-12) | hao hụt / đồ chưa dùng hết | B | 1 | `B19` (phân loại để được/không để được); B18/B20 đã về shop-facts §8.4 |
@@ -261,13 +270,13 @@ hàng thì lấy lại số bằng `grep -n` ngay lượt ấy, đừng chép t�
 | [ADM-14](#adm-14) | nối nút tạm dừng | B | 1 | [**ADM-13**](#adm-13) — [`B21`](admin-questions.md#L160) **đã có lời 2026-09-15**: máy không phát tín hiệu *sắp hết*, nên chỉ còn vế **người nào bấm** |
 | [ADM-15](#adm-15) | công nợ nhà cung cấp | B | 1 | [`B16`](admin-questions.md#L142) + [**ADM-11**](#adm-11) |
 | [ADM-20](#adm-20) | hồ sơ nhân viên | C | 1 | `C23` — *[**Đ-4**] hết chặn: về owner 2026-09-20 (ADM-53), đọc ở `master_plan/shop-facts.md` §8.7* |
-| ~~[ADM-21](#adm-21)~~ | ai đang trực trạm | C | **3** | ✅ **`Done` 2026-09-20** — lời `C36` đã về owner: `master_plan/shop-facts.md` **§8.8** · `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6 · `docs/product/1-system-design/architecture.md` **§14.5**. Luật quyền gắn **chỗ đứng** (§4) lần đầu đứng trên một dữ kiện thật — **cho trạm `quay`**. Ba vế còn hở mang mã riêng: [`U-055`](../docs/product/99-unknowns.md) (bốn trạm ngoài quầy) · `U-056` (ai khai mốc) · `U-057` (vế *ai* của hai cửa ghi ngoài quầy) |
+| ~~[ADM-21](#adm-21)~~ | ai đang trực trạm | C | **3** | ✅ `Done` 2026-09-20; bổ sung U-055/U-056 ngày 2026-09-25 ở shop-facts §8.8. Còn U-060 (nguồn số người) và U-057 (nghĩa POS ở hai cửa ngoài quầy). |
 | [ADM-22](#adm-22) | chấm công | C | 1 | phần còn thiếu `C30` `C32` — *[**Đ-4**] hết chặn: về owner 2026-09-20 (ADM-53)* |
 | [ADM-23](#adm-23) | bảng lương | C | 1 | phần còn thiếu `C26` `C27` `C28` `C33` + [**ADM-22**](#adm-22) — *[**Đ-4**] hết chặn: về owner 2026-09-20 (ADM-53)* |
 | [ADM-24](#adm-24) | quyền xem lương | C | 1 | [`F55`](admin-questions.md#L298) + [**ADM-23**](#adm-23) |
 | [ADM-30](#adm-30) | ai được sửa giá thành phần | D | 2 | D40 đã về shop-facts §8.9 (2026-09-25) |
 | [ADM-31](#adm-31) | bật/tắt món | D | 2 | *hết chặn* — không thiếu gì |
-| [ADM-32](#adm-32) | thêm món mới | D | 1 | D37–D42 đã nhận ở shop-facts §8.9; còn danh mục/phạm vi và U-059 |
+| [ADM-32](#adm-32) | thêm món mới | D | 1 | D37–D42 đã nhận ở shop-facts §8.9; còn danh mục/phạm vi món mới; U-059 đã đóng |
 | [ADM-33](#adm-33) | menu QR: ảnh và thứ tự | D | 1 | D43 đã về shop-facts §8.9; còn quyền ảnh/thứ tự |
 | [ADM-40](#adm-40) | doanh thu ngày | E | 2 | E47 đã về shop-facts §8.10 |
 | [ADM-41](#adm-41) | đối soát cuối ngày | E | **2 + L3** | nửa dưới chặn: [`A3`](admin-questions.md#L100) [`A4`](admin-questions.md#L101) |
@@ -526,11 +535,10 @@ trong buổi**, và không bao giờ được bày như thể đã đối soát 
 - `F52` (phần quản trị chạy trên máy gì) · `F53` (có muốn xem từ nhà, ngoài giờ bán không). `F53`
   trả lời *"có"* thì việc này kéo theo **ADM-51** (ai được xem gì) và không còn là L1.
 
-⚠️ **Con số thứ sáu — *bao nhiêu người đang làm* — vẫn chưa đủ nguồn, nhưng chặn đã CHUYỂN CHỦ
-ngày 2026-09-20.** `C36` có lời và đã về owner (ADM-21 `Done`, `master_plan/shop-facts.md` **§8.8**):
-mỗi lần đổi người **ở quầy** là một mốc có giờ. Con số này hỏi về **cả quán**, nên nó nay đứng trên
-**`U-055`** — *bốn trạm ngoài quầy có ghi mốc đổi người không*. Bày con số ấy ra trước khi `U-055`
-có lời vẫn là bày một con số không có nguồn.
+**Cập nhật 2026-09-25:** U-055 đã có lời: bốn trạm ngoài quầy không ghi mốc
+đổi giờ. Nguồn số người và vế thiếu người của tổng quan chuyển sang **U-060**;
+không lấy việc đóng U-055 làm bằng chứng đã có đủ nguồn. U-054 đã nhận
+“chủ quán nhập”, còn cần rõ nghĩa; đọc shop-facts §8.4/§8.6/§8.8.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 
@@ -1042,7 +1050,7 @@ không còn chờ câu này. D39 ghi nhịp thực tế, chưa trả lời thờ
 **Owner:** cấu tạo giá ở shop-facts §4.6; xem trước và giữ giá đơn cũ ở
 `docs/product/1-system-design/architecture.md` §6.1; đổi giữa buổi và khoá từng
 dòng ở ADR-023; quyền ở shop-facts §8.9. Vết ai đổi trên mặt quản trị vẫn
-chờ U-057. Quyền giảm giá riêng cho khách là U-058, không suy từ D40.
+chờ U-057. Quyền giảm giá riêng cho khách đã chốt là chủ quán (U-058, 2026-09-25); còn cách tính/phạm vi ở U-058.
 
 **Acceptance · Verify:** lời D40 nằm ở owner, phần thi công đi theo pha nhận nó.
 
@@ -1085,7 +1093,7 @@ một thay đổi file.
 <a id="adm-32"></a>
 ### ADM-32 — Thêm một món mới là ĐỔI PHẠM VI, và phạm vi đó nằm trong danh sách "đã quyết định không làm"
 
-**L2** · nhánh D · **còn chặn bởi danh mục/phạm vi món mới và U-059**
+**L2** · nhánh D · **còn chặn bởi danh mục/phạm vi món mới; U-059 đã đóng**
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -1108,7 +1116,7 @@ một ngày quán bán thêm món, chỗ này là nơi ghi rằng câu trả l�
 
 **Cập nhật 2026-09-25 (T-092):** D37, D38, D42 đã có lời ở
 `master_plan/shop-facts.md` §8.9. Còn hỏi tên món, thời điểm/phạm vi phần mềm
-cần hỗ trợ và vế cuối tuần; U-059 làm rõ combo. Lời về kế hoạch bán thêm chưa
+cần hỗ trợ và vế cuối tuần; U-059 đã đóng: lời sửa ở shop-facts §8.9. Lời về kế hoạch bán thêm chưa
 đủ để đặc tả chức năng thêm món, giá hay luồng bếp.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
@@ -1344,6 +1352,10 @@ Không gì. Đây là việc duy nhất của lane mà câu trả lời trung th
 
 <a id="adm-50"></a>
 ### ADM-50 — MVP đã chốt là CÓ lưu vết, phạm vi vết cũng đã chốt, và cái vết ấy vẫn không ghi được AI
+
+**Cập nhật 2026-09-25:** U-057 đã có lời “POS” ở shop-facts §8.8, nhưng cần
+xác định đó là người khai danh tính hay chuyển thao tác về quầy; chưa đủ để
+đóng vế *ai bấm* của hai cửa ngoài quầy.
 
 **L3** — vết là thứ đối soát dựa vào · nhánh F · **loại 2** — luật đã đủ, phần còn lại thuộc
 **P1-07** và pha 2 · **vế *ai*: hết chặn ở cửa POS ở quầy 2026-09-20 (`C36` ⇒ §8.8, ADM-21), còn

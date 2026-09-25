@@ -305,9 +305,9 @@ khác bảng giá §4.2 và bảng phụ thu §4.4 ở đúng chỗ đó: hai b�
 
 ### 4.6 Chín quy tắc cấu tạo giá
 
-**Cập nhật 2026-09-25:** D41 mở lại vế giảm giá; D42 cần làm rõ tên combo. Đọc
-§8.9 và `docs/product/99-unknowns.md` U-058; vế combo đã xác nhận có, xem §8.9 trước khi dùng công thức
-này làm hợp đồng đầy đủ cho các trường hợp mới.
+**Cập nhật 2026-09-25:** chủ quán được giảm giá (D41/U-058), còn cách tính
+và phạm vi ở `docs/product/99-unknowns.md` U-058. D42 đã sửa: có combo, xem
+§8.9. Chưa dùng công thức dưới đây như hợp đồng đầy đủ cho giảm giá.
 
 1. **Giá một suất bán = TỔNG giá các thành phần của suất** (§4.5 cho thành phần, §4.2 cho giá từng
    thành phần). Đây là luật gốc, tám luật dưới đều là hệ quả.
@@ -917,7 +917,9 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
           hình dạng *POS quyết theo tình hình thực tế* đã gặp ở §5.4 · §6.4 · §6.24.
         - **Ca quán mất mạng hẳn — chủ quán chốt 2026-09-25 (U-053):**
           “chủ quán dùng mạng 5g bấm tắt”. Chủ quán dùng 5G để bấm dừng ba
-          kênh khách tự bấm. Luật mở lại bằng nút ở trên giữ nguyên.
+          kênh khách tự bấm. Luật mở lại bằng nút ở trên giữ nguyên. Khoảng từ
+          mất mạng tới lúc bấm chưa được lời này xác định: **U-061** ở
+          `docs/product/99-unknowns.md`, đối chiếu bảo đảm I-008.
       - **Máy làm sao biết quán đang mất kết nối** là **cơ chế**, không phải dữ kiện quán: nó thuộc
         `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6 bước **P1-08** và pha 3.
 12. **Bốn ranh giới đã chốt — đây là quyết định, không phải chỗ trống chờ ai điền:**
@@ -1361,11 +1363,11 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-09-15 | **Lúc một vai rời quán đi giao, NGƯỜI ĐỨNG QUẦY (POS) gánh trạm của người ấy — và khoảng trống ấy KHÔNG là thiếu người** (đóng **U-050**) — nguyên văn *"pos gánh, không thiếu người vì đi ship luc quán vắng."* ⇒ ba trạm riêng có **một** ngoại lệ: `quay` kiêm trạm bị bỏ trống trong lúc có người đi giao; khoảng trống ấy không tính vào số 7 của §8.6 — *"lúc quán vắng"* là lý do, không phải luật cấm giao lúc đông. *Khi chính người đứng quầy đi giao thì ai gánh `quay` — lời chốt va lời `U-049` (*"bất cứ ai"*) ⇒ **U-052*** | **§3** · §8.6 |
 | 2026-09-15 | **KHÔNG có ngưỡng nhắc sắp hết: chủ quán tự đọc hai con số mua vào · đã dùng rồi tự kết luận thiếu hay đủ** (đóng **U-045**) — nguyên văn *"chủ quán tự đọc rôi đưa ra kết luận"* ⇒ máy không kết luận, không nhắc; danh mục §8.4 không mọc cột *ngưỡng*; §8.4 đứng nguyên ở mức sổ ghi tay điện tử. *Mục tổng quan bày gì cho vế nguyên liệu thì lời ấy không nói ⇒ **U-051**; đơn vị tính vẫn ở câu **B12*** | **§8.4** · §8.6 |
 | 2026-09-16 | **Bốn bàn mới đánh số NỐI TIẾP 12 · 13 · 14 · 15 ⇒ danh sách bàn là 1…15** (đóng **U-042**, vế cuối) — nguyên văn *"trả lời nối tiếp 12–15"*. ⇒ mọi bàn gọi tên được bằng đúng số của nó: vế **ADR-027** cần (*chỉ ghép sang bàn trống*) và `work/backlog_AD.md` **ADM-03** hết hở. *Không lời nào nói bàn có tên ngoài số, cũng không lời nào gắn số với vị trí ngồi* | **§1** · §6.25 |
-| 2026-09-16 | **Web ngừng nhận đơn KHÔNG do đồng hồ: máy BÁO, POS QUYẾT, mở lại bằng NÚT** (đóng **U-043**) — nguyên văn *"hiên thông báo để pos quyết định nếu dừng cần có nut mở lại"* ⇒ không có con số cửa sổ nào; hệ thống hiện thông báo ở quầy, POS quyết dừng ba kênh khách tự bấm, và đã dừng thì không tự mở lại. ⇒ lật luật 1 của `docs/product/1-system-design/05-realtime-va-du-phong.md` §3 và một câu *Verification* của **I-008** (**ADR-047**). *Ca quán mất mạng hẳn — POS không bấm được gì — lời chốt không phủ ⇒ **U-053*** | **§6.11** · `quality/invariants.md` **I-008** |
+| 2026-09-16 | **Web ngừng nhận đơn KHÔNG do đồng hồ: máy BÁO, POS QUYẾT, mở lại bằng NÚT** (đóng **U-043**) — nguyên văn *"hiên thông báo để pos quyết định nếu dừng cần có nut mở lại"* ⇒ không có con số cửa sổ nào; hệ thống hiện thông báo ở quầy, POS quyết dừng ba kênh khách tự bấm, và đã dừng thì không tự mở lại. ⇒ lật luật 1 của `docs/product/1-system-design/05-realtime-va-du-phong.md` §3 và một câu *Verification* của **I-008** (**ADR-047**). *Lúc ấy mở U-053; đã đóng 2026-09-25, xem §6.11.* | **§6.11** · `quality/invariants.md` **I-008** |
 | 2026-09-16 | **Mục tổng quan bày THỜI GIAN NHẬP · TỔNG ĐÃ DÙNG · SỐ THIẾU do máy trừ** (đóng **U-051**) — nguyên văn *"thời gian nhâp sản phẩm và tổng đã sử dụng lấy thiếu bằng tổng đã nhập trừ đi sử dụng"* ⇒ *thiếu = tổng đã nhập − tổng đã dùng*; máy **cộng dồn hộ** nhưng vẫn không có ngưỡng và không kết luận (`U-045` đứng nguyên), §8.4 vẫn ở mức sổ ghi tay điện tử. *Hai con số **tổng** cộng dồn từ mốc nào thì lời ấy không nói ⇒ **U-054*** | **§8.4** · §8.6 (hàng 7) |
 | 2026-09-16 | **NGƯỜI ĐỨNG QUẦY KHÔNG BAO GIỜ ĐI GIAO** (đóng **U-052**) — nguyên văn *"người đứng quầy khônng đi giao"* ⇒ chữ *"bất cứ ai"* của `U-049` hẹp lại còn **ba** vai (`trang_banh` · `gap_banh` · `canh`+`don_ban`); trạm `quay` không bao giờ bỏ trống vì đi giao, nên lời *"pos gánh"* của `U-050` luôn có người gánh. *Lời này không đụng tới chủ quán — §3 vẫn để chủ quán thỉnh thoảng đứng quầy* | **§3** · §8.6 |
 | 2026-09-20 | **Mảng CON NGƯỜI làm tới CẢ BA MỨC: ai đang trực trạm nào · chấm công · tính lương trên máy** (xác nhận lại lời chốt **Đ-4** ngày 2026-09-01; việc đi hỏi: `work/backlog_AD.md` **ADM-53**) — chủ quán chọn *"Đúng, cả ba mức"*. *Lời này chốt **mức sâu**, không chốt một con số nào: đơn giá công, kỳ trả lương, quyền xem lương vẫn là các câu `C23`…`C35` ở `work/admin-questions.md` §3* | **§8.7** |
-| 2026-09-20 | **Mỗi lần ĐỔI NGƯỜI Ở QUẦY là một mốc CÓ GIỜ — ghi cả ai vào, ai ra** (trả lời câu `C36`; hỏi qua `work/backlog_AD.md` **ADM-53**, chuyển về owner qua **ADM-21**, cùng ngày) — nguyên văn *"Có — ghi cả mốc đổi, ai vào ai ra lúc mấy giờ"* ⇒ đơn nào, huỷ nào, hoàn tiền nào cũng truy ra được người đang đứng quầy lúc ấy. Đây là dữ kiện **đầu tiên** đỡ được luật quyền gắn **chỗ đứng** của §6.13 và **ADR-016**. *Lời này phủ **trạm `quay`**, không phủ bốn trạm còn lại ⇒ **U-055**; không nói **ai khai** cái mốc ⇒ **U-056**; không phủ hai cửa ghi ngoài quầy (§6.7 · §6.17) ⇒ **U-057*** | **§8.8** · §8.7 (mức 1) |
+| 2026-09-20 | **Mỗi lần ĐỔI NGƯỜI Ở QUẦY là một mốc CÓ GIỜ — ghi cả ai vào, ai ra** (trả lời câu `C36`; hỏi qua `work/backlog_AD.md` **ADM-53**, chuyển về owner qua **ADM-21**, cùng ngày) — nguyên văn *"Có — ghi cả mốc đổi, ai vào ai ra lúc mấy giờ"* ⇒ đơn nào, huỷ nào, hoàn tiền nào cũng truy ra được người đang đứng quầy lúc ấy. Đây là dữ kiện **đầu tiên** đỡ được luật quyền gắn **chỗ đứng** của §6.13 và **ADR-016**. *Lúc ấy mở U-055/U-056/U-057; cập nhật 2026-09-25 ở §8.8: U-055/U-056 đã có lời, U-057 có lời một phần.* | **§8.8** · §8.7 (mức 1) |
 | 2026-09-25 | Chủ quán trả lời C24–C35 về phân công, công, lương và quyền xem (T-091); giữ riêng các vế chưa rõ | §8.7 |
 | 2026-09-25 | Chủ quán sửa B19/B20: cách gọi và việc dùng lại ngày mai; không có người ghi hỏng / đổ / cháy (T-095), thay lời cũ tương ứng của T-090 | §8.4 |
 | 2026-09-25 | Chủ quán trả lời B18–B20/B22: kiểm lại cuối buổi, đồ chưa bán hết, người ghi sự cố và không cần giá vốn một suất (T-090) | §8.4 |
@@ -1748,8 +1750,7 @@ nguyên liệu và con người đã có. đối với menu: tôi muốn có …
   - ⛔ **Máy biết đang thiếu người bằng cách nào thì vẫn chưa đủ** — nhưng chỗ hở đã **hẹp lại**
     ngày **2026-09-20**: câu **C36** có lời và lời ấy đã về owner (**§8.8**, qua ADM-21), nên trạm
     `quay` nay có nguồn. Bốn trạm còn lại không ghi mốc đổi giờ (chủ quán chốt 2026-09-25), và chỗ hở còn lại mang mã **`U-060`**
-    (`docs/product/99-unknowns.md`). Chừng nào `U-060` chưa có lời, số **7** vẫn chưa đủ nguồn —
-    dù số **6** thì có rồi. (`U-052` —
+    (`docs/product/99-unknowns.md`). Chừng nào `U-060` chưa có lời, số **6** và vế người của số **7** vẫn chưa đủ nguồn. (`U-052` —
     ai gánh `quay` khi chính người đứng quầy đi giao — **đã đóng 2026-09-16**: người đứng quầy
     **không** đi giao, nên ca ấy không tồn tại; nó vốn cũng không chặn số 7, vì lời `U-050` đã loại
     khoảng trống do đi giao khỏi chữ *thiếu người*, bất kể ai đi.)

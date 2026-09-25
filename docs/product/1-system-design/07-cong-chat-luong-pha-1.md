@@ -163,7 +163,7 @@ scenario ở §8 pha 0 **không** có bước nào mất kết nối, nên lư�
 | # | Bước ở quán | Cơ chế pha 1 giữ nó |
 |:--:|---|---|
 | 1 | Quán mất điện/mất mạng giữa buổi; **hệ thống vẫn sống** ⇒ quán mù, khách web **không** mù | `PT-1` §2 · đường suy giảm đủ ba vế ở §3 ([`01-ranh-gioi-he-thong.md`](01-ranh-gioi-he-thong.md)) · `RR-8` ([`06-so-rui-ro.md`](06-so-rui-ro.md) §1) |
-| 2 | **Ba kênh khách tự bấm dừng**; hai kênh người của quán nhập **không** dừng | `I-008` **điều kiện thứ ba, tầng 3** — và nó là điều kiện **duy nhất không ai bấm được** ([`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) §3 · §3.1) · bốn câu luật *ai phán quyết và dựa vào đường nào* ([`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §3) · **chỗ để trống có tên:** `U-043` **đã đóng 2026-09-16** — không có độ dài cửa sổ nào, máy báo và **POS quyết** (**ADR-047**); chỗ trống nay là ca quán **mất mạng hẳn**, `U-053`, câu của **chủ quán** (§4) |
+| 2 | **Ba kênh khách tự bấm dừng**; hai kênh người của quán nhập **không** dừng | `I-008` **điều kiện thứ ba, tầng 3** — chủ quán dùng 5G bấm tắt khi mạng quán mất (U-053, 2026-09-25) ([`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) §3 · §3.1) · bốn câu luật *ai phán quyết và dựa vào đường nào* ([`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §3) · **chỗ để trống có tên:** `U-043` **đã đóng 2026-09-16** — không có độ dài cửa sổ nào, máy báo và **POS quyết** (**ADR-047**); U-053 đã đóng 2026-09-25; khoảng trước lúc chủ quán bấm tắt còn ở U-061 (§4) |
 | 3 | Khách đặt qua **hotline**; quán **ghi giấy trực tiếp với POS** | `PT-6` — sổ giấy là quy trình của **người** (§2), đường suy giảm §3 · `RB-4` chỉ đứng được **vì** có đường bán không đi qua máy ([`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §2) |
 | 4 | Màn trạm mất đường đẩy nhưng **vẫn đúng, chỉ trễ hơn** — và **rỗng thì nói được vì sao nó rỗng** | đường **kéo** tự chạy, ba luật, và nó **không** phải một cái nút — **ADR-011**, màn trạm không có nút nào ([`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §1.2) · luật *màn chỉ đọc phải cho biết nó vừa lấy lại lúc nào* (§1.3) · `RR-7` là rủi ro của đúng chỗ này và cột *Cơ chế chặn* của nó trỏ về §1.3 ([`06-so-rui-ro.md`](06-so-rui-ro.md) §1) · `RB-1` là ràng buộc sinh ra từ tính chất của đường đẩy (§2) |
 | 5 | Có điện lại ⇒ bán tiếp **ngay** trên hệ thống; phần ghi tay **nhập bù sau** | `PT-1` cột *bù lúc nào* §3 · mốc tính tiền của lượt nhập bù là **mốc quán bán thật** ([`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §2 · §3, ca **duy nhất** một mốc vào hệ thống mà **không** do hệ thống cấp) · `YC-08` ([`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §1) |
@@ -173,8 +173,7 @@ scenario ở §8 pha 0 **không** có bước nào mất kết nối, nên lư�
 **Lát này đi hết, không chỗ nào dừng** — sáu trong bảy bước trỏ được vào **hai** mục khác nhau, và
 chỗ để trống duy nhất là câu của **chủ quán**, có tên và có người trả lời, không phải một chỗ pha 1
 phải đoán. *Viết 2026-09-08 khi câu ấy là `U-043` (độ dài cửa sổ); `U-043` đóng **2026-09-16** —
-không có con số nào, máy báo và POS quyết — và cùng lời đáp mở `U-053` (ai dừng khi quán mất mạng
-hẳn), nên chỗ trống đổi mã chứ không mất.*
+không có con số nào, máy báo và POS quyết — U-053 đã đóng ngày 2026-09-25 (chủ quán dùng 5G bấm tắt), còn khoảng trước lúc bấm ở U-061, nên chỗ trống đổi mã chứ không mất.*
 
 ---
 

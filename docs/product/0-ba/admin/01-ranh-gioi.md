@@ -77,10 +77,10 @@ quả về **hành vi** — thứ mục này sở hữu:
   đổi là nó hết rỗng.
 - **Lời chốt này KHÔNG thêm một thao tác nào vào luồng bán hàng của §2–§6.** Ghi mốc đổi người là
   việc của mảng con người; không đơn nào, không phiên bàn nào, không nút nào ở §2–§6 đổi vì nó.
-- **Phạm vi là trạm `quay`. Bốn trạm còn lại chưa có lời** ⇒ `U-055`
-  ([99-unknowns.md](../../99-unknowns.md)). **Ai khai cái mốc** ⇒ `U-056`. **Hai cửa ghi ngoài
-  quầy** — người đi giao và chủ quán đổi giá ⇒ `U-057`. Đọc sự im lặng ấy thành *"chưa quyết"*,
-  đừng đọc thành *"không làm"*, và đừng đọc thành *"cả năm trạm"*.
+- **Bổ sung chủ quán 2026-09-25:** bốn trạm ngoài quầy không ghi mốc đổi giờ
+  (U-055); **POS khai mốc ở quầy** (U-056). Nguồn số người trên tổng quan còn
+  ở U-060. Hai cửa ghi ngoài quầy có lời “POS” nhưng nghĩa cần làm rõ ở U-057
+  ([99-unknowns.md](../../99-unknowns.md)); không tự chuyển thao tác về quầy.
 
 Mảng **tài chính** vẫn chưa có lời chốt mức sâu tương ứng.
 

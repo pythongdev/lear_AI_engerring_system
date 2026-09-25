@@ -15,13 +15,11 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
-  - [U-053](#u-053) — quán mất mạng HẲN thì ai bấm dừng ba kênh, khi POS không bấm được gì
   - [U-054](#u-054) — hai con số *tổng* của vế nguyên liệu cộng dồn từ mốc nào
-  - [U-055](#u-055) — bốn trạm ngoài quầy có ghi mốc đổi người không
-  - [U-056](#u-056) — **ai khai** cái mốc đổi người ở quầy
   - [U-057](#u-057) — vế *ai bấm* của hai cửa ghi **ngoài** quầy
+  - [U-061](#u-061) — đơn tới trong khoảng mất mạng trước khi chủ quán bấm tắt
+  - [U-060](#u-060) — nguồn đếm người khi ngoài quầy không ghi mốc đổi
   - [U-058](#u-058) — giảm giá khách quen: phạm vi, quyền và cách tính
-  - [U-059](#u-059) — D42 có thay đổi suất Đầy đủ không
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
 - [Đã có lời giải](#da-co-loi-giai) — câu đã đóng, xếp theo lượt trả lời của chủ quán, kèm nguyên
@@ -40,20 +38,33 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 <a id="dang-mo"></a>
 ### Đang mở
 
+<a id="u-061"></a>
+- **U-061 — Trong khoảng quán mất mạng đến khi chủ quán dùng 5G bấm tắt,
+  ba kênh khách tự bấm có tiếp tục nhận đơn không?** Mở 2026-09-25, T-094,
+  từ lời U-053: đã rõ ai bấm và dùng mạng nào, chưa rõ khoảng trước khi bấm.
+  `quality/invariants.md` I-008 đang đòi không tạo đơn trong toàn bộ khoảng
+  quán không nhìn thấy đơn; thao tác tay chưa chứng minh được bảo đảm ấy.
+  **Chủ quán** chốt; chặn tiêu chí khoảng mất mạng của I-008 và cơ chế pha 3.
+  Không tự thêm tự động dừng, cũng không tự cho phép đơn lọt trong khoảng này.
+
+<a id="u-060"></a>
+- **U-060 — Không ghi mốc đổi người ở bốn trạm ngoài quầy thì số người đang làm
+  và vế thiếu người trên tổng quan lấy nguồn nào?** Mở 2026-09-25, T-094, sau
+  lời đáp U-055. Chủ quán đã chốt không ghi mốc đổi giờ ngoài quầy; điều đó chưa
+  xác định nguồn cho §8.6 hàng 6/7 và mức 1 §8.7 của `master_plan/shop-facts.md`.
+  **Chủ quán** trả lời; chặn ADM-04 và phạm vi trực trạm ngoài quầy. Không tự
+  dùng chấm công thay cho vị trí đang đứng, không tự bỏ chỉ tiêu đã yêu cầu.
+
 <a id="u-058"></a>
 - **U-058 — Giảm giá cho khách quen được thực hiện thế nào trong phần mềm?**
+  **Đã nhận một phần 2026-09-25 (T-094):** chủ quán trả lời “chủ quán” —
+  quyền giảm giá thuộc chủ quán. Còn cách tính và phạm vi áp dụng.
   Mở 2026-09-25 (T-092), từ D41 của chủ quán, dữ kiện ở
   `master_plan/shop-facts.md` §8.9. Cần **chủ quán** chốt có đưa vào bản bán hàng
-  đầu tiên không, ai được giảm, giảm theo số tiền hay phần trăm, áp cho từng món
+  đầu tiên không, giảm theo số tiền hay phần trăm, áp cho từng món
   hay cả đơn, và có giới hạn/ghi lý do không. Chặn việc chốt lại BA
   `0-ba/ban-hang/04-gia-thanh-toan.md` §4.2 · §4.11, công thức tiền và quyền giảm;
   không suy rằng khách hoặc nhân viên được tự gửi giá tuỳ ý.
-
-<a id="u-059"></a>
-- **U-059 — D42 “không có combo” có bỏ suất Đầy đủ hay chỉ không có combo riêng
-  ngoài các suất hiện có?** Mở 2026-09-25 (T-092). Cần **chủ quán** đối chiếu
-  lời D42 ở `master_plan/shop-facts.md` §8.9 với “Combo Đầy đủ” ở §4.3–§4.9.
-  Chặn sửa danh mục và các tổ hợp giá liên quan, không tự xoá hoặc đổi tên món.
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
 chủ quán quyết theo tình hình thực tế, không có luật cứng.** Lượt một (T-042) đóng U-022, U-025 và
@@ -146,25 +157,6 @@ chưa ai hỏi** (T-078). Cả hai đều không mở vì ai quên hỏi: `U-043
 `master_plan/shop-facts.md` §8.4 ghi hai con số ấy theo **từng ngày**, nên chữ *tổng* chưa có mốc.
 Nguyên văn cả bốn lời đáp ở [Đã có lời giải](#da-co-loi-giai).
 
-<a id="u-053"></a>
-- **U-053 — quán mất mạng HẲN thì ba kênh khách tự bấm có TỰ dừng không, khi POS không nhìn thấy
-  thông báo và cũng không bấm được nút nào?** Lời chốt `U-043` (2026-09-16) giao quyền dừng cho
-  **POS**: máy hiện thông báo, POS quyết. Nhưng điều kiện thứ ba của `quality/invariants.md`
-  **I-008** sinh ra cho đúng ca **không ai ở quán bấm được gì** — *"quán mất mạng thì nút tạm dừng
-  cũng nằm sau đúng đường mạng vừa mất"* (I-008 · `master_plan/shop-facts.md` §6.11). Đọc hai lời
-  cạnh nhau thì hở đúng ca ấy: máy thấy quán mù, thông báo không ai đọc, không ai bấm dừng, và đơn
-  web vẫn rơi vào một cái quán không ai nhìn thấy. **Vì sao không được suy hộ** (`CLAUDE.md` §3.5):
-  hai đường ra là hai luật khác nhau, không đường nào suy được từ chữ đã có — hoặc **máy tự dừng**
-  ba kênh khi quán mù còn POS chỉ quyết ở ca chập chờn mà quầy vẫn nhìn thấy, hoặc **máy không bao
-  giờ tự dừng** và quán chấp nhận đơn rơi vào khoảng mù rồi xử sau, mà đường sau lật chính `I-008`.
-  **Ai trả lời được:** chủ quán. **Đang chặn:** luật 1 của
-  `docs/product/1-system-design/05-realtime-va-du-phong.md` §3, hàng thứ nhất bảng §4 của file ấy,
-  và vế **cơ chế** của `I-008` — tức cả **pha 3**. **Cách hỏi** (bài học `S-4` — hỏi về cái quán):
-  *"Lúc quán mất mạng hẳn, không ai ở quán bấm được gì: anh muốn máy tự ngừng nhận đơn trên web cho
-  tới khi có người bấm mở lại, hay cứ để khách đặt rồi lát nữa quán xem lại?"*
-  *Mở 2026-09-16 · T-078 · trả lời `U-043` · `quality/invariants.md` **I-008** ·
-  `docs/product/1-system-design/05-realtime-va-du-phong.md` §3.*
-
 <a id="u-054"></a>
 - **U-054 — hai con số *tổng* mà mục tổng quan lấy hiệu — *tổng đã nhập* trừ *tổng đã dùng* — cộng
   dồn TỪ MỐC NÀO: từ ngày đầu tiên có sổ, từ đầu tháng, hay chỉ trong ngày hôm nay?** Lời chốt
@@ -179,6 +171,7 @@ Nguyên văn cả bốn lời đáp ở [Đã có lời giải](#da-co-loi-giai)
   (bài học `S-4` — hỏi về cái quán): *"Con số còn lại anh muốn cộng từ lúc nào — cộng hết từ trước
   tới nay, từ đầu tháng, hay chỉ tính riêng trong ngày hôm nay?"*
   *Mở 2026-09-16 · T-078 · trả lời `U-051` · `master_plan/shop-facts.md` §8.4 · §8.6.*
+  **Đã nhận một phần 2026-09-25, chủ quán (T-094):** “chủ quán nhập”. Cần xác định chủ quán nhập mốc bắt đầu cộng dồn hay nhập trực tiếp hai số tổng.
 
 **Ngày 2026-09-20, chủ quán trả lời `C36` và lời đáp để lộ BA vế chưa ai hỏi** (ADM-53 hỏi,
 **ADM-21** chuyển lời về owner trong cùng ngày). Cả ba đều không mở vì ai quên hỏi: câu `C36` hỏi
@@ -187,39 +180,6 @@ về **người đứng quầy**, và lời đáp — *"Có — ghi cả mốc �
 §8.7 chốt mức 1 cho **năm** trạm, §8.6 hàng 6 hỏi **bao nhiêu người đang làm**, và
 `quality/invariants.md` **I-012** đòi *ai bấm* ở **hai cửa ghi ngoài quầy**. Nguyên văn lời đáp và
 phạm vi của nó ở `master_plan/shop-facts.md` **§8.8**.
-
-<a id="u-055"></a>
-- **U-055 — bốn trạm ngoài quầy (`trang_banh` · `gap_banh` · `canh`+`don_ban`) có ghi mốc đổi
-  người không, hay chỉ trạm `quay` mới ghi?** Lời chốt `C36` (2026-09-20,
-  `master_plan/shop-facts.md` **§8.8**) nói mỗi lần đổi người **ở quầy** là một mốc có giờ. Nhưng
-  §8.7 chốt mức 1 của mảng con người là *ai đang trực trạm nào* trên **cả năm** trạm §3, nên bốn
-  trạm kia còn trống đúng chỗ trạm `quay` vừa được lấp. **Vì sao không được suy hộ**
-  (`CLAUDE.md` §3.5): hai đường ra là hai cái quán khác nhau — hoặc **cả năm trạm** đều ghi mốc
-  đổi, tức mỗi người ở bếp cũng phải khai vào/ra và quán gánh thêm một thao tác mỗi buổi; hoặc
-  **chỉ quầy** ghi vì quầy là nơi duy nhất chạm tiền (**ADR-016**), còn bếp thì không ai cần truy
-  ngược. Đường sau rẻ hơn hẳn cho quán, nhưng chọn nó là quyết hộ nghĩa của số **6** ở §8.6.
-  **Ai trả lời được:** chủ quán. **Đang chặn:** số **6** (*bao nhiêu người đang làm*) và vế *người*
-  của số **7** ở `master_plan/shop-facts.md` §8.6, `work/backlog_AD.md` **ADM-04**, và phạm vi đầy
-  đủ của mức 1 ở §8.7. **Chưa chặn:** luật quyền huỷ / hoàn tiền — luật ấy sống ở trạm `quay` và
-  §8.8 đã đỡ được nó. **Cách hỏi** (bài học `S-4` — hỏi về cái quán): *"Ngoài người đứng quầy, mấy
-  người ở bếp đổi chỗ cho nhau giữa buổi thì anh có muốn máy ghi lại không, hay chỉ cần biết ai
-  đang đứng quầy là đủ?"*
-  *Mở 2026-09-20 · ADM-21 · trả lời `C36` · `master_plan/shop-facts.md` **§8.8** · §8.6 · §8.7.*
-
-<a id="u-056"></a>
-- **U-056 — AI khai cái mốc đổi người ở quầy: người vào tự bấm, người ra bấm, hay POS bấm hộ?**
-  Lời chốt `C36` (2026-09-20, `master_plan/shop-facts.md` **§8.8**) nói máy **ghi** mốc đổi; nó
-  không nói ai **khai** mốc ấy. **Vì sao không được suy hộ** (`CLAUDE.md` §3.5): ba đường ra cho ba
-  luật khác nhau, và một trong ba lật chính lời vừa chốt — nếu **người vào tự bấm** thì có ca hai
-  người cùng nhận mình đang đứng quầy, nếu **người ra bấm** thì có ca người ra quên bấm và quầy
-  thành trống trong máy giữa lúc đang bán, nếu **POS bấm hộ** thì cái mốc lại do chính chỗ đứng nó
-  ghi lại xác nhận, và quán phải chấp nhận điều đó. Không đường nào suy được từ chữ đã có.
-  **Ai trả lời được:** chủ quán. **Đang chặn:** vế *đổi lúc nào thì ai chịu trách nhiệm từ lúc nào*
-  của `work/backlog_AD.md` **ADM-21** khi nó đi tiếp, và **ADM-51** (phân quyền). **Chưa chặn:**
-  pha 2 — chỗ cất một cái mốc không đổi theo người khai nó (**ADR-035**). **Cách hỏi** (bài học
-  `S-4` — hỏi về cái quán): *"Lúc B thay A ở quầy, ai là người bấm vào máy cái mốc đổi ấy — người
-  vừa vào, người vừa ra, hay ai đang cầm máy cũng được?"*
-  *Mở 2026-09-20 · ADM-21 · trả lời `C36` · `master_plan/shop-facts.md` **§8.8**.*
 
 <a id="u-057"></a>
 - **U-057 — hai cửa ghi NGOÀI quầy lấy tên người từ đâu: người đi giao bấm *đã giao + đã thu tiền*
@@ -238,6 +198,7 @@ phạm vi của nó ở `master_plan/shop-facts.md` **§8.8**.
   bấm không — hay chỉ cần biết là 'người đi giao' và 'chủ quán' là đủ?"*
   *Mở 2026-09-20 · ADM-21 · trả lời `C36` · `quality/invariants.md` **I-012** ·
   `master_plan/shop-facts.md` **§8.8** · §6.7 · §6.17.*
+  **Đã nhận một phần 2026-09-25, chủ quán (T-094):** “POs”. Cần xác định POS khai tên người thực sự thao tác, hay các thao tác ngoài quầy chuyển về POS; chưa tự đổi luồng giao/thu tiền hoặc quyền sửa giá.
 
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
@@ -263,9 +224,36 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
 
+**Chủ quán trả lời 2026-09-25 (T-094):**
+
+<a id="u-053"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-053 — Ai dừng ba kênh khi quán mất mạng hẳn~~ | “chủ quán dùng mạng 5g bấm tắt”. Chủ quán dùng 5G bấm tắt ba kênh khách tự bấm. | `master_plan/shop-facts.md` §6.11 |
+
+<a id="u-055"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-055 — Bốn trạm ngoài quầy có ghi mốc đổi người không~~ | “không ghi nôc đổi giờ”. Chuẩn hoá: không ghi mốc đổi giờ ngoài quầy; nguồn số người còn ở U-060. | `master_plan/shop-facts.md` §8.8 |
+
+<a id="u-056"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-056 — Ai khai mốc đổi người ở quầy~~ | “pos”. POS khai mốc đổi người ở quầy. | `master_plan/shop-facts.md` §8.8 |
+
+<a id="u-059"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-059 — D42 có phủ nhận combo không~~ | “có combos”. Xác nhận có combo; sửa lời D42 trước đó, không tự thêm món hoặc giá. | `master_plan/shop-facts.md` §8.9 |
+
+
 **Ngày 2026-09-16, chủ quán trả lời BỐN câu trong một lượt — `U-042` · `U-043` · `U-051` · `U-052`**
 (T-078) — cả bốn câu đang mở lúc ấy, đóng trong cùng một lượt. Hai lời trong đó **để lộ hai câu
-mới** — `U-053` · `U-054`, nay ở [Đang mở](#dang-mo); hai lời còn lại (`U-042`, `U-052`) đóng hẳn,
+mới** — `U-053` · `U-054`, trạng thái hiện tại xem từng mã; hai lời còn lại (`U-042`, `U-052`) đóng hẳn,
 không để hở chỗ nào.
 
 | Câu hỏi cũ | Lời giải (chủ quán, 2026-09-16) | Ghi ở |

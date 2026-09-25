@@ -104,7 +104,7 @@ văn lời chủ quán nằm ở owner bên dưới, một chỗ, không có b�
 | ~~`A7`~~ | **11 bàn** — đúng con số §1 đã có từ 2026-08-30 | §1 · **§6.25** · mở U-040, đóng 2026-09-06: 4 chỗ/bàn, đã đánh số — và số bàn đổi **11 → 15** trong cùng lời đáp; **U-042 đóng nốt 2026-09-16**: bốn bàn mới đánh số **nối tiếp 12–15** ⇒ danh sách bàn là **1…15** |
 | ~~`A8`~~ | **có** khách đứng chờ, quán xếp hàng chờ | **§6.25** · mở U-039, đóng 2026-09-06: **không**, POS tự điều phối |
 | ~~`A9`~~ | **cả hai** — khách tự chọn, đôi khi nhân viên xếp | **§6.25** |
-| ~~`A10`~~ | **sáu con số** cho mục tổng quan của chủ quán | **§8.6** · mở U-041, đóng 2026-09-08 qua **ba lượt**: *"còn thiếu gì"* là **cả ba** đường — nguyên liệu (Danh mục §8.4) · **người** (bảng phân vai §3) · món (§4.9) ⇒ §8.6 nay **bảy** hàng; *máy biết bằng cách nào*: nguyên liệu **đóng 2026-09-15** — máy không biết, chủ quán tự đọc hai con số rồi tự kết luận (**U-045**; mục tổng quan bày gì **đóng 2026-09-16** — **U-051**: thời gian nhập · tổng đã dùng · số thiếu máy tự trừ, còn mốc cộng dồn là **U-054**), người **C36** — **đã có lời và về owner 2026-09-20** (**§8.8**: mốc đổi người **ở quầy**), chỗ hở còn lại của vế người là **U-055** (bốn trạm ngoài quầy); (**U-049** đóng 2026-09-08: người đi giao là một trong bốn vai, POS chỉ định; **U-050** đóng 2026-09-15: POS gánh trạm bị bỏ trống, khoảng trống ấy **không** là thiếu người — **U-052 đóng 2026-09-16**: người đứng quầy **không** đi giao, chữ *"bất cứ ai"* hẹp lại còn ba vai) |
+| ~~`A10`~~ | **sáu con số** cho mục tổng quan của chủ quán | **§8.6** · mở U-041, đóng 2026-09-08 qua **ba lượt**: *"còn thiếu gì"* là **cả ba** đường — nguyên liệu (Danh mục §8.4) · **người** (bảng phân vai §3) · món (§4.9) ⇒ §8.6 nay **bảy** hàng; *máy biết bằng cách nào*: nguyên liệu **đóng 2026-09-15** — máy không biết, chủ quán tự đọc hai con số rồi tự kết luận (**U-045**; mục tổng quan bày gì **đóng 2026-09-16** — **U-051**: thời gian nhập · tổng đã dùng · số thiếu máy tự trừ, còn mốc cộng dồn là **U-054**), người **C36** — **đã có lời và về owner 2026-09-20** (**§8.8**: mốc đổi người **ở quầy**), U-055/U-056 đã có lời 2026-09-25 ở §8.8; nguồn số người còn ở **U-060**; (**U-049** đóng 2026-09-08: người đi giao là một trong bốn vai, POS chỉ định; **U-050** đóng 2026-09-15: POS gánh trạm bị bỏ trống, khoảng trống ấy **không** là thiếu người — **U-052 đóng 2026-09-16**: người đứng quầy **không** đi giao, chữ *"bất cứ ai"* hẹp lại còn ba vai) |
 
 ⚠️ **Bốn vế chủ quán KHÔNG chạm tới đã thành câu hỏi có mã, không thành suy luận** —
 **U-038** · **U-039** · **U-040** · **U-041** ở `docs/product/99-unknowns.md`. *Cả bốn nay đã có
@@ -230,11 +230,9 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > `docs/product/1-system-design/architecture.md` §14.5. Một chỗ, không có bản thứ hai
 > (`work/findings.md` **F-001**).
 >
-> ⚠️ **Ba vế chủ quán KHÔNG chạm tới đã thành câu hỏi có mã, không thành suy luận** — **U-055**
-> (bốn trạm ngoài quầy) · **U-056** (ai khai cái mốc) · **U-057** (vế *ai bấm* của hai cửa ghi
-> ngoài quầy), cả ba ở `docs/product/99-unknowns.md`. Chúng ở đó chứ không ở đây, vì file này sẽ bị
-> xoá còn `99-unknowns.md` thì không, và vì `scripts/brief.sh` đẩy danh sách unknown vào mọi phiên
-> mới (`CLAUDE.md` §7.1).
+> **Cập nhật 2026-09-25 (T-094):** U-055/U-056 đã có lời tại
+> `master_plan/shop-facts.md` §8.8; nguồn số người còn ở U-060. U-057 đã nhận
+> “POS”, còn làm rõ nghĩa tại `docs/product/99-unknowns.md`.
 
 ### D. Sản phẩm
 *Nhóm này mở khoá ADM-30 → ADM-33.*
@@ -252,10 +250,10 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-092)** — `master_plan/shop-facts.md` §8.9.
 
 **D41.** Có bao giờ **bán giá khác cho khách quen**, hoặc giảm giá không? *(Luật trước lời đáp D41, nay cần xét lại qua U-058: `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.2 nói giá do hệ thống xác định, khách và nhân viên không đặt được giá. Trả lời "có" là mở lại một luật đã chốt.)*
-> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-092)** — `master_plan/shop-facts.md` §8.9. Còn làm rõ cơ chế và quyền giảm giá: `docs/product/99-unknowns.md` U-058.
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-092)** — `master_plan/shop-facts.md` §8.9. Quyền giảm giá đã nhận 2026-09-25 ở shop-facts §8.9; còn cơ chế: `docs/product/99-unknowns.md` U-058.
 
 **D42.** Có **combo**, **suất trẻ em**, hay **suất lớn / suất nhỏ** không?
-> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-092)** — `master_plan/shop-facts.md` §8.9. Còn làm rõ vế combo so với suất Đầy đủ: `docs/product/99-unknowns.md` U-059.
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-092)** — `master_plan/shop-facts.md` §8.9. Vế combo đã được chủ quán sửa ngày 2026-09-25 (T-094, U-059); đọc shop-facts §8.9.
 
 **D43.** Menu QR cho khách có cần **ảnh món** không, hay chỉ tên và giá là đủ?
 > **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-092)** — `master_plan/shop-facts.md` §8.9.

@@ -63,7 +63,7 @@ có câu trả lời mới từ người.
 | ADR-044 | `I-021` vào **nhóm TIỀN đã có** (§1 của bảng ba cột), **không** mở nhóm thứ năm; hàng ấy có chủ là bước mới **P1-14** | Đã chốt 2026-09-07 | — | đóng **hẳn F-026**; kế hoạch §6/§7, `03-bao-ve-invariant.md` §1 thêm một hàng và §1.5 |
 | ADR-045 | **Bốn ràng buộc kiến trúc ẩn có nhà ở pha 1**, mỗi cái một **dấu hiệu đo được**; ba cái chưa có chủ (*một tiến trình · không hàng đợi · không bộ nhớ đệm*) được chốt ở bước **P1-08** | Đã chốt 2026-09-08 | — | đóng **nốt F-027**; file mới `05-realtime-va-du-phong.md` §2 |
 | ADR-046 | Hoàn tiền **chéo phương thức** vào `I-021` bằng **hai hạng tử riêng**; *doanh thu tiền mặt* giữ nguyên nghĩa, vết hoàn tiền ghi thêm **phương thức trả lại** | Đã chốt 2026-09-15 | — | viết lại **I-021**; **U-044** đóng — POS quyết từng ca |
-| ADR-047 | **Dừng nhận đơn web khi mất kết nối là quyết định của NGƯỜI, không của đồng hồ**: máy **báo**, **POS quyết**, mở lại bằng **nút** — lật luật 1 của `05-realtime-va-du-phong.md` §3 và một câu *Verification* của `I-008` | Đã chốt 2026-09-16 | — | **U-043** đóng; mở **U-053** — ai dừng khi quán mất mạng hẳn |
+| ADR-047 | **Dừng nhận đơn web khi mất kết nối là quyết định của NGƯỜI, không của đồng hồ**: máy **báo**, **POS quyết**, mở lại bằng **nút** — lật luật 1 của `05-realtime-va-du-phong.md` §3 và một câu *Verification* của `I-008` | Đã chốt 2026-09-16 | — | **U-043** đóng; **U-053** đã đóng 2026-09-25 — chủ quán dùng 5G bấm tắt |
 | ADR-048 | **Ba chỗ pha 1 viết hộ pha 2/3 được VIẾT LẠI BẰNG NGÔN NGỮ TẦNG, không được khai thành ngoại lệ**: `architecture.md` §3.1 · §4 · §12.2 giữ nguyên nghĩa, bỏ tên cột · `bảng.cột` · hợp đồng API; `PAT_API` của Gate 1d nới kèm ca hồi quy | Đã chốt 2026-09-20 | — | **F-040** · **F-041** đóng; ô 10 cổng pha 1 tick ⇒ **10/10** |
 | ADR-049 | Pha 2 chạy theo **kế hoạch riêng** ở `master_plan/`, mã bước là **`P2-XX`**, đầu ra vào thư mục **mới** `docs/product/2-db/` mở cùng dòng nội dung đầu tiên; năm tầng của pha 1 dịch sang pha 2 thành **ràng buộc · giao dịch · một đường ghi · chỗ cất vết · câu truy vấn** | Đã chốt 2026-09-20 | — | mở khoá **P2-01…P2-14**; chép hình dạng của **ADR-033** |
 | ADR-050 | **Năm tầng của pha 1 dịch sang pha 2 thành năm thứ dựng được, mỗi thứ một phép chấm** — ràng buộc thật · ranh giới giao dịch · một đường ghi duy nhất · chỗ cất vết sống độc lập · một câu truy vấn ra 0 dòng; cộng **ba câu pha 2 không được viết ra** (endpoint · route · cơ chế vận hành) và ba luật dịch: không tự hạ tầng · mệnh đề tầng 1 vẫn có câu truy vấn · câu truy vấn chưa bao giờ đỏ là chưa được chứng minh | Đã chốt 2026-09-22 | — | mở khoá **P2-02** và **P2-03**; lane `prompt/DB/` vào Gate 1b |
@@ -3045,7 +3045,7 @@ buộc không có dấu hiệu thì hoặc được giữ mãi vì không ai dá
 - **Cách chạy** ở chỗ duy nhất ấy: theo dõi, khởi động lại, triển khai — pha 5.
 - **Cửa sổ thời gian** để gọi là *quán đang mất kết nối* — `docs/product/99-unknowns.md` **U-043**.
   *Đã có lời chủ quán **2026-09-16**: không có cửa sổ nào — máy **báo**, **POS quyết**, mở lại bằng
-  **nút**; lời ấy lật luật 1 của §3 mà ADR này dựng ⇒ **ADR-047**, và chỗ trống còn lại là `U-053`.*
+  **nút**; lời ấy lật luật 1 của §3 mà ADR này dựng ⇒ **ADR-047**, U-053 đã đóng 2026-09-25: chủ quán dùng 5G bấm tắt; khoảng trước lúc bấm ở U-061.*
 - **Câu chữ dòng thông báo** cho khách khi ba kênh tự bấm dừng — chưa chốt (`quality/invariants.md`
   **I-008**), hỏi khi dựng màn ở pha 4.
 
@@ -3142,8 +3142,8 @@ lời chủ quán**, và ADR này ghi lại chuyện xử chúng thế nào.
    tồn tại; thứ đổi là **cơ chế**, và cơ chế chưa bao giờ thuộc mệnh đề ấy.
 5. **Chỗ lý do cũ để lại thành một câu hỏi có tên, không thành một luật tự chọn.** Ca quán **mất
    mạng hẳn** — POS không nhìn thấy thông báo và không bấm được gì — là đúng ca `I-008` sinh ra để
-   chặn, và nay không có người quyết. Đó là **`U-053`**, câu của chủ quán, đang chặn luật 1 của §3
-   và **pha 3**.
+   chặn. **Cập nhật 2026-09-25:** U-053 đã có lời — chủ quán dùng 5G bấm tắt
+   (`shop-facts.md` §6.11); khoảng trước lúc bấm còn ở U-061.
 
 **Rejected alternatives:**
 
@@ -3158,7 +3158,7 @@ lời chủ quán**, và ADR này ghi lại chuyện xử chúng thế nào.
   đang được đọc như thiết kế đã chốt.
 
 **Chỗ ADR này KHÔNG chốt:**
-- **Ai dừng khi quán mất mạng hẳn** — `U-053`, câu của **chủ quán**.
+- **Ai dừng khi quán mất mạng hẳn** — U-053 đã đóng 2026-09-25; chủ quán dùng 5G bấm tắt. Khoảng trước lúc bấm còn ở U-061.
 - **Thông báo ở quầy trông thế nào, POS bấm ở đâu** — pha 4.
 - **Máy dựa vào dấu hiệu nào để nói *đang mất kết nối*** — luật 2 của §3 (chạy trên chính đường
   việc và đơn đang đi) đứng nguyên; con số chu kỳ vẫn là **pha 3**.
@@ -3168,7 +3168,7 @@ lời chủ quán**, và ADR này ghi lại chuyện xử chúng thế nào.
 `docs/product/1-system-design/03-bao-ve-invariant.md` §3 (bảng *bước sau*) ·
 `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §4 · §7 · §8 ·
 `quality/invariants.md` **I-008** · `master_plan/shop-facts.md` §6.11 · §7.1 ·
-`docs/product/99-unknowns.md` (**U-043** đóng, **U-053** mở).
+`docs/product/99-unknowns.md` (**U-043** đóng, **U-053** đóng 2026-09-25; khoảng trước lúc bấm là U-061).
 
 ---
 

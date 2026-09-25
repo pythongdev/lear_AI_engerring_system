@@ -48,7 +48,7 @@ tiền**, và thiếu đúng phần bánh mà bếp đã thật sự làm ra. C�
 ### 4.2 Giá do hệ thống xác định, khách không bao giờ đặt được giá
 
 **2026-09-25 — D41 mở lại vế giảm giá:** dữ kiện ở `master_plan/shop-facts.md`
-§8.9; cơ chế và quyền đang chờ U-058 (`docs/product/99-unknowns.md`). Các luật
+§8.9; quyền giảm giá thuộc chủ quán (2026-09-25); cơ chế còn ở U-058 (`docs/product/99-unknowns.md`). Các luật
 dưới đây chưa đặc tả giảm giá, không dùng chúng để phủ nhận lời chủ quán.
 
 - **Giá luôn do hệ thống tính lại từ bảng giá**, từ đúng hai thứ: món khách chọn, và tuỳ chọn

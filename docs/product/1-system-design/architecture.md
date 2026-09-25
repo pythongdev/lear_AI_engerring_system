@@ -729,15 +729,16 @@ Ba việc §4 đòi — trực trạm đọc được theo thời điểm, chủ
 mỗi lần huỷ / hoàn / ghi nợ ghi lại **người đang trực** — đều hỏi về trạm `quay`. Đó là lý do một
 lời đáp hẹp lại lấp được đúng chỗ hở rộng nhất.
 
-**Ba chỗ nó KHÔNG lấp — đừng đọc mục này rộng hơn:**
+**Ba vế được cập nhật theo lời chủ quán 2026-09-25:**
 
-- **Bốn trạm ngoài quầy** chưa có luật ghi mốc đổi người ⇒ `U-055`
-  ([99-unknowns.md](../99-unknowns.md)). Mức 1 của `shop-facts.md` §8.7 vì thế mới có **một** trong
-  năm trạm.
-- **Ai khai cái mốc** ⇒ `U-056`.
+- **Bốn trạm ngoài quầy không ghi mốc đổi giờ** — chủ quán chốt 2026-09-25,
+  U-055, `shop-facts.md` §8.8. Nguồn số người cho tổng quan còn ở U-060
+  ([99-unknowns.md](../99-unknowns.md)).
+- **POS khai mốc đổi người ở quầy** — chủ quán chốt 2026-09-25, U-056.
 - **Vế *ai bấm* của hai cửa ghi ngoài quầy** — người đi giao (`shop-facts.md` §6.7) và chủ quán đổi
   giá (§6.17) ⇒ `U-057`. `quality/invariants.md` **I-012** đòi *ai bấm* cho cả hai; lời `C36` không
-  phủ chúng, nên **vế *ai* của vết thao tác vẫn chưa xong**.
+  phủ chúng, nên **vế *ai* của vết thao tác vẫn chưa xong**. Chủ quán trả lời “POS” ngày
+  2026-09-25; cần làm rõ nghĩa tại U-057 trước khi sửa luồng ngoài quầy.
 
 **`YC-15` không đổi.** [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §4 viết từ **P1-07**
 (2026-09-07) rằng trực trạm phải đọc được **theo thời điểm**; lời `C36` **xác nhận** câu ấy bằng

@@ -132,6 +132,12 @@ thể đọc lại được nhưng chỗ lệch thì không.
 
 ## 4. Ai đang trực trạm nào — ba việc `architecture.md` §4 đòi
 
+**Phạm vi đã chốt, 2026-09-25:** yêu cầu lịch sử đổi người của YC-04/YC-15
+áp dụng cho trạm `quay`, do POS khai. Bốn trạm ngoài quầy không ghi mốc đổi giờ
+(chủ quán, `shop-facts.md` §8.8, U-055/U-056); nguồn số người ngoài quầy còn ở
+U-060 (`docs/product/99-unknowns.md`). Không dùng câu “trạm nào” dưới đây để
+áp đặt thêm mốc đổi ở bếp.
+
 §4 nói rõ vì sao **chức vụ ghi cố định** không đủ: chức vụ trả lời *người này là ai*, còn luật hỏi
 *người này đang đứng đâu, lúc này* — và câu thứ hai đổi nhiều lần trong một buổi sáng.
 

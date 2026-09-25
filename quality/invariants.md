@@ -204,9 +204,8 @@ tạm dừng có ưu tiên **cao hơn** giờ mở cửa: đang giữa giờ bá
 được tạo. Luật này áp cho **mọi** kênh, không riêng ba kênh mang đi. Đơn đã tạo **trước** đó không
 bị chạm tới: nó vẫn được làm, đóng gói, giao và thu tiền.
 
-**Điều kiện thứ ba khác hai điều kiện kia ở chỗ KHÔNG AI BẤM ĐƯỢC NÓ.** Giờ bán là đồng hồ, nút tạm
-dừng là chủ quán bấm; còn *"quán đang nhìn thấy được đơn mới"* tắt đi vào đúng lúc **không ai ở quán
-bấm được gì** — quán mất mạng thì nút tạm dừng cũng nằm sau đúng đường mạng vừa mất. Ba kênh khách
+**Điều kiện thứ ba cần đường điều khiển khi mạng quán mất.** Chủ quán chốt
+2026-09-25 (U-053): dùng 5G bấm tắt (`shop-facts.md` §6.11). Ba kênh khách
 tự bấm (`delivery`, `pickup`, `qr_table`) dừng; hai kênh do người của quán nhập (`staff_pos`,
 `phone_preorder`) **không** dừng — mất mạng thì họ ghi giấy (§6.11). Khách được nhìn thấy **một dòng
 thông báo** trên web, và **câu chữ của dòng ấy chưa chốt** — đừng tự viết
@@ -220,10 +219,11 @@ thông báo** trên web, và **câu chữ của dòng ấy chưa chốt** — đ
 *"hiên thông báo để pos quyết định nếu dừng cần có nut mở lại"*): hệ thống **hiện một thông báo** ở
 quầy, **POS quyết** dừng ba kênh khách tự bấm, và đã dừng thì **mở lại là một nút người bấm** —
 không tự mở lại khi tín hiệu về (`master_plan/shop-facts.md` §6.11 · `docs/decisions.md`
-**ADR-047**). ⛔ **Mệnh đề trên KHÔNG đổi một chữ, và chỗ hở nằm ở cơ chế:** ca quán **mất mạng
-hẳn** là ca POS không nhìn thấy thông báo và không bấm được gì — đúng ca điều kiện thứ ba sinh ra
-để chặn. Máy có **tự** dừng trong ca ấy không là `docs/product/99-unknowns.md` **U-053**, và chừng
-nào chưa có lời thì **không phiên nào được tự chọn một đường** (`CLAUDE.md` §3.5).
+**ADR-047**). **Bổ sung 2026-09-25 (U-053):** khi quán mất mạng hẳn, chủ
+quán dùng 5G bấm tắt ba kênh. Lời này xác định người và đường bấm, không xác
+định cách xử lý đơn tới trước khi chủ quán bấm; xung đột với bảo đảm không
+nhận đơn trong toàn bộ khoảng mất mạng cần chủ quán làm rõ tại **U-061**
+(`docs/product/99-unknowns.md`). Không tự coi thao tác tay là bảo đảm tức thời.
 
 **Why:**
 Hai quy tắc của kế hoạch gốc (§5 quy tắc 10 và 11) nằm cạnh nhau mà không nói cái nào thắng; chủ
@@ -241,11 +241,11 @@ Kịch bản biên: gửi một đơn lúc 05:59 và một đơn lúc 11:01 ⇒ 
 câu *"Quán mở cửa 6h–11h sáng"* chứ không phải một nút bấm im lặng (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.2.6).
 Kịch bản ưu tiên: 08:00 — trong giờ bán — chủ quán bật tạm dừng ⇒ đơn mới của **cả năm** kênh đều
 bị từ chối; tắt tạm dừng thì đặt lại được ngay. Kịch bản mất kết nối: 08:00, quán mất mạng
-trong khi hệ thống vẫn sống ⇒ ba kênh khách tự bấm (`delivery`, `pickup`, `qr_table`) **bị từ
+trong khi hệ thống vẫn sống, chủ quán dùng 5G bấm tắt ⇒ ba kênh khách tự bấm (`delivery`, `pickup`, `qr_table`) **bị từ
 chối** và khách thấy **một dòng thông báo**, trong khi `staff_pos` và `phone_preorder` **không** bị
 chặn — quán vẫn nhận đơn qua hotline và ghi giấy; có mạng lại thì ba kênh kia mở lại **khi POS bấm
 nút mở** (chủ quán chốt 2026-09-16 — **không** tự mở lại), và
-**không đơn nào của khoảng mất mạng nằm chờ trong máy mà quán chưa từng nhìn thấy**. Kịch bản không chạm đơn cũ: nhận một đơn giao tận
+**không nhận thêm đơn sau khi đã bấm dừng**. Phần trước lúc bấm chưa có tiêu chí đã chốt (U-061). Kịch bản không chạm đơn cũ: nhận một đơn giao tận
 nơi lúc 10:50, bật tạm dừng lúc 10:55 ⇒ đơn đó vẫn đi hết luồng, vẫn bấm được **đã giao và đã thu
 tiền** sau 11:00. Kiểm ngược, cuối ngày: không đơn nào có thời điểm tạo nằm ngoài 06:00–11:00.
 
