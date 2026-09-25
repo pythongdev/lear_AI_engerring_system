@@ -11,8 +11,10 @@ This repository is an AI-assisted development operating system: a small set of
 canonical documents, a task backlog, and shell gates that make every change
 verifiable.
 
-This file is the entry point for any AI session working in this repo. Read it
-first, every session, before touching anything else. It says where facts live,
+This file owns the shared rules for Claude Code and Codex. Claude Code uses
+this entry point; Codex enters through `AGENTS.md`, which points here without
+copying the rules. Read this file every session before starting work.
+It says where facts live,
 how to work, and what "done" means. It does not repeat those facts — it points
 at their single owner. Mechanism detail for a given gate lives in that script's
 own header comment, not here — this file loads into every session, so every
@@ -39,6 +41,7 @@ is a bug to fix now.
 
 | Fact | Owner |
 |---|---|
+| Shared AI working rules and cross-tool handoff | `CLAUDE.md` (Codex entry point: `AGENTS.md`) |
 | Business rules, product behavior | `docs/product/` |
 | Open business questions (unknowns) | `docs/product/99-unknowns.md` |
 | Architecture | `docs/product/1-system-design/architecture.md` |
@@ -99,7 +102,8 @@ paths such a document names describe a structure that does not exist, and `work/
 is where Gate 1b does not check links (§5).
 
 ```text
-CLAUDE.md          this file — read first
+AGENTS.md          Codex entry point → CLAUDE.md
+CLAUDE.md          shared rules — read first
 docs/              product/ → 00-index.md, 0-ba/… (behavior), 1-system-design/
                    (architecture), 99-unknowns.md — all by phase;
                    decisions, prompt guideline
@@ -124,7 +128,7 @@ by the size of the diff (levels: `README.md`). **Most changes are L0 or L1.**
 
 | Obligation | L0 | L1 | L2 | L3 | Enforced by |
 |---|:--:|:--:|:--:|:--:|---|
-| `./scripts/gate.sh` passes | ✓ | ✓ | ✓ | ✓ | Stop hook |
+| `./scripts/gate.sh` passes | ✓ | ✓ | ✓ | ✓ | Claude Stop hook; Codex runs directly |
 | Entry in `work/backlog.md` | — | ✓ | ✓ | ✓, split into L1/L2 | *self-discipline* |
 | `work/scope.txt` declared | — | ✓ | ✓ | ✓ | Gate 3 (partial) |
 | Acceptance written *before* the change | — | ✓ | ✓ | ✓ | *self-discipline* |
@@ -145,8 +149,9 @@ wrong" reaches money, stored data, or a published contract — not to feel safe.
 
 Then, at every level:
 
-1. **Context** — start from the session brief (§7.1), which arrives on its own
-   and tells you what moved since last time. Then load only what the task needs:
+1. **Context** — start from the session brief (§7.1): Claude receives it from
+   its hook; Codex runs it directly. It tells you what moved since last time.
+   Then load only what the task needs:
    the task entry in `work/backlog.md`, the patterns in `work/scope.txt`, the
    owners in §2 that the task actually touches, and the code and tests under
    those patterns. Do not read the repository by default.
@@ -269,8 +274,15 @@ It runs, in order:
    of the tree, and what it sends back is the *report text* to rewrite — not the
    change, which is already green by then.
 
-The gate is also wired as a Stop hook in `.claude/settings.json`, so it runs when
-a turn ends; a failure blocks the turn and returns the output to be fixed.
+The gate is wired as a Claude Code Stop hook in `.claude/settings.json`;
+a failure returns output to Claude to fix. This configuration does not run
+hooks for Codex. Codex must invoke `./scripts/gate.sh` directly after changes.
+Direct execution runs steps 1–5, **not Gate 7/7b**: those require Claude's
+transcript. Codex must check the commit block against §6.1 manually, including
+its explicit file list, scope and the real staged index. A green direct gate
+does not prove the commit block was checked. Scope cleared means Gate 7b loses
+its scope comparison even in Claude; the existing follow-up is in
+`work/backlog.md` → T-085.
 
 Gate output is the only evidence a change works. "I tested it" is not evidence.
 The remaining gates — acceptance→evidence mapping, diff red flags, per-level
@@ -296,6 +308,7 @@ still uncommitted, ends with:
 ```bash
 # get the candidate list from git, don't reconstruct it from memory:
 git diff --name-only HEAD
+git ls-files --others --exclude-standard
 
 git add CLAUDE.md work/backlog.md
 git commit -m "T-XXX: what changed" -m "Why it changed.
@@ -306,7 +319,12 @@ Verified: ./scripts/gate.sh green."
   `git add -A`, never `.` — the block must stage this task's files and nothing
   that happened to be lying around. Read the list off git, not off memory: a
   session that recalls which files it touched will occasionally miss one or
-  add one that isn't there; `git diff --name-only HEAD` doesn't.
+  add one that isn't there. Use `git ls-files --others --exclude-standard`
+  as well: the diff command does not list untracked files. Include only files
+  belonging to this task, and inspect `git diff --cached --name-only` so a later
+  commit will not accidentally include someone else's already-staged changes.
+  If unrelated files are staged, report them and do not hand over a block that
+  would commit them; do not alter someone else's index without authorization.
 - **`work/scope.txt` only belongs in the block when its diff against `HEAD`
   leaves it comment-only** (§6 above; F-020, ADR-043). Clearing a task's own
   patterns normally nets back to the same comment-only file already in `HEAD`,
@@ -327,9 +345,10 @@ Verified: ./scripts/gate.sh green."
 Give the block whether or not the user asks for it — asking to commit is a
 separate request (§6), and the answer to it is already written by then.
 
-This one is enforced, not remembered: `scripts/check-commit-block.sh` (Gate 7,
-§5) blocks the end of a turn that leaves tracked changes uncommitted without a
-`git commit -m` block in its report.
+In Claude hook mode, `scripts/check-commit-block.sh` (Gate 7, §5) checks the
+report for a `git commit -m` block when tracked changes remain. It warns at most
+once per tree state. In Codex this obligation is manual; direct gate execution
+does not check the report.
 
 ### 6.2 Gate 8 — git itself refuses a subject that says nothing
 
@@ -366,11 +385,11 @@ The repo grows; a session's memory does not survive it. Every session starts
 cold and will act on whatever it is handed — so it must be handed the state of
 **today**, not the state of the day the documents were written.
 
-The loop is: **the brief arrives → you record as you go → you hand off.**
-Only the middle step is discipline, and that is deliberate — `work/findings.md`
-F-001 is the record of what happens when a rule relies on someone remembering.
+The loop is: **load the brief → record as you go → hand off.**
+Claude automates brief loading through its hook; Codex invokes it directly.
+Recording durable facts remains a responsibility in both tools.
 
-### 7.1 Start of session — the brief arrives on its own
+### 7.1 Start of session — load the live brief
 
 `scripts/brief.sh` prints the live state: the task In Progress, the declared
 scope, the next Ready task, Open findings, Open unknowns, the newest ADRs,
@@ -384,10 +403,10 @@ will judge your change by someone else's scope; if you are mid-task, put the tas
 back in *In Progress* rather than deleting the scope. Patterns **with** a task in
 *In Progress* are normal and stay silent (ADR-006, F-010).
 
-It is a `SessionStart` hook in `.claude/settings.json`, so it runs on startup,
-`/clear`, resume and compaction, and its output is in context before the first
-instruction. Nobody has to remember to read it. Run it by hand whenever the
-state may have moved under you:
+In Claude Code it is a `SessionStart` hook in `.claude/settings.json`, running
+on startup, `/clear`, resume and compaction. In Codex, run it directly at the
+start of a session, after context loss, and when receiving a handoff. In either
+tool, run it again whenever repository state may have moved under you:
 
 ```bash
 ./scripts/brief.sh
@@ -477,6 +496,30 @@ Anything true only inside your head is lost. Before finishing:
   - **Link the owner from §2, never a copy.** The link is a pointer, not a place
     to restate the question — same reason the brief points and never copies
     (§7.1, `work/findings.md` F-001).
+
+### 7.4 Claude Code / Codex handoff and independent review
+
+Adopted 2026-09-25 at the repo owner's request; rationale: `docs/decisions.md`
+ADR-052. Both tools use the same owners (§2), task state and acceptance.
+
+- One writer per working tree. The other tool may review without editing once
+  the writer pauses at a stable diff. For concurrent implementation, use separate
+  branches and worktrees, separate tasks, and name an integrator. Shared backlog
+  and owner-file changes still need reconciliation during integration.
+- When receiving a task or switching tools, read the brief, task entry, current
+  branch, `git status` and diff. Existing changes may belong to someone else.
+- Keep handoff in the existing task detail entry (§2), with the implementing
+  tool, reviewer (or "not yet reviewed"), branch and commit/base when available,
+  changed or new files, checks actually run and their results, remaining work,
+  next action and links to relevant owners. Keep status only in `work/backlog.md`.
+  Do not maintain a second task log or separate business memory for each tool.
+- Independent review starts from acceptance, relevant owner documents and the
+  exact diff being reviewed. Report findings with location and evidence. The
+  implementer resolves valid findings and reruns affected checks. A review
+  opinion does not change business truth; route decisions through §4.
+- A chat session without repository/terminal access receives the relevant task,
+  source excerpts and diff as a snapshot. Its output is a proposal until a
+  repository session applies and verifies it; it cannot claim local gate results.
 
 ## 8. Definition of Done
 

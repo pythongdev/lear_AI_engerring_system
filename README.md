@@ -14,6 +14,7 @@ A lightweight AI-assisted development operating system inspired by the strongest
 ## Structure
 
 ```text
+AGENTS.md             (Codex entry → shared rules in CLAUDE.md)
 CLAUDE.md
 docs/
   product.md
@@ -69,7 +70,14 @@ Design + decision + task breakdown + invariants + verification + review.
 
 ## Context loading
 
-`scripts/brief.sh` runs as a `SessionStart` hook and hands every session the current state: what is in progress, what is open, what changed. Start with it and `CLAUDE.md`, then load only the product, architecture, decisions, code, and tests relevant to the current task.
+Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md` and reads the same
+shared rules. `scripts/brief.sh` provides current task state and open items.
+Claude receives it through the configured `SessionStart` hook; Codex runs
+`./scripts/brief.sh` directly. Load only sources relevant to the task.
+
+After changes, run `./scripts/gate.sh`. Claude also has a Stop hook. Direct runs
+do not check the report's commit block (Gate 7/7b); follow `CLAUDE.md` §6.1.
+For switching tools, independent review and worktree ownership, see §7.4 there.
 
 Do not read the entire repository by default.
 

@@ -100,6 +100,21 @@ commit "$r"
 printf 'Bản nháp trỏ [đi đâu đó](design/db/01.md).\n' > "$r/docs/nhap.md"
 check "file chưa track chỉ ghi chú" 0 "note" "$(run "$r")"
 
+# Codex entry point is checked just like CLAUDE.md.
+r="$(newrepo agents)"
+printf 'Read `CLAUDE.md`.\n' > "$r/AGENTS.md"
+commit "$r"
+check "AGENTS.md có nguồn hợp lệ" 0 "OK" "$(run "$r")"
+printf 'Read [missing](docs/missing.md).\n' > "$r/AGENTS.md"
+check "AGENTS.md đã track có link chết" 1 "AGENTS.md :: docs/missing.md" "$(run "$r")"
+
+r="$(newrepo agents-untracked)"
+commit "$r"
+printf 'Read [missing](docs/missing.md).\n' > "$r/AGENTS.md"
+got="$(run "$r")"
+check "AGENTS.md chưa track chỉ ghi chú" 0 "note" "$got"
+check "ghi chú nêu link chết trong AGENTS.md" 0 "? AGENTS.md :: docs/missing.md" "$got"
+
 if [ "$fails" -ne 0 ]; then
   echo "check-links.test: FAIL ($fails ca)"
   exit 1

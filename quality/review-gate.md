@@ -107,8 +107,9 @@ Không đọc kiểu "xem có hợp lý không" — mắt sẽ trôi. Săn đún
 
 Session vừa viết code có bias xác nhận rất nặng — nó đã "tin" là code đúng.
 
-Chấm bằng context lạnh: `/code-review`, hoặc session mới, chỉ đưa diff +
-acceptance, không đưa lý do LLM đã tự giải thích.
+Chấm bằng phiên độc lập (có thể dùng công cụ AI còn lại): đưa diff, acceptance và
+nguồn liên quan để đối chiếu, không lấy lời tự giải thích của người viết làm bằng
+chứng. Quy tắc phối hợp và bàn giao: `CLAUDE.md` §7.4.
 
 ---
 
@@ -118,7 +119,7 @@ Người bấm commit là người dùng; người **viết** commit là phiên 
 task, và hết mỗi phiên cho phần còn chưa commit, báo cáo phải kết thúc bằng một
 khối `git add` + `git commit` dán chạy được ngay — luật đầy đủ ở `CLAUDE.md` §6.1.
 
-Cổng này tự động: `scripts/check-commit-block.sh` chặn kết thúc lượt khi cây còn
+Trong hook Claude Code, `scripts/check-commit-block.sh` chặn kết thúc lượt khi cây còn
 thay đổi **git đang theo dõi** mà lượt đó không đưa ra khối commit nào. File chưa
 track và `work/scope.txt` không kích hoạt nó, và nó chỉ hỏi **một lần cho mỗi
 trạng thái cây** — đỏ vì lý do sai còn hại hơn không đỏ (ADR-003, ADR-004).
@@ -145,26 +146,30 @@ mỗi phiên khi chưa cài. Luật đầy đủ: `CLAUDE.md` §6.2, `docs/decis
 
 ## Tự động hoá
 
-Gate 1, Gate 1b, Gate 3 và Gate 7 chạy tự động qua Stop hook trong
+Trong Claude Code, các kiểm tra dưới đây chạy qua Stop hook trong
 `.claude/settings.json`:
 
 ```text
-Stop hook → scripts/gate.sh → check-scope.sh + check-links.sh + verify.sh
-                              + check-commit-block.sh
+Stop hook → scripts/gate.sh → check-scope.sh + check-links.sh
+                              + check-doc-status.sh + check-phase-boundary.sh
+                              + verify.sh + check-commit-block.sh
 ```
 
 Hook fail sẽ chặn kết thúc lượt và trả lỗi lại cho LLM tự sửa. `verify.sh` được
 bỏ qua khi chỉ có tài liệu thay đổi, và chạy mọi `scripts/*.test.sh` khi không —
 `check-links.sh` thì không bao giờ bị bỏ qua (ADR-005).
 `check-commit-block.sh` chỉ chạy trong hook mode — chạy tay không có transcript
-để đọc. Chạy tay: `./scripts/gate.sh`.
+để đọc. Codex chạy trực tiếp `./scripts/gate.sh`; cấu hình hook Claude không áp dụng
+cho Codex. Gate xanh ở chế độ này không chứng minh Gate 7/7b đã chạy: tự kiểm tra
+khối commit theo `CLAUDE.md` §6.1. Khi scope đã gỡ, phép đối chiếu scope của Gate 7b
+cũng không còn hiệu lực; việc xử lý giới hạn này nằm ở `work/backlog.md` → T-085.
 
 **Gate 8 không nằm trong chuỗi này.** Nó là hook của git, không phải của Claude
 Code, và chạy ở một thời điểm khác: lúc `git commit`, chứ không phải lúc kết thúc
 lượt. Bật nó bằng `./scripts/install-hooks.sh` (một lần cho mỗi bản clone);
 `./scripts/install-hooks.sh --check` trả lời "đã cài chưa".
 
-Xem hoặc tắt hook bằng `/hooks`.
+Trong Claude Code, xem hoặc tắt hook bằng `/hooks`.
 
 ## Vòng phản hồi
 

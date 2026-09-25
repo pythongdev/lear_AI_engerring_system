@@ -146,7 +146,7 @@ Con số ba loại **không đổi** (20 · 8 · 1): lời chốt này không đ
 | Nhánh | Câu hỏi ở `admin-questions.md` §3 | Việc bị chặn |
 |---|---|---|
 | ~~**A** — một buổi bán~~ | ~~`A1`…`A10`~~ **ĐÃ TRẢ LỜI CẢ MƯỜI, 2026-09-04** (T-056); bốn vế bỏ trống nay cũng đóng hết (`U-038`·`U-039`·`U-040` 2026-09-06 · **`U-041` 2026-09-08**) | **hết chặn:** ADM-01 · ADM-02 · ADM-03 → loại 2 · **còn chặn:** ADM-04 — nhưng bằng **U-054** (`U-045` đóng 2026-09-15 ⇒ `U-051`, `U-051` đóng 2026-09-16 ⇒ `U-054`), không còn bằng câu nhánh A nào |
-| **B** — nguyên liệu | `B11`…`B22` (B13/B14/B17 đã về owner 2026-09-25; B11/B12/B15/B16 trả lời một phần; `B18` trả lời **một nửa**, **`B21` có lời 2026-09-15** qua `U-045`: không ngưỡng, máy không nhắc) — **U-034 đóng 2026-09-06** | ADM-10 · ADM-11 · ADM-12 · ADM-13 · ADM-14 · ADM-15 |
+| **B** — nguyên liệu | `B11`…`B22` (B13/B14/B17 đã về owner 2026-09-25; B11/B12/B15/B16 trả lời một phần; B18/B20/B22 đã về owner 2026-09-25; B19 còn thiếu phân loại, **`B21` có lời 2026-09-15** qua `U-045`: không ngưỡng, máy không nhắc) — **U-034 đóng 2026-09-06** | ADM-10 · ADM-11 · ADM-12 · ADM-13 · ADM-14 · ADM-15 |
 | **C** — con người | `C23`…`C36` (14 câu; ~~`C36`~~ **có lời 2026-09-20 và ĐÃ VỀ OWNER cùng ngày** qua ADM-21 — đọc ở `master_plan/shop-facts.md` **§8.8**; mười ba câu còn lại **chưa câu nào**) | ADM-20 · ~~ADM-21~~ ✅ `Done` · ADM-22 · ADM-23 · ADM-24 |
 | **D** — sản phẩm | `D37`…`D43` (7 câu, **chưa câu nào**) | ADM-32 · ADM-33 (ADM-30 chỉ vướng vế quyền, ADM-31 không vướng) |
 | **E** — tài chính | `E44`…`E51` (8 câu, **chưa câu nào**) | ADM-42 · ADM-43 · ADM-44 · ADM-45 |
@@ -256,7 +256,7 @@ hàng thì lấy lại số bằng `grep -n` ngay lượt ấy, đừng chép t�
 | [ADM-04](#adm-04) | tổng quan buổi bán | A | 1 | [`U-054`](../docs/product/99-unknowns.md#L149) · [`F52`](admin-questions.md#L289) · [`F53`](admin-questions.md#L292) — *`U-041` đóng 2026-09-08, cả ba đường; `U-045` đóng 2026-09-15 — máy không kết luận, chủ quán tự đọc*; vế **người** nay đứng trên [`U-055`](../docs/product/99-unknowns.md) — [ADM-21](#adm-21) ✅ `Done` 2026-09-20 đưa `C36` về owner, nhưng lời ấy phủ **trạm quầy**, còn con số *bao nhiêu người đang làm* cần cả năm trạm (*`U-049` đóng 2026-09-08, `U-050` đóng 2026-09-15: POS gánh trạm bị bỏ trống, khoảng trống ấy không là thiếu người*) |
 | [ADM-10](#adm-10) | danh mục nguyên liệu | B | 1 | [`B11`](admin-questions.md#L124) [`B12`](admin-questions.md#L127) |
 | [ADM-11](#adm-11) | phiếu nhập hàng | B | 1 | [`B13`](admin-questions.md#L133)…[`B17`](admin-questions.md#L145) |
-| [ADM-12](#adm-12) | hao hụt / đồ thừa | B | 1 | vế còn lại của [`B18`](admin-questions.md#L148) · [`B19`](admin-questions.md#L154) [`B20`](admin-questions.md#L157) |
+| [ADM-12](#adm-12) | hao hụt / đồ chưa bán hết | B | 1 | `B19` (phân loại để được/không để được); B18/B20 đã về shop-facts §8.4 |
 | [ADM-13](#adm-13) | tồn ước tính | B | 1 | [`U-054`](../docs/product/99-unknowns.md#L149) — [`B21`](admin-questions.md#L160) **đã có lời 2026-09-15**: không ngưỡng, máy không nhắc ⇒ chỉ còn nửa *con số tồn ước tính* |
 | [ADM-14](#adm-14) | nối nút tạm dừng | B | 1 | [**ADM-13**](#adm-13) — [`B21`](admin-questions.md#L160) **đã có lời 2026-09-15**: máy không phát tín hiệu *sắp hết*, nên chỉ còn vế **người nào bấm** |
 | [ADM-15](#adm-15) | công nợ nhà cung cấp | B | 1 | [`B16`](admin-questions.md#L142) + [**ADM-11**](#adm-11) |
@@ -623,26 +623,25 @@ B16 đã xác nhận có ghi nợ ngày 2026-09-25 ⇒ **ADM-15 cần làm**, c�
 ---
 
 <a id="adm-12"></a>
-### ADM-12 — Đồ hỏng, đồ đổ, đồ thừa cuối buổi là chi phí thật của quán và hôm nay không có chỗ nào nhận con số ấy
+### ADM-12 — Chưa có luật ghi sự cố và lượng đồ chưa bán hết cuối buổi
 
-**L2** · nhánh B · **chưa nhận được — chặn bởi `B18` (vế còn lại) `B19` `B20`** (`U-034` đóng 2026-09-06)
+**L2** · nhánh B · **chưa nhận được — chặn bởi `B19` (phân loại để được/không để được)** (`U-034` đóng 2026-09-06)
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
-Xong rồi thì cuối buổi có một chỗ nhập những gì đã mất đi mà không thành doanh thu, và con số ấy
-đứng đúng một chỗ — không trộn vào doanh thu, không trộn vào tồn.
+Xong rồi thì có luật ghi sự cố và lượng kiểm đếm cuối buổi, phân biệt hao hụt với
+đồ chưa bán hết còn để bán tiếp.
 
 **Nói một câu, việc phải làm là gì:**
-Chốt **luật ghi hao hụt / huỷ / đồ thừa** ở mức người nhập tay. Việc **không** phải làm: đừng cho
+Chốt **luật ghi hao hụt / huỷ / đồ chưa bán hết** ở mức người nhập tay. Việc **không** phải làm: đừng cho
 một thao tác bán hàng nào tự sinh ra dòng hao hụt — `01-ranh-gioi.md` §1.6 chốt *đường duy nhất để
 một con số nguyên liệu đổi là có người nhập nó*.
 
 **Vì sao có việc này:**
-Chủ quán đã trả lời **một nửa** của `B18` ngày 2026-09-04: có **một mục tổng nhập hàng ngày, chủ
-quán tự nhập**. Nửa còn lại — *đếm những thứ gì*, và con số ấy có phải *đồ thừa* hay không — chạm
-`U-034`, **đóng 2026-09-06**: mục tổng ghi **mua vào** và **đã dùng**, không ghi *đồ thừa* như một
-mục riêng. Đây là việc gần lời chốt nhất của cả nhánh B và cũng là việc dễ làm sai nhất: một mục
-nhập tổng làm đúng thì đóng cả `B18`, làm sai thì thành cái sổ không ai nhập.
+B18/B20 đã có lời ngày 2026-09-25 (T-090), đọc ở `master_plan/shop-facts.md` §8.4.
+B19 đã sửa cách gọi; không coi đồ chưa bán hết là hao hụt hay đồ phải huỷ.
+Còn thiếu phân loại thứ nào để được/không để được và luật ghi cụ thể để dựng phần mềm.
+`U-034` đóng 2026-09-06 vẫn quyết con số nền của mục tổng; lời B18 không tự đổi cấu trúc mục ấy.
 
 **Không làm thì mất gì:**
 - **Mục tổng hàng ngày mà chủ quán đã yêu cầu không có luật để dựng.** Chủ quán đã nói *sẽ nhập số
@@ -652,9 +651,9 @@ nhập tổng làm đúng thì đóng cả `B18`, làm sai thì thành cái sổ
   làm được, miễn danh mục (`B11`/`B12`) đã có.
 
 **Chặn bởi — hỏi gì trước:**
-Vế còn lại của `B18` (đếm những thứ gì) · `B19` (đồ thừa để mai hay bỏ) · `B20` (hỏng/đổ/cháy giữa
-buổi có ai ghi không). ~~`U-034`~~ đã đóng, xem trên — nó quyết **con số nền**, và
-ba câu kia chỉ có nghĩa sau khi biết con số nền là gì.
+`B19`: cụ thể thứ nào để được đến mai, thứ nào không. B18/B20 đã về owner;
+không hỏi lại người ghi sự cố. Khi nhận việc cần chốt thông tin ghi sự cố và cách
+nhập lượng kiểm đếm, không suy ra từ việc quán có kiểm đếm thực tế.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 

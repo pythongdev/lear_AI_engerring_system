@@ -282,4 +282,22 @@ Không được sửa:
 - Còn vấn đề gì chưa giải quyết
 ```
 
-Ba dòng cuối trong **Report** là bắt buộc, khớp với mục "Before Finishing" trong `CLAUDE.md`.
+Ba dòng cuối trong **Report** là bắt buộc, khớp với `CLAUDE.md` §7.3.
+
+## 6. Giao việc giữa Claude Code và Codex
+
+Dùng cùng Goal, Scope, Acceptance và Verify cho cả hai công cụ. Luật phối hợp,
+vị trí bàn giao và trách nhiệm người sửa/reviewer nằm ở `CLAUDE.md` §7.4;
+không tạo bản prompt riêng chỉ vì đổi công cụ.
+
+Ví dụ lời gọi review:
+
+```text
+Review task được chỉ định theo acceptance và nguồn của nó.
+Đọc bàn giao trong entry, kiểm tra nhánh và diff hiện tại.
+Chỉ báo lỗi có vị trí và bằng chứng; không sửa file trong lượt review.
+Nêu rõ phần chưa kiểm chứng và những lệnh thực sự đã chạy.
+```
+
+Nếu dùng chat không có quyền đọc repo/chạy lệnh, cung cấp nội dung nguồn liên
+quan cùng diff; kết quả cần một phiên trong repo áp dụng và kiểm chứng.

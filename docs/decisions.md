@@ -68,6 +68,7 @@ có câu trả lời mới từ người.
 | ADR-049 | Pha 2 chạy theo **kế hoạch riêng** ở `master_plan/`, mã bước là **`P2-XX`**, đầu ra vào thư mục **mới** `docs/product/2-db/` mở cùng dòng nội dung đầu tiên; năm tầng của pha 1 dịch sang pha 2 thành **ràng buộc · giao dịch · một đường ghi · chỗ cất vết · câu truy vấn** | Đã chốt 2026-09-20 | — | mở khoá **P2-01…P2-14**; chép hình dạng của **ADR-033** |
 | ADR-050 | **Năm tầng của pha 1 dịch sang pha 2 thành năm thứ dựng được, mỗi thứ một phép chấm** — ràng buộc thật · ranh giới giao dịch · một đường ghi duy nhất · chỗ cất vết sống độc lập · một câu truy vấn ra 0 dòng; cộng **ba câu pha 2 không được viết ra** (endpoint · route · cơ chế vận hành) và ba luật dịch: không tự hạ tầng · mệnh đề tầng 1 vẫn có câu truy vấn · câu truy vấn chưa bao giờ đỏ là chưa được chứng minh | Đã chốt 2026-09-22 | — | mở khoá **P2-02** và **P2-03**; lane `prompt/DB/` vào Gate 1b |
 | ADR-051 | **Lane pha 2 thí điểm: entry ở `work/backlog_DB.md` là hồ sơ thực thi DUY NHẤT của một bước** — Nghiệm thu và Kiểm chứng viết vào entry lúc nhận việc, không còn file prompt riêng bắt buộc; trạng thái chỉ ở `work/backlog.md` (bỏ cột *Trạng thái* của *Mục lục* và dòng *✅ Xong ngày…*); mức và thứ tự chỉ ở kế hoạch §6 | Đã chốt 2026-09-25 | — | thay luật 2 · 3 của `work/backlog_DB.md` (**ADR-034** hình dạng · **ADR-049**) cho lane pha 2; lane khác giữ nguyên tới khi thí điểm được đánh giá |
+| ADR-052 | Claude Code và Codex dùng chung luật; AGENTS.md là điểm vào mỏng | Đã chốt 2026-09-25 | — | T-088; giữ lõi Gate 7, phân biệt hook và chạy trực tiếp |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3475,3 +3476,28 @@ thi cho mỗi task, một nơi giữ trạng thái"* (T-083). Phạm vi là **th
 **Pointer sửa trong cùng thay đổi** (`CLAUDE.md` §7.2): `work/backlog_DB.md` (luật đầu file ·
 *Mục lục* · mọi entry · khuôn cuối file) · `work/backlog.md` (*Task Detail Template* nói ngoại lệ
 của lane pha 2) · `prompt/DB/README.md` (luật 1) · `docs/prompt-guideline.md` (đầu file).
+
+
+---
+
+### ADR-052 — Claude Code và Codex dùng chung luật, mỗi worktree một người sửa
+
+**Trạng thái:** Đã chốt 2026-09-25 — chủ repo yêu cầu triển khai đề xuất tích hợp hai công cụ (T-088).
+
+**Context:** Quy trình đang tập trung trong `CLAUDE.md`; brief và kiểm tra báo cáo
+được nối vào hook Claude. Codex chưa có điểm vào. Lệnh gate chạy trực tiếp không
+đọc transcript và không thực hiện Gate 7/7b.
+
+**Decision:** Thêm `AGENTS.md` làm điểm vào trỏ tới luật chung ở `CLAUDE.md`.
+Claude giữ hook hiện có; Codex gọi brief và gate trực tiếp, tự kiểm khối commit.
+Quy tắc vận hành và bàn giao duy nhất nằm ở `CLAUDE.md` §7.4: một người sửa trên
+mỗi worktree, bàn giao trong entry task hiện có, review dựa trên nguồn và diff.
+
+**Rejected alternatives:** Sao chép toàn bộ luật thành hai bộ dễ gây lệch;
+di chuyển toàn bộ luật lúc này chồng lên T-087; xây hệ thống điều phối và chuyển
+lõi Gate 7 ngay vượt phạm vi tích hợp tối thiểu, trong khi T-085 đang chờ giải
+quyết nguồn scope sau Done.
+
+**Hệ quả:** Gate 1b kiểm tra thêm điểm vào Codex. Hai công cụ dùng chung nguồn
+và task state nhưng mức tự động hoá khác nhau. T-085 vẫn giữ việc xử lý scope;
+không tuyên bố kiểm tra bàn giao Codex đã được tự động hoá.

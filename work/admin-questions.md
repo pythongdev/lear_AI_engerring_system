@@ -17,8 +17,8 @@
 > owner** — Đ-1 (2026-09-02, T-040) · Đ-3 (2026-09-04, T-050) · **Đ-2 và Đ-4 (2026-09-20, ADM-53)**
 > ⇒ §1 nay chỉ còn **một dòng lịch sử trỏ tới owner**. **`C36` cũng đã về owner 2026-09-20**
 > (ADM-21) ⇒ đọc lời ấy ở `master_plan/shop-facts.md` **§8.8**, không đọc ở đây. Còn lại ở đây là
-> **§3**: **35 câu để trống** (đo 2026-09-25 bằng `grep -c '^> \*\*Trả lời:\*\*$'` — **đếm lại,
-> đừng tin con số này**, `work/findings.md` **F-003**), cộng `B11`, `B12`, `B15`, `B16`, `B18` mới trả lời một phần
+> **§3**: **32 câu để trống** (đo 2026-09-25 bằng `grep -c '^> \*\*Trả lời:\*\*$'` — **đếm lại,
+> đừng tin con số này**, `work/findings.md` **F-003**), cộng `B11`, `B12`, `B15`, `B16`, `B19` mới trả lời một phần
 >
 > **2026-09-04 — §2 đã chuyển đi.** Danh sách việc `ADM-01`…`ADM-53` nay ở **`work/backlog_AD.md`**
 > (T-052, `docs/decisions.md` **ADR-036**). Sau ADM-53 (2026-09-20) file này chỉ còn **một** việc
@@ -146,16 +146,13 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-089)** — đọc chứng từ/trao đổi tiền hàng tại `master_plan/shop-facts.md` §8.4.
 
 **B18.** Cuối buổi quán có **đếm lại đồ thừa** không? Đếm những thứ gì?
-> **Trả lời (2026-09-04, một nửa):** có một **mục tổng nhập hàng ngày**, chủ quán tự nhập số liệu.
-> **Loại con số ấy đã chốt 2026-09-06 (U-034, đóng):** mua vào và đã dùng — không phải một mục
-> *đồ thừa* riêng. Vế *"đếm những thứ gì"* (danh mục cụ thể) **vẫn chưa trả lời**. Ghi ở
-> `master_plan/shop-facts.md` §8.4.
+> **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-090)** — đọc việc kiểm đếm cuối buổi và những thứ được nêu tại `master_plan/shop-facts.md` §8.4.
 
 **B19.** **Đồ thừa** hôm nay để mai bán tiếp hay bỏ? Thứ nào để được, thứ nào không?
-> **Trả lời:**
+> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-090)** — cách gọi và cách xử lý đã về `master_plan/shop-facts.md` §8.4. Còn hỏi: cụ thể thứ nào để được đến mai, thứ nào không?
 
 **B20.** Hỏng / đổ / cháy giữa buổi thì có ai ghi lại không?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-090)** — đã làm rõ người ghi sự cố tại `master_plan/shop-facts.md` §8.4.
 
 **B21.** Muốn máy **nhắc "sắp hết X"** thì dựa vào cái gì — chủ quán tự đặt ngưỡng, hay đếm tay rồi nhập vào?
 > **Trả lời (2026-09-15, qua `U-045`, đóng):** *"chủ quán tự đọc rôi đưa ra kết luận"* — **không
@@ -167,7 +164,7 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > `docs/product/99-unknowns.md` **U-054**.
 
 **B22.** Có muốn biết **giá vốn một suất bánh cuốn** không? *(Trả lời "có" là **mở lại Đ-3**: phải chốt định lượng từng thành phần cho từng suất — thứ hôm nay chưa có dữ kiện nào.)*
-> **Trả lời:**
+> **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-090)** — quyết định về giá vốn một suất tại `master_plan/shop-facts.md` §8.4.
 
 ### C. Con người
 *Mức sâu đã chốt: **cả ba mức** (**Đ-4**) — **về owner 2026-09-20**, đọc ở `master_plan/shop-facts.md` **§8.7**,

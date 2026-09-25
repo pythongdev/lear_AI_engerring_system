@@ -2,11 +2,12 @@
 # Session brief — prints the CURRENT state of the system, not the state of the
 # day the documents were written.
 #
-# Wired as a SessionStart hook in .claude/settings.json, so it runs on startup,
+# In Claude Code, wired as a SessionStart hook in .claude/settings.json: startup,
 # /clear, resume and compaction, and its stdout lands in the session's context
 # before the first instruction. That is the point: a session cannot forget to
 # read something that arrives on its own.
-# Also runnable by hand whenever the state may have moved under you:
+# Codex runs it directly at session start and handoff. Either tool can rerun it
+# whenever the state may have moved under you:
 #   ./scripts/brief.sh
 #
 # HARD RULE — this script is a POINTER, never a COPY.
@@ -72,7 +73,7 @@ block() {
 }
 
 printf '=== Lean AI Engineering — session brief (%s) ===\n' "$(date +%F)"
-printf 'Read CLAUDE.md first. This brief points; the owners in §2 hold the facts.\n'
+printf 'Read CLAUDE.md for shared rules (Codex entry: AGENTS.md). This brief points; §2 owners hold facts.\n'
 
 # --- What is being worked on -------------------------------------------------
 section "IN PROGRESS (work/backlog.md)"

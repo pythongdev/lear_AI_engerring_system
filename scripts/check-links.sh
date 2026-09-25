@@ -14,7 +14,7 @@
 # thời điểm xuất khẩu. Luật đó bây giờ do máy chấm.
 #
 # CHẤM FILE NÀO
-#   Chấm  — tài liệu chỉ đường: CLAUDE.md · README.md · docs/ · quality/ ·
+#   Chấm  — tài liệu chỉ đường: AGENTS.md · CLAUDE.md · README.md · docs/ · quality/ ·
 #           master_plan/ · prompt/BA/ · prompt/SD/ · prompt/AD/ · prompt/DB/ ·
 #           .claude/
 #           (prompt/SD/ = lane prompt của pha 1, mã bước P1-XX; thêm 2026-09-04
@@ -60,7 +60,7 @@ IGNORE_FILE="${CHECK_LINKS_IGNORE:-scripts/check-links.ignore}"
 checked() {
   case "$1" in
     work/*|prompt/maintenance/*) return 1 ;;
-    CLAUDE.md|README.md|docs/*|quality/*|master_plan/*|prompt/BA/*|prompt/SD/*|prompt/AD/*|prompt/DB/*|.claude/*) return 0 ;;
+    AGENTS.md|CLAUDE.md|README.md|docs/*|quality/*|master_plan/*|prompt/BA/*|prompt/SD/*|prompt/AD/*|prompt/DB/*|.claude/*) return 0 ;;
     *) return 1 ;;
   esac
 }

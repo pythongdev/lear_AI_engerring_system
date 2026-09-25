@@ -1362,6 +1362,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-09-16 | **NGƯỜI ĐỨNG QUẦY KHÔNG BAO GIỜ ĐI GIAO** (đóng **U-052**) — nguyên văn *"người đứng quầy khônng đi giao"* ⇒ chữ *"bất cứ ai"* của `U-049` hẹp lại còn **ba** vai (`trang_banh` · `gap_banh` · `canh`+`don_ban`); trạm `quay` không bao giờ bỏ trống vì đi giao, nên lời *"pos gánh"* của `U-050` luôn có người gánh. *Lời này không đụng tới chủ quán — §3 vẫn để chủ quán thỉnh thoảng đứng quầy* | **§3** · §8.6 |
 | 2026-09-20 | **Mảng CON NGƯỜI làm tới CẢ BA MỨC: ai đang trực trạm nào · chấm công · tính lương trên máy** (xác nhận lại lời chốt **Đ-4** ngày 2026-09-01; việc đi hỏi: `work/backlog_AD.md` **ADM-53**) — chủ quán chọn *"Đúng, cả ba mức"*. *Lời này chốt **mức sâu**, không chốt một con số nào: đơn giá công, kỳ trả lương, quyền xem lương vẫn là các câu `C23`…`C35` ở `work/admin-questions.md` §3* | **§8.7** |
 | 2026-09-20 | **Mỗi lần ĐỔI NGƯỜI Ở QUẦY là một mốc CÓ GIỜ — ghi cả ai vào, ai ra** (trả lời câu `C36`; hỏi qua `work/backlog_AD.md` **ADM-53**, chuyển về owner qua **ADM-21**, cùng ngày) — nguyên văn *"Có — ghi cả mốc đổi, ai vào ai ra lúc mấy giờ"* ⇒ đơn nào, huỷ nào, hoàn tiền nào cũng truy ra được người đang đứng quầy lúc ấy. Đây là dữ kiện **đầu tiên** đỡ được luật quyền gắn **chỗ đứng** của §6.13 và **ADR-016**. *Lời này phủ **trạm `quay`**, không phủ bốn trạm còn lại ⇒ **U-055**; không nói **ai khai** cái mốc ⇒ **U-056**; không phủ hai cửa ghi ngoài quầy (§6.7 · §6.17) ⇒ **U-057*** | **§8.8** · §8.7 (mức 1) |
+| 2026-09-25 | Chủ quán trả lời B18–B20/B22: kiểm lại cuối buổi, đồ chưa bán hết, người ghi sự cố và không cần giá vốn một suất (T-090) | §8.4 |
 | 2026-09-25 | Chủ quán bổ sung hàng mua và đơn vị mua, nhịp mua, người mua và nguồn mua qua B11–B17; làm rõ mộc nhĩ, túi chữ T; xác nhận trả ngay/ghi nợ và tin nhắn, chưa chốt kỳ trả nợ (T-089) | §8.4 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
@@ -1557,6 +1558,20 @@ chủ quán bổ sung cùng ngày: “mua từ chợ các mối”. Vế một m
 Phần cần hỏi tiếp nằm tại `work/admin-questions.md` B11, B12, B15.
 Danh mục cũ vẫn giữ: những mặt hàng chưa có đơn vị trong lời đáp này chưa được tự gán đơn vị.
 
+**Kiểm lại cuối buổi và ghi sự cố — chủ quán trả lời B18–B20/B22 ngày
+2026-09-25 (T-090):**
+
+- **B18:** cuối buổi có kiểm đếm lượng còn lại; những thứ chủ quán nêu là **nhân,
+  rau, quất**. Lời đáp chưa nói đây là toàn bộ danh mục, chưa chốt đơn vị kiểm đếm
+  hoặc cách nhập lượng còn lại vào phần mềm.
+- **B19:** chủ quán sửa cách gọi thành **“đồ chưa bán hết”**, không gọi là “đồ thừa”.
+  Đồ chưa bán hết hôm nay để mai bán tiếp. Chưa có phân loại cụ thể thứ nào để được,
+  thứ nào không; không suy thêm quy tắc xử lý đồ hỏng từ lời này.
+- **B20:** **người đứng POS ghi lại sự cố hỏng / đổ / cháy giữa buổi**. Chủ quán
+  xác nhận rõ người ghi trong lượt làm rõ cùng ngày. Chưa chốt trường thông tin
+  cần ghi hoặc cách ghi trên phần mềm.
+- **B22:** **không** muốn biết giá vốn một suất bánh cuốn; không mở lại Đ-3.
+
 **Thanh toán và chứng từ — chủ quán trả lời B16/B17 ngày 2026-09-25 (T-089):**
 “Mua hàng trả ngay và nợ”; chứng từ/trao đổi tiền hàng “qua tin nhắn”. Như vậy có cả
 mua trả ngay và mua ghi nợ; chưa chốt kỳ trả nợ, cách trả từng phần hoặc ai ghi nhận thanh toán.
@@ -1616,9 +1631,9 @@ con số là cặp **mua vào · đã dùng** ở trên (`U-034`, 2026-09-06).
   `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7, và câu ấy đã chốt riêng ngày 2026-09-02
   (U-030): **không** mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên.
 - **Mở lại được, và có đúng một cửa để mở.** Muốn biết **giá vốn một suất** thì phải chốt định
-  lượng từng thành phần, tức lật ngược mức sổ tay ở trên. Hôm nay chưa ai hỏi câu ấy
-  (`work/admin-questions.md` câu **B22**); hỏi rồi mà chủ quán trả lời *"có"* thì mục này phải
-  viết lại, không phải viết thêm.
+  lượng từng thành phần, tức lật ngược mức sổ tay ở trên. Chủ quán đã trả lời **“không”**
+  ngày 2026-09-25 (`work/admin-questions.md` câu **B22**). Nếu sau này đổi thành *“có”*
+  thì mục này phải viết lại, không phải viết thêm.
 
 ### 8.5 Mảng TÀI CHÍNH — tiền đầu két, và tiền nằm trong két tới cuối buổi
 

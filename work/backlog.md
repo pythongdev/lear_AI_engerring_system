@@ -241,9 +241,15 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 ## In Progress
 
 
+
+
+
 <a id="done"></a>
 ## Done
+- [x] T-090 **Ghi nhận B18/B19/B22 và làm rõ B20** — L1, 2026-09-25. Acceptance: chuyển lời chủ quán về shop-facts §8.4; dùng đúng nghĩa đồ chưa bán hết; không tự chốt B20 hoặc quy tắc kiểm kê trong phần mềm; cập nhật bảng hỏi và phụ thuộc ADM-12. Phạm vi: work/admin-questions.md, master_plan/shop-facts.md, work/backlog_AD.md, work/backlog.md. Bàn giao: Codex, nhánh chatgpt_involve, base b85afc9; chưa review độc lập. B20 đã được chủ quán làm rõ. Đối chiếu lời đáp với §8.4 và bảng hỏi; B19 còn thiếu phân loại. Kiểm chứng: chạy ./scripts/gate.sh ở lượt bàn giao; kết quả trong báo cáo phiên. Không stage do index đang có việc khác.
 - [x] T-089 **Ghi nhận câu trả lời B11–B17** — L1, 2026-09-25. Acceptance: giữ đủ hàng và đơn vị chủ quán nêu; không suy tên hàng, nguồn mua hoặc kỳ trả nợ; chuyển dữ kiện về shop-facts §8.4, giữ câu cần làm rõ tại bảng hỏi. Phạm vi: master_plan/shop-facts.md, work/admin-questions.md, work/backlog_AD.md, work/backlog.md. Bàn giao: Codex, nhánh chatgpt_involve, base 8e319c1; chưa review độc lập. Đã đối chiếu danh sách hàng; bổ sung B16/B17, gộp mộc nhĩ trùng theo lời sửa của chủ quán. Còn làm rõ tại B11/B12/B15/B16.
+
+- [x] T-088 **Claude Code và Codex dùng chung luật và bàn giao** — **L1**, xong 2026-09-25; AGENTS.md mới, ADR-052, Gate 1b kiểm tra điểm vào Codex. Gate đạt; Gate 7/7b của Codex vẫn kiểm thủ công.
 - [x] T-083 **Lane pha 2: entry ở `work/backlog_DB.md` là hồ sơ thực thi duy nhất, trạng thái chỉ ở
   file này** — **L2**, xong 2026-09-25, chủ repo đồng ý đề xuất tinh gọn trong phiên.
   `docs/decisions.md` **ADR-051**: Nghiệm thu · Kiểm chứng vào khối *Nhận việc* của entry (điền lúc
@@ -1299,6 +1305,59 @@ git status --porcelain
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### T-088 — Codex chưa có điểm vào và mô tả hook đang mặc định Claude Code
+
+**Prompt:** `prompt/maintenance/09-shared-agents-L1.md` (L1).
+
+**Goal:** Claude Code và Codex tiếp tục cùng một task theo cùng nguồn sự thật và biết rõ kiểm tra nào đã chạy.
+
+**Nói một câu, việc phải làm là gì:** Thêm điểm vào Codex, làm rõ hook và bàn giao; giữ nguyên lõi Gate 7.
+
+**Vì sao có task này:** Ngày 2026-09-25, chủ repo yêu cầu triển khai đề xuất dùng cả Claude Code và ChatGPT/Codex trên nhánh mới.
+
+**Không làm thì mất gì:** Phiên Codex dễ thiếu brief, hiểu nhầm gate đã chạy tự động hoặc dùng trạng thái chỉ còn trong hội thoại Claude.
+
+**Cách hoàn thành:**
+1. Đọc luật và chạy brief.
+2. Nhận task người dùng chỉ định, giữ nguyên các task Ready khác.
+3. Đọc prompt được dẫn ở trên.
+4. Khai scope trước khi sửa.
+5. Thêm điểm vào dùng chung và ghi quyết định.
+6. Làm rõ vòng đời phiên và bàn giao trong các tài liệu liên quan.
+7. Bổ sung vùng kiểm tra link cùng ca hồi quy.
+8. Chạy gate và đối chiếu nghiệm thu trong prompt.
+9. Đọc diff, cập nhật kết quả và dọn scope của task.
+10. Giao khối commit chỉ chứa file của task.
+
+**Acceptance · Verify:** trong file prompt.
+
+**Bàn giao (2026-09-25):** Thực hiện: Codex; reviewer độc lập: chưa có.
+Nhánh `chatgpt_involve`, base `8e319c1`. File thay đổi/mới thuộc danh sách Scope trong prompt;
+`work/scope.txt` được dọn về nguyên trạng sau khi chấm scope. `docs/command/git.md` là file
+có sẵn của người dùng, không thuộc task và không nằm trong khối commit.
+
+Nghiệm thu đối chiếu: AGENTS.md dẫn tới cùng luật và nêu giới hạn Gate 7; tài liệu phân biệt
+hook/chạy trực tiếp; CLAUDE.md §7.4 giữ quy tắc phối hợp; test chứng minh link chết trong điểm
+vào bị bắt; danh sách bàn giao lấy cả tracked và untracked, index không có file đã stage.
+
+Bằng chứng chạy `./scripts/gate.sh` khi scope còn khai báo (exit 0):
+
+```text
+check-scope: OK — all tracked changes within declared scope.
+check-links: OK — mọi đường dẫn trong tài liệu chỉ đường đều mở được.
+check-links.test: OK
+Verification passed.
+```
+
+Toàn bộ test shell được chạy, gồm các ca hồi quy AGENTS.md. `git diff --check` không có output.
+Brief in đúng điểm vào Codex và task đang làm; đường dẫn trong AGENTS.md mới được kiểm tra
+trực tiếp vì file chưa track. Đã tự đọc diff theo Gate 4; chưa có review độc lập.
+
+Giới hạn: Gate 7/7b trên Codex chưa tự động hoá (CLAUDE.md §5–6.1); vấn đề scope sau Done
+vẫn thuộc [T-085](#ready). Bước tiếp theo: người dùng review/commit khối bàn giao hoặc giao
+Claude review T-088 theo prompt; không cần nhận lại các task Ready chỉ để dùng Codex.
+
 
 <a id="t-082"></a>
 ### T-082 — `work/scope.txt` vào git kèm pattern lần thứ ba, và lần này chính cú nhặt của một phiên song song đẻ ra cổng đỏ

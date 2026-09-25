@@ -99,7 +99,7 @@ Ví dụ về quan hệ giữa các loại hồ sơ: phát hiện nhiều tài l
 
 ## 6. Một phiên làm việc thực tế diễn ra thế nào?
 
-**Bắt đầu:** đọc [CLAUDE.md](../../CLAUDE.md), lấy bản tóm tắt trạng thái bằng lệnh dưới đây từ thư mục gốc repo:
+**Bắt đầu:** Claude Code đọc [CLAUDE.md](../../CLAUDE.md); Codex đi qua [AGENTS.md](../../AGENTS.md) để đọc cùng bộ luật. Claude nhận brief qua hook đã cấu hình; Codex chạy lệnh dưới đây từ thư mục gốc repo:
 
 ```bash
 ./scripts/brief.sh
@@ -119,6 +119,11 @@ Brief cho biết việc đang làm, việc Ready, scope, finding, câu hỏi m�
 
 **Bàn giao:** cập nhật trạng thái đúng thực tế, gỡ phần scope của task đã hoàn thành, báo kết quả kiểm tra và phần còn thiếu. Theo quy ước repo, AI chuẩn bị khối lệnh commit; người dùng quyết định thực hiện commit.
 
+Khi đổi giữa Claude Code và Codex, ghi bàn giao trong entry task hiện có theo
+[CLAUDE.md §7.4](../../CLAUDE.md#74-claude-code--codex-handoff-and-independent-review).
+Một bên thực hiện, bên kia review trên diff ổn định; mỗi worktree chỉ có một bên
+sửa. Reviewer đối chiếu acceptance và nguồn, không dựa vào lời báo đã xong.
+
 ## 7. “Gate” kiểm tra được đến đâu?
 
 Chuỗi chạy tay hiện tại được xác định trong [gate.sh](../../scripts/gate.sh):
@@ -131,7 +136,7 @@ Chuỗi chạy tay hiện tại được xác định trong [gate.sh](../../scri
 | Phase boundary | Bắt các mẫu vượt ranh giới pha trong vùng thiết kế hệ thống và DB | Chỉ bắt mẫu đã định nghĩa, vẫn cần người review |
 | Verify | Chạy kiểm tra mã và test theo những thành phần hiện diện trong repo | Bỏ qua khi lượt chỉ thay đổi tài liệu |
 
-Ngoài chuỗi trên, kiểm tra bàn giao commit chạy trong chế độ hook; kiểm tra subject commit là hook Git riêng. Cấu hình hook của Claude Code nằm ở [.claude/settings.json](../../.claude/settings.json). Khi làm việc bằng công cụ khác, cần chủ động chạy lệnh kiểm tra, không mặc định hook Claude đã chạy.
+Ngoài chuỗi trên, kiểm tra bàn giao commit chạy trong chế độ hook; kiểm tra subject commit là hook Git riêng. Cấu hình hook của Claude Code nằm ở [.claude/settings.json](../../.claude/settings.json). Codex chủ động chạy gate; lệnh chạy tay không kiểm tra khối commit (Gate 7/7b). Phần đó cần tự đối chiếu theo [CLAUDE.md §6.1](../../CLAUDE.md#61-hand-over-the-commit-ready-to-paste), kể cả file mới và file đã stage từ trước.
 
 Ví dụ về giới hạn: mọi link đều mở được nhưng AI tự chọn một luật chưa được chủ quán trả lời thì kết quả vẫn sai. Máy giúp bắt lỗi có hình dạng rõ ràng; người review phải đối chiếu nội dung với yêu cầu và nguồn nghiệp vụ.
 
