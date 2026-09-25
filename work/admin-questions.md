@@ -17,8 +17,8 @@
 > owner** — Đ-1 (2026-09-02, T-040) · Đ-3 (2026-09-04, T-050) · **Đ-2 và Đ-4 (2026-09-20, ADM-53)**
 > ⇒ §1 nay chỉ còn **một dòng lịch sử trỏ tới owner**. **`C36` cũng đã về owner 2026-09-20**
 > (ADM-21) ⇒ đọc lời ấy ở `master_plan/shop-facts.md` **§8.8**, không đọc ở đây. Còn lại ở đây là
-> **§3**: **32 câu để trống** (đo 2026-09-25 bằng `grep -c '^> \*\*Trả lời:\*\*$'` — **đếm lại,
-> đừng tin con số này**, `work/findings.md` **F-003**), cộng `B11`, `B12`, `B15`, `B16`, `B19` mới trả lời một phần
+> **§3**: **20 câu để trống** (đo 2026-09-25 bằng `grep -c '^> \*\*Trả lời:\*\*$'` — **đếm lại,
+> đừng tin con số này**, `work/findings.md` **F-003**), cộng `B11`, `B12`, `B15`, `B16`, `B19`, `C26`, `C27`, `C28`, `C30`, `C32`, `C33` mới trả lời một phần
 >
 > **2026-09-04 — §2 đã chuyển đi.** Danh sách việc `ADM-01`…`ADM-53` nay ở **`work/backlog_AD.md`**
 > (T-052, `docs/decisions.md` **ADR-036**). Sau ADM-53 (2026-09-20) file này chỉ còn **một** việc
@@ -169,8 +169,7 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 ### C. Con người
 *Mức sâu đã chốt: **cả ba mức** (**Đ-4**) — **về owner 2026-09-20**, đọc ở `master_plan/shop-facts.md` **§8.7**,
 đừng đọc ở đây. Nhóm này mở khoá ADM-20 → ADM-24, và bịt chỗ thiếu `architecture.md` §8.*
-*✅ **`C36` đã trả lời và đã về owner 2026-09-20** (§8.8) ⇒ **ADM-21 `Done`**. Mười ba câu
-`C23`…`C35` còn lại chưa câu nào có lời.*
+*✅ **`C36` đã trả lời và đã về owner 2026-09-20** (§8.8) ⇒ **ADM-21 `Done`**. **C24–C35 đã nhận 2026-09-25 (T-091), đọc ở §8.7; C23 còn trống.** Các vế thiếu ghi tại từng câu dưới đây.*
 
 **C23.** Quán có **bao nhiêu người** làm, kể cả người nhà?
 > ⚠️ Câu này hỏi **tổng số**. Vế *người đi giao nằm trong hay ngoài bốn vai của
@@ -185,40 +184,40 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > **Trả lời:**
 
 **C24.** Người nhà làm **không lương** có phải nằm trong bảng lương không?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7.
 
 **C25.** Ai làm **cố định một trạm**, ai làm được nhiều trạm và đổi trong buổi?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7.
 
 **C26.** Trả lương theo **buổi / ngày / tháng**? Bao nhiêu một đơn vị?
-> **Trả lời:**
+> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7. Còn hỏi: Đơn giá bao nhiêu? “Theo buổi / theo tuần” là đơn vị tính hay kỳ trả, đối chiếu C33?
 
 **C27.** Có **tăng ca / làm thêm buổi** không? Tính tiền thế nào?
-> **Trả lời:**
+> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7. Còn hỏi: “Chưa có tăng có tối” nghĩa là chưa có tăng ca hay chưa có ca tối? Nếu làm thêm buổi thì tính thế nào?
 
 **C28.** Có **thưởng** không — ngày đông khách, lễ Tết?
-> **Trả lời:**
+> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7. Còn hỏi: Có thưởng ngày đông khách không?
 
 **C29.** Có **tạm ứng giữa tháng** không? Ai duyệt?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7.
 
 **C30.** Nghỉ có báo trước / nghỉ đột xuất có trừ tiền không?
-> **Trả lời:**
+> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7. Còn hỏi: Nghỉ có báo trước có trừ tiền không?
 
 **C31.** **Chấm công bằng cách nào**? Nhân viên tự bấm trên máy, hay người đứng quầy điểm danh đầu buổi?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7.
 
 **C32.** Đi muộn có bị trừ không? Muộn bao nhiêu phút thì mới tính là muộn?
-> **Trả lời:**
+> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7. Còn hỏi: Có ngưỡng phút để ghi nhận đi muộn không?
 
 **C33.** Kỳ trả lương vào **ngày nào trong tháng**?
-> **Trả lời:**
+> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7. Còn hỏi: Trả ngày nào trong tuần, lúc nào trong ngày? Kỳ trả này tương ứng cách tính C26 thế nào?
 
 **C34.** **Ai được xem bảng lương** — chỉ chủ quán, hay người đứng quầy cũng thấy?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7.
 
 **C35.** Nhân viên có được xem **công của chính mình** không?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7.
 
 ~~**C36.**~~ **ĐÃ TRẢ LỜI 2026-09-20 · ĐÃ VỀ OWNER 2026-09-20 (ADM-21) — đừng trả lời lại, và
 đừng đọc một dữ kiện nào từ đây.**

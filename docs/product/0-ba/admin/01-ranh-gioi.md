@@ -62,9 +62,9 @@ quả về **hành vi** — thứ mục này sở hữu:
 - **Mảng con người có mặt ở cả ba mức không làm đổi một luật bán hàng nào của §2–§6.** Nó là một
   mảng đứng riêng, đọc vào bảng vai của `master_plan/shop-facts.md` §3; nó không thêm trạm, không
   thêm vai, không đổi luật huỷ đơn hay hoàn tiền.
-- **Lời chốt này chốt MỨC, không chốt con số.** Đơn giá công, kỳ trả lương, quyền xem bảng lương —
-  không câu nào có lời (`work/admin-questions.md` §3, các câu `C23`…`C35`). Đọc sự im lặng ấy thành
-  *"chưa quyết"*, đừng đọc thành *"không làm"*.
+- **Lời chốt Đ-4 chốt mức sâu.** C24–C35 được chủ quán bổ sung ngày 2026-09-25
+  (T-091), dữ kiện ở `master_plan/shop-facts.md` §8.7; những vế còn thiếu ở
+  `work/admin-questions.md` §3. Không suy đơn giá hoặc công thức tính lương từ kỳ trả.
 - **Mức *ai đang trực trạm nào* nay có luật, nhưng chỉ cho TRẠM QUẦY** — câu `C36` có lời ngày
   2026-09-20 và lời ấy đã về owner cùng ngày (`work/backlog_AD.md` **ADM-21**). Dữ kiện đầy đủ ở
   `master_plan/shop-facts.md` **§8.8**; mục này không nhắc lại nó bằng lời của mình (**F-001**).

@@ -1362,6 +1362,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-09-16 | **NGƯỜI ĐỨNG QUẦY KHÔNG BAO GIỜ ĐI GIAO** (đóng **U-052**) — nguyên văn *"người đứng quầy khônng đi giao"* ⇒ chữ *"bất cứ ai"* của `U-049` hẹp lại còn **ba** vai (`trang_banh` · `gap_banh` · `canh`+`don_ban`); trạm `quay` không bao giờ bỏ trống vì đi giao, nên lời *"pos gánh"* của `U-050` luôn có người gánh. *Lời này không đụng tới chủ quán — §3 vẫn để chủ quán thỉnh thoảng đứng quầy* | **§3** · §8.6 |
 | 2026-09-20 | **Mảng CON NGƯỜI làm tới CẢ BA MỨC: ai đang trực trạm nào · chấm công · tính lương trên máy** (xác nhận lại lời chốt **Đ-4** ngày 2026-09-01; việc đi hỏi: `work/backlog_AD.md` **ADM-53**) — chủ quán chọn *"Đúng, cả ba mức"*. *Lời này chốt **mức sâu**, không chốt một con số nào: đơn giá công, kỳ trả lương, quyền xem lương vẫn là các câu `C23`…`C35` ở `work/admin-questions.md` §3* | **§8.7** |
 | 2026-09-20 | **Mỗi lần ĐỔI NGƯỜI Ở QUẦY là một mốc CÓ GIỜ — ghi cả ai vào, ai ra** (trả lời câu `C36`; hỏi qua `work/backlog_AD.md` **ADM-53**, chuyển về owner qua **ADM-21**, cùng ngày) — nguyên văn *"Có — ghi cả mốc đổi, ai vào ai ra lúc mấy giờ"* ⇒ đơn nào, huỷ nào, hoàn tiền nào cũng truy ra được người đang đứng quầy lúc ấy. Đây là dữ kiện **đầu tiên** đỡ được luật quyền gắn **chỗ đứng** của §6.13 và **ADR-016**. *Lời này phủ **trạm `quay`**, không phủ bốn trạm còn lại ⇒ **U-055**; không nói **ai khai** cái mốc ⇒ **U-056**; không phủ hai cửa ghi ngoài quầy (§6.7 · §6.17) ⇒ **U-057*** | **§8.8** · §8.7 (mức 1) |
+| 2026-09-25 | Chủ quán trả lời C24–C35 về phân công, công, lương và quyền xem (T-091); giữ riêng các vế chưa rõ | §8.7 |
 | 2026-09-25 | Chủ quán trả lời B18–B20/B22: kiểm lại cuối buổi, đồ chưa bán hết, người ghi sự cố và không cần giá vốn một suất (T-090) | §8.4 |
 | 2026-09-25 | Chủ quán bổ sung hàng mua và đơn vị mua, nhịp mua, người mua và nguồn mua qua B11–B17; làm rõ mộc nhĩ, túi chữ T; xác nhận trả ngay/ghi nợ và tin nhắn, chưa chốt kỳ trả nợ (T-089) | §8.4 |
 
@@ -1779,10 +1780,30 @@ máy — vẫn đúng cả ba chứ?*; chủ quán chọn **"Đúng, cả ba m�
 | 2 | **chấm công** — quán ghi được công của từng người trên máy |
 | 3 | **tính lương** — quán tính lương **trên máy**, không tính ngoài bằng sổ hay bảng tính riêng |
 
-**Lời này chốt MỨC SÂU, không chốt một con số nào.** Đơn giá công, cách tính một công, kỳ trả
-lương, ai được xem bảng lương, đi muộn có trừ không — **không** câu nào trong số đó có lời; chúng
-là các câu `C23`…`C35` ở `work/admin-questions.md` §3 và vẫn đang chờ. Đừng suy ra hộ một con số
-nào từ mục này (`CLAUDE.md` §3.5).
+**Bổ sung 2026-09-25 — chủ quán trả lời C24–C35 (T-091).**
+
+| Câu | Dữ kiện chủ quán cung cấp |
+|---|---|
+| C24 | Người nhà làm không lương vẫn nằm trong bảng lương. |
+| C25 | Người tráng bánh làm một trạm. Người đứng POS và người gấp bánh có thể đổi cho nhau trong buổi; những người còn lại giữ nguyên. |
+| C26 | Trả lương “theo buổi và theo tuần”. Chưa cung cấp số tiền một đơn vị. |
+| C27 | Nguyên văn: “hiện tại chưa có tăng có tối.” Chưa rõ cụm này nói chưa có tăng ca hay chưa có ca tối; chưa chốt cách tính làm thêm. |
+| C28 | Có thưởng lễ Tết. Chưa trả lời vế thưởng ngày đông khách. |
+| C29 | Có tạm ứng; chủ quán duyệt. |
+| C30 | Nguyên văn: “nghỉ có báo trước, nghi đột xuất không trừ tiêng.” Xác nhận nghỉ đột xuất không trừ tiền; chưa rõ vế khấu trừ khi nghỉ có báo trước. |
+| C31 | Nhân viên tự bấm chấm công trên máy. |
+| C32 | Đi muộn không bị trừ tiền. Chưa nêu ngưỡng phút để ghi nhận đi muộn. |
+| C33 | Trả lương theo ngày, theo tuần. Chưa nêu mốc trả cụ thể. |
+| C34 | Chỉ chủ quán được xem bảng lương. |
+| C35 | Nhân viên được xem công của chính mình. |
+
+**Phần chưa chốt:** C23 vẫn chưa có tổng đầu người. Không tự đồng nhất “theo buổi /
+theo tuần” ở C26 với “theo ngày / theo tuần” ở C33 thành công thức tính lương;
+cần làm rõ đơn vị tính và kỳ chi trả cùng đơn giá. Các vế còn thiếu được giữ tại
+`work/admin-questions.md` §3, chưa dùng để chốt hành vi phần mềm.
+C25 nói phân công thường lệ; không tự thay luật POS gánh trạm khi người khác đi
+giao (§6.7), cũng không quyết định máy ghi mốc đổi người ngoài quầy (U-055).
+C31 nói chấm công, không trả lời ai khai mốc đổi người đứng quầy (U-056).
 
 **Người mà ba mức này đếm là người của §3, không phải một danh sách thứ hai.** Bốn vai cộng chủ
 quán (§3, chốt 2026-08-30 và 2026-09-08) là tập người duy nhất; mục này **không** giữ bảng người
@@ -1845,5 +1866,5 @@ thêm một yêu cầu nào.
   `quality/invariants.md` **I-012** đòi *ai bấm* cho cả hai, và lời `C36` không phủ chúng.
 
 **Lời này KHÔNG chạm chấm công.** *Lúc này ai đứng quầy* và *hôm nay người này làm mấy giờ* là hai
-câu khác nhau; câu thứ hai là mức 2 của §8.7 và vẫn chờ `C30` · `C31` · `C32`
-(`work/admin-questions.md` §3).
+câu khác nhau; câu thứ hai là mức 2 của §8.7 đã có lời đáp `C30` · `C31` · `C32` ngày 2026-09-25 ở §8.7; các vế còn thiếu
+ở `work/admin-questions.md` §3.
