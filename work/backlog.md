@@ -243,6 +243,7 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 <a id="done"></a>
 ## Done
+- [x] T-089 **Ghi nhận câu trả lời B11–B17** — L1, 2026-09-25. Acceptance: giữ đủ hàng và đơn vị chủ quán nêu; không suy tên hàng, nguồn mua hoặc kỳ trả nợ; chuyển dữ kiện về shop-facts §8.4, giữ câu cần làm rõ tại bảng hỏi. Phạm vi: master_plan/shop-facts.md, work/admin-questions.md, work/backlog_AD.md, work/backlog.md. Bàn giao: Codex, nhánh chatgpt_involve, base 8e319c1; chưa review độc lập. Đã đối chiếu danh sách hàng; bổ sung B16/B17, gộp mộc nhĩ trùng theo lời sửa của chủ quán. Còn làm rõ tại B11/B12/B15/B16.
 - [x] T-083 **Lane pha 2: entry ở `work/backlog_DB.md` là hồ sơ thực thi duy nhất, trạng thái chỉ ở
   file này** — **L2**, xong 2026-09-25, chủ repo đồng ý đề xuất tinh gọn trong phiên.
   `docs/decisions.md` **ADR-051**: Nghiệm thu · Kiểm chứng vào khối *Nhận việc* của entry (điền lúc

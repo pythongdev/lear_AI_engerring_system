@@ -146,7 +146,7 @@ Con số ba loại **không đổi** (20 · 8 · 1): lời chốt này không đ
 | Nhánh | Câu hỏi ở `admin-questions.md` §3 | Việc bị chặn |
 |---|---|---|
 | ~~**A** — một buổi bán~~ | ~~`A1`…`A10`~~ **ĐÃ TRẢ LỜI CẢ MƯỜI, 2026-09-04** (T-056); bốn vế bỏ trống nay cũng đóng hết (`U-038`·`U-039`·`U-040` 2026-09-06 · **`U-041` 2026-09-08**) | **hết chặn:** ADM-01 · ADM-02 · ADM-03 → loại 2 · **còn chặn:** ADM-04 — nhưng bằng **U-054** (`U-045` đóng 2026-09-15 ⇒ `U-051`, `U-051` đóng 2026-09-16 ⇒ `U-054`), không còn bằng câu nhánh A nào |
-| **B** — nguyên liệu | `B11`…`B22` (12 câu, `B18` trả lời **một nửa**, **`B21` có lời 2026-09-15** qua `U-045`: không ngưỡng, máy không nhắc) — **U-034 đóng 2026-09-06** | ADM-10 · ADM-11 · ADM-12 · ADM-13 · ADM-14 · ADM-15 |
+| **B** — nguyên liệu | `B11`…`B22` (B13/B14/B17 đã về owner 2026-09-25; B11/B12/B15/B16 trả lời một phần; `B18` trả lời **một nửa**, **`B21` có lời 2026-09-15** qua `U-045`: không ngưỡng, máy không nhắc) — **U-034 đóng 2026-09-06** | ADM-10 · ADM-11 · ADM-12 · ADM-13 · ADM-14 · ADM-15 |
 | **C** — con người | `C23`…`C36` (14 câu; ~~`C36`~~ **có lời 2026-09-20 và ĐÃ VỀ OWNER cùng ngày** qua ADM-21 — đọc ở `master_plan/shop-facts.md` **§8.8**; mười ba câu còn lại **chưa câu nào**) | ADM-20 · ~~ADM-21~~ ✅ `Done` · ADM-22 · ADM-23 · ADM-24 |
 | **D** — sản phẩm | `D37`…`D43` (7 câu, **chưa câu nào**) | ADM-32 · ADM-33 (ADM-30 chỉ vướng vế quyền, ADM-31 không vướng) |
 | **E** — tài chính | `E44`…`E51` (8 câu, **chưa câu nào**) | ADM-42 · ADM-43 · ADM-44 · ADM-45 |
@@ -544,6 +544,10 @@ có lời vẫn là bày một con số không có nguồn.
 **L1** · nhánh B · **chưa nhận được — chặn bởi `B11` `B12`** (`U-034` đóng 2026-09-06, xem dưới)
 **Prompt:** chưa viết được (luật 6 đầu file)
 
+**Tiếp nhận 2026-09-25 — T-089, Codex:** B11/B12 có lời một phần, đã ghi tại
+`master_plan/shop-facts.md` §8.4. Hai tên gõ nhầm đã làm rõ cùng ngày; còn “túi nóng” và đơn vị các tên cũ;
+không coi danh mục hoàn tất. Câu hỏi tiếp ở `work/admin-questions.md` B11/B12.
+
 **Goal:**
 Xong rồi thì có một danh mục thứ quán mua vào, mỗi thứ một đơn vị tính, và danh mục ấy là **dữ
 kiện quán** ở owner của nó chứ không phải một bảng ai đó bịa ra lúc dựng màn.
@@ -579,8 +583,12 @@ tổng ghi HAI con số — mua vào và đã dùng (`master_plan/shop-facts.md`
 <a id="adm-11"></a>
 ### ADM-11 — Tiền mua hàng đi ra khỏi quán mỗi ngày và không có một dòng nào trong hệ thống ghi lại
 
-**L2** · nhánh B · **chưa nhận được — chặn bởi `B13` `B14` `B15` `B16` `B17`** (`U-034` đóng 2026-09-06)
+**L2** · nhánh B · **chưa nhận được — chặn bởi phần còn lại của `B15`, `B16`** (`U-034` đóng 2026-09-06)
 **Prompt:** chưa viết được (luật 6 đầu file)
+
+**Tiếp nhận 2026-09-25 — T-089, Codex:** B13/B14 đã về `master_plan/shop-facts.md`
+§8.4; B15 còn vế một hàng/nhiều mối. B16 xác nhận có ghi nợ nhưng chưa có kỳ trả;
+B17 đã về owner. Chưa chốt đủ luật tiền hoặc quyền nhập hàng.
 
 **Goal:**
 Xong rồi thì một lần mua hàng có luật: ghi cái gì, ai được ghi, trả liền hay ghi nợ, và khoản ấy
@@ -604,10 +612,9 @@ dòng nào giải thích.
 - **ADM-15 (công nợ nhà cung cấp) không có chỗ bám** — một khoản nợ sinh ra từ một lần nhập.
 
 **Chặn bởi — hỏi gì trước:**
-`B13` (mấy ngày mua một lần) · `B14` (ai đi mua) · `B15` (chợ, mối quen hay cửa hàng; một thứ có
-nhiều nguồn không) · `B16` (trả liền hay ghi sổ nợ, trả theo tuần hay tháng) · `B17` (có hoá đơn
-giấy không). `B16` là câu quyết định: trả lời *"có ghi nợ"* thì **ADM-15 thành bắt buộc** và việc
-này lên L2 chạm tiền thật.
+B13/B14 đã về owner ngày 2026-09-25. Còn `B15` (chợ, mối quen hay cửa hàng; một thứ có
+nhiều nguồn không) · `B16` (kỳ trả nợ). B17 đã về owner 2026-09-25.
+B16 đã xác nhận có ghi nợ ngày 2026-09-25 ⇒ **ADM-15 cần làm**, còn thiếu luật trả nợ.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 
@@ -739,6 +746,10 @@ tín hiệu nào để bấm theo**. Vẫn chặn bởi **ADM-13** cho vế con 
 
 **L2** · nhánh B · **chưa nhận được — chặn bởi `B16` và ADM-11**
 **Prompt:** chưa viết được (luật 6 đầu file)
+
+**Tiếp nhận 2026-09-25 — T-089, Codex:** chủ quán xác nhận có mua ghi nợ;
+không còn nhánh bỏ việc vì trả ngay toàn bộ. Dữ kiện tại `master_plan/shop-facts.md` §8.4;
+B16 vẫn thiếu kỳ trả nợ và ADM-11 chưa đủ luật.
 
 **Goal:**
 Xong rồi thì khoản quán **nợ nhà cung cấp** có luật riêng, và không ai nhầm nó với khoản **khách nợ

@@ -1362,6 +1362,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-09-16 | **NGƯỜI ĐỨNG QUẦY KHÔNG BAO GIỜ ĐI GIAO** (đóng **U-052**) — nguyên văn *"người đứng quầy khônng đi giao"* ⇒ chữ *"bất cứ ai"* của `U-049` hẹp lại còn **ba** vai (`trang_banh` · `gap_banh` · `canh`+`don_ban`); trạm `quay` không bao giờ bỏ trống vì đi giao, nên lời *"pos gánh"* của `U-050` luôn có người gánh. *Lời này không đụng tới chủ quán — §3 vẫn để chủ quán thỉnh thoảng đứng quầy* | **§3** · §8.6 |
 | 2026-09-20 | **Mảng CON NGƯỜI làm tới CẢ BA MỨC: ai đang trực trạm nào · chấm công · tính lương trên máy** (xác nhận lại lời chốt **Đ-4** ngày 2026-09-01; việc đi hỏi: `work/backlog_AD.md` **ADM-53**) — chủ quán chọn *"Đúng, cả ba mức"*. *Lời này chốt **mức sâu**, không chốt một con số nào: đơn giá công, kỳ trả lương, quyền xem lương vẫn là các câu `C23`…`C35` ở `work/admin-questions.md` §3* | **§8.7** |
 | 2026-09-20 | **Mỗi lần ĐỔI NGƯỜI Ở QUẦY là một mốc CÓ GIỜ — ghi cả ai vào, ai ra** (trả lời câu `C36`; hỏi qua `work/backlog_AD.md` **ADM-53**, chuyển về owner qua **ADM-21**, cùng ngày) — nguyên văn *"Có — ghi cả mốc đổi, ai vào ai ra lúc mấy giờ"* ⇒ đơn nào, huỷ nào, hoàn tiền nào cũng truy ra được người đang đứng quầy lúc ấy. Đây là dữ kiện **đầu tiên** đỡ được luật quyền gắn **chỗ đứng** của §6.13 và **ADR-016**. *Lời này phủ **trạm `quay`**, không phủ bốn trạm còn lại ⇒ **U-055**; không nói **ai khai** cái mốc ⇒ **U-056**; không phủ hai cửa ghi ngoài quầy (§6.7 · §6.17) ⇒ **U-057*** | **§8.8** · §8.7 (mức 1) |
+| 2026-09-25 | Chủ quán bổ sung hàng mua và đơn vị mua, nhịp mua, người mua và nguồn mua qua B11–B17; làm rõ mộc nhĩ, túi chữ T; xác nhận trả ngay/ghi nợ và tin nhắn, chưa chốt kỳ trả nợ (T-089) | §8.4 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -1463,9 +1464,8 @@ mảng tài chính:
   *sổ ghi tay điện tử* — **§8.4**. Mảng con người làm tới **cả ba mức** — **§8.7**. Mảng tài chính
   làm tới đâu thì chưa có dòng nào trong tài liệu này trả lời, nên đừng suy ra hộ (§8.5 chốt **tiền
   đầu két**, đó là một dữ kiện, không phải mức sâu của cả mảng).
-- **Chưa có con số nào — kể cả cho mảng nguyên liệu.** Không danh mục nguyên liệu, không đơn vị
-  tính, không số người, không đơn giá công, không khoản chi. §8.4 chốt *cách ghi*, không chốt
-  *ghi cái gì*: mọi con số cho ba mảng này còn phải hỏi chủ quán.
+- **Dữ kiện admin được bổ sung theo từng lời đáp.** Danh mục nguyên liệu đã có tên và một phần
+  đơn vị mua tại §8.4 (bổ sung 2026-09-25); không suy từ đó ra số người, đơn giá công hay khoản chi.
 - **Bốn ranh giới ở §6.12 không bị lời chốt này chạm tới** — kênh bán thứ sáu, đơn tối
   thiểu và bậc phí ship, số tài khoản cứng trong sản phẩm, món ngoài bảng giá. Cả bốn vẫn là *đã
   quyết định không làm*.
@@ -1524,11 +1524,48 @@ không phải suy ra.
 thẳng đây là **hạng mục quan trọng** và sẽ **bổ sung dần dần**, nên đừng đọc mười bốn thứ này như
 một danh mục đã đủ.
 
-- **Đây mới chỉ là TÊN, chưa có đơn vị tính cho bất kỳ thứ nào** — đúng ranh giới thứ nhất dưới
-  đây: *ghi cái gì* mới có phần **tên**; phần **đơn vị** vẫn như §8.2 đã nói, chưa có dữ kiện nào
-  (`work/admin-questions.md` câu **B12**). Đừng tự suy đơn vị (vd "gạo" tính theo kg hay theo bao).
-  Phần **ngưỡng nhắc sắp hết** thì **không bao giờ có** — xem khối *không có ngưỡng* ngay dưới
-  (chủ quán chốt 2026-09-15).
+**Bổ sung 2026-09-25 — chủ quán trả lời B11–B15 (T-089).** Đơn vị dưới đây là
+**đơn vị mua**, chưa xác nhận đơn vị ghi lượng đã dùng hay quy đổi túi/vỉ/hộp ra cái.
+Chủ quán làm rõ cùng ngày: “thịt mộc” là mộc nhĩ (gộp dòng trùng), “túi chú T” là
+túi chữ T để đựng hộp canh. Không tự hợp nhất các tên khác với danh mục ngày 2026-09-06.
+
+| Hàng mua vào | Đơn vị mua |
+|---|---|
+| Túi nóng | kg |
+| Túi zip đựng rau | kg |
+| Cốc đựng canh | túi (chủ quán nói “1 túi”) |
+| Hộp đựng bánh cuốn | túi |
+| Đũa dùng một lần | túi |
+| Thìa dùng một lần | túi |
+| Giấy ăn | túi |
+| Rau mùi tàu | túi |
+| Giò | cái |
+| Trứng | vỉ |
+| Gạo | kg |
+| Ớt | kg |
+| Măng | kg |
+| Găng tay | hộp |
+| Túi bóng | kg |
+| Mộc nhĩ | kg |
+| Xương | kg |
+| Túi chữ T đựng hộp canh | kg |
+
+**Cách mua:** chủ quán nói “gần hết thì mua”, “chủ quan mua”, “mua ở nhiều nơi”.
+Chưa có lịch mua cố định được nêu; không suy người đi mua cũng là người duy nhất được nhập liệu.
+“Mua ở nhiều nơi” chưa xác nhận **cùng một mặt hàng** có nhiều nhà cung cấp hay không,
+chủ quán bổ sung cùng ngày: “mua từ chợ các mối”. Vế một mặt hàng/nhiều nguồn vẫn chưa rõ.
+Phần cần hỏi tiếp nằm tại `work/admin-questions.md` B11, B12, B15.
+Danh mục cũ vẫn giữ: những mặt hàng chưa có đơn vị trong lời đáp này chưa được tự gán đơn vị.
+
+**Thanh toán và chứng từ — chủ quán trả lời B16/B17 ngày 2026-09-25 (T-089):**
+“Mua hàng trả ngay và nợ”; chứng từ/trao đổi tiền hàng “qua tin nhắn”. Như vậy có cả
+mua trả ngay và mua ghi nợ; chưa chốt kỳ trả nợ, cách trả từng phần hoặc ai ghi nhận thanh toán.
+Lời đáp không xác nhận có hay không hóa đơn giấy, cũng không yêu cầu hệ thống tự đọc tin nhắn.
+Kỳ trả nợ còn hỏi tại `work/admin-questions.md` B16.
+
+- **Danh mục đã có một phần đơn vị mua** (2026-09-25, bảng trên); B12 còn hỏi đơn vị của
+  những tên cũ chưa được bổ sung. Phần **ngưỡng nhắc sắp hết** không có — chủ quán tự kết luận
+  (chốt 2026-09-15, khối bên dưới).
 - **Danh sách CHƯA đầy đủ — đừng coi mười bốn thứ này là toàn bộ nguyên liệu quán dùng.** Chủ quán
   nói sẽ thêm dần; mỗi lần thêm, nối tiếp vào đây kèm ngày, đừng viết đè lên danh sách cũ.
 - **Từ 2026-09-08, danh mục này có một người ĐỌC nó ngoài mục §8.4:** mục tổng quan §8.6 — vế
@@ -1573,7 +1610,7 @@ con số là cặp **mua vào · đã dùng** ở trên (`U-034`, 2026-09-06).
 **Ba ranh giới của chính §8.4:**
 
 - **Chốt *cách ghi*, không chốt *ghi cái gì*.** Danh mục nguyên liệu **bắt đầu có tên** (xem ngay
-  trên, 2026-09-06, còn bổ sung dần); đơn vị tính thì vẫn chưa có dữ kiện nào, đúng như §8.2 nói.
+  trên, 2026-09-06, còn bổ sung dần); một phần đơn vị mua đã có ngày 2026-09-25, bảng trên.
   Ngưỡng nhắc sắp hết thì **không có** — chủ quán tự kết luận (2026-09-15, ngay trên).
 - **Không nói mảng này có vào bản chạy đầu tiên hay không.** Đó là câu của
   `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7, và câu ấy đã chốt riêng ngày 2026-09-02

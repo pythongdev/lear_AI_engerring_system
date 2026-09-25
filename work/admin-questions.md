@@ -17,8 +17,8 @@
 > owner** — Đ-1 (2026-09-02, T-040) · Đ-3 (2026-09-04, T-050) · **Đ-2 và Đ-4 (2026-09-20, ADM-53)**
 > ⇒ §1 nay chỉ còn **một dòng lịch sử trỏ tới owner**. **`C36` cũng đã về owner 2026-09-20**
 > (ADM-21) ⇒ đọc lời ấy ở `master_plan/shop-facts.md` **§8.8**, không đọc ở đây. Còn lại ở đây là
-> **§3**: **42 câu để trống** (đo 2026-09-20 bằng `grep -c '^> \*\*Trả lời:\*\*$'` — **đếm lại,
-> đừng tin con số này**, `work/findings.md` **F-003**), cộng `B18` mới trả lời một nửa
+> **§3**: **35 câu để trống** (đo 2026-09-25 bằng `grep -c '^> \*\*Trả lời:\*\*$'` — **đếm lại,
+> đừng tin con số này**, `work/findings.md` **F-003**), cộng `B11`, `B12`, `B15`, `B16`, `B18` mới trả lời một phần
 >
 > **2026-09-04 — §2 đã chuyển đi.** Danh sách việc `ADM-01`…`ADM-53` nay ở **`work/backlog_AD.md`**
 > (T-052, `docs/decisions.md` **ADR-036**). Sau ADM-53 (2026-09-20) file này chỉ còn **một** việc
@@ -122,28 +122,28 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 *Đã chốt mức: **sổ ghi tay điện tử**, máy không tự trừ (Đ-3). Nhóm này mở khoá ADM-10 → ADM-15.*
 
 **B11.** Kể tên **những thứ quán mua vào** — gạo/bột, thịt, mộc nhĩ, trứng, giò, rau, hành phi, mắm, gas, than, túi/hộp, nước uống…? Càng liệt kê nhiều càng tốt.
-> **Trả lời:**
+> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-089), dữ kiện ở `master_plan/shop-facts.md` §8.4.** Hai tên gõ nhầm đã được làm rõ và cập nhật tại owner cùng ngày. Còn hỏi: “túi nóng” có phải túi đựng đồ nóng không?
 
 **B12.** Mỗi thứ mua theo **đơn vị gì** (kg, quả, bó, chai, thùng, con)?
 > ⚠️ Từ 2026-09-15 đây là chỗ hở **duy nhất** còn lại của danh mục nguyên liệu `shop-facts.md`
 > §8.4: phần *ngưỡng* đã đóng (`U-045` — không có ngưỡng), phần *đơn vị* thì không, và nó không
 > còn mã `U-XXX` nào giữ hộ — chỉ còn câu này.
-> **Trả lời:**
+> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-089), đơn vị mua ở `master_plan/shop-facts.md` §8.4.** Còn đơn vị của các tên cũ chưa được nhắc lại: nhân thịt, nhân thịt mộc nhĩ, quất, hành tây, mì chính, hạt nêm, đường trắng, đường đen, bột bánh cuốn, hạt tiêu, nước mắm, dầu rửa bát. Chưa xác nhận đơn vị ghi lượng đã dùng hoặc quy đổi bao gói.
 
 **B13.** Quán **mấy ngày mua một lần**? Sáng nào cũng mua, hay mua theo tuần?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-089)** — đọc cách mua ở `master_plan/shop-facts.md` §8.4.
 
 **B14.** **Ai đi mua**? Chỉ chủ quán, hay có người được giao?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-089)** — đọc người mua ở `master_plan/shop-facts.md` §8.4.
 
 **B15.** Mua ở **chợ / mối quen / cửa hàng**? Có nhiều nhà cung cấp cho cùng một thứ không?
-> **Trả lời:**
+> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-089), dữ kiện ở `master_plan/shop-facts.md` §8.4.** Nguồn mua đã bổ sung tại owner cùng ngày. Còn hỏi: cùng một mặt hàng có mua từ nhiều mối không.
 
 **B16.** Trả tiền **liền** hay có mối cho **ghi sổ nợ**? Nếu ghi nợ thì trả theo tuần hay tháng?
-> **Trả lời:**
+> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-089), dữ kiện ở `master_plan/shop-facts.md` §8.4.** Còn hỏi: khoản nợ trả theo tuần, tháng hay khi mối yêu cầu?
 
 **B17.** Có **hoá đơn giấy** không, hay chỉ nhớ miệng?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-089)** — đọc chứng từ/trao đổi tiền hàng tại `master_plan/shop-facts.md` §8.4.
 
 **B18.** Cuối buổi quán có **đếm lại đồ thừa** không? Đếm những thứ gì?
 > **Trả lời (2026-09-04, một nửa):** có một **mục tổng nhập hàng ngày**, chủ quán tự nhập số liệu.
