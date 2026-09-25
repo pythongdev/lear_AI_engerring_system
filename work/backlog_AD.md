@@ -149,7 +149,7 @@ Con số ba loại **không đổi** (20 · 8 · 1): lời chốt này không đ
 | **B** — nguyên liệu | `B11`…`B22` (B13/B14/B17 đã về owner 2026-09-25; B11/B12/B15/B16 trả lời một phần; B18/B20/B22 đã về owner 2026-09-25; B19 còn thiếu phân loại, **`B21` có lời 2026-09-15** qua `U-045`: không ngưỡng, máy không nhắc) — **U-034 đóng 2026-09-06** | ADM-10 · ADM-11 · ADM-12 · ADM-13 · ADM-14 · ADM-15 |
 | **C** — con người | `C23`…`C36` (14 câu; ~~`C36`~~ **có lời 2026-09-20 và ĐÃ VỀ OWNER cùng ngày** qua ADM-21 — đọc ở `master_plan/shop-facts.md` **§8.8**; C24–C35 đã nhận 2026-09-25 (T-091), xem §8.7 và các vế còn thiếu tại bảng hỏi; C23 còn trống) | ADM-20 · ~~ADM-21~~ ✅ `Done` · ADM-22 · ADM-23 · ADM-24 |
 | **D** — sản phẩm | `D37`…`D43` đã nhận 2026-09-25, owner `master_plan/shop-facts.md` §8.9; còn các vế hỏi tiếp | ADM-32 còn danh mục/phạm vi và U-059; ADM-33 còn quyền ảnh/thứ tự; ADM-30 hết vướng D40, ADM-31 không vướng |
-| **E** — tài chính | `E44`…`E51` (8 câu, **chưa câu nào**) | ADM-42 · ADM-43 · ADM-44 · ADM-45 |
+| **E** — tài chính | `E44`…`E51` đã nhận 2026-09-25 (T-093), owner shop-facts §8.10; các vế hỏi tiếp ở bảng hỏi nhóm E | ADM-42 · ADM-43 · ADM-44 · ADM-45 |
 | **F** — chung | `F52`…`F55` (4 câu, **chưa câu nào**) | ADM-51 · ADM-52 (ADM-50 chỉ vướng vế *ai*) |
 
 **Không phải việc nào không bị chặn cũng là việc của lane này.** Đo lại 2026-09-06 (chủ quán đóng
@@ -269,12 +269,12 @@ hàng thì lấy lại số bằng `grep -n` ngay lượt ấy, đừng chép t�
 | [ADM-31](#adm-31) | bật/tắt món | D | 2 | *hết chặn* — không thiếu gì |
 | [ADM-32](#adm-32) | thêm món mới | D | 1 | D37–D42 đã nhận ở shop-facts §8.9; còn danh mục/phạm vi và U-059 |
 | [ADM-33](#adm-33) | menu QR: ảnh và thứ tự | D | 1 | D43 đã về shop-facts §8.9; còn quyền ảnh/thứ tự |
-| [ADM-40](#adm-40) | doanh thu ngày | E | 2 | nửa còn chặn: [`E47`](admin-questions.md#L271) |
+| [ADM-40](#adm-40) | doanh thu ngày | E | 2 | E47 đã về shop-facts §8.10 |
 | [ADM-41](#adm-41) | đối soát cuối ngày | E | **2 + L3** | nửa dưới chặn: [`A3`](admin-questions.md#L100) [`A4`](admin-questions.md#L101) |
-| [ADM-42](#adm-42) | sổ chi | E | 1 | [`E44`](admin-questions.md#L262) [`E45`](admin-questions.md#L265) [`E46`](admin-questions.md#L268) + [**ADM-11**](#adm-11) |
-| [ADM-43](#adm-43) | lãi/lỗ | E | 1 | [`E47`](admin-questions.md#L271) + [**ADM-42**](#adm-42) + [**ADM-23**](#adm-23) + [**ADM-11**](#adm-11) |
-| [ADM-44](#adm-44) | quỹ và két | E | **1 + L3** | [`A3`](admin-questions.md#L100) [`A4`](admin-questions.md#L101) [`E49`](admin-questions.md#L277) + [**ADM-01**](#adm-01) |
-| [ADM-45](#adm-45) | bán chạy / giờ cao điểm | E | 1 | [`E48`](admin-questions.md#L274) |
+| [ADM-42](#adm-42) | sổ chi | E | 1 | E44–E46 đã về shop-facts §8.10; còn luật ghi chi và ADM-11, không còn chờ ba lời đáp ban đầu. |
+| [ADM-43](#adm-43) | lãi/lỗ | E | 1 | E47 đã về shop-facts §8.10; còn cách phân bổ chi phí tháng và ADM-42 · ADM-23 · ADM-11. |
+| [ADM-44](#adm-44) | quỹ và két | E | **1 + L3** | E49 và nhu cầu E51 đã về shop-facts §8.10; còn cách ghi/xác nhận dòng tiền và hạn nộp/xử lý thiếu muộn ở bảng hỏi nhóm E, cùng ADM-01. |
+| [ADM-45](#adm-45) | bán chạy / giờ cao điểm | E | 1 | E48 đã về shop-facts §8.10; không hỏi lại nhu cầu. Còn đặc tả chỉ tiêu, mốc giờ và phạm vi MVP trước khi thi công. |
 | [ADM-50](#adm-50) | vết thao tác | F | **2 + L3** | vế *ai* **có nguồn cho cửa POS ở quầy** từ 2026-09-20 ([ADM-21](#adm-21) `Done`, `shop-facts.md` §8.8); **hai cửa ghi ngoài quầy vẫn chưa** — người đi giao (§6.7) và chủ quán đổi giá (§6.17) ⇒ [`U-057`](../docs/product/99-unknowns.md) |
 | [ADM-51](#adm-51) | phân quyền mảng quản trị | F | 1 | [`F52`](admin-questions.md#L289) [`F53`](admin-questions.md#L292) [`F55`](admin-questions.md#L298) |
 | [ADM-52](#adm-52) | nhập bù (mất điện) | F | 1 | nửa dưới chặn: [`U-032`](../docs/product/99-unknowns.md#L309) [`F54`](admin-questions.md#L295) |
@@ -1148,7 +1148,7 @@ chưa tự quyết cách lưu ảnh hoặc giao diện.
 <a id="adm-40"></a>
 ### ADM-40 — Luật cộng doanh thu đã chốt tới mức có cả hai chỗ dễ đếm sai; việc này nằm trong sổ như một task đặc tả là nhầm
 
-**L2** · nhánh E · **loại 2** — luật đã đủ, phần còn lại thuộc pha 2–4 · **một nửa còn chặn: `E47`**
+**L2** · nhánh E · **loại 2** — luật đã đủ, phần còn lại thuộc pha 2–4 · **E47 đã về shop-facts §8.10**
 **Prompt:** không cần prompt cho phần nghiệp vụ
 
 **Luật đã ở đâu, còn thiếu gì:**
@@ -1159,7 +1159,7 @@ chưa tự quyết cách lưu ảnh hoặc giao diện.
 | suất *đem về* của khách ngồi bàn thuộc nguồn **phiên bàn** | `shop-facts.md` §6.15 · **ADR-029** | ✅ đủ |
 | một khoản **nợ** đã tính doanh thu nhưng chưa có tiền | `shop-facts.md` §6.14 · **ADR-019** | ✅ đủ |
 | **hoàn tiền** tính vào **ngày hoàn** | `shop-facts.md` §6.4 · **ADR-020** | ✅ đủ |
-| báo cáo có cần mốc **tháng** không | — | ❌ **`E47`** |
+| nhịp lãi/lỗ theo E47 | `shop-facts.md` §8.10 | ✅ đã nhận; không tự suy phạm vi báo cáo tháng |
 
 ⇒ Chỗ **thật sự** còn thiếu ở tầng hệ thống không nằm ở việc này mà ở **P1-03**: *một ngày bán* là
 gì cho phép cộng tiền. Chừng nào P1-03 chưa xong, mọi phép cộng ở đây đứng trên một khái niệm chưa
@@ -1169,8 +1169,7 @@ gì cho phép cộng tiền. Chừng nào P1-03 chưa xong, mọi phép cộng �
 - Không mất gì ở tầng nghiệp vụ hôm nay. Cái mất là **một phiên đọc nhầm** rồi viết lại luật cộng
   tiền vào một file admin — bản thứ hai của một luật đang giữ tiền (**F-001**).
 
-**Chặn bởi — hỏi gì trước:** `E47` (xem lãi/lỗ theo ngày hay theo tháng là đủ) — nó ảnh hưởng
-**ADM-43** nhiều hơn ảnh hưởng việc này.
+**E47 đã nhận 2026-09-25 (T-093):** đọc shop-facts §8.10; phần công thức và chi phí thuộc ADM-43.
 
 **Acceptance · Verify:** phần nghiệp vụ không có gì để nghiệm thu ngoài lời `E47` nằm đúng owner.
 
@@ -1220,7 +1219,7 @@ buổi và tiền nộp về chưa nằm trong phép tính đó"*.
 <a id="adm-42"></a>
 ### ADM-42 — Hệ thống cộng được mọi đồng tiền đi VÀO quán và không biết một đồng nào đi RA
 
-**L2** · nhánh E · **chưa nhận được — chặn bởi `E44` `E45` `E46`, và ADM-11**
+**L2** · nhánh E · **Đã nhận lời đáp nhóm E; phần còn lại xem dưới**
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -1228,8 +1227,7 @@ Xong rồi thì mọi khoản chi của quán có một chỗ để ghi, và m�
 
 **Nói một câu, việc phải làm là gì:**
 Chốt **danh mục khoản chi và luật ghi một khoản chi**. Việc **không** phải làm: đừng dựng kế toán
-kép — Đ-3 đã đặt mức cho cả lane này là **sổ ghi tay điện tử**, và không có lời chốt nào nâng mức
-ấy lên cho mảng tài chính.
+kép — Đ-3 chỉ chốt mức của mảng nguyên liệu; nhóm E chưa chốt mức sâu của thiết kế tài chính.
 
 **Vì sao có việc này:**
 `docs/product/1-system-design/architecture.md` §7 tả **bốn** đường tiền, cả bốn đều là tiền vào.
@@ -1241,10 +1239,7 @@ khoản chi là một lần đối soát 0đ lệch.
 - **Đối soát 0đ vỡ mỗi lần ai đó rút tiền két đi mua đá.**
 - **ADM-43 (lãi/lỗ) không tồn tại được** — lãi lỗ là doanh thu trừ chi phí, và vế trừ chưa có.
 
-**Chặn bởi — hỏi gì trước:**
-`E44` (chi những khoản gì) · `E45` (khoản nào cố định hằng tháng, khoản nào lặt vặt trong ngày) ·
-`E46` (chi lặt vặt lấy từ két hay tiền riêng). `E46` là câu quyết định việc này có chạm đối soát
-hay không — trả lời *"tiền riêng"* thì nó rơi từ chỗ chạm tiền xuống một cuốn sổ thường.
+**Phần còn lại (2026-09-25, T-093):** E44–E46 đã về shop-facts §8.10; còn luật ghi chi và ADM-11, không còn chờ ba lời đáp ban đầu.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 
@@ -1255,7 +1250,7 @@ hay không — trả lời *"tiền riêng"* thì nó rơi từ chỗ chạm ti�
 <a id="adm-43"></a>
 ### ADM-43 — Con số duy nhất chủ quán thật sự muốn biết là con số duy nhất chưa có một vế nào
 
-**L2** · nhánh E · **chưa nhận được — chặn bởi `E47`, ADM-42, ADM-23, ADM-11**
+**L2** · nhánh E · **Đã nhận lời đáp nhóm E; phần còn lại xem dưới**
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -1273,9 +1268,7 @@ còn thiếu khoản — một con số lãi đẹp hơn sự thật là con s�
 - Không mất gì hôm nay — nhưng nó là **đích** của cả nhánh E và nhánh B. Bỏ nó ra khỏi sổ thì ba
   việc kia mất lý do tồn tại.
 
-**Chặn bởi — hỏi gì trước:**
-`E47` (theo ngày hay theo tháng là đủ) — và ba việc ADM-42 · ADM-23 · ADM-11 phải xong trước. Đây
-là việc bị chặn sâu nhất của cả lane; đừng nhận nó sớm.
+**Phần còn lại (2026-09-25, T-093):** E47 đã về shop-facts §8.10; còn cách phân bổ chi phí tháng và ADM-42 · ADM-23 · ADM-11.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 
@@ -1286,7 +1279,7 @@ là việc bị chặn sâu nhất của cả lane; đừng nhận nó sớm.
 <a id="adm-44"></a>
 ### ADM-44 — Két là chỗ đối soát so vào, và không ai chốt trong két có gì lúc mở cửa
 
-**L3** — chạm tiền mặt · nhánh E · **chưa nhận được — chặn bởi `A3` `A4` `E49`, và ADM-01**
+**L3** — chạm tiền mặt · nhánh E · **Đã nhận lời đáp nhóm E; phần còn lại xem dưới**
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -1307,11 +1300,7 @@ buổi và tiền nộp về. Và `E51` mở một ca chưa ai viết: **ngườ
 - **Ngưỡng 0đ không đạt được bằng bất kỳ cách nào** — xem ADM-41.
 - **Tiền người giao cầm về không có chỗ đứng**, nên ngày nào có đơn giao là ngày đối soát lệch.
 
-**Chặn bởi — hỏi gì trước:**
-`A3` (tiền lẻ đầu két, có nhập máy không) · `A4` (nộp bớt giữa buổi) · `E49` (tiền cuối buổi nộp
-ngân hàng hay để nhà; đường đi ấy có cần ghi không) · và `E51` (người giao nộp thiếu / nộp muộn,
-quán có muốn máy theo dõi không). Nên hỏi cùng lượt với `ADM-01`: cả hai việc đều đứng trên mốc
-mở/đóng buổi.
+**Phần còn lại (2026-09-25, T-093):** E49 và nhu cầu E51 đã về shop-facts §8.10; còn cách ghi/xác nhận dòng tiền và hạn nộp/xử lý thiếu muộn ở bảng hỏi nhóm E, cùng ADM-01.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 
@@ -1320,9 +1309,9 @@ mở/đóng buổi.
 ---
 
 <a id="adm-45"></a>
-### ADM-45 — Việc rẻ nhất của cả lane, và nó vẫn phải chờ một câu trả lời "có muốn không"
+### ADM-45 — Đã có nhu cầu báo cáo bán chạy và giờ cao điểm
 
-**L1** · nhánh E · **chưa nhận được — chặn bởi `E48`**
+**L1** · nhánh E · **Đã nhận lời đáp nhóm E; phần còn lại xem dưới**
 **Prompt:** chưa viết được (luật 6 đầu file)
 
 **Goal:**
@@ -1330,7 +1319,7 @@ Xong rồi thì hoặc có một báo cáo bán chạy / giờ cao điểm, ho�
 nó — và cả hai đều là kết quả tốt.
 
 **Nói một câu, việc phải làm là gì:**
-Hỏi `E48` rồi ghi lời giải. Việc **không** phải làm: đừng dựng nó vì *dễ làm* — mọi báo cáo không
+Dùng lời E48 tại shop-facts §8.10 để đặc tả báo cáo cần làm. Việc **không** phải làm: đừng dựng nó vì *dễ làm* — mọi báo cáo không
 ai đọc đều bắt đầu bằng lý do ấy, và `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7 (BA-09) là
 chỗ quyết cái gì vào MVP, không phải chỗ này.
 
@@ -1342,7 +1331,7 @@ rẻ, vừa là lý do nó dễ bị làm trước những việc quan trọng h
 Không gì. Đây là việc duy nhất của lane mà câu trả lời trung thực cho *"không làm thì mất gì"* là
 **không mất gì** — và điều đó phải được viết ra, vì nó xếp thứ tự ưu tiên.
 
-**Chặn bởi — hỏi gì trước:** `E48` (có muốn biết món nào bán chạy, giờ nào đông khách không).
+**Phần còn lại (2026-09-25, T-093):** E48 đã về shop-facts §8.10; không hỏi lại nhu cầu. Còn đặc tả chỉ tiêu, mốc giờ và phạm vi MVP trước khi thi công.
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc.
 

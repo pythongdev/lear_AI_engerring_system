@@ -157,7 +157,8 @@ thể là bất cứ ai pos sẽ chỉ định."*
   người bấm là ai). Câu **C36** — *người đứng quầy đổi giữa buổi* — **đã có lời và đã về owner
   2026-09-20** (**§8.8**), nhưng nó phủ đúng trạm `quay`: hai nút ở §6.7 bấm **ngoài quán**, nên vế
   *ai bấm* của chúng mang mã riêng — **`U-057`**. Câu còn lại chạm chỗ này khi lane admin tới lượt
-  là **E51** (*người đi giao nộp tiền về*), ở `work/admin-questions.md` §3.
+  là **E51** (*người đi giao nộp tiền về*), đã nhận 2026-09-25 tại **§8.10**;
+  cách theo dõi còn cần làm rõ tại `work/admin-questions.md` §3.
 
 ## 4. Menu, giá và tuỳ chọn
 
@@ -1894,3 +1895,28 @@ giá giữa buổi (§6.17). D41 mở lại giả định không có giảm giá
 không tự cho khách gửi giá hoặc cho người đứng quầy đặt giá tuỳ ý. D42 chưa đủ
 để xoá suất Đầy đủ. Các vế hỏi tiếp ở `work/admin-questions.md` §3 và
 `docs/product/99-unknowns.md` U-058 · U-059.
+
+
+### 8.10 Tài chính — câu trả lời E44–E51
+
+**Chủ quán trả lời 2026-09-25 (T-093).** Chuẩn hoá chính tả, giữ nguyên ý;
+đây là dữ kiện và nhu cầu, chưa phải thiết kế nghiệp vụ tài chính.
+
+| Câu | Dữ kiện chủ quán cung cấp |
+|---|---|
+| E44 | Ngoài tiền hàng và lương, các khoản chi được nêu là điện, nước, wifi, xăng xe. |
+| E45 | Điện, nước là khoản cố định hằng tháng; giò, trứng, rau, quất là các khoản mua lặt vặt trong ngày. “Cố định” ở đây chưa chốt số tiền không đổi. |
+| E46 | Chi lặt vặt dùng tiền riêng của chủ quán. Chưa nói nguồn chi các khoản khác. |
+| E47 | Muốn xem lãi/lỗ theo ngày. |
+| E48 | Muốn biết cả món bán chạy và giờ đông khách. |
+| E49 | Tiền cuối buổi để ở nhà; cần ghi lại đường đi của khoản tiền đó. |
+| E50 | Quán có báo thuế. Chưa nêu loại báo cáo, kỳ báo, người nhận hay nhu cầu phần mềm hỗ trợ. |
+| E51 | Cần theo dõi việc người đi giao nộp tiền về. Chưa trả lời đã từng nộp thiếu hoặc nộp muộn hay chưa. |
+
+**Giới hạn lời đáp:** chưa chốt chu kỳ wifi/xăng xe, cách phân bổ chi phí tháng
+vào lãi/lỗ ngày, công thức lãi/lỗ, cách ghi nhận tiền riêng, người ghi/nhận tiền
+cuối buổi, hạn nộp và xử lý thiếu/muộn của người giao. Giò, trứng, rau, quất
+là tiền hàng; không suy thành một khoản chi khác để cộng trùng với mua hàng.
+Không suy rằng quán không có khoản chi nào khác ngoài danh sách E44, cũng
+không suy việc có báo thuế thành yêu cầu phần mềm tự kê khai. Các vế hỏi tiếp
+được giữ tại `work/admin-questions.md` §3, nhóm E.

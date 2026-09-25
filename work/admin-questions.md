@@ -264,28 +264,28 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 *Nhóm này mở khoá ADM-40 → ADM-45.*
 
 **E44.** Ngoài tiền hàng và lương, quán còn **chi những khoản gì**? (thuê nhà, điện, nước, gas, rác, wifi, sửa đồ, xăng xe đi giao…)
-> **Trả lời:**
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-093)** — `master_plan/shop-facts.md` §8.10.
 
 **E45.** Khoản nào **cố định hằng tháng**, khoản nào chi lặt vặt trong ngày?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-093)** — `master_plan/shop-facts.md` §8.10. Còn hỏi: Wifi và xăng xe chi theo chu kỳ nào?
 
 **E46.** Chi lặt vặt lấy **từ két bán hàng** hay từ tiền riêng của chủ quán?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-093)** — `master_plan/shop-facts.md` §8.10.
 
 **E47.** Muốn xem **lãi/lỗ theo ngày**, hay theo **tháng** là đủ?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-093)** — `master_plan/shop-facts.md` §8.10. Còn hỏi: Chi phí tháng phân bổ vào lãi/lỗ từng ngày thế nào?
 
 **E48.** Có muốn biết **món nào bán chạy** và **giờ nào đông khách** không?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-093)** — `master_plan/shop-facts.md` §8.10.
 
 **E49.** Tiền cuối buổi **nộp ngân hàng** hay để nhà? Đường đi của khoản tiền đó có cần ghi lại không?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-093)** — `master_plan/shop-facts.md` §8.10. Còn hỏi: Ai ghi và ai xác nhận khoản tiền mang về nhà?
 
 **E50.** Quán có phải **báo thuế** hoặc có sổ sách gì phải nộp cho ai không?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-093)** — `master_plan/shop-facts.md` §8.10. Còn hỏi: Báo thuế loại gì, theo kỳ nào, nộp cho ai; phần mềm cần hỗ trợ sổ/báo cáo nào?
 
 **E51.** Người đi giao cầm tiền về nộp lại — có bao giờ **nộp thiếu hoặc nộp muộn** không? Quán có muốn máy theo dõi chuyện đó không?
-> **Trả lời:**
+> **Trả lời:** **ĐÃ NHẬN 2026-09-25 (T-093)** — `master_plan/shop-facts.md` §8.10. Còn hỏi: Đã từng nộp thiếu hoặc muộn chưa? Hạn nộp, người xác nhận và cách xử lý thiếu/muộn thế nào?
 
 ### F. Chung
 *Nhóm này mở khoá ADM-50 → ADM-52.*
