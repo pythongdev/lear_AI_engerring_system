@@ -68,6 +68,19 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
   nó là dòng *Ready* duy nhất còn lại của pha 2 và là bước đáng lấy tiếp. Vùng
   `docs/product/2-db/` mà nó mở ra nay **đã có cổng gác** (`P2-02` xong 2026-09-24), nên file đầu
   tiên của pha 2 bị Gate 1d chấm ngay từ lượt sinh ra nó.
+- [ ] T-084 **Gate in lẫn "OK" · "xanh" · "skipping" · "note:", nên "đã kiểm và đạt" trông giống
+  "không kiểm"** — **L1**, mở 2026-09-25 (đề xuất tinh gọn bước 5, **ADR-051** *Hệ quả*). Mỗi dòng
+  của `scripts/gate.sh` mang đúng một nhãn PASS · FAIL · SKIP · NOTE; không đổi logic cổng nào.
+- [ ] T-085 **Gỡ scope lúc Done làm Gate 7b im lặng; scope đang bị dùng để nhắc "chưa commit"** —
+  **L2**, mở 2026-09-25. Quyết trước khi sửa: 7b đọc *Phạm vi* của hồ sơ vừa Done, hay chấp nhận mất
+  lớp ấy (ghi ADR). Brief đọc git cho việc chưa commit; worktree riêng khi chạy song song
+  (**F-025**).
+- [ ] T-086 **`work/backlog.md` dài hơn 6.300 dòng, phần lớn là chi tiết việc đã xong** — **L1**, mở
+  2026-09-25. Done chỉ còn một dòng + hash commit; chi tiết chuyển ra chỗ lưu trữ không ai phải cập
+  nhật. Làm **sau** T-085.
+- [ ] T-087 **`CLAUDE.md` 506 dòng nạp vào mọi phiên** — **L2**, mở 2026-09-25. Rút về luật đang có;
+  giải thích cơ chế về header script và ADR. Làm **sau cùng** — nó mô tả quy trình, rút trước là
+  viết hai lần (**ADR-051**). Trước đó đánh giá thí điểm lane pha 2 sau `P2-03` · `P2-04`.
 
 Việc bảo trì ở mục này không việc nào chặn ai — chen vào lúc nào cũng được. Chuỗi BA nay
 không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31, T-016 xong 2026-08-31).
@@ -227,8 +240,16 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="in-progress"></a>
 ## In Progress
 
+
 <a id="done"></a>
 ## Done
+- [x] T-083 **Lane pha 2: entry ở `work/backlog_DB.md` là hồ sơ thực thi duy nhất, trạng thái chỉ ở
+  file này** — **L2**, xong 2026-09-25, chủ repo đồng ý đề xuất tinh gọn trong phiên.
+  `docs/decisions.md` **ADR-051**: Nghiệm thu · Kiểm chứng vào khối *Nhận việc* của entry (điền lúc
+  nhận, giữ quy tắc T-051), không còn file prompt bắt buộc; bỏ cột *Mức* · *Trạng thái* của *Mục
+  lục* và dòng ✅ (hai dòng cũ thành khối *Bàn giao*). Sửa pointer sai **ADR-008** → T-051 ở
+  `work/backlog_DB.md` và `prompt/DB/README.md`. Mốc gốc để đo: `d57cf4f` chạm 3 file giấy tờ / 5.
+  Bốn bước còn lại: T-084 → T-087 ở *Ready*. Gate xanh (docs-only).
 - [x] P2-02 **Gate 1d nay chấm CẢ vùng pha 2, với một bộ mẫu riêng im lặng với SQL** — **L2**,
   xong 2026-09-24, bước **2/14** của pha 2. Trước lượt này vùng `docs/product/2-db/` có **không**
   cổng nào: `scripts/check-phase-boundary.sh` chỉ đọc thư mục pha 1, và bộ mẫu SQL của nó sẽ đỏ với
@@ -6223,6 +6244,7 @@ nói sai sự thật (bước 9).
 
 1. Đọc entry của task ở [Chi tiết — việc cần làm](#chi-tiet-can-lam), rồi đọc hết file prompt của
    nó — cả mục *Constraints* và *Unknowns*, không chỉ *Goal*.
+   Bước pha 2 thì không có file prompt: đọc khối *Nhận việc* của entry (**ADR-051**).
 2. **Khai `work/scope.txt`**: chép nguyên khối dòng ở mục *Scope* của prompt, **trước** lần sửa đầu
    tiên (CLAUDE.md §3.4). Bỏ bước này thì Gate 3 in `scope not declared, skipping` — gate xanh mà
    không kiểm gì.
@@ -6257,6 +6279,11 @@ nên đọc nó ở [Chi tiết — việc đã xong](#chi-tiet-da-xong), mục 
 File prompt trả lời *sửa dòng nào, xong là thế nào*. Năm thứ **không bao giờ** chép vào entry:
 bảng file/dòng phải sửa · mục *Acceptance* · mục *Verify* · giá và số điện thoại · sơ đồ luồng.
 Chép là tạo bản thứ hai, và bản thứ hai luôn trôi — `work/findings.md` F-001.
+
+**Ngoại lệ thí điểm — lane pha 2** (`docs/decisions.md` **ADR-051**, 2026-09-25): entry ở
+`work/backlog_DB.md` là hồ sơ **duy nhất**, Nghiệm thu và Kiểm chứng nằm trong khối *Nhận việc* của
+nó, không có file prompt. Khuôn riêng ở cuối file ấy. Các lane khác giữ luật số một cho tới khi thí
+điểm được đánh giá.
 
 ### Khuôn L1+ — bảy khối bắt buộc
 

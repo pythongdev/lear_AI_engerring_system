@@ -67,6 +67,7 @@ có câu trả lời mới từ người.
 | ADR-048 | **Ba chỗ pha 1 viết hộ pha 2/3 được VIẾT LẠI BẰNG NGÔN NGỮ TẦNG, không được khai thành ngoại lệ**: `architecture.md` §3.1 · §4 · §12.2 giữ nguyên nghĩa, bỏ tên cột · `bảng.cột` · hợp đồng API; `PAT_API` của Gate 1d nới kèm ca hồi quy | Đã chốt 2026-09-20 | — | **F-040** · **F-041** đóng; ô 10 cổng pha 1 tick ⇒ **10/10** |
 | ADR-049 | Pha 2 chạy theo **kế hoạch riêng** ở `master_plan/`, mã bước là **`P2-XX`**, đầu ra vào thư mục **mới** `docs/product/2-db/` mở cùng dòng nội dung đầu tiên; năm tầng của pha 1 dịch sang pha 2 thành **ràng buộc · giao dịch · một đường ghi · chỗ cất vết · câu truy vấn** | Đã chốt 2026-09-20 | — | mở khoá **P2-01…P2-14**; chép hình dạng của **ADR-033** |
 | ADR-050 | **Năm tầng của pha 1 dịch sang pha 2 thành năm thứ dựng được, mỗi thứ một phép chấm** — ràng buộc thật · ranh giới giao dịch · một đường ghi duy nhất · chỗ cất vết sống độc lập · một câu truy vấn ra 0 dòng; cộng **ba câu pha 2 không được viết ra** (endpoint · route · cơ chế vận hành) và ba luật dịch: không tự hạ tầng · mệnh đề tầng 1 vẫn có câu truy vấn · câu truy vấn chưa bao giờ đỏ là chưa được chứng minh | Đã chốt 2026-09-22 | — | mở khoá **P2-02** và **P2-03**; lane `prompt/DB/` vào Gate 1b |
+| ADR-051 | **Lane pha 2 thí điểm: entry ở `work/backlog_DB.md` là hồ sơ thực thi DUY NHẤT của một bước** — Nghiệm thu và Kiểm chứng viết vào entry lúc nhận việc, không còn file prompt riêng bắt buộc; trạng thái chỉ ở `work/backlog.md` (bỏ cột *Trạng thái* của *Mục lục* và dòng *✅ Xong ngày…*); mức và thứ tự chỉ ở kế hoạch §6 | Đã chốt 2026-09-25 | — | thay luật 2 · 3 của `work/backlog_DB.md` (**ADR-034** hình dạng · **ADR-049**) cho lane pha 2; lane khác giữ nguyên tới khi thí điểm được đánh giá |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3403,3 +3404,74 @@ hết ở lượt mở thư mục · nhà cho `work/findings.md` **F-034** (*m�
 **Pointer sửa trong cùng thay đổi** (`CLAUDE.md` §7.2): `scripts/check-links.sh` (lane `prompt/DB/`
 vào danh sách Gate 1b chấm — **F-007**) · `prompt/DB/` → `README.md` mới · `work/backlog.md`
 (`P2-01` → *Done*, `P2-02` · `P2-03` → *Ready*) · `work/backlog_DB.md` (entry `P2-01` + *Mục lục*).
+
+---
+
+### ADR-051 — Lane pha 2 thí điểm: entry ở `work/backlog_DB.md` là hồ sơ thực thi DUY NHẤT của một bước, và trạng thái chỉ sống ở `work/backlog.md`
+
+**Trạng thái:** Đã chốt 2026-09-25 — chủ repo đồng ý trong phiên đề xuất tinh gọn *"một hồ sơ thực
+thi cho mỗi task, một nơi giữ trạng thái"* (T-083). Phạm vi là **thí điểm trên lane pha 2**
+(`P2-03`…`P2-14`); lane pha 1, lane admin và task `T-XXX` giữ luật cũ cho tới khi thí điểm được
+đánh giá.
+
+**Context:**
+Đo ngày 2026-09-25, trước quyết định này:
+
+- Trạng thái của một bước pha 2 nằm ở **ba** chỗ: dòng `- [ ]`/`- [x]` ở `work/backlog.md`, cột
+  *Trạng thái* (**Mở**/**Đóng**) ở *Mục lục* của `work/backlog_DB.md`, và dòng *✅ Xong ngày…* ở đầu
+  entry. **Mức** của bước chép thêm ở cột *Mức* của *Mục lục*, trong khi owner của nó là kế hoạch
+  §6 (`master_plan/DB_master_plan_banh_cuon_ba_thanh.md`).
+- Hình ba chỗ ấy **đã trôi một lần thật**: `work/findings.md` **F-032** (2026-09-07) — *Mục lục*
+  `work/backlog_SD.md` ghi **Đóng** cho hai bước thiếu dòng *✅ Xong ngày…*, gate xanh suốt vì không
+  cổng nào canh mẫu `P1-XX`. F-032 chọn vá dòng thiếu; quyết định này bỏ luôn hình dạng cho lane pha 2
+  — không còn hai chỗ thì không còn gì để lệch, và không phải dựng phép so thứ tư ở Gate 1c.
+- Một bước có **hai** hồ sơ: entry (vì sao, hỏng thì mất gì, mười bước) và một file prompt ở
+  `prompt/DB/` giữ *Acceptance* · *Verify* (luật *entry TRỎ, prompt GIỮ* — `work/backlog.md` →
+  *Task Detail Template*).
+- Commit của `P2-02` (`d57cf4f`) chạm **năm** file; **ba** là giấy tờ (file prompt, hai sổ backlog),
+  **hai** là việc thật (script và bộ test của nó). `P2-01` (`0715382`) cùng hình.
+- Luật 2 của `work/backlog_DB.md` viện dẫn **ADR-008** cho quy tắc *"prompt chỉ viết khi mọi bước
+  phụ thuộc đã Done"*. ADR-008 nói về lịch sử git; quy tắc ấy là của **T-051**. Không gate nào bắt
+  được, vì đường dẫn vẫn mở — một ví dụ sống của việc nhiều bản cùng nói một chuyện (**F-001**).
+
+**Decision:**
+
+1. **Một bước pha 2 có đúng một hồ sơ: entry của nó ở `work/backlog_DB.md`.** Entry có **ba nửa**,
+   mỗi nửa một thời điểm viết:
+   - *lúc lập kế hoạch* — Goal · vì sao · hỏng thì mất gì · cách hoàn thành · bẫy (các khối đang
+     có);
+   - *lúc nhận việc*, **chỉ khi mọi bước ở *Cần xong trước* đã `Done`** — khối **Nhận việc**: Phạm
+     vi · Nghiệm thu · Kiểm chứng. Quy tắc thời điểm của T-051 **giữ nguyên**, chỉ đổi chỗ viết:
+     Nghiệm thu viết sớm hơn là đoán (**F-013** · **F-017**);
+   - *lúc đóng* — khối **Bàn giao**: kết quả, output gate, phần còn thiếu kèm link tới owner.
+2. **File prompt riêng cho một bước không còn bắt buộc.** Lời gọi một phiên chỉ cần *"làm P2-XX theo
+   entry của nó ở `work/backlog_DB.md`"*. Prompt **tái sử dụng được** vẫn viết ở `prompt/DB/`; hai
+   file prompt đã có (`P2-01`, `P2-02`) ở lại làm bằng chứng, không chuyển nội dung.
+3. **Trạng thái chỉ sống ở `work/backlog.md`.** Bỏ cột *Trạng thái* của *Mục lục*; dòng *✅ Xong
+   ngày…* của `P2-01` · `P2-02` đổi thành khối **Bàn giao** cuối entry — giữ **kết quả**, không giữ
+   **trạng thái**.
+4. **Mức và thứ tự chỉ sống ở kế hoạch §6.** Bỏ cột *Mức* của *Mục lục* và chữ mức trong dòng đầu
+   entry. Dòng đầu entry vẫn nói *cần xong trước* / *chặn* như **bản đọc nhanh**; lệch với §6 thì §6
+   thắng và dòng entry là bug của lượt thấy nó.
+
+**Rejected alternatives:**
+
+- *Chuyển cả bốn sổ cùng lúc.* Bác: thí điểm trên một lane trước, đo lại, rồi mới áp rộng — đề xuất
+  gốc tự đặt thứ tự ấy, và bốn sổ cùng đổi là bốn chỗ cùng hỏng nếu khuôn sai.
+- *Viết sẵn Nghiệm thu cho mười hai bước còn lại ngay lượt này, "cho đủ khuôn".* Bác: phần lớn các
+  bước ấy chưa hết chặn — Nghiệm thu viết lúc này là đúng loại câu đoán **F-013** · **F-017** ghi.
+- *Bỏ luôn dòng* cần xong trước / chặn *ở đầu entry cho sạch bản chép.* Bác lúc này: phiên nhận việc
+  cần biết ngay bước có nhận được không mà không mở thêm file; đổi lại, §6 được nói rõ là bên thắng.
+
+**Hệ quả:**
+
+- Một bước pha 2 xong chạm **hai** sổ thay vì ba chỗ giấy tờ (không còn file prompt, không còn
+  *Mục lục* phải đổi). Đo lại sau `P2-03` · `P2-04` — mốc gốc là commit `d57cf4f`.
+- **Chưa giải quyết ở đây:** vòng đời `work/scope.txt` và việc Gate 7b im lặng khi scope trống; nhãn
+  PASS/FAIL/SKIP/NOTE của gate; phần *việc đã xong* chiếm phần lớn `work/backlog.md`; rút gọn
+  `CLAUDE.md`. Mỗi việc một dòng *Ready* ở `work/backlog.md`, thứ tự theo đề xuất gốc — `CLAUDE.md`
+  **sau cùng**, vì nó mô tả quy trình và rút trước là viết hai lần.
+
+**Pointer sửa trong cùng thay đổi** (`CLAUDE.md` §7.2): `work/backlog_DB.md` (luật đầu file ·
+*Mục lục* · mọi entry · khuôn cuối file) · `work/backlog.md` (*Task Detail Template* nói ngoại lệ
+của lane pha 2) · `prompt/DB/README.md` (luật 1) · `docs/prompt-guideline.md` (đầu file).

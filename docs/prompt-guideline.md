@@ -8,6 +8,11 @@ Một prompt tốt không phải là prompt dài. Là prompt mà sau khi đọc 
 Guideline này bám theo ceremony theo rủi ro trong `README.md` (L0 → L3) và dùng lại đúng
 các trường của task trong `work/backlog.md`.
 
+> **Lane pha 2 (thí điểm từ 2026-09-25, `docs/decisions.md` ADR-051):** một bước `P2-XX` không có
+> file prompt riêng. *Scope* · *Acceptance* · *Verify* của nó viết vào khối **Nhận việc** của entry
+> ở `work/backlog_DB.md`, lúc nhận việc; guideline này vẫn là luật cho **cách viết** ba khối ấy.
+> Lời gọi phiên chỉ cần: *"làm P2-XX theo entry của nó ở `work/backlog_DB.md`"*.
+
 ---
 
 ## 1. Nguyên tắc chọn level

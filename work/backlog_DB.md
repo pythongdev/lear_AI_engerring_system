@@ -25,7 +25,7 @@ dạng của file này chép của `work/backlog_SD.md` (**ADR-034**), sổ mô 
 |---|---|
 | Pha 2 còn nợ gì · thứ tự · mức · đầu ra kiểm chứng được · cổng sang pha 3 | [`master_plan/DB_master_plan_banh_cuon_ba_thanh.md`](../master_plan/DB_master_plan_banh_cuon_ba_thanh.md) |
 | Bước nào **đang** chạy, xong chưa | [`work/backlog.md`](backlog.md) → *Ready* · *In Progress* · *Done* |
-| **Vì sao** có bước này, hỏng thì mất gì, chạy mười bước thế nào | **file này** |
+| **Vì sao** có bước này, hỏng thì mất gì, chạy mười bước thế nào, **xong là thế nào** (Nghiệm thu · Kiểm chứng) | **file này** |
 | Sự thật nghiệp vụ, invariant, quyết định, lược đồ | owner ở `CLAUDE.md` §2 — không file nào ở trên |
 
 ## Luật của file này — bốn câu
@@ -35,40 +35,41 @@ dạng của file này chép của `work/backlog_SD.md` (**ADR-034**), sổ mô 
    sách *Ready* ở sáu mục, nên mười bốn dòng đổ vào đó đẩy tám dòng ra khỏi tầm nhìn của mọi phiên
    mới — đúng cơ chế đã làm `U-011` và `BA-12` vô hình (**F-012**). Mô tả nằm ở file này thì không
    chiếm chỗ nào của brief.
-2. **Entry TRỎ, prompt GIỮ.** *Acceptance* và *Verify* nằm trong file prompt viết lúc nhận việc
-   (lane `prompt/DB/`), không nằm ở đây — cùng luật với `work/backlog.md` → *Task Detail Template*.
-   Và prompt của một bước chỉ viết được **khi mọi bước ở cột *Cần xong trước* của nó đã `Done`**
-   (**ADR-008**, T-051): sớm hơn thì *Constraints* và *Verify* là những câu đoán (**F-013** ·
-   **F-017**).
-3. **Bước xong thì entry ở lại đây**, thêm một dòng *✅ Xong ngày…* ở đầu entry và đổi cột *Trạng
-   thái* ở *Mục lục* **trong cùng lượt**; dòng `- [x]` đi vào `work/backlog.md` → *Done*. Không có
-   mục *đã xong* riêng ở file này: mười bốn bước là một pha, tách đôi làm mất đường đọc từ `P2-01`
-   tới `P2-14`.
+2. **Entry là hồ sơ thực thi DUY NHẤT của bước** (**ADR-051**, 2026-09-25 — thay luật *entry TRỎ,
+   prompt GIỮ* cho lane này). *Nghiệm thu* và *Kiểm chứng* viết vào khối **Nhận việc** cuối entry,
+   không vào một file prompt riêng; lời gọi một phiên chỉ cần *"làm P2-XX theo entry của nó"*. Khối
+   ấy chỉ điền được **khi mọi bước ở *Cần xong trước* đã `Done`** (T-051): sớm hơn thì nó là những
+   câu đoán (**F-013** · **F-017**). Nghiệm thu **cụ thể hoá** cột *Đầu ra kiểm chứng được* của kế
+   hoạch §6 cho lượt này, không chép lại nó.
+3. **Bước xong thì entry ở lại đây** và nhận khối **Bàn giao** cuối entry: kết quả, output gate, phần
+   còn thiếu kèm link tới owner. Bàn giao giữ **kết quả**, không giữ **trạng thái** — dòng `- [x]`
+   ở `work/backlog.md` → *Done* là chỗ duy nhất nói bước đã xong (**ADR-051**). Không có mục *đã
+   xong* riêng ở file này: mười bốn bước là một pha, tách đôi làm mất đường đọc từ `P2-01` tới
+   `P2-14`.
 4. **Bước mới của pha 2 vào đây, không vào `work/backlog.md`.** Task không thuộc pha 2 thì ngược
    lại. Ranh giới là *pha*, không phải *độ dài* (**ADR-036**).
 
 ## Mục lục
 
-Cột **Trạng thái** chỉ đọc **entry ở file này** đã có dòng *✅ Xong ngày…* ở đầu hay chưa (luật 3
-đầu file) — nó **không** phải Ready/In Progress/Done. Ba trạng thái ấy chỉ sống ở
-`work/backlog.md`.
+Mục lục không có cột trạng thái hay mức: trạng thái ở `work/backlog.md`, mức và thứ tự ở kế hoạch
+§6 (**ADR-051**).
 
-| Bước | Entry | Mức | Trạng thái |
-|---|---|:--:|---|
-| P2-01 | [Ranh giới và từ vựng của cả pha 2](#p2-01) | L2 | **Đóng** |
-| P2-02 | [Gate 1d học vùng pha 2](#p2-02) | L2 | **Đóng** |
-| P2-03 | [Quy ước dữ liệu — và lượt mở `docs/product/2-db/`](#p2-03) | L2 | Mở |
-| P2-04 | [Lược đồ lát bán hàng lõi](#p2-04) | L2 | Mở |
-| P2-05 | [Lược đồ menu · giá · ảnh chụp giá lúc đặt](#p2-05) | L2 | Mở |
-| P2-06 | [Lược đồ đường tiền](#p2-06) | L2 | Mở |
-| P2-07 | [Lược đồ sản xuất theo mẻ](#p2-07) | L2 | Mở |
-| P2-08 | [Lược đồ người · chỗ đứng theo thời điểm · vết](#p2-08) | L2 | Mở |
-| P2-09 | [Thứ tự migration và đường lùi](#p2-09) | L2 | Mở |
-| P2-10 | [Dữ liệu mồi](#p2-10) | L1 | Mở |
-| P2-11 | [Bộ query đối chiếu bất biến](#p2-11) | L2 | Mở |
-| P2-12 | [Quy ước code](#p2-12) | L2 | Mở |
-| P2-13 | [Cổng chất lượng pha 2](#p2-13) | L2 | Mở |
-| P2-14 | [Rà chéo ranh giới pha và pointer](#p2-14) | L1 | Mở |
+| Bước | Entry |
+|---|---|
+| P2-01 | [Ranh giới và từ vựng của cả pha 2](#p2-01) |
+| P2-02 | [Gate 1d học vùng pha 2](#p2-02) |
+| P2-03 | [Quy ước dữ liệu — và lượt mở `docs/product/2-db/`](#p2-03) |
+| P2-04 | [Lược đồ lát bán hàng lõi](#p2-04) |
+| P2-05 | [Lược đồ menu · giá · ảnh chụp giá lúc đặt](#p2-05) |
+| P2-06 | [Lược đồ đường tiền](#p2-06) |
+| P2-07 | [Lược đồ sản xuất theo mẻ](#p2-07) |
+| P2-08 | [Lược đồ người · chỗ đứng theo thời điểm · vết](#p2-08) |
+| P2-09 | [Thứ tự migration và đường lùi](#p2-09) |
+| P2-10 | [Dữ liệu mồi](#p2-10) |
+| P2-11 | [Bộ query đối chiếu bất biến](#p2-11) |
+| P2-12 | [Quy ước code](#p2-12) |
+| P2-13 | [Cổng chất lượng pha 2](#p2-13) |
+| P2-14 | [Rà chéo ranh giới pha và pointer](#p2-14) |
 
 **Thứ tự lấy việc, và cái gì chạy song song được: kế hoạch §6.** Đừng đọc thứ tự từ mục lục trên —
 nó xếp theo số, còn phụ thuộc thật thì không. **`P2-01` đã `Done` 2026-09-22**, nên hai bước đứng
@@ -108,18 +109,6 @@ lane pointer **không cổng nào đọc** (**F-007**).
 
 <a id="p2-01"></a>
 ### P2-01 — Pha 1 viết *"phải do cơ sở dữ liệu giữ"* hai mươi mốt lần, và không chỗ nào nói câu ấy dịch sang pha 2 thành cái gì
-
-✅ **Xong ngày 2026-09-22** — `docs/decisions.md` **ADR-050**: bảng năm tầng **bốn** cột (*pha 2 nợ
-cái gì* · *chấm bằng gì* · **cái gì KHÔNG phải biên nhận**), **ba luật khi dịch**, và **ba câu pha 2
-không được viết ra** kèm *viết gì thay vào*. Lane **`prompt/DB/`** dựng cùng lượt, và `prompt/DB/*`
-vào danh sách Gate 1b chấm (`scripts/check-links.sh`) — chứng minh bằng một đường dẫn cố tình sai ⇒
-gate **đỏ**, sửa lại ⇒ **xanh** (**F-007**). **Một chỗ dọn phát sinh giữa lượt:** ADR-050 nhận
-quyền sở hữu bảng năm tầng, nên **§7 của kế hoạch pha 2 thôi giữ bản chép của mình và chỉ còn trỏ**
-— bản thứ hai luôn trôi (**F-001**), và dọn nó là bug của chính lượt ấy (`CLAUDE.md` §7.2). Mọi
-pointer viết *"kế hoạch §7"* vẫn đọc được; số hiệu ba luật giữ nguyên 1 · 2 · 3.
-**Không** file nào dưới `docs/product/2-db/` tồn tại sau lượt này — thư mục ấy vẫn là của `P2-03`.
-⇒ **`P2-02` và `P2-03` hết bị chặn.** Entry ở lại đây theo luật 3 đầu file; dòng `- [x]` ở
-`work/backlog.md` → *Done*.
 
 **Prompt:** [`prompt/DB/P2-01-ranh-gioi-tu-vung-pha-2-L2.md`](../prompt/DB/P2-01-ranh-gioi-tu-vung-pha-2-L2.md)
 (viết 2026-09-22 lúc nhận việc, sáu khối theo `docs/prompt-guideline.md`) ·
@@ -199,26 +188,23 @@ riêng của bước này.
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc (**F-001** — entry này trỏ, prompt
 giữ).
 
+**Bàn giao (2026-09-22):** `docs/decisions.md` **ADR-050**: bảng năm tầng **bốn** cột (*pha 2 nợ
+cái gì* · *chấm bằng gì* · **cái gì KHÔNG phải biên nhận**), **ba luật khi dịch**, và **ba câu pha 2
+không được viết ra** kèm *viết gì thay vào*. Lane **`prompt/DB/`** dựng cùng lượt, và `prompt/DB/*`
+vào danh sách Gate 1b chấm (`scripts/check-links.sh`) — chứng minh bằng một đường dẫn cố tình sai ⇒
+gate **đỏ**, sửa lại ⇒ **xanh** (**F-007**). **Một chỗ dọn phát sinh giữa lượt:** ADR-050 nhận
+quyền sở hữu bảng năm tầng, nên **§7 của kế hoạch pha 2 thôi giữ bản chép của mình và chỉ còn trỏ**
+— bản thứ hai luôn trôi (**F-001**), và dọn nó là bug của chính lượt ấy (`CLAUDE.md` §7.2). Mọi
+pointer viết *"kế hoạch §7"* vẫn đọc được; số hiệu ba luật giữ nguyên 1 · 2 · 3.
+**Không** file nào dưới `docs/product/2-db/` tồn tại sau lượt này — thư mục ấy vẫn là của `P2-03`.
+⇒ **`P2-02` và `P2-03` hết bị chặn.** Trạng thái: `work/backlog.md` → *Done*.
+
 [↑ đầu file](#top)
 
 ---
 
 <a id="p2-02"></a>
 ### P2-02 — Cổng duy nhất biết chặn một pha viết hộ pha sau chỉ đọc thư mục pha 1, và bộ mẫu SQL của nó sẽ đỏ với đúng thứ pha 2 phải viết
-
-✅ **Xong ngày 2026-09-24** — `scripts/check-phase-boundary.sh` nay đọc **hai vùng, hai bộ mẫu**:
-vùng pha 1 giữ **nguyên** hành vi cũ (đỏ với SQL · endpoint · route), vùng `docs/product/2-db/` đỏ
-với **endpoint · route · component** và **im lặng với SQL** — vì SQL là đầu ra hợp lệ của pha 2
-(**ADR-049** · **ADR-050**). Mẫu endpoint của hai vùng **khác nhau có lý do đo được**: mẫu pha 1
-nhận `DELETE` + khoảng trắng + chữ, nên ở vùng pha 2 nó sẽ kêu oan `ON DELETE CASCADE` và
-`DELETE FROM …` ở **mọi** lát lược đồ có khoá ngoại; mẫu vùng pha 2 vì thế đòi một **dấu gạch
-chéo nằm trong đường dẫn** ngay sau động từ — vẫn bắt được `POST staff/debts/:id/collect` (hồi quy
-**F-041**) mà không kêu oan SQL. Bộ ca lên **mười tám**: mười ca cũ xanh **không đổi một kỳ vọng
-nào**, tám ca mới cho vùng pha 2, trong đó ca *SQL có `DELETE` không bị kêu oan* là thứ duy nhất
-chặn việc "dọn cho gọn" bằng cách gộp hai bộ mẫu về một. Vùng pha 3 và pha 4 **cố ý không thêm**:
-thư mục của chúng chưa tồn tại, và một bộ mẫu viết cho vùng chưa có nội dung là bộ mẫu chưa bao giờ
-được chấm (**F-017**). `scripts/check-phase-boundary.ignore` **không thêm mục nào**. Entry ở lại đây
-theo luật 3 đầu file; dòng `- [x]` ở `work/backlog.md` → *Done*.
 
 **Prompt:** [`prompt/DB/P2-02-gate-1d-vung-pha-2-L2.md`](../prompt/DB/P2-02-gate-1d-vung-pha-2-L2.md)
 (viết 2026-09-24 lúc nhận việc) · **L2** · bước 2/14 (kế hoạch §6) · **cần xong trước:** `P2-01`,
@@ -281,6 +267,20 @@ và người đứng đọc; lần này pha 2 có mười một file và `P2-14`
 
 **Acceptance · Verify:** trong file prompt viết lúc nhận việc (**F-001**).
 
+**Bàn giao (2026-09-24):** `scripts/check-phase-boundary.sh` nay đọc **hai vùng, hai bộ mẫu**:
+vùng pha 1 giữ **nguyên** hành vi cũ (đỏ với SQL · endpoint · route), vùng `docs/product/2-db/` đỏ
+với **endpoint · route · component** và **im lặng với SQL** — vì SQL là đầu ra hợp lệ của pha 2
+(**ADR-049** · **ADR-050**). Mẫu endpoint của hai vùng **khác nhau có lý do đo được**: mẫu pha 1
+nhận `DELETE` + khoảng trắng + chữ, nên ở vùng pha 2 nó sẽ kêu oan `ON DELETE CASCADE` và
+`DELETE FROM …` ở **mọi** lát lược đồ có khoá ngoại; mẫu vùng pha 2 vì thế đòi một **dấu gạch
+chéo nằm trong đường dẫn** ngay sau động từ — vẫn bắt được `POST staff/debts/:id/collect` (hồi quy
+**F-041**) mà không kêu oan SQL. Bộ ca lên **mười tám**: mười ca cũ xanh **không đổi một kỳ vọng
+nào**, tám ca mới cho vùng pha 2, trong đó ca *SQL có `DELETE` không bị kêu oan* là thứ duy nhất
+chặn việc "dọn cho gọn" bằng cách gộp hai bộ mẫu về một. Vùng pha 3 và pha 4 **cố ý không thêm**:
+thư mục của chúng chưa tồn tại, và một bộ mẫu viết cho vùng chưa có nội dung là bộ mẫu chưa bao giờ
+được chấm (**F-017**). `scripts/check-phase-boundary.ignore` **không thêm mục nào**.
+Trạng thái: `work/backlog.md` → *Done*.
+
 [↑ đầu file](#top)
 
 ---
@@ -288,7 +288,7 @@ và người đứng đọc; lần này pha 2 có mười một file và `P2-14`
 <a id="p2-03"></a>
 ### P2-03 — Năm lát lược đồ sắp chạy song song, mà không chỗ nào nói tiền cất bằng gì và mốc cất bằng gì
 
-**Prompt:** `prompt/DB/P2-03-quy-uoc-du-lieu-L2.md` — **chưa viết** · **L2** · bước 3/14 (kế hoạch
+**Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 3/14 (kế hoạch
 §6) · **cần xong trước:** `P2-01` · **chặn** `P2-04` · `P2-05` · `P2-06` · `P2-07` · `P2-08` ·
 `P2-12` — sáu bước, nhiều nhất pha 2 · **lượt này MỞ `docs/product/2-db/`**
 
@@ -329,7 +329,7 @@ trả lời nó.
    [`04-yeu-cau-du-lieu.md`](../docs/product/1-system-design/04-yeu-cau-du-lieu.md) `YC-12`…`YC-14`
    và `YC-18`…`YC-20`; `docs/product/00-index.md` → *Luật ghi*.
 2. Khai `work/scope.txt`: khối `P2-03` — `docs/product/2-db/`, `docs/product/00-index.md`,
-   `CLAUDE.md`, `work/backlog.md`, `work/backlog_DB.md`, `prompt/DB/`.
+   `CLAUDE.md`, `work/backlog.md`, `work/backlog_DB.md`.
 3. Chuyển `P2-03` sang *In Progress*.
 4. Viết file quy ước: **mỗi quy ước một dòng, mỗi dòng một hậu quả nếu làm khác**. Tối thiểu sáu
    chủ đề kế hoạch §6 kể tên — tiền · mốc và múi giờ · khoá · đặt tên · trạng thái · không xoá
@@ -343,7 +343,7 @@ trả lời nó.
 7. Gate 2: mỗi dòng *Acceptance* trỏ vào một dòng thật trong file quy ước.
 8. `grep -rn 'chưa có owner'` ở `CLAUDE.md` — hàng nào nay đã có chủ mà vẫn nói *chưa có* là bug của
    **lượt này**.
-9. Tick `P2-03` → *Done*; dòng *✅ Xong ngày…* + *Mục lục*; thêm dòng *Ready* cho năm lát vừa hết
+9. Tick `P2-03` → *Done*; điền khối **Bàn giao**; thêm dòng *Ready* cho năm lát vừa hết
    chặn — **nhưng đọc luật 1 đầu file trước**: `brief.sh` cắt *Ready* ở sáu mục.
 10. Khối `git commit` dán được, liệt kê từng file.
 
@@ -355,7 +355,12 @@ trả lời nó.
 - **Đừng viết quy ước mà không viết hậu quả.** Một dòng *"tiền cất bằng số nguyên"* không có hậu quả
   kèm theo là một dòng ai cũng sửa được ở lát sau mà không thấy mình đang phá cái gì.
 
-**Acceptance · Verify:** trong file prompt viết lúc nhận việc (**F-001**).
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
+- *Phạm vi:* —
+- *Nghiệm thu:* —
+- *Kiểm chứng:* —
+
+**Bàn giao:** —
 
 [↑ đầu file](#top)
 
@@ -364,7 +369,7 @@ trả lời nó.
 <a id="p2-04"></a>
 ### P2-04 — Bảy mệnh đề của lát bán hàng lõi đang chờ một ràng buộc thật, và một luật đã chốt của pha 0 (`F-038`) chưa có mệnh đề nào mang
 
-**Prompt:** `prompt/DB/P2-04-luoc-do-ban-hang-L2.md` — **chưa viết** · **L2** · bước 4/14 (kế hoạch
+**Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 4/14 (kế hoạch
 §6) · **cần xong trước:** `P2-03` · **chặn** `P2-06` · `P2-07` · `P2-09` · `P2-10` · `P2-11` ·
 **chỗ đang chặn nó:** `F-038` · chạy song song được với `P2-05` · `P2-06` · `P2-07` · `P2-08`
 
@@ -419,7 +424,7 @@ tiên cái thiếu ấy thành một lỗ hổng chạy được.
 7. Gate 2: mỗi dòng *Acceptance* map vào một output thật, không vào một câu khẳng định.
 8. Thêm dòng file mới vào `docs/product/00-index.md`; đổi hàng *Schema* của `CLAUDE.md` §2 từ *chưa
    có owner* sang file này (**ADR-035** luật 2) — các lát sau **thêm** dòng, không ghi đè.
-9. Tick `P2-04` → *Done*; dòng *✅ Xong ngày…* + *Mục lục*; xoá **khối của mình** trong
+9. Tick `P2-04` → *Done*; điền khối **Bàn giao**; xoá **khối của mình** trong
    `work/scope.txt`, không xoá khối của lát khác.
 10. Khối `git commit` dán được, liệt kê từng file.
 
@@ -433,7 +438,12 @@ tiên cái thiếu ấy thành một lỗ hổng chạy được.
 - **Đừng chấm bằng *"đã tạo xong bảng"*.** Biên nhận của bước này là **lời từ chối của database**,
   đúng cột *Đầu ra kiểm chứng được* của kế hoạch §6.
 
-**Acceptance · Verify:** trong file prompt viết lúc nhận việc (**F-001**).
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
+- *Phạm vi:* —
+- *Nghiệm thu:* —
+- *Kiểm chứng:* —
+
+**Bàn giao:** —
 
 [↑ đầu file](#top)
 
@@ -442,7 +452,7 @@ tiên cái thiếu ấy thành một lỗ hổng chạy được.
 <a id="p2-05"></a>
 ### P2-05 — Giá của một đơn đã đặt chưa có chỗ cất riêng, nên sửa menu là sửa luôn doanh thu của ngày đã chốt
 
-**Prompt:** `prompt/DB/P2-05-luoc-do-menu-gia-L2.md` — **chưa viết** · **L2** · bước 5/14 (kế hoạch
+**Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 5/14 (kế hoạch
 §6) · **cần xong trước:** `P2-03` · **chặn** `P2-10` · `P2-11` · **chỗ đang chặn nó:** `F-036` (vế
 *ngừng bán hẳn*) · chạy song song được với bốn lát kia
 
@@ -492,7 +502,7 @@ không bao giờ được dùng*) đứng trên cùng chỗ cất ấy.
 7. Gate 2: hai dòng *Acceptance* trên map vào hai output thật.
 8. Thêm dòng vào `docs/product/00-index.md`; hàng *Schema* ở `CLAUDE.md` §2 **thêm** tên file này,
    không ghi đè tên file của `P2-04`.
-9. Tick `P2-05` → *Done*; dòng *✅ Xong ngày…* + *Mục lục*; xoá khối scope của mình.
+9. Tick `P2-05` → *Done*; điền khối **Bàn giao**; xoá khối scope của mình.
 10. Khối `git commit` dán được, liệt kê từng file.
 
 **Bẫy hay sửa nhầm nhất:**
@@ -504,7 +514,12 @@ không bao giờ được dùng*) đứng trên cùng chỗ cất ấy.
 - **Đừng lẫn *ngừng bán* với *tổ hợp không hợp lệ*.** `I-010` giữ tổ hợp tuỳ chọn; *món còn bán hay
   không* là vế khác, và nó đang là `F-036`.
 
-**Acceptance · Verify:** trong file prompt viết lúc nhận việc (**F-001**).
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
+- *Phạm vi:* —
+- *Nghiệm thu:* —
+- *Kiểm chứng:* —
+
+**Bàn giao:** —
 
 [↑ đầu file](#top)
 
@@ -513,7 +528,7 @@ không bao giờ được dùng*) đứng trên cùng chỗ cất ấy.
 <a id="p2-06"></a>
 ### P2-06 — Vết hoàn tiền và khoản nợ — hai thứ mà thiếu chúng thì đối soát ngưỡng 0đ không chạy nổi — vẫn chưa có chỗ cất
 
-**Prompt:** `prompt/DB/P2-06-luoc-do-duong-tien-L2.md` — **chưa viết** · **L2** · bước 6/14 (kế
+**Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 6/14 (kế
 hoạch §6) · **cần xong trước:** `P2-03` · `P2-04` · **chặn** `P2-08` · `P2-09` · `P2-11` · **chỗ
 đang chặn nó:** `F-037` · chạy song song được với `P2-05` · `P2-07`
 
@@ -569,7 +584,7 @@ sang chỗ mới — **trong cùng thay đổi**, không phải một task sau (
 8. **Cùng lượt**: `architecture.md` §12.3 nhận một dòng trỏ sang file mới; `00-index.md` thêm dòng;
    `CLAUDE.md` §2 hàng *Schema* **thêm** tên file. Rồi `grep -rn '§12.3'` — pointer nào còn đọc
    §12.3 như nhà thật là bug của **lượt này**.
-9. Tick `P2-06` → *Done*; dòng *✅ Xong ngày…* + *Mục lục*; xoá khối scope của mình.
+9. Tick `P2-06` → *Done*; điền khối **Bàn giao**; xoá khối scope của mình.
 10. Khối `git commit` dán được, liệt kê từng file.
 
 **Bẫy hay sửa nhầm nhất:**
@@ -581,7 +596,12 @@ sang chỗ mới — **trong cùng thay đổi**, không phải một task sau (
   một ô làm mọi ngày lệch đúng bằng tiền đầu két, và một báo đỏ mỗi ngày dạy người ta bỏ qua báo
   đỏ.
 
-**Acceptance · Verify:** trong file prompt viết lúc nhận việc (**F-001**).
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
+- *Phạm vi:* —
+- *Nghiệm thu:* —
+- *Kiểm chứng:* —
+
+**Bàn giao:** —
 
 [↑ đầu file](#top)
 
@@ -590,7 +610,7 @@ sang chỗ mới — **trong cùng thay đổi**, không phải một task sau (
 <a id="p2-07"></a>
 ### P2-07 — Một lần bấm *"đã làm xong"* đẩy việc của nhiều bàn cùng lúc, mà không chỗ nào cất phần của từng bàn
 
-**Prompt:** `prompt/DB/P2-07-luoc-do-san-xuat-L2.md` — **chưa viết** · **L2** · bước 7/14 (kế hoạch
+**Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 7/14 (kế hoạch
 §6) · **cần xong trước:** `P2-03` · `P2-04` · **chặn** `P2-09` · `P2-11` · **chỗ đang chặn nó:**
 `S-5` · `S-6` (**để trống, đừng điền**) · `F-036` (vế việc **cấp đơn**) · chạy song song được với
 `P2-05` · `P2-06` · `P2-08`
@@ -645,7 +665,7 @@ cập nhật — đó là một lần **đổi chủ**, cũng cần chỗ cất.
    mã**, không vào một giá trị.
 8. `00-index.md` thêm dòng; `CLAUDE.md` §2 hàng *Schema* **thêm** tên file. `grep -rn 'S-5'` — mọi
    chỗ nói `S-5` chặn `P2-07` phải còn đúng sau lượt này.
-9. Tick `P2-07` → *Done*; dòng *✅ Xong ngày…* + *Mục lục*; xoá khối scope của mình.
+9. Tick `P2-07` → *Done*; điền khối **Bàn giao**; xoá khối scope của mình.
 10. Khối `git commit` dán được, liệt kê từng file.
 
 **Bẫy hay sửa nhầm nhất:**
@@ -657,7 +677,12 @@ cập nhật — đó là một lần **đổi chủ**, cũng cần chỗ cất.
   nhất (2026-09-06); ca thứ hai **chưa có luật, chưa hỏi** (`shop-facts.md` §5.4) — gặp nó thì ghi
   `U-XXX`, đừng suy.
 
-**Acceptance · Verify:** trong file prompt viết lúc nhận việc (**F-001**).
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
+- *Phạm vi:* —
+- *Nghiệm thu:* —
+- *Kiểm chứng:* —
+
+**Bàn giao:** —
 
 [↑ đầu file](#top)
 
@@ -666,7 +691,7 @@ cập nhật — đó là một lần **đổi chủ**, cũng cần chỗ cất.
 <a id="p2-08"></a>
 ### P2-08 — Quyền của một thao tác gắn với CHỖ ĐỨNG tại thời điểm bấm, mà không dữ liệu nào biết ai đứng đâu lúc nào
 
-**Prompt:** `prompt/DB/P2-08-luoc-do-nguoi-va-vet-L2.md` — **chưa viết** · **L2** · bước 8/14 (kế
+**Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 8/14 (kế
 hoạch §6) · **cần xong trước:** `P2-03` · `P2-06` · **chặn** `P2-09` · `P2-11` · chạy song song
 được với `P2-05` · `P2-07` · **chỗ giao nhau với lane admin** — đọc kế hoạch §3 trước khi dựng
 
@@ -721,7 +746,7 @@ mỗi lần **cập nhật** — trong một hệ **không có nút hoàn tác**
 7. Gate 2: mỗi dòng *Acceptance* map vào một output thật.
 8. `00-index.md` thêm dòng; `CLAUDE.md` §2 hàng *Schema* **thêm** tên file. `grep -rn 'YC-15\|YC-16\|YC-17'`
    — lane admin trỏ vào ba dòng này (kế hoạch §3), pointer nào hết đúng là bug của **lượt này**.
-9. Tick `P2-08` → *Done*; dòng *✅ Xong ngày…* + *Mục lục*; xoá khối scope của mình.
+9. Tick `P2-08` → *Done*; điền khối **Bàn giao**; xoá khối scope của mình.
 10. Khối `git commit` dán được, liệt kê từng file.
 
 **Bẫy hay sửa nhầm nhất:**
@@ -731,7 +756,12 @@ mỗi lần **cập nhật** — trong một hệ **không có nút hoàn tác**
   đọc được sau nhiều ngày.
 - **Đừng lẫn *người nhập bù* với *người bán*.** `YC-08` đòi cả hai, và hai mốc của chúng khác nhau.
 
-**Acceptance · Verify:** trong file prompt viết lúc nhận việc (**F-001**).
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
+- *Phạm vi:* —
+- *Nghiệm thu:* —
+- *Kiểm chứng:* —
+
+**Bàn giao:** —
 
 [↑ đầu file](#top)
 
@@ -740,7 +770,7 @@ mỗi lần **cập nhật** — trong một hệ **không có nút hoàn tác**
 <a id="p2-09"></a>
 ### P2-09 — Mỗi lần đổi lược đồ sau này sẽ chạy trên dữ liệu bán hàng thật, mà không chỗ nào nói đường lùi
 
-**Prompt:** `prompt/DB/P2-09-thu-tu-migration-L2.md` — **chưa viết** · **L2** · bước 9/14 (kế hoạch
+**Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 9/14 (kế hoạch
 §6) · **cần xong trước:** `P2-04` → `P2-08` (cả năm lát) · **chỗ đang chặn nó:** **`F-034`** — và
 người gỡ là **chủ repo**, bước này **không chọn hộ**
 
@@ -785,7 +815,7 @@ thật, và nếu nó hỏng giữa chừng thì không có đường về. Cộ
 7. Gate 2: ba dòng *Acceptance* map vào ba output trên, không vào một câu khẳng định.
 8. `00-index.md` thêm dòng. `grep -rn 'F-034'` — `work/findings.md` và sổ rủi ro cùng nói về nó;
    trạng thái ở hai chỗ phải khớp sau lượt này (Gate 1c chấm `docs/`, không chấm `work/`).
-9. Tick `P2-09` → *Done*; dòng *✅ Xong ngày…* + *Mục lục*; xoá khối scope.
+9. Tick `P2-09` → *Done*; điền khối **Bàn giao**; xoá khối scope.
 10. Khối `git commit` dán được, liệt kê từng file.
 
 **Bẫy hay sửa nhầm nhất:**
@@ -796,7 +826,12 @@ thật, và nếu nó hỏng giữa chừng thì không có đường về. Cộ
 - **Đừng nhét backup vào đây cho "đủ bộ".** `F-034` chạm pha 5; bước này chỉ nói lược đồ đứng thế
   nào khi nó còn mở.
 
-**Acceptance · Verify:** trong file prompt viết lúc nhận việc (**F-001**).
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
+- *Phạm vi:* —
+- *Nghiệm thu:* —
+- *Kiểm chứng:* —
+
+**Bàn giao:** —
 
 [↑ đầu file](#top)
 
@@ -805,7 +840,7 @@ thật, và nếu nó hỏng giữa chừng thì không có đường về. Cộ
 <a id="p2-10"></a>
 ### P2-10 — Mọi test của pha 2 sẽ chạy trên một cái menu chưa ai dựng từ menu thật của quán
 
-**Prompt:** `prompt/DB/P2-10-du-lieu-moi-L1.md` — **chưa viết** · **L1** · bước 10/14 (kế hoạch §6)
+**Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 10/14 (kế hoạch §6)
 · **cần xong trước:** `P2-04` · `P2-05` · **chặn** `P2-11`
 
 **Goal:**
@@ -846,7 +881,7 @@ trên, và mỗi phiên sẽ tự gõ vài món để thử — mỗi phiên m�
 7. Gate 2: mỗi ca giá là một dòng *Acceptance* có kết quả chạy thật kèm theo.
 8. `00-index.md` thêm dòng. `grep -rn` một con giá bất kỳ trong `docs/product/2-db/` — ra kết quả
    nghĩa là đã có bản chép thứ hai, và đó là bug của **lượt này**.
-9. Tick `P2-10` → *Done*; dòng *✅ Xong ngày…* + *Mục lục*; xoá khối scope.
+9. Tick `P2-10` → *Done*; điền khối **Bàn giao**; xoá khối scope.
 10. Khối `git commit` dán được, liệt kê từng file.
 
 **Bẫy hay sửa nhầm nhất:**
@@ -857,7 +892,12 @@ trên, và mỗi phiên sẽ tự gõ vài món để thử — mỗi phiên m�
 - **Đừng dựng người thật với tên thật vào dữ liệu mồi mà không đọc `shop-facts.md` §3 trước** — số
   người và vai là dữ kiện có owner, không phải thứ tự nghĩ ra.
 
-**Acceptance · Verify:** trong file prompt viết lúc nhận việc (**F-001**).
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
+- *Phạm vi:* —
+- *Nghiệm thu:* —
+- *Kiểm chứng:* —
+
+**Bàn giao:** —
 
 [↑ đầu file](#top)
 
@@ -866,7 +906,7 @@ trên, và mỗi phiên sẽ tự gõ vài món để thử — mỗi phiên m�
 <a id="p2-11"></a>
 ### P2-11 — Hai mươi mốt mệnh đề có phép đối chiếu viết bằng lời, và không câu nào chạy được
 
-**Prompt:** `prompt/DB/P2-11-query-doi-chieu-L2.md` — **chưa viết** · **L2** · bước 11/14 (kế hoạch
+**Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 11/14 (kế hoạch
 §6) · **cần xong trước:** `P2-04` → `P2-08` · `P2-10` · **chỗ đang chặn nó:** `F-037` (khoản trả
 trước chưa có dòng trong bảng đối soát)
 
@@ -915,7 +955,7 @@ là lớp cuối cùng của cả hệ thống.
 7. Gate 2: ba dòng *Acceptance* map vào ba output trên.
 8. `00-index.md` thêm dòng. `grep -rn 'I-0'` trong bộ truy vấn và đối chiếu ngược với
    `quality/invariants.md` — mã nào có ở một bên mà không ở bên kia là chỗ hụt của **lượt này**.
-9. Tick `P2-11` → *Done*; dòng *✅ Xong ngày…* + *Mục lục*; xoá khối scope.
+9. Tick `P2-11` → *Done*; điền khối **Bàn giao**; xoá khối scope.
 10. Khối `git commit` dán được, liệt kê từng file.
 
 **Bẫy hay sửa nhầm nhất:**
@@ -926,7 +966,12 @@ là lớp cuối cùng của cả hệ thống.
 - **Đừng cài lỗi bằng cách sửa câu truy vấn cho nó đỏ.** Lỗi phải cài vào **dữ liệu**; sửa truy vấn
   là chứng minh ngược.
 
-**Acceptance · Verify:** trong file prompt viết lúc nhận việc (**F-001**).
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
+- *Phạm vi:* —
+- *Nghiệm thu:* —
+- *Kiểm chứng:* —
+
+**Bàn giao:** —
 
 [↑ đầu file](#top)
 
@@ -935,7 +980,7 @@ là lớp cuối cùng của cả hệ thống.
 <a id="p2-12"></a>
 ### P2-12 — Phiên đầu tiên viết code chưa có một quy ước nào để đối chiếu, và cái nó bịa ra sẽ thành fact
 
-**Prompt:** `prompt/DB/P2-12-quy-uoc-code-L2.md` — **chưa viết** · **L2** · bước 12/14 (kế hoạch
+**Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 12/14 (kế hoạch
 §6) · **cần xong trước:** `P2-03` · **độc lập với cả dãy lược đồ** — chạy song song được với
 `P2-04`…`P2-11`
 
@@ -978,7 +1023,7 @@ là bước cuối cùng trước lúc ấy.
 8. `00-index.md` thêm dòng; `CLAUDE.md` §2 hàng *Quy ước code* đổi sang tên file này (**ADR-035**
    luật 2). `grep -rn 'chưa có owner'` — hàng nào nay có chủ mà còn nói *chưa có* là bug của **lượt
    này**.
-9. Tick `P2-12` → *Done*; dòng *✅ Xong ngày…* + *Mục lục*; xoá khối scope.
+9. Tick `P2-12` → *Done*; điền khối **Bàn giao**; xoá khối scope.
 10. Khối `git commit` dán được, liệt kê từng file.
 
 **Bẫy hay sửa nhầm nhất:**
@@ -989,7 +1034,12 @@ là bước cuối cùng trước lúc ấy.
 - **Đừng đợi hết pha 2 mới làm bước này.** Nó độc lập với dãy lược đồ, và làm muộn nghĩa là code
   đầu tiên của pha 3 viết trước quy ước.
 
-**Acceptance · Verify:** trong file prompt viết lúc nhận việc (**F-001**).
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
+- *Phạm vi:* —
+- *Nghiệm thu:* —
+- *Kiểm chứng:* —
+
+**Bàn giao:** —
 
 [↑ đầu file](#top)
 
@@ -998,7 +1048,7 @@ là bước cuối cùng trước lúc ấy.
 <a id="p2-13"></a>
 ### P2-13 — Mười một file pha 2 sẽ tự khai là xong, mà chưa ai diễn thử một buổi bán qua chúng
 
-**Prompt:** `prompt/DB/P2-13-cong-chat-luong-pha-2-L2.md` — **chưa viết** · **L2** · bước 13/14 (kế
+**Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 13/14 (kế
 hoạch §6) · **cần xong trước:** `P2-03` → `P2-12` (toàn bộ) · **chặn** `P2-14` · **đây là chỗ các ô
 cổng §9 được KÝ**
 
@@ -1047,7 +1097,7 @@ Và cách chấm đã được chứng minh: `BA-11` và `P1-11` tìm ra chỗ h
 8. `00-index.md` thêm dòng. Đối chiếu **bốn mã nợ pha 1** (`F-034` · `F-036` · `F-037` · `F-038`):
    mỗi mã hoặc đã đóng, hoặc có **một dòng** trong file pha 2 nói rõ lược đồ đứng thế nào khi nó
    còn mở (ô cổng thứ mười một).
-9. Tick `P2-13` → *Done*; dòng *✅ Xong ngày…* + *Mục lục*; xoá khối scope.
+9. Tick `P2-13` → *Done*; điền khối **Bàn giao**; xoá khối scope.
 10. Khối `git commit` dán được, liệt kê từng file.
 
 **Bẫy hay sửa nhầm nhất:**
@@ -1058,7 +1108,12 @@ Và cách chấm đã được chứng minh: `BA-11` và `P1-11` tìm ra chỗ h
 - **Đủ các ô KHÔNG phải câu *"được, sang pha 3"*.** Ký chuyển pha là quyền **chủ repo** (kế hoạch
   §9).
 
-**Acceptance · Verify:** trong file prompt viết lúc nhận việc (**F-001**).
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
+- *Phạm vi:* —
+- *Nghiệm thu:* —
+- *Kiểm chứng:* —
+
+**Bàn giao:** —
 
 [↑ đầu file](#top)
 
@@ -1067,7 +1122,7 @@ Và cách chấm đã được chứng minh: `BA-11` và `P1-11` tìm ra chỗ h
 <a id="p2-14"></a>
 ### P2-14 — Pha 1 đã viết hộ pha sau và cổng không bắt được (`F-040` · `F-041`); pha 2 có mười một file và nhiều cửa hơn
 
-**Prompt:** `prompt/DB/P2-14-ra-cheo-ranh-gioi-pha-L1.md` — **chưa viết** · **L1** · bước 14/14 (kế
+**Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 14/14 (kế
 hoạch §6) · **cần xong trước:** `P2-13` · **bước cuối của pha 2**
 
 **Goal:**
@@ -1112,7 +1167,7 @@ nên cửa để lọt nhiều hơn.
 8. Rà **pointer hai chiều**: `grep -rn '2-db'` và `grep -rn 'pha 2'` — mọi chỗ pha 1 hứa *"việc của
    pha 2"* nay phải trỏ được vào một dòng thật, và mọi chỗ pha 2 trỏ ngược về pha 1 phải còn đúng.
    Chỗ lệch là bug của **lượt này** (`CLAUDE.md` §7.2).
-9. Tick `P2-14` → *Done*; dòng *✅ Xong ngày…* + *Mục lục*; xoá khối scope. Pha 2 đóng ở đây về mặt
+9. Tick `P2-14` → *Done*; điền khối **Bàn giao**; xoá khối scope. Pha 2 đóng ở đây về mặt
    việc — **ký chuyển pha 3 là quyền chủ repo**.
 10. Khối `git commit` dán được, liệt kê từng file.
 
@@ -1122,7 +1177,12 @@ nên cửa để lọt nhiều hơn.
 - **Đừng bỏ qua file quy ước code (`P2-12`).** Nó là file pha 2 dễ mang tên route và tên component
   nhất, vì nó nói về cấu trúc thư mục của cả dự án.
 
-**Acceptance · Verify:** trong file prompt viết lúc nhận việc (**F-001**).
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
+- *Phạm vi:* —
+- *Nghiệm thu:* —
+- *Kiểm chứng:* —
+
+**Bàn giao:** —
 
 [↑ đầu file](#top)
 
@@ -1130,16 +1190,19 @@ nên cửa để lọt nhiều hơn.
 
 ## Khuôn viết một bước mới của pha 2
 
-Dùng nguyên **Khuôn L1+ — bảy khối bắt buộc** ở
-[`work/backlog.md` → *Task Detail Template*](backlog.md#template), kèm bốn khác biệt của file này:
+Dùng các khối *lập kế hoạch* của **Khuôn L1+** ở
+[`work/backlog.md` → *Task Detail Template*](backlog.md#template) — Goal · vì sao · hỏng thì mất gì
+· cách hoàn thành · bẫy — kèm năm khác biệt của file này (**ADR-051**, 2026-09-25):
 
-1. Dòng **Prompt** ghi thêm *bước N/14 (kế hoạch §6)*, **mức**, **cần xong trước**, và **chỗ đang
-   chặn** nếu có. Prompt chỉ viết được khi mọi bước ở *Cần xong trước* đã `Done` (**ADR-008**).
-2. Bước 3 và bước 9 của *Cách hoàn thành* nói tới `work/backlog.md` — đó là nơi dòng trạng thái
+1. Dòng đầu entry là **Phụ thuộc**: *bước N/14*, **cần xong trước**, **chặn**, **chỗ đang chặn** nếu
+   có — bản đọc nhanh, kế hoạch §6 thắng khi lệch. **Không** ghi mức: mức sống ở §6.
+2. **Không có file prompt riêng.** Entry cuối bằng khối **Nhận việc** (*Phạm vi · Nghiệm thu · Kiểm
+   chứng*) để trống có nhãn; chỉ điền khi mọi bước ở *Cần xong trước* đã `Done` (T-051).
+3. Bước 3 và bước 9 của *Cách hoàn thành* nói tới `work/backlog.md` — đó là nơi dòng trạng thái
    sống, không phải file này.
-3. Bước xong thì entry **ở lại đây** kèm một dòng *✅ Xong ngày…* ở đầu, không chuyển mục — và
-   **cùng lượt**, đổi cột *Trạng thái* của dòng đó ở bảng *Mục lục* thành **Đóng**.
-4. **Không một dòng lược đồ nào vào entry.** Tên bảng, tên cột và khoá ngoại có owner ở
+4. Bước xong thì entry **ở lại đây** và nhận khối **Bàn giao** cuối entry — kết quả, output gate,
+   phần còn thiếu kèm link. Không dòng ✅, không cột trạng thái.
+5. **Không một dòng lược đồ nào vào entry.** Tên bảng, tên cột và khoá ngoại có owner ở
    `docs/product/2-db/` từ `P2-04` (**ADR-035**); một entry mô tả mang chúng là bản chép thứ hai
    (**F-001**).
 

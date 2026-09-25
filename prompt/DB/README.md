@@ -1,7 +1,7 @@
 # Prompt DB — pha 2 · Lược đồ dữ liệu · Bánh cuốn Bà Thanh Cao Bằng
 
 Bộ prompt để chạy **pha 2** mô tả ở `master_plan/DB_master_plan_banh_cuon_ba_thanh.md`.
-Một file một bước, mã bước là **`P2-XX`** — không phải `DB-XX` (`docs/decisions.md` **ADR-049**
+Từ 2026-09-25 file prompt một-bước không còn bắt buộc (luật 1 dưới). File nào có thì một file một bước, mã bước là **`P2-XX`** — không phải `DB-XX` (`docs/decisions.md` **ADR-049**
 điểm 2: một tiền tố mang hai nghĩa là cái bẫy `work/findings.md` **F-015** · **F-021** · **F-022**
 ghi lại).
 
@@ -33,7 +33,7 @@ chứa nó, thành hai mẩu. Pha 2 gặp chuyện này nhiều hơn pha 1, vì 
 | Nguồn | Cho cái gì | Ai là nhà thật |
 |---|---|---|
 | `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` | **thứ tự · mức · đầu ra kiểm chứng được** của mười bốn bước, cổng sang pha 3 (§9) | kế hoạch — **không sở hữu sự thật nào**; §7 của nó **trỏ** sang **ADR-050** cho từ vựng năm tầng |
-| `work/backlog_DB.md` | **mô tả dài** của từng bước: vì sao có nó, hỏng thì mất gì, mười bước chạy | sổ task pha 2 — không giữ trạng thái |
+| `work/backlog_DB.md` | **hồ sơ thực thi** của từng bước: vì sao có nó, hỏng thì mất gì, mười bước chạy, và khối *Nhận việc* (Nghiệm thu · Kiểm chứng — **ADR-051**) | sổ task pha 2 — không giữ trạng thái |
 | `work/backlog.md` | **trạng thái** *Ready* / *In Progress* / *Done* của mọi bước | owner của Tasks (**ADR-002** · **ADR-036**) |
 
 Dữ kiện quán thì **không** nằm ở ba chỗ trên: `master_plan/shop-facts.md` là nhà duy nhất
@@ -42,9 +42,11 @@ chiếu** của nó ở `docs/product/1-system-design/03-bao-ve-invariant.md` (*
 
 ## Luật riêng của lane này
 
-1. **Prompt của một bước chỉ viết được khi mọi bước ở cột *Cần xong trước* của nó đã `Done`**
-   (**ADR-008**, T-051). Sớm hơn thì *Constraints* và *Verify* là những câu đoán — đúng loại lỗi
-   **F-013** · **F-017** ghi.
+1. **Từ 2026-09-25, một bước pha 2 KHÔNG cần file prompt riêng** (**ADR-051**). *Nghiệm thu* và
+   *Kiểm chứng* viết vào khối **Nhận việc** của entry ở `work/backlog_DB.md`, và chỉ viết được khi
+   mọi bước ở *Cần xong trước* đã `Done` (T-051 — sớm hơn là câu đoán, **F-013** · **F-017**).
+   Thư mục này giữ prompt **tái sử dụng được**, cộng hai file của `P2-01` · `P2-02` làm bằng chứng;
+   ba luật dưới áp cho **mọi** prompt pha 2, kể cả khối *Nhận việc* của entry.
 2. **Không prompt nào ở đây được viết một endpoint, một route hay một tên component.** Đó là đầu ra
    của pha 3 và pha 4 (**ADR-035**); ranh giới đầy đủ ở **ADR-050**.
 3. **Không prompt nào được tự hạ tầng của một mệnh đề.** Dựng không nổi ràng buộc cho một hàng

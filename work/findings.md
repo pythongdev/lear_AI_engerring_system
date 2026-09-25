@@ -3083,6 +3083,10 @@ với việc entry cùng mã có dòng `✅ Xong ngày…` / `XONG…` ở đầ
 `Xong ngày…` trỏ chứ không chép) · **F-021** (cùng hình dạng: bảng tóm tắt nói ngược thân của
 chính file mình).
 
+*2026-09-25 (T-083): lane pha 2 bỏ hẳn hình dạng này — `docs/decisions.md` **ADR-051** gỡ cột
+Trạng thái của Mục lục và dòng ✅ ở `work/backlog_DB.md`. `work/backlog_SD.md` vẫn giữ hình cũ tới
+khi thí điểm được đánh giá.*
+
 **Status:**
 Fixed
 
