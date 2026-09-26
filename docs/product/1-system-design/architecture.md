@@ -735,10 +735,11 @@ lời đáp hẹp lại lấp được đúng chỗ hở rộng nhất.
   U-055, `shop-facts.md` §8.8. Nguồn số người cho tổng quan còn ở U-060
   ([99-unknowns.md](../99-unknowns.md)).
 - **POS khai mốc đổi người ở quầy** — chủ quán chốt 2026-09-25, U-056.
-- **Vế *ai bấm* của hai cửa ghi ngoài quầy** — người đi giao (`shop-facts.md` §6.7) và chủ quán đổi
-  giá (§6.17) ⇒ `U-057`. `quality/invariants.md` **I-012** đòi *ai bấm* cho cả hai; lời `C36` không
-  phủ chúng, nên **vế *ai* của vết thao tác vẫn chưa xong**. Chủ quán trả lời “POS” ngày
-  2026-09-25; cần làm rõ nghĩa tại U-057 trước khi sửa luồng ngoài quầy.
+- **Vế *ai bấm* của hai cửa ghi ngoài quầy** — U-057 đã được chủ quán làm rõ,
+  ghi nhận 2026-09-27: **POS khai tên người thao tác; người giao thực hiện
+  thao tác** (`shop-facts.md` §8.8). Phân biệt người khai tên với người bấm
+  trong vết I-012; không lấy tên POS thay cho người giao hoặc chủ quán đang
+  thao tác. Luồng §6.7 và quyền chủ quán ở §6.17 giữ nguyên.
 
 **`YC-15` không đổi.** [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §4 viết từ **P1-07**
 (2026-09-07) rằng trực trạm phải đọc được **theo thời điểm**; lời `C36` **xác nhận** câu ấy bằng

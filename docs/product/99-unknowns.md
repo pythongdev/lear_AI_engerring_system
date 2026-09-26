@@ -15,8 +15,6 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
-  - [U-054](#u-054) — hai con số *tổng* của vế nguyên liệu cộng dồn từ mốc nào
-  - [U-057](#u-057) — vế *ai bấm* của hai cửa ghi **ngoài** quầy
   - [U-061](#u-061) — đơn tới trong khoảng mất mạng trước khi chủ quán bấm tắt
   - [U-060](#u-060) — nguồn đếm người khi ngoài quầy không ghi mốc đổi
   - [U-058](#u-058) — giảm giá khách quen: phạm vi, quyền và cách tính
@@ -133,7 +131,7 @@ nào, máy **báo** còn **POS quyết**, đã dừng thì mở lại bằng **n
 Chỗ lời ấy để hở — mục tổng quan **bày cái gì** ở vế nguyên liệu — thành `U-051`, và **chủ quán
 đóng nốt nó 2026-09-16**: bày **thời gian nhập** cùng **tổng đã dùng**, còn số thiếu thì **máy
 trừ**. Cả hai câu nay ở [Đã có lời giải](#da-co-loi-giai); chỗ lời đáp mới để hở — chữ *tổng* cộng
-dồn từ mốc nào — là **U-054** ngay dưới.
+dồn từ mốc nào — đã được U-054 làm rõ (lời bổ sung ghi nhận 2026-09-27).
 
 **Cùng ngày 2026-09-08, bước P1-10 mở `U-044` trong lúc dựng sổ rủi ro, và chủ quán đóng nó cùng
 ngày** — *trả lại bằng gì* cũng do POS quyết từng ca. Câu ấy nay ở
@@ -157,22 +155,6 @@ chưa ai hỏi** (T-078). Cả hai đều không mở vì ai quên hỏi: `U-043
 `master_plan/shop-facts.md` §8.4 ghi hai con số ấy theo **từng ngày**, nên chữ *tổng* chưa có mốc.
 Nguyên văn cả bốn lời đáp ở [Đã có lời giải](#da-co-loi-giai).
 
-<a id="u-054"></a>
-- **U-054 — hai con số *tổng* mà mục tổng quan lấy hiệu — *tổng đã nhập* trừ *tổng đã dùng* — cộng
-  dồn TỪ MỐC NÀO: từ ngày đầu tiên có sổ, từ đầu tháng, hay chỉ trong ngày hôm nay?** Lời chốt
-  `U-051` (2026-09-16) bảo máy trừ hai con số **tổng**; `master_plan/shop-facts.md` §8.4 thì ghi
-  hai con số **mua vào · đã dùng** theo **từng ngày** (`U-034`, 2026-09-06). Chữ *tổng* vì thế có
-  ít nhất ba nghĩa, và mỗi nghĩa cho một con số khác hẳn trên cùng một màn. **Vì sao không được
-  suy hộ** (`CLAUDE.md` §3.5): đây là con số chủ quán nhìn để quyết **có phải đi mua hàng không**
-  — chọn hộ cái mốc là quyết hộ nghĩa của chữ *thiếu*, đúng thứ `U-045` vừa dời ra khỏi máy
-  (2026-09-15). **Ai trả lời được:** chủ quán. **Đang chặn:** vế nguyên liệu của hàng số **7**
-  `master_plan/shop-facts.md` §8.6, và `work/backlog_AD.md` **ADM-04** · **ADM-13**. **Chưa chặn:**
-  không bước nào của pha 1 — không mục nào của pha 1 dựa vào danh mục nguyên liệu. **Cách hỏi**
-  (bài học `S-4` — hỏi về cái quán): *"Con số còn lại anh muốn cộng từ lúc nào — cộng hết từ trước
-  tới nay, từ đầu tháng, hay chỉ tính riêng trong ngày hôm nay?"*
-  *Mở 2026-09-16 · T-078 · trả lời `U-051` · `master_plan/shop-facts.md` §8.4 · §8.6.*
-  **Đã nhận một phần 2026-09-25, chủ quán (T-094):** “chủ quán nhập”. Cần xác định chủ quán nhập mốc bắt đầu cộng dồn hay nhập trực tiếp hai số tổng.
-
 **Ngày 2026-09-20, chủ quán trả lời `C36` và lời đáp để lộ BA vế chưa ai hỏi** (ADM-53 hỏi,
 **ADM-21** chuyển lời về owner trong cùng ngày). Cả ba đều không mở vì ai quên hỏi: câu `C36` hỏi
 về **người đứng quầy**, và lời đáp — *"Có — ghi cả mốc đổi, ai vào ai ra lúc mấy giờ"* — trả lời
@@ -180,25 +162,6 @@ về **người đứng quầy**, và lời đáp — *"Có — ghi cả mốc �
 §8.7 chốt mức 1 cho **năm** trạm, §8.6 hàng 6 hỏi **bao nhiêu người đang làm**, và
 `quality/invariants.md` **I-012** đòi *ai bấm* ở **hai cửa ghi ngoài quầy**. Nguyên văn lời đáp và
 phạm vi của nó ở `master_plan/shop-facts.md` **§8.8**.
-
-<a id="u-057"></a>
-- **U-057 — hai cửa ghi NGOÀI quầy lấy tên người từ đâu: người đi giao bấm *đã giao + đã thu tiền*
-  tại chỗ khách, và chủ quán đổi giá / đổi thành phần suất trên mặt quản trị?**
-  `quality/invariants.md` **I-012** đòi mọi thao tác chạm tiền để lại vết có đủ *ai bấm*, và chính
-  I-012 chốt hai ca này nằm **ngoài** cửa POS ở quầy (`master_plan/shop-facts.md` §6.7 · §6.17).
-  Lời chốt `C36` (2026-09-20, **§8.8**) chỉ cho biết ai đang đứng **quầy**, nên hai cửa kia vẫn
-  không có nguồn cho vế *ai*. **Vì sao không được suy hộ** (`CLAUDE.md` §3.5): với người đi giao,
-  §3 chốt POS **chỉ định từng lần** và không lời nào nói máy có ghi lại lần chỉ định ấy không — lấy
-  cái vết ra từ một quyết định miệng là bịa; với chủ quán, đường ra đụng vào một luật đã chốt, vì
-  gán tên theo **chức vụ** là đúng thứ §4 của `docs/product/1-system-design/architecture.md` cấm.
-  **Ai trả lời được:** chủ quán. **Đang chặn:** vế *ai* của `work/backlog_AD.md` **ADM-50** (vết
-  thao tác), và phần *Kịch bản phủ* của **I-012** ở hai ca ngoài quầy. **Chưa chặn:** mọi thao tác
-  đi qua POS ở quầy — §8.8 đã đỡ. **Cách hỏi** (bài học `S-4` — hỏi về cái quán): *"Lúc người đi
-  giao bấm đã thu tiền ở nhà khách, và lúc anh tự sửa giá ở nhà, anh có muốn máy ghi lại đó là ai
-  bấm không — hay chỉ cần biết là 'người đi giao' và 'chủ quán' là đủ?"*
-  *Mở 2026-09-20 · ADM-21 · trả lời `C36` · `quality/invariants.md` **I-012** ·
-  `master_plan/shop-facts.md` **§8.8** · §6.7 · §6.17.*
-  **Đã nhận một phần 2026-09-25, chủ quán (T-094):** “POs”. Cần xác định POS khai tên người thực sự thao tác, hay các thao tác ngoài quầy chuyển về POS; chưa tự đổi luồng giao/thu tiền hoặc quyền sửa giá.
 
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
@@ -223,6 +186,21 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Lời bổ sung của chủ quán, ghi nhận 2026-09-27 (T-098):**
+
+<a id="u-054"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-054 — Hai số tổng nguyên liệu cộng dồn từ mốc nào~~ | “từ ngày mua sản phẩm”. Tổng đã nhập và tổng đã dùng cộng dồn từ ngày mua sản phẩm; lời này làm rõ câu “chủ quán nhập” trước đó. Không tự suy quản lý lô hay quy tắc đặt lại khi mua thêm. | `master_plan/shop-facts.md` §8.4 · §8.6 |
+
+<a id="u-057"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-057 — Hai cửa ghi ngoài quầy lấy tên người từ đâu~~ | “pos khai tên , người giao thực hiện thao tác.” POS khai tên người thao tác; người giao tự bấm đã giao + đã thu tiền. Việc khai tên không chuyển các thao tác ngoài quầy về POS; quyền chủ quán đổi giá/thành phần ở §6.17 giữ nguyên. | `master_plan/shop-facts.md` §8.8 · §6.7 · §6.17 |
+
 
 **Chủ quán trả lời 2026-09-25 (T-094):**
 

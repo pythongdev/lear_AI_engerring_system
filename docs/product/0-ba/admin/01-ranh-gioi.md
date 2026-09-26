@@ -79,8 +79,9 @@ quả về **hành vi** — thứ mục này sở hữu:
   việc của mảng con người; không đơn nào, không phiên bàn nào, không nút nào ở §2–§6 đổi vì nó.
 - **Bổ sung chủ quán 2026-09-25:** bốn trạm ngoài quầy không ghi mốc đổi giờ
   (U-055); **POS khai mốc ở quầy** (U-056). Nguồn số người trên tổng quan còn
-  ở U-060. Hai cửa ghi ngoài quầy có lời “POS” nhưng nghĩa cần làm rõ ở U-057
-  ([99-unknowns.md](../../99-unknowns.md)); không tự chuyển thao tác về quầy.
+  ở U-060. U-057 đã có lời bổ sung, ghi nhận 2026-09-27: POS khai tên người
+  thao tác, người giao thực hiện thao tác; xem `shop-facts.md` §8.8. Luồng
+  ngoài quầy và quyền sửa giá của chủ quán giữ nguyên.
 
 Mảng **tài chính** vẫn chưa có lời chốt mức sâu tương ứng.
 

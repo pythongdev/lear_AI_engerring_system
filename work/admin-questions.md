@@ -104,7 +104,7 @@ văn lời chủ quán nằm ở owner bên dưới, một chỗ, không có b�
 | ~~`A7`~~ | **11 bàn** — đúng con số §1 đã có từ 2026-08-30 | §1 · **§6.25** · mở U-040, đóng 2026-09-06: 4 chỗ/bàn, đã đánh số — và số bàn đổi **11 → 15** trong cùng lời đáp; **U-042 đóng nốt 2026-09-16**: bốn bàn mới đánh số **nối tiếp 12–15** ⇒ danh sách bàn là **1…15** |
 | ~~`A8`~~ | **có** khách đứng chờ, quán xếp hàng chờ | **§6.25** · mở U-039, đóng 2026-09-06: **không**, POS tự điều phối |
 | ~~`A9`~~ | **cả hai** — khách tự chọn, đôi khi nhân viên xếp | **§6.25** |
-| ~~`A10`~~ | **sáu con số** cho mục tổng quan của chủ quán | **§8.6** · mở U-041, đóng 2026-09-08 qua **ba lượt**: *"còn thiếu gì"* là **cả ba** đường — nguyên liệu (Danh mục §8.4) · **người** (bảng phân vai §3) · món (§4.9) ⇒ §8.6 nay **bảy** hàng; *máy biết bằng cách nào*: nguyên liệu **đóng 2026-09-15** — máy không biết, chủ quán tự đọc hai con số rồi tự kết luận (**U-045**; mục tổng quan bày gì **đóng 2026-09-16** — **U-051**: thời gian nhập · tổng đã dùng · số thiếu máy tự trừ, còn mốc cộng dồn là **U-054**), người **C36** — **đã có lời và về owner 2026-09-20** (**§8.8**: mốc đổi người **ở quầy**), U-055/U-056 đã có lời 2026-09-25 ở §8.8; nguồn số người còn ở **U-060**; (**U-049** đóng 2026-09-08: người đi giao là một trong bốn vai, POS chỉ định; **U-050** đóng 2026-09-15: POS gánh trạm bị bỏ trống, khoảng trống ấy **không** là thiếu người — **U-052 đóng 2026-09-16**: người đứng quầy **không** đi giao, chữ *"bất cứ ai"* hẹp lại còn ba vai) |
+| ~~`A10`~~ | **sáu con số** cho mục tổng quan của chủ quán | **§8.6** · mở U-041, đóng 2026-09-08 qua **ba lượt**: *"còn thiếu gì"* là **cả ba** đường — nguyên liệu (Danh mục §8.4) · **người** (bảng phân vai §3) · món (§4.9) ⇒ §8.6 nay **bảy** hàng; *máy biết bằng cách nào*: nguyên liệu **đóng 2026-09-15** — máy không biết, chủ quán tự đọc hai con số rồi tự kết luận (**U-045**; mục tổng quan bày gì **đóng 2026-09-16** — **U-051**: thời gian nhập · tổng đã dùng · số thiếu máy tự trừ, mốc cộng dồn đã có lời U-054, ghi nhận 2026-09-27 ở §8.4), người **C36** — **đã có lời và về owner 2026-09-20** (**§8.8**: mốc đổi người **ở quầy**), U-055/U-056 đã có lời 2026-09-25 ở §8.8; nguồn số người còn ở **U-060**; (**U-049** đóng 2026-09-08: người đi giao là một trong bốn vai, POS chỉ định; **U-050** đóng 2026-09-15: POS gánh trạm bị bỏ trống, khoảng trống ấy **không** là thiếu người — **U-052 đóng 2026-09-16**: người đứng quầy **không** đi giao, chữ *"bất cứ ai"* hẹp lại còn ba vai) |
 
 ⚠️ **Bốn vế chủ quán KHÔNG chạm tới đã thành câu hỏi có mã, không thành suy luận** —
 **U-038** · **U-039** · **U-040** · **U-041** ở `docs/product/99-unknowns.md`. *Cả bốn nay đã có
@@ -160,8 +160,8 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > luận. Ghi ở `master_plan/shop-facts.md` §8.4. ✅ *Chủ quán đọc ở màn nào, con số nào* cũng
 > **đã có lời** — chủ quán chốt **2026-09-16** (`U-051`, đóng): mục tổng quan bày **thời gian
 > nhập** · **tổng đã dùng** · **số thiếu = tổng đã nhập − tổng đã dùng** (máy trừ hộ, vẫn không
-> kết luận). ⚠️ Chỗ còn hở: hai con số *tổng* ấy cộng dồn **từ mốc nào** ⇒
-> `docs/product/99-unknowns.md` **U-054**.
+> kết luận). Mốc cộng dồn **đã có lời U-054**, ghi nhận 2026-09-27 (T-098);
+> đọc `master_plan/shop-facts.md` §8.4.
 
 **B22.** Có muốn biết **giá vốn một suất bánh cuốn** không? *(Trả lời "có" là **mở lại Đ-3**: phải chốt định lượng từng thành phần cho từng suất — thứ hôm nay chưa có dữ kiện nào.)*
 > **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-090)** — quyết định về giá vốn một suất tại `master_plan/shop-facts.md` §8.4.
@@ -231,8 +231,8 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > (`work/findings.md` **F-001**).
 >
 > **Cập nhật 2026-09-25 (T-094):** U-055/U-056 đã có lời tại
-> `master_plan/shop-facts.md` §8.8; nguồn số người còn ở U-060. U-057 đã nhận
-> “POS”, còn làm rõ nghĩa tại `docs/product/99-unknowns.md`.
+> `master_plan/shop-facts.md` §8.8; nguồn số người còn ở U-060. U-057 đã được
+> làm rõ, ghi nhận 2026-09-27 (T-098); lời bổ sung tại shop-facts §8.8.
 
 ### D. Sản phẩm
 *Nhóm này mở khoá ADM-30 → ADM-33.*
