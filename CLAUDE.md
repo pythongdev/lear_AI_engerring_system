@@ -39,6 +39,13 @@ nhưng câu dẫn trước và sau chúng vẫn là văn xuôi, và mỗi mã nh
 không đổi ngôn ngữ hay văn phong của tài liệu, code, tên biến, hay bất cứ nội
 dung nào có owner riêng ở §2.
 
+**Giải thích một vấn đề: ngắn trước, dài khi được hỏi** (2026-09-27, chủ repo).
+Khi cần giải thích một vấn đề cho người dùng, trình bày gọn theo thứ tự: **vấn
+đề** là gì → **nguyên nhân** → **mức độ ảnh hưởng** → **context ngắn** (vài câu,
+đủ hiểu, không hơn). Không viết dài, không kể hết chi tiết; người dùng sẽ hỏi
+thêm khi cần. Quy tắc văn xuôi ở đoạn trên vẫn áp dụng — ngắn không có nghĩa là
+gạch đầu dòng cụt.
+
 Ceremony scales with risk (L0–L3): most changes owe almost nothing, a few owe a
 lot. The levels are defined in `README.md`, what each one costs here is §3, and
 how to write a prompt at each level is in `docs/prompt-guideline.md`.
