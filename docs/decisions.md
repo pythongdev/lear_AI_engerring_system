@@ -3045,7 +3045,7 @@ buộc không có dấu hiệu thì hoặc được giữ mãi vì không ai dá
 - **Cách chạy** ở chỗ duy nhất ấy: theo dõi, khởi động lại, triển khai — pha 5.
 - **Cửa sổ thời gian** để gọi là *quán đang mất kết nối* — `docs/product/99-unknowns.md` **U-043**.
   *Đã có lời chủ quán **2026-09-16**: không có cửa sổ nào — máy **báo**, **POS quyết**, mở lại bằng
-  **nút**; lời ấy lật luật 1 của §3 mà ADR này dựng ⇒ **ADR-047**, U-053 đã đóng 2026-09-25: chủ quán dùng 5G bấm tắt; khoảng trước lúc bấm ở U-061.*
+  **nút**; lời ấy lật luật 1 của §3 mà ADR này dựng ⇒ **ADR-047**, U-053 đã đóng 2026-09-25: chủ quán dùng 5G bấm tắt; U-061 đã đóng 2026-09-27: tuân I-008 cả trước lúc bấm.*
 - **Câu chữ dòng thông báo** cho khách khi ba kênh tự bấm dừng — chưa chốt (`quality/invariants.md`
   **I-008**), hỏi khi dựng màn ở pha 4.
 
@@ -3143,7 +3143,7 @@ lời chủ quán**, và ADR này ghi lại chuyện xử chúng thế nào.
 5. **Chỗ lý do cũ để lại thành một câu hỏi có tên, không thành một luật tự chọn.** Ca quán **mất
    mạng hẳn** — POS không nhìn thấy thông báo và không bấm được gì — là đúng ca `I-008` sinh ra để
    chặn. **Cập nhật 2026-09-25:** U-053 đã có lời — chủ quán dùng 5G bấm tắt
-   (`shop-facts.md` §6.11); khoảng trước lúc bấm còn ở U-061.
+   (`shop-facts.md` §6.11); U-061 đã đóng 2026-09-27: tuân I-008 cả trước lúc bấm.
 
 **Rejected alternatives:**
 
@@ -3158,7 +3158,7 @@ lời chủ quán**, và ADR này ghi lại chuyện xử chúng thế nào.
   đang được đọc như thiết kế đã chốt.
 
 **Chỗ ADR này KHÔNG chốt:**
-- **Ai dừng khi quán mất mạng hẳn** — U-053 đã đóng 2026-09-25; chủ quán dùng 5G bấm tắt. Khoảng trước lúc bấm còn ở U-061.
+- **Ai dừng khi quán mất mạng hẳn** — U-053 đã đóng 2026-09-25; chủ quán dùng 5G bấm tắt. U-061 đã đóng 2026-09-27: tuân I-008 cả trước lúc bấm.
 - **Thông báo ở quầy trông thế nào, POS bấm ở đâu** — pha 4.
 - **Máy dựa vào dấu hiệu nào để nói *đang mất kết nối*** — luật 2 của §3 (chạy trên chính đường
   việc và đơn đang đi) đứng nguyên; con số chu kỳ vẫn là **pha 3**.
@@ -3168,7 +3168,7 @@ lời chủ quán**, và ADR này ghi lại chuyện xử chúng thế nào.
 `docs/product/1-system-design/03-bao-ve-invariant.md` §3 (bảng *bước sau*) ·
 `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §4 · §7 · §8 ·
 `quality/invariants.md` **I-008** · `master_plan/shop-facts.md` §6.11 · §7.1 ·
-`docs/product/99-unknowns.md` (**U-043** đóng, **U-053** đóng 2026-09-25; khoảng trước lúc bấm là U-061).
+`docs/product/99-unknowns.md` (**U-043** đóng, **U-053** đóng 2026-09-25; U-061 đã đóng 2026-09-27: tuân I-008 cả trước lúc bấm).
 
 ---
 

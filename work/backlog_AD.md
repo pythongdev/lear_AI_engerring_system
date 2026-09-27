@@ -6,8 +6,8 @@
 > **Bổ sung 2026-09-27 (T-098):** U-054/U-057 đã đóng; lời ở shop-facts
 > §8.4/§8.8. ADM-04 còn U-060 và F52/F53; ADM-13 hết vướng mốc cộng dồn,
 > còn đặc tả/thi công từ dữ liệu nền ADM-12. ADM-50 hết vướng nguồn tên người thao tác. ADM-32 hết vướng mâu thuẫn D42,
-> còn danh mục/phạm vi món mới. Quyền giảm giá thuộc chủ quán; U-058 còn
-> cách tính/phạm vi. Mã hỏi còn lại tra `docs/product/99-unknowns.md`.
+> còn danh mục/phạm vi món mới. Chủ quán ghi tên khách và nhập số tiền giảm cả đơn (2026-09-27); U-058 còn
+> phạm vi bản đầu, giới hạn/lý do. Mã hỏi còn lại tra `docs/product/99-unknowns.md`.
 
 # Backlog — mảng QUẢN TRỊ (admin)
 
@@ -263,7 +263,7 @@ hàng thì lấy lại số bằng `grep -n` ngay lượt ấy, đừng chép t�
 | [ADM-01](#adm-01) | ca bán | A | 2 | *hết chặn* — chờ thi công pha 2–4 |
 | [ADM-02](#adm-02) | thứ tự bưng | A | 2 | *hết chặn* — chờ thi công pha 2–4 |
 | [ADM-03](#adm-03) | sức chứa | A | 2 | *hết chặn* (đóng 2026-09-06: [`U-039`](../docs/product/99-unknowns.md#L296) [`U-040`](../docs/product/99-unknowns.md#L297)) |
-| [ADM-04](#adm-04) | tổng quan buổi bán | A | 1 | U-054 đã đóng (shop-facts §8.4); còn U-060 (nguồn số người sau lời U-055) · F52 · F53; owner shop-facts §8.4/§8.6/§8.8 |
+| [ADM-04](#adm-04) | tổng quan buổi bán | A | 1 | U-054 đã đóng (shop-facts §8.4); còn U-060 (còn nguồn đếm người; đi giao lúc vắng không thiếu người đã chốt 2026-09-27) · F52 · F53; owner shop-facts §8.4/§8.6/§8.8 |
 | [ADM-10](#adm-10) | danh mục nguyên liệu | B | 1 | [`B11`](admin-questions.md#L124) [`B12`](admin-questions.md#L127) |
 | [ADM-11](#adm-11) | phiếu nhập hàng | B | 1 | [`B13`](admin-questions.md#L133)…[`B17`](admin-questions.md#L145) |
 | [ADM-12](#adm-12) | hao hụt / đồ chưa dùng hết | B | 1 | `B19` (phân loại để được/không để được); B18/B20 đã về shop-facts §8.4 |
@@ -271,7 +271,7 @@ hàng thì lấy lại số bằng `grep -n` ngay lượt ấy, đừng chép t�
 | [ADM-14](#adm-14) | nối nút tạm dừng | B | 1 | [**ADM-13**](#adm-13) — [`B21`](admin-questions.md#L160) **đã có lời 2026-09-15**: máy không phát tín hiệu *sắp hết*, nên chỉ còn vế **người nào bấm** |
 | [ADM-15](#adm-15) | công nợ nhà cung cấp | B | 1 | [`B16`](admin-questions.md#L142) + [**ADM-11**](#adm-11) |
 | [ADM-20](#adm-20) | hồ sơ nhân viên | C | 1 | `C23` — *[**Đ-4**] hết chặn: về owner 2026-09-20 (ADM-53), đọc ở `master_plan/shop-facts.md` §8.7* |
-| ~~[ADM-21](#adm-21)~~ | ai đang trực trạm | C | **3** | ✅ `Done` 2026-09-20; bổ sung U-055/U-056 ngày 2026-09-25 ở shop-facts §8.8. Còn U-060 (nguồn số người); U-057 đã đóng, xem shop-facts §8.8. |
+| ~~[ADM-21](#adm-21)~~ | ai đang trực trạm | C | **3** | ✅ `Done` 2026-09-20; bổ sung U-055/U-056 ngày 2026-09-25 ở shop-facts §8.8. U-060 đã chốt đi giao lúc vắng không thiếu người; còn nguồn đếm người; U-057 đã đóng, xem shop-facts §8.8. |
 | [ADM-22](#adm-22) | chấm công | C | 1 | phần còn thiếu `C30` `C32` — *[**Đ-4**] hết chặn: về owner 2026-09-20 (ADM-53)* |
 | [ADM-23](#adm-23) | bảng lương | C | 1 | phần còn thiếu `C26` `C27` `C28` `C33` + [**ADM-22**](#adm-22) — *[**Đ-4**] hết chặn: về owner 2026-09-20 (ADM-53)* |
 | [ADM-24](#adm-24) | quyền xem lương | C | 1 | [`F55`](admin-questions.md#L298) + [**ADM-23**](#adm-23) |
@@ -531,7 +531,8 @@ trong buổi**, và không bao giờ được bày như thể đã đối soát 
   trả lời *"có"* thì việc này kéo theo **ADM-51** (ai được xem gì) và không còn là L1.
 
 **Cập nhật 2026-09-25:** U-055 đã có lời: bốn trạm ngoài quầy không ghi mốc
-đổi giờ. Nguồn số người và vế thiếu người của tổng quan chuyển sang **U-060**;
+đổi giờ. Nguồn số người của tổng quan còn ở **U-060**; chủ quán bổ sung 2026-09-27:
+chỉ một người đi giao lúc vắng, người còn lại đủ phục vụ; không coi chuyến giao ấy là thiếu người;
 không lấy việc đóng U-055 làm bằng chứng đã có đủ nguồn. U-054 đã được
 làm rõ và đóng; đọc shop-facts §8.4/§8.6/§8.8.
 
@@ -1046,7 +1047,7 @@ không còn chờ câu này. D39 ghi nhịp thực tế, chưa trả lời thờ
 **Owner:** cấu tạo giá ở shop-facts §4.6; xem trước và giữ giá đơn cũ ở
 `docs/product/1-system-design/architecture.md` §6.1; đổi giữa buổi và khoá từng
 dòng ở ADR-023; quyền ở shop-facts §8.9. Vết ai đổi trên mặt quản trị
-đã có nguồn từ U-057 (ghi nhận 2026-09-27), shop-facts §8.8. Quyền giảm giá riêng cho khách đã chốt là chủ quán (U-058, 2026-09-25); còn cách tính/phạm vi ở U-058.
+đã có nguồn từ U-057 (ghi nhận 2026-09-27), shop-facts §8.8. Chủ quán ghi tên khách và nhập số tiền giảm cả đơn (U-058, bổ sung 2026-09-27); còn phạm vi bản đầu, giới hạn/lý do ở U-058.
 
 **Acceptance · Verify:** lời D40 nằm ở owner, phần thi công đi theo pha nhận nó.
 

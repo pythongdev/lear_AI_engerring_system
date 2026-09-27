@@ -142,9 +142,11 @@ thể là bất cứ ai pos sẽ chỉ định."*
     khác"* ở trên vẫn đúng nguyên chữ. Quán **không** dừng trạm nào, và chủ quán **không** phải đứng
     vào.
   - ⇒ **Khoảng trống do đi giao không tính vào số 7 của §8.6** (*đang thiếu người hay không*).
-    Lý do chủ quán đưa ra: quán **chỉ cho đi giao lúc vắng**. Đó là **lý do**, không phải một luật
-    cấm giao lúc đông — không lời nào nói máy chặn hay cảnh báo một chuyến giao lúc quán đông, nên
-    đừng viết luật ấy (`work/findings.md` **F-004**).
+    **Bổ sung chủ quán 2026-09-27 (U-060, T-099):** “chỉ khi nào quán vằng
+    thì mới đi ship 1 người đi ship sô người conf lại vẫn để để phục vụ.”
+    Chuẩn hoá: **chỉ khi quán vắng mới cho một người đi giao; số người còn
+    lại vẫn đủ phục vụ**. Đây là điều kiện vận hành chủ quán xác nhận;
+    chưa có ngưỡng máy tự đo đông/vắng hay luật tự chặn chuyến giao.
   - ⇒ **NGƯỜI ĐỨNG QUẦY KHÔNG BAO GIỜ ĐI GIAO — chủ quán chốt 2026-09-16, trả lời `U-052`.**
     Nguyên văn: *"người đứng quầy khônng đi giao"*. Câu này **hẹp** chữ *"bất cứ ai"* ngay trên lại
     còn **BA vai**: `trang_banh` · `gap_banh` · `canh`+`don_ban`. ⇒ trạm `quay` **không bao giờ** là
@@ -303,9 +305,9 @@ khác bảng giá §4.2 và bảng phụ thu §4.4 ở đúng chỗ đó: hai b�
 
 ### 4.6 Chín quy tắc cấu tạo giá
 
-**Cập nhật 2026-09-25:** chủ quán được giảm giá (D41/U-058), còn cách tính
-và phạm vi ở `docs/product/99-unknowns.md` U-058. D42 đã sửa: có combo, xem
-§8.9. Chưa dùng công thức dưới đây như hợp đồng đầy đủ cho giảm giá.
+**Cập nhật 2026-09-27:** chủ quán ghi tên khách và nhập số tiền giảm cả đơn
+(D41/U-058, §8.9); phạm vi bản đầu và giới hạn còn ở `docs/product/99-unknowns.md`
+U-058. D42 đã sửa: có combo, xem §8.9. Chưa dùng công thức dưới đây như hợp đồng đầy đủ cho giảm giá.
 
 1. **Giá một suất bán = TỔNG giá các thành phần của suất** (§4.5 cho thành phần, §4.2 cho giá từng
    thành phần). Đây là luật gốc, tám luật dưới đều là hệ quả.
@@ -915,9 +917,12 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
           hình dạng *POS quyết theo tình hình thực tế* đã gặp ở §5.4 · §6.4 · §6.24.
         - **Ca quán mất mạng hẳn — chủ quán chốt 2026-09-25 (U-053):**
           “chủ quán dùng mạng 5g bấm tắt”. Chủ quán dùng 5G để bấm dừng ba
-          kênh khách tự bấm. Luật mở lại bằng nút ở trên giữ nguyên. Khoảng từ
-          mất mạng tới lúc bấm chưa được lời này xác định: **U-061** ở
-          `docs/product/99-unknowns.md`, đối chiếu bảo đảm I-008.
+          kênh khách tự bấm. Luật mở lại bằng nút ở trên giữ nguyên.
+        - **U-061 — chủ quán chốt 2026-09-27:** “follow `quality/invariants.md`
+          I-008.” **Ba kênh khách tự bấm không được tạo đơn khi quán không
+          nhìn thấy đơn mới, kể cả trước khi chủ quán kịp bấm tắt qua 5G.**
+          Thao tác tay không thay điều kiện nhận đơn; hệ thống phải bảo vệ
+          I-008 độc lập với việc chờ người bấm. Không tự chọn thời gian phát hiện.
       - **Máy làm sao biết quán đang mất kết nối** là **cơ chế**, không phải dữ kiện quán: nó thuộc
         `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6 bước **P1-08** và pha 3.
 12. **Bốn ranh giới đã chốt — đây là quyết định, không phải chỗ trống chờ ai điền:**
@@ -1358,7 +1363,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-09-08 | **KHÔNG suất nào bưng kèm canh; số bát bếp bưng đúng bằng lựa chọn của khách** (đóng **U-048**, mở cùng ngày) — nguyên văn *"mỗi suất bếp sẽ không bưng kèm theo canh. bếp bưng canh như nào dựa vào lựa chọn thực tế của khách"* ⇒ phần kèm sẵn là **0 bát**, nên con số ở dòng *canh bánh cuốn* là **TỔNG số bát**, không phải phần thêm; không chọn ⇒ **0 bát** và đơn ấy không có việc *canh* nào xuống bếp. Chữ *"bưng kèm sẵn"* của lời chốt `U-046` cùng ngày vì thế chỉ còn nghĩa **không tính tiền** — ô 0đ §4.2 · §4.3 đứng nguyên | §4.2 · §4.5 · §4.9 · §5.3 |
 | 2026-09-08 | **Người ĐI GIAO là một trong BỐN VAI của §3, không phải người thứ năm — và POS chỉ định ai đi từng lần** (đóng **U-049**) — nguyên văn *"1 trong bốn vai trên có thể là bất cứ ai pos sẽ chỉ định."* ⇒ con số người của quán đóng lại ở **bốn vai + chủ quán**; *đi giao* không thành trạm thứ sáu, không thêm dòng nào vào bảng ca/bảng lương. *Lúc người ấy rời quán thì **trạm của họ ai gánh** — lời chốt không nói ⇒ **U-050*** | **§3** · §6.7 · §8.6 |
 | 2026-09-08 | **Hoàn tiền trả lại bằng gì cũng không có luật cứng — POS quyết từng ca** (đóng **U-044**) — nguyên văn *"tuỳ vào tình hình thực tế, pos quyết định"* ⇒ khách đã chuyển khoản có thể được hoàn bằng **tiền mặt lấy trong két** hoặc **chuyển khoản lại**, và ngược lại. *Vết hoàn tiền phải ghi thêm **phương thức trả lại** là suy ra từ §6.10, không phải lời chủ quán*; hệ quả cho phép trừ tiền két: **I-021** viết lại, **ADR-046** | **§6.4** · §8.5 |
-| 2026-09-15 | **Lúc một vai rời quán đi giao, NGƯỜI ĐỨNG QUẦY (POS) gánh trạm của người ấy — và khoảng trống ấy KHÔNG là thiếu người** (đóng **U-050**) — nguyên văn *"pos gánh, không thiếu người vì đi ship luc quán vắng."* ⇒ ba trạm riêng có **một** ngoại lệ: `quay` kiêm trạm bị bỏ trống trong lúc có người đi giao; khoảng trống ấy không tính vào số 7 của §8.6 — *"lúc quán vắng"* là lý do, không phải luật cấm giao lúc đông. *Khi chính người đứng quầy đi giao thì ai gánh `quay` — lời chốt va lời `U-049` (*"bất cứ ai"*) ⇒ **U-052*** | **§3** · §8.6 |
+| 2026-09-15 | **Lúc một vai rời quán đi giao, NGƯỜI ĐỨNG QUẦY (POS) gánh trạm của người ấy — và khoảng trống ấy KHÔNG là thiếu người** (đóng **U-050**) — nguyên văn *"pos gánh, không thiếu người vì đi ship luc quán vắng."* ⇒ ba trạm riêng có **một** ngoại lệ: `quay` kiêm trạm bị bỏ trống trong lúc có người đi giao; khoảng trống ấy không tính vào số 7 của §8.6 — cách đọc lúc ấy coi “lúc quán vắng” là lý do; chủ quán bổ sung điều kiện chỉ đi giao lúc vắng ngày 2026-09-27 (U-060), xem §3. *Khi chính người đứng quầy đi giao thì ai gánh `quay` — lời chốt va lời `U-049` (*"bất cứ ai"*) ⇒ **U-052*** | **§3** · §8.6 |
 | 2026-09-15 | **KHÔNG có ngưỡng nhắc sắp hết: chủ quán tự đọc hai con số mua vào · đã dùng rồi tự kết luận thiếu hay đủ** (đóng **U-045**) — nguyên văn *"chủ quán tự đọc rôi đưa ra kết luận"* ⇒ máy không kết luận, không nhắc; danh mục §8.4 không mọc cột *ngưỡng*; §8.4 đứng nguyên ở mức sổ ghi tay điện tử. *Mục tổng quan bày gì cho vế nguyên liệu thì lời ấy không nói ⇒ **U-051**; đơn vị tính vẫn ở câu **B12*** | **§8.4** · §8.6 |
 | 2026-09-16 | **Bốn bàn mới đánh số NỐI TIẾP 12 · 13 · 14 · 15 ⇒ danh sách bàn là 1…15** (đóng **U-042**, vế cuối) — nguyên văn *"trả lời nối tiếp 12–15"*. ⇒ mọi bàn gọi tên được bằng đúng số của nó: vế **ADR-027** cần (*chỉ ghép sang bàn trống*) và `work/backlog_AD.md` **ADM-03** hết hở. *Không lời nào nói bàn có tên ngoài số, cũng không lời nào gắn số với vị trí ngồi* | **§1** · §6.25 |
 | 2026-09-16 | **Web ngừng nhận đơn KHÔNG do đồng hồ: máy BÁO, POS QUYẾT, mở lại bằng NÚT** (đóng **U-043**) — nguyên văn *"hiên thông báo để pos quyết định nếu dừng cần có nut mở lại"* ⇒ không có con số cửa sổ nào; hệ thống hiện thông báo ở quầy, POS quyết dừng ba kênh khách tự bấm, và đã dừng thì không tự mở lại. ⇒ lật luật 1 của `docs/product/1-system-design/05-realtime-va-du-phong.md` §3 và một câu *Verification* của **I-008** (**ADR-047**). *Lúc ấy mở U-053; đã đóng 2026-09-25, xem §6.11.* | **§6.11** · `quality/invariants.md` **I-008** |
@@ -1749,7 +1754,7 @@ nguyên liệu và con người đã có. đối với menu: tôi muốn có …
   - ⛔ **Máy biết đang thiếu người bằng cách nào thì vẫn chưa đủ** — nhưng chỗ hở đã **hẹp lại**
     ngày **2026-09-20**: câu **C36** có lời và lời ấy đã về owner (**§8.8**, qua ADM-21), nên trạm
     `quay` nay có nguồn. Bốn trạm còn lại không ghi mốc đổi giờ (chủ quán chốt 2026-09-25), và chỗ hở còn lại mang mã **`U-060`**
-    (`docs/product/99-unknowns.md`). Chừng nào `U-060` chưa có lời, số **6** và vế người của số **7** vẫn chưa đủ nguồn. (`U-052` —
+    (`docs/product/99-unknowns.md`). U-060 đã có lời một phần ngày 2026-09-27: một người đi giao lúc vắng không làm thiếu người; riêng nguồn số **6** vẫn còn cần làm rõ. (`U-052` —
     ai gánh `quay` khi chính người đứng quầy đi giao — **đã đóng 2026-09-16**: người đứng quầy
     **không** đi giao, nên ca ấy không tồn tại; nó vốn cũng không chặn số 7, vì lời `U-050` đã loại
     khoảng trống do đi giao khỏi chữ *thiếu người*, bất kể ai đi.)
@@ -1863,7 +1868,8 @@ thêm một yêu cầu nào.
 **Bổ sung của chủ quán 2026-09-25 (T-094):**
 
 - **U-055:** bốn trạm ngoài quầy không ghi mốc đổi giờ. Nguồn số người của
-  §8.6 hàng 6/7 vẫn cần làm rõ tại **U-060**.
+  §8.6 hàng 6 vẫn cần làm rõ tại **U-060**; vế đi giao không làm thiếu người
+  đã được chủ quán xác nhận lại 2026-09-27, xem §3.
 - **U-056:** nguyên văn “pos” — **POS khai mốc đổi người ở quầy**, có giờ,
   ai vào và ai ra theo luật C36.
 - **U-057:** lời đầu “POs” được chủ quán làm rõ, ghi nhận 2026-09-27 (T-098):
@@ -1888,7 +1894,7 @@ rõ bên dưới chưa đủ để chốt cách thực hiện trong phần mềm
 | D38 | Gần Tết sẽ bán thêm đặc sản vùng miền. Chưa nêu món cụ thể hoặc trả lời vế chỉ bán cuối tuần. |
 | D39 | Một năm đổi giá một lần. Chưa nêu thời điểm trong ngày; không suy thành máy chỉ cho đổi mỗi năm một lần. |
 | D40 | Chủ quán đổi giá. Đây là quyền đổi bảng giá, chưa phải quyền giảm giá riêng cho khách ở D41. |
-| D41 | Đôi khi giảm giá cho khách quen. Chủ quán trả lời U-058 ngày 2026-09-25: “chủ quán” — chủ quán được giảm giá. Cách tính và phạm vi phần mềm còn ở U-058. |
+| D41 | Đôi khi giảm giá cho khách quen. Chủ quán trả lời U-058 ngày 2026-09-25: “chủ quán” — chủ quán được giảm giá. Bổ sung 2026-09-27 (T-099): “ghi tên người tôi sẽ nhập số tiền giảm gía”; chủ quán làm rõ tên là **tên khách được giảm giá**, số tiền giảm áp dụng **cả đơn**. Chủ quán nhập số tiền giảm, không tính theo phần trăm. Phạm vi bản đầu, giới hạn và yêu cầu ghi lý do còn ở U-058. |
 | D42 | Nguyên văn: “không.” Câu hỏi gồm combo, suất trẻ em, suất lớn / nhỏ. Chủ quán sửa vế combo ngày 2026-09-25 (U-059): “có combos”. Quán có combo; không dùng lời “không” trước đó để xoá suất Đầy đủ ở §4.3–§4.9. Chưa có danh mục combo mới, thành phần hay giá mới. |
 | D43 | Menu QR cho khách cần ảnh món. Chưa chốt quyền sửa ảnh hoặc thứ tự hiển thị. |
 

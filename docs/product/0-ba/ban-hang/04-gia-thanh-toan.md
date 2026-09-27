@@ -48,8 +48,11 @@ tiền**, và thiếu đúng phần bánh mà bếp đã thật sự làm ra. C�
 ### 4.2 Giá do hệ thống xác định, khách không bao giờ đặt được giá
 
 **2026-09-25 — D41 mở lại vế giảm giá:** dữ kiện ở `master_plan/shop-facts.md`
-§8.9; quyền giảm giá thuộc chủ quán (2026-09-25); cơ chế còn ở U-058 (`docs/product/99-unknowns.md`). Các luật
-dưới đây chưa đặc tả giảm giá, không dùng chúng để phủ nhận lời chủ quán.
+§8.9. **Chủ quán bổ sung 2026-09-27 (U-058): ghi tên khách được giảm giá và
+nhập số tiền giảm cho cả đơn.** Quyền nhập khoản giảm thuộc chủ quán; không
+phải phần trăm hay giảm từng món. Các luật giá dưới đây tính giá trước giảm;
+chưa phải hợp đồng đầy đủ cho khoản giảm. Phạm vi bản đầu, giới hạn số tiền
+và yêu cầu ghi lý do còn ở U-058 (`docs/product/99-unknowns.md`).
 
 - **Giá luôn do hệ thống tính lại từ bảng giá**, từ đúng hai thứ: món khách chọn, và tuỳ chọn
   khách chọn kèm. Khách **không bao giờ** gửi giá lên; giá do khách gửi tới thì bỏ, không dùng
@@ -357,8 +360,9 @@ và cách bày bảng đối soát, **không** phải dữ liệu quá khứ —
 - **Giảm giá và khuyến mãi.** Công thức giá ở `shop-facts.md` §4.1 không có số hạng nào cho chúng,
   và mười một tổ hợp ở §4.8 là hợp đồng đầy đủ — trước D41, MVP được đặc tả **không** có giảm giá. **Ngày 2026-09-25,
   chủ quán trả lời D41 đã mở lại vế này** (`shop-facts.md` §8.9); phạm vi đưa vào
-  phần mềm và luật thực hiện chờ **U-058**, không còn coi việc loại giảm giá là
-  kết luận đã chốt.
+  phần mềm còn ở **U-058**. Chủ quán đã chốt 2026-09-27: ghi tên khách và
+  nhập số tiền giảm cho cả đơn; không hỏi lại quyền hoặc cách nhập khoản giảm.
+  Giới hạn và yêu cầu ghi lý do chưa có lời.
 - **Số tài khoản ngân hàng, và mọi chuyện tích hợp.** Số tài khoản do chủ quán nhập trong phần
   quản trị, không cứng trong sản phẩm (`shop-facts.md` §1, §6.12).
 - **Cách tính toán được viết ra sao, và tiền được lưu ở đâu.** Đó là việc của

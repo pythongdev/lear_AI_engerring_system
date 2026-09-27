@@ -15,9 +15,8 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
-  - [U-061](#u-061) — đơn tới trong khoảng mất mạng trước khi chủ quán bấm tắt
   - [U-060](#u-060) — nguồn đếm người khi ngoài quầy không ghi mốc đổi
-  - [U-058](#u-058) — giảm giá khách quen: phạm vi, quyền và cách tính
+  - [U-058](#u-058) — giảm giá cả đơn nhập tay: phạm vi bản đầu và giới hạn
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
 - [Đã có lời giải](#da-co-loi-giai) — câu đã đóng, xếp theo lượt trả lời của chủ quán, kèm nguyên
@@ -36,33 +35,25 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 <a id="dang-mo"></a>
 ### Đang mở
 
-<a id="u-061"></a>
-- **U-061 — Trong khoảng quán mất mạng đến khi chủ quán dùng 5G bấm tắt,
-  ba kênh khách tự bấm có tiếp tục nhận đơn không?** Mở 2026-09-25, T-094,
-  từ lời U-053: đã rõ ai bấm và dùng mạng nào, chưa rõ khoảng trước khi bấm.
-  `quality/invariants.md` I-008 đang đòi không tạo đơn trong toàn bộ khoảng
-  quán không nhìn thấy đơn; thao tác tay chưa chứng minh được bảo đảm ấy.
-  **Chủ quán** chốt; chặn tiêu chí khoảng mất mạng của I-008 và cơ chế pha 3.
-  Không tự thêm tự động dừng, cũng không tự cho phép đơn lọt trong khoảng này.
-
 <a id="u-060"></a>
-- **U-060 — Không ghi mốc đổi người ở bốn trạm ngoài quầy thì số người đang làm
-  và vế thiếu người trên tổng quan lấy nguồn nào?** Mở 2026-09-25, T-094, sau
-  lời đáp U-055. Chủ quán đã chốt không ghi mốc đổi giờ ngoài quầy; điều đó chưa
-  xác định nguồn cho §8.6 hàng 6/7 và mức 1 §8.7 của `master_plan/shop-facts.md`.
-  **Chủ quán** trả lời; chặn ADM-04 và phạm vi trực trạm ngoài quầy. Không tự
-  dùng chấm công thay cho vị trí đang đứng, không tự bỏ chỉ tiêu đã yêu cầu.
+- **U-060 — Số người đang làm trên tổng quan lấy nguồn nào khi bốn trạm ngoài
+  quầy không ghi mốc đổi người?** Mở 2026-09-25; đã nhận thêm lời chủ quán
+  2026-09-27 (T-099): chỉ khi quán vắng mới cho một người đi giao, người còn
+  lại vẫn đủ phục vụ. Vế đi giao **không là thiếu người** đã rõ, owner
+  `master_plan/shop-facts.md` §3 · §8.6. Còn nguồn để máy hiển thị **số người
+  đang làm** (hàng 6): ai nhập/xác nhận số người hay dùng dữ liệu nào đang có?
+  **Chủ quán** trả lời; chặn vế đếm người của ADM-04. Không tự biến bốn vai
+  thành số người có mặt cố định, hoặc tự dùng chấm công làm nguồn.
 
 <a id="u-058"></a>
-- **U-058 — Giảm giá cho khách quen được thực hiện thế nào trong phần mềm?**
-  **Đã nhận một phần 2026-09-25 (T-094):** chủ quán trả lời “chủ quán” —
-  quyền giảm giá thuộc chủ quán. Còn cách tính và phạm vi áp dụng.
-  Mở 2026-09-25 (T-092), từ D41 của chủ quán, dữ kiện ở
-  `master_plan/shop-facts.md` §8.9. Cần **chủ quán** chốt có đưa vào bản bán hàng
-  đầu tiên không, giảm theo số tiền hay phần trăm, áp cho từng món
-  hay cả đơn, và có giới hạn/ghi lý do không. Chặn việc chốt lại BA
-  `0-ba/ban-hang/04-gia-thanh-toan.md` §4.2 · §4.11, công thức tiền và quyền giảm;
-  không suy rằng khách hoặc nhân viên được tự gửi giá tuỳ ý.
+- **U-058 — Phạm vi bản đầu và giới hạn của giảm giá nhập tay cho cả đơn?**
+  Mở 2026-09-25; chủ quán bổ sung 2026-09-27 (T-099): **ghi tên khách được
+  giảm giá; chủ quán nhập số tiền giảm cho cả đơn**, không phải phần trăm
+  hoặc giảm từng món. Owner `master_plan/shop-facts.md` §8.9.
+  Quyền, cách nhập, người được ghi tên và đối tượng áp dụng đã rõ. Còn
+  **chủ quán** chốt có đưa vào bản bán hàng đầu tiên không, giới hạn số tiền
+  và có cần ghi lý do không. Chặn phần phạm vi MVP và giới hạn kiểm tra của
+  `0-ba/ban-hang/04-gia-thanh-toan.md` §4.2 · §4.11; không hỏi lại cách giảm.
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
 chủ quán quyết theo tình hình thực tế, không có luật cứng.** Lượt một (T-042) đóng U-022, U-025 và
@@ -186,6 +177,15 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ quán chốt 2026-09-27 (T-099):**
+
+<a id="u-061"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-061 — Khoảng mất mạng trước khi chủ quán bấm tắt~~ | “follow `quality/invariants.md` I-008.” Ba kênh khách tự bấm không được tạo đơn khi quán không nhìn thấy đơn mới, kể cả trước lúc chủ quán dùng 5G bấm tắt. Cơ chế thực hiện thuộc pha sau; không chọn hộ thời gian phát hiện. | `quality/invariants.md` I-008 · `master_plan/shop-facts.md` §6.11 |
+
 
 **Lời bổ sung của chủ quán, ghi nhận 2026-09-27 (T-098):**
 
@@ -318,7 +318,7 @@ sang `U-050`. Một lời chốt đóng được một trong hai vế nó chặn
 
 | Câu hỏi cũ | Lời giải (chủ quán, 2026-09-15) | Ghi ở |
 |---|---|---|
-| ~~U-050 — lúc một trong bốn vai rời quán ĐI GIAO, trạm của người ấy DO AI GÁNH, và khoảng trống ấy có phải là "thiếu người" của mục tổng quan không~~ | **POS gánh, và KHÔNG là thiếu người** — nguyên văn: *"pos gánh, không thiếu người vì đi ship luc quán vắng."* **(1) Ai gánh:** **người đứng quầy** (trạm `quay`) làm thay việc của trạm bị bỏ trống tới lúc người đi giao về ⇒ chữ *"trạm riêng, không kiêm"* của §3 nay có **một ngoại lệ có tên**: trong lúc có người đi giao, `quay` kiêm trạm của người ấy. Quán **không** dừng trạm nào, và chủ quán **không** phải đứng vào. **(2) Thiếu người:** khoảng trống do đi giao **không** tính vào số **7** của §8.6 — vì quán **chỉ cho đi giao lúc vắng**. Chữ *"vì … lúc quán vắng"* là **lý do** chủ quán đưa ra, **không** phải một luật cấm giao lúc đông: không lời nào nói máy chặn hay cảnh báo một chuyến giao lúc quán đông, nên đừng viết luật ấy (**F-004**). ⚠️ Lời *"pos gánh"* **va** lời chốt `U-049` — người đi giao là *"bất cứ ai"* trong bốn vai, kể cả người đứng quầy ⇒ mở **`U-052`**. | `shop-facts.md` **§3** · §8.6 (hàng 7) · §7.1 |
+| ~~U-050 — lúc một trong bốn vai rời quán ĐI GIAO, trạm của người ấy DO AI GÁNH, và khoảng trống ấy có phải là "thiếu người" của mục tổng quan không~~ | **POS gánh, và KHÔNG là thiếu người** — nguyên văn: *"pos gánh, không thiếu người vì đi ship luc quán vắng."* **(1) Ai gánh:** **người đứng quầy** (trạm `quay`) làm thay việc của trạm bị bỏ trống tới lúc người đi giao về ⇒ chữ *"trạm riêng, không kiêm"* của §3 nay có **một ngoại lệ có tên**: trong lúc có người đi giao, `quay` kiêm trạm của người ấy. Quán **không** dừng trạm nào, và chủ quán **không** phải đứng vào. **(2) Thiếu người:** khoảng trống do đi giao **không** tính vào số **7** của §8.6 — vì quán **chỉ cho đi giao lúc vắng**. Cách đọc lúc 2026-09-15 chỉ coi “lúc quán vắng” là lý do. **Bổ sung 2026-09-27 (U-060):** chủ quán chốt chỉ đi giao lúc vắng, một người đi, người còn lại đủ phục vụ; chưa có ngưỡng máy tự đo đông/vắng hoặc luật tự chặn chuyến giao. ⚠️ Lời *"pos gánh"* **va** lời chốt `U-049` — người đi giao là *"bất cứ ai"* trong bốn vai, kể cả người đứng quầy ⇒ mở **`U-052`**. | `shop-facts.md` **§3** · §8.6 (hàng 7) · §7.1 |
 
 Số **7** của §8.6 hết đứng trên `U-050`; nó còn đứng trên đúng **một** câu — **C36** (*ai đang trực
 trạm nào*, `work/admin-questions.md`), vì máy vẫn chưa có dữ liệu nào để so người có mặt với người

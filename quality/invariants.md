@@ -220,10 +220,11 @@ thông báo** trên web, và **câu chữ của dòng ấy chưa chốt** — đ
 quầy, **POS quyết** dừng ba kênh khách tự bấm, và đã dừng thì **mở lại là một nút người bấm** —
 không tự mở lại khi tín hiệu về (`master_plan/shop-facts.md` §6.11 · `docs/decisions.md`
 **ADR-047**). **Bổ sung 2026-09-25 (U-053):** khi quán mất mạng hẳn, chủ
-quán dùng 5G bấm tắt ba kênh. Lời này xác định người và đường bấm, không xác
-định cách xử lý đơn tới trước khi chủ quán bấm; xung đột với bảo đảm không
-nhận đơn trong toàn bộ khoảng mất mạng cần chủ quán làm rõ tại **U-061**
-(`docs/product/99-unknowns.md`). Không tự coi thao tác tay là bảo đảm tức thời.
+quán dùng 5G bấm tắt ba kênh. **Chủ quán chốt tiếp 2026-09-27 (U-061):
+“follow I-008”.** Điều kiện quán nhìn thấy đơn mới phải được bảo vệ cả trước
+khi người bấm tắt: ba kênh khách tự bấm không được tạo đơn trong khoảng đó.
+Không chờ thao tác tay mới chặn; luật mở lại bằng nút giữ nguyên. Cơ chế phát
+hiện và thực thi thuộc pha sau, không tự suy một khoảng chờ được nhận đơn.
 
 **Why:**
 Hai quy tắc của kế hoạch gốc (§5 quy tắc 10 và 11) nằm cạnh nhau mà không nói cái nào thắng; chủ
@@ -241,11 +242,13 @@ Kịch bản biên: gửi một đơn lúc 05:59 và một đơn lúc 11:01 ⇒ 
 câu *"Quán mở cửa 6h–11h sáng"* chứ không phải một nút bấm im lặng (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.2.6).
 Kịch bản ưu tiên: 08:00 — trong giờ bán — chủ quán bật tạm dừng ⇒ đơn mới của **cả năm** kênh đều
 bị từ chối; tắt tạm dừng thì đặt lại được ngay. Kịch bản mất kết nối: 08:00, quán mất mạng
-trong khi hệ thống vẫn sống, chủ quán dùng 5G bấm tắt ⇒ ba kênh khách tự bấm (`delivery`, `pickup`, `qr_table`) **bị từ
+trong khi hệ thống vẫn sống, **chủ quán chưa bấm tắt qua 5G** ⇒ ba kênh khách tự bấm (`delivery`, `pickup`, `qr_table`) **bị từ
 chối** và khách thấy **một dòng thông báo**, trong khi `staff_pos` và `phone_preorder` **không** bị
 chặn — quán vẫn nhận đơn qua hotline và ghi giấy; có mạng lại thì ba kênh kia mở lại **khi POS bấm
 nút mở** (chủ quán chốt 2026-09-16 — **không** tự mở lại), và
-**không nhận thêm đơn sau khi đã bấm dừng**. Phần trước lúc bấm chưa có tiêu chí đã chốt (U-061). Kịch bản không chạm đơn cũ: nhận một đơn giao tận
+**không tạo đơn trong cả khoảng quán không nhìn thấy đơn mới, kể cả trước lúc
+chủ quán bấm tắt** (U-061, chủ quán chốt 2026-09-27). Kiểm tiếp: chủ quán bấm
+tắt qua 5G, khôi phục mạng nhưng chưa bấm mở ⇒ ba kênh vẫn dừng. Kịch bản không chạm đơn cũ: nhận một đơn giao tận
 nơi lúc 10:50, bật tạm dừng lúc 10:55 ⇒ đơn đó vẫn đi hết luồng, vẫn bấm được **đã giao và đã thu
 tiền** sau 11:00. Kiểm ngược, cuối ngày: không đơn nào có thời điểm tạo nằm ngoài 06:00–11:00.
 

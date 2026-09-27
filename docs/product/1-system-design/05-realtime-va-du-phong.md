@@ -125,16 +125,15 @@ tên của chỗ ấy ở `master_plan/shop-facts.md` §1).
 Chủ quán đã chốt dùng 5G bấm tắt (2026-09-25, U-053; `shop-facts.md` §6.11). I-008 giao thẳng phần
 **cơ chế** cho bước này. Bước này trả lời bằng **bốn câu luật**, không bằng một cơ chế:
 
-1. **Hệ thống PHÁT HIỆN và BÁO; POS quyết dừng — chủ quán chốt 2026-09-16** (`U-043`, nguyên văn:
-   *"hiên thông báo để pos quyết định nếu dừng cần có nut mở lại"*). Bước này trước đó viết ngược
-   lại — *phán quyết đứng ở phía hệ thống, không phía quán* — vì lý do vẫn đúng: đúng lúc phải phán
-   quyết thì quán là bên đã mất tiếng nói. Lời chủ quán **thắng** (`docs/decisions.md` **ADR-047**),
-   nên luật này nay tách làm hai vế: **phát hiện** vẫn ở phía hệ thống và vẫn không chờ quán báo;
-   **quyết dừng** thì ở phía **POS**, và hệ thống hiện cho quầy một thông báo để POS quyết.
-   **Ca mất mạng hẳn đã có lời 2026-09-25 (U-053): chủ quán dùng 5G bấm tắt
-   ba kênh khách tự bấm** (`shop-facts.md` §6.11). Đây là đường thao tác của
-   người; không thêm luật tự dừng sau một khoảng thời gian. Khoảng trước khi
-   bấm dừng còn ở U-061 (`docs/product/99-unknowns.md`, I-008).
+1. **Hệ thống phát hiện và báo; thao tác dừng của POS không thay điều kiện
+   nhận đơn I-008.** U-043 (2026-09-16, **ADR-047**) chốt thông báo cho POS
+   quyết dừng và mở lại bằng nút. U-053 (2026-09-25) bổ sung chủ quán dùng
+   5G bấm tắt khi mạng quán mất. **U-061 đã đóng 2026-09-27:** chủ quán yêu
+   cầu tuân I-008 — khi quán không nhìn thấy đơn mới, ba kênh khách tự bấm
+   **không được tạo đơn, kể cả trước lúc chủ quán bấm tắt**. Hệ thống phải
+   bảo vệ điều kiện này độc lập với thao tác tay (`shop-facts.md` §6.11).
+   Cơ chế phát hiện và thực thi thuộc pha sau; không tự chọn một khoảng chờ
+   được nhận đơn. Quyền bấm tắt/mở và việc không tự mở lại giữ nguyên.
 2. **Dấu hiệu *quán còn nhìn thấy* phải chạy trên CÙNG đường mà việc và đơn đang đi** (§1). Dùng
    một đường riêng để kiểm thì có ngày đường kiểm còn sống trong khi đường thật đã chết, và hệ
    thống sẽ nhận đơn cho một cái quán đang mù.
