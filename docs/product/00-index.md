@@ -81,6 +81,7 @@ tiền tố khác — `P1-XX` (ADR-033).
 | Nội dung | File |
 |---|---|
 | Quy ước dữ liệu — **cất bằng gì**: đặt tên · khoá · tiền · mốc và múi giờ · trạng thái · không xoá cứng · văn bản và định danh; mỗi quy ước một mã `QD-XX`, một hậu quả nếu làm khác và một phép kiểm (P2-03) | [2-db/01-quy-uoc-du-lieu.md](2-db/01-quy-uoc-du-lieu.md) |
+| Lược đồ lát bán hàng lõi — bàn · phiên bàn · bàn của phiên · đơn · dòng đơn · dấu *đem về*: ý định, lý do và ánh xạ `I-001` `I-002` `I-003` `I-006` `I-007` `I-016` `I-017` `YC-05`; tên · kiểu · ràng buộc ở file migration (P2-04, ADR-053 luật 2) | [2-db/02-luoc-do-ban-hang.md](2-db/02-luoc-do-ban-hang.md) |
 | Quy ước code — **dựng và kiểm bằng gì**: DBMS + phiên bản · cách chạy database · vai · kiểu · migration · múi giờ kết nối · khung test · thư mục · stack · tên ràng buộc; mỗi quy ước một mã `QC-XX` và một phép kiểm (P2-12, ADR-055) | [2-db/10-quy-uoc-code.md](2-db/10-quy-uoc-code.md) |
 
 Các lát lược đồ sau **thêm** dòng vào bảng này, không ghi đè dòng của lát trước (kế hoạch pha 2 §6).

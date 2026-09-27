@@ -51,7 +51,7 @@ is a bug to fix now.
 | Phụ thuộc ngoài của hệ thống + đường suy giảm của từng cái | `docs/product/1-system-design/01-ranh-gioi-he-thong.md` — pha 1, sinh ra ở P1-02 |
 | Định nghĩa **một ngày bán** cho phép cộng tiền + mốc tính tiền + nguồn thời gian | `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` — pha 1, sinh ra ở P1-03 |
 | Quy ước dữ liệu: tiền, mốc và múi giờ, khoá, đặt tên, trạng thái, không xoá cứng, văn bản và định danh — mỗi quy ước một mã `QD-XX` và một phép kiểm | `docs/product/2-db/01-quy-uoc-du-lieu.md` — pha 2, sinh ra ở P2-03 (ADR-035, ADR-053 luật 3) |
-| Schema: tên bảng, tên cột, khoá ngoại | **chưa có owner** — sinh ra ở **pha 2**, cùng `docs/product/2-db/` (ADR-035). Thứ tự việc, mức và cổng của pha 2: `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (ADR-049) |
+| Schema: tên bảng, tên cột, kiểu, ràng buộc, khoá ngoại | **file migration thắng** — `db/migrations/` (ADR-053 luật 2). Ý định, lý do và ánh xạ `I-0xx`/`YC-xx` của từng lát: `docs/product/2-db/02-luoc-do-ban-hang.md` (P2-04); các lát sau **thêm** file, không ghi đè. Hai bản lệch ⇒ `F-XXX`. Thứ tự việc, mức và cổng của pha 2: `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (ADR-049) |
 | Quy ước code: DBMS + phiên bản, cách chạy database, migration, khung test, cấu trúc thư mục, stack, tên ràng buộc — mỗi quy ước một mã `QC-XX` và một phép kiểm | `docs/product/2-db/10-quy-uoc-code.md` — pha 2, sinh ra ở P2-12 (ADR-035, ADR-039, ADR-055) |
 | Hợp đồng API: endpoint, quyền theo vai, chữ ký | **chưa có owner** — sinh ra ở **pha 3**, cùng `docs/product/3-be/` (ADR-035) |
 | Route, component | **chưa có owner** — sinh ra ở **pha 4**, cùng `docs/product/4-fe/` (ADR-035) |
@@ -73,8 +73,8 @@ ADR-035, 2026-09-04). Those still saying *chưa có owner* do so on purpose: the
 a phase is created together with that phase's first line of content, never before,
 and a row changes to the real file name **in the same change** that writes its
 first content. `docs/product/2-db/` opened 2026-09-26 (P2-03, *Quy ước dữ liệu*
-row); *Quy ước code* got its owner 2026-09-27 (P2-12) and *Schema* changes at
-P2-04 — the phase-2 plan §5 reading, still awaiting the repo owner's confirmation. Until a row has its
+row); *Quy ước code* got its owner 2026-09-27 (P2-12) and *Schema* 2026-09-27
+(P2-04) — the phase-2 plan §5 reading, still awaiting the repo owner's confirmation. Until a row has its
 owner, no document may name what it owns: a phase writing what a later phase
 owns is a bug even when every gate is green. `scripts/check-phase-boundary.sh`
 (Gate 1d, §5, ADR-039) catches the most common shape of this in

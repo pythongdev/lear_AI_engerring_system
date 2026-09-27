@@ -523,12 +523,93 @@ tiên cái thiếu ấy thành một lỗ hổng chạy được.
   còn nợ tiền*, gồm cả *chờ thanh toán*. Dự án cũ chặn đúng một giá trị, và ràng buộc nhả ra đúng
   lúc quầy bấm tính tiền (bằng chứng cũ: `nghien-cuu.md` §1.3, không phải dữ kiện quán này).
 
-**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+**Nhận việc** — *điền 2026-09-27 (Claude Code), `P2-03` · `P2-12` đã `Done`* (**ADR-051**):
+- *Phạm vi:* `db/migrations/` (một file mới) · `db/tests/` (file `i0xx_…` · `yc05_…` mới) ·
+  `docs/product/2-db/02-luoc-do-ban-hang.md` (mới) · `docs/product/00-index.md` · `CLAUDE.md` §2 hàng
+  *Schema* · `work/findings.md` (`F-038` · `F-043` nhận một dòng tình trạng) · `work/backlog.md` ·
+  entry này · `work/scope.txt`. **Không** chạm: menu và giá (`P2-05`), đường tiền (`P2-06`), việc trạm
+  (`P2-07`), người và vết (`P2-08`), kế hoạch pha 2, `quality/`, `docs/product/1-system-design/`.
+- *Nghiệm thu:*
+  1. Mỗi hàng **tầng 1** của lát — `I-001` (phủ cả *chờ thanh toán*, theo **nghĩa** *chưa đóng*, và
+     ghép bàn vẫn được) · `I-002` vế *một phiên một hoá đơn* · `I-006`/`I-007` vế ranh giới — có một
+     ràng buộc thật mang tên theo `QC-10`; cố tình dựng trạng thái sai ⇒ database **từ chối**, lời
+     từ chối nguyên văn dán ở *Bàn giao*.
+  2. `YC-05` trả lời được cả hai câu: một đơn của phiên bàn mang **cùng lúc** suất ăn tại chỗ và suất
+     đem về, đọc ra được suất nào là suất nào; dấu *đem về* không làm suất rời phiên.
+  3. Ba hàng không phải tầng 1 (`I-003` tầng 3 · `I-016` tầng 3 · `I-017` tầng 2) có dòng ở file lát
+     nói lược đồ nợ gì cho tầng ấy theo **ADR-050** và cái gì còn là việc của pha 3 — không hàng nào
+     bị nâng hay hạ tầng.
+  4. `F-038` và `F-043` mỗi mã một dòng *chỗ trống có tên* ở file lát, và một dòng tình trạng ở
+     `work/findings.md`; lược đồ không có cột hay ràng buộc nào cho hai vế ấy.
+  5. `./scripts/db-check.sh` chạy migration từ số 0 và cả bộ `QD-XX` · `QC-XX` + test lát ⇒ PASS;
+     `./scripts/gate.sh` xanh.
+  6. Phép so tên bảng file `.md` ↔ migration (**ADR-053** luật 2) chạy tay, in cả hai danh sách chưa
+     lọc cạnh `comm -3` rỗng.
+  7. `CLAUDE.md` §2 hàng *Schema* có owner theo luật chủ sở hữu **ADR-053** luật 2; `00-index.md` có
+     dòng file mới.
+- *Kiểm chứng:* output `./scripts/db-check.sh` (dòng `NOTICE … bị từ chối` của từng test) · output
+  `./scripts/gate.sh` · output phép so tên bảng — cả ba dán ở *Bàn giao*.
 
-**Bàn giao:** —
+**Bàn giao** — 2026-09-27, Claude Code, nhánh `chatgpt_involve`, base `6bf8f97`; **chưa review độc
+lập**.
+
+*Kết quả:* migration
+[`db/migrations/20260927120000_ban_hang_loi.up.sql`](../db/migrations/20260927120000_ban_hang_loi.up.sql)
+dựng năm bảng; file lát
+[`docs/product/2-db/02-luoc-do-ban-hang.md`](../docs/product/2-db/02-luoc-do-ban-hang.md) giữ ý định,
+ánh xạ mệnh đề → ràng buộc → test (§2), phần nợ của ba hàng không phải tầng 1 (§3), bảng ánh xạ
+trạng thái (§4) và tám chỗ trống có tên (§5); bảy test ở `db/tests/`. `CLAUDE.md` §2 hàng *Schema*
+có owner theo **ADR-053** luật 2; `docs/product/00-index.md` thêm một dòng; `F-038` · `F-043` nhận
+dòng tình trạng, vẫn **Open**.
+
+*Nghiệm thu → bằng chứng* (output `./scripts/db-check.sh`, cơ sở dữ liệu rỗng dựng từ số 0,
+PostgreSQL 17.11):
+1. Tầng 1 bị từ chối, nguyên văn:
+   - `I-001` (phiên cũ **đang chờ thanh toán**): `duplicate key value violates unique constraint
+     "table_session_member_one_unpaid_session_key"`; ghép bàn đang có phiên sang phiên khác: cùng lời;
+     ghép hai bàn vào một phiên — được; sau khi phiên cũ đóng, bàn nhận phiên mới — được.
+   - `I-002`: `new row for relation "sales_order" violates check constraint
+     "sales_order_session_iff_table_channel_check"` (đơn `qr_table` không phiên) · `insert or update on
+     table "sales_order" violates foreign key constraint "sales_order_session_table_fkey"` (bàn 7 đổ
+     vào phiên bàn 5); hai lượt QR + POS ⇒ `2 đơn, 1 phiên`.
+   - `I-006`/`I-007`: `new row for relation "sales_order" violates check constraint
+     "sales_order_session_iff_table_channel_check"` — ba ca: tạo `pickup` trong phiên · nối
+     `phone_preorder` vào phiên · đổi kênh để lách.
+2. `YC-05`: `2 suất, đem về = f, thuộc phiên bàn 5 = t` và `1 suất, đem về = t, thuộc phiên bàn 5 = t`
+   trên **cùng** một đơn; suất đem về rời đơn ⇒ `null value in column "sales_order_id" of relation
+   "order_line" violates not-null constraint`.
+3. Không phải tầng 1: `I-003` — `violates check constraint "table_session_member_cleaned_after_close_check"`
+   + bàn không có cột trạng thái; `I-016` — `violates check constraint "sales_order_status_check"` ·
+   `"table_session_status_check"` · `column "is_closed" can only be updated to DEFAULT`; `I-017` —
+   `update or delete on table "table_session" violates foreign key constraint
+   "table_session_member_session_fkey"`, rồi `phiên ở awaiting_payment, bàn đã đánh dấu đóng: 0 —
+   không nửa nào sống sót`. Phần pha 3 nợ: file lát §3.
+4. `F-038` · `F-043`: file lát §5, `work/findings.md` hai dòng *Tình trạng ở pha 2*.
+5. `db-check: PASS — 26 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 7 file test`; `QD-02`
+   (`sales_order.channel_code` = năm mã của `shop-facts.md` §2) và `QD-40(b)` (hai cột `status`) in
+   cả hai danh sách, `comm -3` rỗng. `./scripts/gate.sh` exit 0.
+6. Phép so tên bảng `.md` ↔ migration (chạy tay, `grep 'CREATE TABLE'` trên migration ·
+   `grep '^| \`tên\` |'` trên `docs/product/2-db/*.md`): cả hai danh sách chưa lọc là
+   `dining_table order_line sales_order table_session table_session_member`; `comm -3` **rỗng**.
+7. `CLAUDE.md` §2 · `00-index.md`: trong diff của lượt này.
+
+*Test biết kêu:* trên một database riêng, gỡ `table_session_member_one_unpaid_session_key` và
+`sales_order_session_iff_table_channel_check` rồi chạy lại hai test ⇒ `ERROR: I-001: database KHÔNG
+từ chối phiên thứ hai khi phiên cũ đang chờ thanh toán` và `ERROR: I-007: database KHÔNG từ chối đơn
+pickup tạo trong phiên bàn`, cả hai exit 3.
+
+*Còn mở — cần chủ repo đọc:*
+- **Tuỳ chọn đã chọn chưa được dựng**, trong khi kế hoạch §6 xếp nó vào lát này: mọi cột của nó là
+  ảnh chụp menu, nên phiên giao sang `P2-05` (file lát §5, phiên chọn). Kế hoạch §5 · §6 chưa sửa
+  (ngoài scope) — nếu chủ repo đồng ý thì sửa dòng `P2-04` · `P2-05` của kế hoạch; nếu không, một lượt
+  sau dựng nó ở đây.
+- Mọi lựa chọn *phiên chọn 2026-09-27* của file lát (bản soi + khoá ngoại hai cột hoãn cho `I-001`,
+  không bản ghi hoá đơn riêng, *Trống* đọc ra từ chi tiết) chưa có lời chủ repo.
+- `F-038` · `F-043` · `F-042` vẫn Open — việc của pha 1.
+
+*Bước sau:* `P2-06` · `P2-07` hết chặn (mọi bước *Cần xong trước* đã `Done`; `S-5` · `S-6` của `P2-07`
+là ô **để trống**, không phải chỗ chặn) nên có dòng ở *Ready*; `P2-08` còn chờ `P2-06`. `P2-05` đọc file
+lát §5 trước khi thêm vào `order_line`.
 
 [↑ đầu file](#top)
 

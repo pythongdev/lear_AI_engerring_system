@@ -3521,6 +3521,12 @@ khác (**F-010** · **F-014**).
 **P1-11** (lượt phát hiện, 2026-09-08) · **BA-04** (lượt chốt §3.2.4) · **F-026** (cùng hình: một
 mệnh đề sinh ngoài bốn nhóm) · **F-036** (cùng lượt, khác loại).
 
+**Tình trạng ở pha 2 — 2026-09-27 (`P2-04`, Claude Code):** lát bán hàng lõi dựng xong mà **không**
+giữ vế này. Không cột liên hệ nào (số điện thoại · địa chỉ giao · giờ khách cần hàng), không ràng buộc
+nào: một đơn `delivery` hôm nay tạo được mà không có địa chỉ. Dòng *chỗ trống có tên* ở
+`docs/product/2-db/02-luoc-do-ban-hang.md` §5. Gỡ vẫn theo ba việc ở trên (pha 1), rồi một migration
+mới thêm cột + ràng buộc.
+
 **Status:**
 Open
 
@@ -3789,6 +3795,11 @@ Finding này **không** đề xuất tầng bảo vệ.
 
 **Related task:**
 T-097 · `work/backlog_DB.md` → **P2-04** · `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` §8
+
+**Tình trạng ở pha 2 — 2026-09-27 (`P2-04`, Claude Code):** lát bán hàng lõi dựng xong **không có
+khoá chống trùng** nào; hai lần gửi giống hệt thành hai đơn và database không chặn. Dòng *chỗ trống
+có tên* ở `docs/product/2-db/02-luoc-do-ban-hang.md` §5. Chưa có mệnh đề và tầng thì chưa có hình
+dạng để dựng.
 
 **Status:**
 Open
