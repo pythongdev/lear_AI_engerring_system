@@ -14,6 +14,14 @@ là system design, hãy làm master plan cho system design thật kĩ và cẩn 
 > `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`, nơi một bảng ⬜ trong kế hoạch và một dòng
 > `- [x]` trong backlog nói về cùng một việc bằng hai giọng.
 >
+> **Pha 1 đã đóng.** Cổng pha 1 ký 10/10 ở
+> [`docs/product/1-system-design/07-cong-chat-luong-pha-1.md`](../docs/product/1-system-design/07-cong-chat-luong-pha-1.md)
+> §7, và dự án đang ở pha 2. File này nay là bản ghi của một kế hoạch đã chạy xong: đọc nó để biết
+> **vì sao** pha 1 có những bước ấy, còn *bước nào đã xong* thì đọc ở `work/backlog.md`. Bảng đầu ra
+> §2 và ba câu §4 không còn tự ghi trạng thái — mỗi ô trỏ về bước sở hữu nó (2026-09-27, T-107,
+> đóng `work/findings.md` **F-033**). Những dòng *đóng ngày…* còn ở §8 · §9 là lịch sử có ghi ngày,
+> không phải trạng thái hiện hành.
+>
 > **Pha 1 là L3 ở cấp giai đoạn** — nó quyết định cái gì bảo vệ cái gì cho toàn hệ thống. Nhưng
 > **không bước nào trong bảng §6 là L3**: mỗi bước là một L1/L2 làm xong trong một phiên, đúng
 > `CLAUDE.md` §3 (L3 ⇒ chia thành nhiều task L1/L2).
@@ -51,13 +59,18 @@ phép kiểm chứng minh cơ chế đó còn sống.**
 
 Bốn đầu ra bắt buộc mà bảng sáu pha đòi ở pha 1, cộng một thứ thứ năm mà dự án này thêm vào:
 
-| # | Đầu ra | Hôm nay có chưa |
+| # | Đầu ra | Bước sinh ra nó · nằm ở đâu |
 |:--:|---|---|
-| 1 | Bảng bất biến **ba cột**: mệnh đề · bảo vệ bằng · phép đối chiếu | **chưa** — xem §4 |
-| 2 | Ràng buộc kiến trúc ẩn + **dấu hiệu phải xem lại** từng cái | **xong 2026-09-08** — P1-08: `docs/product/1-system-design/05-realtime-va-du-phong.md` §2, bốn ràng buộc `RB-1`…`RB-4`, mỗi cái một dấu hiệu đo được (**ADR-045**, đóng nốt **F-027**) |
-| 3 | Nguồn thời gian | dữ kiện có (`shop-facts.md` §1); **định nghĩa NGÀY BÁN cho phép cộng tiền thì chưa** |
-| 4 | Những rủi ro lớn nhất kèm cách chặn | **xong 2026-09-08** — P1-10: `docs/product/1-system-design/06-so-rui-ro.md` §1, chín dòng `RR-1`…`RR-9`, mỗi dòng một cơ chế đã viết ra ở một mục pha 1 — trừ `RR-9` (*mất hẳn bản ghi đã ghi*) ghi thẳng **chưa có cơ chế**, mã `work/findings.md` **F-034**. Ba dòng bản nháp §6 không có là ba luật đường tiền chốt sau nó (nợ · hoàn tiền · đối soát ba nguồn) |
-| 5 | **Đường suy giảm** — mất điện, mất mạng, hỏng máy | luật nghiệp vụ có (`shop-facts.md` §6.11); hệ quả kiến trúc thì chưa |
+| 1 | Bảng bất biến **ba cột**: mệnh đề · bảo vệ bằng · phép đối chiếu | `P1-04` · `P1-05` · `P1-06` · `P1-13` · `P1-14` — `docs/product/1-system-design/03-bao-ve-invariant.md` §1–§4 |
+| 2 | Ràng buộc kiến trúc ẩn + **dấu hiệu phải xem lại** từng cái | `P1-08` — `docs/product/1-system-design/05-realtime-va-du-phong.md` §2 (**ADR-045**) |
+| 3 | Nguồn thời gian + **định nghĩa NGÀY BÁN** cho phép cộng tiền | `P1-03` — `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` (dữ kiện gốc: `shop-facts.md` §1) |
+| 4 | Những rủi ro lớn nhất kèm cách chặn | `P1-10` — `docs/product/1-system-design/06-so-rui-ro.md` §1 |
+| 5 | **Đường suy giảm** — mất điện, mất mạng, hỏng máy | `P1-02` (quán làm gì) — `docs/product/1-system-design/01-ranh-gioi-he-thong.md` §3 · `P1-08` (máy làm gì) — `05-realtime-va-du-phong.md` §1 · §3 (luật nghiệp vụ gốc: `shop-facts.md` §6.11) |
+
+Cột thứ ba cố ý nói **bước nào sinh ra đầu ra**, không nói **đầu ra đã có chưa**. Bản đầu của bảng
+này (2026-09-03, T-048) có cột *"Hôm nay có chưa"*, và cột ấy trôi: bốn ô còn ghi *chưa* nhiều tuần
+sau khi bước của chúng đã xong (`work/findings.md` **F-033**). Trạng thái có một owner là
+`work/backlog.md`; một cột trạng thái chép tay ở đây là bản sao thứ hai (**F-001**).
 
 Thứ năm không có trong bảng sáu pha, và nó ở đây vì chủ quán đã chốt một câu mà hầu hết hệ thống
 POS không chốt: **mất điện thì quán không dừng bán**. Một hệ thống chỉ đúng khi nó đang chạy thì
@@ -114,21 +127,24 @@ vết thao tác · ai đang trực trạm nào · note *"đem về"* · đã ph�
 cầu** để pha 2 tự đối chiếu, và những câu ấy nay ở
 [`docs/product/1-system-design/04-yeu-cau-du-lieu.md`](../docs/product/1-system-design/04-yeu-cau-du-lieu.md).
 
-### Ba câu bảng sáu pha đòi mà hôm nay chưa ai trả lời
+### Ba câu bảng sáu pha đòi — và mục nào trả lời từng câu
 
-1. **Mỗi `I-0xx` được giữ bởi tầng nào?** Mười tám mệnh đề, không mục nào có cột ấy.
-2. **Một ngày bán bắt đầu và kết thúc lúc nào, đối với phép cộng tiền?** Ba luật đã chốt cùng chạm
-   vào nó theo ba chiều khác nhau — nợ tính **ngày ghi nợ**, hoàn tính **ngày hoàn**, còn lượt bán
-   trên sổ giấy thì *nhập ngay khi có thể, không có mốc cứng*.
-3. ~~**Mất kết nối / mất mạng / mất điện thì mỗi mặt xử sự thế nào?**~~ — **trả lời xong**: phần
-   *quán làm gì* ở [`01-ranh-gioi-he-thong.md`](../docs/product/1-system-design/01-ranh-gioi-he-thong.md)
-   §3 (P1-02, 2026-09-04), phần *máy làm gì* ở
+Ba câu dưới đây viết 2026-09-03 (T-048), lúc chưa mục nào trả lời chúng. Mỗi câu nay trỏ về mục
+đang trả lời nó; câu trả lời đọc **ở mục ấy**, không đọc ở đây.
+
+1. **Mỗi `I-0xx` được giữ bởi tầng nào?** —
+   [`03-bao-ve-invariant.md`](../docs/product/1-system-design/03-bao-ve-invariant.md) §1–§4
+   (`P1-04` · `P1-05` · `P1-06` · `P1-13` · `P1-14`). Số mệnh đề đếm ở `quality/invariants.md`,
+   đừng đếm ở đây (**F-003**).
+2. **Một ngày bán bắt đầu và kết thúc lúc nào, đối với phép cộng tiền?** Câu này khó vì ba luật đã
+   chốt cùng chạm vào nó theo ba chiều khác nhau: nợ, hoàn tiền, và lượt bán nhập bù từ sổ giấy. —
+   [`02-thoi-gian-ngay-ban.md`](../docs/product/1-system-design/02-thoi-gian-ngay-ban.md) §1 · §2
+   (`P1-03`).
+3. **Mất kết nối / mất mạng / mất điện thì mỗi mặt xử sự thế nào?** — phần *quán làm gì* ở
+   [`01-ranh-gioi-he-thong.md`](../docs/product/1-system-design/01-ranh-gioi-he-thong.md) §3
+   (`P1-02`), phần *máy làm gì* ở
    [`05-realtime-va-du-phong.md`](../docs/product/1-system-design/05-realtime-va-du-phong.md)
-   §1 · §3 (P1-08, 2026-09-08). Câu hỏi này viết 2026-09-03, lúc chưa mục nào tồn tại.
-
-⚠️ **Ba dòng trên là ảnh chụp ngày 2026-09-03 và hai dòng đầu chưa ai cập nhật** — cùng hình với ô
-*Hôm nay có chưa* của bảng §2: `work/findings.md` **F-033** (mở 2026-09-08 bởi P1-08). Đọc trạng
-thái thật ở `work/backlog.md`, đừng đọc ở hai chỗ này.
+   §1 · §3 (`P1-08`).
 
 ---
 
@@ -262,7 +278,7 @@ số dòng ở đây là phép đếm của người viết, đếm lại ở `d
 | ~~**U-032**~~ | ~~lượt bán ghi trên **sổ giấy** hôm mất điện, hôm sau mới nhập — doanh thu tính ngày nào~~ — **chủ quán trả lời 2026-09-04: *ngày BÁN*** (T-054, `shop-facts.md` §6.11 · **ADR-037**) ⇒ P1-03 và P1-04 hết bị nó chặn | — | — |
 | ~~**U-035**~~ | ~~quán mất mạng mà hệ thống vẫn sống: khách web vẫn đặt được, quán không thấy~~ *(mở 2026-09-04 bởi P1-02)* — **chủ quán trả lời cùng ngày: *web ngừng nhận đơn, khách gọi hotline*** (T-054, `quality/invariants.md` **I-008**) ⇒ chưa kịp chặn bước nào. *Bảng này từng mang **hai** hàng U-035 — một hàng gạch ngang ở đây và một hàng còn sống ghi "chặn P1-08", viết ngày P1-03 chạy trước khi biết câu đã đóng cùng ngày; hàng thừa gỡ 2026-09-08 bởi P1-08, bước mà nó tự khai là đang chặn.* | — | — |
 | ~~**U-037**~~ | ~~nhập bù xong thì **ai** ngồi lại đối soát ngày mất điện, **lúc nào**~~ — **đóng 2026-09-06: POS hoặc chủ quán, cuối buổi bán hàng** ⇒ P1-04 hết bị nó chặn | — | — |
-| **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** (`shop-facts.md` §7.2 — chỗ **suy ra**, chưa hỏi) | P1-07 · P1-09 | chủ quán |
+| **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** (`shop-facts.md` §7.2 — chỗ **suy ra**, chưa hỏi) | không chặn bước nào của pha 1 — `P1-07` · `P1-09` từng ghi ở đây đã `Done` mà không cần nó; câu vẫn chưa hỏi, đọc trạng thái ở `shop-facts.md` §7.2 *(sửa 2026-09-27, T-107 — F-033)* | chủ quán |
 | ~~**BA-12**~~ | ~~lát cắt sản xuất theo mẻ chưa có mục nào~~ — **xong 2026-09-04** (`31fb071`), §3.4 đã có; P1-07 và P1-09 hết bị nó chặn | — | — |
 | ~~**U-033**~~ | ~~đơn bị **huỷ** sau khi bếp đã làm xong phần của nó: chỗ ấy tính cho bàn khác đang chờ, hay bỏ và làm lại?~~ — **đóng 2026-09-06: tính cho bàn khác đang chờ, POS chọn bàn nhận và cập nhật** ⇒ P1-05 · P1-07 · P1-09 hết bị nó chặn | — | — |
 | ~~**U-043**~~ | ~~mất tín hiệu **bao lâu** thì web ngừng nhận đơn~~ *(mở 2026-09-08 bởi chính P1-08)* — **đóng 2026-09-16: KHÔNG có con số cửa sổ nào** — máy **báo**, **POS quyết** dừng, và đã dừng thì mở lại bằng **nút** (*"hiên thông báo để pos quyết định nếu dừng cần có nut mở lại"*); lời ấy **lật** luật 1 của `05-realtime-va-du-phong.md` §3 và một câu *Verification* của `I-008` — **ADR-047** | — | — |

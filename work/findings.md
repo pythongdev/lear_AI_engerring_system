@@ -94,7 +94,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-030 | Gate 1c coi mọi U-XXX nhắc trong gạch đầu dòng đang mở là "đang mở" | Fixed |
 | F-031 | Lần thứ năm: subject trùng commit trước, nội dung không khớp | Open |
 | F-032 | Mục lục `backlog_SD.md` ghi Trạng thái "Đóng" cho hai bước còn thiếu dòng luật đòi | Fixed |
-| F-033 | Ảnh chụp *"hôm nay có chưa"* của kế hoạch pha 1 vẫn ghi **chưa** cho bốn thứ đã xong | Open |
+| F-033 | Ảnh chụp *"hôm nay có chưa"* của kế hoạch pha 1 vẫn ghi **chưa** cho bốn thứ đã xong | Fixed |
 | F-034 | Cơ chế chặn *mất hẳn dữ liệu* chỉ sống ở tài liệu không sở hữu gì — lần thứ hai của F-027 | Fixed |
 | F-035 | Gate 7b đọc index bằng encoding KHÁC mọi chỗ đọc khác trong chính nó ⇒ kêu một file scope đã phủ | Closed |
 | F-036 | Phép đối chiếu của một mệnh đề hẹp hơn chính mệnh đề ấy ⇒ đọc ra rỗng trong khi một vế đã hỏng | Fixed |
@@ -3179,13 +3179,24 @@ khác chạy, và F-032 vừa dựng đúng tiền lệ ấy — ghi lại, khô
 cột trạng thái chép tay trong một kế hoạch tự khai *"không sở hữu sự thật nào"* là bản sao thứ hai
 đúng nghĩa (**F-001**), và nó sẽ trôi lại lần nữa dù lượt này có sửa hết bốn ô.
 
+**Sửa 2026-09-27 (T-107, Claude Code, chủ repo yêu cầu *"sửa f-033 theo đề xuất của bạn"*):** đi
+đúng đường rẻ nhất ở trên, không sửa từng ô. Bảng §2 của kế hoạch pha 1 đổi cột *"Hôm nay có chưa"*
+thành cột *"Bước sinh ra nó · nằm ở đâu"* — cùng hình cột mà kế hoạch pha 2 §2 đã dùng từ đầu vì
+chính finding này. Ba câu §4 mỗi câu trỏ về mục đang trả lời nó, cảnh báo ⚠️ gỡ đi. Hàng `S-5` ở §8
+thôi nói đang chặn hai bước đã `Done`, và vẫn nói `S-5` chưa hỏi chủ quán. Đầu file thêm một đoạn nói
+pha 1 đã đóng, trạng thái đọc ở `work/backlog.md`. Câu ở kế hoạch pha 2 nói *"kế hoạch pha 1 §2 dùng
+cột ấy"* sửa thành thì quá khứ. **ADR-049** giữ nguyên lời trích cột cũ: đó là lý do của quyết định
+lúc nó được viết, không phải trạng thái hiện hành. Chưa sửa (ngoài phạm vi finding này): §4.2 của kế
+hoạch pha 1 vẫn kể *"`I-001`…`I-018`"* như ảnh chụp ngày 2026-09-03 — cùng họ, nhưng là mô tả tài sản
+pha 0 để lại lúc mở pha, không phải một ô trạng thái.
+
 **Related task:**
-**P1-08** (lượt phát hiện, 2026-09-08) · **P1-11** (đo thêm hàng `S-5` của §8, 2026-09-08, cũng
+**T-107** (lượt sửa, 2026-09-27) · **P1-08** (lượt phát hiện, 2026-09-08) · **P1-11** (đo thêm hàng `S-5` của §8, 2026-09-08, cũng
 **không** sửa hộ) · **T-048** (lượt viết bảng, 2026-09-03) · **F-001** ·
 **F-012** · **F-024** · **F-032** (cùng đường xử: ghi lại, không sửa hộ).
 
 **Status:**
-Open
+Fixed
 
 ---
 

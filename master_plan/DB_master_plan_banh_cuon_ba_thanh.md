@@ -68,8 +68,9 @@ Năm đầu ra bắt buộc mà bảng sáu pha đòi ở pha 2, cộng một th
 | 5 | **Query đối chiếu cho từng bất biến** | `P2-11` |
 | 6 | **Quy ước code**: stack, cấu trúc thư mục, đặt tên, khung test (**ADR-039**) | `P2-12` |
 
-**Cột thứ ba cố ý KHÔNG phải cột *"hôm nay có chưa"***, dù kế hoạch pha 1 §2 dùng cột ấy. Lý do đo
-được: cột ấy ở pha 1 đã hết đúng và không ai cập nhật — `work/findings.md` **F-033**. Một cột nói
+**Cột thứ ba cố ý KHÔNG phải cột *"hôm nay có chưa"***, dù bản đầu của kế hoạch pha 1 §2 dùng cột
+ấy. Lý do đo được: cột ấy ở pha 1 đã hết đúng và không ai cập nhật — `work/findings.md` **F-033**;
+2026-09-27 (T-107) kế hoạch pha 1 đổi sang đúng hình cột của file này. Một cột nói
 *bước nào sinh ra nó* thì không bao giờ lệch, vì nó nói về **kế hoạch** (thứ file này sở hữu) chứ
 không nói về **trạng thái** (thứ `work/backlog.md` sở hữu).
 
