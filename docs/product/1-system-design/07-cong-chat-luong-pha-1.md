@@ -214,6 +214,11 @@ kỳ vọng*.
 
 ## 6. Ba chỗ KHÔNG trỏ được — biên bản của lượt diễn
 
+> **`F-036` đã lấp 2026-09-27** (T-103, **ADR-056**): hai vế có tầng và tập đối chiếu ở
+> [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) hàng `I-004` · `I-009`, và lượt rà theo vế lấp
+> thêm năm hàng cùng hình. Các ô *KHÔNG trỏ được — `F-036`* ở §1 · §2 · §3 là biên bản của ngày
+> 2026-09-08, giữ nguyên; hôm nay chúng trỏ được vào hai hàng ấy. `F-037` · `F-038` không đổi.
+
 Ba chỗ dưới đây là **phát hiện của lượt này**. Không chỗ nào được lấp ở đây: lượt này **ghi**, và
 việc thiết kế bù thuộc bước hoặc phiên nhận `F-XXX` tương ứng (`work/backlog_SD.md` → P1-11, mục
 *Nói một câu, việc phải làm là gì*).
@@ -286,6 +291,15 @@ vẫn là của **chủ repo**, không của cổng (§8).
   ⚠️ **Tick KÈM một câu, và câu này là lý do `F-036` tồn tại:** ô này chấm **mã**, không chấm
   **vế**. Hai mệnh đề có hàng đầy đủ mà vẫn thiếu hẳn một vế (`I-004` việc cấp đơn `canh`,
   `I-009` vế ngừng bán) — xem §6. Đừng đọc ô xanh này thành *mọi vế đã có tầng*.
+  **Đo lại theo vế 2026-09-27 (T-103, ADR-056)** — ô này nay chấm cả vế (kế hoạch §9). Đọc lời cả
+  hai mươi mốt mệnh đề, tách vế, đối chiếu từng vế với hai cột: **bảy** hàng thiếu — hai hàng của
+  `F-036` thiếu cả tầng lẫn tập; `I-003` (chiều *đủ hai điều kiện mà bàn vẫn không trống*) ·
+  `I-008` (đơn cũ không bị chạm; khoảng mất kết nối tính từ lúc mất, `U-061`) · `I-010` (dòng cũ
+  không bị đánh dấu hỏng) · `I-015` (thu **vượt**) · `I-017` (tiền chưa thu **không** chặn đóng)
+  có tầng nhưng thiếu tập. Cả bảy đã lấp; sau đó mọi vế có một tầng và một tập, **trừ** hai chỗ
+  đã có tên từ trước: `I-004` ca *không bàn nào đang chờ đúng thứ đã làm* (chưa có luật) và
+  `I-014` khoản trả trước (**`F-037`**). Bảy là phép đếm của lượt này, không phải ranh giới
+  (**F-003**): phép đọc vế là việc của người, và người đọc sau có thể tách vế khác.
 - [x] **2. Mỗi mệnh đề chỉ được giữ ở tầng 4 hoặc 5 đã nói thẳng ra điều đó.**
   Lọc chữ *"máy không ngăn được"* trên [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md): **11**
   lần, và đối chiếu từng hàng có chữ *tầng 4* / *tầng 5* — `I-004` · `I-011` · `I-012` · `I-014` ·

@@ -140,7 +140,7 @@ cộng hai chỗ *suy ra* chưa ai hỏi chủ quán. Chi tiết ở §8.
 | Mã | Nó thiếu cái gì | Chạm bước nào của pha 2 |
 |---|---|---|
 | **F-034** | cơ chế chặn *mất hẳn bản ghi đã ghi* chưa có nhà; ba đường ra đã ghi sẵn, chọn là quyền chủ repo | `P2-09` |
-| **F-036** | phép đối chiếu của một mệnh đề hẹp hơn chính mệnh đề ấy — hai vế không có tầng | `P2-05` · `P2-07` |
+| ~~**F-036**~~ | ~~phép đối chiếu của một mệnh đề hẹp hơn chính mệnh đề ấy~~ — **đã đóng 2026-09-27** (T-103, `docs/decisions.md` **ADR-056**); hai vế nay có tầng | `P2-07` (nổ đơn trạm `canh`, tầng 2) |
 | **F-037** | khoản **trả trước** có mốc tính tiền nhưng không có dòng nào trong bảng đối soát | `P2-06` · `P2-11` |
 | **F-038** | *thiếu một trường bắt buộc thì đơn không tạo được* là luật pha 0 mà pha 1 không có mệnh đề, không có tầng, không có dòng yêu cầu | `P2-04` |
 | **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** — `04-yeu-cau-du-lieu.md` §6 dặn **để trống, đừng điền** | `P2-07` |
@@ -288,7 +288,7 @@ là mở ra đúng loại việc rà mà **F-007** đã đo giá.
 | **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** (`master_plan/shop-facts.md` §7.2 — chỗ *suy ra*, chưa hỏi) | `P2-07` — ô ấy **để trống**, đừng điền | chủ quán |
 | **S-6** | với đơn giao tận nơi, quầy bấm mốc *"đã ra bàn"* **lúc nào** | `P2-07` | chủ quán |
 | **F-034** | *mất hẳn bản ghi đã ghi* chưa có cơ chế nào; ba đường ra ghi sẵn trong finding | `P2-09` | **chủ repo** |
-| **F-036** | hai vế thiếu tầng — việc cấp đơn của một trạm, và vế *ngừng bán* | `P2-05` · `P2-07` | phiên nhận F-036 (pha 1) |
+| ~~**F-036**~~ | ~~hai vế thiếu tầng~~ — **đã đóng 2026-09-27** (T-103, **ADR-056**) | `P2-07` | — |
 | **F-037** | khoản **trả trước** không có dòng trong bảng đối soát | `P2-06` · `P2-11` | phiên nhận F-037 (pha 1) |
 | **F-038** | *thiếu một trường bắt buộc thì đơn không tạo được* chưa có mệnh đề và chưa có tầng | `P2-04` | phiên nhận F-038 (pha 1) |
 | **F-042** | mã QR của bàn *không đoán được và đổi được* chưa có mệnh đề nào (thêm 2026-09-25, T-097) | `P2-10` — dữ liệu mồi ghi chỗ trống, không tự chốt cách sinh mã | phiên nhận F-042 (pha 1) |

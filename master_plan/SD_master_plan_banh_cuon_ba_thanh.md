@@ -330,7 +330,10 @@ dùng được; một cổng tick 9/9 bằng cảm giác thì không chặn đư
       `03-bao-ve-invariant.md`, đối chiếu **danh sách mã** giữa hai file (không đếm số lượng —
       một con số đếm động đã tự hết đúng một lần, `work/findings.md` **F-026**): không mã nào ở
       `quality/invariants.md` vắng mặt ở đây, không ô nào trống, và mỗi tầng là một trong năm
-      giá trị §7.
+      giá trị §7. **Rồi đếm VẾ** (thêm 2026-09-27, T-103, **ADR-056**): danh sách mã khớp là điều
+      kiện **cần**, không **đủ** — với mỗi mã, đọc lời ở `quality/invariants.md`, tách vế, và mỗi
+      vế phải có một tầng ở cột giữa **và** một tập ở cột phải sẽ có phần tử nếu đúng vế ấy hỏng
+      (`work/findings.md` **F-036**). Việc của người, không của script.
 - [ ] Mỗi mệnh đề chỉ được giữ ở **tầng 4 hoặc 5** đã nói thẳng ra điều đó → lọc chữ *"máy không
       ngăn được"*, đối chiếu với danh sách các mục thuộc hai tầng ấy.
 - [ ] Định nghĩa **ngày bán** có đúng một chỗ, và ba phép cộng tiền trỏ về nó → `grep` ba luật

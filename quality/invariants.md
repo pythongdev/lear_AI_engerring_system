@@ -100,8 +100,15 @@ phiên chưa đóng.
 
 **Invariant:**
 Một đơn **đã duyệt** nổ ra việc cho **mọi** trạm mà thành phần của suất chạm tới, với số lượng =
-số suất × số thành phần trong suất (`shop-facts.md` §4.5). Mọi đơn đều có đúng một việc cho trạm
-`canh` — nước chấm là việc cấp đơn. Một đơn **chưa duyệt** sinh **không** việc nào, ở cả năm trạm.
+số suất × số thành phần trong suất (`shop-facts.md` §4.5). Trạm `canh` **không** đi theo phép
+nhân ấy — nó có **hai** loại việc (`shop-facts.md` §5.3): **nước chấm** là việc cấp đơn, **mọi**
+đơn đều có **đúng một**, không nhân theo số suất; **canh** có số lượng **bằng đúng** con số khách
+chọn trên dòng *canh bánh cuốn* — không suất nào kèm sẵn bát nào, nên khách không chọn canh thì đơn
+**không** có việc canh nào. Một đơn **chưa duyệt** sinh **không** việc nào, ở cả năm trạm.
+
+*Câu về trạm `canh` viết lại 2026-09-27 (T-103, Claude Code), theo lời chủ quán đã chốt ở `U-046` ·
+`U-048` (2026-09-08): bản trước nói *"đúng một việc cho trạm `canh`"*, hết đúng từ khi canh thành
+một dòng menu khách chọn số lượng (`work/findings.md` **F-036**).*
 
 **Why:**
 Hai nửa của cùng một luật. Nổ thiếu thì bếp làm thiếu: một dòng "Combo ×2" mơ hồ không cho ai biết
@@ -114,7 +121,10 @@ Kịch bản dương: duyệt một đơn "hai suất Đầy đủ trứng tái"
 đúng ví dụ ở `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.5 — sáu việc trên ba trạm, bánh cuốn ×6 chứ không phải ×2, và
 dòng giò không kèm mô tả nhân. Kịch bản âm: gửi cùng đơn ấy qua QR tại bàn và **không** duyệt ⇒
 đếm việc ở cả năm trạm bằng 0. Kịch bản phủ: với mỗi suất bán ở `shop-facts.md` §4.5, đơn duyệt
-xong phải có ít nhất một việc bánh cuốn — suất nào không có là nổ sai.
+xong phải có ít nhất một việc bánh cuốn — suất nào không có là nổ sai. Kịch bản trạm `canh`: duyệt
+cùng đơn hai suất ấy kèm dòng *canh bánh cuốn ×2* ⇒ trạm `canh` có đúng **một** việc nước chấm
+(không phải hai) và **một** việc canh số lượng **2**; duyệt lại đơn ấy **không** kèm dòng canh ⇒
+vẫn một việc nước chấm, **không** việc canh nào (`shop-facts.md` §5.3).
 
 *Phát hiện ở BA-03, 2026-08-31.*
 

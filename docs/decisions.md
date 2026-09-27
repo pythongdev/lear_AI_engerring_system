@@ -72,6 +72,7 @@ có câu trả lời mới từ người.
 | ADR-053 | **Pha 2 dựng trên nền gì và cái gì chứng minh nó còn đúng** — `P2-12` (có chọn DBMS + phiên bản) vào *Cần xong trước* của năm lát `P2-04`…`P2-08`; khi đã có file migration thì **migration thắng** cho tên · kiểu · ràng buộc, `.md` giữ ý định, lệch ⇒ `F-XXX`, `P2-09` biến phép đối chiếu tên bảng thành lệnh; mỗi quy ước dữ liệu của `P2-03` kèm **một phép kiểm chạy được**, gom vào bộ `P2-11` | **Đã chốt** 2026-09-25 — chủ repo xác nhận luật 2 ý 1 (*code dựng database thắng*); ý 2 · 3 là phần suy ra của phiên | — | T-096; đổi *Cần xong trước* của `P2-04`…`P2-08`; không chọn DBMS |
 | ADR-054 | **Claude quyết, Codex thi công** — Claude giữ chọn task, mức, Acceptance, scope, thiết kế, ADR, unknowns, lời chủ quán, duyệt, tích hợp, khối commit; Codex làm theo phiếu trong worktree riêng, không quyết nghiệp vụ, không commit | Đã chốt 2026-09-27 | — | T-100; nối ADR-052; quy trình ở `docs/prompt-guideline.md` §6.1 |
 | ADR-055 | **DBMS là PostgreSQL 17** — chọn vì lát bán hàng lõi cần khoá duy nhất chỉ áp cho vài trạng thái, DDL trong giao dịch và kiểu mốc không vướng 2038; loại MySQL 8.4 của `prompt-fullstack.md` §3.4 và SQLite. Quy ước code ở `docs/product/2-db/10-quy-uoc-code.md` | Đã chốt 2026-09-27 (giao cho phiên) | — | mở `P2-04`…`P2-08` |
+| ADR-056 | **Hai vế thiếu tầng của F-036** — nước chấm · canh của `I-004` giữ ở **tầng 2** trong giao dịch nổ đơn; *ngừng bán ⇒ không đặt mới được* ở lại hàng `I-009`, **tầng 3** tại cửa tạo lượt gọi; đơn vị của bảng bảo vệ là **vế**, không phải mã | Đã chốt 2026-09-27 (giao cho phiên) | — | `P2-07` (nổ đơn trạm `canh`) |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3733,3 +3734,61 @@ của `P2-12`, `work/backlog_DB.md`).
 **Applies to:** `docs/product/2-db/10-quy-uoc-code.md` · `docs/product/2-db/01-quy-uoc-du-lieu.md`
 §0 · `compose.yaml` · `db/` · `scripts/db-check.sh` · `scripts/verify.sh` ·
 `master_plan/prompt-fullstack.md` §3.4 (một dòng trỏ).
+
+### ADR-056 — Hai vế thiếu tầng của F-036: nước chấm · canh ở tầng 2, ngừng bán ở tầng 3, và bảng bảo vệ đếm theo vế
+
+**Trạng thái:** **Đã chốt** 2026-09-27, **giao cho phiên**. Chủ repo giao `work/findings.md`
+**F-036** với lời nguyên văn *"đọc kĩ và sửa"* — F-036 ghi *"chọn đường là quyết định của chủ
+repo"*, và câu ấy là lời **giao việc chọn**, không phải lời xác nhận một phương án cụ thể (`CLAUDE.md`
+§7.2). Chủ repo đọc ADR này rồi muốn đổi thì chỉ cần một câu; lượt đổi phải xong trước khi `P2-07`
+dựng lát nổ đơn. Task **T-103**.
+
+**Context:**
+Lượt diễn P1-11 (2026-09-08) tìm ra hai vế có mặt trong lời mệnh đề ở `quality/invariants.md`
+nhưng không có tầng lẫn tập đối chiếu ở `docs/product/1-system-design/03-bao-ve-invariant.md`:
+việc **cấp đơn** của trạm `canh` (`I-004`) và *món đã ngừng bán thì không kênh nào đặt mới được*
+(`I-009`). Luật của cả hai đã đủ, không cần hỏi thêm ai: `master_plan/shop-facts.md` §5.3 (nước
+chấm đúng một mỗi đơn; canh đúng số bát khách chọn, `U-046` · `U-048`) và
+`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3.4 (ngừng bán chặn đơn mới ở cả năm kênh, không rút
+đơn cũ). Cái còn thiếu là **tầng**, và tầng là việc của pha 1 (**ADR-035**).
+
+**Decision:**
+1. **Nước chấm · canh của `I-004`: tầng 2**, trong **cùng** giao dịch nổ đơn đã giữ vế *đủ việc*.
+   Lần nổ sinh đúng một việc nước chấm và một việc canh mang đúng con số trên dòng *canh bánh
+   cuốn*; phép nhân *suất × thành phần* không áp cho trạm `canh`.
+2. **Ngừng bán: ở lại hàng `I-009`, tầng 3** — cửa tạo lượt gọi, cửa đã đọc menu tại mốc để khoá
+   giá (`I-009` · `I-013`), đọc luôn món còn đang bán tại mốc ấy và **từ chối** dòng của món đã
+   ngừng.
+3. **Đơn vị của bảng bảo vệ là vế** (luật đọc thứ năm ở §0 của file ấy): mỗi vế một tầng và một tập.
+   Ô 1 của cổng pha 1 chấm thêm vế, không chỉ mã.
+
+**Rejected alternatives:**
+- **Tầng 1 cho *không đơn nào có hơn một việc nước chấm*** (một khoá duy nhất). Rẻ, nhưng nó chỉ giữ
+  nửa **thừa**; nửa **thiếu** — đúng nửa đắt, khách mang đi về nhà không có nước chấm — vẫn chỉ
+  giao dịch nổ đơn giữ được. Hai cơ chế cho một vế thì phép đối chiếu vẫn phải đọc cả hai chiều;
+  thêm khoá không đổi tầng cao nhất đang giữ vế (§0 luật 1).
+- **Tầng 1 cho ngừng bán** (database từ chối dòng đơn mới trỏ vào món đã ngừng). Mạnh hơn, và vế
+  này chạm tiền: đặt được món đã ngừng là thu tiền rồi phải hoàn (`shop-facts.md` §6.4). Bị loại
+  vì luật ấy là một phép so **mốc** giữa dòng đơn và trạng thái menu, mà menu **đổi theo thời
+  gian** — một món ngừng rồi bán lại thì nghĩa của mốc ra sao chưa ai chốt. Đúng lý do `I-010` và
+  `I-016` chọn tầng 3: luật đổi được mà không cần một migration. Cái máy **có** giữ thay vào: mốc
+  ngừng bán được **cất** (lược đồ `P2-05` đã có, vì `QD-50` cấm xoá), nên tập đối chiếu của vế này
+  đọc được từ dữ liệu.
+- **Chuyển vế ngừng bán sang `I-010`**, đọc *món đã ngừng* thành một ca của *tổ hợp không hợp lệ*
+  (F-036 việc 1 nêu đường này). Bị loại: lời `I-009` tự liệt *ngừng bán hẳn* trong bốn chiều và có
+  kịch bản riêng cho nó; `I-010` nói về tổ hợp **tuỳ chọn**. Chuyển sang thì phải sửa lời hai mệnh
+  đề để giữ một vế — và cùng cửa, cùng luật *từ chối, không sửa hộ* vẫn áp như nhau.
+
+**Hệ quả:**
+- `P2-07` dựng lát nổ đơn với hai loại việc trạm `canh`; tập đối chiếu của hai vế ấy có sẵn ở hàng
+  `I-004`.
+- `P2-05` không cần migration mới cho ngừng bán: cửa tạo lượt gọi là pha 3. Test
+  `db/tests/i009_snapshot_survives_menu_change.sql` in đúng câu *database không chặn dòng mới cho
+  món đã ngừng* — câu ấy nay là **thiết kế**, không phải chỗ trống.
+- Lượt rà theo vế tìm thêm năm hàng cùng hình (`I-003` · `I-008` · `I-010` · `I-015` · `I-017`),
+  tất cả đã có luật đủ và chỉ thiếu **tập đối chiếu**; lấp cùng lượt. Năm là phép đếm của lượt này,
+  không phải ranh giới (**F-003**).
+
+**Applies to:** `docs/product/1-system-design/03-bao-ve-invariant.md` §0 · §1 · §2 · §3 ·
+`quality/invariants.md` `I-004` · `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §9 ·
+`docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §6 · §7.

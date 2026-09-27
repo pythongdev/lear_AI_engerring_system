@@ -86,7 +86,7 @@ số trong câu này (`work/findings.md` **F-003**). Bảng sống ở kế ho�
 | **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** (`master_plan/shop-facts.md` §7.2 — chỗ *suy ra*, **chưa hỏi**) | `P2-07` — ô ấy **để trống**, đừng điền | chủ quán |
 | **S-6** | với đơn giao tận nơi, quầy bấm mốc *"đã ra bàn"* **lúc nào** (§7.2) | `P2-07` | chủ quán |
 | **F-034** | *mất hẳn bản ghi đã ghi* chưa có cơ chế nào; ba đường ra ghi sẵn trong finding | `P2-09` | **chủ repo** |
-| **F-036** | hai vế thiếu tầng — việc **cấp đơn** của trạm `canh`, và vế *ngừng bán hẳn* của `I-009` | `P2-05` · `P2-07` | phiên nhận F-036 (pha 1) |
+| ~~**F-036**~~ | ~~hai vế thiếu tầng~~ — **đã đóng 2026-09-27** (T-103, **ADR-056**): nước chấm · canh của `I-004` **tầng 2** trong giao dịch nổ đơn; ngừng bán của `I-009` **tầng 3**, không ràng buộc | `P2-07` dựng hai loại việc trạm `canh` theo hàng `I-004` | — |
 | **F-037** | khoản **trả trước** không có dòng trong bảng đối soát | `P2-06` · `P2-11` | phiên nhận F-037 (pha 1) |
 | **F-038** | *thiếu một trường bắt buộc thì đơn không tạo được* chưa có mệnh đề, chưa có tầng, chưa có dòng `YC` | `P2-04` | phiên nhận F-038 (pha 1) |
 

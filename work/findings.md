@@ -97,7 +97,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-033 | Ảnh chụp *"hôm nay có chưa"* của kế hoạch pha 1 vẫn ghi **chưa** cho bốn thứ đã xong | Open |
 | F-034 | Cơ chế chặn *mất hẳn dữ liệu* chỉ sống ở tài liệu không sở hữu gì — lần thứ hai của F-027 | Open |
 | F-035 | Gate 7b đọc index bằng encoding KHÁC mọi chỗ đọc khác trong chính nó ⇒ kêu một file scope đã phủ | Closed |
-| F-036 | Phép đối chiếu của một mệnh đề hẹp hơn chính mệnh đề ấy ⇒ đọc ra rỗng trong khi một vế đã hỏng | Open |
+| F-036 | Phép đối chiếu của một mệnh đề hẹp hơn chính mệnh đề ấy ⇒ đọc ra rỗng trong khi một vế đã hỏng | Fixed |
 | F-037 | Khoản trả trước có mốc tính tiền nhưng không có dòng nào trong bảng đối soát để đứng | Open |
 | F-038 | *"Thiếu một trường bắt buộc thì đơn không tạo được"* — luật đã chốt của pha 0, pha 1 không có mệnh đề nào | Open |
 | F-039 | Gate 7b đọc khối commit theo từng dòng ⇒ khối nối dòng `\` vừa bị kêu nhầm vừa bị chấm sót bảy trên mười file | Fixed |
@@ -2441,6 +2441,13 @@ trên một cây; lần này luật ấy chạy **đúng**) · **F-024** (nội 
 `docs/decisions.md` **ADR-006** (Gate 7b) · **ADR-008** (sửa tiến) · **ADR-010** (Gate 8) ·
 `CLAUDE.md` §6.1 · §6.2 · §3.8 (ngưỡng "hai lần" đã qua từ trước)
 
+**Lần nữa — 2026-09-27, ghi bởi T-103 (Claude Code).** Commit `71f8705` subject `T-104` (đóng
+F-019) mang theo toàn bộ phần chưa commit của **P2-05** (migration menu · giá, ba test, file lát
+`03-luoc-do-menu-gia.md`, hàng `CLAUDE.md` §2) và dòng *In Progress* của **T-103** vừa ghi vào
+`work/backlog.md` — trong khi T-103 đang chạy trên cùng cây. Body commit tự ghi *"Gate 3 đỏ chỉ vì
+file P2-05/T-102 chưa commit"*, tức phiên ấy **thấy** file của người khác mà vẫn stage chúng. Không
+mất dữ liệu; hệ quả là P2-05 không còn commit mang tên mình, cùng loại với dòng P1-11 ở trên.
+
 **Status:**
 Open
 
@@ -3387,8 +3394,32 @@ vế *ngừng bán* của `I-009`. Lược đồ **cất** mốc ngừng bán tr
 `docs/product/2-db/03-luoc-do-menu-gia.md` §5. Vế `I-004` (việc cấp đơn của trạm `canh`) là của
 `P2-07`. Gỡ vẫn theo việc 1 ở trên (pha 1 chọn tầng), rồi một migration mới nếu tầng chọn là tầng 1.
 
+**Đã lấp — 2026-09-27, T-103 (Claude Code), chủ repo giao: *"đọc kĩ và sửa"*.** Cả ba việc ở trên:
+
+1. **Hai hàng rộng ra** (`docs/product/1-system-design/03-bao-ve-invariant.md`, `docs/decisions.md`
+   **ADR-056** — *giao cho phiên*, chủ repo đổi được bằng một câu). `I-004`: nước chấm đúng một mỗi
+   đơn và canh đúng số bát khách chọn, **tầng 2** trong giao dịch nổ đơn; phép nhân *suất × thành
+   phần* không còn áp cho trạm `canh`, nên hết cả chiều **báo lệch cho đơn đúng**. `I-009`: vế ngừng
+   bán **ở lại** hàng `I-009` (không sang `I-010`), **tầng 3** tại cửa tạo lượt gọi — nên lát
+   `P2-05` **không** cần migration mới; câu *database không chặn* của test `i009` nay là thiết kế.
+   Lời `I-004` ở `quality/invariants.md` viết lại cho khớp `shop-facts.md` §5.3 — đây là lời chủ quán
+   đã chốt (`U-046` · `U-048`), không phải luật mới.
+2. **Ô 1 của cổng pha 1 chấm vế** (`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §9, chỗ ký
+   `07-cong-chat-luong-pha-1.md` §7), và bảng bảo vệ có luật đọc thứ năm ở §0: đơn vị của bảng là
+   **vế**, mỗi vế một tầng và một tập.
+3. **Rà nốt theo vế — đọc lời cả 21 mệnh đề.** Thêm **năm** hàng cùng hình, đều đã có tầng, chỉ
+   thiếu tập: `I-003` chiều ngược của *khi và chỉ khi* · `I-008` vế *đơn cũ không bị chạm* và khoảng
+   mất kết nối tính từ lúc mất chứ không từ lúc bấm tắt (`U-061`) · `I-010` dòng cũ không bị đánh
+   dấu hỏng · `I-015` thu **vượt** (tập cũ chỉ đọc được *phần thiếu*) · `I-017` tiền chưa thu
+   **không** chặn đóng phiên. Cả năm đã lấp cùng lượt. Hai chỗ còn thiếu tập đã có tên từ trước và
+   **không** thuộc finding này: `I-004` ca *không bàn nào đang chờ đúng thứ đã làm* (chưa có luật)
+   và `I-014` khoản trả trước (**F-037**). Năm là phép đếm của lượt này (**F-003**).
+
+Không cổng máy nào được thêm: phép đọc vế là việc của người (việc 2 ở trên), và ô cổng là chỗ đúng
+cho nó.
+
 **Status:**
-Open
+Fixed — 2026-09-27 (T-103)
 
 ---
 
