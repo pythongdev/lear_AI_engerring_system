@@ -89,7 +89,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-025 | Phiên song song `git commit` nhặt luôn thay đổi chưa commit của phiên khác | Open *(**lần thứ sáu 2026-09-20**, `04c5a64` — lần đầu cú nhặt tự đẻ ra một cổng đỏ: `work/scope.txt` vào git kèm pattern. Đọc cuối mục F-025)* |
 | F-026 | Ba invariant sinh sau khi kế hoạch chia nhóm, không nhóm nào nhận — cả ba đã xếp xong (ADR-042 · ADR-044) | Fixed |
 | F-027 | Hai phụ thuộc ngoài chỉ tồn tại ở bản xuất khẩu | Fixed |
-| F-028 | Một dãy mã bị đọc thành phép đếm, đã đứng trong ADR hai ngày | Open |
+| F-028 | Một dãy mã bị đọc thành phép đếm, đã đứng trong ADR hai ngày | Fixed |
 | F-029 | Tiền đề "không tài liệu nào nói X" viết mà không grep | Fixed |
 | F-030 | Gate 1c coi mọi U-XXX nhắc trong gạch đầu dòng đang mở là "đang mở" | Fixed |
 | F-031 | Lần thứ năm: subject trùng commit trước, nội dung không khớp | Open |
@@ -2762,12 +2762,33 @@ Hai chỗ còn lại **không** sửa trong lượt này, và đó là một l�
 Chỗ **phải** sửa nếu ai đó viết lại: cụm *"ADM-01…ADM-52"* nay hụt mất `ADM-53`. Sửa nó thành
 *"ADM-01…ADM-53"* trong cùng lượt mà file ấy được sửa vì lý do khác — không mở task riêng.
 
+**Đóng 2026-09-27 — T-106, Codex theo yêu cầu trực tiếp của chủ repo.**
+Tiêu chí đóng là phép đếm có bằng chứng, nơi tra công việc hiện hành đúng owner và không dùng
+“52 việc” làm căn cứ xếp lịch hiện tại; không yêu cầu xoá câu sai trong lịch sử.
+
+Đếm lại bằng hai cấu trúc độc lập trong `work/backlog_AD.md`: **29 tiêu đề `### ADM-`**, **29 hàng
+mục lục**, **29 mã duy nhất**, hai tập mã khớp nhau. Đây là số đo ngày 2026-09-27, không phải giới
+hạn số việc; khi danh sách đổi phải đếm lại. Mục *Mã số không đánh lại* ở owner đã giải thích
+khoảng trống và đính chính phép đếm của ADR-013 từ 2026-09-04.
+
+Rà các tài liệu Markdown cho câu “52 việc” và dãy `ADM-01…ADM-52`: câu sai còn trong **ADR-013**, cả
+phần *Why* của **ADR-014**, và chi tiết **T-041** đã xong; những lần trích lại trong finding hay
+T-052 là bằng chứng lịch sử. Giữ các đoạn này theo hướng xử lý đã ghi ở trên; chúng không phải
+phép đếm hiện hành. Dãy cũ còn trong ADR, hồ sơ task đã xong, bản lưu `docs/product.md` và lời
+đính chính của sổ admin cũng được giữ theo đúng ngữ cảnh lịch sử.
+
+Chỗ tra cứu còn dùng danh sách cũ ở `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7.6 đã được
+sửa về `work/backlog_AD.md` (mô tả) và `work/backlog.md` (trạng thái, thứ tự làm), bỏ số đếm câu hỏi
+chép tay. Đối chiếu mục *Thứ tự làm giữa lane admin và các pha* trong backlog: căn cứ hiện hành
+là lời chủ quán ngày 2026-09-20 về thu luật song song pha 2, không phải “52 việc”. Không đổi lời
+chốt ấy, luật vào MVP hay nội dung ADR. Bằng chứng và kết quả gate ở task T-106.
+
 **Related task:**
 **T-052** (lượt phát hiện, dựng `work/backlog_AD.md`) · `docs/decisions.md` **ADR-013** · **ADR-031**
 · **ADR-036** · **F-003** (cùng gốc, bản gốc) · **F-018** (cùng gốc, lần thứ hai)
 
 **Status:**
-Open
+Fixed
 
 ---
 

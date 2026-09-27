@@ -247,6 +247,8 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="done"></a>
 ## Done
 
+- [x] T-106 **Rà phép đếm ADM và đóng F-028** — L1, 2026-09-27. Đếm khớp 29 mục; sửa pointer MVP; F-028 Fixed. Bằng chứng và giới hạn gate ở chi tiết T-106.
+
 - [x] T-105 **Mọi điều AI truyền đạt cho chủ repo viết bằng văn xuôi tiếng Việt** — L1, 2026-09-27. Chủ repo: *"cập nhật claude.md và agent.md tất cả những thông tin mà bạn cần truyện đạt cho tôi đều dùng văn xuôi để tôi dễ hiểu"*. Acceptance: `CLAUDE.md` §1 nói luật phủ **mọi** thứ gửi tới chủ repo (trả lời, báo cáo cuối task/phiên, báo cáo Codex, câu hỏi, bàn giao), nói rõ khối commit · lệnh · link câu hỏi mở vẫn giữ dạng của chúng nhưng lời giải thích quanh chúng là văn xuôi; `AGENTS.md` trỏ Codex tới luật ấy mà không chép; gate xanh ở mọi bước chạm file của task này. Claude Code, nhánh chatgpt_involve, base a70467b. Kết quả: đoạn *Ngôn ngữ trả lời* ở `CLAUDE.md` §1 mở rộng như Acceptance; `AGENTS.md` thêm một đoạn trỏ Codex tới §1. Gate 1b · 1c xanh; Gate 3 đỏ chỉ vì bảy file của `T-102` chưa commit, không file nào của lượt này. Chưa review độc lập.
 - [x] T-103 **F-036: phép đối chiếu phủ mọi vế — hai hàng thiếu vế và năm hàng cùng hình** — L2, 2026-09-27. Chủ repo: *"đọc kĩ và sửa"*. Claude Code, nhánh chatgpt_involve, base 71f8705; chưa review độc lập. Acceptance ở dòng mở task (dòng ấy bị commit `71f8705` nhặt — F-025). Kết quả: `03-bao-ve-invariant.md` §0 thêm luật 5 (đơn vị là **vế**); hàng `I-004` có vế nước chấm · canh **tầng 2** và hai tập mới, phép nhân không còn áp cho trạm `canh`; hàng `I-009` có vế ngừng bán **tầng 3** và một tập; năm hàng cùng hình (`I-003` · `I-008` · `I-010` · `I-015` · `I-017`) thêm tập còn thiếu; lời `I-004` khớp `shop-facts.md` §5.3; **ADR-056** (*giao cho phiên* — chủ repo đổi được bằng một câu); ô 1 cổng pha 1 chấm vế, đo lại ở `07-cong-chat-luong-pha-1.md` §7; `F-036` **Fixed**; bốn chỗ trỏ ở pha 2 sửa theo; `F-025` ghi thêm lần nhặt `71f8705`. Gate 1b · 1c · 1d xanh; Gate 3 đỏ chỉ vì file của `T-102` chưa commit. Chưa làm: `P2-07` dựng hai loại việc trạm `canh`; tập đối chiếu ngừng bán ở `P2-11`.
 - [x] T-104 **Đóng F-019 — nghiệm thu đếm chữ trong tiêu đề sau lượt tách file** — L1, 2026-09-27. Chủ repo: *"F-019 … đọc kĩ và fix"*. Acceptance: Acceptance 12 của prompt BA-12 nói mọi chỗ mang *"Ba lát cắt"* (H1 · `## 3.` · câu văn) và chạy `grep` sau khi viết; `docs/prompt-guideline.md` §2 *Verify* có đoạn bài học; F-019 `Fixed` ở thân và bảng tổng hợp, có khối đóng ghi ngày; gate xanh. Claude Code, nhánh chatgpt_involve; chưa review độc lập. Không dựng cổng mới (F-019 đã quyết). `grep -n 'Ba lát cắt' docs/product/0-ba/ban-hang/03-lat-cat.md` rỗng 2026-09-27.
@@ -1325,6 +1327,22 @@ git status --porcelain
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+### T-106 — Rà phép đếm ADM và đóng F-028
+
+**Yêu cầu:** Chủ repo yêu cầu ngày 2026-09-27 rà căn cứ xếp lịch rồi đóng finding về việc đọc dãy mã thành số lượng.
+
+**Phạm vi:** `work/backlog.md`, `work/findings.md`, `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md`.
+
+**Acceptance (trước khi sửa):** Đếm độc lập hàng mục lục và tiêu đề ADM, hai tập mã khớp nhau; rà câu “52 việc” và dãy ADM cũ, phân biệt lịch sử với căn cứ hiện hành; sửa pointer MVP về owner hiện hành mà không đổi luật nghiệp vụ; ghi bằng chứng đóng F-028, đồng bộ trạng thái thân và mục lục; chạy gate và báo đúng kết quả, không gom thay đổi có sẵn.
+
+**Bàn giao:** Codex, nhánh `chatgpt_involve`, base `92b4f76`; chưa review độc lập. Đã đọc diff theo Gate 4; không sửa ADR hay dữ kiện quán. Chỉ ba file trong phạm vi đổi ở lượt này; giữ nguyên bảy file tracked và hai prompt untracked có sẵn, không stage/commit.
+
+**Bằng chứng nghiệm thu:** Lệnh Python dùng regex `^### (ADM-\d+) —` và `^\| (?:~~)?\[(ADM-\d+)\]` trên sổ admin trả `ADM headings: 29 index rows: 29 unique: 29 same IDs: True`. Rà Markdown bằng `rg`: câu sai còn ở ADR-013, ADR-014 và chi tiết T-041 đã xong; các trích dẫn khác giải thích lịch sử lỗi. Mục thứ tự làm hiện hành dựa vào lời chủ quán 2026-09-20. Pointer §7.6 MVP nay trỏ đúng ba owner; không còn dãy cũ ở `docs/product/` và `prompt/`. F-028 Fixed ở cả bảng và thân, có khối đóng kèm ngày và tiêu chí.
+
+**Kiểm tra:** `git diff --check` không lỗi. Chạy `./scripts/gate.sh` khi scope còn khai: Gate 3 FAIL chỉ vì bảy file có sẵn ngoài phạm vi; check-links OK; check-doc-status xanh (2349 khối, 59 mã U-XXX, 21 chuyển tiếp hợp lệ); verify skipped vì chỉ tài liệu. Không mở rộng scope để nhận thay đổi của việc khác. Sau khi hoàn tất và gỡ scope, chạy lại `./scripts/gate.sh` exit 0: scope skipped (không còn pattern), links OK, doc-status xanh; verify skipped vì chỉ tài liệu. Không còn phần sửa nào của T-106; chưa review độc lập.
+
+
 
 ### T-088 — Codex chưa có điểm vào và mô tả hook đang mặc định Claude Code
 

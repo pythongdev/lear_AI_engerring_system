@@ -142,13 +142,17 @@ Hai điều đọc kèm, vì chúng dễ bị nhớ nhầm thành ngược nhau:
   tới"* (§7.5) — có người cần, chỉ là **cần sau**. Chỗ đứng đúng vẫn là mục này, nhưng câu mô tả
   nay đổi: **được phép, chưa có luật, và đã có thứ tự — đi sau bán hàng.**
 
-⇒ **Hệ quả cho việc xếp lịch:** ADM-01…ADM-52 ở `work/admin-questions.md` §2 nay có một mốc để xếp
+⇒ **Hệ quả cho việc xếp lịch:** các việc ADM ở `work/backlog_AD.md` có một mốc để xếp
 quanh — không phải *"chưa biết bao giờ"* mà là *"sau khi luồng bán hàng chạy được"*. Điều kiện vào
 cửa §7.2 **không đổi**: một mảng chỉ vào MVP khi §1–§6 đã có luật nghiệp vụ cho nó.
 
-`work/admin-questions.md` giữ 55 câu hỏi và danh sách việc ADM-01…ADM-52 cho ba mảng ấy. Đó là
-**working state**, không phải phạm vi: một dòng ở đó không vào MVP cho tới khi nó có luật ở §1–§6
-và có tên trong §7.2.
+`work/admin-questions.md` giữ câu hỏi cho chủ quán; `work/backlog_AD.md` giữ mô tả công việc
+admin; `work/backlog.md` giữ trạng thái và thứ tự làm hiện hành (mục *Thứ tự làm giữa lane admin
+và các pha*). Đó là **working state**, không phải phạm vi: một dòng ở đó không vào MVP cho tới
+khi nó có luật ở §1–§6 và có tên trong §7.2.
+
+*Cập nhật pointer 2026-09-27, Codex theo yêu cầu chủ repo đóng F-028: tra danh sách ở owner,
+không suy số lượng công việc từ mã cuối dãy.*
 
 ### 7.7 Bốn chỗ MVP còn thiếu mô tả ở §1–§6
 
