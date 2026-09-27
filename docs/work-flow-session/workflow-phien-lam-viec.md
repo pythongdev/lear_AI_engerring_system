@@ -102,8 +102,8 @@ phiên nào cũng cần. Cái tôi rút ra khỏi nó, theo đúng thứ tự ư
    ghi: *dữ kiện này nhà ở đâu?* Hai file nói khác nhau thì file được bảng chỉ
    tên là đúng, file kia là bug phải sửa **ngay lúc phát hiện**, không phải task
    sau.
-2. **Những dòng ghi *chưa có owner*.** Schema, quy ước code, hợp đồng API, route
-   — bốn dòng ấy cố ý trống vì chúng thuộc pha sau. Chúng là **lệnh cấm** đối với
+2. **Những dòng ghi *chưa có owner*.** Schema, hợp đồng API, route — ba dòng ấy
+   cố ý trống vì chúng thuộc pha sau (quy ước code có chủ từ 2026-09-27, `P2-12`). Chúng là **lệnh cấm** đối với
    tôi: trước khi pha ấy mở, tôi không được đặt tên bảng, tên cột, endpoint hay
    route ở bất cứ đâu, kể cả khi tôi "biết" nó nên trông thế nào. Đây đúng là chỗ
    một LLM trượt dễ nhất, vì câu văn bịa ra nghe rất hợp lý.
@@ -232,8 +232,8 @@ không phải nhà của thứ ấy.
 | Ai đó **đề xuất đổi** chính hệ thống này | `work/proposals/` — đọc như ý kiến | không bao giờ là dữ kiện; chỗ nào nó trái §2 thì **§2 thắng** |
 | Việc phải làm trong task | `prompt/` | prompt mô tả *việc*, không sở hữu *dữ kiện nghiệp vụ*; số trong prompt vẫn phải đối chiếu owner |
 
-Thêm một luật cứng đứng trên cả bảng trên: bốn dòng §2 ghi **chưa có owner**
-(schema, quy ước code, hợp đồng API, route) nghĩa là *không có file nào* được đọc
+Thêm một luật cứng đứng trên cả bảng trên: những dòng §2 còn ghi **chưa có owner**
+(hôm nay: schema, hợp đồng API, route) nghĩa là *không có file nào* được đọc
 để lấy những thứ ấy — chúng chưa tồn tại. Đi tìm context cho một câu hỏi thuộc pha
 sau là bước đầu của việc bịa ra nó.
 
@@ -529,7 +529,7 @@ sửa"** có giá trị cao hơn phần "được sửa".
 Tôi *biết* một schema quán ăn trông thế nào, *biết* phụ thu giao hàng thường tính
 ra sao. Nên khi tài liệu im lặng, câu văn tôi viết ra sẽ trôi chảy và có vẻ đúng
 — và nó trở thành dữ kiện vì không có chủ nào để đối chiếu. Phòng thủ: cấm bịa sự
-thật nghiệp vụ (không có mức L0), bốn dòng *chưa có owner* trong §2, Gate 1d, và
+thật nghiệp vụ (không có mức L0), các dòng *chưa có owner* trong §2, Gate 1d, và
 ranh giới cứng giữa *lời bạn chốt* và *phần tôi suy ra*.
 
 **d) Tôi sẽ tin là code của mình đúng vì tôi vừa viết nó.**

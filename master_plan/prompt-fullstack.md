@@ -140,6 +140,10 @@ Ngoài giờ bán: web khoá nút đặt, hiện *"Quán mở cửa 6h–11h sá
 
 ### 3.4 Stack đã chốt
 
+> **2026-09-27:** DBMS **không** còn là MySQL — PostgreSQL 17 (`docs/decisions.md` ADR-055). Owner
+> của stack và quy ước code: `docs/product/2-db/10-quy-uoc-code.md`. Phần còn lại của khối này là
+> đề xuất để đối chiếu, không phải fact (ADR-035 luật 3).
+
 MySQL **8.4 LTS** · Go **1.26** (Gin + sqlc + golang-migrate) · Next.js **16** (App Router, TypeScript, Tailwind 4,
 Zustand, TanStack Query, Zod) · Docker Compose · Caddy **2.11** (HTTPS tự động) · Node **24 LTS**.
 Cổng: BE `8080` · MySQL `3306` · FE `3000`. Thông báo đơn web: **Telegram**; đẩy việc xuống trạm: **SSE**.

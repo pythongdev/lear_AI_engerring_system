@@ -10,8 +10,9 @@ bắt chúng cộng được tiền với nhau là **cùng một từ vựng** �
 **File này KHÔNG sở hữu:**
 - **tên bảng, tên cột cụ thể của một lát, kiểu, ràng buộc** — file migration thắng, file lát giữ ý
   định (**ADR-053** luật 2); lát đầu tiên là `P2-04`;
-- **DBMS, phiên bản, tên kiểu cụ thể** — `P2-12` chốt (**ADR-053** luật 1). Vì thế không mục nào ở
-  đây gọi tên một kiểu của một DBMS;
+- **DBMS, phiên bản, tên kiểu cụ thể** — `P2-12` chốt (**ADR-053** luật 1), ở
+  [`10-quy-uoc-code.md`](10-quy-uoc-code.md) `QC-01` · `QC-04`. Vì thế không mục nào ở đây chọn kiểu;
+  từ 2026-09-27 các câu kiểm viết bằng cú pháp PostgreSQL, nghĩa giữ nguyên;
 - **một con giá, một múi giờ, một mã kênh** — dữ kiện quán ở `master_plan/shop-facts.md`
   (**ADR-001**). Mục nào cần chúng thì **trỏ**, không chép (**F-001**);
 - **luật nghiệp vụ và tầng bảo vệ** — `quality/invariants.md` và
@@ -35,28 +36,36 @@ tên nó ở `P2-11` thì không được biến mất.
   phải sửa ở đây kèm hậu quả mới, trước khi lát nào làm khác.
 
 **Phép kiểm** của mỗi mục là một câu truy vấn trên `information_schema` chuẩn SQL, hoặc một lệnh.
-Nó ra **0 dòng** khi lược đồ đạt (**ADR-053** luật 3). Hôm nay **chưa phép nào chạy được**: chưa có
-database, chưa có bảng. Ba bước sau nhận chúng:
+Nó ra **0 dòng** khi lược đồ đạt (**ADR-053** luật 3). **Cập nhật 2026-09-27 (`P2-12`):** DBMS là
+PostgreSQL 17 (`10-quy-uoc-code.md` `QC-01`, **ADR-054**), và cả mười tám phép đã chạy trên một cơ sở
+dữ liệu rỗng ⇒ 0 dòng. Máy chạy chúng là `scripts/db-check.sh`: nó đọc **thẳng** mọi khối `sql` dưới
+tiêu đề `QD-XX` của file này — sửa một câu ở đây là sửa phép kiểm, không có bản chép thứ hai — còn
+bốn phép dạng lệnh (`QD-02` · `QD-31` vế (b) · `QD-32` · `QD-40` vế (b)) là hàm cùng tên trong script
+ấy. Ba bước sau nhận chúng:
 
 | Bước | Làm gì với phép kiểm |
 |---|---|
-| `P2-12` | chạy **từng** phép trên DBMS vừa chọn, cơ sở dữ liệu rỗng ⇒ 0 dòng; điền các tham số dưới đây; phép nào không chạy nổi là bug của lượt ấy |
+| `P2-12` | **xong 2026-09-27** — chạy từng phép trên PostgreSQL 17, cơ sở dữ liệu rỗng ⇒ 0 dòng; điền các tham số dưới đây |
 | `P2-04`…`P2-08` | mỗi lát chạy lại cả bộ sau khi dựng, dán output vào khối *Bàn giao* |
 | `P2-11` | gom thành **nhóm phép kiểm quy ước**, mang mã `QD-XX`, tách khỏi phép so mã `I-0xx`; chứng minh từng phép **biết kêu** bằng một lỗi cài sẵn (**ADR-050** luật 3) |
 
-**Tham số** — các câu dưới đây dùng tên có dấu hai chấm đứng trước, vì giá trị của chúng chưa có:
+**Tham số** — các câu dưới đây dùng tên có dấu hai chấm đứng trước. Cột cuối là giá trị **đúng chữ
+SQL** mà `scripts/db-check.sh` thay vào; đổi giá trị là đổi ở đây, script không giữ bản nào khác.
+Mỗi dòng giữ đúng dạng `` | `:ten` | … | `giá trị` | `` — script đọc ô đầu và ô cuối.
 
-| Tham số | Nghĩa | Ai điền |
-|---|---|---|
-| `:schema` | schema chứa lược đồ của quán | `P2-12` |
-| `:kieu_moc` | danh sách tên kiểu (đúng chữ `information_schema.columns.data_type` in ra) được dùng cho mốc — thoả cả ba điều kiện của `QD-30` | `P2-12` |
-| `:collation_van_ban` · `:collation_so_byte` · `:collation_mac_dinh` | cách so cho văn bản người đọc · cho định danh và chuỗi băm · cách so mặc định của schema (một số DBMS để trống cột `collation_name` khi cột dùng mặc định) | `P2-12` |
-| `:vai_ung_dung` | vai database mà hệ thống dùng để ghi | `P2-12` |
-| `:bang_ky_thuat` | bảng **không** mang dữ liệu nghiệp vụ, được xoá (nếu có); mỗi tên phải có một dòng lý do ở file lát của nó | lát tạo bảng ấy |
-| `:bang_khong_quan_he_so_hoc` | bảng có từ hai cột tiền trở lên mà các cột ấy **không** có quan hệ số học với nhau; mỗi tên một dòng lý do ở file lát | lát tạo bảng ấy |
+| Tham số | Nghĩa | Ai điền | Giá trị (PostgreSQL 17) |
+|---|---|---|---|
+| `:schema` | schema chứa lược đồ của quán | `P2-12` | `'shop'` |
+| `:kieu_moc` | danh sách tên kiểu (đúng chữ `information_schema.columns.data_type` in ra) được dùng cho mốc — thoả cả ba điều kiện của `QD-30` | `P2-12` | `'timestamp with time zone'` |
+| `:collation_van_ban` | cách so cho văn bản người đọc (`QD-60`) | `P2-12` | `'vi-x-icu'` |
+| `:collation_so_byte` | cách so cho định danh, chuỗi băm và mã trạng thái (`QD-61`) | `P2-12` | `'C'` |
+| `:collation_mac_dinh` | cách so mặc định của cơ sở dữ liệu — PostgreSQL để trống `collation_name` khi cột dùng mặc định; `QC-02` giữ mặc định ấy là `C` | `P2-12` | `'C'` |
+| `:vai_ung_dung` | vai database mà hệ thống dùng để ghi | `P2-12` | `'shop_app'` |
+| `:bang_ky_thuat` | bảng **không** mang dữ liệu nghiệp vụ, được xoá (nếu có); mỗi tên phải có một dòng lý do ở file lát của nó. Chuỗi rỗng = chưa bảng nào — **đừng** thay bằng `NULL`: `NOT IN (NULL)` làm phép kiểm im lặng với mọi dòng | lát tạo bảng ấy | `''` |
+| `:bang_khong_quan_he_so_hoc` | bảng có từ hai cột tiền trở lên mà các cột ấy **không** có quan hệ số học với nhau; mỗi tên một dòng lý do ở file lát. Chuỗi rỗng = chưa bảng nào, cùng lý do như trên | lát tạo bảng ấy | `''` |
 
-Phép `LIKE` dùng `ESCAPE '!'` để dấu gạch dưới được đọc đúng chữ. Có DBMS in tên cột của
-`information_schema` bằng chữ hoa; `P2-12` sửa cách viết nếu cần, không sửa nghĩa.
+Phép `LIKE` dùng `ESCAPE '!'` để dấu gạch dưới được đọc đúng chữ. PostgreSQL in tên cột của
+`information_schema` bằng chữ thường, nên cách viết dưới đây giữ nguyên.
 
 ---
 
@@ -82,10 +91,11 @@ cột tiền mang sai hậu tố là một cột mà `QD-20` không bao giờ nh
   WHERE table_schema = :schema
     AND (   table_name  <> LOWER(table_name)  OR column_name <> LOWER(column_name)
          OR CHAR_LENGTH(table_name) > 63     OR CHAR_LENGTH(column_name) > 63
-         OR column_name LIKE '% %'           OR column_name LIKE '%-%');
+         OR column_name LIKE '% %'           OR column_name LIKE '%-%'
+         OR table_name  !~ '^[a-z][a-z0-9_]*$' OR column_name !~ '^[a-z][a-z0-9_]*$');
   ```
-  Vế *chỉ ký tự ASCII* cần biểu thức chính quy, thứ mỗi DBMS viết một kiểu: `P2-12` thêm nó bằng cú
-  pháp của DBMS đã chọn.
+  Vế *chỉ ký tự ASCII* là hai biểu thức chính quy cuối, cú pháp PostgreSQL (`P2-12`, 2026-09-27).
+  63 cũng là giới hạn của PostgreSQL, nên con số giữ nguyên.
 - **Nguồn:** phiên chọn 2026-09-26. Lý do chọn tiếng Anh: mã kênh ở `master_plan/shop-facts.md` §2
   đã là tiếng Anh, và một lược đồ trộn hai thứ tiếng trong **tên cấu trúc** buộc người đọc đoán
   từng cột. Mã trạm tiếng Việt không dấu (§3) vẫn giữ nguyên — đó là **giá trị**, không phải tên.
@@ -102,6 +112,9 @@ cột tiền mang sai hậu tố là một cột mà `QD-20` không bao giờ nh
   `information_schema.check_constraints`, tách các chuỗi trong nháy đơn, `sort -u`; so `comm -3`
   với danh sách mã tách từ bảng §2 của `shop-facts.md` bằng `grep -o` ⇒ **rỗng**. Làm y hệt cho mã
   trạm với bảng §3. Lệnh phải in **cả hai danh sách chưa lọc** cạnh kết quả `comm` (**F-017**).
+  **Cách viết (`P2-12`, 2026-09-27):** lệnh là hàm `qd02` trong `scripts/db-check.sh`. Nó tìm cột
+  bằng **tên**, nên cột mang mã kênh tên `channel_code`, cột mang mã trạm tên `station_code` (hậu tố
+  `_code` của `QD-03`); một cột mang mã kênh dưới tên khác là cột lệnh này không thấy.
 - **Nguồn:** owner — `shop-facts.md` §2 · §3, **ADR-001**, **ADR-015**.
 
 ### QD-03 — Vai trò của một cột đọc được từ hậu tố của nó
@@ -299,7 +312,8 @@ nào, kiểu gì* (§5). Năm mục dưới đây là câu trả lời.
 - **Quy ước:** kiểu dùng cho mốc (`:kieu_moc`) phải thoả **cả ba**: (a) đọc lại ra **một** thời điểm
   không mơ hồ, dù phiên kết nối đang ở múi giờ nào — tức là mang múi giờ, hoặc cất theo một múi giờ
   cố định viết rõ ở quy ước code; (b) **không** có giới hạn năm 2038 mà một số kiểu mốc mang; (c) độ
-  phân giải ít nhất là **giây**. `P2-12` chọn kiểu cụ thể và ghi vì sao nó thoả từng điều kiện.
+  phân giải ít nhất là **giây**. `P2-12` chọn kiểu cụ thể và ghi vì sao nó thoả từng điều kiện —
+  **đã chọn 2026-09-27**, kiểu và lý do từng điều kiện ở `10-quy-uoc-code.md` `QC-04`.
 - **Hậu quả nếu làm khác:** mốc cất như *giờ đồng hồ trần* thì một tầng đọc nó bằng múi giờ khác sẽ
   cắt một ngày bán của quán thành hai (`02-thoi-gian-ngay-ban.md` §1), đúng ở những giờ quán đóng
   cửa — chỗ không ai nhìn. Kiểu có giới hạn năm 2038 thì hỏng **cùng lúc trên mọi bảng**, vào một
@@ -337,8 +351,9 @@ nào, kiểu gì* (§5). Năm mục dưới đây là câu trả lời.
         AND d.column_name = 'sale_date');
   ```
   (b) dữ liệu — một câu cho mỗi bảng có `booked_at`: dòng nào có `sale_date` khác ngày lịch của
-  `booked_at` quy bằng múi giờ của quán ⇒ **0 dòng**. Cách quy múi giờ là cú pháp riêng của từng
-  DBMS: `P2-12` viết nó, `P2-11` gom vào bộ.
+  `booked_at` quy bằng múi giờ của quán ⇒ **0 dòng**. Cú pháp PostgreSQL (`P2-12`, 2026-09-27):
+  `sale_date <> (booked_at AT TIME ZONE '<múi giờ ở shop-facts §1>')::date`; lệnh là hàm `qd31b`
+  trong `scripts/db-check.sh`, đọc múi giờ thẳng từ `shop-facts.md` §1. `P2-11` gom vào bộ.
 - **Nguồn:** owner cho nghĩa — `02-thoi-gian-ngay-ban.md` §1 · §2; cất thành cột riêng là phiên chọn
   2026-09-26.
 
@@ -350,7 +365,10 @@ nào, kiểu gì* (§5). Năm mục dưới đây là câu trả lời.
   cũ lệch **7 tiếng chỉ trong test** (`nghien-cuu.md` §4.4), nên test đầu tiên của luật giờ bán sẽ đỏ
   mà không ai hiểu vì sao — hoặc tệ hơn, **xanh nhầm**.
 - **Phép kiểm:** một lệnh in múi giờ của phiên kết nối ở **cả hai** môi trường ⇒ hai dòng giống hệt.
-  `P2-12` biến nó thành một lệnh của khung test (entry `P2-12` trong `work/backlog_DB.md`, bẫy cuối).
+  **Cách viết (`P2-12`, 2026-09-27):** hàm `qd32` trong `scripts/db-check.sh` in múi giờ ở
+  `shop-facts.md` §1 và múi giờ mà kết nối của bộ kiểm thật sự đọc ra. Múi giờ mặc định của server
+  cố ý để **UTC**, nên một kết nối quên đặt múi giờ lộ ra ngay. Vế *môi trường chạy thật* chờ kết
+  nối của backend — chỗ trống có tên ở `10-quy-uoc-code.md` `QC-06`.
 - **Nguồn:** phiên chọn 2026-09-26, bài học dự án cũ đưa vào ở T-097.
 
 ### QD-33 — Mốc tính tiền có một tên duy nhất, `booked_at`, và không dời
@@ -426,7 +444,10 @@ nào, kiểu gì* (§5). Năm mục dưới đây là câu trả lời.
                 AND u.column_name = 'status'));
   ```
   (b) một lệnh: tập mã tách từ `check_clause` của ràng buộc ấy, so `comm -3` với cột *mã* của bảng
-  ánh xạ ở file lát ⇒ **rỗng**, in cả hai danh sách chưa lọc (**F-017**).
+  ánh xạ ở file lát ⇒ **rỗng**, in cả hai danh sách chưa lọc (**F-017**). **Cách viết (`P2-12`,
+  2026-09-27):** hàm `qd40b` trong `scripts/db-check.sh`; mỗi dòng của bảng ánh xạ ở file lát viết
+  đúng dạng `` | `<bảng>.status` | `<mã>` | <tên ở owner> | ``, vì lệnh tìm dòng bằng ô đầu. Bảng có
+  cột `status` mà không có dòng ánh xạ nào ⇒ lệnh **đỏ**.
 - **Nguồn:** owner cho tập trạng thái — `05-vong-doi.md` §5, `quality/invariants.md` `I-016`; mã
   chữ và bảng ánh xạ là phiên chọn 2026-09-26.
 
@@ -450,12 +471,13 @@ nào, kiểu gì* (§5). Năm mục dưới đây là câu trả lời.
   SELECT table_name, privilege_type
   FROM information_schema.table_privileges
   WHERE table_schema = :schema
-    AND grantee = :vai_ung_dung
+    AND grantee IN (:vai_ung_dung, 'PUBLIC')
     AND privilege_type IN ('DELETE', 'TRUNCATE')
     AND table_name NOT IN (:bang_ky_thuat);
   ```
-  Có DBMS không liệt kê quyền xoá toàn bảng trong `table_privileges`; `P2-12` bổ sung bằng câu của
-  DBMS đã chọn.
+  PostgreSQL **có** liệt kê quyền xoá toàn bảng (`TRUNCATE`) trong `table_privileges`, nên không cần
+  câu bổ sung. Vế `'PUBLIC'` thêm 2026-09-27 (`P2-12`): quyền cấp cho mọi vai cũng là quyền của
+  `:vai_ung_dung`. Mặc định cấp quyền nằm ở `db/init/` (`10-quy-uoc-code.md` `QC-03`).
 - **Nguồn:** owner — `I-009`, `I-018`, `04-yeu-cau-du-lieu.md` `YC-12` · `YC-14`, `03-lat-cat.md`
   §3.3.4; giữ bằng **quyền của database** là phiên chọn 2026-09-26. **Không** trả lời
   `work/findings.md` **F-034**: *mất hẳn bản ghi* vì hỏng máy là chuyện sao lưu, không phải chuyện
@@ -497,12 +519,15 @@ so **sau khi đã có dữ liệu** là dựng lại cả bảng lẫn mọi ch�
   SELECT table_name, column_name, collation_name
   FROM information_schema.columns
   WHERE table_schema = :schema
-    AND character_maximum_length IS NOT NULL
+    AND data_type IN ('text', 'character varying', 'character')
     AND column_name NOT LIKE '%code' AND column_name NOT LIKE '%!_hash' ESCAPE '!'
+    AND column_name <> 'status'
     AND COALESCE(collation_name, :collation_mac_dinh) NOT IN (:collation_van_ban);
   ```
   Cột văn bản ngắn mà không phải văn bản cho người đọc (mã trạng thái `QD-40`, mã giá trị `QD-02`) là
-  **mã**: `P2-12` quyết chúng theo `QD-60` hay `QD-61`, và câu trên thêm một vế cho quyết định ấy.
+  **mã**. **Quyết định `P2-12` (2026-09-27):** mã đi theo `QD-61` — mã giá trị đã mang hậu tố `_code`,
+  và `status` được thêm vào cả hai câu. Vế lọc cột văn bản đổi từ *có độ dài tối đa* sang *kiểu văn
+  bản*: ở PostgreSQL kiểu `text` không có độ dài tối đa, và câu cũ bỏ sót đúng kiểu hay dùng nhất.
 - **Nguồn:** phiên chọn 2026-09-26, bài học dự án cũ đưa vào ở T-097.
 
 ### QD-61 — Định danh máy đọc và chuỗi băm: so từng byte, phân biệt hoa thường
@@ -520,7 +545,7 @@ so **sau khi đã có dữ liệu** là dựng lại cả bảng lẫn mọi ch�
   FROM information_schema.columns
   WHERE table_schema = :schema
     AND (column_name = 'code' OR column_name LIKE '%!_code' ESCAPE '!'
-         OR column_name LIKE '%!_hash' ESCAPE '!')
+         OR column_name LIKE '%!_hash' ESCAPE '!' OR column_name = 'status')
     AND COALESCE(collation_name, :collation_mac_dinh) NOT IN (:collation_so_byte);
   ```
 - **Nguồn:** phiên chọn 2026-09-26, bài học dự án cũ đưa vào ở T-097.
@@ -532,7 +557,7 @@ so **sau khi đã có dữ liệu** là dựng lại cả bảng lẫn mọi ch�
 | Chỗ trống | Vì sao không quyết ở đây | Ai gỡ |
 |---|---|---|
 | Luật **làm tròn** nếu một nghiệp vụ sau này cần chia tiền | U-058 đã xác định giảm theo số tiền nhập tay (2026-09-27), không phát sinh phép chia từ giảm phần trăm | Chốt với chủ quán khi có nghiệp vụ cần chia tiền; `master_plan/shop-facts.md` §8.9 |
-| DBMS · phiên bản · tên kiểu · mọi tham số ở §0 | **ADR-053** luật 1 | `P2-12` |
+| ~~DBMS · phiên bản · tên kiểu · mọi tham số ở §0~~ — **đã gỡ 2026-09-27**: PostgreSQL 17, tham số ở §0, tên kiểu ở `10-quy-uoc-code.md` `QC-04` | **ADR-053** luật 1 | `P2-12` (**ADR-054**) |
 | Tên bảng, tên cột của từng lát | file migration thắng (**ADR-053** luật 2) | `P2-04`…`P2-08` |
 | Đơn vị **lượng** (nguyên liệu tính theo cân, theo cái…) | Mục này chỉ nói tiền; lượng thuộc lane admin, luật còn đang thu | lane admin — `work/backlog_AD.md` |
 | Cách sinh mã QR của bàn | Pha 1 chưa có mệnh đề nào | phiên nhận `work/findings.md` **F-042** |
@@ -544,7 +569,7 @@ so **sau khi đã có dữ liệu** là dựng lại cả bảng lẫn mọi ch�
 
 | Bước | Lấy gì |
 |---|---|
-| `P2-12` | §0 — chạy từng phép kiểm trên DBMS vừa chọn, điền tham số; `QD-30` · `QD-32` · `QD-60` · `QD-61` là bốn mục chờ đúng lựa chọn của nó |
+| `P2-12` | **xong 2026-09-27** — §0 đã điền; `QD-30` · `QD-32` · `QD-60` · `QD-61` đã có lựa chọn cụ thể ở `10-quy-uoc-code.md` `QC-04` · `QC-06` |
 | `P2-04`…`P2-08` | mọi mục; mỗi lát chạy lại cả bộ sau khi dựng, dán output vào *Bàn giao*; bảng ánh xạ trạng thái (`QD-40`) và danh sách `:bang_ky_thuat` · `:bang_khong_quan_he_so_hoc` nằm ở file lát |
 | `P2-06` | `QD-20` · `QD-21` · `QD-22` · `QD-31` · `QD-33` — lát tiền là lát đọc mục này nhiều nhất |
 | `P2-11` | gom mọi phép kiểm thành một nhóm mang mã `QD-XX`, chứng minh từng phép biết kêu |

@@ -1,0 +1,44 @@
+# Database cho máy phát triển và cho bộ kiểm — CHỈ cho hai việc ấy, không phải
+# cấu hình chạy thật. Quy ước: docs/product/2-db/10-quy-uoc-code.md (QC-01…QC-03,
+# QC-05). Mật khẩu ở đây là mật khẩu máy phát triển, không dùng ở đâu khác.
+#
+#   docker compose up -d --wait db              # database để làm việc
+#   docker compose run --rm migrate             # chạy mọi migration ở db/migrations/
+#   ./scripts/db-check.sh                       # bộ kiểm — dựng một database RIÊNG, rỗng
+name: banhcuon
+
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: banhcuon
+      POSTGRES_USER: shop_owner
+      POSTGRES_PASSWORD: shop_owner_dev
+      # QC-02: UTF8 + cách so mặc định "C" (so từng byte). Văn bản cho người đọc
+      # khai cách so tiếng Việt tường minh ở từng cột (QD-60).
+      POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=C
+    ports:
+      - "127.0.0.1:${DB_PORT:-5433}:5432"
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "shop_owner", "-d", "banhcuon"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  migrate:
+    image: migrate/migrate:v4.18.3
+    profiles: ["tools"]
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./db/migrations:/migrations:ro
+    # QC-05: lược đồ vào schema `shop`; bảng ghi phiên bản của công cụ nằm ở
+    # `public`, ngoài tầm các phép kiểm QD-XX.
+    command:
+      - -path=/migrations
+      - -database
+      - postgres://shop_owner:shop_owner_dev@db:5432/banhcuon?sslmode=disable&search_path=shop&x-migrations-table=%22public%22.%22schema_migrations%22&x-migrations-table-quoted=1
+      - up

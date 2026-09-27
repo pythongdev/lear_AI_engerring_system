@@ -1,0 +1,238 @@
+#!/usr/bin/env bash
+# Bộ kiểm database — Gate 1 gọi qua scripts/verify.sh (P2-12,
+# docs/product/2-db/10-quy-uoc-code.md QC-07). Chạy tay: ./scripts/db-check.sh
+#
+# Mỗi lần chạy dựng một database RIÊNG và RỖNG (compose project banhcuon_check,
+# cổng ngẫu nhiên, gỡ sạch khi xong — database làm việc `banhcuon` không bị
+# đụng), chạy mọi migration ở db/migrations/ từ số 0, rồi:
+#   1. mọi khối ```sql và ```sh nằm dưới một tiêu đề `### QD-XX` / `### QC-XX`
+#      trong docs/product/2-db/*.md — lấy thẳng từ tài liệu, không chép
+#      (work/findings.md F-001). Khối sql phải ra 0 dòng, khối sh phải in rỗng;
+#   2. bốn phép kiểm dạng lệnh mà một câu SQL không viết nổi: QD-02, QD-31(b),
+#      QD-32, QD-40(b) — hàm cùng tên ở dưới;
+#   3. từng file db/tests/*.sql, mỗi file trong một transaction rồi ROLLBACK.
+# Tham số `:schema`, `:kieu_moc`… lấy từ bảng §0 của 01-quy-uoc-du-lieu.md; múi
+# giờ của quán lấy từ master_plan/shop-facts.md §1. Không có Docker, hay database
+# không lên ⇒ FAIL, không bỏ qua: một bộ kiểm im lặng khi thiếu máy là một bộ
+# kiểm không ai biết đã không chạy.
+set -uo pipefail
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT" || exit 1
+
+PROJECT=banhcuon_check
+DOCS=docs/product/2-db
+PARAMS_FILE="$DOCS/01-quy-uoc-du-lieu.md"
+export DB_PORT=0
+failed=0
+
+compose() { docker compose -p "$PROJECT" "$@"; }
+cleanup() { compose down -v --remove-orphans >/dev/null 2>&1; }
+fail() { echo "FAIL $*"; failed=1; }
+
+if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
+  echo "db-check: FAIL — Docker không chạy. Bật Docker rồi chạy lại ./scripts/db-check.sh"
+  exit 1
+fi
+
+SHOP_TZ="$(grep -m1 '^| Múi giờ |' master_plan/shop-facts.md | grep -o '`[^`]*`' | head -1 | tr -d '`')"
+if [ -z "$SHOP_TZ" ]; then
+  echo "db-check: FAIL — không đọc được múi giờ ở master_plan/shop-facts.md §1 (dòng '| Múi giờ |')"
+  exit 1
+fi
+
+cleanup
+trap cleanup EXIT
+if ! compose up -d --wait db >/dev/null 2>&1; then
+  echo "db-check: FAIL — database không lên"
+  compose logs db 2>&1 | tail -20
+  exit 1
+fi
+
+# Mọi kết nối của bộ kiểm đặt múi giờ TƯỜNG MINH (QD-32), không dựa vào mặc định.
+# psql_f đọc câu lệnh từ stdin; psql_q thì KHÔNG được đọc stdin — `compose exec`
+# sẽ nuốt nốt phần còn lại của vòng lặp đang đọc danh sách khối kiểm.
+psql_f() {
+  compose exec -T -e PGTZ="$SHOP_TZ" db \
+    psql -X -q -v ON_ERROR_STOP=1 -U shop_owner -d banhcuon -tA "$@"
+}
+psql_q() { psql_f "$@" </dev/null; }
+
+echo "=== db-check — $(psql_q -c 'SHOW server_version' 2>&1) · múi giờ kết nối $SHOP_TZ ==="
+
+# --- migration -------------------------------------------------------------
+n_mig="$(find db/migrations -maxdepth 1 -name '*.up.sql' 2>/dev/null | wc -l | tr -d ' ')"
+if [ "$n_mig" -gt 0 ]; then
+  if out="$(compose run --rm migrate </dev/null 2>&1)"; then
+    echo "PASS migrate — $n_mig file"
+  else
+    fail "migrate"; printf '%s\n' "$out" | tail -20
+  fi
+else
+  echo "NOTE migrate — db/migrations/ chưa có file nào; kiểm trên lược đồ rỗng"
+fi
+
+# --- tham số từ bảng §0 ------------------------------------------------------
+# Dòng dạng: | `:ten` | nghĩa | ai điền | `giá trị SQL` |
+subst_file="$(mktemp)"
+grep -E '^\| `:[a-z_]+` \|' "$PARAMS_FILE" | while IFS= read -r row; do
+  name="$(printf '%s' "$row" | grep -o '`:[a-z_]*`' | head -1 | tr -d '`:')"
+  value="$(printf '%s' "$row" | grep -o '`[^`]*`' | tail -1 | tr -d '`')"
+  printf '%s\t%s\n' "$name" "$value"
+done > "$subst_file"
+if [ ! -s "$subst_file" ]; then
+  fail "tham số — không đọc được bảng §0 của $PARAMS_FILE"
+fi
+apply_params() {
+  local sql="$1" name value
+  while IFS="$(printf '\t')" read -r name value; do
+    sql="$(NAME="$name" VALUE="$value" perl -pe 's/:\Q$ENV{NAME}\E\b/$ENV{VALUE}/g' <<<"$sql")"
+  done < "$subst_file"
+  printf '%s' "$sql"
+}
+param() { awk -F'\t' -v n="$1" '$1==n {print $2}' "$subst_file" | tr -d "'"; }
+SCHEMA="$(param schema)"
+
+# --- 1. khối kiểm trong tài liệu --------------------------------------------
+blocks="$(mktemp)"
+for f in "$DOCS"/*.md; do
+  awk -v file="$f" '
+    /^## /                                  { code="" }
+    /^### Q[CD]-[0-9]+/                     { code=$2 }
+    code!="" && !inb && /^ *```(sql|sh) *$/ { inb=1; lang=$0; gsub(/[ `]/,"",lang); body=""; next }
+    inb && /^ *``` *$/                      { printf "%s\t%s\t%s\t%s\036", code, lang, file, body; inb=0; next }
+    inb                                     { body = body $0 "\n" }
+  ' "$f"
+done > "$blocks"
+
+n_blocks=0
+while IFS="$(printf '\t')" read -r -d $'\036' code lang file body; do
+  n_blocks=$((n_blocks + 1))
+  if [ "$lang" = "sql" ]; then
+    if out="$(psql_q -c "$(apply_params "$body")" 2>&1)"; then
+      if [ -z "$out" ]; then echo "PASS $code (sql) — 0 dòng"
+      else fail "$code (sql) — $(printf '%s\n' "$out" | wc -l | tr -d ' ') dòng:"; printf '%s\n' "$out" | sed 's/^/     /'
+      fi
+    else
+      fail "$code (sql) — câu kiểm không chạy được:"; printf '%s\n' "$out" | sed 's/^/     /'
+    fi
+  else
+    out="$(bash -c "$body" </dev/null 2>&1)"
+    if [ -z "$out" ]; then echo "PASS $code (sh) — rỗng"
+    else fail "$code (sh):"; printf '%s\n' "$out" | sed 's/^/     /'
+    fi
+  fi
+done < "$blocks"
+[ "$n_blocks" -gt 0 ] || fail "không tìm thấy khối kiểm nào trong $DOCS/*.md"
+rm -f "$blocks"
+
+# --- 2. bốn phép kiểm dạng lệnh ---------------------------------------------
+
+# Tập giá trị trong ràng buộc kiểm trên một cột, mỗi dòng một giá trị.
+check_values() {
+  psql_q -c "SELECT k.check_clause
+             FROM information_schema.constraint_column_usage u
+             JOIN information_schema.check_constraints k
+               ON k.constraint_schema = u.constraint_schema AND k.constraint_name = u.constraint_name
+             WHERE u.table_schema = '$SCHEMA' AND u.table_name = '$1' AND u.column_name = '$2'" \
+    | grep -o "'[^']*'" | tr -d "'" | sort -u
+}
+tables_with_column() {
+  psql_q -c "SELECT table_name FROM information_schema.columns
+             WHERE table_schema = '$SCHEMA' AND column_name = '$1' ORDER BY 1"
+}
+
+# QD-02 — cột mang mã kênh tên `channel_code` (bảng shop-facts §2), cột mang mã
+# trạm tên `station_code` (bảng §3); tập mã trong ràng buộc = tập mã của owner.
+qd02() {
+  local col sec owner t db_codes diff
+  for pair in "channel_code:2" "station_code:3"; do
+    col="${pair%%:*}"; sec="${pair##*:}"
+    owner="$(awk -v s="^## $sec\\\\." '$0 ~ s {on=1; next} on && /^## / {exit} on' master_plan/shop-facts.md \
+             | grep -E '^\| `[a-z_]+`' | grep -o '^| `[a-z_]*`' | tr -d '|` ' | sort -u)"
+    echo "     QD-02 owner §$sec ($col): $(printf '%s' "$owner" | tr '\n' ' ')"
+    [ -n "$owner" ] || fail "QD-02 — không đọc được bảng mã ở shop-facts §$sec"
+    local tables; tables="$(tables_with_column "$col")"
+    if [ -z "$tables" ]; then
+      echo "PASS QD-02 ($col) — chưa bảng nào mang cột này, 0 dòng"
+      continue
+    fi
+    for t in $tables; do
+      db_codes="$(check_values "$t" "$col")"
+      echo "     QD-02 $t.$col: $(printf '%s' "$db_codes" | tr '\n' ' ')"
+      diff="$(comm -3 <(printf '%s\n' "$owner") <(printf '%s\n' "$db_codes"))"
+      if [ -z "$diff" ]; then echo "PASS QD-02 ($t.$col) — comm -3 rỗng"
+      else fail "QD-02 ($t.$col) — lệch với shop-facts §$sec:"; printf '%s\n' "$diff" | sed 's/^/     /'
+      fi
+    done
+  done
+}
+
+# QD-31(b) — mỗi bảng có cả booked_at và sale_date: sale_date = ngày lịch của
+# booked_at quy bằng múi giờ của quán.
+qd31b() {
+  local t n
+  local tables; tables="$(psql_q -c "SELECT table_name FROM information_schema.columns
+      WHERE table_schema = '$SCHEMA' AND column_name IN ('booked_at','sale_date')
+      GROUP BY table_name HAVING COUNT(*) = 2 ORDER BY 1")"
+  if [ -z "$tables" ]; then echo "PASS QD-31(b) — chưa bảng nào có booked_at, 0 dòng"; return; fi
+  for t in $tables; do
+    n="$(psql_q -c "SELECT COUNT(*) FROM $SCHEMA.$t
+                    WHERE sale_date <> (booked_at AT TIME ZONE '$SHOP_TZ')::date")"
+    if [ "$n" = "0" ]; then echo "PASS QD-31(b) ($t) — 0 dòng"
+    else fail "QD-31(b) ($t) — $n dòng có sale_date lệch ngày của booked_at"
+    fi
+  done
+}
+
+# QD-32 — kết nối của bộ kiểm (cũng là kết nối chạy db/tests/) đọc mốc đúng múi
+# giờ của quán. Kết nối của backend chạy thật chưa có — chỗ trống có tên, QC-06.
+qd32() {
+  local seen; seen="$(psql_q -c 'SHOW TimeZone')"
+  echo "     QD-32 shop-facts §1: $SHOP_TZ"
+  echo "     QD-32 kết nối bộ kiểm: $seen"
+  if [ "$seen" = "$SHOP_TZ" ]; then echo "PASS QD-32 — hai dòng giống hệt"
+  else fail "QD-32 — múi giờ kết nối lệch múi giờ của quán"
+  fi
+}
+
+# QD-40(b) — tập mã trong ràng buộc kiểm của cột `status` = cột mã của bảng ánh
+# xạ ở file lát. Mỗi dòng ánh xạ viết: | `<bảng>.status` | `<mã>` | tên ở owner |
+qd40b() {
+  local t db_codes doc_codes diff
+  local tables; tables="$(tables_with_column status)"
+  if [ -z "$tables" ]; then echo "PASS QD-40(b) — chưa bảng nào có cột status, 0 dòng"; return; fi
+  for t in $tables; do
+    db_codes="$(check_values "$t" status)"
+    doc_codes="$(grep -h "^| \`$t.status\` |" "$DOCS"/*.md | awk -F'`' '{print $4}' | sort -u)"
+    echo "     QD-40(b) $t.status ràng buộc: $(printf '%s' "$db_codes" | tr '\n' ' ')"
+    echo "     QD-40(b) $t.status file lát: $(printf '%s' "$doc_codes" | tr '\n' ' ')"
+    diff="$(comm -3 <(printf '%s\n' "$doc_codes") <(printf '%s\n' "$db_codes"))"
+    if [ -n "$doc_codes" ] && [ -z "$diff" ]; then echo "PASS QD-40(b) ($t) — comm -3 rỗng"
+    else fail "QD-40(b) ($t) — ràng buộc và bảng ánh xạ lệch, hoặc chưa có bảng ánh xạ"
+         printf '%s\n' "$diff" | sed 's/^/     /'
+    fi
+  done
+}
+
+qd02; qd31b; qd32; qd40b
+
+# --- 3. db/tests/*.sql --------------------------------------------------------
+n_tests=0
+for t in db/tests/*.sql; do
+  [ -f "$t" ] || continue
+  n_tests=$((n_tests + 1))
+  if out="$({ echo 'BEGIN;'; cat "$t"; echo 'ROLLBACK;'; } | psql_f -f - 2>&1)"; then
+    echo "PASS $t"; [ -z "$out" ] || printf '%s\n' "$out" | sed 's/^/     /'
+  else
+    fail "$t"; printf '%s\n' "$out" | sed 's/^/     /'
+  fi
+done
+[ "$n_tests" -gt 0 ] || echo "NOTE db/tests/ — chưa có file test nào"
+
+rm -f "$subst_file"
+if [ "$failed" -ne 0 ]; then
+  echo "db-check: FAIL"
+  exit 1
+fi
+echo "db-check: PASS — $n_blocks khối kiểm tài liệu, 4 phép kiểm dạng lệnh, $n_tests file test"

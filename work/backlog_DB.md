@@ -1169,11 +1169,55 @@ là bước cuối cùng trước lúc ấy.
   mẫu ai cũng chép thiếu.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi:* khối `P2-12` ở `work/scope.txt` — file quy ước code mới ở `docs/product/2-db/`; §0 và
+  bốn mục chờ DBMS của `01-quy-uoc-du-lieu.md`; một ADR; `compose.yaml` · `db/` · `scripts/db-check.sh`
+  · `scripts/verify.sh`; `CLAUDE.md` §2 · §5; `00-index.md`; một dòng trỏ ở
+  `master_plan/prompt-fullstack.md` §3.4. Nhận 2026-09-27, Claude Code, base `f378015`.
+- *Nghiệm thu:* (1) mục đầu tiên của file quy ước code là DBMS + phiên bản, câu kiểm là một lệnh in
+  phiên bản đang chạy; (2) mỗi mục còn lại (stack · thư mục có thư mục migration · đặt tên migration ·
+  khung test · múi giờ kết nối) có một lệnh kiểm, hoặc ghi rõ là chỗ trống có tên kèm bước gỡ; (3)
+  một ADR ghi lựa chọn DBMS với phương án bị loại và lời giao của chủ repo; (4) sáu tham số ở §0 của
+  `01-quy-uoc-du-lieu.md` có giá trị; (5) **mười tám** phép kiểm `QD-XX` chạy trên DBMS đã chọn, cơ sở
+  dữ liệu rỗng ⇒ 0 dòng, output dán ở *Bàn giao*; (6) `scripts/verify.sh` gọi bộ kiểm database,
+  output dán; (7) `CLAUDE.md` §2 hàng *Quy ước code* trỏ file mới, `grep -rn 'chưa có owner'` không
+  còn hàng nào đã có chủ mà vẫn nói chưa có.
+- *Kiểm chứng:* `./scripts/db-check.sh` · `./scripts/verify.sh` · `./scripts/gate.sh` · `grep -rn
+  'chưa có owner' CLAUDE.md docs/`.
 
-**Bàn giao:** —
+**Bàn giao:** xong 2026-09-27 — Claude Code, nhánh `chatgpt_involve`, base `f378015`; chưa review
+độc lập. File: `docs/product/2-db/10-quy-uoc-code.md` (mới, `QC-01`…`QC-10`, tên theo bản đồ kế hoạch
+§5) · **ADR-055** · `compose.yaml` · `db/init/001-vai-va-schema.sql` · `db/migrations/.gitkeep` ·
+`db/tests/.gitkeep` · `scripts/db-check.sh` (mới) · `scripts/verify.sh` · `scripts/check-links.ignore`
+(một dòng `fe/package.json`) · `01-quy-uoc-du-lieu.md` §0 · `QD-01` · `QD-02` · `QD-30` · `QD-31` ·
+`QD-32` · `QD-40` · `QD-50` · `QD-60` · `QD-61` · §8 · §9 · `CLAUDE.md` §2 · §5 · cây thư mục ·
+`00-index.md` · `master_plan/prompt-fullstack.md` §3.4 (một dòng trỏ) ·
+`docs/work-flow-session/workflow-phien-lam-viec.md` (ba câu *bốn dòng chưa có owner*).
+
+Nghiệm thu → bằng chứng:
+1. DBMS mục đầu ⇒ `QC-01`, khối `sql` so `server_version_num`; output `PASS QC-01 (sql) — 0 dòng`
+   trên `17.11 (Debian 17.11-1.pgdg13+2)`.
+2. Mỗi mục một lệnh ⇒ `QC-02`…`QC-10` đều có khối `sql`/`sh` hoặc hàm có tên; hai chỗ trống có tên:
+   kết nối backend (`QC-06`) và `verify.sh` gọi Go/Node trong `be/` · `fe/` (`QC-09`) — cả hai giao
+   pha 3.
+3. ADR ⇒ **ADR-055**: lời giao nguyên văn *"DBMS cho P2-12: làm theo đề xuất của bạn"*, loại MySQL
+   8.4 · SQLite · PostgreSQL 18.
+4. Sáu tham số ⇒ bảng §0 có cột *Giá trị*; `db-check.sh` đọc thẳng từ đó.
+5. Mười tám `QD-XX` trên database rỗng: `PASS` cho `QD-01` `03` `10` `11` `20` `21` `22` `30` `31`
+   `33` `34` `40` `50` `51` `60` `61` (sql, 0 dòng) và `QD-02` · `QD-31(b)` · `QD-32` · `QD-40(b)`
+   (lệnh); dòng cuối `db-check: PASS — 26 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 0 file test`.
+   Thêm (không phải nghiệm thu, P2-11 mới là chứng minh đủ): một bản sao script ở scratchpad cài
+   một bảng sai mọi quy ước ⇒ `FAIL` ở `QD-01` `03` `10` `11` `20` `21` `34` `40` `50` `60`, `QC-04`
+   `QC-10`, `QD-02` (in `delivery grab` cạnh năm mã owner) và `QD-40(b)`.
+6. Gate 1 gọi ⇒ `./scripts/verify.sh` in `[db] scripts/db-check.sh` rồi `db-check: PASS …`; trước khi
+   sửa `verify.sh`, `QC-07 (sh)` đỏ đúng câu *"scripts/verify.sh không gọi scripts/db-check.sh"*.
+7. `CLAUDE.md` §2 ⇒ hàng *Quy ước code* trỏ file mới; `grep -rn 'chưa có owner' CLAUDE.md docs/`
+   còn *Schema* · *Hợp đồng API* · *Route* (đúng, chưa có chủ) và các câu lịch sử của ADR-035 ·
+   ADR-039.
+
+`./scripts/gate.sh` xanh (Gate 3 chỉ note hai file `prompt/maintenance/` chưa track, không phải của
+task này). **Cần chủ repo xem:** ADR-055 (lựa chọn đã được giao trước); `QC-05` dùng golang-migrate
+và `QC-09` dùng Go · Next.js theo §3.4 — đề xuất, chưa đọc lại. Máy chạy bộ kiểm cần Docker: lượt đổi
+`db/` mà Docker tắt thì Gate 1 **đỏ**, có chủ ý. Trạng thái: `work/backlog.md` → *Done*.
 
 [↑ đầu file](#top)
 
