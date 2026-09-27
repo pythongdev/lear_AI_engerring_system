@@ -73,6 +73,7 @@ có câu trả lời mới từ người.
 | ADR-054 | **Claude quyết, Codex thi công** — Claude giữ chọn task, mức, Acceptance, scope, thiết kế, ADR, unknowns, lời chủ quán, duyệt, tích hợp, khối commit; Codex làm theo phiếu trong worktree riêng, không quyết nghiệp vụ, không commit | Đã chốt 2026-09-27 | — | T-100; nối ADR-052; quy trình ở `docs/prompt-guideline.md` §6.1 |
 | ADR-055 | **DBMS là PostgreSQL 17** — chọn vì lát bán hàng lõi cần khoá duy nhất chỉ áp cho vài trạng thái, DDL trong giao dịch và kiểu mốc không vướng 2038; loại MySQL 8.4 của `prompt-fullstack.md` §3.4 và SQLite. Quy ước code ở `docs/product/2-db/10-quy-uoc-code.md` | Đã chốt 2026-09-27 (giao cho phiên) | — | mở `P2-04`…`P2-08` |
 | ADR-056 | **Hai vế thiếu tầng của F-036** — nước chấm · canh của `I-004` giữ ở **tầng 2** trong giao dịch nổ đơn; *ngừng bán ⇒ không đặt mới được* ở lại hàng `I-009`, **tầng 3** tại cửa tạo lượt gọi; đơn vị của bảng bảo vệ là **vế**, không phải mã | Đã chốt 2026-09-27 (giao cho phiên) | — | `P2-07` (nổ đơn trạm `canh`) |
+| ADR-057 | Yêu cầu bảo toàn và khôi phục dữ liệu ở pha 1; cơ chế và kiểm chứng ở pha 5 (F-034) | Đã chốt 2026-09-27 (chủ repo) | — | T-109 — triển khai và nghiệm thu vận hành |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3792,3 +3793,28 @@ chấm đúng một mỗi đơn; canh đúng số bát khách chọn, `U-046` ·
 **Applies to:** `docs/product/1-system-design/03-bao-ve-invariant.md` §0 · §1 · §2 · §3 ·
 `quality/invariants.md` `I-004` · `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §9 ·
 `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §6 · §7.
+
+
+### ADR-057 — Yêu cầu khôi phục ở pha 1, cơ chế thực hiện ở pha vận hành
+
+**Trạng thái:** Đã chốt 2026-09-27, chủ repo chọn hướng thứ ba của F-034 và cho phép Codex
+sửa tài liệu, ghi quyết định, đóng finding (T-108); ngoại lệ phân vai chỉ áp dụng việc này.
+
+**Context:** sao lưu và phục hồi chỉ được nhắc ở tài liệu không sở hữu sự thật; RR-9 không
+có yêu cầu chính thức để giao cho bước triển khai.
+
+**Decision:** `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 sở hữu **YC-21**.
+Pha 5 — Deploy/vận hành nhận thiết kế, thực hiện và kiểm chứng cơ chế, theo việc **T-109**
+ở `work/backlog.md`. Không đưa công cụ hoặc lịch sao lưu vào pha 1, không giao cho migration
+của P2-09 thay thế phục hồi dữ liệu. Khi mở owner pha vận hành, cập nhật CLAUDE.md §2 cùng lượt.
+
+**Rejected alternatives:** mở thêm bước pha 1 thiết kế cơ chế sẽ lẫn ranh giới; giao hết
+sang vận hành mà không có yêu cầu pha 1 sẽ giữ nguyên khoảng trống đầu vào.
+
+**Hệ quả:** đóng F-034 ở lỗi thiếu owner và yêu cầu, không tuyên bố RR-9 đã được chặn.
+Các tiêu chí chưa chốt và bằng chứng phục hồi phải được hoàn tất theo YC-21 trước bán thật;
+không có con số mức mất dữ liệu hoặc thời gian phục hồi nào được quyết định trong ADR này.
+
+**Applies to:** `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 ·
+`docs/product/1-system-design/06-so-rui-ro.md` RR-9 · `work/backlog_DB.md` P2-09 ·
+`work/backlog.md` T-109.

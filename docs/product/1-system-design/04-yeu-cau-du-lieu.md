@@ -8,9 +8,8 @@
 [`03-lat-cat.md`](../0-ba/ban-hang/03-lat-cat.md) §3.4 (BA-12, xong 2026-09-04) ·
 [`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §5.*
 
-> **Mục này sở hữu đúng một thứ: câu YÊU CẦU mà pha 2 tự chấm lược đồ của mình.** Mỗi dòng ở đây
-> là một câu pha 2 trả lời được bằng *có* hoặc *không* sau khi đã dựng xong lược đồ — không phải
-> một lời khuyên, không phải một gợi ý hình dạng.
+> **Mục này sở hữu yêu cầu dữ liệu:** YC-01…YC-20 để pha 2 tự chấm lược đồ;
+> YC-21 (§8) để pha 5 nghiệm thu bảo toàn và khôi phục. Yêu cầu không chốt cơ chế triển khai.
 >
 > **Nó không sở hữu một luật nghiệp vụ nào.** Giá, giờ bán, ai được bấm cái gì, ngưỡng lệch 0đ đều
 > thuộc `master_plan/shop-facts.md` (**ADR-001**). Cột *Luật nguồn* dưới đây **trỏ** về đó và cố ý
@@ -31,7 +30,8 @@
 
 ## 0. Cách đọc — hai dạng câu, và một mã
 
-Mỗi yêu cầu mang một mã `YC-XX` và được viết bằng **đúng một trong hai dạng**, thường là cả hai:
+YC-01…YC-20 mang mã `YC-XX` và dùng hai dạng câu dưới đây. YC-21 ở §8 là yêu cầu
+khôi phục, nghiệm thu ở pha vận hành:
 
 | Dạng | Câu mở đầu | Pha 2 chấm thế nào |
 |---|---|---|
@@ -199,7 +199,7 @@ dùng thật.
 - **Màn hình.** Cái gì hiện ở đâu là pha 4.
 
 **Pha 2 dùng mục này thế nào:** dựng lược đồ xong thì đi ngược bảng §1 và các dòng `YC-XX` còn lại,
-mỗi dòng hỏi **hai** câu — *đọc ra được không* và *dựng được trạng thái sai không*. Dòng nào không
+với YC-01…YC-20, mỗi dòng hỏi **hai** câu — *đọc ra được không* và *dựng được trạng thái sai không*. Dòng nào không
 trả lời được là một chỗ lược đồ còn thiếu, **không phải** một dòng viết chưa rõ; sửa lược đồ, và
 chỉ quay lại sửa dòng ở đây khi chính luật nghiệp vụ đã đổi ở owner của nó.
 
@@ -208,3 +208,28 @@ dòng ở §1 đây trong cùng thay đổi** — hai danh sách ấy phải kh�
 duy nhất giữ chúng khỏi trôi khỏi nhau.
 
 [↑ đầu file](#top)
+## 8. Bảo toàn và khôi phục dữ liệu — YC-21, giao pha vận hành
+
+**Chủ repo chốt 2026-09-27, ADR-057 (T-108):** chọn hướng thứ ba của F-034.
+Mục này sở hữu yêu cầu; **pha 5 — Deploy/vận hành** sở hữu cơ chế thực hiện.
+
+**YC-21 — Phải khôi phục lại được bản ghi của một ngày đã bán khi dữ liệu đang dùng bị mất.**
+Kết quả khôi phục phải đọc lại được dữ liệu và các mối liên hệ cần cho đối soát ngày bán,
+truy vết thao tác theo các yêu cầu ở trên. Dựng lại một cơ sở dữ liệu rỗng hoặc nhập dữ liệu mồi
+không đáp ứng yêu cầu này. Sổ giấy dùng khi mất kết nối không thay thế việc khôi phục lịch sử.
+
+**Giao thực hiện:** pha 5 phải thiết kế và triển khai sao lưu, phục hồi, theo dõi thất bại;
+chỉ định người phụ trách và nơi giữ bằng chứng. Công cụ, nơi lưu, lịch sao lưu và quy trình
+cụ thể do pha ấy thiết kế, không chốt ở pha 1. Việc tiếp nhận theo dõi tại **T-109** trong
+`work/backlog.md`; khi mở owner vận hành, cập nhật bảng owner trong `CLAUDE.md` cùng lượt.
+
+**Nghiệm thu ở pha vận hành:** phục hồi từ bản sao lưu vào môi trường riêng, đọc và đối chiếu
+lại dữ liệu ngày bán cùng vết liên quan; lưu kết quả, mốc dữ liệu phục hồi được và thời gian
+thực hiện. Có bản sao lưu nhưng chưa phục hồi thử chưa phải bằng chứng đạt YC-21.
+
+**Chưa chốt:** phạm vi lưu giữ chi tiết, mức mất dữ liệu tối đa chấp nhận được và thời gian
+phục hồi tối đa. Chủ repo cần chốt các tiêu chí này trong T-109 trước khi nghiệm thu vận hành;
+không suy ra con số từ câu yêu cầu trên, không tự coi là mất 0 dữ liệu hoặc phục hồi tức thì.
+T-109 phải hoàn tất trước khi đưa hệ thống vào bán thật. Pha 2 chỉ bảo đảm dữ liệu có thể biểu
+đạt đủ; phép chạy xuôi/lùi migration của P2-09 không chứng minh YC-21 đã đạt.
+

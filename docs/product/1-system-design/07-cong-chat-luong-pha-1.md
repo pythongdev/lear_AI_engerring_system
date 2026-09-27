@@ -339,8 +339,9 @@ vẫn là của **chủ repo**, không của cổng (§8).
   **F-026** · **F-018**): **`RR-1`…`RR-8`** mỗi dòng trỏ được tới ít nhất một mục pha 1 cụ thể;
   lọc *"cẩn thận hơn" · "chú ý hơn" · "nhớ kiểm tra"* **trên các dòng rủi ro** ra **rỗng**.
   ⚠️ **Ô này tick KÈM LÝ DO, không tick trơn** — đúng như §2 của sổ rủi ro đã báo trước: **`RR-9`**
-  (*mất hẳn bản ghi đã ghi*) là dòng **⛔ chưa có cơ chế**, mã `work/findings.md` **F-034**, và
-  chọn nhà cho nó là quyết định của **chủ repo**. Bốn dòng nữa — `RR-1` · `RR-3` vế vết · `RR-4` ·
+  (*mất hẳn bản ghi đã ghi*) vẫn **⛔ chưa triển khai/kiểm chứng cơ chế**. Cập nhật 2026-09-27:
+  **F-034 đã Fixed** (T-108, ADR-057); yêu cầu **YC-21** ở `04-yeu-cau-du-lieu.md` §8,
+  cơ chế giao pha 5 qua **T-109** trong `work/backlog.md`. Bốn dòng nữa — `RR-1` · `RR-3` vế vết · `RR-4` ·
   `RR-6` — có cơ chế cao nhất là **tầng 4/5**: máy **không ngăn**, nó nhắc, để vết và bắt sau.
 - [x] **7. Ba scenario BA đi hết được qua thiết kế — mỗi bước trỏ được một cơ chế.**
   §1 · §2 · §3 ở trên: **17 + 14 + 10 = 41 bước**, cộng **7** bước của lát mất kết nối (§4). Mỗi
@@ -459,6 +460,9 @@ vẫn là của **chủ repo**, không của cổng (§8).
 
   **Ô này tick, nhưng nó KHÔNG nói câu *"được, sang pha 2"*.** Mười ô nói **cổng đạt tới đâu**; ký
   là quyền của **chủ repo**, đúng như §8 mục này đã ghi cho mình.
+
+**Cập nhật 2026-09-27 (T-108):** F-034 đã đóng về owner/yêu cầu, công việc vận hành
+còn ở T-109. Đoạn tổng kết sau là lịch sử lượt diễn, không phải trạng thái hiện hành của finding.
 
 **Một câu cho người ký cổng.** Mười ô xanh **không** có nghĩa là pha 1 đã hết chỗ hụt: ô 1 xanh
 trong khi hai vế thiếu tầng (**`F-036`**), ô 3 xanh trong khi bảng đối soát thiếu một dòng

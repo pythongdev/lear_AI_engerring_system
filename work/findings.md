@@ -95,7 +95,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-031 | Lần thứ năm: subject trùng commit trước, nội dung không khớp | Open |
 | F-032 | Mục lục `backlog_SD.md` ghi Trạng thái "Đóng" cho hai bước còn thiếu dòng luật đòi | Fixed |
 | F-033 | Ảnh chụp *"hôm nay có chưa"* của kế hoạch pha 1 vẫn ghi **chưa** cho bốn thứ đã xong | Open |
-| F-034 | Cơ chế chặn *mất hẳn dữ liệu* chỉ sống ở tài liệu không sở hữu gì — lần thứ hai của F-027 | Open |
+| F-034 | Cơ chế chặn *mất hẳn dữ liệu* chỉ sống ở tài liệu không sở hữu gì — lần thứ hai của F-027 | Fixed |
 | F-035 | Gate 7b đọc index bằng encoding KHÁC mọi chỗ đọc khác trong chính nó ⇒ kêu một file scope đã phủ | Closed |
 | F-036 | Phép đối chiếu của một mệnh đề hẹp hơn chính mệnh đề ấy ⇒ đọc ra rỗng trong khi một vế đã hỏng | Fixed |
 | F-037 | Khoản trả trước có mốc tính tiền nhưng không có dòng nào trong bảng đối soát để đứng | Open |
@@ -3241,12 +3241,19 @@ có**, cột dấu hiệu ghi **chưa đo được** — để nó không bao gi
    `docs/product/1-system-design/04-yeu-cau-du-lieu.md`. Giữ được ranh giới **và** để lại một câu
    cho pha sau đối chiếu; cái giá là mở thêm một mục trong pha 1 khi pha 1 sắp đóng.
 
-**Related task:**
+**Sửa 2026-09-27 (T-108, Codex, chủ repo cho phép):** chủ repo chọn hướng thứ ba;
+ADR-057 ghi quyết định. YC-21 ở `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8
+sở hữu yêu cầu bảo toàn/khôi phục; pha 5 nhận cơ chế và kiểm chứng, theo T-109 trong
+`work/backlog.md`. RR-9 và các đầu việc pha 2 đã trỏ về yêu cầu, không còn đợi chọn nhà.
+**Fixed chỉ đóng lỗi thiếu owner/yêu cầu.** Chưa triển khai sao lưu, chưa phục hồi thử;
+RR-9 vẫn cảnh báo. Tiêu chí chưa chốt và bằng chứng vận hành giao T-109, không tự điền con số.
+
+**Related task:** T-108 · T-109 · ADR-057 ·
 **P1-10** (lượt phát hiện, 2026-09-08) · **F-027** (cùng hình dạng, đã đóng) · **F-001** ·
 `docs/decisions.md` **ADR-035** · **ADR-014**.
 
 **Status:**
-Open
+Fixed
 
 ### F-035 — Cùng một script đọc đường dẫn bằng HAI encoding, và cổng kêu một file mà scope đã phủ
 

@@ -62,6 +62,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
+- [ ] T-109 **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Chủ repo chốt phạm vi lưu giữ, mức mất dữ liệu và thời gian phục hồi chấp nhận được trước nghiệm thu. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
+
 - [ ] P2-06 **Lược đồ đường tiền — thu nhiều phương thức · nợ · hoàn tiền · tiền đầu két** — **L2**, hết chặn 2026-09-27 (`P2-04` `Done`). Mô tả dài: `work/backlog_DB.md` → [P2-06](backlog_DB.md#p2-06). Đọc `docs/product/2-db/02-luoc-do-ban-hang.md` §5 (mốc tính tiền, bản ghi hoá đơn) trước.
 - [ ] P2-07 **Lược đồ sản xuất theo mẻ** — **L2**, hết chặn 2026-09-27 (`P2-04` `Done`; `S-5` · `S-6` để trống, không chặn). Mô tả dài: `work/backlog_DB.md` → [P2-07](backlog_DB.md#p2-07).
 - [ ] P2-10 **Dữ liệu mồi — menu thật, bàn, trạm, người** — **L1**, hết chặn 2026-09-27 (`P2-04` · `P2-05` `Done`). Mô tả dài: `work/backlog_DB.md` → [P2-10](backlog_DB.md#p2-10). Đọc `docs/product/2-db/03-luoc-do-menu-gia.md` §5 · §6 trước; **tra** `shop-facts.md` §4, không chép.
@@ -244,8 +246,11 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 
 
 
+
 <a id="done"></a>
 ## Done
+
+- [x] T-108 **Đặt yêu cầu khôi phục ở pha 1, giao cơ chế cho pha 5 và đóng F-034** — L2 tài liệu, 2026-09-27. Chủ repo cho phép Codex thực hiện ngoại lệ phân vai và sửa ADR. Acceptance trước sửa: yêu cầu có owner và mã; ADR ghi đúng hướng 3; RR-9 giữ cảnh báo chưa triển khai; pha vận hành có việc theo dõi; các pointer hiện hành hết đòi chọn lại; F-034 Fixed ở chỉ mục và thân. Không đổi invariant hoặc code nên chưa có phép hồi quy cơ chế để chạy; nghiệm thu lượt này bằng đối chiếu tài liệu và gate. Scope: các file khai trong work/scope.txt. Codex, nhánh chatgpt_involve, base 3189b6e; chưa review độc lập. Kết quả: YC-21 §8, ADR-057, RR-9 và pointer pha 2 đồng bộ; F-034 Fixed; T-109 giữ việc vận hành chưa làm. Gate lần đầu: links/status đạt, verify bỏ qua vì chỉ sửa tài liệu; scope báo sáu file có sẵn ngoài task. Sau hoàn tất, xoá scope riêng: ./scripts/gate.sh exit 0 (scope không khai nên bỏ qua; links/status đạt; verify bỏ qua vì chỉ sửa tài liệu); git diff --check đạt. Không commit, không thay đổi index; các sửa trước phiên giữ nguyên.
 
 - [x] T-106 **Rà phép đếm ADM và đóng F-028** — L1, 2026-09-27. Đếm khớp 29 mục; sửa pointer MVP; F-028 Fixed. Bằng chứng và giới hạn gate ở chi tiết T-106.
 

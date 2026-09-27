@@ -14,8 +14,9 @@ hậu quả nếu làm khác · phép kiểm · nguồn. Mục đầu tiên là 
 - **tên bảng, tên cột, ràng buộc của một lát** — file migration thắng, file lát giữ ý định
   (**ADR-053** luật 2);
 - **hợp đồng API, route, component** — pha 3, pha 4 (**ADR-035**);
-- **cách triển khai lên máy chạy thật** (máy chủ, sao lưu, HTTPS) — chưa có owner; sao lưu chờ
-  `work/findings.md` **F-034**.
+- **cách triển khai lên máy chạy thật** (máy chủ, sao lưu, HTTPS) — chưa có owner; yêu cầu khôi phục ở
+  `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21, ADR-057), cơ chế giao pha 5
+  qua T-109 (`work/backlog.md`).
 
 ---
 

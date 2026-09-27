@@ -57,7 +57,7 @@ Năm luật khi đọc và khi thêm một dòng:
    bảng quầy, cái vết, dòng *còn N lượt bán trên giấy chưa nhập*. Một dấu hiệu phải dựng thêm một
    phép đo mới đo được là một dấu hiệu không ai đo (cùng luật với §2 của
    [`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md); `work/findings.md` **F-012**).
-4. **Người chịu là một vai đã có:** *người đứng quầy* (POS) · *chủ quán* · *POS hoặc chủ quán*.
+4. **Riêng RR-9**, trách nhiệm kỹ thuật giao pha vận hành theo ADR-057, không gán thêm việc cho người quán. Các dòng khác: **người chịu là một vai đã có:** *người đứng quầy* (POS) · *chủ quán* · *POS hoặc chủ quán*.
    Đặt ra một vai mới ở đây là đặt ra một dữ kiện quán (`CLAUDE.md` §3.5).
 5. **Cột *Cơ chế chặn* trỏ, không chép.** Lời của cơ chế ở mục sở hữu nó; ở đây chỉ đủ để nhận ra
    hàng (**F-001**).
@@ -80,7 +80,7 @@ rủi ro duy nhất đã có đường lùi viết ra; `RR-9` đứng cuối vì
 | **RR-6** | Vết của một thao tác chạm tiền mang tên một **chỗ đứng**, không phải một **người** | Tối đối soát lệch thì truy về được *"quầy"* chứ không về ai. Ba việc quầy quyết từng ca — **hoàn tiền · ghi nợ · huỷ đơn** — mất đúng cái tên khiến chúng được phép tồn tại mà không cần một luật cứng | **Máy không ngăn được** vế *cái tên trong vết là người thật đã bấm*: ô `I-012` **tầng 4**, vì quyền gắn **chỗ đứng**, không gắn chức vụ ([`architecture.md`](architecture.md) §4) — hai người dùng chung một chỗ đứng là chuyện máy không phân biệt ([`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) §1). Cái máy **có** giữ: vết đủ **bốn câu** (`I-012` tầng 1) · mọi thao tác chạm tiền qua **một cửa có tên**, kể cả **hai** ngoại lệ đã chốt — người đi giao và chủ quán (§1.1) · mỗi lần cập nhật giữ đủ bốn thứ (`I-018`, §3) · yêu cầu *ai đang trực trạm nào* đã gửi pha 2 ([`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §4) | **Chủ quán** — người quyết ai được đứng chỗ nào (`architecture.md` §4) | Một buổi bán có **hơn một** người đứng quầy mà **mọi** vết chạm tiền của buổi ấy mang **cùng một** cái tên |
 | **RR-7** | Một mẻ **chia sai phần theo khoá gom** ⇒ bàn này thừa, bàn kia thiếu, và số *đã phục vụ* sai theo | Bàn 7 ngồi chờ đúng thứ bếp **đã làm xong**; người tráng bánh nhìn màn trống và đọc ra *"chưa có việc"*. Khách chờ món không bao giờ tới, và không ai biết vì sao | **Tầng 1** — tổng nhu cầu luôn bằng tổng các phần chia, **cả hai chiều**, và ranh giới phép cộng là **khoá gom** (thành phần + loại nhân + lượng nhân), không phải tên món (ô `I-019`, [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) §4 · §4.2). **Tầng 1 + tầng 2** cho ô `I-020`: trần trên kể cả **trạng thái giữa**, và một mẻ phủ **nhiều bàn trong cùng một giao dịch**, đường lùi là giao dịch nghịch đảo (§4). Cộng: **con số thứ tư** của bảng quầy — *đã làm xong, còn ở bếp* ([`architecture.md`](architecture.md) §3.4) · luật *màn rỗng phải nói được vì sao nó rỗng* ([`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §1.3) | **Người đứng quầy** — mẻ là đơn vị **bấm**, và ba trạm bếp không bấm gì (`architecture.md` §3.4 · §5) | Con số *đã làm xong, còn ở bếp* khác 0 và **không giảm** trong khi vẫn có bàn đang chờ đúng thành phần ấy |
 | **RR-8** | Quán **mất điện hoặc mất mạng** giữa buổi — quán mù trong khi **hệ thống vẫn sống** | Khách web vẫn đặt được mà không ai ở quán nhìn thấy; doanh thu buổi ấy chỉ tồn tại **trên giấy** cho tới lúc nhập bù, nên ngày ấy **chưa đối soát xong** | **Đường suy giảm đủ ba vế** — *quán làm gì · ai bù · bù lúc nào* — cho `PT-1` · `PT-2` · `PT-6` ([`01-ranh-gioi-he-thong.md`](01-ranh-gioi-he-thong.md) §3). Cộng: **web ngừng nhận đơn, khách gọi hotline** — điều kiện thứ ba của `I-008`, chủ quán chốt 2026-09-04 — và **bốn câu luật** về phía nào phán quyết ([`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §3) · **đường kéo dự phòng tự chạy** (§1.2) · doanh thu lượt nhập bù rơi vào **ngày quán bán** ([`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §2) | **POS hoặc chủ quán** — người giữ sổ cũng là người nhập lại (`shop-facts.md` §6.11) | `RB-4`: quán phải chuyển sang sổ giấy vì hệ thống chết **quá một buổi bán trong một tháng** ([`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §2). Và: mỗi tối đóng sổ còn dòng *còn N lượt bán trên giấy chưa nhập* khác 0 |
-| **RR-9** | **Mất hẳn bản ghi đã ghi** — không phải mất kết nối, mà là dữ liệu của những ngày đã bán không còn | Không đối soát lại được ngày nào, không truy được vết nào, và **không có đường lùi**: sổ giấy chỉ có những ngày quán ghi tay, còn những ngày máy chạy bình thường thì không có bản thứ hai ở đâu cả | ⛔ **CHƯA CÓ CƠ CHẾ NÀO Ở PHA 1.** Không mục nào của `docs/` hay `quality/` sở hữu câu *bản ghi đã ghi có còn không*. Chỗ **duy nhất** trong repo nói tới nó — sao lưu, diễn tập phục hồi, không triển khai trong giờ bán — nằm ở `master_plan/prompt-fullstack.md` §5, đúng tài liệu mà **ADR-035** đã chốt là **không sở hữu thứ gì**. Đó là `work/findings.md` **F-034**, cùng hình dạng với **F-027**. **Đừng đọc dòng này như đã được chặn** | **Chưa có** — chọn nhà cho nó là quyết định của **chủ repo** (`F-034`), không phải của bước này | **Chưa đo được**: phép đo cũng chưa có nhà. Dấu hiệu rẻ nhất ngay khi nó có nhà — **bản sao lưu gần nhất chưa từng được phục hồi thử** |
+| **RR-9** | **Mất hẳn bản ghi đã ghi** — dữ liệu của những ngày đã bán không còn | Không đối soát hoặc truy vết lại được; sổ giấy không chứa lịch sử những ngày bán trên máy | ⛔ **Chưa triển khai/kiểm chứng cơ chế.** Yêu cầu đã có owner: [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §8 **YC-21**, chủ repo chốt 2026-09-27 (**ADR-057**). **F-034 đã Fixed** về thiếu owner; không có nghĩa rủi ro đã được chặn | Pha 5 — vận hành nhận việc **T-109** (`work/backlog.md`); người phụ trách cụ thể phải được chỉ định khi triển khai | **Chưa có bằng chứng phục hồi thử**; phép nghiệm thu đọc ở YC-21 |
 
 ### 1.1 Chín là phép đếm của lượt này, và năm dòng bản nháp đi đâu
 
@@ -106,8 +106,8 @@ tức **ba trong chín dòng của bảng trên không có mặt trong bản nh�
   (§3).
 - *Mất dữ liệu / lịch sử đơn* → hôm nay tách làm **hai** thứ khác hẳn nhau: **cái tên trong vết**
   → `RR-6`, và **bản ghi còn hay mất** → `RR-9`. Cách chặn mà bản nháp ghi — *backup + snapshot +
-  verification* — **chưa bao giờ có nhà** trong `docs/` hay `quality/` (`work/findings.md`
-  **F-034**).
+  verification* — lúc phát hiện chưa có owner. Nay yêu cầu có nhà ở YC-21, cơ chế giao pha 5
+  theo ADR-057; không dùng bản nháp làm đặc tả triển khai.
 - *Realtime hỏng* → `RR-8`, và nó **xuống cuối bảng có chủ ý**: xem §1.2 luật 3.
 
 ### 1.2 Bốn chỗ bảng trên dễ bị đọc sai
@@ -128,23 +128,12 @@ tức **ba trong chín dòng của bảng trên không có mặt trong bản nh�
    khẩu có nhắc chữ ấy là lặp lại đúng ca `work/findings.md` **F-027** đã tốn một vòng rà: một cơ
    chế chỉ sống ở tài liệu **không sở hữu gì** là một cơ chế **không ai chịu trách nhiệm**.
 
-### 1.3 Chỗ cố ý để trống — nay còn MỘT mã, và nó là chỗ trống của chủ repo
+### 1.3 Quyết định và việc triển khai còn lại
 
-Kế hoạch §9: *một ô không tick được thì để trống kèm mã của chỗ đang chặn*. Sổ này mở ra với **hai**
-mã như thế — một câu của **chủ quán**, một chỗ trống của **chủ repo**. Câu của chủ quán đã có lời
-(2026-09-08), nên hôm nay chỉ còn mã thứ hai.
-
-- **`U-044` — ĐÃ ĐÓNG, chủ quán chốt 2026-09-08: *"tuỳ vào tình hình thực tế, pos quyết định."*** Hoàn tiền cho
-  khoản khách đã chuyển khoản trả lại bằng **tiền mặt trong két** hay **chuyển khoản lại** đều
-  được, POS quyết từng ca (`shop-facts.md` §6.4). Hệ quả đúng như dòng này viết sẵn lúc câu còn mở:
-  hoàn **tiền mặt** cho khoản **chuyển khoản** là một đường tiền rời két giữa buổi, nên `I-021` đã
-  được **viết lại** — thêm hai hạng tử cho ca hoàn **chéo** phương thức (`docs/decisions.md`
-  **ADR-046**, 2026-09-15). `RR-3` vì thế **không còn ô ⚠️ *chưa có luật***; chỗ nó còn mỏng là
-  **vết**, như bảng §1 ghi.
-- **`F-034` — `RR-9` chưa có mục nào ở pha 1 sở hữu cơ chế của nó.** Bước này **không** tự mở một
-  mục mới cho nó và **không** thiết kế một cơ chế sao lưu nào: *cách chạy hệ thống* thuộc pha sau
-  (**ADR-035**), và một tài liệu nghi lễ viết ra ở đây sẽ thành cái ai cũng tưởng là đã có
-  (`CLAUDE.md` §3.8). Chọn nhà cho nó là quyết định của **chủ repo**.
+**Cập nhật 2026-09-27, T-108, ADR-057:** F-034 đã Fixed: yêu cầu nằm ở YC-21,
+pha vận hành nhận cơ chế qua T-109. RR-9 vẫn có dấu ⛔ cho tới khi có bằng chứng nghiệm thu;
+việc đóng finding không thay thế phục hồi thử. Câu hoàn tiền U-044 đã đóng từ 2026-09-08,
+luật đọc ở `master_plan/shop-facts.md` §6.4 và ADR-046.
 
 ---
 
@@ -155,7 +144,7 @@ mã như thế — một câu của **chủ quán**, một chỗ trống của *
 | **P1-11** — diễn ba scenario, và cổng sang pha 2 | ô cổng thứ sáu của kế hoạch §9 đọc **bảng §1**: mỗi dòng phải trỏ được tới một mục pha 1, **hoặc** nói thẳng *chưa có cơ chế* kèm mã. **`RR-9` là dòng làm ô ấy không tick trơn được** — nó tick kèm lý do và mã, đúng luật *"không tick hộ, không xoá ô"* |
 | **P1-12** — rà ranh giới pha | mục này không có tên bảng · cột · ràng buộc · endpoint · route · component; các câu *"phải không tồn tại được"* là câu **trích** từ [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md), tức câu về **tầng** |
 | **Pha 2** | bốn dòng chỉ tới **tầng 4/5** (`RR-1` · `RR-3` vế vết · `RR-4` · `RR-6`) là **cái pha 2 không dựng nổi một ràng buộc nào chặn** — đừng đọc chúng thành yêu cầu. Yêu cầu gửi pha 2 nằm ở [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) §1.4 và [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) |
-| **Pha sau — chạy thật** | `RR-8` (đường suy giảm đã có đủ ba vế) và `RR-9` (chỗ trống chưa có nhà, `F-034`) |
+| **Pha sau — chạy thật** | `RR-8` (đường suy giảm đã có đủ ba vế) và `RR-9` (YC-21 đã có owner; thực hiện và nghiệm thu qua T-109, ADR-057) |
 | **Chủ quán** | không còn câu nào của sổ này đang chờ: `U-044` đã có lời **2026-09-08** — *trả lại bằng gì tuỳ ca, POS quyết* (`shop-facts.md` §6.4) |
 
 [↑ đầu file](#top)

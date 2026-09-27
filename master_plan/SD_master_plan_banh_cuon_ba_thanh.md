@@ -346,7 +346,7 @@ dùng được; một cổng tick 9/9 bằng cảm giác thì không chặn đư
       mỗi dòng hoặc trỏ được tới một mục pha 1 cụ thể, hoặc nói thẳng **chưa có cơ chế** kèm mã của
       chỗ đang thiếu. Không dòng nào được chặn bằng *"cẩn thận hơn"*. **Tính tới 2026-09-08 ô này
       tick kèm lý do, không tick trơn**: `RR-9` (mất hẳn bản ghi đã ghi) là dòng chưa có cơ chế,
-      mã `F-034`.
+      yêu cầu nay có owner YC-21 (ADR-057, 2026-09-27); F-034 đã Fixed, cơ chế giao pha 5 qua T-109.
 - [ ] Ba scenario BA đi hết được qua thiết kế → P1-11, mỗi bước trỏ được một cơ chế.
 - [ ] Trục sản xuất theo mẻ đã có mục nghiệp vụ (**BA-12**) và §3 đã viết lại (**P1-09**).
 - [ ] Không câu hỏi nghiệp vụ nào đang mở mà một bước pha 1 phải đoán thay → `./scripts/brief.sh`

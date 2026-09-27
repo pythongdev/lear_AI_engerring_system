@@ -85,7 +85,7 @@ số trong câu này (`work/findings.md` **F-003**). Bảng sống ở kế ho�
 |---|---|---|---|
 | **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** (`master_plan/shop-facts.md` §7.2 — chỗ *suy ra*, **chưa hỏi**) | `P2-07` — ô ấy **để trống**, đừng điền | chủ quán |
 | **S-6** | với đơn giao tận nơi, quầy bấm mốc *"đã ra bàn"* **lúc nào** (§7.2) | `P2-07` | chủ quán |
-| **F-034** | *mất hẳn bản ghi đã ghi* chưa có cơ chế nào; ba đường ra ghi sẵn trong finding | `P2-09` | **chủ repo** |
+| **F-034** | Đã Fixed 2026-09-27: yêu cầu YC-21 có owner (ADR-057); cơ chế chưa triển khai | `P2-09` đọc yêu cầu | **pha 5**, T-109 |
 | ~~**F-036**~~ | ~~hai vế thiếu tầng~~ — **đã đóng 2026-09-27** (T-103, **ADR-056**): nước chấm · canh của `I-004` **tầng 2** trong giao dịch nổ đơn; ngừng bán của `I-009` **tầng 3**, không ràng buộc | `P2-07` dựng hai loại việc trạm `canh` theo hàng `I-004` | — |
 | **F-037** | khoản **trả trước** không có dòng trong bảng đối soát | `P2-06` · `P2-11` | phiên nhận F-037 (pha 1) |
 | **F-038** | *thiếu một trường bắt buộc thì đơn không tạo được* chưa có mệnh đề, chưa có tầng, chưa có dòng `YC` | `P2-04` | phiên nhận F-038 (pha 1) |
@@ -1049,8 +1049,7 @@ mỗi lần **cập nhật** — trong một hệ **không có nút hoàn tác**
 ### P2-09 — Mỗi lần đổi lược đồ sau này sẽ chạy trên dữ liệu bán hàng thật, mà không chỗ nào nói đường lùi
 
 **Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 9/14 (kế hoạch
-§6) · **cần xong trước:** `P2-04` → `P2-08` (cả năm lát) · **chỗ đang chặn nó:** **`F-034`** — và
-người gỡ là **chủ repo**, bước này **không chọn hộ**
+§6) · **cần xong trước:** `P2-04` → `P2-08` (cả năm lát) · **F-034 đã Fixed** 2026-09-27 (ADR-057); đọc YC-21, cơ chế giao pha 5 qua T-109
 
 **Goal:**
 Xong rồi thì cả dãy migration dựng lại được một cơ sở dữ liệu từ **số không**, và **lùi** một bước
@@ -1060,15 +1059,15 @@ rồi xuôi lại vẫn xanh — chạy thật, dán output. Một lần đổi 
 **Nói một câu, việc phải làm là gì:**
 Chốt **thứ tự migration**: mỗi bước có đường đi và **đường lùi** chạy thật được, cả dãy dựng lại
 được từ số không. Việc **không** phải làm: đừng thiết kế backup theo lịch, compose hay cách phục
-hồi khi hỏng máy — đó là **pha 5 · Deploy** (kế hoạch §3); và đừng chọn hộ đường ra cho `F-034`.
+hồi khi hỏng máy — đó là **pha 5 · Deploy** (kế hoạch §3); theo ADR-057; yêu cầu chính thức là YC-21.
 
 **Vì sao có task này:**
 Năm lát ở trên sinh ra lược đồ; không bước nào trong số đó nói **thứ tự dựng** và **đường lùi**.
 Chừng nào chưa có, lần đổi lược đồ đầu tiên sau khi quán chạy thật sẽ mang theo dữ liệu bán hàng
 thật, và nếu nó hỏng giữa chừng thì không có đường về. Cộng thêm một khoản nợ đã có tên:
 **`F-034`** (mở 2026-09-08, `P1-10`) — cơ chế chặn *mất hẳn bản ghi đã ghi* (`RR-9` của sổ rủi ro)
-**chỉ sống ở tài liệu đã chốt là không sở hữu gì**. Ba đường ra đã ghi sẵn trong finding; chọn
-đường nào là **quyết định của chủ repo**, và một bước L2 không được quyết thay (`CLAUDE.md` §3.5).
+lúc phát hiện chưa có owner. Chủ repo đã chọn hướng 3 ngày 2026-09-27: YC-21 ở pha 1,
+cơ chế và bằng chứng ở pha 5 (ADR-057, T-109). Finding đã Fixed, cơ chế chưa được nghiệm thu.
 
 **Không làm thì mất gì:**
 - **Dữ liệu bán hàng thật kẹt ở trạng thái nửa vời.** Một migration chạy được một nửa rồi lỗi, và
@@ -1080,7 +1079,7 @@ thật, và nếu nó hỏng giữa chừng thì không có đường về. Cộ
 
 **Cách hoàn thành — đủ mười bước, 1 tới 10.**
 
-1. Đọc **`F-034` nguyên văn trước tiên** — ba đường ra của nó;
+1. Đọc **ADR-057 và YC-21** ở `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8;
    [`06-so-rui-ro.md`](../docs/product/1-system-design/06-so-rui-ro.md) dòng `RR-9`; năm file lát
    `P2-04`…`P2-08`; file quy ước `P2-03`.
 2. Khai `work/scope.txt`: khối `P2-09`.
@@ -1091,8 +1090,8 @@ thật, và nếu nó hỏng giữa chừng thì không có đường về. Cộ
    danh sách ⇒ **rỗng**. Nối lệnh ấy vào `./scripts/gate.sh` — một lệnh chạy tay mà không cổng nào
    gọi là đúng hình *luật không có lệnh gác thì tự trôi* (**ADR-053** luật 3). Lệch ⇒ một dòng
    `F-XXX`, **không** sửa migration cho khớp chữ.
-5. **`F-034`: hỏi chủ repo, đừng chọn.** Nếu chưa có lời, viết **một dòng** trong file nói rõ lược
-   đồ đứng thế nào khi `F-034` còn mở — đúng cách ô cổng thứ mười một của kế hoạch §9 đòi.
+5. **Trỏ YC-21 và ADR-057.** Nêu rõ dựng/lùi lược đồ không phải phục hồi dữ liệu bán hàng;
+   cơ chế và nghiệm thu thuộc pha 5, theo T-109 (`work/backlog.md`).
 6. Chứng minh, chạy thật và **dán cả ba output**: (a) chạy xuôi cả dãy trên một cơ sở dữ liệu rỗng
    ⇒ xanh; (b) chạy **lùi** một bước ⇒ xanh; (c) xuôi lại ⇒ xanh. Rồi `./scripts/gate.sh`.
 7. Gate 2: ba dòng *Acceptance* map vào ba output trên, không vào một câu khẳng định. Cộng một dòng
@@ -1109,8 +1108,7 @@ thật, và nếu nó hỏng giữa chừng thì không có đường về. Cộ
   lần nào là một đường lùi chưa được chứng minh — cùng luật với kế hoạch §7 luật 3.
 - **Đừng để thứ tự migration đi trước một lát chưa xong.** Cột *Cần xong trước* của bước này là cả
   năm lát; chạy sớm thì thứ tự phải viết lại, và bản viết lại luôn bỏ sót một bảng.
-- **Đừng nhét backup vào đây cho "đủ bộ".** `F-034` chạm pha 5; bước này chỉ nói lược đồ đứng thế
-  nào khi nó còn mở.
+- **Đừng nhét backup vào đây cho "đủ bộ".** cơ chế YC-21 thuộc pha 5 (ADR-057); bước này chỉ chứng minh đường đi/lùi của lược đồ.
 - **Đừng tin một phép so tên bảng ra rỗng mà không in hai danh sách.** Một danh sách rỗng vì biểu
   thức lọc viết sai cũng cho `comm -3` rỗng (**F-017**). Dự án cũ phát hiện chữ trôi khỏi migration
   ba lần chỉ khi đọc thẳng file migration — bằng chứng của dự án cũ,

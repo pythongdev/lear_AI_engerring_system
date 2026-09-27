@@ -561,7 +561,7 @@ so **sau khi đã có dữ liệu** là dựng lại cả bảng lẫn mọi ch�
 | Tên bảng, tên cột của từng lát | file migration thắng (**ADR-053** luật 2) | `P2-04`…`P2-08` |
 | Đơn vị **lượng** (nguyên liệu tính theo cân, theo cái…) | Mục này chỉ nói tiền; lượng thuộc lane admin, luật còn đang thu | lane admin — `work/backlog_AD.md` |
 | Cách sinh mã QR của bàn | Pha 1 chưa có mệnh đề nào | phiên nhận `work/findings.md` **F-042** |
-| Mất hẳn bản ghi vì hỏng máy | Chuyện sao lưu, không phải chuyện lệnh xoá (`QD-50`) | chủ repo — `work/findings.md` **F-034** |
+| Mất hẳn bản ghi vì hỏng máy | Chuyện sao lưu, không phải chuyện lệnh xoá (`QD-50`) | pha 5 — YC-21 ở `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8; T-109 (`work/backlog.md`), ADR-057 |
 
 ---
 
