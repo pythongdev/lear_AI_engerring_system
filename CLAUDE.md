@@ -50,6 +50,7 @@ is a bug to fix now.
 | Tầng bảo vệ của từng invariant + phép đối chiếu | `docs/product/1-system-design/` — pha 1, sinh ra ở P1-04…P1-06 (ADR-035) |
 | Phụ thuộc ngoài của hệ thống + đường suy giảm của từng cái | `docs/product/1-system-design/01-ranh-gioi-he-thong.md` — pha 1, sinh ra ở P1-02 |
 | Định nghĩa **một ngày bán** cho phép cộng tiền + mốc tính tiền + nguồn thời gian | `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` — pha 1, sinh ra ở P1-03 |
+| Quy ước dữ liệu: tiền, mốc và múi giờ, khoá, đặt tên, trạng thái, không xoá cứng, văn bản và định danh — mỗi quy ước một mã `QD-XX` và một phép kiểm | `docs/product/2-db/01-quy-uoc-du-lieu.md` — pha 2, sinh ra ở P2-03 (ADR-035, ADR-053 luật 3) |
 | Schema: tên bảng, tên cột, khoá ngoại | **chưa có owner** — sinh ra ở **pha 2**, cùng `docs/product/2-db/` (ADR-035). Thứ tự việc, mức và cổng của pha 2: `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (ADR-049) |
 | Quy ước code: stack, cấu trúc thư mục, đặt tên, khung test | **chưa có owner** — sinh ra ở **pha 2**, cùng `docs/product/2-db/` (ADR-035, ADR-039). Không ai sở hữu dòng này thì phiên đầu tiên viết code sẽ tự bịa quy ước, và cái bịa đó thành fact vì không có chủ để đối chiếu |
 | Hợp đồng API: endpoint, quyền theo vai, chữ ký | **chưa có owner** — sinh ra ở **pha 3**, cùng `docs/product/3-be/` (ADR-035) |
@@ -69,14 +70,18 @@ is a bug to fix now.
 
 Five of the rows above are the **phase ownership boundary** (`docs/decisions.md`
 ADR-035, 2026-09-04). Four of them say *chưa có owner* on purpose: the folder of
-a phase is created together with that phase's first line of content, never before
-— so when `docs/product/2-db/` opens, the row changes to the real file name **in
-the same change**. Until then no document may name a table, an endpoint or a
-route: a phase writing what a later phase owns is a bug even when every gate is
-green. `scripts/check-phase-boundary.sh` (Gate 1d, §5, ADR-039) catches the most
-common shape of this inside `docs/product/1-system-design/` — SQL keywords, HTTP
-verbs + `/api/`, JSX-looking tags — but it is deliberately conservative and does
-not catch everything. P1-12 and human eyes remain the last layer.
+a phase is created together with that phase's first line of content, never before,
+and a row changes to the real file name **in the same change** that writes its
+first content. `docs/product/2-db/` opened 2026-09-26 (P2-03, *Quy ước dữ liệu*
+row); *Schema* changes at P2-04 and *Quy ước code* at P2-12 — the phase-2 plan
+§5 reading, still awaiting the repo owner's confirmation. Until a row has its
+owner, no document may name what it owns: a phase writing what a later phase
+owns is a bug even when every gate is green. `scripts/check-phase-boundary.sh`
+(Gate 1d, §5, ADR-039) catches the most common shape of this in
+`docs/product/1-system-design/` (SQL, endpoints, routes) and `docs/product/2-db/`
+(endpoints, routes — SQL is phase-2 output) — but it is deliberately
+conservative and does not catch everything. P1-12, P2-14 and human eyes remain
+the last layer.
 
 Behavior is cut by phase under `docs/product/`; which file owns which section is
 in `docs/product/00-index.md`, which owns no fact itself. `docs/product.md` is the
@@ -105,7 +110,8 @@ is where Gate 1b does not check links (§5).
 AGENTS.md          Codex entry point → CLAUDE.md
 CLAUDE.md          shared rules — read first
 docs/              product/ → 00-index.md, 0-ba/… (behavior), 1-system-design/
-                   (architecture), 99-unknowns.md — all by phase;
+                   (architecture), 2-db/ (data conventions, schema),
+                   99-unknowns.md — all by phase;
                    decisions, prompt guideline
 work/              backlog.md (trạng thái mọi task), backlog_SD.md (mô tả pha 1),
                    backlog_DB.md (mô tả pha 2), backlog_AD.md (mô tả mảng admin),

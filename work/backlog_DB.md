@@ -72,9 +72,10 @@ Mục lục không có cột trạng thái hay mức: trạng thái ở `work/ba
 | P2-14 | [Rà chéo ranh giới pha và pointer](#p2-14) |
 
 **Thứ tự lấy việc, và cái gì chạy song song được: kế hoạch §6.** Đừng đọc thứ tự từ mục lục trên —
-nó xếp theo số, còn phụ thuộc thật thì không. **`P2-01` đã `Done` 2026-09-22**, nên hai bước đứng
-trên nó — **`P2-02`** và **`P2-03`** — nay có dòng ở `work/backlog.md` → *Ready*. Mười một bước còn
-lại vẫn chưa có dòng trạng thái: `brief.sh` cắt *Ready* ở sáu mục (**F-012**).
+nó xếp theo số, còn phụ thuộc thật thì không. `P2-01` · `P2-02` · `P2-03` đã `Done`
+(2026-09-22 · 09-24 · 09-26), nên bước duy nhất vừa hết chặn — **`P2-12`** — có dòng ở
+`work/backlog.md` → *Ready*. Năm lát `P2-04`…`P2-08` còn chờ chính `P2-12` (**ADR-053** luật 1), nên
+chưa có dòng trạng thái: `brief.sh` cắt *Ready* ở sáu mục (**F-012**).
 
 **Chỗ đang chặn, đo ngày 2026-09-20** — mỗi chỗ ghi ở owner của nó, đếm lại ở đó chứ đừng tin con
 số trong câu này (`work/findings.md` **F-003**). Bảng sống ở kế hoạch §8; bảng dưới đây chỉ là bản
@@ -385,11 +386,55 @@ trả lời nó.
   Một quy ước mà phép kiểm của nó chỉ nằm trong lời văn là quy ước tự trôi (**ADR-053** luật 3).
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi:* nhận 2026-09-26, Claude Code, nhánh `chatgpt_involve`, base `cf048d4`. Scope:
+  `docs/product/2-db/` · `docs/product/00-index.md` · `CLAUDE.md` · `work/backlog.md` ·
+  `work/backlog_DB.md`. **Không** ADR: lựa chọn của phiên nằm ngay trong file quy ước, có nhãn
+  *phiên chọn* và chờ chủ repo, vì `docs/decisions.md` dành ADR cho quyết định có lời người thật.
+- *Nghiệm thu:* (N1) file quy ước dữ liệu mở `docs/product/2-db/`, mỗi quy ước một mục mang mã
+  `QD-XX`, phủ **bảy** chủ đề: đặt tên · khoá · tiền · mốc và múi giờ · trạng thái · không xoá cứng
+  · văn bản và định danh. (N2) Mỗi mục có đủ ba ô *hậu quả nếu làm khác* · *phép kiểm* · *nguồn*.
+  Phép kiểm là câu truy vấn trên `information_schema` hoặc một lệnh; chỗ nào cần thứ `P2-12` chốt
+  thì ghi tên tham số. (N3) Ba bài học T-097 (văn bản và định danh, mốc 2038 và múi giờ kết nối
+  test, quan hệ số học trong một bản ghi) mỗi bài có đúng một mã. (N4) Không có con giá, tên kiểu
+  của một DBMS hay tên bảng nào. (N5) `00-index.md` có hàng *Pha 2* **đang mở** và một dòng trỏ
+  file mới; `CLAUDE.md` §2 có hàng *Quy ước dữ liệu*; hàng *Schema* và *Quy ước code* vẫn ghi
+  *chưa có owner*. (N6) Chỗ nghiệp vụ chưa rõ thì trỏ `U-XXX`, không tự quyết.
+- *Kiểm chứng:* `grep -o 'QD-[0-9]*'` trên file mới, liệt kê theo chủ đề (N1, N3). Một lệnh đếm
+  mục `QD` thiếu ô, in cả danh sách chưa lọc (**F-017**) (N2). `grep` giá có dấu chấm nghìn · tên
+  kiểu DBMS · tên bảng cũ trên file mới ⇒ rỗng (N4). `grep -n 'chưa có owner' CLAUDE.md` (N5).
+  `./scripts/gate.sh` xanh, đọc riêng dòng Gate 1d vì lượt này là lượt đầu nó gặp vùng pha 2.
 
-**Bàn giao:** —
+**Bàn giao (2026-09-26):** mở `docs/product/2-db/` bằng
+[`01-quy-uoc-du-lieu.md`](../docs/product/2-db/01-quy-uoc-du-lieu.md) — **mười tám** mục, đếm bằng
+danh sách mã: `QD-01` `QD-02` `QD-03` (đặt tên) · `QD-10` `QD-11` (khoá) · `QD-20` `QD-21` `QD-22`
+(tiền) · `QD-30`…`QD-34` (mốc và múi giờ) · `QD-40` (trạng thái) · `QD-50` `QD-51` (không xoá cứng)
+· `QD-60` `QD-61` (văn bản và định danh). Nghiệm thu → bằng chứng:
+- **N1 · N3** — `grep -oE '^### QD-[0-9]+'` ra đúng mười tám mã trên, bảy chủ đề. Ba bài học T-097:
+  văn bản và định danh ⇒ `QD-60` · `QD-61` (hai vai trò, hai mã); mốc ⇒ `QD-30` vế (b) giới hạn
+  2038 và `QD-32` múi giờ kết nối test; quan hệ số học trong một bản ghi ⇒ `QD-22`. Bài 1 và bài 2
+  mỗi bài hai mã vì mỗi bài có hai vế kiểm khác nhau — lệch khỏi chữ *đúng một mã* của N3, ghi ra.
+- **N2** — lệnh `awk` in từng mã kèm ba cờ *hậu quả · phép kiểm · nguồn*: cả mười tám mã `1 1 1`,
+  danh sách thiếu ô **rỗng**.
+- **N4** — `grep` giá có dấu chấm nghìn · tên kiểu DBMS · tên bảng/cột dự án cũ trên file mới ⇒
+  exit 1, **rỗng**. Tên kiểu cụ thể là tham số `:kieu_moc` · `:collation_*` do `P2-12` điền.
+- **N5** — `docs/product/00-index.md`: hàng *Pha 2* **đang mở**, bảng *Pha 2 — Database* có một
+  dòng. `CLAUDE.md` §2: hàng *Quy ước dữ liệu* mới; `grep -n 'chưa có owner'` vẫn ra *Schema* ·
+  *Quy ước code* · *API* · *Route*. Cùng lượt sửa hai pointer đã lệch ở `CLAUDE.md`: câu *"khi
+  `2-db/` mở thì hàng đổi"* (nay nói ba hàng đổi ở ba bước, theo kế hoạch §5) và câu Gate 1d *chỉ đọc
+  thư mục pha 1* (sai từ `P2-02`); cây thư mục thêm `2-db/`.
+- **N6** — luật làm tròn cho phép chia chạm tiền trỏ **U-058**, không tự chọn (`QD-20`, §8 của file).
+- **Gate** — `./scripts/gate.sh` xanh; Gate 1d chạy riêng ⇒ exit 0 và file mới **có** trong danh
+  sách nó quét. Lệnh chưa lọc cạnh lệnh lọc (**F-017**): dòng duy nhất mang một động từ HTTP là
+  câu SQL phân quyền của `QD-50`, đúng thứ vùng pha 2 được viết.
+
+**Chưa chạy được, và ai chạy:** mọi phép kiểm — chưa có database. `P2-12` chạy lần đầu trên DBMS vừa
+chọn và điền sáu tham số ở §0; `P2-11` gom và chứng minh biết kêu. **Lựa chọn của phiên, chờ chủ
+repo:** tên cấu trúc tiếng Anh (`QD-01`), bảng hậu tố vai trò (`QD-03`), khoá chính `id` tự sinh
+(`QD-10`), tiền không âm với chiều đi theo loại bản ghi (`QD-21`), `sale_date` cất riêng (`QD-31`),
+trạng thái là mã chữ có bảng ánh xạ (`QD-40`), cấm xoá bằng **quyền của database** (`QD-50`). Không
+viết ADR, vì `docs/decisions.md` dành ADR cho quyết định có lời người thật; chủ repo xác nhận thì
+nhãn *phiên chọn* của mục ấy đổi thành *owner*. Claude Code, nhánh `chatgpt_involve`, base
+`cf048d4`; chưa review độc lập. Trạng thái: `work/backlog.md` → *Done*.
 
 [↑ đầu file](#top)
 

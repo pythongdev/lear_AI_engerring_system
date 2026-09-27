@@ -13,20 +13,19 @@ Hành vi nghiệp vụ của sản phẩm, cắt theo **pha** ở tầng ngoài 
 |---|---|---|
 | 0 — BA (nghiệp vụ) | `0-ba/` | **đang mở** — xem bảng dưới |
 | 1 — System design | [`1-system-design/`](1-system-design/architecture.md) | **đang mở** — xem bảng dưới |
-| 2 — Database | `2-db/` | **chưa mở** |
+| 2 — Database | [`2-db/`](2-db/01-quy-uoc-du-lieu.md) | **đang mở** — xem bảng dưới (mở 2026-09-26, `P2-03`) |
 | 3 — Backend | `3-be/` | **chưa mở** |
 | 4 — Frontend | `4-fe/` | **chưa mở** |
 | 5 — Deploy | `5-deploy/` | **chưa mở** |
 
-Thư mục của pha **2–5** chưa tồn tại và cố ý chưa tồn tại: nó ra đời cùng dòng nội dung đầu tiên
+Thư mục của pha **3–5** chưa tồn tại và cố ý chưa tồn tại: nó ra đời cùng dòng nội dung đầu tiên
 của pha ấy, không sớm hơn. Một file "chưa có gì" là tài liệu nghi lễ (`CLAUDE.md` §3.8), và một
 thư mục rỗng không gỡ được dòng nào cho ai.
 
-**Pha 2 đã có kế hoạch, chưa có nội dung.** Thứ tự mười bốn bước `P2-01`…`P2-14`, mức của từng
-bước, đầu ra kiểm chứng được và cổng sang pha 3 ở
-`master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (viết 2026-09-20, `docs/decisions.md`
-**ADR-049**). Kế hoạch ấy **không sở hữu sự thật nào** và **không mở thư mục nào**: hàng *Pha 2* ở
-trên đổi sang **đang mở** ở bước `P2-03`, lượt viết dòng nội dung đầu tiên.
+**Thứ tự việc của pha 2** — mười bốn bước `P2-01`…`P2-14`, mức của từng bước, đầu ra kiểm chứng
+được và cổng sang pha 3 — ở `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (viết 2026-09-20,
+`docs/decisions.md` **ADR-049**). Kế hoạch ấy **không sở hữu sự thật nào**; thư mục `2-db/` mở ở
+bước `P2-03`, lượt viết dòng nội dung đầu tiên (2026-09-26).
 
 ## Pha 0 — BA
 
@@ -76,6 +75,14 @@ kèm một dòng vào bảng trên trong cùng thay đổi (mục *Luật ghi* d
 nó ở lại `master_plan/` (ADR-014, khối *SỬA ĐỔI 2026-09-03*). Đừng đọc nó như một owner. Nó dùng
 `SD-01`…`SD-10` làm mã task **và** `SD-01`…`SD-07` làm mã quyết định, nên kế hoạch pha 1 cố ý dùng
 tiền tố khác — `P1-XX` (ADR-033).
+
+## Pha 2 — Database
+
+| Nội dung | File |
+|---|---|
+| Quy ước dữ liệu — **cất bằng gì**: đặt tên · khoá · tiền · mốc và múi giờ · trạng thái · không xoá cứng · văn bản và định danh; mỗi quy ước một mã `QD-XX`, một hậu quả nếu làm khác và một phép kiểm (P2-03) | [2-db/01-quy-uoc-du-lieu.md](2-db/01-quy-uoc-du-lieu.md) |
+
+Các lát lược đồ sau **thêm** dòng vào bảng này, không ghi đè dòng của lát trước (kế hoạch pha 2 §6).
 
 **Câu hỏi chưa có lời giải** — [99-unknowns.md](99-unknowns.md), dùng chung cho mọi pha.
 
