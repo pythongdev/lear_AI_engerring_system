@@ -883,3 +883,60 @@ giá trước khi U-038 có lời.
 
 *Phát hiện ở T-056, 2026-09-04, từ lời chủ quán trả lời `A3` và `A4`.*
 *Viết lại ở T-073, 2026-09-15, từ lời chủ quán trả lời `U-044` (2026-09-08).*
+
+### I-022 — Một đơn mang đi không tồn tại được khi thiếu một trường liên hệ bắt buộc của kênh và cách trao hàng của nó
+
+**Invariant:**
+Với mọi đơn của **ba kênh không gắn bàn** — Delivery, Pickup, Đặt trước qua hotline — tại **mọi**
+thời điểm đơn ấy tồn tại, đơn mang đủ mức liên hệ tối thiểu mà chủ quán đã chốt cho **kênh** và
+**cách trao hàng** của nó. Bảng trường nào bắt buộc ở kênh nào có nhà duy nhất ở
+`master_plan/shop-facts.md` §6.5 và được đọc thành ba câu ở
+`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.2.4 — **đọc ở đó, đây cố ý không chép**
+(`work/findings.md` **F-001**). Mệnh đề này có bốn vế:
+
+- **Số điện thoại** — mọi đơn của cả ba kênh.
+- **Địa chỉ giao** — mọi đơn mà cách trao hàng là **giao tận nơi**: luôn luôn với Delivery, và với
+  đơn hotline khi khách chọn giao. Đơn **tới lấy** — Pickup, hoặc hotline khách tới lấy — **không**
+  bị đòi địa chỉ.
+- **Giờ khách cần hàng** — mọi đơn Pickup và mọi đơn hotline.
+- **Cách trao hàng của một đơn hotline** — đúng **một** trong hai nhánh, giao tận nơi hoặc tới lấy
+  (`03-lat-cat.md` §3.2.1 bước 2 · §3.2.2). Không có nó thì vế địa chỉ không có gì để đọc. Với
+  Delivery và Pickup, cách trao hàng chính là kênh — khách đã chọn lúc bấm.
+
+Chiều ngược cũng thuộc mệnh đề: một trường mà §6.5 ghi *nên có* hoặc *tuỳ tình huống* **không**
+chặn tạo đơn — phần ấy người ở quầy điền theo tình huống thật. Mệnh đề **không** áp cho `qr_table`
+và `staff_pos`: khách ngồi bàn ẩn danh theo số bàn (`03-lat-cat.md` §3.2.4).
+
+**Mệnh đề nói *thiếu*, không nói *sai*.** Một số điện thoại có mặt nhưng gọi không được, một địa
+chỉ có mặt nhưng không tìm ra, không phải trạng thái mệnh đề này chặn: chủ quán chưa chốt luật nào
+về định dạng hay độ đúng của hai trường ấy, và đừng tự viết một luật như thế ở đây
+(`docs/product/99-unknowns.md` là chỗ ghi nếu cần hỏi).
+
+**Why:**
+Hai trường bắt buộc là **hệ quả của luồng**, không phải sở thích (`shop-facts.md` §6.5): không có
+số thì không gọi lại được khi tới nơi, không có địa chỉ thì quán tự đi giao vào đâu. Ba trong năm
+kênh là kênh **khách tự bấm** (`shop-facts.md` §2), nên đây là chỗ dữ liệu vào hệ thống **không
+qua tay người của quán**. Một đơn giao tận nơi thiếu địa chỉ lộ ra ở chỗ muộn nhất có thể: bếp đã
+làm, đã đóng gói, người đi giao đã cầm hàng — và đường ra khi ấy là **huỷ**, cộng **hoàn tiền** nếu
+khách đã trả trước, tức đường không có luật cứng (`shop-facts.md` §6.4). Đơn Pickup thiếu giờ hẹn
+thì quán không biết làm lúc nào cho kịp, đúng chỗ mà đường báo đơn về quầy phải tới *trước giờ hẹn
+của đơn sớm nhất* (`docs/product/1-system-design/01-ranh-gioi-he-thong.md` §3, `PT-5`).
+
+Luật đã chốt từ **2026-08-30** (chủ quán xác nhận thẳng hai trường bắt buộc, `shop-facts.md` §6.5
+· §7.1) và pha 0 viết nó thành điều kiện tạo đơn ở §3.2.1 bước 3. Nó chưa từng thành mệnh đề vì
+lượt BA-04 viết mệnh đề `I-007` — câu về **tiền** — cho cùng lát cắt, và không lượt nào sau đó hỏi
+§3.2.4 *"chỗ này có mệnh đề chưa"* (`work/findings.md` **F-038**).
+
+**Verification:**
+Kịch bản âm, một vế một lần: tạo một đơn Delivery thiếu địa chỉ ⇒ **bị từ chối**; một đơn Pickup
+thiếu giờ hẹn lấy ⇒ **bị từ chối**; một đơn của bất kỳ kênh nào trong ba kênh thiếu số điện thoại ⇒
+**bị từ chối**; một đơn hotline chưa có cách trao hàng ⇒ **bị từ chối**; một đơn hotline khách chọn
+giao mà thiếu địa chỉ ⇒ **bị từ chối**. Kịch bản dương, chống đọc rộng: một đơn hotline khách **tới
+lấy**, có số và giờ, **không** địa chỉ ⇒ **tạo được**; một đơn Pickup không địa chỉ ⇒ **tạo được**;
+một đơn Delivery không giờ khách cần hàng và không tên ⇒ **tạo được** (hai trường *nên có*). Kịch
+bản sửa: một đơn Delivery đã tạo, thử xoá trắng địa chỉ của nó ⇒ **bị từ chối** — mệnh đề giữ ở
+**mọi** thời điểm, không chỉ lúc tạo. Kiểm ngược, bất kỳ lúc nào: không đơn nào của ba kênh đang
+tồn tại mà thiếu một trường mà kênh và cách trao hàng của nó đòi.
+
+*Phát hiện ở P1-11, 2026-09-08 (`work/findings.md` **F-038**). Viết thành mệnh đề ở T-110,
+2026-09-28, Claude Code — luật nguồn đã chốt, không hỏi thêm chủ quán.*

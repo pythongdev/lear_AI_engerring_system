@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 39 finding — 30 Fixed/Resolved/Closed, 9 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-08, sau khi P1-11 mở F-036 · F-037 · F-038, T-070 thêm F-039 đã Fixed; cùng ngày T-067 đóng F-035. Phép đếm trước đó trong ngày ghi *34 — 28/6* và **đếm hụt một mục**: bảng dưới đã có 35 hàng lúc câu ấy được viết — đúng hình `F-003`, một con số chép tay cạnh một danh sách tự lớn lên). Cột **Status** ở đây là một bản
+Tổng: 43 finding — 38 Fixed/Resolved/Closed, 5 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-28, T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -99,10 +99,10 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-035 | Gate 7b đọc index bằng encoding KHÁC mọi chỗ đọc khác trong chính nó ⇒ kêu một file scope đã phủ | Closed |
 | F-036 | Phép đối chiếu của một mệnh đề hẹp hơn chính mệnh đề ấy ⇒ đọc ra rỗng trong khi một vế đã hỏng | Fixed |
 | F-037 | Khoản trả trước có mốc tính tiền nhưng không có dòng nào trong bảng đối soát để đứng | Open |
-| F-038 | *"Thiếu một trường bắt buộc thì đơn không tạo được"* — luật đã chốt của pha 0, pha 1 không có mệnh đề nào | Open |
+| F-038 | *"Thiếu một trường bắt buộc thì đơn không tạo được"* — luật đã chốt của pha 0, pha 1 không có mệnh đề nào | Fixed |
 | F-039 | Gate 7b đọc khối commit theo từng dòng ⇒ khối nối dòng `\` vừa bị kêu nhầm vừa bị chấm sót bảy trên mười file | Fixed |
-| F-040 | Ba chỗ vượt ranh giới pha trong `architecture.md`, chỉ một có tên trong ngoại lệ — cả ba sinh TRƯỚC ADR-035 | Open |
-| F-041 | Gate 1d mù với khối API rõ nhất repo (mẫu đòi `/` ngay sau động từ), và dòng ignore ghi sai mục | Open |
+| F-040 | Ba chỗ vượt ranh giới pha trong `architecture.md`, chỉ một có tên trong ngoại lệ — cả ba sinh TRƯỚC ADR-035 | Closed |
+| F-041 | Gate 1d mù với khối API rõ nhất repo (mẫu đòi `/` ngay sau động từ), và dòng ignore ghi sai mục | Closed |
 | F-042 | Mã QR của bàn phải không đoán được và đổi được — pha 1 không có mệnh đề nào | Open |
 | F-043 | Một lần gửi đơn phải thành đúng một đơn — pha 1 không có mệnh đề nào | Open |
 
@@ -3614,8 +3614,20 @@ nào: một đơn `delivery` hôm nay tạo được mà không có địa chỉ
 `docs/product/2-db/02-luoc-do-ban-hang.md` §5. Gỡ vẫn theo ba việc ở trên (pha 1), rồi một migration
 mới thêm cột + ràng buộc.
 
+**Fix — 2026-09-28 (T-110, Claude Code, `docs/decisions.md` **ADR-058**):** đủ ba việc ở trên,
+trong một lượt. (1) Mệnh đề `quality/invariants.md` **`I-022`** — bốn vế *thiếu thì không tồn tại
+được* (số điện thoại · địa chỉ khi giao tận nơi · giờ khách cần hàng · cách trao hàng của đơn
+hotline), chiều ngược *trường nên có không chặn*, và câu *nói thiếu, không nói sai*; trỏ về
+`shop-facts.md` §6.5, không chép bảng. (2) Hàng `I-022` ở **nhóm VÒNG ĐỜI** của
+`docs/product/1-system-design/03-bao-ve-invariant.md` §2 — bốn vế **tầng 1**, vế ngược tầng 3, chỗ
+tầng 4 (câu *giao hay lấy* của đơn hotline do người bấm) nói thẳng; chọn nhóm là **giao cho
+phiên**, chủ repo đổi được bằng một câu. (3) `architecture.md` §8 có dòng chỗ thiếu — nền 16 bảng
+chỉ đòi số điện thoại — nên `04-yeu-cau-du-lieu.md` §1 có **`YC-22`**. Ô 1 của cổng pha 1 đo lại:
+`comm -3` rỗng, hai mươi hai mã. Phần **pha 2** — chỗ cất và ràng buộc thật — là `work/backlog.md`
+**T-111**; F-038 đóng ở chỗ hụt của pha 1, không tuyên bố lược đồ đã giữ.
+
 **Status:**
-Open
+Fixed — 2026-09-28 (T-110)
 
 ---
 

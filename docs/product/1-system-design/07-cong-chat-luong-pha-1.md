@@ -217,7 +217,13 @@ kỳ vọng*.
 > **`F-036` đã lấp 2026-09-27** (T-103, **ADR-056**): hai vế có tầng và tập đối chiếu ở
 > [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) hàng `I-004` · `I-009`, và lượt rà theo vế lấp
 > thêm năm hàng cùng hình. Các ô *KHÔNG trỏ được — `F-036`* ở §1 · §2 · §3 là biên bản của ngày
-> 2026-09-08, giữ nguyên; hôm nay chúng trỏ được vào hai hàng ấy. `F-037` · `F-038` không đổi.
+> 2026-09-08, giữ nguyên; hôm nay chúng trỏ được vào hai hàng ấy.
+>
+> **`F-038` đã lấp 2026-09-28** (T-110, **ADR-058**): luật nay là mệnh đề `quality/invariants.md`
+> **`I-022`**, có hàng ở nhóm VÒNG ĐỜI của [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) §2
+> (bốn vế tầng 1) và dòng **`YC-22`** ở [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §1. Các ô
+> *KHÔNG trỏ được — `F-038`* ở §2 bước 1 · 2 · 3 là biên bản ngày 2026-09-08, giữ nguyên; hôm nay
+> chúng trỏ được vào hàng `I-022`. `F-037` không đổi.
 
 Ba chỗ dưới đây là **phát hiện của lượt này**. Không chỗ nào được lấp ở đây: lượt này **ghi**, và
 việc thiết kế bù thuộc bước hoặc phiên nhận `F-XXX` tương ứng (`work/backlog_SD.md` → P1-11, mục
@@ -300,10 +306,14 @@ vẫn là của **chủ repo**, không của cổng (§8).
   đã có tên từ trước: `I-004` ca *không bàn nào đang chờ đúng thứ đã làm* (chưa có luật) và
   `I-014` khoản trả trước (**`F-037`**). Bảy là phép đếm của lượt này, không phải ranh giới
   (**F-003**): phép đọc vế là việc của người, và người đọc sau có thể tách vế khác.
+  **Đo lại 2026-09-28 (T-110, ADR-058)** sau khi `I-022` sinh: `comm -3` giữa hai danh sách mã vẫn
+  **rỗng** — hai mươi hai mã mỗi bên; sáu vế của hàng `I-022` mỗi vế một tầng, năm vế có tập, vế
+  ngược nói thẳng vì sao chưa có tập (§0 luật 5 của file ấy).
 - [x] **2. Mỗi mệnh đề chỉ được giữ ở tầng 4 hoặc 5 đã nói thẳng ra điều đó.**
   Lọc chữ *"máy không ngăn được"* trên [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md): **11**
-  lần, và đối chiếu từng hàng có chữ *tầng 4* / *tầng 5* — `I-004` · `I-011` · `I-012` · `I-014` ·
-  `I-015` · `I-020` · `I-021` đều **có** câu ấy trong đúng hàng của mình.
+  lần lúc ký, **12** lần khi đo lại 2026-09-28 (T-110 thêm câu ấy vào hàng `I-022`, vế tầng 4 của
+  đơn hotline), và đối chiếu từng hàng có chữ *tầng 4* / *tầng 5* — `I-004` · `I-011` · `I-012` · `I-014` ·
+  `I-015` · `I-020` · `I-021` · `I-022` đều **có** câu ấy trong đúng hàng của mình.
   **Một hàng có tầng 4 mà KHÔNG có câu ấy, và nó đúng như thế:** `I-009` — vế tầng 4 của nó là
   **một ngoại lệ đã chốt** (quầy **sửa** một dòng thì mốc khoá của dòng đó đặt lại, `U-026` đã
   đóng 2026-09-02), còn mệnh đề thì được giữ ở **tầng 1 + tầng 3**. Luật của ô này là *ô nào **chỉ
@@ -352,6 +362,8 @@ vẫn là của **chủ repo**, không của cổng (§8).
   (**`F-037`**). Ô này tick **vì** ba chỗ ấy được **ghi ra, có mã, có owner và brief in ra được** —
   đó là điều ngược lại với một chỗ hụt không ai biết, đúng cách ô số 7 của cổng BA được tick kèm
   `U-031`. **Nó không tick vì thiết kế đã đủ.**
+  **2026-09-28:** `F-036` (T-103) và `F-038` (T-110) đã lấp — S2 bước 1 · 2 · 3 nay trỏ được vào
+  hàng `I-022`; còn **một** bước không trỏ được hết, S2 bước 6 (**`F-037`**).
 - [x] **8. Trục sản xuất theo mẻ đã có mục nghiệp vụ (BA-12) và §3 đã viết lại (P1-09).**
   `BA-12` `Done` 2026-09-04 — [`../0-ba/ban-hang/03-lat-cat.md`](../0-ba/ban-hang/03-lat-cat.md)
   §3.4; `P1-09` `Done` 2026-09-07 — [`architecture.md`](architecture.md) §3.4 có **bốn** con số và

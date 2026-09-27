@@ -8,7 +8,7 @@
 [`03-lat-cat.md`](../0-ba/ban-hang/03-lat-cat.md) §3.4 (BA-12, xong 2026-09-04) ·
 [`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §5.*
 
-> **Mục này sở hữu yêu cầu dữ liệu:** YC-01…YC-20 để pha 2 tự chấm lược đồ;
+> **Mục này sở hữu yêu cầu dữ liệu:** YC-01…YC-20 và YC-22 để pha 2 tự chấm lược đồ;
 > YC-21 (§8) để pha 5 nghiệm thu bảo toàn và khôi phục. Yêu cầu không chốt cơ chế triển khai.
 >
 > **Nó không sở hữu một luật nghiệp vụ nào.** Giá, giờ bán, ai được bấm cái gì, ngưỡng lệch 0đ đều
@@ -30,7 +30,7 @@
 
 ## 0. Cách đọc — hai dạng câu, và một mã
 
-YC-01…YC-20 mang mã `YC-XX` và dùng hai dạng câu dưới đây. YC-21 ở §8 là yêu cầu
+YC-01…YC-20 và YC-22 mang mã `YC-XX` và dùng hai dạng câu dưới đây. YC-21 ở §8 là yêu cầu
 khôi phục, nghiệm thu ở pha vận hành:
 
 | Dạng | Câu mở đầu | Pha 2 chấm thế nào |
@@ -55,7 +55,7 @@ Bốn luật đọc:
 
 ---
 
-## 1. Tám chỗ thiếu ở `architecture.md` §8 — mỗi chỗ đúng một dòng yêu cầu
+## 1. Chín chỗ thiếu ở `architecture.md` §8 — mỗi chỗ đúng một dòng yêu cầu
 
 §8 là danh sách **chỗ mô hình 16 bảng chưa với tới**. Bảng dưới đây là cùng danh sách ấy, đọc theo
 chiều ngược lại: không phải *thiếu cái gì*, mà *pha 2 phải chấm được cái gì*.
@@ -70,8 +70,13 @@ chiều ngược lại: không phải *thiếu cái gì*, mà *pha 2 phải ch�
 | **Đã phục vụ bao nhiêu cho từng bàn** | **YC-06** | **Ghi được:** với **từng thành phần** của **từng bàn** — đã gọi bao nhiêu, đã phục vụ bao nhiêu — và mọi con số tổng cộng ngang qua nhiều bàn **tách ngược về được** từng bàn, khớp cả hai chiều. **Không xảy ra được:** số đã phục vụ của một bàn **vượt** số bàn ấy đã gọi · một con số tổng không chia hết về các bàn của nó | `shop-facts.md` §5.4 · [`03-lat-cat.md`](../0-ba/ban-hang/03-lat-cat.md) §3.4.3 · §3.4.4 · `I-019` · `I-020` |
 | **Mẻ, và con số *"đã làm xong, còn ở bếp"*** *(chốt 2026-09-01, thêm vào §8 ở P1-07)* | **YC-07** | **Ghi được:** **một lần bấm** *"đã làm xong"* là **một mẻ**, và một mẻ đẩy nhiều việc của **nhiều bàn** cùng lúc — nên mỗi lần bấm ấy đọc ra được **phần của từng bàn**; con số *đã làm xong, còn ở bếp* đứng riêng, **không** gộp vào *đã phục vụ*; mỗi lần **lùi** một mẻ bấm nhầm để lại vết (lùi mẻ nào · mấy giờ · ai). **Không xảy ra được:** *còn thiếu* của người bưng và *còn phải làm* của bếp bị gộp làm một con số · một lần bấm mẻ không chia được về từng bàn · phần đã làm xong của một đơn bị huỷ biến mất mà không có lần cập nhật nào chuyển nó sang bàn khác | `shop-facts.md` §5.4 · [`03-lat-cat.md`](../0-ba/ban-hang/03-lat-cat.md) §3.4.2 · §3.4.5 · §3.4.8 · `I-019` · `I-020` |
 | **Lượt bán nhập bù từ sổ giấy** *(chốt 2026-09-04, thêm vào §8 ở P1-07)* | **YC-08** | **Ghi được:** một lượt bán ghi trên giấy hôm mất điện, nhập vào máy hôm sau, mang **hai** mốc đọc riêng được — **ngày quán bán thật** (mốc tính tiền) và **lúc gõ vào máy** — cùng **người nhập bù**; và một ngày đọc ra được **còn bao nhiêu lượt trên giấy chưa nhập**. **Không xảy ra được:** một lượt nhập bù rơi vào doanh thu của **ngày gõ** · một ngày còn lượt chưa nhập được coi là **đã đối soát xong** | `shop-facts.md` §6.11 · `docs/decisions.md` **ADR-037** · **I-012** · **I-014** · [`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §2 |
+| **Mức liên hệ tối thiểu của đơn mang đi** *(thêm vào §8 ở T-110, 2026-09-28)* | **YC-22** | **Ghi được:** với mỗi đơn của ba kênh không gắn bàn — **số điện thoại**, **địa chỉ giao**, **giờ khách cần hàng**, và **cách trao hàng** (giao tận nơi hay tới lấy) đọc ra được từ chính đơn ấy, cùng các trường *nên có* khi khách khai. **Không xảy ra được:** một đơn tồn tại mà thiếu một trường mà kênh và cách trao hàng của nó đòi · một đơn hotline không có cách trao hàng · một đơn Delivery mang nhánh *tới lấy* hoặc Pickup mang nhánh *giao* · một trường *nên có* trở thành điều kiện tạo đơn | `shop-facts.md` §6.5 · [`03-lat-cat.md`](../0-ba/ban-hang/03-lat-cat.md) §3.2.1 bước 2 · 3 · §3.2.2 · §3.2.4 · **I-022** |
 
-**Hai dòng cuối là chỗ thiếu thứ bảy và thứ tám, thêm vào §8 trong chính lượt này.** §8 tự khai
+**Dòng cuối — `YC-22` — là chỗ thiếu thứ chín, thêm vào §8 ở T-110 (2026-09-28).** Mã nhảy qua
+`YC-21` vì mã ấy đã thuộc §8 của file này (**ADR-057**); luật nguồn đã chốt từ 2026-08-30 nhưng
+chưa từng thành mệnh đề cho tới `I-022` (`work/findings.md` **F-038**).
+
+**Hai dòng trước nó là chỗ thiếu thứ bảy và thứ tám, thêm vào §8 ở P1-07.** §8 tự khai
 danh sách của nó là *"chỗ thiếu đã biết tính tới 2026-08-31"* và dặn *"gặp chỗ thứ bảy thì thêm vào
 đây, đừng tự thiết kế quanh nó"*. Cả hai chỗ mới đều là **lời chốt của chủ quán sau ngày ấy** — mẻ
 và con số thứ tư (2026-09-01), chỗ đã làm xong của đơn huỷ đổi chủ (2026-09-06), lượt bán trên giấy
@@ -134,8 +139,9 @@ thể đọc lại được nhưng chỗ lệch thì không.
 
 **Phạm vi đã chốt, 2026-09-25:** yêu cầu lịch sử đổi người của YC-04/YC-15
 áp dụng cho trạm `quay`, do POS khai. Bốn trạm ngoài quầy không ghi mốc đổi giờ
-(chủ quán, `shop-facts.md` §8.8, U-055/U-056); nguồn số người ngoài quầy còn ở
-U-060 (`docs/product/99-unknowns.md`). Không dùng câu “trạm nào” dưới đây để
+(chủ quán, `shop-facts.md` §8.8, U-055/U-056). Tổng quan lấy số người thực tế
+đang làm ở quán (chủ quán xác nhận 2026-09-27, §8.6); cách thu nhận/cập nhật
+số đó còn ở U-060 (`docs/product/99-unknowns.md`). Không dùng câu “trạm nào” dưới đây để
 áp đặt thêm mốc đổi ở bếp.
 
 §4 nói rõ vì sao **chức vụ ghi cố định** không đủ: chức vụ trả lời *người này là ai*, còn luật hỏi
@@ -199,7 +205,7 @@ dùng thật.
 - **Màn hình.** Cái gì hiện ở đâu là pha 4.
 
 **Pha 2 dùng mục này thế nào:** dựng lược đồ xong thì đi ngược bảng §1 và các dòng `YC-XX` còn lại,
-với YC-01…YC-20, mỗi dòng hỏi **hai** câu — *đọc ra được không* và *dựng được trạng thái sai không*. Dòng nào không
+với YC-01…YC-20 và YC-22, mỗi dòng hỏi **hai** câu — *đọc ra được không* và *dựng được trạng thái sai không*. Dòng nào không
 trả lời được là một chỗ lược đồ còn thiếu, **không phải** một dòng viết chưa rõ; sửa lược đồ, và
 chỉ quay lại sửa dòng ở đây khi chính luật nghiệp vụ đã đổi ở owner của nó.
 
@@ -207,7 +213,6 @@ chỉ quay lại sửa dòng ở đây khi chính luật nghiệp vụ đã đ�
 dòng ở §1 đây trong cùng thay đổi** — hai danh sách ấy phải khớp một-đối-một, và đó là phép chấm
 duy nhất giữ chúng khỏi trôi khỏi nhau.
 
-[↑ đầu file](#top)
 ## 8. Bảo toàn và khôi phục dữ liệu — YC-21, giao pha vận hành
 
 **Chủ repo chốt 2026-09-27, ADR-057 (T-108):** chọn hướng thứ ba của F-034.
@@ -233,3 +238,4 @@ không suy ra con số từ câu yêu cầu trên, không tự coi là mất 0 d
 T-109 phải hoàn tất trước khi đưa hệ thống vào bán thật. Pha 2 chỉ bảo đảm dữ liệu có thể biểu
 đạt đủ; phép chạy xuôi/lùi migration của P2-09 không chứng minh YC-21 đã đạt.
 
+[↑ đầu file](#top)

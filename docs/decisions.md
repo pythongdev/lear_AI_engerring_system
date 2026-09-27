@@ -74,6 +74,7 @@ có câu trả lời mới từ người.
 | ADR-055 | **DBMS là PostgreSQL 17** — chọn vì lát bán hàng lõi cần khoá duy nhất chỉ áp cho vài trạng thái, DDL trong giao dịch và kiểu mốc không vướng 2038; loại MySQL 8.4 của `prompt-fullstack.md` §3.4 và SQLite. Quy ước code ở `docs/product/2-db/10-quy-uoc-code.md` | Đã chốt 2026-09-27 (giao cho phiên) | — | mở `P2-04`…`P2-08` |
 | ADR-056 | **Hai vế thiếu tầng của F-036** — nước chấm · canh của `I-004` giữ ở **tầng 2** trong giao dịch nổ đơn; *ngừng bán ⇒ không đặt mới được* ở lại hàng `I-009`, **tầng 3** tại cửa tạo lượt gọi; đơn vị của bảng bảo vệ là **vế**, không phải mã | Đã chốt 2026-09-27 (giao cho phiên) | — | `P2-07` (nổ đơn trạm `canh`) |
 | ADR-057 | Yêu cầu bảo toàn và khôi phục dữ liệu ở pha 1; cơ chế và kiểm chứng ở pha 5 (F-034) | Đã chốt 2026-09-27 (chủ repo) | — | T-109 — triển khai và nghiệm thu vận hành |
+| ADR-058 | **`I-022` vào nhóm VÒNG ĐỜI đã có**, không mở nhóm mới; bốn vế *thiếu thì không tồn tại được* ở **tầng 1**, vế *trường nên có không chặn* ở **tầng 3**; `architecture.md` §8 thêm một chỗ thiếu và `YC-22` (F-038) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-110; migration ở `T-111` |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3818,3 +3819,60 @@ không có con số mức mất dữ liệu hoặc thời gian phục hồi nào
 **Applies to:** `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 ·
 `docs/product/1-system-design/06-so-rui-ro.md` RR-9 · `work/backlog_DB.md` P2-09 ·
 `work/backlog.md` T-109.
+
+### ADR-058 — `I-022` vào nhóm VÒNG ĐỜI, bốn vế ở tầng 1, và `YC-22` cho chỗ cất
+
+**Trạng thái:** **Đã chốt** 2026-09-28, **giao cho phiên**. Chủ repo giao `work/findings.md`
+**F-038** với lời nguyên văn *"hãy đọc kĩ và làm từng bước 1"* — F-038 ghi *"nhóm nào nhận nó là
+quyết định của chủ repo"*, và câu giao việc ấy là lời **giao việc chọn**, không phải lời xác nhận
+một nhóm cụ thể (`CLAUDE.md` §7.2, cùng cách đọc với **ADR-056**). Chủ repo đọc ADR này rồi muốn
+đổi thì chỉ cần một câu; lượt đổi phải xong trước khi `T-111` dựng migration. Task **T-110**.
+
+**Context:**
+Lượt diễn P1-11 (2026-09-08) tìm ra một luật đã chốt của pha 0 chưa từng thành mệnh đề:
+`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.2.1 bước 3 · §3.2.4 — *thiếu một trường bắt buộc thì
+đơn không tạo được*, với mức tối thiểu theo kênh và cách trao hàng ở `master_plan/shop-facts.md`
+§6.5 (chủ quán chốt 2026-08-30). Luật đủ, không cần hỏi ai; thiếu **mệnh đề**, **tầng** và **dòng
+yêu cầu**. Mệnh đề sinh sau khi kế hoạch pha 1 chia nhóm — đúng hình **F-026**, lần thứ tư, sau
+`I-019`/`I-020` (**ADR-042**, nhóm mới) và `I-021` (**ADR-044**, nhóm có sẵn).
+
+**Decision:**
+1. **Mệnh đề `I-022`** ở `quality/invariants.md` — bốn vế *thiếu thì không tồn tại được* (số điện
+   thoại · địa chỉ khi giao tận nơi · giờ khách cần hàng · cách trao hàng của đơn hotline), chiều
+   ngược *trường nên có không chặn*, và câu *mệnh đề nói thiếu, không nói sai*.
+2. **Nhóm VÒNG ĐỜI** (§2 của `docs/product/1-system-design/03-bao-ve-invariant.md`), không mở nhóm
+   thứ năm: câu hỏi của `I-022` là *một đơn có được tồn tại hay không*, cùng loại với `I-001` ·
+   `I-004` vế 1 · `I-006`, và bảng ấy đã có sẵn ranh giới ba kênh không gắn bàn qua `I-006`/`I-007`.
+3. **Tầng 1** cho bốn vế và cho vế *Delivery là giao, Pickup là tới lấy*: cả năm là điều kiện đọc
+   trên chính một đơn, không đổi theo thời gian. **Tầng 3** cho chiều ngược. Chỗ **tầng 4** nói
+   thẳng: câu trả lời *giao hay lấy* của đơn hotline do người bấm.
+4. **`architecture.md` §8 thêm một dòng** — nền 16 bảng chỉ đòi số điện thoại — và
+   `04-yeu-cau-du-lieu.md` §1 thêm **`YC-22`** (luật một-đối-một của P1-07). Mã nhảy qua `YC-21`
+   vì mã ấy đã thuộc §8 của file đó (**ADR-057**).
+
+**Rejected alternatives:**
+- **Gấp vào `I-007`** (đơn mang đi là đơn vị thanh toán độc lập). Cùng lát cắt, cùng ba kênh — nhưng
+  `I-007` là câu về **tiền** và ở nhóm TIỀN; gấp vào là đúng cái nhầm đã giấu luật này từ BA-04
+  (`work/findings.md` **F-038** *Vì sao vòng rà trước không bắt*).
+- **Gấp vào `I-008`** (khi nào không đơn nào được tạo). `I-008` nói điều kiện của **quán** — giờ
+  bán, tạm dừng, mất kết nối — áp cho cả năm kênh; `I-022` nói điều kiện của **chính đơn**, áp cho
+  ba kênh, và giữ cả lúc sửa chứ không chỉ lúc tạo. Gấp vào thì phải viết lại lời `I-008`.
+- **Mở nhóm thứ năm** (như **ADR-042**). Một mệnh đề không đủ làm một nhóm, và nó không có trục
+  riêng như sản xuất theo mẻ.
+- **Tầng 3** cho bốn vế (cửa tạo đơn kiểm). Yếu hơn không có lý do: luật không đổi theo thời gian
+  và kênh khách tự bấm là chỗ dữ liệu vào **không qua tay người của quán**; lại phải giữ cả lúc
+  sửa, không chỉ lúc tạo.
+
+**Hệ quả:**
+- `T-111` dựng một migration **mới** (`QC-05`) cho chỗ cất bốn trường và ràng buộc tầng 1, kèm
+  test: năm kịch bản âm, ba kịch bản dương, một kịch bản sửa của `I-022`.
+- Cổng pha 2 (`P2-13`) chấm `YC-22` cùng `YC-01`…`YC-20`.
+- **Không** có luật định dạng số điện thoại hay độ đúng của địa chỉ; cần thì hỏi chủ quán qua
+  `docs/product/99-unknowns.md`.
+
+**Applies to:** `quality/invariants.md` `I-022` ·
+`docs/product/1-system-design/03-bao-ve-invariant.md` §2 ·
+`docs/product/1-system-design/architecture.md` §8 ·
+`docs/product/1-system-design/04-yeu-cau-du-lieu.md` §1 ·
+`docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §6 ·
+`docs/product/2-db/02-luoc-do-ban-hang.md` §5.

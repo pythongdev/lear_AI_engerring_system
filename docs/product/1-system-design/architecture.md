@@ -411,13 +411,16 @@ tại ngày đo (`work/findings.md` **F-003** · **F-018**); đếm ở bảng, 
 | **Đã phục vụ bao nhiêu cho từng bàn** | §5.4 | bảng quầy không hiện được *"còn thiếu gì"* |
 | **Mẻ, và con số *"đã làm xong, còn ở bếp"*** — một lần bấm ứng với một mẻ, chia được về từng bàn; phần đã làm xong của đơn huỷ đổi chủ sang bàn khác | §5.4 (chủ quán chốt 2026-09-01 và 2026-09-06) | bếp bị giục làm lại cái bánh **đang nằm chờ đủ đĩa**, và cái đĩa của một đơn vừa huỷ không còn chỗ nào ghi nó đã đi đâu |
 | **Lượt bán nhập bù từ sổ giấy** — ngày quán bán thật, tách khỏi lúc gõ vào máy; ai nhập bù; một ngày còn bao nhiêu lượt chưa nhập | §6.11 (chủ quán chốt 2026-09-04) · `docs/decisions.md` **ADR-037** | doanh thu hôm mất điện rơi vào ngày gõ, và ngưỡng lệch **0đ** báo động giả mọi lần quán phải ghi tay |
+| **Mức liên hệ tối thiểu của đơn mang đi** — địa chỉ giao · giờ khách cần hàng · cách trao hàng của đơn hotline; nền 16 bảng chỉ đòi số điện thoại | §6.5 · `quality/invariants.md` **I-022** (thêm 2026-09-28, T-110) | đơn giao tận nơi không có địa chỉ đi tới tận lúc người đi giao cầm hàng ra khỏi quán — `work/findings.md` **F-038** |
 
-Đây là **danh sách chỗ thiếu đã biết tính tới 2026-09-07**, không phải lời hứa là đã đủ. Gặp chỗ
+Đây là **danh sách chỗ thiếu đã biết tính tới 2026-09-28**, không phải lời hứa là đã đủ. Gặp chỗ
 tiếp theo thì thêm vào đây, đừng tự thiết kế quanh nó — **và thêm một dòng yêu cầu tương ứng vào**
 [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) **§1 trong cùng thay đổi**: hai danh sách ấy khớp
 một-đối-một, và đó là phép chấm duy nhất giữ chúng khỏi trôi khỏi nhau.
 
-**Hai dòng cuối vào bảng ngày 2026-09-07, ở bước P1-07.** Cả hai là lời chốt của chủ quán **sau**
+**Dòng cuối vào bảng ngày 2026-09-28, ở T-110** — luật đã chốt từ 2026-08-30 nhưng chưa từng
+thành mệnh đề (`work/findings.md` **F-038**), nên không bước nào đọc bảng này với nó trong tay.
+**Hai dòng trước nó vào bảng ngày 2026-09-07, ở bước P1-07.** Cả hai là lời chốt của chủ quán **sau**
 ngày đo cũ (2026-08-31), nên bảng không thể có chúng lúc viết; không ai quay lại thêm dòng cho tới
 lúc P1-07 đọc lại toàn bộ danh sách. Đó là cái giá của một danh sách tự khai ngày đo mà không có
 cổng nào nhắc đọc lại.
@@ -732,7 +735,8 @@ lời đáp hẹp lại lấp được đúng chỗ hở rộng nhất.
 **Ba vế được cập nhật theo lời chủ quán 2026-09-25:**
 
 - **Bốn trạm ngoài quầy không ghi mốc đổi giờ** — chủ quán chốt 2026-09-25,
-  U-055, `shop-facts.md` §8.8. Nguồn số người cho tổng quan còn ở U-060
+  U-055, `shop-facts.md` §8.8. Tổng quan lấy số người thực tế đang làm ở quán
+  (chủ quán xác nhận 2026-09-27, §8.6); cách thu nhận/cập nhật số đó còn ở U-060
   ([99-unknowns.md](../99-unknowns.md)).
 - **POS khai mốc đổi người ở quầy** — chủ quán chốt 2026-09-25, U-056.
 - **Vế *ai bấm* của hai cửa ghi ngoài quầy** — U-057 đã được chủ quán làm rõ,
