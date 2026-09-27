@@ -112,6 +112,12 @@ Lệnh hoặc thao tác cụ thể để chứng minh acceptance đã đạt.
 
 Verify phải chạy được bởi người khác, không cần hỏi lại.
 
+Một câu Verify đếm **chữ** (`grep '<cụm chữ>'` phải rỗng / ra N dòng) chấm mọi chỗ mang cụm chữ ấy,
+không chấm riêng chỗ Acceptance nhắm tới. Sau một lượt tách file, tiêu đề mục có thêm bản sao là H1
+của file con; lượt đang chạy cũng viết thêm câu mới mang cùng chữ. Vì vậy Acceptance nói **mọi chỗ**
+chứ không đếm sẵn số chỗ, và câu `grep` chạy **sau khi viết xong** (2026-09-27, T-104 —
+`work/findings.md` F-019).
+
 ---
 
 ## 3. Template theo level

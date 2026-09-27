@@ -120,8 +120,11 @@ thứ tư (U-017): viết bốn con số, và nói rõ chưa chốt bấm theo t
    một bàn không bao giờ vượt số bàn đó đã gọi. Mục *Verification* của cả hai không được để trống.
 10. §3.4 **không** chứa con số 2, 3 hay 6 lấy từ `shop-facts.md` §5.4 (F-001 — trỏ, đừng chép).
 11. §3.4 không chứa tên trạng thái kiểu mã, tên bảng dữ liệu, route, hay tên thư mục.
-12. Tiêu đề `## 3.` của `docs/product/0-ba/ban-hang/03-lat-cat.md` đã đổi sang **bốn** lát cắt, và mục lục/liên kết nội bộ
-    (nếu có) đi theo.
+12. **Mọi** chỗ trong `docs/product/0-ba/ban-hang/03-lat-cat.md` nói *"Ba lát cắt"* đã đổi sang **bốn**
+    (hoặc viết lại nếu câu ấy thật sự nói về ba lát đầu), và mục lục/liên kết nội bộ (nếu có) đi theo.
+    Không chỉ tiêu đề `## 3.`: sau lượt tách DOC-1 file này còn tiêu đề H1 `# §3 —` mang cùng chữ, cộng
+    câu văn — và câu văn chính lượt này viết ra. Không đếm trước: chạy câu `grep` ở *Verify* **sau khi
+    viết xong** (`work/findings.md` F-019, sửa 2026-09-27 · T-104).
 
 ## Verify
 

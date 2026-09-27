@@ -693,12 +693,108 @@ không bao giờ được dùng*) đứng trên cùng chỗ cất ấy.
   (`03-lat-cat.md` §3.3.4); hết giữa buổi là **tạm dừng nhận đơn** + POS bàn với khách (`shop-facts.md`
   §6.8 · §6.20). Không có thao tác *tạm hết từng món* — cần thì hỏi chủ quán (`nghien-cuu.md` §2.9).
 
-**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+**Nhận việc** — *điền 2026-09-27 (Claude Code), `P2-03` · `P2-12` đã `Done`* (**ADR-051**):
+- *Phạm vi:* `db/migrations/` (một file mới) · `db/tests/` (file `i009_…` · `i010_…` · `i013_…` · một
+  file cho đầu ra (c) mới; test `yc05_…` của `P2-04` sửa phần dựng dữ liệu vì `order_line` có cột bắt
+  buộc mới) · `docs/product/2-db/03-luoc-do-menu-gia.md` (mới) · `02-luoc-do-ban-hang.md` §5 · §6 (hàng
+  *món, giá, tuỳ chọn* trỏ sang file mới) · `docs/product/00-index.md` · `CLAUDE.md` §2 hàng *Schema* ·
+  `work/findings.md` (`F-036` nhận một dòng tình trạng) · `work/backlog.md` · entry này ·
+  `work/scope.txt`. **Không** chạm: kế hoạch pha 2, `quality/`, `docs/product/1-system-design/`,
+  `master_plan/shop-facts.md`, đường tiền (`P2-06`), việc trạm (`P2-07`), vết (`P2-08`).
+- *Đọc đầu ra (b) thế nào — lệch chữ với bước 6, ghi trước khi dựng:* `I-010` là **tầng 3**
+  (`03-bao-ve-invariant.md` §3 — *"tra theo luật, không theo một danh sách case mã cứng"*). Pha 2 không
+  nâng tầng (**ADR-050** luật 1 · điểm 4), nên database **không** từ chối *Chay + Nhiều nhân*; lời từ
+  chối ấy là của cửa tạo lượt gọi ở pha 3. Cái lát này nợ cho tầng 3: luật *Lượng nhân chỉ có khi nhân
+  ≠ Chay* cất thành **dữ liệu, một chỗ, theo TẬP** (bẫy thứ năm) — không nửa nào rơi xuống code.
+- *Nghiệm thu:*
+  1. **(a) · `I-009` tầng 1.** Đổi giá gốc một thành phần, đổi mức phụ thu, đổi thành phần một suất,
+     đổi tên món và tên tuỳ chọn, ngừng bán món — **sau khi** một đơn đã đặt ⇒ đọc lại đơn cũ **chỉ từ
+     ảnh chụp** ra đúng giá, tên, thành phần, tuỳ chọn như lúc đặt; một suất đặt mới đọc giá mới.
+     Dòng đơn thiếu giá · thiếu tên món · thiếu ảnh chụp thành phần ⇒ database **từ chối**, lời từ chối
+     nguyên văn ở *Bàn giao*.
+  2. **(b) · `I-010` tầng 3.** Một câu đọc chỉ trên dữ liệu luật ra *Chay + Nhiều nhân* **không hợp
+     lệ**, *Thịt + mộc nhĩ + Nhiều nhân* và *Thịt + Nhiều nhân* **hợp lệ**; thêm một loại nhân thứ tư là
+     **một** dòng dữ liệu. Ảnh chụp tuỳ chọn trên dòng đơn giữ **mã gốc** (khoá ngoại về lựa chọn) cạnh
+     tên hiển thị; đổi tên hiển thị không đổi phép đếm theo tuỳ chọn.
+  3. **(c) · §4.6 luật 5.** Đổi mức phụ thu **một lần, ở một dòng** ⇒ giá tính từ dữ liệu của mọi suất
+     đổi đúng *Δ × số phần nhận nhân* (1 · 4 · 4 · 5 · 0 phần), không dòng nào khác bị sửa; hệ số không
+     cất ở đâu cả.
+  4. **`I-013` tầng 3 · `I-011` tầng 4.** File lát liệt kê mọi cột tiền của dòng đơn và chứng minh chỉ
+     có **một** cột giá ghi được mỗi dòng (không cột *giá khách gửi*); `I-011` có dòng nói lược đồ nợ gì
+     (chỗ cất vết thuộc `P2-08`) — không hàng nào bị nâng hay hạ tầng.
+  5. **`F-036`** vế *ngừng bán*: file lát có một dòng *chỗ trống có tên* (lược đồ cất **mốc** ngừng bán
+     vì `QD-50` cấm xoá, nhưng **không** ràng buộc nào chặn đặt mới món đã ngừng) và `work/findings.md`
+     một dòng tình trạng.
+  6. `./scripts/db-check.sh` từ số 0 ⇒ PASS cả bộ `QD-XX` · `QC-XX` + mọi test (cả bảy test của
+     `P2-04`); `./scripts/gate.sh` xanh; không con giá thật nào của `shop-facts.md` trong file pha 2.
+  7. Phép so tên bảng `.md` ↔ migration chạy tay, in cả hai danh sách chưa lọc cạnh `comm -3` rỗng;
+     `CLAUDE.md` §2 hàng *Schema* **thêm** tên file lát mới; `00-index.md` có dòng mới.
+- *Kiểm chứng:* output `./scripts/db-check.sh` (dòng `NOTICE` của từng test) · output
+  `./scripts/gate.sh` · output phép so tên bảng — dán ở *Bàn giao*.
 
-**Bàn giao:** —
+**Bàn giao** — 2026-09-27, Claude Code, nhánh `chatgpt_involve`, base `a99d3ef`; **chưa review độc
+lập**.
+
+*Kết quả:* migration
+[`db/migrations/20260927140000_menu_gia.up.sql`](../db/migrations/20260927140000_menu_gia.up.sql) —
+bảy bảng menu, ba chỗ cất ảnh chụp (thêm cột vào `order_line`, tạo `order_line_component` ·
+`order_line_option`); file lát
+[`docs/product/2-db/03-luoc-do-menu-gia.md`](../docs/product/2-db/03-luoc-do-menu-gia.md); ba test mới
+ở `db/tests/`; test `yc05_…` của `P2-04` sửa **phần dựng dữ liệu** (hai câu nó chứng minh không đổi).
+`02-luoc-do-ban-hang.md` §1 · §5 trỏ sang file mới; `CLAUDE.md` §2 hàng *Schema* thêm tên file;
+`00-index.md` thêm một dòng; `F-036` nhận dòng tình trạng, vẫn **Open**.
+
+*Nghiệm thu → bằng chứng* (output `./scripts/db-check.sh`, database rỗng dựng từ số 0, PostgreSQL
+17.11; số trong test là số giả):
+1. `I-009`: `đơn cũ đọc lại sau năm lần sửa menu: "test-suất giò" · giá 1340 · thành tiền 1340 ·
+   [test-giò ×1 @900, test-bánh ×4 @100] · [test-Lượng nhân: test-Thường +0, test-Nhân: test-Thịt +10]`
+   sau khi đổi giá thành phần · phụ thu · thành phần suất · tên món · tên tuỳ chọn · ngừng bán; suất
+   đặt mới `1410`, `một đơn, hai mức giá cho cùng món: 1340 · 1410`. Từ chối, nguyên văn:
+   `null value in column "unit_price_vnd" of relation "order_line" violates not-null constraint` ·
+   `null value in column "item_name" …` · `insert or update on table "order_line" violates foreign key
+   constraint "order_line_last_component_fkey"` (không ảnh chụp thành phần nào) · `insert or update on
+   table "order_line_component" violates foreign key constraint
+   "order_line_component_previous_position_fkey"` (thiếu một thành phần) · `new row for relation
+   "order_line_component" violates check constraint "order_line_component_position_in_range_check"`
+   (thừa so với số đã khai).
+2. `I-010`: `Chay + Nhiều nhân ⇒ KHÔNG hợp lệ` · `Thịt + Nhiều nhân ⇒ hợp lệ` · `Thịt + mộc nhĩ +
+   Nhiều nhân ⇒ hợp lệ` · `Chay, không chọn lượng ⇒ hợp lệ` — đọc chỉ trên dữ liệu; nhân thứ tư ⇒
+   `tập điều kiện của Lượng nhân nay có 3 lựa chọn`; `đếm theo mã gốc: 2 suất · đếm theo tên hiển thị:
+   … = 1 · … (đặc biệt) = 1`; ảnh chụp tuỳ chọn không gốc ⇒ `violates foreign key constraint
+   "order_line_option_menu_option_fkey"`. **Database không từ chối *Chay + Nhiều nhân*** — đúng tầng 3
+   (*Nhận việc*, đoạn *Đọc đầu ra (b)*).
+3. (c): `đổi phụ thu nhân 10 → 15: 1 dòng bị sửa`; Δ = `0 · 5 · 20 · 20 · 25` cho `0 · 1 · 4 · 4 · 5`
+   phần nhận nhân.
+4. `I-013`: bốn cột tiền — `order_line.line_total_vnd (tự tính: t)` · `order_line.unit_price_vnd` ·
+   `order_line_component.base_price_vnd` · `order_line_option.surcharge_vnd`; không cột giá khách gửi.
+   `I-011`: file lát §3, chỗ cất vết ở `P2-08`.
+5. `F-036`: `dòng mới cho món đã ngừng bán vẫn ghi được (không ràng buộc nào — chưa có tầng)`; file lát
+   §5; `work/findings.md` dòng *Tình trạng ở pha 2 (`P2-05`)*.
+6. `db-check: PASS — 26 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 10 file test` (bảy test `P2-04` vẫn
+   PASS). Lọc số dạng giá trên file lát, migration và ba test mới: chỉ còn số giả `1340`.
+   `./scripts/gate.sh`: links OK · doc-status xanh · verify PASS; **Gate 3 đỏ vì bảy file của `T-102`**
+   (phiên Codex song song, chưa commit — `shop-facts.md` · `99-unknowns.md` · `architecture.md` ·
+   `04-yeu-cau-du-lieu.md` · `admin/01-ranh-gioi.md` · `admin-questions.md` · `backlog_AD.md`), không file
+   nào của lượt này.
+7. So tên bảng (`grep 'CREATE TABLE'` trên migration · `grep '^| \`tên\` |'` trên file lát): cả hai
+   danh sách là `dining_table menu_component menu_item menu_item_component menu_item_option_group
+   menu_option option_group option_group_prerequisite order_line order_line_component order_line_option
+   sales_order table_session table_session_member`; `comm -3` **rỗng**.
+
+*Chưa làm:* **test biết kêu** — lệnh gỡ ràng buộc trong một test tạm rồi chạy lại bị từ chối quyền
+trong phiên; mỗi test tự ném lỗi khi database không từ chối (khuôn `QC-07`), nhưng chưa có một lần
+đỏ thật.
+
+*Còn mở — cần chủ repo đọc:*
+- **Đầu ra (b) đọc theo tầng 3**: kế hoạch §6 và bước 6 viết *"bị từ chối, dán nguyên lời từ chối"*;
+  lát này giữ luật ở dữ liệu, lời từ chối là của pha 3. Muốn database từ chối thì phải đổi tầng của
+  `I-010` ở pha 1 trước.
+- Mọi lựa chọn *phiên chọn 2026-09-27* của file lát (ngừng bán là mốc, chuỗi vị trí cho ảnh chụp thành
+  phần, mốc khoá giá riêng dòng, giá menu sửa tại chỗ — lịch sử giá lấy từ vết `P2-08`).
+- `F-036` vẫn Open — việc của pha 1.
+
+*Bước sau:* `P2-10` hết chặn khi đủ `P2-04` · `P2-05` (cả hai `Done`) — dựng menu thật vào bảy bảng
+menu bằng cách tra `shop-facts.md` §4.2–§4.5; đọc file lát §5 hàng *trứng chín/tái/vàng*.
 
 [↑ đầu file](#top)
 

@@ -80,7 +80,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-016 | shop-facts.md tự khai "không trỏ đi đâu" nhưng trỏ 5 chỗ | Fixed |
 | F-017 | Câu `grep` "chứng minh xong" trong prompt lọc rỗng | Fixed |
 | F-018 | Số đếm động dùng như invariant | Fixed |
-| F-019 | Tách file đẻ tiêu đề thứ hai trùng chữ, nghiệm thu đếm hụt | Open |
+| F-019 | Tách file đẻ tiêu đề thứ hai trùng chữ, nghiệm thu đếm hụt | Fixed |
 | F-020 | Ba khối `work/scope.txt` bị commit, Gate 3 mở toang — đường đã chốt, chờ T-047 | Fixed |
 | F-021 | Bảng tổng hợp decisions.md nói ngược thân của chính nó | Fixed |
 | F-022 | Hai mục ĐÃ CHỐT trả lời khác nhau cùng một câu hỏi | Fixed |
@@ -1730,10 +1730,20 @@ DOC-3b (phát hiện) · **BA-12** (chịu hậu quả, **đã chạy 2026-09-03
 lượt CHUYỂN file nên không dính) ·
 DOC-1 (lượt tách sinh ra H1) · **T-046** (đã trỏ prompt 15 về mục này để phiên chạy DOC-5 đọc
 trước) · F-017 (câu `grep` trong prompt không ai chạy thử) ·
-F-018 (con số trong prompt biến thành mệnh lệnh)
+F-018 (con số trong prompt biến thành mệnh lệnh) · **T-104** (đóng)
+
+**Đóng 2026-09-27, T-104 (Claude Code, theo yêu cầu chủ repo "đọc kĩ và fix").** Hậu quả với
+BA-12 đã xử lý từ 2026-09-03 (lượt đo ở trên). Còn hai chỗ hỏng, nay đã sửa:
+(1) Acceptance 12 của `prompt/BA/12-production-control-L2.md` vẫn viết *một* chỗ (`## 3.`) — nay
+nói **mọi** chỗ mang *"Ba lát cắt"*, kể tên H1 · `## 3.` · câu văn · câu văn do chính lượt ấy viết,
+và bảo chạy câu `grep` **sau khi viết**; câu `grep` ở *Verify* giữ nguyên vì nó vốn đúng ý (rỗng =
+hết mọi chỗ). Chạy lại hôm nay trên file đích: **rỗng**.
+(2) Bài học chưa có owner: nay là một đoạn ở `docs/prompt-guideline.md` §2 → *Verify* (owner
+"cách viết prompt", CLAUDE.md §2). Vẫn **không dựng cổng** — đúng quyết định ở trên; chuẩn hoá
+nghiệm thu theo cấu trúc tiêu đề chỉ bàn khi có finding cùng loại mới.
 
 **Status:**
-Open
+Fixed
 
 ---
 
@@ -3369,6 +3379,13 @@ con số khách chọn cũng không phải `suất × thành phần`. Nhưng **c
 cùng ngày — xác nhận ca thứ nhất, sinh ca thứ ba) · **P1-05** · **P1-06** (hai lượt viết hai hàng,
 đúng vào ngày chúng chạy) · **`U-048`** (từng chặn vế *canh*; đóng 2026-09-08, **T-072**) · **F-003** · **F-012** · **F-018** ·
 **F-024** · **F-026** · **ADR-032**.
+
+**Tình trạng ở pha 2 — 2026-09-27 (`P2-05`, Claude Code):** lát menu · giá dựng xong mà **không** giữ
+vế *ngừng bán* của `I-009`. Lược đồ **cất** mốc ngừng bán trên suất bán (vì `QD-50` cấm xoá), nhưng
+**không** ràng buộc nào chặn một dòng đơn mới trỏ vào món đã ngừng — test
+`db/tests/i009_snapshot_survives_menu_change.sql` in đúng câu ấy. Dòng *chỗ trống có tên* ở
+`docs/product/2-db/03-luoc-do-menu-gia.md` §5. Vế `I-004` (việc cấp đơn của trạm `canh`) là của
+`P2-07`. Gỡ vẫn theo việc 1 ở trên (pha 1 chọn tầng), rồi một migration mới nếu tầng chọn là tầng 1.
 
 **Status:**
 Open
