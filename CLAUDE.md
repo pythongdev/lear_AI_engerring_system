@@ -527,6 +527,21 @@ ADR-052. Both tools use the same owners (§2), task state and acceptance.
   source excerpts and diff as a snapshot. Its output is a proposal until a
   repository session applies and verifies it; it cannot claim local gate results.
 
+**Roles — Claude leads, Codex implements** (adopted 2026-09-27 at the repo
+owner's request; rationale `docs/decisions.md` ADR-054). Claude owns every step
+where a mistake costs money or invents business truth: picking the task and
+moving its status, the L0–L3 level, Acceptance, `work/scope.txt`, design, ADRs,
+unknowns, `master_plan/shop-facts.md`, `quality/invariants.md`, recording the
+shop owner's answers, reviewing, integrating, and writing the §6.1 block.
+Codex implements a work order from Claude inside its own worktree and scope,
+runs the gate, and reports with evidence. Codex never decides a business
+question, never edits task status or those owners, and never commits; an
+unclear rule stops that part of the work and goes into the report. The integrator
+§7.4 asks for is Claude, who re-reads the real diff and reruns the gate itself —
+Codex's report is a claim, not evidence (§5). `git commit` stays the repo owner's
+(§6). Procedure, commands and the work-order template:
+`docs/prompt-guideline.md` §6.
+
 ## 8. Definition of Done
 
 Tiered like §3 — an L0 change is done after four lines, not eleven.

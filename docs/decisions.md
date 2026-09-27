@@ -70,6 +70,7 @@ có câu trả lời mới từ người.
 | ADR-051 | **Lane pha 2 thí điểm: entry ở `work/backlog_DB.md` là hồ sơ thực thi DUY NHẤT của một bước** — Nghiệm thu và Kiểm chứng viết vào entry lúc nhận việc, không còn file prompt riêng bắt buộc; trạng thái chỉ ở `work/backlog.md` (bỏ cột *Trạng thái* của *Mục lục* và dòng *✅ Xong ngày…*); mức và thứ tự chỉ ở kế hoạch §6 | Đã chốt 2026-09-25 | — | thay luật 2 · 3 của `work/backlog_DB.md` (**ADR-034** hình dạng · **ADR-049**) cho lane pha 2; lane khác giữ nguyên tới khi thí điểm được đánh giá |
 | ADR-052 | Claude Code và Codex dùng chung luật; AGENTS.md là điểm vào mỏng | Đã chốt 2026-09-25 | — | T-088; giữ lõi Gate 7, phân biệt hook và chạy trực tiếp |
 | ADR-053 | **Pha 2 dựng trên nền gì và cái gì chứng minh nó còn đúng** — `P2-12` (có chọn DBMS + phiên bản) vào *Cần xong trước* của năm lát `P2-04`…`P2-08`; khi đã có file migration thì **migration thắng** cho tên · kiểu · ràng buộc, `.md` giữ ý định, lệch ⇒ `F-XXX`, `P2-09` biến phép đối chiếu tên bảng thành lệnh; mỗi quy ước dữ liệu của `P2-03` kèm **một phép kiểm chạy được**, gom vào bộ `P2-11` | **Đã chốt** 2026-09-25 — chủ repo xác nhận luật 2 ý 1 (*code dựng database thắng*); ý 2 · 3 là phần suy ra của phiên | — | T-096; đổi *Cần xong trước* của `P2-04`…`P2-08`; không chọn DBMS |
+| ADR-054 | **Claude quyết, Codex thi công** — Claude giữ chọn task, mức, Acceptance, scope, thiết kế, ADR, unknowns, lời chủ quán, duyệt, tích hợp, khối commit; Codex làm theo phiếu trong worktree riêng, không quyết nghiệp vụ, không commit | Đã chốt 2026-09-27 | — | T-100; nối ADR-052; quy trình ở `docs/prompt-guideline.md` §6.1 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3622,3 +3623,37 @@ Ba lỗ này là **một** quyết định: *pha 2 dựng trên nền gì, và c
 
 **Applies to:** `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` §5 · §6 · §8 ·
 `work/backlog_DB.md` entry `P2-03` · `P2-04`…`P2-08` · `P2-09` · `P2-11` · `P2-12`.
+
+---
+
+### ADR-054 — Claude quyết, Codex thi công: chia vai giữa hai công cụ
+
+**Trạng thái:** Đã chốt 2026-09-27 — chủ repo yêu cầu (*"claude sẽ là người làm những việc quan
+trọng là sếp và codex sẽ là nhân viên"*), đọc đề xuất
+`work/proposals/claude-sep-codex-nhan-vien.md` rồi bảo *"hãy áp dụng luật này cho dự án này luôn"*.
+Task **T-100**.
+
+**Context:** ADR-052 cho hai công cụ dùng chung luật và *mỗi worktree một người sửa*, nhưng không
+nói ai quyết, ai làm, ai duyệt. Lỗi đắt nhất của repo nằm ở khâu quyết định và bàn giao: sự thật bị
+bịa (F-003, F-004) và commit mang nhầm nội dung (F-025, F-031). Chỉ Claude có hook `SessionStart`
+và `Stop`, nên chỉ lượt của Claude có Gate 7/7b chấm khối commit.
+
+**Decision:** Claude giữ mọi khâu mà sai thì tốn tiền hoặc sai sự thật nghiệp vụ — chọn task và đổi
+trạng thái, chấm mức, Acceptance, scope, thiết kế, ADR, unknowns, `shop-facts.md`, `invariants.md`,
+ghi lời chủ quán, duyệt, tích hợp, viết khối commit. Codex thi công theo **phiếu giao việc** trong
+worktree và scope riêng, chạy gate, báo cáo có bằng chứng; không quyết câu hỏi nghiệp vụ, không sửa
+trạng thái task hay các owner trên, không commit. Claude là integrator mà `CLAUDE.md` §7.4 đòi, tự
+đọc diff thật và tự chạy lại gate. `git commit` vẫn là của chủ repo (ADR-004). Luật ở `CLAUDE.md`
+§7.4 *Roles*; quy trình, lệnh và mẫu phiếu ở `docs/prompt-guideline.md` §6.1.
+
+**Rejected alternatives:** Hai công cụ ngang hàng, ai nhận task nấy tự quyết (hiện trạng từ ADR-052)
+— giữ nguyên chỗ hở ở khâu quyết định. Codex làm cả task kể cả ghi lời chủ quán — đúng loại việc mà
+kết quả là sự thật nghiệp vụ, không gate nào bắt được. Viết một script điều phối — chưa có lỗi nào
+lặp hai lần để biện minh (`CLAUDE.md` §3.8).
+
+**Hệ quả:** Việc ghi lời chủ quán mà Codex đã làm ở T-090…T-099 từ nay thuộc Claude. Phần giao được
+cho Codex hôm nay còn ít vì repo phần lớn là tài liệu; sẽ tăng từ `P2-04` khi có migration và code.
+Codex không có hook, nên brief và gate phía Codex vẫn dựa vào phiếu — bù bằng bước duyệt của Claude.
+Cờ `codex exec` có thể đổi giữa các bản.
+
+**Applies to:** `CLAUDE.md` §7.4 · `AGENTS.md` · `docs/prompt-guideline.md` §6.1.

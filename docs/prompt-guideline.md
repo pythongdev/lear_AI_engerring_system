@@ -301,3 +301,111 @@ Nêu rõ phần chưa kiểm chứng và những lệnh thực sự đã chạy.
 
 Nếu dùng chat không có quyền đọc repo/chạy lệnh, cung cấp nội dung nguồn liên
 quan cùng diff; kết quả cần một phiên trong repo áp dụng và kiểm chứng.
+
+### 6.1 Claude giao việc cho Codex — phiếu giao việc
+
+Chia vai (Claude quyết, Codex thi công) là luật ở `CLAUDE.md` §7.4, lý do ở
+`docs/decisions.md` ADR-054. Mục này chỉ nói **cách làm**. Lệnh `codex exec`
+đối chiếu với `codex exec --help` của codex-cli 0.157.0 ngày 2026-09-27; bản
+khác có thể đổi cờ, kiểm lại trước khi dùng.
+
+**Giao gì theo mức.** L0: giao thẳng, Claude đọc diff. L1: Claude viết
+Acceptance và scope, Codex làm, Claude duyệt. L2: Claude thiết kế và viết test
+hồi quy cho invariant **trước**, Codex làm cho test xanh, Claude tự chạy lại
+test. L3: Claude tách thành lát L1/L2, Codex nhận từng lát. **Không bao giờ
+giao** việc mà kết quả là một sự thật nghiệp vụ: trả lời hay đóng `U-XXX`, sửa
+`master_plan/shop-facts.md`, chốt ADR, ghi lời chủ quán vào `docs/product/`.
+Việc ngắn hơn khoảng mười phút thì Claude tự làm thường rẻ hơn viết phiếu.
+
+**Chuẩn bị một lần:** `./scripts/install-hooks.sh` trong clone chính;
+`codex login status`; worktree đặt **ngoài** repo (ví dụ `../lean_wt/`); không
+bao giờ chạy Codex với `--dangerously-bypass-approvals-and-sandbox`.
+
+**Tám bước:**
+
+1. **Khoanh việc.** Claude nhận task, chuyển *In Progress*, chấm mức, viết
+   Acceptance vào entry. Worktree tạo từ `HEAD` không thấy thay đổi chưa
+   commit: task dựa vào thay đổi chưa commit thì nhờ chủ repo commit trước,
+   hoặc không giao.
+2. **Tạo worktree:** `git worktree add ../lean_wt/T-XXX -b codex/T-XXX`, rồi
+   ghi scope vào `work/scope.txt` **của worktree đó** (Gate 3 của Codex đọc cây
+   của chính nó), kèm một dòng cấm (dấu `!` đứng đầu) cho từng đường dẫn
+   `work/backlog.md`, `docs/decisions.md`, `docs/product/99-unknowns.md`,
+   `master_plan/`, `quality/invariants.md`, `CLAUDE.md`.
+3. **Viết phiếu** theo mẫu dưới, vào scratchpad của phiên — không lưu vào repo
+   (`CLAUDE.md` §3.8). Phiếu phải tự đủ: Codex bắt đầu nguội.
+4. **Gọi Codex**, chạy nền để chủ repo vẫn nói chuyện được với Claude:
+
+   ```bash
+   codex exec -C ../lean_wt/T-XXX -s workspace-write \
+     -o <scratchpad>/T-XXX-bao-cao.md - < <scratchpad>/T-XXX-phieu.md
+   ```
+
+   Chủ repo cũng có thể tự dán phiếu vào Codex; các bước sau giữ nguyên.
+5. **Codex làm:** đọc `AGENTS.md` → `CLAUDE.md`, chạy brief, sửa trong scope,
+   chạy `./scripts/gate.sh` tới khi xanh, báo cáo đúng khuôn. Gặp câu hỏi nghiệp
+   vụ thì dừng phần đó, ghi vào báo cáo, làm tiếp phần không phụ thuộc.
+6. **Claude duyệt:** đọc báo cáo rồi đọc diff thật
+   (`git -C ../lean_wt/T-XXX diff` và `status --short` để thấy file mới); **tự
+   chạy lại gate** trong worktree; đối chiếu Acceptance → bằng chứng và bảng red
+   flag của `quality/review-gate.md`; kiểm Codex có tự quyết điều lẽ ra phải hỏi.
+   Chưa đạt thì gửi lại từng lỗi có vị trí và bằng chứng:
+   `codex exec resume --last -C ../lean_wt/T-XXX "Sửa 2 điểm: (1) … (2) …"`.
+   Tối đa **hai vòng**; vòng ba thì lỗi nằm ở phiếu — Claude tự sửa nốt hoặc viết
+   lại phiếu.
+7. **Đưa về và bàn giao:**
+
+   ```bash
+   git -C ../lean_wt/T-XXX add -N .
+   git -C ../lean_wt/T-XXX diff > <scratchpad>/T-XXX.patch
+   git apply <scratchpad>/T-XXX.patch      # trong clone chính
+   ./scripts/gate.sh                       # chạy lại ở clone chính
+   git worktree remove ../lean_wt/T-XXX && git branch -D codex/T-XXX
+   ```
+
+   Rồi Claude làm §7.3–§7.4 của `CLAUDE.md`: entry ghi *thực hiện: Codex, duyệt:
+   Claude*, file đổi, lệnh đã chạy và kết quả; chuyển *Done*; dọn scope; viết
+   khối commit §6.1. Gate 7/7b chạy ở lượt này vì đây là lượt của Claude.
+8. **Học từ lỗi:** Codex mắc cùng một lỗi hai lần thì mở `F-XXX` và chữa bằng
+   một dòng trong mẫu phiếu hoặc `AGENTS.md` (`quality/review-gate.md` →
+   *Vòng phản hồi*). Lỗi một lần thì chỉ sửa.
+
+**Nhiều Codex song song** được, nếu mỗi Codex một task, một worktree, một nhánh;
+hai danh sách scope không chạm chung file; và chỉ Claude đưa thay đổi về clone
+chính, từng task một, chạy gate sau mỗi lần.
+
+**Mẫu phiếu:**
+
+```markdown
+# Phiếu giao việc — T-XXX (mức L1)
+
+Bạn là người thi công. Người quyết định là Claude; bạn không quyết thay.
+
+## Bắt đầu
+1. Đọc AGENTS.md rồi CLAUDE.md. Chạy ./scripts/brief.sh.
+2. Chỉ đọc thêm: <owner/file cần đọc, có đường dẫn>.
+
+## Việc cần làm
+<mục tiêu trong 2–4 câu; vì sao cần>
+
+## Acceptance (mỗi dòng phải có bằng chứng trong báo cáo)
+- [ ] ...
+- [ ] ./scripts/gate.sh xanh
+
+## Phạm vi
+Đã khai trong work/scope.txt. Chỉ sửa file khớp scope. Cần thêm file thì DỪNG
+và ghi vào báo cáo, không tự mở rộng scope.
+
+## Cấm
+- Không commit, không sửa work/backlog.md, docs/decisions.md,
+  docs/product/99-unknowns.md, master_plan/, quality/invariants.md, CLAUDE.md.
+- Không bịa luật nghiệp vụ. Chỗ nào chưa rõ: để nguyên hành vi, ghi câu hỏi.
+- Không git add -A, không xoá file ngoài scope.
+
+## Báo cáo (tin nhắn cuối cùng, đúng khuôn này)
+1. File đã đổi / tạo (lấy từ `git status --short`, không nhớ lại).
+2. Output cuối của ./scripts/gate.sh, dán nguyên.
+3. Bảng Acceptance → bằng chứng (tên test hoặc lệnh + output).
+4. Câu hỏi còn mở / điều đã phải giả định.
+5. Việc chưa xong.
+```
