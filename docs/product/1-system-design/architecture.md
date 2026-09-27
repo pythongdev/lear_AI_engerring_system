@@ -350,8 +350,31 @@ tiền thực nhận trong ngày  ( mặt + chuyển khoản, đếm được tr
   =  doanh thu trong ngày          hoá đơn đóng hôm nay, kể cả hoá đơn ghi nợ
   −  nợ ghi trong ngày             đã tính doanh thu, CHƯA có tiền  ⇒ két thiếu
   +  nợ cũ thu được hôm nay        có tiền, doanh thu đã tính hôm TRƯỚC ⇒ két thừa
+  +  trả trước nhận trong ngày     có tiền, doanh thu CHƯA tính (tính ngày giao/lấy) ⇒ két thừa
+  −  trả trước thành doanh thu     phần đã trả trước của hoá đơn đóng hôm nay ⇒ két thiếu
+  −  trả lại trả trước trong ngày  đơn đã trả trước bị huỷ/bớt TRƯỚC khi đóng ⇒ tiền rời quán
   −  hoàn tiền trong ngày          từng khoản có vết: ai, lý do, TRẢ LẠI BẰNG GÌ (§6.4)
 ```
+
+**Ba dòng trả trước là chiều ngược của hai dòng nợ** (thêm 2026-09-28, T-112, `docs/decisions.md`
+**ADR-059**, đóng `work/findings.md` **F-037**). Chủ quán chốt 2026-09-06 (`shop-facts.md` §6.26):
+doanh thu của khoản trả trước tính vào **ngày giao/lấy hàng**, không phải ngày nhận tiền. Nợ là
+doanh thu có trước tiền; trả trước là tiền có trước doanh thu — nên nó cũng lệch ở **hai** ngày,
+ngược chiều, và cũng cần một dòng ở **mỗi** ngày. Ba điều giữ cho ba dòng ấy đúng:
+
+- **Không có điều kiện ngày**, giống hai dòng nợ. Nhận và đóng cùng ngày thì khoản ấy hiện ở cả
+  dòng *nhận* lẫn dòng *thành doanh thu* và tự triệt tiêu. Công thức vì thế không dựa vào giới hạn
+  *đặt trước tối đa một ngày* — giới hạn ấy chỉ bó khoảng tiền nằm chờ.
+- **Dòng *thành doanh thu* là phần ĐÃ dùng cho hoá đơn**, không phải số đã nhận: đơn bớt món trước
+  khi đóng thì phần dư đi dòng *trả lại*.
+- **Dòng *trả lại* đứng riêng, không gộp vào dòng hoàn tiền.** Nó vẫn là một lần hoàn theo nghĩa
+  **vết** — POS quyết từng ca, ghi đủ ai · lý do · trả lại bằng gì (§6.4). Nhưng khoản ấy chưa từng
+  là doanh thu của ngày nào, nên nó **không** trừ doanh thu ngày trả lại — *suy ra*, không phải lời
+  chủ quán nói thẳng; lý do ở **ADR-059** điểm 5. Đơn **đã đóng** rồi mới hoàn thì là một lần hoàn
+  thường, đi dòng cuối.
+
+**Phần chuyển khoản so với tin nhắn báo có theo LÚC TIỀN TỚI, không theo mốc tính tiền.** Hai mốc
+ấy chỉ khác nhau ở khoản trả trước, và tin nhắn báo có tới đúng hôm nhận tiền.
 
 **Dòng hoàn tiền phải tách theo PHƯƠNG THỨC TRẢ LẠI, không gộp một con số.** Chủ quán chốt
 2026-09-08 (`shop-facts.md` §6.4) rằng trả lại bằng **tiền mặt** hay **chuyển khoản lại** là do POS
@@ -362,9 +385,10 @@ lệch **cả hai** phép đối chiếu cùng lúc và ngược chiều nhau, v
 
 Ba luật của màn này:
 
-1. **Dòng "nợ cũ thu được hôm nay" không bao giờ được cộng vào doanh thu hôm nay.** Cộng vào là
-   **tính doanh thu hai lần** cho cùng một bữa ăn — nặng hơn quên thu, vì nó làm báo cáo trông
-   đẹp hơn sự thật.
+1. **Dòng "nợ cũ thu được hôm nay" và dòng "trả trước nhận trong ngày" không bao giờ được cộng vào
+   doanh thu hôm nay.** Cộng dòng nợ vào là **tính doanh thu hai lần** cho cùng một bữa ăn; cộng
+   dòng trả trước vào là tính doanh thu **trước** một bữa ăn còn có thể không xảy ra (khách huỷ) —
+   cả hai nặng hơn quên thu, vì chúng làm báo cáo trông đẹp hơn sự thật.
 2. **Mỗi dòng trừ/cộng phải mở ra được thành danh sách từng khoản**, mỗi khoản có người đứng tên.
    Một con số tổng không giúp ai tìm ra lý do lúc lệch.
 3. **Không có nút "đóng ca dù lệch".** Lệch mà vẫn đóng được thì luật ngưỡng 0đ chỉ là một câu chữ.
@@ -412,13 +436,16 @@ tại ngày đo (`work/findings.md` **F-003** · **F-018**); đếm ở bảng, 
 | **Mẻ, và con số *"đã làm xong, còn ở bếp"*** — một lần bấm ứng với một mẻ, chia được về từng bàn; phần đã làm xong của đơn huỷ đổi chủ sang bàn khác | §5.4 (chủ quán chốt 2026-09-01 và 2026-09-06) | bếp bị giục làm lại cái bánh **đang nằm chờ đủ đĩa**, và cái đĩa của một đơn vừa huỷ không còn chỗ nào ghi nó đã đi đâu |
 | **Lượt bán nhập bù từ sổ giấy** — ngày quán bán thật, tách khỏi lúc gõ vào máy; ai nhập bù; một ngày còn bao nhiêu lượt chưa nhập | §6.11 (chủ quán chốt 2026-09-04) · `docs/decisions.md` **ADR-037** | doanh thu hôm mất điện rơi vào ngày gõ, và ngưỡng lệch **0đ** báo động giả mọi lần quán phải ghi tay |
 | **Mức liên hệ tối thiểu của đơn mang đi** — địa chỉ giao · giờ khách cần hàng · cách trao hàng của đơn hotline; nền 16 bảng chỉ đòi số điện thoại | §6.5 · `quality/invariants.md` **I-022** (thêm 2026-09-28, T-110) | đơn giao tận nơi không có địa chỉ đi tới tận lúc người đi giao cầm hàng ra khỏi quán — `work/findings.md` **F-038** |
+| **Khoản trả trước** — lúc quán **nhận tiền** tách khỏi mốc tính tiền của đơn; phần nào đã thành doanh thu của hoá đơn nào; phần nào đã trả lại | §6.4 · §6.26 · `docs/decisions.md` **ADR-040** · **ADR-059** (thêm 2026-09-28, T-112) | két thừa đúng bằng khoản trả trước hôm nhận tiền và thiếu đúng bằng nó hôm giao, mà bảng đối soát không có danh sách nào gọi tên — ngưỡng **0đ** đỏ vì một lý do ai cũng biết — `work/findings.md` **F-037** |
 
 Đây là **danh sách chỗ thiếu đã biết tính tới 2026-09-28**, không phải lời hứa là đã đủ. Gặp chỗ
 tiếp theo thì thêm vào đây, đừng tự thiết kế quanh nó — **và thêm một dòng yêu cầu tương ứng vào**
 [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) **§1 trong cùng thay đổi**: hai danh sách ấy khớp
 một-đối-một, và đó là phép chấm duy nhất giữ chúng khỏi trôi khỏi nhau.
 
-**Dòng cuối vào bảng ngày 2026-09-28, ở T-110** — luật đã chốt từ 2026-08-30 nhưng chưa từng
+**Dòng cuối vào bảng ngày 2026-09-28, ở T-112** — lời chốt 2026-09-06 (**ADR-040**) đã nói cần
+một dòng đối soát nhưng giao nó cho *"bước sau"*, và không bước nào nhận (`work/findings.md`
+**F-037**). **Dòng trước nó vào cùng ngày, ở T-110** — luật đã chốt từ 2026-08-30 nhưng chưa từng
 thành mệnh đề (`work/findings.md` **F-038**), nên không bước nào đọc bảng này với nó trong tay.
 **Hai dòng trước nó vào bảng ngày 2026-09-07, ở bước P1-07.** Cả hai là lời chốt của chủ quán **sau**
 ngày đo cũ (2026-08-31), nên bảng không thể có chúng lúc viết; không ai quay lại thêm dòng cho tới

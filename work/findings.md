@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 43 finding — 38 Fixed/Resolved/Closed, 5 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-28, T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 43 finding — 39 Fixed/Resolved/Closed, 4 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-28, T-112, sau khi đóng F-037; lần đếm trước ở T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -98,7 +98,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-034 | Cơ chế chặn *mất hẳn dữ liệu* chỉ sống ở tài liệu không sở hữu gì — lần thứ hai của F-027 | Fixed |
 | F-035 | Gate 7b đọc index bằng encoding KHÁC mọi chỗ đọc khác trong chính nó ⇒ kêu một file scope đã phủ | Closed |
 | F-036 | Phép đối chiếu của một mệnh đề hẹp hơn chính mệnh đề ấy ⇒ đọc ra rỗng trong khi một vế đã hỏng | Fixed |
-| F-037 | Khoản trả trước có mốc tính tiền nhưng không có dòng nào trong bảng đối soát để đứng | Open |
+| F-037 | Khoản trả trước có mốc tính tiền nhưng không có dòng nào trong bảng đối soát để đứng | Fixed |
 | F-038 | *"Thiếu một trường bắt buộc thì đơn không tạo được"* — luật đã chốt của pha 0, pha 1 không có mệnh đề nào | Fixed |
 | F-039 | Gate 7b đọc khối commit theo từng dòng ⇒ khối nối dòng `\` vừa bị kêu nhầm vừa bị chấm sót bảy trên mười file | Fixed |
 | F-040 | Ba chỗ vượt ranh giới pha trong `architecture.md`, chỉ một có tên trong ngoại lệ — cả ba sinh TRƯỚC ADR-035 | Closed |
@@ -3533,10 +3533,28 @@ Việc còn lại, thứ tự bắt buộc vì hai danh sách phải khớp mộ
 
 **Related task:**
 **P1-11** (lượt phát hiện, 2026-09-08) · **P1-03** (lượt ghi ra chỗ trống, 2026-09-04) ·
-**P1-04** · **P1-07** (hai bước lẽ ra nhận) · **ADR-040** · **F-024** · **F-027** · `RR-5`.
+**P1-04** · **P1-07** (hai bước lẽ ra nhận) · **ADR-040** · **F-024** · **F-027** · `RR-5` ·
+**T-112** (lượt lấp, 2026-09-28).
+
+**Fix — 2026-09-28 (T-112, Claude Code, `docs/decisions.md` **ADR-059**):** đủ bốn việc ở trên,
+một chỗ khác với lời dặn. (1) `architecture.md` §6.4 thêm **ba** dòng, không phải một — *trả trước
+nhận trong ngày* (+) · *trả trước thành doanh thu* (−) · *trả lại trả trước trong ngày* (−), không
+điều kiện ngày, giống hai dòng nợ. Một dòng chỉ đỡ được hôm nhận tiền; hôm giao hàng két thiếu đúng
+bằng khoản ấy mà không dòng nào gọi tên — chính **Impact** ở trên đã viết *"nợ có hai dòng"*. Chữ
+*"một dòng"* của ADR-040 và của bước 1 ở trên là phép đếm của người viết (**F-003**), không phải lời
+chủ quán. §8 có chỗ thiếu thứ mười. (2) `04-yeu-cau-du-lieu.md` §1 có **`YC-23`**, cùng thay đổi.
+(3) `I-021` thêm ba hạng tử tiền mặt cho trả trước, và lượt đọc lại tìm thêm một lỗ cùng hình:
+phép trừ ấy chưa từng có hạng tử cho **nợ cũ thu bằng tiền mặt** — thêm luôn, ghi ở ADR-059 điểm 3.
+Ô `I-005` · `I-014` · `I-015` · `I-021` của `03-bao-ve-invariant.md` §1 đọc lại; ô `I-021` còn sót
+các hạng tử hoàn chéo từ ADR-046, sửa cùng lượt. (4) Không hỏi chủ quán câu nào. Một câu **suy ra**
+có đánh dấu: trả lại một khoản trả trước chưa thành doanh thu **không** trừ doanh thu ngày nào
+(`I-014`, ADR-059 điểm 5) — chủ quán nói khác thì mở `U-XXX`. Kiểm tay trên số liệu ở kịch bản mới
+của `I-021`: cả hai ngày khớp **0đ**, bỏ một hạng tử thì lệch đúng bằng khoản ấy. Phần **pha 2** —
+chỗ cất và câu truy vấn — thuộc `P2-06` · `P2-11`, nay hết bị F-037 chặn; F-037 đóng ở chỗ hụt của
+pha 1, không tuyên bố lược đồ đã giữ.
 
 **Status:**
-Open
+Fixed — 2026-09-28 (T-112)
 
 ---
 

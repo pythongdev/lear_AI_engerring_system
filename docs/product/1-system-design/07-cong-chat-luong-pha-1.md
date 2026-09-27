@@ -223,7 +223,14 @@ kỳ vọng*.
 > **`I-022`**, có hàng ở nhóm VÒNG ĐỜI của [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) §2
 > (bốn vế tầng 1) và dòng **`YC-22`** ở [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §1. Các ô
 > *KHÔNG trỏ được — `F-038`* ở §2 bước 1 · 2 · 3 là biên bản ngày 2026-09-08, giữ nguyên; hôm nay
-> chúng trỏ được vào hàng `I-022`. `F-037` không đổi.
+> chúng trỏ được vào hàng `I-022`.
+>
+> **`F-037` đã lấp 2026-09-28** (T-112, **ADR-059**): công thức đối soát
+> [`architecture.md`](architecture.md) §6.4 có **ba** dòng trả trước — nhận · thành doanh thu · trả
+> lại — `quality/invariants.md` **`I-021`** có hạng tử tiền mặt cho chúng, và
+> [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §1 có **`YC-23`**. Ô *một nửa KHÔNG TRỎ ĐƯỢC —
+> `F-037`* ở §2 bước 6 là biên bản ngày 2026-09-08, giữ nguyên; hôm nay nó trỏ được vào ba dòng ấy.
+> Cả ba chỗ hụt của bảng dưới nay đã lấp.
 
 Ba chỗ dưới đây là **phát hiện của lượt này**. Không chỗ nào được lấp ở đây: lượt này **ghi**, và
 việc thiết kế bù thuộc bước hoặc phiên nhận `F-XXX` tương ứng (`work/backlog_SD.md` → P1-11, mục
@@ -309,6 +316,9 @@ vẫn là của **chủ repo**, không của cổng (§8).
   **Đo lại 2026-09-28 (T-110, ADR-058)** sau khi `I-022` sinh: `comm -3` giữa hai danh sách mã vẫn
   **rỗng** — hai mươi hai mã mỗi bên; sáu vế của hàng `I-022` mỗi vế một tầng, năm vế có tập, vế
   ngược nói thẳng vì sao chưa có tập (§0 luật 5 của file ấy).
+  **Đo lại 2026-09-28 (T-112, ADR-059):** chỗ hụt `I-014` khoản trả trước (**`F-037`**) nay có
+  tầng và tập ở hàng `I-014` (vế *chưa thành doanh thu thì không là doanh thu ngày nào*: tầng 3
+  đường vào, tầng 1 vế *không dùng quá số đã nhận*); `comm -3` không đổi vì không mã nào sinh thêm.
 - [x] **2. Mỗi mệnh đề chỉ được giữ ở tầng 4 hoặc 5 đã nói thẳng ra điều đó.**
   Lọc chữ *"máy không ngăn được"* trên [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md): **11**
   lần lúc ký, **12** lần khi đo lại 2026-09-28 (T-110 thêm câu ấy vào hàng `I-022`, vế tầng 4 của
@@ -327,6 +337,8 @@ vẫn là của **chủ repo**, không của cổng (§8).
   §4 của cùng mục ấy giao cho *"P1-04 trở đi"* thì chưa ai viết. Ô này hỏi *ngày bán có một chỗ và
   các phép cộng có trỏ về nó*, và câu trả lời là **có**; chỗ hụt nằm ở **bảng đối soát**, không ở
   định nghĩa.
+  **2026-09-28 (T-112):** dòng ấy nay đã có — **ba** dòng ở [`architecture.md`](architecture.md)
+  §6.4 (**ADR-059**); lời kèm theo trên là biên bản ngày ký.
 - [x] **4. Mỗi phụ thuộc ngoài có một đường suy giảm.**
   Đếm hai bảng của [`01-ranh-gioi-he-thong.md`](01-ranh-gioi-he-thong.md): §2 có **6** hàng
   `PT-1`…`PT-6`, §3 có **6** hàng, cùng bộ mã, không mã nào lệch. Mỗi hàng §3 đủ **ba vế** — quán
@@ -364,6 +376,9 @@ vẫn là của **chủ repo**, không của cổng (§8).
   `U-031`. **Nó không tick vì thiết kế đã đủ.**
   **2026-09-28:** `F-036` (T-103) và `F-038` (T-110) đã lấp — S2 bước 1 · 2 · 3 nay trỏ được vào
   hàng `I-022`; còn **một** bước không trỏ được hết, S2 bước 6 (**`F-037`**).
+  **2026-09-28, T-112:** `F-037` đã lấp (**ADR-059**) — S2 bước 6 nay trỏ được vào ba dòng trả trước
+  của [`architecture.md`](architecture.md) §6.4 và hàng `I-021`. Ba mã của lượt diễn — `F-036` ·
+  `F-037` · `F-038` — nay đều đã lấp; `S-5` · `S-6` vẫn là chỗ dừng như cũ, không phải phát hiện.
 - [x] **8. Trục sản xuất theo mẻ đã có mục nghiệp vụ (BA-12) và §3 đã viết lại (P1-09).**
   `BA-12` `Done` 2026-09-04 — [`../0-ba/ban-hang/03-lat-cat.md`](../0-ba/ban-hang/03-lat-cat.md)
   §3.4; `P1-09` `Done` 2026-09-07 — [`architecture.md`](architecture.md) §3.4 có **bốn** con số và
@@ -515,7 +530,7 @@ Ai đọc cổng này thì đọc kèm câu đó.
 | **`F-040` · `F-041`** | **đã đóng 2026-09-20** (**T-079**, **ADR-048**) — đường 2: ba chỗ viết lại bằng ngôn ngữ tầng, `PAT_API` nới kèm hai ca hồi quy, `scripts/check-phase-boundary.ignore` nay rỗng. Ô 10 giữ biên bản của cả hai mốc |
 | **Pha 2** | §7 câu cuối — bốn mã cộng `S-5` · `S-6` phải đọc **trước** khi tin một ô cổng nào; §6 là danh sách chỗ pha 1 **chưa** phủ, đừng đọc chúng thành yêu cầu đã có |
 | **Phiên nhận `F-036`** | hai ca cụ thể, và câu hỏi thật: phép đối chiếu của một mệnh đề phải phủ **mọi vế** của mệnh đề ấy, không chỉ vế chính |
-| **Phiên nhận `F-037`** | [`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §4 đã tả sẵn hình của dòng còn thiếu — *đúng hình của dòng nợ ghi trong ngày nhưng ngược chiều* — cộng luật một-đối-một giữa [`architecture.md`](architecture.md) §8 và [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §1 |
+| **Phiên nhận `F-037`** | **đã chạy 2026-09-28** (T-112, **ADR-059**) — ra **ba** dòng, không phải một. Lời viết ngày 2026-09-08: [`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §4 đã tả sẵn hình của dòng còn thiếu — *đúng hình của dòng nợ ghi trong ngày nhưng ngược chiều* — cộng luật một-đối-một giữa [`architecture.md`](architecture.md) §8 và [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §1 |
 | **Phiên nhận `F-038`** | [`../0-ba/ban-hang/03-lat-cat.md`](../0-ba/ban-hang/03-lat-cat.md) §3.2.4 là nhà của luật; chỗ thiếu là một **mệnh đề** và một **tầng**, không phải một luật mới |
 | **Chủ quán** | không câu mới nào từ lượt này. *Viết 2026-09-08: lúc ấy `U-043` còn mở. Chủ quán đã trả lời nó **2026-09-16** — máy báo, POS quyết, mở lại bằng nút (**ADR-047**) — và cùng lượt đóng nốt `U-042` · `U-051` · `U-052`; hai câu mới `U-053` · `U-054` thế chỗ ở `docs/product/99-unknowns.md`.* `U-044` **đã đóng 2026-09-08** — POS quyết từng ca |
 

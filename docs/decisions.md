@@ -75,6 +75,7 @@ có câu trả lời mới từ người.
 | ADR-056 | **Hai vế thiếu tầng của F-036** — nước chấm · canh của `I-004` giữ ở **tầng 2** trong giao dịch nổ đơn; *ngừng bán ⇒ không đặt mới được* ở lại hàng `I-009`, **tầng 3** tại cửa tạo lượt gọi; đơn vị của bảng bảo vệ là **vế**, không phải mã | Đã chốt 2026-09-27 (giao cho phiên) | — | `P2-07` (nổ đơn trạm `canh`) |
 | ADR-057 | Yêu cầu bảo toàn và khôi phục dữ liệu ở pha 1; cơ chế và kiểm chứng ở pha 5 (F-034) | Đã chốt 2026-09-27 (chủ repo) | — | T-109 — triển khai và nghiệm thu vận hành |
 | ADR-058 | **`I-022` vào nhóm VÒNG ĐỜI đã có**, không mở nhóm mới; bốn vế *thiếu thì không tồn tại được* ở **tầng 1**, vế *trường nên có không chặn* ở **tầng 3**; `architecture.md` §8 thêm một chỗ thiếu và `YC-22` (F-038) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-110; migration ở `T-111` |
+| ADR-059 | **Khoản trả trước vào công thức đối soát bằng BA dòng** — *nhận trong ngày* (+) · *thành doanh thu trong ngày* (−) · *trả lại trong ngày* (−), không điều kiện ngày; `I-021` thêm hạng tử tiền mặt cho ba dòng ấy và cho nợ cũ thu bằng tiền mặt; chuyển khoản so theo lúc tiền tới; trả lại khoản chưa thành doanh thu không trừ doanh thu (*suy ra*); `YC-23` (F-037) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-112; chỗ cất ở `P2-06` |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3876,3 +3877,81 @@ yêu cầu**. Mệnh đề sinh sau khi kế hoạch pha 1 chia nhóm — đúng
 `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §1 ·
 `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §6 ·
 `docs/product/2-db/02-luoc-do-ban-hang.md` §5.
+
+### ADR-059 — Khoản trả trước vào công thức đối soát bằng BA dòng, `I-021` thêm hạng tử cho nó, và `YC-23` cho chỗ cất
+
+**Trạng thái:** **Đã chốt** 2026-09-28, **giao cho phiên**. Chủ repo giao `work/findings.md`
+**F-037** với lời nguyên văn *"hãy đọc kĩ và làm"*. F-037 bước 4 ghi *"bày ở đâu trên bảng là việc
+thiết kế"* và **không** cần hỏi chủ quán thêm: hướng đã chốt ở **ADR-040**. Câu giao việc là lời
+**giao việc chọn**, không phải lời xác nhận một cách bày cụ thể (`CLAUDE.md` §7.2, cùng cách đọc
+với **ADR-056** · **ADR-058**). Chủ repo đọc ADR này rồi muốn đổi thì chỉ cần một câu; lượt đổi
+phải xong trước khi `P2-06` dựng lát đường tiền. Task **T-112**.
+
+**Context:**
+**ADR-040** chốt doanh thu của khoản trả trước rơi vào **ngày giao/lấy hàng**, và tự khai *"câu chữ
+và cơ chế của dòng mới trong công thức đối soát §6.4 — việc của bước đọc §2 của
+`02-thoi-gian-ngay-ban.md`"*. Không bước nào nhận (**F-037**, đo ở P1-11 ngày 2026-09-08). Hệ quả:
+tiền vào két hoặc tài khoản **hôm nay**, doanh thu thuộc **hôm khác**, nên phép trừ `I-021` và phép
+so phần chuyển khoản của `I-015` cùng lệch ở hai ngày, ngược chiều — một ô đỏ có lý do biết trước,
+đường thẳng tới `RR-5`. Cả ADR-040 lẫn F-037 đều viết *"thêm **một** dòng"*.
+
+**Decision:**
+1. **Ba dòng, không phải một.** Khoản trả trước lệch ở **hai** ngày ngược chiều, đúng hình của nợ —
+   và nợ có **hai** dòng. Công thức `architecture.md` §6.4 thêm:
+   - **+ trả trước nhận trong ngày** — có tiền, doanh thu **chưa** tính ⇒ két thừa (chiều ngược của
+     *nợ ghi trong ngày*);
+   - **− trả trước thành doanh thu trong ngày** — phần đã trả trước của các hoá đơn **đóng hôm
+     nay**: doanh thu tính hôm nay, tiền đã về lúc nhận ⇒ két thiếu (chiều ngược của *nợ cũ thu
+     được hôm nay*);
+   - **− trả lại trả trước trong ngày** — đơn đã trả trước bị huỷ hoặc bớt **trước khi đóng**: tiền
+     rời quán mà không ngày nào có doanh thu của nó để trừ.
+
+   Chữ *"một dòng"* của ADR-040 và F-037 là **phép đếm của người viết**, không phải lời chủ quán
+   (`CLAUDE.md` §7.2) — lời chủ quán chỉ nói *doanh thu ngày nào*.
+2. **Ba dòng không có điều kiện ngày**, giống hai dòng nợ: một khoản trả trước nhận và đóng **cùng
+   ngày** hiện ở cả dòng *nhận* lẫn dòng *thành doanh thu* và tự triệt tiêu. Vì thế công thức **không
+   dựa** vào giới hạn *đặt trước tối đa một ngày* (`shop-facts.md` §6.26): giới hạn ấy chỉ bó khoảng
+   tiền nằm chờ, không phải điều kiện để công thức đúng.
+3. **`I-021` thêm bốn hạng tử tiền mặt**: trả trước nhận bằng tiền mặt (+), phần tiền mặt của trả
+   trước thành doanh thu (−), trả lại trả trước bằng tiền mặt (−) — và **nợ cũ thu bằng tiền mặt**
+   (+). Hạng tử cuối không thuộc F-037: lượt đọc lại ô `I-021` (F-037 bước 3) tìm ra phép trừ ấy
+   chưa từng có hạng tử cho khoản nợ được trả bằng tiền mặt, trong khi công thức §6.4 có dòng *nợ cũ
+   thu được hôm nay* từ 2026-08-31. Cùng một lỗ, cùng một lần sửa; để nguyên là để `I-021` đỏ mỗi
+   ngày có khách trả nợ bằng tiền mặt.
+4. **Phần chuyển khoản so với tin nhắn báo có theo lúc TIỀN TỚI**, không theo mốc tính tiền. Hai mốc
+   chỉ khác nhau ở khoản trả trước; đọc theo mốc tính tiền thì tin nhắn của hôm nhận tiền không có
+   gì để khớp.
+5. **Trả lại một khoản trả trước chưa thành doanh thu KHÔNG trừ vào doanh thu ngày nào** — *suy ra,
+   không phải lời chủ quán nói thẳng*. Hai lời chốt đặt cạnh nhau buộc ra câu này: doanh thu tính vào
+   ngày **đem hàng cho khách** (ADR-040), nên đơn huỷ trước khi trao chưa từng là doanh thu; còn luật
+   *hoàn trừ vào doanh thu ngày hoàn* (`shop-facts.md` §6.4) nói về một lần **bán đã xong**. Đọc
+   ngược lại thì tổng doanh thu của một đơn chưa bao giờ bán ra **âm**. Lần trả lại ấy vẫn là một
+   lần hoàn theo nghĩa **vết** — đủ năm câu của `YC-01`, POS quyết từng ca, ghi phương thức trả lại.
+   Chủ quán nói khác thì đó là một câu `U-XXX` mới, và dòng thứ ba của công thức gấp vào dòng hoàn
+   tiền.
+6. **`architecture.md` §8 thêm một chỗ thiếu** — nền 16 bảng không có chỗ cho lúc quán nhận tiền
+   tách khỏi mốc tính tiền — và `04-yeu-cau-du-lieu.md` §1 thêm **`YC-23`** (luật một-đối-một của
+   P1-07).
+
+**Rejected alternatives:**
+- **Một dòng, như ADR-040 viết.** Chỉ đỡ được **hôm nhận tiền**; hôm giao hàng két thiếu đúng bằng
+  khoản ấy mà không dòng nào gọi tên — lỗi F-037 dời sang ngày hôm sau.
+- **Hai dòng có điều kiện ngày** (*nhận hôm nay, đơn chưa đóng hôm nay* · *nhận hôm trước, đơn đóng
+  hôm nay*). Ít dòng hơn trên bảng trong ngày thường, nhưng mỗi dòng mang một phép so hai ngày; đơn
+  huỷ phải đi qua dòng hoàn tiền, kéo theo câu *hoàn trừ doanh thu* áp nhầm lên tiền chưa từng là
+  doanh thu. Ba dòng không điều kiện đọc được từ ba danh sách từng khoản, không cần so ngày.
+- **Tính doanh thu ngày nhận tiền.** Đã bác ở ADR-040 — chủ quán chốt ngược lại.
+
+**Hệ quả:**
+- `P2-06` (lát đường tiền) dựng thêm chỗ cất cho `YC-23`; nó **hết** bị F-037 chặn. `P2-11` có
+  phép đối chiếu cho ba dòng.
+- Kịch bản kiểm của `I-021` có ca trả trước và ca trả nợ bằng tiền mặt.
+- **Không** có luật mới cho đơn đã trả trước mà khách **không tới lấy**: khoản ấy nằm ở dòng
+  *nhận* hôm nhận tiền và không đi đâu cho tới khi POS đóng hoặc trả lại — công thức vẫn đúng từng
+  ngày. Có cần một cảnh báo cho khoản nằm chờ quá lâu không là câu của chủ quán, chưa hỏi.
+
+**Applies to:** `docs/product/1-system-design/architecture.md` §6.4 · §8 · `quality/invariants.md`
+`I-014` · `I-021` · `docs/product/1-system-design/03-bao-ve-invariant.md` §1 ·
+`docs/product/1-system-design/04-yeu-cau-du-lieu.md` §1 ·
+`docs/product/1-system-design/02-thoi-gian-ngay-ban.md` §4 ·
+`docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §6 · **ADR-040** · **ADR-046**.

@@ -87,7 +87,7 @@ số trong câu này (`work/findings.md` **F-003**). Bảng sống ở kế ho�
 | **S-6** | với đơn giao tận nơi, quầy bấm mốc *"đã ra bàn"* **lúc nào** (§7.2) | `P2-07` | chủ quán |
 | **F-034** | Đã Fixed 2026-09-27: yêu cầu YC-21 có owner (ADR-057); cơ chế chưa triển khai | `P2-09` đọc yêu cầu | **pha 5**, T-109 |
 | ~~**F-036**~~ | ~~hai vế thiếu tầng~~ — **đã đóng 2026-09-27** (T-103, **ADR-056**): nước chấm · canh của `I-004` **tầng 2** trong giao dịch nổ đơn; ngừng bán của `I-009` **tầng 3**, không ràng buộc | `P2-07` dựng hai loại việc trạm `canh` theo hàng `I-004` | — |
-| **F-037** | khoản **trả trước** không có dòng trong bảng đối soát | `P2-06` · `P2-11` | phiên nhận F-037 (pha 1) |
+| ~~**F-037**~~ | ~~khoản **trả trước** không có dòng trong bảng đối soát~~ — **đã đóng 2026-09-28** (T-112, **ADR-059**): **ba** dòng trả trước ở `architecture.md` §6.4, hạng tử ở `I-021`, `YC-23` | `P2-06` dựng chỗ cất `YC-23` · `P2-11` có câu truy vấn cho ba dòng | — |
 | ~~**F-038**~~ | ~~*thiếu một trường bắt buộc thì đơn không tạo được* chưa có mệnh đề, chưa có tầng, chưa có dòng `YC`~~ — **đã đóng 2026-09-28** (T-110, **ADR-058**): `I-022` **tầng 1** cho bốn vế *thiếu thì không tồn tại được*, `YC-22` | `T-111` — migration mới dựng chỗ cất và ràng buộc | — |
 
 ⚠️ **Một bước bị chặn vẫn chạy được phần không phụ thuộc câu trả lời**, và ghi chỗ trống ra kèm mã
@@ -805,7 +805,7 @@ menu bằng cách tra `shop-facts.md` §4.2–§4.5; đọc file lát §5 hàng 
 
 **Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 6/14 (kế
 hoạch §6) · **cần xong trước:** `P2-03` · `P2-04` · `P2-12` · **chặn** `P2-08` · `P2-09` · `P2-11` · **chỗ
-đang chặn nó:** `F-037` · chạy song song được với `P2-05` · `P2-07`
+đang chặn nó:** không còn — `F-037` đã đóng 2026-09-28 (T-112, **ADR-059**) · chạy song song được với `P2-05` · `P2-07`
 
 **Goal:**
 Xong rồi thì **năm** thứ của một lần hoàn (`YC-01`) và **sáu** thứ của một khoản nợ (`YC-02`) đọc
@@ -814,7 +814,8 @@ có đủ dữ liệu để chạy ở ngưỡng lệch 0đ.
 
 **Nói một câu, việc phải làm là gì:**
 Dựng **lát đường tiền** — thu chia nhiều phương thức · **nợ** · **hoàn tiền** · tiền đầu két — mang
-`I-005` `I-012` `I-014` `I-015` `I-021` và `YC-01` `YC-02` `YC-09` `YC-10` `YC-11`. Việc **không**
+`I-005` `I-012` `I-014` `I-015` `I-021` và `YC-01` `YC-02` `YC-09` `YC-10` `YC-11` `YC-23` (khoản
+trả trước — thêm 2026-09-28, T-112). Việc **không**
 phải làm: đừng quyết *ai được bấm hoàn tiền* — quyền theo vai là pha 3; pha 2 chỉ đảm bảo mỗi lần
 bấm để lại đủ vết để hỏi câu ấy sau.
 
@@ -837,21 +838,25 @@ sang chỗ mới — **trong cùng thay đổi**, không phải một task sau (
 - **Hoàn tiền thiếu *lý do*.** Quán **cố ý** không có luật cứng về hoàn tiền (`shop-facts.md` §6.4),
   nên lý do là thứ **duy nhất** thay được luật — một lần hoàn không lý do là một lần không ai xét
   lại được.
-- **`F-037` để nguyên** ⇒ khoản **trả trước** có mốc tính tiền (**ADR-040**: ngày **giao**) nhưng
-  không có dòng nào trong bảng đối soát để đứng, và tiền ấy đã vào két.
+- **Khoản trả trước không có chỗ cất** ⇒ bảng đối soát có **ba** dòng trả trước (`architecture.md`
+  §6.4, **ADR-059**) mà không danh sách nào dựng lại được chúng, và két lệch đúng bằng khoản ấy ở
+  hai ngày — `YC-23`. *(F-037, đã đóng ở pha 1 2026-09-28.)*
 
 **Cách hoàn thành — đủ mười bước, 1 tới 10.**
 
 1. Đọc file quy ước `P2-03`; file quy ước code `P2-12`; lát `P2-04`; `quality/invariants.md` năm mệnh đề trên; `YC-01` `YC-02`
    `YC-09` `YC-10` `YC-11`; `architecture.md` **§12.3** và **§8**; `shop-facts.md` §6.4 · §6.10 ·
-   §6.14 · §6.18 · §6.26; **`F-037` nguyên văn**.
+   §6.14 · §6.18 · §6.26; `architecture.md` §6.4 ba dòng trả trước · **ADR-059** · `YC-23`.
 2. Khai `work/scope.txt`: khối `P2-06` — **thêm**.
 3. Chuyển `P2-06` sang *In Progress*.
 4. Dựng lát. `I-015` (*một lần thu chia nhiều phương thức, tổng luôn khớp, từng phần ghi riêng*) là
    hàng dễ dựng sai nhất: **từng phần** phải đứng riêng được, và `YC-19` đòi mọi phần dùng **chung
    một** mốc.
-5. **`F-037` không được tự lấp.** Dòng của khoản trả trước trong bảng đối soát là việc của pha 1:
-   ghi một dòng nói lược đồ đứng thế nào khi nó còn mở, gửi ngược vào `work/findings.md`.
+5. **Khoản trả trước theo `YC-23`**, không tự thiết kế thêm: lúc nhận tiền tách khỏi mốc tính
+   tiền; ba danh sách *nhận · thành doanh thu · trả lại* dựng lại được cho mỗi ngày. Vế *trả lại
+   không trừ doanh thu* là **suy ra** (**ADR-059** điểm 5) — dựng theo nó, và nếu chủ quán nói khác
+   thì đó là một `U-XXX`, không phải một sửa lược đồ âm thầm. *(Bước này từng là "`F-037` không
+   được tự lấp"; F-037 đóng ở pha 1 ngày 2026-09-28, T-112.)*
 6. Chứng minh, chạy thật và dán output: năm thứ của một lần hoàn và sáu thứ của một khoản nợ **đọc
    lại được sau nhiều ngày**; một lần trả nợ **không** sinh một khoản bán mới. Rồi
    `./scripts/gate.sh`.
@@ -1199,8 +1204,8 @@ trên, và mỗi phiên sẽ tự gõ vài món để thử — mỗi phiên m�
 ### P2-11 — Hai mươi mốt mệnh đề có phép đối chiếu viết bằng lời, và không câu nào chạy được
 
 **Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 11/14 (kế hoạch
-§6) · **cần xong trước:** `P2-04` → `P2-08` · `P2-10` · **chỗ đang chặn nó:** `F-037` (khoản trả
-trước chưa có dòng trong bảng đối soát)
+§6) · **cần xong trước:** `P2-04` → `P2-08` · `P2-10` · **chỗ đang chặn nó:** không còn — `F-037`
+đã đóng 2026-09-28 (T-112, **ADR-059**)
 
 **Goal:**
 Xong rồi thì mỗi phép đối chiếu của
@@ -1227,14 +1232,14 @@ là lớp cuối cùng của cả hệ thống.
   chỉ chạy được khi có một lệnh chạy sau khi đóng quán.
 - **Một bộ truy vấn chưa bao giờ đỏ là một bộ chưa được chấm** (kế hoạch §7 luật 3) ⇒ cả bộ có thể
   xanh vì viết sai, và cái xanh ấy đắt hơn không có gì, vì nó tạo lòng tin.
-- **`F-037` để nguyên** ⇒ bộ đối chiếu thiếu đúng dòng của khoản **trả trước**, tức tiền đã vào két
-  mà không câu nào nhìn thấy.
+- **Ba dòng trả trước không có câu truy vấn** ⇒ tiền đã vào két mà không câu nào nhìn thấy — ba
+  tập mới ở ô `I-014` và các hạng tử trả trước ở ô `I-021` (**ADR-059**) phải có câu của chúng.
 
 **Cách hoàn thành — đủ mười bước, 1 tới 10.**
 
 1. Đọc `03-bao-ve-invariant.md` §1–§4 — **cột phải** của mọi hàng; `quality/invariants.md` danh
    sách **mã** (đừng đọc một con số đếm — **F-026** · **F-018**); năm lát `P2-04`…`P2-08`; dữ liệu
-   mồi `P2-10`; **`F-037` nguyên văn**.
+   mồi `P2-10`; `architecture.md` §6.4 ba dòng trả trước (**ADR-059**).
 2. Khai `work/scope.txt`: khối `P2-11`.
 3. Chuyển `P2-11` sang *In Progress*.
 4. Viết **đúng một** câu truy vấn cho mỗi phép đối chiếu, mỗi câu mang mã mệnh đề của nó; gom
@@ -1408,7 +1413,7 @@ cổng §9 được KÝ**
 **Goal:**
 Xong rồi thì ba scenario nghiệm thu
 ([`08-scenario.md`](../docs/product/0-ba/ban-hang/08-scenario.md) §8) đi hết được **qua lược đồ**
-bằng dữ liệu thật, mỗi dòng `YC-01`…`YC-20` · `YC-22` được chấm bằng **hai** câu, và các ô cổng §9 có chỗ ký
+bằng dữ liệu thật, mỗi dòng `YC-01`…`YC-20` · `YC-22` · `YC-23` được chấm bằng **hai** câu, và các ô cổng §9 có chỗ ký
 với bằng chứng kèm theo.
 
 **Nói một câu, việc phải làm là gì:**
@@ -1441,7 +1446,7 @@ Và cách chấm đã được chứng minh: `BA-11` và `P1-11` tìm ra chỗ h
 3. Chuyển `P2-13` sang *In Progress*.
 4. Diễn **từng bước** của ba scenario qua lược đồ bằng dữ liệu thật: mỗi bước phải **ghi được** và
    **đọc lại được**; tiền của cả ba cộng lại được từ `shop-facts.md`.
-5. Chấm ngược `YC-01`…`YC-20` · `YC-22`, mỗi dòng **hai** câu: *đọc ra được không* · *dựng được trạng thái
+5. Chấm ngược `YC-01`…`YC-20` · `YC-22` · `YC-23`, mỗi dòng **hai** câu: *đọc ra được không* · *dựng được trạng thái
    sai không*. Dòng nào không trả lời được là **một chỗ lược đồ còn thiếu**, không phải một dòng
    viết chưa rõ — ghi `F-XXX`/`U-XXX`, **không** tự thiết kế bù.
 6. Ký các ô cổng vào file mới, **mỗi ô kèm bằng chứng**. Ô không tick được thì **để trống kèm lý do

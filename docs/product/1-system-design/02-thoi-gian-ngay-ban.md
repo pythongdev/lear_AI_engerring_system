@@ -189,10 +189,19 @@ Kế hoạch pha 1 §9: *một ô không tick được thì để trống kèm m
   **hết trống**. Xem `docs/decisions.md` **ADR-040**. Đọc nguyên văn ở
   [`docs/product/99-unknowns.md`](../99-unknowns.md).
 
-**Hai mã trên đòi công thức đối soát §6.4 của [`architecture.md`](architecture.md) thêm một
-dòng** — dòng cho khoản tiền đã vào két mà chưa vào doanh thu, đúng hình của dòng *nợ ghi trong
-ngày* nhưng ngược chiều. Mục này **không** viết câu chữ hay cơ chế của dòng ấy: đó là việc của bước
-đọc mục này (P1-04 trở đi), không phải của lời chốt vừa nhận.
+**Câu giao việc cũ ở đây, giữ làm lịch sử:** *"Hai mã trên đòi công thức đối soát §6.4 thêm một
+dòng … đó là việc của bước đọc mục này (P1-04 trở đi)"*. Không bước nào nhận, vì cái tên *"P1-04
+trở đi"* không trỏ vào một bước cụ thể nào (`work/findings.md` **F-037**, tìm ra ở P1-11). **Đã
+lấp 2026-09-28** (T-112, `docs/decisions.md` **ADR-059**): công thức
+[`architecture.md`](architecture.md) §6.4 có **ba** dòng trả trước — nhận · thành doanh thu · trả
+lại — chứ không phải một, vì khoản ấy lệch ở hai ngày như nợ. Và chỉ **`U-036`** đòi dòng mới:
+lượt nhập bù của `U-032` có tiền và doanh thu cùng rơi vào ngày bán trên giấy, phần chưa nhập đã
+có **ADR-037** lo.
+
+**Một câu về mốc, để khỏi đọc bảng §2 sai:** khoản trả trước có **một** mốc tính tiền (ngày
+giao/lấy, bảng §2) và **một** lúc nhận tiền — lúc tiền vào két hoặc tài khoản. Lúc nhận tiền
+**không** phải mốc tính tiền thứ hai; nó là chỗ bảng đối soát đọc để biết tiền vào hôm nào, cùng
+hình với hai mốc của lượt nhập bù (`04-yeu-cau-du-lieu.md` **YC-08** · **YC-23**).
 
 ---
 

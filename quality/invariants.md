@@ -497,6 +497,12 @@ nguồn thứ hai (`master_plan/shop-facts.md` §6.9, `docs/product/0-ba/ban-han
 ⇒ **Một lần trả nợ không bao giờ là một khoản bán mới**, và **một lần hoàn không bao giờ sửa lại
 doanh thu của một ngày đã đóng sổ**.
 
+**Một khoản trả trước chưa thành doanh thu thì không là doanh thu của ngày nào**, và trả lại nó
+(đơn huỷ hoặc bớt **trước** khi đóng) **không** trừ vào doanh thu ngày trả lại — *suy ra, không
+phải lời chủ quán nói thẳng* (2026-09-28, T-112, `docs/decisions.md` **ADR-059** điểm 5): dòng thứ
+tư của bảng đặt doanh thu vào ngày **đem hàng cho khách**, còn dòng thứ hai nói về một lần hoàn cho
+việc bán **đã xong**. Đơn đã đóng rồi mới hoàn thì đi dòng thứ hai như mọi lần hoàn.
+
 **Hệ quả chung của hai luật đầu — và một ngoại lệ mà luật thứ ba mở ra, có chủ ý:**
 
 > **Doanh thu của một ngày đã đối soát không đổi về sau, TRỪ đúng một ca: lượt bán ghi trên sổ giấy
@@ -802,7 +808,7 @@ số âm: với mọi bàn và mọi thành phần, *còn thiếu* = đã gọi 
 
 *Phát hiện ở BA-12, 2026-09-03.*
 
-### I-021 — Tiền mặt đếm được trong két cuối ngày trừ đi TIỀN ĐẦU KÉT phải bằng doanh thu tiền mặt của ngày bán đó, sau khi bù các lần hoàn CHÉO phương thức
+### I-021 — Tiền mặt đếm được trong két cuối ngày trừ đi TIỀN ĐẦU KÉT phải bằng doanh thu tiền mặt của ngày bán đó, sau khi bù các lần hoàn CHÉO phương thức, nợ cũ thu bằng tiền mặt và khoản TRẢ TRƯỚC
 
 **Invariant:**
 Với mỗi **ngày bán** (định nghĩa ở `docs/product/1-system-design/02-thoi-gian-ngay-ban.md`, pha 1):
@@ -812,7 +818,23 @@ Với mỗi **ngày bán** (định nghĩa ở `docs/product/1-system-design/02-
       =  (doanh thu TIỀN MẶT của ngày bán đó)
       −  (hoàn trả bằng TIỀN MẶT trong ngày, cho khoản đã thu bằng CHUYỂN KHOẢN)
       +  (hoàn trả bằng CHUYỂN KHOẢN trong ngày, cho khoản đã thu bằng TIỀN MẶT)
+      +  (nợ cũ thu bằng TIỀN MẶT trong ngày)
+      +  (trả trước nhận bằng TIỀN MẶT trong ngày)
+      −  (phần TIỀN MẶT của trả trước đã thành doanh thu trong ngày)
+      −  (trả trước trả lại bằng TIỀN MẶT trong ngày)
 ```
+
+*Thêm bốn hạng tử cuối 2026-09-28 (T-112, `docs/decisions.md` **ADR-059**, đóng
+`work/findings.md` **F-037**).* Ba hạng tử trả trước là phần tiền mặt của ba dòng trả trước trong
+công thức đối soát `docs/product/1-system-design/architecture.md` §6.4: doanh thu của khoản trả
+trước tính vào **ngày giao/lấy** (`master_plan/shop-facts.md` §6.26, **ADR-040**), còn tiền vào két
+**hôm nhận**. Hạng tử *nợ cũ thu bằng tiền mặt* không thuộc F-037 — lượt đọc lại mệnh đề này tìm ra
+nó chưa từng có, trong khi khoản ấy vào két mà **không** vào doanh thu ngày nào (`shop-facts.md`
+§6.14). Một khoản được trả lại bằng **chuyển khoản** thì két không đổi, nên không có hạng tử.
+**Lần trả lại trả trước KHÔNG đi hai hạng tử hoàn chéo ở trên**, kể cả khi nhận bằng chuyển khoản
+mà trả bằng tiền mặt: hai hạng tử ấy bù cho một lần hoàn **đã trừ vào doanh thu** của phương thức
+đã thu, còn khoản trả trước chưa thành doanh thu thì không có doanh thu nào để trừ. Nó có đúng một
+hạng tử, theo phương thức **trả lại** — đi cả hai đường là đếm nó hai lần.
 
 *Viết lại 2026-09-15 (T-073, `docs/decisions.md` **ADR-046**)* — đúng như điều kiện biên thứ hai
 dưới đây đã viết sẵn từ 2026-09-04: chủ quán chốt 2026-09-08 (`U-044` ⇒ `master_plan/shop-facts.md`
@@ -830,8 +852,9 @@ Ba điều kiện biên của cùng mệnh đề:
 - **Mỗi ngày bán có đúng MỘT con số tiền đầu két** — mặc định cố định, sửa được
   (`shop-facts.md` §8.5). Một ngày **không có** con số ấy thì phép trừ không chạy được, và ngày ấy
   **chưa** đối soát xong; nó không được coi là *"lệch"*.
-- **Đường duy nhất làm tiền két vơi trong buổi mà doanh thu tiền mặt không chứa là một lần hoàn
-  tiền MẶT cho khoản đã CHUYỂN KHOẢN** — và nó đã có hạng tử của nó ở trên. Quán **không** có
+- **Hai đường duy nhất làm tiền két vơi trong buổi mà doanh thu tiền mặt không chứa là một lần hoàn
+  tiền MẶT cho khoản đã CHUYỂN KHOẢN và một lần trả lại TIỀN MẶT cho khoản trả trước chưa thành
+  doanh thu** — cả hai đã có hạng tử ở trên (đường thứ hai thêm 2026-09-28, **ADR-059**). Quán **không** có
   nghiệp vụ nộp bớt tiền giữa buổi (chủ quán chốt 2026-09-04, `A4` ⇒ §8.5), nên ngoài hạng tử ấy
   **không** có khoản rút nào phải cộng lại. Mỗi lần hoàn chéo phải đọc ra được từ vết hoàn tiền —
   vết ấy nay ghi cả **phương thức trả lại** (§6.4) — nên hai hạng tử mới mở ra được thành danh sách
@@ -874,6 +897,17 @@ một khách đã trả tiền mặt **60.000** được hoàn bằng **chuyển
 doanh thu tiền mặt còn **740.000**, hạng tử cộng **60.000** ⇒ vế phải **800.000** ⇒ **xanh**. Một
 lần hoàn mà vết **không** ghi phương thức trả lại ⇒ ngày ấy **chưa** đối soát xong, không phải
 *"lệch"* — cùng hình dạng ngày chưa có tiền đầu két.
+Kịch bản **trả trước** (thêm 2026-09-28, ADR-059), tiền đầu két **1.200.000** cả hai ngày: thứ Hai
+bán **800.000** tiền mặt, nhận trả trước **50.000** tiền mặt cho đơn B và **40.000** chuyển khoản
+cho đơn E, cả hai lấy hàng thứ Ba ⇒ két **2.050.000**, phép trừ ra **850.000**; vế phải
+800.000 + 50.000 = **850.000** ⇒ **xanh**; bỏ hạng tử *trả trước nhận* ⇒ lệch **50.000** ⇒ phải
+**đỏ**. Thứ Ba bán **700.000** tiền mặt, đơn B đóng (doanh thu tiền mặt thứ Ba gồm cả 50.000 của
+nó, tức **750.000**), đơn E huỷ và POS trả lại **40.000** bằng tiền mặt trong két ⇒ két
+**1.860.000**, phép trừ ra **660.000**; vế phải 750.000 − 50.000 − 40.000 = **660.000** ⇒ **xanh**.
+Doanh thu thứ Hai **không** chứa 50.000 của B, doanh thu thứ Ba **không** bị trừ 40.000 của E
+(`I-014`). Kịch bản **trả nợ bằng tiền mặt**: cùng ngày cơ sở, bàn 5 trả **100.000** nợ của hôm
+trước bằng tiền mặt ⇒ két **2.100.000**, phép trừ ra **900.000**; vế phải 800.000 + 100.000 ⇒
+**xanh**; bỏ hạng tử ấy ⇒ lệch **100.000** ⇒ phải **đỏ**.
 
 ⛔ **Phép đếm ở vế trái còn một câu chưa có lời: đếm MỘT TỔNG hay đếm TỪNG MỆNH GIÁ** — **U-038**
 (`docs/product/99-unknowns.md`). Invariant này đúng cho cả hai đường ra, nhưng *cách chứng minh nó*
@@ -883,6 +917,7 @@ giá trước khi U-038 có lời.
 
 *Phát hiện ở T-056, 2026-09-04, từ lời chủ quán trả lời `A3` và `A4`.*
 *Viết lại ở T-073, 2026-09-15, từ lời chủ quán trả lời `U-044` (2026-09-08).*
+*Thêm bốn hạng tử ở T-112, 2026-09-28 — ba cho khoản trả trước (`U-036`, ADR-040), một cho nợ cũ thu bằng tiền mặt; `docs/decisions.md` **ADR-059**.*
 
 ### I-022 — Một đơn mang đi không tồn tại được khi thiếu một trường liên hệ bắt buộc của kênh và cách trao hàng của nó
 
