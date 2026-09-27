@@ -3,6 +3,10 @@
 Read `CLAUDE.md` before starting work. It owns the shared repository rules for
 both Claude Code and Codex; this file only connects Codex to those rules.
 
+Everything you tell the repo owner — answers, questions, progress notes and
+the final report of a work order or task — follows the language rule in
+`CLAUDE.md` §1 (*Ngôn ngữ trả lời*): Vietnamese, as easy-to-read prose.
+
 Run `./scripts/brief.sh` at session start and after context loss or a handoff,
 then read only the task and owner files it points to that are relevant.
 The Claude hooks in `.claude/settings.json` do not supply this step to Codex.

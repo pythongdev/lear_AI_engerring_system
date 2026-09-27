@@ -20,11 +20,24 @@ at their single owner. Mechanism detail for a given gate lives in that script's
 own header comment, not here — this file loads into every session, so every
 extra line is fixed tax.
 
-**Ngôn ngữ trả lời:** người dùng dùng tiếng Việt. Mọi câu trả lời trực tiếp cho
-người dùng viết bằng tiếng Việt, dạng văn xuôi (câu hoàn chỉnh, không liệt kê
-gạch đầu dòng trừ khi nội dung thật sự cần danh sách). Quy tắc này chỉ áp dụng
-cho lời trả lời trong hội thoại — không đổi ngôn ngữ hay văn phong của tài
-liệu, code, tên biến, hay bất cứ nội dung nào có owner riêng ở §2.
+**Ngôn ngữ trả lời:** người dùng dùng tiếng Việt. **Mọi điều** Claude Code hay
+Codex cần truyền đạt cho người dùng đều viết bằng tiếng Việt, dạng văn xuôi dễ
+hiểu: câu trả lời trong hội thoại, cập nhật giữa chừng, câu hỏi cần người dùng
+quyết, báo cáo cuối task và cuối phiên (§7.3, §8), báo cáo Codex gửi lại sau
+một phiếu việc (§7.4), và phần ghi chú bàn giao người dùng sẽ đọc. Văn xuôi ở
+đây nghĩa là câu hoàn chỉnh, nối với nhau bằng lý do và hệ quả — đã làm gì, vì
+sao, còn gì chưa xong và người dùng cần làm gì tiếp — thay vì chuỗi gạch đầu
+dòng cụt, bảng, hay mã định danh đứng trơ không kèm lời giải thích. Chỉ dùng
+danh sách khi nội dung thật sự là danh sách (ví dụ các bước phải làm theo thứ
+tự). Những thứ có dạng bắt buộc riêng vẫn giữ dạng ấy — khối commit (§6.1),
+lệnh cần chạy, output của gate làm bằng chứng, link tới câu hỏi mở (§7.3),
+bảng Acceptance → bằng chứng trong khuôn báo cáo của phiếu việc
+(`docs/prompt-guideline.md` §6) —
+nhưng câu dẫn trước và sau chúng vẫn là văn xuôi, và mỗi mã như `U-XXX`,
+`F-XXX`, `T-XXX` được nhắc tới phải đi kèm một câu nói nó là gì
+(2026-09-27, chủ repo, T-105). Quy tắc này chỉ áp dụng cho lời gửi người dùng —
+không đổi ngôn ngữ hay văn phong của tài liệu, code, tên biến, hay bất cứ nội
+dung nào có owner riêng ở §2.
 
 Ceremony scales with risk (L0–L3): most changes owe almost nothing, a few owe a
 lot. The levels are defined in `README.md`, what each one costs here is §3, and
