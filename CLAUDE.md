@@ -52,7 +52,7 @@ is a bug to fix now.
 | Định nghĩa **một ngày bán** cho phép cộng tiền + mốc tính tiền + nguồn thời gian | `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` — pha 1, sinh ra ở P1-03 |
 | Quy ước dữ liệu: tiền, mốc và múi giờ, khoá, đặt tên, trạng thái, không xoá cứng, văn bản và định danh — mỗi quy ước một mã `QD-XX` và một phép kiểm | `docs/product/2-db/01-quy-uoc-du-lieu.md` — pha 2, sinh ra ở P2-03 (ADR-035, ADR-053 luật 3) |
 | Schema: tên bảng, tên cột, khoá ngoại | **chưa có owner** — sinh ra ở **pha 2**, cùng `docs/product/2-db/` (ADR-035). Thứ tự việc, mức và cổng của pha 2: `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (ADR-049) |
-| Quy ước code: stack, cấu trúc thư mục, đặt tên, khung test | **chưa có owner** — sinh ra ở **pha 2**, cùng `docs/product/2-db/` (ADR-035, ADR-039). Không ai sở hữu dòng này thì phiên đầu tiên viết code sẽ tự bịa quy ước, và cái bịa đó thành fact vì không có chủ để đối chiếu |
+| Quy ước code: DBMS + phiên bản, cách chạy database, migration, khung test, cấu trúc thư mục, stack, tên ràng buộc — mỗi quy ước một mã `QC-XX` và một phép kiểm | `docs/product/2-db/10-quy-uoc-code.md` — pha 2, sinh ra ở P2-12 (ADR-035, ADR-039, ADR-055) |
 | Hợp đồng API: endpoint, quyền theo vai, chữ ký | **chưa có owner** — sinh ra ở **pha 3**, cùng `docs/product/3-be/` (ADR-035) |
 | Route, component | **chưa có owner** — sinh ra ở **pha 4**, cùng `docs/product/4-fe/` (ADR-035) |
 | Tasks — trạng thái của **mọi** task (`Ready`/`In Progress`/`Done`) | `work/backlog.md` |
@@ -69,12 +69,12 @@ is a bug to fix now.
 | Proposals about this system that were **not** adopted | `work/proposals/` |
 
 Five of the rows above are the **phase ownership boundary** (`docs/decisions.md`
-ADR-035, 2026-09-04). Four of them say *chưa có owner* on purpose: the folder of
+ADR-035, 2026-09-04). Those still saying *chưa có owner* do so on purpose: the folder of
 a phase is created together with that phase's first line of content, never before,
 and a row changes to the real file name **in the same change** that writes its
 first content. `docs/product/2-db/` opened 2026-09-26 (P2-03, *Quy ước dữ liệu*
-row); *Schema* changes at P2-04 and *Quy ước code* at P2-12 — the phase-2 plan
-§5 reading, still awaiting the repo owner's confirmation. Until a row has its
+row); *Quy ước code* got its owner 2026-09-27 (P2-12) and *Schema* changes at
+P2-04 — the phase-2 plan §5 reading, still awaiting the repo owner's confirmation. Until a row has its
 owner, no document may name what it owns: a phase writing what a later phase
 owns is a bug even when every gate is green. `scripts/check-phase-boundary.sh`
 (Gate 1d, §5, ADR-039) catches the most common shape of this in
@@ -110,7 +110,7 @@ is where Gate 1b does not check links (§5).
 AGENTS.md          Codex entry point → CLAUDE.md
 CLAUDE.md          shared rules — read first
 docs/              product/ → 00-index.md, 0-ba/… (behavior), 1-system-design/
-                   (architecture), 2-db/ (data conventions, schema),
+                   (architecture), 2-db/ (data + code conventions, schema),
                    99-unknowns.md — all by phase;
                    decisions, prompt guideline
 work/              backlog.md (trạng thái mọi task), backlog_SD.md (mô tả pha 1),
@@ -120,7 +120,7 @@ work/              backlog.md (trạng thái mọi task), backlog_SD.md (mô t�
 quality/           invariants.md, review-gate.md
 scripts/           gate.sh → check-scope.sh + check-links.sh
                    + check-doc-status.sh + check-phase-boundary.sh + verify.sh
-                   + check-commit-block.sh; brief.sh (§7);
+                   (→ db-check.sh) + check-commit-block.sh; brief.sh (§7);
                    hooks/ → commit-msg (Gate 8, §6.2), install-hooks.sh
 master_plan/       domain facts for the current project
 prompt/            prompt sets built from master_plan/
@@ -262,8 +262,10 @@ It runs, in order:
    `scripts/check-phase-boundary.ignore`, one substring per line with a reason
    comment above it.
 5. `scripts/verify.sh` (Gate 1) — Go: `gofmt` check, `go build`, `go test`;
-   Node: `npm test` / `lint` / `build` when present, then every
-   `scripts/*.test.sh`. Skipped when the change touches documentation only.
+   Node: `npm test` / `lint` / `build` when present; `scripts/db-check.sh`
+   when `db/`, `compose.yaml` or `docs/product/2-db/` changed (needs Docker —
+   `10-quy-uoc-code.md` QC-07); then every `scripts/*.test.sh`. Skipped when
+   the change touches documentation only.
 6. `scripts/check-commit-block.sh` (Gate 7) — **hook mode only**, and only once
    the five above are green: tracked changes are waiting to be committed, so the
    turn must hand over the commit block (§6.1). Untracked files and
@@ -541,6 +543,16 @@ unclear rule stops that part of the work and goes into the report. The integrato
 Codex's report is a claim, not evidence (§5). `git commit` stays the repo owner's
 (§6). Procedure, commands and the work-order template:
 `docs/prompt-guideline.md` §6.
+
+**Small tasks without Claude** (2026-09-27, repo owner; ADR-054 *Sửa đổi*). An
+L0/L1 task the repo owner hands Codex directly, with no work order, has the
+repo owner as lead. Codex may then also move that task's own status in
+`work/backlog.md`, write its detail entry, declare and clear `work/scope.txt`,
+add an `F-XXX` finding and add an open `U-XXX`. It still never decides a
+business question, never edits `docs/decisions.md`,
+`master_plan/shop-facts.md` or `quality/invariants.md`, never closes an
+unknown, never commits. A task that turns out L2+ or needs one of those owners
+goes back to Claude.
 
 ## 8. Definition of Done
 

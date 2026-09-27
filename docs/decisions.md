@@ -71,6 +71,7 @@ có câu trả lời mới từ người.
 | ADR-052 | Claude Code và Codex dùng chung luật; AGENTS.md là điểm vào mỏng | Đã chốt 2026-09-25 | — | T-088; giữ lõi Gate 7, phân biệt hook và chạy trực tiếp |
 | ADR-053 | **Pha 2 dựng trên nền gì và cái gì chứng minh nó còn đúng** — `P2-12` (có chọn DBMS + phiên bản) vào *Cần xong trước* của năm lát `P2-04`…`P2-08`; khi đã có file migration thì **migration thắng** cho tên · kiểu · ràng buộc, `.md` giữ ý định, lệch ⇒ `F-XXX`, `P2-09` biến phép đối chiếu tên bảng thành lệnh; mỗi quy ước dữ liệu của `P2-03` kèm **một phép kiểm chạy được**, gom vào bộ `P2-11` | **Đã chốt** 2026-09-25 — chủ repo xác nhận luật 2 ý 1 (*code dựng database thắng*); ý 2 · 3 là phần suy ra của phiên | — | T-096; đổi *Cần xong trước* của `P2-04`…`P2-08`; không chọn DBMS |
 | ADR-054 | **Claude quyết, Codex thi công** — Claude giữ chọn task, mức, Acceptance, scope, thiết kế, ADR, unknowns, lời chủ quán, duyệt, tích hợp, khối commit; Codex làm theo phiếu trong worktree riêng, không quyết nghiệp vụ, không commit | Đã chốt 2026-09-27 | — | T-100; nối ADR-052; quy trình ở `docs/prompt-guideline.md` §6.1 |
+| ADR-055 | **DBMS là PostgreSQL 17** — chọn vì lát bán hàng lõi cần khoá duy nhất chỉ áp cho vài trạng thái, DDL trong giao dịch và kiểu mốc không vướng 2038; loại MySQL 8.4 của `prompt-fullstack.md` §3.4 và SQLite. Quy ước code ở `docs/product/2-db/10-quy-uoc-code.md` | Đã chốt 2026-09-27 (giao cho phiên) | — | mở `P2-04`…`P2-08` |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3656,4 +3657,79 @@ cho Codex hôm nay còn ít vì repo phần lớn là tài liệu; sẽ tăng t�
 Codex không có hook, nên brief và gate phía Codex vẫn dựa vào phiếu — bù bằng bước duyệt của Claude.
 Cờ `codex exec` có thể đổi giữa các bản.
 
+**Sửa đổi 2026-09-27 (T-101):** chủ repo: *"khi làm task mới claude chỉ đạo codex làm nhưng cũng có
+những task nhỏ thì tôi và codex sẽ tự làm nên những công việc đó codex có thể sửa 1 số file"*. Task
+L0/L1 chủ repo giao thẳng cho Codex, không qua phiếu, thì chủ repo là người dẫn: Codex được đổi trạng
+thái của chính task ấy, viết entry chi tiết, khai/gỡ scope, thêm `F-XXX` và thêm `U-XXX` đang mở.
+**Suy ra, chưa được xác nhận** (`CLAUDE.md` §7.2): danh sách *"một số file"* là do phiên chọn — vẫn
+để ngoài tay Codex `docs/decisions.md`, `shop-facts.md`, `invariants.md`, việc đóng unknown và
+`git commit`, vì đó là chỗ sự thật nghiệp vụ bị bịa (F-003, F-004); chủ repo muốn nới thêm thì chỉ
+cần một câu. Task hoá ra L2+ hoặc cần các owner ấy thì trả về Claude.
+
 **Applies to:** `CLAUDE.md` §7.4 · `AGENTS.md` · `docs/prompt-guideline.md` §6.1.
+
+---
+
+### ADR-055 — DBMS là PostgreSQL 17
+
+**Trạng thái:** **Đã chốt** 2026-09-27, **giao cho phiên**. Chủ repo, khi được hỏi *"chọn DBMS
+cho `P2-12`"*, trả lời nguyên văn: *"DBMS cho P2-12: làm theo đề xuất của bạn"*. Đó là lời **giao
+việc chọn trước khi thấy phương án**, không phải lời xác nhận một phương án cụ thể (`CLAUDE.md`
+§7.2 — *cái được bảo ≠ cái suy ra*): chủ repo đọc ADR này rồi muốn đổi thì chỉ cần một câu, và lượt
+đổi phải xong **trước** khi lát đầu tiên (`P2-04`) có migration. Task **P2-12**.
+
+**Context:**
+**ADR-053** luật 1 buộc chọn DBMS + phiên bản trước lát lược đồ đầu tiên. Đề xuất duy nhất có sẵn là
+*"MySQL 8.4 LTS"* ở `master_plan/prompt-fullstack.md` §3.4 (2026-08-31). Đó là bản xuất khẩu, không
+sở hữu gì (**ADR-035** luật 3), và được viết **trước** phần lớn lời chốt của chủ quán. Năm lát cần
+ba thứ từ DBMS: (1) `I-001` — *một bàn tối đa một phiên còn nợ tiền* — là một **khoá duy nhất chỉ
+áp cho vài trạng thái**; (2) mỗi migration hoặc chạy trọn, hoặc không để lại gì; (3) một kiểu mốc
+thoả cả ba điều kiện của `QD-30`. Bằng chứng dự án cũ, không phải dữ kiện quán này:
+`work/proposals/from_old_project/data_base/nghien-cuu.md` §1.3 — MySQL **không có** khoá duy nhất
+có điều kiện, phải mô phỏng bằng cột sinh trả `NULL` rồi đặt `UNIQUE` lên cột ấy; và dự án cũ đã
+viết điều kiện theo **một giá trị trạng thái**, nên ràng buộc nhả ra đúng lúc quầy bấm tính tiền.
+
+**Decision:** PostgreSQL, phiên bản chính **17**, cho mọi môi trường. Quy ước chi tiết — cách chạy,
+vai, kiểu, migration, khung test, thư mục — ở `docs/product/2-db/10-quy-uoc-code.md` `QC-01`…`QC-10`.
+Ba lý do, mỗi lý do một nhu cầu ở trên:
+1. **Khoá duy nhất có điều kiện là cú pháp gốc** (`CREATE UNIQUE INDEX … WHERE …`): điều kiện viết
+   theo **nghĩa** — *bàn còn nợ tiền*, gồm cả *chờ thanh toán* — đọc thẳng được, không qua một cột
+   sinh mà người đọc phải giải mã. Ràng buộc kiểm được thực thi từ trước tới nay, không phụ thuộc
+   bản vá.
+2. **DDL chạy trong giao dịch:** một migration hỏng ở câu thứ năm thì bốn câu trước cũng lùi. MySQL
+   tự chốt từng câu DDL, nên migration hỏng giữa chừng để lại một lược đồ nửa vời mà công cụ đánh
+   dấu *dirty*.
+3. **`timestamptz`** cất một thời điểm tuyệt đối, phạm vi tới năm 294276, micro giây — thoả cả ba
+   điều kiện của `QD-30`. Kiểu `TIMESTAMP` của MySQL hết hạn năm 2038.
+
+**17** chứ không 18: bản chính mới nhất đã qua hơn một năm vá, hỗ trợ tới tháng 11/2029. Việc lên
+18 sau này là một ADR mới (`QC-01`). Bộ kiểm (`scripts/db-check.sh`) đã chạy trên 17.11:
+`QD-01`…`QD-61` và `QC-01`…`QC-10` ra 0 dòng trên cơ sở dữ liệu rỗng; một bảng cố tình sai làm đỏ
+mười phép `QD` dạng SQL, hai phép `QC` và cả hai phép dạng lệnh có dữ liệu để soi (output ở *Bàn giao*
+của `P2-12`, `work/backlog_DB.md`).
+
+**Rejected alternatives:**
+- **MySQL 8.4 LTS** (đề xuất §3.4). Chạy được, và dự án cũ đã dùng nó. Bị loại vì cả ba lý do trên:
+  `I-001` phải mô phỏng bằng cột sinh — đúng chỗ dự án cũ viết sai điều kiện; DDL không lùi được;
+  `TIMESTAMP` có hạn 2038, buộc mọi lát phải nhớ tránh một kiểu.
+- **SQLite.** Một file, không cần server — hợp với quán một máy. Bị loại vì quán có **nhiều máy ghi
+  đồng thời** (năm kênh, bốn trạm, POS), SQLite khoá cả file mỗi lần ghi, và việc giữ đúng khi
+  hai máy cùng ghi một bàn là việc năm lát muốn giao cho database, không cho ứng dụng.
+- **PostgreSQL 18.** Mới hơn, hỗ trợ lâu hơn một năm. Không có tính năng nào năm lát cần mà 17
+  thiếu; chọn 17 để bản đầu tiên chạy trên bản đã vá lâu nhất.
+
+**Hệ quả:**
+- Câu *"MySQL 8.4"* ở `master_plan/prompt-fullstack.md` §3.4 nay sai. File ấy không sở hữu gì, nên
+  không sửa nội dung; một dòng ở đầu §3.4 trỏ về đây.
+- Các phần khác của §3.4 (Go, Next.js, golang-migrate, Node 24) **không** được ADR này chốt.
+  `QC-05` dùng golang-migrate và `QC-09` dùng Go · Next.js như **đề xuất**; chủ repo chưa đọc lại
+  chúng sau ngày 2026-08-31.
+- Các câu kiểm `QD-XX` của `01-quy-uoc-du-lieu.md` nay viết bằng cú pháp PostgreSQL (vế ASCII của
+  `QD-01`, vế `PUBLIC` của `QD-50`, vế kiểu văn bản của `QD-60`); nghĩa của chúng không đổi.
+
+**Chỗ ADR này KHÔNG chốt:** máy chạy thật, sao lưu (**F-034**), cách backend kết nối (`QC-06`, pha
+3).
+
+**Applies to:** `docs/product/2-db/10-quy-uoc-code.md` · `docs/product/2-db/01-quy-uoc-du-lieu.md`
+§0 · `compose.yaml` · `db/` · `scripts/db-check.sh` · `scripts/verify.sh` ·
+`master_plan/prompt-fullstack.md` §3.4 (một dòng trỏ).
