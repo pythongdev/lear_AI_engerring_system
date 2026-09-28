@@ -298,3 +298,225 @@ thái phiên, không bao giờ vào commit.
 | Kết quả đo đầy đủ | [`07-cong-chat-luong-pha-1.md`](../product/1-system-design/07-cong-chat-luong-pha-1.md) §7 ô 10 |
 | Hai mã lượt ấy mở ra | [`work/findings.md`](../../work/findings.md) → `F-040` · `F-041` |
 | Cách chấm kết quả sau khi tôi chạy xong | [`quality/review-gate.md`](../../quality/review-gate.md) |
+
+
+các bước làm cụ thể 
+
+Tôi đã đọc cả ba file trong docs/work-flow-session/. Để chỉ ra được câu lệnh thật chứ không chỉ kể lại, tôi mở thêm những gì ca này để lại: prompt gốc P1-12-ra-cheo-ranh-gioi-pha-L1.md, mô tả dài trong work/backlog_SD.md:1023, commit bf39be5, ô 10 đúng như lúc commit đó ghi, hai finding F-040/F-041, quality/review-gate.md và .claude/settings.json.
+
+Ba file quan hệ với nhau thế này. workflow-phien-lam-viec.md mô tả luồng chung dưới dạng quy tắc. vi-du-mot-task-chay-that-P1-12.md mổ lại một lượt có thật theo đúng luồng ấy. tom_tat_du_an.md là bản tóm tắt dự án chụp ngày 2026-09-20. Không file nào trong ba file sở hữu dữ kiện; luật thật nằm ở CLAUDE.md.
+
+Bối cảnh ngắn: P1-12 là bước 12/14 của pha 1 (pha thiết kế hệ thống). Nó kiểm xem luật ADR-035 có được tuân thủ thật hay không. Luật đó nói tài liệu pha 0–1 không được nhắc tên bảng, pha 2 không được nhắc endpoint, pha 3 không được nhắc component.
+
+Dưới đây là từng bước theo đúng thứ tự thời gian.
+
+Bước 0 — Chưa ai gõ gì, brief đã tự chạy
+Cơ chế. Trong .claude/settings.json, hook SessionStart gọi scripts/brief.sh. Hook này chạy khi mở phiên, khi /clear, khi resume và khi context bị nén. Output của nó nằm trong context trước cả câu đầu tiên của người dùng:
+
+
+"SessionStart": [{ "hooks": [{ "type": "command",
+  "command": "\"${CLAUDE_PROJECT_DIR:-.}/scripts/brief.sh\"" }] }]
+Thứ lấy ra. Brief có các mục: task In Progress, scope đang khai, task Ready tiếp theo, finding đang mở, câu hỏi nghiệp vụ còn mở, ADR mới nhất, commit gần đây, ngày sửa cuối của từng file owner, và các thay đổi chưa commit. Brief chỉ in con trỏ (tên file, mã, ngày), không bao giờ chép dữ kiện. Lý do là F-001: một bản sao thứ hai sớm muộn sẽ lệch khỏi bản gốc.
+
+Cách đọc và quyết định ở P1-12. Có ba chi tiết quyết định lượt này trước khi nó bắt đầu.
+
+P1-11 đã Done, nên P1-12 được phép chạy (prompt ghi "cần xong trước: P1-11"). Nếu brief nói khác, việc đầu tiên phải làm là hỏi người dùng, không phải bắt tay vào làm.
+work/scope.txt còn 70 pattern của phiên trước. Brief không phân biệt được đó là scope bị bỏ quên hay một phiên khác đang chạy song song trên cùng cây thư mục. Vì vậy quyết định là thêm khối của mình vào cuối, không xoá khối của người khác (F-010, F-014). Xoá đi thì Gate 3 sẽ chấm việc của phiên kia bằng scope của phiên này.
+Danh sách finding bị cắt, có dòng → ĐÃ CẮT. Brief chỉ in sáu mục, trong khi ô 10 sau đó phải nêu những mã không có trong sáu mục ấy. Quyết định là mở thẳng work/findings.md thay vì tin danh sách đã bị cắt. Đây là bài học F-012: một danh sách bị cắt mà không báo đã từng giấu một câu hỏi mở suốt nhiều phiên.
+Vì sao làm vậy. Mỗi phiên Claude bắt đầu mà không nhớ gì. Nếu việc đọc trạng thái hiện tại phụ thuộc vào trí nhớ, sẽ có ngày nó bị quên, và phiên đó sẽ làm việc theo trạng thái của ngày tài liệu được viết. Khi brief mâu thuẫn với điều Claude đang tin thì brief thắng, vì ngày trong brief lấy từ git.
+
+Bước 1 — Rút từ CLAUDE.md những gì cần dùng
+CLAUDE.md được nạp sẵn vào mọi phiên. Có bốn thứ được dùng ở lượt này.
+
+Bảng owner §2 ("một dữ kiện, một chủ"). Trước mọi lần đọc hay ghi, câu hỏi luôn là: dữ kiện này nằm ở file nào?
+Các dòng ghi "chưa có owner" (lúc ấy gồm schema, API, route). Chúng là lệnh cấm: pha 1 không được đặt tên bảng hay endpoint, dù Claude "biết" chúng nên trông thế nào.
+Bảng bậc rủi ro §3, đặc biệt cột "Enforced by". Nghĩa vụ ghi self-discipline là nghĩa vụ không script nào bắt được nếu bị quên, nên phải chủ động giữ.
+§3.8. Chỉ dựng luật, hook hay test mới khi cùng một vấn đề đã tốn công hai lần. Điều này sẽ quyết định ở bước 8.
+Bước 2 — Phân loại: vì sao là L1 mà không phải L2
+Câu hỏi đặt ra là "nếu sai thì hỏng cái gì", không phải "diff to hay nhỏ". Bộ câu hỏi nằm ở docs/prompt-guideline.md §1. Lượt này không đụng tiền, không đụng dữ liệu đã lưu, không đổi hành vi hay hợp đồng, và không quyết thiết kế nào: nó chỉ đo rồi chuyển kết quả đo tới đúng chỗ. Nó có sửa một tài liệu đã ký (ô cổng), nên ít nhất là L1.
+
+Phân loại này có hệ quả ngay. L1 không đòi ADR, nên lượt này không được phép viết ADR chọn cách sửa ba chỗ vi phạm. Nếu tự nâng lên L2, lượt này sẽ kết thúc bằng một quyết định kiến trúc do máy ký thay chủ repo. Bài học rút ra là phân loại sai lên trên cũng hỏng như phân loại sai xuống dưới. Nâng quá thì máy giành mất quyền quyết định. Hạ quá thì không ai chấm được kết quả.
+
+Bước 3 — Lấy context theo "ai sở hữu dữ kiện", không theo "file nào liên quan"
+Câu hỏi sai là "file nào liên quan?", vì trong repo này gần như file nào cũng liên quan một chút. Câu hỏi đúng là "dữ kiện tôi cần do file nào sở hữu?", và câu trả lời tra được ở bảng §2. Thứ tự đọc như sau.
+
+1. Trạng thái task ở work/backlog.md, và chỉ ở đó. Hai file backlog_SD.md và backlog_AD.md chỉ giữ mô tả dài.
+
+2. Mô tả dài của task. Không đọc cả file, mà tìm vị trí trước rồi đọc đúng khối:
+
+
+grep -n "P1-12" work/backlog_SD.md        # → entry nằm ở dòng 1023
+sed -n 1023,1095p work/backlog_SD.md
+Từ khối này lấy ra: Goal, vì sao có task, không làm thì mất gì, danh sách mười bước (bước 5 viết thẳng "chỗ lọt ra trả về bước đã viết nó, không tự sửa hộ ở đây"), và bẫy hay sửa nhầm (F-018: đừng đếm rộng hơn phạm vi).
+
+3. File prompt prompt/SD/P1-12-ra-cheo-ranh-gioi-pha-L1.md. Đọc đủ sáu khối: Context, Goal, Scope, Constraints, Acceptance, Verify. Khối Verify chứa sẵn các lệnh đo. Khối Acceptance có 11 dòng, và đó là thước đo xem lượt này xong hay chưa.
+
+4. Sáu owner mà task thật sự chạm tới. Mỗi file mở ra để trả lời đúng một câu hỏi:
+
+docs/decisions.md → ADR-035, ADR-039: luật đang được đo là gì, và cổng nào đang chấm nó.
+master_plan/SD_master_plan_banh_cuon_ba_thanh.md §3 và §9: ba câu không được viết ra, và luật "ô không tick được thì để trống kèm mã chỗ chặn".
+architecture.md §8 và §12.3: ngoại lệ đã tự khai, phải kể ra như ngoại lệ chứ không như lỗi.
+07-cong-chat-luong-pha-1.md §7: chỗ ghi kết quả của lượt này.
+scripts/check-phase-boundary.sh và file .ignore của nó: bộ mẫu thật, để chạy nguyên văn chứ không viết lại.
+master_plan/shop-facts.md §3 và §5: danh sách kênh bán và trạm.
+Vì sao shop-facts.md quan trọng nhất. Các chuỗi qr_table, staff_pos hay trang_banh trông giống hệt tên bảng, nhưng thật ra là tên kênh bán và tên trạm do pha 0 sở hữu. Nếu không mở file này trước, phép đo sẽ báo 14 vi phạm thay vì 3, và cả báo cáo thành vô dụng.
+
+Khi nào dừng đọc. Khi viết ra được ba thứ: từng dòng Acceptance, owner mà mỗi dữ kiện mới sẽ về, và các pattern của scope. Viết được cả ba mà vẫn muốn mở thêm file thì đó là "đọc cho chắc", nên dừng. Dấu hiệu lấy sai context là phải đoán một định danh nghĩa là gì. Khi đó phải dừng lại và đi tìm owner của nó.
+
+Bước 4 — Chuyển task sang In Progress và khai scope trước lần sửa đầu tiên
+Claude chuyển dòng P1-12 trong work/backlog.md sang In Progress, rồi thêm khối của mình vào cuối work/scope.txt. Khối này khai bảy file được sửa (ô 10 của file cổng, file prompt, prompt/SD/README.md, hai file backlog, SD master plan, findings.md/99-unknowns.md), và ghi rõ trong comment những gì cố ý không có:
+
+
+# Đây là một PHÉP ĐO: bảy file nội dung pha 1 và scripts/ chỉ được ĐỌC, không sửa —
+# chỗ lọt ra trả về bước đã viết nó (work/backlog_SD.md → P1-12, bước 5). Vì thế
+# 01…06 + architecture.md + scripts/ KHÔNG có trong scope này, có chủ ý.
+Vì sao. Ở ca này, scope chính là hình dạng của task. Nếu architecture.md nằm trong scope, đến chỗ vi phạm thứ ba gần như chắc chắn Claude sẽ "tiện tay sửa luôn", và Gate 3 vẫn xanh vì file ấy đã được khai. Để file đó ngoài scope thì Gate 3 sẽ chặn đúng hành vi này.
+
+docs/product/00-index.md được khai nhưng cố ý không dùng. Nó chỉ phải sửa nếu pha 1 thật sự đóng trong lượt này, mà cuối cùng pha 1 không đóng. Khai mà không sửa là hợp lệ. Còn nếu không khai scope, Gate 3 sẽ in scope not declared, skipping, tức gate xanh mà không kiểm gì cả.
+
+Bước 5 — Đo: các lệnh trong khối Verify
+Có hai ràng buộc chi phối toàn bộ bước này. Thứ nhất, luôn in số dòng chưa lọc bên cạnh số đã lọc (F-017), vì một bộ lọc rỗng do viết sai trông giống hệt một bộ lọc rỗng do không có lỗi. Thứ hai, chỉ đo trong docs/product/1-system-design/*.md (F-018).
+
+(1) Tập bị rà, ở mức thô nhất:
+
+
+wc -l docs/product/1-system-design/*.md
+Kết quả là 8 file, tổng 2385 dòng (ví dụ architecture 681, file 07 416). Đây là con số gốc để mọi lượt lọc so sánh.
+
+(2) Lượt A: chạy nguyên văn bộ mẫu của Gate 1d trên cả tám file. Gate 1d thật chỉ quét những file đổi trong lượt, nên trước đó nó chưa bao giờ chạy trên toàn bộ tập:
+
+
+PAT_DB='CREATE[[:space:]]+TABLE|ALTER[[:space:]]+TABLE|...|\b(VARCHAR|BIGINT|SERIAL|TIMESTAMPTZ|NOT[[:space:]]+NULL)\b'
+PAT_API='\b(GET|POST|PUT|PATCH|DELETE)[[:space:]]+/|/api/|/v[0-9]+/'
+PAT_FE='\.(jsx|tsx|vue)\b|<[A-Z][A-Za-z]+[[:space:]]*/?>'
+grep -nEI "$PAT_DB|$PAT_API|$PAT_FE" docs/product/1-system-design/*.md
+Kết quả là 1 dòng (architecture.md:552), và dòng này đã nằm sẵn trong file ignore. Nói cách khác, Gate 1d im lặng hoàn toàn trên cả tập.
+
+(3) Lượt B: động từ HTTP theo sau là đường dẫn không mở đầu bằng /. Đây là chỗ đoán rằng mẫu gốc bị mù:
+
+
+grep -nEI '\b(GET|POST|PUT|PATCH|DELETE)[[:space:]]+[A-Za-z]' docs/product/1-system-design/*.md
+Kết quả là 4 dòng, chính là bốn dòng hợp đồng API ở §12.2 (POST staff/sessions/:id/close…). Từ đây sinh ra F-041.
+
+(4) Lượt C: từ khoá ràng buộc SQL (cờ -w để khớp nguyên từ):
+
+
+grep -nEIw 'UNIQUE|CHECK|INDEX|CASCADE|CONSTRAINT|JOIN|SELECT|INSERT' docs/product/1-system-design/*.md
+Kết quả là 3 dòng.
+
+(5) Lượt D: định danh snake_case trong backtick, đếm theo tần suất:
+
+
+grep -oEI '`[a-z][a-z0-9]*_[a-z0-9_]+`' docs/product/1-system-design/*.md | sort | uniq -c | sort -rn
+Kết quả là 14 dòng. Lượt này bắt buộc đọc tay, vì phần lớn kết quả là tên kênh và tên trạm.
+
+(6) Lượt D2: dạng bảng.cột, loại trừ tên file .md:
+
+
+grep -nEI '`[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*`' docs/product/1-system-design/*.md | grep -v '\.md`'
+Kết quả là 1 dòng (staff.role).
+
+(7) Lượt E: dấu vết của pha 4 (route, component, useState, className, đuôi file code):
+
+
+grep -nEI '\.(jsx|tsx|vue|ts|js|css)\b|<[A-Z][A-Za-z]+[[:space:]]*/?>|\broute\b|\bcomponent\b|useState|className' docs/product/1-system-design/*.md
+grep -nEI '(^|[^a-z.`])/[a-z][a-z0-9-]*/[a-z]' docs/product/1-system-design/*.md \
+  | grep -v '\.md\|docs/\|work/\|scripts/\|quality/\|master_plan/\|prompt/'
+Kết quả là 12 dòng cho lệnh đầu và 0 cho lệnh sau. Lượt E cố ý được viết để không rỗng: nó bắt những câu tài liệu tự khai kiểu "Ở đây không có tên bảng, endpoint, route". Như vậy nó chứng minh bộ lọc có chạy, chỉ là không có route nào để bắt. Nếu lượt E trả về 0, phải nghi lệnh viết sai trước khi kết luận tài liệu sạch.
+
+(8) Kiểm pointer. Gate 1b tự động kiểm link, nhưng có hai thứ nó không kiểm nên phải làm thêm:
+
+
+grep -ohE '\]\([^)]+\)' docs/product/1-system-design/*.md | wc -l      # tổng: 196
+grep -nE '\]\([^)]*/\)' docs/product/1-system-design/*.md             # trỏ thư mục (F-018): 0
+grep -ohE '\]\([^)]*#[^)]+\)' docs/product/1-system-design/*.md | sort -u  # neo #
+for f in ...; do u=$(grep -c ']( *#top)' $f); a=$(grep -c 'id="top"' $f); ...; done  # neo chết: 0
+./scripts/check-links.sh                                               # xanh
+Bước 6 — Phân loại kết quả: chỗ không script nào làm thay được
+Chạy grep chỉ mất vài giây. Việc thật là chia mọi dòng khớp vào ba nhóm, không để dòng nào lửng lơ. Lý do không script nào làm được việc này là: UNIQUE ở §3.1 là vi phạm, UNIQUE ở §12.3 là ngoại lệ đã khai, còn qr_table thì không thuộc cả hai. Với mọi biểu thức chính quy, ba chuỗi này trông như nhau.
+
+Nhóm 1: ngoại lệ có tên. Chỉ có §12.3, và nó được kể ra cùng với ranh giới của chính nó. Câu tự khai của §12.3 chỉ phủ tên bảng, tên cột và chỉ trong một mục. Nó không phủ endpoint và không phủ mục nào khác. Nếu đọc nó thành "phần nợ được miễn" thì một ngoại lệ không có ranh giới sẽ thành tiền lệ cho lần sau.
+
+Nhóm 2: định danh nghiệp vụ do pha 0 sở hữu. Gồm qr_table, staff_pos, phone_preorder (kênh bán, shop-facts.md §5) và trang_banh, gap_banh, don_ban (trạm, §3). Chúng được ghi ra để lượt đo sau không báo nhầm lần nữa.
+
+Nhóm 3: chỗ vi phạm thật. Có ba chỗ, cả ba đều ở architecture.md, còn bảy file kia sạch. Đó là §12.2 dòng 552 và 555–558 (một hợp đồng API bốn dòng), §3.1 dòng 161–163 (UNIQUE trên generated column), và §4 dòng 238 (staff.role).
+
+Bước 7 — git blame: xác định chỗ lỗi thuộc về ai
+
+git blame -L 161,163 --date=short -- docs/product/1-system-design/architecture.md
+git blame -L 238,238 --date=short -- ...
+git blame -L 552,558 --date=short -- ...
+Cả ba chỗ đều trả về commit cf8bd83, ngày 2026-08-31. ADR-035, cái luật mà chúng vi phạm, ra đời 2026-09-04.
+
+Kết quả này đổi hẳn cách hiểu. Đây không phải một bước pha 1 vượt rào. architecture.md được viết trước khi có luật, và khi dựng luật ở P1-01 thì chỉ §8 được viết lại cho khớp; §3.1, §4 và §12.2 không ai rà lại. Nếu bỏ bước blame, báo cáo sẽ viết thành "pha 1 vi phạm luật của chính nó", tức đổ lỗi nhầm chỗ. Luật rút ra là: trước khi viết một chữ nào về một chỗ hỏng, hãy hỏi nó sinh ngày nào, và luật nó vi phạm sinh ngày nào.
+
+Bước 8 — Ghi dữ kiện: hai finding, và không tự sửa gì
+F-040 ghi ba chỗ vi phạm, dùng đúng khuôn năm phần (Problem / Impact / Decision-Fix / Related task / Status: Open). Nó viết ra ba hướng xử lý kèm cái giá của từng hướng, nhưng không chọn hướng nào:
+
+Khai thêm vào ngoại lệ: rẻ nhất, nhưng biến ngoại lệ thành cả một vùng được miễn.
+Viết lại bằng ngôn ngữ tầng, ví dụ "trạng thái này do cơ sở dữ liệu giữ" thay cho UNIQUE.
+Mở pha 3 sớm để chứa hợp đồng API.
+Chọn một trong ba là quyết định thiết kế, tức L2, vượt quá bậc của task. Vì vậy đó là quyền của chủ repo.
+
+F-041 ghi rằng Gate 1d bị mù. Mẫu PAT_API đòi dấu / ngay sau động từ HTTP, trong khi tài liệu viết staff/debts. Ngoài ra, dòng ignore duy nhất ghi lý do là "§12.3" trong khi dòng nó che nằm ở §12.2. Finding ghi luôn mẫu sửa đã thử ([A-Za-z/] bắt đúng bốn dòng), nhưng không sửa scripts/. Có hai lý do: scripts/ nằm ngoài scope, và theo §3.8 đây mới là lần đầu vấn đề xuất hiện. Sửa cổng ngay là đúng theo bản năng nhưng sai theo hệ thống, vì nó biến một lượt đo thành một lượt sửa.
+
+Ô 10 được viết thành - [ ] (không tick), kèm "⛔ Để trống — chỗ chặn: F-040", cùng bảng năm lượt lọc với cả hai con số, ba nhóm phân loại và kết quả blame. Có một chi tiết hiếm gặp: biên bản đo lại nằm trong chính tập bị đo (file 07 là một file pha 1). Vì vậy ngay sau khi viết xong, các con số tự thay đổi (2385 thành 2459 dòng, lượt D từ 14 thành 31). Ô 10 tự ghi lại điều này và dặn lượt đo sau phải loại mục này ra trước khi đếm.
+
+Cùng lần sửa đó còn cập nhật mục lục đầu findings.md. Dòng ngay dưới **Status:** phải đúng một chữ Open, vì brief.sh đọc theo đúng hình dạng này. Viết Open — ... thì finding sẽ biến mất khỏi brief.
+
+Bước 9 — Kiểm tra chất lượng: hai tầng
+Tầng máy chạy bằng một lệnh:
+
+
+./scripts/gate.sh
+Lệnh này lần lượt chạy:
+
+Gate 3 (check-scope.sh): mọi file đã đổi phải nằm trong scope. Ở ca này, đây là gate chặn việc "tiện tay sửa" architecture.md.
+Gate 1b (check-links.sh): mọi đường dẫn trong tài liệu phải mở được.
+Gate 1c (check-doc-status.sh): một mã không được mang hai trạng thái ở hai chỗ khác nhau.
+Gate 1d (check-phase-boundary.sh): kiểm ranh giới pha.
+Gate 1 (verify.sh): được bỏ qua, vì lượt này chỉ đổi tài liệu.
+Gate này còn được gắn vào hook Stop với tham số --hook. Khi Claude định kết thúc lượt mà gate đỏ, lượt bị chặn lại (exit 2) và lỗi được trả về cho Claude sửa, nên Claude không tự tuyên bố được là đã xong. Khi gate xanh, Gate 7/7b hỏi tiếp: khối commit đâu, và các file trong khối có nằm trong scope không. Khi người dùng gõ git commit, Gate 8 (hook commit-msg của git) chấm subject.
+
+Tầng tự kỷ luật theo quality/review-gate.md. Với L1, phải qua Gate 1 đến 4.
+
+Gate 2 (Acceptance → bằng chứng). Mỗi dòng Acceptance phải chỉ ra được thứ chứng minh nó. Ở P1-12, ánh xạ như sau:
+
+Acceptance	Bằng chứng
+1. Tập bị rà nêu đích danh	output wc -l (8 file, 2385 dòng)
+2–3. Năm lượt lọc, mỗi lượt có số chưa lọc	bảng A–E trong ô 10
+4. Ba nhóm, không dòng nào lửng	danh sách ba nhóm trong ô 10
+5. Mỗi chỗ vi phạm có mục, blame và mã F	output git blame, F-040
+6. Pointer	check-links.sh xanh, 196 pointer, 0 trỏ thư mục, 0 neo chết
+7. Ô 10 không tick trơn	- [ ] kèm mã chặn F-040
+8–9. Bảy file nội dung và scripts/ không đổi	git diff --stat -- docs/.../0*.md .../architecture.md scripts/ → rỗng
+10. Mã mới có ở owner và bảng tổng hợp	F-040, F-041 cùng mục lục của findings.md
+11. Gate	./scripts/gate.sh xanh
+Dòng nào không có bằng chứng thì coi như chưa đạt. Lệnh ở dòng 8–9 rất đáng chú ý: nó chứng minh bằng output rằng Claude không sửa những gì không được sửa.
+
+Gate 4 là rà diff theo một danh sách dấu hiệu nguy hiểm cố định, không đọc kiểu "xem có hợp lý không". Ở lượt này, dấu hiệu đáng lo nhất là có file .md được tạo ra mà không ai yêu cầu.
+
+Gate 6 là không tự chấm bài của mình. Việc quan trọng nên được một phiên khác, không mang context của phiên đã làm, chấm lại dựa trên diff và acceptance.
+
+Bước 10 — Bàn giao
+work/backlog.md chuyển P1-12 sang Done. Entry trong backlog_SD.md ghi thẳng câu: "Task Đóng ≠ ô cổng xanh". Nghĩa là việc đã làm xong, nhưng câu trả lời của phép đo là "không", nên cổng vẫn 9/10 và pha 1 chưa đóng. Câu "được, sang pha 2" là chữ ký của chủ repo, không phải hệ quả của một task Done. Scope được dọn. Khối commit được viết từ danh sách git đưa ra chứ không từ trí nhớ, và không có work/scope.txt:
+
+
+git diff --name-only HEAD
+git ls-files --others --exclude-standard
+
+git add docs/product/1-system-design/07-cong-chat-luong-pha-1.md \
+  master_plan/SD_master_plan_banh_cuon_ba_thanh.md prompt/SD/P1-12-ra-cheo-ranh-gioi-pha-L1.md \
+  prompt/SD/README.md work/backlog.md work/backlog_SD.md work/findings.md
+git commit -m "P1-12: do ranh gioi pha tren ca pha 1 — o 10 khong tick duoc" -m "..."
+Commit thật bf39be5 có đúng 7 file này (+438/−15). Claude chỉ viết khối lệnh; người dùng mới là người chạy git commit.
+
+Hậu truyện. Ngày 2026-09-20, ở task T-079 (ADR-048), chủ repo chọn hướng 2 trong ba hướng của F-040. Ba chỗ được viết lại bằng ngôn ngữ tầng, mẫu của Gate 1d được nới và kèm test hồi quy, và lúc đó ô 10 mới được tick (10/10).
+
+Năm bài học tách khỏi task này vẫn dùng được
+Đo và dọn là hai lượt khác nhau. Gộp lại thì mất cả phép đo lẫn quyền quyết định của người sở hữu chỗ bị sửa.
+Luôn in con số chưa lọc. Không có nó, câu "không tìm thấy gì" không có nghĩa.
+Chạy git blame trước khi kết luận. Chỗ hỏng sinh ra trước luật là nợ từ trước, không phải vi phạm.
+Ngoại lệ phải có tên và có ranh giới.
+Ô không tick được thì để trống kèm mã chỗ chặn. Giá trị của một cổng nằm ở những lần nó không xanh.
+Tôi chỉ đọc, không sửa file nào, nên không có khối commit. Trong lúc đọc tôi thấy hai tài liệu đã cũ so với hôm nay. tom_tat_du_an.md chụp ngày 2026-09-20 nên vẫn ghi "pha 2 chưa mở" và F-034 (finding về việc mất hẳn dữ liệu đã ghi) còn mở. Thực tế pha 2 đã mở, và F-034 đã đóng ở commit b04715c (T-108). Còn workflow-phien-lam-viec.md §2 vẫn xếp schema vào nhóm "chưa có owner", trong khi schema đã có owner từ P2-04. Nếu bạn muốn, tôi có thể mở một task L0/L1 để cập nhật hai chỗ này.
