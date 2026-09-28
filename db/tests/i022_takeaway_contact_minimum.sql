@@ -25,65 +25,65 @@ DECLARE d1 bigint; t5 bigint; s1 bigint; n bigint;
 BEGIN
   -- Kịch bản âm, một vế một lần.
   PERFORM pg_temp.expect_reject('Delivery thiếu địa chỉ',
-    $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_phone)
-       VALUES ('delivery', 'pending_confirmation', 'door_delivery', '0900000001')$q$,
+    $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, submission_code)
+       VALUES ('delivery', 'pending_confirmation', 'door_delivery', '0900000001', gen_random_uuid()::text)$q$,
     'sales_order_door_delivery_address_check');
   PERFORM pg_temp.expect_reject('Pickup thiếu giờ hẹn lấy',
-    $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_phone)
-       VALUES ('pickup', 'pending_confirmation', 'shop_pickup', '0900000002')$q$,
+    $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, submission_code)
+       VALUES ('pickup', 'pending_confirmation', 'shop_pickup', '0900000002', gen_random_uuid()::text)$q$,
     'sales_order_takeaway_needed_at_check');
   PERFORM pg_temp.expect_reject('Delivery thiếu số điện thoại',
-    $q$INSERT INTO sales_order (channel_code, status, handover_code, delivery_address)
-       VALUES ('delivery', 'pending_confirmation', 'door_delivery', '12 Hàng Bạc')$q$,
+    $q$INSERT INTO sales_order (channel_code, status, handover_code, delivery_address, submission_code)
+       VALUES ('delivery', 'pending_confirmation', 'door_delivery', '12 Hàng Bạc', gen_random_uuid()::text)$q$,
     'sales_order_takeaway_phone_check');
   PERFORM pg_temp.expect_reject('Pickup thiếu số điện thoại',
-    $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_needed_at)
-       VALUES ('pickup', 'pending_confirmation', 'shop_pickup', now())$q$,
+    $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_needed_at, submission_code)
+       VALUES ('pickup', 'pending_confirmation', 'shop_pickup', now(), gen_random_uuid()::text)$q$,
     'sales_order_takeaway_phone_check');
   PERFORM pg_temp.expect_reject('hotline thiếu số điện thoại',
-    $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_needed_at)
-       VALUES ('phone_preorder', 'confirmed', 'shop_pickup', now())$q$,
+    $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_needed_at, submission_code)
+       VALUES ('phone_preorder', 'confirmed', 'shop_pickup', now(), gen_random_uuid()::text)$q$,
     'sales_order_takeaway_phone_check');
   PERFORM pg_temp.expect_reject('hotline số điện thoại chỉ có khoảng trắng',
-    $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at)
-       VALUES ('phone_preorder', 'confirmed', 'shop_pickup', '   ', now())$q$,
+    $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at, submission_code)
+       VALUES ('phone_preorder', 'confirmed', 'shop_pickup', '   ', now(), gen_random_uuid()::text)$q$,
     'sales_order_takeaway_phone_check');
   PERFORM pg_temp.expect_reject('hotline chưa có cách trao hàng',
-    $q$INSERT INTO sales_order (channel_code, status, customer_phone, customer_needed_at)
-       VALUES ('phone_preorder', 'confirmed', '0900000003', now())$q$,
+    $q$INSERT INTO sales_order (channel_code, status, customer_phone, customer_needed_at, submission_code)
+       VALUES ('phone_preorder', 'confirmed', '0900000003', now(), gen_random_uuid()::text)$q$,
     'sales_order_takeaway_handover_check');
   PERFORM pg_temp.expect_reject('hotline chọn giao mà thiếu địa chỉ',
-    $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at)
-       VALUES ('phone_preorder', 'confirmed', 'door_delivery', '0900000004', now())$q$,
+    $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at, submission_code)
+       VALUES ('phone_preorder', 'confirmed', 'door_delivery', '0900000004', now(), gen_random_uuid()::text)$q$,
     'sales_order_door_delivery_address_check');
   -- Vế "Delivery là giao, Pickup là tới lấy" — lách vế địa chỉ bằng nhánh sai.
   PERFORM pg_temp.expect_reject('Delivery mang nhánh tới lấy',
-    $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_phone)
-       VALUES ('delivery', 'pending_confirmation', 'shop_pickup', '0900000005')$q$,
+    $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, submission_code)
+       VALUES ('delivery', 'pending_confirmation', 'shop_pickup', '0900000005', gen_random_uuid()::text)$q$,
     'sales_order_takeaway_handover_check');
   PERFORM pg_temp.expect_reject('Pickup mang nhánh giao',
     $q$INSERT INTO sales_order (channel_code, status, handover_code, customer_phone,
-                                delivery_address, customer_needed_at)
-       VALUES ('pickup', 'pending_confirmation', 'door_delivery', '0900000006', '12 Hàng Bạc', now())$q$,
+                                delivery_address, customer_needed_at, submission_code)
+       VALUES ('pickup', 'pending_confirmation', 'door_delivery', '0900000006', '12 Hàng Bạc', now(), gen_random_uuid()::text)$q$,
     'sales_order_takeaway_handover_check');
 
   -- Kịch bản dương, chống đọc rộng.
-  INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at)
-  VALUES ('phone_preorder', 'confirmed', 'shop_pickup', '0900000007', now());
+  INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at, submission_code)
+  VALUES ('phone_preorder', 'confirmed', 'shop_pickup', '0900000007', now(), gen_random_uuid()::text);
   RAISE NOTICE 'I-022 tạo được: hotline tới lấy, có số và giờ, không địa chỉ';
-  INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at)
-  VALUES ('pickup', 'pending_confirmation', 'shop_pickup', '0900000008', now());
+  INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at, submission_code)
+  VALUES ('pickup', 'pending_confirmation', 'shop_pickup', '0900000008', now(), gen_random_uuid()::text);
   RAISE NOTICE 'I-022 tạo được: Pickup không địa chỉ';
-  INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, delivery_address)
-  VALUES ('delivery', 'pending_confirmation', 'door_delivery', '0900000009', '12 Hàng Bạc')
+  INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, delivery_address, submission_code)
+  VALUES ('delivery', 'pending_confirmation', 'door_delivery', '0900000009', '12 Hàng Bạc', gen_random_uuid()::text)
   RETURNING id INTO d1;
   RAISE NOTICE 'I-022 tạo được: Delivery không giờ khách cần hàng, không tên';
   -- Mệnh đề không áp cho kênh gắn bàn: khách ngồi bàn ẩn danh theo số bàn.
   INSERT INTO dining_table (label) VALUES ('test-5') RETURNING id INTO t5;
   INSERT INTO table_session (status) VALUES ('serving') RETURNING id INTO s1;
   INSERT INTO table_session_member (table_session_id, dining_table_id) VALUES (s1, t5);
-  INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id)
-  VALUES ('qr_table', 'new', s1, t5);
+  INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code)
+  VALUES ('qr_table', 'new', s1, t5, gen_random_uuid()::text);
   RAISE NOTICE 'I-022 không áp: đơn qr_table không liên hệ nào vẫn tạo được';
 
   -- Kịch bản sửa: mệnh đề giữ ở MỌI thời điểm, không chỉ lúc tạo.

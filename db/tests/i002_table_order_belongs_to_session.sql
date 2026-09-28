@@ -10,22 +10,22 @@ BEGIN
   INSERT INTO table_session_member (table_session_id, dining_table_id) VALUES (s1, t5);
 
   BEGIN
-    INSERT INTO sales_order (channel_code, status) VALUES ('qr_table', 'new');
+    INSERT INTO sales_order (channel_code, status, submission_code) VALUES ('qr_table', 'new', gen_random_uuid()::text);
     RAISE EXCEPTION 'I-002: database KHÔNG từ chối đơn qr_table không thuộc phiên nào';
   EXCEPTION WHEN check_violation THEN
     RAISE NOTICE 'I-002 bị từ chối (đơn kênh gắn bàn không có phiên): %', SQLERRM;
   END;
 
   BEGIN
-    INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id)
-    VALUES ('staff_pos', 'confirmed', s1, t7);
+    INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code)
+    VALUES ('staff_pos', 'confirmed', s1, t7, gen_random_uuid()::text);
     RAISE EXCEPTION 'I-002: database KHÔNG từ chối đơn của bàn 7 đổ vào phiên của bàn 5';
   EXCEPTION WHEN foreign_key_violation THEN
     RAISE NOTICE 'I-002 bị từ chối (bàn không thuộc phiên): %', SQLERRM;
   END;
 
-  INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id)
-  VALUES ('qr_table', 'new', s1, t5), ('staff_pos', 'confirmed', s1, t5);
+  INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code)
+  VALUES ('qr_table', 'new', s1, t5, gen_random_uuid()::text), ('staff_pos', 'confirmed', s1, t5, gen_random_uuid()::text);
   RAISE NOTICE 'I-002 hai lượt gọi QR + POS của bàn 5: % đơn, % phiên',
     (SELECT COUNT(*) FROM sales_order WHERE table_session_id = s1),
     (SELECT COUNT(DISTINCT table_session_id) FROM sales_order WHERE table_session_id = s1);

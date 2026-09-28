@@ -6,8 +6,8 @@ DECLARE s1 bigint;
 BEGIN
   BEGIN
     -- Đủ liên hệ của I-022 (T-111): lời từ chối phải đến từ sales_order_status_check.
-    INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at)
-    VALUES ('pickup', 'reopened', 'shop_pickup', '0900000000', now());
+    INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at, submission_code)
+    VALUES ('pickup', 'reopened', 'shop_pickup', '0900000000', now(), gen_random_uuid()::text);
     RAISE EXCEPTION 'I-016: database KHÔNG từ chối trạng thái đơn ngoài §5.2';
   EXCEPTION WHEN check_violation THEN
     RAISE NOTICE 'I-016 bị từ chối (trạng thái đơn ngoài §5.2): %', SQLERRM;

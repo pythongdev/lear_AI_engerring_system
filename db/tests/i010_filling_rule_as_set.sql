@@ -61,8 +61,8 @@ BEGIN
   VALUES ('test-bánh', 100, true) RETURNING id INTO c1;
   INSERT INTO menu_item (name) VALUES ('test-suất') RETURNING id INTO m1;
   -- Đơn pickup mang đủ liên hệ tối thiểu của I-022 (T-111), để chỉ ràng buộc của test này nói.
-  INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at)
-  VALUES ('pickup', 'new', 'shop_pickup', '0900000000', now()) RETURNING id INTO so;
+  INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at, submission_code)
+  VALUES ('pickup', 'new', 'shop_pickup', '0900000000', now(), gen_random_uuid()::text) RETURNING id INTO so;
   INSERT INTO order_line (sales_order_id, quantity, menu_item_id, item_name, unit_price_vnd,
                           component_count)
   VALUES (so, 1, m1, 'test-suất', 110, 1) RETURNING id INTO l1;

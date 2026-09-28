@@ -145,7 +145,7 @@ cộng hai chỗ *suy ra* chưa ai hỏi chủ quán. Chi tiết ở §8.
 | ~~**F-037**~~ | ~~khoản **trả trước** có mốc tính tiền nhưng không có dòng nào trong bảng đối soát~~ — **đã đóng 2026-09-28** (T-112, `docs/decisions.md` **ADR-059**): ba dòng ở `architecture.md` §6.4 · hạng tử `I-021` · `YC-23` | `P2-06` (chỗ cất `YC-23`) · `P2-11` (câu truy vấn) |
 | ~~**F-038**~~ | ~~*thiếu một trường bắt buộc thì đơn không tạo được* là luật pha 0 mà pha 1 không có mệnh đề~~ — **đã đóng 2026-09-28** (T-110, `docs/decisions.md` **ADR-058**): `I-022` · hàng VÒNG ĐỜI · `YC-22` | `P2-04` (xong) → migration ở `T-111` (xong 2026-09-28) |
 | ~~**F-042**~~ | ~~mã QR của bàn *không đoán được và đổi được* chưa có mệnh đề~~ — **đã đóng 2026-09-28** (T-113, `docs/decisions.md` **ADR-060**): `I-023` · hàng TIỀN · `YC-24` | `P2-10` (sinh mã cho dữ liệu mồi) → migration ở `T-114` |
-| ~~**F-043**~~ | ~~*một lần gửi đơn thành đúng một đơn* chưa có mệnh đề~~ — **đã đóng 2026-09-28** (T-115, `docs/decisions.md` **ADR-061**): `I-024` · hàng TIỀN · `YC-25` | `P2-04` (xong) → migration ở `T-116` |
+| ~~**F-043**~~ | ~~*một lần gửi đơn thành đúng một đơn* chưa có mệnh đề~~ — **đã đóng 2026-09-28** (T-115, `docs/decisions.md` **ADR-061**): `I-024` · hàng TIỀN · `YC-25` | `P2-04` (xong) → migration ở `T-116` (xong 2026-09-28) |
 | **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** — `04-yeu-cau-du-lieu.md` §6 dặn **để trống, đừng điền** | `P2-07` |
 | **S-6** | với đơn giao tận nơi, quầy bấm mốc *"đã ra bàn"* **lúc nào** | `P2-07` |
 
@@ -295,7 +295,7 @@ là mở ra đúng loại việc rà mà **F-007** đã đo giá.
 | ~~**F-037**~~ | ~~khoản **trả trước** không có dòng trong bảng đối soát~~ — **đã đóng 2026-09-28** (T-112, **ADR-059**) | `P2-06` · `P2-11` | — |
 | ~~**F-038**~~ | ~~*thiếu một trường bắt buộc thì đơn không tạo được* chưa có mệnh đề và chưa có tầng~~ — **đã đóng 2026-09-28** (T-110, **ADR-058**) | `T-111` — migration mới dựng chỗ cất và ràng buộc tầng 1 của `I-022` — **xong 2026-09-28** | — |
 | ~~**F-042**~~ | ~~mã QR của bàn *không đoán được và đổi được* chưa có mệnh đề nào~~ — **đã đóng 2026-09-28** (T-113, **ADR-060**): `I-023` · hàng TIỀN · `YC-24`; *ai đổi, khi nào* là **U-062** | `T-114` — migration mới dựng chỗ cất mã, lịch sử mã và ràng buộc tầng 1 của `I-023`; `P2-10` sinh mã qua cửa sinh mã ấy, sau `T-114` | — |
-| ~~**F-043**~~ | ~~*một lần gửi đơn thành đúng một đơn* chưa có mệnh đề nào~~ — **đã đóng 2026-09-28** (T-115, **ADR-061**): `I-024` · hàng TIỀN · `YC-25` | `T-116` — migration mới dựng chỗ cất dấu lần gửi và ràng buộc tầng 1 của `I-024` (file của `P2-04` không sửa) | — |
+| ~~**F-043**~~ | ~~*một lần gửi đơn thành đúng một đơn* chưa có mệnh đề nào~~ — **đã đóng 2026-09-28** (T-115, **ADR-061**): `I-024` · hàng TIỀN · `YC-25` | `T-116` — migration mới dựng chỗ cất dấu lần gửi và ràng buộc tầng 1 của `I-024` (file của `P2-04` không sửa) — **xong 2026-09-28** | — |
 | **U-054** | hai con số *tổng* của vế nguyên liệu cộng dồn **từ mốc nào** | lane **admin**, không chặn bước nào ở §6 | chủ quán |
 
 **Một bước bị chặn vẫn chạy được phần không phụ thuộc câu trả lời**, và ghi chỗ trống ra kèm mã —

@@ -11,8 +11,8 @@ BEGIN
   INSERT INTO dining_table (label) VALUES ('test-5') RETURNING id INTO t5;
   INSERT INTO table_session (status) VALUES ('serving') RETURNING id INTO s1;
   INSERT INTO table_session_member (table_session_id, dining_table_id) VALUES (s1, t5);
-  INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id)
-  VALUES ('qr_table', 'new', s1, t5) RETURNING id INTO o1;
+  INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code)
+  VALUES ('qr_table', 'new', s1, t5, gen_random_uuid()::text) RETURNING id INTO o1;
   INSERT INTO order_line (sales_order_id, quantity, is_takeaway,
                           menu_item_id, item_name, unit_price_vnd, component_count)
   VALUES (o1, 2, false, m1, 'test-suất', 100, 1), (o1, 1, true, m1, 'test-suất', 100, 1);
