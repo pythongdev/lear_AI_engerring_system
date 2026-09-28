@@ -1,9 +1,10 @@
 -- I-007 · I-006 (tầng 1, một ranh giới, một cơ chế): đơn của ba kênh không gắn
 -- bàn không thuộc phiên bàn nào, ở mọi thời điểm. Lát: 02-luoc-do-ban-hang.md.
 DO $$
-DECLARE t5 bigint; s1 bigint; o1 bigint;
+DECLARE t5 bigint; s1 bigint; o1 bigint; q5 bigint;
 BEGIN
   INSERT INTO dining_table (label) VALUES ('test-5') RETURNING id INTO t5;
+  q5 := qr_code_issue(t5);  -- lượt gọi qr_table mang mã của bàn (I-023, T-114)
   INSERT INTO table_session (status) VALUES ('serving') RETURNING id INTO s1;
   INSERT INTO table_session_member (table_session_id, dining_table_id) VALUES (s1, t5);
 
@@ -29,7 +30,8 @@ BEGIN
   END;
 
   BEGIN
-    UPDATE sales_order SET channel_code = 'qr_table' WHERE id = o1;
+    -- Mang cả mã QR (T-114), để lời từ chối đến từ ranh giới phiên, không từ I-023.
+    UPDATE sales_order SET channel_code = 'qr_table', qr_code_id = q5 WHERE id = o1;
     RAISE EXCEPTION 'I-007: database KHÔNG từ chối đổi kênh để lách ranh giới';
   EXCEPTION WHEN check_violation THEN
     RAISE NOTICE 'I-007 bị từ chối (đổi kênh đơn lẻ thành kênh gắn bàn mà không có phiên): %', SQLERRM;

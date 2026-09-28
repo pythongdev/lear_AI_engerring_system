@@ -1,7 +1,7 @@
 -- YC-05: dấu "đem về" ở mức một suất; một đơn của phiên bàn mang cùng lúc suất ăn
 -- tại chỗ và suất đem về; dấu ấy không làm suất rời phiên. Lát: 02-luoc-do-ban-hang.md.
 DO $$
-DECLARE t5 bigint; s1 bigint; o1 bigint; c1 bigint; m1 bigint; r record;
+DECLARE t5 bigint; s1 bigint; o1 bigint; c1 bigint; m1 bigint; r record; q5 bigint;
 BEGIN
   -- Món và ảnh chụp của nó (lát P2-05, 03-luoc-do-menu-gia.md) — chỉ để dòng đơn ghi
   -- được; số giả, không phải giá quán.
@@ -9,10 +9,11 @@ BEGIN
   VALUES ('test-bánh', 100, true) RETURNING id INTO c1;
   INSERT INTO menu_item (name) VALUES ('test-suất') RETURNING id INTO m1;
   INSERT INTO dining_table (label) VALUES ('test-5') RETURNING id INTO t5;
+  q5 := qr_code_issue(t5);  -- lượt gọi qr_table mang mã của bàn (I-023, T-114)
   INSERT INTO table_session (status) VALUES ('serving') RETURNING id INTO s1;
   INSERT INTO table_session_member (table_session_id, dining_table_id) VALUES (s1, t5);
-  INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code)
-  VALUES ('qr_table', 'new', s1, t5, gen_random_uuid()::text) RETURNING id INTO o1;
+  INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code, qr_code_id)
+  VALUES ('qr_table', 'new', s1, t5, gen_random_uuid()::text, q5) RETURNING id INTO o1;
   INSERT INTO order_line (sales_order_id, quantity, is_takeaway,
                           menu_item_id, item_name, unit_price_vnd, component_count)
   VALUES (o1, 2, false, m1, 'test-suất', 100, 1), (o1, 1, true, m1, 'test-suất', 100, 1);

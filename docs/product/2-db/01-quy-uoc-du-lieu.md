@@ -560,7 +560,7 @@ so **sau khi đã có dữ liệu** là dựng lại cả bảng lẫn mọi ch�
 | ~~DBMS · phiên bản · tên kiểu · mọi tham số ở §0~~ — **đã gỡ 2026-09-27**: PostgreSQL 17, tham số ở §0, tên kiểu ở `10-quy-uoc-code.md` `QC-04` | **ADR-053** luật 1 | `P2-12` (**ADR-054**) |
 | Tên bảng, tên cột của từng lát | file migration thắng (**ADR-053** luật 2) | `P2-04`…`P2-08` |
 | Đơn vị **lượng** (nguyên liệu tính theo cân, theo cái…) | Mục này chỉ nói tiền; lượng thuộc lane admin, luật còn đang thu | lane admin — `work/backlog_AD.md` |
-| Cách sinh mã QR của bàn | Pha 1 có mệnh đề từ 2026-09-28 (`quality/invariants.md` **I-023**, **ADR-060**): mã không đoán được, sinh ở một cửa — mệnh đề cố ý không chọn cơ chế | `work/backlog.md` **T-114** |
+| ~~Cách sinh mã QR của bàn~~ — **đã gỡ 2026-09-28 (`T-114`)**: một cửa `qr_code_issue`, mã từ nguồn ngẫu nhiên mạnh — [`02-luoc-do-ban-hang.md`](02-luoc-do-ban-hang.md) §2 hàng `I-023` | Pha 1 có mệnh đề từ 2026-09-28 (`quality/invariants.md` **I-023**, **ADR-060**) | `T-114` — xong |
 | Mất hẳn bản ghi vì hỏng máy | Chuyện sao lưu, không phải chuyện lệnh xoá (`QD-50`) | pha 5 — YC-21 ở `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8; T-109 (`work/backlog.md`), ADR-057 |
 
 ---

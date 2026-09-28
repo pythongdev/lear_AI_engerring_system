@@ -21,7 +21,7 @@ BEGIN
 END $$;
 
 DO $$
-DECLARE d1 bigint; t5 bigint; s1 bigint; n bigint;
+DECLARE d1 bigint; t5 bigint; s1 bigint; n bigint; q5 bigint;
 BEGIN
   -- Kịch bản âm, một vế một lần.
   PERFORM pg_temp.expect_reject('Delivery thiếu địa chỉ',
@@ -80,10 +80,11 @@ BEGIN
   RAISE NOTICE 'I-022 tạo được: Delivery không giờ khách cần hàng, không tên';
   -- Mệnh đề không áp cho kênh gắn bàn: khách ngồi bàn ẩn danh theo số bàn.
   INSERT INTO dining_table (label) VALUES ('test-5') RETURNING id INTO t5;
+  q5 := qr_code_issue(t5);  -- lượt gọi qr_table mang mã của bàn (I-023, T-114)
   INSERT INTO table_session (status) VALUES ('serving') RETURNING id INTO s1;
   INSERT INTO table_session_member (table_session_id, dining_table_id) VALUES (s1, t5);
-  INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code)
-  VALUES ('qr_table', 'new', s1, t5, gen_random_uuid()::text);
+  INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code, qr_code_id)
+  VALUES ('qr_table', 'new', s1, t5, gen_random_uuid()::text, q5);
   RAISE NOTICE 'I-022 không áp: đơn qr_table không liên hệ nào vẫn tạo được';
 
   -- Kịch bản sửa: mệnh đề giữ ở MỌI thời điểm, không chỉ lúc tạo.

@@ -10,7 +10,9 @@ thuộc file migration
 và — cho liên hệ của đơn mang đi, thêm ở `T-111` ngày 2026-09-28 —
 [`db/migrations/20260928090000_lien_he_don_mang_di.up.sql`](../../../db/migrations/20260928090000_lien_he_don_mang_di.up.sql),
 và — cho dấu lần gửi, thêm ở `T-116` cùng ngày —
-[`db/migrations/20260928100000_dau_lan_gui.up.sql`](../../../db/migrations/20260928100000_dau_lan_gui.up.sql).
+[`db/migrations/20260928100000_dau_lan_gui.up.sql`](../../../db/migrations/20260928100000_dau_lan_gui.up.sql),
+và — cho mã QR của bàn, thêm ở `T-114` cùng ngày —
+[`db/migrations/20260928110000_ma_qr_ban.up.sql`](../../../db/migrations/20260928110000_ma_qr_ban.up.sql).
 File này giữ **ý định, lý do và ánh xạ** sang `I-0xx` / `YC-xx`. Nó nhắc tên bảng và tên ràng buộc
 để trỏ, **không** chép lại kiểu hay điều kiện thành bản thứ hai (**F-001**). Hai bản lệch nhau ⇒ một
 dòng `F-XXX`, không lặng lẽ sửa bên nào.
@@ -43,7 +45,8 @@ của database; không bị từ chối thì chính file ấy đỏ.
 
 | Bảng | Giữ gì | Vì sao là một bảng riêng · nguồn |
 |---|---|---|
-| `dining_table` | một cái bàn của quán và **số bàn** người đọc (không trùng) | khoá chính không mang nghĩa, số bàn là cột riêng (`QD-10`). **Không** có mã QR (`I-023`, §5) và **không** có cột trạng thái (§3, `I-003`) |
+| `dining_table` | một cái bàn của quán và **số bàn** người đọc (không trùng) | khoá chính không mang nghĩa, số bàn là cột riêng (`QD-10`). Mã QR **không** nằm ở đây mà ở `qr_code` — đổi mã không chạm bàn. **Không** có cột trạng thái (§3, `I-003`) |
+| `qr_code` | **mọi** mã QR từng cấp cho một bàn — mã hiện hành và mọi mã đã thay — cùng lúc cấp và lúc bị thay *(`T-114`, 2026-09-28)* | owner: `I-023`, `YC-24` — *một mã một bàn suốt đời mã* cần giữ cả mã đã thay; một dòng mới cho bàn đã có mã **là** một lần đổi (bàn · lúc). Chỉ sinh qua hàm `qr_code_issue` (§2 hàng `I-023`) |
 | `table_session` | một **phiên bàn** — đơn vị tính tiền của hai kênh gắn bàn — và trạng thái của nó | owner: `shop-facts.md` §2 hệ quả 1, `05-vong-doi.md` §5.3. Cờ *đã đóng chưa* là cột **tự tính** từ trạng thái, không ghi tay được |
 | `table_session_member` | **bàn nào thuộc phiên nào**, mốc đã dọn của **từng** bàn, và một bản soi *phiên đã đóng chưa* | owner: ghép bàn = **một** phiên **nhiều** bàn (**ADR-027**, `shop-facts.md` §6.16); dọn tính **riêng từng bàn** (`05-vong-doi.md` §5.3). Quan hệ bàn ↔ phiên là nhiều-nhiều theo thời gian, nên nó phải là một bảng |
 | `sales_order` | một **đơn** của bất kỳ kênh nào: kênh, trạng thái, và — chỉ khi kênh gắn bàn — phiên và bàn gửi đơn; với ba kênh không gắn bàn thêm **cách trao hàng** và **liên hệ** của khách (`T-111`, hàng `I-022` ở §2) | owner: năm kênh (`shop-facts.md` §2, danh sách đóng — **ADR-015**); vòng đời đơn (`05-vong-doi.md` §5.2). Một bảng cho cả năm kênh để ranh giới `I-006`/`I-007` là **một** điều kiện trên **một** bảng |
@@ -70,6 +73,10 @@ tên ấy.
 | **`I-022`** — đơn mang đi không tồn tại được khi thiếu trường liên hệ bắt buộc của kênh và cách trao hàng *(`T-111`, 2026-09-28)* | 1 | năm ràng buộc kiểm trên `sales_order`, giữ lúc tạo **lẫn** lúc sửa. Vế *số điện thoại*: `sales_order_takeaway_phone_check`. Vế *địa chỉ khi giao tận nơi*: `sales_order_door_delivery_address_check` — đọc **cách trao hàng**, không đọc kênh, nên phủ cả đơn hotline khách chọn giao. Vế *giờ khách cần hàng*: `sales_order_takeaway_needed_at_check`. Vế *cách trao hàng của đơn hotline* và vế *Delivery là giao, Pickup là tới lấy*: `sales_order_takeaway_handover_check`, trên tập mã của `sales_order_handover_code_check` (§4). *Thiếu* là không có **hoặc chỉ có khoảng trắng** — kịch bản *xoá trắng địa chỉ* của mệnh đề; **không** ràng buộc nào xét định dạng hay độ đúng. Tên và ghi chú có chỗ cất, không ràng buộc nào đòi (vế ngược, tầng 3). Năm tập đối chiếu của hàng `I-022` là năm câu cuối của file test | `db/tests/i022_takeaway_contact_minimum.sql` |
 | **`I-024`** vế *một lần gửi, nhiều nhất một đơn* và vế *không đơn nào thiếu dấu* *(`T-116`, 2026-09-28)* | 1 | `sales_order.submission_code` — **dấu lần gửi** do phía gửi đặt. Một lượt gọi vào phiên bàn là một dòng `sales_order` (§1), nên một cột phủ cả năm kênh. `sales_order_submission_code_key` — khoá duy nhất trên **mọi** đơn, không hạn thời gian, chỉ trên dấu, **không** trên nội dung. `NOT NULL` + `sales_order_submission_code_not_blank_check` — không đơn nào thiếu dấu, kể cả lúc sửa. Cố ý **không** có giá trị mặc định: một mặc định tự sinh cấp dấu mới cho mỗi lần gửi lại. Hai lần gửi lại **song song thật** (hai kết nối): lần sau bị database giữ lại tới khi lần trước `COMMIT`, rồi bị từ chối — đúng ca *kiểm rồi mới ghi* thua | `db/tests/i024_one_submission_one_order.sql` |
 | **`I-024`** ba vế tầng 3 — *gửi lại nhận lại đúng đơn* · *cùng dấu khác nội dung bị từ chối* · *giống hệt không phải là trùng* | 3 | lược đồ nợ đúng một điều: không có đường ghi nào gộp đơn theo nội dung — không khoá, không chỉ mục duy nhất nào trên món, bàn hay số điện thoại. **Pha 3 nợ:** cửa tạo đơn tra dấu **trước** mọi điều kiện khác, trả lại đơn đã có khi nội dung khớp, từ chối khi không khớp — kể cả kịch bản biên *gửi 10:59, gửi lại 11:00:30 nhận lại đơn, không phải câu ngoài giờ bán*, vì giờ bán là việc của cửa ấy (`I-008`), không của lược đồ | test dương trong cùng file: nội dung giống hệt, dấu khác ⇒ hai đơn |
+| **`I-023`** vế *một mã, một bàn* *(`T-114`, 2026-09-28)* | 1 | `qr_code_one_current_per_table_key` — khoá duy nhất theo bàn, chỉ áp cho mã **hiện hành** (chưa có lúc bị thay). `qr_code_code_key` — khoá duy nhất trên mã, trên **mọi** dòng kể cả mã đã thay; không dòng nào bị xoá (`QD-50`), nên một mã không bao giờ được cấp lại cho bàn khác | `db/tests/i023_qr_code_one_table.sql` |
+| **`I-023`** vế *bàn của lượt gọi do hệ thống tra từ mã* — phần lược đồ | 3 | `sales_order.qr_code_id` — lượt gọi đọc ra **mã đã mang**. `sales_order_qr_code_iff_qr_channel_check`: có mã **khi và chỉ khi** kênh là `qr_table`. `sales_order_qr_code_table_fkey` — khoá ngoại **hai cột** (mã, bàn): bàn của lượt gọi phải là bàn mà mã chỉ tới, nên không có cột thứ hai nói khác. Đây là nghĩa vụ *không có đường ghi thứ hai* của tầng 3 (**ADR-050**), không nâng tầng: việc **tra** bàn từ mã và bỏ số bàn khách gửi vẫn là của cửa tạo lượt gọi (**pha 3 nợ**) | cùng file |
+| **`I-023`** vế *đổi được, mã cũ chết ngay* | 3 · 1 | **Đổi:** hàm `qr_code_issue(bàn)` đặt lúc bị thay cho mã hiện hành và cấp mã mới **trong cùng một lệnh**; nó không chạm phiên bàn, số bàn hay lượt gọi nào — khoá ngoại của lượt gọi trỏ tới **dòng mã**, không tới *mã hiện hành*, nên lượt gọi tạo trước lần đổi giữ nguyên mã cũ. **Mã cũ không tạo được lượt gọi** (tầng 3): **pha 3 nợ** — cửa tạo lượt gọi chỉ nhận mã chưa có lúc bị thay, đọc và ghi trong cùng lần tạo; một ràng buộc kiểm không đọc được bảng mã. Test dựng đúng trạng thái sai ấy và cho thấy câu đối chiếu 3 bắt được nó. **Vết lần đổi** (tầng 1): *bàn* và *lúc* là `NOT NULL` trên dòng mã; ***ai* là chỗ trống có tên** (§5) | cùng file |
+| **`I-023`** vế *không đoán được* | 3 | **đúng một cửa** sinh mã: `qr_code_issue`, `SECURITY DEFINER`; vai `shop_app` **không** có quyền thêm hay sửa `qr_code` — chỉ đọc và gọi cửa ấy. Mã là 32 ký tự hex của `sha256` trên một UUID ngẫu nhiên (nguồn ngẫu nhiên mạnh của PostgreSQL): không chứa số bàn, thứ tự hay giờ sinh, không phần nào cố định. **Phiên chọn 2026-09-28** — mệnh đề cố ý không chọn cơ chế. Vế này **không có tập đối chiếu** (mã đoán được và không đoán được trông giống nhau): chỉ kịch bản đoán kiểm được | kịch bản đoán trong cùng file |
 | **`I-003`** — bàn trống ⟺ phiên đóng và bàn đã dọn | 3 | §3 | `db/tests/i003_clean_only_after_close.sql` |
 | **`I-016`** — chuyển trạng thái ngoài §5 bị từ chối | 3 | §3 | `db/tests/i016_status_outside_lifecycle.sql` |
 | **`I-017`** — phiên không đóng khi còn đơn chưa xong | 2 | §3 | `db/tests/i017_close_session_atomic.sql` |
@@ -160,12 +167,13 @@ chi tiết (§3, `I-003`).
 **Mã cách trao hàng** (`sales_order.handover_code`, `T-111`) — không phải trạng thái, nên không thuộc
 `QD-40(b)`; hai nhánh của `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.2.2. Owner không đặt chữ máy
 đọc cho hai nhánh (`master_plan/shop-facts.md` §5.2 chỉ có tên), nên hai mã là **phiên chọn
-2026-09-28**; `QD-02` không áp.
+2026-09-28**; `QD-02` không áp. Cột tên đứng trước để dòng bảng này không trông như một dòng tên
+bảng ở §1 — phép so tên bảng `.md` ↔ migration (**ADR-053** luật 2) đọc dòng mở đầu bằng một mã.
 
-| Mã | Tên ở owner |
+| Tên ở owner | Mã |
 |---|---|
-| `door_delivery` | Giao tận nơi (§3.2.2) |
-| `shop_pickup` | Khách tới lấy (§3.2.2) |
+| Giao tận nơi (§3.2.2) | `door_delivery` |
+| Khách tới lấy (§3.2.2) | `shop_pickup` |
 
 ---
 
@@ -176,7 +184,8 @@ chi tiết (§3, `I-003`).
 | ~~**`F-038`** — *thiếu một trường bắt buộc thì đơn không tạo được* (`03-lat-cat.md` §3.2.4)~~ — **gỡ 2026-09-28 (`T-111`)**. Pha 1 lấp trước (T-110, `docs/decisions.md` **ADR-058**: `I-022`, tầng 1, `YC-22`), rồi lược đồ dựng | chỗ cất và năm ràng buộc: §2 hàng `I-022`. Lý do nó từng là chỗ trống, giữ làm lịch sử: dựng ràng buộc trước khi có mệnh đề là pha 2 tự viết mệnh đề (**ADR-035**) | `T-111` — xong |
 | ~~**`F-043`** — *một lần gửi đơn thành đúng một đơn*~~ — **gỡ 2026-09-28 (`T-116`)**. Pha 1 lấp trước (T-115, `docs/decisions.md` **ADR-061**: `I-024`, `YC-25`), rồi lược đồ dựng | chỗ cất dấu và hai ràng buộc tầng 1: §2 hàng `I-024` | `T-116` — xong |
 | **Tập đối chiếu thứ ba của `I-024`** — đơn mà nội dung hiện tại khác nội dung lúc tạo **mà không** có một lần sửa mang vết `I-018` | chưa viết được: lát này không có vết sửa nào. Hai tập kia đã là câu truy vấn ở cuối `db/tests/i024_one_submission_one_order.sql` | `P2-08` (vết cập nhật), gom ở `P2-11` |
-| **`F-042`** — mã QR của bàn — pha 1 **đã lấp 2026-09-28** (T-113, `docs/decisions.md` **ADR-060**): mệnh đề `quality/invariants.md` **`I-023`**, tầng ở [`../1-system-design/03-bao-ve-invariant.md`](../1-system-design/03-bao-ve-invariant.md) §1, yêu cầu **`YC-24`**; lược đồ **chưa** dựng | `dining_table` không có cột mã QR, không lịch sử mã, và lượt gọi không ghi mã đã mang — hôm nay kênh `qr_table` không có gì để tra bàn | `work/backlog.md` **T-114** — một migration **mới** (file của lát này không sửa, `QC-05`) |
+| ~~**`F-042`** — mã QR của bàn~~ — **gỡ 2026-09-28 (`T-114`)**. Pha 1 lấp trước (T-113, `docs/decisions.md` **ADR-060**: `I-023`, `YC-24`), chủ quán trả lời **U-062** (T-118: chỉ chủ quán đổi, khi quán bị hack — `master_plan/shop-facts.md` §6 quy tắc 2), rồi lược đồ dựng | bảng `qr_code`, cửa `qr_code_issue`, lượt gọi mang mã: §1 · §2 hàng `I-023` | `T-114` — xong |
+| **Ai đổi mã QR** — vế *ai* của vết lần đổi (`I-023` · `YC-24`), và *chỉ chủ quán được đổi* (U-062) | dòng `qr_code` ghi **bàn** và **lúc**, chưa ghi **ai**: chưa có bảng người, và một cột chữ tạm là một cách định danh người thứ hai (`QD-11`). Quyền *chỉ chủ quán gọi cửa đổi mã* là quyền theo vai — việc pha 3, lược đồ không dựng bảng vai. Câu đối chiếu 6 hôm nay chỉ đọc bàn và lúc | `P2-08` — thêm người vào `qr_code` và tham số người vào `qr_code_issue` bằng migration mới; quyền theo vai ở pha 3 |
 | ~~**Món, giá khoá lúc đặt, tuỳ chọn đã chọn** trên dòng đơn~~ — **gỡ 2026-09-27 (`P2-05`)** | `P2-05` thêm vào `order_line` bằng migration **mới** (file của lát này không sửa, `QC-05`) và dựng chỗ cất tuỳ chọn đã chọn — [`03-luoc-do-menu-gia.md`](03-luoc-do-menu-gia.md) §1. Lý do giao sang, giữ làm lịch sử: mọi cột của tuỳ chọn đã chọn là ảnh chụp của một thứ trong menu, nên dựng nó ở đây là đặt hình dạng thay `P2-05` | `P2-05` — xong |
 | **Mốc tính tiền** của lần đóng phiên và của đơn lẻ (`booked_at` · `sale_date`, `QD-31` · `QD-33`) | lát này không cất mốc đóng: mốc ấy **là** mốc tính tiền (`02-thoi-gian-ngay-ban.md` §2), và một mốc đóng thứ hai ở đây sẽ là mốc tính tiền thứ hai | `P2-06` |
 | **Bản ghi hoá đơn / lần thu** của một đơn vị tính tiền | chưa có. Bản ghi nào `P2-06` thêm cho lần đóng một phiên nợ một **khoá duy nhất theo phiên** (`I-002` vế 1), và cho đơn lẻ nợ đúng một lần thu khi đóng (`I-007` phép đối chiếu) | `P2-06` |
@@ -196,6 +205,7 @@ chi tiết (§3, `I-003`).
 | `P2-05` | §1 hàng `order_line` · §5 hàng *món, giá, tuỳ chọn* — thêm bằng migration **mới**, không sửa file của lát này (`QC-05`) |
 | `P2-06` | §5 hàng *mốc tính tiền* và *bản ghi hoá đơn*; đơn vị tính tiền là `table_session` (kênh gắn bàn) hoặc `sales_order` (ba kênh kia) |
 | `P2-07` | `order_line` và dấu đem về; bàn gửi đơn ở `sales_order` |
+| `P2-10` | mã QR của bàn mồi sinh **qua** `qr_code_issue` (§2 hàng `I-023`), không tự chèn vào `qr_code` |
 | `P2-09` | file migration của lát này là file đầu tiên của dãy; phép so tên bảng `.md` ↔ migration đọc §1 |
 | `P2-11` | §2 cột *Bằng chứng* và §3 — mỗi mệnh đề vẫn cần câu đối chiếu của mình (**ADR-050** luật 2), kể cả những hàng đã có ràng buộc; hàng `I-022` đã có năm câu ở cuối file test của nó |
 | pha 3 | §3 — ba chỗ *Pha 3 nợ* |

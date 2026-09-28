@@ -34,7 +34,7 @@ CREATE FUNCTION pg_temp.pickup(code text) RETURNS text LANGUAGE sql AS $$
 $$;
 
 DO $$
-DECLARE t5 bigint; s5 bigint; o1 bigint; n bigint; msg text; code text;
+DECLARE t5 bigint; s5 bigint; o1 bigint; n bigint; msg text; code text; q5 bigint;
         conn text := 'dbname=banhcuon user=shop_app password=shop_app_dev';
 BEGIN
   -- Kịch bản âm 1: một đơn Pickup, gửi lại cùng dấu năm lần (tuần tự) ⇒ đúng một đơn.
@@ -49,13 +49,14 @@ BEGIN
 
   -- Kịch bản âm 2: lượt gọi qr_table và staff_pos vào bàn 5, mỗi lượt gửi lại một lần.
   INSERT INTO dining_table (label) VALUES ('test-5') RETURNING id INTO t5;
+  q5 := qr_code_issue(t5);  -- lượt gọi qr_table mang mã của bàn (I-023, T-114)
   INSERT INTO table_session (status) VALUES ('serving') RETURNING id INTO s5;
   INSERT INTO table_session_member (table_session_id, dining_table_id) VALUES (s5, t5);
-  INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code)
-  VALUES ('qr_table', 'new', s5, t5, 'lan-gui-qr');
+  INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code, qr_code_id)
+  VALUES ('qr_table', 'new', s5, t5, 'lan-gui-qr', q5);
   PERFORM pg_temp.expect_reject('gửi lại lượt gọi qr_table',
-    format($q$INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code)
-              VALUES ('qr_table', 'new', %s, %s, 'lan-gui-qr')$q$, s5, t5),
+    format($q$INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code, qr_code_id)
+              VALUES ('qr_table', 'new', %s, %s, 'lan-gui-qr', %s)$q$, s5, t5, q5),
     'sales_order_submission_code_key');
   INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code)
   VALUES ('staff_pos', 'confirmed', s5, t5, 'lan-gui-pos');
@@ -131,8 +132,8 @@ BEGIN
   RAISE NOTICE 'I-024 tạo được: gửi lại cùng dấu sau khi lần đầu bị I-022 từ chối';
 
   -- Kịch bản dương, chống đọc rộng: nội dung giống hệt, dấu khác ⇒ hai đơn thật.
-  INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code)
-  VALUES ('qr_table', 'new', s5, t5, 'lan-gui-qr-goi-them');
+  INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code, qr_code_id)
+  VALUES ('qr_table', 'new', s5, t5, 'lan-gui-qr-goi-them', q5);
   SELECT count(*) INTO n FROM sales_order WHERE table_session_id = s5;
   RAISE NOTICE 'I-024 tạo được: bàn 5 gọi thêm đúng món bằng một lần gửi mới — phiên có % lượt gọi', n;
   EXECUTE pg_temp.pickup('lan-gui-lay-1');
