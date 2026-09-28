@@ -3958,3 +3958,36 @@ chưa có. Phần **pha 2** — chỗ cất dấu và ràng buộc thật — l�
 
 **Status:**
 Fixed — 2026-09-28 (T-115)
+
+### F-044 — Một tập đối chiếu của hàng `I-004` không bao giờ rỗng được, vì việc trạm không có trạng thái huỷ và không dòng nào bị xoá
+
+**Problem:**
+`docs/product/1-system-design/03-bao-ve-invariant.md` §2 hàng `I-004`, vế *đơn huỷ rút nhu cầu, việc
+CHƯA XONG* (tầng 3), liệt tập *"Mọi việc trạm còn ở Chưa làm mà đơn của nó đã Huỷ"* và đòi nó
+**rỗng**. Nhưng hai thứ đã chốt làm tập ấy không bao giờ rỗng: vòng đời việc trạm chỉ có ba trạng
+thái *Chưa làm · Đã làm xong, còn ở bếp · Đã ra bàn* và **không có nhánh huỷ riêng**
+(`docs/product/0-ba/ban-hang/05-vong-doi.md` §5.4: *"nó sống chết theo đơn"*), và không bản ghi
+nghiệp vụ nào bị xoá (`docs/product/2-db/01-quy-uoc-du-lieu.md` `QD-50`). Huỷ một đơn đã nổ thì mọi
+việc chưa làm của nó **vẫn** là việc *Chưa làm* của một đơn *Huỷ* — mãi mãi. Lượt dựng `P2-07`
+(2026-09-28, Claude Code) đo được: huỷ một đơn QR hai suất ⇒ tập ấy có **19** phần tử, trong khi bảng
+nhu cầu của bàn ấy đúng là **0** (`db/tests/i004_station_jobs_follow_approval.sql`).
+
+**Impact:**
+`P2-11` viết câu truy vấn theo đúng lời tập ấy thì câu ấy đỏ **mỗi tối có một đơn huỷ** — một báo đỏ
+mỗi ngày dạy người ta bỏ qua báo đỏ, đúng cái bẫy `04-luoc-do-duong-tien.md` §2 tránh cho tiền đầu
+két. Viết khác lời thì pha 2 tự viết lại một tập của pha 1 (**ADR-035**, **ADR-050** luật 4).
+
+**Decision / Fix:**
+Chưa sửa ở pha 1. **Cách lát `P2-07` đọc tạm**, ghi rõ ở `docs/product/2-db/05-luoc-do-san-xuat.md` §2
+· §5: vế tầng 3 nghĩa là *bảng nhu cầu không còn thấy việc của đơn đã huỷ* — mọi phép đọc bảng nhu cầu
+lọc đơn *Huỷ*, không có đường ghi nào đánh dấu từng việc *rời bảng*. Đó là **cách đọc của phiên**,
+không phải lời pha 1. Việc của pha 1: viết lại tập ấy thành một tập **rỗng được** — ví dụ *"một phép
+đọc nhu cầu tính cả việc của đơn đã huỷ"* — hoặc chọn thêm một trạng thái cho việc trạm (khi ấy
+`05-vong-doi.md` §5.4 đổi trước, rồi lát `P2-07` nhận một migration mới). Không sửa trong lượt
+`P2-07` vì `03-bao-ve-invariant.md` đang mang thay đổi chưa commit của phiên khác.
+
+**Related task:**
+`work/backlog_DB.md` → **P2-07** · `P2-11` (câu truy vấn của tập ấy)
+
+**Status:**
+Open

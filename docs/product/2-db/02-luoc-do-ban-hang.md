@@ -22,7 +22,7 @@ dòng `F-XXX`, không lặng lẽ sửa bên nào.
   `docs/product/1-system-design/03-bao-ve-invariant.md`. Lát này **thi hành** tầng đã chốt, không
   nâng, không hạ (**ADR-050** luật 1);
 - **món, giá, tuỳ chọn** — `P2-05`; **tiền** (thu, nợ, hoàn, mốc tính tiền) — `P2-06`, [`04-luoc-do-duong-tien.md`](04-luoc-do-duong-tien.md); **việc trạm** —
-  `P2-07`; **người, chỗ đứng, vết cập nhật** — `P2-08`. Chỗ nối với từng lát ở §5;
+  `P2-07`, [`05-luoc-do-san-xuat.md`](05-luoc-do-san-xuat.md); **người, chỗ đứng, vết cập nhật** — `P2-08`. Chỗ nối với từng lát ở §5;
 - **cất bằng gì** (tiền, mốc, khoá, tên) — [`01-quy-uoc-du-lieu.md`](01-quy-uoc-du-lieu.md);
   **dựng và kiểm bằng gì** — [`10-quy-uoc-code.md`](10-quy-uoc-code.md).
 
@@ -193,7 +193,7 @@ bảng ở §1 — phép so tên bảng `.md` ↔ migration (**ADR-053** luật 
 | ~~**Mốc tính tiền** của lần đóng phiên và của đơn lẻ (`booked_at` · `sale_date`, `QD-31` · `QD-33`)~~ — **gỡ 2026-09-28 (`P2-06`)** | mốc nằm trên bản ghi hoá đơn của lát đường tiền, không trên phiên hay đơn — [`04-luoc-do-duong-tien.md`](04-luoc-do-duong-tien.md) §1. Lý do lát này không cất mốc đóng, giữ làm lịch sử: mốc ấy **là** mốc tính tiền (`02-thoi-gian-ngay-ban.md` §2), một mốc đóng thứ hai ở đây sẽ là mốc tính tiền thứ hai | `P2-06` — xong |
 | ~~**Bản ghi hoá đơn / lần thu** của một đơn vị tính tiền~~ — **gỡ 2026-09-28 (`P2-06`)** | bản ghi hoá đơn có khoá duy nhất theo phiên và theo đơn lẻ; phiên đã đóng và đơn lẻ Hoàn thành **phải** có hoá đơn (khoá ngoại hoãn trên cột tự tính của hai bảng lát này — migration mới, file của lát này không sửa, `QC-05`) — [`04-luoc-do-duong-tien.md`](04-luoc-do-duong-tien.md) §2 hàng `I-005` · `I-014` | `P2-06` — xong |
 | **Ai bấm** mỗi thao tác, **vết cập nhật** (`I-012` · `I-018`) | lát này không có cột người, không có vết | `P2-08` |
-| **Dấu đem về đọc ở bảng bếp**, bàn nhận việc | lát này chỉ cất dấu trên dòng | `P2-07` (đơn vị bấm *đã bưng ra bàn* vẫn để trống — `S-5`) |
+| ~~**Dấu đem về đọc ở bảng bếp**, bàn nhận việc~~ — **gỡ 2026-09-28 (`P2-07`)** | việc trạm đứng tên **đơn**; bàn của nó là bàn gửi đơn, dấu đem về đọc từ dòng đơn của nó — không cột thứ hai ([`05-luoc-do-san-xuat.md`](05-luoc-do-san-xuat.md) §1). Đơn vị bấm *đã bưng ra bàn* vẫn **trống có tên** — `S-5`, file ấy §5 | `P2-07` — xong |
 
 **Tham số của `01-quy-uoc-du-lieu.md` §0:** lát này **không** thêm bảng nào vào `:bang_ky_thuat`
 (mọi bảng đều mang dữ liệu nghiệp vụ, không bảng nào được xoá) và không bảng nào vào
@@ -207,7 +207,7 @@ bảng ở §1 — phép so tên bảng `.md` ↔ migration (**ADR-053** luật 
 |---|---|
 | `P2-05` | §1 hàng `order_line` · §5 hàng *món, giá, tuỳ chọn* — thêm bằng migration **mới**, không sửa file của lát này (`QC-05`) |
 | `P2-06` | **xong 2026-09-28** — §5 hàng *mốc tính tiền* và *bản ghi hoá đơn* đã gỡ; [`04-luoc-do-duong-tien.md`](04-luoc-do-duong-tien.md) |
-| `P2-07` | `order_line` và dấu đem về; bàn gửi đơn ở `sales_order` |
+| `P2-07` | **xong 2026-09-28** — `order_line` và dấu đem về, bàn gửi đơn ở `sales_order`; cột tự tính *đơn đã duyệt* thêm vào `sales_order` bằng migration mới — [`05-luoc-do-san-xuat.md`](05-luoc-do-san-xuat.md) §1 |
 | `P2-10` | mã QR của bàn mồi sinh **qua** `qr_code_issue` (§2 hàng `I-023`), không tự chèn vào `qr_code` |
 | `P2-09` | file migration của lát này là file đầu tiên của dãy; phép so tên bảng `.md` ↔ migration đọc §1 |
 | `P2-11` | §2 cột *Bằng chứng* và §3 — mỗi mệnh đề vẫn cần câu đối chiếu của mình (**ADR-050** luật 2), kể cả những hàng đã có ràng buộc; hàng `I-022` đã có năm câu ở cuối file test của nó |

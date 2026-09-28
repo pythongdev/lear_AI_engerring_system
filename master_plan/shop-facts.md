@@ -669,7 +669,8 @@ này đem ra cho bàn nào."*
   nghĩ *"máy không gom, người gom"* ở trên: máy chỉ bày ra ai đang chờ đúng thứ đã làm (cùng thành
   phần, cùng lượng nhân — §4.5), người ở quầy chọn và bấm.
 - **Chỉ áp dụng khi có bàn khác đang chờ đúng thứ đã làm.** Chủ quán không nói tới ca không bàn
-  nào chờ — ca ấy chưa có luật, chưa hỏi.
+  nào chờ — ca ấy chưa có luật, chưa hỏi. Câu hỏi đã ghi thành **U-064** (`docs/product/99-unknowns.md`,
+  mở 2026-09-28 ở P2-07) — vẫn chưa hỏi chủ quán.
 **Con số thứ ba cũng do POS bấm, và đường lùi thì CÓ** (chủ quán chốt 2026-09-01, trả lời U-021 và
 U-024). Hai câu này khép nốt bảng bốn con số:
 

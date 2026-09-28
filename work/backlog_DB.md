@@ -1017,11 +1017,51 @@ cập nhật — đó là một lần **đổi chủ**, cũng cần chỗ cất.
   `U-XXX`, đừng suy.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi:* migration mới `db/migrations/20260928130000_san_xuat_theo_me.up.sql` (file của `P2-04` ·
+  `P2-05` · `P2-06` không sửa, `QC-05`); ba test mới `db/tests/i004_…` · `i019_…` · `i020_…`; file lát
+  `docs/product/2-db/05-luoc-do-san-xuat.md`; pointer ở `02-luoc-do-ban-hang.md` §5 · §6, `00-index.md`,
+  `CLAUDE.md` §2 hàng *Schema*; một câu mở `U-064` và chỗ trỏ tới nó ở `shop-facts.md` §5.4 ·
+  `04-yeu-cau-du-lieu.md` §6; một finding `F-044`. **Không** chạm: `S-5` · `S-6` (để trống), ai bấm
+  (`P2-08`), câu đối chiếu mỗi tối (`P2-11`), bốn file đang mang thay đổi chưa commit của phiên khác
+  (`03-bao-ve-invariant.md` · `06-so-rui-ro.md` · `03-luoc-do-menu-gia.md` · `quality/invariants.md`).
+- *Nghiệm thu:* bảy dòng Acceptance ở dòng `P2-07` của `work/backlog.md` (viết trước khi dựng,
+  2026-09-28).
+- *Kiểm chứng:* `./scripts/db-check.sh` (database rỗng dựng từ số 0) · một vòng gỡ từng ràng buộc
+  trên database riêng · phép so tên bảng `.md` ↔ migration · `./scripts/gate.sh`.
 
-**Bàn giao:** —
+**Bàn giao:** Claude Code, nhánh `chatgpt_involve`, base `89ac41b`, 2026-09-28; **chưa review độc
+lập**; chưa commit.
+
+*Kết quả:* năm bảng — `menu_component_station` (trạm của thành phần, dữ liệu menu) · `station_job`
+(việc trạm, **một dòng một đơn vị**, ba trạng thái) · `production_batch` (mẻ = một lần bấm, mốc lùi) ·
+`production_batch_item` (thứ mẻ đã làm: làm cho ai lúc bấm, chủ hiện tại) · `station_job_transfer`
+(vết đổi chủ của phần đã làm khi đơn huỷ); cột tự tính `sales_order.id_if_approved` và hai khoá duy
+nhất làm đích trên `order_line` · `order_line_component`. **Không có ô tổng nào**: mọi con số của bảng
+quầy là một phép đếm trên đơn vị — `I-019` tầng 1 theo cấu tạo, `I-020` tầng 1 thành *số dòng có
+được*. Lựa chọn thiết kế và phương án bị loại: file lát §0 · §2 (*phiên chọn 2026-09-28*, chờ chủ repo
+đọc).
+
+*Nghiệm thu → bằng chứng* (output `./scripts/db-check.sh`, PostgreSQL 17.11; tên, số trong test là
+giả):
+
+| # | Acceptance | Bằng chứng |
+|---|---|---|
+| 1 | migration mới, không sửa file đã commit | `PASS migrate — 7 file`; `PASS QC-05 (sh) — rỗng` |
+| 2 | hai hàng tầng 1 thành ràng buộc thật, dựng sai ⇒ từ chối | `I-004`: `insert or update on table "station_job" violates foreign key constraint "station_job_sales_order_fkey"` (việc cho đơn *Chờ xác nhận*, cho đơn *Mới*) · `update or delete on table "sales_order" violates foreign key constraint "station_job_sales_order_fkey"` (đơn đã có việc lùi về *Chờ xác nhận*). `I-020`: `violates check constraint "station_job_position_in_range_check"` (bánh thứ 4 của bàn gọi 3) · `unique constraint "station_job_position_key"` (một đơn vị hai lần) · `unique constraint "station_job_one_sauce_per_order_key"` (nước chấm thứ hai) · `foreign key constraint "station_job_order_line_fkey"` / `"station_job_order_line_component_fkey"` (bản soi số suất / số thành phần khai sai) · `check constraint "station_job_component_columns_check"` (bỏ trống bản soi). **Biết kêu:** trên compose project `banhcuon_p207` (gỡ sạch khi xong), **18** lần gỡ một ràng buộc (hay cấp lại quyền sửa cột vết) trong giao dịch rồi chạy test giữ nó ⇒ **18** lần đỏ đúng ca, ví dụ `I-004: database KHÔNG từ chối việc trạm của một đơn Chờ xác nhận` · `I-020: database KHÔNG từ chối cái bánh thứ tư của bàn chỉ gọi ba` · `I-020: database KHÔNG từ chối lùi phần bàn 5 mà để phần bàn 7 đứng nguyên` · `I-004: vai shop_app sửa được "mẻ làm cho ai"`. Lần rà đầu tìm ra **sáu** ràng buộc chưa ca nào kêu khi gỡ (bản soi số thành phần, cột cấp thành phần bỏ trống, mốc lùi trước mốc bấm, trạm trùng, chuyển cho chính mình, một mẻ làm cho một đơn vị hai lần) — đã thêm ca trước khi chạy vòng gỡ |
+| 3 | `I-019` suy ra, hai chiều, khoá gom | `i019_…`: sáu bàn ⇒ **sáu** dòng — `trang_banh │ test-bánh — test-Thịt + mộc nhĩ, test-Nhiều nhân │ 18 │ test-b1: 3 · … · test-b9: 3`, trứng 6, gấp bánh 18, giò 6, trứng 6, nước chấm 6; thêm bàn 10 ⇒ **mười** dòng, `test-bánh — test-Thịt, test-Thường │ 3 │ test-b10: 3` đứng riêng, `test-giò │ 7`, `nước chấm │ 7`; mỗi lần in: *hai chiều khớp: tổng mỗi dòng = tổng phần chia, phần mỗi bàn = phần bàn ấy đã gọi*; *sửa tay một dòng tổng*: `column "quantity" of relation "production_batch" does not exist`; huỷ đơn bàn 9 ⇒ dòng bánh **15**, bàn 9 rời phần chia |
+| 4 | `I-020` tầng 2 · `YC-07` | mẻ ghi thiếu: `violates foreign key constraint "production_batch_item_live_station_job_fkey"` (cộng bàn 5, sót bàn 7) · `"station_job_made_in_batch_fkey"` (đã làm xong mà không mẻ nào làm ra) · `unique constraint "production_batch_item_live_key"` (hai mẻ một đơn vị). Lùi thiếu: `update or delete on table "production_batch" violates foreign key constraint "production_batch_item_batch_fkey"` (lùi một phần mẻ) · `"station_job_made_in_batch_fkey"` (lùi mẻ, con số bàn không lùi). Lùi đủ: *trước lúc bấm* và *sau lúc lùi* giống hệt từng chữ cho cả hai bàn; `YC-07 vết lần lùi — mẻ 4, bấm lúc 2026-09-28 12:30:45…, lùi lúc 2026-09-28 12:30:45…, đã phủ [test-b5 ×3, test-b7 ×1]; "ai lùi" chờ P2-08`. Hai chữ *còn*: `bàn 7 trứng tái: đã gọi 2 · còn phải làm 0 · đã làm xong còn ở bếp 2 · đã bưng ra bàn 0 · còn thiếu 2` |
+| 5 | đơn huỷ sau khi làm xong | ba lời từ chối: `"production_batch_item_transfer_fkey"` (đổi chủ không vết) · `"station_job_made_in_batch_fkey"` (bàn cũ còn giữ) · `"production_batch_item_live_station_job_fkey"` (bàn nhận không giảm); vết: `lần chuyển …: trứng tái của mẻ … từ test-b5 sang test-b9; "ai chọn bàn nhận" chờ P2-08`; bàn 9: `còn phải làm 0, đã làm xong còn ở bếp 1`. Huỷ đơn bàn 7 đã bưng một trứng: `đã gọi 0 · … · đã bưng ra bàn 0`; `I-020 đối chiếu: … rỗng`. Câu đối chiếu kêu khi quầy chuyển sang bàn chờ **khác nhân** (`chuyển khác khoá gom`) |
+| 6 | `S-5` · `S-6` ô trống có mã; ca không bàn nào chờ ⇒ `U-XXX` | file lát §5 hai hàng `S-5` · `S-6`: **không bản ghi nào** cho một lần bấm *đã ra bàn*, không cột mặc định, không ràng buộc nối `served` với trạng thái đơn — không ô nào mang giá trị. **`U-064`** mở ở `docs/product/99-unknowns.md`, brief đã in nó; test in tập *đã làm của đơn huỷ, chưa chuyển* còn đúng quả trứng không bàn nào chờ. Thêm **`F-044`**: tập *việc Chưa làm của đơn đã Huỷ* của pha 1 không rỗng được (`19` phần tử sau một lần huỷ) |
+| 7 | file lát · pointer · db-check · gate · so tên bảng | `05-luoc-do-san-xuat.md`; `00-index.md` thêm dòng; `CLAUDE.md` §2 hàng *Schema* thêm tên file; `02-luoc-do-ban-hang.md` §5 gỡ hàng *dấu đem về ở bảng bếp*, §6 hàng `P2-07`. `db-check: PASS — 26 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 22 file test` (19 test cũ vẫn PASS); `QD-02 (menu_component_station.station_code)` · `(station_job.station_code)` comm rỗng; `QD-40(b) station_job.status ràng buộc: made pending served` = file lát. So tên bảng (`grep 'CREATE TABLE'` · `grep '^| \`tên\` |'` trên `0[2-9]-luoc-do-*.md`): cả hai danh sách **27** tên, `comm -3` **rỗng**. Gate: xem dòng `P2-07` ở `work/backlog.md` → *Done* |
+
+*Còn mở — cần chủ repo đọc:* các lựa chọn *phiên chọn 2026-09-28* của file lát (một dòng một đơn vị ·
+không ô tổng · khoá ngoại hai chiều đơn vị ↔ thứ đã làm, có hệ quả *chưa làm → đã ra bàn thẳng* không
+ghi được · đổi chủ bằng trỏ lại thứ đã làm · tên `production_batch`); **`U-064`** (chủ quán); **`F-044`**
+(pha 1 viết lại một tập của hàng `I-004` — `03-bao-ve-invariant.md` đang mang thay đổi chưa commit của
+phiên khác nên lượt này không chạm); *đủ việc* của lần nổ đơn và *đơn Hoàn thành khi mọi việc đã ra
+bàn* là việc của pha 3 (file lát §3); *ai bấm* chờ `P2-08`. `03-luoc-do-menu-gia.md` §5 · §6 còn trỏ
+`P2-07` cho *trứng chín/tái/vàng* — câu ấy vẫn đúng (khoá gom tách được cả hai cách), không sửa vì file
+ấy cũng đang mang thay đổi của phiên khác.
 
 [↑ đầu file](#top)
 

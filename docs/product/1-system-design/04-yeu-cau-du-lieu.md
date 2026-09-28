@@ -202,7 +202,7 @@ có lời (`CLAUDE.md` §3.5, §7.2).
 |---|---|---|
 | **`S-5`** — bấm *"đã bưng ra bàn"* theo **đơn vị nào** (`master_plan/shop-facts.md` §7.2) | `YC-06` · `YC-07` | Chủ quán mới nói **ai** bấm, chưa nói **theo gì**. Chỗ *suy ra* là theo **bàn** — một mẻ phục vụ nhiều bàn, còn bưng thì bưng tới **một** bàn. Đơn vị **đếm** là **bàn**, đơn vị **bấm** của mốc *đã làm xong* là **mẻ** (đã chốt 2026-09-01); đơn vị **bấm** của mốc *đã bưng ra bàn* thì **để trống**, đừng điền |
 | **`S-6`** — với đơn **giao tận nơi**, quầy bấm mốc *"đã ra bàn"* **lúc nào** (§7.2) | `YC-06` | **Ai** bấm đã chốt 2026-09-04 (*"pos"*, không có ngoại lệ). Vế **lúc nào** là chỗ *suy ra*: lúc đơn rời quán. Sai thì mốc ấy nghĩa là **tới tay khách**, và quầy phải chờ người đi giao báo về |
-| **Chỗ đã làm xong của một đơn huỷ khi KHÔNG có bàn nào đang chờ đúng thứ ấy** | `YC-07` | Chủ quán chốt 2026-09-06 cho ca **có** bàn chờ: tính cho bàn khác, người đứng quầy chọn bàn nhận trên POS rồi cập nhật. Ca **không có bàn nào chờ** thì chủ quán không nói tới — **chưa có luật, chưa hỏi** (`shop-facts.md` §5.4) |
+| **Chỗ đã làm xong của một đơn huỷ khi KHÔNG có bàn nào đang chờ đúng thứ ấy** | `YC-07` | Chủ quán chốt 2026-09-06 cho ca **có** bàn chờ: tính cho bàn khác, người đứng quầy chọn bàn nhận trên POS rồi cập nhật. Ca **không có bàn nào chờ** thì chủ quán không nói tới — **chưa có luật, chưa hỏi** (`shop-facts.md` §5.4); câu hỏi ghi thành **U-064** ở `docs/product/99-unknowns.md` (2026-09-28, P2-07) |
 
 **Ba chỗ này không được lấp bằng một mặc định.** Một lược đồ chọn sẵn *"bấm theo bàn"* rồi chạy
 tiếp là một lược đồ đã thay chủ quán trả lời một câu chưa ai hỏi — và cái sai ấy chỉ lộ ra lúc quán

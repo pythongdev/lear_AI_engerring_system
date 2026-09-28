@@ -15,6 +15,7 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
+  - [U-064](#u-064) — đơn huỷ khi bếp đã làm xong, mà không bàn nào chờ đúng thứ ấy
   - [U-063](#u-063) — khách nợ trả dần từng phần được không
   - [U-058](#u-058) — giảm giá cả đơn nhập tay: phạm vi bản đầu và giới hạn
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
@@ -34,6 +35,22 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 
 <a id="dang-mo"></a>
 ### Đang mở
+
+<a id="u-064"></a>
+- **U-064 — Một đơn bị huỷ khi bếp đã làm xong phần của nó, mà lúc ấy không bàn
+  nào đang chờ đúng thứ ấy: cái bánh, quả trứng ấy quán xử thế nào?** Mở
+  2026-09-28 (P2-07). `master_plan/shop-facts.md` §5.4 có lời chủ quán cho ca
+  **có** bàn chờ (`U-033`, 2026-09-06: *"tính vào bàn khác, pos sẽ cập nhật
+  bánh này đem ra cho bàn nào"*) và ghi thẳng ca **không** bàn nào chờ là
+  *chưa có luật, chưa hỏi*. Lược đồ hôm nay
+  (`docs/product/2-db/05-luoc-do-san-xuat.md` §5) để thứ ấy nguyên ở *đã làm
+  xong* dưới một đơn đã huỷ — không chuyển, không bỏ — và tập đối chiếu *đã
+  làm của đơn huỷ, chưa chuyển* chưa phân biệt được nó với một lần quầy quên
+  chuyển. Hỏi về cái quán, không về cái bảng: *"khách huỷ khi bánh đã tráng
+  xong mà chưa bàn nào gọi đúng loại bánh ấy — quán để đó chờ khách sau, bỏ
+  đi, hay làm cách khác?"* **Chủ quán** trả lời; chặn đường xử ca ấy ở pha 3 và
+  tập đối chiếu tương ứng ở `P2-11`, không chặn bước nào của pha 2. Không tự
+  cho giữ chờ, không tự cho bỏ.
 
 <a id="u-063"></a>
 - **U-063 — Khách nợ có được trả dần từng phần, rồi trả nốt sau không?** Mở
