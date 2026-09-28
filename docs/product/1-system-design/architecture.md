@@ -428,7 +428,7 @@ tại ngày đo (`work/findings.md` **F-003** · **F-018**); đếm ở bảng, 
 | Thiếu cái gì | Vì luật nào | Không có thì hỏng thế nào |
 |---|---|---|
 | **Vết hoàn tiền** — bao nhiêu · đơn nào · ai bấm · lý do · **trả lại bằng gì** | §6.4 | đối soát thấy két lệch, không ai truy được |
-| **Khoản nợ** — ai nợ · bao nhiêu · phiên nào | §6.14 | đóng phiên xong khoản nợ vô chủ — hình dạng đầy đủ ở **§12.3** |
+| **Khoản nợ** — ai nợ · bao nhiêu · phiên nào | §6.14 | đóng phiên xong khoản nợ vô chủ — hình dạng đề xuất ở **§12.3**; chỗ cất thật ở [`docs/product/2-db/04-luoc-do-duong-tien.md`](../2-db/04-luoc-do-duong-tien.md) (`P2-06`, 2026-09-28) |
 | **Vết thao tác chạm tiền / chạm trạng thái đơn** | §6.10 · `docs/product/0-ba/ban-hang/01-actors-pham-vi.md` §1.4 | *"lệch 1 đồng phải tìm ra lý do"* không thực hiện được |
 | **Ai đang trực trạm nào, lúc này** | §6.13 (quyền gắn chỗ đứng) | quyền huỷ phải gán theo **chức vụ ghi cố định**, tức sai luật — §4 |
 | **Note "đem về"** trên một suất của phiên bàn | §6.15 | khách mang về một đĩa không gói |
@@ -597,6 +597,13 @@ việc của **pha 3** (**ADR-035**), và tới hôm nay chưa ai chốt nó:
    §6.4 cần đúng hai con số ấy, không cần một con số gộp.
 
 ### 12.3 Mặt DB — cất cái gì, và ràng buộc nào phải do database giữ
+
+> **Đã được pha 2 thay thế — 2026-09-28, `P2-06`.** Chỗ cất thật của khoản nợ, lần thu nợ và phần
+> còn lại của đường tiền nay ở
+> [`docs/product/2-db/04-luoc-do-duong-tien.md`](../2-db/04-luoc-do-duong-tien.md) (ý định, ánh xạ
+> sang sáu thứ và ba ràng buộc dưới đây) và file migration nó trỏ tới (tên · kiểu · ràng buộc —
+> **ADR-053** luật 2). Mục này giữ nguyên như **đề xuất lịch sử**; đọc chỗ cất ở file kia, đừng đọc
+> ở đây.
 
 §8 liệt kê **Khoản nợ** là một trong những chỗ mô hình 16 bảng chưa với tới. Đây là hình dạng nhỏ
 nhất đủ dùng, treo vào `table_sessions` đã có:
@@ -767,7 +774,7 @@ lời đáp hẹp lại lấp được đúng chỗ hở rộng nhất.
 
 - **Bốn trạm ngoài quầy không ghi mốc đổi giờ** — chủ quán chốt 2026-09-25,
   U-055, `shop-facts.md` §8.8. Tổng quan lấy số người thực tế đang làm ở quán
-  (chủ quán xác nhận 2026-09-27, §8.6); cách thu nhận/cập nhật số đó còn ở U-060
+  (chủ quán xác nhận 2026-09-27, §8.6), do POS khai và cập nhật (đóng U-060 2026-09-28)
   ([99-unknowns.md](../99-unknowns.md)).
 - **POS khai mốc đổi người ở quầy** — chủ quán chốt 2026-09-25, U-056.
 - **Vế *ai bấm* của hai cửa ghi ngoài quầy** — U-057 đã được chủ quán làm rõ,

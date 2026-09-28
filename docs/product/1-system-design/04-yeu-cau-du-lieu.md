@@ -63,7 +63,7 @@ chiều ngược lại: không phải *thiếu cái gì*, mà *pha 2 phải ch�
 | §8 nói thiếu | Mã | Câu yêu cầu | Luật nguồn |
 |---|---|---|---|
 | **Vết hoàn tiền** | **YC-01** | **Ghi được:** mỗi lần hoàn tiền đọc lại được đủ **năm** thứ — hoàn **bao nhiêu** · cho **lượt bán nào** · **ai bấm** · **lúc mấy giờ** · **lý do gì**. **Không xảy ra được:** một lần hoàn tiền thiếu bất kỳ thứ nào trong năm, **kể cả lý do** — quán cố ý không có luật cứng về hoàn tiền, nên lý do là thứ duy nhất thay được luật | `shop-facts.md` §6.4 · `quality/invariants.md` **I-012** |
-| **Khoản nợ** | **YC-02** | **Ghi được:** một khoản nợ đứng được **sau khi phiên bàn của nó đã đóng** — ai nợ · bao nhiêu · thuộc đúng một phiên · lúc ghi · lúc thu · đã thu hay chưa. **Không xảy ra được:** đóng phiên thu thiếu mà không có chủ nợ và số tiền · một khoản nợ được cộng vào tiền đã thu của ngày ghi nợ · một phiên mang **hai** khoản nợ chưa thu cùng lúc · một số tiền nợ không dương. Hình dạng nhỏ nhất đủ dùng đã có ở [`architecture.md`](architecture.md) **§12.3** — đọc ở đó, §2 dưới đây chỉ nói **cái §12.3 không nói** | `shop-facts.md` §6.14 · `I-005` · `I-015` |
+| **Khoản nợ** | **YC-02** | **Ghi được:** một khoản nợ đứng được **sau khi phiên bàn của nó đã đóng** — ai nợ · bao nhiêu · thuộc đúng một phiên · lúc ghi · lúc thu · đã thu hay chưa. **Không xảy ra được:** đóng phiên thu thiếu mà không có chủ nợ và số tiền · một khoản nợ được cộng vào tiền đã thu của ngày ghi nợ · một phiên mang **hai** khoản nợ chưa thu cùng lúc · một số tiền nợ không dương. Hình dạng nhỏ nhất đủ dùng đã có ở [`architecture.md`](architecture.md) **§12.3** — đọc ở đó, §2 dưới đây chỉ nói **cái §12.3 không nói**. *Chỗ cất thật (pha 2, `P2-06`, 2026-09-28): [`../2-db/04-luoc-do-duong-tien.md`](../2-db/04-luoc-do-duong-tien.md) §2.* | `shop-facts.md` §6.14 · `I-005` · `I-015` |
 | **Vết thao tác chạm tiền / chạm trạng thái đơn** | **YC-03** | **Ghi được:** mỗi thao tác chạm tiền đọc lại được đủ **bốn** câu (cái gì · bao nhiêu · ai · mấy giờ), **và** mỗi lần sửa một bản ghi đã có dựng lại được **bản trước**, **bản sau**, **lý do**, **người sửa**. **Không xảy ra được:** một chỗ lệch trong bảng đối soát cuối ngày mà không quy được về **đúng một** thao tác có tên người. Hai vế trên là **hai** mệnh đề khác nhau — §3 dưới đây | `shop-facts.md` §6.10 · **I-012** · **I-018** |
 | **Ai đang trực trạm nào, lúc này** | **YC-04** | **Ghi được:** ở **bất kỳ thời điểm nào trong quá khứ**, đọc ra được ai đang trực trạm nào; và mỗi lần huỷ · hoàn · ghi nợ · thu nợ đọc ra được **người đang trực lúc đó**, không phải chức vụ của người ấy. **Không xảy ra được:** quyền của một thao tác được quyết bởi **chức vụ ghi cố định trên hồ sơ một người** — chức vụ không mở thêm cửa nào | `shop-facts.md` §6.13 · [`architecture.md`](architecture.md) §4 |
 | **Note *"đem về"* trên một suất của phiên bàn** | **YC-05** | **Ghi được:** dấu *đem về* nằm ở mức **một suất**, và bếp lẫn người bưng đọc ra được ngay **suất nào gói lại, suất nào ăn tại chỗ**. **Không xảy ra được:** dấu ấy làm suất rời khỏi phiên bàn thành một đơn lẻ · hoặc nó chỉ tồn tại ở mức cả đơn, khiến một bàn không thể vừa có suất ăn tại chỗ vừa có suất đem về | `shop-facts.md` §6.15 · `I-006` |
@@ -83,7 +83,8 @@ nội dung: đơn giống hệt nhau mang hai dấu là hai đơn thật.
 **Dòng trước nó — `YC-24` — là chỗ thiếu thứ mười một, thêm vào §8 ở T-113 (2026-09-28).** Nền 16
 bảng đã có một mã ngẫu nhiên cho mỗi bàn, nhưng không có đường đổi, không giữ mã đã thay, và lượt
 gọi không ghi mã đã mang — nên *đổi được, mã cũ chết ngay* của `I-023` không có gì để đứng
-(`work/findings.md` **F-042**). *Ai được đổi mã, khi nào* không thuộc dòng này: đó là **U-062**.
+(`work/findings.md` **F-042**). *Ai được đổi mã, khi nào* không thuộc dòng này: đó là **U-062** — đóng 2026-09-28, chủ quán đổi
+khi quán bị hack (`master_plan/shop-facts.md` §6 quy tắc 2).
 
 **Dòng trước nữa — `YC-23` — là chỗ thiếu thứ mười, thêm vào §8 ở T-112 (2026-09-28).** Lời chốt
 2026-09-06 (**ADR-040**) đã nói bảng đối soát cần một dòng cho khoản này nhưng giao nó cho *"bước
@@ -158,8 +159,8 @@ thể đọc lại được nhưng chỗ lệch thì không.
 **Phạm vi đã chốt, 2026-09-25:** yêu cầu lịch sử đổi người của YC-04/YC-15
 áp dụng cho trạm `quay`, do POS khai. Bốn trạm ngoài quầy không ghi mốc đổi giờ
 (chủ quán, `shop-facts.md` §8.8, U-055/U-056). Tổng quan lấy số người thực tế
-đang làm ở quán (chủ quán xác nhận 2026-09-27, §8.6); cách thu nhận/cập nhật
-số đó còn ở U-060 (`docs/product/99-unknowns.md`). Không dùng câu “trạm nào” dưới đây để
+đang làm ở quán (chủ quán xác nhận 2026-09-27, §8.6), do POS khai và cập nhật
+(chủ quán chốt 2026-09-28, đóng U-060, `docs/product/99-unknowns.md`). Không dùng câu “trạm nào” dưới đây để
 áp đặt thêm mốc đổi ở bếp.
 
 §4 nói rõ vì sao **chức vụ ghi cố định** không đủ: chức vụ trả lời *người này là ai*, còn luật hỏi
@@ -250,9 +251,19 @@ cụ thể do pha ấy thiết kế, không chốt ở pha 1. Việc tiếp nh�
 lại dữ liệu ngày bán cùng vết liên quan; lưu kết quả, mốc dữ liệu phục hồi được và thời gian
 thực hiện. Có bản sao lưu nhưng chưa phục hồi thử chưa phải bằng chứng đạt YC-21.
 
-**Chưa chốt:** phạm vi lưu giữ chi tiết, mức mất dữ liệu tối đa chấp nhận được và thời gian
-phục hồi tối đa. Chủ repo cần chốt các tiêu chí này trong T-109 trước khi nghiệm thu vận hành;
-không suy ra con số từ câu yêu cầu trên, không tự coi là mất 0 dữ liệu hoặc phục hồi tức thì.
+**Tiêu chí nghiệm thu — chủ repo chốt 2026-09-28 (T-109):** chủ repo chọn trong các phương án
+phiên Claude Code đưa ra, nguyên văn lựa chọn:
+- **Mức mất dữ liệu tối đa:** *"Tối đa 1 giờ bán"* — bản phục hồi được không cũ hơn một giờ so
+  với lúc mất.
+- **Thời gian phục hồi tối đa:** *"Trước ca bán kế tiếp"* — trong lúc chờ, quán bán bằng đường
+  suy giảm đã có.
+- **Giữ bản sao lưu:** *"1 năm"*.
+
+*Phiên suy ra, chưa có lời chủ repo:* "ca bán kế tiếp" đọc là **trước giờ mở bán kế tiếp** theo
+giờ bán ở `master_plan/shop-facts.md` §1; phần bán trong khoảng mất (tối đa một giờ) và trong lúc
+phục hồi được bù từ sổ giấy. Số bản sao, nơi cất ngoài máy chạy, lịch sao lưu và công cụ vẫn do
+pha 5 thiết kế theo ba tiêu chí trên. Phép nghiệm thu đo đúng ba tiêu chí ấy: mốc dữ liệu phục
+hồi được so với lúc mất, thời gian thực hiện so với giờ mở bán kế tiếp.
 T-109 phải hoàn tất trước khi đưa hệ thống vào bán thật. Pha 2 chỉ bảo đảm dữ liệu có thể biểu
 đạt đủ; phép chạy xuôi/lùi migration của P2-09 không chứng minh YC-21 đã đạt.
 

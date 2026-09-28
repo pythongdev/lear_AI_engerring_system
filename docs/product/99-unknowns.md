@@ -15,8 +15,7 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
-  - [U-062](#u-062) — ai được đổi mã QR của một bàn, và quán đổi khi nào
-  - [U-060](#u-060) — cách cập nhật số người thực tế đang làm ở quán
+  - [U-063](#u-063) — khách nợ trả dần từng phần được không
   - [U-058](#u-058) — giảm giá cả đơn nhập tay: phạm vi bản đầu và giới hạn
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
@@ -36,26 +35,16 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 <a id="dang-mo"></a>
 ### Đang mở
 
-<a id="u-062"></a>
-- **U-062 — Ai được đổi mã QR dán ở một bàn, và quán đổi khi nào?** Mở
-  2026-09-28 (T-113). `quality/invariants.md` **I-023** đòi hệ thống **đổi
-  được** mã của một bàn và mã cũ **chết ngay** từ lúc đổi (vế ấy là *suy ra*,
-  ghi rõ trong mệnh đề); in và dán lại tem là việc tay của quán. Còn hai câu:
-  **ai** được bấm đổi (chủ quán, người đứng quầy, hay cả hai), và quán đổi
-  **khi nào** — chỉ khi nghi mã đã lộ, hay định kỳ. **Chủ quán** trả lời;
-  chặn phần quyền theo vai của thao tác đổi mã (pha 3) và dòng người chịu
-  việc đổi mã ở `docs/product/1-system-design/06-so-rui-ro.md` RR-10. Không
-  tự gán thao tác này cho một vai, không tự đặt lịch đổi mã.
-
-<a id="u-060"></a>
-- **U-060 — Ai cung cấp/cập nhật số người thực tế đang làm ở quán cho tổng
-  quan?** Mở 2026-09-25. **Chủ quán xác nhận 2026-09-27 (T-102): “lấy số
-  người thực tế đang làm ở quán.”** Đã rõ con số muốn hiển thị, owner
-  `master_plan/shop-facts.md` §8.6. Lời trước đó (T-099) cũng chốt một người
-  chỉ đi giao lúc vắng, người còn lại đủ phục vụ; đi giao không là thiếu người.
-  Phần chưa có lời chỉ còn cách đưa số thực tế vào hệ thống: ai nhập/xác nhận
-  hoặc lấy từ dữ liệu nào. **Chủ quán** trả lời; chặn phần thu nhận dữ liệu
-  của ADM-04. Không tự dùng số vai, số trạm hoặc chấm công làm số thực tế.
+<a id="u-063"></a>
+- **U-063 — Khách nợ có được trả dần từng phần, rồi trả nốt sau không?** Mở
+  2026-09-28 (P2-06). `master_plan/shop-facts.md` §6.14 nói *người nợ quay lại
+  trả thì POS ghi nhận*; `docs/product/1-system-design/architecture.md` §12.3
+  và `YC-02` chỉ có hai trạng thái của một khoản nợ, **chưa thu · đã thu** —
+  không lời nào nói tới ca khách trả **một phần**. Lược đồ hôm nay
+  (`docs/product/2-db/04-luoc-do-duong-tien.md` §5) đi theo hai trạng thái ấy:
+  một khoản nợ được thu **đủ**, trong **một** lần. **Chủ quán** trả lời; chặn
+  đường thu nợ một phần ở pha 3, không chặn bước nào của pha 2. Không tự cho
+  trả dần, không tự cấm bằng một thông báo trên màn hình.
 
 <a id="u-058"></a>
 - **U-058 — Phạm vi bản đầu và giới hạn của giảm giá nhập tay cho cả đơn?**
@@ -68,6 +57,9 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
   **chủ quán** chốt có đưa vào bản bán hàng đầu tiên không, giới hạn số tiền
   và có cần ghi lý do không. Chặn phần phạm vi MVP và giới hạn kiểm tra của
   `0-ba/ban-hang/04-gia-thanh-toan.md` §4.2 · §4.11; không hỏi lại cách giảm.
+  **Lần thứ ba 2026-09-28 (T-118)** chủ quán gửi lại đúng lời ấy — vẫn chưa có
+  lời cho ba vế còn mở; lần hỏi sau nên hỏi thẳng từng vế (có trong bản đầu
+  không · trần số tiền giảm · có bắt ghi lý do không).
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
 chủ quán quyết theo tình hình thực tế, không có luật cứng.** Lượt một (T-042) đóng U-022, U-025 và
@@ -192,6 +184,20 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
 
+**Chủ quán trả lời 2026-09-28 (T-118), chủ repo chuyển lời trong hội thoại:**
+
+<a id="u-062"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-062 — Ai được đổi mã QR dán ở một bàn, và quán đổi khi nào~~ | “chủ quán đổi , khi quán bị hack”. **Chỉ chủ quán** bấm đổi mã QR của một bàn — người đứng quầy không đổi. Quán đổi **khi bị hack** — cách đọc: khi mã của bàn đã lộ hoặc bị người ngoài dùng; không có lịch đổi định kỳ nào được nêu, nên không tự đặt. *Mã cũ chết ngay* của `I-023` vẫn là suy ra, lời này không chạm tới. | `master_plan/shop-facts.md` §6 quy tắc 2 |
+
+<a id="u-060"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-060 — Ai cung cấp/cập nhật số người thực tế đang làm ở quán cho tổng quan~~ | “pos”. **POS** (người đứng quầy) cung cấp và cập nhật số người thực tế đang làm ở quán cho hàng 6 của tổng quan. Lời không nói cập nhật bao lâu một lần; không tự đặt nhịp, và vẫn không tự lấy số vai, số trạm hay chấm công thay cho con số POS khai. | `master_plan/shop-facts.md` §8.6 hàng 6 |
+
 **Chủ quán chốt 2026-09-27 (T-099):**
 
 <a id="u-061"></a>
@@ -228,7 +234,7 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 | Câu đã đóng | Lời chủ quán | Owner |
 |---|---|---|
-| ~~U-055 — Bốn trạm ngoài quầy có ghi mốc đổi người không~~ | “không ghi nôc đổi giờ”. Chuẩn hoá: không ghi mốc đổi giờ ngoài quầy; nguồn số người còn ở U-060. | `master_plan/shop-facts.md` §8.8 |
+| ~~U-055 — Bốn trạm ngoài quầy có ghi mốc đổi người không~~ | “không ghi nôc đổi giờ”. Chuẩn hoá: không ghi mốc đổi giờ ngoài quầy; nguồn số người lúc ấy còn ở U-060 — đóng 2026-09-28 (T-118): POS khai. | `master_plan/shop-facts.md` §8.8 |
 
 <a id="u-056"></a>
 

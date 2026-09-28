@@ -787,6 +787,26 @@ bảy bảng menu, ba chỗ cất ảnh chụp (thêm cột vào `order_line`, t
 trong phiên; mỗi test tự ném lỗi khi database không từ chối (khuôn `QC-07`), nhưng chưa có một lần
 đỏ thật.
 
+*Test biết kêu — làm 2026-09-28, Claude Code, nhánh `chatgpt_involve`, base `ff9c2d5`; chưa review
+độc lập.* Trên một database riêng (compose project `banhcuon_mutate`, dựng từ số 0, gỡ sạch khi xong),
+mỗi lần gỡ một ràng buộc **trong transaction** rồi chạy lại đúng test giữ nó. Ba test trên lược đồ
+nguyên vẹn: xanh. Bảy lần gỡ, bảy lần đỏ, lời nguyên văn:
+`DROP NOT NULL unit_price_vnd` ⇒ `ERROR: I-009: database KHÔNG từ chối dòng đơn thiếu giá` ·
+`DROP NOT NULL item_name` ⇒ `… thiếu tên món` · gỡ `order_line_last_component_fkey` ⇒ `… không có ảnh
+chụp thành phần nào` · gỡ `order_line_component_previous_position_fkey` ⇒ `… thiếu một trong hai thành
+phần` · gỡ `order_line_component_position_in_range_check` ⇒ `… ảnh chụp thừa so với số đã khai` · gỡ
+`order_line_option_menu_option_fkey` ⇒ `ERROR: I-010: database KHÔNG từ chối tuỳ chọn không có gốc` ·
+**thêm** cột `order_line.client_price_vnd` ⇒ `ERROR: I-013: họ order_line có cột tiền ngoài bốn cột đã
+khai — có thể là giá khách gửi`.
+
+Lần chạy đầu tìm ra **một test không biết kêu**: phần `I-013` của `i013_…` chỉ **in** các cột tiền, nên
+thêm một cột giá khách gửi vẫn xanh — nghiệm thu 4 khi ấy đứng trên mắt người đọc output. Sửa: test so
+tập cột tiền của họ `order_line` với đúng bốn cột đã khai, lệch ⇒ `RAISE EXCEPTION`; file lát §3 hàng
+`I-013` thêm một câu. Cùng lượt, `i009_…` đổi lời *"F-036 chỗ trống … chưa có tầng"* thành vế ngừng bán
+**tầng 3** (**ADR-056**, T-103 đã đóng `F-036` sau khi lát này xong — dòng *Còn mở* bên dưới là trạng
+thái ngày 2026-09-27). Không migration nào đổi. Kịch bản gỡ ràng buộc để ở nháp của phiên, không vào
+repo: gom phép *biết kêu* thành một lệnh là việc của `P2-11`.
+
 *Còn mở — cần chủ repo đọc:*
 - **Đầu ra (b) đọc theo tầng 3**: kế hoạch §6 và bước 6 viết *"bị từ chối, dán nguyên lời từ chối"*;
   lát này giữ luật ở dữ liệu, lời từ chối là của pha 3. Muốn database từ chối thì phải đổi tầng của
@@ -880,11 +900,46 @@ sang chỗ mới — **trong cùng thay đổi**, không phải một task sau (
   đỏ.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi:* migration mới `db/migrations/20260928120000_duong_tien.up.sql` (file của `P2-04` · `P2-05`
+  không sửa, `QC-05`); sáu test mới `db/tests/i005_…` · `i014_…` · `i015_…` · `i021_…` · `yc01_…` ·
+  `yc02_…`; file lát `docs/product/2-db/04-luoc-do-duong-tien.md`; pointer ở `architecture.md` §8 ·
+  §12.3, `04-yeu-cau-du-lieu.md` hàng `YC-02`, kế hoạch pha 2 §1, `02-luoc-do-ban-hang.md` §1 · §2 · §3
+  · §5 · §6, `00-index.md`, `CLAUDE.md` §2 hàng *Schema*; một câu mở `U-063`. **Không** chạm: quyền theo
+  vai (pha 3), bảng người (`P2-08`), câu đối chiếu mỗi tối (`P2-11`).
+- *Nghiệm thu:* bảy dòng Acceptance ở dòng `P2-06` của `work/backlog.md` (viết trước khi dựng,
+  2026-09-28).
+- *Kiểm chứng:* `./scripts/db-check.sh` (database rỗng dựng từ số 0) · một vòng gỡ từng ràng buộc
+  trên database riêng · phép so tên bảng `.md` ↔ migration · `./scripts/gate.sh`.
 
-**Bàn giao:** —
+**Bàn giao:** Claude Code, nhánh `chatgpt_involve`, base `ff9c2d5`, 2026-09-28; **chưa review độc
+lập**; chưa commit.
+
+*Kết quả:* bảy bảng — `bill` (hoá đơn = lần đóng một đơn vị tính tiền, thu chia phương thức theo cột,
+nợ và người nợ trên cùng dòng) · `debt_collection` · `prepayment` · `prepayment_use` (chuỗi số dư của
+khoản trả trước) · `refund` (hoàn cho hoá đơn **hoặc** trả lại trả trước) · `opening_float` ·
+`opening_float_line`; ba cột tự tính trên `table_session` · `sales_order` làm đích cho khoá ngoại hoãn
+*phiên đã đóng ⇔ có hoá đơn* và *đơn lẻ Hoàn thành ⇒ có hoá đơn*. `architecture.md` §12.3 nay là đề
+xuất lịch sử, trỏ sang file lát. Lựa chọn thiết kế và phương án bị loại: file lát §0 · §2 (*phiên
+chọn 2026-09-28*, chờ chủ repo đọc).
+
+*Nghiệm thu → bằng chứng* (output `./scripts/db-check.sh`, PostgreSQL 17.11; số trong test là số giả
+hoặc số của kịch bản `I-021`):
+
+| # | Acceptance | Bằng chứng |
+|---|---|---|
+| 1 | migration mới, không sửa file đã commit | `PASS migrate — 6 file`; `PASS QC-05 (sh) — rỗng` (không file migration đã commit nào bị sửa) |
+| 2 | mỗi vế tầng 1 có ràng buộc thật, dựng sai ⇒ từ chối | `I-005`: `violates check constraint "bill_parts_equal_due_check"` (thu thiếu không nợ) · `"bill_debtor_iff_debt_check"` (nợ không tên; tên ở phiên không nợ — `YC-11`) · `"bill_debtor_name_not_blank_check"` · `"bill_amounts_not_negative_check"` · `violates foreign key constraint "table_session_bill_fkey"` (phiên đóng, không hoá đơn) · `"bill_table_session_fkey"` (hoá đơn cho phiên chưa đóng). `I-014`: `"bill_sales_order_fkey"` (lượt gọi phiên bàn tính tiền riêng) · `"bill_one_unit_check"` · `"sales_order_bill_fkey"` (đơn lẻ Hoàn thành không hoá đơn). `I-015`: `"bill_parts_equal_due_check"` (thu vượt; xoá một phần đã ghi) · `column "card_vnd" of relation "bill" does not exist` (phương thức thứ ba). `I-002`/`I-007`: `unique constraint "bill_one_per_order_key"` · `"bill_one_per_session_key"`. `I-021`: `unique constraint "opening_float_one_per_day_key"` · `check constraint "opening_float_line_amount_check"`. `YC-23`: `"prepayment_use_balance_check"` (đã thành doanh thu + trả lại vượt số đã nhận) · `"prepayment_use_first_fkey"` · `"prepayment_use_previous_fkey"` · `"prepayment_use_bill_fkey"` · `"bill_prepayment_use_fkey"` · `"refund_prepayment_use_fkey"` · `"prepayment_sales_order_fkey"` (trả trước ở phiên bàn). **Biết kêu:** trên compose project `banhcuon_mutate` (gỡ sạch khi xong), 25 lần gỡ một ràng buộc trong transaction rồi chạy lại test giữ nó ⇒ 25 lần đỏ đúng ca, ví dụ `ERROR: I-005: database KHÔNG từ chối phiên đã đóng mà không có hoá đơn` · `ERROR: YC-23: database KHÔNG từ chối dùng quá số đã nhận` · `ERROR: YC-10: database KHÔNG từ chối ghi lần trả nợ thành một lần bán mới`. Lần chạy đầu tìm ra **hai test chưa biết kêu** (ca *một lần thu gắn hai đơn vị* bị khoá một-hoá-đơn-một-phiên che; ca *dòng mệnh giá không phải bội* bị khoá một-mệnh-giá-một-dòng che) — đã sửa, chạy lại đỏ đúng ca |
+| 3 | năm thứ của lần hoàn, sáu thứ của khoản nợ đọc lại được sau nhiều ngày | `YC-01 đọc lại: hoàn 60000 cho đơn 62 (bán ngày 2026-09-21) lúc 2026-09-23 08:40:00+07 (ngày hoàn 2026-09-23), lý do "bánh nguội, khách không nhận", trả lại bằng cash, khoản ấy đã thu bằng transfer — "ai bấm" chờ P2-08`; `YC-02 đọc lại sau ba ngày — sáu thứ: ai nợ "Chú Tư, số 0912 000 111", bao nhiêu 50000, phiên 18, lúc ghi 2026-09-21 09:00:00+07, lúc thu 2026-09-24 16:00:00+07 (tiền mặt 20000 + chuyển khoản 30000), đã thu t`. Vết không xoá được: `permission denied for table refund` (shop_app) · `violates foreign key constraint "refund_bill_fkey"` (xoá lần bán có vết). **Chỗ trống có tên:** *ai bấm* (vế thứ năm của `YC-01`, người trực `quay` của `YC-02`) ⇒ `P2-08`, file lát §5. *Sau nhiều ngày* dựng bằng mốc của các ngày khác nhau trong **một** lần chạy — không phải chờ thật |
+| 4 | trả nợ không tạo khoản bán mới | `YC-10 bị từ chối (trả nợ ghi thành lần bán thứ hai): duplicate key value violates unique constraint "bill_one_per_session_key"`; `I-014 doanh thu thứ Hai 200000 · thứ Năm 0 (nợ cũ thu được thứ Năm 50000, không vào doanh thu) · hai ngày cộng lại 200000` |
+| 5 | ba danh sách trả trước và các hạng tử `I-021` dựng lại được, khớp 0đ | `YC-23 nhận ngày 2026-09-21 — đơn 18: tiền mặt 50000` · `— đơn 19: … chuyển khoản 40000` · `thành doanh thu ngày 2026-09-22 — đơn 18: tiền mặt 50000` · `trả lại (trả bằng cash) ngày 2026-09-22 — đơn 19: tiền mặt 40000`. `I-021 ngày 2026-09-21: … = 850000 · vế phải … ⇒ lệch 0` · `ngày 2026-09-22: … = 660000 … ⇒ lệch 0` · `ngày 2026-09-23: … = 840000 … hoàn mặt cho CK 60000 … nợ cũ mặt 100000 … ⇒ lệch 0`; bỏ một hạng tử ⇒ `lệch 50000` · `-40000` · `100000` · `-60000`. `I-014 doanh thu ngày 2026-09-21: 860000` (không có trả trước) · `2026-09-22: 850000` (có B, không bị trừ lần trả lại của E). Số tiền mặt **đếm được** đưa vào như hằng số — chưa có chỗ cất (file lát §5) |
+| 6 | file lát · pointer | `docs/product/2-db/04-luoc-do-duong-tien.md`; `architecture.md` §12.3 mở bằng khối *Đã được pha 2 thay thế* và §8 hàng *Khoản nợ* trỏ sang; `04-yeu-cau-du-lieu.md` hàng `YC-02` · kế hoạch pha 2 §1 trỏ sang; `00-index.md` thêm dòng; `CLAUDE.md` §2 hàng *Schema* thêm tên file; `02-luoc-do-ban-hang.md` §5 gỡ hai chỗ trống giao cho `P2-06`, §3 hàng `I-017` thêm câu hoá đơn. `git grep '§12.3'` còn lại đều đọc §12.3 là **đề xuất** (ADR, `03-bao-ve-invariant.md`, tài liệu ví dụ quy trình) — không chỗ nào đọc nó như nhà thật |
+| 7 | db-check · gate · so tên bảng | `db-check: PASS — 26 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 19 file test` (13 test cũ vẫn PASS). `./scripts/gate.sh`: links OK · doc-status xanh · phase-boundary exit 0 · verify PASS; **Gate 3 đỏ vì bảy file của phiên song song** (`T-118` và phần *test biết kêu* của `P2-05`, chưa commit: `db/tests/i009_…` · `i013_…` · `docs/decisions.md` · `03-bao-ve-invariant.md` · `06-so-rui-ro.md` · `03-luoc-do-menu-gia.md` · `quality/invariants.md`), không file nào của lượt này. So tên bảng (`grep 'CREATE TABLE'` · `grep '^| \`tên\` |'` trên `0[2-9]-luoc-do-*.md`): cả hai danh sách 22 tên, `bill debt_collection dining_table menu_component menu_item menu_item_component menu_item_option_group menu_option opening_float opening_float_line option_group option_group_prerequisite order_line order_line_component order_line_option prepayment prepayment_use qr_code refund sales_order table_session table_session_member`; `comm -3` **rỗng** |
+
+*Còn mở — cần chủ repo đọc:* các lựa chọn *phiên chọn 2026-09-28* của file lát (nợ nằm trên hoá đơn
+thay vì bảng nợ riêng · mỗi phương thức một cột · một đơn một khoản trả trước · mã `cash` · `transfer`
+· khoá ngoại hai chiều); **`U-063`** (trả nợ một phần — câu của chủ quán); **số tiền mặt đếm được cuối
+ngày và dấu *ngày đã đối soát xong* chưa bước nào của kế hoạch pha 2 nhận** (file lát §5) — chủ repo
+chọn bước; *ai bấm* chờ `P2-08`.
 
 [↑ đầu file](#top)
 

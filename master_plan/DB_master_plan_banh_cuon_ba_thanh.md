@@ -32,7 +32,7 @@ hình dạng ấy chép của kế hoạch pha 1 (**ADR-033**).*
 | Tài liệu | Nó là gì | Được đọc như |
 |---|---|---|
 | [`prompt-fullstack.md`](prompt-fullstack.md) §3.4–§3.7 | **bản xuất khẩu** viết 2026-08-31, trước phần lớn quyết định của chủ quán | **đề xuất để đối chiếu**, không phải lược đồ đã chốt (**ADR-035** luật 3) |
-| [`../docs/product/1-system-design/architecture.md`](../docs/product/1-system-design/architecture.md) §12.3 | mục **duy nhất** trong repo đã đi tới mức *cất cái gì* và *ràng buộc nào phải do database giữ*, cho riêng phần **nợ** | **đề xuất gửi sang pha 2**, tự khai như thế trong thân mục |
+| [`../docs/product/1-system-design/architecture.md`](../docs/product/1-system-design/architecture.md) §12.3 | mục **duy nhất** trong repo đã đi tới mức *cất cái gì* và *ràng buộc nào phải do database giữ*, cho riêng phần **nợ** — **tới 2026-09-28**: `P2-06` thay thế nó bằng [`../docs/product/2-db/04-luoc-do-duong-tien.md`](../docs/product/2-db/04-luoc-do-duong-tien.md) | **đề xuất gửi sang pha 2**, tự khai như thế trong thân mục; nay là đề xuất lịch sử, §12.3 trỏ sang chỗ mới |
 | [`../docs/product/1-system-design/04-yeu-cau-du-lieu.md`](../docs/product/1-system-design/04-yeu-cau-du-lieu.md) | **owner** của *câu yêu cầu* — `YC-01`…`YC-20` · `YC-22` (thêm 2026-09-28, T-110) · `YC-23` (thêm 2026-09-28, T-112) · `YC-24` (thêm 2026-09-28, T-113) · `YC-25` (thêm 2026-09-28, T-115; `YC-21` là yêu cầu khôi phục của pha 5, **ADR-057**) | **đề bài của pha 2**: mỗi dòng là một câu pha 2 phải trả lời được bằng *có*/*không* sau khi dựng xong lược đồ |
 | **file này** | kế hoạch: thứ tự · mức · đầu ra kiểm chứng được | **không sở hữu gì** |
 

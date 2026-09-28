@@ -21,7 +21,7 @@ dòng `F-XXX`, không lặng lẽ sửa bên nào.
 - **luật nghiệp vụ và tầng bảo vệ** — `quality/invariants.md` và
   `docs/product/1-system-design/03-bao-ve-invariant.md`. Lát này **thi hành** tầng đã chốt, không
   nâng, không hạ (**ADR-050** luật 1);
-- **món, giá, tuỳ chọn** — `P2-05`; **tiền** (thu, nợ, hoàn, mốc tính tiền) — `P2-06`; **việc trạm** —
+- **món, giá, tuỳ chọn** — `P2-05`; **tiền** (thu, nợ, hoàn, mốc tính tiền) — `P2-06`, [`04-luoc-do-duong-tien.md`](04-luoc-do-duong-tien.md); **việc trạm** —
   `P2-07`; **người, chỗ đứng, vết cập nhật** — `P2-08`. Chỗ nối với từng lát ở §5;
 - **cất bằng gì** (tiền, mốc, khoá, tên) — [`01-quy-uoc-du-lieu.md`](01-quy-uoc-du-lieu.md);
   **dựng và kiểm bằng gì** — [`10-quy-uoc-code.md`](10-quy-uoc-code.md).
@@ -66,7 +66,7 @@ tên ấy.
 | Mệnh đề | Tầng | Lược đồ giữ bằng | Bằng chứng |
 |---|:--:|---|---|
 | **`I-001`** — một bàn ≤ một phiên chưa thanh toán | 1 | `table_session_member_one_unpaid_session_key` — khoá duy nhất theo **bàn**, chỉ áp cho dòng mà phiên **chưa đóng**. Điều kiện viết theo **nghĩa** *chưa đóng*, không theo một giá trị trạng thái, nên phủ cả *chờ thanh toán*. Buộc theo bàn chứ không theo phiên, nên một phiên nhiều bàn (ghép) không bị chặn, còn ghép một bàn đang có phiên sang phiên khác thì bị | `db/tests/i001_one_unpaid_session_per_table.sql` |
-| **`I-002`** vế *một phiên một hoá đơn* | 1 | đơn vị tính tiền của một đơn kênh gắn bàn **là** phiên: `sales_order_session_iff_table_channel_check` buộc đơn `qr_table` · `staff_pos` có phiên, và `sales_order_session_table_fkey` buộc bàn gửi đơn là một bàn **của chính phiên ấy**. Lát này **không** có bản ghi hoá đơn riêng — không có chỗ thứ hai để một phiên có hai hoá đơn. Nếu `P2-06` thêm một bản ghi cho lần đóng/hoá đơn thì nó nợ một khoá duy nhất theo phiên (§5) | `db/tests/i002_table_order_belongs_to_session.sql` |
+| **`I-002`** vế *một phiên một hoá đơn* | 1 | đơn vị tính tiền của một đơn kênh gắn bàn **là** phiên: `sales_order_session_iff_table_channel_check` buộc đơn `qr_table` · `staff_pos` có phiên, và `sales_order_session_table_fkey` buộc bàn gửi đơn là một bàn **của chính phiên ấy**. Lát này **không** có bản ghi hoá đơn riêng — không có chỗ thứ hai để một phiên có hai hoá đơn. Bản ghi hoá đơn của `P2-06` mang khoá duy nhất theo phiên: [`04-luoc-do-duong-tien.md`](04-luoc-do-duong-tien.md) §2 hàng `I-002` (2026-09-28) | `db/tests/i002_table_order_belongs_to_session.sql` |
 | **`I-002`** vế *tổng hoá đơn = tổng mọi lượt gọi* | 3 | không có cột tổng nào: tổng **cộng lại từ chi tiết** (đơn → dòng), nên không có ô thứ hai để ghi lệch (**ADR-050** tầng 3). Giá của dòng ở `P2-05` | câu đối chiếu thuộc `P2-11` |
 | **`I-006`** · **`I-007`** — ranh giới phiên bàn ↔ ba kênh không gắn bàn | 1 | **một** cơ chế cho cả hai nửa (`03-bao-ve-invariant.md` §2 hàng `I-006`): `sales_order_session_iff_table_channel_check` — đơn có phiên **khi và chỉ khi** kênh gắn bàn. Tạo đơn `pickup` trong phiên, **nối** một đơn `phone_preorder` vào phiên sau khi tạo, hay đổi kênh để lách — cả ba bị từ chối | `db/tests/i007_takeaway_channels_outside_session.sql` |
 | **`YC-05`** — dấu *đem về* ở mức suất | — | `order_line.is_takeaway` nằm trên **dòng**; dòng thuộc đơn bằng khoá ngoại bắt buộc, đơn thuộc phiên như hàng `I-006`. Dấu ấy không chạm tới dòng thuộc đơn nào, nên không có đường nào nó làm suất rời phiên. Một đơn mang cùng lúc dòng ăn tại chỗ và dòng đem về | `db/tests/yc05_takeaway_mark_per_line.sql` |
@@ -133,7 +133,10 @@ viết ra*. Không hàng nào dưới đây được nâng thành ràng buộc t
 - **`I-017` (tầng 2).** **Ranh giới giao dịch viết ra:** đổi `table_session.status` sang `closed` và
   đánh dấu **mọi** dòng `table_session_member` của phiên ấy là đã đóng **cùng sống hoặc cùng chết** —
   khoá ngoại hai cột hoãn tới `COMMIT` cưỡng chế điều ấy; cắt giữa chừng thì không nửa nào sống sót
-  (bằng chứng: `i017_close_session_atomic.sql`). **Pha 3 nợ:** trong **cùng** giao dịch ấy, đọc trạng
+  (bằng chứng: `i017_close_session_atomic.sql`). **Từ `P2-06` (2026-09-28)** cùng giao dịch ấy còn
+  phải ghi **hoá đơn** của phiên: `table_session_bill_fkey`, hoãn tới `COMMIT`, từ chối một phiên đã
+  đóng mà không có hoá đơn ([`04-luoc-do-duong-tien.md`](04-luoc-do-duong-tien.md) §2 hàng `I-005`).
+  Test `i017_…` dừng ở `ROLLBACK` nên không chạm khoá ấy. **Pha 3 nợ:** trong **cùng** giao dịch ấy, đọc trạng
   thái của **mọi** đơn thuộc phiên — kể cả đơn của bàn ghép — và khoá chúng để không đơn nào đổi trạng
   thái giữa lúc đọc và lúc ghi. Lược đồ không tự làm được vế ấy; một ràng buộc kiểm không đọc được
   bảng khác. *Tiền chưa thu không chặn đóng phiên* (`I-005`) — lát này không có cột tiền nào để chặn
@@ -187,8 +190,8 @@ bảng ở §1 — phép so tên bảng `.md` ↔ migration (**ADR-053** luật 
 | ~~**`F-042`** — mã QR của bàn~~ — **gỡ 2026-09-28 (`T-114`)**. Pha 1 lấp trước (T-113, `docs/decisions.md` **ADR-060**: `I-023`, `YC-24`), chủ quán trả lời **U-062** (T-118: chỉ chủ quán đổi, khi quán bị hack — `master_plan/shop-facts.md` §6 quy tắc 2), rồi lược đồ dựng | bảng `qr_code`, cửa `qr_code_issue`, lượt gọi mang mã: §1 · §2 hàng `I-023` | `T-114` — xong |
 | **Ai đổi mã QR** — vế *ai* của vết lần đổi (`I-023` · `YC-24`), và *chỉ chủ quán được đổi* (U-062) | dòng `qr_code` ghi **bàn** và **lúc**, chưa ghi **ai**: chưa có bảng người, và một cột chữ tạm là một cách định danh người thứ hai (`QD-11`). Quyền *chỉ chủ quán gọi cửa đổi mã* là quyền theo vai — việc pha 3, lược đồ không dựng bảng vai. Câu đối chiếu 6 hôm nay chỉ đọc bàn và lúc | `P2-08` — thêm người vào `qr_code` và tham số người vào `qr_code_issue` bằng migration mới; quyền theo vai ở pha 3 |
 | ~~**Món, giá khoá lúc đặt, tuỳ chọn đã chọn** trên dòng đơn~~ — **gỡ 2026-09-27 (`P2-05`)** | `P2-05` thêm vào `order_line` bằng migration **mới** (file của lát này không sửa, `QC-05`) và dựng chỗ cất tuỳ chọn đã chọn — [`03-luoc-do-menu-gia.md`](03-luoc-do-menu-gia.md) §1. Lý do giao sang, giữ làm lịch sử: mọi cột của tuỳ chọn đã chọn là ảnh chụp của một thứ trong menu, nên dựng nó ở đây là đặt hình dạng thay `P2-05` | `P2-05` — xong |
-| **Mốc tính tiền** của lần đóng phiên và của đơn lẻ (`booked_at` · `sale_date`, `QD-31` · `QD-33`) | lát này không cất mốc đóng: mốc ấy **là** mốc tính tiền (`02-thoi-gian-ngay-ban.md` §2), và một mốc đóng thứ hai ở đây sẽ là mốc tính tiền thứ hai | `P2-06` |
-| **Bản ghi hoá đơn / lần thu** của một đơn vị tính tiền | chưa có. Bản ghi nào `P2-06` thêm cho lần đóng một phiên nợ một **khoá duy nhất theo phiên** (`I-002` vế 1), và cho đơn lẻ nợ đúng một lần thu khi đóng (`I-007` phép đối chiếu) | `P2-06` |
+| ~~**Mốc tính tiền** của lần đóng phiên và của đơn lẻ (`booked_at` · `sale_date`, `QD-31` · `QD-33`)~~ — **gỡ 2026-09-28 (`P2-06`)** | mốc nằm trên bản ghi hoá đơn của lát đường tiền, không trên phiên hay đơn — [`04-luoc-do-duong-tien.md`](04-luoc-do-duong-tien.md) §1. Lý do lát này không cất mốc đóng, giữ làm lịch sử: mốc ấy **là** mốc tính tiền (`02-thoi-gian-ngay-ban.md` §2), một mốc đóng thứ hai ở đây sẽ là mốc tính tiền thứ hai | `P2-06` — xong |
+| ~~**Bản ghi hoá đơn / lần thu** của một đơn vị tính tiền~~ — **gỡ 2026-09-28 (`P2-06`)** | bản ghi hoá đơn có khoá duy nhất theo phiên và theo đơn lẻ; phiên đã đóng và đơn lẻ Hoàn thành **phải** có hoá đơn (khoá ngoại hoãn trên cột tự tính của hai bảng lát này — migration mới, file của lát này không sửa, `QC-05`) — [`04-luoc-do-duong-tien.md`](04-luoc-do-duong-tien.md) §2 hàng `I-005` · `I-014` | `P2-06` — xong |
 | **Ai bấm** mỗi thao tác, **vết cập nhật** (`I-012` · `I-018`) | lát này không có cột người, không có vết | `P2-08` |
 | **Dấu đem về đọc ở bảng bếp**, bàn nhận việc | lát này chỉ cất dấu trên dòng | `P2-07` (đơn vị bấm *đã bưng ra bàn* vẫn để trống — `S-5`) |
 
@@ -203,7 +206,7 @@ bảng ở §1 — phép so tên bảng `.md` ↔ migration (**ADR-053** luật 
 | Bước | Lấy gì |
 |---|---|
 | `P2-05` | §1 hàng `order_line` · §5 hàng *món, giá, tuỳ chọn* — thêm bằng migration **mới**, không sửa file của lát này (`QC-05`) |
-| `P2-06` | §5 hàng *mốc tính tiền* và *bản ghi hoá đơn*; đơn vị tính tiền là `table_session` (kênh gắn bàn) hoặc `sales_order` (ba kênh kia) |
+| `P2-06` | **xong 2026-09-28** — §5 hàng *mốc tính tiền* và *bản ghi hoá đơn* đã gỡ; [`04-luoc-do-duong-tien.md`](04-luoc-do-duong-tien.md) |
 | `P2-07` | `order_line` và dấu đem về; bàn gửi đơn ở `sales_order` |
 | `P2-10` | mã QR của bàn mồi sinh **qua** `qr_code_issue` (§2 hàng `I-023`), không tự chèn vào `qr_code` |
 | `P2-09` | file migration của lát này là file đầu tiên của dãy; phép so tên bảng `.md` ↔ migration đọc §1 |
