@@ -12,7 +12,8 @@
 #      QD-32, QD-40(b) — hàm cùng tên ở dưới;
 #   3. từng file db/tests/*.sql, mỗi file trong một transaction rồi ROLLBACK.
 # Tham số `:schema`, `:kieu_moc`… lấy từ bảng §0 của 01-quy-uoc-du-lieu.md; múi
-# giờ của quán lấy từ master_plan/shop-facts.md §1. Không có Docker, hay database
+# giờ của quán lấy từ master_plan/shop-facts.md §1. Bước 4: dựng dữ liệu mồi (db/seed/,
+# P2-10) vào database ấy rồi tính lại các ca giá §4.8. Không có Docker, hay database
 # không lên ⇒ FAIL, không bỏ qua: một bộ kiểm im lặng khi thiếu máy là một bộ
 # kiểm không ai biết đã không chạy.
 set -uo pipefail
@@ -230,9 +231,33 @@ for t in db/tests/*.sql; do
 done
 [ "$n_tests" -gt 0 ] || echo "NOTE db/tests/ — chưa có file test nào"
 
+# --- 4. dữ liệu mồi (P2-10, docs/product/2-db/08-du-lieu-moi.md) ----------------
+# Sinh từ master_plan/shop-facts.md lúc chạy, dựng vào database này (sau mọi test,
+# vì các test chạy trên database rỗng), rồi tính lại các ca giá của §4.8 ⇒ khớp
+# từng đồng. Owner đổi hình mà bộ dựng không đọc được ⇒ FAIL.
+n_seed=0
+if seed_sql="$(perl db/seed/seed.pl 2>&1)"; then
+  if out="$(printf '%s\n' "$seed_sql" | psql_f -f - 2>&1)"; then
+    n_seed="$(psql_q -c "SELECT format('%s bàn · %s mã QR hiện hành · %s thành phần · %s dòng menu · %s nhóm tuỳ chọn · %s trạm của thành phần',
+      (SELECT count(*) FROM dining_table), (SELECT count(*) FROM qr_code WHERE replaced_at IS NULL),
+      (SELECT count(*) FROM menu_component), (SELECT count(*) FROM menu_item),
+      (SELECT count(*) FROM option_group), (SELECT count(*) FROM menu_component_station))")"
+    echo "PASS dữ liệu mồi — $n_seed"
+    if out="$(perl db/seed/seed.pl --price-cases | psql_f -f - 2>&1)"; then
+      echo "PASS §4.8 ca giá"; printf '%s\n' "$out" | sed 's/^psql:[^N]*NOTICE: */     /'
+    else
+      fail "§4.8 ca giá"; printf '%s\n' "$out" | sed 's/^/     /'
+    fi
+  else
+    fail "dữ liệu mồi — không dựng được"; printf '%s\n' "$out" | sed 's/^/     /'
+  fi
+else
+  fail "dữ liệu mồi — db/seed/seed.pl không đọc được owner:"; printf '%s\n' "$seed_sql" | sed 's/^/     /'
+fi
+
 rm -f "$subst_file"
 if [ "$failed" -ne 0 ]; then
   echo "db-check: FAIL"
   exit 1
 fi
-echo "db-check: PASS — $n_blocks khối kiểm tài liệu, 4 phép kiểm dạng lệnh, $n_tests file test"
+echo "db-check: PASS — $n_blocks khối kiểm tài liệu, 4 phép kiểm dạng lệnh, $n_tests file test, dữ liệu mồi + §4.8"

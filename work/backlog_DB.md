@@ -1289,11 +1289,64 @@ trên, và mỗi phiên sẽ tự gõ vài món để thử — mỗi phiên m�
   `qr_code_issue` (`docs/product/2-db/02-luoc-do-ban-hang.md` §2 hàng `I-023`), không tự chèn mã.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi:* 2026-09-28, Claude Code, nhánh `chatgpt_involve`, base `3701e1a`. `db/seed/` (mới) ·
+  `scripts/db-check.sh` · `docs/product/2-db/08-du-lieu-moi.md` (mới) · `10-quy-uoc-code.md`
+  (`QC-08` thêm dòng `db/seed/`) · `docs/product/00-index.md` · hai file backlog. **Không** đụng
+  bảy file chưa commit của phiên khác có sẵn trong cây lúc nhận (T-118 · hậu ADR-056).
+- *Nghiệm thu* (viết trước khi dựng):
+  1. Dữ liệu mồi **đọc** `master_plan/shop-facts.md` §1 · §4.2 · §4.4 · §4.5 · §4.9 · §5.3 **lúc
+     chạy**; không file nào dưới `db/` hay `docs/product/2-db/` mang một con giá, một phụ thu, một
+     số lượng thành phần hay số bàn của quán — `grep` giá bất kỳ ra rỗng.
+  2. Dựng vào database rỗng **bằng vai `shop_app`**: mười lăm bàn, mỗi bàn một mã QR **qua**
+     `qr_code_issue`; thành phần · dòng menu · thành phần suất · nhóm tuỳ chọn · luật *Lượng nhân*
+     · trạm của thành phần.
+  3. Mười ba ca của §4.8 tính lại **từ dữ liệu trong database** ⇒ khớp từng đồng; ca 11 bị từ
+     chối; kỳ vọng đọc thẳng từ bảng §4.8, không gõ lại. Chạy trong `./scripts/db-check.sh`.
+  4. Owner đổi hình mà bộ dựng không đọc được (một dòng menu §4.9 không ánh xạ được, một thành phần
+     không có trạm, ba cột giá §4.2 không khớp phụ thu §4.4) ⇒ **FAIL**, không dựng nửa chừng.
+  5. **Người**: không bảng nào để dựng (`P2-08` chưa làm) ⇒ chỗ trống có tên, không tự đặt tên người.
+- *Kiểm chứng:* output thật của `./scripts/db-check.sh` và `./scripts/gate.sh`, dán ở *Bàn giao*.
 
-**Bàn giao:** —
+**Bàn giao:** 2026-09-28, Claude Code, nhánh `chatgpt_involve`, base `3701e1a`; **chưa review độc
+lập**. File mới: `db/seed/seed.pl` · `docs/product/2-db/08-du-lieu-moi.md`. File sửa:
+`scripts/db-check.sh` (bước 4) · `docs/product/2-db/10-quy-uoc-code.md` (`QC-08` dòng `db/seed/`) ·
+`docs/product/00-index.md` · `work/backlog.md` · file này. Chưa commit.
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| 1 — đọc owner lúc chạy, không bản chép | `grep -rnE '[0-9]{4,}\|[0-9]+\.000' db/seed/ docs/product/2-db/08-du-lieu-moi.md` chỉ ra ngày tháng và số mục. Grep giá trên cả `docs/product/2-db/` · `db/` ra số tiền **thu/nợ** giả trong test đường tiền của `P2-06` (có từ trước, không phải bảng giá menu) và một dòng `10000` của `QC-01` (số phiên bản) |
+| 2 — dựng bằng `shop_app`, mã qua `qr_code_issue` | `PASS dữ liệu mồi — 15 bàn · 15 mã QR hiện hành · 6 thành phần · 10 dòng menu · 2 nhóm tuỳ chọn · 10 trạm của thành phần` |
+| 3 — các ca §4.8 từng đồng | `ca 1 … ca 13 khớp` · `§4.8: 13 / 13 ca khớp từng đồng` — ca 11 `⇒ TỪ CHỐI`, ca 13 `⇒ 0đ` (output đủ ở dưới) |
+| 4 — owner đổi hình ⇒ FAIL | bản sao hỏng qua `SHOP_FACTS`: §4.5 suất giò 3 bánh ⇒ `ca 8 LỆCH … tính ra 24000, §4.8 đòi 29000` · `db-check: FAIL`; §4.2 ô bánh thịt nhiều sai ⇒ `seed.pl: §4.2 'bánh cuốn' cột 'Thịt nhiều' = 5500, chay + phụ thu §4.4 (Thịt, Nhiều nhân) = 5000`; §4.9 thêm món ⇒ `§4.9 dòng 'bánh cuốn chả' chưa có trong %MENU`; §5.3 bỏ dòng giò ⇒ `§5.3: thành phần 'Giò' không xuống trạm nào` — cả ba exit 1 |
+| 5 — người là chỗ trống | `08-du-lieu-moi.md` §4 hàng *Người*, chờ `P2-08` |
+
+```text
+PASS §4.8 ca giá
+     ca 1 khớp: Bánh cuốn ×1 [Chay] ⇒ 3000đ
+     ca 2 khớp: Bánh cuốn ×1 [Thịt · Thường] ⇒ 4000đ
+     ca 3 khớp: Bánh cuốn ×1 [Thịt · Nhiều nhân] ⇒ 5000đ
+     ca 4 khớp: Bánh cuốn ×1 [Thịt + mộc nhĩ · Nhiều nhân] ⇒ 5000đ
+     ca 5 khớp: Suất trứng chín ×1 [Chay] ⇒ 20000đ
+     ca 6 khớp: Suất trứng tái ×1 [Thịt + mộc nhĩ · Thường] ⇒ 25000đ
+     ca 7 khớp: Suất trứng vàng ×1 [Thịt · Nhiều nhân] ⇒ 30000đ
+     ca 8 khớp: Suất giò ×1 [Thịt · Nhiều nhân] ⇒ 29000đ
+     ca 9 khớp: Đầy đủ trứng chín ×1 [Thịt · Thường] ⇒ 30000đ
+     ca 10 khớp: Đầy đủ trứng tái ×1 [Thịt + mộc nhĩ · Nhiều nhân] ⇒ 34000đ
+     ca 11 khớp: Bánh cuốn ×1 [Chay · Nhiều nhân] ⇒ TỪ CHỐI
+     ca 12 khớp: Giò bán rời ×3 [] ⇒ 27000đ
+     ca 13 khớp: Canh bánh cuốn ×2 [] ⇒ 0đ
+     §4.8: 13 / 13 ca khớp từng đồng
+db-check: PASS — 26 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 22 file test, dữ liệu mồi + §4.8
+```
+
+`./scripts/gate.sh` ⇒ exit 0 (`check-scope: OK` · `check-links: OK` · `check-doc-status: xanh` ·
+`Verification passed.`). *(Output trên là bằng chứng của lượt chạy, không phải bảng giá: giá đọc ở
+`shop-facts.md` §4.2–§4.4.)*
+
+**Còn lại, cho phiên sau:** hàng *trứng chín/tái/vàng* ở `03-luoc-do-menu-gia.md` §5 đã được gỡ
+bằng phiên chọn ở `08-du-lieu-moi.md` §2 nhưng **chưa** trỏ sang — file ấy đang mang thay đổi chưa
+commit của phiên khác lúc giao, nên lượt này không sửa. Lượt chỉ sửa `shop-facts.md` không tự chạy
+lại các ca giá (`08-du-lieu-moi.md` §4).
 
 [↑ đầu file](#top)
 

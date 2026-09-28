@@ -268,6 +268,7 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   | `db/init/` | dựng vai, schema, mặc định cấp quyền — chạy một lần khi database khởi tạo | `P2-12` |
   | `db/migrations/` | lược đồ, theo `QC-05` | `P2-04`…`P2-08` |
   | `db/tests/` | test database, theo `QC-07` | `P2-04`…`P2-08` · `P2-11` |
+  | `db/seed/` | bộ dựng dữ liệu mồi — đọc `master_plan/shop-facts.md` lúc chạy, in SQL; không cất con số nào của quán (`08-du-lieu-moi.md`) | `P2-10` |
   | `be/` | backend | pha 3 |
   | `fe/` | frontend | pha 4 |
 
@@ -277,9 +278,9 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   **ở gốc** — gọi nhầm hoặc không gọi gì.
 - **Phép kiểm:**
   ```sh
-  for d in db/init db/migrations db/tests; do [ -d "$d" ] || echo "thiếu thư mục $d"; done
+  for d in db/init db/migrations db/tests db/seed; do [ -d "$d" ] || echo "thiếu thư mục $d"; done
   ```
-- **Nguồn:** phiên chọn 2026-09-27.
+- **Nguồn:** phiên chọn 2026-09-27; dòng `db/seed/` thêm 2026-09-28 (`P2-10`).
 
 ### QC-09 — Stack ngoài database: Go ở `be/`, Next.js + TypeScript ở `fe/`
 
