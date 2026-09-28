@@ -78,6 +78,7 @@ có câu trả lời mới từ người.
 | ADR-059 | **Khoản trả trước vào công thức đối soát bằng BA dòng** — *nhận trong ngày* (+) · *thành doanh thu trong ngày* (−) · *trả lại trong ngày* (−), không điều kiện ngày; `I-021` thêm hạng tử tiền mặt cho ba dòng ấy và cho nợ cũ thu bằng tiền mặt; chuyển khoản so theo lúc tiền tới; trả lại khoản chưa thành doanh thu không trừ doanh thu (*suy ra*); `YC-23` (F-037) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-112; chỗ cất ở `P2-06` |
 | ADR-060 | **`I-023` — mã QR của bàn — vào nhóm TIỀN đã có**, không mở nhóm mới; vế *một mã một bàn* và *lần đổi có vết* ở **tầng 1**, vế *bàn tra từ mã* · *mã cũ chết ngay* · *không đoán được* ở **tầng 3**, mã hiện hành trong tay người ngoài là **tầng 4** (`RR-10`); `YC-24`; *ai đổi, khi nào* mở `U-062` (F-042) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-113; migration ở `T-114` |
 | ADR-061 | **`I-024` — một lần gửi, nhiều nhất một đơn — vào nhóm TIỀN đã có**; đồng nhất lần gửi bằng **dấu lần gửi** do phía gửi đặt một lần, **không** bằng nội dung; vế *một dấu một đơn* và *không đơn nào thiếu dấu* ở **tầng 1**, vế *gửi lại nhận lại đúng đơn* · *cùng dấu khác nội dung bị từ chối* · *giống hệt không phải là trùng* ở **tầng 3**, hai ý định của người là **tầng 4** (`RR-11`); `YC-25` (F-043) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-115; migration ở `T-116` |
+| ADR-062 | Gate 8 chặn thêm **subject trùng từng chữ một commit đã có** trong lịch sử; `git commit --amend` giữ nguyên subject của `HEAD` vẫn qua (F-031, sửa đổi ADR-010) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-117 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -675,6 +676,8 @@ giới hạn dưới đây là một phần của quyết định, không phải
   `core.hooksPath = scripts/hooks` cho bản clone hiện tại. Không dùng `.git/hooks/`.
 - **Luật hẹp, một câu:** bỏ tiền tố `T-XXX: ` nếu có (CLAUDE.md §6 cho phép L0 không mang mã task),
   phần mô tả còn lại phải có **≥ 2 từ và ≥ 8 ký tự**. `Fix typo` qua, `adg` chết.
+  *(Sửa đổi 2026-09-28, **ADR-062**: thêm một luật thứ hai — subject không được trùng từng chữ
+  một commit đã có trong lịch sử. Mọi giới hạn khác của ADR này giữ nguyên.)*
 - **Subject > 72 ký tự chỉ bị NHẮC.** CLAUDE.md §6 nói ≤ 72, nhưng một subject 75 ký tự vẫn nói
   được nó là gì; chặn nó là *đỏ vì lý do sai* (ADR-003).
 - **Đường thoát `--no-verify` được in ra ngay trong thông báo từ chối.**
@@ -4107,3 +4110,64 @@ thật (`master_plan/shop-facts.md` §5.1), hai kênh của người quán nhậ
 `docs/product/1-system-design/06-so-rui-ro.md` RR-11 ·
 `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §6 · §7 ·
 `docs/product/2-db/02-luoc-do-ban-hang.md` §5.
+
+### ADR-062 — Gate 8 chặn thêm một thứ: subject trùng từng chữ một commit đã có trong lịch sử
+
+**Trạng thái:** **Đã chốt** 2026-09-28, **giao cho phiên**. Chủ repo giao `work/findings.md`
+**F-031** với lời nguyên văn *"hãy đoc kĩ và làm"*. F-031 ghi rằng dựng cơ chế cho lỗi này *"là
+quyết định của chủ repo"*; câu giao việc ấy là lời **giao việc chọn** (cùng cách đọc với
+**ADR-058** · **ADR-060** · **ADR-061**), không phải lời xác nhận một luật cụ thể. Chủ repo đọc
+ADR này rồi muốn đổi thì chỉ cần một câu. Task **T-117**. Sửa đổi **ADR-010** ở đúng vế *"chỉ chặn
+cái rỗng nghĩa"*; mọi giới hạn khác của ADR-010 giữ nguyên.
+
+**Context:**
+`git log --format='%s' | sort | uniq -cd` (chạy lại 2026-09-28) vẫn cho đúng **năm** nhóm subject
+bị dùng lại, không nhóm nào mới kể từ lần đo 2026-09-07 — bảng ở F-031. Ở mỗi nhóm nhiều nhất một
+commit nói đúng về chính nó. Bốn trong năm nhóm là commit **sát nhau**, cách vài phút (`1b1d5f5` →
+`0b3a337` 5 phút, `3f579f9` → `30abf8f` 11 phút, `b296268` → `510f092` 8 phút): message của commit
+vừa làm bị chép lại. Gate 7 không đứng ở cửa terminal; Gate 8 đứng ở mọi cửa nhưng chỉ hỏi subject
+có rỗng nghĩa không, nên cả năm nhóm đều lọt. `CLAUDE.md` §3.8 đòi hai lần để thêm luật — dạng lỗi
+này có năm.
+
+**Decision:**
+1. `scripts/hooks/commit-msg` từ chối commit khi subject — sau khi cắt khoảng trắng hai đầu — **trùng
+   từng chữ** subject của một commit **đi tới được từ `HEAD`**. So nguyên chuỗi, kể cả tiền tố
+   `T-XXX:`; cùng mã task khác mô tả thì qua.
+2. **`HEAD` cũng bị so**, vì đó là ca phổ biến nhất. Ngoại lệ duy nhất: `git commit --amend`. Khi
+   amend, commit mới **thay** `HEAD` chứ không đứng cạnh nó, nên hook so với lịch sử **trước**
+   `HEAD` — giữ nguyên subject thì qua, amend thành subject của một commit cũ hơn vẫn bị chặn.
+   Git không báo amend cho hook, nên hook đọc dòng lệnh của tiến trình cha (và ông, nếu git chạy
+   hook qua shell) để tìm `--amend`.
+3. Những gì ADR-010 đã miễn vẫn miễn: `Merge …`, `Revert …`, `fixup!`, `squash!`, `amend!`. Repo
+   chưa có commit nào, hay hook chạy ngoài repo git ⇒ không chặn.
+4. Lời từ chối nêu **hash và ngày** của commit đã dùng subject ấy, F-031, và hai đường ra:
+   `git commit --amend` (nếu đang định sửa commit vừa làm) và `git commit --no-verify`.
+5. **Không sửa lịch sử** (ADR-008): năm nhóm cũ vẫn nằm nguyên; luật chỉ chặn nhóm thứ sáu.
+
+**Rejected alternatives:**
+- **Chỉ nhắc, không chặn.** Nhắc thì chạy ở terminal lúc người ta đang vội — đúng lúc năm nhóm kia
+  ra đời. Khác với subject > 72 ký tự (vẫn nói được nó là gì), một subject trùng **nói sai** về
+  commit của nó, nên chặn không phải *đỏ vì lý do sai* (ADR-003).
+- **Bỏ `HEAD` khỏi phép so** để khỏi phải nhận ra amend. Đơn giản hơn, nhưng bỏ đúng bốn trong năm
+  nhóm đã xảy ra.
+- **So cả thân commit, hoặc so gần đúng** (khác vài chữ vẫn là trùng). So gần đúng sẽ chặn hai
+  commit thật cùng task viết gần giống nhau — đỏ vì lý do sai; còn so thân thì không thêm gì: nhóm
+  nào trùng thân cũng đã trùng subject.
+- **Chỉ so với N commit gần nhất.** Nhóm 3 có một commit cách hai commit kia bảy tiếng; một con số N
+  là một ngưỡng không ai chốt, còn so cả lịch sử của repo cỡ này tốn không đáng kể.
+- **Đặt luật vào Gate 7b** (đọc khối commit của phiên). Gate 7b không đứng ở cửa terminal — đúng lỗ
+  hổng ADR-010 đã nêu.
+
+**Rủi ro đã chấp nhận:**
+- **Nhận ra amend dựa vào `ps`.** Nếu `ps` không đọc được tiến trình cha, hook coi như không amend
+  và một lần amend giữ nguyên subject sẽ bị chặn — đỏ vì lý do sai, nhưng lời từ chối in sẵn
+  `--no-verify`. `scripts/commit-msg.test.sh` chấm cả hai ca amend bằng commit thật, nên nếu cách
+  nhận ra này hỏng trên máy nào thì test đỏ trên máy ấy.
+- **Chép subject rồi sửa một chữ vẫn qua.** Luật chặn *chép nguyên*, không chấm *đúng sai* — việc
+  ấy vẫn là của Gate 7b và người đọc diff (giới hạn ADR-010 đã nhận).
+- **`--no-verify` vẫn đi qua** và **hook vẫn phải cài mỗi bản clone** — hai giới hạn của ADR-010,
+  không đổi.
+
+**Applies to:** `scripts/hooks/commit-msg` · `scripts/commit-msg.test.sh` · `CLAUDE.md` §6.2 ·
+`quality/review-gate.md` Gate 8 · `docs/work-flow-session/workflow-phien-lam-viec.md` ·
+`work/findings.md` F-031.

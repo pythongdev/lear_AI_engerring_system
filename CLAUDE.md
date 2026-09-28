@@ -398,8 +398,11 @@ whoever writes it.
   brief (§7.1) prints a warning while it is not installed, so nobody has to
   remember — but nothing can *force* it, and that limit is part of the decision.
 - **What it refuses:** strip an optional `T-XXX: ` prefix, and what is left must
-  be at least 2 words and 8 characters. That is the whole rule. `Fix typo` passes;
-  `adg` does not.
+  be at least 2 words and 8 characters. `Fix typo` passes; `adg` does not. And a
+  subject identical to one already reachable from `HEAD` — five groups of copied
+  subjects reached this repo (`work/findings.md` F-031, `docs/decisions.md`
+  ADR-062). `git commit --amend` keeping `HEAD`'s own subject still passes.
+  Those two are the whole rule.
 - **What it only warns about:** a subject over 72 characters. It still says what
   it changed, and red for the wrong reason teaches people to remove the hook.
 - **Escape hatch, printed in the refusal itself:** `git commit --no-verify`.

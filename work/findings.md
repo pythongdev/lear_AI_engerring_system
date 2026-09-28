@@ -92,7 +92,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-028 | Một dãy mã bị đọc thành phép đếm, đã đứng trong ADR hai ngày | Fixed |
 | F-029 | Tiền đề "không tài liệu nào nói X" viết mà không grep | Fixed |
 | F-030 | Gate 1c coi mọi U-XXX nhắc trong gạch đầu dòng đang mở là "đang mở" | Fixed |
-| F-031 | Lần thứ năm: subject trùng commit trước, nội dung không khớp | Open |
+| F-031 | Lần thứ năm: subject trùng commit trước, nội dung không khớp — Gate 8 nay chặn (ADR-062) | Fixed |
 | F-032 | Mục lục `backlog_SD.md` ghi Trạng thái "Đóng" cho hai bước còn thiếu dòng luật đòi | Fixed |
 | F-033 | Ảnh chụp *"hôm nay có chưa"* của kế hoạch pha 1 vẫn ghi **chưa** cho bốn thứ đã xong | Fixed |
 | F-034 | Cơ chế chặn *mất hẳn dữ liệu* chỉ sống ở tài liệu không sở hữu gì — lần thứ hai của F-027 | Fixed |
@@ -3078,8 +3078,20 @@ T-065 chuyển nó lên đây ngày 2026-09-07 để dòng Status về đúng m�
 `scripts/brief.sh` ghi ở đầu file, đúng lỗi **F-008** từng giấu **F-011** ngay trong lượt nó ra
 đời. Nếu phiên chủ của F-031 muốn viết thêm, viết ở đây, đừng viết vào dòng Status.)*
 
+**Đóng 2026-09-28 (T-117, `docs/decisions.md` ADR-062).** Chủ repo giao F-031 với lời *"hãy đoc
+kĩ và làm"* — đọc là lời giao phần *"dựng cơ chế là quyết định của chủ repo"* ở trên. Chạy lại
+`git log --format='%s' | sort | uniq -cd` trong đúng lượt này: vẫn **năm** nhóm, không nhóm nào
+mới. Hai việc còn dở đều xong. Một: Gate 8 (`scripts/hooks/commit-msg`) nay từ chối subject trùng
+từng chữ một commit đi tới được từ `HEAD`, kể cả chính `HEAD` — bốn trong năm nhóm là chép message
+của commit vừa làm — trừ `git commit --amend` giữ nguyên subject của `HEAD`; lời từ chối nêu hash
+commit cũ. `scripts/commit-msg.test.sh` có ca cho trùng `HEAD`, trùng commit cũ, amend giữ subject,
+amend thành subject cũ hơn, và `--no-verify`. Hai: entry `T-062` ở `work/backlog.md` nay ghi **ba
+bước** và **lần thứ năm**. Không sửa lịch sử (ADR-008): năm nhóm cũ nằm nguyên, bảng trên vẫn là chỗ
+đọc khi `git log` nói một việc xảy ra hai lần. Luật không chặn được subject chép rồi sửa một chữ —
+giới hạn ADR-062 đã nhận.
+
 **Status:**
-Open
+Fixed
 
 ### F-032 — Mục lục `backlog_SD.md` ghi Trạng thái "Đóng" cho hai bước, dù chính luật của file đòi một dòng mà cả hai đều thiếu
 

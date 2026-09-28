@@ -19,14 +19,20 @@ trap 'rm -rf "$TMPROOT"' EXIT
 fails=0
 n=0
 
+# Tầng A chạy NGOÀI mọi repo git: luật 4 (F-031) so subject với lịch sử của repo
+# ở thư mục hiện tại, và ca của tầng A không được đỏ chỉ vì lịch sử thật của repo
+# này tình cờ có cùng một subject.
+cd "$TMPROOT" || exit 1
+DIR="$TMPROOT"
+
 # --- tầng A — gọi hook trực tiếp --------------------------------------------
-msg() { # msg <exit mong đợi> <tên ca> <nội dung commit…>
+msg() { # msg <exit mong đợi> <tên ca> <nội dung commit…>   (chạy trong $DIR)
   local want="$1" name="$2"; shift 2
   n=$((n + 1))
   local f="$TMPROOT/msg.$n"
   printf '%s\n' "$@" > "$f"
   local out rc
-  out="$("$HOOK" "$f" 2>&1)"; rc=$?
+  out="$(cd "$DIR" && "$HOOK" "$f" 2>&1)"; rc=$?
   if [ "$rc" = "$want" ]; then
     echo "  ok   $name (exit $rc)"
   else
@@ -93,6 +99,37 @@ out="$("$HOOK" "$TMPROOT/khong-ton-tai" 2>&1)"; rc=$?
 if [ "$rc" = 0 ]; then echo "  ok   thiếu file nội dung ⇒ không chặn"
 else echo "  FAIL thiếu file nội dung — mong đợi exit 0, nhận $rc"; fails=$((fails + 1)); fi
 
+# Luật 4 — subject trùng một commit đã có (work/findings.md F-031, ADR-062).
+# Dựng một repo tạm có ba commit, rồi gọi hook trong đó.
+hist="$TMPROOT/hist"
+mkdir -p "$hist"
+git -C "$hist" init -q
+git -C "$hist" config user.email t@t
+git -C "$hist" config user.name t
+DIR="$hist"
+msg 0 "repo chưa có commit nào ⇒ không so" "T-020: đơn mang đi được trả trước"
+for s in "T-020: đơn mang đi được trả trước" "BA-09: chốt phạm vi MVP" "T-030: thêm một dòng nữa"; do
+  git -C "$hist" commit -q --allow-empty --no-verify -m "$s"
+done
+msg 1 "F-031: trùng subject của HEAD"          "T-030: thêm một dòng nữa"
+msg 1 "F-031: trùng subject của commit cũ"     "T-020: đơn mang đi được trả trước"
+msg 1 "F-031: subject không mã task cũng so"   "BA-09: chốt phạm vi MVP"
+msg 1 "F-031: khoảng trắng ở hai đầu không cứu" "  T-030: thêm một dòng nữa  "
+msg 0 "chỉ trùng một phần ⇒ qua"               "T-030: thêm một dòng nữa, lần này khác"
+msg 0 "cùng mã task, khác mô tả ⇒ qua"         "T-020: sửa lời nhắc trả trước"
+msg 0 "revert của chính commit ấy ⇒ không so"  "Revert \"T-030: thêm một dòng nữa\""
+n=$((n + 1)); f="$TMPROOT/msg.dup"; printf 'T-020: đơn mang đi được trả trước\n' > "$f"
+out="$(cd "$hist" && "$HOOK" "$f" 2>&1)"
+want_hash="$(git -C "$hist" log --format=%h --reverse | head -1)"
+if printf '%s' "$out" | grep -q "$want_hash" && printf '%s' "$out" | grep -q 'F-031' \
+   && printf '%s' "$out" | grep -q -- '--no-verify'; then
+  echo "  ok   lời từ chối nêu hash commit cũ, F-031 và --no-verify"
+else
+  echo "  FAIL lời từ chối thiếu hash cũ ($want_hash), F-031 hoặc --no-verify: $out"
+  fails=$((fails + 1))
+fi
+DIR="$TMPROOT"
+
 # --- tầng B — commit thật qua install-hooks.sh -------------------------------
 echo "[test] install-hooks.sh + git commit thật"
 
@@ -153,6 +190,46 @@ if ( cd "$repo/sub" && git commit -m "T-025: thêm c.txt từ thư mục con" >/
 else
   echo "  FAIL subject hợp lệ bị chặn khi commit từ thư mục con"
   fails=$((fails + 1))
+fi
+
+# F-031 bằng commit thật: chép subject của commit vừa làm là ca phổ biến nhất
+# (bốn trong năm nhóm trùng của repo này nằm sát nhau, cách vài phút).
+echo hi3 > "$repo/d.txt"
+git -C "$repo" add d.txt
+if git -C "$repo" commit -m "T-025: thêm c.txt từ thư mục con" >/dev/null 2>&1; then
+  echo "  FAIL commit chép subject của HEAD vẫn vào được"
+  fails=$((fails + 1))
+else
+  echo "  ok   commit chép subject của HEAD bị git từ chối"
+fi
+if git -C "$repo" commit -m "T-025: thêm d.txt để thử luật trùng" >/dev/null 2>&1; then
+  echo "  ok   subject mới commit được"
+else
+  echo "  FAIL subject mới vẫn bị chặn"
+  fails=$((fails + 1))
+fi
+
+# --amend THAY HEAD chứ không thêm commit đứng cạnh nó: giữ subject phải qua.
+echo hi4 >> "$repo/d.txt"
+git -C "$repo" add d.txt
+if git -C "$repo" commit --amend -m "T-025: thêm d.txt để thử luật trùng" >/dev/null 2>&1; then
+  echo "  ok   --amend giữ nguyên subject của HEAD vẫn qua"
+else
+  echo "  FAIL --amend giữ nguyên subject của HEAD bị chặn"
+  fails=$((fails + 1))
+fi
+if ( cd "$repo" && git commit --amend --no-edit >/dev/null 2>&1 ); then
+  echo "  ok   --amend --no-edit vẫn qua"
+else
+  echo "  FAIL --amend --no-edit bị chặn"
+  fails=$((fails + 1))
+fi
+# …nhưng amend thành subject của một commit CŨ HƠN vẫn là trùng.
+if git -C "$repo" commit --amend -m "T-025: thêm file a.txt để thử cổng" >/dev/null 2>&1; then
+  echo "  FAIL --amend thành subject của commit cũ hơn vẫn vào được"
+  fails=$((fails + 1))
+else
+  echo "  ok   --amend thành subject của commit cũ hơn bị chặn"
 fi
 
 echo hi2 > "$repo/b.txt"

@@ -497,7 +497,9 @@ Hai cổng đứng gác đoạn này:
 - **Gate 8** (`scripts/hooks/commit-msg`) là hook của **git**, không phải của
   Claude Code, nên nó đứng ở chỗ Gate 7 với tay không tới: người gõ `git commit`
   thẳng trong terminal. Luật hẹp một cách cố ý — bỏ tiền tố `T-XXX: `, phần còn
-  lại phải có ≥ 2 từ và ≥ 8 ký tự. `Fix typo` qua; `adg` chết. Subject dài quá 72
+  lại phải có ≥ 2 từ và ≥ 8 ký tự. `Fix typo` qua; `adg` chết. Subject trùng từng
+  chữ một commit đã có trong lịch sử cũng chết (F-031, ADR-062), trừ khi đang
+  `git commit --amend` giữ nguyên subject của chính commit vừa làm. Subject dài quá 72
   ký tự chỉ bị **nhắc**, không bị chặn — đỏ vì lý do sai thì người ta gỡ hook chứ
   không sửa message. Đường thoát in ngay trong lời từ chối: `git commit
   --no-verify`. Hook không đi theo bản clone, nên mỗi bản clone mới phải chạy

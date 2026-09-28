@@ -20,6 +20,9 @@
 #   3. Subject dài quá 72 ký tự (CLAUDE.md §6) chỉ bị **nhắc**, không bị chặn:
 #      một subject 75 ký tự vẫn nói được nó là gì, chặn nó là đỏ vì lý do sai
 #      (bài học ADR-003).
+#   4. Subject không được trùng từng chữ subject của một commit đi tới được từ
+#      HEAD (F-031, ADR-062). `git commit --amend` giữ nguyên subject của HEAD
+#      vẫn qua — xem khối LUẬT 4 ở dưới.
 #
 # ĐƯỜNG THOÁT, nói ra ngay trong thông báo lỗi: `git commit --no-verify`.
 # Không có đường thoát thì hook bị GỠ khỏi máy chứ không được sửa (ADR-003).
@@ -85,6 +88,52 @@ Nếu lần này thật sự cần đi qua:  git commit --no-verify
 
 EOF
   exit 1
+fi
+
+# LUẬT 4 — subject không được trùng từng chữ subject của một commit đã có
+# (work/findings.md F-031 · docs/decisions.md ADR-062). Năm nhóm commit trùng
+# subject đã vào repo này, và ở mỗi nhóm nhiều nhất một commit nói đúng về chính
+# nó: message được CHÉP LẠI thay vì viết cho thay đổi đang commit. Phần lớn là
+# chép đúng subject của HEAD, nên HEAD cũng bị so — trừ khi đang `--amend`: khi
+# đó commit mới THAY HEAD chứ không đứng cạnh nó, giữ nguyên subject là đúng.
+# Không có HEAD (commit đầu tiên) hay không ở trong repo git ⇒ không chặn.
+if head="$(git rev-parse -q --verify HEAD 2>/dev/null)"; then
+  amending=0
+  pid="$PPID"
+  for _ in 1 2; do   # cha của hook là git; nếu git chạy hook qua sh thì là ông
+    args="$(ps -o args= -p "$pid" 2>/dev/null)" || break
+    case " $args " in *" --amend "*) amending=1; break ;; esac
+    pid="$(ps -o ppid= -p "$pid" 2>/dev/null | tr -d ' ')"
+    [ -n "$pid" ] || break
+  done
+  range="$head"
+  [ "$amending" = 1 ] && range="$head^@"   # amend: so với lịch sử TRƯỚC HEAD
+  dup=""
+  if [ "$range" = "$head" ] || git rev-parse -q --verify "$head^" >/dev/null 2>&1; then
+    dup="$(git log --format='%h %s' $range 2>/dev/null \
+      | S="$subject" awk '{ i = index($0, " "); if (substr($0, i + 1) == ENVIRON["S"]) { print substr($0, 1, i - 1); exit } }')"
+  fi
+  if [ -n "$dup" ]; then
+    cat >&2 <<EOF
+
+Gate 8 — commit bị từ chối: subject trùng từng chữ một commit đã có.
+
+  subject    : $subject
+  đã dùng ở  : $dup  ($(git log -1 --format='%ad' --date=short "$dup" 2>/dev/null))
+
+Hai commit cùng một subject thì git log nói rằng một việc xảy ra hai lần, và
+nhiều nhất một trong hai nói đúng về chính nó. Viết subject cho ĐÚNG thay đổi
+đang commit — xem git diff --cached --stat — thay vì chép message cũ.
+
+Lý do có luật này: work/findings.md F-031 — năm nhóm commit trùng subject đã
+vào repo, đã push, không sửa lại được (docs/decisions.md ADR-008, ADR-062).
+
+Sửa commit vừa làm mà giữ subject:  git commit --amend
+Nếu lần này thật sự cần đi qua:     git commit --no-verify
+
+EOF
+    exit 1
+  fi
 fi
 
 if [ "${#subject}" -gt "$MAX_SUBJECT" ]; then

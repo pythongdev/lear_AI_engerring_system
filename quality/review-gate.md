@@ -135,7 +135,9 @@ terminal không đi qua lượt nào, và năm commit đã vào repo này theo �
 cũng vậy.
 
 Luật hẹp, cố ý: bỏ tiền tố `T-XXX: ` nếu có, phần mô tả còn lại phải có ≥ 2 từ và
-≥ 8 ký tự. Subject > 72 ký tự chỉ bị **nhắc**, không chặn — đỏ vì lý do sai còn
+≥ 8 ký tự; và subject không được trùng từng chữ subject của một commit đi tới được
+từ `HEAD` (`work/findings.md` **F-031**, `docs/decisions.md` **ADR-062**) —
+`git commit --amend` giữ nguyên subject của `HEAD` vẫn qua. Subject > 72 ký tự chỉ bị **nhắc**, không chặn — đỏ vì lý do sai còn
 hại hơn không đỏ (ADR-003). Đường thoát `git commit --no-verify` được in ngay
 trong thông báo từ chối. Hook **không** tự soạn nội dung commit (ADR-004).
 
