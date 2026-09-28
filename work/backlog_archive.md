@@ -950,6 +950,42 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-119"></a>
+### T-119 — Đo lại thí điểm lane pha 2 (ADR-051) trước khi rút `CLAUDE.md`
+
+**Yêu cầu:** 2026-09-28, chủ repo nói *"please continue"* sau T-086; Claude hỏi vì T-087 ghi *"trước
+đó đánh giá thí điểm lane pha 2 sau `P2-03` · `P2-04`"* mà chưa ai đánh giá, và chủ repo chọn
+*"đánh giá thí điểm trước"*. Mức **L1**: đo và ghi, không đổi quyết định nào.
+
+**Phạm vi:** `work/scope/T-119.txt` — `work/backlog.md` · `work/backlog_archive.md` ·
+`docs/decisions.md` · `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (thêm giữa chừng, khi thấy
+chỗ trỏ bị sót ở §5).
+
+**Acceptance (viết trước khi đo):** (1) mọi commit của một bước pha 2 từ `P2-03` được đếm file, chia
+*sổ giấy tờ* · *tài liệu sản phẩm* · *việc thật*, đặt cạnh mốc gốc `d57cf4f` · `0715382`; (2) đếm số
+chỗ giữ trạng thái của một bước pha 2 hôm nay, và mọi chỗ trạng thái lệch hay đi vào commit không
+phải của bước ấy; (3) mỗi bước đã xong có hay không có khối *Nhận việc* và *Bàn giao* ADR-051 đòi;
+(4) kết quả ghi thành dòng *Đo lại* dưới *Hệ quả* của ADR-051, không đổi quyết định nào — áp rộng
+hay không là của chủ repo; (5) gate xanh.
+
+**Bàn giao:** Claude Code, nhánh `T-085-scope-per-task`, base `5d7a79c`; chưa review độc lập. Kết
+quả ở `docs/decisions.md` ADR-051 → *Hệ quả* → *Đo lại 2026-09-28*. Kế hoạch pha 2 §5 sửa: câu đòi
+một file prompt mỗi bước và viện dẫn ADR-008 thay bằng câu trỏ ADR-051 và T-051.
+
+**Bằng chứng:** (1) `git show --name-only` trên `0715382` `d57cf4f` `70ecefc` `6bf8f97` `a99d3ef`
+`71f8705` `89ac41b` `3701e1a` `f385fc0`, chia bằng tiền tố đường dẫn — `d57cf4f`: giấy tờ 3
+(prompt, `backlog.md`, `backlog_DB.md`) · việc thật 2; `a99d3ef`: giấy tờ 3 (hai sổ + `findings.md`)
+· tài liệu 3 · việc thật 8; `f385fc0`: giấy tờ 2 · tài liệu 3 · việc thật 2; không commit nào sau
+`d57cf4f` thêm file vào `prompt/DB/` (chỉ còn `P2-01`, `P2-02`, `README.md`). (2) `git log -S "[x]
+P2-XX" -- work/backlog.md`: `P2-03` · `P2-12` → `598d7ee T-101`, `P2-05` → `71f8705 T-104`, bốn bước
+còn lại → commit của chính bước; *Mục lục* `work/backlog_DB.md` không cột trạng thái; kế hoạch §4
+hàng `F-043` còn *"`P2-04` (xong)"*. (3) entry của bảy bước đều có *Nhận việc* · *Nghiệm thu* ·
+*Bàn giao*. (5) gate: xem báo cáo cuối lượt.
+
+**Còn lại:** chủ repo quyết áp khuôn cho lane admin và task `T-XXX` hay không; T-087 chờ quyết định
+ấy. Bản chép *"`P2-04` (xong)"* ở kế hoạch §4 để lại — nằm trong hàng lịch sử của một finding đã
+đóng.
+
 <a id="t-086"></a>
 ### T-086 — `work/backlog.md` dài hơn 6.300 dòng, phần lớn là chi tiết việc đã xong
 

@@ -3487,6 +3487,29 @@ thi cho mỗi task, một nơi giữ trạng thái"* (T-083). Phạm vi là **th
   PASS/FAIL/SKIP/NOTE của gate; phần *việc đã xong* chiếm phần lớn `work/backlog.md`; rút gọn
   `CLAUDE.md`. Mỗi việc một dòng *Ready* ở `work/backlog.md`, thứ tự theo đề xuất gốc — `CLAUDE.md`
   **sau cùng**, vì nó mô tả quy trình và rút trước là viết hai lần.
+- **Đo lại 2026-09-28 (T-119, Claude Code; chủ repo chọn *"đánh giá thí điểm trước"* T-087).** Bảy
+  bước đã xong từ khi thí điểm bắt đầu: `P2-03` · `P2-12` · `P2-04` · `P2-05` · `P2-06` · `P2-07` ·
+  `P2-10`. Đếm của phiên đo, không phải con số chốt:
+  - *Giấy tờ bắt buộc* — mốc `d57cf4f` là ba file (file prompt + hai sổ). Sau thí điểm: **không
+    bước nào** có file prompt; commit của bước chạm đúng hai sổ ở `P2-04` · `P2-07` · `P2-10`, thêm
+    kế hoạch pha 2 ở `P2-06`, chỉ `work/backlog_DB.md` ở `P2-03` · `P2-12`. `work/findings.md` ở
+    `P2-04` · `P2-07` là finding thật, không tính là giấy tờ.
+  - *Chỗ giữ trạng thái* — *Mục lục* không còn cột trạng thái hay mức; không entry nào còn dòng
+    *✅ Xong ngày…* (hai dòng còn thấy là bước 9 của `P2-01` · `P2-02`, viết theo luật cũ). Còn **một**
+    bản chép: kế hoạch pha 2 §4 hàng `F-043` ghi *"`P2-04` (xong)"*. Mục tiêu *"một nơi giữ trạng
+    thái"* đạt.
+  - *Ba nửa của entry* — cả bảy entry có khối *Nhận việc* và *Bàn giao*. Git **không chứng minh
+    được** Nghiệm thu viết trước khi dựng: khối ấy và việc thật vào cùng một commit.
+  - *Lỗi thí điểm không bắt được* — dấu *Done* của **ba trên bảy** bước rơi vào commit của task
+    khác: `P2-03` · `P2-12` trong `598d7ee` (T-101), và `P2-05` — cả migration lẫn test — trong
+    `71f8705` (T-104). Trạng thái vẫn ở một nơi, nhưng lịch sử git nói sai commit nào mang bước
+    nào: đúng hình **F-025**. Thí điểm không nhắm tới lỗi này; T-085 (scope mỗi task một file, Gate
+    7b chấm theo mã trong subject) nhắm tới nó và chưa đo được, vì nhánh của nó chưa gộp.
+  - *Chỗ trỏ bị sót* — kế hoạch pha 2 §5 vẫn đòi một file prompt mỗi bước và vẫn viện dẫn ADR-008
+    cho quy tắc của T-051; không nằm trong danh sách *Pointer sửa* bên dưới. T-119 sửa.
+  - **Chưa quyết — của chủ repo:** áp khuôn *một entry, trạng thái một nơi* cho lane admin
+    (`work/backlog_AD.md`) và task `T-XXX`, hay giữ thí điểm ở lane pha 2. T-087 viết `CLAUDE.md`
+    theo quyết định ấy.
 
 **Pointer sửa trong cùng thay đổi** (`CLAUDE.md` §7.2): `work/backlog_DB.md` (luật đầu file ·
 *Mục lục* · mọi entry · khuôn cuối file) · `work/backlog.md` (*Task Detail Template* nói ngoại lệ

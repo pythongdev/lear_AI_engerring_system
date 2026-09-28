@@ -213,12 +213,12 @@ vẫn chỉ ở `work/backlog.md` (**ADR-002**), và **chỉ bước nào nhận
 `scripts/brief.sh` cắt *Ready* ở sáu mục, nên mười bốn dòng đổ vào đó đẩy tám dòng ra khỏi tầm nhìn
 của mọi phiên mới (**F-012**).
 
-Prompt của mỗi bước vào lane **`prompt/DB/`**, một file một bước, theo `docs/prompt-guideline.md`.
-**Lane ấy phải được thêm vào danh sách Gate 1b chấm** (`scripts/check-links.sh`) trong cùng thay đổi
-tạo ra nó — đúng việc P1-01 đã làm cho `prompt/SD/` và T-058 cho `prompt/AD/`; một lane prompt
-không nằm trong danh sách ấy là lane pointer **không cổng nào đọc** (**F-007**). Và **viết được
-prompt của một bước khi mọi bước ở cột *Cần xong trước* của nó đã `Done`** (**ADR-008**, T-051):
-sớm hơn thì *Constraints* và *Verify* là những câu đoán, đúng loại lỗi **F-013** · **F-017** ghi.
+Hồ sơ thực thi của mỗi bước là **entry của nó ở `work/backlog_DB.md`** — không còn file prompt
+riêng bắt buộc (**ADR-051**, 2026-09-25; câu cũ ở đây đòi một file ở `prompt/DB/` cho mỗi bước và
+bị sót khi ADR-051 sửa pointer, T-119 sửa 2026-09-28). Lane **`prompt/DB/`** vẫn nằm trong danh
+sách Gate 1b chấm (`scripts/check-links.sh`) cho prompt tái sử dụng được (**F-007**). Và **khối
+*Nhận việc* của một bước chỉ viết khi mọi bước ở cột *Cần xong trước* của nó đã `Done`** (T-051):
+sớm hơn thì *Nghiệm thu* và *Kiểm chứng* là những câu đoán, đúng loại lỗi **F-013** · **F-017** ghi.
 
 ---
 

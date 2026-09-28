@@ -84,6 +84,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-119 Đo lại thí điểm lane pha 2 (ADR-051): mục tiêu đạt, ba trên bảy bước có dấu *Done* trong commit của task khác — 2026-09-28 · [chi tiết](backlog_archive.md#t-119)
 - [x] T-086 `work/backlog.md` chỉ giữ trạng thái — mỗi việc đã xong một dòng; chi tiết sang `work/backlog_archive.md` — 2026-09-28 · [chi tiết](backlog_archive.md#t-086)
 - [x] T-085 Mỗi task một file scope `work/scope/<MÃ>.txt`; Gate 7b chấm theo task trong subject — 2026-09-28 · `2ab82bc` · [chi tiết](backlog_archive.md#t-085)
 - [x] T-084 Gate in lẫn "OK" · "xanh" · "skipping" · "note:", nên "đã kiểm và đạt" trông giống "không kiểm" — 2026-09-28 · `5d64e6c` · [dòng gốc](backlog_archive.md#done-nguyen-van)
