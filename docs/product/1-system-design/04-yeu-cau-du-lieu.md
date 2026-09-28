@@ -8,7 +8,7 @@
 [`03-lat-cat.md`](../0-ba/ban-hang/03-lat-cat.md) §3.4 (BA-12, xong 2026-09-04) ·
 [`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §5.*
 
-> **Mục này sở hữu yêu cầu dữ liệu:** YC-01…YC-20 và YC-22…YC-24 để pha 2 tự chấm lược đồ;
+> **Mục này sở hữu yêu cầu dữ liệu:** YC-01…YC-20 và YC-22…YC-25 để pha 2 tự chấm lược đồ;
 > YC-21 (§8) để pha 5 nghiệm thu bảo toàn và khôi phục. Yêu cầu không chốt cơ chế triển khai.
 >
 > **Nó không sở hữu một luật nghiệp vụ nào.** Giá, giờ bán, ai được bấm cái gì, ngưỡng lệch 0đ đều
@@ -30,7 +30,7 @@
 
 ## 0. Cách đọc — hai dạng câu, và một mã
 
-YC-01…YC-20 và YC-22…YC-24 mang mã `YC-XX` và dùng hai dạng câu dưới đây. YC-21 ở §8 là yêu cầu
+YC-01…YC-20 và YC-22…YC-25 mang mã `YC-XX` và dùng hai dạng câu dưới đây. YC-21 ở §8 là yêu cầu
 khôi phục, nghiệm thu ở pha vận hành:
 
 | Dạng | Câu mở đầu | Pha 2 chấm thế nào |
@@ -55,7 +55,7 @@ Bốn luật đọc:
 
 ---
 
-## 1. Mười một chỗ thiếu ở `architecture.md` §8 — mỗi chỗ đúng một dòng yêu cầu
+## 1. Mười hai chỗ thiếu ở `architecture.md` §8 — mỗi chỗ đúng một dòng yêu cầu
 
 §8 là danh sách **chỗ mô hình 16 bảng chưa với tới**. Bảng dưới đây là cùng danh sách ấy, đọc theo
 chiều ngược lại: không phải *thiếu cái gì*, mà *pha 2 phải chấm được cái gì*.
@@ -73,18 +73,24 @@ chiều ngược lại: không phải *thiếu cái gì*, mà *pha 2 phải ch�
 | **Mức liên hệ tối thiểu của đơn mang đi** *(thêm vào §8 ở T-110, 2026-09-28)* | **YC-22** | **Ghi được:** với mỗi đơn của ba kênh không gắn bàn — **số điện thoại**, **địa chỉ giao**, **giờ khách cần hàng**, và **cách trao hàng** (giao tận nơi hay tới lấy) đọc ra được từ chính đơn ấy, cùng các trường *nên có* khi khách khai. **Không xảy ra được:** một đơn tồn tại mà thiếu một trường mà kênh và cách trao hàng của nó đòi · một đơn hotline không có cách trao hàng · một đơn Delivery mang nhánh *tới lấy* hoặc Pickup mang nhánh *giao* · một trường *nên có* trở thành điều kiện tạo đơn | `shop-facts.md` §6.5 · [`03-lat-cat.md`](../0-ba/ban-hang/03-lat-cat.md) §3.2.1 bước 2 · 3 · §3.2.2 · §3.2.4 · **I-022** |
 | **Khoản trả trước** *(thêm vào §8 ở T-112, 2026-09-28)* | **YC-23** | **Ghi được:** mỗi khoản trả trước đọc lại được **sau nhiều ngày** — cho **đơn nào** · **bao nhiêu** · từng phần theo **phương thức** · **lúc quán nhận tiền** · **ai bấm** *đã nhận tiền* — với lúc nhận tiền **tách khỏi** mốc tính tiền của đơn (ngày giao/lấy); và với mỗi ngày, đọc ra được **ba danh sách từng khoản**: trả trước **nhận** trong ngày · trả trước **thành doanh thu** trong ngày (phần đã dùng cho hoá đơn đóng hôm ấy) · trả trước **trả lại** trong ngày, mỗi lần trả lại ghi phương thức trả lại. **Không xảy ra được:** một khoản trả trước vào doanh thu của **ngày nhận tiền** khi đơn đóng ngày khác · phần đã thành doanh thu cộng phần đã trả lại **vượt** số đã nhận · một lần trả lại khoản **chưa** thành doanh thu làm giảm doanh thu của một ngày nào | `shop-facts.md` §6.3 · §6.4 · §6.10 · §6.26 · `docs/decisions.md` **ADR-040** · **ADR-059** · **I-014** · **I-015** · **I-021** |
 | **Mã QR của bàn — lịch sử mã, và mã lượt gọi đã mang** *(thêm vào §8 ở T-113, 2026-09-28)* | **YC-24** | **Ghi được:** với mỗi bàn — mã **hiện hành** của nó và **mọi mã đã bị thay**, mỗi mã đọc ra được nó hiện hành **từ lúc nào tới lúc nào**; với mỗi lần đổi — **bàn nào · lúc nào · ai đổi**; với mỗi lượt gọi QR tại bàn — nó đã mang **mã nào**. **Không xảy ra được:** một bàn có hơn một mã hiện hành cùng lúc · một mã, kể cả mã đã thay, chỉ tới hơn một bàn · một lượt gọi QR tại bàn không đọc ra được mã đã mang · một lần đổi mã làm đổi số bàn, hay chạm phiên bàn đang mở của bàn ấy | `shop-facts.md` §2 · §6 quy tắc 2 · [`02-kenh-ban.md`](../0-ba/ban-hang/02-kenh-ban.md) · **I-023** · **I-018** · **I-001** · `docs/decisions.md` **ADR-060** |
+| **Dấu lần gửi** *(thêm vào §8 ở T-115, 2026-09-28)* | **YC-25** | **Ghi được:** với mỗi đơn của cả năm kênh — kể cả mỗi lượt gọi vào phiên bàn — **dấu lần gửi** đã sinh ra nó, đọc lại được **sau nhiều ngày**; và từ một dấu, đọc ra được nó đã sinh ra **đơn nào**. **Không xảy ra được:** hai đơn hay hai lượt gọi mang chung một dấu, ở bất kỳ thời điểm nào, không có hạn thời gian · một đơn hay một lượt gọi không mang dấu nào · hai lần gửi có dấu khác nhau bị ghi thành một đơn vì nội dung giống nhau | `shop-facts.md` §2 · §5.1 · §6 quy tắc 2 · **I-024** · **I-007** · **I-002** · **I-018** · `docs/decisions.md` **ADR-061** |
 
-**Dòng cuối — `YC-24` — là chỗ thiếu thứ mười một, thêm vào §8 ở T-113 (2026-09-28).** Nền 16
+**Dòng cuối — `YC-25` — là chỗ thiếu thứ mười hai, thêm vào §8 ở T-115 (2026-09-28).** Nền 16
+bảng không có gì phân biệt một lần gửi lại với một lần gửi mới, nên *một lần gửi, nhiều nhất một
+đơn* của `I-024` không có gì để đứng (`work/findings.md` **F-043**). Dòng này cố ý **không** đòi so
+nội dung: đơn giống hệt nhau mang hai dấu là hai đơn thật.
+
+**Dòng trước nó — `YC-24` — là chỗ thiếu thứ mười một, thêm vào §8 ở T-113 (2026-09-28).** Nền 16
 bảng đã có một mã ngẫu nhiên cho mỗi bàn, nhưng không có đường đổi, không giữ mã đã thay, và lượt
 gọi không ghi mã đã mang — nên *đổi được, mã cũ chết ngay* của `I-023` không có gì để đứng
 (`work/findings.md` **F-042**). *Ai được đổi mã, khi nào* không thuộc dòng này: đó là **U-062**.
 
-**Dòng trước nó — `YC-23` — là chỗ thiếu thứ mười, thêm vào §8 ở T-112 (2026-09-28).** Lời chốt
+**Dòng trước nữa — `YC-23` — là chỗ thiếu thứ mười, thêm vào §8 ở T-112 (2026-09-28).** Lời chốt
 2026-09-06 (**ADR-040**) đã nói bảng đối soát cần một dòng cho khoản này nhưng giao nó cho *"bước
 sau"*, và không bước nào nhận (`work/findings.md` **F-037**). Vế *trả lại không trừ doanh thu* là
 **suy ra**, không phải lời chủ quán — lý do ở **ADR-059** điểm 5.
 
-**Dòng trước nữa — `YC-22` — là chỗ thiếu thứ chín, thêm vào §8 ở T-110 (2026-09-28).** Mã nhảy qua
+**Trước nữa — `YC-22` — là chỗ thiếu thứ chín, thêm vào §8 ở T-110 (2026-09-28).** Mã nhảy qua
 `YC-21` vì mã ấy đã thuộc §8 của file này (**ADR-057**); luật nguồn đã chốt từ 2026-08-30 nhưng
 chưa từng thành mệnh đề cho tới `I-022` (`work/findings.md` **F-038**).
 
@@ -217,7 +223,7 @@ dùng thật.
 - **Màn hình.** Cái gì hiện ở đâu là pha 4.
 
 **Pha 2 dùng mục này thế nào:** dựng lược đồ xong thì đi ngược bảng §1 và các dòng `YC-XX` còn lại,
-với YC-01…YC-20 và YC-22…YC-24, mỗi dòng hỏi **hai** câu — *đọc ra được không* và *dựng được trạng thái sai không*. Dòng nào không
+với YC-01…YC-20 và YC-22…YC-25, mỗi dòng hỏi **hai** câu — *đọc ra được không* và *dựng được trạng thái sai không*. Dòng nào không
 trả lời được là một chỗ lược đồ còn thiếu, **không phải** một dòng viết chưa rõ; sửa lược đồ, và
 chỉ quay lại sửa dòng ở đây khi chính luật nghiệp vụ đã đổi ở owner của nó.
 

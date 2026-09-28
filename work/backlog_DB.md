@@ -90,6 +90,7 @@ số trong câu này (`work/findings.md` **F-003**). Bảng sống ở kế ho�
 | ~~**F-037**~~ | ~~khoản **trả trước** không có dòng trong bảng đối soát~~ — **đã đóng 2026-09-28** (T-112, **ADR-059**): **ba** dòng trả trước ở `architecture.md` §6.4, hạng tử ở `I-021`, `YC-23` | `P2-06` dựng chỗ cất `YC-23` · `P2-11` có câu truy vấn cho ba dòng | — |
 | ~~**F-038**~~ | ~~*thiếu một trường bắt buộc thì đơn không tạo được* chưa có mệnh đề, chưa có tầng, chưa có dòng `YC`~~ — **đã đóng 2026-09-28** (T-110, **ADR-058**): `I-022` **tầng 1** cho bốn vế *thiếu thì không tồn tại được*, `YC-22` | `T-111` — migration mới dựng chỗ cất và ràng buộc | — |
 | ~~**F-042**~~ | ~~mã QR của bàn *không đoán được và đổi được* chưa có mệnh đề~~ — **đã đóng 2026-09-28** (T-113, **ADR-060**): `I-023` — hai vế tầng 1 (*một mã một bàn* · *lần đổi có vết*), ba vế tầng 3, `YC-24`; *ai đổi, khi nào* là **U-062** | `T-114` — migration mới dựng chỗ cất và ràng buộc; `P2-10` sinh mã qua cửa sinh mã sau `T-114` | — |
+| ~~**F-043**~~ | ~~*một lần gửi đơn thành đúng một đơn* chưa có mệnh đề~~ — **đã đóng 2026-09-28** (T-115, **ADR-061**): `I-024` — hai vế tầng 1 (*một dấu lần gửi một đơn* · *không đơn nào thiếu dấu*), ba vế tầng 3, `YC-25`; nội dung giống hệt **không** phải là trùng | `T-116` — migration mới dựng chỗ cất dấu và ràng buộc | — |
 
 ⚠️ **Một bước bị chặn vẫn chạy được phần không phụ thuộc câu trả lời**, và ghi chỗ trống ra kèm mã
 — đúng cách `P1-04` xử `I-014` và `P1-07` xử `S-5`. Cái **không** được làm là lấp chỗ trống bằng
@@ -606,7 +607,7 @@ pickup tạo trong phiên bàn`, cả hai exit 3.
   sau dựng nó ở đây.
 - Mọi lựa chọn *phiên chọn 2026-09-27* của file lát (bản soi + khoá ngoại hai cột hoãn cho `I-001`,
   không bản ghi hoá đơn riêng, *Trống* đọc ra từ chi tiết) chưa có lời chủ repo.
-- `F-038` · `F-043` · `F-042` vẫn Open — việc của pha 1. *(Đo lại 2026-09-28: `F-038` đóng ở T-110, `F-042` đóng ở T-113; còn `F-043`.)*
+- `F-038` · `F-043` · `F-042` vẫn Open — việc của pha 1. *(Đo lại 2026-09-28: `F-038` đóng ở T-110, `F-042` đóng ở T-113, `F-043` đóng ở T-115 — cả ba đã có mệnh đề; phần lược đồ là T-111 · T-114 · T-116.)*
 
 *Bước sau:* `P2-06` · `P2-07` hết chặn (mọi bước *Cần xong trước* đã `Done`; `S-5` · `S-6` của `P2-07`
 là ô **để trống**, không phải chỗ chặn) nên có dòng ở *Ready*; `P2-08` còn chờ `P2-06`. `P2-05` đọc file
@@ -1416,7 +1417,7 @@ cổng §9 được KÝ**
 **Goal:**
 Xong rồi thì ba scenario nghiệm thu
 ([`08-scenario.md`](../docs/product/0-ba/ban-hang/08-scenario.md) §8) đi hết được **qua lược đồ**
-bằng dữ liệu thật, mỗi dòng `YC-01`…`YC-20` · `YC-22`…`YC-24` được chấm bằng **hai** câu, và các ô cổng §9 có chỗ ký
+bằng dữ liệu thật, mỗi dòng `YC-01`…`YC-20` · `YC-22`…`YC-25` được chấm bằng **hai** câu, và các ô cổng §9 có chỗ ký
 với bằng chứng kèm theo.
 
 **Nói một câu, việc phải làm là gì:**
@@ -1449,7 +1450,7 @@ Và cách chấm đã được chứng minh: `BA-11` và `P1-11` tìm ra chỗ h
 3. Chuyển `P2-13` sang *In Progress*.
 4. Diễn **từng bước** của ba scenario qua lược đồ bằng dữ liệu thật: mỗi bước phải **ghi được** và
    **đọc lại được**; tiền của cả ba cộng lại được từ `shop-facts.md`.
-5. Chấm ngược `YC-01`…`YC-20` · `YC-22`…`YC-24`, mỗi dòng **hai** câu: *đọc ra được không* · *dựng được trạng thái
+5. Chấm ngược `YC-01`…`YC-20` · `YC-22`…`YC-25`, mỗi dòng **hai** câu: *đọc ra được không* · *dựng được trạng thái
    sai không*. Dòng nào không trả lời được là **một chỗ lược đồ còn thiếu**, không phải một dòng
    viết chưa rõ — ghi `F-XXX`/`U-XXX`, **không** tự thiết kế bù.
 6. Ký các ô cổng vào file mới, **mỗi ô kèm bằng chứng**. Ô không tick được thì **để trống kèm lý do

@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 43 finding — 40 Fixed/Resolved/Closed, 3 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-28, T-113, sau khi đóng F-042; trước đó T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 43 finding — 41 Fixed/Resolved/Closed, 2 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-28, T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -104,7 +104,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-040 | Ba chỗ vượt ranh giới pha trong `architecture.md`, chỉ một có tên trong ngoại lệ — cả ba sinh TRƯỚC ADR-035 | Closed |
 | F-041 | Gate 1d mù với khối API rõ nhất repo (mẫu đòi `/` ngay sau động từ), và dòng ignore ghi sai mục | Closed |
 | F-042 | Mã QR của bàn phải không đoán được và đổi được — pha 1 không có mệnh đề nào | Fixed |
-| F-043 | Một lần gửi đơn phải thành đúng một đơn — pha 1 không có mệnh đề nào | Open |
+| F-043 | Một lần gửi đơn phải thành đúng một đơn — pha 1 không có mệnh đề nào | Fixed |
 
 ---
 
@@ -3931,5 +3931,18 @@ khoá chống trùng** nào; hai lần gửi giống hệt thành hai đơn và 
 có tên* ở `docs/product/2-db/02-luoc-do-ban-hang.md` §5. Chưa có mệnh đề và tầng thì chưa có hình
 dạng để dựng.
 
+**Fix — 2026-09-28 (T-115, Claude Code, `docs/decisions.md` **ADR-061**):** thêm mệnh đề. (1)
+`quality/invariants.md` **`I-024`**, năm vế: một lần gửi sinh nhiều nhất một đơn · mọi đơn đọc ra
+được lần gửi của nó · lần gửi lại nhận lại đúng đơn đã sinh · cùng dấu khác nội dung bị từ chối ·
+**nội dung giống hệt không phải là trùng** (khách gọi thêm đúng món vừa gọi là một lượt gọi thật).
+Lần gửi được đồng nhất bằng **dấu lần gửi** do phía gửi đặt một lần, không bằng nội dung; hai vế ghi
+rõ là **suy ra**. (2) Hàng `I-024` ở **nhóm TIỀN** của
+`docs/product/1-system-design/03-bao-ve-invariant.md` §1 — hai vế tầng 1, ba vế tầng 3, hai vế nói
+thẳng vì sao chưa có tập; tầng 4 (hai ý định của người cho cùng một đơn) nói *máy không ngăn được*
+và có tên **RR-11** ở `06-so-rui-ro.md`. (3) `architecture.md` §8 thêm một dòng,
+`04-yeu-cau-du-lieu.md` §1 thêm **`YC-25`**. (4) Không mở `U-XXX` nào — không vế nào đòi dữ kiện quán
+chưa có. Phần **pha 2** — chỗ cất dấu và ràng buộc thật — là `work/backlog.md` **T-116**. F-043 đóng
+ở chỗ hụt của pha 1, không tuyên bố lược đồ đã giữ.
+
 **Status:**
-Open
+Fixed — 2026-09-28 (T-115)

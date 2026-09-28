@@ -77,6 +77,7 @@ có câu trả lời mới từ người.
 | ADR-058 | **`I-022` vào nhóm VÒNG ĐỜI đã có**, không mở nhóm mới; bốn vế *thiếu thì không tồn tại được* ở **tầng 1**, vế *trường nên có không chặn* ở **tầng 3**; `architecture.md` §8 thêm một chỗ thiếu và `YC-22` (F-038) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-110; migration ở `T-111` |
 | ADR-059 | **Khoản trả trước vào công thức đối soát bằng BA dòng** — *nhận trong ngày* (+) · *thành doanh thu trong ngày* (−) · *trả lại trong ngày* (−), không điều kiện ngày; `I-021` thêm hạng tử tiền mặt cho ba dòng ấy và cho nợ cũ thu bằng tiền mặt; chuyển khoản so theo lúc tiền tới; trả lại khoản chưa thành doanh thu không trừ doanh thu (*suy ra*); `YC-23` (F-037) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-112; chỗ cất ở `P2-06` |
 | ADR-060 | **`I-023` — mã QR của bàn — vào nhóm TIỀN đã có**, không mở nhóm mới; vế *một mã một bàn* và *lần đổi có vết* ở **tầng 1**, vế *bàn tra từ mã* · *mã cũ chết ngay* · *không đoán được* ở **tầng 3**, mã hiện hành trong tay người ngoài là **tầng 4** (`RR-10`); `YC-24`; *ai đổi, khi nào* mở `U-062` (F-042) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-113; migration ở `T-114` |
+| ADR-061 | **`I-024` — một lần gửi, nhiều nhất một đơn — vào nhóm TIỀN đã có**; đồng nhất lần gửi bằng **dấu lần gửi** do phía gửi đặt một lần, **không** bằng nội dung; vế *một dấu một đơn* và *không đơn nào thiếu dấu* ở **tầng 1**, vế *gửi lại nhận lại đúng đơn* · *cùng dấu khác nội dung bị từ chối* · *giống hệt không phải là trùng* ở **tầng 3**, hai ý định của người là **tầng 4** (`RR-11`); `YC-25` (F-043) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-115; migration ở `T-116` |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -4025,4 +4026,84 @@ câu phải hỏi.
 `docs/product/1-system-design/06-so-rui-ro.md` RR-10 ·
 `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §6 · §7 ·
 `docs/product/99-unknowns.md` U-062 ·
+`docs/product/2-db/02-luoc-do-ban-hang.md` §5.
+
+### ADR-061 — `I-024` vào nhóm TIỀN, đồng nhất lần gửi bằng dấu chứ không bằng nội dung, hai vế tầng 1, ba vế tầng 3, và `YC-25`
+
+**Trạng thái:** **Đã chốt** 2026-09-28, **giao cho phiên**. Chủ repo giao `work/findings.md`
+**F-043** với lời nguyên văn *"hãy đoc kĩ và làm"* — F-043 ghi việc của phiên nhận nó là *thêm
+mệnh đề và chốt tầng*, và câu giao việc ấy là lời **giao việc chọn**, không phải lời xác nhận một
+nhóm hay một tầng cụ thể (cùng cách đọc với **ADR-058** · **ADR-060**). Chủ repo đọc ADR này rồi
+muốn đổi thì chỉ cần một câu; lượt đổi phải xong trước khi `T-116` dựng migration. Task **T-115**.
+
+**Context:**
+T-097 (2026-09-25) mang bài học của dự án cũ vào pha 2 và tìm ra một chỗ pha 1 chưa nói gì: khách
+bấm gửi hai lần, hay mạng chập chờn khiến máy gửi lại, thì hệ thống phải ghi **một** đơn — mà không
+mệnh đề, không hàng bảo vệ, không dòng yêu cầu nào giữ vế ấy. Mọi chỗ nói *"hai lần"* ở pha 1 đều
+nói về **tiền đếm hai lần**, không chỗ nào nói về **đơn tạo hai lần**. Lát bán hàng lõi (`P2-04`)
+dựng xong không có khoá chống trùng nào và ghi đúng chỗ ấy thành *chỗ trống có tên*. Chủ quán
+**chưa** nói gì về đơn trùng, và lượt này không cần hỏi: luật nguồn — mỗi đơn mang đi là một đơn vị
+thanh toán (`I-007`), mỗi lượt gọi cộng vào hoá đơn phiên (`I-002`), khách gọi thêm là một lượt gọi
+thật (`master_plan/shop-facts.md` §5.1), hai kênh của người quán nhập không qua duyệt (§6 quy tắc 2)
+— đã đủ để viết mệnh đề.
+
+**Decision:**
+1. **Mệnh đề `I-024`** ở `quality/invariants.md` — năm vế: *một lần gửi, nhiều nhất một đơn* ·
+   *mọi đơn đọc ra được lần gửi của nó* · *lần gửi lại nhận lại đúng đơn đã sinh* · *cùng dấu khác
+   nội dung bị từ chối* · *nội dung giống hệt không phải là trùng*. Áp cho **cả năm** kênh, kể cả
+   lượt gọi vào phiên bàn. Mệnh đề **không** nói dấu sinh bằng gì, cất ở đâu.
+2. **Đồng nhất lần gửi bằng DẤU, không bằng nội dung.** Một lần gửi mang một dấu do phía gửi đặt
+   **một lần**, lúc người bấm gửi, và giữ nguyên trên mọi lần gửi lại. Đây là lựa chọn quan trọng
+   nhất của ADR này: so nội dung để đoán trùng thì **bỏ** một lượt gọi thêm có thật — thu thiếu —
+   nên cách chữa ấy sinh ra đúng loại hỏng mà mệnh đề chống.
+3. **Nhóm TIỀN** (§1 của `docs/product/1-system-design/03-bao-ve-invariant.md`), không mở nhóm
+   thứ năm: câu hỏi của `I-024` là *một đơn vị tính tiền đếm một lần gửi bao nhiêu lần* — cùng loại
+   với `I-002` (hoá đơn = mọi lượt gọi của phiên) và `I-007` (mỗi đơn mang đi một đơn vị thanh
+   toán). Hỏng thì khách **trả tiền hai lần** cho một lần gọi.
+4. **Tầng**: *một dấu một đơn* — **tầng 1**, không có hạn thời gian; *kiểm rồi mới ghi* ở tầng 3 thua
+   đúng ca hai lần gửi lại tới gần như cùng lúc. *Không đơn nào thiếu dấu* — **tầng 1**, vì đơn không
+   dấu là đường lách vế trên. *Gửi lại nhận lại đúng đơn*, *cùng dấu khác nội dung bị từ chối* và
+   *giống hệt không phải là trùng* — **tầng 3**, ở cùng cửa tạo đơn của `I-008`; cửa ấy tra dấu
+   **trước** mọi điều kiện của `I-008`, vì lần gửi lại không tạo đơn mới. **Tầng 4, nói thẳng**: hai
+   ý định của người cho cùng một mong muốn là hai lần gửi thật, máy không phân biệt được — rủi ro
+   có tên `RR-11` ở `docs/product/1-system-design/06-so-rui-ro.md`, nặng nhất ở hai kênh không qua
+   duyệt.
+5. **Hai vế là SUY RA**, không phải lời chủ quán: *lần gửi lại nhận lại đúng đơn* (một lời từ chối
+   khiến khách đặt lại từ đầu, tức một lần gửi **mới** không vế nào chặn được) và *cùng dấu khác nội
+   dung bị từ chối* (không thế thì gửi lại thành một đường sửa đơn không để vết của `I-018`).
+6. **Không mở `U-XXX` nào.** Không vế nào đòi một dữ kiện quán chưa có; nếu chủ quán muốn quầy
+   được **gộp** hai đơn giống nhau thay vì huỷ một, đó là một luật mới và mở `U-XXX` lúc ấy.
+7. **`architecture.md` §8 thêm một dòng** và `04-yeu-cau-du-lieu.md` §1 thêm **`YC-25`** (luật
+   một-đối-một của P1-07).
+
+**Rejected alternatives:**
+- **Đồng nhất bằng nội dung** (cùng món, cùng bàn hay cùng số điện thoại trong vài phút là trùng).
+  Bỏ lượt gọi thêm có thật và đơn thứ hai có thật của cùng một khách — kịch bản đếm của `I-007` đã
+  nói hai đơn tới lấy cách nhau mười phút là **hai** đơn. Và nó cần một ngưỡng *vài phút* — một dữ
+  kiện quán không ai chốt.
+- **Gấp vào `I-007`** hay `I-002`. Cùng câu hỏi về tiền, nhưng `I-007` nói **ranh giới** giữa hai
+  loại đơn vị tính tiền và `I-002` nói **hoá đơn cộng từ gì**; câu *bao nhiêu đơn sinh từ một lần
+  gửi* áp cho cả năm kênh, và gấp vào một trong hai thì bỏ sót nửa kia.
+- **Nhóm VÒNG ĐỜI**, cạnh `I-022` (điều kiện để một đơn tồn tại). Cũng đọc được, nhưng nhóm ấy là
+  nhóm **bàn kẹt, đơn kẹt**; đơn trùng không kẹt gì — nó chạy trơn tru tới tận lúc thu tiền hai lần.
+- **Tầng 3 cho *một dấu một đơn*** — một cửa tạo đơn kiểm dấu rồi mới ghi. Thua khi hai lần gửi lại
+  tới gần như cùng lúc (`work/proposals/from_old_project/data_base/nghien-cuu.md` §3.1, bằng chứng
+  dự án cũ); pha 1 ghi tầng **cao nhất thật sự giữ được** (§0 luật 1), và điều kiện này đọc được trên
+  chính các đơn, không đổi theo thời gian.
+- **Một hạn thời gian cho dấu** (dấu chỉ duy nhất trong vài giờ). Cần một con số không ai chốt, và
+  một dấu dùng lại sau hạn thì một lần gửi lại tới muộn thành đơn mới — đúng ca mệnh đề chống.
+
+**Hệ quả:**
+- `T-116` dựng một migration **mới** (`QC-05`) cho chỗ cất dấu lần gửi trên đơn và lượt gọi, kèm
+  ràng buộc tầng 1 và test theo kịch bản của `I-024`; file của `P2-04` không sửa.
+- Cổng pha 2 (`P2-13`) chấm `YC-25` cùng các dòng khác.
+- Pha 3 dựng cửa tạo đơn tra dấu trước điều kiện của `I-008`; pha 4 dựng **một chỗ sinh dấu** ở phía
+  gửi, đặt dấu lúc bấm và giữ nguyên qua mọi lần gửi lại.
+
+**Applies to:** `quality/invariants.md` `I-024` ·
+`docs/product/1-system-design/03-bao-ve-invariant.md` §1 ·
+`docs/product/1-system-design/architecture.md` §8 ·
+`docs/product/1-system-design/04-yeu-cau-du-lieu.md` §1 ·
+`docs/product/1-system-design/06-so-rui-ro.md` RR-11 ·
+`docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §6 · §7 ·
 `docs/product/2-db/02-luoc-do-ban-hang.md` §5.

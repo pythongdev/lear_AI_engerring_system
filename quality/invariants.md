@@ -1032,3 +1032,72 @@ hai bàn.
 
 *Phát hiện ở T-097, 2026-09-25 (`work/findings.md` **F-042**). Viết thành mệnh đề ở T-113,
 2026-09-28, Claude Code — ai đổi mã, khi nào đổi còn là câu của chủ quán (**U-062**).*
+
+### I-024 — Một lần gửi sinh nhiều nhất MỘT đơn, dù máy gửi lại bao nhiêu lần; hai lần gửi khác nhau là hai đơn, kể cả khi giống hệt nhau
+
+**Invariant:**
+Mệnh đề áp cho **mọi** cửa tạo đơn của **cả năm** kênh (`master_plan/shop-facts.md` §2) — đơn mang
+đi của ba kênh không gắn bàn, và **lượt gọi** vào phiên bàn của hai kênh gắn bàn (ở đây gọi chung là
+*đơn*). Một **lần gửi** là một lần một người bấm gửi một đơn — khách trên web hay trên điện thoại
+quét QR, người của quán trên POS; mọi lần máy **gửi lại** cùng lần bấm ấy vì mạng chập chờn, vì không
+nhận được trả lời, hay vì người bấm thêm lần nữa trên cùng màn chưa kịp đổi, là **cùng một** lần gửi.
+Mệnh đề có năm vế:
+
+- **Một lần gửi, nhiều nhất một đơn.** Hai đơn không bao giờ cùng sinh ra từ một lần gửi — kể cả khi
+  các lần gửi lại tới gần như cùng một lúc.
+- **Mọi đơn đọc ra được lần gửi nào đã sinh ra nó.** Mỗi lần gửi mang một **dấu lần gửi** do phía gửi
+  đặt **một lần**, lúc người bấm gửi, và giữ nguyên trên mọi lần gửi lại; hai lần gửi khác nhau không
+  bao giờ mang chung một dấu. Một đơn không mang dấu nào là cách đi vòng qua vế trên.
+- **Lần gửi lại nhận lại đúng đơn đã sinh.** Tới sau khi đơn đã có, lần gửi lại được trả lời bằng
+  **chính đơn ấy** — không phải một đơn thứ hai, và không phải một lời từ chối khiến người gửi tưởng
+  đơn chưa đi. Câu ấy đúng cả khi đơn đã đổi trạng thái sau đó, và cả khi cửa tạo đơn đã đóng theo
+  `I-008` sau lần tạo: đơn tạo **trước** lúc đóng không bị chạm tới (`I-008`), và lần gửi lại không
+  phải một đơn mới. Lần gửi đầu **bị từ chối** thì không có đơn nào mang dấu ấy, và lần gửi lại được
+  xét như lần đầu.
+- **Cùng dấu mà khác nội dung thì bị từ chối.** Một lần gửi mang dấu của một đơn đã có mà nội dung
+  khác đơn ấy **bị từ chối**, và đơn đã có giữ nguyên — lần gửi lại không phải một đường sửa đơn;
+  sửa đơn có đường riêng của nó, với vết của `I-018`.
+- **Nội dung giống hệt không phải là trùng.** Hai lần gửi có dấu khác nhau là **hai** đơn, kể cả khi
+  món, số lượng, bàn hay số điện thoại giống hệt nhau: khách ngồi bàn gọi thêm đúng món vừa gọi là
+  một lượt gọi thật (`shop-facts.md` §5.1), và một khách đặt hai đơn tới lấy cách nhau mười phút là
+  hai đơn (kịch bản đếm của `I-007`). Không cửa tạo đơn nào gộp hay bỏ một lần gửi vì nó **trông
+  giống** một đơn đã có.
+
+**Mệnh đề không nói dấu lần gửi sinh bằng gì, cất ở đâu, hay giữ bao lâu** — đó là cơ chế của pha
+sau. Nó nói dấu phải riêng cho từng lần gửi, và một dấu đã sinh ra một đơn thì **không bao giờ** sinh
+ra đơn thứ hai, không có hạn thời gian. Mệnh đề **không** nói về lần bấm *đã nhận tiền* hai lần: tổng
+đã thu vượt số phải trả đã không tồn tại được theo `I-015`.
+
+**Why:**
+Đơn trùng làm mất tiền theo hai chiều, và cả hai chỉ lộ ra **sau** khi bếp đã làm. Với ba kênh không
+gắn bàn, mỗi đơn là một đơn vị thanh toán riêng (`I-007`): đơn trùng thành **hai lần thu**, hoặc hai
+suất bếp làm mà chỉ một suất có người lấy. Với hai kênh gắn bàn, lượt trùng đổ vào cùng phiên
+(`I-001`) và hoá đơn cộng mọi lượt gọi (`I-002`), nên khách bị tính gấp đôi lúc tính tiền. Hai kênh
+do người của quán nhập — `staff_pos`, `phone_preorder` — **không** qua bước duyệt
+(`shop-facts.md` §6 quy tắc 2), nên một lần bấm đúp lúc đông đi thẳng xuống bếp mà không người nào
+nhìn thấy trước. Bằng chứng từ dự án cũ, không phải dữ kiện quán này
+(`work/proposals/from_old_project/data_base/nghien-cuu.md` §3.1): cả cửa khách quét QR bằng mạng yếu
+lẫn cửa nhân viên bấm lúc đông đều dính, và cách *kiểm rồi mới ghi* ở tầng code thua khi hai lần gửi
+tới gần như cùng lúc.
+
+Vế **nội dung giống hệt không phải là trùng** chống cách chữa sai dễ nghĩ ra nhất — so nội dung để
+đoán trùng — vì cách ấy **bỏ** một lượt gọi thêm có thật, tức thu thiếu, cùng loại với cái mệnh đề
+chống. Hai vế **lần gửi lại nhận lại đúng đơn** và **cùng dấu khác nội dung bị từ chối** là **suy
+ra**, không phải lời chủ quán (`CLAUDE.md` §7.2): vế đầu vì một lời từ chối cho lần gửi lại khiến
+khách đặt lại từ đầu — một lần gửi **mới**, mà không vế nào của mệnh đề chặn được; vế sau vì không
+thế thì lần gửi lại thành một đường sửa đơn không để vết.
+
+**Verification:**
+Kịch bản âm: gửi một đơn Pickup, rồi gửi lại **cùng dấu** năm lần, có hai lần tới gần như cùng lúc ⇒
+đúng **một** đơn tồn tại, cả sáu lần đều nhận lại đơn ấy; làm như thế với một lượt gọi `qr_table` vào
+bàn 5 và một lượt gọi `staff_pos` ⇒ phiên bàn 5 có **một** lượt gọi mới, không phải hai; gửi lại cùng
+dấu mà đổi số lượng ⇒ **bị từ chối**, đơn đầu giữ nguyên số lượng cũ; tạo một đơn không mang dấu nào
+⇒ **bị từ chối**. Kịch bản biên: gửi một đơn lúc 10:59 và được tạo, lần gửi lại tới lúc 11:00:30 ⇒
+nhận lại đơn đã tạo, **không** phải câu *ngoài giờ bán*; lần gửi đầu bị từ chối vì thiếu địa chỉ
+(`I-022`), gửi lại cùng dấu khi đã điền ⇒ **tạo được**. Kịch bản dương, chống đọc rộng: bàn 5 gọi hai
+suất, mười phút sau gọi thêm đúng hai suất ấy bằng một lần gửi mới ⇒ **hai** lượt gọi, hoá đơn tính
+cả hai; một khách đặt hai đơn tới lấy giống hệt nhau cách nhau mười phút ⇒ **hai** đơn. Kiểm ngược,
+bất kỳ lúc nào: không hai đơn nào mang chung một dấu lần gửi, và không đơn nào không mang dấu.
+
+*Phát hiện ở T-097, 2026-09-25 (`work/findings.md` **F-043**). Viết thành mệnh đề ở T-115,
+2026-09-28, Claude Code — không câu nào phải hỏi chủ quán; hai vế **suy ra** ghi rõ ở trên.*

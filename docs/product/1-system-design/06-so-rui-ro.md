@@ -64,13 +64,13 @@ Năm luật khi đọc và khi thêm một dòng:
 
 ---
 
-## 1. Mười rủi ro — bảng
+## 1. Mười một rủi ro — bảng
 
 **Thứ tự là thứ tự tiền đi ra khỏi quán, không phải thứ tự chữ cái.** Năm dòng đầu là **đường
 tiền**; `RR-6` là **đường truy**; `RR-7` là **đường bánh**; `RR-8` xuống cuối **có chủ ý** vì nó là
 rủi ro duy nhất đã có đường lùi viết ra; `RR-9` đứng sau nó vì nó là dòng **chưa có cơ chế** (§1.2). `RR-10` là **đường tiền**, nhưng đứng
 cuối vì nó thêm sau ngày đếm (T-113, 2026-09-28) — thứ tự không đánh số lại, để mã cũ vẫn trỏ đúng
-dòng.
+dòng. `RR-11` cũng là **đường tiền** và đứng sau nó vì cùng lý do (T-115, 2026-09-28).
 
 | Mã | Rủi ro | Hậu quả ở quán | Cơ chế chặn — chỗ đọc | Người chịu | Dấu hiệu nó ĐANG xảy ra |
 |---|---|---|---|---|---|
@@ -84,6 +84,7 @@ dòng.
 | **RR-8** | Quán **mất điện hoặc mất mạng** giữa buổi — quán mù trong khi **hệ thống vẫn sống** | Khách web vẫn đặt được mà không ai ở quán nhìn thấy; doanh thu buổi ấy chỉ tồn tại **trên giấy** cho tới lúc nhập bù, nên ngày ấy **chưa đối soát xong** | **Đường suy giảm đủ ba vế** — *quán làm gì · ai bù · bù lúc nào* — cho `PT-1` · `PT-2` · `PT-6` ([`01-ranh-gioi-he-thong.md`](01-ranh-gioi-he-thong.md) §3). Cộng: **web ngừng nhận đơn, khách gọi hotline** — điều kiện thứ ba của `I-008`, chủ quán chốt 2026-09-04 — và **bốn câu luật** về phía nào phán quyết ([`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §3) · **đường kéo dự phòng tự chạy** (§1.2) · doanh thu lượt nhập bù rơi vào **ngày quán bán** ([`02-thoi-gian-ngay-ban.md`](02-thoi-gian-ngay-ban.md) §2) | **POS hoặc chủ quán** — người giữ sổ cũng là người nhập lại (`shop-facts.md` §6.11) | `RB-4`: quán phải chuyển sang sổ giấy vì hệ thống chết **quá một buổi bán trong một tháng** ([`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §2). Và: mỗi tối đóng sổ còn dòng *còn N lượt bán trên giấy chưa nhập* khác 0 |
 | **RR-9** | **Mất hẳn bản ghi đã ghi** — dữ liệu của những ngày đã bán không còn | Không đối soát hoặc truy vết lại được; sổ giấy không chứa lịch sử những ngày bán trên máy | ⛔ **Chưa triển khai/kiểm chứng cơ chế.** Yêu cầu đã có owner: [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §8 **YC-21**, chủ repo chốt 2026-09-27 (**ADR-057**). **F-034 đã Fixed** về thiếu owner; không có nghĩa rủi ro đã được chặn | Pha 5 — vận hành nhận việc **T-109** (`work/backlog.md`); người phụ trách cụ thể phải được chỉ định khi triển khai | **Chưa có bằng chứng phục hồi thử**; phép nghiệm thu đọc ở YC-21 |
 | **RR-10** | **Mã QR hiện hành của một bàn nằm trong tay người ngoài** — người từng ngồi bàn ấy chụp tem, rồi gọi món vào bàn từ chỗ khác *(thêm 2026-09-28, T-113)* | Khách thật ở bàn ấy bị tính tiền cho món mình không gọi, hoặc cãi với quầy lúc tính tiền đúng lúc đông khách; bếp làm một phần không ai ăn | **Tầng 4 — máy không ngăn được** người cầm mã **đúng** gọi vào bàn của mã ấy: hàng `I-023` ở [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) §1. Cái máy **có** giữ: mã không đoán được (biết mã bàn này không với tới bàn khác) · mọi đơn QR đứng chờ **quầy duyệt** (`I-004`, `master_plan/shop-facts.md` §6 quy tắc 2) · lượt gọi ghi **mã đã mang** · đổi mã chặn mã cũ **ngay** (`quality/invariants.md` **I-023**) | **Người đứng quầy** — duyệt đơn QR. Việc **đổi mã**: **chưa có vai** — ai được đổi, khi nào đổi là `docs/product/99-unknowns.md` **U-062**, chủ quán trả lời | Quầy phải **từ chối** đơn QR vào một bàn **đang trống**; khách ở bàn phản đối một lượt gọi lúc tính tiền — và hai chuyện ấy **lặp lại ở cùng một bàn** |
+| **RR-11** | **Hai ý định của người cho cùng một đơn** — người của quán bấm tạo một đơn `staff_pos` hay `phone_preorder` hai lần vì tưởng lần đầu chưa đi, hai người cùng nhập một cuộc gọi hotline, hay nhập bù cùng một dòng sổ giấy hai lần *(thêm 2026-09-28, T-115)* | Bếp làm **hai** phần cho một mong muốn; khách ngồi bàn bị tính gấp đôi lúc tính tiền, hoặc đơn mang đi thứ hai nằm lại không ai lấy — và hai kênh ấy **không qua duyệt**, nên đơn thứ hai đã thành việc ở trạm trước khi có ai nhìn thấy nó | **Tầng 4 — máy không ngăn được** hai lần gửi thật mang hai dấu: hàng `I-024` ở [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) §1. Cái máy **có** giữ: một lần gửi, dù máy gửi lại bao nhiêu lần, **không bao giờ** thành đơn thứ hai (tầng 1), và lần gửi lại luôn nhận lại đơn đã có nên người bấm không có lý do bấm lại từ đầu (`quality/invariants.md` **I-024**) · đơn khách tự gửi chờ **quầy duyệt** (`master_plan/shop-facts.md` §6 quy tắc 2 · `I-004`) · đường ra là **huỷ** một đơn, có vết (`I-018`) | **Người đứng quầy** — người nhập đơn của hai kênh ấy, và người duyệt, huỷ đơn | Lần **huỷ** mang lý do *trùng* hay *nhập hai lần* trong vết huỷ đơn, cuối buổi; khách ở bàn phản đối một lượt gọi lúc tính tiền vì *"gọi có một lần"* |
 
 ### 1.1 Chín là phép đếm của lượt này, và năm dòng bản nháp đi đâu
 
@@ -91,7 +92,9 @@ dòng.
 Thấy cái thứ mười thì **thêm một dòng** đủ sáu ô, đừng ép nó vào một dòng đã có; và cũng đừng đi
 tìm cho đủ một con số. Con số **năm** ở bản nháp là phép đếm của người viết ngày ấy, không phải một
 ranh giới ai chốt. **Dòng thứ mười — `RR-10` — vào 2026-09-28 (T-113)**, đúng theo câu trên: mã QR
-của bàn có mệnh đề `I-023` ngày ấy, và vế tầng 4 của nó là một chỗ mất tiền có tên.
+của bàn có mệnh đề `I-023` ngày ấy, và vế tầng 4 của nó là một chỗ mất tiền có tên. **Dòng thứ mười
+một — `RR-11` — vào cùng ngày (T-115)**, cùng cách: `I-024` sinh ra, và vế tầng 4 của nó ở hai kênh
+không qua duyệt là một chỗ mất tiền có tên.
 
 **Bản nháp §6 giữ năm dòng `R1`–`R5`, và nó không sở hữu gì** (**ADR-014**) — đoạn dưới là **bản
 ghi lịch sử** để người từng đọc bản nháp biết mỗi dòng đi đâu, **không** phải một pointer coi bảng
@@ -116,8 +119,8 @@ tức **ba trong chín dòng của bảng trên không có mặt trong bản nh�
 
 ### 1.2 Bốn chỗ bảng trên dễ bị đọc sai
 
-1. **Đừng đọc *"đã có cơ chế"* thành *"đã an toàn"*.** Năm dòng — `RR-1` · `RR-3` (vế vết) ·
-   `RR-4` · `RR-6` · `RR-10` — có cơ chế cao nhất là **tầng 4 hoặc tầng 5**: máy **không ngăn**, nó chỉ
+1. **Đừng đọc *"đã có cơ chế"* thành *"đã an toàn"*.** Sáu dòng — `RR-1` · `RR-3` (vế vết) ·
+   `RR-4` · `RR-6` · `RR-10` · `RR-11` — có cơ chế cao nhất là **tầng 4 hoặc tầng 5**: máy **không ngăn**, nó chỉ
    **nhắc, để vết, và bắt sau**. Một dòng như thế được chặn bởi **người**; cái máy giữ là **đường
    truy**, không phải hàng rào. Đây đúng là rủi ro lớn nhất của cả pha 1 mà kế hoạch §10 gọi tên.
 2. **`RR-5` không cùng hạng với bốn dòng trên nó — nó là điều kiện sống của chúng.** `RR-1`, `RR-2`,

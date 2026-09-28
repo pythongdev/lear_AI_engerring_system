@@ -236,6 +236,12 @@ kỳ vọng*.
 > T-097: mã QR của bàn nay là mệnh đề `quality/invariants.md` **`I-023`**, có hàng ở nhóm TIỀN của
 > [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) §1 và dòng **`YC-24`**. S1 bước 1 (khách quét
 > QR gọi lượt đầu) hôm nay trỏ thêm được vào hàng ấy; ô của bước ấy ở §1 giữ nguyên biên bản.
+>
+> **`F-043` đã lấp 2026-09-28** (T-115, **ADR-061**) — cũng là chỗ hụt của T-097, không của lượt
+> diễn này: *một lần gửi, nhiều nhất một đơn* nay là mệnh đề `quality/invariants.md` **`I-024`**, có
+> hàng ở nhóm TIỀN của [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md) §1 và dòng **`YC-25`**. Mọi
+> bước gửi đơn hay gọi lượt của ba scenario hôm nay trỏ thêm được vào hàng ấy; ô của các bước ấy ở
+> §1 giữ nguyên biên bản.
 
 Ba chỗ dưới đây là **phát hiện của lượt này**. Không chỗ nào được lấp ở đây: lượt này **ghi**, và
 việc thiết kế bù thuộc bước hoặc phiên nhận `F-XXX` tương ứng (`work/backlog_SD.md` → P1-11, mục
@@ -327,12 +333,17 @@ vẫn là của **chủ repo**, không của cổng (§8).
   **Đo lại 2026-09-28 (T-113, ADR-060)** sau khi `I-023` sinh: `comm -3` giữa hai danh sách mã vẫn
   **rỗng** — hai mươi ba mã mỗi bên; bốn vế của hàng `I-023` mỗi vế một tầng, ba vế có tập, vế
   *không đoán được* nói thẳng vì sao chưa có tập (§0 luật 5 của file ấy).
+  **Đo lại 2026-09-28 (T-115, ADR-061)** sau khi `I-024` sinh: `comm -3` giữa hai danh sách mã vẫn
+  **rỗng** — hai mươi bốn mã mỗi bên; năm vế của hàng `I-024` mỗi vế một tầng, ba vế có tập, hai vế
+  (*lần gửi lại nhận lại đúng đơn* · *nội dung giống hệt không phải là trùng*) nói thẳng vì sao chưa
+  có tập (§0 luật 5 của file ấy).
 - [x] **2. Mỗi mệnh đề chỉ được giữ ở tầng 4 hoặc 5 đã nói thẳng ra điều đó.**
   Lọc chữ *"máy không ngăn được"* trên [`03-bao-ve-invariant.md`](03-bao-ve-invariant.md): **11**
   lần lúc ký, **12** lần khi đo lại 2026-09-28 (T-110 thêm câu ấy vào hàng `I-022`, vế tầng 4 của
   đơn hotline), **13** lần sau T-113 cùng ngày (hàng `I-023`, mã hiện hành trong tay người ngoài),
+  **14** lần sau T-115 cùng ngày (hàng `I-024`, hai ý định của người cho cùng một đơn),
   và đối chiếu từng hàng có chữ *tầng 4* / *tầng 5* — `I-004` · `I-011` · `I-012` · `I-014` ·
-  `I-015` · `I-020` · `I-021` · `I-022` · `I-023` đều **có** câu ấy trong đúng hàng của mình.
+  `I-015` · `I-020` · `I-021` · `I-022` · `I-023` · `I-024` đều **có** câu ấy trong đúng hàng của mình.
   **Một hàng có tầng 4 mà KHÔNG có câu ấy, và nó đúng như thế:** `I-009` — vế tầng 4 của nó là
   **một ngoại lệ đã chốt** (quầy **sửa** một dòng thì mốc khoá của dòng đó đặt lại, `U-026` đã
   đóng 2026-09-02), còn mệnh đề thì được giữ ở **tầng 1 + tầng 3**. Luật của ô này là *ô nào **chỉ
