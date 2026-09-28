@@ -769,6 +769,12 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
    không.** Phải duyệt: `qr_table`, `delivery`, `pickup`. Không cần duyệt: `staff_pos`,
    `phone_preorder`. Lý do là mục đích của bước duyệt — chặn đơn ảo — chỉ có nghĩa với đơn không
    ai chịu trách nhiệm. Đơn chưa duyệt **không sinh việc ở bất kỳ trạm nào**.
+   - **Mã QR dán ở một bàn: chỉ CHỦ QUÁN được đổi, và quán đổi khi bị hack** (chủ quán chốt
+     2026-09-28, trả lời `U-062`, T-118). Nguyên văn: *"chủ quán đổi , khi quán bị hack"*. Người
+     đứng quầy **không** đổi mã. *Bị hack* đọc là: mã của bàn đã lộ hoặc bị người ngoài dùng để
+     gọi món — cách đọc của Claude Code, chưa được chủ quán xác nhận thêm. Không có lịch đổi định
+     kỳ nào được nêu, nên không tự đặt. In và dán lại tem là việc tay của quán; mệnh đề máy phải
+     giữ khi đổi mã ở `quality/invariants.md` **I-023**.
 3. **Mặc định thu tiền lúc trao hàng; riêng đơn mang đi, khách ĐƯỢC CHỌN trả trước** (chủ quán
    chốt 2026-08-30). Đường mặc định không đổi: ăn tại bàn thu ở quầy lúc đóng phiên · tới lấy
    thu ở quầy lúc khách tới · giao tận nơi thu **tại chỗ khách**, lúc đưa hàng. Cả ba trường
@@ -1375,6 +1381,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-09-25 | Chủ quán sửa B19/B20: cách gọi và việc dùng lại ngày mai; không có người ghi hỏng / đổ / cháy (T-095), thay lời cũ tương ứng của T-090 | §8.4 |
 | 2026-09-25 | Chủ quán trả lời B18–B20/B22: kiểm lại cuối buổi, đồ chưa bán hết, người ghi sự cố và không cần giá vốn một suất (T-090) | §8.4 |
 | 2026-09-25 | Chủ quán bổ sung hàng mua và đơn vị mua, nhịp mua, người mua và nguồn mua qua B11–B17; làm rõ mộc nhĩ, túi chữ T; xác nhận trả ngay/ghi nợ và tin nhắn, chưa chốt kỳ trả nợ (T-089) | §8.4 |
+| 2026-09-28 | Chủ quán trả lời U-062 và U-060 (T-118): **chỉ chủ quán** đổi mã QR của bàn, đổi khi quán bị hack; **POS** khai và cập nhật số người thực tế đang làm ở quán. U-058 nhận lại lời cũ, vẫn mở | §6 quy tắc 2 · §8.6 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -1712,8 +1719,18 @@ chủ quán — đếm lại, đừng tin câu này (`work/findings.md` **F-003*
 | 3 | **còn thiếu bao nhiêu** | phần chưa ra bàn — cùng cặp với số 2 |
 | 4 | **bán được như nào rồi** | tiến độ bán trong buổi |
 | 5 | **số tiền dự tính đã bán được** | ⚠️ chữ *dự tính* là của chủ quán: đây là con số **tạm tính trong buổi**, **không** phải doanh thu đã đối soát (§6.10) và không bao giờ được bày ra như thể đã đối soát |
-| 6 | có **bao nhiêu người đang làm** | ⛔ vẫn chưa đủ nguồn, nhưng **chặn đã CHUYỂN CHỦ ngày 2026-09-20**: câu `C36` đã có lời và lời ấy đã về owner (**§8.8** — mỗi lần đổi người **ở quầy** là một mốc có giờ). Lời ấy phủ **một** trong năm trạm, nên con số này còn đứng trên **`U-060`** — *nguồn số người khi bốn trạm ngoài quầy không ghi mốc đổi* |
-| 7 | **còn thiếu gì không** | **cả BA đường, không phải một** (chốt 2026-09-08, ba lượt): thiếu **NGUYÊN LIỆU** · thiếu **NGƯỜI** · thiếu **MÓN trên menu** — xem ngay dưới. Mỗi đường trỏ vào một tập **đã có chủ ở chỗ khác**, không đường nào có danh sách riêng ở đây (**F-001**): nguyên liệu → **Danh mục nguyên liệu** §8.4 · người → **bảng phân vai** §3 · món → **§4.9**. Chữ *thiếu* từ đâu ra: **nguyên liệu — máy KHÔNG kết luận, chủ quán tự đọc hai con số mua vào · đã dùng rồi tự kết luận** (chốt 2026-09-15, đóng `U-045`, §8.4), và **mục tổng quan bày ba thứ**: *thời gian nhập* · *tổng đã dùng* · *số thiếu = tổng đã nhập − tổng đã dùng* (chốt 2026-09-16, đóng `U-051`, §8.4); Mốc cộng dồn là ngày mua sản phẩm (U-054, lời bổ sung ghi nhận 2026-09-27, §8.4). ⛔ **Người** thì lời đầu tiên có ngày **2026-09-20** và đã về owner — **§8.8**, mốc đổi người **ở quầy** — nhưng nó phủ **một** trong năm trạm, nên vế này còn đứng trên **`U-060`** (bốn trạm còn lại) — *U-049 đóng 2026-09-08 (người đi giao là một trong bốn vai, POS chỉ định) và U-050 đóng 2026-09-15 (POS gánh trạm bị bỏ trống, khoảng trống do đi giao **không** là thiếu người) — cả hai ở §3* |
+| 6 | có **bao nhiêu người đang làm** | **Số người thực tế đang làm ở quán** — chủ quán xác nhận 2026-09-27 (U-060, T-102). **POS khai và cập nhật con số này** — chủ quán chốt 2026-09-28 (đóng U-060, T-118); không tự lấy số vai hoặc số trạm làm con số này. |
+| 7 | **còn thiếu gì không** | **cả BA đường, không phải một** (chốt 2026-09-08, ba lượt): thiếu **NGUYÊN LIỆU** · thiếu **NGƯỜI** · thiếu **MÓN trên menu** — xem ngay dưới. Mỗi đường trỏ vào một tập **đã có chủ ở chỗ khác**, không đường nào có danh sách riêng ở đây (**F-001**): nguyên liệu → **Danh mục nguyên liệu** §8.4 · người → **bảng phân vai** §3 · món → **§4.9**. Chữ *thiếu* từ đâu ra: **nguyên liệu — máy KHÔNG kết luận, chủ quán tự đọc hai con số mua vào · đã dùng rồi tự kết luận** (chốt 2026-09-15, đóng `U-045`, §8.4), và **mục tổng quan bày ba thứ**: *thời gian nhập* · *tổng đã dùng* · *số thiếu = tổng đã nhập − tổng đã dùng* (chốt 2026-09-16, đóng `U-051`, §8.4); Mốc cộng dồn là ngày mua sản phẩm (U-054, lời bổ sung ghi nhận 2026-09-27, §8.4). ⛔ **Người** thì lời đầu tiên có ngày **2026-09-20** và đã về owner — **§8.8**, mốc đổi người **ở quầy** — nó phủ **một** trong năm trạm; nguồn cho cả quán có ngày **2026-09-28**: **POS khai số người thực tế** (hàng 6, đóng **`U-060`**) — *U-049 đóng 2026-09-08 (người đi giao là một trong bốn vai, POS chỉ định) và U-050 đóng 2026-09-15 (POS gánh trạm bị bỏ trống, khoảng trống do đi giao **không** là thiếu người) — cả hai ở §3* |
+
+**Hàng 6 — chủ quán xác nhận 2026-09-27 (T-102, U-060):** “lấy số người
+thực tế đang làm ở quán.” Đây là số người đang làm thực tế tại quán; lời chốt
+không xác định người nhập hoặc cách hệ thống nhận/cập nhật con số. Không tự
+lấy bốn vai, năm trạm hay số người theo chấm công thay cho số thực tế.
+
+**Hàng 6 — ai đưa con số vào, chủ quán chốt 2026-09-28 (T-118, đóng U-060):**
+nguyên văn *"pos"* ⇒ **POS (người đứng quầy) khai và cập nhật** số người thực
+tế đang làm ở quán. Lời không nói cập nhật bao lâu một lần hay lúc nào; không
+tự đặt nhịp, và máy không tự tính con số này từ nguồn nào khác.
 
 **Vế thứ bảy — *"còn thiếu gì không"* — chủ quán chốt 2026-09-08: thiếu NGUYÊN LIỆU.** Nguyên văn
 lượt ấy: *"về nguyên liệu hãy tham khảo «Danh mục nguyên liệu» tại `master_plan/shop-facts.md`"* ⇒
@@ -1751,10 +1768,11 @@ nguyên liệu và con người đã có. đối với menu: tôi muốn có …
     *"pos gánh, không thiếu người vì đi ship luc quán vắng."* ⇒ một chuyến giao rút một đôi tay
     ra khỏi năm trạm nhưng **không** làm số **7** bật lên; người đứng quầy gánh trạm bị bỏ trống.
     Lời chốt ở **§3**.
-  - ⛔ **Máy biết đang thiếu người bằng cách nào thì vẫn chưa đủ** — nhưng chỗ hở đã **hẹp lại**
+  - ✅ **Máy biết số người đang làm từ đâu — đủ nguồn ngày 2026-09-28** (đóng **`U-060`**): POS
+    khai và cập nhật số người thực tế (hàng 6). Trước đó chỗ hở đã **hẹp lại**
     ngày **2026-09-20**: câu **C36** có lời và lời ấy đã về owner (**§8.8**, qua ADM-21), nên trạm
-    `quay` nay có nguồn. Bốn trạm còn lại không ghi mốc đổi giờ (chủ quán chốt 2026-09-25), và chỗ hở còn lại mang mã **`U-060`**
-    (`docs/product/99-unknowns.md`). U-060 đã có lời một phần ngày 2026-09-27: một người đi giao lúc vắng không làm thiếu người; riêng nguồn số **6** vẫn còn cần làm rõ. (`U-052` —
+    `quay` nay có nguồn. Bốn trạm còn lại không ghi mốc đổi giờ (chủ quán chốt 2026-09-25), và chỗ hở còn lại từng mang mã **`U-060`**
+    (`docs/product/99-unknowns.md`). U-060 đã có lời một phần ngày 2026-09-27: một người đi giao lúc vắng không làm thiếu người; hàng **6** lấy số người thực tế đang làm ở quán (T-102), do **POS** khai và cập nhật (chủ quán chốt 2026-09-28, đóng U-060). (`U-052` —
     ai gánh `quay` khi chính người đứng quầy đi giao — **đã đóng 2026-09-16**: người đứng quầy
     **không** đi giao, nên ca ấy không tồn tại; nó vốn cũng không chặn số 7, vì lời `U-050` đã loại
     khoảng trống do đi giao khỏi chữ *thiếu người*, bất kể ai đi.)
@@ -1824,7 +1842,7 @@ riêng (`work/findings.md` **F-001**). Mức 1 cũng chính là chỗ mục tổ
 **Mức 1 nay có luật — nhưng chỉ cho TRẠM QUẦY.** *Người đứng quầy đổi giữa buổi thì máy có ghi lại
 mốc đổi không* là câu **`C36`**; nó có lời ngày **2026-09-20**, và lời ấy đã về owner trong cùng
 ngày qua `work/backlog_AD.md` **ADM-21** — đọc ở **§8.8**, không đọc ở đâu khác
-(`work/findings.md` **F-001**). Lời ấy phủ **một** trong năm trạm; bốn trạm còn lại không ghi mốc đổi giờ (chủ quán chốt 2026-09-25), nhưng nguồn số người còn thiếu, và chỗ hở ấy mang mã **`U-060`** (`docs/product/99-unknowns.md`).
+(`work/findings.md` **F-001**). Lời ấy phủ **một** trong năm trạm; bốn trạm còn lại không ghi mốc đổi giờ (chủ quán chốt 2026-09-25), số người trên tổng quan là số thực tế đang làm ở quán (§8.6, chủ quán xác nhận 2026-09-27), do **POS** khai và cập nhật (chủ quán chốt 2026-09-28, đóng **`U-060`**).
 
 **Lời này KHÔNG nói mảng con người lưu ở đâu hay bày thế nào.** Chỗ cất dữ liệu là pha 2, màn hình
 là pha 4 (`docs/decisions.md` **ADR-035**). Mục này chỉ nói quán muốn máy làm tới đâu.
@@ -1851,8 +1869,8 @@ Ba điều lời chốt nói, và không điều nào rộng hơn:
 **Phạm vi là trạm `quay`, đúng bằng câu hỏi — đừng đọc rộng ra năm trạm.** Câu `C36` hỏi về người
 đứng quầy và lời đáp nói về người đứng quầy. Bốn trạm còn lại của §3 — `trang_banh` · `gap_banh` ·
 `canh`+`don_ban` — **không ghi mốc đổi giờ**, chủ quán chốt 2026-09-25
-(U-055; nguyên văn “không ghi nôc đổi giờ”). Nguồn số người cho tổng quan
-chưa được xác định, xem U-060.
+(U-055; nguyên văn “không ghi nôc đổi giờ”). Số người trên tổng quan là số thực tế đang làm ở quán (§8.6, xác nhận
+2026-09-27), do POS khai và cập nhật (chủ quán chốt 2026-09-28, đóng U-060).
 
 **Vì sao trạm `quay` là trạm đáng chốt trước:** `docs/decisions.md` **ADR-016** chốt POS ở quầy là
 **cửa ghi duy nhất**, và §6.13 chốt quyền huỷ / hoàn tiền gắn **chỗ đứng** chứ không gắn chức vụ.
@@ -1867,8 +1885,8 @@ thêm một yêu cầu nào.
 
 **Bổ sung của chủ quán 2026-09-25 (T-094):**
 
-- **U-055:** bốn trạm ngoài quầy không ghi mốc đổi giờ. Nguồn số người của
-  §8.6 hàng 6 vẫn cần làm rõ tại **U-060**; vế đi giao không làm thiếu người
+- **U-055:** bốn trạm ngoài quầy không ghi mốc đổi giờ. Số người của
+  §8.6 hàng 6 là số thực tế đang làm ở quán, do POS khai và cập nhật (đóng **U-060** 2026-09-28); vế đi giao không làm thiếu người
   đã được chủ quán xác nhận lại 2026-09-27, xem §3.
 - **U-056:** nguyên văn “pos” — **POS khai mốc đổi người ở quầy**, có giờ,
   ai vào và ai ra theo luật C36.
@@ -1894,7 +1912,7 @@ rõ bên dưới chưa đủ để chốt cách thực hiện trong phần mềm
 | D38 | Gần Tết sẽ bán thêm đặc sản vùng miền. Chưa nêu món cụ thể hoặc trả lời vế chỉ bán cuối tuần. |
 | D39 | Một năm đổi giá một lần. Chưa nêu thời điểm trong ngày; không suy thành máy chỉ cho đổi mỗi năm một lần. |
 | D40 | Chủ quán đổi giá. Đây là quyền đổi bảng giá, chưa phải quyền giảm giá riêng cho khách ở D41. |
-| D41 | Đôi khi giảm giá cho khách quen. Chủ quán trả lời U-058 ngày 2026-09-25: “chủ quán” — chủ quán được giảm giá. Bổ sung 2026-09-27 (T-099): “ghi tên người tôi sẽ nhập số tiền giảm gía”; chủ quán làm rõ tên là **tên khách được giảm giá**, số tiền giảm áp dụng **cả đơn**. Chủ quán nhập số tiền giảm, không tính theo phần trăm. Phạm vi bản đầu, giới hạn và yêu cầu ghi lý do còn ở U-058. |
+| D41 | Đôi khi giảm giá cho khách quen. Chủ quán trả lời U-058 ngày 2026-09-25: “chủ quán” — chủ quán được giảm giá. Bổ sung 2026-09-27 (T-099): “ghi tên người tôi sẽ nhập số tiền giảm gía”; chủ quán làm rõ tên là **tên khách được giảm giá**, số tiền giảm áp dụng **cả đơn**. Chủ quán nhập số tiền giảm, không tính theo phần trăm. **Tái xác nhận 2026-09-27 (T-102): “ghi tên khách được giảm giá; chủ quán nhập số tiền giảm cho cả đơn”.** Phạm vi bản đầu, giới hạn và yêu cầu ghi lý do còn ở U-058. |
 | D42 | Nguyên văn: “không.” Câu hỏi gồm combo, suất trẻ em, suất lớn / nhỏ. Chủ quán sửa vế combo ngày 2026-09-25 (U-059): “có combos”. Quán có combo; không dùng lời “không” trước đó để xoá suất Đầy đủ ở §4.3–§4.9. Chưa có danh mục combo mới, thành phần hay giá mới. |
 | D43 | Menu QR cho khách cần ảnh món. Chưa chốt quyền sửa ảnh hoặc thứ tự hiển thị. |
 

@@ -78,8 +78,9 @@ quả về **hành vi** — thứ mục này sở hữu:
 - **Lời chốt này KHÔNG thêm một thao tác nào vào luồng bán hàng của §2–§6.** Ghi mốc đổi người là
   việc của mảng con người; không đơn nào, không phiên bàn nào, không nút nào ở §2–§6 đổi vì nó.
 - **Bổ sung chủ quán 2026-09-25:** bốn trạm ngoài quầy không ghi mốc đổi giờ
-  (U-055); **POS khai mốc ở quầy** (U-056). Nguồn số người trên tổng quan còn
-  ở U-060. U-057 đã có lời bổ sung, ghi nhận 2026-09-27: POS khai tên người
+  (U-055); **POS khai mốc ở quầy** (U-056). Tổng quan lấy số người thực tế
+  đang làm ở quán (chủ quán xác nhận 2026-09-27, shop-facts §8.6); cách
+  POS khai và cập nhật số đó (chủ quán chốt 2026-09-28, đóng U-060). U-057 đã có lời bổ sung, ghi nhận 2026-09-27: POS khai tên người
   thao tác, người giao thực hiện thao tác; xem `shop-facts.md` §8.8. Luồng
   ngoài quầy và quyền sửa giá của chủ quán giữ nguyên.
 
