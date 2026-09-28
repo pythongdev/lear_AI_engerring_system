@@ -222,7 +222,8 @@ if [ -n "$outside" ] || [ -n "$bad_form" ] || [ -n "$scope_in_block" ]; then
 fi
 
 # --- Trạng thái cây này đã được nhắc / đã được giao khối chưa? ---------------
-STAMP=".git/lean-ai-commit-block"
+# Trong một worktree, .git là FILE trỏ sang thư mục git thật — hỏi git chỗ ấy.
+STAMP="$(git rev-parse --git-dir 2>/dev/null || echo .git)/lean-ai-commit-block"
 state="$(
   { git -c core.quotepath=false status --porcelain 2>/dev/null; git diff HEAD 2>/dev/null; } |
   { command -v shasum >/dev/null 2>&1 && shasum || cksum; }
