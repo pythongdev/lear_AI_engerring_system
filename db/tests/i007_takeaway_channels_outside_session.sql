@@ -8,15 +8,18 @@ BEGIN
   INSERT INTO table_session_member (table_session_id, dining_table_id) VALUES (s1, t5);
 
   BEGIN
-    INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id)
-    VALUES ('pickup', 'new', s1, t5);
+    -- Đủ liên hệ của I-022 (T-111): lời từ chối phải đến từ ranh giới phiên, không từ I-022.
+    INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id,
+                             handover_code, customer_phone, customer_needed_at)
+    VALUES ('pickup', 'new', s1, t5, 'shop_pickup', '0900000000', now());
     RAISE EXCEPTION 'I-007: database KHÔNG từ chối đơn pickup tạo trong phiên bàn';
   EXCEPTION WHEN check_violation THEN
     RAISE NOTICE 'I-007 bị từ chối (tạo đơn pickup trong phiên bàn): %', SQLERRM;
   END;
 
   -- Khách đặt hotline rồi tới quán ngồi: thử NỐI đơn cũ vào phiên bàn 5.
-  INSERT INTO sales_order (channel_code, status) VALUES ('phone_preorder', 'confirmed')
+  INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at)
+  VALUES ('phone_preorder', 'confirmed', 'shop_pickup', '0900000000', now())
     RETURNING id INTO o1;
   BEGIN
     UPDATE sales_order SET table_session_id = s1, dining_table_id = t5 WHERE id = o1;
