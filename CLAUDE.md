@@ -188,8 +188,8 @@ Then, at every level:
    *Ready* unless the user names another. An Open finding in `work/findings.md`
    that blocks a Ready task is done first. Move the item to *In Progress* when
    you start.
-4. **Scope** (L1+) — declare `work/scope/<ID>.txt` (e.g. `work/scope/T-085.txt`,
-   one file per task, ignored by git — ADR-063) before the first edit, matching
+4. **Scope** (L1+) — declare `work/scope/<ID>.txt` (a task ID such as T-085 as
+   the file name, one file per task, ignored by git — ADR-063) before the first edit, matching
    the Scope section of the prompt, and stay inside it. Never edit another task's
    scope file. One pattern per line:
 
