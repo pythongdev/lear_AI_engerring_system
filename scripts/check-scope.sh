@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
 # Gate 3 — scope drift check.
 #
-# Compares the files changed in the working tree against the scope declared in
-# work/scope.txt. Catches the failure test cannot catch: the change is correct
-# but touches files the task never authorised.
+# Compares the files changed in the working tree against the scope declared for
+# the tasks in flight. Catches the failure test cannot catch: the change is
+# correct but touches files the task never authorised.
 #
-# work/scope.txt format (one pattern per line, # starts a comment):
+# MỖI TASK MỘT FILE SCOPE (đổi 2026-09-27, T-085 — docs/decisions.md ADR-063):
+# scope khai ở work/scope/<MÃ-TASK>.txt, ví dụ work/scope/T-085.txt. Thư mục bị
+# git bỏ qua (work/scope/.gitignore), nên file scope là trạng thái của phiên
+# đang chạy và không bao giờ đi vào commit (F-020), `git checkout --` hay
+# `git stash` không xoá được nó (F-014), và hai phiên song song không ghi đè lên
+# nhau (F-010). Trước đó mọi phiên dùng chung một work/scope.txt.
+#
+# Format of each scope file (one pattern per line, # starts a comment):
 #   order/*        allow anything under order/
 #   docs/x.md      allow exactly this file
 #   !order/db.go   deny, even if an allow pattern above matches it
@@ -13,7 +20,11 @@
 # A pattern ending in / is treated as "everything under this directory".
 # Note: * matches across / (order/* also matches order/sub/a.go).
 #
-# No work/scope.txt, or one with no active patterns → scope not declared, skip.
+# Một path là TRONG SCOPE khi có ÍT NHẤT MỘT file scope cho phép nó và chính file
+# ấy không cấm nó. Dòng `!` của task này không chặn file task khác được phép —
+# git không biết phiên nào sửa file nào, nên hợp các scope là mức tốt nhất khi hai
+# phiên chung một cây; muốn tách hẳn thì dùng worktree riêng (CLAUDE.md §7.4).
+# Không có file scope nào mang pattern → scope not declared, skip.
 #
 # TRACKED vs UNTRACKED (đổi 2026-08-30, T-010 — xem docs/decisions.md ADR-003):
 # Chỉ file **git đang theo dõi** mới làm gate đỏ. File chưa track (`??`) nằm ngoài
@@ -26,34 +37,36 @@
 # ghi chú. Dòng `note:` là chỗ nhìn thấy nó — đọc, đừng lướt.
 #
 # CHẾ ĐỘ --match (thêm 2026-08-31, T-016 — xem docs/decisions.md ADR-006):
-#   ./scripts/check-scope.sh --match <path>...
+#   ./scripts/check-scope.sh --match [--task <MÃ>]... <path>...
 # In ra những path nằm NGOÀI scope, mỗi path một dòng, rồi exit 0. Không đọc
 # `git status`, không kết luận gì về trạng thái track — người gọi tự quyết.
 # Có chế độ này để `check-commit-block.sh` (Gate 7) hỏi được câu "file trong khối
 # commit có thuộc scope không" mà KHÔNG phải chép lại ngữ nghĩa pattern: hai bản
 # so khớp sẽ trôi khỏi nhau, đúng họ lỗi work/findings.md F-001.
-# Cách đọc pattern không đổi một dòng nào — Gate 3 vẫn hành xử y như trước.
+# `--task <MÃ>` (T-085): chỉ chấm theo file scope của những mã ấy. Không mã nào
+# có file scope ⇒ chấm theo hợp mọi file scope, như khi không truyền `--task`.
 #
-# PHÉP CHẤM BASELINE (thêm 2026-09-07, T-047 — work/findings.md F-020, docs/
-# decisions.md ADR-043): ngoài việc chấm file thay đổi có khớp scope không, Gate
-# 3 (chế độ "gate", không phải --match) nay còn giữ MỘT hình bất biến của chính
-# work/scope.txt: bản ĐÃ COMMIT (HEAD) chỉ được chứa comment — pattern là trạng
-# thái phiên đang chạy, không bao giờ được đi vào git (CLAUDE.md §6). Vị ngữ:
-#   - HEAD còn pattern MÀ cây làm việc vẫn giữ nguyên ⇒ FAIL. Đây đúng là lỗ
-#     hổng F-020 mô tả: một pattern đã lọt vào một commit và không ai gỡ.
-#   - HEAD còn pattern nhưng cây làm việc đã sạch (đang dọn, chưa commit) ⇒
-#     không FAIL, chỉ in `note:` nhắc đưa work/scope.txt vào khối commit của
-#     lượt này để xoá nợ. Đây là điểm hở duy nhất luật cho phép — dọn xong
-#     trong cây là xanh ngay, không phải chờ tới sau khi commit.
-#   - HEAD sạch ⇒ im lặng, không có gì để chấm.
-# Đếm pattern ở HEAD dùng ĐÚNG một phép — bỏ phần từ `#`, cắt khoảng trắng, còn
-# khác rỗng — như phần đọc $SCOPE_FILE ở dưới; không dựng file mẫu thứ hai để so
-# (work/findings.md F-001). Cách đọc/khớp pattern của cây làm việc không đổi.
+# HAI HÌNH BẤT BIẾN (chế độ "gate", không phải --match — thay phép chấm baseline
+# của T-047/ADR-043, vì F-020 nay được .gitignore chặn từ gốc):
+#   - work/scope.txt còn pattern ⇒ FAIL. File ấy nay là stub chỉ-comment; cách
+#     khai cũ không còn được đọc, và im lặng thì scope của phiên đó mất tác dụng
+#     mà không ai biết.
+#   - một file work/scope/*.txt bị git theo dõi (ai đó `git add -f`) ⇒ FAIL.
+# Đếm pattern dùng ĐÚNG một phép — bỏ phần từ `#`, cắt khoảng trắng, còn khác
+# rỗng — cho mọi file (work/findings.md F-001).
 
 set -uo pipefail
 
 MODE="gate"
 if [ "${1:-}" = "--match" ]; then MODE="match"; shift; fi
+
+tasks=()
+if [ "$MODE" = "match" ]; then
+  while [ "${1:-}" = "--task" ]; do
+    [ -n "${2:-}" ] && tasks+=("$2")
+    shift 2 || break
+  done
+fi
 
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || {
   echo "check-scope: not a git repository, skipping"
@@ -61,91 +74,98 @@ ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || {
 }
 cd "$ROOT" || exit 0
 
-SCOPE_FILE="${SCOPE_FILE:-work/scope.txt}"
+SCOPE_DIR="${SCOPE_DIR:-work/scope}"
+LEGACY_FILE="work/scope.txt"
 
-[ -f "$SCOPE_FILE" ] || {
-  [ "$MODE" = "match" ] && exit 0
-  echo "check-scope: no $SCOPE_FILE — scope not declared, skipping"
-  exit 0
+# patterns <file> — in mỗi pattern hữu hiệu một dòng (bỏ `#` trở đi, cắt khoảng
+# trắng, bỏ dòng rỗng). Phép đếm duy nhất của repo cho "file scope có pattern".
+patterns() {
+  local line
+  while IFS= read -r line || [ -n "$line" ]; do
+    line="${line%%#*}"
+    line="${line#"${line%%[![:space:]]*}"}"
+    line="${line%"${line##*[![:space:]]}"}"
+    [ -n "$line" ] && printf '%s\n' "$line"
+  done < "$1"
 }
 
-allow=()
-deny=()
-while IFS= read -r line || [ -n "$line" ]; do
-  line="${line%%#*}"
-  line="${line#"${line%%[![:space:]]*}"}"
-  line="${line%"${line##*[![:space:]]}"}"
-  [ -n "$line" ] || continue
-  case "$line" in
-    !*) pat="${line#!}"; [ "${pat%/}" != "$pat" ] && pat="${pat}*"; deny+=("$pat") ;;
-    *)  pat="$line";     [ "${pat%/}" != "$pat" ] && pat="${pat}*"; allow+=("$pat") ;;
-  esac
-done < "$SCOPE_FILE"
-
-# --- Phép chấm baseline: bản ĐÃ COMMIT của $SCOPE_FILE chỉ được chứa comment --
-# Chạy TRƯỚC early-exit "scope not declared" ở dưới, vì ca cần bắt đúng là: cây
-# làm việc đã sạch (nên allow/deny rỗng) nhưng HEAD vẫn còn nợ pattern cũ. Không
-# chạy ở chế độ --match (Gate 7b tự có luật riêng cho work/scope.txt).
-baseline_fail=0
-if [ "$MODE" = "gate" ]; then
-  head_content="$(git show "HEAD:$SCOPE_FILE" 2>/dev/null || true)"
-  if [ -n "$head_content" ]; then
-    head_dirty=0
-    while IFS= read -r hline || [ -n "$hline" ]; do
-      hline="${hline%%#*}"
-      hline="${hline#"${hline%%[![:space:]]*}"}"
-      hline="${hline%"${hline##*[![:space:]]}"}"
-      [ -n "$hline" ] && head_dirty=1
-    done <<< "$head_content"
-
-    if [ "$head_dirty" -eq 1 ]; then
-      if [ ${#allow[@]} -gt 0 ] || [ ${#deny[@]} -gt 0 ]; then
-        echo "check-scope: FAIL — bản đã commit (HEAD) của $SCOPE_FILE còn mang pattern, và cây"
-        echo "  làm việc vẫn giữ nguyên. Bản đã commit chỉ được chứa comment (CLAUDE.md §6 ·"
-        echo "  work/findings.md F-020). Gỡ pattern khỏi $SCOPE_FILE trong cây làm việc, rồi đưa"
-        echo "  file vào khối commit của lượt này."
-        baseline_fail=1
-      else
-        echo "check-scope: note — $SCOPE_FILE ở HEAD còn nợ pattern cũ (đã commit), nhưng cây làm"
-        echo "  việc đã sạch. Đưa $SCOPE_FILE vào khối commit của lượt này để xoá nợ"
-        echo "  (work/findings.md F-020)."
-      fi
-    fi
-  fi
+# --- Chọn file scope ---------------------------------------------------------
+files=()
+if [ ${#tasks[@]} -gt 0 ]; then
+  for t in "${tasks[@]}"; do
+    [ -f "$SCOPE_DIR/$t.txt" ] && files+=("$SCOPE_DIR/$t.txt")
+  done
+fi
+if [ ${#files[@]} -eq 0 ] && [ -d "$SCOPE_DIR" ]; then
+  for f in "$SCOPE_DIR"/*.txt; do
+    [ -f "$f" ] && files+=("$f")
+  done
 fi
 
-if [ ${#allow[@]} -eq 0 ] && [ ${#deny[@]} -eq 0 ]; then
-  [ "$MODE" = "match" ] && exit 0
-  echo "check-scope: $SCOPE_FILE has no patterns — scope not declared, skipping"
-  [ "$baseline_fail" -eq 1 ] && exit 1
-  exit 0
-fi
+# rules: "<chỉ số file>|a|<pattern>" hoặc "<chỉ số file>|d|<pattern>"
+rules=()
+nfiles=0
+for i in "${!files[@]}"; do
+  had=0
+  while IFS= read -r p; do
+    [ -n "$p" ] || continue
+    case "$p" in
+      !*) pat="${p#!}"; kind=d ;;
+      *)  pat="$p";     kind=a ;;
+    esac
+    [ "${pat%/}" != "$pat" ] && pat="${pat}*"
+    rules+=("$i|$kind|$pat")
+    had=1
+  done < <(patterns "${files[$i]}")
+  [ "$had" -eq 1 ] && nfiles=$((nfiles + 1))
+done
 
-matches() {
-  local path="$1"; shift
-  local pat
-  for pat in "$@"; do
-    # shellcheck disable=SC2254 # pattern must stay unquoted to glob
-    case "$path" in $pat) return 0 ;; esac
+# in_scope <path> — 0 khi có một file scope cho phép path và không cấm nó.
+in_scope() {
+  local path="$1" i r idx kind pat allowed denied
+  for i in "${!files[@]}"; do
+    allowed=0; denied=0
+    for r in ${rules[@]+"${rules[@]}"}; do
+      idx="${r%%|*}"; [ "$idx" = "$i" ] || continue
+      kind="${r#*|}"; kind="${kind%%|*}"
+      pat="${r#*|*|}"
+      # shellcheck disable=SC2254 # pattern must stay unquoted to glob
+      case "$path" in $pat) [ "$kind" = d ] && denied=1 || allowed=1 ;; esac
+    done
+    [ "$allowed" -eq 1 ] && [ "$denied" -eq 0 ] && return 0
   done
   return 1
 }
 
 # --- Chế độ --match: chấm một danh sách path do người gọi đưa, rồi thôi --------
 if [ "$MODE" = "match" ]; then
+  [ "$nfiles" -gt 0 ] || exit 0
   for path in "$@"; do
     [ -n "$path" ] || continue
-    # `work/scope.txt` được miễn ở đây vì lý do khác Gate 3: người gọi (Gate 7)
-    # có luật riêng cho nó (§6.1 cấm nó nằm trong khối commit), và luật đó nói
-    # "kêu", không phải "ngoài scope". Trả nó về sẽ thành hai lời nhắc chồng nhau.
-    [ "$path" = "$SCOPE_FILE" ] && continue
-    if [ ${#deny[@]} -gt 0 ] && matches "$path" "${deny[@]}"; then
-      printf '%s\n' "$path"
-    elif [ ${#allow[@]} -eq 0 ] || ! matches "$path" "${allow[@]}"; then
-      printf '%s\n' "$path"
-    fi
+    in_scope "$path" || printf '%s\n' "$path"
   done
   exit 0
+fi
+
+# --- Hai hình bất biến -------------------------------------------------------
+invariant_fail=0
+if [ -f "$LEGACY_FILE" ] && [ -n "$(patterns "$LEGACY_FILE")" ]; then
+  echo "check-scope: FAIL — $LEGACY_FILE còn pattern, nhưng file này không còn được đọc (T-085,"
+  echo "  ADR-063). Chuyển các pattern sang $SCOPE_DIR/<MÃ-TASK>.txt — một file cho mỗi task —"
+  echo "  rồi để $LEGACY_FILE chỉ còn comment."
+  invariant_fail=1
+fi
+tracked="$(git -c core.quotepath=false ls-files -- "$SCOPE_DIR" 2>/dev/null | grep '\.txt$')"
+if [ -n "$tracked" ]; then
+  echo "check-scope: FAIL — file scope đang bị git theo dõi; file scope là trạng thái của phiên,"
+  echo "  không bao giờ đi vào git (work/findings.md F-020). Gỡ khỏi index: git rm --cached <file>"
+  printf '  - %s\n' $tracked
+  invariant_fail=1
+fi
+
+if [ "$nfiles" -eq 0 ]; then
+  echo "check-scope: $SCOPE_DIR/ has no scope file with patterns — scope not declared, skipping"
+  exit "$invariant_fail"
 fi
 
 violations=()
@@ -155,28 +175,20 @@ while IFS= read -r line; do
   status="${line:0:2}"
   path="${line:3}"
   case "$path" in *" -> "*) path="${path##* -> }" ;; esac
+  path="${path%\"}"; path="${path#\"}"
   [ -n "$path" ] || continue
 
-  # File khai báo scope không bao giờ nằm trong scope nó khai báo (2026-08-30).
-  # Khai báo scope là việc BẮT BUỘC của mọi task L1+ (CLAUDE.md §3.4), nên nếu
-  # tính nó là vi phạm thì mọi task khai báo đúng luật đều mở màn bằng một Gate 3
-  # đỏ — và lối thoát duy nhất là tự liệt kê `work/scope.txt` vào chính nó, thứ
-  # đã đi thẳng vào hai commit (T-016). Đỏ vì lý do sai dạy người ta bỏ qua gate
-  # (ADR-003); `check-commit-block.sh` đã miễn trừ file này vì cùng lý do.
-  [ "$path" = "$SCOPE_FILE" ] && continue
+  # File khai báo scope không bao giờ nằm trong scope nó khai báo (2026-08-30):
+  # khai scope là việc BẮT BUỘC của mọi task L1+ (CLAUDE.md §3.4), nên tính nó là
+  # vi phạm thì mọi task khai đúng luật đều mở màn bằng một Gate 3 đỏ (ADR-003).
+  case "$path" in "$SCOPE_DIR"/*.txt) continue ;; esac
 
-  reason=""
-  if [ ${#deny[@]} -gt 0 ] && matches "$path" "${deny[@]}"; then
-    reason="$path (matches a ! deny pattern)"
-  elif [ ${#allow[@]} -eq 0 ] || ! matches "$path" "${allow[@]}"; then
-    reason="$path"
-  fi
-  [ -n "$reason" ] || continue
+  in_scope "$path" && continue
 
   if [ "$status" = "??" ]; then
-    untracked+=("$reason")
+    untracked+=("$path")
   else
-    violations+=("$reason")
+    violations+=("$path")
   fi
 done < <(git -c core.quotepath=false status --porcelain --untracked-files=all)
 
@@ -187,14 +199,12 @@ if [ ${#untracked[@]} -gt 0 ]; then
 fi
 
 if [ ${#violations[@]} -gt 0 ]; then
-  echo "check-scope: FAIL — files changed outside the scope declared in $SCOPE_FILE:"
+  echo "check-scope: FAIL — files changed outside every scope declared in $SCOPE_DIR/:"
   printf '  - %s\n' "${violations[@]}"
-  echo "Revert them, or update $SCOPE_FILE if the task scope genuinely changed."
+  echo "Revert them, or update your $SCOPE_DIR/<MÃ-TASK>.txt if the task scope genuinely changed."
   exit 1
 fi
 
-if [ "$baseline_fail" -eq 1 ]; then
-  exit 1
-fi
+[ "$invariant_fail" -eq 1 ] && exit 1
 
-echo "check-scope: OK — all tracked changes within declared scope."
+echo "check-scope: OK — all tracked changes within declared scope ($nfiles scope file(s))."

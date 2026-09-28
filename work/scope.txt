@@ -1,43 +1,13 @@
-# Scope của task đang làm — dùng bởi scripts/check-scope.sh (Gate 3).
+# STUB — file này KHÔNG còn được đọc (2026-09-27, T-085, docs/decisions.md ADR-063).
 #
-# Khai báo trước khi bắt đầu task, khớp với mục Scope trong prompt.
-# Mỗi dòng một pattern:
+# Scope nay khai ở work/scope/<MÃ-TASK>.txt, một file cho mỗi task, ví dụ
+# work/scope/T-085.txt. Thư mục ấy bị git bỏ qua, nên scope không lọt vào commit
+# và không bị phiên khác xoá. Cú pháp pattern: đầu scripts/check-scope.sh.
 #
-#   order/         cho phép mọi thứ dưới order/
-#   docs/x.md      cho phép đúng file này
-#   !order/db.go   cấm, kể cả khi một dòng allow ở trên đã khớp
+# File này ở lại chỉ để các tài liệu lịch sử nhắc tới nó vẫn mở được. Nó phải
+# chỉ chứa comment: Gate 3 FAIL nếu ở đây còn pattern, vì pattern ở đây không
+# được chấm và im lặng thì scope của phiên đó mất tác dụng mà không ai biết.
 #
-# Lưu ý: * khớp cả dấu / (order/* cũng khớp order/sub/a.go).
-#
-# File này rỗng (chỉ có comment) = chưa khai báo scope → Gate 3 bỏ qua.
-# Xoá hết pattern sau khi task xong.
-#
-# ⚠️ BẢN ĐÃ COMMIT (HEAD) CỦA FILE NÀY CHỈ ĐƯỢC CHỨA COMMENT (CLAUDE.md §6,
-# work/findings.md F-020, docs/decisions.md ADR-043). Pattern là trạng thái của
-# phiên đang chạy — không bao giờ đi vào git. Gate 3 (scripts/check-scope.sh) và
-# Gate 7b (scripts/check-commit-block.sh) cùng thi hành hình bất biến này: HEAD
-# còn pattern mà cây làm việc vẫn giữ ⇒ Gate 3 đỏ; khối commit đưa file này vào
-# mà nội dung còn pattern ⇒ Gate 7b kêu. THÊM khối của bạn ở dưới khi bắt một
-# task, và GỠ nó trước khi giao khối commit cuối cùng của task đó (§7.3) — đừng
-# ghi đè khối của phiên khác đang chạy song song (work/findings.md F-010, F-014).
-#
-# Lịch sử: T-047 (2026-09-07) đóng work/findings.md F-020 — ba khối pattern của
-# BA-04/T-027/T-031 đã nằm trong git từ commit 12c77f8 (2026-08-31) mà không ai
-# gỡ được, vì gỡ tạo một thay đổi tracked buộc phải commit — đúng cái luật cũ
-# cấm. Đường 2 (ADR-043) sửa hai script ở trên để hình bất biến có cổng gác, rồi
-# mới dọn sạch file này. Đọc `work/findings.md` F-020 nếu cần biết toàn bộ diễn
-# biến.
-#
-# 2026-09-16 (T-078): dọn nốt MÓN NỢ TRẠNG THÁI SCOPE lần thứ hai. Bản HEAD của
-# file này mang 73 pattern của những task đã xong (P1-12, T-077, và các khối
-# trước nữa), nên Gate 3 đỏ ở MỌI lượt, không riêng lượt nào. Cây làm việc nay
-# comment-only và file đi kèm khối commit của T-078 — đúng đường CLAUDE.md §6.1
-# mô tả cho ca này. Phiên nào đang chạy song song mà cần scope thì THÊM khối mới
-# xuống dưới đây.
-#
-# 2026-09-22: dọn MÓN NỢ TRẠNG THÁI SCOPE lần thứ ba. Commit 04c5a64 (2026-09-20)
-# mang theo work/scope.txt với hai khối pattern còn nguyên — khối T-081 và khối
-# ADM-21 — nên Gate 3 đỏ ở MỌI lượt sau đó. Cả hai task đều đã Done và đã nằm
-# TRONG chính commit ấy, nên cả hai khối là "khối ghi rõ đã commit" và được gỡ.
-# Gỡ bằng cách xoá đúng từng khối, KHÔNG bằng `git checkout --` (work/findings.md
-# F-014, lần thứ sáu: trên file này mọi lệnh khôi phục đều xoá scope của mọi phiên).
+# Lịch sử của cách khai cũ — ba lần dọn "món nợ trạng thái scope" (T-047 · T-078 ·
+# 2026-09-22) và các lần một phiên xoá scope của phiên khác — ở work/findings.md
+# F-010 · F-014 · F-020 và trong git log của file này.

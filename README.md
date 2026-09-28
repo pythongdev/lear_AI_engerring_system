@@ -24,7 +24,7 @@ docs/
 work/
   backlog.md
   findings.md
-  scope.txt
+  scope/               (mỗi task một file scope, git bỏ qua — CLAUDE.md §3.4)
 quality/
   invariants.md
   review-gate.md

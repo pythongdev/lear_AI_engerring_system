@@ -18,7 +18,8 @@ Nếu không viết nổi acceptance thì vấn đề không nằm ở LLM — m
 muốn gì, và sẽ không có cách nào chấm điểm kết quả. Đây là cổng rẻ nhất và chặn
 được nhiều rác nhất.
 
-Khai báo scope vào `work/scope.txt` cùng lúc, khớp với mục Scope trong prompt.
+Khai báo scope vào `work/scope/<MÃ-TASK>.txt` cùng lúc — mỗi task một file, git
+bỏ qua (ADR-063) — khớp với mục Scope trong prompt.
 
 ## Gate 1 — Máy chấm
 
@@ -68,7 +69,7 @@ nhưng không phải cái viết trong Goal.
 ./scripts/check-scope.sh
 ```
 
-So file đã đổi với scope khai trong `work/scope.txt`. File ngoài scope → hỏi lại
+So file đã đổi với các file scope trong `work/scope/`. File ngoài scope → hỏi lại
 hoặc revert phần đó.
 
 Chỉ file **git đang theo dõi** mới làm gate đỏ. File chưa track nằm ngoài scope
@@ -121,7 +122,7 @@ khối `git add` + `git commit` dán chạy được ngay — luật đầy đ�
 
 Trong hook Claude Code, `scripts/check-commit-block.sh` chặn kết thúc lượt khi cây còn
 thay đổi **git đang theo dõi** mà lượt đó không đưa ra khối commit nào. File chưa
-track và `work/scope.txt` không kích hoạt nó, và nó chỉ hỏi **một lần cho mỗi
+track và file scope không kích hoạt nó, và nó chỉ hỏi **một lần cho mỗi
 trạng thái cây** — đỏ vì lý do sai còn hại hơn không đỏ (ADR-003, ADR-004).
 
 ---
@@ -163,8 +164,8 @@ bỏ qua khi chỉ có tài liệu thay đổi, và chạy mọi `scripts/*.test
 `check-commit-block.sh` chỉ chạy trong hook mode — chạy tay không có transcript
 để đọc. Codex chạy trực tiếp `./scripts/gate.sh`; cấu hình hook Claude không áp dụng
 cho Codex. Gate xanh ở chế độ này không chứng minh Gate 7/7b đã chạy: tự kiểm tra
-khối commit theo `CLAUDE.md` §6.1. Khi scope đã gỡ, phép đối chiếu scope của Gate 7b
-cũng không còn hiệu lực; việc xử lý giới hạn này nằm ở `work/backlog.md` → T-085.
+khối commit theo `CLAUDE.md` §6.1. Gate 7b chấm khối theo file scope của task có mã
+đứng đầu subject; file ấy giữ tới khi task đã commit (ADR-063).
 
 **Gate 8 không nằm trong chuỗi này.** Nó là hook của git, không phải của Claude
 Code, và chạy ở một thời điểm khác: lúc `git commit`, chứ không phải lúc kết thúc

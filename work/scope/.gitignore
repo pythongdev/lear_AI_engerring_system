@@ -1,0 +1,8 @@
+# work/scope/ — mỗi task một file scope: work/scope/<MÃ-TASK>.txt (T-085, ADR-063).
+# File scope là trạng thái của phiên đang chạy, KHÔNG BAO GIỜ đi vào git (F-020),
+# nên mọi thứ trong thư mục này bị bỏ qua, trừ chính file này. Nhờ vậy
+# `git checkout --` hay `git stash` không xoá được scope của phiên khác (F-014),
+# và hai phiên song song không còn ghi đè lên cùng một file (F-010).
+# Cú pháp pattern và cách Gate 3 · 7b đọc thư mục này: đầu scripts/check-scope.sh.
+*
+!.gitignore

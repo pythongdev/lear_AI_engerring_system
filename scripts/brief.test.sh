@@ -4,9 +4,10 @@
 # Chạy tay:  ./scripts/brief.test.sh
 # verify.sh tự chạy mọi scripts/*.test.sh, nên gate cũng chạy nó khi scripts/ đổi.
 #
-# Hai trạng thái phải phân biệt được, nếu không thì cảnh báo là tiếng ồn:
-#   scope đã khai + CÓ task In Progress    → bình thường, im
-#   scope đã khai + KHÔNG có task nào      → scope của task đã xong chưa dọn, kêu
+# Mỗi task một file scope work/scope/<MÃ>.txt (T-085, ADR-063). Hai trạng thái
+# phải phân biệt được, nếu không thì cảnh báo là tiếng ồn:
+#   file scope của mã ĐANG ở In Progress     → bình thường, im
+#   file scope của mã KHÔNG ở In Progress    → task đã Done, kêu đích danh mã đó
 # Và một luật không được vi phạm ở bất kỳ ca nào: brief luôn exit 0 (CLAUDE.md §7.1).
 #
 # Mỗi ca dựng một repo git tạm để không đụng cây thật.
@@ -46,10 +47,12 @@ newrepo() {
   printf '%s' "$d"
 }
 
-# setscope <repo> <pattern>...
+# setscope <repo> <pattern>...  — file scope của T-001 (task In Progress của
+# newrepo … yes); SCOPE_ID=<mã> để ghi cho task khác (T-085, ADR-063)
 setscope() {
   local d="$1"; shift
-  { echo "# scope"; printf '%s\n' "$@"; } > "$d/work/scope.txt"
+  mkdir -p "$d/work/scope"
+  { echo "# scope"; printf '%s\n' "$@"; } > "$d/work/scope/${SCOPE_ID:-T-001}.txt"
 }
 
 # brief <repo> — chạy brief.sh, đặt $rc và $out.
@@ -85,33 +88,41 @@ exit0() { # exit0 <tên ca> <rc>
 
 echo "=== brief.sh — cảnh báo scope chưa dọn ==="
 
-# B1. scope còn pattern + KHÔNG có task In Progress → kêu, nêu đích danh và số pattern
+# B1. file scope của một mã KHÔNG ở In Progress → kêu, nêu đích danh mã và file
 r="$(newrepo b1 no)"; setscope "$r" "docs/x.md" "scripts/"
 brief "$r"
-want "B1 scope bẩn, không có In Progress" yes "$out"
+want "B1 file scope của task không ở In Progress" yes "$out"
 exit0 "B1" "$rc"
 case "$out" in
-  *"work/scope.txt còn 2 pattern"*) echo "  ok   B1 nêu đích danh file và đếm đúng 2 pattern" ;;
-  *) echo "  FAIL B1 — không nêu 'work/scope.txt còn 2 pattern'"; fails=$((fails + 1)) ;;
+  *"T-001 không ở In Progress"*) echo "  ok   B1 nêu đích danh mã task" ;;
+  *) echo "  FAIL B1 — không nêu 'T-001 không ở In Progress'"; fails=$((fails + 1)) ;;
 esac
 
-# B1b. F-014: cảnh báo phải bảo THÊM khối, không được ra lệnh XOÁ trước — brief
-# không có cách nào biết scope là của task đã xong hay của một phiên khác đang
-# chạy song song, nên nó chỉ được nói ra rằng nó không biết.
+# B1b. F-014 + T-085: cảnh báo không được ra lệnh xoá vô điều kiện — task Done mà
+# chưa commit vẫn cần file scope cho Gate 7b. Xoá chỉ khi đã commit.
 case "$out" in
-  *"THÊM khối của bạn"*) echo "  ok   B1b dùng lời THÊM khối, không ra lệnh xoá (F-014)" ;;
-  *) echo "  FAIL B1b — thiếu lời 'THÊM khối của bạn' (F-014)"; fails=$((fails + 1)) ;;
+  *"Nếu task đã"*"commit: xoá"*"giữ tới khi commit xong"*)
+    echo "  ok   B1b chỉ bảo xoá khi đã commit, giữ khi chưa (F-014, T-085)" ;;
+  *) echo "  FAIL B1b — thiếu điều kiện xoá/giữ theo commit"; fails=$((fails + 1)) ;;
+esac
+
+# B1c. hai task: file của task In Progress im, file của task khác kêu — chỉ nó
+r="$(newrepo b1c yes)"; setscope "$r" "docs/x.md"; SCOPE_ID=T-007 setscope "$r" "docs/y.md"
+brief "$r"
+case "$out" in
+  *"T-007 không ở In Progress"*) echo "  ok   B1c kêu đúng T-007" ;;
+  *) echo "  FAIL B1c — không kêu T-007"; fails=$((fails + 1)) ;;
 esac
 case "$out" in
-  *"Dọn nó TRƯỚC khi bắt task mới"*)
-    echo "  FAIL B1b — vẫn còn lời ra lệnh xoá cũ đã gây mất scope T-027/T-031 (F-014)"
-    fails=$((fails + 1)) ;;
-  *) echo "  ok   B1b không còn lời ra lệnh xoá cũ" ;;
+  *"T-001 không ở In Progress"*) echo "  FAIL B1c — kêu nhầm T-001 đang In Progress"; fails=$((fails + 1)) ;;
+  *) echo "  ok   B1c không kêu T-001 đang In Progress" ;;
 esac
-case "$out" in
-  *"không có cách nào biết"*) echo "  ok   B1b brief nói rõ nó không biết có phiên khác đang chạy (F-014)" ;;
-  *) echo "  FAIL B1b — brief không nói rõ nó không biết (F-014)"; fails=$((fails + 1)) ;;
-esac
+
+# B1d. work/scope.txt còn pattern (cách khai cũ) → kêu, chỉ sang cơ chế mới
+r="$(newrepo b1d yes)"; echo "docs/x.md" >> "$r/work/scope.txt"
+brief "$r"
+want "B1d work/scope.txt còn pattern" yes "$out"
+exit0 "B1d" "$rc"
 
 # B2. cùng scope đó + CÓ task In Progress → im, và giữ nguyên dòng cũ
 r="$(newrepo b2 yes)"; setscope "$r" "docs/x.md" "scripts/"
@@ -371,7 +382,7 @@ exit0 "C2" "$rc"
 
 # C3. In Progress 8 mục — và cảnh báo scope vẫn phải đọc danh sách ĐỦ, không đọc
 #     bản đã cắt: "có task nào đang chạy không" hỏi trên nửa sự thật là sai.
-r="$(manyrepo c3 1 8)"; setscope "$r" "docs/x.md"
+r="$(manyrepo c3 1 8)"; SCOPE_ID=P-008 setscope "$r" "docs/x.md"
 brief "$r"; b="$(sect 'IN PROGRESS')"
 inbody "C3 In Progress dài nói ĐÃ CẮT" "$b" "in 6/8 mục"
 inbody "C3 chỉ chỗ đọc đủ"             "$b" "work/backlog.md → In Progress"

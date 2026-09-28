@@ -62,10 +62,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-085 **Gỡ scope lúc Done làm Gate 7b im lặng; scope đang bị dùng để nhắc "chưa commit"** —
-  **L2**, mở 2026-09-25. Quyết trước khi sửa: 7b đọc *Phạm vi* của hồ sơ vừa Done, hay chấp nhận mất
-  lớp ấy (ghi ADR). Brief đọc git cho việc chưa commit; worktree riêng khi chạy song song
-  (**F-025**).
 - [ ] T-086 **`work/backlog.md` dài hơn 6.300 dòng, phần lớn là chi tiết việc đã xong** — **L1**, mở
   2026-09-25. Done chỉ còn một dòng + hash commit; chi tiết chuyển ra chỗ lưu trữ không ai phải cập
   nhật. Làm **sau** T-085.
@@ -249,6 +245,9 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](#chi-tiet-can-
 <a id="done"></a>
 ## Done
 
+- [x] T-085 **Mỗi task một file scope `work/scope/<MÃ>.txt`; Gate 7b chấm theo task trong subject** —
+  **L2**, 2026-09-27, chủ repo yêu cầu. **ADR-063**. Gate 3 · 7b · brief đổi cơ chế, test mới đều
+  đạt; `work/scope.txt` thành stub. Bằng chứng và giới hạn: [chi tiết T-085](#t-085).
 - [x] T-084 **Gate in lẫn "OK" · "xanh" · "skipping" · "note:", nên "đã kiểm và đạt" trông giống
   "không kiểm"** — **L1**, mở 2026-09-25 (đề xuất tinh gọn bước 5, **ADR-051** *Hệ quả*). Mỗi dòng
   của `scripts/gate.sh` mang đúng một nhãn PASS · FAIL · SKIP · NOTE; không đổi logic cổng nào.
@@ -1369,6 +1368,58 @@ git status --porcelain
 
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
+
+<a id="t-085"></a>
+### T-085 — Mỗi task một file scope, Gate 7b chấm theo task trong subject
+
+**Yêu cầu:** Chủ repo, 2026-09-27: *"hãy mỗi 1 task tự tạo file scope riêng để không bị xoá"*, sau khi
+Gate 3 đỏ vì một phiên song song gỡ sạch `work/scope.txt` giữa chừng; rồi *"hãy làm theo đề xuất
+trên"* cho thiết kế Claude đề xuất trong cùng phiên. Mức **L2**: đổi Gate 3 · Gate 7b · brief, không
+đổi dữ liệu hay tiền. Quyết định thiết kế: **ADR-063**.
+
+**Phạm vi:** `work/scope/T-085.txt` (chính cơ chế mới).
+
+**Acceptance (viết trước khi sửa):**
+
+1. Scope khai ở `work/scope/<MÃ-TASK>.txt`, một file mỗi task; thư mục bị git bỏ qua trừ
+   `work/scope/.gitignore`, nên file scope không thể lọt vào commit bằng `git add` thường.
+2. Gate 3: một file đổi là **trong scope** khi có **ít nhất một** file scope cho phép nó và chính
+   file ấy không cấm nó. Không có file scope nào ⇒ bỏ qua như cũ.
+3. Gate 3 FAIL khi `work/scope.txt` còn pattern (cách khai cũ không còn được đọc — im lặng sẽ làm
+   scope của phiên đó mất tác dụng mà không ai biết), và khi một file `work/scope/*.txt` bị git theo
+   dõi (ai đó `git add -f`).
+4. Gate 7b: mã task trong subject `git commit -m "<MÃ>: …"` của khối chọn file scope để chấm; không
+   mã nào có file scope ⇒ chấm theo hợp mọi file scope. Khối liệt kê `work/scope/<x>.txt` ⇒ kêu.
+5. Task Done **không** xoá file scope nữa — Gate 7b cần nó lúc giao khối commit; file được xoá sau
+   khi task đã commit. Brief liệt kê từng file scope theo mã, và cảnh báo file nào có mã không nằm
+   trong *In Progress*.
+6. `work/scope.txt` ở lại thành stub chỉ-comment trỏ sang cơ chế mới, để các tài liệu lịch sử nhắc
+   tới nó vẫn mở được.
+7. Test: mỗi luật 2–5 có ca trong `check-scope.test.sh` · `check-commit-block.test.sh` ·
+   `brief.test.sh`; `./scripts/gate.sh` xanh.
+8. Luật chung (CLAUDE.md, AGENTS.md, README.md, `docs/prompt-guideline.md`,
+   `quality/review-gate.md`, `.claude/commands/commands.md`) nói cơ chế mới; tài liệu lịch sử giữ
+   nguyên.
+
+**Bàn giao:** Claude Code, worktree `.claude/worktrees/t085`, nhánh `T-085-scope-per-task`, base
+`b04715c`; chưa review độc lập. Acceptance → bằng chứng: 1 · 2 · 3 → `check-scope.test.sh` ca 1–10
+(18 ca đạt); 4 → `check-commit-block.test.sh` A4 · A9 · A10 · A11 (đạt); 5 → `brief.test.sh` B1 ·
+B1b · B1c · B1d (đạt); 6 → `work/scope.txt` chỉ còn comment; 7 → `./scripts/verify.sh`: *Verification
+passed*; 8 → sáu file luật đã sửa, tài liệu lịch sử giữ nguyên. Gate 1b còn đỏ trong worktree vì một link
+có sẵn từ commit `b4b603e`: ADR-053 trỏ tới `prompt/maintenance/02-quy-trinh-db-tu-du-an-cu-L2.md`,
+file chỉ nằm chưa track ở cây chính nên không có trong worktree — không thuộc task này. **Việc còn lại khi gộp vào cây chính:** cây
+chính đang có phiên khác ghi pattern vào `work/scope.txt`; sau khi gộp, phiên ấy phải chuyển pattern
+sang `work/scope/<MÃ>.txt`, nếu không Gate 3 đỏ (đúng thiết kế).
+
+**Tích hợp 2026-09-28 (Claude Code, chủ repo chọn "hoàn tất T-085 trước" khi giao T-086):** thay đổi
+được áp lại lên `5d64e6c` (T-084) và ba file xung đột (`CLAUDE.md` §5 Gate 3, `docs/decisions.md`
+bảng + thân ADR, `work/backlog.md` Ready · Done) đã gỡ. ADR của task này **đổi số ADR-058 → ADR-063**
+vì nhánh chính đã dùng ADR-058…062 cho `I-022` · khoản trả trước · `I-023` · `I-024` · Gate 8; mọi
+chỗ T-085 viết đã đổi theo, các chỗ ADR-058 của `I-022` giữ nguyên. Mô tả Gate 3 ở `CLAUDE.md` §5
+đổi `note:` → `NOTE` theo T-084. Bằng chứng: tám `scripts/*.test.sh` đều qua; `./scripts/gate.sh`
+trong worktree: `PASS gate không cổng nào đỏ`.
+
+[↑ đầu file](#top)
 
 ### T-106 — Rà phép đếm ADM và đóng F-028
 

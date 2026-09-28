@@ -82,33 +82,38 @@ section "IN PROGRESS (work/backlog.md)"
 inprog="$(block work/backlog.md '## In Progress' | grep -E '^- \[')"
 printf '%s\n' "$inprog" | emit "$MAX_LIST" 'work/backlog.md → In Progress'
 
-section "DECLARED SCOPE (work/scope.txt)"
-# Scope đã khai + có task In Progress = bình thường. Scope đã khai + KHÔNG có task
-# nào In Progress = scope của task trước chưa dọn (CLAUDE.md §7.3) — đã đi thẳng
-# vào hai commit, `5c41f65` và `25f0f88`. Xem docs/decisions.md ADR-006.
+section "DECLARED SCOPE (work/scope/<MÃ>.txt)"
+# Mỗi task một file scope (T-085, docs/decisions.md ADR-063). File của một task
+# In Progress = bình thường. File của một mã KHÔNG ở In Progress = task đã Done
+# nhưng có thể chưa commit (Gate 7b cần file ấy tới lúc giao khối commit), hoặc
+# đã commit mà chưa ai xoá. Brief không biết ca nào — nó chỉ nêu đích danh.
 # Cảnh báo, không chặn: brief không bao giờ đổi mã thoát (§7.1).
-if [ -f work/scope.txt ]; then
-  # No cap here. A scope line hidden by truncation is a scope line nobody
-  # honours, and Gate 3 would then reject a file the brief said nothing about.
-  scope="$(grep -vE '^\s*(#|$)' work/scope.txt)"
-  if [ -n "$scope" ]; then
-    printf '%s\n' "$scope" | sed 's/^/  /'
-    if [ -n "$inprog" ]; then
-      printf '  → a task is open. Finish or hand it off before starting another.\n'
-    else
-      npat="$(printf '%s\n' "$scope" | grep -c .)"
-      printf '  → CẢNH BÁO: work/scope.txt còn %s pattern nhưng work/backlog.md không có\n' "$npat"
-      printf '    task nào ở In Progress. Có thể là scope của task đã xong chưa được dọn\n'
-      printf '    (CLAUDE.md §7.3) — hoặc một phiên khác đang chạy song song trên cùng cây,\n'
-      printf '    và brief không có cách nào biết đâu là ca nào (work/findings.md F-014).\n'
-      printf '    THÊM khối của bạn vào CUỐI file; chỉ gỡ khối nào ghi rõ đã commit. Nếu bạn\n'
-      printf '    đang giữa một task: mở lại nó ở In Progress, đừng xoá scope.\n'
-    fi
-  else
-    printf '  (not declared — no task in flight, or an L0 change)\n'
+# No cap here. A scope line hidden by truncation is a scope line nobody honours,
+# and Gate 3 would then reject a file the brief said nothing about.
+nscope=0
+for sf in work/scope/*.txt; do
+  [ -f "$sf" ] || continue
+  scope="$(grep -vE '^\s*(#|$)' "$sf")"
+  [ -n "$scope" ] || continue
+  nscope=$((nscope + 1))
+  id="$(basename "$sf" .txt)"
+  printf '  %s:\n' "$sf"
+  printf '%s\n' "$scope" | sed 's/^/    /'
+  if ! printf '%s\n' "$inprog" | grep -qE "(^|[^A-Za-z0-9-])${id}([^0-9]|\$)"; then
+    printf '    → CẢNH BÁO: %s không ở In Progress trong work/backlog.md. Nếu task đã\n' "$id"
+    printf '      commit: xoá %s. Nếu đã Done mà chưa commit: giữ tới khi commit xong\n' "$sf"
+    printf '      (Gate 7b chấm khối commit theo file này). Nếu bạn đang làm %s: đưa nó\n' "$id"
+    printf '      về In Progress, đừng xoá.\n'
   fi
-else
-  printf '  (no work/scope.txt)\n'
+done
+if [ "$nscope" -eq 0 ]; then
+  printf '  (not declared — no task in flight, or an L0 change)\n'
+elif [ -n "$inprog" ]; then
+  printf '  → a task is open. Finish or hand it off before starting another.\n'
+fi
+if [ -f work/scope.txt ] && grep -qvE '^\s*(#|$)' work/scope.txt; then
+  printf '  → CẢNH BÁO: work/scope.txt còn pattern nhưng không còn được đọc (T-085). Chuyển\n'
+  printf '    chúng sang work/scope/<MÃ-TASK>.txt — Gate 3 đỏ tới khi file ấy chỉ còn comment.\n'
 fi
 
 # --- Cổng nào đang thật sự đứng gác -----------------------------------------
