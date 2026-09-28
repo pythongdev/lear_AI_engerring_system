@@ -15,7 +15,8 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
-  - [U-060](#u-060) — nguồn đếm người khi ngoài quầy không ghi mốc đổi
+  - [U-062](#u-062) — ai được đổi mã QR của một bàn, và quán đổi khi nào
+  - [U-060](#u-060) — cách cập nhật số người thực tế đang làm ở quán
   - [U-058](#u-058) — giảm giá cả đơn nhập tay: phạm vi bản đầu và giới hạn
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
@@ -35,21 +36,34 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 <a id="dang-mo"></a>
 ### Đang mở
 
+<a id="u-062"></a>
+- **U-062 — Ai được đổi mã QR dán ở một bàn, và quán đổi khi nào?** Mở
+  2026-09-28 (T-113). `quality/invariants.md` **I-023** đòi hệ thống **đổi
+  được** mã của một bàn và mã cũ **chết ngay** từ lúc đổi (vế ấy là *suy ra*,
+  ghi rõ trong mệnh đề); in và dán lại tem là việc tay của quán. Còn hai câu:
+  **ai** được bấm đổi (chủ quán, người đứng quầy, hay cả hai), và quán đổi
+  **khi nào** — chỉ khi nghi mã đã lộ, hay định kỳ. **Chủ quán** trả lời;
+  chặn phần quyền theo vai của thao tác đổi mã (pha 3) và dòng người chịu
+  việc đổi mã ở `docs/product/1-system-design/06-so-rui-ro.md` RR-10. Không
+  tự gán thao tác này cho một vai, không tự đặt lịch đổi mã.
+
 <a id="u-060"></a>
-- **U-060 — Số người đang làm trên tổng quan lấy nguồn nào khi bốn trạm ngoài
-  quầy không ghi mốc đổi người?** Mở 2026-09-25; đã nhận thêm lời chủ quán
-  2026-09-27 (T-099): chỉ khi quán vắng mới cho một người đi giao, người còn
-  lại vẫn đủ phục vụ. Vế đi giao **không là thiếu người** đã rõ, owner
-  `master_plan/shop-facts.md` §3 · §8.6. Còn nguồn để máy hiển thị **số người
-  đang làm** (hàng 6): ai nhập/xác nhận số người hay dùng dữ liệu nào đang có?
-  **Chủ quán** trả lời; chặn vế đếm người của ADM-04. Không tự biến bốn vai
-  thành số người có mặt cố định, hoặc tự dùng chấm công làm nguồn.
+- **U-060 — Ai cung cấp/cập nhật số người thực tế đang làm ở quán cho tổng
+  quan?** Mở 2026-09-25. **Chủ quán xác nhận 2026-09-27 (T-102): “lấy số
+  người thực tế đang làm ở quán.”** Đã rõ con số muốn hiển thị, owner
+  `master_plan/shop-facts.md` §8.6. Lời trước đó (T-099) cũng chốt một người
+  chỉ đi giao lúc vắng, người còn lại đủ phục vụ; đi giao không là thiếu người.
+  Phần chưa có lời chỉ còn cách đưa số thực tế vào hệ thống: ai nhập/xác nhận
+  hoặc lấy từ dữ liệu nào. **Chủ quán** trả lời; chặn phần thu nhận dữ liệu
+  của ADM-04. Không tự dùng số vai, số trạm hoặc chấm công làm số thực tế.
 
 <a id="u-058"></a>
 - **U-058 — Phạm vi bản đầu và giới hạn của giảm giá nhập tay cho cả đơn?**
   Mở 2026-09-25; chủ quán bổ sung 2026-09-27 (T-099): **ghi tên khách được
   giảm giá; chủ quán nhập số tiền giảm cho cả đơn**, không phải phần trăm
-  hoặc giảm từng món. Owner `master_plan/shop-facts.md` §8.9.
+  hoặc giảm từng món. **Tái xác nhận 2026-09-27 (T-102): “ghi tên khách được
+  giảm giá; chủ quán nhập số tiền giảm cho cả đơn”.** Owner
+  `master_plan/shop-facts.md` §8.9.
   Quyền, cách nhập, người được ghi tên và đối tượng áp dụng đã rõ. Còn
   **chủ quán** chốt có đưa vào bản bán hàng đầu tiên không, giới hạn số tiền
   và có cần ghi lý do không. Chặn phần phạm vi MVP và giới hạn kiểm tra của

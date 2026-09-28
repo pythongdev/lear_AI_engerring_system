@@ -33,7 +33,7 @@ hình dạng ấy chép của kế hoạch pha 1 (**ADR-033**).*
 |---|---|---|
 | [`prompt-fullstack.md`](prompt-fullstack.md) §3.4–§3.7 | **bản xuất khẩu** viết 2026-08-31, trước phần lớn quyết định của chủ quán | **đề xuất để đối chiếu**, không phải lược đồ đã chốt (**ADR-035** luật 3) |
 | [`../docs/product/1-system-design/architecture.md`](../docs/product/1-system-design/architecture.md) §12.3 | mục **duy nhất** trong repo đã đi tới mức *cất cái gì* và *ràng buộc nào phải do database giữ*, cho riêng phần **nợ** | **đề xuất gửi sang pha 2**, tự khai như thế trong thân mục |
-| [`../docs/product/1-system-design/04-yeu-cau-du-lieu.md`](../docs/product/1-system-design/04-yeu-cau-du-lieu.md) | **owner** của *câu yêu cầu* — `YC-01`…`YC-20` · `YC-22` (thêm 2026-09-28, T-110) · `YC-23` (thêm 2026-09-28, T-112; `YC-21` là yêu cầu khôi phục của pha 5, **ADR-057**) | **đề bài của pha 2**: mỗi dòng là một câu pha 2 phải trả lời được bằng *có*/*không* sau khi dựng xong lược đồ |
+| [`../docs/product/1-system-design/04-yeu-cau-du-lieu.md`](../docs/product/1-system-design/04-yeu-cau-du-lieu.md) | **owner** của *câu yêu cầu* — `YC-01`…`YC-20` · `YC-22` (thêm 2026-09-28, T-110) · `YC-23` (thêm 2026-09-28, T-112) · `YC-24` (thêm 2026-09-28, T-113; `YC-21` là yêu cầu khôi phục của pha 5, **ADR-057**) | **đề bài của pha 2**: mỗi dòng là một câu pha 2 phải trả lời được bằng *có*/*không* sau khi dựng xong lược đồ |
 | **file này** | kế hoạch: thứ tự · mức · đầu ra kiểm chứng được | **không sở hữu gì** |
 
 **Hai tài liệu đầu là hai cái bẫy khác nhau.** Bẫy của §3.4–§3.7 là nó **rẻ và trông đúng**: nó có
@@ -107,7 +107,7 @@ không phải lời chủ repo (§8, `CLAUDE.md` §7.2).
 
 ## 4. Pha 2 nhận gì từ pha 1 — bốn chỗ đọc trước khi viết dòng đầu tiên
 
-**4.1 `quality/invariants.md` giữ mệnh đề `I-001`…`I-022` (`I-022` thêm 2026-09-28, T-110), và
+**4.1 `quality/invariants.md` giữ mệnh đề `I-001`…`I-023` (`I-022` thêm 2026-09-28, T-110; `I-023` cùng ngày, T-113), và
 [`03-bao-ve-invariant.md`](../docs/product/1-system-design/03-bao-ve-invariant.md) §1–§4 giữ
 **tầng** và **phép đối chiếu** của từng mệnh đề.** Đây là đầu vào đắt nhất pha 1 để lại. Đọc **danh
 sách mã**, đừng đọc một con số đếm — một phép đếm cứng trong tài liệu đã tự hết đúng đúng một lần
@@ -144,6 +144,7 @@ cộng hai chỗ *suy ra* chưa ai hỏi chủ quán. Chi tiết ở §8.
 | ~~**F-036**~~ | ~~phép đối chiếu của một mệnh đề hẹp hơn chính mệnh đề ấy~~ — **đã đóng 2026-09-27** (T-103, `docs/decisions.md` **ADR-056**); hai vế nay có tầng | `P2-07` (nổ đơn trạm `canh`, tầng 2) |
 | ~~**F-037**~~ | ~~khoản **trả trước** có mốc tính tiền nhưng không có dòng nào trong bảng đối soát~~ — **đã đóng 2026-09-28** (T-112, `docs/decisions.md` **ADR-059**): ba dòng ở `architecture.md` §6.4 · hạng tử `I-021` · `YC-23` | `P2-06` (chỗ cất `YC-23`) · `P2-11` (câu truy vấn) |
 | ~~**F-038**~~ | ~~*thiếu một trường bắt buộc thì đơn không tạo được* là luật pha 0 mà pha 1 không có mệnh đề~~ — **đã đóng 2026-09-28** (T-110, `docs/decisions.md` **ADR-058**): `I-022` · hàng VÒNG ĐỜI · `YC-22` | `P2-04` (xong) → migration ở `T-111` |
+| ~~**F-042**~~ | ~~mã QR của bàn *không đoán được và đổi được* chưa có mệnh đề~~ — **đã đóng 2026-09-28** (T-113, `docs/decisions.md` **ADR-060**): `I-023` · hàng TIỀN · `YC-24` | `P2-10` (sinh mã cho dữ liệu mồi) → migration ở `T-114` |
 | **S-5** | bấm *"đã bưng ra bàn"* theo **đơn vị nào** — `04-yeu-cau-du-lieu.md` §6 dặn **để trống, đừng điền** | `P2-07` |
 | **S-6** | với đơn giao tận nơi, quầy bấm mốc *"đã ra bàn"* **lúc nào** | `P2-07` |
 
@@ -241,7 +242,7 @@ chiếu đọc được là một bước chẻ sai ([`prompt-fullstack.md`](pro
 | **P2-10** | **Dữ liệu mồi**: menu thật, bàn, trạm, người — **tra** `shop-facts.md` §1 · §3 · §4.2–§4.5, không chép bảng giá thứ hai | P2-05 · P2-04 | Dựng dữ liệu mồi rồi tính lại giá **mười một ca giá bắt buộc** (`shop-facts.md` §4.8) ⇒ khớp từng đồng; sai một ca là sai dữ liệu mồi hoặc sai lược đồ giá, **không** sửa ca | Mọi test sau đó chạy trên một cái menu không phải menu của quán | L1 |
 | **P2-11** | **Bộ query đối chiếu**: mỗi phép đối chiếu của `03-bao-ve-invariant.md` thành **đúng một** câu truy vấn, gom thành **một** lệnh chạy sau khi đóng quán | P2-04 → P2-08 · P2-10 | `comm -3` giữa danh sách mã ở `quality/invariants.md` và danh sách mã của bộ truy vấn ⇒ **rỗng**; cả bộ chạy trên dữ liệu mồi ⇒ **0 dòng**; cài một lỗi thật vào dữ liệu ⇒ đúng câu truy vấn của nó ra **khác 0** (§7 luật 3); bộ chứa thêm **nhóm phép kiểm quy ước** của `P2-03`, mang mã quy ước, không trộn vào phép so mã `I-0xx`, và mỗi phép cũng được chứng minh biết kêu (**ADR-053** luật 3) | Bất biến chỉ tồn tại trên giấy: không ai biết một ràng buộc đã bị gỡ | L2 |
 | **P2-12** | **Quy ước code** (**ADR-039**): **mục đầu tiên là chọn DBMS + phiên bản** (**ADR-053** luật 1), rồi đối chiếu lại stack đề xuất ở §3.4, cấu trúc thư mục (có thư mục migration), đặt tên, khung test | P2-03 | Một file quy ước, mỗi mục một câu **kiểm được bằng lệnh** — mục DBMS là một lệnh in ra phiên bản đang chạy; mỗi phép kiểm quy ước của `P2-03` chạy được trên DBMS vừa chọn (cơ sở dữ liệu rỗng ⇒ 0 dòng); `CLAUDE.md` §2 hàng *Quy ước code* hết nói *chưa có owner* | Phiên đầu tiên viết code tự bịa quy ước, và cái bịa đó thành fact vì không có chủ để đối chiếu; năm lát dựng ràng buộc trên một DBMS chưa chọn rồi phải dựng lại | L2 |
-| **P2-13** | **Cổng chất lượng pha 2**: diễn ba scenario nghiệm thu (`08-scenario.md` §8) **qua lược đồ**, chấm ngược từng dòng `YC-01`…`YC-20` · `YC-22` · `YC-23`, và ký các ô §9 | P2-03 → P2-12 | Mỗi **bước** của ba scenario ghi/đọc được bằng dữ liệu thật; mỗi dòng `YC` trả lời được **hai** câu; chỗ không trả lời được ghi thành `F-XXX`/`U-XXX`, **không** tự thiết kế bù | Lược đồ đẹp mà không chạy nổi một buổi bán — đúng cách `BA-11` và `P1-11` tìm ra chỗ hụt | L2 |
+| **P2-13** | **Cổng chất lượng pha 2**: diễn ba scenario nghiệm thu (`08-scenario.md` §8) **qua lược đồ**, chấm ngược từng dòng `YC-01`…`YC-20` · `YC-22`…`YC-24`, và ký các ô §9 | P2-03 → P2-12 | Mỗi **bước** của ba scenario ghi/đọc được bằng dữ liệu thật; mỗi dòng `YC` trả lời được **hai** câu; chỗ không trả lời được ghi thành `F-XXX`/`U-XXX`, **không** tự thiết kế bù | Lược đồ đẹp mà không chạy nổi một buổi bán — đúng cách `BA-11` và `P1-11` tìm ra chỗ hụt | L2 |
 | **P2-14** | **Rà chéo ranh giới pha và pointer**: không endpoint · route · component nào lọt vào file pha 2; mọi pointer từ pha 1 sang pha 2 còn đúng | P2-13 | Bộ lọc chạy trên **mọi** file pha 2, và **in cả lệnh chưa lọc cạnh lệnh đã lọc** — một bộ lọc rỗng vì viết sai trông y hệt một bộ lọc rỗng vì không có lỗi (**F-017**) | Pha 3 mở ra và đọc bốn dòng hợp đồng API do pha 2 viết hộ như đầu vào đã chốt — đúng `F-040` · `F-041`, lần thứ hai | L1 |
 
 **Chạy song song được:** `P2-04` · `P2-05` · `P2-06` · `P2-07` · `P2-08` sau khi `P2-03` **và `P2-12`** xong —
@@ -292,7 +293,7 @@ là mở ra đúng loại việc rà mà **F-007** đã đo giá.
 | ~~**F-036**~~ | ~~hai vế thiếu tầng~~ — **đã đóng 2026-09-27** (T-103, **ADR-056**) | `P2-07` | — |
 | ~~**F-037**~~ | ~~khoản **trả trước** không có dòng trong bảng đối soát~~ — **đã đóng 2026-09-28** (T-112, **ADR-059**) | `P2-06` · `P2-11` | — |
 | ~~**F-038**~~ | ~~*thiếu một trường bắt buộc thì đơn không tạo được* chưa có mệnh đề và chưa có tầng~~ — **đã đóng 2026-09-28** (T-110, **ADR-058**) | `T-111` — migration mới dựng chỗ cất và ràng buộc tầng 1 của `I-022` | — |
-| **F-042** | mã QR của bàn *không đoán được và đổi được* chưa có mệnh đề nào (thêm 2026-09-25, T-097) | `P2-10` — dữ liệu mồi ghi chỗ trống, không tự chốt cách sinh mã | phiên nhận F-042 (pha 1) |
+| ~~**F-042**~~ | ~~mã QR của bàn *không đoán được và đổi được* chưa có mệnh đề nào~~ — **đã đóng 2026-09-28** (T-113, **ADR-060**): `I-023` · hàng TIỀN · `YC-24`; *ai đổi, khi nào* là **U-062** | `T-114` — migration mới dựng chỗ cất mã, lịch sử mã và ràng buộc tầng 1 của `I-023`; `P2-10` sinh mã qua cửa sinh mã ấy, sau `T-114` | — |
 | **F-043** | *một lần gửi đơn thành đúng một đơn* chưa có mệnh đề nào (thêm 2026-09-25, T-097) | `P2-04` — một dòng *chỗ trống có tên* trong file lát | phiên nhận F-043 (pha 1) |
 | **U-054** | hai con số *tổng* của vế nguyên liệu cộng dồn **từ mốc nào** | lane **admin**, không chặn bước nào ở §6 | chủ quán |
 
@@ -342,7 +343,7 @@ bằng cảm giác thì không chặn được gì. Nên mỗi ô dưới đây 
 - [ ] **Mọi hàng *tầng 1* của [`03-bao-ve-invariant.md`](../docs/product/1-system-design/03-bao-ve-invariant.md)
       có một ràng buộc thật mang nó** → với từng hàng, dán nguyên lời từ chối của database khi cố
       dựng trạng thái sai. Hàng nào dựng không nổi ⇒ **một `F-XXX` gửi ngược**, không hạ tầng.
-- [ ] **Mọi dòng `YC-01`…`YC-20` · `YC-22` · `YC-23` được chấm bằng hai câu** — *đọc ra được không* và *dựng được trạng
+- [ ] **Mọi dòng `YC-01`…`YC-20` · `YC-22`…`YC-24` được chấm bằng hai câu** — *đọc ra được không* và *dựng được trạng
       thái sai không* → `P2-13`, mỗi dòng một kết quả chạy thật, không một lời khẳng định suông.
 - [ ] **Mỗi migration có đường lùi đã chạy thật** → chạy xuôi cả dãy trên cơ sở dữ liệu rỗng, lùi
       một bước, xuôi lại; dán cả ba output.

@@ -76,6 +76,7 @@ có câu trả lời mới từ người.
 | ADR-057 | Yêu cầu bảo toàn và khôi phục dữ liệu ở pha 1; cơ chế và kiểm chứng ở pha 5 (F-034) | Đã chốt 2026-09-27 (chủ repo) | — | T-109 — triển khai và nghiệm thu vận hành |
 | ADR-058 | **`I-022` vào nhóm VÒNG ĐỜI đã có**, không mở nhóm mới; bốn vế *thiếu thì không tồn tại được* ở **tầng 1**, vế *trường nên có không chặn* ở **tầng 3**; `architecture.md` §8 thêm một chỗ thiếu và `YC-22` (F-038) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-110; migration ở `T-111` |
 | ADR-059 | **Khoản trả trước vào công thức đối soát bằng BA dòng** — *nhận trong ngày* (+) · *thành doanh thu trong ngày* (−) · *trả lại trong ngày* (−), không điều kiện ngày; `I-021` thêm hạng tử tiền mặt cho ba dòng ấy và cho nợ cũ thu bằng tiền mặt; chuyển khoản so theo lúc tiền tới; trả lại khoản chưa thành doanh thu không trừ doanh thu (*suy ra*); `YC-23` (F-037) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-112; chỗ cất ở `P2-06` |
+| ADR-060 | **`I-023` — mã QR của bàn — vào nhóm TIỀN đã có**, không mở nhóm mới; vế *một mã một bàn* và *lần đổi có vết* ở **tầng 1**, vế *bàn tra từ mã* · *mã cũ chết ngay* · *không đoán được* ở **tầng 3**, mã hiện hành trong tay người ngoài là **tầng 4** (`RR-10`); `YC-24`; *ai đổi, khi nào* mở `U-062` (F-042) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-113; migration ở `T-114` |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3955,3 +3956,73 @@ so phần chuyển khoản của `I-015` cùng lệch ở hai ngày, ngược ch
 `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §1 ·
 `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` §4 ·
 `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §6 · **ADR-040** · **ADR-046**.
+
+### ADR-060 — `I-023` vào nhóm TIỀN, hai vế tầng 1, ba vế tầng 3, một giới hạn tầng 4, và `YC-24`
+
+**Trạng thái:** **Đã chốt** 2026-09-28, **giao cho phiên**. Chủ repo giao `work/findings.md`
+**F-042** với lời nguyên văn *"hãy đọc kĩ và làm"* — F-042 ghi việc của phiên nhận nó là *thêm
+mệnh đề (hoặc nói rõ vì sao không cần) và chốt tầng*, và câu giao việc ấy là lời **giao việc
+chọn**, không phải lời xác nhận một nhóm hay một tầng cụ thể (cùng cách đọc với **ADR-056** ·
+**ADR-058**). Chủ repo đọc ADR này rồi muốn đổi thì chỉ cần một câu; lượt đổi phải xong trước khi
+`T-114` dựng migration. Task **T-113**.
+
+**Context:**
+T-097 (2026-09-25) mang bài học của dự án cũ vào pha 2 và tìm ra một chỗ pha 1 chưa nói gì: kênh
+`qr_table` gắn lượt gọi vào phiên bàn **theo mã dán ở bàn**, mà không mệnh đề, không hàng bảo vệ,
+không dòng yêu cầu nào đòi mã ấy *không đoán được* hay *đổi được*. Nền 16 bảng
+(`master_plan/prompt-fullstack.md` §3.5) đã có một mã ngẫu nhiên cho mỗi bàn — nhưng đó là một đề
+xuất lược đồ, không phải một mệnh đề, và nó không có đường đổi, không giữ mã đã thay, lượt gọi
+không ghi mã đã mang. Chủ quán **chưa** nói gì về mã QR của bàn (`grep` trên
+`master_plan/shop-facts.md` 2026-09-28: không một dòng), nên mọi câu về *ai đổi, khi nào đổi* là
+câu phải hỏi.
+
+**Decision:**
+1. **Mệnh đề `I-023`** ở `quality/invariants.md` — bốn vế: *bàn của lượt gọi do hệ thống tra từ
+   mã* · *một mã, một bàn* · *không đoán được* · *đổi được, mã cũ chết ngay*. Mệnh đề **không**
+   nói ai đổi, khi nào đổi, và mã sinh bằng gì.
+2. **Nhóm TIỀN** (§1 của `docs/product/1-system-design/03-bao-ve-invariant.md`), không mở nhóm
+   thứ năm: câu hỏi của `I-023` là *lượt gọi này đứng trên hoá đơn của ai* — cùng loại với `I-002`
+   (tổng hoá đơn = mọi lượt gọi của phiên) và `I-013` (con số từ phía khách không bao giờ được
+   dùng). Hỏng thì một bàn **trả tiền** cho thứ mình không gọi.
+3. **Tầng**: *một mã một bàn* và *lần đổi có vết* — **tầng 1**, điều kiện đọc trên chính các bản
+   ghi mã. *Bàn tra từ mã* và *mã cũ chết ngay* — **tầng 3**, ở cùng cửa tạo lượt gọi của `I-008`;
+   trần của vế đầu là tầng 3 vì cơ sở dữ liệu không đọc được một số bàn **đến từ đâu**, đúng như
+   `I-013`. *Không đoán được* — **tầng 3**, một cửa sinh mã; **chưa có tập đối chiếu** vì mã đoán
+   được và mã không đoán được trông giống hệt nhau trong dữ liệu, nói thẳng theo §0 luật 5.
+   **Tầng 4, nói thẳng**: người cầm **mã hiện hành** gọi được vào bàn ấy cho tới khi mã được đổi —
+   rủi ro có tên `RR-10` ở `docs/product/1-system-design/06-so-rui-ro.md`.
+4. **Mã cũ chết ngay lúc đổi là SUY RA**, không phải lời chủ quán: đổi mã chỉ có nghĩa nếu mã cũ
+   hết dùng được, và quán không mất đường bán nào lúc tem mới chưa dán — khách gọi qua quầy đặt hộ
+   (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.2).
+5. **`U-062`** cho *ai được đổi mã, và quán đổi khi nào* — câu của chủ quán, không phải của pha 1.
+6. **`architecture.md` §8 thêm một dòng** và `04-yeu-cau-du-lieu.md` §1 thêm **`YC-24`** (luật
+   một-đối-một của P1-07).
+
+**Rejected alternatives:**
+- **Gấp vào `I-013`** (giá do hệ thống tính lại). Cùng hình *không tin dữ liệu từ phía khách*,
+  nhưng `I-013` nói **giá**; gấp vào thì phải viết lại lời của nó, và vế *đổi được* không có chỗ.
+- **Gấp vào `I-001`** hay nhóm VÒNG ĐỜI. `I-001` nói *một bàn một phiên* — đổi mã đúng là không
+  được chạm tới câu ấy, nhưng câu hỏi của `I-023` là tiền đứng sai hoá đơn, không phải bàn kẹt.
+- **Nói rõ vì sao không cần mệnh đề** — lối thứ hai F-042 cho phép. Không chọn: quầy duyệt theo số
+  bàn trên đơn, không biết ai cầm điện thoại, nên lớp người đang có không phủ ca *đơn chen vào một
+  bàn đang có khách*.
+- **Tầng 1 cho *mã cũ chết ngay*.** Điều kiện ấy so mốc tạo lượt gọi với mốc thay mã của một bản
+  ghi khác — viết được thành ràng buộc, nhưng chọn cơ chế là việc pha 2; pha 1 ghi tầng **cao nhất
+  thật sự đang giữ** (§0 luật 1), và cửa tạo lượt gọi là chỗ đã có. Pha 2 dựng cao hơn được thì
+  tốt, không được dựng thấp hơn (**ADR-050** luật 1).
+
+**Hệ quả:**
+- `T-114` dựng một migration **mới** (`QC-05`) cho chỗ cất mã hiện hành, mã đã thay, vết đổi mã và
+  mã đã mang của lượt gọi, kèm ràng buộc tầng 1 và test theo kịch bản của `I-023`; `P2-10` sinh mã
+  cho dữ liệu mồi qua đúng một cửa sinh mã ấy.
+- Cổng pha 2 (`P2-13`) chấm `YC-24` cùng các dòng khác.
+- Quyền theo vai của thao tác đổi mã (pha 3) chờ `U-062`.
+
+**Applies to:** `quality/invariants.md` `I-023` ·
+`docs/product/1-system-design/03-bao-ve-invariant.md` §1 ·
+`docs/product/1-system-design/architecture.md` §8 ·
+`docs/product/1-system-design/04-yeu-cau-du-lieu.md` §1 ·
+`docs/product/1-system-design/06-so-rui-ro.md` RR-10 ·
+`docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §6 · §7 ·
+`docs/product/99-unknowns.md` U-062 ·
+`docs/product/2-db/02-luoc-do-ban-hang.md` §5.

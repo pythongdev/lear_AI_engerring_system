@@ -162,7 +162,7 @@ cột tiền mang sai hậu tố là một cột mà `QD-20` không bao giờ nh
   riêng**, có khoá duy nhất riêng nếu owner đòi.
 - **Hậu quả nếu làm khác:** khoá mang nghĩa thì phải đổi khi nghĩa đổi, và mọi khoá ngoại trỏ tới nó
   phải đổi theo, trên dữ liệu bán hàng thật. Ca đã có tên: mã QR của bàn **phải đổi được**
-  (`work/findings.md` **F-042**) — dùng nó làm khoá là biến mỗi lần đổi mã thành một lần sửa lịch
+  (`work/findings.md` **F-042**, nay là `quality/invariants.md` **I-023**) — dùng nó làm khoá là biến mỗi lần đổi mã thành một lần sửa lịch
   sử của mọi phiên bàn.
 - **Phép kiểm:**
   ```sql
@@ -532,8 +532,8 @@ so **sau khi đã có dữ liệu** là dựng lại cả bảng lẫn mọi ch�
 
 ### QD-61 — Định danh máy đọc và chuỗi băm: so từng byte, phân biệt hoa thường
 
-- **Quy ước:** cột `code` / `_code` (định danh máy đọc: mã hiển thị, mã QR của bàn khi `F-042` có
-  lời) và cột `_hash` (chuỗi băm) dùng cách so `:collation_so_byte` — so **từng byte**, **phân biệt
+- **Quy ước:** cột `code` / `_code` (định danh máy đọc: mã hiển thị, mã QR của bàn theo `I-023`,
+  dựng ở `T-114`) và cột `_hash` (chuỗi băm) dùng cách so `:collation_so_byte` — so **từng byte**, **phân biệt
   hoa thường**, không coi hai chữ khác nhau là một.
 - **Hậu quả nếu làm khác:** cách so *không phân biệt hoa thường, không phân biệt dấu* coi nhiều định
   danh khác nhau là **bằng nhau**, nên hai mã khác nhau va nhau ở một khoá duy nhất và một trong hai
@@ -560,7 +560,7 @@ so **sau khi đã có dữ liệu** là dựng lại cả bảng lẫn mọi ch�
 | ~~DBMS · phiên bản · tên kiểu · mọi tham số ở §0~~ — **đã gỡ 2026-09-27**: PostgreSQL 17, tham số ở §0, tên kiểu ở `10-quy-uoc-code.md` `QC-04` | **ADR-053** luật 1 | `P2-12` (**ADR-054**) |
 | Tên bảng, tên cột của từng lát | file migration thắng (**ADR-053** luật 2) | `P2-04`…`P2-08` |
 | Đơn vị **lượng** (nguyên liệu tính theo cân, theo cái…) | Mục này chỉ nói tiền; lượng thuộc lane admin, luật còn đang thu | lane admin — `work/backlog_AD.md` |
-| Cách sinh mã QR của bàn | Pha 1 chưa có mệnh đề nào | phiên nhận `work/findings.md` **F-042** |
+| Cách sinh mã QR của bàn | Pha 1 có mệnh đề từ 2026-09-28 (`quality/invariants.md` **I-023**, **ADR-060**): mã không đoán được, sinh ở một cửa — mệnh đề cố ý không chọn cơ chế | `work/backlog.md` **T-114** |
 | Mất hẳn bản ghi vì hỏng máy | Chuyện sao lưu, không phải chuyện lệnh xoá (`QD-50`) | pha 5 — YC-21 ở `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8; T-109 (`work/backlog.md`), ADR-057 |
 
 ---

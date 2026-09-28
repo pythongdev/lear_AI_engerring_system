@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 43 finding — 39 Fixed/Resolved/Closed, 4 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-28, T-112, sau khi đóng F-037; lần đếm trước ở T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 43 finding — 40 Fixed/Resolved/Closed, 3 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-28, T-113, sau khi đóng F-042; trước đó T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -103,7 +103,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-039 | Gate 7b đọc khối commit theo từng dòng ⇒ khối nối dòng `\` vừa bị kêu nhầm vừa bị chấm sót bảy trên mười file | Fixed |
 | F-040 | Ba chỗ vượt ranh giới pha trong `architecture.md`, chỉ một có tên trong ngoại lệ — cả ba sinh TRƯỚC ADR-035 | Closed |
 | F-041 | Gate 1d mù với khối API rõ nhất repo (mẫu đòi `/` ngay sau động từ), và dòng ignore ghi sai mục | Closed |
-| F-042 | Mã QR của bàn phải không đoán được và đổi được — pha 1 không có mệnh đề nào | Open |
+| F-042 | Mã QR của bàn phải không đoán được và đổi được — pha 1 không có mệnh đề nào | Fixed |
 | F-043 | Một lần gửi đơn phải thành đúng một đơn — pha 1 không có mệnh đề nào | Open |
 
 ---
@@ -3884,8 +3884,21 @@ vế *đổi mã* (in lại mã dán bàn là việc tay của quán). Finding n
 **Related task:**
 T-097 · `work/backlog_DB.md` → **P2-10** · `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` §8
 
+**Fix — 2026-09-28 (T-113, Claude Code, `docs/decisions.md` **ADR-060**):** lối thứ nhất — thêm
+mệnh đề. (1) `quality/invariants.md` **`I-023`**, bốn vế: bàn của lượt gọi QR do hệ thống tra từ mã,
+số bàn từ phía khách không bao giờ được dùng · một mã một bàn, mã đã thay không cấp lại · không đoán
+được · đổi được, mã cũ chết ngay, lượt gọi cũ giữ nguyên, lần đổi có vết. *Mã cũ chết ngay* là
+**suy ra**, ghi rõ. (2) Hàng `I-023` ở **nhóm TIỀN** của
+`docs/product/1-system-design/03-bao-ve-invariant.md` §1 — hai vế tầng 1, ba vế tầng 3, vế *không
+đoán được* nói thẳng vì sao chưa có tập; tầng 4 (người cầm mã hiện hành) nói *máy không ngăn được* và
+có tên **RR-10** ở `06-so-rui-ro.md`. (3) `architecture.md` §8 thêm một dòng, `04-yeu-cau-du-lieu.md`
+§1 thêm **`YC-24`**. (4) Vế *đổi mã* đúng như dòng *Decision* ở trên dự đoán là câu của chủ quán: **ai**
+được đổi và **khi nào** đổi mở thành `docs/product/99-unknowns.md` **U-062**. Phần **pha 2** — chỗ
+cất và ràng buộc thật — là `work/backlog.md` **T-114**; `P2-10` sinh mã qua cửa sinh mã ấy. F-042
+đóng ở chỗ hụt của pha 1, không tuyên bố lược đồ đã giữ.
+
 **Status:**
-Open
+Fixed — 2026-09-28 (T-113)
 
 ### F-043 — Một lần gửi đơn phải thành đúng một đơn, mà pha 1 không có mệnh đề nào nói vậy
 

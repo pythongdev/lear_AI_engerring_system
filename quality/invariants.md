@@ -975,3 +975,60 @@ tồn tại mà thiếu một trường mà kênh và cách trao hàng của nó
 
 *Phát hiện ở P1-11, 2026-09-08 (`work/findings.md` **F-038**). Viết thành mệnh đề ở T-110,
 2026-09-28, Claude Code — luật nguồn đã chốt, không hỏi thêm chủ quán.*
+
+### I-023 — Một lượt gọi QR tại bàn chỉ vào được bàn mà mã HIỆN HÀNH của nó chỉ tới; mã của một bàn không suy ra được từ bàn khác, và đổi được
+
+**Invariant:**
+Kênh **QR tại bàn** (`qr_table`) gắn một lượt gọi vào phiên bàn **theo mã dán ở bàn** — khách ẩn
+danh theo số bàn (`master_plan/shop-facts.md` §2 · `docs/product/0-ba/ban-hang/02-kenh-ban.md`), nên
+mã là thứ duy nhất nói *lượt gọi này của bàn nào*. Mệnh đề có bốn vế:
+
+- **Bàn của lượt gọi do hệ thống tra từ mã.** Bàn của một lượt gọi `qr_table` là bàn mà mã nó mang
+  đang chỉ tới **tại mốc tạo lượt gọi**; một số bàn hay định danh bàn nào đến từ phía khách **không
+  bao giờ** được dùng, kể cả khi nó trùng đúng bàn ấy — cùng hình với giá của `I-013`. Lượt gọi ghi
+  lại được nó đã mang **mã nào**.
+- **Một mã, một bàn.** Tại mọi thời điểm, một bàn có **nhiều nhất một** mã hiện hành, và một mã —
+  hiện hành hay đã bị thay — chỉ tới **nhiều nhất một** bàn trong suốt đời nó: mã đã thay không được
+  cấp lại cho bàn khác.
+- **Không đoán được.** Biết mã của một bàn — hay của **mọi** bàn khác — không cho suy ra mã của một
+  bàn còn lại, và không cho suy ra mã **kế tiếp** của chính bàn ấy. Mã không mang thông tin nào đọc
+  ra được từ số bàn, từ thứ tự hay từ thời điểm nó được sinh.
+- **Đổi được, và mã cũ chết ngay.** Một bàn được cấp mã mới mà **không** đổi số bàn và không chạm
+  phiên bàn đang mở của nó. Từ mốc đổi, mã cũ **không tạo được lượt gọi nào nữa**; lượt gọi đã tạo
+  bằng mã cũ **trước** mốc ấy giữ nguyên — không bị huỷ, không đổi bàn. Mỗi lần đổi đọc ra được bàn
+  nào, lúc nào, ai đổi (`I-018`).
+
+**Mệnh đề không nói ai được đổi mã, và khi nào quán đổi.** Đó là câu của chủ quán — mở ở
+`docs/product/99-unknowns.md` **U-062** — không phải câu của mệnh đề này. Nó cũng **không** nói mã
+sinh bằng gì: đó là cơ chế của pha sau.
+
+**Why:**
+Mã đoán được, hay lộ mà không đổi được, thì một người **đã từng ngồi quán** gọi món ghi vào hoá đơn
+**bàn khác**, và bàn ấy trả cho thứ mình không gọi — hoặc cãi với quầy lúc tính tiền, đúng lúc đông
+khách. Đó là mất tiền ở **phiên bàn**, cùng loại với thu thiếu của `I-002`: một lượt gọi đứng sai đơn
+vị tính tiền. Lớp người đang có là **quầy duyệt** mọi đơn QR (`shop-facts.md` §6 quy tắc 2), nhưng
+quầy duyệt theo **số bàn trên đơn**, không biết ai đang cầm điện thoại — nên quầy chặn được đơn vào
+một bàn **đang trống**, không chặn được đơn vào một bàn **đang có khách** gọi thật. Bằng chứng từ dự
+án cũ, không phải dữ kiện quán này (`work/proposals/from_old_project/data_base/nghien-cuu.md` §2.1): mã
+sinh bằng một hàm dựa trên thời gian cho cả loạt bàn cùng lúc ⇒ có một mã là suy ra các mã kia; và
+không có đường đổi mã, nên lộ một lần là hỏng vĩnh viễn.
+
+*Mã cũ chết ngay* là **suy ra**, không phải lời chủ quán (`CLAUDE.md` §7.2): đổi mã chỉ có nghĩa nếu
+mã cũ hết dùng được, và quán không mất đường bán nào khi tem mới chưa dán kịp — khách ngồi bàn ấy
+gọi qua quầy đặt hộ, nhánh đã có (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.2). Chủ quán nói
+khác thì mệnh đề viết lại qua **U-062**.
+
+**Verification:**
+Kịch bản âm: gửi một lượt gọi QR mang mã của bàn 5 kèm *số bàn 7* từ phía khách ⇒ lượt gọi vào **bàn
+5**, không vào bàn 7; gửi một lượt gọi mang một mã không chỉ tới bàn nào ⇒ **bị từ chối**; đổi mã
+bàn 5, rồi gửi một lượt gọi mang **mã cũ** ⇒ **bị từ chối**; cấp cho bàn 7 một mã đang hoặc đã từng
+là mã của bàn 5 ⇒ **bị từ chối**. Kịch bản dương: lượt gọi tạo bằng mã cũ **trước** lần đổi vẫn ở
+phiên của bàn 5, không đổi bàn, không bị huỷ; đổi mã một bàn đang có phiên mở ⇒ phiên giữ nguyên,
+số bàn giữ nguyên. Kịch bản đoán: sinh mã cho **mọi** bàn trong cùng một lượt, và sinh lại mã của
+cùng một bàn hai lần ⇒ không mã nào chứa số bàn, không hai mã nào chung một phần đọc ra được thứ tự
+hay thời điểm sinh. Kiểm ngược, bất kỳ lúc nào: không lượt gọi `qr_table` nào có bàn khác bàn mà mã
+nó mang chỉ tới lúc tạo, hoặc có mốc tạo **sau** lúc mã nó mang bị thay; không mã nào từng chỉ tới
+hai bàn.
+
+*Phát hiện ở T-097, 2026-09-25 (`work/findings.md` **F-042**). Viết thành mệnh đề ở T-113,
+2026-09-28, Claude Code — ai đổi mã, khi nào đổi còn là câu của chủ quán (**U-062**).*
