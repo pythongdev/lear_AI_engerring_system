@@ -36,6 +36,9 @@
 #   Dòng đã khai trong scripts/check-phase-boundary.ignore.
 #
 # EXIT: 0 = sạch hoặc không có gì để soát · 1 = có vi phạm
+# Exit 0 vẫn in ĐÚNG MỘT dòng nói là trường hợp nào ("OK — N file đã soát" hay
+# "… skipping"), để gate.sh gắn được PASS hay SKIP thay vì một cổng im lặng
+# trông giống hệt cổng không chạy (T-084, 2026-09-28).
 
 set -uo pipefail
 
@@ -110,7 +113,15 @@ if [ -f "$IGNORE_FILE" ] && { [ -n "$hits1" ] || [ -n "$hits2" ]; }; then
   done < "$IGNORE_FILE"
 fi
 
-[ -z "$hits1" ] && [ -z "$hits2" ] && exit 0
+if [ -z "$hits1" ] && [ -z "$hits2" ]; then
+  n_files=$(printf '%s %s' "$(changed_md "$PHASE1_DIR")" "$(changed_md "$PHASE2_DIR")" | wc -w | tr -d ' ')
+  if [ "$n_files" -eq 0 ]; then
+    echo "check-phase-boundary: không file .md nào đổi ở $PHASE1_DIR hay $PHASE2_DIR, skipping"
+  else
+    echo "check-phase-boundary: OK — $n_files file .md đã soát, không câu nào đặt tên thứ pha sau sở hữu."
+  fi
+  exit 0
+fi
 
 echo "Gate 1d — một pha đang đặt tên thứ pha sau sở hữu (CLAUDE.md §2, ADR-035):"
 echo

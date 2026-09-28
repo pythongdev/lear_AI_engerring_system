@@ -242,14 +242,14 @@ It runs, in order:
 
 1. `scripts/check-scope.sh` (Gate 3) — every changed file **git already tracks**
    must match `work/scope.txt`. Catches the correct change that touches
-   unauthorized files. An untracked file outside scope is printed as a `note:`
-   and does **not** fail the gate — git cannot tell whether it predates the task
+   unauthorized files. An untracked file outside scope is printed as a `NOTE`
+   line and does **not** fail the gate — git cannot tell whether it predates the task
    (ADR-003). If the note lists a file *your* task created, put it in scope or
    delete it; nothing else will stop you. It also holds `work/scope.txt` itself
    to one invariant: the **committed** version may hold only comments (§6,
    `work/findings.md` F-020, ADR-043). If `HEAD` still carries a pattern the
    working tree hasn't cleared, the gate fails; once the working tree is clean
-   it prints a `note:` to fold the file into this turn's commit, and does not
+   it prints a `NOTE` to fold the file into this turn's commit, and does not
    block.
 2. `scripts/check-links.sh` (Gate 1b) — every path a **pointer document** names
    must open. Runs on **every** turn, including documentation-only ones: docs are
@@ -275,8 +275,8 @@ It runs, in order:
 4. `scripts/check-phase-boundary.sh` (Gate 1d) — a conservative pattern check
    inside `docs/product/1-system-design/`: it fails a phase-1 file that names a
    table, a column, an HTTP verb + `/api/`, or a JSX-looking tag — the shapes
-   §2 says belong to phase 2/3/4 (ADR-035, ADR-039). Runs on every turn, exits 0
-   immediately when nothing in that directory changed; deliberately catches only
+   §2 says belong to phase 2/3/4 (ADR-035, ADR-039). Runs on every turn, prints
+   `SKIP` when nothing in that directory changed; deliberately catches only
    the common shapes and stays silent when unsure — P1-12 and human eyes are
    still the last layer (§2). A deliberate quote goes in
    `scripts/check-phase-boundary.ignore`, one substring per line with a reason
@@ -311,6 +311,10 @@ its explicit file list, scope and the real staged index. A green direct gate
 does not prove the commit block was checked. Scope cleared means Gate 7b loses
 its scope comparison even in Claude; the existing follow-up is in
 `work/backlog.md` → T-085.
+
+Every line the gate prints at column 0 carries exactly one label (T-084):
+`PASS` ran and passed · `FAIL` ran and failed · `SKIP` did **not** run ·
+`NOTE` does not block, read it. A `SKIP` is not a pass.
 
 Gate output is the only evidence a change works. "I tested it" is not evidence.
 The remaining gates — acceptance→evidence mapping, diff red flags, per-level
