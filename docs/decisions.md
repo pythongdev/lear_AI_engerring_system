@@ -59,7 +59,7 @@ có câu trả lời mới từ người.
 | ADR-040 | Trả trước cho đơn đặt trước ngày SAU tính doanh thu vào **ngày GIAO**, không phải ngày nhận tiền; quán nhận đặt trước **tối đa một ngày** | Đã chốt 2026-09-06 | — | công thức đối soát `architecture.md` §6.4 cần thêm một dòng; **U-036** đóng |
 | ADR-041 | Đặt tên chủ cho **PT-5** (đường báo đơn web về quầy = **Telegram**) và **PT-2** (nơi hệ thống chạy = **một VPS**) | Đã chốt 2026-09-07 | — | đóng một phần **F-027**; **shop-facts.md §1** giữ tên cụ thể |
 | ADR-042 | Mở **bước thứ mười ba** của pha 1 (`P1-13`), nhóm **SẢN XUẤT THEO MẺ**, cho `I-019`/`I-020` — hai mệnh đề mồ côi vì sinh sau khi kế hoạch chia ba nhóm | Đã chốt 2026-09-07 | — | đóng **F-026**; kế hoạch §6/§7/§9 và `03-bao-ve-invariant.md` thêm §4 |
-| ADR-043 | Bản **đã commit** của `work/scope.txt` chỉ được chứa comment; pattern là trạng thái phiên chạy, Gate 3 và Gate 7b cùng thi hành | Đã chốt 2026-09-03, thi hành 2026-09-07 | — | đóng **F-020**; sửa một câu của `CLAUDE.md` §6, §6.1 |
+| ADR-043 | Bản **đã commit** của `work/scope.txt` chỉ được chứa comment; pattern là trạng thái phiên chạy, Gate 3 và Gate 7b cùng thi hành | Đã chốt 2026-09-03, thi hành 2026-09-07; cơ chế thay bởi **ADR-063** 2026-09-27 | — | đóng **F-020**; sửa một câu của `CLAUDE.md` §6, §6.1 |
 | ADR-044 | `I-021` vào **nhóm TIỀN đã có** (§1 của bảng ba cột), **không** mở nhóm thứ năm; hàng ấy có chủ là bước mới **P1-14** | Đã chốt 2026-09-07 | — | đóng **hẳn F-026**; kế hoạch §6/§7, `03-bao-ve-invariant.md` §1 thêm một hàng và §1.5 |
 | ADR-045 | **Bốn ràng buộc kiến trúc ẩn có nhà ở pha 1**, mỗi cái một **dấu hiệu đo được**; ba cái chưa có chủ (*một tiến trình · không hàng đợi · không bộ nhớ đệm*) được chốt ở bước **P1-08** | Đã chốt 2026-09-08 | — | đóng **nốt F-027**; file mới `05-realtime-va-du-phong.md` §2 |
 | ADR-046 | Hoàn tiền **chéo phương thức** vào `I-021` bằng **hai hạng tử riêng**; *doanh thu tiền mặt* giữ nguyên nghĩa, vết hoàn tiền ghi thêm **phương thức trả lại** | Đã chốt 2026-09-15 | — | viết lại **I-021**; **U-044** đóng — POS quyết từng ca |
@@ -79,6 +79,7 @@ có câu trả lời mới từ người.
 | ADR-060 | **`I-023` — mã QR của bàn — vào nhóm TIỀN đã có**, không mở nhóm mới; vế *một mã một bàn* và *lần đổi có vết* ở **tầng 1**, vế *bàn tra từ mã* · *mã cũ chết ngay* · *không đoán được* ở **tầng 3**, mã hiện hành trong tay người ngoài là **tầng 4** (`RR-10`); `YC-24`; *ai đổi, khi nào* mở `U-062` (F-042) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-113; migration ở `T-114` |
 | ADR-061 | **`I-024` — một lần gửi, nhiều nhất một đơn — vào nhóm TIỀN đã có**; đồng nhất lần gửi bằng **dấu lần gửi** do phía gửi đặt một lần, **không** bằng nội dung; vế *một dấu một đơn* và *không đơn nào thiếu dấu* ở **tầng 1**, vế *gửi lại nhận lại đúng đơn* · *cùng dấu khác nội dung bị từ chối* · *giống hệt không phải là trùng* ở **tầng 3**, hai ý định của người là **tầng 4** (`RR-11`); `YC-25` (F-043) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-115; migration ở `T-116` |
 | ADR-062 | Gate 8 chặn thêm **subject trùng từng chữ một commit đã có** trong lịch sử; `git commit --amend` giữ nguyên subject của `HEAD` vẫn qua (F-031, sửa đổi ADR-010) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-117 |
+| ADR-063 | **Mỗi task một file scope `work/scope/<MÃ>.txt`, git bỏ qua** — Gate 3 chấm theo hợp các file scope; Gate 7b chấm khối commit theo file của mã đứng đầu subject; file scope giữ tới khi task đã commit; `work/scope.txt` thành stub chỉ-comment | Đã chốt 2026-09-27 (chủ repo) | — | thay luật khai/gỡ scope của **ADR-043** · đóng T-085 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -2886,7 +2887,9 @@ P1-07/P1-10) · §7 (tiêu đề) · §9 (câu đầu) ·
 ### ADR-043 — Bản đã commit của `work/scope.txt` chỉ được chứa comment; pattern không bao giờ đi vào git
 
 **Trạng thái:** Đường chốt 2026-09-03 (chủ repo, ngay trong phiên phát hiện `work/findings.md`
-**F-020**); thi hành 2026-09-07 (T-047).
+**F-020**); thi hành 2026-09-07 (T-047). Cơ chế thi hành được **ADR-063** thay ngày 2026-09-27:
+file scope nay nằm ở `work/scope/`, git bỏ qua; `work/scope.txt` còn lại là stub chỉ-comment, nên
+hình bất biến của ADR này vẫn đúng.
 
 **Vấn đề nó giải quyết.**
 `CLAUDE.md` §6 đã cấm bằng chữ từ trước: *"`work/scope.txt` is working state, not a deliverable —
@@ -3484,6 +3487,29 @@ thi cho mỗi task, một nơi giữ trạng thái"* (T-083). Phạm vi là **th
   PASS/FAIL/SKIP/NOTE của gate; phần *việc đã xong* chiếm phần lớn `work/backlog.md`; rút gọn
   `CLAUDE.md`. Mỗi việc một dòng *Ready* ở `work/backlog.md`, thứ tự theo đề xuất gốc — `CLAUDE.md`
   **sau cùng**, vì nó mô tả quy trình và rút trước là viết hai lần.
+- **Đo lại 2026-09-28 (T-119, Claude Code; chủ repo chọn *"đánh giá thí điểm trước"* T-087).** Bảy
+  bước đã xong từ khi thí điểm bắt đầu: `P2-03` · `P2-12` · `P2-04` · `P2-05` · `P2-06` · `P2-07` ·
+  `P2-10`. Đếm của phiên đo, không phải con số chốt:
+  - *Giấy tờ bắt buộc* — mốc `d57cf4f` là ba file (file prompt + hai sổ). Sau thí điểm: **không
+    bước nào** có file prompt; commit của bước chạm đúng hai sổ ở `P2-04` · `P2-07` · `P2-10`, thêm
+    kế hoạch pha 2 ở `P2-06`, chỉ `work/backlog_DB.md` ở `P2-03` · `P2-12`. `work/findings.md` ở
+    `P2-04` · `P2-07` là finding thật, không tính là giấy tờ.
+  - *Chỗ giữ trạng thái* — *Mục lục* không còn cột trạng thái hay mức; không entry nào còn dòng
+    *✅ Xong ngày…* (hai dòng còn thấy là bước 9 của `P2-01` · `P2-02`, viết theo luật cũ). Còn **một**
+    bản chép: kế hoạch pha 2 §4 hàng `F-043` ghi *"`P2-04` (xong)"*. Mục tiêu *"một nơi giữ trạng
+    thái"* đạt.
+  - *Ba nửa của entry* — cả bảy entry có khối *Nhận việc* và *Bàn giao*. Git **không chứng minh
+    được** Nghiệm thu viết trước khi dựng: khối ấy và việc thật vào cùng một commit.
+  - *Lỗi thí điểm không bắt được* — dấu *Done* của **ba trên bảy** bước rơi vào commit của task
+    khác: `P2-03` · `P2-12` trong `598d7ee` (T-101), và `P2-05` — cả migration lẫn test — trong
+    `71f8705` (T-104). Trạng thái vẫn ở một nơi, nhưng lịch sử git nói sai commit nào mang bước
+    nào: đúng hình **F-025**. Thí điểm không nhắm tới lỗi này; T-085 (scope mỗi task một file, Gate
+    7b chấm theo mã trong subject) nhắm tới nó và chưa đo được, vì nhánh của nó chưa gộp.
+  - *Chỗ trỏ bị sót* — kế hoạch pha 2 §5 vẫn đòi một file prompt mỗi bước và vẫn viện dẫn ADR-008
+    cho quy tắc của T-051; không nằm trong danh sách *Pointer sửa* bên dưới. T-119 sửa.
+  - **Chưa quyết — của chủ repo:** áp khuôn *một entry, trạng thái một nơi* cho lane admin
+    (`work/backlog_AD.md`) và task `T-XXX`, hay giữ thí điểm ở lane pha 2. T-087 viết `CLAUDE.md`
+    theo quyết định ấy.
 
 **Pointer sửa trong cùng thay đổi** (`CLAUDE.md` §7.2): `work/backlog_DB.md` (luật đầu file ·
 *Mục lục* · mọi entry · khuôn cuối file) · `work/backlog.md` (*Task Detail Template* nói ngoại lệ
@@ -4171,3 +4197,42 @@ này có năm.
 **Applies to:** `scripts/hooks/commit-msg` · `scripts/commit-msg.test.sh` · `CLAUDE.md` §6.2 ·
 `quality/review-gate.md` Gate 8 · `docs/work-flow-session/workflow-phien-lam-viec.md` ·
 `work/findings.md` F-031.
+
+### ADR-063 — Mỗi task một file scope, và Gate 7b chấm theo task trong subject
+
+**Trạng thái:** Đã chốt 2026-09-27. Chủ repo: *"hãy mỗi 1 task tự tạo file scope riêng để không
+bị xoá"*, rồi *"hãy làm theo đề xuất trên"* cho thiết kế Claude đề xuất trong cùng phiên (T-085).
+
+**Context:** mọi phiên dùng chung một `work/scope.txt`. Ba lỗi cùng một gốc: một phiên gỡ hay
+khôi phục file này là xoá scope của phiên khác (F-010, F-014 — lần mới nhất ngay 2026-09-27, khi
+Gate 3 đỏ giữa chừng vì scope bị gỡ sạch); file bị git theo dõi nên pattern lọt vào commit ba lần
+(F-020, ADR-043); và luật "gỡ scope lúc Done" làm Gate 7b mất thước đo đúng lúc giao khối commit
+(T-085).
+
+**Decision:**
+
+1. Scope khai ở `work/scope/<MÃ-TASK>.txt`, một file mỗi task. `work/scope/.gitignore` bỏ qua mọi
+   thứ trong thư mục trừ chính nó, nên file scope không vào commit bằng `git add` thường và
+   không bị `git checkout --` hay `git stash` xoá.
+2. Gate 3: một file đổi hợp lệ khi có ít nhất một file scope cho phép nó và chính file ấy không
+   cấm nó. Gate 3 FAIL khi `work/scope.txt` còn pattern, và khi một file scope bị git theo dõi.
+3. Gate 7b: mã đứng đầu subject của mỗi `git commit -m "<MÃ>: …"` trong turn chọn file scope để
+   chấm; không mã nào có file ⇒ chấm theo hợp mọi file scope. File scope trong khối ⇒ kêu.
+4. File scope giữ qua *Done* tới khi task đã commit, rồi mới xoá. Brief liệt kê từng file scope và
+   cảnh báo file nào có mã không nằm ở *In Progress*.
+5. `work/scope.txt` ở lại thành stub chỉ-comment để các tài liệu lịch sử nhắc tới nó vẫn mở được.
+
+**Rejected alternatives:** giữ file chung và cho 7b đọc mục *Phạm vi* của hồ sơ task vừa Done —
+phải phân tích văn xuôi markdown, và không chữa được lỗi phiên này xoá scope của phiên kia. Chấp
+nhận mất lớp 7b — bỏ đúng lớp đã bắt F-009. Chỉ dùng worktree riêng cho mỗi phiên — đúng hướng
+(CLAUDE.md §7.4) nhưng không cưỡng chế được, còn file scope riêng thì không tốn gì.
+
+**Hệ quả:** hai phiên chung một cây không còn ghi đè scope của nhau, và phép baseline HEAD của
+ADR-043 được thay bằng `.gitignore`. Giới hạn còn lại: Gate 3 dùng hợp các scope, vì git không
+biết phiên nào sửa file nào — hai phiên cùng sửa một file vẫn không tách được; muốn tách hẳn thì
+dùng worktree riêng. Một file scope bị bỏ quên sau commit chỉ nới Gate 3, không chặn ai; brief
+nêu đích danh nó.
+
+**Applies to:** `scripts/check-scope.sh` · `scripts/check-commit-block.sh` · `scripts/brief.sh` và
+test của chúng · `work/scope/.gitignore` · `work/scope.txt` · `CLAUDE.md` §2 · §3 · §5 · §6 · §7 ·
+§8 · `AGENTS.md` · `docs/prompt-guideline.md` §6 · `quality/review-gate.md`.

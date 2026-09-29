@@ -1,0 +1,6470 @@
+<a id="top"></a>
+# Backlog — lưu trữ việc đã xong
+
+File này giữ **lịch sử**, không giữ trạng thái. Trạng thái của mọi task — kể cả việc nào đã *Done* —
+chỉ sống ở [`work/backlog.md`](backlog.md), mỗi việc đã xong một dòng kèm hash commit và link về
+đây (`CLAUDE.md` §2, T-086, 2026-09-28).
+
+**Chỉ thêm, không sửa.** Một task chuyển *Done* thì hồ sơ chi tiết của nó được **chuyển nguyên
+khối** vào đầu mục [Chi tiết — việc đã xong](#chi-tiet-da-xong), kèm neo `<a id="<mã>">`. Sau đó
+không ai phải cập nhật nó nữa: một dữ kiện trong đây đã cũ thì owner ở `CLAUDE.md` §2 thắng, và
+người đọc đi theo owner — đừng sửa lịch sử cho khớp hiện tại.
+
+Ba mục, cả ba chuyển **nguyên văn** từ `work/backlog.md` ngày 2026-09-28 (T-086); chỉ link nội bộ
+được viết lại để còn mở được và neo được thêm cho những hồ sơ chưa có:
+
+| Mục | Nội dung |
+|---|---|
+| [Dòng *Done* nguyên văn](#done-nguyen-van) | danh sách *Done* dài như nó từng đứng, trước khi rút về một dòng mỗi việc |
+| [Ghi chú lịch sử dưới *Ready*](#ghi-chu-ready) | ghi chú thứ tự và hệ quả của chuỗi BA · DOC, nay đã xong hết |
+| [Chi tiết — việc đã xong](#chi-tiet-da-xong) | hồ sơ dài của từng task; từ T-086 trở đi mới nhất ở trên, phần chuyển ngày 2026-09-28 giữ thứ tự cũ |
+
+<a id="done-nguyen-van"></a>
+## Dòng *Done* nguyên văn, tới 2026-09-28
+
+
+- [x] P2-08 **Lược đồ người · chỗ đứng theo thời điểm · vết — trực quầy theo khoảng, *ai bấm* bắt buộc, vết cập nhật bản trước / bản sau, sổ giấy nhập bù** — L2, 2026-09-28. Chủ repo chọn làm P2-08 và chọn vết cập nhật **chế độ mềm + F-046**. Claude Code, nhánh chatgpt_involve, base 5d64e6c; **chưa review độc lập**. Acceptance (viết trước khi dựng): (1) một migration mới, không sửa file migration đã commit (`QC-05`); (2) `YC-15` · `YC-16` · `YC-17`: đọc ra được ai đứng quầy tại một thời điểm đã qua; hai người đứng quầy trùng giờ bị database từ chối; chủ quán đang trực quầy vẫn đọc ra quyền quản trị; lược đồ không đòi năm người và không ghi mốc đổi ở bốn trạm ngoài quầy (`shop-facts.md` §8.8); (3) `I-012` tầng 1 hình dạng vết: mọi bảng thao tác chạm tiền của `P2-06`, mẻ và lần lùi mẻ, lần chuyển của `P2-07`, lần cấp mã QR của `T-114` mang **ai bấm** bắt buộc — thiếu ⇒ database từ chối; câu đối chiếu *thao tác ở quầy mà người bấm không đứng quầy lúc ấy* đỏ trên dữ liệu cài lỗi; (4) `I-018` · `YC-13`: một lần sửa có khai lý do và người sửa dựng lại được bản trước, bản sau, lý do, người sửa — cả ca hai người ghi đè; vết thiếu một trong bốn thứ không tồn tại được; vết sống khi bản ghi gốc bị xoá; vai `shop_app` không sửa được vết; chế độ mềm ghi thành `F-046`; (5) `YC-08`: lượt nhập bù mang ngày bán và lúc gõ đọc riêng, người nhập bù khác người bán; *còn N lượt trên giấy chưa nhập* đọc ra được; lượt nhập bù không rơi vào ngày gõ; (6) không thay lane admin quyết luật nhân sự (chấm công, lương không dựng); dữ liệu mồi thêm người theo vai của `shop-facts.md` §3, không tự đặt tên người; (7) file lát, `00-index.md`, `CLAUDE.md` §2 hàng *Schema*, chỗ trỏ ở các lát trước; `./scripts/db-check.sh` PASS, vòng gỡ từng ràng buộc ⇒ đỏ đúng ca, so tên bảng `.md` ↔ migration rỗng, `./scripts/gate.sh`. Kết quả: migration `db/migrations/20260928140000_nguoi_va_vet.up.sql` (bốn bảng `person` · `counter_duty` · `paper_ledger` · `record_revision`; cột *ai bấm* trên bảy bảng; trigger vết trên mọi bảng), file lát `docs/product/2-db/06-luoc-do-nguoi-va-vet.md`, bốn test mới `yc15_…` · `i012_…` · `i018_…` · `yc08_…`, mười lăm test cũ khai người thao tác, `seed.pl` thêm người theo vai; `QD-03` · `QD-52` · `QC-04`; pointer `02-` · `04-` · `05-` · `08-`, `00-index.md`, `CLAUDE.md` §2; ghi **F-046**. Bằng chứng: `db-check: PASS — 27 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 26 file test, dữ liệu mồi + §4.8`; 28 lần gỡ ⇒ 27 đỏ đúng ca, một vế giữ kép; so tên bảng 31 mỗi bên, `comm -3` rỗng. Chờ chủ repo: các lựa chọn *phiên chọn* của file lát; F-046. Chưa làm: `03-luoc-do-menu-gia.md` §5 ba hàng vết (file của phiên khác). **Review độc lập 2026-09-29** (Claude Code): vai `shop_app` chèn thẳng được vết bịa ⇒ đã sửa (trigger `SECURITY DEFINER`, thu quyền `INSERT`, hai kịch bản mới ở `i018_…`); hai phát hiện thấp còn chờ chủ repo. Nghiệm thu → bằng chứng: `work/backlog_DB.md` → [P2-08](backlog_DB.md#p2-08).
+- [x] T-085 **Mỗi task một file scope `work/scope/<MÃ>.txt`; Gate 7b chấm theo task trong subject** —
+  **L2**, 2026-09-27, chủ repo yêu cầu. **ADR-063**. Gate 3 · 7b · brief đổi cơ chế, test mới đều
+  đạt; `work/scope.txt` thành stub. Bằng chứng và giới hạn: [chi tiết T-085](#t-085).
+- [x] T-084 **Gate in lẫn "OK" · "xanh" · "skipping" · "note:", nên "đã kiểm và đạt" trông giống
+  "không kiểm"** — **L1**, mở 2026-09-25 (đề xuất tinh gọn bước 5, **ADR-051** *Hệ quả*). Mỗi dòng
+  của `scripts/gate.sh` mang đúng một nhãn PASS · FAIL · SKIP · NOTE; không đổi logic cổng nào.
+  Nhận 2026-09-28, Claude Code, nhánh chatgpt_involve, base f385fc0. **Acceptance (viết trước khi
+  sửa):** (1) mọi dòng gate in ở cột 0 mở đầu bằng đúng một nhãn `PASS` · `FAIL` · `SKIP` · `NOTE`;
+  dòng chi tiết thụt lề và thuộc dòng có nhãn ngay trên nó; (2) cổng không chạy (scope chưa khai,
+  verify bỏ qua vì chỉ tài liệu, db-check bỏ qua, Gate 1d không có file nào để soát) in `SKIP`,
+  không in `PASS`; (3) lời nhắc không chặn của cổng con in `NOTE`, chi tiết của nó vẫn hiện;
+  (4) cổng đỏ in `FAIL` kèm toàn bộ output của cổng ấy; (5) exit code của gate và của từng cổng
+  không đổi, không cổng nào đổi điều kiện đạt/đỏ; (6) `scripts/gate.test.sh` dựng repo tạm với cổng
+  giả, chứng minh (1)–(5); `./scripts/gate.sh` chạy thật.
+  **Kết quả:** `scripts/gate.sh` chạy từng cổng qua `step()` và in output của nó qua `label()` — nhãn
+  chỉ đọc output và exit code, không cổng nào đổi điều kiện; exit khác 0 luôn ra `FAIL` kể cả khi
+  script in chữ "OK"; chi tiết của `PASS` · `SKIP` ẩn và đếm, của `FAIL` · `NOTE` in đủ; Gate 7
+  (hook) cũng mang nhãn. `scripts/check-phase-boundary.sh` thêm một dòng khi exit 0 (đã soát N file
+  hay không có gì để soát) — trước đó im lặng ở cả hai ca nên không gắn được PASS hay SKIP.
+  `scripts/gate.test.sh` mới: chín ca, gate thật trong repo tạm với cổng giả. `CLAUDE.md` §5 và
+  `quality/review-gate.md` đổi chữ `note:` thành `NOTE` và thêm một đoạn định nghĩa bốn nhãn. **Bằng
+  chứng:** `gate.test: tất cả ca đều qua.`; cùng test chạy trên `gate.sh` của `HEAD` ⇒
+  `gate.test: 35 ca FAIL.`; lần chạy đầu test bắt một lỗi thật (chi tiết trước dòng trạng thái đầu
+  bị mất khi cổng đỏ), đã sửa. Gate thật lúc scope còn khai in `FAIL Gate 3` chỉ vì bảy file chưa
+  commit của phiên khác có từ đầu phiên, cùng dòng `NOTE Gate 3` cho `.claude/worktrees/t085/`.
+  **Chưa review độc lập.** Không đổi ADR nào: không có lựa chọn thiết kế mới, chỉ cách in.
+- [x] P2-10 **Dữ liệu mồi — menu thật, bàn và mã QR, trạm của thành phần; mười ba ca giá §4.8 khớp từng đồng** — L1, 2026-09-28. Claude Code, nhánh chatgpt_involve, base 3701e1a; **chưa review độc lập**. Kết quả: `db/seed/seed.pl` đọc `master_plan/shop-facts.md` §1 · §4.2 · §4.4 · §4.5 · §4.9 · §5.3 lúc chạy và in SQL (vai `shop_app`, mã QR qua `qr_code_issue`) — không file nào trong repo mang bản chép giá; `scripts/db-check.sh` bước 4 dựng rồi tính lại 13/13 ca; bốn bản sao hỏng của owner đều đỏ. Ý định và phiên chọn (ba loại trứng là ba thành phần): `docs/product/2-db/08-du-lieu-moi.md`. **Người** chưa dựng — chờ `P2-08`. Chi tiết và bằng chứng: `work/backlog_DB.md` → [P2-10](backlog_DB.md#p2-10) *Bàn giao*.
+- [x] P2-07 **Lược đồ sản xuất theo mẻ — việc trạm một dòng một đơn vị, mẻ và lần lùi mẻ, phần của từng bàn, lần chuyển phần đã làm của đơn huỷ; `I-004` vế chưa duyệt · `I-019` · `I-020` tầng 1 thành ràng buộc thật** — L2, 2026-09-28. Claude Code, nhánh chatgpt_involve, base 89ac41b; **chưa review độc lập**. Acceptance (viết trước khi dựng): (1) một migration mới, không sửa file migration đã commit (`QC-05`); (2) hai hàng tầng 1 thành ràng buộc thật, dựng sai ⇒ database từ chối và dán lời: `I-004` vế *đơn chưa duyệt không việc nào* (việc trạm cho đơn Mới/Chờ xác nhận · lùi một đơn đã có việc về chưa duyệt) và `I-020` vế *trần trên* (đơn vị vượt số đã gọi · nước chấm thứ hai của một đơn · bản soi số suất lệch dòng đơn); (3) `I-019`: tổng không là một ô ghi được mà cộng lại từ phần của từng bàn — kịch bản sáu bàn + bàn 10 của `03-lat-cat.md` §3.4.3 · §3.4.6 tách ngược về từng bàn, khớp hai chiều, hai dòng bánh khác nhân không gộp, giò gộp; (4) `I-020` tầng 2 · `YC-07`: một lần bấm mẻ phủ nhiều bàn, và một lần lùi, ghi thiếu một phần ⇒ không `COMMIT` được; lùi đủ ⇒ mọi bàn về đúng số trước lúc bấm, mẻ nào · lúc nào lùi đọc lại được; *còn thiếu* và *còn phải làm* đọc riêng, lệch đúng bằng số đã làm xong; (5) đơn huỷ sau khi làm xong: phần đã làm xong đổi chủ sang bàn khác trong một giao dịch, có vết; đổi chủ không vết ⇒ từ chối; huỷ đơn đã phục vụ một phần ⇒ không bàn nào đã phục vụ vượt đã gọi; (6) `S-5` · `S-6` là ô trống có mã ở file lát, không giá trị mặc định nào; ca *không bàn nào chờ* thành một `U-XXX`; (7) file lát `05-luoc-do-san-xuat.md`, `00-index.md`, `CLAUDE.md` §2 hàng *Schema*, `02-luoc-do-ban-hang.md` §5 · §6; `./scripts/db-check.sh` PASS, một vòng gỡ từng ràng buộc ⇒ đỏ đúng ca, phép so tên bảng `.md` ↔ migration rỗng, `./scripts/gate.sh`. Kết quả: migration `db/migrations/20260928130000_san_xuat_theo_me.up.sql` (năm bảng: `menu_component_station` · `station_job` · `production_batch` · `production_batch_item` · `station_job_transfer`; cột tự tính `sales_order.id_if_approved`; không ô tổng nào), file lát `docs/product/2-db/05-luoc-do-san-xuat.md`, ba test `db/tests/i004_…` · `i019_…` · `i020_…`; `CLAUDE.md` §2 hàng *Schema* thêm tên file; `00-index.md` thêm dòng; `02-luoc-do-ban-hang.md` §5 · §6; mở **`U-064`** (đơn huỷ khi đã làm xong mà không bàn nào chờ) và trỏ tới nó ở `shop-facts.md` §5.4 · `04-yeu-cau-du-lieu.md` §6; ghi **`F-044`** (một tập của hàng `I-004` pha 1 không rỗng được). Bằng chứng: `db-check: PASS — 26 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 22 file test`; 18 lần gỡ một ràng buộc ⇒ 18 lần đỏ đúng ca (lần rà đầu tìm ra sáu ràng buộc chưa ca nào kêu, đã thêm ca); so tên bảng `.md` ↔ migration 27 tên mỗi bên, `comm -3` rỗng. `./scripts/gate.sh`: links OK · doc-status xanh · phase-boundary exit 0 · verify passed; **Gate 3 đỏ vì bảy file chưa commit của phiên khác** (`db/tests/i009_…` · `i013_…` · `docs/decisions.md` · `03-bao-ve-invariant.md` · `06-so-rui-ro.md` · `03-luoc-do-menu-gia.md` · `quality/invariants.md`), không file nào của lượt này. Chờ chủ repo: các lựa chọn *phiên chọn* của file lát; `F-044`. `S-5` · `S-6` để trống có mã. Chưa làm: *ai bấm* (`P2-08`), cửa nổ đơn · hàm gom · cửa chuyển (pha 3). Nghiệm thu → bằng chứng: `work/backlog_DB.md` → [P2-07](backlog_DB.md#p2-07).
+- [x] P2-06 **Lược đồ đường tiền — hoá đơn, thu chia phương thức, nợ, hoàn tiền, trả trước, tiền đầu két; `I-005` · `I-014` · `I-015` · `I-021` · `YC-23` tầng 1 thành ràng buộc thật** — L2, 2026-09-28. Claude Code, nhánh chatgpt_involve, base ff9c2d5; chưa review độc lập. Acceptance bảy dòng viết trước khi dựng (ở *Bàn giao*). Kết quả: migration `db/migrations/20260928120000_duong_tien.up.sql` (bảy bảng: `bill` · `debt_collection` · `prepayment` · `prepayment_use` · `refund` · `opening_float` · `opening_float_line`, cộng ba cột tự tính trên hai bảng của `P2-04`), file lát `docs/product/2-db/04-luoc-do-duong-tien.md`, sáu test `db/tests/`; `architecture.md` §12.3 thành đề xuất lịch sử và trỏ sang file lát; `CLAUDE.md` §2 hàng *Schema* thêm tên file; `00-index.md` thêm dòng; mở `U-063` (trả nợ một phần). `db-check` PASS 19 test; 25 lần gỡ ràng buộc ⇒ 25 lần đỏ đúng ca (lần đầu tìm ra hai test chưa biết kêu, đã sửa); công thức `I-021` trên kịch bản trả trước · trả nợ · hoàn chéo lệch 0 cả ba ngày; so tên bảng `comm -3` rỗng. Gate 3 đỏ vì bảy file của phiên song song (T-118, test biết kêu của P2-05), không file nào của lượt này. Chờ chủ repo: các lựa chọn *phiên chọn* của file lát; chỗ cất số tiền đếm được cuối ngày chưa bước nào nhận. Chưa làm: *ai bấm* (`P2-08`). Nghiệm thu → bằng chứng: `work/backlog_DB.md` → [P2-06](backlog_DB.md#p2-06).
+- [x] T-114 **Migration giữ `I-023` — bảng `qr_code` giữ mã hiện hành và mọi mã đã thay, một cửa sinh mã, lượt gọi QR mang mã và đứng đúng bàn của mã** — L2, 2026-09-28. Chủ repo: *"U-062 đã xong hãy hoàn thành task này đi"*; lời đóng U-062 (T-118) lúc nhận việc còn **chưa commit** trong cây — task này đọc, không sửa nó. Claude Code, nhánh chatgpt_involve, base 82a1587; **chưa review độc lập**. Acceptance (viết trước khi sửa): (1) bảng mã + tầng 1 *một bàn ≤ một mã hiện hành* · *một mã ≤ một bàn kể cả đã thay* · lượt gọi `qr_table` mang mã, đứng đúng bàn của mã; (2) một cửa sinh mã, `shop_app` không ghi thẳng, mã từ nguồn ngẫu nhiên mạnh; (3) *ai đổi* là chỗ trống cho `P2-08`, quyền theo vai là pha 3; (4) kịch bản âm · dương · đoán, mã cũ sau lần đổi dựng ở tầng 3 và câu đối chiếu bắt được; (5) test cũ mang mã, vẫn bị chặn đúng ràng buộc cũ; (6) tài liệu, chỗ trỏ, `db-check`, gate. Kết quả: [`db/migrations/20260928110000_ma_qr_ban.up.sql`](../db/migrations/20260928110000_ma_qr_ban.up.sql) — bảng `qr_code` (`qr_code_code_key`, `qr_code_one_current_per_table_key`, `qr_code_replaced_after_issued_check`), `sales_order.qr_code_id` (`sales_order_qr_code_iff_qr_channel_check`, khoá ngoại hai cột `sales_order_qr_code_table_fkey`), hàm `qr_code_issue` `SECURITY DEFINER`, `shop_app` mất quyền thêm/sửa `qr_code`. [`db/tests/i023_qr_code_one_table.sql`](../db/tests/i023_qr_code_one_table.sql): mã bàn 5 + số bàn 7 · mã không chỉ tới bàn nào · lượt gọi không mã · mã đã thay và mã hiện hành của bàn 5 cấp cho bàn 7 · mã hiện hành thứ hai · `shop_app` tự ghi và hồi sinh mã cũ — tất cả bị từ chối bằng đúng tên; `shop_app` đổi được mã qua cửa; lượt gọi trước lần đổi giữ bàn, phiên, mã, trạng thái; đổi giữa bữa không chạm phiên, số bàn; kịch bản đoán 16 mã; sáu câu đối chiếu rỗng. Năm file test cũ có lượt gọi `qr_table` nay mang mã. File lát: §1 hàng `qr_code`, §2 bốn hàng `I-023`, §5 `F-042` gạch + chỗ trống *ai đổi mã* → `P2-08`, §6 dòng `P2-10`; cùng lượt sửa bảng mã cách trao hàng của T-111 (§4) — dòng của nó bị phép so tên bảng đọc nhầm thành hai bảng. `01-quy-uoc-du-lieu.md` §8 hàng *cách sinh mã QR* gỡ; `backlog_DB.md` (P2-10) · `DB_master_plan` §4.1 · §9 ghi `T-114` xong. Bằng chứng: `db-check: PASS — 26 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 13 file test`; gỡ `qr_code_code_key` ⇒ `ERROR: I-023 (cấp cho bàn 7 mã ĐÃ THAY của bàn 5): bị chặn bởi qr_code_one_current_per_table_key thay vì qr_code_code_key`; gỡ `qr_code_one_current_per_table_key` ⇒ `… KHÔNG từ chối — mã hiện hành thứ hai cho bàn 5`; gỡ `sales_order_qr_code_table_fkey` ⇒ `… mã bàn 5, số bàn 7 từ phía khách` (và `QD-11` đỏ). Phép so tên bảng `.md` ↔ migration chạy tay: 15 bảng mỗi bên, `comm -3` rỗng. **Phiên chọn, chờ chủ repo:** tên `qr_code` · `qr_code_issue`; mã 32 hex từ `sha256` của UUID ngẫu nhiên; khoá ngoại hai cột (mã, bàn) trên lượt gọi — đọc là nghĩa vụ *không đường ghi thứ hai* của tầng 3, không nâng tầng.
+- [x] T-118 **Ghi lời chủ quán đóng U-062 (ai đổi mã QR, khi nào) và U-060 (ai cập nhật số người thực tế); U-058 chưa có lời mới** — L1, 2026-09-28. Chủ repo chuyển lời chủ quán trong hội thoại. Acceptance: (1) U-062 đóng — chỉ chủ quán đổi mã QR của bàn, đổi khi quán bị hack, không tự thêm lịch định kỳ; (2) U-060 đóng — POS cung cấp/cập nhật số người thực tế, không tự suy tần suất; (3) U-058 giữ mở vì lời nhắc lại trùng lời T-099/T-102, không trả lời phạm vi bản đầu/giới hạn/lý do; (4) lời vào owner `shop-facts.md` kèm ngày, mục lục unknowns khớp, mọi pointer còn nói "chờ U-062/U-060" được sửa; gate xanh. Claude Code, nhánh chatgpt_involve. Kết quả: U-062 và U-060 chuyển xuống *Đã có lời giải* của `docs/product/99-unknowns.md`, lời vào `master_plan/shop-facts.md` §6 quy tắc 2 · §8.6 hàng 6 · §7.1; pointer ở I-023, ADR-060, RR-10, 03/04 pha 1, architecture, BA admin, admin-questions, backlog_AD, T-114 đã sửa. Chưa review độc lập. Cách đọc *bị hack* = mã đã lộ/bị người ngoài dùng là suy ra, ghi rõ ở shop-facts. Lưu ý commit: `shop-facts.md`, `01-ranh-gioi.md`, `admin-questions.md`, `backlog_AD.md` còn mang phần chưa commit của T-102; `docs/decisions.md` có phần T-117 đã staged.
+
+- [x] T-116 **Migration giữ `I-024` — dấu lần gửi trên mọi đơn và mọi lượt gọi, bắt buộc và duy nhất không hạn thời gian** — L2, 2026-09-28. Chủ repo: *"please continue"* sau T-111 — tiếp mạch chỗ trống có tên của `P2-04` (`F-043`). Claude Code, nhánh chatgpt_involve, base 9671f93; **chưa review độc lập**. Acceptance: xem dòng nhận việc trong lịch sử của entry này — (1) migration mới, cột bắt buộc không mặc định, không trắng, duy nhất; (2) bốn kịch bản âm có hai kết nối song song thật; (3) hai dương + biên `I-022`; (4) tập đối chiếu viết được thì viết, tập cần vết `I-018` là chỗ trống cho `P2-08`; (5) test cũ bị chặn bởi đúng ràng buộc cũ; (6) file lát, chỗ trỏ, `db-check`, gate. Kết quả: [`db/migrations/20260928100000_dau_lan_gui.up.sql`](../db/migrations/20260928100000_dau_lan_gui.up.sql) — `sales_order.submission_code` `NOT NULL`, `sales_order_submission_code_not_blank_check`, `sales_order_submission_code_key`; [`db/tests/i024_one_submission_one_order.sql`](../db/tests/i024_one_submission_one_order.sql) — gửi lại năm lần ⇒ một đơn; lượt `qr_table` · `staff_pos` gửi lại ⇒ phiên một lượt mỗi lần gửi; cùng dấu khác số điện thoại bị từ chối, đơn đầu giữ số cũ; không dấu · dấu trắng · xoá dấu bị từ chối; **song song qua `dblink`**: kết nối B bị giữ lại khi A chưa `COMMIT`, rồi `duplicate key value violates unique constraint "sales_order_submission_code_key"`; biên `I-022` tạo được; hai dương ⇒ hai đơn; hai câu đối chiếu rỗng. Bảy file test cũ nay mang dấu ở 23 câu tạo đơn (không mang thì `NOT NULL` chặn trước ràng buộc chúng kiểm). `02-luoc-do-ban-hang.md` §2 hai hàng `I-024` (tầng 1 và phần pha 3 nợ, kể cả biên 10:59), §5 `F-043` gạch + chỗ trống *tập đối chiếu thứ ba* → `P2-08`; `DB_master_plan` · `backlog_DB.md` ghi `T-116` xong. Bằng chứng: `db-check: PASS — 26 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 12 file test`; gỡ khoá duy nhất ⇒ `ERROR: I-024: database KHÔNG từ chối — gửi lại Pickup lần 1`; bỏ `NOT NULL` ⇒ `… đơn không mang dấu`. Test song song `COMMIT` một đơn Pickup trong database riêng của `db-check` (gỡ sau mỗi lần chạy) — ghi ở đầu file test. **Phiên chọn, chờ chủ repo:** tên `submission_code`, kiểu `text` (mệnh đề không nói dấu sinh bằng gì), dùng `dblink` trong test.
+- [x] T-111 **Migration giữ `I-022` — liên hệ tối thiểu của đơn mang đi thành năm ràng buộc thật trên `sales_order`** — L2, 2026-09-28. Chủ repo giao qua tiêu đề `P2-04` với lời *"hãy đọc kĩ và làm"*: `P2-04` đã *Done* từ 2026-09-27, phần còn dở của tiêu đề ấy (`F-038`, pha 1 đã lấp ở T-110) là task này. Claude Code, nhánh chatgpt_involve, base 34b3d9c; **chưa review độc lập**. Acceptance (viết trước khi sửa): (1) migration **mới**, file `P2-04` không sửa; (2) năm kịch bản âm + kịch bản sửa bị từ chối bởi đúng ràng buộc `QC-10`, ba kịch bản dương tạo được, trắng = thiếu, không luật định dạng; (3) năm tập đối chiếu ra 0 dòng; (4) bốn test cũ vẫn bị chặn bởi ràng buộc cũ; (5) file lát §2 · §4 · §5 và chỗ trỏ `T-111` sửa theo; (6) `db-check` PASS, gate xanh. Kết quả: [`db/migrations/20260928090000_lien_he_don_mang_di.up.sql`](../db/migrations/20260928090000_lien_he_don_mang_di.up.sql) thêm `handover_code` · `is_door_delivery` (tự tính) · `customer_phone` · `delivery_address` · `customer_needed_at` · `customer_name` · `contact_note` và năm ràng buộc; [`db/tests/i022_takeaway_contact_minimum.sql`](../db/tests/i022_takeaway_contact_minimum.sql) — mười kịch bản âm, bốn dương (thêm *qr_table không liên hệ vẫn tạo được*), hai kịch bản sửa, năm câu đối chiếu; mỗi lời từ chối bị đòi đúng tên ràng buộc (`GET STACKED DIAGNOSTICS`). `i007` `i009` `i010` `i016` nay tạo đơn mang đi có đủ liên hệ — không sửa thì `i007` và `i016` đạt nhờ ràng buộc **mới** chặn hộ. `docs/product/2-db/02-luoc-do-ban-hang.md`: hàng `I-022` ở §2, lý do và phương án bị loại, mã cách trao hàng ở §4, hàng `F-038` ở §5 gạch; `DB_master_plan` §4.1 · §9 và `backlog_DB.md` ghi `T-111` xong. Bằng chứng: `db-check: PASS — 26 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 11 file test`; gỡ `sales_order_door_delivery_address_check` ⇒ `ERROR: I-022: database KHÔNG từ chối — Delivery thiếu địa chỉ`, gỡ `sales_order_takeaway_handover_check` ⇒ `… hotline chưa có cách trao hàng`. Lần chạy đầu `QD-02` đỏ vì hàm gom mọi chuỗi trong ràng buộc trên `channel_code` (mã cách trao hàng, chuỗi rỗng) — sửa ở migration, không sửa phép kiểm. **Phiên chọn, chờ chủ repo:** liên hệ nằm trên `sales_order`; hai mã `door_delivery` · `shop_pickup`; chuỗi trắng tính là thiếu. Gate: Gate 1 · 1b · 1c · 1d xanh; Gate 3 đỏ **chỉ** vì file chưa commit của phiên khác (T-117 và thay đổi có sẵn trước phiên), không file nào của task này.
+- [x] T-117 **F-031: Gate 8 chặn subject trùng một commit đã có trong lịch sử, sửa hai con số của entry T-062** — L1 (cổng công cụ, không chạm tiền hay dữ liệu) + ADR-062, 2026-09-28. Chủ repo: *"hãy đoc kĩ và làm"* về `work/findings.md` F-031. Claude Code, nhánh chatgpt_involve, base 34b3d9c. Acceptance (viết trước khi sửa): (1) `scripts/hooks/commit-msg` từ chối subject trùng từng chữ (sau khi cắt khoảng trắng) với subject của một commit đi tới được từ `HEAD`, lời từ chối nêu hash commit cũ, F-031 và `--no-verify`; (2) `git commit --amend` giữ nguyên subject của `HEAD` vẫn qua, nhưng amend thành subject của một commit cũ hơn vẫn bị chặn; (3) merge/revert/fixup, repo chưa có commit nào, và chạy ngoài repo git không bị chặn; (4) `scripts/commit-msg.test.sh` có ca cho (1)–(3) ở cả tầng gọi trực tiếp lẫn commit thật; (5) `CLAUDE.md` §6.2, `quality/review-gate.md` Gate 8, `docs/work-flow-session/workflow-phien-lam-viec.md` nói đúng luật mới, `docs/decisions.md` có ADR-062 và hàng bảng; (6) entry T-062 hết *bốn bước* / *lần thứ tư*, F-031 Fixed ở chỉ mục và thân; (7) `./scripts/gate.sh` xanh. Kết quả: hook thêm luật 4 (so với `git log` từ `HEAD`; khi `--amend` — nhận ra qua dòng lệnh tiến trình cha — so với lịch sử trước `HEAD`); `scripts/commit-msg.test.sh` 42/42 ca đạt, trong đó chín ca mới ở tầng gọi trực tiếp và năm ca mới bằng commit thật (trùng `HEAD` bị chặn, subject mới qua, amend giữ subject qua, `--amend --no-edit` qua, amend thành subject cũ hơn bị chặn); tầng gọi trực tiếp nay chạy ngoài mọi repo để lịch sử thật không làm đỏ ca nào. Chạy hook trên chính repo: subject `T-115: …` bị chặn, nêu `34b3d9c`. ADR-062 + hàng bảng + dòng sửa đổi ở ADR-010; `CLAUDE.md` §6.2, `quality/review-gate.md` Gate 8, `docs/work-flow-session/workflow-phien-lam-viec.md` cập nhật; entry T-062 sửa *ba bước* / *lần thứ năm*; F-031 Fixed. Chưa ai review độc lập. Gate xanh (2026-09-28)
+- [x] T-115 **F-043: một lần gửi thành đúng một đơn — mệnh đề `I-024`, có tầng, có `YC-25`** — L2, 2026-09-28. Chủ repo: *"hãy đọc kĩ và làm"* về `work/findings.md` F-043. Claude Code, nhánh chatgpt_involve, base f152dd1. Acceptance (viết trước khi sửa): (1) `quality/invariants.md` có `I-024`, mỗi vế một câu kiểm được, không chép dữ kiện quán, không chốt cơ chế; nói rõ *nội dung giống hệt không phải là trùng* (khách gọi thêm, hai đơn tới lấy cách nhau mười phút vẫn là hai); (2) `03-bao-ve-invariant.md` có hàng `I-024`, mỗi vế một tầng và một tập (hoặc câu nói thẳng vì sao chưa có tập, §0 luật 5), vế tầng 4 nói *máy không ngăn được* kèm cái máy có giữ; (3) `architecture.md` §8 thêm đúng một dòng và `04-yeu-cau-du-lieu.md` §1 thêm đúng một dòng `YC-25`; (4) chọn nhóm và tầng ghi thành ADR (**giao cho phiên**); (5) không tự quyết câu của chủ quán — nếu có thì mở `U-XXX`; (6) `F-043` **Fixed** ở bảng chỉ mục lẫn thân entry, các chỗ trỏ pha 1 · pha 2 sửa theo, phần migration thành một task Ready riêng (**T-116**); (7) Gate 1b · 1c · 1d xanh. Không chạm năm file chưa commit của task khác. Kết quả: `I-024` ở `quality/invariants.md` — năm vế (một lần gửi nhiều nhất một đơn · mọi đơn mang dấu lần gửi · gửi lại nhận lại đúng đơn, kể cả sau khi cửa `I-008` đóng · cùng dấu khác nội dung bị từ chối · nội dung giống hệt không phải là trùng), lần gửi đồng nhất bằng **dấu**, không bằng nội dung; hai vế ghi là **suy ra**; hàng `I-024` ở **nhóm TIỀN** của `03-bao-ve-invariant.md` §1 (hai vế tầng 1, ba vế tầng 3, ba tập, hai vế nói thẳng vì sao chưa có tập, tầng 4 nói *máy không ngăn được*), §1.4 cập nhật; **RR-11** ở `06-so-rui-ro.md`; dòng chỗ thiếu ở `architecture.md` §8 và **`YC-25`** ở `04-yeu-cau-du-lieu.md` §1; **ADR-061** (giao cho phiên); không mở `U-XXX` nào; `07-cong-chat-luong-pha-1.md` ô 1 · 2 đo lại (`comm -3` rỗng, 24 mã; *máy không ngăn được* 14 lần); chỗ trỏ pha 2 (`DB_master_plan` §2 · §4.1 · §5 · §8 · §9, `backlog_DB.md` bảng mã · P2-04 · P2-13, `2-db/02-luoc-do-ban-hang.md` §5) giao migration cho **T-116**; `F-043` **Fixed**, câu tổng đếm findings 43 — 41/2. Gate 1b · 1c · 1d · verify xanh; Gate 3 đỏ chỉ vì năm file chưa commit của task khác. Chưa review độc lập. Chưa làm: lược đồ (T-116).
+- [x] T-113 **F-042: mã QR của bàn thành mệnh đề `I-023` — bàn của lượt gọi QR tra từ mã, mã không đoán được, đổi được và mã cũ chết ngay — có tầng, có `YC-24`** — L2, 2026-09-28. Chủ repo: *"hãy đọc kĩ và làm"* về `work/findings.md` F-042. Claude Code, nhánh chatgpt_involve, base d333b7b. Acceptance (viết trước khi sửa): (1) `quality/invariants.md` có `I-023`, mỗi vế một câu kiểm được, không chép dữ kiện quán, không chốt cơ chế sinh mã, không tự đặt ai được đổi mã; (2) `03-bao-ve-invariant.md` có hàng `I-023`, mỗi vế một tầng và một tập (hoặc câu nói thẳng vì sao chưa có tập, §0 luật 5), vế tầng 4 nói *máy không ngăn được* kèm cái máy có giữ; (3) `architecture.md` §8 thêm đúng một dòng và `04-yeu-cau-du-lieu.md` §1 thêm đúng một dòng `YC-24`; (4) chọn nhóm và tầng ghi thành ADR (**giao cho phiên**); (5) phần là câu của chủ quán — ai được đổi mã, khi nào đổi — mở thành `U-XXX`, không tự quyết; (6) `F-042` **Fixed** ở bảng chỉ mục lẫn thân entry, các chỗ trỏ pha 1 · pha 2 sửa theo, phần migration thành một task Ready riêng; (7) Gate 1b · 1c · 1d xanh. Không chạm sáu file chưa commit của task khác ngoài `docs/product/99-unknowns.md` (bắt buộc cho điểm 5 — báo trong khối commit). Kết quả: `I-023` ở `quality/invariants.md` — bốn vế (bàn tra từ mã, số bàn từ phía khách bị bỏ · một mã một bàn · không đoán được · đổi được, mã cũ chết ngay), *mã cũ chết ngay* ghi là **suy ra**; hàng `I-023` ở **nhóm TIỀN** của `03-bao-ve-invariant.md` §1 (hai vế tầng 1, ba vế tầng 3, vế *không đoán được* nói thẳng vì sao chưa có tập, tầng 4 nói *máy không ngăn được*), §1.4 cập nhật; `RR-10` ở `06-so-rui-ro.md`; dòng chỗ thiếu ở `architecture.md` §8 và **`YC-24`** ở `04-yeu-cau-du-lieu.md` §1; **ADR-060** (giao cho phiên); **U-062** mở cho *ai được đổi mã, khi nào đổi*; `07-cong-chat-luong-pha-1.md` ô 1 · 2 đo lại (`comm -3` rỗng, 23 mã; *máy không ngăn được* 13 lần); chỗ trỏ pha 2 (`DB_master_plan` §2 · §4.1 · §8 · §9, `backlog_DB.md` bảng mã · P2-04 · P2-10 · P2-13, `2-db/01-quy-uoc-du-lieu.md` QD-10 · QD-61 · §8, `2-db/02-luoc-do-ban-hang.md` §1 · §5) giao migration cho **T-114**; `F-042` **Fixed**, câu tổng đếm findings 43 — 40/3. Chưa review độc lập. Chưa làm: lược đồ (T-114), quyền đổi mã (chờ U-062).
+- [x] T-112 **F-037: khoản trả trước có dòng trong công thức đối soát, `I-021` có hạng tử cho nó, và `YC-23`** — L2, 2026-09-28. Chủ repo: *"hãy đọc kĩ và làm"* về `work/findings.md` F-037. Claude Code, nhánh chatgpt_involve, base 0dd8afb. Acceptance (viết trước khi sửa): (1) `docs/product/1-system-design/architecture.md` §6.4 có dòng cho khoản trả trước, đủ để một ngày có trả trước nhận hôm nay cho đơn mai, đơn đóng hôm nay với tiền nhận hôm qua, và đơn đã trả trước bị huỷ đều khớp **0đ** — kiểm bằng tay trên số liệu, dán vào báo cáo; (2) `quality/invariants.md` `I-021` có hạng tử tiền mặt tương ứng, kịch bản kiểm có ca trả trước, và `I-014` nói rõ lần trả lại một khoản trả trước chưa thành doanh thu có trừ doanh thu hay không, **đánh dấu là suy ra** nếu không có lời chủ quán; (3) `architecture.md` §8 thêm đúng một chỗ thiếu và `04-yeu-cau-du-lieu.md` §1 thêm đúng một dòng `YC-23`; (4) `03-bao-ve-invariant.md` các ô `I-005` · `I-014` · `I-015` · `I-021` đọc lại, tập đối chiếu nào liệt kê dòng công thức thì liệt kê đủ; (5) cách chọn ghi thành ADR (**giao cho phiên**); (6) `F-037` **Fixed** ở bảng chỉ mục lẫn thân entry, các chỗ trỏ ở pha 1 (`02-thoi-gian-ngay-ban.md` §4, `03-bao-ve-invariant.md` §1.2, `07-cong-chat-luong-pha-1.md`) và pha 2 (`DB_master_plan` · `backlog_DB.md` P2-06 · P2-11) sửa theo; không hỏi chủ quán thêm câu nào (F-037 bước 4); (7) Gate 1b · 1c · 1d xanh. Không chạm sáu file chưa commit của task khác. Kết quả: **ba** dòng trả trước ở `architecture.md` §6.4 (nhận · thành doanh thu · trả lại, không điều kiện ngày) — không phải một như ADR-040/F-037 viết, vì một dòng chỉ đỡ hôm nhận tiền; chỗ thiếu thứ mười ở §8 và `YC-23`; `I-021` thêm ba hạng tử tiền mặt cho trả trước **và** một hạng tử *nợ cũ thu bằng tiền mặt* mà lượt đọc lại tìm ra chưa từng có; `I-014` có câu **suy ra** *trả lại khoản trả trước chưa thành doanh thu không trừ doanh thu* (ADR-059 điểm 5, chủ quán nói khác thì mở `U-XXX`); ô `I-005` · `I-014` · `I-015` · `I-021` đọc lại (ô `I-021` còn sót hạng tử hoàn chéo từ ADR-046, sửa cùng lượt); **ADR-059** (giao cho phiên); `02-thoi-gian-ngay-ban.md` §4 · `03-bao-ve-invariant.md` §1.2 · `07-cong-chat-luong-pha-1.md` §6 · §7 ô 1 · 3 · 7 · §8 cập nhật; pha 2: `DB_master_plan` §2 · §4.1 · §5 · §9 và `backlog_DB.md` P2-06 · P2-11 · P2-13 hết bị F-037 chặn, chấm thêm `YC-23`; `F-037` **Fixed**, câu tổng đếm findings 43 — 39/4. Kiểm tay: kịch bản trả trước và trả nợ ở `I-021` khớp 0đ cả hai ngày, bỏ một hạng tử thì lệch đúng bằng khoản ấy. Gate 1b · 1c · 1d xanh. Chưa review độc lập. Chưa làm: chỗ cất và câu truy vấn (`P2-06` · `P2-11`).
+- [x] T-110 **F-038: mức liên hệ tối thiểu của đơn mang đi thành mệnh đề `I-022`, có tầng và có `YC-22`** — L2, 2026-09-28. Chủ repo: *"hãy đọc kĩ và làm từng bước 1"* về `work/findings.md` F-038. Claude Code, nhánh chatgpt_involve, base 8ebe7f4. Acceptance (viết trước khi sửa): (1) `quality/invariants.md` có `I-022` nói đúng §3.2.4 của `docs/product/0-ba/ban-hang/03-lat-cat.md` — ba kênh mang đi, ba trường bắt buộc theo kênh và cách trao hàng, trường *nên có* không chặn — trỏ về `shop-facts.md` §6.5 chứ không chép bảng; không thêm luật mới (định dạng số điện thoại, đổi cách trao hàng sau khi tạo); (2) `03-bao-ve-invariant.md` có hàng `I-022` ở nhóm VÒNG ĐỜI, mỗi vế một tầng và một tập đối chiếu (§0 luật 5); (3) `architecture.md` §8 có một dòng chỗ thiếu và `04-yeu-cau-du-lieu.md` §1 có đúng một dòng `YC-22` tương ứng; (4) chỗ đặt nhóm ghi thành ADR (**giao cho phiên**, chủ repo đổi được bằng một câu); (5) `F-038` **Fixed** ở bảng chỉ mục lẫn thân entry, các chỗ trỏ ở pha 1 · pha 2 sửa theo; phần migration pha 2 thành một task Ready riêng; (6) Gate 1b · 1c · 1d xanh. Kết quả: `I-022` ở `quality/invariants.md`; hàng `I-022` ở nhóm VÒNG ĐỜI của `03-bao-ve-invariant.md` §2 (bốn vế tầng 1, vế ngược tầng 3, giới hạn tầng 4 nói thẳng); dòng chỗ thiếu ở `architecture.md` §8 và `YC-22` ở `04-yeu-cau-du-lieu.md` §1; **ADR-058** (giao cho phiên); `07-cong-chat-luong-pha-1.md` §6 · §7 ô 1 · 2 · 7 đo lại (`comm -3` rỗng, 22 mã; *máy không ngăn được* 12 lần); các chỗ trỏ pha 2 (`DB_master_plan` §2 · §4.1 · §5 · §9, `backlog_DB.md`, `02-luoc-do-ban-hang.md` §5) gạch F-038 và giao migration cho **T-111**; cổng pha 2 chấm cả `YC-22`; `F-038` **Fixed**. Cùng lượt sửa hai hàng chỉ mục F-040 · F-041 đang ghi *Open* dù thân đã *Closed* từ T-079, và câu tổng đếm findings (43 — 38/5). Chưa review độc lập. Chưa làm: lược đồ (T-111).
+- [x] T-108 **Đặt yêu cầu khôi phục ở pha 1, giao cơ chế cho pha 5 và đóng F-034** — L2 tài liệu, 2026-09-27. Chủ repo cho phép Codex thực hiện ngoại lệ phân vai và sửa ADR. Acceptance trước sửa: yêu cầu có owner và mã; ADR ghi đúng hướng 3; RR-9 giữ cảnh báo chưa triển khai; pha vận hành có việc theo dõi; các pointer hiện hành hết đòi chọn lại; F-034 Fixed ở chỉ mục và thân. Không đổi invariant hoặc code nên chưa có phép hồi quy cơ chế để chạy; nghiệm thu lượt này bằng đối chiếu tài liệu và gate. Scope: các file khai trong work/scope.txt. Codex, nhánh chatgpt_involve, base 3189b6e; chưa review độc lập. Kết quả: YC-21 §8, ADR-057, RR-9 và pointer pha 2 đồng bộ; F-034 Fixed; T-109 giữ việc vận hành chưa làm. Gate lần đầu: links/status đạt, verify bỏ qua vì chỉ sửa tài liệu; scope báo sáu file có sẵn ngoài task. Sau hoàn tất, xoá scope riêng: ./scripts/gate.sh exit 0 (scope không khai nên bỏ qua; links/status đạt; verify bỏ qua vì chỉ sửa tài liệu); git diff --check đạt. Không commit, không thay đổi index; các sửa trước phiên giữ nguyên.
+
+- [x] T-107 **F-033: kế hoạch pha 1 thôi tự khai trạng thái — mỗi ô trỏ về bước sở hữu và `work/backlog.md`** — L1, 2026-09-27. Chủ repo: *"sửa f-033 theo đề xuất của bạn"*. Acceptance: (1) `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §2 không còn cột trạng thái chép tay — mỗi hàng ghi bước sở hữu và file đầu ra; (2) ba câu §4 mỗi câu trỏ tới mục đang trả lời nó, cảnh báo ⚠️ F-033 gỡ đi; (3) hàng `S-5` ở §8 không còn nói đang chặn bước đã `Done`, và vẫn nói `S-5` chưa hỏi chủ quán; (4) đầu file nói đây là kế hoạch của pha đã đóng, trạng thái đọc ở `work/backlog.md`; (5) `F-033` **Fixed** ở cả bảng chỉ mục lẫn thân entry; Gate 1b · 1c xanh. Claude Code, nhánh chatgpt_involve, base 18dbd31. Kết quả: kế hoạch pha 1 có đoạn đầu nói pha đã đóng; bảng §2 đổi cột trạng thái thành *Bước sinh ra nó · nằm ở đâu* (cùng hình kế hoạch pha 2 §2); ba câu §4 trỏ về `01-ranh-gioi-he-thong.md` §3 · `02-thoi-gian-ngay-ban.md` §1 · §2 · `03-bao-ve-invariant.md` §1–§4 · `05-realtime-va-du-phong.md` §1 · §3, cảnh báo ⚠️ gỡ; hàng `S-5` §8 nói không chặn bước nào, vẫn chưa hỏi; câu ở `DB_master_plan` §2 sửa thì quá khứ; `F-033` **Fixed**. ADR-049 giữ nguyên lời trích (lịch sử). Gate 1b · 1c xanh; Gate 3 đỏ chỉ vì bảy file của `T-102` chưa commit. Chưa review độc lập. Chưa làm: §4.2 kế hoạch pha 1 vẫn kể `I-001`…`I-018` như ảnh chụp 2026-09-03.
+
+- [x] T-106 **Rà phép đếm ADM và đóng F-028** — L1, 2026-09-27. Đếm khớp 29 mục; sửa pointer MVP; F-028 Fixed. Bằng chứng và giới hạn gate ở chi tiết T-106.
+
+- [x] T-105 **Mọi điều AI truyền đạt cho chủ repo viết bằng văn xuôi tiếng Việt** — L1, 2026-09-27. Chủ repo: *"cập nhật claude.md và agent.md tất cả những thông tin mà bạn cần truyện đạt cho tôi đều dùng văn xuôi để tôi dễ hiểu"*. Acceptance: `CLAUDE.md` §1 nói luật phủ **mọi** thứ gửi tới chủ repo (trả lời, báo cáo cuối task/phiên, báo cáo Codex, câu hỏi, bàn giao), nói rõ khối commit · lệnh · link câu hỏi mở vẫn giữ dạng của chúng nhưng lời giải thích quanh chúng là văn xuôi; `AGENTS.md` trỏ Codex tới luật ấy mà không chép; gate xanh ở mọi bước chạm file của task này. Claude Code, nhánh chatgpt_involve, base a70467b. Kết quả: đoạn *Ngôn ngữ trả lời* ở `CLAUDE.md` §1 mở rộng như Acceptance; `AGENTS.md` thêm một đoạn trỏ Codex tới §1. Gate 1b · 1c xanh; Gate 3 đỏ chỉ vì bảy file của `T-102` chưa commit, không file nào của lượt này. Chưa review độc lập.
+- [x] T-103 **F-036: phép đối chiếu phủ mọi vế — hai hàng thiếu vế và năm hàng cùng hình** — L2, 2026-09-27. Chủ repo: *"đọc kĩ và sửa"*. Claude Code, nhánh chatgpt_involve, base 71f8705; chưa review độc lập. Acceptance ở dòng mở task (dòng ấy bị commit `71f8705` nhặt — F-025). Kết quả: `03-bao-ve-invariant.md` §0 thêm luật 5 (đơn vị là **vế**); hàng `I-004` có vế nước chấm · canh **tầng 2** và hai tập mới, phép nhân không còn áp cho trạm `canh`; hàng `I-009` có vế ngừng bán **tầng 3** và một tập; năm hàng cùng hình (`I-003` · `I-008` · `I-010` · `I-015` · `I-017`) thêm tập còn thiếu; lời `I-004` khớp `shop-facts.md` §5.3; **ADR-056** (*giao cho phiên* — chủ repo đổi được bằng một câu); ô 1 cổng pha 1 chấm vế, đo lại ở `07-cong-chat-luong-pha-1.md` §7; `F-036` **Fixed**; bốn chỗ trỏ ở pha 2 sửa theo; `F-025` ghi thêm lần nhặt `71f8705`. Gate 1b · 1c · 1d xanh; Gate 3 đỏ chỉ vì file của `T-102` chưa commit. Chưa làm: `P2-07` dựng hai loại việc trạm `canh`; tập đối chiếu ngừng bán ở `P2-11`.
+- [x] T-104 **Đóng F-019 — nghiệm thu đếm chữ trong tiêu đề sau lượt tách file** — L1, 2026-09-27. Chủ repo: *"F-019 … đọc kĩ và fix"*. Acceptance: Acceptance 12 của prompt BA-12 nói mọi chỗ mang *"Ba lát cắt"* (H1 · `## 3.` · câu văn) và chạy `grep` sau khi viết; `docs/prompt-guideline.md` §2 *Verify* có đoạn bài học; F-019 `Fixed` ở thân và bảng tổng hợp, có khối đóng ghi ngày; gate xanh. Claude Code, nhánh chatgpt_involve; chưa review độc lập. Không dựng cổng mới (F-019 đã quyết). `grep -n 'Ba lát cắt' docs/product/0-ba/ban-hang/03-lat-cat.md` rỗng 2026-09-27.
+- [x] P2-05 **Lược đồ menu · giá · ảnh chụp giá lúc đặt — `I-009` tầng 1 thành ràng buộc thật, `F-036` là chỗ trống có tên** — L2, 2026-09-27. Claude Code, nhánh chatgpt_involve, base a99d3ef; chưa review độc lập. Kết quả: migration `db/migrations/20260927140000_menu_gia.up.sql` (bảy bảng menu + ảnh chụp giá · tên · thành phần · tuỳ chọn trên dòng đơn), file lát `docs/product/2-db/03-luoc-do-menu-gia.md`, ba test `db/tests/`; `CLAUDE.md` §2 hàng *Schema* thêm tên file. Đơn cũ đọc lại nguyên sau năm lần sửa menu; dòng đơn thiếu giá · tên · ảnh chụp thành phần bị database từ chối; đổi phụ thu một dòng ⇒ Δ × số phần nhận nhân; `db-check` PASS 10 test; so tên bảng `comm -3` rỗng. Gate 3 đỏ vì file của `T-102` chưa commit, không file nào của lượt này. Chờ chủ repo: đầu ra (b) đọc theo tầng 3 (`I-010` — database không từ chối *Chay + Nhiều nhân*), các lựa chọn *phiên chọn*. Chưa làm: test biết kêu — **làm 2026-09-28**: bảy lần gỡ/thêm ràng buộc, bảy lần đỏ; phần `I-013` của `i013_…` trước đó không biết kêu, đã sửa. `F-036` đóng sau đó ở T-103 (**ADR-056**). Nghiệm thu → bằng chứng: `work/backlog_DB.md` → [P2-05](backlog_DB.md#p2-05).
+- [x] T-102 **Ghi lời xác nhận số người thực tế và giảm giá cả đơn** — L1, 2026-09-27. Chủ repo cho phép Codex cập nhật trực tiếp hai lời này như ngoại lệ §7.4 trong hội thoại. Acceptance: số trên tổng quan là số người thực tế đang làm ở quán; ghi lại xác nhận tên khách và số tiền giảm cả đơn do chủ quán nhập; không suy cách thu nhận số người hoặc thêm giới hạn giảm giá; owner và pointer khớp. Phạm vi: shop-facts, unknowns, BA admin, architecture, SD yêu cầu dữ liệu, admin-questions, backlog_AD, backlog này. Codex, nhánh chatgpt_involve, base a99d3ef; chưa review độc lập. Đã đối chiếu 2/2 lời với owner và unknowns; đọc diff theo Gate 4. ./scripts/gate.sh đạt scope, links, doc-status; verify bỏ qua vì chỉ tài liệu. U-060 đã chốt con số, còn cách thu nhận/cập nhật; U-058 tái xác nhận cách giảm, còn phạm vi bản đầu/giới hạn/lý do; xem docs/product/99-unknowns.md. Bước tiếp theo: chủ repo làm rõ các vế còn thiếu khi đặc tả; chưa commit.
+- [x] P2-04 **Lược đồ lát bán hàng lõi — bảy mệnh đề thành ràng buộc thật, `F-038` · `F-043` là chỗ trống có tên** — L2, 2026-09-27. Claude Code, nhánh chatgpt_involve, base 6bf8f97; chưa review độc lập. Kết quả: migration `db/migrations/20260927120000_ban_hang_loi.up.sql` (năm bảng), file lát `docs/product/2-db/02-luoc-do-ban-hang.md`, bảy test `db/tests/`; `CLAUDE.md` §2 hàng *Schema* có owner (**ADR-053** luật 2). `I-001` (phủ cả chờ thanh toán) · `I-002` · `I-006`/`I-007` bị database từ chối, lời từ chối nguyên văn ở *Bàn giao*; `YC-05` đọc được cả hai câu; `db-check` PASS 7 test, gate xanh; so tên bảng `.md` ↔ migration `comm -3` rỗng. Chờ chủ repo: *tuỳ chọn đã chọn* giao sang `P2-05` (lệch kế hoạch §6), các lựa chọn *phiên chọn* của file lát. `F-038` · `F-043` vẫn Open. Nghiệm thu → bằng chứng: `work/backlog_DB.md` → [P2-04](backlog_DB.md#p2-04).
+- [x] T-101 **Codex được sửa thêm vài file khi chủ repo giao thẳng task nhỏ** — L1, 2026-09-27. Chủ repo: *"những task nhỏ thì tôi và codex sẽ tự làm nên những công việc đó codex có thể sửa 1 số file"*. Acceptance: `AGENTS.md` tách hai chế độ (phiếu của Claude / task L0–L1 chủ repo giao thẳng); `CLAUDE.md` §7.4 có đoạn cùng nội dung; ADR-054 có mục *Sửa đổi* ghi lời chủ repo và tách phần suy ra; gate xanh. Claude Code, nhánh chatgpt_involve, base 5ca8c96; chưa review độc lập. Kết quả: chế độ thứ hai cho Codex đổi trạng thái chính task ấy, viết entry, khai/gỡ scope, thêm F-XXX, thêm U-XXX đang mở; vẫn cấm ADR, shop-facts, invariants, đóng unknown, commit. Danh sách file là phiên chọn — chờ chủ repo xác nhận.
+- [x] P2-12 **Quy ước code — DBMS là PostgreSQL 17** — L2, 2026-09-27. Claude Code, nhánh chatgpt_involve, base f378015; chưa review độc lập. Kết quả: `docs/product/2-db/10-quy-uoc-code.md` (`QC-01`…`QC-10`), **ADR-055** (chủ repo giao việc chọn: *"làm theo đề xuất của bạn"*), `compose.yaml` · `db/` · `scripts/db-check.sh`, Gate 1 gọi bộ kiểm database; §0 của `01-quy-uoc-du-lieu.md` có giá trị. Mười tám `QD-XX` và mười `QC-XX` chạy trên PostgreSQL 17.11 rỗng ⇒ 0 dòng; gate xanh. Nghiệm thu → bằng chứng: *Bàn giao* của entry. Chưa chốt: Go · Next.js · golang-migrate vẫn là đề xuất §3.4; kết nối backend (`QC-06`) ở pha 3. `P2-04` · `P2-05` sang *Ready*.
+- [x] T-100 **Áp dụng chia vai Claude quyết, Codex thi công** — L1, 2026-09-27. Chủ repo: *"hãy áp dụng luật này cho dự án này luôn"* (đề xuất `work/proposals/claude-sep-codex-nhan-vien.md`). Acceptance: `CLAUDE.md` §7.4 có luật chia vai ngắn và trỏ quy trình; `AGENTS.md` nói Codex là người thi công, làm theo phiếu, không quyết nghiệp vụ, không sửa trạng thái, không commit; quy trình tám bước + mẫu phiếu ở `docs/prompt-guideline.md` §6.1; ADR-054 nối ADR-052 và có hàng ở bảng tổng hợp; banner đề xuất ghi đã áp dụng và trỏ owner; gate xanh. Claude Code, nhánh chatgpt_involve, base f378015; chưa review độc lập. Không đụng P2-12 đang chạy song song trong cùng cây. Kết quả: đủ năm chỗ trên; `CLAUDE.md` thêm 15 dòng (giữ ngắn vì T-087). Hệ quả: ghi lời chủ quán từ nay thuộc Claude. Chưa làm: chưa chạy thử một vòng `codex exec` thật.
+- [x] P2-03 **Quy ước dữ liệu — mở `docs/product/2-db/`** — L2, 2026-09-26. Claude Code, nhánh chatgpt_involve, base cf048d4; chưa review độc lập. Kết quả: `docs/product/2-db/01-quy-uoc-du-lieu.md`, mười tám mục `QD-01`…`QD-61` trên bảy chủ đề, mỗi mục một hậu quả và một phép kiểm trên `information_schema` (chưa chạy — chưa có database; `P2-12` chạy lần đầu). `00-index.md` hàng *Pha 2* đang mở; `CLAUDE.md` §2 thêm hàng *Quy ước dữ liệu*, sửa hai câu lệch về ranh giới pha và Gate 1d. Không ADR: bảy lựa chọn mang nhãn *phiên chọn*, chờ chủ repo. Làm tròn tiền trỏ U-058. Gate xanh; Gate 1d đọc file mới, exit 0. Nghiệm thu → bằng chứng: khối *Bàn giao* của entry. `P2-12` sang *Ready*.
+- [x] T-097 **Mười một bài học lược đồ của dự án cũ vào đúng bước pha 2** — L1, 2026-09-25. Prompt: `prompt/maintenance/03-noi-dung-db-tu-du-an-cu-L1.md` (sau T-096). Acceptance: mỗi dòng 1–11 của bảng *Context* có đúng một chỗ đứng (entry + mục, hoặc `F-XXX`) hoặc một lý do không cần; P2-03 có chủ đề *văn bản và định danh* và quan hệ số học trong cùng bản ghi; §6 kế hoạch và entry P2-05 cùng một đầu ra mới cho phụ thu; finding mới đúng template, Open, có ở §8; không tên bảng/cột cũ, con giá hay kiểu dữ liệu DBMS nào trên dòng thêm mới. Claude Code, nhánh chatgpt_involve, base 1e00f9b; chưa review độc lập. Kết quả: P2-03 bước 4 thêm chủ đề *văn bản và định danh* (dòng 1), luật mốc 2038 + múi giờ kết nối test (dòng 2, P2-12 chỉ trỏ), quan hệ số học trong cùng bản ghi (dòng 3); P2-04 bẫy điều kiện `I-001` theo nghĩa (dòng 8) và chỗ trống có tên `F-043` ở bước 5 (dòng 10); P2-05 đầu ra (c) phụ thu khớp chữ với kế hoạch §6 (dòng 4) và bốn bẫy (dòng 4 · 5 · 6 · 7 — dòng 7 trỏ owner `03-lat-cat.md` §3.3.4 · `shop-facts.md` §6.8 · §6.20, không mở U); P2-10 bẫy mã QR trỏ `F-042` (dòng 9); dòng 11 không cần — đã phủ ở `01-ranh-gioi-he-thong.md` PT-5. Mở **F-042** · **F-043** (Open), kế hoạch §8 thêm hai hàng; ghi lần thứ bảy của **F-025** (`1480aba` nhặt dòng In Progress của T-097). Lọc tên bảng/giá/kiểu DBMS trên dòng thêm mới ra rỗng; gate xanh. Chưa làm: dòng *Phụ thuộc* của P2-04 · P2-10 chưa kể `F-043` · `F-042` (ngoài scope prompt; kế hoạch §8 đã có).
+- [x] T-096 **Ba lỗ quy trình pha 2 rút từ dự án cũ: DBMS chốt trước lát lược đồ · bản nào thắng khi có migration · mỗi quy ước dữ liệu một phép kiểm** — L2, 2026-09-25. Prompt: `prompt/maintenance/02-quy-trinh-db-tu-du-an-cu-L2.md`. Acceptance: một ADR mới trả lời ba lỗ kèm phương án bị loại; kế hoạch §6 và dòng *Phụ thuộc* của P2-04…P2-08 cùng buộc DBMS chốt trước; P2-03 đòi mỗi quy ước một phép kiểm chạy được, gom vào bộ P2-11; P2-04 bước 8 viết hàng *Schema* theo luật chủ sở hữu; một bước duy nhất có dòng *Đầu ra* lệnh đối chiếu tên bảng `.md` ↔ migration; không tên bảng cũ nào lọt vào kế hoạch/backlog. Claude Code, nhánh chatgpt_involve, base 1e00f9b; chưa review độc lập. Kết quả: **ADR-053** (Đã chốt 2026-09-25 — chủ repo xác nhận luật 2 ý 1: *"code dựng database nói khác nhau thắng"*; ý 2 · 3 ghi rõ là suy ra); chọn phương án (a) `P2-12` vào *Cần xong trước* của năm lát, kế hoạch giữ mười bốn dòng; lệnh đối chiếu tên bảng giao `P2-09`; kế hoạch §5 · §6 · §8 và entry P2-03…P2-09 · P2-11 · P2-12 đã khớp. Đối chiếu *Cần xong trước* năm lát plan ↔ entry khớp từng chữ; grep tên bảng cũ trên dòng thêm vào ra rỗng. Gate 1b · 1c · 1d xanh; Gate 3 đỏ chỉ vì thay đổi chưa commit của T-094/T-095 ngoài scope, không revert. Chưa giải quyết: chọn DBMS ngay hay để `P2-12` (chưa có lời). `docs/decisions.md` và `work/backlog.md` còn mang hunk T-094/T-095 — commit T-096 sau chúng hoặc bằng `git add -p`.
+- [x] T-094 **Ghi nhận lời đáp U-053–U-059** — L1, 2026-09-25. Acceptance: đủ bảy lời đáp có ngày/người quyết ở shop-facts; đóng phần đủ rõ, giữ câu hỏi cho phần thiếu; đồng bộ các pointer nghiệp vụ và hệ thống, không suy cơ chế tiền hay danh tính. Codex, nhánh chatgpt_involve, base 1f7f6d4; chưa review độc lập. T-093 đã được commit bên ngoài lượt này tại 1e00f9b. Giữ nguyên T-095 đang có trong cùng cây/index; không stage/commit. Đối chiếu 7/7 lời đáp đạt; đóng U-053/U-055/U-056/U-059, U-054/U-057/U-058 còn thiếu; mở U-060/U-061 tại docs/product/99-unknowns.md. Đã đọc diff theo Gate 4; gate đạt scope, links, doc-status, verify bỏ qua vì chỉ tài liệu. Bước tiếp theo: làm rõ các câu còn mở và tách phần staged T-095 trước khi commit T-094.
+- [x] T-098 **Chốt mốc nguyên liệu và người khai danh tính ngoài quầy** — L1, ghi nhận 2026-09-27 từ lời bổ sung của chủ quán. Acceptance: U-054 cộng dồn từ ngày mua sản phẩm; U-057 POS khai tên, người giao thực hiện thao tác; đóng hai câu và đồng bộ owner/pointer, không suy quản lý lô hay chuyển quyền sửa giá. Codex, nhánh chatgpt_involve, base cf048d4; chưa review độc lập. Giữ nguyên thay đổi P2-03 có sẵn; không stage/commit. Phạm vi: shop-facts, 99-unknowns, BA admin 01-ranh-gioi, architecture, admin-questions, backlog_AD và backlog này. Kiểm tay: hai lời khớp owner và hai mã không còn ở vùng Đang mở; diff đọc theo Gate 4. Gate đạt scope/links/doc-status; verify bỏ qua vì chỉ tài liệu; các untracked là có sẵn. Còn U-058/U-060/U-061 tại docs/product/99-unknowns.md; bước tiếp theo là nhận lời cho các câu đó. Tách phần backlog của T-098 bằng /private/tmp/T098-backlog.patch khi commit để không gom P2-03.
+- [x] T-099 **Ghi nhận lời bổ sung về mất mạng, đi giao và giảm giá** — L1, 2026-09-27. Acceptance: U-061 tuân I-008 cả trước lúc bấm; U-060 một người chỉ đi giao lúc vắng, người còn lại đủ phục vụ; U-058 chủ quán nhập số tiền giảm cả đơn và tên khách; giữ riêng vế chưa được trả lời, đồng bộ owner/pointer. Codex, nhánh chatgpt_involve, base 1145325; chưa review độc lập. Giữ nguyên P2-03 có sẵn; không stage/commit. Phạm vi: shop-facts; unknowns; I-008; BA giá; SD 03/05/07; decisions; admin-questions; backlog_AD; quy ước dữ liệu và backlog này. Kiểm tay 3/3 lời khớp owner; U-061 đóng, U-058/U-060 chỉ giữ vế thiếu; diff đọc theo Gate 4. ./scripts/gate.sh đạt scope/links/doc-status; verify bỏ qua vì chỉ tài liệu. P2-03 được commit bên ngoài lượt tại 70ecefc, gồm cả điều chỉnh U-058 trong quy ước dữ liệu; phần backlog P2-03 vẫn còn riêng. Bước tiếp: chủ quán trả lời phạm vi bản đầu/giới hạn/lý do (U-058) và nguồn số người (U-060), docs/product/99-unknowns.md. Dùng /private/tmp/T099-backlog.patch để chỉ stage entry này.
+- [x] T-095 **Cập nhật lời chủ quán về B19/B20** — L1, 2026-09-25. Acceptance: dùng “đồ chưa dùng hết”, ghi nhận mai dùng lại được; thay lời B20 cũ bằng không có người ghi; sửa bảng hỏi và ADM-12, không tự suy yêu cầu phần mềm hay phân loại mặt hàng. Phạm vi: master_plan/shop-facts.md, work/admin-questions.md, work/backlog_AD.md, work/backlog.md. Bàn giao: Codex, nhánh chatgpt_involve, base 1e00f9b; chưa review độc lập. Đối chiếu hai lời mới với §8.4 và bảng hỏi đạt; gate đạt scope, links, doc-status, verify bỏ qua vì chỉ tài liệu. B19 còn thiếu phân loại tại bảng hỏi. Phiên khác đang sửa T-094 cùng cây; chọn hunk T-095 khi commit.
+- [x] T-093 **Ghi nhận câu trả lời E44–E51** — L1, 2026-09-25. Acceptance: đủ tám lời đáp ở shop-facts; bảng hỏi trỏ owner và giữ vế thiếu; cập nhật phụ thuộc tài chính, không tự chốt công thức lãi/lỗ hay cách báo thuế. Phạm vi: work/backlog.md, work/admin-questions.md, master_plan/shop-facts.md, work/backlog_AD.md. Bàn giao: Codex, nhánh chatgpt_involve, base a044398; chưa review độc lập. Đối chiếu 8/8 lời đáp và pointer đạt; đã đọc diff theo Gate 4. ./scripts/gate.sh đạt scope, links, doc-status; verify bỏ qua vì chỉ tài liệu. Còn các vế hỏi tiếp nhóm E ở work/admin-questions.md §3; bước tiếp theo là làm rõ khi đặc tả tài chính. T-092 có sẵn được giữ nguyên và đã được commit bên ngoài lượt này tại 1f7f6d4; diff còn lại chỉ thuộc T-093.
+- [x] T-092 **Ghi nhận câu trả lời D37–D43** — L1, 2026-09-25. Acceptance: chuyển đủ bảy lời đáp về shop-facts; ghi riêng vế thiếu, xung đột giảm giá và combo; cập nhật bảng hỏi, phụ thuộc admin và cảnh báo tại luật giá, không tự thiết kế cách giảm giá. Phạm vi: work/backlog.md, work/admin-questions.md, master_plan/shop-facts.md, work/backlog_AD.md, docs/product/99-unknowns.md, docs/product/0-ba/ban-hang/04-gia-thanh-toan.md. Bàn giao: Codex, nhánh chatgpt_involve, base a044398; chưa review độc lập. Đối chiếu 7/7 lời đáp và pointer đạt; kiểm diff theo Gate 4; ./scripts/gate.sh đạt scope, links, doc-status, verify bỏ qua vì chỉ tài liệu. Còn U-058/U-059 và các vế hỏi tiếp tại bảng hỏi §3; bước tiếp theo là chủ quán làm rõ.
+- [x] T-091 **Ghi nhận câu trả lời C24–C35** — L1, 2026-09-25. Acceptance: chuyển đủ lời chủ quán về shop-facts §8.7; không suy đơn giá, nghĩa C27, khấu trừ nghỉ báo trước hoặc đồng nhất đơn vị công với kỳ trả; cập nhật bảng hỏi và phụ thuộc admin. Phạm vi: work/admin-questions.md, master_plan/shop-facts.md, work/backlog_AD.md, docs/product/0-ba/admin/01-ranh-gioi.md, work/backlog.md. Bàn giao: Codex, nhánh chatgpt_involve, base 3dde852; chưa review độc lập. Đã đối chiếu 12 lời đáp với owner và bảng hỏi, kiểm diff theo Gate 4; ./scripts/gate.sh đạt (scope, links, doc-status; verify bỏ qua vì chỉ tài liệu). Còn các vế cần hỏi tại bảng hỏi §3; bước tiếp theo là chủ quán bổ sung.
+- [x] T-090 **Ghi nhận B18/B19/B22 và làm rõ B20** — L1, 2026-09-25. Acceptance: chuyển lời chủ quán về shop-facts §8.4; dùng đúng nghĩa đồ chưa bán hết; không tự chốt B20 hoặc quy tắc kiểm kê trong phần mềm; cập nhật bảng hỏi và phụ thuộc ADM-12. Phạm vi: work/admin-questions.md, master_plan/shop-facts.md, work/backlog_AD.md, work/backlog.md. Bàn giao: Codex, nhánh chatgpt_involve, base b85afc9; chưa review độc lập. B20 đã được chủ quán làm rõ. Đối chiếu lời đáp với §8.4 và bảng hỏi; B19 còn thiếu phân loại. Kiểm chứng: chạy ./scripts/gate.sh ở lượt bàn giao; kết quả trong báo cáo phiên. Không stage do index đang có việc khác.
+- [x] T-089 **Ghi nhận câu trả lời B11–B17** — L1, 2026-09-25. Acceptance: giữ đủ hàng và đơn vị chủ quán nêu; không suy tên hàng, nguồn mua hoặc kỳ trả nợ; chuyển dữ kiện về shop-facts §8.4, giữ câu cần làm rõ tại bảng hỏi. Phạm vi: master_plan/shop-facts.md, work/admin-questions.md, work/backlog_AD.md, work/backlog.md. Bàn giao: Codex, nhánh chatgpt_involve, base 8e319c1; chưa review độc lập. Đã đối chiếu danh sách hàng; bổ sung B16/B17, gộp mộc nhĩ trùng theo lời sửa của chủ quán. Còn làm rõ tại B11/B12/B15/B16.
+
+- [x] T-088 **Claude Code và Codex dùng chung luật và bàn giao** — **L1**, xong 2026-09-25; AGENTS.md mới, ADR-052, Gate 1b kiểm tra điểm vào Codex. Gate đạt; Gate 7/7b của Codex vẫn kiểm thủ công.
+- [x] T-083 **Lane pha 2: entry ở `work/backlog_DB.md` là hồ sơ thực thi duy nhất, trạng thái chỉ ở
+  file này** — **L2**, xong 2026-09-25, chủ repo đồng ý đề xuất tinh gọn trong phiên.
+  `docs/decisions.md` **ADR-051**: Nghiệm thu · Kiểm chứng vào khối *Nhận việc* của entry (điền lúc
+  nhận, giữ quy tắc T-051), không còn file prompt bắt buộc; bỏ cột *Mức* · *Trạng thái* của *Mục
+  lục* và dòng ✅ (hai dòng cũ thành khối *Bàn giao*). Sửa pointer sai **ADR-008** → T-051 ở
+  `work/backlog_DB.md` và `prompt/DB/README.md`. Mốc gốc để đo: `d57cf4f` chạm 3 file giấy tờ / 5.
+  Bốn bước còn lại: T-084 → T-087 ở *Ready*. Gate xanh (docs-only).
+- [x] P2-02 **Gate 1d nay chấm CẢ vùng pha 2, với một bộ mẫu riêng im lặng với SQL** — **L2**,
+  xong 2026-09-24, bước **2/14** của pha 2. Trước lượt này vùng `docs/product/2-db/` có **không**
+  cổng nào: `scripts/check-phase-boundary.sh` chỉ đọc thư mục pha 1, và bộ mẫu SQL của nó sẽ đỏ với
+  đúng thứ pha 2 phải viết. Nay **hai vùng, hai bộ mẫu** — vùng pha 1 giữ **nguyên** hành vi, vùng
+  pha 2 đỏ với **endpoint · route · component** và im lặng với SQL (**ADR-049** · **ADR-050**).
+  **Chỗ khó thật của bước, ghi ra vì nó sẽ bị "dọn cho gọn":** mẫu endpoint của pha 1 nhận `DELETE`
+  + khoảng trắng + chữ, nên dùng chung mẫu ấy cho pha 2 sẽ kêu oan `ON DELETE CASCADE` và
+  `DELETE FROM …` ở **mọi** lát lược đồ có khoá ngoại; mẫu vùng pha 2 vì thế đòi một **dấu gạch
+  chéo nằm trong đường dẫn** ngay sau động từ — vẫn bắt `POST staff/debts/:id/collect` (hồi quy
+  **F-041**) mà không kêu oan SQL. Bộ ca **10 → 18**: mười ca cũ xanh **không đổi một kỳ vọng nào**,
+  tám ca mới, trong đó ca *SQL có `DELETE` không bị kêu oan* và ca *hai vùng cùng vi phạm thì nêu cả
+  hai* là hai ca không có thì lần sửa sau im lặng ở cả hai chiều (**F-017**). Vùng pha 3 · pha 4
+  **cố ý không thêm** — thư mục chưa tồn tại, bộ mẫu cho vùng chưa có nội dung là bộ mẫu chưa bao
+  giờ được chấm. `check-phase-boundary.ignore` **không thêm mục nào**: ignore là cho một chỗ trích
+  cố ý, không phải để im một lớp lỗi. ⇒ **`P2-03` mở `docs/product/2-db/` với cổng đã sẵn sàng.**
+  Gate xanh, `verify.sh` chạy thật (2026-09-24). Mô tả dài: `work/backlog_DB.md` →
+  [P2-02](backlog_DB.md#p2-02)
+- [x] P2-01 **Ranh giới và từ vựng của cả pha 2 có owner: `docs/decisions.md` ADR-050** — **L2**,
+  xong 2026-09-22, bước **1/14** của pha 2. Bảng năm tầng nay có **bốn** cột: *pha 2 nợ cái gì* ·
+  *chấm bằng gì* · **cái gì KHÔNG phải biên nhận** — cột thứ ba tồn tại vì chỗ hỏng thật là một
+  bước dựng xong rồi tự khai đạt bằng *"đã tạo xong bảng"*. Cộng **ba luật khi dịch** (không tự hạ
+  tầng · mệnh đề tầng 1 **vẫn** có câu truy vấn của nó · một câu truy vấn chưa bao giờ ra khác 0 là
+  một câu **chưa được chứng minh**) và **ba câu pha 2 không được viết ra** (endpoint/chữ ký ·
+  route/component · cơ chế vận hành), mỗi câu kèm **viết gì thay vào**. Lane **`prompt/DB/`** dựng
+  cùng lượt và `prompt/DB/*` vào Gate 1b (`scripts/check-links.sh`) — chứng minh bằng một đường dẫn
+  cố tình sai ⇒ gate **đỏ**, sửa lại ⇒ **xanh** (**F-007**), bộ ca cũ vẫn xanh. **Một chỗ dọn phát
+  sinh giữa lượt, scope mở rộng có khai báo:** ADR-050 nhận quyền sở hữu bảng năm tầng ⇒ **§7 của
+  kế hoạch pha 2 thôi giữ bản chép và chỉ còn trỏ** (**F-001**; số hiệu ba luật giữ nguyên 1·2·3
+  nên mọi pointer *"kế hoạch §7"* vẫn đọc được). **Không** file nào dưới `docs/product/2-db/` tồn
+  tại sau lượt này — thư mục ấy vẫn là của `P2-03` (**ADR-035** luật 2). Ba chỗ **ADR-049** để lại
+  cho chủ repo **không bị trả lời hộ**. ⇒ **`P2-02` và `P2-03` hết bị chặn.** Gate xanh, `verify.sh`
+  chạy thật (2026-09-22). Mô tả dài: `work/backlog_DB.md` → [P2-01](backlog_DB.md#p2-01)
+- [x] T-082 **Món nợ trạng thái scope lần thứ BA, và lần thứ SÁU một phiên song song nhặt việc của
+  phiên khác** — **L1**, xong 2026-09-22. Commit `04c5a64` (2026-09-20, subject ` chuyển sang pha
+  2`) gộp việc của **ba** phiên vào một commit và mang theo `work/scope.txt` **còn nguyên hai khối
+  pattern** (T-081 và ADM-21) ⇒ **Gate 3 đỏ ở MỌI lượt** suốt hai ngày (**F-020** · **ADR-043**).
+  Lượt này gỡ **đúng hai khối ấy** — cả hai task đã `Done` và đã nằm **trong chính commit ấy**, nên
+  cả hai là *"khối ghi rõ đã commit"* — và **không** dùng `git checkout --`, vì trên file này mọi
+  lệnh khôi phục đều xoá scope của mọi phiên (**F-014**). `work/findings.md` **F-025** nhận khối
+  *LẦN THỨ SÁU*: cái mới so với năm lần trước là cú nhặt **tự đẻ ra một cổng đỏ**, chứ không chỉ đặt
+  nội dung vào sai commit; subject cũng nói ít hơn mọi lần trước — không nêu task nào, và mở đầu
+  bằng một dấu cách (**F-031**). Không nội dung nào mất: cả mười bốn file vào git nguyên vẹn.
+  ⚠️ **Ngưỡng §3.8 đã vượt từ lâu** — hai đường vá (`pre-commit` so tập đang stage với khối
+  `work/scope.txt`, hoặc `git worktree` riêng cho mỗi phiên) vẫn **thuộc quyết định chủ repo**,
+  không phiên nào tự dựng. Lượt này **cố ý không khai scope**: đường duy nhất xoá được nợ là cây
+  làm việc comment-only rồi đưa `work/scope.txt` vào khối commit (`CLAUDE.md` §6.1), đúng cách
+  **T-047** và **T-078** đã làm. Gate xanh (2026-09-22). Chi tiết: [T-082](#t-082)
+- [x] T-081 **Pha 2 có sổ mô tả riêng: `work/backlog_DB.md`, mười bốn entry `P2-01`…`P2-14`** —
+  **L1**, xong 2026-09-20, chủ repo yêu cầu trong phiên (*"hãy làm backlog_db.md"*). Kế hoạch pha 2
+  (`master_plan/DB_master_plan_banh_cuon_ba_thanh.md` §5, **ADR-049**) đã chốt sổ ấy phải tồn tại
+  và phải có **một hàng ở `CLAUDE.md` §2 trong cùng thay đổi dựng nó**; trước lượt này mười bốn
+  bước chỉ có một dòng bảng ở kế hoạch §6, không bước nào có *vì sao có task này* và *không làm thì
+  mất gì*. Mỗi entry đủ **bảy khối** của khuôn L1+ cộng *Bẫy hay sửa nhầm nhất*; *Vì sao* dẫn bằng
+  dòng thật ở `quality/invariants.md` · `04-yeu-cau-du-lieu.md` · `architecture.md` ·
+  `shop-facts.md`; *Không làm thì mất gì* viết bằng **hậu quả ở quán**. **Ranh giới bốn sổ giữ
+  nguyên** (**ADR-036** · **ADR-034**): trạng thái chỉ ở file này · thứ tự, mức và đầu ra kiểm
+  chứng được chỉ ở kế hoạch §6 · sổ mới chỉ giữ **mô tả** — và **không một dòng lược đồ nào**, vì
+  owner của lược đồ ra đời ở `P2-04` (**ADR-035**). Sáu chỗ đang chặn được kể theo bước (`S-5` ·
+  `S-6` · `F-034` · `F-036` · `F-037` · `F-038`), mỗi chỗ ghi **ai gỡ**, không bước nào được suy
+  hộ (**§3.5**). `CLAUDE.md` §2 thêm một hàng, cây thư mục kể tên file mới, và hàng pha 1 sửa
+  `P1-01`…`P1-12` → `P1-01`…`P1-14` — phép đếm cũ hết đúng từ 2026-09-07 (**ADR-042** ·
+  **ADR-044**). **Chỉ `P2-01` có dòng *Ready***, đúng luật 1 của sổ mới (**F-012**). Gate xanh
+  (2026-09-20). Chi tiết: [T-081](#t-081)
+- [x] ADM-21 **Lời `C36` đã về owner: mỗi lần đổi người Ở QUẦY là một mốc có giờ** — **L2**, xong
+  2026-09-20. Prompt: [`prompt/AD/ADM-21-loi-c36-ve-owner-L2.md`](../prompt/AD/ADM-21-loi-c36-ve-owner-L2.md),
+  viết ngay trong lượt nhận việc. Chủ quán trả lời `C36` ngày 2026-09-20 (ADM-53 hỏi nhân thể);
+  lượt này **chuyển lời ấy về owner** và **không** thiết kế gì theo nó (chỗ cất là pha 2 —
+  **ADR-035**). Dữ kiện đầy đủ ⇒ `master_plan/shop-facts.md` **§8.8** (mục mới) + một dòng nhật ký
+  §7.1; hành vi ⇒ `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6; kiến trúc ⇒
+  `docs/product/1-system-design/architecture.md` **§14.5** (**ADR-013**: mục riêng có nhãn, và cả
+  hai chỉ **trỏ** về §8.8 — **F-001**). ⚠️ **Lời chốt phủ TRẠM `quay`, không phủ năm trạm** — đủ
+  cho luật quyền huỷ / hoàn tiền (nó sống ở quầy — **ADR-016**), không đủ cho mức 1 của §8.7. Ba vế
+  chủ quán không chạm tới thành mã riêng, không thành suy luận (**§3.5** · **F-004**): **U-055**
+  (bốn trạm ngoài quầy) · **U-056** (ai khai cái mốc) · **U-057** (vế *ai bấm* của hai cửa ghi
+  **ngoài** quầy — §6.7 · §6.17, thứ `quality/invariants.md` **I-012** đòi). ⇒ chỗ chạm thứ hai của
+  `architecture.md` §14.3 **hết rỗng**; số **6** của §8.6 và vế *thiếu người* của **ADM-04**
+  **chuyển chủ** từ `C36` sang `U-055`; vế *ai* của **ADM-50** hết chặn ở cửa POS, còn chặn ở hai
+  cửa kia. `C36` đã gạch khỏi `work/admin-questions.md` §3. **Loại 3 của lane admin nay RỖNG.**
+  Gate xanh (2026-09-20)
+- [x] ADM-53 **Hai lời chủ quán chốt 2026-09-01 đã về owner — và `C36` có lời** — **L1**, xong
+  2026-09-20, **nhánh B** của *Acceptance* (chủ quán trả lời được trong lượt). Ba câu hỏi, ba lời:
+  **Đ-4** — mảng con người làm **cả ba mức** (trực trạm · chấm công · tính lương) ⇒
+  `master_plan/shop-facts.md` **§8.7** mới + một dòng nhật ký §7.1 + hai khối có nhãn ở
+  `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6 và `docs/product/1-system-design/architecture.md`
+  **§14.4** (**ADR-013**, và cả hai chỉ **trỏ** về §8.7 — **F-001**). **Đ-2** — thứ tự làm, cộng vế
+  mới: lane admin chạy **SONG SONG pha 2 ở nghĩa THU LUẬT**, thi công thì vẫn đi sau (**ADR-031**
+  không bị lật) ⇒ mục *[Thứ tự làm giữa lane admin và các pha](backlog.md#thu-tu-lane)* của file này, **không**
+  vào `shop-facts.md` (nó là dữ kiện xếp lịch của repo — **ADR-001**). **`C36`** hỏi nhân thể cũng
+  có lời — *có, ghi cả mốc đổi người ở quầy, ai vào ai ra lúc mấy giờ* — nhưng lượt ADM-53 chỉ được
+  hỏi và ghi lại, **chưa chuyển về owner**: chuyển nó là **ADM-21**, thiết kế tầng quyền theo nó là
+  **P1-07**. *(**ADM-21 đã chạy ngay sau, cùng ngày** — lời `C36` nay ở `master_plan/shop-facts.md`
+  **§8.8**; đọc ở đó, không đọc ở dòng này.)* ⇒ `work/admin-questions.md` §1 co lại còn một bảng lịch sử; **ADM-21 đổi loại
+  1 → 3** và thành việc nhận được ngay duy nhất của lane; ba loại đo lại còn **19 · 8 · 1**. Gate
+  xanh (2026-09-20)
+- [x] T-080 **Pha 2 có kế hoạch còn sống: mười bốn bước `P2-01`…`P2-14`, và một cổng mỗi ô kèm
+  cách chứng minh** — **L2**, xong 2026-09-20, chủ repo yêu cầu trong phiên (*"chuyển sang pha 2,
+  hãy làm master plan…"*). `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (**mới**) chép hình
+  dạng kế hoạch pha 1 (**ADR-033**): sáu cột, **không** cột *Trạng thái*, từ vựng bắt buộc ở §7 —
+  **năm tầng của pha 1 dịch sang pha 2** thành ràng buộc · giao dịch · một đường ghi · chỗ cất vết ·
+  câu truy vấn ra 0 dòng — và cổng §9 mỗi ô một cách chứng minh, **không tick ở kế hoạch** (chỗ ký
+  là file cổng do `P2-13` sinh ra). **Ba chỗ cố ý để lại cho chủ repo**, ghi thẳng ở §8: lược đồ
+  admin đi cùng pha 2 hay theo lane của nó · ba hàng `CLAUDE.md` §2 đổi ở ba bước hay đổi hết ở
+  lượt mở thư mục · nhà cho **F-034**. **Không thi công pha 2**: không thư mục `docs/product/2-db/`,
+  không một tên bảng, không một dòng lược đồ (**ADR-035** luật 2 — thư mục ra đời cùng dòng nội
+  dung đầu tiên, ở `P2-03`). Quyết định hình dạng: **ADR-049**. Gate xanh (2026-09-20)
+- [x] T-079 **Ô 10 của cổng pha 1 tick — cổng lên 10/10** — **L1**, xong 2026-09-20. Chủ repo chốt
+  **đường 2** trong ba đường `F-040` ghi (**ADR-048**): ba chỗ `architecture.md` §3.1 · §4 · §12.2
+  viết lại bằng **ngôn ngữ tầng**, giữ nguyên nghĩa, bỏ tên cột · `bảng.cột` · hợp đồng API bốn
+  dòng; **§12.3 không đụng tới** vì nó là ngoại lệ tự khai trong thân mục. Vế cổng: `PAT_API` của
+  Gate 1d nới cho endpoint **không** mở đầu bằng `/`, kèm **hai** ca hồi quy (ca 9 đòi đỏ trên đúng
+  bốn dòng cũ — chỗ chúng còn sống sau khi bị xoá; ca 10 đòi xanh trên văn xuôi pha 1, để lần nới
+  sau không khép mẫu lại cho êm), và `scripts/check-phase-boundary.ignore` **gỡ hẳn** mục duy nhất
+  của nó — chuỗi nó che không còn tồn tại, mà lý do nó ghi thì từ đầu đã sai mục (**F-041**).
+  **Nghiệm thu:** bộ mẫu đã nới trên cả tám file pha 1 ⇒ **rỗng** (trước: 4 dòng) · `/api/` và
+  `/vN/` ⇒ **rỗng** · `bảng.cột` trong cả pha 1 ⇒ **rỗng** · từ khoá ràng buộc SQL còn **2**, cả
+  hai ở §12.3 · `./scripts/check-phase-boundary.test.sh` **10/10 ca** · `./scripts/gate.sh` xanh.
+  **Pointer sửa trong cùng lượt** (CLAUDE.md §7.2): kế hoạch §9 · bản kể lại lượt P1-12
+  (`docs/work-flow-session/`) · hai pointer trỏ tiêu đề §4 ở `work/backlog_AD.md`. **F-040** ·
+  **F-041** đóng. Chi tiết: [T-079](#t-079)
+- [x] T-078 **Chủ quán trả lời BỐN câu trong một lượt — `U-042` · `U-043` · `U-051` · `U-052` — và
+  hai lời đáp mở `U-053` · `U-054`** — **L1**, xong 2026-09-16. Nguyên văn từng lời và hệ quả ở
+  `docs/product/99-unknowns.md` → *Đã có lời giải* (bảng 2026-09-16). **Bốn lời chốt:** bốn bàn mới
+  đánh số **nối tiếp 12–15** ⇒ danh sách bàn là **1…15**, `ADR-027` và **ADM-03** hết hở · web ngừng
+  nhận đơn **không do đồng hồ**: máy **báo**, **POS quyết**, mở lại bằng **nút** · mục tổng quan bày
+  **thời gian nhập** · **tổng đã dùng** · **số thiếu = tổng đã nhập − tổng đã dùng** (máy trừ hộ,
+  vẫn không có ngưỡng — `U-045` đứng nguyên) · **người đứng quầy không đi giao** ⇒ *"bất cứ ai"* của
+  `U-049` hẹp lại còn **ba** vai. **Chỗ đắt nhất của lượt này là `U-043`:** lời chủ quán **lật** hai
+  câu đã viết trước khi có nó — luật 1 của `05-realtime-va-du-phong.md` §3 (*phán quyết đứng ở phía
+  hệ thống*) và câu *"có mạng lại thì ba kênh kia mở lại ngay"* ở *Verification* của `I-008`. Cả hai
+  sửa theo lời chốt trong cùng thay đổi, và **lý do cũ không bị xoá** mà thành câu hỏi có tên:
+  `U-053` — ai dừng khi quán **mất mạng hẳn**, lúc POS không thấy thông báo và không bấm được gì.
+  Quyết định: `docs/decisions.md` **ADR-047**. Mệnh đề `I-008` **không đổi một chữ** — thứ đổi là
+  cơ chế, và cơ chế chưa bao giờ thuộc mệnh đề ấy. **Pointer sửa trong cùng lượt** (CLAUDE.md §7.2):
+  `master_plan/shop-facts.md` §1 · §3 · §6.11 · §6.25 · §8.4 · §8.6 · §7.1 (bốn hàng mới) ·
+  `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §8 · `quality/invariants.md` **I-008** ·
+  `03-bao-ve-invariant.md` §3 · `07-cong-chat-luong-pha-1.md` §4 · §7 · §8 ·
+  `work/admin-questions.md` (`A7` · `A10` · `B21` · `C23`) · `work/backlog_AD.md` (ADM-03 · ADM-04 ·
+  ADM-13 · ADM-21). **Nghiệm thu:** `./scripts/gate.sh` xanh (Gate 1c: 0 mã đóng bị nhắc như còn
+  mở) · `./scripts/brief.sh` in **đúng hai** câu đang mở, `U-053` và `U-054`, và **không** in bốn mã
+  vừa đóng · `grep -rn "U-042\|U-051\|U-052"` trên `docs/product` · `quality` · `master_plan` ·
+  `work` không còn chỗ nào nói chúng đang mở. **Món nợ scope dọn luôn trong lượt này:** bản `HEAD`
+  của `work/scope.txt` mang **73** pattern của những task đã xong (Gate 3 đỏ từ trước lượt này,
+  cùng hình **F-020** · **ADR-043**) — cây làm việc nay comment-only và file vào khối commit.
+- [x] T-077 **`docs/product/99-unknowns.md` có mục lục — file hơn bốn trăm dòng, ba tiêu đề `###`,
+  không có đường vào nào ngoài cuộn tay** — **L1**, xong 2026-09-16. Mục lục **đứng trên** tiêu đề
+  `## Unknowns` có chủ ý: `scripts/brief.sh` và `scripts/check-doc-status.sh` đọc từ dòng ấy trở
+  xuống và coi **một gạch đầu dòng trong vùng đang mở là một câu đang mở** (ADR-007 · **F-008**),
+  nên mấy dòng mục lục đặt nhầm chỗ sẽ thành câu hỏi ma. Neo `<a id="…">` thêm cho `### Đang mở`
+  và cho bốn gạch đầu dòng đang mở (`u-042`, `u-043`, `u-051`, `u-052`), cùng lối viết neo đã có
+  của file (`cach-viet`, `da-co-loi-giai`). Mục *Cách viết một câu ở đây* — owner của hợp đồng
+  hình dạng — mọc thêm một luật: **mở hay đóng một câu thì sửa mục lục trong cùng thay đổi ấy**,
+  vì mục lục là bản sao thứ hai của danh sách đang mở và **không cổng nào chấm nó**. Nghiệm thu:
+  `./scripts/gate.sh` xanh, và `./scripts/brief.sh` in **đúng bốn** câu đang mở y như trước thay
+  đổi — hợp đồng máy đọc không xê dịch.
+- [x] P1-12 **Ranh giới pha được ĐO lần đầu trên cả pha 1 — và câu trả lời là KHÔNG: ba chỗ lọt ra,
+  chỉ một trong ba có tên trong ngoại lệ** — bước 12/14 (kế hoạch §6), **L1**, tiền đề `P1-11` ✔.
+  Nhận và xong 2026-09-16. Đầu ra: **ô 10** của
+  `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §7 — mang toàn bộ phép đo, và **để
+  trống kèm mã** thay vì tick. **Tập bị rà nêu đích danh**: tám file `docs/product/1-system-design/*.md`,
+  **2385** dòng, không đếm `work/` hay `prompt/maintenance/` (**F-018**). **Năm lượt lọc, mỗi lượt
+  in cả hai con số** (**F-017**): bộ mẫu **nguyên văn** của Gate 1d chạy trên cả tám file (1 dòng
+  khớp, và dòng ấy đã nằm trong ignore) · động từ HTTP + đường dẫn **không** mở đầu bằng `/` (**4**)
+  · ràng buộc SQL (**3**) · `snake_case` + `bảng.cột` (**14 + 1**) · pha 4 route/component (**12 + 0**).
+  **Lượt pha 4 là chỗ chứng minh bộ lọc không tự rỗng**: mười hai dòng nó bắt được đều là chính
+  những câu **tự khai ranh giới** — bộ lọc chạy, nó chỉ không có route nào để bắt. **Ba nhóm phân
+  loại, không chỗ nào để lửng**: (1) ngoại lệ **có tên** — `architecture.md` §12.3, kể ra kèm
+  **ranh giới của chính nó** (câu ⚠️ ấy khai đúng *tên bảng, tên cột* và đúng **một** mục; nó
+  **không** phủ endpoint); (2) **định danh nghiệp vụ pha 0 sở hữu, không phải tên bảng** —
+  `qr_table` · `staff_pos` · `phone_preorder` là kênh bán, `trang_banh` · `gap_banh` · `don_ban` là
+  trạm, cả sáu có nhà ở `master_plan/shop-facts.md` §5 · §3; (3) **chỗ lọt ra thật — ba chỗ, tất cả
+  ở `architecture.md`, bảy file kia sạch**: §12.2 một **hợp đồng API bốn dòng** (động từ, đường dẫn,
+  tên trường thân yêu cầu, tham số truy vấn) · §3.1 `UNIQUE` trên generated column kèm **chỉ định**
+  phải gồm trạng thái `billing` · §4 `staff.role`. **Cả ba `git blame` về `cf8bd83`, 2026-08-31 —
+  TRƯỚC ADR-035** (2026-09-04, P1-01): `architecture.md` viết trước khi có ranh giới, và lúc P1-01
+  dựng ranh giới thì **chỉ §8** được viết lại cho khớp. Nên chúng không trả về một bước pha 1 nào —
+  chúng là quyết định của **chủ repo**: **F-040**, ba đường ra ghi sẵn, **không chọn hộ**. Cộng
+  **F-041**: `scripts/check-phase-boundary.sh` **im hoàn toàn** trên cả tập vì mẫu `PAT_API` đòi dấu
+  `/` **ngay sau** động từ, mà §12.2 viết `staff/debts` chứ không `/staff/debts` — một dấu gạch chéo
+  thiếu ở đầu chuỗi là toàn bộ khoảng cách giữa *bắt được* và *không thấy gì*; và dòng ignore duy
+  nhất ghi lý do là *"§12.3"* trong khi dòng nó che nằm ở **§12.2**. **Lần thứ ba trong tuần một
+  script đọc văn bản bằng phép lọc hẹp hơn thứ nó phải hiểu** (**F-035** · **F-039**). **Pointer rà
+  lần cuối**: `check-links.sh` xanh, **196** pointer (số chưa lọc), **không** pointer trỏ thư mục
+  (Gate 1b mù với đuôi `/` — **F-018**), neo `#` chỉ có `](#top)` và bốn file dùng nó đều tự định
+  nghĩa `id="top"`. **Lượt này không sửa một chữ nào** trong bảy file nội dung pha 1 và trong
+  `scripts/`: P1-12 là **phép đo**, không phải lượt dọn (`work/backlog_SD.md` → P1-12 bước 5), và
+  `CLAUDE.md` §3.8 cấm dựng cổng mới ở lần đo đầu tiên. **Ô 10 KHÔNG tick, cổng vẫn 9/10, pha 1
+  CHƯA đóng** — bảng *Sáu pha* của `docs/product/00-index.md` vì thế **không đổi**: ký là quyền chủ
+  repo, đúng như §8 của chính file cổng đã ghi. Mô tả dài: [P1-12](backlog_SD.md#p1-12) → `work/backlog_SD.md`.
+- [x] T-073 **Chủ quán đóng `U-044`: hoàn tiền trả lại bằng gì cũng KHÔNG có luật cứng — POS quyết
+  từng ca, và hệ quả là `I-021` phải viết lại** — **L1**, nhận 2026-09-08, đóng 2026-09-16. Nguyên
+  văn lời chủ quán: *"tuỳ vào tình hình thực tế, pos quyết định."* ⇒ khách đã **chuyển khoản** mà
+  cần hoàn thì quầy đưa **tiền mặt trong két** hay **chuyển khoản lại** đều được; không đường nào
+  mặc định, không đường nào bị cấm — cùng hình dạng quyền hoàn tiền `shop-facts.md` §6.4 (2026-08-30)
+  và `U-049` (2026-09-08). **Lời chốt vào owner:** `master_plan/shop-facts.md` §6.4 (một gạch đầu
+  dòng mới), §7.1 (một hàng nhật ký), §8.5 (ô ⚠️ — câu *"giữa buổi không ai lấy tiền ra"* vẫn đúng
+  nguyên văn, nhưng nay có một đường tiền **rời két** không phải một lần nộp bớt). **`U-044` đóng**
+  ở `docs/product/99-unknowns.md`, gạch đầu dòng chuyển hẳn xuống *Đã có lời giải* (không gạch
+  ngang tại chỗ — hợp đồng của mục ấy). **Việc đắt nhất của lượt không phải chép lời, mà là mệnh đề
+  tiền:** `quality/invariants.md` **I-021** tự khai từ 2026-09-04 rằng luật *không có khoản rút giữa
+  buổi* mà đổi thì công thức **thiếu một hạng tử** và mệnh đề phải **viết lại, không phải viết
+  thêm** — lời chốt này làm đúng điều ấy, nên I-021 nay mang **hai hạng tử** cho lần hoàn **chéo
+  phương thức** (trừ *hoàn tiền mặt cho khoản đã thu chuyển khoản*, cộng *hoàn chuyển khoản cho
+  khoản đã thu tiền mặt*), kèm **hai kịch bản nghiệm** mới đo hai chiều và một ca *thiếu phương
+  thức ⇒ ngày chưa đối soát xong, không phải lệch*. Hoàn **cùng** phương thức không sinh hạng tử
+  nào — *doanh thu tiền mặt* **giữ nguyên nghĩa**, đó là chỗ **ADR-046** chọn đường và ghi lại ba
+  đường bị bác (định nghĩa lại doanh thu tiền mặt theo phương thức trả ra · coi hoàn tiền mặt là
+  một khoản *rút giữa buổi* — lật ngược §8.5 · cấm hoàn chéo cho gọn công thức — lật ngược chính
+  lời chủ quán). **Một chỗ là SUY RA, không phải lời chủ quán** (**F-004**): vết hoàn tiền phải ghi
+  thêm **phương thức trả lại** — câu thứ năm cạnh *bao nhiêu · đơn nào · ai bấm · lý do* — vì không
+  có nó thì hai hạng tử mới không mở ra được thành danh sách từng khoản (`architecture.md` §6.4 luật
+  2); chỗ này ghi rõ *cách đọc* ở §6.4 và ở điểm 3 của ADR. **Năm chỗ chép/trỏ vào câu hỏi sửa
+  trong CÙNG lần sửa** (`CLAUDE.md` §7.2): `architecture.md` §6.4 (dòng *hoàn tiền trong ngày* +
+  một đoạn tách theo phương thức) · §7 (hàng *Hoàn tiền*) · §8 (hàng *Vết hoàn tiền*) ·
+  `06-so-rui-ro.md` (`RR-3` bỏ ô ⚠️ *chưa có luật*, §1.3 từ **hai mã** còn **một**, §2 hàng *Chủ
+  quán*) · `SD_master_plan…md` §8 (hàng `U-044` gạch ngang). **Một chỗ CỐ Ý không đổi trạng thái:**
+  ô số **9** của `07-cong-chat-luong-pha-1.md` — nó ghi *trả lời tại mốc ký 2026-09-08*, tức lịch
+  sử, nên lượt này chỉ **thêm** lời *"câu này đã có lời ngay trong ngày"*, không viết lại phán quyết
+  của mốc ấy. **Chỗ ADR KHÔNG chốt, và nó là chỗ hở thật:** một lần hoàn **chuyển khoản** là tiền
+  **ra**, trong khi §6.10 hôm nay chỉ đối chiếu phần chuyển khoản với **tin nhắn báo có** — tiền
+  **vào**; chưa lời nào nói nó đối chiếu với nguồn gì. Không chặn bước nào của pha 1, phải chốt
+  trước khi dựng màn đối soát. **Không làm:** không đặt luật cho POS chọn phương thức nào, không
+  đụng `I-014` (nó nói về **nguồn** doanh thu, không về phương thức), không sửa `shop-facts.md`
+  §6.10, không mở câu hỏi mới. **Va chạm phiên song song, đo được:** commit `66798b8` của phiên
+  `T-076` đã **nhặt** phần đã viết của lượt này (`shop-facts.md`, `99-unknowns.md`, `work/backlog.md`)
+  vào subject của nó — **lần thứ tư của `work/findings.md` F-025**, đã có mục ghi sẵn ở đó, lượt này
+  **không** ghi lần thứ năm chồng lên. Gate xanh 2026-09-16 (`check-doc-status` 1922 khối, 50 mã
+  U-XXX; `./scripts/gate.sh` → *Verification passed*)
+- [x] T-072 **Chủ quán đóng `U-048` — KHÔNG suất nào bưng kèm canh, nên con số khách chọn trên
+  dòng canh là TỔNG số bát, và chữ *kèm sẵn* của lời chốt hôm trước chỉ còn nghĩa *không tính
+  tiền*** — **L1**. Nguyên văn: *"mỗi suất bếp sẽ không bưng kèm theo canh. bếp bưng canh như nào
+  dựa vào lựa chọn thực tế của khách."* Câu hỏi có **hai** vế và lời đáp đóng cả hai bằng một
+  đường: phần kèm sẵn là **0 bát**, nên hai cách đọc của vế thứ hai (*tổng* hay *phần thêm*) **trùng
+  nhau** — khách gọi 1 suất đầy đủ + *canh ×2* thì bếp múc **đúng 2** bát, không phải 3. Không chọn
+  canh ⇒ **0 bát**, và đơn ấy **không có việc `canh` nào** xuống bếp; việc **nước chấm** thì vẫn
+  còn, vì nó là việc cấp đơn của mọi đơn. **Chỗ đáng nhất của lượt này là một lời chốt PHỦ một cách
+  đọc của lời chốt cùng ngày**: `U-046` được ghi lại bằng chữ *"canh bánh cuốn bưng kèm sẵn không
+  tính tiền"*, và câu hôm nay bỏ vế *tự động bưng* trong khi giữ nguyên vế *không tính tiền* — nên ô
+  **0đ** ở `master_plan/shop-facts.md` §4.2 · §4.3 **không đổi một chữ**, còn §4.5 · §5.3 thì đổi.
+  Đây là **lời chốt**, không phải suy luận của phiên (**F-004**): chủ quán nói thẳng *"không bưng
+  kèm theo"*. **Năm chỗ sửa trong cùng lần sửa** (`CLAUDE.md` §7.2): §4.2 (thêm câu cảnh báo cách
+  đọc chữ *kèm sẵn*) · §4.5 (hai luật, thay khối ⛔) · §4.9 dòng 10 · §5.3 (ví dụ `×?` → `×2`, và
+  dòng hoá đơn thứ hai để con số ấy truy được về đâu) · §7.1 (một hàng nhật ký). **Lời đáp này
+  KHÔNG mở câu hỏi nào mới** — khác ba lượt liền trước nó, nhưng đó là quan sát của phiên chứ không
+  phải một quy luật (**F-003**). **Hai chỗ trỏ vào `U-048` sửa theo:**
+  `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §1 (file CHƯA COMMIT của phiên P1-11 —
+  sửa vì Gate 1c chấm `docs/product/`, và chỗ ấy nay đọc được thêm một điều: một đơn khách **không**
+  chọn canh thì bảng sáu việc của Scenario 1 **đúng**, nó chỉ không cho thấy dòng canh **khi** khách
+  có chọn) · `work/findings.md` **F-036** vế *canh* hết bị chặn — phép đối chiếu cho vế ấy nay viết
+  được, và lượt này **không** viết nó (đó là việc 1 của F-036, thuộc bước sửa hai hàng P1-05 ·
+  P1-06). **Không làm:** không đặt giá cho bát canh, không cho canh nhận nhân, không đổi một con số
+  nào trong bốn hàng suất của §4.5, không sửa lời `I-004` ở `quality/invariants.md` (F-036 đã chốt
+  đó là việc của pha 0), không chạm `U-051` · `U-052` của hai phiên khác. **Việc của lượt này đã
+  nằm trong commit `66798b8` dưới subject `T-076`** — phiên song song nhặt cả ba file chưa commit
+  (`shop-facts.md` · `99-unknowns.md` · `backlog.md`), đúng hình **F-025** lần thứ tư, và F-025 đã
+  ghi lại ca ấy. Gate xanh — `./scripts/gate.sh` exit 0, `check-doc-status` xanh, `./scripts/brief.sh`
+  không còn in `U-048` (2026-09-08, dọn nốt 2026-09-16)
+- [x] T-075 **Chủ quán đóng `U-050` — NGƯỜI ĐỨNG QUẦY gánh trạm của người đi giao, và khoảng trống
+  ấy KHÔNG là *thiếu người*: cả hai vế trong một câu** — **L1**. Nguyên văn: *"pos gánh, không thiếu
+  người vì đi ship luc quán vắng."* **(1) Ai gánh:** trạm `quay` **kiêm** trạm bị bỏ trống tới lúc
+  người kia về ⇒ câu *"ba trạm đầu là trạm riêng, không kiêm sang trạm khác"* của
+  `master_plan/shop-facts.md` §3 nay có **một ngoại lệ có tên**, và hai đường ra kia mà `U-050` liệt
+  kê lúc còn mở — quán **dừng** trạm ấy, hoặc **chủ quán** đứng vào — đều **không** phải đường chủ
+  quán chọn. **(2) Thiếu người:** khoảng trống do đi giao **không** tính vào số **7** của §8.6 ⇒ số 7
+  hết đứng trên một câu về việc đi giao, nó chỉ còn đứng trên **C36** (*ai đang trực trạm nào*), đúng
+  một câu. **Chỗ KHÔNG được đọc rộng ra (F-004):** *"vì đi ship lúc quán vắng"* là **lý do** chủ quán
+  đưa ra, **không** phải luật cấm giao lúc đông — không lời nào nói máy chặn hay cảnh báo một chuyến
+  giao lúc quán đông, nên đừng viết luật ấy.
+  **Chỗ để hở ⇒ `U-052`:** lời *"pos gánh"* **va** chính lời chốt `U-049` bảy ngày trước — người đi
+  giao là *"bất cứ ai"* trong bốn vai, **kể cả người đứng quầy**; lúc ấy không còn POS ở quầy để
+  gánh. Không suy hộ (**F-004**): ba đường ra (quầy không bao giờ đi giao ⇒ *"bất cứ ai"* hẹp lại
+  còn ba vai · chủ quán đứng vào · `quay` để trống) đều là luật mới. `U-052` chạm việc **xếp ca**
+  (ADM-21), **không** chạm số 7 của mục tổng quan.
+  *Va chạm phiên song song:* mã là **T-075** vì `T-072`·`T-073`·`T-074` đã có chủ (**F-014**), và
+  câu mới phải đổi từ `U-051` sang **`U-052`** vì phiên T-074 mở `U-051` trong cùng file, cùng lúc —
+  **F-014 lần thứ hai trong một ngày, lần này trên một mã `U-XXX` chứ không phải `T-XXX`**. Thay đổi
+  của lượt này ở `shop-facts.md` · `99-unknowns.md` · `backlog.md` cũng đã bị commit `66798b8` của
+  phiên khác cuốn đi (**F-025**, lần thứ tư).
+  *Nghiệm thu:* `./scripts/gate.sh` xanh; `./scripts/brief.sh` **không** in `U-050` ở *Đang mở* và
+  in `U-052`; `U-050` nằm ở *Đã có lời giải* với nguyên văn lời chủ quán.
+  Ghi ở: `master_plan/shop-facts.md` **§3** · §7.1 · §8.6 (hàng 7) ·
+  `docs/product/99-unknowns.md` · `work/admin-questions.md` (A10 · C23) ·
+  `work/backlog_AD.md` (ADM-04 · ADM-21). (2026-09-15)
+- [x] T-074 **Chủ quán đóng `U-045` — chữ *thiếu* của mục tổng quan KHÔNG do máy nghĩ ra: không có
+  ngưỡng cho thứ nào, chủ quán tự đọc hai con số rồi tự kết luận** — **L1**, 2026-09-15. Nguyên
+  văn: *"chủ quán tự đọc rôi đưa ra kết luận"* — chủ quán chọn đúng một trong hai đường câu hỏi
+  đưa ra. Hai con số là cặp **mua vào · đã dùng** mà `U-034` chốt 2026-09-06. **Ba thứ lời ấy
+  chốt:** máy **không** giữ ngưỡng nhắc sắp hết cho bất kỳ nguyên liệu nào · máy **không** tự bày
+  chữ *thiếu* / *sắp hết* / không nhắc · danh mục §8.4 **không** mọc cột *ngưỡng*. **Thứ lời ấy
+  giữ nguyên:** §8.4 đứng nguyên ở mức **sổ ghi tay điện tử** — lời chốt đi đường *không* lật
+  ngược nó, nên cửa duy nhất mở lại được mức ấy (`B22`, giá vốn một suất) vẫn chưa ai mở, đúng
+  hình dạng *"máy không gom, người gom"* (§5.4). **Chỗ để hở ⇒ `U-051`:** máy không kết luận nữa
+  thì mục tổng quan **bày gì** ở vế nguyên liệu — cặp số của hôm nay cho từng thứ, số còn lại cộng
+  dồn, hay không bày gì (chủ quán tự mở mục nhập hàng ngày) — ba cách đọc cho ba tập con số khác
+  nhau, mà §8.6 chốt **tập con số**. **Một chỗ CỐ Ý không đóng theo:** chỗ hở **đơn vị tính** của
+  danh mục §8.4 chỉ từng nằm chung trong `U-045`; lời chốt này không chạm nó, nên nó về đứng một
+  mình ở câu `B12` (`work/admin-questions.md`) và vẫn là vế chặn của ADM-10 — đừng đọc `U-045`
+  đóng thành *danh mục đã đủ dữ kiện*. **Lane admin:** cùng lời ấy trả lời luôn câu `B21` (*máy
+  nhắc dựa vào cái gì*) ⇒ **ADM-13** mất hẳn nửa *ngưỡng + lời nhắc* và nửa còn lại (con số tồn
+  ước tính) chuyển sang đứng trên `U-051`; **ADM-14** hẹp lại còn đúng vế *người nào bấm nút tạm
+  dừng*, vì máy không còn tín hiệu nào để bấm theo; **ADM-04** vẫn loại 1, vế chặn đổi chủ `U-045`
+  ⇒ `U-051`. Con số ba loại **không đổi** (20 · 8 · 1) — không việc nào sinh ra, không việc nào
+  mất đi. **Không làm:** không tự chọn con số nào cho mục tổng quan, không đặt đơn vị tính hộ cho
+  thứ nào trong mười bốn tên, không mở lại §8.4.
+  *Nghiệm thu:* `./scripts/gate.sh` xanh; `./scripts/brief.sh` in `U-051` ở *Đang mở* và **không**
+  in `U-045`; `U-045` nằm ở *Đã có lời giải* kèm nguyên văn.
+  Ghi ở: `master_plan/shop-facts.md` §8.4 (khối *không có ngưỡng*) · §8.6 (hàng 7) · §7.1 ·
+  `docs/product/99-unknowns.md` · `work/admin-questions.md` (A10 · B12 · B21) ·
+  `work/backlog_AD.md` (ADM-04 · ADM-13 · ADM-14).
+  ⚠️ **Phần sửa tài liệu của task này đã bị commit `66798b8` (subject `T-076`) cuốn theo** trước
+  khi task đóng — lần thứ N của `work/findings.md` **F-025**, hai phiên cùng cây.
+- [x] T-071 **Chủ quán đóng `U-049` — người ĐI GIAO là một trong bốn vai của §3, không phải người
+  thứ năm — nên con số nhân sự thật của quán đóng lại, còn CHỖ TRỐNG người ấy để lại thì không** —
+  **L1**. Nguyên văn: *"1 trong bốn vai trên có thể là bất cứ ai pos sẽ chỉ định."* Hai điều lời ấy
+  chốt: (1) **không có vai thứ năm** — bốn vai của `master_plan/shop-facts.md` §3 cộng chủ quán
+  ngoài năm trạm là hết, *đi giao* không thành trạm thứ sáu và không thêm dòng nào vào bảng ca hay
+  bảng lương; (2) **ai đi là POS chỉ định từng lần**, không luật cứng — cùng hình dạng *POS quyết
+  từng ca* ở §5.4 · §6.24, nên theo §6.10 việc chỉ định phải để lại vết. ⇒ Số **6** của §8.6
+  (*bao nhiêu người đang làm*) nay có nguồn; `C23` chỉ còn hỏi đầu người.
+  **Chỗ để hở ⇒ `U-050`:** lời chốt đi đúng vào nhánh mà chính `U-049` đã cảnh báo lúc còn mở —
+  *"lúc người ấy đi giao, trạm của họ trống"* — mà **không** nói ai gánh chỗ trống ấy, trong khi §3
+  đã chốt `quay` · `trang_banh` · `gap_banh` là **trạm riêng, không kiêm**. Không suy hộ (**F-004**):
+  ba đường ra đều lật một luật ở chỗ khác. Nên số **7** của §8.6 (*đang thiếu người hay không*) vẫn
+  chưa có nguồn, và vế chặn của ADM-04 · ADM-21 **chuyển chủ chứ không mất**: `U-049` ⇒ `U-050`;
+  số ba loại của lane admin **không đổi** (20 · 8 · 1).
+  *Kèm theo, L0:* mọi link `#L` từ `work/backlog_AD.md` sang `work/admin-questions.md` và
+  `docs/product/99-unknowns.md` đã trôi (C24…F55 lệch tới 7 dòng, `U-039`·`U-040`·`U-032` lệch
+  hàng trăm) — chỉnh lại đúng dòng trong cùng lượt (CLAUDE.md §7.2, *theo dấu con trỏ*).
+  *Nghiệm thu:* `./scripts/gate.sh` xanh; `./scripts/brief.sh` in `U-050` ở *Đang mở* và **không**
+  in `U-049`; `U-049` nằm ở *Đã có lời giải* với nguyên văn lời chủ quán.
+  Ghi ở: `master_plan/shop-facts.md` **§3** · §6.7 · §7.1 · §8.6 ·
+  `docs/product/99-unknowns.md` · `work/admin-questions.md` (A10 · C23) ·
+  `work/backlog_AD.md` (ADM-04 · ADM-21).
+
+- [x] T-070 **Gate 7b chặn một khối bàn giao HỢP LỆ vì một "file" tên `\` — và cùng phép lọc ấy
+  đang bỏ qua bảy trên mười file của chính khối đó** — **L1**, mở giữa lượt T-069 (`CLAUDE.md`
+  §3.4), đóng `work/findings.md` **F-039**. `scripts/check-commit-block.sh` đọc transcript **theo
+  từng dòng** và chỉ nhận dòng bắt đầu bằng `git add `. Nhưng `CLAUDE.md` §6.1 đòi **liệt kê từng
+  file**, nên mọi khối thật đều nối dòng bằng `\` — và cổng vì thế **(1) kêu nhầm**, dấu `\` cuối
+  dòng thành một token rồi thành một path "ngoài scope", **(2) chấm sót trong im lặng**, các dòng
+  từ thứ hai trở đi không khớp `git add ` nên không được nhìn thấy lấy một lần. Vế 2 là chỗ đắt:
+  nó mở lại đúng lỗ hổng **F-009** mà Gate 7b sinh ra để bịt — một file lạ nằm ở dòng thứ hai đi
+  qua cổng không ai chấm. **Sửa:** gộp dòng nối `\` **trước** khi tìm `git add ` (khối Python đọc
+  transcript) + một phòng hộ ở tầng shell để token `\` không bao giờ thành path. **Hai ca hồi quy,
+  mỗi ca bắt một vế**: **A7c** (khối nối dòng, mọi file trong scope ⇒ phải **im**) và **A7d** (file
+  ở **dòng thứ hai** ngoài scope ⇒ phải **kêu và nêu đích danh**) — ca A7d là ca mà một bản sửa chỉ
+  lo "hết kêu nhầm" sẽ trượt. **Đo hai chiều**: bỏ bản sửa ⇒ A7c FAIL (mong đợi 0, nhận 2) và A7d
+  không nêu được tên file; lắp lại ⇒ **20/20 ca qua**. **Lần thứ hai trong một ngày cổng này bắt
+  nhầm một khối hợp lệ** (F-035 sáng cùng ngày: hai encoding cho một đường dẫn) — hai nguyên nhân
+  khác nhau, một hình dạng: script đọc văn bản bằng phép lọc hẹp hơn thứ nó phải hiểu, rồi kết luận
+  như đã đọc hết. Bài học ghi trong F-039: khi một cổng bắt nhầm, câu đáng hỏi thứ hai là *nó còn
+  bỏ sót gì bằng chính phép lọc ấy* — ở đây là bảy trong mười file. **Không làm:** không nới lỏng
+  Gate 7b, không đụng ngữ nghĩa pattern (vẫn một chủ, `check-scope.sh --match`), không sửa khối
+  commit của T-069 để né cổng. Mục lục `work/findings.md` đếm lại: **39 finding — 30
+  Fixed/Resolved/Closed, 9 Open** (F-003). Gate xanh (2026-09-08)
+- [x] T-076 **Vế NGƯỜI của `U-041` cuối cùng cũng có tập để trỏ vào — bảng phân vai §3 — và lộ ra
+  rằng con số nhân sự thật của quán CHƯA đóng** — **L1**. *Mã cũ **T-070**, trùng với việc F-039 ngay
+  trên — đổi thành T-076 ngày 2026-09-15 (**F-014**); khối commit bàn giao 2026-09-08 ghi `T-070:` là sai.* Lượt trước chủ quán chỉ nói *"con người
+  đã có"*: nhận là có, nhưng không nói đường ấy **đọc vào đâu**, nên hàng 7 của `shop-facts.md`
+  §8.6 để trống đúng chỗ ấy trong khi hai đường kia đã có tập (nguyên liệu → §8.4, món → §4.9).
+  Lượt này chủ repo chỉ thẳng: tập của vế *người* là **§3** — năm trạm việc gộp thành bốn vai
+  (chủ quán chốt 2026-08-30), cộng chủ quán là vai riêng ngoài năm trạm. `U-041` **vẫn đóng**;
+  đây là đường thứ ba được hoàn tất, không phải một lần mở lại. Hai điều lượt này làm rõ và **không**
+  phải lời chủ quán (**F-004**): số **6** của bảng §8.6 (*bao nhiêu người đang làm*) khác số **7**
+  (*đang thiếu người hay không*) — gộp lại là mất đúng câu chủ quán hỏi; và chữ *thiếu người* **không
+  đồng đều giữa năm trạm**, vì §3 cho `canh` + `don_ban` chung một đôi tay còn ba trạm kia thì riêng.
+  **Chỗ để hở ⇒ `U-049`:** §3 chia bốn vai cho **năm trạm việc**, mà *đi giao* không phải một trạm,
+  còn §6.7 chỉ gọi người đi giao là *"nhân viên quán"* — không lời nào nói đó là một trong bốn vai
+  rời quán hay **người thứ năm**, và hai cách đọc cho hai con số nhân sự khác nhau mà cả nhánh **C**
+  (lương, ca, chấm công) đứng lên. Câu `C23` hỏi **tổng số**, không trả lời vế này — đã ghi cảnh báo
+  ngay dưới C23. Lane admin: **ADM-04 và ADM-21 không còn tách rời được** (vế *thiếu người* của mục
+  tổng quan đứng trên `C36`), số ba loại **không đổi** (20 · 8 · 1).
+  *Nghiệm thu:* `./scripts/gate.sh` xanh; `./scripts/brief.sh` in `U-049` ở *Đang mở*; `U-041` vẫn
+  nằm ở *Đã có lời giải* và bản ghi của nó nay kể cả ba đường.
+  Ghi ở: `master_plan/shop-facts.md` §8.6 · §6.7 · `docs/product/99-unknowns.md` ·
+  `work/admin-questions.md` (A10 · C23) · `work/backlog_AD.md` (ADM-04 · ADM-21).
+
+- [x] T-069 **Chủ quán đóng `U-046` và `U-047` trong một lượt — menu đi từ BỐN lên SÁU dòng, và một
+  trong hai dòng mới KHÔNG sinh một đồng doanh thu nào** — **L1**. Hai đáp án đều là **luật**, không
+  phải con số lẻ. **`U-047`**: *"đó là SỐ LƯỢNG khách gọi món bán rời. số bánh / số giò TRONG MỘT
+  SUẤT là không đổi."* ⇒ suất giò 4 bánh · suất trứng 4 bánh · combo 3 bánh là **hằng số chủ quán
+  nói thẳng** (trước lượt này chúng chỉ là dữ kiện 2026-08-19 chưa ai thử lật), nên §4.5 · §4.6 ·
+  §4.8 giữ nguyên từng chữ — và **giò thành một dòng menu bán rời**, thứ §4.3 chưa từng có.
+  **`U-046`**: *"canh bánh cuốn bưng kèm sẵn không tính tiền nhưng cần có trong menu để khách chọn
+  vì đôi khi 1 suất đầy đủ khách muốn có 2 bát canh, 1 bát cho con và 1 bát cho mẹ."* ⇒ một **dòng
+  menu 0đ có số lượng** — hình dạng chưa bảng nào trong repo có chỗ chứa. Đầu ra ở
+  `master_plan/shop-facts.md`: **§4.2** (hàng *1 bát canh = 0*, để luật 1 §4.6 vẫn cộng được) ·
+  **§4.3** (hai dòng mới) · **§4.5** (hai hàng thành phần, *sáu dòng menu*, bốn hàng cũ nguyên vẹn)
+  · **§4.8** (mười một ca → **mười ba**) · **§4.9** (ba dòng cuối nay có lời) · **§5.3** (dòng
+  `canh ×?`) · hai hàng nhật ký §7.1 · **S-9** §7.2. **Chỗ đắt nhất của lượt là §5.3**: trạm `canh`
+  tới hôm nay là *việc cấp ĐƠN, mọi đơn đều có*, số lượng suy ra bằng `số suất × số thành phần` —
+  lời chốt `U-046` làm phép nhân ấy **hết đúng** cho canh, nên trạm ấy nay có **hai** loại việc
+  trên cùng một đơn (nước chấm: cấp đơn, không số lượng · canh: có số lượng khách chọn). Không sửa
+  chỗ này thì bát canh thứ hai của khách không có đường nào xuống tới bếp. **Ô ⚠ đầu tiên quay lại
+  bảng giá kể từ 2026-08-30**: giá **9.000** của *giò bán rời* là **hệ quả tính từ luật 1 §4.6**
+  (một chiếc giò rời = một thành phần = 9.000), chủ quán **chưa đọc con số ấy thành lời** ⇒ **S-9**,
+  đúng hình dạng `S-1` ngày 2026-08-30 (**F-004**) — ba ô ấy mang dấu ⚠ chứ không được viết như đã
+  chốt. **Năm chỗ trong repo chép chữ *"bốn suất bán"* sửa trong CÙNG lần sửa** (`CLAUDE.md` §7.2):
+  `architecture.md` §6.1 (hai chỗ) · `0-ba/ban-hang/03-lat-cat.md` §3 · `08-scenario.md` ·
+  `work/backlog_AD.md`. Chỗ đáng nhất là **03-lat-cat.md**: câu *"Mọi suất bán đều kèm bánh cuốn"*
+  **thành sai** ngày hôm nay — giò bán rời và canh không kèm bánh cuốn — nên nó được viết lại thành
+  *mọi **SUẤT** đều kèm bánh, còn menu không chỉ có suất*. **Bốn chỗ sửa theo hướng bỏ số đếm cứng,
+  không thay bốn bằng sáu** (**F-018**, cùng đường ADR-042): tài liệu nay đọc *"từng dòng menu ở
+  §4.3"*, nên lần sau menu dài ra thì không chỗ nào phải sửa lại. **Hai chỗ CỐ Ý không sửa:**
+  `docs/product.md` (bản lưu trước khi tách — không sở hữu gì, ADR-014) và hàng nhật ký §7.1 ngày
+  **2026-08-19** (nó ghi đúng cái đã chốt hôm ấy; sửa nó là sửa lịch sử). **Mở `U-048`**: mỗi suất
+  kèm sẵn mấy bát canh, và con số khách chọn là **tổng số bát** hay **số bát thêm** — khách gọi 1
+  suất đầy đủ + *canh ×2* thì bếp múc **2** hay **3** bát; hai cách đọc cho hai số bát khác nhau
+  trên cùng một đơn, và đây là đôi tay đang kiêm cả `don_ban` (§3). Dấu `×?` ở ví dụ §5.3 đứng đó
+  chờ câu ấy, **không** điền số hộ (`CLAUDE.md` §3.5). **Lần thứ tư trong năm ngày một câu trả lời
+  đầy đủ để lộ một câu hỏi mới** (`U-032`→`U-037`, `U-040`→`U-042`, `U-041`→`U-045`, nay
+  `U-046`→`U-048`) — phép đếm, không phải quy luật (**F-003**). **Không làm:** không đặt giá cho
+  bát canh, không suy số bát kèm sẵn, không cho canh nhận nhân (chủ quán không nói gì về nhân cho
+  canh), không đổi một con số nào trong bốn hàng suất của §4.5, không chạm `U-044` · `U-045` của
+  hai phiên khác. Gate xanh — `./scripts/brief.sh` in `U-048`, không còn in `U-046` · `U-047`
+  (2026-09-08)
+- [x] P1-11 **Ba scenario nghiệm thu BA nay đã được diễn qua thiết kế, và cổng sang pha 2 ký 9/10 —
+  cả chín ô kèm lý do, ba chỗ không trỏ được có mã** — bước 11/14 (kế hoạch §6), **L2**, **cổng của
+  cả pha**; tiền đề P1-02 → P1-10 ✔. Đầu ra:
+  `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` (**mới**, một chủ) + **một** dòng vào
+  bảng *Pha 1* của `docs/product/00-index.md` trong cùng thay đổi. **Diễn 41 bước của ba scenario
+  (17 + 14 + 10), cộng 7 bước của một lát thứ tư mà ba scenario không có — một buổi mất kết nối**,
+  lát mà `01-ranh-gioi-he-thong.md` §5 đòi thẳng ở hàng P1-11 (*ba scenario phải đi qua được `PT-1`
+  và `PT-6`*); lát ấy **đi hết, không chỗ nào dừng**. **Tiền cộng lại từ `master_plan/shop-facts.md`
+  §4.2 · §4.4, không đọc con số của scenario** — mười ba dòng khớp **từng đồng**, kể cả ba bậc phụ
+  thu **×1 · ×4 · ×5** (suất trứng ×5 vì quả trứng cũng nhận nhân, suất giò ×4 vì giò **không**
+  nhận). Đây là phép duy nhất bắt được loại **F-022**, và là lý do `I-013` chỉ tới **tầng 3**: không
+  ràng buộc nào đọc được một con số **đến từ đâu**. **Ba chỗ KHÔNG trỏ được — ghi mã, KHÔNG lấp**,
+  đúng luật của bước: **`F-036`** phép đối chiếu hẹp hơn mệnh đề nó nhận giữ (`I-004` việc **cấp
+  đơn** nước chấm · `I-009` vế **ngừng bán**) — và **ô cổng thứ nhất vẫn tick xanh** vì phép chứng
+  minh của nó là *đối chiếu **danh sách mã***, không phải **vế** (cùng họ **F-012**); **`F-037`**
+  khoản **trả trước** có mốc tính tiền (**ADR-040**) mà không có dòng nào trong công thức đối soát
+  để đứng — `02-thoi-gian-ngay-ban.md` §4 giao dòng ấy cho *"P1-04 trở đi"* từ 2026-09-04 và **không
+  bước nào nhận** (cùng họ **F-024** · **F-027**), đường trực tiếp tới `RR-5`; **`F-038`** *"thiếu
+  một trường bắt buộc thì đơn không tạo được"* — luật pha 0 đã chốt (§3.2.4) mà không mệnh đề
+  `I-0xx` nào, không ô bảng bảo vệ nào, không dòng `YC-XX` nào nói, nên **không ô cổng nào** nhìn
+  thấy nó. **Hai chỗ dừng không tính là phát hiện** (`03-bao-ve-invariant.md` §2.2 · §2.3 đã báo
+  trước): **`S-6`** và `I-004` vế **tầng 4**. **Chỗ ký cổng ở file mới §7, KHÔNG ở kế hoạch §9** —
+  kế hoạch nhận **một** khối trỏ sang và mười hộp `- [ ]` của nó ở lại nguyên, vì hai bản tick sẽ
+  trôi khỏi nhau (**F-001** · **F-033**); đúng cách chín hộp cổng BA vẫn `- [ ]` ở
+  `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §12 trong khi chỗ ký là `08-scenario.md`.
+  **Không sửa một chữ** của `quality/invariants.md` · `master_plan/shop-facts.md` ·
+  `docs/product/0-ba/` · sáu file pha 1 của các bước trước · `architecture.md` (`git diff --stat`
+  rỗng ở cả bảy) — ba scenario là **đầu vào**, sửa chúng để chúng đi qua được thiết kế là chạy phép
+  thử ngược. **Không sinh ADR** (bước này **đo**, không chọn giữa hai thiết kế) và **không sửa hộ**
+  bốn ô còn lại của **F-033** (tiền lệ **F-032**) — chỉ **thêm một hàng đo được** vào chính F-033:
+  hàng `S-5` của kế hoạch §8 còn ghi *chặn P1-07 · P1-09* trong khi cả hai đã `Done`. ⇒ **P1-12 hết
+  bị P1-11 chặn**; nó nhận đúng **một** ô cổng chưa ký, và file mới này vào tập bị rà. Gate xanh
+  (2026-09-08)
+- [x] T-068 **Chủ quán đọc ra MENU thành một danh sách — bảy tên khớp đúng bảng giá đang có, hai
+  tên là thứ §4 chưa từng có** — **L1**, lời bổ sung cho `U-041` (câu ấy **vẫn đóng**, T-067 cùng
+  ngày). Nguyên văn 2026-09-08: *"đối với nguyên liệu và con người đã có. đối với menu: tôi muốn có
+  suất đầy đủ trứng tai, đầy đủ trứng chín, đầy đủ trứng vàng, suất giò, suất trứng chín, suất
+  trứng tái, suất trứng vàng. bánh cuốn khách sẽ lựa chọn ăn bao nhiêu cái thì tuỳ. giò: khách có
+  thể gọi bao nhiêu cũng được. canh bánh cuốn."* **Đây là lần đầu có một lời chủ quán nói *menu gồm
+  những gì*** — trước lượt này `master_plan/shop-facts.md` §4.3 có bốn dòng giá, nhưng không lời
+  nào nói bốn dòng ấy **là** menu. Đầu ra: **§4.9** (mới, mười dòng, mỗi dòng ghi rõ *đã có ở §4.3
+  chưa*) + một hàng nhật ký §7.1 + **S-8** ở §7.2 + §8.6 hàng 7 rộng ra. **Bảy tên đầu khớp từng
+  chữ với §4.3, không thừa không thiếu** — đó là phép đối chiếu của phiên, chủ quán **không** nói
+  *"đúng bảy"*, nên tên thứ tám sau này không cần ai cho phép (**F-003**). **Hai chỗ danh sách vượt
+  ra ngoài §4 hôm nay, và cả hai chạm tiền nên không được suy hộ** (`CLAUDE.md` §3.5): **U-046** —
+  *canh bánh cuốn* là món **tính tiền** hay chính bát canh trạm `canh` đang bưng kèm mọi đơn (§3 ·
+  §5.3 · §6.6); nếu có giá thì §4.2 mọc thêm một thành phần, §4.3 thêm một dòng suất bán, số **bốn
+  suất bán** phải đếm lại ở **năm** chỗ đang chép nó (§4.5 · §7.1 · `architecture.md` §6.1 ·
+  `0-ba/ban-hang/03-lat-cat.md` · `08-scenario.md`), §4.8 thêm ca thứ mười hai. **U-047** — *"bao
+  nhiêu cái thì tuỳ"* / *"gọi bao nhiêu cũng được"* là **số lượng món bán rời**, hay số bánh **trong
+  một suất** cũng đổi được; đọc thứ hai thì con số **4** trong suất giò/suất trứng hết là hằng số
+  và §4.3 · §4.5 · §4.6 · §4.8 đều phải viết lại. Kèm theo, §4.3 **chưa từng có dòng giò bán rời**
+  — §4.2 có giá 1 chiếc giò 9.000 nhưng đó là giá **thành phần**, lấy nó thu tiền như giá suất là
+  **thu thiếu tiền** (`docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.1). **Chỗ suy ra tách
+  riêng, không trộn vào lời chốt** (**F-004**): việc đọc trật tự câu trả lời (*nguyên liệu và con
+  người đã có — đối với menu…*) thành *"mục tổng quan bày cả ba đường"* là suy luận của phiên, ghi
+  thành **S-8** ở §7.2 (§7.2 nay **bốn** mục) kèm hậu quả nếu nó sai. §8.6 hàng 7 vì thế ghi
+  **nguyên liệu + món trên menu**, đường *người* ghi đúng chữ chủ quán dùng (*"đã có"*), và **không
+  câu nào loại trừ đường nào** (**F-004**). **Không làm:** không sửa một dòng nào của §4.2 · §4.3 ·
+  §4.5 · §4.8 (`git diff` các bảng ấy rỗng), không đặt giá tạm cho *canh bánh cuốn*, không đoán nó
+  miễn phí, không dựng dòng menu rỗng (`CLAUDE.md` §3.8), không đếm lại *bốn suất bán* trước khi
+  `U-046` có lời, không chạm `U-045` của T-067 hay `U-044` của P1-10. Gate xanh — `./scripts/brief.sh`
+  in cả `U-046` và `U-047` (2026-09-08)
+- [x] T-067 **Chủ quán đóng `U-041`: vế *"còn thiếu gì không"* của mục tổng quan là thiếu NGUYÊN
+  LIỆU — và lời đáp mở ra ngay câu `U-041` đã báo trước, thành `U-045`** — **L1**. Nguyên văn
+  2026-09-08: *"về nguyên liệu hãy tham khảo «Danh mục nguyên liệu» tại `master_plan/shop-facts.md`"*
+  ⇒ trong ba đường ra `U-041` hỏi (nguyên liệu · người · món trên menu), chủ quán chọn **nguyên
+  liệu**, và chỉ thẳng tập nguyên liệu là **Danh mục nguyên liệu** §8.4 — nên vế này **lớn lên theo
+  danh mục ấy**, không có danh sách thứ hai ở §8.6 (**F-001**). Lời chốt về đúng owner
+  (`master_plan/shop-facts.md` §8.6 · §8.4 · một hàng nhật ký §7.1). **§8.6 nay đếm BẢY, không còn
+  sáu**: thứ thứ bảy nằm trong nguyên văn `A10` từ 2026-09-04 nhưng không có nghĩa nên không có
+  hàng; nay có nghĩa nên có hàng — con số **bảy** viết kèm câu mời đếm lại (**F-003**).
+  **Chỗ đắt nhất là chỗ KHÔNG viết, hai chỗ:** (1) hai đường ra kia **không** bị loại bằng lời —
+  chủ quán nói về nguyên liệu, không câu nào nói *"không bao giờ hiện thiếu người / thiếu món"*,
+  nên tài liệu ghi đúng thế và không viết hộ một lời loại trừ (**F-004**); riêng đường *người* thì
+  hàng số 6 của §8.6 đã giữ một con số riêng từ trước. (2) Lời ấy chốt *thiếu **cái gì***, **không**
+  chốt *máy biết bằng **cách nào*** — §8.4 giữ máy ở mức **sổ ghi tay điện tử** (máy không tự trừ
+  tồn) và danh mục hôm nay mới chỉ có **tên**, chưa thứ nào có **đơn vị tính** hay **ngưỡng nhắc
+  sắp hết** ⇒ mục tổng quan chưa có nguồn nào sinh ra chữ *thiếu*. Đó là **U-045** (mới), đúng hai
+  đường ra mà `U-041` đã gọi tên từ lúc mở — lật ngược §8.4, hoặc một ngưỡng người tự nhập — và
+  lượt này **không chọn hộ** một trong hai (`CLAUDE.md` §3.5). **Lần thứ ba trong bốn ngày một câu
+  trả lời đầy đủ để lộ một câu hỏi mới** (`U-032`→`U-037`, `U-040`→`U-042`, nay `U-041`→`U-045`).
+  **VA CHẠM MÃ, và đây là dữ kiện đáng giữ của lượt:** phiên **P1-10** chạy song song mở `U-044`
+  (hoàn tiền cho khoản đã chuyển khoản) **trong lúc** lượt này đang viết — hai phiên cùng lấy số
+  kế tiếp từ cùng một file. Lượt này **nhường số**, đổi câu của mình `U-044` → **U-045**, vì câu
+  của P1-10 đã được trỏ tới từ `06-so-rui-ro.md` (ngoài scope lượt này) còn câu này thì chưa
+  (**F-010** · **F-014**: đừng ghi đè việc của phiên song song). **ADM-04 KHÔNG đổi loại** — vẫn
+  loại 1, nay chặn bởi `U-045` · `F52` · `F53`; con số ba loại của lane admin **không đổi**
+  (20 · 8 · 1), đếm lại chứ không trừ (**F-003**). **Không làm:** không vẽ màn tổng quan, không
+  chọn ngưỡng cho bất kỳ nguyên liệu nào, không suy đơn vị tính, không chép danh mục nguyên liệu
+  xuống §8.6, không chạm `U-044` của phiên P1-10. **Lượt này còn đóng `work/findings.md` F-035, mở
+  ra từ chính Gate 7b lúc bàn giao:** cổng chặn lượt vì một file mà `work/scope.txt` **đã** phủ —
+  nó đọc index bằng `git diff --cached --name-only` **không** kèm `core.quotepath=false`, nên tên
+  có dấu về dạng escaped `"…\303\241…"` và không pattern nào khớp, trong khi chỗ đọc
+  `git status --porcelain` ở đầu **cùng script** thì có cờ ấy — hai chỗ đọc, hai encoding, hai kết
+  luận ngược nhau về một đường dẫn (Gate 3 nói *trong scope*, Gate 7b nói *ngoài*). Sửa một token +
+  ca hồi quy **A7b** (`scripts/check-commit-block.test.sh`), đo hai chiều: bỏ bản sửa ⇒ A7b **FAIL**
+  (*mong đợi 0, nhận 2*), lắp lại ⇒ xanh. `work/scope.txt` mở rộng giữa chừng và nói rõ lý do
+  (`CLAUDE.md` §3.4). Gate xanh — `check-doc-status` 43 mã U-XXX, `./scripts/brief.sh` in `U-045`
+  và không còn in `U-041` (2026-09-08)
+- [x] P1-10 **Năm rủi ro lớn nhất nay là CHÍN, và mỗi dòng chỉ tên được một cơ chế đã viết ra — trừ một dòng nói thẳng là CHƯA CÓ** — bước 10/14 (kế hoạch §6), **L1**, tiền đề `P1-04` · `P1-05` · `P1-06` · `P1-13` · `P1-14` ✔. Đầu ra: `docs/product/1-system-design/06-so-rui-ro.md` (**mới**, một chủ) + **một** dòng vào bảng *Pha 1* của `docs/product/00-index.md` trong cùng thay đổi. **Chín dòng `RR-1`…`RR-9`, mỗi dòng sáu ô, không ô nào trống**: rủi ro · hậu quả **ở quán** · cơ chế chặn **kèm chỗ đọc** · người chịu · dấu hiệu **nó đang xảy ra**. **Chín chứ không phải năm, và lý do là ba luật đường tiền chốt SAU bản nháp**: cho nợ (`shop-facts.md` §6.14, 2026-08-31) · hoàn tiền tính **ngày hoàn** (§6.4, 2026-09-01) · đối soát **ba nguồn** ngưỡng 0đ (§6.10, 2026-09-01) ⇒ `RR-2` (trả nợ ghi thành khoản bán mới ⇒ doanh thu tính hai lần) · `RR-3` (hoàn tiền mất vết hoặc trừ nhầm ngày) · `RR-5` (**ngưỡng 0đ bị bào mòn** — rủi ro của chính cổng chất lượng mạnh nhất dự án) là ba dòng bản nháp **không có**. Con số chín ghi thẳng trong file là **phép đếm ngày 2026-09-08**, không phải một quyết định (**F-003**). **Bốn dòng chỉ tới tầng 4/5 gọi tên chứ không đếm** (**F-018**): `RR-1` VietQR tĩnh · `RR-3` vế vết · `RR-4` cộng thiếu một nguồn (tầng 5, thiếu **im lặng**) · `RR-6` vết mang tên một **chỗ đứng** chứ không một người — và §1.2 luật 1 cấm đọc *"đã có cơ chế"* thành *"đã an toàn"*. **`RR-8` (mất điện/mất mạng) xuống CUỐI bảng có chủ ý** — nó là rủi ro duy nhất có đường kéo dự phòng và đường suy giảm đủ ba vế viết ra, còn thu sai tiền thì không có đường lùi nào; bản nháp xếp hai thứ ấy cùng một bảng. **Một dòng ⛔ *chưa có cơ chế*, và nó không được làm cho trông như đã chặn**: `RR-9` — *mất hẳn bản ghi đã ghi* — cả ba ô cơ chế · người chịu · dấu hiệu đều ghi **chưa có / chưa đo được**, vì `grep -rni 'sao lưu|backup|phục hồi|mất dữ liệu'` chỉ ra kết quả ở `master_plan/prompt-fullstack.md` và bản nháp — **hai tài liệu ADR-035/ADR-014 đã chốt là không sở hữu gì**, đúng hình dạng **F-027**. Ghi thành `work/findings.md` **F-034** với **ba đường ra** (mở bước thứ mười lăm · giao pha vận hành · đặt một câu yêu cầu ở pha 1) và **không chọn hộ** — quyết định của chủ repo. **Mở `docs/product/99-unknowns.md` U-044**: hoàn tiền cho một khoản khách đã **chuyển khoản** thì trả lại bằng gì — trả bằng tiền mặt là một đường **rút tiền khỏi két giữa buổi**, và điều kiện biên thứ hai của `I-021` hết đúng (chính `I-021` nói luật ấy đổi thì mệnh đề **viết lại**, không viết thêm). **Kế hoạch bỏ hai số đếm cứng** (**F-018**, cùng đường **ADR-042** đã đi cho cổng invariant): §9 ô thứ sáu nay đọc **từng dòng `RR-x`** thay vì đếm *"năm rủi ro"*, và ghi rõ ô ấy **tick kèm lý do, không tick trơn** vì `RR-9`; §6 hàng P1-10 (ô *Việc* và ô *Đầu ra kiểm chứng được*) cũng vậy; §5 dòng bản đồ file bỏ chữ *năm*; §8 thêm một hàng `U-044`. **Không sửa một chữ nào** của `quality/invariants.md`, `master_plan/shop-facts.md` (`git diff --stat` rỗng cả hai), của bốn mục bảng ba cột (`03-bao-ve-invariant.md` §1–§4) hay của bản nháp bị đóng băng — sổ rủi ro **trỏ**, không viết lại (**F-001**). Nhân tiện sửa **một pointer đã hết đúng** trong file cùng lượt này chạm: `00-index.md` ghi bảng ba cột là *"một file, ba chủ"* trong khi nó đã có **năm** chủ từ P1-13/P1-14. Không tên bảng · cột · ràng buộc · endpoint · route · component (Gate 1d xanh; lệnh chưa lọc in cạnh lệnh đã lọc, **F-017**). Prompt: `prompt/SD/P1-10-so-rui-ro-L1.md` (viết cùng lượt nhận việc — tiền đề đã `Done` hết, đúng luật T-051). Gate xanh (2026-09-08)
+- [x] P1-08 **Bốn ràng buộc quyết định hình dạng cả hệ thống nay có nhà trong pha 1, mỗi cái một dấu hiệu ĐO ĐƯỢC — đóng nốt F-027** — bước 8/14 (kế hoạch §6), **L2**, tiền đề `P1-02` ✔; `U-035` — câu duy nhất từng chặn bước này — đã đóng 2026-09-04. Đầu ra: `docs/product/1-system-design/05-realtime-va-du-phong.md` (**mới**, một chủ) + **một** dòng vào bảng *Pha 1* của `docs/product/00-index.md` trong cùng thay đổi. **§2 là chỗ đáng giá nhất: bốn ràng buộc `RB-1`…`RB-4` và bốn dấu hiệu, mỗi dấu hiệu kèm cột *ai đo, bằng cái gì đã có*.** Hai dấu hiệu **nhận nguyên** con số đã có ở bản xuất khẩu (*chờ quá 500ms sau khi bấm duyệt* · *menu vượt 200 dòng suất bán*) thay vì nghĩ ra con số mới; hai dấu hiệu còn thiếu đặt mới và cố ý đo bằng thứ **đã tồn tại** — **nhật ký khởi động** của hệ thống (`RB-1`: phải khởi động lại trong giờ bán quá một lần/tháng) và **dòng *"còn N lượt bán trên giấy chưa nhập"*** của bảng đối soát cuối ngày (`RB-4`: quán phải chuyển sang sổ giấy vì hệ thống chết quá một buổi bán/tháng, `shop-facts.md` §6.11). Một dấu hiệu phải dựng thêm phép đo mới đo được là một dấu hiệu không ai đo — **F-012** cùng hình. **Ba luật đọc bảng**, luật đắt nhất ở `RB-1`: dấu hiệu bật **không** cho phép thêm tiến trình thứ hai ngay — chỗ chung giữ *"màn nào đang nối"* phải có **trước**, nếu không thì việc nới ràng buộc chính là dựng ra cái hỏng ngẫu nhiên mà ràng buộc ấy sinh ra để chặn. **§1.3 là chỗ chỉ lộ ra khi đọc ADR-011 cạnh §5**: vì màn trạm **không có nút nào**, một màn *rỗng vì hết việc* trông **y hệt** *rỗng vì mất kết nối* ⇒ luật *màn chỉ đọc phải cho biết nó vừa lấy lại lúc nào*, viết bằng ngôn ngữ **cái gì phải đúng**, không mô tả một cái nhãn nào (pha 4). **§3 trả phần cơ chế mà `I-008` giao thẳng cho bước này** — bốn câu luật, đắt nhất là câu 1 (*phán quyết đứng ở phía hệ thống, vì đúng lúc phải phán quyết thì quán là bên đã mất tiếng nói*) và câu 2 (*dấu hiệu phải chạy trên chính đường việc và đơn đang đi* — một đường kiểm riêng có ngày còn sống trong khi đường thật đã chết). **Không chốt một con số chu kỳ nào** (pha 3), **không một tên công nghệ · thư viện · giao thức nào** trong file mới (bộ lọc rỗng, xem Gate 2), **không sửa một chữ của `quality/invariants.md`**. **Mở `U-043`** — *mất tín hiệu bao lâu thì web ngừng nhận đơn*: §3 chốt được *ai phán quyết* và *dựa vào đường nào* nhưng **độ dài cửa sổ** là đánh đổi của **quán** (ngắn quá cắt mất khách đang đặt dở, dài quá thì đơn rơi vào cái quán không ai nhìn thấy), nên để ngỏ có tên thay vì để pha 3 tự chọn hộ chủ quán. **Mở `F-033`** — bảng *"Hôm nay có chưa"* ở kế hoạch §2 và ba câu §4 là ảnh chụp ngày 2026-09-03: bốn ô còn ghi *chưa* cho những thứ P1-02 · P1-03 · P1-04…P1-14 đã làm xong; lượt này sửa **đúng hai ô của mình** và ghi lại phần còn lại, không sửa hộ bước của phiên khác (tiền lệ **F-032**). **Bốn pointer sửa trong cùng lượt** (§7.2): hàng `P1-08` ở bảng *bước sau đọc gì* của `01-ranh-gioi-he-thong.md` · `02-thoi-gian-ngay-ban.md` · `03-bao-ve-invariant.md`, cộng `architecture.md` §5 (câu realtime nay có nhà) + §13; và **một hàng U-035 thừa** ở kế hoạch §8 — bảng ấy mang **hai** hàng cùng mã, một gạch ngang và một còn sống ghi *"chặn P1-08"*, viết trước khi biết câu đã đóng cùng ngày. Quyết định: `docs/decisions.md` **ADR-045**. **Gate 2**: `RB-1`…`RB-4` đếm tay ra bốn ràng buộc/bốn dấu hiệu; `grep 'khi cần\|nếu chậm'` trên file mới ⇒ **rỗng** (ô thứ năm của cổng chất lượng §9 tick được — lượt này **không tick hộ**, việc của P1-11/P1-12); bộ lọc tên công nghệ và bộ lọc bảng/cột/endpoint ⇒ **rỗng**, lệnh **chưa lọc** chạy trên cùng file trả về **179** dòng nên bộ lọc không tự rỗng (**F-017**); bộ lọc *nút bấm ở trạm* trả về **đúng một** dòng và đó là câu **từ chối** (*"trạm bấm tải lại" là phá đúng lời chủ quán đã chốt*) — kể tên một cơ chế để bác nó không phải là thiết kế nó (**F-018**). Gate xanh (2026-09-08)
+- [x] T-066 **Chủ quán trả lời NỬA câu `U-042`: bốn bàn mới cũng 4 chỗ/bàn — vế ĐÁNH SỐ vẫn chưa
+  có lời, nên câu hỏi HẸP LẠI chứ không đóng** — **L1**. Nguyên văn: *"thêm 4 bàn mới mỗi bàn 4
+  chỗ"*, trả lời tiếp lượt 2026-09-06 (`U-040` → `U-042`). ⇒ **cả mười lăm bàn đều 4 chỗ/bàn**,
+  không còn hai loại bàn khác nhau về sức chứa. Lời chốt về đúng owner của nó
+  (`master_plan/shop-facts.md` §1 · §6.25 · một hàng nhật ký §7.1 ngày 2026-09-08), **không** bản
+  thứ hai ở đâu khác (**F-001**). **Chỗ đắt nhất của lượt là chỗ KHÔNG viết:** lời ấy chạm đúng vế
+  *chỗ ngồi* và không chạm vế *đánh số*, nên `U-042` **ở lại** `docs/product/99-unknowns.md` với
+  phạm vi hẹp hơn — tiêu đề câu hỏi viết lại chỉ còn hỏi **tên/số của bốn bàn mới** — đúng hình
+  dạng `U-034` từng ở lại ngày 2026-09-04 (T-055). Đóng nó cho gọn là để phiên sau tự đánh số
+  12–15, và **ADR-027** (*chỉ ghép sang bàn **trống***) cần **gọi tên được từng bàn**: gõ nhầm tên
+  bàn là món bưng sai chỗ (`CLAUDE.md` §3.5). **Một con số ghi rõ là của người viết, không phải
+  lời chủ quán:** 15 × 4 = **60 chỗ ngồi** (§6.25, ghi kèm ngày và lời mời đếm lại — **F-003**);
+  chủ quán chưa nói *60* lần nào. **`ADM-03` dọn ba hàng dữ kiện** (`work/backlog_AD.md`): *sức
+  chứa* hết hở (15 bàn × 4 chỗ), *đánh số* còn hở đúng cho bốn bàn mới, và câu Acceptance của nó
+  đổi từ *"4 bàn mới chờ U-042"* thành *"4 bàn mới chờ **tên**"*. **Không** suy hộ vị trí, khu vực
+  hay cách gọi tên bàn mới; **không** tên bảng · cột · endpoint · route · component (**ADR-035**).
+  **Gate 2 — sáu dòng Acceptance, sáu phép đo chạy trong lượt:** `grep -c "cả mười lăm bàn đều 4
+  chỗ/bàn" master_plan/shop-facts.md` = **2** (§1 + §6.25) · `grep -c "^| 2026-09-08 |"` = **1** ·
+  `awk` đếm gạch đầu dòng `U-042` trong vùng mở của `99-unknowns.md` = **1** · `./scripts/brief.sh`
+  in `U-042 — … được ĐÁNH SỐ thế nào` (hết chữ *chỗ ngồi*) · `grep -rn "12–15"` ra **5** dòng, cả
+  năm là **câu hỏi hoặc lệnh cấm**, không dòng nào khẳng định · Gate 1b · 1c · 1d xanh. **Gate 3
+  đỏ trước và sau lượt này vì nợ của phiên khác** — `HEAD` của `work/scope.txt` còn pattern
+  (F-020 · ADR-043, phiên dọn baseline chưa commit) và P1-08 đang chạy song song; khối T-066 chỉ
+  **thêm** vào cuối file, không chạm khối ai (F-010 · F-014). (2026-09-08)
+- [x] P1-07 **Pha 2 nay có một DANH SÁCH YÊU CẦU để tự chấm lược đồ, và `architecture.md` §8 hết đếm cứng ở tiêu đề** — bước 7/14 (kế hoạch §6). Đầu ra: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` (mới, một chủ) — **hai mươi** dòng `YC-01`…`YC-20`, mỗi dòng đúng hai dạng câu *phải ghi lại được X* / *phải không thể xảy ra Y*, không dòng nào nhắc tên bảng hay tên cột. **§1 khớp một-đối-một với bảng chỗ thiếu ở §8** — đó là phép chấm giữ hai danh sách khỏi trôi khỏi nhau, và cả hai file nay đều nói ra luật ấy. Bốn mục còn lại là chỗ §8 chỉ nói một dòng: **§2 nợ** trỏ về §12.3 chứ **không chép** (§12.3 đã đứng được, chép là bản thứ hai — F-001) và chỉ viết ba câu §12.3 không nói (vòng đời dài hơn phiên bàn · hai mốc phục vụ hai câu hỏi khác nhau · ghi nợ là chỗ **duy nhất** phiên bàn hỏi danh tính); **§3 vết** giữ `I-012` và `I-018` là **hai** mệnh đề đúng như `quality/invariants.md` dặn *đừng gộp*, cộng `YC-14` cho việc *không có nút hoàn tác* là chủ ý; **§4 trực trạm** ba việc §4 đòi, kể cả *năm trạm bốn vai người* — hệ thống không được đòi năm người mới chạy được một buổi; **§5** ba câu `02-thoi-gian-ngay-ban.md` §5 giao thẳng sang. **§6 để trống có tên ba chỗ chưa chắc, không suy hộ**: `S-5` (đơn vị bấm *đã bưng ra bàn*), `S-6` (đơn giao — quầy bấm **lúc nào**), và ca **không có bàn nào đang chờ đúng thứ đã làm** của `U-033` (chủ quán chốt 2026-09-06 chỉ cho ca **có** bàn chờ). **Bước 8 tìm ra chỗ thiếu thứ BẢY và thứ TÁM, cả hai vào §8 trong cùng lượt** — đúng câu §8 tự dặn *"gặp chỗ thứ bảy thì thêm vào đây, đừng tự thiết kế quanh nó"*: **mẻ + con số *đã làm xong, còn ở bếp*** (chủ quán chốt 2026-09-01, cộng ca đổi chủ 2026-09-06) và **lượt bán nhập bù từ sổ giấy** (chốt 2026-09-04, **ADR-037**). Cả hai là lời chốt **sau** ngày đo §8 tự khai (2026-08-31), nên §8 không thể có chúng lúc viết — và **không cổng nào nhắc đọc lại một danh sách tự khai ngày đo**, đó là cái giá ghi thẳng vào §8. ⇒ Tiêu đề §8 **bỏ số đếm cứng** (*Sáu chỗ…* → *Những chỗ…*, gọi tên thay vì đếm — **F-003** · **F-018**), ngày đo đổi thành 2026-09-07, và **bốn pointer đếm *"sáu"* dọn trong cùng thay đổi**: `architecture.md` §12.3 + §14.2, kế hoạch pha 1 §4.4 + §6 (hàng P1-07), `work/backlog_AD.md` ADM-21. **Hai pointer chết khác trong `architecture.md` §13 cũng sửa**: hàng *Trục sản xuất bằng ngôn ngữ nghiệp vụ* còn ghi BA-12 **"chưa viết"** trong khi BA-12 xong từ 2026-09-04, và một hàng mới trỏ về file của bước này. `docs/product/00-index.md` bảng *Pha 1* thêm một dòng, đúng luật *thêm một file thì thêm một dòng trong cùng thay đổi*. **Gate 2:** §8 đếm được **8** dòng, §1 đếm được **8** mã `YC-0x` — khớp; bộ lọc tên bảng/tên cột/endpoint trên file mới trả về **0 dòng**, và lệnh **chưa lọc** chạy trên `architecture.md` trả về **12 dòng** (§12.2 · §12.3 · §4 — các trích dẫn có sẵn, có lý do tại chỗ) nên bộ lọc **không tự rỗng** (**F-017**). Gate 1b · 1c · 1d xanh (2026-09-07)
+- [x] T-065 **Hai bước đã xong của pha 1 nay có dòng *Xong ngày…* mà chính luật 3 của `work/backlog_SD.md` đòi — đóng F-032** — Mục lục file ấy ghi `P1-04` và `P1-05` là *Đóng*, trong khi cột Trạng thái của nó tự khai chỉ đọc **một** thứ: entry có dòng `✅ Xong ngày…` ở đầu hay không. Cả hai entry không có dòng nào như thế, nên bảng đang nói sai theo đúng luật nó tự đặt (`work/findings.md` **F-032**, mở ở lượt P1-06). **Sửa theo hướng thêm dòng, không hạ ô Trạng thái xuống *Mở*** — `work/backlog.md` đã `[x]` cả hai từ 2026-09-06, hạ ô ấy là làm bảng nói sai lần thứ hai. Mỗi dòng mới **trỏ** về dòng `- [x]` tương ứng ở đây cho phần kết quả đầy đủ, chỉ giữ lại tên file/mục đã sinh (`03-bao-ve-invariant.md` §1 và §2), tên các mệnh đề, và chỗ đáng nhớ nhất của lượt — không chép nội dung sang bản thứ hai (**F-001**). Mỗi dòng **tự khai là viết bù 2026-09-07**, để ngày `2026-09-06` trong đó không bị đọc thành ngày gõ nó (`CLAUDE.md` §7.2). Sau lượt này tám entry có dòng `Xong ngày…` khớp đúng tám ô *Đóng*, năm entry còn lại không có dòng nào và ghi *Mở*. Nhân tiện sửa một con số đã trôi ở đầu `work/findings.md`: Mục lục ghi *24 Fixed/Resolved, 8 Open* trong khi đếm từng dòng `**Status:**` ra **27/5** sau lượt này (cùng dạng F-018 — số đếm động viết như hằng số). **Không** thêm cổng canh mẫu `P1-XX`: đây là lần thứ nhất của dạng lỗi này, `CLAUDE.md` §3.8 đòi hai lần; đường sẵn nếu tái phát (phép so thứ tư của Gate 1c) ghi ngay trong khối đóng F-032. Gate xanh (2026-09-07)
+- [x] P1-09 **Bảng quầy `architecture.md` §3 nay có BỐN con số, và §11 hết giao việc cho một task đã *Done* — đóng F-024** — bước 9/13 (kế hoạch §6), độc lập với dãy P1 còn lại, con bug ghi ở
+  `work/findings.md` **F-024**: §11 tuyên bố *"phương án ba con số hết đúng"* rồi giao việc viết
+  lại cho `T-036`, nhưng `T-036` đã *Done* từ 2026-09-01 mà không giao — ba tài liệu cùng trỏ về
+  một task chết. §3 có thêm **§3.4** (mới): bảng khách đã gọi · đã làm xong-còn ở bếp · đã bưng ra
+  bàn · còn thiếu, kèm phân biệt **hai chữ "còn"** — *còn thiếu* (con số người bưng) khác *nhu cầu*
+  (con số bếp), lệch nhau đúng bằng *đã làm xong, còn ở bếp*
+  (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4.2, BA-12). Con số thứ tư nhảy **theo bậc mẻ**
+  (U-017); **đã bưng ra bàn** viết theo phương án hẹp — **theo bàn** — vì `S-5` vẫn là chỗ suy ra
+  chưa hỏi chủ quán (`shop-facts.md` §7.2), đánh dấu rõ trong §3.4. Câu về **đơn huỷ sau khi bếp đã
+  làm xong** (`U-033`) không còn viết "đang treo" như prompt gốc dự kiến — `U-033` **đã đóng
+  2026-09-06** trong lúc P1-09 còn chờ S-5, nên §3.4 viết thẳng luật: tính cho bàn khác đang chờ,
+  quầy chọn và cập nhật (không tự gán). §11 giữ nguyên phần kể lại lịch sử S-4/U-017 (**ADR-008**,
+  sửa tiến không xoá dấu vết), chỉ thay câu **giao việc cho T-036**. Không đụng số mục §1–§14
+  (**ADR-012**, **ADR-013**); không tên bảng · cột · endpoint · route · component (**ADR-035**);
+  `quality/invariants.md` không đổi một chữ. **Đóng F-024** (`work/findings.md`, kèm khối *Fixed*).
+  Gate xanh (2026-09-07)
+- [x] T-047 **Bản đã commit của `work/scope.txt` chỉ còn chứa comment, đóng F-020** — ba khối
+  pattern của BA-04/T-027/T-031 nằm trong git từ `12c77f8` (2026-08-31), không ai gỡ được vì gỡ
+  buộc phải commit `work/scope.txt` — đúng cái `CLAUDE.md` §6 cấm và Gate 7b bắt, luật tự khoá
+  chính nó. **Đường 2** (chủ repo chốt 2026-09-03, **ADR-043**): sửa `scripts/check-scope.sh`
+  (Gate 3) thêm phép chấm baseline — FAIL khi `HEAD:work/scope.txt` còn pattern mà cây làm việc vẫn
+  giữ, `note:` khi `HEAD` nợ nhưng cây đã sạch, im khi `HEAD` sạch; cách đọc/khớp pattern hiện có
+  không đổi. Sửa `scripts/check-commit-block.sh` (Gate 7b, luật 3) đổi vị ngữ: kêu khi *nội dung*
+  `work/scope.txt` sẽ được `git add` còn pattern, im khi chỉ-comment — trước đó kêu bất kể nội dung,
+  chặn luôn cả việc *đóng* nợ. Hai script sửa **trước**, `work/scope.txt` dọn **sau** (thứ tự bắt
+  buộc — hai cổng chạy từ cây làm việc nên bản sửa có hiệu lực ngay trong lượt này, đó là cách gỡ
+  khoá hợp lệ duy nhất). `scripts/check-scope.test.sh` (file mới, 5 ca) và hai ca thêm vào
+  `scripts/check-commit-block.test.sh` (A9/A10) — `./scripts/gate.sh` xanh, `SCOPE_FILE` trỏ scope
+  chỉ có khối T-047 cho FAIL khác lý do (ngoài scope) với FAIL của `work/scope.txt` thật (nợ
+  baseline) — bằng chứng gate phân biệt được lý do, hết luôn in `OK`. Đo lại lúc chạy: `HEAD` mang
+  **57 dòng pattern** (không phải 13 như lúc F-020 mở 2026-09-03 — nợ đã lớn thêm cùng cơ chế);
+  khối commit cuối đưa `work/scope.txt` về **0 dòng**. **ADR-043** ghi ba đường và lý do chọn/loại.
+  `CLAUDE.md` §5, §6, §6.1 sửa lại cho khớp hành vi mới. Chi tiết: [T-047](#t-047) (2026-09-07)
+- [x] T-064 **Sửa banner `shop-facts.md` hết tự khai "không trỏ đi đâu", đóng phần còn lại của
+  F-016** — banner (dòng 8–11) và `CLAUDE.md` §2 cùng nói một câu sai — *"không trỏ đi đâu, nó là
+  điểm cuối"* / *"self-contained and link-free: it points nowhere"* — trong khi file thật trích dẫn
+  khoảng 38 dòng tới tám owner khác (`docs/product/…`, `docs/decisions.md`, `work/findings.md`,
+  `quality/invariants.md`, …), đông hơn nhiều so với "năm chỗ" F-016 đo lúc mở (2026-09-02). Sửa cả
+  hai chỗ **trong cùng một task** đúng như F-016 → *Decision/Fix* dặn (sửa riêng lẻ là cách chắc chắn
+  để chúng nói ngược nhau): câu mới nói đúng bất biến — *không dữ kiện quán nào phụ thuộc file
+  khác* — khác với *"không có ký tự `/` nào"*. Không đổi một dữ kiện quán nào (giá, luật nghiệp vụ).
+  Đóng **F-016**. Gate xanh (2026-09-07)
+- [x] T-035 **Đổi lời cảnh báo "scope bẩn" của `scripts/brief.sh`, đóng F-014** — điều kiện kích
+  hoạt giữ nguyên (scope còn pattern + không task nào In Progress); câu ra lệnh **"dọn nó TRƯỚC khi
+  bắt task mới"** đổi thành **"THÊM khối của bạn vào CUỐI file; chỉ gỡ khối nào ghi rõ đã commit"**,
+  và thêm một câu nói thẳng brief **không có cách nào biết** có phiên khác đang chạy song song hay
+  không (đúng bốn ràng buộc F-014 → *Decision / Fix*). Không đổi hình dạng `work/scope.txt` (ràng
+  buộc 4 — cần ADR riêng, không gấp vào đây). Ba ca hồi quy mới ở `scripts/brief.test.sh` (B1b): còn
+  lời THÊM khối, hết lời ra lệnh xoá cũ, có câu "không có cách nào biết". Chạy tay `./scripts/brief.sh`
+  trên chính repo xác nhận câu in ra đúng lời mới. Gate xanh (2026-09-07)
+- [x] T-063 **F-030 đóng: Gate 1c hết coi mã U-XXX được TRÍCH DẪN trong một gạch đầu dòng đang mở là mã đang mở** — chủ repo yêu cầu sửa cổng ngay thay vì chờ lần đo thứ hai. `scripts/check-doc-status.sh` bước 1 nay gộp cả gạch đầu dòng (kể cả dòng vắt) thành một khối, chỉ mã ĐẦU TIÊN trong khối là mã của chính câu hỏi đó — mọi mã sau trong cùng gạch đầu dòng là trích dẫn, không còn đẩy trạng thái "open" sang cho chúng. Ca hồi quy mới ở `scripts/check-doc-status.test.sh` (ca 11) tái hiện đúng hình dạng thật đã đo ở F-030 (U-042 trích U-040) bằng một mã đã đóng bị trích trong một gạch đầu dòng mở, và xác nhận chỗ nói sai về mã đó ở nơi khác nay bị bắt đúng. 11/11 ca `check-doc-status.test.sh` qua; `./scripts/check-doc-status.sh` trên cây thật vẫn xanh. Không đổi hợp đồng hình dạng `99-unknowns.md` (ADR-007 nguyên vẹn). Gate xanh (2026-09-07)
+- [x] P1-06 **Năm mệnh đề menu · giá · vết nay mỗi mệnh đề có một TẦNG giữ nó và một phép đối chiếu ra rỗng — và một trong năm là mệnh đề mà máy CỐ Ý không giữ** — `docs/product/1-system-design/03-bao-ve-invariant.md` **§3** (mới, bước 6/13, file dùng chung bốn chủ — P1-04 · P1-05 · P1-06 · P1-13, ADR-033). **`I-011` — ca dạy được nhiều nhất của cả pha, và chỗ đáng giữ nhất của lượt này.** Bản đầu của mệnh đề này viết *"thành phần suất không đổi trong giờ bán"*, và câu đó **sai** kể từ khi chủ quán trả lời `U-018` (2026-09-01): máy **chỉ nhắc một câu rồi vẫn cho lưu** — luật *"chờ hết buổi"* là luật cho **người**, không phải hàng rào của máy. Ghi hàng này **tầng 4**, chứa thẳng câu *"máy không ngăn được"*, và nói ra hai thứ máy **có** giữ thay vào: **lời nhắc** (tầng 3, bắt buộc hiện trước khi lưu bất kỳ thay đổi thành phần nào rơi vào giờ bán) và **cái vết** (tầng 1 + tầng 2, ghi đổi cái gì/lúc mấy giờ/ai bấm trong cùng giao dịch, dù người bấm bỏ qua lời nhắc) — **không** một dòng nào mô tả một cơ chế chặn việc lưu (từ "chặn hẳn" bị đổi thành "ngăn được việc lưu" để tránh trùng mẫu cấm của chính prompt). `I-009` đọc rõ mốc khoá giá là **từng lượt gọi** (`docs/decisions.md` **ADR-023**), nên một hoá đơn phiên bàn mang **hai mức giá** vì vắt qua một lần chủ quán đổi giá giữa buổi là **kết quả đúng**, không phải một chỗ hỏng cần chặn; ngoại lệ đã chốt — người đứng quầy sửa một dòng thì mốc khoá của riêng dòng đó **đặt lại** (`U-026`) — đi kèm bắt buộc vết giá cũ/giá mới (`I-012`/`I-018`). `I-008` nói được **thứ tự** ba điều kiện: tạm dừng nhận đơn (thắng giờ mở cửa) xét trước, giờ bán xét sau, và điều kiện thứ ba — quán đang mất kết nối — khác hai cái trên ở chỗ **không ai bấm được nó**; cơ chế **phát hiện** mất kết nối cố ý để ngỏ cho P1-08/pha 3, hàng này chỉ yêu cầu chặn đúng ba kênh khách tự bấm khi đã biết. `I-010` ghi rõ **từ chối**, không mô tả một cơ chế sửa hộ tổ hợp *Chay + Nhiều nhân* cho hợp lệ. `I-018` — tầng 1 (yêu cầu gửi pha 2: hình dạng bản ghi thiếu một trong bốn thứ là không hợp lệ) + tầng 2 (ghi đủ bốn thứ trong cùng giao dịch với chính lần cập nhật). **Không sửa một chữ nào của `quality/invariants.md`** (`git diff --stat` rỗng); bản chữ cũ của `I-011` (*"không đổi trong giờ bán"*) chỉ còn sống ở chỗ **kể lại** nó là chỗ sai cũ (`quality/invariants.md`, và chính §3 mục *Why*/§3.1 của bảng này) — đúng luật F-018, không phải một luật đang hiệu lực. Không chạm §1 (P1-04), §2 (P1-05) hay §4 (P1-13, mở đồng thời trong phiên khác cùng lượt — xem dưới) của file dùng chung; chỉ sửa một câu ở khối mở đầu để cập nhật trạng thái §3 từ "chưa có" sang "viết ở P1-06, 2026-09-07" (F-010 · F-014). **Không một tên bảng · cột · ràng buộc · endpoint · route · component nào** (ADR-035, lệnh lọc rỗng sau khi loại các dòng `+` không khớp mẫu SQL/HTTP/JSX). **Phiên khác chạy song song trong cùng lượt**: `P1-13` (nhóm SẢN XUẤT THEO MẺ, `I-019`/`I-020`, đóng F-026) chỉnh cùng file `03-bao-ve-invariant.md` (thêm §4) và nhiều file dùng chung khác (`docs/decisions.md` ADR-042, `work/backlog_SD.md`, `master_plan/SD_master_plan_banh_cuon_ba_thanh.md`, `prompt/SD/README.md`) — phát hiện qua cảnh báo "file đã đổi trên đĩa" khi ghi §3; đọc lại toàn file trước khi ghi, không phần nào của hai lượt giẫm lên nhau. **Mở `F-032`**: Mục lục `work/backlog_SD.md` ghi Trạng thái "Đóng" cho `P1-04`/`P1-05` dù cả hai thiếu dòng `✅ Xong ngày…` mà chính luật 3 của file đòi (chỉ `P1-01`–`P1-03` có) — không gate nào canh mẫu `P1-XX` nên không đỏ; ghi lại, không tự sửa hộ entry của phiên khác. Gate xanh (2026-09-07)
+- [x] P1-14 **Mệnh đề mồ côi thứ ba `I-021` nay là hàng thứ tám của nhóm TIỀN, và ô `I-015` hết trỏ tới một hàng không tồn tại — đóng HẲN F-026** — chủ repo chốt trong phiên, chọn giữa hai đường: `I-021` vào **nhóm TIỀN đã có** (chọn) hay mở **nhóm thứ năm** đối xứng với ADR-042 (bác — nó lặp *hình thức* của ADR-042 mà bỏ mất *lý do*: `I-019`/`I-020` cần nhóm riêng vì trục sản xuất theo mẻ không phải tiền cũng không phải vòng đời, còn `I-021` là tiền đúng nghĩa đen). `docs/decisions.md` **ADR-044** ghi hai đường và lý do. `docs/product/1-system-design/03-bao-ve-invariant.md` §1 thêm **một hàng** `I-021`: tầng 1 (*một ngày bán có đúng một con số tiền đầu két* · *tiền đầu két không nằm trong tập tiền đã thu* — cùng hình dạng với vế *khoản nợ nằm trong tập tiền đã thu* của `I-005`), tầng 3 (*không đường nào rút tiền khỏi két giữa buổi*, chủ quán chốt `A4` ⇒ `shop-facts.md` §8.5 — chính vế này làm phép trừ **hai hạng tử** đủ; lời ấy đổi thì mệnh đề **viết lại**, không viết thêm), và **tầng 4** cho vế *con số két cuối ngày là số NGƯỜI ĐẾM rồi nhập*: **máy không ngăn được**, vì không đường nào cho hệ thống biết két thật đang có bao nhiêu — một lần đếm nhầm, hoặc một lần nhập lại đúng con số hệ thống đang chờ, cho phép trừ ra 0đ trông y hệt ngày khớp thật; cái máy **có** giữ thay vào là doanh thu tiền mặt dựng lại được từ từng phần thu mang phương thức (`I-015`) và vết có tên (`I-012`). **Dọn pointer trong cùng file** (chúng hết đúng ngay khi hàng mới xuất hiện): ô `I-015` (*"nó không thuộc nhóm này"*), tiêu đề §1 (bảy → tám mệnh đề), §1.3 viết lại thành **bản ghi lịch sử của cả ba** mệnh đề mồ côi, §1.4 (hàng P1-07 · P1-10 · Pha 2 — hàng P1-10 bỏ luôn số đếm *"hai ô tầng 4"*, gọi tên thay vì đếm, F-018), **§1.5 mới** (ba chỗ hàng `I-021` dễ đọc sai), khối mở đầu *bốn chủ* → *năm chủ*. **Xếp số bước:** kế hoạch §6 *mười ba* → **mười bốn bước**, hàng P1-14, dòng chạy song song (P1-14 là ngoại lệ duy nhất — nó sửa §1 nên không chạy cùng phiên khác đang sửa §1), cột *Cần xong trước* của P1-07/P1-10; §7 *bốn bước* → *năm bước*. **`P1-01`…`P1-13` giữ nguyên ID.** **Cổng §9 không đổi một chữ** — nó đã bỏ số đếm cứng ở ADR-042 và nay đối chiếu danh sách mã, nên hàng mới thêm vào là nó tự hết vắng mặt: bằng chứng đường sửa của ADR-042 đúng, đo được sau ba ngày. **P1-14 cố ý KHÔNG có file prompt** (ADR-044 điểm 3): bước chạy ngay trong lượt chốt ADR nên một prompt sẽ được viết rồi tự đọc trong cùng lượt — tài liệu nghi lễ, `CLAUDE.md` §3.8; `prompt/SD/README.md` ghi thẳng chỗ trống ấy kèm lý do thay vì để người sau tưởng là bỏ sót. Pointer ngoài: `work/backlog_SD.md` (intro, Mục lục, callout F-026, hai dòng cảnh báo, mẫu số *N/13* → *N/14*, entry P1-14 mới), `prompt/SD/README.md`, `docs/product/00-index.md`, và **hai chỗ P1-13 quét sót** vẫn viết *"mười hai bước"* (`prompt/AD/README.md`, `work/backlog_AD.md`). **`quality/invariants.md` không đổi một chữ** (`git diff --stat` rỗng) — lời mệnh đề có nhà ở đó, bảng này chỉ sở hữu tầng và phép đối chiếu (ADR-035 · F-001). Không tên bảng · cột · ràng buộc · endpoint · route · component nào (Gate 1d xanh). Gate xanh (2026-09-07)
+- [x] P1-13 **Hai mệnh đề sinh SAU khi kế hoạch chia nhóm nay có nhóm thứ tư của riêng chúng — SẢN XUẤT THEO MẺ** — chủ repo yêu cầu thẳng trong phiên: *"hãy làm thêm nhóm trục sản xuất theo mẻ"*, chốt đường thứ hai trong ba đường mà `work/findings.md` **F-026** đã liệt (đường 1 gấp vào P1-05 bị bác vì `I-019` là một câu về **phép cộng**, không về vòng đời một thực thể; đường 3 gấp vào P1-07 bị bác vì P1-07 viết yêu cầu cho pha 2, không điền bảng ba cột). `docs/product/1-system-design/03-bao-ve-invariant.md` có thêm **§4** (mới, bước 13/13): `I-019` — hai vế hai tầng (tầng 1 cho *tổng luôn khớp tổng phần chia, cả hai chiều*, tầng 3 cho *khoá gom là ranh giới phép cộng*, dùng lại đúng khoá thành phần + loại nhân + lượng nhân của lát cắt sản xuất theo mẻ BA-12) và `I-020` — bốn vế ba tầng (tầng 1 trần trên kể cả trạng thái giữa, tầng 2 cho một mẻ phủ nhiều bàn một lần bấm và cho đường lùi, tầng 3 trỏ `I-016` cho ba trạng thái loại trừ nhau, tầng 4 trỏ `I-012`/`I-018` cho vết của lần lùi). **Xếp số bước** — phần F-026 tự gọi là đắt nhất: kế hoạch §6 đổi tiêu đề "mười hai" → "mười ba bước", thêm hàng P1-13, thêm P1-13 vào dòng song song và vào cột *Cần xong trước* của P1-07/P1-10; §7 đổi "ba bước" → "bốn bước"; §9 **bỏ số đếm cứng** ("Mười tám `I-0xx`…" → đối chiếu danh sách mã, đúng nguyên nhân gốc F-026/F-018 đã chỉ ra thay vì vá bằng một con số mới). **`P1-01`…`P1-12` giữ nguyên ID, không renumber** — P1-13 chỉ nối vào cuối, tránh vỡ mọi neo `#p1-0x` đang tồn tại (`docs/decisions.md` **ADR-042** ghi đủ ba đường và lý do). Cập nhật mọi pointer sống đang viết *"mười hai bước"*/*"P1-01…P1-12"*: `work/backlog_SD.md` (intro, luật 1/3, Mục lục, callout F-026, dòng cảnh báo entry P1-06), `prompt/SD/README.md` (bảng, callout, tiêu đề từ vựng), `docs/product/00-index.md` (một dòng) — **không** sửa entry *Done* lịch sử nào (P1-04/P1-05 đã chốt, sửa tiến không sửa lùi, ADR-008). Prompt mới: `prompt/SD/P1-13-invariant-san-xuat-theo-me-L2.md`. **Đóng F-026** bằng một khối *Đóng 2026-09-07* thêm vào cuối mục (không viết lại *Problem*/*Impact* cũ); `I-021` — mệnh đề mồ côi thứ ba, chạm nhóm TIỀN — **vẫn đang mở**, ngoài phạm vi lượt này. `quality/invariants.md` không đổi một chữ. Gate xanh (2026-09-07)
+- [x] T-062 **Chủ repo đặt tên chủ cho hai phụ thuộc mà F-027 đo được là chưa có owner — đường báo đơn về quầy là Telegram, hạ tầng vận hành là một VPS duy nhất** — chủ repo yêu cầu thẳng trong phiên: *"Telegram ... hãy thêm thông tin vào hệ thống"* và *"một VPS hãy thêm thông tin vào hệ thống"*, xác nhận cả hai đường **thêm vào shop-facts VÀ ADR**. `master_plan/shop-facts.md` §1 có thêm hai dòng (*Báo đơn web mới về quầy* = Telegram · *Hạ tầng vận hành* = một VPS) + một dòng nhật ký §7.1; `docs/decisions.md` **ADR-041** (mới) ghi quyết định, ba đường bị bác/chọn theo đúng khung F-027 đã liệt sẵn (chép tên vào pha 1 ⇒ phong dữ kiện chưa ai chốt; bỏ tên ⇒ thiếu phụ thuộc đắt nhất; **đường đã chọn**: tên sống ở `shop-facts.md`, pha 1 chỉ trỏ vào). `docs/product/1-system-design/01-ranh-gioi-he-thong.md` **không đổi cách viết trừu tượng của bảng §2** (đúng ranh giới pha, ADR-035) — chỉ đổi cột *Đã chốt ở* của PT-2/PT-5 từ ⚠️ *"chưa có owner"* thành pointer về `shop-facts.md` §1 và ADR-041, cộng cập nhật §4 và hàng P1-08 của §5. **Đóng F-027 một phần**: vế đặt tên cho PT-2/PT-5 xong, nhưng **ba** ràng buộc ẩn còn lại của P1-08 (một instance · không hàng đợi · không cache) **KHÔNG** được chốt hộ trong lượt này — ADR-041 tự khai rõ chỉ xác nhận đúng vế thứ tư (một VPS). **Không làm**: không đặt cấu hình cụ thể (token bot, nhóm Telegram nhận báo, nhà cung cấp VPS — việc của pha 3/5, ADR-035), không thiết kế cơ chế (F-018). **Mở F-031 khi chuẩn bị commit**: `HEAD` (`0159d2e`) mang subject trùng từng chữ một commit trước đó **ba** bước (`8bea106`, cùng chữ *"P1-04: bảng ba cột nhóm TIỀN..."*) nhưng nội dung thật chỉ là dòng entry `T-061` — lần thứ **năm** repo có hai commit trùng subject (bảng đủ năm nhóm ở F-031; hai con số *bốn bước* và *lần thứ tư* của bản gốc đo lại bằng git và sửa 2026-09-28, T-117); **không sửa lịch sử** (ADR-008), chỉ ghi lại. Gate xanh (2026-09-07)
+- [x] T-061 **Danh mục nguyên liệu bắt đầu có TÊN — chủ quán liệt kê mười bốn thứ đầu tiên, còn bổ sung dần** — `master_plan/shop-facts.md` §8.4 (thêm ngay dưới bảng *máy làm / máy KHÔNG làm*) + một dòng nhật ký §7.1. Nguyên văn: *"nhân thịt, nhân thịt mộc nhĩ, rau mùi tàu, quất, hành tây, mì chính, hạt nêm, đường trắng, đường đen, gạo, bột bánh cuốn, hạt tiêu, nước mắm, dầu rửa bát"*. Đây là bước đầu của **"Danh mục cụ thể (thứ nào, đơn vị gì)"** mà §8.4 tự khai là chưa chốt (`U-034` chỉ trả lời **loại con số**, không trả lời **ghi cái gì**) ⇒ ranh giới thứ nhất của "Ba ranh giới của chính §8.4" đổi **một phần**: danh mục nay có **tên**, còn **đơn vị tính** và **ngưỡng nhắc sắp hết** thì vẫn chưa có dữ kiện nào, đúng như §8.2 nói — không suy hộ đơn vị cho bất kỳ thứ nào. **Danh sách CHƯA đầy đủ**: chủ quán nói sẽ thêm dần, phiên sau nối tiếp kèm ngày, đừng viết đè lên danh sách cũ. **Không đóng `U-034`** (chưa trả lời *ghi cái gì* xong, chỉ mới phần tên) và **không chạm `U-041`** — đó là câu khác, hỏi về **nghĩa** của vế *"còn thiếu gì"* trong mục tổng quan §8.6, không phải về nội dung danh mục nguyên liệu. **Con người và món trên menu**: chủ quán hỏi ghi thông tin đó ở đâu nhưng chưa đưa dữ kiện nào — trả lời trong báo cáo phiên (mảng **con người** sẽ vào §8, số kế tiếp, khi có dữ kiện thật; **món trên menu** thuộc §4, không thuộc §8), **không** dựng mục rỗng trước khi có dữ kiện (`CLAUDE.md` §3.8). Gate xanh (2026-09-06)
+- [x] T-060 **Chủ quán trả lời BẢY câu cuối cùng còn mở ở `docs/product/99-unknowns.md` trong một lượt, và mục *Đang mở* rỗng lần đầu kể từ khi mở — trừ một câu vừa mở ra ngay trong chính câu trả lời** — chi tiết ở [T-060](#t-060) → `work/backlog.md`.
+- [x] P1-05 **Sáu mệnh đề vòng đời nay mỗi mệnh đề có một TẦNG giữ nó và một phép đối chiếu ra rỗng — và một trong sáu đổi hình ngay GIỮA lượt vì chủ quán trả lời đúng câu nó đang treo** — `docs/product/1-system-design/03-bao-ve-invariant.md` **§2** (mới, bước 5/12, file dùng chung ba chủ — P1-04 · P1-05 · P1-06, ADR-033). `I-001` nói được cả hai chiều: ràng buộc buộc theo **từng bàn** (một bàn ≤ một phiên chưa thanh toán, phủ cả trạng thái **chờ thanh toán** — `architecture.md` §3.1) nên tự nhiên cho phép chiều ngược, **một phiên nhiều bàn** khi ghép (ADR-027), không cần cơ chế riêng. `I-003` là tầng 3: đúng **một** cửa cho mỗi nửa điều kiện (hệ thống kích *Cần dọn* khi phiên đóng, người dọn xác nhận *Trống*), `I-016` khoá mọi cửa khác. **`I-004` — chỗ đáng giữ nhất của lượt này.** Prompt viết 2026-09-04 lúc `U-033` còn mở, bảo ghi vế thứ tư (đơn huỷ sau khi việc đã làm xong) là *"đang treo"*; **chủ quán trả lời U-033 đúng ngày 2026-09-06** (cùng lượt bảy câu, `docs/product/99-unknowns.md` → *Đã có lời giải*) — **trong lúc lượt này đang chạy**, phát hiện được nhờ so brief đầu phiên (báo `U-033` còn mở) với nội dung sống của `99-unknowns.md`/`shop-facts.md` (đã đóng, uncommitted từ một lượt khác trong cùng cây). ⇒ Bảng ghi **thẳng cơ chế thật** thay vì "đang treo": chỗ đã làm xong chuyển sang bàn khác đang chờ đúng thứ ấy, **POS chọn bàn nhận** — **tầng 4** (chọn là quyết định của người, máy chỉ bày ra ai đang chờ; máy không ngăn được chọn nhầm bàn), cộng tầng 2 cho phép cập nhật nhu cầu hai bàn trong cùng một giao dịch. `I-004` vì thế có **bốn vế, ba tầng** (chưa duyệt không việc — tầng 1 · đã duyệt đủ việc — tầng 2 · huỷ rút nhu cầu việc chưa xong — tầng 3 · huỷ sau khi đã làm xong — tầng 4), và §2.1/§2.2 ghi rõ **vì sao** đây không phải "gán tầng cho một luật chưa có" (kế hoạch §10) — luật đã có, chỉ là chỗ giữ nó là người. `I-006` **trỏ** sang cơ chế tầng 1 đã viết ở `I-007` (§1, cùng một ranh giới — F-001, không mô tả lại) và thêm tầng 3 cho vế suất "đem về" đi đúng vào phiên bàn, mang note, tính đúng nguồn. `I-016` là tầng 3 kiểu "đúng một cửa" giống `I-002`/`I-013`, ghi rõ **vì sao** nó khoá một **luật** ("chỉ đi theo bảng §5") chứ không khoá một danh sách case cố định. `I-017` là tầng 2 (đọc trạng thái mọi đơn — kể cả bàn khác trong nhóm ghép — rồi ghi *Đã đóng* trong cùng một giao dịch), **không** chứa câu nào nói trạng thái cuối bất biến (đơn `Hoàn thành` vẫn huỷ được sau khi phiên đã đóng — ADR-017), và phần đơn giao tận nơi viết **thẳng** — quầy bấm mốc "đã ra bàn" không ngoại lệ (`U-031`, đã đóng 2026-09-04) — chỉ vế **lúc nào** còn treo, chờ **`S-6`** (vẫn *"chưa hỏi"* tính tới 2026-09-06 — **mã treo duy nhất còn lại** của cả nhóm). **Không sửa một chữ nào của `quality/invariants.md`** (`git diff --stat` rỗng), không chạm `05-vong-doi.md` §5 hay `architecture.md` §2 · §3.1, không sửa mở đầu hay §1 (nhóm TIỀN) của file dùng chung (F-010 · F-014), không một tên bảng · cột · ràng buộc · endpoint · route · component nào (ADR-035). **F-026 không bị kéo vào**: `I-019` · `I-020` để nguyên ngoài §2, đúng luật của prompt (xếp nhóm là quyết định của chủ repo, không phải của lượt này). ⇒ ô cổng chất lượng §9 thứ nhất và thứ hai vẫn **chưa** tick được (còn chờ P1-06); bảng nay có 13/18 hàng. Gate xanh (2026-09-06)
+- [x] T-059 **Gate 1d chấm máy phần phổ biến nhất của ranh giới pha; `CLAUDE.md` hết ba chỗ mục nát mà một vòng rà soát (hội thoại + hai file nháp `new_claude/`) chỉ ra: quy ước code chưa có chủ, luật tự giác trộn với luật có script, và §8 tự mâu thuẫn "bốn dòng" trong khi khối *Every level* có sáu** — `scripts/check-phase-boundary.sh` (mới) + `scripts/check-phase-boundary.test.sh` (mới, tám ca) chạy trong `gate.sh` ngay sau Gate 1c, cùng lý do **ADR-032**: lỗi chỉ sống trong tài liệu pha 1, `verify.sh` bỏ qua đúng lượt sinh ra nó. Gate bắt từ khoá SQL, verb HTTP + `/api/`, thẻ JSX-giống trong `docs/product/1-system-design/`, tự thoát sớm khi thư mục đó không đổi trong lượt, chấm cả file đã track (thay đổi chưa commit) lẫn file chưa track — cố ý bảo thủ, **không thay P1-12 và mắt người** (**ADR-035**), chỉ hẹp phần việc của họ lại. **`CLAUDE.md` bốn chỗ sửa, lấy từ vòng rà soát chứ không lấy nguyên văn bản nháp** (không viết lại toàn bộ sang tiếng Việt, không đổi số mục — gần 200 chỗ trong repo trỏ `CLAUDE.md §X.Y`, đổi số mục không gate nào bắt được nhưng âm thầm sai ngữ cảnh tất cả): §2.2 thêm dòng chủ **quy ước code** (pha 2, cạnh schema — sửa một câu của **ADR-035** vốn bỏ sót nó); §3 thêm cột **Cưỡng chế bởi** tách nghĩa vụ có script chặn khỏi nghĩa vụ *tự giác*; §8 khối **L0** rút còn đúng bốn dòng thật, hai dòng backlog/scope chuyển xuống **L1 trở lên** — nơi entry và scope thật sự tồn tại; §6.1 thêm lệnh `git diff --name-only HEAD` để lấy danh sách file commit **từ git**, không từ trí nhớ phiên. **Bắt được một lỗi có sẵn khi sửa, không phải lỗi task này tạo ra**: §5 mục 2 nói *"step 3 is skipped"* trỏ tới `verify.sh` từ thời nó còn là bước 3 — trước khi Gate 1c ra đời đẩy nó xuống bước 4, rồi Gate 1d task này đẩy tiếp xuống bước 5; con trỏ chưa từng theo kịp, sửa thành *"step 5"*. **ADR-039** ghi quyết định, ba đường bị bác cho mỗi chỗ, và nói rõ ADR này **không** viết lại toàn bộ CLAUDE.md. Gate xanh (2026-09-06)
+- [x] P1-04 **Bảy mệnh đề chạm tiền nay mỗi mệnh đề có một TẦNG giữ nó và một phép đối chiếu ra rỗng — và ba chỗ trong bảy chỗ ấy nói thẳng rằng máy không ngăn được** — `docs/product/1-system-design/03-bao-ve-invariant.md` (file **mới**, bước 4/12, bản đồ file ở kế hoạch §5) + **một** dòng vào bảng *Pha 1* của `docs/product/00-index.md` trong cùng thay đổi. File này **một file, ba chủ**: lượt này viết mở đầu + **§1 nhóm TIỀN**; §2 (**P1-05**) và §3 (**P1-06**) còn trống, hai bước ấy **thêm** mục của mình chứ không sửa §1 (**F-010** · **F-014**). **Bảy hàng, ba ô, không ô nào trống**: `I-002` tầng 1 (một phiên một hoá đơn) + tầng 3 (một cửa ghi, hoá đơn **cộng lại** chứ không mang con số tự đứng) · `I-005` tầng 1 **phải do** · `I-007` tầng 1 + tầng 3, **trỏ** `I-006` như nửa kia của cùng một ranh giới và không viết hộ nó (nửa kia thuộc P1-05) · `I-012` tầng 1 + tầng 3 + **tầng 4** · `I-013` **tầng 3 và tầng 3 là trần thật** · `I-014` **hai vế hai tầng** · `I-015` **ba vế ba tầng**. **Ba ô chỉ tới được tầng 4 hoặc 5 đều mang câu *"máy không ngăn được"* kèm cái máy CÓ giữ thay vào** — đúng ô cổng chất lượng §9 thứ hai tồn tại để bắt, và đúng thứ kế hoạch §10 gọi là rủi ro lớn nhất của cả pha: **(1)** `I-015` — **VietQR ở quán là mã TĨNH, không có đường nào báo tiền về** (`architecture.md` §7), nên hệ thống **không tự biết** tiền đã vào tài khoản; câu *"đã nhận tiền"* là **lời của người đứng quầy** nhìn tin nhắn báo có, máy chỉ ghi lại lời ấy — cái máy giữ thay vào là *tổng các phần = số phải trả*, *từng phần ghi riêng theo phương thức*, và vết có tên (`I-012`); **(2)** `I-014` vế *cộng đủ hai nguồn* — không ràng buộc nào biết một phép cộng đã bỏ sót cái gì, và nó thiếu **im lặng**; máy giữ thay vào là *mỗi khoản đúng một nguồn* (tầng 1) và *đúng một mốc tính tiền* (P1-03) ⇒ con số **dựng lại được**; **(3)** `I-012` vế *cái tên trong vết là người thật đã bấm* — quyền gắn **chỗ đứng** không gắn chức vụ (`architecture.md` §4) nên máy không ngăn hai người dùng chung một chỗ đứng. **`I-005` đọc `architecture.md` §12.3 là ĐỀ XUẤT, không phải ràng buộc đã có** — ô ghi *"tầng 1, và là **phải do** chứ không phải **đã do**"*, và luật 4 của mục §0 nâng câu ấy lên cho **cả bảng**: pha 2 chưa mở nên **mọi** câu *tầng 1* ở đây là **yêu cầu gửi pha 2**. **`I-012` kể đủ HAI ngoại lệ đã chốt** của câu *đi qua đúng một cửa POS* (người đi giao `shop-facts.md` §6.7 · chủ quán §6.17) — ngoại lệ đã chốt không phải lỗ thủng, nhưng một hàng quên chúng mô tả một hệ thống không tồn tại; **`I-013` nói rõ bước quầy duyệt KHÔNG phải cơ chế giữ nó** (nó chặn đơn ảo, không ai đứng đó cộng lại tiền từng dòng). **Ô `I-014` mang cả `U-036` và `U-037`, không tick trơn**, với **phương án hẹp nhất** — một câu về *phép đối chiếu*, không phải một luật mới: **ngày nào còn một khoản chưa có mốc (`U-036`) hoặc còn lượt bán trên giấy chưa nhập (ADR-037) thì phép đối chiếu KHÔNG kết luận, và ngày ấy đọc là *chưa đối soát xong*, không đọc là *lệch***; ba đường **không** đi ghi thẳng ở §1.2 (chọn hộ một ngày · thêm một dòng vào công thức đối soát §6.4 · đặt một người vào chỗ trống `U-037`). **F-026 đo lại: hai mệnh đề mồ côi nay là BA, và mệnh đề thứ ba chạm tiền** — `I-021` (*két cuối ngày − tiền đầu két = doanh thu tiền mặt*) sinh ở T-056 ngày 2026-09-04, đứng **ngay giữa** nhóm TIỀN và bị chính ô `I-015` **trỏ vào**, nên bảng hôm nay có một hàng *bị trỏ tới mà không tồn tại*. Lượt này **không** kéo nó vào (bảy hàng là bảy hàng) và **không** bỏ lửng: nó có tên ở §1.3 kèm **một đề xuất** cho chủ repo, không phải một quyết định (`CLAUDE.md` §3.5). **Không sửa một chữ nào của `quality/invariants.md`** (`git diff --stat` rỗng), **không viết lại công thức đối soát `architecture.md` §6.4** và không chạm §6.3 · §7 · §12.2 · §12.3, **không lấp hàng ⛔ của `02-thoi-gian-ngay-ban.md` §2**, **không đóng `U-036` hay `U-037`**, **không thiết kế một cơ chế nào** (không nút *khoá sổ*, không đường báo tiền về cho VietQR, không lịch chạy đối soát), **không một tên bảng · cột · ràng buộc · endpoint · route · component nào** (**ADR-035**, lệnh chưa lọc **150** dòng thêm cạnh lệnh đã lọc **rỗng** sau khi bỏ ra đúng **một** dòng — hàng *P1-12* của §1.4, dòng **kể tên** sáu thứ ấy để **từ chối** chúng, đúng ca **F-018**; và `git add -N` chạy trước, nếu không `git diff` không đọc file mới — F-017). ⇒ **P1-07 và P1-10 hết bị P1-04 chặn** (còn chờ P1-05 · P1-06); ô cổng §9 thứ nhất và thứ hai **chưa** tick được — bảng mới có 7/18 hàng, và phép đếm *"mười tám"* của cổng ấy đã hết đúng (F-026). Gate xanh (2026-09-06)
+- [x] T-056 **Chủ quán trả lời CẢ MƯỜI câu nhóm A trong một lượt, và một trong mười lời LÀM MẤT NỬA CÂU HỎI của một việc** — `A1`…`A10` về owner, nhóm A **gạch** khỏi `work/admin-questions.md` §3, số câu chưa trả lời đi từ **54** xuống **44** (đo bằng `grep -c '^> \*\*Trả lời:\*\*$'`). Ba quy tắc mới ở `master_plan/shop-facts.md` — **§6.23** một ngày **đúng một buổi** (buổi sáng) và quán **KHÔNG có mở ca / đóng ca** (*"cứ đến giờ là bán rồi tối đếm tiền"*) · **§6.24** thứ tự bưng **POS quyết**, luật cơ sở **ai tới trước ăn trước**, ưu tiên **khách vội** là ngoại lệ *đôi khi* · **§6.25** khách tự chọn bàn **và** nhân viên xếp, hàng chờ **có thật ngoài đời** — cộng **§8.5** (mảng TÀI CHÍNH: **tiền đầu két** có thật, số mặc định **sửa được**; giữa buổi **không** ai lấy tiền) và **§8.6** (mục tổng quan chủ quán, **sáu** con số). **Chỗ đắt nhất: `A2` không TRẢ LỜI ADM-01, nó làm mất một nửa câu hỏi ấy** — không có mốc mở và mốc đóng nào để định nghĩa vì quán **không có** hai mốc đó, nên mục *Goal* của ADM-01 hỏi về hai thứ không tồn tại ⇒ **ADR-038** chốt **tiền đầu két gắn vào NGÀY BÁN** (định nghĩa của **P1-03**, `Done` cùng ngày), **không** dựng một biến cố *mở ca* mà ngoài đời không có: dựng nó là bắt người bấm một nút không tương ứng việc gì, và quên bấm = một ngày đối soát lệch không ai biết vì sao. **I-021** (mới) viết thành công thức: `két cuối ngày − tiền đầu két = doanh thu tiền mặt`, ngưỡng **0đ**, năm kịch bản kiểm — không có nó thì đối soát lệch **đúng bằng** tiền đầu két **mọi ngày** và cổng chất lượng mạnh nhất của dự án bị người dùng học cách bỏ qua. **Bốn vế chủ quán KHÔNG chạm tới thành câu hỏi có mã, không thành suy luận** (`CLAUDE.md` §3.5): **U-038** (tiền đầu két nhập **một tổng** hay **bảng theo mệnh giá** — đổi *cách chứng minh* I-021, không đổi luật) · **U-039** (máy có giữ hàng chờ không) · **U-040** (mấy chỗ ngồi · bàn đã đánh số chưa — vế **ADR-027** cần) · **U-041** (*"còn thiếu gì"* là thiếu gì). **Một chỗ suy ra vào §7.2 chứ không vào §7.1** — **S-7**: đọc cửa sổ **06:00–11:00** của §1 **chính là** một buổi là suy luận, chủ quán chỉ nói *"chỉ bán buổi sáng"* (**F-004**); tiêu đề §7.2 đếm lại **ba** mục. **`A7` là bằng chứng sống của F-029**: câu hỏi ba vế, chủ quán trả lời đúng **vế đã có chủ** (*"11 bàn"*, §1 có từ 2026-08-30) và không chạm hai vế còn sống — dòng cảnh báo T-053 kịp ngăn bản thứ hai nhưng không ngăn được hai vế kia bị bỏ qua. **ADM-01 và ADM-02 chuyển từ loại 1 sang loại 2** (luật đủ, còn lại là pha 2–4), mỗi entry đổi mục *Chặn bởi* thành *Luật đã ở đâu, còn thiếu gì* (luật 6 của `work/backlog_AD.md`); ADM-03 · ADM-04 hẹp lại nhưng **vẫn loại 1**. Con số lane **đếm lại, không trừ**: loại 1 **23 → 21**, loại 2 **5 → 7**, loại 3 **1**, tổng **29** (**F-003**). **Không thi công**: không màn, không cơ chế hàng chờ, không tên bảng · cột · endpoint · route · component (**ADR-035**). Gate: hai dòng đỏ của Gate 1c nằm ở `docs/product/0-ba/ban-hang/` — **file phiên khác đang viết dở**, không phải của lượt này (2026-09-04)
+- [x] T-057 **Bước 4/12 của pha 1 nay có prompt, và nó là bước DUY NHẤT hôm nay đủ tiền đề để có một.** `prompt/SD/P1-04-invariant-tien-L2.md` (mới) — bảng ba cột **nhóm TIỀN**, bảy mệnh đề `I-002` `I-005` `I-007` `I-012` `I-013` `I-014` `I-015`, sáu khối theo `docs/prompt-guideline.md` cộng *Unknowns* và *Report*. **Viết được vì P1-03 `Done` 2026-09-04**: luật §6 sửa tiến ở T-051 (**ADR-008**) cho phép viết prompt của một bước khi mọi bước ở cột *Cần xong trước* của nó đã `Done`, và P1-04 là bước duy nhất vừa bước qua ngưỡng ấy trong ngày. **Năm cái bẫy của riêng nhóm tiền đi vào *Context* và *Acceptance*, không để phiên nhận việc tự tìm:** **(1) VietQR là mã TĨNH, không webhook** (`architecture.md` §7) ⇒ vế *"tiền đã thật sự vào tài khoản"* của `I-015` **không có tầng máy nào giữ**, người đứng quầy nói — đúng ca mà kế hoạch §10 gọi là rủi ro lớn nhất của cả pha; **(2) `architecture.md` §12.3 là ĐỀ XUẤT gửi pha 2**, tự khai như thế, nên `I-005` ghi *phải do* cơ sở dữ liệu giữ chứ không phải *đã do*; **(3) `I-014` có hai vế ở hai tầng khác nhau** — *không khoản nào đứng ở cả hai nguồn* là vế máy giữ được, *cộng đủ hai nguồn* là một phép cộng chỉ đối soát mới bắt được; **(4) `I-012` có hai ngoại lệ ĐÃ CHỐT** của câu *"đi qua đúng một cửa POS"* (người đi giao §6.7 · chủ quán §6.17) — quên chúng là mô tả một hệ thống không tồn tại; **(5) `I-013`** viết bằng ngôn ngữ tầng và nói rõ **bước quầy duyệt không phải cơ chế giữ nó**. **Một luật mới cho cả ba bước bảng ba cột, viết vào *Constraints*:** *tầng 5 ở cột 2 không được là bản sao của cột 3* — cả bảy hàng đều đối soát được ở cuối ngày, nên một hàng chép cột 3 sang cột 2 nói **một** điều chứ không phải hai. **Ô `I-014` mang cả hai mã đang mở** `U-036` (trả trước nhận ngày này, giao ngày khác) và `U-037` (ai chấm lại ngày đã nhập bù, lúc nào) — *Acceptance* mục 9 cấm tick trơn. **Mục *Verify* mang bài học của chính P1-03**: file MỚI chưa được git track thì `git diff` không đọc nó, nên lệnh lọc ranh giới pha chạy trên 0 dòng mà vẫn xanh (**F-017**) ⇒ prompt dặn `git add -N` trước, và in cả lệnh chưa lọc cạnh lệnh đã lọc. **Không thi công P1-04**: không tạo file bảng ba cột, không điền một hàng nào, `quality/invariants.md` và `docs/product/1-system-design/` không đổi một chữ. Hai pointer sửa trong cùng lượt (§7.2): hàng P1-04 ở `prompt/SD/README.md` và dòng **Prompt:** của entry P1-04 ở `work/backlog_SD.md` hết nói *chưa viết*. Gate xanh (2026-09-04)
+- [x] T-058 **Lane admin có lane prompt riêng: `prompt/AD/`** — `prompt/AD/README.md` + **một** file prompt, `ADM-53-hai-loi-ve-owner-L1.md`, và `prompt/AD/*` vào tập file **Gate 1b** chấm (`scripts/check-links.sh`, đúng việc P1-01 đã làm cho `prompt/SD/`: một lane prompt không nằm trong danh sách ấy là lane pointer **không cổng nào đọc**, đúng thứ **F-007** dựng gate để bắt). **Chỉ một prompt, và đó là kết quả chứ không phải nợ.** Luật 6 đầu `work/backlog_AD.md` chia hai mươi chín việc làm ba loại theo **tiền đề**, không theo ý người viết: **loại 1** thiếu **luật** ⇒ prompt viết trước lời chủ quán không chỉ chết (**F-013** · **F-017**) mà **quyết hộ**, thứ `CLAUDE.md` §3.5 cấm và **không có mức L0**; **loại 2** luật đã đủ, phần còn lại thuộc pha 2–4 hoặc **P1-07** ⇒ prompt của nó thuộc lane khác; **loại 3** nhận được ngay ⇒ đúng **ADM-53**. Nên README **không** bỏ trống hai mươi tám việc kia: nó mang **bảng đủ 29 hàng** — mức · loại · trạng thái prompt · **cột *Mở khoá bằng*** chép mã chặn thật (`A2`…`F55` · `U-034` · `P1-03` · `P1-09` · `Đ-2` · `Đ-4`), kèm câu điều kiện đọc được: **viết được prompt khi mọi câu ở cột ấy đã có lời VÀ lời ấy đã về owner** — *đã hỏi* chưa đủ. Bảng tự khai là **ảnh chụp 2026-09-04**, owner là `work/backlog_AD.md` (**F-003** · **F-018**). Prompt ADM-53 chia *Acceptance* làm **hai nhánh** vì bước hỏi có hai kết cục hợp lệ — chủ quán trả lời được, hoặc không, và nhánh *không* có ba dòng nghiệm thu riêng bắt đầu bằng **không một dòng owner nào bị đổi**. Nó cũng bắt một pointer đã hết hạn trong đúng ngày nó được viết: entry ADM-53 bảo ghi **Đ-4** vào `master_plan/shop-facts.md` **§8.5**, mà §8.5 và §8.6 đã bị hai lượt khác lấy **cùng ngày 2026-09-04** ⇒ Constraints viết *lấy số còn trống theo §8.3, đừng chép số từ entry*. **Không viết một dòng nghiệp vụ nào của lane admin**, không chuyển Đ-2/Đ-4 về owner, không trả lời hộ câu nào của chủ quán, không chạm entry ADM-01…ADM-04 (phiên T-056 đang sửa). Gate xanh (2026-09-04)
+- [x] T-055 **Chủ quán đóng `U-031` bằng một từ, và trả lời MỘT NỬA `U-034`** — `U-031` (*ai bấm mốc `Đã ra bàn` của một đơn **giao tận nơi***, mở 2026-09-03 bởi BA-13 từ `F-022` chỗ 2) đóng bằng **`"pos"`**: **không** có ngoại lệ, quầy bấm mốc thứ ba y như đã bấm hai mốc kia (U-021), người đi giao vẫn chỉ giữ *đã giao* + *đã thu tiền* (§6.7) ⇒ **§5.5 chạy được cho đơn giao** và không ai phải bấm khống một mốc cho suất đang ở nhà khách. **Vế *lúc nào* thì lời ấy KHÔNG chạm tới, nên nó không lên §7.1**: nó thành **S-6** ở `master_plan/shop-facts.md` §7.2 — *suy ra* là **lúc đơn rời quán**, cùng mốc quầy đã bấm để sang `Đang giao` (§6.7, U-023), kèm câu *nếu suy ra này sai thì quầy phải chờ người đi giao báo về mới bấm được* (CLAUDE.md §7.2: cái được nói ≠ cái mình suy ra, `F-004`). §7.2 vì thế từ **một** mục lên **hai**, và cả §7 mở đầu lẫn tiêu đề §7.2 sửa theo trong cùng lượt. **Bảy chỗ nhắc tới U-031 dọn hết trong cùng thay đổi** (`05-vong-doi.md` §5.2 + §5.4 · `03-lat-cat.md` §3.4.8 · `08-scenario.md` bốn chỗ · kế hoạch pha 1 §8 · `work/backlog_SD.md` bảng + P1-05/P1-07/P1-09 · `prompt/SD/P1-05-…` sáu chỗ) — bốn chỗ ở `08-scenario.md` **giữ nguyên văn ngày ký cổng** và chỉ thêm dòng *đã đóng*, vì đó là biên bản, không phải luật. Prompt **P1-05** đổi hẳn hình: `I-017` ca đơn giao nay viết **thẳng**, chỉ vế *lúc nào* còn treo và nó treo vào **`S-6`** chứ không vào một `U-XXX`. **`U-034` KHÔNG đóng — nó hẹp lại.** Chủ quán trả lời *"tuỳ từng nguyên liệu"*, tức bỏ đúng giả định của câu hỏi gốc (**một** con số cho cả mục), nên phần còn mở là **thứ nào mang loại nào** và nó không nhỏ đi. Cùng lượt ấy chủ quán kể một **danh mục rộng hơn hai chữ *nguyên liệu*** — thực phẩm · vật tư tiêu hao và bao bì · **số điện, số nước** (nhóm thứ ba là **chỉ số công tơ**, không phải hàng có tồn, nên nó **không nhận được cả ba đường ra** của câu hỏi). **Danh mục ấy KHÔNG được chép vào `shop-facts.md` §8**: câu gốc **đứt giữa chừng** và sai chính tả nhiều chỗ ⇒ chép vào owner là dựng một dữ kiện quán chưa ai đọc lại (`F-001`); nguyên văn giữ trong chính gạch đầu dòng `U-034`, và *Cách hỏi* của nó viết lại thành **hỏi theo từng thứ**. **Mở `F-030` — lỗi ngủ do chính lượt này làm bật dậy:** Gate 1c đỏ ở `03-lat-cat.md:850`, một ô bảng lượt này **không sửa một chữ**, đã nằm im **chín ngày**. Cơ chế ở bước 1 của cổng: nó đánh dấu **mọi** mã `U-XXX` xuất hiện trong một gạch đầu dòng đang mở là `open`, nên `U-021` — chỉ được gạch đầu dòng `U-031` **trích dẫn** — bị coi là đang mở và phép A **được miễn** ở toàn repo; xoá gạch đầu dòng ấy là `U-021` về `closed` và ô bảng đỏ ngay. ⇒ **cổng báo thiếu trong khi một câu hỏi còn mở**, và giá bị dời sang lượt đóng nó. Sửa ô bảng bằng cách gọi đúng tên chỗ chưa chắc (**S-5**, không phải `U-021`); **chưa sửa cổng** — lần đo **thứ nhất**, `CLAUDE.md` §3.8 đòi hai. Ba câu mở còn lại (`U-033` · `U-036` · `U-037`) sẽ lặp lại đúng ca này. **Ba phiên chạy song song trong cùng cây** (T-054 · T-055 · T-056): khối scope được **thêm**, `U-037`/`ADR-037` để cho T-054, lượt này lấy **`S-6`** và **`F-030`** và không mở một `U-XXX` nào. Gate xanh (2026-09-04)
+- [x] T-054 **Chủ quán trả lời HAI câu trong một lượt, và cả hai đi cùng một hướng: quán không dừng bán, nhưng máy không được giữ cái mà quán không nhìn thấy.** **`U-035` → *"không cho đặt qua web cho đặt qua hotline và ghi giấy trực tiếp với pos, trên web có dòng thông báo"*** ⇒ quán mất kết nối là **điều kiện thứ ba** để một đơn được tạo (`quality/invariants.md` **I-008**, trước nay viết *"cả hai điều kiện"*), và là điều kiện **duy nhất không ai bấm được** — nút *"Tạm dừng nhận đơn"* (§6.8) nằm sau đúng đường mạng vừa mất. Ba kênh khách tự bấm (`delivery` · `pickup` · `qr_table`) **dừng**; hai kênh do người của quán nhập (`staff_pos` · `phone_preorder`) **không** dừng — họ ghi giấy. *Vế `qr_table` là **cách đọc**, không phải chữ của chủ quán, và được ghi ra đúng như thế (§7.2 · **F-004**); câu chữ dòng thông báo **chưa** chốt, không ai được tự viết.* **`U-032` → *"bán"*** ⇒ lượt bán trên sổ giấy tính doanh thu **ngày quán bán**, không phải ngày gõ. Đây là đường mà chính U-032 đã cảnh báo là **phá một thứ đang đứng**: doanh thu một ngày **đã đối soát** đổi được về sau ⇒ câu hệ quả của **I-014** (*"không đổi về sau"*, đúng từ 2026-09-01) nay **sai**. **ADR-037** trả lời chỗ đó không giết ngưỡng **0đ** bằng cách nào: **một ngày còn lượt chưa nhập là một ngày CHƯA đối soát xong** — con số `N` (*"còn N lượt bán trên giấy chưa nhập"*, §6.11 từ 2026-09-02) nâng từ **một dòng bày ra** thành **điều kiện đóng sổ**, nên ngày mất điện không *"lệch rồi được tha"* mà là **chưa tới lúc được chấm**; ngưỡng 0đ và luật *không có nút "đóng ca dù lệch"* (**ADR-022**) không đổi một chữ. I-014 nay **ba** dòng (bán · hoàn · **nhập bù**) và một **ngoại lệ có tên**, đọc theo nghĩa hẹp nhất — chỉ lượt bán **đã xảy ra thật ở quán** và **có mặt trên sổ giấy**; kèm một kịch bản *Verification* đo được (30 suất ⇒ ngày mất điện tăng đúng 30, ngày gõ tăng 0, `N` về 0 mới đóng sổ; nhập 20/30 thì `N`=10 và **không có đường nào đóng sổ**). **Ba đường bị bác ở ADR-037**, đường nguy hiểm nhất là đường **rẻ nhất**: *tính ngày bán nhưng vẫn đóng sổ như thường rồi sửa số lặng lẽ* — nó giữ được **cả hai câu chữ** (*"tính ngày bán"* + *"tối nào cũng đối soát xong"*) bằng cách cho một con số đã chốt đổi mà **không ai chứng kiến**. **Mở `U-037`**: lời chốt nói doanh thu rơi vào ngày nào, **không** nói **ai** ngồi lại chấm con số ấy khi `N` về 0 và **lúc nào** — chặn ô `I-014` của **P1-04**. **Chín chỗ trỏ vào hai câu ấy sửa trong cùng lượt** (§7.2): `shop-facts.md` §6.11 + hai dòng nhật ký §7.1 · `99-unknowns.md` (hai bullet xuống vùng *đã có lời giải*, U-037 lên) · `I-008` · `I-014` · **ADR-037** + hàng bảng tổng hợp · `01-ranh-gioi-he-thong.md` (**PT-1** · **PT-6** · bảng chốt/suy-ra · §4) · `02-thoi-gian-ngay-ban.md` (hàng *nhập bù* của bảng §2 **hết trống**, §3, §4, §5) · `06-ngoai-le.md` dòng 11–12 + §6.2 · bảng chặn ở kế hoạch §8 và `backlog_SD.md` + hai pointer `prompt/SD/`. **Không thiết kế cơ chế** *máy làm sao biết quán mất kết nối* — đó là **P1-08** và pha 3. Gate 3 · 1b xanh; Gate 1c xanh với phần của lượt này (2026-09-04)
+- [x] P1-03 **Mọi phép cộng tiền của hệ thống nay đứng trên cùng MỘT định nghĩa *một ngày bán*, và định nghĩa ấy có đúng một chỗ để đọc** — `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` (file **mới**, bước 3/12, bản đồ file ở kế hoạch §5) + **một** dòng vào bảng *Pha 1* của `docs/product/00-index.md` trong cùng thay đổi. **Định nghĩa: một ngày bán = một ngày lịch trong múi giờ quán** (`shop-facts.md` §1), **đóng ở mốc đầu, mở ở mốc cuối** — hai ngày liền nhau không cùng nhận một mốc và không để rơi mốc nào, đúng điều kiện `I-014` cần. **Chỗ đáng giá nhất là chỗ tách *ngày bán* khỏi *giờ bán*:** 06:00–11:00 là giờ **bán**, còn một ngày bán phủ **cả hai mươi tư giờ** — bốn việc chạm tiền của quán đều nằm ngoài giờ bán (thu nợ · hoàn tiền · nhập bù sổ giấy · chính lượt đối soát *mỗi tối*), nên một định nghĩa lấy 11:00 làm mốc kết thúc đẩy cả bốn ra ngoài mọi ngày. **Mục §2 — mốc tính tiền:** mỗi việc chạm tiền có **đúng một** mốc quyết định ngày của nó, ba luật đã chốt **trỏ** về đây chứ không được nhắc lại bằng lời khác (`I-014` vẫn là chỗ duy nhất đọc cả ba cạnh nhau); §2.1 chặn ca **I-015** hỏng — một lần thu chia hai phương thức lúc 23:59 không được rơi vào hai ngày, nếu không ngưỡng 0đ báo lệch **hai** lần cho một lần thu; §2.2 suy từ `I-014` rằng **mốc đã ghi thì không dời** (sửa một khoản đã ghi là việc mới, mang mốc ngày sửa — đúng cách §6.4 xử một lần hoàn), ghi rõ là *cách đọc* chứ không phải lời chủ quán (§7.2). **Mục §3 — nguồn thời gian:** mốc do **một** nguồn cấp, cấp **ở nơi ghi**, không lấy từ máy khách (ba trong năm kênh là kênh khách tự bấm — `qr_table` · `delivery` · `pickup`) và cũng không lấy từ đồng hồ của từng máy trong quán; kèm câu **luật này không với tới đâu** — lượt bán trên sổ giấy xảy ra khi hệ thống không có mặt, và đó đúng là chỗ `U-032` đang đứng. **Mở U-036 — chỗ mà bước này KHÔNG tự quyết được:** `shop-facts.md` §6.3 cho khách mang đi chọn **trả trước** và POS xác nhận *lúc tiền tới tay quán*, §5.2 điểm 5 cho `pickup` **giờ hẹn lấy** và `phone_preorder` là **đơn đặt trước** — không câu nào buộc hai mốc ấy cùng ngày. Đây là **chiều ngược của §6.14**: nợ là tiền về **sau** một lần bán đã xong và đã có luật; tiền về **trước** một lần bán chưa xong thì chưa ai chốt. Hai đường ra đều động vào đúng thứ `U-032` đang đe doạ (về **ngày giao** ⇒ két có tiền mà ngày ấy không có doanh thu, ngưỡng 0đ báo lệch trừ khi công thức `architecture.md` §6.4 mọc thêm một dòng — quyết định của chủ quán, không phải của pha 1; về **ngày nhận tiền** ⇒ ghi doanh thu cho một bữa ăn **chưa bán**, và một lần huỷ hôm sau để lại doanh thu ảo). **Bảng §2 vì thế có hai hàng ⛔ để trống có chủ ý**, đúng luật kế hoạch §9. **Không sửa một chữ nào của `I-014` · `I-015`** (`git diff --stat -- quality/invariants.md` rỗng), **không viết lại công thức `architecture.md` §6.4** — đo lại 2026-09-04: §6.3 · §6.4 · §12.3 **thiếu** một định nghĩa chứ không **nói ngược** một định nghĩa, nên không chỗ nào phải sửa. **Không thiết kế một cơ chế nào** (không nút *khoá sổ*, không đường đồng bộ đồng hồ, không lịch chạy — §2.2 nói *cái gì phải đúng*, không nói *khoá bằng gì*), **không một tên bảng · cột · kiểu dữ liệu thời gian · endpoint · route nào** (ADR-035), **không chép một dữ kiện quán nào** (ADR-001). **`CLAUDE.md` §2 thêm một hàng** cho owner mới, và bảng *Đang chặn* ở kế hoạch §8 thêm **hai** hàng: `U-036` của lượt này **và `U-035`** mà P1-02 mở cùng ngày rồi chưa kịp đưa vào — một bảng tự khai *"đo lại 2026-09-04"* mà thiếu một câu đang mở là pointer trỏ vào sự thật đã dời (§7.2). Ba dòng ấy ngoài scope của prompt, nói ra chứ không sửa lén (§3.4). **Lệnh (6) của mục Verify trong prompt tự nó dính F-017** — nó đọc `git diff`, mà file mới thì **chưa track**, nên bộ lọc chạy trên **3** dòng thay vì **208**: một bộ lọc rỗng vì không đọc gì trông y hệt một bộ lọc rỗng vì không có lỗi. Đã chạy lại trên cả file mới. ⇒ **P1-04 hết bị P1-03 chặn**, nhưng ô `I-014` của nó phải mang **hai** mã đang mở (`U-032` · `U-036`); ô thứ ba của cổng chất lượng §9 **tick được**, và lượt này không tick hộ (việc của P1-11/P1-12). Gate xanh (2026-09-04)
+- [x] T-053 **Hai việc bị chặn bởi một câu hỏi mà `shop-facts.md` đã trả lời năm ngày trước** — tiền đề chặn của **ADM-01** (*"không tài liệu nào nói một buổi bán bắt đầu và kết thúc lúc nào"*) và **ADM-03** (*"số bàn và số chỗ ngồi chưa là dữ kiện"*) đo lại là **sai**: `master_plan/shop-facts.md` **§1** chốt **Giờ bán 06:00–11:00** và **Số bàn: 11** từ **2026-08-30** (`397a8e9`), tức năm ngày trước tiền đề và ba ngày trước khi 55 câu hỏi được viết. Hệ quả đắt hơn hai câu văn: **`A1` và `A7` đang hỏi chủ quán lại một dữ kiện đã có chủ** ⇒ bản thứ hai của **F-001** do **chính chủ quán** viết ra, vào một file tự khai sẽ bị xoá, và `work/` không bị Gate 1b lẫn Gate 1c chấm nên **không cổng nào đỏ**. Sửa: hai entry mang bảng **hai cột *đã có chủ* / *còn thiếu*** và nói ra chỗ thiếu **thật** — ADM-01 thiếu **mốc vận hành** (ai mở, ai đóng, con số nào bị chốt), **không** thiếu giờ; ADM-03 thiếu **danh sách bàn gọi tên được** cho **ADR-027**, **không** thiếu con số (*một con số 11 không phải một danh sách*). ADM-01 rút từ bốn câu chặn xuống **`A2` `A3` `A4`**; `A1` · `A7` mỗi câu thêm một dòng ⚠️ *ĐÃ CÓ LỜI cho vế…* mà **không xoá, không viết lại** câu hỏi (§0 luật 4). **Bảng *Cổng của cả lane* và con số 23/29 không đổi** — cả hai việc **vẫn** bị chặn, chỉ hẹp hơn (**F-003**). **Không thi công ADM-01**: nó vẫn không nhận được (`A2` `A3` `A4` chưa có lời, và **P1-03** phải đi trước). **Mở F-029** — một **mệnh đề phủ định toàn phần** (*"không tài liệu nào…"*) viết mà không `grep`; họ lỗi **F-016** nhìn từ chiều ngược, và cùng cơ chế **F-028**: *lane trông nặng thì bị hoãn*. Gate xanh (2026-09-04)
+- [x] T-052 **Mảng admin có sổ task riêng: `work/backlog_AD.md`** — hai mươi chín entry `ADM-01`…`ADM-53` — mỗi entry có dòng **mức · loại**, khối *Không làm thì mất gì*, một khối nói vì sao nó ở trạng thái ấy (*Chặn bởi* · *Luật đã ở đâu* · *Cách hoàn thành*) và dòng *Acceptance · Verify*, đo 29/29 — một bảng nối **54 câu hỏi đang mở** với việc chúng chặn, và một bảng **sáu chỗ lane này chạm pha 1** (P1-03 · P1-07 · P1-04 · P1-09). **ADR-036** chốt ranh giới giữa ba sổ nay là **LANE**, không phải pha — sửa luật 3 của **ADR-034** bằng một khối *SỬA ĐỔI*. Dựng sổ **lộ ra hai con số mà một danh sách một dòng không thể lộ**: **23/29 việc bị chặn** bởi câu chưa hỏi chủ quán, và **5 việc không còn phần nghiệp vụ nào** (ADM-30 · ADM-31 · ADM-40 · ADM-41 · ADM-50 — luật của chúng đã chốt sẵn ở mảng bán hàng, phần còn lại thuộc pha 2–4) ⇒ chỉ **một** việc vào *Ready*: **ADM-53**. `work/admin-questions.md` §2 thành chỗ chỉ đường và **mười một đường dẫn chết** trong đó hết trỏ về bản lưu — chúng sống sót qua cả năm lượt DOC-1…DOC-5 vì `work/` không bị Gate 1b chấm. **Mở F-028** — ADR-013 đọc dãy *"ADM-01…ADM-52"* thành phép đếm *"52 việc"*, số thật là **29**; lần thứ ba của họ lỗi **F-003** · **F-018**.
+- [x] P1-02 **Pha 1 nay kể tên những thứ NGOÀI hệ thống mà hệ thống đang dựa vào, và nói mất từng thứ thì quán làm gì** — `docs/product/1-system-design/01-ranh-gioi-he-thong.md` (file **mới**, bước 2/12, bản đồ file ở kế hoạch §5) + **một** dòng vào bảng *Pha 1* của `docs/product/00-index.md` trong cùng thay đổi. **Sáu phụ thuộc `PT-1`…`PT-6`, sáu dòng suy giảm**, mỗi dòng đủ ba vế *quán làm gì · ai bù · bù lúc nào*: **PT-1** điện·mạng·thiết bị POS tại quán · **PT-2** nơi hệ thống chạy · **PT-3** ngân hàng qua **VietQR tĩnh** · **PT-4** tin nhắn báo có · **PT-5** đường báo đơn web về quầy · **PT-6** sổ giấy. **Chỗ đáng giá nhất là chỗ tách PT-1 khỏi PT-2**: quán mất mạng thì hệ thống **vẫn sống**, nên **khách web vẫn đặt được** trong lúc quán mù, và nút *"Tạm dừng nhận đơn"* (`shop-facts.md` §6.8) cũng nằm sau đúng đường mạng vừa mất ⇒ **U-035** (mở trong lượt này, chặn vế *khách web* của PT-1 và chặn **P1-08**); hệ thống chết thì cả hai bên cùng mù và hai kênh khách tự bấm **mất hẳn** — không đơn nào để nhập bù vì đơn ấy chưa từng tồn tại. **Actor TRỎ về pha 0** (`01-actors-pham-vi.md` §1.2·§1.4·§1.5), không chép — mục chỉ dẫn lại đúng một câu §1.4 (*"không phải chỗ dựa duy nhất để bán hàng"*) vì cả mục dựng trên nó, cộng §1.1 (*POS là nơi duy nhất ghi*): hai câu ấy cho ra hình dạng của cả file — **một cái máy ở quầy đứng giữa quán và hệ thống**, nên mọi thứ ngoài kia chết thì chỗ hứng luôn là **người đứng quầy**. **Ba chỗ một đường suy giảm không được đi qua**, viết thẳng vào §3: không mở nút *"đóng ca dù lệch"* (ngưỡng 0đ — ADR-022) · không đánh mất vết (**I-012**, kể cả lượt nhập bù từ giấy) · không cộng gộp hai nguồn tiền để lấp một chỗ mất (**I-014** + §6.10 chia theo **phương thức**). **Mở F-027 — chỗ mà bước này KHÔNG tự quyết được:** kế hoạch §6 đặt đầu ra bằng **năm** phụ thuộc kể tên, mà **hai** trong năm (**Telegram** · **một VPS**) `grep` ra **không một dòng nào** ở `docs/`/`quality/` — chúng chỉ sống ở `master_plan/prompt-fullstack.md`, đúng tài liệu mà **ADR-035** vừa chốt là **không sở hữu thứ gì** ⇒ pha 1 chỉ có hai đường và cả hai đều sai (bịa nhà cho một câu chưa ai chốt, hoặc bỏ sót phụ thuộc đắt nhất). Đường đã đi: bảng §2 ghi **cái quán dựa vào**, không ghi **tên của thứ đang đảm nhiệm nó** — PT-2 là *"nơi hệ thống chạy"* chứ không phải *"một VPS"*, PT-5 là *"đường báo đơn web về quầy"* chứ không phải *"Telegram"*, cả hai mang một dấu ⚠️ trỏ về F-027. Chỗ này rộng hơn P1-02: **cả bốn ràng buộc ẩn của P1-08** (*một instance · không hàng đợi · không cache · một VPS*) đều đứng trên cùng bản xuất khẩu ấy. **Không chốt hộ `U-032`** — PT-6 viết *"quán ghi giấy, nhập bù khi máy sống lại"* rồi dừng; *doanh thu ngày nào* là câu của **P1-03**. **Không thiết kế một cơ chế nào** (retry · hàng đợi · cache · đồng bộ ngược — lệnh chưa lọc **172** dòng thêm, lệnh đã lọc còn **hai** dòng và cả hai là câu **từ chối**: *"Thử lại, hàng đợi, bộ nhớ đệm… là việc của P1-08"* và hàng *Pha 3 · pha 5* của §5 — một tài liệu **kể tên** một cơ chế để từ chối nó không phải là thiết kế nó, **F-018**; F-017), **không một tên bảng · cột · endpoint · route · component nào** (ADR-035), **không chép một dữ kiện quán nào** (ADR-001). **`CLAUDE.md` §2 thêm một hàng** cho owner mới — ngoài bốn dòng scope của prompt, nói ra chứ không sửa lén (§3.4): một owner mà §2 không kể là owner không ai tìm ra (§7.2). ⇒ **P1-08 hết bị P1-02 chặn**; ô thứ tư của cổng chất lượng §9 tick được, kèm câu F-027 rằng nó **không** chứng minh mỗi phụ thuộc đã có nhà. Gate xanh (2026-09-04)
+- [x] T-051 **Lane `prompt/SD/` nay có sáu file, không phải một.** Năm prompt L2 cho năm bước mà cột *Cần xong trước* chỉ còn những bước **đã `Done`** — **P1-02** (ranh giới hệ thống · phụ thuộc ngoài · đường suy giảm) · **P1-03** (nguồn thời gian và định nghĩa NGÀY BÁN) · **P1-05** (bảng ba cột nhóm VÒNG ĐỜI) · **P1-06** (bảng ba cột nhóm MENU·GIÁ·VẾT) · **P1-09** (bảng quầy bốn con số, con bug F-024) — cộng **`prompt/SD/README.md`** cho cả lane. **Phạm vi do chủ repo chốt trong phiên**, chọn giữa ba đường: viết cả mười một bước còn lại · viết năm bước đã đủ tiền đề · viết một bước kế tiếp. **Sáu bước còn lại cố ý KHÔNG viết** (P1-04, P1-07, P1-08, P1-10, P1-11, P1-12): tiền đề của chúng chưa tồn tại, và một *Constraints* viết trước đầu ra là câu chết (**F-013** · **F-017**). **Kế hoạch §6 sửa TIẾN** (ADR-008), vì câu cũ *"prompt viết lúc nhận việc"* nói ngược việc vừa làm: nó trộn **lúc nào được viết** với **cái gì đã biết**, và lý do thật là vế sau ⇒ luật nay đọc được là **viết được prompt của một bước khi mọi bước ở cột *Cần xong trước* của nó đã `Done`**; vế *bước còn tiền đề chưa xong thì vẫn không được viết trước* **không đổi**. **Mở F-026 — một chỗ chặn mà không cổng nào thấy:** `I-019` và `I-020` sinh ở BA-12 ngày 2026-09-03, **sau** khi kế hoạch §6 chia ba nhóm, nên **hai trong hai mươi mệnh đề không thuộc nhóm nào** của P1-04·P1-05·P1-06, và cổng chất lượng §9 vẫn đếm *"mười tám"* ⇒ **cổng ấy tick xanh được trong khi hai mệnh đề chưa có tầng giữ nào**. Cùng hình với **F-024**, khác chỗ che: ở F-024 là một **tên task đã chết**, ở đây là một **con số đã hết đúng**. **Không xếp nhóm hộ** — ba đường (gấp vào P1-05 · mở bước thứ mười ba nhóm SẢN XUẤT · gấp vào P1-07) ghi sẵn trong F-026, quyết định là của chủ repo. Cảnh báo ấy đi vào prompt P1-05, P1-06, `prompt/SD/README.md` và `work/backlog_SD.md` ngay dưới bảng *Chỗ đang chặn* — bốn chỗ, vì brief chỉ in **mã** finding chứ không in nội dung. **Luật riêng của lane, viết vào README vì Gate 1b chấm `prompt/SD/`** (P1-01 đã thêm nó vào `scripts/check-links.sh`): đường dẫn của một file **đầu ra chưa tồn tại** không được viết dạng `thư-mục/tên.md` — viết **tên trần** cạnh thư mục chứa nó, nếu không Gate 1b đỏ ngay khi prompt được `git add`. Năm dòng **Prompt:** ở `work/backlog_SD.md` hết nói *chưa có* (pointer sai là bug của cùng lượt — §7.2). **Không thi công pha 1**: không một dòng đặc tả nào vào `docs/product/1-system-design/`, `quality/invariants.md` và `master_plan/shop-facts.md` không đổi một chữ. Gate xanh (2026-09-04)
+- [x] P1-01 **Ranh giới sở hữu của pha 1 đã có một câu trả lời, và không tài liệu nào còn nói ngược nó.** **ADR-035** chốt sở hữu chạy theo **trục pha đã có** (bảng sáu pha `master_plan/prompt-fullstack.md` §7 — không dựng trục thứ hai): **lược đồ** → pha 2 · **hợp đồng API** → pha 3 · **route · component** → pha 4 · **tầng bảo vệ của từng `I-0xx` + phép đối chiếu** → **pha 1** (P1-04…P1-06) · **yêu cầu hình dạng dữ liệu** → pha 1 (P1-07); mệnh đề `I-0xx` thì owner không đổi (`quality/invariants.md`, `I-001`…`I-020`). Kèm bốn luật, trong đó hai luật là chỗ dễ hỏng nhất: **hàng *chưa có owner* đổi thành tên file thật trong CÙNG thay đổi mở thư mục của pha ấy** (không mở thư mục trước, không file giữ chỗ — ADR-014 khối *SỬA ĐỔI 2026-09-02* đã bác `00-chua-co-gi.md` một lần), và **`master_plan/prompt-fullstack.md` §3.4–§3.7 không sở hữu thứ gì** — đề xuất 16 bảng ở đó là **đầu vào để pha 2–4 đối chiếu**, không phải đầu ra đã chốt, nên pha 1 cũng **không được sửa hộ** nó (gặp chỗ thiếu ⇒ viết yêu cầu ở P1-07). **Bốn đường bị bác, đường nguy hiểm nhất là đường rẻ nhất:** ghi §3.5 là owner của lược đồ vì nó là chỗ duy nhất hôm nay **thật sự có** 16 bảng — bác vì nó là bản xuất khẩu tự khai *"không phải nhà của sự thật nào"*, viết **2026-08-31** trước hơn hai mươi lời chốt của chủ quán, và `architecture.md` §8 đã đo **sáu** chỗ nó chưa cất được (vết hoàn tiền · nợ · vết thao tác · ai đang trực · note *đem về* · đã phục vụ) ⇒ thi công nó là làm **đối soát ngưỡng 0đ** (ADR-022) không thực hiện được. Ba đường còn lại: đọc ADR-014 theo nghĩa đen (phải sửa **cả** §8 lẫn `00-index.md`, tức viết lại ranh giới pha 0–1 để đổi lấy một owner không ai xin) · mở sẵn ba thư mục pha 2–4 với file giữ chỗ · để lửng cho pha 2 tự quyết — **đường thứ tư chính là hiện trạng F-023**, đứng từ 2026-09-02 tới 2026-09-04 mà không cổng nào đỏ. **ADR-014 sửa TIẾN** (ADR-008): câu cũ ở lại **nguyên văn** — đo bằng phép đọc theo **khối** vì nó **gói dòng** giữa *"vẫn thuộc"* và đường dẫn, đúng chỗ mà một `grep` theo dòng trả 0 và trông y hệt *"câu đã bị xoá"* (**F-015**) — khối *SỬA ĐỔI 2026-09-04* nói nó sai ở đâu và **giữ lại phần vẫn đúng**: mục đích của câu ấy là chặn folder `docs/product/` thành owner thứ hai của kiến trúc (F-001), mục đích đứng nguyên, chỉ **cái đích** nó chỉ vào là sai. **`CLAUDE.md` §2 bốn hàng mới**, ba hàng ghi thẳng *chưa có owner — sinh ra ở pha N*: một hàng nói *chưa có* biến câu hỏi thành việc có lịch; một bảng im lặng biến nó thành chỗ trống ai đi qua cũng có quyền lấp. **Hai pointer nói ngược quyết định mới sửa trong CÙNG lượt** (§7.2): `architecture.md` §8 hết giao việc chốt lược đồ cho *"tầng System Design"* (nay pha 2 · DB; điều kiện BA-12 mà câu cũ đặt ra cũng **đã đủ từ 2026-09-04**), banner `prompt-fullstack.md` hết xếp **bất biến** vào loại *chưa có nhà*. Câu *"cố ý KHÔNG làm"* của §8 **ở lại** — nó đúng, và chỗ sai là câu **giao việc**, không phải câu **từ chối**. **Hai lệnh Verify của chính prompt này viết sai và bị chính nó bắt** — ghi ra vì đó là lần lặp thứ ba của cùng bài học: lệnh (2) lọc theo **dòng** một câu **gói dòng** (**F-015**) ⇒ báo 0 = *"đã xoá"*, sự thật là còn nguyên; lệnh (4) lọc cụm *"tầng System Design"* mà chính khối sửa đổi phải **nhắc lại** cụm ấy để kể được chỗ sai (**F-018**) ⇒ báo đỏ vì đúng cái việc vừa làm. Cả hai đã sửa trong file prompt, và bộ lọc tên bảng/endpoint/route in **cả lệnh chưa lọc** (**244** dòng thêm) cạnh lệnh đã lọc (**rỗng**) — một bộ lọc rỗng vì viết sai trông y hệt một bộ lọc rỗng vì không có lỗi (**F-017**). **Lane prompt mới `prompt/SD/`** (pha 1, một file một bước `P1-XX`) và **một dòng vào `scripts/check-links.sh`** để Gate 1b chấm nó — ngoài bốn dòng scope entry khai, nói ra chứ không sửa lén (§3.4): một lane prompt không nằm trong tập file Gate 1b chấm là một lane pointer không cổng nào chấm, đúng thứ **F-007** dựng gate này để bắt. **Rủi ro còn lại, ghi trong chính ADR-035:** ba hàng *chưa có owner* trỏ vào đường **chưa tồn tại** nên Gate 1b không chấm được chúng, và **không cổng nào của repo đọc được ranh giới pha** — một tên bảng viết vào file pha 1 đi qua cả năm cổng mà không cổng nào đỏ; phép rà duy nhất là **P1-12**, chạy một lần, cuối pha. **F-023 → Fixed**; §8 kế hoạch pha 1 gạch nó chứ không xoá. ⇒ **mười một bước còn lại của pha 1 hết bị P1-01 chặn.** Gate xanh toàn phần (2026-09-04)
+- [x] T-050 **Đ-3 về owner**: mảng nguyên liệu làm ở mức **sổ ghi tay điện tử** — `master_plan/shop-facts.md` **§8.4** (mới) + một dòng nhật ký §7.1, `docs/product/0-ba/admin/01-ranh-gioi.md` **§1.6** (hệ quả về hành vi). Chủ quán xác nhận lại lời chốt 2026-09-01 và **thêm một dữ kiện chưa ai hỏi**: *"có mục tổng lưu trữ hàng ngày tôi sẽ nhập số liệu"* ⇒ có **một mục tổng**, nhịp **hàng ngày**, người nhập là **chủ quán**, nhập **bằng tay**. **Chia đôi lời với suy luận (CLAUDE.md §7.2, F-004):** ba điều trên là lời chủ quán nói thẳng; *"số liệu"* ấy là con số **gì** thì **không** ai nói ⇒ **U-034**, không suy hộ — ba đường ra (*còn lại* / *mua vào* / *đã dùng*) là ba mục khác hẳn nhau, và đường **đã dùng** chỉ có được bằng cách trừ theo công thức, **đúng thứ lời chốt vừa nói là máy không làm**. **Hai pointer đã sai vì lời chốt này, sửa trong cùng lần** (`grep` ra bốn chỗ, hai chỗ sống): `shop-facts.md` §8.2 *"mức sâu của từng mảng chưa chốt ở đây"* và `01-ranh-gioi.md` §1.6 *"sâu tới đâu… chưa được ghi vào owner nào"* — cả hai nay đọc cho **mảng con người và mảng tài chính**, không đọc cho mảng nguyên liệu; hai chỗ còn lại nằm ở bản lưu `docs/product.md` nên **không** sửa (banner *"Không sửa ở đây"*). **Không mở ADR** — đây là lời chủ quán, không phải lựa chọn giữa hai thiết kế khả thi (CLAUDE.md §4); **không** chạm `docs/product/1-system-design/architecture.md` §14 (mục ấy nói *chưa có thiết kế nào*, và §8.4 chốt mức sâu chứ không dựng thiết kế) và **không** chạm `quality/invariants.md` (chưa có mã để hồi quy). `work/admin-questions.md`: Đ-3 gạch khỏi bảng §1, nhánh B mang cảnh báo *chờ U-034*, **B18 ghi là đã trả lời một nửa** — có mục tổng, còn *đếm những thứ gì* thì chưa. Gate xanh (2026-09-04)
+- [x] T-049 Pha 1 có **sổ task riêng**: `work/backlog_SD.md` — mười hai entry `P1-01`…`P1-12` viết đủ **bảy khối** của khuôn L1+, mỗi entry có *Vì sao có task này* dẫn bằng dòng thật ở `architecture.md`/`shop-facts.md`/`quality/invariants.md`, *Không làm thì mất gì* viết bằng **hậu quả ở quán**, mười bước 1→10 và mục *Bẫy hay sửa nhầm nhất*. **Ranh giới ba file, chốt thành ADR-034:** `work/backlog.md` giữ **trạng thái** (thứ `brief.sh` đọc — ADR-002) · `work/backlog_SD.md` giữ **mô tả** · kế hoạch §6 giữ **thứ tự · mức · đầu ra kiểm chứng được**; không chỗ nào chép chỗ nào (F-001). **Sửa một luật của ADR-033**: bản đầu nói *mô tả* cũng chỉ viết lúc nhận việc — lý do thật của nó là **danh sách *Ready* bị `brief.sh` cắt ở sáu mục** (F-012), và lý do ấy **không mất** khi mô tả nằm ở file khác, nên mười hai mô tả viết trước còn dòng trạng thái vẫn chỉ tạo lúc nhận việc. Ba phương án bị bác ghi ở ADR-034, trong đó phương án *"để sổ mới giữ luôn trạng thái"* là **gọn nhất và hỏng nặng nhất** (brief mù với nó). Entry P1-01 **chuyển** khỏi `work/backlog.md` sang sổ mới, chỗ cũ để lại khối chỉ đường + neo `#p1-01` vì dòng *Ready* đang trỏ tới. **Bắt kịp hai thay đổi của phiên song song ngay trong lượt:** **BA-12 xong 2026-09-04** (`31fb071`) ⇒ P1-07 và P1-09 hết bị chặn, và chính BA-12 mở **U-033** (đơn huỷ sau khi bếp đã làm xong thì chỗ ấy đi đâu) ⇒ thêm vào bảng chặn của kế hoạch §8 và vào ba entry P1-05 · P1-07 · P1-09. `CLAUDE.md` §2 tách hàng *Tasks* làm hai và cây thư mục kể tên file mới — một owner mà §2 không liệt kê là owner nobody will find (§7.2). Gate xanh (2026-09-04)
+- [x] BA-12 `docs/product/0-ba/ban-hang/03-lat-cat.md` **§3.4 — lát cắt sản xuất theo mẻ**, và §3 nay là **bốn** lát cắt. Chín tiểu mục: bốn khái niệm ADR-009 kèm **đơn vị** và **câu nó trả lời** (§3.4.1) · bốn con số bảng quầy (§3.4.2) · nhu cầu **cộng ngang** (§3.4.3) · **tách ngược** về từng bàn (§3.4.4) · hai trục gặp nhau (§3.4.5) · khoá gom (§3.4.6) · sáu thứ quầy phải nhìn (§3.4.7) · ai bấm + *máy không gom, người gom* (§3.4.8) · bốn việc cố ý không nói (§3.4.9). **Phát hiện đáng giữ nhất — §3.4.2, hai chữ *còn* khác nhau**: *còn thiếu* (con số của người bưng, `Chưa làm` + `Đã làm xong, còn ở bếp`) **khác** *nhu cầu* (con số của bếp, chỉ `Chưa làm`), lệch nhau đúng bằng con số thứ hai của bảng; gộp hai cái là quay về bảng **ba** con số và giục bếp làm lại một cái bánh đang nằm chờ đủ đĩa. Ghi rõ đó là **phép cộng của người viết** trên §5.4 + ba trạng thái việc trạm, không phải lời chủ quán (F-004). **U-008–U-011 đều đã đóng, viết kèm ngày**; **S-4** đóng 2026-09-01 ⇒ **bốn** con số; **U-017** đóng — bấm theo **mẻ**. **Acceptance 7 của prompt đã cũ**: nó bảo nêu U-017 là *còn treo*, trong khi U-017 đóng từ 2026-09-01 (ADR-009 khối T-037). Viết nguyên văn câu ấy làm **Gate 1c đỏ** — đo hai chiều trong lượt này: `check-doc-status` báo `ĐỎ … câu còn-mở nhắc tới câu hỏi ĐÃ ĐÓNG: U-017`, gỡ ra thì xanh lại. Chỗ *chưa chốt* thật là **S-5** (đơn vị bấm *đã bưng ra bàn*) và §3.4.8 để nguyên nó là **suy ra**. **Mở U-033**: đơn bị huỷ **sau khi bếp đã làm xong** thì chỗ bánh ấy có tính cho bàn khác không — không luật nào phủ, §3.4.5 chạy bằng phương án **hẹp nhất viết thẳng ra**. **Gate 5 (L2) bắt được một lỗi thật**: bảng nhu cầu bản đầu để bánh cuốn ở **một** trạm, trong khi §5.3/§3.1.5 nổ nó ở **hai** (tráng rồi gấp) ⇒ sửa cả hai khối ví dụ thành sáu dòng, và nói thẳng *hai dòng ấy không cộng vào nhau*; cùng lượt sửa một câu **nói ngược hai nhóm khách**. Cộng xuôi/tách ngược khớp hai chiều (sáu bàn × ba = mười tám, chia hết về sáu bàn). **I-019** (tổng nhu cầu = tổng phần chia về từng bàn, hai chiều) và **I-020** (đã phục vụ ≤ đã gọi, phủ cả ca **một mẻ nhiều bàn** và ca **đường lùi**). Bốn lệnh *Verify* của prompt: `Ba lát cắt` **rỗng** (F-019 báo ba chỗ — thực tế **bốn**, chỗ thứ tư là câu văn của chính §3.4 mới viết) · lọc tên mã/route **rỗng** · `S-4` có mặt · số 2·3·6 trong §3.4 đọc tay: **không con số nào của §5.4**, chỉ là số mục và danh sách 1–6. Gate xanh (2026-09-03)
+- [x] T-048 Pha 1 nay có **kế hoạch còn sống**: `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` — mười hai bước `P1-01`…`P1-12`, sáu cột (**không** cột *Trạng thái*: owner của Tasks là file này), **từ vựng năm tầng bảo vệ** bắt buộc cho ba bước điền bảng ba cột, cổng chất lượng **mười ô mỗi ô kèm cách chứng minh**, và bản đồ file đầu ra. **Ba quyết định hình dạng, ghi thành ADR-033:** file mới ở `master_plan/` (bản nháp pha 1 bị banner *"Không sửa ở đây"*, và nó giữ `I1`–`I8` đã bị `I-001`…`I-018` thay) · mã bước **`P1-XX`** chứ không `SD-XX` (bản nháp dùng `SD-01`…`SD-10` làm mã task **và** `SD-01`…`SD-07` làm mã quyết định — thêm nghĩa thứ ba là dựng lại bẫy F-015/F-021/F-022) · đầu ra vào **file mới** cạnh `architecture.md` (số mục §1–§14 bị ADR-012/ADR-013 ghim, file đã 592 dòng, và F-014 đã xảy ra **năm** lần trên loại file dùng chung như thế). **Đo được cái pha 1 còn nợ, không đoán:** `quality/invariants.md` có `I-001`…`I-018` với khối *Verification* viết bằng **kịch bản người**, nên cột giữa — *tầng nào giữ nó* — **chưa mục nào có**; bảng sáu pha đòi bốn đầu ra ở pha 1 và **không đầu ra nào** đã vào owner. **Mở hai finding và một unknown, không tự sửa chỗ nào** (task này viết kế hoạch, không thi công pha 1): **F-023** — ADR-014 giao lược đồ·API·route cho `architecture.md` (§8 của chính nó viết *"cố ý KHÔNG làm"*) và `prompt-fullstack.md` (banner viết *"CHƯA có nhà"*), trong khi `CLAUDE.md` §2 **không có hàng nào** cho ba thứ ấy ⇒ pha 2 sẽ hoặc bơm tên bảng vào một tài liệu tự cấm, hoặc thi công đề xuất 16 bảng ngày 2026-08-31 mà `architecture.md` §8 đã đo là **thiếu sáu chỗ cất** (vết hoàn tiền · nợ · vết thao tác · ai đang trực · note *đem về* · đã phục vụ) ⇒ đối soát 0đ không thực hiện được · **F-024** — §11 giao việc viết lại §3 (bảng quầy **bốn** con số) cho `T-036`, mà T-036 *Done* từ 2026-09-01 **không** giao; đo lại 2026-09-03: §3 không chứa *"đã làm xong"* / *"còn ở bếp"* / *"đã ra bàn"* ở dòng nào, luật rút ra là **mọi câu giao việc cho một mã task phải được chấm lại khi mã ấy sang *Done*** · **U-032** — lượt bán trên **sổ giấy** hôm mất điện, hôm sau mới nhập, tính doanh thu **ngày nào**: ba luật đã chốt (nợ ngày ghi nợ · hoàn ngày hoàn · sổ giấy *"nhập ngay khi có thể"*) đều đi qua ca này mà không luật nào phủ, và **hai đường ra đều phá một thứ đang có** (`I-014` *"ngày đã đối soát không bao giờ đổi"* vs ngưỡng lệch 0đ) ⇒ chặn **P1-03**, kèm sẵn **câu hỏi viết về cái quán** theo bài học S-4. **Một sự cố xảy ra GIỮA lượt và thành F-025:** phiên song song đang chạy **BA-12** commit `39ca608` lúc 22:13 với subject **trùng từng chữ** commit thật của BA-13 (`1b9d238`), và nó nhặt luôn **23 dòng chưa commit của T-048** — nguyên văn bản nháp đầu của **U-032** — nên `U-032` nay nằm trong một commit mang tên task khác, ở trạng thái **hỏng giữa câu**. Ba cổng đều xanh và **không cổng nào có thể đỏ**: Gate 7b chỉ đọc khối commit mà phiên viết ra (ở đây không có khối — người gõ `git commit` ở terminal), Gate 8 chấm subject **rỗng nghĩa** mà subject này hoàn hảo chỉ là của task khác, Gate 3 hợp cả hai khối scope lại nên `99-unknowns.md` vẫn trong scope — nó không có khái niệm *trong scope của AI*. Lần thứ **ba** repo có hai commit trùng subject (sau `0b3a337`/`1b1d5f5` ở F-009). **Không sửa lịch sử** (ADR-008) và không tự quyết thay chủ repo (lý lẽ của T-023); khối commit của lượt này nói rõ phần nào đã ở trong `39ca608`. Chỗ **đúng** cũng ghi: phiên BA-12 **thêm** khối scope chứ không ghi đè, nên không phiên nào mất scope — luật F-010/F-014 chạy đúng, chỗ hỏng nằm ở `git add`. Gate xanh; `brief.sh` in U-031, U-032, F-023 và **nói ra rằng nó cắt** mục thứ bảy (2026-09-03)
+- [x] BA-13 Năm chỗ **hai mục đã chốt nói lệch nhau** đã dọn, và **cổng chất lượng BA nay 9/9 bằng tick thật** ⇒ **giai đoạn BA đóng được**. **F-015** bốn chỗ: §1.2 ghi *người đứng quầy bấm lúc nhận tiền* (U-005) · §4.9 ghi *đối chiếu VietQR bằng tin nhắn báo có* (U-019) · §6.1 dòng 7 và §6.2 ghi `Hoàn thành` ⇒ `Huỷ` là **hợp lệ** (U-027). **F-021**: hai dòng bảng `docs/decisions.md` + đoạn văn dưới bảng + hàng tiêu đề + **một chỗ thứ ba `grep` tìm ra** ở `99-unknowns.md` — cả năm `GĐ` nay là *Đã thay*. **F-022**: chỗ 1 sửa §3.1.1 bước 1 **theo §5.3** (phe đa số) kèm câu hệ quả chưa ai viết ra — *bàn có khách ngồi mà chưa gọi gì thì vẫn ở `Trống`* · chỗ 3 sửa §3.3.3 **và** mục *Verification* của **I-009** trong **cùng** một lượt, thành thao tác chỉ có **một** nghĩa (*nâng giá gốc — giá chay — từ 3.000 lên 4.000* ⇒ 29.000, và bậc phụ thu *nhiều nhân* vẫn còn) ⇒ ba chỗ kể cả Scenario 3 nay nói cùng một câu · **chỗ 2 KHÔNG sửa** — mở **U-031** (ai bấm `Đã ra bàn` cho đơn **giao tận nơi**), đánh dấu ở **cả hai** mục đang nói ngược nhau (§5.2 và §5.4), và `./scripts/brief.sh` in nó ra ở *OPEN UNKNOWNS*. **Cổng dựng xong — `scripts/check-doc-status.sh` (Gate 1c, ADR-032), chạy ở MỌI lượt** chứ không nằm trong `verify.sh`: lỗi loại này **sinh ra trong lượt chỉ đổi tài liệu**, đúng lượt `verify.sh` bỏ qua (ADR-005), nên một cổng đặt ở `scripts/*.test.sh` sẽ ngủ đúng lúc cần thức. Ba phép so: `U-XXX` đã đóng bị kể như còn treo · một chuyển tiếp bảng §5 ghi là **hợp lệ** bị phủ định ngay cạnh · dòng `GĐ-XXX` ở bảng tổng hợp vs `Trạng thái:` trong thân. Nó **đọc theo KHỐI, không theo dòng** nên bắt được chỗ **gói dòng**, và phép thứ hai **không dùng mã định danh nào** nên bắt được chỗ **không mang mã** — đúng hai chỗ mà câu `awk` của F-015 để lọt. **Một phép thứ tư đã viết rồi BỎ** (*mọi ngôn ngữ còn-mở phải trỏ tới một thứ đang mở*): chạy thật ra **11 báo động, cả 11 đều giả** ⇒ F-018, ghi lại trong ADR-032. Đo **hai chiều**: **ĐỎ, 8 báo động** trên bản `git archive HEAD` trước khi sửa (đủ **cả bốn** chỗ F-015 + **hai** dòng F-021), **XANH** sau khi sửa; `check-doc-status.test.sh` **12 ca qua hết**, trong đó ca 2b khẳng định một `grep` theo dòng **vẫn mù** với chỗ gói dòng, và ca 4b khẳng định báo động của chỗ không-mã **không chứa `U-0` nào**. Mục 8 tick bằng **lượt đọc context sạch THỨ BA**: trả lời **CÓ**, tự cộng lại tiền khớp **100%** (96.000 + 95.000 + 54.000 = **245.000đ**, ba ô combo §4.3 tái tạo đúng từ §4.2 + §4.5), và tắc đúng **một** chỗ, tắc **đúng cách** — U-031 có ID, có người trả lời, có hệ quả. Lượt ba còn tìm ra **F-015 lần thứ ba, và lần này nó nằm trong chính §8**: mục *Lỗ hổng* cùng ô mục 5 là ảnh chụp trạng thái **trước** khi sửa, nên người đọc sạch *tin §8 rồi đi sửa lại những chỗ đã đúng*. Cổng mới **cố ý** không bắt được ca ấy (một biên bản kể lỗi và một tài liệu mắc lỗi trông giống hệt nhau với máy); đã sửa bằng banner đặt ở **đầu** mục — bản đầu tiên của lượt này đặt banner ở **cuối**, và người đọc sạch đọc bảng trước. Gate xanh toàn phần (2026-09-03)
+- [x] BA-11 `docs/product/0-ba/ban-hang/08-scenario.md` §8 — **ba scenario nghiệm thu BA + cổng chất lượng BA**. Ba scenario đúng ba ca §12 kế hoạch gốc, mỗi bước có cột *Luật ở đâu* trỏ về một mục §1–§7: **S1** bàn 5, ba lượt gọi bằng hai kênh, lượt 3 rơi **sau** khi quầy đã bắt đầu thu tiền ⇒ **một** hoá đơn **96.000đ**, bếp nhận **6 bánh · 2 trứng · 2 giò · 1 nước chấm** khác con số ×2 trên hoá đơn · **S2** ba đơn mang đi đủ **ba** kênh, đơn `phone_preorder` **không qua bước quầy duyệt**, đơn A và C **cùng một khách** vẫn là hai lần thu · **S3** đổi giá giữa buổi, đơn cũ **25.000đ** đứng yên, đơn mới **29.000đ**, một hoá đơn **54.000đ** mang hai mức giá. **Cổng chất lượng: 6/9**, ba mục để trống kèm lý do (mục 6 ⇒ F-021 · mục 7 ⇒ F-015 · mục 8 ⇒ F-022) ⇒ **giai đoạn BA CHƯA đóng**. Nghiệm bằng **hai lượt Gate 6 context sạch**: lượt một tắc ở ba chỗ **trong §8** (thiếu chặng bếp của lượt gọi thêm ⇒ phiên không đóng được theo §5.5 · thiếu hai mốc bấm của đơn mang đi · Scenario 3 nói ngược §3.3.6 — *"chờ hết buổi"* là luật cho **người**, máy nhắc rồi **vẫn cho lưu*) — đã sửa hết; lượt hai cộng đúng **toàn bộ** tiền và tắc ở **ba chỗ nằm trong §1–§7** ⇒ **F-022**. Ba nhóm lỗ hổng, **không tự sửa chỗ nào** (§1–§7 và `docs/decisions.md` là *Không được sửa* của prompt) ⇒ mở **BA-13**: **F-015 có chỗ thứ tư** (§1.2/U-005, và câu `awk` đo lại của chính F-015 bắt **2/4** — một chỗ lọt vì **xuống dòng** cắt đôi cụm `CHƯA CHỐT`, một chỗ lọt vì **không mang mã** ⇒ lần đo **thứ hai**, đủ điều kiện dựng cổng) · **F-021** (bảng tổng hợp `docs/decisions.md` còn xếp GĐ-01, GĐ-05 là giả định đang sống, thân ghi *Superseded*) · **F-022** (§3.1.1 nói ngược §5.3 về lúc mở phiên · §5.4 và §5.2 cho **hai người khác nhau** cùng nút *"đã ra bàn"* của đơn giao ⇒ phải **hỏi chủ quán**, không suy · ví dụ đổi giá §3.3.3 và *Verification* của **I-009** cho **hai** kết quả 25.000/29.000). **Chọn một task mới thay vì mở lại sáu task BA đã xong**: sáu task ấy đúng vào ngày chúng chạy, bốn chỗ của F-015 hỏng **về sau** do T-038/T-042/T-043 đóng unknown mà không quét chỗ nhắc tới câu hỏi. Gate xanh; năm lệnh mục *Verify* của prompt chạy đúng (3 scenario · 68.000 có mặt · 9 ô checklist · `phone_preorder` có mặt · lọc từ kỹ thuật **rỗng**) (2026-09-03)
+- [x] DOC-5 `docs/architecture.md` → `docs/product/1-system-design/architecture.md` — **lượt 5/5, đóng ADR-014**. Chủ repo chốt **đồng ý** 2026-09-03, ghi thành khối *SỬA ĐỔI 2026-09-03* của ADR-014 (điều kiện mở khoá 1); ĐK2 dẫn bằng 6 mã commit, **ĐK3 thoả bằng chính luật của repo**: file dọn vào *là* dòng nội dung đầu tiên của pha 1, đúng câu *"tạo thư mục của pha cùng lúc với dòng nội dung đầu tiên"* ở `docs/product/00-index.md`, nên thư mục sinh ra có ruột chứ không phải nhà chờ rỗng mà bản sửa đổi trước đã cấm. **Chuyển bằng `git mv`** (lịch sử file đi theo), **giữ tên file** để cả lượt là đổi tiền tố đường dẫn thuần tuý, **giữ §1–§14** vì ADR-012/ADR-013 gọi tên mục bằng số. **48 dòng nêu đường cũ, chia 40 chuyển / 8 ở lại** — đúng số đã đo ở T-046, và chỗ cắt là việc **đọc thì của câu** chứ không phải đếm (F-015, F-018): 8 dòng ở lại gồm **6 dòng bản lưu** `docs/product.md` (banner của nó viết *"Không sửa ở đây"*; đổi đường dẫn trong một ảnh chụp là khai rằng ảnh ấy mang đường chưa tồn tại vào ngày chụp) và **2 dòng của chính ADR-014**, nơi đường cũ là **chủ ngữ** của câu (*"`docs/architecture.md` dọn vào `1-system-design/`"* — đổi thì câu vô nghĩa). **Điểm thiết kế prompt không lường:** khác lượt 3 (bản lưu ở lại nên pointer cũ vẫn mở được), lần này file rời đường cũ nên mọi pointer chưa chuyển chết ngay khi `git mv` chạy ⇒ **chia năm task con sẽ hỏng đúng câu Acceptance *"mỗi task con revert được độc lập"*** (lùi một task con giữa chừng = gate đỏ vì dòng ignore đã gỡ). Chủ repo chọn **một commit**: gate xanh trước và sau, không stub (thứ chính chủ repo đã bác cho bản lưu), lùi là `git revert` đúng một commit. Tám dòng ở lại phủ bằng **hai dòng `check-links.ignore` có ghi lý do và ghi cả cái giá** (dòng ngoại lệ phủ mọi lần xuất hiện trong file ấy ⇒ pointer *mới* viết nhầm về đường cũ trong hai file đó sẽ không bị Gate 1b bắt). **`CLAUDE.md` §2 trỏ FILE, `brief.sh` in THƯ MỤC — cố ý**: §2 trỏ file để Gate 1b còn chấm được (đường kết thúc bằng `/` bị `check-links.sh` bỏ qua hẳn — F-018), brief in thư mục vì *OWNER FILES* đo ngày đổi của cả pha. **Bản nháp `master_plan/phase_1_system_design_…md` ở lại `master_plan/` và được banner hoá là không sở hữu gì** — nó giữ `I1`–`I8` trong khi owner thật `quality/invariants.md` đang giữ `I-001…I-018` (I1≈I-001 · I2≈I-002 · I3≈I-013 · I4≈I-004 · I7≈I-009 · I8≈I-003), nên dọn nó vào cùng thư mục là đặt bản sao **cũ hơn** cạnh owner thật, đúng F-001. Gate xanh toàn phần, **`verify.sh` có chạy** (đụng `scripts/brief.sh`): 4 bộ test qua hết, trong đó `brief.test.sh` D4 chấm đúng mục *OWNER FILES*. `./scripts/brief.sh` in `docs/product/1-system-design/` và `exit 0` (2026-09-03)
+- [x] T-046 Prompt của DOC-5 hết mang hai con số hỏng — **không mở khoá DOC-5**. Chủ repo được hỏi 2026-09-03 và **chốt HOÃN**: chưa quyết `docs/architecture.md` có dọn vào folder hay không, nên khối ⛔ và cả ba điều kiện mở khoá **giữ nguyên từng chữ**; lượt này chỉ vá cổng, không mở cổng. Đo lại ba điều kiện và dán bằng chứng vào chính prompt: **ĐK2 đủ** (`bc5033c` · `83fe8ff` · `dc53768`/`fd64862`/`1a56b8e` · `ddec2f0`), **ĐK1 chưa có** (`docs/decisions.md` dòng 1068 vẫn viết *"chưa chốt"*), **ĐK3 mỏng** (`docs/product/00-index.md` dòng 15: pha 1 *"chưa mở"*; folder mới sẽ chứa 1–2 file). Hai chỗ vá: (1) **bộ lọc `grep` của mục *Acceptance* lọc rỗng** — F-017 đã dặn đích danh *"DOC-5 thì phải sửa trước khi chạy"*; bản cũ ba bộ lọc `^\./…` trả về **đúng bằng tổng chưa lọc** vì `grep` máy này là ugrep 7.8.4 in đường dẫn không có `./`. Bản portable trả về **48**, đã trích **nguyên khối ```bash trong prompt** ra chạy chứ không gõ lại, cộng một câu chỉ cách đọc kết quả (hai lệnh ra bằng nhau ⇒ bộ lọc lại rỗng). (2) **con số `99`** ở ba chỗ (Context · Scope · Deliverables 2) thay bằng số đo hôm nay kèm ngày và kèm lời mời tìm dòng thứ 49, không viết *"đúng N"* (F-018). **Không viết 48 thành "48 dòng phải chuyển"**: nêu đích danh vùng chắc chắn ở lại — 6 dòng bản lưu `docs/product.md` (banner của nó viết *"Không sửa ở đây"*) và `docs/decisions.md` 1066/1068 (hai dòng ấy nói về chính lượt 5, đường cũ là chủ ngữ chứ không phải pointer). **Phát hiện mới, ghi vào F-018 lần kiểm thứ tư:** tổng chưa lọc **tự nhích 133 → 139 → 142 ngay trong lượt vá** mà không pointer nào đổi — nó đếm cả `work/` và `prompt/maintenance/`, đúng hai thư mục phình ra mỗi lần có ai viết về chính task ấy, trong khi số sau bộ lọc đứng yên ở **48**. ⇒ luật rút ra: *một con số làm mốc phải được đo bằng đúng bộ lọc của phạm vi việc*. Đóng hai mục treo: **F-017** (prompt 15 hết giữ bản hỏng) và **F-018** (mục `DOC-5 chưa kiểm`). Prompt 15 nay trỏ **F-017 · F-018 · F-019** ngay đầu file, F-019 vì dòng `Done` của DOC-3b đã dự báo *"DOC-5 sẽ gặp lại y hệt"*. Gate xanh (2026-09-03)
+- [x] DOC-4 `CLAUDE.md` hết trỏ về bản lưu — **6 chỗ prompt đếm đều có thật và đều đã đổi** (29, 30, 135→141, 149→155, 370→376, 374→380), cộng **khối cây thư mục §2** mà prompt nêu riêng. Chia đích: **hai chỗ trỏ thư mục** `docs/product/` (hàng §2 *Business rules* — ghi **y hệt** ô bảng owner `docs/architecture.md` dòng 533 như DOC-3a dặn), **bốn chỗ trỏ thẳng** `docs/product/99-unknowns.md` (hàng §2 *Open business questions*, bảng §4, câu hợp đồng §4, câu liệt kê §7.3) — đối chiếu với `grep -n unknowns scripts/brief.sh`: brief đọc đúng file ấy ở cả bốn dòng 140/145/152/188, nên ADR-007 không lệch. **Dòng ví dụ §7.3 vẫn là ví dụ**: nó nằm trong khối ``` mà `check-links.sh` cắt bỏ trước khi rà, nên nó minh hoạ hình dạng chứ không phải pointer phải mở được; số dòng 1508 của bản lưu đổi thành 61 cho hợp một file 173 dòng. **Bản lưu còn đúng MỘT câu, không link** (dòng 44) và câu ấy nói nó *owns nothing* — §2 nay không còn chỗ nào gửi phiên mới về `docs/product.md`. Cấu trúc §2 không thêm/bớt hàng nào, đúng ràng buộc prompt. Hai chỗ ngoài Scope bị bỏ lại đúng như prompt dặn, ghi ở Report: banner `docs/product/99-unknowns.md` dòng 5–6 vẫn nói *"brief còn đọc bản lưu cho tới khi DOC-2 trỏ nó sang file này"* (DOC-2 xong 2026-09-02) và dòng Done của DOC-3b ghi nhầm *"Lượt 5/5"* trong khi nó là một phần của lượt 3. Gate xanh (Gate 1b **có** chấm `CLAUDE.md`). Lượt 4/5 của ADR-014; **chỉ còn lượt 5 (DOC-5), vẫn chưa được phép chạy** (2026-09-03)
+- [x] DOC-3b Nhóm B (`prompt/BA/**`, 13 file) hết trỏ về bản lưu — **92 dòng chuyển, 22 ở lại**. Ba loại như prompt chia, nhưng **chỗ cắt của loại 3 sai**: 30 dòng lệnh chia **8 / 22** (2 file còn sống / 11 prompt đã xong), không phải 10/20 — xác nhận **F-018** lần hai, `git diff` chứng minh 22 dòng lệnh của 11 prompt đã xong không đổi một ký tự. Chia đích của 92 dòng: **52 dòng** trỏ thẳng một file `.md` (48 file con `0-ba/ban-hang/`, 4 dòng `99-unknowns.md`), **18 dòng** trỏ thư mục `docs/product/0-ba/ban-hang/` (một đường dẫn mang nhiều `§N` trải nhiều file con — luật F-018 mục 2), **22 dòng** trỏ thư mục `docs/product/` (12 dòng scope trần + 10 dòng nói về cả tài liệu). Gate 1b nay chấm **44/114** dòng (52 dòng `.md` trừ 8 dòng lệnh nằm trong khối ```); 40 dòng thư mục và mọi thứ trong khối ``` là vùng mù — bằng chứng duy nhất là **chạy thử**, đã chạy cả 8 lệnh đã đổi, đối chiếu đường cũ/đường mới, kết quả trong report. Hai lệnh của BA-11/BA-12 vốn **báo xanh giả** trên bản lưu nay báo đúng (`click|button|…` 7 kết quả → 0; `S-4 có mặt` 5 kết quả từ mục khác → 0, tức nó chưa được viết thật). `git diff` chỉ đổi đường dẫn, trừ ba chỗ: **3 dòng** rụng cụm *→ Unknowns* thừa vì tên file mới đã nói điều đó (đúng tiền lệ DOC-3a), neo cuối `sed` trong lệnh BA-12 đổi `/^## 4\./` → `$` vì file con không còn `## 4.` phía sau, và khoảng trắng canh chú thích. Mở **F-019**: lượt tách DOC-1 sinh thêm một tiêu đề H1 mang cùng chữ với `## N.`, nên câu nghiệm thu `grep -n 'Ba lát cắt' # phải rỗng` của BA-12 nay cần đổi **ba** chỗ chứ không phải một như Acceptance 12 của nó viết — **ai chạy BA-12 đọc F-019 trước**; DOC-5 sẽ gặp lại y hệt. Cũng ghi vào **F-017** lần lặp thứ hai: bước 4 mục *Verify* của chính prompt 13b lọc bằng `git diff | grep -v <tên file>`, mà dòng thân `git diff` không mang tên file ⇒ luôn báo đỏ; bản chạy được là lọc ở đối số của `git diff`. Lượt 5/5 của ADR-014 (2026-09-03)
+- [x] DOC-3c Vùng *Ready* + *In Progress* của `work/backlog.md` hết trỏ về bản lưu — **7 dòng chuyển (8 lần xuất hiện), 2 dòng ở lại**; *In Progress* rỗng nên không có dòng nào ở đó. Prompt đếm *"9 dòng, 1 ở lại"*: tổng **9 dòng / 10 lần xuất hiện là đúng**, chỗ cắt mới sai — **F-018 lần thứ ba**, nhẹ nhất trong ba lần vì chính prompt đã chừa cửa (nó gọi dòng 167 là *"đọc rồi quyết"*). **Dòng 167 (nay 166) Ở LẠI**: câu ấy cảnh báo *"DOC-1 và BA-11/BA-12 cùng chạm"* một file, mà **DOC-1 đã xong ở `bc5033c`** ⇒ nó kể một va chạm **đã qua**, và đổi đường dẫn đi là khai rằng DOC-1 từng tranh chấp một thư mục do chính nó tạo ra. **Dòng 161 (nay 160) ở lại** đúng như prompt dặn — nó mô tả **cái sai đang tồn tại lúc viết** nên phải gọi đúng tên bản lưu; DOC-4 hoặc một task dọn riêng quyết định có rút gọn cả khối không, DOC-3c không đụng. Chia đích của 8 lần xuất hiện: **6 trỏ thẳng file con** (`99-unknowns.md` · `07-pham-vi-mvp.md` ×2 · `08-scenario.md` · `03-lat-cat.md` · `05-vong-doi.md`), **2 trỏ thư mục** theo luật F-018 mục 2 (`docs/product/0-ba/ban-hang/` cho câu trải §1–§3.4; `docs/product/` cho câu không mang số mục nào). Dòng **BA-12 đã đổi cả hai chỗ** (§3.4 và §5.4 → hai file khác nhau — ca dễ hỏng nhất của task này). **216 dòng ngoài hai vùng không đổi một ký tự**; `git diff` chỉ đổi đường dẫn, trừ hai đoạn văn phải **ngắt dòng lại** vì tên file mới dài hơn tên cũ (kiểm bằng cách gộp khoảng trắng rồi so chuỗi: y hệt). Gate 1b **không chấm `work/`** ⇒ task này không có cổng máy nào, bằng chứng là `git diff` và hai lệnh đếm ở mục *Verify* của prompt. Phần cuối của **DOC-3**; **DOC-4 hết bị chặn** (2026-09-03)
+- [x] DOC-3a Nhóm A (6 tài liệu chỉ đường lõi) hết trỏ về bản lưu — **99 dòng chuyển, 15 ở lại** (prompt đoán 100/14; chỗ lệch là `quality/invariants.md` dòng 492, xem **F-018**). Chia đích: **75 dòng** trỏ thẳng một file con `.md`, **24 dòng** trỏ **thư mục** vì một đường dẫn mang nhiều `§N` trải trên nhiều file con (20 dòng *Applies to:*/*Ảnh hưởng tới:*) hoặc không mang số mục nào (4 dòng). Mọi `§N` giữ nguyên; `git diff` chỉ đổi đường dẫn, trừ **9 dòng** rụng cụm *→ Unknowns* thừa vì tên file mới đã nói điều đó (đúng ô trái của bảng ánh xạ). Hai bẫy prompt nêu đều xử lý: `docs/prompt-guideline.md` dòng 52 (*mục 4*) và 161 (*mục X*, khuôn mẫu ⇒ trỏ thư mục); `docs/decisions.md` 1757 và 1775 **đã chuyển** (nói trạng thái hôm nay, không kể lịch sử). `docs/architecture.md` dòng 533 ghi `docs/product/` — **DOC-4 phải ghi y hệt vào `CLAUDE.md` §2**. Mở **F-018**: prompt biến một con số đếm được thành Acceptance, và con số ấy đẩy phiên chạy đi sửa đúng dòng lịch sử mà chính prompt dựng bẫy để bảo vệ; hệ quả kèm theo — Gate 1b nay chỉ chấm **90/114** dòng chứ không phải 113/114, vì đường dẫn thư mục không có đuôi file. **Chạy trước DOC-3b** theo yêu cầu chủ repo (hai task không chung file nào). Lượt 4/5 của ADR-014 (2026-09-03)
+- [x] DOC-3 (giai đoạn **chia việc** L3) — đếm lại 2026-09-02: **595 dòng/50 file**, không phải 563. Ngoài sổ lịch sử và `docs/product*` còn **239** dòng = A **114** · B **114** · `CLAUDE.md` **6** (DOC-4) · `scripts/` **5** (DOC-2 đã xong). **Phần DOC-3 phải chuyển = 237** (A 114 · B 114 · vùng *Ready* của backlog **9**); nhóm E **334 dòng giữ nguyên**. Chia thành **DOC-3b → DOC-3a → DOC-3c** (thứ tự đổi: nhóm B đứng trước vì BA-11/BA-12 còn ở *Ready* và scope của chúng trỏ vào bản lưu ⇒ rủi ro **ghi** nhầm nhà). Ba prompt con `prompt/maintenance/13a|13b|13c`. Luật ánh xạ xác nhận đủ phủ §1–§8 + §1.6 + *Unknowns*; **14 dòng nhóm A ở lại** (12 trong thân ADR-014 · ô bảng chỉ mục dòng 32 · `shop-facts.md` dòng 791 là câu lịch sử). Nhóm B **không đồng nhất**: 72 văn xuôi + 12 scope trần + 30 dòng lệnh, và **42/114 nằm trong khối ``` nên Gate 1b không chấm**. Mở **F-016** (banner `shop-facts.md` nói không trỏ đi đâu, thực tế trỏ 5 chỗ) và **F-017** (câu `grep` nghiệm thu của prompt 13 và 15 lọc rỗng trên `ugrep` ⇒ luôn báo xanh). Lượt 3/5 của ADR-014 (2026-09-02)
+- [x] DOC-2 `scripts/brief.sh` đọc mục *Unknowns* ở `docs/product/99-unknowns.md` thay cho bản lưu — bốn chỗ đổi đường dẫn (tiêu đề mục · `block` · nhãn *chỗ đọc đủ* · dòng `OWNER FILES`), **parser ADR-007 không đổi một dòng `awk` nào**; `OWNER FILES` đổi `[ -f ]` thành `[ -e ]` vì owner nay là một THƯ MỤC (`[ -f ]` trên thư mục là false ⇒ dòng owner biến mất im lặng). `grep -n 'docs/product\.md' scripts/brief.sh` nay **rỗng**. Bốn ca test mới D1–D4 (đọc file mới · mất `docs/product/` vẫn `(none)` + exit 0 · **không** đọc mục Unknowns còn lại trong bản lưu · `OWNER FILES` in `docs/product/` kèm ngày thật); 89 ca xanh. Lượt 2/5 của ADR-014 (2026-09-02)
+- [x] DOC-1 `docs/product/` dựng theo **pha** — 10 mục chuyển **nguyên văn** (diff với `git show HEAD` rỗng cả 10; 163+37+89+599+354+286+104+197+4+165 = **1998 = 1998 dòng**, không dòng nào rơi); `docs/product.md` thành **bản lưu** có banner, tiêu đề `## Unknowns` đổi để brief không đọc nhầm bản lưu. Lượt 1/5 của ADR-014 (2026-09-02)
+      ⚠ **Hệ quả cho BA-11 và BA-12:** hai task ấy còn ghi *"`docs/product.md` §8 / §3.4"*. Nhà thật nay là `docs/product/0-ba/ban-hang/08-scenario.md` và `03-lat-cat.md` — viết vào bản lưu là viết vào chỗ không ai đọc. DOC-3 sẽ sửa câu chữ; tới lúc đó ai chạy BA-11/BA-12 phải tự đọc dòng này.
+- [x] DOC-0 Chủ repo chốt trục **pha** thay cho **mảng** — ADR-014 thêm khối *SỬA ĐỔI 2026-09-02*, tiêu đề đổi theo; bộ **5 prompt thi hành** `prompt/maintenance/11`–`15`; mở DOC-1…DOC-5 (2026-09-02)
+- [x] T-045 GĐ-01 và GĐ-05 được xác nhận **kèm một yêu cầu mới**: mỗi lần cập nhật giữ bản trước · bản sau · lý do · người sửa. §6.22, **I-018**; §6 hết dấu ⚠; cả năm giả định nay đã bị thay (2026-09-02)
+- [x] BA-10 `docs/decisions.md` — **17 ADR nghiệp vụ (ADR-015…ADR-031)**, bảng tổng hợp đầu file và bản đồ phủ **10 câu §10 + U-001…U-030 + S-1…S-5**; 7 tham chiếu ngược `→ ADR` vào `docs/product.md`; mở **F-015** (2026-09-02)
+
+- [x] T-044 U-026 đóng — dòng vừa sửa lấy **giá đang hiệu lực lúc sửa**; ngoại lệ có chủ ý của §4.4, I-009 thêm ranh giới. **Mục Unknowns nay RỖNG** (2026-09-02)
+- [x] T-043 U-027 và U-030 đóng: đơn đã `Hoàn thành` **huỷ được** (§5.2 thêm dòng, §5.6 còn một ca, I-016 viết lại); **không mảng admin nào** ở bản chạy đầu (§7.6). U-026 còn mở (2026-09-02)
+
+- [x] T-042 Chủ quán trả lời U-022, U-025, GĐ-02, GĐ-03 — **POS quyết theo tình hình thực tế**; §6.19–§6.21 và §6.11; mở U-026, U-027 (2026-09-02)
+- [x] T-041 Mảng ADMIN có **mục riêng có nhãn** ở ba tài liệu — `docs/product.md` **§1.6**, `docs/architecture.md` **§14**, `shop-facts.md` **§8**; luật chốt thành **ADR-013** (2026-09-02)
+- [x] BA-09 `docs/product.md` §7 — phạm vi MVP chốt: **14 năng lực + 2 việc vận hành** trong MVP, hai loại *ngoài MVP* tách bạch, **4 chỗ còn thiếu mô tả** ghi thẳng ra; mở **U-030** (2026-09-02)
+- [x] T-040 Đ-1: ba mảng **nguyên liệu · con người · tài chính** vào phạm vi — hai dòng ranh giới cũ bị xoá ở `docs/product.md` §1.4 và `docs/architecture.md` §10; ngày chốt vào `shop-facts.md` §7.1 (2026-09-02)
+- [x] BA-08 `docs/product.md` §6 — mười bốn ngoại lệ; chín dòng chốt, năm dòng thành GĐ-01–GĐ-05 kèm mức rủi ro; mở U-025 (2026-09-02)
+- [x] T-039 U-021, U-023, U-024 đóng — **POS bấm cả bốn mốc**, bấm nhầm một mẻ **lùi được**; U-022 còn một nửa; §6.19, S-5 (2026-09-01)
+- [x] BA-07 `docs/product.md` §5 — ba vòng đời, trạng thái giữa của việc trạm là **đã làm xong còn ở bếp**; I-016, I-017; mở U-021–U-024 (2026-09-01)
+- [x] T-038 U-019 và U-020 đóng: đối chiếu bằng tin nhắn báo có, hoàn tiền tính NGÀY HOÀN, một lần thu chia được hai phương thức; §6.18, I-015 (2026-09-01)
+- [x] BA-06 `docs/product.md` §4 — quy tắc giá và thanh toán; I-012, I-013, I-014; mở U-019, U-020 (2026-09-01)
+- [x] T-037 U-017 và U-018 đóng: bấm theo MẺ, máy chỉ NHẮC; I-011 viết lại vì bản đầu sai (2026-09-01) — **chung một commit với T-036**
+- [x] T-036 S-4 có lời giải: bảng quầy BỐN con số, quầy bấm "đã làm xong"; mở U-017, ghi F-014 (2026-09-01) — **chung một commit với T-037**
+- [x] T-034 Giá đổi được giữa giờ bán, thành phần suất phải chờ hết buổi; §6.17, I-011; mở U-018 (2026-09-01)
+- [x] BA-05 `docs/product.md` §3.3 — lát cắt chủ quán đổi menu/giá; I-009, I-010; mở U-014–U-016 (2026-09-01)
+- [x] BA-04 `docs/product.md` §3.2 — lát cắt một đơn mang đi, ba kênh không gắn bàn; I-007, I-008 (2026-08-31)
+- [x] T-027 Brief nói ra phần nó đã cắt: `→ ĐÃ CẮT: in 6/10 mục` (F-012 đóng) (2026-08-31)
+- [x] T-031 Bản xuất khẩu hết nút `Xong` ở màn trạm: §3.6 mang luật ghi, POS là nơi duy nhất ghi (F-013) (2026-08-31)
+- [x] T-033 U-012 và U-013 đóng nốt; câu hỏi S-4 viết lại vì hỏi sai cách (2026-08-31)
+- [x] T-029 `docs/architecture.md` hết là template rỗng: mặt admin có đặc tả, chỉ POS được ghi (ADR-011) (2026-08-31)
+- [x] T-026 Đề xuất Admin/POS được chấm: lời chủ quán về gom mẻ vào nhà thật, phần còn lại bị từ chối có tên (ADR-009) (2026-08-31)
+
+- [x] T-025 Gate 8 — hook `commit-msg` của git từ chối subject rỗng nghĩa; cài bằng `core.hooksPath` (ADR-010, F-011) (2026-08-31)
+- [x] T-032 Nợ là một phần riêng: `docs/architecture.md` §12 có mục FE · BE · DB (ADR-012) (2026-08-31)
+- [x] T-030 U-006 — ghép bàn là MỘT phiên, MỘT hoá đơn; I-001 đọc lại; mở U-013 (2026-08-31)
+- [x] T-028 Bảy lời chốt của chủ quán 2026-08-31: cho nợ, năng lực nồi, suất đem về, máy không gom (2026-08-31)
+- [x] BA-03 `docs/product.md` §3.1 — lát cắt một suất tại bàn; I-001–I-004; mở U-006, U-007 (2026-08-31)
+- [x] T-023 Hậu quả đã commit của F-009 dọn xong: bản đồ hash, blueprint ra khỏi `docs/` (ADR-008) (2026-08-31)
+- [x] T-019 Bản xuất khẩu hết trỏ vào layout repo cũ; bảy dòng ignore đã gỡ (F-007) (2026-08-31)
+- [x] T-021 `brief.sh` đọc Unknowns theo cấu trúc; mục Unknowns có hình dạng máy đọc được (ADR-007) (2026-08-31)
+- [x] T-009 Ready hết dòng mẫu của template — brief chỉ phiên mới vào một task thật (2026-08-31)
+- [x] T-016 Scope quên dọn thì brief kêu; Gate 7b đọc nội dung khối commit (ADR-006) (2026-08-31)
+- [x] T-015 §10 kế hoạch gốc: bốn câu mang dấu đã chốt, câu 6 hỏi đúng cả hai kênh (2026-08-31)
+- [x] T-014 §2.1 kế hoạch gốc nay có đường điện thoại — khách gọi, nhân viên nhập hộ (2026-08-31)
+- [x] T-024 Gate 1b — tài liệu cũng bị máy chấm: mọi pointer phải mở được (ADR-005) (2026-08-30)
+- [x] T-022 Bản xuất khẩu hết chép số tiền của nhà thật — §4, §9.1, §9.4 nay trỏ `shop-facts.md` (2026-08-30)
+- [x] T-020 Đơn mang đi được trả trước — §6.3 hết câu "không bao giờ thu trước", mở U-005 (2026-08-30)
+- [x] T-013 Bản xuất khẩu `prompt-fullstack.md` không còn nói "4 kênh", lát cắt B phủ luồng mang đi (2026-08-30)
+- [x] T-012 Bộ prompt `prompt/BA/` gọi luồng mang đi bằng ba kênh (F-006, lần rà thứ ba) (2026-08-30)
+- [x] T-018 Gate 7 — hook chặn turn kết thúc mà chưa giao khối commit (ADR-004) (2026-08-30)
+- [x] T-017 Kết thúc mỗi task/phiên giao sẵn nội dung commit (CLAUDE.md §6.1) (2026-08-30)
+- [x] T-011 `phone_preorder` nay thuộc lát cắt Epic B — luồng mang đi ba kênh (2026-08-30)
+- [x] T-008 Backlog có 11 task BA-01–BA-11, thứ tự phụ thuộc và acceptance kiểm được
+- [x] T-010 Gate 3 chỉ chặn file git đang theo dõi; file chưa track chỉ được ghi chú (ADR-003)
+- [x] T-007 Kế hoạch gốc không còn nói "bốn kênh bán" — §2.2 · §9 · §11 · §12 (F-005)
+- [x] T-006 Quyền huỷ đơn gắn với chỗ đứng, không gắn chức vụ (chủ quán chốt 2026-08-30)
+- [x] T-005 U-004 — chỉ người đứng quầy được huỷ đơn (chủ quán chốt 2026-08-30)
+- [x] T-004 Ghi nhận sáu câu trả lời của chủ quán ngày 2026-08-30 (U-001–U-003, S-1–S-3)
+- [x] BA-01 `docs/product.md` §1 — Actor và phạm vi hệ thống
+- [x] BA-02 `docs/product.md` §2 — Kênh bán
+- [x] T-003 Vòng cập nhật liên tục — brief đầu phiên + luật ghi trong phiên (CLAUDE.md §7)
+- [x] T-002 Đảo nhà thật về `master_plan/shop-facts.md` (ADR-001)
+
+[↑ đầu file](#top)
+
+<a id="ghi-chu-ready"></a>
+## Ghi chú lịch sử từng nằm dưới *Ready*, tới 2026-09-28
+
+Việc bảo trì ở mục này không việc nào chặn ai — chen vào lúc nào cũng được. Chuỗi BA nay
+không còn bị task bảo trì nào chặn (T-015 xong 2026-08-31, T-016 xong 2026-08-31).
+
+
+- **T-011 đã xong 2026-08-30** — dòng BA-04 ở §11 kế hoạch gốc nay ghi đủ ba kênh không gắn bàn,
+  và §3 Epic B, §4.2, §5, §6, §12 cũng vậy. Khung và nhà thật (`master_plan/shop-facts.md` §5.2)
+  nay nói cùng một luồng mang đi.
+- **T-012 và T-013 đã xong 2026-08-30 — con bug T-011 mở ra nay đóng hết.** Cùng một kênh
+  `phone_preorder`, bốn loại file: tài liệu tra cứu (xong từ trước), tài liệu khung (T-007, T-011),
+  prompt (T-012) — ba loại F-005 kể tên — và loại thứ tư F-005 không kể, **bản xuất khẩu** (T-013). Luật rà chung ở `work/findings.md`
+  **F-006**: grep theo **định danh** kênh, không theo con số — và đọc những file grep **không**
+  ra kết quả, vì chỗ thiếu nằm ở đó.
+- **T-023 dọn hậu quả đã commit của F-009 (2026-08-30) — cần chủ repo quyết, không tự làm.**
+  Commit `0b3a337` mang subject của T-020 nhưng chứa 1096 dòng của ba file `docs/` chưa track;
+  T-020 thật là `1b1d5f5`. Hai commit trùng tên làm `git revert` mất an toàn, và
+  `docs/updatee_sýstem.md` nay đã track trong khi nó mô tả một cấu trúc sở hữu khác CLAUDE.md
+  §2. **Sửa lịch sử hay để nguyên là quyền chủ repo**, nên task này dừng ở mức ghi.
+- **T-016 nay gánh thêm phần kiểm của F-009.** Nó vốn chỉ lo `work/scope.txt` quên dọn; F-009
+  cho thấy cùng một script family phải kiểm thêm **tập file đã `git add`** có nằm trong scope
+  không. Gấp vào T-016, không mở task riêng (§3.8).
+- **T-021 đã xong 2026-08-31 — F-008 đóng, và mục *Unknowns* nay có hình dạng bắt buộc.**
+  `brief.sh` hết đọc mục ấy bằng `grep` theo hình dạng dòng (nó vừa giấu U-005 vừa in U-004 đã
+  đóng như đang mở); nay nó đọc **cấu trúc**. Hệ quả cho mọi task sau: một câu hỏi nghiệp vụ chỉ
+  được brief nhìn thấy khi nó là **một gạch đầu dòng** trong vùng đang mở của
+  `docs/product/99-unknowns.md` — luật đầy đủ ở CLAUDE.md §4 và `docs/decisions.md` **ADR-007**.
+- **T-019 và T-023 chạy song song ngày 2026-08-31, cả hai đã xong.** Trong lúc chạy,
+  `work/scope.txt` mang pattern của **cả hai** task cùng lúc, mỗi khối ghi rõ chủ. Hai task không
+  giẫm chân nhau: T-019 sở hữu `master_plan/prompt-fullstack.md` + `scripts/check-links.ignore`,
+  T-023 sở hữu `docs/updatee_sýstem.md` + `work/proposals/`; hai file dùng chung
+  (`work/backlog.md`, `work/findings.md`) mỗi task chỉ sửa mục của mình.
+  **Bài học, ghi ở đây chứ không mở finding mới:** hai phiên chạy cùng lúc thì `work/scope.txt` là
+  **một file, hai chủ**. Phiên vào sau phải **thêm** khối của mình chứ đừng ghi đè — ghi đè làm
+  Gate 3 chấm việc của người kia bằng scope của mình, đúng thứ `work/findings.md` **F-010** mô tả,
+  chỉ khác là nguyên nhân đến từ song song chứ không từ quên dọn.
+- **T-031 đã xong 2026-08-31 — F-013 đóng, bản xuất khẩu hết thiết kế một nút không ai bấm.**
+  Chủ quán bỏ nút báo xong ở ba trạm bếp ngày 2026-08-31 (`master_plan/shop-facts.md` §5.4), trong
+  khi `master_plan/prompt-fullstack.md` §3.6 và §3.7 còn thiết kế cho bếp bấm. Đây là **loại thứ
+  ba** của họ lỗi F-005 / F-007, và bản vá cũng chung một hình: người đọc bản xuất khẩu đứng
+  **ngoài** repo nên không grep được ⇒ **luật ghi phải nằm trong chính file họ cầm**, không phải ở
+  một pointer trỏ về `docs/architecture.md`. §3.6 nay có một khối *Luật ghi* tự đứng. Hệ quả cho
+  mọi task sau chạm bản xuất khẩu: sửa một chỗ chép sai thì mang theo **lý do**, đừng chỉ xoá.
+- **T-027 đã xong 2026-08-31 — F-012 đóng, và brief hết cắt câm.** Trước đó
+  `scripts/brief.sh` cắt cả bốn danh sách ở `MAX_LIST=6` mà **không nói là đã cắt**, nên U-011 vô
+  hình với mọi phiên mới kể từ dòng đầu tiên nó được viết, và **BA-12** nằm ngoài sáu dòng Ready
+  đầu tiên. Hệ quả cho **mọi phiên sau**: một danh sách bị cắt nay in `→ ĐÃ CẮT: in 6/10 mục…` kèm
+  chỗ đọc đủ, và **không có dòng đó nghĩa là danh sách đã hết** — im lặng nay là một câu trả lời,
+  không còn là một chỗ trống. Câu hỏi mở có ngưỡng riêng (`MAX_UNKNOWNS=12`) vì CLAUDE.md §3.5 chỉ
+  dừng được phiên **biết** mình đang thiếu. Đây là lần thứ hai của cùng một hậu quả với
+  `work/findings.md` **F-008** (F-008 hỏng ở *cách đọc*, T-021 đã chữa; lần này hỏng ở *bộ cắt*).
+- **T-025 đã xong 2026-08-31 — F-011 đóng, và repo nay có một cổng thứ tám.**
+  `scripts/hooks/commit-msg` là hook của **git**, nên nó đứng ở đúng chỗ Gate 7 không với tới:
+  giữa người gõ `git commit -m` ở terminal và git. Hệ quả cho **mọi task sau**, kể cả L0: một
+  subject không nói gì (`adg`) không vào được repo, và **mỗi bản clone phải chạy
+  `./scripts/install-hooks.sh` một lần** — `.git/` không đi theo `git clone`, nên brief kêu ở mỗi
+  phiên khi chưa cài. Luật đầy đủ ở `CLAUDE.md` §6.2 và `docs/decisions.md` **ADR-010**.
+- **T-019 sinh ra từ T-013 (2026-08-30), không chặn ai.** T-013 sửa chữ trong
+  `master_plan/prompt-fullstack.md`; nó **không** sửa việc file đó trỏ tới bảy đường không tồn
+  tại trong repo. Đó không phải lỗi chữ mà là câu hỏi *file này còn thuộc dự án nào* — ghi ở
+  `work/findings.md` **F-007** (Open).
+- **BA-04, BA-06 và BA-11 hết bị T-012 chặn (2026-08-30).** Scenario 2 ở
+  `prompt/BA/10-acceptance-scenarios-L2.md` nay nêu đủ ba kênh và đòi diễn `phone_preorder`
+  **không qua bước quầy duyệt**, nên tick BA-11 không còn đóng giai đoạn BA khi một kênh chưa
+  ai nghiệm thu.
+- **T-020 đã xong 2026-08-30, BA-04 và BA-06 hết bị nó chặn.** Chủ quán lật luật thu tiền ngay
+  trong ngày đã chốt nó: đơn mang đi **được** trả trước, là tuỳ chọn. `shop-facts.md` §6.3 nay
+  nói đúng thứ đó, nên hai task kia đọc vào không còn chép một luật đã chết. **Nhưng T-020 để
+  lại U-005** (ai xác nhận tiền của đơn trả trước) — BA-06 không tick hết được nếu U-005 còn mở.
+- **T-015 chặn BA-10** và nên xong trước BA-04, BA-06: §10 còn để mở hai câu đã chốt, task sau đọc
+  vào sẽ biến luật đã chốt thành giả định (CLAUDE.md §3.5 cấm).
+- T-016 là việc của hệ thống làm việc, không chạm dữ kiện quán — chạy song song với bất kỳ task nào.
+- **BA-12 sinh ra từ T-026 (2026-08-31), không chặn ai, nhưng chặn được BA-09.** Chủ quán mô tả
+  cách bếp **gom việc theo mẻ** trong `work/proposals/admin.admiadmin/admin1.md`; lời ấy nay là dữ
+  kiện ở `master_plan/shop-facts.md` §5.4 và cách đọc nó là `docs/decisions.md` **ADR-009**. Đây
+  là **lát cắt thứ tư**, không phải một mục của lát cắt nào có sẵn: nó cộng ngang qua mọi bàn và
+  mọi đơn, nên không có chỗ đứng trong §3.1 hay §3.2.
+  **Cập nhật 2026-09-02 — BA-09 đã chốt xong mà không chờ BA-12, và câu "chặn" ở trên đọc lại như
+  sau.** Trục mẻ **có** trong MVP: nó là một phần của dòng 6 *Điều phối công việc tới các trạm*
+  (`docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7.2). Cái BA-09 cần để xếp một hạng mục vào MVP
+  là **dữ kiện**, và dữ kiện mẻ đã chốt đủ từ 2026-08-31 (`shop-facts.md` §5.4 · ADR-009); cái còn
+  thiếu chỉ là **mục mô tả** trong `docs/product/`. Nên BA-12 không chặn *phạm vi*, nó lấp một
+  **chỗ thiếu mô tả** — và chỗ thiếu ấy nay có tên, dòng đầu bảng
+  `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7.7. Ai đọc dòng "chặn BA-09" ở entry BA-12 thì
+  đọc kèm dòng này.
+
+Chuỗi BA chạy từ trên xuống. Thứ tự là cột "Cần xong trước" của §11 kế hoạch gốc; BA-01 và BA-02
+đã xong 2026-08-30, **BA-03 và BA-04 xong 2026-08-31**, **BA-05 xong 2026-09-01**, nên **BA-06 và
+BA-07 chạy song song được** — không task BA nào còn bị một task BA khác chặn.
+`docs/product/0-ba/ban-hang/` nay đã chốt §1, §2, §3.1, §3.2 và §3.3; §3 chỉ còn thiếu
+**§3.4 (BA-12)**, và chính BA-12 là task đổi tiêu đề §3 từ *ba* lát cắt sang *bốn*.
+
+**BA-05 mở U-014, U-015, U-016 và chủ quán đóng cả ba trong ngày (2026-09-01, T-034).** Ba câu ra
+**hai** luật, không phải một (`master_plan/shop-facts.md` §6.17): ba chiều **tiền** sửa được ngay
+giữa giờ bán · chiều **thành phần suất** phải chờ hết buổi · và một hoá đơn phiên bàn **được phép
+mang hai mức giá** cho cùng một món, vì ranh giới khoá giá là **từng lượt gọi**.
+Hệ quả cho task sau: **BA-06 (§4) nay có đủ luật để chốt cách tính tổng một phiên bàn** — và phải
+tính đúng ca hai mức giá, đừng khoá giá theo lúc mở phiên. **BA-08 (§6)** hết chờ U-016.
+~~**BA-09 (§7) thì đang chờ U-018**~~ — **U-018 đóng 2026-09-01** (máy chỉ **nhắc**, không chặn) và
+**BA-09 xong 2026-09-02**. Lời giải ấy **bớt** việc cho MVP: §7.2 không có dòng nào cho một nút
+chặn, vì không có nút chặn nào phải làm.
+
+**BA-06 xong 2026-09-01, và nó đóng bốn thứ nhưng mở hai câu MỚI về tiền.** §4 nay chốt: luật gốc
+*giá một suất = tổng giá thành phần* · bảng mười một tổ hợp bắt buộc phủ (cột giá **cố ý không có
+số**, trỏ `shop-facts.md` §4.2–§4.3) · mốc khoá giá là **từng lượt gọi**, nên một hoá đơn phiên bàn
+mang hai mức giá là kết quả **đúng** · hai đơn vị thanh toán và hai phương thức, với **người đứng
+quầy** là người duy nhất nói được câu *"đã nhận tiền"* vì VietQR là mã **tĩnh**. Ba invariant mới:
+**I-012** (mọi thao tác chạm tiền để lại vết), **I-013** (khách không bao giờ đặt được giá),
+**I-014** (doanh thu cộng từ đủ hai nguồn).
+Hai câu mới, cả hai đều chạm đối soát ngưỡng **0đ** và cả hai phải hỏi **chủ quán**:
+**U-019** — buổi tối lấy gì đối chiếu phần khách **chuyển khoản** (két chỉ giữ tiền mặt), và một
+lần **hoàn tiền** trừ vào doanh thu ngày nào; §4.10 đang chạy bằng một **giả định** viết thẳng ra
+kèm rủi ro, đúng như dòng câu 8 ở bảng §10 dặn.
+**U-020** — khách trả **một phần tiền mặt, một phần chuyển khoản** thì quán có nhận không; §4.6
+đang viết theo nghĩa *"một lần thu chọn một phương thức"*, đọc từ chữ **hoặc** của
+`shop-facts.md` §1 và §6.3.
+Hệ quả cho task sau: **BA-07** phải đọc U-020 trước khi chốt vòng đời một lần thu tiền; **BA-08**
+phải đọc U-019 trước khi viết ca hoàn tiền; **BA-10** gom cả hai.
+
+**T-038 cùng ngày: chủ quán đóng CẢ HAI câu, và một lời chốt lật ngược BA-06.** Hai đoạn ngay trên
+là ảnh chụp lúc BA-06 chạy — đọc trạng thái hôm nay ở entry **T-038**. Ba lời chốt (2026-09-01):
+**đối soát có nguồn thứ ba là tin nhắn báo có** (`shop-facts.md` §6.10) · **hoàn tiền tính vào ngày
+HOÀN, không phải ngày bán gốc** (§6.4 — **ngược chiều** luật nợ ở §6.14, đừng gộp thành một) ·
+**một lần thu chia được hai phương thức, POS ghi từng phần** (**§6.18** mới). §4.6 và §4.10 đã viết
+lại, khối *GIẢ ĐỊNH* biến mất, **I-014** sửa và **I-015** thêm.
+⇒ Hệ quả đáng giữ nhất: **doanh thu một ngày đã đối soát không bao giờ đổi về sau.**
+⇒ **BA-07, BA-08 và BA-10 hết chờ hai câu này**; đọc lời giải ở §4.6, §4.8–§4.10, đừng mở lại.
+
+
+
+
+**DOC-3 chạy theo thứ tự 3b → 3a → 3c, KHÔNG theo thứ tự chữ cái** (chốt 2026-09-02, lượt L3
+chia việc). Lý do: **BA-11 và BA-12 vẫn ở *Ready***, và khối `Scope` trong hai prompt của chúng
+đang ghi trần `docs/product.md`. Ai bắt BA-11 trước khi DOC-3b xong sẽ **ghi §8 vào bản lưu** —
+phá ADR-014 từ bên trong, trong khi Gate 1b vẫn xanh vì bản lưu vẫn mở được. Nhóm A hỏng nhẹ hơn:
+phiên đọc pointer cũ vẫn tới được bản sao đúng nội dung, tức đọc nhầm nhà chứ không **ghi** nhầm nhà.
+⇒ **Đừng bắt BA-11 hoặc BA-12 trước khi DOC-3b xong.**
+
+**Năm dòng DOC là ADR-014 (khối *SỬA ĐỔI 2026-09-02*), chạy ĐÚNG thứ tự 1→5.** Chúng không chặn
+chuỗi BA và chuỗi BA không chặn chúng — nhưng **DOC-1 và BA-11/BA-12 cùng chạm `docs/product.md`**,
+nên hai bên không được chạy cùng lúc (F-014 đã hỏng sáu lần trên đúng file này). Ai bắt DOC-1 thì
+đọc `./scripts/brief.sh` mục *DECLARED SCOPE* trước.
+
+**Vì sao tiền tố `DOC-` chứ không phải `T-`.** Ngày 2026-09-02 hai phiên song song đã **cùng lấy số
+T-040** và **cùng lấy số U-028** (ghi trong entry T-042). Một chuỗi năm task mở cùng lúc với một
+phiên khác đang đánh số `T-` là ca chắc chắn đụng lần nữa. Tiền tố riêng không sửa được F-014,
+nó chỉ lấy chuỗi này ra khỏi đường đua đánh số.
+
+Mỗi task chạm **một** mục tài liệu riêng, nên revert được độc lập: §3.1 · §3.2 · §3.3 · §4 · §5 ·
+§6 · §7 · `docs/decisions.md` · §8 · §3.4. Hai task cùng chạm một mục là dấu hiệu chia việc sai.
+BA-12 đứng cuối danh sách nhưng chạm §3.4, tức nó cũng đổi tiêu đề §3 từ *ba* lát cắt sang *bốn* —
+đó là dòng duy nhất nó dùng chung với BA-03–BA-05.
+
+Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi-tiet-can-lam).
+
+[↑ đầu file](#top)
+
+
+<a id="chi-tiet-da-xong"></a>
+## Chi tiết — việc đã xong
+
+<a id="t-119"></a>
+### T-119 — Đo lại thí điểm lane pha 2 (ADR-051) trước khi rút `CLAUDE.md`
+
+**Yêu cầu:** 2026-09-28, chủ repo nói *"please continue"* sau T-086; Claude hỏi vì T-087 ghi *"trước
+đó đánh giá thí điểm lane pha 2 sau `P2-03` · `P2-04`"* mà chưa ai đánh giá, và chủ repo chọn
+*"đánh giá thí điểm trước"*. Mức **L1**: đo và ghi, không đổi quyết định nào.
+
+**Phạm vi:** `work/scope/T-119.txt` — `work/backlog.md` · `work/backlog_archive.md` ·
+`docs/decisions.md` · `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (thêm giữa chừng, khi thấy
+chỗ trỏ bị sót ở §5).
+
+**Acceptance (viết trước khi đo):** (1) mọi commit của một bước pha 2 từ `P2-03` được đếm file, chia
+*sổ giấy tờ* · *tài liệu sản phẩm* · *việc thật*, đặt cạnh mốc gốc `d57cf4f` · `0715382`; (2) đếm số
+chỗ giữ trạng thái của một bước pha 2 hôm nay, và mọi chỗ trạng thái lệch hay đi vào commit không
+phải của bước ấy; (3) mỗi bước đã xong có hay không có khối *Nhận việc* và *Bàn giao* ADR-051 đòi;
+(4) kết quả ghi thành dòng *Đo lại* dưới *Hệ quả* của ADR-051, không đổi quyết định nào — áp rộng
+hay không là của chủ repo; (5) gate xanh.
+
+**Bàn giao:** Claude Code, nhánh `T-085-scope-per-task`, base `5d7a79c`; chưa review độc lập. Kết
+quả ở `docs/decisions.md` ADR-051 → *Hệ quả* → *Đo lại 2026-09-28*. Kế hoạch pha 2 §5 sửa: câu đòi
+một file prompt mỗi bước và viện dẫn ADR-008 thay bằng câu trỏ ADR-051 và T-051.
+
+**Bằng chứng:** (1) `git show --name-only` trên `0715382` `d57cf4f` `70ecefc` `6bf8f97` `a99d3ef`
+`71f8705` `89ac41b` `3701e1a` `f385fc0`, chia bằng tiền tố đường dẫn — `d57cf4f`: giấy tờ 3
+(prompt, `backlog.md`, `backlog_DB.md`) · việc thật 2; `a99d3ef`: giấy tờ 3 (hai sổ + `findings.md`)
+· tài liệu 3 · việc thật 8; `f385fc0`: giấy tờ 2 · tài liệu 3 · việc thật 2; không commit nào sau
+`d57cf4f` thêm file vào `prompt/DB/` (chỉ còn `P2-01`, `P2-02`, `README.md`). (2) `git log -S "[x]
+P2-XX" -- work/backlog.md`: `P2-03` · `P2-12` → `598d7ee T-101`, `P2-05` → `71f8705 T-104`, bốn bước
+còn lại → commit của chính bước; *Mục lục* `work/backlog_DB.md` không cột trạng thái; kế hoạch §4
+hàng `F-043` còn *"`P2-04` (xong)"*. (3) entry của bảy bước đều có *Nhận việc* · *Nghiệm thu* ·
+*Bàn giao*. (5) gate: xem báo cáo cuối lượt.
+
+**Còn lại:** chủ repo quyết áp khuôn cho lane admin và task `T-XXX` hay không; T-087 chờ quyết định
+ấy. Bản chép *"`P2-04` (xong)"* ở kế hoạch §4 để lại — nằm trong hàng lịch sử của một finding đã
+đóng.
+
+<a id="t-086"></a>
+### T-086 — `work/backlog.md` dài hơn 6.300 dòng, phần lớn là chi tiết việc đã xong
+
+**Yêu cầu:** mở 2026-09-25 (đề xuất tinh gọn, `docs/decisions.md` **ADR-051** *Hệ quả*); chủ repo
+giao 2026-09-28 với lời *"hãy đọc kĩ và hoàn thành"*, rồi *"bạn làm luôn"* sau khi T-085 được tích
+hợp. Mức **L1**: đổi cách sổ task được viết, không chạm dữ liệu hay tiền. Không ADR — không có hai
+thiết kế đáng cân; luật mới ghi ở đầu `work/backlog.md`.
+
+**Phạm vi:** `work/scope/T-086.txt` — `work/backlog.md` · `work/backlog_archive.md` · `CLAUDE.md`.
+
+**Acceptance (viết trước khi sửa):**
+
+1. `work/backlog.md` chỉ còn phần trạng thái: *Ready* và *In Progress* chỉ gồm dòng task; *Done* mỗi
+   việc **một dòng** — mã · tên · ngày · hash · link chi tiết.
+2. Không mất chữ nào: mọi dòng rời `work/backlog.md` có mặt nguyên văn ở file này (chỉ link nội bộ
+   được viết lại), trừ những dòng luật cố ý viết lại.
+3. Tập mã ở *Done* trước và sau bằng nhau.
+4. Hash tra theo tiền tố subject; mã không có commit nào mang nó thì ghi rõ cách tra khác.
+5. Mọi link `](#neo)` trong hai file và mọi link `backlog*.md#neo` mở được neo.
+6. Output của `scripts/brief.sh` cho *In Progress* · *Ready* không đổi.
+7. Luật mới ghi ở đầu `work/backlog.md`, bước 9 của vòng chạy, và `CLAUDE.md` §2.
+8. `./scripts/gate.sh` xanh.
+
+**Kết quả:** `work/backlog.md` từ 6.540 dòng xuống 414. Ba vùng chuyển nguyên văn sang file này:
+danh sách *Done* dài, ghi chú lịch sử dưới *Ready* (chuỗi BA · DOC), và mọi hồ sơ đã xong — kể cả
+T-046 · DOC-3b · DOC-3a · DOC-3c · T-019 và bảng §10 vốn còn nằm ở mục *việc cần làm* dù đã xong.
+161 dòng *Done* mới: hash lấy từ commit có mã ở đầu subject (114 mã); 47 mã không commit nào mang
+nên lấy commit đầu tiên tick dòng ấy, ghi *(commit tick Done)*. Ngày là ngày của commit đó, không
+phải ngày mở task. Link đi về hồ sơ ở file này, ở sổ lane (`backlog_SD` · `backlog_DB` ·
+`backlog_AD`), hoặc về dòng *Done* nguyên văn khi không có hồ sơ riêng. Neo `<a id>` được thêm
+cho mọi hồ sơ `### <mã> —` chưa có. Link `#p1-12` vốn đã chết trước lượt này, nay trỏ
+`backlog_SD.md#p1-12`. Bước 2 · 4 · 9 · 10 của vòng chạy đổi sang file scope theo task (T-085
+chưa sửa chúng).
+
+**Luật hash cho dòng mới — lệch chữ của task:** task ghi *"một dòng + hash commit"*, nhưng dòng
+*Done* được viết **trong** commit của chính task nên hash chưa tồn tại. Chọn không ghi hash cho dòng
+mới và tra bằng mã (`git log --grep='^T-XXX:'`) thay vì bắt phiên sau quay lại điền — điền sau là
+đúng loại cập nhật mà lưu trữ này sinh ra để khỏi phải làm.
+
+**Bàn giao:** Claude Code, worktree `.claude/worktrees/t085`, nhánh `T-085-scope-per-task`, base
+`2ab82bc` (T-085); chưa review độc lập. Acceptance → bằng chứng: 1 → `work/backlog.md` *Done*; 2 ·
+3 · 5 → script đối chiếu trong phiên: 15 dòng không còn nguyên văn, cả 15 là dòng luật viết lại
+(đầu file · bước 2 · 4 · 9 · 10 · câu trỏ của khuôn); *Done* thiếu `[]` thừa `[]`; neo hỏng `[]`
+sau khi sửa `p1-12`; 4 → mục *Kết quả*; 6 → `diff` output brief trước/sau rỗng; 7 → đầu
+`work/backlog.md`, bước 9, `CLAUDE.md` §2; 8 → gate ở báo cáo cuối phiên.
+
+[↑ đầu file](#top)
+
+<a id="t-046"></a>
+### T-046 — Prompt của DOC-5 mang hai con số hỏng, và một trong hai là CỔNG NGHIỆM THU của nó
+
+**Mức:** L1 · **Trạng thái:** In Progress 2026-09-03 · **KHÔNG mở khoá DOC-5**
+
+**Bối cảnh.** Chủ repo được hỏi hôm nay (2026-09-03) rằng có chốt việc `docs/architecture.md` dọn
+vào `docs/product/1-system-design/` không, và **chốt là HOÃN**: chưa quyết dọn hay không, lượt này
+chỉ vá prompt để lúc chốt là chạy được ngay với con số đúng. Ba điều kiện mở khoá ở đầu
+`prompt/maintenance/15-architecture-into-system-design-L3.md` **vẫn còn nguyên**, và lượt này
+không đụng vào cái nào:
+
+| ĐK | Trạng thái đo 2026-09-03 | Bằng chứng |
+|:--:|---|---|
+| 1 — câu chốt của chủ repo trong `docs/decisions.md` | ❌ **chưa có** | dòng 1068 vẫn viết *"chưa chốt việc `docs/architecture.md` có dọn vào folder hay không"* |
+| 2 — bước 1–4 xong và đã commit | ✅ | `bc5033c` · `83fe8ff` · `dc53768`/`fd64862`/`1a56b8e` · `ddec2f0` |
+| 3 — pha 1 đã có sản phẩm thật | ⚠️ **mỏng** | `docs/product/00-index.md` dòng 15 ghi pha 1 *"chưa mở"*; folder mới sẽ chứa 1–2 file (`docs/architecture.md` 592 dòng, và có thể `master_plan/phase_1_system_design_banh_cuon_ba_thanh.md` 375 dòng) |
+
+**Vấn đề — hai con số, cùng một lượt đo 2026-09-02, cả hai đã hỏng.**
+
+1. **Bộ lọc `grep` của mục *Acceptance* lọc rỗng** — đúng **F-017**, mà F-017 đã dặn đích danh:
+   *"DOC-5 thì phải sửa trước khi chạy — nó chưa được chạy lần nào."* Đo hôm nay:
+
+   | Lệnh | Kết quả |
+   |---|---:|
+   | tổng số dòng trỏ `docs/architecture.md` | **133** |
+   | bản trong prompt (ba bộ lọc `^\./…`) | **133** ← không bỏ được dòng nào |
+   | bản portable của F-017 | **48** |
+
+   Nó hỏng theo chiều nguy hiểm nhất, y như ở DOC-3: **luôn có kết quả, không bao giờ báo lỗi**.
+   Phiên chạy DOC-5 sẽ thấy lệnh *"chứng minh đã xong"* trả về hàng trăm dòng `work/**` mà đề bài
+   đã nói là **không phải việc phải làm**, rồi hoặc kết luận mình thất bại, hoặc đi sửa `work/**`.
+
+2. **Con số `99` sai cả hai chiều.** Prompt viết *"99 dòng trong repo trỏ `docs/architecture.md`"*
+   (Context), *"~99 pointer"* (Scope) và *"Đếm lại 99 pointer"* (Deliverables 2). Hôm nay tổng là
+   **133**, phần sau bộ lọc portable là **48**. Đây là lần kiểm thứ tư của **F-018**, và là mục
+   `DOC-5 (cùng lượt đo, chưa kiểm lại)` mà F-018 để mở.
+
+**Acceptance** *(viết trước khi sửa — CLAUDE.md §3)*
+
+1. Câu `grep` trong mục *Acceptance* của prompt 15 **lọc được thật trên máy này**: chạy nó ra
+   **48**, nhỏ hơn hẳn tổng **133**. Dán cả hai số kèm ngày đo vào chính prompt (F-017: *"lệnh
+   nghiệm thu phải được chạy một lần lúc viết prompt, và dán kết quả vào chính prompt làm mốc"*).
+2. Không còn chỗ nào trong prompt 15 viết `99`. Con số mới đi kèm **ngày đo** và **lời mời tìm
+   chỗ thứ N+1**, không viết *"đúng N"* (F-018 mục *Bài học chung*).
+3. **48 không được viết thành "48 dòng phải chuyển".** Ba lần trước tổng đúng mà **chỗ cắt sai**,
+   vì chỗ cắt ra từ **đọc thì của câu**, không từ đếm (F-015, F-018). Prompt phải nói rõ đây là số
+   **phải đọc từng dòng**, và nêu đích danh vùng chắc chắn **ở lại**.
+4. **Khối ⛔ đầu file còn nguyên, cả ba điều kiện mở khoá không bị nới một chữ.** Lượt này vá cổng,
+   không mở cổng.
+5. Prompt 15 trỏ tới **F-017, F-018, F-019** để phiên chạy DOC-5 đọc trước — F-019 vì dòng `Done`
+   của DOC-3b đã dự báo *"DOC-5 sẽ gặp lại y hệt"*.
+6. `F-017` và `F-018` trong `work/findings.md` ghi rằng DOC-5 **đã được kiểm lại**, hết là mục treo.
+7. `./scripts/gate.sh` xanh.
+
+**Ngoài phạm vi.** Mọi thứ thuộc chính DOC-5: không chuyển một pointer nào, không dựng
+`docs/product/1-system-design/`, không viết ADR, không đụng `docs/decisions.md`.
+
+[↑ đầu file](#top)
+
+<a id="doc-3b"></a>
+### DOC-3b — Hai prompt BA còn sẽ chạy đang khai báo scope trỏ vào BẢN LƯU
+
+**Trạng thái: ĐÃ XONG 2026-09-03** — khối này ở lại làm bản ghi đề bài; đừng chạy lại.
+Kết quả và chỗ prompt đếm sai ghi ở dòng `- [x] DOC-3b` trong *Done*.
+
+**Prompt:** `prompt/maintenance/13b-pointer-nhom-B-L1.md` (L1) · **chặn** DOC-3a · DOC-3c · DOC-4 ·
+**và chặn cả BA-11, BA-12**
+
+**Goal:**
+Không prompt BA nào còn chỉ người đọc về `docs/product.md`. Quan trọng hơn: BA-11 và BA-12 khi được
+chạy sẽ **ghi và verify vào file con**, không đụng bản lưu.
+
+**Nói một câu, việc phải làm là gì:**
+Đổi 72 dòng văn xuôi + 12 dòng scope trần trong `prompt/BA/**`, và viết lại 10 dòng **lệnh** trong
+hai prompt còn sống. Việc **không** phải làm: đụng 20 dòng lệnh trong 11 prompt của task đã xong —
+chủ repo chốt 2026-09-02 rằng chúng là biên bản một lượt chạy đã kết thúc.
+
+**Vì sao có task này:**
+Lượt chia việc của DOC-3 (2026-09-02) đo ra một chuyện prompt gốc không thấy: khối `Scope` của
+`prompt/BA/10-acceptance-scenarios-L2.md` và `12-production-control-L2.md` ghi trần một dòng
+`docs/product.md`, trong khi **BA-11 và BA-12 vẫn nằm ở *Ready***. ADR-014 (2026-09-02) đã cấm mọi
+thứ trỏ về bản lưu, nhưng file cũ còn tồn tại nên không cổng nào đỏ.
+
+**Không làm thì mất gì:**
+- **Ai bắt BA-11 sẽ ghi §8 vào bản lưu.** ADR-014 bị phá từ bên trong;
+  `docs/product/0-ba/ban-hang/08-scenario.md` vẫn rỗng trong khi nội dung nằm ở chỗ không ai đọc.
+  Đây là hỏng **âm thầm** — Gate 1b chỉ hỏi đường dẫn có mở được không, mà bản lưu thì mở được.
+- Nó xảy ra **vào ngày ai đó bắt BA-11**, không phải một ngày xa xôi: BA-11/BA-12 đang ở đầu *Ready*.
+- Sửa sau thì phải gỡ nội dung ra khỏi bản lưu — đắt hơn nhiều so với đổi 84 dòng bây giờ.
+
+**Bẫy hay sửa nhầm nhất:**
+- **Đổi đường dẫn máy móc làm LỆNH SAI.** `grep -n 'x' docs/product/` không chạy (thư mục cần `-r`).
+- **42/114 dòng nằm trong khối ```** ⇒ Gate 1b **không** chấm. Bằng chứng duy nhất là chạy thử từng lệnh.
+- **Chú thích kỳ vọng đi kèm lệnh** (*"# phải rỗng"*, *"# = 3"*) phải vẫn đúng sau khi đổi. Lệch là
+  phát hiện thật — ghi finding, đừng sửa con số cho khớp.
+
+**Cách hoàn thành — đủ mười bước, 1 tới 10.**
+Luật chung ở [Vòng chạy một task L1](backlog.md#vong-chay). Việc riêng: ba loại dòng nằm lẫn nhau trong cùng
+một file nên **không `sed -i`**; bước verify phải **dán kết quả chạy thử** của từng lệnh đã đổi.
+
+**Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+
+[↑ đầu file](#top)
+
+<a id="doc-3a"></a>
+### DOC-3a — Tài liệu chỉ đường lõi vẫn dạy phiên mới đọc bản lưu
+
+**Prompt:** `prompt/maintenance/13a-pointer-nhom-A-L2.md` (L2) · **cần** DOC-3b · **chặn** DOC-4
+
+**Goal:**
+Sáu file chỉ đường lõi — trong đó có `quality/invariants.md` và `docs/decisions.md` — dẫn thẳng tới
+`docs/product/`, giữ nguyên `§N`. Chỉ 14 dòng cố ý nói về bản lưu được ở lại.
+
+**Nói một câu, việc phải làm là gì:**
+Đổi 100 trong 114 dòng, theo đúng một luật ánh xạ. Việc **không** phải làm: viết lại câu chữ quanh
+pointer, và sửa nội dung một `I-XXX` — nếu thấy mình đang sửa invariant thì đã đi lạc task.
+
+**Vì sao có task này:**
+ADR-014 (2026-09-02) cấm mọi thứ trỏ về `docs/product.md`. Đo lượt chia việc DOC-3 (2026-09-02):
+nhóm A còn **114 dòng**, riêng `quality/invariants.md` **29** và `docs/decisions.md` **62**.
+
+**Không làm thì mất gì:**
+- **Owner của invariant và owner của quyết định đang trỏ nhầm nhà.** Phiên mới đọc `I-XXX` rồi mở
+  bản lưu để tra nguồn — hôm nay còn ra nội dung đúng vì bản lưu là bản sao, nhưng **kể từ lần đầu
+  một file con được sửa**, hai bên bắt đầu trôi và không ai biết mình đang đọc bản cũ.
+- DOC-4 (`CLAUDE.md` §2) **không chạy được trước task này**: hai bảng owner phải ghi giống nhau.
+
+**Bẫy hay sửa nhầm nhất:**
+- **`mục N` không phải `§N`.** `docs/prompt-guideline.md` dòng 52 (*"mục 4"*) và 161 (*"mục X"*)
+  **lọt lưới** mọi grep tìm theo `§`.
+- **Hai dòng trông như ADR-014 nhưng phải chuyển:** `docs/decisions.md` 1757 và 1775 nói về trạng
+  thái **hôm nay**, không kể lịch sử.
+- **`docs/architecture.md` dòng 533 là ô bảng owner** — phải ghi y hệt thứ DOC-4 sẽ ghi vào
+  `CLAUDE.md` §2.
+
+**Cách hoàn thành — đủ mười bước, 1 tới 10.**
+Luật chung ở [Vòng chạy một task L1](backlog.md#vong-chay). Việc riêng: 113/114 dòng nằm **ngoài** khối ```
+nên Gate 1b **có** chấm — gõ sai tên file con là gate đỏ ngay, đây là nhóm duy nhất cổng máy đỡ được.
+
+**Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+
+[↑ đầu file](#top)
+
+<a id="doc-3c"></a>
+### DOC-3c — Vùng *Ready* của backlog vẫn bảo phiên sau ghi vào bản lưu
+
+**Trạng thái: ĐÃ XONG 2026-09-03** — khối này ở lại làm bản ghi đề bài; đừng chạy lại.
+Kết quả, chỗ prompt cắt sai và lý do hai dòng ở lại ghi ở dòng `- [x] DOC-3c` trong *Done*.
+
+**Prompt:** `prompt/maintenance/13c-pointer-backlog-ready-L1.md` (L1) · **cần** DOC-3b · **chặn** DOC-4
+
+**Goal:**
+Vùng *Ready* và *In Progress* của `work/backlog.md` trỏ đúng nhà mới; 211 dòng lịch sử còn lại
+không đổi một ký tự.
+
+**Nói một câu, việc phải làm là gì:**
+Đổi 8 dòng (9 lần xuất hiện) trong đúng hai vùng. Việc **không** phải làm: dọn 212 dòng ở *Done* và
+*Chi tiết* — đó là lý do task này tách ra khỏi phần còn lại.
+
+**Vì sao có task này:**
+`work/backlog.md` có **220 dòng** trỏ bản lưu, nhiều nhất repo, nhưng CLAUDE.md §5 nói rõ `work/`
+là sổ ghi chép: *một đường đã chết ở đó là bằng chứng, không phải bug*. Chỉ *Ready* và *In Progress*
+là **lời hướng dẫn cho việc sắp làm** — câu mà phiên sau sẽ **làm theo**.
+
+**Không làm thì mất gì:**
+- Mục **BA-11** và **BA-12** ở *Ready* vẫn ghi *"`docs/product.md` §8 / §3.4"*. Cùng hậu quả với
+  DOC-3b nhưng ở chỗ khác: phiên đọc backlog trước, prompt sau.
+- Không làm thì DOC-3b sửa prompt xong mà backlog vẫn chỉ ngược lại — hai owner nói khác nhau.
+
+**Bẫy hay sửa nhầm nhất:**
+- **Dòng BA-12 có HAI lần xuất hiện** (§3.4 và §5.4) ⇒ hai file đích khác nhau. Sửa một sót một.
+- **Ranh giới vùng trôi mỗi ngày** — định vị bằng tiêu đề `## Ready` / `## Done`, không dùng lại số dòng.
+- **Gate 1b không chấm `work/`** ⇒ task này không có cổng máy nào. Đọc `git diff` là bắt buộc.
+
+**Cách hoàn thành — đủ mười bước, 1 tới 10.**
+Luật chung ở [Vòng chạy một task L1](backlog.md#vong-chay). Việc riêng: chạy **sau** DOC-3b, vì DOC-3b có thể
+chạm chính hai dòng BA-11/BA-12 này.
+
+**Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+
+[↑ đầu file](#top)
+
+### Mười câu hỏi §10 kế hoạch gốc — ai trả lời câu nào
+
+Bốn câu **đã có lời giải trước khi chuỗi BA bắt đầu**; task tương ứng chỉ chép lời giải kèm nguồn,
+**không** mở lại thành câu hỏi.
+
+| §10 | Câu hỏi | Task | Trạng thái |
+|---|---|---|---|
+| 1 | Ai xác nhận / huỷ / sửa đơn | BA-07 | **cả ba vế đã chốt NGƯỜI** → xác nhận `shop-facts.md` §6.2 · huỷ §6.13 (2026-08-30) · **sửa đơn: POS sửa, không huỷ-rồi-tạo-lại** (§6.19, chốt 2026-09-01, T-039). Còn mở đúng một thứ: **từ trạng thái nào** thì sửa/huỷ được — **U-022**, chuyển BA-08 |
+| 2 | Đơn đã xác nhận được sửa hay chỉ huỷ/tạo lại | BA-07 | **đã chốt 2026-09-01** (T-039) → **sửa**, trên POS; `shop-facts.md` §6.19 · `docs/product.md` §5.2. Vế *tới trạng thái nào* ở lại **U-022** cùng câu 1 |
+| 3 | Món hết sau khi khách đã đặt | BA-08 | **đã chốt 2026-09-02** (T-042) → **POS bàn với khách**, quyết định ra tại lúc thoả thuận xong; không tự thay thế, không tự huỷ → `shop-facts.md` §6.20 · `docs/product.md` §6 dòng 5 và §6.3 (quy mô: hết bánh là hết gần như mọi món) |
+| 4 | Khách không trả được tiền thì phiên bàn ở đâu | BA-08 | **đã chốt** → quán **cho nợ**, phiên vẫn `Đã đóng`, POS bắt buộc ghi **ai nợ** và **nợ bao nhiêu** (`shop-facts.md` §6.14, đóng U-007 ngày 2026-08-31); BA-08 chép vào `docs/product.md` §6 dòng 10 (2026-09-02) |
+| 5 | Có hoàn tiền không, ai được | BA-06 | **đã chốt** → `shop-facts.md` §6.4 — quầy quyết từng ca, phải ghi vết; BA-06 chép vào `docs/product.md` §4.8 (2026-09-01) |
+| 6 | Pickup có cần giờ hẹn bắt buộc | BA-04 | **đã chốt** → `shop-facts.md` §6.5 — bắt buộc; BA-04 chép vào `docs/product.md` §3.2.4 (2026-08-31) |
+| 7 | Delivery có quản lý trạng thái giao | BA-04 | **đã chốt** → `shop-facts.md` §6.7 — quán tự giao, có trạng thái "đang giao"; BA-04 chép vào `docs/product.md` §3.2.2 (2026-08-31) |
+| 8 | Doanh thu tính theo ngày nào, đơn huỷ/hoàn tiền ra sao | BA-06 | **đã chốt cả hai vế 2026-09-01** → bán (kể cả nợ) tính **ngày bán/ngày ghi nợ** (`shop-facts.md` §6.14) · hoàn tiền tính **ngày hoàn**, ngược chiều (§6.4, đóng U-019 ở T-038) → `docs/product.md` §4.8, §4.10 |
+| 9 | Chủ quán đổi giá đang bán ngay lập tức được không | BA-05 | **đã chốt 2026-09-01** (mở thành U-014 rồi đóng trong ngày, T-034) → **được**, không phải chờ hết buổi → `shop-facts.md` §6.17 · `docs/product.md` §3.3.1 |
+| 10 | Có lưu lịch sử thao tác nhân viên ở MVP không | BA-09 | **đã trả lời 2026-09-02 — bằng luật đã có, không phải quyết định mới**: `docs/product.md` §1.4 đã chốt *hệ thống ghi lại mọi thao tác chạm tiền hoặc chạm trạng thái đơn*, và **I-012** giữ luật ấy. Nên **có**, ở đúng mức đó, và nó nằm trong MVP qua §7.3 (đối soát cuối ngày không chạy nổi nếu thiếu vết). Phần **chưa** chốt là nhật ký thao tác **rộng hơn tiền và trạng thái đơn** — ai đăng nhập, ai xem báo cáo: đó là **ADM-50** ở `work/admin-questions.md` §2, không phải câu của §7 |
+
+Năm câu còn mở đều được BA-10 gom lại lần cuối (`docs/decisions.md`): câu nào chốt được thì thành
+ADR, câu nào chưa thì thành GIẢ ĐỊNH có mức rủi ro và người cần trả lời. **Câu 8 đã ra khỏi danh
+sách đó ngày 2026-09-01** — cả hai vế đều có lời chủ quán, và hai vế đi **ngược chiều** nhau, nên
+BA-10 chép cả hai chứ đừng gộp thành một câu.
+
+**S-1, S-2, S-3 không phải giả định.** Chủ quán xác nhận cả ba ngày **2026-08-30**
+(`shop-facts.md` §7.1); §7.2 nay không còn mục nào. Task nào ghi chúng là "chưa xác nhận" là sai.
+
+<a id="t-019"></a>
+### T-019 — `prompt-fullstack.md` trỏ tới bảy đường không tồn tại
+
+**Cập nhật 2026-08-30 (T-024):** bảy đường này nay nằm trong `scripts/check-links.ignore` mang tên
+T-019, nên Gate 1b xanh chừng nào chúng còn chết. Sửa xong thì **phải gỡ bảy dòng ignore đó** —
+ignore hết hạn tự làm gate đỏ, đó là cách task này báo mình đã xong.
+
+**Prompt:** chưa có · **Finding:** `work/findings.md` **F-007** (Open) · L1
+
+**Goal:**
+`master_plan/prompt-fullstack.md` là bản xuất khẩu, được **dán vào prompt của agent ngoài repo**.
+Khối trích dẫn đầu file trỏ tới bốn tài liệu `design/**`, `quality/05-checklist.md`,
+`quality/prompt_guiline.md` và `finding.md#f-67` — kiểm ngày 2026-08-30, **không đường nào tồn
+tại**. Người đọc file này không có repo để `ls`, nên họ hoặc dừng vì thiếu đầu vào, hoặc tự bịa nội
+dung của bảy file rồi coi là đã có nguồn.
+
+**Không sửa được bằng cách sửa từng link.** Phải trả lời trước: *`prompt-fullstack.md` còn thuộc dự
+án nào, xuất khẩu cho ai?* — bảy đường kia là (a) tài liệu của một repo khác, (b) tài liệu sẽ sinh
+ra ở pha sau, hay (c) tàn dư của cấu trúc đã bỏ. Ba khả năng, ba cách sửa khác nhau. **Hỏi người,
+đừng đoán** (CLAUDE.md §3.5).
+
+Kèm theo, cùng loại nhưng nhẹ hơn: §7 hàng `0 · BA` bảo *"trả lời 3 câu chưa rõ ở §3.2"*, trong khi
+§3.2 nay chỉ còn dòng *"Đã gộp vào §3.1"* và không giữ câu hỏi nào. T-013 cố ý không sửa câu đó vì
+sửa là phải đoán ba câu ấy nay nằm ở đâu.
+
+**Câu hỏi đã có lời giải — chủ repo chốt 2026-08-31.** Đáp án là **(c) tàn dư của một repo
+khác**, và cách sửa là **trỏ về nhà thật của repo này**. Bằng chứng đưa ra trước khi hỏi:
+
+- `git log --all -- 'design/*' 'quality/05-checklist.md' 'quality/prompt_guiline.md' 'finding.md'`
+  **rỗng** — không đường nào từng tồn tại trong repo này, một lần nào, trong toàn bộ lịch sử.
+- Bảy đường không rời rạc mà là **một bộ layout hoàn chỉnh** của repo cũ: `project_preparation/` +
+  `design/{data_base,backend,frontend,system_design}/01-thiet-ke.md` + `quality/05-checklist.md` +
+  `quality/prompt_guiline.md` + `finding.md` (ở gốc, đánh số F-31, F-67 — repo này đánh F-001…).
+
+**Đường thứ tám, F-007 không kể và Gate 1b không thấy:** dòng cuối §11 bảo người đọc tự kiểm bằng
+`grep -n '^## §' project_preparation/prompt-fullstack.md` — file tự gọi tên mình ở
+`project_preparation/`, trong khi nó nằm ở `master_plan/`. Gate 1b mù chỗ này vì `check-links.sh`
+chỉ nhận chuỗi nháy ngược **không có dấu cách**, mà đây là cả một câu lệnh `grep`. Ghi vào F-007.
+
+**Hai nhóm, hai cách sửa khác nhau** — đây là điểm chính của task:
+
+| Đường cũ | Repo này có nhà tương đương? | Cách sửa |
+|---|---|---|
+| `quality/prompt_guiline.md` | có — `docs/prompt-guideline.md` | trỏ lại |
+| `quality/05-checklist.md` | có — `CLAUDE.md` §8 + `quality/review-gate.md` | trỏ lại |
+| `finding.md#f-67`, `#f-31` | có — `work/findings.md` F-001 | trỏ lại |
+| `project_preparation/…` | có — chính file này ở `master_plan/` | trỏ lại |
+| `design/**` × 4 (schema · API · route · bất biến) | **không** | **bỏ link**, ghi là **đầu ra của pha 1–4 (§7)** |
+
+Bốn đường `design/**` là chỗ dễ sai nhất: chúng là **đầu ra** của chính prompt này, không phải đầu
+vào để tra. Trỏ chúng đi đâu cũng sai — nhà duy nhất đúng là "chưa tồn tại, pha 1–4 sinh ra".
+
+**Một cái ngoặc phải sửa theo, không chỉ đổi đường dẫn:** dòng 3 ghi *"Khuôn: quality/prompt_guiline.md
+(5 vế)"*. `docs/prompt-guideline.md` §2 là **sáu khối** (Context · Goal · Scope · Constraints ·
+Acceptance · Verify). Đổi đường dẫn mà giữ "(5 vế)" là thay một pointer chết bằng một pointer đúng
+đường nhưng **sai nội dung** — loại lỗi khó thấy hơn hẳn loại cũ. Năm vế ở §11 là bộ tự kiểm của
+**chính file này** trên §2/§3/§4/§6/§8, khác với sáu khối của repo; giữ cả hai, nói rõ cái nào của ai.
+
+**§7 hàng `0 · BA`:** chủ repo chốt **gỡ hẳn** vế *"trả lời 3 câu chưa rõ ở §3.2 hoặc ghi thành giả
+định có mức rủi ro"*. Ba câu đó đã gộp vào §3.1 và không còn tồn tại như câu hỏi; ba đầu ra còn lại
+của pha 0 giữ nguyên.
+
+**Scope:** `master_plan/prompt-fullstack.md` · `scripts/check-links.ignore` · `work/findings.md` ·
+`work/backlog.md`.
+
+**Out of scope:** `master_plan/shop-facts.md` (nhà thật, đang đúng) · `docs/**` · `prompt/**` ·
+`quality/**` · `scripts/*.sh` · cấu trúc §1 → §10 · nội dung nghiệp vụ của bất kỳ mục nào.
+
+**Acceptance:**
+1. `./scripts/check-links.sh` xanh **sau khi bảy dòng ignore mang tên T-019 đã bị xoá khỏi**
+   `scripts/check-links.ignore` — đây là cách task tự chứng minh mình xong (T-024 dựng sẵn: ignore
+   hết hạn làm gate đỏ).
+2. `grep -nE 'design/|quality/05-checklist|prompt_guiline|finding\.md|project_preparation'
+   master_plan/prompt-fullstack.md` **rỗng** — không còn dấu vết layout repo cũ, kể cả đường thứ tám
+   nằm trong câu lệnh `grep` mà Gate 1b không thấy.
+3. Mọi link markdown còn lại trong file đều mở được, kiểm bằng vòng lặp `ls` chạy tay (Gate 1b bỏ
+   qua chuỗi có dấu cách nên không thay thế được bước này).
+4. Khối đầu file vẫn nói đúng ba việc: file là **bản xuất khẩu**, lệch ⇒ **nhà thật thắng**, và
+   `shop-facts.md` là nhà của dữ kiện quán. Không thêm dữ kiện quán nào vào khối đó (F-001).
+5. Bốn thứ `design/**` từng trỏ tới (schema · API · route · bất biến) vẫn được nêu tên, nhưng nêu
+   như **đầu ra của pha 1–4 (§7)**, kèm câu nói thẳng chúng chưa tồn tại — người đọc ngoài repo
+   không được đi tìm chúng.
+6. Dòng 3 không còn ghi "(5 vế)" cho `docs/prompt-guideline.md`; §11 vẫn giữ bộ tự kiểm năm vế của
+   file này và nói rõ đó là năm vế của **file này**.
+7. §7 hàng `0 · BA` không còn nhắc §3.2; ba đầu ra còn lại của pha 0 (năm kênh · 2 sơ đồ luồng ·
+   danh sách quy tắc nghiệp vụ) giữ nguyên.
+8. Không đổi cấu trúc §1 → §10, không đổi stack/sơ đồ 16 bảng/bảng sáu pha, không đụng con số
+   thành phần ở §9.4 (T-022 sở hữu chúng).
+9. `grep -c '⚠️'` không tăng — task này không thêm khối cảnh báo mới (T-022 đã chốt **một** khối ở §3.1).
+10. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -nE 'design/|quality/05-checklist|prompt_guiline|finding\.md|project_preparation' \
+  master_plan/prompt-fullstack.md            # rỗng
+grep -n 'T-019' scripts/check-links.ignore   # rỗng
+./scripts/check-links.sh                     # xanh sau khi gỡ ignore
+grep -c '⚠️' master_plan/prompt-fullstack.md  # không tăng (2)
+grep -n '^## §' master_plan/prompt-fullstack.md   # vẫn đủ §1 → §11
+git status --porcelain
+```
+
+
+
+
+<a id="t-085"></a>
+### T-085 — Mỗi task một file scope, Gate 7b chấm theo task trong subject
+
+**Yêu cầu:** Chủ repo, 2026-09-27: *"hãy mỗi 1 task tự tạo file scope riêng để không bị xoá"*, sau khi
+Gate 3 đỏ vì một phiên song song gỡ sạch `work/scope.txt` giữa chừng; rồi *"hãy làm theo đề xuất
+trên"* cho thiết kế Claude đề xuất trong cùng phiên. Mức **L2**: đổi Gate 3 · Gate 7b · brief, không
+đổi dữ liệu hay tiền. Quyết định thiết kế: **ADR-063**.
+
+**Phạm vi:** `work/scope/T-085.txt` (chính cơ chế mới).
+
+**Acceptance (viết trước khi sửa):**
+
+1. Scope khai ở `work/scope/<MÃ-TASK>.txt`, một file mỗi task; thư mục bị git bỏ qua trừ
+   `work/scope/.gitignore`, nên file scope không thể lọt vào commit bằng `git add` thường.
+2. Gate 3: một file đổi là **trong scope** khi có **ít nhất một** file scope cho phép nó và chính
+   file ấy không cấm nó. Không có file scope nào ⇒ bỏ qua như cũ.
+3. Gate 3 FAIL khi `work/scope.txt` còn pattern (cách khai cũ không còn được đọc — im lặng sẽ làm
+   scope của phiên đó mất tác dụng mà không ai biết), và khi một file `work/scope/*.txt` bị git theo
+   dõi (ai đó `git add -f`).
+4. Gate 7b: mã task trong subject `git commit -m "<MÃ>: …"` của khối chọn file scope để chấm; không
+   mã nào có file scope ⇒ chấm theo hợp mọi file scope. Khối liệt kê `work/scope/<x>.txt` ⇒ kêu.
+5. Task Done **không** xoá file scope nữa — Gate 7b cần nó lúc giao khối commit; file được xoá sau
+   khi task đã commit. Brief liệt kê từng file scope theo mã, và cảnh báo file nào có mã không nằm
+   trong *In Progress*.
+6. `work/scope.txt` ở lại thành stub chỉ-comment trỏ sang cơ chế mới, để các tài liệu lịch sử nhắc
+   tới nó vẫn mở được.
+7. Test: mỗi luật 2–5 có ca trong `check-scope.test.sh` · `check-commit-block.test.sh` ·
+   `brief.test.sh`; `./scripts/gate.sh` xanh.
+8. Luật chung (CLAUDE.md, AGENTS.md, README.md, `docs/prompt-guideline.md`,
+   `quality/review-gate.md`, `.claude/commands/commands.md`) nói cơ chế mới; tài liệu lịch sử giữ
+   nguyên.
+
+**Bàn giao:** Claude Code, worktree `.claude/worktrees/t085`, nhánh `T-085-scope-per-task`, base
+`b04715c`; chưa review độc lập. Acceptance → bằng chứng: 1 · 2 · 3 → `check-scope.test.sh` ca 1–10
+(18 ca đạt); 4 → `check-commit-block.test.sh` A4 · A9 · A10 · A11 (đạt); 5 → `brief.test.sh` B1 ·
+B1b · B1c · B1d (đạt); 6 → `work/scope.txt` chỉ còn comment; 7 → `./scripts/verify.sh`: *Verification
+passed*; 8 → sáu file luật đã sửa, tài liệu lịch sử giữ nguyên. Gate 1b còn đỏ trong worktree vì một link
+có sẵn từ commit `b4b603e`: ADR-053 trỏ tới `prompt/maintenance/02-quy-trinh-db-tu-du-an-cu-L2.md`,
+file chỉ nằm chưa track ở cây chính nên không có trong worktree — không thuộc task này. **Việc còn lại khi gộp vào cây chính:** cây
+chính đang có phiên khác ghi pattern vào `work/scope.txt`; sau khi gộp, phiên ấy phải chuyển pattern
+sang `work/scope/<MÃ>.txt`, nếu không Gate 3 đỏ (đúng thiết kế).
+
+**Tích hợp 2026-09-28 (Claude Code, chủ repo chọn "hoàn tất T-085 trước" khi giao T-086):** thay đổi
+được áp lại lên `5d64e6c` (T-084) và ba file xung đột (`CLAUDE.md` §5 Gate 3, `docs/decisions.md`
+bảng + thân ADR, `work/backlog.md` Ready · Done) đã gỡ. ADR của task này **đổi số ADR-058 → ADR-063**
+vì nhánh chính đã dùng ADR-058…062 cho `I-022` · khoản trả trước · `I-023` · `I-024` · Gate 8; mọi
+chỗ T-085 viết đã đổi theo, các chỗ ADR-058 của `I-022` giữ nguyên. Mô tả Gate 3 ở `CLAUDE.md` §5
+đổi `note:` → `NOTE` theo T-084. Bằng chứng: tám `scripts/*.test.sh` đều qua; `./scripts/gate.sh`
+trong worktree: `PASS gate không cổng nào đỏ`.
+
+**Gộp vào `chatgpt_involve` và review 2026-09-29 (Claude Code, chủ repo giao "hoàn thành T-085"):**
+nhánh `T-085-scope-per-task` (tới `84a1fe5`, gồm cả T-086 · T-119) chưa từng vào `chatgpt_involve`,
+nơi đã thêm P2-08 (`8e5a77e`). Gộp ở worktree `.claude/worktrees/t085-integrate`, nhánh
+`T-085-integrate`, vì cây chính còn thay đổi chưa commit của phiên khác. Một xung đột, mục *Done* của
+`work/backlog.md`: giữ khuôn một dòng của T-086, P2-08 thành một dòng trỏ `backlog_DB.md#p2-08`, dòng
+*Done* dài của P2-08 chép nguyên văn vào [Dòng *Done* nguyên văn](#done-nguyen-van) (có đoạn review
+2026-09-29 không nằm ở `backlog_DB.md`). Review `check-scope.sh` · `check-commit-block.sh` theo
+Acceptance 1–5: không phát hiện chặn; một điểm thấp — danh sách file scope bị theo dõi in ra không
+bọc ngoặc, tên có dấu cách bị tách khi in, không đổi kết quả cổng. Bằng chứng: `./scripts/gate.sh`
+trên bản gộp — `PASS gate`, tám `scripts/*.test.sh` đều qua.
+
+[↑ đầu file](#top)
+
+<a id="t-106"></a>
+### T-106 — Rà phép đếm ADM và đóng F-028
+
+**Yêu cầu:** Chủ repo yêu cầu ngày 2026-09-27 rà căn cứ xếp lịch rồi đóng finding về việc đọc dãy mã thành số lượng.
+
+**Phạm vi:** `work/backlog.md`, `work/findings.md`, `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md`.
+
+**Acceptance (trước khi sửa):** Đếm độc lập hàng mục lục và tiêu đề ADM, hai tập mã khớp nhau; rà câu “52 việc” và dãy ADM cũ, phân biệt lịch sử với căn cứ hiện hành; sửa pointer MVP về owner hiện hành mà không đổi luật nghiệp vụ; ghi bằng chứng đóng F-028, đồng bộ trạng thái thân và mục lục; chạy gate và báo đúng kết quả, không gom thay đổi có sẵn.
+
+**Bàn giao:** Codex, nhánh `chatgpt_involve`, base `92b4f76`; chưa review độc lập. Đã đọc diff theo Gate 4; không sửa ADR hay dữ kiện quán. Chỉ ba file trong phạm vi đổi ở lượt này; giữ nguyên bảy file tracked và hai prompt untracked có sẵn, không stage/commit.
+
+**Bằng chứng nghiệm thu:** Lệnh Python dùng regex `^### (ADM-\d+) —` và `^\| (?:~~)?\[(ADM-\d+)\]` trên sổ admin trả `ADM headings: 29 index rows: 29 unique: 29 same IDs: True`. Rà Markdown bằng `rg`: câu sai còn ở ADR-013, ADR-014 và chi tiết T-041 đã xong; các trích dẫn khác giải thích lịch sử lỗi. Mục thứ tự làm hiện hành dựa vào lời chủ quán 2026-09-20. Pointer §7.6 MVP nay trỏ đúng ba owner; không còn dãy cũ ở `docs/product/` và `prompt/`. F-028 Fixed ở cả bảng và thân, có khối đóng kèm ngày và tiêu chí.
+
+**Kiểm tra:** `git diff --check` không lỗi. Chạy `./scripts/gate.sh` khi scope còn khai: Gate 3 FAIL chỉ vì bảy file có sẵn ngoài phạm vi; check-links OK; check-doc-status xanh (2349 khối, 59 mã U-XXX, 21 chuyển tiếp hợp lệ); verify skipped vì chỉ tài liệu. Không mở rộng scope để nhận thay đổi của việc khác. Sau khi hoàn tất và gỡ scope, chạy lại `./scripts/gate.sh` exit 0: scope skipped (không còn pattern), links OK, doc-status xanh; verify skipped vì chỉ tài liệu. Không còn phần sửa nào của T-106; chưa review độc lập.
+
+
+
+<a id="t-088"></a>
+### T-088 — Codex chưa có điểm vào và mô tả hook đang mặc định Claude Code
+
+**Prompt:** `prompt/maintenance/09-shared-agents-L1.md` (L1).
+
+**Goal:** Claude Code và Codex tiếp tục cùng một task theo cùng nguồn sự thật và biết rõ kiểm tra nào đã chạy.
+
+**Nói một câu, việc phải làm là gì:** Thêm điểm vào Codex, làm rõ hook và bàn giao; giữ nguyên lõi Gate 7.
+
+**Vì sao có task này:** Ngày 2026-09-25, chủ repo yêu cầu triển khai đề xuất dùng cả Claude Code và ChatGPT/Codex trên nhánh mới.
+
+**Không làm thì mất gì:** Phiên Codex dễ thiếu brief, hiểu nhầm gate đã chạy tự động hoặc dùng trạng thái chỉ còn trong hội thoại Claude.
+
+**Cách hoàn thành:**
+1. Đọc luật và chạy brief.
+2. Nhận task người dùng chỉ định, giữ nguyên các task Ready khác.
+3. Đọc prompt được dẫn ở trên.
+4. Khai scope trước khi sửa.
+5. Thêm điểm vào dùng chung và ghi quyết định.
+6. Làm rõ vòng đời phiên và bàn giao trong các tài liệu liên quan.
+7. Bổ sung vùng kiểm tra link cùng ca hồi quy.
+8. Chạy gate và đối chiếu nghiệm thu trong prompt.
+9. Đọc diff, cập nhật kết quả và dọn scope của task.
+10. Giao khối commit chỉ chứa file của task.
+
+**Acceptance · Verify:** trong file prompt.
+
+**Bàn giao (2026-09-25):** Thực hiện: Codex; reviewer độc lập: chưa có.
+Nhánh `chatgpt_involve`, base `8e319c1`. File thay đổi/mới thuộc danh sách Scope trong prompt;
+`work/scope.txt` được dọn về nguyên trạng sau khi chấm scope. `docs/command/git.md` là file
+có sẵn của người dùng, không thuộc task và không nằm trong khối commit.
+
+Nghiệm thu đối chiếu: AGENTS.md dẫn tới cùng luật và nêu giới hạn Gate 7; tài liệu phân biệt
+hook/chạy trực tiếp; CLAUDE.md §7.4 giữ quy tắc phối hợp; test chứng minh link chết trong điểm
+vào bị bắt; danh sách bàn giao lấy cả tracked và untracked, index không có file đã stage.
+
+Bằng chứng chạy `./scripts/gate.sh` khi scope còn khai báo (exit 0):
+
+```text
+check-scope: OK — all tracked changes within declared scope.
+check-links: OK — mọi đường dẫn trong tài liệu chỉ đường đều mở được.
+check-links.test: OK
+Verification passed.
+```
+
+Toàn bộ test shell được chạy, gồm các ca hồi quy AGENTS.md. `git diff --check` không có output.
+Brief in đúng điểm vào Codex và task đang làm; đường dẫn trong AGENTS.md mới được kiểm tra
+trực tiếp vì file chưa track. Đã tự đọc diff theo Gate 4; chưa có review độc lập.
+
+Giới hạn: Gate 7/7b trên Codex chưa tự động hoá (CLAUDE.md §5–6.1); vấn đề scope sau Done
+vẫn thuộc [T-085](backlog.md#ready). Bước tiếp theo: người dùng review/commit khối bàn giao hoặc giao
+Claude review T-088 theo prompt; không cần nhận lại các task Ready chỉ để dùng Codex.
+
+
+<a id="t-082"></a>
+### T-082 — `work/scope.txt` vào git kèm pattern lần thứ ba, và lần này chính cú nhặt của một phiên song song đẻ ra cổng đỏ
+
+**Prompt:** không có file prompt — việc dọn chạy thẳng trong phiên. **Xong 2026-09-22.**
+*Acceptance* vì thế nằm ngay trong entry này, đúng ngoại lệ **T-079** · **T-080** · **T-081** đã
+dùng: không có prompt thì không có chỗ thứ hai để nó trôi (`work/findings.md` **F-001**).
+
+**Vì sao có task này.** Ngày 2026-09-20, ba phiên chạy song song trên cùng cây làm việc: một phiên
+đóng **ADM-21**, một phiên dựng **T-081** (`work/backlog_DB.md`), và một lượt `git commit` gộp
+**cả hai cộng phần dở của lượt thứ ba** vào một commit duy nhất — `04c5a64`, subject
+` chuyển sang pha 2`. Cả hai phiên đều đã giao khối commit dán được của mình theo `CLAUDE.md` §6.1,
+mỗi khối nói rõ file nào **không** thuộc về nó; không khối nào được dùng. Đó là **lần thứ sáu**
+`work/findings.md` **F-025** ghi cùng một hình.
+
+Cái làm lần này khác năm lần trước: commit ấy nhặt luôn **`work/scope.txt` với hai khối pattern còn
+nguyên**. Bản `HEAD` của file ấy từ đó vi phạm hình bất biến *"bản đã commit chỉ chứa comment"*
+(**F-020** · **ADR-043**), nên `scripts/check-scope.sh` đỏ ở **mọi** lượt sau đó, không riêng lượt
+nào — suốt hai ngày, tới lượt này.
+
+**Không làm thì mất gì.**
+- **Một cổng đỏ thường trực dạy người ta bỏ qua cổng.** Gate 3 đỏ vì một lý do đã biết trước thì
+  lượt nào cũng đỏ, và từ hôm ấy một thay đổi **thật sự** ra ngoài scope cũng đi qua cùng cái đỏ
+  ấy — đúng cơ chế `master_plan/shop-facts.md` §6.10 mô tả cho ngưỡng lệch 0đ, chỉ khác chỗ áp
+  dụng.
+- **Phiên mới không khai được scope của mình.** `work/scope.txt` mang hai khối của task đã xong ⇒
+  brief cảnh báo mỗi phiên, và Gate 3 chấm thay đổi của phiên mới bằng scope của người khác
+  (**F-010**).
+- **Lịch sử git mất đường tra.** Ai `git log` tìm *"lời `C36` về owner lúc nào"* hay *"sổ pha 2
+  dựng ở commit nào"* không tìm thấy bằng subject: ` chuyển sang pha 2` không nêu task nào — đúng
+  cái giá **F-031** đã đo.
+
+**Acceptance — bốn dòng, cả bốn đã chạy:**
+
+1. Cây làm việc của `work/scope.txt` **comment-only**, và hai khối bị gỡ là **đúng** hai khối đã
+   nằm trong commit `04c5a64`. Kiểm: `./scripts/check-scope.sh` in `note:` (nợ ở `HEAD`, cây đã
+   sạch) thay vì FAIL.
+2. Việc gỡ làm bằng cách **xoá đúng từng khối**, không bằng `git checkout --` — trên file này mọi
+   lệnh khôi phục đều xoá scope của mọi phiên đang chạy (**F-014**).
+3. `work/findings.md` **F-025** có khối *LẦN THỨ SÁU* kèm ngày, mã commit, và **cái mới** so với năm
+   lần trước; hàng của nó ở bảng tổng hợp đầu file trỏ tới khối ấy. **Status vẫn `Open`** — hai
+   đường vá thuộc quyết định chủ repo, lượt này không tự dựng cái nào (**§3.8**).
+4. `./scripts/gate.sh` xanh.
+
+**Vì sao lượt này CỐ Ý không khai scope.** Đường duy nhất xoá được món nợ là: cây làm việc về
+comment-only, rồi đưa `work/scope.txt` vào khối commit của chính lượt ấy (`CLAUDE.md` §6.1, đoạn
+*"The one time it does show up with a real diff"*). Khai một khối pattern mới ở lượt này sẽ đưa
+pattern trở lại git lần thứ tư. **T-047** (2026-09-07) và **T-078** (2026-09-16) đã chạy đúng
+đường này hai lần trước.
+
+**Chỗ này KHÔNG đóng được bằng kỷ luật, và đã đo được ba lần.** F-020 đóng ở T-047 bằng cách dựng
+**cổng gác** (Gate 3 + Gate 7b, ADR-043) chứ không bằng một lời nhắc; nhưng cả hai cổng ấy sống
+**bên trong một lượt phiên**, còn `git commit` gõ tay ở terminal thì không đi qua lượt nào — đúng
+chỗ **Gate 8** (`CLAUDE.md` §6.2) được dựng ra để đứng, và nó chỉ chấm **subject**, không chấm
+**tập file**. Đó là lý do F-025 còn `Open` sau sáu lần.
+
+<a id="t-081"></a>
+### T-081 — Pha 2 có mười bốn bước nhưng không bước nào nói vì sao có nó, hỏng thì mất gì, và chạy mười bước thế nào
+
+**Prompt:** không có file prompt — task chạy thẳng trong phiên theo yêu cầu chủ repo 2026-09-20
+(*"hãy làm backlog_db.md"*). **Xong 2026-09-20.** *Acceptance* vì thế nằm ngay trong entry này,
+đúng ngoại lệ có tên mà **T-079** và **T-080** đã dùng: không có prompt thì không có chỗ thứ hai
+để nó trôi (`work/findings.md` **F-001**).
+
+**Vì sao có task này.** **T-080** dựng kế hoạch pha 2 cùng ngày
+(`master_plan/DB_master_plan_banh_cuon_ba_thanh.md`, **ADR-049**), và §5 của kế hoạch ấy chốt sẵn
+hai điều: mô tả dài của mười bốn bước vào một sổ riêng **`backlog_DB.md`** cạnh `work/backlog.md`
+(đúng hai điều kiện của **ADR-036** luật 1 — một dãy mã riêng `P2-XX`, một chuỗi việc đọc liền
+nhau), và sổ ấy cần **một hàng ở `CLAUDE.md` §2 trong cùng thay đổi dựng nó**. Trước lượt này,
+mười bốn bước chỉ có **một dòng bảng** ở kế hoạch §6 — đủ để biết thứ tự và mức, không đủ để ai
+nhận việc. Đúng chỗ trống mà **T-049** đã lấp cho pha 1 (**ADR-034**).
+
+**Không làm thì mất gì.** Phiên nhận `P2-04` đọc một ô bảng ghi *"Lược đồ lát bán hàng lõi"* rồi tự
+quyết định nó nghĩa là gì: bảng nào, mệnh đề nào phải thành ràng buộc, chỗ nào được để trống. Cái
+tự quyết ấy không có chỗ để đối chiếu, vì kế hoạch **không sở hữu mô tả** và `work/backlog.md`
+**chỉ sở hữu trạng thái**. Nặng nhất là ba chỗ **phải để trống có tên** — `S-5`, `S-6`, và bốn mã
+nợ pha 1: một bước không được kể tên chỗ chặn của mình sẽ lấp nó bằng một mặc định, và một lược đồ
+tự chọn *"bấm theo bàn"* là một lược đồ đã thay chủ quán trả lời một câu **chưa ai hỏi**
+(`docs/product/1-system-design/04-yeu-cau-du-lieu.md` §6).
+
+**Acceptance — sáu dòng, cả sáu đã chạy:**
+
+1. `work/backlog_DB.md` tồn tại với **mười bốn** entry `P2-01`…`P2-14`, mỗi entry đủ **bảy khối**
+   của khuôn L1+ (`work/backlog.md` → *Task Detail Template*) cộng *Bẫy hay sửa nhầm nhất*.
+   Kiểm: `grep -c '^<a id="p2-' work/backlog_DB.md` ⇒ **14**.
+2. Mỗi entry có *Cách hoàn thành* chạy **liền 1→10**, không nhảy cóc.
+3. Sổ mới **không giữ trạng thái** (banner đầu file trỏ về `work/backlog.md` — **ADR-002**), **không
+   giữ thứ tự · mức · đầu ra kiểm chứng được** (trỏ về kế hoạch §6 — **F-001**), và **không một
+   dòng lược đồ nào** (owner ra đời ở `P2-04` — **ADR-035**).
+4. `CLAUDE.md` §2 có hàng *Tasks — mô tả dài của **pha 2**, `P2-01`…`P2-14`* trỏ vào file mới, và
+   cây thư mục §2 kể tên nó. Một owner mà §2 không liệt kê là owner không ai tìm ra (§7.2).
+5. **Chỉ `P2-01`** có dòng ở `work/backlog.md` → *Ready* — luật 1 của sổ mới, cùng lý do đo được đã
+   làm `U-011` và `BA-12` vô hình (**F-012**).
+6. `./scripts/gate.sh` xanh.
+
+**Hai chỗ sửa kèm, không phải task riêng (§7.2 — pointer hỏng là bug của lượt này):**
+
+- `CLAUDE.md` §2 hàng pha 1 ghi `P1-01`…`P1-12`; pha 1 có **mười bốn** bước từ 2026-09-07
+  (**ADR-042** mở `P1-13`, **ADR-044** mở `P1-14`). Sửa thành `P1-01`…`P1-14`.
+- `work/backlog.md` mở đầu ghi *"Ba sổ, một chỗ giữ trạng thái"*. Nay là **bốn**.
+
+**Một chuyện đã xảy ra trong lượt này, ghi ra chứ không giấu.** Một phiên chạy song song đóng
+**ADM-21** giữa lượt và **xoá sạch pattern trong `work/scope.txt`**, kể cả khối của T-081 vừa khai
+— đúng hình `work/findings.md` **F-010** · **F-014** (một file, nhiều chủ; dọn scope phải xoá
+**đúng khối của mình**). Khối đã được khai lại kèm một dòng comment cảnh báo. Không mở finding mới:
+F-014 đã là bản ghi của đúng lỗi này, và `CLAUDE.md` §3.8 cấm thêm luật cho một chuyện đã có nhà.
+
+<a id="t-080"></a>
+### T-080 — Cổng pha 1 đủ mười ô và chủ repo chốt chuyển pha, nhưng pha 2 không có một dòng kế hoạch nào
+
+**Prompt:** không có file prompt — task chạy thẳng trong phiên theo yêu cầu chủ repo 2026-09-20.
+**Xong 2026-09-20.** *Acceptance* vì thế nằm ngay trong entry này, đúng ngoại lệ có tên mà **T-079**
+đã dùng: không có prompt thì không có chỗ thứ hai để nó trôi (`work/findings.md` **F-001**).
+
+**Vì sao có task này.** Ngày 2026-09-20, ô 10 của cổng pha 1 tick và cổng lên **10/10**
+(`docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §7, **T-079** · **ADR-048**), rồi chủ
+repo chốt chuyển pha ngay trong ngày. Lúc ấy pha 2 có **đề bài** (`04-yeu-cau-du-lieu.md`,
+`YC-01`…`YC-20`), có **tầng bảo vệ** để thi hành (`03-bao-ve-invariant.md`), có **hai đề xuất**
+(`prompt-fullstack.md` §3.5 và `architecture.md` §12.3) — và **không có thứ tự, không có mức, không
+có cổng**. Đúng chỗ trống mà **T-048** đã lấp cho pha 1.
+
+**Không làm thì mất gì.** Phiên đầu tiên của pha 2 mở ra, thấy một lược đồ 16 bảng viết sẵn ngày
+2026-08-31 và thi công nó. `architecture.md` §8 đã đo **tám** chỗ đề xuất ấy chưa có chỗ cất, trong
+đó có **vết hoàn tiền** và **khoản nợ** — thiếu hai thứ ấy thì đối soát ngưỡng lệch **0đ**
+(`master_plan/shop-facts.md` §6.10), cổng chất lượng mạnh nhất của cả dự án, không thực hiện được.
+Và chỗ sai ấy chỉ lộ ra sau vài tuần quán chạy thật, lúc sửa lược đồ đã phải mang theo dữ liệu bán
+hàng thật.
+
+**Acceptance — bảy dòng, cả bảy đã chạy:**
+
+1. Kế hoạch có **mục tiêu một dòng** của pha (§2), **ranh giới** (§3), **thứ tự mười bốn bước kèm
+   mức và đầu ra kiểm chứng được** (§6), **cổng mỗi ô một cách chứng minh** (§9).
+2. Mỗi bước ở §6 có ô *Đầu ra kiểm chứng được* nói được biên nhận bằng **một lệnh hoặc một phép đối
+   chiếu đọc được**, không ô nào ghi *"đã tạo xong bảng"*.
+3. Kế hoạch **không sở hữu sự thật nào**: không tên bảng, không tên cột, không dữ kiện quán, không
+   invariant chép lại — mọi chỗ cần một luật đều **trỏ** về owner ở `CLAUDE.md` §2.
+4. Các hộp `- [ ]` ở §9 **không được tick** và nói rõ chỗ ký ở đâu, đúng cách cổng pha 1 đứng trong
+   kế hoạch pha 1 §9 (**F-001** · **F-033**).
+5. Chỗ **suy ra** tách khỏi chỗ **được bảo**: §8 kể tên ba chỗ kế hoạch tự quyết và trả lại cho chủ
+   repo (`CLAUDE.md` §7.2).
+6. **Không thi công pha 2**: `docs/product/2-db/` không tồn tại sau lượt này (`ls` trả về *No such
+   file or directory*), `docs/product/1-system-design/`, `quality/invariants.md` và
+   `master_plan/shop-facts.md` không đổi một chữ (`git diff --stat` rỗng cả ba).
+7. `./scripts/gate.sh` xanh; `./scripts/check-links.sh` xanh — kể cả với đường dẫn của **file chưa
+   tồn tại**: tên sổ task tương lai viết **trần** cạnh thư mục chứa nó, không viết dạng
+   `thư-mục/tên.md`, đúng luật lane mà **T-051** đã rút ra.
+
+**Bẫy hay sửa nhầm nhất — ba cái, cả ba đã tránh:**
+
+- **Chép đề xuất 16 bảng vào kế hoạch cho "tiện đối chiếu".** Kế hoạch §1 **trỏ** và gọi tên hai
+  cái bẫy của hai đề xuất; nó không chép một tên bảng nào về.
+- **Dùng cột *"hôm nay có chưa"*** như bảng §2 của kế hoạch pha 1. Cột ấy đã hết đúng và không ai
+  cập nhật (**F-033**), nên bảng §2 ở đây dùng cột **bước nào sinh ra nó** — một cột nói về kế
+  hoạch thì không trôi.
+- **Tự chốt hộ ba chỗ chưa có lời chủ repo.** Cả ba nằm ở §8 dưới nhãn *kế hoạch này SUY RA*.
+
+**Cái lượt này KHÔNG làm:** không mở `docs/product/2-db/` · không dựng sổ task pha 2 (việc của
+`P2-01`/`P2-03`, và nó cần một hàng `CLAUDE.md` §2 trong cùng thay đổi) · không viết một file prompt
+nào cho `prompt/DB/` (luật **ADR-008**: viết được prompt của một bước khi mọi bước ở cột *Cần xong
+trước* của nó đã `Done`) · không đóng và không đụng vào **F-034** · **F-036** · **F-037** ·
+**F-038** — kế hoạch chỉ **định tuyến** chúng về đúng bước ở §8.
+
+**Pointer sửa trong cùng lượt** (`CLAUDE.md` §7.2): `CLAUDE.md` §2 hàng *Schema* ·
+`docs/product/00-index.md` (bảng *Sáu pha*) · `docs/decisions.md` (bảng tóm tắt + **ADR-049**).
+
+[↑ đầu file](#top)
+
+<a id="t-079"></a>
+### T-079 — Ô 10 của cổng pha 1 để trống vì ba chỗ trong `architecture.md`, và cổng lẽ ra bắt được chúng thì mù
+
+**Prompt:** không có file prompt — task chạy thẳng trong phiên theo yêu cầu chủ repo 2026-09-20.
+**Xong 2026-09-20**, cả bảy dòng *Acceptance* dưới đây đã chạy và xanh; đường đã chọn là
+**đường 2** (`docs/decisions.md` **ADR-048**).
+*Acceptance* vì thế nằm ngay trong entry này (ngoại lệ có tên của luật *entry trỏ, prompt giữ*,
+`work/findings.md` **F-001**): không có prompt thì không có chỗ thứ hai để nó trôi.
+
+**Goal:**
+Ô 10 của `docs/product/1-system-design/07-cong-chat-luong-pha-1.md` §7 tick được, cổng pha 1 lên
+**10/10**, và bằng chứng của ô ấy là **Gate 1d chạy được trên cả tập** chứ không còn là năm lượt
+`grep` chạy tay hết hạn ngay sau khi đo.
+
+**Nói một câu, việc phải làm là gì:**
+Gỡ ba chỗ pha 1 đang viết hộ pha 2/3 (`architecture.md` §3.1 · §4 · §12.2) bằng cách **viết lại
+bằng ngôn ngữ tầng** — giữ nguyên nghĩa, bỏ tên bảng · cột · endpoint — rồi nới `PAT_API` của Gate
+1d cho nó nhìn thấy đúng lớp vi phạm ấy. **Không** làm: đụng §12.3 (ngoại lệ đã có tên, tự khai
+trong thân mục), và **không** mở `docs/product/3-be/` chỉ để chứa bốn dòng chưa ai chốt.
+
+**Vì sao có task này:**
+Bước **P1-12** (2026-09-16) đo ranh giới pha lần đầu trên cả tám file pha 1 và tìm ra ba chỗ; nó
+**cố ý không sửa** vì nó là một phép đo (`work/backlog_SD.md` → P1-12 bước 5). Cả ba dòng sinh ở
+`cf8bd83` **2026-08-31**, trước **ADR-035** (2026-09-04) — `architecture.md` viết trước khi có ranh
+giới, và lúc P1-01 dựng ranh giới thì chỉ §8 được viết lại. Chọn đường ra là quyết định của chủ
+repo: chốt **2026-09-20**, **đường 2** trong ba đường F-040 ghi.
+
+**Không làm thì mất gì:**
+Pha 1 **không đóng được** — cổng đứng mãi ở 9/10. Nặng hơn: §12.2 là một **hợp đồng API kê thẳng
+ra** trong tài liệu mà pha 2 và pha 3 sẽ đọc như đầu vào đã chốt, nên để nguyên là để pha sau thừa
+kế một quyết định chưa ai ra (đúng ca **F-023**, ngược chiều). Và chừng nào `PAT_API` còn đòi dấu
+`/` ngay sau động từ HTTP thì lần lọt tiếp theo cũng im như lần này — **F-041** là lần thứ **ba**
+trong một tuần một script đọc văn bản bằng phép lọc hẹp hơn thứ nó phải hiểu (**F-035** · **F-039**),
+nên `CLAUDE.md` §3.8 đã đủ điều kiện để dựng luật.
+
+**Đây là con bug F-040 + F-041.** Vòng rà trước không bắt được vì Gate 1d chỉ quét **file đã đổi
+trong lượt**, mà `architecture.md` §3.1 · §4 · §12.2 không ai chạm kể từ khi ranh giới ra đời; và
+dòng khớp duy nhất của nó đã nằm trong `scripts/check-phase-boundary.ignore` với lý do ghi **§12.3**
+trong khi dòng nó che nằm ở **§12.2**.
+
+**Bẫy hay sửa nhầm nhất:**
+· Xoá `/api/v1` ở §12.2 mà quên xoá mục ignore ⇒ dòng ignore hết khớp, và `CLAUDE.md` §5 nói ignore
+hết khớp thì **gate đỏ** cho tới khi gỡ.
+· Đổi tiêu đề §4 mà quên ô bảng `architecture.md` dòng 407 còn chữ `role`.
+· Viết lại ô 10 rồi tưởng năm con số cũ vẫn đúng — chính ô ấy dặn **lượt đo sau phải trừ file
+`07-…` ra trước khi đếm**, vì biên bản kể tên chỗ hỏng thì tự nó chứa chỗ hỏng ấy.
+
+**Acceptance — mỗi dòng một phép chạy được:**
+1. `grep -nEI '\b(GET|POST|PUT|PATCH|DELETE)[[:space:]]+[A-Za-z/]' docs/product/1-system-design/*.md`
+   ⇒ **rỗng** (trước khi sửa: đúng **4** dòng, `architecture.md` 555–558).
+2. `grep -nEI '/api/|/v[0-9]+/' docs/product/1-system-design/*.md` ⇒ **rỗng**.
+3. `grep -n 'staff\.role\|UNIQUE\|generated column' docs/product/1-system-design/architecture.md`
+   ⇒ chỉ còn dòng của **§12.3** (ngoại lệ có tên), không dòng nào ở §3.1 · §4 · §12.2.
+4. `scripts/check-phase-boundary.ignore` không còn mục nào — và Gate 1d vẫn **xanh** khi
+   `architecture.md` đổi trong chính lượt này.
+5. `./scripts/check-phase-boundary.test.sh` xanh, có ca hồi quy lấy **đúng bốn dòng §12.2 cũ** làm
+   đầu vào và đòi exit 1.
+6. `./scripts/gate.sh` xanh · `./scripts/check-links.sh` xanh sau khi đổi tiêu đề §4.
+7. Ô 10 ở `07-cong-chat-luong-pha-1.md` §7 tick `[x]`, cổng ghi **10/10**; **F-040** và **F-041**
+   `Status: Đóng`; ADR ghi lựa chọn đường 2.
+
+<a id="t-047"></a>
+### T-047 — `work/scope.txt` mang ba khối pattern ĐÃ COMMIT, nên Gate 3 chấm mọi task bằng scope của người khác
+
+**Prompt:** `prompt/maintenance/16-scope-txt-baseline-migration-L2.md` (L2) · **Xong 2026-09-07.**
+Đường đã chọn: **chủ repo chốt ĐƯỜNG 2 ngày 2026-09-03** — `work/scope.txt` ở lại trong git, bản đã
+commit chỉ chứa comment, pattern không bao giờ được commit, và **hai cổng** (Gate 3, Gate 7b) thi
+hành hình bất biến ấy. Bảy bước, theo đúng thứ tự, nằm ở `work/findings.md` **F-020** → *Decision /
+Fix* (đóng cùng lượt này) · **ADR-043** ghi lại quyết định.
+
+**Goal:**
+Gate 3 chấm lại được. Sau task này, `work/scope.txt` chỉ chứa scope của task **đang** chạy, và
+việc một task xong mà quên dọn scope không còn im lặng đi qua được nữa.
+
+**Nói một câu, việc phải làm là gì:**
+Đưa `work/scope.txt` về trạng thái chỉ-comment **và dựng cổng giữ nó ở đó**: một hình bất biến duy
+nhất — *bản đã commit chỉ chứa comment* — thi hành ở `scripts/check-scope.sh` (Gate 3) và
+`scripts/check-commit-block.sh` (Gate 7b). Việc **không** phải làm: đổi cách đọc pattern của Gate 3
+(ngữ nghĩa ấy không sai một dòng nào, và nó chỉ được có một chủ — ADR-006), và dựng một file
+baseline thứ hai để so từng byte (bản sao thứ hai của cùng nội dung — F-001).
+
+**Vì sao có task này:**
+Phát hiện 2026-09-03 khi chạy DOC-5: brief in mục `DECLARED SCOPE` ra những file mà DOC-5 không hề
+khai. Truy ra commit **`12c77f8` (T-031, 2026-08-31)** đã đưa **ba khối pattern** — của BA-04,
+T-027, T-031 — vào lịch sử git. Cả ba task ấy xong từ hôm đó, và chính ba khối ấy tự dặn
+*"GỠ NGAY SAU KHI commit"*. Không ai gỡ, và không phiên nào **có thể** gỡ hợp lệ (xem *Bẫy* dưới).
+
+Điều này `CLAUDE.md` §6 đã cấm bằng chữ — *"`work/scope.txt` is working state, not a deliverable
+— do not commit patterns"* — nên đây không phải luật còn thiếu, mà là **luật có mà không có cổng
+nào gác**. `work/backlog.md` T-016 ghi hai lần trước nó từng bị commit; đây là lần thứ ba, tức là
+luật này đã hỏng ba lần bằng đúng một cơ chế.
+
+**Không làm thì mất gì:**
+1. **Gate 3 gần như không còn chấm gì, và không ai biết.** Đo ở `HEAD` ngày 2026-09-03: **13 dòng
+   pattern, 10 đường khác nhau** — phủ đúng những file đắt nhất repo, trong đó có `CLAUDE.md`,
+   `docs/decisions.md`, `quality/invariants.md`, `work/backlog.md`. Mọi task từ 2026-08-31 tới nay
+   đều được chấm với chúng đang mở. Cổng hỏng theo chiều tệ nhất: **luôn in `OK`**, đúng hình dạng
+   của F-017 và của bộ lọc `grep` rỗng. Đếm lại trước khi tin hai con số này (F-018).
+2. **Cái gate ấy sinh ra để bắt đúng loại lỗi đang xảy ra nhiều nhất ở đây.** Nó bắt *"thay đổi
+   đúng nhưng chạm file không được phép"* — mà `work/findings.md` F-014 ghi rằng nhiều phiên chạy
+   song song trên cùng một cây đã va nhau **sáu lần**, lần nào cũng trên file dùng chung.
+3. **Nợ này tự lớn, và đã bắt đầu mục.** Mỗi task quên dọn lại thêm một khối, và mỗi khối thêm vào
+   lại làm khối trước khó thấy hơn. Ba khối hôm nay đã dài hơn phần comment hướng dẫn của chính
+   file. Bằng chứng nó đang mục: DOC-5 chuyển `docs/architecture.md` đi nơi khác ngày 2026-09-03,
+   nên dòng allow mang tên ấy trong khối T-031 **nay khớp không cái gì** — một pattern chết nằm
+   trong một cổng đang chạy, và không cổng nào kêu về nó.
+4. **Nó ăn mòn lòng tin vào cả bộ gate.** Một phiên phát hiện Gate 3 xanh vô nghĩa sẽ có lý do để
+   ngờ ba cổng còn lại — trong khi ba cổng ấy đang chạy đúng.
+
+**Đây là con bug F-020** (`work/findings.md`), họ hàng gần với **F-010** và **F-014** — cùng một
+file, cùng một chỗ đau: `work/scope.txt` có **nhiều chủ** và **không có ai dọn**. Vì sao vòng rà
+trước không bắt được: cả ba lần commit đều lọt qua Gate 3 và Gate 7b **hợp lệ**, vì Gate 3 tự miễn
+trừ `work/scope.txt` cho chính nó (`scripts/check-scope.sh`, ADR-006) và Gate 7b chỉ kêu khi file
+ấy nằm trong **khối commit của turn** — nó không nhìn `git commit` gõ tay ở terminal, đúng khoảng
+trống mà Gate 8 sinh ra để lấp cho *thông điệp* commit chứ không cho *nội dung* commit.
+
+**Bẫy hay sửa nhầm nhất:**
+- **Đừng chỉ xoá ba khối rồi commit.** Vì pattern **đã nằm trong git**, xoá chúng tạo một thay đổi
+  *tracked*; muốn sửa thật thì phải **commit `work/scope.txt`** — đúng cái §6 cấm và Gate 7b bắt.
+  Một phiên tuân thủ luật **không có đường hợp lệ nào**. Đây là lõi của task, không phải chi tiết
+  phụ: phải gỡ cái khoá ấy trước, bằng một trong ba đường ở F-020.
+- **Đừng xoá hộ khối của phiên khác theo phản xạ.** F-014 ghi đúng cái giá của việc ấy. Ba khối
+  này gỡ được **chỉ vì** cả ba task đã commit xong từ 2026-08-31 — hãy kiểm lại điều đó bằng
+  `git log` ngay trước khi gỡ, đừng tin dòng này.
+- **Phần đọc pattern của `scripts/check-scope.sh` không sai — đừng "siết" nó.** Cái được thêm vào
+  là **một phép chấm mới** (bản đã commit có ở trạng thái nền không), không phải sửa cách khớp
+  pattern đang chạy đúng. *(Câu ở bản trước của mục này — "không phải sửa `check-scope.sh`" — đã bị
+  chính quyết định 2026-09-03 thay; đường 2 sửa cả hai script.)*
+- **Đừng chấm hình bất biến bằng `HEAD` thuần**, và **đừng cho Gate 7b một "ngoại lệ commit
+  migration"**. Cái thứ nhất khoá đúng lượt đi dọn, cái thứ hai bắt cổng tin một chữ trong báo cáo.
+  Vị ngữ đúng cho cả hai nằm ở F-020, điểm 2 và điểm 3.
+- **Pattern chết / pattern lặp chỉ được `note:`, không được làm gate đỏ** — task tạo file mới khai
+  đường dẫn vào scope trước khi file tồn tại (ADR-003). Lý do đầy đủ ở F-020.
+
+**Cách hoàn thành — mười bước** (luật chung ở [Vòng chạy một task L1](backlog.md#vong-chay)):
+
+1. Đọc mục này, rồi đọc **F-020** trọn vẹn — nhất là ba đường ở *Decision / Fix*. Chưa có prompt
+   để đọc; nếu đã có thì đọc cả *Constraints*.
+2. Khai `work/scope.txt`. Trớ trêu ở đây là thật: task này phải khai scope **vào đúng cái file nó
+   sắp dọn**. Thêm khối của mình **bên dưới** ba khối cũ, đừng ghi đè.
+3. Chuyển dòng T-047 từ *Ready* xuống *In Progress*.
+4. **Đường đã chọn (2026-09-03, đường 2)** — bước "chờ quyết định" của bản trước đã xong. Viết
+   prompt bằng cách chép **bảy bước** ở F-020 → *Decision / Fix* thành Acceptance, rồi mới sửa.
+   Ràng buộc thứ tự quan trọng nhất: **sửa hai script TRƯỚC, dọn file SAU** — hai cổng chạy từ cây
+   làm việc nên bản sửa có hiệu lực ngay trong lượt ấy, và đó là cách gỡ khoá hợp lệ.
+5. Không có dữ kiện nghiệp vụ nào ở đây; câu chưa rõ **duy nhất** là câu chọn đường ở bước 4, và
+   nó thuộc chủ repo chứ không thuộc chủ quán — hỏi thẳng, đừng ghi thành `U-XXX`.
+6. Chạy `./scripts/gate.sh`, dán output thật. Thêm **một phép thử riêng** mà task này bắt buộc
+   phải có: chạy lại `scripts/check-scope.sh` với `SCOPE_FILE` trỏ vào một scope **chỉ có** khối
+   của task đang chạy, và chứng minh nó cho kết quả khác trước khi dọn — đó là bằng chứng cổng đã
+   sống lại, chứ không phải dòng `OK` quen thuộc.
+7. Mỗi dòng *Acceptance* của prompt phải trỏ được tới một dòng cụ thể chứng minh nó.
+8. Ghi kết quả vào **F-020** (đổi *Status*), và `grep -rn` những chỗ trỏ tới `work/scope.txt` —
+   `CLAUDE.md` §3.4, §6, §7.1, §7.3 đều nói về file này, và đường 2 hoặc đường 3 sẽ làm vài câu
+   trong đó thành sai.
+9. Tick *Done* kèm ngày, chuyển khối này sang *Chi tiết — việc đã xong*, và **xoá sạch pattern** —
+   bước mà chính task này tồn tại vì nó đã bị quên ba lần.
+10. Khối `git commit` dán được — **một commit duy nhất**, subject nói rõ đây là *scope-state
+    migration*. `work/scope.txt` **buộc phải** có mặt trong khối ấy (đó là cả điểm của lượt này), và
+    với vị ngữ mới của Gate 7b nó **im lặng hợp lệ** vì file lúc đó chỉ còn comment — không phải vì
+    ai miễn trừ cho nó. Muốn thế thì pattern phải được xoá **trước khi** viết khối commit (§7.3).
+
+**Acceptance · Verify:** trong file prompt, viết sau khi chọn đường (F-001 — entry này trỏ,
+prompt giữ) → `prompt/maintenance/16-scope-txt-baseline-migration-L2.md`.
+
+**ĐÓNG 2026-09-07 — mười bước trên đã chạy đúng thứ tự.** `scripts/check-scope.sh` thêm phép chấm
+baseline (FAIL khi `HEAD` còn pattern mà cây vẫn giữ · `note:` khi `HEAD` nợ nhưng cây đã sạch ·
+im khi `HEAD` sạch — cách đọc/khớp pattern hiện có không đổi một dòng); `scripts/check-commit-block.sh`
+đổi vị ngữ luật 3 sang nội-dung-hoá. `scripts/check-scope.test.sh` (file mới, 5 ca) và hai ca A9/A10
+thêm vào `scripts/check-commit-block.test.sh` — tám ca A1–A8 cũ vẫn qua nguyên. `./scripts/gate.sh`
+xanh; phép thử riêng bước 6 cho hai FAIL **khác lý do** (`SCOPE_FILE` trỏ scope chỉ có khối T-047 →
+FAIL vì ngoài scope · `work/scope.txt` thật lúc đó → FAIL vì nợ baseline) — bằng chứng gate phân
+biệt được lý do, không còn luôn in `OK`. **ADR-043** ghi ba đường. `work/findings.md` F-020 → Fixed.
+`CLAUDE.md` §5/§6/§6.1 sửa khớp hành vi mới (`grep -rn 'scope\.txt' CLAUDE.md` rà hết 13 chỗ).
+`work/scope.txt` về **0 dòng pattern** — đo lúc chạy: `HEAD` mang **57 dòng** (nợ đã lớn hơn 13 dòng
+lúc F-020 mở 2026-09-03, vì cùng cơ chế lặp lại ở mọi task chạy sau đó); mười bảy khối phát sinh
+thêm cũng gỡ trong cùng lượt, mỗi khối đối chiếu `work/backlog.md` + `git log` trước khi gỡ.
+
+[↑ đầu file](#top)
+
+<a id="t-064"></a>
+### T-064 — Banner `shop-facts.md` tự khai "không trỏ đi đâu", đóng phần còn lại của F-016
+
+**Mức:** L1 · **Trạng thái:** Done 2026-09-07
+
+**Vấn đề (`work/findings.md` F-016):** Banner `master_plan/shop-facts.md` (dòng 8–11) và `CLAUDE.md`
+§2 cùng khai file này *"không trỏ đi đâu — nó là điểm cuối"* / *"self-contained and link-free: it
+points nowhere"*. F-016 (2026-09-02) đã đóng phần thứ nhất — chuyển bốn pointer sống về
+`docs/product.md` sang `docs/product/` (DOC-3a) — nhưng để ngỏ phần banner, *"xem xét cùng DOC-4"*.
+DOC-4 xong nhưng không đụng banner này. Đo lại hôm nay (T-064): `shop-facts.md` hiện có **~38 dòng**
+trích dẫn tới **tám owner khác** (`docs/product/…`, `docs/decisions.md`, `work/findings.md`,
+`quality/invariants.md`, `work/admin-questions.md`, `work/backlog_AD.md`, `CLAUDE.md`,
+`master_plan/prompt-fullstack.md`, `master_plan/SD_master_plan_banh_cuon_ba_thanh.md`) — nhiều hơn
+hẳn "năm chỗ" F-016 đo lúc mở, vì file tiếp tục tích luỹ pointer trong các lần sửa khác trong khi
+banner đứng yên.
+
+**Acceptance (viết trước khi sửa):**
+- Banner `shop-facts.md` hết dùng cụm "không trỏ đi đâu" / "điểm cuối".
+- `CLAUDE.md` §2 hết dùng cụm "link-free: it points nowhere", sửa cùng một task với banner (không
+  tách hai task khác nhau — đúng lo ngại F-016 → *Decision/Fix*).
+- Câu thay thế nói đúng bất biến thật: không dữ kiện quán nào ở đây phụ thuộc việc mở file khác mới
+  hiểu đúng — khác với "không có ký tự `/` nào".
+- Không đổi bất kỳ dữ kiện quán nào (giá, luật nghiệp vụ, kênh bán…).
+- `./scripts/gate.sh` xanh.
+- F-016 chuyển `Status` → Fixed, có ngày và số task đóng.
+
+**Fix:** Banner (`master_plan/shop-facts.md` dòng 8–11) đổi câu cuối thành: *"không cần mở thêm tài
+liệu nào khác để hiểu một dữ kiện quán. File này có thể trích dẫn nơi khác (câu hỏi mở, quyết định,
+một lần sửa trong quá khứ) để chỉ đường, nhưng không dữ kiện quán nào ở đây phụ thuộc vào việc mở
+file khác mới hiểu đúng"* — thay cho *"không trỏ đi đâu — nó là điểm cuối"*. `CLAUDE.md` §2 (dòng
+85–86) đổi câu song song: *"deliberately self-contained: every shop fact stands on its own there,
+none of them depends on another file, even though the file does cite other owners … to point the
+way"* — thay cho *"self-contained and link-free: it points nowhere, everything points at it"*. Hai
+chỗ sửa trong cùng một commit.
+
+**Evidence:**
+```
+$ ./scripts/gate.sh
+```
+(xem output cuối report)
+
+**Related:** `work/findings.md` **F-016** (đóng) · DOC-3a, DOC-4 (phần đã đóng trước đó của cùng
+finding).
+
+[↑ đầu file](#top)
+
+<a id="t-035"></a>
+### T-035 — Brief ra lệnh xoá `work/scope.txt` trong khi chủ thật của nó đang chạy song song
+
+**Mức:** L1 · **Trạng thái:** Done 2026-09-07
+
+**Vấn đề (`work/findings.md` F-014):** Cảnh báo "scope bẩn" ở đầu mỗi phiên (scope còn pattern +
+không task nào In Progress) ra lệnh **"Dọn nó TRƯỚC khi bắt task mới"** — nhưng nó không phân biệt
+được scope của một task đã xong chưa dọn với scope của một phiên khác đang chạy song song trên
+cùng cây. Ngày 2026-09-01, phiên BA-04 làm đúng thứ brief bảo và xoá mất scope của hai phiên T-027,
+T-031 đang chạy — bài học nằm trong `work/backlog.md` không thắng được một câu mệnh lệnh in ra ở
+đầu mỗi phiên mới.
+
+**Acceptance (bốn ràng buộc từ F-014 → *Decision / Fix*):**
+- Không bỏ cảnh báo — ca nó bắt được (scope task đã xong không ai dọn) là ca thật.
+- Đổi lời, không đổi điều kiện kích hoạt.
+- Brief không được tự đoán có phiên nào đang chạy — chỉ được nói ra rằng nó không biết.
+- Không đổi hình dạng `work/scope.txt` (đó là một quyết định riêng, cần ADR — không gấp vào đây).
+
+**Fix:** Câu ra lệnh trong `scripts/brief.sh` đổi thành **"THÊM khối của bạn vào CUỐI file; chỉ gỡ
+khối nào ghi rõ đã commit"**, cộng một câu nói thẳng: *"một phiên khác đang chạy song song trên
+cùng cây, và brief không có cách nào biết đâu là ca nào"*. Điều kiện kích hoạt (biến `npat`, nhánh
+`if/else` theo `$inprog`) giữ nguyên. Không chạm hình dạng `work/scope.txt`.
+
+**Evidence:**
+```
+$ ./scripts/brief.test.sh
+...
+  ok   B1b dùng lời THÊM khối, không ra lệnh xoá (F-014)
+  ok   B1b không còn lời ra lệnh xoá cũ
+  ok   B1b brief nói rõ nó không biết có phiên khác đang chạy (F-014)
+...
+brief: tất cả ca đều qua.
+
+$ ./scripts/brief.sh | sed -n '/CẢNH BÁO/,/đừng xoá scope/p'
+  → CẢNH BÁO: work/scope.txt còn 97 pattern nhưng work/backlog.md không có
+    task nào ở In Progress. Có thể là scope của task đã xong chưa được dọn
+    (CLAUDE.md §7.3) — hoặc một phiên khác đang chạy song song trên cùng cây,
+    và brief không có cách nào biết đâu là ca nào (work/findings.md F-014).
+    THÊM khối của bạn vào CUỐI file; chỉ gỡ khối nào ghi rõ đã commit. Nếu bạn
+    đang giữa một task: mở lại nó ở In Progress, đừng xoá scope.
+```
+
+**Related:** `work/findings.md` **F-014** (đóng) · **F-010** (cùng họ, ngược chiều).
+
+[↑ đầu file](#top)
+
+<a id="t-063"></a>
+### T-063 — F-030: Gate 1c bước 1 hết coi mã TRÍCH DẪN trong một gạch đầu dòng đang mở là mã đang mở
+
+**Mức:** L2 · **Trạng thái:** Done 2026-09-07
+
+**Vấn đề (`work/findings.md` F-030):** Bước 1 của `scripts/check-doc-status.sh` lấy MỌI mã `U-XXX`
+xuất hiện trong một gạch đầu dòng đang mở làm "open" — kể cả mã một câu khác trích dẫn để giải
+thích bối cảnh (ca thật đã đo 2026-09-04, T-055: gạch đầu dòng `U-031` mở bằng *"Chủ quán chốt
+2026-09-01 (**U-021**) rằng…"* ⇒ `U-021` — đã đóng — bị đọc là đang mở). Hậu quả: mã bị trích dẫn
+tắt phép A (câu A của Gate 1c) cho toàn repo trong lúc gạch đầu dòng trích nó còn ở vùng mở, và chỉ
+đỏ lên đột ngột — dồn cục — khi gạch đầu dòng ấy được đóng/xoá.
+
+**Acceptance (viết trước khi sửa):**
+- Một ca hồi quy trong `scripts/check-doc-status.test.sh` tái hiện đúng hình: gạch đầu dòng mở trích
+  một mã đã đóng, cộng một chỗ khác nói sai về mã đã đóng đó — ca phải ĐỎ (bắt được) sau khi sửa.
+- Chạy `scripts/check-doc-status.test.sh` trên bản awk CŨ (trước sửa) phải cho ca đó SAI (chứng minh
+  ca hồi quy thật sự bắt được lỗi, không phải luôn xanh).
+- Toàn bộ ca cũ của `check-doc-status.test.sh` vẫn qua (không phá phép A/C/D hiện có).
+- `./scripts/check-doc-status.sh` trên cây thật vẫn xanh sau khi sửa.
+- Không đổi hợp đồng hình dạng `docs/product/99-unknowns.md` (ADR-007), không đụng phép C/D.
+
+**Fix:** Bước 1 nay gộp cả gạch đầu dòng (kể cả dòng vắt) thành một khối trước khi đọc mã, và chỉ mã
+ĐẦU TIÊN trong khối đó được tính là mã CỦA câu hỏi ấy (khớp hợp đồng ADR-007: một gạch đầu dòng là
+một unknown) — mọi mã xuất hiện sau trong cùng gạch đầu dòng là trích dẫn, không đẩy trạng thái
+"open" sang cho chúng. Vùng đóng (mọi tiêu đề `###` khác *Đang mở*) không đổi: mỗi mã ở đó vẫn được
+đọc theo dòng, như cũ.
+
+**Evidence:**
+```
+$ ./scripts/check-doc-status.test.sh
+...
+[check-doc-status] F-030 — mã TRÍCH DẪN trong một gạch đầu dòng đang mở không phải mã đang mở
+  ok   11. U-101 trích U-005 (đã đóng) ⇒ U-005 vẫn đóng, chỗ nói sai bị bắt (exit 1)
+
+check-doc-status.test: tất cả ca qua.
+
+$ ./scripts/check-doc-status.sh
+check-doc-status: xanh — 1569 khối, 40 mã U-XXX, 21 chuyển tiếp hợp lệ.
+```
+
+**Related:** `work/findings.md` **F-030** (đóng) · `docs/decisions.md` **ADR-007**, **ADR-032**.
+
+[↑ đầu file](#top)
+
+<a id="t-060"></a>
+### T-060 — Chủ quán trả lời bảy câu cuối cùng còn mở, và một trong bảy tự mở ra một câu thứ tám ngay trong lời đáp
+
+**Mức:** L1 · **Trạng thái:** Done 2026-09-06
+
+Chủ repo đưa nguyên văn bảy lời chủ quán trả lời đúng bảy câu còn lại ở
+`docs/product/99-unknowns.md` → *Đang mở*: **U-033** (đơn huỷ sau khi bếp làm xong đi đâu), **U-034**
+(mục tổng nhập hàng ngày ghi con số gì), **U-036** (trả trước cho đơn giao ngày khác tính doanh thu
+ngày nào), **U-037** (ai chấm lại ngày sau khi nhập bù, lúc nào), **U-038** (tiền đầu két nhập một
+tổng hay bảng mệnh giá), **U-039** (máy có giữ hàng chờ bàn không), **U-040** (mỗi bàn mấy chỗ ngồi,
+đã đánh số chưa). Cả bảy đóng trong cùng một lượt — **mục *Đang mở* rỗng lần đầu tiên kể từ khi mở**,
+trừ `U-041` (chưa trả lời, không thuộc lượt này) và **U-042** mới mở ra ngay trong lời đáp `U-040`.
+
+**Bảy câu trả lời, ghi vào owner từng câu (`master_plan/shop-facts.md`):**
+
+1. **U-033 → "tính vào bàn khác, pos sẽ cập nhật bánh này đem ra cho bàn nào."** Phần đã làm xong
+   của một đơn bị huỷ **không** về không — nó chuyển cho một bàn khác đang chờ đúng thứ đó; **POS
+   chọn bàn nhận, máy không tự gán** (§5.4, rule mới). Thay hẳn phương án "hẹp nhất" mà
+   `docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4.5 từng chạy tạm (đã làm xong về không, nhu cầu
+   bàn khác không đổi) — phương án ấy hoá ra sai.
+2. **U-034 → "đồ mua trong ngày và đồ dùng trong ngày để tôi biết còn thừa thiếu bao nhiêu."** Mục
+   tổng ghi **HAI** con số mỗi ngày cho mỗi thứ — mua vào, đã dùng — không phải "còn lại cuối buổi"
+   như một trong ba đường ra gốc. "Đã dùng" là số **chủ quán tự ước lượng và nhập tay**, không phải
+   số máy suy ra — không lật ngược mức sổ tay của §8.4. Danh mục cụ thể (thứ nào, đơn vị gì) **vẫn
+   chưa chốt** — U-034 chỉ trả lời loại con số.
+3. **U-036 → "quán nhận đơn trước 1 ngày, doanh thu tính vào ngày đem hàng cho khách."** Trả trước
+   cho đơn đặt trước ngày sau tính doanh thu vào **ngày giao/lấy hàng**, không phải ngày nhận tiền —
+   chiều đối xứng với luật nợ (§6.14). Quán chỉ nhận đặt trước **tối đa một ngày**. Đây là quyết
+   định thiết kế có hệ quả (công thức đối soát §6.4 cần thêm một dòng), nên ghi thành
+   **`docs/decisions.md` ADR-040** — cùng hình dạng ADR-037/038 đã dùng cho những chỗ tương tự.
+4. **U-037 → "pos hoặc chủ quán cuối buổi bán hàng."** Sau khi nhập bù xong một ngày có bán trên sổ
+   giấy, **POS hoặc chủ quán** chấm lại con số vào **cuối buổi bán hàng** — cùng người, cùng nhịp đã
+   làm việc đối soát hằng ngày, không phải vai trò mới.
+5. **U-038 → "tổng của từng mệnh giá và tổng của tất cả các mệnh giá cộng lại với nhau."** Máy giữ
+   **cả hai**: một bảng theo mệnh giá VÀ một tổng cộng. Phép trừ của I-021 dùng tổng cộng; bảng mệnh
+   giá chỉ là cách đếm/kiểm cuối ngày.
+6. **U-039 → "không. pos sẽ điều phối khách nếu cần."** Máy **không** giữ hàng chờ bàn trong dữ
+   liệu; người đứng quầy tự điều phối. *Khách chưa có bàn* không phải một khái niệm dữ liệu.
+7. **U-040 → "11 bàn mỗi bàn 4 chỗ, đã đánh số, hôm nay tôi mua thêm bàn, hãy để 15 bàn."** Trả lời
+   đủ ba vế cho **mười một** bàn ban đầu (4 chỗ/bàn, đã đánh số — đủ cho vế mà **ADR-027** cần), rồi
+   tự thêm một dữ kiện quán vừa đổi: **Số bàn §1: 11 → 15**. Chỗ ngồi và cách đánh số của **bốn bàn
+   mới** thì không nói — mở ra **U-042** (mới), không suy hộ (`CLAUDE.md` §3.5): đừng tự đánh số
+   12–15, đừng giả định chúng cũng 4 chỗ.
+
+**Theo dấu con trỏ sau khi bảy dữ kiện đổi (`CLAUDE.md` §7.2), sửa trong cùng lượt:**
+`docs/product/99-unknowns.md` (chuyển bảy câu xuống *Đã có lời giải*, mở `U-042`) ·
+`docs/decisions.md` (ADR-040 mới; sửa "còn mở" thành đã đóng ở thân ADR-037 và ADR-038) ·
+`quality/invariants.md` **I-014** (bảng ngày lên **bốn** dòng, câu "ai chấm lại" hết treo) ·
+`docs/product/1-system-design/02-thoi-gian-ngay-ban.md` (hàng cuối bảng §2 hết trống, §4, §5) ·
+`docs/product/1-system-design/03-bao-ve-invariant.md` (ô `I-014` ở §1, §1.2 — **không** chạm §2 của
+P1-05, đã tự cập nhật U-033 trong lượt của chính nó, phát hiện qua so brief đầu phiên với nội dung
+sống) · `docs/product/1-system-design/01-ranh-gioi-he-thong.md` (PT-6) ·
+`docs/product/0-ba/ban-hang/06-ngoai-le.md` · `docs/product/0-ba/ban-hang/03-lat-cat.md` (§3.4.5,
+§3.1.7) · `docs/product/0-ba/admin/01-ranh-gioi.md` · `work/backlog_AD.md` (ADM-03 chuyển loại 1→2,
+ADM-10…13 bớt một vế chặn, bảng nhánh/loại đếm lại) · `work/admin-questions.md` (Đ-3, A3/A7/A8, B18)
+· `work/backlog_SD.md` (bảng *Chỗ đang chặn*, entry P1-03/P1-04) ·
+`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §8 · `prompt/SD/README.md` (một dòng trạng thái).
+
+**Không làm:** không trả lời hộ `U-041` hay `U-042` (chưa có lời chủ quán) · không thiết kế cơ chế
+cho dòng mới của công thức đối soát §6.4 mà ADR-040 chỉ ra là cần — đó là việc của bước đọc
+`02-thoi-gian-ngay-ban.md` tiếp theo · không đánh số hộ bốn bàn mới · không một tên bảng · cột ·
+endpoint · route · component nào (**ADR-035**).
+
+**Phiên khác chạy song song trong cùng cây** (P1-05, `docs/product/1-system-design/03-bao-ve-invariant.md`
+§2): lượt đó tự phát hiện `U-033` đã đóng bởi lượt này, viết cơ chế thật thay vì "đang treo", và
+nguyên văn khớp — không cần sửa lại. Gate xanh (2026-09-06): `check-scope` OK, `check-links` OK,
+`check-doc-status` xanh (1527 khối, 40 mã U-XXX, 21 chuyển tiếp hợp lệ), `check-phase-boundary` OK,
+`verify.sh` xanh (không đổi mã nguồn, chỉ tài liệu).
+
+**Còn lại, chưa động tới trong lượt này:** `U-041` (*"còn thiếu gì"*) và `U-042` (mới) vẫn ở
+`docs/product/99-unknowns.md` → *Đang mở*; câu chữ dòng mới của công thức đối soát §6.4 vẫn để
+trống, đúng luật *đừng thiết kế cơ chế trước khi cần*.
+
+[↑ đầu file](#top)
+
+---
+
+<a id="t-059"></a>
+### T-059 — `CLAUDE.md` §2.2 chưa có chủ cho quy ước code, §3 không tách luật tự giác khỏi luật có script, §8 nói bốn dòng mà có sáu, và ranh giới pha không cổng nào chấm
+
+**Xong 2026-09-06.** **L2** — thay đổi cách vận hành repo (thêm một gate, sửa nghĩa vụ Definition of
+Done), không chạm tiền hay dữ liệu quán. Chủ repo đưa một vòng rà soát `CLAUDE.md` (hội thoại,
+không phải file) cộng hai file nháp `new_claude/claude_new.md` (bản viết lại) và
+`new_claude/check-pháe-boundary.sh` (script gate mới), yêu cầu: *"hãy đọc kĩ cuộc hội thoại trên và
+đọc kĩ 2 file attache … xem xet và update claude.md và thêm câu lệnh mới"*.
+
+**Goal:**
+Xong rồi thì bốn lỗ hổng vòng rà soát đo được trong `CLAUDE.md` đều có gate hoặc dòng chữ vá lại,
+và ranh giới sở hữu theo pha (**ADR-035**) có một lớp máy chấm phần phổ biến nhất — thay vì chỉ
+*"P1-12 và mắt người"* như câu chữ ADR-035 tự thừa nhận.
+
+**Nói một câu, việc phải làm là gì:**
+Đưa vào bốn chỗ sửa đã đo được (Gate 1d · chủ cho quy ước code · cột *Cưỡng chế bởi* · §8 hết mâu
+thuẫn) và một script mới, kèm test. Việc **không** phải làm: **không** áp nguyên văn bản viết lại
+`new_claude/claude_new.md` — bản đó đổi toàn bộ khung sang tiếng Việt và không kiểm chứng được là
+giữ nguyên ngữ nghĩa của gần 200 chỗ đang trỏ `CLAUDE.md §X.Y` trong repo; nhận nguyên nó vào là
+đặt cược một file mà mọi phiên khác đọc đầu tiên, không có gate nào bắt được nếu nó lệch.
+
+**Vì sao có task này:**
+`docs/decisions.md` **ADR-035** (2026-09-04) tự viết trong thân nó: *"no gate here can read that
+boundary. P1-12 and human eyes are the only check."* — một lỗ hổng được ghi nhận nhưng chưa vá.
+Vòng rà soát của chủ repo đọc đúng chỗ đó và ba chỗ khác: (1) `docs/product/2-db/` sắp mở ở pha 2
+nhưng không dòng nào trong bảng §2 sở hữu **quy ước code**, nên phiên đầu viết code phía backend sẽ
+tự bịa stack/cấu trúc và cái bịa đó thành fact vì không có chủ đối chiếu; (2) bảng nghĩa vụ §3 không
+nói nghĩa vụ nào có script chặn và nghĩa vụ nào chỉ trông chờ tự giác — đúng lúc context đầy, luật
+tự giác là luật rơi trước, mà không ai biết trước đó là luật nào; (3) §8 tự mâu thuẫn: câu mở đầu
+nói *"L0 xong sau bốn dòng"*, khối **Every level** thật sự có sáu, hai dòng trong đó (*Handed off*,
+*Report kèm link câu hỏi mở*) đòi backlog entry và scope mà một task L0 không có.
+
+**Không làm thì mất gì:**
+- Không vá Gate 1d: mỗi phiên viết tài liệu pha 1 tiếp tục dựa hoàn toàn vào tự giác để không đặt
+  tên bảng/endpoint/route — đúng chỗ một LLM dễ trượt nhất vì nó *biết* các thứ đó trông thế nào.
+- Không thêm chủ cho quy ước code: khi pha 2 mở (`docs/product/2-db/`), phiên đầu viết code sẽ tự
+  chọn stack/cấu trúc thư mục/khung test, và sửa lại sau đó là viết lại chứ không phải khai chủ.
+- Không thêm cột *Cưỡng chế bởi*: nghĩa vụ tự giác (ADR khi có lựa chọn thiết kế, acceptance viết
+  trước) tiếp tục lẫn với nghĩa vụ có script, không ai biết trước cái nào sẽ rơi khi task dài.
+- Không sửa §8: một phiên đọc *"bốn dòng"* rồi thấy sáu dòng sẽ tự hỏi tài liệu nào đúng — đúng
+  hình dạng lỗi mà Gate 1c (F-015 · F-021 · F-022) được dựng ra để bắt, dù bản thân nó không đọc
+  `CLAUDE.md`.
+
+**Cách hoàn thành — mười bước:**
+1. Đọc lại `docs/decisions.md` ADR-035, ADR-036 để xác nhận số mục và mã ADR còn hiệu lực trước khi
+   viết ADR-039 (`grep -n "^### ADR-03"`).
+2. Đọc hai file `new_claude/` — bản viết lại và script nháp — đối chiếu từng câu với sự thật hiện tại
+   của repo trước khi nhận bất cứ câu nào (script dùng tên file có dấu, phải đổi sang ASCII).
+3. Copy script nháp sang `scripts/check-phase-boundary.sh`, sửa tên file, `chmod +x`.
+4. Viết `scripts/check-phase-boundary.test.sh` theo khuôn `check-links.test.sh` (repo git tạm mỗi
+   ca) — tám ca: sạch ngoài phạm vi, sạch trong phạm vi, ba loại vi phạm (DB/API/FE), file chưa
+   track, ignore có chủ, file không phải `.md`.
+5. Chạy test, sửa cho tới khi xanh — bẫy gặp phải: `git diff --name-only HEAD` chỉ thấy thay đổi
+   **chưa commit**; ca nào `commit()` trước khi gọi script sẽ luôn thấy 0 file đổi (script không
+   sai, test lúc đầu dựng sai kịch bản).
+6. Wire script vào `scripts/gate.sh`, ngay sau `check-doc-status.sh`, trước khối phát hiện
+   `code_changed`; sửa comment đầu file cho khớp bước mới.
+7. Sửa `CLAUDE.md`: thêm dòng §2.2, cột §3, mục Gate 1d trong danh sách §5 (và sửa số bước 4→5 ở
+   các chỗ trỏ theo — bắt được lỗi có sẵn: mục 2 nói *"step 3"* trỏ `verify.sh` từ thời nó còn là
+   bước 3), khối L0 ở §8, dòng lệnh `git diff --name-only HEAD` ở §6.1, dòng sản phẩm ở §1.
+8. Viết `docs/decisions.md` ADR-039 (thân + một hàng bảng tổng hợp) — ba đường bị bác cho mỗi chỗ
+   sửa, và một mục *Chỗ ADR này KHÔNG chốt* nói rõ không viết lại toàn bộ CLAUDE.md.
+9. Ghi entry này vào `work/backlog.md` (bullet Done + mục chi tiết), khai `work/scope.txt`.
+10. Chạy `./scripts/gate.sh`, dán kết quả vào báo cáo, viết khối commit.
+
+**Bẫy hay sửa nhầm nhất:**
+- **Đổi số mục §1…§8 hoặc thêm/bớt mục §2 theo đúng cấu trúc bản nháp** — an toàn về mặt nội dung
+  (bản nháp giữ đúng 8 mục cùng số), nhưng không có gate nào xác nhận gần 200 chỗ `CLAUDE.md §X.Y`
+  trong repo vẫn đúng ngữ cảnh sau khi đổi; task này cố tình **không** đổi số mục.
+- **Tưởng `check-phase-boundary.sh` bắt được mọi câu văn mô tả bảng/endpoint bằng lời** — nó chỉ bắt
+  cú pháp (từ khoá SQL, verb HTTP, thẻ JSX-giống); một câu văn tự nhiên nói "hệ thống lưu đơn vào
+  một bảng tên đơn hàng" không khớp mẫu nào và vẫn lọt — đúng như header script tự khai *"cố ý bảo
+  thủ, im lặng khi không chắc"*.
+
+**Acceptance · Verify:** không có file prompt riêng — task đến thẳng từ yêu cầu chủ repo trong
+phiên.
+
+| Nghiệm thu | Đo bằng | Kết quả |
+|---|---|---|
+| `scripts/check-phase-boundary.sh` tồn tại, chạy được | `./scripts/check-phase-boundary.sh; echo $?` | exit 0 (cây sạch) |
+| Test Gate 1d có tám ca, tất cả `ok` | `./scripts/check-phase-boundary.test.sh` | `check-phase-boundary.test: OK` |
+| `gate.sh` gọi Gate 1d giữa Gate 1c và `verify.sh` | `grep -n "check-phase-boundary\|check-doc-status\|verify.sh" scripts/gate.sh` | đúng thứ tự |
+| `./scripts/verify.sh` toàn bộ vẫn xanh sau khi thêm test mới | `./scripts/verify.sh` | `Verification passed.` |
+| `CLAUDE.md` §2.2 có dòng *quy ước code* | `grep -n "Quy ước code" CLAUDE.md` | có |
+| `CLAUDE.md` §3 có cột *Enforced by* | `grep -n "Enforced by" CLAUDE.md` | có |
+| `CLAUDE.md` §8 khối L0 có đúng bốn dòng | đọc khối **L0 — four lines** | 4 checkbox |
+| `docs/decisions.md` có ADR-039 ở thân + bảng tổng hợp | `grep -n "ADR-039" docs/decisions.md` | ≥ 2 chỗ |
+| `./scripts/gate.sh` xanh toàn bộ | `./scripts/gate.sh` | không FAILED |
+
+[↑ đầu file](#top)
+
+---
+<a id="t-056"></a>
+### T-056 — Chủ quán trả lời cả mười câu nhóm A, và một trong mười lời làm MẤT một nửa câu hỏi của ADM-01
+
+**Xong 2026-09-04.** **L2** — chạm tiền: `A3` là vế còn thiếu của phép đối soát ngưỡng **0đ**
+(`master_plan/shop-facts.md` §6.10, **ADR-022**). Chủ quán trả lời `A1`…`A10` trong một lượt;
+đường đi của lời chốt là `work/admin-questions.md` §0 luật 5.
+
+**Goal:**
+Xong rồi thì cả mười lời chủ quán sống ở owner của chúng, nhóm A **đóng**, và bốn vế chủ quán
+không chạm tới là **câu hỏi có mã** chứ không phải một suy luận nào phiên sau nhặt được.
+
+**Nói một câu, việc phải làm là gì:**
+Chuyển mười lời về owner và gạch nhóm A. Việc **không** phải làm: **không suy hộ bốn chỗ chủ quán
+bỏ trống** (`CLAUDE.md` §3.5, không có mức L0), không vẽ màn tổng quan (pha 4), không thiết kế cơ
+chế hàng chờ (pha 2–4), không đặt tên bảng · cột · endpoint · route · component (**ADR-035**),
+không định nghĩa lại *ngày bán* — thứ đó là **P1-03** và lượt này chỉ **trỏ** về nó (**F-001**).
+
+**Vì sao có task này:**
+`work/admin-questions.md` §0 luật 5: trả lời xong một nhóm thì lời giải về owner, mở task, gạch
+nhóm ấy. Nhóm A là **nhóm đầu tiên trong sáu nhóm** đi hết đường đó. Nó cũng là nhóm chặn nhiều
+nhất ở lane admin: bốn việc `ADM-01`…`ADM-04`.
+
+**Cái đắt nhất của lượt này không phải mười lời — mà là một lời làm việc BIẾN MẤT.**
+`A2` — *"cứ đến giờ là bán rồi tối đếm tiền"* — **không trả lời** ADM-01. Nó nói rằng nửa câu hỏi
+ấy **hỏi về một thứ không tồn tại**: mục *Goal* của ADM-01 đòi *"một mốc mở và một mốc đóng đọc
+được ở một chỗ"*, và quán **không có** hai mốc ấy. Nửa còn lại — tiền đầu buổi — thì có thật.
+
+| | Trước 2026-09-04 | Sau lời chủ quán |
+|---|---|---|
+| mốc mở / mốc đóng của một buổi | *chưa ai định nghĩa* | **không tồn tại** — §6.23 |
+| mốc gom tiền nhỏ nhất | *chưa biết* | **ngày bán** (P1-03), ADM-01 trỏ về, không viết bản thứ hai |
+| tiền lẻ đầu két | *chưa ai nói* | **có**, số mặc định **sửa được** — §8.5 |
+| nộp bớt tiền giữa buổi | *chưa ai nói* | **không có** — §8.5, một câu trả lời làm việc **ít đi** |
+
+**ADR-038 trả lời câu còn lại: con số tiền đầu két gắn vào cái gì, khi không có ca để gắn vào.**
+Ba đường, hai đường đầu sai theo hai kiểu: **dựng một biến cố *mở ca* dù quán không có** ⇒ bắt
+người đứng quầy bấm một nút không tương ứng với việc gì ngoài đời, và mỗi lần quên bấm là một ngày
+đối soát lệch mà không ai biết vì sao (ngược §5.4 *"máy không gom, người gom"*); **bỏ tiền đầu két
+ra ngoài phép đối soát** ⇒ lệch **đúng bằng** nó, **mọi ngày**, và ngưỡng 0đ mất nghĩa. Đường đã
+chọn: **gắn vào ngày bán**, mốc đã có định nghĩa riêng do một bước khác sở hữu.
+
+**I-021 là chỗ mệnh đề ấy trở thành kiểm được:**
+`két cuối ngày − tiền đầu két = doanh thu tiền mặt`, ngưỡng **0đ**, chỉ chạm phần **tiền mặt**
+(phần chuyển khoản vẫn đối chiếu tin nhắn báo có, không cộng gộp — §6.10, **I-014**). Năm kịch bản
+kiểm, kể cả kịch bản **thiếu dữ kiện**: một ngày chưa có con số tiền đầu két thì báo **chưa đối
+soát xong**, **không** báo lệch — cùng hình dạng với ngày còn `N > 0` lượt giấy chưa nhập
+(**ADR-037**, phiên T-054).
+
+**Bốn chỗ KHÔNG suy hộ, và mỗi chỗ có lý do đo được:**
+
+| Mã | Chủ quán nói gì | Vế bỏ trống | Vì sao không được suy |
+|---|---|---|---|
+| **U-038** | kể ra mệnh giá, nhưng *"để **số** cố định"* ở **số ít** | một tổng, hay bảng theo mệnh giá | quyết **cách đếm cuối ngày ở ngưỡng 0đ**: một tổng thì đổi tiền thối trong buổi không lệch gì; bảng mệnh giá thì đúng lần đổi ấy làm bảng lệch trong khi tổng khớp ⇒ ngưỡng 0đ **kêu oan mỗi ngày** |
+| **U-039** | *"có khách đứng chờ, xếp hàng chờ"* | máy có giữ không · ai nhớ thứ tự | hai **hệ thống** khác nhau, không phải hai mức chi tiết: máy giữ ⇒ sinh khái niệm *khách chưa có bàn*, đứng **trước** cả phiên bàn |
+| **U-040** | *"quán có 11 bàn"* — **vế đã có chủ từ 2026-08-30** | mấy chỗ ngồi · đã đánh số chưa | vế *đánh số* là vế **ADR-027** cần (*chỉ ghép sang bàn trống*); đặt tên bàn hộ ⇒ người đứng quầy gõ sai bàn ⇒ món bưng sai chỗ |
+| **U-041** | *"còn thiếu gì không"* | thiếu **gì** | đường *nguyên liệu* lật ngược mức **sổ ghi tay điện tử** §8.4 (máy không tự trừ tồn ⇒ không tự biết sắp hết); đường *người* đứng trên `C36` |
+
+**Một chỗ suy ra đi vào §7.2, không vào §7.1 — S-7.** Chủ quán nói *"quán chỉ bán buổi sáng"*, nói
+về **cả ngày**; đọc câu ấy thành *cửa sổ 06:00–11:00 của §1 **chính là** một buổi* là **suy luận
+của phiên** (**F-004**). Nếu nó sai thì §6.23 · ADR-038 · I-021 đều phải viết lại — nên nó phải
+nằm ở chỗ có người đến hỏi lại. Tiêu đề §7.2 **đếm lại thành ba** mục (S-5 · S-6 · S-7), kèm câu
+mời đếm lại thay vì tin con số (**F-003** · **F-018**).
+
+**`A7` là bằng chứng sống của F-029, và đó là chỗ lượt này học được nhiều nhất.** F-029 (mở hôm
+qua, T-053) ghi rằng hỏi lại một dữ kiện đã có chủ thì sinh bản thứ hai. Chuyện xảy ra khác một
+chút và **tệ hơn**: câu `A7` hỏi ba vế, chủ quán trả lời đúng **vế đã có chủ** — *"quán có 11
+bàn"*, con số nằm ở §1 từ **2026-08-30** — và **không chạm hai vế còn sống**. Dòng cảnh báo T-053
+thêm vào `A7` (*"đừng trả lời lại vế đó"*) đã **kịp** ngăn một bản thứ hai; nó **không** ngăn được
+việc hai vế thật bị bỏ qua. ⇒ Không mở finding mới: đây là **cùng một F-029**, và mục *Decision /
+Fix* của nó đã mang đúng luật cần (`grep` owner trước khi viết một mệnh đề phủ định). Chỗ này ghi
+vào nhóm A đã gạch, để phiên nào mở lại `A7` đọc được vì sao nó chỉ được nửa lời.
+
+**Số đếm của lane: đếm lại, không trừ** (**F-003**). Loại 1 **23 → 21** · loại 2 **5 → 7** ·
+loại 3 **1** · tổng **29**, đếm bằng cách liệt kê từng mã rồi đếm, không bằng phép trừ — đúng bài
+học **F-028** (một dãy mã không bao giờ được đọc thành số phần tử).
+
+**Bốn phiên song song trong cùng cây, và lượt này phải nhường số HAI lần.**
+`T-055` + `S-6` đã bị một phiên khác lấy sau khi tôi đọc và trước khi tôi ghi ⇒ lượt này đổi thành
+**T-056** + **S-7**. Đây là lần thứ tư của họ sự cố **F-025** / **T-042** trong **một ngày**;
+`work/scope.txt` là kênh duy nhất bốn phiên cùng đọc, nên mã được khai ở khối scope **trước** khi
+ghi vào file. Hai phiên khác **cùng lấy `T-058`** trong scope, và backlog cho thấy một bên đã đổi
+sang `T-057`.
+
+**Ba mục cố ý KHÔNG chạm, vì chúng là mục của phiên khác đang chạy:** `shop-facts.md` §6.11 và hai
+dòng §7.1 của **T-054** · `quality/invariants.md` **I-008** và **I-014** (T-054) · `ADR-037`
+(T-054) · §5.4 và đoạn mở đầu §7 (T-055) · `docs/product/0-ba/ban-hang/**` (T-055). Một chỗ **có**
+chạm và nói ra: **tiêu đề §7.2** — phiên T-055 vừa đổi nó thành *"hai mục"*, và **S-7** làm nó
+thành ba; để *"hai"* là một phép đếm sai, nên tôi sửa và khai ở đây.
+
+**Acceptance · Verify:** không có file prompt — task đến thẳng từ lời chủ quán trong phiên.
+Mười một câu nghiệm thu, viết **trước** khi sửa dòng đầu tiên:
+
+| Nghiệm thu | Đo bằng | Kết quả |
+|---|---|---|
+| §6 có ba quy tắc 23·24·25, tiêu đề đếm đúng | `grep -c '^2[345]\. \*\*'` · đọc tiêu đề | **3** · *"Hai mươi lăm"* |
+| §8 có §8.5 và §8.6 | `grep -c '^### 8\.[56]'` | **2** |
+| §7.1 có ba dòng nhật ký 2026-09-04 của nhóm A | grep | **3** |
+| §7.2 có **S-7** (S-6 là của T-055) và tiêu đề đếm **ba** | grep | **có** |
+| bốn vế bỏ trống thành U-038…U-041, brief in được cả bốn | `./scripts/brief.sh` | **4/4 in ra** |
+| ADR-038 ở thân + một hàng bảng tổng hợp | `grep -n` hai chỗ | **2** |
+| I-021 có, kèm khối `**Verification:**` | grep | **có** |
+| ADM-01 · ADM-02 → loại 2 với mục *Luật đã ở đâu*; ADM-03 · ADM-04 hẹp lại, vẫn loại 1 | đọc bốn entry + bảng Mục lục | **đúng** |
+| nhóm A bị gạch, mỗi mã trỏ owner, không chép dữ kiện | đọc §3 | **đúng** |
+| số câu chưa trả lời | `grep -c '^> \*\*Trả lời:\*\*$'` | **44** (trước: 54) |
+| số đếm lane cộng lại bằng 29 | liệt kê từng mã rồi đếm | **21 + 7 + 1 = 29** |
+
+[↑ đầu file](#top)
+
+---
+<a id="t-058"></a>
+### T-058 — Lane admin có sổ task đủ hai mươi chín việc và không có một file prompt nào
+
+**Xong 2026-09-04.** **L1** · yêu cầu của chủ repo trong phiên: *"hãy làm prompt cho các task trên
+và để vào `prompt/AD`"*. Đầu ra: `prompt/AD/README.md` · `prompt/AD/ADM-53-hai-loi-ve-owner-L1.md` ·
+`scripts/check-links.sh` · `work/backlog_AD.md` (dòng *Prompt:* của ADM-53).
+
+**Vì sao có task này.** T-052 dựng `work/backlog_AD.md` ngày 2026-09-04 với hai mươi chín entry, và
+mọi entry ghi *"Prompt: chưa viết được"* hoặc *"không cần prompt"*. Lane admin vì thế có sổ task mà
+không có lane prompt — cùng chỗ trống mà **T-051** đã lấp cho pha 1, và cùng luật: một prompt tự
+viết trong phiên nhận việc là prompt không ai rà trước.
+
+**Phạm vi là một quyết định, và lần này luật đã có sẵn.** Với `prompt/SD/`, câu *viết bao nhiêu
+file* phải đưa lại cho chủ repo (T-051, ba đường). Ở đây không cần: **luật 6 đầu
+`work/backlog_AD.md`** đã chốt rằng **hình dạng của một entry do TIỀN ĐỀ quyết định, không do người
+viết chọn**, và bảng *Cổng của cả lane* đã đếm sẵn ba loại. Viết prompt cho hai mươi tám việc còn
+lại là đổi luật ấy — và đổi theo hướng đắt nhất:
+
+| Loại | Vì sao **không** có prompt ở đây |
+|---|---|
+| **1 — thiếu luật** (hai mươi ba việc) | tiền đề đang thiếu **không** phải đầu ra của một bước kỹ thuật, mà là **lời của chủ quán**. Một prompt viết trước lời ấy không chỉ mang Constraints chết (**F-013** · **F-017**) — nó **quyết hộ**, và người đọc sau không phân biệt được đâu là điều chủ quán nói, đâu là điều prompt đoán (`CLAUDE.md` §3.5, luật **không có mức L0**) |
+| **2 — luật đã đủ** (năm việc) | phần nghiệp vụ đã chốt sẵn ở mảng bán hàng; phần còn lại thuộc **pha 2–4** hoặc **P1-07**. Prompt của nó là prompt của pha nhận nó — viết ở đây là dựng bản thứ hai của một sự thật đã có owner (**F-001**) |
+| **3 — nhận được ngay** (một việc) | **ADM-53** — file prompt duy nhất của lượt này |
+
+**Hai mươi tám việc kia vẫn được giao, chỉ không giao dưới dạng một file rỗng.** `prompt/AD/README.md`
+mang **bảng đủ 29 hàng**: mức · loại · trạng thái prompt · và cột ***Mở khoá bằng*** chép mã chặn
+thật của từng việc (`A2`…`F55` · `U-034` · `P1-03` · `P1-09` · `Đ-2` · `Đ-4`). Điều kiện viết được
+prompt vì thế **đọc được, không phải cảm tính**: *mọi câu ở cột ấy đã có lời, **và lời ấy đã về
+owner***. Không phải *đã hỏi* — **đã về owner** (`CLAUDE.md` §7.2). Bảng tự khai là **ảnh chụp
+2026-09-04** và trỏ về owner `work/backlog_AD.md`, vì nhóm A đang được trả lời trong cùng ngày
+(**F-003** · **F-018**: một con số đếm động không được đọc như một lời khẳng định đã kiểm).
+
+**Prompt ADM-53 có hai nhánh Acceptance, và đó là chỗ nó khác mọi prompt đã viết.** Bước đắt nhất
+của việc ấy là **bước hỏi chủ quán**, thứ không phiên nào tự làm được; nên *"chủ quán không trả lời
+được trong lượt này"* là một **kết cục hợp lệ**, không phải một thất bại. Nhánh ấy có ba dòng nghiệm
+thu riêng, và dòng đầu là **không một dòng nào của ba tài liệu owner bị đổi** — đo bằng ba lệnh
+`git diff --stat` phải rỗng. Prompt một nhánh sẽ dạy phiên chạy nó rằng phải có gì đó được ghi.
+
+**Nó bắt một pointer hết hạn trong đúng ngày pointer ấy được viết.** Entry ADM-53 (T-052,
+2026-09-04) bảo ghi **Đ-4** vào `master_plan/shop-facts.md` **§8.5**; §8.5 và §8.6 đã bị hai lượt
+khác lấy trong **cùng ngày** cho hai dữ kiện khác. Constraints của prompt vì thế viết *lấy số con
+còn trống theo **§8.3** tại thời điểm chạy, đừng chép số từ entry* — cùng họ lỗi **F-003** ·
+**F-018**, lần này bắt được trước khi nó tốn tiền.
+
+**Một luật kỹ thuật của lane, giống hệt lane trước.** `prompt/AD/*` vào tập file **Gate 1b** chấm
+(`scripts/check-links.sh`, mục *CHẤM FILE NÀO*), kèm dòng ghi vì sao. Hệ quả cho người viết prompt ở
+đây: đường dẫn của một **file đầu ra chưa tồn tại** phải viết thành **tên file trần cạnh thư mục
+chứa nó**, không viết đủ trong một dấu nháy ngược — luật ấy nằm ở `prompt/AD/README.md` chứ không
+nằm trong đầu ai.
+
+**Không thi công lane admin.** Không một lời chủ quán nào được chuyển về owner, không một câu hỏi
+nào được trả lời hộ, `master_plan/shop-facts.md` · `docs/` · `quality/invariants.md` ·
+`work/admin-questions.md` không đổi một chữ. Entry ADM-01…ADM-04 của `work/backlog_AD.md` **không**
+bị chạm — phiên **T-056** đang sửa đúng bốn entry ấy trong cùng cây, và khối scope của lượt này
+được **thêm**, không ghi đè (**F-010** · **F-014**).
+
+[↑ đầu file](#top)
+
+---
+
+<a id="t-057"></a>
+### T-057 — Bước 4/12 của pha 1 không có prompt, trong khi tiền đề cuối cùng của nó vừa `Done` trong ngày
+
+**Xong 2026-09-04.** **L1** · yêu cầu của chủ repo trong phiên: *"P1-04 … hãy làm prompt cho task
+trên và để vào `prompt/SD`"*. Đầu ra: `prompt/SD/P1-04-invariant-tien-L2.md` (mới) ·
+`prompt/SD/README.md` (một hàng bảng + hai con số) · `work/backlog_SD.md` (dòng **Prompt:** của
+entry P1-04).
+
+**Vì sao viết được đúng hôm nay, và vì sao không sớm hơn.** T-051 cố ý **không** viết prompt cho
+P1-04 ngày 2026-09-04 sáng: cột *Cần xong trước* của nó còn **P1-03** chưa xong, và một
+*Constraints* viết trước đầu ra của bước trước là câu chết (**F-013** · **F-017**). P1-03 `Done`
+cùng ngày ⇒ điều kiện của luật §6 sửa tiến (**ADR-008**, T-051) đã đủ: *viết được prompt của một
+bước khi mọi bước ở cột `Cần xong trước` của nó đã `Done`*. P1-04 là **bước duy nhất** vừa bước qua
+ngưỡng ấy — năm bước còn lại (P1-07 · P1-08 · P1-10 · P1-11 · P1-12) vẫn chờ tiền đề, và lượt này
+**không** viết hộ chúng.
+
+**Cái prompt phải mang mà mô tả dài ở `work/backlog_SD.md` chưa mang.** Entry P1-04 ở sổ pha 1 đã
+có mười bước chạy và ba cái bẫy; cái nó không có là **Acceptance đo được** và **Verify chạy được**
+— đúng hai khối mà `docs/prompt-guideline.md` đòi và mà entry sổ task cố ý không giữ (F-001: entry
+trỏ, prompt giữ). Bảy hàng của nhóm tiền vì thế được viết thành **16 dòng Acceptance**, mỗi dòng
+chỉ vào một chỗ hỏng cụ thể chứ không phải một lời khuyên.
+
+**Năm cái bẫy riêng của nhóm TIỀN, đọc ra từ owner chứ không suy:**
+
+| Bẫy | Đọc ở | Hệ quả nếu bỏ qua |
+|---|---|---|
+| VietQR là mã **tĩnh**, không webhook | `architecture.md` §7 · `shop-facts.md` §6.3 | vế *"tiền đã thật sự vào"* của `I-015` được ghi như đã có bảo vệ, trong khi người đứng quầy mới là chỗ giữ |
+| `architecture.md` §12.3 là **đề xuất gửi pha 2** | chính mục ấy tự khai | `I-005` ghi *đã do* database giữ thay vì *phải do* ⇒ pha 2 tưởng ràng buộc đã tồn tại |
+| `I-014` có **hai vế, hai tầng** | `quality/invariants.md` **I-014** | gộp làm một ⇒ mất vế *cộng đủ hai nguồn*, thứ không ràng buộc nào ngăn được |
+| `I-012` có **hai ngoại lệ đã chốt** | `shop-facts.md` §6.7 · §6.17 | hàng vết mô tả một hệ thống không tồn tại (mọi thứ qua POS) |
+| `I-013`: **bước duyệt không đỡ được** | `I-013` → *Why* | tầng của hàng giá bị ghi cao hơn sự thật |
+
+**Một luật mới, và nó dùng chung cho cả P1-05 và P1-06.** *Tầng 5 ở cột 2 không được là bản sao của
+cột 3.* Cả bảy hàng của nhóm tiền đều đối soát được ở cuối ngày (`shop-facts.md` §6.10), nên một
+hàng ghi *"tầng 5 — đối soát cuối ngày"* ở cột 2 rồi chép lại đúng câu ấy sang cột 3 **nói một
+điều chứ không phải hai**: cột 2 trả lời *cái gì ngăn nó xảy ra*, cột 3 trả lời *cái gì bắt được nó
+khi đã xảy ra*. Luật này viết vào prompt P1-04; **không** sửa hộ prompt P1-05 và P1-06 (hai file ấy
+đang có phiên khác chạm, và luật chung là việc của chủ repo).
+
+**Mục *Verify* mang bài học của chính lượt P1-03.** Lệnh lọc ranh giới pha đọc `git diff`, mà file
+**mới** thì chưa được git track ⇒ bộ lọc chạy trên 0 dòng và vẫn báo xanh (**F-017**, đã ghi trong
+entry P1-03). Prompt này vì thế dặn `git add -N docs/product/1-system-design/` **trước** khi lọc,
+và in **cả lệnh chưa lọc** cạnh lệnh đã lọc. Đo trên chính lượt này: chưa lọc **337** dòng thêm, đã
+lọc còn **một** dòng — và dòng đó là **chính câu lệnh lọc** nằm trong khối code của prompt (**F-018**
+nhìn từ chiều ngược: một tài liệu kể tên thứ nó cấm thì tự khớp bộ lọc của mình).
+
+**Không thi công P1-04.** Không tạo file bảng ba cột, không điền một hàng nào, không tick ô nào của
+cổng chất lượng §9: `git diff --stat -- quality/invariants.md docs/product/` rỗng cho phần của lượt
+này. **`U-036` và `U-037` không bị đóng, không bị suy hộ** — prompt dặn viết ô `I-014` theo phương
+án hẹp nhất và ghi thẳng là đang treo.
+
+**Hai pointer sửa trong cùng lượt** (`CLAUDE.md` §7.2): hàng P1-04 ở `prompt/SD/README.md` hết ghi
+*"chưa viết — chờ P1-03"*, và dòng **Prompt:** của entry P1-04 ở `work/backlog_SD.md` hết ghi
+*"chưa có"*. Con số ở đoạn *"vì sao … bước còn lại chưa có prompt"* của README cũng đổi theo (sáu →
+năm), vì một con số đã hết đúng đọc như một lời khẳng định đã kiểm (**F-018**).
+
+**Hai file dùng chung với phiên khác.** `prompt/SD/README.md` và `work/backlog_SD.md` đang mang
+thay đổi **chưa commit** của **T-054** và **T-055**; lượt này chỉ sửa **hàng/dòng P1-04** của mình
+và không chạm phần của họ. Khối commit ở dưới **không** nhặt hai file ấy (**F-025**) — xem
+*Report* của phiên.
+
+**Acceptance · Verify:** ở phần *Report* của phiên (task này sinh ra một prompt; nghiệm thu của
+**P1-04** thì nằm trong chính file prompt ấy).
+
+[↑ đầu file](#top)
+
+---
+
+<a id="t-053"></a>
+### T-053 — Hai việc bị chặn bởi một câu hỏi mà `shop-facts.md` đã trả lời năm ngày trước
+
+**Xong 2026-09-04.** **L1** · yêu cầu của chủ repo trong phiên: *"ADM-01 … hãy đọc kĩ và làm
+`work/backlog_AD.md`"* — và **đọc kĩ là chỗ task này sinh ra**. Finding: **F-029**.
+
+**Goal:**
+Xong rồi thì tiền đề chặn của **ADM-01** và **ADM-03** nói đúng thứ repo đang có, và hai câu hỏi
+gửi chủ quán không còn hỏi lại một dữ kiện đã có chủ.
+
+**Nói một câu, việc phải làm là gì:**
+Sửa **tiền đề** của hai việc, không thi công hai việc ấy. Việc **không** phải làm: **ADM-01 vẫn
+không nhận được** — `A2` `A3` `A4` chưa có lời và `P1-03` phải đi trước; lượt này không định nghĩa
+*"buổi bán"*, không trả lời hộ câu nào (`CLAUDE.md` §3.5, không có mức L0), và không thêm một dữ
+kiện quán nào — nó chỉ **trỏ** vào dữ kiện đã có.
+
+**Vì sao có task này:**
+Chủ repo giao ADM-01. Bước một của việc ấy là mở owner ra đọc, và owner nói ngược tiền đề:
+
+| Việc | Tiền đề T-052 viết 2026-09-04 | `master_plan/shop-facts.md` §1, có từ **2026-08-30** (`397a8e9`) |
+|---|---|---|
+| **ADM-01** | *"không tài liệu nào nói một buổi bán bắt đầu và kết thúc lúc nào"* | **Giờ bán 06:00 – 11:00, tất cả các ngày** + `Asia/Ho_Chi_Minh`; **§6.8** nhắc lại ở phía web |
+| **ADM-03** | *"số bàn và số chỗ ngồi chưa là dữ kiện ở `shop-facts.md`"* | **Số bàn: 11** |
+
+Dữ kiện không dời chỗ — nó đã ở đó **năm ngày** trước tiền đề, và **ba ngày** trước khi 55 câu hỏi
+được viết. Một mệnh đề phủ định toàn phần được viết mà không `grep`.
+
+**Không làm thì mất gì:**
+- **Chủ quán trả lời lại một dữ kiện đã có chủ ⇒ bản thứ hai (F-001), lần đầu do CHÍNH CHỦ QUÁN
+  viết ra** — vào `work/admin-questions.md`, file tự khai là sẽ bị xoá. Lời mới lệch lời cũ thì
+  repo có hai owner nói hai con số, và `work/` không bị Gate 1b lẫn Gate 1c chấm: **không cổng nào
+  đỏ**.
+- **ADM-01 trông bị chặn bởi bốn câu trong khi thật ra là ba** — và `ADM-53` sắp trả lời câu *lane
+  admin chạy song song pha 1 hay chờ pha 1* bằng cách nhìn lane còn nợ bao nhiêu câu. Đúng cơ chế
+  **F-028**: lane trông nặng thì bị hoãn.
+- **Chỗ thiếu thật bị câu sai che.** ADM-01 thiếu **mốc vận hành** (ai mở, ai đóng, con số nào bị
+  chốt), không thiếu giờ; ADM-03 thiếu **danh sách bàn gọi tên được** — thứ **ADR-027** (*chỉ ghép
+  sang bàn trống*) cần — không thiếu con số. Ai đọc tiền đề cũ sẽ đi trả lời **đúng câu sai**.
+
+**Cái đã sửa:**
+- `work/backlog_AD.md` — **ADM-01** đổi tiêu đề (*giờ bán đã là dữ kiện, nhưng không ai MỞ và không
+  ai ĐÓNG*), mục *Vì sao* mang một khối ⚠️ nói ra chỗ sai cũ + một bảng **hai cột *đã có chủ* /
+  *còn thiếu***, mục *Chặn bởi* rút từ bốn câu xuống **`A2` `A3` `A4`** với `A1` hạ xuống *chỉ còn
+  một nửa, và nửa ấy trùng `A2`*. **ADM-03** cùng hình: bảng ba hàng chỉ ra **số bàn đã có chủ**,
+  còn thiếu **chỗ ngồi** và **bàn đã đánh số chưa**; `A7` rút còn hai vế; và gạch đầu dòng
+  *ADR-027 không kiểm chứng được* viết lại cho đúng lý do thật — **một con số 11 không phải một
+  danh sách bàn**.
+- `work/admin-questions.md` §3 — `A1` và `A7` mỗi câu thêm **một** dòng ⚠️ *ĐÃ CÓ LỜI cho vế…,
+  đừng trả lời lại vế đó* kèm đường dẫn owner. **Câu hỏi không bị xoá, không bị viết lại** (§0
+  luật 4 của file ấy), và vẫn mời chủ quán nói nếu con số đã đổi. Vẫn đúng **55** câu.
+- `work/findings.md` — **F-029** (mới), `Fixed` trong cùng lượt.
+
+**Ba chỗ cố ý KHÔNG chạm, và lý do:**
+- **Bảng *Cổng của cả lane* và con số 23/29** — cả hai việc **vẫn** bị chặn. Cái đổi là **độ rộng**
+  chỗ chặn, không phải việc có bị chặn hay không; không có gì để đếm lại (**F-003**).
+- **`master_plan/shop-facts.md`** — lượt này không có một dữ kiện quán mới nào. Chỉ trỏ vào ba dòng
+  đã có (§1 giờ bán · §1 số bàn · §6.8).
+- **Không dựng cổng** (`CLAUDE.md` §3.8) — không cổng nào đọc được *"mệnh đề phủ định này đã đo
+  chưa"*: nó cần biết owner của mệnh đề, đúng vùng mù **ADR-035** luật 1 ghi cho ranh giới pha.
+  Lần thứ hai của họ lỗi này mới đáng bàn tới một cổng. Luật rút ra ở F-029 → *Decision / Fix*.
+
+**Phiên song song trong cùng cây: P1-02.** Thay đổi của nó (`docs/product/1-system-design/01-ranh-gioi-he-thong.md`,
+`docs/product/00-index.md`, `work/backlog_SD.md`, `master_plan/SD_master_plan_banh_cuon_ba_thanh.md`)
+**chưa commit** và **không** nằm trong khối commit của T-053 (**F-025**, `CLAUDE.md` §6.1). Khối
+`work/scope.txt` của P1-02 được **giữ nguyên**; khối T-052 thì **đã gỡ** trong lượt này vì commit
+`be4f488` của nó đã chạy và chính khối ấy dặn gỡ (F-010 · F-014). Số finding đã tránh nhau: P1-02
+giữ **F-027**, T-052 giữ **F-028**, T-053 lấy **F-029**.
+
+**Acceptance · Verify:** không có file prompt — task đến thẳng từ yêu cầu của chủ repo trong phiên.
+Nghiệm thu viết **trước** khi sửa dòng đầu tiên; mười câu, cả mười đo bằng lệnh:
+
+| Nghiệm thu | Đo bằng | Kết quả |
+|---|---|---|
+| cụm *"không tài liệu nào nói một buổi bán bắt đầu"* hết là một **khẳng định** | `grep -n` | **1** lần còn lại, và nó ở dòng 178 trong dấu `*"…"*` — **trích dẫn** chỗ sai cũ ở khối ⚠️. Tiêu đề ADM-01 sạch. ⚠️ Dòng nghiệm thu này **viết sai lần đầu** (`grep -c` = 0): nó đo *biến mất khỏi file* trong khi thứ phải đo là *hết là một khẳng định* — một khối sửa lỗi thì **phải** trích lại câu nó sửa |
+| cụm *"không mục nào của repo nói cái gì bắt đầu"* biến mất | `grep -c` | **0** (trước: 1) |
+| cụm *"số bàn và số chỗ ngồi chưa là dữ kiện"* biến mất | `grep -c` | **0** (trước: 1) |
+| ADM-01 trỏ được vào cửa sổ giờ đã có chủ | `grep -c '06:00'` trong khối ADM-01 | **≥1** |
+| ADM-03 ghi **Số bàn: 11** là dữ kiện đã có chủ | grep trong khối ADM-03 | **có** |
+| `A1` và `A7` mỗi câu có một dòng chỉ đường | `grep -c 'ĐÃ CÓ LỜI'` | **2** |
+| không câu hỏi nào bị xoá | `grep -c '^\*\*[A-F][0-9]'` | **55** (không đổi) |
+| F-029 đủ năm khối | grep | **đủ** |
+| bảng *Cổng của cả lane* không đổi | `git diff` | **không chạm** |
+| `./scripts/gate.sh` | chạy | **xanh** |
+
+[↑ đầu file](#top)
+
+---
+
+<a id="t-052"></a>
+### T-052 — Hai mươi chín việc của cả một mảng sống ở độ sâu MỘT DÒNG, trong một file tự khai là sẽ bị xoá
+
+**Xong 2026-09-04.** **L2** · yêu cầu của chủ repo trong phiên: *"hãy làm backlog_AD cho admin"*.
+Đầu ra: `work/backlog_AD.md` (mới, 29 entry) · `docs/decisions.md` **ADR-036** + một hàng bảng tổng
+hợp + khối *SỬA ĐỔI* của **ADR-034** · `CLAUDE.md` §2 hai hàng mới + cây thư mục ·
+`work/admin-questions.md` §2 và §4 · `work/findings.md` **F-028** · file này (mục lục, khối chỉ
+đường, dòng *Ready* của ADM-53).
+
+**Vì sao có task này.** `work/admin-questions.md` §2 giữ danh sách việc `ADM-01`…`ADM-53` dưới dạng
+sáu cái bảng **một dòng một việc** — không có *vì sao có việc*, không có *không làm thì mất gì*,
+không có chỗ chặn. Và banner của chính file ấy nói nó **sẽ bị xoá** khi mọi câu hỏi đã chuyển về
+owner. Danh sách việc của cả một mảng đang nằm trong một file có ngày hết hạn.
+
+**Ranh giới giữa các sổ đổi trục, và đó là quyết định của lượt này.** **ADR-034** (2026-09-04,
+T-049) viết luật 3: *"ranh giới giữa hai sổ là **pha**, không phải **độ dài**"*. Mảng admin **không**
+là một pha — nó đi ngang mọi pha. Đọc luật 3 theo nghĩa đen thì 29 entry phải vào file này, đúng
+thứ lý do 1 của ADR-034 đã bác. **ADR-036** đổi trục sang **lane** và giữ nguyên ba luật còn lại
+của ADR-034; ADR-034 nhận một khối *SỬA ĐỔI* thay vì bị viết lại (**ADR-008**).
+
+**Việc dựng sổ đo được hai thứ mà danh sách một dòng không đo được:**
+
+| Loại | Đếm | Nghĩa là gì |
+|---|:--:|---|
+| **1 — thiếu LUẬT** | 23 | phải hỏi chủ quán trước; không phiên nào được suy hộ (§3.5) |
+| **2 — luật ĐÃ ĐỦ, thiếu THI CÔNG** | 5 | ADM-30 · ADM-31 · ADM-40 · ADM-41 · ADM-50 — luật đã chốt ở mảng bán hàng, phần còn lại thuộc pha 2–4, **không** thuộc lane này |
+| **3 — việc của chính lane** | 1 | **ADM-53** |
+
+Loại 2 là chỗ dễ hỏng nhất: entry của chúng nằm trong sổ trông như việc chưa làm, và phiên nhận
+chúng sẽ **viết lại** một luật đã có owner — bản thứ hai (**F-001**), lần này còn kèm vi phạm
+**ADR-013** theo chiều ngược (nội dung bán hàng chảy vào mục admin). Nên entry của chúng không có
+mục *Cách hoàn thành*; nó có mục *Luật đã ở đâu, còn thiếu gì*.
+
+**Bảng sáu chỗ chạm pha 1 là phần đắt nhất của file mới.** Pha 1 đang chạy song song, và sáu chỗ —
+`P1-03` (một ngày bán · `U-032`), `P1-07` (hình dạng *ai đang trực trạm* · vết thao tác), `P1-04`
+(invariant nhóm TIỀN), `P1-09` (bảng quầy) — là nơi hai lane viết về **cùng một thứ**. Ở mỗi chỗ
+pha 1 đi trước. Không cổng nào của repo đọc được ranh giới này, giống hệt vùng mù mà **ADR-035**
+ghi cho ranh giới pha.
+
+**Câu có đòn bẩy lớn nhất, đo trong lượt này: `C36`.** *Người đứng quầy đổi giữa buổi thì máy có
+ghi lại mốc đổi ấy không.* Một câu, và nó gỡ **ADM-21** + vế *ai* của **ADM-50**; không có nó thì
+`architecture.md` §4 (*quyền gắn chỗ đứng, không gắn chức vụ*, **ADR-016**) không có dữ kiện nào để
+đứng, và pha 2–4 buộc phải gán quyền theo chức vụ — tức thi công ngược một quyết định đã chốt.
+
+**Hai chỗ mở rộng có chủ ý, nói ra chứ không sửa lén (§3.4):**
+- `work/admin-questions.md` **§1 · §3 · §4** — **mười một** đường dẫn còn trỏ `docs/product.md` và
+  `docs/architecture.md`, hai file nay là **bản lưu**. Chúng sống sót qua cả năm lượt DOC-1…DOC-5
+  vì `work/` không bị Gate 1b chấm (`CLAUDE.md` §5). Để nguyên là vừa dựng §2 thành chỗ chỉ đường,
+  vừa để §4 chỉ tới cái hố. Ba đường dẫn ở §1 mô tả **lịch sử** (*"§1.4 từng viết…"*) thì **giữ
+  nguyên** — chúng đúng cho ngày chúng nói tới.
+- `work/findings.md` **F-028** — không nằm trong bốn dòng khai đầu; mở vì phép đếm 29 chỉ đo được
+  khi dựng sổ.
+
+**Phiên song song trong cùng cây: P1-02.** Nó chạy giữa lượt này và chạm bốn file dùng chung —
+`work/backlog.md`, `CLAUDE.md` §2, `work/findings.md`, `work/scope.txt`. Hai bên đã tránh số:
+P1-02 giữ **F-027**, T-052 lấy **F-028** (đúng ca đụng số U-028/T-040 ngày 2026-09-02, entry T-042).
+Khối commit của T-052 **không** nhặt file của P1-02 (**F-025**).
+
+**Acceptance · Verify:** không có file prompt — task đến thẳng từ yêu cầu của chủ repo trong phiên.
+Bốn câu nghiệm thu, cả bốn đo bằng lệnh và cả bốn đã chạy trong lượt này:
+
+| Nghiệm thu | Đo bằng | Kết quả |
+|---|---|---|
+| `work/backlog_AD.md` có đúng **29** entry | `grep -c 'a id="adm-'` | **29** |
+| mỗi entry có khối *Không làm thì mất gì* **và** dòng *Acceptance · Verify* | script tách theo neo, kiểm từng entry | **29/29** |
+| mỗi entry có một khối nói vì sao nó ở trạng thái ấy — *Chặn bởi* · *Luật đã ở đâu* · *Cách hoàn thành* | cùng script | **29/29** |
+| không một `endpoint` · `component` · `khoá ngoại` · `/api/` nào ngoài chính câu luật cấm chúng (**ADR-035**) | `grep -nioE` | chỉ **2** dòng, cả hai nằm trong luật 5 đầu file |
+| bốn cổng | `./scripts/gate.sh` | xanh |
+
+[↑ đầu file](#top)
+
+<a id="t-051"></a>
+### T-051 — Lane `prompt/SD/` có ĐÚNG MỘT file, trong khi năm bước đã đủ tiền đề vẫn ghi "chưa có prompt"
+
+**Xong 2026-09-04.** **L1** · yêu cầu của chủ repo trong phiên: *"hãy viêt prompt cho SD và để vào
+prompt/SD"*. Đầu ra: `prompt/SD/README.md` + năm file prompt L2 · `work/findings.md` **F-026** ·
+`work/backlog_SD.md` · `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6.
+
+**Vì sao có task này.** P1-01 dựng lane `prompt/SD/` ngày 2026-09-04 và để lại đúng một file trong
+đó. Mười một bước còn lại của pha 1 đều ghi *"Prompt: chưa có"* ở `work/backlog_SD.md`, nên mỗi
+phiên nhận việc phải tự viết prompt trước khi làm — và prompt tự viết trong phiên nhận việc là
+prompt không ai rà trước.
+
+**Phạm vi là một quyết định, không phải một mặc định.** Kế hoạch §6 cấm viết prompt trước, bằng
+một câu có lý do thật: *"một prompt viết trước khi biết bước trước đã ra kết quả gì sẽ mang những
+câu Constraints đã chết"* (**F-013** · **F-017**). Viết cả mười một file là đổi luật ấy, nên câu ấy
+được đưa lại cho **chủ repo** với ba đường: (1) năm bước đã đủ tiền đề · (2) cả mười một, kèm sửa
+luật §6 và banner *đọc lại trước khi chạy* trên sáu file · (3) chỉ P1-02. **Chủ repo chọn đường 1.**
+
+Năm bước ấy là đúng tập mà cột *Cần xong trước* chỉ còn những bước **đã `Done`** — P1-01 (xong
+2026-09-04) và BA-12 (xong 2026-09-04):
+
+| Prompt | Bước | Chặn còn lại |
+|---|---|---|
+| `P1-02-ranh-gioi-he-thong-L2.md` | actor · phụ thuộc ngoài · đường suy giảm | không |
+| `P1-03-ngay-ban-L2.md` | nguồn thời gian, định nghĩa NGÀY BÁN | ⛔ `U-032` (mục *nhập bù* để trống) |
+| `P1-05-invariant-vong-doi-L2.md` | bảng ba cột, sáu hàng vòng đời | ⚠️ `U-031` · `U-033` · **F-026** |
+| `P1-06-invariant-menu-gia-vet-L2.md` | bảng ba cột, năm hàng menu·giá·vết | ⚠️ **F-026** |
+| `P1-09-bang-quay-bon-con-so-L2.md` | §3 bốn con số, gỡ câu giao việc cho `T-036` | ⚠️ `S-5` · `U-033` |
+
+**Sáu bước còn lại cố ý không viết**, và đó là kết quả chứ không phải nợ: P1-04 chờ định nghĩa
+*ngày bán* của P1-03 · P1-07 chờ ba bảng ba cột · P1-08 chờ danh sách phụ thuộc ngoài của P1-02 ·
+P1-10 chờ ba bảng để mỗi rủi ro chỉ tên được một cơ chế đã viết ra · P1-11 chờ P1-02→P1-10 · P1-12
+chờ P1-11.
+
+**Kế hoạch §6 sửa tiến, không xoá** (**ADR-008**). Câu cũ — *"viết lúc nhận việc"* — trộn hai thứ
+khác nhau: **lúc nào được viết** với **cái gì đã biết**. Lý do thật của luật là vế sau, nên luật nay
+đọc được: **viết được prompt của một bước khi mọi bước ở cột *Cần xong trước* của nó đã `Done`**.
+Vế *bước còn tiền đề chưa xong thì vẫn không được viết trước* **không đổi** — đó là phần luật cũ
+vẫn đúng, và nó ở lại.
+
+**F-026 — chỗ chặn tìm thấy giữa lượt, và không cổng nào thấy được nó.** `quality/invariants.md`
+giữ **hai mươi** mệnh đề; kế hoạch §6 chia **mười tám** thành ba nhóm. `I-019` (tổng nhu cầu = tổng
+phần chia về từng bàn, hai chiều) và `I-020` (đã phục vụ ≤ đã gọi) sinh ở **BA-12 ngày 2026-09-03**,
+**sau** khi kế hoạch chia nhóm ⇒ **không nhóm nào nhận chúng**, và ô đầu tiên của cổng chất lượng
+§9 vẫn đọc *"Mười tám `I-0xx` đều có tầng bảo vệ"*. Hậu quả: **cổng ấy tick xanh được trong khi hai
+mệnh đề chưa có tầng giữ nào** — đúng loại hỏng nó được dựng để chặn. Cùng hình với **F-024**, khác
+đúng một chỗ: F-024 che chỗ trống bằng một **tên task đã chết**, F-026 che bằng một **con số đã hết
+đúng**; cả hai đọc như một lời khẳng định đã kiểm (**F-018**).
+
+**Không xếp nhóm hộ.** `I-019` là câu về **phép cộng**, không về vòng đời của thực thể nào — nên
+"gấp vào P1-05" gọn mà không đúng hẳn. Ba đường (gấp vào P1-05 · mở bước thứ mười ba nhóm SẢN XUẤT ·
+gấp vào P1-07) ghi trong F-026 kèm lý do bác từng đường; chọn đường nào là **quyết định của chủ
+repo** (`CLAUDE.md` §3.5 · §4). Cho tới lúc đó, cảnh báo đi vào **bốn** chỗ — prompt P1-05, prompt
+P1-06, `prompt/SD/README.md`, và `work/backlog_SD.md` ngay dưới bảng *Chỗ đang chặn* — vì
+`scripts/brief.sh` in **mã** finding chứ không in nội dung, nên một phiên nhận P1-06 sẽ đọc tiêu đề
+F-026 mà không biết nó chạm đúng bảng mình sắp điền.
+
+**Một luật riêng của lane, và nó là luật kỹ thuật thật.** P1-01 đã thêm `prompt/SD/*` vào tập file
+**Gate 1b** chấm (`scripts/check-links.sh`), nên mọi đường dẫn viết trong một prompt ở đây phải mở
+được — kể cả đường dẫn của **file đầu ra chưa tồn tại**, thứ mà bốn trong năm prompt này phải nhắc
+tới. Cách viết: **tên file trần** (`03-bao-ve-invariant.md`) cạnh thư mục chứa nó
+(`docs/product/1-system-design/`) — cả hai đọc được, không cái nào là đường chết. Viết dạng
+`thư-mục/tên.md` thì gate đỏ ngay khi prompt được `git add`. Luật ấy vào `prompt/SD/README.md` chứ
+không nằm trong đầu ai.
+
+**Pointer sửa trong cùng lượt** (§7.2): năm dòng **Prompt:** ở `work/backlog_SD.md` hết nói
+*"chưa có"*; sáu dòng còn lại **vẫn nói vậy và vẫn đúng**.
+
+**Không thi công pha 1.** Không một dòng đặc tả nào vào `docs/product/1-system-design/`;
+`quality/invariants.md`, `master_plan/shop-facts.md` và `docs/product/99-unknowns.md` không đổi một
+chữ. Bốn file đang staged của **T-050** không bị gộp vào khối commit của task này (**F-025**).
+
+[↑ đầu file](#top)
+
+---
+
+<a id="t-050"></a>
+### T-050 — Một lời chốt của chủ quán sống trong `work/admin-questions.md`, mà file ấy không sở hữu sự thật nào
+
+**Xong 2026-09-04.** **L1** · không có file prompt — yêu cầu đến trực tiếp từ chủ quán trong phiên:
+*"Đ-3 hãy làm. có mục tổng lưu trữ hàng ngày tôi sẽ nhập số liệu"*.
+Đầu ra: `master_plan/shop-facts.md` §8.4 (mới) + §7.1 + §8.2 · `docs/product/0-ba/admin/01-ranh-gioi.md`
+§1.6 · `docs/product/99-unknowns.md` **U-034** · `work/admin-questions.md`.
+
+**Goal:**
+Mức sâu của mảng nguyên liệu đọc được ở owner của nó chứ không ở một file nháp. Phiên sau mở
+`shop-facts.md` §8.4 là biết máy **không** tự trừ tồn theo công thức, biết có một mục tổng nhập
+hàng ngày do chủ quán tự nhập, và biết đúng chỗ nào còn hở.
+
+**Nói một câu, việc phải làm là gì:**
+Chuyển **một** lời chốt về owner của nó, kèm dữ kiện mới chủ quán vừa thêm. Việc **không** phải
+làm: thiết kế mảng nguyên liệu — không danh mục, không đơn vị tính, không tên bảng, không màn,
+không quyết mảng nào vào MVP (câu của `07-pham-vi-mvp.md` §7).
+
+**Vì sao có task này:**
+Đ-3 được chốt **2026-09-01** nhưng chưa đi đâu cả: nó nằm trong bảng §1 của
+`work/admin-questions.md`, và banner của chính file ấy viết *"file này không sở hữu sự thật nào"*.
+Đ-1 đã đi qua đúng đường này ngày 2026-09-02 (**T-040**) sau khi chủ quán **xác nhận lại**; Đ-3
+chờ đúng điều kiện ấy, và 2026-09-04 chủ quán xác nhận lại — kèm một câu chưa ai hỏi về mục tổng
+hàng ngày.
+
+**Không làm thì mất gì:**
+Nhánh B của `admin-questions.md` (ADM-10…ADM-15) sẽ được mở task theo một mức sâu **không owner
+nào ghi**, nên phiên đầu tiên dựng nó sẽ tự chọn giữa *sổ tay* và *trừ kho theo công thức* — và
+chọn nhầm thì phải chốt định lượng từng thành phần cho từng suất, thứ hôm nay **không có một dữ
+kiện nào**. Ở chiều ngược lại, một lời chốt chỉ sống trong file nháp là đúng họ lỗi **F-001**: khi
+file ấy bị xoá (banner của nó nói sẽ xoá), lời chốt biến mất cùng.
+
+**Chỗ CỐ Ý để hở, và vì sao:**
+1. **U-034** — mục tổng ghi con số gì. Chủ quán nói *ai nhập* và *nhịp nào*, không nói *nhập cái
+   gì*. Suy hộ ở đây rẻ mà đắt: đường *đã dùng* chỉ có được bằng phép trừ theo công thức, tức lật
+   ngược chính lời chốt vừa nhận.
+2. **Đ-2 và Đ-4 không nằm trong task này** — chưa được xác nhận lại, nên chưa chuyển (`CLAUDE.md`
+   §3.5). §8.5 để dành cho Đ-4.
+3. **Không ADR, không invariant, không chạm `architecture.md` §14.** §14 tự khai *chưa có thiết kế
+   nào* và lượt này không dựng thiết kế nào; `quality/invariants.md` đòi hồi quy chạy được, mà
+   chưa có mã.
+
+**Bẫy hay sửa nhầm nhất:**
+- **Bản lưu `docs/product.md` §1.6 cũng chứa câu đã sai** (dòng 204). Không sửa: banner của nó
+  viết *"Không sửa ở đây"*, và sửa một ảnh chụp là khai rằng ảnh ấy mang chữ chưa tồn tại vào ngày
+  chụp (cùng lý lẽ đã dùng ở DOC-5).
+- **§8.3 dặn "đánh số tiếp §8.4, §8.5…"** ⇒ mục mới đi **sau** §8.3, không chen vào giữa.
+- **U-034, không phải U-031/32/33** — ba số ấy đã có chủ (BA-13, T-048, BA-12). Hai phiên cùng lấy
+  một số đã xảy ra một lần (entry T-042).
+
+**Acceptance · Verify:** không có file prompt; nghiệm bằng gate và bằng bốn câu ở dòng *Done*.
+
+[↑ đầu file](#top)
+
+<a id="t-049"></a>
+### T-049 — Mười hai bước pha 1 có thứ tự và có mức, nhưng không có chỗ nào nói vì sao có từng bước
+
+**Xong 2026-09-04.** **L2** · không có file prompt — yêu cầu đến trực tiếp từ chủ repo trong phiên:
+*"make me a backlog_SD file for design system based on at least master plan design system and
+`docs/product/1-system-design/architecture.md` and other as well"*.
+Đầu ra: `work/backlog_SD.md` (mới, 12 entry) · `docs/decisions.md` **ADR-034** + một hàng bảng tổng
+hợp + khối *SỬA ĐỔI 2026-09-04* của **ADR-033** · `CLAUDE.md` §2 và cây thư mục ·
+`work/backlog.md` (chuyển entry P1-01 đi, để lại khối chỉ đường) ·
+`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §6 và §8.
+
+**Goal:**
+Ai nhận một bước của pha 1 đọc **một** entry là biết vì sao có nó, hỏng thì quán mất gì, phải đọc
+gì trước, và mười bước chạy thế nào — không phải ghép lại từ ba file.
+
+**Vì sao có task này:**
+Sau T-048, pha 1 có **thứ tự · mức · đầu ra kiểm chứng được** (kế hoạch §6) nhưng mô tả từng bước
+thì không có nhà: `work/backlog.md` chỉ giữ đúng **một** entry (P1-01), mười một bước còn lại
+không có dòng nào ngoài một ô bảng. Chỗ ấy là chỗ pha 0 đã trả giá theo chiều ngược lại — mười ba
+entry BA nằm rải trong một file 4.600 dòng, và suốt mười ngày không lúc nào đọc được
+*"pha này còn lại những gì"* trong một lần.
+
+**Ranh giới ba file — thứ quyết định file nào được sửa khi có việc mới:**
+
+| File | Sở hữu | Vì sao không đổi chỗ được |
+|---|---|---|
+| `work/backlog.md` | **trạng thái** mọi task | `scripts/brief.sh` đọc đúng file này và đẩy vào mọi phiên mới (**ADR-002**); trạng thái viết chỗ khác là dòng **không phiên nào thấy** (**F-012**) |
+| `work/backlog_SD.md` | **mô tả** 12 bước pha 1 | `work/backlog.md` đã 4.600+ dòng và là file **mọi** phiên sửa — F-014 đã xảy ra **năm** lần trên loại file ấy; riêng 2026-09-03→04 có ba phiên cùng chạm nó |
+| kế hoạch §6 | **thứ tự · mức · đầu ra kiểm chứng được** | nó ở `master_plan/`, là **đầu vào** của pha (`CLAUDE.md` §2) |
+
+**Không làm thì mất gì:**
+- **Mười một bước không có *vì sao*** ⇒ phiên nhận việc tự suy ra mục đích, và bước đầu tiên làm
+  sai mục đích là bước đắt nhất (P1-01 quyết ranh giới sở hữu của cả pha).
+- **Hoặc mười hai entry đổ vào `work/backlog.md`** ⇒ thêm ~800 dòng vào file mà ba phiên đang cùng
+  sửa, đúng chỗ F-014 đã hỏng năm lần.
+- **Hoặc trạng thái đi theo sổ mới** ⇒ brief mù, và cả pha 1 vô hình với mọi phiên mới.
+
+**Cách hoàn thành — mười bước đã chạy:** đọc kế hoạch, `architecture.md` §1–§14, `quality/invariants.md`,
+`shop-facts.md` các mục được dẫn, và `docs/product/99-unknowns.md` (1) · khai `work/scope.txt`, **gỡ
+khối T-048** đã commit (`faacc38`) và **giữ** khối BA-12 của phiên song song (2) · task sinh và đóng
+trong cùng lượt theo yêu cầu trực tiếp, dòng *Done* là chỗ nó xuất hiện lần đầu (3) · viết 12 entry
++ ADR-034 + sửa 4 file pointer (4) · không tự quyết một dữ kiện nghiệp vụ nào; bốn chỗ đang chặn
+được **kể tên**, không được suy hộ (5) · `./scripts/gate.sh` (6) · Acceptance soi ở report (7) ·
+`grep` lại chỗ trỏ tới entry P1-01 cũ và chỗ nói *"entry tạo lúc nhận việc"* — sửa cả hai trong
+cùng lượt (8) · tick *Done*, dọn khối scope của mình (9) · khối commit (10).
+
+**Bắt kịp phiên song song — hai thay đổi đến giữa lượt:**
+**BA-12 commit `31fb071` lúc 06:37** (sạch, chỉ file của nó — khác hẳn sự cố `39ca608` ở **F-025**).
+Nó làm hai việc chạm pha 1: §3.4 *lát cắt sản xuất theo mẻ* nay có ⇒ **P1-07 và P1-09 hết bị BA-12
+chặn**; và nó **mở U-033** — *đơn bị huỷ sau khi bếp đã làm xong phần của nó thì chỗ ấy đi đâu* —
+chạm thẳng `I-004`, con số nhu cầu, và bảng quầy bốn con số. Cả hai đã vào bảng chặn của kế hoạch
+§8 và vào ba entry **P1-05 · P1-07 · P1-09** ngay trong lượt này, chứ không để lại thành việc sau.
+
+**Acceptance — viết trong entry vì task không có file prompt:**
+
+1. `work/backlog_SD.md` có **đúng 12** entry `P1-01`…`P1-12`, mỗi entry đủ **bảy khối** của khuôn
+   L1+ (`work/backlog.md` → *Task Detail Template*).
+2. Không entry nào chứa một **dòng trạng thái** (`- [ ]` / `- [x]`); trạng thái chỉ có ở
+   `work/backlog.md`.
+3. Không entry nào chép lại cột *Đầu ra kiểm chứng được* của kế hoạch §6 — mục *Acceptance ·
+   Verify* trỏ sang file prompt, đúng luật *entry TRỎ, prompt GIỮ*.
+4. Entry P1-01 **chỉ còn một bản** trong repo, và nó ở `work/backlog_SD.md`.
+5. Bốn chỗ đang chặn (**U-031 · U-032 · U-033 · S-5**) có mặt ở cả bảng đầu file lẫn dòng *Prompt*
+   của bước bị chặn.
+6. `CLAUDE.md` §2 kể tên file mới; `docs/decisions.md` có **ADR-034** và một hàng bảng tổng hợp.
+7. `./scripts/gate.sh` xanh.
+
+*Ghi chú thủ tục:* như T-048, Acceptance viết **trong entry** và **sau** bản đầu của file — task
+đến trực tiếp từ chủ repo giữa phiên, không qua prompt. Chỗ lệch với `CLAUDE.md` §3 ghi ra chứ
+không che; mười hai bước `P1-XX` thì mỗi bước có prompt riêng và không lặp lại nó.
+
+[↑ đầu file](#top)
+
+<a id="ba-12"></a>
+### BA-12 — Lát cắt sản xuất theo mẻ chưa có ở đâu, trong khi quán đang làm theo mẻ mỗi sáng
+
+> **XONG 2026-09-03.** §3.4 đã viết, §3 nay là **bốn** lát cắt. Đọc kết quả ở dòng `BA-12` trong
+> [Done](backlog.md#done). Ba chỗ entry này viết trước khi chạy mà **hôm nay đọc khác đi**: (1) câu *"chặn
+> BA-09"* đã hết đúng từ 2026-09-02 — lý do ở khối *Ready*, ngay dưới gạch đầu dòng BA-12;
+> (2) bước 3 dặn *"hỏi chủ quán năm câu U-008–U-011 + S-4"* — **cả năm đã đóng** 2026-08-31 →
+> 2026-09-01, không phải hỏi lại; (3) *Acceptance 7* của prompt bảo nêu **U-017** là còn treo,
+> nhưng U-017 **đã đóng** 2026-09-01 (bấm theo **mẻ**) và viết như thế làm **Gate 1c đỏ**. Chỗ
+> chưa chốt thật là **S-5** (`master_plan/shop-facts.md` §7.2).
+
+**Prompt:** `prompt/BA/12-production-control-L2.md` (L2) · **Cần xong trước:** BA-03, BA-07 ·
+**chặn** BA-09
+
+**Goal:**
+`docs/product.md` §3.4 mô tả trọn lát cắt sản xuất — từ lúc một đơn được duyệt, việc của nó nhập
+vào tổng nhu cầu của quán, được gom thành mẻ, làm xong, rồi về đúng bàn đã gọi. Xong rồi thì người
+đứng quầy đọc §3.4 là biết bảng trước mặt mình phải hiện con số nào, và con số nào tăng giảm khi
+ai làm gì.
+
+**Nói một câu, việc phải làm là gì:**
+Viết ra **những con số nào tồn tại** ở trục sản xuất và chúng liên hệ với nhau thế nào. Việc
+**không** phải làm: vẽ màn hình, đặt tên trạng thái kiểu mã, hay chọn cấu trúc dữ liệu — đề xuất
+`work/proposals/admin.admiadmin/admin1.md` có sẵn cả ba và không thứ nào được nhận.
+
+**Vì sao có task này:**
+Chủ quán nói ngày **2026-08-31**: hai nồi tráng bánh, mỗi nồi ba quả trứng, sáu khách vào cùng lúc
+thì làm sáu quả một mẻ; làm lần lượt từng suất là *mất thời gian và mất nhiệt*. Kèm theo là danh
+sách những thứ người đứng quầy phải nhìn thấy cùng lúc — đếm được sáu tính tới ngày đó. Dữ kiện ở `master_plan/shop-facts.md` §5.4,
+cách đọc ở `docs/decisions.md` **ADR-009**.
+
+Vì sao nó không nằm gọn trong một lát cắt đã có: con số quán thật sự dùng — *"còn phải làm 14 cái
+bánh"* — **không thuộc đơn nào cả**, nó cộng ngang qua mọi đơn đang mở. §3.1 kể chuyện một bàn,
+§3.2 kể chuyện một đơn; không mục nào có chỗ cho một con số cắt ngang cả hai.
+
+**Không làm thì mất gì:**
+- **BA-09 chốt phạm vi MVP mà không biết trục này rộng tới đâu** — nặng nhất, vì MVP chốt xong là
+  cơ sở cho mọi việc sau.
+- **BA-07 viết vòng đời công việc trạm theo từng đơn** rồi phát hiện quán không làm theo đơn. Sửa
+  sau nghĩa là viết lại §5.
+- **Hệ thống làm ra bắt bếp nhận việc lẻ từng suất**, tức chậm hơn cách quán đang làm bằng tay —
+  hỏng nặng hơn thiếu tính năng, và chỉ lộ ra khi đang phục vụ khách.
+- **Năm câu hỏi (U-008–U-011, S-4) nằm mãi không ai hỏi.** Cả năm hỏi được trong **một** lần gặp;
+  để lâu thì phiên sau tự suy, đúng thứ CLAUDE.md §3.5 cấm.
+
+**Đây là con bug của một chỗ mù, không phải của một finding:**
+Không vòng rà nào bỏ sót — trục này **chưa từng** có mặt trong `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`,
+nên mười một task BA-01–BA-11 phủ đúng khung gốc và vẫn không phủ nó. Khung gốc mô tả quán bằng
+**đơn**; chủ quán vận hành quán bằng **mẻ**. Bài học ghi ở đây chứ không mở finding mới: một bộ
+task phủ kín tài liệu khung vẫn có thể phủ thiếu thực tế, vì tài liệu khung do người viết, không
+do quán viết.
+
+**Thứ tự đọc trước khi sửa file đầu tiên:**
+1. `master_plan/shop-facts.md` §5.4 → §5.3 → §4.5 — đọc ngược lên: gom việc, nổ thành phần, thành
+   phần một suất. Đọc xuôi sẽ tưởng §5.4 là mở rộng của §5.3, nó không phải.
+2. `docs/decisions.md` ADR-009 — bốn khái niệm và vì sao chúng không thay nhau được.
+3. `docs/product.md` §3.1 (BA-03) và §5 (BA-07) — trục đơn, để biết hai trục gặp nhau ở đâu.
+4. `master_plan/shop-facts.md` §7.2 (S-4) — chỗ suy ra chưa xác nhận; đọc **trước** khi viết một
+   dòng nào về "đã làm xong".
+
+**Bẫy hay sửa nhầm nhất:**
+- **Chép con số 2 · 3 · 6 vào `docs/product.md`.** Đúng số, và là bản chép thứ hai — F-001. §3.4
+  trỏ sang `shop-facts.md` §5.4, không mang số về.
+- **Viết "đã làm xong ≠ đã phục vụ" như thể chủ quán nói câu đó.** Chủ quán **không** nói; đó là
+  S-4, chưa xác nhận. Trộn vào phần đã chốt là đúng lỗi F-004.
+- **Cho §3.4 chỉ có bảng tổng.** Nhìn thì đủ, và mất chủ sở hữu: gom sáu quả trứng mà không tách
+  ngược về sáu bàn là bưng nhầm bàn.
+
+**Cách hoàn thành — đủ mười bước, 1 tới 10.**
+Luật chung ở [Vòng chạy một task L1](backlog.md#vong-chay). Việc riêng của task này ở từng bước:
+1. Đọc brief; xác nhận BA-03 và BA-07 đã ở *Done*, vì §3.4 tham chiếu tên trạng thái của cả hai.
+2. Nhận task, chuyển BA-12 sang *In Progress*.
+3. **Hỏi chủ quán năm câu U-008–U-011 + S-4 trong một lần.** Câu kiểm chứng của S-4 đã soạn sẵn ở
+   `master_plan/shop-facts.md` §7.2 — hỏi đúng câu đó.
+4. Lời giải nào có ⇒ ghi vào `master_plan/shop-facts.md` §5.4 + §7.1 (và xoá khỏi §7.2 nếu là
+   S-4) **trước**, trong cùng một lần sửa; câu nào còn treo thì để nguyên ở *Unknowns*.
+5. Khai báo `work/scope.txt` theo mục Scope của prompt.
+6. Viết §3.4; đổi tiêu đề §3 sang **bốn** lát cắt.
+7. Thêm invariant vào `quality/invariants.md` — chỉ thêm, không sửa cái của task khác.
+8. `./scripts/gate.sh`.
+9. Gate 2 + Gate 5: cộng xuôi ví dụ sáu bàn ra tổng, rồi tách ngược về sáu bàn; hai chiều phải khớp.
+10. Đóng task, dọn scope, giao khối commit.
+
+**Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+
+[↑ đầu file](#top)
+
+<a id="t-048"></a>
+### T-048 — Pha 1 chưa có kế hoạch nào còn sống: bản nháp bị đóng băng, và ba câu bảng sáu pha đòi thì chưa ai trả lời
+
+**Xong 2026-09-03.** **L2 ở cấp task, L3 ở cấp giai đoạn** — pha 1 quyết *cái gì bảo vệ cái gì*
+cho toàn hệ thống, nhưng lượt này chỉ **viết kế hoạch**, không thi công một dòng đặc tả nào; mười
+hai bước trong kế hoạch đều là L1/L2, đúng luật *L3 ⇒ chia thành nhiều task L1/L2* (`CLAUDE.md` §3).
+Không có file prompt — yêu cầu đến trực tiếp từ chủ repo trong phiên.
+Đầu ra: `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` (mới) · `docs/decisions.md` **ADR-033** +
+một hàng bảng tổng hợp · `work/findings.md` **F-023**, **F-024**, **F-025** ·
+`docs/product/99-unknowns.md` **U-032** · `docs/product/00-index.md` bảng *Pha 1*.
+**F-025 không phải chỗ thiếu của pha 1** — nó là một sự cố xảy ra **giữa lượt này**, ghi ở khối
+*Sự cố giữa lượt* dưới đây.
+
+**Goal:**
+Pha 1 có một bản đồ mà phiên mới đọc được trong một lần: còn nợ những gì, chạy theo thứ tự nào,
+đang bị chặn ở đâu, và đủ điều kiện gì thì được sang pha 2.
+
+**Vì sao có task này:**
+Chủ repo yêu cầu trong phiên 2026-09-03: *"BA về cơ bản đã xong, pha tiếp theo sẽ là system design,
+hãy làm master plan cho system design thật kĩ và cẩn thận từng bước"*. Chỗ trống có thật, đo được
+trước khi viết:
+
+| Đầu ra bảng sáu pha đòi ở pha 1 | Hôm nay |
+|---|---|
+| Bảng bất biến **ba cột** (mệnh đề · bảo vệ bằng · phép đối chiếu) | `I-001`…`I-018` có *Invariant · Why · Verification*, và *Verification* viết bằng **kịch bản người** ⇒ **cột giữa chưa mục nào có** |
+| Ràng buộc kiến trúc ẩn + dấu hiệu phải xem lại | chỉ ở `master_plan/prompt-fullstack.md` §6.8, chưa vào owner nào |
+| Nguồn thời gian | dữ kiện có (`shop-facts.md` §1); **định nghĩa NGÀY BÁN cho phép cộng tiền** thì chưa ⇒ **U-032** |
+| Năm rủi ro lớn nhất + cách chặn | chỉ ở bản nháp §6, viết **trước** khi có nợ · hoàn tiền · đối soát ba nguồn |
+
+Và bản nháp `master_plan/phase_1_system_design_banh_cuon_ba_thanh.md` **không dùng lại được**: nó bị
+banner hoá 2026-09-03 với đúng một câu *"Không sửa ở đây"* (ADR-014, khối *SỬA ĐỔI*), và nó giữ
+`I1`–`I8` — bản đã bị `I-001`…`I-018` thay.
+
+**Ba quyết định hình dạng — ADR-033:**
+
+| Quyết định | Vì sao, một câu |
+|---|---|
+| Kế hoạch là **file mới** ở `master_plan/` | bản nháp bị cấm sửa; viết vào nó là hồi sinh một bản sao cũ hơn owner thật (F-001) |
+| Mã bước là **`P1-XX`**, không `SD-XX` | bản nháp dùng `SD-01`…`SD-10` làm mã **task** và `SD-01`…`SD-07` làm mã **quyết định** — thêm nghĩa thứ ba là dựng lại đúng bẫy F-015 · F-021 · F-022 |
+| Đầu ra vào **file mới** cạnh `architecture.md` | §1–§14 bị ADR-012/ADR-013 ghim theo số; file đã 592 dòng; F-014 đã xảy ra **năm** lần trên loại file dùng chung như thế, và pha 1 có ba bước chạy song song được |
+
+Hai luật kèm theo, cả hai đều là chỗ pha 0 đã trả giá: **bảng bước không có cột *Trạng thái*** (một
+bảng ⬜ trong kế hoạch và một dòng `- [x]` trong backlog là hai bản của một sự thật, và bản trong kế
+hoạch không bao giờ được cập nhật) · **mười hai bước không đổ vào *Ready* cùng lúc** (`brief.sh` cắt
+ở sáu mục — đúng cơ chế đã làm U-011 và BA-12 vô hình, **F-012**).
+
+**Thứ kế hoạch này thêm mà bảng sáu pha không đòi — từ vựng năm tầng bảo vệ.**
+Ba bước P1-04 · P1-05 · P1-06 cùng điền **một** bảng. Không có từ vựng chung thì cột giữa sẽ đầy
+những chữ như *"xử lý cẩn thận"*, nên cột ấy chỉ nhận đúng một trong năm giá trị, xếp mạnh dần:
+**cơ sở dữ liệu giữ** → **một giao dịch giữ** → **miền nghiệp vụ giữ (một cửa ghi)** → **người +
+thủ tục giữ** → **phép đối chiếu bắt sau khi hỏng**. Luật đi kèm: **ghi tầng cao nhất thật sự đang
+giữ nó, không ghi tầng mình muốn nó ở** — `I-011` là ca mẫu, chủ quán chốt 2026-09-01 rằng máy
+**chỉ nhắc** rồi vẫn cho lưu, nên nó là **tầng 4** và phải nói thẳng *"máy không ngăn được"*. Đây
+cũng là **rủi ro lớn nhất của cả pha**, ghi ở §10 của kế hoạch: một bảng ba cột trông đã đủ trong
+khi mấy mệnh đề chạm tiền chỉ được giữ bởi người, mà không ai nói ra.
+
+**Ba chỗ mở ra, và không chỗ nào được tự sửa trong lượt này** (task viết kế hoạch, không thi công):
+
+- **F-023** — ADR-014 giao *tên bảng · tên cột · khoá ngoại · API · route* cho hai tài liệu, và
+  **cả hai tự khai không sở hữu**: `architecture.md` §8 viết *"cố ý KHÔNG làm"*, banner
+  `prompt-fullstack.md` viết *"CHƯA có nhà"*; `CLAUDE.md` §2 thì không có hàng nào. ⇒ **P1-01**.
+- **F-024** — `architecture.md` §11 giao việc viết lại §3 cho `T-036`, task đã *Done* từ
+  2026-09-01 mà không giao. Đo lại 2026-09-03: §3 không chứa *"đã làm xong"* / *"còn ở bếp"* /
+  *"đã ra bàn"* ở dòng nào. Luật rút ra: **mọi câu giao việc cho một mã task phải được chấm lại
+  khi mã ấy sang *Done*** — một phép so mà chưa cổng nào có. ⇒ **P1-09**.
+- **U-032** — lượt bán ghi trên **sổ giấy** hôm mất điện, hôm sau mới nhập, thì doanh thu tính
+  **ngày nào**. Ba luật đã chốt đều đi qua ca này mà không luật nào phủ (nợ **ngày ghi nợ** ·
+  hoàn **ngày hoàn** · sổ giấy *"nhập ngay khi có thể, không có mốc giờ cứng"*), và **hai đường ra
+  đều phá một thứ đang có**: rơi vào *ngày gõ* thì doanh thu ngày mất điện sai mãi mãi; rơi vào
+  *ngày bán* thì một ngày đã đối soát **có** đổi về sau, tức ngưỡng lệch 0đ mất nghĩa. Câu hỏi
+  viết theo bài học **S-4** — hỏi về **cái quán**, không hỏi về cái bảng trong máy. ⇒ chặn **P1-03**.
+
+**Cách hoàn thành — mười bước đã chạy:** đọc bốn owner của pha 1 + bảng sáu pha (1) · khai
+`work/scope.txt` sáu pattern, **thêm khối của mình** và gỡ khối BA-13 đã commit ở `1b9d238`, không
+đụng ba khối là nợ của T-047 (2) · task này không đi qua *Ready* — nó sinh ra và đóng trong cùng
+lượt theo yêu cầu trực tiếp của chủ repo, và dòng *Done* là chỗ nó xuất hiện lần đầu (3) · viết kế
+hoạch, ADR-033, hai finding, U-032, một dòng ở `00-index.md` (4) · không tự quyết một dữ kiện nghiệp
+vụ nào — chỗ thiếu thành **U-032** kèm câu hỏi soạn sẵn (5) · `./scripts/gate.sh` (6) · Acceptance
+soi ở report (7) · `grep` lại các chỗ trỏ tới bản nháp và tới ba tài liệu của F-023 (8) · tick
+*Done*, dọn scope (9) · khối commit (10).
+
+**Acceptance — viết trong entry vì task không có file prompt:**
+
+1. `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` tồn tại, mở đầu bằng câu **không sở hữu sự
+   thật nào**, và không chứa một con số dữ kiện quán nào (giá · giờ · số bàn · số nồi).
+2. Bảng bước có **mười hai** dòng `P1-01`…`P1-12`, mỗi dòng đủ sáu cột, và **không** cột *Trạng thái*.
+3. Mỗi dòng bước có ô *Đầu ra kiểm chứng được* nói ra **cách chấm**, không nói *"đã xong thì thôi"*.
+4. Mười tám mã `I-0xx` được chia hết vào đúng ba bước P1-04 · P1-05 · P1-06, không mã nào ở hai
+   nhóm và không mã nào bị bỏ (7 + 6 + 5 = 18).
+5. Mọi chỗ đang chặn có mã và có người trả lời: **U-031 · U-032 · S-5 · BA-12**.
+6. Cổng chất lượng có **mười** ô, mỗi ô kèm **cách chứng minh** chứ không phải một lời hứa.
+7. `./scripts/gate.sh` xanh, và `./scripts/brief.sh` in ra **U-032** và **F-023**; **F-024 thì
+   không** — hai finding mới đẩy danh sách *Open findings* lên **bảy** mục, vượt ngưỡng sáu, nên
+   brief in `→ ĐÃ CẮT: in 6/7 mục` kèm chỗ đọc đủ. Đó là hợp đồng của **F-012** đang làm việc đúng
+   (im lặng mới là lỗi, cắt-và-nói-ra thì không), nhưng hệ quả phải ghi ra: **từ hôm nay, phiên mới
+   không còn thấy hết danh sách finding ở brief** — mở `work/findings.md` trước khi kết luận repo
+   đang mở những gì.
+
+**Sự cố giữa lượt — `work/findings.md` F-025.** Lúc 22:13, phiên song song đang chạy **BA-12**
+commit `39ca608` với subject trùng từng chữ `1b9d238` (commit thật của BA-13) và nhặt theo **23
+dòng chưa commit của task này**: nguyên văn bản nháp đầu của **U-032**. Hệ quả phải biết trước khi
+đọc `git log`: `U-032` xuất hiện lần đầu trong một commit **mang tên BA-13**, và ở bản ấy chỗ chèn
+còn **cắt ngang một đoạn văn** của mục *Đang mở* — bản đọc được nằm trong khối commit của T-048.
+Không sửa lịch sử (**ADR-008**), không tự quyết thay chủ repo (**T-023**), không gộp thay đổi chưa
+commit của phiên BA-12 (`docs/product/0-ba/ban-hang/03-lat-cat.md`) vào khối của mình (`CLAUDE.md`
+§6.1). Câu để chủ repo quyết ghi ở F-025 → *Decision / Fix*: có dựng cổng thứ chín (`pre-commit`
+hỏi *"mọi file đang `git add` có thuộc **một** khối scope không"* — cần `work/scope.txt` mang nhãn
+chủ đọc được bằng máy) hay không.
+
+*Ghi chú thủ tục, ghi ra chứ không che:* `CLAUDE.md` §3 đòi *Acceptance viết trước khi sửa*. Bảy
+dòng trên được viết **sau** bản đầu của kế hoạch, trong cùng lượt — task đến trực tiếp từ chủ repo
+giữa phiên, không qua file prompt, nên không có chỗ nào giữ Acceptance trước lúc bắt đầu. Đó là một
+chỗ lệch thật; bước tiếp theo (P1-01) có prompt riêng và không lặp lại nó.
+
+[↑ đầu file](#top)
+
+<a id="ba-13"></a>
+### BA-13 — Năm chỗ hai mục đã chốt nói lệch nhau, tìm ra bằng cách DIỄN ba scenario
+
+**Prompt:** chưa viết · mức **L2** (chạm §1–§7 và `docs/decisions.md` — nội dung nghiệp vụ đã chốt,
+và một chỗ chạm **tiền**) · **Cần xong trước:** không task nào · **chặn** việc **đóng giai đoạn BA**
+— mục 6, 7 và 8 của cổng chất lượng ở `docs/product/0-ba/ban-hang/08-scenario.md` đang để trống vì
+đúng năm chỗ này.
+
+**Goal:**
+Năm chỗ dưới đây hết nói lệch nhau, và cổng chất lượng BA tick được **9/9** bằng tick thật.
+
+**Nói một câu, việc phải làm là gì:**
+Đi sửa **chỗ nhắc tới** một sự thật, ở những chỗ mà lượt chốt sự thật ấy đã bỏ quên. Việc **không**
+phải làm: chốt lại bất kỳ luật nghiệp vụ nào — cả năm chỗ đều **đã có lời chốt**, chúng chỉ chưa
+được chép về đúng chỗ. Ngoại lệ duy nhất là chỗ 2 của **F-022**, chỗ phải **hỏi chủ quán**.
+
+**Vì sao có task này:**
+BA-11 (2026-09-03) diễn ba scenario nghiệm thu và, qua **hai lượt đọc context sạch** (Gate 6), tìm
+ra năm chỗ mà **hai mục đã chốt cho hai câu trả lời khác nhau**. Không mục nào sai một mình — cái
+sai chỉ tồn tại **giữa** chúng, nên chín lượt BA trước đọc từng mục một đều đi qua mà không thấy.
+BA-11 **không được sửa** chỗ nào: §1–§7 và `docs/decisions.md` nằm trong mục *Không được sửa* của
+`prompt/BA/10-acceptance-scenarios-L2.md`.
+
+**Năm chỗ, ba nhóm** — đọc bản đầy đủ ở `work/findings.md` trước khi sửa, entry này chỉ trỏ:
+
+| Nhóm | Chỗ | Đọc ở |
+|---|---|---|
+| **F-015** (4 chỗ) | §1.2 · §4.9 · §6.1 dòng 7 · §6.2 — bốn câu nói một luật **đã chốt** vẫn đang treo | `work/findings.md` **F-015**, khối *CẬP NHẬT 2026-09-03* |
+| **F-021** (1 chỗ) | Bảng tổng hợp `docs/decisions.md` còn xếp **GĐ-01** và **GĐ-05** là giả định đang sống, thân ghi *Superseded* | `work/findings.md` **F-021** |
+| **F-022** (3 chỗ) | §3.1.1 vs §5.3 (phiên mở lúc nào) · §5.4 vs §5.2 (**ai** bấm *"đã ra bàn"* của đơn giao) · ví dụ đổi giá §3.3.3 và **I-009** (một câu, **hai** số tiền) | `work/findings.md` **F-022** |
+
+**Không làm thì mất gì:**
+1. **Giai đoạn BA không đóng được.** Ba trong chín mục cổng chất lượng đang trống vì đúng năm chỗ
+   này; không qua cổng thì không sang System Design (§12 kế hoạch gốc).
+2. **Một chỗ dạy NGƯỢC một luật.** §6.1 dòng 7 viết *"`Hoàn thành → Huỷ` hôm nay bị từ chối"*,
+   trong khi §5.2 đã có đúng dòng ấy và chủ quán chốt 2026-09-02 là **được phép**. Phiên System
+   Design đọc nó sẽ dựng hàng rào chủ quán không đặt — sai theo chiều **chặt hơn thực tế**, chiều
+   không ai phàn nàn cho tới lúc quán cần huỷ một đơn đã trao.
+3. **Một chỗ chạm TIỀN, trong kịch bản kiểm của một invariant.** Ví dụ *"nâng giá một cái bánh
+   nhân thường lên 5.000"* cho **25.000 hoặc 29.000** tuỳ đường đọc, và nó nằm trong mục
+   *Verification* của **I-009** — tức một bài kiểm viết theo nó có thể xanh trong khi sản phẩm sai.
+4. **Nợ tự lớn.** F-015 mở với **ba** chỗ ngày 2026-09-02; một ngày sau đã là **bốn**. Mỗi lượt
+   đóng unknown lại thêm một chỗ, vì cơ chế sinh ra nó chưa bị chặn.
+
+**Bẫy hay sửa nhầm nhất:**
+- **Đừng chép câu `awk` của F-015 làm cổng.** Nó bắt **2/4** chỗ hôm nay: một chỗ lọt vì tài liệu
+  **gói dòng** và cụm `CHƯA CHỐT` bị cắt đôi giữa hai dòng, một chỗ lọt vì nó **không mang** mã
+  `U-XXX` nào. Một bộ lọc viết cùng lúc với các ca đã biết thì nó tả **các ca ấy**, không tả **loại
+  lỗi** (F-017, F-018).
+- **Đừng sửa §5.3 theo §3.1.1.** Hai mục nói khác nhau về lúc phiên mở, và **§5.3 cùng §3.1.2** là
+  phe đa số; sửa ngược là chọn phe thiểu số.
+- **Đừng tự chọn ai bấm *"đã ra bàn"* cho đơn giao tận nơi.** Chủ quán chốt 2026-09-01 (U-021) rằng
+  *người đứng quầy* bấm cả hai mốc, và **ca đơn giao tận nơi không nằm trong câu hỏi lúc ấy**. Suy
+  hộ ở đây là dựng luật chủ quán chưa nói (CLAUDE.md §3.5) ⇒ **mở một `U-XXX` mới**, đúng hình dạng
+  `docs/product/99-unknowns.md` → *Cách viết một câu ở đây* (ADR-007).
+- **Sửa §3.3.3 và I-009 trong CÙNG một lượt.** Để lệch một chỗ là đẻ lại đúng con bug này.
+
+**Cách hoàn thành** (luật chung ở [Vòng chạy một task L1](backlog.md#vong-chay)):
+
+1. Đọc **F-015** (khối *CẬP NHẬT 2026-09-03*), **F-021**, **F-022** trọn vẹn — mỗi finding đã ghi
+   sẵn địa chỉ và câu sửa đề xuất.
+2. Khai `work/scope.txt`; các file bị chạm: `docs/product/0-ba/ban-hang/01-actors-pham-vi.md` ·
+   `03-lat-cat.md` · `04-gia-thanh-toan.md` · `05-vong-doi.md` · `06-ngoai-le.md` ·
+   `08-scenario.md` (chỉ ba ô checklist) · `docs/decisions.md` · `docs/product/99-unknowns.md` ·
+   `quality/invariants.md` · `work/findings.md` · `work/backlog.md`.
+3. Sửa **F-021** trước — nó gọn nhất và không phụ thuộc gì.
+4. Sửa bốn chỗ **F-015**, rồi hai chỗ **F-022** (chỗ 1 và chỗ 3). Chỗ 2 của F-022 **không sửa**:
+   ghi thành `U-XXX` mới và để chủ quán trả lời.
+5. Sau **mỗi** chỗ sửa, `grep -rn` cái gì còn trỏ tới nó (CLAUDE.md §7.2) — cả năm chỗ này sinh ra
+   vì đúng bước ấy bị bỏ.
+6. **Dựng cổng.** Đây là lần đo **thứ hai** của F-015 ⇒ điều kiện CLAUDE.md §3.8 đã đủ, và chính
+   F-015 đã viết sẵn câu *"lần hai thì dựng cổng"*. Cổng phải bắt được **cả bốn** chỗ của F-015,
+   kể cả chỗ **xuống dòng** và chỗ **không mang mã** — nên nó không thể là một `grep` theo dòng.
+   Chỗ tự nhiên: một `scripts/*.test.sh` (Gate 1 chạy mọi file ấy), hoặc một bước trong
+   `scripts/check-links.sh`.
+7. Tick lại **mục 6, 7 và 8** của cổng chất lượng ở `docs/product/0-ba/ban-hang/08-scenario.md`.
+   Mục 8 chỉ được tick sau **một lượt Gate 6 context sạch mới** — đừng tick bằng lý lẽ.
+8. Đổi *Status* của **F-015**, **F-021**, **F-022**; ghi kết quả lượt đo mới vào F-015.
+9. Tick *Done*, chuyển entry này sang *Chi tiết — việc đã xong*, xoá sạch pattern scope.
+10. Khối `git commit` dán được.
+
+**Acceptance · Verify:** viết trong file prompt. Ba câu bắt buộc phải có, vì thiếu chúng thì lượt
+này chỉ dọn được **một** lần: (a) cổng ở bước 6 **báo đỏ** trên bản trước khi sửa và **xanh** sau
+khi sửa — dán cả hai lần chạy; (b) mục 8 kèm báo cáo của một lượt đọc context sạch **mới**; (c)
+`U-XXX` mới của F-022 chỗ 2 hiện ra ở `./scripts/brief.sh` mục *OPEN UNKNOWNS*.
+
+**Đã làm 2026-09-03.** Cả mười bước ở trên chạy đủ. Bốn điều đáng đọc lại hơn danh sách chỗ đã sửa:
+
+1. **Chỗ KHÔNG sửa là chỗ đúng nhất của lượt này.** Chỗ 2 của F-022 — *ai bấm `Đã ra bàn` cho một
+   đơn giao tận nơi* — thành **U-031**, không thành một câu tài liệu. Lượt đọc context sạch thứ ba
+   xác nhận cách ghi ấy có tác dụng: nó **dừng lại và hỏi** thay vì đoán, và nguyên văn báo cáo là
+   *"tài liệu NÓI RÕ đây là chỗ chưa chốt, không im lặng"*. Một câu hỏi được ghi ra đúng chỗ thì
+   **không** làm cổng chất lượng trượt — mục 7 hỏi *còn luật nào bị suy đoán*, và một câu hỏi có
+   ID, có người trả lời, có hệ quả là điều ngược lại với một luật bị suy đoán.
+2. **Cổng đặt sai chỗ là cổng không chạy.** Entry này đề xuất `scripts/*.test.sh`; chỗ ấy **sai**,
+   vì `gate.sh` bỏ qua `verify.sh` khi thay đổi chỉ chạm tài liệu (ADR-005) — mà lỗi loại này
+   **chỉ sinh ra trong lượt chỉ đổi tài liệu**. Cổng nay là một bước riêng chạy vô điều kiện
+   (**ADR-032**). Đây là chỗ lượt này **đi lệch chữ của entry**, cố ý và có ghi.
+3. **Một phép so đã viết rồi bỏ, và việc bỏ nó đáng giá hơn việc viết nó.** *"Mọi ngôn ngữ còn-mở
+   phải trỏ tới một thứ đang mở"* nghe đúng, chạy thật ra **11 báo động và cả 11 đều giả**. Giữ
+   lại là dạy người ta bỏ qua gate (F-018). Ca nó định phủ đã được một phép khác phủ, bằng đường
+   không dùng mã định danh nào.
+4. **F-015 lặp lại lần thứ ba ngay trong lượt đang dọn nó, ở chỗ không ai nghĩ tới: chính §8.**
+   Sau khi sửa xong §1–§7, mục *Lỗ hổng* của `08-scenario.md` trở thành ảnh chụp của ngày hôm
+   trước, và người đọc sạch *"tin §8 rồi đi sửa lại những chỗ đã đúng"*. Cổng mới **cố ý** im ở
+   đây — một biên bản kể lỗi và một tài liệu mắc lỗi trông giống hệt nhau với máy. Chống được nó
+   bằng đúng một thứ: banner đặt ở **đầu** mục. Bản đầu tiên của lượt này đặt banner ở **cuối**,
+   và lượt đọc sạch đọc bảng trước — đó là lý do biết được điều này.
+
+**Ba câu Acceptance bắt buộc, cả ba có bằng chứng:**
+(a) cổng **đỏ 8 báo động** trên bản `git archive HEAD` (đủ bốn chỗ F-015 + hai dòng F-021),
+**xanh** sau khi sửa — hai lần chạy dán ở `work/findings.md` F-015 · (b) mục 8 kèm báo cáo của
+lượt đọc context sạch **thứ ba**, tự cộng tiền ra **245.000đ** khớp 100% · (c) **U-031** hiện ở
+`./scripts/brief.sh` mục *OPEN UNKNOWNS*.
+
+[↑ đầu file](#top)
+
+<a id="ba-11"></a>
+### BA-11 — Ba scenario nghiệm thu BA
+
+**Prompt:** `prompt/BA/10-acceptance-scenarios-L2.md` (L2) · **Cần xong trước:** BA-03–BA-10
+
+**Goal:**
+`docs/product.md` §8 có ba scenario nghiệm thu diễn lại được bằng nghiệp vụ thuần, và kết quả chạy
+thử ba scenario đó chứng minh tài liệu BA không còn lỗ hổng chặn System Design.
+
+**Scope:** `docs/product.md` §8 · `work/findings.md` (lỗ hổng phát hiện khi diễn scenario) ·
+`work/backlog.md` (cập nhật trạng thái BA-01–BA-11).
+
+**Out of scope:** §1–§7 của `docs/product.md` — thấy sai/thiếu thì **không tự sửa**: ghi finding và
+mở lại task BA tương ứng. `docs/decisions.md` · `quality/invariants.md`.
+
+**Acceptance:**
+1. §8 có đúng 3 scenario; mỗi scenario có bối cảnh · các bước · kết quả mong đợi kiểm được
+   đúng/sai.
+2. Scenario 1 nêu số lần thanh toán = 1 dù có nhiều lượt gọi món, và trạng thái cuối của bàn là
+   `Trống`.
+3. Scenario 1 có ít nhất một lượt gọi thêm **sau khi quầy bắt đầu thu tiền**, kết quả vẫn 1 hoá đơn.
+4. Scenario 1 có bước kiểm số lượng bếp nhận được (6 bánh · 2 trứng · 2 giò · 1 nước chấm) khác số
+   lượng trên hoá đơn (2 suất), và tổng tiền **68.000đ** tra từ `shop-facts.md` §4.3.
+5. Scenario 2 nêu đơn không gắn phiên bàn, trạng thái cuối là `Hoàn thành`, và có ít nhất một lượt
+   dùng kênh `phone_preorder`.
+6. Scenario 3 có món cụ thể, giá trước và giá sau tra từ `shop-facts.md` §4.3, và câu khẳng định
+   tổng tiền đơn cũ không đổi sau khi giá menu đổi.
+7. Mỗi bước trong cả 3 scenario trỏ tới mục §1–§7 chứa quy tắc tương ứng.
+8. Có checklist cổng chất lượng BA (9 mục ở §12 kế hoạch gốc) với trạng thái tick thật; không tick
+   mục chưa đạt. Mục "không còn business rule quan trọng bị suy đoán" chỉ được tick khi mọi câu
+   hỏi đang mở ở `docs/product.md` → Unknowns đã đóng.
+9. Mọi lỗ hổng phát hiện khi diễn scenario có finding trong `work/findings.md` kèm task BA cần mở
+   lại.
+10. `work/backlog.md`: task BA nào đã xong thì ở Done; task phải mở lại thì quay về Ready kèm lý do.
+11. Không bước nào trong scenario mô tả thao tác kỹ thuật.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+sed -n '/^## 8\./,/^## Unknowns/p' docs/product.md | grep -c '^### '   # 3 scenario
+grep -n '68.000' docs/product.md
+grep -n 'phone_preorder' docs/product.md
+./scripts/brief.sh | sed -n '/NEXT READY/,+3p'
+git status --porcelain
+```
+
+[↑ đầu file](#top)
+
+**Đã làm 2026-09-03.** Ba scenario ở `docs/product/0-ba/ban-hang/08-scenario.md` §8, cổng chất
+lượng BA **6/9**. Mười một câu *Acceptance* trên đây đạt hết, **trừ hai câu và đúng theo cách hai
+câu ấy tự cho phép**:
+
+- **Acceptance 8** (*"không tick mục chưa đạt"*) — ba mục **để trống kèm lý do**: mục 6 (F-021),
+  mục 7 (F-015), mục 8 (F-022). Câu này đạt **vì** ba ô ấy trống, không phải bất chấp điều đó.
+- **Acceptance 10** (*"task phải mở lại quay về Ready kèm lý do"*) — **không** mở lại task nào;
+  thay vào đó mở **BA-13** gom cả năm chỗ sửa. Lý do đầy đủ ở entry [BA-13](#ba-13) và ở
+  `work/findings.md` F-015 (khối *CẬP NHẬT 2026-09-03*): sáu task bị đụng tới đều **đúng vào ngày
+  chúng chạy**, chỗ hỏng đến **về sau** từ các lượt đóng unknown. Đây là chỗ lượt này **đi lệch
+  chữ của prompt**, cố ý và có ghi.
+
+**Ba thứ đáng đọc lại nhiều hơn bản thân ba scenario:**
+
+1. **Gate 6 không phải nghi lễ.** Cả sáu chỗ hỏng của lượt này — ba trong §8, ba trong §1–§7 — đều
+   do **lượt đọc context sạch** tìm ra, không do phiên viết tìm ra. Phiên viết đã đọc cả tám file
+   nên nó **tự vá chỗ lệch trong đầu** mà không biết mình đang vá. Người chỉ được đọc tài liệu thì
+   tắc, và chỗ tắc là bằng chứng.
+2. **Diễn scenario bắt được loại lỗi mà đọc từng mục không bắt được** — ba chỗ của F-022 đều là
+   *"hai mục, mỗi mục tự nó đúng, đặt cạnh nhau thì lệch"*. Đây là lý do §12 kế hoạch gốc đặt ba
+   scenario **sau cùng** thay vì rải vào từng task.
+3. **Câu `grep` đo lại của một finding chỉ mô tả những ca finding ấy đã biết.** Câu `awk` của
+   F-015 bắt **2/4** chỗ hôm nay: một chỗ lọt vì tài liệu **gói dòng** làm cụm từ khoá bị cắt đôi,
+   một chỗ lọt vì nó **không mang mã `U-XXX`** nào. Cùng hình dạng F-017, chỉ khác là bộ lọc không
+   rỗng mà **hụt**.
+
+[↑ đầu file](#top)
+
+<a id="t-045"></a>
+### T-045 — Hai giả định cuối được xác nhận, và chủ quán THÊM vào một luật không ai hỏi
+
+**L2** — sinh một bất biến mới và một quy tắc cắt ngang mọi thao tác sửa.
+
+**Lời chủ quán, 2026-09-02:**
+- **GĐ-01** — *"đồng ý, nhưng cần note ai là người sửa. Hệ thống cần record sửa cái gì, có bản copy
+  trước khi sửa là thế nào, sau khi sửa là thế nào, ai sửa — để đối chiếu."*
+- **GĐ-05** — *"mọi thao tác nhầm khác — duyệt nhầm, huỷ nhầm, đóng phiên nhầm — không có nút hoàn
+  tác, nhưng có nút cập nhật, và có bản copy trước cập nhật / sau cập nhật / lý do / ai là người
+  sửa."*
+
+**Kết quả.** Hai câu trả lời **xác nhận** cả hai giả định, nhưng cả hai cùng kèm **một yêu cầu
+giống nhau** — nên nó không phải hai lời chốt lẻ mà là **một luật cắt ngang**:
+`master_plan/shop-facts.md` **§6.22** (quy tắc thứ hai mươi hai) và `quality/invariants.md`
+**I-018**. §6 dòng 4 và 14 hết dấu ⚠ — **cả mười bốn dòng nay đều có lời chốt**; `docs/decisions.md`
+GĐ-01 và GĐ-05 thành **Superseded**, nên **cả năm** giả định BA-08 đều đã bị thay.
+
+**Luật mới, nói gọn:** không có hoàn tác (trừ đúng ca lùi một mẻ, §5.4); có **nút cập nhật**; và
+mỗi lần cập nhật giữ **bốn** thứ — bản **trước** · bản **sau** · **lý do** · **người sửa**. Chủ
+quán nói thẳng mục đích: ***"để đối chiếu"*** ⇒ nó phục vụ §6.10, không phải một tính năng lịch sử.
+
+**Vì sao phải là invariant riêng, không nhét vào I-012.** I-012 hỏi *ai bấm, lúc mấy giờ, cái gì,
+bao nhiêu* cho mọi **thao tác chạm tiền**. I-018 hỏi *trước thế nào, sau thế nào, vì sao* cho mọi
+lần **sửa một bản ghi đã có**. Hai tập **không trùng nhau**: xác nhận đã nhận tiền là I-012 mà
+không phải I-018; đóng phiên nhầm rồi cập nhật là I-018 mà tiền có thể không đổi. Gộp lại thì mất
+đúng phần *"dựng lại được bản trước"* — phần đắt nhất.
+
+**Bài học ĐẮT NHẤT của hai ngày, ghi ở `docs/decisions.md` đầu mục Giả định.** Năm giả định, hai
+kiểu lệch:
+- **Bốn lần đoán CHẶT HƠN quán thật** (GĐ-02, GĐ-03, GĐ-04, nửa GĐ-05) — lộ ra ngay khi hỏi, vì
+  câu trả lời mâu thuẫn thẳng.
+- **Một lần đoán THIẾU** (GĐ-01, nửa còn lại của GĐ-05) — đoán **đúng** cơ chế, nhưng bỏ mất điều
+  kiện đi kèm. Kiểu này **không lộ ra khi hỏi câu đã viết**: hỏi *"ai thắng?"* thì được xác nhận là
+  đúng, và yêu cầu kia chỉ xuất hiện vì chủ quán **tự nói thêm**. ⇒ **Một giả định được xác nhận
+  không có nghĩa là đã đủ — nó chỉ có nghĩa là phần đã hỏi thì đúng.**
+
+**Một chỗ suy ra, đánh dấu tại chỗ (§7.2, F-004).** Chủ quán nêu chữ **lý do** ở ca *nút cập nhật*
+(thao tác nhầm); áp nó cho **mọi** lần cập nhật — kể cả sửa đơn theo yêu cầu khách — là **suy ra**.
+Lý do suy: không có cách nào phân biệt hai ca ấy lúc ghi, và thứ phân biệt chúng **chính là** ô lý
+do. Ghi rõ trong §6.22 để chủ quán bác được nếu sai.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Bằng chứng |
+|---|---|
+| 1 | `shop-facts.md` §6 = *Hai mươi hai quy tắc*; `prompt-fullstack.md` dòng 72 khớp |
+| 2 | §6.22 có đủ bốn thứ + câu *"để đối chiếu"* + đoạn *cách đọc* cho chữ **lý do** |
+| 3 | §7.1 có **8** dòng `2026-09-02` |
+| 4 | `quality/invariants.md` **I-018** có *Invariant · Why · quan hệ với I-012 · Verification* |
+| 5 | `docs/product.md` §6: `grep -c '⚠ \*\*Chưa chốt'` → **0**; dòng 4 và 14 trỏ §6.22 + I-018 |
+| 6 | ba chỗ nói *"còn ⚠"* trong §6 đã đọc lại (khối ADR đầu mục · lời mở · §6.4) |
+| 7 | `docs/decisions.md`: **5** mục mang *ĐÃ THAY bằng quy tắc*; không giả định nào còn hiệu lực |
+| 8 | `./scripts/gate.sh` xanh |
+
+<a id="ba-10"></a>
+### BA-10 — Quyết định và giả định BA
+
+**Prompt:** `prompt/BA/09-decisions-assumptions-L2.md` (L2) · **Cần xong trước:** BA-01–BA-09
+
+**Goal:**
+`docs/decisions.md` chứa toàn bộ quyết định BA đã chốt và toàn bộ giả định chưa chốt, mỗi giả định
+có mức rủi ro và người cần trả lời — không còn câu hỏi nghiệp vụ nào nằm rải rác trong đầu ai.
+
+**Task này không rỗng dù S-1–S-3 đã chốt.** Việc của nó không phải "gom giả định còn sót": nó
+phải viết ra ADR cho mọi thứ đã chốt — hiện `docs/decisions.md` mới có ADR-001–ADR-003 và cả ba
+đều là quyết định **về cách vận hành repo**, không có ADR nghiệp vụ nào. Còn lại: **sáu** câu §10
+đang mở (2, 3, 4, 8, 9, 10) cộng phần "sửa đơn" của câu 1, mọi mục Unknowns của prompt 01–08, và ba mục
+S-1–S-3 phải được ghi ở dạng **ADR đã chốt 2026-08-30**, không phải GIẢ ĐỊNH.
+
+**Scope:** `docs/decisions.md` · `docs/product.md` (**chỉ** thêm dòng tham chiếu `→ ADR-00N` tại
+chỗ quy tắc liên quan) · `work/backlog.md`.
+
+**Out of scope:** nội dung nghiệp vụ đã chốt ở §1–§8 `docs/product.md` ·
+`quality/invariants.md` · `docs/architecture.md`.
+
+**Acceptance:**
+1. 10 câu hỏi ở §10 kế hoạch gốc đều có mục tương ứng trong `docs/decisions.md`, dạng ADR hoặc
+   GIẢ ĐỊNH, không câu nào thiếu.
+2. S-1, S-2, S-3 đều có mục, ở dạng **ADR** (chốt 2026-08-30), không phải GIẢ ĐỊNH. ADR của S-1
+   ghi con số đã chốt (25.000, ×5) và nói rõ nó từng là suy luận tới 2026-08-30.
+3. Mọi mục Unknowns của prompt 01–08 đều xuất hiện trong file, không sót mục nào.
+4. Sáu câu đã có lời giải — giờ hẹn pickup · phí ship 0đ · khách QR ẩn danh · gọi thêm khi đang
+   thu tiền · `phone_preorder` là kênh thứ năm · giá suất giò — nằm ở dạng **ADR**, và phần "Why"
+   trỏ về `shop-facts.md` kèm mục số và ngày chốt ở §7.1.
+5. Không mục nào về giá bị ghi là "chưa biết" hay "giả định".
+6. Mỗi ADR có đủ 4 phần: Decision · Why · Rejected alternatives · Applies to.
+7. Mỗi GIẢ ĐỊNH có đủ: nội dung · mức rủi ro · hậu quả nếu sai · người cần trả lời.
+8. Không mục nào vừa là quyết định vừa không nói được ai đã quyết.
+9. Đầu file có bảng tổng hợp: ID | Trạng thái (Đã chốt / Giả định) | Rủi ro | Chặn việc gì.
+10. Mỗi quy tắc trong `docs/product.md` bắt nguồn từ một quyết định đều có tham chiếu `→ ADR-00N`.
+11. Không có quyết định về công nghệ hay kiến trúc.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -c '^### ADR-\|^### GIẢ ĐỊNH' docs/decisions.md
+grep -n 'S-1\|S-2\|S-3' docs/decisions.md          # cả ba ở dạng ADR
+grep -n 'ADR-0' docs/product.md                    # tham chiếu ngược
+git status --porcelain
+```
+
+**Đã xong 2026-09-02.** Mười một dòng Acceptance đều có bằng chứng:
+
+| # | Acceptance | Bằng chứng |
+|:--:|---|---|
+| 1 | 10 câu §10 đều có mục | `docs/decisions.md` → *Bản đồ* → bảng **Mười câu của §10**: cả 10 dòng trỏ ADR, không dòng nào là `GĐ` |
+| 2 | S-1, S-2, S-3 ở dạng **ADR** | S-1 → **ADR-025** · S-2 → **ADR-015** · S-3 → **ADR-020**; không mục nào là `GĐ` |
+| 3 | Mọi Unknown của prompt 01–08 có mặt | bảng **U-001 → U-030**, 30 dòng; U-028/U-029 là hai chỗ trống có thật, có chú thích lý do |
+| 4 | Sáu câu đã có lời giải ở dạng ADR, "Why" trỏ `shop-facts.md` + ngày | giờ hẹn pickup + `phone_preorder` → **ADR-021** · phí ship 0đ → ADR-021 · khách QR ẩn danh → **ADR-015** · gọi thêm khi đang thu tiền → **ADR-022**/ADR-017 · `phone_preorder` kênh thứ năm → ADR-015 · giá suất giò → **ADR-025** |
+| 5 | Không mục nào về giá bị ghi *"chưa biết"* / *"giả định"* | ADR-025 và ADR-023 đều là **ADR**; `grep 'GĐ'` không chạm mục giá nào |
+| 6 | Mỗi ADR đủ 4 phần | 17 mục mới đều có `**Decision:**` · `**Why:**` · `**Rejected alternatives:**` · `**Applies to:**` |
+| 7 | Mỗi GĐ đủ nội dung · rủi ro · hậu quả · người trả lời | GĐ-01 và GĐ-05 (hai mục còn hiệu lực) đều có `**Rủi ro:**`, *Rủi ro nếu sai*, *Câu phải hỏi chủ quán* |
+| 8 | Không mục nào vừa là quyết định vừa không nói ai quyết | mỗi ADR nghiệp vụ ghi **chủ quán** + ngày chốt trong `**Decision:**` |
+| 9 | Bảng tổng hợp đầu file | `docs/decisions.md` → *Bảng tổng hợp*, 36 dòng: ID · nội dung · trạng thái · rủi ro · chặn việc gì |
+| 10 | Tham chiếu ngược `→ ADR-0N` trong `docs/product.md` | 7 khối *Quyết định gốc của mục này* dưới §1…§7; `grep -c 'ADR-0'` → **31** |
+| 11 | Không có quyết định công nghệ/kiến trúc | `grep -nEi 'postgres|mysql|react|next\.js|golang|framework'` → rỗng |
+
+**Quyết định BA-07 để lại đã thành ADR:** **ADR-026** — vòng đời việc trạm **bỏ `Đang làm`** và giữ
+`Đã làm xong, còn ở bếp` thay vào. Phần *Why* tách rõ hai lời chốt vì một mình lời nào cũng chưa đủ:
+**U-009** (2026-08-31, bỏ mọi nút bấm ở bếp) làm `Đang làm` thành **trạng thái không ai cập nhật
+được**, còn **S-4** (2026-09-01, bánh gấp xong có nằm chờ thật) cho chỗ trống ấy một trạng thái
+**có thật trong bếp** để điền vào.
+
+**Ba chỗ BA-10 CỐ Ý không tự trả lời** (CLAUDE.md §3.5):
+- **S-5** — bấm *"đã bưng ra bàn"* theo đơn vị nào. Vẫn là chỗ **suy ra** ở `shop-facts.md` §7.2,
+  **không** bị nâng thành ADR và **không** bị hạ vào *Unknowns*. Bảng S-1…S-5 nói thẳng vì sao.
+- **GĐ-01, GĐ-05** — hai giả định TRUNG BÌNH còn hiệu lực. Không mục nào được nâng thành ADR; cả
+  hai chờ *ai đó gặp ca thật*, không chờ một câu trả lời.
+- **Câu 10 §10** (nhật ký thao tác nhân viên) — ADR-024 chốt phần **có** (vết của thao tác chạm
+  tiền và chạm trạng thái) và ghi thẳng rằng nhật ký **toàn bộ** thao tác *chưa ai chốt*, chứ
+  không phải *đã quyết là không làm*.
+
+**Lệch so với prompt, nói ra ở đây:** prompt bảo thêm dòng `→ ADR-00N` *"tại chỗ quy tắc liên
+quan"*. BA-10 đặt tham chiếu ở **đầu mỗi mục §1–§7** thay vì rải vào từng quy tắc, vì hai lý do:
+(a) một phiên song song đang ghi `docs/product.md` cùng lúc (F-014 — sáu lần va chạm, lần gần nhất
+mất một bullet), nên số điểm chạm phải ít nhất có thể; (b) **ADR-014** sắp cắt file này thành
+`docs/product/`, và bảy khối theo mục đi thẳng vào bảy file mới, còn bốn mươi dòng rải rác thì không.
+
+**Phát hiện kèm theo, KHÔNG sửa trong task này:** `docs/product.md` §4.9 vừa liệt kê lời giải của
+U-019 vừa nói U-019 *"CHƯA CHỐT"*, cách nhau 25 dòng ⇒ `work/findings.md` **F-015** (Open), giao
+cho **BA-11**. BA-10 không tự sửa vì §1–§8 của `docs/product.md` là nội dung nghiệp vụ đã chốt,
+nằm ngoài scope của prompt này.
+
+**Sự cố trong lúc chạy — F-014 lần thứ bảy, lần này KHÔNG có thiệt hại.** Lúc BA-10 bắt đầu, hai
+phiên khác đang chạy trên đúng ba file BA-10 cần: T-044 (ADR-014, `docs/decisions.md`) và một phiên
+đóng U-026 (`docs/product.md`, `shop-facts.md`, `invariants.md`, `work/backlog.md`). Cách né, ghi
+lại vì nó **có tác dụng**: (1) **thêm** khối scope của mình vào `work/scope.txt` chứ không ghi đè;
+(2) chỉ ghi vào **mục chưa ai chạm** — ADR-015 trở đi, đặt **sau** ADR-014; (3) hoãn phần
+`docs/product.md` tới cuối lượt và làm bằng thay-chuỗi chính xác, để một lần đụng độ **thất bại**
+chứ không **ghi đè**. ⇒ Việc của T-044 (ADR-014, +93 dòng) vẫn còn nguyên và **chưa commit**; nó
+**không** thuộc khối commit của BA-10.
+
+<a id="t-044"></a>
+### T-044 — Câu cuối cùng đóng, và nó lật một mốc tiền
+
+**L2** — chạm mốc khoá giá (§4.4) và ranh giới của một bất biến tiền (I-009).
+
+**Lời chủ quán, 2026-09-02:** một dòng vừa sửa lấy **giá đang hiệu lực lúc sửa**. Câu trả lời đầu
+(*"đối sửa được tại thời điểm mà chủ quán quyết định"*) đọc được **hai** nghĩa cho ra **hai số tiền
+khác nhau** trên cùng một hoá đơn, nên phiên **hỏi lại** thay vì đoán (CLAUDE.md §3.5) — chủ quán
+chọn *lấy giá đang hiệu lực lúc sửa*.
+
+**Kết quả.** `shop-facts.md` §6.19 chốt: **sửa một dòng là đặt lại mốc khoá giá của chính dòng ấy**.
+`docs/product.md` §4.4 mang khối ngoại lệ; §5.2 và §6 dòng 13 đọc theo; `quality/invariants.md`
+**I-009** thêm ranh giới. §7.1 có dòng nhật ký. **Mục *Unknowns* nay rỗng.**
+
+**Chỗ dễ hỏng nhất, đã viết ra ở cả ba nơi:** lời chốt này **không** phá §4.4 và **không** nới
+I-009. Cái hai luật ấy cấm là **menu tự với ngược vào đơn cũ** — điều đó vẫn đúng nguyên văn. Cái
+được phép là **một thao tác cố ý của người đứng quầy trên đúng một dòng**. Bài kiểm phân biệt hai
+ca: đổi giá rồi **không** đụng đơn ⇒ mọi dòng giữ giá cũ · đổi giá rồi **sửa** một dòng ⇒ **chỉ
+dòng ấy** ăn giá mới. Sản phẩm nào đổi giá **cả lượt gọi** khi sửa một dòng là **vi phạm I-009**.
+
+**Hệ quả chạm tiền khách, không được giấu:** nếu chủ quán đổi giá giữa buổi, một dòng sửa sau mốc
+ấy **đắt hơn hoặc rẻ hơn chính nó lúc mới gọi**, dù khách không đổi món. ⇒ Vết của lần sửa phải ghi
+**cả giá cũ lẫn giá mới**; ghi mỗi *"đã sửa"* là làm đối soát ngưỡng 0đ (§4.9) không giải thích
+được chỗ lệch.
+
+**Bảy câu, hai ngày, một hình dạng — trừ câu này.** Sáu câu trước (U-021…U-025, U-027, U-030) đều
+ra *"POS quyết theo tình hình thực tế"*. Câu này chủ quán chọn một **luật cứng**. ⇒ Đừng đọc cái
+họ của sáu câu kia thành *"chủ quán không bao giờ đặt luật"* — họ đặt, ở đúng chỗ tiền của khách
+phải tính ra một con số duy nhất.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Bằng chứng |
+|---|---|
+| 1 | `shop-facts.md` §6.19 có gạch đầu dòng *"Một dòng vừa sửa lấy GIÁ ĐANG HIỆU LỰC LÚC SỬA"* |
+| 2 | §7.1 có **7** dòng `2026-09-02` |
+| 3 | `docs/product.md` §4.4 có khối *"ngoại lệ có chủ ý"* + ba gạch đầu dòng phân biệt |
+| 4 | I-009 có mục *"Một ngoại lệ, và nó KHÔNG nới invariant này ra"* kèm bài kiểm hai ca |
+| 5 | §6 còn **2** ⚠, cả hai là GĐ (dòng 4, 14); dòng 13 sạch |
+| 6 | `./scripts/brief.sh` → `OPEN UNKNOWNS (none)` |
+| 7 | `./scripts/gate.sh` xanh |
+
+<a id="t-043"></a>
+### T-043 — Hai câu nữa đóng, và một trong hai bỏ `Hoàn thành` khỏi chỗ "điểm dừng"
+
+**L2** — thêm một dòng vào bảng chuyển trạng thái của đơn và đổi nghĩa một trạng thái kết thúc.
+
+**Lời chủ quán, 2026-09-02 (lượt hai trong ngày):**
+- **U-027** — đơn đã `Hoàn thành` có huỷ được không: *"có thể huỷ được, để POS quyết định trong
+  thực tế."*
+- **U-030** — mảng quản trị nào phải có ở bản chạy đầu: *"không mảng nào cần chạy với bán hàng.
+  Bán hàng xong chạy được thì để chạy trước."*
+- **U-026** — dòng vừa sửa tính giá lúc nào: trả lời *"đối sửa được tại thời điểm mà chủ quán quyết
+  định"* — **chưa đủ rõ để ghi thành luật tiền**, xem mục *Còn mở* dưới đây.
+
+**Kết quả.** `shop-facts.md` §6.19 nay chốt **cả sửa lẫn huỷ**: không mốc trạng thái nào chặn, POS
+quyết từng ca. `docs/product.md` §5.2 có thêm dòng `Hoàn thành → Huỷ`; §5.6 rút từ hai ca xuống
+**một**; §6 dòng 13 nay có **hai** đường (sửa hoặc huỷ); §7.6 chốt thứ tự *bán hàng trước, quản trị
+sau*; `quality/invariants.md` **I-016** viết lại cả ba phần. §7.1 có hai dòng nhật ký.
+
+**Chỗ đắt nhất của task này: `Hoàn thành` không còn là điểm dừng tuyệt đối.** §5.2 từng viết *"hai
+trạng thái kết thúc, không có đường ra thứ ba"* — câu ấy nay **sai**. Một đơn đã `Hoàn thành` là
+đơn **có thể đã thu tiền**, nên mọi chỗ đọc `Hoàn thành` như *"chốt sổ xong"* phải đọc lại: báo cáo
+doanh thu (§4.10), đối soát cuối ngày (§4.9). Đường tiền của lần huỷ ấy là **hoàn tiền** (§4.8) —
+rơi vào **ngày hoàn**, không sửa lại ngày bán. §5.2 nay mang một khối ⚠ nói đúng điều này.
+
+**Bài học ghi tại chỗ, không thành finding riêng (§3.8).** Hai ca §5.6 từng bị viết bằng giọng của
+luật (*"sản phẩm từ chối"*) trong khi thật ra **chưa ai hỏi chủ quán** — và **cả hai lần chủ quán
+đều trả lời ngược lại**. Cộng với ba giả định GĐ-02/03/04 bị thay hôm nay, đó là **năm** lần cùng
+một kiểu sai trong hai ngày: đoán chặt hơn quán thật. §5.6 nay nói thẳng bài học ấy tại chỗ.
+
+**Còn mở — U-026, và vì sao KHÔNG đoán.** Câu trả lời *"tại thời điểm mà chủ quán quyết định"* đọc
+được ít nhất hai nghĩa: (a) dòng vừa sửa lấy **giá đang hiệu lực lúc sửa**; (b) chủ quán chọn mốc
+giá cho **từng ca**. Hai nghĩa cho ra hai con số tiền khác nhau trên cùng một hoá đơn, và §4.4 đang
+khoá giá theo *thời điểm tạo lượt gọi* — chọn sai là **tính sai tiền của khách**. CLAUDE.md §3.5
+cấm đoán chỗ này, nên U-026 ở lại *Đang mở* và câu hỏi lại đã viết trong report.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Bằng chứng |
+|---|---|
+| 1 | `shop-facts.md` §6.19 có gạch đầu dòng *"Vế HUỶ nay cũng đã chốt"*; §7.1 có 6 dòng `2026-09-02` |
+| 2 | §5.2 có dòng `\| **Hoàn thành** \| ... \| **Huỷ** \|`; bảng lên **13** dòng |
+| 3 | §5.2 mở đầu mang khối ⚠ nói `Hoàn thành` không còn là điểm dừng tuyệt đối |
+| 4 | §5.6 tiêu đề *"Một chuyển tiếp"*, còn **1** gạch đầu dòng ca bị từ chối |
+| 5 | I-016: phần *Invariant* còn 1 ca, *Verification* có **2** kịch bản dương + đường tiền |
+| 6 | §7.6 tiêu đề đổi thành *"KHÔNG mảng nào ở bản chạy đầu tiên"* |
+| 7 | brief in đúng **một** unknown còn mở: U-026 |
+| 8 | `./scripts/gate.sh` xanh |
+
+<a id="t-042"></a>
+### T-042 — Bốn câu đang treo có lời giải trong một lần, và cả bốn nói cùng một điều
+
+**L2** — chạm quy tắc tiền (§6.20, §6.21), vòng đời đơn (§5.2, §5.6) và ba dòng của bảng ngoại lệ §6.
+
+**Lời chủ quán, 2026-09-02** (trả lời bốn câu trong một lần):
+- **U-022** — sửa/huỷ đơn tới trạng thái nào: *"quán đang ở trạng thái nào cũng sửa được. POS sẽ
+  quyết định dựa trên tình hình thực tế."*
+- **U-025** — sổ giấy: *"POS hoặc chủ sẽ làm. Nhập ngay khi có thể… có điện lúc quán đang làm thì
+  để tiếp tục làm trên hệ thống sẽ cập nhật sau. Túm lại khi có thể sẽ nhập."*
+- **GĐ-02** — món hết: *"POS sẽ làm việc với khách và quyết định được đưa ra tại thời điểm thảo
+  luận xong với khách hàng."*
+- **GĐ-03** — chưa thấy báo có: *"POS sẽ thảo luận với khách và đưa ra quyết định tại lúc đó."*
+
+**Kết quả — chốt 2026-09-02.** Cả bốn cùng **một hình dạng**: POS quyết theo tình hình thực tế,
+**không có luật cứng**. Đây là lần thứ năm hình dạng ấy lặp lại — sau hoàn tiền (`shop-facts.md`
+§6.4) và đường lùi một mẻ (§5.4). ⇒ Ghi thành **lời chốt về cách quán vận hành**, không phải bốn
+chỗ tài liệu còn thiếu: sản phẩm **không được dựng hàng rào** ở những chỗ này.
+
+**Nhà thật đổi trước** (CLAUDE.md §2): `shop-facts.md` §6 lên **hai mươi mốt** quy tắc — §6.19 nới
+(sửa ở bất kỳ trạng thái nào) · §6.11 nới (ai giữ sổ, nhập khi có thể) · **§6.20** mới (món hết) ·
+**§6.21** mới (chưa thấy báo có). §7.1 có bốn dòng nhật ký `2026-09-02`. `prompt-fullstack.md` chép
+lại số quy tắc ở dòng bảng §6.
+
+**Rồi tài liệu đọc theo:** `docs/product.md` §5.2 (đoạn *sửa đơn* viết lại) · §5.6 (`Hoàn thành →
+Huỷ` nay chờ **U-027**, và nói rõ ca ấy **đã có đường đi bằng sửa**) · §6 dòng 5, 9, 13 hết dấu ⚠ ·
+§6.2 viết lại thành *dòng nào đã chốt, chốt từ đâu* · §6.3 (quy mô "hết bánh") ·
+`quality/invariants.md` **I-016** (thêm câu: lời chốt này **không** nới invariant ra) ·
+`docs/decisions.md` **GĐ-02, GĐ-03, GĐ-04** thành **Superseded**, giữ lại có gạch ngang.
+
+**Ba giả định BA-08 đoán SAI, và sai cùng một chiều — chặt hơn quán thật.** GĐ-04 đoán ngược hẳn
+(*"đơn đã Hoàn thành thì không sửa nữa"*); GĐ-03 chốt sẵn một đường trong khi chủ quán để cả hai
+mở; GĐ-02 viết như thể quán chọn sẵn một trong ba cách. Chính rủi ro GĐ-04 tự nêu là điều đã xảy
+ra. ⇒ Đây là bằng chứng cho CLAUDE.md §3.5: chỗ nào chưa hỏi thì **đừng đoán một luật cứng** —
+đoán chặt nghe an toàn nhưng sai nhiều nhất. Ba mục giữ lại kèm lời chốt thật ở đầu vì **chỗ đoán
+lệch là thứ đáng đọc**, không phải thứ nên xoá.
+
+**Hai vế lời chốt KHÔNG chạm tới, tách ra hai câu hẹp** (F-004 — đừng đọc rộng hơn chữ):
+**U-027** (đơn đã `Hoàn thành` có **huỷ** được không — cả hai lần trả lời đều dùng chữ *sửa*) và
+**U-026** (một dòng **vừa sửa** tính giá lúc nào, vì §4.4 khoá giá theo lượt gọi). U-027 **không
+chặn ai** — ca *"đơn hoàn thành cần điều chỉnh"* đã có đường đi bằng sửa.
+
+**Va chạm hai phiên — F-014, lần thứ sáu, và lần này CÓ thiệt hại.** Task admin (T-040, T-041) chạy
+song song trong cùng cây. Ba lần đụng: (1) tôi ghi đè cả mục *Đang mở* của `docs/product.md`, xoá
+mất bullet **U-026** phiên kia vừa viết — họ tự viết lại nên không mất hẳn; (2) hai phiên cùng lấy
+số **T-040**; (3) hai phiên cùng lấy số **U-028**. Cả ba đều do **đánh số và ghi đè theo mục** trên
+tài liệu dùng chung. ⇒ Đây là dữ kiện mới cho **T-035**: F-014 tới nay chỉ nói về `work/scope.txt`,
+nhưng thiệt hại thật lần này là **trùng ID** và **ghi đè cả mục**, hai thứ scope không chặn được.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Bằng chứng |
+|---|---|
+| 1 | `shop-facts.md` §6.19 (sửa mọi trạng thái) · §6.11 (sổ giấy) · §6.20 · §6.21 |
+| 2 | tiêu đề §6 = *Hai mươi mốt*, `prompt-fullstack.md` dòng 72 khớp |
+| 3 | §7.1 có **4** dòng `2026-09-02` |
+| 4 | `docs/product.md` §6: `grep -c '⚠ \*\*Chưa chốt'` → **3** (dòng 4, 13-phần-giá, 14), trước là 5 |
+| 5 | brief in đúng **U-026** và **U-027**; U-022, U-025 xuống bảng *Đã có lời giải* |
+| 6 | `docs/decisions.md`: 3 mục mang **Superseded**, GĐ-01 và GĐ-05 giữ nguyên hiệu lực |
+| 7 | bảng §10 câu 3 đóng, trỏ `shop-facts.md` §6.20 |
+| 8 | `./scripts/gate.sh` xanh |
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -c '^| [0-9]' <(sed -n '/^## 6\. Ngoại lệ/,/^## 7\./p' docs/product.md)   # 14
+./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/LATEST/p'
+```
+
+
+<a id="t-041"></a>
+### T-041 — Nội dung mảng ADMIN nằm lẫn trong mục của mảng bán hàng, đọc không biết nó thuộc phần nào
+
+**L1** — chỉ tài liệu, không chạm hành vi; nhưng nó đặt ra một **luật viết** mà mọi task admin sau
+này phải theo, nên nó đẻ một ADR.
+
+**Prompt:** chưa có · **chặn** mọi task ADM-01…ADM-52 nếu chạy trước
+
+**Hiện trạng đang SAI:** T-040 (cùng ngày) ghi lời chốt Đ-1 bằng cách **viết chen vào mục đang có**
+— một khối dài trong `docs/product.md` §1.4 (*Ranh giới hệ thống*) và một khối nữa trong
+`docs/architecture.md` §10 (*Ngoài phạm vi mặt admin*). Cả hai mục ấy vốn nói về **mảng bán hàng**.
+Người đọc mở ra thấy một đoạn về nguyên liệu, chấm công, tài chính nằm giữa các dòng về đơn và bàn,
+và **không có cách nào biết đoạn ấy thuộc phần nào**.
+
+**Lời chủ repo, 2026-09-02:** *"khi cập nhật phần admin vào bất cứ tài liệu nào hãy làm thêm 1 mục
+cho admin tách riêng ra, tôi cần biết mục này là thuộc phần nào"*.
+
+**Goal:** mở bất kỳ tài liệu nào trong repo, nhìn mục lục là biết ngay đâu là phần **bán hàng** và
+đâu là phần **quản trị (admin)**; và luật ấy được ghi ở chỗ phiên sau buộc phải đọc, không phải chỗ
+ai đó phải nhớ.
+
+**Nói một câu, việc phải làm là gì:** chuyển nội dung admin của T-040 ra **mục riêng có nhãn** ở ba
+tài liệu, để lại ở mục cũ đúng **một dòng trỏ**, rồi chốt luật thành **ADR-013**. Việc **không**
+phải làm: viết thêm luật nghiệp vụ cho ba mảng admin, hay dựng mục con cho từng mảng — hôm nay chưa
+có dữ kiện nào để đổ vào đó.
+
+**Vì sao có task này:** một mục riêng có nhãn là thứ duy nhất **không trôi**. Ghi chen vào mục có
+sẵn thì mỗi lần mục ấy được sửa vì lý do bán hàng, phần admin lại bị đọc nhầm là luật bán hàng —
+đúng họ lỗi F-001 (hai thứ khác nhau ở chung một chỗ thì chỗ ấy sai với ít nhất một trong hai).
+
+**Không làm thì mất gì:** 52 việc ADM ở `work/admin-questions.md` §2 sẽ lần lượt được viết vào tài
+liệu; mỗi việc chen vào một mục bán hàng là một chỗ nữa không ai tách lại được. Sửa bây giờ mất một
+lượt, sửa sau mất một lượt cho mỗi mục.
+
+**Scope:** `docs/product.md` (§1.4 → mục mới §1.6) · `docs/architecture.md` (§10 → mục mới §14, và
+bảng §13) · `docs/decisions.md` (**ADR-013**) · `master_plan/shop-facts.md` (§7.1 cột *Ghi ở*, §7.3,
+mục mới **§8**) · `work/admin-questions.md` §4 · `work/backlog.md`.
+
+**Out of scope:** Đ-2, Đ-3, Đ-4 (vẫn chờ chủ quán xác nhận lại) · `quality/invariants.md` ·
+`CLAUDE.md` (đang có thay đổi chưa commit của phiên khác — không chen vào) · `prompt/`.
+
+**Bẫy hay sửa nhầm nhất:**
+- **Đánh số lại mục là làm gãy pointer.** `docs/architecture.md` §13 đang được
+  `prompt/BA/08-mvp-scope-L1.md` trỏ tới; mục admin mới phải là **§14** ở cuối, không được chèn vào
+  giữa rồi đẩy §13 xuống.
+- **`master_plan/shop-facts.md` không có liên kết nào** (ADR-001). Mục admin mới ở đó chỉ được trỏ
+  bằng số mục nội bộ, không được nhắc tên file khác.
+- **§7.1 vẫn phải là nhật ký ĐẦY ĐỦ.** Tách mục admin không có nghĩa là rút dòng chốt ra khỏi §7.1
+  — dòng ở lại, chỉ đổi cột *Ghi ở* thành **§8**.
+
+**Acceptance:**
+1. `docs/product.md` có mục **§1.6** mang nhãn admin, giữ toàn bộ nội dung ranh giới ba mảng; §1.4
+   chỉ còn **một dòng trỏ** sang §1.6 và không còn khối dài nào về admin.
+2. `docs/architecture.md` có mục **§14** mang nhãn admin; §10 chỉ còn một dòng trỏ; **§13 giữ
+   nguyên số** và bảng *Đọc gì tiếp* có thêm một dòng trỏ tới §14.
+3. `master_plan/shop-facts.md` có mục **§8** mang nhãn admin; §7.1 giữ nguyên dòng nhật ký nhưng
+   cột *Ghi ở* trỏ **§8**; §7.3 nói thêm rằng dữ kiện admin về §8.
+4. `master_plan/shop-facts.md` §8 **không nhắc tên file nào** (ADR-001).
+5. `docs/decisions.md` có **ADR-013** chốt luật *"nội dung admin đi vào mục riêng có nhãn"*, đủ bốn
+   khối Decision · Why · Rejected alternatives · Applies to.
+6. `work/admin-questions.md` §4 — bảng *lời giải đi đâu* nói rõ luật này và trỏ ADR-013.
+7. Mở mục lục của cả ba tài liệu, đọc tên mục là biết mục nào thuộc mảng admin.
+8. `./scripts/gate.sh` xanh.
+
+**Đã xong 2026-09-02.** Tám dòng Acceptance đều có bằng chứng:
+- (1) `docs/product.md` — mục mới **§1.6 Mảng QUẢN TRỊ (admin)**; §1.4 chỉ còn ba dòng trỏ sang nó,
+  khối dài đã chuyển đi nguyên vẹn. Banner đầu file nói thêm: tên mục admin mang chữ *(admin)*.
+- (2) `docs/architecture.md` — mục mới **§14** ở cuối, **§13 giữ nguyên số** (nên
+  `prompt/BA/08-mvp-scope-L1.md` không gãy), bảng *Đọc gì tiếp* có thêm dòng trỏ §14. §14 mở đầu
+  bằng một cảnh báo phân biệt **mảng admin** (ba mảng) với **mặt admin** (cả hệ thống, tiêu đề tài
+  liệu) — hai chữ giống nhau, hai phạm vi khác hẳn.
+- (3) `master_plan/shop-facts.md` — mục mới **§8** (§8.1 ranh giới · §8.2 chưa có luật · §8.3 cách
+  viết tiếp); §7.1 giữ nguyên dòng nhật ký, cột *Ghi ở* nay là **§8**; §7.3 thêm đoạn nói dữ kiện
+  admin về §8; banner đầu file nói *§1–§7 bán hàng, §8 admin*.
+- (4) `sed -n` mục §8 rồi `grep` tìm dấu `/` và đuôi `.md` → không khớp dòng nào ⇒ §8 không nhắc
+  tên file nào, ADR-001 nguyên vẹn.
+- (5) `docs/decisions.md` **ADR-013** đủ bốn khối, kèm bảng ba mục admin và ba luật đi kèm.
+- (6) `work/admin-questions.md` §4 — bảng *lời giải đi đâu* nay có bảng ba mục admin và trỏ ADR-013.
+- (7) Mục lục ba tài liệu: `### 1.6 Mảng QUẢN TRỊ (admin)…` · `## 14. Mảng QUẢN TRỊ (admin)…` ·
+  `## 8. Mảng QUẢN TRỊ (admin)…` — đọc tên mục là biết thuộc phần nào.
+- (8) `./scripts/gate.sh` xanh (lần chạy đầu đỏ, xem bẫy ngay dưới).
+
+**Bẫy đã gặp thật:** Gate 1b bắt một đường dẫn không tồn tại trong mục *Rejected alternatives* của
+ADR-013 — phương án **bị từ chối** viết dưới dạng đường dẫn có backtick vẫn bị chấm như pointer
+thật. Phương án bị loại thì tả bằng lời, đừng viết thành đường dẫn.
+
+<a id="ba-09"></a>
+### BA-09 — Phạm vi MVP
+
+**Xong 2026-09-02.** L1 · `prompt/BA/08-mvp-scope-L1.md` · `docs/product.md` §7 (chín mục con) +
+*Unknowns* (**U-030** mới) · `work/backlog.md`.
+
+**§7 chốt gì:**
+
+| Mục | Chốt |
+|---|---|
+| §7.2 | **Mười bốn năng lực** trong MVP, đúng mười bốn dòng kế hoạch gốc §9 — không bớt, không thêm dòng nào nghe hợp lý. Mỗi dòng trỏ về mục §1–§6 mô tả nó |
+| §7.3 | **Hai việc VẬN HÀNH** bắt buộc nằm trong MVP — đối soát cuối ngày (ba nguồn, ngưỡng 0đ) và quy trình sổ giấy. Chúng là **việc của quán**, không phải tính năng; cột thứ hai của bảng nói phần mềm phải chịu được gì |
+| §7.4 | **Sáu dòng chủ quán ĐÃ QUYẾT không làm** — bốn ranh giới `shop-facts.md` §6.12, cộng *máy tự chia mẻ* và *nút báo xong ở ba trạm bếp*. Mở lại phải có lời chủ quán, một task là chưa đủ |
+| §7.5 | **Bảy dòng để sau** — không nguồn nào nhắc tới ⇒ mặc định ngoài MVP |
+| §7.6 | **Ba mảng vừa mở ranh giới** (nguyên liệu · con người · tài chính) — chỗ đứng riêng, không phải §7.4 và không phải §7.5 |
+| §7.7 | **Bốn chỗ MVP còn thiếu mô tả ở §1–§6**, ghi thẳng ra thay vì viết bù |
+| §7.8 | Yêu cầu ngoài hai danh sách thì đi đường nào — và một câu nói rõ **§7 là chỗ đối chiếu, không phải hàng rào** |
+
+**Ba chỗ khuôn BA-09 nói một đằng, dữ kiện hôm nay nói một nẻo — và §7 viết theo dữ kiện:**
+
+1. ***"Tách/gộp bàn"* chỉ còn đúng một nửa.** Khuôn xếp cả cụm vào *ngoài MVP*; khuôn viết **trước
+   2026-08-31**, ngày chủ quán trả lời U-006: **ghép bàn là chuyện có thật**, một phiên gắn nhiều
+   bàn và vẫn **một** hoá đơn (`shop-facts.md` §6.16). Nên **gộp** vào §7.2 dòng 4, chỉ **tách** ở
+   §7.5. Chép nguyên dòng khuôn vào đây là **loại bỏ một năng lực chủ quán đã chốt là có** — đúng
+   họ lỗi F-005 (dữ kiện đổi, tài liệu khung còn nói cũ).
+2. **Kế hoạch gốc §9 viết *"Bốn kênh bán"***, vì viết trước 2026-08-29. §7.2 dòng 2 ghi **năm** và
+   nói thẳng vì sao, đúng như Acceptance 2 đòi.
+3. **Câu 10 của bảng mười câu hỏi không cần một quyết định mới.** *"Có lưu lịch sử thao tác nhân
+   viên ở MVP không"* — §1.4 đã chốt từ trước là **có** (mọi thao tác chạm tiền hoặc chạm trạng
+   thái đơn để lại vết) và **I-012** giữ luật ấy. §7 chỉ **trỏ về** lời chốt đó; tự viết một câu
+   mới ở §7 là tạo bản sao thứ hai của một sự thật (F-001).
+
+**U-030 — câu duy nhất task này mở.** §1.6 (T-040 mở ranh giới, T-041 tách ra thành mục admin
+riêng — cả hai cùng ngày) nói rõ
+*"mảng nào vào MVP là câu của §7"*. §7 trả lời được **một nửa**: hôm nay không mảng nào ở §7.2, vì
+§7.2 có điều kiện vào cửa — *§1–§6 đã mô tả nó* — và §2–§6 chưa có một quy tắc nghiệp vụ nào cho ba
+mảng ấy. Nửa còn lại — **mảng nào phải có ở bản chạy đầu tiên** — là câu cho **chủ quán**, không
+phải chỗ để §7 tự xếp lịch (CLAUDE.md §3.5). Ba lời chốt **Đ-2, Đ-3, Đ-4** ở
+`work/admin-questions.md` §1 chạm đúng câu này nhưng **chưa được xác nhận lại**, nên chúng chưa
+phải lời giải.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Chứng minh ở |
+|---|---|
+| 1 | `docs/product.md` §7.2 (*Trong MVP*) và §7.4 + §7.5 (*Ngoài MVP*, hai loại tách bạch) |
+| 2 | §7.2, mười bốn dòng bảng; đoạn ngay dưới bảng nói kế hoạch gốc viết **bốn** kênh vì viết trước 2026-08-29 |
+| 3 | §7.2, cột *Mô tả ở đâu* — mười bốn dòng đều có; bốn dòng có thêm dấu ⚠ trỏ §7.7 |
+| 4 | §7.4 và §7.5, cột *Vì sao* / *Lý do* — mười ba dòng đều có |
+| 5 | §7.8, ba bước, câu đầu in đậm |
+| 6 | §7.5 (khuyến mãi · tích điểm · **tách** bàn · đặt bàn trước) + §7.4 bốn dòng đầu, lý do là *chủ quán đã quyết*; ghi chú dưới §7.5 giải thích vì sao **gộp** bàn không ở đó |
+| 7 | §7.3, hai dòng bảng |
+| 8 | §7.9 gạch đầu dòng thứ nhất — tám hạng mục kỹ thuật của kế hoạch gốc §9 nằm ở đó như thứ **không** phải năng lực MVP, không dòng nào lọt vào §7.2 |
+| 9 | `./scripts/gate.sh` xanh |
+
+**Bốn chỗ thiếu §7.7 ghi ra, để BA-10 và BA-12 khỏi phải tìm lại:** trục **mẻ** (§3.4 — BA-12) ·
+*Quản lý nhân viên cơ bản* (đúng một gạch đầu dòng ở §1.3 — đi cùng U-030) · *Báo cáo doanh thu
+**cơ bản*** gồm chỉ số nào (BA-10 hoặc một task riêng) · *Thông báo đơn* (một câu ở §3.2.1 bước 6).
+Chỗ thứ năm — **U-025** — đóng ngay trong ngày (POS hoặc chủ quán nhập lại, ngay khi có thể),
+nên nó đổi loại: MVP **có** một đường nhập lại phần bán tay (§7.3), và cái còn thiếu chỉ là **một
+lượt bán ghi tay gồm những trường nào** — **ADM-52**, không chặn ai.
+
+**BA-12 không chặn task này** dù entry BA-12 và mục *Ready* đều nói thế — lý do viết ở khối
+*Ready*, ngay dưới gạch đầu dòng BA-12.
+
+**Không mở ADR, không mở finding.** §7 không quyết định thiết kế nào; mọi dòng của nó đọc lại
+lời đã chốt ở §1–§6 hoặc ở `shop-facts.md`. Chỗ nào chưa có lời chốt thì thành **U-030** hoặc một
+dòng ⚠ ở §7.7, không thành một giả định.
+
+<a id="t-040"></a>
+### T-040 — Ranh giới hệ thống nói KHÔNG với ba mảng mà chủ quán đã chốt là CÓ
+
+**L1** — chỉ tài liệu, không chạm hành vi nào đang chạy; nhưng nó **xoá** một dòng ranh giới, và
+một ranh giới bị xoá nhầm thì task sau viết theo phạm vi sai (BA-09).
+
+**Prompt:** chưa có · **chặn** BA-09 (§7 phạm vi MVP) nếu chạy trước
+
+**Hiện trạng đang SAI:** `docs/product.md` §1.4 còn dòng *"Không quản lý nguyên liệu, tồn kho,
+chấm công hay kế toán"* và `docs/architecture.md` §10 xếp đúng bốn thứ ấy vào *"đã quyết định
+không làm"*. Chủ quán đã chốt **ngược lại** từ 2026-09-01, nên hôm nay hai câu ấy tả một sản phẩm
+hẹp hơn cái chủ quán đặt hàng.
+
+**Lời chủ quán:** chốt **2026-09-01** trong phiên, **xác nhận lại 2026-09-02** bằng đúng chữ
+*"Đ-1 → trả lời đồng ý theo lời chốt"* (`work/admin-questions.md` §1): **mở cả ba** — nguyên
+liệu · con người · tài chính — vào phạm vi hệ thống.
+
+**Goal:** ranh giới trong tài liệu bằng đúng ranh giới chủ quán chốt, và nhật ký chốt giữ được ngày
+để phiên sau biết mình đang lật lại điều gì.
+
+**Nói một câu, việc phải làm là gì:** xoá câu *"không quản lý…"* ở hai chỗ và ghi ngày chốt ở chỗ
+thứ ba. Việc **không** phải làm: viết luật nghiệp vụ, dựng màn, chọn mức sâu cho ba mảng, hay quyết
+mảng nào vào MVP — mở ranh giới chỉ là **được phép**, chưa phải **làm**.
+
+**Vì sao có task này:** `work/admin-questions.md` §1 giữ bốn lời chốt ngày 2026-09-01 mà **chưa
+file nào ghi lại** — hôm ấy `docs/product.md` đang có thay đổi chưa commit của BA-07 và sửa chồng
+lên đúng là cơ chế sự cố F-013/F-014. Chủ quán xác nhận lại Đ-1 ngày 2026-09-02 nên nó đi trước;
+Đ-2, Đ-3, Đ-4 **chưa** được xác nhận lại và **không** nằm trong task này.
+
+**Không làm thì mất gì:** BA-09 chốt *"MVP gồm những gì"* bằng cách đọc §1.4; đọc phải dòng cũ thì
+nó loại thẳng ba mảng ra khỏi MVP và phải viết lại lần hai. Mọi việc ADM-01…ADM-52 ở
+`work/admin-questions.md` §2 đều mâu thuẫn với owner của chính nó chừng nào dòng cũ còn đứng đó.
+
+**Scope:** `docs/product.md` §1.4 · `docs/architecture.md` §10 · `master_plan/shop-facts.md` §7.1 ·
+`work/admin-questions.md` · `work/backlog.md`.
+
+**Out of scope:** Đ-2, Đ-3, Đ-4 (chưa xác nhận lại) · `docs/decisions.md` · `quality/invariants.md`
+(chưa có luật nào để giữ) · `docs/product.md` §2–§8 · `prompt/`.
+
+**Acceptance:**
+1. `docs/product.md` §1.4 **không còn** dòng *"Không quản lý nguyên liệu, tồn kho, chấm công hay
+   kế toán"* trong danh sách *KHÔNG chịu trách nhiệm*.
+2. `docs/product.md` §1.4 nói ra lời chốt: ba mảng **nguyên liệu · con người · tài chính** vào phạm
+   vi, kèm **ngày** (2026-09-01, xác nhận lại 2026-09-02) và **ai chốt** (chủ quán).
+3. §1.4 nói thẳng rằng **mở ranh giới chưa sinh ra luật**, và mảng nào vào MVP là câu của §7
+   (BA-09) — để task sau không đọc nhầm *được phép* thành *phải làm ngay*.
+4. §1.4 nói rõ bốn ranh giới ở `shop-facts.md` §6.12 **không** bị lời chốt này chạm tới.
+5. `docs/architecture.md` §10 **không còn** dòng *"Nguyên liệu, tồn kho, chấm công, kế toán"*, và
+   có một đoạn nói dòng ấy đã ra khỏi mục, ngày nào, vì ai.
+6. `master_plan/shop-facts.md` §7.1 có **một dòng nhật ký** cho lời chốt này, ngày 2026-09-01, và
+   nó **không trỏ ra file khác** — tài liệu ấy cố ý không có link (CLAUDE.md §2).
+7. `work/admin-questions.md` §1 đánh dấu Đ-1 **đã về owner**, và §2 dòng ADM-53 nói rõ phần nào
+   còn lại (Đ-2, Đ-3, Đ-4).
+8. `grep -rn` cho *tồn kho / chấm công / kế toán* trong `docs/` và `master_plan/` không còn chỗ nào
+   nói ba mảng ấy ngoài phạm vi.
+9. `./scripts/gate.sh` xanh.
+
+**Cách hoàn thành:** khai báo `work/scope.txt` → viết Acceptance (khối này) → sửa ba owner theo
+thứ tự nhà thật trước (`shop-facts.md` §7.1) rồi tài liệu đọc lại theo nó (`product.md`,
+`architecture.md`) → cập nhật `work/admin-questions.md` → chạy gate → khối commit.
+
+**Đã xong 2026-09-02.** Chín dòng Acceptance đều có bằng chứng:
+- (1)(2)(3)(4) `docs/product.md` §1.4 — dòng *"Không quản lý…"* biến mất khỏi danh sách *KHÔNG chịu
+  trách nhiệm*; thay vào là khối **2026-09-02 — ranh giới vừa MỞ RA**, có ngày, có người chốt, có
+  câu *"mở ranh giới chưa phải là có luật"*, và có câu giữ nguyên bốn ranh giới §6.12.
+- (5) `docs/architecture.md` §10 — bullet *Nguyên liệu, tồn kho, chấm công, kế toán* bị xoá, thay
+  bằng đoạn **Một dòng đã RA khỏi mục này** kèm cảnh báo mở ranh giới không sinh ra thiết kế.
+- (6) `master_plan/shop-facts.md` §7.1 — thêm đúng một dòng nhật ký ngày 2026-09-01, cột *Ghi ở* để
+  dấu `—` chứ không trỏ ra file khác (tài liệu ấy cố ý không có link, `CLAUDE.md` §2).
+- (7) `work/admin-questions.md` — Đ-1 gạch ngang và đánh dấu ✅ đã về owner; dòng ADM-53 nói rõ còn
+  Đ-2, Đ-3, Đ-4.
+- (8) `grep -rn` *tồn kho / chấm công / kế toán* trong `docs/ master_plan/ prompt/ quality/` chỉ còn
+  **ba** chỗ trích lại chính câu đã xoá (đánh dấu là lịch sử) và một chỗ ở `docs/decisions.md` dùng
+  chữ *kế toán* theo nghĩa khác (doanh thu ghi nợ).
+- (9) `./scripts/gate.sh` xanh.
+
+**Việc còn lại, KHÔNG thuộc task này:** Đ-2, Đ-3, Đ-4 ở `work/admin-questions.md` §1 vẫn chưa về
+owner. Chủ quán mới xác nhận lại **Đ-1**; ba lời kia là lời chốt ngày 2026-09-01 chưa được nhắc
+lại, và chuyển chúng đi mà không hỏi là tự quyết thay chủ quán (`CLAUDE.md` §3.5).
+
+<a id="ba-08"></a>
+### BA-08 — Ngoại lệ
+
+**Prompt:** `prompt/BA/07-exceptions-L2.md` (L2) · **Cần xong trước:** BA-03–BA-07
+
+**Goal:**
+`docs/product.md` §6 chốt cách quán xử lý từng ngoại lệ quan trọng, ở mức nghiệp vụ, đủ để nhân
+viên biết phải làm gì mà không cần hỏi chủ quán.
+
+**Scope:** `docs/product.md` §6 · `docs/decisions.md` (ghi GIẢ ĐỊNH cho ngoại lệ chưa có lời
+giải) · `work/findings.md` (khi phát hiện mâu thuẫn giữa hai quy tắc đã chốt) · `work/backlog.md`.
+
+**Out of scope:** §1–§5, §7–§8 của `docs/product.md` · `quality/invariants.md` (BA-08 mô tả cách
+xử lý, không thêm bất biến) · `docs/architecture.md`.
+
+**Acceptance:**
+1. §6 có bảng phủ đúng 14 tình huống ở §8 kế hoạch gốc, không thiếu dòng nào.
+2. Mỗi dòng có đúng 4 cột: tình huống · ai xử lý · kết quả với đơn/phiên (trạng thái có trong §5) ·
+   kết quả với tiền.
+3. Mọi tên trạng thái trong §6 tìm được trong §5.
+4. Tình huống chưa chốt được đánh dấu `⚠ Chưa chốt — xem docs/decisions.md`; không dòng nào bị bỏ
+   trống lặng lẽ.
+5. Ba tình huống đã có lời giải — gọi thêm khi đang thu tiền (`shop-facts.md` §6.1) · tạm dừng
+   nhận đơn (§6.8) · mất điện/mất mạng/POS hỏng (§6.11) — **không** bị đánh dấu Chưa chốt.
+6. Mỗi tình huống chưa chốt có một mục tương ứng trong `docs/decisions.md` kèm mức rủi ro.
+7. Không dòng nào mô tả cách hệ thống kỹ thuật xử lý (retry, hàng đợi, offline cache).
+8. Hai quy tắc đã chốt mà mâu thuẫn nhau thì có finding trong `work/findings.md`.
+
+**Câu hỏi §10 gắn vào task này:**
+- Câu 3 — món hết sau khi khách đã đặt: thay thế, huỷ phần đó, hay huỷ cả đơn; và nếu chỉ hết
+  **một thành phần** của suất thì sao. **Còn mở.**
+- Câu 4 — khách không thanh toán được thì phiên bàn giữ ở trạng thái nào. **Còn mở.**
+Cả hai: hỏi người, không tự chốt; chưa có lời giải thì GIẢ ĐỊNH + rủi ro trong `docs/decisions.md`.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+sed -n '/^## 6\./,/^## 7\./p' docs/product.md | grep -c '^| '   # 14 dòng tình huống
+grep -n 'Chưa chốt' docs/product.md docs/decisions.md           # khớp đôi một
+grep -nEi 'retry|offline cache|hàng đợi' docs/product.md        # rỗng
+git status --porcelain
+```
+
+**Kết quả — chốt 2026-09-02.** `docs/product.md` §6 có bảng **mười bốn dòng**, phủ đúng danh sách
+kế hoạch gốc §8 không bớt dòng nào, mỗi dòng đủ bốn cột *tình huống · ai xử lý · kết quả với
+đơn/phiên · kết quả với tiền*. Mọi tên trạng thái trong §6 đều tìm được ở §5 (kiểm bằng máy, 13
+tên).
+
+**Chín dòng chốt được, năm dòng không — và năm dòng ấy đều có tên.** Chốt được vì đã có lời chủ
+quán ở `shop-facts.md`: gửi nhầm đơn QR · quầy từ chối đơn · gọi thêm khi đang thu tiền (§6.1) ·
+tạm dừng nhận đơn (§6.8) · khách huỷ · nhân viên huỷ (§6.13) · **khách rời bàn chưa trả** (§6.14 —
+cho nợ, đây là **câu 4** của bảng §10, nay đóng) · mất mạng · mất điện/POS hỏng (§6.11).
+
+**Năm dòng còn mở thành năm GIẢ ĐỊNH có mức rủi ro** trong `docs/decisions.md` — mục
+*Giả định BA* mới: **GĐ-01** hai người cùng thao tác một bàn (TRUNG BÌNH) · **GĐ-02** món hết sau
+khi khách đã chọn (**CAO**) · **GĐ-03** khách nói đã chuyển khoản mà chưa thấy báo có (**CAO**) ·
+**GĐ-04** đơn đã hoàn thành cần điều chỉnh (TRUNG BÌNH, chính là nửa còn mở của **U-022**) ·
+**GĐ-05** thao tác nhầm ngoài ca bấm nhầm một mẻ (TRUNG BÌNH). Mỗi mục ghi *giả định · vì sao tạm
+chấp nhận được · rủi ro nếu sai · câu phải hỏi chủ quán*.
+
+**Hai dòng CAO đều cao vì QUY MÔ, không vì độ khó.** GĐ-02: mọi suất đều kèm bánh
+(`shop-facts.md` §4.5) ⇒ **hết bánh cuốn là hết gần như mọi món**, nên chọn sai đường ở đây là
+chọn sai cho cả buổi bán chứ không phải một đơn — §6.3 nói riêng chuyện này ra. GĐ-03 chạm thẳng
+cổng chất lượng mạnh nhất của dự án: đối soát ngưỡng **0đ** (`shop-facts.md` §6.10).
+
+**Mở một câu mới: U-025** — mất điện thì **ai giữ sổ giấy, ghi những trường gì, ai nhập lại vào
+máy và lúc nào**. §6 chốt được *quán chuyển sang sổ giấy và không dừng bán* (§6.11) nhưng phần
+nhập lại thì chưa ai nói, mà không có nó thì đối soát cuối ngày của một ngày mất điện không chạy
+được. Prompt `07-exceptions-L2.md` đã dặn trước phải ghi Unknowns chỗ này.
+
+**Không thêm bất biến nào** — đúng Out of scope. Ba dòng chạm tiền nặng nhất (9, 10, 13) được đối
+chiếu tay với I-005, I-012, I-017 (Gate 5, L2): không dòng nào phá bất biến đang có.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Bằng chứng |
+|---|---|
+| 1 | `grep -c '^| [0-9]'` trên §6 → **14** |
+| 2 | mọi dòng bảng có đúng 5 cột (kiểm bằng `awk -F'|' 'NF!=7'` → rỗng) |
+| 3 | 13 tên trạng thái dùng ở §6, cả 13 tìm được trong §5 (kiểm bằng vòng lặp `grep`) |
+| 4 | năm dòng ⚠ mang đúng chuỗi `⚠ **Chưa chốt — docs/decisions.md GĐ-0X`; không ô nào trống |
+| 5 | dòng 3, 6, 11, 12 **không** mang dấu ⚠; §6.2 gọi tên lại ba ca ấy |
+| 6 | `GĐ-01…GĐ-05` trong §6 khớp đôi một với `### GĐ-01…GĐ-05` trong `docs/decisions.md`, mỗi mục có **Rủi ro:** |
+| 7 | `grep -nEi 'retry|cache|offline sync|hàng đợi|queue'` trên `docs/product.md` → rỗng |
+| 8 | không phát hiện hai quy tắc đã chốt mâu thuẫn nhau ⇒ **không** thêm finding (§3.8: không viết finding cho cái không có) |
+
+<a id="t-039"></a>
+### T-039 — Bốn câu BA-07 vừa mở có lời giải trong ngày, và một trong bốn MỞ RA một đường đi mới
+
+**L2** — chạm bảng chuyển trạng thái của `docs/product.md` §5 và thêm một đường lùi chưa từng có.
+
+**Hiện trạng đang SAI:** BA-07 đóng ngày 2026-09-01 với bốn chỗ *"chưa ai chốt ai bấm"* nằm thẳng
+trong cột **ai kích hoạt** của hai bảng §5.2 và §5.4 — một bảng chuyển trạng thái có ô để trống thì
+chưa dùng được. Ngoài ra `docs/product.md` §5.6 đang nói *"bấm nhầm một mẻ thì hôm nay không có
+đường lùi"* và `quality/invariants.md` I-016 chép lại câu ấy; chủ quán trả lời **ngược**: có đường
+lùi. Nên ngay lúc này §5 tả một sản phẩm chặt hơn cái quán thật.
+
+**Lời chủ quán, 2026-09-01** (trả lời cả bốn câu trong một lần):
+- **U-021** — ai nói cho máy biết một mẻ **đã bưng ra bàn**: **"pos"**.
+- **U-022** — đơn đã xác nhận mà khách đổi ý: **"pos sửa đơn"** ⇒ **sửa được**, không phải huỷ rồi
+  tạo lại, và POS là nơi sửa. Vế **huỷ được phép tới trạng thái nào** thì câu trả lời **không
+  chạm tới** — U-022 ở lại *Đang mở* với phạm vi hẹp hơn, đúng cách U-006 từng ở lại (§*Đã có lời
+  giải*, 2026-08-31).
+- **U-023** — ai bấm cho đơn giao tận nơi sang `Đang giao`: **"pos"**.
+- **U-024** — bấm nhầm *"đã làm xong"* một mẻ: **"có đường lui. thời gian tuỳ theo thực tế để pos
+  quyết định"** ⇒ **có** đường lùi, và **không có mốc thời gian cứng** — người đứng quầy quyết
+  từng ca.
+
+**Goal:** bốn lời chốt vào nhà thật `master_plan/shop-facts.md`, rồi `docs/product.md` §5 và
+`quality/invariants.md` đọc lại theo nó; U-021, U-023, U-024 xuống *Đã có lời giải*, U-022 ở lại
+hẹp hơn.
+
+**Scope:** `master_plan/shop-facts.md` · `master_plan/prompt-fullstack.md` (chép lại số quy tắc
+§6) · `docs/product.md` §5 và *Unknowns* · `quality/invariants.md` · `work/backlog.md`.
+
+**Out of scope:** `docs/decisions.md` (BA-10 gom) · `docs/architecture.md` · §1–§4 và §6–§8 của
+`docs/product.md` · `prompt/BA/`.
+
+**Acceptance:**
+1. `shop-facts.md` chốt **POS là nơi bấm** cả hai con số của bảng quầy — *đã làm xong* **và** *đã
+   bưng ra bàn* — kèm ngày và người chốt.
+2. `shop-facts.md` chốt **đường lùi** cho một lần bấm nhầm, và ghi rõ **không có mốc thời gian
+   cứng**: người đứng quầy quyết từng ca.
+3. `shop-facts.md` có một quy tắc **sửa đơn**: đơn đã xác nhận **được sửa**, sửa **trên POS**, và
+   nói thẳng phần nào của câu hỏi **chưa** được trả lời.
+4. `shop-facts.md` chốt **POS bấm** mốc đơn giao tận nơi sang *"đang giao"*.
+5. Tiêu đề §6 và mọi chỗ chép lại số quy tắc (kể cả `master_plan/prompt-fullstack.md`) khớp số
+   quy tắc thật.
+6. `shop-facts.md` §7.1 có dòng nhật ký cho cả bốn lời chốt, ngày **2026-09-01**.
+7. `docs/product.md` §5.2 và §5.4 **không còn ô nào** ghi *"chưa ai chốt ai bấm"*.
+8. §5.4 có **dòng lùi** `Đã làm xong, còn ở bếp → Chưa làm`, và §5.6 không còn kể nó là ca bị từ
+   chối.
+9. §5.2 nói ra **sửa đơn**: nó **không** phải một chuyển tiếp trạng thái, và phần còn mở của U-022
+   được trỏ đúng.
+10. `quality/invariants.md` **I-016** đọc lại: chỉ còn **một** ca bị từ chối vì chưa chốt
+    (`Hoàn thành → Huỷ`), và phần *Verification* không còn dùng đường lùi làm kịch bản âm.
+11. **U-021, U-023, U-024** xuống bảng *Đã có lời giải*; **U-022** còn ở *Đang mở* với phạm vi hẹp
+    hơn và nói rõ nửa nào đã có lời giải.
+12. `work/backlog.md` bảng §10 câu 1 và câu 2 đọc lại theo lời chốt.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -n 'chưa ai chốt ai bấm' docs/product.md        # rỗng
+grep -n 'Đã làm xong, còn ở bếp | ' docs/product.md  # có dòng lùi
+./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/LATEST/p'   # chỉ còn U-022
+git status --porcelain
+```
+
+**Kết quả — chốt 2026-09-01.** Bốn câu, một lần trả lời, và cả bốn ra **cùng một chỗ đứng: POS**.
+Đây là lần thứ tư câu trả lời ấy lặp lại — duyệt đơn (§6.2), huỷ đơn (§6.13), hoàn tiền (§6.4),
+ghép bàn (§6.16), thu tiền, ghi nợ (§6.14), và nay cả hai mốc của bảng bếp cùng mốc *"đang giao"*
+đều đi qua đúng **một** cái máy ở quầy.
+
+| Câu | Lời chủ quán | Vào nhà thật | Đọc lại ở |
+|---|---|---|---|
+| **U-021** | *"pos"* | `shop-facts.md` §5.4 | `docs/product.md` §5.4 (ô *ai kích hoạt* của dòng cuối) |
+| **U-022** | *"pos sửa đơn"* — **nửa câu** | `shop-facts.md` **§6.19** (quy tắc mới) | §5.2, khối *"một việc KHÔNG có trong bảng"* |
+| **U-023** | *"pos"* | `shop-facts.md` §6.7 | §5.2 (dòng `Đang thực hiện → Đang giao`) |
+| **U-024** | *"có đường lui, thời gian tuỳ theo thực tế để pos quyết định"* | `shop-facts.md` §5.4 | §5.4 (**dòng lùi mới**) và §5.6 |
+
+**Ba thứ đổi hình, không chỉ điền vào chỗ trống:**
+
+1. **§5.4 có thêm một DÒNG, và §5.6 mất một ca.** `Đã làm xong, còn ở bếp → Chưa làm` từng là ca bị
+   **từ chối**; nay là chuyển tiếp **hợp lệ**. §5.6 đổi tiêu đề *Ba* → *Hai* và giữ lại một đoạn
+   nói chỗ ca thứ ba từng đứng, để phiên sau đọc bản cũ không tưởng tài liệu tự mâu thuẫn.
+   `quality/invariants.md` **I-016** đọc lại theo: kịch bản *âm* của đường lùi thành kịch bản
+   **dương**, và danh sách ngắn đi một dòng — chính là bằng chứng invariant ấy bảo vệ *"chỉ đi theo
+   bảng"* chứ không bảo vệ một danh sách cố định.
+2. **Sửa đơn là một việc KHÔNG phải chuyển tiếp.** Nó đổi *nội dung* đơn, không đẩy đơn sang trạng
+   thái khác, nên nó không có dòng trong bảng §5.2 và cũng **không** bị I-016 từ chối. Ghi thẳng ra
+   vì đọc nhầm chiều nào cũng hỏng: coi nó là chuyển tiếp thì bảng thiếu dòng, coi nó là ngoài
+   bảng thì sản phẩm từ chối một việc chủ quán vừa cho phép.
+3. **`shop-facts.md` §7.2 có lại một dòng: S-5.** Chủ quán nói **ai** bấm *"đã bưng ra bàn"*, chưa
+   nói **theo đơn vị nào** — mẻ hay bàn. Suy ra là **theo bàn** (một mẻ phục vụ nhiều bàn, còn bưng
+   thì bưng tới một bàn), và vì đó là suy ra nên nó vào §7.2 chứ không vào §7.1. **BA-12** cần nó
+   trước khi dựng bảng quầy.
+
+**Nửa câu U-022 còn lại, và nó kéo theo một câu về TIỀN.** Chủ quán nói *ai sửa* và *sửa được*,
+không nói *tới đâu thì thôi*. Nửa còn mở gồm: sửa được từ trạng thái nào · huỷ được tới trạng thái
+nào · và **một dòng vừa sửa tính giá lúc nào**, vì §4.4 khoá giá theo *thời điểm tạo lượt gọi* —
+lấy giá mới thì §3.3.3 vỡ, lấy giá cũ thì khách đổi sang món đắt hơn vẫn trả giá rẻ. Ghi vào U-022
+cùng gốc, không tách thành câu riêng, vì chủ quán sẽ trả lời cả cụm trong một lần.
+
+**Pointer phải sửa trong cùng lần đổi (CLAUDE.md §7.2).** S-5 làm hai câu *"§7.2 rỗng trở lại"* hết
+đúng: `docs/decisions.md` (ADR về S-4) và `prompt/BA/README.md`. Cả hai đã sửa, và `work/scope.txt`
+được nới thêm hai file ấy giữa task kèm lý do — chỉ sửa đúng mệnh đề sai, không viết ADR mới.
+
+**Verify — output thật:**
+```text
+$ ./scripts/gate.sh
+check-scope: OK — all tracked changes within declared scope.
+check-links: OK — mọi đường dẫn trong tài liệu chỉ đường đều mở được.
+verify: skipped — only documentation changed.
+
+$ grep -n 'chưa ai chốt ai bấm' docs/product.md            → rỗng  (bốn ô đã điền)
+$ grep -n 'lùi\*\* lại | \*\*Chưa làm\*\*' docs/product.md  → 1313  (dòng lùi có thật)
+$ ./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/^$/p'      → chỉ còn U-022
+$ grep -nE 'ORDER_[A-Z]+|status *=' docs/product.md        → rỗng
+```
+
+<a id="ba-07"></a>
+### BA-07 — Vòng đời đơn, phiên bàn và công việc trạm
+
+**Prompt:** `prompt/BA/06-lifecycles-L2.md` (L2) · **Cần xong trước:** BA-03
+
+**Goal:**
+`docs/product.md` §5 định nghĩa ba vòng đời nghiệp vụ — đơn, phiên bàn, công việc trạm — với các
+trạng thái, chuyển tiếp hợp lệ, ai kích hoạt mỗi chuyển tiếp, và trạng thái kết thúc.
+
+**Scope:** `docs/product.md` §5 · §3.1–§3.3 **chỉ khi** phải đổi tên trạng thái cho khớp §5 (đổi
+tên, không đổi nghĩa) · `quality/invariants.md` (chỉ **thêm**) · `work/backlog.md`.
+
+**Out of scope:** §1, §2, §4, §6–§8 của `docs/product.md` · nội dung nghiệp vụ của §3 ·
+`docs/decisions.md` · `docs/architecture.md`.
+
+**Acceptance:**
+1. §5 có ba bảng chuyển trạng thái; mỗi dòng gồm trạng thái nguồn · sự kiện · trạng thái đích ·
+   ai kích hoạt.
+2. Mỗi vòng đời nêu trạng thái bắt đầu và các trạng thái kết thúc.
+3. Có câu khẳng định chuyển tiếp không nằm trong bảng thì bị từ chối.
+4. Nêu quan hệ giữa ba vòng đời: phiên bàn chỉ vào `Chờ thanh toán` khi các đơn của nó ở trạng
+   thái nào; đơn chỉ `Hoàn thành` khi công việc trạm ở trạng thái nào.
+5. Mọi tên trạng thái xuất hiện ở §3.1–§3.3 đều có trong §5, không còn tên lạc.
+6. Có điều kiện chuyển `Bàn cần dọn → Trống` và ai xác nhận đã dọn (trạm `don_ban`).
+7. Bảng phiên bàn có đường quay lại từ `Chờ thanh toán` khi khách gọi thêm, kèm câu khẳng định
+   `Chờ thanh toán` vẫn là phiên **chưa thanh toán**.
+8. §5 nói vòng đời "công việc trạm" áp cho **một việc ở một trạm**, và một đơn có nhiều việc chạy
+   song song ở các trạm khác nhau.
+9. `quality/invariants.md` có hai invariant: chuyển trạng thái không hợp lệ bị từ chối · phiên bàn
+   không thể `Đã đóng` khi còn đơn chưa hoàn thành hoặc chưa huỷ.
+10. Không có tên trạng thái viết kiểu mã (`ORDER_PENDING`, `status=2`).
+
+**Câu hỏi §10 gắn vào task này:**
+- Câu 1 — ai xác nhận / huỷ / sửa đơn. Hai phần **đã chốt**: xác nhận → `shop-facts.md` §6.2
+  (đơn khách tự gửi phải qua quầy; `staff_pos` và `phone_preorder` thì không); huỷ → §6.13
+  (**chỉ người đứng quầy**, quyền gắn với chỗ đứng chứ không gắn chức vụ, chốt 2026-08-30).
+  **Phần "sửa đơn" chưa ai nói** — đó là chỗ còn mở của câu này.
+- Câu 2 — đơn đã xác nhận được sửa hay chỉ huỷ rồi tạo lại: **còn mở**, cùng gốc với phần trên.
+  Hỏi người; chưa có lời giải thì GIẢ ĐỊNH + rủi ro, chuyển BA-10.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+sed -n '/^## 5\./,/^## 6\./p' docs/product.md | grep -c '^|'    # ba bảng chuyển trạng thái
+grep -nE 'ORDER_[A-Z]+|status *=' docs/product.md               # rỗng
+git status --porcelain
+```
+
+**Kết quả — chốt 2026-09-01.** `docs/product.md` §5 có ba bảng chuyển trạng thái (§5.2 đơn · §5.3
+phiên bàn và cái bàn của nó · §5.4 công việc trạm), mỗi dòng đủ bốn cột *nguồn · sự kiện · đích ·
+ai kích hoạt*.
+
+**Ba chỗ §5 KHÁC kế hoạch gốc §7, cả ba đều có lý do ghi rõ:**
+
+1. **Thêm `Đang giao` vào vòng đời đơn.** Kế hoạch gốc không có nó; chủ quán chốt 2026-08-30 rằng
+   quán **tự đi giao** và đơn giao mang trạng thái ấy để quầy biết *ai đang cầm tiền chưa về*
+   (`shop-facts.md` §6.7), và §3.2.2 đã dùng tên này từ BA-04.
+2. **Vòng đời công việc trạm giữ BA trạng thái nhưng đổi cái GIỮA:** `Đang làm` →
+   **`Đã làm xong, còn ở bếp`**. Quán **không ghi được** *Đang làm* — chủ quán đã bỏ mọi nút bấm ở
+   trạm bếp (2026-08-31, đóng U-009), nên không ai nói cho máy biết lúc bếp *bắt đầu*. Đổi lại,
+   S-4 (2026-09-01) chốt là bánh gấp xong **có nằm chờ** trước khi ra bàn, và bảng quầy có **bốn**
+   con số vì thế. ⇒ §5 giữ thứ quán **đếm được** thay cho thứ kế hoạch gốc **đoán**. Đây là một
+   quyết định thiết kế nghiệp vụ ⇒ **BA-10 gom thành ADR** (`docs/decisions.md` ngoài scope BA-07).
+3. **Sáu trạng thái của "phiên bàn" tách làm HAI chủ thể:** bốn cái đầu là của **phiên**, hai cái
+   cuối (`Bàn cần dọn`, `Trống`) là của **cái bàn**. Nhóm ghép bàn là chỗ nó lộ ra: một phiên đóng,
+   nhưng từng bàn dọn riêng (§3.1.7) — một chuỗi sáu bước một chủ thể không tả được ca đó. Không
+   trạng thái nào bị bỏ.
+
+**Đổi tên ở §3 (đổi tên, KHÔNG đổi nghĩa) — 12 chỗ:** *chờ duyệt* → **Chờ xác nhận**, *đã duyệt* →
+**Đã xác nhận** (§3.1.1 bước 4–6, §3.1.2, §3.1.3, §3.2.1 bước 5–8, §3.2.3); *trạng thái đang mở* →
+**Mở** (§3.1.1 bước 1); §3.3.6 liệt kê trạng thái bằng đúng tên §5. Động từ **duyệt** giữ nguyên.
+`§5.1` ghi luật đọc: §5 viết hoa chữ đầu, §3–§4 viết thường trong văn xuôi — cùng một trạng thái;
+và *"phiên chưa đóng"* là cách gọi gộp ba trạng thái, không phải trạng thái thứ tư.
+
+**Bốn câu mở ra, và cả bốn cùng một họ.** §5 là mục đầu tiên đòi **mỗi** chuyển tiếp phải gọi tên
+được người kích hoạt nó, nên bốn chỗ chưa ai bấm lộ ra cùng lúc: **U-021** (ai bấm *đã bưng ra
+bàn* — chặn mốc kết thúc của cả vòng đời việc trạm lẫn vòng đời đơn, và chặn BA-12) · **U-022**
+(sửa đơn đã xác nhận, và huỷ được tới trạng thái nào — chính là câu 1 phần còn mở + câu 2 của bảng
+§10, chuyển BA-08) · **U-023** (ai bấm cho đơn sang `Đang giao`) · **U-024** (bấm nhầm một mẻ thì
+có đường lùi không). Cả bốn hỏi **chủ quán**, hỏi được trong **một** lần nói chuyện.
+
+**Hai invariant:** **I-016** (chuyển tiếp ngoài bảng bị từ chối — và nó bảo vệ *"chỉ đi theo
+bảng"*, không bảo vệ một danh sách cố định, nên U-022/U-024 có lời giải thì §5 thêm dòng mà
+invariant vẫn đúng nguyên văn) · **I-017** (phiên không `Đã đóng` khi còn đơn chưa `Hoàn thành` và
+chưa `Huỷ` — **món** chưa xong thì chặn, **tiền** chưa thu thì không, hai luật ngược chiều).
+
+**Sự cố trong lúc chạy — F-014 lần thứ TƯ.** Giữa lúc BA-07 đang viết §5, một phiên song song chạy
+T-038 `git add work/backlog.md` và commit cả file trong `30abf8f`, **nuốt luôn dòng *In Progress*
+của BA-07**. Subject của commit ấy — `BA-06: docs/product.md §4 …` — còn **trùng chữ** với
+`3f579f9`, nên lịch sử có hai commit cùng tên BA-06 và cái thứ hai chứa việc của ba task. Đã ghi
+thành lần thứ tư ở `work/findings.md` F-014 (`work/scope.txt` được nới thêm `work/findings.md`
+giữa task, có ghi lý do, đúng CLAUDE.md §3.4). Phần §5, bốn unknown và hai invariant **không** bị
+chạm — chỉ dòng backlog bị nuốt. `ADR-008` đóng đường viết lại lịch sử; đây là bản sửa tiến.
+
+**Verify — output thật:**
+```text
+$ ./scripts/gate.sh
+check-scope: OK — all tracked changes within declared scope.
+check-links: OK — mọi đường dẫn trong tài liệu chỉ đường đều mở được.
+verify: skipped — only documentation changed.
+
+$ sed -n '/^## 5\./,/^## 6\./p' docs/product.md | grep -c '^|'      → 29   (ba bảng)
+$ grep -nE 'ORDER_[A-Z]+|status *=' docs/product.md                  → rỗng (exit 1)
+$ ./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/LATEST/p'            → U-021 · U-022 · U-023 · U-024
+```
+Gate 5 (L2, tự tay dò): lấy **15** tên trạng thái xuất hiện ở §3.1–§3.3 và tìm từng cái trong §5 —
+đủ 15/15, và `grep "chờ duyệt\|đã duyệt"` trong §3 nay **rỗng**, không còn tên lạc.
+
+<a id="t-038"></a>
+### T-038 — U-019 và U-020 có lời giải, và một trong hai LẬT NGƯỢC giả định BA-06 vừa viết
+
+**Xong 2026-09-01.** L2 · `master_plan/shop-facts.md` §6.4, §6.10, **§6.18 mới**, §7.1 (ba dòng) ·
+`master_plan/prompt-fullstack.md` (tiêu đề §6) · `docs/product.md` §4.6, §4.8, §4.9, §4.10 và
+*Unknowns* · `quality/invariants.md` **I-014 sửa, I-015 mới** · **đóng U-019 và U-020**.
+
+**Điểm đáng nhớ nhất: giả định được ghi ra kèm rủi ro nên lúc nó sai, chỗ phải sửa đã có sẵn tên.**
+BA-06 không tự chốt vế *hoàn tiền rơi vào ngày nào*; nó viết giả định (trừ vào ngày bán gốc) và
+viết luôn câu *"chủ quán chốt ngược lại thì phải sửa §4.9, §4.10 và cách bày bảng đối soát; không
+phải sửa dữ liệu quá khứ"*. Chủ quán chốt **ngược** trong cùng ngày, và T-038 chỉ việc làm đúng ba
+chỗ đã được kê. Đây là lý do CLAUDE.md §3.5 bắt ghi giả định thay vì im lặng chọn một bên.
+
+**Hai lời chốt đi NGƯỢC CHIỀU nhau, và đó là chỗ dễ hỏng nhất về sau:**
+
+| Việc | Rơi vào ngày | Nhà thật |
+|---|---|---|
+| Bán, kể cả khoản khách **nợ** | **ngày bán** (= ngày ghi nợ) | `shop-facts.md` §6.14 |
+| **Hoàn tiền** | **ngày hoàn** | `shop-facts.md` §6.4 |
+
+Gộp hai dòng ấy thành một luật là sai một trong hai. Cả `shop-facts.md` §6.4, `docs/product.md`
+§4.8 và `quality/invariants.md` I-014 đều nói thẳng chúng ngược chiều, kèm **cách đọc** vì sao:
+khoản nợ là một bữa ăn **đã bán xong**, tiền về muộn ⇒ thuộc ngày bán; một lần hoàn là **quyết định
+mới của người đứng quầy** hôm ấy (§6.4 không có luật cứng) ⇒ thuộc ngày quyết.
+
+⇒ **Hệ quả lớn nhất, đáng giữ hơn cả hai luật: doanh thu của một ngày đã đối soát không bao giờ đổi
+về sau.** Giả định cũ phá đúng thứ đó; lời chốt mới giữ nó. Đây là ràng buộc I-009 giữ cho từng
+đơn, nay có ở mức một ngày bán (I-014).
+
+**Lời chốt U-020 sửa một câu SAI mà BA-06 vừa viết ra vài giờ trước.** §4.6 từng viết *"một lần thu
+chọn một phương thức"*, đọc chữ **hoặc** ở `shop-facts.md` §1 thành luật loại trừ — trong khi chữ
+ấy chỉ mô tả **lựa chọn của khách**. Chủ quán: *"nhận cả hai"*. Cả §6.18, §4.6 và I-015 đều dựng
+bia cho câu sai ấy để nó không quay lại.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Chứng minh ở |
+|---|---|
+| 1 | `shop-facts.md` §6.10 — *"**ba** nguồn"*, nguồn thứ ba là **tin nhắn báo có**, ghi *chủ quán chốt 2026-09-01, trả lời U-019* |
+| 2 | `shop-facts.md` §6.4, bốn gạch đầu dòng mới; gạch thứ hai in đậm **NGƯỢC CHIỀU với luật nợ ở §6.14** |
+| 3 | `shop-facts.md` **§6.18** (quy tắc thứ mười tám) — chia được, POS ghi từng phần, tổng các phần = số phải trả |
+| 4 | `shop-facts.md` §7.1, ba dòng ngày 2026-09-01 trỏ §6.10 · §6.4 · §6.18 |
+| 5 | `grep -n 'một lần thu chọn một phương thức' docs/product.md` → **rỗng**; §4.6 nay là luật chia được + khối ⚠️ dựng bia cho câu cũ |
+| 6 | `grep -n 'GIẢ ĐỊNH' docs/product.md` → **rỗng**; §4.10 nay là luật, kèm một đoạn *Ghi lại cho phiên sau* kể lại giả định cũ đã bị lật thế nào |
+| 7 | §4.9 — bảng ba nguồn ở đầu mục, và dòng **Hoàn tiền** của bảng bốn chuyện đổi thành **"không lệch"** vì hai vế cùng giảm |
+| 8 | §4.10, câu ⇒ in đậm *"doanh thu của một ngày đã đối soát xong không bao giờ đổi về sau"*; nhắc lại ở I-014 |
+| 9 | `./scripts/brief.sh` → `OPEN UNKNOWNS (none)`; U-019 (hai vế, hai dòng) và U-020 nằm ở bảng *Đã có lời giải* |
+| 10 | `quality/invariants.md` I-014 — vế *"tính vào ngày bán"* thay bằng **bảng hai dòng ngược chiều**, và dòng xuất xứ ghi rõ *Sửa ở T-038 — bản đầu sai cho hoàn tiền* |
+| 11 | `quality/invariants.md` **I-015** — tổng các phần = số phải trả · mỗi phần đúng một phương thức · từng phần ghi riêng, vì §6.10 đối chiếu hai nguồn khác nhau |
+| 12 | Bảng §10 câu 8 ở trên → **đã chốt cả hai vế**, và câu chốt dưới bảng dặn BA-10 chép **cả hai** chứ đừng gộp |
+
+**Pointer đã đi theo (CLAUDE.md §7.2):** §6 lên mười tám quy tắc nên tiêu đề `shop-facts.md` §6 và
+dòng bảng ở bản xuất khẩu `master_plan/prompt-fullstack.md` đổi trong **cùng** thay đổi;
+`grep -rn 'Mười bảy quy tắc' master_plan/ docs/ quality/` → rỗng.
+
+
+
+**L2** — chạm thẳng cách tính doanh thu một ngày và cách ghi một lần thu tiền.
+
+**Hiện trạng đang SAI:** BA-06 đóng ngày 2026-09-01 với hai câu để mở, và `docs/product.md` §4.10
+đang chạy bằng một **giả định** viết thẳng ra: *hoàn tiền trừ vào doanh thu của ngày bán gốc*.
+Chủ quán trả lời cùng ngày, và trả lời **ngược lại**. §4.6 thì đang viết *"một lần thu chọn một
+phương thức"*, đọc từ chữ **hoặc** ở `shop-facts.md` §1 — chủ quán nói quán **nhận cả hai**.
+Nên ngay lúc này repo có hai câu sai về tiền, cả hai đều nằm ở mục người ta tin nhất.
+
+**Lời chủ quán, 2026-09-01:**
+- **U-019, vế 1** — *"đối chiếu qua tin nhắn khách chuyển khoản"*. Buổi tối, phần chuyển khoản
+  đối chiếu bằng **tin nhắn báo có**; đây là **nguồn thứ ba** của đối soát, đứng cạnh sổ giấy và
+  tiền trong két (`shop-facts.md` §6.10 hiện chỉ có hai).
+- **U-019, vế 2** — *"phần hoàn tiền tính vào ngày hôm hoàn tiền"*. **Không** phải ngày bán gốc.
+- **U-020** — *"nhận cả hai. POS xác nhận thông tin bao nhiêu chuyển khoản, bao nhiêu tiền mặt"*.
+  Một lần thu chia được làm hai khoản, và POS phải ghi **số tiền của từng phương thức**.
+
+**Goal:** ba lời chốt trên vào nhà thật `master_plan/shop-facts.md`, rồi `docs/product.md` §4 và
+`quality/invariants.md` đọc lại theo nó; U-019 và U-020 chuyển xuống mục *Đã có lời giải*.
+
+**Scope:** `master_plan/shop-facts.md` · `docs/product.md` §4 và *Unknowns* ·
+`quality/invariants.md` · `work/backlog.md`.
+
+**Out of scope:** `docs/architecture.md` · `docs/decisions.md` · §1–§3 và §5–§8 của
+`docs/product.md` · `prompt/`.
+
+**Acceptance:**
+1. `shop-facts.md` §6.10 có **ba** nguồn đối soát, nguồn thứ ba là **tin nhắn báo có**, kèm ngày và
+   người chốt.
+2. `shop-facts.md` §6.4 chốt **hoàn tiền tính vào doanh thu ngày HOÀN**, và nói rõ nó **khác**
+   luật nợ ở §6.14 (nợ tính ngày ghi nợ) — hai luật ngược chiều, không được nhớ nhầm thành một.
+3. `shop-facts.md` chốt **một lần thu chia được nhiều phương thức**, POS ghi số tiền từng phương
+   thức, và tổng các khoản = số tiền phải trả.
+4. `shop-facts.md` §7.1 có dòng nhật ký cho cả ba lời chốt, ngày **2026-09-01**.
+5. `docs/product.md` §4.6 **không còn** câu *"một lần thu chọn một phương thức"*; thay bằng luật
+   chia được, và **không còn** trỏ U-020 như câu đang mở.
+6. `docs/product.md` §4.10 **không còn khối GIẢ ĐỊNH** và không còn khối *Rủi ro nếu giả định này
+   sai*; thay bằng luật đã chốt.
+7. `docs/product.md` §4.9 bảng đối soát đọc lại theo lời chốt: dòng **hoàn tiền** không còn là một
+   chỗ lệch phải đi tìm lý do, và bảng có nguồn **tin nhắn báo có**.
+8. `docs/product.md` §4.9/§4.10 nói ra được hệ quả lớn: **doanh thu một ngày đã đối soát không bao
+   giờ đổi về sau** — thứ giả định cũ phá, lời chốt mới giữ.
+9. **U-019 và U-020 rời khỏi vùng đang mở** của *Unknowns* và xuống bảng *Đã có lời giải*; vùng
+   đang mở không còn gạch đầu dòng nào ⇒ `./scripts/brief.sh` in `(none)`.
+10. `quality/invariants.md` **I-014** sửa lại vế *"tính vào ngày bán"* để không mâu thuẫn với luật
+    hoàn tiền mới.
+11. Có invariant cho lần thu chia phương thức: tổng các khoản thu = số tiền phải trả, và mỗi khoản
+    mang đúng một phương thức.
+12. `work/backlog.md` bảng §10 câu 8 chuyển sang **đã chốt** (cả hai vế).
+
+**Verify:**
+```bash
+./scripts/gate.sh
+./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/LATEST/p'     # phải in (none)
+grep -n 'GIẢ ĐỊNH' docs/product.md                          # rỗng trong §4
+grep -n 'tin nhắn' master_plan/shop-facts.md docs/product.md
+grep -n 'một lần thu chọn một phương thức' docs/product.md  # rỗng
+git status --porcelain
+```
+
+
+<a id="ba-06"></a>
+### BA-06 — Quy tắc giá và thanh toán
+
+**Xong 2026-09-01.** L2 · prompt `prompt/BA/05-pricing-payment-L2.md` · `docs/product.md` §4 (mười
+một mục con, §4.1–§4.11) · `quality/invariants.md` **I-012, I-013, I-014** · **mở hai unknown:
+U-019, U-020**.
+
+**Mục §4 phải chốt luật tiền trên một nhà thật đã đầy — nhưng đầy về GIÁ, không đầy về THU.**
+`master_plan/shop-facts.md` §4.1–§4.8 nói đủ mọi thứ về việc một suất đáng bao nhiêu tiền, và §6.3,
+§6.4, §6.9, §6.10, §6.14, §6.17 nói đủ về việc ai thu, ai hoàn, ai nợ. Chỗ mỏng là **buổi tối**:
+§6.10 bắt so doanh thu với *sổ giấy và tiền trong két*, ngưỡng **0đ**, trong khi két chỉ giữ tiền
+mặt và quán có hẳn một phương thức không đi qua két. BA-06 chốt hết phần có lời chủ quán, và đẩy
+đúng chỗ mỏng ấy thành **U-019** thay vì tự nghĩ ra một quy trình đối soát (CLAUDE.md §3.5).
+
+**Ba chỗ §4 cố ý viết khác thói quen, cả ba đều có lý do:**
+- **Cột "Giá kỳ vọng" của bảng mười một tổ hợp KHÔNG có số.** `shop-facts.md` §4.8 có sẵn cột giá,
+  chép sang là xong — nhưng §4 là mục **tiền**, tức chỗ người ta tin nhất, nên một bảng giá thứ hai
+  ở đây là bản sao nguy hiểm nhất có thể đặt (ADR-001, `work/findings.md` F-001). Cột ấy nay ghi
+  *"tra `shop-facts.md` §4.2–§4.3"*, và cột cuối đổi thành **"ca này bắt lỗi gì"** — thứ §4.8 không
+  có và là lý do thật để bảng tồn tại ở đây.
+- **§4 không có một con số tiền nào.** Kể cả cái bẫy *"suất giò không phải giá một chiếc giò"* —
+  Constraints của prompt viết nó kèm hai con số, §4.1 viết nó bằng **cấu tạo** (*một chiếc giò cộng
+  bốn cái bánh*) và trỏ về §4.3. Cùng một cái bẫy, không thêm một ô giá nào phải bảo trì. Đối chiếu:
+  §3.3.3 (BA-05) có bốn con số và phải mang theo một dòng banner dặn sửa nhà thật trước.
+- **§4.7 tách "chưa xác nhận được" khỏi "cho nợ".** Prompt hỏi một câu (*thanh toán chưa xác nhận
+  được thì bàn có trống không*), nhưng hai tình huống trả lời **ngược nhau**: chờ báo có ⇒ phiên
+  chưa đóng, **bàn không trống**; cho nợ ⇒ phiên **vẫn đóng**, bàn trống bình thường
+  (`shop-facts.md` §6.14). Gộp chúng là hoặc khoá một cái bàn cả buổi, hoặc mất một khoản tiền.
+
+> **Cập nhật 2026-09-01 (T-038): cả hai unknown BA-06 mở đã đóng trong ngày**, chủ quán trả lời
+> ngay lượt kế tiếp. Một lời chốt **lật ngược** thứ BA-06 viết: §4.10 lúc ấy chạy bằng giả định
+> *hoàn tiền trừ vào ngày bán gốc*, chủ quán chốt là **ngày hoàn**. Mọi câu *"chưa chốt"* và khối
+> *GIẢ ĐỊNH* trong entry này là ảnh chụp lúc BA-06 chạy; trạng thái hôm nay đọc ở entry **T-038**,
+> `master_plan/shop-facts.md` §6.4, §6.10, §6.18 và `docs/product.md` §4.6, §4.8–§4.10.
+
+**Sự cố trong lúc chạy — `ffc2997` nuốt mất §4, và không sửa lại được nữa.**
+Giữa lúc BA-06 đang viết `docs/product.md` §4, một phiên **chạy song song trên cùng cây làm việc**
+commit hai task của nó bằng `git add docs/product.md` — và lấy luôn ~290 dòng §4 chưa xong. Commit
+`ffc2997` mang subject *"T-036 + T-037"*, thân không nhắc BA-06 một chữ, lại còn tự mô tả sai
+(*"mục Unknowns rỗng"*, trong khi chính nó mang **U-019** và **U-020** vào lịch sử).
+Nó **đã push** trước khi BA-06 nhìn thấy ⇒ `docs/decisions.md` **ADR-008** đóng đường viết lại:
+sửa **tiến**. Bản sửa tiến là **bản đồ hash trong `work/findings.md` F-014** (lần thứ ba của cùng
+một finding — nguyên nhân gốc là nhiều phiên một cây, không phải lỗi của ai).
+⇒ **Đọc `git log` để tìm §4 đến từ đâu sẽ ra sai.** §4 nằm trong `ffc2997`; commit mang tên BA-06
+chỉ có `quality/invariants.md`, `work/backlog.md`, `work/findings.md` và một sửa nhỏ ở §4.2. Đây
+cũng là lý do BA-06 **không** gỡ hai khối scope T-036/T-037 dù chúng đã commit: phiên kia có thể
+vẫn đang chạy, và F-014 chính là finding về việc một phiên dọn scope của phiên khác.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Chứng minh ở |
+|---|---|
+| 1 | §4.2, ba gạch đầu dòng đầu — *"giá luôn do hệ thống tính lại từ bảng giá"*, *"khách không bao giờ gửi giá lên"* (`shop-facts.md` §4.6 quy tắc 9); thêm **I-013** |
+| 2 | §4.4 — mốc là **thời điểm tạo một lượt gọi**, kèm hai câu phủ định (không phải lúc mở phiên, không phải lúc thanh toán) và hệ quả *một hoá đơn hai mức giá* |
+| 3 | §4.1 mở đầu bằng khối trích dẫn *"giá một suất bán = tổng giá các thành phần"*, rồi bảng hai dòng phân biệt `shop-facts.md` §4.2 (thành phần) với §4.3 (một suất bán) |
+| 4 | §4.2, gạch đầu dòng *"+1.000 cho MỖI phần nhận nhân"* + bảng bốn dòng ×1 / ×4 / ×4 / ×5 với tiêu đề cột **"⇒ phụ thu mỗi bậc"** — chữ ⇒ là chỗ nói ra rằng đó là hệ quả |
+| 5 | §4.2, gạch đầu dòng *"Mặc định là nhân Thịt, lượng Thường"*, kèm câu chống hiểu nhầm *"đơn không có tuỳ chọn nào không phải đơn chay"* |
+| 6 | §4.3, bảng đủ **11** dòng theo đúng thứ tự `shop-facts.md` §4.8; dòng 11 ghi **PHẢI BỊ TỪ CHỐI** ở cột kết quả, và có một đoạn riêng ngay dưới bảng giải thích ca 11 hỏi gì |
+| 7 | §4.3, ca 5–6–7 ghi ×5 ở cột *"ca này bắt lỗi gì"*, và đoạn in đậm ngay dưới bảng ghi **đã chốt 2026-08-30** kèm nguồn `shop-facts.md` §7.1; không có chữ *suy ra* nào |
+| 8 | `grep -c '000' docs/product.md` = **5**, cả năm đều nằm ngoài §4 (bốn ở khối ví dụ §3.3.3, một ở bảng Unknowns) ⇒ §4 **không có ô giá nào** |
+| 9 | `grep -n 'không nhân theo' docs/product.md` → rỗng. §4.2 còn chủ động dựng bia: khối ⚠️ ghi câu đó đã bị gỡ 2026-08-29 và *thấy quay lại là bug* |
+| 10 | §4.5, bảng **năm** kênh → hai đơn vị: `qr_table` và `staff_pos` = **phiên bàn**; `delivery`, `pickup`, `phone_preorder` = **đơn** |
+| 11 | §4.6, bảng **hai** dòng — tiền mặt và VietQR tĩnh — mỗi dòng có cột *ai xác nhận* và cột *lúc nào*; ca đơn giao tận nơi ghi rõ người bấm là **người đi giao** (`shop-facts.md` §6.7) |
+| 12 | §4.7 — hai tình huống tách hẳn: **(a)** chờ báo có ⇒ phiên *chờ thanh toán*, **bàn KHÔNG trống** (I-003); **(b)** cho nợ ⇒ phiên **vẫn đóng**, bàn trống bình thường (I-005) |
+| 13 | §4.9 — *sổ giấy* và *tiền trong két*, ngưỡng **0đ**, viết như quy trình buổi tối của quán; kèm bảng bốn chuyện làm hai con số lệch nhau **hợp lệ** |
+| 14 | §4.10, câu in đậm mở mục (*doanh thu = phiên bàn + đơn mang đi*, một khoản thuộc đúng một trong hai) + đoạn *"hai chia theo ĐƠN VỊ THANH TOÁN, không chia theo kênh"*; thêm **I-014** |
+| 15 | Ba invariant yêu cầu đủ mặt: *tổng phiên = tổng đơn thuộc phiên* là **I-002** (đã có, BA-03) · *giá đơn không đổi sau khi tạo* là **I-009** (đã có, BA-05) · *không thao tác đổi tiền nào không truy vết được* là **I-012** (mới). Thêm **I-013** và **I-014**; ba cái mới đều ghi *"khác gì cái đã có"* để không thành bản sao |
+| 16 | `grep -nEi 'momo\|zalopay\|vnpay\|stripe\|thẻ tín dụng\|webhook\|api\|ngân hàng' docs/product.md` → chỉ một dòng, §4.11, và nó nói **không** làm: *số tài khoản ngân hàng do chủ quán nhập trong phần quản trị* |
+
+**Câu hỏi §10 gắn vào task này:**
+- **Câu 5 (hoàn tiền) — chép lời giải, xong.** `shop-facts.md` §6.4 vào `docs/product.md` §4.8:
+  quầy quyết từng ca, không có luật cứng, **mọi lần hoàn để lại vết** (bao nhiêu, đơn nào, ai bấm,
+  lý do gì), và người đứng quầy vừa quyết vừa ghi. Bảng *"khi nào một lần huỷ sinh việc hoàn tiền"*
+  là phần §4.8 thêm vào: nó ghép §6.4 với §6.3 (đơn đã trả trước ⇒ có hoàn; đơn chưa trả ⇒ không).
+- **Câu 8 — KHÔNG đóng được, và nó chỉ mở một NỬA.** Vế *doanh thu tính ngày nào* đã có lời giải
+  từ 2026-08-31 (ngày ghi nợ, `shop-facts.md` §6.14) và §4.10 chép thẳng. Vế *hoàn tiền / huỷ đơn
+  đã trả trước rơi vào ngày nào* thì không owner nào nói, nên nó lên hình dạng máy đọc được thành
+  **U-019**. Prompt cho phép ghi GIẢ ĐỊNH rồi đi tiếp, và BA-06 **đi** — khác BA-05 ở câu 9: chỗ
+  này giả định sai thì sửa **cách bày báo cáo**, không sửa dữ liệu quá khứ, vì cả hai mốc thời gian
+  đều đã được ghi (cùng lập luận với `docs/decisions.md` ADR-012). Giả định và **rủi ro nếu nó
+  sai** viết thẳng ở §4.10, và U-019 mang cả hai vế để BA-08 và BA-10 không phải tìm lại.
+
+**Unknown thứ hai sinh ra trong lúc viết, không có trong prompt:**
+- **U-020** — khách trả **một phần tiền mặt, một phần chuyển khoản**. Prompt có liệt kê nó ở mục
+  Unknowns nhưng như một câu phụ; viết §4.6 mới thấy nó quyết định **hình dạng của một lần thu
+  tiền** (một khoản hay nhiều khoản), tức chạm thẳng đối soát 0đ. `shop-facts.md` §1 và §6.3 chỉ
+  đưa gián tiếp một chữ **hoặc**, và một chữ *hoặc* trong câu mô tả lựa chọn của khách thì không đủ
+  làm luật. §4.6 viết theo nghĩa *một lần thu chọn một phương thức* và **nói thẳng ra rằng đó là
+  cách đọc**, kèm trỏ U-020.
+
+
+**Prompt:** `prompt/BA/05-pricing-payment-L2.md` (L2) · **Cần xong trước:** BA-03, BA-04
+
+**Goal:**
+`docs/product.md` §4 chốt toàn bộ quy tắc nghiệp vụ về tiền: giá từ đâu ra, tổng tiền xác định lúc
+nào, thu bằng cách nào, đối soát dựa trên cái gì.
+
+**Scope:** `docs/product.md` §4 · `quality/invariants.md` (chỉ **thêm**) · `work/backlog.md`.
+
+**Out of scope:** §1–§3, §5–§8 của `docs/product.md` · `docs/decisions.md` · `docs/architecture.md`.
+
+**Acceptance:**
+1. §4 nêu nguồn của giá và câu khẳng định khách không tự đặt được giá.
+2. §4 nêu thời điểm tổng tiền được xác định, và điều gì xảy ra nếu giá menu đổi sau thời điểm đó.
+3. §4 mở đầu bằng luật "giá một suất = tổng giá thành phần" và phân biệt bảng giá **thành phần**
+   (`shop-facts.md` §4.2) với bảng giá **một suất** (§4.3).
+4. §4 nêu quy tắc phụ thu **+1.000 mỗi phần nhận nhân**, và nói ×1 / ×4 / ×5 là hệ quả.
+5. §4 nêu mặc định khi khách không chọn gì: nhân Thịt, lượng Thường.
+6. §4 có bảng 11 tổ hợp bắt buộc phủ theo `shop-facts.md` §4.8; ca 11 ghi rõ **bị từ chối**.
+7. Ba ca suất trứng đứng riêng ghi phụ thu ×5 là **đã chốt 2026-08-30**, không đánh dấu suy luận.
+8. §4 **không chép** bảng giá; chỗ cần số thì trỏ `shop-facts.md` §4.2–§4.3.
+9. Không có câu nào nói phụ thu "không nhân theo số phần bếp làm" — câu đó đã bị gỡ 2026-08-29,
+   thấy nó quay lại là bug.
+10. Có bảng phân biệt đơn vị thanh toán theo kênh: tại bàn = phiên · mang đi = đơn.
+11. Liệt kê đúng 2 phương thức thanh toán, mỗi phương thức nói ai xác nhận đã thu được tiền.
+12. Có trường hợp thanh toán chưa xác nhận được: phiên/đơn ở trạng thái nào, bàn có được giải
+    phóng không.
+13. Nêu cơ sở đối soát cuối ngày: sổ giấy và tiền trong két, ngưỡng lệch chấp nhận = **0đ**
+    (`shop-facts.md` §6.10).
+14. Có câu khẳng định doanh thu một ngày = tiền từ phiên bàn **cộng** tiền từ đơn mang đi, và một
+    khoản tiền chỉ thuộc một trong hai (`shop-facts.md` §6.9).
+15. `quality/invariants.md` có ít nhất ba invariant: tổng tiền một phiên bằng tổng các đơn thuộc
+    phiên · giá áp cho một đơn không đổi sau khi đơn được tạo · không có thao tác đổi tiền nào
+    không truy vết lại được.
+16. Không có tên cổng thanh toán hay ngân hàng cụ thể.
+
+**Câu hỏi §10 gắn vào task này:**
+- Câu 5 — có hoàn tiền không, ai được: **đã chốt** → `shop-facts.md` §6.4. Quầy quyết từng ca,
+  **mọi lần hoàn phải để lại vết** (hoàn bao nhiêu, đơn nào, ai bấm, lý do gì) và người đứng quầy
+  là người ghi vết. Chép lời giải, đừng mở lại thành câu hỏi.
+- Câu 8 — doanh thu tính theo ngày nào, đơn huỷ/hoàn tiền vào đâu: **còn mở**. Hỏi người; chưa có
+  lời giải thì GIẢ ĐỊNH + rủi ro, chuyển BA-10.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+sed -n '/^## 4\./,/^## 5\./p' docs/product.md | grep -c '^|'    # bảng 11 tổ hợp + bảng đơn vị
+grep -n '6.4\|6.9\|6.10' docs/product.md                        # có trỏ nguồn hoàn tiền/đối soát
+grep -nE '[0-9]{2}\.000' docs/product.md                        # không chép bảng giá
+git status --porcelain
+```
+
+<a id="t-037"></a>
+### T-037 — Hai câu cuối đóng: bấm theo MẺ, và máy chỉ NHẮC
+
+> **T-036 và T-037 nằm trong MỘT commit** (chủ repo quyết 2026-09-01). Hai phiên chạy song song
+> trong cùng một cây và cùng sửa `master_plan/shop-facts.md`, `docs/product.md`, `work/backlog.md`;
+> tới lúc commit thì thay đổi của hai task đã đan vào nhau trong cùng những file đó, và tách bằng
+> `git add -p` không rẻ hơn giá trị nó mang lại. **Hệ quả phải biết trước khi ai đó revert:** một
+> `git revert` commit này gỡ **cả hai** task — lời giải S-4 lẫn lời giải U-017/U-018. Muốn gỡ một
+> task thôi thì phải sửa tay, không có đường tự động. Đây là cái giá đã biết của việc chạy song
+> song, ghi ở đây chứ không mở finding mới — `work/findings.md` **F-014** đã giữ nguyên nhân gốc.
+
+**Xong 2026-09-01.** L2 · không có prompt — chủ quán trả lời U-017 và U-018 trong cùng một lượt ·
+`master_plan/shop-facts.md` §5.4 + §6.17 + hai dòng §7.1 · `docs/product.md` §1.2, §3.3.6, mục
+*Unknowns* (nay **rỗng**) · `quality/invariants.md` **I-011 viết lại** ·
+`docs/architecture.md` + `docs/decisions.md` (chỉ dòng trạng thái *"U-017 còn mở"*) ·
+`work/backlog.md`.
+
+**Hai câu do hai phiên khác nhau mở, đóng trong cùng một lượt.** U-017 là của T-036 (bấm *"đã làm
+xong"* ở mức nào), U-018 là của T-034 (máy chặn hay chỉ nhắc). T-036 đã xong trước khi T-037 chạy,
+nên T-037 được phép đóng nốt U-017 ở owner của nó mà không giẫm lên ai — nhưng **không viết hộ
+`docs/architecture.md` §3**: bốn con số là deliverable của T-036, T-037 chỉ gỡ dòng chặn.
+
+**Điều đáng ghi nhất — lời chốt U-018 làm một invariant vừa viết hôm nay trở thành SAI.**
+I-011 bản đầu (T-034) nói *"thành phần suất không bao giờ có hiệu lực trong giờ bán"*. Câu đó viết
+khi chưa biết máy có chặn hay không, và nó ngầm cho rằng **luật của chủ quán là hàng rào của máy**.
+Lời chốt U-018 nói ngược: máy **chỉ nhắc một câu rồi vẫn cho lưu**. Vậy trong quán vẫn có thể có
+một ngày thành phần đổi lúc 9h sáng ⇒ bản đầu của I-011 mô tả một thứ hệ thống không giữ nổi.
+**Một invariant hệ thống không giữ nổi thì không phải invariant, nó là một câu chúc.** I-011 nay
+nói đúng thứ giữ được: chuyện đó không bao giờ xảy ra **âm thầm** — nhắc trước, để vết sau, đủ để
+đối soát cuối ngày tìm ra.
+
+**Bài học, ghi ở đây chứ không mở finding mới (CLAUDE.md §3.8):** khi một luật nghiệp vụ chưa biết
+có được máy cưỡng chế hay không, **đừng viết invariant theo luật — viết theo thứ máy làm được**,
+hoặc chờ. T-034 đã cẩn thận đúng một nửa: nó viết Verification ở mức đối soát cuối ngày *"để đúng
+với cả hai lời giải của U-018"*, nhưng câu **Invariant** thì vẫn viết theo lời giải mạnh hơn. Nửa
+cẩn thận không đủ — phần sai nằm ở câu đầu tiên, chỗ người ta đọc.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Chứng minh ở |
+|---|---|
+| 1 | `shop-facts.md` §5.4 — khối *"Bấm theo MẺ"*, ba gạch đầu dòng hệ quả + một dòng đánh dấu cách đọc |
+| 2 | `shop-facts.md` §6.17 — ba gạch đầu dòng mới: máy chỉ nhắc · luật cho người chứ không phải hàng rào của máy · phải để lại vết (đánh dấu là cách đọc) |
+| 3 | `shop-facts.md` §7.1 — hai dòng `2026-09-01`, ghi rõ *trả lời U-017* và *trả lời U-018* |
+| 4 | `docs/product.md` §1.2 (bấm theo mẻ) · §3.3.6 (máy chỉ nhắc + hệ quả *"sản phẩm không bảo đảm thành phần đứng yên trong giờ bán"*) |
+| 5 | `docs/product.md` → *Unknowns* → *Đang mở* **rỗng**; U-017 và U-018 nằm trong bảng lời giải cuối ngày 2026-09-01; brief in `OPEN UNKNOWNS (none)` |
+| 6 | `quality/invariants.md` I-011 viết lại, có khối ⚠️ nói thẳng bản đầu sai ở đâu và vì sao; dòng cuối ghi *Viết lại ở T-037* |
+| 7 | `docs/architecture.md` và `docs/decisions.md`: bốn dòng *Cập nhật 2026-09-01 (T-037)*, đều chỉ đổi **trạng thái** câu hỏi, không viết đặc tả hộ T-036 |
+| 8 | Ready: BA-09 hết chờ U-018 (**MVP không phải làm nút chặn**), BA-12 hết chờ U-017 |
+| 9 | `./scripts/gate.sh` xanh |
+
+**Hệ quả cho BA-09:** lời giải U-018 **bớt** việc cho MVP chứ không thêm — không phải làm nút chặn,
+chỉ cần một lời nhắc và một dòng vết. Đây là lần hiếm một câu hỏi mở đóng lại theo hướng làm ít đi.
+
+**Không mở ADR, không mở finding.** Cả hai là lời chủ quán, không phải lựa chọn thiết kế của phiên.
+Bài học về invariant ghi ngay trong entry này — lần đầu gặp, chưa đủ hai lần để thành một luật
+(`quality/review-gate.md` → *Vòng phản hồi*).
+
+<a id="t-036"></a>
+### T-036 — S-4 có lời giải sau khi hỏi lại đúng cách, và một sự cố scope thành F-014
+
+**Xong 2026-09-01.** L1 · không có file prompt — hai câu hỏi lấy trực tiếp từ chủ repo trong phiên ·
+`master_plan/shop-facts.md` §5.4, §7.1, §7.2 · `docs/product.md` §1.2 + *Unknowns* (**U-017** mới) ·
+`work/findings.md` **F-014** (Open) · sáu pointer sửa kèm.
+
+**Chủ quán trả lời gì, ngày 2026-09-01:**
+
+| Câu | Trả lời |
+|---|---|
+| *"Từ lúc bếp tráng xong một cái bánh đến lúc nó đặt xuống bàn khách, có khi nào nó phải nằm chờ không?"* | **Có** — chờ đủ đĩa · chờ người rảnh tay bưng · chờ món khác của cùng bàn |
+| *"Vậy ai nói cho máy biết món đã xong?"* (U-009 đã bỏ nút ở bếp) | **Người đứng quầy bấm** |
+
+⇒ Bảng ở quầy có **bốn** con số, không phải ba. **U-009 nguyên vẹn**: ba trạm bếp vẫn không bấm gì
+— nút mới nằm ở **quầy**. Hai luật không mâu thuẫn, chúng nói về hai chỗ đứng khác nhau.
+
+**Vì sao lần này hỏi được, lần trước không:** câu ngày 2026-08-31 hỏi *"bảng ở quầy lúc đó hiện bàn
+5 còn thiếu 3 hay đã đủ"* — một câu về **mô hình dữ liệu** — và chủ quán trả lời *"tôi không hiểu"*.
+Câu ngày 2026-09-01 hỏi về **cái quán**, và chủ quán không những trả lời ngay mà còn tự kể ra ba lý
+do nằm chờ. Bài học ở lại `master_plan/shop-facts.md` §7.2 **kể cả khi S-4 đã đóng**, vì nó là luật
+cho mọi câu kiểm chứng viết sau này, không phải một mẩu chuyện riêng của S-4.
+
+**Cái mới mở ra — U-017, không được suy ra:** quầy bấm *"đã làm xong"* theo **từng cái**, theo
+**cả mẻ**, hay theo **cả bàn**? Bếp làm theo mẻ nên cả ba đều nghe hợp lý, mà chúng cho ra ba con
+số thứ tư khác nhau. Đây chính là câu **đếm ở mức nào** mà lời chốt U-009 từng bịt lại (bỏ nút ở bếp) và
+nay quay về cho cái nút ở quầy.
+
+**Sáu pointer sửa trong cùng lần đổi** (CLAUDE.md §7.2 — pointer lệch là bug của lần này):
+
+| Pointer | Đang nói sai gì |
+|---|---|
+| `docs/architecture.md` §11 | *"§3 viết theo phương án hẹp nhất: ba con số"* và *"bảng quầy không biết khoảng chờ"* |
+| `docs/decisions.md` ADR-009 (thân + *Rủi ro*) | *"đã làm xong" là suy luận chưa xác nhận, giữ ở §7.2* |
+| `docs/decisions.md` ADR-011 (*Rủi ro*) | *"ba câu còn mở… S-4 đã hỏi một lần và hỏng"* |
+| `master_plan/00-scope.md` | *"§7.2 giữ đúng một mục: S-4"* |
+| `prompt/BA/README.md` | *"S-4 chưa ai xác nhận, ghi là suy luận"* |
+| `prompt/BA/12-production-control-L2.md` (bốn chỗ) | bảng câu hỏi · *"phương án hẹp nhất = ba con số"* · Constraint *"nếu S-4 được xác nhận"* · Acceptance 7 *"hoặc ba hoặc bốn"* |
+
+**F-014 — sự cố của phiên trước, nay có tên.** Phiên BA-04 (2026-09-01) làm đúng thứ cảnh báo của
+`scripts/brief.sh` bảo — *"dọn scope TRƯỚC khi bắt task mới"* — và xoá mất khối scope của hai phiên
+T-027, T-031 đang chạy song song. Cảnh báo không phân biệt được *pattern của task đã xong* với
+*pattern của phiên đang chạy*. Lần thứ hai của cùng hậu quả sau F-010, nhưng lệnh lần này đến từ
+**máy**. Sửa `brief.sh` là **T-035**; task này chỉ ghi, vì `scripts/` nằm ngoài scope T-036 và việc
+sửa cần ca kiểm mới.
+
+**Chạy song song với T-034** (ba lời chốt về mốc đổi menu/giá). Ba file dùng chung —
+`master_plan/shop-facts.md`, `docs/product.md`, `work/backlog.md` — mỗi task chỉ sửa mục của mình,
+và khối scope của T-036 được **thêm vào cuối** `work/scope.txt`, không ghi đè khối T-034. Đó là
+đúng thứ F-014 nói phải làm. Hai phiên còn tránh trùng định danh: T-036 lấy **U-017**, T-034 thấy
+trùng thì tự đổi sang **U-018** (`docs/product.md` ghi lại chuyện này ngay tại mục *Unknowns*).
+
+[↑ đầu file](#top)
+
+<a id="t-034"></a>
+### T-034 — Ba lời chốt về mốc đổi menu/giá: giá đổi ngay, thành phần chờ hết buổi
+
+**Xong 2026-09-01.** L2 · không có prompt — chủ quán trả lời thẳng cả ba câu BA-05 vừa mở, trong
+lượt kế tiếp · `master_plan/shop-facts.md` **§6.17** (quy tắc thứ mười bảy) + §4.5 + ba dòng §7.1 ·
+`master_plan/prompt-fullstack.md` (đếm lại quy tắc) · `docs/product.md` §3.3 và mục *Unknowns* ·
+`quality/invariants.md` **I-011**, siết **I-009** · **mở U-018**.
+
+**Điều đáng ghi nhất — ba câu ra HAI luật, và BA-05 đã đoán sai chỗ đó.** §3.3.2 lúc BA-05 viết gom
+cả bốn chiều đổi giá vào một bảng và ngầm cho rằng chúng cùng một mốc hiệu lực (*"lúc chủ quán
+lưu"*). Lời chốt tách đôi: ba chiều **tiền** sửa giữa giờ bán cũng được, chiều thứ tư — **thành
+phần suất** — phải chờ hết buổi. Đây đúng là lý do CLAUDE.md §3.5 cấm tự chốt: một giả định
+*"chắc là cùng mốc"* nghe hợp lý, và nó sai ở đúng chiều đắt nhất.
+
+**Lời chốt thứ hai đóng một ca mà không ai nghĩ là ca:** một hoá đơn phiên bàn **được phép mang hai
+mức giá cho cùng một món**. Chủ quán nhìn thẳng vào ca đó và nhận. Hệ quả là ranh giới khoá giá
+phải đọc ở mức **từng lượt gọi**, không phải mức phiên — I-009 nay nói thẳng như vậy, và ghi ra
+luôn hai đường **không** được chọn: khoá giá theo lúc mở phiên, hoặc tính lại cả phiên lúc thanh
+toán.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Chứng minh ở |
+|---|---|
+| 1 | `shop-facts.md` §6.17, sáu gạch đầu dòng + hai dòng *cách đọc*; mỗi lời chốt ghi *trả lời U-014 / U-015 / U-016* ở §7.1 |
+| 2 | `shop-facts.md` §6 tiêu đề *Mười bảy* · `master_plan/prompt-fullstack.md` dòng bảng đổi theo; `grep -rn 'Mười sáu quy tắc' master_plan/ docs/ quality/` → rỗng |
+| 3 | `shop-facts.md` §7.1, ba dòng cuối bảng, đều `2026-09-01`, mỗi dòng ghi câu U nào đóng |
+| 4 | Hai chỗ suy ra được đánh dấu tại chỗ trong §6.17 (*"cách đọc, không phải lời chủ quán nói thẳng"*): **vì sao** hai chiều xử khác nhau, và **"hết buổi" là sau 11:00** theo §1. Không dòng nào trong bảng §7.1 mang suy luận (F-004) |
+| 5 | `docs/product.md` §3.3 đoạn mở (hai nhóm, hai mốc) · §3.3.1 bước 3 · §3.3.2 bảng có cột **Sửa được lúc nào** · §3.3.6 viết lại |
+| 6 | Mục *Unknowns*: vùng *Đang mở* nay chỉ còn U-018; U-014–U-016 nằm trong bảng lời giải ngày 2026-09-01, gạch ngang kèm lời giải và chỗ ghi |
+| 7 | `quality/invariants.md` I-009 (*"ranh giới là thời điểm tạo một LƯỢT GỌI"* + kịch bản bàn 5 gọi 8:00, đổi giá 8:30, gọi lại 9:00 ⇒ tổng = giá cũ + giá mới) và **I-011** |
+| 8 | Bảng §10 câu 9 nay là **đã chốt 2026-09-01**, trỏ `shop-facts.md` §6.17 |
+| 9 | `./scripts/gate.sh` xanh; brief in `OPEN UNKNOWNS` chỉ còn U-018 |
+
+**U-018 — câu duy nhất sinh ra từ task này.** Luật *"đổi thành phần phải chờ hết buổi"* là luật cho
+**người**, và chủ quán là người duy nhất bấm được nút ấy. Chưa ai nói máy phải làm gì khi người
+định phá luật của chính mình: chặn hẳn, hay nhắc rồi vẫn cho lưu. Câu hỏi được soạn theo đúng bài
+học của S-4 (`shop-facts.md` §7.2) — **hỏi về cái quán trước** (*có ca nào buộc anh phải đổi thành
+phần ngay giữa buổi không*), rồi mới hỏi về cái máy. Nó chặn **BA-09**: phạm vi MVP có làm nút chặn
+hay không phụ thuộc câu này.
+
+**Vì sao I-011 tồn tại dù U-018 còn mở:** cái *luật* đã chốt, chỉ *cách máy giữ luật* là chưa. Nên
+Verification của I-011 viết ở mức **đối soát cuối ngày** (không lần đổi thành phần nào có mốc trong
+06:00–11:00) — đúng với cả hai lời giải của U-018. Lời giải sẽ **thêm** một kịch bản kiểm tại chỗ,
+không thay kịch bản này.
+
+**Không mở ADR.** Cả ba là lời chủ quán, không phải lựa chọn thiết kế của phiên
+(CLAUDE.md §3, `docs/decisions.md` là chỗ của cái thứ hai).
+
+**Prompt:** không có — chủ quán trả lời thẳng cả ba câu BA-05 vừa mở, trong lượt kế tiếp,
+2026-09-01. **L2** — lời chốt quyết định **một hoá đơn được phép mang hai mức giá**, tức chạm
+thẳng cách tính tiền một phiên bàn và chạm đối soát cuối ngày.
+
+**Goal:**
+U-014, U-015, U-016 hết nằm trong danh sách đang mở; ba lời chốt về đúng owner
+(`master_plan/shop-facts.md`), `docs/product.md` §3.3 hết chỗ *"chưa chốt"*, và mọi pointer nói ba
+câu ấy còn mở đã đuổi theo.
+
+**Ba câu, ba lời chốt:**
+
+| Câu | Lời chủ quán | Nghĩa là |
+|---|---|---|
+| **U-014** | *"không phải chờ đến hết buổi"* | sửa **giá** được **ngay giữa giờ bán**, hiệu lực từ lúc lưu |
+| **U-015** | *"lượt gọi trước mốc giữ giá cũ, lượt gọi sau mốc áp giá mới"* | **một hoá đơn được phép mang hai mức giá** cho cùng một món; chủ quán chấp nhận |
+| **U-016** | *"chờ đến hết buổi bán hàng"* | sửa **thành phần một suất** thì **không** được làm giữa giờ bán |
+
+**Điều đáng ghi nhất — ba câu ra hai luật khác nhau, không phải một.** BA-05 gộp cả bốn chiều đổi
+giá vào một bảng (`docs/product.md` §3.3.2) và ngầm cho rằng chúng cùng một mốc hiệu lực. Lời chốt
+tách đôi: **ba chiều tiền sửa lúc nào cũng được, chiều thứ tư — thành phần suất — phải chờ hết
+buổi.** Ai đọc §3.3 mà chỉ nhớ *"mốc là lúc chủ quán lưu"* sẽ làm sai đúng chiều đắt nhất.
+
+**Scope:** `master_plan/shop-facts.md` (§4.5, §6 quy tắc mới, §7.1) · `master_plan/prompt-fullstack.md`
+(dòng đếm quy tắc §6) · `docs/product.md` (§3.3, Unknowns) · `quality/invariants.md` (chỉ **thêm**
+I-011 và siết I-009) · `work/backlog.md`.
+
+**Out of scope:** `docs/decisions.md` (không có lựa chọn thiết kế nào để ghi — cả ba là lời chủ
+quán, không phải ADR) · `docs/architecture.md` · `prompt/`.
+
+**Acceptance:**
+1. `shop-facts.md` §6 có quy tắc **thứ 17** ghi cả ba lời chốt, kèm ngày 2026-09-01 và ghi rõ câu
+   nào trả lời câu nào.
+2. Tiêu đề §6 đổi *Mười sáu* → *Mười bảy*, và `master_plan/prompt-fullstack.md` — bản xuất khẩu —
+   đổi theo trong **cùng** lần sửa (F-005/F-006: bản xuất khẩu là loại file thứ tư hay bị bỏ quên).
+3. `shop-facts.md` §7.1 có ba dòng mới ngày 2026-09-01, mỗi dòng ghi câu U nào đóng.
+4. Chỗ nào là **suy ra** thì nằm đúng chỗ suy ra, không trộn vào lời chủ quán (F-004).
+5. `docs/product.md` §3.3 hết mọi chỗ nói ba câu này chưa chốt; §3.3.2 phân biệt được **hai** mốc
+   hiệu lực cho bốn chiều.
+6. U-014, U-015, U-016 **chuyển xuống** mục *Đã có lời giải*, không gạch ngang tại chỗ (ADR-007).
+7. `quality/invariants.md`: I-009 nói rõ ranh giới là **từng lượt gọi**, và có kịch bản kiểm phiên
+   bàn hai mức giá; thêm **I-011** về mốc được phép đổi thành phần suất.
+8. Bảng §10 câu 9 ở backlog chuyển từ *còn mở* sang **đã chốt** kèm nguồn.
+9. `./scripts/gate.sh` xanh; `grep -rn` không còn dòng nào nói U-014/U-015/U-016 đang mở.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/LATEST/p'   # không còn U-014..U-016
+grep -rn 'Mười sáu quy tắc' master_plan/ docs/ quality/    # rỗng
+grep -n 'Mười bảy' master_plan/shop-facts.md master_plan/prompt-fullstack.md
+git status --porcelain
+```
+
+<a id="ba-05"></a>
+### BA-05 — Lát cắt chủ quán thay đổi menu/giá
+
+**Xong 2026-09-01.** L2 · prompt `prompt/BA/04-slice-menu-price-change-L2.md` · `docs/product.md`
+§3.3 (bảy mục con, §3.3.1–§3.3.7) · `quality/invariants.md` **I-009, I-010** · **mở ba unknown:
+U-014, U-015, U-016**.
+
+> **Cập nhật 2026-09-01 (T-034): cả ba unknown đã đóng trong ngày**, chủ quán trả lời ngay lượt kế
+> tiếp. Mọi câu *"chưa chốt"* trong entry này là ảnh chụp lúc BA-05 chạy, giữ nguyên làm lịch sử;
+> trạng thái hôm nay đọc ở entry **T-034** và ở `master_plan/shop-facts.md` §6.17. Một lời chốt
+> **sửa lại** thứ BA-05 viết: §3.3.2 lúc ấy cho cả bốn chiều chung một mốc hiệu lực, nay chiều thứ
+> tư có mốc riêng.
+
+**Đây là lát cắt đầu tiên phải để lại câu hỏi mở.** BA-03 và BA-04 chạy trên một nhà thật đã đủ
+dữ kiện; BA-05 thì không — `master_plan/shop-facts.md` nói rất kỹ giá **là bao nhiêu** (§4.1–§4.8)
+nhưng **không có một câu nào** về việc chủ quán được sửa bảng giá ấy lúc nào và sửa thì đơn đang
+chạy ra sao. Chỗ trống đó không suy ra được từ giá, nên §3.3 chốt phần luật lịch sử đơn (thứ kế
+hoạch gốc §5 quy tắc 5–7 đã quyết) và đẩy phần *"lúc nào"* thành ba câu hỏi cho chủ quán
+(CLAUDE.md §3.5).
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Chứng minh ở |
+|---|---|
+| 1 | `docs/product.md` §3.3.1, bảy bước có đánh số; bước 3 là mốc hiệu lực (*"khi chủ quán lưu"*), bước 5 và 6 chia hai phía của mốc |
+| 2 | §3.3.3, câu in đậm mở mục (*"giữ nguyên tổng tiền của nó, mãi mãi"*) + ví dụ suất giò 25.000 |
+| 3 | §3.3.4, ba gạch đầu dòng: biến khỏi menu ở cả năm kênh · đơn cũ vẫn đúng tên và giá · doanh thu ngày cũ không đổi |
+| 4 | §3.3.5 — *"Từ chối, không phải sửa hộ"*, nêu đích danh **Chay + Nhiều nhân**; `grep -n 'Chay' docs/product.md` → 2 dòng, cả hai ở §3.3.5 |
+| 5 | §3.3.2, bảng bốn dòng: giá thành phần · phụ thu nhân · phụ thu lượng nhân · thành phần một suất, mỗi dòng trỏ `shop-facts.md` §4.2 / §4.4 / §4.5 |
+| 6 | §3.3.3, khối trích dẫn ghi thẳng *"bản chép của `shop-facts.md` §4.2–§4.3"*; `grep -c '000' docs/product.md` = **5** dòng, bốn trong số đó nằm trong đúng khối ví dụ ấy, dòng thứ năm có từ trước (bảng S-1 ở mục Unknowns) |
+| 7 | §3.3.6 — phần đã chốt (đơn đã tạo là xong chuyện giá, mọi trạng thái) và phần chưa chốt (U-014, U-015, U-016) |
+| 8 | `quality/invariants.md` **I-009** (đơn cũ không đổi giá/tên/thành phần, phủ cả bốn chiều) và **I-010** (tổ hợp không hợp lệ bị từ chối). Verification của I-009 mở đúng kịch bản yêu cầu: đổi giá bánh → mở đơn suất giò cũ → tổng vẫn 25.000 |
+| 9 | `grep -nEi 'snapshot\|version\|migration\|schema\|cột\|column' docs/product.md` → **rỗng**; §3.3.7 gạch đầu dòng 1 nói thẳng cách máy giữ lịch sử giá là việc của `docs/architecture.md` |
+
+**Câu hỏi §10 gắn vào task này — câu 9, KHÔNG đóng được.** *"Chủ quán đổi giá đang bán ngay lập
+tức được không"* không có lời giải ở bất kỳ owner nào, nên nó **lên hình dạng máy đọc được**: thành
+**U-014**, một gạch đầu dòng trong vùng đang mở của `docs/product.md` → *Unknowns*, để
+`scripts/brief.sh` đẩy vào mọi phiên sau (ADR-007). Dòng câu 9 trong bảng §10 trên kia nay trỏ về
+đó. Ghi GIẢ ĐỊNH rồi đi tiếp là đường prompt cho phép nhưng BA-05 **không** đi: một giả định về
+thời điểm đổi giá sẽ chảy thẳng vào §4 (BA-06) thành luật tính tiền.
+
+**Hai unknown còn lại sinh ra trong lúc viết, không có trong prompt:**
+- **U-015** là hệ quả trực tiếp của việc ghép luật lịch sử đơn với I-002 (một phiên bàn, một hoá
+  đơn): phiên bàn **không phải** một đơn, nó gom nhiều lượt gọi, nên một phiên vắt qua mốc đổi giá
+  đẻ ra một hoá đơn có hai mức giá cho cùng một món. Không owner nào nói chủ quán chấp nhận điều đó
+  hay không.
+- **U-016** tách riêng chiều thứ tư (đổi **thành phần** một suất) khỏi ba chiều tiền, vì chỉ chiều
+  này đổi **thứ bếp làm ra**, không chỉ đổi tiền — hậu quả của nó rơi vào bếp và vào BA-08, không
+  rơi vào máy tính tiền.
+
+**Prompt:** `prompt/BA/04-slice-menu-price-change-L2.md` (L2) · **Cần xong trước:** BA-02 (xong
+2026-08-30)
+
+**Goal:**
+`docs/product.md` §3.3 chốt nguyên tắc lịch sử đơn hàng: đơn mới dùng menu/giá mới, đơn cũ giữ
+nguyên tên món và giá tại thời điểm đặt, kể cả khi món đã ngừng bán.
+
+**Scope:** `docs/product.md` §3.3 · `quality/invariants.md` (chỉ **thêm**) · `work/backlog.md`.
+
+**Out of scope:** §3.1, §3.2, §4–§8 của `docs/product.md` · `docs/decisions.md` ·
+`docs/architecture.md`.
+
+**Acceptance:**
+1. §3.3 mô tả luồng trước/sau khi đổi giá và nêu thời điểm giá mới bắt đầu có hiệu lực.
+2. Có câu khẳng định đơn đặt trước thời điểm đổi giá giữ nguyên tổng tiền.
+3. Có câu khẳng định món đã ngừng bán không còn trong menu mới nhưng vẫn hiện đúng tên và giá
+   trong đơn cũ.
+4. Có hành vi khi tổ hợp món/option không hợp lệ: đơn bị từ chối, không tự sửa thành hợp lệ; nêu
+   đích danh ví dụ Chay + Nhiều nhân (`shop-facts.md` §4.4).
+5. §3.3 phủ cả bốn chiều đổi giá: giá thành phần · phụ thu nhân · phụ thu lượng nhân · thành phần
+   một suất (`shop-facts.md` §4.5).
+6. §3.3 không chép bảng giá; ví dụ minh hoạ ghi nguồn `shop-facts.md` §4.2–§4.3.
+7. Nêu trạng thái của đơn đang dở khi giá đổi — hoặc ghi thành câu hỏi mở nếu chưa chốt được.
+8. `quality/invariants.md` có hai invariant: đơn đã tạo không đổi giá và tên món khi menu đổi ·
+   tổ hợp món/option không hợp lệ bị từ chối. Invariant lịch sử đơn có Verification mô tả được
+   kịch bản: đổi giá món → mở đơn cũ → tổng tiền không đổi.
+9. §3.3 không mô tả cách lưu dữ liệu (bảng, cột, version, snapshot).
+
+**Câu hỏi §10 gắn vào task này:** câu 9 — chủ quán có được đổi giá đang bán ngay lập tức không.
+**Còn mở**; BA-05 hỏi người, không tự chốt. Chưa có lời giải thì ghi GIẢ ĐỊNH kèm mức rủi ro và
+chuyển sang BA-10.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -n 'Chay' docs/product.md
+grep -n 'shop-facts.md §4' docs/product.md                     # ví dụ có ghi nguồn
+grep -nEi 'snapshot|version' docs/product.md                   # rỗng
+git status --porcelain
+```
+
+<a id="ba-04"></a>
+### BA-04 — Lát cắt một đơn mang đi (ba kênh không gắn bàn)
+
+**Xong 2026-08-31.** L2 · prompt `prompt/BA/03-slice-ship-pickup-L2.md` · `docs/product.md` §3.2
+(tám mục con, §3.2.1–§3.2.8) · `quality/invariants.md` **I-007, I-008** · không mở unknown nào —
+mọi câu hỏi của prompt đều đã có lời giải ở `master_plan/shop-facts.md` trước khi task chạy.
+
+**Hai chỗ lệch so với entry gốc, cố ý:**
+- **§3.2 có ba định danh máy, đúng một lần.** BA-03 đã chọn luật *"`docs/product.md` chỉ gọi kênh
+  bằng tên người đọc"*, nhưng Acceptance 2 và mục *Verify* của BA-04 đòi `phone_preorder` **có
+  mặt** trong §3.2. Hai luật ngược nhau, nên §3.2 chép ba định danh `delivery` · `pickup` ·
+  `phone_preorder` vào **một** câu ở đầu mục, nói thẳng đó là cầu nối sang `shop-facts.md`, và từ
+  đó trở đi chỉ dùng tên người đọc. Ngoại lệ thứ hai là câu nói `phone_preorder` bị ghi thành
+  `staff_pos` là bug — chỗ đó **phải** gọi tên máy vì chính cái bug là một cái tên.
+- **§3.2.6 chép hai con số của quán** — giờ bán `06:00 – 11:00` và phí ship `0đ` — trong khi đầu
+  `docs/product.md` cấm chép dữ kiện quán về đây (ADR-001). Acceptance 7 đòi đúng thế: *"bằng số,
+  không viết chung chung"*, vì một câu kiểu "theo giờ mở cửa của quán" không kiểm được. Giảm hại
+  bằng cách gọi tên chủ ngay tại chỗ (`shop-facts.md` §1, §2) và ghi rõ đổi thì phải sửa cả hai
+  nơi trong cùng một lần đổi. Đây là bản chép thứ hai **duy nhất** trong file.
+
+**Sự cố trong lúc chạy — phiên BA-04 ghi đè `work/scope.txt` của hai phiên đang chạy song song:**
+Brief đầu phiên báo `work/scope.txt` còn 38 pattern thừa mà không task nào In Progress, nên phiên
+này dọn sạch rồi khai scope của mình (CLAUDE.md §7.3). Nhưng **T-027 và T-031 đang chạy trong cùng
+cây làm việc** ngay lúc đó, và cảnh báo của brief chỉ đọc được trạng thái lúc phiên bắt đầu. Ba
+khối scope đã được dựng lại ngay trong `work/scope.txt`, mỗi khối ghi rõ nó là **bản dựng lại**,
+suy từ file đang sửa trong cây + entry backlog, nên có thể hẹp hơn bản gốc.
+⇒ Đây là lần **thứ hai** của cùng một cơ chế: lần đầu là bài học T-019/T-023 ở [Ready](backlog.md#ready)
+(*"phiên vào sau phải THÊM khối của mình, đừng ghi đè"*), họ lỗi `work/findings.md` **F-010**.
+Lần này nguyên nhân mới: **cảnh báo "scope bẩn" của brief không phân biệt được pattern của task đã
+xong với pattern của một phiên đang chạy song song.** Chưa mở finding — `work/findings.md` nằm
+ngoài scope của BA-04 và đang được phiên T-027 sửa; để chủ repo quyết có mở F-014 không.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Chứng minh ở |
+|---|---|
+| 1 | `docs/product.md` §3.2.1, chín bước, mỗi bước mở đầu bằng actor in nghiêng; `sed … \| grep -cE '^ *[0-9]+\.'` = 9 |
+| 2 | §3.2 đoạn mở (ba kênh + ba định danh) và §3.2.3 đoạn đầu — Staff POS khác ở **đơn vị tính tiền** và ở bước hỏi cách trao hàng |
+| 3 | §3.2.3, bảy gạch đầu dòng: từ *"Khách gọi hotline"* tới **hai** gạch "Kết thúc kiểu thứ nhất / thứ hai" |
+| 4 | §3.2.5, gạch đầu dòng 1 và 2 (và bước 5 của §3.2.1) |
+| 5 | §3.2.4, ba gạch đầu dòng + dòng *chủ quán chốt 2026-08-30*, không đánh dấu suy luận |
+| 6 | §3.2.2, gạch đầu dòng *"Giao tận nơi"*; nhắc lại ở §3.2.7 gạch cuối |
+| 7 | §3.2.6, gạch đầu dòng 1 (`06:00 – 11:00`) và đoạn cuối (`0đ`, không đơn tối thiểu, không bậc phí) |
+| 8 | §3.2.6, gạch đầu dòng 1 (ngoài giờ: khoá nút đặt + câu khách nhìn thấy) và gạch 2 (*"nút tạm dừng THẮNG giờ mở cửa"*) |
+| 9 | §3.2.7, **bảy** gạch đầu dòng khác biệt (yêu cầu tối thiểu là ba) |
+| 10 | `quality/invariants.md` **I-007** (không thuộc phiên bàn, thanh toán độc lập) và **I-008** (ngoài giờ bán / tạm dừng thì không tạo được đơn), cả hai có Verification |
+| 11 | `grep -nEi 'grab\|ahamove\|google maps\|api\|endpoint' docs/product.md` → rỗng; §3.2.8 nói thẳng ba thứ lát cắt này không nói tới |
+
+**Câu hỏi §10 đã đóng bằng task này:** câu 6 (pickup có giờ hẹn bắt buộc) → §3.2.4 · câu 7
+(delivery có trạng thái giao) → §3.2.2. Cả hai vốn **đã chốt** ở `shop-facts.md` trước khi task
+chạy; BA-04 chỉ chép lời giải kèm nguồn, không mở lại thành câu hỏi.
+
+
+**Prompt:** `prompt/BA/03-slice-ship-pickup-L2.md` (L2) · **Cần xong trước:** BA-02 (xong
+2026-08-30) và T-011 (xong 2026-08-30).
+
+**Goal:**
+`docs/product.md` §3.2 mô tả trọn đường đi của một đơn không gắn bàn — từ lúc khách chọn món tới
+lúc đơn hoàn thành — cho **cả ba** kênh `delivery`, `pickup`, `phone_preorder`, và nêu nó khác đơn
+tại bàn ở chỗ nào.
+
+Lát cắt này là **ba** kênh, không phải hai. Nguồn: `master_plan/shop-facts.md` §5.2 gộp cả ba kênh
+không gắn bàn vào **một** luồng, và `prompt/BA/03-slice-ship-pickup-L2.md` đã phủ đủ ba. Dòng BA-04
+ở §11 kế hoạch gốc từng viết "ship/pickup"; T-011 đã sửa **2026-08-30**, nên khung và nhà thật nay
+khớp nhau.
+
+**Scope:** `docs/product.md` §3.2 · `quality/invariants.md` (chỉ **thêm**) · `work/backlog.md`.
+
+**Out of scope:** §3.1, §3.3, §4–§8 của `docs/product.md` · `docs/decisions.md` ·
+`docs/architecture.md`.
+
+**Acceptance:**
+1. §3.2 có luồng đúng 9 bước theo §4.2 kế hoạch gốc, mỗi bước ghi actor.
+2. §3.2 phủ **ba** kênh không gắn bàn và nói `phone_preorder` khác `staff_pos` ở chỗ nào
+   (`docs/product.md` §2.3).
+3. Có đường đi của đơn `phone_preorder` từ lúc nhân viên nghe máy tới lúc đơn hoàn thành, gồm
+   **cả hai** kiểu kết thúc — khách tới lấy hoặc quán giao (`shop-facts.md` §5.2).
+4. Có câu khẳng định đơn mang đi không gắn phiên bàn và được thanh toán độc lập.
+5. Nêu thông tin liên hệ tối thiểu theo từng kênh: số điện thoại bắt buộc cả ba kênh, địa chỉ bắt
+   buộc khi giao tận nơi, giờ hẹn bắt buộc với `pickup` và `phone_preorder` — tra
+   `shop-facts.md` §6.5, ghi là **đã chốt 2026-08-30**, không đánh dấu suy luận. → §10 câu 6.
+6. Nêu đơn giao tận nơi mang trạng thái **"đang giao"** và quán tự đi giao
+   (`shop-facts.md` §6.7). → §10 câu 7.
+7. Nêu giờ bán 06:00–11:00 và phí ship 0đ, không đơn tối thiểu — bằng số, không viết chung chung.
+8. Có hành vi khi đặt ngoài giờ bán (đơn bị từ chối, khách nhìn thấy gì) và khi chủ quán tạm dừng
+   nhận đơn, kèm câu khẳng định nút tạm dừng **thắng** giờ mở cửa (`shop-facts.md` §6.8).
+9. Có đoạn "Khác gì so với đơn tại bàn" liệt kê ít nhất 3 khác biệt nghiệp vụ.
+10. `quality/invariants.md` có hai invariant: đơn mang đi không thuộc phiên bàn nào · không tạo
+    được đơn ngoài giờ bán hoặc khi đang tạm dừng nhận đơn.
+11. §3.2 không nói về nhà cung cấp vận chuyển, bản đồ, hay cách tính phí ship theo bậc.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -n 'phone_preorder' docs/product.md                       # có mặt trong §3.2
+sed -n '/^### 3.2/,/^### 3.3/p' docs/product.md | grep -cE '^ *[0-9]+\.'   # 9 bước
+grep -n 'đang giao\|06:00\|0đ' docs/product.md
+git status --porcelain
+```
+
+<a id="t-027"></a>
+### T-027 — Brief cắt danh sách ở 6 và không nói đã cắt, nên mục thứ bảy vô hình
+
+**Prompt:** không có — người dùng chỉ nói *"đọc kĩ và hoàn thành T-027"*, 2026-08-31. **L1** —
+nó đổi thứ mọi phiên mới đọc trước chỉ thị đầu tiên. **Xong 2026-08-31.**
+
+**Goal:**
+Một phiên mới đọc brief là biết **có phần bị cắt hay không**. Danh sách bảy mục không còn trông
+giống hệt danh sách sáu mục.
+
+**Nói một câu, việc phải làm là gì:**
+Cho brief **nói ra** phần nó đã cắt. Việc **không** phải làm: đổi `MAX_LIST=6` thành một số to hơn
+— số nào cũng có một danh sách vượt qua nó, và lúc đó im lặng vẫn im lặng.
+
+**Vì sao có task này:**
+Ghi ngày 2026-08-31 trong lúc chạy T-026: câu hỏi mở lên **bảy**, brief in **sáu**, U-011 vô hình
+với mọi phiên mới kể từ dòng đầu tiên nó được viết ra. Chi tiết, bốn ràng buộc, và vì sao đây là
+lần thứ hai của cùng một hậu quả (sau F-008) ở `work/findings.md` **F-012**.
+
+**Không làm thì mất gì:**
+- **Phiên sau tự suy ra câu trả lời cho một câu hỏi nó không biết là đang mở** — nặng nhất, vì
+  CLAUDE.md §3.5 chỉ dừng được phiên **biết** mình đang thiếu.
+- **BA-12 không phiên nào nhìn thấy**: Ready đang có 10 dòng chưa tick, BA-12 nằm ngoài sáu dòng
+  đầu.
+- **Chính F-012 biến mất khỏi brief** khi số finding Open vượt sáu.
+
+**Acceptance** (viết trước khi sửa, 2026-08-31 · bốn ràng buộc gốc ở `work/findings.md` F-012):
+
+1. Danh sách **dài hơn** ngưỡng in ra một dòng nói **còn bao nhiêu mục** và **đọc đủ ở file nào**.
+   Đúng bốn danh sách: In Progress · Ready · Open findings · Open unknowns.
+2. Danh sách **bằng hoặc ngắn hơn** ngưỡng không in thêm dòng nào — im lặng ở đây là đúng, và
+   một dòng "đã in hết" mỗi phiên là tiếng ồn.
+3. **Câu hỏi mở có ngưỡng riêng**, khai báo riêng, không thừa hưởng `MAX_LIST`. Ca thật của
+   F-012 — **bảy** câu mở — phải in **đủ bảy**, U-011 có mặt.
+4. Khi câu hỏi mở *thật sự* bị cắt, dòng thông báo nói thẳng hậu quả theo CLAUDE.md §3.5
+   (phiên không biết mình đang thiếu), không dùng chung một câu với ba danh sách kia.
+5. `./scripts/brief.sh` **exit 0** ở mọi ca, kể cả ca bị cắt (CLAUDE.md §7.1).
+6. `scripts/brief.test.sh` có ca cho danh sách **vượt ngưỡng** ở cả bốn danh sách — ràng buộc
+   thứ tư của F-012: mọi ca cũ đều dưới ngưỡng nên không ca nào bắt được lỗi này.
+
+**Verify:** `./scripts/brief.test.sh` (verify.sh tự chạy nó) · `./scripts/gate.sh` ·
+và chạy tay `./scripts/brief.sh` trên chính repo này.
+
+**Kết quả (2026-08-31):**
+
+| Chỗ sửa | Sửa gì |
+|---|---|
+| `scripts/brief.sh` | hàm `emit` — in tối đa N mục rồi **nói ra** phần đã cắt: `→ ĐÃ CẮT: in 6/10 mục. Còn 4 mục nữa chỉ có ở work/backlog.md → Ready.` Cả bốn danh sách đi qua nó |
+| `scripts/brief.sh` | `MAX_UNKNOWNS=12` đứng riêng cạnh `MAX_LIST=6`, kèm lý do vì sao câu hỏi mở không thừa hưởng ngưỡng chung |
+| `scripts/brief.sh` | `$inprog` giữ danh sách **đủ**, không phải bản đã cắt — cảnh báo "scope chưa dọn" hỏi *"có task nào đang chạy không"*, hỏi câu đó trên bản đã cắt là hỏi trên nửa sự thật |
+| `scripts/brief.test.sh` | bảy ca C1–C7: bốn danh sách vượt ngưỡng · "bằng đúng ngưỡng thì im" · bảy câu mở **không** bị cắt · ngưỡng riêng không thừa hưởng `MAX_LIST` |
+| `CLAUDE.md` §7.1 | "hai luật giữ brief thật thà" thành **ba** — luật thứ ba: brief nói khi nó đã cắt |
+| `work/findings.md` | F-012 → **Fixed (2026-08-31, T-027)** |
+
+**Bằng chứng nó bắt được đúng con bug của chính mình:** ngay lần chạy đầu trên repo này, mục Ready
+in `→ ĐÃ CẮT: in 6/10 mục. Còn 4 mục nữa chỉ có ở work/backlog.md → Ready.` — bốn dòng cuối, trong
+đó có **BA-12**, là bốn dòng mà trước T-027 không phiên mới nào nhìn thấy.
+
+**Điều đáng ghi — vì sao không phải "đổi 6 thành 20":**
+Ngưỡng nào cũng có một danh sách vượt qua nó, và lúc vượt thì im lặng vẫn im lặng. Thứ hỏng chưa
+bao giờ là **cắt**: cắt là đúng, vì brief trỏ chứ không chép (CLAUDE.md §7.1) và một brief bốn mươi
+dòng thì không ai đọc. Thứ hỏng là người đọc không phân biệt được **"hết rồi"** với **"còn nữa"**.
+Nên bản sửa để nguyên con số và thêm **một câu**. Đổi số thì cũng xanh gate y như vậy — và F-012 sẽ
+quay lại lần thứ ba.
+
+**Điều đáng ghi thứ hai — một hằng số dùng chung là một quyết định không ai từng ra:**
+`MAX_LIST=6` áp cho cả bốn danh sách chỉ vì nó tiện, không vì ai từng cân nhắc rằng câu hỏi mở đáng
+được đối xử như ba danh sách kia. Ba danh sách kia trả lời *"làm gì tiếp"*; danh sách câu hỏi mở là
+thứ CLAUDE.md §3.5 bắt phiên phải **biết** trước khi nó tự suy ra một câu trả lời. Tách thành
+`MAX_UNKNOWNS`, đặt cạnh nhau, mỗi hằng số có lý do viết ngay bên trên — để lần sau ai sửa số cũng
+đọc được vì sao có hai số.
+
+**Điều đáng ghi thứ ba — ca kiểm thử phải vượt qua ngưỡng nó đang kiểm:**
+`scripts/brief.test.sh` trước T-027 có 43 ca và **không ca nào** có danh sách dài hơn sáu mục, nên
+bộ test xanh suốt trong khi bốn danh sách đều đang cắt câm. Đó là ràng buộc thứ tư của F-012 và là
+bài học chung: một ca kiểm thử luôn nằm dưới ngưỡng thì không kiểm cái ngưỡng, nó chỉ kiểm phần
+dễ.
+
+[↑ đầu file](#top)
+
+<a id="t-031"></a>
+### T-031 — Bản xuất khẩu vẫn thiết kế nút `Xong` ở màn trạm mà chủ quán đã bỏ
+
+**Prompt:** không có — người dùng chỉ nói *"đọc kĩ và hoàn thành T-031"*, 2026-08-31. **L1** — nó
+sửa tài liệu người **ngoài** repo dùng để dựng hệ thống; không chạm dữ kiện, không chạm mã.
+
+**Goal:**
+`master_plan/prompt-fullstack.md` §3.6 và §3.7 nói đúng thứ chủ quán đã chốt: ba trạm bếp không có
+nút báo xong, và POS là nơi ghi tiến độ.
+
+**Ba chỗ sai, và chỗ nào được sửa thế nào:**
+
+| Chỗ | Trước | Sau |
+|---|---|---|
+| §3.6, khối *Nhân viên* | `PATCH staff/tasks/:id` (`todo → doing → done`) | **gỡ**; `GET staff/tasks?station=` ghi rõ **chỉ đọc**; thêm `POST staff/sessions/:id/served` — POS ghi đã phục vụ |
+| §3.7, *Màn hình trạm* | *"một task = một thẻ, một nút `Xong`"* | ba trạm bếp là **màn chỉ đọc**; thẻ **tự biến mất** khi POS ghi đã phục vụ |
+| §3.7, cùng gạch đầu dòng | `Hoàn tác` 10 giây cho một màn không còn thao tác nào | **chuyển** sang gạch đầu dòng mới *Màn dọn bàn* — nơi còn một thao tác thật |
+
+**Điều đáng ghi nhất — bản vá không phải là phép xoá:**
+Xoá `PATCH staff/tasks/:id` rồi để trống thì người đọc ngoài repo tự nghĩ ra một cơ chế khác, và
+lần này không ai biết họ nghĩ ra cái gì. Nên §3.6 nhận thêm một khối **Luật ghi** *tự đứng*: nói
+luôn lời chủ quán, lý do (*ba đôi tay đang bận*), ai ghi thay (POS), và ngoại lệ duy nhất
+(`don_ban` bấm *đã dọn*). Điểm chung của cả họ F-005 / F-007 / F-013 là **người đọc đứng ngoài
+repo, không grep được** — nên một pointer trỏ về `docs/architecture.md` §1.1 sẽ hỏng đúng cái cách
+ba finding kia đã hỏng. Luật phải nằm trong file họ cầm.
+
+**Điều đáng ghi thứ hai — ràng buộc "ba trạm, không phải bốn" là chỗ dễ hỏng nhất:**
+`don_ban` **vẫn có** một thao tác, vì nó là bước cuối của **bàn**, không phải bước giữa của **món**.
+Một bản vá đọc lướt sẽ gỡ luôn `PATCH staff/tables/:id/cleaned` và route `staff/cleaning`, tức chữa
+một lỗi bằng một lỗi to hơn. Cùng lý lẽ giữ lại luật `Hoàn tác` 10 giây — nó đúng, chỉ đứng nhầm
+màn.
+
+**Vì sao có task này:**
+Chủ quán bỏ nút báo xong ngày 2026-08-31 (`master_plan/shop-facts.md` §5.4). Bản xuất khẩu viết
+trước đó; chi tiết, cái giá và bốn ràng buộc ở `work/findings.md` **F-013**.
+
+**Acceptance · Verify:** bảy dòng acceptance viết trước khi sửa, giữ nguyên ở `work/findings.md`
+F-013 (bảng *Đã sửa*) và ở khối commit của phiên. Chạy: `./scripts/gate.sh` xanh ·
+`grep -rn "staff/tasks/:id"` không còn dòng nào ngoài `work/` và `prompt/maintenance/` · đọc lại
+§3.6 + §3.7 **chỉ bằng file đó** (không grep) — dựng theo đây không làm ra nút nào ở ba trạm bếp.
+
+**Đã chạm gì ngoài bản xuất khẩu:** bốn pointer nói *"bản xuất khẩu còn sai"*, sửa trong cùng thay
+đổi theo CLAUDE.md §7.2 — `docs/architecture.md` §1.1 và §5, `docs/decisions.md` ADR-011 (*Rejected
+alternatives*, *Applies to*). `master_plan/shop-facts.md` **không đổi một chữ**: dữ kiện chưa bao
+giờ sai, chỉ bản chép sai.
+
+**Còn hở, cố ý:** tên `POST staff/sessions/:id/served` là **thiết kế**, không phải dữ kiện.
+`docs/architecture.md` §8 cố ý không đặt tên bảng/cột/endpoint, và *"đã phục vụ bao nhiêu cho từng
+bàn"* vẫn nằm trong sáu chỗ 16 bảng chưa với tới. Pha System Design đổi tên nó thì đổi — miễn giữ
+đúng luật: **người ghi là POS**.
+
+[↑ đầu file](#top)
+
+<a id="t-033"></a>
+### T-033 — Hai câu cuối đã có lời chốt, và câu hỏi S-4 hỏi sai người
+
+**Prompt:** không có — chủ quán trả lời thẳng ba câu trong một lượt, 2026-08-31. **L2** — một trong
+hai lời chốt quyết định **doanh thu tính vào ngày nào**, tức chạm tiền và chạm đối soát.
+
+**Goal:**
+U-012 và U-013 hết nằm trong danh sách đang mở, lời chốt về đúng owner, và mọi pointer nói chúng
+"còn mở" đã đuổi theo. S-4 vẫn mở, nhưng mang một câu hỏi **hỏi được**.
+
+**Ba câu, ba cách xử khác nhau:**
+
+| Câu | Lời chủ quán | Xử thế nào |
+|---|---|---|
+| **U-013** | *"pos bấm ghép bàn. không được ghép khi bàn kia đang mở"* | ghi thẳng — `shop-facts.md` §6.16 · `docs/product.md` §3.1.7 |
+| **U-012** | *"pos nhận. doanh thu tính ngày nợ"* | ghi thẳng — `shop-facts.md` §6.14 · `docs/product.md` §3.1.6 · `docs/architecture.md` §6.4, §12.4 |
+| **S-4** | *"tôi không hiểu"* | **không ghi lời giải nào.** Viết lại câu hỏi — `shop-facts.md` §7.2 |
+
+**Vì sao có task này:**
+Lời chốt chỉ sống trong hội thoại thì chết theo phiên (CLAUDE.md §7.2). Hai trong ba câu chặn
+BA-06, BA-07, BA-08.
+
+**Điều đáng ghi nhất — lời chốt U-013 đóng một ca đắt bằng một câu:**
+Câu hỏi mở ra hai ca rất khác nhau. Ca rẻ: nới một phiên sang bàn **trống**. Ca đắt: **gộp hai hoá
+đơn đã có tiền trong đó** — trộn tiền của hai phiên đang mở, chạm thẳng I-001. Chủ quán trả lời
+*"không được ghép khi bàn kia đang mở"* ⇒ **ca đắt bị đóng bằng quyết định, không phải bằng mã.**
+Hệ thống không cần và **không được** có đường trộn tiền hai hoá đơn. Hệ quả nghiệp vụ phải nói
+thẳng ra, vì nó là cái giá: hai nhóm đã ngồi hai bàn riêng thì trả **hai** hoá đơn, kể cả khi họ
+quen nhau và xin gộp.
+
+**Điều đáng ghi thứ hai — U-012 làm đối soát lệch ở HAI ngày, không phải một:**
+*Doanh thu tính ngày ghi nợ* nghĩa là ngày ghi nợ két **thiếu**, ngày trả nợ két **thừa** trong khi
+doanh thu hôm ấy không tăng. Công thức đối soát ở `docs/architecture.md` §6.4 trước đó chỉ có một
+dòng nợ ⇒ đã viết lại thành bốn dòng. Kèm một luật mới phải nói ra: **một lần trả nợ không bao giờ
+được ghi thành khoản bán mới** — ghi vậy là tính doanh thu **hai lần** cho cùng một bữa ăn, sai
+nặng hơn quên thu vì nó làm báo cáo trông đẹp hơn sự thật.
+
+**S-4: "tôi không hiểu" là dữ liệu về CÂU HỎI, không phải về người trả lời.**
+Câu kiểm chứng cũ — *"bảng ở quầy lúc đó hiện bàn 5 còn thiếu 3 hay đã đủ?"* — bắt chủ quán suy ra
+hộ **một bảng trong máy nên hiện con số nào**. Đó là câu về mô hình dữ liệu, và người viết tài liệu
+mới có nghĩa vụ trả lời nó. Câu mới hỏi về **cái quán**, thứ chủ quán biết rõ hơn bất kỳ ai:
+*"từ lúc bánh tráng xong đến lúc nó xuống bàn, có khi nào nó phải nằm chờ không?"* — kèm một câu
+thứ hai chỉ dùng khi trả lời là "có", vì lời chốt U-009 (bỏ nút bấm ở bếp) đã bịt nguồn dữ liệu
+duy nhất của con số thứ tư.
+
+Câu cũ giữ nguyên văn ở §7.2 làm **bằng chứng**, không phải để hỏi lại. Bài học ghi ở đây chứ không
+mở finding mới (CLAUDE.md §3.8 — mới hỏng một lần): **câu kiểm chứng phải hỏi về cái quán, không
+hỏi về cái bảng.** Ba câu kiểm chứng trước đó — S-1, S-2, S-3 — đều hỏi về quán và đều được trả lời
+gọn trong một lần.
+
+**Pointer đã đuổi theo (§7.2):** năm chỗ nói U-012/U-013 còn mở — `docs/product.md` §3.1.6, §3.1.7
+và phần văn xuôi mục *Unknowns* · `docs/architecture.md` §11, §12.3, §12.4 · `docs/decisions.md`
+ADR-011 và ADR-012 (**sửa tiến** bằng một dòng *Cập nhật*, không viết lại thân ADR — ADR-008).
+
+**Một xác nhận nhỏ đáng giữ:** §12.2 từng chọn **phương án hẹp** cho câu *ai bấm thu nợ* (người
+đang trực quầy) và ghi rõ đó là suy ra. Lời chủ quán trùng đúng phương án ấy ⇒ không phải sửa gì.
+Đây là bằng chứng cho luật chọn hẹp: chọn hẹp thì lúc có lời giải hoặc đúng sẵn, hoặc sửa một chỗ;
+chọn rộng thì sửa cả một nhánh.
+
+**Còn treo:**
+Danh sách câu hỏi nghiệp vụ đang mở nay **rỗng**. Còn đúng một chỗ suy ra — **S-4** — với câu hỏi
+mới chưa ai hỏi.
+
+[↑ đầu file](#top)
+
+<a id="t-032"></a>
+### T-032 — Nợ là một phần riêng, có mục FE · BE · DB
+
+**Xong 2026-08-31.** L2 · không có prompt — chủ repo yêu cầu thẳng.
+`docs/architecture.md` **§12** (mới, bốn mục con) + §8, §11, §13 · `docs/decisions.md` **ADR-012**
+· `docs/product.md` *Unknowns* U-012 (trỏ tới §12).
+
+**Vì sao có task này:**
+Chủ quán chốt **cho nợ** (T-028, `shop-facts.md` §6.14), nhưng lời chốt chỉ nói *lúc sinh ra* của
+khoản nợ. T-029 viết xong `docs/architecture.md` thì nợ nằm rải ở sáu chỗ — §1.1, §4, §6.4, §7,
+§8, §11 — **không có mục nào của riêng nó**. Chủ repo yêu cầu một mục riêng, có FE, BE, DB.
+
+**Lập luận trung tâm:** nợ và phiên bàn có **hai vòng đời khác nhau**. Phiên đóng xong là hết;
+khoản nợ sinh ra *lúc* phiên đóng rồi sống tiếp nhiều ngày. Hai ô *"ai nợ / bao nhiêu"* gắn vào
+phiên bàn thì khoản nợ chết ngay tại chỗ nó sinh ra: không tra được ai còn nợ, không thu lại được,
+và §6.4 (ngưỡng lệch 0đ) mãi mãi không giải thích được chỗ két thiếu.
+
+**Ba mục đã viết:**
+- **§12.1 FE** — ba chỗ nợ hiện ra (POS lúc đóng phiên · màn *Nợ* riêng ở POS · báo cáo & đối
+  soát của chủ quán) và **một chỗ nó không được hiện**: năm màn trạm bếp.
+- **§12.2 BE** — bốn luật (chặn ở BE chứ không ở FE · nợ ≠ tiền đã thu · mọi thao tác có vết kèm
+  người đang trực `quay` · chỉ POS ghi) + bốn đường API bổ sung.
+- **§12.3 DB** — sáu thứ phải cất, ba ràng buộc phải để **database** giữ.
+
+**Hai chỗ nói thẳng là đang vượt rào / đang suy ra:**
+- §12.3 **cố ý vượt ranh giới §8** (*"không đặt tên bảng, không đặt tên cột"*) cho riêng phần nợ,
+  theo yêu cầu thẳng của chủ repo. Đã ghi ⚠️ ngay trong mục: đây là **đề xuất gửi sang pha 2**,
+  không phải lược đồ đã chốt.
+- **Người bấm *thu nợ* là người đang trực `quay`** — suy từ §4 và §3.3, **không** phải lời chủ
+  quán. Ghi rõ ở §12.4 và trong ADR-012 để chủ quán nói khác thì biết sửa chỗ nào trước.
+
+**Chỗ thiết kế bám vào câu còn treo:** §12.3 cất **cả hai** mốc thời gian — lúc ghi nợ và lúc thu
+nợ. U-012 còn mở ở vế *doanh thu tính ngày nào*; giữ cả hai mốc thì chủ quán chốt kiểu nào cũng
+dựng lại được báo cáo mà không sửa dữ liệu quá khứ. Đó là **phương án hẹp nhất**, không phải một
+lựa chọn ngầm (CLAUDE.md §3.5).
+
+**Pointer đã đuổi theo (§7.2):** §11 của `docs/architecture.md` còn liệt **U-006** là câu đang mở —
+T-030 đã đóng nó cùng ngày. Đã thay bằng **U-013** và ghi rõ U-006 đóng ra kết quả gì.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -n '^## 12\.\|^## 13\.\|^### 12\.' docs/architecture.md
+grep -n 'ADR-012' docs/decisions.md docs/architecture.md
+./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/LATEST/p'      # U-012, U-013
+```
+
+<a id="t-029"></a>
+### T-029 — `docs/architecture.md` là template rỗng, trong khi mặt admin đã đủ dữ kiện để viết
+
+**Prompt:** không có — chủ repo yêu cầu thẳng 2026-08-31: *"tôi muốn thêm phần admin cho hệ thống
+này"*. **L2** — nó chốt ai được ghi cái gì, tức chạm quyền và chạm tiền.
+
+**Goal:**
+`docs/architecture.md` — owner của *Architecture* theo CLAUDE.md §2 — hết là template tiếng Anh
+rỗng, và giữ đặc tả mặt quản trị: ba mặt một miền · luật ghi · hai trục · POS · bếp · chủ quán ·
+tiền · quyền theo chỗ đứng · chỗ thiếu của hình dạng dữ liệu · câu còn treo.
+
+**Nói một câu, việc phải làm là gì:**
+Viết ra **ai được ghi cái gì** và **luật nào không bao giờ được rời khỏi backend**. Việc **không**
+phải làm: đặt tên bảng, tên cột, endpoint hay thư mục — lược đồ là việc của System Design và phải
+chạy sau BA-12.
+
+**Vì sao có task này:**
+Ba nguồn hội tụ trong cùng ngày 2026-08-31. (a) Chủ repo yêu cầu mặt admin. (b) T-026 đã đưa lời
+chủ quán về gom mẻ vào `master_plan/shop-facts.md` §5.4 và chốt ADR-009. (c) T-028 ghi bảy lời chốt
+nữa, trong đó **ba** lời quyết định thẳng hình dạng của mặt admin: bỏ nút bấm ở bếp (U-009) · máy
+không gom, người gom (U-011) · cho nợ và phải ghi ai nợ (U-007 → §6.14).
+
+Vì sao viết được ngay dù BA-12 chưa xong: phần lớn đặc tả **derive được** từ dữ kiện đã chốt, chứ
+không phải từ lát cắt chưa viết. Chỗ nào chưa chốt thì tài liệu nêu đích danh là đang treo (§11 của
+nó) thay vì tự quyết — lý lẽ đầy đủ ở `docs/decisions.md` **ADR-011**, mục *Rejected alternatives*.
+
+**Không làm thì mất gì:**
+- **Người dựng màn hình trạm làm ra một nút không ai bấm** — nặng nhất, và nó **đang** sắp xảy ra:
+  bản xuất khẩu vẫn thiết kế `PATCH staff/tasks/:id` (F-013 → T-031).
+- **Quyền huỷ bị gán theo `role`**, tức sai `shop-facts.md` §6.13: chủ quán có `role=owner` sẽ huỷ
+  được từ bất kỳ đâu, đúng thứ luật *"chức vụ không mở thêm cửa nào"* cấm.
+- **Sáu chỗ thiếu của 16 bảng không ai biết là thiếu** — vết hoàn tiền, khoản nợ, audit, ai đang
+  trực, note "đem về", đã phục vụ bao nhiêu. Phát hiện lúc đang viết mã là làm lại lược đồ.
+- **Owner của §2 vẫn rỗng.** Một owner rỗng là một owner nhìn thì như đã có.
+
+**Phát hiện lớn nhất trong lúc làm — không phải thứ task này đi tìm:**
+Lời chốt *"bỏ nút bấm ở bếp"* (2026-08-31) **bác** hai câu đang nằm trong
+`master_plan/prompt-fullstack.md` §3.6 và §3.7. Đây là **loại thứ ba** của họ lỗi F-005 / F-007 —
+người đọc bản xuất khẩu đứng **ngoài** repo nên không grep được, họ dựng đúng thứ được viết. Ghi
+thành `work/findings.md` **F-013**, việc sửa là **T-031**. Task này **không** tự sửa bản xuất khẩu:
+ba phiên khác đang có thay đổi chưa commit trong cùng cây, nhận thêm file vào scope là giẫm chân.
+
+**Chạy song song với ba phiên khác — và va số task:**
+T-026, T-025, T-028 đều XONG-CHƯA-COMMIT khi task này chạy; `work/scope.txt` mang **bốn** khối, mỗi
+khối ghi rõ chủ (F-010). T-029 sở hữu riêng `docs/architecture.md`; ba file dùng chung
+(`docs/decisions.md` ADR-011 · `work/findings.md` F-013 · `work/backlog.md`) mỗi task chỉ thêm mục
+của mình.
+
+**Bài học lặp lại lần thứ hai trong một ngày, ghi ở đây chứ không mở finding mới:** task này đánh
+số **T-030** cho việc sửa bản xuất khẩu, rồi phát hiện một phiên khác vừa lấy T-030 cho U-006 ⇒ đổi
+thành **T-031**. Đúng thứ đã xảy ra với U-006/U-008 lúc T-026 chạy. **Dãy số cũng là tài nguyên
+dùng chung**: đọc lại số cuối cùng ngay trước khi ghi, đừng lấy số theo bản đọc lúc đầu phiên.
+
+**Còn treo:**
+Ba câu chạm thẳng vào mặt admin, ghi ở §11 của tài liệu: **U-006** (ghép bàn một hoá đơn hay hai —
+nay đã có T-030 của phiên khác) · **U-012** (nợ trả sau tính doanh thu ngày nào) · **S-4** (bảng
+quầy ba cột hay bốn).
+
+[↑ đầu file](#top)
+
+<a id="t-030"></a>
+### T-030 — U-006: ghép bàn là một phiên, một hoá đơn
+
+**Xong 2026-08-31.** L2 · không có prompt — lời chủ quán trả lời thẳng U-006.
+`master_plan/shop-facts.md` §5.1, §6.16, §7.1 · `docs/product.md` §2.1, §3.1.1, §3.1.4, §3.1.7,
+*Unknowns* · `quality/invariants.md` **I-001** (viết lại), **I-002** (thêm vế nhóm ghép).
+
+**Lời chốt:** ghép bàn ⇒ **một phiên và một hoá đơn**.
+
+**Vì sao đây là task L2 chứ không phải một dòng thêm vào:**
+Lời chốt này **phủ định cách đọc cũ của một invariant đang có**. I-001 đang viết *"một bàn chỉ có
+một phiên chưa thanh toán"*; câu ấy đọc xuôi thì như cấm luôn việc một phiên phủ hai bàn. Câu đúng
+là **"một bàn thuộc nhiều nhất một phiên chưa thanh toán"** — quan hệ **không đối xứng**: một bàn
+không nằm trong hai phiên còn mở, nhưng một phiên gắn được nhiều bàn. Không sửa I-001 thì phiên
+sau đọc invariant rồi chặn đúng thứ chủ quán vừa cho phép.
+
+**Bốn hệ quả đã viết ra, không để người đọc tự suy:**
+- Mọi lượt gọi từ bất kỳ bàn nào trong nhóm vào **cùng** phiên — tách ra hai hoá đơn là **thu
+  thiếu tiền**, đúng nghĩa cũ của §6.1.
+- **Bàn trở lại trống theo từng bàn**: đóng phiên là điều kiện chung, dọn bàn thì dọn từng cái.
+- **Bếp không biết đến chuyện ghép** — việc xuống bếp vẫn ghi bàn nào gọi, vì người bưng cần biết
+  bưng tới chỗ nào. Ghép là chuyện của tiền.
+- §2.1 (ẩn danh theo số bàn) vẫn đúng, chỉ nới thành nhóm bàn.
+
+**Chỗ cố ý KHÔNG suy ra ⇒ mở U-013:** ai được bấm ghép, và ghép được cả khi bàn kia **đã** có
+phiên đang mở hay chỉ khi bàn kia còn trống. Xếp một nhóm vào hai bàn trống ≠ gộp hai hoá đơn đã
+có tiền trong đó. Quyền bấm cũng chưa ai nói — §6.13 gắn quyền huỷ đơn với chỗ đứng ở quầy, nhưng
+đó là luật của việc khác.
+
+**Pointer đã đuổi theo (§7.2):** §6 lên **mười sáu** quy tắc ⇒ sửa lại
+`master_plan/prompt-fullstack.md` §7 và `prompt/BA/README.md` (lần thứ hai trong ngày; T-028 vừa
+đưa chúng lên mười lăm).
+
+**Verify:**
+```bash
+./scripts/gate.sh
+./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/LATEST/p'                    # U-012, U-013
+sed -n '/^### 3.1/,/^### 3.2/p' docs/product.md | grep -cE '^ *[0-9]+\.'   # vẫn 15
+grep -rn --include='*.md' '15 quy tắc' master_plan/ prompt/BA/ docs/        # rỗng
+```
+
+<a id="t-028"></a>
+### T-028 — Bảy lời chốt của chủ quán ngày 2026-08-31
+
+**Xong 2026-08-31.** L2 · không có file prompt — lời chủ quán trả lời thẳng bảy câu đang mở.
+`master_plan/shop-facts.md` §5.1, §5.4, §6.3, §6.14, §6.15, §7.1, §7.2 · `docs/product.md` §1.1,
+§1.2, §1.4, §2.1, §3.1.1, §3.1.4, §3.1.6, *Unknowns* · `quality/invariants.md` **I-005, I-006**.
+
+**Vì sao có task này:**
+Chủ quán trả lời một loạt bảy câu trong một lượt. Lời chốt chỉ sống trong hội thoại thì chết theo
+phiên (CLAUDE.md §7.2), và sáu trong bảy câu đang **chặn** BA-06, BA-07, BA-08, BA-09, BA-12.
+
+**Bảy câu, và mỗi câu đi về đâu:**
+
+| Câu | Lời chốt | Nhà của nó |
+|---|---|---|
+| U-005 | Trả trước dùng **đúng hai** phương thức đang có; **POS xác nhận lúc nhận tiền** | `shop-facts.md` §6.3 |
+| U-006 | **Ghép bàn có thật** — nhưng một hoá đơn hay hai thì chưa nói ⇒ **còn mở, hẹp lại** | `docs/product.md` → *Unknowns* |
+| U-007 | **Cho nợ**; đóng phiên trên POS ghi **ai nợ, nợ bao nhiêu** | `shop-facts.md` §6.14 · §3.1.6 |
+| U-008 | Một nồi một lần tráng: **3 trứng / 2 bánh / 1 trứng + 1 bánh**; 2 nồi | `shop-facts.md` §5.4 |
+| U-009 | **Bỏ nút bấm ở bếp**; POS tự cập nhật số đã làm cho từng bàn | `shop-facts.md` §5.4 |
+| U-010 | Đơn mang đi **không** chung bảng gom việc; suất **đem về** của khách ngồi bàn thuộc **phiên bàn** | `shop-facts.md` §6.15 |
+| U-011 | **Máy không gom, người gom** — hệ thống chỉ hiện tổng nhu cầu | `shop-facts.md` §5.4 · §1.4 |
+
+**Ba chỗ cố ý KHÔNG suy ra (CLAUDE.md §3.5, §7.2):**
+- **U-006 chỉ đóng một nửa.** *"Ghép bàn có thể xảy ra"* là xác nhận việc ấy có thật, **không**
+  phải quyết định hệ thống phải làm gì. Ghép rồi ra một hoá đơn hay hai là câu chạm tiền và chạm
+  I-001, nên U-006 ở lại *Đang mở* với phạm vi hẹp hơn và một câu kiểm chứng soạn sẵn.
+- **Ba tổ hợp nồi không quy về một đơn vị chung.** 3 trứng · 2 bánh · 1+1 không khớp một mô hình
+  "N chỗ mỗi nồi"; §5.4 ghi nguyên ba tổ hợp và cấm đặt ra mô hình quy đổi.
+- **S-4 hẹp lại nhưng chưa được trả lời.** U-009 bỏ nút bấm ở bếp ⇒ vế *"phải có người bấm thêm
+  một nút"* của S-4 hết đúng, nhưng câu gốc — *có con số thứ tư hay không* — vẫn nguyên. Ghi rõ ở
+  `shop-facts.md` §7.2, câu kiểm chứng cũ không phải sửa một chữ.
+
+**Một câu mới mở ra:** **U-012** — nợ trả sau thì ai ghi nhận, doanh thu tính vào ngày nợ hay ngày
+trả. Sinh ra từ chính lời chốt cho nợ; để trống thì đối soát lệch hai lần mà §6.10 lấy ngưỡng 0đ.
+
+**Pointer đã đuổi theo (§7.2):** §6 lên **mười lăm** quy tắc ⇒ sửa
+`master_plan/prompt-fullstack.md` §7 và `prompt/BA/README.md`. Hai chỗ còn nói "13 quy tắc" là
+**ghi chép lịch sử, cố ý không sửa**: `prompt/maintenance/10-prepay-takeaway-L2.md` là prompt của
+T-020 đã chạy (nó *ra lệnh* giữ 13 quy tắc — sửa là viết lại thứ T-020 đã được bảo), và các entry
+Done cũ trong file này mô tả trạng thái lúc ấy.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+./scripts/brief.sh | sed -n '/OPEN UNKNOWNS/,/LATEST/p'     # đúng U-006, U-012
+sed -n '/^### 3.1/,/^### 3.2/p' docs/product.md | grep -cE '^ *[0-9]+\.'   # vẫn 15
+grep -rn --include='*.md' '13 quy tắc' master_plan/ prompt/BA/ docs/        # rỗng
+grep -n '^### I-' quality/invariants.md                                     # I-005, I-006
+```
+
+<a id="t-025"></a>
+### T-025 — `commit-msg` hook chặn subject rỗng nghĩa
+
+**Prompt:** không có — task sinh từ `work/findings.md` **F-011** · **ADR:** ADR-004 đặt sẵn điều
+kiện kích hoạt, ADR-008 là luật dọn hậu quả, **ADR-010** là quyết định của chính task này ·
+L2 — đổi hành vi của **mọi** commit trong repo · **Xong 2026-08-31**
+
+**Goal:**
+Một commit có subject không nói gì về chính nó (`dsfg`, `adg`, `ádg`) không vào được repo, kể cả
+khi người ta gõ `git commit -m` thẳng ở terminal — chỗ Gate 7 không với tới.
+
+**Nói một câu, việc phải làm là gì:**
+Thêm một `commit-msg` hook của **git** (không phải hook của Claude Code) từ chối subject không có
+dạng `T-XXX: …` và không đủ dài, kèm cách cài đặt cho bản clone mới. Việc **không** phải làm:
+sửa `scripts/check-commit-block.sh` — nó đã đúng phần việc của nó (ADR-004, ADR-006); lỗ hổng nằm
+ở chỗ nó chỉ sống trong vòng đời một lượt của phiên.
+
+**Vì sao có task này:**
+ADR-004 mục *Rủi ro đã chấp nhận* viết đúng câu: *"Nếu có lần thứ hai một thay đổi đi vào git mà
+không có nội dung commit, ghi finding và siết lại."* Ngày **2026-08-31** có **hai** lần nữa trong
+cùng một ngày — `0704139 "dsfg"` (nuốt T-016 + T-021 + T-009) và `03ffda3 "adg"` (nuốt T-023 +
+T-019 + một file 2342 dòng không thuộc task nào). Cả hai đã push, nên không sửa lại được
+(**ADR-008**). Bảng hash → nội dung thật ở **F-011**.
+
+**Không làm thì mất gì:**
+- `brief.sh` in RECENT COMMITS cho mọi phiên mới (ADR-002); đỉnh nhánh đang là `adg`.
+- `CLAUDE.md` §6 *"One task per commit"* hiện không có cơ chế nào đứng sau — đúng loại hỏng F-001.
+- Lý do của một thay đổi mất theo phiên và không lấy lại được.
+
+**Bẫy:**
+- **`git` hook không đi theo `git clone`.** Hook đặt trong `.git/hooks/` chỉ bảo vệ một máy. Phải
+  có cách cài (ví dụ `core.hooksPath` trỏ vào một thư mục được commit) và phải viết ra ở đâu đó
+  người mới đọc được.
+- **Phải có đường thoát và nói ra trong chính thông báo lỗi** (`--no-verify`), nếu không nó sẽ bị
+  gỡ khỏi máy chứ không được sửa — bài học ADR-003 về *đỏ vì lý do sai*.
+- **Không tự soạn nội dung commit.** `CLAUDE.md` §6 nói commit là quyết định của người dùng;
+  ADR-004 đã loại phương án hook tự commit.
+
+**Ba cái bẫy trên đã xử ra sao:**
+- **Hook không đi theo `git clone`** → hook được **commit** ở `scripts/hooks/`, bật bằng
+  `git config core.hooksPath scripts/hooks` qua `./scripts/install-hooks.sh`. Không ép được mỗi
+  clone chạy nó, nên chỗ *nói ra* là `scripts/brief.sh`: nó chấm `install-hooks.sh --check` và kêu
+  ở **mỗi phiên** khi chưa cài (ADR-002 — trạng thái được đẩy vào phiên, không chờ ai đọc).
+- **Đường thoát** `git commit --no-verify` được in **trong chính thông báo từ chối**, cùng với số
+  hiệu F-011 để người bị chặn đọc được lý do thay vì chỉ thấy mình bị chặn.
+- **Không tự soạn nội dung commit.** Hook chỉ đọc và từ chối; nó không sửa file nội dung, không
+  `git add`, không `git commit`.
+
+**Một quyết định phát sinh trong lúc làm — subject dài chỉ bị NHẮC, không bị chặn.**
+`CLAUDE.md` §6 nói subject ≤ 72 ký tự, nhưng một subject 75 ký tự **vẫn nói được nó là gì**, tức là
+không nằm trong Goal của task này. Chặn nó là *đỏ vì lý do sai*, và ADR-003 đã trả giá một lần cho
+bài học ấy. Ghi vào ADR-010 chứ không im lặng, vì nó là chỗ hook **cố ý không** thi hành một câu
+chữ của §6.
+
+**Acceptance:**
+1. `scripts/hooks/commit-msg` từ chối (exit ≠ 0) cả **năm** subject đã thật sự vào repo này:
+   `ádg`, `sdgf`, `sdfg`, `dsfg`, `adg` (F-011).
+2. Subject hợp lệ đi qua: `T-025: …` đầy đủ, và L0 không mã task (`Fix typo`) — §6 cho phép.
+3. Nội dung git tự sinh (`Merge …`, `Revert …`, `fixup!`, `squash!`, `amend!`) không bị chấm.
+4. Comment và dòng trống ở đầu file nội dung không bị nhận nhầm là subject.
+5. Subject > 72 ký tự: **exit 0** kèm một dòng nhắc, không chặn.
+6. Thông báo từ chối nêu `--no-verify` **và** F-011.
+7. File nội dung không đọc được ⇒ exit 0 (hook hỏng không được cướp mất commit).
+8. `./scripts/install-hooks.sh` đặt `core.hooksPath`, `--check` đỏ khi chưa cài và xanh sau khi
+   cài; nó nêu tên hook thật trong `.git/hooks/` sẽ ngừng chạy.
+9. Trong một repo git thật: `git commit -m "dsfg"` bị từ chối, subject hợp lệ commit được,
+   `--no-verify` vẫn đi qua — **và cả ba điều đó vẫn đúng khi commit từ một thư mục con**
+   (`core.hooksPath` là đường dẫn tương đối; git giải nó theo gốc cây làm việc, đã chấm bằng test).
+10. `scripts/brief.sh` kêu khi chưa cài, **im** sau khi cài, im ở repo không có
+    `scripts/install-hooks.sh`, và exit 0 ở cả ba ca.
+11. ADR-010 ghi luật, bảy phương án bị loại và bốn rủi ro còn lại; `CLAUDE.md` §2, §6.2 và F-011
+    nói cùng một chuyện.
+12. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/commit-msg.test.sh   # 28/28 ca ok (phủ 1–9)
+./scripts/brief.test.sh        # tất cả ca đều qua, gồm H1–H3 (phủ 10)
+./scripts/install-hooks.sh     # core.hooksPath = scripts/hooks
+./scripts/gate.sh              # xanh, exit 0
+```
+
+**Còn lại sau task này — cố ý, đã ghi ở ADR-010 và F-011:**
+`--no-verify` vẫn đi qua được · mỗi bản clone vẫn phải tự chạy `install-hooks.sh` · cổng chấm
+*rỗng nghĩa*, không chấm *đúng sai* (`T-025: fix stuff` vẫn qua).
+
+<a id="t-026"></a>
+### T-026 — Đề xuất Admin/POS nằm trong repo không banner, và lời chủ quán trong đó chưa vào nhà thật
+
+**Prompt:** không có — task sinh từ yêu cầu trực tiếp của chủ repo ngày 2026-08-31
+(*"xem xét và làm hệ thống cho nhà hàng này dựa trên `work/proposals/admin.admiadmin/admin1.md`"*).
+**L2** — nó thêm dữ kiện vào `master_plan/shop-facts.md`, tức chạm hợp đồng với chủ quán.
+
+**Goal:**
+`work/proposals/admin.admiadmin/admin1.md` đi qua đúng đường CLAUDE.md §2 dành cho một đề xuất:
+banner nói nó là gì và trái §2 ở đâu · phần **dữ kiện quán** trong nó về đúng owner · phần
+**thiết kế** bị từ chối và ghi rõ là bị từ chối · phần **việc phải làm** thành một task có prompt.
+Xong rồi thì phiên sau đọc file ấy không còn tưởng nó là sự thật của repo.
+
+**Nói một câu, việc phải làm là gì:**
+Chấm một đề xuất và định tuyến nội dung của nó. Việc **không** phải làm: viết mã, dựng cây thư mục,
+hay chốt hành vi sản phẩm — hành vi là việc của BA-12, và nó cần năm câu trả lời chưa ai có.
+
+**Vì sao có task này:**
+File vào repo ngày **2026-08-31** trong commit `03ffda3 "adg"` — không thuộc task nào, không banner
+(`work/findings.md` **F-011**, lần thứ năm của họ lỗi ấy). CLAUDE.md §2 bắt mọi file trong
+`work/proposals/` mở đầu bằng banner nêu ngày, trạng thái, và những dòng của bảng §2 mà nó trái;
+file này không có. Trong lúc chưa ai chấm, nó là 3.318 dòng nói repo *nên* trông thế nào, nằm cạnh
+các file nói repo *đang* thế nào.
+
+Và nó không chỉ là lời cố vấn: **có nguyên văn lời chủ quán** trong đó — hai nồi tráng bánh, mỗi
+nồi ba quả trứng, làm lẻ thì mất nhiệt, cùng danh sách những thứ người đứng quầy phải nhìn thấy.
+CLAUDE.md §7.2
+nói dữ kiện phải được ghi **ngay lúc phát hiện**, vào owner của nó, không để lại thành ghi chú.
+
+**Không làm thì mất gì:**
+- **Dữ kiện quán chết cùng phiên.** Con số 2 nồi · 3 quả · 6 quả một mẻ chỉ nằm trong một file
+  không ai được phép tin. Phiên sau viết BA-07 hay BA-09 sẽ mô tả quán bằng **đơn**, trong khi quán
+  chạy bằng **mẻ**.
+- **Phiên sau nhận nhầm tầng thiết kế.** File có cây `/admin/...`, cây `code/be/internal/...`, tên
+  trạng thái kiểu mã và mô hình dữ liệu. Không có banner thì một phiên đang vội sẽ chép chúng vào
+  `docs/architecture.md` — và tầng dưới quyết thay tầng trên.
+- **Bốn câu hỏi + một chỗ suy ra không ai hỏi.** Cả năm hỏi được trong một lần gặp chủ quán.
+
+**Đây là con bug F-011, phía nội dung:**
+F-011 sở hữu phía **commit** — vì sao file này vào repo mà không ai nhìn. Task này sở hữu phía
+**nội dung** — file đã vào rồi thì chấm nó thế nào. Vòng rà trước không bắt được vì Gate 1b không
+chấm `work/` (cố ý, CLAUDE.md §5) và **không cổng nào kiểm banner của một file trong
+`work/proposals/`**: luật §2 hiện chỉ sống bằng trí nhớ. Đây là lần **thứ nhất** nó hỏng ở repo
+này — `work/proposals/updatee_sýstem.md` cũng từng vào không banner, nhưng lúc đó luật §2 chưa
+được viết (T-023 viết nó cùng ngày). Chưa đủ ngưỡng "tốn công hai lần" của CLAUDE.md §3.8 nên
+**không mở finding và không thêm cổng**; lần thứ hai thì mở.
+
+**Đã làm gì:**
+
+| Phần của đề xuất | Đi đâu |
+|---|---|
+| Lời **chủ quán** — 2 nồi · 3 quả/nồi · 6 quả một mẻ · làm lẻ mất nhiệt · danh sách thứ quầy phải nhìn | `master_plan/shop-facts.md` **§5.4** mới, nhật ký ở **§7.1** |
+| Suy luận của cố vấn — *"đã làm xong" là con số riêng* | `master_plan/shop-facts.md` **§7.2** làm **S-4**, kèm câu kiểm chứng — **không** trộn vào §7.1 (F-004) |
+| Cách đọc nghiệp vụ — sản xuất là trục riêng, bốn khái niệm | `docs/decisions.md` **ADR-009** |
+| Chỗ chủ quán chưa nói | `docs/product.md` → *Unknowns* **U-008–U-011** |
+| Hành vi sản phẩm phải viết | `work/backlog.md` **BA-12** + `prompt/BA/12-production-control-L2.md` |
+| Cây thư mục, màn hình Phase A–D, tên trạng thái, mô hình dữ liệu, bộ `harness/plans/admin/` | **từ chối**, nêu đích danh trong banner của chính file đề xuất |
+
+Kèm theo, ba pointer khẳng định `shop-facts.md` §7.2 rỗng đã hết đúng khi S-4 ra đời và đã được
+sửa trong cùng lần thay đổi (CLAUDE.md §7.2 — *theo dấu con trỏ*): `master_plan/shop-facts.md` §7
+mở đầu · `master_plan/00-scope.md` · `prompt/BA/README.md`.
+
+**Chạy song song với BA-03 — hai chủ trên ba file.**
+BA-03 ở *In Progress* trong một phiên khác khi task này chạy. `work/scope.txt` mang **hai** khối,
+mỗi khối ghi rõ chủ; phiên này **thêm** khối của mình chứ không ghi đè (bài học ở mục Ready,
+`work/findings.md` **F-010**). Ba file dùng chung, mỗi task chỉ sửa mục của mình:
+`docs/product.md` (BA-03 giữ §3.1 · T-026 chỉ thêm vào *Unknowns*) · `work/backlog.md` (mỗi task
+một entry) · `quality/invariants.md` (T-026 **không** chạm — invariant của trục sản xuất thuộc
+BA-12). Không viết dòng `!quality/invariants.md` vào scope: deny thắng allow, nên nó sẽ chấm đỏ
+thay đổi hợp lệ của BA-03.
+
+**Va số ngay trong lúc chạy, đáng ghi:** bốn unknown mới ban đầu đánh U-006–U-009; BA-03 đã lấy
+U-006 và U-007 trong cùng khoảng thời gian, nên chúng được đánh lại thành **U-008–U-011**. Hai
+phiên chạy song song thì **dãy số cũng là tài nguyên dùng chung** — kiểm số cuối cùng ngay trước
+khi ghi, đừng lấy số theo bản đọc lúc đầu phiên.
+
+**Còn treo, phiên sau nhặt:**
+Năm câu hỏi chủ quán chưa trả lời — U-008, U-009, U-010, U-011 và S-4. BA-12 không tick hết được
+cho tới lúc có lời giải, và cả năm hỏi được trong một lần gặp.
+
+[↑ đầu file](#top)
+
+<a id="ba-03"></a>
+### BA-03 — Lát cắt một suất tại bàn
+
+**Xong 2026-08-31.** L2 · prompt `prompt/BA/02-slice-dine-in-L2.md` · `docs/product.md` §3.1 ·
+`quality/invariants.md` **I-001–I-004** · mở **U-006** (tách/gộp bàn) và **U-007** (khách rời quán
+chưa trả tiền) ở `docs/product.md` → *Unknowns*.
+
+**Hai chỗ lệch so với entry gốc, cố ý:**
+- Acceptance 6 viết *"đơn `qr_table`"*, nhưng §3.1 gọi kênh là **QR tại bàn** — đúng tên §2 đang
+  dùng. Định danh `qr_table` là tên máy, `docs/product.md` chưa từng dùng tên máy của kênh nào, và
+  mục *Verify* của chính prompt BA-03 grep `table` mong không có kết quả. Hai tên cho một kênh
+  trong cùng tài liệu là đúng họ lỗi F-001, nên chọn tên §2.
+- `quality/invariants.md` mục *Template* dùng luôn ID `I-001` làm ví dụ, trùng với invariant thật
+  đầu tiên. Đã đổi placeholder đó thành `I-XXX`; không invariant nào bị sửa.
+
+**Gate 2 — mỗi dòng Acceptance trỏ về đâu:**
+
+| # | Chứng minh ở |
+|---|---|
+| 1 | `docs/product.md` §3.1.1, mười lăm bước; `sed … \| grep -cE '^ *[0-9]+\.'` = 15 |
+| 2 | §3.1.2, gạch đầu dòng 3 — "vào đúng phiên đang mở của bàn ấy" |
+| 3 | §3.1.4, gạch đầu dòng 2 |
+| 4 | §3.1.4, gạch đầu dòng 3 (và bước 11 của §3.1.1) |
+| 5 | §3.1.4, gạch đầu dòng 4 (và bước 15) |
+| 6 | §3.1.3, đoạn "Điểm chặn nằm giữa bước 4 và bước 6" (và bước 4, bước 5) |
+| 7 | §3.1.1 bước 6 và bước 7; §3.1.3 "cả năm trạm" |
+| 8 | §3.1.5, khối ví dụ + câu "Hoá đơn ghi ×2, bếp phải tráng ×6" |
+| 9 | §3.1.5, đoạn in đậm "Mọi suất bán đều kèm bánh cuốn, không riêng combo" |
+| 10 | `quality/invariants.md` I-001 · I-002 · I-003 · I-004, cả bốn có Verification |
+| 11 | `grep -nEi 'websocket\|socket\|queue\|endpoint\|schema\|table' docs/product.md` → rỗng |
+
+**Prompt:** `prompt/BA/02-slice-dine-in-L2.md` (L2) · **Cần xong trước:** BA-02 (xong 2026-08-30)
+
+**Goal:**
+`docs/product.md` §3.1 mô tả trọn vòng đời một khách ăn tại quán — từ lúc bàn được mở tới lúc bàn
+trở lại trạng thái trống — đủ để một người không biết code diễn lại được bằng nghiệp vụ.
+
+**Scope:** `docs/product.md` §3.1 · `quality/invariants.md` (chỉ **thêm**) · `work/backlog.md`.
+
+**Out of scope:** §3.2, §3.3, §4–§8 của `docs/product.md` · `docs/decisions.md` ·
+`docs/architecture.md` · invariant do task khác viết.
+
+**Acceptance:**
+1. §3.1 có luồng chính đúng 15 bước theo §4.1 kế hoạch gốc, mỗi bước ghi actor thực hiện.
+2. Có nhánh "đặt hộ tại quầy" (§4.3) và câu nói nó nhập vào phiên bàn nào.
+3. Có câu khẳng định nhiều lượt gọi món tại một bàn tạo **một** lần thanh toán.
+4. Có câu khẳng định khách gọi thêm lúc phiên đang chờ thanh toán vẫn vào cùng một hoá đơn, và
+   bàn chưa được coi là trống ở thời điểm đó (`shop-facts.md` §6.1).
+5. Có điều kiện để bàn trở lại trạng thái trống, và điều kiện đó gồm bước dọn bàn.
+6. Có điểm mà đơn `qr_table` bị chặn khi quầy chưa xác nhận (`shop-facts.md` §6.2).
+7. Nêu một đơn duyệt xong sinh việc ở những trạm nào, dùng đúng 5 tên trạm ở `shop-facts.md` §3.
+8. Có ví dụ nổ thành phần lấy lại từ `shop-facts.md` §5.3, cho thấy số lượng bếp thấy khác số
+   lượng trên hoá đơn.
+9. Có câu khẳng định **mọi suất bán đều kèm bánh cuốn**, không chỉ combo.
+10. `quality/invariants.md` có ít nhất bốn invariant: một bàn một phiên chưa thanh toán (tính cả
+    lúc chờ thanh toán) · tính tiền theo phiên chứ không theo lượt gọi · bàn trống chỉ sau khi
+    đóng phiên và dọn bàn · đơn đã duyệt sinh việc cho mọi trạm liên quan. Mỗi invariant có mục
+    Verification không để trống.
+11. §3.1 không chứa từ hiện thực kỹ thuật (websocket, queue, bảng dữ liệu).
+
+**Verify:**
+```bash
+./scripts/gate.sh
+sed -n '/^### 3.1/,/^### 3.2/p' docs/product.md | grep -cE '^ *[0-9]+\.'   # 15 bước
+grep -n 'tráng bánh\|gấp bánh\|canh\|dọn bàn\|quầy' docs/product.md
+grep -nEi 'websocket|queue' docs/product.md                                # rỗng
+git status --porcelain
+```
+
+<a id="t-023"></a>
+### T-023 — Hai commit trùng tên "T-020", và ba file `docs/` bị commit nhầm
+
+**Xong 2026-08-31.** `docs/decisions.md` **ADR-008** · `work/findings.md` **F-009** (Fixed) ·
+**F-011** (mới lúc đó; **đóng cùng ngày** bởi T-025 — Gate 8, ADR-010) · L2 · không có file
+prompt — ba quyết định lấy trực tiếp từ chủ repo
+
+**Goal:**
+Lịch sử git kể đúng thứ đã xảy ra, và `docs/` không còn file nào mâu thuẫn CLAUDE.md §2.
+
+**Nói một câu, việc phải làm là gì:**
+Quyết ba việc rồi thi hành: (a) hai commit trùng subject `T-020` xử thế nào, (b) ba file `docs/`
+vừa bị track thì giữ, chuyển hay xoá, (c) riêng `docs/updatee_sýstem.md` mô tả cấu trúc sở hữu
+khác §2 thì phần nào thành đề xuất có chủ, phần nào bỏ. Việc **không** phải làm: tự sửa lịch
+sử git — đó là quyền chủ repo.
+
+**Vì sao có task này:**
+`0b3a337` (2026-08-30) mang subject *"T-020: đơn mang đi được trả trước…"* nhưng nội dung là
+1096 dòng của ba file `docs/` chưa track, không một dòng nào của T-020; T-020 thật là `1b1d5f5`.
+Cơ chế và ba lần trước ghi ở **F-009**.
+
+**Không làm thì mất gì:**
+- `brief.sh` in RECENT COMMITS cho mọi phiên mới (ADR-002), nên phiên sau đọc thấy **hai** commit
+  cùng tên T-020 và tin cả hai là việc của T-020.
+- `git revert` mất an toàn: revert nhầm cái thì hoặc không gỡ được gì, hoặc xoá âm thầm 1096 dòng.
+- `docs/updatee_sýstem.md` nay là **nội dung repo đã track** mô tả một cấu trúc sở hữu khác §2.
+  §2 nói hai chỗ mâu thuẫn thì chỗ kia là bug phải sửa ngay — bug đó đang nằm trong repo.
+
+**Bẫy:**
+- **Không `git push --force` hay rewrite lịch sử đã chia sẻ** nếu chưa có lệnh rõ ràng.
+- **Đọc `updatee_sýstem.md` trước khi xoá.** 1010 dòng, có thể có đề xuất đáng giữ; xoá thẳng là
+  vứt việc của người khác.
+
+**Ba quyết định của chủ repo (2026-08-31), làm căn cứ cho Acceptance dưới đây:**
+
+| | Câu hỏi | Chủ repo chốt |
+|---|---|---|
+| (a) | Hai commit trùng subject `T-020` | **Sửa tiến, không đụng lịch sử.** `0b3a337` đã nằm trên `origin/merge_first_time` — rewrite là lịch sử đã chia sẻ. Ghi bản đồ hash → nội dung thật và chốt luật thành ADR |
+| (b) | Hai file `đánh_giá_file_*.md` | **Giữ nguyên trong `docs/`.** Không xoá, không chuyển |
+| (c) | `docs/updatee_sýstem.md` | **Chuyển nguyên văn ra ngoài `docs/`**, kèm banner nói rõ là đề xuất chưa áp dụng. Không chiết nội dung |
+
+**Acceptance (viết 2026-08-31, TRƯỚC khi sửa — CLAUDE.md §3, L2):**
+
+| # | Acceptance |
+|---|---|
+| A1 | `docs/updatee_sýstem.md` không còn; file ở `work/proposals/updatee_sýstem.md`, thân bài **nguyên văn** — diff của lần chuyển chỉ được thêm banner ở đầu, không sửa một dòng nội dung nào |
+| A2 | Banner nói đủ bốn thứ: ngày, đây là **đề xuất chưa áp dụng**, mục nào trái CLAUDE.md §2, và §2 vẫn thắng |
+| A3 | `grep -rn "docs/updatee"` trong repo không còn kết quả nào trỏ đường cũ như một đường sống (§7.2 *Follow the pointers*) |
+| A4 | `CLAUDE.md` §2 có dòng owner cho `work/proposals/`, và cây thư mục §2 có nó — owner mà §2 không liệt kê là owner không ai tìm ra (§7.2) |
+| A5 | Hai file `đánh_giá_file_*.md` **không đổi một byte nào** — quyết định (b) là giữ nguyên |
+| A6 | F-009 mang bảng hash → nội dung thật cho `1b1d5f5` và `0b3a337`, và phần *hậu quả đã commit* đóng lại |
+| A7 | ADR-008 chốt luật "lịch sử đã chia sẻ thì sửa tiến, không viết lại", nêu đích danh hai hash |
+| A8 | `0704139 "dsfg"` được ghi thành finding riêng (F-011) — ADR-004 *Rủi ro đã chấp nhận* nói đúng câu "nếu có lần thứ hai … ghi finding và siết lại"; việc siết lại thành task mới trong Ready |
+| A9 | `./scripts/gate.sh` xanh |
+
+**Verify:** `./scripts/gate.sh`; `git show --stat` cho lần chuyển file (A1); `grep -rn "docs/updatee" . --exclude-dir=.git` (A3); `git diff --stat` trên hai file `đánh_giá_file_*.md` (A5).
+
+**Đã làm gì (2026-08-31):**
+
+| # | Acceptance | Bằng chứng |
+|---|---|---|
+| A1 | File ra khỏi `docs/` | `git mv` → `work/proposals/updatee_sýstem.md`; `git diff -M --stat` = **+26/−0**, không một dòng thân bài nào đổi |
+| A2 | Banner đủ bốn thứ | Ngày · "ĐỀ XUẤT — CHƯA ÁP DỤNG" · hai chỗ trái §2 (`docs/facts/…`, `work/tasks/…`) · "§2 thắng" |
+| A3 | Pointer đi theo | `work/findings.md` F-009 §Impact nay ghi kèm đường mới; các chỗ còn lại là **trích dẫn lịch sử** trong `work/`, nơi đường chết là bằng chứng chứ không phải bug (CLAUDE.md §5) |
+| A4 | §2 có owner mới | `CLAUDE.md` §2 thêm dòng `work/proposals/`, thêm một đoạn giải thích, và cây thư mục §2 có nó |
+| A5 | Hai file `đánh_giá_*` nguyên vẹn | Không xuất hiện trong `git status`; quyết định (b) là giữ nguyên |
+| A6 | F-009 đóng phần hậu quả | Bảng `hash → nội dung thật` cho `1b1d5f5` / `0b3a337`, ba quyết định của chủ repo, Status → Fixed trọn vẹn |
+| A7 | ADR-008 | "Lịch sử đã chia sẻ thì sửa tiến, không viết lại", nêu đích danh cả hai hash, bốn phương án bị loại |
+| A8 | `0704139 "dsfg"` | **F-011** + **T-025** trong Ready — cả hai **đã đóng 2026-08-31**, cùng ngày, bởi T-025 (Gate 8, ADR-010) |
+| A9 | Gate xanh | `./scripts/gate.sh` |
+
+**Hai thứ phát sinh trong lúc làm, không nằm trong task gốc:**
+
+1. **`0704139 "dsfg"`** — giữa lúc T-023 đang hỏi chủ repo ba câu, toàn bộ cây làm việc bị commit
+   thành một commit subject `dsfg` gộp T-016 + T-021 + T-009, và đã push. Đây đúng điều kiện kích
+   hoạt mà ADR-004 đặt sẵn, nên nó thành **F-011** + **T-025**, không giải quyết trong T-023 (§3.8).
+2. **T-019 đang ở *In Progress* nhưng chưa sửa gì**, và `work/scope.txt` của nó bị T-023 ghi đè.
+   T-019 đã trả về *Ready*; ai nhận lại phải khai lại scope từ đầu.
+
+**Việc cố ý KHÔNG làm:** không `rebase`, không `--amend`, không `push --force` — lý do đầy đủ ở
+**ADR-008**. Và không chiết nội dung `updatee_sýstem.md` thành ADR hay task: chủ repo chọn chuyển
+nguyên văn.
+
+<a id="t-021"></a>
+### T-021 — `brief.sh` đọc Unknowns theo cấu trúc, không theo hình dạng dòng
+
+**Xong 2026-08-31.** `docs/decisions.md` **ADR-007** · `work/findings.md` **F-008** (Resolved) · L2
+
+**Prompt:** chưa có · **Finding:** `work/findings.md` **F-008** (Open) · L2
+
+**Goal:**
+`scripts/brief.sh` in đúng danh sách unknown **đang mở** của `docs/product.md`, không phụ thuộc
+vào việc người viết vắt dòng hay in đậm ở đâu.
+
+**Nói một câu, việc phải làm là gì:**
+Cho mục OPEN UNKNOWNS đọc **cấu trúc**, đúng cách mục OPEN FINDINGS đã làm (`brief.sh` dòng 72–78
+bắt `^### F-` rồi đọc `**Status:**`). Việc **không** phải làm: nới regex cho khớp thêm vài hình
+dạng — đó là chữa triệu chứng, hình dạng thứ ba sẽ lại trượt.
+
+**Vì sao có task này:**
+T-020 (2026-08-30) mở U-005 và brief **không** in nó ra, đồng thời vẫn in U-004 — câu đã đóng từ
+trước — như đang mở. T-020 đã sửa phía dữ liệu nên brief đúng ngay hôm nay, nhưng luật "viết
+`U-XXX` sao cho `grep` bắt được" là thứ dựa vào trí nhớ, đúng loại hỏng `work/findings.md` F-001
+nói tới.
+
+**Không làm thì mất gì:**
+Brief là cơ chế ADR-002 dựa vào để **đẩy** trạng thái vào mỗi phiên, và nó cố ý `exit 0` ở mọi
+đường lỗi — nên khi đọc sai thì không có gì kêu lên, phiên sau chỉ đơn giản tin bản sai. Một câu
+hỏi nghiệp vụ bị giấu là một chỗ CLAUDE.md §3.5 bị vô hiệu: phiên sau không biết có câu phải hỏi
+nên tự quyết.
+
+**Bẫy hay sửa nhầm nhất:**
+- **Đây là L2 vì chạm `scripts/**` — thứ chạy trong mọi phiên.** Sửa hỏng `brief.sh` thì mọi phiên
+  sau mở ra với một brief sai hoặc rỗng. Có `scripts/*.test.sh` làm khuôn sẵn để viết test.
+- **Giữ luật "brief không bao giờ chặn"** (CLAUDE.md §7.1): mọi đường lỗi vẫn phải `exit 0`.
+- **Brief trỏ, không chép** — vẫn chỉ in định danh và tiêu đề câu hỏi, không in nội dung dữ kiện.
+
+**Acceptance (viết 2026-08-31, TRƯỚC khi sửa code — CLAUDE.md §3, L2):**
+
+Hợp đồng mới, phát biểu một câu: trong mục `## Unknowns` của `docs/product.md`, **vùng đang mở**
+là phần đầu mục (trước tiêu đề `###` đầu tiên) **cộng** mọi khối dưới một tiêu đề `### Đang mở`;
+trong vùng đó, **một gạch đầu dòng là một unknown đang mở**, và định danh `U-XXX` được tìm ở bất
+cứ đâu trong gạch đầu dòng ấy. Văn xuôi trong vùng mở không sinh ra unknown; mọi thứ dưới một
+tiêu đề `###` khác không được đọc.
+
+| # | Ca | Phải xảy ra |
+|---|---|---|
+| U1 | `- **U-005 — …**` (in đậm chen giữa gạch đầu dòng và định danh) | Vẫn in ra `U-005` — đây là chiều **giấu câu đang mở** của F-008 |
+| U2 | Dòng văn xuôi bắt đầu bằng `U-004 — …` nằm dưới `### Đã có lời giải` | **Không** in — chiều **khoe câu đã đóng** của F-008 |
+| U3 | Dòng văn xuôi (không gạch đầu dòng) bắt đầu bằng `U-006` ngay trong vùng mở | **Không** in — chỉ gạch đầu dòng mới là unknown |
+| U3b | Gạch đầu dòng chứa `U-` nằm dưới một tiêu đề `###` khác (mục "cách viết" chẳng hạn) | **Không** in — tiêu đề khác đóng vùng lại |
+| U4 | Một unknown vắt qua ba dòng, tiêu đề dài hơn 96 ký tự | In **một** mục, tiêu đề nối lại rồi cắt ở ranh giới **từ** — không xẻ đôi một chữ tiếng Việt |
+| U5 | Vùng mở không còn gạch đầu dòng nào | In `(none)`, không rơi xuống đọc vùng đã đóng |
+| U6 | Không có tiêu đề `### Đang mở` (hình dạng cũ của file) | Vẫn đọc được các gạch đầu dòng ở đầu mục — hợp đồng không đòi file phải sửa trước |
+| U7 | `docs/product.md` không tồn tại / không có mục `## Unknowns` | `(none)`, **exit 0** — brief không bao giờ chặn (CLAUDE.md §7.1) |
+| U8 | Bất kỳ ca nào ở trên | `brief.sh` exit 0, và chỉ in định danh + tiêu đề câu hỏi, không in nội dung dữ kiện (§7.1 "trỏ, không chép") |
+
+Ràng buộc chéo: **không nới regex cho khớp thêm hình dạng** (đó là chữa triệu chứng — Goal ở trên
+đã cấm), và **không tạo file test mới** — mở rộng `scripts/brief.test.sh` đã có.
+
+**Verify:** `./scripts/gate.sh` · `./scripts/brief.test.sh` (verify.sh tự chạy mọi
+`scripts/*.test.sh`) · `./scripts/brief.sh` trên repo thật, đối chiếu bằng mắt với
+`docs/product.md` → *Unknowns*.
+
+<a id="t-016"></a>
+### T-016 — Scope quên dọn thì brief kêu; Gate 7b đọc nội dung khối commit
+
+**Cập nhật 2026-08-30 (T-024):** một nguồn của lỗi này đã bị gỡ — `check-scope.sh` không còn tính
+`work/scope.txt` là file ngoài scope, nên phiên sau không còn bị Gate 3 ép liệt kê nó vào chính
+nó. Phần còn lại của T-016 (kêu khi scope quên dọn, và kiểm tập đã `git add`) vẫn nguyên.
+
+**Prompt:** `prompt/maintenance/09-scope-not-cleared-L2.md` (L2 — đổi hành vi thứ mọi phiên đều chạy)
+· **Xong 2026-08-31** · **ADR-006** · `work/findings.md` **F-010** (mới), **F-009** (đóng phần cơ chế)
+
+**Goal:**
+Task kết thúc mà `work/scope.txt` còn pattern thì phải nhìn thấy ngay, không phụ thuộc ai nhớ dọn.
+Đã hỏng hai lần: `5c41f65` (6 pattern) và `25f0f88` (8 pattern). Hậu quả ở hai chỗ — Gate 3 đỏ vì
+lý do sai (hoặc xanh nhầm), và `brief.sh` in *"a task is open"* cho mọi phiên mới.
+
+CLAUDE.md §3.8 chỉ cho dựng cơ chế **sau hai lần**; ngưỡng đã đạt, nên task này được phép — nhưng
+là **cảnh báo, không chặn** (ADR-003), và chỉ kêu khi scope đã khai báo mà backlog không có task
+nào ở *In Progress*. Cần một ADR và một finding — nhưng **hai số prompt viết ra đã bị lấy mất**:
+ADR-004 là của T-018 (2026-08-30), F-007 là của T-013 (2026-08-30). Dùng số trống kế tiếp tại
+thời điểm làm, đừng dùng số ghi trong prompt.
+
+**Phạm vi mở rộng 2026-08-30 (F-009):** ngoài việc kêu khi `work/scope.txt` còn pattern, task
+này gánh thêm phần kiểm **tập file đã `git add` có nằm trong scope không**. Lý do gộp: cùng một
+script family, cùng một họ lỗi *commit nuốt thứ task không được phép chạm*, và đã trả giá bốn
+lần (`5c41f65`, `25f0f88`, `128955a`, `0b3a337`). Hai ràng buộc bắt buộc, chi tiết ở F-009:
+**không lật ADR-003** (Gate 3 vẫn không chặn vì file chưa track), và phần kiểm mới **cảnh báo,
+không chặn**, đặt ở Gate 7 — nơi đã đọc khối commit.
+
+**Acceptance · Verify phần gốc (scope quên dọn):** trong file prompt.
+
+**Acceptance phần mở rộng F-009 (viết 2026-08-31, TRƯỚC khi sửa code — CLAUDE.md §3, L2):**
+
+Gọi *khối commit* là đoạn `git add …` + `git commit -m …` mà lượt giao ra theo §6.1. Gate 7 đã
+đọc transcript để hỏi *"có khối không"*; phần mở rộng hỏi thêm *"trong khối có gì"*.
+
+| # | Ca | Phải xảy ra |
+|---|---|---|
+| A1 | Khối liệt kê một file **ngoài** `work/scope.txt` | Gate 7 nêu **đích danh** file đó, lượt không kết thúc im lặng |
+| A2 | Khối chỉ liệt kê file **trong** scope | Gate 7 im lặng, exit 0 |
+| A3 | Khối dùng `git add -A` hoặc `git add .` | Gate 7 nêu đích danh dạng lệnh bị §6.1 cấm |
+| A4 | Khối liệt kê `work/scope.txt` | Gate 7 kêu — §6.1 cấm nó nằm trong khối |
+| A5 | `work/scope.txt` **chưa khai** (rỗng/chỉ comment) | Gate 7 im lặng — không có gì để đối chiếu, đoán là tệ hơn im |
+| A6 | Đã kêu một lần cho **cùng một trạng thái cây** | Lần sau im — không lặp vô hạn, đúng luật 3 ở đầu `check-commit-block.sh` |
+| A7 | **Index thật** (`git diff --cached`) có file ngoài scope | Cũng bị nêu, cùng một đường ra với A1 |
+| A8 | File chưa track nằm trong khối và **trong** scope | Không kêu — ADR-003 không bị lật, vì ở đây căn cứ là scope, không phải trạng thái track |
+
+Ràng buộc chéo: **không đổi cách `check-scope.sh` đọc pattern** (Gate 3 đang đúng), và **không
+tạo script mới** — ngữ nghĩa pattern phải còn đúng **một** chủ, nếu không hai bản sẽ trôi khỏi
+nhau (cùng họ lỗi F-001).
+
+**Verify phần mở rộng:** `scripts/check-commit-block.test.sh` (mở rộng, không tạo file test mới cho
+Gate 7) + `scripts/brief.test.sh` cho phần gốc. Cả hai chạy tự động trong `verify.sh`.
+
+**Đã dựng gì — hai triệu chứng, hai chỗ chấm, vì chúng nổ ở hai thời điểm khác nhau:**
+
+| Chỗ | Kêu khi nào | Mã thoát |
+|---|---|---|
+| `scripts/brief.sh` | `work/scope.txt` còn pattern **mà** không có task nào ở *In Progress* — nêu đích danh file và số pattern | luôn 0 (§7.1) |
+| `scripts/check-commit-block.sh` — **Gate 7b** | khối commit nhặt file ngoài scope · dùng `git add -A` / `git add .` · có `work/scope.txt` trong khối | 2, nhiều nhất **một lần** cho mỗi trạng thái cây |
+| `scripts/check-scope.sh --match <path>…` | không kêu — chế độ phụ, in path nằm ngoài scope rồi exit 0 | luôn 0 |
+
+`--match` tồn tại để Gate 7b **không chép lại** cách so khớp pattern: ngữ nghĩa scope giữ đúng một
+chủ, nếu không hai bản sẽ trôi khỏi nhau đúng như hai bảng giá của F-001. Cách đọc pattern của
+Gate 3 không đổi một dòng nào.
+
+**Ba lựa chọn phải giải trình, đã ghi đủ trong ADR-006:**
+
+1. **Chọn `brief.sh`, không chọn `check-scope.sh`/`gate.sh`** cho triệu chứng "scope quên dọn":
+   nó là chỗ duy nhất trong ba ứng viên mà đầu ra **chắc chắn** tới được người đọc (hook
+   `SessionStart` → vào thẳng context, ADR-002). Nhánh xanh của gate chỉ đi ra stdout của một hook
+   `Stop` exit 0 — nơi không quay lại phiên; muốn nó tới nơi thì phải exit khác 0, tức là chặn,
+   thứ Constraints cấm. Nó cũng đúng là chỗ câu sai đang được in ra, và đã cầm sẵn cả hai đầu vào.
+2. **Gate 7b đi chệch F-009 ở một điểm, có chủ ý:** F-009 viết *"cảnh báo, không chặn"*; Gate 7b
+   dùng **exit 2** — đúng mã thoát Gate 7 đã dùng khi thiếu khối commit — vì ở exit 0 một hook
+   `Stop` không có kênh nào về phiên, nên "cảnh báo" ở đó là in vào hư không. Thứ bị trả lại là
+   **đoạn văn bản bàn giao**, không phải thay đổi: Gate 1, 1b, 3 đã xanh trước khi nó chạy.
+3. **ADR-003 không bị lật.** Gate 7b chấm **danh sách file vừa được cố ý chọn**, không chấm cây
+   làm việc; trạng thái track không tham gia vào kết luận (ca A8: file chưa track nằm trong scope
+   thì vẫn im). `check-scope.sh` không đổi hành vi Gate 3.
+
+**Số ADR/finding thực dùng khác số ghi trong prompt** — prompt viết ADR-004 và F-007, cả hai đã bị
+T-018 và T-013 lấy mất ngày 2026-08-30. Số trống kế tiếp tại thời điểm làm: **ADR-006** và
+**F-010**. F-010 chỉ sở hữu phía *scope còn sót* (hậu quả ở `check-scope.sh` và `brief.sh`); phía
+*khối commit nhặt nhầm* đã là **F-009** từ trước, nên nó được **nối thêm và đóng**, không chép lại
+— viết finding thứ hai cho cùng bảng bằng chứng chính là bệnh F-001.
+
+**Kiểm bằng gì:** `scripts/brief.test.sh` (mới, B1–B5) và `scripts/check-commit-block.test.sh`
+(mở rộng, A1–A8 — đúng bảng Acceptance ở trên). Cả hai chạy tự động trong `verify.sh`. Ca A6 từng
+**FAIL** ở lần chạy đầu: dấu vết `.git/lean-ai-commit-block` chỉ được đọc ở nhánh *thiếu khối*, nên
+một khối xấu bị kêu lại mãi. Đã sửa: nhánh *có khối* đọc dấu cũ trước rồi mới đóng dấu mới.
+
+**Còn nợ, cố ý:** Gate 7b đọc `git add` bằng **văn bản** trong transcript, nên khối viết theo kiểu
+lạ (biến shell, `xargs`, xuống dòng giữa danh sách file) sẽ lọt. Nó bắt đúng dạng §6.1 mô tả — cũng
+là dạng cả bốn lần hỏng đã dùng. Rủi ro này ghi ở ADR-006, không mở task mới.
+
+<a id="t-009"></a>
+### T-009 — Gỡ dòng mẫu T-001 khỏi Ready
+
+**Prompt:** `prompt/maintenance/03-retire-T-001-L0.md` (L0) · **Xong 2026-08-31**
+
+**Hiện trạng đã sửa:**
+*Ready* còn một dòng mẫu của template khởi tạo repo — ID `T-001`, nội dung là câu "thay dòng này
+bằng task thật đầu tiên". Nó chưa bao giờ là task thật: không Goal, không Scope, không Acceptance.
+Nguyên văn dòng đó cố ý **không** chép lại ở đây, vì acceptance của task này là `grep` chuỗi ấy
+trong `work/backlog.md` phải rỗng.
+
+Nó không vô hại: `scripts/brief.sh` in **NEXT READY** bằng những dòng chưa tick đầu tiên của
+*Ready*, và brief là `SessionStart` hook — nên mọi phiên mới nhận nó như một việc, trước cả chỉ
+thị đầu tiên của người dùng. ADR-002 dựng brief để phiên mới nhận trạng thái **hôm nay**; một
+brief trỏ vào dòng mẫu là đúng thứ ADR-002 muốn chặn.
+
+**Đã làm:**
+Xoá dòng đó khỏi *Ready*. **Không** tick `[x]`, **không** chuyển xuống *Done* — Done ghi việc đã
+làm, đưa một dòng mẫu vào đó là làm hỏng lịch sử. Không phát minh task mới lấp chỗ: *Ready* sau
+việc này đúng bằng những task đã có.
+
+**Luật để lại — ID đã dùng thì không tái sử dụng:**
+Số **T-001 không được cấp lại** cho bất kỳ task mới nào. Nó vẫn xuất hiện trong tên task này, trong
+`prompt/maintenance/03-retire-T-001-L0.md` và trong các entry lịch sử — đó là **tham chiếu**, không
+phải một task đang sống.
+
+**Verify:** `grep -n 'meaningful task' work/backlog.md` rỗng;
+`./scripts/brief.sh` in NEXT READY là T-019 (task thật, có entry chi tiết); *Done* không có dòng nào
+mang ID T-001; `./scripts/gate.sh` xanh.
+
+<a id="t-015"></a>
+### T-015 — §10 kế hoạch gốc: hai câu đã có lời giải, một câu hỏi hẹp hơn thực tế
+
+**Prompt:** `prompt/maintenance/08-plan-open-questions-scope-L1.md` (L1) · **Xong 2026-08-31** · gỡ chặn BA-10
+
+**Goal:**
+§10 câu 6 ("Pickup có cần giờ hẹn bắt buộc không?") và câu 7 (trạng thái giao hàng) **đã có lời
+giải** ở `shop-facts.md` §6.5 · §6.7, nhưng §10 vẫn để mở. Riêng câu 6 còn hỏi **hẹp hơn** thực tế:
+mốc giờ bắt buộc với cả `pickup` **và** `phone_preorder` (§6.5). Câu 7 thì đúng phạm vi — trạng
+thái "đang giao" chỉ có ở đơn giao tận nơi; đừng mở rộng nó cho ba kênh.
+
+Đánh số 1–10 **không đổi**: `work/backlog.md` và `prompt/BA/09-decisions-assumptions-L2.md` trỏ
+theo số thứ tự (`§10.6`).
+
+**Acceptance · Verify:** trong file prompt.
+
+**Đã sửa, tất cả trong §10 của `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`:**
+
+| Câu | Thành gì |
+|---|---|
+| **1** | giữ nguyên câu hỏi, thêm dấu *xác nhận* và *hủy* **đã chốt 2026-08-30** → §6.2 · §6.13, và ghi thẳng **phần "chỉnh sửa đơn" vẫn còn mở** |
+| **5** | giữ nguyên câu hỏi, thêm dấu **đã chốt 2026-08-30** → §6.4 |
+| **6** | **đổi phạm vi** — từ *"Pickup có cần giờ hẹn bắt buộc không?"* thành *"Giờ khách cần hàng có bắt buộc không, và với những kênh nào?"*, dấu chốt trỏ §6.5: bắt buộc với **cả `pickup` và `phone_preorder`** |
+| **7** | giữ nguyên câu hỏi **và phạm vi `delivery`**, thêm dấu chốt trỏ §6.7 |
+| đầu §10 | ba dòng dẫn: bốn câu 1·5·6·7 đã có lời giải, đọc ở nguồn, **đừng biến thành `GIẢ ĐỊNH`** |
+
+**Sáu câu còn mở (2, 3, 4, 8, 9, 10) không đổi một ký tự** — `git diff -U0` chỉ hiện bốn dòng
+1, 5, 6, 7. Đánh số 1–10 liên tục, vẫn đủ mười câu.
+
+**Đã mở từng mục nguồn ra kiểm (Acceptance yêu cầu nói rõ):** §6.2 (đơn khách tự gửi phải quầy
+duyệt) · §6.4 (hoàn tiền, quầy quyết từng ca) · §6.5 (bảng thông tin liên hệ — *Giờ khách cần
+hàng* bắt buộc với `pickup` **và** `phone_preorder`) · §6.7 (quán tự giao, trạng thái "đang giao") ·
+§6.13 (chỉ người đứng quầy được huỷ). Hai mục đỡ chéo: §5.2 điểm 5 (cả hai kênh đều có mốc giờ)
+và điểm 7 (chỉ đơn giao tận nơi có "đang giao"). Ngày chốt lấy từ §7.1 — cả năm dòng đều
+**2026-08-30**.
+
+**Ba câu được xác nhận là KHÔNG có lời giải**, nên cố ý không mang dấu chốt: câu 3 (món hết),
+câu 9 (đổi giá đang bán), câu 10 (lịch sử thao tác) — `grep` trên `shop-facts.md` không ra dòng
+nào. Câu 2, 4, 8 cũng vậy: §6.13 chỉ nói *huỷ* chứ không nói *sửa*, §6.1 nói phiên "chờ thanh
+toán" chứ không nói ca khách không trả được, §6.9 · §6.10 nói cộng đủ nguồn và đối soát chứ
+không chốt mốc ngày doanh thu.
+
+**Không tự chốt câu nào, không mở U-XXX mới.** Task chỉ ghi lại lời giải đã có sẵn trong
+`shop-facts.md`; không có chỗ nào phải suy luận (F-004).
+
+**Mục *"Mười câu hỏi §10"* ở trên không sửa** — đã đúng sẵn và trùng khớp với `shop-facts.md`;
+sửa nó là tạo bản chép thứ hai (ADR-001, F-001).
+
+<a id="t-014"></a>
+### T-014 — §2.1 kế hoạch gốc thiếu việc khách gọi điện đặt trước
+
+**Prompt:** `prompt/maintenance/07-plan-actor-phone-order-L1.md` (L1) · **Xong 2026-08-31**
+
+**Goal:**
+§2.1 *Người dùng chính* liệt kê việc khách làm là "Đặt ship · Đặt trước để tới lấy · Quét QR tại
+bàn" — không có đường điện thoại; phía nhân viên cũng chỉ có "Đặt món hộ khách" (tức `staff_pos`).
+`docs/product.md` §1.1 · §1.2 **đã** đúng từ BA-01, nên đây là chỗ khung lệch với cả nhà thật lẫn
+tài liệu tra cứu — chỗ lệch **thứ bảy** của cùng một kênh. T-011 cố ý không sửa: §2.1 nằm ngoài
+vòng rà của nó.
+
+**Đã sửa ba chỗ, tất cả trong §2.1 của `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`:**
+
+| Chỗ | Thêm gì |
+|---|---|
+| nhóm **1. Khách hàng** | dòng thứ tư: *"Gọi điện đặt trước — khách nói, **không tự bấm**; nhân viên nhập hộ."* Ba dòng cũ giữ nguyên chữ |
+| nhóm **2. Nhân viên quán** | dòng *"Nhập hộ đơn đặt trước qua điện thoại"*, đặt ngay dưới "Đặt món hộ khách" và **nói rõ khác chỗ nào** (đặt hộ **tại quầy**), kèm nghĩa vụ hỏi giao-hay-lấy và mấy giờ |
+| cuối §2.1 | một dòng trỏ `master_plan/shop-facts.md` §5.2 cho phần ai duyệt và phải hỏi gì lúc nhận máy |
+
+**Không có chỗ lệch thứ tám trong cùng file.** Đã đọc §1, §4.3, §13, §14 — không mục nào khác kể
+việc của khách/nhân viên theo kênh; §4.2 và Epic B đã đủ ba kênh từ T-011. Nên **F-006 không được
+nối thêm** (prompt chỉ yêu cầu nối khi tìm thấy chỗ thứ tám).
+
+**Đọc chéo `docs/product.md` §1.1 · §1.2 (Acceptance yêu cầu nói rõ đã đọc):** không câu nào ở §2.1
+mâu thuẫn. §1.1 ghi *"Gọi hotline để đặt trước; khách nói, nhân viên nhập hộ vào hệ thống"* —
+§2.1 nói cùng một việc, ngắn hơn, và **không chép số hotline**. §1.2 ghi *"Nhập hộ đơn đặt trước
+qua điện thoại, và khi nhận điện thoại phải hỏi: giao tận nơi hay tới lấy, và cần hàng lúc mấy
+giờ"* — §2.1 giữ đúng hai nghĩa vụ đó, thêm phần phân biệt với đặt hộ tại quầy mà §1.2 tách sẵn
+thành hai gạch đầu dòng riêng.
+
+**§2.2 không đổi một ký tự** — vẫn là câu trỏ `shop-facts.md` §2 (ADR-001, F-001).
+
+<a id="t-024"></a>
+### T-024 — Lượt chỉ đổi tài liệu là lượt không có gì máy chấm
+
+**Prompt:** yêu cầu miệng của chủ repo, 2026-08-30 — *"đánh giá hệ thống và nâng cấp"* (L2) ·
+**Xong 2026-08-30**
+
+**Goal:**
+Repo này sản xuất tài liệu, nhưng cổng máy chấm duy nhất (`verify.sh`) in đúng một dòng cho mọi
+thay đổi tài liệu: *"verify: skipped — only documentation changed."* Bảy trong chín finding đang
+có đều là lỗi tài liệu. Xong rồi thì mọi lượt — kể cả lượt chỉ đổi tài liệu — đều có một cổng
+deterministic chạy qua, và không tài liệu chỉ đường nào còn trỏ vào đường không mở được mà không
+ai biết.
+
+**Nói một câu, việc phải làm là gì:**
+Dựng `scripts/check-links.sh` và cho `gate.sh` chạy nó ở **mọi** lượt. Việc **không** phải làm:
+sửa bảy đường chết của `master_plan/prompt-fullstack.md` — F-007 nói rõ sửa được thì phải biết
+trước file đó còn thuộc dự án nào, và đó là T-019.
+
+**Vì sao có task này:**
+Ngưỡng `CLAUDE.md` §3.8 (hai lần) đã vượt cho họ lỗi *tài liệu nói sai về chính repo*: F-005 và
+F-006 rà **dữ kiện** đã đổi, F-007 là loại thứ ba — **pointer chết**, và người đọc bản xuất khẩu
+đứng ngoài repo nên không `ls` được. Bằng chứng cổng chạy đúng: lần chạy đầu, chưa có dòng ignore
+nào, nó dựng lại **đúng bảy đường** F-007 tìm ra bằng tay, cộng hai đường cố ý không tồn tại,
+không hơn. Lựa chọn thiết kế ghi ở **ADR-005**.
+
+**Không làm thì mất gì:**
+- Mỗi bản xuất khẩu gửi ra ngoài repo lại có thể mang theo pointer chết mà không ai chấm — F-007
+  đã cho thấy giá: agent ngoài repo hoặc dừng, hoặc **tự bịa** nội dung bảy file rồi coi là nguồn.
+- Nợ pointer không có nơi hết hạn: bảy đường của T-019 nay nằm trong `check-links.ignore` mang tên
+  task, và ngày T-019 xong thì dòng ignore thừa **tự bắt đỏ** cho tới khi bị gỡ.
+
+**Đây là con bug F-007** — vòng rà trước không bắt được vì T-013 rà **con số** ("bốn kênh"), còn
+chỗ hỏng của F-007 không chứa con số nào. Chấm bằng máy thì không phụ thuộc vòng rà nào cả.
+
+**Sửa kèm — `check-scope.sh` không còn tính `work/scope.txt` là vi phạm scope.**
+Gặp ngay khi khai báo scope cho chính task này: Gate 3 đỏ vì `work/scope.txt` (file vừa sửa để
+khai báo) nằm ngoài scope nó khai báo. Nghĩa là **mọi** task L1+ khai báo đúng luật §3.4 đều mở
+màn bằng một Gate 3 đỏ, và lối thoát duy nhất là tự liệt kê `work/scope.txt` vào chính nó — đúng
+thứ đã đi thẳng vào hai commit (T-016). `check-commit-block.sh` đã miễn trừ file này từ trước;
+nay `check-scope.sh` cũng vậy. Đỏ vì lý do sai là thứ ADR-003 cấm.
+
+**Acceptance:**
+1. `scripts/check-links.sh` chạy độc lập, exit 1 khi một tài liệu chỉ đường nêu đường không mở
+   được, in ra `<file> :: <đường dẫn>`.
+2. Không chấm `work/` và `prompt/maintenance/` — ở đó đường đã chết là bằng chứng được trích dẫn.
+3. Nội dung trong khối ``` không bị tính là pointer; đường dẫn tương đối tính theo thư mục file.
+4. File `.md` **chưa track** chỉ được in dòng `note:`, không chặn gate (ADR-003).
+5. `scripts/check-links.ignore` giữ ngoại lệ kèm chủ, và **ignore hết hạn làm gate đỏ**.
+6. `gate.sh` gọi nó ở mọi lượt, kể cả lượt chỉ đổi tài liệu (khác `verify.sh`).
+7. `scripts/check-links.test.sh` phủ 1–5, và `verify.sh` tự chạy mọi `scripts/*.test.sh`.
+8. `check-scope.sh` bỏ qua chính `work/scope.txt`.
+9. ADR-005 ghi bốn ranh giới và bốn phương án bị loại; `CLAUDE.md` §5, `quality/review-gate.md`
+   Gate 1b, `README.md` nói cùng một chuyện.
+10. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/check-links.sh          # OK — mọi đường dẫn ... đều mở được
+./scripts/check-links.test.sh     # 8/8 ca ok
+./scripts/check-scope.sh          # OK — all tracked changes within declared scope
+./scripts/gate.sh                 # xanh, exit 0
+```
+
+<a id="t-022"></a>
+### T-022 — Bản xuất khẩu còn chép ba con số tiền của nhà thật
+
+**Prompt:** không có (task sinh trong phiên 2026-08-30, từ mục *còn chưa giải quyết* của T-013) · L1
+· **Xong 2026-08-30**
+
+**Goal:**
+`master_plan/prompt-fullstack.md` tự đặt luật ở §3.1 — *"Không có con số nào ở đây"* — nhưng vẫn
+còn bốn dòng mang số tiền. T-013 chỉ rà **kênh và luồng** nên không đụng tới chúng; chúng có từ
+trước, không phải do T-013 thêm vào.
+
+| Dòng | Đang viết | Nhà thật của con số |
+|---|---|---|
+| §4 (FE, giao diện khách) | `Thêm vào giỏ · 5.000đ` · `→ 34.000đ` | bánh cuốn nhân Nhiều = 5.000 (`shop-facts.md` §4.2) · combo Đầy đủ nhiều nhân = 34.000 (§4.3) |
+| §9.1 (ví dụ dòng master task ĐÚNG) | "Sai **1.000đ** mỗi suất" | phụ thu mỗi phần nhận nhân (§4.4) |
+| §9.4 (ví dụ nổ thành phần) | `34.000 × 2 = 68.000` | **chép nguyên văn** `shop-facts.md` §5.3 |
+
+Nặng nhất là hai dòng ở §9: §9 tự giới thiệu là *"Ví dụ chuẩn — bám đúng, đừng sáng tạo"*, nên agent
+ngoài repo được bảo chép y nguyên. Chủ quán đổi giá thì bản xuất khẩu vẫn dạy giá cũ, và người đọc
+nó không có repo để đối chiếu.
+
+**Vì sao là task chứ không phải finding:** bài học đã có nhà — `work/findings.md` **F-001**
+(*"một bản chép có kèm cảnh báo vẫn là một bản chép"*) và chính luật §3.1 của file. Ở đây chỉ thiếu
+**việc**, và việc thì không chờ ai trả lời. Cũng vì thế **không gộp vào T-019**: T-019 đứng chờ một
+câu hỏi cho người, việc này làm được ngay.
+
+**Scope:** `master_plan/prompt-fullstack.md` · `work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:** `master_plan/shop-facts.md` (nhà thật, đang đúng) · `docs/**` · `prompt/**` ·
+`quality/**` · `scripts/**` · mọi file T-020 vừa sửa.
+
+**Acceptance:**
+1. `grep -nE '[0-9]{1,3}\.000' master_plan/prompt-fullstack.md` **rỗng**.
+2. §4 vẫn chốt được hai luật giao diện cũ (giá hiện ngay trên nút thêm vào giỏ · tiền định dạng
+   `vi-VN`) mà không nêu con số nào, và nói thêm **giá lấy từ API**, khớp §6.9 (*BE luôn tính lại
+   giá từ DB*).
+3. §9.1 ô *Hỏng thì mất gì* vẫn **cụ thể** — nói đúng khoản tiền nào sai, không nói chung chung
+   kiểu "lỗi đơn" — nhưng không còn con số. Đây là ví dụ dạy cách viết cột đó, hỏng tính cụ thể
+   là hỏng cả bài học.
+4. §9.4 **giữ nguyên** phần nổ thành phần và mọi số **thành phần** (combo = 3 bánh + 1 trứng +
+   1 giò, 2 combo ⇒ 6 bánh). Chúng được phép ở lại vì ví dụ dạy đúng chúng, đã trỏ
+   `shop-facts.md` §4.5, có ngày chốt và có sẵn luật bảo trì *"thành phần đổi thì sửa ví dụ này
+   trước"*. Chỉ **dòng tiền** bị bỏ số và trỏ §4.3.
+5. Khối ⚠️ ở §3.1 ghi thêm lần này, kèm ngày — vẫn đúng **một** khối.
+6. Không đổi cấu trúc §1 → §10, không đổi stack/cổng/sơ đồ 16 bảng, không đụng bảng sáu pha §7.
+7. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -nE '[0-9]{1,3}\.000|0382688666' master_plan/prompt-fullstack.md   # rỗng
+grep -n 'Thêm vào giỏ\|Intl.NumberFormat' master_plan/prompt-fullstack.md
+grep -n 'Hỏng thì mất gì\|không ai phát hiện' master_plan/prompt-fullstack.md
+sed -n '/9.4 Việc xuống bếp/,/§10/p' master_plan/prompt-fullstack.md      # ×6 còn nguyên
+grep -c '⚠️' master_plan/prompt-fullstack.md
+git status --porcelain
+```
+
+**Đã sửa ba dòng, giữ lại một:**
+
+| Chỗ | Sau khi sửa |
+|---|---|
+| §4 giao diện khách | bỏ cả hai số; thêm luật **giá lấy từ API, không hard-code** (trỏ §6.9) và tả định dạng `vi-VN` bằng lời (dấu chấm ngăn nghìn, hậu tố `đ`) |
+| §9.1 ô *Hỏng thì mất gì* | "Thu sai **phụ thu ở mọi suất có nhân**, không ai phát hiện tới cuối tháng" — vẫn nói đúng khoản tiền nào sai, không còn con số |
+| §9.4 dòng tiền | `[… — Thịt+mộc nhĩ, Nhiều nhân]   ← đơn giá: shop-facts §4.3` |
+| §9.4 số **thành phần** | **giữ nguyên** (`×6`, `×2`, combo = 3 bánh + 1 trứng + 1 giò) — xem Acceptance 4 |
+| §3.1 khối ⚠️ | vẫn **một** khối, ghi thêm lần này |
+
+**Một chỗ suýt hỏng, đáng nhớ:** bản nháp đầu của khối ⚠️ **trích cả ba con số** để kể lại lỗi —
+và thế là Acceptance 1 vẫn đỏ, file vẫn đủ ba con số tiền, chỉ là chúng chuyển từ chỗ này sang chỗ
+kia. Luật đã ghi thẳng vào khối đó: *cảnh báo nêu chỗ sai và loại sai, không chép lại giá trị sai.*
+Cùng họ với F-001 — bản chép nào cũng là bản chép, kể cả bản chép nằm trong lời cảnh báo về việc
+chép.
+
+**Phát hiện kèm theo, không sửa:** §9.3 còn một link `../finding.md#f-31` — cùng loại với F-007,
+và cho thấy F-007 đếm thiếu (nó chỉ kể `#f-67`). Vào **T-019** khi task đó chạy.
+
+<a id="t-020"></a>
+### T-020 — §6.3 còn viết "không bao giờ thu trước", trong khi đơn mang đi đã được trả trước
+
+**Prompt:** `prompt/maintenance/10-prepay-takeaway-L2.md` (L2) · **chặn** BA-04, BA-06
+
+**Goal:**
+`master_plan/shop-facts.md` nói đúng thứ chủ quán chốt: đơn mang đi **mặc định** thu lúc trao
+hàng, nhưng khách **được chọn** trả trước; đơn đã trả trước mà huỷ thì hoàn theo §6.4. Không còn
+chỗ nào trong repo nói "không bao giờ thu trước", và không còn chỗ nào suy ra "huỷ đơn không bao
+giờ sinh việc hoàn tiền".
+
+**Nói một câu, việc phải làm là gì:**
+Sửa **luật** ở nhà thật rồi đuổi theo mọi chỗ trỏ về nó. Việc **không** phải làm: biến trả trước
+thành mặc định — nó là tuỳ chọn; và không đụng luồng ăn tại bàn, vẫn thu ở quầy lúc đóng phiên.
+
+**Vì sao có task này:**
+Chủ quán chốt **2026-08-30**: *"đơn mang đi có thể thanh toán trước"*, kèm ba vế trả lời trong
+cùng ngày — trả trước là **tuỳ chọn** · áp cho **cả ba** kênh mang đi · huỷ đơn đã trả trước thì
+hoàn **theo §6.4** (quầy quyết từng ca, phải ghi vết). Câu này **lật một luật đã chốt cùng ngày**:
+§6.3 quy tắc 3 đang viết *"không bao giờ thu trước"*, và §7.1 có dòng nhật ký ghi đúng câu đó.
+Chỗ lệch lộ ra khi T-012 đọc mục *Unknowns* của `prompt/BA/03-slice-ship-pickup-L2.md` — câu hỏi
+"đơn mang đi có được thanh toán trước không" nằm đó, và §6.3 đã trả lời "không". T-012 cố ý không
+sửa (ngoài scope), báo cáo lại, và chủ quán trả lời ngược với §6.3.
+
+**Không làm thì mất gì — ba chỗ, xếp theo mức nặng:**
+- **BA-06** viết `docs/product.md` §4 — quy tắc giá và thanh toán. Nó đọc §6.3. Chạy BA-06 trước
+  T-020 là **chép nguyên một luật đã chết vào tài liệu sản phẩm**, rồi mọi thứ hạ nguồn tính tiền
+  theo nó. Đây là chỗ nặng nhất.
+- **BA-04** viết §3.2 — chính lát cắt mang đi, nơi nhánh trả trước sống. Prompt của nó còn giữ câu
+  hỏi đã có lời giải, nên nó sẽ hỏi lại một thứ đã chốt (CLAUDE.md §3.5 cấm biến luật đã chốt
+  thành giả định).
+- **Luật đổ theo:** `shop-facts.md` §2 và `docs/product.md` §2.4 đều suy ra *"tiền chưa bao giờ
+  thu trước ⇒ huỷ đơn đặt trước **không sinh việc hoàn tiền**"*. Từ hôm nay câu đó chỉ đúng cho
+  đơn chưa trả tiền — để nguyên là để một quán thật tin rằng huỷ đơn thì không phải trả lại tiền.
+
+**Thứ tự đọc trước khi sửa file đầu tiên:**
+1. `master_plan/shop-facts.md` §6.3 (luật đang sai) → §6.4 (hoàn tiền, nơi ca huỷ đơn đã trả rơi
+   vào) → §5 và §5.2 (hai bản nhắc lại) → §2 đoạn huỷ đơn hotline → §7.1 nhật ký chốt.
+2. `prompt/maintenance/10-prepay-takeaway-L2.md` — bảng *Context* liệt kê **tám** chỗ phải sửa,
+   mục *Constraints* có sáu cái bẫy, *Acceptance* có **mười một** dòng.
+
+**Ba cái bẫy hay sửa nhầm nhất** (danh sách đủ ở *Constraints* của prompt):
+- **Trả trước là tuỳ chọn, không phải mặc định.** Viết thành "đơn mang đi thu tiền trước" là sai
+  lời chốt.
+- **Không xoá dòng nhật ký §7.1 cũ.** Hai lần chốt cùng một ngày là chuyện thật; nhật ký phải kể
+  được cả hai mà không tự mâu thuẫn.
+- **Không tự quyết ai bấm xác nhận "đã nhận tiền" cho đơn trả trước.** VietQR là tĩnh và không có
+  ai đứng đối diện khách lúc trả ⇒ ghi **U-005**, đừng suy ra.
+
+**Cách hoàn thành — đủ mười bước, 1 tới 10.** Luật chung ở
+[Vòng chạy một task L1](backlog.md#vong-chay); dưới đây là việc cụ thể của T-020 ở đúng bước đó.
+
+1. **Đọc.** Entry này rồi cả file prompt — nhất là bảng *Context* và sáu dòng *Constraints*.
+2. **Khai scope.** Bảy dòng ở mục *Scope* của prompt, nối vào cuối `work/scope.txt`.
+3. **Mở task.** Cắt dòng `- [ ] T-020 …` khỏi [Ready](backlog.md#ready) xuống [In Progress](backlog.md#in-progress).
+4. **Sửa, từ nhà thật ra ngoài.** `shop-facts.md` §6.3 → §5 → §5.2 điểm 6 → §2 → §7.1, rồi mới
+   tới `docs/product.md`, rồi `prompt/BA/03`. Sửa nhà thật sau cùng là tự chép luật cũ đi tiếp.
+5. **Một câu hỏi phải ghi, không được trả lời:** U-005 (ai xác nhận tiền của đơn trả trước).
+6. **Verify.** Bảy lệnh ở mục *Verify* của prompt. Lệnh dễ trượt nhất là lệnh `grep` toàn repo tìm
+   "không bao giờ thu trước" — phải **rỗng**, kể cả trong `master_plan/**` và `docs/**`.
+7. **Gate 2 — mười một dòng Acceptance, mười một bằng chứng**, mỗi dòng trỏ tới một `file:dòng`.
+8. **Findings.** Chỗ lệch số điện thoại ở `docs/product.md` → *Unknowns* nối vào **F-006**, không
+   mở finding mới: đúng con bug T-012 đã sửa ở `prompt/BA/01`, lần này ở tài liệu tra cứu.
+9. **Đóng task.** Tick ở [Done](backlog.md#done) kèm ngày · chuyển khối này sang
+   [Chi tiết — việc đã xong](#chi-tiet-da-xong) · xoá bảy pattern khỏi `work/scope.txt` · sửa hai
+   dòng ở [Ready](backlog.md#ready) đang trỏ tới T-020 (câu "Sáu việc bảo trì", bullet "T-020 chặn BA-04 và
+   BA-06") và ghi `(T-020 xong)` vào dòng BA-04, BA-06.
+10. **Khối commit.** Một khối, liệt kê từng file, subject `T-020: …`, không có `work/scope.txt`.
+
+**Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+
+**Đã xong 2026-08-30.** Tám chỗ trong bảng *Context* đã sửa; nhà thật `shop-facts.md` §6.3 nay
+nói đủ ba vế của lời chốt và §6 vẫn đúng 13 quy tắc. Hai chỗ **ngoài** bảng đó cũng phải sửa vì
+trỏ vào dữ kiện vừa dịch chuyển: dòng lệch số điện thoại ở `docs/product.md` → *Unknowns* (nối
+vào **F-006**, lần rà thứ tư — lần đầu chỗ lệch nằm ở **tài liệu tra cứu**), và ghi chú đóng
+T-012 trong chính backlog này, chỗ còn khẳng định *"§6.3 đã trả lời: không"*.
+**Một dòng Acceptance đã bị sửa sau khi bắt đầu:** dòng 10 đòi grep toàn repo phải rỗng, nhưng
+hồ sơ của chính task (entry này + file prompt) **phải** trích lại câu cũ mới kể được nó sửa gì.
+Dòng 10 nay loại trừ đúng hai file đó và vẫn đòi rỗng ở `master_plan/**`, `docs/**`,
+`prompt/BA/**`.
+**Còn mở:** **U-005** — đơn trả trước thì trả bằng gì, ai bấm xác nhận đã nhận tiền, lúc nào.
+Chặn BA-06 và một phần BA-07; chỉ chủ quán trả lời được.
+
+<a id="t-013"></a>
+### T-013 — Bản xuất khẩu còn nói "4 kênh" và gọi luồng mang đi bằng hai kênh
+
+**Prompt:** `prompt/maintenance/06-fullstack-export-three-channels-L1.md` (L1) · **Xong 2026-08-30**
+
+**Goal:**
+`master_plan/prompt-fullstack.md` — bản xuất khẩu cho agent **ngoài** repo — không còn chỗ nào nói
+quán bán bốn kênh, và mọi chỗ mô tả luồng mang đi đều gọi tên luồng thay vì kể thiếu thành viên.
+
+**Đã sửa năm chỗ** (chỉ trong `master_plan/prompt-fullstack.md`):
+
+| Mục | Trước | Sau |
+|---|---|---|
+| §7 hàng `0 · BA` | "4 kênh bán · 2 sơ đồ luồng (tại bàn, ship)" | "**năm** kênh bán, đủ cả năm (trỏ `shop-facts.md` §2) · 2 sơ đồ luồng (tại bàn, **mang đi**)" |
+| §2 bảng ba mặt | POS chỉ có "đặt món hộ khách"; không có đường điện thoại | quầy "đặt hộ tại bàn **và nhập hộ đơn khách gọi qua điện thoại**", kèm câu "ba mặt **không** phải ba kênh" + trỏ `shop-facts.md` §2 |
+| §3.3 | "Luồng ship/pickup khác **3 điểm**: cần SĐT, không phiên bàn, có đóng gói" | gọi tên **luồng mang đi**, nêu khác biệt cốt lõi (mỗi đơn là một đơn vị thanh toán, không phiên bàn), **bỏ con số**, trỏ `shop-facts.md` §5.2 |
+| §5 lát cắt B | "**B. Một đơn ship** — khách web đặt → Telegram → quầy duyệt" | "**B. Một đơn mang đi**" — thêm nhánh đơn gọi điện thoại do nhân viên nhập hộ, **không** qua bước quầy duyệt |
+| §3.1 khối ⚠️ | kể hai kiểu chép sai cũ | vẫn **một** khối, nay kể ba kiểu + lần gặp 2026-08-30 và tìm thấy ở đâu |
+
+**Ba điều task này chứng minh, ngoài việc sửa chữ:**
+
+1. **Cảnh báo cùng file không cứu được bản chép (F-001).** Dòng "4 kênh bán" sống sót **ngay dưới**
+   khối ⚠️ nói "thấy 'bốn kênh bán' quay lại là bug", trong ô định nghĩa đầu ra bắt buộc của cả
+   pha BA. Một agent ngoài repo giao đúng bốn kênh rồi coi pha BA là xong.
+2. **Bỏ con số, đừng thay số (F-003).** "Khác 3 điểm" **không** được sửa thành "khác 7 điểm": đếm
+   là tóm tắt của người viết thì không được viết như khẳng định đã đủ, và một bản xuất khẩu càng
+   không nên giữ con số sẽ trôi. Chỗ cần danh sách thì **trỏ** nhà thật.
+3. **Loại file thứ tư của F-005 nay đã rà xong.** Tra cứu → khung (T-007, T-011) → prompt (T-012)
+   → bản xuất khẩu (T-013), cùng một kênh `phone_preorder`.
+
+**Phát hiện kèm theo, KHÔNG sửa trong task này:** file trỏ tới bảy đường không tồn tại →
+`work/findings.md` **F-007** (Open) + **T-019** ở [Ready](backlog.md#ready). Sửa từng link là đoán hộ người
+quyết định `prompt-fullstack.md` còn thuộc dự án nào.
+
+**Lệch nhỏ so với Acceptance của prompt:** dòng `grep -c '⚠️'` trong prompt kỳ vọng **1**, thực tế
+ra **2** — cả trước lẫn sau khi sửa. Kết quả thứ hai là §6.2 (*"bất biến nào chưa có cơ chế bảo vệ
+thì đánh dấu ⚠️ ngay trong bảng"*), một câu hướng dẫn chứ không phải khối cảnh báo. Điều kiện thật
+— **một** khối cảnh báo ở §3.1 — vẫn đúng.
+
+<a id="t-012"></a>
+### T-012 — Bộ prompt BA còn mô tả luồng mang đi bằng hai kênh
+
+**Prompt:** `prompt/maintenance/05-ba-prompts-three-channels-L1.md` (L1) · **chặn** BA-04, BA-06, BA-11
+
+**Goal:**
+Không còn prompt nào trong `prompt/BA/` mô tả luồng mang đi bằng cách kể hai kênh. T-011 đã sửa
+tài liệu **khung**; đây là loại file thứ ba của `work/findings.md` F-005 — `prompt/**`, thứ phiên
+sau đọc rồi làm theo. Nặng nhất là `10-acceptance-scenarios-L2.md` dòng 45: BA-11 tick theo nó.
+
+**Nói một câu, việc phải làm là gì:**
+Sửa **chữ** trong `prompt/BA/**` để mọi prompt gọi luồng mang đi là **một luồng ba kênh**
+(`delivery` · `pickup` · `phone_preorder`) thay vì kể tên hai kênh ("ship/pickup"). Đây là việc
+sửa phạm vi cho đúng, **không** phải viết lại prompt: không đổi tên file, không đổi ID `BA-01`–
+`BA-11`, không đổi level, không thêm/bớt bước hay scenario.
+
+**Vì sao có task này:**
+Chủ quán chốt kênh bán thứ năm `phone_preorder` (2026-08-24, sửa tên 2026-08-29, chốt luồng
+2026-08-30). Nhà thật `master_plan/shop-facts.md` §5.2 xếp nó **chung một luồng** với `delivery`
+và `pickup` — ba kênh không gắn bàn, mỗi đơn là một đơn vị thanh toán riêng. Theo F-005, một dữ
+kiện đổi thì phải rà đủ **ba loại file**: tài liệu tra cứu (`docs/product.md` — đã xong từ BA-02),
+tài liệu khung (kế hoạch gốc — T-011 xong 2026-08-30), và **prompt** — loại thứ ba, chưa ai rà.
+T-012 chính là loại thứ ba đó. T-013 là phần còn lại: bản xuất khẩu.
+
+**Không làm thì mất gì — ba chỗ, xếp theo mức nặng:**
+- **BA-11** tick nghiệm thu theo `prompt/BA/10-acceptance-scenarios-L2.md`. Scenario 2 đang viết là
+  "khách đặt ship/pickup". Diễn lại được scenario đó rồi tick nghĩa là **đóng cả giai đoạn BA
+  trong lúc một trong ba kênh chưa ai nghiệm thu**, rồi bước sang System Design với mô hình bán
+  hàng thiếu một kênh. Đây là chỗ nặng nhất, và là lý do T-012 phải chạy trước.
+- **BA-06** chốt quy tắc giá và thanh toán. `05-pricing-payment-L2.md` đang mô tả đơn vị thanh
+  toán của đơn không gắn bàn bằng hai kênh ⇒ `phone_preorder` bước vào giai đoạn sau mà **không có
+  luật tính tiền**.
+- **BA-04** viết `docs/product.md` §3.2 — chính lát cắt mang đi. Prompt của nó
+  (`03-slice-ship-pickup-L2.md`) hiện **tự mâu thuẫn**: một dòng đã nói đủ ba kênh, tiêu đề và
+  nhiều dòng khác vẫn nói hai.
+
+**Đây là con bug F-006, không phải bug mới.**
+Chỗ lệch **không chứa con số nào** — nó viết "ship/pickup", "Ship / Pickup" — nên luật grep theo
+con số của F-005 (`bốn`/`4`, `năm`/`5`) chạy đúng vẫn ra rỗng. Rà bằng **định danh** kênh
+(`phone_preorder`), và mỗi chỗ liệt kê thành viên thay vì gọi tên luồng là một chỗ phải sửa.
+
+**Thứ tự đọc trước khi sửa file đầu tiên:**
+1. `master_plan/shop-facts.md` §5.2 — luồng thật. Chú ý điểm dễ bỏ sót: `phone_preorder` do nhân
+   viên nhập hộ nên **không qua bước quầy duyệt**, khác `delivery` và `pickup`.
+2. `work/findings.md` F-005 và F-006 — vì sao rà theo định danh, và ba loại file phải rà.
+3. `prompt/maintenance/05-ba-prompts-three-channels-L1.md` — mục *Context* có **bảng liệt kê đúng
+   từng file, từng dòng** đang sai và sai kiểu gì. Chép bốn dòng ở mục *Scope* vào `work/scope.txt`
+   trước khi sửa. Đọc hết *Constraints*: có mấy cái bẫy sửa nhầm là hỏng.
+4. `prompt/BA/03-slice-ship-pickup-L2.md` dòng 51 — câu đã viết đúng, dùng làm mẫu giọng văn cho
+   các chỗ còn lại.
+
+**Ba cái bẫy hay sửa nhầm nhất** (danh sách đủ ở mục *Constraints* của prompt):
+- **Không đổi tên file.** `03-slice-ship-pickup-L2.md` giữ nguyên tên dù nội dung nói ba kênh —
+  `prompt/BA/README.md`, `work/backlog.md` và §11 kế hoạch gốc trỏ tới nó theo tên. Sửa tiêu đề
+  bên trong thì được.
+- **Doanh thu vẫn cộng từ HAI nguồn, không phải ba.** Con số hai chia theo **đơn vị thanh toán**
+  (phiên bàn ↔ đơn lẻ), không chia theo kênh. Thấy "hai" mà sửa thành "ba" là sai.
+- **Không chép sơ đồ, số hotline hay giá** từ `shop-facts.md` vào prompt — chỗ cần chi tiết thì
+  **trỏ** (ADR-001, F-001).
+
+**Cách hoàn thành — đủ mười bước, 1 tới 10.** Luật chung của từng bước ở
+[Vòng chạy một task L1](backlog.md#vong-chay); dưới đây là **việc cụ thể của T-012** đứng ở đúng bước đó.
+
+1. **Đọc.** Entry này, rồi đọc hết `prompt/maintenance/05-ba-prompts-three-channels-L1.md` — nhất
+   là bảng ở mục *Context* (liệt kê từng file, từng dòng đang sai) và mục *Constraints*. Nền tảng
+   thì theo "Thứ tự đọc trước khi sửa" ở trên: `shop-facts.md` §5.2 rồi F-005 · F-006.
+2. **Khai scope.** Nối bốn dòng ở mục *Scope* của prompt vào **cuối** `work/scope.txt` — nối thêm,
+   đừng ghi đè phần chú thích có sẵn:
+   ```bash
+   cat >> work/scope.txt <<'EOF'
+   prompt/BA/
+   work/backlog.md
+   work/findings.md
+   work/scope.txt
+   EOF
+   ```
+   Ngoài bốn dòng đó là ngoài scope: `master_plan/**`, `docs/**`, `quality/**`, `scripts/**`,
+   `prompt/maintenance/**` — chạm vào là Gate 3 đỏ, đúng như thiết kế.
+3. **Mở task.** Cắt dòng `- [ ] T-012 …` khỏi [Ready](backlog.md#ready), dán xuống
+   [In Progress](backlog.md#in-progress). Chưa tick, chưa đụng [Done](backlog.md#done).
+4. **Sửa, từ chỗ nặng xuống nhẹ.** `10-acceptance-scenarios-L2.md` (chặn BA-11) →
+   `05-pricing-payment-L2.md` (chặn BA-06) → `03-slice-ship-pickup-L2.md` (chặn BA-04) →
+   `prompt/BA/README.md`. Dòng 51 của file thứ ba là câu đã viết đúng — dùng làm mẫu giọng văn cho
+   các chỗ còn lại. Ba cái bẫy ở mục ngay trên: không đổi tên file · doanh thu vẫn **hai** nguồn ·
+   không chép sơ đồ, hotline hay giá vào prompt.
+5. **Không có câu hỏi nghiệp vụ nào phải hỏi.** Luồng ba kênh đã chốt ở `shop-facts.md` §5.2 (chủ
+   quán chốt 2026-08-30) và tài liệu khung đã khớp từ T-011. Task này chỉ sửa chữ cho khớp thứ đã
+   chốt — dừng lại hỏi ở đây là hiểu sai việc.
+6. **Verify.** Chạy nguyên khối lệnh ở mục *Verify* của prompt (tám lệnh: `gate.sh`, bốn lệnh
+   `grep`, `git status --porcelain`, `git diff --stat`), rồi đọc kỹ hai lệnh dễ trượt nhất:
+   `git status` **không được có file nào bị rename**, và `grep` hotline/giá phải **rỗng**.
+7. **Gate 2 — chín dòng Acceptance, chín bằng chứng.** Mục *Acceptance* của prompt có đúng **chín**
+   dòng. Mỗi dòng phải trỏ được tới một `file:dòng` cụ thể sau khi sửa, hoặc tới output thật của
+   lệnh `grep` tương ứng. Dòng nào không trỏ được là chưa xong — không tick.
+8. **Findings — chỉ ghi khi có.** Tìm thấy chỗ lệch **ngoài** bảng *Context* thì sửa luôn trong
+   cùng lần và **nối vào `work/findings.md` F-006**, đừng mở F-007: cùng một con bug, cùng một
+   luật. Không tìm thấy gì thêm thì không đụng file này, và bỏ nó khỏi khối commit ở bước 10.
+9. **Đóng task — bốn việc, làm cùng lúc.** (a) Tick `- [x] T-012 … (YYYY-MM-DD)` ở [Done](backlog.md#done);
+   (b) chuyển khối chi tiết này sang [Chi tiết — việc đã xong](#chi-tiet-da-xong); (c) **xoá bốn
+   pattern vừa thêm ở bước 2** khỏi `work/scope.txt`; (d) sửa **bốn dòng ở [Ready](backlog.md#ready) đang
+   trỏ tới T-012**: câu "Sáu việc bảo trì" → năm · câu "Hai việc chặn chuỗi BA, làm trước:
+   T-012 → T-015" → chỉ còn T-015 · bullet "T-012 và T-013 là phần còn lại của cùng con bug T-011
+   sửa" · bullet "T-012 chặn BA-04, BA-06, BA-11". Dòng BA-04 ghi thêm `(T-012 xong)` theo đúng
+   cách nó đang ghi `(T-011 xong)`.
+10. **Khối commit.** Một khối, liệt kê từng file, subject `T-012: …`, **không** có
+    `work/scope.txt` (§6):
+    ```bash
+    git add prompt/BA/10-acceptance-scenarios-L2.md prompt/BA/05-pricing-payment-L2.md \
+            prompt/BA/03-slice-ship-pickup-L2.md prompt/BA/README.md work/backlog.md
+    git commit -m "T-012: bộ prompt BA gọi luồng mang đi bằng ba kênh" -m "..."
+    ```
+    Thêm `work/findings.md` vào `git add` **chỉ khi** bước 8 thực sự có ghi.
+
+**Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+
+**Đã xong 2026-08-30.** Bốn chỗ trong bảng *Context* của prompt đã sửa, cộng một chỗ thứ năm
+bảng đó không kể — `prompt/BA/01-actors-channels-L1.md` viết *"chỉ delivery và pickup mới bắt
+buộc số điện thoại"*, sai với `shop-facts.md` §6.5 (bắt buộc cho cả ba kênh). Chỗ thứ năm này
+được nối vào `work/findings.md` **F-006** đúng theo bước 8, không mở F-007. `grep -rn
+'ship/pickup\|Ship / Pickup' prompt/BA/` nay rỗng; `phone_preorder` có mặt ở sáu file
+(`01`, `03`, `05`, `08`, `09`, `10`); không file nào bị đổi tên; câu doanh thu vẫn **hai** nguồn.
+**Đã chuyển tiếp, không thuộc T-012:** `03-slice-ship-pickup-L2.md` còn một Unknown *"đơn mang
+đi có được thanh toán trước không"*. T-012 báo cáo lại thay vì tự sửa, và **chủ quán trả lời
+ngược với §6.3 đang viết lúc đó**: đơn mang đi **được** trả trước. Việc ghi lời chốt đó thành
+**T-020**, đóng 2026-08-30 — nên câu Unknown này nay đã có lời giải trong chính file 03.*
+
+*Mục này được viết dài thêm 2026-08-30 theo yêu cầu của owner ("không hiểu task này để làm gì").
+Phạm vi công việc không đổi — chỉ thêm phần vì sao, hậu quả, thứ tự đọc và cách hoàn thành. Bảng
+chỗ phải sửa, Acceptance và Verify vẫn chỉ sống ở file prompt; mười bước thủ tục sống một chỗ ở
+[Vòng chạy một task L1](backlog.md#vong-chay), không chép vào từng task.*
+
+<a id="t-018"></a>
+### T-018 — §6.1 là kỷ luật, chưa có cơ chế nào chặn việc quên
+
+**Prompt:** yêu cầu miệng của chủ repo, 2026-08-30 — *"thêm hook để đảm bảo không quên"* (L2)
+
+**Goal:**
+T-017 viết luật §6.1 nhưng không có gì thi hành nó: một phiên quên giao khối commit thì không ai
+biết, đúng loại hỏng `work/findings.md` F-001 nói tới — luật dựa vào trí nhớ. Cuối mỗi turn, nếu
+cây làm việc còn thay đổi **git đang theo dõi** mà báo cáo của turn đó không kèm khối
+`git commit -m`, Stop hook phải chặn và trả lời về cho phiên.
+
+**Scope:**
+`scripts/check-commit-block.sh` (mới) · `scripts/check-commit-block.test.sh` (mới) ·
+`scripts/gate.sh` · `scripts/verify.sh` · `CLAUDE.md` · `README.md` · `docs/decisions.md` ·
+`work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+Không tự chạy `git add`/`git commit` — quyền commit vẫn của người dùng (CLAUDE.md §6). Không đổi
+`check-scope.sh`. Không thêm hook thứ hai vào `.claude/settings.json`. Không dữ kiện nghiệp vụ.
+
+**Acceptance:**
+1. `scripts/check-commit-block.sh` đọc JSON hook trên stdin, exit 2 khi có thay đổi tracked chưa
+   commit mà turn hiện tại không có `git commit -m`; exit 0 khi có khối, hoặc khi cây sạch.
+2. `work/scope.txt` **không** tính là thay đổi cần commit (§6.1: nó không bao giờ nằm trong khối).
+3. Chỉ file **tracked** kích hoạt hook — file chưa track không, đúng luật ADR-003.
+4. Nhắc **một lần cho mỗi trạng thái cây**: đã giao khối rồi thì turn sau không bị nhắc lại nếu
+   cây không đổi. Dấu vết nằm trong `.git/`, không phải file trong repo.
+5. Mọi đường lỗi (không phải git repo, thiếu python3, không đọc được transcript, không phải hook
+   mode) đều exit 0 — không bao giờ chặn nhầm.
+6. `gate.sh --hook` gọi nó **sau** khi gate xanh; `gate.sh` chạy tay không gọi (không có transcript).
+7. `scripts/check-commit-block.test.sh` chạy được độc lập, phủ 1–5, và `verify.sh` tự chạy mọi
+   `scripts/*.test.sh`.
+8. ADR-004 ghi lại ba lựa chọn: nhắc-không-tự-commit · chỉ file tracked · gắn vào `gate.sh` thay vì
+   hook Stop thứ hai.
+9. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/check-commit-block.test.sh
+./scripts/gate.sh
+```
+
+<a id="t-017"></a>
+### T-017 — Kết thúc task/phiên chưa giao nội dung commit
+
+**Prompt:** yêu cầu miệng của chủ repo, 2026-08-30 (L1)
+
+**Goal:**
+Chủ repo là người bấm commit, nhưng người viết commit phải là phiên làm việc — phiên là chỗ duy
+nhất còn biết task nào, file nào, bằng chứng nào. Hiện §6 chỉ quy định *dạng* subject và cấm tự
+commit; không có dòng nào bắt phiên **giao** nội dung commit. Kết quả nằm ngay trong git log:
+`202e8c4 ádg`, `2692178 sdgf`, `25f0f88 sdfg` — ba commit gần nhất không có nội dung, vì việc soạn
+nội dung rơi vào lúc phiên đã kết thúc.
+
+**Scope:**
+`CLAUDE.md` · `work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+Không dữ kiện nghiệp vụ. Không tự chạy `git commit`/`git add`. Không thêm hook, không thêm script,
+không tạo file `.md` mới (CLAUDE.md §3.8).
+
+**Acceptance:**
+1. `CLAUDE.md` §6 có tiểu mục §6.1 quy định: cuối **mỗi task** và cuối **mỗi phiên** cho phần chưa
+   commit, báo cáo kết thúc bằng một khối `git add` + `git commit` dán chạy được ngay.
+2. §6.1 nói rõ khối đó **liệt kê từng file**, không `git add -A`, và không bao giờ chứa
+   `work/scope.txt` (nối lại luật §6 gạch đầu dòng 4 và T-016).
+3. §7.3 (bàn giao cuối phiên) có một gạch đầu dòng trỏ tới §6.1.
+4. §8 *Every level* có một dòng checklist về nội dung commit.
+5. Chính task này giao commit theo đúng §6.1 — bằng chứng là khối commit ở cuối báo cáo.
+6. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+grep -n "6.1" CLAUDE.md
+./scripts/gate.sh
+```
+
+<a id="t-011"></a>
+### T-011 — Kênh `phone_preorder` không thuộc lát cắt BA nào
+
+**Prompt:** `prompt/maintenance/04-phone-preorder-slice-L1.md` (L1)
+
+**Goal:**
+Mỗi kênh ở `master_plan/shop-facts.md` §2 có **đúng một** lát cắt BA nhận trách nhiệm mô tả luồng.
+`phone_preorder` chưa có trong **tài liệu khung**: kế hoạch gốc §3 chỉ có Epic A (tại bàn) và Epic B
+(ship/pickup), §4.2 cũng vậy, §11 giao BA-04 đúng hai kênh, §12 nghiệm thu đúng hai kênh.
+
+Chỗ lệch là **chỉ ở khung**: `shop-facts.md` §5.2 đã gộp ba kênh không gắn bàn thành một luồng
+("Luồng mang đi — `delivery`, `pickup`, `phone_preorder`"), và `prompt/BA/03-slice-ship-pickup-L2.md`
+— prompt thật sự chạy BA-04 — **đã phủ đủ ba kênh** (*"Bỏ `phone_preorder` là bỏ một phần ba lát
+cắt"*). Nên đây là việc đồng bộ khung theo nhà thật, không phải chốt luật mới; giữ nguyên **ba** lát
+cắt, mở rộng Epic B, không thêm Epic D.
+
+Đúng con bug mà `work/findings.md` F-003 đã đặt tên: *"Kênh chỉ có trong bảng §2 mà không có trong
+luồng nào là bug."* T-007 sửa **con số** kênh, không sửa chỗ thiếu **luồng** này.
+
+**Acceptance · Verify:** trong file prompt (F-001 — entry này trỏ, prompt giữ).
+
+**Đã làm 2026-08-30:** **sáu** chỗ (không phải bốn) đã chuyển từ "ship/pickup" sang luồng **mang
+đi** gồm cả ba kênh không gắn bàn, trong `master_plan/BA_initial_plan_banh_cuon_ba_thanh.md`:
+§3 Epic B (đổi tên, nêu đích danh `phone_preorder`, **Mục tiêu BA** giữ nguyên), §4.2 (đổi tiêu đề,
+thêm bước nhân viên hỏi giao-hay-lấy lúc nhận máy, bước cuối kết thúc **cả hai** nhánh, kèm một
+dòng trỏ `shop-facts.md` §5.2), §11 dòng BA-04 (chỉ ô "Việc"), §12 scenario nghiệm thu thứ hai.
+Hai chỗ kia là **chỗ lệch thứ năm và thứ sáu**, chỉ lộ ra khi grep theo tên kênh: §5 quy tắc 8
+("Đơn ship/pickup không sử dụng phiên bàn") và §6 mục Thanh toán ("Đối với ship/pickup") — cả hai
+mô tả luồng bằng cách liệt kê hai trong ba thành viên. Vẫn **ba** lát cắt, không có Epic D; khối
+ghi chú ở cuối §12 được nối thêm chứ không tách khối thứ hai.
+
+Vì sao hai lần rà trước (F-003, F-005) không chặn được lần này — grep theo **con số** không tìm
+được chỗ lệch không chứa con số nào — ghi ở `work/findings.md` **F-006**.
+
+<a id="t-008"></a>
+### T-008 — Chạy BA-00 sau khi BA-01/BA-02 đã xong
+
+**Prompt:** `prompt/maintenance/02-run-ba00-backlog-L3.md` (L3, bọc `prompt/BA/00-master-L3.md`)
+
+**Goal:**
+Backlog có 11 task BA-01–BA-11 với thứ tự phụ thuộc và acceptance kiểm được. BA-00 chưa từng chạy,
+nhưng prompt 01 thì đã chạy — nên chạy BA-00 nguyên văn sẽ **ghi đè** `docs/product.md` §1/§2 bằng
+chỗ giữ. Prompt bọc nêu ba điều chỉnh cần thiết.
+
+**Acceptance · Verify:** trong file prompt.
+
+**Đã làm 2026-08-30.** Ready nay có BA-03–BA-11 xếp theo cột "Cần xong trước" của §11 kế hoạch gốc;
+BA-01/BA-02 giữ nguyên ở Done. Mười câu hỏi §10 được phân bổ trong bảng ở đầu mục Ready — bốn câu
+đã có lời giải ghi kèm nguồn `shop-facts.md` §6.2 · §6.4 · §6.5 · §6.7 · §6.13 và **không** bị mở
+lại thành câu hỏi.
+
+Ba điều chỉnh của prompt bọc, đã áp dụng:
+
+1. `docs/product.md` không bị sửa một ký tự. Việc duy nhất của file đó — đối chiếu tiêu đề §3–§8
+   với bảng khung của BA-00 — đã chạy và **cả 8 tiêu đề đã khớp sẵn** từ lần chạy prompt 01
+   (commit `e801668`), nên `git diff docs/product.md` rỗng.
+2. BA-01/BA-02 giữ ở Done với entry cũ, không tạo bản thứ hai.
+3. S-1–S-3 ghi là **đã chốt 2026-08-30**, không ghi dạng giả định.
+
+Hai chỗ phải tự quyết, ghi lại để phiên sau không phải đoán:
+
+- **BA-04 viết là ba kênh, không phải hai.** T-011 chưa chạy nên dòng BA-04 ở §11 kế hoạch gốc còn
+  ghi "ship/pickup". Backlog **không** chép chỗ thiếu đó: entry BA-04 lấy định nghĩa lát cắt từ
+  `shop-facts.md` §5.2 và `prompt/BA/03-slice-ship-pickup-L2.md`, hai chỗ đã phủ ba kênh. T-011
+  vẫn phải xong trước khi ai mở BA-04 — đã ghi vào cả hai chỗ.
+- **BA-10 không rỗng.** Lý do nằm trong entry BA-10: `docs/decisions.md` hiện chỉ có ADR-001–003,
+  đều là quyết định về cách vận hành repo, chưa có ADR nghiệp vụ nào; sáu câu §10 vẫn đang mở; và
+  S-1–S-3 phải được viết thành ADR đã chốt chứ không phải biến mất. Sáu câu đó là 2, 3, 4, 8, 9, 10;
+  phần "sửa đơn" của câu 1 là chỗ mở thứ bảy.
+
+<a id="t-010"></a>
+### T-010 — `check-scope` tính file chưa track là thay đổi ngoài scope
+
+**Prompt:** không có — phát hiện trong lúc chạy T-007, sửa ngay trong cùng phiên 2026-08-30.
+
+**Goal:**
+Gate chỉ đỏ vì thứ **task này** làm. `scripts/check-scope.sh` đọc `git status --untracked-files=all`
+nên ba file `prompt/maintenance/*.md` đã nằm sẵn trong cây từ **trước** khi T-007 bắt đầu bị tính là
+"thay đổi ngoài scope", và T-007 phải nới `work/scope.txt` chỉ để gate xanh. Một gate đỏ vì lý do
+sai dạy người dùng bỏ qua nó — đắt hơn nhiều so với thứ nó bắt được.
+
+**Scope:**
+`scripts/check-scope.sh` · `CLAUDE.md` §5 · `quality/review-gate.md` Gate 3 · `docs/decisions.md` ·
+`work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+`gate.sh`, `verify.sh`, `brief.sh`, `.claude/settings.json`. Không đổi cú pháp pattern của
+`work/scope.txt`. Không đụng dữ kiện nghiệp vụ.
+
+**Acceptance:**
+1. File **đã được git theo dõi** mà đổi ngoài scope ⇒ `check-scope.sh` vẫn FAIL, exit 1 — hành vi
+   này không được yếu đi.
+2. File **chưa track** (`??`) nằm ngoài scope ⇒ **không** làm gate đỏ; được in thành một dòng
+   `note:` để vẫn nhìn thấy, exit 0.
+3. Chạy `./scripts/gate.sh` trên cây hiện tại (có `prompt/maintenance/` chưa track) với scope
+   **không** chứa `prompt/maintenance/` ⇒ xanh.
+4. Đầu file `check-scope.sh` nói rõ luật mới và **vì sao** — người đọc sau không tự ý siết lại.
+5. `CLAUDE.md` §5 và `quality/review-gate.md` Gate 3 nói đúng hành vi mới (rà pointer, CLAUDE.md §7.2).
+6. `docs/decisions.md` có ADR-003 ghi lựa chọn *ghi chú thay vì chặn*, kèm rủi ro đã chấp nhận:
+   file **mới** do task tạo ra ngoài scope (ví dụ file `.md` nghi lễ, CLAUDE.md §3.8) nay chỉ được
+   ghi chú, không bị chặn.
+7. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+touch /tmp/x && cp /tmp/x ./ngoai-scope-untracked.md && ./scripts/check-scope.sh; echo "exit=$?"   # note, exit 0
+echo x >> README.md && ./scripts/check-scope.sh; echo "exit=$?"                                    # FAIL, exit 1
+git checkout README.md && rm -f ngoai-scope-untracked.md
+```
+
+**Đã làm 2026-08-30.** `scripts/check-scope.sh` tách hai loại: file đã track ngoài scope vẫn FAIL
+exit 1; file chưa track ngoài scope in thành dòng `note:` và exit 0. Đầu script ghi luật mới kèm lý
+do; `CLAUDE.md` §5 và `quality/review-gate.md` Gate 3 đã sửa theo; lựa chọn *ghi chú thay vì chặn*
+và rủi ro đã chấp nhận nằm ở `docs/decisions.md` **ADR-003**.
+
+Chạy thật, cả hai nhánh, trên cây làm việc có `prompt/maintenance/` chưa track:
+
+```text
+# nhánh FAIL — file ĐÃ track ngoài scope (plan.md, findings.md của T-007)
+check-scope: note — file chưa được git theo dõi, nằm ngoài scope (không chặn gate):
+  ? prompt/maintenance/01-fix-plan-channel-count-L1.md
+  ? prompt/maintenance/02-run-ba00-backlog-L3.md
+  ? prompt/maintenance/03-retire-T-001-L0.md
+check-scope: FAIL — files changed outside the scope declared in work/scope.txt:
+  - master_plan/BA_initial_plan_banh_cuon_ba_thanh.md
+  - work/findings.md
+exit=1
+
+# nhánh OK — chỉ còn file chưa track nằm ngoài scope
+check-scope: note — file chưa được git theo dõi, nằm ngoài scope (không chặn gate):
+  ? prompt/maintenance/01-fix-plan-channel-count-L1.md ...
+check-scope: OK — all tracked changes within declared scope.
+exit=0
+```
+
+<a id="t-007"></a>
+### T-007 — Kế hoạch gốc còn nói "bốn kênh bán"
+
+**Prompt:** `prompt/maintenance/01-fix-plan-channel-count-L1.md` (L1)
+
+**Goal:**
+`master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` không còn chỗ nào nói quán bán qua bốn kênh.
+Nguy hiểm nhất là §12 dòng 277 — cổng chất lượng của cả giai đoạn BA; BA-11 tick theo nó sẽ đóng
+giai đoạn BA trong lúc kênh thứ năm chưa được nghiệm thu.
+
+**Acceptance · Verify:** sống trong file prompt, **không chép lại ở đây** (F-001 — một fact một
+nhà; entry này trỏ, prompt giữ).
+
+**Đã làm 2026-08-30:** bốn chỗ (không phải ba) đã sửa thành **năm** kênh —
+`master_plan/BA_initial_plan_banh_cuon_ba_thanh.md` §2.2 (nay là câu trỏ về `shop-facts.md` §2,
+không chép bảng), §9 (phạm vi MVP — chỗ thứ tư, chỉ lộ ra khi grep), §11 dòng BA-02, §12 cổng chất
+lượng. Một dòng ghi chú có ngày để lại ở cuối §12. Bài học ghi ở `work/findings.md` **F-005**.
+
+<a id="t-006"></a>
+### T-006 — Chủ quán không đứng quầy thì huỷ đơn thế nào
+
+**Goal:**
+Chỗ suy luận duy nhất còn lại của T-005 — "chủ quán không đứng quầy mà muốn huỷ thì chưa ai nói" —
+đã có lời chủ quán: **nhờ người đứng quầy bấm trên POS**. Không còn đường huỷ riêng cho chức vụ.
+
+**Scope:**
+`master_plan/shop-facts.md` · `docs/product.md` · `work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+Không đổi ai được huỷ (§6.13 đã chốt ở T-005), không chạm luật duyệt đơn hay hoàn tiền.
+
+**Acceptance:**
+1. `shop-facts.md` §6.13 không còn câu "chưa ai nói"; thay bằng quyết định của chủ quán kèm ngày.
+2. §6.13 nói rõ quyền huỷ gắn với **chỗ đứng (quầy/POS)**, không gắn **chức vụ**.
+3. `shop-facts.md` §7.1 có dòng ngày 2026-08-30 cho quyết định này.
+4. `docs/product.md` §1.3 và §2.4 khớp: chủ quán không có đường huỷ riêng; đoạn ghi "hệ quả suy
+   ra" ở §2.4 được thay bằng lời chủ quán.
+5. `grep -rn 'chưa ai nói\|hệ quả suy ra'` trong hai file trên không còn dính tới quyền huỷ.
+6. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -n 'chưa ai nói\|suy ra' master_plan/shop-facts.md docs/product.md
+git status --porcelain
+```
+
+<a id="t-005"></a>
+### T-005 — Ai được bấm huỷ một đơn
+
+**Goal:**
+U-004 — câu hỏi sinh ra từ luật huỷ đơn hotline ở T-004 — đã có lời giải của chủ quán: **người
+đứng quầy**, thao tác trên máy POS ở quầy. Ghi vào owner, đóng U-004, sửa mọi pointer đang chờ nó.
+
+**Scope:**
+`master_plan/shop-facts.md` · `master_plan/prompt-fullstack.md` · `docs/product.md` ·
+`prompt/BA/*.md` · `work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+Không đổi luật huỷ đơn (đã chốt ở T-004), không đổi luật hoàn tiền, không chạm bảng giá.
+
+**Acceptance:**
+1. `shop-facts.md` §6 có quy tắc mới: **chỉ người đứng quầy được huỷ đơn**; tiêu đề §6 đổi từ
+   "Mười hai" sang "Mười ba quy tắc" và mọi pointer đếm số quy tắc được sửa theo.
+2. Hệ quả "chủ quán đứng quầy thì huỷ được" ghi là **hệ quả suy ra**, không trộn vào lời chủ quán.
+3. `shop-facts.md` §7.1 có dòng ngày 2026-08-30 cho quyết định này.
+4. `docs/product.md`: quyền huỷ nằm trong việc của nhân viên (§1.2) và của trạm quầy (§1.5);
+   §2.4 gán đích danh người bấm huỷ; U-004 chuyển sang bảng đã có lời giải.
+5. `grep -rn 'U-004'` không còn chỗ nào coi nó là câu hỏi đang mở.
+6. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -rn 'U-004' --include='*.md' .
+grep -rn 'Mười hai quy tắc\|Mười ba quy tắc' --include='*.md' .
+git status --porcelain
+```
+
+<a id="t-004"></a>
+### T-004 — Sáu câu trả lời của chủ quán 2026-08-30
+
+**Goal:**
+Sáu câu hỏi đang treo — ba unknown ở `docs/product.md` và ba chỗ suy luận ở
+`master_plan/shop-facts.md` §7.2 — được chủ quán trả lời hết ngày 2026-08-30. Mỗi câu trả lời về
+đúng owner của nó, kèm ngày và người chốt, và **mọi pointer đang nói "chưa ai xác nhận" phải được
+sửa trong cùng lần thay đổi này** (CLAUDE.md §7.2).
+
+**Scope:**
+`master_plan/shop-facts.md` · `master_plan/00-scope.md` · `docs/product.md` · `prompt/BA/*.md` ·
+`work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+Không đổi một con số giá nào — S-1 được xác nhận **đúng như bảng §4.3 đang ghi**, đây là đổi
+*trạng thái* của một dữ kiện, không phải đổi dữ kiện. Không sửa `work/findings.md` (F-004 là bản
+ghi lịch sử của một bài học, không phải chỗ tra cứu trạng thái hiện tại).
+
+**Acceptance:**
+1. `shop-facts.md` §3 ghi cách phân trạm: quầy · tráng bánh · gấp bánh là ba trạm riêng, lấy canh
+   và dọn bàn do cùng một người; chủ quán thỉnh thoảng đứng quầy.
+2. `shop-facts.md` ghi: đơn đặt trước qua hotline mà khách tới ăn tại quán thì **huỷ** đơn đó,
+   khách gọi lại bằng `qr_table` — không có đường chuyển đơn hotline thành phiên bàn.
+3. `shop-facts.md` §6.4 ghi rõ **người đứng quầy** là người quyết định và ghi vết hoàn tiền.
+4. `shop-facts.md` §4.3/§4.6 ghi phụ thu suất trứng ×5 là **chốt**, không còn chữ "suy luận";
+   giá 20.000 / 25.000 / 30.000 **không đổi**.
+5. `shop-facts.md` §7.1 có bốn dòng mới ngày 2026-08-30 cho bốn quyết định trên; §7.2 không còn
+   mục nào và nói rõ là đã rỗng.
+6. `docs/product.md`: U-001, U-002, U-003 chuyển sang mục đã có lời giải kèm câu trả lời và ngày;
+   §1 và §2 phản ánh nội dung mới; mục "chưa ai xác nhận" ở §2 được gỡ.
+7. `grep -rn 'S-1' --include='*.md' .` không còn chỗ nào nói S-1 là suy luận chưa xác nhận, trừ
+   `work/findings.md` (bản ghi lịch sử) và chỗ ghi ngày nó được chốt.
+8. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -rn 'chưa ai xác nhận\|chưa xác nhận' --include='*.md' . | grep -v findings.md
+grep -n '25.000' master_plan/shop-facts.md      # giá suất trứng không đổi
+grep -n 'U-00' docs/product.md
+git status --porcelain
+```
+
+<a id="ba-01"></a>
+### BA-01 / BA-02 — Actor, phạm vi hệ thống và kênh bán
+
+**Prompt:** `prompt/BA/01-actors-channels-L1.md` (L1, chạy 2026-08-30)
+
+**Goal:**
+`docs/product.md` §1 và §2 mô tả được: hệ thống phục vụ những ai, mỗi actor được làm gì, quán bán
+qua kênh nào và mỗi kênh khác nhau ở điểm nghiệp vụ nào.
+
+**Scope:**
+`docs/product.md` (§1, §2, mục Unknowns) · `work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+Nội dung nghiệp vụ của §3–§8 `docs/product.md`. `docs/decisions.md`, `quality/invariants.md`,
+`docs/architecture.md`, `master_plan/*` — đều là input, không phải sản phẩm.
+
+**Acceptance:**
+1. §1 có đúng 3 nhóm actor (Khách hàng · Nhân viên quán · Chủ quán), mỗi nhóm là danh sách hành
+   động nghiệp vụ quan sát được → §1.1–§1.3.
+2. §1 nêu ranh giới hệ thống: chịu trách nhiệm gì, không chịu trách nhiệm gì → §1.4.
+3. §1 liệt kê đúng 5 trạm theo tên ở `master_plan/shop-facts.md` §3, mỗi trạm một câu → §1.5;
+   không trạm thứ 6, chủ quán là vai ngoài 5 trạm.
+4. §2 có bảng 5 kênh, mỗi dòng đủ: tên kênh · ai khởi tạo · có phiên bàn không · ai xác nhận ·
+   định danh khách bắt buộc.
+5. Đọc §2 biết ngay 3 kênh không gắn phiên bàn và 2 kênh ẩn danh theo bàn → §2.1.
+6. §2 khẳng định chỉ có 5 kênh, và phân biệt Staff POS (đặt hộ tại bàn) với đặt trước qua hotline
+   (không bàn) → mở đầu §2 và §2.3.
+7. Với mỗi kênh, bảng §2 cho biết đơn có cần quầy duyệt trước khi xuống bếp không → cột 4 và §2.2.
+8. Không câu nào gán quyền mà nguồn không nói; quyền suy đoán nằm ở Unknowns → U-001, U-002, U-003.
+
+**Verify:**
+```bash
+./scripts/gate.sh
+grep -n 'Delivery\|Pickup\|QR\|POS\|đặt trước\|hotline' docs/product.md
+grep -c 'tráng bánh\|gấp bánh\|lấy canh\|dọn bàn\|quầy' docs/product.md
+git status --porcelain
+```
+
+<a id="t-003"></a>
+### T-003 — Vòng cập nhật liên tục
+
+**Goal:**
+Mỗi phiên mới bắt đầu bằng trạng thái **hiện tại** của hệ thống, không phải trạng thái của ngày
+tài liệu được viết. Việc đó phải là cơ chế (hook chạy tự động), không phải kỷ luật (nhớ đọc file).
+
+**Scope:**
+`CLAUDE.md` · `README.md` · `scripts/brief.sh` (mới) · `.claude/settings.json` ·
+`docs/decisions.md` · `work/backlog.md` · `work/scope.txt`.
+
+**Out of scope:**
+Mọi dữ kiện nghiệp vụ — không sửa một con số, một quy tắc, một finding nào. Không đổi `gate.sh`,
+`verify.sh`, `check-scope.sh`. Không tạo file `.md` mới.
+
+**Acceptance:**
+1. `./scripts/brief.sh` chạy được từ repo sạch, exit 0, in ra: task In Progress, scope đã khai báo,
+   task Ready kế tiếp, finding Open, unknown Open, ADR mới nhất, commit gần đây, ngày sửa cuối của
+   từng file owner ở §2.
+2. `brief.sh` **không chép** một dữ kiện nghiệp vụ nào — chỉ tên file, mã số, ngày (chống tái phạm
+   F-001). `grep -E '[0-9]{1,3}\.000' scripts/brief.sh` không ra kết quả.
+3. `.claude/settings.json` có hook `SessionStart` gọi `brief.sh`, và hook `Stop` cũ còn nguyên.
+4. `CLAUDE.md` có §7 mô tả vòng: đầu phiên (brief tự động) → trong phiên (ghi ngay, kèm ngày) →
+   cuối phiên (bàn giao). §8 là Definition of Done, có thêm dòng nhắc ghi nhận.
+5. Cây thư mục ở `CLAUDE.md` §2 và `README.md` có `scripts/brief.sh`.
+6. ADR-002 trong `docs/decisions.md` ghi lại lựa chọn cơ chế-thay-vì-kỷ-luật.
+7. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+./scripts/brief.sh; echo "exit=$?"
+grep -E '[0-9]{1,3}\.000' scripts/brief.sh
+python3 -c "import json;print(list(json.load(open('.claude/settings.json'))['hooks']))"
+./scripts/gate.sh
+```
+
+<a id="t-002"></a>
+### T-002 — Đảo nhà thật về `master_plan/shop-facts.md`
+
+**Goal:**
+Một fact một nhà. `shop-facts.md` sở hữu mọi dữ kiện quán; không còn bản chép thứ hai của bất kỳ
+con số nào trong repo.
+
+**Scope:**
+`CLAUDE.md` · `master_plan/shop-facts.md` · `master_plan/00-scope.md` ·
+`master_plan/prompt-fullstack.md` · `prompt/BA/*.md` · `docs/decisions.md` · `work/findings.md`.
+
+**Out of scope:**
+Nội dung nghiệp vụ — không sửa một con số hay quy tắc nào, chỉ đổi chỗ sở hữu và số mục tham chiếu.
+
+**Acceptance:**
+1. `CLAUDE.md` §2 ghi `shop-facts.md` là owner của shop facts.
+2. `grep -rn '00-scope' --include='*.md' .` chỉ còn kết quả trong `00-scope.md` (file trỏ),
+   `CLAUDE.md`, `work/findings.md`, `prompt/BA/README.md` và `docs/decisions.md` — tức chỉ ở chỗ
+   nói *về* việc chuyển nhà, không ở chỗ tra cứu số.
+3. Không tài liệu nào ngoài `shop-facts.md` chứa bảng giá.
+4. Mọi tham chiếu §-số trong `prompt/BA/` trỏ đúng mục mới của `shop-facts.md`.
+5. ADR-001 có mặt trong `docs/decisions.md`.
+6. `./scripts/gate.sh` xanh.
+
+**Verify:**
+```bash
+grep -rn '00-scope' --include='*.md' .
+grep -rn '3.000\|9.000\|25.000' --include='*.md' master_plan/ prompt/ docs/
+./scripts/gate.sh
+```
+
+[↑ đầu file](#top)

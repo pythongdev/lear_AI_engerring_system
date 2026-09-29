@@ -23,8 +23,8 @@ In this repo Codex works in one of two modes (`CLAUDE.md` §7.4, *Roles*):
   for.
 - **Small task straight from the repo owner** (L0/L1, no work order) — the repo
   owner leads, so you may also move that task's own status in
-  `work/backlog.md`, write its detail entry, declare and clear
-  `work/scope.txt`, add an `F-XXX` finding and add an open `U-XXX` question.
+  `work/backlog.md`, write its detail entry, declare and delete its
+  `work/scope/<ID>.txt`, add an `F-XXX` finding and add an open `U-XXX` question.
   Still never decide a business question, never edit `docs/decisions.md`,
   `master_plan/shop-facts.md` or `quality/invariants.md`, never close an
   unknown, never commit. If the task turns out L2+ or needs one of those files,

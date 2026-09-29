@@ -334,7 +334,7 @@ bao giờ chạy Codex với `--dangerously-bypass-approvals-and-sandbox`.
    commit: task dựa vào thay đổi chưa commit thì nhờ chủ repo commit trước,
    hoặc không giao.
 2. **Tạo worktree:** `git worktree add ../lean_wt/T-XXX -b codex/T-XXX`, rồi
-   ghi scope vào `work/scope.txt` **của worktree đó** (Gate 3 của Codex đọc cây
+   ghi scope vào `work/scope/<MÃ-TASK>.txt` **của worktree đó** (Gate 3 của Codex đọc cây
    của chính nó), kèm một dòng cấm (dấu `!` đứng đầu) cho từng đường dẫn
    `work/backlog.md`, `docs/decisions.md`, `docs/product/99-unknowns.md`,
    `master_plan/`, `quality/invariants.md`, `CLAUDE.md`.
@@ -399,7 +399,7 @@ Bạn là người thi công. Người quyết định là Claude; bạn không 
 - [ ] ./scripts/gate.sh xanh
 
 ## Phạm vi
-Đã khai trong work/scope.txt. Chỉ sửa file khớp scope. Cần thêm file thì DỪNG
+Đã khai trong work/scope/T-XXX.txt. Chỉ sửa file khớp scope. Cần thêm file thì DỪNG
 và ghi vào báo cáo, không tự mở rộng scope.
 
 ## Cấm
