@@ -143,7 +143,7 @@ Lát này **không** thêm cột `status` nào, nên không có bảng ánh xạ
 | **Yêu cầu gốc của khách** (vế *"tổ hợp khác tổ hợp khách gửi"* của đối chiếu `I-010`) | ảnh chụp giữ tổ hợp **đã ghi**, không giữ yêu cầu gửi lên | pha 3 quyết có cất hay không; nếu cất thì một migration mới |
 | **Sửa một dòng đã đặt** (`U-026`) khi món đổi | shop_app không xoá được (`QD-50`), nên ảnh chụp thành phần không bỏ được dòng; sửa đổi món sẽ cần một đường *thay dòng* thay vì sửa tại chỗ | pha 3 · `P2-08` (vết giá cũ/giá mới) |
 | **Số lựa chọn mỗi nhóm** (*nhân bắt buộc chọn 1*, §4.4) và **mặc định** *Thịt · Thường* (§4.6 luật 7 · 8) | chưa cất; cửa ở pha 3 giữ. Cất thành dữ liệu thì một migration mới | pha 3 |
-| **Trứng chín / tái / vàng** là ba thành phần hay một thành phần trong ba suất | lược đồ cho cả hai; chọn dòng nào là việc **dữ liệu mồi**, và trạm nào cần đọc độ chín là việc trạm | `P2-10` · `P2-07` |
+| **Trứng chín / tái / vàng** là ba thành phần hay một thành phần trong ba suất | lược đồ cho cả hai. Dữ liệu mồi đã chọn **ba thành phần** — [`08-du-lieu-moi.md`](08-du-lieu-moi.md) §2, phiên chọn 2026-09-28, **chưa có lời chủ repo**; trạm nào cần đọc độ chín là việc trạm | `P2-10` (đã chọn, chờ xác nhận) · `P2-07` |
 | **Hết giữa buổi** | cố ý **không** có cờ *tạm hết* trên món: owner tách *ngừng bán* (đổi menu) khỏi *hết giữa buổi* (**tạm dừng nhận đơn**, `shop-facts.md` §6.8 · §6.20) | — cần thì hỏi chủ quán |
 | **Ai đổi menu** (chỉ chủ quán — `03-lat-cat.md` §3.3.1 bước 1) | không có cột người | `P2-08` · pha 3 |
 
