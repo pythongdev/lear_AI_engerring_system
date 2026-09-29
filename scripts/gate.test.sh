@@ -4,7 +4,7 @@
 # Chạy tay:  ./scripts/gate.test.sh
 # verify.sh tự chạy mọi scripts/*.test.sh.
 #
-# Mỗi ca dựng một repo git tạm, chép gate.sh THẬT vào, và thay sáu script con
+# Mỗi ca dựng một repo git tạm, chép gate.sh THẬT vào, và thay bảy script con
 # bằng bản giả in đúng chữ và thoát đúng mã mà ca cần. Nhờ vậy test không bao
 # giờ gọi lại gate.sh hay verify.sh thật (không đệ quy), và chứng minh điều T-084
 # hứa: nhãn chỉ ĐỌC output của cổng con — exit code và điều kiện đạt/đỏ giữ
@@ -30,6 +30,7 @@ newrepo() { # newrepo <tên> → repo tạm, mọi cổng giả đều xanh và 
   stub "$d" check-links.sh 0 "check-links: OK — mọi đường dẫn trong tài liệu chỉ đường đều mở được."
   stub "$d" check-doc-status.sh 0 "check-doc-status: xanh — 10 khối, 2 mã U-XXX, 1 chuyển tiếp hợp lệ."
   stub "$d" check-phase-boundary.sh 0 "check-phase-boundary: không file .md nào đổi ở a hay b, skipping"
+  stub "$d" check-schema-names.sh 0 "check-schema-names: PASS — 2 bảng ở migration, 2 bảng tài liệu nhắc, comm -3 rỗng"
   stub "$d" verify.sh 0 "=== Lean AI Engineering Verification ===
 [db] skipped — nothing under db/ changed
 [test] /abs/scripts/x.test.sh

@@ -1296,12 +1296,81 @@ cơ chế và bằng chứng ở pha 5 (ADR-057, T-109). Finding đã Fixed, cơ
   `work/proposals/from_old_project/data_base/nghien-cuu.md` §4.1–§4.3, không phải dữ kiện của quán
   này.
 
-**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+**Nhận việc** — 2026-09-29, Claude Code; cả năm lát `P2-04`…`P2-08` đã `Done` (`work/backlog.md`).
+Mức **L2** (kế hoạch §6). Lời gọi của chủ repo: *"hãy đọc kĩ và làm task trên"*.
 
-**Bàn giao:** —
+*Chỗ phải chọn trước khi viết Nghiệm thu:* `10-quy-uoc-code.md` `QC-05` (phiên chọn 2026-09-27)
+cấm file `.down.sql`, còn bước này đòi *mỗi bước một đường lùi chạy thật*. Lượt này chọn: mỗi
+`.up.sql` có đúng một `.down.sql` gỡ **đúng** thứ nó dựng, và mở đầu bằng một **khoá chặn** — bảng
+sắp gỡ có dòng, hay cột sắp gỡ có giá trị ⇒ từ chối, không gỡ gì. Lý do và phương án bị loại:
+**ADR-065**. Thí nghiệm trước khi chọn (database riêng `p209_exp`, gỡ sạch): một migration hỏng ở
+câu thứ ba ⇒ `error: migration failed: division by zero` · bảng và cột của hai câu trước **không
+còn** · phiên bản `20260929000000|t` (dirty) · `up` lần nữa ⇒ `Dirty database version
+20260929000000. Fix and force version.` · `force 20260928140000` ⇒ `20260928140000|f`.
+
+- *Phạm vi:* `work/scope/P2-09.txt` — `db/migrations/` · `compose.yaml` · `scripts/db-check.sh` ·
+  `scripts/check-schema-names.sh` + test · `scripts/gate.sh` + test · `07-thu-tu-migration.md` (mới)
+  · `10-quy-uoc-code.md` `QC-05` · `00-index.md` · `docs/decisions.md` · `CLAUDE.md` §2 · §5 · kế
+  hoạch · `06-so-rui-ro.md` và `work/findings.md` (chỉ nếu `F-034` lệch) · hai sổ việc.
+- *Nghiệm thu* (viết trước khi sửa):
+  1. **(a) xuôi từ số không:** `db-check` dựng database rỗng và chạy từng bước một ⇒ mỗi bước xanh.
+  2. **(b) lùi từng bước:** từ bước cuối lùi về số không, **từng** bước một (không chỉ một bước) ⇒
+     xanh, và lược đồ sau khi lùi bước *N* **giống hệt** lược đồ đã chụp trước khi xuôi bước *N*
+     (`pg_dump --schema-only`, so từng dòng).
+  3. **(c) xuôi lại:** từ số không chạy lại cả dãy ⇒ xanh, và lược đồ giống hệt lần xuôi đầu.
+  4. **Khoá chặn biết kêu:** sau khi dựng dữ liệu mồi, lùi một bước ⇒ **bị từ chối** với lời nói
+     bảng · cột nào có dữ liệu; lược đồ không đổi; `force` về đúng bản trước lệnh ⇒ sạch.
+  5. **Tên bảng `.md` ↔ migration:** lệnh mới trong `./scripts/gate.sh`, chạy **mọi** lượt (kể cả lượt
+     chỉ đổi tài liệu); in hai danh sách đầy đủ rồi `comm -3` ⇒ **rỗng**; test của nó chứng minh
+     biết kêu cả hai chiều.
+  6. `QC-05` nói luật mới và có phép kiểm *mỗi `.up.sql` một `.down.sql`*; `07-thu-tu-migration.md`
+     trỏ **YC-21** · **ADR-057** và nói rõ dựng/lùi lược đồ **không** phải phục hồi dữ liệu bán hàng.
+  7. `F-034` cùng một trạng thái ở `work/findings.md` và `06-so-rui-ro.md`.
+- *Kiểm chứng:* `./scripts/db-check.sh` (1–4) · `./scripts/check-schema-names.sh` và
+  `./scripts/check-schema-names.test.sh` (5) · `./scripts/gate.sh` · `grep -rn 'F-034'` (7).
+
+**Bàn giao** — 2026-09-30, Claude Code (nhánh `chatgpt_involve`, base `30d6aff`); **chưa review độc
+lập**. Chọn cơ chế: **ADR-065** (giao cho phiên — chủ repo một câu là đổi được).
+
+*Kết quả:* tám file `db/migrations/*.down.sql`, mỗi file mở đầu bằng khoá chặn; `compose.yaml` —
+service `migrate` nhận lệnh con (`down 1` · `version` · `force`), không đối số vẫn là `up`;
+`scripts/db-check.sh` — xuôi · lùi · xuôi lại từng bước, so `pg_dump --schema-only` sau mỗi lần lùi,
+chặn ảnh chụp rỗng (**F-017**), rồi khoá chặn trên dữ liệu mồi; `scripts/check-schema-names.sh` +
+test (Gate 1e) trong `./scripts/gate.sh`; `docs/product/2-db/07-thu-tu-migration.md` (mới) ·
+`10-quy-uoc-code.md` `QC-05` (bỏ luật *chỉ đi tới*) · `00-index.md` · `CLAUDE.md` §2 hàng mới + §5
+bước 5 · `docs/work-flow-session/workflow-phien-lam-viec.md` (bảng cổng) · `gate.test.sh` (bản giả
+của Gate 1e). Thứ tự sửa phát hiện được khi chạy: file lùi của `menu_gia` bị PostgreSQL từ chối
+lần đầu (`order_line_menu_item_fkey on table order_line depends on table menu_item`) — cột phải gỡ
+trước bảng menu.
+
+| Acceptance | Bằng chứng (`./scripts/db-check.sh`, 2026-09-29) |
+|---|---|
+| 1 (a) xuôi | tám dòng `PASS xuôi 20260927120000_ban_hang_loi` … `PASS xuôi 20260928140000_nguoi_va_vet` |
+| 2 (b) lùi từng bước | `PASS lùi 20260928140000_nguoi_va_vet — lược đồ giống hệt lúc trước bước ấy (942 dòng)` … `PASS lùi 20260927120000_ban_hang_loi — … (16 dòng)` — tám dòng |
+| 3 (c) xuôi lại | `PASS xuôi lại — 8 bước từ số không, lược đồ giống hệt lần xuôi đầu (1134 dòng)` |
+| 4 khoá chặn | `PASS khoá chặn — lùi trên dữ liệu mồi bị từ chối, lược đồ không đổi` · `đường lùi từ chối: person đang giữ 5 giá trị đã ghi — gỡ nó là xoá dữ liệu` · `sau lệnh hỏng: 20260928130000 (dirty)` · `PASS force 20260928140000 — dấu dirty gỡ, phiên bản: 20260928140000` |
+| 5 tên bảng | `check-schema-names: PASS — 31 bảng ở migration, 31 bảng tài liệu nhắc, comm -3 rỗng`, kèm hai danh sách đầy đủ 31 tên mỗi bên và `comm -3: (rỗng)`; `check-schema-names.test: OK` (13 ca: lệch mỗi chiều đỏ, `DROP` · `RENAME`, file lùi không tính, tên file · schema · chú thích im, danh sách rỗng đỏ) |
+| 6 tài liệu | `QC-05` · `07-thu-tu-migration.md` §5 (YC-21 · ADR-057 · T-109); `PASS QC-05 (sh) — rỗng` |
+| 7 `F-034` | `work/findings.md` *Fixed* (thiếu owner đã có YC-21) · `06-so-rui-ro.md` `RR-9` ⛔ (cơ chế chưa nghiệm thu) — hai câu về hai việc, không lệch; không sửa |
+
+**Biết kêu** (sửa tạm hai file lùi, chạy, khôi phục — `cmp` khớp): bỏ `DROP FUNCTION qr_code_issue`
+⇒ `FAIL lùi 20260928110000_ma_qr_ban — lược đồ khác lúc trước bước ấy` kèm đúng hàm còn thừa; bỏ
+chữ khoá chặn ở `dau_lan_gui` ⇒ `FAIL QC-05 (sh): db/migrations/20260928100000_dau_lan_gui.down.sql`.
+
+*Còn lại, cho chủ repo:* **ADR-065** là lựa chọn của phiên (đổi `QC-05` của `P2-12`). `db-check`
+chậm từ ~14 lên ~36 giây, làm **F-045** (hai lần chạy giẫm nhau) dễ gặp hơn — tái diễn 2026-09-30,
+đã ghi vào finding. Lỗi đã biết của bước 8 trên bảng có dòng (review độc lập P2-08 phát hiện 3) nay
+là một câu ở `07-…` §3, chưa chạy thử.
+
+*Gate lúc bàn giao (2026-09-30):* `./scripts/gate.sh` 2026-09-29 **xanh** hết (Gate 1: `db-check: PASS — 8
+bước xuôi · lùi · xuôi lại, …, khoá chặn`). Ba lần chạy 2026-09-30 **đỏ ở Gate 1** vì database của
+project `banhcuon_check` bị gỡ giữa chừng (`No such container` · `the database system is shutting
+down` · `database không lên`) — **F-045**; Gate 3 · 1b · 1c · 1d · 1e xanh cả ba lần. Cùng code, chạy
+bản sao `db-check.sh` chỉ đổi `PROJECT=banhcuon_p209` ⇒ `db-check: PASS — 8 bước xuôi · lùi · xuôi
+lại, 27 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 26 file test, dữ liệu mồi + §4.8, khoá chặn`.
+**Việc tiếp:** chạy lại `./scripts/gate.sh` lúc không phiên nào khác chạy `db-check`, hoặc sửa F-045
+trước.
+
 
 [↑ đầu file](#top)
 

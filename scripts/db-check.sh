@@ -4,7 +4,8 @@
 #
 # Mỗi lần chạy dựng một database RIÊNG và RỖNG (compose project banhcuon_check,
 # cổng ngẫu nhiên, gỡ sạch khi xong — database làm việc `banhcuon` không bị
-# đụng), chạy mọi migration ở db/migrations/ từ số 0, rồi:
+# đụng), chạy migration ở db/migrations/ xuôi từng bước từ số 0, lùi từng bước về
+# số 0 rồi xuôi lại, so lược đồ sau mỗi lần lùi (P2-09), rồi:
 #   1. mọi khối ```sql và ```sh nằm dưới một tiêu đề `### QD-XX` / `### QC-XX`
 #      trong docs/product/2-db/*.md — lấy thẳng từ tài liệu, không chép
 #      (work/findings.md F-001). Khối sql phải ra 0 dòng, khối sh phải in rỗng;
@@ -13,7 +14,8 @@
 #   3. từng file db/tests/*.sql, mỗi file trong một transaction rồi ROLLBACK.
 # Tham số `:schema`, `:kieu_moc`… lấy từ bảng §0 của 01-quy-uoc-du-lieu.md; múi
 # giờ của quán lấy từ master_plan/shop-facts.md §1. Bước 4: dựng dữ liệu mồi (db/seed/,
-# P2-10) vào database ấy rồi tính lại các ca giá §4.8. Không có Docker, hay database
+# P2-10) vào database ấy rồi tính lại các ca giá §4.8. Bước 5: trên dữ liệu mồi ấy,
+# lùi một bước phải bị khoá chặn từ chối (07-thu-tu-migration.md). Không có Docker, hay database
 # không lên ⇒ FAIL, không bỏ qua: một bộ kiểm im lặng khi thiếu máy là một bộ
 # kiểm không ai biết đã không chạy.
 set -uo pipefail
@@ -61,13 +63,64 @@ psql_q() { psql_f "$@" </dev/null; }
 
 echo "=== db-check — $(psql_q -c 'SHOW server_version' 2>&1) · múi giờ kết nối $SHOP_TZ ==="
 
-# --- migration -------------------------------------------------------------
-n_mig="$(find db/migrations -maxdepth 1 -name '*.up.sql' 2>/dev/null | wc -l | tr -d ' ')"
+# --- migration: xuôi · lùi · xuôi lại (P2-09, docs/product/2-db/07-thu-tu-migration.md)
+# (a) xuôi TỪNG bước từ số không, chụp lược đồ sau mỗi bước; (b) lùi từng bước về số
+# không — lược đồ sau khi lùi bước N phải GIỐNG HỆT ảnh chụp trước khi xuôi bước N;
+# (c) xuôi lại cả dãy — giống hệt lần xuôi đầu. Ảnh chụp là pg_dump --schema-only
+# của schema `shop` (gồm quyền), bỏ dòng chú thích và cặp \restrict có khoá ngẫu nhiên.
+migrate() { compose run --rm migrate "$@" </dev/null 2>&1; }
+schema_dump() {
+  compose exec -T db pg_dump -U shop_owner -d banhcuon --schema-only --schema=shop </dev/null \
+    | grep -Ev '^(--|\\(un)?restrict )' | grep -v '^$'
+}
+snap="$(mktemp -d)"
+versions="$(find db/migrations -maxdepth 1 -name '*.up.sql' 2>/dev/null | sed 's|.*/||' | sort)"
+n_mig="$(printf '%s' "$versions" | grep -c .)"
 if [ "$n_mig" -gt 0 ]; then
-  if out="$(compose run --rm migrate </dev/null 2>&1)"; then
-    echo "PASS migrate — $n_mig file"
+  mig_ok=1
+  prev=0; schema_dump > "$snap/0"
+  for f in $versions; do
+    v="${f%%_*}"
+    if out="$(migrate up 1)"; then
+      schema_dump > "$snap/$v"; echo "PASS xuôi ${f%.up.sql}"
+      printf '%s\n' "$prev" > "$snap/$v.prev"; prev="$v"
+    else
+      fail "xuôi ${f%.up.sql}"; printf '%s\n' "$out" | tail -20 | sed 's/^/     /'; mig_ok=0; break
+    fi
+  done
+  top="$prev"
+  # F-017: pg_dump hỏng thì mọi ảnh chụp cùng rỗng, và "rỗng giống rỗng" là một PASS giả.
+  if [ "$mig_ok" -eq 1 ] && [ "$(grep -c . "$snap/$top")" -le "$(grep -c . "$snap/0")" ]; then
+    fail "ảnh chụp lược đồ — sau $n_mig bước không dài hơn lược đồ rỗng; pg_dump có chạy không?"
+    mig_ok=0
+  fi
+  if [ "$mig_ok" -eq 1 ]; then
+    for f in $(printf '%s\n' $versions | sort -r); do
+      v="${f%%_*}"; before="$(cat "$snap/$v.prev")"
+      if ! out="$(migrate down 1)"; then
+        fail "lùi ${f%.up.sql}"; printf '%s\n' "$out" | tail -20 | sed 's/^/     /'; mig_ok=0; break
+      fi
+      if d="$(diff "$snap/$before" <(schema_dump))"; then
+        echo "PASS lùi ${f%.up.sql} — lược đồ giống hệt lúc trước bước ấy ($(grep -c . "$snap/$before") dòng)"
+      else
+        fail "lùi ${f%.up.sql} — lược đồ khác lúc trước bước ấy:"; printf '%s\n' "$d" | head -20 | sed 's/^/     /'
+        mig_ok=0; break
+      fi
+    done
+  fi
+  if [ "$mig_ok" -eq 1 ]; then
+    if out="$(migrate up)" && d="$(diff "$snap/$top" <(schema_dump))"; then
+      echo "PASS xuôi lại — $n_mig bước từ số không, lược đồ giống hệt lần xuôi đầu ($(grep -c . "$snap/$top") dòng)"
+    else
+      fail "xuôi lại"; printf '%s\n' "$out" "${d:-}" | head -20 | sed 's/^/     /'
+    fi
   else
-    fail "migrate"; printf '%s\n' "$out" | tail -20
+    # Vòng hỏng giữa chừng để lại lược đồ dở và dấu dirty: dựng lại database sạch để
+    # các phép kiểm sau chạy trên lược đồ đầy đủ, không đỏ dây chuyền.
+    echo "NOTE migrate — dựng lại database rỗng và xuôi cả dãy cho các phép kiểm sau"
+    cleanup; compose up -d --wait db >/dev/null 2>&1 && migrate up >/dev/null \
+      || fail "migrate — không dựng lại được lược đồ đầy đủ"
+    top=0   # không kiểm khoá chặn trên một vòng đã hỏng
   fi
 else
   echo "NOTE migrate — db/migrations/ chưa có file nào; kiểm trên lược đồ rỗng"
@@ -255,9 +308,33 @@ else
   fail "dữ liệu mồi — db/seed/seed.pl không đọc được owner:"; printf '%s\n' "$seed_sql" | sed 's/^/     /'
 fi
 
+# --- 5. khoá chặn của đường lùi biết kêu (P2-09) ------------------------------
+# Database lúc này có dữ liệu mồi. Lùi một bước ⇒ phải bị từ chối, lược đồ không
+# đổi; rồi gỡ dấu dirty bằng force về đúng bước trước lệnh (07-thu-tu-migration.md §3).
+if [ "$n_mig" -gt 0 ] && [ "${top:-0}" != 0 ]; then
+  schema_dump > "$snap/seeded"
+  if out="$(migrate down 1)"; then
+    fail "khoá chặn — lùi một bước trên database có dữ liệu mồi mà KHÔNG bị từ chối"
+  elif ! printf '%s\n' "$out" | grep -q 'đường lùi từ chối'; then
+    fail "khoá chặn — lùi hỏng vì lý do khác:"; printf '%s\n' "$out" | tail -5 | sed 's/^/     /'
+  elif ! d="$(diff "$snap/seeded" <(schema_dump))"; then
+    fail "khoá chặn — từ chối nhưng lược đồ đã đổi:"; printf '%s\n' "$d" | head -20 | sed 's/^/     /'
+  else
+    echo "PASS khoá chặn — lùi trên dữ liệu mồi bị từ chối, lược đồ không đổi"
+    printf '%s\n' "$out" | grep -o 'đường lùi từ chối: .* gỡ nó là xoá dữ liệu' | head -1 | sed 's/^/     /'
+    echo "     sau lệnh hỏng: $(migrate version | tail -1)"
+    if migrate force "$top" >/dev/null && [ "$(migrate version | tail -1)" = "$top" ]; then
+      echo "PASS force $top — dấu dirty gỡ, phiên bản: $(migrate version | tail -1)"
+    else
+      fail "force $top — không gỡ được dấu dirty: $(migrate version | tail -1)"
+    fi
+  fi
+fi
+
+rm -rf "$snap"
 rm -f "$subst_file"
 if [ "$failed" -ne 0 ]; then
   echo "db-check: FAIL"
   exit 1
 fi
-echo "db-check: PASS — $n_blocks khối kiểm tài liệu, 4 phép kiểm dạng lệnh, $n_tests file test, dữ liệu mồi + §4.8"
+echo "db-check: PASS — $n_mig bước xuôi · lùi · xuôi lại, $n_blocks khối kiểm tài liệu, 4 phép kiểm dạng lệnh, $n_tests file test, dữ liệu mồi + §4.8, khoá chặn"

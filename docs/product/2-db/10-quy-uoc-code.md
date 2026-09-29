@@ -161,37 +161,49 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
 
 ## 3. Migration — `QC-05`
 
-### QC-05 — Migration: golang-migrate, `db/migrations/`, tên theo mốc giờ, chỉ đi tới
+### QC-05 — Migration: golang-migrate, `db/migrations/`, tên theo mốc giờ, mỗi bước xuôi một bước lùi
 
 - **Quy ước:**
   - **Công cụ:** golang-migrate **v4.18.3**, chạy bằng service `migrate` trong `compose.yaml`
-    (`docker compose run --rm migrate`) — không cần cài gì lên máy ngoài Docker.
+    (`docker compose run --rm migrate`, thêm lệnh con như `down 1` · `version` · `force <số>`) —
+    không cần cài gì lên máy ngoài Docker.
   - **Thư mục:** `db/migrations/`. Lược đồ vào schema `shop`; bảng ghi phiên bản của công cụ nằm ở
     `public.schema_migrations`, ngoài tầm các phép kiểm `QD-XX`.
   - **Tên file:** mốc giờ tạo file dạng `YYYYMMDDHHMMSS`, một dấu gạch dưới, mô tả snake_case ASCII,
     đuôi `.up.sql` — ví dụ `20260101000000_vi_du.up.sql`. Năm lát
     chạy **song song** (`P2-04`…`P2-08`): số thứ tự tăng dần sẽ va nhau, mốc giờ thì không.
-  - **Chỉ đi tới:** không file `.down.sql`. Sửa một lược đồ đã commit là **một migration mới**;
-    file migration đã vào `HEAD` thì không sửa, không xoá.
+  - **Mỗi `.up.sql` có đúng một `.down.sql`** cùng tên, gỡ **đúng** thứ bước xuôi dựng — không hơn,
+    không kém. *(Đổi 2026-09-29 ở `P2-09`, **ADR-065**; trước đó mục này cấm file lùi.)* File lùi
+    mở đầu bằng **khoá chặn**: bảng sắp gỡ có dòng, hay cột ghi sắp gỡ có giá trị ⇒ từ chối, không gỡ
+    gì. Luật, thứ tự và cách gỡ một lệnh hỏng: [`07-thu-tu-migration.md`](07-thu-tu-migration.md).
+  - **Sửa một lược đồ đã commit là một migration mới** — kể cả khi muốn *lùi* một bước đã có dữ liệu:
+    file lùi chỉ gỡ chỗ còn rỗng. File migration đã vào `HEAD` thì không sửa, không xoá.
   - **Một file là một giao dịch:** không viết `BEGIN` · `COMMIT` trong file. Công cụ gửi cả file
     một lượt, PostgreSQL chạy nó trong một giao dịch ngầm — lỗi ở câu thứ năm thì bốn câu trước
-    cũng không còn.
+    cũng không còn (thí nghiệm 2026-09-29: `07-thu-tu-migration.md` §3).
   - Ràng buộc đặt tên tường minh theo `QC-10`.
 - **Hậu quả nếu làm khác:** hai lát cùng lấy số `000004` thì một trong hai **không bao giờ chạy**,
-  và công cụ không báo. File `.down.sql` của một lát lược đồ là một lệnh xoá bảng nằm sẵn cạnh dữ
-  liệu bán hàng thật — đúng đường mà `QD-50` đóng. Sửa một migration đã chạy ở máy khác thì hai máy
-  có hai lược đồ khác nhau dưới **cùng một** số phiên bản, và **ADR-053** luật 2 (*migration thắng*)
-  không còn biết bản nào thắng.
+  và công cụ không báo. Một bước không có file lùi thì lần xuôi đầu tiên hỏng *về nghĩa* trên máy
+  thật (chạy xong nhưng sai) không có đường về ngoài sửa tay. Một file lùi **không** có khoá chặn là
+  một lệnh xoá bảng nằm sẵn cạnh dữ liệu bán hàng thật — đúng đường mà `QD-50` đóng. Sửa một
+  migration đã chạy ở máy khác thì hai máy có hai lược đồ khác nhau dưới **cùng một** số phiên bản,
+  và **ADR-053** luật 2 (*migration thắng*) không còn biết bản nào thắng.
 - **Phép kiểm:**
   ```sh
-  ls -A db/migrations | grep -Ev '^([0-9]{14}_[a-z0-9_]+\.up\.sql|\.gitkeep)$'
+  ls -A db/migrations | grep -Ev '^([0-9]{14}_[a-z0-9_]+\.(up|down)\.sql|\.gitkeep)$'
+  for f in db/migrations/*.up.sql; do [ -f "${f%.up.sql}.down.sql" ] || echo "thiếu đường lùi: $f"; done
+  for f in db/migrations/*.down.sql; do [ -f "${f%.down.sql}.up.sql" ] || echo "lùi mà không có xuôi: $f"; done
+  grep -L 'đường lùi từ chối' db/migrations/*.down.sql
   git diff --name-only --diff-filter=MDR HEAD -- db/migrations
   ```
-  Dòng đầu: tên sai khuôn, hoặc có file `.down.sql`. Dòng sau: file migration đã commit bị sửa,
-  xoá hay đổi tên.
+  Dòng đầu: tên sai khuôn. Hai dòng sau: một bước thiếu nửa kia. Dòng thứ tư: file lùi không có khoá
+  chặn. Dòng cuối: file migration đã commit bị sửa, xoá hay đổi tên. File lùi gỡ **đúng** thứ bước
+  xuôi dựng hay không thì một lệnh `sh` không chấm được: `scripts/db-check.sh` xuôi từng bước, lùi
+  từng bước về số không, và so lược đồ sau mỗi lần lùi với ảnh chụp trước bước ấy.
 - **Nguồn:** công cụ theo `master_plan/prompt-fullstack.md` §3.4 (bản xuất khẩu, **không** sở hữu
-  gì — **ADR-035** luật 3; đọc như đề xuất); thư mục, tên và luật chỉ đi tới là phiên chọn
-  2026-09-27. Migration thắng tài liệu: **ADR-053** luật 2.
+  gì — **ADR-035** luật 3; đọc như đề xuất); thư mục, tên là phiên chọn 2026-09-27; mỗi bước một file
+  lùi có khoá chặn là phiên chọn 2026-09-29 (**ADR-065**) theo yêu cầu của `P2-09`. Migration thắng
+  tài liệu: **ADR-053** luật 2.
 
 ---
 
@@ -347,6 +359,6 @@ tên **ràng buộc** và **chỉ mục**.
 | Bước | Lấy gì |
 |---|---|
 | `P2-04`…`P2-08` | `QC-04` kiểu · `QC-05` tên và luật migration · `QC-07` khuôn test *từ chối* · `QC-10` tên ràng buộc; chạy `./scripts/db-check.sh`, dán output vào *Bàn giao* |
-| `P2-09` | `QC-05` — thư mục và khuôn tên mà lệnh đối chiếu tên bảng `.md` ↔ migration đọc |
+| `P2-09` | `QC-05` — thư mục và khuôn tên mà lệnh đối chiếu tên bảng `.md` ↔ migration đọc; đã đổi mục ấy thành *mỗi bước xuôi một bước lùi* (2026-09-29) |
 | `P2-11` | `QC-07` — bộ kiểm để gom phép so `I-0xx` và chứng minh từng phép `QD-XX` biết kêu |
 | pha 3 | `QC-06` chỗ trống kết nối backend · `QC-09` chỗ trống `verify.sh` và thư viện |

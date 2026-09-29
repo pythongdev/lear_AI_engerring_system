@@ -81,6 +81,7 @@ có câu trả lời mới từ người.
 | ADR-062 | Gate 8 chặn thêm **subject trùng từng chữ một commit đã có** trong lịch sử; `git commit --amend` giữ nguyên subject của `HEAD` vẫn qua (F-031, sửa đổi ADR-010) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-117 |
 | ADR-063 | **Mỗi task một file scope `work/scope/<MÃ>.txt`, git bỏ qua** — Gate 3 chấm theo hợp các file scope; Gate 7b chấm khối commit theo file của mã đứng đầu subject; file scope giữ tới khi task đã commit; `work/scope.txt` thành stub chỉ-comment | Đã chốt 2026-09-27 (chủ repo) | — | thay luật khai/gỡ scope của **ADR-043** · đóng T-085 |
 | ADR-064 | **`CLAUDE.md` chỉ giữ luật và con trỏ** — cơ chế của một cổng ở header script của nó, lý do ở ADR; số mục §1–§8 giữ nguyên; bảng §2 giữ đủ hàng (607 → khoảng 410 dòng) | Đã chốt 2026-09-29 (giao cho phiên) | — | T-087 |
+| ADR-065 | **Mỗi bước migration một bước lùi, và bước lùi chỉ gỡ chỗ còn rỗng** — `QC-05` bỏ luật *chỉ đi tới*; mỗi `.up.sql` một `.down.sql` mở đầu bằng khoá chặn (bảng có dòng, cột có giá trị ⇒ từ chối); lùi trên dữ liệu đã ghi là migration mới; `db-check` xuôi · lùi · xuôi lại từng bước và so lược đồ; tên bảng `.md` ↔ migration thành Gate 1e | Đã chốt 2026-09-29 (giao cho phiên) | — | P2-09 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -4300,3 +4301,60 @@ mô tả khuôn entry.
 
 **Applies to:** `CLAUDE.md` · `scripts/verify.sh` (header) · `scripts/gate.sh` (header, con trỏ
 `§2.2` cũ → §2).
+
+---
+
+### ADR-065 — Mỗi bước migration một bước lùi, và bước lùi chỉ gỡ chỗ còn rỗng
+
+**Trạng thái:** **Đã chốt** 2026-09-29, **giao cho phiên**. Chủ repo giao `P2-09` với lời *"hãy
+đọc kĩ và làm task trên"*; entry ấy đòi *mỗi bước có đường đi và đường lùi chạy thật được*, nhưng
+không chọn cơ chế. Câu giao việc là lời **giao việc chọn**, không phải lời xác nhận cơ chế dưới
+đây (`CLAUDE.md` §7.2, cùng cách đọc với **ADR-058**). Chủ repo muốn đổi thì một câu là đủ; lượt đổi
+phải xong trước khi một bước migration nào chạy trên dữ liệu thật. Task **P2-09**.
+
+**Context:**
+`docs/product/2-db/10-quy-uoc-code.md` `QC-05` (phiên chọn 2026-09-27, `P2-12`) cấm file `.down.sql`,
+với lý do đúng: *một file lùi của một lát lược đồ là một lệnh xoá bảng nằm sẵn cạnh dữ liệu bán
+hàng thật* — đường mà `QD-50` đóng. Kế hoạch pha 2 §3 · §6 và entry `P2-09` lại đòi *mỗi migration
+phải có đường lùi chạy thật được*, chứng minh bằng *chạy lùi một bước rồi xuôi lại ⇒ xanh*. Hai câu
+cùng đúng về hai nỗi sợ khác nhau: một bước xuôi **sai về nghĩa** không có đường về, và một bước lùi
+**xoá dữ liệu**. Thí nghiệm 2026-09-29 (database riêng) cho thêm một dữ kiện: bước xuôi **hỏng
+giữa chừng** không cần file lùi — cả file là một giao dịch, nên lược đồ không đứng ở nửa bước; công
+cụ chỉ đánh dấu *dirty* và chờ `force`.
+
+**Decision:**
+1. **Mỗi `.up.sql` có đúng một `.down.sql`**, gỡ đúng thứ bước xuôi dựng. *Đúng* đo bằng ảnh chụp
+   `pg_dump --schema-only`: lược đồ sau khi lùi bước *N* giống từng dòng lược đồ trước khi xuôi bước
+   *N*.
+2. **Khoá chặn ở đầu mọi file lùi:** bảng sắp gỡ có dòng, hay cột ghi sắp gỡ có giá trị ⇒ `RAISE`,
+   không gỡ gì. Nỗi sợ của `QC-05` cũ được giữ bằng khoá này thay vì bằng lệnh cấm.
+3. **Lùi trên dữ liệu đã ghi là một migration mới đi tới** — luật *sửa lược đồ đã commit là một
+   migration mới* của `QC-05` giữ nguyên.
+4. **Bộ kiểm chứng minh ở mỗi lần chạy:** `scripts/db-check.sh` xuôi từng bước từ số không, lùi từng
+   bước về số không (so ảnh chụp), xuôi lại cả dãy; rồi trên dữ liệu mồi, lùi một bước phải bị khoá
+   chặn từ chối và `force` gỡ được dấu *dirty*.
+5. **Phép so tên bảng của ADR-053 luật 2 thành Gate 1e** (`scripts/check-schema-names.sh`) trong
+   `./scripts/gate.sh`, chạy mọi lượt vì chỉ đọc file; in hai danh sách đầy đủ trước `comm -3`
+   (**F-017**).
+
+**Rejected alternatives:**
+- *Giữ luật chỉ đi tới; "đường lùi" = giao dịch + `force`.* Bác: chỉ phủ bước **hỏng giữa chừng**;
+  bước chạy xong mà sai về nghĩa vẫn không có đường về, và đầu ra *lùi một bước rồi xuôi lại* của kế
+  hoạch không chạy được.
+- *File lùi không khoá chặn, chỉ dặn "đừng chạy trên máy thật".* Bác: đúng hình *luật không có lệnh
+  gác thì tự trôi* (**ADR-053**); một lệnh gõ nhầm máy là mất dữ liệu bán hàng.
+- *File lùi đặt ngoài `db/migrations/` (chỉ bộ kiểm dùng).* Bác: công cụ không thấy nó, nên đường lùi
+  ở máy thật vẫn không có; hai bộ file cho một dãy là bản thứ hai (**F-001**).
+- *Khoá chặn chỉ đếm dòng của bảng, kể cả với cột thêm vào bảng cũ.* Bác: một cột **có thể trống**
+  chưa ai ghi vào thì gỡ không mất gì — đếm dòng của cả bảng sẽ chặn cả trường hợp ấy.
+
+**Hệ quả:** `db-check` chậm thêm khoảng 17 giây (14 → 32 giây trên máy phát triển, 2026-09-29) vì mỗi
+bước một lần gọi công cụ. Đường lùi thật sự dùng được ở máy thật chỉ trong khoảng ngắn sau khi triển
+khai một bước, trước khi chỗ mới có dữ liệu; sau đó chỉ còn đường đi tới. Một lệnh lùi bị khoá chặn
+để lại dấu *dirty* ở số của bước **dưới**, trong khi lược đồ vẫn ở bước trên —
+`07-thu-tu-migration.md` §3 nói phải `force` về số nào. Không gì ở đây chạm **YC-21** (**ADR-057**):
+đường lùi của lược đồ không phục hồi dữ liệu.
+
+**Applies to:** `db/migrations/*.down.sql` · `compose.yaml` (service `migrate`) · `scripts/db-check.sh`
+· `scripts/check-schema-names.sh` + test · `scripts/gate.sh` + test · `docs/product/2-db/10-quy-uoc-code.md`
+`QC-05` · `docs/product/2-db/07-thu-tu-migration.md` · `CLAUDE.md` §2 · §5.

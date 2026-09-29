@@ -407,7 +407,7 @@ owner, vì một owner mà §2 không kể tên là owner không ai tìm thấy.
 ./scripts/gate.sh
 ```
 
-Nó chạy sáu bước, theo đúng thứ tự này:
+Nó chạy bảy bước, theo đúng thứ tự này:
 
 | # | Script | Nó bắt cái gì | Chạy khi nào |
 |---|---|---|---|
@@ -415,10 +415,11 @@ Nó chạy sáu bước, theo đúng thứ tự này:
 | 2 | `scripts/check-links.sh` (Gate 1b) | một tài liệu chỉ đường nêu đường dẫn không mở được | mọi lượt |
 | 3 | `scripts/check-doc-status.sh` (Gate 1c) | **một mã, hai chỗ, hai trạng thái** — câu đã đóng còn bị nhắc như đang mở | mọi lượt |
 | 4 | `scripts/check-phase-boundary.sh` (Gate 1d) | tài liệu pha 1 đặt tên thứ pha 2/3/4 sở hữu | khi `docs/product/1-system-design/` đổi |
-| 5 | `scripts/verify.sh` (Gate 1) | format, build, test, và mọi `scripts/*.test.sh` | **bỏ qua** khi lượt chỉ đổi tài liệu |
-| 6 | `scripts/check-commit-block.sh` (Gate 7) | lượt kết thúc mà chưa giao nội dung commit | chỉ ở chế độ hook, chỉ sau khi 1–5 xanh |
+| 5 | `scripts/check-schema-names.sh` (Gate 1e) | tài liệu `docs/product/2-db/` nhắc một bảng migration không tạo, hoặc migration tạo một bảng tài liệu không nhắc (thêm 2026-09-29, `P2-09`) | mọi lượt |
+| 6 | `scripts/verify.sh` (Gate 1) | format, build, test, và mọi `scripts/*.test.sh` | **bỏ qua** khi lượt chỉ đổi tài liệu |
+| 7 | `scripts/check-commit-block.sh` (Gate 7) | lượt kết thúc mà chưa giao nội dung commit | chỉ ở chế độ hook, chỉ sau khi 1–6 xanh |
 
-Vì sao bước 2, 3, 4 **không** được bỏ qua ở lượt chỉ đổi tài liệu, dù bước 5 thì
+Vì sao bước 2, 3, 4, 5 **không** được bỏ qua ở lượt chỉ đổi tài liệu, dù bước 6 thì
 có: tài liệu chính là thứ repo này sản xuất. Lượt chỉ sửa `.md` từng là lượt duy
 nhất không bị máy chấm gì cả — mà đó lại đúng là lượt **sinh ra** loại lỗi bước 3
 bắt (đóng một câu hỏi thì chỉ sửa `.md` chứ có đụng code đâu). Một cổng đặt trong

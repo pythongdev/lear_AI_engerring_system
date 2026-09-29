@@ -60,6 +60,7 @@ is a bug to fix now.
 | Quy ước dữ liệu: tiền, mốc và múi giờ, khoá, đặt tên, trạng thái, không xoá cứng, văn bản và định danh — mỗi quy ước một mã `QD-XX` và một phép kiểm | `docs/product/2-db/01-quy-uoc-du-lieu.md` — pha 2, sinh ra ở P2-03 (ADR-035, ADR-053 luật 3) |
 | Schema: tên bảng, tên cột, kiểu, ràng buộc, khoá ngoại | **file migration thắng** — `db/migrations/` (ADR-053 luật 2). Ý định, lý do và ánh xạ `I-0xx`/`YC-xx` của từng lát: `docs/product/2-db/02-luoc-do-ban-hang.md` (P2-04) · `03-luoc-do-menu-gia.md` (P2-05) · `04-luoc-do-duong-tien.md` (P2-06) · `05-luoc-do-san-xuat.md` (P2-07) · `06-luoc-do-nguoi-va-vet.md` (P2-08); các lát sau **thêm** file, không ghi đè. Hai bản lệch ⇒ `F-XXX`. Thứ tự việc, mức và cổng của pha 2: `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (ADR-049) |
 | Quy ước code: DBMS + phiên bản, cách chạy database, migration, khung test, cấu trúc thư mục, stack, tên ràng buộc — mỗi quy ước một mã `QC-XX` và một phép kiểm | `docs/product/2-db/10-quy-uoc-code.md` — pha 2, sinh ra ở P2-12 (ADR-035, ADR-039, ADR-055) |
+| Thứ tự migration, đường lùi của từng bước (khoá chặn), cách gỡ một lệnh migration hỏng, dựng lại từ số không | `docs/product/2-db/07-thu-tu-migration.md` — pha 2, sinh ra ở P2-09 (ADR-065) |
 | Hợp đồng API: endpoint, quyền theo vai, chữ ký | **chưa có owner** — sinh ra ở **pha 3**, cùng `docs/product/3-be/` (ADR-035) |
 | Route, component | **chưa có owner** — sinh ra ở **pha 4**, cùng `docs/product/4-fe/` (ADR-035) |
 | Tasks — trạng thái của **mọi** task (`Ready`/`In Progress`/`Done`) | `work/backlog.md` |
@@ -188,11 +189,14 @@ It runs, in order — each script's header is the owner of how it works:
    `GĐ-XXX` table row disagreeing with its body). Every turn (ADR-032).
 4. `scripts/check-phase-boundary.sh` (Gate 1d) — a phase document naming what a
    later phase owns (§2; ADR-035, ADR-039). Every turn; conservative.
-5. `scripts/verify.sh` (Gate 1) — build, tests, `scripts/db-check.sh` when the
+5. `scripts/check-schema-names.sh` (Gate 1e) — every table name the
+   `docs/product/2-db/` files name exists in `db/migrations/`, and the reverse
+   (ADR-053 luật 2, ADR-065). Every turn; reads files only.
+6. `scripts/verify.sh` (Gate 1) — build, tests, `scripts/db-check.sh` when the
    database side changed, every `scripts/*.test.sh`. Skipped for docs-only
    turns.
-6. `scripts/check-commit-block.sh` (Gate 7/7b) — **Claude hook mode only**, once
-   1–5 are green: the turn must hand over the §6.1 block, and the block's
+7. `scripts/check-commit-block.sh` (Gate 7/7b) — **Claude hook mode only**, once
+   1–6 are green: the turn must hand over the §6.1 block, and the block's
    file list must fit the scope of the task its subject names (ADR-006,
    ADR-063). Speaks at most once per tree state.
 
@@ -201,7 +205,7 @@ Gates 1b, 1c and 1d each take a deliberate exception in their own
 the gate red until removed. `work/` (and the folders each header names) is not
 checked by 1b or 1c — a dead path or broken sentence quoted there is evidence.
 
-Codex runs the gate directly: that runs steps 1–5, **not** Gate 7/7b, so Codex
+Codex runs the gate directly: that runs steps 1–6, **not** Gate 7/7b, so Codex
 checks the commit block against §6.1 by hand — file list, scope, and the real
 staged index. A green direct gate does not prove the block was checked.
 

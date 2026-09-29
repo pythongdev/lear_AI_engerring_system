@@ -82,6 +82,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] P2-09 Thứ tự migration và đường lùi — mỗi bước một file lùi có khoá chặn, `db-check` xuôi · lùi · xuôi lại từng bước; tên bảng `.md` ↔ migration là Gate 1e — 2026-09-30 · [chi tiết](backlog_DB.md#p2-09)
 - [x] T-087 `CLAUDE.md` chỉ giữ luật và con trỏ — 607 còn 412 dòng; cơ chế về header script, lý do về ADR-064 — 2026-09-29 · [chi tiết](backlog_archive.md#t-087)
 - [x] P2-08 Lược đồ người · chỗ đứng theo thời điểm · vết — trực quầy theo khoảng, *ai bấm* bắt buộc, vết cập nhật bản trước / bản sau, sổ giấy nhập bù — 2026-09-28 · `8e5a77e` · [chi tiết](backlog_DB.md#p2-08)
 - [x] T-119 Đo lại thí điểm lane pha 2 (ADR-051): mục tiêu đạt, ba trên bảy bước có dấu *Done* trong commit của task khác — 2026-09-28 · [chi tiết](backlog_archive.md#t-119)

@@ -4011,6 +4011,10 @@ Open
 (P2-05 phần *test biết kêu*, Claude Code): lúc `ps` thấy **hai** tiến trình `db-check`, một lần chạy
 in `FAIL` cho sáu khối `QD-XX` và mười ba file test (*"câu kiểm không chạy được"*), không đổi một
 dòng nào, chạy lại ngay sau đó ⇒ `db-check: PASS — … 22 file test`.
+**Lần hai, 2026-09-30** (P2-09, Claude Code): gate đỏ ở `xuôi 20260928140000_nguoi_va_vet` với
+`No such container`, rồi mọi khối kiểm *"service "db" is not running"*; `ps` thấy một `db-check.sh`
+của phiên khác vừa khởi động 10 giây trước. Từ `P2-09` một lần chạy dài **~36 giây** thay vì ~14 (xuôi ·
+lùi · xuôi lại từng bước), nên khoảng hai lần chạy chồng nhau rộng gấp đôi — lý do thêm để sửa sớm.
 
 **Impact:**
 Gate 1 đỏ vì một lý do không nằm trong thay đổi. Phiên nhận cổng đỏ hoặc đi sửa thứ không hỏng, hoặc

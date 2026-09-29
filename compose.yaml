@@ -36,9 +36,16 @@ services:
     volumes:
       - ./db/migrations:/migrations:ro
     # QC-05: lược đồ vào schema `shop`; bảng ghi phiên bản của công cụ nằm ở
-    # `public`, ngoài tầm các phép kiểm QD-XX.
-    command:
+    # `public`, ngoài tầm các phép kiểm QD-XX. Đường dẫn và database nằm ở
+    # entrypoint, nên lệnh con đổi được mà không chép lại chúng (P2-09):
+    #   docker compose run --rm migrate             # up — mọi bước chưa chạy
+    #   docker compose run --rm migrate down 1      # lùi một bước
+    #   docker compose run --rm migrate version     # đang ở bước nào, dirty hay không
+    #   docker compose run --rm migrate force <số>  # gỡ dấu dirty sau một lệnh hỏng
+    # Khi nào dùng lệnh nào: docs/product/2-db/07-thu-tu-migration.md.
+    entrypoint:
+      - migrate
       - -path=/migrations
       - -database
       - postgres://shop_owner:shop_owner_dev@db:5432/banhcuon?sslmode=disable&search_path=shop&x-migrations-table=%22public%22.%22schema_migrations%22&x-migrations-table-quoted=1
-      - up
+    command: ["up"]

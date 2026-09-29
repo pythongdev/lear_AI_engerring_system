@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Quality gate — runs Gate 3 (scope), Gate 1b (links), Gate 1c (doc status),
-# Gate 1d (phase boundary), Gate 1 (verify), then Gate 7 (commit).
+# Gate 1d (phase boundary), Gate 1e (schema names), Gate 1 (verify), then Gate 7
+# (commit).
 #
 # Wired as a Stop hook in .claude/settings.json, which calls it as
 #   ./scripts/gate.sh --hook
@@ -15,7 +16,9 @@
 # check-phase-boundary.sh (Gate 1d, CLAUDE.md §2, ADR-039) runs right after
 # doc-status for the same reason: it only reads docs/product/1-system-design/ and
 # docs/product/2-db/, and would sleep through a documentation-only turn if it sat
-# in verify.sh.
+# in verify.sh. check-schema-names.sh (Gate 1e, ADR-053 luật 2, P2-09) sits next
+# to it for the same reason: a slice document can name a table the migrations
+# never create in a documentation-only turn, and it needs no database to notice.
 # check-commit-block.sh runs only in hook mode (it needs the transcript) and only
 # after the gate is green: no point asking for a commit message for a red change.
 #
@@ -117,6 +120,7 @@ step "Gate 3"  "check-scope"          check-scope.sh
 step "Gate 1b" "check-links"          check-links.sh
 step "Gate 1c" "check-doc-status"     check-doc-status.sh
 step "Gate 1d" "check-phase-boundary" check-phase-boundary.sh
+step "Gate 1e" "check-schema-names"   check-schema-names.sh
 
 code_changed=0
 while IFS= read -r line; do
