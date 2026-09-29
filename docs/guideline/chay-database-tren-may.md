@@ -35,7 +35,9 @@ make stop      tắt database, GIỮ dữ liệu
 make reset     XOÁ SẠCH dữ liệu rồi dựng lại từ đầu
 ```
 
-Lần sau mở máy: `make up` rồi `make psql`. Các mục dưới đây giải thích từng lệnh `make` thật sự
+Lần sau mở máy: `make up` rồi `make psql`. Bảng tra đủ các lệnh `make`, kèm cách xử lý lỗi thường
+gặp: [docs/command/make.md](../command/make.md). Database gồm những gì và lệnh nào kiểm nó đang
+tốt: [hieu-va-kiem-database.md](hieu-va-kiem-database.md). Các mục dưới đây giải thích từng lệnh `make` thật sự
 chạy gì bên trong — đọc khi muốn hiểu, hoặc khi `make` báo lỗi.
 
 ## Bước 1 — Bật database
