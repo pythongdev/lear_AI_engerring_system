@@ -5,6 +5,14 @@
 -- Dựng chung của file (pg_temp — mất cùng ROLLBACK). Menu, tên và số đều GIẢ (test-…); menu thật
 -- là của P2-10, tra shop-facts §4.5 · §5.3. Hàm don · dong đứng THAY cửa tạo lượt gọi, no_don
 -- thay cửa nổ đơn, bam_me thay nút "đã làm xong" — đều của pha 3; chúng không phải các cửa ấy.
+-- Người thao tác của giao dịch (P2-08, 06-luoc-do-nguoi-va-vet.md §0): mọi cột "ai bấm" lấy mặc
+-- định từ đây — không khai thì thao tác chạm tiền, mẻ, lần chuyển, mã QR đều không ghi được.
+DO $$
+DECLARE p bigint;
+BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người đứng quầy') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+END $$;
 CREATE TEMP TABLE tm (name text PRIMARY KEY, id bigint NOT NULL);
 
 DO $$
@@ -356,6 +364,15 @@ BEGIN
     RAISE NOTICE 'I-004 bị từ chối (lần chuyển không đổi chủ): %', SQLERRM;
   END;
 
+  BEGIN   -- lần chuyển không có người chọn bàn nhận (P2-08 — I-004 tầng 4: máy giữ vết có tên)
+    PERFORM set_config('shop.actor_person_id', '', true);
+    INSERT INTO station_job_transfer (production_batch_item_id, from_station_job_id, to_station_job_id)
+    VALUES (it, f, t);
+    RAISE EXCEPTION 'I-004: database KHÔNG từ chối lần chuyển không có người chọn bàn nhận';
+  EXCEPTION WHEN not_null_violation THEN
+    RAISE NOTICE 'I-004 bị từ chối (lần chuyển không ai chọn bàn nhận): %', SQLERRM;
+  END;
+
   -- Chuyển đúng: bốn lệnh, một giao dịch.
   INSERT INTO station_job_transfer (production_batch_item_id, from_station_job_id, to_station_job_id)
   VALUES (it, f, t);
@@ -364,7 +381,8 @@ BEGIN
   UPDATE station_job SET status = 'made' WHERE id = t;
   SET CONSTRAINTS ALL IMMEDIATE;
   SET CONSTRAINTS ALL DEFERRED;
-  SELECT tr.id, tr.transferred_at, fd.label AS ban_cu, td.label AS ban_nhan, i.production_batch_id
+  SELECT tr.id, tr.transferred_at, fd.label AS ban_cu, td.label AS ban_nhan, i.production_batch_id,
+         (SELECT display_name FROM person WHERE id = tr.person_id) AS nguoi_chon
   INTO r
   FROM station_job_transfer tr
   JOIN production_batch_item i ON i.id = tr.production_batch_item_id
@@ -373,8 +391,8 @@ BEGIN
   JOIN station_job tj ON tj.id = tr.to_station_job_id JOIN sales_order tor ON tor.id = tj.sales_order_id
   JOIN dining_table td ON td.id = tor.dining_table_id
   WHERE tr.production_batch_item_id = it;
-  RAISE NOTICE 'I-004 vết lần chuyển — lần %, lúc %: trứng tái của mẻ % từ % sang %; "ai chọn bàn nhận" chờ P2-08',
-    r.id, r.transferred_at, r.production_batch_id, r.ban_cu, r.ban_nhan;
+  RAISE NOTICE 'I-004 vết lần chuyển — lần %, lúc %: trứng tái của mẻ % từ % sang %, % chọn bàn nhận',
+    r.id, r.transferred_at, r.production_batch_id, r.ban_cu, r.ban_nhan, r.nguoi_chon;
   RAISE NOTICE 'I-004 bàn 9 (gọi 1) trứng tái ở trạm tráng sau khi nhận: còn phải làm %, đã làm xong còn ở bếp %',
     COALESCE(array_length(pg_temp.viec('test-b9', 'trang_banh', 'test-trứng tái', 'pending', 9), 1), 0),
     COALESCE(array_length(pg_temp.viec('test-b9', 'trang_banh', 'test-trứng tái', 'made', 9), 1), 0);

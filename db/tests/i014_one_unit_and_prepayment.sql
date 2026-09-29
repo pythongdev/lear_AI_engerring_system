@@ -1,6 +1,14 @@
 -- I-014 (tầng 1) và YC-23: một khoản tiền gắn với đúng MỘT đơn vị tính tiền; khoản trả
 -- trước chỉ vào doanh thu qua hoá đơn của chính đơn nó, và phần đã thành doanh thu cộng phần
 -- đã trả lại không bao giờ vượt số đã nhận. Lát: 04-luoc-do-duong-tien.md.
+-- Người thao tác của giao dịch (P2-08, 06-luoc-do-nguoi-va-vet.md §0): mọi cột "ai bấm" lấy mặc
+-- định từ đây — không khai thì thao tác chạm tiền, mẻ, lần chuyển, mã QR đều không ghi được.
+DO $$
+DECLARE p bigint;
+BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người đứng quầy') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+END $$;
 DO $$
 DECLARE t5 bigint; s1 bigint; o_tbl bigint; o1 bigint; o2 bigint; o3 bigint;
         p1 bigint; b1 bigint; b2 bigint; rf bigint; r record;

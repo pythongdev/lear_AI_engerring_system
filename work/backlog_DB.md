@@ -807,6 +807,12 @@ tập cột tiền của họ `order_line` với đúng bốn cột đã khai, l
 thái ngày 2026-09-27). Không migration nào đổi. Kịch bản gỡ ràng buộc để ở nháp của phiên, không vào
 repo: gom phép *biết kêu* thành một lệnh là việc của `P2-11`.
 
+*Đo lại cùng ngày, sau khi `P2-06` · `P2-07` · `P2-10` vào git (7 migration):* ba test xanh, bảy lần
+gỡ vẫn bảy lần đỏ, cùng lời; `./scripts/db-check.sh` ⇒ `PASS — 26 khối kiểm tài liệu, 4 phép kiểm dạng
+lệnh, 22 file test, dữ liệu mồi + §4.8`. Khối này và dòng `Done` ở `work/backlog.md` đã bị commit
+`89ac41b` (`P2-06`) nhặt trước khi hai test và file lát được commit — `work/findings.md` **F-025**. Một
+lần chạy đỏ giả giữa chừng do hai phiên cùng chạy `db-check` — **F-045**.
+
 *Còn mở — cần chủ repo đọc:*
 - **Đầu ra (b) đọc theo tầng 3**: kế hoạch §6 và bước 6 viết *"bị từ chối, dán nguyên lời từ chối"*;
   lát này giữ luật ở dữ liệu, lời từ chối là của pha 3. Muốn database từ chối thì phải đổi tầng của
@@ -1137,11 +1143,84 @@ mỗi lần **cập nhật** — trong một hệ **không có nút hoàn tác**
 - **Đừng lẫn *người nhập bù* với *người bán*.** `YC-08` đòi cả hai, và hai mốc của chúng khác nhau.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi:* migration mới `db/migrations/20260928140000_nguoi_va_vet.up.sql` (file cũ không sửa,
+  `QC-05`); bốn test mới `db/tests/yc15_…` · `i012_…` · `i018_…` · `yc08_…`; mười lăm test cũ nhận khối
+  khai người thao tác; `db/seed/seed.pl` thêm người theo vai; file lát
+  `docs/product/2-db/06-luoc-do-nguoi-va-vet.md`; `01-quy-uoc-du-lieu.md` (`QD-03` vai trò `_image`,
+  `QD-52` mới) · `10-quy-uoc-code.md` (`QC-04` kiểu `jsonb`); pointer ở `02-` · `04-` · `05-` ·
+  `08-…md`, `00-index.md`, `CLAUDE.md` §2; finding `F-046`. **Không** chạm: chấm công, lương (lane
+  admin), `i009_…` · `i013_…` · `03-luoc-do-menu-gia.md` (thay đổi chưa commit của phiên khác).
+- *Nghiệm thu:* bảy dòng Acceptance ở dòng `P2-08` của `work/backlog.md` (viết trước khi dựng,
+  2026-09-28). Chủ repo chọn trong phiên: làm `P2-08`; vết cập nhật **chế độ mềm + F-046**.
+- *Kiểm chứng:* `./scripts/db-check.sh` · một vòng gỡ từng ràng buộc trên database riêng · phép so tên
+  bảng `.md` ↔ migration · `./scripts/gate.sh`.
 
-**Bàn giao:** —
+**Bàn giao:** Claude Code, nhánh `chatgpt_involve`, base `5d64e6c`, 2026-09-28; **chưa review độc
+lập**; chưa commit.
+
+*Kết quả:* bốn bảng — `person` (người, cờ chủ quán) · `counter_duty` (khoảng trực quầy, không chồng
+nhau) · `paper_ledger` (sổ giấy của ngày mất điện) · `record_revision` (vết cập nhật: bản trước,
+bản sau, lý do, người sửa, chụp bằng trigger trong cùng câu lệnh); cột *ai bấm* bắt buộc trên bảy
+bảng của `P2-06` · `P2-07` · `T-114`, mặc định là **người thao tác của giao dịch**
+(`shop.actor_person_id`); hoá đơn nhập bù trỏ về lượt thứ mấy của sổ nào. Lựa chọn và phương án bị
+loại: file lát §0 · §2.
+
+*Nghiệm thu → bằng chứng* (output `./scripts/db-check.sh`, PostgreSQL 17.11; tên, số trong test là
+giả):
+
+| # | Acceptance | Bằng chứng |
+|---|---|---|
+| 1 | migration mới, không sửa file đã commit | `PASS migrate — 8 file`; `PASS QC-05 (sh) — rỗng` |
+| 2 | `YC-15` · `YC-16` · `YC-17` | `yc15_…`: `YC-15 lúc 06:10 — đứng quầy: test-A` · `08:29 test-A` · `08:30 test-B` · `10:00 test-chủ quán (vẫn giữ quyền quản trị — YC-16)`; `conflicting key value violates exclusion constraint "counter_duty_one_at_a_time_excl"` (chồng một phần; người vào khi người trước chưa ra); `YC-16 … đang trực quầy t, quyền quản trị t`; `YC-17 bảng ghi mốc đổi người: counter_duty — chỉ trạm quầy` |
+| 3 | `I-012` tầng 1 · câu đối chiếu tầng 4 | `i012_…`: `null value in column "person_id" of relation "bill"` · `"prepayment"` · `"opening_float"` · `"qr_code"` · `"debt_collection"` · `"refund"`, `"made_by_person_id"`, `check constraint "production_batch_rolled_back_by_iff_rolled_back_check"`; `i004_…`: `"station_job_transfer"`. Đối chiếu rỗng trước khi cài lỗi (hoá đơn người đi giao đứng ngoài); chủ quán tự hoàn khi không đứng quầy ⇒ `refund 2: người bấm test-chủ quán, người đứng quầy lúc ấy test-A đứng quầy` |
+| 4 | `I-018` · `YC-13` · `YC-12` · chế độ mềm | `i018_…`: `trước 0900000009, sau 0911111111, lý do "test-khách đọc lại số", test-B` · `trước 0911111111, sau 0922222222 … test-C`; `bản của B dựng lại từ vết của C: 0911111111`; cắt giữa chừng: số điện thoại và số vết không đổi; `null value in column "person_id" of relation "record_revision"` (sửa có lý do, không người sửa — lần sửa chết cùng vết); sáu lời từ chối hình dạng vết; `đổi giá — trước 900, sau 1000, test-chủ quán`; `bàn … đã xoá — vết vẫn đọc: "test-9" → "test-9b"`; `permission denied for table record_revision`; `chế độ mềm — sửa không khai lý do: 0 vết (F-046)`; `QD-33` mốc bị dời bắt được |
+| 5 | `YC-08` | `yc08_…`: `ngày bán 2026-09-27 (bán lúc 2026-09-27 07:50), gõ ngày 2026-09-28, người nhập bù test-B …, người đứng quầy lúc bán test-A …`; `sổ khai 3 lượt, còn 1 lượt trên giấy chưa nhập`; `violates foreign key constraint "bill_paper_ledger_fkey"` (ghi vào ngày gõ; bản soi số lượt sai) · `"bill_paper_position_in_range_check"` · `"bill_paper_position_key"` · `"bill_paper_columns_check"` · `"paper_ledger_one_per_day_key"` · `"paper_ledger_entry_count_positive_check"` |
+| 6 | không quyết luật nhân sự; mồi người theo vai | không bảng chấm công, lương, vai thường lệ; dữ liệu mồi in `INSERT INTO person (display_name) VALUES ('Người đứng quầy')` · `'Người tráng bánh'` · `'Người gấp bánh'` · `'Người canh & dọn'` — đọc bảng *Vai* của `shop-facts.md` §3 lúc chạy — cộng `'Chủ quán'` (`is_owner`); `PASS dữ liệu mồi — 15 bàn · 15 mã QR hiện hành …` |
+| 7 | file lát · pointer · kiểm | `06-luoc-do-nguoi-va-vet.md`; `00-index.md`, `CLAUDE.md` §2; `02-` §5 (ba hàng) · `04-` §5 · §6 · `05-` §5 · §6 · `08-` §4 · §6. `db-check: PASS — 27 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 26 file test, dữ liệu mồi + §4.8` (`PASS QD-52`, `PASS QC-04`). **Biết kêu:** trên compose project `banhcuon_p208` (gỡ sạch khi xong), **28** lần gỡ một ràng buộc / tắt trigger / cấp lại quyền sửa vết ⇒ **27** lần đỏ đúng ca; lần còn lại — gỡ `NOT NULL` của bản trước — bị `record_revision_images_of_target_check` từ chối: vế ấy được giữ kép. Lần rà đầu tìm ra ba test chưa đỏ đúng chỗ (thu nợ 0 đồng, bản chụp của dòng khác, phép so với NULL im lặng khi tắt trigger) — đã sửa. So tên bảng: **31** tên mỗi bên, `comm -3` **rỗng** |
+
+*Còn mở — cần chủ repo đọc:* các lựa chọn *phiên chọn 2026-09-28* của file lát (người thao tác là cài
+đặt giao dịch · một bảng vết cho mọi bảng bằng `jsonb` · trigger + `QD-52` · `paper_ledger` khai số
+lượt · tên `person`); **F-046** (bật chế độ nghiêm, cùng lượt cột người trên `table_session_member`);
+dấu *ngày đã đối soát xong* chưa bước nào nhận (cùng hàng ở `04-` §5).
+`03-luoc-do-menu-gia.md` §5 ba hàng vết (*giá tại mốc đã qua* · *vết sửa menu* · *ai đổi menu*) còn trỏ
+`P2-08` như chỗ trống — nay có lời ở `06-…` §2, nhưng file ấy đang mang thay đổi chưa commit của phiên
+khác nên lượt này không sửa: sửa sau khi file ấy commit.
+
+**Review độc lập** — 2026-09-29, Claude Code (phiên khác phiên dựng), chỉ đọc; tự chạy
+`./scripts/db-check.sh` ⇒ `PASS — 27 khối …, 26 file test, dữ liệu mồi + §4.8` và `./scripts/gate.sh`
+exit 0; không chạy lại vòng 28 lần gỡ. Ba phát hiện, thử trên compose project `banhcuon_review` (gỡ
+sạch):
+1. **Vai `shop_app` chèn thẳng được một vết bịa** vào `record_revision` — `REVOKE` chỉ thu `UPDATE`, còn
+   `INSERT` giữ lại vì trigger chạy bằng quyền người gọi. Output: `INSERT 0 1` cho một vết `bill` lý
+   do *"bịa"* không có lần sửa nào. Vết là đường lùi duy nhất (`I-018`, `YC-14`) và là nguồn lịch sử
+   của đối chiếu `I-016` · `I-024` ⇒ **sửa trong lượt này**, ngay dưới.
+2. Sửa số lượt đã khai của `paper_ledger` sau khi có hoá đơn nhập bù ⇒ `bill_paper_ledger_fkey` từ
+   chối lệnh sửa lẻ; sửa được khi đổi sổ **và** mọi hoá đơn của sổ trong cùng giao dịch (khoá hoãn).
+   Thấp — để chủ repo cân `ON UPDATE CASCADE`.
+3. *Suy ra, chưa chạy:* bảy cột ai bấm `NOT NULL DEFAULT actor_person_id()` thêm vào bảng **đã có
+   dòng** sẽ hỏng migration (mặc định ra trống). Không lỗi hôm nay — database luôn dựng từ rỗng; việc
+   của `P2-09`.
+
+**Sửa phát hiện 1** — 2026-09-29, chủ repo: *"please continue"* sau đề xuất nhận sửa. Acceptance (viết
+trước khi sửa): (a) `shop_app` chèn thẳng vào `record_revision` ⇒ `permission denied`; (b) `shop_app`
+sửa một bản ghi có khai lý do ⇒ vết **vẫn** được chụp (trigger chạy bằng quyền chủ lược đồ); (c) mọi
+test cũ và dữ liệu mồi vẫn qua; (d) file lát hàng `YC-12` nói vết chỉ sinh qua trigger. Kiểm chứng:
+`./scripts/db-check.sh`, `./scripts/gate.sh`.
+
+*Kết quả:* `record_revision_capture` thành `SECURITY DEFINER`; `REVOKE INSERT, UPDATE ON record_revision
+FROM shop_app`; `i018_…` thêm hai kịch bản; file lát hàng `YC-12`. Migration vẫn chưa commit nên sửa tại
+chỗ (`QC-05` chỉ cấm sửa file đã commit).
+
+| Acceptance | Bằng chứng |
+|---|---|
+| (a) | `I-018 vết không chèn thẳng được (shop_app): permission denied for table record_revision` |
+| (b) | `I-018 shop_app sửa ⇒ vết qua trigger: "test-10" → "test-10b", lý do "test-shop_app đổi tên bàn"` |
+| (c) | `db-check: PASS — 27 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 26 file test, dữ liệu mồi + §4.8` · `§4.8: 13 / 13 ca khớp từng đồng` |
+| (d) | `06-luoc-do-nguoi-va-vet.md` hàng `YC-12` |
+
+**Biết kêu** (database riêng, gỡ sạch): trả `GRANT INSERT` cho `shop_app` ⇒ `ERROR: I-018: vai shop_app
+chèn thẳng được một vết bịa`; đổi trigger về `SECURITY INVOKER` ⇒ `ERROR: permission denied for table
+record_revision` ở lần sửa của `shop_app` — hai lần gỡ, hai lần đỏ.
 
 [↑ đầu file](#top)
 

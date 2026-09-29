@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# P2-10 — dữ liệu mồi: menu thật, bàn, trạm của thành phần. Ý định, lý do và chỗ trống:
+# P2-10 — dữ liệu mồi: menu thật, bàn, trạm của thành phần; người theo vai (P2-08). Ý định, lý do và chỗ trống:
 # docs/product/2-db/08-du-lieu-moi.md.
 #
 # File này KHÔNG mang một con giá, một phụ thu, một số lượng thành phần hay số bàn nào của
@@ -224,6 +224,14 @@ my (%stations, @order_level);
   }
 }
 
+# --- §3: người theo vai (P2-08) -----------------------------------------------------------
+# Một người cho mỗi vai của bảng "Vai", cộng chủ quán — vai riêng ngoài năm trạm. Tên hiển thị
+# là TÊN VAI, không phải tên người: quán chưa khai tên ai (08-du-lieu-moi.md §4 hàng Người).
+my @roles = map { $_->{'Vai'} } table('Vai', section('## 3.'));
+die_owner("bảng Vai ở §3 rỗng") unless @roles;
+die_owner("§3 không còn câu về chủ quán (`owner`)")
+  unless grep { /Chủ quán \(`owner`\)/ } section('## 3.');
+
 # --- in SQL -----------------------------------------------------------------------------
 my $mode = $ARGV[0] // '';
 
@@ -233,6 +241,12 @@ die "seed.pl: tham số lạ '$mode'\n" if $mode ne '';
 print "-- Dữ liệu mồi P2-10, sinh từ $FACTS lúc chạy — không sửa tay, không lưu lại.\n";
 print "-- Ý định: docs/product/2-db/08-du-lieu-moi.md.\n";
 print "BEGIN;\nSET LOCAL ROLE shop_app;\n\n";
+
+print "-- §3 người theo vai, cộng chủ quán; chủ quán là người thao tác của lượt dựng (U-062: chủ\n";
+print "-- quán đổi mã QR). Mọi cột \"ai bấm\" đọc shop.actor_person_id (06-luoc-do-nguoi-va-vet.md §0).\n";
+printf "INSERT INTO person (display_name) VALUES (%s);\n", sqlq($_) for @roles;
+print "INSERT INTO person (display_name, is_owner) VALUES ('Chủ quán', true);\n";
+print "SELECT set_config('shop.actor_person_id', id::text, true) FROM person WHERE is_owner;\n\n";
 
 print "-- §1 Số bàn = $tables; tên bàn 1…$tables. Mã QR qua cửa duy nhất qr_code_issue (I-023).\n";
 print "INSERT INTO dining_table (label) SELECT n::text FROM generate_series(1, $tables) n;\n";

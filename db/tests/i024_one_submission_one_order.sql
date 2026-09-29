@@ -6,6 +6,14 @@
 -- Kịch bản song song mở HAI kết nối thật qua dblink. Kết nối đầu COMMIT, nên một đơn
 -- Pickup của kịch bản ấy còn lại sau ROLLBACK của file — trong database riêng mà
 -- db-check dựng rồi gỡ sau mỗi lần chạy, không phải database làm việc.
+-- Người thao tác của giao dịch (P2-08, 06-luoc-do-nguoi-va-vet.md §0): mọi cột "ai bấm" lấy mặc
+-- định từ đây — không khai thì thao tác chạm tiền, mẻ, lần chuyển, mã QR đều không ghi được.
+DO $$
+DECLARE p bigint;
+BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người đứng quầy') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+END $$;
 CREATE EXTENSION IF NOT EXISTS dblink;
 
 CREATE FUNCTION pg_temp.expect_reject(label text, stmt text, want text) RETURNS void

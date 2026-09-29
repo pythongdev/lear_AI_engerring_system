@@ -184,14 +184,14 @@ tên đứng trước để dòng không trông như một dòng tên bảng ở
 
 | Chỗ trống | Lược đồ hôm nay đứng thế nào | Ai gỡ |
 |---|---|---|
-| **Ai bấm** — vế thứ năm của `YC-01`, *người đang trực `quay`* lúc ghi nợ và lúc thu nợ (`architecture.md` §12.3), người bấm *đã nhận tiền* của khoản trả trước (`YC-23`), người sửa con số tiền đầu két | không bảng nào của lát có cột người: chưa có bảng người, và một cột chữ tạm là một cách định danh người thứ hai (`QD-11`). Bốn thứ còn lại của một lần hoàn đã `NOT NULL`. Cùng cách lát bán hàng lõi xử *ai đổi mã QR* | `P2-08` — thêm người vào `bill` · `debt_collection` · `prepayment` · `refund` · `opening_float` bằng migration mới |
+| ~~**Ai bấm** — vế thứ năm của `YC-01`, người trực quầy lúc ghi nợ và thu nợ, người nhận trả trước, người khai tiền đầu két~~ — **gỡ 2026-09-28 (`P2-08`)** | `person_id` bắt buộc trên `bill` · `debt_collection` · `prepayment` · `refund` · `opening_float`, mặc định người thao tác của giao dịch; *người đang trực lúc ấy* đọc từ `counter_duty` — [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) §1 · §2 | `P2-08` — xong |
 | **Trả một phần khoản nợ** | lần thu nợ phải thu **đủ** số nợ, đúng một lần — hai trạng thái *chưa thu · đã thu* của `YC-02` và `architecture.md` §12.3. Owner chưa nói ca khách trả dần | chủ quán — **U-063** (`docs/product/99-unknowns.md`) |
 | **Giảm giá cả đơn** (`shop-facts.md` §8.9) | hoá đơn **không** có cột giảm giá; `due_vnd` là số phải trả sau cùng | chủ quán — **U-058** (phạm vi bản đầu, giới hạn, lý do); lát nào dựng nó thêm cột bằng migration mới |
 | **Số tiền mặt đếm được cuối ngày**, và dấu *ngày đã đối soát xong* | chưa có chỗ cất: vế trái của `I-021` và tập *ngày đã qua mà con số dựng lại khác con số đã đối soát* của `I-014` cần nó. Test `i021_…` đưa số đếm vào như hằng số. Kế hoạch pha 2 §6 **không giao** việc này cho bước nào | chủ repo — quyết bước nào nhận (`P2-11` hay một bước lane admin) |
 | **Con số tiền đầu két mặc định** (*cố định, sửa được* — `shop-facts.md` §8.5) | lát chỉ cất con số **của từng ngày**; con số mặc định là cấu hình của mảng tài chính | lane admin (`work/backlog_AD.md` ADM-01); dữ liệu mồi `P2-10` |
 | **Một đơn nhiều khoản trả trước** | `prepayment_one_per_order_key` — một đơn, nhiều nhất một khoản. Owner chỉ tả **một** lần trả trước lúc đặt (`shop-facts.md` §6.3) | phiên chọn 2026-09-28 — gỡ bằng migration mới nếu quán cần |
-| **Vết của một lần sửa** một dòng tiền đã ghi (bản trước, bản sau — `YC-13`), vế *mốc không dời* của `QD-33` | lược đồ không cấm sửa; dòng tiền đã ghi sửa được như mọi bảng (`QC-03`) | `P2-08` |
-| **Nhập bù từ sổ giấy** (`YC-08`) | `booked_at` · `sale_date` nhận giá trị người khai; `created_at` là lúc gõ — hai mốc đọc riêng. *Còn bao nhiêu lượt trên giấy chưa nhập* chưa có chỗ | `P2-08` |
+| **Vết của một lần sửa** một dòng tiền đã ghi (bản trước, bản sau — `YC-13`), vế *mốc không dời* của `QD-33` | **từ `P2-08`**: vết cập nhật chụp bản trước và bản sau khi giao dịch khai lý do; câu *mốc tính tiền bị dời* đọc từ vết ([`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) §2). Chế độ mềm — một lần sửa không khai lý do không có vết | **F-046** |
+| ~~**Nhập bù từ sổ giấy** (`YC-08`)~~ — **gỡ 2026-09-28 (`P2-08`)** | sổ giấy `paper_ledger` khai số lượt; hoá đơn nhập bù trỏ về lượt thứ mấy của sổ, ngày bán bằng ngày của sổ; *còn N lượt* là một phép trừ; người nhập bù là `bill.person_id` — [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) §2 hàng `YC-08` | `P2-08` — xong |
 
 **Tham số của `01-quy-uoc-du-lieu.md` §0:** lát này **không** thêm bảng nào vào `:bang_ky_thuat` (mọi
 bảng mang dữ liệu tiền, không bảng nào được xoá) và không bảng nào vào `:bang_khong_quan_he_so_hoc` —
@@ -204,7 +204,7 @@ mỗi bảng có từ hai cột tiền trở lên đều có một điều kiệ
 | Bước | Lấy gì |
 |---|---|
 | `P2-07` | không gì — lát sản xuất không chạm tiền |
-| `P2-08` | §5 hàng *ai bấm* · *vết của một lần sửa* · *nhập bù*; năm bảng nhận cột người bằng migration **mới** |
+| `P2-08` | **xong 2026-09-28** — §5 ba hàng *ai bấm* · *vết của một lần sửa* · *nhập bù*; [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) |
 | `P2-09` | file migration của lát này là file thứ sáu của dãy; phép so tên bảng `.md` ↔ migration đọc §1 |
 | `P2-10` | con số tiền đầu két mặc định (§5) nếu dữ liệu mồi cần một ngày mẫu |
 | `P2-11` | §2 cột *Bằng chứng* · §3 bảng *Hạng tử đọc ở đâu* — mỗi mệnh đề cần câu đối chiếu của mình (**ADR-050** luật 2); các câu ở cuối file test là điểm bắt đầu |

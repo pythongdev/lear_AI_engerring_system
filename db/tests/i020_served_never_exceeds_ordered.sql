@@ -5,6 +5,14 @@
 -- Dựng chung của file (pg_temp — mất cùng ROLLBACK). Menu, tên và số đều GIẢ (test-…); menu thật
 -- là của P2-10, tra shop-facts §4.5 · §5.3. Hàm don · dong đứng THAY cửa tạo lượt gọi, no_don
 -- thay cửa nổ đơn, bam_me thay nút "đã làm xong" — đều của pha 3; chúng không phải các cửa ấy.
+-- Người thao tác của giao dịch (P2-08, 06-luoc-do-nguoi-va-vet.md §0): mọi cột "ai bấm" lấy mặc
+-- định từ đây — không khai thì thao tác chạm tiền, mẻ, lần chuyển, mã QR đều không ghi được.
+DO $$
+DECLARE p bigint;
+BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người đứng quầy') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+END $$;
 CREATE TEMP TABLE tm (name text PRIMARY KEY, id bigint NOT NULL);
 
 DO $$
@@ -319,7 +327,7 @@ BEGIN
   SET CONSTRAINTS ALL DEFERRED;
   RAISE NOTICE 'I-020 mẻ B vừa bấm — %', pg_temp.anh('test-bánh');
   BEGIN
-    UPDATE production_batch SET rolled_back_at = clock_timestamp() WHERE id = b_b;
+    UPDATE production_batch SET rolled_back_at = clock_timestamp(), rolled_back_by_person_id = actor_person_id() WHERE id = b_b;
     UPDATE production_batch_item SET batch_rolled_back = true
      WHERE production_batch_id = b_b AND station_job_id <> u[4];
     UPDATE station_job SET status = 'pending' WHERE id = ANY (u[1:3]);
@@ -330,7 +338,7 @@ BEGIN
   END;
   SET CONSTRAINTS ALL DEFERRED;
   BEGIN
-    UPDATE production_batch SET rolled_back_at = clock_timestamp() WHERE id = b_b;
+    UPDATE production_batch SET rolled_back_at = clock_timestamp(), rolled_back_by_person_id = actor_person_id() WHERE id = b_b;
     UPDATE production_batch_item SET batch_rolled_back = true WHERE production_batch_id = b_b;
     SET CONSTRAINTS ALL IMMEDIATE;   -- mẻ đã lùi, bốn cái bánh vẫn "đã làm xong"
     RAISE EXCEPTION 'I-020: database KHÔNG từ chối lùi mẻ mà không trả đơn vị về chưa làm';
@@ -339,13 +347,13 @@ BEGIN
   END;
   SET CONSTRAINTS ALL DEFERRED;
 
-  UPDATE production_batch SET rolled_back_at = clock_timestamp() WHERE id = b_b;
+  UPDATE production_batch SET rolled_back_at = clock_timestamp(), rolled_back_by_person_id = actor_person_id() WHERE id = b_b;
   UPDATE production_batch_item SET batch_rolled_back = true WHERE production_batch_id = b_b;
   UPDATE station_job SET status = 'pending' WHERE id = ANY (u);
   SET CONSTRAINTS ALL IMMEDIATE;
   SET CONSTRAINTS ALL DEFERRED;
   BEGIN
-    UPDATE production_batch SET rolled_back_at = made_at - interval '1 minute' WHERE id = b_b;
+    UPDATE production_batch SET rolled_back_at = made_at - interval '1 minute', rolled_back_by_person_id = actor_person_id() WHERE id = b_b;
     RAISE EXCEPTION 'I-020: database KHÔNG từ chối mốc lùi đứng trước mốc bấm';
   EXCEPTION WHEN check_violation THEN
     RAISE NOTICE 'I-020 bị từ chối (vết lần lùi có mốc lùi trước mốc bấm): %', SQLERRM;
@@ -357,6 +365,8 @@ BEGIN
     RAISE EXCEPTION 'I-020: lùi mẻ B không trả mọi bàn về đúng số trước lúc bấm';
   END IF;
   SELECT b.id, b.made_at, b.rolled_back_at,
+         (SELECT display_name FROM person WHERE id = b.made_by_person_id) AS nguoi_bam,
+         (SELECT display_name FROM person WHERE id = b.rolled_back_by_person_id) AS nguoi_lui,
          string_agg(t.label || ' ×' || x.n, ', ' ORDER BY t.label) AS phan
   INTO r
   FROM production_batch b
@@ -365,9 +375,11 @@ BEGIN
                 JOIN sales_order o ON o.id = j.sales_order_id
                 WHERE i.production_batch_id = b.id GROUP BY 1) x ON true
   JOIN dining_table t ON t.id = x.dining_table_id
-  WHERE b.id = b_b GROUP BY b.id, b.made_at, b.rolled_back_at;
-  RAISE NOTICE 'YC-07 vết lần lùi — mẻ %, bấm lúc %, lùi lúc %, đã phủ [%]; "ai lùi" chờ P2-08',
-    r.id, r.made_at, r.rolled_back_at, r.phan;
+  WHERE b.id = b_b GROUP BY b.id, b.made_at, b.rolled_back_at, b.made_by_person_id,
+                              b.rolled_back_by_person_id;
+  RAISE NOTICE 'YC-07 vết lần lùi — mẻ %, % bấm lúc %, % lùi lúc %, đã phủ [%]',
+    r.id, r.nguoi_bam, r.made_at, r.nguoi_lui, r.rolled_back_at, r.phan;
+  IF r.nguoi_lui IS NULL THEN RAISE EXCEPTION 'YC-07: lần lùi không đọc ra ai lùi'; END IF;
   -- Bấm lại sau khi lùi: mẻ cũ không còn giữ đơn vị nào, nên một mẻ mới nhận được chúng.
   PERFORM pg_temp.bam_me(u[1:2]);
   SET CONSTRAINTS ALL IMMEDIATE;

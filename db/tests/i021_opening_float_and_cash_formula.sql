@@ -3,6 +3,14 @@
 -- trả trước (đơn B · E), trả nợ và hoàn chéo của quality/invariants.md I-021.
 -- Số tiền mặt ĐẾM ĐƯỢC cuối ngày chưa có chỗ cất (file lát §5) — test đưa nó vào như hằng số.
 -- Lát: 04-luoc-do-duong-tien.md.
+-- Người thao tác của giao dịch (P2-08, 06-luoc-do-nguoi-va-vet.md §0): mọi cột "ai bấm" lấy mặc
+-- định từ đây — không khai thì thao tác chạm tiền, mẻ, lần chuyển, mã QR đều không ghi được.
+DO $$
+DECLARE p bigint;
+BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người đứng quầy') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+END $$;
 DO $$
 DECLARE t5 bigint; s1 bigint; oa bigint; ob bigint; oe bigint; oc bigint; od bigint; ow bigint; ot bigint;
         pb bigint; pe bigint; bb bigint; bt bigint; f1 bigint; rf bigint; d date; lech bigint; r record;

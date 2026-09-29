@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 43 finding — 41 Fixed/Resolved/Closed, 2 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-28, T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 46 finding — 42 Fixed/Resolved/Closed, 4 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -105,6 +105,9 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-041 | Gate 1d mù với khối API rõ nhất repo (mẫu đòi `/` ngay sau động từ), và dòng ignore ghi sai mục | Closed |
 | F-042 | Mã QR của bàn phải không đoán được và đổi được — pha 1 không có mệnh đề nào | Fixed |
 | F-043 | Một lần gửi đơn phải thành đúng một đơn — pha 1 không có mệnh đề nào | Fixed |
+| F-044 | Một tập đối chiếu của hàng `I-004` không bao giờ rỗng được — việc trạm không có trạng thái huỷ | Open |
+| F-045 | Hai phiên chạy `db-check` cùng lúc dùng chung một compose project ⇒ gỡ database của nhau, đỏ giả | Open |
+| F-046 | Vết cập nhật ở chế độ mềm — lần sửa không khai lý do đi qua mà không vết (chủ repo chọn, P2-08) | Open |
 
 ---
 
@@ -2497,6 +2500,13 @@ T-094 vào git trong bốn phút, giữa lượt làm của T-097. Không mất 
 `HEAD` vẫn comment-only, nên lần này chỉ là *sai chỗ*: ai tìm lúc T-097 được nhận sẽ thấy nó dưới
 subject của T-094. ⇒ Kết luận không đổi; đường vá vẫn thuộc chủ repo.
 
+**Lần nữa — 2026-09-28, ghi bởi P2-05 phần *test biết kêu* (Claude Code).** Commit `89ac41b`
+**`P2-06: Dựng lược đồ đường tiền …`** mang theo hai thay đổi chưa commit của P2-05 — dòng `Done` của
+P2-05 ở `work/backlog.md` và khối *Test biết kêu* ở `work/backlog_DB.md` — trong khi hai test và file
+lát của cùng lượt ấy (`db/tests/i009_…` · `i013_…` · `03-luoc-do-menu-gia.md`) ở lại ngoài commit. Hệ
+quả: `HEAD` kể bằng chứng *"bảy lần đỏ"* và *"đã sửa test `I-013`"* trong khi test đã sửa chưa có
+trong `HEAD` — đúng hình lần thứ tư. ⇒ Kết luận không đổi; đường vá vẫn thuộc chủ repo.
+
 ### F-026 — Ba invariant sinh SAU khi kế hoạch chia nhóm, nên không nhóm nào của pha 1 nhận chúng
 
 **Problem:**
@@ -3988,6 +3998,65 @@ không phải lời pha 1. Việc của pha 1: viết lại tập ấy thành m�
 
 **Related task:**
 `work/backlog_DB.md` → **P2-07** · `P2-11` (câu truy vấn của tập ấy)
+
+**Status:**
+Open
+
+### F-045 — Hai phiên chạy `db-check` cùng lúc dùng chung một compose project, nên gỡ database của nhau và báo đỏ giả
+
+**Problem:**
+`scripts/db-check.sh` dựng database kiểm dưới tên compose project **cố định** `banhcuon_check`, và gọi
+`compose down -v` cả lúc bắt đầu lẫn lúc thoát. Hai phiên song song (hay một phiên và một worktree như
+`.claude/worktrees/`) chạy nó cùng lúc thì lần sau gỡ database của lần trước giữa chừng. Đo 2026-09-28
+(P2-05 phần *test biết kêu*, Claude Code): lúc `ps` thấy **hai** tiến trình `db-check`, một lần chạy
+in `FAIL` cho sáu khối `QD-XX` và mười ba file test (*"câu kiểm không chạy được"*), không đổi một
+dòng nào, chạy lại ngay sau đó ⇒ `db-check: PASS — … 22 file test`.
+
+**Impact:**
+Gate 1 đỏ vì một lý do không nằm trong thay đổi. Phiên nhận cổng đỏ hoặc đi sửa thứ không hỏng, hoặc
+học rằng *đỏ thì chạy lại* — đúng thói quen làm một cổng mất nghĩa. Ngược lại hiếm hơn nhưng nặng
+hơn: một lần chạy có thể đọc lược đồ mà migration của lần kia đã dựng.
+
+**Decision / Fix:**
+Chưa sửa — `scripts/` ngoài scope của lượt ghi nhận. Hướng rẻ nhất: tên project riêng cho mỗi lần chạy
+(ví dụ gắn PID), để `cleanup` chỉ gỡ đúng database của mình; `QC-07` ở
+`docs/product/2-db/10-quy-uoc-code.md` đang nêu tên project cố định nên đổi cùng lượt. Cần một task
+L1 ở `work/backlog.md`; người mở task chọn cách.
+
+**Related task:**
+`work/backlog_DB.md` → **P2-05** (lượt phát hiện) · `P2-12` (`QC-07`, chủ của bộ kiểm)
+
+**Status:**
+Open
+
+### F-046 — Vết cập nhật đang ở chế độ mềm: một lần sửa không khai lý do đi qua mà không để lại vết
+
+**Problem:**
+`quality/invariants.md` `I-018` và hàng của nó ở `docs/product/1-system-design/03-bao-ve-invariant.md`
+đòi **mọi** lần cập nhật một bản ghi đã có giữ đủ bản trước, bản sau, lý do, người sửa — tầng 1 cho
+hình dạng, tầng 2 cho *cùng giao dịch với lần sửa*. Lát `P2-08` (2026-09-28, Claude Code) dựng trigger
+`record_revision_capture` chụp vết trong cùng câu lệnh với lần sửa, nhưng ở **chế độ mềm**: giao dịch
+không khai `shop.revision_reason` thì lần sửa đi qua mà **không** có vết
+(`db/tests/i018_revision_before_after.sql` in *"sửa không khai lý do: 0 vết"*). Chủ repo chọn chế độ
+này trong phiên, 2026-09-28, giữa ba đường: mềm + finding · nghiêm ngay · không trigger.
+
+**Impact:**
+Vế *không lần sửa nào thiếu vết* hôm nay chỉ do cửa cập nhật của pha 3 (tầng 3) và câu đối chiếu giữ —
+thấp hơn tầng pha 1 đã chốt. Một đường ghi quên khai lý do là một lần sửa không ai dựng lại được —
+đúng ca *thu thiếu tiền* của `I-018` nếu nó là lần ghi đè một lượt gọi.
+
+**Decision / Fix:**
+Chưa bật. Lý do hoãn: chế độ nghiêm từ chối **mọi** lần sửa không khai, nên mọi file `db/tests/*.sql` có
+lệnh `UPDATE` và `db/seed/seed.pl` phải khai lý do và người sửa — gồm `i009_…` · `i013_…` đang mang thay
+đổi chưa commit của phiên khác lúc `P2-08` chạy. **Gỡ bằng một migration mới**, cùng lượt: (1)
+`record_revision_capture` từ chối lần sửa khi `shop.revision_reason` trống; (2) mọi file test và dữ
+liệu mồi khai lý do trước mỗi lần sửa; (3) cùng lượt thêm cột người bắt buộc vào `table_session_member`
+(*ai mở phiên, ai ghép bàn* — `I-012`), chỗ trống cùng nguyên nhân ở
+`docs/product/2-db/06-luoc-do-nguoi-va-vet.md` §5. Làm sau khi hai file kia đã commit, tốt nhất cùng
+lượt pha 3 dựng cửa ghi duy nhất.
+
+**Related task:**
+`work/backlog_DB.md` → **P2-08** · pha 3
 
 **Status:**
 Open

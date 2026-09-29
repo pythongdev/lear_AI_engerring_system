@@ -2,6 +2,14 @@
 -- số tiền; nợ không phải tiền đã thu; phiên đã đóng không thể thiếu hoá đơn. Kèm YC-11: tên
 -- người chỉ được hỏi khi có nợ. Lát: 04-luoc-do-duong-tien.md.
 -- Bộ kiểm ROLLBACK cuối file, nên mọi ràng buộc hoãn được ép chạy bằng SET CONSTRAINTS.
+-- Người thao tác của giao dịch (P2-08, 06-luoc-do-nguoi-va-vet.md §0): mọi cột "ai bấm" lấy mặc
+-- định từ đây — không khai thì thao tác chạm tiền, mẻ, lần chuyển, mã QR đều không ghi được.
+DO $$
+DECLARE p bigint;
+BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người đứng quầy') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+END $$;
 DO $$
 DECLARE t5 bigint; t6 bigint; s1 bigint; s2 bigint; b1 bigint; r record;
 BEGIN

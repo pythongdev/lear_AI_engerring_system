@@ -3,6 +3,14 @@
 -- Kịch bản: quality/invariants.md I-022 Verification. Lát: 02-luoc-do-ban-hang.md §2.
 -- Mỗi kịch bản âm phải bị từ chối bởi ĐÚNG ràng buộc nó nhắm, không phải một ràng
 -- buộc khác tình cờ chặn hộ.
+-- Người thao tác của giao dịch (P2-08, 06-luoc-do-nguoi-va-vet.md §0): mọi cột "ai bấm" lấy mặc
+-- định từ đây — không khai thì thao tác chạm tiền, mẻ, lần chuyển, mã QR đều không ghi được.
+DO $$
+DECLARE p bigint;
+BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người đứng quầy') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+END $$;
 CREATE FUNCTION pg_temp.expect_reject(label text, stmt text, want text) RETURNS void
 LANGUAGE plpgsql AS $$
 DECLARE got text;

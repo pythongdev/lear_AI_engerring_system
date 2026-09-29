@@ -1,6 +1,14 @@
 -- YC-01 · I-012: mỗi lần hoàn tiền đọc lại được sau nhiều ngày — bao nhiêu · cho lượt bán
 -- nào · lúc mấy giờ · lý do · trả lại bằng gì; thiếu lý do là không ghi được. Vế "ai bấm" là
 -- chỗ trống có tên — bảng người là của P2-08. Lát: 04-luoc-do-duong-tien.md.
+-- Người thao tác của giao dịch (P2-08, 06-luoc-do-nguoi-va-vet.md §0): mọi cột "ai bấm" lấy mặc
+-- định từ đây — không khai thì thao tác chạm tiền, mẻ, lần chuyển, mã QR đều không ghi được.
+DO $$
+DECLARE p bigint;
+BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người đứng quầy') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+END $$;
 DO $$
 DECLARE o1 bigint; b1 bigint; rf bigint; r record;
 BEGIN

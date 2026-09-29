@@ -105,7 +105,7 @@ thử; mặc định luôn là owner):
 
 | Chỗ trống | Hôm nay đứng thế nào | Ai gỡ |
 |---|---|---|
-| **Người** — bốn vai, chủ quán, ai đứng trạm nào (`shop-facts.md` §3) | **không dựng**: chưa có bảng người nào. Không tự đặt tên người | `P2-08` dựng bảng; dữ liệu mồi thêm người **theo vai** của §3 ở lượt ấy |
+| **Người** — bốn vai, chủ quán (`shop-facts.md` §3) | **dựng 2026-09-28 (`P2-08`)**: một người cho mỗi dòng bảng *Vai* của §3, đọc lúc chạy, cộng chủ quán (`is_owner`); tên hiển thị là **tên vai** — quán chưa khai tên ai. Chủ quán là người thao tác lúc cấp mã QR (U-062). *Ai đứng trạm nào* không mồi: chỉ quầy có mốc đổi, và POS khai lúc bán thật | `P2-08` — xong; tên người thật là việc của quán |
 | **Số chỗ ngồi của bàn** (§1) | không cột nào cất; dữ liệu mồi không dựng | — cần thì một migration mới |
 | **Ô giá ⚠ của giò bán rời** (`S-9`, §7.2) | dựng đúng ô owner đang ghi; ca 12 khớp ô ấy. Chủ quán đọc ô khác ⇒ owner đổi, dữ liệu mồi đổi theo | chủ quán |
 | **Bắt buộc chọn một nhân** và **mặc định Thịt · Thường** (§4.4 · §4.6 luật 7 · 8) | không cất (`03-luoc-do-menu-gia.md` §5); các ca của §4.8 đều ghi rõ lựa chọn nên không cần mặc định | pha 3 |
@@ -120,5 +120,5 @@ thử; mặc định luôn là owner):
 |---|---|
 | `P2-11` | bộ đối chiếu chạy trên database **sau bước 4** của `db-check.sh` ⇒ phải ra 0 dòng trên dữ liệu mồi |
 | `P2-13` | ba scenario dựng đơn trên menu này, không tự gõ món |
-| `P2-08` | §4 hàng *Người* |
+| `P2-08` | **xong 2026-09-28** — §4 hàng *Người*; [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) |
 | pha 3 | §2 — ba loại trứng là ba thành phần; hàm tính giá phải ra đúng mọi ca của §4.8 như §3 |

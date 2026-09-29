@@ -133,6 +133,7 @@ cột tiền mang sai hậu tố là một cột mà `QD-20` không bao giờ nh
   | trạng thái | `status` | `QD-40` |
   | định danh máy đọc | `code` hoặc hậu tố `_code` | `QD-61` |
   | chuỗi băm | hậu tố `_hash` | `QD-61` |
+  | bản chụp một dòng (vết cập nhật) — *thêm 2026-09-28, `P2-08`* | hậu tố `_image` | `QD-52` · `10-quy-uoc-code.md` `QC-04` |
 
   Cột trỏ tới bản ghi của **nhiều** bảng khác nhau (ví dụ một vết nói về nhiều loại bản ghi) **không**
   mang hậu tố `_id`, vì nó không có khoá ngoại được (`QD-11`); lát tạo nó đặt tên và ghi lý do.
@@ -498,6 +499,34 @@ nào, kiểu gì* (§5). Năm mục dưới đây là câu trả lời.
     AND (delete_rule = 'CASCADE' OR update_rule = 'CASCADE');
   ```
 - **Nguồn:** phiên chọn 2026-09-26, dựng để `QD-50` không có đường vòng.
+
+
+### QD-52 — Mọi bảng nghiệp vụ mang trigger chụp vết cập nhật, và trigger ấy đang bật
+
+- **Quy ước:** mỗi bảng của `:schema`, trừ chính bảng vết `record_revision`, có một trigger
+  `AFTER UPDATE … FOR EACH ROW` gọi hàm `record_revision_capture` và trigger ấy **không** bị tắt.
+  Bảng mới của một lát sau phải mang nó trong cùng migration tạo bảng. *Thêm 2026-09-28, `P2-08`.*
+- **Hậu quả nếu làm khác:** lần sửa trên bảng thiếu trigger không để lại bản trước và bản sau dù
+  giao dịch đã khai lý do — `I-018` hỏng im lặng đúng ở bảng mới nhất, bảng ít ai để ý nhất. Một
+  trigger bị tắt là một vết không ai biết đã ngừng ghi, nên phép kiểm đọc cả trạng thái bật.
+- **Phép kiểm:**
+  ```sql
+  SELECT t.table_name
+  FROM information_schema.tables t
+  WHERE t.table_schema = :schema AND t.table_type = 'BASE TABLE'
+    AND t.table_name <> 'record_revision'
+    AND NOT EXISTS (
+      SELECT 1
+      FROM pg_trigger g
+      JOIN pg_class c     ON c.oid = g.tgrelid
+      JOIN pg_namespace n ON n.oid = c.relnamespace
+      JOIN pg_proc f      ON f.oid = g.tgfoid
+      WHERE n.nspname = t.table_schema AND c.relname = t.table_name
+        AND f.proname = 'record_revision_capture' AND g.tgenabled <> 'D');
+  ```
+- **Nguồn:** owner — `quality/invariants.md` `I-018`, `03-bao-ve-invariant.md` hàng `I-018` (tầng 2:
+  vết ghi cùng giao dịch với lần sửa); dùng trigger và phép kiểm này là phiên chọn 2026-09-28
+  (`docs/product/2-db/06-luoc-do-nguoi-va-vet.md` §2).
 
 ---
 

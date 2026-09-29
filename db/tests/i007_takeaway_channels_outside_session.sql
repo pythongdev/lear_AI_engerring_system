@@ -1,5 +1,13 @@
 -- I-007 · I-006 (tầng 1, một ranh giới, một cơ chế): đơn của ba kênh không gắn
 -- bàn không thuộc phiên bàn nào, ở mọi thời điểm. Lát: 02-luoc-do-ban-hang.md.
+-- Người thao tác của giao dịch (P2-08, 06-luoc-do-nguoi-va-vet.md §0): mọi cột "ai bấm" lấy mặc
+-- định từ đây — không khai thì thao tác chạm tiền, mẻ, lần chuyển, mã QR đều không ghi được.
+DO $$
+DECLARE p bigint;
+BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người đứng quầy') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+END $$;
 DO $$
 DECLARE t5 bigint; s1 bigint; o1 bigint; q5 bigint;
 BEGIN

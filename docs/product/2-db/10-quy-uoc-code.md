@@ -133,6 +133,7 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   | mã `code` · `_code` · `status` · `_hash` (`QD-61`, `QD-40`) | `text` (cách so mặc định `C`) | so từng byte, phân biệt hoa thường |
   | số lượng, số đếm | `integer` | số nguyên; không âm là ràng buộc kiểm của lát |
   | cờ có/không | `boolean` | — |
+  | bản chụp một dòng `_image` (`QD-03`) — *thêm 2026-09-28, `P2-08`* | `jsonb` | vết cập nhật (`I-018`) giữ bản trước và bản sau của **mọi** bảng trong một bảng vết: một kiểu mang được một dòng bất kỳ, so được bằng `=`, đọc từng ô bằng `->>`. Chỉ cột hậu tố `_image` được dùng nó |
 
   Kiểu khác (`numeric`, `jsonb`, mảng, `varchar`…) chỉ vào lược đồ khi một dòng mới được thêm vào
   bảng trên **trước**, kèm lý do.
@@ -146,7 +147,8 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   FROM information_schema.columns
   WHERE table_schema = :schema
     AND (   data_type NOT IN ('bigint', 'integer', 'boolean', 'date', 'text',
-                              'timestamp with time zone')
+                              'timestamp with time zone', 'jsonb')
+         OR (data_type = 'jsonb') <> (column_name LIKE '%!_image' ESCAPE '!')
          OR (column_name = 'id' AND (data_type <> 'bigint' OR is_identity <> 'YES'
                                      OR identity_generation <> 'ALWAYS'))
          OR (column_name LIKE '%!_id'  ESCAPE '!' AND data_type <> 'bigint')
