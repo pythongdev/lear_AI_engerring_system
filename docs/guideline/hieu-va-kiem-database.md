@@ -240,4 +240,58 @@ nào là xong. Một dòng `SKIP` nghĩa là bước ấy **không chạy**, kh�
 
 Mở máy muốn biết database làm việc còn ổn: mục 2 (`make status`, rồi vài câu SQL ở 2.2–2.3). Vừa
 sửa hay thêm migration, test, hay dữ liệu mồi: `./scripts/db-check.sh`, vì chỉ nó dựng lại từ số 0.
-Trước khi giao một thay đổi: `./scripts/gate.sh`.
+Trước khi giao một thay đổi: `./scripts/gate.sh`. Muốn tận mắt xem một vòng bán: mục 6.
+
+## 6. Mô phỏng một vòng bán tại bàn
+
+Hệ thống **chưa có** lệnh "đặt món" hay "thanh toán": database chỉ chứa dữ liệu và chặn cái sai,
+còn phần làm việc — nhận đơn, tính giá, chia việc xuống bếp, đóng phiên — là việc của pha 3
+(backend), chưa mở. Kịch bản [mo-phong-mot-vong-ban-tai-ban.sql](mo-phong-mot-vong-ban-tai-ban.sql)
+gõ tay thay cho phần ấy, để xem cả vòng chạy trên database thật:
+
+1. khách ngồi bàn 5 quét QR gọi 2 suất — đơn chờ quầy duyệt;
+2. quầy duyệt, đơn nổ thành việc ở từng trạm bếp;
+3. khách nhờ quầy gọi thêm 1 giò — vào **chính** phiên ấy, không cần duyệt;
+4. bếp làm hai mẻ, quầy bấm "đã làm xong";
+5. quầy bấm "đã ra bàn", hai đơn sang Hoàn thành;
+6. quầy tính tiền cả phiên, in hoá đơn tạm;
+7. khách trả một phần tiền mặt, phần còn lại chuyển khoản; quầy đóng phiên;
+8. dọn bàn, bàn 5 nhận khách mới.
+
+Dọc đường nó cố tình làm sai bốn lần — cho bếp làm đơn chưa duyệt, mở phiên thứ hai cho bàn đang
+có khách, ghi thu vượt số phải trả, đóng phiên thiếu hoá đơn — và in ra câu database từ chối.
+
+Chạy trên database làm việc (cần `make setup` trước):
+
+```bash
+make psql < docs/guideline/mo-phong-mot-vong-ban-tai-ban.sql
+```
+
+Cả kịch bản nằm trong `BEGIN … ROLLBACK`, nên chạy xong database **không đổi gì** và chạy lại bao
+nhiêu lần cũng được; chỉ các số thứ tự (`id`) nhảy lên, không hại gì. Đoạn output thật chạy
+2026-09-29 trên một database dựng riêng từ dữ liệu mồi:
+
+```text
+NOTICE:  1. Khách ngồi bàn 5, quét QR, gọi món
+NOTICE:     + 2 × Đầy đủ trứng chín [Thịt · Thường] — 30000 đ/suất
+NOTICE:     ✗ bị chặn — đơn chưa duyệt không xuống bếp được (I-004): ... "station_job_sales_order_fkey"
+NOTICE:  2. Quầy duyệt đơn 3; hệ thống nổ đơn xuống các trạm
+NOTICE:     bếp: canh: chờ 1 · xong 0 · ra bàn 0 | gap_banh: chờ 10 · xong 0 · ra bàn 0 | trang_banh: chờ 8 · ...
+...
+NOTICE:  6. Quầy tính tiền cả phiên: 69000 đ — phiên sang Chờ thanh toán (bàn vẫn bận)
+ don |   kenh    |        mon        |   tuy_chon    | sl | don_gia | thanh_tien
+   3 | qr_table  | Đầy đủ trứng chín | Thịt · Thường |  2 |   30000 |      60000
+   4 | staff_pos | Giò bán rời       |               |  1 |    9000 |       9000
+NOTICE:  7. Khách trả 20000 đ tiền mặt + 49000 đ chuyển khoản; quầy đóng phiên
+NOTICE:     ✗ bị chặn — tiền thu phải khớp số phải trả (I-015): ... "bill_parts_equal_due_check"
+NOTICE:     ✗ bị chặn — phiên đã đóng phải có hoá đơn: ... "table_session_bill_fkey"
+...
+ hoa_don | phai_tra | tien_mat | chuyen_khoan | no |  ngay_ban  |  luc  |    nguoi_thu
+       2 |    69000 |    20000 |        49000 |  0 | 2026-09-29 | 23:03 | Người đứng quầy
+Xong mô phỏng — ROLLBACK: database trở lại như trước khi chạy.
+```
+
+Con số tiền đi theo menu trong `master_plan/shop-facts.md`, nên đổi khi menu đổi. Kịch bản
+**không** quyết luật nào mới: các hàm `pg_temp.*` trong nó đứng thay cho cửa của pha 3, phép tính
+giá chép từ `db/seed/seed.pl`. Một chỗ nó chỉ tạm chọn để đi tiếp: bấm "đã ra bàn" theo mẻ hay
+theo bàn là **S-5** ở `master_plan/shop-facts.md` §7.2, còn chờ chủ quán; ở đây bấm cả bàn một lần.
