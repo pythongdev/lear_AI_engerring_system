@@ -71,6 +71,9 @@ không nối được về §4.2; một thành phần không xuống trạm nào
   cùng nhân sẽ gộp vào một mẻ, trong khi §5.3 in *Trứng tái ×2* thành một dòng riêng. Bị loại: *một
   thành phần, loại trứng là một nhóm tuỳ chọn* — §4.4 không có nhóm ấy, và dựng thêm một nhóm là
   thêm một luật mà owner không viết.
+  **Chủ repo xác nhận 2026-09-30**, nguyên văn: *"ba loại trứng này là 3 quả khác nhau. 1 suất
+  trứng khách có thể gọi suất trứng tái, trứng chín hoặc trứng vàng"* — gạch này không còn là phiên
+  chọn. Hai gạch dưới vẫn là phiên chọn.
 - **Trạm của trứng chín và trứng vàng đọc theo trứng tái.** Khối §5.3 chỉ in trứng tái; §3 ghi trạm
   `trang_banh` *làm trứng* không phân loại, nên bộ dựng gán trạm theo **họ** thành phần, không theo
   từng loại. Đây là **suy ra**, không phải lời chủ quán.
