@@ -214,6 +214,8 @@ Các bước dưới đây giải thích cách áp dụng luật đọc context 
    chiếu khi còn thiếu căn cứ. Những nguồn này có thể nằm ngoài tập phải rà
    và ngoài phạm vi được sửa. Ví dụ, đọc `shop-facts.md` để xác nhận một tên
    kênh bán không có nghĩa là rà toàn bộ file ấy hay được sửa dữ kiện quán.
+   Xem **§4.4 bên dưới**: lượt đọc thật trường hợp `staff.role`, có lệnh,
+   output, căn cứ kết luận và diff của lần sửa trong lịch sử.
 
    **Rà để kết luận: phải kiểm tra đầy đủ trên tập tài liệu nào?** Tập của
    ca lịch sử là tám file `docs/product/1-system-design/*.md`: sáu file
@@ -349,21 +351,137 @@ owner, đừng đoán tiếp.
   kênh. Cần lấy ý nghĩa của định danh trong câu đang xét. Không cần nạp toàn bộ
   menu, giá và mọi quy tắc quán chỉ để phân biệt tên trạm với tên bảng.
 
-### 4.4. Ví dụ: biến một dòng tìm thấy thành kết luận có căn cứ
+### 4.4. Chạy thật một ví dụ: đọc `staff.role`, kết luận và xem bản sửa
 
-Giả sử bộ lọc trả về một đoạn chứa `qr_table`. Chưa thể ghi “vi phạm” chỉ vì chuỗi
-có dấu gạch dưới. Trước hết đọc đoạn chứa nó: tác giả đang nói về kênh bán hay
-đang mô tả lược đồ? Sau đó tìm định nghĩa trong `shop-facts.md` §2 và luồng sử dụng
-ở §5. Nếu đoạn ấy dùng nó với nghĩa kênh bán đã được owner định nghĩa, kết luận
-là **định danh nghiệp vụ**, không tính làm tên bảng.
+**Codex chạy lại các lệnh dưới đây ngày 2026-09-29 theo yêu cầu chủ repo.** Đây
+là lượt kiểm chứng một trường hợp bằng lịch sử Git, không phải chạy lại toàn bộ
+Acceptance của P1-12. `bf39be5` là commit kết quả đo; `20f7822` là commit sửa ở
+task T-079. Dùng `git show` để đọc đúng phiên bản lịch sử mà không đổi working
+tree. Các số dòng bên dưới thuộc phiên bản được chỉ định, không phải file hôm nay.
 
-Ngược lại, việc một chuỗi có mặt trong `shop-facts.md` không miễn cho mọi cách dùng
-chuỗi ấy. Nếu đoạn đang rà dùng nó để đặt tên một bảng, phải chấm theo ranh giới
-lược đồ. Context gồm **cả định nghĩa ở nguồn lẫn cách dùng tại chỗ đang đo**.
+**Bước 1 — Đọc nhiệm vụ để biết tìm thấy lỗi rồi được làm gì.** Chạy từ gốc repo:
 
-Với `UNIQUE`, cũng phải đọc vị trí: ca lịch sử này phân biệt đoạn ở §3.1 với ngoại
-lệ tự khai tại §12.3. Cùng từ khoá nhưng phạm vi áp dụng khác nhau thì kết luận
-khác nhau. Đây là lý do không thể lấy danh sách khớp của bộ lọc làm danh sách lỗi.
+```bash
+git show bf39be5:prompt/SD/P1-12-ra-cheo-ranh-gioi-pha-L1.md | sed -n '32,54p'
+```
+
+Output có hai phần “Được sửa” và “Không được sửa”: phần đầu cho sửa §7 ô 10 của
+file cổng và ghi finding; phần sau cấm sửa bảy file nội dung pha 1, gồm
+`architecture.md`. Tôi hiểu rằng **phát hiện trong kiến trúc thì ghi nhận để
+xử lý, không sửa kiến trúc ngay trong lượt P1-12**. Đây là quyền do prompt cấp,
+không phải suy từ việc tôi đọc được file.
+
+**Bước 2 — Tìm dòng nghi vấn, rồi đọc cả đoạn để hiểu nó đang nói gì.**
+
+```bash
+git show bf39be5:docs/product/1-system-design/architecture.md | rg -n -C 4 'staff.role'
+git show bf39be5:docs/product/1-system-design/architecture.md | sed -n '238,265p'
+```
+
+Dòng khớp thật của lệnh đầu:
+
+```text
+238:## 4. Quyền gắn CHỖ ĐỨNG, không gắn chức vụ — và vì sao `staff.role` không đủ
+```
+
+Lệnh thứ hai cho thấy đoạn bên dưới còn viết “Một cột `role` cố định trên bảng
+nhân viên không diễn được luật này”, rồi giải thích chức vụ trả lời *người này
+là ai*, còn quyền thao tác hỏi *người này đang đứng đâu, lúc này*. Vậy đây là
+cách diễn đạt bằng bảng và cột, không phải một tên kênh bán tình cờ khớp mẫu.
+Tới đây tôi biết **đang có gì trong tài liệu**, nhưng còn phải đọc luật để chấm.
+
+**Bước 3 — Đọc nguồn quyết định ranh giới và kiểm tra ngoại lệ.**
+
+```bash
+git show bf39be5:docs/decisions.md | sed -n '2066,2165p'
+git show bf39be5:docs/product/1-system-design/architecture.md | sed -n '552,588p'
+```
+
+Lệnh đầu mở toàn bộ quyết định ADR-035 về quyền sở hữu theo pha. Trong bảng
+Decision, “Lược đồ: tên bảng, tên cột, khoá ngoại, quan hệ, thứ tự migration”
+thuộc **pha 2 · DB**. Lệnh sau mở §12.3, có câu tự khai:
+
+> Mục 12.3 này cố ý vượt ranh giới §8 đặt ra ("không đặt tên bảng, không đặt tên cột").
+
+Đây là trích đoạn; đọc cả output sẽ thấy lý do là chủ repo yêu cầu một mục DB
+cho phần nợ và nó chỉ là đề xuất gửi sang pha 2. **Ngoại lệ nói rõ “Mục 12.3”;
+dòng đang xét nằm ở §4 nên không được hưởng ngoại lệ ấy.** Kết hợp vị trí, cách
+dùng và luật sở hữu, tôi mới kết luận `staff.role` là chỗ vượt ranh giới pha.
+Nếu chỉ tìm chuỗi rồi báo lỗi, tôi chưa chứng minh được phần này.
+
+**Bước 4 — Đọc nghiệp vụ để biết khi sửa phải giữ ý nghĩa nào.**
+
+```bash
+git show bf39be5:master_plan/shop-facts.md | sed -n '902,923p'
+```
+
+Đoạn §6.13 xác nhận quyền huỷ gắn với người đang đứng quầy; chủ quán không đứng
+quầy thì nhờ người đứng quầy bấm. Nguồn này trả lời **ý nghĩa phải giữ**, còn
+ADR-035 trả lời **cách diễn đạt nào đặt sai pha**. Không thể dùng quyết định
+kiến trúc để tự đặt lại quyền huỷ của quán. Với ví dụ này chỉ cần phần nghiệp vụ
+ấy, không cần đọc menu, giá hay migration đang mở trong IDE.
+
+**Bước 5 — Kiểm tra nguồn gốc và nơi đã nhận lỗi.**
+
+```bash
+git blame bf39be5 -L 238,238 --date=short -- docs/product/1-system-design/architecture.md
+git show bf39be5:work/findings.md | rg -n -C 3 'staff.role'
+```
+
+Output của blame:
+
+```text
+cf8bd83b docs/architecture.md (pythongdev 2026-08-31 238) ## 4. Quyền gắn CHỖ ĐỨNG, không gắn chức vụ — và vì sao `staff.role` không đủ
+```
+
+Git hiện đường dẫn cũ của file ở commit sinh ra dòng. Ngày 2026-08-31 đứng trước
+ngày chốt ADR-035 là 2026-09-04: đây là nội dung cũ chưa được điều chỉnh theo luật
+ban hành sau đó. Điều này giải thích nguồn gốc, **không làm nó hợp lệ khi đo**.
+Lệnh thứ hai tìm được hàng §4, dòng 238 trong finding F-040 về ba chỗ vượt ranh
+giới; P1-12 đã ghi nhận nó thay vì sửa ngay.
+
+**Bước 6 — Xem lần sửa thật: ai cho phép, đổi câu nào, giữ lại điều gì.**
+
+```bash
+git log --oneline --all --grep='T-079'
+git show 20f7822:docs/decisions.md | rg -n -A 30 '^### ADR-048'
+git show 20f7822 -- docs/product/1-system-design/architecture.md
+```
+
+Lệnh đầu trả về `20f7822 T-079: o 10 cong pha 1 tick — F-040 va F-041 dong`.
+Lệnh thứ hai cho thấy ADR-048 ghi chủ repo chọn cách viết lại bằng ngôn ngữ tầng
+ngày 2026-09-20, giữ nguyên ý nghĩa. Lệnh cuối cho diff thật; dưới đây trích hai
+phần sửa ở §4, không phải toàn bộ diff của commit:
+
+```diff
+-## 4. Quyền gắn CHỖ ĐỨNG, không gắn chức vụ — và vì sao `staff.role` không đủ
++## 4. Quyền gắn CHỖ ĐỨNG, không gắn chức vụ — và vì sao một chức vụ ghi cố định không đủ
+
+-⇒ **Một cột `role` cố định trên bảng nhân viên không diễn được luật này.** `role` trả lời *người
+-này là ai*; luật hỏi *người này đang đứng đâu, lúc này*. Hai câu khác nhau, và câu thứ hai đổi
+-nhiều lần trong một buổi sáng.
++⇒ **Một chức vụ ghi cố định trên hồ sơ một người không diễn được luật này.** Chức vụ trả lời
++*người này là ai*; luật hỏi *người này đang đứng đâu, lúc này*. Hai câu khác nhau, và câu thứ
++hai đổi nhiều lần trong một buổi sáng.
+```
+
+Để kiểm tra bản sau sửa thay vì chỉ tin thông điệp commit, chạy:
+
+```bash
+git show 20f7822:docs/product/1-system-design/architecture.md | rg -n -A 17 '^## 4\.'
+```
+
+Output có tiêu đề mới ở dòng 240, câu mới ở dòng 254–256 và vẫn giữ ví dụ chủ
+quán không ở quầy thì không được huỷ, nhân viên đang ở quầy thì được. Bản sửa
+bỏ tên bảng/cột khỏi cách giải thích nhưng giữ sự khác nhau giữa chức vụ và
+chỗ đứng. Đó là điều phải đối chiếu bằng mắt; riêng việc không còn chuỗi
+`staff.role` chưa đủ chứng minh sửa đúng.
+
+**Thay đổi thực hiện trong lượt hôm nay:** thay ví dụ giả định ở §4.4 của chính
+file hướng dẫn này bằng chuỗi lệnh và kết quả đã kiểm chứng trên. Bản sửa kiến
+trúc là việc đã có trong commit T-079, không phải một thay đổi mới của lượt này.
+Người đọc có thể chạy lại từng lệnh để đi từ nhiệm vụ → dòng nghi vấn → luật và
+ngoại lệ → ý nghĩa nghiệp vụ → nguồn gốc → bản sửa, thay vì phải tin lời kể.
 
 ### 4.5. Khi nào đã đủ context để bắt đầu?
 
