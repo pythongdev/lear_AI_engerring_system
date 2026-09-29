@@ -76,11 +76,12 @@ is a bug to fix now.
 | Hợp đồng API: endpoint, quyền theo vai, chữ ký | **chưa có owner** — sinh ra ở **pha 3**, cùng `docs/product/3-be/` (ADR-035) |
 | Route, component | **chưa có owner** — sinh ra ở **pha 4**, cùng `docs/product/4-fe/` (ADR-035) |
 | Tasks — trạng thái của **mọi** task (`Ready`/`In Progress`/`Done`) | `work/backlog.md` |
+| Tasks — mô tả dài của việc **đã xong** (lưu trữ, chỉ thêm, không cập nhật) | `work/backlog_archive.md` (T-086) |
 | Tasks — mô tả dài của **pha 1**, `P1-01`…`P1-14` | `work/backlog_SD.md` |
 | Tasks — mô tả dài của **pha 2**, `P2-01`…`P2-14` | `work/backlog_DB.md` |
 | Tasks — mô tả dài của **mảng admin**, `ADM-01`…`ADM-53` | `work/backlog_AD.md` |
 | Câu hỏi cho chủ quán về mảng admin, và chỗ chủ quán trả lời | `work/admin-questions.md` §3 |
-| Scope of the task in progress | `work/scope.txt` |
+| Scope of each task in flight | `work/scope/<ID>.txt` — one file per task, ignored by git (ADR-063) |
 | Recurring problems, lessons | `work/findings.md` |
 | How to write a prompt/task | `docs/prompt-guideline.md` |
 | How to check LLM output | `quality/review-gate.md` |
@@ -135,7 +136,8 @@ docs/              product/ → 00-index.md, 0-ba/… (behavior), 1-system-desig
                    decisions, prompt guideline
 work/              backlog.md (trạng thái mọi task), backlog_SD.md (mô tả pha 1),
                    backlog_DB.md (mô tả pha 2), backlog_AD.md (mô tả mảng admin),
-                   admin-questions.md (câu hỏi chủ quán), scope.txt, findings.md;
+                   backlog_archive.md (việc đã xong),
+                   admin-questions.md (câu hỏi chủ quán), scope/, findings.md;
                    proposals/ — not adopted, owns nothing
 quality/           invariants.md, review-gate.md
 scripts/           gate.sh → check-scope.sh + check-links.sh
@@ -156,7 +158,7 @@ by the size of the diff (levels: `README.md`). **Most changes are L0 or L1.**
 |---|:--:|:--:|:--:|:--:|---|
 | `./scripts/gate.sh` passes | ✓ | ✓ | ✓ | ✓ | Claude Stop hook; Codex runs directly |
 | Entry in `work/backlog.md` | — | ✓ | ✓ | ✓, split into L1/L2 | *self-discipline* |
-| `work/scope.txt` declared | — | ✓ | ✓ | ✓ | Gate 3 (partial) |
+| `work/scope/<ID>.txt` declared | — | ✓ | ✓ | ✓ | Gate 3 (partial) |
 | Acceptance written *before* the change | — | ✓ | ✓ | ✓ | *self-discipline* |
 | Regression test for the related invariant | — | — | ✓ | ✓ | Gate 1, if the test exists |
 | ADR in `docs/decisions.md` | — | — | if a design choice was made | ✓ | *self-discipline* |
@@ -178,7 +180,7 @@ Then, at every level:
 1. **Context** — start from the session brief (§7.1): Claude receives it from
    its hook; Codex runs it directly. It tells you what moved since last time.
    Then load only what the task needs:
-   the task entry in `work/backlog.md`, the patterns in `work/scope.txt`, the
+   the task entry in `work/backlog.md`, the patterns in `work/scope/<ID>.txt`, the
    owners in §2 that the task actually touches, and the code and tests under
    those patterns. Do not read the repository by default.
 2. **Focus** — one task at a time, finished before the next is started.
@@ -186,8 +188,10 @@ Then, at every level:
    *Ready* unless the user names another. An Open finding in `work/findings.md`
    that blocks a Ready task is done first. Move the item to *In Progress* when
    you start.
-4. **Scope** (L1+) — declare `work/scope.txt` before the first edit, matching the
-   Scope section of the prompt, and stay inside it. One pattern per line:
+4. **Scope** (L1+) — declare `work/scope/<ID>.txt` (a task ID such as T-085 as
+   the file name, one file per task, ignored by git — ADR-063) before the first edit, matching
+   the Scope section of the prompt, and stay inside it. Never edit another task's
+   scope file. One pattern per line:
 
    ```text
    order/          everything under order/
@@ -195,8 +199,9 @@ Then, at every level:
    !order/db.go    denied, even if an allow line above matches
    ```
 
-   If the task genuinely needs more, update `work/scope.txt` and say so — do not
-   edit outside it silently. Clear the patterns when the task is done.
+   If the task genuinely needs more, update your scope file and say so — do not
+   edit outside it silently. Keep it through *Done* — Gate 7b checks the commit
+   block against it — and delete it once the task is committed.
 5. **Never invent business truth** — if a business rule is unclear, stop and ask.
    If you cannot ask, record it and leave the behavior undecided (§4). This rule
    has no L0.
@@ -241,16 +246,14 @@ governs, in `docs/product/99-unknowns.md` → *Cách viết một câu ở đây
 It runs, in order:
 
 1. `scripts/check-scope.sh` (Gate 3) — every changed file **git already tracks**
-   must match `work/scope.txt`. Catches the correct change that touches
+   must be allowed by at least one scope file in `work/scope/` (one per task,
+   ADR-063). Catches the correct change that touches
    unauthorized files. An untracked file outside scope is printed as a `NOTE`
    line and does **not** fail the gate — git cannot tell whether it predates the task
    (ADR-003). If the note lists a file *your* task created, put it in scope or
-   delete it; nothing else will stop you. It also holds `work/scope.txt` itself
-   to one invariant: the **committed** version may hold only comments (§6,
-   `work/findings.md` F-020, ADR-043). If `HEAD` still carries a pattern the
-   working tree hasn't cleared, the gate fails; once the working tree is clean
-   it prints a `NOTE` to fold the file into this turn's commit, and does not
-   block.
+   delete it; nothing else will stop you. It fails when `work/scope.txt` (now a
+   comment-only stub) carries a pattern, and when a `work/scope/*.txt` file is
+   tracked by git (F-020).
 2. `scripts/check-links.sh` (Gate 1b) — every path a **pointer document** names
    must open. Runs on **every** turn, including documentation-only ones: docs are
    what this repo produces, and step 5 (`verify.sh`) is skipped for exactly those
@@ -289,13 +292,13 @@ It runs, in order:
 6. `scripts/check-commit-block.sh` (Gate 7) — **hook mode only**, and only once
    the five above are green: tracked changes are waiting to be committed, so the
    turn must hand over the commit block (§6.1). Untracked files and
-   `work/scope.txt` never trigger it, and it asks once per state of the tree.
+   scope files never trigger it, and it asks once per state of the tree.
    It then asks a second question — **what is in that block** (Gate 7b,
    ADR-006): it reads the block's `git add` lines, plus the real index when
-   something is staged, and names any file outside `work/scope.txt`, any
-   `git add -A` / `git add .`, and `work/scope.txt` itself if the working-tree
-   content it would add still carries a pattern (F-020, ADR-043) — comment-only
-   is fine, even required, to close a scope-state debt. It judges the file list
+   something is staged, and names any file outside the scope of the task whose
+   ID opens the block's subject (`work/scope/<ID>.txt`; no such file ⇒ every
+   scope file together, ADR-063), any `git add -A` / `git add .`, and any
+   `work/scope/<x>.txt` in the block. It judges the file list
    you deliberately chose, never the working tree, so
    ADR-003 stands: an untracked file inside scope stays silent. Scope not
    declared ⇒ silent. Like the rest of Gate 7, it speaks at most once per state
@@ -308,9 +311,7 @@ hooks for Codex. Codex must invoke `./scripts/gate.sh` directly after changes.
 Direct execution runs steps 1–5, **not Gate 7/7b**: those require Claude's
 transcript. Codex must check the commit block against §6.1 manually, including
 its explicit file list, scope and the real staged index. A green direct gate
-does not prove the commit block was checked. Scope cleared means Gate 7b loses
-its scope comparison even in Claude; the existing follow-up is in
-`work/backlog.md` → T-085.
+does not prove the commit block was checked.
 
 Every line the gate prints at column 0 carries exactly one label (T-084):
 `PASS` ran and passed · `FAIL` ran and failed · `SKIP` did **not** run ·
@@ -325,9 +326,9 @@ review, cold-context review — are in `quality/review-gate.md`.
 - Work on a branch off `main`; never commit directly to `main`.
 - Commit or push only when the user asks.
 - One task per commit. Subject: `T-XXX: what changed` (imperative, ≤ 72 chars).
-- `work/scope.txt` stays in git as working state: the **committed** version holds
-  only comments — a pattern is session state, and never reaches a commit
-  (Gate 3, Gate 7b; `work/findings.md` F-020, ADR-043).
+- Scope is session state and never reaches a commit: `work/scope/` is ignored by
+  git except its `.gitignore`, and `work/scope.txt` is a comment-only stub
+  (Gate 3, Gate 7b; `work/findings.md` F-020, ADR-063).
 
 ### 6.1 Hand over the commit, ready to paste
 
@@ -357,13 +358,9 @@ Verified: ./scripts/gate.sh green."
   commit will not accidentally include someone else's already-staged changes.
   If unrelated files are staged, report them and do not hand over a block that
   would commit them; do not alter someone else's index without authorization.
-- **`work/scope.txt` only belongs in the block when its diff against `HEAD`
-  leaves it comment-only** (§6 above; F-020, ADR-043). Clearing a task's own
-  patterns normally nets back to the same comment-only file already in `HEAD`,
-  so it drops out of the command above on its own — nothing to stage. The one
-  time it *does* show up with a real diff is closing a scope-state debt (a
-  pattern that reached a commit, `work/backlog.md` T-016 and T-047): stage it
-  then, once it's clean, never while it still carries a pattern.
+- **A scope file never belongs in the block** (§6 above; F-020, ADR-063). Git
+  ignores `work/scope/`, so it does not show up in the commands above; Gate 7b
+  names it if you list it anyway.
 - **Subject follows §6:** `T-XXX: what changed`, imperative, ≤ 72 chars, written
   in the language the change itself is written in. An L0 change with no task ID
   drops the `T-XXX:` prefix.
@@ -431,12 +428,12 @@ scope, the next Ready task, Open findings, Open unknowns, the newest ADRs,
 recent commits, the last-changed date of every owner file in §2, and any
 uncommitted work.
 
-It also warns about one state it can see and you cannot: `work/scope.txt` still
-holding patterns while **no** task sits in *In Progress* — the scope of a
-finished task nobody cleared (§7.3). Clear it before starting anything, or Gate 3
-will judge your change by someone else's scope; if you are mid-task, put the task
-back in *In Progress* rather than deleting the scope. Patterns **with** a task in
-*In Progress* are normal and stay silent (ADR-006, F-010).
+It also lists every scope file in `work/scope/` and warns about each one whose
+task ID is **not** in *In Progress* — a finished task. Delete that file only if
+the task is already committed; if it is Done but not yet committed, it stays
+until the commit (Gate 7b needs it); if you are mid-task, put the task back in
+*In Progress* instead. Scope files of tasks in *In Progress* are normal and stay
+silent (ADR-006, ADR-063, F-010).
 
 In Claude Code it is a `SessionStart` hook in `.claude/settings.json`, running
 on startup, `/clear`, resume and compaction. In Codex, run it directly at the
@@ -502,8 +499,8 @@ Anything true only inside your head is lost. Before finishing:
 
 - The task in `work/backlog.md` reflects reality — moved to *Done*, or left in
   *In Progress* with what remains written into the entry.
-- `work/scope.txt` is cleared when the task is done, or left declared and
-  accurate when it is not.
+- `work/scope/<ID>.txt` is accurate; it stays until the task is committed, and is
+  deleted after that.
 - Every rule, decision, invariant and unknown you hit is in its owner (§2, §4).
 - Every task finished this session has its paste-ready commit block in the
   report (§6.1), plus one for anything else left uncommitted.
@@ -559,7 +556,7 @@ ADR-052. Both tools use the same owners (§2), task state and acceptance.
 **Roles — Claude leads, Codex implements** (adopted 2026-09-27 at the repo
 owner's request; rationale `docs/decisions.md` ADR-054). Claude owns every step
 where a mistake costs money or invents business truth: picking the task and
-moving its status, the L0–L3 level, Acceptance, `work/scope.txt`, design, ADRs,
+moving its status, the L0–L3 level, Acceptance, `work/scope/<ID>.txt`, design, ADRs,
 unknowns, `master_plan/shop-facts.md`, `quality/invariants.md`, recording the
 shop owner's answers, reviewing, integrating, and writing the §6.1 block.
 Codex implements a work order from Claude inside its own worktree and scope,
@@ -574,7 +571,7 @@ Codex's report is a claim, not evidence (§5). `git commit` stays the repo owner
 **Small tasks without Claude** (2026-09-27, repo owner; ADR-054 *Sửa đổi*). An
 L0/L1 task the repo owner hands Codex directly, with no work order, has the
 repo owner as lead. Codex may then also move that task's own status in
-`work/backlog.md`, write its detail entry, declare and clear `work/scope.txt`,
+`work/backlog.md`, write its detail entry, declare and delete its `work/scope/<ID>.txt`,
 add an `F-XXX` finding and add an open `U-XXX`. It still never decides a
 business question, never edits `docs/decisions.md`,
 `master_plan/shop-facts.md` or `quality/invariants.md`, never closes an
@@ -597,8 +594,9 @@ Tiered like §3 — an L0 change is done after four lines, not eleven.
 - [ ] Every Acceptance line maps to a named test, or to a manual run with real
       output pasted (`quality/review-gate.md` Gate 2).
 - [ ] Diff checked against the red-flag table in Gate 4.
-- [ ] Task moved to *Done* in `work/backlog.md`; `work/scope.txt` cleared.
-- [ ] Handed off: backlog and `work/scope.txt` match reality (§7.3).
+- [ ] Task moved to *Done* in `work/backlog.md`; `work/scope/<ID>.txt` kept
+      until the commit, deleted after it.
+- [ ] Handed off: backlog and `work/scope/<ID>.txt` match reality (§7.3).
 - [ ] Report: what changed, how it was verified (with command output), what is
       still unresolved — each open question named there carries a link to the
       line it is written on, grepped in this turn (§7.3).
