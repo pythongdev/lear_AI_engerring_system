@@ -92,8 +92,9 @@ BEGIN
     RAISE EXCEPTION 'I-009: đơn cũ ĐỔI theo menu';
   END IF;
 
-  -- F-036 — chỗ trống có tên: món đã ngừng bán, database VẪN ghi được một dòng mới.
-  -- Vế "không kênh nào đặt mới được" chưa có tầng; lát này cố ý không dựng gì cho nó.
+  -- Vế ngừng bán của I-009: món đã ngừng bán, database VẪN ghi được một dòng mới.
+  -- Vế "không kênh nào đặt mới được" là TẦNG 3 (ADR-056, đóng F-036): cửa tạo lượt
+  -- gọi ở pha 3 từ chối; lược đồ chỉ cất mốc ngừng bán, cố ý không ràng buộc.
   INSERT INTO order_line (sales_order_id, quantity, menu_item_id, item_name, unit_price_vnd,
                           component_count)
   VALUES (so, 1, m_gio, 'test-suất giò (mới)', gia_moi, 1) RETURNING id INTO l_x;
@@ -102,7 +103,7 @@ BEGIN
   VALUES (l_x, 1, 1, c_gio, 'test-giò', 1, false, 900);
   SET CONSTRAINTS ALL IMMEDIATE;
   SET CONSTRAINTS ALL DEFERRED;
-  RAISE NOTICE 'F-036 chỗ trống: dòng mới cho món đã ngừng bán vẫn ghi được (không ràng buộc nào — chưa có tầng)';
+  RAISE NOTICE 'I-009 vế ngừng bán: dòng mới cho món đã ngừng bán vẫn ghi được ở database (tầng 3 — cửa pha 3 từ chối, ADR-056)';
 
   -- Tầng 1: dòng đơn thiếu giá · thiếu tên món · thiếu ảnh chụp thành phần.
   BEGIN

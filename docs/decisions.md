@@ -4025,6 +4025,8 @@ câu phải hỏi.
    hết dùng được, và quán không mất đường bán nào lúc tem mới chưa dán — khách gọi qua quầy đặt hộ
    (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.2).
 5. **`U-062`** cho *ai được đổi mã, và quán đổi khi nào* — câu của chủ quán, không phải của pha 1.
+   *(Đóng 2026-09-28, T-118: chủ quán đổi, khi quán bị hack — `master_plan/shop-facts.md` §6 quy
+   tắc 2.)*
 6. **`architecture.md` §8 thêm một dòng** và `04-yeu-cau-du-lieu.md` §1 thêm **`YC-24`** (luật
    một-đối-một của P1-07).
 
@@ -4046,7 +4048,8 @@ câu phải hỏi.
   mã đã mang của lượt gọi, kèm ràng buộc tầng 1 và test theo kịch bản của `I-023`; `P2-10` sinh mã
   cho dữ liệu mồi qua đúng một cửa sinh mã ấy.
 - Cổng pha 2 (`P2-13`) chấm `YC-24` cùng các dòng khác.
-- Quyền theo vai của thao tác đổi mã (pha 3) chờ `U-062`.
+- Quyền theo vai của thao tác đổi mã (pha 3) ~~chờ `U-062`~~ — `U-062` đóng 2026-09-28 (T-118):
+  chỉ vai **chủ quán** được đổi mã.
 
 **Applies to:** `quality/invariants.md` `I-023` ·
 `docs/product/1-system-design/03-bao-ve-invariant.md` §1 ·

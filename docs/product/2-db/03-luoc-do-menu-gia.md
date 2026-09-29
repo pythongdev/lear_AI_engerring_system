@@ -107,7 +107,9 @@ hai cột của `I-001` (`02-luoc-do-ban-hang.md` §2). Bị loại:
 - **`I-013` (tầng 3).** Database không biết một con số **đến từ đâu** (`03-bao-ve-invariant.md` §1).
   **Lược đồ nợ, và đã giữ:** không cột nào mang *giá khách gửi*; mỗi dòng có **một** cột giá ghi được
   (`unit_price_vnd`), thành tiền tự tính; hai cột tiền của ảnh chụp là **giá đã áp** của thành phần
-  và tuỳ chọn, ghi cùng lúc bởi cùng cửa — test liệt kê đủ bốn cột tiền của dòng đơn và ảnh chụp.
+  và tuỳ chọn, ghi cùng lúc bởi cùng cửa — test liệt kê đủ bốn cột tiền của dòng đơn và ảnh chụp, và
+  **đỏ** khi họ `order_line` có một cột tiền thứ năm (2026-09-28, P2-05 phần *test biết kêu*): ai thêm
+  cột ấy phải nói nó không phải giá khách gửi rồi mới sửa danh sách trong test.
   **Pha 3 nợ:** một hàm tính giá duy nhất, mọi đường đặt món của năm kênh đi qua nó.
 - **`I-011` (tầng 4).** Máy **không** ngăn được việc đổi thành phần giữa giờ bán (chủ quán giữ quyền ấy,
   `U-018`), và lát này **không** dựng gì chặn: không cột khoá, không điều kiện giờ. Cái máy giữ thay

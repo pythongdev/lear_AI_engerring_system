@@ -998,8 +998,9 @@ mã là thứ duy nhất nói *lượt gọi này của bàn nào*. Mệnh đề
   bằng mã cũ **trước** mốc ấy giữ nguyên — không bị huỷ, không đổi bàn. Mỗi lần đổi đọc ra được bàn
   nào, lúc nào, ai đổi (`I-018`).
 
-**Mệnh đề không nói ai được đổi mã, và khi nào quán đổi.** Đó là câu của chủ quán — mở ở
-`docs/product/99-unknowns.md` **U-062** — không phải câu của mệnh đề này. Nó cũng **không** nói mã
+**Mệnh đề không nói ai được đổi mã, và khi nào quán đổi.** Đó là câu của chủ quán — đã trả lời
+2026-09-28 (**U-062** đóng, T-118): **chỉ chủ quán** đổi, đổi **khi quán bị hack**; owner
+`master_plan/shop-facts.md` §6 quy tắc 2 — không phải câu của mệnh đề này. Nó cũng **không** nói mã
 sinh bằng gì: đó là cơ chế của pha sau.
 
 **Why:**
@@ -1016,7 +1017,7 @@ không có đường đổi mã, nên lộ một lần là hỏng vĩnh viễn.
 *Mã cũ chết ngay* là **suy ra**, không phải lời chủ quán (`CLAUDE.md` §7.2): đổi mã chỉ có nghĩa nếu
 mã cũ hết dùng được, và quán không mất đường bán nào khi tem mới chưa dán kịp — khách ngồi bàn ấy
 gọi qua quầy đặt hộ, nhánh đã có (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.2). Chủ quán nói
-khác thì mệnh đề viết lại qua **U-062**.
+khác thì mệnh đề viết lại qua một câu hỏi mới — lời đóng **U-062** không chạm tới vế này.
 
 **Verification:**
 Kịch bản âm: gửi một lượt gọi QR mang mã của bàn 5 kèm *số bàn 7* từ phía khách ⇒ lượt gọi vào **bàn
@@ -1031,7 +1032,8 @@ nó mang chỉ tới lúc tạo, hoặc có mốc tạo **sau** lúc mã nó man
 hai bàn.
 
 *Phát hiện ở T-097, 2026-09-25 (`work/findings.md` **F-042**). Viết thành mệnh đề ở T-113,
-2026-09-28, Claude Code — ai đổi mã, khi nào đổi còn là câu của chủ quán (**U-062**).*
+2026-09-28, Claude Code — ai đổi mã, khi nào đổi là câu của chủ quán (**U-062**, đóng cùng ngày ở
+T-118: chủ quán đổi, khi bị hack).*
 
 ### I-024 — Một lần gửi sinh nhiều nhất MỘT đơn, dù máy gửi lại bao nhiêu lần; hai lần gửi khác nhau là hai đơn, kể cả khi giống hệt nhau
 

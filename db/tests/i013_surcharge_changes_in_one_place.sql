@@ -66,7 +66,19 @@ BEGIN
   END IF;
 
   -- I-013: mọi cột tiền của dòng đơn và ảnh chụp của nó; chỉ unit_price_vnd là giá
-  -- của dòng, thành tiền tự tính, không cột nào mang giá khách gửi.
+  -- của dòng, thành tiền tự tính, không cột nào mang giá khách gửi. Tập cột phải
+  -- đúng bốn cột dưới đây: một cột tiền mới trên họ order_line ⇒ test đỏ, và người
+  -- thêm nó phải nói nó KHÔNG phải giá khách gửi rồi mới sửa danh sách này.
+  IF (SELECT string_agg(table_name || '.' || column_name
+                        || CASE WHEN is_generated = 'ALWAYS' THEN '(t)' ELSE '' END,
+                        ' ' ORDER BY table_name, column_name)
+      FROM information_schema.columns
+      WHERE table_schema = 'shop' AND table_name LIKE 'order!_line%' ESCAPE '!'
+        AND column_name LIKE '%!_vnd' ESCAPE '!')
+     IS DISTINCT FROM 'order_line.line_total_vnd(t) order_line.unit_price_vnd '
+                      'order_line_component.base_price_vnd order_line_option.surcharge_vnd' THEN
+    RAISE EXCEPTION 'I-013: họ order_line có cột tiền ngoài bốn cột đã khai — có thể là giá khách gửi';
+  END IF;
   FOR r IN
     SELECT table_name, column_name, is_generated
     FROM information_schema.columns
