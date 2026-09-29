@@ -13,6 +13,31 @@ quy ước chạy do [10-quy-uoc-code.md](../product/2-db/10-quy-uoc-code.md) gi
 Máy cần có Docker Desktop **đang bật** (lệnh `docker info` chạy không báo lỗi) và có `perl` (macOS
 có sẵn). Mọi lệnh dưới đây chạy ở **thư mục gốc repo**.
 
+## Cách nhanh — dùng `make`
+
+[Makefile](../../Makefile) ở gốc repo gói các bước bên dưới thành lệnh ngắn. Lần đầu chỉ cần hai
+lệnh:
+
+```bash
+make setup    # Bước 1 + 2 + 3: bật database, tạo bảng, nạp dữ liệu mồi
+make psql     # Bước 4: vào psql bên trong container (\q để thoát)
+```
+
+Các lệnh còn lại (gõ `make` không kèm gì để xem danh sách):
+
+```text
+make up        bật database (Bước 1)
+make migrate   chạy migration mới (Bước 2)
+make seed      nạp dữ liệu mồi (Bước 3) — tự bỏ qua nếu database đã có dữ liệu
+make shell     vào shell bash bên trong container
+make status    xem container database có đang chạy không
+make stop      tắt database, GIỮ dữ liệu
+make reset     XOÁ SẠCH dữ liệu rồi dựng lại từ đầu
+```
+
+Lần sau mở máy: `make up` rồi `make psql`. Các mục dưới đây giải thích từng lệnh `make` thật sự
+chạy gì bên trong — đọc khi muốn hiểu, hoặc khi `make` báo lỗi.
+
 ## Bước 1 — Bật database
 
 ```bash

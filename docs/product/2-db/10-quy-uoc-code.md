@@ -271,6 +271,7 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   | `db/migrations/` | lược đồ, theo `QC-05` | `P2-04`…`P2-08` |
   | `db/tests/` | test database, theo `QC-07` | `P2-04`…`P2-08` · `P2-11` |
   | `db/seed/` | bộ dựng dữ liệu mồi — đọc `master_plan/shop-facts.md` lúc chạy, in SQL; không cất con số nào của quán (`08-du-lieu-moi.md`) | `P2-10` |
+  | `Makefile` | lệnh tắt cho database làm việc trên máy phát triển — chỉ gọi lại `compose.yaml` và `db/seed/`, không mang cấu hình riêng; bộ kiểm không đi qua nó | chủ repo yêu cầu 2026-09-29 |
   | `be/` | backend | pha 3 |
   | `fe/` | frontend | pha 4 |
 
