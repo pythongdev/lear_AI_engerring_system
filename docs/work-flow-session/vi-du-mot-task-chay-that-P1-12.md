@@ -94,7 +94,216 @@ bằng một quyết định kiến trúc do máy ký.
 
 ## 4. Lấy context — chọn theo **chủ quyền**, không theo *độ liên quan*
 
-Repo có hàng trăm file "liên quan" tới ranh giới pha. Lượt này mở đúng sáu chỗ:
+### 4.1. “Chủ quyền” nghĩa là gì khi chọn context?
+
+**Context là những thông tin cần có để làm đúng task:** phải trả lời câu hỏi nào,
+được sửa đến đâu, quy tắc nào dùng để chấm, bằng chứng nằm ở đâu và điều gì chưa
+được phép kết luận. Đọc một file mới chỉ là lấy đầu vào; phải hiểu nó trả lời câu
+hỏi nào và có quyền quyết định điều gì thì mới dùng được.
+
+“Chủ quyền” ở đây là **file được repo giao sở hữu một loại thông tin**, theo
+`CLAUDE.md` §2. Ví dụ, trạng thái task thuộc `work/backlog.md`; mô tả dài của
+task pha 1 thuộc `work/backlog_SD.md`; dữ kiện quán thuộc `master_plan/shop-facts.md`.
+Một file nhắc đến cùng từ khoá chưa chắc có quyền xác nhận ý nghĩa của từ ấy.
+Nếu bản tóm tắt và owner nói khác nhau, phải đối chiếu owner, không chọn câu
+nghe hợp lý hơn hay file vừa sửa gần nhất.
+
+Vì vậy, chọn theo chủ quyền **vẫn cần xét task có cần thông tin ấy không**.
+Không phải đọc hết mọi owner. Trình tự là: xác định câu hỏi cần trả lời → tìm
+owner của câu trả lời → đọc phần đủ để hiểu cả quy tắc lẫn giới hạn áp dụng.
+
+### 4.2. Đọc từ đâu, theo thứ tự nào?
+
+Các bước dưới đây giải thích cách áp dụng luật đọc context trong `CLAUDE.md`
+§2, §3 và §7; không tạo thêm một bộ luật riêng cho tài liệu này.
+
+1. **Đọc `CLAUDE.md`, rồi lấy brief.** Claude nhận brief từ hook; Codex chạy
+   `./scripts/brief.sh`. Dùng brief để biết task đang làm, scope, thay đổi chưa
+   commit và những mục cần mở tiếp. Brief chỉ là bảng chỉ đường: thấy mã finding
+   thì mở nội dung finding, thấy danh sách bị cắt thì mở nguồn để đọc phần còn lại.
+   Không lấy việc brief không in một mục làm bằng chứng rằng mục ấy không tồn tại.
+
+   **Cụ thể, đọc gì trong `CLAUDE.md` và hiểu như thế nào?** Đọc toàn bộ file vì
+   đây là luật làm việc chung của repo. Sau đó rút ra những điều cần áp dụng cho
+   task, thay vì chỉ nhớ tên các mục:
+
+   **§1 — Hiểu dự án và cách trao đổi.** Biết repo phục vụ hệ thống bán hàng và
+   quản trị của một quán, đồng thời quy định cách AI làm việc có kiểm chứng.
+   Trả lời chủ repo bằng tiếng Việt, văn xuôi dễ hiểu. Phần giới thiệu chỉ giúp
+   định hướng; dữ kiện chi tiết về quán phải đọc ở owner được chỉ ra.
+
+   **§2 — Biết thông tin nào thuộc file nào.** Hiểu rằng `CLAUDE.md` là bản đồ
+   chỉ nguồn, không chứa toàn bộ sự thật của dự án. Trạng thái task đọc ở
+   `work/backlog.md`; luật ranh giới pha theo tới quyết định tương ứng; ý nghĩa
+   tên kênh bán đọc ở `master_plan/shop-facts.md`. Một tài liệu nhắc lại thông
+   tin không trở thành căn cứ cuối cùng chỉ vì nó dễ tìm hơn owner.
+
+   **§3 — Biết task được làm đến đâu.** Hiểu phải xác định mục tiêu, mức rủi ro
+   và phạm vi sửa trước khi làm; không tự đặt ra sự thật nghiệp vụ. Áp dụng vào
+   `P1-12`, phải đọc tiếp prompt mới biết nhiệm vụ cụ thể là đo và ghi nhận.
+   Tìm thấy lỗi không cho phép tự sửa kiến trúc hay script. Đây là kết luận từ
+   luật chung kết hợp với phạm vi task, không phải chỉ đọc `CLAUDE.md` là biết.
+
+   **§4 — Biết xử lý điều chưa rõ.** Không tự suy ra một quy tắc nghiệp vụ để
+   tiếp tục. Câu hỏi chưa có đáp án phải chuyển tới người có quyền quyết; lỗi
+   phát hiện được ghi vào nơi theo dõi phù hợp. Đọc mục này để biết cách đưa
+   vấn đề về đúng nơi, đồng thời đối chiếu §7.4 để biết vai trò hiện tại có
+   được trực tiếp ghi vào file đó hay phải báo lại người dẫn việc.
+
+   **§5 và §8 — Biết khi nào được nói đã xong.** Phải có bằng chứng kiểm tra,
+   đọc lại diff và, với L1 trở lên, đối chiếu từng Acceptance. Với `P1-12`,
+   gate xanh chưa chứng minh toàn bộ pha 1 đúng ranh giới: script chỉ kiểm một
+   phần. Đọc tiếp task để biết phép đo bổ sung và bằng chứng cần đưa ra.
+
+   **§6 — Biết cách bàn giao commit.** Chỉ lấy đúng file thuộc task từ trạng
+   thái Git thực tế, kiểm tra cả những file đã stage, rồi chuẩn bị khối lệnh
+   bàn giao theo vai trò. Codex không tự commit; khi nhận phiếu việc từ Claude,
+   báo cáo bằng chứng để Claude tích hợp và chuẩn bị khối commit theo §7.4.
+
+   **§7 — Biết bắt đầu từ trạng thái nào và làm với vai trò nào.** Lấy brief,
+   kiểm tra công việc đang dở và thay đổi có sẵn, rồi đọc đúng task. Khi làm
+   hôm nay, Codex phải phân biệt phiếu việc từ Claude với task nhỏ chủ repo
+   giao trực tiếp, vì quyền cập nhật task và scope khác nhau. Kết thúc phải
+   để lại trạng thái và bằng chứng mà phiên sau có thể tiếp tục dùng.
+
+   Sau bước này, điều cần hiểu là: **“Tôi biết tìm sự thật ở đâu, giới hạn
+   quyền của mình, cách kiểm chứng và cách bàn giao. Tôi chưa biết đầy đủ nội
+   dung task; brief và prompt sẽ dẫn tới phần cần đọc tiếp.”**
+
+   Phần giải thích này hướng dẫn đọc luật hiện tại. Ca `P1-12` diễn ra ngày
+   2026-09-16; muốn xác minh phiên ấy tuân theo luật nào thì đọc bản lịch sử
+   của `CLAUDE.md`, không gán các quy định được bổ sung sau đó cho phiên cũ.
+
+2. **Đọc đúng task được giao.** Với ca này, tìm dòng `P1-12` trong
+   `work/backlog.md`, đọc entry `P1-12` trong `work/backlog_SD.md`, rồi đọc prompt
+   được entry dẫn tới. Đọc `Goal` để hiểu kết quả cần tạo; `Scope` để biết quyền
+   sửa; `Constraints` và `Unknowns` để biết giới hạn; `Acceptance` và `Verify`
+   để biết phải đưa ra bằng chứng gì. Kết luận cần giữ lại là: đây là phép đo trên
+   cả pha 1, kết quả ghi ở ô 10; phát hiện lỗi không có nghĩa là được sửa lỗi ấy.
+
+   **Sau khi đọc hết các tài liệu của task, phải hiểu cụ thể điều gì?** Với
+   `P1-12`, cần rút ra cách hiểu dưới đây. Đây là cách hiểu nhiệm vụ khi nhận
+   việc; phần kết quả lịch sử ghi sau khi hoàn thành phải được tách riêng.
+
+   **Vấn đề cần giải quyết.** Repo đã có luật phân chia nội dung theo pha,
+   nhưng gate tự động chỉ kiểm được một phần. Vì vậy, tên bảng hoặc hợp đồng
+   API vẫn có thể nằm trong tài liệu pha 1 mà gate không báo lỗi. Task được
+   giao để kiểm tra khoảng trống đó trên toàn bộ tập tài liệu đã chỉ định.
+
+   **Đầu ra phải tạo.** Cần ghi một phép đo có bằng chứng tại ô 10 của cổng
+   chất lượng pha 1: đã rà những file nào, chạy lệnh gì, tìm thấy gì và phân
+   loại thế nào. Nhiệm vụ không buộc kết quả phải sạch. Nếu còn vi phạm, ghi
+   rõ chỗ chặn là kết quả đúng; tự sửa hoặc che vi phạm để tick ô là làm sai
+   nhiệm vụ.
+
+   **Vai trò của ba tài liệu vừa đọc.** `work/backlog.md` xác nhận trạng thái
+   task. Entry `P1-12` trong `work/backlog_SD.md` giải thích vì sao cần làm,
+   phụ thuộc và liên kết tới prompt. Prompt cụ thể hoá mục tiêu, phạm vi,
+   ràng buộc, Acceptance và cách kiểm tra. Đoạn tổng kết lịch sử trong entry
+   cho biết chuyện đã xảy ra, nhưng không thay cho bằng chứng của lần chạy mới.
+
+   **Phạm vi đọc, rà và sửa.** Phải tách ba việc này vì mỗi việc trả lời một
+   câu hỏi khác nhau. Các giới hạn dưới đây là của ca lịch sử `P1-12`, theo
+   `Context`, `Scope`, `Constraints` và `Acceptance` trong prompt; không phải
+   quyền sửa được cấp cho một lượt đang đọc tài liệu ví dụ này.
+
+   **Đọc để hiểu: cần nguồn nào để làm đúng và giải thích được kết quả?**
+   Đọc prompt để hiểu nhiệm vụ, quyết định để hiểu luật ranh giới, kiến trúc
+   để hiểu ngoại lệ, script và file ignore để hiểu máy kiểm được gì, dữ kiện
+   quán để hiểu ý nghĩa định danh. Chỉ mở những phần cần thiết và theo dẫn
+   chiếu khi còn thiếu căn cứ. Những nguồn này có thể nằm ngoài tập phải rà
+   và ngoài phạm vi được sửa. Ví dụ, đọc `shop-facts.md` để xác nhận một tên
+   kênh bán không có nghĩa là rà toàn bộ file ấy hay được sửa dữ kiện quán.
+
+   **Rà để kết luận: phải kiểm tra đầy đủ trên tập tài liệu nào?** Tập của
+   ca lịch sử là tám file `docs/product/1-system-design/*.md`: sáu file
+   `01-…` đến `06-…`, `architecture.md` và `07-cong-chat-luong-pha-1.md`.
+   Phải liệt kê đủ tập, chạy các phép kiểm Acceptance yêu cầu trên cả tập,
+   rồi đọc đoạn bao quanh từng chỗ khớp để phân loại và kiểm tra pointer.
+   Không chỉ rà file vừa đổi hoặc vài file đã đọc lấy context. Ngược lại,
+   kết quả tìm thấy trong script hay dữ kiện quán không được cộng vào số
+   liệu đo tám file pha 1 chỉ vì đã mở chúng để tham khảo.
+
+   **Sửa để ghi kết quả: được thay đổi đúng file nào, phần nào?** Trong tám
+   file được rà, chỉ được sửa **§7, ô 10** của
+   `07-cong-chat-luong-pha-1.md` để ghi bằng chứng và kết luận. Các phần khác
+   của file cổng không thuộc quyền sửa ấy. Bảy file nội dung còn lại phải
+   giữ nguyên; `scripts/`, `quality/invariants.md` và
+   `master_plan/shop-facts.md` cũng bị cấm sửa trong lượt đo.
+
+   **Cập nhật phụ trợ cũng có giới hạn cụ thể.** Prompt cho phép sửa chính
+   file prompt `P1-12`, hàng P1-12 trong `prompt/SD/README.md`, dòng và entry
+   P1-12 trong hai backlog; cập nhật kế hoạch pha 1 ở §9, ô P1-12 ở §6 và §5
+   nếu bản đồ file đổi; ghi mã mở trong lượt vào `work/findings.md` hoặc
+   `docs/product/99-unknowns.md`; thêm khối scope của lượt theo cách prompt
+   lịch sử quy định. `docs/product/00-index.md` chỉ được cập nhật khi pha 1
+   thật sự đóng, có chữ ký chủ repo. Không sửa entry Done lịch sử của bước
+   khác. Đây là danh sách quyền có điều kiện, không phải yêu cầu sửa hết
+   các file được liệt kê; khi thực hiện hôm nay còn phải đối chiếu vai trò
+   hiện tại theo `CLAUDE.md` §7.4.
+
+   Ví dụ, nếu tìm thấy tên bảng trái ranh giới trong `architecture.md`,
+   phải đọc đoạn chứa nó và nguồn quy định để kết luận, ghi vị trí cùng
+   nguồn gốc vào finding, rồi dẫn mã chặn ở ô 10; không xoá tên bảng ngay
+   trong kiến trúc. Nếu script bỏ sót chỗ ấy, ghi nhận giới hạn của script,
+   không sửa mẫu lọc hay file ignore để làm kết quả xanh. **Được đọc không
+   đồng nghĩa với phải rà toàn bộ; phải rà không đồng nghĩa với được sửa;
+   được sửa một ô không đồng nghĩa với được sửa cả file.**
+
+   **Cách đo và diễn giải.** Phải rà đủ các họ mẫu Acceptance yêu cầu: dấu
+   hiệu SQL, định danh dạng `snake_case` hoặc `bảng.cột`, hợp đồng HTTP và
+   dấu hiệu route/component. Mỗi lượt có lệnh và số liệu chưa lọc đi cùng
+   kết quả đã lọc. Sau đó đọc đoạn chứa từng chỗ khớp để phân biệt ngoại lệ
+   được cho phép có giới hạn rõ, định danh nghiệp vụ có owner xác nhận,
+   và chỗ thực sự vượt ranh giới pha cần ghi nhận. Không coi mọi chuỗi khớp
+   là lỗi, cũng không tự mở rộng ngoại lệ để bỏ qua một lỗi. Các nguồn dùng
+   để phân biệt nằm ở bước 3 và §4.3 bên dưới; prompt cho biết phải kiểm gì,
+   còn owner cung cấp căn cứ để chấm.
+
+   **Bằng chứng cho từng chỗ sai.** Phải chỉ được mục và dòng chứa nó, dùng
+   `git blame` xác định nguồn gốc, rồi ghi mã finding tại nơi theo dõi phù
+   hợp. Nguồn gốc giúp hiểu nội dung có trước hay sau luật; nó không tự làm
+   cho nội dung đang trái ranh giới trở thành hợp lệ. Task ghi nhận và
+   chuyển xử lý, không chọn hộ phương án thiết kế.
+
+   **Điều kiện hoàn thành và quyền kết luận.** Phải đối chiếu đủ Acceptance:
+   rà đủ tập, phân loại đủ kết quả, kiểm tra pointer, ghi ô 10 có căn cứ,
+   chứng minh những file bị cấm sửa vẫn nguyên vẹn và chạy gate. Task hoàn
+   thành không tự động có nghĩa ô 10 được tick; ô 10 được tick cũng không
+   thay chữ ký của chủ repo cho phép đóng pha.
+
+   Sau khi đọc, phải diễn đạt được nhiệm vụ bằng lời của mình: **“Tôi được
+   giao kiểm tra ranh giới pha trên toàn bộ tập tài liệu đã chỉ định và ghi
+   kết quả có thể kiểm chứng vào ô 10. Tôi phải giải thích từng chỗ tìm thấy
+   bằng nguồn có thẩm quyền, ghi nhận chỗ sai và giữ nguyên những file không
+   được sửa. Tôi hoàn thành việc đo theo Acceptance; việc sửa thiết kế và
+   cho phép sang pha tiếp theo thuộc quyết định khác.”**
+
+   Nếu chưa nói rõ được phải tạo gì, được sửa đâu, chấm bằng gì và ai có
+   quyền quyết phần còn lại, thì chưa hiểu đủ task để bắt đầu thực hiện.
+
+3. **Từ từng yêu cầu, tìm nguồn có quyền trả lời.** Dùng bảng owner ở
+   `CLAUDE.md` §2; khi cần tìm file nghiệp vụ cụ thể, dùng `docs/product/00-index.md`
+   làm mục lục. Mục lục không sở hữu quy tắc. Với `P1-12`, câu hỏi “cấm cái gì”
+   dẫn tới quyết định ranh giới pha, còn “chuỗi này có nghĩa gì ở quán” dẫn tới
+   `shop-facts.md`. Sáu nhóm nguồn ở §4.3 là kết quả của bước chọn này.
+4. **Đọc trọn phần có ý nghĩa, rồi theo pointer nếu còn thiếu.** Tìm heading
+   hoặc mã bằng `rg -n`, sau đó đọc cả mục: câu định nghĩa, bảng, ngoại lệ, ghi chú
+   và dẫn chiếu đi kèm. Một dòng khớp từ khoá chỉ giúp định vị; nó chưa đủ để kết
+   luận. Nếu mục dẫn sang một quyết định đang chi phối kết quả, đọc quyết định đó.
+5. **Tách việc hiểu luật khỏi việc thu bằng chứng.** Sau khi hiểu luật, vẫn phải
+   chạy phép đo trên toàn bộ tập file task yêu cầu. “Chỉ đọc context cần thiết”
+   không cho phép chỉ rà vài file mẫu. Mỗi kết quả khớp cần đọc đoạn bao quanh
+   rồi đối chiếu với owner trước khi phân loại.
+
+`work/scope.txt` quy định **file được sửa**, không phải danh sách duy nhất được
+đọc. Ở ca này, phải đọc `architecture.md` và script để đo đúng dù task cấm sửa
+chúng. Ngược lại, có một file trong scope cũng không buộc phải sửa file đó.
+
+### 4.3. Với `P1-12`, từng nguồn phải đọc và hiểu thế nào?
+
+Sau brief và task, ca này cần sáu nhóm nguồn sau. Đây là các nguồn để **hiểu phép
+đo**, chưa tính toàn bộ file phải quét để **thực hiện phép đo**:
 
 | Mở cái gì | Vì nó **sở hữu** cái gì |
 |---|---|
@@ -112,6 +321,74 @@ con số nào.
 
 **Dấu hiệu lấy sai context:** phải *đoán* một định danh là gì. Lúc ấy dừng và đi tìm
 owner, đừng đoán tiếp.
+
+Đọc bảng trên thành các thao tác cụ thể như sau:
+
+- **Quyết định ranh giới:** đọc toàn bộ entry `ADR-035` và `ADR-039`, gồm bối cảnh,
+  quyết định và giới hạn, không chỉ dòng ở mục lục. Phải phân biệt được luật cấm
+  gì với script bắt được gì. Script không bắt hết luật nên gate xanh chưa đủ để
+  ký ô 10.
+- **Kế hoạch pha 1:** mở
+  [`SD_master_plan_banh_cuon_ba_thanh.md`](../../master_plan/SD_master_plan_banh_cuon_ba_thanh.md)
+  §3 để biết ranh giới đầu ra; đọc §9 và theo pointer tới cổng chất lượng để biết
+  cách ghi kết quả. Kế hoạch dẫn việc; quyết định được dẫn chiếu mới là căn cứ
+  cho ranh giới. Không dùng kế hoạch để tự mở rộng quyền sửa trong prompt.
+- **Kiến trúc:** đọc §8 để hiểu phần việc được để lại cho các pha sau; đọc trọn
+  §12.3 để thấy ngoại lệ cho phép đến đâu, do ai yêu cầu. Giữ lại phạm vi ngoại
+  lệ, không suy ra rằng mọi đoạn gần đó đều được miễn. Khi bộ lọc trả về một
+  dòng khác, mở cả đoạn chứa dòng ấy để phân loại riêng.
+- **Cổng chất lượng:** đọc phần hướng dẫn và ô 10 trong §7 để biết bằng chứng
+  phải ghi vào đâu, điều kiện tick là gì. Khi cần trả lời “pha đã đóng chưa”,
+  đọc thêm §8 về quyền ký; trạng thái task hoàn thành không thay cho chữ ký ấy.
+- **Script và danh sách bỏ qua:** đọc header, cách chọn file đầu vào, các mẫu lọc,
+  cách áp dụng ignore và lý do từng dòng ignore. Từ đó mới biết script chạy trên
+  file thay đổi hay cả tập, loại gì ra và có thể bỏ sót gì. Một dòng bị ignore
+  chỉ cho biết máy bỏ qua nó; muốn gọi đó là ngoại lệ hợp lệ vẫn phải đối chiếu
+  quyết định và phạm vi ngoại lệ.
+- **Dữ kiện quán:** đọc §3 về trạm và §5 về luồng bán, kèm §2 nếu cần định nghĩa
+  kênh. Cần lấy ý nghĩa của định danh trong câu đang xét. Không cần nạp toàn bộ
+  menu, giá và mọi quy tắc quán chỉ để phân biệt tên trạm với tên bảng.
+
+### 4.4. Ví dụ: biến một dòng tìm thấy thành kết luận có căn cứ
+
+Giả sử bộ lọc trả về một đoạn chứa `qr_table`. Chưa thể ghi “vi phạm” chỉ vì chuỗi
+có dấu gạch dưới. Trước hết đọc đoạn chứa nó: tác giả đang nói về kênh bán hay
+đang mô tả lược đồ? Sau đó tìm định nghĩa trong `shop-facts.md` §2 và luồng sử dụng
+ở §5. Nếu đoạn ấy dùng nó với nghĩa kênh bán đã được owner định nghĩa, kết luận
+là **định danh nghiệp vụ**, không tính làm tên bảng.
+
+Ngược lại, việc một chuỗi có mặt trong `shop-facts.md` không miễn cho mọi cách dùng
+chuỗi ấy. Nếu đoạn đang rà dùng nó để đặt tên một bảng, phải chấm theo ranh giới
+lược đồ. Context gồm **cả định nghĩa ở nguồn lẫn cách dùng tại chỗ đang đo**.
+
+Với `UNIQUE`, cũng phải đọc vị trí: ca lịch sử này phân biệt đoạn ở §3.1 với ngoại
+lệ tự khai tại §12.3. Cùng từ khoá nhưng phạm vi áp dụng khác nhau thì kết luận
+khác nhau. Đây là lý do không thể lấy danh sách khớp của bộ lọc làm danh sách lỗi.
+
+### 4.5. Khi nào đã đủ context để bắt đầu?
+
+Trước khi đo, cần nói được bằng lời của mình: task phải tạo đầu ra nào, được sửa
+đâu, lấy luật ở nguồn nào, rà trên tập nào, dùng bằng chứng nào để chấm và gặp
+điều chưa rõ thì trả về ai. Với mỗi kết luận quan trọng, giữ đường dẫn và mục
+làm căn cứ; không cần tạo thêm một file “context” chép lại các owner.
+
+Ví dụ, phần hiểu để bắt đầu `P1-12` có thể diễn đạt như sau: “Tôi phải đo toàn bộ
+tập file pha 1 được prompt chỉ định và ghi bằng chứng vào ô 10. Tôi dùng quyết
+định ranh giới để chấm, đọc giới hạn của ngoại lệ §12.3, và dùng dữ kiện quán để
+phân biệt định danh nghiệp vụ. Tôi không sửa nội dung bị phát hiện hay script;
+mỗi chỗ sai cần có nơi nhận xử lý.” Đây là cách tóm tắt để làm việc, không thay
+thế prompt hay nguồn gốc của từng quy tắc.
+
+Nếu vẫn phải đoán quy tắc, phạm vi ngoại lệ hoặc quyền quyết định thì context
+chưa đủ: mở tiếp đúng owner hoặc chuyển câu hỏi cho người có quyền. Nếu những
+câu hỏi đó đã trả lời được, bắt đầu làm; chỉ mở thêm nguồn khi bằng chứng mới
+đặt ra câu hỏi mới, không đọc cả repo để có cảm giác chắc chắn.
+
+**Lưu ý về thời điểm:** ca này là ảnh chụp ngày 2026-09-16. Để kiểm chứng chuyện
+đã xảy ra, xem bản lịch sử bằng `git show bf39be5:<đường-dẫn-file>`; bản đó chứa
+kết quả sau lượt đo, muốn xem đầu vào trước lượt thì dùng `bf39be5^`. Để làm một
+task hôm nay, dùng brief và owner hiện tại. Không trộn mẫu script cũ, trạng thái
+cũ và nội dung hiện tại để tái tạo các con số của ca lịch sử.
 
 ---
 
