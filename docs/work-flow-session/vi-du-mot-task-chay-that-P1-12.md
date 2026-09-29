@@ -304,8 +304,12 @@ chúng. Ngược lại, có một file trong scope cũng không buộc phải s�
 
 ### 4.3. Với `P1-12`, từng nguồn phải đọc và hiểu thế nào?
 
-Sau brief và task, ca này cần sáu nhóm nguồn sau. Đây là các nguồn để **hiểu phép
-đo**, chưa tính toàn bộ file phải quét để **thực hiện phép đo**:
+Mục đích đọc các nguồn này là **lấy đủ căn cứ để kiểm tra tài liệu pha 1 có viết
+lấn sang phần việc của pha sau hay không**. `P1-12` là một lượt rà soát, nên phải
+biết luật, ngoại lệ và cách ghi kết quả trước khi kết luận.
+
+Sau brief và task, ca này cần sáu nhóm nguồn sau. Mỗi nguồn trả lời một câu hỏi
+cụ thể để **hiểu phép đo**, chưa tính toàn bộ file phải quét để **thực hiện phép đo**:
 
 | Mở cái gì | Vì nó **sở hữu** cái gì |
 |---|---|
@@ -315,6 +319,26 @@ Sau brief và task, ca này cần sáu nhóm nguồn sau. Đây là các nguồn
 | [`07-cong-chat-luong-pha-1.md`](../product/1-system-design/07-cong-chat-luong-pha-1.md) §7 | chỗ ký, tức đầu ra của lượt này |
 | `scripts/check-phase-boundary.sh` + `.ignore` | bộ mẫu thật, để chạy **nguyên văn** chứ không viết lại |
 | [`master_plan/shop-facts.md`](../../master_plan/shop-facts.md) §3 · §5 | kênh bán và trạm — để **không** kêu nhầm chúng là tên bảng |
+
+Đọc `docs/decisions.md` để trả lời **“đang kiểm theo luật nào?”**: ranh giới giữa
+các pha là gì và cổng tự động kiểm được những gì. Đọc kế hoạch pha 1 để trả lời
+**“điều gì bị cấm, khi chưa đạt thì xử lý ra sao?”**: nội dung nào chưa được phép
+chốt ở pha 1 và khi nào phải để ô kiểm trống, kèm mã vấn đề đang chặn.
+
+Đọc `architecture.md` để trả lời **“có ngoại lệ nào đã được khai rõ?”**, nhờ đó
+phân biệt ngoại lệ trong phạm vi cho phép với vi phạm thật. Đọc
+`07-cong-chat-luong-pha-1.md` để trả lời **“kết quả rà soát phải ghi ở đâu?”**:
+đây là nơi ghi bằng chứng và tình trạng ô kiểm của lượt này.
+
+Đọc script kiểm tra và `.ignore` để trả lời **“máy thực sự đang tìm gì, bỏ qua
+gì?”**, nhằm dùng đúng bộ mẫu hiện có và hiểu giới hạn của nó. Đọc
+`shop-facts.md` để trả lời **“những tên tìm thấy thực chất có nghĩa gì?”**. Ví dụ,
+`qr_table` là tên kênh bán; chỉ vì giống cách đặt tên bảng thì chưa thể kết luận
+nó là chi tiết cơ sở dữ liệu viết vượt pha.
+
+Vì vậy, **“sở hữu” trong bảng nghĩa là nguồn có thẩm quyền cho thông tin đó**.
+Đối chiếu các nguồn này giúp tránh báo lỗi nhầm một nội dung hợp lệ hoặc bỏ sót
+vi phạm vì chỉ tin kết quả script.
 
 Dòng cuối là dòng đáng giá nhất. `qr_table` · `staff_pos` · `trang_banh` trông y hệt
 tên bảng. Nếu không mở `shop-facts.md` trước, phép đo sẽ báo **14 vi phạm** thay vì
