@@ -12,9 +12,10 @@
 # check-links.sh và check-doc-status.sh KHÔNG bị bỏ qua: tài liệu là thứ repo này
 # sản xuất, nên lượt chỉ đổi tài liệu là lượt duy nhất trước đây không bị máy chấm
 # gì cả (ADR-005) — và cũng đúng là lượt sinh ra lỗi mà Gate 1c bắt (ADR-032).
-# check-phase-boundary.sh (Gate 1d, CLAUDE.md §2.2, ADR-039) runs right after
-# doc-status for the same reason: it too only lives in docs/product/1-system-design/
-# and would sleep through a documentation-only turn if it sat in verify.sh.
+# check-phase-boundary.sh (Gate 1d, CLAUDE.md §2, ADR-039) runs right after
+# doc-status for the same reason: it only reads docs/product/1-system-design/ and
+# docs/product/2-db/, and would sleep through a documentation-only turn if it sat
+# in verify.sh.
 # check-commit-block.sh runs only in hook mode (it needs the transcript) and only
 # after the gate is green: no point asking for a commit message for a red change.
 #

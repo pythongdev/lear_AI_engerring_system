@@ -9,50 +9,37 @@ kiện đầy đủ: `master_plan/shop-facts.md`.
 
 This repository is an AI-assisted development operating system: a small set of
 canonical documents, a task backlog, and shell gates that make every change
-verifiable.
+verifiable. This file owns the shared rules for Claude Code and Codex (Codex
+enters through `AGENTS.md`, which points here). Read it every session. It holds
+**rules and pointers only**: where facts live, how to work, what "done" means.
+How a gate works lives in that script's header comment; why a rule exists lives
+in its ADR in `docs/decisions.md` (ADR-064). This file loads into every session,
+so every extra line is fixed tax.
 
-This file owns the shared rules for Claude Code and Codex. Claude Code uses
-this entry point; Codex enters through `AGENTS.md`, which points here without
-copying the rules. Read this file every session before starting work.
-It says where facts live,
-how to work, and what "done" means. It does not repeat those facts — it points
-at their single owner. Mechanism detail for a given gate lives in that script's
-own header comment, not here — this file loads into every session, so every
-extra line is fixed tax.
+**Ngôn ngữ trả lời** (2026-09-27, chủ repo, T-105): người dùng dùng tiếng Việt.
+**Mọi điều** Claude Code hay Codex truyền đạt cho người dùng — câu trả lời, cập
+nhật giữa chừng, câu hỏi cần người dùng quyết, báo cáo cuối task và cuối phiên
+(§7.3, §8), báo cáo Codex gửi lại sau một phiếu việc (§7.4), ghi chú bàn giao
+người dùng sẽ đọc — viết bằng tiếng Việt, dạng văn xuôi dễ hiểu: câu hoàn
+chỉnh, nối nhau bằng lý do và hệ quả (đã làm gì, vì sao, còn gì chưa xong,
+người dùng cần làm gì tiếp), không phải chuỗi gạch đầu dòng cụt, bảng, hay mã
+định danh đứng trơ. Chỉ dùng danh sách khi nội dung thật sự là danh sách (ví
+dụ các bước theo thứ tự). Thứ có dạng bắt buộc riêng giữ dạng ấy — khối commit
+(§6.1), lệnh cần chạy, output gate làm bằng chứng, link tới câu hỏi mở (§7.3),
+bảng Acceptance → bằng chứng của phiếu việc (`docs/prompt-guideline.md` §6) —
+nhưng câu dẫn trước và sau chúng vẫn là văn xuôi, và mỗi mã `U-XXX`, `F-XXX`,
+`T-XXX` được nhắc tới phải kèm một câu nói nó là gì. Luật này chỉ áp cho lời
+gửi người dùng — không đổi ngôn ngữ hay văn phong của tài liệu, code, tên biến,
+hay nội dung nào có owner riêng ở §2.
 
-**Ngôn ngữ trả lời:** người dùng dùng tiếng Việt. **Mọi điều** Claude Code hay
-Codex cần truyền đạt cho người dùng đều viết bằng tiếng Việt, dạng văn xuôi dễ
-hiểu: câu trả lời trong hội thoại, cập nhật giữa chừng, câu hỏi cần người dùng
-quyết, báo cáo cuối task và cuối phiên (§7.3, §8), báo cáo Codex gửi lại sau
-một phiếu việc (§7.4), và phần ghi chú bàn giao người dùng sẽ đọc. Văn xuôi ở
-đây nghĩa là câu hoàn chỉnh, nối với nhau bằng lý do và hệ quả — đã làm gì, vì
-sao, còn gì chưa xong và người dùng cần làm gì tiếp — thay vì chuỗi gạch đầu
-dòng cụt, bảng, hay mã định danh đứng trơ không kèm lời giải thích. Chỉ dùng
-danh sách khi nội dung thật sự là danh sách (ví dụ các bước phải làm theo thứ
-tự). Những thứ có dạng bắt buộc riêng vẫn giữ dạng ấy — khối commit (§6.1),
-lệnh cần chạy, output của gate làm bằng chứng, link tới câu hỏi mở (§7.3),
-bảng Acceptance → bằng chứng trong khuôn báo cáo của phiếu việc
-(`docs/prompt-guideline.md` §6) —
-nhưng câu dẫn trước và sau chúng vẫn là văn xuôi, và mỗi mã như `U-XXX`,
-`F-XXX`, `T-XXX` được nhắc tới phải đi kèm một câu nói nó là gì
-(2026-09-27, chủ repo, T-105). Quy tắc này chỉ áp dụng cho lời gửi người dùng —
-không đổi ngôn ngữ hay văn phong của tài liệu, code, tên biến, hay bất cứ nội
-dung nào có owner riêng ở §2.
+**Giải thích một vấn đề: ngắn trước, dài khi được hỏi** (2026-09-27, chủ repo):
+**vấn đề** → **nguyên nhân** → **mức độ ảnh hưởng** → **context ngắn** (vài
+câu, đủ hiểu). Không kể hết chi tiết; người dùng sẽ hỏi thêm. Ngắn vẫn là văn
+xuôi, không phải gạch đầu dòng cụt.
 
-**Giải thích một vấn đề: ngắn trước, dài khi được hỏi** (2026-09-27, chủ repo).
-Khi cần giải thích một vấn đề cho người dùng, trình bày gọn theo thứ tự: **vấn
-đề** là gì → **nguyên nhân** → **mức độ ảnh hưởng** → **context ngắn** (vài câu,
-đủ hiểu, không hơn). Không viết dài, không kể hết chi tiết; người dùng sẽ hỏi
-thêm khi cần. Quy tắc văn xuôi ở đoạn trên vẫn áp dụng — ngắn không có nghĩa là
-gạch đầu dòng cụt.
-
-Ceremony scales with risk (L0–L3): most changes owe almost nothing, a few owe a
-lot. The levels are defined in `README.md`, what each one costs here is §3, and
-how to write a prompt at each level is in `docs/prompt-guideline.md`.
-
-The repository keeps growing; a session's memory does not. §7 is how the system
-hands each new session the state as it is **today** — read it before you trust
-anything you think you already know about this project.
+Ceremony scales with risk (L0–L3): levels in `README.md`, their cost here in §3,
+prompts per level in `docs/prompt-guideline.md`. The repository keeps growing; a
+session's memory does not — §7 hands each session the state as it is **today**.
 
 ## 2. Source of Truth
 
@@ -89,65 +76,23 @@ is a bug to fix now.
 | Shop facts: scope, channels, prices, flows, business rules | `master_plan/shop-facts.md` |
 | Proposals about this system that were **not** adopted | `work/proposals/` |
 
-Five of the rows above are the **phase ownership boundary** (`docs/decisions.md`
-ADR-035, 2026-09-04). Those still saying *chưa có owner* do so on purpose: the folder of
-a phase is created together with that phase's first line of content, never before,
-and a row changes to the real file name **in the same change** that writes its
-first content. `docs/product/2-db/` opened 2026-09-26 (P2-03, *Quy ước dữ liệu*
-row); *Quy ước code* got its owner 2026-09-27 (P2-12) and *Schema* 2026-09-27
-(P2-04) — the phase-2 plan §5 reading, still awaiting the repo owner's confirmation. Until a row has its
-owner, no document may name what it owns: a phase writing what a later phase
-owns is a bug even when every gate is green. `scripts/check-phase-boundary.sh`
-(Gate 1d, §5, ADR-039) catches the most common shape of this in
-`docs/product/1-system-design/` (SQL, endpoints, routes) and `docs/product/2-db/`
-(endpoints, routes — SQL is phase-2 output) — but it is deliberately
-conservative and does not catch everything. P1-12, P2-14 and human eyes remain
-the last layer.
+**Phase ownership boundary** (ADR-035). A row saying *chưa có owner* says so on
+purpose: a phase's folder is created with that phase's first line of content,
+and the row changes to the real file name **in the same change**. Until a row
+has its owner, no document may name what it owns — a phase writing what a later
+phase owns is a bug even when every gate is green. The moment the *Schema* and
+*Quy ước code* rows changed follows the phase-2 plan's reading (its §5), which
+still awaits the repo owner's confirmation. Gate 1d (§5) catches common shapes;
+P1-12, P2-14 and human eyes remain the last layer.
 
-Behavior is cut by phase under `docs/product/`; which file owns which section is
-in `docs/product/00-index.md`, which owns no fact itself. `docs/product.md` is the
-pre-split archive: it owns nothing, nothing points at it, and no session reads a
-fact from it.
-
-Domain material for the current project lives in `master_plan/` and the BA prompt
-set in `prompt/BA/`. **`master_plan/shop-facts.md` is the single owner of every
-shop fact** — selling scope, channels, prices, surcharges, portion composition,
-operating flows, business rules. It is deliberately self-contained: every shop
-fact stands on its own there, none of them depends on another file, even though
-the file does cite other owners (open questions, decisions, history) to point
-the way. `master_plan/00-scope.md` is a redirect stub kept only so older links
-resolve; it owns nothing.
-
-`work/proposals/` holds documents that say what this repo *should* look like —
-outside advice, blueprints, redesigns — none of it adopted. Nothing in there is a
-fact and nothing points at it: if a proposal is ever taken up, it becomes a task
-in `work/backlog.md`, and the fact lands in its owner above. Each file opens with
-a banner giving its date, its status, and the rows of this table it contradicts —
-where they disagree, **this table wins**. It lives under `work/` on purpose: the
-paths such a document names describe a structure that does not exist, and `work/`
-is where Gate 1b does not check links (§5).
-
-```text
-AGENTS.md          Codex entry point → CLAUDE.md
-CLAUDE.md          shared rules — read first
-docs/              product/ → 00-index.md, 0-ba/… (behavior), 1-system-design/
-                   (architecture), 2-db/ (data + code conventions, schema),
-                   99-unknowns.md — all by phase;
-                   decisions, prompt guideline
-work/              backlog.md (trạng thái mọi task), backlog_SD.md (mô tả pha 1),
-                   backlog_DB.md (mô tả pha 2), backlog_AD.md (mô tả mảng admin),
-                   backlog_archive.md (việc đã xong),
-                   admin-questions.md (câu hỏi chủ quán), scope/, findings.md;
-                   proposals/ — not adopted, owns nothing
-quality/           invariants.md, review-gate.md
-scripts/           gate.sh → check-scope.sh + check-links.sh
-                   + check-doc-status.sh + check-phase-boundary.sh + verify.sh
-                   (→ db-check.sh) + check-commit-block.sh; brief.sh (§7);
-                   hooks/ → commit-msg (Gate 8, §6.2), install-hooks.sh
-master_plan/       domain facts for the current project
-prompt/            prompt sets built from master_plan/
-.claude/           settings.json (SessionStart → brief.sh, Stop → gate.sh)
-```
+Other owners, one line each. Which `docs/product/` file owns which section:
+`docs/product/00-index.md` (owns no fact itself). `docs/product.md` is the
+pre-split archive — it owns nothing and no session reads a fact from it.
+**`master_plan/shop-facts.md` is the single owner of every shop fact** and is
+self-contained; `master_plan/00-scope.md` is a redirect stub. The BA prompt set
+lives in `prompt/BA/`. `work/proposals/` holds advice that was **not** adopted:
+nothing points at it, each file's banner names the rows of this table it
+contradicts, and **this table wins**; a proposal taken up becomes a task.
 
 ## 3. Working Rules
 
@@ -164,34 +109,30 @@ by the size of the diff (levels: `README.md`). **Most changes are L0 or L1.**
 | ADR in `docs/decisions.md` | — | — | if a design choice was made | ✓ | *self-discipline* |
 | Design reviewed before any code | — | — | — | ✓ | *self-discipline* |
 
-The last column is the most important one in this table. An obligation with a
-script behind it does not need to be remembered — the script will say so. An
-obligation marked *self-discipline* has nothing catching it: when context is
-full and the task is long, those are exactly the ones that get dropped first.
-Re-read that column before starting an L2+ task.
+The last column matters most: a scripted obligation will be reported; a
+*self-discipline* one is what gets dropped first when context is full and the
+task is long. Re-read that column before starting an L2+ task.
 
 L0 is a real level, not a loophole: a typo, a formatting run, a mechanical rename
-is *change → gate → done*, no paperwork. A change is L1+ once it alters behavior,
-a contract, or data. Escalate only when the answer to "what breaks if this is
-wrong" reaches money, stored data, or a published contract — not to feel safe.
+is *change → gate → done*. A change is L1+ once it alters behavior, a contract,
+or data. Escalate when "what breaks if this is wrong" reaches money, stored
+data, or a published contract — not to feel safe.
 
 Then, at every level:
 
-1. **Context** — start from the session brief (§7.1): Claude receives it from
-   its hook; Codex runs it directly. It tells you what moved since last time.
-   Then load only what the task needs:
-   the task entry in `work/backlog.md`, the patterns in `work/scope/<ID>.txt`, the
-   owners in §2 that the task actually touches, and the code and tests under
-   those patterns. Do not read the repository by default.
+1. **Context** — start from the session brief (§7.1), then load only what the
+   task needs: its entry in `work/backlog.md`, the patterns in its scope file,
+   the §2 owners it touches, and the code and tests under those patterns. Do not
+   read the repository by default.
 2. **Focus** — one task at a time, finished before the next is started.
 3. **Priority** (L1+) — take the top unchecked item in `work/backlog.md` →
    *Ready* unless the user names another. An Open finding in `work/findings.md`
    that blocks a Ready task is done first. Move the item to *In Progress* when
    you start.
-4. **Scope** (L1+) — declare `work/scope/<ID>.txt` (a task ID such as T-085 as
-   the file name, one file per task, ignored by git — ADR-063) before the first edit, matching
-   the Scope section of the prompt, and stay inside it. Never edit another task's
-   scope file. One pattern per line:
+4. **Scope** (L1+) — declare `work/scope/<ID>.txt` (task ID as file name,
+   ignored by git — ADR-063) before the first edit, matching the prompt's Scope
+   section, and stay inside it. Never edit another task's scope file. One
+   pattern per line:
 
    ```text
    order/          everything under order/
@@ -199,17 +140,15 @@ Then, at every level:
    !order/db.go    denied, even if an allow line above matches
    ```
 
-   If the task genuinely needs more, update your scope file and say so — do not
-   edit outside it silently. Keep it through *Done* — Gate 7b checks the commit
-   block against it — and delete it once the task is committed.
+   If the task genuinely needs more, update your scope file and say so. Keep it
+   through *Done* (Gate 7b reads it) and delete it once the task is committed.
 5. **Never invent business truth** — if a business rule is unclear, stop and ask.
    If you cannot ask, record it and leave the behavior undecided (§4). This rule
    has no L0.
 6. **Verify** — run `./scripts/gate.sh` after every change (§5).
 7. **Record durable facts** — a rule, decision, or invariant discovered while
-   working goes into its owner from §2, in that file's own template, in the same
-   change that discovered it. How to write it so the next session can trust it:
-   §7.2.
+   working goes into its §2 owner, in that file's template, in the same change
+   that discovered it (how: §7.2).
 8. **No ceremony documents** — do not create a `.md` file nobody asked for. Add a
    rule, a hook, or a test only after the same problem has cost you twice
    (`quality/review-gate.md` → *Vòng phản hồi*).
@@ -224,18 +163,11 @@ Never let implementation silently decide an open question. Route it:
 | Recurring problem or lesson | `work/findings.md` | `F-XXX` template in that file |
 | Choice between viable designs | `docs/decisions.md` | `ADR-XXX` template in that file |
 
-Record only what has future value. A one-off imperfection is not a finding.
-
-An open question is only routed if the brief can find it. `scripts/brief.sh` pushes
-the open list into every new session (§7.1), and it reads the *Unknowns* section by
-**structure**: the open region is the top of the section plus every block under a
-`### Đang mở` heading, and inside it **one bullet is one open question** — the
-`U-XXX` may sit anywhere in that bullet, bold or not, wrapped over as many lines as
-it needs. Prose there is prose, and anything under a different `###` heading is not
-read. So a question written as a paragraph, or filed under the answered heading, is
-a question the next session never sees. The full contract lives with the section it
-governs, in `docs/product/99-unknowns.md` → *Cách viết một câu ở đây*
-(`docs/decisions.md` ADR-007, `work/findings.md` F-008).
+Record only what has future value; a one-off imperfection is not a finding. An
+open question is only routed if the brief can find it: `scripts/brief.sh` reads
+**one bullet under `### Đang mở` = one open question**, so a question written as
+a paragraph or under another heading is never seen. Full shape contract:
+`docs/product/99-unknowns.md` → *Cách viết một câu ở đây* (ADR-007, F-008).
 
 ## 5. Verification
 
@@ -243,83 +175,41 @@ governs, in `docs/product/99-unknowns.md` → *Cách viết một câu ở đây
 ./scripts/gate.sh
 ```
 
-It runs, in order:
+It runs, in order — each script's header is the owner of how it works:
 
-1. `scripts/check-scope.sh` (Gate 3) — every changed file **git already tracks**
-   must be allowed by at least one scope file in `work/scope/` (one per task,
-   ADR-063). Catches the correct change that touches
-   unauthorized files. An untracked file outside scope is printed as a `NOTE`
-   line and does **not** fail the gate — git cannot tell whether it predates the task
-   (ADR-003). If the note lists a file *your* task created, put it in scope or
-   delete it; nothing else will stop you. It fails when `work/scope.txt` (now a
-   comment-only stub) carries a pattern, and when a `work/scope/*.txt` file is
-   tracked by git (F-020).
-2. `scripts/check-links.sh` (Gate 1b) — every path a **pointer document** names
-   must open. Runs on **every** turn, including documentation-only ones: docs are
-   what this repo produces, and step 5 (`verify.sh`) is skipped for exactly those
-   turns (ADR-005). `work/` and `prompt/maintenance/` are not checked — a dead path
-   quoted there is evidence, not a bug. A path that deliberately does not exist
-   goes in `scripts/check-links.ignore` with its owner; an ignore line that stops
-   matching turns the gate red until it is removed.
-3. `scripts/check-doc-status.sh` (Gate 1c) — **một mã định danh, hai chỗ, hai
-   trạng thái**. Also runs on **every** turn, and for the same reason as step 2:
-   this defect is *born* in documentation-only turns — closing an unknown edits
-   `.md` files and nothing else — so a check living in `verify.sh` would sleep
-   through exactly the turn that creates it (ADR-032). Three comparisons: a
-   **closed** `U-XXX` quoted as still open · a transition the §5 lifecycle
-   tables list as **valid** being denied right beside it · a `GĐ-XXX` row in the
-   `docs/decisions.md` summary table disagreeing with `Trạng thái:` in the body
-   it points at. It reads **blocks, not lines** — the documents wrap every
-   paragraph, and a line-based filter is blind to a keyword split across two
-   lines (`work/findings.md` F-015). `work/` and `prompt/` are not checked: a
-   broken sentence quoted there is evidence. A deliberate quote goes in
-   `scripts/check-doc-status.ignore` with its reason, and an ignore line that
-   stops matching turns the gate red until it is removed.
-4. `scripts/check-phase-boundary.sh` (Gate 1d) — a conservative pattern check
-   inside `docs/product/1-system-design/`: it fails a phase-1 file that names a
-   table, a column, an HTTP verb + `/api/`, or a JSX-looking tag — the shapes
-   §2 says belong to phase 2/3/4 (ADR-035, ADR-039). Runs on every turn, prints
-   `SKIP` when nothing in that directory changed; deliberately catches only
-   the common shapes and stays silent when unsure — P1-12 and human eyes are
-   still the last layer (§2). A deliberate quote goes in
-   `scripts/check-phase-boundary.ignore`, one substring per line with a reason
-   comment above it.
-5. `scripts/verify.sh` (Gate 1) — Go: `gofmt` check, `go build`, `go test`;
-   Node: `npm test` / `lint` / `build` when present; `scripts/db-check.sh`
-   when `db/`, `compose.yaml` or `docs/product/2-db/` changed (needs Docker —
-   `10-quy-uoc-code.md` QC-07); then every `scripts/*.test.sh`. Skipped when
-   the change touches documentation only.
-6. `scripts/check-commit-block.sh` (Gate 7) — **hook mode only**, and only once
-   the five above are green: tracked changes are waiting to be committed, so the
-   turn must hand over the commit block (§6.1). Untracked files and
-   scope files never trigger it, and it asks once per state of the tree.
-   It then asks a second question — **what is in that block** (Gate 7b,
-   ADR-006): it reads the block's `git add` lines, plus the real index when
-   something is staged, and names any file outside the scope of the task whose
-   ID opens the block's subject (`work/scope/<ID>.txt`; no such file ⇒ every
-   scope file together, ADR-063), any `git add -A` / `git add .`, and any
-   `work/scope/<x>.txt` in the block. It judges the file list
-   you deliberately chose, never the working tree, so
-   ADR-003 stands: an untracked file inside scope stays silent. Scope not
-   declared ⇒ silent. Like the rest of Gate 7, it speaks at most once per state
-   of the tree, and what it sends back is the *report text* to rewrite — not the
-   change, which is already green by then.
+1. `scripts/check-scope.sh` (Gate 3) — every changed **tracked** file must be
+   allowed by some scope file. An untracked file outside scope prints a `NOTE`
+   and does not fail (ADR-003): if it is a file *your* task created, put it in
+   scope or delete it — nothing else will stop you.
+2. `scripts/check-links.sh` (Gate 1b) — every path a pointer document names must
+   open. Runs on every turn, docs-only included (ADR-005).
+3. `scripts/check-doc-status.sh` (Gate 1c) — one ID, two places, two states
+   (closed `U-XXX` quoted as open, a valid lifecycle transition denied, a
+   `GĐ-XXX` table row disagreeing with its body). Every turn (ADR-032).
+4. `scripts/check-phase-boundary.sh` (Gate 1d) — a phase document naming what a
+   later phase owns (§2; ADR-035, ADR-039). Every turn; conservative.
+5. `scripts/verify.sh` (Gate 1) — build, tests, `scripts/db-check.sh` when the
+   database side changed, every `scripts/*.test.sh`. Skipped for docs-only
+   turns.
+6. `scripts/check-commit-block.sh` (Gate 7/7b) — **Claude hook mode only**, once
+   1–5 are green: the turn must hand over the §6.1 block, and the block's
+   file list must fit the scope of the task its subject names (ADR-006,
+   ADR-063). Speaks at most once per tree state.
 
-The gate is wired as a Claude Code Stop hook in `.claude/settings.json`;
-a failure returns output to Claude to fix. This configuration does not run
-hooks for Codex. Codex must invoke `./scripts/gate.sh` directly after changes.
-Direct execution runs steps 1–5, **not Gate 7/7b**: those require Claude's
-transcript. Codex must check the commit block against §6.1 manually, including
-its explicit file list, scope and the real staged index. A green direct gate
-does not prove the commit block was checked.
+Gates 1b, 1c and 1d each take a deliberate exception in their own
+`scripts/*.ignore` file, with a reason; an ignore line that stops matching turns
+the gate red until removed. `work/` (and the folders each header names) is not
+checked by 1b or 1c — a dead path or broken sentence quoted there is evidence.
 
-Every line the gate prints at column 0 carries exactly one label (T-084):
-`PASS` ran and passed · `FAIL` ran and failed · `SKIP` did **not** run ·
-`NOTE` does not block, read it. A `SKIP` is not a pass.
+Codex runs the gate directly: that runs steps 1–5, **not** Gate 7/7b, so Codex
+checks the commit block against §6.1 by hand — file list, scope, and the real
+staged index. A green direct gate does not prove the block was checked.
 
-Gate output is the only evidence a change works. "I tested it" is not evidence.
-The remaining gates — acceptance→evidence mapping, diff red flags, per-level
-review, cold-context review — are in `quality/review-gate.md`.
+Every gate line at column 0 carries one label: `PASS` ran and passed · `FAIL`
+ran and failed · `SKIP` did **not** run · `NOTE` does not block, read it. A
+`SKIP` is not a pass. Gate output is the only evidence a change works; "I tested
+it" is not evidence. The remaining gates — acceptance→evidence, diff red flags,
+per-level review, cold-context review — are in `quality/review-gate.md`.
 
 ## 6. Git
 
@@ -327,16 +217,14 @@ review, cold-context review — are in `quality/review-gate.md`.
 - Commit or push only when the user asks.
 - One task per commit. Subject: `T-XXX: what changed` (imperative, ≤ 72 chars).
 - Scope is session state and never reaches a commit: `work/scope/` is ignored by
-  git except its `.gitignore`, and `work/scope.txt` is a comment-only stub
-  (Gate 3, Gate 7b; `work/findings.md` F-020, ADR-063).
+  git and `work/scope.txt` is a comment-only stub (F-020, ADR-063).
 
 ### 6.1 Hand over the commit, ready to paste
 
-You do not run `git commit`; you **write** it. The session is the only place that
-still knows which task this was, which files it touched, and what the gate
-printed — that knowledge has to leave the session in a form the user can paste.
-So the closing report of **every task**, and of **every session** for whatever is
-still uncommitted, ends with:
+You do not run `git commit`; you **write** it. Only the session knows which task
+this was, which files it touched, and what the gate printed. So the closing
+report of **every task**, and of **every session** for whatever is still
+uncommitted, ends with:
 
 ```bash
 # get the candidate list from git, don't reconstruct it from memory:
@@ -348,235 +236,152 @@ git commit -m "T-XXX: what changed" -m "Why it changed.
 Verified: ./scripts/gate.sh green."
 ```
 
-- **List the files, one by one, taken from the command above.** Never
-  `git add -A`, never `.` — the block must stage this task's files and nothing
-  that happened to be lying around. Read the list off git, not off memory: a
-  session that recalls which files it touched will occasionally miss one or
-  add one that isn't there. Use `git ls-files --others --exclude-standard`
-  as well: the diff command does not list untracked files. Include only files
-  belonging to this task, and inspect `git diff --cached --name-only` so a later
-  commit will not accidentally include someone else's already-staged changes.
-  If unrelated files are staged, report them and do not hand over a block that
-  would commit them; do not alter someone else's index without authorization.
-- **A scope file never belongs in the block** (§6 above; F-020, ADR-063). Git
-  ignores `work/scope/`, so it does not show up in the commands above; Gate 7b
-  names it if you list it anyway.
-- **Subject follows §6:** `T-XXX: what changed`, imperative, ≤ 72 chars, written
-  in the language the change itself is written in. An L0 change with no task ID
-  drops the `T-XXX:` prefix.
-- **Body: one to three lines** — why, plus the evidence that it works. Skip the
-  body when the subject already says everything (a typo, a rename).
+- **List the files one by one, read off the two commands above** — never
+  `git add -A`, never `.`, never from memory. Include only this task's files.
+  Check `git diff --cached --name-only`: if someone else's files are staged,
+  report them and do not hand over a block that would commit them; do not alter
+  another person's index without authorization.
+- **A scope file never belongs in the block** (Gate 7b names it if you list it).
+- **Subject follows §6**, in the language the change is written in. An L0 change
+  with no task ID drops the `T-XXX:` prefix.
+- **Body: one to three lines** — why, plus the evidence it works. Skip it when
+  the subject says everything.
 - **One task per block.** Two tasks finished in one session are two blocks, in
-  the order they should be committed (§6: one task per commit).
-- **Uncommitted work that is not yours is not folded in.** Name it, say it is
-  not in your block, and leave it to whoever made it.
+  commit order.
+- **Uncommitted work that is not yours is not folded in.** Name it, say it is not
+  in your block, leave it to whoever made it.
 
-Give the block whether or not the user asks for it — asking to commit is a
-separate request (§6), and the answer to it is already written by then.
-
-In Claude hook mode, `scripts/check-commit-block.sh` (Gate 7, §5) checks the
-report for a `git commit -m` block when tracked changes remain. It warns at most
-once per tree state. In Codex this obligation is manual; direct gate execution
-does not check the report.
+Give the block whether or not the user asks — asking to commit is a separate
+request (§6). In Claude hook mode Gate 7 checks for it; in Codex it is manual.
 
 ### 6.2 Gate 8 — git itself refuses a subject that says nothing
 
-Gate 7 lives inside the lifetime of **a session turn**. Someone typing
-`git commit -m` in a terminal never passes through a turn, and five commits
-reached this repo that way under the names `ádg`, `sdgf`, `sdfg`, `dsfg`, `adg`
-(`work/findings.md` F-011). `scripts/hooks/commit-msg` is the gate that stands
-where Gate 7 cannot: a **git** hook, so it runs for every commit on this clone,
-whoever writes it.
+`scripts/hooks/commit-msg` is a **git** hook, so it guards commits typed in a
+terminal, which never pass through a session turn (F-011). Its header owns the
+rule; in short it refuses a subject that, after an optional `T-XXX: ` prefix,
+is under 2 words or 8 characters, or repeats a subject already reachable from
+`HEAD` (ADR-062); over 72 characters only warns. Escape hatch:
+`git commit --no-verify`. It never writes the message for you (ADR-004).
 
 ```bash
 ./scripts/install-hooks.sh          # once per clone — sets core.hooksPath
 ./scripts/install-hooks.sh --check  # exit 1 = not installed here
 ```
 
-- **Run it in every fresh clone.** `.git/` does not travel with `git clone`, so
-  the hook file is in the repo but not running until this command points
-  `core.hooksPath` at `scripts/hooks/` (`docs/decisions.md` ADR-010). The session
-  brief (§7.1) prints a warning while it is not installed, so nobody has to
-  remember — but nothing can *force* it, and that limit is part of the decision.
-- **What it refuses:** strip an optional `T-XXX: ` prefix, and what is left must
-  be at least 2 words and 8 characters. `Fix typo` passes; `adg` does not. And a
-  subject identical to one already reachable from `HEAD` — five groups of copied
-  subjects reached this repo (`work/findings.md` F-031, `docs/decisions.md`
-  ADR-062). `git commit --amend` keeping `HEAD`'s own subject still passes.
-  Those two are the whole rule.
-- **What it only warns about:** a subject over 72 characters. It still says what
-  it changed, and red for the wrong reason teaches people to remove the hook.
-- **Escape hatch, printed in the refusal itself:** `git commit --no-verify`.
-- **It never writes the message for you.** §6 keeps the commit as the user's
-  decision (`docs/decisions.md` ADR-004); a machine-written subject would have
-  exactly the quality of `ádg`.
+`.git/` does not travel with a clone, so run it in every fresh clone; the brief
+warns while it is not installed (ADR-010).
 
 ## 7. Keeping the System Current
 
-The repo grows; a session's memory does not survive it. Every session starts
-cold and will act on whatever it is handed — so it must be handed the state of
-**today**, not the state of the day the documents were written.
-
-The loop is: **load the brief → record as you go → hand off.**
-Claude automates brief loading through its hook; Codex invokes it directly.
-Recording durable facts remains a responsibility in both tools.
+Every session starts cold and acts on whatever it is handed, so it must be
+handed the state of **today**. The loop is: **load the brief → record as you go
+→ hand off.** Claude loads the brief through its hook, Codex runs it; recording
+is a responsibility in both tools.
 
 ### 7.1 Start of session — load the live brief
 
-`scripts/brief.sh` prints the live state: the task In Progress, the declared
-scope, the next Ready task, Open findings, Open unknowns, the newest ADRs,
-recent commits, the last-changed date of every owner file in §2, and any
-uncommitted work.
-
-It also lists every scope file in `work/scope/` and warns about each one whose
-task ID is **not** in *In Progress* — a finished task. Delete that file only if
-the task is already committed; if it is Done but not yet committed, it stays
-until the commit (Gate 7b needs it); if you are mid-task, put the task back in
-*In Progress* instead. Scope files of tasks in *In Progress* are normal and stay
-silent (ADR-006, ADR-063, F-010).
-
-In Claude Code it is a `SessionStart` hook in `.claude/settings.json`, running
-on startup, `/clear`, resume and compaction. In Codex, run it directly at the
-start of a session, after context loss, and when receiving a handoff. In either
-tool, run it again whenever repository state may have moved under you:
+`scripts/brief.sh` prints the live state: task In Progress, declared scope, next
+Ready, Open findings, Open unknowns, newest ADRs, recent commits, last-changed
+date of every §2 owner, uncommitted work. Claude gets it from a `SessionStart`
+hook (`.claude/settings.json`, which also wires the gate as the Stop hook);
+Codex runs it at session start, after context loss and on handoff. Either
+tool reruns it whenever the state may have moved:
 
 ```bash
 ./scripts/brief.sh
 ```
 
-Three rules keep it honest:
+- **It points, never copies** — file names, IDs, dates, headings; never a price
+  or rule text (F-001). Read facts from their §2 owner.
+- **It never blocks** — every failure path exits 0.
+- **It says when it cut a list** (`→ ĐÃ CẮT`, F-012). A capped list is a pointer,
+  not an answer: open the file it names before deciding anything.
+- **It warns about a scope file whose task is not In Progress.** Delete it only
+  if that task is committed; Done-but-uncommitted keeps it until the commit; if
+  you are mid-task, put the task back in *In Progress* (ADR-063, F-010).
 
-- **It points, it never copies.** File names, IDs, dates, headings — never a
-  price, a rule text, or a channel list. A brief carrying facts would be the
-  second copy F-001 was written about. Read facts from their owner in §2.
-- **It never blocks.** Every failure path exits 0. A broken brief must not cost
-  you a session.
-- **It says when it cut a list.** Every list is capped — six items for In
-  Progress, Ready and Open findings, twelve for Open unknowns, which get their
-  own threshold because §3.5 can only stop a session that *knows* what it is
-  missing. When a list is longer than its cap, the brief prints `→ ĐÃ CẮT` with
-  how many it showed, how many are left, and where to read all of them. Silence
-  is only ever "that is the whole list": a seven-item list that printed six of
-  them silently is what made U-011 invisible from the day it was written
-  (`work/findings.md` F-012, fixed by T-027). So a capped list is a pointer, not
-  an answer — open the file it names before you decide anything.
-
-When a brief line contradicts what you believe: the brief's dates come from
-git, so **the brief wins** and you re-read that owner before touching anything.
+When a brief line contradicts what you believe, the brief's dates come from git:
+**the brief wins**, re-read that owner before touching anything.
 
 ### 7.2 During the session — record so the next session can trust it
 
-Record at the moment of discovery, in the same change, in the owner from §2 —
-never in a note "to file later". A fact you learned and did not write down dies
-when the session ends, and the next session re-derives it wrong.
-
-Four rules make a recorded fact usable by someone who was not there:
+Record at the moment of discovery, in the same change, in the §2 owner — never
+in a note "to file later". Four rules make a recorded fact usable:
 
 - **Date and attribution.** Every new or changed fact carries `YYYY-MM-DD` and
-  who decided it. An undated fact can never be aged out, so it is believed
-  forever.
-- **What you were told ≠ what you inferred.** ("Owner" below means the person
-  who decides — the business owner, the user — not the file owners of §2.) When
-  the answer you got is shorter than the decision you need, the gap is your
-  inference: it goes in the inference section, never in the log of what was
+  who decided it. An undated fact can never be aged out.
+- **What you were told ≠ what you inferred.** ("Owner" here is the person who
+  decides.) When the answer is shorter than the decision you need, the gap is
+  your inference and goes in the inference section, never in the log of what was
   confirmed (F-004).
-- **"Exactly N" only when N is a decision, not your summary.** The owner saying
-  "exactly five channels, there is no sixth" may be written as exact — adding a
-  sixth then needs their permission. Your own count — "differs in three places"
-  — may not: date it and invite the fourth (F-003).
-- **Follow the pointers.** After changing a fact, `grep -rn` for what referred
-  to it. A pointer left aimed at a fact that moved is a bug in the same change,
-  not a follow-up task.
+- **"Exactly N" only when N is a decision, not your summary.** The owner's
+  "exactly five channels" may be written as exact; your own count must be dated
+  and invite the next one (F-003).
+- **Follow the pointers.** After changing a fact, `grep -rn` for what referred to
+  it. A pointer left aimed at a moved fact is a bug in the same change.
 
-Where each kind of fact goes is §4. Do not create a file for it (§3.8): a new
-fact belongs in an existing owner. If a genuinely new **category** of fact
-appears, §2's table gains a row in the same change that creates its owner —
-an owner that §2 does not list is an owner nobody will find.
+Where each kind of fact goes is §4. Do not create a file for it (§3.8). A
+genuinely new **category** of fact gets a §2 row in the change that creates its
+owner.
 
 ### 7.3 End of session — hand off
 
-Anything true only inside your head is lost. Before finishing:
+Before finishing, backlog, scope files and owners match reality, and every task
+finished — plus anything else uncommitted — has its §6.1 block (checklist: §8).
+The final report says what is **still unresolved**, in the words the next
+session needs, and **every open thing it names links to the line where it is
+written**, not just its ID: `U-XXX`, `GĐ-XXX`, `ADR-XXX`, `F-XXX`, `S-X`
+(`master_plan/shop-facts.md` §7.2), a blocked task. Get the line with `grep -n`
+in the same turn (lines drift), and link the §2 owner, never a copy:
 
-- The task in `work/backlog.md` reflects reality — moved to *Done*, or left in
-  *In Progress* with what remains written into the entry.
-- `work/scope/<ID>.txt` is accurate; it stays until the task is committed, and is
-  deleted after that.
-- Every rule, decision, invariant and unknown you hit is in its owner (§2, §4).
-- Every task finished this session has its paste-ready commit block in the
-  report (§6.1), plus one for anything else left uncommitted.
-- The final report says what is **still unresolved**, in the same words the
-  next session would need to pick it up — and **every open question it names
-  carries a link to the question itself**, not just its ID.
-
-  A report saying *"U-022 is still open"* makes the reader go hunting for U-022;
-  the ID is an index entry, not an answer. So each one gets a clickable link to
-  the line where the question is actually written:
-
-  ```markdown
-  **U-022** — [docs/product/99-unknowns.md:61](docs/product/99-unknowns.md#L61)
-  **GĐ-04** — [docs/decisions.md:844](docs/decisions.md#L844)
-  ```
-
-  - **Applies to every kind of open thing you name:** `U-XXX`
-    (`docs/product/99-unknowns.md`), `GĐ-XXX` and `ADR-XXX`
-    (`docs/decisions.md`), `F-XXX` (`work/findings.md`), `S-X`
-    (`master_plan/shop-facts.md` §7.2), and a blocked task in
-    `work/backlog.md`.
-  - **Get the line number at report time**, with `grep -n`, in the same turn you
-    write the report. Line numbers drift as documents grow; one copied from
-    memory or from an earlier turn points at the wrong line.
-  - **Link the owner from §2, never a copy.** The link is a pointer, not a place
-    to restate the question — same reason the brief points and never copies
-    (§7.1, `work/findings.md` F-001).
+```markdown
+**U-022** — [docs/product/99-unknowns.md:61](docs/product/99-unknowns.md#L61)
+```
 
 ### 7.4 Claude Code / Codex handoff and independent review
 
-Adopted 2026-09-25 at the repo owner's request; rationale: `docs/decisions.md`
-ADR-052. Both tools use the same owners (§2), task state and acceptance.
+Adopted 2026-09-25 at the repo owner's request (ADR-052). Both tools use the
+same owners (§2), task state and acceptance.
 
 - One writer per working tree. The other tool may review without editing once
-  the writer pauses at a stable diff. For concurrent implementation, use separate
-  branches and worktrees, separate tasks, and name an integrator. Shared backlog
-  and owner-file changes still need reconciliation during integration.
+  the writer pauses at a stable diff. Concurrent implementation uses separate
+  branches and worktrees, separate tasks, and a named integrator; shared
+  backlog and owner-file changes are still reconciled at integration.
 - When receiving a task or switching tools, read the brief, task entry, current
-  branch, `git status` and diff. Existing changes may belong to someone else.
-- Keep handoff in the existing task detail entry (§2), with the implementing
-  tool, reviewer (or "not yet reviewed"), branch and commit/base when available,
-  changed or new files, checks actually run and their results, remaining work,
-  next action and links to relevant owners. Keep status only in `work/backlog.md`.
-  Do not maintain a second task log or separate business memory for each tool.
-- Independent review starts from acceptance, relevant owner documents and the
-  exact diff being reviewed. Report findings with location and evidence. The
-  implementer resolves valid findings and reruns affected checks. A review
-  opinion does not change business truth; route decisions through §4.
-- A chat session without repository/terminal access receives the relevant task,
-  source excerpts and diff as a snapshot. Its output is a proposal until a
-  repository session applies and verifies it; it cannot claim local gate results.
+  branch, `git status` and diff — existing changes may belong to someone else.
+- Handoff lives in the existing task detail entry (§2): implementing tool,
+  reviewer (or "not yet reviewed"), branch and commit/base, changed files,
+  checks actually run and their results, remaining work, next action, links to
+  owners. Status lives only in `work/backlog.md`; no per-tool task log or memory.
+- Independent review starts from acceptance, the relevant owners and the exact
+  diff; findings carry location and evidence. The implementer resolves valid
+  ones and reruns affected checks. A review opinion does not change business
+  truth — route decisions through §4.
+- A chat session without repository access gets a snapshot (task, excerpts,
+  diff); its output is a proposal until a repository session applies and
+  verifies it, and it cannot claim gate results.
 
-**Roles — Claude leads, Codex implements** (adopted 2026-09-27 at the repo
-owner's request; rationale `docs/decisions.md` ADR-054). Claude owns every step
-where a mistake costs money or invents business truth: picking the task and
-moving its status, the L0–L3 level, Acceptance, `work/scope/<ID>.txt`, design, ADRs,
-unknowns, `master_plan/shop-facts.md`, `quality/invariants.md`, recording the
-shop owner's answers, reviewing, integrating, and writing the §6.1 block.
-Codex implements a work order from Claude inside its own worktree and scope,
-runs the gate, and reports with evidence. Codex never decides a business
-question, never edits task status or those owners, and never commits; an
-unclear rule stops that part of the work and goes into the report. The integrator
-§7.4 asks for is Claude, who re-reads the real diff and reruns the gate itself —
-Codex's report is a claim, not evidence (§5). `git commit` stays the repo owner's
-(§6). Procedure, commands and the work-order template:
-`docs/prompt-guideline.md` §6.
+**Roles — Claude leads, Codex implements** (2026-09-27, repo owner; ADR-054).
+Claude owns every step where a mistake costs money or invents business truth:
+picking the task and moving its status, the level, Acceptance, the scope file,
+design, ADRs, unknowns, `master_plan/shop-facts.md`, `quality/invariants.md`,
+recording the shop owner's answers, reviewing, integrating, and the §6.1 block.
+Codex implements a work order inside its own worktree and scope, runs the gate,
+and reports with evidence; it never decides a business question, never edits
+task status or those owners, never commits — an unclear rule stops that part and
+goes into the report. Claude integrates by re-reading the real diff and rerunning
+the gate: Codex's report is a claim, not evidence (§5). `git commit` stays the
+repo owner's (§6). Procedure and work-order template: `docs/prompt-guideline.md`
+§6.
 
 **Small tasks without Claude** (2026-09-27, repo owner; ADR-054 *Sửa đổi*). An
-L0/L1 task the repo owner hands Codex directly, with no work order, has the
-repo owner as lead. Codex may then also move that task's own status in
-`work/backlog.md`, write its detail entry, declare and delete its `work/scope/<ID>.txt`,
-add an `F-XXX` finding and add an open `U-XXX`. It still never decides a
-business question, never edits `docs/decisions.md`,
-`master_plan/shop-facts.md` or `quality/invariants.md`, never closes an
-unknown, never commits. A task that turns out L2+ or needs one of those owners
-goes back to Claude.
+L0/L1 task the repo owner hands Codex directly, with no work order, has the repo
+owner as lead. Codex may then also move that task's status in `work/backlog.md`,
+write its detail entry, declare and delete its scope file, add an `F-XXX` and add
+an open `U-XXX`. It still never decides a business question, never edits
+`docs/decisions.md`, `master_plan/shop-facts.md` or `quality/invariants.md`,
+never closes an unknown, never commits. A task that turns out L2+ or needs one
+of those owners goes back to Claude.
 
 ## 8. Definition of Done
 

@@ -951,6 +951,64 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-087"></a>
+### T-087 — `CLAUDE.md` 607 dòng nạp vào mọi phiên, phần lớn là cơ chế đã có owner khác
+
+**Yêu cầu:** mở 2026-09-25 (đề xuất tinh gọn, `docs/decisions.md` **ADR-051** *Hệ quả*); chủ repo
+giao 2026-09-29: *"hãy đọc kĩ và hoàn thành task trên"*. Mức **L2**: file này đổi cách mọi phiên
+Claude Code và Codex làm việc — sai một luật là mọi phiên sau sai theo. Không file prompt — như
+T-086 · T-119, Nghiệm thu nằm ở entry này.
+
+**Goal:** `CLAUDE.md` chỉ còn *luật* và *con trỏ*; cách một cổng chạy nằm ở header script của nó,
+lý do nằm ở ADR. Mỗi phiên trả ít dòng hơn mà không mất luật nào.
+
+**Vì sao có task này:** mỗi lượt sửa quy trình thêm một đoạn giải thích cơ chế vào §5 · §6.2 · §7.1,
+trong khi header script đã giữ đúng đoạn ấy — hai bản, và một bản đã trôi: §5 nói Gate 1d chỉ soát
+`docs/product/1-system-design/`, header nói hai vùng. Làm **sau cùng** (ADR-051) vì rút trước khi
+T-084 · T-085 · T-086 đổi quy trình là viết hai lần; ba task ấy đã xong 2026-09-28.
+
+**Về quyết định còn treo của T-119** (áp khuôn *một entry, trạng thái một nơi* cho lane admin và
+task `T-XXX` hay không): `CLAUDE.md` không mô tả khuôn entry — nó trỏ về *Task Detail Template*
+của `work/backlog.md`. Bản rút gọn giữ nguyên cách trỏ ấy, nên quyết định kia đi hướng nào cũng
+không phải viết lại file này. Đây là suy luận của phiên, 2026-09-29, không phải lời chủ repo.
+
+**Phạm vi:** `work/scope/T-087.txt` — `CLAUDE.md` · `AGENTS.md` · `scripts/verify.sh` ·
+`scripts/gate.sh` · `work/backlog.md` · `work/backlog_archive.md` · `docs/decisions.md`.
+
+**Acceptance (viết trước khi sửa, 2026-09-29):**
+1. `wc -l CLAUDE.md` ≤ 300 (từ 607). Ngưỡng là của phiên, không phải của chủ repo.
+2. Số mục giữ nguyên: §1…§8, các ý 1…8 của §3, §6.1 · §6.2 · §7.1…§7.4 — mọi chỗ trỏ `CLAUDE.md §x`
+   trong repo vẫn tới đúng nội dung.
+3. Bảng §2 giữ đủ từng hàng, không đổi owner nào.
+4. Không luật nào mất: mỗi nghĩa vụ của bản cũ hoặc còn trong `CLAUDE.md`, hoặc nằm ở một owner mà
+   `CLAUDE.md` trỏ tới. Bảng đối chiếu ghi ở ADR mới.
+5. Luật ngôn ngữ và luật giải thích (§1, T-105), chia vai Claude · Codex (§7.4, ADR-054) giữ đủ ý.
+6. `scripts/verify.sh` có header nói Gate 1 chạy gì, khi nào bị bỏ qua, khi nào gọi `db-check.sh`.
+7. ADR ghi lựa chọn *luật ở `CLAUDE.md`, cơ chế ở header, lý do ở ADR* và phương án bị bác.
+8. `./scripts/gate.sh` xanh.
+
+**Bàn giao:** Claude Code, nhánh `chatgpt_involve`, base `24d84ff`; chưa review độc lập. Sửa
+`CLAUDE.md` · `scripts/verify.sh` (header mới) · `scripts/gate.sh` (header: con trỏ `§2.2` cũ → §2,
+Gate 1d đọc hai vùng) · `docs/decisions.md` (ADR-064 + hàng bảng tổng hợp) · `work/backlog.md` ·
+`work/backlog_archive.md`. `AGENTS.md` khai trong scope nhưng không phải sửa: ba chỗ nó trỏ (§1
+*Ngôn ngữ trả lời*, §6.1, §7.4 *Roles*) còn nguyên.
+
+**Bằng chứng:** (1) `wc -l CLAUDE.md` = 412 — **không đạt** ngưỡng ≤ 300; đọc lại từng đoạn, phần
+còn lại là luật, cắt tiếp là bỏ luật (ADR-064 *Hệ quả*). (2) `diff` danh sách tiêu đề `##`/`###`
+cũ–mới: giống hệt; tám ý đánh số của §3 còn đủ. (3) `diff` các dòng bảng §2 cũ–mới: giống hệt; §8
+giống hệt. (4) bảng *Luật đã đi đâu* ở ADR-064. (5) luật ngôn ngữ, giải thích ngắn trước, chia vai
+và *Small tasks without Claude* giữ đủ ý, viết gọn câu. (6) header `scripts/verify.sh`; `bash -n`
+qua. (7) ADR-064. (8) `./scripts/gate.sh`: Gate 3 · 1b · 1c · 1 PASS, 1d và db SKIP (không đổi
+file nào ở vùng của chúng), dòng cuối `PASS gate`. Nghĩa vụ L2 *regression test cho invariant liên
+quan*: không invariant nghiệp vụ nào ở `quality/invariants.md` dính tới file quy trình này; tám
+`scripts/*.test.sh` chạy trong Gate 1 đều qua.
+
+**Còn lại:** chưa review độc lập. Phiên T-120 (worktree `t120`) khai scope cả `CLAUDE.md` ·
+`docs/decisions.md` · `work/backlog.md`; lúc gộp, hàng §2 nó thêm phải đặt vào bản 412 dòng và ADR
+của nó lấy số sau ADR-064. Quyết định của chủ repo về khuôn entry cho lane admin và task `T-XXX`
+(T-119) vẫn chưa có — không chặn file này.
+
+
 <a id="t-119"></a>
 ### T-119 — Đo lại thí điểm lane pha 2 (ADR-051) trước khi rút `CLAUDE.md`
 

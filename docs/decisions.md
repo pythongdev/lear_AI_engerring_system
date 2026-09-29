@@ -80,6 +80,7 @@ có câu trả lời mới từ người.
 | ADR-061 | **`I-024` — một lần gửi, nhiều nhất một đơn — vào nhóm TIỀN đã có**; đồng nhất lần gửi bằng **dấu lần gửi** do phía gửi đặt một lần, **không** bằng nội dung; vế *một dấu một đơn* và *không đơn nào thiếu dấu* ở **tầng 1**, vế *gửi lại nhận lại đúng đơn* · *cùng dấu khác nội dung bị từ chối* · *giống hệt không phải là trùng* ở **tầng 3**, hai ý định của người là **tầng 4** (`RR-11`); `YC-25` (F-043) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-115; migration ở `T-116` |
 | ADR-062 | Gate 8 chặn thêm **subject trùng từng chữ một commit đã có** trong lịch sử; `git commit --amend` giữ nguyên subject của `HEAD` vẫn qua (F-031, sửa đổi ADR-010) | Đã chốt 2026-09-28 (giao cho phiên) | — | T-117 |
 | ADR-063 | **Mỗi task một file scope `work/scope/<MÃ>.txt`, git bỏ qua** — Gate 3 chấm theo hợp các file scope; Gate 7b chấm khối commit theo file của mã đứng đầu subject; file scope giữ tới khi task đã commit; `work/scope.txt` thành stub chỉ-comment | Đã chốt 2026-09-27 (chủ repo) | — | thay luật khai/gỡ scope của **ADR-043** · đóng T-085 |
+| ADR-064 | **`CLAUDE.md` chỉ giữ luật và con trỏ** — cơ chế của một cổng ở header script của nó, lý do ở ADR; số mục §1–§8 giữ nguyên; bảng §2 giữ đủ hàng (607 → khoảng 410 dòng) | Đã chốt 2026-09-29 (giao cho phiên) | — | T-087 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -4239,3 +4240,63 @@ nêu đích danh nó.
 **Applies to:** `scripts/check-scope.sh` · `scripts/check-commit-block.sh` · `scripts/brief.sh` và
 test của chúng · `work/scope/.gitignore` · `work/scope.txt` · `CLAUDE.md` §2 · §3 · §5 · §6 · §7 ·
 §8 · `AGENTS.md` · `docs/prompt-guideline.md` §6 · `quality/review-gate.md`.
+
+---
+
+### ADR-064 — `CLAUDE.md` chỉ giữ luật và con trỏ; cơ chế ở header script, lý do ở ADR
+
+**Trạng thái:** Đã chốt 2026-09-29 — giao cho phiên. Hướng *"rút về luật đang có; giải thích cơ chế
+về header script và ADR"* là lời của dòng T-087, mở từ đề xuất tinh gọn chủ repo đồng ý 2026-09-25
+(ADR-051 *Hệ quả*); chủ repo giao làm 2026-09-29 (*"hãy đọc kĩ và hoàn thành task trên"*). Cách
+chia từng đoạn dưới đây là của phiên (Claude Code), chưa review độc lập.
+
+**Context:** đo 2026-09-29, `CLAUDE.md` dài 607 dòng và nạp vào mọi phiên Claude Code lẫn Codex.
+Phần dày nhất kể lại **cách cổng chạy** — §5 (84 dòng), §6.2 (32), §7.1 (43) — trong khi header của
+`scripts/check-*.sh`, `scripts/brief.sh`, `scripts/hooks/commit-msg` đã giữ đúng những đoạn ấy.
+Hai bản, và một bản đã trôi: §5 nói Gate 1d chỉ soát `docs/product/1-system-design/`, header nói
+hai vùng (thêm `docs/product/2-db/` từ P2-02). `scripts/verify.sh` không có header nào, nên cơ chế
+Gate 1 chỉ sống ở `CLAUDE.md`. Số mục của file được trỏ từ khắp repo (đếm cùng ngày: §2 hơn 240
+lần, §3.5 hơn 110, §7.2 khoảng 80, §3.8 khoảng 75) nên không đổi được.
+
+**Decision:**
+
+1. `CLAUDE.md` giữ **luật** (phải làm gì, cấm gì, ai quyết) và **con trỏ** (owner nào giữ phần
+   còn lại). **Cách một cổng chạy** thuộc header script của nó; **vì sao có luật** thuộc ADR hay
+   finding mà luật trỏ tới.
+2. Số mục §1…§8, ý 1…8 của §3, §6.1 · §6.2 · §7.1…§7.4 giữ nguyên số và nghĩa.
+3. Bảng §2 giữ đủ hàng; mọi luật do chủ repo chốt bằng lời (ngôn ngữ trả lời · giải thích ngắn
+   trước — T-105; chia vai Claude · Codex — ADR-054) giữ đủ ý, chỉ viết gọn câu.
+4. Không đặt ngân sách dòng cứng: một con số không cổng nào đo là thêm một luật *tự giác*
+   (§3). Ai thêm một đoạn cơ chế vào `CLAUDE.md` thì chuyển nó vào header ở lượt thấy nó.
+
+**Luật đã đi đâu** (đối chiếu bản 607 dòng, commit `24d84ff`):
+
+| Đoạn cũ | Giờ ở đâu |
+|---|---|
+| §5 bước 1–4, 6: điều kiện đỏ, ignore có hạn, đọc theo khối, luật Gate 7b | header `scripts/check-scope.sh` · `check-links.sh` · `check-doc-status.sh` · `check-phase-boundary.sh` · `check-commit-block.sh`; `CLAUDE.md` §5 giữ một dòng mỗi cổng + luật hành động (file chưa track của task mình, Codex tự kiểm khối commit, nhãn PASS/FAIL/SKIP/NOTE) |
+| §5 bước 5: Gate 1 chạy gì, khi nào gọi `db-check.sh` | header **mới** của `scripts/verify.sh` |
+| §6.2: luật chặn subject, lý do, lệnh cài | header `scripts/hooks/commit-msg`, ADR-010 · ADR-062; `CLAUDE.md` §6.2 giữ luật tóm tắt, đường thoát, lệnh cài |
+| §7.1: ngưỡng cắt sáu/mười hai, các lúc hook chạy | header `scripts/brief.sh`; `CLAUDE.md` §7.1 giữ bốn luật đọc brief |
+| §4: hợp đồng hình dạng câu hỏi mở | `docs/product/99-unknowns.md` → *Cách viết một câu ở đây* |
+| §2: ngày mở `docs/product/2-db/`, lịch sử đổi hàng | ADR-035 · `work/backlog_DB.md`; câu *"chờ chủ repo xác nhận"* của kế hoạch pha 2 §5 giữ thành một con trỏ |
+| §2: cây thư mục | bảng §2 và danh sách cổng ở §5 đã nêu đủ file; bỏ |
+| §7.3: bốn gạch trùng checklist §8 | §8; §7.3 giữ luật link tới dòng của câu hỏi mở |
+
+**Rejected alternatives:**
+
+- *Rút về khoảng 120 dòng như đề xuất `work/proposals/updatee_sýstem.md`.* Bác: riêng bảng §2 và
+  §8 đã gần 60 dòng, luật chia vai và luật ngôn ngữ là lời chủ repo — xuống 120 dòng phải bỏ luật,
+  không chỉ bỏ cơ chế.
+- *Tách `CLAUDE.md` thành nhiều file nạp theo nhu cầu.* Bác: luật phiên nào cũng cần thì phải nạp
+  mọi phiên; file tách ra là file phiên không mở (§7.1 ra đời vì đúng lý do ấy).
+- *Đánh số lại mục cho gọn.* Bác: hàng trăm con trỏ `CLAUDE.md §x` trong repo sẽ trỏ sai.
+
+**Hệ quả:** `CLAUDE.md` từ 607 còn khoảng 410 dòng. Ngưỡng ≤ 300 phiên tự đặt ở Acceptance của
+T-087 **không đạt**: đọc lại từng đoạn, phần còn lại là luật, và cắt tiếp là bỏ luật. Một phiên cần
+biết *vì sao* một cổng đỏ phải mở header script — đổi lại, chỉ còn một bản của mỗi cơ chế. Quyết
+định còn treo của T-119 (áp khuôn *một entry, trạng thái một nơi* cho lane admin và task `T-XXX`)
+không đòi viết lại file này: `CLAUDE.md` trỏ về *Task Detail Template* của `work/backlog.md`, không
+mô tả khuôn entry.
+
+**Applies to:** `CLAUDE.md` · `scripts/verify.sh` (header) · `scripts/gate.sh` (header, con trỏ
+`§2.2` cũ → §2).

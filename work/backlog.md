@@ -71,9 +71,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-087 **`CLAUDE.md` 506 dòng nạp vào mọi phiên** — **L2**, mở 2026-09-25. Rút về luật đang có;
-  giải thích cơ chế về header script và ADR. Làm **sau cùng** — nó mô tả quy trình, rút trước là
-  viết hai lần (**ADR-051**). Trước đó đánh giá thí điểm lane pha 2 sau `P2-03` · `P2-04`.
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
 [↑ đầu file](#top)
@@ -81,9 +78,11 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+
 <a id="done"></a>
 ## Done
 
+- [x] T-087 `CLAUDE.md` chỉ giữ luật và con trỏ — 607 còn 412 dòng; cơ chế về header script, lý do về ADR-064 — 2026-09-29 · [chi tiết](backlog_archive.md#t-087)
 - [x] P2-08 Lược đồ người · chỗ đứng theo thời điểm · vết — trực quầy theo khoảng, *ai bấm* bắt buộc, vết cập nhật bản trước / bản sau, sổ giấy nhập bù — 2026-09-28 · `8e5a77e` · [chi tiết](backlog_DB.md#p2-08)
 - [x] T-119 Đo lại thí điểm lane pha 2 (ADR-051): mục tiêu đạt, ba trên bảy bước có dấu *Done* trong commit của task khác — 2026-09-28 · [chi tiết](backlog_archive.md#t-119)
 - [x] T-086 `work/backlog.md` chỉ giữ trạng thái — mỗi việc đã xong một dòng; chi tiết sang `work/backlog_archive.md` — 2026-09-28 · [chi tiết](backlog_archive.md#t-086)
