@@ -1,5 +1,6 @@
 # Lệnh tắt cho database LÀM VIỆC trên máy phát triển (compose project `banhcuon`).
-# Hướng dẫn từng bước: docs/guideline/chay-database-tren-may.md. Chỗ đặt file này:
+# Hướng dẫn từng bước: docs/guideline/chay-database-tren-may.md; bảng tra lệnh:
+# docs/command/make.md. Chỗ đặt file này:
 # docs/product/2-db/10-quy-uoc-code.md QC-08.
 #
 # File này không mang cấu hình riêng: database, cổng, vai lấy từ compose.yaml; múi giờ
