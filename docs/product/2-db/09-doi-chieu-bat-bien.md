@@ -33,7 +33,8 @@ Lệnh in hai nhóm tách nhau (**ADR-053** luật 3): **nhóm `I-0xx/n`** — m
 danh sách đọc lúc chạy (`QD-02` · `QD-31/b` · `QD-32` · `QD-33/b` · `QD-40/b`). Trước mọi câu, lệnh so
 `comm -3` danh sách mã `### I-0xx` ở `quality/invariants.md` với mã có câu, và mã `### QD-XX` với nhóm
 quy ước: một mệnh đề mới chưa có câu làm lệnh **đỏ**, không cần ai nhớ cập nhật một con số
-(**F-018** · **F-026**). Một câu không chạy được là `FAIL`, không phải bỏ qua.
+(**F-018** · **F-026**) — trừ mệnh đề có dòng hợp lệ ở §2.1, được in `NOTE` kèm người nợ
+(**ADR-070**). Một câu không chạy được là `FAIL`, không phải bỏ qua.
 
 Mọi danh sách mà câu cần đều **đọc lúc chạy** từ owner, không chép: giờ bán và múi giờ
 (`shop-facts.md` §1), mã kênh (§2), mã trạm (§3), bảng chuyển trạng thái (`05-vong-doi.md` §5.2 ·
@@ -122,6 +123,23 @@ tính chất của dữ liệu.
 | `I-021` tập 5 — con số doanh thu có cộng tiền đầu két | chưa có câu | (A) đọc con số của báo cáo; tiền đầu két ở bảng riêng, ngoài mọi cột tiền đã thu (**`I-021`** tầng 1) | pha 3 |
 | `I-023` tập 7 — lần đổi mã chạm phiên đang mở | chưa có câu | (B) cửa `qr_code_issue` không chạm phiên hay lượt gọi, và phiên không mang mốc đổi trạng thái nào để so với lần đổi mã | — (đúng theo cấu tạo) |
 
+### 2.1 Mệnh đề chưa có lát — cả mệnh đề chưa có câu
+
+Ngày 2026-09-30, Claude chọn theo ADR-070; T-123 thi công: chỉ nhận dòng có đúng một mã
+`I-0xx` trong backtick, trạng thái `chưa có lát`, đủ *vì sao* và *ai nợ* (không rỗng hoặc chỉ `—`).
+Mã ở `quality/invariants.md` chưa có câu và có dòng hợp lệ được in `NOTE` kèm người nợ; mã thiếu
+câu ngoài danh sách hoặc dòng sai hình làm lệnh đỏ.
+Dòng có mã không thuộc invariant hoặc đã có câu cũng làm lệnh đỏ; bước viết câu phải gỡ dòng
+của mệnh đề ấy trong cùng thay đổi.
+
+| Mệnh đề | Trạng thái | Vì sao | Ai nợ |
+|---|---|---|---|
+| `I-025` | chưa có lát | lát sổ nguyên liệu (`P2A-02`) chưa dựng — chưa có bảng nào để câu đọc | `P2A-07` |
+| `I-026` | chưa có lát | lát sổ nguyên liệu (`P2A-02`) chưa dựng — chưa có bảng nào để câu đọc | `P2A-07` |
+| `I-027` | chưa có lát | lát chấm công (`P2A-03`) chưa dựng, còn chờ lời cho **U-065** | `P2A-07` |
+| `I-028` | chưa có lát | lát khoản của người (`P2A-04`) chưa dựng | `P2A-07` |
+| `I-029` | chưa có lát | lát khoản chi (`P2A-05`) chưa dựng, còn chờ lời cho **U-066** | `P2A-07` |
+
 ---
 
 ## 3. Chứng minh bộ câu biết kêu
@@ -190,6 +208,7 @@ làm khác.
 | Bước | Lấy gì |
 |---|---|
 | `P2-13` | §3 — lệnh và phần chứng minh chạy trong `./scripts/db-check.sh`; §2 là danh sách tập chưa được chấm, đọc trước khi tick cổng |
+| `P2A-02`…`P2A-07` | Bước nào viết câu cho một mệnh đề thì **gỡ dòng của mệnh đề ấy ở §2.1 trong cùng thay đổi** |
 | `P2-14` | §1 — mỗi mã `I-0xx` có câu; file này không nhắc đường gọi hay màn hình nào của pha 3 · pha 4 |
 | pha 3 | §2 các dòng *pha 3* — mỗi chỗ cất mới là một migration, kèm câu và file lỗi mới ở `db/reconcile/`; §4 — **F-046** · **F-047** |
 | chủ repo | §2 các dòng *chủ repo* — số tiền mặt đếm được, tin nhắn báo có, dấu đã đối soát xong: bước nào nhận (`04-luoc-do-duong-tien.md` §5) |

@@ -249,7 +249,7 @@ fi
 # (a) comm -3 danh sách mã và (b) cả bộ trên dữ liệu mồi: chính lệnh chạy sau khi đóng quán.
 n_proof=0
 if out="$(scripts/reconcile.sh --project "$PROJECT" 2>&1)"; then
-  printf '%s\n' "$out" | grep -E '^(PASS mã|     (danh sách|owner|ràng buộc)|reconcile:)'
+  printf '%s\n' "$out" | grep -E '^(PASS mã|NOTE I-0[0-9]{2} chưa có lát|     (danh sách|owner|ràng buộc)|reconcile:)'
 else
   fail "đối chiếu trên dữ liệu mồi:"; printf '%s\n' "$out" | grep -Ev '^PASS I-|^PASS QD-' | sed 's/^/     /'
 fi

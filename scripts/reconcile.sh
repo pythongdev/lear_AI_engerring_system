@@ -14,9 +14,14 @@
 #            db/reconcile/qd.sql, phần cần danh sách đọc lúc chạy từ owner.
 # Mỗi câu ra 0 dòng là PASS; khác 0 là FAIL kèm tối đa vài dòng của tập. Câu không chạy được là FAIL.
 #
-# Trước mọi câu: `comm -3` giữa mã `### I-0xx` ở quality/invariants.md và mã có câu trong
-# db/reconcile/ phải rỗng; cùng phép cho mã `### QD-XX` và nhóm quy ước. Một mệnh đề mới chưa có câu
-# ⇒ FAIL ở đây, không cần ai nhớ cập nhật một con số (F-018 · F-026).
+# Trước mọi câu: so mã I-0xx ở quality/invariants.md với mã có câu trong db/reconcile/.
+# Chỉ mã chưa có câu có dòng hợp lệ ở 09-doi-chieu-bat-bien.md §2.1 được NOTE:
+# đúng một mã, trạng thái "chưa có lát", đủ lý do và người nợ. Dòng đã có câu hoặc
+# không có trong invariant ⇒ FAIL, phải gỡ; mã thiếu câu ngoài danh sách vẫn FAIL.
+# Danh sách đọc lúc chạy, vắng file/mục thì rỗng (work/findings.md F-052 · ADR-070).
+# QD-XX vẫn dùng comm -3 như cũ (F-018 · F-026).
+# Đường thay thế để test: RECONCILE_INVARIANTS (quality/invariants.md),
+# RECONCILE_QUERY_DIR (db/reconcile), RECONCILE_DOC (docs/product/2-db/09-doi-chieu-bat-bien.md).
 #
 # Đọc lúc chạy, không chép: tham số `:schema`… ở bảng §0 của 01-quy-uoc-du-lieu.md; múi giờ và giờ
 # bán ở master_plan/shop-facts.md §1; mã kênh §2, mã trạm §3; bảng chuyển trạng thái
@@ -31,12 +36,14 @@ set -uo pipefail
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT" || exit 1
 
-DIR=db/reconcile
+DIR="${RECONCILE_QUERY_DIR:-db/reconcile}"
 DOCS=docs/product/2-db
 PARAMS_FILE="$DOCS/01-quy-uoc-du-lieu.md"
 FACTS=master_plan/shop-facts.md
 LIFECYCLE=docs/product/0-ba/ban-hang/05-vong-doi.md
-INVARIANTS=quality/invariants.md
+INVARIANTS="${RECONCILE_INVARIANTS:-quality/invariants.md}"
+RECONCILE_DOC="${RECONCILE_DOC:-$DOCS/09-doi-chieu-bat-bien.md}"
+n_pending=0
 
 PROJECT=""
 MODE=run
@@ -99,16 +106,63 @@ blocks() {
 
 # --- so danh sách mã -------------------------------------------------------------
 check_codes() {
-  local want got d ok=0
-  want="$(grep -oE '^### I-0[0-9]{2}' "$INVARIANTS" | cut -c5- | sort -u)"
-  got="$(grep -ohE '^-- @@ I-0[0-9]{2}/' "$DIR"/i[0-9][0-9][0-9].sql | cut -c7-11 | sort -u)"
-  d="$(comm -3 <(printf '%s\n' "$want") <(printf '%s\n' "$got"))"
-  if [ -n "$want" ] && [ -z "$d" ]; then
-    echo "PASS mã I-0xx — comm -3 rỗng: $(printf '%s\n' "$want" | grep -c .) mã ở $INVARIANTS, cùng từng ấy mã có câu"
-  else
-    echo "FAIL mã I-0xx — lệch giữa $INVARIANTS (cột trái) và $DIR/ (cột phải):"
-    printf '%s\n' "$d" | sed 's/^/     /'; ok=1
-  fi
+  local want got d ok=0 result
+  result="$(perl -e '
+    my ($inv, $dir, $doc) = @ARGV;
+    my (%w, %g, %l); my $bad = 0;
+    sub fail { print "FAIL mã I-0xx — $_[0]\n"; $bad = 1 }
+    open my $fh, "<", $inv or die "$inv: $!";
+    while (<$fh>) { $w{$1} = 1 if /^### (I-0[0-9]{2})/ }
+    close $fh;
+    for my $f (glob "$dir/i[0-9][0-9][0-9].sql") {
+      open $fh, "<", $f or die "$f: $!";
+      while (<$fh>) { $g{$1} = 1 if /^-- @@ (I-0[0-9]{2})\// }
+      close $fh;
+    }
+    if (open $fh, "<", $doc) {
+      my $on = 0;
+      while (<$fh>) {
+        if (/^### 2\.1(?:\s|$)/) { $on = 1; next }
+        last if $on && (/^#{1,3}\s/ || /^---\s*$/);
+        next unless $on && /^\s*\|/;
+        my @c = split /\|/, $_, -1;
+        for (@c) { s/^\s+|\s+$//g }
+        next unless defined $c[2] && $c[2] eq "chưa có lát";
+        if (@c != 6 || $c[1] !~ /^`(I-0[0-9]{2})`$/) {
+          fail("dòng chưa có lát sai mã/cột ở $doc §2.1: $_"); next;
+        }
+        my $code = $1;
+        if ($c[3] eq "" || $c[3] eq "—" || $c[4] eq "" || $c[4] eq "—") {
+          fail("$code thiếu vì sao hoặc ai nợ ở $doc §2.1"); next;
+        }
+        $l{$code} = $c[4];
+      }
+      close $fh;
+    }
+    fail("không đọc ra mã nào ở $inv") unless keys %w;
+    for my $code (sort keys %l) {
+      fail("$code không có ở $inv — gỡ dòng ở $doc §2.1") unless $w{$code};
+      fail("$code đã có câu, dòng hết hạn — gỡ dòng ở $doc §2.1") if $g{$code};
+    }
+    my $pending = 0;
+    for my $code (sort keys %w) {
+      next if $g{$code};
+      if (exists $l{$code}) {
+        print "NOTE $code chưa có lát — ai nợ: $l{$code} — $doc §2.1\n";
+        $pending++;
+      } else { fail("$code chưa có câu ở $dir/ và không có dòng hợp lệ ở $doc §2.1") }
+    }
+    for my $code (sort keys %g) { fail("$code có câu nhưng không có ở $inv") unless $w{$code} }
+    unless ($bad) {
+      my $total = scalar keys %w; my $queries = scalar keys %g;
+      print $pending
+        ? "PASS mã I-0xx — $queries mã có câu + $pending mã chưa có lát = $total mã ở $inv\n"
+        : "PASS mã I-0xx — comm -3 rỗng: $total mã ở $inv, cùng từng ấy mã có câu\n";
+    }
+    exit $bad;
+  ' "$INVARIANTS" "$DIR" "$RECONCILE_DOC")" || ok=1
+  printf "%s\n" "$result"
+  n_pending="$(printf "%s\n" "$result" | grep -c "^NOTE I-0[0-9][0-9] chưa có lát")"
   want="$(grep -oE '^### QD-[0-9]+' "$PARAMS_FILE" | cut -c5- | sort -u)"
   got="$(blocks | tr '\036' '\n' | grep -oE '^QD-[0-9]+' | sort -u)"
   d="$(comm -3 <(printf '%s\n' "$want") <(printf '%s\n' "$got"))"
@@ -253,10 +307,12 @@ while IFS="$(printf '\t')" read -r code set; do
   esac
 done <<<"$set_names"
 
-n_open="$(grep -c '^| .* | chưa có câu |' "$DOCS/09-doi-chieu-bat-bien.md" 2>/dev/null)"
-echo "NOTE $n_open tập của pha 1 chưa có câu, mỗi tập một lý do và một người nợ — $DOCS/09-doi-chieu-bat-bien.md §2"
+n_open="$(grep -c '^| .* | chưa có câu |' "$RECONCILE_DOC" 2>/dev/null)"
+echo "NOTE $n_open tập của pha 1 chưa có câu, mỗi tập một lý do và một người nợ — $RECONCILE_DOC §2"
 if [ "$failed" -ne 0 ]; then
   echo "reconcile: FAIL — $n_bad câu có phần tử hoặc không chạy được (trong $n_i câu I-0xx · $n_q câu QD)"
   exit 1
 fi
-echo "reconcile: PASS — $n_i câu I-0xx · $n_q câu QD, mọi tập rỗng"
+summary_pending=""
+[ "$n_pending" -eq 0 ] || summary_pending=" · $n_pending mệnh đề chưa có lát"
+echo "reconcile: PASS — $n_i câu I-0xx · $n_q câu QD, mọi tập rỗng$summary_pending"
