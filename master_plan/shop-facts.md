@@ -668,9 +668,11 @@ này đem ra cho bàn nào."*
 - **Chọn bàn nào nhận là quyết định của người đứng quầy, không phải luật máy tự gán** — cùng lối
   nghĩ *"máy không gom, người gom"* ở trên: máy chỉ bày ra ai đang chờ đúng thứ đã làm (cùng thành
   phần, cùng lượng nhân — §4.5), người ở quầy chọn và bấm.
-- **Chỉ áp dụng khi có bàn khác đang chờ đúng thứ đã làm.** Chủ quán không nói tới ca không bàn
-  nào chờ — ca ấy chưa có luật, chưa hỏi. Câu hỏi đã ghi thành **U-064** (`docs/product/99-unknowns.md`,
-  mở 2026-09-28 ở P2-07) — vẫn chưa hỏi chủ quán.
+- **Chỉ áp dụng khi có bàn khác đang chờ đúng thứ đã làm.**
+- **Không bàn nào chờ đúng thứ ấy ⇒ người đứng quầy ghi chú trên POS rằng đó là bánh làm sai**
+  (chủ quán chốt 2026-09-30, trả lời U-064). Nguyên văn: *"pos note thông tin bánh làm sai."* Thứ
+  ấy không chuyển cho bàn nào. *Lời không nói* cái bánh, quả trứng ấy quán bỏ đi hay để lại cho
+  khách sau, cũng không nói ghi chú gồm những gì — hai vế ấy chưa có luật, không tự suy.
 **Con số thứ ba cũng do POS bấm, và đường lùi thì CÓ** (chủ quán chốt 2026-09-01, trả lời U-021 và
 U-024). Hai câu này khép nốt bảng bốn con số:
 
@@ -978,6 +980,11 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       sẽ báo lệch mỗi lần có người nợ.
     - **Người nợ quay lại trả thì POS ghi nhận** (chủ quán chốt 2026-08-31, trả lời U-012) — cùng
       một cửa với mọi việc chạm tiền khác.
+    - **Khách nợ được TRẢ DẦN từng phần** (chủ quán chốt 2026-09-30, trả lời U-063). Nguyên văn:
+      *"có. pos sẽ ghi lại tổng số nợ và ngày giờ trả nợ với số tiền còn thiếu."* POS ghi **tổng số
+      nợ**; mỗi lần khách trả, POS ghi **ngày giờ trả** và **số tiền còn thiếu** sau lần ấy. Ba
+      gạch đầu dòng dưới đây đứng nguyên cho từng lần trả: doanh thu vẫn tính ngày ghi nợ, mỗi lần
+      trả chỉ là tiền về, và két ngày nào thừa đúng bằng số nợ cũ thu được ngày ấy.
     - **Doanh thu tính vào NGÀY GHI NỢ, không phải ngày thu được tiền** (chủ quán chốt
       2026-08-31, trả lời U-012). Bữa ăn bán ngày nào thì doanh thu ngày ấy; lần trả sau chỉ là
       tiền về, không phải một lần bán mới.
@@ -1383,6 +1390,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-09-25 | Chủ quán trả lời B18–B20/B22: kiểm lại cuối buổi, đồ chưa bán hết, người ghi sự cố và không cần giá vốn một suất (T-090) | §8.4 |
 | 2026-09-25 | Chủ quán bổ sung hàng mua và đơn vị mua, nhịp mua, người mua và nguồn mua qua B11–B17; làm rõ mộc nhĩ, túi chữ T; xác nhận trả ngay/ghi nợ và tin nhắn, chưa chốt kỳ trả nợ (T-089) | §8.4 |
 | 2026-09-28 | Chủ quán trả lời U-062 và U-060 (T-118): **chỉ chủ quán** đổi mã QR của bàn, đổi khi quán bị hack; **POS** khai và cập nhật số người thực tế đang làm ở quán. U-058 nhận lại lời cũ, vẫn mở | §6 quy tắc 2 · §8.6 |
+| 2026-09-30 | Chủ quán trả lời năm câu (T-124): **tạm ứng, thưởng** và **điện, nước, wifi, xăng xe** đều lấy **từ két bán hàng** (U-067 · U-066); một lần chấm công là **một ô *có đi làm* do chủ quán tick** (U-065 — va với `C31` ở vế người bấm, mở U-069); đồ đã làm của đơn huỷ mà không bàn nào chờ thì **POS ghi chú bánh làm sai** (U-064); khách nợ **được trả dần**, POS ghi tổng nợ, ngày giờ trả và số còn thiếu (U-063). U-058 nhận lại lời cũ lần thứ tư, vẫn mở | §8.7 · §8.10 · §5.4 · §6.14 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -1835,6 +1843,17 @@ C25 nói phân công thường lệ; không tự thay luật POS gánh trạm kh
 giao (§6.7), cũng không quyết định máy ghi mốc đổi người ngoài quầy; lời U-055 ngày 2026-09-25 chốt không ghi.
 C31 nói chấm công; U-056 ngày 2026-09-25 chốt POS khai mốc đổi người đứng quầy.
 
+**Bổ sung 2026-09-30 — chủ quán trả lời U-065 và U-067 (T-124).**
+
+- **Một lần chấm công là một ô *có đi làm*.** Nguyên văn: *"chủ quán tự tick vào ô có đi làm"*.
+  Không có mốc lúc tới, lúc về hay bấm theo buổi nào được nêu. **Lời này va với `C31` ở vế người
+  bấm** — `C31` nói *nhân viên tự bấm*, lời này nói *chủ quán tự tick* — và không nói nó thay lời
+  trước. Chỗ va ấy, cùng vế một ô là một ngày hay một buổi, là `docs/product/99-unknowns.md`
+  **U-069**; chừng nào câu ấy còn mở, **không** dùng `C31` lẫn lời này để chốt *ai* đánh dấu công.
+- **Tiền tạm ứng (`C29`) và tiền thưởng (`C28`) lấy từ két bán hàng.** Nguyên văn: *"từ két bán
+  hàng"*. Tiền ấy rời két nên chạm đối soát cuối ngày (§6.10). Lời không nói ai lấy tiền khỏi két
+  hay lấy lúc nào.
+
 **Người mà ba mức này đếm là người của §3, không phải một danh sách thứ hai.** Bốn vai cộng chủ
 quán (§3, chốt 2026-08-30 và 2026-09-08) là tập người duy nhất; mục này **không** giữ bảng người
 riêng (`work/findings.md` **F-001**). Mức 1 cũng chính là chỗ mục tổng quan §8.6 hàng 6 đang hở —
@@ -1913,7 +1932,7 @@ rõ bên dưới chưa đủ để chốt cách thực hiện trong phần mềm
 | D38 | Gần Tết sẽ bán thêm đặc sản vùng miền. Chưa nêu món cụ thể hoặc trả lời vế chỉ bán cuối tuần. |
 | D39 | Một năm đổi giá một lần. Chưa nêu thời điểm trong ngày; không suy thành máy chỉ cho đổi mỗi năm một lần. |
 | D40 | Chủ quán đổi giá. Đây là quyền đổi bảng giá, chưa phải quyền giảm giá riêng cho khách ở D41. |
-| D41 | Đôi khi giảm giá cho khách quen. Chủ quán trả lời U-058 ngày 2026-09-25: “chủ quán” — chủ quán được giảm giá. Bổ sung 2026-09-27 (T-099): “ghi tên người tôi sẽ nhập số tiền giảm gía”; chủ quán làm rõ tên là **tên khách được giảm giá**, số tiền giảm áp dụng **cả đơn**. Chủ quán nhập số tiền giảm, không tính theo phần trăm. **Tái xác nhận 2026-09-27 (T-102): “ghi tên khách được giảm giá; chủ quán nhập số tiền giảm cho cả đơn”.** Phạm vi bản đầu, giới hạn và yêu cầu ghi lý do còn ở U-058. |
+| D41 | Đôi khi giảm giá cho khách quen. Chủ quán trả lời U-058 ngày 2026-09-25: “chủ quán” — chủ quán được giảm giá. Bổ sung 2026-09-27 (T-099): “ghi tên người tôi sẽ nhập số tiền giảm gía”; chủ quán làm rõ tên là **tên khách được giảm giá**, số tiền giảm áp dụng **cả đơn**. Chủ quán nhập số tiền giảm, không tính theo phần trăm. **Tái xác nhận 2026-09-27 (T-102): “ghi tên khách được giảm giá; chủ quán nhập số tiền giảm cho cả đơn”.** Chủ quán gửi lại đúng lời ấy lần thứ ba 2026-09-28 (T-118) và lần thứ tư 2026-09-30 (T-124). Phạm vi bản đầu, giới hạn và yêu cầu ghi lý do còn ở U-058. |
 | D42 | Nguyên văn: “không.” Câu hỏi gồm combo, suất trẻ em, suất lớn / nhỏ. Chủ quán sửa vế combo ngày 2026-09-25 (U-059): “có combos”. Quán có combo; không dùng lời “không” trước đó để xoá suất Đầy đủ ở §4.3–§4.9. Chưa có danh mục combo mới, thành phần hay giá mới. |
 | D43 | Menu QR cho khách cần ảnh món. Chưa chốt quyền sửa ảnh hoặc thứ tự hiển thị. |
 
@@ -1934,7 +1953,7 @@ không tự cho khách gửi giá hoặc cho người đứng quầy đặt giá
 |---|---|
 | E44 | Ngoài tiền hàng và lương, các khoản chi được nêu là điện, nước, wifi, xăng xe. |
 | E45 | Điện, nước là khoản cố định hằng tháng; giò, trứng, rau, quất là các khoản mua lặt vặt trong ngày. “Cố định” ở đây chưa chốt số tiền không đổi. |
-| E46 | Chi lặt vặt dùng tiền riêng của chủ quán. Chưa nói nguồn chi các khoản khác. |
+| E46 | Chi lặt vặt dùng tiền riêng của chủ quán. Điện, nước, wifi, xăng xe trả **từ két bán hàng** (chủ quán chốt 2026-09-30, trả lời U-066; nguyên văn “từ két bán hàng”). Khoản chi nào ngoài các khoản vừa kể thì chưa nói nguồn. |
 | E47 | Muốn xem lãi/lỗ theo ngày. |
 | E48 | Muốn biết cả món bán chạy và giờ đông khách. |
 | E49 | Tiền cuối buổi để ở nhà; cần ghi lại đường đi của khoản tiền đó. |

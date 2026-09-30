@@ -951,6 +951,77 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-124"></a>
+### T-124 — Chủ quán trả lời sáu câu, mà năm câu vẫn nằm ở mục đang mở
+
+**Yêu cầu:** 2026-09-30, chủ repo chuyển lời chủ quán trong hội thoại cho `U-067` · `U-066` ·
+`U-065` · `U-064` · `U-063` · `U-058`, kèm *"hãy cập nhật file trên"*. Mức **L1** — ghi dữ kiện và
+sửa chỗ nhắc tới; không đổi mệnh đề invariant, không đổi lược đồ. Thi công: Claude Code; chưa có
+lượt duyệt độc lập.
+
+**Phạm vi:** `work/scope/T-124.txt`. Không sửa `db/`, `scripts/`, `docs/decisions.md`,
+`docs/product/2-db/09-doi-chieu-bat-bien.md` (file T-123 sửa trong cùng cây, cùng lúc).
+
+**Acceptance → bằng chứng:**
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| Năm câu rời mục *Đang mở*, mỗi câu một bảng ở *Đã có lời giải* kèm nguyên văn và owner; mục lục khớp | `./scripts/brief.sh` mục *OPEN UNKNOWNS* còn `U-068` · `U-069` · `U-058` |
+| Lời chốt nằm ở owner: `master_plan/shop-facts.md` §5.4 · §6.14 · §8.7 · §8.10 và một dòng §7.1 | `grep -n '2026-09-30' master_plan/shop-facts.md` |
+| Không chỗ nào còn gọi một câu đã đóng là đang mở | Gate 1c: `PASS  Gate 1c  check-doc-status — 3178 khối, 67 mã U-XXX` |
+| Vế lời đáp không nói tới thì không được lấp | `U-069` mở cho chỗ va `C31`; ba hệ quả thành `T-125` · `T-126` · `T-127` ở *Ready* |
+
+**Cái được nói ≠ cái suy ra** (`work/findings.md` F-004). Lời `U-065` trả lời cả vế *ai* — câu hỏi
+không hỏi vế ấy — và va với `C31`; phiên **không** coi lời sau thay lời trước, mở `U-069`. Lời
+`U-064` không nói bánh bỏ hay giữ. Lời `U-066` phủ bốn khoản câu hỏi kể tên; `E46` đứng nguyên. Lời
+`U-058` là lần thứ tư gửi lại đúng một câu, ba vế còn mở vẫn mở.
+
+**Còn lại:** `quality/invariants.md` `I-021` · `I-027` · `I-028` · `I-029` **chưa** viết lại theo lời
+mới — chỉ câu *còn mở* được sửa thành *đã đóng, chưa viết lại*. `docs/decisions.md` **ADR-068** ·
+**ADR-069** và hồ sơ `P2A-01` ở `work/backlog_AD_DB.md` giữ nguyên lời lúc viết (lịch sử). Các chú
+thích trong `db/` và `docs/product/2-db/09-doi-chieu-bat-bien.md` còn ghi `U-063` · `U-064` như ca
+chưa có luật; chúng đổi cùng `T-126` · `T-127`.
+
+<a id="t-123"></a>
+### T-123 — `db-check` sẽ đỏ ở mọi lát admin vì năm mệnh đề có mã trước khi có câu đối chiếu
+
+**Yêu cầu:** 2026-09-30, chủ repo, trỏ vào `work/findings.md` **F-052**: *"hãy đọc kĩ finding trên
+yêu cầu codex làm và bạn kiểm tra"*. Mức **L1** — đổi hành vi của một phép kiểm, không đổi lược đồ
+hay dữ liệu. Không file prompt; phiếu giao việc cho Codex ở scratchpad của phiên.
+
+**Phạm vi:** `work/scope/T-123.txt`. Codex: `scripts/reconcile.sh`, `scripts/reconcile.test.sh`,
+`scripts/db-check.sh`, `docs/product/2-db/09-doi-chieu-bat-bien.md`. Claude: sổ việc, finding, ADR,
+một câu cập nhật ở kế hoạch lược đồ admin.
+
+**Acceptance → bằng chứng** (đo ở clone chính, 2026-09-30):
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| 1. năm mã có dòng ⇒ xanh, `NOTE` gọi tên | `./scripts/reconcile.sh --codes` ⇒ exit 0, năm dòng `NOTE I-02x chưa có lát — ai nợ: P2A-07`, `PASS mã I-0xx — 24 mã có câu + 5 mã chưa có lát = 29 mã` |
+| 2. mã thiếu câu, không có dòng ⇒ `FAIL` | ca *(b) thiếu câu ngoài danh sách* · *không miễn trừ mã đứng cạnh*; chạy tay: bỏ dòng `I-027` khỏi một bản sao của file 09 ⇒ `FAIL mã I-0xx — I-027 chưa có câu…`, bốn `NOTE` còn lại |
+| 3. dòng hết hạn ⇒ `FAIL` | ca *(c) dòng hết hạn phải gỡ* |
+| 4. mã có dòng mà không ở invariant ⇒ `FAIL` | ca *(d) mã ngoài invariant* |
+| 5. dòng thiếu lý do / người nợ ⇒ `FAIL` | bốn ca *(e) owner · reason = rỗng · —*, năm ca *(e) sai mã* |
+| 6. `db-check` không nuốt `NOTE` | output `db-check`: năm dòng `NOTE` ở mục đối chiếu; `reconcile: PASS — 63 câu I-0xx · 22 câu QD, mọi tập rỗng · 5 mệnh đề chưa có lát` |
+| 7. các ca là test | `./scripts/reconcile.test.sh` ⇒ 21 dòng `ok`, `reconcile.test: OK`; `verify.sh` tự chạy |
+| 8. `db-check` và gate xanh ở clone chính | `db-check: PASS — 8 bước xuôi · lùi · xuôi lại … 85 lỗi cài … 24 mã YC`; gate: xem báo cáo cuối phiên |
+
+**Bàn giao:** thực hiện **Codex** (bốn file trong scope của nó, worktree `../lean_wt/T-123`, nhánh
+`codex/T-123` từ `008524a` có áp sẵn diff chưa commit của `P2A-01` để tái hiện lỗi) · thiết kế,
+**ADR-070**, duyệt và đưa về: **Claude Code** · nhánh `chatgpt_involve`, trên `008524a` · chưa commit.
+Claude đọc diff thật, chạy lại test, phép đột biến ở hàng 2 và `db-check` ở clone chính; sửa một chỗ
+của Codex (ngắt lại một câu quá dài ở file 09 §0). Sandbox của Codex không với tới Docker nên
+`db-check` chỉ có Claude chạy.
+
+**Còn lại:** (1) chủ repo chưa chọn câu đối chiếu của mệnh đề admin viết ở lát của nó hay dồn về
+`P2A-07` (ADR-070, mục *Không quyết ở đây*). (2) Hai lần chạy `db-check` đầu ở clone chính đỏ vì
+container `banhcuon_check-db-1` biến mất giữa chừng (*No such container* · *the database system is
+shutting down*), lần thứ ba xanh trên cùng cây. Cùng lúc ấy một phiên khác (task `T-124`) đang sửa
+chính cây này; *suy đoán của phiên, chưa kiểm*: hai lần chạy `db-check` trùng giờ dùng chung một
+compose project và dọn container của nhau. Chưa ghi finding. (3) Thêm một mệnh đề ở `quality/invariants.md` trong một lượt chỉ đổi tài liệu vẫn không gọi
+phép so mã — gate bỏ qua `db-check` ở lượt ấy; đó là lý do F-052 chỉ lộ nhờ chạy tay.
+
+
 <a id="t-122"></a>
 ### T-122 — Chủ repo muốn dựng database cho admin, mà không kế hoạch nào nói phần nào dựng được
 

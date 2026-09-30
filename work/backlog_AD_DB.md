@@ -130,7 +130,8 @@ chưa commit.
 [`04-yeu-cau-du-lieu.md`](../docs/product/1-system-design/04-yeu-cau-du-lieu.md) §9; năm mệnh đề
 `I-025`…`I-029` ở `quality/invariants.md`; tầng và phép đối chiếu của chúng ở
 [`03-bao-ve-invariant.md`](../docs/product/1-system-design/03-bao-ve-invariant.md) §5; hành vi ở
-`docs/product/0-ba/admin/01-ranh-gioi.md` §1.6; hình dạng ở `docs/decisions.md` **ADR-069**. Hai câu
+`docs/product/0-ba/admin/01-ranh-gioi.md` §1.6; hình dạng ở `docs/decisions.md` **ADR-069** (chủ repo
+đồng ý 2026-09-30). Hai câu
 mới cho chủ quán — **U-067** (tiền tạm ứng, thưởng lấy từ đâu) và **U-068** (nghĩa của *thời gian
 nhập*) — không chặn chỗ cất nào. Một finding mở: **F-052**.
 

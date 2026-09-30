@@ -316,6 +316,9 @@ pha là quyền **chủ repo** (kế hoạch §9), và bốn ô tick dưới đ�
   mục *OPEN UNKNOWNS* 2026-09-30: `U-064` · `U-063` · `U-058`. Hỏi từng câu: không bước nào phải đoán để
   viết được một dòng của mình — cả ba là chỗ trống có tên, không lấp bằng mặc định (§6). ⚠️ Tick kèm:
   `U-063` và `U-058` **chạm tiền**; pha 3 không viết được cửa nợ và cửa giảm giá khi chúng còn mở.
+  *Cập nhật 2026-09-30 (T-124), không đổi lần tick:* `U-064` và `U-063` đã đóng bằng lời chủ quán cùng ngày
+  (`docs/product/99-unknowns.md`, mục đã có lời giải); lược đồ chưa theo kịp hai lời ấy — task
+  `T-126` (trả nợ từng phần) và `T-127` (ghi chú bánh làm sai) ở `work/backlog.md`. `U-058` ở lại.
 - [x] **11. Bốn mã nợ của pha 1 đã được đọc** — `F-034` *Fixed* (yêu cầu `YC-21` có owner, cơ chế giao
   pha 5 — `T-109`; [`07-thu-tu-migration.md`](07-thu-tu-migration.md) nói rõ migration xuôi · lùi không
   chứng minh khôi phục) · `F-036` *Fixed — 2026-09-27 (T-103)* · `F-037` *Fixed — 2026-09-28 (T-112)* ·
