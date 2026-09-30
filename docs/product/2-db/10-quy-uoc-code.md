@@ -234,8 +234,10 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
 - **Quy ước:**
   - `scripts/db-check.sh` là **một** lệnh chạy cả bộ: dựng một database riêng và rỗng (compose
     project `banhcuon_check`, cổng ngẫu nhiên, gỡ sạch khi xong), chạy mọi migration từ số 0, chạy
-    mọi phép kiểm `QD-XX` · `QC-XX`, rồi chạy từng file `db/tests/*.sql`. Không có Docker, hay
-    database không lên ⇒ **FAIL**, không bỏ qua.
+    mọi phép kiểm `QC-XX`, rồi từng file `db/tests/*.sql`, dữ liệu mồi, và bộ đối chiếu
+    `scripts/reconcile.sh` — nhóm `I-0xx` cùng nhóm quy ước `QD-XX` — kèm phần chứng minh biết kêu
+    ở `db/reconcile/proof/` (`P2-11`, **ADR-066**, 2026-09-30). Không có Docker, hay database không
+    lên ⇒ **FAIL**, không bỏ qua.
   - **File test:** `db/tests/<mã>_<mô tả snake_case>.sql`, `<mã>` là mã mệnh đề viết thường liền —
     `i001`, `yc05`, `qd50`. Script bọc mỗi file trong `BEGIN` … `ROLLBACK`. Một test *từ chối* dựng
     trạng thái sai trong một khối `DO`, bắt **đúng** lỗi mong đợi và in lời từ chối nguyên văn; không
@@ -253,7 +255,7 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
 
     Dòng `NOTICE` là **lời từ chối nguyên văn** mà `P2-04`…`P2-08` dán vào *Bàn giao*.
   - **Gate 1:** `scripts/verify.sh` gọi `scripts/db-check.sh` khi có thay đổi dưới `db/`, ở
-    `compose.yaml`, `scripts/db-check.sh` hay `docs/product/2-db/`. Lượt **chỉ** đổi tài liệu thì
+    `compose.yaml`, `scripts/db-check.sh`, `scripts/reconcile.sh` hay `docs/product/2-db/`. Lượt **chỉ** đổi tài liệu thì
     `verify.sh` không chạy (`CLAUDE.md` §5), nên lượt chỉ sửa một câu kiểm trong `.md` phải tự chạy
     `./scripts/db-check.sh`.
 - **Hậu quả nếu làm khác:** một bộ kiểm cần ai đó nhớ gọi là một bộ kiểm không cổng nào đọc
@@ -282,6 +284,7 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   | `db/init/` | dựng vai, schema, mặc định cấp quyền — chạy một lần khi database khởi tạo | `P2-12` |
   | `db/migrations/` | lược đồ, theo `QC-05` | `P2-04`…`P2-08` |
   | `db/tests/` | test database, theo `QC-07` | `P2-04`…`P2-08` · `P2-11` |
+  | `db/reconcile/` | bộ đối chiếu chạy sau khi đóng quán — một file câu một mệnh đề, `qd.sql` cho nhóm quy ước, `prelude.sql` bảng và hàm tạm; `proof/` ngày bán mẫu và lỗi cài (`09-doi-chieu-bat-bien.md`) | `P2-11` |
   | `db/seed/` | bộ dựng dữ liệu mồi — đọc `master_plan/shop-facts.md` lúc chạy, in SQL; không cất con số nào của quán (`08-du-lieu-moi.md`) | `P2-10` |
   | `Makefile` | lệnh tắt cho database làm việc trên máy phát triển — chỉ gọi lại `compose.yaml` và `db/seed/`, không mang cấu hình riêng; bộ kiểm không đi qua nó | chủ repo yêu cầu 2026-09-29 |
   | `be/` | backend | pha 3 |
@@ -293,9 +296,10 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   **ở gốc** — gọi nhầm hoặc không gọi gì.
 - **Phép kiểm:**
   ```sh
-  for d in db/init db/migrations db/tests db/seed; do [ -d "$d" ] || echo "thiếu thư mục $d"; done
+  for d in db/init db/migrations db/tests db/seed db/reconcile; do [ -d "$d" ] || echo "thiếu thư mục $d"; done
   ```
-- **Nguồn:** phiên chọn 2026-09-27; dòng `db/seed/` thêm 2026-09-28 (`P2-10`).
+- **Nguồn:** phiên chọn 2026-09-27; dòng `db/seed/` thêm 2026-09-28 (`P2-10`); dòng `db/reconcile/`
+  thêm 2026-09-30 (`P2-11`).
 
 ### QC-09 — Stack ngoài database: Go ở `be/`, Next.js + TypeScript ở `fe/`
 
@@ -360,5 +364,5 @@ tên **ràng buộc** và **chỉ mục**.
 |---|---|
 | `P2-04`…`P2-08` | `QC-04` kiểu · `QC-05` tên và luật migration · `QC-07` khuôn test *từ chối* · `QC-10` tên ràng buộc; chạy `./scripts/db-check.sh`, dán output vào *Bàn giao* |
 | `P2-09` | `QC-05` — thư mục và khuôn tên mà lệnh đối chiếu tên bảng `.md` ↔ migration đọc; đã đổi mục ấy thành *mỗi bước xuôi một bước lùi* (2026-09-29) |
-| `P2-11` | `QC-07` — bộ kiểm để gom phép so `I-0xx` và chứng minh từng phép `QD-XX` biết kêu |
+| `P2-11` | **xong 2026-09-30** — `QC-07` bộ kiểm gọi bộ đối chiếu; `QC-08` dòng `db/reconcile/` |
 | pha 3 | `QC-06` chỗ trống kết nối backend · `QC-09` chỗ trống `verify.sh` và thư viện |

@@ -22,8 +22,8 @@ tự khai là *đề xuất gửi sang pha 2* cho phần nợ. Sáu thứ phải
 - **ai bấm, chỗ đứng lúc bấm, vết của một lần sửa** — `P2-08` (§5);
 - **quyền theo vai** — ai được hoàn, ai được ghi nợ — pha 3 (**ADR-035**); lát này chỉ để lại đủ vết
   để hỏi câu ấy sau;
-- **câu truy vấn đối chiếu** chạy mỗi tối — `P2-11`. Các câu ở cuối file test là bằng chứng lát này
-  đọc ra được, không phải bộ đối chiếu;
+- **câu truy vấn đối chiếu** chạy mỗi tối — `P2-11`, [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md). Các câu ở cuối file test là bằng
+  chứng lát này đọc ra được, không phải bộ đối chiếu;
 - **cất bằng gì** — [`01-quy-uoc-du-lieu.md`](01-quy-uoc-du-lieu.md); **dựng và kiểm bằng gì** —
   [`10-quy-uoc-code.md`](10-quy-uoc-code.md).
 
@@ -88,7 +88,7 @@ Tầng ở cột thứ hai là tầng **pha 1 đã chốt** (`03-bao-ve-invarian
 | **`YC-02`** · **`YC-09`** — khoản nợ đứng được sau khi phiên đóng, qua nhiều ngày | — | sáu thứ: **ai nợ** `bill.debtor_name` · **bao nhiêu** `bill.debt_vnd` · **một phiên** `bill.table_session_id` + `bill_one_per_session_key` · **lúc ghi** `bill.booked_at` · **lúc thu** `debt_collection.booked_at` · **đã thu hay chưa** = có dòng thu hay không. *Một phiên hai khoản nợ chưa thu*: không dựng được — một phiên một hoá đơn, một hoá đơn một cột nợ. Thu nợ **đúng một lần, đủ số**: `debt_collection_one_per_debt_key` · `debt_collection_bill_fkey` (khoá ngoại hai cột buộc số nợ trên dòng thu bằng số trên hoá đơn) · `debt_collection_amounts_check` | `yc02_debt_outlives_session.sql` |
 | **`YC-01`** · **`I-012`** vết hoàn tiền | 1 (hình dạng vết) | bốn trong năm thứ là `NOT NULL` hoặc điều kiện kiểm: **bao nhiêu** `refund_amount_positive_check` · **lượt bán nào** `refund_one_target_check` · **lúc** `booked_at` · **lý do** `NOT NULL` + `refund_reason_not_blank_check` — cộng **trả lại bằng gì** (`method_code`, `refund_method_code_check`). **Ai bấm: chỗ trống có tên** (§5). Vết sống độc lập với bản ghi nó nói về: vai `shop_app` không xoá được (`QD-50`), và lần bán mà vết trỏ tới cũng không xoá được (`QD-51`) | `yc01_refund_trace.sql` |
 | **`I-021`** vế *mỗi ngày bán đúng MỘT con số tiền đầu két, và nó không phải doanh thu* | 1 | `opening_float_one_per_day_key`; bảng riêng, không cột nào của nó nằm trong một lần thu. `opening_float_line_one_per_denomination_key` · `opening_float_line_amount_check` (một dòng là một xấp cùng mệnh giá) | `i021_opening_float_and_cash_formula.sql` |
-| **`I-021`** — hai vế của phép trừ két **dựng lại được từ chi tiết** | 5 (câu thuộc `P2-11`) | mỗi hạng tử là một phép cộng trên đúng một cột — §3 bảng *Hạng tử đọc ở đâu*. Hoàn **chéo** đọc được vì lần hoàn cho hoá đơn mang cả phương thức trả lại lẫn phương thức đã thu (`refund_source_iff_bill_check`) | cùng file — kịch bản trả trước B · E, trả nợ, hoàn chéo của `I-021`: lệch `0` cả ba ngày; bỏ một hạng tử ⇒ lệch đúng bằng nó |
+| **`I-021`** — hai vế của phép trừ két **dựng lại được từ chi tiết** | 5 — câu **chưa có**: vế trái (số đếm két) chưa có chỗ cất, §5 và [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §2 | mỗi hạng tử là một phép cộng trên đúng một cột — §3 bảng *Hạng tử đọc ở đâu*. Hoàn **chéo** đọc được vì lần hoàn cho hoá đơn mang cả phương thức trả lại lẫn phương thức đã thu (`refund_source_iff_bill_check`) | cùng file — kịch bản trả trước B · E, trả nợ, hoàn chéo của `I-021`: lệch `0` cả ba ngày; bỏ một hạng tử ⇒ lệch đúng bằng nó |
 | **`YC-23`** vế *không vượt số đã nhận* · **`I-014`** hàng pha 1 cùng vế | 1 | **chuỗi số dư** `prepayment_use`: mắt 1 bắt đầu đúng bằng số đã nhận (`prepayment_use_first_fkey`), mắt *n* bắt đầu đúng bằng số dư sau mắt *n−1* (`prepayment_use_previous_fkey` trên `prepayment_use_chain_key`), số dư không âm (`prepayment_use_balance_check`), không hai mắt cùng số (`prepayment_use_no_key`). Mỗi mắt thuộc **đúng một** hoá đơn hoặc **đúng một** lần trả lại (`prepayment_use_one_target_check`), khớp **đúng số** và **đúng đơn** (`prepayment_use_bill_fkey` · `prepayment_use_refund_fkey`); hoá đơn ghi trả trước, hay lần trả lại trả trước, mà không có mắt nào ⇒ không `COMMIT` được (`bill_prepayment_use_fkey` · `refund_prepayment_use_fkey`, hoãn) | `i014_one_unit_and_prepayment.sql` |
 | **`YC-23`** vế *không vào doanh thu ngày nhận tiền* · vế *trả lại không trừ doanh thu* (**suy ra**, ADR-059 điểm 5) | 3 | doanh thu = hoá đơn đóng trong ngày − hoàn **cho hoá đơn** trong ngày. Khoản trả trước chỉ vào doanh thu **qua** cột trả trước của hoá đơn của chính đơn nó (`prepayment_use_bill_fkey`); lần trả lại là `refund` **không** có hoá đơn, nên không phép cộng doanh thu nào chạm nó. Luồng ăn tại bàn không trả trước được: `prepayment_sales_order_fkey` · `bill_prepaid_only_standalone_check` | `i021_opening_float_and_cash_formula.sql` — doanh thu thứ Hai `860000` (không có 50.000 của B), thứ Ba `850000` (có B, không bị trừ 40.000 của E) |
 
@@ -128,15 +128,16 @@ Bị loại:
   đơn. Nó là **ô duy nhất** mang tổng hoá đơn — lát bán hàng lõi không có cột tổng nào
   (`02-luoc-do-ban-hang.md` §2 hàng `I-002`) — và tập đối chiếu *phiên đã đóng mà tổng hoá đơn khác
   tổng mọi lượt gọi* của `I-002` so đúng ô này với chi tiết. **Pha 3 nợ:** tính nó từ dòng đơn trong
-  cùng giao dịch đóng. **`P2-11` nợ:** câu đối chiếu ấy.
+  cùng giao dịch đóng. **Câu đối chiếu ấy:** `I-002/2` (`P2-11`, 2026-09-30).
 - **Hoá đơn của đơn lẻ chỉ sinh khi đơn Hoàn thành (tầng 3).** Lược đồ buộc chiều *Hoàn thành ⇒ có
   hoá đơn*; chiều ngược không dựng được (§2, đoạn khoá ngoại hai chiều). *"Đơn lẻ đóng"* đọc là **Hoàn
   thành** — `05-vong-doi.md` §5.2: người đi giao bấm *đã giao* **và** *đã thu tiền* cùng lúc; khách tới
   lấy nhận hàng ở quầy. *Cách đọc của phiên, 2026-09-28.*
 - **Khoản trả trước chỉ vào doanh thu qua hoá đơn của chính đơn nó (`I-014` hàng pha 1, tầng 3).**
   Phép cộng doanh thu đọc `bill` và `refund` có `bill_id`; nó không đọc `prepayment`, `debt_collection`
-  hay `refund` có `prepayment_id`. **`P2-11` nợ:** câu doanh thu viết đúng như thế — và ba tập đối chiếu
-  *trả trước* của hàng `I-014`.
+  hay `refund` có `prepayment_id`. **`P2-11` (2026-09-30):** phép cộng ấy là vế phải của câu `I-005/3`;
+  hai trong ba tập *trả trước* của hàng `I-014` là `I-014/7` · `I-014/8`, tập thứ ba đọc con số báo cáo
+  và chưa có câu ([`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §2).
 - **Số tiền hoàn không bị chặn trên (không tầng).** Quán **cố ý** không có luật cứng về hoàn tiền
   (`shop-facts.md` §6.4); lược đồ chỉ giữ *có đủ vết*, không giữ *hoàn bao nhiêu là quá*.
 
@@ -187,7 +188,7 @@ tên đứng trước để dòng không trông như một dòng tên bảng ở
 | ~~**Ai bấm** — vế thứ năm của `YC-01`, người trực quầy lúc ghi nợ và thu nợ, người nhận trả trước, người khai tiền đầu két~~ — **gỡ 2026-09-28 (`P2-08`)** | `person_id` bắt buộc trên `bill` · `debt_collection` · `prepayment` · `refund` · `opening_float`, mặc định người thao tác của giao dịch; *người đang trực lúc ấy* đọc từ `counter_duty` — [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) §1 · §2 | `P2-08` — xong |
 | **Trả một phần khoản nợ** | lần thu nợ phải thu **đủ** số nợ, đúng một lần — hai trạng thái *chưa thu · đã thu* của `YC-02` và `architecture.md` §12.3. Owner chưa nói ca khách trả dần | chủ quán — **U-063** (`docs/product/99-unknowns.md`) |
 | **Giảm giá cả đơn** (`shop-facts.md` §8.9) | hoá đơn **không** có cột giảm giá; `due_vnd` là số phải trả sau cùng | chủ quán — **U-058** (phạm vi bản đầu, giới hạn, lý do); lát nào dựng nó thêm cột bằng migration mới |
-| **Số tiền mặt đếm được cuối ngày**, và dấu *ngày đã đối soát xong* | chưa có chỗ cất: vế trái của `I-021` và tập *ngày đã qua mà con số dựng lại khác con số đã đối soát* của `I-014` cần nó. Test `i021_…` đưa số đếm vào như hằng số. Kế hoạch pha 2 §6 **không giao** việc này cho bước nào | chủ repo — quyết bước nào nhận (`P2-11` hay một bước lane admin) |
+| **Số tiền mặt đếm được cuối ngày**, và dấu *ngày đã đối soát xong* | chưa có chỗ cất: vế trái của `I-021` và tập *ngày đã qua mà con số dựng lại khác con số đã đối soát* của `I-014` cần nó. Test `i021_…` đưa số đếm vào như hằng số. Kế hoạch pha 2 §6 **không giao** việc này cho bước nào | chủ repo — quyết bước nào nhận; `P2-11` **không** nhận (2026-09-30): các tập đọc nó ghi *chưa có câu* ở [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §2 |
 | **Con số tiền đầu két mặc định** (*cố định, sửa được* — `shop-facts.md` §8.5) | lát chỉ cất con số **của từng ngày**; con số mặc định là cấu hình của mảng tài chính | lane admin (`work/backlog_AD.md` ADM-01); dữ liệu mồi `P2-10` |
 | **Một đơn nhiều khoản trả trước** | `prepayment_one_per_order_key` — một đơn, nhiều nhất một khoản. Owner chỉ tả **một** lần trả trước lúc đặt (`shop-facts.md` §6.3) | phiên chọn 2026-09-28 — gỡ bằng migration mới nếu quán cần |
 | **Vết của một lần sửa** một dòng tiền đã ghi (bản trước, bản sau — `YC-13`), vế *mốc không dời* của `QD-33` | **từ `P2-08`**: vết cập nhật chụp bản trước và bản sau khi giao dịch khai lý do; câu *mốc tính tiền bị dời* đọc từ vết ([`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) §2). Chế độ mềm — một lần sửa không khai lý do không có vết | **F-046** |

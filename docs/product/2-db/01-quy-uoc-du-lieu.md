@@ -38,19 +38,21 @@ tên nó ở `P2-11` thì không được biến mất.
 **Phép kiểm** của mỗi mục là một câu truy vấn trên `information_schema` chuẩn SQL, hoặc một lệnh.
 Nó ra **0 dòng** khi lược đồ đạt (**ADR-053** luật 3). **Cập nhật 2026-09-27 (`P2-12`):** DBMS là
 PostgreSQL 17 (`10-quy-uoc-code.md` `QC-01`, **ADR-054**), và cả mười tám phép đã chạy trên một cơ sở
-dữ liệu rỗng ⇒ 0 dòng. Máy chạy chúng là `scripts/db-check.sh`: nó đọc **thẳng** mọi khối `sql` dưới
-tiêu đề `QD-XX` của file này — sửa một câu ở đây là sửa phép kiểm, không có bản chép thứ hai — còn
-bốn phép dạng lệnh (`QD-02` · `QD-31` vế (b) · `QD-32` · `QD-40` vế (b)) là hàm cùng tên trong script
-ấy. Ba bước sau nhận chúng:
+dữ liệu rỗng ⇒ 0 dòng. Máy chạy chúng là `scripts/reconcile.sh` — lệnh đối chiếu chạy sau khi đóng
+quán, nhóm `QD-XX` (**ADR-066**, `P2-11`, 2026-09-30); `scripts/db-check.sh` gọi nó. Lệnh đọc
+**thẳng** mọi khối `sql` dưới tiêu đề `QD-XX` của file này — sửa một câu ở đây là sửa phép kiểm,
+không có bản chép thứ hai — còn bốn phép từng là *dạng lệnh* (`QD-02` · `QD-31` vế (b) · `QD-32` ·
+`QD-40` vế (b)) và vế *không dời* của `QD-33` là câu mang mã ấy ở `db/reconcile/qd.sql`. Ba bước sau
+nhận chúng:
 
 | Bước | Làm gì với phép kiểm |
 |---|---|
 | `P2-12` | **xong 2026-09-27** — chạy từng phép trên PostgreSQL 17, cơ sở dữ liệu rỗng ⇒ 0 dòng; điền các tham số dưới đây |
 | `P2-04`…`P2-08` | mỗi lát chạy lại cả bộ sau khi dựng, dán output vào khối *Bàn giao* |
-| `P2-11` | gom thành **nhóm phép kiểm quy ước**, mang mã `QD-XX`, tách khỏi phép so mã `I-0xx`; chứng minh từng phép **biết kêu** bằng một lỗi cài sẵn (**ADR-050** luật 3) |
+| `P2-11` | **xong 2026-09-30** — nhóm quy ước mang mã `QD-XX`, tách khỏi phép so mã `I-0xx`; mỗi phép có một lỗi cài ở `db/reconcile/proof/` làm nó kêu ([`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §3) |
 
 **Tham số** — các câu dưới đây dùng tên có dấu hai chấm đứng trước. Cột cuối là giá trị **đúng chữ
-SQL** mà `scripts/db-check.sh` thay vào; đổi giá trị là đổi ở đây, script không giữ bản nào khác.
+SQL** mà `scripts/reconcile.sh` (nhóm `QD-XX`) và `scripts/db-check.sh` (nhóm `QC-XX`) thay vào; đổi giá trị là đổi ở đây, script không giữ bản nào khác.
 Mỗi dòng giữ đúng dạng `` | `:ten` | … | `giá trị` | `` — script đọc ô đầu và ô cuối.
 
 | Tham số | Nghĩa | Ai điền | Giá trị (PostgreSQL 17) |
@@ -112,7 +114,8 @@ cột tiền mang sai hậu tố là một cột mà `QD-20` không bao giờ nh
   `information_schema.check_constraints`, tách các chuỗi trong nháy đơn, `sort -u`; so `comm -3`
   với danh sách mã tách từ bảng §2 của `shop-facts.md` bằng `grep -o` ⇒ **rỗng**. Làm y hệt cho mã
   trạm với bảng §3. Lệnh phải in **cả hai danh sách chưa lọc** cạnh kết quả `comm` (**F-017**).
-  **Cách viết (`P2-12`, 2026-09-27):** lệnh là hàm `qd02` trong `scripts/db-check.sh`. Nó tìm cột
+  **Cách viết (`P2-12`, 2026-09-27; viết lại thành câu SQL ở `P2-11`, 2026-09-30):** câu `QD-02` của
+  `db/reconcile/qd.sql`, danh sách mã đọc lúc chạy từ `shop-facts.md` §2 · §3. Nó tìm cột
   bằng **tên**, nên cột mang mã kênh tên `channel_code`, cột mang mã trạm tên `station_code` (hậu tố
   `_code` của `QD-03`); một cột mang mã kênh dưới tên khác là cột lệnh này không thấy.
 - **Nguồn:** owner — `shop-facts.md` §2 · §3, **ADR-001**, **ADR-015**.
@@ -262,7 +265,9 @@ cột tiền mang sai hậu tố là một cột mà `QD-20` không bao giờ nh
         AND u.column_name  = c.column_name);
   ```
   Câu này chỉ chứng minh **có** một ràng buộc kiểm trên cột; nội dung *≥ 0* được `P2-11` chứng minh
-  bằng cách cài một số âm ⇒ database từ chối.
+  bằng cách cài một số âm ⇒ database từ chối: mỗi cột tiền không tự tính của ngày bán mẫu nhận `-1`
+  và bị một ràng buộc nhắc chính cột ấy (hay cột tự tính dựng từ nó) từ chối
+  (`db/reconcile/proof/qd21_so_am.sql`, 2026-09-30).
 - **Nguồn:** phiên chọn 2026-09-26, dựng để `02-thoi-gian-ngay-ban.md` §2 và `I-014` đọc được.
 
 ### QD-22 — Quan hệ số học giữa các cột tiền TRONG CÙNG MỘT bản ghi do database giữ
@@ -353,8 +358,8 @@ nào, kiểu gì* (§5). Năm mục dưới đây là câu trả lời.
   ```
   (b) dữ liệu — một câu cho mỗi bảng có `booked_at`: dòng nào có `sale_date` khác ngày lịch của
   `booked_at` quy bằng múi giờ của quán ⇒ **0 dòng**. Cú pháp PostgreSQL (`P2-12`, 2026-09-27):
-  `sale_date <> (booked_at AT TIME ZONE '<múi giờ ở shop-facts §1>')::date`; lệnh là hàm `qd31b`
-  trong `scripts/db-check.sh`, đọc múi giờ thẳng từ `shop-facts.md` §1. `P2-11` gom vào bộ.
+  `sale_date <> (booked_at AT TIME ZONE '<múi giờ ở shop-facts §1>')::date`; câu `QD-31/b` của
+  `db/reconcile/qd.sql` (`P2-11`, 2026-09-30), đọc múi giờ thẳng từ `shop-facts.md` §1.
 - **Nguồn:** owner cho nghĩa — `02-thoi-gian-ngay-ban.md` §1 · §2; cất thành cột riêng là phiên chọn
   2026-09-26.
 
@@ -366,8 +371,8 @@ nào, kiểu gì* (§5). Năm mục dưới đây là câu trả lời.
   cũ lệch **7 tiếng chỉ trong test** (`nghien-cuu.md` §4.4), nên test đầu tiên của luật giờ bán sẽ đỏ
   mà không ai hiểu vì sao — hoặc tệ hơn, **xanh nhầm**.
 - **Phép kiểm:** một lệnh in múi giờ của phiên kết nối ở **cả hai** môi trường ⇒ hai dòng giống hệt.
-  **Cách viết (`P2-12`, 2026-09-27):** hàm `qd32` trong `scripts/db-check.sh` in múi giờ ở
-  `shop-facts.md` §1 và múi giờ mà kết nối của bộ kiểm thật sự đọc ra. Múi giờ mặc định của server
+  **Cách viết (`P2-12`, 2026-09-27; `P2-11`, 2026-09-30):** câu `QD-32` của `db/reconcile/qd.sql` so
+  múi giờ ở `shop-facts.md` §1 với múi giờ mà kết nối đang chạy lệnh thật sự đọc ra. Múi giờ mặc định của server
   cố ý để **UTC**, nên một kết nối quên đặt múi giờ lộ ra ngay. Vế *môi trường chạy thật* chờ kết
   nối của backend — chỗ trống có tên ở `10-quy-uoc-code.md` `QC-06`.
 - **Nguồn:** phiên chọn 2026-09-26, bài học dự án cũ đưa vào ở T-097.
@@ -391,8 +396,8 @@ nào, kiểu gì* (§5). Năm mục dưới đây là câu trả lời.
     AND column_name <> 'booked_at'
     AND (column_name LIKE '%book%' OR column_name LIKE '%account%' OR column_name LIKE '%post%');
   ```
-  Vế *không dời* đọc bằng vết cập nhật (`YC-13`) và thuộc `P2-08` · `P2-11`: mọi lần cập nhật đổi
-  `booked_at` của một bản ghi đã có ⇒ **0 dòng**.
+  Vế *không dời* đọc bằng vết cập nhật (`YC-13`): mọi lần cập nhật đổi `booked_at` của một bản ghi
+  đã có ⇒ **0 dòng** — câu `QD-33/b` của `db/reconcile/qd.sql` (`P2-11`, 2026-09-30).
 - **Nguồn:** owner cho nghĩa — `02-thoi-gian-ngay-ban.md` §2 · §2.2 · §3, `04-yeu-cau-du-lieu.md`
   `YC-18` · `YC-20`; tên do phiên chọn 2026-09-26.
 
@@ -446,8 +451,8 @@ nào, kiểu gì* (§5). Năm mục dưới đây là câu trả lời.
   ```
   (b) một lệnh: tập mã tách từ `check_clause` của ràng buộc ấy, so `comm -3` với cột *mã* của bảng
   ánh xạ ở file lát ⇒ **rỗng**, in cả hai danh sách chưa lọc (**F-017**). **Cách viết (`P2-12`,
-  2026-09-27):** hàm `qd40b` trong `scripts/db-check.sh`; mỗi dòng của bảng ánh xạ ở file lát viết
-  đúng dạng `` | `<bảng>.status` | `<mã>` | <tên ở owner> | ``, vì lệnh tìm dòng bằng ô đầu. Bảng có
+  2026-09-27; `P2-11`, 2026-09-30):** câu `QD-40/b` của `db/reconcile/qd.sql`; mỗi dòng của bảng ánh
+  xạ ở file lát viết đúng dạng `` | `<bảng>.status` | `<mã>` | <tên ở owner> | ``, vì lệnh tìm dòng bằng ô đầu. Bảng có
   cột `status` mà không có dòng ánh xạ nào ⇒ lệnh **đỏ**.
 - **Nguồn:** owner cho tập trạng thái — `05-vong-doi.md` §5, `quality/invariants.md` `I-016`; mã
   chữ và bảng ánh xạ là phiên chọn 2026-09-26.
@@ -601,7 +606,7 @@ so **sau khi đã có dữ liệu** là dựng lại cả bảng lẫn mọi ch�
 | `P2-12` | **xong 2026-09-27** — §0 đã điền; `QD-30` · `QD-32` · `QD-60` · `QD-61` đã có lựa chọn cụ thể ở `10-quy-uoc-code.md` `QC-04` · `QC-06` |
 | `P2-04`…`P2-08` | mọi mục; mỗi lát chạy lại cả bộ sau khi dựng, dán output vào *Bàn giao*; bảng ánh xạ trạng thái (`QD-40`) và danh sách `:bang_ky_thuat` · `:bang_khong_quan_he_so_hoc` nằm ở file lát |
 | `P2-06` | `QD-20` · `QD-21` · `QD-22` · `QD-31` · `QD-33` — lát tiền là lát đọc mục này nhiều nhất |
-| `P2-11` | gom mọi phép kiểm thành một nhóm mang mã `QD-XX`, chứng minh từng phép biết kêu |
+| `P2-11` | **xong 2026-09-30** — nhóm `QD-XX` của `scripts/reconcile.sh`; lỗi cài từng phép ở [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §3 |
 
 **Mâu thuẫn với một mục pha 1 thì gửi ngược một `F-XXX`, không viết bản thứ hai ở đây**
 (`master_plan/DB_master_plan_banh_cuon_ba_thanh.md` §5).

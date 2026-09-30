@@ -21,7 +21,7 @@ dòng `F-XXX`, không lặng lẽ sửa bên nào.
   nào** — chỗ giao nhau kế hoạch pha 2 §3 hẹn trước; lane admin dùng lại, không dựng lại;
 - **quyền theo vai** — ai được huỷ, hoàn, đổi mã QR, đổi giá — pha 3 (**ADR-035**). Lát này để lại đủ
   dữ liệu để hỏi câu ấy: người bấm, và người đang đứng quầy lúc bấm;
-- **câu truy vấn đối chiếu** chạy mỗi tối — `P2-11`;
+- **câu truy vấn đối chiếu** chạy mỗi tối — `P2-11`, [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md);
 - **cất bằng gì** — [`01-quy-uoc-du-lieu.md`](01-quy-uoc-du-lieu.md) (lượt này thêm vai trò `_image`
   ở `QD-03` và phép kiểm **`QD-52`**); **dựng và kiểm bằng gì** —
   [`10-quy-uoc-code.md`](10-quy-uoc-code.md) (lượt này thêm kiểu `jsonb` ở `QC-04`).
@@ -91,7 +91,7 @@ là yêu cầu hình dạng (`04-yeu-cau-du-lieu.md` §1 · §3 · §4). Tên �
 | **`I-018`** · **`YC-13`** — dựng lại bản trước, bản sau; ca **hai người ghi đè** | 1 · 2 | bản chụp cả dòng; lần đè của người sau có bản trước **là** bản của người trước | cùng file — *trước 0900000009, sau 0911111111 … B* · *trước 0911111111, sau 0922222222 … C*; *bản của B dựng lại từ vết của C: 0911111111* |
 | **`YC-12`** — vết sống độc lập với bản ghi nó nói về | — | không khoá ngoại từ vết về bản gốc (`QD-03`: cột trỏ nhiều bảng không mang `_id`); vai `shop_app` không xoá (`QD-50`), **không sửa** và **không chèn thẳng** được vết — vết chỉ sinh qua trigger, chạy bằng quyền chủ lược đồ (`SECURITY DEFINER`; review độc lập 2026-09-29 tìm ra một vết bịa chèn được trước khi sửa) | cùng file — *bàn … đã xoá — vết vẫn đọc: "test-9" → "test-9b"*; `permission denied for table record_revision` khi sửa và khi chèn thẳng; *shop_app sửa ⇒ vết qua trigger* |
 | **`YC-14`** — không có nút hoàn tác; sửa là cập nhật giữ hai phía | 2 | cùng trigger: mọi lần cập nhật — kể cả lùi mẻ, đổi trạng thái đơn, đổi giá — có khai lý do thì giữ cả hai phía | cùng file — chủ quán *đổi giá — trước 900, sau 1000* |
-| **`QD-33`** vế *mốc tính tiền không dời* (giao cho `P2-08` · `P2-11`) | 5 | đọc từ vết: lần sửa có `booked_at` ở bản trước khác bản sau | cùng file — tập rỗng; một lần dời mốc có khai lý do ⇒ *bill …: mốc 2026-09-28… → 2026-09-27…* |
+| **`QD-33`** vế *mốc tính tiền không dời* (giao cho `P2-08` · `P2-11`; câu `QD-33/b`, 2026-09-30) | 5 | đọc từ vết: lần sửa có `booked_at` ở bản trước khác bản sau | cùng file — tập rỗng; một lần dời mốc có khai lý do ⇒ *bill …: mốc 2026-09-28… → 2026-09-27…* |
 | **`YC-08`** — lượt nhập bù mang hai mốc đọc riêng, người nhập bù, *còn N lượt* | 1 | `booked_at` · `sale_date` là giờ bán trên giấy; `created_at` là lúc gõ; `person_id` là **người nhập bù**, còn **người bán** là người đứng quầy lúc `booked_at` — hai người đọc riêng. `bill_paper_ledger_fkey` (ba cột, hoãn) buộc ngày bán của hoá đơn **bằng** ngày của sổ — lượt nhập bù không rơi vào ngày gõ — và bản soi số lượt bằng sổ; `bill_paper_position_in_range_check` · `bill_paper_position_key` — không vượt, không nhập một lượt hai lần; `bill_paper_columns_check`. `paper_ledger_one_per_day_key` · `paper_ledger_entry_count_positive_check`. *Còn N* = số khai − số hoá đơn của sổ: một phép trừ, không ô ghi tay | `db/tests/yc08_paper_backfill_two_moments.sql` — *ngày bán 2026-09-27, gõ ngày 2026-09-28, người nhập bù B, người đứng quầy lúc bán A*; *sổ khai 3 lượt, còn 1*; bảy lời từ chối |
 
 **Vì sao người thao tác là một cài đặt giao dịch, và cái gì đã bị loại** (phiên chọn 2026-09-28).
@@ -132,8 +132,8 @@ mọi bảng phải mang trigger và trigger phải đang bật, nếu không c�
   thái trước, sau, người bấm. **Pha 3 nợ:** hàm xác thực chuyển trạng thái của `I-016` khai lý do mỗi
   lần — đây là chỗ phép đối chiếu của `I-016` (*dựng lại lịch sử chuyển trạng thái từ vết*) đọc.
 - **Người bấm là người đang đứng quầy (`I-012` tầng 4).** **Pha 3 nợ:** cửa của POS khai người đang
-  đăng nhập làm người thao tác. **`P2-11` nợ:** câu *thao tác ở quầy mà người bấm không đứng quầy lúc
-  ấy* — ở đầu `i012_…`.
+  đăng nhập làm người thao tác. **`P2-11` (2026-09-30):** câu `I-012/3` *thao tác chạm tiền không
+  đi qua một trong ba chỗ bấm có tên* ([`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md)).
 - **Chỉ chủ quán đổi mã QR (`U-062`), chỉ người đứng quầy huỷ (§6.13).** Quyền theo vai — pha 3; lát
   này cất đủ để đối chiếu (`person.is_owner`, `counter_duty`).
 - **Một ngày còn lượt trên giấy chưa nhập thì chưa đối soát xong (**ADR-037**).** *Còn N* đọc ra được

@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 46 finding — 42 Fixed/Resolved/Closed, 4 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 47 finding — 42 Fixed/Resolved/Closed, 5 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-30, lúc ghi F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -108,6 +108,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-044 | Một tập đối chiếu của hàng `I-004` không bao giờ rỗng được — việc trạm không có trạng thái huỷ | Open |
 | F-045 | Hai phiên chạy `db-check` cùng lúc dùng chung một compose project ⇒ gỡ database của nhau, đỏ giả | Open |
 | F-046 | Vết cập nhật ở chế độ mềm — lần sửa không khai lý do đi qua mà không vết (chủ repo chọn, P2-08) | Open |
+| F-047 | Thêm một dòng con vào bản ghi đã có (món vào đơn, thành phần vào suất, xấp mệnh giá vào tiền đầu két) không để lại vết ai thêm (P2-11) | Open |
 
 ---
 
@@ -4061,6 +4062,37 @@ lượt pha 3 dựng cửa ghi duy nhất.
 
 **Related task:**
 `work/backlog_DB.md` → **P2-08** · pha 3
+
+**Status:**
+Open
+
+### F-047 — Thêm một dòng con vào một bản ghi đã có không để lại vết ai thêm, lúc nào, từ gì sang gì
+
+**Problem:**
+Vết cập nhật của `P2-08` (`record_revision`, trigger `record_revision_capture`) chụp lần **sửa** một
+dòng đã có (`AFTER UPDATE`). Ba thay đổi nội dung của một bản ghi đã có lại đi bằng lần **thêm** một
+dòng con, không phải lần sửa: thêm món vào một đơn đã tạo (sửa đơn, `shop-facts.md` §6.19) · thêm
+thành phần vào một suất (`I-011`) · thêm một xấp mệnh giá vào tiền đầu két đã khai (`I-021`). Cả ba
+không để lại *ai thêm*, và bản ghi cha không có dòng vết nào mang *bản trước · bản sau*. `P2-11` tìm ra
+2026-09-30 (Claude Code) khi dịch ba tập `I-024` tập 3 · `I-011` tập 1 · `I-021` tập 6 thành câu: cả
+ba câu (`db/reconcile/i024.sql` · `i011.sql` · `i021.sql`) **kêu ở cả lần thêm hợp lệ**, vì dữ liệu
+không phân biệt được lần thêm có người chịu trách nhiệm với lần thêm lén.
+
+**Impact:**
+Chạy trên dữ liệu thật, ba câu ấy đỏ mỗi lần quầy sửa đơn thêm món — đỏ vì một lý do đã biết trước là
+đúng cái đỏ mà người dùng học cách bỏ qua (`quality/invariants.md` `I-021` mục *Why*). Và `I-018` —
+*mỗi lần cập nhật giữ bản trước, bản sau, lý do, người sửa* — hôm nay không giữ được cho lần sửa đơn
+thường gặp nhất.
+
+**Decision / Fix:**
+Chưa sửa; không phải việc của bước đối chiếu. Hai đường, pha 3 chọn cùng lúc dựng cửa sửa đơn, và
+cùng lượt với **F-046**: (a) cửa sửa đơn ghi một lần **sửa** bản ghi cha có khai lý do (một cột đếm
+phiên bản nội dung, chẳng hạn) — trigger hiện có chụp nó, và ba câu đọc lần sửa ấy là lời giải thích;
+(b) một migration mới chụp cả `INSERT` của các bảng con vào vết. Chọn đường nào thì ba câu ở
+`db/reconcile/` đổi cùng lượt, kèm file lỗi mới ở `db/reconcile/proof/`.
+
+**Related task:**
+`work/backlog_DB.md` → **P2-11** · pha 3
 
 **Status:**
 Open

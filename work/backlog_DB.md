@@ -1567,12 +1567,67 @@ là lớp cuối cùng của cả hệ thống.
 - **Đừng cài lỗi bằng cách sửa câu truy vấn cho nó đỏ.** Lỗi phải cài vào **dữ liệu**; sửa truy vấn
   là chứng minh ngược.
 
-**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**) · nhận
+2026-09-30 (Claude Code), mọi bước cần xong trước đã `Done` (`P2-04`…`P2-08` · `P2-10`):
+- *Phạm vi:* `work/scope/P2-11.txt` — bộ truy vấn `db/reconcile/`, lệnh `scripts/reconcile.sh`,
+  `scripts/db-check.sh` gọi lệnh ấy, file owner mới `docs/product/2-db/09-doi-chieu-bat-bien.md`,
+  con trỏ ở các file lát và `01` · `10` · `00-index.md`, một ADR. **Không** sửa một chữ nào của
+  `03-bao-ve-invariant.md` hay `quality/invariants.md`.
+- *Nghiệm thu:*
+  1. **Đơn vị là TẬP, không phải mã:** mỗi tập *"phải rỗng"* ở cột phải của
+     `03-bao-ve-invariant.md` §1–§4 hoặc là **đúng một** câu mang mã `I-0xx/n`, hoặc có **một dòng
+     *chưa có câu*** ở `09-doi-chieu-bat-bien.md` nói vì sao (dữ liệu chưa có chỗ cất · tập không có
+     phần tử nào tồn tại được trong lược đồ · tập sai là `F-XXX`) và ai nợ.
+  2. `comm -3` giữa mã `### I-0xx` ở `quality/invariants.md` và mã có câu trong `db/reconcile/` ⇒
+     **rỗng**; cùng phép cho mã `### QD-XX` ở `01-quy-uoc-du-lieu.md` và nhóm quy ước của bộ ⇒
+     **rỗng**. Nhóm quy ước **không** trộn vào danh sách `I-0xx`.
+  3. `scripts/reconcile.sh` chạy trên database dựng từ số không + dữ liệu mồi ⇒ mọi câu **0 dòng**,
+     exit 0; và trên **một ngày bán đúng** dựng thêm (phiên bàn, ghép bàn, nợ, trả trước, hoàn,
+     tiền đầu két, đổi mã QR, mẻ) ⇒ vẫn **0 dòng** — một câu xanh vì chưa có đơn nào không chứng minh
+     nó không đỏ nhầm.
+  4. **Biết kêu:** mỗi mã câu (cả `I-0xx/n` lẫn `QD-XX`) có ít nhất một lỗi cài **vào dữ liệu hay
+     lược đồ** (gỡ ràng buộc nếu có ràng buộc giữ — đúng ca câu truy vấn sinh ra để bắt), trạng thái
+     sau lỗi vẫn qua mọi ràng buộc còn lại (`SET CONSTRAINTS ALL IMMEDIATE`), và tập câu kêu **bằng
+     đúng** tập khai ở đầu file lỗi. Không câu truy vấn nào bị sửa để nó đỏ.
+  5. `./scripts/gate.sh` xanh.
+- *Kiểm chứng:* `./scripts/db-check.sh` (bước mới *đối chiếu*: A2 · A3 · A4 in từng dòng `PASS`);
+  `./scripts/reconcile.sh` chạy tay trên database làm việc; `./scripts/gate.sh`.
 
-**Bàn giao:** —
+**Bàn giao** (2026-09-30, Claude Code; reviewer: chưa review độc lập; nhánh `chatgpt_involve`, base
+`d399f6c`):
+
+*Kết quả.* Owner mới [`09-doi-chieu-bat-bien.md`](../docs/product/2-db/09-doi-chieu-bat-bien.md): mỗi
+tập *"phải rỗng"* của pha 1 là một câu `I-0xx/n` ở `db/reconcile/` hoặc một dòng *chưa có câu* có lý
+do và người nợ (§1 · §2). Một lệnh sau khi đóng quán, `scripts/reconcile.sh`: nhóm `I-0xx` (63 câu,
+24 mã) và nhóm quy ước `QD-XX` (22 câu, 19 mã — bốn phép *dạng lệnh* cũ của `db-check.sh` viết lại
+thành SQL ở `db/reconcile/qd.sql`, cộng vế *không dời* của `QD-33`). `db-check.sh` bước 6 chứng minh
+bộ câu: ngày bán mẫu đúng ⇒ 0 dòng; 85 file lỗi ở `db/reconcile/proof/`, mỗi file làm kêu **đúng**
+tập câu nó khai; nội dung *≥ 0* của `QD-21` chứng minh bằng số âm trên 23 cột tiền. Hình dạng và lý
+do: **ADR-066**. `verify.sh` gọi `db-check` cả khi chỉ `scripts/reconcile.sh` đổi.
+
+*Acceptance → bằng chứng* (output `./scripts/db-check.sh`, chạy trong `./scripts/gate.sh` 2026-09-30):
+
+| Acceptance | Bằng chứng |
+|---|---|
+| 1 — mỗi tập là một câu hoặc một dòng *chưa có câu* | `09-doi-chieu-bat-bien.md` §1 (bảng tập → câu, 24 hàng) · §2 (29 dòng); lệnh in `NOTE 29 tập của pha 1 chưa có câu` |
+| 2 — `comm -3` mã | `PASS mã I-0xx — comm -3 rỗng: 24 mã ở quality/invariants.md, cùng từng ấy mã có câu` · `PASS mã QD-XX — comm -3 rỗng: 19 mã ở docs/product/2-db/01-quy-uoc-du-lieu.md, cùng từng ấy mã có phép kiểm` |
+| 3 — 0 dòng trên dữ liệu mồi và trên ngày đúng | `reconcile: PASS — 63 câu I-0xx · 22 câu QD, mọi tập rỗng` · `PASS ngày bán mẫu đúng (db/reconcile/proof/baseline.sql) — 85 câu chạy, mọi tập rỗng` |
+| 4 — biết kêu, đúng tập khai | 85 dòng `PASS kêu <file> — <tập>` · `PASS mọi câu có lỗi cài nhắm vào nó — comm -3 rỗng (85 câu, 85 file lỗi)` · `PASS từ chối qd21_so_am — QD-21 nội dung: 23 cột tiền …` |
+| 5 — gate | `PASS  gate     không cổng nào đỏ` (Gate 3 · 1b · 1c · 1d · 1e · 1 db-check · 1 verify) |
+
+*Bằng chứng biết kêu thật, không dựng:* lần chạy đầu 79/85 file lỗi khớp; sáu chỗ lệch đều là câu
+**khác** kêu đúng — gỡ ràng buộc kiểm thì `QD-21`/`QD-22` kêu cùng, đóng phiên Mở → Đã đóng thì
+`I-016/1` bắt. Hai file được sửa để đi đường chuyển trạng thái hợp lệ, bốn file khai đủ tập kèm lý do;
+không câu truy vấn nào bị sửa. Một câu viết sai cú pháp thử chèn vào ⇒ `FAIL I-024/9 — câu không chạy
+được` (đã gỡ).
+
+*Còn lại — ghi ở owner, không ở đây:* 29 tập chưa có câu (file 09 §2) — phần lớn vì dữ liệu chưa có
+chỗ cất; ba dòng chờ **chủ repo** quyết bước nào cất số tiền mặt đếm được · tin nhắn báo có · dấu đã
+đối soát (`04-luoc-do-duong-tien.md` §5); **F-047** (thêm dòng con không có vết); **F-046** · **F-044**
+vẫn mở; câu đọc hẹp hơn tập của nó: file 09 §4. Lệnh chưa chạy trên database làm việc `banhcuon` (máy
+không bật nó lúc giao) — đã chạy tay trên một database riêng có dữ liệu mồi, `reconcile: PASS`.
+
+*Việc kế:* `P2-13` đọc file 09 §2 trước khi tick cổng pha 2.
 
 [↑ đầu file](#top)
 

@@ -23,8 +23,8 @@ dòng `F-XXX`, không lặng lẽ sửa bên nào.
 - **cửa nổ đơn, cửa bấm mẻ, cửa chọn bàn nhận, hàm xác thực chuyển trạng thái** — pha 3
   (**ADR-035**, **ADR-050** điểm 3). Lát này chỉ đảm bảo mỗi cửa ấy có **một** đường ghi và để lại đủ
   dữ liệu để đối chiếu;
-- **câu truy vấn đối chiếu** chạy mỗi tối — `P2-11`. Các câu ở cuối file test là bằng chứng lát này
-  đọc ra được, không phải bộ đối chiếu;
+- **câu truy vấn đối chiếu** chạy mỗi tối — `P2-11`, [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md). Các câu ở cuối file test là bằng
+  chứng lát này đọc ra được, không phải bộ đối chiếu;
 - **cất bằng gì** — [`01-quy-uoc-du-lieu.md`](01-quy-uoc-du-lieu.md); **dựng và kiểm bằng gì** —
   [`10-quy-uoc-code.md`](10-quy-uoc-code.md). Lát bán hàng và lát menu mà lát này đứng lên:
   [`02-luoc-do-ban-hang.md`](02-luoc-do-ban-hang.md) · [`03-luoc-do-menu-gia.md`](03-luoc-do-menu-gia.md).
@@ -159,15 +159,15 @@ bàn nhận sang *đã làm xong*. Bị loại:
   bảng khác. Một phần của nó dựng được bằng khoá ngoại hoãn (ví dụ *đơn Đang thực hiện ⇒ có nước
   chấm*); bị loại vì chỉ giữ một trong nhiều mảnh của cùng một vế, đúng lý do **ADR-056** bác khoá
   duy nhất cho nước chấm: hai cơ chế cho một vế thì câu đối chiếu vẫn phải đọc cả hai chiều. **Pha 3
-  nợ:** cửa nổ đơn ghi trạng thái và mọi đơn vị trong **một** giao dịch. **`P2-11` nợ:** ba tập *thiếu
-  hoặc thừa việc* · *nước chấm khác một* · *việc của đơn chưa duyệt* — viết sẵn ở cuối `i004_…`, và
-  đã đỏ trên một đơn *Đang thực hiện* mà không nổ.
+  nợ:** cửa nổ đơn ghi trạng thái và mọi đơn vị trong **một** giao dịch. **`P2-11` (2026-09-30):** bốn câu `I-004/1`…`I-004/4` —
+  *việc của đơn chưa duyệt* · *thiếu hoặc thừa việc* (tách trạm `canh` ra câu `I-004/4`, như pha 1
+  tách) · *nước chấm khác một*.
 - **`I-004` vế *đơn huỷ rút nhu cầu* (tầng 3)** — §2. **Pha 3 nợ:** mọi phép đọc bảng nhu cầu lọc đơn
   đã huỷ; không đường nào đánh dấu từng việc *rời bảng*.
 - **`I-004` vế *chọn bàn nhận* (tầng 4).** **Pha 3 nợ:** bày ra những đơn vị đang chờ **đúng** khoá gom
   của thứ đã làm (`shop-facts.md` §5.4: *máy chỉ bày ra ai đang chờ đúng thứ đã làm*), rồi ghi bốn lệnh
-  của một lần chuyển trong một giao dịch. **`P2-11` nợ:** tập *đã làm của đơn huỷ, chưa chuyển* và tập
-  *chuyển khác khoá gom* — ở cuối `i004_…`.
+  của một lần chuyển trong một giao dịch. **`P2-11` (2026-09-30):** câu `I-004/6` *đã làm của đơn
+  huỷ, chưa chuyển* và câu `I-004/7` *chuyển khác khoá gom*.
 - **`I-019` vế *khoá gom* (tầng 3)** — §2. **Pha 3 nợ:** đúng một hàm gom, đọc khoá từ ảnh chụp theo mã
   gốc.
 - **`I-020` vế *ba trạng thái* (tầng 3).** **Pha 3 nợ:** hàm xác thực của `I-016` cho vòng đời việc
@@ -213,7 +213,7 @@ so cả hai cột với bảng ấy.
 | ~~**Ai bấm** — người bấm mẻ, người lùi mẻ, người chọn bàn nhận~~ — **gỡ 2026-09-28 (`P2-08`)**; người bấm *"đã ra bàn"* còn chờ `S-5` | `production_batch.made_by_person_id` · `rolled_back_by_person_id` (có **khi và chỉ khi** mẻ đã lùi), `station_job_transfer.person_id` — [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) §1. Lần bấm *"đã ra bàn"* không có bản ghi nào để gắn người (`S-5`) | `P2-08` — xong; *đã ra bàn* theo `S-5` |
 | **Vết của một lần sửa** — một mẻ đã lùi được *bỏ lùi* (mốc lùi xoá trắng), mốc bấm bị sửa | **từ `P2-08`**: lần sửa có khai lý do giữ mốc lùi cũ và người lùi ở bản trước ([`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) §2); lược đồ vẫn không cấm *bỏ lùi*. Chế độ mềm — sửa không khai lý do không có vết | **F-046** |
 | **Giảm số suất của một dòng đã nổ** (sửa dòng, `U-026`) | bị **từ chối**: đơn vị không xoá được, nên đơn vị thứ *n* cũ vượt số mới (`station_job_position_in_range_check`) — test `i020_…` in đúng lời ấy. Tăng số suất ghi được, kèm đơn vị mới và bản soi mới trong cùng giao dịch. Cùng hình với *sửa đổi món* ở [`03-luoc-do-menu-gia.md`](03-luoc-do-menu-gia.md) §5: cần một đường *thay dòng* | pha 3 · `P2-08` |
-| **Trạm của một thành phần tại một mốc đã qua** | `menu_component_station` cất bảng **hiện hành**; việc đã nổ mang trạm của chính nó nên đơn cũ không đổi, nhưng tập *thiếu hoặc thừa việc* so với bảng hiện hành — đổi bảng trạm sẽ làm đơn cũ trông như nổ sai. Owner chỉ cho sửa thành phần suất **sau** buổi bán (`shop-facts.md` §6.17), nên ca này hẹp | `P2-08` (vết cập nhật menu) · `P2-11` so trong ngày |
+| **Trạm của một thành phần tại một mốc đã qua** | `menu_component_station` cất bảng **hiện hành**; việc đã nổ mang trạm của chính nó nên đơn cũ không đổi, nhưng tập *thiếu hoặc thừa việc* so với bảng hiện hành — đổi bảng trạm sẽ làm đơn cũ trông như nổ sai. Owner chỉ cho sửa thành phần suất **sau** buổi bán (`shop-facts.md` §6.17), nên ca này hẹp | `P2-08` (vết cập nhật menu) · `P2-11` — câu `I-004/2` · `I-004/4` chỉ tính dòng bảng trạm tạo **trước** lúc đơn nổ (không dòng nào bị xoá, `QD-50`), 2026-09-30 |
 | **Nồi, tổ hợp nồi, thứ tự làm** | không cất gì: máy không gom, không xếp nồi, không đề xuất mẻ (`shop-facts.md` §5.4, ranh giới đã chốt). Mẻ chỉ ghi **cái quầy đã bấm** | — cần thì hỏi chủ quán; cho máy chia mẻ là đổi phạm vi |
 
 **Tham số của `01-quy-uoc-du-lieu.md` §0:** lát này **không** thêm bảng nào vào `:bang_ky_thuat` (mẻ và

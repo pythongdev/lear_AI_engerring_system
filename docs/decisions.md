@@ -82,6 +82,7 @@ có câu trả lời mới từ người.
 | ADR-063 | **Mỗi task một file scope `work/scope/<MÃ>.txt`, git bỏ qua** — Gate 3 chấm theo hợp các file scope; Gate 7b chấm khối commit theo file của mã đứng đầu subject; file scope giữ tới khi task đã commit; `work/scope.txt` thành stub chỉ-comment | Đã chốt 2026-09-27 (chủ repo) | — | thay luật khai/gỡ scope của **ADR-043** · đóng T-085 |
 | ADR-064 | **`CLAUDE.md` chỉ giữ luật và con trỏ** — cơ chế của một cổng ở header script của nó, lý do ở ADR; số mục §1–§8 giữ nguyên; bảng §2 giữ đủ hàng (607 → khoảng 410 dòng) | Đã chốt 2026-09-29 (giao cho phiên) | — | T-087 |
 | ADR-065 | **Mỗi bước migration một bước lùi, và bước lùi chỉ gỡ chỗ còn rỗng** — `QC-05` bỏ luật *chỉ đi tới*; mỗi `.up.sql` một `.down.sql` mở đầu bằng khoá chặn (bảng có dòng, cột có giá trị ⇒ từ chối); lùi trên dữ liệu đã ghi là migration mới; `db-check` xuôi · lùi · xuôi lại từng bước và so lược đồ; tên bảng `.md` ↔ migration thành Gate 1e | Đã chốt 2026-09-29 (giao cho phiên) | — | P2-09 |
+| ADR-066 | **Bộ đối chiếu: một câu một TẬP, một lệnh sau khi đóng quán, chứng minh bằng ngày mẫu và lỗi cài** — mỗi tập *"phải rỗng"* của pha 1 là một câu `I-0xx/n` ở `db/reconcile/`; `scripts/reconcile.sh` chạy nhóm `I-0xx` và nhóm quy ước `QD-XX` (bốn phép dạng lệnh viết lại thành SQL); `db-check` chứng minh: ngày bán mẫu đúng ⇒ 0 dòng, mỗi lỗi cài ⇒ đúng tập câu khai | Đã chốt 2026-09-30 (giao cho phiên) | — | P2-11 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -4358,3 +4359,59 @@ khai một bước, trước khi chỗ mới có dữ liệu; sau đó chỉ cò
 **Applies to:** `db/migrations/*.down.sql` · `compose.yaml` (service `migrate`) · `scripts/db-check.sh`
 · `scripts/check-schema-names.sh` + test · `scripts/gate.sh` + test · `docs/product/2-db/10-quy-uoc-code.md`
 `QC-05` · `docs/product/2-db/07-thu-tu-migration.md` · `CLAUDE.md` §2 · §5.
+
+### ADR-066 — Bộ đối chiếu: một câu một TẬP, một lệnh sau khi đóng quán, chứng minh bằng ngày mẫu và lỗi cài
+
+**Trạng thái:** **Đã chốt** 2026-09-30, **giao cho phiên**. Chủ repo giao `P2-11` với lời *"hãy đọc
+kĩ và làm"*; entry đòi *mỗi phép đối chiếu thành đúng một câu, gom thành một lệnh, chứng minh biết
+kêu*, nhưng không chọn hình dạng. Câu giao việc là lời **giao việc chọn**, không phải lời xác nhận
+các lựa chọn dưới đây (`CLAUDE.md` §7.2, cùng cách đọc với **ADR-065**). Task **P2-11**.
+
+**Context:**
+Cột phải của `docs/product/1-system-design/03-bao-ve-invariant.md` viết mỗi phép đối chiếu bằng lời,
+và một ô chứa tới chín tập *"phải rỗng"* (`§0` luật 5: đơn vị là **vế**, không phải mã). Hai mươi tư
+mã, chín mươi hai tập (đếm 2026-09-30). Một câu cho mỗi **mã** sẽ là một phép `UNION` chín nhánh:
+khi nó kêu, không đọc ra tập nào hỏng, và một lỗi cài không chứng minh được nhánh nào biết kêu. Dữ
+liệu mồi (`P2-10`) không có đơn nào, nên *"cả bộ trên dữ liệu mồi ⇒ 0 dòng"* đúng cả với một câu
+kêu oan ở mọi đơn thật.
+
+**Decision:**
+1. **Đơn vị là TẬP.** Mỗi tập là một câu mang mã `I-0xx/n`, `n` là thứ tự của tập trong ô pha 1. Câu ở
+   `db/reconcile/`, một file một mệnh đề; tập không có câu có một dòng ở
+   `docs/product/2-db/09-doi-chieu-bat-bien.md` §2 với lý do và người nợ. Phép `comm -3` của kế hoạch
+   so **mã** (`I-0xx`), như kế hoạch nói.
+2. **Một lệnh, hai nhóm:** `scripts/reconcile.sh` chạy nhóm `I-0xx/n` và nhóm quy ước `QD-XX` trong
+   một phiên kết nối chỉ đọc. Khối `sql` dưới `### QD-XX` của `01-quy-uoc-du-lieu.md` đọc thẳng từ
+   tài liệu; bốn phép *dạng lệnh* của `db-check.sh` (`QD-02` · `QD-31(b)` · `QD-32` · `QD-40(b)`)
+   viết lại thành câu SQL ở `db/reconcile/qd.sql`, đọc danh sách từ owner qua bảng tạm lúc chạy, để cả
+   nhóm quy ước cũng chạy được trên database làm việc và cũng chứng minh được biết kêu trong một giao
+   dịch. `db-check.sh` bước 1 thôi chạy khối `QD` (một phép, một chỗ chạy).
+3. **Chứng minh ở mỗi lần `db-check`:** (a) lệnh trên dữ liệu mồi ⇒ 0 dòng; (b) một **ngày bán mẫu
+   đúng** (`db/reconcile/proof/baseline.sql`) ⇒ 0 dòng ở mọi câu — chống kêu oan; (c) mỗi file lỗi
+   cài **một** chỗ sai vào dữ liệu hay lược đồ (gỡ ràng buộc trước nếu tầng 1 giữ), trạng thái sau lỗi
+   qua `SET CONSTRAINTS ALL IMMEDIATE`, và tập câu kêu **bằng đúng** tập khai ở dòng `-- kêu:` —
+   chống câu điếc và câu kêu lan; (d) mỗi câu là mã đầu của ít nhất một file lỗi.
+4. **Không viết câu cho tập không có phần tử nào tồn tại được trong lược đồ** — một câu không cài lỗi
+   nào làm kêu được là một câu không bao giờ được chấm (kế hoạch pha 2 §7 luật 3). Tập ấy ghi *(B)* ở
+   file 09 §2.
+
+**Rejected alternatives:**
+- *Một câu một mã, `UNION` các tập.* Bác: lý do ở *Context*; và một lỗi cài chỉ chứng minh **một**
+  nhánh.
+- *Chứng minh bằng cách cài lỗi riêng từng câu trên database rỗng.* Bác: không chứng minh câu không kêu
+  oan trên một ngày đúng — lỗi đắt nhất của một ngưỡng 0đ (`I-021` mục *Why*).
+- *Chấp nhận "câu đích kêu" thay vì "đúng tập khai kêu".* Bác: một câu kêu lan ở lỗi của mệnh đề khác
+  là một câu mà chủ quán không đọc ra chỗ hỏng. Khi một lỗi thật làm kêu nhiều câu (gỡ ràng buộc kiểm
+  thì `QD-21` kêu cùng), file lỗi khai đủ và nói vì sao.
+- *Giữ bốn phép `QD` dạng lệnh ở `db-check.sh`.* Bác: chúng không chạy được trên database làm việc, và
+  không chứng minh được biết kêu mà không `COMMIT` một lỗi vào database của bộ kiểm.
+
+**Hệ quả:** `db-check` thêm khoảng nửa phút (85 câu × 86 lần trong một giao dịch). Hai mươi chín tập
+chưa có câu — phần lớn vì dữ liệu tập cần chưa có chỗ cất (số tiền mặt đếm được, tin nhắn báo có, dấu
+đã đối soát, khoảng tạm dừng, lần từ chối): đó là danh sách việc của pha 3 và của một quyết định của
+chủ repo (`04-luoc-do-duong-tien.md` §5), không phải bộ đã đủ. Lệnh đọc **toàn bộ lịch sử**: một chỗ
+sai cũ kêu mỗi tối tới khi được sửa có vết.
+
+**Applies to:** `db/reconcile/` · `scripts/reconcile.sh` · `scripts/db-check.sh` ·
+`docs/product/2-db/09-doi-chieu-bat-bien.md` · `docs/product/2-db/01-quy-uoc-du-lieu.md` §0 ·
+`docs/product/2-db/10-quy-uoc-code.md` `QC-07` · `QC-08`.

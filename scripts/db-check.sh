@@ -6,16 +6,18 @@
 # cổng ngẫu nhiên, gỡ sạch khi xong — database làm việc `banhcuon` không bị
 # đụng), chạy migration ở db/migrations/ xuôi từng bước từ số 0, lùi từng bước về
 # số 0 rồi xuôi lại, so lược đồ sau mỗi lần lùi (P2-09), rồi:
-#   1. mọi khối ```sql và ```sh nằm dưới một tiêu đề `### QD-XX` / `### QC-XX`
-#      trong docs/product/2-db/*.md — lấy thẳng từ tài liệu, không chép
+#   1. mọi khối ```sql và ```sh nằm dưới một tiêu đề `### QC-XX` trong
+#      docs/product/2-db/*.md — lấy thẳng từ tài liệu, không chép
 #      (work/findings.md F-001). Khối sql phải ra 0 dòng, khối sh phải in rỗng;
-#   2. bốn phép kiểm dạng lệnh mà một câu SQL không viết nổi: QD-02, QD-31(b),
-#      QD-32, QD-40(b) — hàm cùng tên ở dưới;
 #   3. từng file db/tests/*.sql, mỗi file trong một transaction rồi ROLLBACK.
-# Tham số `:schema`, `:kieu_moc`… lấy từ bảng §0 của 01-quy-uoc-du-lieu.md; múi
-# giờ của quán lấy từ master_plan/shop-facts.md §1. Bước 4: dựng dữ liệu mồi (db/seed/,
-# P2-10) vào database ấy rồi tính lại các ca giá §4.8. Bước 5: trên dữ liệu mồi ấy,
-# lùi một bước phải bị khoá chặn từ chối (07-thu-tu-migration.md). Không có Docker, hay database
+# Tham số `:schema`… lấy từ bảng §0 của 01-quy-uoc-du-lieu.md; múi giờ của quán
+# lấy từ master_plan/shop-facts.md §1. Bước 4: dựng dữ liệu mồi (db/seed/, P2-10)
+# vào database ấy rồi tính lại các ca giá §4.8. Bước 5: trên dữ liệu mồi ấy, lùi
+# một bước phải bị khoá chặn từ chối (07-thu-tu-migration.md). Bước 6: bộ đối chiếu
+# (scripts/reconcile.sh, P2-11) — nhóm I-0xx và nhóm quy ước QD-XX (các phép QD
+# chạy ở đây, không ở bước 1) — ra 0 dòng trên dữ liệu mồi, 0 dòng trên ngày bán mẫu
+# đúng, và mỗi lỗi cài ở db/reconcile/proof/ làm kêu ĐÚNG tập câu nó khai
+# (09-doi-chieu-bat-bien.md §3). Không có Docker, hay database
 # không lên ⇒ FAIL, không bỏ qua: một bộ kiểm im lặng khi thiếu máy là một bộ
 # kiểm không ai biết đã không chạy.
 set -uo pipefail
@@ -144,15 +146,14 @@ apply_params() {
   done < "$subst_file"
   printf '%s' "$sql"
 }
-param() { awk -F'\t' -v n="$1" '$1==n {print $2}' "$subst_file" | tr -d "'"; }
-SCHEMA="$(param schema)"
 
 # --- 1. khối kiểm trong tài liệu --------------------------------------------
 blocks="$(mktemp)"
 for f in "$DOCS"/*.md; do
   awk -v file="$f" '
     /^## /                                  { code="" }
-    /^### Q[CD]-[0-9]+/                     { code=$2 }
+    /^### QC-[0-9]+/                        { code=$2 }
+    /^### QD-[0-9]+/                        { code="" }
     code!="" && !inb && /^ *```(sql|sh) *$/ { inb=1; lang=$0; gsub(/[ `]/,"",lang); body=""; next }
     inb && /^ *``` *$/                      { printf "%s\t%s\t%s\t%s\036", code, lang, file, body; inb=0; next }
     inb                                     { body = body $0 "\n" }
@@ -179,97 +180,6 @@ while IFS="$(printf '\t')" read -r -d $'\036' code lang file body; do
 done < "$blocks"
 [ "$n_blocks" -gt 0 ] || fail "không tìm thấy khối kiểm nào trong $DOCS/*.md"
 rm -f "$blocks"
-
-# --- 2. bốn phép kiểm dạng lệnh ---------------------------------------------
-
-# Tập giá trị trong ràng buộc kiểm trên một cột, mỗi dòng một giá trị.
-check_values() {
-  psql_q -c "SELECT k.check_clause
-             FROM information_schema.constraint_column_usage u
-             JOIN information_schema.check_constraints k
-               ON k.constraint_schema = u.constraint_schema AND k.constraint_name = u.constraint_name
-             WHERE u.table_schema = '$SCHEMA' AND u.table_name = '$1' AND u.column_name = '$2'" \
-    | grep -o "'[^']*'" | tr -d "'" | sort -u
-}
-tables_with_column() {
-  psql_q -c "SELECT table_name FROM information_schema.columns
-             WHERE table_schema = '$SCHEMA' AND column_name = '$1' ORDER BY 1"
-}
-
-# QD-02 — cột mang mã kênh tên `channel_code` (bảng shop-facts §2), cột mang mã
-# trạm tên `station_code` (bảng §3); tập mã trong ràng buộc = tập mã của owner.
-qd02() {
-  local col sec owner t db_codes diff
-  for pair in "channel_code:2" "station_code:3"; do
-    col="${pair%%:*}"; sec="${pair##*:}"
-    owner="$(awk -v s="^## $sec\\\\." '$0 ~ s {on=1; next} on && /^## / {exit} on' master_plan/shop-facts.md \
-             | grep -E '^\| `[a-z_]+`' | grep -o '^| `[a-z_]*`' | tr -d '|` ' | sort -u)"
-    echo "     QD-02 owner §$sec ($col): $(printf '%s' "$owner" | tr '\n' ' ')"
-    [ -n "$owner" ] || fail "QD-02 — không đọc được bảng mã ở shop-facts §$sec"
-    local tables; tables="$(tables_with_column "$col")"
-    if [ -z "$tables" ]; then
-      echo "PASS QD-02 ($col) — chưa bảng nào mang cột này, 0 dòng"
-      continue
-    fi
-    for t in $tables; do
-      db_codes="$(check_values "$t" "$col")"
-      echo "     QD-02 $t.$col: $(printf '%s' "$db_codes" | tr '\n' ' ')"
-      diff="$(comm -3 <(printf '%s\n' "$owner") <(printf '%s\n' "$db_codes"))"
-      if [ -z "$diff" ]; then echo "PASS QD-02 ($t.$col) — comm -3 rỗng"
-      else fail "QD-02 ($t.$col) — lệch với shop-facts §$sec:"; printf '%s\n' "$diff" | sed 's/^/     /'
-      fi
-    done
-  done
-}
-
-# QD-31(b) — mỗi bảng có cả booked_at và sale_date: sale_date = ngày lịch của
-# booked_at quy bằng múi giờ của quán.
-qd31b() {
-  local t n
-  local tables; tables="$(psql_q -c "SELECT table_name FROM information_schema.columns
-      WHERE table_schema = '$SCHEMA' AND column_name IN ('booked_at','sale_date')
-      GROUP BY table_name HAVING COUNT(*) = 2 ORDER BY 1")"
-  if [ -z "$tables" ]; then echo "PASS QD-31(b) — chưa bảng nào có booked_at, 0 dòng"; return; fi
-  for t in $tables; do
-    n="$(psql_q -c "SELECT COUNT(*) FROM $SCHEMA.$t
-                    WHERE sale_date <> (booked_at AT TIME ZONE '$SHOP_TZ')::date")"
-    if [ "$n" = "0" ]; then echo "PASS QD-31(b) ($t) — 0 dòng"
-    else fail "QD-31(b) ($t) — $n dòng có sale_date lệch ngày của booked_at"
-    fi
-  done
-}
-
-# QD-32 — kết nối của bộ kiểm (cũng là kết nối chạy db/tests/) đọc mốc đúng múi
-# giờ của quán. Kết nối của backend chạy thật chưa có — chỗ trống có tên, QC-06.
-qd32() {
-  local seen; seen="$(psql_q -c 'SHOW TimeZone')"
-  echo "     QD-32 shop-facts §1: $SHOP_TZ"
-  echo "     QD-32 kết nối bộ kiểm: $seen"
-  if [ "$seen" = "$SHOP_TZ" ]; then echo "PASS QD-32 — hai dòng giống hệt"
-  else fail "QD-32 — múi giờ kết nối lệch múi giờ của quán"
-  fi
-}
-
-# QD-40(b) — tập mã trong ràng buộc kiểm của cột `status` = cột mã của bảng ánh
-# xạ ở file lát. Mỗi dòng ánh xạ viết: | `<bảng>.status` | `<mã>` | tên ở owner |
-qd40b() {
-  local t db_codes doc_codes diff
-  local tables; tables="$(tables_with_column status)"
-  if [ -z "$tables" ]; then echo "PASS QD-40(b) — chưa bảng nào có cột status, 0 dòng"; return; fi
-  for t in $tables; do
-    db_codes="$(check_values "$t" status)"
-    doc_codes="$(grep -h "^| \`$t.status\` |" "$DOCS"/*.md | awk -F'`' '{print $4}' | sort -u)"
-    echo "     QD-40(b) $t.status ràng buộc: $(printf '%s' "$db_codes" | tr '\n' ' ')"
-    echo "     QD-40(b) $t.status file lát: $(printf '%s' "$doc_codes" | tr '\n' ' ')"
-    diff="$(comm -3 <(printf '%s\n' "$doc_codes") <(printf '%s\n' "$db_codes"))"
-    if [ -n "$doc_codes" ] && [ -z "$diff" ]; then echo "PASS QD-40(b) ($t) — comm -3 rỗng"
-    else fail "QD-40(b) ($t) — ràng buộc và bảng ánh xạ lệch, hoặc chưa có bảng ánh xạ"
-         printf '%s\n' "$diff" | sed 's/^/     /'
-    fi
-  done
-}
-
-qd02; qd31b; qd32; qd40b
 
 # --- 3. db/tests/*.sql --------------------------------------------------------
 n_tests=0
@@ -331,10 +241,97 @@ if [ "$n_mig" -gt 0 ] && [ "${top:-0}" != 0 ]; then
   fi
 fi
 
+# --- 6. bộ đối chiếu (P2-11, docs/product/2-db/09-doi-chieu-bat-bien.md) ---------
+# (a) comm -3 danh sách mã và (b) cả bộ trên dữ liệu mồi: chính lệnh chạy sau khi đóng quán.
+n_proof=0
+if out="$(scripts/reconcile.sh --project "$PROJECT" 2>&1)"; then
+  printf '%s\n' "$out" | grep -E '^(PASS mã|     (danh sách|owner|ràng buộc)|reconcile:)'
+else
+  fail "đối chiếu trên dữ liệu mồi:"; printf '%s\n' "$out" | grep -Ev '^PASS I-|^PASS QD-' | sed 's/^/     /'
+fi
+# (c) biết kêu: MỘT giao dịch không bao giờ COMMIT — ngày bán mẫu đúng ⇒ mọi câu 0 dòng; rồi mỗi
+# file lỗi trong một savepoint: cài lỗi, trạng thái sau lỗi phải qua mọi ràng buộc còn lại (SET
+# CONSTRAINTS ALL IMMEDIATE, như lúc COMMIT), và tập câu kêu phải BẰNG ĐÚNG tập khai ở dòng
+# "-- kêu:" của file. Mỗi câu phải là mã đầu của ít nhất một file lỗi.
+PROOF=db/reconcile/proof
+queries="$(scripts/reconcile.sh --emit-queries)"
+n_q="$(printf '%s\n' "$queries" | grep -c "^.echo '@@@|")"
+faults="$(grep -l '^-- kêu: ' "$PROOF"/*.sql | sort)"
+refusals="$(grep -l '^-- tu-choi: ' "$PROOF"/*.sql | sort)"
+proof_out="$({ echo 'BEGIN;'
+               scripts/reconcile.sh --emit-prelude
+               cat "$PROOF/baseline.sql"
+               echo "\\echo '@@@@|ngày mẫu'"; printf '%s\n' "$queries"
+               for f in $refusals; do
+                 echo 'SAVEPOINT loi;'; echo "\\echo '@@@@|$(basename "$f" .sql)'"; cat "$f"
+                 echo 'ROLLBACK TO SAVEPOINT loi;'
+               done
+               for f in $faults; do
+                 echo 'SAVEPOINT loi;'
+                 echo "\\echo '@@@@|$(basename "$f" .sql)'"
+                 cat "$f"
+                 echo 'SET CONSTRAINTS ALL IMMEDIATE;'
+                 printf '%s\n' "$queries"
+                 echo 'ROLLBACK TO SAVEPOINT loi;'
+                 echo 'SET CONSTRAINTS ALL DEFERRED;'
+               done
+               echo 'ROLLBACK;'; } \
+             | compose exec -T -e PGTZ="$SHOP_TZ" db psql -X -q -U shop_owner -d banhcuon -tA 2>&1)"
+# Mỗi đoạn: tên · số câu đã chạy · tập câu kêu (sắp xếp) · lỗi đầu tiên (nếu có).
+sections="$(printf '%s\n' "$proof_out" | awk '
+  function flush() { if (name != "") printf "%s\t%d\t%s\t%s\n", name, ran, fired, err }
+  /^@@@@\|/        { flush(); name = substr($0, 6); ran = 0; fired = ""; err = ""; next }
+  /^@@\|/          { split($0, a, "|"); ran++; if (a[3] > 0) fired = fired (fired == "" ? "" : " ") a[2]; next }
+  /ERROR:/ && err == "" { e = $0; sub(/^.*ERROR: */, "", e); err = e }
+  END { flush() }')"
+IFS="$(printf '\t')" read -r _ ran fired err <<<"$(printf '%s\n' "$sections" | grep -m1 "^ngày mẫu$(printf '\t')")"
+if [ "${ran:-0}" -eq "$n_q" ] && [ -z "$fired" ] && [ -z "$err" ]; then
+  echo "PASS ngày bán mẫu đúng ($PROOF/baseline.sql) — $n_q câu chạy, mọi tập rỗng"
+else
+  fail "ngày bán mẫu — ${ran:-0}/$n_q câu chạy, câu kêu: ${fired:-không}${err:+, lỗi: $err}"
+fi
+# Lời từ chối (QC-07) chạy một lần trên ngày mẫu: không lỗi nào, và in dòng NOTICE của nó.
+for f in $refusals; do
+  name="$(basename "$f" .sql)"
+  IFS="$(printf '\t')" read -r _ ran fired err <<<"$(printf '%s\n' "$sections" | grep -m1 "^$name$(printf '\t')")"
+  note="$(printf '%s\n' "$proof_out" | grep -m1 "NOTICE: *$(sed -n '1s/^-- tu-choi: //p' "$f")" | sed 's/^.*NOTICE: *//')"
+  if [ -z "$err" ] && [ -n "$note" ]; then echo "PASS từ chối $name — $note"
+  else fail "từ chối $name — ${err:-không in dòng NOTICE nào}"
+  fi
+done
+targets=""
+for f in $faults; do
+  name="$(basename "$f" .sql)"
+  want="$(sed -n '1s/^-- kêu: //p' "$f" | tr ' ' '\n' | grep . | sort | tr '\n' ' ' | sed 's/ $//')"
+  targets="$targets $(sed -n '1s/^-- kêu: //p' "$f" | awk '{print $1}')"
+  IFS="$(printf '\t')" read -r _ ran fired err <<<"$(printf '%s\n' "$sections" | grep -m1 "^$name$(printf '\t')")"
+  got="$(printf '%s\n' $fired | grep . | sort | tr '\n' ' ' | sed 's/ $//')"
+  n_proof=$((n_proof + 1))
+  if [ -z "$want" ]; then
+    fail "kêu $name — dòng đầu không khai '-- kêu: <mã> …'"
+  elif [ -n "$err" ]; then
+    fail "kêu $name — lỗi cài không đứng được, hoặc một câu không chạy: $err"
+  elif [ "${ran:-0}" -ne "$n_q" ]; then
+    fail "kêu $name — chỉ ${ran:-0}/$n_q câu chạy"
+  elif [ "$got" = "$want" ]; then
+    echo "PASS kêu $name — $got"
+  else
+    fail "kêu $name — khai: $want · kêu: ${got:-không câu nào}"
+  fi
+done
+all_codes="$(printf '%s\n' "$queries" | grep "^.echo '@@@|" | sed "s/^.*@@@|//; s/'$//" | sort -u)"
+d="$(comm -3 <(printf '%s\n' "$all_codes") <(printf '%s\n' $targets | sort -u))"
+if [ -z "$d" ]; then
+  echo "PASS mọi câu có lỗi cài nhắm vào nó — comm -3 rỗng ($n_q câu, $n_proof file lỗi)"
+else
+  fail "câu không có lỗi cài nào nhắm vào (cột trái) / lỗi cài nhắm vào câu không có (cột phải):"
+  printf '%s\n' "$d" | sed 's/^/     /'
+fi
+
 rm -rf "$snap"
 rm -f "$subst_file"
 if [ "$failed" -ne 0 ]; then
   echo "db-check: FAIL"
   exit 1
 fi
-echo "db-check: PASS — $n_mig bước xuôi · lùi · xuôi lại, $n_blocks khối kiểm tài liệu, 4 phép kiểm dạng lệnh, $n_tests file test, dữ liệu mồi + §4.8, khoá chặn"
+echo "db-check: PASS — $n_mig bước xuôi · lùi · xuôi lại, $n_blocks khối kiểm QC, $n_tests file test, dữ liệu mồi + §4.8, khoá chặn, đối chiếu: $n_q câu trên dữ liệu mồi và ngày mẫu, $n_proof lỗi cài"

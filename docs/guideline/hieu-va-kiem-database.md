@@ -158,28 +158,28 @@ phải lỗi.
 ```
 
 Đây là phép kiểm có giá trị bằng chứng. Nó **không đụng** database làm việc: tự dựng một database
-rỗng riêng, chạy mọi migration từ số 0, chạy mọi phép kiểm, rồi gỡ đi. Mất khoảng 15 giây. Docker
+rỗng riêng, chạy mọi migration từ số 0, chạy mọi phép kiểm, rồi gỡ đi. Mất khoảng một phút. Docker
 phải đang bật; nếu không, nó báo `FAIL` chứ không lặng lẽ bỏ qua.
 
 Đừng chạy hai lần `db-check` cùng lúc (ví dụ hai phiên làm việc song song): hai lần ấy dùng chung
 một tên project nên sẽ gỡ database của nhau và báo đỏ giả — đây là finding `F-045` đang mở ở
 [work/findings.md](../../work/findings.md).
 
-### 3.2 Nó kiểm bốn thứ
+### 3.2 Nó kiểm năm thứ
 
-1. **Quy ước dữ liệu và quy ước code**: mọi khối SQL nằm dưới một tiêu đề `### QD-XX` hay `### QC-XX`
-   trong `docs/product/2-db/` được lấy thẳng từ tài liệu ra chạy, và phải trả **0 dòng** (mỗi dòng
-   trả về là một chỗ vi phạm). Thêm bốn phép kiểm mà một câu SQL không viết nổi: mã kênh và mã trạm
-   khớp `shop-facts.md` (`QD-02`), ngày bán khớp mốc giờ (`QD-31`), múi giờ kết nối (`QD-32`), tập
-   trạng thái khớp tài liệu (`QD-40`).
+1. **Quy ước code**: mọi khối SQL hay lệnh nằm dưới một tiêu đề `### QC-XX` trong `docs/product/2-db/`
+   được lấy thẳng từ tài liệu ra chạy, và phải trả **0 dòng** (mỗi dòng trả về là một chỗ vi phạm).
 2. **Từng file ở `db/tests/`**, mỗi file trong một giao dịch rồi huỷ (`ROLLBACK`), nên không để lại
    dữ liệu.
 3. **Dữ liệu mồi** dựng được từ `shop-facts.md`.
 4. **Các ca giá** ở `shop-facts.md` §4.8 tính lại khớp từng đồng.
+5. **Bộ đối chiếu** (`scripts/reconcile.sh`, mục 3.5): mọi câu của nhóm bất biến `I-0xx` và nhóm quy
+   ước dữ liệu `QD-XX` ra 0 dòng trên dữ liệu mồi và trên một ngày bán mẫu đúng; rồi từng lỗi cài ở
+   `db/reconcile/proof/` phải làm kêu **đúng** những câu nó khai.
 
 ### 3.3 Đọc output
 
-Dòng cuối là kết luận. Output thật ngày viết:
+Dòng cuối là kết luận. Output thật (cập nhật 2026-09-30, sau `P2-11`):
 
 ```text
 PASS dữ liệu mồi — 15 bàn · 15 mã QR hiện hành · 6 thành phần · 10 dòng menu · 2 nhóm tuỳ chọn · 10 trạm của thành phần
@@ -187,7 +187,10 @@ PASS §4.8 ca giá
      ca 1 khớp: Bánh cuốn ×1 [Chay] ⇒ 3000đ
      ...
      §4.8: 13 / 13 ca khớp từng đồng
-db-check: PASS — 27 khối kiểm tài liệu, 4 phép kiểm dạng lệnh, 26 file test, dữ liệu mồi + §4.8
+PASS ngày bán mẫu đúng (db/reconcile/proof/baseline.sql) — 85 câu chạy, mọi tập rỗng
+PASS kêu i004_7 — I-004/7
+     ...
+db-check: PASS — 8 bước xuôi · lùi · xuôi lại, 10 khối kiểm QC, 26 file test, dữ liệu mồi + §4.8, khoá chặn, đối chiếu: 85 câu trên dữ liệu mồi và ngày mẫu, 85 lỗi cài
 ```
 
 Các dòng thụt vào dạng `NOTICE: ... bị từ chối (...)` **không phải lỗi**. Đó là file test kể lại
@@ -198,7 +201,7 @@ PASS db/tests/yc15_counter_duty_by_time.sql
      NOTICE:  YC-15 bị từ chối (A vào quầy lúc B đang đứng): conflicting key value violates exclusion constraint "counter_duty_one_at_a_time_excl"
 ```
 
-Lỗi thật trông như `FAIL db/tests/...` hoặc `FAIL QD-XX (sql) — N dòng:` kèm các dòng vi phạm, và
+Lỗi thật trông như `FAIL db/tests/...`, `FAIL QC-XX (sql) — N dòng:` hay `FAIL kêu <file lỗi> — khai: … · kêu: …` kèm chi tiết, và
 dòng cuối là `db-check: FAIL`. Muốn lọc nhanh chỉ kết luận:
 
 ```bash
@@ -225,6 +228,17 @@ ROLLBACK;
 ```
 
 Đường chắc hơn để thử một luật là đọc file test tương ứng ở `db/tests/` rồi chạy `db-check`.
+
+### 3.5 Bộ đối chiếu — chạy sau khi đóng quán
+
+```bash
+./scripts/reconcile.sh          # trên database làm việc (make up)
+```
+
+Lệnh chạy mọi câu đối chiếu trên database đang có dữ liệu: mỗi dòng `PASS I-004/2 — 0 dòng · …` là
+một tập *"phải rỗng"* của pha 1 đang rỗng; `FAIL` in kèm vài phần tử của tập ấy — đó là chỗ cần tìm
+lý do. Nó chỉ đọc, không sửa gì. Tập nào chưa có câu và vì sao:
+[`09-doi-chieu-bat-bien.md`](../product/2-db/09-doi-chieu-bat-bien.md) §2.
 
 ## 4. Kiểm cả repo
 
