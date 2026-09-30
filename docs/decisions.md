@@ -84,6 +84,7 @@ có câu trả lời mới từ người.
 | ADR-065 | **Mỗi bước migration một bước lùi, và bước lùi chỉ gỡ chỗ còn rỗng** — `QC-05` bỏ luật *chỉ đi tới*; mỗi `.up.sql` một `.down.sql` mở đầu bằng khoá chặn (bảng có dòng, cột có giá trị ⇒ từ chối); lùi trên dữ liệu đã ghi là migration mới; `db-check` xuôi · lùi · xuôi lại từng bước và so lược đồ; tên bảng `.md` ↔ migration thành Gate 1e | Đã chốt 2026-09-29 (giao cho phiên) | — | P2-09 |
 | ADR-066 | **Bộ đối chiếu: một câu một TẬP, một lệnh sau khi đóng quán, chứng minh bằng ngày mẫu và lỗi cài** — mỗi tập *"phải rỗng"* của pha 1 là một câu `I-0xx/n` ở `db/reconcile/`; `scripts/reconcile.sh` chạy nhóm `I-0xx` và nhóm quy ước `QD-XX` (bốn phép dạng lệnh viết lại thành SQL); `db-check` chứng minh: ngày bán mẫu đúng ⇒ 0 dòng, mỗi lỗi cài ⇒ đúng tập câu khai | Đã chốt 2026-09-30 (giao cho phiên) | — | P2-11 |
 | ADR-067 | **Cổng pha 2 ký bằng một bước chạy lại được: ba scenario COMMIT thật, đọc lại ở kết nối khác, chấm YC năm kết cục** — `db/scenario/` diễn ba scenario mỗi bước một giao dịch trên database kiểm có dữ liệu mồi; bộ đối chiếu chạy lại trên ngày ấy; mỗi mã YC một dòng *đọc* và một dòng *sai* mang một trong năm kết cục có tên; tất cả là bước 7 của `db-check` | Đã chốt 2026-09-30 (giao cho phiên) | — | P2-13 |
+| ADR-068 | **Lược đồ admin được dựng cho phần ĐÃ ĐỦ LUẬT, trước khi mảng bán hàng chạy thật** — sửa đổi ADR-031 đúng ở tầng lược đồ; pha 3–4 của admin và phần còn chờ lời chủ quán đứng yên; bước mang mã `P2A-XX`, thứ tự ở `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`, mô tả ở `work/backlog_AD_DB.md` | Đã chốt 2026-09-29 (chủ repo mở cổng; mã và sổ giao cho phiên) | — | P2A-01…P2A-09 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -1864,6 +1865,10 @@ quanh — không phải *"chưa biết bao giờ"* mà là *"sau khi luồng bá
 **Applies to:**
 `docs/product/0-ba/` §1.6, §7.6 · `docs/product/1-system-design/architecture.md` §14 · `master_plan/shop-facts.md` §8 ·
 `work/admin-questions.md` §2 · ADR-013.
+
+**SỬA ĐỔI 2026-09-29 (ADR-068):** chủ repo mở thi công **lược đồ** admin cho phần đã đủ luật, trước
+khi luồng bán hàng chạy được. Chữ *"sau"* ở trên còn nguyên cho pha 3 · pha 4 của admin và cho mọi
+phần còn chờ lời chủ quán.
 
 ---
 
@@ -4467,3 +4472,50 @@ database sạch.
 
 **Applies to:** `db/scenario/` · `scripts/db-check.sh` · `docs/product/2-db/11-cong-chat-luong-pha-2.md` ·
 `docs/product/2-db/10-quy-uoc-code.md` `QC-07` · `QC-08`.
+
+---
+
+### ADR-068 — Lược đồ admin được dựng cho phần ĐÃ ĐỦ LUẬT, trước khi mảng bán hàng chạy thật
+
+**Trạng thái:** **Đã chốt** 2026-09-29. Điểm 1 là **lời chủ repo** trong phiên: *"tôi muốn làm luôn
+db cho phần admin hãy kiểm tra xem đã dủ dữ liệu chưa nếu ròi hãy viết prompt để làm master pan,
+back log"*, nhắc lại 2026-09-30 (*"tiếp tục"*) sau khi phiên báo lời ấy trái **ADR-031** và lời Đ-2.
+Điểm 2 · 3 · 4 **giao cho phiên**: lời gốc không nêu phạm vi, mã bước hay chỗ đặt sổ (`CLAUDE.md`
+§7.2). Task **T-122**.
+
+**Context:**
+**ADR-031** xếp ba mảng quản trị *sau* luồng bán hàng ở nghĩa thi công, và lời Đ-2 ngày 2026-09-20
+(`work/backlog.md`, mục *Thứ tự làm giữa lane admin và các pha*) cho lane admin chạy song song pha 2
+chỉ ở nghĩa **thu luật**. Từ đó tới 2026-09-30 hai việc đổi: chủ quán trả lời phần lớn các câu nhóm
+B · C · D · E (`master_plan/shop-facts.md` §8.4 · §8.7 · §8.9 · §8.10), và mười bốn bước pha 2 của
+mảng bán hàng đều `Done`. Lời đáp phủ không đều: sổ nguyên liệu, chấm công, tạm ứng, thưởng và khoản
+chi có lời đủ để biết *phải ghi lại được gì*; lương, lãi/lỗ, nợ nhà cung cấp, quyền xem thì chưa.
+Pha 1 lại chưa viết dòng yêu cầu dữ liệu hay invariant nào cho admin.
+
+**Decision:**
+1. **Được dựng lược đồ admin ngay**, không chờ luồng bán hàng chạy thật (lời chủ repo).
+2. **Phạm vi đọc hẹp:** chỉ phần đã có lời chủ quán ở owner. Phần còn chờ lời **không** có bước và
+   không có chỗ cất để sẵn. Pha 3 · pha 4 của admin không mở — chữ *"sau"* của ADR-031 còn nguyên
+   cho chúng.
+3. **Thứ tự pha không nhảy cóc:** bước đầu viết yêu cầu dữ liệu và invariant cho phần admin ấy vào
+   chính các owner của pha 1, rồi mới tới lát lược đồ (**ADR-050**).
+4. **Mã bước là `P2A-XX`**; thứ tự · mức · cổng ở `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`;
+   mô tả dài ở `work/backlog_AD_DB.md`; trạng thái chỉ ở `work/backlog.md` (**ADR-002**).
+
+**Rejected alternatives:**
+- *Chờ đủ lời cho cả ba mảng rồi mới dựng.* Bác: trái lời chủ repo, và phần đã đủ luật không phụ
+  thuộc phần chưa đủ.
+- *Dựng luôn chỗ cất cho lương, lãi/lỗ, nợ nhà cung cấp "để sẵn".* Bác: một cột để sẵn là một luật
+  nghiệp vụ không ai nói (`CLAUDE.md` §3.5); pha 3 sẽ đọc nó như đã chốt.
+- *Nối thành `P2-15`… trong kế hoạch pha 2.* Bác: kế hoạch ấy đã ký cổng 12/12 cho mười bốn bước;
+  thêm bước là mở lại một cổng đã ký, và §3 của nó nói rõ admin không thuộc mười bốn bước.
+- *Dùng mã `ADM-XX` và ghi vào `work/backlog_AD.md`.* Bác: luật 5 của sổ ấy giữ nó ở tầng nghiệp vụ;
+  một mã mang hai tầng là cái bẫy **F-015** · **F-021**.
+- *Bỏ bước yêu cầu và invariant, dựng thẳng lát.* Bác: pha 2 thi hành tầng của pha 1; không có tầng
+  thì mỗi lát tự quyết cái gì phải không xảy ra được, và cổng không có gì để chấm.
+
+**Hệ quả:** `CLAUDE.md` §2 thêm hàng cho sổ mới; hàng *Schema* trỏ thêm kế hoạch mới. Lời Đ-2 có
+vế thứ ba. Hai câu mới `U-065` · `U-066` chặn hai trong bốn lát.
+
+**Applies to:** `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` · `work/backlog_AD_DB.md` ·
+`work/backlog.md` · ADR-031 · ADR-036 · ADR-049.

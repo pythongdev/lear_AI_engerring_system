@@ -68,6 +68,7 @@ is a bug to fix now.
 | Tasks — mô tả dài của **pha 1**, `P1-01`…`P1-14` | `work/backlog_SD.md` |
 | Tasks — mô tả dài của **pha 2**, `P2-01`…`P2-14` | `work/backlog_DB.md` |
 | Tasks — mô tả dài của **mảng admin**, `ADM-01`…`ADM-53` | `work/backlog_AD.md` |
+| Tasks — mô tả dài của **lược đồ admin**, `P2A-01`…`P2A-09` | `work/backlog_AD_DB.md`; thứ tự, mức và cổng: `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` (ADR-068) |
 | Câu hỏi cho chủ quán về mảng admin, và chỗ chủ quán trả lời | `work/admin-questions.md` §3 |
 | Scope of each task in flight | `work/scope/<ID>.txt` — one file per task, ignored by git (ADR-063) |
 | Recurring problems, lessons | `work/findings.md` |

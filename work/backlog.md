@@ -24,10 +24,12 @@ tick dòng ấy, ghi rõ *(commit tick Done)*.
 | [Vòng chạy một task L1](#vong-chay) | mười bước thủ tục từ nhận task tới khối commit |
 | [Task Detail Template](#template) | khuôn viết một task mới |
 
-**Bốn sổ, một chỗ giữ trạng thái.** Ranh giới giữa chúng là **lane** (`docs/decisions.md`
+**Năm sổ, một chỗ giữ trạng thái.** Ranh giới giữa chúng là **lane** (`docs/decisions.md`
 **ADR-036**): pha 1 (`P1-01`…`P1-14`) giữ mô tả ở **`work/backlog_SD.md`** (**ADR-034**) · pha 2
 (`P2-01`…`P2-14`) giữ mô tả ở **`work/backlog_DB.md`** (**ADR-049**, dựng 2026-09-20 ở T-081) ·
-mảng admin (`ADM-01`…`ADM-53`) giữ mô tả ở **`work/backlog_AD.md`** · mọi thứ còn lại ở file này,
+mảng admin (`ADM-01`…`ADM-53`) giữ mô tả ở **`work/backlog_AD.md`** · lược đồ admin
+(`P2A-01`…`P2A-09`) giữ mô tả ở **`work/backlog_AD_DB.md`** (**ADR-068**, dựng 2026-09-30 ở T-122) ·
+mọi thứ còn lại ở file này,
 rồi sang `work/backlog_archive.md` khi xong.
 Dù mô tả nằm ở sổ nào, **file này vẫn là nơi duy nhất giữ trạng thái** — đó là file
 `scripts/brief.sh` đọc và đẩy vào mọi phiên mới (**ADR-002**).
@@ -47,6 +49,7 @@ của file ấy chỉ nhận dữ kiện admin của quán).
 |---|---|---|
 | Vế cũ (2026-09-01) | **đóng nốt chuỗi BA trước**, rồi mới chạy nhánh admin | **đã xong** — BA-08…BA-13 đều `Done` từ 2026-09-04 |
 | Vế mới (2026-09-20) | lane admin chạy **SONG SONG** với pha 2: *hỏi chủ quán về admin trong khi pha 2 chạy* | **đang hiệu lực** |
+| Vế 2026-09-29 | **chủ repo**: *"tôi muốn làm luôn db cho phần admin"* — nhắc lại 2026-09-30 (*"tiếp tục"*) | **đang hiệu lực** — mở thi công **lược đồ** admin cho phần đã đủ luật; `docs/decisions.md` **ADR-068** |
 
 **Vế mới nói chính xác cái gì.** Chủ quán chọn *"Song song: hỏi chủ quán về admin trong khi pha 2
 chạy"*, và phương án ấy nói rõ hai nửa:
@@ -66,11 +69,25 @@ thì vẫn chờ.
 **không** lật ngược câu đó: *"sau"* ở ADR-031 nói về **thi công**, còn lời này nói về **thu luật**.
 Hai chữ khác nhau; đừng đọc cái này thành phép thi công admin trước.
 
+**Vế 2026-09-29 đổi đúng một nửa của vế trước, và chỉ nửa ấy** (T-122, `docs/decisions.md`
+**ADR-068**). Lúc lời này có hiệu lực, mười bốn bước pha 2 của mảng bán hàng đều đã `Done`
+(2026-09-30).
+
+- **Nay được làm: LƯỢC ĐỒ admin của phần đã đủ luật** — chín bước `P2A-01`…`P2A-09`, thứ tự và
+  cổng ở `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`, mô tả ở `work/backlog_AD_DB.md`.
+- **Vẫn KHÔNG làm:** chỗ cất cho phần còn chờ lời chủ quán (kế hoạch ấy §6), và pha 3 · pha 4 của
+  admin. Lời ngày 2026-09-29 nói *db*; nó không nói API hay màn hình.
+- **Thu luật vẫn chạy song song** như vế 2026-09-20.
+- *Cách đọc của phiên ghi, không phải lời chủ repo* (`work/findings.md` **F-004**): lời gốc không
+  nêu phạm vi; phiên đọc nó hẹp — chỉ phần đã đủ luật. Người nói trong phiên là **chủ repo**; hai
+  vế trước được ghi là lời **chủ quán**, và phiên không tự đồng nhất hai vai.
+
 Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="ready"></a>
 ## Ready
 
+- [ ] P2A-01 Yêu cầu dữ liệu và invariant của phần admin đã đủ luật — dòng `YC` và mệnh đề `I-0xx` mới cho sổ nguyên liệu · chấm công · tạm ứng và thưởng · khoản chi; đứng trước mọi lát lược đồ admin — L2 · [chi tiết](backlog_AD_DB.md#p2a-01)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
 [↑ đầu file](#top)
@@ -83,6 +100,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-122 Lược đồ admin có kế hoạch và sổ việc: chín bước `P2A-01`…`P2A-09` cho phần đã đủ luật, chín phần còn chặn mỗi phần một dòng; lời chủ repo 2026-09-29 mở cổng ghi ở mục *Thứ tự làm* và **ADR-068**; mở `U-065` · `U-066` — 2026-09-30 · [chi tiết](backlog_archive.md#t-122)
 - [x] P2-14 Rà chéo ranh giới pha và pointer — chín lượt lọc endpoint · route · component trên mười một file pha 2 (2753 dòng), mỗi lượt một cặp chưa lọc · đã lọc, bộ lọc chứng minh biết kêu trên bản sao có cài lỗi; ô 9 ký ⇒ cổng pha 2 **12/12**; pointer hai chiều rà xong, bốn câu *"pha 2 chưa mở"* của pha 1 nhận ghi chú có ngày; chỗ hở mới `F-049` (Gate 1d hẹp) · `F-050` (vết *quán đang mù* chưa có dòng yêu cầu). **Ký chuyển pha 3 là quyền chủ repo** — 2026-09-30 · [chi tiết](backlog_DB.md#p2-14)
 - [x] T-121 `db-check` hết đỏ theo giờ trong ngày — đơn mà test `I-024` để lại sau COMMIT nay khai lúc tạo trong giờ bán thay vì lấy đồng hồ; không phép chấm nào đổi. `./scripts/db-check.sh` lúc 20:59 ⇒ exit 0, cùng lệnh trên `HEAD` lúc 20:55 ⇒ exit 1 (`I-008/1`); `work/findings.md` **F-051** *Fixed*. L1, làm trước vì chặn `P2-14` — 2026-09-30
 - [x] P2-13 Cổng chất lượng pha 2 — ba scenario diễn qua lược đồ (mỗi bước một giao dịch COMMIT, đọc lại ở kết nối khác, đối chiếu rỗng trên ngày ấy), 24 dòng `YC` chấm hai câu, 11/12 ô cổng ký kèm bằng chứng, ô 9 chờ `P2-14`; chỗ hở mới `F-048` — 2026-09-30 · [chi tiết](backlog_DB.md#p2-13)
@@ -300,8 +318,9 @@ thuộc lane này. ⇒ **Việc mở lại lane này là một lượt HỎI CH�
 **Ba loại và con số của chúng đọc ở mục *Cổng của cả lane* đầu `work/backlog_AD.md`** — đó là
 owner, đừng đếm ở đây (`work/findings.md` **F-003**).
 
-**Từ 2026-09-20, lane này được chạy SONG SONG pha 2 — nhưng chỉ ở nghĩa *thu luật*.** Lời **Đ-2**
-của chủ quán, đọc đủ ở mục *[Thứ tự làm giữa lane admin và các pha](#thu-tu-lane)*.
+**Từ 2026-09-20, lane này được chạy SONG SONG pha 2 ở nghĩa *thu luật*; từ 2026-09-29 phần đã đủ
+luật được dựng LƯỢC ĐỒ** (`P2A-XX`, `work/backlog_AD_DB.md`). Đọc đủ ở mục
+*[Thứ tự làm giữa lane admin và các pha](#thu-tu-lane)*.
 
 [↑ đầu file](#top)
 

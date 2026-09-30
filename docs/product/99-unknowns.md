@@ -15,6 +15,8 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
+  - [U-066](#u-066) — tiền điện, nước, wifi, xăng xe trả bằng tiền nào
+  - [U-065](#u-065) — một lần chấm công gồm những mốc nào
   - [U-064](#u-064) — đơn huỷ khi bếp đã làm xong, mà không bàn nào chờ đúng thứ ấy
   - [U-063](#u-063) — khách nợ trả dần từng phần được không
   - [U-058](#u-058) — giảm giá cả đơn nhập tay: phạm vi bản đầu và giới hạn
@@ -35,6 +37,28 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 
 <a id="dang-mo"></a>
 ### Đang mở
+
+<a id="u-066"></a>
+- **U-066 — Tiền điện, nước, wifi, xăng xe quán trả bằng tiền nào: tiền riêng
+  của chủ quán, tiền trong két, hay tuỳ khoản?** Mở 2026-09-30 (T-122).
+  `master_plan/shop-facts.md` §8.10 câu `E46` có lời cho **chi lặt vặt** —
+  tiền riêng của chủ quán — và ghi thẳng *chưa nói nguồn chi các khoản khác*.
+  Câu này không có ở `work/admin-questions.md` §3 nên chưa mã nào giữ nó.
+  **Chủ quán** trả lời; chặn bước `P2A-05` (chỗ cất khoản chi) của
+  `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`, vì tiền lấy từ két thì
+  chạm phép đối soát cuối ngày còn tiền riêng thì không. Không tự gán một
+  nguồn cho khoản nào.
+
+<a id="u-065"></a>
+- **U-065 — Một lần chấm công gồm những mốc nào: nhân viên bấm một lần lúc tới,
+  bấm lúc tới và lúc về, hay bấm theo buổi?** Mở 2026-09-30 (T-122).
+  `master_plan/shop-facts.md` §8.7 câu `C31` chốt **nhân viên tự bấm chấm công
+  trên máy**; `C32` chốt đi muộn không trừ tiền và chưa nêu ngưỡng phút. Không
+  lời nào nói một lần chấm ghi lại mốc gì. Hỏi về cái quán, không về cái bảng:
+  *"sáng tới quán nhân viên bấm một cái là xong, hay lúc về cũng phải bấm?"*
+  **Chủ quán** trả lời; chặn bước `P2A-03` (chỗ cất chấm công) của
+  `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`, và đứng dưới phần tính
+  lương sau này. Không tự chọn một mốc hay hai mốc.
 
 <a id="u-064"></a>
 - **U-064 — Một đơn bị huỷ khi bếp đã làm xong phần của nó, mà lúc ấy không bàn

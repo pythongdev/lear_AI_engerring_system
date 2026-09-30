@@ -951,6 +951,31 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-122"></a>
+### T-122 — Chủ repo muốn dựng database cho admin, mà không kế hoạch nào nói phần nào dựng được
+
+**Yêu cầu:** 2026-09-29, chủ repo: *"tôi muốn làm luôn db cho phần admin hãy kiểm tra xem đã dủ dữ
+liệu chưa nếu ròi hãy viết prompt để làm master pan, back log"*; 2026-09-30: *"tiếp tục"*. Prompt:
+`prompt/AD/AD-DB-master-plan-backlog-L2.md` (commit `3d98097`). Mức **L2** — đổi một lời xếp lịch
+và mở một ADR; không đổi lược đồ.
+
+**Phạm vi:** `work/scope/T-122.txt`. Không sửa `master_plan/shop-facts.md`, `quality/invariants.md`,
+`docs/product/1-system-design/`, `docs/product/2-db/`, `db/`.
+
+**Acceptance:** chín dòng của prompt. Khác prompt ở hai chỗ, vì trạng thái đổi giữa hai ngày: pha 2
+đã đóng đủ mười bốn bước nên *"nối vào ba bước chung của pha 2"* không còn là bước riêng (kế hoạch
+§5, đoạn cuối); ADR mở cổng và ADR chọn mã gộp làm một, **ADR-068**.
+
+**Bàn giao:** Claude Code, nhánh `chatgpt_involve`, base `1b39272`; chưa review độc lập. Kết quả:
+kế hoạch `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` (chín bước, chín phần bị chặn, tám
+ô cổng, bảy chỗ suy ra); sổ `work/backlog_AD_DB.md`; vế 2026-09-29 của lời Đ-2 ở `work/backlog.md`;
+**ADR-068** và khối sửa đổi dưới ADR-031; `U-065` · `U-066`; hàng mới ở `CLAUDE.md` §2; một đoạn ở
+`docs/product/00-index.md`. `P2A-01` ở *Ready*.
+
+**Còn lại:** lời `F52`…`F55` vẫn ở nhánh `task/f52-f55` chưa gộp. Cách đọc hẹp của lời mở cổng
+(kế hoạch §8 điểm 1) và việc ghi lời ấy là lời chủ repo (điểm 2) chờ chủ repo xác nhận.
+
+
 <a id="t-087"></a>
 ### T-087 — `CLAUDE.md` 607 dòng nạp vào mọi phiên, phần lớn là cơ chế đã có owner khác
 
