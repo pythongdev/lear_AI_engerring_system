@@ -1,6 +1,6 @@
 # Bảo vệ invariant — tầng nào giữ từng mệnh đề, và phép đối chiếu nào bắt nó khi hỏng
 
-*Bước 4/14 · 5/14 · 6/14 · 13/14 · 14/14 của pha 1 — **một file, năm chủ**
+*Bước 4/14 · 5/14 · 6/14 · 13/14 · 14/14 của pha 1 — **một file, năm chủ** (sáu, kể từ §5 của `P2A-01`, 2026-09-30)
 (`master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §5 · §6 · `docs/decisions.md` **ADR-033**).
 Mở đầu và **§1 — nhóm TIỀN** viết ở **P1-04**, 2026-09-06. **§2 — nhóm VÒNG ĐỜI** là của **P1-05**,
 **§3 — nhóm MENU · GIÁ · VẾT** viết ở **P1-06**, 2026-09-07. **§4 — nhóm SẢN XUẤT THEO MẺ** là của
@@ -15,7 +15,9 @@ chứ không mở một nhóm mới (`docs/decisions.md` **ADR-044**). **Hàng `
 nhóm TIỀN đã có (`docs/decisions.md` **ADR-060**). **Hàng `I-024` của §1** là của **T-115**,
 2026-09-28 — mệnh đề thứ sáu như thế (`work/findings.md` **F-043**, một lần gửi một đơn), cũng vào
 nhóm TIỀN (`docs/decisions.md` **ADR-061**). Không sửa mục của người khác
-(`work/findings.md` **F-010** · **F-014**).*
+(`work/findings.md` **F-010** · **F-014**). **§5 — nhóm QUẢN TRỊ** là của **P2A-01**,
+2026-09-30 (kế hoạch `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`,
+`docs/decisions.md` **ADR-068** · **ADR-069**).*
 
 > **Mục này sở hữu đúng hai thứ cho mỗi mệnh đề bất biến:** **tầng bảo vệ** đang giữ nó, và **phép
 > đối chiếu** bắt được nó khi nó đã hỏng (`CLAUDE.md` §2, hàng *Tầng bảo vệ của từng invariant* —
@@ -375,3 +377,53 @@ khoá gom mà `I-019` giữ — chia sai theo khoá gom tự động kéo `I-020
 | **P1-11** — diễn ba scenario | scenario chạm mẻ phủ nhiều bàn phải trỏ được vào cơ chế tầng 2 ở đây, cả chiều tiến lẫn chiều lùi |
 | **P1-12** — rà ranh giới pha | §4 không có tên bảng · cột · ràng buộc · endpoint · route · component |
 | **Pha 2** | **cái gì bắt buộc do cơ sở dữ liệu giữ**: `I-020` vế trần trên (đã bưng ra bàn ≤ đã gọi). Và **cái gì cần một giao dịch, không chỉ một ràng buộc**: `I-019` (cộng/trừ một phần chia và tổng cùng lúc) · `I-020` (cộng cho mọi bàn của một mẻ trong cùng giao dịch, và đường lùi là giao dịch nghịch đảo của đúng giao dịch tiến) |
+
+---
+
+## 5. Nhóm QUẢN TRỊ — năm mệnh đề (P2A-01, 2026-09-30)
+
+Mảng admin đứng riêng theo `docs/decisions.md` **ADR-013**, nên năm mệnh đề này có nhóm riêng;
+không mệnh đề nào của nhóm này đổi một hàng của bốn nhóm trước.
+**Cột *Mệnh đề* trỏ về `quality/invariants.md`** — nhãn sau mỗi mã chỉ để nhận ra hàng, không
+phải câu mệnh đề; lời của từng mệnh đề đọc ở nhà của nó (`work/findings.md` **F-001**).
+
+| Mệnh đề | Bảo vệ bằng | Phép đối chiếu — *tập này phải rỗng* |
+|---|---|---|
+| **`I-025`** — con số nguyên liệu do người nhập | **Vế *mọi con số có người nhập, ngày và lúc gõ*: tầng 1** — trạng thái một con số thiếu một trong ba phải không tồn tại được. · **Vế *không thao tác bán hàng nào chạm*: tầng 3** — đúng **một** đường ghi tới một con số nguyên liệu: người nhập nó; không đường nào từ đơn, phiên, mẻ hay tiền dẫn tới đó; giới hạn đã biết của tầng 3 là sửa dữ liệu bằng tay. · **Vế *máy không giữ thứ gì để tự tính*: tầng 3** — không có chỗ cất thì không có gì để tính. · **Vế *sửa là cập nhật có vết***: tầng bảo vệ theo `I-018` (§3), không mô tả lại. | **Vế đủ ba dấu:** mọi con số thiếu người nhập, thiếu ngày hoặc thiếu lúc gõ. · **Vế không thao tác bán hàng nào chạm và vế cập nhật có vết:** mọi con số mà giá trị hiện tại khác giá trị lúc nhập mà không có lần cập nhật mang vết `I-018` nào giải thích chỗ khác ấy. Tập này bắt một đường ghi thứ hai **đổi** một con số; nó **không** bắt được một thao tác bán hàng **sinh** ra một con số mới mang đủ ba dấu, hay sửa một con số kèm một vết hợp lệ — trong dữ liệu chúng trông giống hệt việc của người nhập. Ca ấy **chưa có tập**: nó chỉ kiểm được bằng kịch bản âm của `quality/invariants.md` `I-025` (diễn một buổi bán đủ năm kênh rồi so sổ trước và sau), nói thẳng theo §0 luật 5. · **Vế máy không giữ thứ gì để tự tính chưa có tập:** một ngưỡng, một định lượng hay chỗ cất kết luận thiếu hoặc sắp hết là một chỗ cất thừa, không phải một dòng dữ liệu sai; chỉ kiểm được bằng **đọc lược đồ**, theo ô 7 cổng §7 của kế hoạch lược đồ admin. |
+| **`I-026`** — tổng và hiệu số từ các con số ngày | **Vế *tổng là phép cộng* và vế *hiệu số là phép trừ trên hai tổng*: tầng 1**, cùng hình `I-019` (§4) — tổng là thứ **suy ra** từ con số ngày, không phải con số ghi độc lập; nếu lưu đệm thì cộng trừ trong **cùng một giao dịch (tầng 2)**. · **Vế *cộng dồn từ ngày mua, không đặt lại*: tầng 3** — một chỗ tính tổng cộng **mọi** con số ngày của thứ ấy, không lọc theo lần mua hay theo lô. · **Vế *một thứ, một ngày, một đáp số*: tầng 1** — không tồn tại hai giá trị cùng có hiệu lực cho cùng một con số của một thứ trong một ngày. · **Vế *một thứ đứng một lần trong danh mục*: tầng 1** — không tồn tại hai tên trùng trong danh mục. Điều kiện biên về đơn vị (câu **B12**) đọc ở `I-026`: cộng trừ đúng con số người gõ, không quy đổi. | **Vế tổng và vế cộng dồn:** mọi thứ mà tổng đã nhập hay tổng đã dùng hiện ra khác tổng cộng lại từ **mọi** con số ngày của thứ ấy, từ ngày mua, không lọc theo lần mua hay theo lô. · **Vế hiệu số:** mọi thứ mà hiệu số hiện ra khác tổng đã nhập trừ tổng đã dùng. · **Vế một đáp số:** mọi cặp (thứ, ngày) có hơn một giá trị *mua vào* hay hơn một giá trị *đã dùng* cùng có hiệu lực. · **Vế danh mục:** mọi tên đứng hơn một lần trong danh mục. |
+| **`I-027`** — người và mốc của lần chấm công | **Vế *đúng một người, thuộc tập người của quán* và vế *mang mốc giờ*: tầng 1** — mỗi lần chấm phải gắn đúng một người trong tập người đã có và có mốc giờ. · **Vế *một lần chấm muộn không sinh khoản trừ*: tầng 3** — không đường ghi nào đi từ một lần chấm công tới một khoản trừ tiền; giới hạn đã biết của tầng 3 là sửa dữ liệu bằng tay. Ngưỡng phút ghi nhận đi muộn và khấu trừ khi nghỉ có báo trước **chưa có lời** (`C32` · `C30`): mệnh đề không nói, nên hàng này không có tầng nào cho chúng. · **Giới hạn *nhân viên tự bấm*: tầng 4 — máy không ngăn được** một người bấm hộ người khác; cái máy giữ thay vào là mỗi lần chấm có một tên và một mốc, cùng hình chỗ đứng dùng chung của `I-012` (§1). · **Số mốc: để trống** — [U-065](../99-unknowns.md) có lời 2026-09-30 (*một ô "có đi làm" do chủ quán tick*), nhưng lời ấy va với `C31` ở vế ai bấm ([U-069](../99-unknowns.md)), nên hàng này chưa viết lại theo nó và vẫn không có vế nào về số mốc. | **Vế người và mốc:** mọi lần chấm không gắn người nào, gắn người không thuộc tập người của quán, hoặc thiếu mốc giờ. · **Vế chấm muộn không sinh khoản trừ chưa có tập:** một đường từ lần chấm tới khoản trừ là phần thừa của lược đồ, không phải một lần chấm sai; kiểm bằng đọc lược đồ, như vế thứ ba của `I-025`. · **Giới hạn tự bấm chưa có tập:** một lần bấm hộ vẫn mang tên và mốc như một lần tự bấm; dữ liệu ấy không phân biệt được hai việc. · **Số mốc: để trống — chờ [U-069](../99-unknowns.md)**, vì mệnh đề chưa viết lại theo lời `U-065`. |
+| **`I-028`** — tạm ứng và thưởng | **Vế *mỗi khoản đủ của ai, bao nhiêu (lớn hơn 0), lúc nào, ai ghi*: tầng 1** — thiếu một thứ thì khoản ấy không tồn tại được, và người nhận phải là **đúng một** người thuộc tập người của quán, cùng tập với `I-027`. · **Vế *tạm ứng có người duyệt*: tầng 1**. · **Vế *người duyệt là chủ quán*: tầng 3** — cửa ghi khoản tạm ứng xét người duyệt; giới hạn đã biết của tầng 3 là sửa dữ liệu bằng tay, bỏ qua cửa ấy. · **Vế *không sửa đè***: tầng bảo vệ theo `I-018` (§3), không mô tả lại. · **Vế *không phải tiền bán hàng*: tầng 3** — không đường nào đưa một khoản của hai loại này vào nguồn doanh thu (`I-014`) hay vào tập tiền đã thu. · **Nguồn tiền: để trống** — [U-067](../99-unknowns.md) có lời 2026-09-30 (*từ két bán hàng*), mệnh đề chưa viết lại theo lời ấy (task `T-125`); chưa vế nào nối khoản này vào phép trừ két của `I-021`. | **Vế đủ dấu:** mọi khoản thiếu người nhận, có người nhận không thuộc tập người của quán, thiếu số tiền, thiếu lúc, thiếu người ghi hoặc có số tiền không lớn hơn 0. · **Vế có người duyệt:** mọi khoản tạm ứng không có người duyệt. · **Vế chủ quán duyệt:** mọi khoản tạm ứng mà người duyệt không phải chủ quán. · **Vế không sửa đè:** mọi khoản đã đổi mà không có vết `I-018`. · **Vế không phải tiền bán hàng:** mọi khoản của hai loại này xuất hiện trong doanh thu hay tiền đã thu của một ngày. · **Nguồn tiền: để trống — chờ task `T-125`**, mệnh đề chưa có vế để đối chiếu với két. |
+| **`I-029`** — khoản chi theo loại | **Vế *mỗi khoản đủ loại, số tiền (lớn hơn 0), ngày, ai ghi* và vế *loại thuộc danh sách loại*: tầng 1** — mỗi khoản mang **đúng một** loại có trong danh sách và đủ các dấu còn lại. · **Vế *tổng chi một khoảng ngày là phép cộng*: tầng 1** theo nghĩa suy ra, cùng hình `I-026`, không phải một con số ghi riêng. · **Vế *tiền hàng và lương không đứng ở đây*: tầng 4 — máy không ngăn được** một người gõ tiền mua hàng dưới một loại khác, hay thêm vào danh sách một loại mang nghĩa tiền hàng hay lương; cái máy giữ thay vào là mỗi khoản mang **đúng một** loại trong danh sách, nên khoản gõ nhầm vẫn đọc ra và sửa được. · **Nguồn tiền: để trống** — [U-066](../99-unknowns.md) có lời 2026-09-30 (*từ két bán hàng*), mệnh đề chưa viết lại theo lời ấy (task `T-125`); chưa vế nào nối khoản chi vào két. | **Vế đủ dấu:** mọi khoản chi thiếu loại, số tiền, ngày hoặc người ghi, hoặc có số tiền không lớn hơn 0. · **Vế loại thuộc danh sách:** mọi khoản chi mang một loại không có trong danh sách. · **Vế tổng:** mọi tổng chi hiện ra khác phép cộng các khoản trong khoảng ngày ấy. · **Vế tiền hàng và lương chưa có tập:** một khoản tiền hàng hay lương gõ dưới loại khác trông giống hệt một khoản chi thật trong dữ liệu, và một cái tên loại không tự nói nó có phải tiền hàng không — chỗ ấy là một lượt **người đọc** danh sách loại. · **Nguồn tiền: để trống — chờ task `T-125`**, mệnh đề chưa có vế để đối chiếu với két. |
+
+### 5.1 Bốn chỗ hàng trên dễ bị đọc rộng ra
+
+1. **Máy không làm không phải im lặng.** Với sổ nguyên liệu đó là ba vế *không xảy ra được* có tên: không tự trừ
+   theo bán hàng, không giữ định lượng hay ngưỡng để tự tính, không cất kết luận thiếu hoặc sắp
+   hết hay lời nhắc; đọc cùng `YC-26` · `YC-27` · `YC-29` ở
+   [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §9.
+2. **Hiệu số là một con số, không phải một phán quyết.** Hiệu số âm không bị từ chối; máy không
+   thay chủ quán kết luận thiếu hay đủ.
+3. **`I-027` không nói số mốc.** [U-065](../99-unknowns.md) có lời 2026-09-30 (*một ô "có đi
+   làm"*), nhưng lời ấy va với `C31` ở vế ai bấm — đừng dựng gì khi
+   [U-069](../99-unknowns.md) chưa có lời.
+4. **Tạm ứng, thưởng, khoản chi chưa vào phép trừ két.** [U-066](../99-unknowns.md) ·
+   [U-067](../99-unknowns.md) có lời 2026-09-30 — cả hai *từ két bán hàng* — nhưng `I-021` ·
+   `I-028` · `I-029` chưa viết lại theo lời ấy (task `T-125` ở `work/backlog.md`).
+
+### 5.2 Chỗ cố ý để trống
+
+- **[U-069](../99-unknowns.md)** — đọc nguyên văn câu hỏi ở owner. Nó thế chỗ `U-065`, câu đã có
+  lời 2026-09-30.
+- **Nguồn tiền của tạm ứng, thưởng và khoản chi** — `U-066` · `U-067` đã có lời 2026-09-30 (đọc ở
+  owner); chỗ trống còn lại là việc viết lại mệnh đề, task `T-125`.
+
+### 5.3 Bước sau đọc gì ở §5
+
+| Bước | Lấy gì từ mục này |
+|---|---|
+| **P2A-02** — nguyên liệu | `I-025` · `I-026`: từng vế về con số người nhập, tổng và hiệu số. |
+| **P2A-03** — chấm công | `I-027`; chờ `U-069` có lời trước khi dựng (lời `U-065` ngày 2026-09-30 va với `C31`). Ngưỡng ghi nhận đi muộn chưa có lời — không cất sẵn. |
+| **P2A-04** — tạm ứng và thưởng | `I-028`: dấu của từng khoản, người duyệt, vết sửa và ranh giới với tiền bán hàng. |
+| **P2A-05** — khoản chi | `I-029`; `U-066` có lời 2026-09-30 (*từ két bán hàng*) — chờ task `T-125` viết vế nối két. |
+| **P2A-07** — phép đối chiếu | Mỗi tập ở cột phải thành một câu đối chiếu. |
+| **P2A-08** · **P2A-09** — cổng chất lượng và rà ranh giới | Các vế *chưa có tập* về chỗ cất thừa kiểm bằng đọc lược đồ; giới hạn người bấm hộ đã nói riêng ở `I-027`. |

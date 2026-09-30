@@ -1103,3 +1103,224 @@ bất kỳ lúc nào: không hai đơn nào mang chung một dấu lần gửi, 
 
 *Phát hiện ở T-097, 2026-09-25 (`work/findings.md` **F-043**). Viết thành mệnh đề ở T-115,
 2026-09-28, Claude Code — không câu nào phải hỏi chủ quán; hai vế **suy ra** ghi rõ ở trên.*
+
+### I-025 — Con số nguyên liệu chỉ đổi khi có NGƯỜI nhập nó; không thao tác bán hàng nào làm đổi nó, và máy không tự tính ra con số nào
+
+**Invariant:**
+Mệnh đề của **mảng quản trị** — sổ nguyên liệu ở mức *sổ ghi tay điện tử*
+(`master_plan/shop-facts.md` §8.4). *Con số nguyên liệu* là hai con số của sổ ngày: **mua vào** và
+**đã dùng** của một thứ trong danh mục, trong một ngày. Mệnh đề có bốn vế:
+
+- **Mọi con số do một người gõ vào.** Một con số tồn tại thì đọc ra được **ai** đã nhập nó, nó thuộc
+  **ngày nào**, và **lúc** nó được gõ vào máy. Không con số nào sinh ra mà không có người nhập.
+- **Không thao tác bán hàng nào chạm tới nó.** Tạo đơn, duyệt đơn, huỷ đơn, hoàn tiền, đóng phiên,
+  bấm một mẻ — không việc nào sinh, cộng hay trừ một con số nguyên liệu. Đường duy nhất để một con
+  số đổi là có người nhập nó (`docs/product/0-ba/admin/01-ranh-gioi.md` §1.6).
+- **Máy không giữ thứ gì để tự tính thay người.** Không có định lượng của một suất bán, không có
+  ngưỡng nhắc sắp hết cho bất kỳ thứ nào, và không có kết luận *thiếu* · *sắp hết* nào do máy đặt ra
+  — cả ba là bảng *máy KHÔNG làm* của §8.4 (chốt 2026-09-04 và 2026-09-15).
+- **Sửa một con số đã nhập là một lần cập nhật.** Nó để lại bản trước, bản sau, lý do và người sửa
+  theo `I-018`; không có đường sửa đè.
+
+**Mệnh đề không nói** ai được phép nhập (đó là quyền, pha 3), một thứ ghi theo đơn vị gì
+(`work/admin-questions.md` câu **B12**), hay con số *đã dùng* có đúng với thực tế không — đó là ước
+lượng của người, máy chỉ chép lại.
+
+**Why:**
+Chủ quán chốt máy là chỗ **chép lại** con số người ghi, không phải chỗ **tự tính ra** con số
+(`shop-facts.md` §8.4, 2026-09-01, xác nhận lại 2026-09-04). Một đường tự trừ theo suất bán trông
+như một tiện ích, nhưng nó đòi định lượng từng thành phần — đúng thứ chủ quán trả lời **không** ở
+câu **B22** (2026-09-25) — và nó làm con số trong sổ khác con số chủ quán đã gõ mà không ai bấm gì.
+Từ lúc ấy chủ quán không còn đọc được sổ của chính mình. Vế *ai · ngày nào · lúc nào* là thứ làm
+một con số lạ truy về được một người, và là nguồn của *thời gian nhập* chủ quán muốn thấy ở mục
+tổng quan (`U-051`, 2026-09-16).
+
+**Verification:**
+Kịch bản âm: diễn một buổi bán đủ năm kênh — tạo, duyệt, huỷ, hoàn tiền, đóng phiên, bấm mẻ — rồi
+đọc lại sổ nguyên liệu ⇒ **không một con số nào đổi** so với trước buổi; tạo một con số không có
+người nhập, hoặc không có ngày ⇒ **bị từ chối**. Kịch bản dương: chủ quán nhập *mua vào 10* và *đã
+dùng 7* cho gạo ngày hôm nay ⇒ cả hai đọc lại được kèm người nhập, ngày và lúc gõ, sau nhiều ngày.
+Kịch bản sửa: đổi *đã dùng 7* thành *8* ⇒ đọc ra được cả 7 lẫn 8, lý do và người sửa. Kiểm ngược,
+bất kỳ lúc nào: không con số nào thiếu người nhập hay thiếu ngày; và đọc lược đồ ⇒ không chỗ nào
+cất một ngưỡng, một định lượng suất, hay một kết luận thiếu · sắp hết.
+
+*Viết ở P2A-01, 2026-09-30, Claude Code — từ lời chủ quán đã có ở `shop-facts.md` §8.4; không câu
+nào phải hỏi thêm. Vế **lúc gõ vào máy** đứng cạnh **ngày của con số** là cách đọc của phiên viết
+cho chữ *thời gian nhập* (`docs/product/99-unknowns.md` **U-068**), không phải lời chủ quán.*
+
+### I-026 — Tổng đã nhập, tổng đã dùng và hiệu số của một thứ luôn bằng ĐÚNG phép cộng các con số ngày của nó; cộng dồn từ ngày mua, không bao giờ đặt lại
+
+**Invariant:**
+Với **mỗi** thứ trong danh mục nguyên liệu (`master_plan/shop-facts.md` §8.4), mệnh đề có bốn vế:
+
+- **Tổng là phép cộng, không phải một con số tự đứng.** *Tổng đã nhập* bằng đúng tổng mọi con số
+  *mua vào* của thứ ấy; *tổng đã dùng* bằng đúng tổng mọi con số *đã dùng*. Không có đường nào ghi
+  một con số tổng mà không qua các con số ngày.
+- **Hiệu số là một phép trừ trên hai tổng ấy.** *Thiếu = tổng đã nhập − tổng đã dùng* (chủ quán
+  chốt 2026-09-16, `U-051`). Máy làm phép trừ và **dừng ở đó**: hiệu số là một con số, không phải
+  một phán quyết.
+- **Cộng dồn từ ngày mua sản phẩm, không đặt lại.** Hai tổng chạy liên tục từ ngày mua
+  (`U-054`, lời bổ sung ghi nhận 2026-09-27); không đặt về 0 mỗi lần mua thêm, không tách theo lô.
+- **Một thứ, một ngày, một đáp số.** Con số *mua vào* của một thứ trong một ngày đọc ra **đúng một**
+  giá trị, và *đã dùng* cũng vậy; một thứ đứng **một** lần trong danh mục, nên tổng của nó không bị
+  tách làm hai.
+
+**Điều kiện biên:** máy cộng và trừ **đúng con số người gõ**, không quy đổi đơn vị. Đơn vị ghi
+lượng đã dùng chưa có lời (`work/admin-questions.md` câu **B12**); nếu lời ấy nói *mua vào* và *đã
+dùng* của một thứ ghi theo hai đơn vị khác nhau thì vế hiệu số phải **viết lại**, không phải viết
+thêm.
+
+**Why:**
+Hiệu số là con số chủ quán dùng để tự kết luận thừa hay thiếu (`shop-facts.md` §8.4, `U-045` ·
+`U-051`). Một tổng lưu riêng và sửa riêng sẽ có ngày lệch khỏi các con số ngày, và lúc ấy sổ cho
+**hai** đáp số cho cùng một câu hỏi mà không thao tác nào sai — cùng hình với `I-019`. Đặt lại tổng
+theo lần mua là một luật chủ quán không nói (`shop-facts.md` §8.4: *không tự suy quản lý theo lô*).
+
+Hai chỗ **suy ra**, không phải lời chủ quán (`CLAUDE.md` §7.2): vế *một thứ đứng một lần trong danh
+mục* — suy từ việc chủ quán gộp dòng trùng *thịt mộc* · *mộc nhĩ* ngày 2026-09-25; và việc hiệu số
+**âm không bị từ chối** — con số *đã dùng* là ước lượng của người, từ chối nó vì vượt tổng đã nhập
+là máy kết luận thay chủ quán.
+
+**Verification:**
+Kịch bản dương: nhập cho gạo ba ngày liền *mua vào* 10 · 0 · 5 và *đã dùng* 4 · 3 · 6 ⇒ tổng đã
+nhập **15**, tổng đã dùng **13**, hiệu số **2**; ngày thứ ba có mua thêm mà hai tổng **không** đặt
+lại. Kịch bản sửa: đổi con số *đã dùng* ngày thứ hai từ 3 thành 5 ⇒ tổng đã dùng **15**, hiệu số
+**0**, không cần ai sửa con số tổng. Kịch bản biên: nhập *đã dùng* lớn hơn tổng đã nhập ⇒ **nhận**,
+hiệu số âm, không có cảnh báo nào do máy đặt ra. Kịch bản âm: tạo con số *mua vào* thứ hai cho cùng
+một thứ, cùng một ngày, đứng cạnh con số đã có ⇒ không tồn tại được hai đáp số; thêm vào danh mục
+một thứ trùng tên một thứ đã có ⇒ **bị từ chối**. Kiểm ngược, bất kỳ lúc nào: với mọi thứ, tổng
+hiện ra bằng tổng cộng lại từ các con số ngày.
+
+*Viết ở P2A-01, 2026-09-30, Claude Code. Hai chỗ suy ra ghi rõ ở mục Why.*
+
+### I-027 — Mỗi lần chấm công thuộc ĐÚNG MỘT người của quán và mang mốc giờ của nó; một lần chấm muộn không sinh ra khoản trừ nào
+
+**Invariant:**
+Mệnh đề của mức 2 mảng con người (`master_plan/shop-facts.md` §8.7). Ba vế:
+
+- **Một lần chấm, đúng một người, và người ấy là người của quán.** Người được chấm công thuộc cùng
+  tập người mà mức 1 đếm (`shop-facts.md` §3 · §8.7) — không có danh sách người thứ hai. Một lần
+  chấm không gắn với người nào không tồn tại được.
+- **Mỗi lần chấm mang mốc giờ của nó**, đọc lại được sau nhiều ngày: *người này, ngày này, đã chấm
+  lúc nào*.
+- **Một lần chấm muộn không sinh ra khoản trừ nào.** Đi muộn không bị trừ tiền (`C32`); không
+  đường nào đi từ một lần chấm công tới một khoản trừ tiền.
+
+**Mệnh đề không nói** một lần chấm công gồm **những mốc nào** — một lần lúc tới, lúc tới và lúc về,
+hay theo buổi. Câu ấy (`docs/product/99-unknowns.md` **U-065**) đã đóng 2026-09-30 bằng lời *một ô
+"có đi làm" do chủ quán tick*, nhưng lời ấy va với `C31` ở vế **ai bấm**, nên mệnh đề **chưa** được
+viết lại theo nó: chỗ va là **U-069**, và chừng nào câu ấy chưa có lời thì vế *mang mốc giờ* và giới
+hạn *nhân viên tự bấm* ở trên đọc như lời của `C31`, chưa phải lời cuối. Nó không nói **muộn bao nhiêu
+phút thì ghi nhận là muộn** — `C32` chưa nêu ngưỡng ấy, nên mệnh đề không cấm và cũng không đòi một
+ngưỡng; chưa có lời thì không có chỗ cất để sẵn cho nó (kế hoạch lược đồ admin §3 điểm 2). Nó không
+nói về **ngày nghỉ**: `C30` chốt nghỉ đột xuất không trừ tiền và chưa rõ vế nghỉ có báo trước, và
+một ngày nghỉ không phải một lần chấm. Nó cũng không nói công đổi ra lương thế nào (`C26` · `C33`).
+
+**Giới hạn đã biết:** chủ quán chốt **nhân viên tự bấm** (`C31`), nhưng máy không ngăn được một
+người bấm hộ người khác trên cùng một máy — cùng hình với chỗ đứng dùng chung của `I-012`. Cái máy
+giữ là mỗi lần chấm có **một** tên và **một** mốc.
+
+**Why:**
+Mức 3 — tính lương trên máy — sẽ đứng trên sổ công này (`shop-facts.md` §8.7). Một lần chấm không
+có người, hoặc gắn vào một người không thuộc tập người của quán, là một buổi công không ai được trả
+hoặc được trả hai lần. Vế *chấm muộn không sinh khoản trừ* chống đúng cách dựng dễ nghĩ ra nhất:
+một khoản trừ tự sinh khi mốc chấm rơi sau giờ mở bán, trong khi lời chủ quán nói ngược lại.
+
+**Verification:**
+Kịch bản âm: tạo một lần chấm công không gắn người nào ⇒ **bị từ chối**; tạo một lần chấm cho một
+người không có trong tập người của quán ⇒ **bị từ chối**; tạo một lần chấm không có mốc giờ ⇒ **bị
+từ chối**. Kịch bản dương: một người chấm lúc 06:20, sau giờ mở bán ⇒ lần chấm **được nhận**, không
+khoản trừ nào sinh ra. Kiểm ngược: mọi lần chấm có đúng một người và một mốc; và đọc lược đồ ⇒
+không đường nào đi từ một lần chấm tới một khoản trừ.
+
+*Viết ở P2A-01, 2026-09-30, Claude Code — từ lời chủ quán `C31` · `C32` (2026-09-25). Bản đầu trong
+cùng lượt viết rộng hơn lời — cấm cả ngưỡng phút đi muộn và kéo cả ngày nghỉ vào; Codex chỉ ra khi
+đối chiếu nguồn, và bản này thu lại đúng bằng lời đã có.*
+
+### I-028 — Mỗi khoản tạm ứng và mỗi khoản thưởng đọc ra được CỦA AI · BAO NHIÊU · LÚC NÀO; một khoản tạm ứng không tồn tại được khi không có người duyệt; khoản đã ghi không bị sửa đè
+
+**Invariant:**
+Mệnh đề cho hai loại tiền chủ quán đưa cho người làm (`master_plan/shop-facts.md` §8.7, `C28` ·
+`C29`). Bốn vế:
+
+- **Mỗi khoản đủ ba câu.** Một khoản tạm ứng hay một khoản thưởng tồn tại thì đọc ra được nó **của
+  ai** — đúng một người thuộc tập người của quán —, **bao nhiêu** — một số tiền lớn hơn 0 —, và
+  **lúc nào**; cùng **người đã ghi** khoản ấy vào máy.
+- **Tạm ứng phải có người duyệt, và người duyệt là chủ quán** (`C29`: *có tạm ứng; chủ quán duyệt*).
+  Một khoản tạm ứng không có người duyệt không tồn tại được.
+- **Khoản đã ghi không sửa đè.** Sửa số tiền, người nhận hay ngày của một khoản là một lần cập nhật
+  để lại bản trước, bản sau, lý do và người sửa theo `I-018`.
+- **Hai loại khoản này không phải tiền bán hàng.** Chúng không vào doanh thu của ngày nào (`I-014`).
+
+**Mệnh đề không nói** tiền tạm ứng và tiền thưởng lấy **từ đâu** — từ két hay từ tiền riêng. Câu ấy
+(`docs/product/99-unknowns.md` **U-067**) đã đóng 2026-09-30 bằng lời **từ két bán hàng**
+(`master_plan/shop-facts.md` §8.7). Mệnh đề này và phép trừ két của `I-021` **chưa** được viết lại
+theo lời ấy — việc đó là task `T-125` ở `work/backlog.md`; cho tới khi nó xong, không khoản nào ở
+đây được nối vào phép trừ két. Nó không nói khoản ấy **trừ vào hay cộng vào lương** thế nào (chờ
+`C26` · `C33`), không nói **ai duyệt thưởng**, và chỉ phủ **thưởng lễ Tết** — vế thưởng ngày đông
+khách của `C28` chưa có lời.
+
+**Why:**
+Cả hai là tiền thật đã rời tay chủ quán. Không có *của ai · bao nhiêu · lúc nào* thì cuối kỳ không
+ai nhớ đã ứng cho ai, và phần lương sau này không có gì để đối lại. Lời chủ quán đặt việc **duyệt**
+vào tạm ứng, nên một khoản tạm ứng không mang người duyệt là một khoản không ai cho phép. Vế *số
+tiền lớn hơn 0* là **suy ra**, không phải lời chủ quán (`CLAUDE.md` §7.2): một khoản 0đ hay âm không
+phải một lần đưa tiền, và trả lại tạm ứng — nếu có — là một luật chưa ai nói.
+
+**Verification:**
+Kịch bản âm: tạo một khoản tạm ứng không có người duyệt ⇒ **bị từ chối**; tạo một khoản tạm ứng hay
+thưởng không có người nhận, có số tiền 0đ, hoặc không có ngày ⇒ **bị từ chối**. Kịch bản dương: chủ
+quán duyệt tạm ứng cho một người ⇒ sau nhiều ngày đọc lại được của ai, bao nhiêu, lúc nào, ai duyệt.
+Kịch bản sửa: đổi số tiền một khoản đã ghi ⇒ đọc ra được cả số cũ lẫn số mới, lý do và người sửa.
+Kiểm ngược: không khoản tạm ứng nào thiếu người duyệt, và không khoản nào của hai loại này nằm
+trong doanh thu hay trong tập tiền đã thu của một ngày.
+
+*Viết ở P2A-01, 2026-09-30, Claude Code — từ lời chủ quán `C28` · `C29` (2026-09-25). Một chỗ suy ra
+ghi rõ ở mục Why; câu *tiền lấy từ đâu* mở thành **U-067** cùng lượt.*
+
+### I-029 — Mỗi khoản chi đọc ra được LOẠI · SỐ TIỀN · NGÀY · AI GHI; tiền hàng và lương không bao giờ là một khoản chi
+
+**Invariant:**
+*Khoản chi* ở đây là khoản chi **ngoài tiền hàng và lương** của `master_plan/shop-facts.md` §8.10
+(`E44`). Ba vế:
+
+- **Mỗi khoản đủ bốn câu.** Một khoản chi tồn tại thì đọc ra được **loại** của nó, **số tiền** —
+  lớn hơn 0 —, **ngày** chi, và **ai ghi**.
+- **Loại là một trong các loại quán đã kể, và danh sách ấy thêm được.** Hôm nay: điện, nước, wifi,
+  xăng xe (`E44`). §8.10 nói thẳng *không suy rằng quán không có khoản chi nào khác*, nên thêm một
+  loại mới là việc bình thường; một khoản chi **không mang loại nào** thì không tồn tại được.
+- **Tiền hàng và lương không đứng ở đây.** Giò, trứng, rau, quất là tiền hàng (§8.10, *Giới hạn lời
+  đáp*); tiền mua hàng và tiền trả cho người làm không bao giờ được ghi thành một khoản chi, để một
+  phép cộng sau này không đếm chúng hai lần.
+
+Và vì mỗi khoản có số tiền và ngày: **tổng chi của một khoảng ngày là phép cộng** các khoản trong
+khoảng ấy, không phải một con số ghi riêng.
+
+**Mệnh đề không nói** khoản chi trả bằng tiền nào — câu ấy (`docs/product/99-unknowns.md` **U-066**)
+đã đóng 2026-09-30: điện, nước, wifi, xăng xe trả **từ két bán hàng**
+(`master_plan/shop-facts.md` §8.10), và mệnh đề **chưa** được viết lại theo lời ấy (task `T-125` ở
+`work/backlog.md`) — cũng không nói chu kỳ của wifi và xăng xe (`E45`), hay cách phân bổ khoản tháng vào lãi/lỗ ngày (`E47`).
+
+**Giới hạn đã biết:** máy giữ được rằng mỗi khoản chi **mang đúng một loại trong danh sách**. Máy
+**không ngăn được** một người gõ tiền mua trứng dưới một loại khác, và cũng không ngăn được người
+thêm vào danh sách một loại mang nghĩa tiền hàng hay lương — một cái tên loại không tự nói nó là gì.
+Cả hai chỗ ấy do người giữ.
+
+**Why:**
+Hệ thống cộng được mọi đồng đi **vào** quán và chưa biết một đồng nào đi **ra**. Chủ quán muốn xem
+lãi/lỗ theo ngày (`E47`); phép tính ấy còn chờ lời, nhưng đầu vào của nó — từng khoản chi có loại,
+số tiền, ngày — đã đủ lời để ghi. Vế *tiền hàng không đứng ở đây* chép đúng giới hạn §8.10 đặt ra:
+cộng trùng tiền hàng làm lãi/lỗ sai mà không khoản nào sai. Vế *số tiền lớn hơn 0* là **suy ra**
+(`CLAUDE.md` §7.2), cùng lý do với `I-028`.
+
+**Verification:**
+Kịch bản âm: tạo một khoản chi không có loại, có số tiền 0đ, không có ngày, hoặc không có người ghi
+⇒ **bị từ chối**; tạo một khoản chi mang một loại không có trong danh sách ⇒ **bị từ chối**. Kịch
+bản dương: ghi tiền điện và tiền xăng xe trong cùng một tuần ⇒ mỗi khoản đọc lại được đủ bốn câu, và
+tổng chi của tuần ấy bằng tổng hai khoản; thêm một loại mới vào danh sách rồi ghi một khoản thuộc
+loại ấy ⇒ **ghi được**. Kiểm ngược: không khoản chi nào thiếu loại hay mang loại ngoài danh sách;
+còn *danh sách loại không có loại nào là tiền hàng hay lương* là một lượt **người đọc** danh sách,
+không phải một phép máy chấm được.
+
+*Viết ở P2A-01, 2026-09-30, Claude Code — từ lời chủ quán `E44` · `E45` (2026-09-25). Một chỗ suy ra
+ghi rõ ở mục Why.*

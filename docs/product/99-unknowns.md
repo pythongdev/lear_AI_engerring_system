@@ -15,10 +15,8 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
-  - [U-066](#u-066) — tiền điện, nước, wifi, xăng xe trả bằng tiền nào
-  - [U-065](#u-065) — một lần chấm công gồm những mốc nào
-  - [U-064](#u-064) — đơn huỷ khi bếp đã làm xong, mà không bàn nào chờ đúng thứ ấy
-  - [U-063](#u-063) — khách nợ trả dần từng phần được không
+  - [U-069](#u-069) — ai đánh dấu công: nhân viên tự bấm (`C31`) hay chủ quán tự tick (lời 2026-09-30)
+  - [U-068](#u-068) — *thời gian nhập* của nguyên liệu là lúc hàng mua về hay lúc gõ số vào máy
   - [U-058](#u-058) — giảm giá cả đơn nhập tay: phạm vi bản đầu và giới hạn
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
@@ -38,54 +36,34 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 <a id="dang-mo"></a>
 ### Đang mở
 
-<a id="u-066"></a>
-- **U-066 — Tiền điện, nước, wifi, xăng xe quán trả bằng tiền nào: tiền riêng
-  của chủ quán, tiền trong két, hay tuỳ khoản?** Mở 2026-09-30 (T-122).
-  `master_plan/shop-facts.md` §8.10 câu `E46` có lời cho **chi lặt vặt** —
-  tiền riêng của chủ quán — và ghi thẳng *chưa nói nguồn chi các khoản khác*.
-  Câu này không có ở `work/admin-questions.md` §3 nên chưa mã nào giữ nó.
-  **Chủ quán** trả lời; chặn bước `P2A-05` (chỗ cất khoản chi) của
-  `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`, vì tiền lấy từ két thì
-  chạm phép đối soát cuối ngày còn tiền riêng thì không. Không tự gán một
-  nguồn cho khoản nào.
+<a id="u-068"></a>
+- **U-068 — Chữ *"thời gian nhập sản phẩm"* chủ quán muốn thấy ở mục tổng quan
+  là lúc HÀNG MUA VỀ, hay lúc CON SỐ được gõ vào máy?** Mở 2026-09-30
+  (`P2A-01`, Claude Code). `master_plan/shop-facts.md` §8.4 ghi lời `U-051`
+  ngày 2026-09-16 thành *thời gian nhập của từng thứ* và không nói nghĩa nào.
+  Hai nghĩa khác nhau khi chủ quán nhập số của hôm qua vào sáng hôm nay. Hỏi
+  về cái quán, không về cái bảng: *"quán muốn nhìn thấy ngày mua thứ ấy về, hay
+  giờ con số được gõ vào máy?"* **Chủ quán** trả lời. **Không chặn bước lược đồ
+  nào:** dòng yêu cầu `YC-28` ở
+  `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §9 đòi ghi **cả hai**
+  mốc. Chặn việc chọn mốc nào được bày ở mục tổng quan §8.6 — việc của pha 4.
+  Không tự chọn một nghĩa.
 
-<a id="u-065"></a>
-- **U-065 — Một lần chấm công gồm những mốc nào: nhân viên bấm một lần lúc tới,
-  bấm lúc tới và lúc về, hay bấm theo buổi?** Mở 2026-09-30 (T-122).
-  `master_plan/shop-facts.md` §8.7 câu `C31` chốt **nhân viên tự bấm chấm công
-  trên máy**; `C32` chốt đi muộn không trừ tiền và chưa nêu ngưỡng phút. Không
-  lời nào nói một lần chấm ghi lại mốc gì. Hỏi về cái quán, không về cái bảng:
-  *"sáng tới quán nhân viên bấm một cái là xong, hay lúc về cũng phải bấm?"*
-  **Chủ quán** trả lời; chặn bước `P2A-03` (chỗ cất chấm công) của
-  `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`, và đứng dưới phần tính
-  lương sau này. Không tự chọn một mốc hay hai mốc.
-
-<a id="u-064"></a>
-- **U-064 — Một đơn bị huỷ khi bếp đã làm xong phần của nó, mà lúc ấy không bàn
-  nào đang chờ đúng thứ ấy: cái bánh, quả trứng ấy quán xử thế nào?** Mở
-  2026-09-28 (P2-07). `master_plan/shop-facts.md` §5.4 có lời chủ quán cho ca
-  **có** bàn chờ (`U-033`, 2026-09-06: *"tính vào bàn khác, pos sẽ cập nhật
-  bánh này đem ra cho bàn nào"*) và ghi thẳng ca **không** bàn nào chờ là
-  *chưa có luật, chưa hỏi*. Lược đồ hôm nay
-  (`docs/product/2-db/05-luoc-do-san-xuat.md` §5) để thứ ấy nguyên ở *đã làm
-  xong* dưới một đơn đã huỷ — không chuyển, không bỏ — và tập đối chiếu *đã
-  làm của đơn huỷ, chưa chuyển* chưa phân biệt được nó với một lần quầy quên
-  chuyển. Hỏi về cái quán, không về cái bảng: *"khách huỷ khi bánh đã tráng
-  xong mà chưa bàn nào gọi đúng loại bánh ấy — quán để đó chờ khách sau, bỏ
-  đi, hay làm cách khác?"* **Chủ quán** trả lời; chặn đường xử ca ấy ở pha 3 và
-  tập đối chiếu tương ứng ở `P2-11`, không chặn bước nào của pha 2. Không tự
-  cho giữ chờ, không tự cho bỏ.
-
-<a id="u-063"></a>
-- **U-063 — Khách nợ có được trả dần từng phần, rồi trả nốt sau không?** Mở
-  2026-09-28 (P2-06). `master_plan/shop-facts.md` §6.14 nói *người nợ quay lại
-  trả thì POS ghi nhận*; `docs/product/1-system-design/architecture.md` §12.3
-  và `YC-02` chỉ có hai trạng thái của một khoản nợ, **chưa thu · đã thu** —
-  không lời nào nói tới ca khách trả **một phần**. Lược đồ hôm nay
-  (`docs/product/2-db/04-luoc-do-duong-tien.md` §5) đi theo hai trạng thái ấy:
-  một khoản nợ được thu **đủ**, trong **một** lần. **Chủ quán** trả lời; chặn
-  đường thu nợ một phần ở pha 3, không chặn bước nào của pha 2. Không tự cho
-  trả dần, không tự cấm bằng một thông báo trên màn hình.
+<a id="u-069"></a>
+- **U-069 — Ai đánh dấu công của một người: nhân viên tự bấm trên máy, hay chủ
+  quán tự tick — và một ô *có đi làm* là cho một ngày hay một buổi?** Mở
+  2026-09-30 (T-124, Claude Code). Hai lời của **cùng chủ quán** nói khác nhau
+  về **người bấm**: `master_plan/shop-facts.md` §8.7 câu `C31` (2026-09-25) —
+  *nhân viên tự bấm chấm công trên máy*; lời đóng `U-065` (2026-09-30) — *"chủ
+  quán tự tick vào ô có đi làm"*. Lời sau không nói nó thay lời trước, và cũng
+  không nói một ô ứng với một ngày hay một buổi (`C26` trả lương *theo buổi và
+  theo tuần*). Hỏi về cái quán, không về cái bảng: *"việc đánh dấu ai đi làm là
+  chủ quán làm hết, nhân viên không bấm gì nữa — đúng không? Và mỗi người một ô
+  cho cả ngày, hay sáng một ô chiều một ô?"* **Chủ quán** trả lời; chặn bước
+  `P2A-03` (chỗ cất chấm công) của
+  `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` và vế *ai ghi* của
+  `quality/invariants.md` `I-027`. Không tự coi lời sau thay lời trước, không
+  tự chọn ngày hay buổi.
 
 <a id="u-058"></a>
 - **U-058 — Phạm vi bản đầu và giới hạn của giảm giá nhập tay cho cả đơn?**
@@ -101,6 +79,10 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
   **Lần thứ ba 2026-09-28 (T-118)** chủ quán gửi lại đúng lời ấy — vẫn chưa có
   lời cho ba vế còn mở; lần hỏi sau nên hỏi thẳng từng vế (có trong bản đầu
   không · trần số tiền giảm · có bắt ghi lý do không).
+  **Lần thứ tư 2026-09-30 (T-124)** chủ quán vẫn gửi đúng lời ấy — *“ghi tên
+  khách được giảm giá; chủ quán nhập số tiền giảm cho cả đơn”* — ba vế trên
+  vẫn chưa có lời, câu **ở lại đây**. Không tự đọc bốn lần im lặng thành *không
+  có trần* hay *không cần lý do*.
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
 chủ quán quyết theo tình hình thực tế, không có luật cứng.** Lượt một (T-042) đóng U-022, U-025 và
@@ -224,6 +206,38 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ quán trả lời 2026-09-30 (T-124), chủ repo chuyển lời trong hội thoại:**
+
+<a id="u-067"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-067 — Tiền tạm ứng và tiền thưởng đưa cho người làm lấy từ đâu~~ | “từ két bán hàng”. Tiền tạm ứng và tiền thưởng **lấy từ két bán hàng**, không phải tiền riêng của chủ quán. *Hệ quả, chưa làm:* tiền ấy rời két giữa buổi nên phép đối soát két cuối ngày của `quality/invariants.md` `I-021` thiếu một hạng tử, và `I-028` còn để trống vế nối két — việc ấy là task **T-125** ở `work/backlog.md`. Lời không nói ai là người lấy tiền khỏi két hay lấy lúc nào; không tự đặt. | `master_plan/shop-facts.md` §8.7 |
+
+<a id="u-066"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-066 — Tiền điện, nước, wifi, xăng xe quán trả bằng tiền nào~~ | “từ két bán hàng”. Điện, nước, wifi, xăng xe **trả từ két bán hàng**. Lời `E46` — *chi lặt vặt dùng tiền riêng của chủ quán* — đứng nguyên: câu hỏi chỉ hỏi bốn khoản này, lời đáp không chạm chi lặt vặt. *Hệ quả, chưa làm:* cùng hình với U-067 — khoản chi rời két thì chạm đối soát cuối ngày (`I-021`, `I-029`), task **T-125**. | `master_plan/shop-facts.md` §8.10 |
+
+<a id="u-065"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-065 — Một lần chấm công gồm những mốc nào~~ | “chủ quán tự tick vào ô có đi làm”. Một lần chấm công là **một ô *có đi làm*** — không có mốc lúc tới, lúc về hay bấm theo buổi nào được nêu. Lời đáp trả lời luôn một vế câu hỏi **không** hỏi — *ai* đánh dấu: **chủ quán** — và vế ấy va với `C31` (*nhân viên tự bấm*) ⇒ mở **U-069**, không tự coi lời sau thay lời trước. Một ô là một ngày hay một buổi cũng chưa có lời, nằm trong U-069. | `master_plan/shop-facts.md` §8.7 |
+
+<a id="u-064"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-064 — Đơn huỷ khi bếp đã làm xong, mà không bàn nào chờ đúng thứ ấy~~ | “pos note thông tin bánh làm sai.” **Người đứng quầy ghi chú trên POS** rằng thứ ấy là **bánh làm sai**. Thứ ấy không chuyển cho bàn nào — không có bàn nào chờ nó. Lời không nói cái bánh, quả trứng ấy quán bỏ đi hay để lại bán cho khách sau, cũng không nói ghi chú gồm những gì; không tự suy. *Hệ quả, chưa làm:* lược đồ và tập đối chiếu *đã làm của đơn huỷ, chưa chuyển* chưa có chỗ cho ghi chú này — task **T-127**. | `master_plan/shop-facts.md` §5.4 |
+
+<a id="u-063"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-063 — Khách nợ có được trả dần từng phần không~~ | “có. pos sẽ ghi lại tổng số nợ và ngày giờ trả nợ với số tiền còn thiếu.” Khách nợ **được trả dần**. POS ghi **tổng số nợ**, và mỗi lần trả ghi **ngày giờ trả** cùng **số tiền còn thiếu** sau lần ấy. Luật *doanh thu tính ngày ghi nợ* và *một lần trả nợ không phải một khoản bán mới* của §6.14 đứng nguyên — lời này không chạm. *Hệ quả, chưa làm:* lược đồ hôm nay (`docs/product/2-db/04-luoc-do-duong-tien.md` §5) chỉ nhận thu **đủ**, **một** lần — task **T-126**. | `master_plan/shop-facts.md` §6.14 |
 
 **Chủ quán trả lời 2026-09-28 (T-118), chủ repo chuyển lời trong hội thoại:**
 

@@ -29,8 +29,8 @@ liệu, dựng theo thứ tự nào, và mỗi bước chứng minh xong bằng 
 | Mảng · owner của lời | Đủ luật để có chỗ cất | Chưa đủ — chặn bởi |
 |---|---|---|
 | Nguyên liệu · `shop-facts.md` §8.4 | danh mục hàng mua vào, thêm dần, một phần đã có đơn vị mua · mỗi ngày mỗi thứ hai con số *mua vào* và *đã dùng*, người nhập tay · thời gian nhập · tổng cộng dồn và hiệu số máy trừ hộ | đơn vị của các tên cũ và đơn vị ghi lượng đã dùng (`B12`) · một thứ nhiều mối (`B15`) · nợ nhà cung cấp (`B16`) · lượng kiểm đếm cuối buổi (`B18`) · thứ nào để được tới mai (`B19`) |
-| Con người · §8.7 · §8.8 | trực quầy theo thời điểm — **đã dựng** ở `P2-08` · nhân viên tự bấm chấm công · tạm ứng do chủ quán duyệt · thưởng lễ Tết | một lần chấm công gồm những mốc nào (**U-065**) · công thức lương: đơn giá, đơn vị tính, kỳ trả (`C26` · `C33`) · tăng ca (`C27`) · thưởng ngày đông (`C28`) · nghỉ có báo trước (`C30`) · tổng đầu người (`C23`) · ai xem được gì (`C34` · `C35` · `F55`) |
-| Tài chính · §8.10 | khoản chi ngoài tiền hàng và lương: các loại chủ quán đã kể | nguồn tiền của từng loại khoản chi (**U-066**) · chu kỳ wifi, xăng xe (`E45`) · phân bổ chi phí tháng vào lãi/lỗ ngày (`E47`) · ai ghi và xác nhận tiền mang về nhà (`E49`) · báo thuế (`E50`) · hạn nộp và xử lý thiếu/muộn của người giao (`E51`) |
+| Con người · §8.7 · §8.8 | trực quầy theo thời điểm — **đã dựng** ở `P2-08` · nhân viên tự bấm chấm công · tạm ứng do chủ quán duyệt · thưởng lễ Tết | ai đánh dấu công và một ô *có đi làm* là ngày hay buổi (**U-069** — mở 2026-09-30 khi lời đóng `U-065` va với `C31`) · vế nối tạm ứng và thưởng vào đối soát két (`U-067` đã đóng 2026-09-30: *từ két bán hàng*; mệnh đề chưa viết lại — task `T-125`) · công thức lương: đơn giá, đơn vị tính, kỳ trả (`C26` · `C33`) · tăng ca (`C27`) · thưởng ngày đông (`C28`) · nghỉ có báo trước (`C30`) · tổng đầu người (`C23`) · ai xem được gì (`C34` · `C35` · `F55`) |
+| Tài chính · §8.10 | khoản chi ngoài tiền hàng và lương: các loại chủ quán đã kể | vế nối khoản chi vào đối soát két (`U-066` đã đóng 2026-09-30: điện, nước, wifi, xăng xe *từ két bán hàng*; mệnh đề chưa viết lại — task `T-125`) · chu kỳ wifi, xăng xe (`E45`) · phân bổ chi phí tháng vào lãi/lỗ ngày (`E47`) · ai ghi và xác nhận tiền mang về nhà (`E49`) · báo thuế (`E50`) · hạn nộp và xử lý thiếu/muộn của người giao (`E51`) |
 | Sản phẩm · §8.9 | — không thuộc kế hoạch này: là lát menu và đường tiền của mảng bán hàng | combo chưa có danh mục · giảm giá cả đơn (**U-058**) · món mới, đặc sản (`D37` · `D38`) |
 
 Mã chữ cái (`B12`, `C26`…) là câu ở `work/admin-questions.md` §3; mã `U-XXX` ở
@@ -42,6 +42,15 @@ Mã chữ cái (`B12`, `C26`…) là câu ở `work/admin-questions.md` §3; mã
   có dòng yêu cầu cho mảng bán hàng, và `quality/invariants.md` không có mệnh đề nào về sổ nguyên
   liệu, chấm công hay khoản chi. Pha 2 *thi hành* tầng bảo vệ của pha 1 (`docs/decisions.md`
   **ADR-050**), nên với admin chưa có gì để thi hành ⇒ bước `P2A-01` đứng trước mọi lát.
+  **Cập nhật 2026-09-30 (`P2A-01`, Claude Code):** câu trên là **ảnh chụp lúc viết kế hoạch**. Bước
+  `P2A-01` đã đo lại bảng này ở owner — `master_plan/shop-facts.md` và `work/admin-questions.md`
+  không đổi từ 2026-09-28 nên không vế nào đổi cột — và đã viết tám dòng `YC-26`…`YC-33`
+  (`04-yeu-cau-du-lieu.md` §9), năm mệnh đề `I-025`…`I-029` (`quality/invariants.md`) cùng tầng của
+  chúng (`03-bao-ve-invariant.md` §5); lý do hình dạng ở `docs/decisions.md` **ADR-069**. Thứ tự
+  giữa các lát và bước `P2A-07` còn một chỗ hở có tên: `work/findings.md` **F-052**.
+  **Cập nhật 2026-09-30 (`T-123`):** chỗ hở ấy đã chữa — năm mệnh đề có dòng *chưa có lát* ở
+  `docs/product/2-db/09-doi-chieu-bat-bien.md` §2.1 nên `db-check` của từng lát không đỏ vì chúng
+  (`docs/decisions.md` **ADR-070**); bước nào viết câu cho một mệnh đề thì gỡ dòng của nó ở đó.
 - **Lời `F52`…`F55` chưa có ở nhánh làm việc.** Nhánh `task/f52-f55` giữ một commit ghi bốn lời ấy
   nhưng chưa được gộp, và mã task của nó trùng một mã đã dùng ở đây. Kế hoạch này coi bốn câu ấy
   là **chưa trả lời**; không bước nào dưới đây cần chúng (thiết bị và quyền xem là pha 3–5).
@@ -94,9 +103,9 @@ thái: nó ở `work/backlog.md`.
 |---|---|---|---|---|:--:|
 | **P2A-01** | **Yêu cầu dữ liệu và invariant của phần admin đã đủ luật** — dòng `YC` mới nối dãy hiện có, mệnh đề `I-0xx` mới, tầng giữ và phép đối chiếu của từng mệnh đề; chỉ cho các vế ở cột giữa §2 | — | Mỗi vế ở cột giữa §2 có đúng một dòng `YC` hai câu (*ghi được* · *không xảy ra được*) trỏ về mục `shop-facts.md` đã chốt nó; mỗi mệnh đề mới có tầng và một phép đối chiếu viết bằng lời; không dòng nào trỏ về một câu còn mở; hành vi nghiệp vụ tương ứng có ở `docs/product/0-ba/admin/01-ranh-gioi.md` | Bốn lát sau mỗi lát tự quyết *"cái gì phải không xảy ra được"*, và cổng không có gì để chấm | L2 |
 | **P2A-02** | **Lát sổ nguyên liệu** — danh mục thêm dần; mỗi ngày mỗi thứ hai con số người nhập; thời gian nhập; ai nhập | P2A-01 | Mỗi mệnh đề tầng 1 của lát có ràng buộc thật: **cố tình dựng trạng thái sai ⇒ database từ chối**, dán output; tổng đã nhập, tổng đã dùng và hiệu số của một thứ **đọc ra được bằng một phép cộng** từ các dòng ngày; không chỗ nào cất ngưỡng hay định lượng một suất; có bước lùi, `db-check` xanh | Con số chủ quán gõ mỗi ngày không cộng lại được, hoặc cộng ra hai đáp số | L2 |
-| **P2A-03** | **Lát chấm công** — lần chấm công của từng người, người là người của `P2-08` | P2A-01 · **U-065 có lời** | Đọc ra được *người này, ngày này, đã chấm công những mốc nào*; một lần chấm không gắn với người nào ⇒ bị từ chối; không chỗ nào cất ngưỡng đi muộn hay một khoản trừ | Mức 3 (lương) sau này đứng trên một sổ công không ai tin | L2 |
+| **P2A-03** | **Lát chấm công** — lần chấm công của từng người, người là người của `P2-08` | P2A-01 · **U-069 có lời** (`U-065` đã đóng 2026-09-30, lời ấy va với `C31`) | Đọc ra được *người này, ngày này, đã chấm công những mốc nào*; một lần chấm không gắn với người nào ⇒ bị từ chối; không chỗ nào cất ngưỡng đi muộn hay một khoản trừ | Mức 3 (lương) sau này đứng trên một sổ công không ai tin | L2 |
 | **P2A-04** | **Lát khoản của người** — tạm ứng và thưởng: của ai, bao nhiêu, lúc nào, ai duyệt | P2A-01 | Mỗi khoản đọc lại được sau nhiều ngày với đủ bốn thứ ấy; một khoản tạm ứng không có người duyệt ⇒ bị từ chối; khoản đã ghi không sửa đè — sửa để lại vết theo `P2-08` | Tiền đã đưa cho người làm không truy được về một lần duyệt có tên | L2 |
-| **P2A-05** | **Lát khoản chi** — khoản chi ngoài tiền hàng và lương, theo loại | P2A-01 · **U-066 có lời** | Mỗi khoản chi đọc lại được: loại, số tiền, ngày, ai ghi; tổng chi một khoảng ngày **đọc ra được bằng một phép cộng**; tiền hàng **không** vào đây lần thứ hai (giới hạn ghi ở `shop-facts.md` §8.10) | Lãi/lỗ sau này cộng trùng tiền hàng, hoặc thiếu hẳn một loại chi | L2 |
+| **P2A-05** | **Lát khoản chi** — khoản chi ngoài tiền hàng và lương, theo loại | P2A-01 · **task `T-125` xong** (`U-066` đã đóng 2026-09-30: *từ két bán hàng*, nên lát này chạm đối soát két) | Mỗi khoản chi đọc lại được: loại, số tiền, ngày, ai ghi; tổng chi một khoảng ngày **đọc ra được bằng một phép cộng**; tiền hàng **không** vào đây lần thứ hai (giới hạn ghi ở `shop-facts.md` §8.10) | Lãi/lỗ sau này cộng trùng tiền hàng, hoặc thiếu hẳn một loại chi | L2 |
 | **P2A-06** | **Dữ liệu mồi admin** — danh mục nguyên liệu sinh lúc chạy từ `shop-facts.md` §8.4, không chép danh sách thứ hai | P2A-02 | Số thứ và tên trong database khớp bảng ở §8.4 (`comm -3` rỗng, in cả hai danh sách); thứ chưa có đơn vị thì đơn vị **trống**, không tự gán | Mọi phép kiểm sau chạy trên một danh mục không phải của quán | L1 |
 | **P2A-07** | **Phép đối chiếu của admin vào bộ đối chiếu** — mỗi phép của `P2A-01` thành đúng một câu, vào cùng một lệnh sau khi đóng quán | P2A-02 → P2A-05 · P2A-06 | `comm -3` giữa mã mệnh đề mới ở `quality/invariants.md` và mã của bộ câu ⇒ rỗng; dữ liệu đúng ⇒ 0 dòng; **mỗi** lỗi cài ⇒ đúng câu của nó kêu | Mệnh đề admin chỉ tồn tại trên giấy | L2 |
 | **P2A-08** | **Cổng chất lượng** — diễn **một ngày quản trị** qua lược đồ (nhập sổ nguyên liệu · chấm công · ghi khoản chi · duyệt tạm ứng), chấm ngược từng dòng `YC` mới, ký các ô §7 | P2A-01 → P2A-07 | Mỗi bước của ngày ấy ghi rồi đọc lại được bằng dữ liệu thật; mỗi dòng `YC` mới trả lời hai câu; chỗ không trả lời được thành `F-XXX`/`U-XXX`, không thiết kế bù | Lược đồ đẹp mà không chạy nổi một ngày của chủ quán | L2 |
@@ -166,8 +175,12 @@ viết ngày 2026-09-30; chủ repo đổi được.
    đưa tiền có ngày và có người duyệt, đọc được riêng. Cách chúng trừ vào hay cộng vào lương thì
    thuộc phần bị chặn.
 4. **Chấm công được coi là phụ thuộc U-065** vì số mốc của một lần chấm đổi hình dạng thứ phải
-   cất; kế hoạch không chọn hộ *một mốc* hay *hai mốc*.
+   cất; kế hoạch không chọn hộ *một mốc* hay *hai mốc*. *Cập nhật 2026-09-30 (T-124):* `U-065` đã
+   đóng — *một ô "có đi làm" do chủ quán tick* — và lời ấy va với `C31` ở vế ai bấm; chấm công nay
+   phụ thuộc **U-069**.
 5. **Khoản chi được coi là phụ thuộc U-066** vì lời chủ quán chỉ nói nguồn tiền của chi lặt vặt.
+   *Cập nhật 2026-09-30 (T-124):* `U-066` đã đóng — điện, nước, wifi, xăng xe *từ két bán hàng* —
+   nên khoản chi chạm đối soát cuối ngày; lát chờ task `T-125` viết vế ấy vào mệnh đề.
 6. **Mã `P2A-XX` và sổ mô tả riêng** là lựa chọn của phiên (ADR-068), không phải lời chủ repo.
 7. **Danh mục nguyên liệu cho phép một thứ chưa có đơn vị**, vì `shop-facts.md` §8.4 nói rõ một
    phần tên chưa có đơn vị và cấm tự gán.

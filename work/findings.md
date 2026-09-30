@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 51 finding — 43 Fixed/Resolved/Closed, 8 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-30, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 52 finding — 44 Fixed/Resolved/Closed, 8 Open (đếm lại ngày 2026-09-30, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -113,6 +113,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-049 | Gate 1d mù với thẻ component có thuộc tính, thẻ đóng, tên component và route viết trong backtick — hai ca hồi quy chỉ thử hình thẻ ít gặp nhất (P2-14) | Open |
 | F-050 | Pha 1 đòi vết của mỗi lần *quán đang mù* và giao dòng yêu cầu cho "P1-07 hoặc pha 2"; không bước nào viết dòng `YC`, nên pha 2 không chấm nó (P2-14) | Open |
 | F-051 | `db-check` đỏ theo giờ trong ngày — đơn test `I-024` để lại sau COMMIT lấy lúc tạo từ đồng hồ, `I-008/1` bắt nó ngoài giờ bán (T-121) | Fixed |
+| F-052 | Mệnh đề admin `I-025`…`I-029` có ở `quality/invariants.md` trước khi có câu đối chiếu, nên phép so mã của `scripts/reconcile.sh` đỏ và `db-check` sẽ đỏ ở lát admin đầu tiên (P2A-01) | Fixed |
 
 ---
 
@@ -4287,3 +4288,60 @@ fixture mới lấy giờ từ đồng hồ sẽ lặp lại đúng chuyện nà
 
 **Status:**
 Fixed
+
+### F-052 — Mệnh đề admin có mã trước khi có câu đối chiếu: phép so mã của bộ đối chiếu đỏ, và `db-check` sẽ đỏ ngay ở lát admin đầu tiên
+
+**Problem:**
+`scripts/reconcile.sh` mở đầu bằng `comm -3` giữa mã `### I-0xx` ở `quality/invariants.md` và mã có
+câu trong `db/reconcile/` — *một mệnh đề mới chưa có câu ⇒ FAIL* (header của script, **F-018** ·
+**F-026**). Bước `P2A-01` (2026-09-30, Claude Code) viết năm mệnh đề admin `I-025`…`I-029` đúng như
+kế hoạch `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` §5 đòi, và cùng kế hoạch ấy giao câu
+đối chiếu của chúng cho bước **`P2A-07`** — sau cả bốn lát. Đo ngay sau khi viết:
+
+```text
+$ ./scripts/reconcile.sh --codes
+FAIL mã I-0xx — lệch giữa quality/invariants.md (cột trái) và db/reconcile/ (cột phải):
+     I-025
+     I-026
+     I-027
+     I-028
+     I-029
+```
+
+Gate của `P2A-01` vẫn xanh vì lượt ấy chỉ đổi tài liệu ngoài `db/` và `docs/product/2-db/`, nên
+`scripts/verify.sh` không gọi `db-check`. Lát đầu tiên chạm `db/` thì gọi, và đỏ vì lý do không
+thuộc về nó.
+
+**Impact:**
+`P2A-02` → `P2A-05` không ký được *`db-check` xanh* — đầu ra kiểm chứng của chính chúng — cho tới
+khi `P2A-07` xong, mà `P2A-07` lại đứng sau chúng. Một cổng đỏ vì lý do đã biết trước là cổng người
+ta học cách bỏ qua. Lúc kế hoạch bán hàng chạy, thứ tự này không lộ: bộ đối chiếu (`P2-11`) ra đời
+sau mọi mệnh đề.
+
+**Decision / Fix:**
+Chưa sửa — `P2A-01` không chạm `scripts/` hay `db/`. Việc của **chủ repo**, chọn trước khi nhận
+`P2A-02`; hai đường: (a) mỗi lát viết luôn câu đối chiếu cho mệnh đề của nó trong chính lượt của nó
+(file `db/reconcile/i0xx.sql` và lỗi cài ở `db/reconcile/proof/`), `P2A-07` còn lại việc rà `comm -3`
+và các tập ngang lát — sửa hàng `P2A-02`…`P2A-07` của kế hoạch §5; (b) `scripts/reconcile.sh` nhận
+một danh sách *mệnh đề chưa có lát* có lý do và ai nợ, in `NOTE` thay vì `FAIL` cho đúng các mã ấy,
+và danh sách ngắn dần theo từng lát. Đường (a) không thêm ngoại lệ nào vào cổng. Hai lát còn chờ lời
+(`I-027` · `I-029`) cần đường (b) hoặc một cách tương đương dù chọn gì.
+
+**Đã sửa 2026-09-30 (`T-123`; thi công: Codex, thiết kế và duyệt: Claude Code) — đường (b),
+`docs/decisions.md` ADR-070.** Lời giao của chủ repo cùng ngày là *"đọc kĩ finding trên, yêu cầu
+codex làm và bạn kiểm tra"*: nó giao việc chữa, không nêu đường nào. Phiên chọn phần mà cả hai đường
+đều cần (câu cuối đoạn trên): phép so mã đọc một danh sách *mệnh đề chưa có lát* ở
+`docs/product/2-db/09-doi-chieu-bat-bien.md` §2.1 — mỗi dòng một mã, có lý do và người nợ — in `NOTE`
+cho đúng các mã ấy; mã khác thiếu câu vẫn `FAIL`, và dòng đã có câu hoặc không còn ở
+`quality/invariants.md` cũng `FAIL` cho tới khi gỡ. Đo sau khi sửa: `./scripts/reconcile.sh --codes`
+⇒ exit 0, năm dòng `NOTE`, *24 mã có câu + 5 mã chưa có lát = 29 mã*; bỏ dòng `I-027` khỏi một bản
+sao của §2.1 ⇒ `FAIL` gọi `I-027`; `./scripts/db-check.sh` ⇒ `PASS`. **Chưa quyết, vẫn của chủ
+repo:** câu của từng mệnh đề viết ở lát của nó (đường (a)) hay dồn về `P2A-07` như kế hoạch §5 đang
+ghi — cột *ai nợ* hôm nay ghi `P2A-07`.
+
+**Related task:**
+`work/backlog_AD_DB.md` → **P2A-01** (lượt phát hiện) · `P2A-02` · `P2A-07` · `P2-11` · **T-123**
+(lượt sửa)
+
+**Status:**
+Fixed (2026-09-30, T-123)

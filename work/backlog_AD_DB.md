@@ -94,6 +94,79 @@ không có gì để trỏ về.
 - **Đừng đánh số `YC` hay `I` từ trí nhớ.** Đọc mã cuối ở owner trong chính lượt ấy.
 - **Bước này sửa owner mà theo `CLAUDE.md` §7.4 chỉ Claude được sửa** (`quality/invariants.md`).
 
+**Nhận việc** — điền 2026-09-30 (Claude Code), không có bước nào phải xong trước; mức **L2** (kế hoạch §5).
+Chủ repo yêu cầu *Codex hoàn thành, Claude kiểm tra*; chia vai theo `CLAUDE.md` §7.4: **Claude** viết
+mệnh đề, câu hỏi mở, hành vi nghiệp vụ, quyết định thiết kế; **Codex** thi công hai file pha 1 theo
+phiếu giao việc, trong worktree riêng; Claude duyệt diff thật và chạy lại gate.
+- *Phạm vi:* `work/scope/P2A-01.txt` — ba owner của pha 1 và của invariant, `01-ranh-gioi.md`,
+  `99-unknowns.md`, `decisions.md`, `00-index.md`, kế hoạch lược đồ admin, entry này, dòng trạng thái,
+  `work/findings.md`. Worktree của Codex chỉ mở hai file `03-bao-ve-invariant.md` ·
+  `04-yeu-cau-du-lieu.md`.
+- *Nghiệm thu:*
+  1. **Bảng §2 của kế hoạch được đo lại ở owner** trước khi viết; vế nào đổi thì sửa bảng trước.
+  2. **Mỗi vế ở cột giữa §2 có đúng một dòng `YC`** hai câu (*Ghi được* · *Không xảy ra được*), nối số
+     sau dòng cuối đang có; vế đã có dòng từ trước thì trỏ, không viết dòng thứ hai.
+  3. **Mỗi dòng `YC` mới trỏ về một mục `shop-facts.md` đã có lời**; không dòng nào chỉ dựa trên một
+     câu còn mở.
+  4. **Mỗi câu *không xảy ra được* đáng giữ là một vế của một mệnh đề `I-0xx` mới** có *Invariant* ·
+     *Why* · *Verification*; chỗ suy ra ghi là suy ra.
+  5. **Mỗi vế của mỗi mệnh đề mới có một tầng, và một tập đối chiếu hoặc một câu nói thẳng vì sao
+     chưa có tập** (`03-bao-ve-invariant.md` §0 luật 5).
+  6. **Hành vi nghiệp vụ tương ứng có ở `docs/product/0-ba/admin/01-ranh-gioi.md` §1.6**, trong mục
+     riêng có nhãn, trỏ về `shop-facts.md`, không chép lời.
+  7. **Không tên bảng, tên cột, endpoint, route** trong phần thêm mới; không dòng nào viết cho một vế
+     ở cột phải §2 hay ở §6.
+  8. Vế thiếu lời ⇒ dừng vế ấy, có mã `U-XXX`, để trống.
+- *Kiểm chứng:* lệnh đếm và bảng đối chiếu dán ở *Bàn giao*; `./scripts/gate.sh` xanh ở worktree của
+  Codex **và** chạy lại ở clone chính. Test hồi quy cho mệnh đề mới **chưa viết được** ở bước này —
+  chưa có lược đồ nào để chạy; mục *Verification* của từng mệnh đề là kịch bản mà lát `P2A-02`…`P2A-05`
+  phải chạy thật.
+
+**Bàn giao** — 2026-09-30 · thực hiện: **Codex** (hai file pha 1, theo phiếu) và **Claude Code** (mệnh đề,
+câu hỏi mở, hành vi, ADR, finding) · duyệt: **Claude Code** · nhánh `chatgpt_involve`, trên `008524a` ·
+chưa commit.
+
+*Kết quả.* Tám dòng yêu cầu `YC-26`…`YC-33` ở
+[`04-yeu-cau-du-lieu.md`](../docs/product/1-system-design/04-yeu-cau-du-lieu.md) §9; năm mệnh đề
+`I-025`…`I-029` ở `quality/invariants.md`; tầng và phép đối chiếu của chúng ở
+[`03-bao-ve-invariant.md`](../docs/product/1-system-design/03-bao-ve-invariant.md) §5; hành vi ở
+`docs/product/0-ba/admin/01-ranh-gioi.md` §1.6; hình dạng ở `docs/decisions.md` **ADR-069**. Hai câu
+mới cho chủ quán — **U-067** (tiền tạm ứng, thưởng lấy từ đâu) và **U-068** (nghĩa của *thời gian
+nhập*) — không chặn chỗ cất nào. Một finding mở: **F-052**.
+
+*Codex làm gì, Claude duyệt ra sao.* Codex chạy trong worktree riêng, scope đúng hai file pha 1, và
+trả về đúng hai file ấy. Claude đọc diff thật, chạy lại gate trong worktree (xanh, Gate 1d soát 2
+file), rồi đưa về clone chính bằng `git apply`. Báo cáo của Codex nêu năm chỗ thiết kế trong phiếu
+không khớp nguồn; Claude nhận bốn và tự sửa vì lỗi nằm ở thiết kế, không ở thi công: (1) `I-027` viết
+rộng hơn lời — cấm cả ngưỡng phút đi muộn và kéo ngày nghỉ vào — nay thu về đúng *chấm muộn không
+sinh khoản trừ*, kéo theo `YC-30`, hàng `I-027` và khối chấm công của `01-ranh-gioi.md`; (2) tập đối
+chiếu của `I-025` không bắt được một thao tác bán hàng *sinh* con số mới đủ dấu — nay nói thẳng là
+chưa có tập; (3) hàng `I-028` thiếu vế *người nhận thuộc tập người của quán* và ca thiếu số tiền; (4)
+`I-029` tự mâu thuẫn giữa *danh sách không có loại tiền hàng* và *máy không ngăn được người thêm
+loại* — nay ghi là chỗ người giữ. Chỗ thứ năm (hai mốc của `YC-28` chưa chắc biểu đạt *giờ* hàng về)
+giữ nguyên thiết kế, thêm một câu ở §9.1 và đã có **U-068**.
+
+*Nghiệm thu → bằng chứng* (đo 2026-09-30 ở clone chính, sau khi sửa):
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| 1. đo lại bảng §2 | `git log -1 --format=%ad --date=short -- master_plan/shop-facts.md work/admin-questions.md` ⇒ `2026-09-28`, trước ngày viết kế hoạch ⇒ không vế nào đổi cột. Một vế thêm vào cột phải: nguồn tiền tạm ứng, thưởng (**U-067**) |
+| 2. một vế một dòng `YC` | chín vế ở cột giữa: tám dòng mới, vế *trực quầy theo thời điểm* trỏ `YC-04` · `YC-15`. `grep -Ec` hàng `YC-26…33` ⇒ **8**; nhãn *Ghi được* ⇒ **8**; nhãn *Không xảy ra được* ⇒ **8** |
+| 3. trỏ về lời đã chốt | `YC-26`…`YC-29` → `shop-facts.md` §8.4 (dòng 1500) · `YC-30` → `C31` · `C32` (1824 · 1825) · `YC-31` → `C29` (1822) · `YC-32` → `C28` (1821) · `YC-33` → `E44` · `E45` (1935 · 1936). Câu còn mở chỉ đứng ở §9.1, không là nguồn của dòng nào |
+| 4. mệnh đề có đủ ba mục | năm tiêu đề `### I-025`…`### I-029`, mỗi cái có *Invariant* · *Why* · *Verification*; năm chỗ suy ra ghi ở mục *Why* và ở **ADR-069** điểm 6 |
+| 5. mỗi vế một tầng, một tập | `grep -Ec` hàng `I-025…029` ở file tầng ⇒ **5**; `comm -3` giữa mã `### I-0xx` của `quality/invariants.md` và mã hàng của file tầng ⇒ **rỗng** (29 mã hai bên). Sáu vế *chưa có tập* đều nói lý do tại chỗ |
+| 6. hành vi ở `01-ranh-gioi.md` | bốn khối có nhãn dưới câu *Hành vi của phần admin đã đủ luật…*, mỗi khối trỏ mục `shop-facts.md`, không chép lời |
+| 7. không tên bảng · cột · endpoint | `git diff -U0` phần thêm mới, lọc tên `snake_case` trong backtick ⇒ **rỗng**; Gate 1d: *2 file .md đã soát, không câu nào đặt tên thứ pha sau sở hữu* |
+| 8. vế thiếu lời ⇒ dừng, có mã | `U-065` · `U-066` (đã có) · `U-067` · `U-068` (mở ở lượt này) · câu `B12` · `C30` · `C32` — bảng §9.1 của file yêu cầu và §5.2 của file tầng |
+
+*Chưa làm được, và vì sao.* **Test hồi quy cho năm mệnh đề chưa tồn tại** — chưa có lược đồ admin để
+chạy; mục *Verification* là kịch bản các lát phải chạy thật. `./scripts/reconcile.sh --codes` **đỏ**
+cho năm mã mới (**F-052**); gate của lượt này không gọi nó vì không đổi gì dưới `db/`.
+
+*Việc kế tiếp.* `P2A-02` và `P2A-04` lên *Ready*. **Trước khi nhận một trong hai, chủ repo chọn đường
+ra của F-052** — không thì `db-check` của lát đỏ vì lý do không thuộc về lát. `P2A-03` chờ **U-065**,
+`P2A-05` chờ **U-066**.
+
 [↑ đầu file](#top)
 
 ---
@@ -150,8 +223,10 @@ cộng dồn từ đâu (`shop-facts.md` §8.4). Mục tổng quan của chủ q
 <a id="p2a-03"></a>
 ### P2A-03 — Nhân viên sẽ tự bấm chấm công, và chưa ai biết một lần bấm ghi lại mốc gì
 
-**Phụ thuộc** · bước 3/9 · **cần xong trước:** `P2A-01` · **`U-065` có lời**
-(`docs/product/99-unknowns.md`).
+**Phụ thuộc** · bước 3/9 · **cần xong trước:** `P2A-01` · **`U-069` có lời**
+(`docs/product/99-unknowns.md`). *2026-09-30 (T-124):* `U-065` đã đóng bằng lời *"chủ quán tự tick
+vào ô có đi làm"*; lời ấy va với `C31` ở vế ai bấm, nên câu chặn nay là `U-069`. Tên của bước
+(*nhân viên sẽ tự bấm…*) viết theo `C31` và có thể phải đổi theo lời ấy.
 
 **Goal:**
 Xong rồi thì đọc ra được *người này, ngày này, đã chấm công những mốc nào*, và người ấy là người
@@ -168,7 +243,7 @@ Chủ quán chốt cả ba mức của mảng con người (§8.7); mức 2 là 
 - Khi công thức lương có lời, không có sổ công nào để nhân với đơn giá.
 - Nhân viên được xem công của chính mình (`C35`) mà không có công nào để xem.
 
-**Bị chặn — hỏi gì trước.** `U-065`. Bước này **không nhận được** cho tới khi câu ấy có lời, và
+**Bị chặn — hỏi gì trước.** `U-069` (trước 2026-09-30 là `U-065`, đã đóng). Bước này **không nhận được** cho tới khi câu ấy có lời, và
 lời ấy phải thành dòng `YC` (bổ sung vào đầu ra của `P2A-01`) trước khi dựng. Mười bước chạy viết
 lúc nhận việc, theo khuôn `P2A-02`.
 
@@ -218,7 +293,8 @@ khoản ấy trừ vào hay cộng vào lương; thưởng ngày đông khách (
 <a id="p2a-05"></a>
 ### P2A-05 — Hệ thống cộng được mọi đồng đi VÀO quán và chưa biết một đồng nào đi RA
 
-**Phụ thuộc** · bước 5/9 · **cần xong trước:** `P2A-01` · **`U-066` có lời**.
+**Phụ thuộc** · bước 5/9 · **cần xong trước:** `P2A-01` · **task `T-125`** (`work/backlog.md`).
+*2026-09-30 (T-124):* `U-066` đã đóng — điện, nước, wifi, xăng xe trả *từ két bán hàng*.
 
 **Goal:**
 Xong rồi thì mỗi khoản chi ngoài tiền hàng và lương đọc lại được — loại, số tiền, ngày, ai ghi —
@@ -235,8 +311,9 @@ Chủ quán muốn xem lãi/lỗ (`E47`); vế *chi* của phép tính ấy chư
 - Lãi/lỗ sau này chỉ có vế thu.
 - Khoản chi hằng tháng nằm trong tin nhắn và trí nhớ.
 
-**Bị chặn — hỏi gì trước.** `U-066`: khoản chi lấy từ két thì chạm phép đối soát cuối ngày
-(`quality/invariants.md` **I-021**), lấy từ tiền riêng thì không. Hình dạng phụ thuộc lời ấy.
+**Bị chặn — hỏi gì trước.** Không còn câu hỏi nào: `U-066` đã đóng 2026-09-30 và lời là *từ két*,
+tức khoản chi **chạm** phép đối soát cuối ngày (`quality/invariants.md` **I-021**). Thứ chặn nay là
+task `T-125` — viết vế ấy vào `I-021` · `I-029` trước khi dựng chỗ cất.
 
 **Bẫy hay sửa nhầm nhất:**
 - **Tiền hàng không vào đây.** §8.10 cấm cộng trùng giò, trứng, rau, quất với mua hàng.

@@ -85,6 +85,8 @@ có câu trả lời mới từ người.
 | ADR-066 | **Bộ đối chiếu: một câu một TẬP, một lệnh sau khi đóng quán, chứng minh bằng ngày mẫu và lỗi cài** — mỗi tập *"phải rỗng"* của pha 1 là một câu `I-0xx/n` ở `db/reconcile/`; `scripts/reconcile.sh` chạy nhóm `I-0xx` và nhóm quy ước `QD-XX` (bốn phép dạng lệnh viết lại thành SQL); `db-check` chứng minh: ngày bán mẫu đúng ⇒ 0 dòng, mỗi lỗi cài ⇒ đúng tập câu khai | Đã chốt 2026-09-30 (giao cho phiên) | — | P2-11 |
 | ADR-067 | **Cổng pha 2 ký bằng một bước chạy lại được: ba scenario COMMIT thật, đọc lại ở kết nối khác, chấm YC năm kết cục** — `db/scenario/` diễn ba scenario mỗi bước một giao dịch trên database kiểm có dữ liệu mồi; bộ đối chiếu chạy lại trên ngày ấy; mỗi mã YC một dòng *đọc* và một dòng *sai* mang một trong năm kết cục có tên; tất cả là bước 7 của `db-check` | Đã chốt 2026-09-30 (giao cho phiên) | — | P2-13 |
 | ADR-068 | **Lược đồ admin được dựng cho phần ĐÃ ĐỦ LUẬT, trước khi mảng bán hàng chạy thật** — sửa đổi ADR-031 đúng ở tầng lược đồ; pha 3–4 của admin và phần còn chờ lời chủ quán đứng yên; bước mang mã `P2A-XX`, thứ tự ở `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`, mô tả ở `work/backlog_AD_DB.md` | Đã chốt 2026-09-29 (chủ repo mở cổng; mã và sổ giao cho phiên) | — | P2A-01…P2A-09 |
+| ADR-069 | **Mệnh đề và yêu cầu dữ liệu của mảng admin đi vào MỤC RIÊNG CÓ NHÃN trong ba owner sẵn có**, nối dãy mã `I-0xx` · `YC-XX`; câu *máy không làm* thành vế *không xảy ra được* có tên; chỗ chủ quán chưa nói thì mệnh đề khai là **không nói**, không lấp | Đã chốt 2026-09-30 (giao cho phiên, P2A-01) | — | P2A-01 · P2A-02…P2A-08 |
+| ADR-070 | **Phép so mã của bộ đối chiếu nhận một danh sách *mệnh đề chưa có lát* có tên, tự hết hạn** — danh sách ở `09-doi-chieu-bat-bien.md` §2.1, `scripts/reconcile.sh` đọc lúc chạy; mã có dòng thì `NOTE`, mọi mã khác vẫn `FAIL` | Đã chốt 2026-09-30 (giao cho phiên, T-123) | — | P2A-02…P2A-07 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -4519,3 +4521,120 @@ vế thứ ba. Hai câu mới `U-065` · `U-066` chặn hai trong bốn lát.
 
 **Applies to:** `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` · `work/backlog_AD_DB.md` ·
 `work/backlog.md` · ADR-031 · ADR-036 · ADR-049.
+
+### ADR-069 — Mệnh đề và yêu cầu dữ liệu của mảng admin đi vào MỤC RIÊNG CÓ NHÃN trong ba owner sẵn có, nối dãy mã; *máy không làm* thành vế có tên
+
+**Trạng thái:** **Đã chốt** 2026-09-30, **giao cho phiên** (Claude Code, bước `P2A-01`) — không phải
+lời chủ repo hay chủ quán (`CLAUDE.md` §7.2); chủ repo đổi được. Nó thi hành điểm 3 của **ADR-068**
+và không lật quyết định nào.
+
+**Context:**
+**ADR-068** điểm 3 đòi bước đầu của lược đồ admin viết yêu cầu dữ liệu và invariant *vào chính các
+owner của pha 1*. Ba owner ấy — `quality/invariants.md`,
+`docs/product/1-system-design/03-bao-ve-invariant.md`,
+`docs/product/1-system-design/04-yeu-cau-du-lieu.md` — được viết cho mảng bán hàng và mỗi file có
+luật riêng buộc vào mảng ấy: bốn nhóm mệnh đề có chủ từng nhóm, và luật *mỗi dòng §1 của file yêu
+cầu khớp một-đối-một với `architecture.md` §8*. Lời chủ quán về admin lại có dạng khác lời về bán
+hàng: phần lớn là bảng *máy làm / máy KHÔNG làm* (`master_plan/shop-facts.md` §8.4).
+
+**Decision:**
+1. **Mục riêng có nhãn, không chen vào mục của mảng bán hàng** (**ADR-013**): năm mệnh đề
+   `I-025`…`I-029` nối cuối `quality/invariants.md`; tầng và phép đối chiếu của chúng là **§5 — nhóm
+   QUẢN TRỊ** của `03-bao-ve-invariant.md`; tám dòng `YC-26`…`YC-33` là **§9** của
+   `04-yeu-cau-du-lieu.md`. Luật một-đối-một với `architecture.md` §8 **không** áp cho §9.
+2. **Nối dãy mã đang có**, không mở tiền tố riêng cho admin: mọi phép đọc mã — `scripts/reconcile.sh`,
+   cổng chấm ngược dòng `YC` — đọc một dãy.
+3. **Một dòng `YC` cho mỗi vế ở cột giữa bảng §2 của kế hoạch lược đồ admin**; vế đã có dòng từ
+   trước (trực quầy theo thời điểm: `YC-04` · `YC-15`) thì **trỏ**, không viết dòng thứ hai.
+4. **Câu *máy KHÔNG làm* thành vế *không xảy ra được* có tên** — không ngưỡng nhắc sắp hết, không
+   định lượng suất, không kết luận thiếu, không khoản trừ vì chấm muộn. Những vế ấy **không có tập đối chiếu**: một chỗ
+   cất thừa không phải một dòng dữ liệu sai, nên chúng kiểm bằng **đọc lược đồ** ở cổng của kế hoạch
+   (ô 7), và bảng tầng nói thẳng điều đó (`03-bao-ve-invariant.md` §0 luật 5).
+5. **Chỗ chủ quán chưa nói thì mệnh đề khai *không nói*, và trỏ mã của câu còn mở** — số mốc của một
+   lần chấm công (**U-065**), nguồn tiền của khoản chi (**U-066**), nguồn tiền của tạm ứng và thưởng
+   (**U-067**, mở ở bước này), nghĩa của *thời gian nhập* (**U-068**, mở ở bước này), đơn vị ghi
+   (`work/admin-questions.md` câu `B12`). Không khoản nào của admin được nối vào phép trừ két của
+   `I-021` chừng nào hai câu nguồn tiền còn mở.
+6. **Năm chỗ suy ra được ghi tại chỗ**, trong mục *Why* của từng mệnh đề: một thứ đứng một lần trong
+   danh mục; hiệu số âm không bị từ chối; số tiền của tạm ứng, thưởng và khoản chi lớn hơn 0; và
+   *thời gian nhập* được giữ thành hai mốc.
+
+**Why:**
+- Mục riêng giữ cho một lần sửa admin không đọc nhầm một hàng bán hàng, và giữ nguyên *một nhóm, một
+  chủ* của file tầng (`work/findings.md` **F-010** · **F-014**).
+- Một dãy mã thì một mệnh đề admin thiếu câu đối chiếu tự bị bắt là *vắng mặt* — đúng cơ chế đã có
+  (**F-018** · **F-026**). Giá của lựa chọn này lộ ngay: `work/findings.md` **F-052**.
+- *Máy không làm* mà không thành vế có tên thì im lặng; một lát sau sẽ để sẵn một cột ngưỡng và pha 3
+  đọc nó như luật đã chốt (kế hoạch lược đồ admin §9).
+- Mệnh đề nói rõ chỗ nó **không** nói thì lát lược đồ biết chỗ nào phải để trống, thay vì lấp bằng
+  một mặc định (`CLAUDE.md` §3.5).
+
+**Rejected alternatives:**
+- *Mở file invariant và file yêu cầu riêng cho admin.* Bác: **ADR-068** điểm 3 chỉ chính các owner
+  sẵn có; hai nhà cho cùng một loại sự thật là thứ `CLAUDE.md` §2 cấm.
+- *Tiền tố mã riêng (`IA-`, `YCA-`).* Bác: mọi phép đọc mã phải học thêm một hình dạng, và mệnh đề
+  admin rơi khỏi phép so `comm -3` đang có.
+- *Không viết mệnh đề cho chấm công và khoản chi vì lát của chúng còn chờ `U-065` · `U-066`.* Bác:
+  phần đã có lời — mỗi lần chấm thuộc một người, không khoản trừ; mỗi khoản chi có loại, tiền hàng
+  không đứng ở đó — không phụ thuộc hai câu ấy, và kế hoạch §5 đòi bốn mảng.
+- *Biến lời `B20` (không ai ghi hỏng · đổ · cháy) thành vế "không có chức năng ghi".* Bác: §8.4 nói
+  thẳng lời ấy là thực tế quán, chưa phải yêu cầu có hay không có chức năng.
+- *Gộp năm mệnh đề thành một mệnh đề "sổ admin".* Bác: bốn lát chạy song song và mỗi lát phải trỏ
+  được về mệnh đề của riêng nó.
+
+**Applies to:** `quality/invariants.md` `I-025`…`I-029` ·
+`docs/product/1-system-design/03-bao-ve-invariant.md` §5 ·
+`docs/product/1-system-design/04-yeu-cau-du-lieu.md` §9 · `docs/product/0-ba/admin/01-ranh-gioi.md`
+§1.6 · `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` · ADR-013 · ADR-050 · ADR-068.
+
+### ADR-070 — Phép so mã của bộ đối chiếu nhận một danh sách *mệnh đề chưa có lát* có tên, tự hết hạn
+
+**Trạng thái:** **Đã chốt** 2026-09-30, **giao cho phiên** (Claude Code, task `T-123`; thi công:
+Codex) — không phải lời chủ repo (`CLAUDE.md` §7.2); chủ repo đổi được. `work/findings.md` **F-052**
+ghi đây là việc chủ repo chọn; lời giao ngày 2026-09-30 là *"đọc kĩ finding trên, yêu cầu codex làm
+và bạn kiểm tra"* — nó giao việc chữa, **không** nêu đường nào. Phiên chọn phần mà cả hai đường của
+finding đều cần, và để nguyên phần còn lại (xem *Không quyết ở đây*).
+
+**Context:**
+`scripts/reconcile.sh` so mã `### I-0xx` ở `quality/invariants.md` với mã có câu ở `db/reconcile/`;
+lệch là `FAIL` (**ADR-066**, **F-018** · **F-026**). **ADR-069** nối năm mệnh đề admin vào cùng dãy
+mã, và kế hoạch lược đồ admin §5 giao câu của chúng cho `P2A-07`, sau bốn lát. Giữa hai mốc ấy
+`db-check` đỏ ở mọi lát vì lý do không thuộc về lát (**F-052**). Hai lát còn chờ lời chủ quán
+(`I-027` — **U-065**, `I-029` — **U-066**), nên dù câu được viết ở lát hay ở `P2A-07`, vẫn có mệnh
+đề đứng không câu trong một khoảng không ai định trước được.
+
+**Decision:**
+1. Phép so mã nhận một danh sách **mệnh đề chưa có lát**. Mã có dòng trong danh sách ⇒ `NOTE` gọi
+   tên mã và người nợ; **mọi mã khác thiếu câu vẫn `FAIL`** như cũ.
+2. Danh sách nằm ở **owner sẵn có** của *"tập nào chưa có câu, vì sao, ai nợ"* —
+   `docs/product/2-db/09-doi-chieu-bat-bien.md` §2.1 — và script **đọc lúc chạy** (**F-001**). Không
+   mở file `.ignore` thứ tư.
+3. Mỗi dòng là **một mã**, có *vì sao* và *ai nợ*; thiếu một trong hai ⇒ `FAIL`.
+4. **Tự hết hạn:** mã có dòng mà đã có câu, hoặc không còn ở `quality/invariants.md` ⇒ `FAIL` cho tới
+   khi dòng bị gỡ — cùng luật với ba file `.ignore` của Gate 1b · 1c · 1d (`CLAUDE.md` §5).
+5. Dòng `PASS` của phép so và dòng tổng kết in **cả hai con số** (mã có câu · mã chưa có lát);
+   `db-check` in lại dòng `NOTE`. Một lần chạy xanh không được đọc thành *mọi mệnh đề đã được chấm*.
+6. Bước nào viết câu cho một mệnh đề thì **gỡ dòng của nó trong cùng thay đổi**.
+
+**Không quyết ở đây:** câu đối chiếu của một mệnh đề admin được viết **ở lát của nó** (đường (a) của
+**F-052**) hay **dồn về `P2A-07`** (kế hoạch §5 hiện hành). Cột *ai nợ* hôm nay ghi `P2A-07` vì đó
+là lời kế hoạch đang có; chủ repo chọn đường (a) thì chỉ đổi hàng `P2A-02`…`P2A-07` của kế hoạch và
+cột ấy, cơ chế không đổi.
+
+**Why:**
+- Cổng đỏ vì lý do đã biết trước là cổng người ta học cách bỏ qua (**F-052**, *Impact*).
+- Ngoại lệ có tên, có người nợ và tự hết hạn thì không thành chỗ chôn nợ (**F-041**).
+- Một owner: file 09 đã giữ bảng *tập chưa có câu*; một danh sách thứ hai ở `scripts/` là hai nhà
+  cho một loại sự thật (`CLAUDE.md` §2).
+
+**Rejected alternatives:**
+- *Chỉ đường (a), không danh sách.* Bác: `I-027` · `I-029` vẫn đỏ cho tới khi có lời cho **U-065** ·
+  **U-066**.
+- *Chỉ so mã cho các mệnh đề bán hàng (`I-001`…`I-024`).* Bác: một mệnh đề admin thiếu câu thành vô
+  hình, đúng điều **ADR-069** điểm 2 muốn tránh.
+- *Dời việc viết mệnh đề tới khi có câu.* Bác: lát cần mệnh đề trước để biết phải thi hành gì
+  (**ADR-050**).
+
+**Applies to:** `scripts/reconcile.sh` · `scripts/reconcile.test.sh` · `scripts/db-check.sh` ·
+`docs/product/2-db/09-doi-chieu-bat-bien.md` §2.1 · `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`
+§5 · ADR-066 · ADR-069 · `work/findings.md` F-052.

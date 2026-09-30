@@ -86,6 +86,38 @@ quả về **hành vi** — thứ mục này sở hữu:
 
 Mảng **tài chính** vẫn chưa có lời chốt mức sâu tương ứng.
 
+**Hành vi của phần admin đã đủ luật để có chỗ cất — viết 2026-09-30 (`P2A-01`, Claude Code).** Bốn
+khối dưới đây nói **hành vi** — thứ mục này sở hữu — của những lời chủ quán đã có ở
+`master_plan/shop-facts.md` §8; lời ấy đọc ở đó, mục này **không** nhắc lại bằng lời của mình
+(`work/findings.md` **F-001**). Yêu cầu dữ liệu tương ứng ở
+[`04-yeu-cau-du-lieu.md`](../../1-system-design/04-yeu-cau-du-lieu.md) §9; mệnh đề ở
+`quality/invariants.md` `I-025`…`I-029`.
+
+- **Sổ nguyên liệu — tổng và hiệu số do máy cộng trừ hộ** (`shop-facts.md` §8.4, lời `U-051` ·
+  `U-054` · `U-045`). Máy cộng dồn hai con số người đã gõ và trừ chúng cho nhau; nó **không** đặt
+  lại tổng khi mua thêm, **không** giữ ngưỡng, **không** kết luận *thiếu* hay *sắp hết*, **không**
+  nhắc. Việc hỏng · đổ · cháy giữa buổi hôm nay không ai ghi (câu `B20`): đó là thực tế quán, mục
+  này **không** biến nó thành một thao tác ghi trên máy, cũng không cấm có nó sau này.
+- **Chấm công — nhân viên tự bấm, và chấm muộn không sinh khoản trừ** (§8.7, `C31` · `C32`). Máy
+  ghi lần chấm của từng người; một lần chấm muộn **không** sinh ra khoản trừ nào. Muộn bao nhiêu
+  phút thì ghi nhận là muộn, và nghỉ có báo trước có bị trừ không, thì **chưa có lời** (`C32` ·
+  `C30`). Một lần chấm là **một ô *có đi làm* do chủ quán tick** (chủ quán chốt 2026-09-30, trả lời
+  U-065) — lời ấy va với chữ *nhân viên tự bấm* của `C31`, nên **ai** đánh dấu và một ô là ngày hay
+  buổi còn là [99-unknowns.md](../../99-unknowns.md) **U-069**. Chấm công **không** thay mốc đổi người ở quầy
+  của lời `C36`: hai việc khác nhau (§8.8).
+- **Tạm ứng và thưởng — mỗi khoản là một lần đưa tiền có người nhận và có ngày** (§8.7, `C28` ·
+  `C29`). Tạm ứng phải có **chủ quán duyệt**. Hai loại khoản này **không** phải tiền bán hàng và
+  không thao tác nào ở §2–§6 sinh ra chúng. Tiền lấy **từ két bán hàng** (chủ quán chốt 2026-09-30, trả lời
+  U-067); khoản ấy trừ vào hay cộng vào lương thế nào cũng chưa có lời (`C26` · `C33`).
+- **Khoản chi ngoài tiền hàng và lương — ghi từng khoản theo loại** (§8.10, `E44` · `E45`). Danh
+  sách loại là thứ quán kể thêm dần. **Tiền hàng và lương không ghi thành khoản chi.** Điện, nước, wifi,
+  xăng xe trả **từ két bán hàng** (chủ quán chốt 2026-09-30, trả lời U-066), chi lặt vặt bằng tiền
+  riêng của chủ quán (`E46`); lãi/lỗ theo ngày,
+  tiền cuối buổi mang về nhà và báo thuế vẫn **chưa** có hành vi nào ở đây.
+
+Bốn khối này **không** đổi câu ngay trên: chúng là hành vi của từng lời đã có, không phải *mức sâu*
+của mảng tài chính.
+
 **Luật viết cho mọi lần cập nhật admin sau này:** nội dung admin vào **mục riêng có nhãn**, không
 chen vào mục của mảng bán hàng — `docs/decisions.md` **ADR-013**.
 

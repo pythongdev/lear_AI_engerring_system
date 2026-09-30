@@ -10,6 +10,7 @@
 
 > **Mục này sở hữu yêu cầu dữ liệu:** YC-01…YC-20 và YC-22…YC-25 để pha 2 tự chấm lược đồ;
 > YC-21 (§8) để pha 5 nghiệm thu bảo toàn và khôi phục. Yêu cầu không chốt cơ chế triển khai.
+> YC-26…YC-33 ở §9 là của mảng admin, do các bước `P2A-XX` chấm.
 >
 > **Nó không sở hữu một luật nghiệp vụ nào.** Giá, giờ bán, ai được bấm cái gì, ngưỡng lệch 0đ đều
 > thuộc `master_plan/shop-facts.md` (**ADR-001**). Cột *Luật nguồn* dưới đây **trỏ** về đó và cố ý
@@ -36,7 +37,8 @@
 ## 0. Cách đọc — hai dạng câu, và một mã
 
 YC-01…YC-20 và YC-22…YC-25 mang mã `YC-XX` và dùng hai dạng câu dưới đây. YC-21 ở §8 là yêu cầu
-khôi phục, nghiệm thu ở pha vận hành:
+khôi phục, nghiệm thu ở pha vận hành; YC-26…YC-33 ở §9 là của mảng admin, dùng cùng hai dạng
+câu và do các bước `P2A-XX` chấm:
 
 | Dạng | Câu mở đầu | Pha 2 chấm thế nào |
 |---|---|---|
@@ -207,7 +209,7 @@ có lời (`CLAUDE.md` §3.5, §7.2).
 |---|---|---|
 | **`S-5`** — bấm *"đã bưng ra bàn"* theo **đơn vị nào** (`master_plan/shop-facts.md` §7.2) | `YC-06` · `YC-07` | Chủ quán mới nói **ai** bấm, chưa nói **theo gì**. Chỗ *suy ra* là theo **bàn** — một mẻ phục vụ nhiều bàn, còn bưng thì bưng tới **một** bàn. Đơn vị **đếm** là **bàn**, đơn vị **bấm** của mốc *đã làm xong* là **mẻ** (đã chốt 2026-09-01); đơn vị **bấm** của mốc *đã bưng ra bàn* thì **để trống**, đừng điền |
 | **`S-6`** — với đơn **giao tận nơi**, quầy bấm mốc *"đã ra bàn"* **lúc nào** (§7.2) | `YC-06` | **Ai** bấm đã chốt 2026-09-04 (*"pos"*, không có ngoại lệ). Vế **lúc nào** là chỗ *suy ra*: lúc đơn rời quán. Sai thì mốc ấy nghĩa là **tới tay khách**, và quầy phải chờ người đi giao báo về |
-| **Chỗ đã làm xong của một đơn huỷ khi KHÔNG có bàn nào đang chờ đúng thứ ấy** | `YC-07` | Chủ quán chốt 2026-09-06 cho ca **có** bàn chờ: tính cho bàn khác, người đứng quầy chọn bàn nhận trên POS rồi cập nhật. Ca **không có bàn nào chờ** thì chủ quán không nói tới — **chưa có luật, chưa hỏi** (`shop-facts.md` §5.4); câu hỏi ghi thành **U-064** ở `docs/product/99-unknowns.md` (2026-09-28, P2-07) |
+| **Chỗ đã làm xong của một đơn huỷ khi KHÔNG có bàn nào đang chờ đúng thứ ấy** | `YC-07` | Chủ quán chốt 2026-09-06 cho ca **có** bàn chờ: tính cho bàn khác, người đứng quầy chọn bàn nhận trên POS rồi cập nhật. Ca **không có bàn nào chờ**: chủ quán chốt 2026-09-30, trả lời U-064 — người đứng quầy **ghi chú trên POS rằng đó là bánh làm sai** (`shop-facts.md` §5.4). Dòng `YC-07` chưa có vế cho ghi chú ấy — task `T-127` ở `work/backlog.md` |
 
 **Ba chỗ này không được lấp bằng một mặc định.** Một lược đồ chọn sẵn *"bấm theo bàn"* rồi chạy
 tiếp là một lược đồ đã thay chủ quán trả lời một câu chưa ai hỏi — và cái sai ấy chỉ lộ ra lúc quán
@@ -232,6 +234,7 @@ dùng thật.
 với YC-01…YC-20 và YC-22…YC-25, mỗi dòng hỏi **hai** câu — *đọc ra được không* và *dựng được trạng thái sai không*. Dòng nào không
 trả lời được là một chỗ lược đồ còn thiếu, **không phải** một dòng viết chưa rõ; sửa lược đồ, và
 chỉ quay lại sửa dòng ở đây khi chính luật nghiệp vụ đã đổi ở owner của nó.
+YC-26…YC-33 ở §9 là của mảng admin, do các bước `P2A-XX` chấm.
 **Đã chấm — 2026-09-30, `P2-13`** (pointer thêm ở `P2-14`): bảng chấm hai câu nằm ở
 [`../2-db/11-cong-chat-luong-pha-2.md`](../2-db/11-cong-chat-luong-pha-2.md) §5, và những kết cục
 chỉ ra chỗ lược đồ còn thiếu ở §6 của file ấy.
@@ -274,5 +277,39 @@ pha 5 thiết kế theo ba tiêu chí trên. Phép nghiệm thu đo đúng ba ti
 hồi được so với lúc mất, thời gian thực hiện so với giờ mở bán kế tiếp.
 T-109 phải hoàn tất trước khi đưa hệ thống vào bán thật. Pha 2 chỉ bảo đảm dữ liệu có thể biểu
 đạt đủ; phép chạy xuôi/lùi migration của P2-09 không chứng minh YC-21 đã đạt.
+
+## 9. Mảng QUẢN TRỊ (admin) — mục riêng có nhãn (P2A-01, 2026-09-30)
+
+Đây là yêu cầu cho **phần admin đã đủ luật** theo cột giữa bảng §2 của
+`master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`, đứng riêng theo `docs/decisions.md`
+**ADR-013**. Bốn luật đọc của §0 áp dụng **trừ luật 4**: các dòng này không có dòng đối ứng ở
+[`architecture.md`](architecture.md) §8; mảng admin ở §14 của file ấy. Hành vi nghiệp vụ đọc ở
+[`01-ranh-gioi.md`](../0-ba/admin/01-ranh-gioi.md) §1.6; lời chủ quán chỉ **trỏ**, không chép
+(`work/findings.md` **F-001**).
+
+| Vế đã đủ luật | Mã | Câu yêu cầu | Luật nguồn |
+|---|---|---|---|
+| **Danh mục hàng mua vào, thêm dần, một phần đã có đơn vị mua** | **YC-26** | **Ghi được:** mỗi thứ có tên, có đơn vị mua **khi chủ quán đã nói**, và thêm được một thứ mới bất kỳ lúc nào. **Không xảy ra được:** một thứ bị buộc phải có đơn vị mới tồn tại được — đơn vị chưa có lời thì **trống**, không tự gán —, một thứ đứng hai lần trong danh mục, hay danh mục mang ngưỡng nhắc sắp hết hoặc định lượng một suất. | `shop-facts.md` §8.4 · `I-025` · `I-026` |
+| **Mỗi ngày, mỗi thứ, hai con số mua vào và đã dùng, người nhập tay** | **YC-27** | **Ghi được:** với mỗi thứ và mỗi ngày, con số **mua vào** và con số **đã dùng** được giữ đúng như người gõ và đọc lại được sau nhiều ngày. **Không xảy ra được:** một con số sinh ra hay đổi vì một thao tác bán hàng, một thứ trong một ngày đọc ra hai đáp số cho cùng một con số, nhóm chỉ số công tơ điện và nước nhận cặp số này, hay một lần sửa con số không để lại bản trước. | `shop-facts.md` §8.4 · [`01-ranh-gioi.md`](../0-ba/admin/01-ranh-gioi.md) §1.6 · `I-025` · `I-026` · `I-018` |
+| **Thời gian nhập, và ai nhập** | **YC-28** | **Ghi được:** với mỗi con số, đọc ra được **ai** nhập, nó thuộc **ngày nào**, và **lúc** nó được gõ vào máy; hai mốc đọc riêng được, cùng hình hai mốc của `YC-08`. **Không xảy ra được:** một con số không có người nhập, hoặc hai mốc bị gộp làm một khiến *thời gian nhập* chỉ đọc được theo một nghĩa. | `shop-facts.md` §8.4 (lời `U-051`) · `I-025` |
+| **Tổng cộng dồn và hiệu số máy trừ hộ** | **YC-29** | **Ghi được:** với mỗi thứ, tổng đã nhập, tổng đã dùng và hiệu số **đọc ra được bằng một phép cộng** từ các con số ngày, cộng dồn từ ngày mua rồi lấy hai tổng trừ nhau. **Không xảy ra được:** một con số tổng đứng riêng ghi được mà không qua con số ngày, tổng đặt lại mỗi lần mua thêm hay tách theo lô, máy cất một kết luận *thiếu* hay *sắp hết* hoặc một lời nhắc, hay một hiệu số âm bị từ chối. | `shop-facts.md` §8.4 (lời `U-051` · `U-054` · `U-045`) · `I-026` |
+| **Nhân viên tự bấm chấm công** | **YC-30** | **Ghi được:** mỗi lần nhân viên tự bấm chấm công đọc lại được sau nhiều ngày *người này, ngày này, đã chấm lúc nào*; người là người của tập người đã có (`YC-15`), không phải danh sách thứ hai. **Không xảy ra được:** một lần chấm không gắn người nào hoặc không có mốc giờ, hay một lần chấm muộn sinh ra một khoản trừ tiền. | `shop-facts.md` §8.7 (`C31` · `C32`) · `I-027` |
+| **Tạm ứng do chủ quán duyệt** | **YC-31** | **Ghi được:** mỗi khoản tạm ứng đọc lại được sau nhiều ngày — của ai, bao nhiêu, lúc nào, ai duyệt và ai ghi. **Không xảy ra được:** một khoản tạm ứng không có người duyệt, một khoản bị sửa đè, hay một khoản tạm ứng nằm trong doanh thu hoặc tiền đã thu của một ngày. | `shop-facts.md` §8.7 (`C29`) · `I-028` · `I-018` |
+| **Thưởng lễ Tết** | **YC-32** | **Ghi được:** mỗi khoản thưởng lễ Tết đọc ra được của ai, bao nhiêu, lúc nào và ai ghi. **Không xảy ra được:** một khoản thưởng thiếu người nhận hay số tiền, một khoản bị sửa đè, hay một chỗ cất sẵn cho thưởng ngày đông khách vì vế ấy của `C28` chưa có lời. | `shop-facts.md` §8.7 (`C28`) · `I-028` · `I-018` |
+| **Khoản chi ngoài tiền hàng và lương, theo loại** | **YC-33** | **Ghi được:** mỗi khoản chi đọc ra được loại, số tiền, ngày và ai ghi; danh sách loại thêm được, và tổng chi một khoảng ngày **đọc ra được bằng một phép cộng**. **Không xảy ra được:** một khoản chi không mang loại nào, tiền hàng hay lương được ghi thành một khoản chi, hoặc một con số tổng chi đứng riêng. | `shop-facts.md` §8.10 (`E44` · `E45` và *Giới hạn lời đáp*) · `I-029` |
+
+Vế *trực quầy theo thời điểm* của kế hoạch §2 **không có dòng mới** vì nó đã là `YC-04` ·
+`YC-15` (§4 của file này) và đã dựng ở `P2-08`.
+
+### 9.1 Chỗ chưa chắc của mục này — đánh dấu, không suy hộ
+
+| Chỗ chưa chắc | Nó chạm dòng nào | Hôm nay phải làm gì |
+|---|---|---|
+| **[U-069](../99-unknowns.md)** — ai đánh dấu công, và một ô *có đi làm* là ngày hay buổi. Thế chỗ `U-065`, đã đóng 2026-09-30 bằng lời *một ô "có đi làm" do chủ quán tick* — lời va với `C31` | `YC-30` | `YC-30` đòi **có mốc giờ** và viết theo `C31`; chưa viết lại theo lời mới. Lát chấm công chờ câu này. |
+| **Khoản chi rời két** — [U-066](../99-unknowns.md) đã đóng 2026-09-30: điện, nước, wifi, xăng xe trả *từ két bán hàng* | `YC-33` | Chưa dòng nào đòi nối khoản chi vào đối soát két; viết vế ấy là task `T-125` ở `work/backlog.md`. |
+| **Tạm ứng và thưởng rời két** — [U-067](../99-unknowns.md) mở ở chính bước này và đã đóng 2026-09-30: *từ két bán hàng* | `YC-31` · `YC-32` | Chưa dòng nào nối tạm ứng hay thưởng vào phép trừ két của `I-021`; viết vế ấy là task `T-125`. |
+| **[U-068](../99-unknowns.md)** — chữ *thời gian nhập* của lời `U-051` là lúc hàng mua về hay lúc gõ số vào máy; mở 2026-09-30 ở chính bước này | `YC-28` | `YC-28` đòi ghi **cả hai** mốc nên không mốc nào phải chọn hôm nay; màn nào bày mốc nào là pha 4. Mốc thứ nhất là **ngày** của con số, không phải giờ: nếu lời đáp đòi *giờ* hàng về thì `YC-28` phải thêm một vế. |
+| **B12** của `work/admin-questions.md` §3 — đơn vị của các tên cũ và đơn vị ghi lượng đã dùng | `YC-26` · `YC-29` | Đơn vị chưa có lời thì để trống; máy cộng trừ đúng con số người gõ, không quy đổi. |
+| **C32** · **C30** của `work/admin-questions.md` §3 — muộn bao nhiêu phút thì ghi nhận là muộn; nghỉ có báo trước có bị trừ không | `YC-30` | `YC-30` chỉ đòi *chấm muộn không sinh khoản trừ*. Ngưỡng và ngày nghỉ chưa có lời: không dòng nào đòi, và không cất sẵn chỗ cho chúng. |
 
 [↑ đầu file](#top)
