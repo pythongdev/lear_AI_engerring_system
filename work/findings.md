@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 53 finding — 45 Fixed/Resolved/Closed, 8 Open (đếm lại ngày 2026-09-30, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 54 finding — 46 Fixed/Resolved/Closed, 8 Open (đếm lại ngày 2026-10-01, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -115,6 +115,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-051 | `db-check` đỏ theo giờ trong ngày — đơn test `I-024` để lại sau COMMIT lấy lúc tạo từ đồng hồ, `I-008/1` bắt nó ngoài giờ bán (T-121) | Fixed |
 | F-052 | Mệnh đề admin `I-025`…`I-029` có ở `quality/invariants.md` trước khi có câu đối chiếu, nên phép so mã của `scripts/reconcile.sh` đỏ và `db-check` sẽ đỏ ở lát admin đầu tiên (P2A-01) | Fixed |
 | F-053 | Bước khoá chặn của `db-check` giả định bước migration trên cùng luôn có dữ liệu mồi, nên lát admin đầu tiên (hai bảng còn rỗng) làm nó đỏ oan — chỗ hở thứ hai cùng họ F-052 mà lượt chữa F-052 không đo (P2A-02) | Fixed |
+| F-054 | Phép từ chối `qd21_so_am` của `db-check` đòi mọi bảng có cột tiền có một dòng ở ngày bán mẫu, nên hai bảng tiền đầu tiên của mảng admin (tạm ứng, thưởng) làm nó đỏ — chỗ hở thứ ba cùng họ F-052 · F-053 (P2A-04) | Fixed |
 
 ---
 
@@ -4388,3 +4389,43 @@ PASS force 20260928140000 — dấu dirty gỡ; đã xuôi lại 1 bước rỗn
 
 **Status:**
 Fixed (2026-09-30, P2A-02)
+
+### F-054 — Phép từ chối `qd21_so_am` đòi mọi bảng có cột tiền có một dòng ở ngày bán mẫu; hai bảng tiền đầu tiên của mảng admin làm nó đỏ
+
+**Problem:**
+`db/reconcile/proof/qd21_so_am.sql` (dựng ở `P2-11`) thử gán `-1` vào **mọi** cột `_vnd` của schema, ở một
+dòng thật của ngày bán mẫu `db/reconcile/proof/baseline.sql`, và coi một bảng **không có dòng nào** là lỗi.
+Đúng với tám bước của mảng bán hàng; hai bảng `staff_advance` · `holiday_bonus` của lát `P2A-04` là hai
+bảng tiền đầu tiên của mảng admin và rỗng ở ngày mẫu. Claude Code thấy 2026-10-01 khi tự chạy
+`./scripts/db-check.sh` sau khi Codex thi công (Codex không gọi được Docker): lát đúng, test `I-028` xanh,
+mà bộ kiểm đỏ ở dòng
+
+```text
+FAIL từ chối qd21_so_am — không in dòng NOTICE nào
+```
+
+**Impact:**
+Mọi lát admin có cột tiền (`P2A-04`, rồi `P2A-05` khoản chi) đỏ vì một lý do không thuộc về nó. Là chỗ hở
+**thứ ba** cùng họ **F-052** · **F-053**: bộ kiểm của mảng bán hàng ngầm giả định mọi bảng đã có dữ liệu.
+Lượt chữa F-053 chỉ sửa bước khoá chặn, không soát các bước khác cho cùng giả định.
+
+**Decision / Fix:**
+**Đã sửa 2026-10-01 (`P2A-04`, Claude Code).** Không nới phép chứng minh (bỏ qua bảng rỗng là để một cột
+tiền không bị thử mà không ai biết). Thay vào đó ngày bán mẫu có **một khoản tạm ứng và một khoản thưởng**,
+người ghi khai thẳng trên dòng để không đổi người thao tác của ngày mẫu — lần thử đầu đặt người thao tác
+bằng `set_config` và làm năm file lỗi cài kêu thừa câu `I-012/3`. Hai dòng ấy không nối vào két hay doanh
+thu (`I-028`, task `T-125`), nên 85 câu đối chiếu trên ngày mẫu vẫn rỗng. Đo ở clone chính sau khi sửa:
+
+```text
+PASS ngày bán mẫu đúng (db/reconcile/proof/baseline.sql) — 85 câu chạy, mọi tập rỗng
+PASS từ chối qd21_so_am — QD-21 nội dung: 25 cột tiền, cột nào nhận -1 cũng bị một ràng buộc nhắc chính nó (hay cột tự tính dựng từ nó) từ chối
+```
+
+Lát sau có cột tiền mới phải thêm một dòng của bảng ấy vào ngày mẫu trong cùng thay đổi — đã ghi thành một
+dòng bẫy ở entry `P2A-05` của `work/backlog_AD_DB.md`.
+
+**Related task:**
+`work/backlog_AD_DB.md` → **P2A-04** (lượt phát hiện và sửa) · `P2A-05` · `work/backlog_DB.md` → **P2-11**
+
+**Status:**
+Fixed (2026-10-01, P2A-04)

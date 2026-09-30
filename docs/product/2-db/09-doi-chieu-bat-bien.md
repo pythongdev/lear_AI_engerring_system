@@ -136,8 +136,8 @@ của mệnh đề ấy trong cùng thay đổi.
 |---|---|---|---|
 | `I-025` | chưa có lát | lát đã dựng ở `P2A-02` (2026-09-30), câu và lỗi cài chưa viết — chờ dữ liệu mồi `P2A-06` | `P2A-07` |
 | `I-026` | chưa có lát | lát đã dựng ở `P2A-02` (2026-09-30), câu và lỗi cài chưa viết — chờ dữ liệu mồi `P2A-06` | `P2A-07` |
-| `I-027` | chưa có lát | lát chấm công (`P2A-03`) chưa dựng, còn chờ lời cho **U-065** | `P2A-07` |
-| `I-028` | chưa có lát | lát khoản của người (`P2A-04`) chưa dựng | `P2A-07` |
+| `I-027` | chưa có lát | lát đã dựng ở `P2A-03` (2026-09-30), câu và lỗi cài chưa viết | `P2A-07` |
+| `I-028` | chưa có lát | lát đã dựng ở `P2A-04` (2026-09-30), câu và lỗi cài chưa viết | `P2A-07` |
 | `I-029` | chưa có lát | lát khoản chi (`P2A-05`) chưa dựng, còn chờ lời cho **U-066** | `P2A-07` |
 
 ---
@@ -150,7 +150,9 @@ của mệnh đề ấy trong cùng thay đổi.
 2. **Ngày bán mẫu đúng** — `db/reconcile/proof/baseline.sql`: phiên bàn QR + gọi thêm, nhóm ghép
    hai bàn ghi nợ rồi thu nợ sáng hôm sau, đơn giao trả trước đủ, đơn tới lấy có một lần hoàn chéo
    phương thức, đơn hotline huỷ và trả lại tiền trả trước, một thứ đã làm của đơn huỷ chuyển sang bàn
-   chờ đúng thứ ấy, đổi mã QR, tiền đầu két, trực quầy; mọi lần sửa khai lý do, nên mọi lần chuyển
+   chờ đúng thứ ấy, đổi mã QR, tiền đầu két, trực quầy, một khoản tạm ứng và một khoản thưởng lễ Tết
+   (thêm 2026-10-01, `P2A-04`: để phép số âm của `QD-21` có dòng mà thử — `work/findings.md` F-054;
+   không nối vào két trước task `T-125`); mọi lần sửa khai lý do, nên mọi lần chuyển
    trạng thái có vết. Qua mọi ràng buộc hoãn như lúc `COMMIT` ⇒ mọi câu **0 dòng**. Một câu xanh vì
    chưa có đơn nào không chứng minh nó không đỏ nhầm.
 3. **Mỗi file lỗi** — `db/reconcile/proof/<mã>.sql`, một savepoint trên ngày mẫu: cài **một** chỗ sai

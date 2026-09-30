@@ -17,11 +17,11 @@ lược đồ từ số không · chỗ chứng minh từng điều ấy chạy 
 
 ---
 
-## 1. Thứ tự dựng — chín bước
+## 1. Thứ tự dựng — mười một bước
 
 Công cụ chạy các bước theo **tên file**, tức theo mốc giờ ở đầu tên (`QC-05`). Thứ tự dưới đây là
 thứ tự ấy; cột *đứng trên* nói bước nào phải có trước, vì bước sau thêm cột, khoá ngoại hay ràng
-buộc vào bảng của nó. Dựng lại từ số không là chạy đúng chín bước này, từ trên xuống; lùi là đi
+buộc vào bảng của nó. Dựng lại từ số không là chạy đúng mười một bước này, từ trên xuống; lùi là đi
 ngược từ dưới lên, **từng bước một**.
 
 | # | File (`db/migrations/`, bỏ đuôi) | Lát | Dựng gì | Đứng trên |
@@ -35,6 +35,8 @@ ngược từ dưới lên, **từng bước một**.
 | 7 | `20260928130000_san_xuat_theo_me` | `P2-07` | năm bảng sản xuất, từ `menu_component_station` tới `station_job_transfer` | 1 · 2 |
 | 8 | `20260928140000_nguoi_va_vet` | `P2-08` | `person` · `counter_duty` · `paper_ledger` · `record_revision`; cột *ai bấm* trên bảng của bước 5 · 6 · 7; trigger vết trên **mọi** bảng | 5 · 6 · 7 |
 | 9 | `20260930100000_so_nguyen_lieu` | `P2A-02` | `supply_item` · `supply_day_entry` và trigger vết của chúng | 8 |
+| 10 | `20260930110000_cham_cong` | `P2A-03` | `attendance_day` và trigger vết; vai ghi tick và huỷ được một ô, không sửa người hay ngày, không xoá | 8 |
+| 11 | `20260930120000_khoan_cua_nguoi` | `P2A-04` | `staff_advance` · `holiday_bonus` và trigger vết; vai ghi chỉ sửa người nhận, số tiền và ngày | 8 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`

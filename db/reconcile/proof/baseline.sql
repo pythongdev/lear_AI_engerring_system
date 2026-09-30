@@ -309,6 +309,15 @@ BEGIN
                               transfer_before_vnd, take_cash_vnd, refund_id)
   VALUES (p, o, 1, due, 0, due, r);
   INSERT INTO bc VALUES ('don_hotline', o), ('tra_truoc_hotline', p), ('tra_lai_hotline', r);
+
+  -- Một khoản tạm ứng và một khoản thưởng lễ Tết (P2A-04): để phép từ chối qd21_so_am có dòng thật
+  -- mà thử cột tiền của hai bảng ấy. Chúng KHÔNG nối vào két hay doanh thu của ngày mẫu (I-028,
+  -- task T-125 ở work/backlog.md), nên không câu đối chiếu nào của ngày này đổi kết quả.
+  -- Người ghi khai thẳng trên dòng: không đổi người thao tác của ngày mẫu, các file lỗi cài đọc nó.
+  INSERT INTO staff_advance (worker_person_id, amount_vnd, paid_date, approver_person_id, person_id)
+  VALUES (giao, 200000, pg_temp.bc_ngay(), chu, chu);
+  INSERT INTO holiday_bonus (worker_person_id, amount_vnd, paid_date, person_id)
+  VALUES (giao, 100000, pg_temp.bc_ngay(), chu);
 END $$;
 
 -- Ngày mẫu phải qua MỌI ràng buộc hoãn, như lúc COMMIT.

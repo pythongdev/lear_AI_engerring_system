@@ -88,6 +88,8 @@ có câu trả lời mới từ người.
 | ADR-069 | **Mệnh đề và yêu cầu dữ liệu của mảng admin đi vào MỤC RIÊNG CÓ NHÃN trong ba owner sẵn có**, nối dãy mã `I-0xx` · `YC-XX`; câu *máy không làm* thành vế *không xảy ra được* có tên; chỗ chủ quán chưa nói thì mệnh đề khai là **không nói**, không lấp | Đã chốt 2026-09-30 (phiên đề xuất ở P2A-01; **chủ repo đồng ý** cùng ngày) | — | P2A-01 · P2A-02…P2A-08 |
 | ADR-070 | **Phép so mã của bộ đối chiếu nhận một danh sách *mệnh đề chưa có lát* có tên, tự hết hạn** — danh sách ở `09-doi-chieu-bat-bien.md` §2.1, `scripts/reconcile.sh` đọc lúc chạy; mã có dòng thì `NOTE`, mọi mã khác vẫn `FAIL` | Đã chốt 2026-09-30 (giao cho phiên, T-123) | — | P2A-02…P2A-07 |
 | ADR-071 | **Sổ nguyên liệu: một con số người gõ là MỘT dòng; tổng không có chỗ cất; con số là `numeric` đúng như gõ** — hai bảng (danh mục · con số ngày), mỗi con số mang người nhập, ngày và lúc gõ của riêng nó; tổng và hiệu số chỉ đọc ra bằng phép cộng; vết sửa dùng lại trigger sẵn có ở chế độ mềm; bước khoá chặn của `db-check` lùi qua các bước còn rỗng tới bước đầu tiên có dữ liệu | Đã chốt 2026-09-30 (giao cho phiên, P2A-02) | — | P2A-02 · P2A-04 · P2A-05 · P2A-06 · P2A-07 |
+| ADR-072 | **Chấm công: một ô *có đi làm* là MỘT dòng của một người một ngày; không có dòng là không có ô; ô tick nhầm được HUỶ tại chỗ, không xoá và không đổi** — một bảng, mỗi ô mang người được chấm, ngày, người tick và lúc tick; khoá duy nhất trên (người, ngày) của các ô còn hiệu lực; ô đã huỷ ở lại cùng người huỷ, lúc huỷ và ghi chú; vai ghi tick và huỷ được, không sửa người hay ngày, không xoá; *người tick là chủ quán* giữ ở tầng 3, database không xét | Đã chốt 2026-09-30 (giao cho phiên, P2A-03) | — | P2A-03 · P2A-07 · P2A-08 |
+| ADR-073 | **Tạm ứng và thưởng: HAI bảng, mỗi khoản một dòng; người duyệt là một dấu riêng chỉ tạm ứng có; vai ghi chỉ sửa được số tiền · người nhận · ngày; không cột nào nối sang két** — mỗi khoản mang người nhận, số tiền lớn hơn 0, ngày của khoản, người ghi và lúc ghi; *người duyệt là chủ quán* giữ ở tầng 3, database không xét; vết sửa ở chế độ mềm như mọi bảng (F-046); nối két chờ task `T-125` | Đã chốt 2026-09-30 (giao cho phiên, P2A-04) | — | P2A-04 · P2A-07 · P2A-08 · T-125 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -4724,3 +4726,186 @@ con số; tên duy nhất *đúng từng chữ*. Không câu nào chặn việc 
 `docs/product/2-db/12-luoc-do-nguyen-lieu.md` · `docs/product/2-db/01-quy-uoc-du-lieu.md` `QD-03` ·
 `docs/product/2-db/10-quy-uoc-code.md` `QC-04` · `docs/product/2-db/07-thu-tu-migration.md` §4 ·
 `scripts/db-check.sh` bước 5 · ADR-050 · ADR-065 · ADR-069 · `work/findings.md` F-046 · F-053.
+
+### ADR-072 — Chấm công: một ô *có đi làm* là MỘT dòng của một người một ngày; không có dòng là không có ô; ô tick nhầm được HUỶ tại chỗ, không xoá và không đổi
+
+**Trạng thái:** **Đã chốt** 2026-09-30, **giao cho phiên** (Claude Code, bước `P2A-03`; thi công:
+Codex) — không phải lời chủ repo hay chủ quán (`CLAUDE.md` §7.2); chủ repo đổi được. Lời giao ngày
+2026-09-30 là *"hãy đọc kĩ và hoàn thành. codex làm bạn kiểm tra"*: nó giao việc dựng lát, không nêu
+hình dạng nào. Nó thi hành `quality/invariants.md` `I-027` (viết lại cùng lượt theo lời chủ quán đóng
+`U-069`) và không lật quyết định nào.
+
+**Context:**
+Chủ quán chốt 2026-09-30: *chủ quán tick hết* ô *có đi làm*, *mỗi người mỗi ngày một ô*
+(`master_plan/shop-facts.md` §8.7, lời đóng `U-065` · `U-069`). Dòng yêu cầu `YC-30` và mệnh đề `I-027`
+đã viết lại theo lời ấy. Lát `P2A-03` phải chọn hình lược đồ thi hành chúng. Bốn chỗ không mệnh đề nào
+chọn hộ: một ô *chưa tick* có là một dòng không; *người tick là chủ quán* giữ ở đâu; một ô tick nhầm
+được gỡ bằng hình nào; và tên các cột cùng trỏ về người. *Sửa cùng ngày, trước khi commit:* bản đầu của
+quyết định này khoá hẳn đường gỡ vì chủ quán chưa nói; chủ quán rồi đóng **U-070** bằng lời *"làm thêm
+nút huỷ, và có phần note lại để sau đó có thể kiểm"*, và điểm 4 viết lại theo lời ấy.
+
+**Decision:**
+1. **Một bảng; một ô *có đi làm* là MỘT dòng** — của một người, một ngày — mang **người được chấm,
+   ngày của ô, người tick và lúc tick**. **Không có dòng là không có ô**: lát không cất ô *chưa tick*,
+   không có cột có/không. Khoá duy nhất trên (người được chấm, ngày) **của các ô chưa huỷ** là vế *một
+   người một ngày nhiều nhất một ô còn hiệu lực*. Tên bảng, cột, ràng buộc: file migration thắng (**ADR-053** luật 2); ý định ở
+   `docs/product/2-db/13-luoc-do-cham-cong.md`.
+2. **Người tick là cột *ai bấm* sẵn có của pha 2** — tên và mặc định như mọi bảng khác của `P2-08`
+   (lấy từ người thao tác của giao dịch); **người được chấm mang tên riêng** có tiền tố nói vai của nó.
+3. **Vế *người tick là chủ quán* KHÔNG do database xét** — đúng tầng 3 đã chốt ở
+   `docs/product/1-system-design/03-bao-ve-invariant.md` §5, cùng hình vế *người duyệt là chủ quán* của
+   `I-028`. Database giữ *có người tick, và người ấy là người của quán*; test in thẳng rằng một ô do
+   người không phải chủ quán tick **được nhận**; tập đối chiếu của vế ấy là việc của `P2A-07`.
+4. **Huỷ một ô là ba dấu ghi NGAY TRÊN dòng của ô: lúc huỷ, người huỷ, ghi chú.** Ô đã huỷ **ở lại** —
+   đúng chữ *để sau đó có thể kiểm* — và không còn tính vào khoá duy nhất, nên tick lại đúng người,
+   đúng ngày ấy được nhận. Lần huỷ phải có **người huỷ** (người của quán) và không đứng trước lúc tick;
+   **ghi chú để trống được**, có thì không được trắng, và chỉ đứng trên một ô đã huỷ. Vai ghi của hệ
+   thống **chèn** được một ô và **ghi được ba dấu huỷ**; **không** sửa được người hay ngày của ô và
+   **không** xoá được ô (`QD-50`). Trigger vết vẫn gắn lên bảng như mọi bảng (`QD-52`).
+5. **Ngày của ô là một ngày người khai, không phải ngày của đồng hồ**; lúc tick là mốc hệ thống ghi.
+   Lát không buộc hai thứ trùng nhau và không cấm ô cho một ngày đã qua.
+6. **Không cột nào khác.** Không giờ tới, giờ về, buổi, dấu đi muộn, ngưỡng, khoản trừ, đơn giá công —
+   test so danh sách cột **từng chữ**, nên thêm một cột là phải đổi mệnh đề trước.
+
+**Why:**
+- *Điểm 1.* Lời chủ quán là *tick vào ô có đi làm*: thứ được ghi là việc **có đi làm**. Một cột
+  có/không sinh ra trạng thái thứ ba không ai nói tới — *đã ghi là không đi làm* — và `I-027` nói thẳng
+  một ngày không có ô không phải một ngày nghỉ đã ghi (`C30` còn hở vế nghỉ có báo trước).
+- *Điểm 2.* Một tên cho một vai trò (`QD-03`): ở mọi bảng của `P2-08`, cột *ai bấm* là người thao tác.
+  Đặt người được chấm vào cột ấy thì cùng một tên có hai nghĩa tuỳ bảng.
+- *Điểm 3.* Pha 2 *thi hành* tầng pha 1 đã chốt, không nâng tầng hộ (**ADR-035**). Nâng lên database
+  cần một trigger đọc cờ chủ quán — một hàm nhắc tới ô chấm công, đúng thứ phép đọc lược đồ của `I-027`
+  dùng để chứng minh *không đường nào đi từ một ô tới thứ khác*.
+- *Điểm 4.* Lời chủ quán đòi lần huỷ *kiểm lại được*, nên ô huỷ không được biến mất, và người huỷ
+  cùng lúc huỷ phải đọc ra **không phụ thuộc** vết chung — vết ấy ở chế độ mềm (`work/findings.md`
+  **F-046**): sửa không khai lý do thì không để lại gì. Cùng hình lần lùi mẻ của `P2-07` · `P2-08`
+  (lúc lùi, ai lùi ngay trên dòng của mẻ). Đổi ngày hay người của một ô **là** huỷ ô này và tick ô
+  khác; để ngỏ quyền sửa hai cột ấy là mở một đường gỡ thứ hai không có ghi chú. Ghi chú không bắt
+  buộc vì lời chỉ nói *có phần note*: siết sau bằng một migration một dòng thì rẻ; nới sau một ràng
+  buộc đã chặn người dùng thì không.
+- *Điểm 5.* Cùng hình hai mốc của `YC-08` · `YC-28`. Một ràng buộc so ngày với đồng hồ không viết được
+  thành ràng buộc kiểm, và lời chủ quán không nói chủ quán tick lúc nào trong ngày hay có tick bù không.
+- *Điểm 6.* Rủi ro lớn nhất của kế hoạch lược đồ admin là *dựng rộng hơn lời* (kế hoạch §9).
+
+**Rejected alternatives:**
+- *Một dòng cho mỗi (người, ngày) với cột có/không.* Bác: lý do điểm 1; và nó đòi ai đó sinh sẵn dòng
+  cho mọi người mọi ngày.
+- *Xoá hẳn ô tick nhầm.* Bác: trái lời *để sau đó có thể kiểm* và trái `QD-50`.
+- *Một bảng riêng cho các lần huỷ.* Bác: một ô huỷ nhiều nhất một lần; ba cột trên dòng của ô đủ, và
+  cùng hình lần lùi mẻ đã có.
+- *Ghi chú huỷ bắt buộc.* Bác lúc này: lý do điểm 4; chờ **U-071**.
+- *Cấm tick lại sau khi huỷ.* Bác: huỷ nhầm một ô đúng thì không còn cách nào ghi lại ngày công ấy.
+- *Trigger từ chối người tick không phải chủ quán.* Bác: lý do điểm 3.
+- *Để nguyên quyền sửa như mọi bảng, dựa vào vết.* Bác: lý do điểm 4.
+- *Ràng buộc cấm ngày của ô ở tương lai.* Bác: lý do điểm 5; không có lời nào cho nó.
+- *Nối ô với khoảng trực quầy của `P2-08`.* Bác: `shop-facts.md` §8.8 nói thẳng hai việc khác nhau.
+
+**Suy ra, không phải lời chủ quán** (`CLAUDE.md` §7.2): không có dòng nghĩa là không có ô; ghi chú
+huỷ **để trống được** và người huỷ **không bị xét** có phải chủ quán không (cả hai chờ **U-071**); huỷ
+rồi **tick lại được**; một ô đã huỷ không có đường *bỏ huỷ* riêng — vai ghi sửa được ba dấu huỷ, và
+lần sửa ấy chỉ để lại vết ở chế độ mềm (**F-046**); ô cho ngày đã qua được nhận; chủ quán cũng là một
+người được chấm được (lát không cấm, không đòi). Không câu nào chặn việc dựng.
+
+**Applies to:** `db/migrations/20260930110000_cham_cong.up.sql` · `.down.sql` ·
+`db/tests/i027_attendance_one_box_per_worker_day.sql` · `docs/product/2-db/13-luoc-do-cham-cong.md` ·
+`docs/product/2-db/07-thu-tu-migration.md` §1 · `quality/invariants.md` `I-027` ·
+`docs/product/1-system-design/04-yeu-cau-du-lieu.md` `YC-30` · ADR-035 · ADR-053 · ADR-065 · ADR-069 ·
+`work/findings.md` F-046 · `docs/product/99-unknowns.md` U-071.
+
+### ADR-073 — Tạm ứng và thưởng: HAI bảng, mỗi khoản một dòng; người duyệt là một dấu riêng chỉ tạm ứng có; vai ghi chỉ sửa được số tiền · người nhận · ngày; không cột nào nối sang két
+
+**Trạng thái:** **Đã chốt** 2026-09-30, **giao cho phiên** (Claude Code, bước `P2A-04`; thi công:
+Codex) — không phải lời chủ repo hay chủ quán (`CLAUDE.md` §7.2); chủ repo đổi được. Lời giao ngày
+2026-09-30 là *"hãy đọc kĩ và làm, yêu cầu để codex làm bạn kiểm tra"*: nó giao việc dựng lát, không
+nêu hình dạng nào. Nó thi hành `quality/invariants.md` `I-028` đúng như đang viết và không lật quyết
+định nào.
+
+**Context:**
+`C28` · `C29` (`master_plan/shop-facts.md` §8.7): *có thưởng lễ Tết*; *có tạm ứng, chủ quán duyệt*.
+`I-028` và hai dòng yêu cầu `YC-31` · `YC-32` đã nói một khoản gồm gì: của ai, bao nhiêu, lúc nào, ai
+ghi, và — riêng tạm ứng — ai duyệt; nên bẫy *lời không đủ để biết một khoản tạm ứng gồm gì* của entry
+`P2A-04` không xảy ra, không câu `U-XXX` nào phải mở để dựng. Lát `P2A-04` phải chọn hình lược đồ thi
+hành chúng. Năm chỗ không mệnh đề nào chọn hộ: hai loại khoản ở chung một bảng hay hai; *lúc nào* là
+một ngày hay một mốc giờ; một khoản đã ghi thì vai ghi sửa được những gì; chế độ mềm của vết
+(`work/findings.md` **F-046**) có bị siết riêng cho hai bảng tiền này không; và lát đứng thế nào với
+két khi `U-067` đã có lời (*từ két bán hàng*) mà mệnh đề chưa viết lại (task `T-125` ở
+`work/backlog.md`).
+
+**Decision:**
+1. **Hai bảng, mỗi khoản là MỘT dòng** — một bảng cho tạm ứng, một bảng cho thưởng lễ Tết. Mỗi dòng
+   mang **người nhận, số tiền, ngày của khoản, người ghi và lúc ghi**; bảng tạm ứng mang thêm **người
+   duyệt**, bắt buộc. Bảng thưởng **không có** cột người duyệt và **không có** cột loại thưởng. Tên
+   bảng, cột, ràng buộc: file migration thắng (**ADR-053** luật 2); ý định ở
+   `docs/product/2-db/14-luoc-do-khoan-cua-nguoi.md`.
+2. **Người nhận mang cùng tên cột với người được chấm của lát chấm công** (**ADR-072** điểm 2) — cùng
+   một vai: *người làm mà dòng này nói về*. **Người ghi là cột *ai bấm* sẵn có**, mặc định lấy từ
+   người thao tác của giao dịch. **Người duyệt là cột thứ ba, phải khai, không có mặc định.**
+3. **Vế *người duyệt là chủ quán* KHÔNG do database xét** — đúng tầng 3 đã chốt ở
+   `docs/product/1-system-design/03-bao-ve-invariant.md` §5. Database giữ *có người duyệt, và người ấy
+   là người của quán*; test in thẳng rằng một khoản do người không phải chủ quán duyệt **được nhận**;
+   tập đối chiếu của vế ấy là việc của `P2A-07`.
+4. ***Lúc nào* là một NGÀY người khai, đứng riêng với lúc ghi** do hệ thống cấp — cùng hình hai mốc
+   của `YC-08` · `YC-28` và **ADR-072** điểm 5. Lát không buộc hai thứ trùng nhau, không cấm khoản cho
+   một ngày đã qua.
+5. **Số tiền là số nguyên đồng, lớn hơn 0** (`QD-20` · `QD-21`; vế *lớn hơn 0* là của `I-028`).
+   **Không có khoá duy nhất nào**: một người nhận được hai khoản trong cùng một ngày.
+6. **Vai ghi của hệ thống chèn được một khoản, sửa được đúng ba cột `I-028` nêu tên — số tiền, người
+   nhận, ngày — và không xoá được** (`QD-50`). Người duyệt, người ghi và lúc ghi của một khoản đã có
+   **không sửa được** bằng vai ấy.
+7. **Vết sửa dùng nguyên cơ chế của `P2-08`, ở chế độ mềm như mọi bảng** (`QD-52`, **F-046**): lát
+   không dựng một cơ chế nghiêm riêng cho hai bảng này. Test in thẳng *sửa không khai lý do: 0 vết*.
+8. **Không cột, khoá ngoại, hàm hay trigger nào nối một khoản sang hoá đơn, tiền đã thu, ngày bán
+   hay két.** Hai bảng chỉ trỏ về người. Nối két là việc của task `T-125`, làm bằng migration mới sau
+   khi `I-021` · `I-028` viết lại. Test so danh sách cột **từng chữ**, và so số dòng của mọi bảng
+   khác trước và sau khi ghi.
+
+**Why:**
+- *Điểm 1.* Hai loại khoản **khác hình**: tạm ứng có người duyệt, thưởng thì `I-028` nói thẳng *không
+  nói ai duyệt*. Gộp một bảng thì cột người duyệt phải để trống được, và vế *tạm ứng không tồn tại
+  được khi không có người duyệt* thành một ràng buộc kiểm đọc mã loại thay vì một dấu bắt buộc; cột
+  ấy cũng là **chỗ cất sẵn** cho câu *ai duyệt thưởng* chưa ai trả lời. Một cột loại thưởng là chỗ
+  cất sẵn cho *thưởng ngày đông khách*, đúng thứ `YC-32` cấm. Cái giá: phần lương sau này đọc hai
+  bảng thay vì một — một phép hợp, rẻ hơn gỡ một chỗ cất sẵn.
+- *Điểm 2.* Một tên cho một vai trò (`QD-03`). Người duyệt không lấy mặc định từ người thao tác vì
+  người gõ khoản vào máy và người cho phép khoản ấy là hai việc; mặc định sẽ làm vế *có người duyệt*
+  luôn đúng mà không ai khai gì.
+- *Điểm 3.* Pha 2 *thi hành* tầng pha 1 đã chốt, không nâng tầng hộ (**ADR-035**); cùng lý do
+  **ADR-072** điểm 3.
+- *Điểm 4.* Lời chủ quán không nói giờ đưa tiền. Một ngày là thứ người nhớ được khi ghi lại sau, và
+  là thứ phép trừ két của `T-125` cần để gắn khoản vào một ngày bán — nhưng lát **không** gọi nó là
+  ngày bán, vì gọi thế là nối két trước khi mệnh đề cho phép.
+- *Điểm 5.* Không lời nào giới hạn số lần ứng trong một ngày; một khoá duy nhất sẽ từ chối lần đưa
+  tiền thật thứ hai và đẩy người ghi tới chỗ cộng tay hai khoản làm một.
+- *Điểm 6.* `I-028` kể đúng ba thứ sửa được. Đổi người duyệt của một khoản đã ghi là viết lại *ai đã
+  cho phép* — không lời nào nói việc ấy có; để ngỏ thì chế độ mềm cho nó đi qua không vết. Khoá lại
+  rẻ: mở ra sau bằng một migration một dòng.
+- *Điểm 7.* Chủ repo đã chọn chế độ mềm 2026-09-28 giữa ba đường, và **F-046** đã ghi đường gỡ là
+  **một** migration cho mọi bảng. Siết riêng ở đây là lật lựa chọn ấy cho một góc, và sinh cơ chế vết
+  thứ hai. Hệ quả nói thẳng: vế *không sửa đè* của `I-028` hôm nay **thấp hơn** tầng pha 1 đã chốt,
+  cùng khoản nợ với F-046 — nặng hơn ở đây vì đây là tiền.
+- *Điểm 8.* `I-028` viết: *cho tới khi `T-125` xong, không khoản nào ở đây được nối vào phép trừ
+  két*. Một cột ngày bán hay mốc tính tiền dựng sẵn sẽ bị các phép cộng ngang lát đọc thấy trước khi
+  có luật.
+
+**Rejected alternatives:**
+- *Một bảng với cột loại và cột người duyệt để trống được.* Bác: lý do điểm 1.
+- *Bảng thưởng có cột tên dịp lễ.* Bác: không lời nào đòi; thêm được sau khi có lời.
+- *Trigger từ chối người duyệt không phải chủ quán.* Bác: lý do điểm 3.
+- *Trigger riêng từ chối lần sửa không khai lý do trên hai bảng này.* Bác: lý do điểm 7 — đáng làm,
+  nhưng là việc của đường gỡ F-046, cho mọi bảng một lượt.
+- *Không cấp quyền sửa cột nào của khoản đã ghi.* Bác: `I-028` nói thẳng sửa số tiền, người nhận hay ngày **là**
+  một lần cập nhật có vết — đường sửa có trong mệnh đề.
+- *Cột trạng thái đã trừ lương · đã trả lại.* Bác: khoản ấy trừ hay cộng vào lương thế nào chờ
+  `C26` · `C33`; trả lại tạm ứng là một luật chưa ai nói (`I-028` mục Why).
+- *Cột ngày bán hoặc khoá ngoại sang phiên két.* Bác: lý do điểm 8.
+
+**Suy ra, không phải lời chủ quán** (`CLAUDE.md` §7.2): *lúc nào* là một ngày chứ không phải một giờ;
+khoản cho ngày đã qua được nhận; một người nhận được nhiều khoản trong một ngày; người duyệt, người
+ghi, lúc ghi không sửa được bằng vai ghi; chủ quán cũng là một người nhận được (lát không cấm, không
+đòi); thưởng không mang tên dịp lễ. Không câu nào chặn việc dựng.
+
+**Applies to:** `db/migrations/20260930120000_khoan_cua_nguoi.up.sql` · `.down.sql` ·
+`db/tests/i028_advance_and_bonus_name_a_worker.sql` ·
+`docs/product/2-db/14-luoc-do-khoan-cua-nguoi.md` · `docs/product/2-db/07-thu-tu-migration.md` §1 ·
+`quality/invariants.md` `I-028` · `docs/product/1-system-design/04-yeu-cau-du-lieu.md` `YC-31` ·
+`YC-32` · ADR-035 · ADR-053 · ADR-065 · ADR-069 · ADR-072 · `work/findings.md` F-046 · task `T-125`.
