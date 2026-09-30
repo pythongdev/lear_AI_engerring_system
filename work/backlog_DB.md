@@ -1939,12 +1939,111 @@ nên cửa để lọt nhiều hơn.
 - **Đừng bỏ qua file quy ước code (`P2-12`).** Nó là file pha 2 dễ mang tên route và tên component
   nhất, vì nó nói về cấu trúc thư mục của cả dự án.
 
-**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+**Nhận việc** — điền 2026-09-30 (Claude Code), `P2-13` đã `Done` cùng ngày; mức **L1** (kế hoạch §6):
+- *Phạm vi:* `work/scope/P2-14.txt` — ô 9 của file cổng `docs/product/2-db/11-cong-chat-luong-pha-2.md`
+  §7, dòng trạng thái, entry này, và `work/findings.md` cho chỗ sai gặp được. Một pointer lệch là bug
+  của lượt này và được sửa ở file mang nó (scope mở thêm lúc ấy, nói rõ ở *Bàn giao*); một dòng nghiệp
+  vụ hay lược đồ sai thì **không** sửa — ghi `F-XXX`.
+- *Nghiệm thu:*
+  1. **Endpoint** — trên **cả mười một** file `docs/product/2-db/*.md`: mẫu **nguyên văn** của Gate 1d
+     cho vùng pha 2, **cộng** mẫu rộng của vùng pha 1 (động từ HTTP + chữ, không đòi dấu `/` — chỗ
+     `F-041` đã lọt) rồi đọc từng dòng nó trả về. Dán cặp *chưa lọc · đã lọc*.
+  2. **Route · file mã giao diện** — đuôi file mã, thuộc tính đường dẫn, đường dẫn URL trong backtick.
+     Dán cặp *chưa lọc · đã lọc*.
+  3. **Component** — thẻ trông như JSX và tên `PascalCase` trong backtick. Dán cặp *chưa lọc · đã lọc*.
+  4. **Bộ lọc được chứng minh là biết kêu** trên chính tập này: cài một dòng vi phạm mẫu cho từng lượt
+     vào một **bản sao** của file pha 2 ⇒ lượt ấy trả về đúng dòng cài (một output rỗng chưa chứng minh
+     gì — **F-017**).
+  5. **Mỗi dòng còn lại sau lọc được phân loại bằng tên** — SQL hợp lệ, trích dẫn, hay vi phạm; dòng
+     không chắc thuộc pha nào thì hỏi chủ repo, không tự xử.
+  6. **Pointer hai chiều** — mọi chỗ pha 1 trỏ sang pha 2 (đường dẫn `2-db`, chữ *pha 2*, mã `P2-XX`)
+     được mở ra và đích còn nói đúng cái nó từng nói; mọi chỗ pha 2 trỏ ngược về một mục `§` của pha 1
+     cũng vậy. Dán số dòng đã rà và danh sách chỗ lệch.
+  7. Ô 9 được ký **kèm bằng chứng**, hoặc để trống kèm mã của chỗ đang chặn. `git diff` của lượt này
+     không đổi một dòng nghiệp vụ, lược đồ hay migration nào.
+- *Kiểm chứng:* các lệnh `grep` dán nguyên văn kèm con số ở *Bàn giao* và ở ô 9; `./scripts/gate.sh`
+  xanh (Gate 1d là lớp thứ hai).
 
-**Bàn giao:** —
+**Bàn giao** — 2026-09-30 · làm: Claude Code · review độc lập: **chưa có** · nhánh `chatgpt_involve`, trên
+`5e5c931` · chưa commit.
+
+*Kết quả.* Không endpoint, route hay component nào nằm trong mười một file pha 2; ô 9 của
+[`11-cong-chat-luong-pha-2.md`](../docs/product/2-db/11-cong-chat-luong-pha-2.md) §7 ký ⇒ cổng pha 2
+**12/12**. Pointer pha 2 → pha 1 sạch; pointer pha 1 → pha 2 có bốn câu nói *"pha 2 chưa mở"* và hai hàng
+bàn giao thiếu đích — sửa bằng ghi chú có ngày ở ba file pha 1 (scope mở thêm cho đúng ba file ấy:
+`02-thoi-gian-ngay-ban.md` · `03-bao-ve-invariant.md` · `04-yeu-cau-du-lieu.md`; không lời nghiệp vụ nào
+đổi). Ba finding mới: **F-049** · **F-050** (mở) và **F-051** (đã sửa ở `T-121`, vì nó chặn cổng của
+chính lượt này).
+
+*Lệnh — chạy bằng `bash`, từ gốc repo.* Lần chạy đầu gõ thẳng trong `zsh` với danh sách file cất trong
+một biến: biến không được tách từ, mọi `grep` đọc **không file nào** và in rỗng — đúng hình **F-017**,
+và chỉ dòng *chưa lọc* tố cáo nó. Bản dưới dùng glob.
+
+```bash
+set -- docs/product/2-db/*.md
+echo "TẬP: $# file · $(cat "$@" | wc -l | tr -d ' ') dòng chưa lọc"
+# A1 — endpoint, mẫu NGUYÊN VĂN Gate 1d vùng pha 2
+grep -nEI '\b(GET|POST|PUT|PATCH|DELETE)[[:space:]]+(/[A-Za-z0-9_]|[A-Za-z0-9_:-]+/)|/api/|/v[0-9]+/' "$@"
+# A2 — endpoint, mẫu rộng vùng pha 1 (không đòi '/')
+grep -nE '\b(GET|POST|PUT|PATCH|DELETE)[[:space:]]+[A-Za-z/]' "$@"
+# A3 — từ vựng hợp đồng API
+grep -nEi 'endpoint|\bAPI\b|\bHTTPS?\b|\bREST\b|\bJSON\b|\brequest|\bresponse|status code|query param|\bheader\b|\bbody\b|\bpayload\b|\bwebhook' "$@"
+# B1 — route · file mã giao diện, mẫu NGUYÊN VĂN Gate 1d
+grep -nEI '\.(jsx|tsx|vue)\b|<[A-Z][A-Za-z]+[[:space:]]*/?>|path=["'"'"'][^"'"'"']*/' "$@"
+# B2 — đường dẫn route trong backtick
+grep -nE '`/[A-Za-z:\[][^` ]*`' "$@"
+# B3 — từ vựng pha 4
+grep -nEi '\broute|\brouter\b|\bURL\b|\bcomponent|\bpage\.|\blayout\b|\bhook\b|\bReact\b|Next\.js|\bprops?\b|\.(ts|js|css|html)\b|src/|app/|màn hình|\bmàn\b' "$@"
+# C1 — thẻ component, kể cả có thuộc tính và thẻ đóng
+grep -nE '</?[A-Z][A-Za-z0-9]*([[:space:]][^>]*)?/?>' "$@"
+# C2 — tên PascalCase trong backtick
+grep -nE '`[A-Z][a-z0-9]+([A-Z][a-z0-9]+)+`' "$@"
+# D — tên hàm kiểu mã ứng dụng · hàm có ngoặc trong backtick
+grep -nE '`[a-z]+[A-Z][A-Za-z0-9]*[`(]' "$@"
+grep -noE '`[A-Za-z_][A-Za-z0-9_.]*\([^`]*\)`' "$@"
+```
+
+*Nghiệm thu → bằng chứng* (đo 2026-09-30, trước khi ô 9 được viết vào file cổng):
+
+| Nghiệm thu | Chưa lọc | Đã lọc — và mỗi dòng là gì |
+|---|---|---|
+| 1. endpoint | 11 file · 2753 dòng | **A1: 0 · A2: 0.** A3: **8** — `07-thu-tu-migration.md:119` (chữ *header* của một script) · `10-quy-uoc-code.md:16` · `:17` (lời khai *không sở hữu*; chữ HTTPS thuộc việc triển khai) · `:298` · `:311` · `:318` · `:321` (tên file khai gói của `QC-08` · `QC-09`) · `11-cong-chat-luong-pha-2.md:266` (chính ô 9) |
+| 2. route · file mã giao diện | như trên | **B1: 0 · B2: 0.** B3: **11** — `01-quy-uoc-du-lieu.md:408` · `:549` và `10-quy-uoc-code.md:68` (chữ *màn* trong câu hậu quả) · `03-luoc-do-menu-gia.md:63` (giải thích một tên bảng của lát menu) · `09-doi-chieu-bat-bien.md:118` · `:182` · `:193` (câu giao việc cho pha sau, không nói cái gì hiện ở đâu) · `10-quy-uoc-code.md:16` · `:307` · `:309` (lời khai và stack của `QC-09`) · `11-…:266` |
+| 3. component | như trên | **C1: 0.** C2: **1** — `10-quy-uoc-code.md:216`, tên một tham số kết nối của database (`QC-06`). D: **0** và **5**, cả năm là hàm · kiểu của database |
+| 4. bộ lọc biết kêu | bản sao: 11 file · 2759 dòng (sáu dòng cài vào cuối một file lát) | A1 **3** · A2 **3** · B1 **2** · B2 **1** · C1 **2** · C2 **2** (một dòng cài + dòng `QC-06`) — mỗi lượt trả về đúng dòng cài (sáu dòng ở khối dưới bảng). Phép thử từng hình trên mẫu của Gate 1d: `work/findings.md` **F-049** |
+| 5. phân loại | — | cột phải của ba dòng trên. Không dòng nào phải hỏi chủ repo: `QC-08` (hai thư mục gốc cho backend · frontend) và `QC-09` (ngôn ngữ · khung) là *cấu trúc thư mục* và *stack*, thứ hàng *Quy ước code* của `CLAUDE.md` §2 giao cho file ấy |
+| 6. pointer hai chiều | pha 2 → pha 1: **59** dòng nhắc tên một file pha 1 · pha 1 → pha 2: **70** dòng khớp `2-db` · *pha 2* · `P2-XX` trên 8 file | pha 2 → pha 1: **21** cặp *file · mục*, **0** cặp trỏ vào mục không tồn tại; mười chỗ gán lời cụ thể cho một mục, mở ra đọc, đều còn đúng — `02-…` §3 hệ quả 1 · 2; `03-…` §0 luật 2, §1 hàng `I-013`, §2 hàng `I-004` tập thứ năm và hàng `I-016`, §4.3; `04-…` §0 luật 2, §7; `architecture.md` §3.3; `05-…` §3. Các cặp còn lại chỉ được chấm ở mức *mục có tồn tại và đúng chủ đề theo tiêu đề*. Pha 1 → pha 2: **4** câu lệch (`03-…` §0 luật 4 và ba chỗ nhắc lại nó · `04-…` đầu file) + **2** hàng thiếu đích (`02-…` §5 · `04-…` §7) — đã sửa; **1** lời giao không rơi vào dòng nào — **F-050** |
+| 7. ô 9 ký · không đổi nghiệp vụ | — | ô 9 tick kèm bảng chín lượt; `git diff --stat` của lượt: ba file pha 1 (ghi chú có ngày), file cổng, ba sổ `work/`. Không migration, không file lát, không `quality/invariants.md` |
+
+Sáu dòng cài của nghiệm thu 4 — chỉ sống trong bản sao, không vào file nào của repo:
+
+```text
+POST   staff/sessions/:id/close      body có { paid, debtor, debt_amount } khi thu thiếu
+GET    staff/debts?status=open       danh sách nợ chưa thu
+POST /orders tạo đơn
+Màn nợ sống ở `/staff/debts` và file `DebtList.tsx`
+Dùng <DebtTable rows={rows} /> và `OrderCard` cho từng dòng
+<Route path="/pos/debts" />
+```
+
+Phần mã pha 2 (`db/`, `compose.yaml`, `Makefile`, hai script — 170 file · 9482 dòng) qua cùng mẫu: năm dòng
+khớp lượt endpoint là lệnh lấy chẩn đoán lỗi của PL/pgSQL, một dòng khớp lượt thẻ là chú thích định dạng
+bản ghi trong `scripts/reconcile.sh`. Tám file pha 1 (2755 dòng sau ghi chú) qua A1 · A2 · B1 · B2 · C1 ·
+C2: **0** cả sáu.
+
+`./scripts/gate.sh` lúc 21:01: `PASS gate không cổng nào đỏ` — Gate 3 · 1b · 1c · 1d (*4 file .md đã
+soát*) · 1e · `db-check` · verify. Lần chạy lúc 20:52 **đỏ** ở `db-check` vì **F-051**, không vì lượt này.
+
+*Còn lại, mỗi thứ ở owner của nó:*
+- **`F-049`** — Gate 1d không bắt thẻ component có thuộc tính, thẻ đóng, tên component và route trong
+  backtick (`work/findings.md` F-049). Nên vá **trước** khi pha 3 · pha 4 bắt đầu sửa file pha 2.
+- **`F-050`** — vết của mỗi lần *quán đang mù* (và khoảng *tạm dừng nhận đơn*) chưa có dòng yêu cầu nào;
+  chủ repo chọn pha nào dựng (`work/findings.md` F-050).
+- **`F-048`** · **`F-046`** · **`F-047`** · **`F-044`** · **`U-063`** · **`U-058`** · **`U-064`** — còn mở
+  từ các bước trước, không đổi ở lượt này.
+- Câu *"được, sang pha 3"* — **chủ repo**. Mười hai ô nói cổng đạt tới đâu, không nói câu ấy.
+
+*Việc kế:* không còn bước nào của pha 2 trong kế hoạch §6.
 
 [↑ đầu file](#top)
 

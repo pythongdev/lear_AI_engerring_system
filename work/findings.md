@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 48 finding — 42 Fixed/Resolved/Closed, 6 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-30, lúc ghi F-048 ở P2-13; trước đó cùng ngày, lúc ghi F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 51 finding — 43 Fixed/Resolved/Closed, 8 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-30, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -110,6 +110,9 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-046 | Vết cập nhật ở chế độ mềm — lần sửa không khai lý do đi qua mà không vết (chủ repo chọn, P2-08) | Open |
 | F-047 | Thêm một dòng con vào bản ghi đã có (món vào đơn, thành phần vào suất, xấp mệnh giá vào tiền đầu két) không để lại vết ai thêm (P2-11) | Open |
 | F-048 | Số tiền mặt đếm được cuối ngày và dấu *ngày đã đối soát xong* không có chỗ cất, không bước nào nhận — đối soát ngưỡng 0đ không chạy được trên dữ liệu (P2-13) | Open |
+| F-049 | Gate 1d mù với thẻ component có thuộc tính, thẻ đóng, tên component và route viết trong backtick — hai ca hồi quy chỉ thử hình thẻ ít gặp nhất (P2-14) | Open |
+| F-050 | Pha 1 đòi vết của mỗi lần *quán đang mù* và giao dòng yêu cầu cho "P1-07 hoặc pha 2"; không bước nào viết dòng `YC`, nên pha 2 không chấm nó (P2-14) | Open |
+| F-051 | `db-check` đỏ theo giờ trong ngày — đơn test `I-024` để lại sau COMMIT lấy lúc tạo từ đồng hồ, `I-008/1` bắt nó ngoài giờ bán (T-121) | Fixed |
 
 ---
 
@@ -4132,3 +4135,155 @@ viết trước khi có endpoint; (c) lane admin mảng tài chính. Chọn xong
 
 **Status:**
 Open
+
+### F-049 — Gate 1d mù với thẻ component có thuộc tính, thẻ đóng, tên component và đường dẫn route viết trong backtick
+
+**Problem:**
+Ngày 2026-09-30 bước **P2-14** (Claude Code) rà ranh giới pha trên cả mười một file
+`docs/product/2-db/*.md`. Để biết bộ lọc có đọc được gì không (**F-017**), lượt rà cài sáu dòng vi
+phạm mẫu vào một **bản sao** của vùng pha 2 rồi chạy cả mẫu **nguyên văn** của
+`scripts/check-phase-boundary.sh` lẫn mẫu rộng hơn của lượt rà. Mẫu giao diện của cổng (`PAT_FE`) là
+
+```bash
+PAT_FE='\.(jsx|tsx|vue)\b|<[A-Z][A-Za-z]+[[:space:]]*/?>|path=["'"'"'][^"'"'"']*/'
+```
+
+— nhánh thẻ của nó chỉ nhận một thẻ **không có thuộc tính**. Đo từng dòng, cùng ngày:
+
+```text
+KHÔNG BẮT: <DebtTable rows={rows} />
+BẮT     : <DebtTable />
+BẮT     : <DebtTable>
+KHÔNG BẮT: </DebtTable>
+KHÔNG BẮT: <OrderCard order={o}>
+KHÔNG BẮT: dùng `OrderCard` cho từng dòng
+KHÔNG BẮT: màn nợ ở `/staff/debts`
+BẮT     : file `DebtList.tsx`
+```
+
+Hai ca hồi quy hiện có của cổng (`scripts/check-phase-boundary.test.sh`) đều dùng đúng hình thẻ tự
+đóng không thuộc tính (`<OrderCard />` · `<DebtList />`), nên chúng xanh mà không chạm tới bốn hình
+còn lại. Một component viết ra trong tài liệu gần như luôn mang thuộc tính; hình cổng bắt được là
+hình **ít gặp nhất**.
+
+**Impact:**
+Cùng hình với **F-041** (mẫu endpoint đòi dấu `/` ngay sau động từ): một script đọc văn bản bằng phép
+lọc hẹp hơn thứ nó phải hiểu, rồi in *"không câu nào đặt tên thứ pha sau sở hữu"*. Hôm nay **không có
+gì lọt**: lượt rà `P2-14` chạy mẫu rộng trên cả mười một file pha 2 và tám file pha 1 không trả về
+dòng vi phạm nào (`work/backlog_DB.md` → P2-14 *Bàn giao*). Cái mất là lớp bảo vệ **từ nay về sau**:
+ô 9 của cổng pha 2 dựa vào *`P2-14` cộng Gate 1d*, `P2-14` chỉ chạy một lần, và pha 3 · pha 4 sẽ sửa
+file pha 2 (mỗi chỗ cất mới là một migration và một dòng ở file lát) đúng lúc tên component và route
+bắt đầu tồn tại để mà viết nhầm vào.
+
+**Decision / Fix:**
+Chưa sửa — `P2-14` là phép đo, không sửa `scripts/` (entry của nó: *đừng sửa chỗ sai ngay trong lượt
+rà*). Đường ra, theo đúng khuôn đã dùng cho **F-041**: nới nhánh thẻ của `PAT_FE` cho nhận thuộc tính
+và thẻ đóng, thêm **ca hồi quy** lấy các dòng `KHÔNG BẮT` ở trên làm đầu vào và đòi exit 1, kèm một ca
+đòi exit 0 trên văn xuôi pha 2 thường (không có ca ấy thì lần nới sau khép mẫu lại cho êm). Hai hình
+*tên trong backtick* (`PascalCase` · đường dẫn mở đầu bằng `/`) dễ kêu oan hơn — nới hay để cho mắt
+người là lựa chọn của người sửa; lượt đo thấy hôm nay mẫu `PascalCase` kêu đúng một dòng ở vùng pha
+2, và dòng ấy là tên một tham số kết nối của database, không phải component.
+
+**Related task:**
+`work/backlog_DB.md` → **P2-14** (lượt phát hiện) · **F-041** · **F-017** · **ADR-039** (Gate 1d) ·
+`P2-02` (vùng pha 2 của cổng)
+
+**Status:**
+Open
+
+### F-050 — Pha 1 đòi vết của mỗi lần *quán đang mù* và giao dòng yêu cầu cho "P1-07 hoặc pha 2"; không bước nào viết dòng ấy, nên pha 2 không chấm nó
+
+**Problem:**
+`docs/product/1-system-design/05-realtime-va-du-phong.md` §3 luật 4 viết: *mỗi lần hệ thống tự chuyển
+sang "quán đang mù" phải đọc lại được sau nhiều ngày — bắt đầu lúc nào, kết thúc lúc nào*, và tự gọi
+câu ấy là một **yêu cầu hình dạng dữ liệu**. Bước viết nó cố ý không thêm dòng vào file yêu cầu; §4
+của nó ghi chỗ trống có tên và giao cho *"**P1-07** (thêm một cặp dòng), hoặc **pha 2** khi nó đọc §3
+luật 4 ở đây"*, và bảng *bước sau đọc gì* có một hàng **Pha 2** nhắc lại đúng câu ấy.
+
+Bước **P2-14** (2026-09-30, Claude Code) rà pointer pha 1 → pha 2 và thấy lời giao ấy **không rơi vào
+dòng nào**:
+
+- `docs/product/1-system-design/04-yeu-cau-du-lieu.md` không có dòng `YC` nào cho khoảng *quán đang
+  mù*, cũng không cho khoảng *tạm dừng nhận đơn* (`grep -nE 'đang mù|tạm dừng|dừng nhận'` trên file ấy
+  ⇒ rỗng; cùng lệnh với `mất kết nối` ⇒ một dòng, ở §8, nói về sổ giấy).
+- Vì thế lượt chấm ngược của `P2-13` — đọc danh sách mã `YC` từ chính file ấy — **không có gì để
+  chấm**, và ô 4 của cổng pha 2 tick mà không chạm tới yêu cầu này.
+- Pha 2 nhắc tới nó đúng ở một chỗ: `docs/product/2-db/09-doi-chieu-bat-bien.md` §2, hai hàng `I-008`
+  tập 2 · tập 3 ghi *chưa có câu* vì lược đồ **không cất** hai khoảng ấy, cột *ai nợ* ghi **pha 3**.
+  Đó là lý do một tập đối chiếu chưa có câu truy vấn, không phải câu trả lời cho lời giao của pha 1:
+  không file lát nào ghi hai khoảng ấy ở mục *chỗ trống có tên*, và chữ *pha 3* là phiên viết chọn.
+
+**Impact:**
+Không chạm phép cộng tiền, nhưng chạm đúng thứ pha 1 viết luật ấy để giữ: *một lần web ngừng nhận đơn
+mười lăm phút mà không để lại gì là một khoản doanh thu không ai từng biết là đã mất*. Ba tập đối
+chiếu của `I-008` (tập 2 · 3 · 5) không viết được thành câu cho tới khi hai khoảng ấy có chỗ cất. Và
+pha 3 mở ra sẽ đọc hai mươi bốn mã `YC` như danh sách **đủ** của thứ dữ liệu phải giữ — yêu cầu này
+không có mã, nên không phép chấm nào nhắc nó lần nữa. Cùng họ với **F-038** · **F-042** · **F-043**:
+một luật đã chốt mà không có dòng để bước sau chấm.
+
+**Decision / Fix:**
+Chưa sửa — `P2-14` là lượt rà, không thêm yêu cầu hay lược đồ. Việc của **chủ repo**, hai lựa chọn
+khác nhau về nơi nhận: (a) thêm cặp dòng yêu cầu ở pha 1 (`architecture.md` §8 và
+`04-yeu-cau-du-lieu.md` §1, đúng luật một-đối-một của P1-07) rồi một migration pha 2 dựng chỗ cất hai
+khoảng, kèm câu đối chiếu cho ba tập `I-008`; (b) vẫn thêm cặp dòng yêu cầu, nhưng giao chỗ cất cho
+pha 3 cùng cửa tạo lượt gọi — khi ấy hàng **Pha 2** ở `05-realtime-va-du-phong.md` §5 đổi người nhận
+cho khớp. Cả hai đường đều cần dòng yêu cầu có mã; khác nhau ở pha nào dựng.
+
+**Related task:**
+`work/backlog_DB.md` → **P2-14** (lượt phát hiện) · `P1-08` (bước viết luật) · `P1-07` · `P2-11`
+(hai hàng `I-008` ở §2 của file đối chiếu) · `P2-13` (lượt chấm `YC`)
+
+**Status:**
+Open
+
+### F-051 — `db-check` đỏ theo GIỜ TRONG NGÀY: đơn mà test `I-024` để lại sau COMMIT lấy lúc tạo từ đồng hồ, và câu `I-008/1` bắt nó mỗi khi bộ kiểm chạy ngoài giờ bán
+
+**Problem:**
+Ngày 2026-09-30 lúc 20:52 (giờ quán), lượt `P2-14` — chỉ sửa file `.md` — chạy `./scripts/gate.sh` và
+Gate 1 đỏ: *FAIL I-008/1 — 1 dòng · đơn có thời điểm tạo nằm ngoài giờ bán*, kèm 85 dòng *kêu* thừa
+đúng mã ấy ở phần chứng minh. Dòng bị bắt: một đơn `pickup` tạo lúc 20:53:11.
+
+Cơ chế, đọc từ code: `db/tests/i024_one_submission_one_order.sql` diễn kịch bản *hai lần gửi cùng lúc*
+bằng hai kết nối thật, và kết nối đầu **COMMIT** — đầu file ấy nói thẳng đơn này *còn lại sau ROLLBACK
+của file*. Đơn không khai lúc tạo nên lấy mặc định là đồng hồ database. Từ `P2-11`, bước 6 của
+`scripts/db-check.sh` chạy bộ đối chiếu trên **chính database ấy**, và câu `I-008/1` đọc mọi đơn có
+giờ tạo ngoài giờ bán của `master_plan/shop-facts.md` §1. Bộ kiểm chạy trong giờ bán ⇒ xanh; chạy
+ngoài giờ bán ⇒ đỏ, với cùng một cây mã.
+
+Chứng minh không phải do lượt đang chạy, cùng ngày: cất tạm mọi thay đổi (`git stash`), chạy
+`./scripts/db-check.sh` trên `HEAD` (`5e5c931`) lúc 20:55 ⇒ **exit 1**, 87 dòng `FAIL`, cùng dòng
+`I-008/1`. Không phiên nào khác đang chạy bộ kiểm lúc ấy (không phải **F-045**).
+
+**Impact:**
+Cổng duy nhất chứng minh lược đồ đúng trả lời theo đồng hồ treo tường. Ai làm việc sau 11:00 — tức
+gần như mọi phiên — nhận một cổng đỏ không liên quan tới thay đổi của mình, và có hai cách phản ứng
+đều hỏng: bỏ qua dòng đỏ (rồi bỏ qua luôn dòng đỏ thật kế tiếp), hoặc *sửa* câu `I-008/1` cho im —
+tức nới đúng phép đối chiếu của một mệnh đề. Lượt `P2-13` ghi `EXIT=0` cho lần chạy của nó và commit
+lúc 20:32; lượt này không dựng lại được điều kiện của lần chạy ấy, chỉ đo được rằng `HEAD` đỏ lúc 20:55.
+
+**Decision / Fix:**
+2026-09-30 (**T-121**, Claude Code): đơn để lại của kịch bản song song nay khai lúc tạo **tường minh**
+— 08:00 hôm ấy theo múi giờ kết nối (`QD-32`), một giờ nằm trong giờ bán, đúng cách
+`db/reconcile/proof/baseline.sql` đặt mốc cho ngày bán mẫu. Chỉ sửa **dữ kiện của test**: không phép
+chấm `I-024` nào đổi, câu `I-008/1`, migration và `scripts/db-check.sh` không đụng tới. Giờ bán ở
+owner đổi mà 08:00 rơi ra ngoài thì `I-008/1` kêu đúng dòng này — cái sai lộ ra, không bị giấu.
+Đường đã cân mà không chọn: cho bộ kiểm xoá đơn để lại trước bước 6 (giấu một dòng đã COMMIT thay vì
+làm nó hợp lệ), và nới câu `I-008/1` (nới phép đối chiếu của pha 1).
+
+Còn lại, chưa làm: bộ kiểm **không** có phép thử nào chạy nó ở một giờ giả ngoài giờ bán, nên một
+fixture mới lấy giờ từ đồng hồ sẽ lặp lại đúng chuyện này và chỉ lộ ra vào buổi chiều. Chưa dựng —
+`CLAUDE.md` §3.8: mới tốn một lần.
+
+**Verification:**
+`./scripts/db-check.sh` lúc **20:59** giờ quán, 2026-09-30, sau khi sửa ⇒ **exit 0**, 0 dòng `FAIL`:
+`PASS db/tests/i024_one_submission_one_order.sql` (đủ các dòng *bị từ chối* và *song song: dấu mang 1
+đơn* như trước) · `reconcile: PASS — 63 câu I-0xx · 22 câu QD, mọi tập rỗng` · `PASS ngày bán mẫu đúng
+— 85 câu chạy, mọi tập rỗng` · `PASS kêu i024_1` · `i024_2` · `i024_3`. Cùng lệnh trên `HEAD` lúc 20:55
+⇒ exit 1 (ở trên).
+
+**Related task:**
+`work/backlog.md` → **T-121** (sửa) · `work/backlog_DB.md` → **P2-14** (lượt phát hiện) · `P2-11` (bước
+đưa bộ đối chiếu vào cùng database với các test) · `T-116` (test `I-024`) · **F-045** (họ *cổng đỏ giả*)
+
+**Status:**
+Fixed

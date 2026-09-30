@@ -25,6 +25,11 @@
 > **pha 2**. Chỗ duy nhất trong repo hôm nay đã vẽ một hình dạng cụ thể là
 > [`architecture.md`](architecture.md) §12.3, và chính nó tự khai là **đề xuất gửi sang pha 2**,
 > không phải lược đồ đã chốt — mục này **trỏ** sang đó, **không chép về**.
+>
+> **Cập nhật 2026-09-30 (`P2-14`, Claude Code):** câu *"chỗ duy nhất trong repo hôm nay"* là **ảnh
+> chụp lúc viết**. Hình dạng thật nay ở [`../2-db/`](../2-db/02-luoc-do-ban-hang.md) — năm file lát
+> `02`…`06` và file migration chúng trỏ tới (**ADR-053** luật 2); §12.3 đã được
+> [`../2-db/04-luoc-do-duong-tien.md`](../2-db/04-luoc-do-duong-tien.md) thay thế (2026-09-28, `P2-06`).
 
 ---
 
@@ -227,6 +232,9 @@ dùng thật.
 với YC-01…YC-20 và YC-22…YC-25, mỗi dòng hỏi **hai** câu — *đọc ra được không* và *dựng được trạng thái sai không*. Dòng nào không
 trả lời được là một chỗ lược đồ còn thiếu, **không phải** một dòng viết chưa rõ; sửa lược đồ, và
 chỉ quay lại sửa dòng ở đây khi chính luật nghiệp vụ đã đổi ở owner của nó.
+**Đã chấm — 2026-09-30, `P2-13`** (pointer thêm ở `P2-14`): bảng chấm hai câu nằm ở
+[`../2-db/11-cong-chat-luong-pha-2.md`](../2-db/11-cong-chat-luong-pha-2.md) §5, và những kết cục
+chỉ ra chỗ lược đồ còn thiếu ở §6 của file ấy.
 
 **Gặp chỗ thiếu tiếp theo thì thêm vào [`architecture.md`](architecture.md) §8 trước, rồi thêm một
 dòng ở §1 đây trong cùng thay đổi** — hai danh sách ấy phải khớp một-đối-một, và đó là phép chấm

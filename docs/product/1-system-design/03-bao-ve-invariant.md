@@ -65,6 +65,14 @@ Bốn luật đọc, ba luật đầu là của kế hoạch §7, luật thứ t
    được đọc thành *"đã có ràng buộc"*. Chỗ duy nhất trong repo hôm nay **trông** như đã có —
    ba câu *"để database giữ, không để mã ứng dụng giữ"* ở [`architecture.md`](architecture.md)
    §12.3 — **tự khai là đề xuất gửi sang pha 2**, và mục này đọc nó đúng như thế.
+   **Cập nhật 2026-09-30 (`P2-14`, Claude Code):** câu *"hôm nay chưa có lược đồ nào"* ở trên — và
+   ba chỗ nhắc lại nó trong file này (ghi chú `I-003` ở §2, hàng `I-009` và hàng `I-018` ở §3: *"pha
+   2 chưa mở"*) — là **ảnh chụp lúc viết**. Pha 2 mở 2026-09-26 (`P2-03`) và năm lát lược đồ đã
+   dựng: cái đang giữ từng vế đọc ở bảng *Mệnh đề → cái giữ nó trong lược đồ → bằng chứng* (§2 của
+   mỗi file lát `02`…`06` trong [`../2-db/`](../2-db/02-luoc-do-ban-hang.md)); tên, kiểu và ràng buộc
+   ở file migration (**ADR-053** luật 2). Luật này **không đổi**: cột giữa ở đây vẫn là **tầng pha 1
+   chốt**, không phải biên nhận — vế nào đang đứng thấp hơn tầng của nó thì file lát nói ra kèm mã
+   (hôm nay: `I-018`, `work/findings.md` **F-046**).
 5. **Đơn vị của bảng là VẾ, không phải MÃ.** Mỗi vế trong lời của một mệnh đề ở
    `quality/invariants.md` phải có **một tầng** ở cột giữa **và** **một tập** ở cột phải sẽ có
    phần tử nếu đúng vế ấy hỏng — hoặc một câu nói thẳng vì sao chưa có tập (như ca *chưa có luật*

@@ -71,7 +71,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] P2-14 Rà chéo ranh giới pha và pointer — bộ lọc endpoint · route · component trên **mọi** file pha 2, in lệnh chưa lọc cạnh lệnh đã lọc; ký ô 9 ở `docs/product/2-db/11-cong-chat-luong-pha-2.md` §7; `P2-13` đã `Done` 2026-09-30 · [chi tiết](backlog_DB.md#p2-14)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
 [↑ đầu file](#top)
@@ -80,9 +79,12 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## In Progress
 
 
+
 <a id="done"></a>
 ## Done
 
+- [x] P2-14 Rà chéo ranh giới pha và pointer — chín lượt lọc endpoint · route · component trên mười một file pha 2 (2753 dòng), mỗi lượt một cặp chưa lọc · đã lọc, bộ lọc chứng minh biết kêu trên bản sao có cài lỗi; ô 9 ký ⇒ cổng pha 2 **12/12**; pointer hai chiều rà xong, bốn câu *"pha 2 chưa mở"* của pha 1 nhận ghi chú có ngày; chỗ hở mới `F-049` (Gate 1d hẹp) · `F-050` (vết *quán đang mù* chưa có dòng yêu cầu). **Ký chuyển pha 3 là quyền chủ repo** — 2026-09-30 · [chi tiết](backlog_DB.md#p2-14)
+- [x] T-121 `db-check` hết đỏ theo giờ trong ngày — đơn mà test `I-024` để lại sau COMMIT nay khai lúc tạo trong giờ bán thay vì lấy đồng hồ; không phép chấm nào đổi. `./scripts/db-check.sh` lúc 20:59 ⇒ exit 0, cùng lệnh trên `HEAD` lúc 20:55 ⇒ exit 1 (`I-008/1`); `work/findings.md` **F-051** *Fixed*. L1, làm trước vì chặn `P2-14` — 2026-09-30
 - [x] P2-13 Cổng chất lượng pha 2 — ba scenario diễn qua lược đồ (mỗi bước một giao dịch COMMIT, đọc lại ở kết nối khác, đối chiếu rỗng trên ngày ấy), 24 dòng `YC` chấm hai câu, 11/12 ô cổng ký kèm bằng chứng, ô 9 chờ `P2-14`; chỗ hở mới `F-048` — 2026-09-30 · [chi tiết](backlog_DB.md#p2-13)
 - [x] P2-11 Bộ query đối chiếu bất biến — 63 câu `I-0xx/n` + 22 câu `QD`, một lệnh `scripts/reconcile.sh`; ngày mẫu đúng ⇒ 0 dòng, 85 lỗi cài kêu đúng tập khai; 29 tập chưa có câu có tên — 2026-09-30 · [chi tiết](backlog_DB.md#p2-11)
 - [x] P2-09 Thứ tự migration và đường lùi — mỗi bước một file lùi có khoá chặn, `db-check` xuôi · lùi · xuôi lại từng bước; tên bảng `.md` ↔ migration là Gate 1e — 2026-09-30 · [chi tiết](backlog_DB.md#p2-09)

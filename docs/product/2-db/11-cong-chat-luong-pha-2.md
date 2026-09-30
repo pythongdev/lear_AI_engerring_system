@@ -214,8 +214,8 @@ của pha 3 cần lời chủ quán trước khi viết.
 
 ## 7. Cổng chất lượng pha 2 — mười hai ô
 
-Mười hai ô dưới đây là **lời** của kế hoạch pha 2 §9; chỗ ký là đây. **Hôm nay 11/12 — mười một ô tick
-KÈM bằng chứng, một ô để trống kèm mã.** Đủ các ô **không** phải câu *"được, sang pha 3"*: ký chuyển
+Mười hai ô dưới đây là **lời** của kế hoạch pha 2 §9; chỗ ký là đây. **Hôm nay 12/12 — mười hai ô tick
+KÈM bằng chứng** (2026-09-30: mười một ô ở `P2-13`, ô 9 ở `P2-14`). Đủ các ô **không** phải câu *"được, sang pha 3"*: ký chuyển
 pha là quyền **chủ repo** (kế hoạch §9), và bốn ô tick dưới đây mang một chỗ hở chạm tiền có mã.
 
 - [x] **1. Mọi mã `I-0xx` của `quality/invariants.md` có câu truy vấn đối chiếu** — *PASS mã I-0xx —
@@ -263,9 +263,55 @@ pha là quyền **chủ repo** (kế hoạch §9), và bốn ô tick dưới đ�
   riêng, **ADR-059**). `grep` các cột mốc ở `db/migrations/`: mặc định `now()` · `CURRENT_DATE` là đồng
   hồ **database** trên kết nối đặt múi giờ của quán (`QD-32`, *PASS* trong bộ đối chiếu); không cột mốc
   tiền nào nhận giờ từ phía khách. `YC-18` · `YC-19` · `YC-20` ở §5.
-- [ ] **9. Không endpoint · route · component nào lọt vào file pha 2** — **để trống: `P2-14`.** Gate 1d
-  (`P2-02`) chạy mỗi lượt và xanh, nhưng ô này đòi `P2-14` **cộng** Gate 1d, với lệnh chưa lọc cạnh lệnh
-  đã lọc trên **mọi** file pha 2 (**F-017**). `P2-14` là bước kế và cần `P2-13` xong trước.
+- [x] **9. Không endpoint · route · component nào lọt vào file pha 2** — ký 2026-09-30, `P2-14` (Claude
+  Code). Đo trên **cả mười một** file `docs/product/2-db/*.md`, **2753 dòng chưa lọc**, mỗi lượt một
+  cặp *chưa lọc · đã lọc* (**F-017**); lệnh nguyên văn và từng dòng trả về ở `work/backlog_DB.md` →
+  P2-14 *Bàn giao* — không dán ở đây, vì chính file này nằm trong tập bị đo.
+
+  | Lượt | Bắt cái gì | Chưa lọc | Đã lọc |
+  |---|---|--:|--:|
+  | **A1** | endpoint — mẫu **nguyên văn** của Gate 1d cho vùng pha 2 | 2753 | **0** |
+  | **A2** | endpoint — mẫu rộng của vùng pha 1: động từ + chữ, **không** đòi dấu gạch chéo (chỗ `F-041` đã lọt) | 2753 | **0** |
+  | **A3** | từ vựng của hợp đồng API | 2753 | **8** — không dòng nào là hợp đồng: lời khai *không sở hữu* của `10-quy-uoc-code.md`, tên file khai gói của `QC-09`, chữ *header* của một script, và chính ô này |
+  | **B1** | route · file mã giao diện — mẫu **nguyên văn** của Gate 1d | 2753 | **0** |
+  | **B2** | đường dẫn route viết trong backtick | 2753 | **0** |
+  | **B3** | từ vựng pha 4 | 2753 | **11** — chữ *màn* trong câu hậu quả và câu giao việc cho pha sau, lời giải thích một tên bảng của lát menu, stack của `QC-09`, và chính ô này; không dòng nào đặt tên một route hay nói cái gì hiện ở màn nào |
+  | **C1** | thẻ component, kể cả có thuộc tính và thẻ đóng | 2753 | **0** |
+  | **C2** | tên `PascalCase` trong backtick | 2753 | **1** — tên một tham số kết nối của database (`QC-06`) |
+  | **D** | tên hàm kiểu mã ứng dụng · hàm có ngoặc trong backtick | 2753 | **0 · 5** — cả năm là hàm và kiểu của database |
+
+  **Bộ lọc biết kêu, đo trên chính tập này.** Cài sáu dòng vi phạm mẫu vào một **bản sao** của vùng pha
+  2 (2759 dòng): A1 · A2 mỗi lượt trả về **3** dòng cài, B1 **2**, B2 **1**, C1 **2**, C2 **2** (một dòng
+  cài, một dòng `QC-06`). Lần chạy đầu của lượt này đọc **không file nào** vì danh sách file không được
+  tách từ trong shell đang dùng — chỉ con số *chưa lọc = 0* tố cáo nó; output rỗng thì không.
+
+  **Phần mã pha 2** (`db/`, `compose.yaml`, `Makefile`, `scripts/db-check.sh`, `scripts/reconcile.sh` —
+  170 file, 9482 dòng) qua cùng các mẫu: năm dòng khớp lượt endpoint là lệnh lấy chẩn đoán lỗi của
+  PL/pgSQL, một dòng khớp lượt thẻ là chú thích định dạng bản ghi của `scripts/reconcile.sh`.
+
+  **Hai thứ file quy ước code nói tới mà không phải vi phạm** — ghi ra để lượt sau không mở lại: `QC-08`
+  đặt tên hai thư mục gốc cho backend và frontend, `QC-09` đặt tên ngôn ngữ và khung. Cả hai là *cấu
+  trúc thư mục* và *stack*, thứ hàng *Quy ước code* của `CLAUDE.md` §2 giao cho file ấy; không dòng nào
+  trong đó là endpoint, route hay component.
+
+  **Gate 1d — lớp thứ hai:** `./scripts/gate.sh` 2026-09-30 ⇒ Gate 1d `PASS`. ⚠️ **Tick kèm `F-049`:**
+  lượt cài cho thấy mẫu giao diện của Gate 1d **không** bắt thẻ component có thuộc tính, thẻ đóng, tên
+  component và đường dẫn route trong backtick — hôm nay không có gì lọt (lượt C1 · C2 · B2 ở trên rộng
+  hơn cổng và ra sạch), nhưng `P2-14` chỉ chạy một lần, còn pha 3 · pha 4 sẽ sửa file pha 2 với một cổng
+  hẹp hơn thứ nó phải hiểu.
+
+  **Pointer hai chiều** (nửa thứ hai của `P2-14`, không phải lời của ô này): pha 2 → pha 1, **59** dòng
+  nhắc tên một file pha 1, **21** cặp *file · mục* khác nhau, **0** cặp trỏ vào mục không tồn tại, và
+  mười chỗ gán lời cụ thể cho một mục — mở ra đọc — đều còn đúng. Pha 1 → pha 2, **70** dòng: bốn câu *"pha 2 chưa mở"* ·
+  *"chỗ duy nhất trong repo hôm nay"* và hai hàng bàn giao thiếu đích đã nhận ghi chú có ngày ở
+  `02-thoi-gian-ngay-ban.md` §5, `03-bao-ve-invariant.md` §0 luật 4 và `04-yeu-cau-du-lieu.md` (đầu file
+  · §7). **Một lời giao không rơi vào dòng nào — `F-050`:** `05-realtime-va-du-phong.md` §3 luật 4 đòi
+  vết của mỗi lần *quán đang mù*, không bước nào viết dòng `YC` cho nó, nên ô 4 ở trên tick mà không
+  chạm tới nó.
+
+  ⚠️ **Con số ở ô này là ảnh chụp tại mốc đo, và chính ô này làm chúng hết đúng** — nó thêm dòng vào
+  một file của tập. Lượt đo sau đếm lại, đừng đọc con số ở đây như con số hôm ấy (**F-001** · **F-033**,
+  cùng luật với ô 10 của cổng pha 1).
 - [x] **10. Không câu hỏi nghiệp vụ nào đang mở mà một bước pha 2 phải đoán thay** — `./scripts/brief.sh`
   mục *OPEN UNKNOWNS* 2026-09-30: `U-064` · `U-063` · `U-058`. Hỏi từng câu: không bước nào phải đoán để
   viết được một dòng của mình — cả ba là chỗ trống có tên, không lấp bằng mặc định (§6). ⚠️ Tick kèm:
@@ -290,8 +336,8 @@ ngược; và **khôi phục dữ liệu** — `YC-21`, pha 5 (`T-109`).
 
 | Bước / người | Lấy gì từ mục này |
 |---|---|
-| `P2-14` | ô **9** — chạy bộ lọc trên mọi file pha 2, gồm file này, và ký ô ấy ở đây |
-| chủ repo | §6 và ô 1 · 3 · 4 · 10 — `F-048` cần một nơi nhận; `F-046` chờ pha 3; `U-063` · `U-058` chờ chủ quán; rồi câu sang pha 3 |
+| ~~`P2-14`~~ — **xong 2026-09-30** | ô **9** — đã chạy bộ lọc trên mọi file pha 2, gồm file này, và ký ô ấy ở §7 |
+| chủ repo | §6 và ô 1 · 3 · 4 · 9 · 10 — `F-048` cần một nơi nhận; `F-046` chờ pha 3; `F-049` (Gate 1d hẹp hơn thứ nó phải bắt) và `F-050` (vết *quán đang mù* chưa có dòng yêu cầu) cần người nhận; `U-063` · `U-058` chờ chủ quán; rồi câu sang pha 3 |
 | pha 3 | §0 — mỗi bước ở quán một giao dịch, người thao tác và lý do khai ở **mọi** lần ghi; các hàm ở `db/scenario/prelude.sql` là **hình dạng** lần ghi mà cửa pha 3 thay thế, không phải cửa ấy |
 | bước nào thêm vào `db-check` sau bước 7 | database kiểm lúc ấy có một ngày bán đã COMMIT (**ADR-067** *Hệ quả*) |
 

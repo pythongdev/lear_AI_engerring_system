@@ -214,7 +214,7 @@ hình với hai mốc của lượt nhập bù (`04-yeu-cau-du-lieu.md` **YC-08*
 | ~~**P1-08**~~ — realtime và ràng buộc ẩn — **xong 2026-09-08** | §3 nói mốc do **một** nguồn cấp ở nơi ghi. Nhiều nơi cùng ghi thì câu ấy hỏng ⇒ đây là một đầu vào của ràng buộc **RB-1** (*đúng một tiến trình*) ở [`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §2 |
 | **P1-09** — bảng quầy | bảng quầy đếm **trong ngày**; ngày ấy là §1 |
 | **P1-11** — diễn ba scenario | scenario đi qua một buổi mất điện nay **đi hết được**: lượt nhập bù mang mốc ngày bán (§2), và `U-037`/`U-036` đã đóng 2026-09-06 nên không còn chỗ nào phải dừng ở §4 |
-| **Pha 2** | cất mốc **thế nào**, kiểu gì, cột nào — mục này cố ý không nói (**ADR-035**) |
+| **Pha 2** | cất mốc **thế nào**, kiểu gì, cột nào — mục này cố ý không nói (**ADR-035**). **Đã cất — 2026-09-26, `P2-03`** (pointer thêm 2026-09-30, `P2-14`): quy ước ở [`../2-db/01-quy-uoc-du-lieu.md`](../2-db/01-quy-uoc-du-lieu.md) §4 (`QD-30`…`QD-34`); mốc của từng việc chạm tiền nằm trên bản ghi nào: [`../2-db/04-luoc-do-duong-tien.md`](../2-db/04-luoc-do-duong-tien.md) §1 |
 
 **Mâu thuẫn với [`architecture.md`](architecture.md) thì sửa `architecture.md`, không viết bản thứ
 hai ở đây** (kế hoạch pha 1 §5). Đo lại 2026-09-04: không có chỗ nào mâu thuẫn — §6.3, §6.4 và
