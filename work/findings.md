@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 52 finding — 44 Fixed/Resolved/Closed, 8 Open (đếm lại ngày 2026-09-30, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 53 finding — 45 Fixed/Resolved/Closed, 8 Open (đếm lại ngày 2026-09-30, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -114,6 +114,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-050 | Pha 1 đòi vết của mỗi lần *quán đang mù* và giao dòng yêu cầu cho "P1-07 hoặc pha 2"; không bước nào viết dòng `YC`, nên pha 2 không chấm nó (P2-14) | Open |
 | F-051 | `db-check` đỏ theo giờ trong ngày — đơn test `I-024` để lại sau COMMIT lấy lúc tạo từ đồng hồ, `I-008/1` bắt nó ngoài giờ bán (T-121) | Fixed |
 | F-052 | Mệnh đề admin `I-025`…`I-029` có ở `quality/invariants.md` trước khi có câu đối chiếu, nên phép so mã của `scripts/reconcile.sh` đỏ và `db-check` sẽ đỏ ở lát admin đầu tiên (P2A-01) | Fixed |
+| F-053 | Bước khoá chặn của `db-check` giả định bước migration trên cùng luôn có dữ liệu mồi, nên lát admin đầu tiên (hai bảng còn rỗng) làm nó đỏ oan — chỗ hở thứ hai cùng họ F-052 mà lượt chữa F-052 không đo (P2A-02) | Fixed |
 
 ---
 
@@ -4345,3 +4346,45 @@ ghi — cột *ai nợ* hôm nay ghi `P2A-07`.
 
 **Status:**
 Fixed (2026-09-30, T-123)
+
+### F-053 — Bước khoá chặn của `db-check` giả định bước migration trên cùng luôn có dữ liệu mồi; lát admin đầu tiên làm nó đỏ oan
+
+**Problem:**
+Bước 5 của `scripts/db-check.sh` (dựng ở `P2-09`) lùi **đúng một** bước trên database đã nạp dữ liệu
+mồi và đòi lệnh ấy bị khoá chặn từ chối. Nó đúng chừng nào bước migration trên cùng còn giữ dữ liệu
+mồi — đúng với tám bước của mảng bán hàng. Lát sổ nguyên liệu (`P2A-02`) là bước thứ chín, hai bảng
+của nó **rỗng** sau dữ liệu mồi (dữ liệu mồi admin là bước `P2A-06`), nên lệnh lùi sẽ **thành công**
+— đúng luật 2 của `docs/product/2-db/07-thu-tu-migration.md` — và bước 5 báo *"lùi một bước … mà
+KHÔNG bị từ chối"*. Claude Code tìm ra 2026-09-30 khi **đọc** script lúc thiết kế lát, trước khi
+migration tồn tại; vì vậy không có output đỏ nào để dán — bằng chứng là chính đoạn script cũ
+(`git show fb3fff3:scripts/db-check.sh`, khối *5. khoá chặn*).
+
+**Impact:**
+Mọi lát admin đều đỏ vì một lý do không thuộc về nó, và hai lát sau (tạm ứng và thưởng, khoản chi)
+**không bao giờ** có dữ liệu mồi để hết đỏ. Đây là chỗ hở thứ hai cùng họ với **F-052**: lượt chữa
+F-052 (`T-123`) ghi vào `work/backlog.md` rằng *`db-check` không còn đỏ* ở lát admin, nhưng chỉ đo
+nguyên nhân nó biết (phép so mã), không dựng thử một bước migration rỗng để xem còn nguyên nhân nào.
+Bài học: câu *"cổng sẽ không đỏ ở bước sau"* chỉ đáng tin khi đã chạy cổng trên một bản giả của bước
+sau, không phải khi đã chữa xong nguyên nhân đang nhìn thấy.
+
+**Decision / Fix:**
+**Đã sửa 2026-09-30 (`P2A-02`; thiết kế và duyệt: Claude Code, thi công: Codex),
+`docs/decisions.md` ADR-071 điểm 6.** Bước 5 lùi từng bước từ trên xuống: bước còn rỗng thì lùi được
+và được gọi tên bằng một dòng `NOTE`; bước đầu tiên có dữ liệu phải từ chối, lược đồ không đổi; không
+bước nào từ chối ⇒ đỏ; rồi gỡ dấu *dirty*, xuôi lại tới đỉnh, lược đồ phải giống hệt trước bước 5.
+Đo ở clone chính sau khi sửa:
+
+```text
+NOTE khoá chặn — 20260930100000_so_nguyen_lieu còn rỗng, lùi được (luật 2)
+     đường lùi từ chối: person đang giữ 5 giá trị đã ghi — gỡ nó là xoá dữ liệu
+     sau lệnh hỏng: 20260928130000 (dirty)
+PASS khoá chặn — bước đầu có dữ liệu từ chối, lược đồ không đổi; đã lùi qua 1 bước rỗng và xuôi lại, lược đồ giống hệt trước bước 5
+PASS force 20260928140000 — dấu dirty gỡ; đã xuôi lại 1 bước rỗng, phiên bản: 20260930100000
+```
+
+**Related task:**
+`work/backlog_AD_DB.md` → **P2A-02** (lượt phát hiện và sửa) · `P2A-04` · `P2A-05` · `work/backlog_DB.md`
+→ **P2-09** · **T-123**
+
+**Status:**
+Fixed (2026-09-30, P2A-02)

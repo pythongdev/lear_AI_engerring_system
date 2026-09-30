@@ -137,6 +137,7 @@ cột tiền mang sai hậu tố là một cột mà `QD-20` không bao giờ nh
   | định danh máy đọc | `code` hoặc hậu tố `_code` | `QD-61` |
   | chuỗi băm | hậu tố `_hash` | `QD-61` |
   | bản chụp một dòng (vết cập nhật) — *thêm 2026-09-28, `P2-08`* | hậu tố `_image` | `QD-52` · `10-quy-uoc-code.md` `QC-04` |
+  | lượng người gõ, có thể lẻ (sổ nguyên liệu) — *thêm 2026-09-30, `P2A-02`* | hậu tố `_measure` | `10-quy-uoc-code.md` `QC-04` |
 
   Cột trỏ tới bản ghi của **nhiều** bảng khác nhau (ví dụ một vết nói về nhiều loại bản ghi) **không**
   mang hậu tố `_id`, vì nó không có khoá ngoại được (`QD-11`); lát tạo nó đặt tên và ghi lý do.
@@ -593,7 +594,7 @@ so **sau khi đã có dữ liệu** là dựng lại cả bảng lẫn mọi ch�
 | Luật **làm tròn** nếu một nghiệp vụ sau này cần chia tiền | U-058 đã xác định giảm theo số tiền nhập tay (2026-09-27), không phát sinh phép chia từ giảm phần trăm | Chốt với chủ quán khi có nghiệp vụ cần chia tiền; `master_plan/shop-facts.md` §8.9 |
 | ~~DBMS · phiên bản · tên kiểu · mọi tham số ở §0~~ — **đã gỡ 2026-09-27**: PostgreSQL 17, tham số ở §0, tên kiểu ở `10-quy-uoc-code.md` `QC-04` | **ADR-053** luật 1 | `P2-12` (**ADR-054**) |
 | Tên bảng, tên cột của từng lát | file migration thắng (**ADR-053** luật 2) | `P2-04`…`P2-08` |
-| Đơn vị **lượng** (nguyên liệu tính theo cân, theo cái…) | Mục này chỉ nói tiền; lượng thuộc lane admin, luật còn đang thu | lane admin — `work/backlog_AD.md` |
+| Đơn vị **lượng** (nguyên liệu tính theo cân, theo cái…) | Mục này chỉ nói tiền; lượng thuộc lane admin, luật còn đang thu. **2026-09-30 (`P2A-02`):** *cất con số bằng gì* đã có — vai trò `_measure` ở `QD-03`, kiểu ở `10-quy-uoc-code.md` `QC-04`; *đơn vị ghi lượng đã dùng và quy đổi* vẫn trống (`work/admin-questions.md` câu **B12**) | lane admin — `work/backlog_AD.md`; chỗ trống ở [`12-luoc-do-nguyen-lieu.md`](12-luoc-do-nguyen-lieu.md) |
 | ~~Cách sinh mã QR của bàn~~ — **đã gỡ 2026-09-28 (`T-114`)**: một cửa `qr_code_issue`, mã từ nguồn ngẫu nhiên mạnh — [`02-luoc-do-ban-hang.md`](02-luoc-do-ban-hang.md) §2 hàng `I-023` | Pha 1 có mệnh đề từ 2026-09-28 (`quality/invariants.md` **I-023**, **ADR-060**) | `T-114` — xong |
 | Mất hẳn bản ghi vì hỏng máy | Chuyện sao lưu, không phải chuyện lệnh xoá (`QD-50`) | pha 5 — YC-21 ở `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8; T-109 (`work/backlog.md`), ADR-057 |
 

@@ -17,11 +17,11 @@ lược đồ từ số không · chỗ chứng minh từng điều ấy chạy 
 
 ---
 
-## 1. Thứ tự dựng — tám bước
+## 1. Thứ tự dựng — chín bước
 
 Công cụ chạy các bước theo **tên file**, tức theo mốc giờ ở đầu tên (`QC-05`). Thứ tự dưới đây là
 thứ tự ấy; cột *đứng trên* nói bước nào phải có trước, vì bước sau thêm cột, khoá ngoại hay ràng
-buộc vào bảng của nó. Dựng lại từ số không là chạy đúng tám bước này, từ trên xuống; lùi là đi
+buộc vào bảng của nó. Dựng lại từ số không là chạy đúng chín bước này, từ trên xuống; lùi là đi
 ngược từ dưới lên, **từng bước một**.
 
 | # | File (`db/migrations/`, bỏ đuôi) | Lát | Dựng gì | Đứng trên |
@@ -34,9 +34,10 @@ ngược từ dưới lên, **từng bước một**.
 | 6 | `20260928120000_duong_tien` | `P2-06` | bảy bảng tiền, từ `bill` tới `opening_float_line`; cột tự tính trên phiên và đơn để hoá đơn trỏ vào | 1 |
 | 7 | `20260928130000_san_xuat_theo_me` | `P2-07` | năm bảng sản xuất, từ `menu_component_station` tới `station_job_transfer` | 1 · 2 |
 | 8 | `20260928140000_nguoi_va_vet` | `P2-08` | `person` · `counter_duty` · `paper_ledger` · `record_revision`; cột *ai bấm* trên bảng của bước 5 · 6 · 7; trigger vết trên **mọi** bảng | 5 · 6 · 7 |
+| 9 | `20260930100000_so_nguyen_lieu` | `P2A-02` | `supply_item` · `supply_day_entry` và trigger vết của chúng | 8 |
 
-**Bước 8 phải là bước cuối của mọi lược đồ hiện có**, vì nó gắn trigger vết lên mọi bảng *đang
-có*. Một bước sau thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
+**Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
+thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
 của [`01-quy-uoc-du-lieu.md`](01-quy-uoc-du-lieu.md) đỏ khi thiếu — và file lùi của nó gỡ trigger
 ấy cùng bảng.
 
@@ -106,10 +107,10 @@ script ấy hay `docs/product/2-db/` đổi, trên một database **riêng và r
 
 | Đòi hỏi | Dòng `db-check` in |
 |---|---|
-| **(a)** xuôi từ số không, từng bước | `PASS xuôi <file>` — tám dòng |
-| **(b)** lùi từng bước về số không, lược đồ sau mỗi lần lùi giống hệt ảnh chụp trước bước ấy | `PASS lùi <file> — lược đồ giống hệt lúc trước bước ấy (N dòng)` — tám dòng |
-| **(c)** xuôi lại cả dãy, giống hệt lần xuôi đầu | `PASS xuôi lại — 8 bước từ số không, …` |
-| khoá chặn biết kêu | sau dữ liệu mồi: `PASS khoá chặn — lùi trên dữ liệu mồi bị từ chối, lược đồ không đổi`, rồi `PASS force …` |
+| **(a)** xuôi từ số không, từng bước | `PASS xuôi <file>` — một dòng mỗi bước |
+| **(b)** lùi từng bước về số không, lược đồ sau mỗi lần lùi giống hệt ảnh chụp trước bước ấy | `PASS lùi <file> — lược đồ giống hệt lúc trước bước ấy (N dòng)` — một dòng mỗi bước |
+| **(c)** xuôi lại cả dãy, giống hệt lần xuôi đầu | `PASS xuôi lại — N bước từ số không, …` |
+| khoá chặn biết kêu | sau dữ liệu mồi: bước rỗng lùi được (`NOTE khoá chặn`), bước đầu có dữ liệu từ chối và lược đồ không đổi; gỡ dirty rồi xuôi lại đỉnh, giống hệt trước bước 5 (`PASS khoá chặn — …` · `PASS force …`, kèm số bước rỗng) |
 
 Ảnh chụp là `pg_dump --schema-only` của schema `shop` — gồm bảng, cột, ràng buộc, chỉ mục, hàm,
 trigger **và quyền** — bỏ dòng chú thích và cặp dòng `\restrict` có khoá ngẫu nhiên mỗi lần chạy.

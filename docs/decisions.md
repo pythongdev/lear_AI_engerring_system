@@ -85,8 +85,9 @@ có câu trả lời mới từ người.
 | ADR-066 | **Bộ đối chiếu: một câu một TẬP, một lệnh sau khi đóng quán, chứng minh bằng ngày mẫu và lỗi cài** — mỗi tập *"phải rỗng"* của pha 1 là một câu `I-0xx/n` ở `db/reconcile/`; `scripts/reconcile.sh` chạy nhóm `I-0xx` và nhóm quy ước `QD-XX` (bốn phép dạng lệnh viết lại thành SQL); `db-check` chứng minh: ngày bán mẫu đúng ⇒ 0 dòng, mỗi lỗi cài ⇒ đúng tập câu khai | Đã chốt 2026-09-30 (giao cho phiên) | — | P2-11 |
 | ADR-067 | **Cổng pha 2 ký bằng một bước chạy lại được: ba scenario COMMIT thật, đọc lại ở kết nối khác, chấm YC năm kết cục** — `db/scenario/` diễn ba scenario mỗi bước một giao dịch trên database kiểm có dữ liệu mồi; bộ đối chiếu chạy lại trên ngày ấy; mỗi mã YC một dòng *đọc* và một dòng *sai* mang một trong năm kết cục có tên; tất cả là bước 7 của `db-check` | Đã chốt 2026-09-30 (giao cho phiên) | — | P2-13 |
 | ADR-068 | **Lược đồ admin được dựng cho phần ĐÃ ĐỦ LUẬT, trước khi mảng bán hàng chạy thật** — sửa đổi ADR-031 đúng ở tầng lược đồ; pha 3–4 của admin và phần còn chờ lời chủ quán đứng yên; bước mang mã `P2A-XX`, thứ tự ở `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`, mô tả ở `work/backlog_AD_DB.md` | Đã chốt 2026-09-29 (chủ repo mở cổng; mã và sổ giao cho phiên) | — | P2A-01…P2A-09 |
-| ADR-069 | **Mệnh đề và yêu cầu dữ liệu của mảng admin đi vào MỤC RIÊNG CÓ NHÃN trong ba owner sẵn có**, nối dãy mã `I-0xx` · `YC-XX`; câu *máy không làm* thành vế *không xảy ra được* có tên; chỗ chủ quán chưa nói thì mệnh đề khai là **không nói**, không lấp | Đã chốt 2026-09-30 (giao cho phiên, P2A-01) | — | P2A-01 · P2A-02…P2A-08 |
+| ADR-069 | **Mệnh đề và yêu cầu dữ liệu của mảng admin đi vào MỤC RIÊNG CÓ NHÃN trong ba owner sẵn có**, nối dãy mã `I-0xx` · `YC-XX`; câu *máy không làm* thành vế *không xảy ra được* có tên; chỗ chủ quán chưa nói thì mệnh đề khai là **không nói**, không lấp | Đã chốt 2026-09-30 (phiên đề xuất ở P2A-01; **chủ repo đồng ý** cùng ngày) | — | P2A-01 · P2A-02…P2A-08 |
 | ADR-070 | **Phép so mã của bộ đối chiếu nhận một danh sách *mệnh đề chưa có lát* có tên, tự hết hạn** — danh sách ở `09-doi-chieu-bat-bien.md` §2.1, `scripts/reconcile.sh` đọc lúc chạy; mã có dòng thì `NOTE`, mọi mã khác vẫn `FAIL` | Đã chốt 2026-09-30 (giao cho phiên, T-123) | — | P2A-02…P2A-07 |
+| ADR-071 | **Sổ nguyên liệu: một con số người gõ là MỘT dòng; tổng không có chỗ cất; con số là `numeric` đúng như gõ** — hai bảng (danh mục · con số ngày), mỗi con số mang người nhập, ngày và lúc gõ của riêng nó; tổng và hiệu số chỉ đọc ra bằng phép cộng; vết sửa dùng lại trigger sẵn có ở chế độ mềm; bước khoá chặn của `db-check` lùi qua các bước còn rỗng tới bước đầu tiên có dữ liệu | Đã chốt 2026-09-30 (giao cho phiên, P2A-02) | — | P2A-02 · P2A-04 · P2A-05 · P2A-06 · P2A-07 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -4524,9 +4525,10 @@ vế thứ ba. Hai câu mới `U-065` · `U-066` chặn hai trong bốn lát.
 
 ### ADR-069 — Mệnh đề và yêu cầu dữ liệu của mảng admin đi vào MỤC RIÊNG CÓ NHÃN trong ba owner sẵn có, nối dãy mã; *máy không làm* thành vế có tên
 
-**Trạng thái:** **Đã chốt** 2026-09-30, **giao cho phiên** (Claude Code, bước `P2A-01`) — không phải
-lời chủ repo hay chủ quán (`CLAUDE.md` §7.2); chủ repo đổi được. Nó thi hành điểm 3 của **ADR-068**
-và không lật quyết định nào.
+**Trạng thái:** **Đã chốt** 2026-09-30. Phiên (Claude Code, bước `P2A-01`) đề xuất; **chủ repo đồng
+ý** cùng ngày, nguyên văn: *"tôi đồng ý với đề xuất"*. Lời ấy xác nhận **hình dạng** ở mục
+*Decision*; nó **không** biến năm chỗ suy ra ở điểm 6 thành lời chủ quán — chúng vẫn là suy ra về
+nghiệp vụ (`CLAUDE.md` §7.2). Nó thi hành điểm 3 của **ADR-068** và không lật quyết định nào.
 
 **Context:**
 **ADR-068** điểm 3 đòi bước đầu của lược đồ admin viết yêu cầu dữ liệu và invariant *vào chính các
@@ -4638,3 +4640,87 @@ cột ấy, cơ chế không đổi.
 **Applies to:** `scripts/reconcile.sh` · `scripts/reconcile.test.sh` · `scripts/db-check.sh` ·
 `docs/product/2-db/09-doi-chieu-bat-bien.md` §2.1 · `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`
 §5 · ADR-066 · ADR-069 · `work/findings.md` F-052.
+
+### ADR-071 — Sổ nguyên liệu: một con số người gõ là MỘT dòng; tổng không có chỗ cất; con số là `numeric` đúng như gõ
+
+**Trạng thái:** **Đã chốt** 2026-09-30, **giao cho phiên** (Claude Code, bước `P2A-02`; thi công:
+Codex) — không phải lời chủ repo hay chủ quán (`CLAUDE.md` §7.2); chủ repo đổi được. Lời giao ngày
+2026-09-30 là *"hãy đọc kĩ và hoàn thành task trên. yêu cầu codex làm bạn kiểm tra"*: nó giao việc
+dựng lát, không nêu hình dạng nào. Nó thi hành `quality/invariants.md` `I-025` · `I-026` và không lật
+quyết định nào; điểm 6 **sửa đổi** cách bộ kiểm chứng minh luật 2 của **ADR-065**, không đổi luật ấy.
+
+**Context:**
+`P2A-01` đã viết bốn dòng yêu cầu `YC-26`…`YC-29` và hai mệnh đề `I-025` · `I-026` cho sổ nguyên liệu
+(**ADR-069**), cùng tầng giữ của từng vế ở `docs/product/1-system-design/03-bao-ve-invariant.md` §5.
+Lát `P2A-02` phải chọn hình lược đồ thi hành chúng. Sáu chỗ không mệnh đề nào chọn hộ, và hai trong số
+đó chỉ lộ ra khi đọc bộ kiểm: quy ước kiểu (`docs/product/2-db/10-quy-uoc-code.md` `QC-04`) chỉ cho
+*số lượng* là số nguyên, còn danh mục của chủ quán mua theo cân; và bước khoá chặn của
+`scripts/db-check.sh` giả định bước migration trên cùng luôn có dữ liệu mồi.
+
+**Decision:**
+1. **Hai bảng: danh mục, và con số ngày. Một con số người gõ là MỘT dòng** — của một thứ, một ngày,
+   một loại (*mua vào* hoặc *đã dùng*) — mang **người nhập, ngày của con số và lúc gõ của riêng nó**.
+   Khoá duy nhất trên (thứ, ngày, loại) là vế *một thứ, một ngày, một đáp số* của `I-026`. Tên bảng,
+   cột, ràng buộc: file migration thắng (**ADR-053** luật 2); ý định ở
+   `docs/product/2-db/12-luoc-do-nguyen-lieu.md`.
+2. **Con số cất bằng `numeric` không khai độ chính xác, trong cột hậu tố `_measure`** — một vai trò
+   mới ở `QD-03` và một dòng mới ở `QC-04`. Ràng buộc kiểm của lát giữ nó **không âm và hữu hạn**.
+   *Không âm* là phiên chọn theo khuôn sẵn có của `QC-04` (*không âm là ràng buộc kiểm của lát*),
+   không phải lời chủ quán: sửa một con số gõ nhầm đi bằng lần cập nhật có vết, không bằng số âm.
+3. **Tổng đã nhập, tổng đã dùng và hiệu số KHÔNG có chỗ cất, và lát không dựng view hay hàm tổng
+   nào.** Chúng đọc ra bằng một phép cộng trên các con số ngày — cùng hình bảng nhu cầu của `I-019`
+   (`docs/product/2-db/05-luoc-do-san-xuat.md`). *Một chỗ tính tổng* (tầng 3 của `I-026`) là cửa đọc
+   của pha 3.
+4. **Danh mục: tên duy nhất đúng từng chữ, đơn vị mua trống được; không cột nào khác.** Không ngưỡng,
+   không định lượng suất, không trạng thái *ngừng dùng*, không nhà cung cấp, không giá — test so danh
+   sách cột của hai bảng **từng chữ**, nên thêm một cột là phải đổi mệnh đề trước.
+5. **Vết sửa dùng lại trigger `record_revision_capture` sẵn có, ở chế độ mềm của nó**
+   (`work/findings.md` **F-046**). Lát không tự làm nghiêm riêng cho hai bảng của mình.
+6. **Bước khoá chặn của `scripts/db-check.sh` lùi TỪNG bước từ trên xuống**: bước mà chỗ cất còn rỗng
+   thì lùi được (đúng luật 2 của **ADR-065**) và được gọi tên bằng một dòng `NOTE`; bước **đầu tiên**
+   có dữ liệu phải từ chối; không bước nào từ chối ⇒ đỏ. Sau đó gỡ dấu *dirty*, xuôi lại tới đỉnh, và
+   lược đồ phải giống hệt ảnh chụp trước bước ấy.
+
+**Why:**
+- *Điểm 1.* `I-025` đòi *ai · ngày nào · lúc nào* cho **từng con số**. Hai con số của một ngày có thể
+  do hai người gõ ở hai lúc (người đi chợ buổi sáng, người ước lượng cuối buổi); một dòng mang hai cột
+  chỉ có một người nhập và một lúc gõ, và con số thứ hai đến sau là một lần **sửa** dòng ấy — đi qua
+  vết ở chế độ mềm, tức là có thể không để lại *ai*.
+- *Điểm 2.* `shop-facts.md` §8.4: máy giữ **đúng con số người gõ**, không quy đổi đơn vị (`I-026`
+  điều kiện biên, câu **B12** còn mở). Số nguyên buộc người gõ tự đổi nửa cân ra đơn vị nhỏ hơn —
+  đúng phép quy đổi máy không được làm thay, nay đẩy sang người. Chủ quán chưa nói con số có lẻ hay
+  không; `numeric` nhận cả hai nên không lấp hộ câu ấy.
+- *Điểm 3.* Một con số tổng cất riêng là con số thứ hai cho cùng một câu hỏi (`I-026` *Why*). Một view
+  trong schema thì các phép kiểm `QD-XX` đọc nó như một bảng (`QD-11` đòi khoá ngoại cho cột `_id`
+  của nó) — nới các phép ấy để chứa một tiện ích của pha 3 là trả giá ở sai chỗ.
+- *Điểm 4.* Rủi ro lớn nhất của kế hoạch lược đồ admin là *dựng rộng hơn lời* (kế hoạch §9).
+- *Điểm 5.* Kế hoạch §3 điểm 3: lát admin **dùng lại** thứ pha 2 đã dựng, thấy thiếu thì gửi ngược
+  một finding — finding ấy đã có. Hai chế độ vết trong một schema làm cùng một lệnh sửa có hai nghĩa
+  tuỳ bảng.
+- *Điểm 6.* Bước cũ lùi đúng một bước và đòi bị từ chối. Từ lát này, bước trên cùng có thể rỗng mãi
+  (tạm ứng, khoản chi không bao giờ có dữ liệu mồi), nên bước cũ đỏ vì một lý do không thuộc về lát
+  nào — cùng họ với **F-052**, ghi ở `work/findings.md` **F-053**.
+
+**Rejected alternatives:**
+- *Một dòng một ngày, hai cột mua vào · đã dùng.* Bác: lý do điểm 1.
+- *Số nguyên (`integer`) theo dòng *số lượng* sẵn có của `QC-04`.* Bác: lý do điểm 2. *Số thực dấu
+  phẩy động.* Bác: cộng dồn ra phần lẻ không ai gõ. *`numeric(p,s)`.* Bác: làm tròn im lặng con số
+  vượt `s` — máy sửa con số người gõ mà không ai bấm gì.
+- *Một view tổng trong schema.* Bác: lý do điểm 3.
+- *Tên duy nhất không phân biệt hoa thường.* Bác: danh mục menu so đúng từng chữ; hai cách so cho hai
+  danh mục là một bẫy. Chỗ hở (*Gạo* · *gạo*) có tên ở file lát §5.
+- *Một cột trạng thái *ngừng dùng* cho danh mục.* Bác: chủ quán chưa nói gì về việc bỏ một thứ.
+- *Làm nghiêm vết ngay trên hai bảng mới* (từ chối lần sửa không khai lý do). Hấp dẫn — bảng mới không
+  có file test cũ nào phải sửa — nhưng bác: lý do điểm 5; nó gỡ cùng lượt với **F-046**.
+- *Cho bước khoá chặn chèn một dòng giả vào bảng trên cùng.* Bác: bộ kiểm phải biết tên bảng của
+  từng lát, và dòng giả ở lại database cho hai bước sau. *Gộp dữ liệu mồi `P2A-06` vào lát này.* Bác:
+  không chữa được các lát không có dữ liệu mồi.
+
+**Suy ra, không phải lời chủ quán** (`CLAUDE.md` §7.2): con số *không âm*; hai mã máy đọc của hai loại
+con số; tên duy nhất *đúng từng chữ*. Không câu nào chặn việc dựng; không câu hỏi mới nào mở ra.
+
+**Applies to:** `db/migrations/20260930100000_so_nguyen_lieu.up.sql` · `.down.sql` ·
+`db/tests/i025_supply_numbers_entered_by_a_person.sql` · `db/tests/i026_supply_totals_from_day_entries.sql` ·
+`docs/product/2-db/12-luoc-do-nguyen-lieu.md` · `docs/product/2-db/01-quy-uoc-du-lieu.md` `QD-03` ·
+`docs/product/2-db/10-quy-uoc-code.md` `QC-04` · `docs/product/2-db/07-thu-tu-migration.md` §4 ·
+`scripts/db-check.sh` bước 5 · ADR-050 · ADR-065 · ADR-069 · `work/findings.md` F-046 · F-053.

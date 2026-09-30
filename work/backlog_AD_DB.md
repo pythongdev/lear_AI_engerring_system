@@ -217,6 +217,88 @@ cộng dồn từ đâu (`shop-facts.md` §8.4). Mục tổng quan của chủ q
 - **Nhóm số điện, số nước đứng ngoài cặp mua/dùng** (§8.4) — không nhét vào danh mục.
 - **Danh mục thêm dần, không xoá cứng** — quy ước dữ liệu đã có luật, dùng lại.
 
+**Nhận việc** — điền 2026-09-30 (Claude Code); `P2A-01` đã `Done` và đã commit (`45432a3`); mức **L2**
+(kế hoạch §5). Chủ repo yêu cầu *"yêu cầu codex làm bạn kiểm tra"*; chia vai theo `CLAUDE.md` §7.4 và
+`docs/prompt-guideline.md` §6.1 mức L2: **Claude** thiết kế (`docs/decisions.md` **ADR-071**), viết hai
+file test hồi quy **trước** và hai dòng quy ước mới; **Codex** viết migration, file lát và sửa bước 5
+của bộ kiểm cho test xanh, trong worktree riêng; Claude duyệt diff thật và tự chạy lại test.
+- *Phạm vi:* `work/scope/P2A-02.txt` — `db/migrations/`, hai file test, file lát mới, bốn file đã có
+  của `docs/product/2-db/` (quy ước dữ liệu · quy ước code · thứ tự migration · bộ đối chiếu),
+  `docs/product/00-index.md`, `scripts/db-check.sh`, `CLAUDE.md` (hàng *Schema*), `docs/decisions.md`,
+  entry này, dòng trạng thái, `work/findings.md`.
+- *Nghiệm thu:*
+  1. **Mỗi vế tầng 1 của `I-025` · `I-026` có ràng buộc thật**: cố tình dựng trạng thái sai ⇒ database
+     từ chối, lời từ chối in nguyên văn — con số thiếu người nhập · thiếu ngày · thiếu giá trị; người
+     nhập không phải người của quán; thứ không có trong danh mục; con số thứ hai cùng thứ, cùng ngày,
+     cùng loại; tên trùng trong danh mục.
+  2. **Kịch bản dương và kịch bản sửa của `I-025` chạy thật**: hai con số đọc lại được kèm người
+     nhập, ngày và lúc gõ; sửa 7 → 8 có khai lý do ⇒ đọc ra cả 7 lẫn 8, lý do, người sửa.
+  3. **Kịch bản của `I-026` chạy thật, đúng con số của mệnh đề**: 15 · 13 · 2; sau khi sửa 15 · 15 · 0;
+     ngày thứ ba mua thêm mà tổng không đặt lại; hiệu số âm **được nhận**.
+  4. **Tổng và hiệu số đọc ra bằng một phép cộng** trên các con số ngày; **không chỗ nào cất** tổng,
+     ngưỡng, định lượng một suất hay kết luận thiếu — test so danh sách cột của hai bảng từng chữ.
+  5. **Không gì nối sổ với bán hàng**: không khoá ngoại, không hàm, không trigger ngoài trigger vết;
+     một đơn được tạo, thu tiền, hoàn thành ⇒ sổ không đổi.
+  6. **`YC-26`**: một thứ chưa có đơn vị mua vẫn tồn tại được; đơn vị chỉ có khoảng trắng bị từ chối.
+  7. **Không xoá cứng**: vai ghi của hệ thống không xoá được con số hay một thứ trong danh mục.
+  8. **Có bước lùi có khoá chặn**; vòng xuôi · lùi · xuôi lại của bộ kiểm giống hệt cho cả chín bước;
+     mọi khối `QC-XX` và nhóm `QD-XX` xanh trên hai bảng mới.
+  9. **Tên bảng ở file lát và ở migration khớp** (Gate 1e); file lát không nhắc thứ pha sau sở hữu
+     (Gate 1d); hàng *Schema* của `CLAUDE.md` §2 và `docs/product/00-index.md` có file lát mới.
+  10. `./scripts/db-check.sh` và `./scripts/gate.sh` xanh ở clone chính.
+- *Kiểm chứng:* `db/tests/i025_supply_numbers_entered_by_a_person.sql` ·
+  `db/tests/i026_supply_totals_from_day_entries.sql` trong `./scripts/db-check.sh`; Claude tự chạy lại
+  ở worktree của Codex **và** ở clone chính, dán output ở *Bàn giao*.
+- *Ngoài phạm vi, có tên:* buổi bán **đủ năm kênh** của mục *Verification* `I-025` — cổng `P2A-08`;
+  câu đối chiếu của hai mệnh đề — `P2A-07`; dữ liệu mồi danh mục — `P2A-06`.
+
+**Bàn giao** — 2026-09-30 · thực hiện: **Codex** (migration và bước lùi, file lát, bước 5 của bộ kiểm,
+ba file tài liệu đã có — theo phiếu) và **Claude Code** (thiết kế **ADR-071**, hai file test viết
+trước, hai dòng quy ước `QD-03` · `QC-04`, **F-053**) · duyệt: **Claude Code** · nhánh
+`chatgpt_involve`, trên `fb3fff3` · chưa commit.
+
+*Kết quả.* Hai bảng `supply_item` · `supply_day_entry` ở
+`db/migrations/20260930100000_so_nguyen_lieu.up.sql` (bước thứ chín, có bước lùi có khoá chặn); ý
+định và ánh xạ ở [`12-luoc-do-nguyen-lieu.md`](../docs/product/2-db/12-luoc-do-nguyen-lieu.md). Một
+con số người gõ là một dòng mang người nhập, ngày và lúc gõ của riêng nó; tổng và hiệu số không có
+chỗ cất. Con số là `numeric` đúng như gõ — vai trò cột mới `_measure`.
+
+*Codex làm gì, Claude duyệt ra sao.* Codex chạy trong worktree riêng, không sửa hai file test, trả
+về đúng các file trong scope, và **nói thẳng** sandbox của nó không gọi được Docker nên chưa kiểm
+chứng gì trên database. Claude đọc diff thật, tự chạy `./scripts/db-check.sh` trong worktree (xanh
+ngay lần đầu, không vòng sửa nào), đưa về clone chính bằng `git apply`, rồi chạy lại cả
+`./scripts/gate.sh` và `./scripts/db-check.sh` ở đó.
+
+*Nghiệm thu → bằng chứng* (đo 2026-09-30 ở clone chính; mỗi trích dẫn là dòng `NOTICE` hay dòng cổng
+in nguyên văn):
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| 1. vế tầng 1 bị từ chối | test `i025_…`: *không có người nhập* ⇒ `null value in column "person_id"` · *không có ngày* ⇒ `"entry_date"` · *không có con số* ⇒ `"entered_measure"` · người lạ ⇒ `supply_day_entry_person_fkey` · thứ lạ ⇒ `supply_day_entry_supply_item_fkey`; test `i026_…`: con số thứ hai ⇒ `supply_day_entry_one_kind_per_item_day_key` (cả *mua vào* lẫn *đã dùng*) · trùng tên ⇒ `supply_item_name_key` |
+| 2. kịch bản dương và sửa của `I-025` | `YC-28 con số — test-gạo · purchased · 10: test-chủ quán nhập, ngày của con số 2026-09-21, có lúc gõ: t` (ba dòng, hai người nhập) · `I-025 sửa con số — trước 7, sau 8, lý do "test-cân lại cuối buổi", test-chủ quán sửa` |
+| 3. kịch bản của `I-026` | `tổng đã nhập 15, tổng đã dùng 13, hiệu số 2 (ngày thứ ba mua thêm, tổng không đặt lại)` · `tổng đã nhập 15, tổng đã dùng 15, hiệu số 0` · `đã dùng vượt tổng đã nhập — nhận, hiệu số -4` |
+| 4. không chỗ cất tổng, ngưỡng, định lượng | `I-025 đọc lược đồ — supply_item: created_at,id,name,purchase_unit` · `supply_day_entry: created_at,entered_measure,entry_date,id,kind_code,person_id,supply_item_id` — test so từng chữ, lệch là đỏ |
+| 5. không gì nối sổ với bán hàng | `0 khoá ngoại sang đơn · phiên · mẻ · tiền, 0 hàm nhắc tới sổ, 0 trigger ngoài trigger vết` · `sau một đơn tạo · thu tiền · hoàn thành — sổ nguyên liệu không đổi (3 con số)` |
+| 6. `YC-26` | `"test-hành tây", đơn vị mua: (trống)` · đơn vị trắng ⇒ `supply_item_purchase_unit_not_blank_check` · tên trắng ⇒ `supply_item_name_not_blank_check` |
+| 7. không xoá cứng | `permission denied for table supply_day_entry` · `permission denied for table supply_item` (vai `shop_app`) |
+| 8. bước lùi, vòng xuôi · lùi · xuôi lại, quy ước | `PASS lùi 20260930100000_so_nguyen_lieu — lược đồ giống hệt lúc trước bước ấy (1134 dòng)` · `PASS xuôi lại — 9 bước từ số không … (1189 dòng)` · `PASS QC-04 (sql) — 0 dòng` · nhóm `QD-XX` 19 mã, không `FAIL` nào |
+| 9. tên bảng, ranh giới pha, con trỏ | Gate 1e: *33 bảng ở migration, 33 bảng tài liệu nhắc, comm -3 rỗng* · Gate 1d: *5 file .md đã soát, không câu nào đặt tên thứ pha sau sở hữu* · hàng *Schema* của `CLAUDE.md` §2 và `docs/product/00-index.md` có file lát |
+| 10. cổng xanh ở clone chính | `db-check: PASS — 9 bước xuôi · lùi · xuôi lại, 10 khối kiểm QC, 28 file test, dữ liệu mồi + §4.8, khoá chặn, đối chiếu: 85 câu trên dữ liệu mồi và ngày mẫu, 85 lỗi cài, ba scenario + đối chiếu trên ngày diễn, 24 mã YC` · `PASS gate không cổng nào đỏ` |
+
+*Tìm ra trong lượt này.* Bước khoá chặn của bộ kiểm sẽ đỏ oan ở mọi lát admin — `work/findings.md`
+**F-053**, đã sửa cùng lượt (ADR-071 điểm 6).
+
+*Chưa làm được, và vì sao.* (1) **Buổi bán đủ năm kênh** của mục *Verification* `I-025` chưa diễn:
+test chỉ chạy một đơn tới lấy và phần đọc lược đồ — việc của cổng `P2A-08`. (2) **Câu đối chiếu**
+của `I-025` · `I-026` chưa viết; hai dòng ở `09-doi-chieu-bat-bien.md` §2.1 còn đó, người nợ `P2A-07`.
+(3) **Sửa một con số không khai lý do vẫn đi qua mà không có vết** — test in thẳng *"0 vết mới
+(F-046)"*; vế *không có đường sửa đè* của `I-025` hôm nay thấp hơn tầng pha 1 đã chốt, cùng nợ với
+**F-046**. (4) Ba chỗ **suy ra** của ADR-071 (con số không âm, hai mã máy đọc, tên so đúng từng chữ)
+chưa có lời chủ repo.
+
+*Việc kế tiếp.* `P2A-06` (dữ liệu mồi admin) lên *Ready*. `P2A-04` vẫn *Ready*; nó dùng lại bước 5
+mới của bộ kiểm mà không phải sửa gì.
+
 [↑ đầu file](#top)
 
 ---

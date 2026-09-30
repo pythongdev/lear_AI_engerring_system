@@ -134,8 +134,9 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   | số lượng, số đếm | `integer` | số nguyên; không âm là ràng buộc kiểm của lát |
   | cờ có/không | `boolean` | — |
   | bản chụp một dòng `_image` (`QD-03`) — *thêm 2026-09-28, `P2-08`* | `jsonb` | vết cập nhật (`I-018`) giữ bản trước và bản sau của **mọi** bảng trong một bảng vết: một kiểu mang được một dòng bất kỳ, so được bằng `=`, đọc từng ô bằng `->>`. Chỉ cột hậu tố `_image` được dùng nó |
+  | lượng người gõ, có thể lẻ `_measure` (`QD-03`) — *thêm 2026-09-30, `P2A-02`* | `numeric` (không khai độ chính xác) | sổ nguyên liệu giữ **đúng con số người gõ** (`quality/invariants.md` `I-025` · `I-026`): hàng mua theo cân có số lẻ, và `integer` buộc người gõ tự đổi sang đơn vị nhỏ hơn — đúng phép quy đổi máy không được làm. Số thực dấu phẩy động cộng dồn ra phần lẻ không ai gõ; `numeric(p,s)` làm tròn im lặng con số vượt `s`. Không âm và hữu hạn là ràng buộc kiểm của lát. Chỉ cột hậu tố `_measure` được dùng nó; **tiền không bao giờ** (`QD-20`) |
 
-  Kiểu khác (`numeric`, `jsonb`, mảng, `varchar`…) chỉ vào lược đồ khi một dòng mới được thêm vào
+  Kiểu khác (mảng, `varchar`, số thực…) chỉ vào lược đồ khi một dòng mới được thêm vào
   bảng trên **trước**, kèm lý do.
 - **Hậu quả nếu làm khác:** lát này cất tiền bằng `integer`, lát kia bằng `bigint`, và phép cộng
   doanh thu qua lát (`I-014`) đổi kiểu ngầm ở giữa. Một cột mốc bằng `timestamp` (không múi giờ) là
@@ -147,15 +148,17 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   FROM information_schema.columns
   WHERE table_schema = :schema
     AND (   data_type NOT IN ('bigint', 'integer', 'boolean', 'date', 'text',
-                              'timestamp with time zone', 'jsonb')
+                              'timestamp with time zone', 'jsonb', 'numeric')
          OR (data_type = 'jsonb') <> (column_name LIKE '%!_image' ESCAPE '!')
+         OR (data_type = 'numeric') <> (column_name LIKE '%!_measure' ESCAPE '!')
          OR (column_name = 'id' AND (data_type <> 'bigint' OR is_identity <> 'YES'
                                      OR identity_generation <> 'ALWAYS'))
          OR (column_name LIKE '%!_id'  ESCAPE '!' AND data_type <> 'bigint')
          OR (column_name LIKE '%!_vnd' ESCAPE '!' AND data_type <> 'bigint'));
   ```
 - **Nguồn:** owner cho điều kiện — `QD-10` · `QD-20` · `QD-30` · `QD-60` · `QD-61`; tên kiểu là phiên
-  chọn 2026-09-27.
+  chọn 2026-09-27. Dòng `_measure` là phiên chọn 2026-09-30 (`P2A-02`, `docs/decisions.md`
+  **ADR-071**) — chủ quán chưa nói con số gõ vào có lẻ hay không; kiểu này nhận cả hai.
 
 ---
 

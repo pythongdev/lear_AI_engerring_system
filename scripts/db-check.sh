@@ -13,7 +13,8 @@
 # Tham số `:schema`… lấy từ bảng §0 của 01-quy-uoc-du-lieu.md; múi giờ của quán
 # lấy từ master_plan/shop-facts.md §1. Bước 4: dựng dữ liệu mồi (db/seed/, P2-10)
 # vào database ấy rồi tính lại các ca giá §4.8. Bước 5: trên dữ liệu mồi ấy, lùi
-# một bước phải bị khoá chặn từ chối (07-thu-tu-migration.md). Bước 6: bộ đối chiếu
+# từng bước qua chỗ còn rỗng tới bước đầu có dữ liệu bị từ chối, gỡ dirty rồi xuôi
+# lại đỉnh và so lược đồ (07-thu-tu-migration.md). Bước 6: bộ đối chiếu
 # (scripts/reconcile.sh, P2-11) — nhóm I-0xx và nhóm quy ước QD-XX (các phép QD
 # chạy ở đây, không ở bước 1) — ra 0 dòng trên dữ liệu mồi, 0 dòng trên ngày bán mẫu
 # đúng, và mỗi lỗi cài ở db/reconcile/proof/ làm kêu ĐÚNG tập câu nó khai
@@ -223,24 +224,47 @@ else
 fi
 
 # --- 5. khoá chặn của đường lùi biết kêu (P2-09) ------------------------------
-# Database lúc này có dữ liệu mồi. Lùi một bước ⇒ phải bị từ chối, lược đồ không
-# đổi; rồi gỡ dấu dirty bằng force về đúng bước trước lệnh (07-thu-tu-migration.md §3).
+# Database có dữ liệu mồi: bước rỗng được lùi (luật 2), bước đầu có dữ liệu phải
+# từ chối mà không đổi lược đồ. Gỡ dirty về bước ấy rồi xuôi lại đỉnh, so ảnh seeded.
 if [ "$n_mig" -gt 0 ] && [ "${top:-0}" != 0 ]; then
   schema_dump > "$snap/seeded"
-  if out="$(migrate down 1)"; then
-    fail "khoá chặn — lùi một bước trên database có dữ liệu mồi mà KHÔNG bị từ chối"
-  elif ! printf '%s\n' "$out" | grep -q 'đường lùi từ chối'; then
-    fail "khoá chặn — lùi hỏng vì lý do khác:"; printf '%s\n' "$out" | tail -5 | sed 's/^/     /'
-  elif ! d="$(diff "$snap/seeded" <(schema_dump))"; then
-    fail "khoá chặn — từ chối nhưng lược đồ đã đổi:"; printf '%s\n' "$d" | head -20 | sed 's/^/     /'
-  else
-    echo "PASS khoá chặn — lùi trên dữ liệu mồi bị từ chối, lược đồ không đổi"
-    printf '%s\n' "$out" | grep -o 'đường lùi từ chối: .* gỡ nó là xoá dữ liệu' | head -1 | sed 's/^/     /'
-    echo "     sau lệnh hỏng: $(migrate version | tail -1)"
-    if migrate force "$top" >/dev/null && [ "$(migrate version | tail -1)" = "$top" ]; then
-      echo "PASS force $top — dấu dirty gỡ, phiên bản: $(migrate version | tail -1)"
+  empty_steps=0; blocked=0; guard_ok=1; standing="$top"
+  for f in $(printf '%s\n' $versions | sort -r); do
+    v="${f%%_*}"; before="$(cat "$snap/$v.prev")"
+    if out="$(migrate down 1)"; then
+      echo "NOTE khoá chặn — ${f%.up.sql} còn rỗng, lùi được (luật 2)"
+      empty_steps=$((empty_steps + 1)); standing="$before"
+      if ! d="$(diff "$snap/$before" <(schema_dump))"; then
+        fail "khoá chặn — lùi ${f%.up.sql} nhưng lược đồ khác ảnh bước ngay dưới:"
+        printf '%s\n' "$d" | head -20 | sed 's/^/     /'
+        guard_ok=0; break
+      fi
+    elif ! printf '%s\n' "$out" | grep -q 'đường lùi từ chối'; then
+      fail "khoá chặn — lùi hỏng vì lý do khác:"; printf '%s\n' "$out" | tail -5 | sed 's/^/     /'
+      guard_ok=0; break
+    elif ! d="$(diff "$snap/$v" <(schema_dump))"; then
+      fail "khoá chặn — từ chối nhưng lược đồ đã đổi:"; printf '%s\n' "$d" | head -20 | sed 's/^/     /'
+      guard_ok=0; break
     else
-      fail "force $top — không gỡ được dấu dirty: $(migrate version | tail -1)"
+      blocked=1; standing="$v"
+      printf '%s\n' "$out" | grep -o 'đường lùi từ chối: .* gỡ nó là xoá dữ liệu' | head -1 | sed 's/^/     /'
+      echo "     sau lệnh hỏng: $(migrate version | tail -1)"
+      break
+    fi
+  done
+  if [ "$guard_ok" -eq 1 ] && [ "$blocked" -eq 0 ]; then
+    fail "khoá chặn — lùi tới số không trên database có dữ liệu mồi mà KHÔNG bị từ chối"
+  elif [ "$guard_ok" -eq 1 ]; then
+    if migrate force "$standing" >/dev/null && [ "$(migrate version | tail -1)" = "$standing" ]; then
+      if out="$(migrate up)" && d="$(diff "$snap/seeded" <(schema_dump))"; then
+        echo "PASS khoá chặn — bước đầu có dữ liệu từ chối, lược đồ không đổi; đã lùi qua $empty_steps bước rỗng và xuôi lại, lược đồ giống hệt trước bước 5"
+        echo "PASS force $standing — dấu dirty gỡ; đã xuôi lại $empty_steps bước rỗng, phiên bản: $(migrate version | tail -1)"
+      else
+        fail "khoá chặn — xuôi lại đỉnh hoặc so lược đồ seeded hỏng:"
+        printf '%s\n' "$out" "${d:-}" | head -20 | sed 's/^/     /'
+      fi
+    else
+      fail "force $standing — không gỡ được dấu dirty: $(migrate version | tail -1)"
     fi
   fi
 fi
