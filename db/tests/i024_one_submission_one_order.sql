@@ -33,16 +33,17 @@ BEGIN
   RAISE EXCEPTION 'I-024: database KHÔNG từ chối — %', label;
 END $$;
 
--- Một đơn Pickup hợp lệ theo I-022, mang dấu cho trước.
-CREATE FUNCTION pg_temp.pickup(code text) RETURNS text LANGUAGE sql AS $$
+-- Một đơn Pickup hợp lệ theo I-022, mang dấu cho trước. Lúc tạo mặc định là đồng hồ lúc chạy;
+-- kịch bản song song truyền một lúc tạo tường minh (xem ở đó).
+CREATE FUNCTION pg_temp.pickup(code text, luc timestamptz DEFAULT now()) RETURNS text LANGUAGE sql AS $$
   SELECT format($q$INSERT INTO sales_order (channel_code, status, handover_code, customer_phone,
-                                             customer_needed_at, submission_code)
-                   VALUES ('pickup', 'pending_confirmation', 'shop_pickup', '0900000000', now(), %L)$q$,
-                code)
+                                             customer_needed_at, submission_code, created_at)
+                   VALUES ('pickup', 'pending_confirmation', 'shop_pickup', '0900000000', now(), %L, %L)$q$,
+                code, luc)
 $$;
 
 DO $$
-DECLARE t5 bigint; s5 bigint; o1 bigint; n bigint; msg text; code text; q5 bigint;
+DECLARE t5 bigint; s5 bigint; o1 bigint; n bigint; msg text; code text; q5 bigint; luc timestamptz;
         conn text := 'dbname=banhcuon user=shop_app password=shop_app_dev';
 BEGIN
   -- Kịch bản âm 1: một đơn Pickup, gửi lại cùng dấu năm lần (tuần tự) ⇒ đúng một đơn.
@@ -103,12 +104,20 @@ BEGIN
   -- Kịch bản âm 1, nửa song song: hai lần gửi lại tới CÙNG LÚC trên hai kết nối thật.
   -- A ghi mà chưa COMMIT; B ghi cùng dấu trong lúc ấy. B phải bị database GIỮ LẠI (chưa
   -- trả lời), rồi bị từ chối khi A COMMIT — không phải cả hai cùng "kiểm thấy chưa có".
+  -- Đơn của A là dòng DUY NHẤT của file này còn lại sau ROLLBACK (đầu file), và bộ đối chiếu chạy
+  -- sau trên chính database ấy. Để lúc tạo theo đồng hồ thì I-008/1 (đơn tạo ngoài giờ bán) kêu mỗi
+  -- khi bộ kiểm chạy ngoài giờ bán — cổng đỏ theo giờ trong ngày (work/findings.md F-051). Nên nó
+  -- mang 08:00 hôm nay theo múi giờ kết nối (QD-32) — một giờ TRONG giờ bán của shop-facts.md §1,
+  -- cùng cách db/reconcile/proof/baseline.sql đặt mốc; giờ bán đổi mà 08:00 rơi ra ngoài thì
+  -- I-008/1 kêu đúng dòng này.
   code := 'lan-gui-song-song-' || gen_random_uuid();
+  luc := ((now() AT TIME ZONE current_setting('TimeZone'))::date + time '08:00')
+         AT TIME ZONE current_setting('TimeZone');
   PERFORM dblink_connect('i024_a', conn);
   PERFORM dblink_connect('i024_b', conn);
   PERFORM dblink_exec('i024_a', 'BEGIN');
-  PERFORM dblink_exec('i024_a', pg_temp.pickup(code));
-  PERFORM dblink_send_query('i024_b', pg_temp.pickup(code));
+  PERFORM dblink_exec('i024_a', pg_temp.pickup(code, luc));
+  PERFORM dblink_send_query('i024_b', pg_temp.pickup(code, luc));
   PERFORM pg_sleep(0.5);
   IF dblink_is_busy('i024_b') <> 1 THEN
     RAISE EXCEPTION 'I-024: kết nối B không bị giữ lại — hai lần ghi không chồng lên nhau';
