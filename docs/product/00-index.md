@@ -90,6 +90,7 @@ tiền tố khác — `P1-XX` (ADR-033).
 | Dữ liệu mồi — menu thật, bàn và mã QR, trạm của thành phần: sinh lúc chạy từ `master_plan/shop-facts.md` bởi `db/seed/seed.pl`, không cất con giá nào; các ca giá bắt buộc tính lại từ database; *người* là chỗ trống chờ `P2-08` (P2-10) | [2-db/08-du-lieu-moi.md](2-db/08-du-lieu-moi.md) |
 | Bộ đối chiếu bất biến — mỗi tập *"phải rỗng"* của `03-bao-ve-invariant.md` thành một câu `I-0xx/n` ở `db/reconcile/`, một lệnh `scripts/reconcile.sh` sau khi đóng quán (cả nhóm quy ước `QD-XX`) · tập chưa có câu, vì sao, ai nợ · chứng minh biết kêu bằng ngày bán mẫu và lỗi cài (P2-11, ADR-066) | [2-db/09-doi-chieu-bat-bien.md](2-db/09-doi-chieu-bat-bien.md) |
 | Quy ước code — **dựng và kiểm bằng gì**: DBMS + phiên bản · cách chạy database · vai · kiểu · migration · múi giờ kết nối · khung test · thư mục · stack · tên ràng buộc; mỗi quy ước một mã `QC-XX` và một phép kiểm (P2-12, ADR-055) | [2-db/10-quy-uoc-code.md](2-db/10-quy-uoc-code.md) |
+| Cổng chất lượng pha 2 — **biên bản lượt diễn** ba scenario nghiệm thu qua lược đồ (mỗi bước một giao dịch COMMIT, đọc lại ở kết nối khác, bộ đối chiếu rỗng trên ngày ấy), tiền cộng tay từ `shop-facts.md`, **chấm ngược hai mươi bốn dòng `YC`** mỗi dòng hai câu, và **mười hai ô cổng sang pha 3** đã ký kèm bằng chứng; chạy lại ở bước 7 của `db-check` (P2-13, ADR-067) | [2-db/11-cong-chat-luong-pha-2.md](2-db/11-cong-chat-luong-pha-2.md) |
 
 Các lát lược đồ sau **thêm** dòng vào bảng này, không ghi đè dòng của lát trước (kế hoạch pha 2 §6).
 

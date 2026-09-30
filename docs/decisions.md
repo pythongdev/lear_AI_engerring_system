@@ -83,6 +83,7 @@ có câu trả lời mới từ người.
 | ADR-064 | **`CLAUDE.md` chỉ giữ luật và con trỏ** — cơ chế của một cổng ở header script của nó, lý do ở ADR; số mục §1–§8 giữ nguyên; bảng §2 giữ đủ hàng (607 → khoảng 410 dòng) | Đã chốt 2026-09-29 (giao cho phiên) | — | T-087 |
 | ADR-065 | **Mỗi bước migration một bước lùi, và bước lùi chỉ gỡ chỗ còn rỗng** — `QC-05` bỏ luật *chỉ đi tới*; mỗi `.up.sql` một `.down.sql` mở đầu bằng khoá chặn (bảng có dòng, cột có giá trị ⇒ từ chối); lùi trên dữ liệu đã ghi là migration mới; `db-check` xuôi · lùi · xuôi lại từng bước và so lược đồ; tên bảng `.md` ↔ migration thành Gate 1e | Đã chốt 2026-09-29 (giao cho phiên) | — | P2-09 |
 | ADR-066 | **Bộ đối chiếu: một câu một TẬP, một lệnh sau khi đóng quán, chứng minh bằng ngày mẫu và lỗi cài** — mỗi tập *"phải rỗng"* của pha 1 là một câu `I-0xx/n` ở `db/reconcile/`; `scripts/reconcile.sh` chạy nhóm `I-0xx` và nhóm quy ước `QD-XX` (bốn phép dạng lệnh viết lại thành SQL); `db-check` chứng minh: ngày bán mẫu đúng ⇒ 0 dòng, mỗi lỗi cài ⇒ đúng tập câu khai | Đã chốt 2026-09-30 (giao cho phiên) | — | P2-11 |
+| ADR-067 | **Cổng pha 2 ký bằng một bước chạy lại được: ba scenario COMMIT thật, đọc lại ở kết nối khác, chấm YC năm kết cục** — `db/scenario/` diễn ba scenario mỗi bước một giao dịch trên database kiểm có dữ liệu mồi; bộ đối chiếu chạy lại trên ngày ấy; mỗi mã YC một dòng *đọc* và một dòng *sai* mang một trong năm kết cục có tên; tất cả là bước 7 của `db-check` | Đã chốt 2026-09-30 (giao cho phiên) | — | P2-13 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -4414,4 +4415,55 @@ sai cũ kêu mỗi tối tới khi được sửa có vết.
 
 **Applies to:** `db/reconcile/` · `scripts/reconcile.sh` · `scripts/db-check.sh` ·
 `docs/product/2-db/09-doi-chieu-bat-bien.md` · `docs/product/2-db/01-quy-uoc-du-lieu.md` §0 ·
+`docs/product/2-db/10-quy-uoc-code.md` `QC-07` · `QC-08`.
+
+### ADR-067 — Cổng pha 2 ký bằng một bước chạy lại được: ba scenario COMMIT thật, đọc lại ở kết nối khác, chấm YC năm kết cục
+
+**Trạng thái:** **Đã chốt** 2026-09-30, **giao cho phiên**. Chủ repo giao `P2-13` với lời *"hãy đọc
+kĩ và làm"*; entry đòi *mỗi bước của ba scenario ghi/đọc được bằng dữ liệu thật, mỗi dòng YC hai câu,
+mỗi ô cổng một output thật*, nhưng không chọn hình dạng. Câu giao việc là lời giao việc chọn, không
+phải lời xác nhận các lựa chọn dưới đây (`CLAUDE.md` §7.2, cùng cách đọc với **ADR-065** · **ADR-066**).
+Task **P2-13**.
+
+**Context:**
+Cổng pha 1 được ký bằng một lượt đọc: mỗi bước scenario trỏ vào một mục thiết kế
+(`docs/product/1-system-design/07-cong-chat-luong-pha-1.md`). Pha 2 có thứ pha 1 không có — một
+database chạy được — nên *"ghi được, đọc lại được"* chứng minh được bằng lệnh. Ba cách chấm sai dễ
+nhất: diễn trong một giao dịch rồi ROLLBACK (ràng buộc hoãn chỉ được chấm một lần ở cuối, không phải ở
+mỗi bước như cửa ghi thật); đọc lại trong cùng phiên đã ghi (bảng tạm và hàm tạm của lúc ghi che mất
+chỗ thiếu); và chấm YC bằng hai nhãn *đạt / không đạt*, trong khi 04-yeu-cau-du-lieu.md §0 luật 2 nói
+*"không xảy ra được" không có nghĩa là "database phải chặn"*.
+
+**Decision:**
+1. **Mỗi bước ở quán một giao dịch được COMMIT**, trên database kiểm riêng của `db-check` (có dữ liệu
+   mồi), trong ngày bán giả định là *ngày mai*. Mốc của vết cập nhật đặt về giờ của bước — tiền lệ
+   `db/reconcile/proof/i009_2.sql`. Hàm `pg_temp.sc_*` đứng thay cửa của pha 3, không quyết luật nào.
+2. **Đọc lại ở một kết nối khác**, sau COMMIT, chỉ từ dữ liệu, neo vào ngày diễn; mỗi dòng *Kết quả mong
+   đợi* kiểm bằng **quan hệ** (hoá đơn = tổng dòng, dòng mới − dòng cũ = số bánh × phần tăng giá gốc đọc
+   từ vết) — **không chép con giá nào** (**ADR-001**). Phép cộng tay từ `shop-facts.md` ở file cổng.
+3. **Bộ đối chiếu chạy lại trên ngày vừa diễn** ⇒ mọi câu rỗng: một buổi bán đúng không làm kêu câu nào.
+4. **Chấm YC năm kết cục có tên** cho câu *dựng được trạng thái sai không*: TỪ CHỐI (lời database) ·
+   KHÔNG CHỖ (lược đồ không có chỗ cho trạng thái ấy, in bằng chứng vắng mặt) · ĐI QUA (cái sai là chặn
+   nhầm, việc hợp lệ ghi được) · GỌI TÊN (database không chặn, câu đối chiếu có lỗi cài chứng minh biết
+   kêu gọi tên nó) · DỰNG ĐƯỢC / CHƯA TRẢ LỜI ĐƯỢC (kèm mã chỗ hở). Mỗi kết cục tự kiểm: một kết cục
+   không còn đúng ⇒ FAIL, nên cổng đổi thì file chấm đổi cùng lượt.
+5. **Tất cả là bước 7 của `scripts/db-check.sh`**, không phải một lượt chạy tay dán output: mã YC phải
+   chấm đọc lúc chạy từ owner (các mã đứng trước §8 của `04-yeu-cau-du-lieu.md`), `comm -3` với mã có đủ
+   hai dòng; mỗi `GỌI TÊN` phải trỏ tới một file lỗi cài còn đó và khai đúng mã.
+
+**Rejected alternatives:**
+- *Diễn trong một giao dịch ROLLBACK như ngày mẫu của P2-11.* Bác: lý do ở *Context*; ngày mẫu chứng
+  minh bộ đối chiếu, không chứng minh từng bước ở quán ghi được.
+- *Một lượt chạy tay, dán output vào file cổng.* Bác: output dán là bản chụp một ngày; lát sau đổi lược
+  đồ thì ô đã ký vẫn xanh trên giấy (**F-001** · **F-033**).
+- *Chấm YC hai nhãn đạt / không đạt.* Bác: gộp *database chặn* với *câu đối chiếu bắt* và với *lược đồ
+  không có chỗ*, ba câu trả lời khác nhau cho người đọc cổng.
+- *Kiểm con số tiền kỳ vọng trong SQL.* Bác: là bản chép thứ hai của `shop-facts.md` §4.
+
+**Hệ quả:** `db-check` thêm khoảng hai mươi giây. Database kiểm sau bước 7 có một ngày bán thật đã
+COMMIT — bước nào thêm sau bước 7 đọc database ấy phải biết điều đó. Test `i024` COMMIT một đơn qua
+dblink trước bước 7, nên file đọc lại và file chấm neo mọi phép tìm vào ngày diễn, không giả định
+database sạch.
+
+**Applies to:** `db/scenario/` · `scripts/db-check.sh` · `docs/product/2-db/11-cong-chat-luong-pha-2.md` ·
 `docs/product/2-db/10-quy-uoc-code.md` `QC-07` · `QC-08`.

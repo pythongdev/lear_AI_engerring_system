@@ -330,7 +330,9 @@ nguyên: một cổng tick kèm lý do cho ô còn trống thì trung thực và
 bằng cảm giác thì không chặn được gì. Nên mỗi ô dưới đây kèm sẵn **cách chứng minh**.
 
 > **Các ô dưới đây là LỜI của cổng; chỗ nó được KÝ thì không ở file này** — chỗ ký là file cổng chất
-> lượng pha 2 do `P2-13` sinh ra, đúng cách cổng pha 1 được ký ở
+> lượng pha 2 do `P2-13` sinh ra —
+> [`11-cong-chat-luong-pha-2.md`](../docs/product/2-db/11-cong-chat-luong-pha-2.md) §7, từ 2026-09-30 —
+> đúng cách cổng pha 1 được ký ở
 > [`07-cong-chat-luong-pha-1.md`](../docs/product/1-system-design/07-cong-chat-luong-pha-1.md) §7
 > chứ không ở kế hoạch. Những hộp `- [ ]` ở đây vì thế **không** phải một phép đếm và **không được
 > tick**: kế hoạch này không sở hữu sự thật nào, và hai bản tick sẽ trôi khỏi nhau (**F-001** ·

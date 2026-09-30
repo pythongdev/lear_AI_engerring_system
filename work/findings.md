@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 47 finding — 42 Fixed/Resolved/Closed, 5 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-30, lúc ghi F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 48 finding — 42 Fixed/Resolved/Closed, 6 Open (đếm lại từng dòng `**Status:**` ngày 2026-09-30, lúc ghi F-048 ở P2-13; trước đó cùng ngày, lúc ghi F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -109,6 +109,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-045 | Hai phiên chạy `db-check` cùng lúc dùng chung một compose project ⇒ gỡ database của nhau, đỏ giả | Open |
 | F-046 | Vết cập nhật ở chế độ mềm — lần sửa không khai lý do đi qua mà không vết (chủ repo chọn, P2-08) | Open |
 | F-047 | Thêm một dòng con vào bản ghi đã có (món vào đơn, thành phần vào suất, xấp mệnh giá vào tiền đầu két) không để lại vết ai thêm (P2-11) | Open |
+| F-048 | Số tiền mặt đếm được cuối ngày và dấu *ngày đã đối soát xong* không có chỗ cất, không bước nào nhận — đối soát ngưỡng 0đ không chạy được trên dữ liệu (P2-13) | Open |
 
 ---
 
@@ -4093,6 +4094,41 @@ phiên bản nội dung, chẳng hạn) — trigger hiện có chụp nó, và b
 
 **Related task:**
 `work/backlog_DB.md` → **P2-11** · pha 3
+
+**Status:**
+Open
+
+### F-048 — Số tiền mặt đếm được cuối ngày và dấu *ngày đã đối soát xong* không có chỗ cất, và không bước nào nhận
+
+**Problem:**
+Đối soát cuối ngày ngưỡng lệch **0đ** (`master_plan/shop-facts.md` §6.10) cần hai thứ mà lược đồ pha 2
+không cất: **số tiền mặt đếm được** ở két cuối ngày (vế trái của công thức `I-021`) và **dấu một ngày đã
+đối soát xong** (**ADR-037**: ngày còn lượt giấy chưa nhập là ngày *chưa* đối soát xong). Hai lát đã
+ghi đúng chỗ trống này — `docs/product/2-db/04-luoc-do-duong-tien.md` §5 và
+`docs/product/2-db/06-luoc-do-nguoi-va-vet.md` §5, đều ghi *"chủ repo quyết bước nào nhận"* — nhưng kế
+hoạch pha 2 §6 không giao nó cho bước nào, `P2-11` không nhận (ba tập `I-012` tập 2 · `I-014` tập 5 ·
+`I-021` tập 1 ghi *chưa có câu* ở `docs/product/2-db/09-doi-chieu-bat-bien.md` §2), và chưa có mã nào,
+nên brief không bao giờ in nó. `P2-13` (2026-09-30, Claude Code) chấm ngược hai dòng yêu cầu và cả hai
+ra **CHƯA TRẢ LỜI ĐƯỢC** (`db/scenario/yc.sql`, bước 7 của `scripts/db-check.sh`): `YC-03` vế *một chỗ
+lệch trong bảng đối soát không quy được về đúng một thao tác* — không có chỗ lệch nào để quy khi số
+đếm được không có chỗ đứng; `YC-08` vế *một ngày còn lượt giấy chưa nhập được coi là đã đối soát xong*
+— không có dấu *đã đối soát xong* nào để sai.
+
+**Impact:**
+Chạm tiền. Đối soát ngưỡng 0đ là cổng chất lượng mạnh nhất của dự án (kế hoạch pha 2 §10), và hôm nay
+nó chỉ chạy được ở vế phải: mọi hạng tử của công thức két đọc được, nhưng không có con số nào để so.
+Pha 3 dựng cửa *đóng ngày* trên một lược đồ không có chỗ ghi kết quả của lần đóng ấy thì hoặc tự bịa
+một chỗ cất, hoặc để phép đối soát sống ngoài hệ thống — đúng hình `F-034` đã tránh cho dữ liệu bán hàng.
+
+**Decision / Fix:**
+Chưa sửa — `P2-13` là lượt chấm, không thiết kế bù (`work/backlog_DB.md` → P2-13). Việc của **chủ repo**:
+chọn nơi nhận, ví dụ (a) một bước pha 2 mới dựng chỗ cất số đếm két và dấu đối soát xong bằng một
+migration mới, rồi `P2-11` thêm ba câu còn thiếu; (b) giao cho pha 3 cùng cửa đóng ngày, với ràng buộc
+viết trước khi có endpoint; (c) lane admin mảng tài chính. Chọn xong thì hai dòng `CHƯA TRẢ LỜI ĐƯỢC`
+ở `db/scenario/yc.sql` đổi cùng lượt (file ấy tự FAIL khi chỗ cất xuất hiện mà kết cục chưa đổi).
+
+**Related task:**
+`work/backlog_DB.md` → **P2-13** (lượt phát hiện) · `P2-06` · `P2-08` (chỗ trống đã ghi) · `P2-11`
 
 **Status:**
 Open

@@ -1821,12 +1821,61 @@ Và cách chấm đã được chứng minh: `BA-11` và `P1-11` tìm ra chỗ h
 - **Đủ các ô KHÔNG phải câu *"được, sang pha 3"*.** Ký chuyển pha là quyền **chủ repo** (kế hoạch
   §9).
 
-**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+**Nhận việc** — điền 2026-09-30 (Claude Code), mọi bước `P2-03`…`P2-12` đã `Done`; mức **L2**:
+- *Phạm vi:* `work/scope/P2-13.txt` — thư mục mới `db/scenario/` (ba kịch bản diễn + phần đọc lại +
+  phép chấm `YC`), một bước mới của `scripts/db-check.sh`, file cổng
+  `docs/product/2-db/11-cong-chat-luong-pha-2.md`, dòng `QC-07` · `QC-08` ở `10-quy-uoc-code.md`, dòng
+  mục lục, ADR, finding. **Không** sửa migration, dữ liệu mồi hay bộ đối chiếu: chỗ hụt thành `F-XXX`.
+- *Nghiệm thu:*
+  1. Ba scenario ([`08-scenario.md`](../docs/product/0-ba/ban-hang/08-scenario.md) §8) diễn trên database
+     kiểm **có dữ liệu mồi**, **mỗi bước ở quán một giao dịch được COMMIT** (như cửa pha 3 sẽ ghi); chỉ
+     các bước cố ý làm sai bị từ chối.
+  2. **Đọc lại ở một kết nối khác, sau COMMIT**: mỗi dòng *Kết quả mong đợi* của ba scenario được kiểm
+     bằng **quan hệ** đọc từ database (không chép con giá nào — **ADR-001**, **F-001**) và in con số ra;
+     một dòng sai ⇒ `db-check` FAIL.
+  3. `scripts/reconcile.sh` chạy lại trên ngày vừa diễn ⇒ mọi câu 0 dòng; câu nào kêu là một chỗ hụt
+     có tên, không bị sửa cho im.
+  4. Hai mươi bốn dòng `YC-01`…`YC-20` · `YC-22`…`YC-25`, mỗi dòng **hai** câu có output thật: *đọc
+     ra được* (in ra từ dữ liệu) · *dựng được trạng thái sai không* (lời từ chối nguyên văn, hoặc tên
+     câu đối chiếu kèm dòng `PASS kêu` của nó, hoặc mã chỗ đang chặn).
+  5. File cổng ký **mười hai** ô của kế hoạch §9, mỗi ô một bằng chứng hoặc để trống kèm lý do và mã;
+     tiền của ba scenario cộng tay từ `shop-facts.md` khớp con số database in ra.
+- *Kiểm chứng:* `./scripts/db-check.sh` (bước mới in từng dòng) và `./scripts/gate.sh` xanh; dán output
+  vào *Bàn giao* và vào file cổng.
 
-**Bàn giao:** —
+**Bàn giao** — 2026-09-30 · làm: Claude Code · review độc lập: **chưa có** · nhánh `chatgpt_involve`, trên
+`8c50c7c` · chưa commit.
+
+*Kết quả.* File cổng [`11-cong-chat-luong-pha-2.md`](../docs/product/2-db/11-cong-chat-luong-pha-2.md):
+biên bản ba scenario (§1–§3), tiền cộng tay từ `shop-facts.md` khớp database từng đồng — 96.000 · 95.000 ·
+54.000, cả ngày 245.000 (§4), bảng chấm 24 dòng `YC` (§5), chỗ hở (§6), **mười hai ô: 11 tick kèm bằng
+chứng, ô 9 để trống chờ `P2-14`** (§7). Code ở `db/scenario/` (prelude · mở ngày · s1 · s2 · s3 · đọc lại ·
+chấm YC), chạy ở **bước 7** của `scripts/db-check.sh`; lựa chọn ghi ở `docs/decisions.md` **ADR-067**;
+`QC-07` · `QC-08` của `10-quy-uoc-code.md` thêm thư mục và bước. Không sửa migration, test cũ, dữ liệu
+mồi hay bộ đối chiếu.
+
+*Nghiệm thu → bằng chứng* (lần chạy `./scripts/db-check.sh` 2026-09-30, `EXIT=0`):
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| 1. mỗi bước một giao dịch COMMIT | `PASS ba scenario diễn qua lược đồ — 32 dòng bước, mỗi bước một giao dịch COMMIT`; hai lần từ chối cố ý của S1 (`table_session_member_one_unpaid_session_key`, `bill_one_per_session_key`) và một của S2 (`bill_one_per_order_key`) |
+| 2. đọc lại ở kết nối khác, bằng quan hệ | `PASS đọc lại ba scenario ở kết nối khác — mọi dòng Kết quả mong đợi đúng` · `TIỀN ba scenario: S1 96000 · S2 95000 · S3 54000 · cộng 245000 đ`; chứng minh biết kêu: cài *dòng 8:00 tính lại theo giá mới* ⇒ `SAI — S3 — dòng 9:00 đắt hơn dòng 8:00 đúng (…)` |
+| 3. đối chiếu trên ngày vừa diễn | `PASS đối chiếu trên ngày vừa diễn — 63 câu I-0xx · 22 câu QD, mọi tập rỗng` |
+| 4. 24 dòng YC, hai câu | `PASS chấm YC — 24 mã, mỗi mã đọc + sai; comm -3 … rỗng · 34 TỪ CHỐI · 5 KHÔNG CHỖ · 2 ĐI QUA · 5 GỌI TÊN · 4 DỰNG ĐƯỢC · 2 CHƯA TRẢ LỜI ĐƯỢC`; owner chưa lọc 25 mã, đã lọc 24; bỏ dòng *sai* của `YC-25` ⇒ `comm -3` in `YC-25`; `GỌI TÊN` trỏ nhầm file lỗi ⇒ `kêu: I-012/3→proof/i012_1` |
+| 5. mười hai ô, tiền khớp | file cổng §7 · §4 |
+
+`./scripts/gate.sh`: `PASS gate không cổng nào đỏ` — Gate 3 · 1b · 1c · 1d · 1e · 1 (`db-check — … ba scenario +
+đối chiếu trên ngày diễn, 24 mã YC`) · verify.
+
+*Còn lại, mỗi thứ ở owner của nó:*
+- **`F-048`** — số tiền mặt đếm được và dấu *ngày đã đối soát xong* không có chỗ cất, không bước nào nhận;
+  chủ repo chọn nơi nhận (`work/findings.md` F-048). Chạm tiền.
+- **`F-046`** — chế độ mềm của vết, bốn dòng `DỰNG ĐƯỢC` (`work/findings.md` F-046). Chờ pha 3.
+- **`U-063`** · **`U-058`** — chạm tiền, chờ chủ quán (`docs/product/99-unknowns.md`).
+- **Ô 9** — `P2-14`, bước kế, nay ở *Ready*.
+- Câu *"được, sang pha 3"* — chủ repo.
+
+*Việc kế:* `P2-14`.
 
 [↑ đầu file](#top)
 
