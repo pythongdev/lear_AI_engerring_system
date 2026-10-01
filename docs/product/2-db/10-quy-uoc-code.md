@@ -236,7 +236,8 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
 
 - **Quy ước:**
   - `scripts/db-check.sh` là **một** lệnh chạy cả bộ: dựng một database riêng và rỗng (compose
-    project `banhcuon_check`, cổng ngẫu nhiên, gỡ sạch khi xong), chạy mọi migration từ số 0, chạy
+    project `banhcuon_check_{PID}…` riêng mỗi lần, cổng ngẫu nhiên; chỉ gỡ của mình khi xong,
+    rác của lần chạy đã chết được lần sau dọn), chạy mọi migration từ số 0, chạy
     mọi phép kiểm `QC-XX`, rồi từng file `db/tests/*.sql`, dữ liệu mồi, và bộ đối chiếu
     `scripts/reconcile.sh` — nhóm `I-0xx` cùng nhóm quy ước `QD-XX` — kèm phần chứng minh biết kêu
     ở `db/reconcile/proof/` (`P2-11`, **ADR-066**, 2026-09-30); cuối cùng ba scenario nghiệm thu ở

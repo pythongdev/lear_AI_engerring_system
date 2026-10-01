@@ -2,9 +2,10 @@
 # Bộ kiểm database — Gate 1 gọi qua scripts/verify.sh (P2-12,
 # docs/product/2-db/10-quy-uoc-code.md QC-07). Chạy tay: ./scripts/db-check.sh
 #
-# Mỗi lần chạy dựng một database RIÊNG và RỖNG (compose project banhcuon_check,
-# cổng ngẫu nhiên, gỡ sạch khi xong — database làm việc `banhcuon` không bị
-# đụng), chạy migration ở db/migrations/ xuôi từng bước từ số 0, lùi từng bước về
+# Mỗi lần chạy dựng một database RIÊNG và RỖNG (project banhcuon_check_{PID}…,
+# cổng ngẫu nhiên), chỉ gỡ của mình khi xong; rác của lần chạy đã chết được lần
+# sau dọn. Database làm việc `banhcuon` không bị đụng. Chạy migration ở
+# db/migrations/ xuôi từng bước từ số 0, lùi từng bước về
 # số 0 rồi xuôi lại, so lược đồ sau mỗi lần lùi (P2-09), rồi:
 #   1. mọi khối ```sql và ```sh nằm dưới một tiêu đề `### QC-XX` trong
 #      docs/product/2-db/*.md — lấy thẳng từ tài liệu, không chép
@@ -30,7 +31,8 @@ set -uo pipefail
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT" || exit 1
 
-PROJECT=banhcuon_check
+PROJECT="banhcuon_check_$$_$(date +%s)_${RANDOM}"
+echo "NOTE db-check — compose project $PROJECT"
 DOCS=docs/product/2-db
 PARAMS_FILE="$DOCS/01-quy-uoc-du-lieu.md"
 export DB_PORT=0
@@ -39,6 +41,29 @@ failed=0
 compose() { docker compose -p "$PROJECT" "$@"; }
 cleanup() { compose down -v --remove-orphans >/dev/null 2>&1; }
 fail() { echo "FAIL $*"; failed=1; }
+
+# Chỉ nhận tên có PID dương; tên cũ không hậu tố và project làm việc không khớp.
+# PID được tái dùng, hay PID của user khác (kill -0 trả EPERM), vẫn coi là đang
+# sống: hỏi `ps -p`, không hỏi `kill -0` — thà để sót rác hơn gỡ nhầm.
+cleanup_stale() {
+  local project pid
+  while IFS= read -r project; do
+    [[ "$project" =~ ^banhcuon_check_([1-9][0-9]*)(_[a-z0-9_-]+)?$ ]] || continue
+    pid="${BASH_REMATCH[1]}"
+    ps -p "$pid" >/dev/null 2>&1 && continue
+    if docker compose -p "$project" down -v --remove-orphans >/dev/null 2>&1; then
+      echo "NOTE db-check — đã gỡ project rác $project (PID $pid không còn sống)"
+    fi
+  done < <(docker compose ls -a -q)
+}
+
+cleanup_on_exit() {
+  local status=$?
+  trap - EXIT
+  trap '' INT TERM
+  cleanup
+  exit "$status"
+}
 
 if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
   echo "db-check: FAIL — Docker không chạy. Bật Docker rồi chạy lại ./scripts/db-check.sh"
@@ -51,8 +76,10 @@ if [ -z "$SHOP_TZ" ]; then
   exit 1
 fi
 
-cleanup
-trap cleanup EXIT
+trap cleanup_on_exit EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+cleanup_stale
 if ! compose up -d --wait db >/dev/null 2>&1; then
   echo "db-check: FAIL — database không lên"
   compose logs db 2>&1 | tail -20

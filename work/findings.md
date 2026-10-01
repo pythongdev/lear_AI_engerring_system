@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 55 finding — 46 Fixed/Resolved/Closed, 9 Open (đếm lại ngày 2026-10-01, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 55 finding — 47 Fixed/Resolved/Closed, 8 Open (đếm lại ngày 2026-10-01, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -106,7 +106,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-042 | Mã QR của bàn phải không đoán được và đổi được — pha 1 không có mệnh đề nào | Fixed |
 | F-043 | Một lần gửi đơn phải thành đúng một đơn — pha 1 không có mệnh đề nào | Fixed |
 | F-044 | Một tập đối chiếu của hàng `I-004` không bao giờ rỗng được — việc trạm không có trạng thái huỷ | Open |
-| F-045 | Hai phiên chạy `db-check` cùng lúc dùng chung một compose project ⇒ gỡ database của nhau, đỏ giả | Open |
+| F-045 | Hai phiên chạy `db-check` cùng lúc dùng chung một compose project ⇒ gỡ database của nhau, đỏ giả | Fixed |
 | F-046 | Vết cập nhật ở chế độ mềm — lần sửa không khai lý do đi qua mà không vết (chủ repo chọn, P2-08) | Open |
 | F-047 | Thêm một dòng con vào bản ghi đã có (món vào đơn, thành phần vào suất, xấp mệnh giá vào tiền đầu két) không để lại vết ai thêm (P2-11) | Open |
 | F-048 | Số tiền mặt đếm được cuối ngày và dấu *ngày đã đối soát xong* không có chỗ cất, không bước nào nhận — đối soát ngưỡng 0đ không chạy được trên dữ liệu (P2-13) | Open |
@@ -4031,16 +4031,21 @@ học rằng *đỏ thì chạy lại* — đúng thói quen làm một cổng m
 hơn: một lần chạy có thể đọc lược đồ mà migration của lần kia đã dựng.
 
 **Decision / Fix:**
-Chưa sửa — `scripts/` ngoài scope của lượt ghi nhận. Hướng rẻ nhất: tên project riêng cho mỗi lần chạy
-(ví dụ gắn PID), để `cleanup` chỉ gỡ đúng database của mình; `QC-07` ở
-`docs/product/2-db/10-quy-uoc-code.md` đang nêu tên project cố định nên đổi cùng lượt. Cần một task
-L1 ở `work/backlog.md`; người mở task chọn cách.
+Sửa ở **T-128**, 2026-10-01 (Codex thi công, Claude viết nghiệm thu, duyệt và đo bằng Docker): mỗi lần
+chạy một compose project `banhcuon_check_<PID>_<giây>_<ngẫu nhiên>`, `cleanup` chỉ gỡ project ấy (cả khi
+Ctrl-C hay `kill`); lúc đầu lần chạy, project `banhcuon_check_<PID>…` mà `ps -p <PID>` không thấy nữa
+được gỡ như rác. Tên cũ không hậu tố và project `banhcuon` không bao giờ bị gỡ. Bản đầu của Codex hỏi
+`kill -0`, trả lỗi cả với PID còn sống của user khác — Claude đổi sang `ps -p` lúc duyệt. `QC-07` và hai
+trang `docs/guideline/` đổi cùng lượt. Đo: hai lần chạy cách nhau 6 giây, chồng nhau ⇒ cả hai
+`db-check: PASS`, xong không còn project kiểm nào; một lần chạy bị `kill -9` để lại project, lần kế in
+`NOTE … đã gỡ project rác` rồi PASS, trong khi một `banhcuon_check` của bản cũ đang chạy ở clone chính
+được để yên.
 
 **Related task:**
 `work/backlog_DB.md` → **P2-05** (lượt phát hiện) · `P2-12` (`QC-07`, chủ của bộ kiểm)
 
 **Status:**
-Open
+Fixed
 
 ### F-046 — Vết cập nhật đang ở chế độ mềm: một lần sửa không khai lý do đi qua mà không để lại vết
 

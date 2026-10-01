@@ -144,7 +144,8 @@ như `banhcuon-be-1`, `banhcuon-mysql-1`. Đó là container của một dự á
 vào lệnh khi chắc chắn không còn dùng chúng.
 
 **Bộ kiểm không đụng tới database này.** `./scripts/db-check.sh` luôn dựng một database **riêng**,
-rỗng (project `banhcuon_check`, cổng ngẫu nhiên), kiểm xong thì gỡ đi. Database bạn xem ở đây là
+rỗng (project `banhcuon_check_{PID}…` riêng mỗi lần, cổng ngẫu nhiên), kiểm xong chỉ gỡ của mình;
+rác của lần chạy đã chết được lần sau dọn. Database bạn xem ở đây là
 database làm việc `banhcuon`, dữ liệu trong nó vẫn còn nguyên sau khi bộ kiểm chạy.
 
 **Migration mới.** Khi có file migration mới trong [db/migrations/](../../db/migrations/), chỉ cần

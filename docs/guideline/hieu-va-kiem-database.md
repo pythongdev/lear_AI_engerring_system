@@ -21,8 +21,9 @@ có thể có **hai** database cùng lúc, và chúng không bao giờ đụng d
 - **Database làm việc** `banhcuon` (compose project `banhcuon`, cổng `127.0.0.1:5433`). Đây là cái
   bạn bật bằng `make up` và vào xem bằng `make psql`. Dữ liệu trong nó còn nguyên cho tới khi bạn
   `make reset`.
-- **Database của bộ kiểm** (compose project `banhcuon_check`, cổng ngẫu nhiên). `./scripts/db-check.sh`
-  dựng nó rỗng từ số 0, kiểm, rồi gỡ đi. Vì dựng lại từ đầu mỗi lần nên nó là bằng chứng đáng tin
+- **Database của bộ kiểm** (compose project `banhcuon_check_{PID}…` riêng mỗi lần, cổng ngẫu nhiên). `./scripts/db-check.sh`
+  dựng nó rỗng từ số 0, kiểm, rồi chỉ gỡ của mình; rác của lần chạy đã chết được lần sau dọn.
+  Vì dựng lại từ đầu mỗi lần nên nó là bằng chứng đáng tin
   rằng các migration chạy được trên một máy sạch.
 
 ### 1.2 Hai vai, một schema
@@ -161,9 +162,11 @@ phải lỗi.
 rỗng riêng, chạy mọi migration từ số 0, chạy mọi phép kiểm, rồi gỡ đi. Mất khoảng một phút. Docker
 phải đang bật; nếu không, nó báo `FAIL` chứ không lặng lẽ bỏ qua.
 
-Đừng chạy hai lần `db-check` cùng lúc (ví dụ hai phiên làm việc song song): hai lần ấy dùng chung
-một tên project nên sẽ gỡ database của nhau và báo đỏ giả — đây là finding `F-045` đang mở ở
-[work/findings.md](../../work/findings.md).
+Chạy hai lần `db-check` cùng lúc (ví dụ hai phiên làm việc song song) được: mỗi lần một tên
+project riêng nên không gỡ database của nhau. Trước 2026-10-01 thì không — hai lần dùng chung một
+tên và báo đỏ giả, finding `F-045` ở [work/findings.md](../../work/findings.md), đã sửa ở T-128.
+Một bản `db-check` cũ (tên cố định) còn chạy ở worktree chưa cập nhật vẫn có thể giẫm lên một bản
+cũ khác.
 
 ### 3.2 Nó kiểm năm thứ
 
