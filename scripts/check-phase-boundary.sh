@@ -34,6 +34,11 @@
 #   Mọi thứ ngoài hai thư mục trên.
 #   File chưa thay đổi trong lượt này.
 #   Dòng đã khai trong scripts/check-phase-boundary.ignore.
+#   Tên PascalCase và đường dẫn mở đầu bằng '/' chỉ nằm trong backtick vẫn
+#   để mắt người rà (F-049, T-131): PascalCase có thể là tham số database
+#   như TimeZone/PGPASSWORD; đường dẫn có thể chỉ file hệ thống, không phải
+#   route. Không suy ra chủ sở hữu chỉ từ hai hình tên dễ kêu oan này.
+#   Thẻ component thì bắt cả thẻ mở có thuộc tính và thẻ đóng.
 #
 # EXIT: 0 = sạch hoặc không có gì để soát · 1 = có vi phạm
 # Exit 0 vẫn in ĐÚNG MỘT dòng nói là trường hợp nào ("OK — N file đã soát" hay
@@ -85,7 +90,7 @@ PAT_API2='\b(GET|POST|PUT|PATCH|DELETE)[[:space:]]+(/[A-Za-z0-9_]|[A-Za-z0-9_:-]
 PAT_API2="$PAT_API2"'|/api/|/v[0-9]+/'
 
 # Pha 4 — route / component. Áp cho cả hai vùng.
-PAT_FE='\.(jsx|tsx|vue)\b|<[A-Z][A-Za-z]+[[:space:]]*/?>'
+PAT_FE='\.(jsx|tsx|vue)\b|</?[A-Z][A-Za-z]+([[:space:]][^<>]*)?/?>'
 PAT_FE="$PAT_FE"'|path=["'"'"'][^"'"'"']*/'
 
 PATTERN1="$PAT_DB|$PAT_API|$PAT_FE"

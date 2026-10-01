@@ -170,6 +170,34 @@ got="$(run "$r")"
 check "hai vùng cùng vi phạm: nêu pha 1" 1 "pha 1 đang đặt tên" "$got"
 check "hai vùng cùng vi phạm: nêu pha 2" 1 "pha 2 đang đặt tên" "$got"
 
+# 18 — HỒI QUY F-049: mỗi dòng thẻ trước đây KHÔNG BẮT là một ca riêng,
+# cùng ba hình đã BẮT để không đánh mất hành vi cũ. Chạy ở cả hai vùng.
+for phase in "$PHASE1" "$PHASE2"; do
+  i=0
+  while IFS= read -r example; do
+    i=$((i + 1))
+    r="$(newrepo "fe_shapes_${phase##*/}_$i")"
+    printf '%s\n' "$example" > "$r/$phase/01-ranh-gioi.md"
+    check "$phase: $example (F-049)" 1 "$example" "$(run "$r")"
+  done <<'EOF'
+<DebtTable rows={rows} />
+</DebtTable>
+<OrderCard order={o}>
+<DebtTable />
+<DebtTable>
+file `DebtList.tsx`
+EOF
+done
+
+# 19 — một ca văn xuôi pha 2 có dấu <, > và ký hiệu thường dùng phải sạch.
+r="$(newrepo p2_symbols)"
+cat > "$r/$PHASE2/02-luoc-do.md" <<'EOF'
+So sánh a < b và b > a khi kiểm tra giới hạn.
+Thay <MÃ> trong work/scope/<MÃ>.txt bằng mã việc.
+Số tiền dùng numeric(12,0); hợp lệ ⇒ ghi nhận -> đối chiếu.
+EOF
+check "pha 2: dấu so sánh, mã giữ chỗ, kiểu số và mũi tên không bị kêu oan" 0 "OK — 1 file .md đã soát" "$(run "$r")"
+
 if [ "$fails" -ne 0 ]; then
   echo "check-phase-boundary.test: FAIL ($fails ca)"
   exit 1
