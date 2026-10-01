@@ -1027,4 +1027,27 @@ tiếng Việt được (ô 7 đòi *cộng một lượt đọc bằng mắt*).
   file mang nó và nói ở *Bàn giao*.
 - **Khối *Nhận việc* chưa có** (luật 2 của file): nó điền khi `P2A-08` đã `Done`, từ phần trên.
 
+**Nhận việc** — điền 2026-10-01 (Claude Code), `P2A-08` đã `Done` cùng ngày (`7b5e3f6`); mức **L1**. Thi
+công: Codex; xếp dòng loại 5 của *luật xếp dòng quyền*, sửa con trỏ và ký ô: Claude.
+- *Phạm vi Codex:* chỉ `docs/product/2-db/11-cong-chat-luong-pha-2.md` (mục §9.6 mới và hai hàng ô 7 · 8
+  của §9.4, ghi *chờ Claude ký*); bản sao để cài dòng thử đặt **ngoài** repo. Con trỏ lệch, dòng vi phạm,
+  dòng *quyền* loại 5: **báo**, không sửa.
+- *Nghiệm thu:*
+  1. **Tập đếm lại** bằng `git log --name-only` của các commit mang subject `P2A-01:` … `P2A-08:`, bỏ file
+     trong `work/` (sổ việc, không phải lát); in tập đếm được cạnh danh sách ở trên, tập đếm được thắng.
+     `P2A-05` chưa `Done` ⇒ ghi *vắng, rà lại khi lát ấy xong*.
+  2. **Chín lệnh A1…D của `P2-14`** (`work/backlog_DB.md` → P2-14 *Bàn giao*, chạy bằng `bash`, glob, không
+     biến danh sách) trên các file tài liệu của tập — với file có sẵn chỉ tính đoạn admin thêm vào (in số
+     dòng của đoạn). Mỗi lượt dán *chưa lọc · đã lọc*, và mỗi dòng còn lại được xếp loại bằng tên.
+  3. **Lượt §6** — mỗi phần của kế hoạch §6 một nhóm từ (danh sách ở trên); mỗi dòng trúng xếp *khai không
+     dựng* · *trỏ tới chỗ chặn* · *cất* (vi phạm). Dòng nói về quyền xếp theo luật bốn loại ở trên; không
+     xếp được ⇒ loại 5, ghi ra cho Claude.
+  4. **Phần mã** (migration admin, `db/reconcile/i025.sql`…`i028.sql` và lỗi cài, test admin, `db/seed/seed.pl`)
+     qua A1…D và lượt §6; cộng một **bảng tên bảng · cột** của ba migration admin, mỗi tên một dòng xếp loại
+     (*đọc bằng mắt* của ô 7).
+  5. **Mỗi lượt biết kêu**: một dòng vi phạm cài vào bản sao của tập ⇒ lượt ấy trả đúng dòng cài.
+  6. **Con trỏ hai chiều** trên tập con trỏ ở trên: số chỗ đã mở và danh sách chỗ lệch (file:dòng, trỏ gì,
+     đích nói gì).
+  7. `./scripts/gate.sh` xanh; `git diff` không đổi một dòng nghiệp vụ, lược đồ hay migration nào.
+
 [↑ đầu file](#top)

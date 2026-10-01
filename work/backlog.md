@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## Ready
 
 - [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi, không cột *ngày bán của két* khi `U-072` còn mở. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
-- [ ] P2A-09 Rà ranh giới pha và pointer trên file lát admin, ký ô 7 · 8 — nhận sau `P2A-08`; thêm 2026-10-01 vì dòng này vắng khỏi *Ready* nên brief không bao giờ đưa ra — L1 · [chi tiết](backlog_AD_DB.md#p2a-09)
 - [ ] T-127 Thứ đã làm của đơn huỷ mà không bàn nào chờ chưa có chỗ ghi *bánh làm sai* — chủ quán chốt 2026-09-30 (đóng `U-064`, `master_plan/shop-facts.md` §5.4): người đứng quầy ghi chú trên POS. `YC-07`, `docs/product/2-db/05-luoc-do-san-xuat.md` §5 và tập đối chiếu `I-004/6` chưa phân biệt một thứ **đã ghi chú** với một lần quầy **quên chuyển**. Lời không nói bánh bỏ hay giữ, ghi chú gồm gì — không tự suy. Mở bởi T-124 — L2
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
@@ -97,6 +96,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] P2A-09 Rà ranh giới pha và pointer trên file lát admin, ký ô 7 · 8 — Codex chạy lọc, Claude xếp dòng *quyền* loại 5 và ký — L1 · [chi tiết](backlog_AD_DB.md#p2a-09)
 
 <a id="done"></a>
 ## Done
