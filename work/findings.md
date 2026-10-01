@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 54 finding — 46 Fixed/Resolved/Closed, 8 Open (đếm lại ngày 2026-10-01, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 55 finding — 46 Fixed/Resolved/Closed, 9 Open (đếm lại ngày 2026-10-01, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -116,6 +116,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-052 | Mệnh đề admin `I-025`…`I-029` có ở `quality/invariants.md` trước khi có câu đối chiếu, nên phép so mã của `scripts/reconcile.sh` đỏ và `db-check` sẽ đỏ ở lát admin đầu tiên (P2A-01) | Fixed |
 | F-053 | Bước khoá chặn của `db-check` giả định bước migration trên cùng luôn có dữ liệu mồi, nên lát admin đầu tiên (hai bảng còn rỗng) làm nó đỏ oan — chỗ hở thứ hai cùng họ F-052 mà lượt chữa F-052 không đo (P2A-02) | Fixed |
 | F-054 | Phép từ chối `qd21_so_am` của `db-check` đòi mọi bảng có cột tiền có một dòng ở ngày bán mẫu, nên hai bảng tiền đầu tiên của mảng admin (tạm ứng, thưởng) làm nó đỏ — chỗ hở thứ ba cùng họ F-052 · F-053 (P2A-04) | Fixed |
+| F-055 | T-125 chèn một tập vào GIỮA ô `I-021` của pha 1, nên câu `I-021/2` · `I-021/6` của bộ đối chiếu mang số của tập khác, và không gate nào thấy (P2A-07) | Open |
 
 ---
 
@@ -4429,3 +4430,32 @@ dòng bẫy ở entry `P2A-05` của `work/backlog_AD_DB.md`.
 
 **Status:**
 Fixed (2026-10-01, P2A-04)
+
+### F-055 — T-125 chèn một tập vào GIỮA ô `I-021` của pha 1, nên câu `I-021/2` · `I-021/6` của bộ đối chiếu mang số của tập khác
+
+**Problem:**
+Số `n` của một câu `I-0xx/n` là **thứ tự của tập** trong ô *Phép đối chiếu* của hàng ấy ở
+`docs/product/1-system-design/03-bao-ve-invariant.md`, đếm từ trái (`docs/product/2-db/09-doi-chieu-bat-bien.md`
+§1). T-125 (2026-10-01, commit `a306d29`) thêm tập *mọi khoản tạm ứng, thưởng hay chi nguồn két không trừ vào
+đúng một ngày bán* vào **vị trí thứ hai** của ô `I-021`, nên ô ấy có bảy tập. File 09 §1 vẫn đếm sáu:
+`2 → I-021/2` (nay là tập *số lượng con số tiền đầu két khác một*, thứ ba) và `6 → I-021/6` (nay là tập *sửa
+tiền đầu két không đọc ra ai*, thứ bảy); bốn hàng §2 của `I-021` cũng lệch một số. Claude Code thấy
+2026-10-01 lúc nhận `P2A-07`, khi đọc tập *rời két* của `I-028` trỏ sang ô ấy.
+
+**Impact:**
+Câu vẫn chạy đúng tập của nó — chỉ cái **tên** sai, nên một người đọc `FAIL I-021/2` rồi mở ô pha 1 đếm tới
+tập thứ hai sẽ đọc nhầm sang tập chưa có câu. Không gate nào bắt: `reconcile.sh --codes` chỉ so **mã mệnh đề**
+`I-0xx`, không so số tập; Gate 1c không đọc ô của bảng. Một bước pha 1 sau này chèn tập vào giữa một ô khác sẽ
+lặp lại đúng hình này.
+
+**Decision / Fix:**
+Chữa trong `P2A-07`: đánh số lại câu `I-021` theo bảy tập (`I-021/3` · `I-021/7`), cùng file lỗi cài và mọi
+con trỏ ngoài `work/`. Chưa thêm phép kiểm máy — mới tốn một lần (`CLAUDE.md` §3.8); lần thứ hai thì đếm tập
+của ô pha 1 trong `reconcile.sh --codes`. Cho tới lúc ấy, bước nào **sửa** ô *Phép đối chiếu* của một mệnh
+đề đã có câu thì đọc lại hàng của mệnh đề ấy ở file 09 §1 trong cùng thay đổi.
+
+**Related task:**
+`work/backlog_AD_DB.md` → **P2A-07** (lượt phát hiện và chữa) · `work/backlog_archive.md` → T-125
+
+**Status:**
+Open

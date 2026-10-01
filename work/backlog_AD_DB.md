@@ -633,6 +633,9 @@ Thứ chặn là lượt chủ repo duyệt **ADR-074**.
   `db-check` đỏ (`work/findings.md` **F-054**, 2026-10-01).
 - **Không cột *ngày bán của két*, không dấu nguồn trên từng khoản** — nguồn ở **loại**; ngày bán chờ
   `U-072` (**ADR-074** điểm 3 · 4). Bốn loại của `E44` mang nguồn két; loại thêm sau phải khai nguồn.
+- **Câu đối chiếu `I-029` là của bước này, không còn của `P2A-07`** (2026-10-01, Claude Code, lúc
+  nhận `P2A-07`): lát dựng xong thì viết câu cùng lỗi cài theo khuôn `db/reconcile/i028.sql`, và gỡ
+  dòng `I-029` ở `09-doi-chieu-bat-bien.md` §2.1 trong cùng thay đổi.
 
 [↑ đầu file](#top)
 
@@ -769,6 +772,55 @@ Thêm câu vào bộ của `P2-11` theo đúng luật của nó (`docs/decisions
 - **Lát còn bị chặn thì ghi *vắng*, không viết câu rỗng giữ chỗ.**
 - **Một câu rỗng vì viết sai trông y hệt một câu rỗng vì dữ liệu đúng** (**F-017**) ⇒ lỗi cài là
   bắt buộc.
+
+**Nhận việc** — điền 2026-10-01 (Claude Code); mức **L2** (kế hoạch §5). *Cần xong trước* đọc theo
+kế hoạch §5 dòng cuối: bước chung chạy trên lát đã `Done` — `P2A-02` · `P2A-04` · `P2A-06` đã commit,
+`P2A-03` đã `Done` mà **chưa commit** (worktree của Codex mồi bằng trạng thái cây của clone chính, như
+`P2A-04`); `P2A-05` chưa dựng (chờ chủ repo duyệt **ADR-074**) ⇒ `I-029` ghi *vắng*, người nợ đổi sang
+`P2A-05`. Chủ repo yêu cầu *"codex sẽ thực hiện và bạn kiểm tra"*; chia vai theo `CLAUDE.md` §7.4.
+Lúc nhận, Claude thấy ô `I-021` của pha 1 có **bảy** tập từ T-125 mà ánh xạ §1 còn đếm **sáu** —
+câu `I-021/2` · `I-021/6` mang số của tập khác (**F-055**); việc này cần chữa trước khi `I-028` trỏ
+sang tập *trừ vào đúng một ngày bán* của ô ấy, nên gộp vào bước này.
+
+*Thiết kế — Claude chọn, lựa chọn của phiên, chưa có lời chủ repo.* Số `n` đếm các vế **có tập** của
+ô *Phép đối chiếu* ở `03-bao-ve-invariant.md` §5, từ trái; vế pha 1 nói thẳng *chưa có tập* không
+mang số (cùng luật đoạn cuối §1 của file 09).
+- `I-025`: 1 đủ ba dấu → câu · 2 không chạm và cập nhật có vết → câu đọc **chuỗi vết đứt** (dưới).
+- `I-026`: 1 tổng và cộng dồn · 2 hiệu số → §2 lý do (B): tổng và hiệu số không có chỗ cất
+  (**ADR-071**) · 3 một đáp số → câu · 4 danh mục → câu, tên trùng theo phép bằng của cột.
+- `I-027`: 1 người · ngày · người tick → câu · 2 một ô → câu · 3 huỷ → câu · 4 chủ quán tick →
+  câu (tầng 3, không ràng buộc nào để gỡ: lỗi cài là một ô người không phải chủ quán tick).
+- `I-028`: 1 đủ dấu (hai bảng) → câu · 2 có người duyệt → câu · 3 chủ quán duyệt → câu · 4 không sửa
+  đè → câu đọc chuỗi vết đứt · 5 không phải tiền bán hàng → §2 lý do (B): không cột nào nối (**ADR-073**)
+  · 6 rời két → §2 lý do (A), trỏ tập `I-021` mới, chờ **U-072** · **F-048**.
+- **Chuỗi vết đứt** — cách đọc *đổi mà không có vết* dưới chế độ mềm (**F-046**): một dòng có ít nhất
+  một vết mà bản sau của vết mới nhất khác dòng hiện tại, hoặc bản trước của một vết khác bản sau của
+  vết liền trước. Dòng chưa từng có vết thì không câu nào thấy lần sửa không khai lý do — ghi vào §4.
+- `I-021`: đánh số lại theo bảy tập — 1 → §2 · 2 (mới, trừ vào đúng một ngày bán) → §2 chờ **U-072** ·
+  3 → `I-021/3` (câu cũ `I-021/2`) · 4 · 5 · 6 → §2 · 7 → `I-021/7` (câu cũ `I-021/6`).
+
+- *Phạm vi:* `work/scope/P2A-07.txt` — `db/reconcile/` (câu, phần dùng chung, ngày bán mẫu, file lỗi
+  cài), `scripts/db-check.sh` · `scripts/reconcile.sh` · `scripts/reconcile.test.sh` (chỉ khi cần),
+  file 09 và ba file lát admin, entry này, dòng trạng thái, `work/findings.md`.
+- *Nghiệm thu:*
+  1. **Mỗi tập có câu ở thiết kế trên có đúng một khối `-- @@ I-0xx/n`** trong `db/reconcile/i025.sql`
+     … `i028.sql`; `./scripts/reconcile.sh --codes` không còn `NOTE` cho `I-025`…`I-028`, chỉ còn `I-029`.
+  2. **Ngày bán mẫu có dữ liệu admin thật cho mọi câu mới**: con số nguyên liệu mua vào và đã dùng, ít
+     nhất một con số sửa có lý do; ô chấm công chủ quán tick, một ô huỷ có ghi chú rồi tick lại; khoản
+     tạm ứng sửa có lý do — và mọi câu (cũ lẫn mới) vẫn **0 dòng** trên ngày ấy.
+  3. **Mỗi câu mới có ít nhất một file lỗi cài**, tập câu kêu bằng đúng dòng `-- kêu:`; tập có ràng buộc
+     tầng 1 thì lỗi gỡ ràng buộc ấy trước. Hai câu chuỗi vết đứt có lỗi cài là một lần sửa **không khai
+     lý do** sau một lần sửa có vết.
+  4. **`I-021` đánh số lại**: khối, file lỗi cài và mọi con trỏ ngoài `work/` dùng `I-021/3` · `I-021/7`;
+     §1 · §2 · §4 của file 09 đếm bảy tập.
+  5. **File 09**: §1 có bốn hàng mới và hàng `I-021` mới; §2 có hàng cho `I-026` tập 1 · 2, `I-028` tập
+     5 · 6 và `I-021` tập 2; §2.1 chỉ còn `I-029`, người nợ `P2A-05`; §4 có hai cách đọc mới (chuỗi vết
+     đứt, tên trùng theo phép bằng của cột); con số *đo lại* của §1 cập nhật.
+  6. **Ba file lát admin** không còn ghi câu đối chiếu là việc chưa làm của `P2A-07`.
+  7. `./scripts/db-check.sh` và `./scripts/gate.sh` xanh — Claude tự chạy ở worktree **và** ở clone chính.
+- *Kiểm chứng:* bước đối chiếu và chứng minh của `./scripts/db-check.sh`; `./scripts/reconcile.sh --codes`.
+- *Ngoài phạm vi, có tên:* câu `I-029` — `P2A-05`; tập *trừ vào đúng một ngày bán* — **U-072**; siết
+  chế độ mềm — **F-046**; diễn một ngày quản trị — `P2A-08`.
 
 [↑ đầu file](#top)
 

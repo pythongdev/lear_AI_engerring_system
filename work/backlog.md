@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] P2A-07 Phép đối chiếu của admin vào bộ đối chiếu — mỗi tập *phải rỗng* của `I-025`…`I-028` thành một câu có lỗi cài, tập không thành câu được thì có dòng vì sao ở `09-doi-chieu-bat-bien.md` §2; `I-029` ghi *vắng* chờ `P2A-05`; cùng lượt đánh số lại câu `I-021` lệch từ T-125 (**F-055**); Codex thi công, Claude thiết kế và duyệt — L2 · [chi tiết](backlog_AD_DB.md#p2a-07)
 
 
 <a id="done"></a>
