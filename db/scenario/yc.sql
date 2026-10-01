@@ -1,4 +1,4 @@
--- Chấm ngược YC-01…YC-20 · YC-22…YC-25 (P2-13, docs/product/2-db/11-cong-chat-luong-pha-2.md §5),
+-- Chấm ngược YC-01…YC-20 · YC-22…YC-25 · YC-34 (P2-13 · T-132, docs/product/2-db/11-cong-chat-luong-pha-2.md §5),
 -- mỗi dòng HAI câu (docs/product/1-system-design/04-yeu-cau-du-lieu.md §0 · §7):
 --   YC-XX  đọc · …   đọc ra được không — in thẳng từ dữ liệu của ngày diễn;
 --   YC-XX  sai · …   dựng được trạng thái sai không — một trong năm kết cục có tên:
@@ -730,6 +730,35 @@ BEGIN
     format($q$INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at, submission_code)
               VALUES ('phone_preorder', 'new', 'shop_pickup', %L, %L, 'yc25-khac-dau')$q$, o.customer_phone, o.customer_needed_at),
     format($d$(SELECT count(*) FROM sales_order WHERE customer_phone = %L AND channel_code = 'phone_preorder') = 2$d$, o.customer_phone));
+END $$;
+
+-- ============================================================ YC-34 khoảng ngừng nhận đơn (T-132)
+-- Ba scenario không có lần tạm dừng hay lần quán mù nào: dựng ở đây, trong giao dịch ROLLBACK của file.
+DO $$
+DECLARE chu bigint := pg_temp.sc_nguoi('Chủ quán'); quay bigint := pg_temp.sc_nguoi('Người đứng quầy');
+BEGIN
+  INSERT INTO order_intake_pause (started_at, started_by_person_id, ended_at, ended_by_person_id)
+  VALUES (pg_temp.sc_luc('09:40'), chu, pg_temp.sc_luc('09:50'), chu);
+  INSERT INTO shop_blind_spell (started_at, ended_at, ended_by_person_id)
+  VALUES (pg_temp.sc_luc('10:40'), pg_temp.sc_luc('10:50'), quay);
+  PERFORM pg_temp.yc_doc('YC-34', (SELECT format('tạm dừng %s–%s bật %s tắt %s · quán mù %s–%s do %s, mở lại %s · lúc 09:45 tạm dừng %s, lúc 10:45 mù %s',
+    to_char(p.started_at, 'HH24:MI'), to_char(p.ended_at, 'HH24:MI'), pg_temp.yc_ten(p.started_by_person_id),
+    pg_temp.yc_ten(p.ended_by_person_id), to_char(m.started_at, 'HH24:MI'), to_char(m.ended_at, 'HH24:MI'),
+    coalesce(pg_temp.yc_ten(m.declared_by_person_id), 'máy phát hiện'), pg_temp.yc_ten(m.ended_by_person_id),
+    tstzrange(p.started_at, p.ended_at, '[)') @> pg_temp.sc_luc('09:45'),
+    tstzrange(m.started_at, m.ended_at, '[)') @> pg_temp.sc_luc('10:45'))
+    FROM order_intake_pause p, shop_blind_spell m WHERE pg_temp.yc_cua_ngay(p.started_at) AND pg_temp.yc_cua_ngay(m.started_at)));
+  PERFORM pg_temp.yc_tu_choi('YC-34', 'hai lần tạm dừng chồng nhau (một mốc hai câu trả lời)',
+    format($q$INSERT INTO order_intake_pause (started_at, started_by_person_id) VALUES (%L, %s)$q$,
+           pg_temp.sc_luc('09:45'), chu));
+  PERFORM pg_temp.yc_tu_choi('YC-34', 'tạm dừng không có người bật',
+    format($q$INSERT INTO order_intake_pause (started_at, started_by_person_id) VALUES (%L, NULL)$q$,
+           pg_temp.sc_luc('05:00')));
+  PERFORM pg_temp.yc_tu_choi('YC-34', 'khoảng mù tự mở lại — kết thúc không có người bấm',
+    format($q$INSERT INTO shop_blind_spell (started_at, ended_at) VALUES (%L, %L)$q$,
+           pg_temp.sc_luc('05:00'), pg_temp.sc_luc('05:10')));
+  PERFORM pg_temp.yc_goi_ten('YC-34', 'đơn tạo trong lúc tạm dừng', 'tầng 3 (cửa tạo lượt gọi)', 'I-008/2', 'i008_2');
+  PERFORM pg_temp.yc_goi_ten('YC-34', 'đơn ba kênh khách tự bấm tạo trong lúc quán mù', 'tầng 3 (cửa tạo lượt gọi)', 'I-008/3', 'i008_3');
 END $$;
 
 -- ============================================================ YC-26…YC-32 (P2A-08)

@@ -137,7 +137,7 @@ Bảng ca giá §4.8 là **bảng ca test** của hàm giá `P3-06`; test **đ�
 | **F-047** | thêm dòng con vào bản ghi đã có chưa để lại vết ai thêm, lúc nào, từ gì sang gì | `P3-11` — đọc cùng F-046 khi dựng cửa sửa | Claude chọn cách gỡ theo finding |
 | **F-046** | vết cập nhật ở chế độ mềm | `P3-11` — gỡ cùng lượt dựng cửa cập nhật | `P3-11` |
 | **F-048** | số tiền mặt đếm được cuối ngày và dấu *ngày đã đối soát xong* chưa có chỗ cất, chưa bước nào nhận | `P3-09` — lệnh đối soát cuối ngày cần con số ấy | chủ repo chọn bước nhận (`work/findings.md`) |
-| **F-050** | vết của mỗi lần *quán đang mù* chưa có dòng yêu cầu, chưa bước nào viết | `P3-12` — đường suy giảm khi mất kết nối | chủ repo chọn bước nhận (`work/findings.md`) |
+| ~~**F-050**~~ — **đóng 2026-10-01 (T-132)** | vết của mỗi lần *quán đang mù* và mỗi lần *tạm dừng nhận đơn*: nay có dòng `YC-34` và chỗ cất (migration bước 14, **ADR-078**) | `P3-12` — cửa tạo lượt gọi đọc hai khoảng tại mốc tạo, ghi khoảng mù khi phát hiện và khép bằng nút mở lại | — |
 
 **Một bước bị chặn vẫn chạy được phần không phụ thuộc câu trả lời**, và cửa của phần bị chặn **từ
 chối** thao tác ấy kèm mã của chỗ đang chặn — không bao giờ lấp bằng một mặc định.

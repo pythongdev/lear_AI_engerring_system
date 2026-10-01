@@ -17,11 +17,11 @@ lược đồ từ số không · chỗ chứng minh từng điều ấy chạy 
 
 ---
 
-## 1. Thứ tự dựng — mười ba bước
+## 1. Thứ tự dựng — mười bốn bước
 
 Công cụ chạy các bước theo **tên file**, tức theo mốc giờ ở đầu tên (`QC-05`). Thứ tự dưới đây là
 thứ tự ấy; cột *đứng trên* nói bước nào phải có trước, vì bước sau thêm cột, khoá ngoại hay ràng
-buộc vào bảng của nó. Dựng lại từ số không là chạy đúng mười ba bước này, từ trên xuống; lùi là đi
+buộc vào bảng của nó. Dựng lại từ số không là chạy đúng mười bốn bước này, từ trên xuống; lùi là đi
 ngược từ dưới lên, **từng bước một**.
 
 | # | File (`db/migrations/`, bỏ đuôi) | Lát | Dựng gì | Đứng trên |
@@ -39,6 +39,7 @@ ngược từ dưới lên, **từng bước một**.
 | 11 | `20260930120000_khoan_cua_nguoi` | `P2A-04` | `staff_advance` · `holiday_bonus` và trigger vết; vai ghi chỉ sửa người nhận, số tiền và ngày | 8 |
 | 12 | `20261001120000_tra_no_dan` | `T-126` | hai cột còn thiếu và chuỗi từng lần trả trên `debt_collection` (**ADR-075**, lời đóng `U-063`) | 6 · 8 |
 | 13 | `20261001130000_banh_lam_sai` | `T-127` | `wrong_make_note` và trigger vết; cột tự tính `sales_order.id_if_cancelled`; khoá duy nhất `station_job_id_order_key` (**ADR-077**) | 1 · 7 · 8 |
+| 14 | `20261001140000_khoang_chan_tao_don` | `T-132` | `order_intake_pause` · `shop_blind_spell` và trigger vết; vai ghi chỉ khép được một khoảng, không dời lúc bắt đầu, không xoá (**ADR-078**, `YC-34`, **F-050**) | 8 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
@@ -77,6 +78,10 @@ trường hợp riêng của luật 2 theo quyết định trên; dữ liệu tr
 ghi chú đã huỷ, thì từ chối trước khi gỡ gì. Khi bảng rỗng, gỡ trigger, bảng, khoá duy nhất
 `station_job_id_order_key` và cột tự tính `sales_order.id_if_cancelled` (không mang thông tin ngoài
 trạng thái đơn), trả lược đồ về trước bước.
+
+**Khoá chặn bước 14** (2026-10-01, `T-132`, **ADR-078**): `order_intake_pause` hay `shop_blind_spell`
+có dòng, kể cả khoảng đã khép, thì từ chối trước khi gỡ gì. Hai bảng rỗng thì gỡ hai trigger và hai
+bảng, trả lược đồ về trước bước.
 
 ---
 

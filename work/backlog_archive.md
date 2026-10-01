@@ -951,6 +951,46 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-132"></a>
+### T-132 — Vết của mỗi lần *quán đang mù* và mỗi lần *tạm dừng nhận đơn* chưa có dòng yêu cầu, chưa có chỗ cất
+
+**Yêu cầu:** chủ repo 2026-10-01 chọn hướng **(a)** của `work/findings.md` **F-050** — *thêm cặp dòng yêu
+cầu ở pha 1 (`architecture.md` §8 và `04-yeu-cau-du-lieu.md` §1) rồi một migration pha 2 dựng chỗ cất hai
+khoảng, kèm câu đối chiếu cho ba tập `I-008`*. Mức **L2** (lược đồ, dữ liệu đã cất, câu đối chiếu).
+
+**Thiết kế — Claude Code:** `docs/decisions.md` **ADR-078**. Test hồi quy `db/tests/yc34_order_intake_stops.sql`
+viết trước migration. Thực hiện và duyệt: Claude Code, một mình; **chưa review độc lập**.
+
+**Acceptance** (viết trước khi sửa): (1) một dòng mới ở `architecture.md` §8 và đúng một dòng `YC-34` ở
+`04-yeu-cau-du-lieu.md` §1, không tên bảng nào ở pha 1; (2) hàng chỗ trống ở `05-realtime-va-du-phong.md` §4
+và hàng *Pha 2* ở §5 trỏ tới `YC-34`; (3) một cặp migration mới, không sửa file cũ, bước lùi có khoá chặn;
+(4) test hồi quy: đọc lại theo mốc và mọi trạng thái sai của `YC-34` bị từ chối; (5) câu `I-008/2` ·
+`I-008/3`, ngày mẫu có hai khoảng và một lượt gọi `staff_pos` nằm trong khoảng mù, mỗi câu một lỗi cài kêu
+đúng mã; (6) `YC-34` chấm đọc + sai; (7) file lát, thứ tự migration, đối chiếu, F-050, kế hoạch pha 3 theo
+kịp; (8) `db-check` và gate xanh.
+
+| Acceptance | Bằng chứng (Claude chạy) |
+|---|---|
+| 1 · 2 | đọc diff ba file pha 1; Gate 1d ở gate cuối |
+| 3 | `PASS xuôi 20261001140000_khoang_chan_tao_don` · `PASS lùi … — lược đồ giống hệt lúc trước bước ấy (1351 dòng)` · `NOTE khoá chặn — 20261001140000_khoang_chan_tao_don còn rỗng, lùi được` |
+| 4 | `PASS db/tests/yc34_order_intake_stops.sql` — chín lời từ chối đúng tên (`order_intake_pause_one_at_a_time_excl` ×2 · `shop_blind_spell_one_at_a_time_excl` · not-null `started_by_person_id` · `order_intake_pause_ended_after_started_check` · `_ended_by_iff_ended_check` · `shop_blind_spell_ended_by_iff_ended_check` · `_ended_after_started_check`), `permission denied` khi dời lúc bắt đầu và khi xoá; đọc lại sáu mốc |
+| 5 | `PASS ngày bán mẫu đúng — 99 câu chạy, mọi tập rỗng` · `PASS kêu i008_2 — I-008/2` · `PASS kêu i008_3 — I-008/3` |
+| 6 | `YC-34 đọc · …` · ba dòng `⇒ TỪ CHỐI` · hai dòng `⇒ GỌI TÊN: I-008/2 (proof/i008_2)` · `I-008/3 (proof/i008_3)` |
+| 7 | đọc diff `02-luoc-do-ban-hang.md` §7 · `07-thu-tu-migration.md` bước 14 · `09-doi-chieu-bat-bien.md` §1 · §2 · `11-cong-chat-luong-pha-2.md` · F-050 · kế hoạch pha 3 §4 |
+| 8 | `db-check: PASS — 14 bước xuôi · lùi · xuôi lại, 10 khối kiểm QC, 33 file test, …, 99 câu …, 99 lỗi cài, …, 32 mã YC`; gate ở báo cáo cuối phiên |
+
+**Lần đỏ đầu:** khoảng tạm dừng đặt 10:00–10:15 trong ngày mẫu làm mười bốn lỗi cài cũ kêu thêm `I-008/2`
+(chúng tạo đơn lúc 10:00). Dời hai khoảng về trước 08:00, nơi không lỗi cài nào tạo đơn.
+
+**Va chạm phiên:** phiên c2 (F-048) ghi đè `work/scope/T-132.txt` giữa chừng và định dùng cùng mốc bước 14;
+scope đã khai lại, c2 dừng và được báo dùng mốc sau. Thứ tự hai việc do chủ repo quyết.
+
+**Còn lại:** `I-008` tập 5 cần lý do huỷ đọc được bằng máy, tập 4 cần lần từ chối để lại bản ghi — cả hai
+pha 3 (`09-doi-chieu-bat-bien.md` §2). Cửa tạo lượt gọi đọc hai bảng, cách máy phát hiện quán mù, quyền ai
+bật · tắt · mở lại: `P3-12`.
+
+[↑ đầu file](#top)
+
 <a id="t-127"></a>
 ### T-127 — Thứ đã làm của đơn huỷ mà không bàn nào chờ chưa có chỗ ghi *bánh làm sai*
 

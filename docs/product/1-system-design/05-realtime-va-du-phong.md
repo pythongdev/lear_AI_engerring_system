@@ -166,7 +166,7 @@ câu hỏi cũ. Đếm hàng chứ đừng tin một con số viết sẵn (`wor
 | ~~**Cửa sổ thời gian** để gọi là *quán đang mất kết nối*~~ — **hết trống 2026-09-16**: không có con số nào cả | Chủ quán bỏ chính giả định của câu hỏi (`U-043`): máy **báo**, **POS quyết** dừng, và đã dừng thì mở lại bằng **nút** — cùng hình dạng *POS quyết theo tình hình thực tế* của `master_plan/shop-facts.md` §5.4 · §6.4 | ~~Chủ quán~~ **đã chốt 2026-09-16** — lời chốt ở `master_plan/shop-facts.md` §6.11; pha 3 thi hành **luật**, không thi hành một con số |
 | ~~Ai dừng ba kênh khi quán mất mạng hẳn~~ — đóng 2026-09-25 | Chủ quán dùng 5G bấm tắt; owner `shop-facts.md` §6.11 | Chủ quán đã trả lời U-053 |
 | **Câu chữ dòng thông báo** khách nhìn thấy khi ba kênh tự bấm dừng | Chủ quán mới nói *có một dòng*, chưa đọc nội dung (`quality/invariants.md` **I-008**) — tự viết một câu rồi coi là đã chốt là bịa một dữ kiện quán | **Chủ quán**, hỏi khi dựng màn (**pha 4**) |
-| **Dòng yêu cầu dữ liệu cho vết của mỗi lần tự chuyển sang *quán đang mù*** (§3 luật 4) | Nhà của loại câu ấy là [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §1, và mỗi dòng ở đó phải khớp một-đối-một với một dòng [`architecture.md`](architecture.md) §8 — luật của **P1-07**. Thêm hộ một dòng vào hai file của bước khác là phá đúng phép chấm ấy | **P1-07** (thêm một cặp dòng), hoặc **pha 2** khi nó đọc §3 luật 4 ở đây |
+| ~~**Dòng yêu cầu dữ liệu cho vết của mỗi lần tự chuyển sang *quán đang mù*** (§3 luật 4)~~ — **hết trống 2026-10-01 (T-132)** | Nhà của loại câu ấy là [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §1, và mỗi dòng ở đó phải khớp một-đối-một với một dòng [`architecture.md`](architecture.md) §8 — luật của **P1-07**. Không bước nào nhận lời giao này (`work/findings.md` **F-050**); chủ repo chọn thêm cặp dòng ở pha 1 rồi dựng chỗ cất ở pha 2 | ~~P1-07 hoặc pha 2~~ **đã có dòng `YC-34`** ở [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §1, cặp với một dòng [`architecture.md`](architecture.md) §8; dòng ấy phủ luôn khoảng *tạm dừng nhận đơn* |
 
 **Ba thứ thuộc pha sau, và mục này cố ý không chạm:** tên của thứ mang tính chất đường đẩy và
 **con số chu kỳ** của đường kéo (**pha 3**) · cách chạy, cách theo dõi, cách khởi động lại ở chỗ
@@ -181,7 +181,7 @@ duy nhất ấy (**pha 5**) · hình dạng của màn khi nó rỗng (**pha 4**
 | **P1-10** — sổ rủi ro | **RB-1** và **RB-4** là hai rủi ro đã có cơ chế chặn viết ra thành chữ; §1.3 là rủi ro *bếp làm thiếu mà không ai biết*, đã có luật chặn. Sổ rủi ro **trỏ** về đây thay vì viết lại |
 | **P1-11** — diễn ba scenario | Một buổi mất kết nối phải đi qua được §3 (ba kênh dừng, hai kênh không) và §1.2 (màn trạm trễ nhưng vẫn đúng) |
 | **P1-12** — rà chéo ranh giới pha | Mục này là chỗ dễ lọt tên công nghệ nhất của cả pha 1. Bộ lọc gợi ý ở `prompt/SD/P1-08-realtime-du-phong-L2.md` mục *Verify* |
-| **Pha 2** | §3 luật 4 — vết của mỗi lần hệ thống tự chuyển sang *quán đang mù* phải đọc lại được sau nhiều ngày |
+| **Pha 2** | §3 luật 4 — vết của mỗi lần hệ thống tự chuyển sang *quán đang mù* phải đọc lại được sau nhiều ngày; từ 2026-10-01 pha 2 chấm nó qua dòng **`YC-34`** của [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) §1 (T-132) |
 | **Pha 3** | §1.1 ba tính chất bắt buộc của đường đẩy · §1.2 ba luật của đường kéo và con số chu kỳ · §3 bốn luật phán quyết — `U-043` **đã có lời chốt 2026-09-16** (máy báo, POS quyết, mở lại bằng nút), ca quán mất mạng hẳn đã có lời U-053 ngày 2026-09-25: chủ quán dùng 5G bấm tắt |
 | **Pha 5** | **RB-1** và **RB-4** — và luật 2 của §2: bỏ một ràng buộc thì ghi ADR, không sửa lặng |
 

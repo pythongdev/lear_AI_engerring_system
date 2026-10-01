@@ -448,14 +448,19 @@ tại ngày đo (`work/findings.md` **F-003** · **F-018**); đếm ở bảng, 
 | **Khoản trả trước** — lúc quán **nhận tiền** tách khỏi mốc tính tiền của đơn; phần nào đã thành doanh thu của hoá đơn nào; phần nào đã trả lại | §6.4 · §6.26 · `docs/decisions.md` **ADR-040** · **ADR-059** (thêm 2026-09-28, T-112) | két thừa đúng bằng khoản trả trước hôm nhận tiền và thiếu đúng bằng nó hôm giao, mà bảng đối soát không có danh sách nào gọi tên — ngưỡng **0đ** đỏ vì một lý do ai cũng biết — `work/findings.md` **F-037** |
 | **Mã QR của bàn — đổi được, giữ mã đã thay, lượt gọi ghi mã đã mang** — nền 16 bảng chỉ có một mã ngẫu nhiên cho mỗi bàn, không đường đổi, không lịch sử | §2 · §6 quy tắc 2 · `quality/invariants.md` **I-023** (thêm 2026-09-28, T-113) | mã lộ một lần là hỏng vĩnh viễn: người từng ngồi bàn 5 gọi món vào hoá đơn bàn 5 từ bất cứ đâu, và không lượt gọi nào nói nó đã đi vào bằng mã nào — `work/findings.md` **F-042** |
 | **Dấu lần gửi của mỗi đơn và mỗi lượt gọi** — đọc ra được đơn nào sinh từ lần gửi nào; nền 16 bảng không có gì phân biệt một lần gửi lại với một lần gửi mới | §2 · §5.1 · §6 quy tắc 2 · `quality/invariants.md` **I-024** (thêm 2026-09-28, T-115) | mạng chập chờn hay một lần bấm đúp lúc đông thành **hai** đơn: đơn mang đi thu hai lần, lượt gọi trùng tính gấp đôi vào hoá đơn bàn, và hai kênh của người quán nhập đi thẳng xuống bếp không qua duyệt — `work/findings.md` **F-043** |
+| **Khoảng ngừng nhận đơn — mỗi lần tạm dừng, và mỗi lần ba kênh khách tự bấm ngừng vì quán đang mù** — bắt đầu lúc nào, kết thúc lúc nào, ai bật, ai bấm mở lại; nền 16 bảng không có chỗ nào cất một khoảng như thế | §6.8 · §6.11 · `quality/invariants.md` **I-008** · [`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §3 luật 4 (thêm 2026-10-01, T-132) | một lần web ngừng nhận đơn mười lăm phút không để lại gì là một khoản doanh thu không ai từng biết là đã mất; và phép đối chiếu *đơn tạo trong lúc tạm dừng* · *đơn ba kênh khách tự bấm tạo trong lúc quán mù* của `I-008` không có khoảng nào để đọc — `work/findings.md` **F-050** |
 
-Đây là **danh sách chỗ thiếu đã biết tính tới 2026-09-28**, không phải lời hứa là đã đủ. Gặp chỗ
+Đây là **danh sách chỗ thiếu đã biết tính tới 2026-10-01**, không phải lời hứa là đã đủ. Gặp chỗ
 tiếp theo thì thêm vào đây, đừng tự thiết kế quanh nó — **và thêm một dòng yêu cầu tương ứng vào**
 [`04-yeu-cau-du-lieu.md`](04-yeu-cau-du-lieu.md) **§1 trong cùng thay đổi**: hai danh sách ấy khớp
 một-đối-một, và đó là phép chấm duy nhất giữ chúng khỏi trôi khỏi nhau.
 
-**Dòng cuối vào bảng ngày 2026-09-28, ở T-115** — *một lần gửi một đơn* chưa từng có mệnh đề cho
-tới `I-024` (`work/findings.md` **F-043**). **Dòng trước nó vào cùng ngày, ở T-113** — mã QR của bàn
+**Dòng cuối vào bảng ngày 2026-10-01, ở T-132** — pha 1 đã đòi vết của mỗi lần *quán đang mù*
+([`05-realtime-va-du-phong.md`](05-realtime-va-du-phong.md) §3 luật 4, 2026-09-08) nhưng giao dòng yêu
+cầu cho *"P1-07 hoặc pha 2"*, và không bước nào viết nó (`work/findings.md` **F-050**); chủ repo chọn
+thêm cặp dòng ở pha 1 rồi dựng chỗ cất ở pha 2 (2026-10-01). Khoảng *tạm dừng nhận đơn* đi cùng dòng
+vì nó thiếu đúng cùng một thứ. **Dòng trước nó vào bảng ngày 2026-09-28, ở T-115** — *một lần gửi một đơn* chưa từng có mệnh đề cho
+tới `I-024` (`work/findings.md` **F-043**). **Dòng trước nữa vào cùng ngày, ở T-113** — mã QR của bàn
 chưa từng có mệnh đề cho tới `I-023` (`work/findings.md` **F-042**). **Trước nữa, cùng ngày, ở T-112** — lời chốt 2026-09-06 (**ADR-040**) đã nói cần
 một dòng đối soát nhưng giao nó cho *"bước sau"*, và không bước nào nhận (`work/findings.md`
 **F-037**). **Dòng trước nữa vào cùng ngày, ở T-110** — luật đã chốt từ 2026-08-30 nhưng chưa từng

@@ -12,7 +12,9 @@ và — cho liên hệ của đơn mang đi, thêm ở `T-111` ngày 2026-09-28 
 và — cho dấu lần gửi, thêm ở `T-116` cùng ngày —
 [`db/migrations/20260928100000_dau_lan_gui.up.sql`](../../../db/migrations/20260928100000_dau_lan_gui.up.sql),
 và — cho mã QR của bàn, thêm ở `T-114` cùng ngày —
-[`db/migrations/20260928110000_ma_qr_ban.up.sql`](../../../db/migrations/20260928110000_ma_qr_ban.up.sql).
+[`db/migrations/20260928110000_ma_qr_ban.up.sql`](../../../db/migrations/20260928110000_ma_qr_ban.up.sql),
+và — cho hai khoảng ngừng nhận đơn, thêm ở `T-132` ngày 2026-10-01 (§7) —
+[`db/migrations/20261001140000_khoang_chan_tao_don.up.sql`](../../../db/migrations/20261001140000_khoang_chan_tao_don.up.sql).
 File này giữ **ý định, lý do và ánh xạ** sang `I-0xx` / `YC-xx`. Nó nhắc tên bảng và tên ràng buộc
 để trỏ, **không** chép lại kiểu hay điều kiện thành bản thứ hai (**F-001**). Hai bản lệch nhau ⇒ một
 dòng `F-XXX`, không lặng lẽ sửa bên nào.
@@ -211,4 +213,31 @@ bảng ở §1 — phép so tên bảng `.md` ↔ migration (**ADR-053** luật 
 | `P2-10` | mã QR của bàn mồi sinh **qua** `qr_code_issue` (§2 hàng `I-023`), không tự chèn vào `qr_code` |
 | `P2-09` | file migration của lát này là file đầu tiên của dãy; phép so tên bảng `.md` ↔ migration đọc §1 |
 | `P2-11` | §2 cột *Bằng chứng* và §3 — mỗi mệnh đề vẫn cần câu đối chiếu của mình (**ADR-050** luật 2), kể cả những hàng đã có ràng buộc; hàng `I-022` đã có năm câu ở cuối file test của nó |
-| pha 3 | §3 — ba chỗ *Pha 3 nợ* |
+| pha 3 | §3 — ba chỗ *Pha 3 nợ* · §7 — cửa tạo lượt gọi đọc hai khoảng ngừng nhận đơn tại mốc tạo |
+
+---
+
+## 7. Hai khoảng ngừng nhận đơn — tạm dừng, và quán đang mù *(`T-132`, 2026-10-01)*
+
+Owner: **`YC-34`** ([`04-yeu-cau-du-lieu.md`](../1-system-design/04-yeu-cau-du-lieu.md) §1, thêm cùng
+ngày theo hướng chủ repo chọn cho `work/findings.md` **F-050**) và hai tập đối chiếu của **`I-008`** —
+*đơn tạo trong lúc tạm dừng*, *đơn ba kênh khách tự bấm tạo trong lúc quán mù*. Thiết kế:
+`docs/decisions.md` **ADR-078**. Tên, kiểu, ràng buộc: file migration thắng.
+
+| Bảng | Giữ gì | Vì sao là một bảng riêng · nguồn |
+|---|---|---|
+| `order_intake_pause` | mỗi lần **tạm dừng nhận đơn**: lúc bật · ai bật · lúc tắt · ai tắt; khoảng còn mở là *đang tạm dừng* | owner: `shop-facts.md` §6.8 — nút của người, chặn **cả năm** kênh, thắng giờ mở cửa |
+| `shop_blind_spell` | mỗi khoảng **quán không nhìn thấy đơn mới**: lúc bắt đầu — tính từ lúc quán hết nhìn thấy · người bấm tắt nếu người bấm trước khi máy thấy (trống = máy phát hiện) · lúc mở lại · ai bấm mở lại | owner: `shop-facts.md` §6.11 — chỉ chặn **ba** kênh khách tự bấm, bắt đầu không do người (`U-061`), mở lại bằng nút (`U-043`); khác tập kênh và khác luật bắt đầu với tạm dừng, nên không chung một bảng (**ADR-078**) |
+
+| Vế của `YC-34` | Tầng | Lược đồ giữ bằng | Bằng chứng |
+|---|:--:|---|---|
+| một thời điểm có một câu trả lời cho mỗi khoảng | 1 | `order_intake_pause_one_at_a_time_excl` · `shop_blind_spell_one_at_a_time_excl` — ràng buộc loại trừ trên khoảng `[bắt đầu, kết thúc)`, cùng hình trực quầy (`06-luoc-do-nguoi-va-vet.md`). Hai **loại** khoảng chồng nhau thì được: hai điều kiện độc lập của `I-008` | `db/tests/yc34_order_intake_stops.sql` |
+| kết thúc sau bắt đầu; kết thúc có người | 1 | `…_ended_after_started_check` · `…_ended_by_iff_ended_check` trên cả hai bảng — với khoảng mù, đó là *không tự mở lại khi tín hiệu về* | cùng file |
+| tạm dừng có người bật | 1 | `order_intake_pause.started_by_person_id` `NOT NULL`, mặc định người thao tác của giao dịch | cùng file |
+| không xoá, không dời lúc bắt đầu | 1 | vai `shop_app` chỉ sửa được hai cột kết thúc, không xoá (`QD-50`); trigger vết như mọi bảng (`QD-52`) | cùng file |
+| không đơn nào tạo trong khoảng — vế của `I-008` | 3 | **pha 3 nợ:** cửa tạo lượt gọi đọc hai bảng tại mốc tạo. Lược đồ không chặn được: một ràng buộc kiểm không đọc được bảng khác. Câu `I-008/2` · `I-008/3` gọi tên lần lọt | [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §1 |
+
+**Cố ý không giữ:** lần POS bấm tắt qua 5G **khi máy đã thấy trước** — không đổi khoảng nào, `YC-34` không
+đòi; dòng thông báo cho khách (câu chữ chưa chốt, pha 4); *ai được* bật, tắt, mở lại (quyền theo vai,
+pha 3); cách máy phát hiện quán mù (cơ chế, pha 3).
+

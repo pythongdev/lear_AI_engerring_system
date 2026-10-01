@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 55 finding — 49 Fixed/Resolved/Closed, 6 Open (đếm lại ngày 2026-10-01, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 55 finding — 50 Fixed/Resolved/Closed, 5 Open (đếm lại ngày 2026-10-01, lúc đóng F-050 ở T-132; trước đó cùng ngày, *55 — 49/6*, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -111,7 +111,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-047 | Thêm một dòng con vào bản ghi đã có (món vào đơn, thành phần vào suất, xấp mệnh giá vào tiền đầu két) không để lại vết ai thêm (P2-11) | Open |
 | F-048 | Số tiền mặt đếm được cuối ngày và dấu *ngày đã đối soát xong* không có chỗ cất, không bước nào nhận — đối soát ngưỡng 0đ không chạy được trên dữ liệu (P2-13) | Open |
 | F-049 | Gate 1d mù với thẻ component có thuộc tính, thẻ đóng, tên component và route viết trong backtick — hai ca hồi quy chỉ thử hình thẻ ít gặp nhất (P2-14) | Fixed |
-| F-050 | Pha 1 đòi vết của mỗi lần *quán đang mù* và giao dòng yêu cầu cho "P1-07 hoặc pha 2"; không bước nào viết dòng `YC`, nên pha 2 không chấm nó (P2-14) | Open |
+| F-050 | Pha 1 đòi vết của mỗi lần *quán đang mù* và giao dòng yêu cầu cho "P1-07 hoặc pha 2"; không bước nào viết dòng `YC`, nên pha 2 không chấm nó (P2-14) | Fixed |
 | F-051 | `db-check` đỏ theo giờ trong ngày — đơn test `I-024` để lại sau COMMIT lấy lúc tạo từ đồng hồ, `I-008/1` bắt nó ngoài giờ bán (T-121) | Fixed |
 | F-052 | Mệnh đề admin `I-025`…`I-029` có ở `quality/invariants.md` trước khi có câu đối chiếu, nên phép so mã của `scripts/reconcile.sh` đỏ và `db-check` sẽ đỏ ở lát admin đầu tiên (P2A-01) | Fixed |
 | F-053 | Bước khoá chặn của `db-check` giả định bước migration trên cùng luôn có dữ liệu mồi, nên lát admin đầu tiên (hai bảng còn rỗng) làm nó đỏ oan — chỗ hở thứ hai cùng họ F-052 mà lượt chữa F-052 không đo (P2A-02) | Fixed |
@@ -4242,7 +4242,16 @@ không có mã, nên không phép chấm nào nhắc nó lần nữa. Cùng họ
 một luật đã chốt mà không có dòng để bước sau chấm.
 
 **Decision / Fix:**
-Chưa sửa — `P2-14` là lượt rà, không thêm yêu cầu hay lược đồ. Việc của **chủ repo**, hai lựa chọn
+2026-10-01 (**T-132**, Claude Code): chủ repo chọn hướng **(a)**. Pha 1: một dòng mới ở `architecture.md` §8
+và dòng **`YC-34`** ở `04-yeu-cau-du-lieu.md` §1, phủ cả khoảng *quán đang mù* lẫn khoảng *tạm dừng nhận
+đơn*; hàng chỗ trống ở `05-realtime-va-du-phong.md` §4 hết trống. Pha 2: migration bước 14
+`20261001140000_khoang_chan_tao_don` dựng hai bảng (**ADR-078**) — mỗi loại khoảng không chồng nhau, kết
+thúc khi và chỉ khi có người kết thúc, chỉ khép được; câu `I-008/2` · `I-008/3` có lỗi cài kêu đúng mã;
+`db/scenario/yc.sql` chấm `YC-34` đọc + sai. **Tập 5 của `I-008` chưa thành câu**: nó còn cần lý do huỷ
+đọc được bằng máy, thứ ngoài finding này (`docs/product/2-db/09-doi-chieu-bat-bien.md` §2). Bằng chứng:
+`db-check: PASS — 14 bước … 33 file test … 99 câu … 99 lỗi cài … 32 mã YC`.
+
+Lịch sử, giữ nguyên: lúc ghi, chưa sửa — `P2-14` là lượt rà, không thêm yêu cầu hay lược đồ. Việc của **chủ repo**, hai lựa chọn
 khác nhau về nơi nhận: (a) thêm cặp dòng yêu cầu ở pha 1 (`architecture.md` §8 và
 `04-yeu-cau-du-lieu.md` §1, đúng luật một-đối-một của P1-07) rồi một migration pha 2 dựng chỗ cất hai
 khoảng, kèm câu đối chiếu cho ba tập `I-008`; (b) vẫn thêm cặp dòng yêu cầu, nhưng giao chỗ cất cho
@@ -4254,7 +4263,7 @@ cho khớp. Cả hai đường đều cần dòng yêu cầu có mã; khác nhau
 (hai hàng `I-008` ở §2 của file đối chiếu) · `P2-13` (lượt chấm `YC`)
 
 **Status:**
-Open
+Fixed
 
 ### F-051 — `db-check` đỏ theo GIỜ TRONG NGÀY: đơn mà test `I-024` để lại sau COMMIT lấy lúc tạo từ đồng hồ, và câu `I-008/1` bắt nó mỗi khi bộ kiểm chạy ngoài giờ bán
 

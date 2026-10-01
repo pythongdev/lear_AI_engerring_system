@@ -94,6 +94,7 @@ có câu trả lời mới từ người.
 | ADR-075 | **Khách trả nợ dần: mỗi lần trả là MỘT dòng `debt_collection` mang *số còn thiếu sau lần ấy*; các lần trả nối nhau thành chuỗi bằng khoá ngoại, nên trả vượt, rẽ nhánh và trả khi đã hết nợ đều bị database từ chối** — bỏ luật *một khoản nợ thu đủ một lần*; lần đầu nối vào số nợ của hoá đơn, lần sau nối vào số còn thiếu của lần trước; *đã trả xong* là có lần trả còn thiếu 0, không cột trạng thái | Đã chốt 2026-10-01 (giao cho phiên, T-126) | — | T-126 · ADR-059 · U-063 |
 | ADR-076 | **Pha 3 có kế hoạch riêng** `master_plan/BE_master_plan_banh_cuon_ba_thanh.md`, mã bước `P3-01`…`P3-14`, sổ mô tả `work/backlog_BE.md` theo khuôn **ADR-051**; chẻ theo nhóm mệnh đề, không theo endpoint; admin ngoài pha 3 (**ADR-068**); `P3-01` chỉ nhận được sau khi **chủ repo ký chuyển pha** | Đã chốt 2026-10-01 (giao cho phiên, T-120) | — | T-120 · ADR-049 · ADR-051 · ADR-068 |
 | ADR-077 | **Bánh làm sai: mỗi ghi chú một dòng `wrong_make_note` gắn vào đúng một đơn vị đã làm của một đơn đã Huỷ**, mang người ghi · lúc ghi · chữ tuỳ chọn; ghi chú còn hiệu lực giữ đơn vị ở *đã làm* (không chuyển, không lùi), ghi nhầm thì **huỷ tại chỗ** có người và lúc, dòng ở lại; `I-004/6` loại thứ đã ghi chú; *không bàn nào chờ* là tầng 4 | Đã chốt 2026-10-01 (giao cho phiên, T-127; hình ghi chú và cách gỡ: lời chủ repo) | — | T-127 · U-064 · ADR-072 |
+| ADR-078 | **Hai khoảng ngừng nhận đơn, hai bảng**: `order_intake_pause` (tạm dừng — người bật, người tắt, chặn năm kênh) và `shop_blind_spell` (quán mù — bắt đầu từ lúc hết nhìn thấy, máy hay người khai, chỉ khép bằng nút có người); mỗi loại không chồng nhau, chỉ khép được, không dời, không xoá; `I-008` tập 2 · 3 thành câu, tập 5 còn chờ lý do huỷ máy đọc được | Đã chốt 2026-10-01 (hướng (a) của F-050: lời chủ repo; hình bảng: giao cho phiên, T-132) | — | T-132 · F-050 · YC-34 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -5165,3 +5166,54 @@ nào chờ đúng thứ ấy ⇒ *"pos note thông tin bánh làm sai"*. Lược
 (`I-004/6`) · `db/reconcile/proof/baseline.sql` · `db/tests/yc07_wrong_make_note.sql` ·
 `docs/product/2-db/05-luoc-do-san-xuat.md` · `07-thu-tu-migration.md` (bước 13) · `09-doi-chieu-bat-bien.md` ·
 `docs/product/1-system-design/04-yeu-cau-du-lieu.md` `YC-07` · `master_plan/shop-facts.md` §5.4 · U-064 · task `T-127`.
+
+### ADR-078 — Hai khoảng ngừng nhận đơn — tạm dừng và quán đang mù — mỗi khoảng một bảng, chỉ khép được, không dời, không xoá
+
+**Trạng thái:** **Đã chốt** 2026-10-01. **Hướng** là lời chủ repo trong phiên cùng ngày: chọn lựa chọn (a) của
+`work/findings.md` **F-050** — *thêm cặp dòng yêu cầu ở pha 1 (`architecture.md` §8 và
+`04-yeu-cau-du-lieu.md` §1) rồi một migration pha 2 dựng chỗ cất hai khoảng, kèm câu đối chiếu cho ba tập
+`I-008`*. **Hình bảng** giao cho phiên (Claude Code, task `T-132`), test viết trước migration.
+
+**Context:**
+Bước P1-08 viết luật *mỗi lần quán đang mù phải đọc lại được sau nhiều ngày* (`05-realtime-va-du-phong.md`
+§3 luật 4) và giao dòng yêu cầu cho *"P1-07 hoặc pha 2"*; không bước nào viết nó, nên pha 2 không chấm nó
+và hai tập đối chiếu của `I-008` (*đơn tạo trong lúc tạm dừng* · *đơn ba kênh khách tự bấm tạo trong lúc
+quán mù*) không có gì để đọc. Khoảng *tạm dừng nhận đơn* (`shop-facts.md` §6.8) thiếu đúng cùng một thứ.
+
+**Decision:**
+1. **Một dòng yêu cầu `YC-34`** phủ cả hai khoảng, cặp một-đối-một với một dòng mới của `architecture.md` §8.
+2. **Hai bảng, không một.** `order_intake_pause`: lúc bật, **người bật bắt buộc** (mặc định người thao tác
+   của giao dịch), lúc tắt, người tắt. `shop_blind_spell`: lúc bắt đầu **không có mặc định** — nó là lúc
+   quán hết nhìn thấy (`U-061`), có thể sớm hơn lúc ghi; người khai **trống được** (trống = máy phát hiện,
+   có tên = người bấm tắt trước khi máy thấy); lúc mở lại, người bấm mở lại.
+3. **Kết thúc khi và chỉ khi có người kết thúc**, trên cả hai bảng — với khoảng mù đó là *mở lại là một
+   nút, không tự mở khi tín hiệu về* (`U-043`, **ADR-047**) giữ ở tầng 1. Kết thúc đứng **sau** bắt đầu.
+4. **Một thời điểm, một câu trả lời cho mỗi loại**: ràng buộc loại trừ trên `[bắt đầu, kết thúc)`, cùng hình
+   trực quầy. Hai **loại** chồng nhau được — hai điều kiện độc lập của `I-008`.
+5. **Chỉ khép được**: vai ghi sửa được hai cột kết thúc, không dời lúc bắt đầu, không đổi người bật, không
+   xoá (`QD-50`); trigger vết như mọi bảng (`QD-52`). Đường lùi có khoá chặn.
+6. **Câu `I-008/2` · `I-008/3`** đọc hai bảng; tập 3 chỉ ba kênh khách tự bấm. **Tập 5 vẫn chưa thành câu**:
+   nó cần *lý do huỷ đọc được bằng máy*, thứ không thuộc F-050 — viết một câu đoán sẽ kêu oan mọi lần khách
+   tự huỷ trong khoảng. Tập 4 cần lần từ chối để lại bản ghi — vẫn pha 3.
+7. **Cửa tạo lượt gọi đọc hai bảng tại mốc tạo** là tầng 3 của `I-008`, pha 3 (`P3-12`); cách máy phát hiện
+   quán mù và quyền ai được bật, tắt, mở lại cũng thế.
+
+**Why:**
+- *Hai bảng.* Hai khoảng khác nhau ở **tập kênh bị chặn** (năm và ba), ở **ai bắt đầu** (luôn là người, và
+  có khi không ai) và ở **mốc bắt đầu** (lúc bấm, và lúc hết nhìn thấy). Một bảng có cột loại sẽ cần ràng
+  buộc theo loại cho từng vế và một ràng buộc loại trừ có điều kiện theo loại; hai bảng nói thẳng mỗi luật
+  ở một chỗ, và câu đối chiếu mỗi tập đọc đúng một bảng.
+- *Người kết thúc bắt buộc.* Đó là cách duy nhất để vế *không tự mở lại* có một lời từ chối của database
+  thay vì một lời hứa của code pha 3.
+
+**Rejected alternatives:**
+- *Một bảng `order_intake_stop` có cột loại.* Bác: lý do ở *Why*.
+- *Cờ "đang tạm dừng" trên một bảng cấu hình.* Bác: ghi đè — mất đúng thứ `YC-34` đòi (*đọc lại sau nhiều
+  ngày*), cùng lý do trực quầy là khoảng chứ không phải một ô.
+- *Ghi cả lần POS bấm tắt khi máy đã thấy trước.* Bác: không đổi khoảng nào, `YC-34` không đòi.
+
+**Applies to:** `db/migrations/20261001140000_khoang_chan_tao_don.up.sql` · `.down.sql` ·
+`db/tests/yc34_order_intake_stops.sql` · `db/reconcile/i008.sql` · `db/reconcile/proof/baseline.sql` ·
+`db/reconcile/proof/i008_2.sql` · `db/reconcile/proof/i008_3.sql` · `db/scenario/yc.sql` · `docs/product/2-db/02-luoc-do-ban-hang.md` §7 ·
+`07-thu-tu-migration.md` (bước 14) · `09-doi-chieu-bat-bien.md` · `docs/product/1-system-design/architecture.md`
+§8 · `04-yeu-cau-du-lieu.md` `YC-34` · `05-realtime-va-du-phong.md` §4 · §5 · F-050 · task `T-132`.

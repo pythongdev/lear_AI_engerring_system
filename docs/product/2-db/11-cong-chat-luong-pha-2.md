@@ -308,6 +308,9 @@ pha là quyền **chủ repo** (kế hoạch §9), và bốn ô tick dưới đ�
   · §7). **Một lời giao không rơi vào dòng nào — `F-050`:** `05-realtime-va-du-phong.md` §3 luật 4 đòi
   vết của mỗi lần *quán đang mù*, không bước nào viết dòng `YC` cho nó, nên ô 4 ở trên tick mà không
   chạm tới nó.
+  *Cập nhật 2026-10-01 (`T-132`), không đổi lần tick:* chủ repo chọn hướng (a) của `F-050` — dòng
+  `YC-34` ở pha 1, chỗ cất ở migration bước 14, câu `I-008/2` · `I-008/3`; `F-050` đã đóng, và
+  `db/scenario/yc.sql` chấm `YC-34` bằng đọc + sai như mọi mã khác.
 
   ⚠️ **Con số ở ô này là ảnh chụp tại mốc đo, và chính ô này làm chúng hết đúng** — nó thêm dòng vào
   một file của tập. Lượt đo sau đếm lại, đừng đọc con số ở đây như con số hôm ấy (**F-001** · **F-033**,
@@ -340,7 +343,7 @@ ngược; và **khôi phục dữ liệu** — `YC-21`, pha 5 (`T-109`).
 | Bước / người | Lấy gì từ mục này |
 |---|---|
 | ~~`P2-14`~~ — **xong 2026-09-30** | ô **9** — đã chạy bộ lọc trên mọi file pha 2, gồm file này, và ký ô ấy ở §7 |
-| chủ repo | §6 và ô 1 · 3 · 4 · 9 · 10 — `F-048` cần một nơi nhận; `F-046` chờ pha 3; `F-049` (Gate 1d hẹp hơn thứ nó phải bắt) và `F-050` (vết *quán đang mù* chưa có dòng yêu cầu) cần người nhận; `U-063` · `U-058` chờ chủ quán; rồi câu sang pha 3 |
+| chủ repo | §6 và ô 1 · 3 · 4 · 9 · 10 — `F-048` cần một nơi nhận; `F-046` chờ pha 3; `F-049` (Gate 1d hẹp hơn thứ nó phải bắt, đóng ở `T-131`) và `F-050` (vết *quán đang mù* chưa có dòng yêu cầu, đóng ở `T-132` 2026-10-01) cần người nhận; `U-063` · `U-058` chờ chủ quán; rồi câu sang pha 3 |
 | pha 3 | §0 — mỗi bước ở quán một giao dịch, người thao tác và lý do khai ở **mọi** lần ghi; các hàm ở `db/scenario/prelude.sql` là **hình dạng** lần ghi mà cửa pha 3 thay thế, không phải cửa ấy |
 | `P2A-09` | §9 — rà ranh giới các lát admin và ký ô 7 · 8; lát khoản chi còn vắng, rà lại khi P2A-05 xong |
 | bước nào thêm vào `db-check` sau bước 7 | database kiểm lúc ấy có một ngày bán đã COMMIT (**ADR-067** *Hệ quả*) |

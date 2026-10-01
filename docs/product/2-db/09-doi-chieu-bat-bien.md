@@ -47,7 +47,7 @@ danh sách, và đỏ khi một danh sách rỗng (**F-017**).
 
 Số `n` của `I-0xx/n` là **thứ tự của tập** trong ô *Phép đối chiếu* của hàng ấy ở
 `03-bao-ve-invariant.md`, đếm từ trái; tập có câu ghi mã câu, tập không có câu trỏ xuống §2. Đo lại
-2026-10-01: **29** mã ở `quality/invariants.md`, **75** câu `I-0xx/n` (đếm mã bằng `--codes`,
+2026-10-01 (lần sau, `T-132`): **29** mã ở `quality/invariants.md`, **77** câu `I-0xx/n` (đếm mã bằng `--codes`,
 đếm câu bằng `cat db/reconcile/i*.sql | grep -c '^-- @@ I-'`; đừng tin con số này — **F-003**).
 
 | Mệnh đề | Tập → câu |
@@ -59,7 +59,7 @@ Số `n` của `I-0xx/n` là **thứ tự của tập** trong ô *Phép đối c
 | `I-005` | 1 → `I-005/1` · 2 → `I-005/2` · 3 → `I-005/3` |
 | `I-006` | 1 → **`I-007/1`** (pha 1: *cùng một tập với `I-007`, không đối chiếu hai lần*) · 2 → `I-006/2` |
 | `I-007` | 1 → `I-007/1` · 2 → `I-007/2` · 3 → `I-007/3` |
-| `I-008` | 1 → `I-008/1` · 2 · 3 · 4 · 5 → §2 |
+| `I-008` | 1 → `I-008/1` · 2 → `I-008/2` · 3 → `I-008/3` *(T-132, 2026-10-01)* · 4 · 5 → §2 |
 | `I-009` | 1 → `I-009/1` · 2 → `I-009/2` · 3 → `I-009/3` · 4 → `I-009/4` |
 | `I-010` | 1 → `I-010/1` · 2 · 3 · 4 → §2 |
 | `I-011` | 1 → `I-011/1` · 2 · 3 → §2 |
@@ -102,10 +102,10 @@ tính chất của dữ liệu.
 |---|---|---|---|
 | `I-003` tập 3 — bàn kẹt: đủ hai điều kiện mà không Trống | chưa có câu | (B) bàn **không** có cột trạng thái (`02-luoc-do-ban-hang.md` §3); *Trống* đọc ra từ chi tiết, nên "đủ điều kiện mà không Trống" không có dữ liệu nào để mâu thuẫn | — (đúng theo cấu tạo) |
 | `I-004` tập 5 — việc Chưa làm của đơn đã Huỷ | chưa có câu | (C) tập không bao giờ rỗng: việc trạm không có trạng thái huỷ, không dòng nào bị xoá | pha 1 — **F-044** |
-| `I-008` tập 2 — đơn tạo trong khoảng tạm dừng | chưa có câu | (A) lược đồ không cất khoảng *tạm dừng nhận đơn* | pha 3 — cửa tạo lượt gọi cần chỗ cất ấy; một migration mới |
-| `I-008` tập 3 — đơn ba kênh khách tự bấm trong khoảng quán không nhìn thấy đơn | chưa có câu | (A) không cất khoảng mất kết nối ([`05-realtime-va-du-phong.md`](../1-system-design/05-realtime-va-du-phong.md) §3) | pha 3 |
+| ~~`I-008` tập 2 — đơn tạo trong khoảng tạm dừng~~ | **có câu 2026-10-01** — `I-008/2` | chỗ cất `order_intake_pause` dựng ở `T-132` (`YC-34`, **ADR-078**, đóng **F-050**) | — |
+| ~~`I-008` tập 3 — đơn ba kênh khách tự bấm trong khoảng quán không nhìn thấy đơn~~ | **có câu 2026-10-01** — `I-008/3` | chỗ cất `shop_blind_spell` dựng ở `T-132`; khoảng tính từ lúc quán hết nhìn thấy (`U-061`) | — |
 | `I-008` tập 4 — đơn hai kênh nhân viên bị chặn nhầm | chưa có câu | (A) lần từ chối tạo đơn không để lại bản ghi | pha 3 |
-| `I-008` tập 5 — đơn tạo trước khi điều kiện đóng mà bị chạm chỉ vì điều kiện ấy | chưa có câu | (A) cần khoảng tạm dừng/mất kết nối (tập 2 · 3) và lý do huỷ đọc được bằng máy | pha 3 |
+| `I-008` tập 5 — đơn tạo trước khi điều kiện đóng mà bị chạm chỉ vì điều kiện ấy | chưa có câu | (A) **chỉ còn** lý do huỷ đọc được bằng máy: hai khoảng đã có chỗ cất từ `T-132` (2026-10-01), nhưng một đơn bị huỷ trong khoảng mà lý do là chữ tự do của vết thì máy không tách được *huỷ vì khoảng vừa đóng* với *khách tự huỷ* — một câu đoán sẽ kêu oan | pha 3 — cửa huỷ |
 | `I-010` tập 2 — tổ hợp khác tổ hợp khách gửi | chưa có câu | (A) không cất yêu cầu gốc (`03-luoc-do-menu-gia.md` §5) | pha 3 quyết có cất hay không |
 | `I-010` tập 3 — yêu cầu bị từ chối vẫn sinh dòng | chưa có câu | (A) lần từ chối không để lại bản ghi | pha 3 |
 | `I-010` tập 4 — dòng hợp lệ tại mốc bị đánh dấu hỏng vì menu đổi sau | chưa có câu | (B) lược đồ không có dấu *hỏng* hay *chặn* nào trên dòng đơn | — (đúng theo cấu tạo) |

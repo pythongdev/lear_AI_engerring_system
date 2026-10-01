@@ -362,6 +362,16 @@ BEGIN
   UPDATE table_session_member SET cleaned_at = pg_temp.bc_luc('10:45') WHERE table_session_id = s;
 END $$;
 
+-- T-132: chủ quán tạm dừng 06:10–06:25 (hết nguyên liệu), không đơn nào tạo trong khoảng ấy. Máy thấy
+-- quán hết nhìn thấy đơn lúc 07:05, người đứng quầy bấm mở lại 07:15; lượt gọi staff_pos của bàn 5
+-- lúc 07:10 nằm TRONG khoảng mù và phải ra 0 dòng ở I-008/3 — hai kênh người của quán không dừng.
+-- Hai khoảng đứng trước 08:00: không file lỗi cài nào tạo đơn ở đó.
+INSERT INTO order_intake_pause (started_at, started_by_person_id, ended_at, ended_by_person_id)
+VALUES (pg_temp.bc_luc('06:10'), pg_temp.bc_nguoi('Chủ quán'),
+        pg_temp.bc_luc('06:25'), pg_temp.bc_nguoi('Chủ quán'));
+INSERT INTO shop_blind_spell (started_at, ended_at, ended_by_person_id)
+VALUES (pg_temp.bc_luc('07:05'), pg_temp.bc_luc('07:15'), pg_temp.bc_nguoi('Người đứng quầy'));
+
 -- Ngày mẫu phải qua MỌI ràng buộc hoãn, như lúc COMMIT.
 SET CONSTRAINTS ALL IMMEDIATE;
 SET CONSTRAINTS ALL DEFERRED;
