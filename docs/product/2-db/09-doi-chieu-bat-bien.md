@@ -134,8 +134,8 @@ của mệnh đề ấy trong cùng thay đổi.
 
 | Mệnh đề | Trạng thái | Vì sao | Ai nợ |
 |---|---|---|---|
-| `I-025` | chưa có lát | lát đã dựng ở `P2A-02` (2026-09-30), câu và lỗi cài chưa viết — chờ dữ liệu mồi `P2A-06` | `P2A-07` |
-| `I-026` | chưa có lát | lát đã dựng ở `P2A-02` (2026-09-30), câu và lỗi cài chưa viết — chờ dữ liệu mồi `P2A-06` | `P2A-07` |
+| `I-025` | chưa có lát | lát đã dựng ở `P2A-02` (2026-09-30), câu và lỗi cài chưa viết — dữ liệu mồi dựng ở `P2A-06` (2026-10-01) | `P2A-07` |
+| `I-026` | chưa có lát | lát đã dựng ở `P2A-02` (2026-09-30), câu và lỗi cài chưa viết — dữ liệu mồi dựng ở `P2A-06` (2026-10-01) | `P2A-07` |
 | `I-027` | chưa có lát | lát đã dựng ở `P2A-03` (2026-09-30), câu và lỗi cài chưa viết | `P2A-07` |
 | `I-028` | chưa có lát | lát đã dựng ở `P2A-04` (2026-09-30), câu và lỗi cài chưa viết | `P2A-07` |
 | `I-029` | chưa có lát | lát khoản chi (`P2A-05`) chưa dựng, còn chờ lời cho **U-066** | `P2A-07` |

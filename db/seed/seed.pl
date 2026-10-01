@@ -8,6 +8,7 @@
 # đối chiếu hai chiều với §4.9 mỗi lần chạy.
 #
 #   perl db/seed/seed.pl                 # SQL dựng dữ liệu mồi (vai shop_app, một giao dịch)
+#   perl db/seed/seed.pl --supply-names  # tên hàng mua vào sẽ chèn, mỗi dòng một tên
 #   perl db/seed/seed.pl --price-cases   # SQL tính lại các ca giá của §4.8 từ database
 #
 # Owner đổi hình mà script không đọc được ⇒ in lỗi ra stderr, exit 1, không in nửa bộ SQL.
@@ -232,9 +233,48 @@ die_owner("bảng Vai ở §3 rỗng") unless @roles;
 die_owner("§3 không còn câu về chủ quán (`owner`)")
   unless grep { /Chủ quán \(`owner`\)/ } section('## 3.');
 
+# --- §8.4: danh mục hàng mua vào ---------------------------------------------------------
+my @supplies;
+{
+  my @sec = section('### 8.4 ');
+  my ($paragraph, $on) = ('', 0);
+  for (@sec) {
+    $on = 1 if /^\*\*Danh mục nguyên liệu — chủ quán bắt đầu liệt kê 2026-09-06/;
+    next unless $on;
+    last if /^\s*$/;
+    $paragraph .= ($paragraph eq '' ? '' : ' ') . $_;
+  }
+  my ($list) = $paragraph =~ /\*"([^"\n]+)"\*/;
+  die_owner('§8.4: không đọc được danh sách 2026-09-06') unless defined $list;
+  my %merged;
+  for my $name (split /, /, $list, -1) {
+    $name = clean($name);
+    die_owner('§8.4: tên rỗng trong danh sách 2026-09-06') if $name eq '';
+    my $key = lc $name;
+    die_owner("§8.4: tên lặp trong danh sách 2026-09-06: '$name'") if exists $merged{$key};
+    $merged{$key} = [ucfirst($name), undef];
+  }
+  my @rows = table('Hàng mua vào', @sec);
+  die_owner('§8.4: bảng Hàng mua vào rỗng') unless @rows;
+  my %seen;
+  for my $r (@rows) {
+    my $name = clean($r->{'Hàng mua vào'} // '');
+    my $unit = clean($r->{'Đơn vị mua'} // '');
+    $unit =~ s/\s*\([^()]*\)\s*$//;
+    $unit = clean($unit);
+    die_owner('§8.4: tên rỗng trong bảng Hàng mua vào') if $name eq '';
+    die_owner("§8.4: Đơn vị mua rỗng ở '$name'") if $unit eq '';
+    my $key = lc $name;
+    die_owner("§8.4: tên lặp trong bảng Hàng mua vào: '$name'") if $seen{$key}++;
+    $merged{$key} = [$name, $unit];
+  }
+  @supplies = map { $merged{$_} } sort keys %merged;
+}
+
 # --- in SQL -----------------------------------------------------------------------------
 my $mode = $ARGV[0] // '';
 
+if ($mode eq '--supply-names') { print "$_->[0]\n" for @supplies; exit 0 }
 if ($mode eq '--price-cases') { price_cases(); exit 0 }
 die "seed.pl: tham số lạ '$mode'\n" if $mode ne '';
 
@@ -301,6 +341,12 @@ for my $c (sort keys %stations) {
     printf "INSERT INTO menu_component_station (menu_component_id, station_code)"
       . " SELECT id, %s FROM menu_component WHERE name = %s;\n", sqlq($st), sqlq($c);
   }
+}
+
+print "\n-- §8.4 danh mục hàng mua vào; chưa có đơn vị thì để NULL.\n";
+for my $r (@supplies) {
+  printf "INSERT INTO supply_item (name, purchase_unit) VALUES (%s, %s);\n",
+    sqlq($r->[0]), defined $r->[1] ? sqlq($r->[1]) : 'NULL';
 }
 
 print "\nCOMMIT;\n";

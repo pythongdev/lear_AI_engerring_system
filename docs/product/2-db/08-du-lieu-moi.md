@@ -1,20 +1,23 @@
-# Dữ liệu mồi — menu thật, bàn, trạm của thành phần
+# Dữ liệu mồi — menu thật, bàn, trạm của thành phần, hàng mua vào
 
-Pha 2 · bước `P2-10` · viết 2026-09-28 (Claude Code). Tên file đúng đề xuất của kế hoạch pha 2 §5.
+Pha 2 · bước `P2-10` · viết 2026-09-28 (Claude Code); bổ sung `P2A-06` 2026-10-01 (Codex thi công,
+Claude Code duyệt). Tên file đúng đề xuất của kế hoạch pha 2 §5.
 
 **Dữ liệu mồi không nằm trong một file dữ liệu nào.** Nó được **sinh lúc chạy** bởi
 [`db/seed/seed.pl`](../../../db/seed/seed.pl), đọc thẳng
-[`master_plan/shop-facts.md`](../../../master_plan/shop-facts.md) rồi in ra SQL. Không file nào dưới
+[`master_plan/shop-facts.md`](../../../master_plan/shop-facts.md) §1 · §3 · §4 · §5.3 · §8.4 rồi in ra
+SQL. Danh mục hàng mua vào và đơn vị cũng đọc lúc chạy, không cất danh sách thứ hai. Không file nào dưới
 `db/` hay `docs/product/2-db/` mang một con giá, một mức phụ thu, một số lượng thành phần hay số bàn
 của quán — kể cả file này (**ADR-001**, `work/findings.md` **F-001**). Chủ quán đổi giá ở owner ⇒
 lần dựng sau mang giá mới, không có bản thứ hai nào để trôi.
 
 **File này KHÔNG sở hữu:**
-- **giá, thành phần suất, phụ thu, danh sách món, số bàn, trạm** — `master_plan/shop-facts.md` §1 ·
-  §3 · §4 · §5.3;
+- **giá, thành phần suất, phụ thu, danh sách món, số bàn, trạm, hàng mua vào và đơn vị** — `master_plan/shop-facts.md` §1 ·
+  §3 · §4 · §5.3 · §8.4;
 - **chỗ cất** — các file lát: [`02-luoc-do-ban-hang.md`](02-luoc-do-ban-hang.md) (bàn, mã QR),
   [`03-luoc-do-menu-gia.md`](03-luoc-do-menu-gia.md) (bảy bảng menu),
-  [`05-luoc-do-san-xuat.md`](05-luoc-do-san-xuat.md) (trạm của thành phần); tên · kiểu · ràng buộc
+  [`05-luoc-do-san-xuat.md`](05-luoc-do-san-xuat.md) (trạm của thành phần),
+  [`12-luoc-do-nguyen-lieu.md`](12-luoc-do-nguyen-lieu.md) (hàng mua vào); tên · kiểu · ràng buộc
   thắng ở file migration (**ADR-053** luật 2);
 - **hàm tính giá** — pha 3. Phép cộng ở §3 chỉ chứng minh dữ liệu **đủ** cho hàm ấy.
 
@@ -50,6 +53,7 @@ vai dựng lược đồ: dữ liệu mồi đi đúng đường quyền mà d�
 | `menu_item_component` | §4.5 cột *Bếp làm ra* | *số · loại từ · tên*, nối bằng ` + `; tên nối về họ thành phần của §4.2 |
 | `menu_item_option_group` | §4.4 · §4.8 ca 12 | mọi nhóm của §4.4 gắn cho dòng menu có **ít nhất một** phần nhận nhân; dòng không có phần nào (giò bán rời, canh) không mang nhóm nào |
 | `menu_component_station` | §5.3 khối ví dụ · §3 | mỗi dòng *trạm │ thứ* nối *thứ* về họ thành phần; dòng không nối được (nước chấm) là việc cấp đơn, không thuộc thành phần nào |
+| `supply_item` | §8.4 danh sách 2026-09-06 và bảng *Hàng mua vào* | nối các dòng của đoạn danh sách tới dòng trống, đọc chuỗi nguyên văn trong `*"…"*`, tách bằng `, `; đọc cột *Hàng mua vào* và *Đơn vị mua* của bảng; gộp theo §2, tên chỉ có trong danh sách cũ mang đơn vị `NULL`; không dựng con số ngày hay thêm người cho lát này |
 
 **Kiểm chéo hai owner lúc đọc.** Ba cột giá của §4.2 phải bằng *giá chay + phụ thu §4.4* của từng
 tổ hợp nhân · lượng nhân; lệch ⇒ bộ dựng dừng và in hai con số. Đây là cùng một luật (§4.6 luật 1 ·
@@ -63,6 +67,7 @@ không nối được về §4.2; một thành phần không xuống trạm nào
 
 ## 2. Phiên chọn 2026-09-28 — chưa có lời chủ repo
 
+Các lựa chọn ban đầu ngày 2026-09-28; bổ sung ngày 2026-10-01.
 Đổi được bằng một lần sửa bộ dựng kèm lý do ở đây, trước khi code pha 3 dựa vào nó.
 
 - **Ba loại trứng là ba thành phần**, cùng giá vì cùng một hàng §4.2 (gỡ hàng *trứng chín / tái /
@@ -83,6 +88,7 @@ không nối được về §4.2; một thành phần không xuống trạm nào
   được đối chiếu hai chiều với §4.9 mỗi lần chạy.
 - **Kỳ vọng của các ca giá đọc thẳng từ bảng §4.8**, không gõ lại; tên món của ca nối về dòng menu
   qua cùng bảng ánh xạ.
+- **Phiên chọn 2026-10-01 (Claude Code), chưa có lời chủ repo:** tên sau khi bỏ khoảng trắng đầu/cuối và bỏ hoa thường (`lc`) bằng nhau thì gộp, lấy tên hiển thị và đơn vị của bảng; tên khác nhau giữ riêng, không gộp theo nghĩa. Ô đơn vị bỏ phần ghi chú trong ngoặc ở cuối và khoảng trắng đầu/cuối. Tên chỉ có ở danh sách 2026-09-06 viết hoa chữ đầu (`ucfirst`), đơn vị để `NULL`, không tự gán.
 
 ---
 
@@ -91,6 +97,10 @@ không nối được về §4.2; một thành phần không xuống trạm nào
 `./scripts/db-check.sh`, 2026-09-28, trên database rỗng dựng từ số 0: dựng xong mọi bảng ở §1 (số dòng từng bảng in
 ở output), mỗi bàn đúng một mã hiện hành; rồi **mọi** ca của §4.8 khớp từng đồng — ca 11 ra *từ chối*, ca 13 ra một dòng 0đ vẫn có
 mặt. Output nguyên văn dán ở `work/backlog_DB.md` → `P2-10` *Bàn giao*.
+
+Bổ sung `P2A-06` (2026-10-01): bước 4 đối chiếu `perl db/seed/seed.pl --supply-names`
+với tên trong database bằng `comm -3` trên hai danh sách đã `sort`; rỗng mới PASS,
+lệch thì FAIL và in cả hai danh sách. Số hàng và số hàng chưa có đơn vị lấy từ database.
 
 **Biết kêu** — cùng lệnh, chạy trên một bản sao hỏng của owner (biến môi trường `SHOP_FACTS`, chỉ để
 thử; mặc định luôn là owner):
@@ -101,6 +111,11 @@ thử; mặc định luôn là owner):
 | §4.2 một ô giá không còn bằng chay + phụ thu §4.4 | bộ dựng dừng, in hai con số |
 | §4.9 thêm một món chưa ánh xạ | bộ dựng dừng, gọi tên món |
 | §5.3 bỏ dòng giò | bộ dựng dừng: *Giò không xuống trạm nào* |
+| §8.4 mất đoạn danh sách 2026-09-06 | stderr chỉ chỗ hỏng, exit 1, stdout rỗng |
+| §8.4 mất bảng *Hàng mua vào* | stderr chỉ chỗ hỏng, exit 1, stdout rỗng |
+| §8.4 một ô *Đơn vị mua* rỗng | stderr gọi tên hàng thiếu đơn vị, exit 1, stdout rỗng |
+| §8.4 tên lặp trong cùng một danh sách sau `lc` và bỏ khoảng trắng đầu/cuối | stderr gọi tên lặp và danh sách, exit 1, stdout rỗng |
+| §8.4 thêm một hàng hợp lệ, tên mới vào bảng (ca không hỏng) | `--supply-names` thêm đúng một dòng; không khoá số hàng trong code |
 
 ---
 
@@ -109,6 +124,7 @@ thử; mặc định luôn là owner):
 | Chỗ trống | Hôm nay đứng thế nào | Ai gỡ |
 |---|---|---|
 | **Người** — bốn vai, chủ quán (`shop-facts.md` §3) | **dựng 2026-09-28 (`P2-08`)**: một người cho mỗi dòng bảng *Vai* của §3, đọc lúc chạy, cộng chủ quán (`is_owner`); tên hiển thị là **tên vai** — quán chưa khai tên ai. Chủ quán là người thao tác lúc cấp mã QR (U-062). *Ai đứng trạm nào* không mồi: chỉ quầy có mốc đổi, và POS khai lúc bán thật | `P2-08` — xong; tên người thật là việc của quán |
+| **Đơn vị mua của các tên chỉ có ở danh sách 2026-09-06** | để trống (`NULL`); câu hỏi ở `work/admin-questions.md` B12. Lời chủ quán 2026-09-30 cho các tên ấy còn là **bản nháp ở B12, chưa về owner** nên bộ dựng không đọc; về bảng *Hàng mua vào* của §8.4 thì lần dựng sau tự mang đơn vị | chủ quán qua owner §8.4 |
 | **Số chỗ ngồi của bàn** (§1) | không cột nào cất; dữ liệu mồi không dựng | — cần thì một migration mới |
 | **Ô giá ⚠ của giò bán rời** (`S-9`, §7.2) | dựng đúng ô owner đang ghi; ca 12 khớp ô ấy. Chủ quán đọc ô khác ⇒ owner đổi, dữ liệu mồi đổi theo | chủ quán |
 | **Bắt buộc chọn một nhân** và **mặc định Thịt · Thường** (§4.4 · §4.6 luật 7 · 8) | không cất (`03-luoc-do-menu-gia.md` §5); các ca của §4.8 đều ghi rõ lựa chọn nên không cần mặc định | pha 3 |

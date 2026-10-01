@@ -657,6 +657,94 @@ lúc chạy, không cất danh sách thứ hai.
 - **Thứ chưa có đơn vị ⇒ đơn vị trống.**
 - **Không mồi người, không mồi con số ngày** — chúng là dữ liệu của lượt diễn ở `P2A-08`.
 
+**Nhận việc** — điền 2026-10-01 (Claude Code); `P2A-02` đã `Done` và đã commit (`a1aa9ca`); mức **L1**
+(kế hoạch §5: không tiền, không dữ liệu thật — dữ liệu mồi chỉ vào database kiểm). Chủ repo yêu cầu
+*"yêu cầu codex làm bạn kiểm tra"*; chia vai theo `CLAUDE.md` §7.4 và `docs/prompt-guideline.md` §6.1
+mức L1: **Claude** viết nghiệm thu và scope, **Codex** thi công trong worktree riêng, Claude duyệt diff
+thật và tự chạy lại. Lát `P2A-03` lúc nhận **chưa commit**; task này không dựa vào nó, nhưng worktree
+của Codex được mồi bằng đúng các file migration chưa commit để bộ kiểm chạy cùng một dãy bước như clone
+chính.
+
+Cách đọc hai danh sách của §8.4 lúc nhận — **cách đọc của phiên, không phải lời chủ quán**
+(`work/findings.md` **F-004**): hai tên **giống hệt nhau khi bỏ hoa thường** là **một** thứ (*gạo* ·
+*Gạo*, *rau mùi tàu* · *Rau mùi tàu*), và mang đơn vị của bảng 2026-09-25; hai tên khác nhau dù chỉ
+một chữ là **hai** thứ (*Mộc nhĩ* ≠ *nhân thịt mộc nhĩ*, *Gạo* ≠ *bột bánh cuốn*) — đó là lệnh *"không
+tự hợp nhất các tên khác"* của owner. Cách đọc ấy khớp với câu **B12** ở `work/admin-questions.md`:
+mười hai tên cũ B12 còn hỏi đơn vị đúng là mười bốn tên cũ trừ hai tên trùng.
+- *Phạm vi:* `work/scope/P2A-06.txt` — `db/seed/seed.pl`, `scripts/db-check.sh`,
+  `docs/product/2-db/08-du-lieu-moi.md`, `docs/product/2-db/09-doi-chieu-bat-bien.md` (hai hàng *chờ
+  dữ liệu mồi*), `docs/product/00-index.md`, entry này, dòng trạng thái.
+- *Nghiệm thu:*
+  1. **Bộ dựng đọc cả hai danh sách của §8.4 lúc chạy**: danh sách nguyên văn trong ngoặc kép của đoạn
+     *Danh mục nguyên liệu — chủ quán bắt đầu liệt kê 2026-09-06* và bảng có cột *Hàng mua vào*; `db/seed/seed.pl`
+     không mang một tên hàng hay một đơn vị của quán, và `08-du-lieu-moi.md` không chép danh sách
+     (`grep -i` *mộc nhĩ*, *găng tay* trên hai file ấy trả rỗng). *Sửa lúc duyệt 2026-10-01:* bản đầu
+     đòi rỗng trên cả `db/`, nhưng chữ *mộc nhĩ* ở migration menu, test và ngày bán mẫu là tên **lựa
+     chọn nhân** của menu (§4.4), có từ trước — nghiệm thu viết rộng quá, không phải lỗi thi công.
+  2. **Tên trùng khi bỏ hoa thường là một dòng, tên khác nhau là hai dòng**: database có đúng
+     *14 + 18 − 2 = 30* dòng `supply_item` trên owner hôm nay; *Gạo* và *Rau mùi tàu* mỗi tên một
+     dòng mang đơn vị của bảng; *Mộc nhĩ* và *Nhân thịt mộc nhĩ* là hai dòng.
+  3. **Thứ chưa có đơn vị thì đơn vị trống**: đúng mười hai dòng có `purchase_unit` rỗng (NULL), và
+     là mười hai tên cũ; không dòng nào mang đơn vị do bộ dựng tự gán. Đơn vị của bảng lấy ô *Đơn vị
+     mua*, bỏ phần ghi chú trong ngoặc (*túi (chủ quán nói "1 túi")* ⇒ *túi*).
+  4. **Đối chiếu hai chiều trong `db-check`** (kế hoạch §5 hàng `P2A-06`): danh sách tên bộ dựng đọc
+     từ owner và danh sách tên trong database qua `comm -3` ⇒ rỗng; dòng `PASS` in số thứ và số thứ
+     chưa có đơn vị, đếm từ database; lệch ⇒ `FAIL` và in cả hai danh sách.
+  5. **Owner đổi hình ⇒ FAIL, không dựng nửa chừng** (cùng cách `SHOP_FACTS` của `P2-10`), chạy thật
+     trên bản sao hỏng: mất đoạn danh sách 2026-09-06 · mất bảng *Hàng mua vào* · một ô *Đơn vị mua*
+     rỗng · một tên lặp trong cùng một danh sách ⇒ bộ dựng dừng, gọi tên chỗ hỏng; thêm một hàng vào
+     bảng ⇒ database có 31 dòng.
+  6. **Không mồi người, không mồi con số ngày**: sau dữ liệu mồi, `supply_day_entry` có 0 dòng; bộ
+     dựng không thêm người nào cho lát này.
+  7. **`08-du-lieu-moi.md` nói đủ**: hàng `supply_item` ở §1, cách đọc tên trùng và phần trong ngoặc
+     ở §2 (phiên chọn, có ngày), bằng chứng ở §3, chỗ trống *đơn vị của mười hai tên cũ* ở §4 trỏ về
+     câu B12; hai hàng `I-025` · `I-026` của `09-doi-chieu-bat-bien.md` thôi nói *chờ dữ liệu mồi*.
+  8. `./scripts/db-check.sh` và `./scripts/gate.sh` xanh ở worktree của Codex và ở clone chính.
+- *Kiểm chứng:* `./scripts/db-check.sh` bước 4; các lần chạy trên bản sao hỏng dán ở *Bàn giao*.
+- *Ngoài phạm vi, có tên:* đơn vị của mười hai tên cũ — lời chủ quán 2026-09-30 còn là **bản nháp ở
+  `work/admin-questions.md` B12, chưa về owner**, nên bộ dựng **không** đọc nó; khi lời ấy về §8.4 thì
+  lần dựng sau tự mang đơn vị mới nếu nó nằm trong bảng *Hàng mua vào*. Hàng *dữ liệu mồi* ở
+  `12-luoc-do-nguyen-lieu.md` §5 — file đang mang thay đổi chưa commit của `P2A-03`, sửa sau khi lát
+  ấy commit. Câu đối chiếu `I-025` · `I-026` — `P2A-07`.
+
+**Bàn giao** — 2026-10-01 · thực hiện: **Codex** (bộ dựng, bước 4 của bộ kiểm, ba file tài liệu — theo
+phiếu) · duyệt: **Claude Code** (thêm thụt lề cho phần in hai danh sách của `db-check`, câu *bản nháp
+B12* ở `08-du-lieu-moi.md` §4, gói dòng đầu file ấy) · nhánh `chatgpt_involve`, trên `a306d29` · chưa
+commit. Worktree của Codex (`../lean_wt/P2A-06`, nhánh `codex/P2A-06`) mồi thêm ba file chưa commit
+của `P2A-03`; đã gỡ sau khi đưa về.
+
+*Kết quả.* `perl db/seed/seed.pl` in thêm một khối `INSERT INTO supply_item` đọc từ §8.4 lúc chạy;
+`perl db/seed/seed.pl --supply-names` in danh sách tên ấy. Cách gộp là phiên chọn ở
+[`08-du-lieu-moi.md`](../docs/product/2-db/08-du-lieu-moi.md) §2, chưa có lời chủ repo.
+
+*Codex làm gì, Claude duyệt ra sao.* Codex trả đúng năm file của phiếu và chạy thật năm ca bản sao
+hỏng (exit 1, stdout rỗng, lời lỗi gọi chỗ hỏng; thêm một hàng ⇒ 31 tên), nhưng **không chạy được
+database** vì sandbox chặn socket Docker, và gate trong worktree đỏ vì Claude mồi thiếu file tài liệu
+của `P2A-03` (Gate 1b · 1c · 1e nói về `13-luoc-do-cham-cong.md`) — lỗi mồi worktree, không phải lỗi
+thi công. Claude đọc diff thật, đưa về clone chính bằng patch, rồi tự chạy:
+
+```text
+$ ./scripts/db-check.sh        # exit=0
+PASS dữ liệu mồi — 15 bàn · 15 mã QR hiện hành · 6 thành phần · 10 dòng menu · 2 nhóm tuỳ chọn · 10 trạm của thành phần · 30 hàng mua vào · 12 hàng chưa có đơn vị
+PASS tên hàng mua vào — comm -3 rỗng (owner ↔ supply_item)
+db-check: PASS — 11 bước xuôi · lùi · xuôi lại, 10 khối kiểm QC, 30 file test, dữ liệu mồi + §4.8, khoá chặn, đối chiếu: 85 câu trên dữ liệu mồi và ngày mẫu, 85 lỗi cài, ba scenario + đối chiếu trên ngày diễn, 24 mã YC
+```
+
+*Nghiệm thu → bằng chứng.* (1) đọc lúc chạy qua `section('### 8.4 ')` và `table('Hàng mua vào', …)`;
+`grep -i` *mộc nhĩ* · *găng tay* trên `seed.pl` và `08-du-lieu-moi.md` rỗng. (2) SQL sinh ra có 30 dòng,
+*Gạo* — *kg*, *Rau mùi tàu* — *túi*, *Mộc nhĩ* — *kg* tách khỏi *Nhân thịt mộc nhĩ* — NULL; dòng `PASS`
+đếm 30 từ database. (3) mười hai dòng NULL, đúng mười hai tên cũ của B12; dòng `PASS` đếm 12 từ
+database. (4) dòng `PASS tên hàng mua vào` ở trên; nhánh `FAIL` của phép so **chưa được chạy cố ý**
+(cần cài lệch giữa SQL và `--supply-names`), chỉ đọc mã. (5) năm ca bản sao hỏng của Codex, lời lỗi dán ở
+báo cáo: *không đọc được danh sách 2026-09-06* · *không thấy bảng có cột 'Hàng mua vào'* · *Đơn vị mua
+rỗng ở 'Túi nóng'* · *tên lặp trong danh sách 2026-09-06* / *trong bảng Hàng mua vào* · 31 tên. (6) SQL
+không có `INSERT INTO supply_day_entry`; số `INSERT INTO person` là 5, bằng HEAD. (7)(8) diff của ba file
+tài liệu. (9) `db-check` trên, gate dưới khối commit.
+
+*Còn lại.* Đơn vị của mười hai tên cũ chờ lời chủ quán về owner (bản nháp B12); hàng *dữ liệu mồi* ở
+`12-luoc-do-nguyen-lieu.md` §5 còn nói *chưa có* — sửa sau khi `P2A-03` commit; `P2A-07` viết câu đối
+chiếu `I-025` · `I-026` trên danh mục này.
+
 [↑ đầu file](#top)
 
 ---

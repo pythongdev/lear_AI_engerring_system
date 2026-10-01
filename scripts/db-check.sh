@@ -206,11 +206,24 @@ done
 n_seed=0
 if seed_sql="$(perl db/seed/seed.pl 2>&1)"; then
   if out="$(printf '%s\n' "$seed_sql" | psql_f -f - 2>&1)"; then
-    n_seed="$(psql_q -c "SELECT format('%s bàn · %s mã QR hiện hành · %s thành phần · %s dòng menu · %s nhóm tuỳ chọn · %s trạm của thành phần',
+    n_seed="$(psql_q -c "SELECT format('%s bàn · %s mã QR hiện hành · %s thành phần · %s dòng menu · %s nhóm tuỳ chọn · %s trạm của thành phần · %s hàng mua vào · %s hàng chưa có đơn vị',
       (SELECT count(*) FROM dining_table), (SELECT count(*) FROM qr_code WHERE replaced_at IS NULL),
       (SELECT count(*) FROM menu_component), (SELECT count(*) FROM menu_item),
-      (SELECT count(*) FROM option_group), (SELECT count(*) FROM menu_component_station))")"
+      (SELECT count(*) FROM option_group), (SELECT count(*) FROM menu_component_station),
+      (SELECT count(*) FROM supply_item), (SELECT count(*) FROM supply_item WHERE purchase_unit IS NULL))")"
     echo "PASS dữ liệu mồi — $n_seed"
+    if supply_names="$(perl db/seed/seed.pl --supply-names)" &&
+       stored_names="$(psql_q -c 'SELECT name FROM supply_item')"; then
+      d="$(comm -3 <(printf '%s\n' "$supply_names" | sort) <(printf '%s\n' "$stored_names" | sort))"
+      if [ -z "$d" ]; then
+        echo "PASS tên hàng mua vào — comm -3 rỗng (owner ↔ supply_item)"
+      else
+        fail "tên hàng mua vào — danh sách owner và database lệch:"
+        printf 'owner:\n%s\ndatabase:\n%s\n' "$supply_names" "$stored_names" | sed 's/^/     /'
+      fi
+    else
+      fail "tên hàng mua vào — không đọc được owner hoặc database"
+    fi
     if out="$(perl db/seed/seed.pl --price-cases | psql_f -f - 2>&1)"; then
       echo "PASS §4.8 ca giá"; printf '%s\n' "$out" | sed 's/^psql:[^N]*NOTICE: */     /'
     else
