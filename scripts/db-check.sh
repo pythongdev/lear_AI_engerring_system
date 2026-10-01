@@ -23,7 +23,7 @@
 # (db/scenario/, P2-13, 11-cong-chat-luong-pha-2.md) — mỗi bước ở quán một giao dịch
 # được COMMIT; đọc lại ở kết nối khác; bộ đối chiếu chạy lại trên ngày ấy ⇒ mọi câu
 # rỗng; rồi chấm hai câu cho mỗi mã YC mà 04-yeu-cau-du-lieu.md giao pha 2 (các mã
-# đứng trước §8 của file ấy). Không có Docker, hay database
+# trước §8 và ở §9, trừ danh sách YC chưa có lát của file cổng §9.3). Không có Docker, hay database
 # không lên ⇒ FAIL, không bỏ qua: một bộ kiểm im lặng khi thiếu máy là một bộ
 # kiểm không ai biết đã không chạy.
 set -uo pipefail
@@ -398,38 +398,73 @@ fi
 
 # --- 7. ba scenario nghiệm thu diễn qua lược đồ (P2-13, docs/product/2-db/11-cong-chat-luong-pha-2.md)
 # Database lúc này chỉ có dữ liệu mồi: bước 6 không COMMIT gì. (a) diễn: prelude + mở ngày + s1 · s2 ·
-# s3 trong MỘT phiên, mỗi khối DO một giao dịch được COMMIT; (b) đọc lại ở một kết nối KHÁC; (c) bộ
+# s3 · s4 trong MỘT phiên, mỗi khối DO một giao dịch được COMMIT; (b) đọc lại ở một kết nối KHÁC; (c) bộ
 # đối chiếu chạy lại trên ngày ấy ⇒ mọi câu rỗng; (d) chấm YC trong một giao dịch ROLLBACK — mỗi mã
-# YC đứng trước §8 của 04-yeu-cau-du-lieu.md phải có một dòng "đọc" và một dòng "sai", và mỗi
+# YC trước §8 và ở §9 của 04-yeu-cau-du-lieu.md (trừ §9.3 danh sách chưa có lát
+# của file cổng) phải có một dòng "đọc" và một dòng "sai", và mỗi
 # "GỌI TÊN: <mã> (proof/<file>)" phải trỏ tới một file lỗi cài còn đó, khai đúng mã ấy.
 SC=db/scenario
 YC_OWNER=docs/product/1-system-design/04-yeu-cau-du-lieu.md
+YC_GATE_DOC=docs/product/2-db/11-cong-chat-luong-pha-2.md
 n_yc=0
 notices() { sed -n 's/^psql:[^N]*NOTICE: */     /p'; }
 if out="$(cat "$SC/prelude.sql" "$SC/mo_ngay.sql" $(ls "$SC"/s[0-9]_*.sql | sort) | psql_f -f - 2>&1)"; then
-  echo "PASS ba scenario diễn qua lược đồ — $(printf '%s\n' "$out" | grep -c 'NOTICE: *S[0-9]') dòng bước, mỗi bước một giao dịch COMMIT"
+  echo "PASS ba scenario + ngày quản trị diễn qua lược đồ — $(printf '%s\n' "$out" | grep -c 'NOTICE: *S[0-9]') dòng bước, mỗi bước một giao dịch COMMIT"
   printf '%s\n' "$out" | notices
 else
-  fail "ba scenario — một bước không ghi được:"; printf '%s\n' "$out" | tail -15 | sed 's/^/     /'
+  fail "scenario — một bước không ghi được:"; printf '%s\n' "$out" | tail -15 | sed 's/^/     /'
 fi
 if out="$(psql_f -f - < "$SC/doc_lai.sql" 2>&1)"; then
-  echo "PASS đọc lại ba scenario ở kết nối khác — mọi dòng Kết quả mong đợi đúng"
+  echo "PASS đọc lại ba scenario + ngày quản trị ở kết nối khác — mọi dòng Kết quả mong đợi đúng"
   printf '%s\n' "$out" | notices; printf '%s\n' "$out" | grep '^TIỀN' | sed 's/^/     /'
 else
-  fail "đọc lại ba scenario:"; printf '%s\n' "$out" | grep -E 'ERROR|SAI' | head -5 | sed 's/^/     /'
+  fail "đọc lại ba scenario + ngày quản trị:"; printf '%s\n' "$out" | grep -E 'ERROR|SAI' | head -5 | sed 's/^/     /'
 fi
 if out="$(scripts/reconcile.sh --project "$PROJECT" 2>&1)"; then
   echo "PASS đối chiếu trên ngày vừa diễn — $(printf '%s\n' "$out" | grep '^reconcile:' | sed 's/^reconcile: PASS — //')"
 else
   fail "đối chiếu trên ngày vừa diễn:"; printf '%s\n' "$out" | grep -Ev '^PASS' | sed 's/^/     /'
 fi
-yc_want="$(sed -n '1,/^## 8\./p' "$YC_OWNER" | grep -oE '\*\*YC-[0-9]{2}' | tr -d '*' | sort -u)"
+yc_want="$(awk '/^## 8[.]/ {skip=1} /^## 9[.]/ {skip=0} !skip' "$YC_OWNER" | grep -oE '\*\*YC-[0-9]{2}' | tr -d '*' | sort -u)"
 if out="$(cat "$SC/prelude.sql" "$SC/yc.sql" | psql_f -f - 2>&1)"; then
   lines="$(printf '%s\n' "$out" | notices | sed 's/^ *//')"
   both="$(comm -12 <(printf '%s\n' "$lines" | grep -oE '^YC-[0-9]{2} đọc' | cut -c1-5 | sort -u) \
                    <(printf '%s\n' "$lines" | grep -oE '^YC-[0-9]{2} sai' | cut -c1-5 | sort -u))"
   n_yc="$(printf '%s\n' "$both" | grep -c .)"
-  d="$(comm -3 <(printf '%s\n' "$yc_want") <(printf '%s\n' "$both"))"
+  # Danh sách có tên, tự hết hạn như ADR-070: không bỏ qua mã bằng hằng số trong script.
+  yc_codes_ok=1
+  codes_out="$(perl -CSDA -e '
+    use utf8;
+    my ($want, $both, $doc) = @ARGV;
+    my %w = map { $_ => 1 } grep { length } split /\n/, $want;
+    my %g = map { $_ => 1 } grep { length } split /\n/, $both;
+    my (%pending, $on, $seen); my $bad = 0;
+    sub fail { print "FAIL chấm YC — $_[0]\n"; $bad = 1 }
+    open my $fh, "<:encoding(UTF-8)", $doc or die "$doc: $!";
+    while (<$fh>) {
+      if (/^### 9\.3 YC chưa có lát\s*$/) { $on = 1; $seen++; next }
+      last if $on && /^#{1,3}\s/;
+      next unless $on && /^- /;
+      unless (/^- (YC-[0-9]{2}) — (\S.*\S)\s*$/) {
+        fail("dòng YC chưa có lát sai hình ở $doc §9.3"); next;
+      }
+      my ($code, $why) = ($1, $2);
+      fail("$code lặp trong danh sách ở $doc §9.3") if exists $pending{$code};
+      $pending{$code} = $why;
+    }
+    fail("không có mục YC chưa có lát ở $doc §9.3") unless $seen;
+    for my $code (sort keys %pending) {
+      fail("$code không có ở owner — gỡ dòng ở $doc §9.3") unless $w{$code};
+      fail("$code đã có đọc + sai, dòng hết hạn — gỡ dòng ở $doc §9.3") if $g{$code};
+      print "NOTE $code chưa có lát — $pending{$code} — $doc §9.3\n" if $w{$code} && !$g{$code};
+    }
+    for my $code (sort keys %w) {
+      fail("$code thiếu đọc/sai và không có trong danh sách chưa có lát") unless $g{$code} || exists $pending{$code};
+    }
+    for my $code (sort keys %g) { fail("$code có đọc + sai nhưng không có ở owner") unless $w{$code} }
+    exit $bad;
+  ' "$yc_want" "$both" "$YC_GATE_DOC")" || yc_codes_ok=0
+  [ -z "$codes_out" ] || printf '%s\n' "$codes_out"
   bad_ref=""
   while read -r code file; do
     [ -n "$code" ] || continue
@@ -438,13 +473,12 @@ if out="$(cat "$SC/prelude.sql" "$SC/yc.sql" | psql_f -f - 2>&1)"; then
              | sed -E 's/GỌI TÊN: ([^ ]+) \(proof\/([a-z0-9_]+)\)/\1 \2/')
   if [ -z "$yc_want" ]; then
     fail "chấm YC — không đọc được mã YC nào ở $YC_OWNER"
-  elif [ -n "$d" ]; then
-    fail "chấm YC — mã owner giao mà thiếu đọc/sai (cột trái) / mã chấm mà owner không giao (cột phải):"
-    printf '%s\n' "$d" | sed 's/^/     /'
+  elif [ "$yc_codes_ok" -ne 1 ]; then
+    fail "chấm YC — đối chiếu mã owner / đọc + sai / danh sách chưa có lát không khớp"
   elif [ -n "$bad_ref" ]; then
     fail "chấm YC — GỌI TÊN trỏ tới lỗi cài không có hoặc không khai mã ấy:$bad_ref"
   else
-    echo "PASS chấm YC — $n_yc mã, mỗi mã đọc + sai; comm -3 với $YC_OWNER rỗng · $(printf '%s\n' "$lines" | grep -c '⇒ TỪ CHỐI') TỪ CHỐI · $(printf '%s\n' "$lines" | grep -c '⇒ KHÔNG CHỖ') KHÔNG CHỖ · $(printf '%s\n' "$lines" | grep -c '⇒ ĐI QUA') ĐI QUA · $(printf '%s\n' "$lines" | grep -c '⇒ GỌI TÊN') GỌI TÊN · $(printf '%s\n' "$lines" | grep -c '⇒ DỰNG ĐƯỢC') DỰNG ĐƯỢC · $(printf '%s\n' "$lines" | grep -c '⇒ CHƯA TRẢ LỜI ĐƯỢC') CHƯA TRẢ LỜI ĐƯỢC"
+    echo "PASS chấm YC — $n_yc mã, mỗi mã đọc + sai; đối chiếu $YC_OWNER và danh sách chưa có lát khớp · $(printf '%s\n' "$lines" | grep -c '⇒ TỪ CHỐI') TỪ CHỐI · $(printf '%s\n' "$lines" | grep -c '⇒ KHÔNG CHỖ') KHÔNG CHỖ · $(printf '%s\n' "$lines" | grep -c '⇒ ĐI QUA') ĐI QUA · $(printf '%s\n' "$lines" | grep -c '⇒ GỌI TÊN') GỌI TÊN · $(printf '%s\n' "$lines" | grep -c '⇒ DỰNG ĐƯỢC') DỰNG ĐƯỢC · $(printf '%s\n' "$lines" | grep -c '⇒ CHƯA TRẢ LỜI ĐƯỢC') CHƯA TRẢ LỜI ĐƯỢC"
     printf '%s\n' "$lines" | sed 's/^/     /'
   fi
 else
@@ -457,4 +491,4 @@ if [ "$failed" -ne 0 ]; then
   echo "db-check: FAIL"
   exit 1
 fi
-echo "db-check: PASS — $n_mig bước xuôi · lùi · xuôi lại, $n_blocks khối kiểm QC, $n_tests file test, dữ liệu mồi + §4.8, khoá chặn, đối chiếu: $n_q câu trên dữ liệu mồi và ngày mẫu, $n_proof lỗi cài, ba scenario + đối chiếu trên ngày diễn, $n_yc mã YC"
+echo "db-check: PASS — $n_mig bước xuôi · lùi · xuôi lại, $n_blocks khối kiểm QC, $n_tests file test, dữ liệu mồi + §4.8, khoá chặn, đối chiếu: $n_q câu trên dữ liệu mồi và ngày mẫu, $n_proof lỗi cài, ba scenario + ngày quản trị + đối chiếu trên ngày diễn, $n_yc mã YC"

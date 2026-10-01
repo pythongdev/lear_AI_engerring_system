@@ -732,4 +732,123 @@ BEGIN
     format($d$(SELECT count(*) FROM sales_order WHERE customer_phone = %L AND channel_code = 'phone_preorder') = 2$d$, o.customer_phone));
 END $$;
 
+-- ============================================================ YC-26…YC-32 (P2A-08)
+DO $$
+DECLARE i bigint; e bigint; a bigint;
+BEGIN
+  PERFORM pg_temp.sc_buoc('Chủ quán', 'P2A-08 chấm YC trên ngày quản trị');
+  SELECT id INTO STRICT i FROM supply_item WHERE name = 'Hàng thêm S4 (dữ liệu diễn)';
+  PERFORM pg_temp.yc_doc('YC-26', (SELECT format('%s · đơn vị %s', name, coalesce(purchase_unit, '(trống)'))
+    FROM supply_item WHERE id = i));
+  PERFORM pg_temp.yc_tu_choi('YC-26', 'một thứ đứng hai lần',
+    $q$INSERT INTO supply_item (name) VALUES ('Hàng thêm S4 (dữ liệu diễn)')$q$);
+  PERFORM pg_temp.yc_di_qua('YC-26', 'buộc có đơn vị mới cho thêm thứ',
+    $q$INSERT INTO supply_item (name) VALUES ('YC-26 thử đơn vị trống')$q$,
+    $d$EXISTS (SELECT 1 FROM supply_item WHERE name = 'YC-26 thử đơn vị trống' AND purchase_unit IS NULL)$d$);
+  PERFORM pg_temp.yc_khong_cho('YC-26', 'danh mục có ngưỡng hoặc định lượng suất',
+    $d$(SELECT array_agg(column_name::text ORDER BY ordinal_position) FROM information_schema.columns
+        WHERE table_schema = 'shop' AND table_name = 'supply_item') =
+        ARRAY['id','name','purchase_unit','created_at']$d$, 'đọc toàn bộ cột danh mục, không cột ngưỡng/định lượng');
+
+  PERFORM pg_temp.yc_doc('YC-27', (SELECT string_agg(format('%s %s %s = %s', s.name, e.entry_date,
+    e.kind_code, e.entered_measure), ' · ' ORDER BY s.name, e.entry_date, e.kind_code)
+    FROM supply_day_entry e JOIN supply_item s ON s.id = e.supply_item_id
+    WHERE e.entry_date BETWEEN pg_temp.sc_ngay()-1 AND pg_temp.sc_ngay()));
+  PERFORM pg_temp.yc_tu_choi('YC-27', 'hai đáp số cùng thứ, ngày và loại',
+    format($q$INSERT INTO supply_day_entry (supply_item_id, entry_date, kind_code, entered_measure)
+      VALUES (%s, %L, 'purchased', 9)$q$, i, pg_temp.sc_ngay()));
+  SELECT id INTO STRICT e FROM supply_day_entry WHERE supply_item_id = i AND kind_code = 'purchased';
+  PERFORM pg_temp.yc_dung_duoc('YC-27', 'sửa con số không lý do, mất bản trước',
+    format($q$DO $d$ BEGIN PERFORM set_config('shop.revision_reason', '', true);
+      UPDATE supply_day_entry SET entered_measure = 99 WHERE id = %s; END $d$ $q$, e),
+    format($d$(SELECT entered_measure = 99 FROM supply_day_entry WHERE id = %1$s)
+      AND NOT EXISTS (SELECT 1 FROM record_revision WHERE target_table_code = 'supply_day_entry'
+        AND target_row = %1$s)$d$, e), 'F-046 — vết ở chế độ mềm');
+  PERFORM pg_temp.yc_goi_ten('YC-27', 'con số có vết nhưng chuỗi bản trước/sau đứt',
+    'tầng 5, chỉ bắt được khi đã có vết', 'I-025/2', 'i025_2');
+  PERFORM pg_temp.yc_dung_duoc('YC-27', 'nhóm công tơ nhận cặp mua/dùng',
+    $q$WITH x AS (INSERT INTO supply_item (name) VALUES ('Chỉ số công tơ điện (YC-27 diễn sai)') RETURNING id)
+      INSERT INTO supply_day_entry (supply_item_id, entry_date, kind_code, entered_measure)
+      SELECT id, CURRENT_DATE, v.kind, 1 FROM x CROSS JOIN (VALUES ('purchased'), ('used')) v(kind)$q$,
+    $d$(SELECT count(*) = 2 FROM supply_day_entry e JOIN supply_item s ON s.id = e.supply_item_id
+      WHERE s.name = 'Chỉ số công tơ điện (YC-27 diễn sai)')$d$,
+    '12-luoc-do-nguyen-lieu.md §5 — máy không ngăn được tên công tơ, Claude nhận chỗ hở');
+
+  PERFORM pg_temp.yc_doc('YC-28', (SELECT format('người nhập %s · ngày hàng %s · lúc gõ %s',
+    p.display_name, x.entry_date, x.created_at) FROM supply_day_entry x JOIN person p ON p.id = x.person_id
+    WHERE x.id = e));
+  PERFORM pg_temp.yc_tu_choi('YC-28', 'con số không có người nhập',
+    format('UPDATE supply_day_entry SET person_id = NULL WHERE id = %s', e));
+  PERFORM pg_temp.yc_khong_cho('YC-28', 'gộp hai mốc thành một',
+    $d$(SELECT count(*) = 2 FROM information_schema.columns WHERE table_schema = 'shop'
+      AND table_name = 'supply_day_entry' AND column_name IN ('entry_date','created_at') AND is_nullable = 'NO')$d$,
+    'ngày người khai và lúc ghi là hai cột bắt buộc riêng');
+
+  PERFORM pg_temp.yc_doc('YC-29', (SELECT format('Gạo: tổng mua %s · tổng dùng %s · hiệu %s', mua, dung, mua-dung)
+    FROM (SELECT sum(e.entered_measure) FILTER (WHERE kind_code = 'purchased') mua,
+      sum(e.entered_measure) FILTER (WHERE kind_code = 'used') dung FROM supply_day_entry e
+      JOIN supply_item s ON s.id = e.supply_item_id WHERE s.name = 'Gạo') t));
+  PERFORM pg_temp.yc_khong_cho('YC-29', 'cất tổng, lô, kết luận thiếu hoặc lời nhắc',
+    $d$(SELECT array_agg(column_name::text ORDER BY ordinal_position) FROM information_schema.columns
+      WHERE table_schema = 'shop' AND table_name = 'supply_day_entry') =
+      ARRAY['id','supply_item_id','entry_date','kind_code','entered_measure','person_id','created_at']$d$,
+    'đọc toàn bộ cột con số ngày; tổng chỉ là phép cộng, không đặt lại ở lần mua thêm');
+  PERFORM pg_temp.yc_di_qua('YC-29', 'từ chối hiệu số âm',
+    format('UPDATE supply_day_entry SET entered_measure = 0 WHERE id = %s', e),
+    format($d$(SELECT sum(CASE kind_code WHEN 'purchased' THEN entered_measure ELSE -entered_measure END) < 0
+      FROM supply_day_entry WHERE supply_item_id = %s)$d$, i));
+
+  PERFORM pg_temp.yc_doc('YC-30', (SELECT string_agg(format('%s ngày %s · tick bởi %s lúc %s · huỷ bởi %s lúc %s · %s',
+    w.display_name, x.work_date, p.display_name, x.created_at, coalesce(c.display_name,'—'),
+    coalesce(x.cancelled_at::text,'—'), coalesce(x.cancel_note,'—')), ' | ' ORDER BY w.display_name)
+    FROM attendance_day x JOIN person w ON w.id = x.worker_person_id JOIN person p ON p.id = x.person_id
+    LEFT JOIN person c ON c.id = x.cancelled_by_person_id WHERE x.work_date = pg_temp.sc_ngay()));
+  PERFORM pg_temp.yc_tu_choi('YC-30', 'hai ô còn hiệu lực cùng người cùng ngày',
+    format($q$INSERT INTO attendance_day (worker_person_id, work_date) VALUES (%s, %L)$q$,
+      pg_temp.sc_nguoi('Người đứng quầy'), pg_temp.sc_ngay()));
+  PERFORM pg_temp.yc_tu_choi('YC-30', 'huỷ không có người huỷ',
+    format($q$UPDATE attendance_day SET cancelled_by_person_id = NULL
+      WHERE work_date = %L AND cancelled_at IS NOT NULL$q$, pg_temp.sc_ngay()));
+  PERFORM pg_temp.yc_goi_ten('YC-30', 'người tick không là chủ quán', 'tầng 3', 'I-027/4', 'i027_4');
+
+  SELECT id INTO STRICT a FROM staff_advance WHERE paid_date = pg_temp.sc_ngay();
+  PERFORM pg_temp.yc_doc('YC-31', (SELECT format('nhận %s · %s đ · ngày %s · lúc ghi %s · duyệt %s · ghi %s; chưa chọn ngày trừ két (U-072)',
+    pg_temp.yc_ten(worker_person_id), amount_vnd, paid_date, created_at,
+    pg_temp.yc_ten(approver_person_id), pg_temp.yc_ten(person_id)) FROM staff_advance WHERE id = a));
+  PERFORM pg_temp.yc_tu_choi('YC-31', 'tạm ứng thiếu người duyệt',
+    format('UPDATE staff_advance SET approver_person_id = NULL WHERE id = %s', a));
+  PERFORM pg_temp.yc_goi_ten('YC-31', 'người duyệt không là chủ quán', 'tầng 3', 'I-028/3', 'i028_3');
+  PERFORM pg_temp.yc_dung_duoc('YC-31', 'sửa đè tạm ứng không lý do',
+    format($q$DO $d$ BEGIN PERFORM set_config('shop.revision_reason', '', true);
+      UPDATE staff_advance SET amount_vnd = 100001 WHERE id = %s; END $d$ $q$, a),
+    format($d$(SELECT amount_vnd = 100001 FROM staff_advance WHERE id = %1$s) AND NOT EXISTS
+      (SELECT 1 FROM record_revision WHERE target_table_code = 'staff_advance' AND target_row = %1$s)$d$, a), 'F-046');
+  PERFORM pg_temp.yc_chua('YC-31', 'gắn khoản rời két vào ngày bán',
+    $d$NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'shop'
+      AND table_name = 'staff_advance' AND column_name = 'sale_date')$d$,
+    'U-072 — chưa có luật chọn ngày; không tự dựng cột ngày bán của két');
+
+  SELECT id INTO STRICT a FROM holiday_bonus WHERE paid_date = pg_temp.sc_ngay();
+  PERFORM pg_temp.yc_doc('YC-32', (SELECT format('nhận %s · %s đ · ngày %s · lúc ghi %s · ghi %s; chưa chọn ngày trừ két (U-072)',
+    pg_temp.yc_ten(worker_person_id), amount_vnd, paid_date, created_at, pg_temp.yc_ten(person_id))
+    FROM holiday_bonus WHERE id = a));
+  PERFORM pg_temp.yc_tu_choi('YC-32', 'thưởng thiếu người nhận',
+    format('UPDATE holiday_bonus SET worker_person_id = NULL WHERE id = %s', a));
+  PERFORM pg_temp.yc_tu_choi('YC-32', 'thưởng thiếu số tiền',
+    format('UPDATE holiday_bonus SET amount_vnd = NULL WHERE id = %s', a));
+  PERFORM pg_temp.yc_dung_duoc('YC-32', 'sửa đè thưởng không lý do',
+    format($q$DO $d$ BEGIN PERFORM set_config('shop.revision_reason', '', true);
+      UPDATE holiday_bonus SET amount_vnd = 50001 WHERE id = %s; END $d$ $q$, a),
+    format($d$(SELECT amount_vnd = 50001 FROM holiday_bonus WHERE id = %1$s) AND NOT EXISTS
+      (SELECT 1 FROM record_revision WHERE target_table_code = 'holiday_bonus' AND target_row = %1$s)$d$, a), 'F-046');
+  PERFORM pg_temp.yc_khong_cho('YC-32', 'cất sẵn loại thưởng ngày đông khách',
+    $d$(SELECT array_agg(column_name::text ORDER BY ordinal_position) FROM information_schema.columns
+      WHERE table_schema = 'shop' AND table_name = 'holiday_bonus') =
+      ARRAY['id','worker_person_id','amount_vnd','paid_date','person_id','created_at']$d$, 'không cột loại thưởng');
+  PERFORM pg_temp.yc_chua('YC-32', 'gắn khoản thưởng rời két vào ngày bán',
+    $d$NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'shop'
+      AND table_name = 'holiday_bonus' AND column_name = 'sale_date')$d$,
+    'U-072 — chưa có luật chọn ngày; không tự dựng cột ngày bán của két');
+END $$;
+
 ROLLBACK;

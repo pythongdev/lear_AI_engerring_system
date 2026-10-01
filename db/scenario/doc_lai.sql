@@ -216,3 +216,67 @@ SELECT format('TIỀN ba scenario: S1 %s · S2 %s · S3 %s · cộng %s đ',
   (SELECT sum(due_vnd) FROM bill WHERE sales_order_id IS NOT NULL AND sale_date = pg_temp.dl_ngay()),
   (SELECT due_vnd FROM bill WHERE table_session_id = pg_temp.dl_phien('3')),
   (SELECT sum(due_vnd) FROM bill WHERE sale_date = pg_temp.dl_ngay()));
+
+-- S4 — kết nối này không có bảng tạm/hàm của lượt ghi. Các số mong đợi viết tay
+-- từ dữ liệu diễn ở s4_ngay_quan_tri.sql; không dùng tổng vừa đọc làm đáp số.
+DO $$
+DECLARE v record; mua numeric; dung numeric; hieu numeric; rec record;
+BEGIN
+  PERFORM pg_temp.dl_dung((SELECT count(*) = 1 AND bool_and(purchase_unit IS NULL)
+    FROM supply_item WHERE name = 'Hàng thêm S4 (dữ liệu diễn)'), 'S4.1 tên mới, đơn vị trống');
+  RAISE NOTICE 'S4.1 đọc lại: một thứ mới, đơn vị trống';
+
+  FOR v IN SELECT * FROM (VALUES
+    (2, 'Gạo', -1, 10::numeric, 7::numeric),
+    (3, 'Gạo', 0, 2::numeric, 6::numeric),
+    (4, 'Hàng thêm S4 (dữ liệu diễn)', 0, 4::numeric, 1::numeric)
+  ) x(buoc, ten, lech, mua, dung) LOOP
+    PERFORM pg_temp.dl_dung((SELECT count(*) = 2
+      AND sum(e.entered_measure) FILTER (WHERE e.kind_code = 'purchased') = v.mua
+      AND sum(e.entered_measure) FILTER (WHERE e.kind_code = 'used') = v.dung
+      AND bool_and(p.display_name = 'Chủ quán' AND e.created_at IS NOT NULL)
+      FROM supply_day_entry e JOIN supply_item i ON i.id = e.supply_item_id
+      JOIN person p ON p.id = e.person_id
+      WHERE i.name = v.ten AND e.entry_date = pg_temp.dl_ngay() + v.lech),
+      format('S4.%s cặp số ngày và người nhập', v.buoc));
+    RAISE NOTICE 'S4.% đọc lại: % mua %, dùng %, Chủ quán nhập, có lúc ghi', v.buoc, v.ten, v.mua, v.dung;
+  END LOOP;
+  -- Một lần quét cộng từ con số ngày, không lọc lần mua cuối hay đặt lại tổng.
+  SELECT sum(e.entered_measure) FILTER (WHERE e.kind_code = 'purchased'),
+         sum(e.entered_measure) FILTER (WHERE e.kind_code = 'used') INTO mua, dung
+  FROM supply_day_entry e JOIN supply_item i ON i.id = e.supply_item_id WHERE i.name = 'Gạo';
+  hieu := mua - dung;
+  PERFORM pg_temp.dl_dung(mua = 12 AND dung = 13 AND hieu = -1, 'S4 tổng Gạo 12, 13, -1');
+  RAISE NOTICE 'S4 tổng Gạo: mua % · dùng % · hiệu số % (âm được đọc)', mua, dung, hieu;
+
+  PERFORM pg_temp.dl_dung((SELECT count(*) = 1 AND bool_and(a.cancelled_at IS NULL
+      AND p.display_name = 'Chủ quán' AND a.created_at IS NOT NULL)
+    FROM attendance_day a JOIN person w ON w.id = a.worker_person_id JOIN person p ON p.id = a.person_id
+    WHERE w.display_name = 'Người đứng quầy' AND a.work_date = pg_temp.dl_ngay()), 'S4.5 ô còn hiệu lực');
+  RAISE NOTICE 'S4.5 đọc lại: Người đứng quầy có đi làm, Chủ quán tick';
+  SELECT x.*, p.display_name AS nguoi_tick, c.display_name AS nguoi_huy INTO STRICT rec
+    FROM attendance_day x JOIN person w ON w.id = x.worker_person_id
+    JOIN person p ON p.id = x.person_id JOIN person c ON c.id = x.cancelled_by_person_id
+    WHERE w.display_name = 'Người canh & dọn' AND x.work_date = pg_temp.dl_ngay();
+  PERFORM pg_temp.dl_dung(rec.nguoi_tick = 'Chủ quán' AND rec.created_at IS NOT NULL,
+    'S4.6 ô tick nhầm vẫn đọc được người và lúc tick');
+  RAISE NOTICE 'S4.6 đọc lại: ô Người canh & dọn vẫn còn, Chủ quán tick';
+  PERFORM pg_temp.dl_dung(rec.nguoi_huy = 'Chủ quán' AND rec.cancelled_at >= rec.created_at
+    AND rec.cancel_note = 'Tick nhầm người (dữ liệu diễn)', 'S4.7 ai huỷ, lúc huỷ, ghi chú');
+  RAISE NOTICE 'S4.7 đọc lại: người huỷ % · ghi chú %', rec.nguoi_huy, rec.cancel_note;
+
+  SELECT x.*, w.display_name AS nguoi_nhan, p.display_name AS nguoi_ghi,
+    c.display_name AS nguoi_duyet INTO STRICT rec FROM staff_advance x
+    JOIN person w ON w.id = x.worker_person_id JOIN person p ON p.id = x.person_id
+    JOIN person c ON c.id = x.approver_person_id WHERE x.paid_date = pg_temp.dl_ngay();
+  PERFORM pg_temp.dl_dung(rec.amount_vnd = 100000 AND rec.nguoi_nhan = 'Người đứng quầy'
+    AND rec.nguoi_duyet = 'Chủ quán' AND rec.nguoi_ghi = 'Chủ quán' AND rec.created_at IS NOT NULL,
+    'S4.8 tạm ứng và người duyệt');
+  RAISE NOTICE 'S4.8 đọc lại: tạm ứng % đ · người duyệt %', rec.amount_vnd, rec.nguoi_duyet;
+  SELECT x.*, w.display_name AS nguoi_nhan, p.display_name AS nguoi_ghi INTO STRICT rec
+    FROM holiday_bonus x JOIN person w ON w.id = x.worker_person_id JOIN person p ON p.id = x.person_id
+    WHERE x.paid_date = pg_temp.dl_ngay();
+  PERFORM pg_temp.dl_dung(rec.amount_vnd = 50000 AND rec.nguoi_nhan = 'Người canh & dọn'
+    AND rec.nguoi_ghi = 'Chủ quán' AND rec.created_at IS NOT NULL, 'S4.9 khoản thưởng');
+  RAISE NOTICE 'S4.9 đọc lại: thưởng % đ · người ghi %', rec.amount_vnd, rec.nguoi_ghi;
+END $$;

@@ -893,6 +893,67 @@ Diễn ngày ấy theo cách `P2-13` đã diễn ba scenario bán hàng (**ADR-0
 - **Ô của lát còn bị chặn ghi *vắng, chờ câu nào***, không ghi *đạt*.
 - **Chỗ không trả lời được thành `F-XXX`/`U-XXX`**, không thiết kế bù.
 
+**Acceptance** — Claude Code viết 2026-10-01, trước khi giao Codex (lời chủ repo *"giao những việc còn
+lại cho codex và bạn kiểm tra"*):
+1. **Ngày quản trị là một file `db/scenario/s4_ngay_quan_tri.sql`**, chạy sau `s1`…`s3` trong cùng lượt
+   diễn của bước 7 `db-check`, đúng khuôn `P2-13` (**ADR-067**): mỗi bước ở quán một khối `DO`, một giao
+   dịch COMMIT, một dòng `NOTICE 'S4.n …'`, người thao tác khai qua `pg_temp.sc_buoc`. Mỗi bước có một
+   dòng chú thích trỏ về **mục và dòng** của `master_plan/shop-facts.md` §8 (§8.4 · §8.7) đã chốt nó;
+   bước nào không trỏ được thì không diễn. Tối thiểu: thêm một thứ mới vào danh mục; nhập con số mua
+   vào và đã dùng của hai thứ, một thứ hai ngày; chủ quán tick ô *có đi làm* cho hai người, tick nhầm
+   một ô rồi huỷ (có người huỷ, ghi chú); một khoản tạm ứng có người duyệt; một khoản thưởng. Số tiền,
+   tên người là **dữ liệu diễn**, khai ở chú thích đầu file như `s2`.
+2. **Bước *ghi khoản chi* không diễn**: `P2A-05` chưa `Done` (chờ chủ repo duyệt **ADR-074**) ⇒ file ghi
+   một dòng chú thích *vắng, chờ ADR-074*, không dựng bảng hay dòng thay.
+3. **Đọc lại ở kết nối khác**: `db/scenario/doc_lai.sql` thêm phần đọc lại ngày quản trị — mỗi bước một
+   phép so với giá trị mong đợi viết tay (tổng, hiệu số của một thứ đọc bằng một phép cộng; ô đã huỷ
+   đọc ra ai huỷ; tạm ứng đọc ra người duyệt); sai thì `RAISE EXCEPTION`, như các dòng có sẵn.
+   Các dòng `TIỀN` của ba scenario bán hàng **không đổi**; nếu tạm ứng hay thưởng làm một con số két
+   của ngày đổi thì **dừng và báo**, không sửa giá trị mong đợi của `s1`…`s3`.
+4. **Bộ đối chiếu trên ngày vừa diễn vẫn rỗng** — dòng `PASS đối chiếu trên ngày vừa diễn` của `db-check`.
+5. **Chấm `YC-26`…`YC-32`** trong `db/scenario/yc.sql`, mỗi mã một dòng *đọc* và một dòng *sai*, dùng đúng
+   các kết cục đã có (`TỪ CHỐI` · `KHÔNG CHỖ` · `ĐI QUA` · `GỌI TÊN` · `DỰNG ĐƯỢC` · `CHƯA TRẢ LỜI ĐƯỢC`);
+   `GỌI TÊN` trỏ tới lỗi cài có thật ở `db/reconcile/proof/`. Một vế không trả lời được ⇒ ghi kết cục
+   thật và báo, không thiết kế bù.
+6. **`db-check` đòi cả mã §9**: `yc_want` của bước 7 hôm nay chỉ đọc mã đứng trước §8 của
+   `04-yeu-cau-du-lieu.md`, nên `YC-26`…`YC-33` không bị đòi. Nới nó đọc cả §9, **trừ** mã nằm trong một
+   danh sách *YC chưa có lát* có tên ở mục mới của `11-cong-chat-luong-pha-2.md` (dạng
+   `- YC-33 — chờ P2A-05 (ADR-074)`), cùng khuôn danh sách *mệnh đề chưa có lát* của
+   `09-doi-chieu-bat-bien.md` §2.1 (**ADR-070**): mã trong danh sách được in `NOTE`; mã trong danh sách
+   mà **đã** có đọc + sai ⇒ `FAIL` (danh sách tự hết hạn); mã trong danh sách không có ở owner ⇒ `FAIL`.
+   Ba ca này có bằng chứng chạy thật (sửa tạm, chạy, trả lại).
+7. **Mục mới `## 9. Ngày quản trị — P2A-08`** ở `docs/product/2-db/11-cong-chat-luong-pha-2.md`: bảng bước
+   ↔ dòng `shop-facts.md`; bảng chấm `YC-26`…`YC-32`; danh sách *YC chưa có lát*; **ô 1–6** của kế hoạch
+   §7 mỗi ô một output thật dán nguyên dòng, ô của `P2A-05` ghi *vắng, chờ ADR-074*; ô 7 · 8 ghi *của
+   `P2A-09`*. §8 của file (bảng *bước sau đọc gì*) thêm dòng cho `P2A-09`. Không sửa §0…§7 ngoài chỗ ấy.
+8. `./scripts/db-check.sh` và `./scripts/gate.sh` xanh, output cuối dán nguyên.
+
+**Không làm trong bước này:** đổi migration, đổi lời chủ quán, đổi `YC` hay mệnh đề, lấp `F-046` · `F-048`,
+dựng gì cho `P2A-05`.
+
+**Bàn giao** — 2026-10-01 · thực hiện: **Codex** (worktree `../lean_wt/P2A-08`, nhánh `codex/P2A-08`, trên
+`66789d6`) · duyệt và chạy database: **Claude Code**. Sandbox của Codex chặn Docker socket (`connect:
+operation not permitted`), nên Codex nộp phần viết chưa chạy. Claude chạy `db-check` trong worktree: lần
+đầu `FAIL đọc lại … record "a" is not assigned yet` — biến bản ghi `a` của phần đọc S4 trùng bí danh bảng
+`attendance_day a`; Claude đổi tên thành `rec` (một chỗ), chạy lại ⇒ `db-check: PASS`. Claude viết lại
+§9 phần đầu, §9.4 (ô 1–6 ký kèm output) và §9.5 (ba ca danh sách chạy thật qua toàn bộ `db-check`). File:
+`db/scenario/s4_ngay_quan_tri.sql` (mới) · `db/scenario/doc_lai.sql` · `db/scenario/yc.sql` ·
+`scripts/db-check.sh` · `docs/product/2-db/11-cong-chat-luong-pha-2.md` §9 · §8.
+
+| Acceptance | Bằng chứng (Claude chạy) |
+|---|---|
+| 1 · 2 | `PASS ba scenario + ngày quản trị diễn qua lược đồ — 41 dòng bước`; S4.1…S4.9 mỗi bước một dòng `shop-facts.md` §8 (soát ba chỗ: §8.4 dòng 1552, §8.7 dòng 1858 · 1866); bước khoản chi ghi *vắng, chờ ADR-074* |
+| 3 | `PASS đọc lại ba scenario + ngày quản trị ở kết nối khác`; `S4 tổng Gạo: mua 12 · dùng 13 · hiệu số -1`; `TIỀN ba scenario: S1 96000 · S2 95000 · S3 54000 · cộng 245000 đ` — bằng §4 |
+| 4 | `PASS đối chiếu trên ngày vừa diễn — 75 câu I-0xx · 22 câu QD, mọi tập rỗng · 1 mệnh đề chưa có lát` |
+| 5 | `PASS chấm YC — 31 mã`; mười hai vế admin ở `11-cong-chat-luong-pha-2.md` §9.2 |
+| 6 | `NOTE YC-33 chưa có lát`; thêm tạm `YC-32` ⇒ `FAIL … dòng hết hạn`; thêm tạm `YC-99` ⇒ `FAIL … không có ở owner` (§9.5) |
+| 7 | §9 đọc lại; Gate 1b · 1d PASS |
+| 8 | `./scripts/gate.sh` ở clone chính sau khi gộp cả `T-126` · `T-131` ⇒ `PASS gate` |
+
+**Còn lại:** ô 7 · 8 là của `P2A-09`; `P2A-05` vắng ở mọi ô. Bộ đối chiếu rỗng trên ngày có tạm ứng và
+thưởng **vì** hạng tử *chi từ két* chưa có câu (ADR-074 điểm 7), không phải vì két đã trừ đúng. Chưa review
+độc lập.
+
 [↑ đầu file](#top)
 
 ---

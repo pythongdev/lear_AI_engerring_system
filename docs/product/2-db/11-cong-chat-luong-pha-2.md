@@ -342,6 +342,111 @@ ngược; và **khôi phục dữ liệu** — `YC-21`, pha 5 (`T-109`).
 | ~~`P2-14`~~ — **xong 2026-09-30** | ô **9** — đã chạy bộ lọc trên mọi file pha 2, gồm file này, và ký ô ấy ở §7 |
 | chủ repo | §6 và ô 1 · 3 · 4 · 9 · 10 — `F-048` cần một nơi nhận; `F-046` chờ pha 3; `F-049` (Gate 1d hẹp hơn thứ nó phải bắt) và `F-050` (vết *quán đang mù* chưa có dòng yêu cầu) cần người nhận; `U-063` · `U-058` chờ chủ quán; rồi câu sang pha 3 |
 | pha 3 | §0 — mỗi bước ở quán một giao dịch, người thao tác và lý do khai ở **mọi** lần ghi; các hàm ở `db/scenario/prelude.sql` là **hình dạng** lần ghi mà cửa pha 3 thay thế, không phải cửa ấy |
+| `P2A-09` | §9 — rà ranh giới các lát admin và ký ô 7 · 8; lát khoản chi còn vắng, rà lại khi P2A-05 xong |
 | bước nào thêm vào `db-check` sau bước 7 | database kiểm lúc ấy có một ngày bán đã COMMIT (**ADR-067** *Hệ quả*) |
 
 [↑ đầu file](#top)
+
+
+## 9. Ngày quản trị — P2A-08
+
+Biên bản 2026-10-01. **Codex** viết lượt diễn, phần đọc lại, phép chấm và bộ đọc danh sách trong
+worktree không kết nối được Docker. **Claude Code** chạy `./scripts/db-check.sh` ở máy có Docker, sửa
+một lỗi tên biến của phần đọc lại S4 (biến bản ghi trùng bí danh bảng) và ký ô 1–6 ở §9.4 bằng output
+lượt chạy ấy. Không lấy output của lượt P2-13 làm bằng chứng cho phần admin mới.
+
+### 9.1 Bước ở quán và nguồn đã chốt
+
+File [`db/scenario/s4_ngay_quan_tri.sql`](../../../db/scenario/s4_ngay_quan_tri.sql)
+chạy sau s1…s3 trong cùng phiên bước 7, mỗi DO một giao dịch tự COMMIT theo ADR-067.
+Mỗi bước khai người qua hàm sc_buoc trong phiên tạm. Tên người, tên hàng mới, số lượng và tiền
+là dữ liệu diễn; đơn vị chưa có lời để trống, không quy đổi lượng đã dùng.
+D là ngày diễn; cặp số D-1 chỉ để kiểm đọc nhiều ngày, không quyết luật nhập bù.
+
+| Bước | Việc diễn | Nguồn master_plan/shop-facts.md (dòng tại 2026-10-01) | Đọc lại viết tay trong doc_lai.sql |
+|---|---|---|---|
+| S4.1 | Thêm một thứ vào danh mục | §8.4 dòng 1552–1556, 1616–1617 | Đúng một tên, đơn vị trống |
+| S4.2 | Gạo ngày D-1, mua 10 dùng 7 | §8.4 dòng 1525–1544, 1654–1657 | Cặp 10/7, Chủ quán nhập, có lúc ghi |
+| S4.3 | Gạo ngày D, mua 2 dùng 6 | §8.4 dòng 1525–1544, 1654–1657 | Cặp 2/6; cộng cả hai ngày: mua 12, dùng 13, hiệu -1 |
+| S4.4 | Thứ mới ngày D, mua 4 dùng 1 | §8.4 dòng 1525–1544 | Cặp 4/1, Chủ quán nhập, có lúc ghi |
+| S4.5 | Chủ quán tick Người đứng quầy | §8.7 dòng 1866–1869, 1880–1882 | Một ô còn hiệu lực, người và lúc tick |
+| S4.6 | Tick nhầm Người canh & dọn | §8.7 dòng 1866–1869, 1880–1882 | Ô còn lưu, người và lúc tick |
+| S4.7 | Huỷ ô nhầm, ghi chú | §8.7 dòng 1870–1874 | Chủ quán huỷ, lúc huỷ, đúng ghi chú; không suy thành quyền huỷ độc quyền |
+| S4.8 | Tạm ứng 100000 đ có người duyệt | §8.7 dòng 1835, 1858–1861 | Người nhận, tiền, ngày, lúc ghi, người ghi và Chủ quán duyệt |
+| S4.9 | Thưởng lễ Tết 50000 đ | §8.7 dòng 1834, 1858–1861 | Người nhận, tiền, ngày, lúc ghi và người ghi |
+| Vắng | Ghi khoản chi | P2A-05 chưa Done | **vắng, chờ ADR-074** |
+
+Phần đọc lại ở kết nối khác so với các giá trị viết tay trên, sai thì RAISE EXCEPTION.
+S4 so toàn bộ dòng của đường tiền trước/sau admin; đổi thì dừng, không sửa các
+phép đọc hay dòng TIỀN của s1…s3. Đây chỉ chứng minh các khoản không đổi đường tiền
+hiện có; chưa chứng minh công thức két mới đã trừ được khoản admin (U-072).
+
+### 9.2 Chấm ngược yêu cầu quản trị
+
+Nhà của yêu cầu: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §9.
+Bảng dưới là phép chấm trong [`db/scenario/yc.sql`](../../../db/scenario/yc.sql); mọi kết cục đã chạy thật
+2026-10-01 (§9.4 ô 1). Mỗi mã có đọc và sai; một mã có nhiều vế sai thì giữ nhiều kết cục.
+
+| Vế ↔ YC ↔ nguồn | Đọc | Sai / giới hạn phải báo |
+|---|---|---|
+| Danh mục thêm dần ↔ YC-26 ↔ §8.4 dòng 1552–1559, 1616–1617 | Tên mới, đơn vị trống | TỪ CHỐI tên trùng; ĐI QUA thiếu đơn vị; KHÔNG CHỖ ngưỡng/định lượng |
+| Cặp số ngày ↔ YC-27 ↔ §8.4 dòng 1525–1547 | Cặp mua/dùng hai thứ, Gạo hai ngày | TỪ CHỐI cặp trùng; DỰNG ĐƯỢC sửa mất vết (F-046) và tên công tơ; GỌI TÊN chuỗi vết đứt I-025/2 (proof/i025_2) |
+| Người nhập và hai mốc ↔ YC-28 ↔ §8.4 dòng 1519, 1640–1644 | Người, ngày hàng, lúc gõ riêng | TỪ CHỐI mất người; KHÔNG CHỖ gộp hai cột thành một |
+| Cộng dồn và hiệu ↔ YC-29 ↔ §8.4 dòng 1645–1657 | Gạo 12 − 13 = -1 | KHÔNG CHỖ tổng/lô/kết luận; ĐI QUA hiệu âm |
+| Tick và huỷ ↔ YC-30 ↔ §8.7 dòng 1866–1874 | Hai người, người tick, ô huỷ và người huỷ | TỪ CHỐI ô trùng và huỷ thiếu người; GỌI TÊN người tick không là chủ quán I-027/4 (proof/i027_4) |
+| Tạm ứng ↔ YC-31 ↔ §8.7 dòng 1835, 1858–1861 | Khoản, người nhận, hai mốc, người ghi, người duyệt | TỪ CHỐI thiếu người duyệt; GỌI TÊN duyệt không là chủ quán I-028/3 (proof/i028_3); DỰNG ĐƯỢC sửa đè (F-046); CHƯA TRẢ LỜI ĐƯỢC ngày trừ két (U-072) |
+| Thưởng lễ Tết ↔ YC-32 ↔ §8.7 dòng 1834, 1858–1861 | Khoản, người nhận, hai mốc, người ghi | TỪ CHỐI thiếu người/tiền; KHÔNG CHỖ loại thưởng ngày đông khách; DỰNG ĐƯỢC sửa đè (F-046); CHƯA TRẢ LỜI ĐƯỢC ngày trừ két (U-072) |
+| Khoản chi ↔ YC-33 ↔ owner §9 | Vắng | **vắng, chờ ADR-074** — không dựng thay |
+
+Phần trực quầy dùng YC-04 · YC-15 đã có; không tạo mã admin thứ hai.
+Chỗ hở tên công tơ đã được lát nguyên liệu §5 nêu: máy nhận tên tự do, không thể coi
+vế cấm nhận cặp số công tơ là đã chặn. Claude nhận để ghi finding nếu cần.
+F-046 là nợ chung của vết sửa mềm; F-048 là chỗ chưa cất số két đếm và dấu đối soát,
+không được lấp trong lượt này. U-071 chưa quyết người huỷ và tính bắt buộc của ghi chú.
+
+### 9.3 YC chưa có lát
+
+Danh sách máy đọc của bước 7 `scripts/db-check.sh`, cùng nguyên tắc tự hết hạn ADR-070
+của `09-doi-chieu-bat-bien.md` §2.1. Mỗi dòng đúng dạng `- YC-xx — lý do, ai nợ`.
+Mã nằm trong owner nhưng chưa có đủ đọc + sai được in NOTE; đã có cả hai hoặc không
+có ở owner thì FAIL và phải gỡ dòng. YC-21 thuộc §8, pha vận hành, không thuộc tập
+owner giao pha 2; script đọc phần trước §8 và cả §9, không bỏ mã admin bằng hằng số.
+
+- YC-33 — chờ P2A-05 (ADR-074)
+
+### 9.4 Cổng kế hoạch §7 — ô 1–6 ký 2026-10-01, mỗi ô một output thật
+
+Lượt chạy: `./scripts/db-check.sh` trong worktree `P2A-08`, exit 0. Lát khoản chi (`P2A-05`, `YC-33`,
+`I-029`) **vắng, chờ ADR-074** ở mọi ô — không ghi *đạt* cho nó.
+
+| Ô | Output | Trạng thái |
+|---|---|---|
+| 1 | `PASS chấm YC — 31 mã, mỗi mã đọc + sai; đối chiếu docs/product/1-system-design/04-yeu-cau-du-lieu.md và danh sách chưa có lát khớp · 42 TỪ CHỐI · 9 KHÔNG CHỖ · 4 ĐI QUA · 8 GỌI TÊN · 8 DỰNG ĐƯỢC · 4 CHƯA TRẢ LỜI ĐƯỢC` · `NOTE YC-33 chưa có lát — chờ P2A-05 (ADR-074)`; bảng vế ↔ YC ↔ nguồn ở §9.2 không hàng trống | **ký** — `YC-26`…`YC-32`; `YC-33` vắng |
+| 2 | `PASS db/tests/i025_supply_numbers_entered_by_a_person.sql` · `i026_…` · `i027_…` · `i028_…`; lời từ chối ở §9.2 (vd. `supply_day_entry_one_kind_per_item_day_key`, `attendance_day_one_live_per_worker_day_key`, `approver_person_id` not-null) | **ký** — `I-029` vắng |
+| 3 | `PASS ngày bán mẫu đúng (db/reconcile/proof/baseline.sql) — 97 câu chạy, mọi tập rỗng` · `PASS kêu i025_1 — I-025/1` … `PASS kêu i028_4 — I-028/4` (mười hai dòng) · `PASS đối chiếu trên ngày vừa diễn — 75 câu I-0xx · 22 câu QD, mọi tập rỗng · 1 mệnh đề chưa có lát` | **ký** — `I-029` vắng |
+| 4 | `PASS xuôi 20260930100000_so_nguyen_lieu` · `…110000_cham_cong` · `…120000_khoan_cua_nguoi`; `PASS lùi …` ba bước, *lược đồ giống hệt lúc trước bước ấy*; `PASS xuôi lại — 11 bước từ số không, lược đồ giống hệt lần xuôi đầu (1289 dòng)` | **ký** |
+| 5 | `PASS  Gate 1e  check-schema-names — 36 bảng ở migration, 36 bảng tài liệu nhắc, comm -3 rỗng` | **ký** |
+| 6 | `PASS ba scenario + ngày quản trị diễn qua lược đồ — 41 dòng bước, mỗi bước một giao dịch COMMIT` · `PASS đọc lại ba scenario + ngày quản trị ở kết nối khác — mọi dòng Kết quả mong đợi đúng` (S4.1…S4.9 đọc lại, *tổng Gạo: mua 12 · dùng 13 · hiệu số -1*) · `TIỀN ba scenario: S1 96000 · S2 95000 · S3 54000 · cộng 245000 đ` — không đổi so với §4 | **ký** — bước *ghi khoản chi* vắng |
+| 7 | Rà các phần bị chặn | **của P2A-09** |
+| 8 | Rà ranh giới pha | **của P2A-09** |
+
+⚠️ Ký kèm, không phải đạt trọn: trong các dòng admin, bốn kết cục `DỰNG ĐƯỢC` (vết mềm **F-046** ×3, tên
+công tơ ở [`12-luoc-do-nguyen-lieu.md`](12-luoc-do-nguyen-lieu.md) §5) và hai `CHƯA TRẢ LỜI ĐƯỢC` (ngày trừ
+két, **U-072**) — số còn lại trong tổng của ô 1 là của mảng bán hàng, §5 — là chỗ hở có tên, không phải lược đồ đã giữ. Bộ đối chiếu rỗng trên ngày có tạm ứng 100.000đ
+và thưởng 50.000đ vì hạng tử *chi từ két* của `I-021` chưa có câu (**ADR-074** điểm 7) — không phải vì
+két đã trừ đúng.
+
+### 9.5 Danh sách *YC chưa có lát* biết kêu — chạy thật qua toàn bộ `db-check`
+
+Ba lượt, mỗi lượt trả danh sách về đúng một dòng `YC-33` sau khi chạy. Lượt chính (danh sách như trên):
+`NOTE YC-33 chưa có lát — chờ P2A-05 (ADR-074)`, `db-check: PASS`. Hai lượt thêm tạm một dòng (lệnh chèn
+của lượt thử đặt mỗi dòng hai lần, nên nhánh *lặp* cũng kêu):
+
+```text
+FAIL chấm YC — YC-32 lặp trong danh sách ở docs/product/2-db/11-cong-chat-luong-pha-2.md §9.3
+FAIL chấm YC — YC-32 đã có đọc + sai, dòng hết hạn — gỡ dòng ở docs/product/2-db/11-cong-chat-luong-pha-2.md §9.3
+db-check: FAIL
+FAIL chấm YC — YC-99 lặp trong danh sách ở docs/product/2-db/11-cong-chat-luong-pha-2.md §9.3
+FAIL chấm YC — YC-99 không có ở owner — gỡ dòng ở docs/product/2-db/11-cong-chat-luong-pha-2.md §9.3
+db-check: FAIL
+```
