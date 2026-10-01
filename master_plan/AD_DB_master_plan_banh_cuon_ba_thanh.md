@@ -108,8 +108,8 @@ thái: nó ở `work/backlog.md`.
 | **P2A-05** | **Lát khoản chi** — khoản chi ngoài tiền hàng và lương, theo loại | P2A-01 · task `T-125` (xong 2026-10-01, **ADR-074**: mỗi loại chi mang nguồn tiền; khoản giữ ngày khai và lúc ghi, không cột ngày bán của két khi `U-072` còn mở) · **chủ repo duyệt ADR-074** | Mỗi khoản chi đọc lại được: loại, số tiền, ngày, ai ghi; mỗi loại đọc ra nguồn tiền; tổng chi một khoảng ngày **đọc ra được bằng một phép cộng**; tiền hàng **không** vào đây lần thứ hai (giới hạn ghi ở `shop-facts.md` §8.10) | Lãi/lỗ sau này cộng trùng tiền hàng, hoặc thiếu hẳn một loại chi | L2 |
 | **P2A-06** | **Dữ liệu mồi admin** — danh mục nguyên liệu sinh lúc chạy từ `shop-facts.md` §8.4, không chép danh sách thứ hai | P2A-02 | Số thứ và tên trong database khớp bảng ở §8.4 (`comm -3` rỗng, in cả hai danh sách); thứ chưa có đơn vị thì đơn vị **trống**, không tự gán | Mọi phép kiểm sau chạy trên một danh mục không phải của quán | L1 |
 | **P2A-07** | **Phép đối chiếu của admin vào bộ đối chiếu** — mỗi phép của `P2A-01` thành đúng một câu, vào cùng một lệnh sau khi đóng quán | P2A-02 → P2A-05 · P2A-06 | `comm -3` giữa mã mệnh đề mới ở `quality/invariants.md` và mã của bộ câu ⇒ rỗng; dữ liệu đúng ⇒ 0 dòng; **mỗi** lỗi cài ⇒ đúng câu của nó kêu | Mệnh đề admin chỉ tồn tại trên giấy | L2 |
-| **P2A-08** | **Cổng chất lượng** — diễn **một ngày quản trị** qua lược đồ (nhập sổ nguyên liệu · chấm công · ghi khoản chi · duyệt tạm ứng), chấm ngược từng dòng `YC` mới, ký các ô §7 | P2A-01 → P2A-07 | Mỗi bước của ngày ấy ghi rồi đọc lại được bằng dữ liệu thật; mỗi dòng `YC` mới trả lời hai câu; chỗ không trả lời được thành `F-XXX`/`U-XXX`, không thiết kế bù | Lược đồ đẹp mà không chạy nổi một ngày của chủ quán | L2 |
-| **P2A-09** | **Rà ranh giới pha và pointer** trên các file lát admin | P2A-08 | Bộ lọc endpoint · route · component chạy trên mọi file mới, in cả lệnh chưa lọc cạnh lệnh đã lọc (**F-017**); pointer từ `shop-facts.md` §8 và `work/backlog_AD.md` sang chỗ mới còn đúng | Pha 3 đọc một dòng hợp đồng do lát admin viết hộ như đầu vào đã chốt | L1 |
+| **P2A-08** | **Cổng chất lượng** — diễn **một ngày quản trị** qua lược đồ (nhập sổ nguyên liệu · chấm công · ghi khoản chi · duyệt tạm ứng), chấm ngược từng dòng `YC` mới, ký ô 1–6 của §7 (ô 7 · 8 là của `P2A-09`) | P2A-01 → P2A-07 | Mỗi bước của ngày ấy ghi rồi đọc lại được bằng dữ liệu thật; mỗi dòng `YC` mới trả lời hai câu; chỗ không trả lời được thành `F-XXX`/`U-XXX`, không thiết kế bù | Lược đồ đẹp mà không chạy nổi một ngày của chủ quán | L2 |
+| **P2A-09** | **Rà ranh giới pha và pointer** trên các file lát admin, ký ô 7 · 8 của §7 | P2A-08 | Bộ lọc endpoint · route · component **và** bộ lọc chín phần ở §6 chạy trên mọi file và mọi đoạn lượt admin thêm (tập liệt kê ở entry), in cả lệnh chưa lọc cạnh lệnh đã lọc (**F-017**), mỗi lượt có một dòng cài để chứng minh biết kêu; lát còn vắng có dòng *vắng, rà lại khi lát ấy xong*; pointer từ `shop-facts.md` §8, `work/backlog_AD.md`, `architecture.md` §14, `docs/product/0-ba/admin/01-ranh-gioi.md`, hàng *Schema* của `CLAUDE.md` §2 và `docs/product/00-index.md` sang chỗ mới còn đúng | Pha 3 đọc một dòng hợp đồng do lát admin viết hộ như đầu vào đã chốt | L1 |
 
 **Chạy song song được:** `P2A-02` · `P2A-03` · `P2A-04` · `P2A-05` sau khi `P2A-01` xong — bốn lát
 không dùng chung mệnh đề nào, nhưng dùng chung người và vết của `P2-08`; lát vào sau **thêm** file
@@ -144,7 +144,7 @@ tiếp dãy `P2A-XX` — không chen vào bước đã có.
 
 ---
 
-## 7. Cổng chất lượng — ký ở `P2A-08`, mỗi ô một output thật
+## 7. Cổng chất lượng — ô 1–6 ký ở `P2A-08`, ô 7 · 8 ký ở `P2A-09`, mỗi ô một output thật
 
 | # | Ô | Chứng minh bằng |
 |---|---|---|
@@ -155,7 +155,7 @@ tiếp dãy `P2A-XX` — không chen vào bước đã có.
 | 5 | Tên bảng ở tài liệu và ở migration khớp | output Gate 1e |
 | 6 | Một ngày quản trị diễn được qua lược đồ | output lượt diễn ở `P2A-08` |
 | 7 | Không lát nào cất thứ thuộc §6 | phép lọc ở `P2A-09`, cộng một lượt đọc bằng mắt |
-| 8 | Không endpoint · route · component nào trong file lát admin | output Gate 1d và phép lọc `P2A-09` |
+| 8 | Không endpoint · route · component nào trong file lát admin | phép lọc `P2A-09` theo mẫu rộng của `P2-14`, cộng output Gate 1d — Gate 1d hẹp hơn phép lọc (`work/findings.md` **F-049**), nên một mình nó không ký được ô |
 
 Lát còn bị chặn (`P2A-05` chờ duyệt **ADR-074**; `P2A-03` hết bị chặn 2026-09-30) khi cổng ký thì ô của nó ghi **vắng, chờ câu nào** — không
 ghi *đạt*.

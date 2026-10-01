@@ -951,6 +951,62 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-130"></a>
+### T-130 — Đề bài `P2A-09` chưa giao được: hai ô cổng không ai ký, ô 7 không có phép lọc
+
+**Yêu cầu:** 2026-10-01, chủ repo nhờ đọc kỹ `P2A-09` và kiểm. Phiên thấy năm chỗ hở trong đề bài và kế
+hoạch; chủ repo chọn *sửa đề bài, chưa rà* (lượt rà vẫn chờ `P2A-08`). Mức **L1**: chỉ đổi mô tả việc
+và kế hoạch, không đổi lời quán, lược đồ hay mã. Thi công: Claude Code; **chưa có lượt duyệt**.
+
+**Phạm vi:** `work/scope/T-130.txt` — `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`,
+`work/backlog_AD_DB.md`, `work/backlog.md`, `work/backlog_archive.md`.
+
+**Acceptance → bằng chứng** (viết trước khi sửa, đo 2026-10-01):
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| (1) Mỗi ô §7 có đúng một bước ký | kế hoạch §7 đổi tiêu đề thành *ô 1–6 ký ở `P2A-08`, ô 7 · 8 ký ở `P2A-09`*; hàng `P2A-08` ở §5 và Goal của entry `P2A-08` nói *ô 1–6*; hàng và Goal `P2A-09` nói *ký ô 7 · 8* |
+| (2) Ô 7 có phép lọc | hàng `P2A-09` ở §5 và mục *Lượt lọc §6* của entry: một nhóm từ cho mỗi phần §6, ba loại xếp, đọc bằng mắt phần mã |
+| (3) Dòng *quyền* có luật xếp, và chỗ không xếp được đi về chủ repo | mục *Luật xếp một dòng nói về quyền*, năm loại, ghi là cách đọc của phiên |
+| (4) Tập file và tập con trỏ đủ, kế hoạch và entry khớp | mục *Tập phải rà* · *Tập con trỏ* của entry; hàng §5 nêu cùng sáu đích con trỏ |
+| (5) Lát vắng có dòng | mục *Lát vắng* của `P2A-09` và bẫy cuối của `P2A-05` |
+| (6) Ô 8 không dựa vào Gate 1d một mình | ô 8 ở kế hoạch §7 nêu **F-049** |
+| (7) Gate | xem *Bàn giao* ở báo cáo của phiên |
+
+**Còn lại:** luật xếp dòng *quyền* là cách đọc của phiên, chờ chủ repo xác nhận hoặc đổi. Khối *Nhận
+việc* của `P2A-09` vẫn trống cho tới khi `P2A-08` `Done`.
+
+<a id="t-128"></a>
+### T-128 — Hai lần chạy `db-check` song song gỡ database của nhau (F-045)
+
+**Yêu cầu:** 2026-10-01, chủ repo giao F-045 cho Codex sửa, Claude kiểm. Mức **L1**: chỉ đụng công cụ
+kiểm, không chạm dữ liệu hay luật quán. Thi công: Codex (worktree `../lean_wt/T-128`, nhánh
+`codex/T-128`, nền `719a430`); duyệt: Claude Code. Sandbox của Codex không gọi được Docker
+(`docker info`: *operation not permitted*), Codex nói thẳng điều ấy; mọi phép đo Docker dưới đây do
+Claude chạy.
+
+**Phạm vi:** `work/scope/T-128.txt` — `scripts/db-check.sh`, `docs/product/2-db/10-quy-uoc-code.md`,
+`docs/guideline/hieu-va-kiem-database.md`, `docs/guideline/chay-database-tren-may.md`, cộng ba file
+`work/` của Claude.
+
+**Duyệt.** Một lỗi sửa tại chỗ: bước dọn rác hỏi PID còn sống bằng `kill -0`, mà `kill -0` trả lỗi cả
+với PID còn sống của user khác (`kill -0 1` ⇒ *operation not permitted*), nên một lần chạy đang sống
+của user khác bị coi là rác và bị gỡ. Đổi sang `ps -p`.
+
+**Acceptance → bằng chứng** (đo 2026-10-01, trong worktree):
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| (1) Hai lần chạy cách 6 giây, chồng nhau, cả hai PASS | trong lúc chạy `docker compose ls -a` thấy `banhcuon_check_69252_…` và `banhcuon_check_69356_…`; cả hai in `db-check: PASS — 10 bước … 29 file test … 24 mã YC`, exit 0 |
+| (2) Xong không còn project kiểm | `docker compose ls -a \| grep banhcuon_check` rỗng |
+| (3) `kill -9` giữa chừng được lần sau dọn | sau `kill -9 78796` còn `banhcuon_check_78796_…`; lần kế in `NOTE db-check — đã gỡ project rác banhcuon_check_78796_… (PID 78796 không còn sống)` rồi PASS; một `banhcuon_check` của bản cũ đang chạy ở clone chính được để yên |
+| (4) Không câu nào còn tả tên cố định | `grep -rn 'banhcuon_check' scripts docs` chỉ còn tên có hậu tố `{PID}…` |
+| (5) Cú pháp sạch | `bash -n scripts/db-check.sh` exit 0 |
+| (6) Gate | ở clone chính, sau khi phiên `P2A-07` đưa phần đổi số `I-021` về: `PASS  gate     không cổng nào đỏ` — `db-check` 11 bước · 30 file test · 97 câu · 97 lỗi cài; trước đó đỏ ba dòng `i021_2` · `i021_6` của lượt đưa về dở, không do T-128 |
+
+**Còn lại:** Không. Một phiên còn chạy bản `db-check` cũ (tên cố định) vẫn có thể giẫm lên một lần chạy
+bản cũ khác cho tới khi mọi worktree lấy bản này.
+
 <a id="t-125"></a>
 ### T-125 — Tiền RA khỏi két trong ngày chưa có hạng tử nào trong phép đối soát cuối ngày
 

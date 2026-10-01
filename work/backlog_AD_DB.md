@@ -636,6 +636,10 @@ Thứ chặn là lượt chủ repo duyệt **ADR-074**.
 - **Câu đối chiếu `I-029` là của bước này, không còn của `P2A-07`** (2026-10-01, Claude Code, lúc
   nhận `P2A-07`): lát dựng xong thì viết câu cùng lỗi cài theo khuôn `db/reconcile/i028.sql`, và gỡ
   dòng `I-029` ở `09-doi-chieu-bat-bien.md` §2.1 trong cùng thay đổi.
+- **Lát vào sau `P2A-09` thì tự chạy lượt rà ấy trên file của mình** (2026-10-01, Claude Code, T-130):
+  ô 7 · 8 của cổng ghi lát này *vắng*; trước khi tick `Done`, chạy đủ các lượt lọc của
+  [`P2A-09`](#p2a-09) trên `15-luoc-do-khoan-chi.md` và migration của lát, dán cặp *chưa lọc · đã
+  lọc*, rồi đổi chữ *vắng* ở hai ô ấy thành kết quả.
 
 [↑ đầu file](#top)
 
@@ -822,6 +826,47 @@ mang số (cùng luật đoạn cuối §1 của file 09).
 - *Ngoài phạm vi, có tên:* câu `I-029` — `P2A-05`; tập *trừ vào đúng một ngày bán* — **U-072**; siết
   chế độ mềm — **F-046**; diễn một ngày quản trị — `P2A-08`.
 
+**Bàn giao** — 2026-10-01 · thực hiện: **Codex** (worktree `../lean_wt/P2A-07`, nhánh `codex/P2A-07`, trên
+`c93f069`) · duyệt: **Claude Code** · nhánh `chatgpt_involve`, trên `719a430` · chưa commit. Diff được chép
+vào clone chính **trước** lượt duyệt, không qua Claude; lượt chép bỏ sót hai lần xoá `proof/i021_2.sql` ·
+`proof/i021_6.sql` (gate đỏ *câu không có lỗi cài*), đã gỡ trước khi Claude chạy gate lần cuối. Claude không
+đọc báo cáo của Codex trong lượt này; lượt duyệt dựa trên diff thật và output dưới đây.
+
+*Claude duyệt ra sao.* So từng file thay đổi của worktree với clone chính bằng `cmp`: khớp từng byte, trừ
+`work/backlog.md` · `work/findings.md` (mang thêm phần của T-128 — đúng). Đọc mười hai khối `-- @@`, mười bốn
+file lỗi cài, hàm `pg_temp.chuoi_vet_dut` ở `db/reconcile/prelude.sql`, phần thêm vào `baseline.sql`, file 09
+và ba file lát. Gate chạy ở clone chính lúc không phiên nào khác dùng database (hai lần trước đỏ giả vì
+**F-045**, nay đã chữa ở T-128):
+
+```text
+$ ./scripts/gate.sh            # exit=0
+    reconcile: PASS — 75 câu I-0xx · 22 câu QD, mọi tập rỗng · 1 mệnh đề chưa có lát
+    PASS ngày bán mẫu đúng (db/reconcile/proof/baseline.sql) — 97 câu chạy, mọi tập rỗng
+    PASS mọi câu có lỗi cài nhắm vào nó — comm -3 rỗng (97 câu, 97 file lỗi)
+PASS  Gate 1   db-check — 11 bước xuôi · lùi · xuôi lại, 10 khối kiểm QC, 30 file test, dữ liệu mồi + §4.8, khoá chặn, đối chiếu: 97 câu trên dữ liệu mồi và ngày mẫu, 97 lỗi cài, ba scenario + đối chiếu trên ngày diễn, 24 mã YC
+PASS  gate     không cổng nào đỏ
+$ ./scripts/reconcile.sh --codes
+NOTE I-029 chưa có lát — ai nợ: `P2A-05` — docs/product/2-db/09-doi-chieu-bat-bien.md §2.1
+PASS mã I-0xx — 28 mã có câu + 1 mã chưa có lát = 29 mã ở quality/invariants.md
+```
+
+*Nghiệm thu → bằng chứng.* (1) mười hai khối `I-025/1 · 2`, `I-026/3 · 4`, `I-027/1…4`, `I-028/1…4` đúng
+thiết kế; `--codes` chỉ còn `NOTE I-029`. (2) `baseline.sql` thêm con số mua vào · đã dùng và một lần sửa con
+số, ô chấm công huỷ có ghi chú rồi tick lại, khoản tạm ứng sửa; dòng *ngày bán mẫu đúng* trên — và
+`i025_2` · `i028_4` tìm thấy dòng đã có vết nên các lần sửa ấy để lại vết. (3) mười hai dòng `PASS kêu
+i025_1 … i028_4`, mỗi dòng đúng mã của `-- kêu:`; lỗi tầng 1 gỡ ràng buộc trước (vd. `i027_2` gỡ
+`attendance_day_one_live_per_worker_day_key`); `i025_2` chứng minh nhánh *khe giữa hai vết*, `i028_4` nhánh
+*bản sau mới nhất lệch dòng* — cả hai là lần sửa không khai lý do sau một lần có vết. (4) `PASS kêu i021_3 —
+I-021/3` · `PASS kêu i021_7 — I-021/7`; `grep -rnE 'I-021/[26]([^0-9]|$)' db docs scripts quality
+master_plan` rỗng. (5) file 09 §1 bốn hàng mới + hàng `I-021` bảy tập, đo lại *75 câu*; §2 hàng `I-026` tập
+1 · 2, `I-028` tập 5 · 6, `I-021` tập 2; §2.1 chỉ `I-029`, người nợ `P2A-05`; §4 hai cách đọc mới. (6) ba
+file lát ghi *đã có câu … (P2A-07, 2026-10-01)*. (7) gate trên; **chưa** chạy ở worktree — clone chính
+khớp từng byte nên một lần chạy là đủ.
+
+*Còn lại.* `I-029` — `P2A-05` (chờ chủ repo duyệt **ADR-074**); tập *trừ vào đúng một ngày bán* — **U-072**;
+dòng chưa từng có vết thì không câu nào thấy lần sửa mất vết — **F-046**; ai được huỷ ô chấm công — **U-071**.
+Worktree `../lean_wt/P2A-07` gỡ sau khi commit. Bước kế: `P2A-08`.
+
 [↑ đầu file](#top)
 
 ---
@@ -833,7 +878,8 @@ mang số (cùng luật đoạn cuối §1 của file 09).
 
 **Goal:**
 Xong rồi thì một ngày quản trị — nhập sổ nguyên liệu, chấm công, ghi khoản chi, duyệt tạm ứng —
-ghi được và đọc lại được bằng dữ liệu thật, và tám ô cổng ở kế hoạch §7 có output.
+ghi được và đọc lại được bằng dữ liệu thật, và ô 1–6 của cổng ở kế hoạch §7 có output. Ô 7 · 8
+không ký ở đây: bằng chứng của chúng là phép lọc của `P2A-09`, chạy sau bước này (T-130).
 
 **Nói một câu, việc phải làm là gì:**
 Diễn ngày ấy theo cách `P2-13` đã diễn ba scenario bán hàng (**ADR-067**), chấm ngược từng dòng
@@ -854,21 +900,70 @@ Diễn ngày ấy theo cách `P2-13` đã diễn ba scenario bán hàng (**ADR-0
 <a id="p2a-09"></a>
 ### P2A-09 — File lát admin là cửa mới để pha 2 viết hộ pha 3
 
-**Phụ thuộc** · bước 9/9 · **cần xong trước:** `P2A-08`.
+**Phụ thuộc** (kế hoạch §5 thắng khi lệch) · bước 9/9 · **cần xong trước:** `P2A-08`. Lát chưa
+`Done` lúc nhận việc không giữ chân bước này (kế hoạch §5, *Chạy song song được*): rà trên lát đã
+có, ghi lát kia *vắng* — xem *Lát vắng* dưới đây.
 
 **Goal:**
 Xong rồi thì không file lát admin nào mang endpoint, route, component hay luật *ai được xem gì*,
-và mọi con trỏ từ `shop-facts.md` §8, `work/backlog_AD.md`, `architecture.md` §14 sang chỗ mới
-còn đúng.
+không lát nào cất thứ thuộc kế hoạch §6, mọi con trỏ sang chỗ mới còn đúng, và **ô 7 · 8 của cổng**
+(kế hoạch §7) được ký kèm bằng chứng ở mục cổng mà `P2A-08` thêm vào
+`docs/product/2-db/11-cong-chat-luong-pha-2.md`.
 
 **Nói một câu, việc phải làm là gì:**
-Chạy lại phép rà của `P2-14` trên các file mới; đọc `work/findings.md` **F-049** trước (Gate 1d
-hẹp hơn phép rà).
+Chạy lại chín lệnh của `P2-14` (`work/backlog_DB.md` → P2-14, khối *Bàn giao*: A1…D) trên tập dưới
+đây, **thêm** một lượt lọc cho §6, rà con trỏ hai chiều, ký hai ô. Đọc `work/findings.md` **F-049**
+trước: Gate 1d hẹp hơn phép rà, nên output của nó không ký được ô 8 một mình.
 
-**Không làm thì mất gì:** pha 3 đọc một dòng quyền xem lương do lát viết hộ như đã chốt.
+**Không làm thì mất gì:** pha 3 đọc một dòng quyền xem lương do lát viết hộ như đã chốt; một cột
+*"để sẵn cho sau này"* của phần §6 thành luật không ai nói (kế hoạch §9).
+
+**Tập phải rà** (viết 2026-10-01 ở T-130, trước khi `P2A-05` · `P2A-08` xong — lúc nhận việc đếm lại
+bằng `git log --name-only` của các commit `P2A-01`…`P2A-08`, và tập đếm được thắng danh sách này):
+- *File lát:* `docs/product/2-db/12-luoc-do-nguyen-lieu.md` · `13-luoc-do-cham-cong.md` ·
+  `14-luoc-do-khoan-cua-nguoi.md`, và `15-luoc-do-khoan-chi.md` nếu `P2A-05` đã `Done`.
+- *Đoạn lượt admin thêm vào file có sẵn:* câu `I-025`…`I-029` của `09-doi-chieu-bat-bien.md`; mục cổng
+  của `P2A-08` trong `11-cong-chat-luong-pha-2.md`; `YC-26`…`YC-33` của
+  `docs/product/1-system-design/04-yeu-cau-du-lieu.md`; `I-025`…`I-029` của `03-bao-ve-invariant.md`
+  và `quality/invariants.md`; phần `P2A-01` thêm vào `docs/product/0-ba/admin/01-ranh-gioi.md`.
+- *Mã:* migration của các lát admin trong `db/migrations/`, `db/reconcile/i025.sql`…`i028.sql` cùng
+  lỗi cài, test của các lát trong `db/tests/`, `db/seed/seed.pl`.
+
+**Tập con trỏ, rà hai chiều:** `master_plan/shop-facts.md` §8 (§8.4 · §8.7 · §8.8 · §8.10) ·
+`work/backlog_AD.md` · `docs/product/1-system-design/architecture.md` §14 ·
+`docs/product/0-ba/admin/01-ranh-gioi.md` · hàng *Schema* của `CLAUDE.md` §2 ·
+`docs/product/00-index.md` · danh sách file ở kế hoạch §4. Chiều đi: chỗ cũ trỏ sang lát thì đích
+còn nói đúng cái được gán. Chiều về: lát trỏ về `YC` · `I-0xx` · mục `§` thì đích còn đúng.
+
+**Lượt lọc §6 — `P2-14` không có lượt này.** Mỗi phần ở kế hoạch §6 một nhóm từ: lương · kỳ trả ·
+đơn giá công; nợ nhà cung cấp; kiểm đếm cuối buổi; lãi · lỗ · giá vốn; tiền mang về nhà; nộp tiền;
+thuế; quyền xem; giảm giá cả đơn · combo. Mỗi dòng trúng xếp vào một trong ba loại: *khai không
+dựng* (bảng ngoài phạm vi của lát), *trỏ tới chỗ chặn*, hay *cất* — một bảng, cột, ràng buộc hay dòng
+mồi giữ thứ ấy ⇒ vi phạm. Phần mã đọc thêm bằng mắt: tên bảng và cột của migration không lọc từ
+tiếng Việt được (ô 7 đòi *cộng một lượt đọc bằng mắt*).
+
+**Luật xếp một dòng nói về *quyền*** — cách đọc của phiên T-130 (Claude Code, 2026-10-01), theo cách
+`P2-14` đã xếp dòng giao việc; chủ repo đổi được (`CLAUDE.md` §7.2):
+1. Quyền của **vai database** — `GRANT` · `REVOKE`, vai `shop_app`, `QD-50` · `QD-52` — là pha 2, hợp lệ.
+2. Câu **giao việc** cho pha 3 mà không nói ai được gì — *"cửa ghi pha 3 xét"*, *"chưa quyết quyền —
+   pha 3"* — hợp lệ, cùng loại `P2-14` đã xếp cho các câu giao việc của `09-doi-chieu-bat-bien.md`.
+3. Câu **trích** một mệnh đề hay dòng `YC` đã có owner (*`I-027` — người tick là chủ quán*) là trích,
+   hợp lệ.
+4. Câu nói **vai nghiệp vụ nào** — chủ quán, người đứng quầy, nhân viên — được xem, ghi hay duyệt gì
+   qua ứng dụng, kể cả chép lại `C34` · `C35`, là viết hộ hàng *Hợp đồng API … quyền theo vai* của
+   `CLAUDE.md` §2 ⇒ vi phạm.
+5. Không xếp được vào bốn loại trên ⇒ hỏi chủ repo. Codex không tự xếp (**ADR-054**).
+
+**Lát vắng.** Lát chưa `Done` lúc nhận việc ghi ở ô 7 · 8 là *vắng, rà lại khi lát xong* — không ghi
+*đạt*. Lát ấy mang việc rà về entry của chính nó (`P2A-05`, bẫy cuối).
 
 **Bẫy hay sửa nhầm nhất:**
-- **In cả lệnh chưa lọc cạnh lệnh đã lọc** (**F-017**).
+- **In cả lệnh chưa lọc cạnh lệnh đã lọc** (**F-017**), và cài một dòng vi phạm vào **bản sao** cho
+  từng lượt — kể cả lượt §6 — để chứng minh nó biết kêu.
 - **Quyền xem là chỗ dễ lọt nhất**: `C34` · `C35` là lời chủ quán, nhưng thi hành chúng là pha 3.
+- **Đừng sửa chỗ sai ngay trong lượt rà** — ghi `F-XXX` (luật của `P2-14`); không sửa Gate 1d trong
+  lượt này (**F-049** có đường ra riêng). Ngoại lệ như `P2-14`: con trỏ lệch là bug của lượt, sửa ở
+  file mang nó và nói ở *Bàn giao*.
+- **Khối *Nhận việc* chưa có** (luật 2 của file): nó điền khi `P2A-08` đã `Done`, từ phần trên.
 
 [↑ đầu file](#top)
