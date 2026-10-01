@@ -24,9 +24,10 @@ tick dòng ấy, ghi rõ *(commit tick Done)*.
 | [Vòng chạy một task L1](#vong-chay) | mười bước thủ tục từ nhận task tới khối commit |
 | [Task Detail Template](#template) | khuôn viết một task mới |
 
-**Năm sổ, một chỗ giữ trạng thái.** Ranh giới giữa chúng là **lane** (`docs/decisions.md`
+**Sáu sổ, một chỗ giữ trạng thái.** Ranh giới giữa chúng là **lane** (`docs/decisions.md`
 **ADR-036**): pha 1 (`P1-01`…`P1-14`) giữ mô tả ở **`work/backlog_SD.md`** (**ADR-034**) · pha 2
 (`P2-01`…`P2-14`) giữ mô tả ở **`work/backlog_DB.md`** (**ADR-049**, dựng 2026-09-20 ở T-081) ·
+pha 3 (`P3-01`…`P3-14`) giữ mô tả ở **`work/backlog_BE.md`** (**ADR-076**, dựng 2026-10-01 ở T-120) ·
 mảng admin (`ADM-01`…`ADM-53`) giữ mô tả ở **`work/backlog_AD.md`** · lược đồ admin
 (`P2A-01`…`P2A-09`) giữ mô tả ở **`work/backlog_AD_DB.md`** (**ADR-068**, dựng 2026-09-30 ở T-122) ·
 mọi thứ còn lại ở file này,
@@ -100,6 +101,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-120 Pha 3 có kế hoạch `master_plan/BE_master_plan_banh_cuon_ba_thanh.md` và sổ `work/backlog_BE.md`: mười bốn bước `P3-01`…`P3-14`, admin ngoài pha 3, `P3-01` chờ chủ repo ký chuyển pha — **ADR-076** — 2026-10-01 · [chi tiết](backlog_archive.md#t-120)
 - [x] P2A-09 Rà ranh giới pha và pointer trên file lát admin — chín lượt `P2-14` và chín nhóm §6 trên 18 file tài liệu · 36 file mã: 0 endpoint · route · component, 0 dòng *cất* thứ bị chặn, mỗi lượt có dòng thử kêu đúng; hai dòng *quyền* loại 5 Claude xếp loại 3 + 2; bảy con trỏ lệch sửa cùng lượt; ô 7 · 8 ký ⇒ cổng lược đồ admin **8/8** trừ lát `P2A-05` vắng; Codex lọc, Claude duyệt và ký — 2026-10-01 · [chi tiết](backlog_AD_DB.md#p2a-09)
 - [x] P2A-08 Cổng chất lượng lược đồ admin — `db/scenario/s4_ngay_quan_tri.sql` diễn chín bước một ngày quản trị (sổ nguyên liệu, chấm công có huỷ, tạm ứng có duyệt, thưởng), mỗi bước trỏ một dòng `shop-facts.md` §8; đọc lại ở kết nối khác; `YC-26`…`YC-32` chấm đọc + sai, `db-check` đòi cả mã §9 trừ danh sách *YC chưa có lát* tự hết hạn (§9.3, khuôn ADR-070); ô 1–6 ký kèm output, `P2A-05` · `YC-33` vắng chờ ADR-074; Codex thi công, Claude chạy database, sửa một lỗi tên biến và ký — 2026-10-01 · [chi tiết](backlog_AD_DB.md#p2a-08)
 - [x] T-126 Khách trả nợ dần — migration `20261001120000_tra_no_dan`: mỗi lần trả một dòng mang số còn thiếu trước · sau, chuỗi giữ bằng khoá ngoại và khoá duy nhất (**ADR-075**); `YC-02` viết lại; test hồi quy viết trước (chín lời từ chối, đọc lại năm ngày); hạng tử nợ cũ thu của `I-005/3` · `I-012/1` đọc mức nợ giảm; khoá chặn bước lùi thử thật; Claude thiết kế và viết test, Codex thi công, Claude chạy database và duyệt — 2026-10-01 · [chi tiết](backlog_archive.md#t-126)

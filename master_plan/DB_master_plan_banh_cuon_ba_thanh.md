@@ -393,3 +393,8 @@ tạo xong bảng"*; và ô cổng thứ tư ở §9 tồn tại riêng để b�
 truy vấn đối chiếu và quy ước code. Pha 3 trả lời *ai được làm gì, giá tính ở đâu* — endpoint,
 quyền theo vai, **một** hàm tính giá duy nhất. Pha 3 không mở lại lược đồ; gặp chỗ pha 2 sai thì
 gửi ngược một dòng `F-XXX`, đúng luật hai sổ ([`prompt-fullstack.md`](prompt-fullstack.md) §6.4).
+
+Đo 2026-10-01: cổng pha 2 đã tick **12/12**, bằng chứng ở
+`docs/product/2-db/11-cong-chat-luong-pha-2.md` §7. Thứ tự pha tiếp theo ở
+[kế hoạch pha 3](BE_master_plan_banh_cuon_ba_thanh.md) (**ADR-076**).
+**Ký chuyển pha là quyền chủ repo; hôm nay chưa ký.**

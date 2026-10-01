@@ -61,12 +61,13 @@ is a bug to fix now.
 | Schema: tên bảng, tên cột, kiểu, ràng buộc, khoá ngoại | **file migration thắng** — `db/migrations/` (ADR-053 luật 2). Ý định, lý do và ánh xạ `I-0xx`/`YC-xx` của từng lát: `docs/product/2-db/02-luoc-do-ban-hang.md` (P2-04) · `03-luoc-do-menu-gia.md` (P2-05) · `04-luoc-do-duong-tien.md` (P2-06) · `05-luoc-do-san-xuat.md` (P2-07) · `06-luoc-do-nguoi-va-vet.md` (P2-08) · `12-luoc-do-nguyen-lieu.md` (P2A-02) · `13-luoc-do-cham-cong.md` (P2A-03) · `14-luoc-do-khoan-cua-nguoi.md` (P2A-04); các lát sau **thêm** file, không ghi đè. Hai bản lệch ⇒ `F-XXX`. Thứ tự việc, mức và cổng của pha 2: `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (ADR-049) |
 | Quy ước code: DBMS + phiên bản, cách chạy database, migration, khung test, cấu trúc thư mục, stack, tên ràng buộc — mỗi quy ước một mã `QC-XX` và một phép kiểm | `docs/product/2-db/10-quy-uoc-code.md` — pha 2, sinh ra ở P2-12 (ADR-035, ADR-039, ADR-055) |
 | Thứ tự migration, đường lùi của từng bước (khoá chặn), cách gỡ một lệnh migration hỏng, dựng lại từ số không | `docs/product/2-db/07-thu-tu-migration.md` — pha 2, sinh ra ở P2-09 (ADR-065) |
-| Hợp đồng API: endpoint, quyền theo vai, chữ ký | **chưa có owner** — sinh ra ở **pha 3**, cùng `docs/product/3-be/` (ADR-035) |
+| Hợp đồng API: endpoint, quyền theo vai, chữ ký | **chưa có owner** — sinh ra ở **pha 3**, cùng `docs/product/3-be/` (ADR-035). Thứ tự việc, mức và cổng của pha 3: `master_plan/BE_master_plan_banh_cuon_ba_thanh.md` (ADR-076) |
 | Route, component | **chưa có owner** — sinh ra ở **pha 4**, cùng `docs/product/4-fe/` (ADR-035) |
 | Tasks — trạng thái của **mọi** task (`Ready`/`In Progress`/`Done`) | `work/backlog.md` |
 | Tasks — mô tả dài của việc **đã xong** (lưu trữ, chỉ thêm, không cập nhật) | `work/backlog_archive.md` (T-086) |
 | Tasks — mô tả dài của **pha 1**, `P1-01`…`P1-14` | `work/backlog_SD.md` |
 | Tasks — mô tả dài của **pha 2**, `P2-01`…`P2-14` | `work/backlog_DB.md` |
+| Tasks — mô tả dài của **pha 3**, `P3-01`…`P3-14` | `work/backlog_BE.md` (ADR-076) |
 | Tasks — mô tả dài của **mảng admin**, `ADM-01`…`ADM-53` | `work/backlog_AD.md` |
 | Tasks — mô tả dài của **lược đồ admin**, `P2A-01`…`P2A-09` | `work/backlog_AD_DB.md`; thứ tự, mức và cổng: `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` (ADR-068) |
 | Câu hỏi cho chủ quán về mảng admin, và chỗ chủ quán trả lời | `work/admin-questions.md` §3 |

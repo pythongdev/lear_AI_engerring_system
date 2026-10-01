@@ -92,6 +92,7 @@ có câu trả lời mới từ người.
 | ADR-073 | **Tạm ứng và thưởng: HAI bảng, mỗi khoản một dòng; người duyệt là một dấu riêng chỉ tạm ứng có; vai ghi chỉ sửa được số tiền · người nhận · ngày; không cột nào nối sang két** — mỗi khoản mang người nhận, số tiền lớn hơn 0, ngày của khoản, người ghi và lúc ghi; *người duyệt là chủ quán* giữ ở tầng 3, database không xét; vết sửa ở chế độ mềm như mọi bảng (F-046); nối két chờ task `T-125` | Đã chốt 2026-09-30 (giao cho phiên, P2A-04) | — | P2A-04 · P2A-07 · P2A-08 · T-125 |
 | ADR-074 | **Tiền RA khỏi két trong ngày là MỘT hạng tử của `I-021` — *chi từ két* — gồm mọi tạm ứng, mọi thưởng và khoản chi của loại mang nguồn két; nguồn tiền nằm trên LOẠI chi, không trên từng khoản; không cột *ngày bán của két* nào trước khi `U-072` có lời** — viết lại `I-021` · `I-028` · `I-029` · `YC-31`…`YC-33` theo lời đóng `U-066` · `U-067` và lời *trong ngày, trước lúc đếm két*; không migration nào cho tạm ứng và thưởng; câu đối chiếu của hạng tử chờ `U-072` và `F-048` | Đã chốt 2026-10-01 (giao cho phiên, T-125) | — | T-125 · P2A-05 · P2A-07 · ADR-073 |
 | ADR-075 | **Khách trả nợ dần: mỗi lần trả là MỘT dòng `debt_collection` mang *số còn thiếu sau lần ấy*; các lần trả nối nhau thành chuỗi bằng khoá ngoại, nên trả vượt, rẽ nhánh và trả khi đã hết nợ đều bị database từ chối** — bỏ luật *một khoản nợ thu đủ một lần*; lần đầu nối vào số nợ của hoá đơn, lần sau nối vào số còn thiếu của lần trước; *đã trả xong* là có lần trả còn thiếu 0, không cột trạng thái | Đã chốt 2026-10-01 (giao cho phiên, T-126) | — | T-126 · ADR-059 · U-063 |
+| ADR-076 | **Pha 3 có kế hoạch riêng** `master_plan/BE_master_plan_banh_cuon_ba_thanh.md`, mã bước `P3-01`…`P3-14`, sổ mô tả `work/backlog_BE.md` theo khuôn **ADR-051**; chẻ theo nhóm mệnh đề, không theo endpoint; admin ngoài pha 3 (**ADR-068**); `P3-01` chỉ nhận được sau khi **chủ repo ký chuyển pha** | Đã chốt 2026-10-01 (giao cho phiên, T-120) | — | T-120 · ADR-049 · ADR-051 · ADR-068 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -5052,3 +5053,58 @@ POS ghi tổng nợ, ngày giờ trả và số còn thiếu.
 `docs/product/2-db/04-luoc-do-duong-tien.md` §2 · §5 · `db/reconcile/i005.sql` ·
 `db/tests/yc02_debt_paid_in_parts.sql` · `master_plan/shop-facts.md` §6.14 · U-063 · ADR-059 ·
 ADR-065 · task `T-126`.
+
+---
+
+### ADR-076 — Pha 3 có kế hoạch riêng ở `master_plan/`, mã bước `P3-XX`, sổ `work/backlog_BE.md`, và không bước nào mở trước chữ ký chuyển pha của chủ repo
+
+**Trạng thái:** **Đã chốt** 2026-10-01, **giao cho phiên** (Claude Code, task `T-120`; Codex thi công
+hai file kế hoạch, Claude duyệt). Chủ repo yêu cầu 2026-09-29: *"phase db đã xong hãy kiểm tra lại và
+làm viết prompt để thực hiện pha tiếp theo. pha tiếp theo cần master plan, backlog, hay làm tất cả các
+bước cần thiết để thực hiện"*; ngày 2026-10-01 giao làm tiếp bản dở. Câu ấy là lời **giao việc**, không
+phải lời xác nhận cách chia bước dưới đây (`CLAUDE.md` §7.2). Bản nháp 2026-09-29 tự đặt số
+`ADR-065` — số ấy đã thuộc quyết định đường lùi migration của `P2-09`, nên quyết định này mang số 076.
+Quyết định **chép hình dạng** của **ADR-049** (kế hoạch pha 2) và **ADR-051** (một entry là hồ sơ thực
+thi, trạng thái một nơi), và không sửa câu nào của **ADR-035** (ranh giới sở hữu theo pha).
+
+**Decision:**
+
+1. **Kế hoạch pha 3 ở `master_plan/BE_master_plan_banh_cuon_ba_thanh.md`**, không sở hữu sự thật nào:
+   thứ tự · mức · đầu ra kiểm chứng được là của nó; trạng thái là của `work/backlog.md`; hợp đồng API là
+   của pha 3 khi pha 3 viết ra. Kế hoạch **không nêu tên endpoint nào** — hàng *Hợp đồng API* của
+   `CLAUDE.md` §2 còn *chưa có owner*.
+2. **Mã bước `P3-01`…`P3-14`**, cùng hình `P1-XX` · `P2-XX`. Mô tả dài ở **`work/backlog_BE.md`**, khuôn
+   entry của **ADR-051**; khối *Nhận việc* để trống tới khi mọi bước phụ thuộc `Done`.
+3. **Chẻ theo nhóm mệnh đề** (giá · tại bàn · mang đi · tiền · sản xuất · vết), không theo nhóm endpoint:
+   mỗi lát mang danh sách vế tầng 2 · tầng 3 của `03-bao-ve-invariant.md` và chấm bằng **test từ chối
+   qua cửa**. Đây là chỗ phiên **suy ra**, kế hoạch §8 ghi nó chờ chủ repo xác nhận.
+4. **Đầu ra:** tài liệu vào `docs/product/3-be/`, ra đời ở `P3-04` cùng hàng §2 *Hợp đồng API*; code
+   vào `be/` (`QC-08` · `QC-09`), ra đời ở `P3-03`.
+5. **Mảng admin không nằm trong pha 3** — nguồn **ADR-068** (*"pha 3 · pha 4 của admin không mở"*).
+6. **`P3-01` chỉ nhận được sau khi chủ repo ký chuyển pha.** Đo 2026-10-01: pha 2 xong cả mười bốn bước
+   (2026-09-30), cổng tick 12/12 ở `docs/product/2-db/11-cong-chat-luong-pha-2.md` §7 — đủ ô **không**
+   phải chữ ký. Không dòng `P3-XX` nào vào *Ready* trước chữ ký ấy (**F-012**); phiên không tự ký.
+
+**Why:**
+
+- **Hình dạng đã chạy hai pha.** Kế hoạch sáu cột, cổng mỗi ô một cách chứng minh, và một entry là hồ sơ
+  duy nhất — không bước pha 2 nào cần file prompt riêng, trạng thái đứng một nơi (T-119).
+- **Pha 3 là pha dễ bịa luật nhất.** Mỗi nhánh điều kiện trong code là một luật; buộc mỗi lát chấm ngược
+  vế tầng 3 của mình và bắt cửa **từ chối kèm mã** khi luật chưa có là cách rẻ nhất để câu chưa hỏi
+  không thành code.
+
+**Rejected alternatives:**
+
+- *Thi công danh sách đường gọi ở `master_plan/prompt-fullstack.md` §3.6 như hợp đồng đã chốt.* Bác: nó
+  viết trước lược đồ pha 2 và thiếu dấu lần gửi, quyền theo chỗ đứng, nợ trả dần, hoàn tiền, vết.
+- *Viết sẵn bảng tầng 2 · tầng 3 dịch sang code trong kế hoạch.* Bác: đó là đầu ra của `P3-01`; bản nháp
+  ở kế hoạch sẽ được đọc như bản chốt (cùng lý lẽ *Rejected alternatives* thứ ba của **ADR-050**).
+- *Giữ finding "pha 2 vừa cấm vừa đòi file lùi" của bản nháp.* Bác: mâu thuẫn ấy đã được giải ở `P2-09`
+  bằng **ADR-065** trước khi bản nháp được gộp; ghi lại thành finding mở là ghi một chuyện đã xong.
+
+**Còn để lại:** cách chẻ mười bốn bước (điểm 3) chờ chủ repo xác nhận; **hợp đồng thắng hay code thắng**
+khi lệch là ADR của `P3-04`, không suy ra từ **ADR-053**.
+
+**Applies to:** `master_plan/BE_master_plan_banh_cuon_ba_thanh.md` · `work/backlog_BE.md` · `CLAUDE.md` §2
+(hàng sổ pha 3; hàng *Hợp đồng API* trỏ sang kế hoạch) · `docs/product/00-index.md` (hàng *Pha 3*) · kế
+hoạch pha 2 (đoạn cuối) · `work/backlog.md` · task `T-120`.

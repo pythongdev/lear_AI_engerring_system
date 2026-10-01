@@ -951,6 +951,39 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-120"></a>
+### T-120 — Pha 3 có kế hoạch và sổ việc riêng, đặt trên trạng thái của ngày gộp
+
+**Yêu cầu:** 2026-09-29, chủ repo: *"phase db đã xong hãy kiểm tra lại và làm viết prompt để thực hiện
+pha tiếp theo. pha tiếp theo cần master plan, backlog, hay làm tất cả các bước cần thiết để thực
+hiện"*. Bản nháp viết ngày ấy ở worktree `.claude/worktrees/t120` (nhánh `t120-be-plan`, gốc `24d84ff`),
+không commit. 2026-10-01 chủ repo giao: *"hãy yêu cầu codex thực hiện (T-120) và T-127 lần lượt và bạn
+kiểm tra"*. Mức **L2** (thêm owner ở `CLAUDE.md` §2 và một ADR).
+
+**Bản nháp cũ ở đâu:** số `ADR-065` và `F-047` nó tự đặt đã thuộc việc khác; finding *pha 2 vừa cấm vừa
+đòi file lùi* đã được giải ở `P2-09` (**ADR-065**), nên **không** thêm finding nào (prompt giao việc gợi
+ý số F-056 — không dùng); khối *Nhận việc* của `P2-09` · `P2-11` và hai dòng *Ready* của chúng lỗi thời
+vì cả hai đã `Done`; U-063 đã có lược đồ (T-126, **ADR-075**); U-064 đã có lời nhưng lược đồ chờ T-127;
+F-049 đã *Fixed* (T-131); admin ngoài pha 3 nay có nguồn **ADR-068**.
+
+**Acceptance (viết trước khi giao):** (1) `ADR-065` · `F-047` không còn mang nghĩa của bản nháp; ADR-076
+có một thân và một hàng tổng hợp; (2) không câu nào nói U-063 · U-064 đang mở; `P3-09` trỏ ADR-075,
+`P3-10` trỏ T-127; (3) `P3-02` không giả định Gate 1d còn hụt, F-049 là *Fixed (T-131)*; (4) kế hoạch nêu
+admin ngoài pha 3 kèm ADR-068; (5) không bước P3 nào vào *Ready*, `P3-01` chờ chữ ký chuyển pha của chủ
+repo; (6) gate xanh ở clone chính sau khi gộp, Gate 1b PASS; (7) Claude đọc diff thật trước khi gộp.
+
+**Bàn giao** — 2026-10-01 · thực hiện: **Codex** (worktree `../lean_wt/T-120`, nhánh `codex/T-120`, trên
+`87e1b1e`, model `gpt-6-astra` — model trong cấu hình Codex bị tài khoản từ chối) · duyệt và phần của
+lead: **Claude Code**. Codex: hai file mới · `docs/product/00-index.md` · đoạn cuối kế hoạch pha 2.
+Claude sửa thêm ba câu ghi chú tạm Codex để lại, thêm hàng F-048 (→ `P3-09`) · F-050 (→ `P3-12`) vào bảng
+chặn §4, và viết `CLAUDE.md` §2 · ADR-076 · dòng *Done*. Task không qua *In Progress* ở clone chính: mọi
+sửa nằm trong worktree tới lúc gộp (**F-025**). Bằng chứng ở báo cáo cuối phiên; output gate ở clone chính.
+
+**Còn mở:** chủ repo ký chuyển sang pha 3; cách chẻ mười bốn bước (kế hoạch §8) chờ xác nhận; câu *nhân
+viên đăng nhập bằng gì* chưa thành `U-XXX` — `P3-05` mở lúc nhận. Chưa review độc lập.
+
+[↑ đầu file](#top)
+
 <a id="t-126"></a>
 ### T-126 — Lược đồ chỉ nhận thu nợ đủ trong một lần, còn chủ quán cho khách trả dần
 
