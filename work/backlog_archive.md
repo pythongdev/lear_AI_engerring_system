@@ -951,6 +951,42 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-125"></a>
+### T-125 — Tiền RA khỏi két trong ngày chưa có hạng tử nào trong phép đối soát cuối ngày
+
+**Yêu cầu:** 2026-10-01, chủ repo giao `P2A-05` (*"hãy đọc kĩ và làm"*). Phiên chỉ ra `P2A-05` bị chặn
+bởi task này; chủ repo chọn *làm `T-125` trước*. Mức **L3** (chạm tiền, chạm một invariant đã có
+test) — chia lúc nhận: phần **thiết kế và viết lại mệnh đề** làm ở đây; phần máy (câu đối chiếu của
+hạng tử) **không** thành task mới vì đã có chủ: chỗ cất số tiền đếm là `work/findings.md` **F-048**,
+câu đối chiếu là `P2A-07`. Không dòng code nào đổi. Thi công: Claude Code; **chưa có lượt duyệt** —
+chủ repo duyệt **ADR-074** trước khi `P2A-05` dựng.
+
+**Phạm vi:** `work/scope/T-125.txt`.
+
+**Hai câu đã hỏi trong phiên.** (1) Tiền rời két lúc nào — chủ repo chọn *trong ngày, trước lúc đếm
+két*; ghi ở `master_plan/shop-facts.md` §8.10 dòng `E46` · §8.7 · §7.1, ghi rõ là chủ repo trả lời
+bằng cách chọn phương án, chưa nói đó là lời chủ quán. (2) Trừ vào két ngày bán nào — *chưa biết,
+phải hỏi* ⇒ mở `U-072`.
+
+**Acceptance → bằng chứng** (đo 2026-10-01):
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| `I-021` có hạng tử *chi từ két*, điều kiện biên thứ hai viết lại thành ba đường, có kịch bản xanh/đỏ | `grep -n 'chi từ két' quality/invariants.md` |
+| `I-028` có vế thứ năm, `I-029` có vế thứ tư (loại mang nguồn); câu *chưa viết lại, chờ T-125* hết | `grep -n 'T-125' quality/invariants.md` chỉ còn dòng *thêm ở T-125* |
+| `YC-31`…`YC-33`, §9.1, tầng bảo vệ §1 · §5, `architecture.md` §6.4, `01-ranh-gioi.md` cùng lời | Gate 1c: `PASS  Gate 1c  check-doc-status — 3362 khối, 70 mã U-XXX, 21 chuyển tiếp hợp lệ.` |
+| `U-072` ở mục đang mở, brief thấy | `./scripts/brief.sh` mục *OPEN UNKNOWNS*: `U-072 — Tiền lấy khỏi két để trả điện, nước, wifi…` |
+| Không đặt tên thứ pha sau sở hữu | `PASS  Gate 1d  check-phase-boundary — 5 file .md đã soát, …` |
+| Gate xanh | `PASS  gate     không cổng nào đỏ` (db-check 11 bước, 30 file test — chạy vì file `db/` chưa track của `P2A-03`) |
+
+**Cái được nói ≠ cái suy ra** (`work/findings.md` F-004): một hạng tử chung cho ba loại; nguồn đặt
+trên **loại** chi; loại không khai nguồn không tồn tại được; chi lặt vặt không vào hạng tử — đều là
+lựa chọn của phiên, ghi ở **ADR-074** mục *Suy ra*.
+
+**Còn lại:** chủ repo duyệt **ADR-074**; `U-072` chờ chủ quán; câu đối chiếu của hạng tử chờ
+`F-048` và `U-072` (`P2A-07` ghi *vắng*). Mục bàn giao của `P2A-04` ở `work/backlog_AD_DB.md` còn
+nói *nối két — task `T-125`*: đó là lịch sử lúc viết, để nguyên.
+
 <a id="t-124"></a>
 ### T-124 — Chủ quán trả lời sáu câu, mà năm câu vẫn nằm ở mục đang mở
 

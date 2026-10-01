@@ -98,21 +98,27 @@ khối dưới đây nói **hành vi** — thứ mục này sở hữu — của
   lại tổng khi mua thêm, **không** giữ ngưỡng, **không** kết luận *thiếu* hay *sắp hết*, **không**
   nhắc. Việc hỏng · đổ · cháy giữa buổi hôm nay không ai ghi (câu `B20`): đó là thực tế quán, mục
   này **không** biến nó thành một thao tác ghi trên máy, cũng không cấm có nó sau này.
-- **Chấm công — nhân viên tự bấm, và chấm muộn không sinh khoản trừ** (§8.7, `C31` · `C32`). Máy
-  ghi lần chấm của từng người; một lần chấm muộn **không** sinh ra khoản trừ nào. Muộn bao nhiêu
-  phút thì ghi nhận là muộn, và nghỉ có báo trước có bị trừ không, thì **chưa có lời** (`C32` ·
-  `C30`). Một lần chấm là **một ô *có đi làm* do chủ quán tick** (chủ quán chốt 2026-09-30, trả lời
-  U-065) — lời ấy va với chữ *nhân viên tự bấm* của `C31`, nên **ai** đánh dấu và một ô là ngày hay
-  buổi còn là [99-unknowns.md](../../99-unknowns.md) **U-069**. Chấm công **không** thay mốc đổi người ở quầy
-  của lời `C36`: hai việc khác nhau (§8.8).
+- **Chấm công — chủ quán tick một ô *có đi làm* cho từng người từng ngày, và không ô nào sinh
+  khoản trừ** (§8.7, lời đóng `U-065` · `U-069` ngày 2026-09-30; `C32`). Chủ quán tick hết, nhân
+  viên **không** bấm — lời này thay `C31` ở vế người đánh dấu. Mỗi người mỗi ngày **một** ô: không
+  có ô theo buổi, không có mốc lúc tới hay lúc về. Máy ghi ô ấy của ai, ngày nào, ai tick và lúc
+  tick; **không** ô nào sinh ra khoản trừ. Muộn bao nhiêu phút thì ghi nhận là muộn, và nghỉ có báo
+  trước có bị trừ không, thì **chưa có lời** (`C32` · `C30`). Tick nhầm thì **huỷ** ô ấy bằng một nút
+  huỷ, có phần ghi chú để sau kiểm lại; ô đã huỷ không biến mất (lời đóng `U-070`, 2026-09-30). Ghi
+  chú có bắt buộc không và ai được bấm huỷ thì chưa có lời —
+  [99-unknowns.md](../../99-unknowns.md) **U-071**. Chấm công **không** thay mốc đổi người ở
+  quầy của lời `C36`: hai việc khác nhau (§8.8).
 - **Tạm ứng và thưởng — mỗi khoản là một lần đưa tiền có người nhận và có ngày** (§8.7, `C28` ·
   `C29`). Tạm ứng phải có **chủ quán duyệt**. Hai loại khoản này **không** phải tiền bán hàng và
   không thao tác nào ở §2–§6 sinh ra chúng. Tiền lấy **từ két bán hàng** (chủ quán chốt 2026-09-30, trả lời
-  U-067); khoản ấy trừ vào hay cộng vào lương thế nào cũng chưa có lời (`C26` · `C33`).
+  U-067), **trong ngày, trước lúc đếm két** (2026-10-01), nên mỗi khoản vào phép đối soát két cuối
+  ngày (`quality/invariants.md` `I-021`); tính vào két của ngày bán nào thì chưa có lời —
+  [99-unknowns.md](../../99-unknowns.md) **U-072**. Khoản ấy trừ vào hay cộng vào lương thế nào cũng chưa có lời (`C26` · `C33`).
 - **Khoản chi ngoài tiền hàng và lương — ghi từng khoản theo loại** (§8.10, `E44` · `E45`). Danh
   sách loại là thứ quán kể thêm dần. **Tiền hàng và lương không ghi thành khoản chi.** Điện, nước, wifi,
-  xăng xe trả **từ két bán hàng** (chủ quán chốt 2026-09-30, trả lời U-066), chi lặt vặt bằng tiền
-  riêng của chủ quán (`E46`); lãi/lỗ theo ngày,
+  xăng xe trả **từ két bán hàng** (chủ quán chốt 2026-09-30, trả lời U-066), **trong ngày, trước
+  lúc đếm két** (2026-10-01), nên vào phép đối soát két như tạm ứng; mỗi loại chi mang nguồn tiền
+  của nó, và thêm loại mới là hỏi nguồn cùng lúc. Chi lặt vặt bằng tiền riêng của chủ quán (`E46`); lãi/lỗ theo ngày,
   tiền cuối buổi mang về nhà và báo thuế vẫn **chưa** có hành vi nào ở đây.
 
 Bốn khối này **không** đổi câu ngay trên: chúng là hành vi của từng lời đã có, không phải *mức sâu*

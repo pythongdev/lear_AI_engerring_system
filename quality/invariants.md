@@ -808,7 +808,7 @@ số âm: với mọi bàn và mọi thành phần, *còn thiếu* = đã gọi 
 
 *Phát hiện ở BA-12, 2026-09-03.*
 
-### I-021 — Tiền mặt đếm được trong két cuối ngày trừ đi TIỀN ĐẦU KÉT phải bằng doanh thu tiền mặt của ngày bán đó, sau khi bù các lần hoàn CHÉO phương thức, nợ cũ thu bằng tiền mặt và khoản TRẢ TRƯỚC
+### I-021 — Tiền mặt đếm được trong két cuối ngày trừ đi TIỀN ĐẦU KÉT phải bằng doanh thu tiền mặt của ngày bán đó, sau khi bù các lần hoàn CHÉO phương thức, nợ cũ thu bằng tiền mặt, khoản TRẢ TRƯỚC và tiền CHI từ két
 
 **Invariant:**
 Với mỗi **ngày bán** (định nghĩa ở `docs/product/1-system-design/02-thoi-gian-ngay-ban.md`, pha 1):
@@ -822,7 +822,20 @@ Với mỗi **ngày bán** (định nghĩa ở `docs/product/1-system-design/02-
       +  (trả trước nhận bằng TIỀN MẶT trong ngày)
       −  (phần TIỀN MẶT của trả trước đã thành doanh thu trong ngày)
       −  (trả trước trả lại bằng TIỀN MẶT trong ngày)
+      −  (tiền lấy khỏi két trong ngày để trả một KHOẢN CHI, một khoản TẠM ỨNG hay một khoản THƯỞNG)
 ```
+
+*Thêm hạng tử cuối 2026-10-01 (T-125, `docs/decisions.md` **ADR-074**).* Chủ quán chốt 2026-09-30
+rằng điện, nước, wifi, xăng xe, tạm ứng và thưởng đều lấy **từ két bán hàng** (`U-066` · `U-067`,
+`master_plan/shop-facts.md` §8.7 · §8.10), và 2026-10-01 tiền ấy được xác nhận rời két **trong
+ngày, trước lúc đếm két cuối ngày** (§8.10). Hạng tử gồm: **mọi** khoản tạm ứng và **mọi** khoản
+thưởng của `I-028`, và mọi khoản chi của `I-029` mà **loại** của nó mang nguồn *két bán hàng*. Chi
+lặt vặt bằng tiền riêng của chủ quán (`E46`) **không** đứng ở đây — nó là tiền hàng, không phải
+khoản chi, và không rời két. Mỗi khoản trong hạng tử đã có người đứng tên — người ghi, và với tạm
+ứng thêm người duyệt — nên hạng tử mở ra được thành danh sách từng khoản như mọi hạng tử khác.
+⛔ **Khoản ấy trừ vào két của NGÀY BÁN NÀO chưa có lời** — ngày tiền rời két hay ngày người ghi khai
+cho khoản: **U-072** (`docs/product/99-unknowns.md`). Mệnh đề giữ vế *mỗi khoản rời két trừ vào
+đúng MỘT ngày bán*; luật chọn ngày ấy chờ lời, không tự đặt.
 
 *Thêm bốn hạng tử cuối 2026-09-28 (T-112, `docs/decisions.md` **ADR-059**, đóng
 `work/findings.md` **F-037**).* Ba hạng tử trả trước là phần tiền mặt của ba dòng trả trước trong
@@ -852,11 +865,13 @@ Ba điều kiện biên của cùng mệnh đề:
 - **Mỗi ngày bán có đúng MỘT con số tiền đầu két** — mặc định cố định, sửa được
   (`shop-facts.md` §8.5). Một ngày **không có** con số ấy thì phép trừ không chạy được, và ngày ấy
   **chưa** đối soát xong; nó không được coi là *"lệch"*.
-- **Hai đường duy nhất làm tiền két vơi trong buổi mà doanh thu tiền mặt không chứa là một lần hoàn
-  tiền MẶT cho khoản đã CHUYỂN KHOẢN và một lần trả lại TIỀN MẶT cho khoản trả trước chưa thành
-  doanh thu** — cả hai đã có hạng tử ở trên (đường thứ hai thêm 2026-09-28, **ADR-059**). Quán **không** có
-  nghiệp vụ nộp bớt tiền giữa buổi (chủ quán chốt 2026-09-04, `A4` ⇒ §8.5), nên ngoài hạng tử ấy
-  **không** có khoản rút nào phải cộng lại. Mỗi lần hoàn chéo phải đọc ra được từ vết hoàn tiền —
+- **Ba đường duy nhất làm tiền két vơi trong buổi mà doanh thu tiền mặt không chứa là một lần hoàn
+  tiền MẶT cho khoản đã CHUYỂN KHOẢN, một lần trả lại TIỀN MẶT cho khoản trả trước chưa thành
+  doanh thu, và một lần lấy tiền khỏi két để trả một khoản chi, tạm ứng hay thưởng** — cả ba đã có
+  hạng tử ở trên (đường thứ hai thêm 2026-09-28, **ADR-059**; đường thứ ba thêm 2026-10-01,
+  **ADR-074**, viết lại điều kiện này đúng như nó tự đòi). Quán **không** có nghiệp vụ nộp bớt tiền
+  giữa buổi (chủ quán chốt 2026-09-04, `A4` ⇒ §8.5) — lời ấy vẫn đứng: lấy tiền để **trả một khoản
+  có tên** không phải nộp bớt —, nên ngoài các hạng tử ấy **không** có khoản rút nào phải cộng lại. Mỗi lần hoàn chéo phải đọc ra được từ vết hoàn tiền —
   vết ấy nay ghi cả **phương thức trả lại** (§6.4) — nên hai hạng tử mới mở ra được thành danh sách
   từng khoản có người đứng tên, không phải một con số tự khai lúc đếm két. Nếu một ngày quán có
   thêm một đường tiền rời két nữa thì công thức lại **thiếu một hạng tử**, và invariant này phải
@@ -908,6 +923,13 @@ Doanh thu thứ Hai **không** chứa 50.000 của B, doanh thu thứ Ba **khôn
 (`I-014`). Kịch bản **trả nợ bằng tiền mặt**: cùng ngày cơ sở, bàn 5 trả **100.000** nợ của hôm
 trước bằng tiền mặt ⇒ két **2.100.000**, phép trừ ra **900.000**; vế phải 800.000 + 100.000 ⇒
 **xanh**; bỏ hạng tử ấy ⇒ lệch **100.000** ⇒ phải **đỏ**.
+Kịch bản **chi từ két** (thêm 2026-10-01, ADR-074): cùng ngày cơ sở, giữa buổi chủ quán lấy
+**300.000** trong két trả tiền điện và đưa một người làm **200.000** tạm ứng có chủ quán duyệt ⇒ két
+đếm được **1.500.000**, phép trừ ra **300.000**; vế phải 800.000 − 300.000 − 200.000 = **300.000** ⇒
+**xanh**. Bỏ hạng tử ấy ⇒ lệch **500.000** ⇒ phải **đỏ**, và hạng tử mở ra được thành **hai** khoản
+có người ghi. Cùng ngày mà tiền điện ghi dưới một loại chi mang nguồn *không phải két* ⇒ vế phải
+**600.000**, lệch **300.000** ⇒ **đỏ** — đúng: tiền đã rời két mà sổ nói không. Một lần mua quất
+bằng tiền riêng ⇒ **không** vào hạng tử, két không đổi.
 
 ⛔ **Phép đếm ở vế trái còn một câu chưa có lời: đếm MỘT TỔNG hay đếm TỪNG MỆNH GIÁ** — **U-038**
 (`docs/product/99-unknowns.md`). Invariant này đúng cho cả hai đường ra, nhưng *cách chứng minh nó*
@@ -918,6 +940,7 @@ giá trước khi U-038 có lời.
 *Phát hiện ở T-056, 2026-09-04, từ lời chủ quán trả lời `A3` và `A4`.*
 *Viết lại ở T-073, 2026-09-15, từ lời chủ quán trả lời `U-044` (2026-09-08).*
 *Thêm bốn hạng tử ở T-112, 2026-09-28 — ba cho khoản trả trước (`U-036`, ADR-040), một cho nợ cũ thu bằng tiền mặt; `docs/decisions.md` **ADR-059**.*
+*Thêm hạng tử chi từ két ở T-125, 2026-10-01 — từ lời `U-066` · `U-067` (2026-09-30) và lời *trong ngày, trước lúc đếm két* (2026-10-01); `docs/decisions.md` **ADR-074**; ngày bán của khoản chờ **U-072**.*
 
 ### I-022 — Một đơn mang đi không tồn tại được khi thiếu một trường liên hệ bắt buộc của kênh và cách trao hàng của nó
 
@@ -1146,7 +1169,9 @@ cất một ngưỡng, một định lượng suất, hay một kết luận thi
 
 *Viết ở P2A-01, 2026-09-30, Claude Code — từ lời chủ quán đã có ở `shop-facts.md` §8.4; không câu
 nào phải hỏi thêm. Vế **lúc gõ vào máy** đứng cạnh **ngày của con số** là cách đọc của phiên viết
-cho chữ *thời gian nhập* (`docs/product/99-unknowns.md` **U-068**), không phải lời chủ quán.*
+cho chữ *thời gian nhập*, không phải lời chủ quán. **2026-09-30 (`P2A-03`):** chủ quán đóng `U-068` —
+*thời gian nhập* là **lúc hàng mua về**, tức vế **ngày của con số**; vế lúc gõ vào máy đứng nguyên
+như vết *ai nhập, khi nào*.*
 
 ### I-026 — Tổng đã nhập, tổng đã dùng và hiệu số của một thứ luôn bằng ĐÚNG phép cộng các con số ngày của nó; cộng dồn từ ngày mua, không bao giờ đặt lại
 
@@ -1193,55 +1218,75 @@ hiện ra bằng tổng cộng lại từ các con số ngày.
 
 *Viết ở P2A-01, 2026-09-30, Claude Code. Hai chỗ suy ra ghi rõ ở mục Why.*
 
-### I-027 — Mỗi lần chấm công thuộc ĐÚNG MỘT người của quán và mang mốc giờ của nó; một lần chấm muộn không sinh ra khoản trừ nào
+### I-027 — Mỗi ô *có đi làm* thuộc ĐÚNG MỘT người của quán và ĐÚNG MỘT ngày, mang tên người đã tick; một người một ngày không có hai ô còn hiệu lực; ô tick nhầm được HUỶ chứ không biến mất; không ô nào sinh ra khoản trừ
 
 **Invariant:**
-Mệnh đề của mức 2 mảng con người (`master_plan/shop-facts.md` §8.7). Ba vế:
+Mệnh đề của mức 2 mảng con người (`master_plan/shop-facts.md` §8.7). Năm vế:
 
-- **Một lần chấm, đúng một người, và người ấy là người của quán.** Người được chấm công thuộc cùng
-  tập người mà mức 1 đếm (`shop-facts.md` §3 · §8.7) — không có danh sách người thứ hai. Một lần
-  chấm không gắn với người nào không tồn tại được.
-- **Mỗi lần chấm mang mốc giờ của nó**, đọc lại được sau nhiều ngày: *người này, ngày này, đã chấm
-  lúc nào*.
-- **Một lần chấm muộn không sinh ra khoản trừ nào.** Đi muộn không bị trừ tiền (`C32`); không
-  đường nào đi từ một lần chấm công tới một khoản trừ tiền.
+- **Một ô, đúng một người, và người ấy là người của quán.** Người được chấm công thuộc cùng tập
+  người mà mức 1 đếm (`shop-facts.md` §3 · §8.7) — không có danh sách người thứ hai. Một ô không
+  gắn với người nào không tồn tại được.
+- **Một ô, đúng một ngày; một người trong một ngày có nhiều nhất một ô còn hiệu lực.** Chủ quán chốt *mỗi người
+  mỗi ngày một ô* (lời đóng `U-069`, 2026-09-30): không có ô theo buổi, không có mốc lúc tới hay
+  lúc về. Đọc lại được sau nhiều ngày: *người này, ngày này, có đi làm*.
+- **Mỗi ô mang tên người đã tick và lúc tick, và người tick là chủ quán.** Chủ quán tick hết; nhân
+  viên không bấm (lời đóng `U-065` · `U-069`, 2026-09-30, thay `C31` ở vế này).
+- **Ô tick nhầm được huỷ, và ô đã huỷ không biến mất.** Chủ quán chốt một *nút huỷ, có phần ghi chú
+  để sau kiểm lại* (lời đóng `U-070`, 2026-09-30). Một ô đã huỷ ở lại, đọc ra được **ai huỷ**, **lúc
+  huỷ** và **ghi chú** nếu có; nó không còn tính là *có đi làm*. Không ô nào bị xoá, và người hay
+  ngày của một ô không đổi được — tick nhầm thì huỷ rồi tick ô đúng.
+- **Không ô nào sinh ra khoản trừ.** Đi muộn không bị trừ tiền (`C32`); không đường nào đi từ một ô
+  chấm công tới một khoản trừ tiền.
 
-**Mệnh đề không nói** một lần chấm công gồm **những mốc nào** — một lần lúc tới, lúc tới và lúc về,
-hay theo buổi. Câu ấy (`docs/product/99-unknowns.md` **U-065**) đã đóng 2026-09-30 bằng lời *một ô
-"có đi làm" do chủ quán tick*, nhưng lời ấy va với `C31` ở vế **ai bấm**, nên mệnh đề **chưa** được
-viết lại theo nó: chỗ va là **U-069**, và chừng nào câu ấy chưa có lời thì vế *mang mốc giờ* và giới
-hạn *nhân viên tự bấm* ở trên đọc như lời của `C31`, chưa phải lời cuối. Nó không nói **muộn bao nhiêu
-phút thì ghi nhận là muộn** — `C32` chưa nêu ngưỡng ấy, nên mệnh đề không cấm và cũng không đòi một
-ngưỡng; chưa có lời thì không có chỗ cất để sẵn cho nó (kế hoạch lược đồ admin §3 điểm 2). Nó không
-nói về **ngày nghỉ**: `C30` chốt nghỉ đột xuất không trừ tiền và chưa rõ vế nghỉ có báo trước, và
-một ngày nghỉ không phải một lần chấm. Nó cũng không nói công đổi ra lương thế nào (`C26` · `C33`).
+**Mệnh đề không nói** ghi chú của một lần huỷ có **bắt buộc** không, và không nói **ai** được bấm huỷ
+— lời chủ quán chỉ nói *có* phần ghi chú (`docs/product/99-unknowns.md` **U-071**); chừng nào câu ấy
+chưa có lời thì một lần huỷ không ghi chú vẫn là một lần huỷ, và người huỷ chỉ cần là người của quán.
+Nó không nói huỷ rồi có được **tick lại** đúng người, đúng ngày ấy không: mệnh đề chỉ giữ *nhiều nhất
+một ô còn hiệu lực*, nên một ô mới sau khi ô cũ đã huỷ không bị cấm. Nó không nói chủ quán có được tick **bù cho
+một ngày đã qua** hay không: ngày của ô và lúc tick là hai thứ đọc riêng, mệnh đề không buộc chúng
+trùng nhau. Nó không nói **muộn bao nhiêu phút thì ghi nhận là muộn** — `C32` chưa nêu ngưỡng ấy, và
+một ô ngày không mang giờ tới nên không có gì để so; chưa có lời thì không có chỗ cất để sẵn cho nó
+(kế hoạch lược đồ admin §3 điểm 2). Nó không nói về **ngày nghỉ**: `C30` chốt nghỉ đột xuất không
+trừ tiền và chưa rõ vế nghỉ có báo trước, và một ngày không có ô không phải một ngày nghỉ đã ghi. Nó
+cũng không nói một ô ngày đổi ra lương thế nào (`C26` nói *theo buổi và theo tuần*, `C33`).
 
-**Giới hạn đã biết:** chủ quán chốt **nhân viên tự bấm** (`C31`), nhưng máy không ngăn được một
-người bấm hộ người khác trên cùng một máy — cùng hình với chỗ đứng dùng chung của `I-012`. Cái máy
-giữ là mỗi lần chấm có **một** tên và **một** mốc.
+**Giới hạn đã biết:** chủ quán chốt **chủ quán tick hết**, nhưng máy không ngăn được một người khác
+tick trên chiếc máy chủ quán đang mở — cùng hình với chỗ đứng dùng chung của `I-012`. Cái máy giữ là
+mỗi ô có **một** người được chấm, **một** ngày và **một** tên người tick; mỗi lần huỷ có **một** tên
+người huỷ.
 
 **Why:**
-Mức 3 — tính lương trên máy — sẽ đứng trên sổ công này (`shop-facts.md` §8.7). Một lần chấm không
-có người, hoặc gắn vào một người không thuộc tập người của quán, là một buổi công không ai được trả
-hoặc được trả hai lần. Vế *chấm muộn không sinh khoản trừ* chống đúng cách dựng dễ nghĩ ra nhất:
-một khoản trừ tự sinh khi mốc chấm rơi sau giờ mở bán, trong khi lời chủ quán nói ngược lại.
+Mức 3 — tính lương trên máy — sẽ đứng trên sổ công này (`shop-facts.md` §8.7). Một ô không có
+người, hoặc gắn vào một người không thuộc tập người của quán, là một ngày công không ai được trả;
+hai ô cho cùng một người cùng một ngày là một ngày công được trả hai lần. Tên người tick là thứ duy
+nhất cho phép hỏi lại *ai đã đánh dấu ngày này* khi người làm và chủ quán nhớ khác nhau. Vế *không ô
+nào sinh khoản trừ* chống đúng cách dựng dễ nghĩ ra nhất: một khoản trừ tự sinh khi một người không
+có ô hay tới muộn, trong khi lời chủ quán nói ngược lại.
 
 **Verification:**
-Kịch bản âm: tạo một lần chấm công không gắn người nào ⇒ **bị từ chối**; tạo một lần chấm cho một
-người không có trong tập người của quán ⇒ **bị từ chối**; tạo một lần chấm không có mốc giờ ⇒ **bị
-từ chối**. Kịch bản dương: một người chấm lúc 06:20, sau giờ mở bán ⇒ lần chấm **được nhận**, không
-khoản trừ nào sinh ra. Kiểm ngược: mọi lần chấm có đúng một người và một mốc; và đọc lược đồ ⇒
-không đường nào đi từ một lần chấm tới một khoản trừ.
+Kịch bản âm: tạo một ô không gắn người nào ⇒ **bị từ chối**; tạo một ô cho một người không có trong
+tập người của quán ⇒ **bị từ chối**; tạo một ô không có ngày ⇒ **bị từ chối**; tạo một ô không có
+người tick ⇒ **bị từ chối**; tạo ô thứ hai cho cùng một người cùng một ngày ⇒ **bị từ chối**. Kịch
+bản huỷ: chủ quán huỷ một ô kèm ghi chú ⇒ ô **vẫn còn**, đọc ra ai huỷ, lúc huỷ, ghi chú, và không
+còn tính là có đi làm; tick lại đúng người, đúng ngày ấy ⇒ **được nhận**; một lần huỷ không có người
+huỷ ⇒ **bị từ chối**; xoá một ô, hay đổi người hoặc ngày của nó ⇒ **bị từ chối**. Kịch
+bản dương: chủ quán tick cho hai người ngày 2026-09-21 và cho một trong hai người ngày 2026-09-22 ⇒
+ba ô **được nhận**, đọc lại đúng ai có đi làm ngày nào và ai đã tick; không khoản trừ nào sinh ra.
+Kiểm ngược: mọi ô có đúng một người, một ngày và một người tick là chủ quán; không cặp (người, ngày)
+nào có hơn một ô còn hiệu lực; mọi ô đã huỷ có người huỷ và lúc huỷ; và đọc lược đồ ⇒ không
+đường nào đi từ một ô tới một khoản trừ, không chỗ nào cất giờ tới hay một ngưỡng đi muộn.
 
-*Viết ở P2A-01, 2026-09-30, Claude Code — từ lời chủ quán `C31` · `C32` (2026-09-25). Bản đầu trong
-cùng lượt viết rộng hơn lời — cấm cả ngưỡng phút đi muộn và kéo cả ngày nghỉ vào; Codex chỉ ra khi
-đối chiếu nguồn, và bản này thu lại đúng bằng lời đã có.*
+*Viết ở P2A-01, 2026-09-30, Claude Code — từ lời chủ quán `C31` · `C32` (2026-09-25); bản ấy nói
+*nhân viên tự bấm, mỗi lần chấm một mốc giờ*. **Viết lại ở P2A-03, 2026-09-30, Claude Code** — theo
+lời chủ quán đóng `U-065` và `U-069` cùng ngày: chủ quán tick, mỗi người mỗi ngày một ô; vế mốc giờ
+của lần chấm thành vế ngày của ô và lúc tick. **Thêm vế huỷ cùng ngày**, theo lời chủ quán đóng
+`U-070`: bản viết lại đầu tiên nói *không có đường gỡ một ô*.*
 
 ### I-028 — Mỗi khoản tạm ứng và mỗi khoản thưởng đọc ra được CỦA AI · BAO NHIÊU · LÚC NÀO; một khoản tạm ứng không tồn tại được khi không có người duyệt; khoản đã ghi không bị sửa đè
 
 **Invariant:**
 Mệnh đề cho hai loại tiền chủ quán đưa cho người làm (`master_plan/shop-facts.md` §8.7, `C28` ·
-`C29`). Bốn vế:
+`C29`). Năm vế:
 
 - **Mỗi khoản đủ ba câu.** Một khoản tạm ứng hay một khoản thưởng tồn tại thì đọc ra được nó **của
   ai** — đúng một người thuộc tập người của quán —, **bao nhiêu** — một số tiền lớn hơn 0 —, và
@@ -1251,12 +1296,14 @@ Mệnh đề cho hai loại tiền chủ quán đưa cho người làm (`master_
 - **Khoản đã ghi không sửa đè.** Sửa số tiền, người nhận hay ngày của một khoản là một lần cập nhật
   để lại bản trước, bản sau, lý do và người sửa theo `I-018`.
 - **Hai loại khoản này không phải tiền bán hàng.** Chúng không vào doanh thu của ngày nào (`I-014`).
+- **Mỗi khoản là tiền rời két bán hàng, và trừ vào phép đối soát két của đúng MỘT ngày bán**
+  (`I-021`, hạng tử *chi từ két*). Lời chủ quán: tạm ứng và thưởng lấy **từ két bán hàng**
+  (2026-09-30, đóng `U-067`), rời két **trong ngày, trước lúc đếm két** (2026-10-01,
+  `master_plan/shop-facts.md` §8.10). Không có khoản tạm ứng hay thưởng nào *không* rời két, nên vế
+  này không cần dấu nguồn tiền trên từng khoản. *Thêm 2026-10-01, T-125, **ADR-074**.*
 
-**Mệnh đề không nói** tiền tạm ứng và tiền thưởng lấy **từ đâu** — từ két hay từ tiền riêng. Câu ấy
-(`docs/product/99-unknowns.md` **U-067**) đã đóng 2026-09-30 bằng lời **từ két bán hàng**
-(`master_plan/shop-facts.md` §8.7). Mệnh đề này và phép trừ két của `I-021` **chưa** được viết lại
-theo lời ấy — việc đó là task `T-125` ở `work/backlog.md`; cho tới khi nó xong, không khoản nào ở
-đây được nối vào phép trừ két. Nó không nói khoản ấy **trừ vào hay cộng vào lương** thế nào (chờ
+**Mệnh đề không nói** khoản ấy trừ vào két của **ngày bán nào** — ngày tiền rời két hay ngày người ghi
+khai cho khoản (`docs/product/99-unknowns.md` **U-072**). Nó không nói khoản ấy **trừ vào hay cộng vào lương** thế nào (chờ
 `C26` · `C33`), không nói **ai duyệt thưởng**, và chỉ phủ **thưởng lễ Tết** — vế thưởng ngày đông
 khách của `C28` chưa có lời.
 
@@ -1273,16 +1320,19 @@ thưởng không có người nhận, có số tiền 0đ, hoặc không có ng�
 quán duyệt tạm ứng cho một người ⇒ sau nhiều ngày đọc lại được của ai, bao nhiêu, lúc nào, ai duyệt.
 Kịch bản sửa: đổi số tiền một khoản đã ghi ⇒ đọc ra được cả số cũ lẫn số mới, lý do và người sửa.
 Kiểm ngược: không khoản tạm ứng nào thiếu người duyệt, và không khoản nào của hai loại này nằm
-trong doanh thu hay trong tập tiền đã thu của một ngày.
+trong doanh thu hay trong tập tiền đã thu của một ngày. Kịch bản két: khoản tạm ứng 200.000 đưa giữa
+buổi ⇒ vào hạng tử *chi từ két* của **một** ngày bán, không ngày nào khác (kịch bản *chi từ két* ở
+`I-021`).
 
 *Viết ở P2A-01, 2026-09-30, Claude Code — từ lời chủ quán `C28` · `C29` (2026-09-25). Một chỗ suy ra
 ghi rõ ở mục Why; câu *tiền lấy từ đâu* mở thành **U-067** cùng lượt.*
+*Thêm vế thứ năm ở T-125, 2026-10-01 — từ lời đóng `U-067`; **ADR-074**.*
 
 ### I-029 — Mỗi khoản chi đọc ra được LOẠI · SỐ TIỀN · NGÀY · AI GHI; tiền hàng và lương không bao giờ là một khoản chi
 
 **Invariant:**
 *Khoản chi* ở đây là khoản chi **ngoài tiền hàng và lương** của `master_plan/shop-facts.md` §8.10
-(`E44`). Ba vế:
+(`E44`). Bốn vế:
 
 - **Mỗi khoản đủ bốn câu.** Một khoản chi tồn tại thì đọc ra được **loại** của nó, **số tiền** —
   lớn hơn 0 —, **ngày** chi, và **ai ghi**.
@@ -1292,19 +1342,25 @@ ghi rõ ở mục Why; câu *tiền lấy từ đâu* mở thành **U-067** cùn
 - **Tiền hàng và lương không đứng ở đây.** Giò, trứng, rau, quất là tiền hàng (§8.10, *Giới hạn lời
   đáp*); tiền mua hàng và tiền trả cho người làm không bao giờ được ghi thành một khoản chi, để một
   phép cộng sau này không đếm chúng hai lần.
+- **Mỗi loại mang NGUỒN TIỀN của nó — két bán hàng hay không — và khoản chi của một loại mang nguồn
+  két trừ vào phép đối soát két của đúng MỘT ngày bán** (`I-021`, hạng tử *chi từ két*). Điện,
+  nước, wifi, xăng xe mang nguồn **két bán hàng** (lời đóng `U-066`, 2026-09-30; rời két **trong
+  ngày, trước lúc đếm két**, 2026-10-01 — `master_plan/shop-facts.md` §8.10). Một loại **không mang
+  nguồn** thì không tồn tại được: `E46` nói thẳng loại chi nào ngoài bốn loại ấy *chưa nói nguồn*,
+  nên thêm một loại mới là phải hỏi nguồn của nó cùng lúc, không được để máy đoán. *Thêm
+  2026-10-01, T-125, **ADR-074**.*
 
 Và vì mỗi khoản có số tiền và ngày: **tổng chi của một khoảng ngày là phép cộng** các khoản trong
 khoảng ấy, không phải một con số ghi riêng.
 
-**Mệnh đề không nói** khoản chi trả bằng tiền nào — câu ấy (`docs/product/99-unknowns.md` **U-066**)
-đã đóng 2026-09-30: điện, nước, wifi, xăng xe trả **từ két bán hàng**
-(`master_plan/shop-facts.md` §8.10), và mệnh đề **chưa** được viết lại theo lời ấy (task `T-125` ở
-`work/backlog.md`) — cũng không nói chu kỳ của wifi và xăng xe (`E45`), hay cách phân bổ khoản tháng vào lãi/lỗ ngày (`E47`).
+**Mệnh đề không nói** khoản chi của loại mang nguồn két trừ vào két của **ngày bán nào** — ngày tiền
+rời két hay ngày chi người ghi khai (`docs/product/99-unknowns.md` **U-072**) — cũng không nói chu kỳ của wifi và xăng xe (`E45`), hay cách phân bổ khoản tháng vào lãi/lỗ ngày (`E47`).
 
 **Giới hạn đã biết:** máy giữ được rằng mỗi khoản chi **mang đúng một loại trong danh sách**. Máy
 **không ngăn được** một người gõ tiền mua trứng dưới một loại khác, và cũng không ngăn được người
 thêm vào danh sách một loại mang nghĩa tiền hàng hay lương — một cái tên loại không tự nói nó là gì.
-Cả hai chỗ ấy do người giữ.
+Cả hai chỗ ấy do người giữ. Máy cũng **không** biết nguồn khai cho một loại có đúng là nơi tiền ra
+không; khai sai thì phép trừ két của `I-021` lệch đúng bằng khoản ấy — lệch có tên, không im lặng.
 
 **Why:**
 Hệ thống cộng được mọi đồng đi **vào** quán và chưa biết một đồng nào đi **ra**. Chủ quán muốn xem
@@ -1317,10 +1373,14 @@ cộng trùng tiền hàng làm lãi/lỗ sai mà không khoản nào sai. Vế 
 Kịch bản âm: tạo một khoản chi không có loại, có số tiền 0đ, không có ngày, hoặc không có người ghi
 ⇒ **bị từ chối**; tạo một khoản chi mang một loại không có trong danh sách ⇒ **bị từ chối**. Kịch
 bản dương: ghi tiền điện và tiền xăng xe trong cùng một tuần ⇒ mỗi khoản đọc lại được đủ bốn câu, và
-tổng chi của tuần ấy bằng tổng hai khoản; thêm một loại mới vào danh sách rồi ghi một khoản thuộc
-loại ấy ⇒ **ghi được**. Kiểm ngược: không khoản chi nào thiếu loại hay mang loại ngoài danh sách;
+tổng chi của tuần ấy bằng tổng hai khoản; thêm một loại mới vào danh sách **kèm nguồn** rồi ghi một
+khoản thuộc loại ấy ⇒ **ghi được**; thêm một loại **không** khai nguồn ⇒ **bị từ chối**. Kịch bản
+két: tiền điện 300.000 lấy giữa buổi ⇒ vào hạng tử *chi từ két* của **một** ngày bán (kịch bản *chi
+từ két* ở `I-021`). Kiểm ngược: không khoản chi nào thiếu loại hay mang loại ngoài danh sách;
 còn *danh sách loại không có loại nào là tiền hàng hay lương* là một lượt **người đọc** danh sách,
 không phải một phép máy chấm được.
 
 *Viết ở P2A-01, 2026-09-30, Claude Code — từ lời chủ quán `E44` · `E45` (2026-09-25). Một chỗ suy ra
 ghi rõ ở mục Why.*
+*Thêm vế thứ tư ở T-125, 2026-10-01 — từ lời đóng `U-066`; nguồn đặt trên **loại** chứ không trên
+từng khoản là lựa chọn thiết kế, không phải lời chủ quán (**ADR-074**).*

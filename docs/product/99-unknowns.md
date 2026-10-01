@@ -15,8 +15,8 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
-  - [U-069](#u-069) — ai đánh dấu công: nhân viên tự bấm (`C31`) hay chủ quán tự tick (lời 2026-09-30)
-  - [U-068](#u-068) — *thời gian nhập* của nguyên liệu là lúc hàng mua về hay lúc gõ số vào máy
+  - [U-072](#u-072) — tiền chi, tạm ứng, thưởng lấy khỏi két: trừ vào két của ngày bán nào
+  - [U-071](#u-071) — huỷ một ô chấm công: ghi chú có bắt buộc không, và ai được bấm huỷ
   - [U-058](#u-058) — giảm giá cả đơn nhập tay: phạm vi bản đầu và giới hạn
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
@@ -36,34 +36,34 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 <a id="dang-mo"></a>
 ### Đang mở
 
-<a id="u-068"></a>
-- **U-068 — Chữ *"thời gian nhập sản phẩm"* chủ quán muốn thấy ở mục tổng quan
-  là lúc HÀNG MUA VỀ, hay lúc CON SỐ được gõ vào máy?** Mở 2026-09-30
-  (`P2A-01`, Claude Code). `master_plan/shop-facts.md` §8.4 ghi lời `U-051`
-  ngày 2026-09-16 thành *thời gian nhập của từng thứ* và không nói nghĩa nào.
-  Hai nghĩa khác nhau khi chủ quán nhập số của hôm qua vào sáng hôm nay. Hỏi
-  về cái quán, không về cái bảng: *"quán muốn nhìn thấy ngày mua thứ ấy về, hay
-  giờ con số được gõ vào máy?"* **Chủ quán** trả lời. **Không chặn bước lược đồ
-  nào:** dòng yêu cầu `YC-28` ở
-  `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §9 đòi ghi **cả hai**
-  mốc. Chặn việc chọn mốc nào được bày ở mục tổng quan §8.6 — việc của pha 4.
-  Không tự chọn một nghĩa.
+<a id="u-072"></a>
+- **U-072 — Tiền lấy khỏi két để trả điện, nước, wifi, xăng xe, tạm ứng hay
+  thưởng thì trừ vào két của NGÀY BÁN NÀO — ngày tiền rời két, hay ngày người
+  ghi khai cho khoản ấy?** Mở 2026-10-01 (`T-125`, Claude Code). Lời
+  2026-09-30 (đóng `U-066` · `U-067`) nói tiền ấy lấy *từ két bán hàng*; lời
+  2026-10-01 nói nó rời két *trong ngày, trước lúc đếm két*
+  (`master_plan/shop-facts.md` §8.10 dòng `E46`). Không lời nào nói một khoản
+  lấy tiền hôm nay mà ghi vào máy hôm sau thì thuộc két hôm nào. Hỏi về cái
+  quán, không về cái bảng: *"có khi nào lấy tiền trong két trả tiền điện hay
+  đưa tạm ứng, mà để hôm sau mới ghi lại không? Nếu có, khoản ấy tính vào két
+  của hôm lấy tiền hay hôm ghi?"* **Chủ quán** trả lời. **Không chặn lược đồ:**
+  mỗi khoản đã mang cả ngày khai lẫn lúc ghi (`docs/decisions.md` **ADR-073**
+  điểm 4, **ADR-074**), nên `P2A-05` dựng được. Chặn phép đọc hạng tử *chi từ
+  két* của `quality/invariants.md` `I-021` — câu đối chiếu của nó và màn đối
+  soát pha 3/4. Không tự chọn ngày nào.
 
-<a id="u-069"></a>
-- **U-069 — Ai đánh dấu công của một người: nhân viên tự bấm trên máy, hay chủ
-  quán tự tick — và một ô *có đi làm* là cho một ngày hay một buổi?** Mở
-  2026-09-30 (T-124, Claude Code). Hai lời của **cùng chủ quán** nói khác nhau
-  về **người bấm**: `master_plan/shop-facts.md` §8.7 câu `C31` (2026-09-25) —
-  *nhân viên tự bấm chấm công trên máy*; lời đóng `U-065` (2026-09-30) — *"chủ
-  quán tự tick vào ô có đi làm"*. Lời sau không nói nó thay lời trước, và cũng
-  không nói một ô ứng với một ngày hay một buổi (`C26` trả lương *theo buổi và
-  theo tuần*). Hỏi về cái quán, không về cái bảng: *"việc đánh dấu ai đi làm là
-  chủ quán làm hết, nhân viên không bấm gì nữa — đúng không? Và mỗi người một ô
-  cho cả ngày, hay sáng một ô chiều một ô?"* **Chủ quán** trả lời; chặn bước
-  `P2A-03` (chỗ cất chấm công) của
-  `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` và vế *ai ghi* của
-  `quality/invariants.md` `I-027`. Không tự coi lời sau thay lời trước, không
-  tự chọn ngày hay buổi.
+<a id="u-071"></a>
+- **U-071 — Khi huỷ một ô *có đi làm*, phần ghi chú có BẮT BUỘC không, và chỉ
+  chủ quán được bấm huỷ hay người khác cũng được?** Mở 2026-09-30 (`P2A-03`,
+  Claude Code). Lời đóng `U-070` cùng ngày — *"làm thêm nút huỷ, và có phần
+  note lại để sau đó có thể kiểm"* — nói **có** phần ghi chú, không nói bỏ
+  trống nó thì có huỷ được không; và không nói **ai** bấm nút ấy (lời `U-069`
+  chỉ nói chủ quán *tick*). Hỏi về cái quán, không về cái bảng: *"bấm huỷ mà
+  không ghi gì vào phần note thì có được không? Và nút huỷ chỉ chủ quán bấm,
+  hay người đứng quầy cũng bấm được?"* **Chủ quán** trả lời. **Không chặn bước
+  lược đồ nào:** lát chấm công nhận một lần huỷ không ghi chú và không xét
+  người huỷ có phải chủ quán không. Chặn việc siết hai chỗ ấy, và chặn cửa huỷ
+  của pha 3. Không tự chọn *bắt buộc* hay *chỉ chủ quán*.
 
 <a id="u-058"></a>
 - **U-058 — Phạm vi bản đầu và giới hạn của giảm giá nhập tay cho cả đơn?**
@@ -83,6 +83,10 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
   khách được giảm giá; chủ quán nhập số tiền giảm cho cả đơn”* — ba vế trên
   vẫn chưa có lời, câu **ở lại đây**. Không tự đọc bốn lần im lặng thành *không
   có trần* hay *không cần lý do*.
+  **Lần thứ năm 2026-09-30 (`P2A-03`)** vẫn đúng lời ấy — *“ghi tên khách được
+  giảm giá; chủ quán nhập số tiền giảm cho cả đơn”* — ba vế (có trong bản đầu
+  không · trần số tiền giảm · có bắt ghi lý do không) vẫn chưa có lời, câu
+  **ở lại đây**.
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
 chủ quán quyết theo tình hình thực tế, không có luật cứng.** Lượt một (T-042) đóng U-022, U-025 và
@@ -206,6 +210,30 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ quán trả lời 2026-09-30 (P2A-03, lượt hai), chủ repo chuyển nguyên văn trong hội thoại và xác
+nhận đó là lời chủ quán:**
+
+<a id="u-070"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-070 — Chủ quán tick nhầm một ô *có đi làm* thì gỡ thế nào, và lần gỡ ấy có để lại vết không~~ | “làm thêm nut huỷ, và có phần note lại để sau đó có thể kiểm”. Tick nhầm thì **huỷ** ô ấy bằng một **nút huỷ**; lần huỷ **có phần ghi chú** để sau này **kiểm lại được** — tức ô đã huỷ **không biến mất**, nó ở lại cùng ghi chú. Lời không nói ghi chú có bắt buộc không, và không nói ai được bấm huỷ ⇒ mở **U-071**; không nói huỷ rồi có tick lại được đúng ô ấy không — lát chấm công **nhận** lần tick lại, ghi là chỗ suy ra ở `docs/decisions.md` **ADR-072**. | `master_plan/shop-facts.md` §8.7 · `quality/invariants.md` `I-027` |
+
+<a id="u-068"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-068 — Chữ *"thời gian nhập sản phẩm"* ở mục tổng quan là lúc hàng mua về, hay lúc con số được gõ vào máy~~ | “lúc hàng mùa về.” Chuẩn hoá: **lúc hàng mua về**. *Thời gian nhập* của một thứ ở mục tổng quan là lúc **hàng mua về**, không phải lúc con số được gõ vào máy. Lời không nói *lúc* ấy là một **ngày** hay có cả **giờ**: sổ nguyên liệu hôm nay giữ **ngày** của con số (`YC-28`) và không tự thêm giờ. Lúc gõ vào máy vẫn được ghi — nó trả lời *ai nhập, khi nào*, không phải *thời gian nhập* bày cho chủ quán. | `master_plan/shop-facts.md` §8.4 |
+
+**Chủ quán trả lời 2026-09-30 (P2A-03), chủ repo chuyển lời trong hội thoại — bằng cách chọn
+trong hai câu hỏi có sẵn phương án, và xác nhận đó là lời chủ quán:**
+
+<a id="u-069"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-069 — Ai đánh dấu công của một người, và một ô *có đi làm* là cho một ngày hay một buổi~~ | “Chủ quán tick hết” · “Một ô cho cả ngày”. **Chủ quán** tự tick ô *có đi làm* cho **từng người**; nhân viên **không** bấm gì — lời này **thay** `C31` (*nhân viên tự bấm*) ở vế người đánh dấu. **Mỗi người mỗi ngày một ô**, không tách sáng, chiều hay buổi. Lời không nói tick nhầm thì gỡ thế nào ⇒ mở **U-070**; không nói chủ quán có tick bù cho ngày đã qua được không, và không nói một ô ngày đổi ra lương thế nào khi `C26` nói *theo buổi và theo tuần* — không tự suy. `C32` · `C35` đứng nguyên. | `master_plan/shop-facts.md` §8.7 · `quality/invariants.md` `I-027` |
 
 **Chủ quán trả lời 2026-09-30 (T-124), chủ repo chuyển lời trong hội thoại:**
 

@@ -90,6 +90,7 @@ có câu trả lời mới từ người.
 | ADR-071 | **Sổ nguyên liệu: một con số người gõ là MỘT dòng; tổng không có chỗ cất; con số là `numeric` đúng như gõ** — hai bảng (danh mục · con số ngày), mỗi con số mang người nhập, ngày và lúc gõ của riêng nó; tổng và hiệu số chỉ đọc ra bằng phép cộng; vết sửa dùng lại trigger sẵn có ở chế độ mềm; bước khoá chặn của `db-check` lùi qua các bước còn rỗng tới bước đầu tiên có dữ liệu | Đã chốt 2026-09-30 (giao cho phiên, P2A-02) | — | P2A-02 · P2A-04 · P2A-05 · P2A-06 · P2A-07 |
 | ADR-072 | **Chấm công: một ô *có đi làm* là MỘT dòng của một người một ngày; không có dòng là không có ô; ô tick nhầm được HUỶ tại chỗ, không xoá và không đổi** — một bảng, mỗi ô mang người được chấm, ngày, người tick và lúc tick; khoá duy nhất trên (người, ngày) của các ô còn hiệu lực; ô đã huỷ ở lại cùng người huỷ, lúc huỷ và ghi chú; vai ghi tick và huỷ được, không sửa người hay ngày, không xoá; *người tick là chủ quán* giữ ở tầng 3, database không xét | Đã chốt 2026-09-30 (giao cho phiên, P2A-03) | — | P2A-03 · P2A-07 · P2A-08 |
 | ADR-073 | **Tạm ứng và thưởng: HAI bảng, mỗi khoản một dòng; người duyệt là một dấu riêng chỉ tạm ứng có; vai ghi chỉ sửa được số tiền · người nhận · ngày; không cột nào nối sang két** — mỗi khoản mang người nhận, số tiền lớn hơn 0, ngày của khoản, người ghi và lúc ghi; *người duyệt là chủ quán* giữ ở tầng 3, database không xét; vết sửa ở chế độ mềm như mọi bảng (F-046); nối két chờ task `T-125` | Đã chốt 2026-09-30 (giao cho phiên, P2A-04) | — | P2A-04 · P2A-07 · P2A-08 · T-125 |
+| ADR-074 | **Tiền RA khỏi két trong ngày là MỘT hạng tử của `I-021` — *chi từ két* — gồm mọi tạm ứng, mọi thưởng và khoản chi của loại mang nguồn két; nguồn tiền nằm trên LOẠI chi, không trên từng khoản; không cột *ngày bán của két* nào trước khi `U-072` có lời** — viết lại `I-021` · `I-028` · `I-029` · `YC-31`…`YC-33` theo lời đóng `U-066` · `U-067` và lời *trong ngày, trước lúc đếm két*; không migration nào cho tạm ứng và thưởng; câu đối chiếu của hạng tử chờ `U-072` và `F-048` | Đã chốt 2026-10-01 (giao cho phiên, T-125) | — | T-125 · P2A-05 · P2A-07 · ADR-073 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -4909,3 +4910,78 @@ ghi, lúc ghi không sửa được bằng vai ghi; chủ quán cũng là một 
 `docs/product/2-db/14-luoc-do-khoan-cua-nguoi.md` · `docs/product/2-db/07-thu-tu-migration.md` §1 ·
 `quality/invariants.md` `I-028` · `docs/product/1-system-design/04-yeu-cau-du-lieu.md` `YC-31` ·
 `YC-32` · ADR-035 · ADR-053 · ADR-065 · ADR-069 · ADR-072 · `work/findings.md` F-046 · task `T-125`.
+
+### ADR-074 — Tiền RA khỏi két trong ngày là MỘT hạng tử của `I-021`; nguồn tiền nằm trên LOẠI chi; không cột *ngày bán của két* trước khi `U-072` có lời
+
+**Trạng thái:** **Đã chốt** 2026-10-01, **giao cho phiên** (Claude Code, task `T-125`) — không phải
+lời chủ repo hay chủ quán (`CLAUDE.md` §7.2); chủ repo đổi được. Lời giao 2026-10-01 là *"P2A-05 …
+hãy đọc kĩ và làm"*; phiên chỉ ra `P2A-05` bị chặn bởi `T-125`, chủ repo chọn *làm `T-125` trước*.
+Task mức **L3**: đây là bản thiết kế, **chưa có dòng code nào**; chủ repo duyệt nó trước khi
+`P2A-05` dựng lược đồ.
+
+**Context:**
+Chủ quán chốt 2026-09-30 (đóng `U-066` · `U-067`, `master_plan/shop-facts.md` §8.7 · §8.10): điện,
+nước, wifi, xăng xe, tạm ứng và thưởng lấy **từ két bán hàng**. Lời ấy không nói tiền rời két lúc
+nào; nếu lấy từ tiền cuối buổi đã mang về (`E49`) thì két đếm cuối ngày không đổi và `I-021` không
+thiếu gì. Phiên hỏi; chủ repo trả lời 2026-10-01: **trong ngày, trước lúc đếm két** (§8.10, dòng
+`E46`). Vậy điều kiện biên thứ hai của `I-021` — *chỉ hai đường làm két vơi trong buổi* — sai, và
+chính nó đòi mệnh đề **viết lại, không viết thêm**. Câu thứ hai phiên hỏi — khoản ấy trừ vào két
+của **ngày bán nào** khi lấy một hôm mà ghi hôm khác — chủ repo trả lời *chưa biết, phải hỏi*: mở
+**U-072**. Hai điều kiện ngoài: số tiền mặt đếm cuối ngày **chưa có chỗ cất** (`work/findings.md`
+**F-048**), nên phép trừ két chưa có câu đối chiếu nào chạy được; và lát tạm ứng/thưởng đã dựng
+(**ADR-073**) với ngày khai và lúc ghi, không cột nào nối két.
+
+**Decision:**
+1. **Một hạng tử mới, đứng cuối công thức `I-021`: *chi từ két*** — trừ tiền lấy khỏi két trong
+   ngày để trả một khoản chi, một khoản tạm ứng hay một khoản thưởng. Điều kiện biên thứ hai viết lại
+   thành **ba** đường. Lời `A4` (*không nộp bớt giữa buổi*) đứng nguyên.
+2. **Mọi khoản tạm ứng và thưởng vào hạng tử; không dấu nguồn tiền trên hai bảng ấy.** Lời đóng
+   `U-067` không có ngoại lệ.
+3. **Nguồn tiền nằm trên LOẠI chi, bắt buộc; khoản chi vào hạng tử khi loại của nó mang nguồn két.**
+   Bốn loại của `E44` mang nguồn két. Một loại không khai nguồn thì không tồn tại được.
+4. **Mỗi khoản rời két trừ vào ĐÚNG MỘT ngày bán; luật chọn ngày chờ `U-072`.** Lược đồ giữ **cả**
+   ngày khai lẫn lúc ghi (đã có ở `P2A-04`; `P2A-05` dựng cùng hình) và **không** dựng cột *ngày bán
+   của két*. Lời tới thì phép đọc chọn một trong hai mốc, không đổi lược đồ.
+5. **Hạng tử là phép cộng đọc thẳng các khoản, không con số tổng nào được cất** — cùng hình mọi
+   hạng tử khác của `I-021` và luật 2 của `docs/product/1-system-design/architecture.md` §6.4.
+6. **Không migration nào trong task này**, và lời *nối két bằng migration mới* của **ADR-073** điểm 8
+   không còn cần: hai bảng đã mang đủ thứ hạng tử đọc. Điểm 8 ấy giữ nguyên ý *không cột nào nối két
+   trước luật*; ADR này là luật, và nó không đòi cột.
+7. **Câu đối chiếu của hạng tử chưa viết.** Phép trừ két không có câu chạy được tới khi `F-048` có
+   chỗ cất; tập *trừ vào đúng một ngày bán* chờ `U-072`. `P2A-07` ghi chúng là *vắng, chờ câu nào*.
+
+**Why:**
+- *Điểm 1.* Không có hạng tử thì mọi ngày có trả tiền điện hay đưa tạm ứng đều đỏ đúng bằng số ấy —
+  đỏ vì một lý do ai cũng biết, đúng thứ `I-021` mục *Why* nói sẽ dạy người dùng bỏ qua ngưỡng 0đ.
+  Một hạng tử chung cho ba loại thay vì ba hạng tử: cả ba cùng chiều, cùng phương thức (tiền mặt),
+  không loại nào bù chéo với doanh thu; tách ra không cho thêm lý do lệch nào đọc được mà danh sách
+  từng khoản chưa cho.
+- *Điểm 3.* `E46` cho nguồn **theo loại** (*điện, nước, wifi, xăng xe trả từ két*) và nói thẳng loại
+  khác *chưa nói nguồn*. Đặt nguồn trên từng khoản thì mỗi lần ghi phải chọn lại một câu chủ quán đã
+  trả lời một lần, và một lần chọn nhầm làm két lệch mà không loại nào sai. Đặt trên loại thì câu
+  *nguồn của loại mới* buộc phải hỏi đúng lúc thêm loại — chỗ duy nhất nó còn mở.
+- *Điểm 4.* Hai lời đều hợp lý — ngày tiền rời két, hay ngày người ghi khai — và chọn sai thì két
+  lệch ở **hai** ngày ngược chiều. Giữ cả hai mốc rẻ hơn mọi cột đoán trước; cùng lý do **ADR-073**
+  điểm 4 và 8.
+- *Điểm 6.* Một migration không có luật để thi hành là chỗ cất sẵn (`ADR-035`).
+
+**Rejected alternatives:**
+- *Giữ `I-021` nguyên, coi khoản chi là chuyện của tiền mang về.* Bác: trái lời 2026-10-01.
+- *Ba hạng tử riêng cho khoản chi, tạm ứng, thưởng.* Bác: lý do điểm 1.
+- *Dấu nguồn tiền trên từng khoản chi.* Bác: lý do điểm 3; mở lại được nếu chủ quán nói một loại có
+  lúc trả từ két, có lúc không.
+- *Cột ngày bán của két, lấy mặc định từ lúc ghi.* Bác: chọn hộ `U-072`.
+- *Câu đối chiếu rỗng giữ chỗ.* Bác: **F-017**, và bẫy `P2A-07` *lát còn bị chặn thì ghi vắng*.
+
+**Suy ra, không phải lời chủ quán** (`CLAUDE.md` §7.2): một hạng tử chung thay vì ba; nguồn trên
+loại; *loại không khai nguồn thì không tồn tại*; chi lặt vặt bằng tiền riêng là tiền hàng nên không
+vào hạng tử (đọc từ `E45` · `E46` · *Giới hạn lời đáp* §8.10). Lời *trong ngày, trước lúc đếm két*
+là **chủ repo** trả lời trong phiên bằng cách chọn phương án; phiên chưa được nói đó là lời chủ quán
+chuyển lại — ghi đúng như thế ở §8.10.
+
+**Applies to:** `quality/invariants.md` `I-021` · `I-028` · `I-029` ·
+`docs/product/1-system-design/03-bao-ve-invariant.md` §1 · §5 ·
+`docs/product/1-system-design/04-yeu-cau-du-lieu.md` `YC-31` · `YC-32` · `YC-33` · §9.1 ·
+`docs/product/1-system-design/architecture.md` §6.4 · `docs/product/0-ba/admin/01-ranh-gioi.md` ·
+`master_plan/shop-facts.md` §8.7 · §8.10 · `docs/product/99-unknowns.md` U-072 · ADR-035 · ADR-046 ·
+ADR-059 · ADR-073 · `work/findings.md` F-017 · F-048 · task `P2A-05` · `P2A-07`.

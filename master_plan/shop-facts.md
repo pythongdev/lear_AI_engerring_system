@@ -1391,6 +1391,9 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-09-25 | Chủ quán bổ sung hàng mua và đơn vị mua, nhịp mua, người mua và nguồn mua qua B11–B17; làm rõ mộc nhĩ, túi chữ T; xác nhận trả ngay/ghi nợ và tin nhắn, chưa chốt kỳ trả nợ (T-089) | §8.4 |
 | 2026-09-28 | Chủ quán trả lời U-062 và U-060 (T-118): **chỉ chủ quán** đổi mã QR của bàn, đổi khi quán bị hack; **POS** khai và cập nhật số người thực tế đang làm ở quán. U-058 nhận lại lời cũ, vẫn mở | §6 quy tắc 2 · §8.6 |
 | 2026-09-30 | Chủ quán trả lời năm câu (T-124): **tạm ứng, thưởng** và **điện, nước, wifi, xăng xe** đều lấy **từ két bán hàng** (U-067 · U-066); một lần chấm công là **một ô *có đi làm* do chủ quán tick** (U-065 — va với `C31` ở vế người bấm, mở U-069); đồ đã làm của đơn huỷ mà không bàn nào chờ thì **POS ghi chú bánh làm sai** (U-064); khách nợ **được trả dần**, POS ghi tổng nợ, ngày giờ trả và số còn thiếu (U-063). U-058 nhận lại lời cũ lần thứ tư, vẫn mở | §8.7 · §8.10 · §5.4 · §6.14 |
+| 2026-09-30 | Chủ quán trả lời U-069 (P2A-03): **chủ quán tick hết** ô *có đi làm*, nhân viên không bấm — thay `C31` ở vế người đánh dấu; **mỗi người mỗi ngày một ô** | §8.7 |
+| 2026-09-30 | Chủ quán trả lời U-070 và U-068 (P2A-03, lượt hai): ô tick nhầm được **huỷ bằng nút huỷ, có phần ghi chú để kiểm lại**; *thời gian nhập* ở mục tổng quan là **lúc hàng mua về**. Mở U-071 (ghi chú huỷ có bắt buộc không, ai được bấm huỷ). U-058 nhận lại lời cũ lần thứ năm, vẫn mở | §8.7 · §8.4 |
+| 2026-10-01 | Tiền trả điện, nước, wifi, xăng xe, tạm ứng và thưởng **rời két trong ngày, trước lúc đếm két cuối ngày** — không lấy từ tiền cuối buổi mang về (chủ repo trả lời trong phiên T-125, chọn trong phương án có sẵn). Khoản ấy trừ vào két của ngày bán nào thì chưa nói, mở U-072 | §8.10 · §8.7 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -1636,7 +1639,9 @@ con số là cặp **mua vào · đã dùng** ở trên (`U-034`, 2026-09-06).
 - **Chủ quán đọc hai con số ấy Ở ĐÂU, và đọc con số nào — chủ quán chốt 2026-09-16, trả lời
   `U-051`.** Nguyên văn: *"thời gian nhâp sản phẩm và tổng đã sử dụng lấy thiếu bằng tổng đã nhập
   trừ đi sử dụng"*. ⇒ **mục tổng quan §8.6 bày ba thứ** cho vế nguyên liệu:
-  1. **thời gian nhập** của từng thứ — dữ kiện mới, chưa mục nào trước đây nói tới;
+  1. **thời gian nhập** của từng thứ — dữ kiện mới, chưa mục nào trước đây nói tới. **Chủ quán chốt
+     2026-09-30 (đóng `U-068`):** nguyên văn *"lúc hàng mùa về"* — tức **lúc hàng mua về**, không
+     phải lúc con số được gõ vào máy. Lời không nói *lúc* ấy là một ngày hay có cả giờ; không tự đặt;
   2. **tổng đã dùng**;
   3. **số thiếu**, và số ấy **máy tự trừ**: *thiếu = tổng đã nhập − tổng đã dùng*.
   - **Không lật §8.4, và không lật `U-045`.** Bảng *máy làm* đầu mục vốn đã cho máy *"nhận con số
@@ -1829,7 +1834,7 @@ máy — vẫn đúng cả ba chứ?*; chủ quán chọn **"Đúng, cả ba m�
 | C28 | Có thưởng lễ Tết. Chưa trả lời vế thưởng ngày đông khách. |
 | C29 | Có tạm ứng; chủ quán duyệt. |
 | C30 | Nguyên văn: “nghỉ có báo trước, nghi đột xuất không trừ tiêng.” Xác nhận nghỉ đột xuất không trừ tiền; chưa rõ vế khấu trừ khi nghỉ có báo trước. |
-| C31 | Nhân viên tự bấm chấm công trên máy. |
+| C31 | Nhân viên tự bấm chấm công trên máy. *Vế người đánh dấu **đã được thay** 2026-09-30 bởi lời đóng `U-069`: chủ quán tick hết, nhân viên không bấm — đọc mục bổ sung dưới.* |
 | C32 | Đi muộn không bị trừ tiền. Chưa nêu ngưỡng phút để ghi nhận đi muộn. |
 | C33 | Trả lương theo ngày, theo tuần. Chưa nêu mốc trả cụ thể. |
 | C34 | Chỉ chủ quán được xem bảng lương. |
@@ -1849,10 +1854,28 @@ C31 nói chấm công; U-056 ngày 2026-09-25 chốt POS khai mốc đổi ngư�
   Không có mốc lúc tới, lúc về hay bấm theo buổi nào được nêu. **Lời này va với `C31` ở vế người
   bấm** — `C31` nói *nhân viên tự bấm*, lời này nói *chủ quán tự tick* — và không nói nó thay lời
   trước. Chỗ va ấy, cùng vế một ô là một ngày hay một buổi, là `docs/product/99-unknowns.md`
-  **U-069**; chừng nào câu ấy còn mở, **không** dùng `C31` lẫn lời này để chốt *ai* đánh dấu công.
+  **U-069** — đã đóng cùng ngày; lời đóng ở mục bổ sung ngay dưới.
 - **Tiền tạm ứng (`C29`) và tiền thưởng (`C28`) lấy từ két bán hàng.** Nguyên văn: *"từ két bán
   hàng"*. Tiền ấy rời két nên chạm đối soát cuối ngày (§6.10). Lời không nói ai lấy tiền khỏi két
-  hay lấy lúc nào.
+  hay lấy lúc nào. *Bổ sung 2026-10-01 (chủ repo trả lời trong phiên T-125):* tiền rời két **trong
+  ngày, trước lúc đếm két cuối ngày** — xem dòng `E46` ở §8.10; ai lấy vẫn chưa nói.
+
+**Bổ sung 2026-09-30 — chủ quán trả lời U-069 (P2A-03).** Chủ repo chuyển lời trong hội thoại, bằng
+cách chọn trong hai câu hỏi có sẵn phương án, và xác nhận đó là lời chủ quán.
+
+- **Chủ quán tick hết; nhân viên không bấm gì.** Lời chọn: *"Chủ quán tick hết"* — chủ quán tự
+  tick ô *có đi làm* cho **từng người**. Lời này **thay** `C31` (*nhân viên tự bấm*) ở vế người
+  đánh dấu công.
+- **Mỗi người mỗi ngày một ô.** Lời chọn: *"Một ô cho cả ngày"* — không tách sáng, chiều hay buổi.
+- **Tick nhầm thì HUỶ, và lần huỷ có ghi chú để kiểm lại** — chủ quán chốt 2026-09-30 (đóng
+  `U-070`). Nguyên văn: *"làm thêm nut huỷ, và có phần note lại để sau đó có thể kiểm"*. ⇒ ô tick
+  nhầm được huỷ bằng một nút huỷ; ô đã huỷ **không biến mất**, nó ở lại cùng phần ghi chú. Lời không
+  nói ghi chú có bắt buộc không, cũng không nói ai được bấm huỷ —
+  `docs/product/99-unknowns.md` **U-071**.
+- **Lời không nói:** chủ quán
+  có tick bù cho một ngày đã qua được không; một ô ngày đổi ra lương thế nào khi `C26` nói *theo
+  buổi và theo tuần*. Không tự suy vế nào. `C32` (đi muộn không trừ tiền) và `C35` (nhân viên xem
+  công của chính mình) đứng nguyên.
 
 **Người mà ba mức này đếm là người của §3, không phải một danh sách thứ hai.** Bốn vai cộng chủ
 quán (§3, chốt 2026-08-30 và 2026-09-08) là tập người duy nhất; mục này **không** giữ bảng người
@@ -1953,7 +1976,7 @@ không tự cho khách gửi giá hoặc cho người đứng quầy đặt giá
 |---|---|
 | E44 | Ngoài tiền hàng và lương, các khoản chi được nêu là điện, nước, wifi, xăng xe. |
 | E45 | Điện, nước là khoản cố định hằng tháng; giò, trứng, rau, quất là các khoản mua lặt vặt trong ngày. “Cố định” ở đây chưa chốt số tiền không đổi. |
-| E46 | Chi lặt vặt dùng tiền riêng của chủ quán. Điện, nước, wifi, xăng xe trả **từ két bán hàng** (chủ quán chốt 2026-09-30, trả lời U-066; nguyên văn “từ két bán hàng”). Khoản chi nào ngoài các khoản vừa kể thì chưa nói nguồn. |
+| E46 | Chi lặt vặt dùng tiền riêng của chủ quán. Điện, nước, wifi, xăng xe trả **từ két bán hàng** (chủ quán chốt 2026-09-30, trả lời U-066; nguyên văn “từ két bán hàng”). Tiền ấy — cùng tiền tạm ứng và thưởng của §8.7 — rời két **trong ngày, trước lúc đếm két cuối ngày**, không phải lấy từ tiền cuối buổi đã mang về nhà (chủ repo trả lời 2026-10-01 trong phiên T-125, bằng cách chọn trong các phương án có sẵn). Lấy vào két của ngày bán nào khi tiền lấy một hôm mà ghi hôm khác thì chưa nói (`U-072`). Khoản chi nào ngoài các khoản vừa kể thì chưa nói nguồn. |
 | E47 | Muốn xem lãi/lỗ theo ngày. |
 | E48 | Muốn biết cả món bán chạy và giờ đông khách. |
 | E49 | Tiền cuối buổi để ở nhà; cần ghi lại đường đi của khoản tiền đó. |

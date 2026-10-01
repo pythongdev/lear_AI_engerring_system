@@ -354,7 +354,16 @@ tiền thực nhận trong ngày  ( mặt + chuyển khoản, đếm được tr
   −  trả trước thành doanh thu     phần đã trả trước của hoá đơn đóng hôm nay ⇒ két thiếu
   −  trả lại trả trước trong ngày  đơn đã trả trước bị huỷ/bớt TRƯỚC khi đóng ⇒ tiền rời quán
   −  hoàn tiền trong ngày          từng khoản có vết: ai, lý do, TRẢ LẠI BẰNG GÌ (§6.4)
+  −  chi từ két trong ngày         điện, nước, wifi, xăng xe, tạm ứng, thưởng lấy khỏi két ⇒ két thiếu
 ```
+
+**Dòng *chi từ két* là tiền RA không phải hoàn tiền** (thêm 2026-10-01, T-125, `docs/decisions.md`
+**ADR-074**). Chủ quán chốt khoản chi ngoài tiền hàng và lương, tạm ứng và thưởng lấy **từ két bán
+hàng**, **trong ngày, trước lúc đếm két** (`shop-facts.md` §8.7 · §8.10). Mỗi khoản có người ghi
+(luật 2 dưới đây); khoản chi chỉ vào dòng này khi **loại** của nó mang nguồn két. Khoản ấy thuộc
+dòng của ngày bán nào khi tiền lấy một hôm mà ghi hôm khác thì chưa có lời — `U-072`
+(`docs/product/99-unknowns.md`). Phần tiền mặt của dòng này là hạng tử *chi từ két* của
+`quality/invariants.md` **I-021**.
 
 **Ba dòng trả trước là chiều ngược của hai dòng nợ** (thêm 2026-09-28, T-112, `docs/decisions.md`
 **ADR-059**, đóng `work/findings.md` **F-037**). Chủ quán chốt 2026-09-06 (`shop-facts.md` §6.26):

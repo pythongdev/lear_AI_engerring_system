@@ -598,8 +598,11 @@ ADR-073 chưa có lời chủ repo. (5) `YC-31` · `YC-32` chưa vào bộ chấ
 <a id="p2a-05"></a>
 ### P2A-05 — Hệ thống cộng được mọi đồng đi VÀO quán và chưa biết một đồng nào đi RA
 
-**Phụ thuộc** · bước 5/9 · **cần xong trước:** `P2A-01` · **task `T-125`** (`work/backlog.md`).
+**Phụ thuộc** · bước 5/9 · **cần xong trước:** `P2A-01` · task `T-125` (**xong 2026-10-01**) ·
+**chủ repo duyệt `docs/decisions.md` ADR-074** — T-125 mức L3, thiết kế phải được duyệt trước code.
 *2026-09-30 (T-124):* `U-066` đã đóng — điện, nước, wifi, xăng xe trả *từ két bán hàng*.
+*2026-10-01 (T-125):* tiền ấy rời két *trong ngày, trước lúc đếm két*; `I-029` có vế thứ tư — mỗi
+**loại** chi mang nguồn tiền, bắt buộc; `YC-33` đòi đọc ra nguồn của loại và lúc ghi của khoản.
 
 **Goal:**
 Xong rồi thì mỗi khoản chi ngoài tiền hàng và lương đọc lại được — loại, số tiền, ngày, ai ghi —
@@ -616,9 +619,9 @@ Chủ quán muốn xem lãi/lỗ (`E47`); vế *chi* của phép tính ấy chư
 - Lãi/lỗ sau này chỉ có vế thu.
 - Khoản chi hằng tháng nằm trong tin nhắn và trí nhớ.
 
-**Bị chặn — hỏi gì trước.** Không còn câu hỏi nào: `U-066` đã đóng 2026-09-30 và lời là *từ két*,
-tức khoản chi **chạm** phép đối soát cuối ngày (`quality/invariants.md` **I-021**). Thứ chặn nay là
-task `T-125` — viết vế ấy vào `I-021` · `I-029` trước khi dựng chỗ cất.
+**Bị chặn — hỏi gì trước.** Không câu hỏi nào chặn lược đồ. `U-072` (khoản rời két trừ vào két của
+ngày bán nào) còn mở nhưng **không** chặn: lát giữ cả ngày khai lẫn lúc ghi (**ADR-074** điểm 4).
+Thứ chặn là lượt chủ repo duyệt **ADR-074**.
 
 **Bẫy hay sửa nhầm nhất:**
 - **Tiền hàng không vào đây.** §8.10 cấm cộng trùng giò, trứng, rau, quất với mua hàng.
@@ -627,7 +630,9 @@ task `T-125` — viết vế ấy vào `I-021` · `I-029` trước khi dựng ch
 - **Chữ *cố định hằng tháng* không phải số tiền cố định.**
 - **Cột tiền mới ⇒ một dòng ở ngày bán mẫu, cùng thay đổi.** `db/reconcile/proof/qd21_so_am.sql` thử
   `-1` trên một dòng thật của mọi bảng có cột `_vnd`; bảng rỗng ở `db/reconcile/proof/baseline.sql` làm
-  `db-check` đỏ (`work/findings.md` **F-054**, 2026-10-01). Dòng thêm vào không được nối két trước `T-125`.
+  `db-check` đỏ (`work/findings.md` **F-054**, 2026-10-01).
+- **Không cột *ngày bán của két*, không dấu nguồn trên từng khoản** — nguồn ở **loại**; ngày bán chờ
+  `U-072` (**ADR-074** điểm 3 · 4). Bốn loại của `E44` mang nguồn két; loại thêm sau phải khai nguồn.
 
 [↑ đầu file](#top)
 
