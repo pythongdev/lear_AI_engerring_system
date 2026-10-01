@@ -60,3 +60,27 @@ $f$;
 CREATE FUNCTION pg_temp.luc_no(p_don bigint) RETURNS timestamptz LANGUAGE sql STABLE AS $f$
   SELECT coalesce(min(created_at), now()) FROM station_job WHERE sales_order_id = p_don
 $f$;
+
+-- Chuỗi vết đứt (P2A-07): chỉ đọc dòng đã có vết; thứ tự toàn phần là revised_at, id.
+-- Không có vết thì không suy ra được lần sửa mất vết (F-046, file 09 §4).
+-- So theo GIÁ TRỊ của dòng, không theo chữ của ảnh: mỗi ảnh đổi về đúng kiểu dòng của bảng bằng
+-- jsonb_populate_record. Ảnh jsonb in timestamptz theo múi giờ của phiên GHI, nên so chữ thì một
+-- phiên đọc đặt múi giờ khác làm mọi dòng có vết kêu oan.
+CREATE FUNCTION pg_temp.chuoi_vet_dut(p_bang text, p_hien_tai anyelement)
+RETURNS boolean LANGUAGE sql STABLE AS $f$
+  WITH vet AS (
+    SELECT jsonb_populate_record(p_hien_tai, before_image) AS ban_truoc,
+           jsonb_populate_record(p_hien_tai, after_image) AS ban_sau,
+           jsonb_populate_record(p_hien_tai, lag(after_image) OVER (ORDER BY revised_at, id))
+             AS ban_sau_truoc,
+           row_number() OVER (ORDER BY revised_at, id) AS thu_tu,
+           row_number() OVER (ORDER BY revised_at DESC, id DESC) AS tu_cuoi
+    FROM record_revision
+    WHERE target_table_code = p_bang AND target_row = (to_jsonb(p_hien_tai) ->> 'id')::bigint
+  )
+  SELECT EXISTS (
+    SELECT 1 FROM vet
+    WHERE (tu_cuoi = 1 AND ban_sau IS DISTINCT FROM p_hien_tai)
+       OR (thu_tu > 1 AND ban_truoc IS DISTINCT FROM ban_sau_truoc)
+  )
+$f$;

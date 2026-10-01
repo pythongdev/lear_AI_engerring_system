@@ -47,8 +47,8 @@ danh sách, và đỏ khi một danh sách rỗng (**F-017**).
 
 Số `n` của `I-0xx/n` là **thứ tự của tập** trong ô *Phép đối chiếu* của hàng ấy ở
 `03-bao-ve-invariant.md`, đếm từ trái; tập có câu ghi mã câu, tập không có câu trỏ xuống §2. Đo lại
-2026-09-30: **24** mã ở `quality/invariants.md`, **63** câu `I-0xx/n` (đếm lại bằng `--codes`, đừng
-tin con số này — **F-003**).
+2026-10-01: **29** mã ở `quality/invariants.md`, **75** câu `I-0xx/n` (đếm mã bằng `--codes`,
+đếm câu bằng `cat db/reconcile/i*.sql | grep -c '^-- @@ I-'`; đừng tin con số này — **F-003**).
 
 | Mệnh đề | Tập → câu |
 |---|---|
@@ -72,14 +72,21 @@ tin con số này — **F-003**).
 | `I-018` | 1 → `I-018/1` · 2 → §2 · 3 → `I-018/3` |
 | `I-019` | 1 → `I-019/1` · 2 → §2 |
 | `I-020` | 1 → `I-020/1` · 2 → `I-020/2` |
-| `I-021` | 1 → §2 · 2 → `I-021/2` · 3 · 4 · 5 → §2 · 6 → `I-021/6` |
+| `I-021` | 1 → §2 · 2 → §2 · 3 → `I-021/3` · 4 · 5 · 6 → §2 · 7 → `I-021/7` |
 | `I-022` | 1 → `I-022/1` · 2 → `I-022/2` · 3 → `I-022/3` · 4 → `I-022/4` · 5 → `I-022/5` |
 | `I-023` | 1…6 → `I-023/1`…`I-023/6` · 7 → §2 |
 | `I-024` | 1 → `I-024/1` · 2 → `I-024/2` · 3 → `I-024/3` |
+| `I-025` | 1 → `I-025/1` · 2 → `I-025/2` |
+| `I-026` | 1 · 2 → §2 · 3 → `I-026/3` · 4 → `I-026/4` |
+| `I-027` | 1 → `I-027/1` · 2 → `I-027/2` · 3 → `I-027/3` · 4 → `I-027/4` |
+| `I-028` | 1 → `I-028/1` · 2 → `I-028/2` · 3 → `I-028/3` · 4 → `I-028/4` · 5 · 6 → §2 |
 
 Vế mà pha 1 đã nói thẳng là **không có tập** (`I-022` vế ngược, `I-023` vế *không đoán được*, hai vế
 của `I-024`) không có dòng nào ở đây: chúng là kịch bản của `quality/invariants.md`, không phải phép
-đọc trên dữ liệu.
+đọc trên dữ liệu. Với admin (P2A-07, 2026-10-01), `I-025` cũng **chưa có tập** cho thao tác
+bán hàng sinh con số đủ dấu hay sửa có vết hợp lệ, và cho vế *máy không giữ thứ gì để tự tính*;
+`I-027` **chưa có tập** cho vế *không sinh khoản trừ*, *người khác tick hộ trên máy chủ quán*;
+*ghi chú huỷ bắt buộc và người được huỷ* còn để trống, chờ **U-071**.
 
 ---
 
@@ -118,10 +125,15 @@ tính chất của dữ liệu.
 | `I-018` tập 2 — lần ghi đè của hai người không dựng lại được bản người trước | chưa có câu | (A) vết chỉ có khi lần sửa khai lý do; không cất phiên thao tác nào | pha 3 — cùng việc với **F-046** |
 | `I-019` tập 2 — hai dòng nhu cầu chung một khoá / một khoá tách hai dòng | chưa có câu | (B) không dòng nhu cầu nào được cất: bảng nhu cầu cộng lại từ `station_job` theo khoá gom (`05-luoc-do-san-xuat.md` §1) | pha 3 — hàm gom của màn bếp đọc đúng khoá; test của nó |
 | `I-021` tập 1 — két − tiền đầu két khác vế phải công thức | chưa có câu | (A) số tiền mặt đếm được cuối ngày chưa có chỗ cất (`04-luoc-do-duong-tien.md` §5); mọi hạng tử vế phải đã đọc được (§3 bảng hạng tử) | **chủ repo** quyết bước nào nhận |
-| `I-021` tập 3 — ngày chưa có tiền đầu két bị đọc là lệch | chưa có câu | (A) đọc kết quả của tập 1 | như tập 1 |
-| `I-021` tập 4 — phép trừ chạy trên tổng gộp | chưa có câu | (A) đọc phép trừ của báo cáo | pha 3 |
-| `I-021` tập 5 — con số doanh thu có cộng tiền đầu két | chưa có câu | (A) đọc con số của báo cáo; tiền đầu két ở bảng riêng, ngoài mọi cột tiền đã thu (**`I-021`** tầng 1) | pha 3 |
+| `I-021` tập 2 — trừ vào đúng một ngày bán | chưa có câu | (A) chưa có luật chọn ngày, chờ **U-072** · **F-048** | chủ quán qua **U-072** |
+| `I-021` tập 4 — ngày chưa có tiền đầu két bị đọc là lệch | chưa có câu | (A) đọc kết quả của tập 1 | như tập 1 |
+| `I-021` tập 5 — phép trừ chạy trên tổng gộp | chưa có câu | (A) đọc phép trừ của báo cáo | pha 3 |
+| `I-021` tập 6 — con số doanh thu có cộng tiền đầu két | chưa có câu | (A) đọc con số của báo cáo; tiền đầu két ở bảng riêng, ngoài mọi cột tiền đã thu (**`I-021`** tầng 1) | pha 3 |
 | `I-023` tập 7 — lần đổi mã chạm phiên đang mở | chưa có câu | (B) cửa `qr_code_issue` không chạm phiên hay lượt gọi, và phiên không mang mốc đổi trạng thái nào để so với lần đổi mã | — (đúng theo cấu tạo) |
+| `I-026` tập 1 — tổng và cộng dồn | chưa có câu | (B) tổng không có chỗ cất (**ADR-071**) | — (đúng theo cấu tạo) |
+| `I-026` tập 2 — hiệu số | chưa có câu | (B) hiệu số không có chỗ cất (**ADR-071**) | — (đúng theo cấu tạo) |
+| `I-028` tập 5 — không phải tiền bán hàng | chưa có câu | (B) không cột nào nối khoản sang doanh thu hay tiền đã thu (**ADR-073**) | — (đúng theo cấu tạo) |
+| `I-028` tập 6 — rời két | chưa có câu | (A) trỏ sang `I-021` tập 2 — luật chọn ngày chờ **U-072** · **F-048** | như `I-021` tập 2 |
 
 ### 2.1 Mệnh đề chưa có lát — cả mệnh đề chưa có câu
 
@@ -134,11 +146,7 @@ của mệnh đề ấy trong cùng thay đổi.
 
 | Mệnh đề | Trạng thái | Vì sao | Ai nợ |
 |---|---|---|---|
-| `I-025` | chưa có lát | lát đã dựng ở `P2A-02` (2026-09-30), câu và lỗi cài chưa viết — dữ liệu mồi dựng ở `P2A-06` (2026-10-01) | `P2A-07` |
-| `I-026` | chưa có lát | lát đã dựng ở `P2A-02` (2026-09-30), câu và lỗi cài chưa viết — dữ liệu mồi dựng ở `P2A-06` (2026-10-01) | `P2A-07` |
-| `I-027` | chưa có lát | lát đã dựng ở `P2A-03` (2026-09-30), câu và lỗi cài chưa viết | `P2A-07` |
-| `I-028` | chưa có lát | lát đã dựng ở `P2A-04` (2026-09-30), câu và lỗi cài chưa viết | `P2A-07` |
-| `I-029` | chưa có lát | lát khoản chi (`P2A-05`) chưa dựng, còn chờ lời cho **U-066** | `P2A-07` |
+| `I-029` | chưa có lát | lát khoản chi (`P2A-05`) chưa dựng, chờ chủ repo duyệt **ADR-074** | `P2A-05` |
 
 ---
 
@@ -154,7 +162,9 @@ của mệnh đề ấy trong cùng thay đổi.
    (thêm 2026-10-01, `P2A-04`: để phép số âm của `QD-21` có dòng mà thử — `work/findings.md` F-054;
    không nối vào két trước task `T-125`); mọi lần sửa khai lý do, nên mọi lần chuyển
    trạng thái có vết. Qua mọi ràng buộc hoãn như lúc `COMMIT` ⇒ mọi câu **0 dòng**. Một câu xanh vì
-   chưa có đơn nào không chứng minh nó không đỏ nhầm.
+   chưa có đơn nào không chứng minh nó không đỏ nhầm. P2A-07 (2026-10-01) thêm con số nguyên liệu
+   mua vào/đã dùng và một lần sửa có lý do, ô chủ quán tick cho vài người với một ô huỷ có ghi chú
+   rồi tick lại, và một lần sửa có lý do cho khoản tạm ứng.
 3. **Mỗi file lỗi** — `db/reconcile/proof/<mã>.sql`, một savepoint trên ngày mẫu: cài **một** chỗ sai
    vào **dữ liệu hay lược đồ** — tập có ràng buộc tầng 1 giữ thì lỗi **gỡ ràng buộc ấy trước**, đúng ca
    câu truy vấn sinh ra để bắt (`03-bao-ve-invariant.md` §0 luật 2). Trạng thái sau lỗi phải qua mọi
@@ -176,13 +186,13 @@ Mỗi dòng là **lựa chọn của phiên**, chưa có lời chủ repo; đổ
 làm khác.
 
 - **Vết ở chế độ mềm (F-046).** Lần sửa không khai lý do không để lại vết, nên các câu đọc từ vết —
-  `I-009/1` · `I-016/1` · `I-017/2` · `I-018/1` · nhánh *sửa* của `I-011/1` và `I-021/6` · `QD-33/b` —
+  `I-009/1` · `I-016/1` · `I-017/2` · `I-018/1` · nhánh *sửa* của `I-011/1` và `I-021/7` · `QD-33/b` —
   không thấy nó. Ngược lại, lần đổi **giá** menu không khai lý do làm hàm *giá tại mốc* đọc giá hiện
   hành, nên `I-013/1` kêu ở mọi dòng cũ mang giá trước: tiếng kêu ấy đúng — nó chỉ ra một lần sửa
   mất vết — nhưng nó mang mã `I-013`, không mang mã `I-018`.
 - **Thêm một dòng con không có vết.** Vết cập nhật chụp lần **sửa** một dòng đã có; lần **thêm** một
   dòng con vào một bản ghi đã có — thêm món vào đơn, thêm thành phần vào suất, thêm xấp mệnh giá vào
-  tiền đầu két — không để lại *ai thêm*. `I-024/3`, `I-011/1`, `I-021/6` đọc đúng hình ấy và **kêu**
+  tiền đầu két — không để lại *ai thêm*. `I-024/3`, `I-011/1`, `I-021/7` đọc đúng hình ấy và **kêu**
   cả ở lần thêm hợp lệ. Ghi thành **F-047** (`work/findings.md`).
 - **`I-016/1` so với bảng §5 hôm nay**, không với bảng tại lúc chuyển: §5 chưa có lịch sử phiên bản
   đọc được bằng máy. Bảng đổi thì một lần chuyển cũ đúng luật cũ có thể kêu.
@@ -196,8 +206,18 @@ làm khác.
 - **`I-007/2`**: một lần thu gộp hiện ra là hoá đơn **thu nhiều hơn** chính đơn của nó. Hoá đơn thu
   **ít** hơn là `I-015`, không phải thu gộp.
 - **`I-008/1`**: hai đầu giờ bán tính là **trong** giờ.
-- **`I-021/2`** chỉ in ngày có **hơn một** con số tiền đầu két; ngày **chưa có** con số nào là *chưa
-  đối soát xong* (tập 3 của pha 1, **ADR-037**), không phải lệch.
+- **`I-021/3`** chỉ in ngày có **hơn một** con số tiền đầu két; ngày **chưa có** con số nào là *chưa
+  đối soát xong* (tập 4 của pha 1, **ADR-037**), không phải lệch.
+- **Chuỗi vết đứt (P2A-07, 2026-10-01).** `I-025/2` · `I-028/4` đọc dòng đã có vết đúng bảng,
+  đúng dòng: bản sau mới nhất (theo `revised_at, id`) khác dòng hiện tại, hoặc bản trước của một
+  vết khác bản sau của vết liền trước. Dòng chưa từng có vết thì lần sửa không khai lý do không
+  câu nào thấy (**F-046**). Hai ảnh và dòng hiện tại so theo **giá trị** của kiểu dòng
+  (`jsonb_populate_record`), không theo chữ của ảnh: ảnh in mốc `timestamptz` theo múi giờ của phiên
+  ghi, nên so chữ thì một phiên đọc đặt múi giờ khác làm mọi dòng có vết kêu oan — Claude thấy lúc
+  duyệt, khi lỗi cài `qd32` (đổi múi giờ) làm hai câu này kêu theo.
+- **Tên trùng theo phép bằng của cột (P2A-07, 2026-10-01).** `I-026/4` so bằng chính cột `name`;
+  hai tên chỉ khác hoa thường không bị đọc là trùng. Dữ liệu mồi `P2A-06` đã gộp chúng, lần thêm
+  tay sau thì chưa.
 - **Toàn bộ lịch sử, không lọc theo ngày.** Một chỗ sai của hôm qua còn kêu mỗi tối cho tới khi được
   sửa có vết. Lọc theo một ngày bán là việc của màn đối soát — pha 3.
 - **Kết nối qua `docker compose`** — database làm việc của máy phát triển. Kết nối tới database chạy
@@ -210,7 +230,7 @@ làm khác.
 | Bước | Lấy gì |
 |---|---|
 | `P2-13` | §3 — lệnh và phần chứng minh chạy trong `./scripts/db-check.sh`; §2 là danh sách tập chưa được chấm, đọc trước khi tick cổng |
-| `P2A-02`…`P2A-07` | Bước nào viết câu cho một mệnh đề thì **gỡ dòng của mệnh đề ấy ở §2.1 trong cùng thay đổi** |
+| `P2A-05` | Bước còn nợ câu `I-029`; khi viết câu thì **gỡ dòng của mệnh đề ấy ở §2.1 trong cùng thay đổi** |
 | `P2-14` | §1 — mỗi mã `I-0xx` có câu; file này không nhắc đường gọi hay màn hình nào của pha 3 · pha 4 |
 | pha 3 | §2 các dòng *pha 3* — mỗi chỗ cất mới là một migration, kèm câu và file lỗi mới ở `db/reconcile/`; §4 — **F-046** · **F-047** |
 | chủ repo | §2 các dòng *chủ repo* — số tiền mặt đếm được, tin nhắn báo có, dấu đã đối soát xong: bước nào nhận (`04-luoc-do-duong-tien.md` §5) |

@@ -318,6 +318,25 @@ BEGIN
   VALUES (giao, 200000, pg_temp.bc_ngay(), chu, chu);
   INSERT INTO holiday_bonus (worker_person_id, amount_vnd, paid_date, person_id)
   VALUES (giao, 100000, pg_temp.bc_ngay(), chu);
+  -- P2A-07, 2026-10-01: nguyên liệu có mua/dùng; sửa có lý do sinh vết.
+  INSERT INTO supply_day_entry (supply_item_id, entry_date, kind_code, entered_measure, person_id)
+  SELECT id, pg_temp.bc_ngay(), k, n, chu
+  FROM (SELECT id FROM supply_item ORDER BY id LIMIT 2) i
+  CROSS JOIN (VALUES ('purchased', 10::numeric), ('used', 3::numeric)) v(k, n);
+  UPDATE supply_day_entry SET entered_measure = 12
+  WHERE id = (SELECT min(id) FROM supply_day_entry WHERE kind_code = 'purchased');
+
+  -- Chủ quán tick hai người; huỷ ô tick nhầm có ghi chú rồi tick lại.
+  INSERT INTO attendance_day (worker_person_id, work_date, person_id)
+  VALUES (a, pg_temp.bc_ngay(), chu), (giao, pg_temp.bc_ngay(), chu);
+  UPDATE attendance_day
+  SET cancelled_at = now(), cancelled_by_person_id = chu, cancel_note = 'tick nhầm, ghi lại ô đúng'
+  WHERE worker_person_id = giao AND work_date = pg_temp.bc_ngay();
+  INSERT INTO attendance_day (worker_person_id, work_date, person_id)
+  VALUES (giao, pg_temp.bc_ngay(), chu);
+
+  -- Người thao tác hiện hành vẫn là a; lý do của ngày mẫu đã khai, không đổi actor của file lỗi.
+  UPDATE staff_advance SET amount_vnd = 250000 WHERE worker_person_id = giao;
 END $$;
 
 -- Ngày mẫu phải qua MỌI ràng buộc hoãn, như lúc COMMIT.

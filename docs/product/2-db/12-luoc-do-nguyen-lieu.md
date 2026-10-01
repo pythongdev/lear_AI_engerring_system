@@ -16,7 +16,7 @@ trỏ, không chép kiểu hay điều kiện thành bản thứ hai (**F-001**)
   `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §9 · §9.1;
 - **người và cơ chế vết** — [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md), dùng lại
   lát `P2-08`, kể cả chế độ mềm **F-046**: sửa không khai lý do chưa để lại vết;
-- **quyền và cửa đọc tính tổng** — pha 3; **dữ liệu mồi** — `P2A-06`; **câu đối chiếu** — `P2A-07`;
+- **quyền và cửa đọc tính tổng** — pha 3; **dữ liệu mồi** — `P2A-06`; **câu đối chiếu** — đã có câu `db/reconcile/i025.sql` · `db/reconcile/i026.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01);
 - **quy ước cất và kiểm** — [`01-quy-uoc-du-lieu.md`](01-quy-uoc-du-lieu.md) ·
   [`10-quy-uoc-code.md`](10-quy-uoc-code.md); thứ tự và đường lùi ở
   [`07-thu-tu-migration.md`](07-thu-tu-migration.md).
@@ -28,7 +28,7 @@ trỏ, không chép kiểu hay điều kiện thành bản thứ hai (**F-001**)
 Hai nguồn: **owner** là mệnh đề, yêu cầu và lời chủ quán tại các con trỏ trên; **phiên chọn
 2026-09-30 (ADR-071)** là lựa chọn thiết kế để thi hành chúng. Lựa chọn không thành lời chủ quán.
 Các bằng chứng dưới đây là câu `NOTICE` của hai file trong `db/tests/`, chạy bằng
-`./scripts/db-check.sh` (`QC-07`); chúng không thay câu đối chiếu của `P2A-07`.
+`./scripts/db-check.sh` (`QC-07`); chúng không thay câu đối chiếu; đã có câu `db/reconcile/i025.sql` · `db/reconcile/i026.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01).
 
 ---
 
@@ -43,8 +43,9 @@ Các bằng chứng dưới đây là câu `NOTICE` của hai file trong `db/tes
 có thể do hai người gõ ở hai lúc, và `I-025` đòi *ai · ngày nào · lúc nào* cho **từng** con số.
 
 `entry_date` là ngày của con số, người ghi khai; `created_at` là lúc gõ, database cấp. Hai mốc đọc
-riêng theo `YC-28`, cùng hình hai mốc của `YC-08`. Chữ *thời gian nhập* nghĩa nào vẫn là
-**U-068** (`docs/product/99-unknowns.md`, còn mở); lát giữ cả hai, không chọn hộ nghĩa của lời ấy.
+riêng theo `YC-28`, cùng hình hai mốc của `YC-08`. Chữ *thời gian nhập* của chủ quán là **lúc hàng
+mua về** (`U-068` đóng 2026-09-30, `master_plan/shop-facts.md` §8.4) — tức `entry_date`; lát vẫn giữ cả
+hai mốc, và không thêm giờ vì lời ấy không nói ngày hay giờ.
 
 Người nhập là `person` của lát `P2-08`, lấy từ người thao tác của giao dịch qua
 `actor_person_id()`. Không dựng danh sách người thứ hai. Cửa nhập khai người thao tác và lý do
@@ -115,7 +116,7 @@ viết mã máy đọc nào cho hai con số này nên `QD-02` không áp. Tên 
 | Chỉ số công tơ điện · nước (`YC-27`) | đứng ngoài cặp số này; không dựng chỗ cất riêng. Máy **không ngăn được** một người gõ một cái tên như thế vào danh mục | chỗ người giữ, không giả là ràng buộc đã có |
 | Ai được nhập, ai được xem | lát cất người nhập, chưa quyết quyền | pha 3 |
 | Lượng kiểm đếm cuối buổi, nợ nhà cung cấp, một thứ nhiều mối, giá vốn | không dựng; ranh giới ở `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` §6 | chủ quán và bước được kế hoạch giao |
-| Dữ liệu mồi danh mục và câu đối chiếu `I-025` · `I-026` | lát đã có, dữ liệu mồi và câu cùng lỗi cài chưa có; [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §2.1 giữ tên khoản nợ | `P2A-06` dựng mồi; `P2A-07` viết đối chiếu |
+| Dữ liệu mồi danh mục và câu đối chiếu `I-025` · `I-026` | đã có câu `db/reconcile/i025.sql` · `db/reconcile/i026.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01); ánh xạ ở [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §1 · §2 | `P2A-06` dựng mồi; `P2A-07` đã viết câu và lỗi cài, 2026-10-01 |
 
 **Tham số của `01-quy-uoc-du-lieu.md` §0:** lát không thêm bảng nào vào `:bang_ky_thuat` hay
 `:bang_khong_quan_he_so_hoc`.
@@ -127,6 +128,6 @@ viết mã máy đọc nào cho hai con số này nên `QD-02` không áp. Tên 
 | Bước | Lấy gì |
 |---|---|
 | `P2A-06` | danh mục và đơn vị theo owner được trỏ ở §1 · §5; không tự điền đơn vị còn trống |
-| `P2A-07` | §2 ánh xạ và giới hạn bằng chứng; viết câu đối chiếu cùng lỗi cài, sau dữ liệu mồi |
+| `P2A-07` | §2 ánh xạ và giới hạn bằng chứng; đã có câu `db/reconcile/i025.sql` · `db/reconcile/i026.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01) |
 | `P2A-08` | §2: buổi bán đủ năm kênh không đổi sổ; đọc lược đồ để kiểm các chỗ máy không được giữ |
 | pha 3 | §3 một chỗ tính tổng, khai người và lý do; §5 quyền, chuẩn hoá tên nếu cần, giới hạn đơn vị |

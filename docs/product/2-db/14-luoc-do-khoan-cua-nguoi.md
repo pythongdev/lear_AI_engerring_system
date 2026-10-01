@@ -16,7 +16,7 @@ buộc chỉ để trỏ, không chép kiểu hay điều kiện thành bản th
   `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §9, dòng `YC-31` · `YC-32`;
 - **người và cơ chế vết** — [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md), dùng lại
   lát `P2-08`, kể cả chế độ mềm **F-046** ở `work/findings.md`;
-- **cửa ghi xét người duyệt** — pha 3; **câu đối chiếu** — `P2A-07`;
+- **cửa ghi xét người duyệt** — pha 3; **câu đối chiếu** — đã có câu `db/reconcile/i028.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01);
 - **quy ước cất và kiểm** — [`01-quy-uoc-du-lieu.md`](01-quy-uoc-du-lieu.md) ·
   [`10-quy-uoc-code.md`](10-quy-uoc-code.md); thứ tự và đường lùi ở
   [`07-thu-tu-migration.md`](07-thu-tu-migration.md).
@@ -29,7 +29,7 @@ Hai nguồn: **owner** là mệnh đề, yêu cầu và lời chủ quán tại 
 2026-09-30 (ADR-073)** là lựa chọn thiết kế để thi hành chúng. Lựa chọn không thành lời chủ quán.
 Các bằng chứng dưới đây trỏ câu `NOTICE` trong
 `db/tests/i028_advance_and_bonus_name_a_worker.sql`, chạy bằng `./scripts/db-check.sh`
-(`QC-07`); chúng không thay câu đối chiếu của `P2A-07`.
+(`QC-07`); chúng không thay câu đối chiếu; đã có câu `db/reconcile/i028.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01).
 
 ---
 
@@ -95,7 +95,7 @@ thành luật thứ hai. Lát không có trạng thái hay mã loại để cầ
 |---|---|---|
 | Nối khoản vào két | không đường nối; mệnh đề chưa viết lại theo lời đóng câu hỏi nguồn tiền | task `T-125` ở `work/backlog.md`, trước migration nối két |
 | Vết sửa không khai lý do | chế độ mềm, chưa bảo vệ đủ vế không sửa đè | đường gỡ **F-046** ở `work/findings.md`, cho mọi bảng |
-| Câu đối chiếu `I-028` | lát đã có, câu và lỗi cài chưa viết; [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §2.1 giữ tên khoản nợ | `P2A-07` |
+| Câu đối chiếu `I-028` | đã có câu `db/reconcile/i028.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01); ánh xạ ở [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §1 · §2 | `P2A-07` đã viết câu và lỗi cài, 2026-10-01 |
 | Trừ hay cộng vào lương — **C26 · C33**, `master_plan/shop-facts.md` §8.7 | không dấu đã trừ, không công thức hay kỳ lương | chủ quán làm rõ, Claude quyết thiết kế sau |
 | Trả lại tạm ứng — `I-028` mục Why | không trạng thái hay đường trả lại | chủ quán cho lời, Claude ghi owner trước |
 | Người duyệt thưởng, dịp lễ và thưởng ngày đông khách — **C28**, cùng owner | không dựng sẵn dấu cho những việc chưa có lời | chủ quán; Claude cập nhật owner trước khi dựng |
@@ -109,7 +109,7 @@ thành luật thứ hai. Lát không có trạng thái hay mã loại để cầ
 
 | Bước | Lấy gì |
 |---|---|
-| `P2A-07` | §2 ánh xạ và giới hạn bằng chứng; viết câu đối chiếu cùng lỗi cài |
+| `P2A-07` | §2 ánh xạ và giới hạn bằng chứng; đã có câu `db/reconcile/i028.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01) |
 | `P2A-08` | §2 kịch bản đọc, sửa và phép đọc lược đồ; §3 giới hạn của từng tầng |
 | task `T-125` | §3 · §5 ranh giới chưa nối két |
 | pha 3 | §3 xét người duyệt, khai người thao tác và lý do sửa; §5 các chỗ còn chờ lời |

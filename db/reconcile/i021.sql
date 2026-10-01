@@ -2,16 +2,17 @@
 -- MỘT tập "phải rỗng"; 0 dòng là đạt. Ánh xạ tập ↔ câu: docs/product/2-db/09-doi-chieu-bat-bien.md.
 -- Phép trừ két (tập thứ nhất của pha 1) và ba tập đọc kết quả của nó KHÔNG có câu: số tiền mặt đếm
 -- được cuối ngày chưa có chỗ cất (04-luoc-do-duong-tien.md §5) — file 09 §2.
+-- Tập thứ hai (trừ vào đúng một ngày bán) chờ luật chọn ngày U-072 — file 09 §2.
 
--- @@ I-021/2 — ngày bán mang hơn một con số tiền đầu két
--- Ngày CHƯA có con số tiền đầu két là "chưa đối soát xong", không phải lệch (tập thứ ba của pha 1,
+-- @@ I-021/3 — ngày bán mang hơn một con số tiền đầu két
+-- Ngày CHƯA có con số tiền đầu két là "chưa đối soát xong", không phải lệch (tập thứ tư của pha 1,
 -- ADR-037) — câu này không in nó.
 SELECT f.sale_date AS ngay, count(*) AS so_con_so
 FROM opening_float f
 GROUP BY f.sale_date
 HAVING count(*) > 1
 
--- @@ I-021/6 — lần sửa con số tiền đầu két không đọc ra ai bấm · lúc mấy giờ · từ bao nhiêu sang bao nhiêu
+-- @@ I-021/7 — lần sửa con số tiền đầu két không đọc ra ai bấm · lúc mấy giờ · từ bao nhiêu sang bao nhiêu
 -- Hai hình: một xấp mệnh giá THÊM vào sau lúc khai — một dòng mới không mang người và không mang
 -- bản trước; và một lần sửa xấp có vết mà vết thiếu người. Lần sửa không khai lý do không có vết
 -- (F-046) và không câu nào thấy.
