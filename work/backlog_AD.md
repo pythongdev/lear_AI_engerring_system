@@ -930,6 +930,9 @@ nên phép chấm một-đối-một giữa §1 của file ấy và bảng §8 c
 **Goal:**
 Xong rồi thì mỗi buổi có một bản ghi ai làm, vào lúc nào, ra lúc nào — đủ để **ADM-23** cộng ra
 tiền mà không phải hỏi lại ai.
+> ⚠️ *(Cập nhật 2026-10-01, `P2A-09`)* Goal này viết trước lời chủ quán 2026-09-30 (đóng `U-069` · `U-070`, `shop-facts.md` §8.7):
+> mỗi người mỗi ngày **một ô** *có đi làm*, chủ quán tick, không giờ vào · ra, không buổi. Lược đồ theo
+> lời ấy: `P2A-03`, [`13-luoc-do-cham-cong.md`](../docs/product/2-db/13-luoc-do-cham-cong.md). Đọc lời ở owner, không ở Goal này.
 
 **Nói một câu, việc phải làm là gì:**
 Chốt **luật chấm công**: ai bấm, bấm bằng gì, sửa được không và ai sửa được. Việc **không** phải
@@ -1367,7 +1370,7 @@ quầy (U-057, ghi nhận 2026-09-27); đọc shop-facts §8.8**
 |---|---|---|
 | MVP **có** lưu vết; phạm vi = thao tác **chạm tiền** và **chạm trạng thái đơn** | `docs/decisions.md` **ADR-024** | ✅ đủ |
 | vết phải ghi *ai · lúc nào · sửa gì · giá trị cũ*, đủ để *"lệch 1 đồng tìm ra lý do"* | `shop-facts.md` §6.10 · `architecture.md` §6.4 luật 2 | ✅ đủ |
-| **hình dạng dữ liệu** của cái vết | — | ⏳ **P1-07** của pha 1 viết yêu cầu; pha 2 chốt lược đồ (**ADR-035**) |
+| **hình dạng dữ liệu** của cái vết | `docs/product/2-db/06-luoc-do-nguoi-va-vet.md` (`P2-08`) | ✅ lược đồ đã dựng *(Cập nhật 2026-10-01, `P2A-09`)*; vết đang ở chế độ mềm — `work/findings.md` **F-046** |
 | **ai** — người thao tác là ai | `master_plan/shop-facts.md` §8.8, C36 và lời bổ sung U-057 ghi nhận 2026-09-27 | ✅ đủ nguồn tên: POS khai tên người thao tác ngoài quầy; người khai tên và người bấm là hai việc khác nhau. |
 
 `architecture.md` §8 xếp *"Vết thao tác chạm tiền / chạm trạng thái đơn"* vào **những chỗ hình dạng

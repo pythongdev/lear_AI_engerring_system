@@ -771,7 +771,7 @@ hành vi nghiệp vụ tương ứng ở `docs/product/0-ba/admin/01-ranh-gioi.m
 |---|---|---|
 | **§4** — quyền gắn chỗ đứng | luật đúng, nhưng không dữ kiện nào nói ai đang đứng đâu | luật **không đổi một chữ**; nó nay đứng trên một lời chốt thật, **cho trạm quầy** |
 | **§14.3**, hàng giữa | chỗ chạm **chưa có luật** | chỗ chạm **có luật** cho trạm quầy |
-| **§8**, hàng *Ai đang trực trạm nào* | ❌ **không mất hàng nào** | vẫn thiếu: lời chốt là **luật ghi**, chỗ cất vẫn là pha 2 (**ADR-035**) |
+| **§8**, hàng *Ai đang trực trạm nào* | ❌ **không mất hàng nào** | vẫn thiếu: lời chốt là **luật ghi**, chỗ cất vẫn là pha 2 (**ADR-035**). *(Cập nhật 2026-10-01, `P2A-09`)*: chỗ cất trực **quầy** đã dựng ở `P2-08` ([`06-luoc-do-nguoi-va-vet.md`](../2-db/06-luoc-do-nguoi-va-vet.md) §1); trực các trạm khác chưa |
 
 **Vì sao một lời chỉ nói về quầy lại đủ cho luật quyền.** `docs/decisions.md` **ADR-016** chốt POS
 ở quầy là **cửa ghi duy nhất**, và `shop-facts.md` §6.13 gắn quyền huỷ / hoàn tiền vào chỗ đứng ấy.

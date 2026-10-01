@@ -69,7 +69,7 @@ câu mệnh đề ở owner.
 | **`I-027` · `YC-30`** — người tick và lúc tick | 1 | hai dấu bắt buộc; người mặc định lấy từ giao dịch, `attendance_day_person_fkey`; lúc ghi mặc định do database cấp | test I-027 — *bị từ chối (ô không có người tick)* · *(người tick không phải người của quán)*; *YC-30 ô có đi làm* đọc tên người tick và có lúc tick |
 | **`I-027`** — người tick là chủ quán | 3 | database **không xét** cờ chủ quán; cửa ghi pha 3 xét, đã có câu `db/reconcile/i027.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01) | test I-027 — *tầng 3 — ô do người KHÔNG phải chủ quán tick: database nhận* |
 | **`YC-30`** — không tách buổi hay giữ mốc tới, về | — | danh sách cột đóng của một bảng, không bảng phụ | test I-027 so danh sách bảng và cột từng chữ — *đọc lược đồ — attendance_day* |
-| **`I-027` · `YC-30`** — không ô nào sinh khoản trừ | 3 | không chỗ cất khoản trừ, không đường nối tới khoản trừ; kiểm bằng đọc lược đồ, không phải điều kiện kiểm trên từng ô | test I-027 — *đọc lược đồ — 0 khoá ngoại ngoài hai khoá về người, 0 hàm nhắc tới ô, 0 trigger ngoài trigger vết* |
+| **`I-027` · `YC-30`** — không ô nào sinh khoản trừ | 3 | không chỗ cất khoản trừ, không đường nối tới khoản trừ; kiểm bằng đọc lược đồ, không phải điều kiện kiểm trên từng ô | test I-027 — *đọc lược đồ — 0 khoá ngoại ngoài ba khoá về người, 0 hàm nhắc tới ô, 0 trigger ngoài trigger vết* |
 | **ADR-072 điểm 4 · `QD-50` · `QD-52`** — quyền của vai ghi | — | `shop_app` chèn được ô và chỉ cập nhật được ba dấu huỷ; quyền xoá không được cấp; `attendance_day_record_revision_trg` dùng cơ chế vết sẵn có | test I-027 — khối tick rồi huỷ chạy dưới vai `shop_app`; *ô đã tick không đổi được người hay ngày (shop_app)*; *QD-50 ô không xoá được*; phép kiểm `QD-52` giữ trigger |
 
 ---

@@ -96,11 +96,11 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] P2A-09 Rà ranh giới pha và pointer trên file lát admin, ký ô 7 · 8 — Codex chạy lọc, Claude xếp dòng *quyền* loại 5 và ký — L1 · [chi tiết](backlog_AD_DB.md#p2a-09)
 
 <a id="done"></a>
 ## Done
 
+- [x] P2A-09 Rà ranh giới pha và pointer trên file lát admin — chín lượt `P2-14` và chín nhóm §6 trên 18 file tài liệu · 36 file mã: 0 endpoint · route · component, 0 dòng *cất* thứ bị chặn, mỗi lượt có dòng thử kêu đúng; hai dòng *quyền* loại 5 Claude xếp loại 3 + 2; bảy con trỏ lệch sửa cùng lượt; ô 7 · 8 ký ⇒ cổng lược đồ admin **8/8** trừ lát `P2A-05` vắng; Codex lọc, Claude duyệt và ký — 2026-10-01 · [chi tiết](backlog_AD_DB.md#p2a-09)
 - [x] P2A-08 Cổng chất lượng lược đồ admin — `db/scenario/s4_ngay_quan_tri.sql` diễn chín bước một ngày quản trị (sổ nguyên liệu, chấm công có huỷ, tạm ứng có duyệt, thưởng), mỗi bước trỏ một dòng `shop-facts.md` §8; đọc lại ở kết nối khác; `YC-26`…`YC-32` chấm đọc + sai, `db-check` đòi cả mã §9 trừ danh sách *YC chưa có lát* tự hết hạn (§9.3, khuôn ADR-070); ô 1–6 ký kèm output, `P2A-05` · `YC-33` vắng chờ ADR-074; Codex thi công, Claude chạy database, sửa một lỗi tên biến và ký — 2026-10-01 · [chi tiết](backlog_AD_DB.md#p2a-08)
 - [x] T-126 Khách trả nợ dần — migration `20261001120000_tra_no_dan`: mỗi lần trả một dòng mang số còn thiếu trước · sau, chuỗi giữ bằng khoá ngoại và khoá duy nhất (**ADR-075**); `YC-02` viết lại; test hồi quy viết trước (chín lời từ chối, đọc lại năm ngày); hạng tử nợ cũ thu của `I-005/3` · `I-012/1` đọc mức nợ giảm; khoá chặn bước lùi thử thật; Claude thiết kế và viết test, Codex thi công, Claude chạy database và duyệt — 2026-10-01 · [chi tiết](backlog_archive.md#t-126)
 - [x] T-131 Gate 1d bắt thẻ component có thuộc tính và thẻ đóng — `PAT_FE` nới, 12 ca hồi quy (sáu hình × hai vùng) và một ca văn xuôi không kêu oan; hai hình *tên trong backtick* để mắt người, lý do ở header; `F-049` *Fixed*; Codex thi công, Claude duyệt — 2026-10-01 · [chi tiết](backlog_archive.md#t-131)

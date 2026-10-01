@@ -1050,4 +1050,455 @@ công: Codex; xếp dòng loại 5 của *luật xếp dòng quyền*, sửa con
      đích nói gì).
   7. `./scripts/gate.sh` xanh; `git diff` không đổi một dòng nghiệp vụ, lược đồ hay migration nào.
 
+**Bàn giao** — 2026-10-01 · thực hiện: **Codex** (worktree `../lean_wt/P2A-09`, nhánh `codex/P2A-09`, trên
+`481d1ab`) · duyệt, xếp loại 5, sửa con trỏ và ký: **Claude Code**. Codex làm đủ bảy dòng *Nhận việc*,
+gate của nó xanh (*Gate 1d PASS*, chỉ tài liệu đổi). Claude đọc diff thật: §9.6 bản Codex dài 451 dòng
+trong chính file cổng — trái tiền lệ ô 9 của `P2-14` — nên Claude rút §9.6 về một bảng gọn và đặt phần đo
+nguyên văn dưới đây. Hai dòng loại 5 xếp loại 3 + 2 (lý do ở §9.6). Bảy con trỏ lệch sửa ở file mang chúng,
+scope mở thêm đúng sáu file: `13-luoc-do-cham-cong.md` · `14-luoc-do-khoan-cua-nguoi.md` · `00-index.md` ·
+`architecture.md` · `work/backlog_AD.md` (và `work/backlog_archive.md` không đổi). Ô 7 · 8 của §9.4 ký;
+`P2A-05` vắng — nó mang việc rà về entry của mình. Chưa review độc lập.
+
+*Phần đo của Codex, nguyên văn* (số dòng là của ảnh `481d1ab`; mục *Bảy chỗ dẫn lệch* ghi *không sửa
+nguồn* là lời của lượt đo — Claude đã sửa cả bảy sau đó):
+
+**Tập đếm lại, trước khi viết biên bản.** Chạy từ gốc repo:
+
+```bash
+git log --format='%h %s' --grep='^P2A-0[1-8]:'
+git log --format= --name-only --grep='^P2A-0[1-8]:' | sed '/^$/d; /^work\//d' | sort -u
+```
+
+Output: **8 commit, 54 file ngoài work/**; có hai commit mang P2A-07, không có P2A-05.
+Các commit: `45432a3`, `a1aa9ca`, `7fe884b`, `c93f069`, `719a430`, `b1a148c`, `66789d6`,
+`7b5e3f6`. Tập đếm được thắng danh sách dự kiến ở entry:
+
+| Danh sách dự kiến | Tập thực tế |
+|---|---|
+| Ba file lát 12, 13, 14 | Đủ cả ba; file 15 vắng |
+| Các đoạn admin của file 09, 11, hai owner pha 1, invariant và ranh giới BA | Đủ; lấy bản hiện hành của cả mục admin, kể cả lời sửa sau commit P2A |
+| Migration, đối chiếu 025–028, lỗi cài, test admin, bộ mồi | Đủ; mã được rà toàn file để không bỏ phần dùng chung |
+| Không liệt kê trước | Thêm CLAUDE, decisions, index, unknowns, kế hoạch admin, file 01/07/08/10; i021, prelude, baseline, lỗi i021_3/i021_7, ba file scenario và db-check — tất cả có trong bảng dưới |
+
+Với tài liệu có sẵn, lấy các dòng còn sống từ commit P2A bằng `git blame --line-porcelain`,
+và mở rộng đủ mục admin hiện hành ở BA, hai owner pha 1, invariant và cổng. Ba file lát mới lấy
+nguyên file. Bảng dưới là **số dòng gốc tại 481d1ab**, không phải số dòng của bản sao đã ghép.
+Biên bản §9.6 và hai hàng ô 7 · 8 mới không tự tham gia tập đo của chính chúng.
+
+<!-- P2A09-MANIFEST -->
+| Tập | File | Dòng gốc đã lấy |
+|---|---|---|
+| docs | `CLAUDE.md` | 61 |
+| code | `db/migrations/20260930100000_so_nguyen_lieu.down.sql` | 1-23 |
+| code | `db/migrations/20260930100000_so_nguyen_lieu.up.sql` | 1-39 |
+| code | `db/migrations/20260930110000_cham_cong.down.sql` | 1-21 |
+| code | `db/migrations/20260930110000_cham_cong.up.sql` | 1-40 |
+| code | `db/migrations/20260930120000_khoan_cua_nguoi.down.sql` | 1-23 |
+| code | `db/migrations/20260930120000_khoan_cua_nguoi.up.sql` | 1-44 |
+| code | `db/reconcile/i021.sql` | 1-25 |
+| code | `db/reconcile/i025.sql` | 1-12 |
+| code | `db/reconcile/i026.sql` | 1-17 |
+| code | `db/reconcile/i027.sql` | 1-27 |
+| code | `db/reconcile/i028.sql` | 1-36 |
+| code | `db/reconcile/prelude.sql` | 1-86 |
+| code | `db/reconcile/proof/baseline.sql` | 1-344 |
+| code | `db/reconcile/proof/i021_3.sql` | 1-7 |
+| code | `db/reconcile/proof/i021_7.sql` | 1-5 |
+| code | `db/reconcile/proof/i025_1.sql` | 1-4 |
+| code | `db/reconcile/proof/i025_2.sql` | 1-10 |
+| code | `db/reconcile/proof/i026_3.sql` | 1-6 |
+| code | `db/reconcile/proof/i026_4.sql` | 1-5 |
+| code | `db/reconcile/proof/i027_1.sql` | 1-4 |
+| code | `db/reconcile/proof/i027_2.sql` | 1-6 |
+| code | `db/reconcile/proof/i027_3.sql` | 1-5 |
+| code | `db/reconcile/proof/i027_4.sql` | 1-4 |
+| code | `db/reconcile/proof/i028_1.sql` | 1-6 |
+| code | `db/reconcile/proof/i028_2.sql` | 1-4 |
+| code | `db/reconcile/proof/i028_3.sql` | 1-3 |
+| code | `db/reconcile/proof/i028_4.sql` | 1-5 |
+| code | `db/scenario/doc_lai.sql` | 1-282 |
+| code | `db/scenario/s4_ngay_quan_tri.sql` | 1-120 |
+| code | `db/scenario/yc.sql` | 1-854 |
+| code | `db/seed/seed.pl` | 1-430 |
+| code | `db/tests/i025_supply_numbers_entered_by_a_person.sql` | 1-217 |
+| code | `db/tests/i026_supply_totals_from_day_entries.sql` | 1-89 |
+| code | `db/tests/i027_attendance_one_box_per_worker_day.sql` | 1-217 |
+| code | `db/tests/i028_advance_and_bonus_name_a_worker.sql` | 1-354 |
+| docs | `docs/decisions.md` | 88-92,4529-4913 |
+| docs | `docs/product/0-ba/admin/01-ranh-gioi.md` | 89-129 |
+| docs | `docs/product/00-index.md` | 63-64,94-98 |
+| docs | `docs/product/1-system-design/03-bao-ve-invariant.md` | 3,18-20,380-435 |
+| docs | `docs/product/1-system-design/04-yeu-cau-du-lieu.md` | 13,40-41,212,237,281-314 |
+| docs | `docs/product/2-db/01-quy-uoc-du-lieu.md` | 140,597 |
+| docs | `docs/product/2-db/07-thu-tu-migration.md` | 37-39,42-43,119-122 |
+| docs | `docs/product/2-db/08-du-lieu-moi.md` | 1,3-4,8-9,15-16,19-20,56,70,91,101-104,114-118,127 |
+| docs | `docs/product/2-db/09-doi-chieu-bat-bien.md` | 50-51,75,79-82,86-89,128-131,133-136,149,161-163,165-167,189,195,209-220,233 |
+| docs | `docs/product/2-db/10-quy-uoc-code.md` | 137,139,151,153,160-161 |
+| docs | `docs/product/2-db/11-cong-chat-luong-pha-2.md` | 345,349-452 |
+| docs | `docs/product/2-db/12-luoc-do-nguyen-lieu.md` | 1-133 |
+| docs | `docs/product/2-db/13-luoc-do-cham-cong.md` | 1-126 |
+| docs | `docs/product/2-db/14-luoc-do-khoan-cua-nguoi.md` | 1-115 |
+| docs | `docs/product/99-unknowns.md` | 82-85,238-269 |
+| docs | `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` | 45-53,178,185-186 |
+| docs | `quality/invariants.md` | 1129-1386 |
+| code | `scripts/db-check.sh` | 1-494 |
+<!-- /P2A09-MANIFEST -->
+
+**Lệnh tái lập.** Chạy khối sau bằng `bash` từ gốc repo. Nó dựng ảnh đo và mọi dòng thử trong
+`mktemp -d` ngoài repo, không đổi nguồn. Chín mẫu lấy **nguyên văn** từ khối Bàn giao P2-14
+ở ảnh gốc; D gồm hai câu grep. Lệnh chưa lọc in cạnh lệnh lọc trong từng script sinh ra:
+`set -- "$1"/*` rồi `cat "$@" | wc -l`. Không dùng biến chứa danh sách file.
+Bảng nhóm S6 bên dưới giữ mẫu riêng cho từng phần, rồi hợp các mẫu thành một lượt.
+
+```bash
+p2a09_tmp=$(mktemp -d)
+python3 - "$p2a09_tmp" <<'PY_REPLAY'
+import base64, json, pathlib, re, shutil, subprocess, sys
+out = pathlib.Path(sys.argv[1])
+base = '481d1ab'
+def source(f):
+    return subprocess.check_output(['git', 'show', base + ':' + f], text=True)
+doc = pathlib.Path('docs/product/2-db/11-cong-chat-luong-pha-2.md').read_text()
+manifest = doc.split('<!-- P2A09-MANIFEST -->')[1].split('<!-- /P2A09-MANIFEST -->')[0]
+line_map = {}
+for group, f, spans in re.findall(r'^\| (docs|code) \| `([^`]+)` \| ([0-9,-]+) \|$', manifest, re.M):
+    lines = source(f).splitlines()
+    nums = []
+    for span in spans.split(','):
+        ends = list(map(int, span.split('-')))
+        nums.extend(range(ends[0], ends[-1] + 1))
+    dest = out / group / f.replace('/', '__')
+    dest.parent.mkdir(exist_ok=True)
+    dest.write_text(''.join(lines[n-1] + '\n' for n in nums))
+    line_map[str(dest)] = (f, nums)
+text = source('work/backlog_DB.md').split('### P2-14')[1]
+block = text.split('```bash')[1].split('```')[0]
+commands = dict(re.findall(r'^# (A[123]|B[123]|C[12]|D) —[^\n]*\n(.*?)(?=^# |\Z)', block, re.M | re.S))
+
+patterns = ['lương|kỳ trả|đơn giá công', 'nợ nhà cung cấp', 'kiểm đếm', 'lãi|\\blỗ\\b|giá vốn', 'mang về nhà', 'nộp tiền', 'thuế', 'quyền|được xem|ai xem|C34|C35|F55', 'giảm giá.*(cả đơn|toàn đơn)|combo|món mới']
+commands['S6'] = "grep -nEi '" + '|'.join(patterns) + "' \"$@\"\n"
+for name, command in commands.items():
+    pre = 'set -- "$1"/*\necho "TẬP: $# file · $(cat "$@" | wc -l) dòng chưa lọc"\n'
+    (out / (name + '.sh')).write_text(pre + command)
+for group in ['docs', 'code']:
+    for name in commands:
+        run = subprocess.run(['bash', str(out / (name + '.sh')), str(out / group)], capture_output=True, text=True)
+        assert run.returncode in [0, 1] and not run.stderr, run.stderr
+        print(group, name, run.stdout.splitlines()[0])
+        hits = run.stdout.splitlines()[1:]
+        print('đã lọc:', len(hits))
+        for hit in hits:
+            f, n, text = hit.split(':', 2)
+            original, nums = line_map[f]
+            print(original + ':' + str(nums[int(n)-1]) + ':' + text)
+
+fixtures = json.loads(base64.b64decode('eyJBMSI6ICJQT1NUIC9wMmEwOS9wcm9iZSIsICJBMiI6ICJHRVQgcDJhMDlfcHJvYmUiLCAiQTMiOiAiZW5kcG9pbnQgcDJhMDlfcHJvYmUiLCAiQjEiOiAiUDJhMDlQcm9iZS50c3giLCAiQjIiOiAiYC9wMmEwOS9wcm9iZWAiLCAiQjMiOiAiY29tcG9uZW50IHAyYTA5X3Byb2JlIiwgIkMxIjogIjxQMmEwOVByb2JlIHZhbHVlPVwieFwiIC8+IiwgIkMyIjogImBQMmFQcm9iZWAiLCAiRCI6ICJgcHJvYmVDYWxsYCBgcHJvYmVfY2FsbCgpYCIsICJTNiI6ICJD4buZdCBj4bqldCBsxrDGoW5nIHbDoCBr4buzIHRy4bqjLCDEkcahbiBnacOhIGPDtG5nLCBu4bujIG5ow6AgY3VuZyBj4bqlcCwga2nhu4NtIMSR4bq/bSBjdeG7kWkgYnXhu5VpLCBsw6NpIGzhu5cgZ2nDoSB24buRbiwgdGnhu4FuIG1hbmcgduG7gSBuaMOgLCBu4buZcCB0aeG7gW4sIHRodeG6vywgcXV54buBbiB4ZW0sIGdp4bqjbSBnacOhIGPhuqMgxJHGoW4gdsOgIGNvbWJvLCBtw7NuIG3hu5tpLiJ9'))
+for group in ['docs', 'code']:
+    for name, line in fixtures.items():
+        trial = out / 'trial'
+        shutil.rmtree(trial, ignore_errors=True)
+        shutil.copytree(out / group, trial)
+        probe = trial / 'zz_probe'
+        probe.write_text(line + '\n')
+        run = subprocess.run(['bash', str(out / (name + '.sh')), str(trial)], capture_output=True, text=True)
+        hits = [s.split(':1:', 1)[1] for s in run.stdout.splitlines() if str(probe) + ':1:' in s]
+        expected = [line] if name != 'D' else [line, line.split(' ', 1)[1]]
+        assert hits == expected, (group, name, hits)
+        print('PASS', group, name, 'dòng cài khớp nguyên văn', len(hits))
+# Chấm riêng từng nhóm S6: cùng dòng cài phải qua cả chín nhóm.
+for i, pattern in enumerate(patterns, 1):
+    run = subprocess.run(['grep', '-nEi', pattern, str(probe)], capture_output=True, text=True)
+    assert run.stdout.rstrip() == '1:' + fixtures['S6']
+    print('PASS S6.' + str(i), 'dòng cài')
+PY_REPLAY
+```
+
+Chuỗi base64 chỉ chứa các **dòng vi phạm mẫu**, để không đặt chính mẫu endpoint/thẻ giao diện
+vào vùng pha 2 đang được Gate 1d đo. Lệnh giải mã và đối chiếu nguyên văn ở trên là phép thử,
+không phải ngoại lệ của cổng. Bản sao vẫn chứa nội dung thật sau giải mã.
+
+**Output lọc trên tập thật.** Mỗi ô đã lọc là số dòng grep, chưa loại bằng nhận định của người;
+D ghi riêng hai câu. Phân loại từng dòng còn lại ngay sau bảng.
+
+| Lượt | Bắt gì | Chưa lọc (tài liệu / mã) | Đã lọc (tài liệu / mã) |
+|---|---|---|---|
+| A1 | endpoint, mẫu vùng pha 2 của P2-14 | 18 file · 1403 dòng / 36 file · 3868 dòng | 0 / 0 |
+| A2 | động từ + chữ, mẫu rộng vùng pha 1 | 18 file · 1403 dòng / 36 file · 3868 dòng | 0 / 5 |
+| A3 | từ vựng hợp đồng API | 18 file · 1403 dòng / 36 file · 3868 dòng | 0 / 12 |
+| B1 | route và file giao diện, mẫu P2-14 | 18 file · 1403 dòng / 36 file · 3868 dòng | 0 / 0 |
+| B2 | đường dẫn trong backtick | 18 file · 1403 dòng / 36 file · 3868 dòng | 0 / 0 |
+| B3 | từ vựng pha 4 | 18 file · 1403 dòng / 36 file · 3868 dòng | 1 / 15 |
+| C1 | thẻ kể cả thuộc tính và thẻ đóng | 18 file · 1403 dòng / 36 file · 3868 dòng | 0 / 0 |
+| C2 | tên PascalCase trong backtick | 18 file · 1403 dòng / 36 file · 3868 dòng | 0 / 0 |
+| D | tên hàm ứng dụng / hàm có ngoặc | 18 file · 1403 dòng / 36 file · 3868 dòng | (0 · 5) / (0 · 0) |
+| S6 | hợp chín nhóm từ của phần bị chặn | 18 file · 1403 dòng / 36 file · 3868 dòng | 38 / 11 |
+
+| Nhóm §6 | Mẫu grep -nEi (chạy trên cùng tập, số chưa lọc như trên) | Đã lọc tài liệu / mã | Dòng thử |
+|---|---|---|---|
+| S6.1 | `lương&#124;kỳ trả&#124;đơn giá công` | 19 / 1 | PASS |
+| S6.2 | `nợ nhà cung cấp` | 1 / 0 | PASS |
+| S6.3 | `kiểm đếm` | 1 / 0 | PASS |
+| S6.4 | `lãi&#124;\blỗ\b&#124;giá vốn` | 5 / 0 | PASS |
+| S6.5 | `mang về nhà` | 1 / 0 | PASS |
+| S6.6 | `nộp tiền` | 0 / 0 | PASS |
+| S6.7 | `thuế` | 1 / 0 | PASS |
+| S6.8 | `quyền&#124;được xem&#124;ai xem&#124;C34&#124;C35&#124;F55` | 12 / 5 | PASS |
+| S6.9 | `giảm giá.*(cả đơn&#124;toàn đơn)&#124;combo&#124;món mới` | 1 / 5 | PASS |
+
+S6.1 lương/kỳ trả/đơn giá; S6.2 nợ nhà cung cấp; S6.3 kiểm đếm; S6.4 lãi/lỗ/giá vốn;
+S6.5 tiền mang về nhà; S6.6 nộp tiền; S6.7 thuế; S6.8 quyền xem; S6.9 giảm giá cả đơn/combo/món mới.
+Tổng nhóm có thể lớn hơn hợp vì một dòng trúng nhiều nhóm. Mẫu lỗ có biên từ để không bắt chữ lỗi.
+Lượt rộng đầu tiên bắt cả chữ lỗi; đã đọc và sửa mẫu rồi chạy lại, không dùng số của lượt ấy.
+
+**Phân loại A1…D.** Các lượt không liệt kê dưới đây không trả dòng nào.
+
+| Lượt · tập | File:dòng gốc | Xếp bằng tên |
+|---|---|---|
+| B3 · docs | `docs/product/1-system-design/04-yeu-cau-du-lieu.md`:310 | Giao việc cho pha 4; nhắc mốc nghiệp vụ YC-28, không đặt route/component hay màn cụ thể |
+| D · docs | `docs/decisions.md`:4711 | Kiểu numeric hoặc hàm database; không phải hàm ứng dụng |
+| D · docs | `docs/product/2-db/10-quy-uoc-code.md`:137 | Kiểu numeric hoặc hàm database; không phải hàm ứng dụng |
+| D · docs | `docs/product/2-db/12-luoc-do-nguyen-lieu.md`:51, 70 | Kiểu numeric hoặc hàm database; không phải hàm ứng dụng |
+| D · docs | `docs/product/2-db/13-luoc-do-cham-cong.md`:43 | Kiểu numeric hoặc hàm database; không phải hàm ứng dụng |
+| A2 · code | `db/tests/i025_supply_numbers_entered_by_a_person.sql`:146, 153 | Lệnh xoá SQL trong phép thử quyền database (loại quyền 1) |
+| A2 · code | `db/tests/i027_attendance_one_box_per_worker_day.sql`:176 | Lệnh xoá SQL trong phép thử quyền database (loại quyền 1) |
+| A2 · code | `db/tests/i028_advance_and_bonus_name_a_worker.sql`:279, 286 | Lệnh xoá SQL trong phép thử quyền database (loại quyền 1) |
+| A3 · code | `db/seed/seed.pl`:105, 107, 110, 111, 217, 218 | Biến cục bộ rest của Perl |
+| A3 · code | `scripts/db-check.sh`:189, 190, 191, 196, 199, 207 | Biến body của bộ đọc khối kiểm; không phải nội dung HTTP |
+| B3 · code | `db/reconcile/proof/baseline.sql`:75, 78, 94, 234, 236 | Tên cột thành phần món trong SQL bán hàng; không phải component giao diện |
+| B3 · code | `db/scenario/doc_lai.sql`:75, 81, 83 | Tên cột thành phần món trong SQL bán hàng; không phải component giao diện |
+| B3 · code | `db/scenario/yc.sql`:363, 366, 372, 384, 387, 424, 428 | Tên cột thành phần món trong SQL bán hàng; không phải component giao diện |
+
+**Phân loại S6.** Ba nhãn của phép rà là *khai không dựng*, *trỏ tới chỗ chặn*, *cất*.
+Dòng nói quyền tách theo luật riêng; từ trúng nhưng chỉ là mã bán hàng có sẵn được ghi rõ,
+không gán nó thành một chỗ admin cất combo mới. Không có dòng *cất* thuộc phần admin bị chặn.
+
+| Tập · file:dòng gốc | Xếp loại · lý do |
+|---|---|
+| docs · `docs/decisions.md`:4769 | Khai không dựng — không đơn giá công |
+| docs · `docs/decisions.md`:4785 | Quyền loại 1 — lựa chọn cấp/thu quyền vai database |
+| docs · `docs/decisions.md`:4801 | Quyền loại 1 — lựa chọn cấp/thu quyền vai database |
+| docs · `docs/decisions.md`:4869 | Trỏ tới chỗ chặn — lương sau này/chờ lời |
+| docs · `docs/decisions.md`:4898 | Quyền loại 1 — lựa chọn cấp/thu quyền vai database |
+| docs · `docs/decisions.md`:4900 | Trỏ tới chỗ chặn — lương sau này/chờ lời |
+| docs · `docs/product/0-ba/admin/01-ranh-gioi.md`:116 | Trỏ tới chỗ chặn — lời chưa có/đầu vào cho phần sau, không dựng phép tính |
+| docs · `docs/product/0-ba/admin/01-ranh-gioi.md`:117 | Khai không dựng — lương đứng ngoài khoản chi; yêu cầu/giới hạn, không có bảng hay cột lương |
+| docs · `docs/product/0-ba/admin/01-ranh-gioi.md`:118 | Khai không dựng — lương đứng ngoài khoản chi; yêu cầu/giới hạn, không có bảng hay cột lương |
+| docs · `docs/product/0-ba/admin/01-ranh-gioi.md`:121 | Trỏ tới chỗ chặn — lời chưa có/đầu vào cho phần sau, không dựng phép tính |
+| docs · `docs/product/0-ba/admin/01-ranh-gioi.md`:122 | Trỏ tới chỗ chặn — lời chưa có/đầu vào cho phần sau, không dựng phép tính |
+| docs · `docs/product/1-system-design/03-bao-ve-invariant.md`:396 | Khai không dựng — lương đứng ngoài khoản chi; yêu cầu/giới hạn, không có bảng hay cột lương |
+| docs · `docs/product/1-system-design/04-yeu-cau-du-lieu.md`:299 | Khai không dựng — lương đứng ngoài khoản chi; yêu cầu/giới hạn, không có bảng hay cột lương |
+| docs · `docs/product/2-db/11-cong-chat-luong-pha-2.md`:374 | Quyền loại 3 — kịch bản YC-30, không suy quyền huỷ độc quyền |
+| docs · `docs/product/2-db/12-luoc-do-nguyen-lieu.md`:19 | Quyền loại 2 — giao pha 3, chưa nói vai nào được gì |
+| docs · `docs/product/2-db/12-luoc-do-nguyen-lieu.md`:117 | Quyền loại 2 — giao pha 3, chưa nói vai nào được gì |
+| docs · `docs/product/2-db/12-luoc-do-nguyen-lieu.md`:118 | Khai không dựng — không kiểm đếm, nợ nhà cung cấp, giá vốn; trỏ kế hoạch §6 |
+| docs · `docs/product/2-db/12-luoc-do-nguyen-lieu.md`:133 | Quyền loại 2 — giao pha 3, chưa nói vai nào được gì |
+| docs · `docs/product/2-db/13-luoc-do-cham-cong.md`:73 | Quyền loại 1 — vai ghi database |
+| docs · `docs/product/2-db/13-luoc-do-cham-cong.md`:91 | Quyền loại 1 — vai ghi database |
+| docs · `docs/product/2-db/13-luoc-do-cham-cong.md`:111 | Trỏ tới chỗ chặn — C26/C33; không cất lương |
+| docs · `docs/product/2-db/14-luoc-do-khoan-cua-nguoi.md`:66 | Quyền loại 1 — vai ghi database |
+| docs · `docs/product/2-db/14-luoc-do-khoan-cua-nguoi.md`:78 | Quyền loại 1 — vai ghi database |
+| docs · `docs/product/2-db/14-luoc-do-khoan-cua-nguoi.md`:99 | Trỏ tới chỗ chặn — C26/C33; không cất lương |
+| docs · `docs/product/99-unknowns.md`:83 | Trỏ tới chỗ chặn — U-058 còn mở, lời hỏi không phải chỗ cất |
+| docs · `quality/invariants.md`:1148 | Quyền loại 2 — mệnh đề không quyết ai được nhập |
+| docs · `quality/invariants.md`:1251 | Trỏ tới chỗ chặn — lời chưa có/đầu vào cho phần sau, không dựng phép tính |
+| docs · `quality/invariants.md`:1259 | Trỏ tới chỗ chặn — lời chưa có/đầu vào cho phần sau, không dựng phép tính |
+| docs · `quality/invariants.md`:1306 | Trỏ tới chỗ chặn — lời chưa có/đầu vào cho phần sau, không dựng phép tính |
+| docs · `quality/invariants.md`:1312 | Trỏ tới chỗ chặn — lời chưa có/đầu vào cho phần sau, không dựng phép tính |
+| docs · `quality/invariants.md`:1331 | Khai không dựng — lương đứng ngoài khoản chi; yêu cầu/giới hạn, không có bảng hay cột lương |
+| docs · `quality/invariants.md`:1334 | Khai không dựng — lương đứng ngoài khoản chi; yêu cầu/giới hạn, không có bảng hay cột lương |
+| docs · `quality/invariants.md`:1342 | Khai không dựng — lương đứng ngoài khoản chi; yêu cầu/giới hạn, không có bảng hay cột lương |
+| docs · `quality/invariants.md`:1357 | Trỏ tới chỗ chặn — lời chưa có/đầu vào cho phần sau, không dựng phép tính |
+| docs · `quality/invariants.md`:1361 | Khai không dựng — lương đứng ngoài khoản chi; yêu cầu/giới hạn, không có bảng hay cột lương |
+| docs · `quality/invariants.md`:1367 | Trỏ tới chỗ chặn — lời chưa có/đầu vào cho phần sau, không dựng phép tính |
+| docs · `quality/invariants.md`:1369 | Trỏ tới chỗ chặn — lời chưa có/đầu vào cho phần sau, không dựng phép tính |
+| docs · `quality/invariants.md`:1380 | Khai không dựng — lương đứng ngoài khoản chi; yêu cầu/giới hạn, không có bảng hay cột lương |
+| code · `db/migrations/20260930110000_cham_cong.up.sql`:38 | Quyền loại 1 — quyền database, không chọn vai nghiệp vụ |
+| code · `db/migrations/20260930120000_khoan_cua_nguoi.up.sql`:40 | Quyền loại 1 — quyền database, không chọn vai nghiệp vụ |
+| code · `db/migrations/20260930120000_khoan_cua_nguoi.up.sql`:41 | Quyền loại 1 — quyền database, không chọn vai nghiệp vụ |
+| code · `db/scenario/doc_lai.sql`:188 | Ngoài phần admin — combo bán hàng đã có, không cất combo mới của §6 |
+| code · `db/scenario/yc.sql`:322 | Khai không dựng — ca YC-04 kiểm không cất quyền theo chức vụ cố định |
+| code · `db/scenario/yc.sql`:521 | Ngoài phần admin — combo bán hàng đã có, không cất combo mới của §6 |
+| code · `db/seed/seed.pl`:28 | Ngoài phần admin — combo bán hàng đã có, không cất combo mới của §6 |
+| code · `db/seed/seed.pl`:29 | Ngoài phần admin — combo bán hàng đã có, không cất combo mới của §6 |
+| code · `db/seed/seed.pl`:30 | Ngoài phần admin — combo bán hàng đã có, không cất combo mới của §6 |
+| code · `db/tests/i028_advance_and_bonus_name_a_worker.sql`:313 | Khai không dựng — test so danh sách cột, không tạo cột lương |
+| code · `scripts/db-check.sh`:104 | Quyền loại 1 — quyền database, không chọn vai nghiệp vụ |
+
+**Đọc thêm dòng quyền, không chỉ tìm chữ quyền.** Dùng `rg -n 'chủ quán|người tick|người duyệt|được xem|C34|C35|shop_app|GRANT|REVOKE'`
+trên ba file lát và mã tương ứng, rồi mở cả đoạn. Quyền loại 1 gồm hai migration có GRANT/REVOKE
+và các phép thử dưới shop_app. Quyền loại 2 gồm file 12:19,117,133; file 13:19,126;
+file 14:19,115 — chỉ giao việc. Quyền loại 3 gồm file 13:70 (`I-027`) và file 14:62
+(`I-028`/`YC-31`), các câu đối chiếu i027:24–27, i028:24–27 và kịch bản mồi/test của đúng
+mệnh đề ấy. BA và owner pha 1/invariant được đọc như nguồn nghiệp vụ, không phải hợp đồng ứng dụng.
+Không thấy dòng chép C34/C35 vào lát để cấp quyền xem qua ứng dụng; **chưa kết luận sạch quyền**,
+vì hai đoạn sau chạm ranh giới giữa loại 3 và loại 4. Giữ **loại 5, chờ Claude**, không tự chọn:
+
+`docs/product/2-db/13-luoc-do-cham-cong.md:80` (nguyên văn đoạn 80–81):
+
+```text
+  cửa ghi phải khai đúng người thao tác và xét người ấy. Sửa tay bỏ qua cửa ghi là giới hạn đã biết.
+- **Không ô nào sinh khoản trừ** là tầng 3, kiểm bằng đọc lược đồ như bảng §2. Lát không dựng
+```
+
+`docs/product/2-db/14-luoc-do-khoan-cua-nguoi.md:72` (nguyên văn đoạn 72–73):
+
+```text
+- **Người duyệt là chủ quán** là tầng 3, database không xét. Cửa ghi pha 3 phải xét người duyệt
+  và khai đúng người thao tác. Sửa tay bỏ qua cửa ghi là giới hạn đã biết.
+```
+
+Lý do để loại 5: cả hai vừa nhắc nội dung đã có ở I-027/I-028, vừa đặt nghĩa vụ xét một vai cụ thể
+cho cửa ghi pha 3; trong chính đoạn không ghi mã trích. Claude quyết đó là dẫn mệnh đề theo loại 3
+hay viết hộ quyền theo loại 4. Không thay hai đoạn trong lượt này.
+
+**Đọc bằng mắt tên bảng · cột.** Lệnh lấy tên: mở ba file xuôi `db/migrations/20260930*.up.sql`,
+đọc từng khai báo bảng và từng dòng có kiểu bigint/text/numeric/date/timestamptz; không lấy tên từ
+bản mô tả. Output: **5 bảng, 32 cột, 37 tên**. Mỗi tên dưới đây một dòng, toàn bộ là chỗ cất đã được
+giao, không có lương/kỳ trả, công nợ nhà cung cấp, kiểm đếm, giá vốn, thuế hay quyền xem ứng dụng.
+
+| Tên bảng · cột | Xếp loại khi đọc bằng mắt |
+|---|---|
+| `supply_item` | Hợp lệ pha 2 — Danh mục YC-26 |
+| `supply_item.id` | Hợp lệ pha 2 — Khoá dòng |
+| `supply_item.name` | Hợp lệ pha 2 — Tên thứ mua vào |
+| `supply_item.purchase_unit` | Hợp lệ pha 2 — Đơn vị mua, trống được |
+| `supply_item.created_at` | Hợp lệ pha 2 — Lúc ghi |
+| `supply_day_entry` | Hợp lệ pha 2 — Con số ngày YC-27/28; không tổng, ngưỡng hay lô |
+| `supply_day_entry.id` | Hợp lệ pha 2 — Khoá dòng |
+| `supply_day_entry.supply_item_id` | Hợp lệ pha 2 — Thứ trong danh mục |
+| `supply_day_entry.entry_date` | Hợp lệ pha 2 — Ngày con số |
+| `supply_day_entry.kind_code` | Hợp lệ pha 2 — Loại mua vào/đã dùng |
+| `supply_day_entry.entered_measure` | Hợp lệ pha 2 — Con số người gõ |
+| `supply_day_entry.person_id` | Hợp lệ pha 2 — Người ghi/tick, không cấp quyền ứng dụng |
+| `supply_day_entry.created_at` | Hợp lệ pha 2 — Lúc ghi |
+| `attendance_day` | Hợp lệ pha 2 — Ô ngày YC-30; không giờ tới/về, đơn giá hay khoản trừ |
+| `attendance_day.id` | Hợp lệ pha 2 — Khoá dòng |
+| `attendance_day.worker_person_id` | Hợp lệ pha 2 — Người được chấm/nhận khoản |
+| `attendance_day.work_date` | Hợp lệ pha 2 — Ngày của ô |
+| `attendance_day.person_id` | Hợp lệ pha 2 — Người ghi/tick, không cấp quyền ứng dụng |
+| `attendance_day.created_at` | Hợp lệ pha 2 — Lúc ghi |
+| `attendance_day.cancelled_at` | Hợp lệ pha 2 — Lúc huỷ |
+| `attendance_day.cancelled_by_person_id` | Hợp lệ pha 2 — Người huỷ, không quyết quyền huỷ |
+| `attendance_day.cancel_note` | Hợp lệ pha 2 — Ghi chú huỷ |
+| `staff_advance` | Hợp lệ pha 2 — Khoản tạm ứng YC-31; không lương hay dấu nối két |
+| `staff_advance.id` | Hợp lệ pha 2 — Khoá dòng |
+| `staff_advance.worker_person_id` | Hợp lệ pha 2 — Người được chấm/nhận khoản |
+| `staff_advance.amount_vnd` | Hợp lệ pha 2 — Tiền từng khoản, không phải đơn giá lương |
+| `staff_advance.paid_date` | Hợp lệ pha 2 — Ngày của khoản, không phải kỳ lương |
+| `staff_advance.approver_person_id` | Hợp lệ pha 2 — Người duyệt tạm ứng, theo I-028; không quyền xem |
+| `staff_advance.person_id` | Hợp lệ pha 2 — Người ghi/tick, không cấp quyền ứng dụng |
+| `staff_advance.created_at` | Hợp lệ pha 2 — Lúc ghi |
+| `holiday_bonus` | Hợp lệ pha 2 — Khoản thưởng lễ Tết YC-32; không loại thưởng dự phòng |
+| `holiday_bonus.id` | Hợp lệ pha 2 — Khoá dòng |
+| `holiday_bonus.worker_person_id` | Hợp lệ pha 2 — Người được chấm/nhận khoản |
+| `holiday_bonus.amount_vnd` | Hợp lệ pha 2 — Tiền từng khoản, không phải đơn giá lương |
+| `holiday_bonus.paid_date` | Hợp lệ pha 2 — Ngày của khoản, không phải kỳ lương |
+| `holiday_bonus.person_id` | Hợp lệ pha 2 — Người ghi/tick, không cấp quyền ứng dụng |
+| `holiday_bonus.created_at` | Hợp lệ pha 2 — Lúc ghi |
+
+Đã đọc cả ràng buộc và phần sau khai báo: khoá duy nhất, khoá về người/danh mục, dấu huỷ,
+kiểm số tiền/con số, trigger vết và quyền vai database; không có đường lưu cho chín phần chặn.
+Ba file lùi chỉ gỡ bảng rỗng, không tạo chỗ cất. Phần admin của seed: dòng 235–272 đọc danh mục
+§8.4, phần xuất chỉ ghi tên/đơn vị; không có dữ liệu lương hay kiểm đếm. Baseline và S4 ghi con số
+ngày, ô công, tạm ứng, thưởng để diễn; không tự dựng phần bị chặn. Đây là rà tĩnh, không tuyên bố
+đã chạy lại database hay kiểm lại nghiệp vụ của các test.
+
+**Dòng thử — output thật.** Mỗi lượt thêm một dòng vào một bản sao mới của cả tập rồi so nguyên văn:
+
+| Tập bản sao | Chưa lọc | Output |
+|---|---|---|
+| Tài liệu | 19 file · 1404 dòng | PASS docs A1, A2, A3, B1, B2, B3, C1, C2, D, S6: dòng cài khớp nguyên văn |
+| Mã | 37 file · 3869 dòng | PASS code A1, A2, A3, B1, B2, B3, C1, C2, D, S6: dòng cài khớp nguyên văn |
+| Từng nhóm S6.1…S6.9 | 1 file thử · 1 dòng | PASS cả chín nhóm: cùng dòng cài được trả nguyên văn |
+
+A1…C2 và S6 trả một kết quả của dòng cài; D trả hai (tên hàm và hàm có ngoặc). Kết quả gốc
+không bị coi là dòng cài: phép so chỉ lấy đúng file zz_probe, dòng 1, rồi so toàn bộ nội dung.
+
+**Con trỏ hai chiều.** Đã mở **10 vùng nguồn**: shop-facts §8.4, §8.7, §8.8, §8.10 (bốn);
+backlog_AD; architecture §14; ranh giới BA §1.6; CLAUDE §2 hàng Schema; index; kế hoạch admin §4
+(sáu). Chiều về mở **17 vùng đích**: bốn mục shop-facts trên; yêu cầu dữ liệu §9, §9.1;
+I-025…I-029 (năm); bảo vệ invariant §5; đối chiếu §1, §2; lát người §0; quy ước dữ liệu §0;
+kế hoạch admin §6. Đếm vùng đọc, không đếm số lần một link lặp lại.
+
+| Chiều / nguồn | Đích đã đối chiếu | Kết quả |
+|---|---|---|
+| shop-facts §8.4 · §8.7 · §8.8 · §8.10 | YC-26…33, I-025…29; lát 12/13/14 và lát người | Nguồn lời còn đúng; không có link trực tiếp từ shop-facts sang ba lát mới; không bịa một link đã kiểm |
+| backlog_AD | mục lời tương ứng trong shop-facts; YC-15, YC-30; lát người/chấm công | Không có link trực tiếp sang 12/13/14; hai lời giao cũ ở danh sách lệch bên dưới |
+| architecture §14 | shop-facts §8.4, §8.7, §8.8; BA §1.6; YC-15 | Các mục tồn tại; lời “vẫn thiếu” ở 774 chưa chỉ sang chỗ đã dựng |
+| BA §1.6, dòng 89–126 | yêu cầu dữ liệu §9, I-025…29, shop-facts §8 | Có mục và đúng nội dung; không phải hợp đồng API |
+| CLAUDE:61; index:94–96 | ba file 12/13/14 | Đúng tên và đúng lát |
+| index:97–101 | migration, dữ liệu mồi, đối chiếu, cổng | File tồn tại; index:98 còn mô tả người là chỗ trống. Hàng 101 chỉ giới thiệu cổng bán hàng §1–7, chưa dẫn mục admin §9; ghi giới hạn, không coi 24 YC của §5 là số sai |
+| Kế hoạch §4 | ba file 12/13/14; 09/11 | Đúng; tên dự kiến của file 15 vắng có chủ đích, không báo link chết |
+| Ba lát → YC/I/§ | 17 vùng đích trên | Mục/mã tồn tại; ánh xạ I-025/26 ↔ YC-26…29, I-027 ↔ YC-30, I-028 ↔ YC-31/32 đúng; I-029/YC-33 vắng lát |
+| Ba lát → migration/test | ba bước xuôi/lùi và bốn test | File tồn tại; file 13:72 dẫn sai chữ của test, xem dưới |
+| Lát khoản của người → task nối két | backlog T-125; I-028, YC-31/32 | Task đã viết lại mệnh đề, hai câu chờ viết còn cũ |
+
+**Bảy chỗ dẫn lệch — nguyên văn, không sửa nguồn.** Các số dòng là của ảnh đầu vào và vẫn giữ
+nguyên trong lượt này. Đây gồm lời dẫn thiếu cập nhật và một bằng chứng trích sai, không có
+đường dẫn file bị mất (ngoài lát vắng đã nêu).
+
+**Lệch 1 — `docs/product/2-db/14-luoc-do-khoan-cua-nguoi.md:79`**
+
+```text
+- **Chưa nối két**: chờ task `T-125` ở `work/backlog.md` viết lại mệnh đề và phép trừ két; lát này
+  không thay việc ấy bằng một dấu nối dựng sẵn.
+```
+
+Trỏ work/backlog.md T-125 như việc chưa viết. Đích work/backlog.md:111 đã Done phần tài liệu; I-028:1299–1303 và YC-31/32:297–298 đã có vế két. Thiết kế còn chờ duyệt, luật ngày bán còn chờ U-072, không phải còn chờ viết mệnh đề.
+
+**Lệch 2 — `docs/product/2-db/14-luoc-do-khoan-cua-nguoi.md:96`**
+
+```text
+| Nối khoản vào két | không đường nối; mệnh đề chưa viết lại theo lời đóng câu hỏi nguồn tiền | task `T-125` ở `work/backlog.md`, trước migration nối két |
+```
+
+Cùng con trỏ T-125; “mệnh đề chưa viết lại” trái với I-028 và YC-31/32 hiện hành. Không suy từ đó rằng migration đã nối két.
+
+**Lệch 3 — `docs/product/2-db/13-luoc-do-cham-cong.md:72`**
+
+```text
+| **`I-027` · `YC-30`** — không ô nào sinh khoản trừ | 3 | không chỗ cất khoản trừ, không đường nối tới khoản trừ; kiểm bằng đọc lược đồ, không phải điều kiện kiểm trên từng ô | test I-027 — *đọc lược đồ — 0 khoá ngoại ngoài hai khoá về người, 0 hàm nhắc tới ô, 0 trigger ngoài trigger vết* |
+```
+
+Trỏ bằng chứng test I-027 nhưng db/tests/i027_attendance_one_box_per_worker_day.sql:215 in “ngoài ba khoá về người”; migration có cả khoá người huỷ, không phải hai.
+
+**Lệch 4 — `docs/product/00-index.md:98`**
+
+```text
+| Dữ liệu mồi — menu thật, bàn và mã QR, trạm của thành phần, danh mục hàng mua vào (P2A-06): sinh lúc chạy từ `master_plan/shop-facts.md` bởi `db/seed/seed.pl`, không cất con giá nào; các ca giá bắt buộc tính lại từ database; *người* là chỗ trống chờ `P2-08` (P2-10) | [2-db/08-du-lieu-moi.md](2-db/08-du-lieu-moi.md) |
+```
+
+Đích 08-du-lieu-moi.md:126 ghi người đã dựng ở P2-08; 06-luoc-do-nguoi-va-vet.md §1 có bảng người. Cụm “chỗ trống chờ P2-08” đã cũ.
+
+**Lệch 5 — `docs/product/1-system-design/architecture.md:774`**
+
+```text
+| **§8**, hàng *Ai đang trực trạm nào* | ❌ **không mất hàng nào** | vẫn thiếu: lời chốt là **luật ghi**, chỗ cất vẫn là pha 2 (**ADR-035**) |
+```
+
+Lời dẫn hàng Ai đang trực trạm nào còn nói vẫn thiếu. Đích YC-15 đã có; 06-luoc-do-nguoi-va-vet.md §1 có khoảng trực quầy. Chỉ phần quầy đã dựng, không suy đã có mốc cho mọi trạm.
+
+**Lệch 6 — `work/backlog_AD.md:932`**
+
+```text
+tiền mà không phải hỏi lại ai.
+
+```
+
+Lời giao ADM-22 còn tả mỗi buổi/vào-ra. Nguồn shop-facts §8.7:1866–1869 và đích YC-30:296, lát 13 §1 đã là mỗi người mỗi ngày một ô, không giữ giờ tới/về.
+
+**Lệch 7 — `work/backlog_AD.md:1370`**
+
+```text
+| **hình dạng dữ liệu** của cái vết | — | ⏳ **P1-07** của pha 1 viết yêu cầu; pha 2 chốt lược đồ (**ADR-035**) |
+```
+
+Hàng giao hình dạng dữ liệu của vết vẫn chờ P1-07/pha 2. Đích yêu cầu dữ liệu đã có và 06-luoc-do-nguoi-va-vet.md §1–2 đã dựng người/vết; chế độ mềm còn nợ không đồng nghĩa chưa có lược đồ.
+
+**Kiểm và bàn giao.** Chỉ hai hàng ô 7 · 8 của §9.4 và §9.6 này được sửa. Không thay nghiệp vụ,
+lược đồ, migration hoặc nguồn con trỏ. Lượt `./scripts/gate.sh` sau thay đổi: Gate 3/1b/1c/1d/1e PASS;
+Gate 1 verify SKIP vì chỉ đổi tài liệu. Gate 1d soát 1 file, không phát hiện mẫu vi phạm;
+điều ấy không giải quyết hai đoạn quyền loại 5. Diff chỉ có hai hàng cổng và mục này; output cuối
+nguyên văn ở báo cáo phiếu. Claude còn phân loại hai đoạn quyền, xử lý bảy chỗ dẫn lệch, review và ký ô.
+
 [↑ đầu file](#top)

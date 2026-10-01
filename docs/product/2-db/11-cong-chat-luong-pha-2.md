@@ -427,8 +427,8 @@ Lượt chạy: `./scripts/db-check.sh` trong worktree `P2A-08`, exit 0. Lát kh
 | 4 | `PASS xuôi 20260930100000_so_nguyen_lieu` · `…110000_cham_cong` · `…120000_khoan_cua_nguoi`; `PASS lùi …` ba bước, *lược đồ giống hệt lúc trước bước ấy*; `PASS xuôi lại — 11 bước từ số không, lược đồ giống hệt lần xuôi đầu (1289 dòng)` | **ký** |
 | 5 | `PASS  Gate 1e  check-schema-names — 36 bảng ở migration, 36 bảng tài liệu nhắc, comm -3 rỗng` | **ký** |
 | 6 | `PASS ba scenario + ngày quản trị diễn qua lược đồ — 41 dòng bước, mỗi bước một giao dịch COMMIT` · `PASS đọc lại ba scenario + ngày quản trị ở kết nối khác — mọi dòng Kết quả mong đợi đúng` (S4.1…S4.9 đọc lại, *tổng Gạo: mua 12 · dùng 13 · hiệu số -1*) · `TIỀN ba scenario: S1 96000 · S2 95000 · S3 54000 · cộng 245000 đ` — không đổi so với §4 | **ký** — bước *ghi khoản chi* vắng |
-| 7 | Rà các phần bị chặn | **của P2A-09** |
-| 8 | Rà ranh giới pha | **của P2A-09** |
+| 7 | §9.6: lượt §6 chín nhóm — tài liệu 38 dòng · mã 11 dòng trúng, **0 dòng *cất***; bảng 5 bảng · 32 cột của ba migration admin đọc bằng mắt, không tên nào giữ thứ của §6; mỗi nhóm có dòng thử kêu đúng | **ký** 2026-10-01 — `P2A-05` vắng |
+| 8 | §9.6: chín lượt A1…D của `P2-14` trên 18 file tài liệu · 1403 dòng và 36 file mã · 3868 dòng, **0** endpoint · route · component; dòng còn lại xếp loại từng dòng; hai dòng *quyền* loại 5 Claude xếp loại 3 + 2 (hợp lệ); `PASS  Gate 1d` | **ký** 2026-10-01 — `P2A-05` vắng |
 
 ⚠️ Ký kèm, không phải đạt trọn: trong các dòng admin, bốn kết cục `DỰNG ĐƯỢC` (vết mềm **F-046** ×3, tên
 công tơ ở [`12-luoc-do-nguyen-lieu.md`](12-luoc-do-nguyen-lieu.md) §5) và hai `CHƯA TRẢ LỜI ĐƯỢC` (ngày trừ
@@ -450,3 +450,35 @@ FAIL chấm YC — YC-99 lặp trong danh sách ở docs/product/2-db/11-cong-ch
 FAIL chấm YC — YC-99 không có ở owner — gỡ dòng ở docs/product/2-db/11-cong-chat-luong-pha-2.md §9.3
 db-check: FAIL
 ```
+
+### 9.6 Rà ranh giới pha của lát admin — P2A-09
+
+Rà 2026-10-01: **Codex** chạy lọc trên ảnh `481d1ab` theo phiếu của Claude; **Claude Code** xếp hai dòng
+loại 5, sửa con trỏ lệch và ký ô 7 · 8. Lệnh tái lập, phân loại từng dòng, bảng tên bảng · cột và output
+dòng thử nằm ở `work/backlog_AD_DB.md` → P2A-09 *Bàn giao* — không dán ở đây, vì chính file này nằm trong
+tập bị đo (cùng cách ô 9 §7). **`P2A-05` vắng, rà lại khi lát ấy xong.**
+
+| Lượt | Chưa lọc (tài liệu / mã) | Đã lọc (tài liệu / mã) | Kết luận |
+|---|---|---|---|
+| A1 · B1 · B2 · C1 · C2 | 18 file · 1403 dòng / 36 file · 3868 dòng | 0 / 0 | không endpoint, route, thẻ hay tên component |
+| A2 | như trên | 0 / 5 | lệnh `DELETE` SQL trong phép thử quyền database |
+| A3 | như trên | 0 / 12 | biến Perl và biến của bộ kiểm, không phải HTTP |
+| B3 | như trên | 1 / 15 | một câu giao việc cho pha 4 không đặt màn nào; tên cột thành phần món |
+| D | như trên | 0 · 5 / 0 · 0 | kiểu và hàm của database |
+| §6 chín nhóm | như trên | 38 / 11 | *khai không dựng* · *trỏ tới chỗ chặn* · quyền loại 1–3; **0 *cất*** |
+
+**Mỗi lượt biết kêu:** một dòng cài vào bản sao của cả tập (tài liệu 1404 dòng, mã 3869 dòng) ⇒ cả hai
+mươi lượt, gồm chín nhóm §6, trả đúng dòng cài.
+
+**Hai dòng *quyền* loại 5 — Claude xếp, 2026-10-01:** [`13-luoc-do-cham-cong.md`](13-luoc-do-cham-cong.md) §3
+*"Người tick là chủ quán là tầng 3 … cửa ghi phải … xét người ấy"* và
+[`14-luoc-do-khoan-cua-nguoi.md`](14-luoc-do-khoan-cua-nguoi.md) §3 *"Người duyệt là chủ quán là tầng 3 … Cửa
+ghi pha 3 phải xét người duyệt"*. Xếp **loại 3 + loại 2, hợp lệ**: nửa đầu trích mệnh đề đã có owner
+(`I-027` · `I-028` ở `quality/invariants.md`, tầng 3 ở `03-bao-ve-invariant.md`), nửa sau giao việc cho cửa
+pha 3 mà không đặt vai nào được làm gì ngoài lời mệnh đề. Đây là cách đọc của phiên, chủ repo đổi được.
+
+**Con trỏ hai chiều:** 27 vùng mở được (10 chiều đi · 17 chiều về); **bảy chỗ lệch, Claude sửa cùng lượt**,
+mỗi chỗ một ghi chú có ngày, không đổi lời nghiệp vụ: `14-luoc-do-khoan-cua-nguoi.md` hai chỗ (nối két đã
+viết lại ở `T-125`), `13-luoc-do-cham-cong.md` (*ba* khoá về người, khớp test), `../00-index.md` (người
+dựng ở `P2-08`), `../1-system-design/architecture.md` §14 (trực quầy đã có chỗ cất), `work/backlog_AD.md`
+hai chỗ (Goal chấm công cũ hơn lời một ô mỗi ngày; lược đồ vết đã dựng).
