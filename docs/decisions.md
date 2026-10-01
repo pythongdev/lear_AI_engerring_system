@@ -91,6 +91,7 @@ có câu trả lời mới từ người.
 | ADR-072 | **Chấm công: một ô *có đi làm* là MỘT dòng của một người một ngày; không có dòng là không có ô; ô tick nhầm được HUỶ tại chỗ, không xoá và không đổi** — một bảng, mỗi ô mang người được chấm, ngày, người tick và lúc tick; khoá duy nhất trên (người, ngày) của các ô còn hiệu lực; ô đã huỷ ở lại cùng người huỷ, lúc huỷ và ghi chú; vai ghi tick và huỷ được, không sửa người hay ngày, không xoá; *người tick là chủ quán* giữ ở tầng 3, database không xét | Đã chốt 2026-09-30 (giao cho phiên, P2A-03) | — | P2A-03 · P2A-07 · P2A-08 |
 | ADR-073 | **Tạm ứng và thưởng: HAI bảng, mỗi khoản một dòng; người duyệt là một dấu riêng chỉ tạm ứng có; vai ghi chỉ sửa được số tiền · người nhận · ngày; không cột nào nối sang két** — mỗi khoản mang người nhận, số tiền lớn hơn 0, ngày của khoản, người ghi và lúc ghi; *người duyệt là chủ quán* giữ ở tầng 3, database không xét; vết sửa ở chế độ mềm như mọi bảng (F-046); nối két chờ task `T-125` | Đã chốt 2026-09-30 (giao cho phiên, P2A-04) | — | P2A-04 · P2A-07 · P2A-08 · T-125 |
 | ADR-074 | **Tiền RA khỏi két trong ngày là MỘT hạng tử của `I-021` — *chi từ két* — gồm mọi tạm ứng, mọi thưởng và khoản chi của loại mang nguồn két; nguồn tiền nằm trên LOẠI chi, không trên từng khoản; không cột *ngày bán của két* nào trước khi `U-072` có lời** — viết lại `I-021` · `I-028` · `I-029` · `YC-31`…`YC-33` theo lời đóng `U-066` · `U-067` và lời *trong ngày, trước lúc đếm két*; không migration nào cho tạm ứng và thưởng; câu đối chiếu của hạng tử chờ `U-072` và `F-048` | Đã chốt 2026-10-01 (giao cho phiên, T-125) | — | T-125 · P2A-05 · P2A-07 · ADR-073 |
+| ADR-075 | **Khách trả nợ dần: mỗi lần trả là MỘT dòng `debt_collection` mang *số còn thiếu sau lần ấy*; các lần trả nối nhau thành chuỗi bằng khoá ngoại, nên trả vượt, rẽ nhánh và trả khi đã hết nợ đều bị database từ chối** — bỏ luật *một khoản nợ thu đủ một lần*; lần đầu nối vào số nợ của hoá đơn, lần sau nối vào số còn thiếu của lần trước; *đã trả xong* là có lần trả còn thiếu 0, không cột trạng thái | Đã chốt 2026-10-01 (giao cho phiên, T-126) | — | T-126 · ADR-059 · U-063 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -4985,3 +4986,69 @@ chuyển lại — ghi đúng như thế ở §8.10.
 `docs/product/1-system-design/architecture.md` §6.4 · `docs/product/0-ba/admin/01-ranh-gioi.md` ·
 `master_plan/shop-facts.md` §8.7 · §8.10 · `docs/product/99-unknowns.md` U-072 · ADR-035 · ADR-046 ·
 ADR-059 · ADR-073 · `work/findings.md` F-017 · F-048 · task `P2A-05` · `P2A-07`.
+
+### ADR-075 — Khách trả nợ dần: mỗi lần trả một dòng mang số còn thiếu, các lần trả nối thành chuỗi bằng khoá ngoại
+
+**Trạng thái:** **Đã chốt** 2026-10-01, **giao cho phiên** (Claude Code, task `T-126`) — không phải
+lời chủ repo hay chủ quán (`CLAUDE.md` §7.2); chủ repo đổi được. Lời giao 2026-10-01 là *"giao những
+việc còn lại cho codex và bạn kiểm tra"*. Hình dạng thử trên `postgres:17` dùng một lần trong phiên
+trước khi viết: năm ca sai bị từ chối, lần trả đủ một lần như cũ vẫn ghi được.
+
+**Context:**
+Chủ quán chốt 2026-09-30 (đóng `U-063`, `master_plan/shop-facts.md` §6.14): *"có. pos sẽ ghi lại tổng
+số nợ và ngày giờ trả nợ với số tiền còn thiếu."* Lược đồ của `P2-06` chỉ nhận **một** lần thu, bằng
+**đủ** số nợ: `debt_collection_one_per_debt_key UNIQUE (bill_id)` và điều kiện
+`cash_vnd + transfer_vnd = debt_vnd`. Ba luật quanh nợ đứng nguyên cho từng lần trả: doanh thu tính
+ngày ghi nợ, lần trả chỉ là tiền về, két ngày trả thừa đúng số nợ cũ thu được (§6.14, `I-014`).
+
+**Decision:**
+1. **Mỗi lần trả là một dòng `debt_collection`**, mang như hôm nay: hoá đơn, bản soi số nợ, tiền mặt,
+   chuyển khoản, lúc trả (`booked_at` — *ngày giờ trả* của lời chủ quán), ngày bán của lần trả,
+   người bấm. Số trả của một lần **lớn hơn 0**.
+2. **Hai cột mới: *còn thiếu trước lần này* và *còn thiếu sau lần này*.** Cột sau là con số chủ quán
+   gọi *số tiền còn thiếu*; một điều kiện kiểm buộc *sau = trước − tiền mặt − chuyển khoản* và
+   *sau ≥ 0*. Cột trước **để trống ở lần trả đầu**, và khi trống thì *trước* đọc là số nợ của hoá
+   đơn. Cột sau mặc định **0** (*trả đủ*): lần trả thiếu mà quên khai thì điều kiện kiểm từ chối, nên
+   mặc định không ghi sai được.
+3. **Chuỗi do database giữ, không do mã ứng dụng:** lần trả đầu duy nhất cho mỗi hoá đơn (chỉ mục
+   duy nhất có điều kiện *cột trước trống*); lần sau có *(hoá đơn, còn thiếu trước)* là khoá ngoại tới
+   *(hoá đơn, còn thiếu sau)* của một lần trả có thật; *(hoá đơn, còn thiếu trước)* duy nhất nên hai lần
+   trả không nối vào cùng một chỗ. Còn thiếu giảm nghiêm ngặt, nên chuỗi không vòng và tổng đã trả
+   không bao giờ vượt số nợ.
+4. **Không cột trạng thái.** *Đã trả xong* = hoá đơn có một lần trả còn thiếu 0; *còn nợ bao nhiêu* =
+   còn thiếu nhỏ nhất của chuỗi, hoặc số nợ khi chưa lần trả nào — cùng luật *trạng thái đọc từ việc
+   có dòng* của `04-luoc-do-duong-tien.md` §2.
+5. **Đối soát:** hạng tử *nợ cũ thu* của công thức `I-021` · `I-005/3` đọc mỗi lần trả **mức nợ giảm**
+   (*còn thiếu trước − còn thiếu sau*) ở vế công thức, và tiền mặt + chuyển khoản ở vế tiền thực nhận
+   — hai nhóm cột khác nhau như hôm nay đọc `debt_vnd`, nên lỗi cài gỡ điều kiện kiểm vẫn làm câu kêu.
+6. **Migration mới, không sửa file cũ** (`QC`, **ADR-065**); dòng đã có là lần trả đủ một lần ⇒ trước
+   trống, sau 0. Bước lùi có khoá chặn: hoá đơn nào có hơn một lần trả hay một lần trả còn thiếu khác 0
+   thì từ chối lùi.
+
+**Why:**
+- *Điểm 2.* Chủ quán nói POS **ghi** số còn thiếu; cất nó rồi buộc bằng điều kiện kiểm là đúng lời mà
+  không mở chỗ cho hai đáp số (`QD-22`). Một cột tự tính (generated) cũng giữ được phép trừ, nhưng
+  nó chạy theo mọi lần sửa tiền, nên lỗi cài `i005_3` (gỡ điều kiện, sửa chuyển khoản) không còn làm
+  `I-005/3` kêu — mất một bằng chứng bộ đối chiếu biết kêu.
+- *Điểm 3.* Một trigger cộng tổng đã trả phải khoá dòng hoá đơn để hai lần trả cùng lúc không cùng
+  lọt; khoá ngoại và khoá duy nhất làm việc ấy ở tầng 1 mà không cần mã nào nhớ khoá.
+- *Mặc định 0 ở điểm 2.* Giữ nguyên mọi lần ghi *trả đủ một lần* đang có ở test, ngày mẫu và scenario
+  — ít đường ghi phải đổi nhất, và không đường nào ghi sai được.
+
+**Rejected alternatives:**
+- *Giữ một dòng mỗi khoản nợ, cộng dồn số đã trả vào nó.* Bác: sửa đè mất *ngày giờ từng lần trả*
+  chủ quán đòi.
+- *Không cất số còn thiếu, đọc bằng phép trừ.* Bác: không chặn được trả vượt ở tầng 1 nếu không có
+  trigger, và trái chữ *ghi lại* của lời chủ quán.
+- *Trigger kiểm tổng.* Bác: lý do điểm 3.
+- *Cột trạng thái chưa trả · trả một phần · trả xong.* Bác: đường ghi thứ hai cho một sự thật đọc
+  được từ chuỗi.
+
+**Suy ra, không phải lời chủ quán** (`CLAUDE.md` §7.2): mỗi lần trả một dòng; tách *trước · sau*;
+chuỗi bằng khoá ngoại; mặc định 0; *đã trả xong* đọc từ chuỗi. Lời chủ quán chỉ có: trả dần được,
+POS ghi tổng nợ, ngày giờ trả và số còn thiếu.
+
+**Applies to:** `docs/product/1-system-design/04-yeu-cau-du-lieu.md` `YC-02` ·
+`docs/product/2-db/04-luoc-do-duong-tien.md` §2 · §5 · `db/reconcile/i005.sql` ·
+`db/tests/yc02_debt_paid_in_parts.sql` · `master_plan/shop-facts.md` §6.14 · U-063 · ADR-059 ·
+ADR-065 · task `T-126`.

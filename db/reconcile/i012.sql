@@ -7,7 +7,8 @@
 -- @@ I-012/1 — thao tác chạm tiền thiếu một trong bốn câu: cái gì đổi, bao nhiêu, ai bấm, lúc mấy giờ
 WITH op AS (
   SELECT 'bill' AS bang, id, person_id, booked_at AS luc, due_vnd AS bao_nhieu FROM bill
-  UNION ALL SELECT 'debt_collection', id, person_id, booked_at, debt_vnd FROM debt_collection
+  UNION ALL SELECT 'debt_collection', id, person_id, booked_at,
+                   coalesce(remaining_before_vnd, debt_vnd) - remaining_vnd FROM debt_collection
   UNION ALL SELECT 'prepayment', id, person_id, booked_at, cash_vnd + transfer_vnd FROM prepayment
   UNION ALL SELECT 'refund', id, person_id, booked_at, amount_vnd FROM refund
   UNION ALL SELECT 'opening_float', f.id, f.person_id, f.created_at,

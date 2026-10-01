@@ -2460,6 +2460,17 @@ F-019) mang theo toàn bộ phần chưa commit của **P2-05** (migration menu 
 file P2-05/T-102 chưa commit"*, tức phiên ấy **thấy** file của người khác mà vẫn stage chúng. Không
 mất dữ liệu; hệ quả là P2-05 không còn commit mang tên mình, cùng loại với dòng P1-11 ở trên.
 
+**Lặp lại 2026-10-01 (ghi bởi Claude Code, phiên T-126 · P2A-08):** hai lần trong một phiên, ở clone
+chính, một commit mang subject của task **khác** chỉ chứa phần sổ việc phiên này đang sửa dở:
+`9391e86` *"T-128: Tách compose project…"* chỉ có `work/backlog.md` (dòng In Progress T-131 · P2A-08,
+dòng Ready P2A-09 — không gì của T-128, T-128 đã ở `e090e1c`); `cd07721` *"T-129: Hạ vế đơn huỷ…"* chỉ
+có `work/backlog.md` · `work/backlog_archive.md` · `work/findings.md` (T-131 *Done*, T-126 *In
+Progress*, F-049 *Fixed*) — phần việc thật của T-129 vẫn chưa commit ở worktree `../lean_wt/T-129`.
+Nội dung bị cuốn đi đúng nên không mất gì, nhưng subject của cả hai commit nói sai việc, và lịch sử
+`git log --grep='^T-129:'` nay trỏ vào một commit không có việc nào của T-129. Hình mới so với lần đầu:
+khối commit của một phiên **làm việc ở worktree riêng** được dán vào **clone chính**, nên đường dẫn
+`work/…` trong khối khớp file của phiên khác.
+
 **Status:**
 Open
 

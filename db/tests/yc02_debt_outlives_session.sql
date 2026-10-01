@@ -45,7 +45,7 @@ BEGIN
     INSERT INTO debt_collection (bill_id, debt_vnd, cash_vnd) VALUES (b1, 30000, 30000);
     RAISE EXCEPTION 'YC-02: database KHÔNG từ chối lần thu nợ khác số nợ đã ghi';
   EXCEPTION WHEN foreign_key_violation THEN
-    RAISE NOTICE 'YC-02 bị từ chối (thu nợ khác số nợ — trả một phần là U-063): %', SQLERRM;
+    RAISE NOTICE 'YC-02 bị từ chối (bản soi số nợ khác số nợ của hoá đơn): %', SQLERRM;
   END;
   BEGIN
     INSERT INTO debt_collection (bill_id, debt_vnd, cash_vnd) VALUES (b1, 50000, 60000);

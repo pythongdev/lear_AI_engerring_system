@@ -951,6 +951,45 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-126"></a>
+### T-126 — Lược đồ chỉ nhận thu nợ đủ trong một lần, còn chủ quán cho khách trả dần
+
+**Yêu cầu:** chủ quán chốt 2026-09-30 (đóng `U-063`, `master_plan/shop-facts.md` §6.14): *"pos sẽ ghi lại
+tổng số nợ và ngày giờ trả nợ với số tiền còn thiếu."* Mở bởi T-124. Mức **L2** (tiền, dữ liệu đã cất).
+Nhận 2026-10-01 theo lời chủ repo *"giao những việc còn lại cho codex và bạn kiểm tra"*.
+
+**Thiết kế — Claude Code:** `docs/decisions.md` **ADR-075** (mỗi lần trả một dòng; `remaining_before_vnd`
+trống ở lần đầu, `remaining_vnd` mặc định 0 buộc bằng điều kiện kiểm; chuỗi bằng khoá ngoại tự tham chiếu
+cùng hai khoá duy nhất và một chỉ mục duy nhất có điều kiện; không cột trạng thái; cột thường thay vì cột
+tự tính để lỗi cài `i005_3` vẫn kêu). Hình dạng thử trên `postgres:17` với migration thật trước khi giao.
+`YC-02` viết lại ở `docs/product/1-system-design/04-yeu-cau-du-lieu.md`.
+
+**Acceptance** (phiếu giao Codex): (1) một cặp migration mới, không sửa file cũ; (2) bước lùi có khoá chặn,
+lùi trả lược đồ giống hệt; (3) `db/tests/yc02_debt_paid_in_parts.sql` xanh; (4) test cũ xanh, lời NOTICE
+sai sự thật trong `yc02_debt_outlives_session.sql` sửa; (5) `I-005/3` đọc mức nợ giảm, lỗi cài vẫn kêu;
+(6) file lát 04 · 07 cập nhật; (7) `db-check` và gate xanh.
+
+**Bàn giao** — 2026-10-01 · thực hiện: **Codex** (worktree `../lean_wt/T-126`, nhánh `codex/T-126`, trên
+`9391e86`) · duyệt: **Claude Code**. Codex không kết nối được Docker trong sandbox; Claude chạy database.
+File: `db/migrations/20261001120000_tra_no_dan.{up,down}.sql` · `db/reconcile/i005.sql` · `db/reconcile/i012.sql`
+· `db/reconcile/proof/i005_3.sql` (chỉ lời chú thích) · `db/tests/yc02_debt_outlives_session.sql` (một lời
+NOTICE) · `docs/product/2-db/04-luoc-do-duong-tien.md` · `07-thu-tu-migration.md`; cùng lượt Claude:
+`db/tests/yc02_debt_paid_in_parts.sql` · `docs/decisions.md` (ADR-075) · `04-yeu-cau-du-lieu.md` (`YC-02`).
+
+| Acceptance | Bằng chứng (Claude chạy) |
+|---|---|
+| 1 · 2 | `PASS xuôi 20261001120000_tra_no_dan` · `PASS lùi 20261001120000_tra_no_dan — lược đồ giống hệt lúc trước bước ấy (1289 dòng)`; khoá chặn thử riêng trên database có một lần trả 20.000/50.000: `error: migration failed: đường lùi từ chối: debt_collection đang giữ 1 giá trị đã ghi`, cột còn nguyên (`count = 1`) |
+| 3 | `PASS db/tests/yc02_debt_paid_in_parts.sql` — chín lời từ chối đúng tên (`debt_collection_first_payment_key` · `_follows_fkey` · `_before_key` · `_amounts_check` ×6), *22/09 trả 30000 còn 70000 · 24/09 trả 50000 còn 20000 · 26/09 trả 20000 còn 0*, *tổng trả 100000 = tổng nợ giảm 100000*. Trước migration test đỏ: `column "remaining_vnd" … does not exist` |
+| 4 | 31 file `PASS db/tests/…`, gồm `yc02_debt_outlives_session` · `i021_…` · `i012_…` · `i005_…` · `i015_…` không sửa phép thử |
+| 5 | `PASS ngày bán mẫu đúng — 97 câu chạy, mọi tập rỗng` · `PASS kêu i005_3 — I-005/3 QD-21 QD-22` · `PASS kêu i012_1 — I-012/1` |
+| 6 | đọc diff: §2 · §3 · §5 của 04, bước 12 và khoá chặn của 07; Gate 1d · 1e PASS |
+| 7 | `./scripts/gate.sh` ở clone chính sau khi gộp cả `P2A-08` · `T-131` ⇒ `PASS gate`, `db-check — 12 bước … 31 file test … 31 mã YC` |
+
+**Còn lại:** `yc.sql` chấm `YC-02` vẫn bằng các vế cũ (vẫn đúng); các vế *trả dần* được chấm ở test hồi
+quy, chưa ở bước chấm YC. `architecture.md` §12.3 đã ghi là đề xuất lịch sử, không sửa. Chưa review độc lập.
+
+[↑ đầu file](#top)
+
 <a id="t-131"></a>
 ### T-131 — Gate 1d mù với thẻ component có thuộc tính, thẻ đóng (chữa `F-049`)
 

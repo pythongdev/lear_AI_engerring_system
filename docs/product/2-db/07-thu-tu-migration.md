@@ -17,11 +17,11 @@ lược đồ từ số không · chỗ chứng minh từng điều ấy chạy 
 
 ---
 
-## 1. Thứ tự dựng — mười một bước
+## 1. Thứ tự dựng — mười hai bước
 
 Công cụ chạy các bước theo **tên file**, tức theo mốc giờ ở đầu tên (`QC-05`). Thứ tự dưới đây là
 thứ tự ấy; cột *đứng trên* nói bước nào phải có trước, vì bước sau thêm cột, khoá ngoại hay ràng
-buộc vào bảng của nó. Dựng lại từ số không là chạy đúng mười một bước này, từ trên xuống; lùi là đi
+buộc vào bảng của nó. Dựng lại từ số không là chạy đúng mười hai bước này, từ trên xuống; lùi là đi
 ngược từ dưới lên, **từng bước một**.
 
 | # | File (`db/migrations/`, bỏ đuôi) | Lát | Dựng gì | Đứng trên |
@@ -37,6 +37,7 @@ ngược từ dưới lên, **từng bước một**.
 | 9 | `20260930100000_so_nguyen_lieu` | `P2A-02` | `supply_item` · `supply_day_entry` và trigger vết của chúng | 8 |
 | 10 | `20260930110000_cham_cong` | `P2A-03` | `attendance_day` và trigger vết; vai ghi tick và huỷ được một ô, không sửa người hay ngày, không xoá | 8 |
 | 11 | `20260930120000_khoan_cua_nguoi` | `P2A-04` | `staff_advance` · `holiday_bonus` và trigger vết; vai ghi chỉ sửa người nhận, số tiền và ngày | 8 |
+| 12 | `20261001120000_tra_no_dan` | `T-126` | hai cột còn thiếu và chuỗi từng lần trả trên `debt_collection` (**ADR-075**, lời đóng `U-063`) | 6 · 8 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
@@ -64,6 +65,12 @@ của [`01-quy-uoc-du-lieu.md`](01-quy-uoc-du-lieu.md) đỏ khi thiếu — và
    gỡ (`QC-05`: sửa lược đồ đã commit là một migration mới).
 4. **Đường lùi chưa chạy lần nào là đường lùi chưa được chứng minh.** Bộ kiểm chạy mọi file lùi ở
    **mỗi** lần chạy (§4), không chỉ lúc viết.
+
+**Khoá chặn bước 12** (2026-10-01, `T-126`, **ADR-075**): chỉ lùi khi hình cũ giữ nguyên
+được dữ liệu. Có `remaining_before_vnd IS NOT NULL`, `remaining_vnd <> 0`, hoặc một hoá đơn
+có hơn một lần trả ⇒ từ chối trước khi gỡ gì. Bảng rỗng hoặc chỉ có mỗi hoá đơn một lần trả đủ
+(trước trống, sau 0) thì lùi được: hai cột bỏ đi không mang thông tin ngoài hình cũ. Đây là
+trường hợp riêng của luật 2 theo quyết định trên; dữ liệu trả dần đã ghi phải đi bằng migration mới.
 
 ---
 

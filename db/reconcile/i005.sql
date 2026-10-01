@@ -31,7 +31,7 @@ WITH h AS (
   UNION ALL SELECT sale_date, -amount_vnd, 0 FROM refund
   -- vế phải: doanh thu − nợ ghi, nợ cũ thu, trả trước nhận, − trả trước thành doanh thu, − trả lại, − hoàn
   UNION ALL SELECT sale_date, 0, due_vnd - debt_vnd FROM bill
-  UNION ALL SELECT sale_date, 0, debt_vnd FROM debt_collection
+  UNION ALL SELECT sale_date, 0, coalesce(remaining_before_vnd, debt_vnd) - remaining_vnd FROM debt_collection
   UNION ALL SELECT sale_date, 0, cash_vnd + transfer_vnd FROM prepayment
   UNION ALL SELECT b.sale_date, 0, -u.take_vnd FROM prepayment_use u JOIN bill b ON b.id = u.bill_id
   UNION ALL SELECT sale_date, 0, -amount_vnd FROM refund)
