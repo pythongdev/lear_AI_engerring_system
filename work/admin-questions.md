@@ -128,7 +128,17 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > ⚠️ Từ 2026-09-15 đây là chỗ hở **duy nhất** còn lại của danh mục nguyên liệu `shop-facts.md`
 > §8.4: phần *ngưỡng* đã đóng (`U-045` — không có ngưỡng), phần *đơn vị* thì không, và nó không
 > còn mã `U-XXX` nào giữ hộ — chỉ còn câu này.
-> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-089), đơn vị mua ở `master_plan/shop-facts.md` §8.4.** Còn đơn vị của các tên cũ chưa được nhắc lại: nhân thịt, nhân thịt mộc nhĩ, quất, hành tây, mì chính, hạt nêm, đường trắng, đường đen, bột bánh cuốn, hạt tiêu, nước mắm, dầu rửa bát. Chưa xác nhận đơn vị ghi lượng đã dùng hoặc quy đổi bao gói.
+> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-089), đơn vị mua ở `master_plan/shop-facts.md` §8.4.**
+>
+> **Lời chủ quán 2026-09-30 — đơn vị mua của mười hai tên cũ, CHƯA chuyển về owner** (bản nháp,
+> `shop-facts.md` §8.4 chưa có các dòng này): nhân thịt — **kg** · nhân thịt mộc nhĩ — **kg** ·
+> quất — **kg** · hành tây — **kg** · mì chính — **túi** · hạt nêm — **túi** · đường trắng —
+> **túi** (nguyên văn gõ *"tui"*) · đường đen — **bình** · *"gạo bánh cuốn"* — **túi** · hạt tiêu —
+> **kg** · nước mắm — **chai** · dầu rửa bát — **túi**.
+>
+> Còn hỏi: (1) chủ quán viết *"gạo bánh cuốn"*, trong khi danh mục §8.4 có **hai** tên riêng là
+> *gạo* và *bột bánh cuốn* — *túi* là đơn vị của tên nào, hay của cả hai? (2) Chưa xác nhận đơn vị
+> ghi lượng đã dùng hoặc quy đổi bao gói (một túi, một bình, một chai là bao nhiêu).
 
 **B13.** Quán **mấy ngày mua một lần**? Sáng nào cũng mua, hay mua theo tuần?
 > **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-089)** — đọc cách mua ở `master_plan/shop-facts.md` §8.4.
