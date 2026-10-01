@@ -89,7 +89,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 - [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi, không cột *ngày bán của két* khi `U-072` còn mở. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [ ] P2A-09 Rà ranh giới pha và pointer trên file lát admin, ký ô 7 · 8 — nhận sau `P2A-08`; thêm 2026-10-01 vì dòng này vắng khỏi *Ready* nên brief không bao giờ đưa ra — L1 · [chi tiết](backlog_AD_DB.md#p2a-09)
-- [ ] T-126 Lược đồ chỉ nhận thu nợ ĐỦ trong MỘT lần, còn chủ quán cho khách trả dần — chủ quán chốt 2026-09-30 (đóng `U-063`, `master_plan/shop-facts.md` §6.14): POS ghi tổng nợ, ngày giờ từng lần trả và số còn thiếu. `docs/product/2-db/04-luoc-do-duong-tien.md` §5, `YC-02`, `architecture.md` §12.3 và test `db/tests/yc02_debt_outlives_session.sql` đều viết theo hai trạng thái *chưa thu · đã thu* và **từ chối** một lần thu khác số nợ. Việc: dòng yêu cầu, migration mới (không sửa file cũ), test và phép đối chiếu két cho ngày có lần trả một phần. Mở bởi T-124 — L2
 - [ ] T-127 Thứ đã làm của đơn huỷ mà không bàn nào chờ chưa có chỗ ghi *bánh làm sai* — chủ quán chốt 2026-09-30 (đóng `U-064`, `master_plan/shop-facts.md` §5.4): người đứng quầy ghi chú trên POS. `YC-07`, `docs/product/2-db/05-luoc-do-san-xuat.md` §5 và tập đối chiếu `I-004/6` chưa phân biệt một thứ **đã ghi chú** với một lần quầy **quên chuyển**. Lời không nói bánh bỏ hay giữ, ghi chú gồm gì — không tự suy. Mở bởi T-124 — L2
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
@@ -98,12 +97,13 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-131 Gate 1d bắt thẻ component có thuộc tính, thẻ đóng — chữa `F-049` trước khi pha 3 · pha 4 sửa file pha 2; Codex thi công, Claude duyệt — L1 · [chi tiết](#t-131)
+- [ ] T-126 Khách trả nợ dần — mỗi lần trả một dòng mang số còn thiếu, chuỗi giữ bằng khoá ngoại (**ADR-075**, Claude thiết kế 2026-10-01); `YC-02` viết lại; test hồi quy `db/tests/yc02_debt_paid_in_parts.sql` viết trước, đỏ tới khi có migration; Codex dựng migration, sửa hạng tử nợ cũ thu của `I-005/3`, file lát; Claude duyệt — L2. Acceptance: phiếu giao việc, chép vào bàn giao lúc đưa về
 - [ ] P2A-08 Cổng chất lượng lược đồ admin — diễn một ngày quản trị qua lược đồ, chấm `YC-26`…`YC-32`, ký ô 1–6; `P2A-05` (`YC-33`) ghi *vắng, chờ ADR-074*; Codex thi công, Claude duyệt — L2 · [chi tiết](backlog_AD_DB.md#p2a-08)
 
 <a id="done"></a>
 ## Done
 
+- [x] T-131 Gate 1d bắt thẻ component có thuộc tính và thẻ đóng — `PAT_FE` nới, 12 ca hồi quy (sáu hình × hai vùng) và một ca văn xuôi không kêu oan; hai hình *tên trong backtick* để mắt người, lý do ở header; `F-049` *Fixed*; Codex thi công, Claude duyệt — 2026-10-01 · [chi tiết](backlog_archive.md#t-131)
 - [x] T-130 Đề bài `P2A-09` giao được cho Codex — kế hoạch §7: ô 1–6 ký ở `P2A-08`, ô 7 · 8 ở `P2A-09`; entry `P2A-09` có tập file và tập con trỏ, lượt lọc cho chín phần §6, luật xếp dòng *quyền* (cách đọc của phiên, chờ chủ repo), dòng lát vắng (`P2A-05` mang việc rà về mình); không rà, không đổi lời quán hay lược đồ — 2026-10-01 · [chi tiết](backlog_archive.md#t-130)
 - [x] P2A-07 Phép đối chiếu của admin vào bộ đối chiếu — mười hai câu mới trong `db/reconcile/i025.sql` … `i028.sql`, mỗi câu một lỗi cài kêu đúng mã; tập không thành câu (`I-026` tập 1 · 2, `I-028` tập 5 · 6, `I-021` tập 2) có dòng vì sao ở `09-doi-chieu-bat-bien.md` §2; hai câu *chuỗi vết đứt* đọc lần sửa mất vết dưới chế độ mềm (**F-046**) trên dòng đã có vết; ngày bán mẫu thêm dữ liệu admin, mọi câu vẫn rỗng; `I-029` *vắng*, người nợ `P2A-05`; câu `I-021` đánh số lại theo bảy tập (**F-055** đóng); Codex thi công, Claude thiết kế và duyệt; `db-check` 97 câu · 97 lỗi cài, gate xanh — 2026-10-01 · [chi tiết](backlog_AD_DB.md#p2a-07)
 - [x] T-128 Hai lần chạy `db-check` song song không gỡ database của nhau — mỗi lần chạy một compose project `banhcuon_check_<PID>_…`, `cleanup` chỉ gỡ của mình, project của lần chạy đã chết (hỏi `ps -p`) được lần sau dọn, tên cũ và `banhcuon` không bị đụng; `QC-07` và hai trang `docs/guideline/` đổi cùng lượt; **F-045** *Fixed*. Codex thi công, Claude duyệt, sửa một chỗ (`kill -0` → `ps -p`) và đo bằng Docker: hai lần chồng nhau đều PASS, `kill -9` được dọn — 2026-10-01 · [chi tiết](backlog_archive.md#t-128)
@@ -293,29 +293,6 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
-
-<a id="t-131"></a>
-### T-131 — Gate 1d mù với thẻ component có thuộc tính, thẻ đóng (chữa `F-049`)
-
-**Mức:** L1 — một script cổng và test của nó; hỏng thì một tên component lọt vào file pha 1 · pha 2
-mà cổng vẫn `PASS`. Mở 2026-10-01 (Claude Code, theo lời chủ repo *"giao những việc còn lại cho codex"*).
-
-**Acceptance** (viết trước khi giao):
-1. `PAT_FE` của `scripts/check-phase-boundary.sh` bắt thẻ component **có thuộc tính** (`<DebtTable rows={rows} />`,
-   `<OrderCard order={o}>`) và **thẻ đóng** (`</DebtTable>`); hai hình cũ (`<DebtTable />`, `<DebtTable>`) và
-   tên file `.tsx` vẫn bắt.
-2. `scripts/check-phase-boundary.test.sh` có ca hồi quy cho từng dòng `KHÔNG BẮT` của `F-049` mà lượt này
-   nới (mỗi ca đòi exit 1), và **một ca đòi exit 0** trên văn xuôi pha 2 thường có dấu `<` · `>` (so sánh,
-   mũi tên `⇒`, `<MÃ>`, kiểu `numeric(12,0)`) — không có ca ấy thì lần nới sau khép mẫu lại cho êm.
-3. Hai hình *tên trong backtick* (`PascalCase`, đường dẫn mở đầu bằng `/`): nới hay để cho mắt người là
-   lựa chọn của người sửa, **ghi lý do** ở header script; nếu nới thì có ca exit 0 cho tên tham số kết nối
-   database mà `P2-14` đã thấy ở `QC-06`.
-4. Gate 1d chạy trên cây thật hôm nay vẫn `PASS` (không kêu oan file nào đang có).
-5. `./scripts/gate.sh` xanh.
-
-**Bàn giao:** chưa có — điền lúc Claude đưa thay đổi về.
-
-[↑ đầu file](#top)
 
 <a id="p1-01"></a>
 ### Mười hai bước của pha 1 — mô tả dài ở `work/backlog_SD.md`

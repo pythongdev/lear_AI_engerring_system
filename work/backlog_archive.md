@@ -951,6 +951,36 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-131"></a>
+### T-131 — Gate 1d mù với thẻ component có thuộc tính, thẻ đóng (chữa `F-049`)
+
+**Mức:** L1 — một script cổng và test của nó; hỏng thì một tên component lọt vào file pha 1 · pha 2
+mà cổng vẫn `PASS`. Mở 2026-10-01 (Claude Code, theo lời chủ repo *"giao những việc còn lại cho codex"*).
+
+**Acceptance** (viết trước khi giao):
+1. `PAT_FE` của `scripts/check-phase-boundary.sh` bắt thẻ component **có thuộc tính** (`<DebtTable rows={rows} />`,
+   `<OrderCard order={o}>`) và **thẻ đóng** (`</DebtTable>`); hai hình cũ (`<DebtTable />`, `<DebtTable>`) và
+   tên file `.tsx` vẫn bắt.
+2. `scripts/check-phase-boundary.test.sh` có ca hồi quy cho từng dòng `KHÔNG BẮT` của `F-049` mà lượt này
+   nới (mỗi ca đòi exit 1), và **một ca đòi exit 0** trên văn xuôi pha 2 thường có dấu `<` · `>` (so sánh,
+   mũi tên `⇒`, `<MÃ>`, kiểu `numeric(12,0)`) — không có ca ấy thì lần nới sau khép mẫu lại cho êm.
+3. Hai hình *tên trong backtick* (`PascalCase`, đường dẫn mở đầu bằng `/`): nới hay để cho mắt người là
+   lựa chọn của người sửa, **ghi lý do** ở header script; nếu nới thì có ca exit 0 cho tên tham số kết nối
+   database mà `P2-14` đã thấy ở `QC-06`.
+4. Gate 1d chạy trên cây thật hôm nay vẫn `PASS` (không kêu oan file nào đang có).
+5. `./scripts/gate.sh` xanh.
+
+**Bàn giao** — 2026-10-01 · thực hiện: **Codex** (worktree `../lean_wt/T-131`, nhánh `codex/T-131`, trên
+`66789d6`) · duyệt: **Claude Code**. File đổi: `scripts/check-phase-boundary.sh` (`PAT_FE` thành
+`</?[A-Z][A-Za-z]+([[:space:]][^<>]*)?/?>`, header ghi lý do để hai hình *tên trong backtick* cho mắt người)
+· `scripts/check-phase-boundary.test.sh` (ca 18: sáu hình × hai vùng, mỗi ca exit 1; ca 19: văn xuôi pha 2
+có `a < b`, `<MÃ>`, `numeric(12,0)`, `⇒`, `->` ⇒ exit 0). Bằng chứng: `check-phase-boundary.test: OK`;
+Claude chạy lại `./scripts/gate.sh` trong worktree ⇒ *PASS gate*, 10 file test qua; mẫu mới trên toàn bộ
+`.md` thật của hai vùng ⇒ 0 dòng khớp. Gate của Codex đỏ ở hai ca `--amend` của `commit-msg.test.sh` —
+ngoài scope, không tái hiện khi Claude chạy ngoài sandbox Codex. Đưa về clone chính bằng `git apply`.
+
+[↑ đầu file](#top)
+
 <a id="t-130"></a>
 ### T-130 — Đề bài `P2A-09` chưa giao được: hai ô cổng không ai ký, ô 7 không có phép lọc
 
