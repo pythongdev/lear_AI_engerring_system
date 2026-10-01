@@ -61,11 +61,12 @@ WHERE o.status IN ('in_progress', 'delivering', 'completed')
 
 -- @@ I-004/6 — thứ đã làm xong / đã ra bàn của một đơn đã Huỷ mà chưa chuyển sang bàn khác
 -- Thứ đã chuyển thì đơn vị cũ nhả nó và về Chưa làm (05-luoc-do-san-xuat.md §2), nên đơn vị còn
--- ở made/served của đơn huỷ là thứ chưa ai chuyển. Ca không bàn nào chờ đúng thứ ấy chưa có luật
--- (U-064) — câu vẫn in nó: chưa có luật là chưa đối soát xong, không phải xanh.
+-- ở made/served của đơn huỷ là thứ chưa ai chuyển. Thứ có ghi chú bánh làm sai còn hiệu lực
+-- đã đối soát; ghi chú đã huỷ thì đơn vị về lại tập này (T-127, ADR-077).
 SELECT j.id AS viec, o.id AS don, j.station_code AS tram, j.status
 FROM station_job j JOIN sales_order o ON o.id = j.sales_order_id
 WHERE o.status = 'cancelled' AND j.status IN ('made', 'served')
+  AND NOT EXISTS (SELECT 1 FROM wrong_make_note w WHERE w.live_station_job_id = j.id)
 
 -- @@ I-004/7 — lần chuyển mà phần bàn nhận nhận được không phải đúng phần bàn cũ chuyển đi
 -- Một lần chuyển là một đơn vị; hai bên khớp khi và chỉ khi cùng khoá gom.

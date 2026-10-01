@@ -672,7 +672,12 @@ này đem ra cho bàn nào."*
 - **Không bàn nào chờ đúng thứ ấy ⇒ người đứng quầy ghi chú trên POS rằng đó là bánh làm sai**
   (chủ quán chốt 2026-09-30, trả lời U-064). Nguyên văn: *"pos note thông tin bánh làm sai."* Thứ
   ấy không chuyển cho bàn nào. *Lời không nói* cái bánh, quả trứng ấy quán bỏ đi hay để lại cho
-  khách sau, cũng không nói ghi chú gồm những gì — hai vế ấy chưa có luật, không tự suy.
+  khách sau — vế ấy chưa có luật, không tự suy.
+- **Ghi chú ấy gồm gì, và ghi nhầm thì sao** (**chủ repo** trả lời trong phiên 2026-10-01, T-127 —
+  lời chủ repo, không phải lời chủ quán): ghi chú là **một dấu *bánh làm sai* kèm người ghi và lúc
+  ghi, thêm một ô chữ tuỳ chọn** — POS gõ thêm nếu muốn, không bắt buộc. Ghi nhầm thì **gỡ được, có
+  vết**: huỷ ghi chú tại chỗ (ai huỷ, lúc nào), ghi chú cũ ở lại; huỷ rồi thì thứ ấy chuyển được cho
+  một bàn khác như thường. Lược đồ: `docs/decisions.md` **ADR-077**.
 **Con số thứ ba cũng do POS bấm, và đường lùi thì CÓ** (chủ quán chốt 2026-09-01, trả lời U-021 và
 U-024). Hai câu này khép nốt bảng bốn con số:
 

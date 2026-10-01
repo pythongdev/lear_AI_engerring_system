@@ -64,10 +64,10 @@ ngày 2026-09-30; cổng tick **12/12**, bằng chứng ở `docs/product/2-db/1
 `P3-01` chỉ được nhận sau khi **chủ repo ký chuyển pha; hôm nay chưa ký**. Đường lùi migration
 đã giải ở `P2-09`, **ADR-065** (mỗi bước một bước lùi có khoá chặn).
 `P3-05` có câu về cách đăng nhập; `P3-08` · `P3-10` chờ **S-6** · **S-5**;
-`P3-09` chờ **U-058**, đọc **F-048** (số tiền đếm cuối ngày chưa có chỗ cất); `P3-12` đọc **F-050**; vế ghi bánh làm sai của `P3-10` chờ **T-127**, đọc **F-044**;
+`P3-09` chờ **U-058**, đọc **F-048** (số tiền đếm cuối ngày chưa có chỗ cất); `P3-12` đọc **F-050**; vế ghi bánh làm sai của `P3-10` đọc **ADR-077** (T-127), đọc **F-044**;
 `P3-11` gỡ **F-046**, đọc cùng **F-047** về vết khi thêm dòng con.
 **U-063 đã đóng**, lược đồ thu nợ trả dần đã dựng ở **T-126**, **ADR-075**.
-**U-064 đã đóng**; T-127 theo dõi chỗ ghi bánh làm sai còn thiếu trong lược đồ.
+**U-064 đã đóng**; lược đồ có chỗ ghi bánh làm sai từ **T-127** (**ADR-077**).
 Một bước bị chặn vẫn làm phần không phụ thuộc; cửa của phần bị chặn **từ chối kèm mã**,
 không lấp bằng mặc định.
 
@@ -444,13 +444,12 @@ các lần trả nối thành chuỗi. Giảm giá cả đơn còn chờ U-058 �
 ### P3-10 — Bếp không bấm gì, POS ghi hết — và chưa cửa nào ghi "bàn này đã được mấy cái"
 
 **Phụ thuộc** · bước 10/14 · **cần xong trước:** `P3-07` · **chặn:** `P3-12` · **chỗ chặn:** **S-5** ·
-**T-127** (riêng vế ghi bánh làm sai phải chờ task xong) · đọc **F-044**
+đọc **F-044**
 
 **Goal:** duyệt đơn sinh đủ việc trạm trong cùng giao dịch (`I-004`, canh ở tầng 2 — **ADR-056**) · một
 lần bấm là một mẻ · POS ghi đã phục vụ (`architecture.md` §1.1) · phần chia về từng bàn khớp hai chiều
 (`I-019`) · không phục vụ vượt số gọi (`I-020`) · ba trạm bếp **không có cửa ghi nào**. Đơn vị của lần
-bấm *đã bưng* chờ **S-5**; vế ghi bánh làm sai của đơn huỷ chờ **T-127** dựng chỗ cất còn thiếu;
-trước đó cửa từ chối kèm mã `T-127`.
+bấm *đã bưng* chờ **S-5**; vế ghi bánh làm sai của đơn huỷ dựng trên `wrong_make_note` (**T-127**, **ADR-077**).
 
 **Vì sao có task này:** luật ghi của chủ quán 2026-08-31 — *POS là nơi duy nhất ghi tiến độ; ba trạm bếp
 chỉ đọc*. `05-luoc-do-san-xuat.md` dựng chỗ cất; cửa thì chưa.
@@ -460,11 +459,12 @@ giữa lúc tay đang tráng bánh.
 
 **Cách hoàn thành:**
 1. Đọc `architecture.md` §1.1 · §3.4 · §5; `05-luoc-do-san-xuat.md`; hàng `I-004` `I-019` `I-020`;
-   `shop-facts.md` §5.4 · §7.2; **F-044** · **T-127** ở `work/backlog.md`.
+   `shop-facts.md` §5.4 · §7.2; **F-044** · **ADR-077** (`05-luoc-do-san-xuat.md`).
 2. Khai scope; *In Progress*.
 3. Test đỏ trước; liệt kê cửa ghi ⇒ không cửa nào gọi được từ vai trạm bếp.
 4. Vế **S-5** ⇒ cửa từ chối kèm mã; không chọn *"theo bàn"* thay chủ quán.
-   Vế ghi bánh làm sai chờ **T-127** xong; trước đó từ chối kèm mã `T-127`.
+   Vế ghi bánh làm sai: cửa ghi chú và cửa huỷ ghi chú theo **ADR-077**; *không bàn nào chờ* là người
+   đứng quầy quyết (tầng 4) — không tự so khoá gom thay họ.
 5. Thêm phần hợp đồng; gate; *Done*; *Bàn giao*; khối commit.
 
 **Bẫy:** đừng thêm một nút *"xong"* cho trạm bếp vì màn hình "trông thiếu" — đó là luật chủ quán, không

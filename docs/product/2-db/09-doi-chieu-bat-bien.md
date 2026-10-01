@@ -201,8 +201,9 @@ làm khác.
 - **`I-002/2`**: đơn Huỷ không vào tổng — trừ khi hoá đơn của phiên có một lần hoàn và số phải trả
   bằng đúng tổng **cả** đơn huỷ: đọc là đơn đã Hoàn thành rồi mới huỷ sau khi đóng (`shop-facts.md`
   §6.19), tiền đi đường hoàn.
-- **`I-004/6`** in cả ca **không bàn nào chờ đúng thứ đã làm** — ca chưa có luật (**U-064**). Pha 1
-  nói ca ấy chưa có tập; câu này đọc *chưa có luật* là *chưa đối soát xong*, không phải xanh.
+- **`I-004/6`** loại đơn vị có ghi chú bánh làm sai còn hiệu lực: thứ ấy đã đối soát
+  (`T-127`, **ADR-077**, lời đóng **U-064**). Ghi chú đã huỷ thì đơn vị về lại tập; thứ chưa chuyển,
+  chưa ghi chú vẫn kêu. Không bàn nào chờ là người đứng quầy quyết ở tầng 4.
 - **`I-007/2`**: một lần thu gộp hiện ra là hoá đơn **thu nhiều hơn** chính đơn của nó. Hoá đơn thu
   **ít** hơn là `I-015`, không phải thu gộp.
 - **`I-008/1`**: hai đầu giờ bán tính là **trong** giờ.

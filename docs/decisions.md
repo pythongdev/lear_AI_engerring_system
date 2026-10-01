@@ -93,6 +93,7 @@ có câu trả lời mới từ người.
 | ADR-074 | **Tiền RA khỏi két trong ngày là MỘT hạng tử của `I-021` — *chi từ két* — gồm mọi tạm ứng, mọi thưởng và khoản chi của loại mang nguồn két; nguồn tiền nằm trên LOẠI chi, không trên từng khoản; không cột *ngày bán của két* nào trước khi `U-072` có lời** — viết lại `I-021` · `I-028` · `I-029` · `YC-31`…`YC-33` theo lời đóng `U-066` · `U-067` và lời *trong ngày, trước lúc đếm két*; không migration nào cho tạm ứng và thưởng; câu đối chiếu của hạng tử chờ `U-072` và `F-048` | Đã chốt 2026-10-01 (giao cho phiên, T-125) | — | T-125 · P2A-05 · P2A-07 · ADR-073 |
 | ADR-075 | **Khách trả nợ dần: mỗi lần trả là MỘT dòng `debt_collection` mang *số còn thiếu sau lần ấy*; các lần trả nối nhau thành chuỗi bằng khoá ngoại, nên trả vượt, rẽ nhánh và trả khi đã hết nợ đều bị database từ chối** — bỏ luật *một khoản nợ thu đủ một lần*; lần đầu nối vào số nợ của hoá đơn, lần sau nối vào số còn thiếu của lần trước; *đã trả xong* là có lần trả còn thiếu 0, không cột trạng thái | Đã chốt 2026-10-01 (giao cho phiên, T-126) | — | T-126 · ADR-059 · U-063 |
 | ADR-076 | **Pha 3 có kế hoạch riêng** `master_plan/BE_master_plan_banh_cuon_ba_thanh.md`, mã bước `P3-01`…`P3-14`, sổ mô tả `work/backlog_BE.md` theo khuôn **ADR-051**; chẻ theo nhóm mệnh đề, không theo endpoint; admin ngoài pha 3 (**ADR-068**); `P3-01` chỉ nhận được sau khi **chủ repo ký chuyển pha** | Đã chốt 2026-10-01 (giao cho phiên, T-120) | — | T-120 · ADR-049 · ADR-051 · ADR-068 |
+| ADR-077 | **Bánh làm sai: mỗi ghi chú một dòng `wrong_make_note` gắn vào đúng một đơn vị đã làm của một đơn đã Huỷ**, mang người ghi · lúc ghi · chữ tuỳ chọn; ghi chú còn hiệu lực giữ đơn vị ở *đã làm* (không chuyển, không lùi), ghi nhầm thì **huỷ tại chỗ** có người và lúc, dòng ở lại; `I-004/6` loại thứ đã ghi chú; *không bàn nào chờ* là tầng 4 | Đã chốt 2026-10-01 (giao cho phiên, T-127; hình ghi chú và cách gỡ: lời chủ repo) | — | T-127 · U-064 · ADR-072 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -5108,3 +5109,59 @@ khi lệch là ADR của `P3-04`, không suy ra từ **ADR-053**.
 **Applies to:** `master_plan/BE_master_plan_banh_cuon_ba_thanh.md` · `work/backlog_BE.md` · `CLAUDE.md` §2
 (hàng sổ pha 3; hàng *Hợp đồng API* trỏ sang kế hoạch) · `docs/product/00-index.md` (hàng *Pha 3*) · kế
 hoạch pha 2 (đoạn cuối) · `work/backlog.md` · task `T-120`.
+
+---
+
+### ADR-077 — Bánh làm sai: mỗi ghi chú một dòng gắn vào đúng một thứ đã làm của đơn đã huỷ; ghi nhầm thì huỷ tại chỗ, dòng ở lại
+
+**Trạng thái:** **Đã chốt** 2026-10-01, **giao cho phiên** (Claude Code thiết kế và viết test trước, task
+`T-127`; Codex thi công migration, bộ đối chiếu và tài liệu lát tới khi hết hạn mức sử dụng; Claude sửa
+nốt và chạy database). Hai vế nghiệp vụ là **lời chủ repo** trong phiên cùng ngày, Claude hỏi lại vì lời
+chủ quán ngắn hơn quyết định cần có (`CLAUDE.md` §7.2): *ghi chú gồm gì* ⇒ *"dấu + chữ tuỳ chọn"*; *ghi
+nhầm, hay sau đó có bàn gọi đúng thứ ấy* ⇒ *"gỡ được, có vết"*. Ghi ở `master_plan/shop-facts.md` §5.4.
+
+**Context:**
+Chủ quán chốt 2026-09-30 (đóng `U-064`, `shop-facts.md` §5.4): đơn huỷ sau khi bếp đã làm xong, không bàn
+nào chờ đúng thứ ấy ⇒ *"pos note thông tin bánh làm sai"*. Lược đồ của `P2-07` để thứ ấy ở *đã làm* với
+đơn đã huỷ, và tập `I-004/6` của bộ đối chiếu không phân biệt được nó với một lần quầy **quên chuyển**.
+
+**Decision:**
+1. **Một bảng `wrong_make_note`; một ghi chú là MỘT dòng** gắn vào **một đơn vị việc trạm** (`station_job`)
+   — đơn vị đếm của phần đã làm, cùng đơn vị mà lần chuyển của `U-033` dùng. Dòng mang đơn của đơn vị ấy,
+   **người ghi** (cột *ai bấm* của `P2-08`, mặc định người thao tác), **lúc ghi**, và **chữ tuỳ chọn**:
+   trống được, có thì không trắng. Tên cột, ràng buộc: file migration thắng (**ADR-053** luật 2).
+2. **Ghi chú chỉ đứng trên thứ đã làm của đơn đã Huỷ** — tầng 1, bằng khoá ngoại: (đơn vị, đơn) khớp
+   nhau; đơn trỏ tới cột tự tính *mã nếu đã huỷ* của `sales_order` (cùng hình *mã nếu đã duyệt* của `P2-07`);
+   ghi chú **còn hiệu lực** trỏ tới *mã nếu đã làm hoặc đã ra bàn* của đơn vị. Hệ quả: đơn đã có ghi chú
+   không rời trạng thái Huỷ (Huỷ là trạng thái kết thúc, `05-vong-doi.md`), và đơn vị đang mang ghi chú
+   **không** về *chưa làm* — không chuyển, không lùi mẻ — cho tới khi ghi chú bị huỷ.
+3. **Một đơn vị nhiều nhất một ghi chú còn hiệu lực** — khoá duy nhất trên cột tự tính *đơn vị nếu chưa huỷ*.
+4. **Ghi nhầm thì huỷ tại chỗ**: hai dấu trên chính dòng ghi chú — lúc huỷ, người huỷ (có khi và chỉ khi
+   cùng nhau, lúc huỷ không đứng trước lúc ghi). Dòng **ở lại** làm vết (`QD-50`); vai ghi chỉ sửa được
+   hai cột ấy, không sửa chữ, không xoá; trigger vết như mọi bảng (`QD-52`). Cùng hình huỷ ô chấm công
+   (**ADR-072** điểm 4), trừ ghi chú khi huỷ — lời *"có vết"* không đòi.
+5. **`I-004/6` loại đơn vị có ghi chú còn hiệu lực**; ghi chú đã huỷ thì đơn vị về lại tập. Thứ chưa chuyển,
+   chưa ghi chú vẫn kêu.
+6. **Không bàn nào chờ đúng thứ ấy là quyết định của người đứng quầy** (tầng 4, cùng hình chọn bàn nhận của
+   `I-004`): database không so khoá gom với các bàn đang chờ. **Ai được huỷ ghi chú** là quyền theo vai — pha 3.
+7. **Không cột nào về số phận của cái bánh** (bỏ hay giữ cho khách sau): lời không nói.
+
+**Why:**
+- *Điểm 1 · 2.* Ghi chú là câu trả lời cho đúng câu mà `I-004/6` hỏi — *thứ đã làm này của đơn huỷ đi đâu* —
+  nên nó phải gắn vào cùng đơn vị tập ấy liệt kê, và chỉ đứng được ở chỗ câu hỏi có nghĩa.
+- *Điểm 2 · 4.* *"Gỡ được"* mà để ghi chú còn hiệu lực trên một thứ đã chuyển đi là hai câu trả lời cùng
+  lúc; buộc huỷ trước rồi mới chuyển giữ một câu trả lời mỗi lúc, và lần huỷ có tên người.
+- *Cột tự tính trên `sales_order` thay vì một cột hằng trên ghi chú.* Bản đầu (cột `order_status` hằng
+  `'cancelled'` + khoá ngoại hai cột) bị `QD-60` bắt: cột văn bản không phải mã, không phải `status`.
+  Cột tự tính dùng lại đúng thành ngữ đã có và không thêm chữ nào để giữ đồng bộ.
+
+**Rejected alternatives:**
+- *Một trạng thái mới `wrong_make` trên `station_job`.* Bác: đổi tập trạng thái của vòng đời việc trạm
+  (`QD-40`, `I-016`) cho một ghi chú; và mất người ghi, lúc ghi, vết huỷ.
+- *Ghi chú là chữ tự do trên đơn.* Bác: một đơn huỷ có nhiều thứ đã làm, mỗi thứ một số phận (chuyển hay
+  làm sai); ghi trên đơn thì `I-004/6` không biết thứ nào đã đối soát.
+
+**Applies to:** `db/migrations/20261001130000_banh_lam_sai.up.sql` · `.down.sql` · `db/reconcile/i004.sql`
+(`I-004/6`) · `db/reconcile/proof/baseline.sql` · `db/tests/yc07_wrong_make_note.sql` ·
+`docs/product/2-db/05-luoc-do-san-xuat.md` · `07-thu-tu-migration.md` (bước 13) · `09-doi-chieu-bat-bien.md` ·
+`docs/product/1-system-design/04-yeu-cau-du-lieu.md` `YC-07` · `master_plan/shop-facts.md` §5.4 · U-064 · task `T-127`.

@@ -951,6 +951,47 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-127"></a>
+### T-127 — Thứ đã làm của đơn huỷ mà không bàn nào chờ chưa có chỗ ghi *bánh làm sai*
+
+**Yêu cầu:** chủ quán chốt 2026-09-30 (đóng `U-064`, `master_plan/shop-facts.md` §5.4): *"pos note thông
+tin bánh làm sai."* Mở bởi T-124. Mức **L2** (lược đồ, dữ liệu đã cất, một câu đối chiếu). Nhận 2026-10-01
+theo lời chủ repo *"hãy yêu cầu codex thực hiện (T-120) và T-127 lần lượt và bạn kiểm tra"*.
+
+**Câu hỏi lại cho chủ repo** (lời chủ quán ngắn hơn quyết định cần có, `CLAUDE.md` §7.2), trả lời trong
+phiên: ghi chú gồm gì ⇒ *dấu + người + lúc, chữ tuỳ chọn*; ghi nhầm hoặc sau đó có bàn gọi đúng thứ ấy ⇒
+*gỡ được, có vết*. Ghi ở `shop-facts.md` §5.4. Còn để trống: cái bánh làm sai bỏ hay giữ — lời không nói.
+
+**Thiết kế — Claude Code:** `docs/decisions.md` **ADR-077**. Test hồi quy `db/tests/yc07_wrong_make_note.sql`
+viết trước migration.
+
+**Acceptance** (phiếu giao Codex): (1) một cặp migration mới, không sửa file cũ; (2) bảng đúng cột và
+ràng buộc của thiết kế; (3) bước lùi có khoá chặn, lùi trả lược đồ giống hệt; (4) `I-004/6` loại thứ có
+ghi chú còn hiệu lực, ngày mẫu có ca ghi chú, `proof/i004_6.sql` vẫn kêu; (5) test của Claude không đổi
+phép thử; (6) ba file lát cập nhật, không câu nào còn nói ca ấy chưa có luật; (7) `db-check` và gate xanh.
+
+**Bàn giao** — 2026-10-01 · thực hiện: **Codex** (worktree `../lean_wt/T-127`, nhánh `codex/T-127`, trên
+`87e1b1e`, model `gpt-6-astra`) tới lúc tài khoản báo **hết hạn mức sử dụng** — Codex đã viết migration ·
+đường lùi · câu `I-004/6` · ca ngày mẫu · lời trong test `i004_…` · ba file lát, chưa chạy gate, chưa báo
+cáo. Duyệt và sửa nốt: **Claude Code**. `db-check` lần đầu **đỏ** hai chỗ: cột hằng `order_status` bị `QD-60`
+bắt (văn bản không phải mã) và ca ngày mẫu mở phiên mới trên bàn 5 đã dùng nên `I-003/2` kêu oan. Claude đổi
+thiết kế sang cột tự tính `sales_order.id_if_cancelled` (ADR-077 *Why*, cột của ghi chú còn chín — test sửa
+danh sách cột theo) và chuyển ca sang bàn 9. Cùng lượt Claude: `ADR-077` · `shop-facts.md` §5.4 · `YC-07` và
+§6 của `04-yeu-cau-du-lieu.md` · câu đóng `U-064`.
+
+| Acceptance | Bằng chứng (Claude chạy) |
+|---|---|
+| 1 · 3 | `PASS xuôi 20261001130000_banh_lam_sai` · `PASS lùi 20261001130000_banh_lam_sai — lược đồ giống hệt lúc trước bước ấy (1296 dòng)` · `NOTE khoá chặn — … còn rỗng, lùi được` |
+| 2 · 5 | `PASS db/tests/yc07_wrong_make_note.sql`; chạy riêng trên database thử: tám lời từ chối đúng tên (`wrong_make_note_cancelled_order_fkey` · `_live_station_job_fkey` ×2 · `_station_job_order_fkey` · `_note_not_blank_check` · `_live_key` · `_cancelled_by_iff_cancelled_check` · `_cancelled_after_created_check`), `person_id` not-null, `permission denied` khi sửa chữ và khi xoá; *tập I-004/6: 2 → 0 → 1 (huỷ ghi chú) → 0 (chuyển cho bàn 9)* |
+| 4 | `PASS ngày bán mẫu đúng — 97 câu chạy, mọi tập rỗng` · `PASS kêu i004_6 — I-004/6` |
+| 6 | đọc diff 05 §1 · §2 · §3 · §5, 07 bước 13, 09 `I-004/6`; Gate 1d · 1e ở báo cáo cuối phiên |
+| 7 | `db-check: PASS — 13 bước xuôi · lùi · xuôi lại, … 32 file test, … 97 câu …, 97 lỗi cài, … 31 mã YC` |
+
+**Còn lại:** cửa ghi chú và cửa huỷ là của `P3-10`; *ai được huỷ ghi chú* là quyền theo vai, pha 3. Bước
+chấm YC (`db/scenario/yc.sql`) chưa chấm vế ghi chú của `YC-07`; test hồi quy chấm. Chưa review độc lập.
+
+[↑ đầu file](#top)
+
 <a id="t-120"></a>
 ### T-120 — Pha 3 có kế hoạch và sổ việc riêng, đặt trên trạng thái của ngày gộp
 

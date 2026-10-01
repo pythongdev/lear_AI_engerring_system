@@ -259,7 +259,7 @@ trong hai câu hỏi có sẵn phương án, và xác nhận đó là lời ch�
 
 | Câu đã đóng | Lời chủ quán | Owner |
 |---|---|---|
-| ~~U-064 — Đơn huỷ khi bếp đã làm xong, mà không bàn nào chờ đúng thứ ấy~~ | “pos note thông tin bánh làm sai.” **Người đứng quầy ghi chú trên POS** rằng thứ ấy là **bánh làm sai**. Thứ ấy không chuyển cho bàn nào — không có bàn nào chờ nó. Lời không nói cái bánh, quả trứng ấy quán bỏ đi hay để lại bán cho khách sau, cũng không nói ghi chú gồm những gì; không tự suy. *Hệ quả, chưa làm:* lược đồ và tập đối chiếu *đã làm của đơn huỷ, chưa chuyển* chưa có chỗ cho ghi chú này — task **T-127**. | `master_plan/shop-facts.md` §5.4 |
+| ~~U-064 — Đơn huỷ khi bếp đã làm xong, mà không bàn nào chờ đúng thứ ấy~~ | “pos note thông tin bánh làm sai.” **Người đứng quầy ghi chú trên POS** rằng thứ ấy là **bánh làm sai**. Thứ ấy không chuyển cho bàn nào — không có bàn nào chờ nó. Lời không nói cái bánh, quả trứng ấy quán bỏ đi hay để lại bán cho khách sau, cũng không nói ghi chú gồm những gì; không tự suy. *Hệ quả:* lược đồ có chỗ cho ghi chú này và tập đối chiếu *đã làm của đơn huỷ, chưa chuyển* loại thứ đã ghi chú — task **T-127** xong 2026-10-01 (**ADR-077**); ghi chú gồm gì và cách gỡ là lời chủ repo cùng ngày (`shop-facts.md` §5.4). | `master_plan/shop-facts.md` §5.4 |
 
 <a id="u-063"></a>
 

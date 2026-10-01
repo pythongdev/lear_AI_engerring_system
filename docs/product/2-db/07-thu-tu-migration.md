@@ -17,11 +17,11 @@ lược đồ từ số không · chỗ chứng minh từng điều ấy chạy 
 
 ---
 
-## 1. Thứ tự dựng — mười hai bước
+## 1. Thứ tự dựng — mười ba bước
 
 Công cụ chạy các bước theo **tên file**, tức theo mốc giờ ở đầu tên (`QC-05`). Thứ tự dưới đây là
 thứ tự ấy; cột *đứng trên* nói bước nào phải có trước, vì bước sau thêm cột, khoá ngoại hay ràng
-buộc vào bảng của nó. Dựng lại từ số không là chạy đúng mười hai bước này, từ trên xuống; lùi là đi
+buộc vào bảng của nó. Dựng lại từ số không là chạy đúng mười ba bước này, từ trên xuống; lùi là đi
 ngược từ dưới lên, **từng bước một**.
 
 | # | File (`db/migrations/`, bỏ đuôi) | Lát | Dựng gì | Đứng trên |
@@ -38,6 +38,7 @@ ngược từ dưới lên, **từng bước một**.
 | 10 | `20260930110000_cham_cong` | `P2A-03` | `attendance_day` và trigger vết; vai ghi tick và huỷ được một ô, không sửa người hay ngày, không xoá | 8 |
 | 11 | `20260930120000_khoan_cua_nguoi` | `P2A-04` | `staff_advance` · `holiday_bonus` và trigger vết; vai ghi chỉ sửa người nhận, số tiền và ngày | 8 |
 | 12 | `20261001120000_tra_no_dan` | `T-126` | hai cột còn thiếu và chuỗi từng lần trả trên `debt_collection` (**ADR-075**, lời đóng `U-063`) | 6 · 8 |
+| 13 | `20261001130000_banh_lam_sai` | `T-127` | `wrong_make_note` và trigger vết; cột tự tính `sales_order.id_if_cancelled`; khoá duy nhất `station_job_id_order_key` (**ADR-077**) | 1 · 7 · 8 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
@@ -71,6 +72,11 @@ của [`01-quy-uoc-du-lieu.md`](01-quy-uoc-du-lieu.md) đỏ khi thiếu — và
 có hơn một lần trả ⇒ từ chối trước khi gỡ gì. Bảng rỗng hoặc chỉ có mỗi hoá đơn một lần trả đủ
 (trước trống, sau 0) thì lùi được: hai cột bỏ đi không mang thông tin ngoài hình cũ. Đây là
 trường hợp riêng của luật 2 theo quyết định trên; dữ liệu trả dần đã ghi phải đi bằng migration mới.
+
+**Khoá chặn bước 13** (2026-10-01, `T-127`, **ADR-077**): `wrong_make_note` có dòng, kể cả
+ghi chú đã huỷ, thì từ chối trước khi gỡ gì. Khi bảng rỗng, gỡ trigger, bảng, khoá duy nhất
+`station_job_id_order_key` và cột tự tính `sales_order.id_if_cancelled` (không mang thông tin ngoài
+trạng thái đơn), trả lược đồ về trước bước.
 
 ---
 

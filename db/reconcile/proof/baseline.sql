@@ -339,6 +339,29 @@ BEGIN
   UPDATE staff_advance SET amount_vnd = 250000 WHERE worker_person_id = giao;
 END $$;
 
+-- T-127: bàn 9 gọi; một thứ đã làm xong thì đơn bị huỷ.
+-- Không bàn nào chờ đúng thứ ấy: quầy ghi chú bánh làm sai, không chuyển cho bàn nào.
+-- Ca này phải ra 0 dòng ở I-004/6 nhờ ghi chú còn hiệu lực.
+DO $$
+DECLARE s bigint; o bigint; j bigint;
+BEGIN
+  PERFORM set_config('shop.actor_person_id', pg_temp.bc_nguoi('Người đứng quầy')::text, true);
+  PERFORM set_config('shop.revision_reason', 'ngày mẫu: huỷ đơn và ghi chú bánh làm sai', true);
+  s := pg_temp.bc_phien(ARRAY[pg_temp.bc_ban('9')]);
+  o := pg_temp.bc_don('staff_pos', s, pg_temp.bc_ban('9'), pg_temp.bc_luc('10:30'));
+  PERFORM pg_temp.bc_mon(o, 'Bánh cuốn', 1, ARRAY['Chay']);
+  UPDATE sales_order SET status = 'confirmed' WHERE id = o;
+  PERFORM pg_temp.bc_no(o);
+  UPDATE table_session SET status = 'serving' WHERE id = s;
+  SELECT min(id) INTO j FROM station_job
+    WHERE sales_order_id = o AND order_line_component_id IS NOT NULL;
+  PERFORM pg_temp.bc_me(ARRAY[j]);
+  UPDATE sales_order SET status = 'cancelled' WHERE id = o;
+  INSERT INTO wrong_make_note (station_job_id, sales_order_id) VALUES (j, o);
+  PERFORM pg_temp.bc_dong(s, pg_temp.bc_luc('10:40'), 0, 0);
+  UPDATE table_session_member SET cleaned_at = pg_temp.bc_luc('10:45') WHERE table_session_id = s;
+END $$;
+
 -- Ngày mẫu phải qua MỌI ràng buộc hoãn, như lúc COMMIT.
 SET CONSTRAINTS ALL IMMEDIATE;
 SET CONSTRAINTS ALL DEFERRED;

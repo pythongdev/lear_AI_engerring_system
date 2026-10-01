@@ -404,10 +404,10 @@ BEGIN
   EXCEPTION WHEN unique_violation THEN
     RAISE NOTICE 'I-004 bị từ chối (mẻ đã bấm làm thêm cho đơn vị nó từng làm): %', SQLERRM;
   END;
-  -- Quả trứng thứ hai của bàn 5 không bàn nào chờ đúng nó: chưa có luật — U-064. Tập (4) còn nó.
+  -- Quả trứng thứ hai của bàn 5 không bàn nào chờ đúng nó, chưa ghi chú bánh làm sai. Tập (4) còn nó.
   n := pg_temp.in_doi_chieu('I-004 sau lần chuyển');
   IF n <> 1 OR NOT EXISTS (SELECT 1 FROM pg_temp.doi_chieu_i004() WHERE tap = 'đã làm của đơn huỷ, chưa chuyển') THEN
-    RAISE EXCEPTION 'I-004: sau lần chuyển, tập (4) phải còn đúng quả trứng không bàn nào chờ (U-064)';
+    RAISE EXCEPTION 'I-004: sau lần chuyển, tập (4) phải còn đúng quả trứng chưa chuyển, chưa ghi chú bánh làm sai';
   END IF;
 
   -- Vết không sửa được: mẻ làm cho ai lúc bấm là cột vai shop_app không có quyền sửa.
