@@ -95,6 +95,7 @@ có câu trả lời mới từ người.
 | ADR-076 | **Pha 3 có kế hoạch riêng** `master_plan/BE_master_plan_banh_cuon_ba_thanh.md`, mã bước `P3-01`…`P3-14`, sổ mô tả `work/backlog_BE.md` theo khuôn **ADR-051**; chẻ theo nhóm mệnh đề, không theo endpoint; admin ngoài pha 3 (**ADR-068**); `P3-01` chỉ nhận được sau khi **chủ repo ký chuyển pha** | Đã chốt 2026-10-01 (giao cho phiên, T-120) | — | T-120 · ADR-049 · ADR-051 · ADR-068 |
 | ADR-077 | **Bánh làm sai: mỗi ghi chú một dòng `wrong_make_note` gắn vào đúng một đơn vị đã làm của một đơn đã Huỷ**, mang người ghi · lúc ghi · chữ tuỳ chọn; ghi chú còn hiệu lực giữ đơn vị ở *đã làm* (không chuyển, không lùi), ghi nhầm thì **huỷ tại chỗ** có người và lúc, dòng ở lại; `I-004/6` loại thứ đã ghi chú; *không bàn nào chờ* là tầng 4 | Đã chốt 2026-10-01 (giao cho phiên, T-127; hình ghi chú và cách gỡ: lời chủ repo) | — | T-127 · U-064 · ADR-072 |
 | ADR-078 | **Hai khoảng ngừng nhận đơn, hai bảng**: `order_intake_pause` (tạm dừng — người bật, người tắt, chặn năm kênh) và `shop_blind_spell` (quán mù — bắt đầu từ lúc hết nhìn thấy, máy hay người khai, chỉ khép bằng nút có người); mỗi loại không chồng nhau, chỉ khép được, không dời, không xoá; `I-008` tập 2 · 3 thành câu, tập 5 còn chờ lý do huỷ máy đọc được | Đã chốt 2026-10-01 (hướng (a) của F-050: lời chủ repo; hình bảng: giao cho phiên, T-132) | — | T-132 · F-050 · YC-34 |
+| ADR-079 | **Số tiền mặt đếm cuối ngày và dấu *ngày đã đối soát xong* có chỗ cất**: `cash_count` · `cash_count_line` cùng hình tiền đầu két (một lần đếm mỗi ngày, mỗi dòng một mệnh giá, con số là tổng các dòng); `reconciled_day` mỗi ngày một dấu, khoá ngoại về số đếm **và** tiền đầu két, không sửa, không xoá, **không** đòi phép trừ ra 0 (`U-073`); câu `I-021/1` · `I-012/2` · `I-014/5`; ngày có khoản chi mà ngày khai khác ngày ghi chờ `U-072` | Đã chốt 2026-10-05 (hướng (a) của F-048: lời chủ repo 2026-10-01; hình bảng và cách đọc: giao cho phiên, T-133) | — | T-133 · F-048 · ADR-037 · ADR-074 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -5217,3 +5218,71 @@ quán mù*) không có gì để đọc. Khoảng *tạm dừng nhận đơn* (`
 `db/reconcile/proof/i008_2.sql` · `db/reconcile/proof/i008_3.sql` · `db/scenario/yc.sql` · `docs/product/2-db/02-luoc-do-ban-hang.md` §7 ·
 `07-thu-tu-migration.md` (bước 14) · `09-doi-chieu-bat-bien.md` · `docs/product/1-system-design/architecture.md`
 §8 · `04-yeu-cau-du-lieu.md` `YC-34` · `05-realtime-va-du-phong.md` §4 · §5 · F-050 · task `T-132`.
+
+### ADR-079 — Số tiền mặt đếm cuối ngày cùng hình tiền đầu két; dấu *ngày đã đối soát xong* đứng trên số đếm và tiền đầu két, không đòi phép trừ ra 0
+
+**Trạng thái:** **Đã chốt** 2026-10-05. **Hướng** là lời chủ repo trong phiên 2026-10-01: chọn lựa chọn (a)
+của `work/findings.md` **F-048** — *một bước pha 2 mới dựng chỗ cất số đếm két và dấu đối soát xong bằng
+một migration mới, rồi `P2-11` thêm ba câu còn thiếu*. **Hình bảng và cách đọc ba câu** giao cho phiên
+(Claude Code, task `T-133`), test viết trước migration. Mã task là `T-133`, không `P2-15`: kế hoạch pha 2 đã
+ký cổng 12/12 và **ADR-068** đã bác nối bước vào nó; cùng tiền lệ `T-126` · `T-127` · `T-132`.
+
+**Context:**
+Đối soát ngưỡng 0đ (`shop-facts.md` §6.10) cần **số tiền mặt đếm được** ở két cuối ngày — vế trái của
+`I-021` — và **dấu một ngày đã đối soát xong** (**ADR-037**: ngày còn lượt giấy chưa nhập là ngày *chưa*
+xong). Lược đồ pha 2 không cất cả hai; `P2-13` chấm `YC-03` · `YC-08` ra *chưa trả lời được* và ghi
+**F-048**. Ba tập đối chiếu chờ chúng: `I-012` tập 2 · `I-014` tập 5 · `I-021` tập 1. Lời chủ quán đã có
+cho cách đếm: *"tổng của từng mệnh giá và tổng của tất cả các mệnh giá"* (đóng `U-038`, §8.5 — bảng mệnh
+giá là cách đếm và kiểm cuối ngày, phép trừ dùng tổng).
+
+**Decision:**
+1. **Số đếm cùng hình tiền đầu két**: `cash_count` mỗi ngày bán một dòng (người đếm, lúc ghi),
+   `cash_count_line` mỗi dòng một mệnh giá, số tiền là bội của mệnh giá; con số của ngày là **tổng các
+   dòng**, không ô tổng thứ hai (**ADR-050** tầng 3). Đếm lại một xấp là một lần sửa có vết (`I-018`).
+2. **Dấu đối soát xong** `reconciled_day`: mỗi ngày nhiều nhất một dấu, người bấm và lúc bấm. Hai khoá ngoại
+   trên `sale_date` — về `cash_count` và về `opening_float` — làm *đối soát xong mà thiếu số đếm hay thiếu
+   tiền đầu két* không tồn tại được (điều kiện biên thứ nhất của `I-021`, **ADR-037**). Vai ghi không sửa,
+   không xoá dấu.
+3. **Còn lượt giấy chưa nhập** là phép trừ qua nhiều dòng: câu `I-014/5` giữ, không ràng buộc nào.
+4. **Dấu không đòi phép trừ két ra 0.** Một ngày lệch mà đã tìm ra lý do có được bấm xong không là câu của
+   chủ quán — **U-073**. Ngày lệch thì `I-021/1` kêu, có dấu hay không.
+5. **Phép trừ két** là hàm tạm `pg_temp.ket_ngay` của `db/reconcile/prelude.sql`, cộng từng hạng tử từ chi
+   tiết, chỉ cho ngày có **cả** số đếm lẫn tiền đầu két. Hạng tử *chi từ két* đọc tạm ứng và thưởng theo
+   ngày khai; **một ngày chạm một khoản mà ngày khai khác ngày ghi** (theo múi giờ quán) thì hai câu dùng
+   hàm không kết luận ngày ấy — chọn ngày nào là **U-072**. Khoản chi của `I-029` vào hàm khi `P2A-05` dựng.
+6. **`I-012/2` đọc hẹp**: một chỗ lệch *chỉ ra được* một thao tác khi trong ngày có **đúng một** thao tác
+   chạm tiền mang một phần tiền bằng đúng độ lớn chỗ lệch; không có hay nhiều hơn một là chỗ lệch vô danh.
+   Chỉ vế tiền mặt — tin nhắn báo có vẫn không có chỗ cất (`I-015` tập 5).
+7. **Dấu không mang con số nào**, nên `I-014` tập 6 (*con số dựng lại khác con số đã đối soát*) vẫn chưa có
+   câu: con số nào được chụp lúc đóng ngày là việc của cửa đóng ngày, `P3-09`.
+
+**Why:**
+- *Điểm 1.* Lời đóng `U-038` cho cách đếm; dựng khác tiền đầu két là hai cách đọc cho cùng một loại con số.
+- *Điểm 2.* Ngày thiếu một vế của phép trừ thì không có gì để gọi là *xong*; khoá ngoại là lời từ chối của
+  database thay vì một lời hứa của cửa pha 3.
+- *Điểm 4.* §6.10 nói *lệch 1 đồng cũng phải tìm ra lý do*, không nói tìm ra rồi thì đóng được hay không;
+  buộc lệch 0 là chọn hộ chủ quán, và dấu không buộc gì vẫn để `I-021/1` kêu.
+- *Điểm 5.* Không loại ngày chờ `U-072` thì câu phải chọn một trong hai ngày — đúng thứ **ADR-074** điểm 4
+  cấm; loại cả mọi ngày có tạm ứng thì câu im lặng đúng những ngày đắt nhất.
+- *Điểm 6.* Cả hai câu cùng đọc chỗ lệch; nếu `I-012/2` chỉ là *có chỗ lệch* thì nó là `I-021/1` lần hai.
+  Phép khớp số tiền là cách máy đọc được *"tìm ra lý do"* trên dữ liệu: lỗi một thao tác (ghi nhầm phương
+  thức, một khoản đã ghi mà tiền chưa rời két) để lại chỗ lệch đúng bằng phần tiền của nó.
+
+**Rejected alternatives:**
+- *Chỉ một cột tổng trên `cash_count`.* Bác: trái lời `U-038`; thêm bảng mệnh giá sau là ô tổng thứ hai.
+- *Cột `is_reconciled` trên `cash_count`.* Bác: hai việc khác người, khác lúc (đếm tối, chấm lại sau nhập
+  bù — §6.27); và một cờ ghi đè mất người bấm và lúc bấm.
+- *Dấu đòi lệch 0 bằng ràng buộc.* Bác: lý do điểm 4 — và ràng buộc ấy cũng không đọc được nhiều bảng.
+- *Chụp doanh thu vào dấu để viết `I-014` tập 6.* Bác lúc này: chọn con số là việc của cửa đóng ngày.
+- *Cột ngày bán của két trên tạm ứng và thưởng.* Bác: chọn hộ `U-072` (**ADR-074**).
+
+**Suy ra, không phải lời chủ quán** (`CLAUDE.md` §7.2): số đếm cuối ngày đếm theo mệnh giá như tiền đầu két
+(lời `U-038` nói về con số nhập vào máy và gọi bảng mệnh giá là *cách đếm và kiểm cuối ngày*); mỗi ngày một
+lần đếm; *đối soát xong* đòi có số đếm; cách đọc `I-012/2`.
+
+**Applies to:** `db/migrations/20261001150000_dem_ket_doi_soat.up.sql` · `.down.sql` ·
+`db/tests/i021_cash_count_and_reconciled_day.sql` · `db/reconcile/prelude.sql` · `db/reconcile/i012.sql` ·
+`i014.sql` · `i021.sql` · `db/reconcile/proof/` (ngày mẫu, ba lỗi cài mới, mười ba dòng `-- kêu:`) ·
+`db/scenario/yc.sql` (`YC-03` · `YC-08`) · `docs/product/2-db/04-luoc-do-duong-tien.md` §7 ·
+`06-luoc-do-nguoi-va-vet.md` · `07-thu-tu-migration.md` (bước 15) · `09-doi-chieu-bat-bien.md` ·
+`14-luoc-do-khoan-cua-nguoi.md` · `quality/invariants.md` `I-021` · U-072 · U-073 · F-048 · task `T-133`.

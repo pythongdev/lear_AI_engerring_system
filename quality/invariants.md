@@ -931,11 +931,12 @@ có người ghi. Cùng ngày mà tiền điện ghi dưới một loại chi ma
 **600.000**, lệch **300.000** ⇒ **đỏ** — đúng: tiền đã rời két mà sổ nói không. Một lần mua quất
 bằng tiền riêng ⇒ **không** vào hạng tử, két không đổi.
 
-⛔ **Phép đếm ở vế trái còn một câu chưa có lời: đếm MỘT TỔNG hay đếm TỪNG MỆNH GIÁ** — **U-038**
-(`docs/product/99-unknowns.md`). Invariant này đúng cho cả hai đường ra, nhưng *cách chứng minh nó*
-thì khác nhau: một tổng thì một con số, một bảng mệnh giá thì phải khớp từng dòng — và lúc ấy một
-lần đổi tiền thối trong buổi làm bảng lệch trong khi tổng vẫn khớp. Đừng viết phép kiểm theo mệnh
-giá trước khi U-038 có lời.
+**Phép đếm ở vế trái: CẢ bảng mệnh giá LẪN tổng — phép trừ dùng TỔNG** (chủ quán chốt 2026-09-06,
+đóng **U-038**, `master_plan/shop-facts.md` §8.5: bảng mệnh giá là cách đếm và kiểm cuối ngày). Phép
+kiểm của mệnh đề này **so tổng**, không so từng dòng mệnh giá: một lần đổi tiền thối trong buổi làm
+một dòng mệnh giá lệch mà tổng vẫn khớp, và đó không phải lệch. *Sửa 2026-10-05 (`T-133`): đoạn này
+tới hôm ấy vẫn ghi U-038 là câu chưa có lời — con trỏ lệch từ 2026-09-06; số đếm cuối ngày có chỗ cất
+và câu đối chiếu `I-021/1` từ cùng task (`docs/decisions.md` **ADR-079**).*
 
 *Phát hiện ở T-056, 2026-09-04, từ lời chủ quán trả lời `A3` và `A4`.*
 *Viết lại ở T-073, 2026-09-15, từ lời chủ quán trả lời `U-044` (2026-09-08).*

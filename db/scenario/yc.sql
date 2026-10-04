@@ -298,10 +298,11 @@ BEGIN
    WHERE r.target_table_code = 'menu_component' AND r.after_image ->> 'name' = 'Bánh cuốn';
   PERFORM pg_temp.yc_doc('YC-03', format('%s thao tác chạm tiền, %s thiếu một trong bốn câu · lần sửa giá: trước %s → sau %s · lý do "%s" · người sửa %s',
     n, n_thieu, v.before_image ->> 'base_price_vnd', v.after_image ->> 'base_price_vnd', v.reason, pg_temp.yc_ten(v.person_id)));
-  PERFORM pg_temp.yc_chua('YC-03', 'chỗ lệch két cuối ngày không quy về một thao tác — lược đồ không cất số tiền mặt đếm được, nên không có "chỗ lệch" nào để quy',
-    $d$NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'shop'
-                               AND column_name ~ '(counted|cash_count|dem_duoc)')$d$,
-    'F-048 (+ F-046: lần sửa không khai lý do không có vết)');
+  -- T-133 (F-048): số đếm cuối ngày có chỗ cất (cash_count); chỗ lệch đọc ra được và câu I-012/2 gọi
+  -- tên chỗ lệch không khớp đúng một thao tác. Vế chuyển khoản (tin nhắn báo có) vẫn không có chỗ cất.
+  PERFORM pg_temp.yc_goi_ten('YC-03', 'chỗ lệch két cuối ngày không quy về một thao tác',
+    'tầng 4 (số đếm do người nhập, I-021); chỉ vế tiền mặt — lần sửa không khai lý do vẫn không có vết (F-046)',
+    'I-012/2', 'i012_2');
 END $$;
 
 -- ============================================================ YC-04 người đang trực lúc thao tác
@@ -448,10 +449,10 @@ BEGIN
     format($q$UPDATE bill SET sale_date = sale_date + 1 WHERE id = %s$q$, b.id));
   PERFORM pg_temp.yc_tu_choi('YC-08', 'nhập bù quá số lượt sổ đã khai',
     format($q$UPDATE bill SET paper_position = 3 WHERE id = %s$q$, b.id));
-  PERFORM pg_temp.yc_chua('YC-08', 'ngày còn lượt giấy chưa nhập được coi là đã đối soát xong — lược đồ không cất dấu "đã đối soát xong"',
-    $d$NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'shop'
-                               AND column_name ~ '(reconcil|settled|closed_day|doi_soat)')$d$,
-    'F-048 (dấu ngày đã đối soát xong chưa có chỗ cất; tập I-014/5 chưa có câu)');
+  -- T-133 (F-048): dấu ngày đã đối soát xong có chỗ cất (reconciled_day); "còn N > 0" là phép trừ qua
+  -- nhiều dòng nên database không chặn, câu I-014/5 gọi tên.
+  PERFORM pg_temp.yc_goi_ten('YC-08', 'ngày còn lượt giấy chưa nhập được coi là đã đối soát xong',
+    'tầng 5 (ADR-037); cửa đóng ngày của pha 3 đọc còn N trước khi bấm', 'I-014/5', 'i014_5');
 END $$;
 
 -- ============================================================ YC-09 nợ sống lâu hơn phiên

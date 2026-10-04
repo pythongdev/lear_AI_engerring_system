@@ -636,6 +636,11 @@ Thứ chặn là lượt chủ repo duyệt **ADR-074**.
 - **Câu đối chiếu `I-029` là của bước này, không còn của `P2A-07`** (2026-10-01, Claude Code, lúc
   nhận `P2A-07`): lát dựng xong thì viết câu cùng lỗi cài theo khuôn `db/reconcile/i028.sql`, và gỡ
   dòng `I-029` ở `09-doi-chieu-bat-bien.md` §2.1 trong cùng thay đổi.
+- **Phép trừ két đã chạy — khoản chi phải vào nó cùng lượt** (2026-10-05, Claude Code, `T-133`):
+  câu `I-021/1` đọc hạng tử *chi từ két* qua hàm `pg_temp.ket_ngay` của `db/reconcile/prelude.sql`, hôm
+  nay chỉ tạm ứng và thưởng. Khoản chi của loại mang nguồn két thêm vào hàm ấy, cùng luật *ngày khai
+  khác ngày ghi thì chờ `U-072`*; thiếu nó thì `I-021/1` kêu mọi ngày có trả tiền điện, và dòng khoản
+  chi của ngày mẫu làm lệch số đếm két ở `baseline.sql` — cộng nó vào khối số đếm cùng lượt.
 - **Lát vào sau `P2A-09` thì tự chạy lượt rà ấy trên file của mình** (2026-10-01, Claude Code, T-130):
   ô 7 · 8 của cổng ghi lát này *vắng*; trước khi tick `Done`, chạy đủ các lượt lọc của
   [`P2A-09`](#p2a-09) trên `15-luoc-do-khoan-chi.md` và migration của lát, dán cặp *chưa lọc · đã

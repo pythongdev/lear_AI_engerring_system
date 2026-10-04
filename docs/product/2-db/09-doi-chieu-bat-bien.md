@@ -47,7 +47,7 @@ danh sách, và đỏ khi một danh sách rỗng (**F-017**).
 
 Số `n` của `I-0xx/n` là **thứ tự của tập** trong ô *Phép đối chiếu* của hàng ấy ở
 `03-bao-ve-invariant.md`, đếm từ trái; tập có câu ghi mã câu, tập không có câu trỏ xuống §2. Đo lại
-2026-10-01 (lần sau, `T-132`): **29** mã ở `quality/invariants.md`, **77** câu `I-0xx/n` (đếm mã bằng `--codes`,
+2026-10-05 (`T-133`): **29** mã ở `quality/invariants.md`, **80** câu `I-0xx/n` (đếm mã bằng `--codes`,
 đếm câu bằng `cat db/reconcile/i*.sql | grep -c '^-- @@ I-'`; đừng tin con số này — **F-003**).
 
 | Mệnh đề | Tập → câu |
@@ -63,16 +63,16 @@ Số `n` của `I-0xx/n` là **thứ tự của tập** trong ô *Phép đối c
 | `I-009` | 1 → `I-009/1` · 2 → `I-009/2` · 3 → `I-009/3` · 4 → `I-009/4` |
 | `I-010` | 1 → `I-010/1` · 2 · 3 · 4 → §2 |
 | `I-011` | 1 → `I-011/1` · 2 · 3 → §2 |
-| `I-012` | 1 → `I-012/1` · 2 → §2 · 3 → `I-012/3` · 4 → `I-012/4` |
+| `I-012` | 1 → `I-012/1` · 2 → `I-012/2` · 3 → `I-012/3` · 4 → `I-012/4` |
 | `I-013` | 1 → `I-013/1` · 2 → `I-013/2` · 3 → §2 |
-| `I-014` | 1 → `I-014/1` · 2 → `I-014/2` · 3 → §2 · 4 → `I-014/4` · 5 · 6 → §2 · 7 → `I-014/7` · 8 → `I-014/8` · 9 → §2 |
+| `I-014` | 1 → `I-014/1` · 2 → `I-014/2` · 3 → §2 · 4 → `I-014/4` · 5 → `I-014/5` · 6 → §2 · 7 → `I-014/7` · 8 → `I-014/8` · 9 → §2 |
 | `I-015` | 1 → `I-015/1` · 2 → `I-015/2` · 3 · 4 · 5 · 6 → §2 |
 | `I-016` | 1 → `I-016/1` |
 | `I-017` | 1 → `I-017/1` · 2 → `I-017/2` · 3 → §2 |
 | `I-018` | 1 → `I-018/1` · 2 → §2 · 3 → `I-018/3` |
 | `I-019` | 1 → `I-019/1` · 2 → §2 |
 | `I-020` | 1 → `I-020/1` · 2 → `I-020/2` |
-| `I-021` | 1 → §2 · 2 → §2 · 3 → `I-021/3` · 4 · 5 · 6 → §2 · 7 → `I-021/7` |
+| `I-021` | 1 → `I-021/1` · 2 → §2 · 3 → `I-021/3` · 4 · 5 · 6 → §2 · 7 → `I-021/7` |
 | `I-022` | 1 → `I-022/1` · 2 → `I-022/2` · 3 → `I-022/3` · 4 → `I-022/4` · 5 → `I-022/5` |
 | `I-023` | 1…6 → `I-023/1`…`I-023/6` · 7 → §2 |
 | `I-024` | 1 → `I-024/1` · 2 → `I-024/2` · 3 → `I-024/3` |
@@ -111,29 +111,26 @@ tính chất của dữ liệu.
 | `I-010` tập 4 — dòng hợp lệ tại mốc bị đánh dấu hỏng vì menu đổi sau | chưa có câu | (B) lược đồ không có dấu *hỏng* hay *chặn* nào trên dòng đơn | — (đúng theo cấu tạo) |
 | `I-011` tập 2 — lần đổi thành phần trong giờ bán không có bằng chứng lời nhắc | chưa có câu | (A) không cất lời nhắc | pha 3 |
 | `I-011` tập 3 — lần đổi giá bị nhắc nhầm như đổi thành phần | chưa có câu | (A) như trên | pha 3 |
-| `I-012` tập 2 — chỗ lệch của bảng đối soát không chỉ ra đúng một thao tác | chưa có câu | (A) cần số tiền mặt đếm được và tin nhắn báo có — chưa có chỗ cất (`04-luoc-do-duong-tien.md` §5) | **chủ repo** quyết bước nào nhận (`04-luoc-do-duong-tien.md` §5) |
 | `I-013` tập 3 — kênh không có lượt kiểm ra đúng giá §4.8 | chưa có câu | (D) tính chất của bộ test theo kênh, không đọc được trên dữ liệu | pha 3 — test của cửa tính giá |
 | `I-014` tập 3 — tổng báo cáo khác tổng hai nguồn | chưa có câu | (A) lược đồ không cất báo cáo; phép cộng hai nguồn là của chính `I-005/3` | pha 3 — con số báo cáo |
-| `I-014` tập 5 — ngày *đã đối soát xong* mà còn lượt giấy chưa nhập / khoản không mốc | chưa có câu | (A) không cất dấu *đã đối soát xong* | chủ repo, cùng câu với `I-012` tập 2 |
-| `I-014` tập 6 — con số dựng lại hôm nay khác con số đã đối soát hôm ấy | chưa có câu | (A) không cất con số đã đối soát | chủ repo, cùng câu với `I-012` tập 2 |
+| `I-014` tập 6 — con số dựng lại hôm nay khác con số đã đối soát hôm ấy | chưa có câu | (A) dấu đối soát xong (`T-133`, **ADR-079** điểm 7) không mang con số nào; con số nào được chụp lúc đóng ngày là việc của cửa đóng ngày | pha 3 — `P3-09` |
 | `I-014` tập 9 — trả lại trả trước làm giảm doanh thu | chưa có câu | (A) đọc con số doanh thu của báo cáo; công thức của `I-005/3` đã tách dòng *trả lại* khỏi dòng *hoàn* | pha 3 — con số báo cáo |
 | `I-015` tập 3 — phần không mang phương thức / ghi gộp | chưa có câu | (B) một lần thu là một dòng `bill`, mỗi phương thức một cột (`04-luoc-do-duong-tien.md` §1) | — (đúng theo cấu tạo) |
 | `I-015` tập 4 — các phần rơi vào hai ngày | chưa có câu | (B) mọi phần trên một dòng, một `booked_at` | — (đúng theo cấu tạo) |
-| `I-015` tập 5 — tổng chuyển khoản khác tin nhắn báo có | chưa có câu | (A) không cất tin nhắn báo có | chủ repo, cùng câu với `I-012` tập 2 |
-| `I-015` tập 6 — tổng tiền mặt không khớp két | chưa có câu | trỏ sang `I-021` tập 1 — pha 1 nói *mệnh đề ấy là `I-021`* | như `I-021` tập 1 |
+| `I-015` tập 5 — tổng chuyển khoản khác tin nhắn báo có | chưa có câu | (A) không cất tin nhắn báo có; **F-048** chỉ đòi số đếm két và dấu đối soát, `T-133` không nhận phần này | chủ repo — chưa bước nào nhận |
+| `I-015` tập 6 — tổng tiền mặt không khớp két | chưa có câu | trỏ sang `I-021` tập 1 — pha 1 nói *mệnh đề ấy là `I-021`*; câu ấy là `I-021/1` | — (một tập, một câu) |
 | `I-017` tập 3 — lần đóng phiên bị từ chối vì tiền | chưa có câu | (A) lần từ chối không để lại bản ghi | pha 3 |
 | `I-018` tập 2 — lần ghi đè của hai người không dựng lại được bản người trước | chưa có câu | (A) vết chỉ có khi lần sửa khai lý do; không cất phiên thao tác nào | pha 3 — cùng việc với **F-046** |
 | `I-019` tập 2 — hai dòng nhu cầu chung một khoá / một khoá tách hai dòng | chưa có câu | (B) không dòng nhu cầu nào được cất: bảng nhu cầu cộng lại từ `station_job` theo khoá gom (`05-luoc-do-san-xuat.md` §1) | pha 3 — hàm gom của màn bếp đọc đúng khoá; test của nó |
-| `I-021` tập 1 — két − tiền đầu két khác vế phải công thức | chưa có câu | (A) số tiền mặt đếm được cuối ngày chưa có chỗ cất (`04-luoc-do-duong-tien.md` §5); mọi hạng tử vế phải đã đọc được (§3 bảng hạng tử) | **chủ repo** quyết bước nào nhận |
-| `I-021` tập 2 — trừ vào đúng một ngày bán | chưa có câu | (A) chưa có luật chọn ngày, chờ **U-072** · **F-048** | chủ quán qua **U-072** |
-| `I-021` tập 4 — ngày chưa có tiền đầu két bị đọc là lệch | chưa có câu | (A) đọc kết quả của tập 1 | như tập 1 |
+| `I-021` tập 2 — trừ vào đúng một ngày bán | chưa có câu | (A) chưa có luật chọn ngày, chờ **U-072**; trong lúc chờ, `I-021/1` không kết luận ngày nào chạm một khoản mà ngày khai khác ngày ghi (§4) | chủ quán qua **U-072** |
+| `I-021` tập 4 — ngày chưa có tiền đầu két bị đọc là lệch | chưa có câu | (A) đọc cách **báo cáo** gọi tên ngày ấy; về phía dữ liệu, `I-021/1` bỏ qua ngày thiếu tiền đầu két và `reconciled_day_opening_float_fkey` không cho bấm xong (`T-133`) | pha 3 — màn đối soát |
 | `I-021` tập 5 — phép trừ chạy trên tổng gộp | chưa có câu | (A) đọc phép trừ của báo cáo | pha 3 |
 | `I-021` tập 6 — con số doanh thu có cộng tiền đầu két | chưa có câu | (A) đọc con số của báo cáo; tiền đầu két ở bảng riêng, ngoài mọi cột tiền đã thu (**`I-021`** tầng 1) | pha 3 |
 | `I-023` tập 7 — lần đổi mã chạm phiên đang mở | chưa có câu | (B) cửa `qr_code_issue` không chạm phiên hay lượt gọi, và phiên không mang mốc đổi trạng thái nào để so với lần đổi mã | — (đúng theo cấu tạo) |
 | `I-026` tập 1 — tổng và cộng dồn | chưa có câu | (B) tổng không có chỗ cất (**ADR-071**) | — (đúng theo cấu tạo) |
 | `I-026` tập 2 — hiệu số | chưa có câu | (B) hiệu số không có chỗ cất (**ADR-071**) | — (đúng theo cấu tạo) |
 | `I-028` tập 5 — không phải tiền bán hàng | chưa có câu | (B) không cột nào nối khoản sang doanh thu hay tiền đã thu (**ADR-073**) | — (đúng theo cấu tạo) |
-| `I-028` tập 6 — rời két | chưa có câu | (A) trỏ sang `I-021` tập 2 — luật chọn ngày chờ **U-072** · **F-048** | như `I-021` tập 2 |
+| `I-028` tập 6 — rời két | chưa có câu | (A) trỏ sang `I-021` tập 2 — luật chọn ngày chờ **U-072**; khoản có ngày khai bằng ngày ghi đã vào hạng tử *chi từ két* của `I-021/1` | như `I-021` tập 2 |
 
 ### 2.1 Mệnh đề chưa có lát — cả mệnh đề chưa có câu
 
@@ -160,7 +157,9 @@ của mệnh đề ấy trong cùng thay đổi.
    phương thức, đơn hotline huỷ và trả lại tiền trả trước, một thứ đã làm của đơn huỷ chuyển sang bàn
    chờ đúng thứ ấy, đổi mã QR, tiền đầu két, trực quầy, một khoản tạm ứng và một khoản thưởng lễ Tết
    (thêm 2026-10-01, `P2A-04`: để phép số âm của `QD-21` có dòng mà thử — `work/findings.md` F-054;
-   không nối vào két trước task `T-125`); mọi lần sửa khai lý do, nên mọi lần chuyển
+   lúc ghi đặt trong chính ngày khai từ `T-133`, nên chúng vào hạng tử *chi từ két*); tối ấy chủ quán
+   đếm két và bấm đối soát xong (`T-133`: số đếm cộng theo dòng tiền mặt, không theo hạng tử của
+   `I-021` — hai cách cộng phải ra cùng một số); mọi lần sửa khai lý do, nên mọi lần chuyển
    trạng thái có vết. Qua mọi ràng buộc hoãn như lúc `COMMIT` ⇒ mọi câu **0 dòng**. Một câu xanh vì
    chưa có đơn nào không chứng minh nó không đỏ nhầm. P2A-07 (2026-10-01) thêm con số nguyên liệu
    mua vào/đã dùng và một lần sửa có lý do, ô chủ quán tick cho vài người với một ô huỷ có ghi chú
@@ -177,6 +176,9 @@ của mệnh đề ấy trong cùng thay đổi.
 Một lỗi làm kêu **nhiều** câu thì khai đủ, kèm một dòng vì sao — ví dụ gỡ ràng buộc kiểm của
 `debt_collection` cũng làm các cột tiền của bảng ấy mất ràng buộc không âm, nên `QD-21` và `QD-22`
 kêu cùng `I-005/3`: nhóm quy ước bắt đúng lần gỡ ràng buộc mà nhóm mệnh đề bắt hệ quả của nó.
+Từ `T-133` (2026-10-05) ngày mẫu đã đếm két, nên mọi lỗi đổi tiền mặt, tiền đầu két hay khoản tạm ứng,
+thưởng của ngày ấy mà số đếm đứng yên đều kêu thêm `I-021/1`, và `I-012/2` khi chỗ lệch không khớp đúng
+một thao tác — mười ba file lỗi cũ khai thêm hai mã ấy, mỗi file một dòng vì sao.
 
 ---
 
@@ -207,6 +209,16 @@ làm khác.
 - **`I-007/2`**: một lần thu gộp hiện ra là hoá đơn **thu nhiều hơn** chính đơn của nó. Hoá đơn thu
   **ít** hơn là `I-015`, không phải thu gộp.
 - **`I-008/1`**: hai đầu giờ bán tính là **trong** giờ.
+- **`I-012/2`** (`T-133`, 2026-10-05, **ADR-079** điểm 6): một chỗ lệch của phép trừ két *chỉ ra được*
+  một thao tác khi trong ngày có **đúng một** thao tác chạm tiền — hoá đơn, thu nợ, trả trước, hoàn, tạm
+  ứng, thưởng — mang một phần tiền bằng đúng độ lớn chỗ lệch. Không có, hay hơn một, là chỗ lệch vô danh.
+  Câu chỉ đọc **vế tiền mặt**: tin nhắn báo có không có chỗ cất (`I-015` tập 5). Lỗi hai thao tác bù
+  nhau thành một chỗ lệch bằng phần tiền của một thao tác thứ ba thì câu không phân biệt được.
+- **Ngày chờ `U-072`** (`T-133`): hàm `ket_ngay` (`db/reconcile/prelude.sql`) đánh dấu mọi ngày chạm một khoản tạm ứng hay thưởng
+  mà ngày khai khác ngày ghi theo múi giờ quán; `I-021/1` và `I-012/2` không kết luận ngày ấy — chọn hộ
+  một trong hai ngày là chọn hộ chủ quán (**ADR-074** điểm 4). Hai ngày trùng nhau thì hai cách hiểu
+  cho cùng một ngày, nên khoản vào hạng tử. Dấu đối soát xong **không** đòi phép trừ ra 0 (**U-073**):
+  `I-021/1` kêu ngày lệch dù đã bấm xong.
 - **`I-021/3`** chỉ in ngày có **hơn một** con số tiền đầu két; ngày **chưa có** con số nào là *chưa
   đối soát xong* (tập 4 của pha 1, **ADR-037**), không phải lệch.
 - **Chuỗi vết đứt (P2A-07, 2026-10-01).** `I-025/2` · `I-028/4` đọc dòng đã có vết đúng bảng,
@@ -231,7 +243,7 @@ làm khác.
 | Bước | Lấy gì |
 |---|---|
 | `P2-13` | §3 — lệnh và phần chứng minh chạy trong `./scripts/db-check.sh`; §2 là danh sách tập chưa được chấm, đọc trước khi tick cổng |
-| `P2A-05` | Bước còn nợ câu `I-029`; khi viết câu thì **gỡ dòng của mệnh đề ấy ở §2.1 trong cùng thay đổi** |
+| `P2A-05` | Bước còn nợ câu `I-029`; khi viết câu thì **gỡ dòng của mệnh đề ấy ở §2.1 trong cùng thay đổi**. Cùng lượt: khoản chi của loại mang nguồn két vào hạng tử *chi từ két* của hàm `ket_ngay` (`db/reconcile/prelude.sql`) (`db/reconcile/prelude.sql`) — thiếu nó thì `I-021/1` kêu mọi ngày có trả tiền điện |
 | `P2-14` | §1 — mỗi mã `I-0xx` có câu; file này không nhắc đường gọi hay màn hình nào của pha 3 · pha 4 |
 | pha 3 | §2 các dòng *pha 3* — mỗi chỗ cất mới là một migration, kèm câu và file lỗi mới ở `db/reconcile/`; §4 — **F-046** · **F-047** |
-| chủ repo | §2 các dòng *chủ repo* — số tiền mặt đếm được, tin nhắn báo có, dấu đã đối soát xong: bước nào nhận (`04-luoc-do-duong-tien.md` §5) |
+| chủ repo | §2 dòng *chủ repo* còn lại — tin nhắn báo có (`I-015` tập 5). Số đếm két và dấu đối soát xong: `T-133`, 2026-10-05 |

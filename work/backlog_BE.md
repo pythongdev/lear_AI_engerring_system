@@ -64,7 +64,7 @@ ngày 2026-09-30; cổng tick **12/12**, bằng chứng ở `docs/product/2-db/1
 `P3-01` chỉ được nhận sau khi **chủ repo ký chuyển pha; hôm nay chưa ký**. Đường lùi migration
 đã giải ở `P2-09`, **ADR-065** (mỗi bước một bước lùi có khoá chặn).
 `P3-05` có câu về cách đăng nhập; `P3-08` · `P3-10` chờ **S-6** · **S-5**;
-`P3-09` chờ **U-058**, đọc **F-048** (số tiền đếm cuối ngày chưa có chỗ cất); `P3-12` đọc **ADR-078** (T-132 — hai khoảng ngừng nhận đơn đã có chỗ cất, **F-050** đã đóng); vế ghi bánh làm sai của `P3-10` đọc **ADR-077** (T-127), đọc **F-044**;
+`P3-09` chờ **U-058** và **U-073**, đọc **ADR-079** (T-133 — số đếm két và dấu đối soát xong đã có chỗ cất, **F-048** đã đóng); `P3-12` đọc **ADR-078** (T-132 — hai khoảng ngừng nhận đơn đã có chỗ cất, **F-050** đã đóng); vế ghi bánh làm sai của `P3-10` đọc **ADR-077** (T-127), đọc **F-044**;
 `P3-11` gỡ **F-046**, đọc cùng **F-047** về vết khi thêm dòng con.
 **U-063 đã đóng**, lược đồ thu nợ trả dần đã dựng ở **T-126**, **ADR-075**.
 **U-064 đã đóng**; lược đồ có chỗ ghi bánh làm sai từ **T-127** (**ADR-077**).

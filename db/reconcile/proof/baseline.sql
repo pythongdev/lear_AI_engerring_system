@@ -314,10 +314,11 @@ BEGIN
   -- mà thử cột tiền của hai bảng ấy. Chúng KHÔNG nối vào két hay doanh thu của ngày mẫu (I-028,
   -- task T-125 ở work/backlog.md), nên không câu đối chiếu nào của ngày này đổi kết quả.
   -- Người ghi khai thẳng trên dòng: không đổi người thao tác của ngày mẫu, các file lỗi cài đọc nó.
-  INSERT INTO staff_advance (worker_person_id, amount_vnd, paid_date, approver_person_id, person_id)
-  VALUES (giao, 200000, pg_temp.bc_ngay(), chu, chu);
-  INSERT INTO holiday_bonus (worker_person_id, amount_vnd, paid_date, person_id)
-  VALUES (giao, 100000, pg_temp.bc_ngay(), chu);
+  -- T-133: lúc ghi đặt trong chính ngày khai, để ngày két của hai khoản không chờ U-072.
+  INSERT INTO staff_advance (worker_person_id, amount_vnd, paid_date, approver_person_id, person_id, created_at)
+  VALUES (giao, 200000, pg_temp.bc_ngay(), chu, chu, pg_temp.bc_luc('10:50'));
+  INSERT INTO holiday_bonus (worker_person_id, amount_vnd, paid_date, person_id, created_at)
+  VALUES (giao, 100000, pg_temp.bc_ngay(), chu, pg_temp.bc_luc('10:51'));
   -- P2A-07, 2026-10-01: nguyên liệu có mua/dùng; sửa có lý do sinh vết.
   INSERT INTO supply_day_entry (supply_item_id, entry_date, kind_code, entered_measure, person_id)
   SELECT id, pg_temp.bc_ngay(), k, n, chu
@@ -371,6 +372,31 @@ VALUES (pg_temp.bc_luc('06:10'), pg_temp.bc_nguoi('Chủ quán'),
         pg_temp.bc_luc('06:25'), pg_temp.bc_nguoi('Chủ quán'));
 INSERT INTO shop_blind_spell (started_at, ended_at, ended_by_person_id)
 VALUES (pg_temp.bc_luc('07:05'), pg_temp.bc_luc('07:15'), pg_temp.bc_nguoi('Người đứng quầy'));
+
+-- T-133: tối ngày mẫu chủ quán đếm két rồi bấm đối soát xong (shop-facts §6.10 · §6.27). Số đếm là
+-- tiền đầu két cộng mọi lần tiền MẶT thật sự đổi tay trong ngày, đọc theo dòng tiền chứ không theo
+-- hạng tử của I-021: vào két — phần tiền mặt của hoá đơn, thu nợ, trả trước; ra khỏi két — lần hoàn
+-- hay trả lại trả bằng tiền mặt, tạm ứng, thưởng. Hai cách cộng khác nhau phải ra cùng một số.
+DO $$
+DECLARE c bigint; d date := pg_temp.bc_ngay(); ket bigint;
+BEGIN
+  PERFORM set_config('shop.actor_person_id', pg_temp.bc_nguoi('Chủ quán')::text, true);
+  ket := (SELECT sum(x.amount_vnd) FROM opening_float f JOIN opening_float_line x ON x.opening_float_id = f.id
+          WHERE f.sale_date = d)
+       + (SELECT coalesce(sum(cash_vnd), 0) FROM bill WHERE sale_date = d)
+       + (SELECT coalesce(sum(cash_vnd), 0) FROM debt_collection WHERE sale_date = d)
+       + (SELECT coalesce(sum(cash_vnd), 0) FROM prepayment WHERE sale_date = d)
+       - (SELECT coalesce(sum(amount_vnd), 0) FROM refund WHERE method_code = 'cash' AND sale_date = d)
+       - (SELECT coalesce(sum(amount_vnd), 0) FROM staff_advance WHERE paid_date = d)
+       - (SELECT coalesce(sum(amount_vnd), 0) FROM holiday_bonus WHERE paid_date = d);
+  INSERT INTO cash_count (sale_date) VALUES (d) RETURNING id INTO c;
+  INSERT INTO cash_count_line (cash_count_id, denomination_vnd, amount_vnd)
+  VALUES (c, 50000, ket / 50000 * 50000), (c, 1000, ket % 50000);
+  INSERT INTO reconciled_day (sale_date) VALUES (d);
+  INSERT INTO bc VALUES ('dem_ket', c);
+  -- Trả người thao tác về người đứng quầy: các file lỗi cài ghi thao tác ở quầy bằng người ấy.
+  PERFORM set_config('shop.actor_person_id', pg_temp.bc_nguoi('Người đứng quầy')::text, true);
+END $$;
 
 -- Ngày mẫu phải qua MỌI ràng buộc hoãn, như lúc COMMIT.
 SET CONSTRAINTS ALL IMMEDIATE;

@@ -88,7 +88,7 @@ Tầng ở cột thứ hai là tầng **pha 1 đã chốt** (`03-bao-ve-invarian
 | **`YC-02`** · **`YC-09`** — khoản nợ đứng được sau khi phiên đóng, qua nhiều ngày; khách trả dần | — | **Ai nợ** `bill.debtor_name` · **tổng nợ** `bill.debt_vnd` · **một phiên** `bill.table_session_id` + `bill_one_per_session_key` · **lúc ghi** `bill.booked_at`. Mỗi lần trả là một dòng `debt_collection`, giữ bản soi tổng nợ (`debt_collection_bill_fkey`), tiền mặt, chuyển khoản, ngày giờ trả `booked_at`, ngày bán và người bấm. Hai cột `remaining_before_vnd` · `remaining_vnd` giữ còn thiếu trước · sau; chuỗi và cách đọc đã trả xong ở đoạn dưới (**ADR-075**, 2026-10-01, `T-126`) | `yc02_debt_outlives_session.sql` · `yc02_debt_paid_in_parts.sql` |
 | **`YC-01`** · **`I-012`** vết hoàn tiền | 1 (hình dạng vết) | bốn trong năm thứ là `NOT NULL` hoặc điều kiện kiểm: **bao nhiêu** `refund_amount_positive_check` · **lượt bán nào** `refund_one_target_check` · **lúc** `booked_at` · **lý do** `NOT NULL` + `refund_reason_not_blank_check` — cộng **trả lại bằng gì** (`method_code`, `refund_method_code_check`). **Ai bấm: chỗ trống có tên** (§5). Vết sống độc lập với bản ghi nó nói về: vai `shop_app` không xoá được (`QD-50`), và lần bán mà vết trỏ tới cũng không xoá được (`QD-51`) | `yc01_refund_trace.sql` |
 | **`I-021`** vế *mỗi ngày bán đúng MỘT con số tiền đầu két, và nó không phải doanh thu* | 1 | `opening_float_one_per_day_key`; bảng riêng, không cột nào của nó nằm trong một lần thu. `opening_float_line_one_per_denomination_key` · `opening_float_line_amount_check` (một dòng là một xấp cùng mệnh giá) | `i021_opening_float_and_cash_formula.sql` |
-| **`I-021`** — hai vế của phép trừ két **dựng lại được từ chi tiết** | 5 — câu **chưa có**: vế trái (số đếm két) chưa có chỗ cất, §5 và [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §2 | mỗi hạng tử cộng từ các cột của từng lần tiền đổi tay — §3 bảng *Hạng tử đọc ở đâu*. Hoàn **chéo** đọc được vì lần hoàn cho hoá đơn mang cả phương thức trả lại lẫn phương thức đã thu (`refund_source_iff_bill_check`) | cùng file — kịch bản trả trước B · E, trả nợ, hoàn chéo của `I-021`: lệch `0` cả ba ngày; bỏ một hạng tử ⇒ lệch đúng bằng nó |
+| **`I-021`** — hai vế của phép trừ két **dựng lại được từ chi tiết** | 5 — câu `I-021/1` (2026-10-05, `T-133`): vế trái là số đếm cuối ngày của §7 | mỗi hạng tử cộng từ các cột của từng lần tiền đổi tay — §3 bảng *Hạng tử đọc ở đâu*. Hoàn **chéo** đọc được vì lần hoàn cho hoá đơn mang cả phương thức trả lại lẫn phương thức đã thu (`refund_source_iff_bill_check`) | cùng file — kịch bản trả trước B · E, trả nợ, hoàn chéo của `I-021`: lệch `0` cả ba ngày; bỏ một hạng tử ⇒ lệch đúng bằng nó |
 | **`YC-23`** vế *không vượt số đã nhận* · **`I-014`** hàng pha 1 cùng vế | 1 | **chuỗi số dư** `prepayment_use`: mắt 1 bắt đầu đúng bằng số đã nhận (`prepayment_use_first_fkey`), mắt *n* bắt đầu đúng bằng số dư sau mắt *n−1* (`prepayment_use_previous_fkey` trên `prepayment_use_chain_key`), số dư không âm (`prepayment_use_balance_check`), không hai mắt cùng số (`prepayment_use_no_key`). Mỗi mắt thuộc **đúng một** hoá đơn hoặc **đúng một** lần trả lại (`prepayment_use_one_target_check`), khớp **đúng số** và **đúng đơn** (`prepayment_use_bill_fkey` · `prepayment_use_refund_fkey`); hoá đơn ghi trả trước, hay lần trả lại trả trước, mà không có mắt nào ⇒ không `COMMIT` được (`bill_prepayment_use_fkey` · `refund_prepayment_use_fkey`, hoãn) | `i014_one_unit_and_prepayment.sql` |
 | **`YC-23`** vế *không vào doanh thu ngày nhận tiền* · vế *trả lại không trừ doanh thu* (**suy ra**, ADR-059 điểm 5) | 3 | doanh thu = hoá đơn đóng trong ngày − hoàn **cho hoá đơn** trong ngày. Khoản trả trước chỉ vào doanh thu **qua** cột trả trước của hoá đơn của chính đơn nó (`prepayment_use_bill_fkey`); lần trả lại là `refund` **không** có hoá đơn, nên không phép cộng doanh thu nào chạm nó. Luồng ăn tại bàn không trả trước được: `prepayment_sales_order_fkey` · `bill_prepaid_only_standalone_check` | `i021_opening_float_and_cash_formula.sql` — doanh thu thứ Hai `860000` (không có 50.000 của B), thứ Ba `850000` (có B, không bị trừ 40.000 của E) |
 
@@ -200,7 +200,7 @@ tên đứng trước để dòng không trông như một dòng tên bảng ở
 | ~~**Ai bấm** — vế thứ năm của `YC-01`, người trực quầy lúc ghi nợ và thu nợ, người nhận trả trước, người khai tiền đầu két~~ — **gỡ 2026-09-28 (`P2-08`)** | `person_id` bắt buộc trên `bill` · `debt_collection` · `prepayment` · `refund` · `opening_float`, mặc định người thao tác của giao dịch; *người đang trực lúc ấy* đọc từ `counter_duty` — [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) §1 · §2 | `P2-08` — xong |
 | ~~**Trả một phần khoản nợ**~~ — **gỡ 2026-10-01 (`T-126`)** | mỗi lần trả một dòng, còn thiếu trước · sau nối thành chuỗi do database giữ (§2, **ADR-075**); POS giữ tổng nợ, ngày giờ từng lần trả và số còn thiếu theo lời chủ quán đóng `U-063` (`shop-facts.md` §6.14) | `T-126` — migration mới `20261001120000_tra_no_dan` |
 | **Giảm giá cả đơn** (`shop-facts.md` §8.9) | hoá đơn **không** có cột giảm giá; `due_vnd` là số phải trả sau cùng | chủ quán — **U-058** (phạm vi bản đầu, giới hạn, lý do); lát nào dựng nó thêm cột bằng migration mới |
-| **Số tiền mặt đếm được cuối ngày**, và dấu *ngày đã đối soát xong* | chưa có chỗ cất: vế trái của `I-021` và tập *ngày đã qua mà con số dựng lại khác con số đã đối soát* của `I-014` cần nó. Test `i021_…` đưa số đếm vào như hằng số. Kế hoạch pha 2 §6 **không giao** việc này cho bước nào | chủ repo — quyết bước nào nhận; `P2-11` **không** nhận (2026-09-30): các tập đọc nó ghi *chưa có câu* ở [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §2 |
+| ~~**Số tiền mặt đếm được cuối ngày**, và dấu *ngày đã đối soát xong*~~ — **gỡ 2026-10-05 (`T-133`)** | `cash_count` · `cash_count_line` · `reconciled_day` — §7 (**ADR-079**, đóng **F-048**). Còn lại: dấu không mang con số đã đối soát nên tập 6 của `I-014` chưa có câu (cửa đóng ngày `P3-09`); ngày lệch có đóng được không — **U-073** | `T-133` — migration mới `20261001150000_dem_ket_doi_soat` |
 | **Con số tiền đầu két mặc định** (*cố định, sửa được* — `shop-facts.md` §8.5) | lát chỉ cất con số **của từng ngày**; con số mặc định là cấu hình của mảng tài chính | lane admin (`work/backlog_AD.md` ADM-01); dữ liệu mồi `P2-10` |
 | **Một đơn nhiều khoản trả trước** | `prepayment_one_per_order_key` — một đơn, nhiều nhất một khoản. Owner chỉ tả **một** lần trả trước lúc đặt (`shop-facts.md` §6.3) | phiên chọn 2026-09-28 — gỡ bằng migration mới nếu quán cần |
 | **Vết của một lần sửa** một dòng tiền đã ghi (bản trước, bản sau — `YC-13`), vế *mốc không dời* của `QD-33` | **từ `P2-08`**: vết cập nhật chụp bản trước và bản sau khi giao dịch khai lý do; câu *mốc tính tiền bị dời* đọc từ vết ([`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) §2). Chế độ mềm — một lần sửa không khai lý do không có vết | **F-046** |
@@ -220,6 +220,39 @@ mỗi bảng có từ hai cột tiền trở lên đều có một điều kiệ
 | `P2-08` | **xong 2026-09-28** — §5 ba hàng *ai bấm* · *vết của một lần sửa* · *nhập bù*; [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) |
 | `P2-09` | file migration của lát này là file thứ sáu của dãy; phép so tên bảng `.md` ↔ migration đọc §1 |
 | `P2-10` | con số tiền đầu két mặc định (§5) nếu dữ liệu mồi cần một ngày mẫu |
-| `P2-11` | §2 cột *Bằng chứng* · §3 bảng *Hạng tử đọc ở đâu* — mỗi mệnh đề cần câu đối chiếu của mình (**ADR-050** luật 2); các câu ở cuối file test là điểm bắt đầu |
+| `P2-11` | §2 cột *Bằng chứng* · §3 bảng *Hạng tử đọc ở đâu* (từ `T-133`: hàm `ket_ngay` của `db/reconcile/prelude.sql` cộng chúng) — mỗi mệnh đề cần câu đối chiếu của mình (**ADR-050** luật 2); các câu ở cuối file test là điểm bắt đầu |
 | `P2-13` | chấm lại `YC-01` · `YC-02` · `YC-09` · `YC-10` · `YC-11` · `YC-19` · `YC-23` bằng §2 |
 | pha 3 | §3 — đường đóng tính `due_vnd` từ dòng đơn; phép cộng doanh thu; quyền ai được hoàn · ghi nợ |
+
+---
+
+## 7. Số tiền mặt đếm cuối ngày và dấu ngày đã đối soát xong (`T-133`, 2026-10-05)
+
+Thêm bởi task `T-133` (Claude Code), theo hướng (a) chủ repo chọn cho **F-048** ngày 2026-10-01. Bản
+thắng về tên · kiểu · ràng buộc: migration
+[`db/migrations/20261001150000_dem_ket_doi_soat.up.sql`](../../../db/migrations/20261001150000_dem_ket_doi_soat.up.sql)
+(bước 15 của [`07-thu-tu-migration.md`](07-thu-tu-migration.md)). Thiết kế: **ADR-079**.
+
+| Bảng | Giữ gì | Vì sao · nguồn |
+|---|---|---|
+| `cash_count` | **lần đếm két cuối ngày** của một ngày bán — người đếm, lúc ghi; đúng một cho mỗi ngày | owner: `I-021` vế trái, `shop-facts.md` §6.10 · §6.23 (*tối đếm tiền*) · §6.27 (POS hoặc chủ quán) |
+| `cash_count_line` | một dòng **mệnh giá** của số đếm và số tiền của mệnh giá ấy | owner: `shop-facts.md` §8.5, lời đóng `U-038` — bảng mệnh giá là cách đếm và kiểm cuối ngày, phép trừ dùng **tổng**. Cùng hình `opening_float_line`; con số của ngày là tổng các dòng |
+| `reconciled_day` | **dấu ngày đã đối soát xong** — người bấm, lúc bấm; nhiều nhất một cho mỗi ngày | owner: **ADR-037** (ngày còn lượt giấy chưa nhập là ngày *chưa* xong), `I-021` điều kiện biên thứ nhất (ngày không có tiền đầu két *chưa* xong), `I-014` tập 5 |
+
+| Mệnh đề · vế | Tầng | Lược đồ giữ bằng | Bằng chứng |
+|---|:--:|---|---|
+| **`I-021`** — mỗi ngày bán đúng một số đếm, dựng từ dòng mệnh giá | 1 | `cash_count_one_per_day_key`; `cash_count_line_one_per_denomination_key` · `cash_count_line_amount_check` | `db/tests/i021_cash_count_and_reconciled_day.sql` |
+| **`I-012`** — số đếm và dấu đối soát mang người bấm | 1 | `person_id` `NOT NULL` trên `cash_count` · `reconciled_day`, mặc định người thao tác (§0 của [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md)); đếm lại một xấp có vết khi khai lý do (`I-018`) | cùng file |
+| **`I-021`** · **ADR-037** — ngày thiếu số đếm hay thiếu tiền đầu két không *đối soát xong* được | 1 | `reconciled_day_cash_count_fkey` · `reconciled_day_opening_float_fkey` trên `sale_date`; `reconciled_day_one_per_day_key`. Vai ghi không sửa, không xoá dấu (`QD-50`) | cùng file |
+| **`I-014`** tập 5 — ngày đã đối soát xong mà còn lượt giấy chưa nhập | 5 | *còn N* là phép trừ qua nhiều dòng (§2 hàng `YC-08` của [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md)) — câu `I-014/5` | `db/reconcile/proof/i014_5.sql` |
+| **`I-021`** tập 1 — két − tiền đầu két = vế phải, ngưỡng 0đ | 5 · 4 | câu `I-021/1` qua hàm `ket_ngay` (`db/reconcile/prelude.sql`); con số đếm có phải số thật không là tầng 4 | `db/reconcile/proof/i021_1.sql` |
+| **`I-012`** tập 2 — chỗ lệch chỉ ra đúng một thao tác | 5 | câu `I-012/2`, đọc hẹp — [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §3 | `db/reconcile/proof/i012_2.sql` |
+
+**Không làm:** dấu **không** đòi phép trừ ra 0 (**U-073**); dấu **không** mang con số doanh thu nào (`I-014`
+tập 6 chờ cửa đóng ngày `P3-09`); không cất tin nhắn báo có (`I-015` tập 5); không cột *ngày bán của két*
+trên tạm ứng và thưởng — ngày có khoản mà ngày khai khác ngày ghi chờ **U-072**, hai câu dùng hàm không kết
+luận ngày ấy. *Suy ra, không phải lời chủ quán:* đếm theo mệnh giá như tiền đầu két, mỗi ngày một lần đếm,
+*đối soát xong* đòi có số đếm (**ADR-079**).
+
+**Tham số của `01-quy-uoc-du-lieu.md` §0:** không bảng nào vào `:bang_ky_thuat` hay
+`:bang_khong_quan_he_so_hoc` — hai cột tiền của `cash_count_line` có điều kiện kiểm nối chúng (`QD-22`).

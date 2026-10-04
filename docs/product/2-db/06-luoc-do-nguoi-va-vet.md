@@ -137,8 +137,9 @@ mọi bảng phải mang trigger và trigger phải đang bật, nếu không c�
 - **Chỉ chủ quán đổi mã QR (`U-062`), chỉ người đứng quầy huỷ (§6.13).** Quyền theo vai — pha 3; lát
   này cất đủ để đối chiếu (`person.is_owner`, `counter_duty`).
 - **Một ngày còn lượt trên giấy chưa nhập thì chưa đối soát xong (**ADR-037**).** *Còn N* đọc ra được
-  (§2); **dấu *ngày đã đối soát xong*** thì chưa có chỗ cất — cùng chỗ trống với số tiền mặt đếm được
-  cuối ngày ở [`04-luoc-do-duong-tien.md`](04-luoc-do-duong-tien.md) §5, chưa bước nào nhận.
+  (§2); **dấu *ngày đã đối soát xong*** có chỗ cất từ 2026-10-05 (`T-133`, `reconciled_day` ở
+  [`04-luoc-do-duong-tien.md`](04-luoc-do-duong-tien.md) §7), và câu `I-014/5` gọi tên ngày đã bấm xong
+  mà *còn N > 0* — phép trừ qua nhiều dòng, không ràng buộc nào giữ.
 
 ---
 
@@ -166,7 +167,7 @@ Lát này **không** có cột `status` (không dòng ánh xạ `QD-40`) và kh�
 | **Ai tạo đơn, ai sửa một dòng đơn** (`U-026`) | tạo đơn là thêm, không có vết sửa; sửa dòng có vết khi khai lý do. Người tạo đơn `staff_pos` chưa có cột | pha 3 quyết có cần; một migration mới |
 | **Ai bấm *"đã ra bàn"*** | đơn vị bấm của mốc ấy còn là **`S-5`** ([`05-luoc-do-san-xuat.md`](05-luoc-do-san-xuat.md) §5) — không có bản ghi lần bấm nào để gắn người. Lần đổi trạng thái đơn vị có vết khi khai lý do | chủ quán — `S-5` |
 | **Người bán của một lượt nhập bù khi hôm ấy quầy không khai ai đứng** | người bán đọc từ `counter_duty` tại giờ bán trên giấy; hôm mất điện có thể không ai khai được mốc đổi | pha 3 · người giữ sổ khai bù khoảng trực nếu cần |
-| **Dấu *ngày đã đối soát xong*** và **số tiền mặt đếm được** | chưa có chỗ cất (§3) | chủ repo chọn bước — cùng hàng ở [`04-luoc-do-duong-tien.md`](04-luoc-do-duong-tien.md) §5 |
+| ~~**Dấu *ngày đã đối soát xong*** và **số tiền mặt đếm được**~~ — **gỡ 2026-10-05 (`T-133`)** | [`04-luoc-do-duong-tien.md`](04-luoc-do-duong-tien.md) §7 (**ADR-079**) | `T-133` — xong |
 | **Chấm công, lương, vai thường lệ, ai xem được bảng lương** | không dựng | lane admin (`work/backlog_AD.md`, `shop-facts.md` §8.7) |
 
 **Tham số của `01-quy-uoc-du-lieu.md` §0:** lát này **không** thêm bảng nào vào `:bang_ky_thuat` (vết

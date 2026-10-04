@@ -15,6 +15,7 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
+  - [U-073](#u-073) — két lệch mà đã tìm ra lý do: có được bấm đối soát xong ngày ấy không
   - [U-072](#u-072) — tiền chi, tạm ứng, thưởng lấy khỏi két: trừ vào két của ngày bán nào
   - [U-071](#u-071) — huỷ một ô chấm công: ghi chú có bắt buộc không, và ai được bấm huỷ
   - [U-058](#u-058) — giảm giá cả đơn nhập tay: phạm vi bản đầu và giới hạn
@@ -35,6 +36,19 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 
 <a id="dang-mo"></a>
 ### Đang mở
+
+<a id="u-073"></a>
+- **U-073 — Một ngày két đếm được lệch với sổ (dù chỉ 1 đồng) mà POS hay chủ
+  quán đã tìm ra lý do, thì có được bấm "đối soát xong" ngày ấy không — hay
+  phải sửa sổ cho hết lệch rồi mới đóng? Lý do ấy ghi ở đâu?** Mở 2026-10-05
+  (`T-133`, Claude Code). `master_plan/shop-facts.md` §6.10 nói *lệch 1 đồng
+  cũng phải tìm ra lý do*; không lời nào nói tìm ra rồi thì ngày ấy đóng được
+  chưa. Hỏi về cái quán: *"tối đếm két thiếu 20 nghìn, biết là do thối nhầm
+  cho khách, thì hôm ấy coi như đối soát xong chưa?"* **Chủ quán** trả lời.
+  **Không chặn lược đồ:** dấu đối soát xong (`docs/decisions.md` **ADR-079**)
+  không đòi phép trừ ra 0, và câu `I-021/1` kêu mọi ngày lệch dù có dấu hay
+  không. Chặn cửa đóng ngày của pha 3 (`P3-09`): nó có cho bấm khi còn lệch
+  không, và có ô lý do không. Không tự chọn.
 
 <a id="u-072"></a>
 - **U-072 — Tiền lấy khỏi két để trả điện, nước, wifi, xăng xe, tạm ứng hay

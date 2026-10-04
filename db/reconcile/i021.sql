@@ -1,8 +1,17 @@
 -- I-021 — docs/product/1-system-design/03-bao-ve-invariant.md §1, cột phải. Mỗi khối `-- @@` là
 -- MỘT tập "phải rỗng"; 0 dòng là đạt. Ánh xạ tập ↔ câu: docs/product/2-db/09-doi-chieu-bat-bien.md.
--- Phép trừ két (tập thứ nhất của pha 1) và ba tập đọc kết quả của nó KHÔNG có câu: số tiền mặt đếm
--- được cuối ngày chưa có chỗ cất (04-luoc-do-duong-tien.md §5) — file 09 §2.
--- Tập thứ hai (trừ vào đúng một ngày bán) chờ luật chọn ngày U-072 — file 09 §2.
+-- Phép trừ két (tập thứ nhất) đọc số đếm cuối ngày từ T-133 (cash_count, F-048) qua hàm
+-- pg_temp.ket_ngay của prelude.sql. Ba tập đọc con số của báo cáo (4 · 5 · 6) và tập thứ hai (trừ vào
+-- đúng một ngày bán, chờ luật chọn ngày U-072) KHÔNG có câu — file 09 §2.
+
+-- @@ I-021/1 — ngày bán mà két đếm được − tiền đầu két khác vế phải của công thức
+-- Ngưỡng 0đ, không dung sai. Chỉ ngày có CẢ số đếm lẫn tiền đầu két; ngày thiếu một trong hai là
+-- "chưa đối soát xong", không phải lệch. Ngày có một khoản tạm ứng hay thưởng mà ngày khai khác ngày
+-- ghi thì ngày két của khoản ấy chờ U-072 — câu không kết luận ngày ấy.
+SELECT k.ngay, k.dem_duoc, k.dau_ket, k.dem_duoc - k.dau_ket AS ket_tru_dau_ket, k.ve_phai,
+       k.dem_duoc - k.dau_ket - k.ve_phai AS lech
+FROM pg_temp.ket_ngay(:mui_gio) k
+WHERE NOT k.cho_u072 AND k.dem_duoc - k.dau_ket <> k.ve_phai
 
 -- @@ I-021/3 — ngày bán mang hơn một con số tiền đầu két
 -- Ngày CHƯA có con số tiền đầu két là "chưa đối soát xong", không phải lệch (tập thứ tư của pha 1,

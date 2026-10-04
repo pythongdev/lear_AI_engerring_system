@@ -1,8 +1,30 @@
 -- I-012 — docs/product/1-system-design/03-bao-ve-invariant.md §1, cột phải. Mỗi khối `-- @@` là
 -- MỘT tập "phải rỗng"; 0 dòng là đạt. Ánh xạ tập ↔ câu: docs/product/2-db/09-doi-chieu-bat-bien.md.
 -- Thao tác chạm tiền = năm bảng mang "ai bấm" của 06-luoc-do-nguoi-va-vet.md §1: hoá đơn, thu nợ,
--- trả trước, hoàn tiền, tiền đầu két. Tập thứ hai của pha 1 (chỗ lệch của bảng đối soát không chỉ
--- ra đúng một thao tác) KHÔNG có câu: số đếm két và tin nhắn báo có chưa có chỗ cất — file 09 §2.
+-- trả trước, hoàn tiền, tiền đầu két.
+
+-- @@ I-012/2 — chỗ lệch của phép trừ két không chỉ ra đúng một thao tác có tên
+-- Cách đọc của T-133 (file 09 §3): một chỗ lệch "chỉ ra được" một thao tác khi trong ngày ấy có
+-- ĐÚNG MỘT thao tác chạm tiền mang một phần tiền bằng đúng độ lớn chỗ lệch — ví dụ một lần thu ghi
+-- nhầm phương thức. Không thao tác nào, hay hơn một, là chỗ lệch vô danh. Chỉ vế tiền mặt: tin nhắn
+-- báo có chưa có chỗ cất, nên vế chuyển khoản không có câu (I-015 tập 5). Ngày chờ U-072 không kết luận.
+WITH lech AS (
+  SELECT k.ngay, k.dem_duoc - k.dau_ket - k.ve_phai AS lech
+  FROM pg_temp.ket_ngay(:mui_gio) k
+  WHERE NOT k.cho_u072 AND k.dem_duoc - k.dau_ket <> k.ve_phai),
+op(bang, id, ngay, tien) AS (
+  SELECT 'bill', id, sale_date, unnest(ARRAY[cash_vnd, transfer_vnd, prepaid_cash_vnd]) FROM bill
+  UNION ALL SELECT 'debt_collection', id, sale_date, unnest(ARRAY[cash_vnd, transfer_vnd]) FROM debt_collection
+  UNION ALL SELECT 'prepayment', id, sale_date, unnest(ARRAY[cash_vnd, transfer_vnd]) FROM prepayment
+  UNION ALL SELECT 'refund', id, sale_date, amount_vnd FROM refund
+  UNION ALL SELECT 'staff_advance', id, paid_date, amount_vnd FROM staff_advance
+  UNION ALL SELECT 'holiday_bonus', id, paid_date, amount_vnd FROM holiday_bonus)
+SELECT l.ngay, l.lech,
+       (SELECT count(DISTINCT (o.bang, o.id)) FROM op o
+        WHERE o.ngay = l.ngay AND o.tien = abs(l.lech)) AS so_thao_tac_khop
+FROM lech l
+WHERE (SELECT count(DISTINCT (o.bang, o.id)) FROM op o
+       WHERE o.ngay = l.ngay AND o.tien = abs(l.lech)) <> 1
 
 -- @@ I-012/1 — thao tác chạm tiền thiếu một trong bốn câu: cái gì đổi, bao nhiêu, ai bấm, lúc mấy giờ
 WITH op AS (

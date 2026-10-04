@@ -951,6 +951,47 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-133"></a>
+### T-133 — Số tiền mặt đếm cuối ngày và dấu *ngày đã đối soát xong* không có chỗ cất (F-048)
+
+**Yêu cầu:** chủ repo 2026-10-01: *"F-048 tôi chọn quyết định dưới hãy đọc kĩ và thực hiện — một bước pha 2
+mới dựng chỗ cất số đếm két và dấu đối soát xong bằng một migration mới, rồi P2-11 thêm ba câu còn thiếu"*
+(hướng (a) của `work/findings.md` F-048). Mức **L2** (lược đồ, dữ liệu tiền, câu đối chiếu). Phiên mở
+2026-10-01 va chạm với phiên T-132 (cùng mã, cùng bước migration 14, cùng cây); chủ repo chọn **đợi T-132
+commit** rồi làm với mã `T-133`, bước 15. Mã `T-…` chứ không `P2-15`: **ADR-068** bác nối bước vào kế
+hoạch pha 2 đã ký cổng. Làm tiếp và xong 2026-10-05.
+
+**Thiết kế — Claude Code:** `docs/decisions.md` **ADR-079**. Test hồi quy
+`db/tests/i021_cash_count_and_reconciled_day.sql` viết trước migration. Câu hỏi mới cho chủ quán:
+**U-073** (ngày lệch mà đã tìm ra lý do có được bấm đối soát xong không).
+
+**Acceptance:** (1) một cặp migration mới, không sửa file cũ, bước lùi có khoá chặn, lùi trả lược đồ giống
+hệt; (2) số đếm cùng hình tiền đầu két — một lần đếm một ngày, dòng mệnh giá là bội của mệnh giá, có người
+đếm; (3) dấu đối soát xong một ngày một dấu, từ chối khi thiếu số đếm hay tiền đầu két, vai ghi không sửa
+không xoá; (4) ba câu `I-021/1` · `I-012/2` · `I-014/5`, mỗi câu một lỗi cài kêu đúng tập; ngày mẫu sạch;
+(5) `YC-03` · `YC-08` ở `db/scenario/yc.sql` đổi kết cục cùng lượt; (6) không chọn hộ `U-072` hay `U-073`;
+(7) owner và con trỏ cập nhật, F-048 đóng; (8) `db-check` xanh.
+
+**Bàn giao** — 2026-10-05 · thực hiện: **Claude Code** (cây chính, nhánh `chatgpt_involve`, trên `13ae39e`);
+review độc lập: **chưa**.
+
+| Acceptance | Bằng chứng (Claude chạy) |
+|---|---|
+| 1 | `PASS xuôi 20261001150000_dem_ket_doi_soat` · `PASS lùi 20261001150000_dem_ket_doi_soat — lược đồ giống hệt lúc trước bước ấy (1415 dòng)` · `NOTE khoá chặn — … còn rỗng, lùi được` (nhánh từ chối khi có dòng chưa chạy thử thật) |
+| 2 · 3 | `PASS db/tests/i021_cash_count_and_reconciled_day.sql` — lời từ chối `cash_count_one_per_day_key` · `_one_per_denomination_key` · `cash_count_line_amount_check` ×2 · `person_id` not-null · `reconciled_day_opening_float_fkey` · `_cash_count_fkey` · `_one_per_day_key` · `permission denied` ×3; đếm lại một xấp để đúng một vết |
+| 4 | `PASS ngày bán mẫu đúng — 102 câu chạy, mọi tập rỗng` · `PASS kêu i021_1 — I-021/1` · `PASS kêu i012_2 — I-012/2 I-021/1` · `PASS kêu i014_5 — I-014/5`; mười ba lỗi cũ khai thêm `I-021/1` (và `I-012/2`) kèm lý do — 09 §3 |
+| 5 | `YC-03 sai · … ⇒ GỌI TÊN: I-012/2 (proof/i012_2)` · `YC-08 sai · … ⇒ GỌI TÊN: I-014/5 (proof/i014_5)` |
+| 6 | hàm `ket_ngay` không kết luận ngày chờ `U-072`; dấu không đòi lệch 0 (`U-073` mở) |
+| 7 | 04 §7 · 06 · 07 bước 15 · 09 · 11 · 14 · `I-021` (con trỏ U-038 cũ) · F-048 *Fixed* · kế hoạch BE · `backlog_BE` · `P2A-05`; Gate 1c · 1d · 1e xanh |
+| 8 | `db-check: PASS — 15 bước …, 34 file test, … 102 câu …, 102 lỗi cài, … 32 mã YC` |
+
+**Còn lại:** `U-073` (chủ quán); `U-072` (chủ quán); `P2A-05` thêm khoản chi vào hàm `ket_ngay`; cửa đóng
+ngày `P3-09` ghi số đếm và dấu, quyết con số chụp lúc đóng (`I-014` tập 6); tin nhắn báo có (`I-015` tập 5)
+chưa bước nào nhận. Gate 3 · 1b đỏ lúc đóng task vì năm file `docs/work-flow-session/` ·
+`docs/project_work_flow/` bị chuyển sang `docs/private/` ngoài task này — không phải thay đổi của T-133.
+
+[↑ đầu file](#top)
+
 <a id="t-132"></a>
 ### T-132 — Vết của mỗi lần *quán đang mù* và mỗi lần *tạm dừng nhận đơn* chưa có dòng yêu cầu, chưa có chỗ cất
 

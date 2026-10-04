@@ -1,9 +1,17 @@
 -- I-014 — docs/product/1-system-design/03-bao-ve-invariant.md §1, cột phải. Mỗi khối `-- @@` là
 -- MỘT tập "phải rỗng"; 0 dòng là đạt. Ánh xạ tập ↔ câu: docs/product/2-db/09-doi-chieu-bat-bien.md.
 -- Hai nguồn: nguồn phiên bàn = hoá đơn có table_session_id; nguồn đơn lẻ = hoá đơn có
--- sales_order_id (cả ba kênh mang đi). Bốn tập của pha 1 KHÔNG có câu — tổng của báo cáo · ngày
--- "đã đối soát xong" · con số đã đối soát hôm ấy · lần trả lại làm giảm doanh thu: lược đồ không
--- cất báo cáo hay dấu đối soát nào — file 09 §2.
+-- sales_order_id (cả ba kênh mang đi). Ba tập của pha 1 KHÔNG có câu — tổng của báo cáo · con số
+-- đã đối soát hôm ấy · lần trả lại làm giảm doanh thu: lược đồ không cất báo cáo, và dấu đối soát
+-- xong (T-133) không mang con số nào — file 09 §2.
+
+-- @@ I-014/5 — ngày đã đối soát xong mà còn lượt bán trên sổ giấy chưa nhập
+-- Còn N = số lượt khai trên sổ − số hoá đơn nhập bù của sổ (06-luoc-do-nguoi-va-vet.md §2, ADR-037).
+-- Vế "còn một khoản chạm tiền không có mốc" không có phần tử: mọi bảng tiền giữ booked_at NOT NULL.
+SELECT r.sale_date AS ngay, p.entry_count AS so_luot_tren_giay,
+       p.entry_count - (SELECT count(*) FROM bill b WHERE b.paper_ledger_id = p.id) AS con_chua_nhap
+FROM reconciled_day r JOIN paper_ledger p ON p.sale_date = r.sale_date
+WHERE p.entry_count > (SELECT count(*) FROM bill b WHERE b.paper_ledger_id = p.id)
 
 -- @@ I-014/1 — khoản tiền đứng ở hơn một nguồn
 SELECT b.id AS hoa_don, b.table_session_id AS phien, b.sales_order_id AS don
