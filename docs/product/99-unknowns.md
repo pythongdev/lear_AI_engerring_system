@@ -37,6 +37,16 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 <a id="dang-mo"></a>
 ### Đang mở
 
+<a id="u-074"></a>
+- **U-074 — Số tiền đếm két của một ngày đã bấm "đối soát xong" mà sau đó
+  phát hiện đếm nhầm (sót một xấp, ghi sai mệnh giá) thì có được sửa không,
+  ai được sửa, và sửa thì ngày ấy có phải đối soát lại không?** Mở 2026-10-05
+  (lượt review `T-133`, Claude Code). `master_plan/shop-facts.md` §6 mục 4 nói
+  con số đã ký của một ngày không bao giờ đổi về sau; không lời nào nói về một
+  lần đếm nhầm phát hiện muộn. Ai trả lời: **chủ quán**. Chặn: đường sửa số
+  đếm sau khi ký — `T-134` khoá số đếm của ngày đã ký và **không** dựng đường
+  sửa nào trước lời này (`work/findings.md` F-056).
+
 <a id="u-073"></a>
 - **U-073 — Một ngày két đếm được lệch với sổ (dù chỉ 1 đồng) mà POS hay chủ
   quán đã tìm ra lý do, thì có được bấm "đối soát xong" ngày ấy không — hay

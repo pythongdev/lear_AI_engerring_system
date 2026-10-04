@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 55 finding — 51 Fixed/Resolved/Closed, 4 Open (đếm lại ngày 2026-10-05, lúc đóng F-048 ở T-133; trước đó 2026-10-01, *55 — 50/5*, lúc đóng F-050 ở T-132; trước đó cùng ngày, *55 — 49/6*, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 57 finding — 51 Fixed/Resolved/Closed, 6 Open (đếm lại ngày 2026-10-05, lúc ghi F-056 · F-057 ở lượt review T-133; trước đó cùng ngày, *55 — 51/4*, lúc đóng F-048 ở T-133; trước đó 2026-10-01, *55 — 50/5*, lúc đóng F-050 ở T-132; trước đó cùng ngày, *55 — 49/6*, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -117,6 +117,8 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-053 | Bước khoá chặn của `db-check` giả định bước migration trên cùng luôn có dữ liệu mồi, nên lát admin đầu tiên (hai bảng còn rỗng) làm nó đỏ oan — chỗ hở thứ hai cùng họ F-052 mà lượt chữa F-052 không đo (P2A-02) | Fixed |
 | F-054 | Phép từ chối `qd21_so_am` của `db-check` đòi mọi bảng có cột tiền có một dòng ở ngày bán mẫu, nên hai bảng tiền đầu tiên của mảng admin (tạm ứng, thưởng) làm nó đỏ — chỗ hở thứ ba cùng họ F-052 · F-053 (P2A-04) | Fixed |
 | F-055 | T-125 chèn một tập vào GIỮA ô `I-021` của pha 1, nên câu `I-021/2` · `I-021/6` của bộ đối chiếu mang số của tập khác, và không gate nào thấy (P2A-07) | Fixed |
+| F-056 | Số đếm cuối ngày của một ngày ĐÃ đóng dấu đối soát vẫn đổi được bằng một xấp mệnh giá thêm sau, không vết — dấu không giữ con số nó ký (review T-133) | Open |
+| F-057 | Một ngày đóng dấu đối soát được khi số đếm hay tiền đầu két không có dòng mệnh giá nào — *chưa đếm* và *đếm ra 0* cùng một hình (review T-133) | Open |
 
 ---
 
@@ -4492,3 +4494,54 @@ của ô pha 1 trong `reconcile.sh --codes`. Cho tới lúc ấy, bước nào *
 **Status:**
 Fixed (2026-10-01, P2A-07) — câu, file lỗi cài và con trỏ ngoài `work/` dùng `I-021/3` · `I-021/7`;
 file 09 §1 · §2 đếm bảy tập. Phép kiểm máy vẫn chưa thêm (mới tốn một lần).
+
+### F-056 — Số đếm của một ngày đã đóng dấu đối soát vẫn đổi được, không vết
+
+**Problem:**
+Lượt review độc lập T-133 (Claude Code, 2026-10-05) dựng một database từ mười lăm bước migration, khai
+tiền đầu két, số đếm 500.000đ (một xấp 100.000đ) và dấu `reconciled_day` cho ngày 2026-10-04, rồi dưới vai
+`shop_app` thêm một xấp 50.000đ × 4 vào `cash_count_line` của ngày ấy:
+`ĐI QUA: số đếm ngày đã đối soát đổi thành 700000` · `vết ghi lại: 0`. Trigger vết chỉ bắt `UPDATE`; một
+dòng con **thêm** vào bản ghi đã có không để vết — cùng họ **F-047**, nay trên một ngày đã ký.
+
+**Impact:**
+`master_plan/shop-facts.md` §6 mục 4: *doanh thu của một ngày đã đối soát xong không bao giờ đổi về sau …
+con số đã ký hôm qua đọc lại lúc nào cũng bằng chính nó*. Số đếm là vế trái của phép trừ két (`I-021`); đổi
+nó sau khi ký làm chỗ lệch đã đóng biến mất hay hiện ra mà không ai truy được. `opening_float_line` của ngày
+đã ký có cùng hình (chưa thử riêng, cùng thiết kế). Tập `I-014` *ngày đã qua mà con số dựng lại khác con số
+đã đối soát* không bắt được, vì chẳng có con số đã ký nào được chụp.
+
+**Decision / Fix:**
+Task **T-134**. Hướng Claude chọn (cách đọc của phiên, chủ repo đổi được): database từ chối mọi `INSERT` ·
+`UPDATE` · `DELETE` trên `cash_count` · `cash_count_line` · `opening_float` · `opening_float_line` của một
+`sale_date` đã có `reconciled_day` — tầng 1, cùng tinh thần *dấu không dời* của **ADR-079**. Đường sửa một
+số đếm đã ký, nếu quán cần, là câu cho chủ quán: **U-074**; không dựng trước lời.
+
+**Related task:**
+`work/backlog_archive.md` → T-133 (review) · **F-047** · **ADR-079** · `I-014` · `I-021`
+
+**Status:**
+Open
+
+### F-057 — Ngày chưa đếm két vẫn đóng dấu đối soát được
+
+**Problem:**
+Cùng lượt review: khai tiền đầu két và một dòng `cash_count` cho 2026-10-03 **không** dòng mệnh giá nào, rồi
+`INSERT INTO reconciled_day` ⇒ `ĐI QUA: ngày 03/10 đóng dấu với số đếm không dòng mệnh giá nào (tổng 0)`.
+Hai khoá ngoại của `reconciled_day` chỉ đòi có **dòng đầu** của số đếm và tiền đầu két, không đòi có số.
+
+**Impact:**
+**ADR-079** đặt khoá ngoại để *ngày thiếu số đếm thì chưa đối soát xong không tồn tại được*; một dòng đầu rỗng
+đi vòng qua đúng điều ấy. *Chưa đếm* và *đếm ra 0đ* đọc ra cùng một con số, nên phép trừ két báo lệch đúng
+bằng tiền trong két mà dấu vẫn đứng.
+
+**Decision / Fix:**
+Task **T-134**: database từ chối dấu `reconciled_day` khi số đếm hoặc tiền đầu két của ngày ấy không có dòng
+mệnh giá nào (tầng 1). Không đổi luật *dấu không đòi lệch 0* — câu ấy là **U-073**.
+
+**Related task:**
+`work/backlog_archive.md` → T-133 (review) · **ADR-079** · `I-021` điều kiện biên thứ nhất (**ADR-037**)
+
+**Status:**
+Open
+

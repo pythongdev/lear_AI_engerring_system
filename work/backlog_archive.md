@@ -990,6 +990,16 @@ ngày `P3-09` ghi số đếm và dấu, quyết con số chụp lúc đóng (`I
 chưa bước nào nhận. Gate 3 · 1b đỏ lúc đóng task vì năm file `docs/work-flow-session/` ·
 `docs/project_work_flow/` bị chuyển sang `docs/private/` ngoài task này — không phải thay đổi của T-133.
 
+**Review độc lập** — 2026-10-05 · **Claude Code** (phiên khác với phiên thực hiện), trên cây chính chưa
+commit. Đọc entry, migration, bước lùi; chạy `./scripts/gate.sh` ⇒ `PASS  Gate 1   db-check — 15 bước …
+102 câu …, 102 lỗi cài …, 32 mã YC`, Gate 1c · 1d · 1e · verify PASS; Gate 3 · 1b đỏ chỉ vì năm file chuyển
+sang `docs/private/` (không phải T-133 — task **T-135**). Ba phép thử trên database riêng `t133probe`:
+(1) **khoá chặn bước lùi**, nhánh bàn giao ghi *chưa chạy thử*: có dòng ⇒ `error: migration failed: đường lùi
+từ chối: reconciled_day · cash_count_line · cash_count đang giữ 3 giá trị đã ghi` — **đạt**, Acceptance 1 đủ
+bằng chứng; (2) thêm xấp mệnh giá sau khi đóng dấu ⇒ `ĐI QUA … 700000` · `vết ghi lại: 0` — **F-056**;
+(3) đóng dấu với số đếm không dòng nào ⇒ `ĐI QUA` — **F-057**. Hai chỗ hở không làm Acceptance 1–8 sai (không
+dòng nào đòi chúng), nên T-133 giữ *Done*; việc vá là **T-134**, câu hỏi mới **U-074**.
+
 [↑ đầu file](#top)
 
 <a id="t-132"></a>
