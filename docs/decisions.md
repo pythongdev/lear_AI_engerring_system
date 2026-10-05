@@ -96,6 +96,7 @@ có câu trả lời mới từ người.
 | ADR-077 | **Bánh làm sai: mỗi ghi chú một dòng `wrong_make_note` gắn vào đúng một đơn vị đã làm của một đơn đã Huỷ**, mang người ghi · lúc ghi · chữ tuỳ chọn; ghi chú còn hiệu lực giữ đơn vị ở *đã làm* (không chuyển, không lùi), ghi nhầm thì **huỷ tại chỗ** có người và lúc, dòng ở lại; `I-004/6` loại thứ đã ghi chú; *không bàn nào chờ* là tầng 4 | Đã chốt 2026-10-01 (giao cho phiên, T-127; hình ghi chú và cách gỡ: lời chủ repo) | — | T-127 · U-064 · ADR-072 |
 | ADR-078 | **Hai khoảng ngừng nhận đơn, hai bảng**: `order_intake_pause` (tạm dừng — người bật, người tắt, chặn năm kênh) và `shop_blind_spell` (quán mù — bắt đầu từ lúc hết nhìn thấy, máy hay người khai, chỉ khép bằng nút có người); mỗi loại không chồng nhau, chỉ khép được, không dời, không xoá; `I-008` tập 2 · 3 thành câu, tập 5 còn chờ lý do huỷ máy đọc được | Đã chốt 2026-10-01 (hướng (a) của F-050: lời chủ repo; hình bảng: giao cho phiên, T-132) | — | T-132 · F-050 · YC-34 |
 | ADR-079 | **Số tiền mặt đếm cuối ngày và dấu *ngày đã đối soát xong* có chỗ cất**: `cash_count` · `cash_count_line` cùng hình tiền đầu két (một lần đếm mỗi ngày, mỗi dòng một mệnh giá, con số là tổng các dòng); `reconciled_day` mỗi ngày một dấu, khoá ngoại về số đếm **và** tiền đầu két, không sửa, không xoá, **không** đòi phép trừ ra 0 (`U-073`); câu `I-021/1` · `I-012/2` · `I-014/5`; ngày có khoản chi mà ngày khai khác ngày ghi chờ `U-072` | Đã chốt 2026-10-05 (hướng (a) của F-048: lời chủ repo 2026-10-01; hình bảng và cách đọc: giao cho phiên, T-133) | — | T-133 · F-048 · ADR-037 · ADR-074 |
+| ADR-080 | **Ngày đã đối soát xong thì số đếm và tiền đầu két đứng yên; dấu không đứng trên số rỗng**: trigger từ chối mọi `INSERT` · `UPDATE` · `DELETE` · `TRUNCATE` trên `cash_count` · `cash_count_line` · `opening_float` · `opening_float_line` của ngày có `reconciled_day`, **mọi vai, không vai nào miễn**; dấu bị từ chối khi số đếm hay tiền đầu két của ngày không có dòng mệnh giá nào; không đường sửa số đã ký (`U-074`), không đòi lệch 0 (`U-073`) | Đã chốt 2026-10-05 (hướng của F-056 · F-057: phiếu việc của chủ repo 2026-10-05; hình trigger: giao cho phiên, T-134) | — | T-134 · F-056 · F-057 · ADR-079 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -3261,7 +3262,7 @@ mười ô **không** phải câu *"được, sang pha 2"* — ký chuyển pha 
 `scripts/check-phase-boundary.sh` · `scripts/check-phase-boundary.ignore` ·
 `scripts/check-phase-boundary.test.sh` (ca 9 · ca 10) ·
 `master_plan/SD_master_plan_banh_cuon_ba_thanh.md` §9 ·
-`docs/work-flow-session/vi-du-mot-task-chay-that-P1-12.md` §10 ·
+`docs/private/work-flow-session/guidline/vi-du-mot-task-chay-that-P1-12.md` §10 ·
 `work/backlog_AD.md` (hai pointer trỏ vào tiêu đề §4) ·
 `work/findings.md` (**F-040** · **F-041** đóng).
 
@@ -4218,7 +4219,7 @@ này có năm.
   không đổi.
 
 **Applies to:** `scripts/hooks/commit-msg` · `scripts/commit-msg.test.sh` · `CLAUDE.md` §6.2 ·
-`quality/review-gate.md` Gate 8 · `docs/work-flow-session/workflow-phien-lam-viec.md` ·
+`quality/review-gate.md` Gate 8 · `docs/private/work-flow-session/guidline/workflow-phien-lam-viec.md` ·
 `work/findings.md` F-031.
 
 ### ADR-063 — Mỗi task một file scope, và Gate 7b chấm theo task trong subject
@@ -5286,3 +5287,64 @@ lần đếm; *đối soát xong* đòi có số đếm; cách đọc `I-012/2`.
 `db/scenario/yc.sql` (`YC-03` · `YC-08`) · `docs/product/2-db/04-luoc-do-duong-tien.md` §7 ·
 `06-luoc-do-nguoi-va-vet.md` · `07-thu-tu-migration.md` (bước 15) · `09-doi-chieu-bat-bien.md` ·
 `14-luoc-do-khoan-cua-nguoi.md` · `quality/invariants.md` `I-021` · U-072 · U-073 · F-048 · task `T-133`.
+
+### ADR-080 — Ngày đã đối soát xong thì số đếm và tiền đầu két của nó đứng yên với mọi vai; dấu không đứng trên một số đếm hay tiền đầu két rỗng
+
+**Trạng thái:** **Đã chốt** 2026-10-05. **Hướng** là mục *Decision / Fix* của `work/findings.md` **F-056** và
+**F-057** (cách đọc của phiên review T-133), được chủ repo đưa vào phiếu việc T-134 ngày 2026-10-05 với lời
+*"bạn có thể đổi, nhưng phải ghi lý do vào ADR"*. Phiên không đổi hướng. **Hình trigger, mã lỗi và vai miễn**
+giao cho phiên (Claude Code, task `T-134`); test viết trước migration, Codex thi công.
+
+**Context:**
+**ADR-079** dựng dấu `reconciled_day` với hai khoá ngoại về số đếm và tiền đầu két, nhưng không gì giữ hai thứ
+ấy sau khi dấu đứng: thêm một xấp vào số đếm của ngày đã ký đi qua và không để vết (**F-056**, cùng họ
+**F-047**). Khoá ngoại chỉ đòi **dòng đầu**, nên một số đếm không dòng mệnh giá nào vẫn đóng dấu được — *chưa
+đếm* đọc ra như *đếm ra 0đ* (**F-057**). `shop-facts.md` §6 mục 4: con số đã ký của một ngày đọc lại lúc nào
+cũng bằng chính nó.
+
+**Decision:**
+1. **Ngày đã ký đứng yên.** Một hàm trigger `BEFORE` từ chối mọi `INSERT` · `UPDATE` · `DELETE` trên
+   `cash_count` · `cash_count_line` · `opening_float` · `opening_float_line` khi **bản trước hoặc bản sau** của
+   dòng thuộc một `sale_date` đã có `reconciled_day` (dòng mệnh giá đọc ngày qua dòng đầu của nó, nên dời một
+   xấp từ ngày chưa ký sang ngày đã ký cũng bị từ chối). `TRUNCATE` không đi qua trigger dòng, nên một trigger
+   câu lệnh từ chối `TRUNCATE` bốn bảng ấy khi có bất kỳ dấu nào. Lời từ chối mang mã `restrict_violation`.
+2. **Không vai nào miễn.** Trigger bắn với mọi vai ghi dữ liệu, kể cả `shop_owner` (chủ lược đồ, chạy
+   migration). Đi qua khoá chỉ có một đường: một migration mới gỡ hay đổi trigger — tức một quyết định có file,
+   có số bước, có đường lùi (`07-thu-tu-migration.md` luật 3), không phải một câu `UPDATE` lúc nửa đêm.
+3. **Dấu không đứng trên số rỗng.** Trigger `BEFORE INSERT OR UPDATE OF sale_date` trên `reconciled_day` từ
+   chối (`check_violation`) khi dòng đầu số đếm hay tiền đầu két của ngày có mà **không có dòng mệnh giá nào**.
+   Khi chính dòng đầu thiếu, trigger để khoá ngoại của **ADR-079** từ chối như cũ (`foreign_key_violation`).
+   Một dòng mệnh giá ghi 0đ vẫn là một lần đếm: *đếm ra 0* khác *chưa đếm*.
+4. **Không dựng đường sửa số đã ký** — câu ấy là **U-074**. **Không đòi phép trừ két ra 0** — vẫn là
+   **U-073**; ngày lệch có dòng ở cả hai vế vẫn ký được, và `I-021/1` vẫn kêu.
+5. **Đường lùi có khoá chặn**: có dù một `reconciled_day` thì từ chối gỡ. Bước này không cất dữ liệu, nhưng gỡ
+   nó trên ngày đã ký là mở lại đúng chỗ hở của F-056 — tức chọn hộ U-074 bằng một lệnh lùi.
+
+**Why:**
+- *Điểm 1.* Khoá ở tầng 1 vì mọi tầng trên (cửa đóng ngày của pha 3, giao diện) đều có đường vòng: một lệnh SQL
+  tay, một job nhập bù, một bản sửa lỗi. Bắt cả bản trước lẫn bản sau vì một lần sửa có hai đầu.
+- *Điểm 2.* Miễn `shop_owner` là để ngỏ đúng vai mạnh nhất — vai mà người sửa tay sẽ dùng. Vai ấy vẫn đổi được
+  trigger bằng DDL, nên khoá không thay sao lưu hay quyền hệ điều hành; nó biến *sửa số đã ký* từ một câu
+  lệnh thành một bước migration ai cũng thấy.
+- *Điểm 3.* Mã `check_violation` riêng với `foreign_key_violation` để cửa pha 3 nói được hai lời khác nhau:
+  *chưa có số đếm* và *số đếm chưa có dòng nào*.
+
+**Rejected alternatives:**
+- *Chỉ thu quyền `INSERT` · `UPDATE` của `shop_app` trên bốn bảng.* Bác: chặn cả ngày chưa ký (đếm lại trước
+  khi ký là việc thường, ADR-079 điểm 1), và không chặn `shop_owner`.
+- *Ràng buộc `CHECK` hay cột cờ trên dòng đầu.* Bác: `CHECK` không đọc được bảng khác; cờ là ô thứ hai cho
+  cùng sự thật mà `reconciled_day` đã giữ.
+- *Cho đổi số đã ký kèm vết.* Bác lúc này: đó là đường sửa của **U-074**, chủ quán chưa trả lời.
+- *Ràng buộc trì hoãn (`CONSTRAINT TRIGGER … DEFERRABLE`) kiểm lúc commit.* Bác: lời từ chối đến lúc commit, xa câu
+  lệnh gây ra nó, và không có gì cần hoãn — khoá đọc dấu đã đứng; `BEFORE` từ chối ngay câu lệnh.
+
+**Suy ra, không phải lời chủ quán** (`CLAUDE.md` §7.2): không vai nào miễn; `TRUNCATE` cũng bị chặn; dời một
+xấp sang ngày đã ký là sửa ngày đã ký; một dòng mệnh giá 0đ đủ để ký; khoá chặn đường lùi theo dấu.
+
+**Không phủ:** chủ lược đồ vẫn xoá được chính dấu `reconciled_day` (vai ghi thì không — **ADR-079**), rồi sửa
+số đếm. Chặn cả đường ấy là chọn hộ U-074 (gỡ dấu có phải một cách *đối soát lại* không) — để ngỏ, ghi ở đây.
+
+**Applies to:** `db/migrations/20261005120000_khoa_so_dem_ngay_da_ky.up.sql` · `.down.sql` ·
+`db/tests/i021_reconciled_day_frozen.sql` · `db/tests/i021_cash_count_and_reconciled_day.sql` (đếm lại trước
+khi ký) · `db/reconcile/proof/` · `docs/product/2-db/04-luoc-do-duong-tien.md` §7 · `07-thu-tu-migration.md`
+(bước 16) · F-056 · F-057 · U-073 · U-074 · task `T-134`.

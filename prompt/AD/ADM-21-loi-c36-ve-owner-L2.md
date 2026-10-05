@@ -55,7 +55,7 @@ phạm vi lời chủ quán nói, không rộng hơn một chữ.
 - `work/admin-questions.md` — §3: gạch `C36`, trỏ về owner; banner đầu file
 - `work/backlog.md` · `work/backlog_AD.md` · `prompt/AD/README.md` — trạng thái, entry, mọi pointer
   nói *"`C36` chưa về owner"*
-- `docs/work-flow-session/tom_tat_du_an.md` — mục *Công việc sẵn sàng tiếp theo* và danh sách câu
+- `docs/private/work-flow-session/guidline/tom_tat_du_an.md` — mục *Công việc sẵn sàng tiếp theo* và danh sách câu
   mở (bản tóm tắt, không sở hữu gì — sửa cho khỏi nói ngược owner)
 - `work/scope.txt` — **thêm** khối của mình (**F-010** · **F-014**)
 

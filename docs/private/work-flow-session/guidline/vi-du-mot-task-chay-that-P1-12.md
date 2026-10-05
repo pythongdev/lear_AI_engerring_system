@@ -2,7 +2,7 @@
 
 > **File này không sở hữu dữ kiện nào.** Nó là **bản mổ** của một task đã chạy
 > xong trong repo này, dùng làm ví dụ cho [`workflow-phien-lam-viec.md`](workflow-phien-lam-viec.md).
-> Mọi luật thật nằm ở [`CLAUDE.md`](../../CLAUDE.md) và ở các owner mà `CLAUDE.md` §2
+> Mọi luật thật nằm ở [`CLAUDE.md`](../../../../CLAUDE.md) và ở các owner mà `CLAUDE.md` §2
 > chỉ tên; chỗ nào file này nói khác `CLAUDE.md`, **`CLAUDE.md` thắng và file này
 > là bug phải sửa**. Mọi con số dưới đây là **ảnh chụp tại lúc task chạy**
 > (2026-09-16, commit `bf39be5`) — đọc chúng như *biên bản một lượt*, không phải
@@ -28,11 +28,11 @@ hỏi ở mỗi bước: *lúc ấy tôi biết gì, tôi quyết cái gì, và 
 |---|---|
 | **Mã** | `P1-12` — bước 12/14 của pha 1 |
 | **Bậc** | **L1** |
-| **Prompt** | [`prompt/SD/P1-12-ra-cheo-ranh-gioi-pha-L1.md`](../../prompt/SD/P1-12-ra-cheo-ranh-gioi-pha-L1.md) |
-| **Mô tả dài** | [`work/backlog_SD.md`](../../work/backlog_SD.md) → `P1-12` |
-| **Trạng thái** | [`work/backlog.md`](../../work/backlog.md) → *Done* 2026-09-16 |
+| **Prompt** | [`prompt/SD/P1-12-ra-cheo-ranh-gioi-pha-L1.md`](../../../../prompt/SD/P1-12-ra-cheo-ranh-gioi-pha-L1.md) |
+| **Mô tả dài** | [`work/backlog_SD.md`](../../../../work/backlog_SD.md) → `P1-12` |
+| **Trạng thái** | [`work/backlog.md`](../../../../work/backlog.md) → *Done* 2026-09-16 |
 | **Commit** | `bf39be5` — 7 file, +438 / −15 |
-| **Đầu ra thật** | ô 10 của [`07-cong-chat-luong-pha-1.md`](../product/1-system-design/07-cong-chat-luong-pha-1.md) §7, **để trống kèm lý do** |
+| **Đầu ra thật** | ô 10 của [`07-cong-chat-luong-pha-1.md`](../../../product/1-system-design/07-cong-chat-luong-pha-1.md) §7, **để trống kèm lý do** |
 
 ---
 
@@ -43,7 +43,7 @@ hỏi ở mỗi bước: *lúc ấy tôi biết gì, tôi quyết cái gì, và 
 > và **một owner**.
 
 Luật đằng sau nó là `ADR-035`: *pha 0–1 không nhắc tên bảng · pha 2 không nhắc
-endpoint · pha 3 không nhắc component*. Luật ấy có ở [`docs/decisions.md`](../decisions.md)
+endpoint · pha 3 không nhắc component*. Luật ấy có ở [`docs/decisions.md`](../../../decisions.md)
 từ 2026-09-04, nhưng **không cổng nào của repo chấm đủ nó**. `P1-12` sinh ra để
 trả lời một câu duy nhất: *luật ấy có được tuân thủ thật không, hay chỉ được viết ra.*
 
@@ -59,7 +59,7 @@ commit gần đây. Ba thứ ấy quyết định lượt này trước cả khi
    là hỏi, không phải làm.
 2. **`work/scope.txt` còn 70 pattern của phiên trước.** Brief cảnh báo thẳng. Luật
    ở đây là **THÊM khối của mình vào cuối**, không xoá khối người khác
-   ([`work/findings.md`](../../work/findings.md) `F-010` · `F-014`) — vì brief không có cách nào biết
+   ([`work/findings.md`](../../../../work/findings.md) `F-010` · `F-014`) — vì brief không có cách nào biết
    đó là scope bỏ quên hay là một phiên khác đang chạy song song trên cùng cây.
 3. **Danh sách Open findings bị cắt ở sáu mục.** Brief in `→ ĐÃ CẮT`. Đây không phải
    chi tiết trang trí: ô 10 sau đó phải nêu **bốn mã** mà brief **không** in ra, nên
@@ -315,10 +315,10 @@ cụ thể để **hiểu phép đo**, chưa tính toàn bộ file phải quét 
 |---|---|
 | `docs/decisions.md` → `ADR-035`, `ADR-039` | chính cái luật đang được đo, và cái cổng đang chấm nó |
 | kế hoạch pha 1 §3 · §9 | ba câu không được viết ra · luật *"ô không tick được thì để trống kèm mã"* |
-| [`architecture.md`](../product/1-system-design/architecture.md) §8 · §12.3 | ngoại lệ **đã tự khai** — phải kể ra như ngoại lệ, không như lỗi |
-| [`07-cong-chat-luong-pha-1.md`](../product/1-system-design/07-cong-chat-luong-pha-1.md) §7 | chỗ ký, tức đầu ra của lượt này |
+| [`architecture.md`](../../../product/1-system-design/architecture.md) §8 · §12.3 | ngoại lệ **đã tự khai** — phải kể ra như ngoại lệ, không như lỗi |
+| [`07-cong-chat-luong-pha-1.md`](../../../product/1-system-design/07-cong-chat-luong-pha-1.md) §7 | chỗ ký, tức đầu ra của lượt này |
 | `scripts/check-phase-boundary.sh` + `.ignore` | bộ mẫu thật, để chạy **nguyên văn** chứ không viết lại |
-| [`master_plan/shop-facts.md`](../../master_plan/shop-facts.md) §3 · §5 | kênh bán và trạm — để **không** kêu nhầm chúng là tên bảng |
+| [`master_plan/shop-facts.md`](../../../../master_plan/shop-facts.md) §3 · §5 | kênh bán và trạm — để **không** kêu nhầm chúng là tên bảng |
 
 Đọc `docs/decisions.md` để trả lời **“đang kiểm theo luật nào?”**: ranh giới giữa
 các pha là gì và cổng tự động kiểm được những gì. Đọc kế hoạch pha 1 để trả lời
@@ -355,7 +355,7 @@ owner, đừng đoán tiếp.
   gì với script bắt được gì. Script không bắt hết luật nên gate xanh chưa đủ để
   ký ô 10.
 - **Kế hoạch pha 1:** mở
-  [`SD_master_plan_banh_cuon_ba_thanh.md`](../../master_plan/SD_master_plan_banh_cuon_ba_thanh.md)
+  [`SD_master_plan_banh_cuon_ba_thanh.md`](../../../../master_plan/SD_master_plan_banh_cuon_ba_thanh.md)
   §3 để biết ranh giới đầu ra; đọc §9 và theo pointer tới cổng chất lượng để biết
   cách ghi kết quả. Kế hoạch dẫn việc; quyết định được dẫn chiếu mới là căn cứ
   cho ranh giới. Không dùng kế hoạch để tự mở rộng quyền sửa trong prompt.
@@ -711,12 +711,12 @@ thái phiên, không bao giờ vào commit.
 | Muốn biết | Đọc |
 |---|---|
 | Luồng chung của một lượt | [`workflow-phien-lam-viec.md`](workflow-phien-lam-viec.md) |
-| Luật thật của hệ thống | [`CLAUDE.md`](../../CLAUDE.md) |
-| Bốn bậc rủi ro | [`README.md`](../../README.md) |
-| Prompt gốc của ca này | [`prompt/SD/P1-12-ra-cheo-ranh-gioi-pha-L1.md`](../../prompt/SD/P1-12-ra-cheo-ranh-gioi-pha-L1.md) |
-| Kết quả đo đầy đủ | [`07-cong-chat-luong-pha-1.md`](../product/1-system-design/07-cong-chat-luong-pha-1.md) §7 ô 10 |
-| Hai mã lượt ấy mở ra | [`work/findings.md`](../../work/findings.md) → `F-040` · `F-041` |
-| Cách chấm kết quả sau khi tôi chạy xong | [`quality/review-gate.md`](../../quality/review-gate.md) |
+| Luật thật của hệ thống | [`CLAUDE.md`](../../../../CLAUDE.md) |
+| Bốn bậc rủi ro | [`README.md`](../../../../README.md) |
+| Prompt gốc của ca này | [`prompt/SD/P1-12-ra-cheo-ranh-gioi-pha-L1.md`](../../../../prompt/SD/P1-12-ra-cheo-ranh-gioi-pha-L1.md) |
+| Kết quả đo đầy đủ | [`07-cong-chat-luong-pha-1.md`](../../../product/1-system-design/07-cong-chat-luong-pha-1.md) §7 ô 10 |
+| Hai mã lượt ấy mở ra | [`work/findings.md`](../../../../work/findings.md) → `F-040` · `F-041` |
+| Cách chấm kết quả sau khi tôi chạy xong | [`quality/review-gate.md`](../../../../quality/review-gate.md) |
 
 
 các bước làm cụ thể 

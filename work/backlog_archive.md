@@ -951,6 +951,58 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-134"></a>
+### T-134 — Số đếm của ngày đã đối soát xong vẫn đổi được, và ngày chưa đếm vẫn ký được (F-056 · F-057)
+
+**Yêu cầu:** phiếu việc của chủ repo 2026-10-05: *"T-134 — khoá số đếm của ngày đã ký, và không ký ngày chưa
+đếm (L2)"*, thiết kế theo *Decision / Fix* của `work/findings.md` **F-056** · **F-057**. Mức **L2** (dữ liệu
+tiền, lược đồ). Chia vai `CLAUDE.md` §7.4: Claude Code thiết kế, viết test trước, duyệt; Codex thi công trong
+worktree `../lean_wt/T-134`, nhánh `codex/T-134`.
+
+**Thiết kế — Claude Code:** `docs/decisions.md` **ADR-080**. Test hồi quy `db/tests/i021_reconciled_day_frozen.sql`
+viết trước migration; `db/tests/i021_cash_count_and_reconciled_day.sql` dời ca *đếm lại* lên trước khi ký (nội
+dung ca giữ nguyên). Test mới **đỏ** trên lược đồ 15 bước (`ERROR: F-056: shop_owner THÊM được một xấp vào số
+đếm của ngày đã đối soát xong`) và **xanh** trên một hình dựng thử ở database riêng `t134probe`.
+
+**Acceptance:** (1) test mới đỏ trước migration, xanh sau, có lời từ chối dán ra; (2) phép thử F-056 (thêm xấp
+50.000đ × 4 vào ngày đã ký) và F-057 (ký ngày có số đếm rỗng) chạy lại trên database riêng ⇒ bị từ chối; (3)
+một cặp migration **mới** bước 16, không sửa file cũ; bước lùi từ chối khi có `reconciled_day`, lùi trên
+database rỗng trả lược đồ giống hệt; (4) `db-check` PASS với 16 bước, mọi lỗi cài vẫn kêu đúng câu, ngày mẫu
+sạch, không nới ràng buộc mới cho lỗi cài đi qua; (5) không chọn hộ **U-073** hay **U-074**; (6) file lát §7 và
+bước 16 ở `07-thu-tu-migration.md`; F-056 · F-057 sang *Fixed*.
+
+**Bàn giao** — 2026-10-05 · thực hiện: **Codex** (`gpt-6-astra`, worktree `../lean_wt/T-134`, nhánh `codex/T-134`
+trên `f7bef2a`), duyệt: **Claude Code**; gộp về cây chính bằng patch. File: cặp
+`db/migrations/20261005120000_khoa_so_dem_ngay_da_ky.up.sql` · `.down.sql`; `db/tests/i021_reconciled_day_frozen.sql`
+(mới) · `i021_cash_count_and_reconciled_day.sql` (Claude); `db/reconcile/proof/i012_1.sql` · `i012_2.sql` ·
+`i021_1.sql` · `i021_3.sql` · `i021_7.sql` tắt trigger khoá quanh lần làm hỏng; `qd21_so_am.sql` tắt khoá quanh
+phép thử số âm (vòng sửa 1 — khoá `BEFORE` từ chối trước `CHECK`); `docs/product/2-db/04-luoc-do-duong-tien.md`
+§7 · `07-thu-tu-migration.md` (bước 16, khoá chặn); `docs/decisions.md` ADR-080; `work/findings.md` F-056 ·
+F-057. Bằng chứng (Claude tự chạy): `./scripts/db-check.sh` trong worktree ⇒ `db-check: PASS — 16 bước xuôi ·
+lùi · xuôi lại, … 35 file test, … 102 lỗi cài, … 32 mã YC`; năm lỗi cài đã sửa vẫn kêu đúng tập. Database riêng
+`t134acc` (16 bước): thêm xấp 50.000 × 4 vào ngày đã ký ⇒ `ERROR: cash_count_line: không được ghi số của ngày đã
+đối soát xong` dưới `shop_app` và `shop_owner`; ký ngày có số đếm rỗng ⇒ `ERROR: reconciled_day: số đếm ngày
+2026-10-03 không có dòng mệnh giá`; `migrate down 1` khi có dấu ⇒ `đường lùi từ chối: reconciled_day đang giữ 1
+ngày đã ký …`, chín trigger còn nguyên. Không chọn hộ U-073 · U-074. **Chưa review độc lập.** Còn ngỏ (ghi ở
+ADR-080 *Không phủ*): chủ lược đồ vẫn xoá được chính dấu rồi sửa số — chặn đường ấy là chọn hộ U-074.
+
+<a id="t-135"></a>
+### T-135 — Con trỏ chết sau khi chuyển tài liệu quy trình sang `docs/private/`
+
+**Prompt:** phiếu việc T-134 · T-135 của chủ repo, 2026-10-05 (L0)
+
+**Goal:**
+Chủ repo chuyển `docs/work-flow-session/*` sang `docs/private/work-flow-session/guidline/` và
+`docs/project_work_flow/*` sang `docs/private/project_work_flow/`. Sửa ba con trỏ đến (`docs/decisions.md` ×2,
+`prompt/AD/ADM-21-loi-c36-ve-owner-L2.md`) và link tương đối trong năm file đã chuyển (sâu hơn một cấp, ba file
+`guidline/` hai cấp), không đổi lời nào khác. Việc chuyển chưa được commit khi task chạy, nên khối commit gồm
+luôn nó. Làm bởi Claude Code ở cây chính (worktree tạo từ `HEAD` không thấy file đã chuyển, nên không giao
+Codex). Giữ nguyên hai lần nhắc đường cũ là lời kể lịch sử: `vi-du-mot-task-chay-that-P1-12.md` dòng lời
+phiên cũ và `prompt/maintenance/09-shared-agents-L1.md`.
+
+**Acceptance · Verify:** `./scripts/check-links.sh` ⇒ `OK`; mỗi file đã chuyển, sau khi bỏ tiền tố `../` của
+link, giống hệt bản ở `HEAD`.
+
 <a id="t-133"></a>
 ### T-133 — Số tiền mặt đếm cuối ngày và dấu *ngày đã đối soát xong* không có chỗ cất (F-048)
 

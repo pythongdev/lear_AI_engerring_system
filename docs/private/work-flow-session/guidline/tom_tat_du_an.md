@@ -24,8 +24,8 @@ Nguyên tắc vận hành là:
 4. AI không được tự bịa dữ kiện nghiệp vụ.
 5. Ceremony tăng theo rủi ro, không theo độ dài diff.
 
-Nguồn quy định cách làm là [CLAUDE.md](../../CLAUDE.md), còn triết lý mức rủi
-ro nằm ở [README.md](../../README.md).
+Nguồn quy định cách làm là [CLAUDE.md](../../../../CLAUDE.md), còn triết lý mức rủi
+ro nằm ở [README.md](../../../../README.md).
 
 ## 2. Bức tranh quán và phạm vi bán hàng
 
@@ -38,7 +38,7 @@ ro nằm ở [README.md](../../README.md).
 | Giao hàng | Quán tự giao. Người đi giao thuộc một trong ba vai không phải quầy; POS chỉ định. Người đứng quầy không đi giao, và quầy gánh trạm bị bỏ trống khi có người đi giao. |
 
 Mọi số liệu và luật vận hành của quán chỉ lấy từ
-[shop-facts.md](../../master_plan/shop-facts.md), không lấy từ bản sao trong
+[shop-facts.md](../../../../master_plan/shop-facts.md), không lấy từ bản sao trong
 prompt, kế hoạch hay tài liệu cũ.
 
 ### Năm kênh bán là danh sách đóng
@@ -57,8 +57,8 @@ Ba kênh còn lại không gắn bàn, mỗi đơn thu tiền độc lập. `pic
 và giao tận nơi cần địa chỉ. Khách đặt trước qua điện thoại rồi tới ngồi ăn thì
 huỷ đơn đó và gọi lại qua QR, không chuyển đơn sang phiên bàn.
 
-Chi tiết hành vi thuộc [BA §1–§3](../product/0-ba/ban-hang/01-actors-pham-vi.md)
-và [dữ kiện quán §2, §5](../../master_plan/shop-facts.md).
+Chi tiết hành vi thuộc [BA §1–§3](../../../product/0-ba/ban-hang/01-actors-pham-vi.md)
+và [dữ kiện quán §2, §5](../../../../master_plan/shop-facts.md).
 
 ### Hai luồng bán và trục sản xuất
 
@@ -81,9 +81,9 @@ phục vụ, và còn thiếu. POS là nơi duy nhất ghi tiến độ làm/đ�
 bếp chỉ đọc. Một đơn mang đi không vào bảng theo bàn, còn suất đem về của khách
 đang ngồi bàn vẫn thuộc phiên bàn và phải có note rõ ràng.
 
-Nguồn: [lát cắt sản xuất theo mẻ](../product/0-ba/ban-hang/03-lat-cat.md),
-[quy tắc vận hành §5](../../master_plan/shop-facts.md),
-[architecture §1–§3](../product/1-system-design/architecture.md).
+Nguồn: [lát cắt sản xuất theo mẻ](../../../product/0-ba/ban-hang/03-lat-cat.md),
+[quy tắc vận hành §5](../../../../master_plan/shop-facts.md),
+[architecture §1–§3](../../../product/1-system-design/architecture.md).
 
 ### Menu, giá và tiền
 
@@ -107,9 +107,9 @@ Nguồn: [lát cắt sản xuất theo mẻ](../product/0-ba/ban-hang/03-lat-cat
   trả nợ, hoàn tiền và trả trước khác ngày giao đều phải xuất hiện đúng dòng để
   không làm doanh thu bị tính hai lần hoặc che mất lệch.
 
-Xem [giá và thanh toán](../product/0-ba/ban-hang/04-gia-thanh-toan.md),
-[vòng đời](../product/0-ba/ban-hang/05-vong-doi.md),
-[dữ kiện menu/tiền](../../master_plan/shop-facts.md).
+Xem [giá và thanh toán](../../../product/0-ba/ban-hang/04-gia-thanh-toan.md),
+[vòng đời](../../../product/0-ba/ban-hang/05-vong-doi.md),
+[dữ kiện menu/tiền](../../../../master_plan/shop-facts.md).
 
 ## 3. Mảng quản trị và phạm vi MVP
 
@@ -129,9 +129,9 @@ luật để thiết kế/thi công rộng.
   khoản ngân hàng hard-code, món ngoài bảng giá; máy tự gom mẻ hay xếp nồi; và
   hệ thống trở thành phương án bán hàng duy nhất khi mất điện/mạng.
 
-Nguồn: [ranh giới admin](../product/0-ba/admin/01-ranh-gioi.md),
-[MVP](../product/0-ba/ban-hang/07-pham-vi-mvp.md),
-[dữ kiện admin §8](../../master_plan/shop-facts.md).
+Nguồn: [ranh giới admin](../../../product/0-ba/admin/01-ranh-gioi.md),
+[MVP](../../../product/0-ba/ban-hang/07-pham-vi-mvp.md),
+[dữ kiện admin §8](../../../../master_plan/shop-facts.md).
 
 ## 4. Thiết kế pha 1 đã chốt
 
@@ -158,12 +158,12 @@ Pha 1 đã xác định:
   bổ theo bàn, mẻ, nhập bù sổ giấy và mốc tiền. Đây là yêu cầu nghiệp vụ, chưa
   phải tên bảng/cột.
 
-Tài liệu gốc: [architecture](../product/1-system-design/architecture.md),
-[ranh giới hệ thống](../product/1-system-design/01-ranh-gioi-he-thong.md),
-[ngày bán](../product/1-system-design/02-thoi-gian-ngay-ban.md),
-[bảo vệ invariant](../product/1-system-design/03-bao-ve-invariant.md),
-[yêu cầu dữ liệu](../product/1-system-design/04-yeu-cau-du-lieu.md),
-[realtime/dự phòng](../product/1-system-design/05-realtime-va-du-phong.md).
+Tài liệu gốc: [architecture](../../../product/1-system-design/architecture.md),
+[ranh giới hệ thống](../../../product/1-system-design/01-ranh-gioi-he-thong.md),
+[ngày bán](../../../product/1-system-design/02-thoi-gian-ngay-ban.md),
+[bảo vệ invariant](../../../product/1-system-design/03-bao-ve-invariant.md),
+[yêu cầu dữ liệu](../../../product/1-system-design/04-yeu-cau-du-lieu.md),
+[realtime/dự phòng](../../../product/1-system-design/05-realtime-va-du-phong.md).
 
 ## 5. Trạng thái dự án
 
@@ -177,8 +177,8 @@ Tài liệu gốc: [architecture](../product/1-system-design/architecture.md),
 | Pha 5 — Deploy | Chưa mở; mới chọn cách chạy/vận hành cụ thể. |
 | Task đang chạy | Không có task `In Progress`; `work/scope.txt` đang sạch, chỉ còn comment. |
 
-Nguồn trạng thái task là [work/backlog.md](../../work/backlog.md), không phải
-hai backlog mô tả dài. Mục lục pha ở [docs/product/00-index.md](../product/00-index.md)
+Nguồn trạng thái task là [work/backlog.md](../../../../work/backlog.md), không phải
+hai backlog mô tả dài. Mục lục pha ở [docs/product/00-index.md](../../../product/00-index.md)
 vẫn ghi pha 0 và 1 là “đang mở”, vì admin và quyết định chuyển pha chưa được
 đóng bằng một thao tác ký riêng.
 
@@ -190,10 +190,10 @@ owner — mỗi lần đổi người **ở quầy** là một mốc có giờ, 
 §8.8). Lane admin vì thế **không còn việc nào nhận được ngay**: việc mở lại nó là
 một lượt **hỏi chủ quán**, không phải một lượt viết.
 
-Trạng thái task đọc ở [work/backlog.md](../../work/backlog.md); mô tả dài ở
-[work/backlog_AD.md](../../work/backlog_AD.md). Hai prompt đã chạy:
-[ADM-53](../../prompt/AD/ADM-53-hai-loi-ve-owner-L1.md) ·
-[ADM-21](../../prompt/AD/ADM-21-loi-c36-ve-owner-L2.md).
+Trạng thái task đọc ở [work/backlog.md](../../../../work/backlog.md); mô tả dài ở
+[work/backlog_AD.md](../../../../work/backlog_AD.md). Hai prompt đã chạy:
+[ADM-53](../../../../prompt/AD/ADM-53-hai-loi-ve-owner-L1.md) ·
+[ADM-21](../../../../prompt/AD/ADM-21-loi-c36-ve-owner-L2.md).
 
 ## 6. Các điểm còn mở cần biết
 
@@ -212,12 +212,12 @@ Trạng thái task đọc ở [work/backlog.md](../../work/backlog.md); mô tả
 5. **U-057** — hai cửa ghi ngoài quầy (người đi giao bấm đã thu tiền, chủ quán đổi
    giá) lấy tên người từ đâu? Câu này chặn vế *ai* của vết thao tác.
 
-Đọc nguyên văn và người trả lời ở [Unknowns](../product/99-unknowns.md), không
+Đọc nguyên văn và người trả lời ở [Unknowns](../../../product/99-unknowns.md), không
 đoán từ bản tóm tắt này.
 
 ### Điều suy ra nhưng chưa xác nhận
 
-Năm mục `S-5`…`S-9` trong [nhật ký suy ra](../../master_plan/shop-facts.md) chưa
+Năm mục `S-5`…`S-9` trong [nhật ký suy ra](../../../../master_plan/shop-facts.md) chưa
 phải lời chốt: đơn vị bấm “đã bưng ra bàn”; thời điểm POS bấm mốc đó cho đơn giao;
 cách hiểu 06:00–11:00 là một buổi; liệu tổng quan hiển thị cả ba dạng thiếu; và
 giá 9.000đ của giò bán rời. Khi chạm một mục, phải hỏi chủ quán hoặc ghi rõ phần
@@ -229,7 +229,7 @@ Các finding quan trọng còn mở gồm: cơ chế tránh mất hẳn bản gh
 phép đối chiếu invariant chưa phủ hết vế (`F-036`), thiếu dòng trả trước trong
 đối soát (`F-037`), và thiếu mệnh đề/tầng bảo vệ cho trường liên hệ bắt buộc
 (`F-038`). Ngoài ra còn các bài toán vận hành tài liệu/commit song song và chỉ
-mục cũ. Đọc [Findings](../../work/findings.md) trước khi nhận task liên quan.
+mục cũ. Đọc [Findings](../../../../work/findings.md) trước khi nhận task liên quan.
 
 Lưu ý: bảng mục lục finding đầu file chưa cập nhật trạng thái `F-040`/`F-041`,
 nhưng nội dung gốc của cả hai ghi **Closed, 2026-09-20, T-079**. Trạng thái thực
@@ -240,16 +240,16 @@ kết luận chúng còn mở.
 
 | Cần biết | Owner cần mở |
 |---|---|
-| Dữ kiện quán, giá, menu, luồng vận hành | [master_plan/shop-facts.md](../../master_plan/shop-facts.md) |
-| Hành vi sản phẩm BA theo pha | [docs/product/00-index.md](../product/00-index.md) rồi file mục tương ứng |
-| Câu hỏi nghiệp vụ chưa có lời | [docs/product/99-unknowns.md](../product/99-unknowns.md) |
-| Cấu trúc, ranh giới, realtime, yêu cầu pha 1 | [docs/product/1-system-design/](../product/1-system-design/architecture.md) |
-| Lý do của lựa chọn kiến trúc/quy trình | [docs/decisions.md](../decisions.md) |
-| Invariant nghiệp vụ | [quality/invariants.md](../../quality/invariants.md) |
-| Trạng thái task | [work/backlog.md](../../work/backlog.md) |
-| Mô tả dài task pha 1 / admin | [work/backlog_SD.md](../../work/backlog_SD.md) / [work/backlog_AD.md](../../work/backlog_AD.md) |
-| Bài học và lỗi lặp | [work/findings.md](../../work/findings.md) |
-| Prompt đã chuẩn bị | [prompt/](../../prompt/) — chỉ mô tả task, không sở hữu sự thật nghiệp vụ |
+| Dữ kiện quán, giá, menu, luồng vận hành | [master_plan/shop-facts.md](../../../../master_plan/shop-facts.md) |
+| Hành vi sản phẩm BA theo pha | [docs/product/00-index.md](../../../product/00-index.md) rồi file mục tương ứng |
+| Câu hỏi nghiệp vụ chưa có lời | [docs/product/99-unknowns.md](../../../product/99-unknowns.md) |
+| Cấu trúc, ranh giới, realtime, yêu cầu pha 1 | [docs/product/1-system-design/](../../../product/1-system-design/architecture.md) |
+| Lý do của lựa chọn kiến trúc/quy trình | [docs/decisions.md](../../../decisions.md) |
+| Invariant nghiệp vụ | [quality/invariants.md](../../../../quality/invariants.md) |
+| Trạng thái task | [work/backlog.md](../../../../work/backlog.md) |
+| Mô tả dài task pha 1 / admin | [work/backlog_SD.md](../../../../work/backlog_SD.md) / [work/backlog_AD.md](../../../../work/backlog_AD.md) |
+| Bài học và lỗi lặp | [work/findings.md](../../../../work/findings.md) |
+| Prompt đã chuẩn bị | [prompt/](../../../../prompt/) — chỉ mô tả task, không sở hữu sự thật nghiệp vụ |
 
 `docs/product.md`, `master_plan/00-scope.md`, các bản kế hoạch/ảnh chụp cũ và
 `work/proposals/` không phải owner của fact hiện hành. Chúng chỉ dùng để tra lịch
@@ -268,8 +268,8 @@ với bằng chứng thật; output lệnh mới là bằng chứng, không ph�
 
 Đọc [workflow phiên làm việc](workflow-phien-lam-viec.md),
 [ví dụ P1-12](vi-du-mot-task-chay-that-P1-12.md),
-[prompt guideline](../prompt-guideline.md) và
-[review gate](../../quality/review-gate.md) trước khi vận hành repo lần đầu.
+[prompt guideline](../../../prompt-guideline.md) và
+[review gate](../../../../quality/review-gate.md) trước khi vận hành repo lần đầu.
 
 
 đánh giá về cách xây hệ thống
