@@ -89,6 +89,19 @@ BEGIN
     RAISE NOTICE 'I-021 bị từ chối (đối soát xong mà thiếu số đếm): %', SQLERRM;
   END;
 
+  -- Sửa một dòng số đếm (đếm lại) khai lý do thì để lại vết bản trước · bản sau · người (I-018).
+  -- Đếm lại TRƯỚC khi ký: ngày đã ký thì số đếm đứng yên (T-134, ADR-080).
+  PERFORM set_config('shop.revision_reason', 'đếm lại xấp 50.000', true);
+  SET LOCAL ROLE shop_app;
+  UPDATE cash_count_line SET amount_vnd = 750000 WHERE cash_count_id = c AND denomination_vnd = 50000;
+  RESET ROLE;
+  SELECT count(*) INTO n FROM record_revision
+   WHERE target_table_code = 'cash_count_line' AND person_id IS NOT NULL
+     AND (before_image ->> 'amount_vnd') = '800000' AND (after_image ->> 'amount_vnd') = '750000';
+  RAISE NOTICE 'I-012 · I-018 đếm lại: % vết — từ 800000 sang 750000', n;
+  IF n <> 1 THEN RAISE EXCEPTION 'I-018: lần đếm lại không để đúng một vết (có %)', n; END IF;
+  PERFORM set_config('shop.revision_reason', '', true);
+
   INSERT INTO reconciled_day (sale_date) VALUES ('2026-09-21') RETURNING id INTO m;
   RAISE NOTICE 'I-014 ngày 2026-09-21 đối soát xong — người bấm %, lúc ghi có: %',
     (SELECT p.display_name FROM reconciled_day r JOIN person p ON p.id = r.person_id WHERE r.id = m),
@@ -122,17 +135,6 @@ BEGIN
   EXCEPTION WHEN insufficient_privilege THEN
     RAISE NOTICE 'ADR-079 dấu đối soát xong không sửa được (shop_app): %', SQLERRM;
   END;
-
-  -- Sửa một dòng số đếm (đếm lại) khai lý do thì để lại vết bản trước · bản sau · người (I-018).
-  PERFORM set_config('shop.revision_reason', 'đếm lại xấp 50.000', true);
-  SET LOCAL ROLE shop_app;
-  UPDATE cash_count_line SET amount_vnd = 750000 WHERE cash_count_id = c AND denomination_vnd = 50000;
-  RESET ROLE;
-  SELECT count(*) INTO n FROM record_revision
-   WHERE target_table_code = 'cash_count_line' AND person_id IS NOT NULL
-     AND (before_image ->> 'amount_vnd') = '800000' AND (after_image ->> 'amount_vnd') = '750000';
-  RAISE NOTICE 'I-012 · I-018 đếm lại: % vết — từ 800000 sang 750000', n;
-  IF n <> 1 THEN RAISE EXCEPTION 'I-018: lần đếm lại không để đúng một vết (có %)', n; END IF;
 
   SET CONSTRAINTS ALL IMMEDIATE;
 END $$;

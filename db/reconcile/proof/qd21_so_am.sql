@@ -5,6 +5,11 @@
 -- bị từ chối bởi một ràng buộc kiểm có nhắc CHÍNH cột ấy (ràng buộc kiểm được xét theo thứ tự tên,
 -- nên một ràng buộc tổng khớp đứng trước không được tính thay). Không phải một câu truy vấn của bộ
 -- đối chiếu: nó là lời từ chối (QC-07), chạy một lần trong scripts/db-check.sh bước 6.
+-- T-134: file này chứng minh CHECK từ chối số âm, không chứng minh khoá ngày đã ký.
+ALTER TABLE cash_count DISABLE TRIGGER cash_count_reconciled_guard_trg;
+ALTER TABLE cash_count_line DISABLE TRIGGER cash_count_line_reconciled_guard_trg;
+ALTER TABLE opening_float DISABLE TRIGGER opening_float_reconciled_guard_trg;
+ALTER TABLE opening_float_line DISABLE TRIGGER opening_float_line_reconciled_guard_trg;
 DO $$
 DECLARE c record; r bigint; n integer := 0; rb text; def text;
 BEGIN
@@ -41,3 +46,7 @@ BEGIN
   END LOOP;
   RAISE NOTICE 'QD-21 nội dung: % cột tiền, cột nào nhận -1 cũng bị một ràng buộc nhắc chính nó (hay cột tự tính dựng từ nó) từ chối', n;
 END $$;
+ALTER TABLE cash_count ENABLE TRIGGER cash_count_reconciled_guard_trg;
+ALTER TABLE cash_count_line ENABLE TRIGGER cash_count_line_reconciled_guard_trg;
+ALTER TABLE opening_float ENABLE TRIGGER opening_float_reconciled_guard_trg;
+ALTER TABLE opening_float_line ENABLE TRIGGER opening_float_line_reconciled_guard_trg;

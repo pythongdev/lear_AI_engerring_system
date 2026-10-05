@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 57 finding — 51 Fixed/Resolved/Closed, 6 Open (đếm lại ngày 2026-10-05, lúc ghi F-056 · F-057 ở lượt review T-133; trước đó cùng ngày, *55 — 51/4*, lúc đóng F-048 ở T-133; trước đó 2026-10-01, *55 — 50/5*, lúc đóng F-050 ở T-132; trước đó cùng ngày, *55 — 49/6*, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 57 finding — 53 Fixed/Resolved/Closed, 4 Open (đếm lại ngày 2026-10-05, lúc đóng F-056 · F-057 ở T-134; trước đó cùng ngày, *57 — 51/6*, lúc ghi F-056 · F-057 ở lượt review T-133; trước đó cùng ngày, *55 — 51/4*, lúc đóng F-048 ở T-133; trước đó 2026-10-01, *55 — 50/5*, lúc đóng F-050 ở T-132; trước đó cùng ngày, *55 — 49/6*, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -117,8 +117,8 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-053 | Bước khoá chặn của `db-check` giả định bước migration trên cùng luôn có dữ liệu mồi, nên lát admin đầu tiên (hai bảng còn rỗng) làm nó đỏ oan — chỗ hở thứ hai cùng họ F-052 mà lượt chữa F-052 không đo (P2A-02) | Fixed |
 | F-054 | Phép từ chối `qd21_so_am` của `db-check` đòi mọi bảng có cột tiền có một dòng ở ngày bán mẫu, nên hai bảng tiền đầu tiên của mảng admin (tạm ứng, thưởng) làm nó đỏ — chỗ hở thứ ba cùng họ F-052 · F-053 (P2A-04) | Fixed |
 | F-055 | T-125 chèn một tập vào GIỮA ô `I-021` của pha 1, nên câu `I-021/2` · `I-021/6` của bộ đối chiếu mang số của tập khác, và không gate nào thấy (P2A-07) | Fixed |
-| F-056 | Số đếm cuối ngày của một ngày ĐÃ đóng dấu đối soát vẫn đổi được bằng một xấp mệnh giá thêm sau, không vết — dấu không giữ con số nó ký (review T-133) | Open |
-| F-057 | Một ngày đóng dấu đối soát được khi số đếm hay tiền đầu két không có dòng mệnh giá nào — *chưa đếm* và *đếm ra 0* cùng một hình (review T-133) | Open |
+| F-056 | Số đếm cuối ngày của một ngày ĐÃ đóng dấu đối soát vẫn đổi được bằng một xấp mệnh giá thêm sau, không vết — dấu không giữ con số nó ký (review T-133) | Fixed |
+| F-057 | Một ngày đóng dấu đối soát được khi số đếm hay tiền đầu két không có dòng mệnh giá nào — *chưa đếm* và *đếm ra 0* cùng một hình (review T-133) | Fixed |
 
 ---
 
@@ -4521,7 +4521,10 @@ số đếm đã ký, nếu quán cần, là câu cho chủ quán: **U-074**; kh
 `work/backlog_archive.md` → T-133 (review) · **F-047** · **ADR-079** · `I-014` · `I-021`
 
 **Status:**
-Open
+Fixed (2026-10-05, T-134) — migration bước 16 `20261005120000_khoa_so_dem_ngay_da_ky`: trigger từ chối
+thêm · sửa · xoá · `TRUNCATE` số đếm và tiền đầu két của ngày đã ký, mọi vai (**ADR-080**); phép thử chạy lại ⇒
+`ERROR: cash_count_line: không được ghi số của ngày đã đối soát xong` dưới cả `shop_app` lẫn `shop_owner`.
+Đường sửa số đã ký vẫn chờ **U-074**.
 
 ### F-057 — Ngày chưa đếm két vẫn đóng dấu đối soát được
 
@@ -4543,5 +4546,7 @@ mệnh giá nào (tầng 1). Không đổi luật *dấu không đòi lệch 0* 
 `work/backlog_archive.md` → T-133 (review) · **ADR-079** · `I-021` điều kiện biên thứ nhất (**ADR-037**)
 
 **Status:**
-Open
+Fixed (2026-10-05, T-134) — cùng migration: dấu bị từ chối (`check_violation`) khi số đếm hay tiền đầu két
+có dòng đầu mà không dòng mệnh giá nào (**ADR-080**); phép thử chạy lại ⇒ `ERROR: reconciled_day: số đếm
+ngày 2026-10-03 không có dòng mệnh giá`. Luật *dấu không đòi lệch 0* giữ nguyên — **U-073**.
 

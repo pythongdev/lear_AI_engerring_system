@@ -5106,8 +5106,11 @@ thi, trạng thái một nơi), và không sửa câu nào của **ADR-035** (ra
 - *Giữ finding "pha 2 vừa cấm vừa đòi file lùi" của bản nháp.* Bác: mâu thuẫn ấy đã được giải ở `P2-09`
   bằng **ADR-065** trước khi bản nháp được gộp; ghi lại thành finding mở là ghi một chuyện đã xong.
 
-**Còn để lại:** cách chẻ mười bốn bước (điểm 3) chờ chủ repo xác nhận; **hợp đồng thắng hay code thắng**
-khi lệch là ADR của `P3-04`, không suy ra từ **ADR-053**.
+**Còn để lại:** **hợp đồng thắng hay code thắng** khi lệch là ADR của `P3-04`, không suy ra từ **ADR-053**.
+
+**Sửa đổi 2026-10-05 (chủ repo, T-136):** *"đồng ý chuyển sang pha 3. xác nhận cách chia mười bốn bước pha 3"*. Điểm 3 (cách chẻ mười bốn bước) thôi là chỗ phiên suy
+ra — nay là lời chủ repo. Điểm 6 thoả: chữ ký chuyển pha có, `P3-01` vào *Ready* cùng lượt. Lời
+không chốt nội dung từng bước.
 
 **Applies to:** `master_plan/BE_master_plan_banh_cuon_ba_thanh.md` · `work/backlog_BE.md` · `CLAUDE.md` §2
 (hàng sổ pha 3; hàng *Hợp đồng API* trỏ sang kế hoạch) · `docs/product/00-index.md` (hàng *Pha 3*) · kế

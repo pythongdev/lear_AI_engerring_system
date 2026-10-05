@@ -239,11 +239,21 @@ thắng về tên · kiểu · ràng buộc: migration
 | `cash_count_line` | một dòng **mệnh giá** của số đếm và số tiền của mệnh giá ấy | owner: `shop-facts.md` §8.5, lời đóng `U-038` — bảng mệnh giá là cách đếm và kiểm cuối ngày, phép trừ dùng **tổng**. Cùng hình `opening_float_line`; con số của ngày là tổng các dòng |
 | `reconciled_day` | **dấu ngày đã đối soát xong** — người bấm, lúc bấm; nhiều nhất một cho mỗi ngày | owner: **ADR-037** (ngày còn lượt giấy chưa nhập là ngày *chưa* xong), `I-021` điều kiện biên thứ nhất (ngày không có tiền đầu két *chưa* xong), `I-014` tập 5 |
 
+Bổ sung 2026-10-05, task `T-134` (Codex thi công theo thiết kế Claude chốt trong
+`docs/decisions.md` **ADR-080**): ngày đã ký thì số đếm và tiền đầu két **đứng yên với mọi vai**,
+kể cả chủ lược đồ. Xét cả ngày trước và sau khi dời dòng, cùng đường `TRUNCATE` riêng; vá chỗ hở
+**F-056** trong `work/findings.md`. Dấu cũng không đứng trên số đếm hay tiền đầu két chỉ có dòng
+đầu mà không có dòng mệnh giá (**F-057**); có dòng mệnh giá mang số 0 vẫn là có số. Bản thắng:
+[`db/migrations/20261005120000_khoa_so_dem_ngay_da_ky.up.sql`](../../../db/migrations/20261005120000_khoa_so_dem_ngay_da_ky.up.sql)
+(bước 16). Đường sửa số đã ký chờ **U-074**, không dựng ở đây.
+
 | Mệnh đề · vế | Tầng | Lược đồ giữ bằng | Bằng chứng |
 |---|:--:|---|---|
 | **`I-021`** — mỗi ngày bán đúng một số đếm, dựng từ dòng mệnh giá | 1 | `cash_count_one_per_day_key`; `cash_count_line_one_per_denomination_key` · `cash_count_line_amount_check` | `db/tests/i021_cash_count_and_reconciled_day.sql` |
 | **`I-012`** — số đếm và dấu đối soát mang người bấm | 1 | `person_id` `NOT NULL` trên `cash_count` · `reconciled_day`, mặc định người thao tác (§0 của [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md)); đếm lại một xấp có vết khi khai lý do (`I-018`) | cùng file |
 | **`I-021`** · **ADR-037** — ngày thiếu số đếm hay thiếu tiền đầu két không *đối soát xong* được | 1 | `reconciled_day_cash_count_fkey` · `reconciled_day_opening_float_fkey` trên `sale_date`; `reconciled_day_one_per_day_key`. Vai ghi không sửa, không xoá dấu (`QD-50`) | cùng file |
+| **`I-021`** · **`I-014`** — số đếm và tiền đầu két của ngày đã ký không đổi, mọi vai | 1 | `cash_day_reconciled_guard()` trên bốn bảng: chặn thêm, sửa, xoá theo cả ngày trước và sau; chặn `TRUNCATE` khi có ngày đã ký | `db/tests/i021_reconciled_day_frozen.sql` |
+| **`I-021`** — dấu không đứng trên số đếm hay tiền đầu két không có dòng mệnh giá | 1 | `reconciled_day_nonempty_guard()` khi thêm dấu hay sửa ngày; thiếu chính dòng đầu vẫn do hai khoá ngoại từ chối | `db/tests/i021_reconciled_day_frozen.sql` · `db/tests/i021_cash_count_and_reconciled_day.sql` |
 | **`I-014`** tập 5 — ngày đã đối soát xong mà còn lượt giấy chưa nhập | 5 | *còn N* là phép trừ qua nhiều dòng (§2 hàng `YC-08` của [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md)) — câu `I-014/5` | `db/reconcile/proof/i014_5.sql` |
 | **`I-021`** tập 1 — két − tiền đầu két = vế phải, ngưỡng 0đ | 5 · 4 | câu `I-021/1` qua hàm `ket_ngay` (`db/reconcile/prelude.sql`); con số đếm có phải số thật không là tầng 4 | `db/reconcile/proof/i021_1.sql` |
 | **`I-012`** tập 2 — chỗ lệch chỉ ra đúng một thao tác | 5 | câu `I-012/2`, đọc hẹp — [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §3 | `db/reconcile/proof/i012_2.sql` |

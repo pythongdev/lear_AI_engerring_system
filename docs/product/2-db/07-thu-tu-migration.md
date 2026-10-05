@@ -17,11 +17,11 @@ lược đồ từ số không · chỗ chứng minh từng điều ấy chạy 
 
 ---
 
-## 1. Thứ tự dựng — mười lăm bước
+## 1. Thứ tự dựng — mười sáu bước
 
 Công cụ chạy các bước theo **tên file**, tức theo mốc giờ ở đầu tên (`QC-05`). Thứ tự dưới đây là
 thứ tự ấy; cột *đứng trên* nói bước nào phải có trước, vì bước sau thêm cột, khoá ngoại hay ràng
-buộc vào bảng của nó. Dựng lại từ số không là chạy đúng mười lăm bước này, từ trên xuống; lùi là đi
+buộc vào bảng của nó. Dựng lại từ số không là chạy đúng mười sáu bước này, từ trên xuống; lùi là đi
 ngược từ dưới lên, **từng bước một**.
 
 | # | File (`db/migrations/`, bỏ đuôi) | Lát | Dựng gì | Đứng trên |
@@ -41,6 +41,7 @@ ngược từ dưới lên, **từng bước một**.
 | 13 | `20261001130000_banh_lam_sai` | `T-127` | `wrong_make_note` và trigger vết; cột tự tính `sales_order.id_if_cancelled`; khoá duy nhất `station_job_id_order_key` (**ADR-077**) | 1 · 7 · 8 |
 | 14 | `20261001140000_khoang_chan_tao_don` | `T-132` | `order_intake_pause` · `shop_blind_spell` và trigger vết; vai ghi chỉ khép được một khoảng, không dời lúc bắt đầu, không xoá (**ADR-078**, `YC-34`, **F-050**) | 8 |
 | 15 | `20261001150000_dem_ket_doi_soat` | `T-133` | `cash_count` · `cash_count_line` · `reconciled_day` và trigger vết; dấu đối soát xong khoá ngoại về số đếm và tiền đầu két, vai ghi không sửa, không xoá dấu (**ADR-079**, **F-048**) | 6 · 8 |
+| 16 | `20261005120000_khoa_so_dem_ngay_da_ky` | `T-134` | khoá ghi số đếm và tiền đầu két của ngày đã ký với mọi vai; dấu không đứng trên dòng đầu không có dòng mệnh giá (**ADR-080**, **F-056** · **F-057**) | 6 · 15 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
@@ -87,6 +88,11 @@ bảng, trả lược đồ về trước bước.
 **Khoá chặn bước 15** (2026-10-05, `T-133`, **ADR-079**): `reconciled_day`, `cash_count_line` hay
 `cash_count` có dòng thì từ chối trước khi gỡ gì. Ba bảng rỗng thì gỡ ba trigger và ba bảng, trả lược
 đồ về trước bước.
+
+**Khoá chặn bước 16** (2026-10-05, `T-134`, **ADR-080**): `reconciled_day` có dù một dòng thì
+từ chối trước khi gỡ gì: gỡ khoá là mở lại sửa số đã ký. Đây là trường hợp riêng của luật 2 theo
+quyết định trên, dù bước này chỉ thêm ràng buộc. Khi không có ngày đã ký, gỡ chín trigger rồi hai
+hàm, trả lược đồ về trước bước; số đếm và tiền đầu két chưa ký được giữ nguyên.
 
 ---
 

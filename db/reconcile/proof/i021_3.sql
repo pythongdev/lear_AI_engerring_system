@@ -3,9 +3,14 @@
 -- số đếm đứng yên, nên phép trừ két lệch (I-021/1) — và I-012/2 khi chỗ lệch không khớp đúng một thao tác.
 -- Khoá "một ngày một con số tiền đầu két" bị gỡ; ngày mẫu có con số tiền đầu két thứ hai.
 -- Dấu đối soát xong trỏ vào khoá ấy (T-133), nên khoá ngoại của nó gỡ trước.
+-- T-134: lỗi cài cố ý vượt khoá ngày đã ký để dựng dữ liệu hỏng cho phép đối chiếu.
+ALTER TABLE opening_float DISABLE TRIGGER opening_float_reconciled_guard_trg;
+ALTER TABLE opening_float_line DISABLE TRIGGER opening_float_line_reconciled_guard_trg;
 ALTER TABLE reconciled_day DROP CONSTRAINT reconciled_day_opening_float_fkey;
 ALTER TABLE opening_float DROP CONSTRAINT opening_float_one_per_day_key;
 DO $$ DECLARE f bigint; BEGIN
   INSERT INTO opening_float (sale_date) VALUES (pg_temp.bc_ngay()) RETURNING id INTO f;
   INSERT INTO opening_float_line (opening_float_id, denomination_vnd, amount_vnd) VALUES (f, 10000, 50000);
 END $$;
+ALTER TABLE opening_float ENABLE TRIGGER opening_float_reconciled_guard_trg;
+ALTER TABLE opening_float_line ENABLE TRIGGER opening_float_line_reconciled_guard_trg;

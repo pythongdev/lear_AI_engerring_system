@@ -88,6 +88,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
+- [ ] P3-01 **Ranh giới và từ vựng pha 3** — tầng 2 · tầng 3 dịch sang code thành gì, lời từ chối của database thành lỗi thế nào, cái pha 3 không viết; một ADR, không dòng code — L2. Mở 2026-10-05: chủ repo ký chuyển pha (T-136). [chi tiết](backlog_BE.md#p3-01)
 - [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi, không cột *ngày bán của két* khi `U-072` còn mở. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
@@ -100,6 +101,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-136 Chủ repo ký chuyển sang pha 3 và xác nhận cách chia mười bốn bước — ghi ở cổng pha 2 §7, kế hoạch pha 3, ADR-076 *Sửa đổi*; `P3-01` vào *Ready* — 2026-10-05 · [chi tiết](backlog_archive.md#t-136)
 - [x] T-134 Ngày đã đối soát xong thì số đếm và tiền đầu két đứng yên với mọi vai, và dấu không đứng trên số rỗng — migration bước 16 `20261005120000_khoa_so_dem_ngay_da_ky` (trigger chặn thêm · sửa · xoá · `TRUNCATE`; dấu cần dòng mệnh giá ở cả hai vế); sáu file `db/reconcile/proof/` tắt khoá trong chính lỗi cài; không dựng đường sửa số đã ký (**U-074**), không đòi lệch 0 (**U-073**); **F-056** · **F-057** đóng — **ADR-080** — Codex thi công, Claude duyệt — 2026-10-05 · [chi tiết](backlog_archive.md#t-134)
 - [x] T-135 Con trỏ chết sau khi chuyển `docs/work-flow-session/` · `docs/project_work_flow/` sang `docs/private/` — ba con trỏ đến và link tương đối trong năm file đã chuyển, chỉ đổi đường dẫn; khối commit gồm luôn việc chuyển (chưa commit lúc làm) — L0 — 2026-10-05 · [chi tiết](backlog_archive.md#t-135)
 - [x] T-133 Số tiền mặt đếm cuối ngày và dấu *ngày đã đối soát xong* có chỗ cất — migration bước 15 `20261001150000_dem_ket_doi_soat`: `cash_count` · `cash_count_line` cùng hình tiền đầu két, `reconciled_day` khoá ngoại về số đếm và tiền đầu két, không đòi lệch 0 (**U-073**); câu `I-021/1` · `I-012/2` · `I-014/5` mỗi câu một lỗi cài; `YC-03` · `YC-08` sang *GỌI TÊN*; ngày chờ `U-072` không kết luận; **F-048** đóng — **ADR-079** — 2026-10-05 · [chi tiết](backlog_archive.md#t-133)

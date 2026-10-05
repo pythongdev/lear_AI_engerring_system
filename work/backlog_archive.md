@@ -951,6 +951,25 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-136"></a>
+### T-136 — Chủ repo ký chuyển sang pha 3 và xác nhận cách chia mười bốn bước
+
+**Lời chủ repo** 2026-10-05, trong phiên, nguyên văn: *"đồng ý chuyển sang pha 3. xác nhận Cách chia mười
+bốn bước pha 3"*. Mức **L1**: ghi lời của người quyết vào owner, không đổi hành vi hay lược đồ.
+
+**Acceptance (viết trước khi sửa):** (1) chữ ký có ngày và người ở `11-cong-chat-luong-pha-2.md` §7 — chỗ
+ký mà kế hoạch pha 2 §9 chỉ; (2) kế hoạch pha 3 · `work/backlog_BE.md` · kế hoạch pha 2 · `00-index.md`
+không còn câu *"chưa ký"*; (3) §8 kế hoạch pha 3 và ADR-076 ghi cách chia là lời chủ repo, không phải suy ra;
+(4) `P3-01` vào *Ready*, không bước P3 nào khác; khối *Nhận việc* của nó vẫn trống tới lúc nhận;
+(5) gate xanh.
+
+**Bàn giao** — 2026-10-05 · thực hiện và duyệt: **Claude Code** (worktree `../lean_wt/T-136`, nhánh
+`claude/T-136`, trên `f7bef2a`) — làm ngoài cây chính vì T-134 · T-135 còn chưa commit trên cùng
+`docs/decisions.md` · `work/backlog.md` · `work/backlog_archive.md` (**F-025**). Chưa review độc lập.
+
+**Còn lại:** lời xác nhận nói **cách chia**, không chốt nội dung bước nào; `P3-01` viết *Nhận việc* lúc nhận.
+
+[↑ đầu file](#top)
 <a id="t-134"></a>
 ### T-134 — Số đếm của ngày đã đối soát xong vẫn đổi được, và ngày chưa đếm vẫn ký được (F-056 · F-057)
 
