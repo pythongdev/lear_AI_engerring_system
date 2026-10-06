@@ -22,12 +22,19 @@ GROUP BY f.sale_date
 HAVING count(*) > 1
 
 -- @@ I-021/7 — lần sửa con số tiền đầu két không đọc ra ai bấm · lúc mấy giờ · từ bao nhiêu sang bao nhiêu
--- Hai hình: một xấp mệnh giá THÊM vào sau lúc khai — một dòng mới không mang người và không mang
--- bản trước; và một lần sửa xấp có vết mà vết thiếu người. Lần sửa không khai lý do không có vết
--- (F-046) và không câu nào thấy.
+-- Hai hình: một xấp mệnh giá THÊM vào sau lúc khai mà tiền đầu két không có vết thêm của chính xấp
+-- ấy (T-137, ADR-081: bản trước không có xấp, bản sau có — đọc ra ai · lúc nào · từ bao nhiêu sang
+-- bao nhiêu); và một lần sửa xấp có vết mà vết thiếu người. Lần sửa hay lần thêm không khai lý do
+-- không có vết (F-046): lần thêm thì câu này thấy, lần sửa thì không.
 SELECT f.sale_date AS ngay, x.id AS dong_menh_gia, 'thêm sau lúc khai' AS kieu
 FROM opening_float_line x JOIN opening_float f ON f.id = x.opening_float_id
 WHERE x.created_at > f.created_at
+  AND NOT EXISTS (SELECT 1 FROM record_revision r
+                  WHERE r.target_table_code = 'opening_float' AND r.target_row = f.id
+                    AND r.after_image -> 'opening_float_line'
+                        @> jsonb_build_array(jsonb_build_object('id', x.id))
+                    AND NOT coalesce(r.before_image -> 'opening_float_line'
+                                     @> jsonb_build_array(jsonb_build_object('id', x.id)), false))
 UNION ALL
 SELECT NULL, r.target_row, 'sửa, vết thiếu người'
 FROM record_revision r

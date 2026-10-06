@@ -195,7 +195,11 @@ làm khác.
 - **Thêm một dòng con không có vết.** Vết cập nhật chụp lần **sửa** một dòng đã có; lần **thêm** một
   dòng con vào một bản ghi đã có — thêm món vào đơn, thêm thành phần vào suất, thêm xấp mệnh giá vào
   tiền đầu két — không để lại *ai thêm*. `I-024/3`, `I-011/1`, `I-021/7` đọc đúng hình ấy và **kêu**
-  cả ở lần thêm hợp lệ. Ghi thành **F-047** (`work/findings.md`).
+  cả ở lần thêm hợp lệ. Ghi thành **F-047** (`work/findings.md`). **Gỡ 2026-10-05 (`T-137`,
+  **ADR-081**):** lần thêm có khai lý do để lại một vết trên bản ghi cha (bản trước không có dòng, bản
+  sau có); ba câu nay chỉ kêu dòng thêm sau cha mà **không** có vết thêm của chính nó — tức lần thêm
+  không khai lý do (chế độ mềm, **F-046**). Lỗi cài `i011_1` · `i021_7` · `i024_3` xoá lý do trước khi
+  thêm, vì ngày mẫu khai lý do cho cả giao dịch.
 - **`I-016/1` so với bảng §5 hôm nay**, không với bảng tại lúc chuyển: §5 chưa có lịch sử phiên bản
   đọc được bằng máy. Bảng đổi thì một lần chuyển cũ đúng luật cũ có thể kêu.
 - **Lúc đóng phiên** là mốc `booked_at` của hoá đơn phiên — phiên không có cột mốc đóng
@@ -245,5 +249,5 @@ làm khác.
 | `P2-13` | §3 — lệnh và phần chứng minh chạy trong `./scripts/db-check.sh`; §2 là danh sách tập chưa được chấm, đọc trước khi tick cổng |
 | `P2A-05` | Bước còn nợ câu `I-029`; khi viết câu thì **gỡ dòng của mệnh đề ấy ở §2.1 trong cùng thay đổi**. Cùng lượt: khoản chi của loại mang nguồn két vào hạng tử *chi từ két* của hàm `ket_ngay` (`db/reconcile/prelude.sql`) (`db/reconcile/prelude.sql`) — thiếu nó thì `I-021/1` kêu mọi ngày có trả tiền điện |
 | `P2-14` | §1 — mỗi mã `I-0xx` có câu; file này không nhắc đường gọi hay màn hình nào của pha 3 · pha 4 |
-| pha 3 | §2 các dòng *pha 3* — mỗi chỗ cất mới là một migration, kèm câu và file lỗi mới ở `db/reconcile/`; §4 — **F-046** · **F-047** |
+| pha 3 | §2 các dòng *pha 3* — mỗi chỗ cất mới là một migration, kèm câu và file lỗi mới ở `db/reconcile/`; §4 — **F-046** (**F-047** gỡ ở `T-137`) |
 | chủ repo | §2 dòng *chủ repo* còn lại — tin nhắn báo có (`I-015` tập 5). Số đếm két và dấu đối soát xong: `T-133`, 2026-10-05 |
