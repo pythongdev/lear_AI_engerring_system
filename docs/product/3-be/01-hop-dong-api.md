@@ -184,7 +184,8 @@ theo schema của hợp đồng.
 | Bước | Lấy gì |
 |---|---|
 | `P3-05` | **xong 2026-10-06** — §3 thêm mã của lời từ chối quyền; §4 xét dòng `qr_code_*` (bảng cửa của lát ghi); dòng `person` · `counter_duty` để lại cho lát ghi hai bảng ấy (`P3-11`, lane admin); ma trận cửa × lớp ở [`02-vai-va-quyen.md`](02-vai-va-quyen.md), Gate 1g so nó với code (§9) |
-| `P3-06`…`P3-12` | §1 thêm đường gọi cùng lượt dựng cửa · §3 mã của luật · §4 xét dòng của bảng mình ghi · §5 · §6 · §7 tăng phiên bản; `P3-07` · `P3-08` thêm §8 |
+| `P3-06` | **xong 2026-10-06** — §1 thêm sáu đường gọi (tính thử, menu, bốn cửa sửa menu); §3 sáu mã của giá và menu; §4 xét dòng của bảng menu và bảng dòng đơn (`internal`), dòng `sales_order_*` để lại cho phần kênh của cửa tạo lượt gọi (`P3-07` · `P3-08`); hàm và bảng ca: [`03-ham-gia.md`](03-ham-gia.md) |
+| `P3-07`…`P3-12` | §1 thêm đường gọi cùng lượt dựng cửa · §3 mã của luật · §4 xét dòng của bảng mình ghi · §5 · §6 · §7 tăng phiên bản; `P3-07` · `P3-08` thêm §8 |
 | `P3-13` | §9 — ô cổng *hợp đồng khớp code*: Gate 1g xanh và đã từng đỏ (`scripts/check-api-contract.test.sh`) |
 | pha 4 | `openapi.yaml` — sinh type; §3 cách đọc lỗi; §5 không tự tính |
 

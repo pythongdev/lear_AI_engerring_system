@@ -102,6 +102,7 @@ có câu trả lời mới từ người.
 | ADR-083 | **Backend nói chuyện với database bằng pgx v5 và SQL viết tay, mọi câu ghi trong file `.sql` dưới thư mục của một cửa** — nên lệnh liệt kê đường ghi của ADR-082 chỉ đọc file (Gate 1f); Go 1.27.1, web bằng `net/http` chuẩn; một hàm mở giao dịch; test Go trên PostgreSQL thật qua `scripts/be-check.sh`, thiếu database thì đỏ; quy ước ở `QC-11`…`QC-17` | Đã chốt 2026-10-06 (giao cho phiên, P3-03; Codex thi công, Claude chốt) | — | P3-03 · ADR-082 · ADR-053 · F-045 |
 | ADR-084 | **Hợp đồng API thắng code; migration thắng hợp đồng về tên ràng buộc**: hợp đồng là OpenAPI 3.1 một file YAML (`docs/product/3-be/openapi.yaml`, bắt đầu rỗng đường gọi), khuôn ở `01-hop-dong-api.md`; hình lỗi `{code, field?}`, mã kèm status; bảng *tên từ chối → mã* (`x-constraint-errors`) phủ mọi tên của migration, giá trị là mã · `internal` · `unreviewed`; Gate 1g so hợp đồng ↔ code ↔ migration mọi lượt, đổi hợp đồng phải tăng phiên bản; lời từ chối của trigger mang tên (F-058) | Đã chốt 2026-10-06 (giao cho phiên, P3-04; Claude chọn và thi công) | — | P3-04 · ADR-082 · ADR-053 · F-058 |
 | ADR-085 | **Quyền là một lớp của cửa, đọc tại mốc giao dịch của cửa ấy**: mỗi cửa khai đúng một lớp (`quay` · `chu_quan` mở ở P3-05), ma trận `02-vai-va-quyen.md` một dòng mỗi cửa, ba tập (thư mục cửa · dòng ma trận · khai báo Go) bằng nhau, Gate 1g chấm; `authz.Run` kiểm quyền và khai người thao tác trong cùng giao dịch; khách QR mang mã, không mang bàn; danh tính tách khỏi cách đăng nhập (U-075) | Đã chốt 2026-10-06 (giao cho phiên, P3-05; Claude thiết kế và thi công) | — | P3-05 · ADR-083 · ADR-084 · U-075 · U-062 |
+| ADR-086 | **Một hàm tính giá `gia.Tinh`, gọi từ tính thử, menu và cửa ghi đơn; một cửa tạo lượt gọi `don/tao_luot_goi` cho cả năm kênh** — `P3-06` dựng phần giá (tổ hợp, ngừng bán, ảnh chụp) và lối vào đặt hộ tại quầy, chưa đường gọi HTTP; `P3-07` · `P3-08` thêm phần kênh vào chính cửa ấy; cửa từ chối, không sửa hộ, không tự điền mặc định (**F-059**); bốn cửa sửa menu của chủ quán bắt buộc lý do, để vết | Đã chốt 2026-10-06 (giao cho phiên, P3-06; Claude thiết kế, Codex thi công) | — | P3-06 · ADR-082 · ADR-085 · F-059 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -5737,3 +5738,78 @@ trực quầy là cửa của `P3-11`. Hai người dùng chung một danh tính
 
 **Applies to:** `P3-05`…`P3-12`; `docs/product/3-be/02-vai-va-quyen.md`; `be/internal/authz/` ·
 `be/internal/qr/`; `scripts/check-api-contract.sh`; **U-075** · **U-062**.
+
+### ADR-086 — Một hàm tính giá, gọi từ tính thử, menu và cửa ghi đơn; một cửa tạo lượt gọi cho cả năm kênh; cửa không bao giờ tự điền hay sửa tuỳ chọn
+
+**Trạng thái:** Đã chốt 2026-10-06, **giao cho phiên** (task `P3-06`, bước 6/14 của pha 3; chủ repo giao
+*"hãy đọc kĩ và làm yêu codex làm bạn kiểm tra"*). Claude thiết kế và viết test đỏ trước; Codex thi
+công trong worktree riêng; Claude duyệt. Quyết định này **không sở hữu** luật giá — luật ở
+`master_plan/shop-facts.md` §4.2–§4.8 — và không sở hữu tầng của `I-009` · `I-010` · `I-013` (của
+`03-bao-ve-invariant.md`). Cách đọc hàm và chỗ trống: `docs/product/3-be/03-ham-gia.md`.
+
+**Decision:**
+
+1. **Một hàm tính giá** — `gia.Tinh` ở `be/internal/gia/`. Nó đọc menu **trong giao dịch của người gọi**,
+   tại `now()` của giao dịch ấy, từ đúng các bảng của `03-luoc-do-menu-gia.md` §1, và trả giá dòng cùng
+   ảnh chụp thành phần · tuỳ chọn đã tính. Ba đường gọi nó: **tính thử** (`POST /price-quotes`),
+   **đọc menu** (`GET /menu` — giá của mọi tổ hợp hợp lệ, tính bằng chính hàm ấy) và **cửa tạo lượt
+   gọi**. Không chỗ nào khác cộng giá; cửa ghi chép kết quả của hàm vào cột ảnh chụp và không có
+   trường giá nào nhận từ người gọi (`I-013`).
+2. **Một cửa tạo lượt gọi cho cả năm kênh** — `don/tao_luot_goi`, chủ của các ô *thêm dòng* vào
+   `sales_order` · `order_line` · `order_line_component` · `order_line_option`. Đây là *"cửa tạo lượt
+   gọi"* mà hàng `I-008` · `I-009` · `I-010` · `I-013` · `I-023` của `03-bao-ve-invariant.md` đều nói
+   là **một**. `P3-06` dựng phần **giá** của cửa (tổ hợp, ngừng bán, ảnh chụp) và một lối vào duy nhất:
+   lượt gọi người đứng quầy đặt hộ vào một phiên bàn đã có, lớp `quay`, **chưa có đường gọi HTTP**.
+   `P3-07` · `P3-08` thêm phần **kênh** (mở phiên từ lượt gọi đầu, khách QR, bốn kênh ngoài bàn, dấu
+   lần gửi, giờ bán và tạm dừng) vào **chính cửa này**; kênh nào cần một lớp quyền khác thì đổi lớp
+   của cửa (lớp mới theo `02-vai-va-quyen.md` §2), **không** mở cửa thứ hai ghi các ô ấy.
+3. **Cửa từ chối, không sửa hộ, không tự điền.** Mỗi nhóm tuỳ chọn *có mặt* trên một dòng phải có
+   **đúng một** lựa chọn (`shop-facts.md` §4.6 luật 7), nhóm *không có mặt* thì không có lựa chọn nào
+   (luật 3, đọc theo tập ở `option_group_prerequisite`); sai bất kỳ ⇒ cả yêu cầu bị từ chối
+   (`option_combination_invalid`). Thiếu lựa chọn **không** được điền mặc định: mặc định *Thịt ·
+   Thường* (luật 8) chưa có chỗ cất trong dữ liệu (`03-luoc-do-menu-gia.md` §5), và điền nó bằng tên
+   lựa chọn viết trong code là bản thứ hai của sự thật — **F-059**.
+4. **Bốn cửa sửa menu của chủ quán**, lớp `chu_quan`: giá thành phần, phụ thu, số lượng của một thành
+   phần trong suất, ngừng bán. Mỗi cửa **bắt buộc lý do** và khai nó cho trigger vết trong cùng giao
+   dịch, nên mỗi lần sửa để lại *cái gì · bản trước · bản sau · ai · lúc nào* (`I-018` · `I-012` ·
+   `I-011`) — **chặt hơn** chế độ mềm của **F-046** cho riêng bốn cửa này. **Không** cửa nào nhận giá
+   của một suất (`architecture.md` §6.1) — lược đồ cũng không có ô ấy.
+5. **Mã của lát:** `menu_item_not_found` · `menu_option_not_found` · `menu_component_not_found` ·
+   `menu_item_component_not_found` (404) · `menu_item_discontinued` (409) ·
+   `option_combination_invalid` (422). Dòng `x-constraint-errors` của bảng menu và bảng dòng đơn thành
+   `internal` (cửa kiểm trước hoặc tự dựng giá trị); dòng `sales_order_*` **giữ `unreviewed`** cho
+   lát dựng phần kênh xét.
+
+**Why:**
+
+- **Hai đường tính giá là cách chắc nhất để khách thấy một số, quầy thu số khác** — tên của chính
+  `P3-06`. Gọi chung một hàm thì hai con số chỉ khác được khi menu đổi giữa hai lần gọi, và khi ấy
+  con số của đơn là con số đúng tại mốc của nó (`I-009`).
+- **Một cửa tạo lượt gọi, không phải mỗi kênh một cửa:** luật *mỗi ô đúng một cửa* (**ADR-082**) và
+  năm hàng của pha 1 cùng nói *một cửa*; năm cửa ghi dòng đơn là năm chỗ phải nhớ gọi đúng hàm giá.
+- **Dựng phần giá trước phần kênh, không dựng đường gọi HTTP:** hình request trên dây (phiên mở từ
+  lượt gọi đầu — `05-vong-doi.md` §5.3; khách mang mã — `I-023`; dấu lần gửi — `I-024`) là của
+  `P3-07` · `P3-08`; chốt nó ở đây là viết hộ lát sau. Không có chương trình chạy nào (`be/cmd/` chờ
+  **U-075**), nên cửa chưa xét giờ bán không mở được cho ai.
+- **Từ chối chứ không điền mặc định:** `I-010` cấm *thêm* tuỳ chọn để biến yêu cầu thành hợp lệ; một
+  dòng thiếu nhân mà cửa tự thêm *Thịt* là đúng hình ấy khi cửa không đọc được mặc định từ dữ liệu.
+
+**Rejected alternatives:**
+
+- *Mỗi kênh một cửa ghi đơn, cùng gọi `gia.Tinh`.* Bác: hai cửa chung một ô (**ADR-082** điểm 1), và
+  *"cùng gọi"* chỉ còn là quy ước.
+- *Hàm giá viết bằng hàm SQL trong một migration.* Bác ở bước này: hàm của pha 2 là *chỗ cất*, không
+  phải luật (`03-luoc-do-menu-gia.md` — *hàm tính giá là đầu ra của pha 3*); và lời từ chối của
+  `I-010` cần mã theo dòng, việc của cửa.
+- *Điền mặc định Thịt · Thường theo tên lựa chọn.* Bác: xem *Why* thứ tư và **F-059**.
+- *Trả FE bảng phụ thu để FE tự cộng.* Bác: `01-hop-dong-api.md` §5 — FE nhận kết quả, không nhận công
+  thức; menu trả giá của từng tổ hợp.
+- *Dựng luôn `POST /orders` cho quầy.* Bác: xem *Why* thứ ba.
+
+**Giới hạn có tên:** cửa tạo lượt gọi chưa xét giờ bán · tạm dừng (`I-008`, `P3-08` · `P3-12`), chưa
+xét dấu lần gửi trùng (`I-024`, `P3-07`), chưa có lối vào của khách QR và bốn kênh ngoài bàn; lời nhắc
+*đang trong giờ bán* trước khi đổi thành phần (`I-011`) là của pha 4 và cần nguồn giờ bán của cửa
+`I-008`; thêm · bỏ một thành phần của suất, đổi tên món, bán lại món đã ngừng chưa có cửa.
+
+**Applies to:** `P3-06`…`P3-08`; `be/internal/gia/` · `be/internal/don/` · `be/internal/menu/`;
+`docs/product/3-be/03-ham-gia.md` · `openapi.yaml` · `02-vai-va-quyen.md`; **F-059** · **F-046**.

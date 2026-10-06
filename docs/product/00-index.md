@@ -110,6 +110,8 @@ Các lát lược đồ sau **thêm** dòng vào bảng này, không ghi đè d�
 |---|---|
 | Hợp đồng API — **khuôn, luật đọc, luật đổi**: định dạng OpenAPI 3.1 · khuôn viết để Gate 1g đọc được · hình lỗi chung và mã kèm status · bảng tên từ chối → mã · tiền, mốc, ngày bán, dấu lần gửi trên dây · phiên bản · hợp đồng thắng code và lệnh chấm (P3-04, ADR-084) | [3-be/01-hop-dong-api.md](3-be/01-hop-dong-api.md) |
 | Hợp đồng API **máy đọc** — nguồn duy nhất cho FE, pha 4 sinh type từ đây; mỗi lát thêm đường gọi của mình | [3-be/openapi.yaml](3-be/openapi.yaml) |
+| **Vai và quyền** — luật đọc quyền theo chỗ đứng, lớp quyền, ma trận cửa × lớp một dòng mỗi cửa (P3-05, ADR-085; dòng thêm muộn ở P3-06) | [3-be/02-vai-va-quyen.md](3-be/02-vai-va-quyen.md) |
+| **Hàm tính giá** — một hàm, ba đường gọi (tính thử · menu · cửa tạo lượt gọi), thứ tự kiểm, bảng ca test đọc §4.8 lúc chạy, chỗ trống (P3-06, ADR-086) | [3-be/03-ham-gia.md](3-be/03-ham-gia.md) |
 
 Các lát `P3-05`…`P3-13` **thêm** dòng vào bảng này cùng file của mình (kế hoạch pha 3 §5).
 

@@ -10,6 +10,8 @@
 #   perl db/seed/seed.pl                 # SQL dựng dữ liệu mồi (vai shop_app, một giao dịch)
 #   perl db/seed/seed.pl --supply-names  # tên hàng mua vào sẽ chèn, mỗi dòng một tên
 #   perl db/seed/seed.pl --price-cases   # SQL tính lại các ca giá của §4.8 từ database
+#   perl db/seed/seed.pl --price-cases-tsv  # các ca §4.8 cho test cửa giá của pha 3 (P3-06), mỗi dòng:
+#        số ca <TAB> dòng menu <TAB> số suất <TAB> nhóm=lựa chọn|… <TAB> giá kỳ vọng hoặc REJECT
 #
 # Owner đổi hình mà script không đọc được ⇒ in lỗi ra stderr, exit 1, không in nửa bộ SQL.
 use strict;
@@ -276,6 +278,7 @@ my $mode = $ARGV[0] // '';
 
 if ($mode eq '--supply-names') { print "$_->[0]\n" for @supplies; exit 0 }
 if ($mode eq '--price-cases') { price_cases(); exit 0 }
+if ($mode eq '--price-cases-tsv') { price_cases_tsv(); exit 0 }
 die "seed.pl: tham số lạ '$mode'\n" if $mode ne '';
 
 print "-- Dữ liệu mồi P2-10, sinh từ $FACTS lúc chạy — không sửa tay, không lưu lại.\n";
@@ -352,9 +355,10 @@ for my $r (@supplies) {
 print "\nCOMMIT;\n";
 
 # --- §4.8: các ca giá, tính lại từ database --------------------------------------------------
-sub price_cases {
+# Các ca §4.8 đã đọc: [số ca, dòng menu, số suất, [[nhóm, lựa chọn], …], giá kỳ vọng | undef = từ chối].
+sub read_price_cases {
   my %by_alias = map { $_->{alias} => $_ } @items;
-  my @case;
+  my @out;
   for my $r (table('Giá kỳ vọng', section('### 4.8 '))) {
     my ($name, $qty) = ($r->{'Món'}, 1);
     $qty = $1 if $name =~ s/\s*×(\d+)\s*$//;
@@ -368,11 +372,27 @@ sub price_cases {
       $o or die_owner("§4.8 ca $r->{'#'}: '$v' không là lựa chọn của '$g->{name}'");
       push @sel, [ $g->{name}, $o->[0] ];
     }
-    my $want = $r->{'Giá kỳ vọng'} =~ /TỪ CHỐI/ ? 'NULL' : money($r->{'Giá kỳ vọng'}, "§4.8 ca $r->{'#'}");
-    push @case, sprintf "(%d, %s, %d, ARRAY[%s]::text[], ARRAY[%s]::text[], %s)",
-      $r->{'#'}, sqlq($it->{name}), $qty,
-      join(', ', map { sqlq($_->[0]) } @sel), join(', ', map { sqlq($_->[1]) } @sel), $want;
+    my $want = $r->{'Giá kỳ vọng'} =~ /TỪ CHỐI/ ? undef : money($r->{'Giá kỳ vọng'}, "§4.8 ca $r->{'#'}");
+    push @out, [ $r->{'#'} + 0, $it->{name}, $qty, \@sel, $want ];
   }
+  die_owner('§4.8: bảng ca giá rỗng') unless @out;
+  return @out;
+}
+
+sub price_cases_tsv {
+  for my $c (read_price_cases()) {
+    my ($no, $item, $qty, $sel, $want) = @$c;
+    print join("\t", $no, $item, $qty, join('|', map { "$_->[0]=$_->[1]" } @$sel), $want // 'REJECT'), "\n";
+  }
+}
+
+sub price_cases {
+  my @case = map {
+    my ($no, $item, $qty, $sel, $want) = @$_;
+    sprintf "(%d, %s, %d, ARRAY[%s]::text[], ARRAY[%s]::text[], %s)",
+      $no, sqlq($item), $qty,
+      join(', ', map { sqlq($_->[0]) } @$sel), join(', ', map { sqlq($_->[1]) } @$sel), $want // 'NULL';
+  } read_price_cases();
   print <<'SQL';
 -- §4.8 tính lại từ dữ liệu mồi. Phép tính CHỈ để chứng minh dữ liệu đủ — hàm tính giá là của pha 3.
 -- Giá một suất = Σ số lượng × giá gốc + (số phần nhận nhân) × Σ phụ thu đã chọn (§4.6 luật 1 · 5).

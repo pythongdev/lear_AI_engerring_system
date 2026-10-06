@@ -60,6 +60,11 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | Cửa | Lớp | Nguồn |
 |---|---|---|
 | `qr/doi_ma` | `chu_quan` | `shop-facts.md` §6 quy tắc 2 — **U-062** đã đóng: chỉ chủ quán đổi mã, đổi khi quán bị hack |
+| `don/tao_luot_goi` | `quay` | `shop-facts.md` §2 — Staff POS: người đứng quầy đặt hộ; `architecture.md` §1.1 (POS ghi) |
+| `menu/doi_gia_thanh_phan` | `chu_quan` | `architecture.md` §6.1 · `I-012` (chủ quán đổi giá) |
+| `menu/doi_phu_thu` | `chu_quan` | `architecture.md` §6.1 · `I-012` |
+| `menu/sua_thanh_phan` | `chu_quan` | `architecture.md` §6.1 · `I-011` · `I-012` |
+| `menu/ngung_ban` | `chu_quan` | `architecture.md` §6.1 · `03-lat-cat.md` §3.3.4 |
 
 **Lát sau thêm dòng thế nào:** cùng lượt dựng cửa — thư mục cửa, khai báo `authz.Door{Code, Need}` ngoài
 file test, và một dòng ở đây trỏ nguồn nghiệp vụ. Thiếu một trong ba thì Gate 1g đỏ.
@@ -69,7 +74,7 @@ file test, và một dòng ở đây trỏ nguồn nghiệp vụ. Thiếu một 
 | Chỗ trống | Hôm nay | Ai gỡ |
 |---|---|---|
 | **Cách đăng nhập** của nhân viên và chủ quán | cửa nhận người qua giao diện `authz.Authenticator`; chưa có bản thật, chưa có chương trình chạy | chủ quán — **U-075** |
-| **Cửa lớp `quay` đầu tiên** | lớp được chứng minh qua `authz.Run` trên PostgreSQL thật, chưa qua một cửa thật | `P3-07` |
+| **Cửa lớp `quay` đầu tiên** | `don/tao_luot_goi` (`P3-06`) — chưa có đường gọi HTTP | `P3-07` |
 | **Mở · khép khoảng trực quầy** | khoảng trực chỉ ghi được bằng tay ở database | `P3-11` |
 | **Hai người dùng chung một danh tính** | máy không phân biệt được (`I-012` tầng 4) | không gỡ ở máy — đối chiếu `I-012/3` |
 

@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.2.0
+  version: 0.3.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -93,6 +93,303 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /menu:
+    get:
+      operationId: getMenu
+      summary: Món đang bán và giá mọi tổ hợp hợp lệ
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Menu'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /price-quotes:
+    post:
+      operationId: quotePrices
+      summary: Tính thử; bỏ qua mọi trường lạ kể cả giá gửi lên
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PriceQuoteRequest'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceQuote'
+        '400':
+          description: Yêu cầu sai hình (invalid_request); field chỉ trường sai nếu xác định được.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Món hoặc lựa chọn không tồn tại (menu_item_not_found, menu_option_not_found).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Món đã ngừng bán tại mốc giao dịch (menu_item_discontinued).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Tổ hợp sai bị từ chối nguyên yêu cầu (option_combination_invalid); không sửa hộ.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-components/{menu_component_id}/base-price:
+    put:
+      operationId: changeComponentPrice
+      summary: Đổi giá gốc thành phần, có lý do
+      parameters:
+        - name: menu_component_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComponentPriceChange'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComponentPrice'
+        '400':
+          description: Yêu cầu sai hình (invalid_request); field chỉ trường sai nếu xác định được.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Không xác định được người bấm (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Người bấm không phải chủ quán (owner_only).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Không tồn tại (menu_component_not_found).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-options/{menu_option_id}/surcharge:
+    put:
+      operationId: changeOptionSurcharge
+      summary: Đổi phụ thu, có lý do
+      parameters:
+        - name: menu_option_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OptionSurchargeChange'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OptionSurcharge'
+        '400':
+          description: Yêu cầu sai hình (invalid_request); field chỉ trường sai nếu xác định được.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Không xác định được người bấm (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Người bấm không phải chủ quán (owner_only).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Không tồn tại (menu_option_not_found).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-items/{menu_item_id}/components/{menu_component_id}:
+    put:
+      operationId: changeItemComponent
+      summary: Đổi số lượng thành phần suất, có lý do
+      parameters:
+        - name: menu_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: menu_component_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemComponentChange'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemComponent'
+        '400':
+          description: Yêu cầu sai hình (invalid_request); field chỉ trường sai nếu xác định được.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Không xác định được người bấm (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Người bấm không phải chủ quán (owner_only).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Không tồn tại (menu_item_not_found, menu_component_not_found, menu_item_component_not_found).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-items/{menu_item_id}/discontinuation:
+    post:
+      operationId: discontinueMenuItem
+      summary: Ngừng bán món, giữ nguyên mốc khi ngừng lần nữa
+      parameters:
+        - name: menu_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuDiscontinuationRequest'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuDiscontinuation'
+        '400':
+          description: Yêu cầu sai hình (invalid_request); field chỉ trường sai nếu xác định được.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Không xác định được người bấm (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Người bấm không phải chủ quán (owner_only).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Không tồn tại (menu_item_not_found).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Món đã ngừng bán (menu_item_discontinued); mốc cũ giữ nguyên.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     ErrorCode:
@@ -109,6 +406,12 @@ components:
         - qr_code_not_current
         - dining_table_not_found
         - qr_code_issue_conflict
+        - menu_item_not_found
+        - menu_option_not_found
+        - menu_component_not_found
+        - menu_item_component_not_found
+        - menu_item_discontinued
+        - option_combination_invalid
       x-http-status:
         internal_error: 500
         invalid_request: 400
@@ -118,6 +421,12 @@ components:
         qr_code_not_current: 404
         dining_table_not_found: 404
         qr_code_issue_conflict: 409
+        menu_item_not_found: 404
+        menu_option_not_found: 404
+        menu_component_not_found: 404
+        menu_item_component_not_found: 404
+        menu_item_discontinued: 409
+        option_combination_invalid: 422
     Error:
       type: object
       description: Hình lỗi chung của mọi lời từ chối (01-hop-dong-api.md §3).
@@ -167,6 +476,262 @@ components:
           type: integer
           format: int64
         issued_at:
+          $ref: '#/components/schemas/Instant'
+    PriceLineRequest:
+      type: object
+      description: Không nhận giá; trường lạ bị bỏ qua. Nhóm có mặt phải được chọn đúng một lựa chọn.
+      required: [menu_item_id, quantity, option_ids]
+      additionalProperties: true
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+        option_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+    PriceQuoteRequest:
+      type: object
+      description: Lỗi đầu tiên thắng, theo thứ tự dòng gửi; field có dạng lines[i].tên_trường.
+      required: [lines]
+      additionalProperties: true
+      properties:
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceLineRequest'
+          minItems: 1
+    PriceComponent:
+      type: object
+      required: [menu_component_id, component_name, quantity, takes_filling, base_price_vnd]
+      additionalProperties: false
+      properties:
+        menu_component_id:
+          type: integer
+          format: int64
+        component_name:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+        takes_filling:
+          type: boolean
+        base_price_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    PriceOption:
+      type: object
+      required: [menu_option_id, option_group_name, option_name, surcharge_vnd]
+      additionalProperties: false
+      properties:
+        menu_option_id:
+          type: integer
+          format: int64
+        option_group_name:
+          type: string
+        option_name:
+          type: string
+        surcharge_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    PriceLine:
+      type: object
+      required: [menu_item_id, item_name, quantity, unit_price_vnd, line_total_vnd, components, options]
+      additionalProperties: false
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
+        item_name:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+        unit_price_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        line_total_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        components:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceComponent'
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceOption'
+    PriceQuote:
+      type: object
+      required: [lines, total_vnd]
+      additionalProperties: false
+      properties:
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceLine'
+        total_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    MenuOption:
+      type: object
+      required: [menu_option_id, option_name]
+      additionalProperties: false
+      properties:
+        menu_option_id:
+          type: integer
+          format: int64
+        option_name:
+          type: string
+    MenuOptionGroup:
+      type: object
+      required: [option_group_id, option_group_name, prerequisite_option_ids, options]
+      additionalProperties: false
+      properties:
+        option_group_id:
+          type: integer
+          format: int64
+        option_group_name:
+          type: string
+        prerequisite_option_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuOption'
+    MenuPrice:
+      type: object
+      required: [option_ids, unit_price_vnd]
+      additionalProperties: false
+      properties:
+        option_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: Mã lựa chọn xếp tăng; rỗng nếu món không mang nhóm nào.
+        unit_price_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    MenuItem:
+      type: object
+      required: [menu_item_id, item_name, option_groups, prices]
+      additionalProperties: false
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
+        item_name:
+          type: string
+        option_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuOptionGroup'
+        prices:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuPrice'
+    Menu:
+      type: object
+      required: [items]
+      additionalProperties: false
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuItem'
+    ComponentPriceChange:
+      type: object
+      required: [base_price_vnd, reason]
+      additionalProperties: true
+      properties:
+        base_price_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        reason:
+          type: string
+          minLength: 1
+          description: Sau khi bỏ khoảng trắng đầu cuối phải còn nội dung.
+    ComponentPrice:
+      type: object
+      required: [menu_component_id, base_price_vnd]
+      additionalProperties: false
+      properties:
+        menu_component_id:
+          type: integer
+          format: int64
+        base_price_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    OptionSurchargeChange:
+      type: object
+      required: [surcharge_vnd, reason]
+      additionalProperties: true
+      properties:
+        surcharge_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        reason:
+          type: string
+          minLength: 1
+          description: Sau khi bỏ khoảng trắng đầu cuối phải còn nội dung.
+    OptionSurcharge:
+      type: object
+      required: [menu_option_id, surcharge_vnd]
+      additionalProperties: false
+      properties:
+        menu_option_id:
+          type: integer
+          format: int64
+        surcharge_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    ItemComponentChange:
+      type: object
+      required: [quantity, reason]
+      additionalProperties: true
+      properties:
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+        reason:
+          type: string
+          minLength: 1
+          description: Sau khi bỏ khoảng trắng đầu cuối phải còn nội dung.
+    ItemComponent:
+      type: object
+      required: [menu_item_id, menu_component_id, quantity]
+      additionalProperties: false
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
+        menu_component_id:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+    MenuDiscontinuationRequest:
+      type: object
+      required: [reason]
+      additionalProperties: true
+      properties:
+        reason:
+          type: string
+          minLength: 1
+          description: Sau khi bỏ khoảng trắng đầu cuối phải còn nội dung.
+    MenuDiscontinuation:
+      type: object
+      required: [menu_item_id, discontinued_at]
+      additionalProperties: false
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
+        discontinued_at:
           $ref: '#/components/schemas/Instant'
 # Tên từ chối → mã (ADR-082 điểm 5). Mọi tên ở db/migrations/ một dòng: một mã của ErrorCode,
 # internal (không bao giờ là luật người dùng chạm tới) hoặc unreviewed (chưa lát nào xét — chạy như
@@ -229,31 +794,31 @@ x-constraint-errors:
   holiday_bonus_pkey: internal
   holiday_bonus_positive_amount_check: unreviewed
   holiday_bonus_worker_person_fkey: unreviewed
-  menu_component_base_price_non_negative_check: unreviewed
-  menu_component_name_key: unreviewed
-  menu_component_name_not_blank_check: unreviewed
+  menu_component_base_price_non_negative_check: internal
+  menu_component_name_key: internal
+  menu_component_name_not_blank_check: internal
   menu_component_pkey: internal
   menu_component_station_menu_component_fkey: unreviewed
   menu_component_station_once_key: unreviewed
   menu_component_station_pkey: internal
   menu_component_station_station_code_check: unreviewed
-  menu_item_component_menu_component_fkey: unreviewed
-  menu_item_component_menu_item_fkey: unreviewed
-  menu_item_component_once_key: unreviewed
+  menu_item_component_menu_component_fkey: internal
+  menu_item_component_menu_item_fkey: internal
+  menu_item_component_once_key: internal
   menu_item_component_pkey: internal
-  menu_item_component_quantity_positive_check: unreviewed
-  menu_item_name_key: unreviewed
-  menu_item_name_not_blank_check: unreviewed
+  menu_item_component_quantity_positive_check: internal
+  menu_item_name_key: internal
+  menu_item_name_not_blank_check: internal
   menu_item_option_group_menu_item_fkey: unreviewed
   menu_item_option_group_once_key: unreviewed
   menu_item_option_group_option_group_fkey: unreviewed
   menu_item_option_group_pkey: internal
   menu_item_pkey: internal
-  menu_option_name_in_group_key: unreviewed
-  menu_option_name_not_blank_check: unreviewed
-  menu_option_option_group_fkey: unreviewed
+  menu_option_name_in_group_key: internal
+  menu_option_name_not_blank_check: internal
+  menu_option_option_group_fkey: internal
   menu_option_pkey: internal
-  menu_option_surcharge_non_negative_check: unreviewed
+  menu_option_surcharge_non_negative_check: internal
   opening_float_line_amount_check: unreviewed
   opening_float_line_one_per_denomination_key: unreviewed
   opening_float_line_opening_float_fkey: unreviewed
@@ -278,35 +843,35 @@ x-constraint-errors:
   order_intake_pause_one_at_a_time_excl: unreviewed
   order_intake_pause_pkey: internal
   order_intake_pause_started_by_person_fkey: unreviewed
-  order_line_component_base_price_non_negative_check: unreviewed
-  order_line_component_count_positive_check: unreviewed
-  order_line_component_id_line_quantity_key: unreviewed
-  order_line_component_line_fkey: unreviewed
-  order_line_component_menu_component_fkey: unreviewed
-  order_line_component_name_not_blank_check: unreviewed
-  order_line_component_once_key: unreviewed
+  order_line_component_base_price_non_negative_check: internal
+  order_line_component_count_positive_check: internal
+  order_line_component_id_line_quantity_key: internal
+  order_line_component_line_fkey: internal
+  order_line_component_menu_component_fkey: internal
+  order_line_component_name_not_blank_check: internal
+  order_line_component_once_key: internal
   order_line_component_pkey: internal
-  order_line_component_position_in_range_check: unreviewed
-  order_line_component_position_key: unreviewed
-  order_line_component_previous_position_fkey: unreviewed
-  order_line_component_quantity_positive_check: unreviewed
-  order_line_id_component_count_key: unreviewed
-  order_line_id_order_quantity_key: unreviewed
-  order_line_item_name_not_blank_check: unreviewed
-  order_line_last_component_fkey: unreviewed
-  order_line_line_total_non_negative_check: unreviewed
-  order_line_menu_item_fkey: unreviewed
-  order_line_option_group_name_not_blank_check: unreviewed
-  order_line_option_menu_option_fkey: unreviewed
-  order_line_option_name_not_blank_check: unreviewed
-  order_line_option_once_key: unreviewed
-  order_line_option_order_line_fkey: unreviewed
+  order_line_component_position_in_range_check: internal
+  order_line_component_position_key: internal
+  order_line_component_previous_position_fkey: internal
+  order_line_component_quantity_positive_check: internal
+  order_line_id_component_count_key: internal
+  order_line_id_order_quantity_key: internal
+  order_line_item_name_not_blank_check: internal
+  order_line_last_component_fkey: internal
+  order_line_line_total_non_negative_check: internal
+  order_line_menu_item_fkey: internal
+  order_line_option_group_name_not_blank_check: internal
+  order_line_option_menu_option_fkey: internal
+  order_line_option_name_not_blank_check: internal
+  order_line_option_once_key: internal
+  order_line_option_order_line_fkey: internal
   order_line_option_pkey: internal
-  order_line_option_surcharge_non_negative_check: unreviewed
+  order_line_option_surcharge_non_negative_check: internal
   order_line_pkey: internal
-  order_line_quantity_positive_check: unreviewed
-  order_line_sales_order_fkey: unreviewed
-  order_line_unit_price_non_negative_check: unreviewed
+  order_line_quantity_positive_check: internal
+  order_line_sales_order_fkey: internal
+  order_line_unit_price_non_negative_check: internal
   paper_ledger_entry_count_positive_check: unreviewed
   paper_ledger_id_day_count_key: unreviewed
   paper_ledger_one_per_day_key: unreviewed

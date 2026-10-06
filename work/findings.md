@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 58 finding — 55 Fixed/Resolved/Closed, 3 Open (đếm lại ngày 2026-10-06, lúc đóng F-058 ở P3-04; trước đó 2026-10-05, *58 — 54/4*, lúc ghi F-058 ở P3-01; trước đó cùng ngày, *57 — 54/3*, lúc đóng F-047 ở T-137; trước đó cùng ngày, *57 — 53/4*, lúc đóng F-056 · F-057 ở T-134; trước đó cùng ngày, *57 — 51/6*, lúc ghi F-056 · F-057 ở lượt review T-133; trước đó cùng ngày, *55 — 51/4*, lúc đóng F-048 ở T-133; trước đó 2026-10-01, *55 — 50/5*, lúc đóng F-050 ở T-132; trước đó cùng ngày, *55 — 49/6*, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 59 finding — 55 Fixed/Resolved/Closed, 4 Open (đếm lại ngày 2026-10-06, lúc ghi F-059 ở P3-06; trước đó cùng ngày, *58 — 55/3*, lúc đóng F-058 ở P3-04; trước đó 2026-10-05, *58 — 54/4*, lúc ghi F-058 ở P3-01; trước đó cùng ngày, *57 — 54/3*, lúc đóng F-047 ở T-137; trước đó cùng ngày, *57 — 53/4*, lúc đóng F-056 · F-057 ở T-134; trước đó cùng ngày, *57 — 51/6*, lúc ghi F-056 · F-057 ở lượt review T-133; trước đó cùng ngày, *55 — 51/4*, lúc đóng F-048 ở T-133; trước đó 2026-10-01, *55 — 50/5*, lúc đóng F-050 ở T-132; trước đó cùng ngày, *55 — 49/6*, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -120,6 +120,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-056 | Số đếm cuối ngày của một ngày ĐÃ đóng dấu đối soát vẫn đổi được bằng một xấp mệnh giá thêm sau, không vết — dấu không giữ con số nó ký (review T-133) | Fixed |
 | F-057 | Một ngày đóng dấu đối soát được khi số đếm hay tiền đầu két không có dòng mệnh giá nào — *chưa đếm* và *đếm ra 0* cùng một hình (review T-133) | Fixed |
 | F-058 | Bốn lời từ chối do trigger phát ra (khoá ngày đã đối soát, ADR-080) chỉ mang mã lỗi chung và một câu tiếng Việt, không mang tên theo `QC-10` — backend pha 3 không nhận ra luật nào vừa chặn (P3-01) | Fixed |
+| F-059 | Mặc định *Thịt · Thường* (`shop-facts.md` §4.6 luật 8) chưa có chỗ cất trong dữ liệu, nên cửa tạo lượt gọi từ chối dòng thiếu lựa chọn thay vì điền — pha 4 cần nó trước màn gọi món (P3-06) | Open |
 
 ---
 
@@ -4590,3 +4591,31 @@ bằng đúng bảng nó giữ, `QC-10`) mang tên qua `USING CONSTRAINT`, cùng
 
 **Status:**
 Fixed
+
+### F-059 — Mặc định *Thịt · Thường* của `shop-facts.md` §4.6 luật 8 chưa có chỗ cất, nên cửa tạo lượt gọi không áp được nó mà không chép tên lựa chọn vào code
+
+**Problem:**
+Đo 2026-10-06 (`P3-06`, Claude Code): lược đồ menu không có cột nào nói lựa chọn nào là **mặc định**
+của một nhóm (`db/migrations/20260927140000_menu_gia.up.sql`; `03-luoc-do-menu-gia.md` §5 hàng *Số lựa
+chọn mỗi nhóm … và mặc định* — *"chưa cất; cửa ở pha 3 giữ"*). Cửa ở pha 3 chỉ giữ được luật ấy bằng
+cách viết chữ *Thịt* và *Thường* vào code — bản thứ hai của một sự thật mà owner là `shop-facts.md`
+(**F-001**), gãy im lặng khi chủ quán đổi tên lựa chọn. Vì vậy cửa của `P3-06` **từ chối** một dòng
+thiếu lựa chọn (`option_combination_invalid`, **ADR-086** điểm 3) thay vì tự điền.
+
+**Impact:**
+Luật 8 hôm nay không có chỗ nào trong máy giữ. Khách bấm gọi mà không chạm nhóm nhân sẽ nhận lời từ
+chối, trừ khi màn gọi món tự chọn sẵn — mà màn ấy cũng không đọc được *chọn sẵn cái nào* từ backend.
+Nếu pha 4 tự viết *Thịt · Thường* vào FE thì đó là bản thứ ba.
+
+**Decision / Fix:**
+Một migration **mới đi tới** cất mặc định thành dữ liệu (ví dụ một dấu trên `menu_option`, mỗi nhóm
+nhiều nhất một), dữ liệu mồi đọc nó từ `shop-facts.md` §4.6 luật 8 lúc chạy (`db/seed/seed.pl`), và
+`GET /menu` trả nó để màn gọi món chọn sẵn. Cửa vẫn **không** tự điền (**I-010** — không thêm tuỳ chọn
+cho yêu cầu); chọn sẵn là việc của màn hình, khách thấy và đổi được. Làm **trước** khi pha 4 dựng màn
+gọi món; hình của dấu chọn ở lượt ấy, có ADR nếu có hơn một cách.
+
+**Related task:**
+P3-06 (phát hiện) · **ADR-086** · `03-luoc-do-menu-gia.md` §5
+
+**Status:**
+Open

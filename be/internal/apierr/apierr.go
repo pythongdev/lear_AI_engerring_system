@@ -25,18 +25,32 @@ const (
 	CodeQRCodeNotCurrent    Code = "qr_code_not_current"
 	CodeDiningTableNotFound Code = "dining_table_not_found"
 	CodeQRCodeIssueConflict Code = "qr_code_issue_conflict"
+
+	// Menu và giá (P3-06, I-009 · I-010).
+	CodeMenuItemNotFound          Code = "menu_item_not_found"
+	CodeMenuOptionNotFound        Code = "menu_option_not_found"
+	CodeMenuComponentNotFound     Code = "menu_component_not_found"
+	CodeMenuItemComponentNotFound Code = "menu_item_component_not_found"
+	CodeMenuItemDiscontinued      Code = "menu_item_discontinued"
+	CodeOptionCombinationInvalid  Code = "option_combination_invalid"
 )
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
-	CodeInternalError:       500,
-	CodeInvalidRequest:      400,
-	CodeUnauthenticated:     401,
-	CodeNotOnCounterDuty:    403,
-	CodeOwnerOnly:           403,
-	CodeQRCodeNotCurrent:    404,
-	CodeDiningTableNotFound: 404,
-	CodeQRCodeIssueConflict: 409,
+	CodeInternalError:             500,
+	CodeInvalidRequest:            400,
+	CodeUnauthenticated:           401,
+	CodeNotOnCounterDuty:          403,
+	CodeOwnerOnly:                 403,
+	CodeQRCodeNotCurrent:          404,
+	CodeDiningTableNotFound:       404,
+	CodeQRCodeIssueConflict:       409,
+	CodeMenuItemNotFound:          404,
+	CodeMenuOptionNotFound:        404,
+	CodeMenuComponentNotFound:     404,
+	CodeMenuItemComponentNotFound: 404,
+	CodeMenuItemDiscontinued:      409,
+	CodeOptionCombinationInvalid:  422,
 }
 
 // constraintCodes giữ đúng các dòng của x-constraint-errors mang mã công khai. Tên vắng mặt ở đây —

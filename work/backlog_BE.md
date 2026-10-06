@@ -554,11 +554,94 @@ lược đồ + dữ liệu mồi khớp §4.8 từng đồng; pha 3 phải ch�
 **Bẫy:** đừng gõ lại con số của §4.8 vào test. Đừng để FE nhận một công thức — nó nhận **kết quả**.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi* (nhận 2026-10-06, Claude Code; chủ repo giao *"hãy đọc kĩ và làm yêu codex làm bạn kiểm
+  tra"* — Claude thiết kế và viết test đỏ; Codex thi công ở worktree `../lean_wt/P3-06`, nhánh
+  `codex/P3-06`, model chỉ định trên dòng lệnh `-m gpt-6-astra` vì model trong `~/.codex/config.toml`
+  vẫn bị từ chối; Claude duyệt và tích hợp): `be/internal/gia/` · `be/internal/don/` · `be/internal/menu/`
+  (mới) · `be/internal/apierr/` · `db/seed/seed.pl` (chế độ `--price-cases-tsv`) ·
+  `docs/product/3-be/` (`openapi.yaml`, `02-vai-va-quyen.md` §3 · §4, mới `03-ham-gia.md`,
+  `01-hop-dong-api.md` §10) · `docs/product/00-index.md` · `docs/product/2-db/03-luoc-do-menu-gia.md`
+  (con trỏ §5 · §6) — `docs/decisions.md` (ADR-086) · `CLAUDE.md` §2 · `work/`. **Không** migration, không
+  đường gọi HTTP cho cửa tạo lượt gọi, không `be/cmd/`.
+- *Vế tầng 2 · tầng 3 lát chạm* (đọc cột giữa của `docs/product/1-system-design/03-bao-ve-invariant.md`,
+  2026-10-06): `I-013` dòng 101 — tầng 3, **một chỗ** tính giá, giá từ phía khách bị bỏ; `I-009` dòng 298 —
+  tầng 3 vế *mốc khoá là từng lượt gọi* và vế *ngừng bán ⇒ không đặt mới được* (cửa tạo lượt gọi), tầng 1
+  vế lưu bản sao đã có từ `P2-05`; `I-010` dòng 299 — tầng 3, cùng cửa, từ chối **toàn bộ**, không sửa hộ;
+  `I-011` dòng 300 — tầng 4 (máy không chặn), cái máy giữ là **vết** người · lúc · cái gì. Không vế tầng 2
+  nào của bốn hàng thuộc lát này (vế tầng 2 của `I-009` là vết khi **sửa một dòng**, `U-026` — `P3-11`).
+- *Câu cho chủ quán:* không mở câu mới. Mặc định *Thịt · Thường* (`shop-facts.md` §4.6 luật 8) **có** lời
+  của chủ quán nhưng **không có chỗ cất** ⇒ **F-059**, không phải `U-XXX`.
+- *Thiết kế* (Claude, 2026-10-06; lý do và phương án bị loại: **ADR-086**): một hàm `gia.Tinh` đọc menu
+  trong giao dịch của người gọi; ba đường gọi nó — `POST /price-quotes` (tính thử), `GET /menu` (giá của
+  mọi tổ hợp hợp lệ) và cửa `don/tao_luot_goi` (lớp `quay`, lối vào đặt hộ tại quầy vào phiên đã có,
+  **chưa** đường gọi HTTP; `P3-07` · `P3-08` thêm phần kênh vào chính cửa ấy). Bốn cửa lớp `chu_quan`:
+  `menu/doi_gia_thanh_phan` · `menu/doi_phu_thu` · `menu/sua_thanh_phan` · `menu/ngung_ban`, mỗi cửa bắt
+  buộc `reason` và khai nó cho trigger vết. Sáu mã mới: `menu_item_not_found` · `menu_option_not_found` ·
+  `menu_component_not_found` · `menu_item_component_not_found` 404 · `menu_item_discontinued` 409 ·
+  `option_combination_invalid` 422. Ca §4.8 đọc lúc chạy qua `perl db/seed/seed.pl --price-cases-tsv`
+  (Claude thêm, cùng bộ đọc với `--price-cases` của `P2-10`; bản SQL cũ không đổi một byte — `md5`
+  trước/sau bằng nhau).
+- *Nghiệm thu* (viết trước khi sửa): (1) Test đỏ do Claude viết trước — `be/internal/gia/gia_test.go` ·
+  `be/internal/menu/menu_test.go` · `be/internal/don/don_test.go` — xanh qua `./scripts/be-check.sh` **mà
+  không sửa điều kiện kiểm nào**: mười ba ca §4.8 khớp từng đồng qua tính thử **và** qua cửa ghi đơn, hai
+  đường ra cùng đơn giá; ca 11 bị từ chối ở cả hai, bốn bảng đơn không đổi; menu kể giá mọi tổ hợp hợp lệ,
+  không kể tổ hợp cấm, không hiện nhóm nhân cho món không nhận nhân; giá gửi lên (0đ · gấp mười) bị bỏ;
+  năm hình tổ hợp sai và *một dòng đúng + một dòng cấm* bị từ chối nguyên yêu cầu, không tự điền mặc định;
+  món ngừng bán bị từ chối ở tính thử và cửa ghi, biến khỏi menu; người không đứng quầy · không người ⇒
+  `not_on_counter_duty` · `unauthenticated`, không ghi; đơn của quầy là `staff_pos` · `new`; sửa giá thành
+  phần · phụ thu · thành phần suất rồi ngừng bán ⇒ đơn cũ đứng nguyên từng chữ (giá · tên · ảnh chụp ·
+  mốc khoá), lượt gọi mới cùng phiên ăn giá mới bằng đúng con số tính thử; bốn cửa menu: nhân viên ⇒
+  `owner_only`, không người ⇒ `unauthenticated`, thiếu · trắng lý do ⇒ `invalid_request` field `reason`,
+  mỗi lần sửa đúng một `record_revision` mang chủ quán · lý do · giá trị mới; giá trị sai hình ⇒
+  `invalid_request` kèm field; không tồn tại ⇒ bốn mã 404; ngừng bán lần hai ⇒ `menu_item_discontinued`,
+  mốc cũ giữ; không đường gọi nào nhận giá suất. (2) `openapi.yaml` có sáu đường gọi mới (tính thử, menu, bốn cửa sửa menu — tám tất cả), sáu mã kèm status,
+  `info.version` 0.3.0; dòng `x-constraint-errors` của bảng menu và bảng dòng đơn đã xét (`internal`, lý
+  do ở **ADR-086** điểm 5), `sales_order_*` giữ `unreviewed`. (3) Ma trận có năm dòng mới; Gate 1g `PASS`
+  với sáu cửa ở ba phía. (4) Gate 1f: bốn ô *thêm* của đơn chỉ thuộc `don/tao_luot_goi`, bốn ô sửa của
+  menu mỗi ô một cửa `menu/…`. (5) `grep` một đường tính giá: phép cộng giá chỉ ở `be/internal/gia/`.
+  (6) `./scripts/gate.sh` xanh ở worktree **và** ở clone chính sau tích hợp.
+- *Kiểm chứng:* `./scripts/be-check.sh` (Claude tự chạy lại, ít nhất hai lần) ·
+  `./scripts/check-api-contract.sh --list` · `./scripts/check-write-paths.sh --list` · lệnh `grep` của (5)
+  · `./scripts/gate.sh`; Claude đọc diff theo từng dòng nghiệm thu, đối chiếu bảng red flag Gate 4.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-06): thiết kế, test đỏ, duyệt và tích hợp — **Claude Code**; thi công — **Codex**
+(`codex exec -m gpt-6-astra`, worktree `../lean_wt/P3-06`, nhánh `codex/P3-06` từ `c1bb8d9`, một vòng). Thiết kế và
+lý do: **ADR-086**; cách đọc hàm và chỗ trống: `docs/product/3-be/03-ham-gia.md`.
+- *File đổi:* mới — `be/internal/gia/` (`gia.go`, `http.go`, `gia_test.go`) · `be/internal/don/` (`don.go`,
+  `don_test.go`, bốn file `sql/tao_luot_goi/`) · `be/internal/menu/` (`menu.go`, `menu_test.go`, bốn thư mục cửa
+  dưới `sql/`) · `docs/product/3-be/03-ham-gia.md`; sửa — `be/internal/apierr/apierr.go` · `db/seed/seed.pl`
+  (`--price-cases-tsv`) · `docs/product/3-be/openapi.yaml` (0.2.0 → 0.3.0) · `02-vai-va-quyen.md` (§3 năm dòng,
+  §4) · `01-hop-dong-api.md` §10 · `docs/product/00-index.md` (dòng `03-ham-gia.md`, và dòng `02-vai-va-quyen.md`
+  mà `P3-05` quên) · `docs/product/2-db/03-luoc-do-menu-gia.md` (§5 · §6 con trỏ) · `docs/decisions.md` (ADR-086) ·
+  `work/findings.md` (F-059) · `CLAUDE.md` §2 · `work/backlog.md` · entry này.
+- *Duyệt — ba lỗi, cả ba ở phần của Claude, Codex bắt hai:* (a) dữ liệu giả của test `I-009` làm ba lần sửa menu
+  triệt tiêu nhau (trước và sau đều 21000) nên điều kiện *giá mới khác giá cũ* không bao giờ đạt — Codex **dừng
+  đúng luật**, không sửa test, kèm `shasum` chứng minh ba file test nguyên; Claude đổi **dữ liệu** (giá bánh mới
+  4000 → 5000), giữ điều kiện; (b) bốn dòng `gia_test.go` chưa qua `gofmt` — Codex báo, Claude chạy `gofmt`;
+  (c) mười hàm test đặt tên không theo `QC-17` — gate đầy đủ bắt, Claude đổi **tên** sang mã mệnh đề
+  (`TestI009_` · `TestI010_` · `TestI012_` · `TestI013_` · `TestI018_`), không đổi điều kiện. Codex cũng chỉ ra phiếu
+  đếm nhầm *bảy đường gọi* — đúng là sáu đường mới, tám tất cả; đã sửa chữ ở đây và §10 của hợp đồng.
+  Claude đọc diff thật của `gia.go` · `http.go` · `don.go` · `menu.go` và mười file SQL: một câu đọc lấy món,
+  thành phần, lựa chọn trong cùng giao dịch; `GET /menu` liệt kê tổ hợp rồi hỏi chính `Tinh` (không bản luật
+  thứ hai); cửa ghi gọi `Tinh` trước câu ghi đầu, chỉ chép kết quả; bốn cửa menu kiểm hình → `authz.Run` →
+  `FOR UPDATE` → khai lý do → ghi; phép cộng có chặn tràn `int64`. Không red flag Gate 4.
+- *Bằng chứng theo nghiệm thu:* (1) `be-check: PASS` hai lần liền ở worktree và lần thứ ba trong gate; mười ba
+  ca §4.8 in từng dòng, ví dụ `ca 6 Suất trứng tái ×1 [[Nhân Thịt + mộc nhĩ] [Lượng nhân Thường]] ⇒ đơn giá
+  25000 …(§4.8 đòi 25000)`; **lỗi cài**: bỏ vế *nhóm có mặt phải đúng một lựa chọn* trong `gia.go` ⇒
+  `--- FAIL: TestI010_TuChoiToanBoLuotGoi` · `--- FAIL: TestI010_TuChoiKhongSuaHo`, gỡ ra thì xanh. (2) `hợp
+  đồng 0.3.0; 8 đường gọi ở hợp đồng, 8 ở code; 14 mã lỗi; 290 tên … (85 internal, 202 unreviewed, 3 dòng mang
+  mã công khai)`; dòng `sales_order_*`, `option_group_*`, `menu_item_option_group_*`, `menu_component_station_*`
+  giữ `unreviewed` (chỉ khoá chính là `internal`, như trước). (3) `6 cửa, 6 dòng ma trận, 6 khai báo
+  authz.Door`. (4) `check-write-paths --list`: `sales_order` · `order_line` · `order_line_component` ·
+  `order_line_option` *thêm* → `don/tao_luot_goi`; `menu_component.base_price_vnd` → `menu/doi_gia_thanh_phan`,
+  `menu_option.surcharge_vnd` → `menu/doi_phu_thu`, `menu_item_component.quantity` → `menu/sua_thanh_phan`,
+  `menu_item.discontinued_at` → `menu/ngung_ban` — `PASS — 8 ô ghi, 6 cửa`. (5) `grep -rnE
+  'base_price_vnd|surcharge_vnd' be/internal --include='*.go' --include='*.sql' | grep -v _test.go` ⇒ phép cộng
+  chỉ ở `be/internal/gia/gia.go`; `don/sql/` chỉ chép vào cột ảnh chụp, `menu/` chỉ `SET` của cửa sửa. (6)
+  `./scripts/gate.sh` ⇒ `PASS gate không cổng nào đỏ` ở worktree **và** ở clone chính sau `git apply`.
+- *Còn lại:* mặc định *Thịt · Thường* — **F-059**; đường gọi HTTP của cửa tạo lượt gọi, khách QR, mở phiên,
+  dấu lần gửi trùng — `P3-07`; bốn kênh ngoài bàn và giờ bán · tạm dừng — `P3-08` · `P3-12`; lời nhắc *đang
+  trong giờ bán* khi đổi thành phần — pha 4; danh sách đủ ở `docs/product/3-be/03-ham-gia.md` §4.
 
 [↑ đầu file](#top)
 
