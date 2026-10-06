@@ -194,11 +194,14 @@ It runs, in order — each script's header is the owner of how it works:
 5. `scripts/check-schema-names.sh` (Gate 1e) — every table name the
    `docs/product/2-db/` files name exists in `db/migrations/`, and the reverse
    (ADR-053 luật 2, ADR-065). Every turn; reads files only.
-6. `scripts/verify.sh` (Gate 1) — build, tests, `scripts/db-check.sh` when the
-   database side changed, every `scripts/*.test.sh`. Skipped for docs-only
-   turns.
-7. `scripts/check-commit-block.sh` (Gate 7/7b) — **Claude hook mode only**, once
-   1–6 are green: the turn must hand over the §6.1 block, and the block's
+6. `scripts/check-write-paths.sh` (Gate 1f) — every backend write sits in
+   exactly one write door under `be/`, one door per cell (ADR-082, ADR-083).
+   Every turn; reads files only.
+7. `scripts/verify.sh` (Gate 1) — build, tests, `scripts/db-check.sh` when the
+   database side changed, `scripts/be-check.sh` when `be/` or the database
+   changed, every `scripts/*.test.sh`. Skipped for docs-only turns.
+8. `scripts/check-commit-block.sh` (Gate 7/7b) — **Claude hook mode only**, once
+   1–7 are green: the turn must hand over the §6.1 block, and the block's
    file list must fit the scope of the task its subject names (ADR-006,
    ADR-063). Speaks at most once per tree state.
 
@@ -207,7 +210,7 @@ Gates 1b, 1c and 1d each take a deliberate exception in their own
 the gate red until removed. `work/` (and the folders each header names) is not
 checked by 1b or 1c — a dead path or broken sentence quoted there is evidence.
 
-Codex runs the gate directly: that runs steps 1–6, **not** Gate 7/7b, so Codex
+Codex runs the gate directly: that runs steps 1–7, **not** Gate 7/7b, so Codex
 checks the commit block against §6.1 by hand — file list, scope, and the real
 staged index. A green direct gate does not prove the block was checked.
 

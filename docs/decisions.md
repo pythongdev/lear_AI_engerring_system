@@ -99,6 +99,7 @@ có câu trả lời mới từ người.
 | ADR-080 | **Ngày đã đối soát xong thì số đếm và tiền đầu két đứng yên; dấu không đứng trên số rỗng**: trigger từ chối mọi `INSERT` · `UPDATE` · `DELETE` · `TRUNCATE` trên `cash_count` · `cash_count_line` · `opening_float` · `opening_float_line` của ngày có `reconciled_day`, **mọi vai, không vai nào miễn**; dấu bị từ chối khi số đếm hay tiền đầu két của ngày không có dòng mệnh giá nào; không đường sửa số đã ký (`U-074`), không đòi lệch 0 (`U-073`) | Đã chốt 2026-10-05 (hướng của F-056 · F-057: phiếu việc của chủ repo 2026-10-05; hình trigger: giao cho phiên, T-134) | — | T-134 · F-056 · F-057 · ADR-079 |
 | ADR-081 | **Thêm một dòng con vào bản ghi đã có để lại vết trên bản ghi cha**: trigger `AFTER INSERT` trên `order_line` · `menu_item_component` · `opening_float_line` — dòng tạo sau cha, giao dịch có khai lý do ⇒ một `record_revision` của **cha**, bản trước có các dòng con trước dòng ấy, bản sau thêm đúng dòng ấy; **chế độ mềm** như bước 8 (không lý do ⇒ không vết, câu đối chiếu thấy); ba câu `I-024/3` · `I-011/1` · `I-021/7` chỉ kêu lần thêm không có vết của chính dòng | Đã chốt 2026-10-05 (làm ngay ở tầng database: chủ repo; hình vết: phiên, T-137) | — | T-137 · F-047 · F-046 · ADR-080 |
 | ADR-082 | **Tầng 2 · tầng 3 dịch sang pha 3**: *ô ghi* = bảng × loại ghi, *cửa ghi* = lối vào có tên, mỗi ô đúng một cửa; tầng 2 chấm bằng cắt giao dịch qua cửa, tầng 3 bằng lệnh liệt kê đường ghi (dựng ở `P3-03`, chạy trong gate) và test từ chối qua cửa ⇒ database không đổi; cổng pha 3 đếm §1–§4 của `03-bao-ve-invariant.md`, admin §5 ngoài (ADR-068); lời từ chối của database tới người dùng qua tên `QC-10`, kể cả trigger (F-058), bảng ánh xạ thuộc hợp đồng của `P3-04` | Đã chốt 2026-10-05 (giao cho phiên, P3-01; Codex kiểm kê, Claude chốt) | — | P3-01 · ADR-050 · ADR-068 · F-058 |
+| ADR-083 | **Backend nói chuyện với database bằng pgx v5 và SQL viết tay, mọi câu ghi trong file `.sql` dưới thư mục của một cửa** — nên lệnh liệt kê đường ghi của ADR-082 chỉ đọc file (Gate 1f); Go 1.27.1, web bằng `net/http` chuẩn; một hàm mở giao dịch; test Go trên PostgreSQL thật qua `scripts/be-check.sh`, thiếu database thì đỏ; quy ước ở `QC-11`…`QC-17` | Đã chốt 2026-10-06 (giao cho phiên, P3-03; Codex thi công, Claude chốt) | — | P3-03 · ADR-082 · ADR-053 · F-045 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -5539,3 +5540,68 @@ một chữ ký hay một mã lỗi** (ranh giới sở hữu, **ADR-035**).
 
 **Applies to:** mọi bước `P3-02`…`P3-14`; kế hoạch pha 3 §7 (rút còn con trỏ về đây) và ô thứ nhất ·
 thứ ba của §9; `P3-03` (lệnh liệt kê, dấu truy test → `I-0xx`); `P3-04` (bảng ánh xạ, lệnh so); **F-058**.
+
+### ADR-083 — Backend nói chuyện với database bằng pgx v5 và SQL viết tay; mọi câu ghi nằm trong file `.sql` của một cửa, nên đường ghi liệt kê được bằng cách đọc file
+
+**Trạng thái:** Đã chốt 2026-10-06, **giao cho phiên** (task `P3-03`, bước 3/14 của pha 3; chủ repo giao
+*"hãy đọc kĩ và làm yêu cầu codex làm bạn kiểm tra"*). Claude chọn, Codex thi công theo
+`docs/prompt-guideline.md` §6.1. Quyết định này **không sở hữu quy ước** — chữ của từng quy ước là
+`docs/product/2-db/10-quy-uoc-code.md` `QC-11`…`QC-17`; ở đây chỉ giữ **vì sao** và **cái bị loại**.
+
+**Decision:**
+
+1. **Truy cập database: pgx v5, SQL viết tay, không ORM, không sinh code.** Mọi câu **ghi** (thêm, sửa)
+   là một file `.sql` dưới `be/internal/<gói>/sql/<cửa>/`; thư mục ấy **là** cửa ghi của **ADR-082**
+   điểm 1, và Go nạp câu bằng `embed`. Câu đọc được viết ở đâu cũng được.
+2. **Lệnh liệt kê đường ghi** (ADR-082 điểm 3) = `scripts/check-write-paths.sh`, Gate 1f, chạy **mọi
+   lượt** sau Gate 1e: đọc file `.sql` của các cửa ra ô ghi; đỏ khi một ô có hai cửa, một câu ghi nằm
+   ngoài mọi cửa (chuỗi Go không phải test, file `.sql` ngoài thư mục cửa), bảng đích không có trong
+   migration, cột sửa không đọc ra được, câu xoá · `TRUNCATE` · `MERGE` · `COPY`, hay ô thuộc migration
+   (bảng mà hàm trigger trong migration ghi, hoặc loại ghi đã thu hồi khỏi `shop_app`).
+3. **Một cách mở giao dịch:** một hàm ở `be/internal/db/`; gọi `Begin` ở chỗ khác là đỏ.
+4. **Kết nối:** chỉ `shop_app`; hàm kết nối đặt `TimeZone` từ cấu hình và **từ chối** khi thiếu múi
+   giờ, khi vai khác `shop_app`, hay khi là superuser (`QC-03` · `QC-06`).
+5. **Test:** thư viện chuẩn `testing`, trên PostgreSQL thật do `scripts/be-check.sh` dựng — mỗi lần một
+   compose project riêng (**F-045**), migration từ số 0. Không có database ⇒ test **đỏ**, không `Skip`.
+   Tên test mang mã mệnh đề (`TestI017_…`, `TestQC15_…`) — dấu truy về `I-0xx` của ADR-082 điểm 4.
+6. **Go 1.27.1** (bản ổn định mới nhất ngày chọn) ghim ở dòng `go` của `be/go.mod`; **web bằng
+   `net/http`** của thư viện chuẩn.
+
+**Why:**
+
+- **Lệnh liệt kê phải chạy được không cần database và không cần biên dịch**, như Gate 1e — để chạy cả
+  ở lượt chỉ đổi tài liệu. Câu ghi nằm trong file `.sql` có thư mục là cửa thì *ô → cửa* đọc thẳng
+  từ cây file; câu ghi rải trong chuỗi Go thì phải phân tích mã Go, và một ORM sinh câu lúc chạy thì
+  không đọc được bằng gì cả.
+- **Một hàm mở giao dịch** là trả lời cho rủi ro kế hoạch pha 3 §6 hàng `P3-03`: *bốn lát có bốn cách
+  mở giao dịch*. Ranh giới tầng 2 (ADR-082 điểm 2) chỉ chấm được khi nó trông giống nhau ở mọi cửa.
+- **Từ chối kết nối sai vai** biến `QC-03` từ quy ước thành điều backend tự kiểm: chạy nhầm bằng
+  `shop_owner` thì `QD-50` không còn giữ gì — và không ai biết.
+- **Test đỏ khi thiếu database**: một test tự `Skip` là một test không ai biết đã không chạy (**F-007**,
+  cùng lý lẽ `QC-07`); test trên database giả xanh vì không có ai để từ chối (`P3-03` *Bẫy*).
+- **`net/http`**: từ Go 1.22 bộ định tuyến chuẩn nhận phương thức và tham số đường dẫn; cửa ghi là hàm
+  Go thường, không cần framework — thêm một phụ thuộc là thêm một thứ phải ghim và theo dõi.
+
+**Rejected alternatives:**
+
+- *sqlc (sinh code Go từ SQL) — đề xuất của `master_plan/prompt-fullstack.md` §3.4.* Cũng giữ câu trong
+  file `.sql`, nên lệnh liệt kê dựng được y như vậy. Bác vì cái nó thêm — kiểm cột lúc sinh code — đã
+  có ở chỗ khác: ADR-082 bắt mọi cửa có test trên PostgreSQL thật, câu sai cột đỏ ở đó. Cái nó tốn là
+  một công cụ nữa phải ghim (cgo hay image Docker) và một cổng nữa để code sinh ra không lệch file
+  `.sql`. Đổi được về sau bằng một ADR mới mà không đổi luật *file `.sql` dưới thư mục cửa*.
+- *Gin (cùng §3.4).* Bác: xem *Why* thứ năm; §3.4 là bản xuất khẩu, đọc như đề xuất (**ADR-035** luật 3).
+- *ORM (GORM, ent).* Bác: câu ghi sinh lúc chạy ⇒ lệnh liệt kê không dựng được — ADR-082 điểm 3 nói thẳng
+  đó là lý do đổi lựa chọn.
+- *Dồn mọi đường ghi vào hàm database và chấm bằng quyền của `shop_app`* (phương án ADR-082 *Rejected*
+  thứ tư để ngỏ). Bác: đưa logic cửa — vai theo chỗ đứng, mốc, mã từ chối — vào PL/pgSQL, xa khung test
+  Go và xa hợp đồng của `P3-04`; thêm một lớp migration cho mỗi lần sửa cửa.
+- *Test dùng chung `scripts/db-check.sh`.* Bác: database của db-check sau bước 4 đã mang dữ liệu mồi và
+  scenario, test Go cần lược đồ rỗng; và một thay đổi chỉ ở `be/` không nên trả ~36 giây của db-check.
+- *Database giả trong bộ nhớ, hay mock pgx.* Bác: tầng 1 và tầng 2 không tồn tại ở đó.
+
+**Giới hạn có tên:** lệnh liệt kê không thấy một lần ghi đi qua **hàm database** gọi bằng `SELECT`, hay
+một câu ghi ghép từ mảnh chuỗi tách rời từ khoá. Hôm nay `shop_app` không có hàm nào như thế; lát nào
+thêm một hàm ghi vào migration thì hàm ấy là ô thuộc migration và lát ấy nói rõ ở *Nhận việc*.
+
+**Applies to:** `P3-04`…`P3-14`; `docs/product/2-db/10-quy-uoc-code.md` `QC-06` · `QC-09` · `QC-11`…`QC-17`;
+`scripts/verify.sh` · `scripts/gate.sh` · `CLAUDE.md` §5.

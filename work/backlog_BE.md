@@ -246,9 +246,36 @@ lát kia chạy trên bản giả — và bản giả không từ chối gì, n�
 để hai lần chạy test dùng chung một database kiểm cố định (**F-045**).
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi* (nhận 2026-10-06, Claude Code; thi công: Codex theo `docs/prompt-guideline.md` §6.1):
+  `be/` · `scripts/check-write-paths.sh` · `scripts/check-write-paths.test.sh` · `scripts/be-check.sh` ·
+  `scripts/verify.sh` · `scripts/gate.sh` · `scripts/gate.test.sh` · `docs/product/2-db/10-quy-uoc-code.md`
+  · `docs/decisions.md` · `CLAUDE.md` (§5, một dòng Gate 1f) · `work/backlog.md` · `work/backlog_BE.md`.
+  Không tạo `docs/product/3-be/` (sinh ở `P3-04`), không endpoint, không `be/cmd/`.
+- *Thiết kế* (Claude, 2026-10-06; lý do và phương án bị loại: **ADR-083**): Go **1.27.1** ghim ở dòng
+  `go` của `be/go.mod`; web bằng thư viện chuẩn `net/http`, không framework; database bằng **pgx v5**,
+  SQL viết tay, và **mọi câu ghi nằm trong file `.sql` dưới thư mục của một cửa**
+  `be/internal/<gói>/sql/<cửa>/` — vì thế lệnh liệt kê đường ghi chỉ đọc file (Gate 1f
+  `scripts/check-write-paths.sh`, khuôn Gate 1e); giao dịch mở bằng **một** hàm ở `be/internal/db/`;
+  kết nối từ chối mọi vai khác `shop_app` và từ chối khi thiếu múi giờ; test Go chạy trên PostgreSQL
+  thật qua `scripts/be-check.sh` (compose project riêng mỗi lần, **F-045**), thiếu database thì **đỏ**,
+  không bỏ qua; tên test mang mã mệnh đề. Bảy mục `QC-11`…`QC-17`.
+- *Nghiệm thu* (viết trước khi giao): (1) `10-quy-uoc-code.md` có `QC-11`…`QC-17`, mỗi mục bốn ô, và
+  `./scripts/db-check.sh` in `PASS` cho mọi khối của chúng; `QC-06` · `QC-09` không còn *chỗ trống có
+  tên* của pha 3. (2) `be/go.mod` ghim `go 1.27.1` và `github.com/jackc/pgx/v5`, có `be/go.sum`.
+  (3) `scripts/be-check.sh` dựng database riêng, chạy migration từ số 0, chạy `go test` trong `be/` và in
+  output test; không Docker ⇒ exit khác 0; hai lần chạy chồng nhau ⇒ cả hai đạt. (4) test khói
+  `TestQC15_*` chạy qua hàm kết nối của backend: vai là `shop_app`, không superuser; `SHOW TimeZone` qua
+  kết nối ấy **bằng** múi giờ `shop-facts.md` §1, trong khi kết nối không đặt múi giờ đọc ra UTC; một
+  lệnh xoá bị từ chối `42501`, in lời từ chối nguyên văn, số dòng không đổi; kết nối bằng `shop_owner`
+  hoặc thiếu múi giờ ⇒ hàm kết nối trả lỗi. (5) `cd be && go test ./...` không qua `be-check.sh` ⇒ **đỏ**
+  với lời chỉ sang `be-check.sh`, không `SKIP`. (6) `scripts/verify.sh` chạy gofmt · vet · build trong
+  `be/` và gọi `be-check.sh` khi `be/` · `db/` · `compose.yaml` · `scripts/be-check.sh` đổi.
+  (7) Gate 1f chạy mọi lượt sau Gate 1e; `scripts/check-write-paths.test.sh` (Claude viết trước, đỏ khi
+  chưa có script) xanh, trong đó ca **cài một đường ghi thứ hai** ⇒ đỏ và nêu cả hai cửa;
+  `scripts/gate.test.sh` xanh. (8) `CLAUDE.md` §5 có dòng Gate 1f. (9) `./scripts/gate.sh` xanh.
+- *Kiểm chứng:* Claude tự chạy trong worktree và ở clone chính: `./scripts/check-write-paths.test.sh` ·
+  `./scripts/be-check.sh` (một lần, rồi hai lần chồng nhau) · `cd be && go test ./...` (mong đỏ) ·
+  `./scripts/db-check.sh` · `./scripts/gate.sh`; đọc diff theo từng dòng nghiệm thu.
 
 **Bàn giao:** —
 
