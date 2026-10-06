@@ -17,10 +17,10 @@ bước cần thiết để thực hiện"**. Quyết định về hình dạng 
 > **Pha 3 là L3 ở cấp giai đoạn** — nó là chỗ đầu tiên code thật ghi tiền của quán. **Không bước
 > nào trong bảng §6 là L3**: mỗi bước là một L1/L2 làm xong trong một phiên (`CLAUDE.md` §3).
 >
-> **Pha 3 CHƯA MỞ (đo 2026-10-01).** Pha 2 đã xong cả mười bốn bước ngày 2026-09-30;
-> cổng đã tick **12/12**, bằng chứng ở `docs/product/2-db/11-cong-chat-luong-pha-2.md` §7.
-> **`P3-01` chỉ được nhận sau khi chủ repo ký chuyển pha; hôm nay chưa ký.** Đủ các ô
-> không thay chữ ký chuyển pha (§9 của kế hoạch pha 2). Đường lùi migration đã được giải
+> **Pha 3 ĐÃ MỞ 2026-10-05 — chủ repo ký chuyển pha** (T-136), nguyên văn *"đồng ý chuyển sang pha 3. xác nhận cách chia mười bốn bước pha 3"*. Pha 2 đã xong
+> cả mười bốn bước ngày 2026-09-30; cổng tick **12/12**, bằng chứng ở
+> `docs/product/2-db/11-cong-chat-luong-pha-2.md` §7. `P3-01` nhận được từ hôm ấy; các bước sau
+> theo cột *Cần xong trước* của §6. Thư mục `docs/product/3-be/` vẫn chưa có — nó ra đời ở `P3-04`. Đường lùi migration đã được giải
 > ở `P2-09`, **ADR-065**: mỗi bước migration một bước lùi có khoá chặn.
 
 ---
@@ -134,7 +134,7 @@ Bảng ca giá §4.8 là **bảng ca test** của hàm giá `P3-06`; test **đ�
 | **S-6** | đơn giao tận nơi, quầy bấm mốc *"đã ra bàn"* **lúc nào** | `P3-08` · `P3-10` | chủ quán |
 | **U-058** | giảm giá cả đơn: có trong bản đầu không · trần · có bắt ghi lý do không | `P3-09` | chủ quán |
 | **F-044** | một tập đối chiếu của `I-004` không bao giờ rỗng | `P3-10` (và `P2-11`) | pha 1/2 |
-| **F-047** | thêm dòng con vào bản ghi đã có chưa để lại vết ai thêm, lúc nào, từ gì sang gì | `P3-11` — đọc cùng F-046 khi dựng cửa sửa | Claude chọn cách gỡ theo finding |
+| ~~**F-047**~~ | **đóng 2026-10-05 (`T-137`, ADR-081)**: lần thêm dòng con có khai lý do để lại vết trên bản ghi cha (migration bước 17); ba câu `I-024/3` · `I-011/1` · `I-021/7` chỉ kêu lần thêm không vết | `P3-11` — cửa sửa đơn khai lý do khi thêm món; chế độ nghiêm cho cả lần thêm đi cùng F-046 | — |
 | **F-046** | vết cập nhật ở chế độ mềm | `P3-11` — gỡ cùng lượt dựng cửa cập nhật | `P3-11` |
 | ~~**F-048**~~ | **đóng 2026-10-05 (`T-133`, ADR-079)**: số đếm két `cash_count` · `cash_count_line` và dấu `reconciled_day` có chỗ cất, câu `I-021/1` · `I-012/2` · `I-014/5` chạy | `P3-09` — cửa đóng ngày ghi số đếm và dấu; còn chờ **U-073** (ngày lệch có đóng được không) và quyết con số chụp lúc đóng (`I-014` tập 6) | chủ quán qua `U-073` |
 | ~~**F-050**~~ — **đóng 2026-10-01 (T-132)** | vết của mỗi lần *quán đang mù* và mỗi lần *tạm dừng nhận đơn*: nay có dòng `YC-34` và chỗ cất (migration bước 14, **ADR-078**) | `P3-12` — cửa tạo lượt gọi đọc hai khoảng tại mốc tạo, ghi khoảng mù khi phát hiện và khép bằng nút mở lại | — |
@@ -204,9 +204,9 @@ test xanh trong worktree riêng, Claude tự chạy lại.
 
 | ID | Việc | Cần xong trước | Đầu ra kiểm chứng được | Hỏng thì mất gì | Mức |
 |---|---|---|---|---|:--:|
-| **P3-01** | Chốt **ranh giới và từ vựng pha 3**: tầng 2 · tầng 3 dịch sang code thành cái gì (*một cửa ghi* nghĩa là gì, chấm bằng gì), lời từ chối của database dịch thành lỗi thế nào, và cái pha 3 **không** viết — một ADR, không một dòng code | pha 2 đã xong 2026-09-30, cổng 12/12 ở `11-cong-chat-luong-pha-2.md` §7; chỉ nhận sau khi chủ repo ký chuyển pha (đo 2026-10-01: chưa ký) | Một ADR mới; mọi bước sau trích được từ nó câu trả lời cho *"vế tầng 3 này phải thành cái gì, và biên nhận là gì"*; `docs/product/3-be/` và `be/` **chưa** tồn tại sau lượt này | Mười ba bước sau mỗi bước tự hiểu chữ *"cửa"*, và tám lát chạy song song gặp nhau ở cổng với tám cách hiểu | L2 |
+| **P3-01** | Chốt **ranh giới và từ vựng pha 3**: tầng 2 · tầng 3 dịch sang code thành cái gì (*một cửa ghi* nghĩa là gì, chấm bằng gì), lời từ chối của database dịch thành lỗi thế nào, và cái pha 3 **không** viết — một ADR, không một dòng code | pha 2 đã xong 2026-09-30, cổng 12/12 ở `11-cong-chat-luong-pha-2.md` §7; chủ repo ký chuyển pha 2026-10-05 (T-136) | Một ADR mới; mọi bước sau trích được từ nó câu trả lời cho *"vế tầng 3 này phải thành cái gì, và biên nhận là gì"*; `docs/product/3-be/` và `be/` **chưa** tồn tại sau lượt này | Mười ba bước sau mỗi bước tự hiểu chữ *"cửa"*, và tám lát chạy song song gặp nhau ở cổng với tám cách hiểu | L2 |
 | **P3-02** | **Gate 1d học vùng pha 3**: `scripts/check-phase-boundary.sh` chấm thêm `docs/product/3-be/` — đỏ với **component · route màn hình · thẻ JSX kể cả thẻ có thuộc tính và thẻ đóng**, im với endpoint và SQL; bộ mẫu riêng dựng trên mẫu sau T-131, **F-049 Fixed (T-131)** | P3-01 | Ca hồi quy mới trong `scripts/check-phase-boundary.test.sh` theo khuôn T-131 (đỏ với component, route màn hình, các dạng thẻ; xanh với endpoint và SQL); hai hình tên trong backtick — PascalCase và đường dẫn mở đầu bằng dấu gạch chéo — vẫn để mắt người theo header; **cả bộ ca cũ vẫn xanh** | Pha 3 viết giao diện hộ pha 4 mà không cổng nào đỏ — lần thứ ba của `F-040` · `F-041` | L2 |
-| **P3-03** | **Quy ước code backend** (`QC-09` đã hẹn): thư viện web · cách truy cập database · khung test Go chạy trên **PostgreSQL thật** · cấu trúc `be/` · kết nối bằng `shop_app` và đặt múi giờ (`QC-06`) · `scripts/verify.sh` gọi `be/` — dựng `be/go.mod` với **một** test khói | P3-01 | Mỗi quy ước mới một mục `QC-XX` có **phép kiểm chạy được**; `./scripts/gate.sh` chạy `go test` trong `be/` (dán output); test khói kết nối database kiểm và đọc được múi giờ quán | Phiên đầu tiên của mỗi lát tự chọn thư viện, và bốn lát có bốn cách mở giao dịch | L2 |
+| **P3-03** | **Quy ước code backend** (`QC-09` đã hẹn): thư viện web · cách truy cập database · khung test Go chạy trên **PostgreSQL thật** · cấu trúc `be/` · kết nối bằng `shop_app` và đặt múi giờ (`QC-06`) · `scripts/verify.sh` gọi `be/` — dựng `be/go.mod` với **một** test khói | P3-01 | Mỗi quy ước mới một mục `QC-XX` có **phép kiểm chạy được**; `./scripts/gate.sh` chạy `go test` trong `be/` (dán output); test khói kết nối database kiểm và đọc được múi giờ quán; **lệnh liệt kê đường ghi** của **ADR-082** điểm 3 chạy trong gate, có ca hồi quy đỏ khi cài một đường ghi thứ hai | Phiên đầu tiên của mỗi lát tự chọn thư viện, và bốn lát có bốn cách mở giao dịch | L2 |
 | **P3-04** | **Khuôn hợp đồng API** — **mở `docs/product/3-be/`**: định dạng file hợp đồng máy đọc được · hình lỗi chung (tên ràng buộc `QC-10` → mã lỗi) · tiền và mốc trên dây theo `QD-XX` · dấu lần gửi (`I-024`) trên dây · **bên nào thắng khi hợp đồng và code lệch** (ADR) | P3-01 · P3-03 | `CLAUDE.md` §2 hàng *Hợp đồng API* có owner; `00-index.md` hàng *Pha 3* **đang mở**; một **lệnh** so hợp đồng với code chạy trong gate, có ca hồi quy đỏ khi lệch | Pha 4 sinh type từ một hợp đồng không ai kiểm, và FE tính lại thứ backend đã tính — đúng chỗ `I-013` cấm | L2 |
 | **P3-05** | **Danh tính · vai · quyền theo chỗ đứng tại thời điểm**: nhân viên đăng nhập · quyền gắn **chỗ đứng lúc bấm** (`architecture.md` §4, `YC-15`…`YC-17`) · khách QR vào bàn qua mã hiện hành (`I-023`) · chủ quán · *ai bấm* bắt buộc trên mọi thao tác chạm tiền (`I-012`) · đổi mã QR. **Cách đăng nhập là câu cho chủ quán** nếu chưa có lời — §3.6 chỉ là đề xuất | P3-04 | Ma trận vai × thao tác trong file mới; mỗi thao tác ghi có **đúng một** dòng; test: người không đứng quầy bấm việc của quầy ⇒ từ chối; mã QR cũ ⇒ từ chối; thao tác chạm tiền không có người ⇒ từ chối | Một thao tác tiền không truy được về người ⇒ ngưỡng lệch 0đ mất nghĩa | L2 |
 | **P3-06** | **Hàm tính giá duy nhất + menu của chủ quán**: một hàm, tính thử và ghi đơn gọi **cùng** hàm · giá khách gửi lên bị bỏ (`I-013`) · tổ hợp cấm bị từ chối (`I-010`) · ảnh chụp giá lúc đặt (`I-009`) · món ngừng bán bị cửa từ chối (`I-009` tầng 3, **ADR-056**) · đổi thành phần trong giờ bán không âm thầm (`I-011`) | P3-04 · P3-05 | Test đọc bảng §4.8 của `shop-facts.md` **lúc chạy** ⇒ mọi ca khớp từng đồng qua **cửa**, không qua hàm trần; `grep` chứng minh **một** đường tính giá; sửa menu sau khi đặt ⇒ đơn cũ không đổi | Tính thử một giá, ghi đơn một giá khác — khách thấy một con số, quầy thu con số khác | L2 |
@@ -214,7 +214,7 @@ test xanh trong worktree riêng, Claude tự chạy lại.
 | **P3-08** | **Luồng mang đi · giao · đặt trước**: bốn kênh ngoài bàn · liên hệ tối thiểu theo kênh (`I-022`) · đơn mang đi độc lập (`I-007`) · ngoài giờ bán, tạm dừng nhận đơn thì không đơn nào tạo được (`I-008`, `architecture.md` §6.2) · mốc giao (**S-6** để trống) | P3-05 · P3-06 | Test từ chối qua cửa cho `I-007` `I-008` `I-022` `I-024`; mỗi kênh một đơn đi hết vòng đời bằng dữ liệu thật; vế **S-6** bị cửa từ chối kèm mã, không đoán | Đơn giao không có số điện thoại, hoặc nhận đơn lúc quán đã tạm dừng | L2 |
 | **P3-09** | **Đường tiền**: thu chia phương thức (`I-015`) · nợ (`I-005`), thu nợ theo chuỗi trả dần đã dựng ở **T-126**: mỗi lần trả một dòng mang số còn thiếu, nối chuỗi (đọc **ADR-075** và `04-luoc-do-duong-tien.md`) · hoàn tiền · trả trước · tiền đầu két · giảm giá cả đơn (**U-058** để trống) · đối soát cuối ngày gọi bộ truy vấn của `P2-11` (`I-014`, `I-021`) · mọi thao tác có người (`I-012`) | P3-07 · P3-08 | Test từ chối qua cửa cho năm mã; một ngày bán giả đi hết qua cửa ⇒ lệnh đối soát ra **0đ lệch**; cài một lần thu sai ⇒ đối soát kêu; thao tác còn chờ `U-XXX` bị từ chối kèm mã | Két lệch mà không truy được về một thao tác — đúng thứ ngưỡng 0đ tồn tại để bắt | L2 |
 | **P3-10** | **Sản xuất theo mẻ**: duyệt đơn sinh việc trạm (`I-004`, canh ở tầng 2 — **ADR-056**) · một lần bấm một mẻ · **ghi đã phục vụ ở POS** (`architecture.md` §1.1; **S-5** để trống) · phần chia về bàn (`I-019`) · không phục vụ vượt số gọi (`I-020`) · đơn huỷ đổi chủ phần đã làm (**F-044**); cửa ghi chú bánh làm sai và cửa huỷ ghi chú theo lược đồ của **T-127** (**ADR-077**) | P3-07 | Test từ chối qua cửa cho `I-004` `I-019` `I-020`; ba trạm bếp **không có cửa ghi nào** (liệt kê cửa ⇒ trạm bếp chỉ đọc); đơn vị của lần bấm *đã bưng* vẫn **trống** tới khi có lời | Bánh cộng cho bàn này thiếu cho bàn kia, hoặc bếp phải bấm nút giữa lúc tay đang tráng bánh | L2 |
-| **P3-11** | **Vết sửa · nhập bù sổ giấy · trực quầy**: mọi cửa cập nhật khai lý do và người (`I-018`) — **gỡ F-046** bằng một migration mới cùng lượt; đọc **F-047** về vết khi thêm dòng con để Claude chọn cách gỡ · nhập bù lượt bán trên giấy mang hai mốc (`YC-08`) · mở · khép khoảng trực quầy (`YC-15`) | P3-05 · P3-09 | Mọi cửa cập nhật liệt kê được, mỗi cửa một test *sửa ⇒ có vết đủ bốn thứ*; chế độ vết **nghiêm** bật và `db-check` vẫn xanh; nhập bù ⇒ lượt ấy đọc riêng được hai mốc | Một lần ghi đè lượt gọi không dựng lại được ⇒ thu thiếu tiền mà không ai biết | L2 |
+| **P3-11** | **Vết sửa · nhập bù sổ giấy · trực quầy**: mọi cửa cập nhật khai lý do và người (`I-018`) — **gỡ F-046** bằng một migration mới cùng lượt, phủ cả trigger vết thêm dòng con của **ADR-081** (F-047 đã gỡ ở `T-137`) · nhập bù lượt bán trên giấy mang hai mốc (`YC-08`) · mở · khép khoảng trực quầy (`YC-15`) | P3-05 · P3-09 | Mọi cửa cập nhật liệt kê được, mỗi cửa một test *sửa ⇒ có vết đủ bốn thứ*; chế độ vết **nghiêm** bật và `db-check` vẫn xanh; nhập bù ⇒ lượt ấy đọc riêng được hai mốc | Một lần ghi đè lượt gọi không dựng lại được ⇒ thu thiếu tiền mà không ai biết | L2 |
 | **P3-12** | **Realtime + dự phòng**: đẩy việc xuống màn trạm · báo đơn mới · đường suy giảm của từng phụ thuộc (`01-ranh-gioi-he-thong.md` §3, `05-realtime-va-du-phong.md`) · mất kết nối thì không đơn nào tạo được (`I-008` vế mất kết nối) | P3-10 | Test cắt từng phụ thuộc ⇒ hệ thống đi đúng đường suy giảm đã viết (dán output mỗi phụ thuộc); màn đọc bắt lại được trạng thái sau khi mất kết nối mà không mất việc nào | Bếp không thấy đơn lúc mạng chập, và không ai biết cho tới khi khách hỏi | L2 |
 | **P3-13** | **Cổng chất lượng pha 3**: diễn ba scenario nghiệm thu (`08-scenario.md` §8) **qua API**, chấm mọi vế tầng 2 · tầng 3, và ký các ô §9 | P3-02 → P3-12 | Mỗi bước của ba scenario là một lần gọi thật với output; mọi vế tầng 3 có một test từ chối; chỗ không trả lời được ⇒ `F-XXX`/`U-XXX`, không tự thiết kế bù | Backend từng lát xanh mà không chạy nổi một buổi bán | L2 |
 | **P3-14** | **Rà ranh giới pha và pointer**: không component · route màn hình nào trong `docs/product/3-be/` · hợp đồng là **nguồn duy nhất** (không bản chép ở chỗ khác) · mọi pointer pha 1/2 → pha 3 còn đúng | P3-13 | Bộ lọc chạy trên **mọi** file pha 3, **in cả lệnh chưa lọc cạnh lệnh đã lọc** (**F-017**); `grep` pointer hai chiều | Pha 4 đọc giao diện do pha 3 viết hộ như đầu vào đã chốt | L1 |
@@ -230,22 +230,11 @@ phải *lát việc*.
 
 ---
 
-## 7. Tầng 2 · tầng 3 dịch sang pha 3 — owner sẽ là ADR của `P3-01`
+## 7. Tầng 2 · tầng 3 dịch sang pha 3 — owner là **ADR-082**
 
-Pha 2 có **ADR-050**: năm tầng dịch sang lược đồ, mỗi tầng *nợ gì · chấm bằng gì · cái gì không phải
-biên nhận*. Pha 3 cần đúng một bảng như thế cho **tầng 2** (giao dịch mở ở cửa) và **tầng 3** (một cửa
-ghi, liệt kê được). Bảng ấy **chưa viết** — nó là đầu ra của `P3-01`, và mục này cố ý không viết bản
-nháp: một bản nháp ở kế hoạch sẽ được mười ba bước sau đọc như bản đã chốt (lý lẽ *Rejected
-alternatives* thứ ba của **ADR-050**).
-
-Ba câu `P3-01` **phải** trả lời, để không bước nào tự trả lời:
-
-1. *"Một cửa ghi"* được **liệt kê** bằng gì — một lệnh đọc ra mọi đường ghi tới một bảng, và lệnh ấy
-   chạy trong gate hay chạy tay.
-2. Một vế tầng 3 được **chấm** bằng gì — test gọi qua cửa với trạng thái sai ⇒ từ chối **và** database
-   không đổi; cái gì **không** phải biên nhận (một test gọi thẳng hàm trong, bỏ qua quyền).
-3. Lời từ chối của database (tên ràng buộc `QC-10`) đi tới người dùng thế nào, và ai sở hữu bảng ánh
-   xạ ấy.
+Bảng *pha 3 nợ gì · chấm bằng gì · cái gì không phải biên nhận* cho **tầng 2** và **tầng 3**, nghĩa của
+*ô ghi* và *cửa ghi*, lệnh liệt kê đường ghi, phạm vi ô cổng thứ nhất, và đường đi của lời từ chối của
+database: `docs/decisions.md` **ADR-082** (chốt 2026-10-05, `P3-01`). Mục này cố ý không chép (**F-001**).
 
 ---
 
@@ -256,12 +245,13 @@ Ba câu `P3-01` **phải** trả lời, để không bước nào tự trả l�
 **Admin ngoài pha 3 đã có nguồn**, không còn là suy ra chờ xác nhận: **ADR-068** nói
 *"pha 3 · pha 4 của admin không mở"*; xem **Đ-2** ở `work/backlog.md`, vế 2026-09-29.
 
-**Chỗ kế hoạch này SUY RA, chờ chủ repo xác nhận** (`CLAUDE.md` §7.2): mười bốn bước,
-chẻ theo nhóm mệnh đề (giá · tại bàn · mang đi · tiền · sản xuất · vết), không theo nhóm endpoint.
-Đây là cách phiên viết hiểu yêu cầu lập kế hoạch, chưa phải lời xác nhận cách chia bước.
+**Cách chia mười bốn bước đã được chủ repo xác nhận 2026-10-05** (T-136, cùng câu ký chuyển pha:
+*"đồng ý chuyển sang pha 3. xác nhận cách chia mười bốn bước pha 3"*): chẻ theo nhóm mệnh đề (giá · tại bàn · mang đi · tiền · sản xuất · vết), không theo nhóm
+endpoint. Lời xác nhận nói **cách chia**; nó không chốt nội dung từng bước — mỗi bước vẫn viết
+*Nhận việc* lúc nhận.
 
 **Trạng thái đo 2026-10-01:** pha 2 xong 2026-09-30, cổng 12/12 ở
-`docs/product/2-db/11-cong-chat-luong-pha-2.md` §7; chủ repo chưa ký chuyển pha.
+`docs/product/2-db/11-cong-chat-luong-pha-2.md` §7; chủ repo ký chuyển pha 2026-10-05.
 `P3-09` đọc **ADR-075** và `04-luoc-do-duong-tien.md` để dựng cửa thu nợ theo chuỗi đã có
 ở **T-126**. Vế ghi bánh làm sai của `P3-10` dựng cửa trên lược đồ của **T-127** (**ADR-077**).
 
@@ -277,11 +267,11 @@ không dùng hai mã ấy làm lý do từ chối.
 > **Các ô dưới đây là LỜI của cổng; chỗ KÝ là file cổng do `P3-13` sinh ra.** Hộp `- [ ]` ở đây
 > **không được tick** (**F-001** · **F-033**). **Đếm ở danh sách, đừng đếm ở tiêu đề** (**F-018**).
 
-- [ ] **Mọi vế tầng 3 của `03-bao-ve-invariant.md` có một test từ chối qua cửa** → danh sách vế lấy
+- [ ] **Mọi vế tầng 3 của `03-bao-ve-invariant.md` §1–§4 có một test từ chối qua cửa** (§5 admin ngoài cổng — **ADR-082** điểm 4) → danh sách vế lấy
       bằng lệnh, danh sách test lấy bằng lệnh, `comm -3` ⇒ rỗng; mỗi test dán lời từ chối.
 - [ ] **Mọi vế tầng 2 có ranh giới giao dịch đã bị cắt thử** → cắt giữa chừng ⇒ không nửa nào sống,
       dán output.
-- [ ] **Mỗi ô ghi có đúng một cửa** → lệnh liệt kê đường ghi của `P3-01` ⇒ mỗi bảng một cửa.
+- [ ] **Mỗi ô ghi có đúng một cửa** → lệnh liệt kê đường ghi (**ADR-082** điểm 3, dựng ở `P3-03`) ⇒ mỗi ô (bảng × loại ghi) một cửa.
 - [ ] **Một hàm tính giá** → bảng ca §4.8 khớp từng đồng **qua cửa**; `grep` ra một đường tính giá.
 - [ ] **Hợp đồng khớp code** → lệnh của `P3-04` xanh, và đã được chứng minh biết đỏ.
 - [ ] **Mọi thao tác ghi có dòng trong ma trận vai × thao tác** → `comm -3` giữa cửa và ma trận ⇒ rỗng.

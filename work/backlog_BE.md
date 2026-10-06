@@ -28,7 +28,7 @@ Vì sao pha 3 có sổ riêng: `docs/decisions.md` **ADR-036** luật 1 (một d
 ## Luật của file này — bốn câu, chép luật của `work/backlog_DB.md`
 
 1. **Mô tả cả mười bốn bước viết trước; dòng trạng thái thì không.** Chỉ bước **nhận được ngay** mới
-   có dòng ở *Ready* (**F-012**). Đo 2026-10-01 **không bước nào** nhận được: `P3-01` chờ chủ repo ký chuyển pha.
+   có dòng ở *Ready* (**F-012**). Từ 2026-10-05 (chủ repo ký chuyển pha, T-136) `P3-01` nhận được; `P3-01` xong cùng ngày (**ADR-082**) ⇒ `P3-02` · `P3-03` nhận được; bước sau theo cột *Cần xong trước*.
 2. **Entry là hồ sơ thực thi duy nhất của bước** (**ADR-051**). *Nghiệm thu* và *Kiểm chứng* vào khối
    **Nhận việc** cuối entry, chỉ điền khi mọi bước ở *Cần xong trước* đã `Done` (T-051).
 3. **Bước xong thì entry ở lại đây** và nhận khối **Bàn giao**: kết quả, output gate, phần còn thiếu
@@ -61,11 +61,11 @@ và tự chạy lại `./scripts/gate.sh`. Scope khai ở `work/scope/P3-XX.txt`
 
 **Chỗ đang chặn** — bảng sống ở kế hoạch §4, đo 2026-10-01. Pha 2 đã xong cả mười bốn bước
 ngày 2026-09-30; cổng tick **12/12**, bằng chứng ở `docs/product/2-db/11-cong-chat-luong-pha-2.md` §7.
-`P3-01` chỉ được nhận sau khi **chủ repo ký chuyển pha; hôm nay chưa ký**. Đường lùi migration
+**Chủ repo ký chuyển pha 2026-10-05** (T-136); `P3-01` nhận được. Đường lùi migration
 đã giải ở `P2-09`, **ADR-065** (mỗi bước một bước lùi có khoá chặn).
 `P3-05` có câu về cách đăng nhập; `P3-08` · `P3-10` chờ **S-6** · **S-5**;
 `P3-09` chờ **U-058** và **U-073**, đọc **ADR-079** (T-133 — số đếm két và dấu đối soát xong đã có chỗ cất, **F-048** đã đóng); `P3-12` đọc **ADR-078** (T-132 — hai khoảng ngừng nhận đơn đã có chỗ cất, **F-050** đã đóng); vế ghi bánh làm sai của `P3-10` đọc **ADR-077** (T-127), đọc **F-044**;
-`P3-11` gỡ **F-046**, đọc cùng **F-047** về vết khi thêm dòng con.
+`P3-11` gỡ **F-046**; vết khi thêm dòng con đã có từ `T-137` (**F-047** đóng, **ADR-081**) — chế độ nghiêm phủ cả nó.
 **U-063 đã đóng**, lược đồ thu nợ trả dần đã dựng ở **T-126**, **ADR-075**.
 **U-064 đã đóng**; lược đồ có chỗ ghi bánh làm sai từ **T-127** (**ADR-077**).
 Một bước bị chặn vẫn làm phần không phụ thuộc; cửa của phần bị chặn **từ chối kèm mã**,
@@ -77,7 +77,7 @@ không lấp bằng mặc định.
 ### P3-01 — Pha 1 giao cho tầng 3 hàng chục vế "miền nghiệp vụ giữ", và chưa chỗ nào nói trong code chữ ấy nghĩa là gì
 
 **Phụ thuộc** (bản đọc nhanh — kế hoạch §6 thắng khi lệch) · bước 1/14 · **cần xong trước:** chủ repo ký chuyển pha
-(đo 2026-10-01: chưa ký; pha 2 xong 2026-09-30, cổng 12/12 ở `11-cong-chat-luong-pha-2.md` §7) · **chặn:** mọi bước sau
+(**đã ký 2026-10-05**, T-136; pha 2 xong 2026-09-30, cổng 12/12 ở `11-cong-chat-luong-pha-2.md` §7) · **chặn:** mọi bước sau
 
 **Goal:** một ADR mới là **thước** của pha 3, cùng vai **ADR-050** ở pha 2: tầng 2 và tầng 3 dịch sang
 code thành cái gì, chấm bằng gì, cái gì **không** phải biên nhận; lời từ chối của database đi tới người
@@ -106,11 +106,27 @@ kế hoạch §9 không có định nghĩa để ký.
 *Rejected alternatives* thứ ba). Đừng chọn thư viện ở đây — đó là `P3-03`.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi* (nhận 2026-10-05, Claude Code): `docs/decisions.md` · `master_plan/BE_master_plan_banh_cuon_ba_thanh.md`
+  · `work/backlog.md` · `work/backlog_BE.md` · `work/findings.md` (thêm giữa lượt, cho **F-058**). Không file nào dưới
+  `docs/product/3-be/` hay `be/`.
+- *Nghiệm thu* (viết trước khi viết ADR): (1) một ADR mới trả lời đủ ba câu của kế hoạch §7, mỗi câu có
+  một phép chấm, hoặc tên bước dựng phép chấm ấy; (2) ADR nói cái gì **không** phải biên nhận cho tầng 2 và
+  tầng 3; (3) ADR không có một dòng code mẫu, không tên thư viện, không tên endpoint · route · component,
+  không một dòng bảng mã lỗi; (4) phạm vi ô cổng thứ nhất (§9) với vế admin được nói rõ, có nguồn;
+  (5) kế hoạch §7 rút còn con trỏ sang ADR mới, ô §9 *mỗi ô ghi có đúng một cửa* trỏ cùng chỗ;
+  (6) `docs/product/3-be/` và `be/` không tồn tại; (7) `./scripts/gate.sh` xanh.
+- *Kiểm chứng:* đọc diff theo từng dòng nghiệm thu; `ls -d be docs/product/3-be`; `./scripts/gate.sh`.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-05): **ADR-082** đã chốt. Thực hiện: Codex soạn bản kiểm kê và bản nháp ở chế độ chỉ
+đọc (`codex exec -s read-only`, không sửa file); duyệt và chốt: Claude Code, đối chiếu lại nguồn trích. Claude
+sửa bản nháp ba chỗ: đơn vị *một cửa* là **ô ghi** (bảng × loại ghi), không phải bảng; ô cổng thứ nhất đếm §1–§4,
+admin §5 ngoài cổng theo **ADR-068**; lời từ chối do trigger cũng phải mang tên — bốn `RAISE EXCEPTION` hôm nay
+không có ⇒ **F-058** (Open, sửa trước `P3-09`, muộn nhất ở `P3-04`). File đổi: `docs/decisions.md` (ADR-082 + dòng
+bảng tổng hợp) · `master_plan/BE_master_plan_banh_cuon_ba_thanh.md` (§7 thành con trỏ; §9 ô một và ba; dòng
+`P3-03` ở §6) · `work/backlog_BE.md` (entry này; bước `P3-03`, `P3-04`, `P3-14` trỏ ADR-082) · `work/findings.md`
+(F-058) · `work/backlog.md`. Kiểm chứng: `ls -d be docs/product/3-be` ⇒ cả hai *No such file*; `./scripts/gate.sh`
+⇒ `PASS  gate     không cổng nào đỏ`. Còn mở: **F-058**; cách dựng lệnh liệt kê đường ghi là việc của `P3-03`.
+
 
 [↑ đầu file](#top)
 
@@ -133,7 +149,7 @@ gì"*. `F-040` · `F-041` là hai lần một pha viết hộ pha sau mà không
 
 **Cách hoàn thành:**
 1. Đọc header `scripts/check-phase-boundary.sh`, entry `P2-02` ở `work/backlog_DB.md` (cách lượt trước
-   thêm vùng), **F-017** · **F-040** · **F-041**, ADR của `P3-01`.
+   thêm vùng), **F-017** · **F-040** · **F-041**, ADR của `P3-01` (**ADR-082**).
 2. Khai scope; *In Progress*.
 3. Thêm vùng pha 3 với bộ mẫu riêng; ca hồi quy mới trong `scripts/check-phase-boundary.test.sh`: một
    file giả mang component, route màn hình và các dạng thẻ JSX ⇒ đỏ; file giả mang endpoint
@@ -183,7 +199,8 @@ lát kia chạy trên bản giả — và bản giả không từ chối gì, n�
 3. Chốt, mỗi thứ một mục `QC-XX` (**quy ước · hậu quả nếu làm khác · phép kiểm · nguồn**): thư viện web
    · cách truy cập database (sinh code từ SQL hay viết tay) · phiên bản Go · cấu trúc thư mục trong `be/`
    · cách test dựng database kiểm (dùng lại `db-check` hay riêng) · kết nối bằng vai `shop_app` và
-   đặt múi giờ quán (`QC-06`).
+   đặt múi giờ quán (`QC-06`) · **dấu truy từ test về `I-0xx`** (**ADR-082** điểm 4).
+   Cùng lượt dựng **lệnh liệt kê đường ghi** và đưa nó vào gate, có ca hồi quy đỏ (**ADR-082** điểm 3).
 4. Dựng `be/go.mod` và **một** test khói: kết nối database kiểm, đọc múi giờ phiên, thử một lệnh xoá ⇒
    bị từ chối (`QC-03`).
 5. `scripts/verify.sh` gọi `go test` trong `be/` (`QC-09` *chỗ trống có tên*).
@@ -220,7 +237,7 @@ chung, tiền và mốc trên dây, dấu lần gửi trên dây; `CLAUDE.md` §
 đồng không ai thấy cho tới khi màn hình vỡ.
 
 **Cách hoàn thành:**
-1. Đọc ADR của `P3-01`; `01-quy-uoc-du-lieu.md` (`QD` tiền · mốc · định danh); `QC-10` (tên ràng buộc);
+1. Đọc ADR của `P3-01` (**ADR-082** — điểm 5: lời từ chối của database, **F-058**); `01-quy-uoc-du-lieu.md` (`QD` tiền · mốc · định danh); `QC-10` (tên ràng buộc);
    `quality/invariants.md` `I-024` (dấu lần gửi); `CLAUDE.md` §2 đoạn *phase ownership boundary*.
 2. Khai scope; *In Progress*.
 3. Viết `docs/product/3-be/01-hop-dong-api.md` (tên đề xuất): định dạng · hình lỗi (tên ràng buộc → mã
@@ -497,7 +514,7 @@ Sổ giấy là đường suy giảm khi mất mạng (`01-ranh-gioi-he-thong.md
 **Không làm thì mất gì:** một lần ghi đè lượt gọi không dựng lại được ⇒ thu thiếu tiền không ai biết.
 
 **Cách hoàn thành:**
-1. Đọc **F-046** và **F-047** nguyên văn (vết khi thêm dòng con; Claude chọn cách gỡ cùng lượt); `06-luoc-do-nguoi-va-vet.md`; hàng `I-018`; `YC-08` · `YC-15`.
+1. Đọc **F-046** nguyên văn và **ADR-081** (vết khi thêm dòng con, dựng ở `T-137`: chế độ nghiêm phải phủ cả trigger `record_revision_capture_added_line`); `06-luoc-do-nguoi-va-vet.md`; hàng `I-018`; `YC-08` · `YC-15`.
 2. Khai scope (gồm `db/migrations/` cho **một file mới**, `db/tests/`, `db/seed/`); *In Progress*.
 3. Test đỏ trước: sửa không lý do ⇒ từ chối; sửa qua cửa ⇒ vết đủ bốn thứ.
 4. Migration mới bật chế độ nghiêm; `./scripts/db-check.sh` vẫn xanh.

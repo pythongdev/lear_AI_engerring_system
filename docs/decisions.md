@@ -97,6 +97,8 @@ có câu trả lời mới từ người.
 | ADR-078 | **Hai khoảng ngừng nhận đơn, hai bảng**: `order_intake_pause` (tạm dừng — người bật, người tắt, chặn năm kênh) và `shop_blind_spell` (quán mù — bắt đầu từ lúc hết nhìn thấy, máy hay người khai, chỉ khép bằng nút có người); mỗi loại không chồng nhau, chỉ khép được, không dời, không xoá; `I-008` tập 2 · 3 thành câu, tập 5 còn chờ lý do huỷ máy đọc được | Đã chốt 2026-10-01 (hướng (a) của F-050: lời chủ repo; hình bảng: giao cho phiên, T-132) | — | T-132 · F-050 · YC-34 |
 | ADR-079 | **Số tiền mặt đếm cuối ngày và dấu *ngày đã đối soát xong* có chỗ cất**: `cash_count` · `cash_count_line` cùng hình tiền đầu két (một lần đếm mỗi ngày, mỗi dòng một mệnh giá, con số là tổng các dòng); `reconciled_day` mỗi ngày một dấu, khoá ngoại về số đếm **và** tiền đầu két, không sửa, không xoá, **không** đòi phép trừ ra 0 (`U-073`); câu `I-021/1` · `I-012/2` · `I-014/5`; ngày có khoản chi mà ngày khai khác ngày ghi chờ `U-072` | Đã chốt 2026-10-05 (hướng (a) của F-048: lời chủ repo 2026-10-01; hình bảng và cách đọc: giao cho phiên, T-133) | — | T-133 · F-048 · ADR-037 · ADR-074 |
 | ADR-080 | **Ngày đã đối soát xong thì số đếm và tiền đầu két đứng yên; dấu không đứng trên số rỗng**: trigger từ chối mọi `INSERT` · `UPDATE` · `DELETE` · `TRUNCATE` trên `cash_count` · `cash_count_line` · `opening_float` · `opening_float_line` của ngày có `reconciled_day`, **mọi vai, không vai nào miễn**; dấu bị từ chối khi số đếm hay tiền đầu két của ngày không có dòng mệnh giá nào; không đường sửa số đã ký (`U-074`), không đòi lệch 0 (`U-073`) | Đã chốt 2026-10-05 (hướng của F-056 · F-057: phiếu việc của chủ repo 2026-10-05; hình trigger: giao cho phiên, T-134) | — | T-134 · F-056 · F-057 · ADR-079 |
+| ADR-081 | **Thêm một dòng con vào bản ghi đã có để lại vết trên bản ghi cha**: trigger `AFTER INSERT` trên `order_line` · `menu_item_component` · `opening_float_line` — dòng tạo sau cha, giao dịch có khai lý do ⇒ một `record_revision` của **cha**, bản trước có các dòng con trước dòng ấy, bản sau thêm đúng dòng ấy; **chế độ mềm** như bước 8 (không lý do ⇒ không vết, câu đối chiếu thấy); ba câu `I-024/3` · `I-011/1` · `I-021/7` chỉ kêu lần thêm không có vết của chính dòng | Đã chốt 2026-10-05 (làm ngay ở tầng database: chủ repo; hình vết: phiên, T-137) | — | T-137 · F-047 · F-046 · ADR-080 |
+| ADR-082 | **Tầng 2 · tầng 3 dịch sang pha 3**: *ô ghi* = bảng × loại ghi, *cửa ghi* = lối vào có tên, mỗi ô đúng một cửa; tầng 2 chấm bằng cắt giao dịch qua cửa, tầng 3 bằng lệnh liệt kê đường ghi (dựng ở `P3-03`, chạy trong gate) và test từ chối qua cửa ⇒ database không đổi; cổng pha 3 đếm §1–§4 của `03-bao-ve-invariant.md`, admin §5 ngoài (ADR-068); lời từ chối của database tới người dùng qua tên `QC-10`, kể cả trigger (F-058), bảng ánh xạ thuộc hợp đồng của `P3-04` | Đã chốt 2026-10-05 (giao cho phiên, P3-01; Codex kiểm kê, Claude chốt) | — | P3-01 · ADR-050 · ADR-068 · F-058 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -5351,3 +5353,189 @@ số đếm. Chặn cả đường ấy là chọn hộ U-074 (gỡ dấu có ph
 `db/tests/i021_reconciled_day_frozen.sql` · `db/tests/i021_cash_count_and_reconciled_day.sql` (đếm lại trước
 khi ký) · `db/reconcile/proof/` · `docs/product/2-db/04-luoc-do-duong-tien.md` §7 · `07-thu-tu-migration.md`
 (bước 16) · F-056 · F-057 · U-073 · U-074 · task `T-134`.
+
+### ADR-081 — Thêm một dòng con vào một bản ghi đã có để lại vết trên bản ghi cha, cùng chế độ mềm với vết sửa
+
+**Trạng thái:** **Đã chốt** 2026-10-05. **Làm ngay ở tầng database**, không chờ `P3-11`, là lời chủ repo
+cùng ngày (*"F-047 đọc kĩ và hoàn thành"*, rồi chọn *"Làm ngay ở tầng DB"*). Kế hoạch pha 3 giao việc chọn
+cách gỡ cho Claude (`master_plan/BE_master_plan_banh_cuon_ba_thanh.md`, hàng F-047); **hình vết** dưới đây
+là phiên chọn (Claude Code, task `T-137`).
+
+**Context:**
+Vết cập nhật của bước 8 (`record_revision_capture`, `AFTER UPDATE`) chụp lần **sửa** một dòng. Ba thay
+đổi nội dung của một bản ghi đã có đi bằng lần **thêm** một dòng con: món vào đơn đã tạo (sửa đơn,
+`shop-facts.md` §6.19) · thành phần vào suất đã có (`I-011`) · xấp mệnh giá vào tiền đầu két đã khai
+(`I-021`). Không gì ghi *ai thêm · lúc nào · từ gì sang gì*, nên ba câu `I-024/3` · `I-011/1` · `I-021/7`
+kêu cả lần thêm hợp lệ (**F-047**), và `I-018` không giữ được cho lần sửa đơn thường gặp nhất.
+
+**Decision:**
+1. **Vết nằm trên bản ghi cha.** Một hàm trigger `AFTER INSERT` (`record_revision_capture_added_line`)
+   trên `order_line` · `menu_item_component` · `opening_float_line` ghi một dòng `record_revision` với
+   `target_table_code` là bảng **cha** (`sales_order` · `menu_item` · `opening_float`), `target_row` là
+   cha. Bản trước = dòng cha cùng một khoá mang tên bảng con chứa các dòng con có **khoá tự sinh nhỏ hơn**
+   dòng mới; bản sau = như thế cộng đúng dòng mới. Người là `actor_person_id()`, lý do là
+   `shop.revision_reason` — cùng hai cài đặt giao dịch với bước 8.
+2. **Chỉ lần thêm vào cha đã có.** Dòng có mốc tạo **không muộn hơn** cha là nội dung lúc tạo, không vết —
+   đúng cách ba câu đối chiếu đã định nghĩa *nội dung lúc tạo*.
+3. **Chế độ mềm, như bước 8.** Không khai lý do ⇒ không vết, lần thêm vẫn đi qua; khai lý do mà không
+   khai người ⇒ lần thêm bị từ chối cùng vết (`not_null_violation`). Chế độ nghiêm cho cả sửa lẫn thêm
+   vẫn là việc của **F-046** · `P3-11`.
+4. **Ba câu đối chiếu đọc vết của chính dòng.** Một dòng thêm sau cha bị gọi tên khi **không** có vết
+   của cha mà bản sau có dòng ấy và bản trước không — tức lần thêm không khai lý do.
+5. **Đường lùi có khoá chặn**: có dù một vết thêm dòng con thì từ chối gỡ (cùng lối bước 16, ADR-080
+   điểm 5).
+
+**Why:**
+- *Điểm 1, cha thay vì chính dòng con.* Lần thêm đổi nội dung **của cha** (đơn, suất, tiền đầu két), và
+  người đọc hỏi *đơn này đổi gì*. Vết trên dòng con (bản trước rỗng) còn làm kêu oan các câu đọc vết
+  `order_line` như một lần đổi giá (`I-009/1` so `unit_price_vnd` bản trước với bản sau) và vỡ các câu
+  `YC-13` đòi đúng một vết của `menu_item_component`.
+- *Điểm 1, bản trước theo khoá tự sinh.* Một câu lệnh thêm nhiều dòng thì mỗi dòng có đúng bản trước
+  của nó; *mọi dòng trừ dòng này* sẽ nhét anh em cùng câu lệnh vào bản trước.
+- *Điểm 3.* Bật nghiêm riêng cho lần thêm trong khi lần sửa còn mềm là hai luật cho một vết; và chủ repo
+  đã chọn hoãn chế độ nghiêm (F-046, 2026-09-28).
+- *Không cần cột hay bảng mới:* `record_revision_images_of_target_check` và
+  `record_revision_changes_something_check` đứng nguyên — hai bản đều mang `id` của cha và khác nhau ở
+  khoá bảng con.
+
+**Rejected alternatives:**
+- *(a) của F-047 — cửa sửa đơn ghi một lần sửa cha (cột đếm phiên bản nội dung).* Bác: thêm một cột vào ba
+  bảng, và cần cửa pha 3 mới có tác dụng; vết chỉ mang con số phiên bản, không mang dòng nào được thêm.
+- *Vết trên chính dòng con, bản trước chỉ có `id`.* Bác: lý do ở *Why* điểm 1.
+- *Chụp cả `DELETE` dòng con.* Không làm: `QD-50` — vai ghi của hệ thống không có quyền xoá trên bảng
+  nghiệp vụ nào, nên không có lần xoá nào của hệ thống để chụp.
+
+**Suy ra, không phải lời chủ quán** (`CLAUDE.md` §7.2): vết nằm trên cha; mốc tạo phân biệt *lúc tạo* với
+*thêm sau*; bản trước theo khoá tự sinh; khoá chặn đường lùi theo vết.
+
+**Không phủ:** `table_session_member` (bàn ghép vào phiên — `06-luoc-do-nguoi-va-vet.md` §5),
+`cash_count_line` (xấp thêm vào số đếm trước khi ký; sau khi ký thì ADR-080 chặn), `order_line_component`
+· `order_line_option` (ghi cùng dòng đơn). Mỗi bảng thêm vào là một migration mới.
+
+**Applies to:** `db/migrations/20261005130000_vet_them_dong_con.up.sql` · `.down.sql` ·
+`db/tests/i018_added_line_leaves_trail.sql` · `db/reconcile/i024.sql` · `i011.sql` · `i021.sql` ·
+`db/reconcile/proof/i011_1.sql` · `i021_7.sql` · `docs/product/2-db/06-luoc-do-nguoi-va-vet.md` §2 ·
+`07-thu-tu-migration.md` (bước 17) · `09-doi-chieu-bat-bien.md` §4 · F-047 · F-046 · task `T-137`.
+
+---
+
+### ADR-082 — Tầng 2 · tầng 3 của pha 1 dịch sang pha 3 thành CỬA GHI sở hữu ô ghi, mỗi thứ một phép chấm; lời từ chối của database tới người dùng qua tên của nó
+
+**Trạng thái:** Đã chốt 2026-10-05, **giao cho phiên** (task `P3-01`, bước 1/14 của pha 3 —
+`master_plan/BE_master_plan_banh_cuon_ba_thanh.md` §6; chủ repo giao *"hãy đọc kĩ và làm yêu cầu codex
+làm bạn kiểm tra"*). Codex kiểm kê và soạn bản nháp ở chế độ chỉ đọc; Claude đối chiếu nguồn, sửa, và
+chốt (`docs/prompt-guideline.md` §6.1 — *chốt ADR* không giao). Cùng vai **ADR-050** ở pha 2: quyết
+định này **không sở hữu tầng** — tầng của từng `I-0xx` là của
+`docs/product/1-system-design/03-bao-ve-invariant.md` (**ADR-035**). Nó trả lời một câu: *pha 3 nợ
+gì cho tầng 2 và tầng 3, và biên nhận trông thế nào* — ba câu kế hoạch pha 3 §7 đặt ra.
+
+**Decision:**
+
+**1. Hai chữ bắt buộc.** Mọi bước pha 3 dùng đúng nghĩa này; bước nào cần nghĩa khác thì đó là một
+`F-XXX`, không phải một cách đọc riêng.
+
+- **Ô ghi** = một bảng × một loại ghi: *thêm dòng vào bảng* là một ô; *sửa cột X của bảng* là một ô
+  cho mỗi cột sửa được. **Không có ô xoá** — `shop_app` không xoá được (`10-quy-uoc-code.md` `QC-03`).
+  Ô do database tự ghi (trigger vết của **ADR-081**, khoá của **ADR-080**) thuộc **migration**, và
+  backend **không** có đường ghi nào tới nó.
+- **Cửa ghi** = một lối vào có tên của backend, nơi **duy nhất** phát lệnh ghi tới các ô nó sở hữu. Tại
+  cửa, theo thứ tự: xét vai theo **chỗ đứng** (`architecture.md` §4), lấy mốc từ nguồn thời gian của
+  hệ thống (`02-thoi-gian-ngay-ban.md` §2), mở giao dịch, đọc trạng thái hiện tại, rồi ghi hoặc từ
+  chối kèm mã. **Mỗi ô đúng một cửa; một cửa sở hữu được nhiều ô.**
+
+Vì sao là *ô*, không phải *bảng*: một bảng đơn được ghi hợp lệ bởi cửa tạo đơn (thêm dòng) **và** cửa
+chuyển trạng thái của `I-016` (sửa cột trạng thái). Luật *mỗi bảng một cửa* hoặc ép hai việc vào một
+cửa khổng lồ, hoặc đỏ oan. Ô cổng *"mỗi ô ghi có đúng một cửa"* ở kế hoạch §9 đọc theo nghĩa này.
+
+**2. Hai tầng, mỗi tầng ba ô** — hình của ADR-050 điểm 1.
+
+| Tầng ở pha 1 | Pha 3 **nợ** cái gì | **Chấm** bằng | **KHÔNG** phải biên nhận |
+|:--:|---|---|---|
+| **2** — một giao dịch giữ | một **ranh giới giao dịch mở ở cửa**, bao lần đọc quyết định và mọi ô mà vế đòi cùng sống hoặc cùng chết | gọi **qua cửa** trên PostgreSQL thật, **cắt** sau lần ghi đầu ⇒ cửa báo lỗi và database **y như trước**, dán output; vế có lần đọc quyết định (kiểu `I-017`) thêm một ca **hai lời gọi chen nhau** ⇒ điều kiện vẫn đúng tại mốc ghi | *"hai lệnh chạy liền nhau"* · một giao dịch mở **bên trong** một hàm con, không bao lần đọc · ca thành công chưa từng bị cắt · chỉ nhìn mã lỗi trả về mà không đọc lại database |
+| **3** — miền nghiệp vụ giữ | một **cửa ghi** sở hữu ô ấy, và **không đường ghi thứ hai** tới ô ấy trong backend | (a) **lệnh liệt kê** (điểm 3) ⇒ ô ấy đúng một cửa; (b) test gọi **qua cửa**, với vai **và** trạng thái thật, dựng trạng thái sai ⇒ **từ chối kèm mã** và database **không đổi**, dán lời từ chối | một `if` trong code · test gọi thẳng hàm bên trong cửa, bỏ qua quyền · test trên database giả · test chỉ kiểm mã trả về · một quy ước *"chỉ gọi cửa này"* mà lệnh liệt kê không chấm · một lệnh liệt kê chưa bao giờ đỏ |
+
+Vế tầng 2 **có điều kiện** — *"nếu lưu tổng làm bản đệm"* (`I-019`, `I-026`) — chỉ đòi phép chấm khi
+migration **có** cột ấy. Không có thì lát chạm nó dán bằng chứng *không có* (đọc từ migration), không
+viết test rỗng; migration nào thêm cột ấy sau này mang phép chấm tầng 2 cùng lượt.
+
+**3. Câu 1 của kế hoạch §7 — đường ghi được liệt kê bằng một LỆNH, chạy trong gate.** Lệnh ấy in mỗi
+ô ghi kèm cửa sở hữu nó, và **đỏ** khi: một lệnh ghi nằm ngoài mọi cửa · một ô có hai cửa · một lệnh ghi
+không nhận ra được bảng đích · backend ghi tới một ô thuộc migration. Lệnh **được dựng ở `P3-03`**, cùng
+lượt chọn cách backend truy cập database — vì hình của lệnh phụ thuộc lựa chọn ấy — và vào
+`./scripts/gate.sh` **cùng lượt**, có ca hồi quy cài một đường ghi thứ hai ⇒ đỏ. Quyết định này **không**
+chọn cơ chế của lệnh. Nếu `P3-03` thấy cách truy cập nó chọn **không** cho dựng được lệnh này, đó là lý
+do đổi lựa chọn hoặc quay về ADR này, **không** phải lý do chạy tay.
+
+**4. Ô cổng thứ nhất (§9) đếm cái gì.** Danh sách vế lấy bằng lệnh đọc **cột giữa** của
+`03-bao-ve-invariant.md` **§1–§4**: hàng `I-0xx` có nhắc tầng 2 hoặc tầng 3. **§5 (mảng QUẢN TRỊ,
+`I-025`…`I-028`) nằm ngoài cổng pha 3** — đọc theo **ADR-068** (*"pha 3 · pha 4 của admin không mở"*)
+và kế hoạch §3; lệnh in các hàng bị loại ra **riêng**, không giấu. Đo 2026-10-05, bằng lệnh `awk` trên
+cột giữa (bản kiểm kê của Codex, Claude đếm lại): **25 hàng** ở §1–§5, trong đó **4** ở §5 ⇒ **21 hàng**
+vào cổng. Số đo, không phải quyết định — đếm lại lúc `P3-13`.
+
+**Giới hạn có tên:** một hàng gói nhiều vế (`I-004` năm vế, bốn tầng; `I-009` trộn bốn tầng trong một ô).
+Lệnh chỉ chạm tới mức **hàng**; tách vế là mắt người. Vì vậy mỗi lát, ở khối *Nhận việc*, liệt kê các vế
+tầng 2 · tầng 3 của mỗi hàng nó chạm, kèm số dòng nguồn, và `P3-13` đối chiếu test với danh sách vế ấy.
+Mỗi test phải truy được về một `I-0xx` **bằng lệnh**; hình của dấu truy ấy chọn ở `P3-03` (khung test).
+
+**5. Câu 3 của kế hoạch §7 — lời từ chối của database tới người dùng qua TÊN của nó.**
+
+1. Ràng buộc database là thứ **giữ**; cửa được kiểm trước để báo sớm, **không** thay ràng buộc (kế hoạch
+   §3, *Không mở lại lược đồ bằng tay*).
+2. Cửa bắt lời từ chối, đọc **tên** (`QC-10`: `<bảng>_<ý>_<loại>`), tra **bảng ánh xạ tên → mã lỗi
+   công khai**, trả theo hình lỗi của hợp đồng. Nguyên văn lỗi database **không** tới người dùng.
+3. Tên chưa có trong bảng ánh xạ ⇒ một **lỗi hệ thống chung**, ghi lại tên ràng buộc, **không bao giờ**
+   là ghi thành công. Lệnh so hợp đồng với code của `P3-04` **đỏ** khi một tên trong migration chưa có
+   dòng ánh xạ (hoặc chưa được ghi rõ *không tới người dùng*).
+4. **Lời từ chối do trigger phát ra cũng phải mang tên theo hình `QC-10`.** Hôm nay bốn lệnh
+   `RAISE EXCEPTION` của migration `20261005120000_khoa_so_dem_ngay_da_ky` chỉ mang mã lỗi chung và một
+   câu tiếng Việt ⇒ backend chỉ nhận ra luật bằng cách đọc chữ. Chỗ hổng ấy là **F-058**, sửa bằng một
+   migration **mới đi tới** (`QC-05`), không sửa file cũ.
+5. **Owner của bảng ánh xạ** là hợp đồng API ở `docs/product/3-be/`, ra đời ở **`P3-04`** (`CLAUDE.md`
+   §2 hàng *Hợp đồng API*). Quyết định này **không** viết một dòng nào của bảng ấy, không đặt tên một mã
+   lỗi nào.
+
+**6. Ranh giới viết của pha 3** — bảng *không được viết / đầu ra của / viết gì thay vào* là
+**kế hoạch pha 3 §3**; quyết định này nhận bảng ấy làm của mình và **không chép** (**F-001**). Thêm một
+câu §3 chưa có: **trước `P3-04`, không tài liệu nào — kể cả ADR này và kế hoạch — viết tên một endpoint,
+một chữ ký hay một mã lỗi** (ranh giới sở hữu, **ADR-035**).
+
+**7. Ba luật khi dịch** — chép hình ba luật của ADR-050 điểm 2, đổi chiều thi hành:
+
+1. **Không tự hạ hay nâng tầng.** Một vế tầng 2 không dựng nổi ranh giới, hay một vế tầng 3 còn đường
+   ghi tắt, là **chưa đạt** — một `F-XXX` gửi ngược pha 1, không sửa cột giữa cho dễ dựng.
+2. **Một vế nhiều tầng thì chấm đủ mọi tầng.** Test cửa xanh không thay ràng buộc tầng 1; ràng buộc
+   tầng 1 đứng không chứng minh cửa xét đúng vai, đúng mốc.
+3. **Phép chấm chưa bao giờ đỏ là phép chấm chưa được chứng minh.** Lệnh liệt kê và mỗi test từ chối
+   được chạy một lần trên lỗi cài sẵn (đường ghi thứ hai, trạng thái sai) ⇒ đỏ đúng chỗ (**F-017**).
+
+**Why:**
+
+- **Chữ *"miền nghiệp vụ giữ"* là YÊU CẦU gửi sang pha 3, chưa có người dịch** — đúng hình chữ *"cơ sở
+  dữ liệu giữ"* trước ADR-050. Tám lát pha 3 mỗi lát viết cửa của mình; không thước chung thì mỗi lát tự
+  hiểu *"một cửa"*, và cách hiểu chỉ gặp nhau ở `P3-13` — lúc đã có tiền lệ.
+- **Cột *KHÔNG phải biên nhận* là chỗ hỏng thật.** Rủi ro của pha 3 không phải quên viết cửa, mà là tự
+  khai đạt bằng một test gọi hàm trong — thứ không chứng minh cửa từ chối khi người gọi đi vòng.
+- **Lệnh liệt kê vào gate từ `P3-03`, không chờ cổng cuối:** giữa `P3-03` và `P3-13` có tám lát; một đường
+  ghi thứ hai thêm ở lát thứ hai mà tới lát thứ chín mới thấy thì đã có sáu lát dựng trên nó.
+- **Bốn `RAISE EXCEPTION` không tên** được tìm thấy khi viết điểm 5 (Claude, `grep` migration 2026-10-05) —
+  bản nháp của Codex không đọc migration nên không thấy; hậu quả ở quán: ca đóng ngày bị chặn mà màn quầy
+  chỉ hiện *"lỗi hệ thống"*, người đứng quầy không biết vì sao.
+
+**Rejected alternatives:**
+
+- *Mỗi bảng một cửa* (lời kế hoạch §9 trước quyết định này). Bác: đỏ oan với mọi bảng có cả thêm dòng
+  lẫn chuyển trạng thái — xem điểm 1.
+- *Để mỗi lát tự gọi một hàm trong là "cửa", thống nhất ở `P3-13`.* Bác: cùng lý lẽ ADR-050 *Rejected*
+  thứ nhất — các lát gặp nhau muộn, khi sửa phải sửa cả tám.
+- *Chạy lệnh liệt kê bằng tay ở cổng cuối.* Bác: xem *Why* thứ ba.
+- *Chọn luôn cơ chế của lệnh liệt kê ở đây* (chẳng hạn dồn mọi đường ghi vào database và chấm bằng quyền
+  của `shop_app`). Bác **ở bước này**, không bác phương án: cơ chế phụ thuộc cách truy cập database,
+  là việc của `P3-03`; chốt ở đây là chọn thư viện hộ bước sau.
+- *Viết kèm một đoạn code mẫu, một cửa mẫu hay vài dòng bảng mã lỗi "cho dễ hình dung".* Bác — ADR-050
+  *Rejected* thứ ba: mười ba bước sau sẽ đọc mẫu như bản đã chốt.
+- *Gộp mảng admin vào cổng pha 3 cho đủ "mọi vế".* Bác: **ADR-068** chưa mở pha 3 của admin; đếm nó vào
+  cổng là ép cổng chờ một mảng không ai được làm.
+
+**Applies to:** mọi bước `P3-02`…`P3-14`; kế hoạch pha 3 §7 (rút còn con trỏ về đây) và ô thứ nhất ·
+thứ ba của §9; `P3-03` (lệnh liệt kê, dấu truy test → `I-0xx`); `P3-04` (bảng ánh xạ, lệnh so); **F-058**.

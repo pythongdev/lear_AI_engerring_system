@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 57 finding — 53 Fixed/Resolved/Closed, 4 Open (đếm lại ngày 2026-10-05, lúc đóng F-056 · F-057 ở T-134; trước đó cùng ngày, *57 — 51/6*, lúc ghi F-056 · F-057 ở lượt review T-133; trước đó cùng ngày, *55 — 51/4*, lúc đóng F-048 ở T-133; trước đó 2026-10-01, *55 — 50/5*, lúc đóng F-050 ở T-132; trước đó cùng ngày, *55 — 49/6*, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 58 finding — 54 Fixed/Resolved/Closed, 4 Open (đếm lại ngày 2026-10-05, lúc ghi F-058 ở P3-01; trước đó cùng ngày, *57 — 54/3*, lúc đóng F-047 ở T-137; trước đó cùng ngày, *57 — 53/4*, lúc đóng F-056 · F-057 ở T-134; trước đó cùng ngày, *57 — 51/6*, lúc ghi F-056 · F-057 ở lượt review T-133; trước đó cùng ngày, *55 — 51/4*, lúc đóng F-048 ở T-133; trước đó 2026-10-01, *55 — 50/5*, lúc đóng F-050 ở T-132; trước đó cùng ngày, *55 — 49/6*, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -108,7 +108,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-044 | Một tập đối chiếu của hàng `I-004` không bao giờ rỗng được — việc trạm không có trạng thái huỷ | Open |
 | F-045 | Hai phiên chạy `db-check` cùng lúc dùng chung một compose project ⇒ gỡ database của nhau, đỏ giả | Fixed |
 | F-046 | Vết cập nhật ở chế độ mềm — lần sửa không khai lý do đi qua mà không vết (chủ repo chọn, P2-08) | Open |
-| F-047 | Thêm một dòng con vào bản ghi đã có (món vào đơn, thành phần vào suất, xấp mệnh giá vào tiền đầu két) không để lại vết ai thêm (P2-11) | Open |
+| F-047 | Thêm một dòng con vào bản ghi đã có (món vào đơn, thành phần vào suất, xấp mệnh giá vào tiền đầu két) không để lại vết ai thêm (P2-11) | Fixed |
 | F-048 | Số tiền mặt đếm được cuối ngày và dấu *ngày đã đối soát xong* không có chỗ cất, không bước nào nhận — đối soát ngưỡng 0đ không chạy được trên dữ liệu (P2-13) | Fixed |
 | F-049 | Gate 1d mù với thẻ component có thuộc tính, thẻ đóng, tên component và route viết trong backtick — hai ca hồi quy chỉ thử hình thẻ ít gặp nhất (P2-14) | Fixed |
 | F-050 | Pha 1 đòi vết của mỗi lần *quán đang mù* và giao dòng yêu cầu cho "P1-07 hoặc pha 2"; không bước nào viết dòng `YC`, nên pha 2 không chấm nó (P2-14) | Fixed |
@@ -119,6 +119,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-055 | T-125 chèn một tập vào GIỮA ô `I-021` của pha 1, nên câu `I-021/2` · `I-021/6` của bộ đối chiếu mang số của tập khác, và không gate nào thấy (P2A-07) | Fixed |
 | F-056 | Số đếm cuối ngày của một ngày ĐÃ đóng dấu đối soát vẫn đổi được bằng một xấp mệnh giá thêm sau, không vết — dấu không giữ con số nó ký (review T-133) | Fixed |
 | F-057 | Một ngày đóng dấu đối soát được khi số đếm hay tiền đầu két không có dòng mệnh giá nào — *chưa đếm* và *đếm ra 0* cùng một hình (review T-133) | Fixed |
+| F-058 | Bốn lời từ chối do trigger phát ra (khoá ngày đã đối soát, ADR-080) chỉ mang mã lỗi chung và một câu tiếng Việt, không mang tên theo `QC-10` — backend pha 3 không nhận ra luật nào vừa chặn (P3-01) | Open |
 
 ---
 
@@ -4118,10 +4119,17 @@ phiên bản nội dung, chẳng hạn) — trigger hiện có chụp nó, và b
 `db/reconcile/` đổi cùng lượt, kèm file lỗi mới ở `db/reconcile/proof/`.
 
 **Related task:**
-`work/backlog_DB.md` → **P2-11** · pha 3
+`work/backlog_DB.md` → **P2-11** · pha 3 · `work/backlog.md` → **T-137** (lượt sửa)
 
 **Status:**
-Open
+Fixed (2026-10-05, T-137) — chủ repo chọn làm ngay ở tầng database, không chờ `P3-11`. Đường (b), vết đặt
+trên **bản ghi cha** (`docs/decisions.md` **ADR-081**): migration bước 17 `20261005130000_vet_them_dong_con`,
+trigger `AFTER INSERT` trên `order_line` · `menu_item_component` · `opening_float_line` ghi một
+`record_revision` của cha khi dòng thêm sau cha trong giao dịch có khai lý do — bản trước không có dòng ấy,
+bản sau có, kèm người và lý do. Ba câu `I-024/3` · `I-011/1` · `I-021/7` nay chỉ kêu lần thêm **không** có vết;
+thử trên database riêng: đơn thêm món có lý do ⇒ vết *1 → 2 món*, câu im; đơn thêm món không lý do ⇒ câu gọi
+tên đúng đơn ấy. Còn lại, có chủ riêng: lần thêm không khai lý do vẫn đi qua (chế độ mềm) — **F-046**;
+bảng con chưa phủ — ADR-081 *Không phủ*.
 
 ### F-048 — Số tiền mặt đếm được cuối ngày và dấu *ngày đã đối soát xong* không có chỗ cất, và không bước nào nhận
 
@@ -4550,3 +4558,28 @@ Fixed (2026-10-05, T-134) — cùng migration: dấu bị từ chối (`check_vi
 có dòng đầu mà không dòng mệnh giá nào (**ADR-080**); phép thử chạy lại ⇒ `ERROR: reconciled_day: số đếm
 ngày 2026-10-03 không có dòng mệnh giá`. Luật *dấu không đòi lệch 0* giữ nguyên — **U-073**.
 
+### F-058 — Lời từ chối do trigger phát ra không mang tên theo `QC-10`, nên backend chỉ nhận ra luật bằng cách đọc chữ
+
+**Problem:**
+Đo 2026-10-05 (P3-01, Claude Code, `grep -n "RAISE EXCEPTION" db/migrations/*.up.sql`): bốn lệnh
+`RAISE EXCEPTION` — cả bốn ở `db/migrations/20261005120000_khoa_so_dem_ngay_da_ky.up.sql` (dòng 9, 36,
+53, 60; khoá ngày đã đối soát, **ADR-080**) — chỉ mang `ERRCODE` chung (`restrict_violation`,
+`check_violation`) và một câu tiếng Việt. Không câu nào mang tên ràng buộc theo hình
+`<bảng>_<ý>_<loại>` của `QC-10`.
+
+**Impact:**
+**ADR-082** điểm 5 quy định lời từ chối của database tới người dùng **qua tên của nó**. Không tên thì
+backend chỉ còn đọc chữ của câu báo lỗi — sửa một chữ trong migration là gãy ánh xạ mà không cổng nào
+đỏ — hoặc rơi vào *lỗi hệ thống chung*: ca đóng ngày bị chặn mà người đứng quầy không biết vì sao.
+
+**Decision / Fix:**
+Một migration **mới đi tới** (`QC-05`, không sửa file cũ) cho mỗi lời từ chối của trigger một tên theo
+hình `QC-10`; luật *mọi `RAISE EXCEPTION` của migration mang tên* có phép kiểm chạy được. Làm **trước**
+lát đầu tiên có cửa chạm bốn bảng ấy (`P3-09`, đường tiền), muộn nhất ở `P3-04` khi lệnh so hợp đồng
+với code đòi mọi tên có dòng ánh xạ.
+
+**Related task:**
+P3-01 (phát hiện) · **ADR-082** · **ADR-080** · `QC-10`
+
+**Status:**
+Open
