@@ -100,6 +100,7 @@ có câu trả lời mới từ người.
 | ADR-081 | **Thêm một dòng con vào bản ghi đã có để lại vết trên bản ghi cha**: trigger `AFTER INSERT` trên `order_line` · `menu_item_component` · `opening_float_line` — dòng tạo sau cha, giao dịch có khai lý do ⇒ một `record_revision` của **cha**, bản trước có các dòng con trước dòng ấy, bản sau thêm đúng dòng ấy; **chế độ mềm** như bước 8 (không lý do ⇒ không vết, câu đối chiếu thấy); ba câu `I-024/3` · `I-011/1` · `I-021/7` chỉ kêu lần thêm không có vết của chính dòng | Đã chốt 2026-10-05 (làm ngay ở tầng database: chủ repo; hình vết: phiên, T-137) | — | T-137 · F-047 · F-046 · ADR-080 |
 | ADR-082 | **Tầng 2 · tầng 3 dịch sang pha 3**: *ô ghi* = bảng × loại ghi, *cửa ghi* = lối vào có tên, mỗi ô đúng một cửa; tầng 2 chấm bằng cắt giao dịch qua cửa, tầng 3 bằng lệnh liệt kê đường ghi (dựng ở `P3-03`, chạy trong gate) và test từ chối qua cửa ⇒ database không đổi; cổng pha 3 đếm §1–§4 của `03-bao-ve-invariant.md`, admin §5 ngoài (ADR-068); lời từ chối của database tới người dùng qua tên `QC-10`, kể cả trigger (F-058), bảng ánh xạ thuộc hợp đồng của `P3-04` | Đã chốt 2026-10-05 (giao cho phiên, P3-01; Codex kiểm kê, Claude chốt) | — | P3-01 · ADR-050 · ADR-068 · F-058 |
 | ADR-083 | **Backend nói chuyện với database bằng pgx v5 và SQL viết tay, mọi câu ghi trong file `.sql` dưới thư mục của một cửa** — nên lệnh liệt kê đường ghi của ADR-082 chỉ đọc file (Gate 1f); Go 1.27.1, web bằng `net/http` chuẩn; một hàm mở giao dịch; test Go trên PostgreSQL thật qua `scripts/be-check.sh`, thiếu database thì đỏ; quy ước ở `QC-11`…`QC-17` | Đã chốt 2026-10-06 (giao cho phiên, P3-03; Codex thi công, Claude chốt) | — | P3-03 · ADR-082 · ADR-053 · F-045 |
+| ADR-084 | **Hợp đồng API thắng code; migration thắng hợp đồng về tên ràng buộc**: hợp đồng là OpenAPI 3.1 một file YAML (`docs/product/3-be/openapi.yaml`, bắt đầu rỗng đường gọi), khuôn ở `01-hop-dong-api.md`; hình lỗi `{code, field?}`, mã kèm status; bảng *tên từ chối → mã* (`x-constraint-errors`) phủ mọi tên của migration, giá trị là mã · `internal` · `unreviewed`; Gate 1g so hợp đồng ↔ code ↔ migration mọi lượt, đổi hợp đồng phải tăng phiên bản; lời từ chối của trigger mang tên (F-058) | Đã chốt 2026-10-06 (giao cho phiên, P3-04; Claude chọn và thi công) | — | P3-04 · ADR-082 · ADR-053 · F-058 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -5605,3 +5606,70 @@ thêm một hàm ghi vào migration thì hàm ấy là ô thuộc migration và 
 
 **Applies to:** `P3-04`…`P3-14`; `docs/product/2-db/10-quy-uoc-code.md` `QC-06` · `QC-09` · `QC-11`…`QC-17`;
 `scripts/verify.sh` · `scripts/gate.sh` · `CLAUDE.md` §5.
+
+### ADR-084 — Hợp đồng API thắng code; migration thắng hợp đồng về tên ràng buộc; một lệnh chấm cả hai mọi lượt
+
+**Trạng thái:** Đã chốt 2026-10-06, **giao cho phiên** (task `P3-04`, bước 4/14 của pha 3; chủ repo giao
+*"hãy đọc kĩ và làm task này"*). Claude chọn và thi công. Quyết định này **không sở hữu hợp đồng** — chữ
+của khuôn là `docs/product/3-be/01-hop-dong-api.md`, hợp đồng là `docs/product/3-be/openapi.yaml`; ở đây
+chỉ giữ **vì sao** và **cái bị loại**. Kế hoạch pha 3 §5 đòi câu này thành ADR, **không** tự suy ra từ
+**ADR-053**.
+
+**Decision:**
+
+1. **Hợp đồng thắng code.** Code khác hợp đồng là lỗi của code; đổi hợp đồng là sửa `openapi.yaml` trước
+   (tăng `info.version`), rồi code, cùng một lượt.
+2. **Migration thắng hợp đồng về tên ràng buộc** — **ADR-053** luật 2 không đổi. Bảng *tên từ chối → mã*
+   của hợp đồng đi theo migration: mọi tên migration dựng có đúng một dòng; giá trị là một mã công khai,
+   `internal` (đã xét, không phải luật người dùng chạm tới) hoặc `unreviewed` (chưa lát nào xét). Hai giá
+   trị sau đều chạy như `internal_error` (**ADR-082** điểm 5.3).
+3. **Định dạng:** OpenAPI 3.1, **một** file YAML, viết theo một khuôn con (thụt hai dấu cách, không neo)
+   để một bộ đọc khuôn đọc được; bắt đầu `paths: {}` — mỗi lát thêm đường gọi của mình.
+4. **Hình lỗi** `{code, field?}`, không trường chữ; mỗi mã một status khai trong hợp đồng; khuôn chỉ mở
+   hai mã chung (`internal_error` · `invalid_request`), mã của luật do lát thêm.
+5. **Lệnh chấm** = `scripts/check-api-contract.sh`, **Gate 1g**, chạy **mọi lượt** sau Gate 1f, chỉ đọc
+   file: đường gọi hai phía · mã và status hai phía · tên migration ↔ dòng ánh xạ · dòng mang mã ↔ bảng
+   ở `be/internal/apierr/` · phiên bản tăng khi file khác `HEAD`. Test `TestQC10_…` qua `be-check.sh` so
+   tập tên đọc từ database sống với bảng, và chứng minh lời từ chối của trigger mang tên.
+6. **F-058 sửa cùng lượt**: migration bước 18 cho mười lời từ chối của hai hàm trigger một tên `QC-10`
+   (`USING CONSTRAINT`, chuỗi trần), giữ nguyên mã lỗi và câu; `QC-10` có phép kiểm trên thân hàm sống.
+
+**Why:**
+
+- **Pha 4 sinh type từ hợp đồng** (bảng sáu pha, hàng pha 4). Nếu code thắng, một lần đổi code đổi luôn
+  thứ FE dựa vào mà không ai thấy cho tới khi màn vỡ — đúng *Không làm thì mất gì* của `P3-04`. Hợp đồng
+  thắng thì lệch là lỗi có chỗ đứng: phía code, đỏ ở Gate 1g.
+- **Migration vẫn thắng về tên** vì tên là thứ database **phát ra** lúc từ chối — hợp đồng không quyết
+  được database nói gì, chỉ quyết được cửa dịch nó thành gì.
+- **`unreviewed` thay vì đoán 200+ mã ngay ở khuôn:** nghĩa người dùng của một ràng buộc phụ thuộc cửa nào
+  chạm nó — thứ chưa tồn tại ở `P3-04`. Đoán bây giờ là đặt luật hộ tám lát sau (cùng lý lẽ **ADR-082**
+  *Rejected* thứ năm). Đòi một dòng cho mọi tên thì vẫn giữ được điều **ADR-082** điểm 5.3 cần: thêm một
+  ràng buộc mà quên quyết nó đi tới người dùng thế nào thì gate đỏ. Bảng không trôi vì test từ chối qua
+  cửa kiểm **mã**: dòng còn `unreviewed` ở đúng chỗ cửa từ chối làm test ấy đỏ.
+- **Lệnh chỉ đọc file và chạy mọi lượt:** `docs/` là lượt *chỉ tài liệu* với `scripts/gate.sh`, Gate 1
+  bỏ qua — một lượt chỉ sửa hợp đồng sẽ không ai chấm nếu lệnh nằm trong Gate 1. Cùng lý lẽ Gate 1e · 1f.
+- **Một file YAML, khuôn con:** đọc được bằng Perl như Gate 1f, không thêm phụ thuộc; OpenAPI 3.1 là
+  định dạng các công cụ sinh type cùng đọc, nên pha 4 không bị khoá vào một công cụ.
+
+**Rejected alternatives:**
+
+- *Code thắng — sinh hợp đồng từ code (chú thích, phản chiếu struct).* Bác: `net/http` chuẩn (`QC-12`)
+  không mang chú thích đường gọi, phải thêm một công cụ sinh và ghim nó; và hợp đồng đi theo code là đúng
+  thứ pha 4 không được gặp — đổi im lặng.
+- *Bảng ánh xạ ở file riêng (CSV, hay trong `be/`).* Bác: **ADR-082** điểm 5.5 giao owner cho hợp đồng; tách
+  ra là hai file một owner, và FE sinh type từ hợp đồng không thấy mã nào có thể về.
+- *Chỉ liệt kê tên có mã, tên vắng mặt hiểu ngầm là lỗi hệ thống.* Bác: một ràng buộc mới thêm vào
+  migration sẽ không bao giờ buộc ai quyết nó tới người dùng thế nào — đúng chỗ **ADR-082** điểm 5.3 đòi đỏ.
+- *Đặt ngay mã công khai cho mọi `check` · `key`.* Bác: xem *Why* thứ ba.
+- *Phiên bản trong đường dẫn (`/v1`).* Bác: một backend, một FE, triển khai cùng nhau; hai bản song song
+  không ai dùng mà phải giữ.
+- *Đọc file migration để chấm luật "mọi `RAISE EXCEPTION` mang tên".* Bác: file của bước 16 không sửa
+  được (`QC-05`) mà thân hàm của nó đã bị bước 18 thay — chấm trên thân hàm sống trong database mới đúng.
+
+**Giới hạn có tên:** Gate 1g không so thân request · response với struct Go — lát thêm đường gọi chứng
+minh hình trả về bằng test qua cửa. Bộ đọc khuôn không phải trình đọc YAML đầy đủ; viết ngoài khuôn §2
+của `01-hop-dong-api.md` thì đỏ hoặc không thấy, nên khuôn là luật, không phải gợi ý.
+
+**Applies to:** `P3-05`…`P3-14`; `docs/product/3-be/`; `be/internal/apierr/`;
+`docs/product/2-db/10-quy-uoc-code.md` `QC-10` · `QC-14`; `scripts/check-api-contract.sh` ·
+`scripts/gate.sh` · `CLAUDE.md` §2 · §5; **F-058**.

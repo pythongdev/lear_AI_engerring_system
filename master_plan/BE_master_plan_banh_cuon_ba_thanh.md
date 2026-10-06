@@ -20,15 +20,16 @@ bước cần thiết để thực hiện"**. Quyết định về hình dạng 
 > **Pha 3 ĐÃ MỞ 2026-10-05 — chủ repo ký chuyển pha** (T-136), nguyên văn *"đồng ý chuyển sang pha 3. xác nhận cách chia mười bốn bước pha 3"*. Pha 2 đã xong
 > cả mười bốn bước ngày 2026-09-30; cổng tick **12/12**, bằng chứng ở
 > `docs/product/2-db/11-cong-chat-luong-pha-2.md` §7. `P3-01` nhận được từ hôm ấy; các bước sau
-> theo cột *Cần xong trước* của §6. Thư mục `docs/product/3-be/` vẫn chưa có — nó ra đời ở `P3-04`. Đường lùi migration đã được giải
+> theo cột *Cần xong trước* của §6. Thư mục `docs/product/3-be/` mở ngày 2026-10-06 ở `P3-04` (hợp đồng API, **ADR-084**). Đường lùi migration đã được giải
 > ở `P2-09`, **ADR-065**: mỗi bước migration một bước lùi có khoá chặn.
 
 ---
 
 ## 1. Bốn tài liệu đã nói về "API trông thế nào" — và không cái nào là owner
 
-Cùng hình §1 của kế hoạch pha 2. Tính tới hôm nay **owner của hợp đồng API chưa tồn tại**
-(`CLAUDE.md` §2, hàng *Hợp đồng API* — *chưa có owner*), nhưng bốn chỗ đã nói tới nó:
+Cùng hình §1 của kế hoạch pha 2. Lúc viết kế hoạch **owner của hợp đồng API chưa tồn tại** — từ
+2026-10-06 (`P3-04`) owner là `docs/product/3-be/openapi.yaml` cùng khuôn `01-hop-dong-api.md`
+(`CLAUDE.md` §2, **ADR-084**) — nhưng bốn chỗ đã nói tới nó trước đó:
 
 | Tài liệu | Nó là gì | Được đọc như |
 |---|---|---|
@@ -156,7 +157,7 @@ của pha — ở `P3-04`, không sớm hơn (**ADR-035** luật 2). Code vào `
 ```text
 docs/product/3-be/
   01-hop-dong-api.md           P3-04 — khuôn hợp đồng: hình lỗi, tiền và mốc trên dây, dấu lần gửi
-  (file hợp đồng máy đọc được) P3-04 — nguồn duy nhất cho FE; định dạng do P3-04 chọn
+  openapi.yaml                 P3-04 — hợp đồng máy đọc, nguồn duy nhất cho FE (OpenAPI 3.1, ADR-084)
   02-vai-va-quyen.md           P3-05 — ma trận vai × thao tác, chỗ đứng tại thời điểm
   03-ham-gia.md                P3-06 — một hàm tính giá, bảng ca test đọc từ shop-facts §4.8
   04-luong-tai-ban.md          P3-07
@@ -184,10 +185,8 @@ dòng này trong cùng thay đổi.)*
 | **Hợp đồng API**: endpoint, quyền theo vai, chữ ký | `P3-04` | file hợp đồng của `docs/product/3-be/`; quyền theo vai thêm file của `P3-05` |
 | **Quy ước code** | `P3-03` | không đổi owner — thêm mục `QC-XX` mới vào `10-quy-uoc-code.md` (`QC-09` đã hẹn thế) |
 
-**Hợp đồng thắng hay code thắng** — câu `P3-04` phải chốt thành ADR, **không** tự suy ra từ ADR-053:
-ADR-053 luật 2 nói *code dựng database thắng tài liệu*; với API, pha 4 **sinh type** từ hợp đồng
-(bảng sáu pha, hàng pha 4), nên hợp đồng phải **được kiểm với code** bằng một lệnh — bên nào thắng khi
-lệch là quyết định, không phải hệ quả.
+**Hợp đồng thắng hay code thắng** — đã chốt 2026-10-06 ở `P3-04`: **ADR-084** (hợp đồng thắng code; migration
+thắng hợp đồng về tên ràng buộc; Gate 1g chấm mọi lượt).
 
 **Sổ task và hồ sơ thực thi.** Mô tả dài của mười bốn bước ở [`work/backlog_BE.md`](../work/backlog_BE.md)
 (**ADR-036** luật 1: dãy mã riêng `P3-XX`, một chuỗi việc đọc liền nhau), có hàng ở `CLAUDE.md` §2.

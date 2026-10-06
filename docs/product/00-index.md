@@ -14,11 +14,11 @@ Hành vi nghiệp vụ của sản phẩm, cắt theo **pha** ở tầng ngoài 
 | 0 — BA (nghiệp vụ) | `0-ba/` | **đang mở** — xem bảng dưới |
 | 1 — System design | [`1-system-design/`](1-system-design/architecture.md) | **đang mở** — xem bảng dưới |
 | 2 — Database | [`2-db/`](2-db/01-quy-uoc-du-lieu.md) | **đang mở** — xem bảng dưới (mở 2026-09-26, `P2-03`) |
-| 3 — Backend | `3-be/` | **chưa có file** — chủ repo ký chuyển pha 2026-10-05; [kế hoạch pha 3](../../master_plan/BE_master_plan_banh_cuon_ba_thanh.md) (ADR-076); thư mục ra đời ở `P3-04` |
+| 3 — Backend | [`3-be/`](3-be/01-hop-dong-api.md) | **đang mở** — xem bảng dưới (mở 2026-10-06, `P3-04`); [kế hoạch pha 3](../../master_plan/BE_master_plan_banh_cuon_ba_thanh.md) (ADR-076) |
 | 4 — Frontend | `4-fe/` | **chưa mở** |
 | 5 — Deploy | `5-deploy/` | **chưa mở** |
 
-Thư mục của pha **3–5** chưa tồn tại và cố ý chưa tồn tại: nó ra đời cùng dòng nội dung đầu tiên
+Thư mục của pha **4–5** chưa tồn tại và cố ý chưa tồn tại: nó ra đời cùng dòng nội dung đầu tiên
 của pha ấy, không sớm hơn. Một file "chưa có gì" là tài liệu nghi lễ (`CLAUDE.md` §3.8), và một
 thư mục rỗng không gỡ được dòng nào cho ai.
 
@@ -103,6 +103,15 @@ tiền tố khác — `P1-XX` (ADR-033).
 Các lát lược đồ sau **thêm** dòng vào bảng này, không ghi đè dòng của lát trước (kế hoạch pha 2 §6).
 
 **Câu hỏi chưa có lời giải** — [99-unknowns.md](99-unknowns.md), dùng chung cho mọi pha.
+
+## Pha 3 — Backend
+
+| Mục | File |
+|---|---|
+| Hợp đồng API — **khuôn, luật đọc, luật đổi**: định dạng OpenAPI 3.1 · khuôn viết để Gate 1g đọc được · hình lỗi chung và mã kèm status · bảng tên từ chối → mã · tiền, mốc, ngày bán, dấu lần gửi trên dây · phiên bản · hợp đồng thắng code và lệnh chấm (P3-04, ADR-084) | [3-be/01-hop-dong-api.md](3-be/01-hop-dong-api.md) |
+| Hợp đồng API **máy đọc** — nguồn duy nhất cho FE, pha 4 sinh type từ đây; mỗi lát thêm đường gọi của mình | [3-be/openapi.yaml](3-be/openapi.yaml) |
+
+Các lát `P3-05`…`P3-13` **thêm** dòng vào bảng này cùng file của mình (kế hoạch pha 3 §5).
 
 ## Luật ghi
 

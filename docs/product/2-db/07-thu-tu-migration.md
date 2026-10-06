@@ -17,11 +17,11 @@ lược đồ từ số không · chỗ chứng minh từng điều ấy chạy 
 
 ---
 
-## 1. Thứ tự dựng — mười bảy bước
+## 1. Thứ tự dựng — mười tám bước
 
 Công cụ chạy các bước theo **tên file**, tức theo mốc giờ ở đầu tên (`QC-05`). Thứ tự dưới đây là
 thứ tự ấy; cột *đứng trên* nói bước nào phải có trước, vì bước sau thêm cột, khoá ngoại hay ràng
-buộc vào bảng của nó. Dựng lại từ số không là chạy đúng mười bảy bước này, từ trên xuống; lùi là đi
+buộc vào bảng của nó. Dựng lại từ số không là chạy đúng mười tám bước này, từ trên xuống; lùi là đi
 ngược từ dưới lên, **từng bước một**.
 
 | # | File (`db/migrations/`, bỏ đuôi) | Lát | Dựng gì | Đứng trên |
@@ -43,6 +43,7 @@ ngược từ dưới lên, **từng bước một**.
 | 15 | `20261001150000_dem_ket_doi_soat` | `T-133` | `cash_count` · `cash_count_line` · `reconciled_day` và trigger vết; dấu đối soát xong khoá ngoại về số đếm và tiền đầu két, vai ghi không sửa, không xoá dấu (**ADR-079**, **F-048**) | 6 · 8 |
 | 16 | `20261005120000_khoa_so_dem_ngay_da_ky` | `T-134` | khoá ghi số đếm và tiền đầu két của ngày đã ký với mọi vai; dấu không đứng trên dòng đầu không có dòng mệnh giá (**ADR-080**, **F-056** · **F-057**) | 6 · 15 |
 | 17 | `20261005130000_vet_them_dong_con` | `T-137` | trigger `record_revision_capture_added_line` trên `order_line` · `menu_item_component` · `opening_float_line`: thêm một dòng con vào bản ghi đã có, có khai lý do, để lại vết trên bản ghi cha (**ADR-081**, **F-047**) | 1 · 2 · 6 · 8 |
+| 18 | `20261006120000_ten_loi_tu_choi_trigger` | `P3-04` | thay thân `cash_day_reconciled_guard()` · `reconciled_day_nonempty_guard()`: mười lời từ chối của trigger mang tên `QC-10` qua `USING CONSTRAINT`, cùng điều kiện, cùng mã lỗi, cùng câu (**ADR-084**, **F-058**) | 16 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
@@ -100,6 +101,11 @@ con (vết trên `sales_order` · `menu_item` · `opening_float` mang khoá tên
 khi gỡ gì: gỡ trigger lúc ấy là để lần thêm sau đi qua không vết trong khi lần thêm trước có vết. Bước
 này không dựng bảng và vết đã ghi không bị gỡ; đây là trường hợp riêng của luật 2, cùng lối bước 16.
 Chưa có vết nào thì gỡ ba trigger rồi hàm, trả lược đồ về trước bước.
+
+**Bước 18 không có khoá chặn** (2026-10-06, `P3-04`, **ADR-084**): bước này chỉ thay thân hai hàm, không
+dựng bảng, cột hay dòng nào — luật 2 không có gì để chặn. File lùi trả thân hàm về **đúng chữ** của
+bước 16 (so được từng dòng bằng ảnh chụp §4) và ghi lý do ngay ở đầu file; phép kiểm `QC-05` đọc câu ấy.
+Hệ quả của việc lùi: backend nhận lại lời từ chối không tên và dịch nó thành `internal_error`.
 
 ---
 

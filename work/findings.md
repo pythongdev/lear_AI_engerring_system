@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 58 finding — 54 Fixed/Resolved/Closed, 4 Open (đếm lại ngày 2026-10-05, lúc ghi F-058 ở P3-01; trước đó cùng ngày, *57 — 54/3*, lúc đóng F-047 ở T-137; trước đó cùng ngày, *57 — 53/4*, lúc đóng F-056 · F-057 ở T-134; trước đó cùng ngày, *57 — 51/6*, lúc ghi F-056 · F-057 ở lượt review T-133; trước đó cùng ngày, *55 — 51/4*, lúc đóng F-048 ở T-133; trước đó 2026-10-01, *55 — 50/5*, lúc đóng F-050 ở T-132; trước đó cùng ngày, *55 — 49/6*, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 58 finding — 55 Fixed/Resolved/Closed, 3 Open (đếm lại ngày 2026-10-06, lúc đóng F-058 ở P3-04; trước đó 2026-10-05, *58 — 54/4*, lúc ghi F-058 ở P3-01; trước đó cùng ngày, *57 — 54/3*, lúc đóng F-047 ở T-137; trước đó cùng ngày, *57 — 53/4*, lúc đóng F-056 · F-057 ở T-134; trước đó cùng ngày, *57 — 51/6*, lúc ghi F-056 · F-057 ở lượt review T-133; trước đó cùng ngày, *55 — 51/4*, lúc đóng F-048 ở T-133; trước đó 2026-10-01, *55 — 50/5*, lúc đóng F-050 ở T-132; trước đó cùng ngày, *55 — 49/6*, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -119,7 +119,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-055 | T-125 chèn một tập vào GIỮA ô `I-021` của pha 1, nên câu `I-021/2` · `I-021/6` của bộ đối chiếu mang số của tập khác, và không gate nào thấy (P2A-07) | Fixed |
 | F-056 | Số đếm cuối ngày của một ngày ĐÃ đóng dấu đối soát vẫn đổi được bằng một xấp mệnh giá thêm sau, không vết — dấu không giữ con số nó ký (review T-133) | Fixed |
 | F-057 | Một ngày đóng dấu đối soát được khi số đếm hay tiền đầu két không có dòng mệnh giá nào — *chưa đếm* và *đếm ra 0* cùng một hình (review T-133) | Fixed |
-| F-058 | Bốn lời từ chối do trigger phát ra (khoá ngày đã đối soát, ADR-080) chỉ mang mã lỗi chung và một câu tiếng Việt, không mang tên theo `QC-10` — backend pha 3 không nhận ra luật nào vừa chặn (P3-01) | Open |
+| F-058 | Bốn lời từ chối do trigger phát ra (khoá ngày đã đối soát, ADR-080) chỉ mang mã lỗi chung và một câu tiếng Việt, không mang tên theo `QC-10` — backend pha 3 không nhận ra luật nào vừa chặn (P3-01) | Fixed |
 
 ---
 
@@ -4579,7 +4579,14 @@ lát đầu tiên có cửa chạm bốn bảng ấy (`P3-09`, đường tiền)
 với code đòi mọi tên có dòng ánh xạ.
 
 **Related task:**
-P3-01 (phát hiện) · **ADR-082** · **ADR-080** · `QC-10`
+P3-01 (phát hiện) · P3-04 (sửa) · **ADR-082** · **ADR-080** · **ADR-084** · `QC-10`
+
+**Bàn giao** (2026-10-06, `P3-04`, Claude Code): migration bước 18 `20261006120000_ten_loi_tu_choi_trigger`
+thay thân hai hàm của bước 16 — **mười** lời từ chối (bốn lệnh `RAISE` cũ thành mười vì mỗi tên mở đầu
+bằng đúng bảng nó giữ, `QC-10`) mang tên qua `USING CONSTRAINT`, cùng mã lỗi, cùng câu. Phép kiểm: khối
+`sql` thứ hai của `QC-10` đọc thân hàm sống (ra 2 dòng khi rút bước 18, 0 dòng khi có);
+`TestQC10_LoiTuChoiTriggerMangTen` thấy `ConstraintName` qua pgx; mọi tên có dòng ở bảng ánh xạ của hợp
+đồng (Gate 1g, **ADR-084**).
 
 **Status:**
-Open
+Fixed

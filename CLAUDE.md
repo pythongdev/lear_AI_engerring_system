@@ -61,7 +61,7 @@ is a bug to fix now.
 | Schema: tên bảng, tên cột, kiểu, ràng buộc, khoá ngoại | **file migration thắng** — `db/migrations/` (ADR-053 luật 2). Ý định, lý do và ánh xạ `I-0xx`/`YC-xx` của từng lát: `docs/product/2-db/02-luoc-do-ban-hang.md` (P2-04) · `03-luoc-do-menu-gia.md` (P2-05) · `04-luoc-do-duong-tien.md` (P2-06) · `05-luoc-do-san-xuat.md` (P2-07) · `06-luoc-do-nguoi-va-vet.md` (P2-08) · `12-luoc-do-nguyen-lieu.md` (P2A-02) · `13-luoc-do-cham-cong.md` (P2A-03) · `14-luoc-do-khoan-cua-nguoi.md` (P2A-04); các lát sau **thêm** file, không ghi đè. Hai bản lệch ⇒ `F-XXX`. Thứ tự việc, mức và cổng của pha 2: `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (ADR-049) |
 | Quy ước code: DBMS + phiên bản, cách chạy database, migration, khung test, cấu trúc thư mục, stack, tên ràng buộc — mỗi quy ước một mã `QC-XX` và một phép kiểm | `docs/product/2-db/10-quy-uoc-code.md` — pha 2, sinh ra ở P2-12 (ADR-035, ADR-039, ADR-055) |
 | Thứ tự migration, đường lùi của từng bước (khoá chặn), cách gỡ một lệnh migration hỏng, dựng lại từ số không | `docs/product/2-db/07-thu-tu-migration.md` — pha 2, sinh ra ở P2-09 (ADR-065) |
-| Hợp đồng API: endpoint, quyền theo vai, chữ ký | **chưa có owner** — sinh ra ở **pha 3**, cùng `docs/product/3-be/` (ADR-035). Thứ tự việc, mức và cổng của pha 3: `master_plan/BE_master_plan_banh_cuon_ba_thanh.md` (ADR-076) |
+| Hợp đồng API: endpoint, chữ ký, hình lỗi, mã lỗi, bảng tên từ chối → mã | `docs/product/3-be/openapi.yaml` (máy đọc; pha 4 sinh type từ đây) — khuôn, luật đọc và luật đổi: `docs/product/3-be/01-hop-dong-api.md` (P3-04). **Hợp đồng thắng code; migration thắng hợp đồng về tên ràng buộc** (ADR-084). Quyền theo vai: file của `P3-05`, chưa có. Thứ tự việc, mức và cổng của pha 3: `master_plan/BE_master_plan_banh_cuon_ba_thanh.md` (ADR-076) |
 | Route, component | **chưa có owner** — sinh ra ở **pha 4**, cùng `docs/product/4-fe/` (ADR-035) |
 | Tasks — trạng thái của **mọi** task (`Ready`/`In Progress`/`Done`) | `work/backlog.md` |
 | Tasks — mô tả dài của việc **đã xong** (lưu trữ, chỉ thêm, không cập nhật) | `work/backlog_archive.md` (T-086) |
@@ -197,11 +197,14 @@ It runs, in order — each script's header is the owner of how it works:
 6. `scripts/check-write-paths.sh` (Gate 1f) — every backend write sits in
    exactly one write door under `be/`, one door per cell (ADR-082, ADR-083).
    Every turn; reads files only.
-7. `scripts/verify.sh` (Gate 1) — build, tests, `scripts/db-check.sh` when the
+7. `scripts/check-api-contract.sh` (Gate 1g) — the API contract against the
+   code and the migrations: routes, error codes, every refusal name mapped,
+   version bumped when it changed (ADR-084). Every turn; reads files only.
+8. `scripts/verify.sh` (Gate 1) — build, tests, `scripts/db-check.sh` when the
    database side changed, `scripts/be-check.sh` when `be/` or the database
    changed, every `scripts/*.test.sh`. Skipped for docs-only turns.
-8. `scripts/check-commit-block.sh` (Gate 7/7b) — **Claude hook mode only**, once
-   1–7 are green: the turn must hand over the §6.1 block, and the block's
+9. `scripts/check-commit-block.sh` (Gate 7/7b) — **Claude hook mode only**, once
+   1–8 are green: the turn must hand over the §6.1 block, and the block's
    file list must fit the scope of the task its subject names (ADR-006,
    ADR-063). Speaks at most once per tree state.
 
@@ -210,7 +213,7 @@ Gates 1b, 1c and 1d each take a deliberate exception in their own
 the gate red until removed. `work/` (and the folders each header names) is not
 checked by 1b or 1c — a dead path or broken sentence quoted there is evidence.
 
-Codex runs the gate directly: that runs steps 1–7, **not** Gate 7/7b, so Codex
+Codex runs the gate directly: that runs steps 1–8, **not** Gate 7/7b, so Codex
 checks the commit block against §6.1 by hand — file list, scope, and the real
 staged index. A green direct gate does not prove the block was checked.
 

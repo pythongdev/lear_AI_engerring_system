@@ -342,9 +342,16 @@ tên **ràng buộc** và **chỉ mục**.
   (khoá chính) · `key` (khoá duy nhất, kể cả khoá duy nhất chỉ áp cho vài trạng thái) · `fkey` (khoá
   ngoại) · `check` (điều kiện kiểm) · `excl` (loại trừ). Chỉ mục không duy nhất kết thúc bằng `idx`.
   Phần giữa nói **ý** bằng tiếng Anh snake_case — ví dụ `_one_unpaid_session_` thay vì tên cột.
+  **Lời từ chối do hàm trigger phát ra cũng mang tên theo hình ấy** (2026-10-06, `P3-04`, **F-058**):
+  mỗi `RAISE EXCEPTION` trong một hàm của schema viết `USING … CONSTRAINT = '<bảng>_<ý>_<loại>'` bằng
+  **chuỗi trần**, `<bảng>` là bảng mà lời từ chối giữ, `<loại>` thường là `check`. Mọi tên — ràng buộc,
+  chỉ mục duy nhất, lời từ chối của trigger — có một dòng trong bảng ánh xạ của hợp đồng API
+  ([`../3-be/01-hop-dong-api.md`](../3-be/01-hop-dong-api.md) §4); Gate 1g đỏ khi thiếu.
 - **Hậu quả nếu làm khác:** lời từ chối của database in **tên ràng buộc** — đó là thứ `P2-04` bước 6
   dán làm bằng chứng, và là thứ backend pha 3 đọc để biết luật nào vừa chặn. Tên tự sinh kiểu
-  `x_y_check1` không nói luật nào, nên bằng chứng không đọc được và backend phải đoán.
+  `x_y_check1` không nói luật nào, nên bằng chứng không đọc được và backend phải đoán. Lời từ chối của
+  trigger không tên thì backend chỉ nhận ra luật bằng cách đọc chữ của câu báo lỗi — sửa một chữ trong
+  migration là gãy ánh xạ mà không cổng nào đỏ (**F-058**).
 - **Phép kiểm:**
   ```sql
   SELECT r.relname AS bang, c.conname AS rang_buoc
@@ -361,7 +368,29 @@ tên **ràng buộc** và **chỉ mục**.
     AND (   indexname NOT LIKE tablename || '!_%' ESCAPE '!'
          OR indexname !~ '^[a-z][a-z0-9_]*_(pkey|key|excl|idx)$');
   ```
-- **Nguồn:** phiên chọn 2026-09-27.
+  Câu dưới chấm lời từ chối của trigger trên thân hàm đang chạy trong database — file migration cũ
+  không sửa được, nên đọc file không chấm được: hàm có `RAISE EXCEPTION` nhiều hơn số tên viết bằng
+  chuỗi trần, hay một tên sai hình hoặc không mở đầu bằng tên một bảng của schema, ra một dòng.
+  ```sql
+  SELECT p.proname AS ham, 'RAISE EXCEPTION không mang tên' AS loi
+  FROM pg_proc p
+  JOIN pg_namespace n ON n.oid = p.pronamespace
+  WHERE n.nspname = :schema
+    AND (SELECT count(*) FROM regexp_matches(p.prosrc, '\mRAISE\s+EXCEPTION\M', 'gi'))
+     <> (SELECT count(*) FROM regexp_matches(p.prosrc, '\mCONSTRAINT\s*=\s*''[^'']+''', 'gi'))
+  UNION ALL
+  SELECT p.proname, m[1]
+  FROM pg_proc p
+  JOIN pg_namespace n ON n.oid = p.pronamespace
+  CROSS JOIN LATERAL regexp_matches(p.prosrc, '\mCONSTRAINT\s*=\s*''([^'']+)''', 'gi') AS m
+  WHERE n.nspname = :schema
+    AND (   m[1] !~ '^[a-z][a-z0-9_]*_(pkey|key|fkey|check|excl)$'
+         OR NOT EXISTS (SELECT 1 FROM pg_class r
+                        WHERE r.relnamespace = n.oid AND r.relkind = 'r'
+                          AND m[1] LIKE r.relname || '!_%' ESCAPE '!'));
+  ```
+- **Nguồn:** phiên chọn 2026-09-27; vế lời từ chối của trigger là owner — **ADR-082** điểm 5.4, sửa
+  **F-058** ở migration bước 18 (`P3-04`, 2026-10-06).
 
 ---
 
@@ -441,6 +470,7 @@ phương án bị loại: `docs/decisions.md` **ADR-083**. Hai chữ *ô ghi* ·
   | `be/go.mod` · `be/go.sum` | module (`QC-11`) |
   | `be/internal/db/` | hàm kết nối (`QC-15`), hàm mở giao dịch (`QC-13`), test khói |
   | `be/internal/dbtest/` | đọc database kiểm từ môi trường cho test (`QC-16`); không câu ghi nào |
+  | `be/internal/apierr/` | hình lỗi chung, hằng mã lỗi và bảng *tên từ chối → mã* — bản code của hợp đồng ([`../3-be/01-hop-dong-api.md`](../3-be/01-hop-dong-api.md) §3–§4, `P3-04`); Gate 1g so hai bản |
   | `be/internal/<gói>/` | một gói một lát nghiệp vụ (`P3-05`…`P3-12`); cửa ghi là hàm exported của gói |
   | `be/internal/<gói>/sql/<cửa>/` | câu ghi của cửa ấy (`QC-13`) |
   | `be/cmd/<chương trình>/` | chương trình chạy — sinh ở bước có đường gọi đầu tiên, không sớm hơn |
@@ -534,4 +564,5 @@ phương án bị loại: `docs/decisions.md` **ADR-083**. Hai chữ *ô ghi* ·
 | `P2-11` | **xong 2026-09-30** — `QC-07` bộ kiểm gọi bộ đối chiếu; `QC-08` dòng `db/reconcile/` |
 | `P2-13` | **2026-09-30** — `QC-07` bước 7 của bộ kiểm diễn ba scenario; `QC-08` dòng `db/scenario/` |
 | `P3-03` | **2026-10-06** — đóng chỗ trống của `QC-06` · `QC-09`; thêm `QC-11`…`QC-17` |
+| `P3-04` | **2026-10-06** — `QC-10` thêm vế lời từ chối của trigger (**F-058**); `QC-14` thêm dòng `be/internal/apierr/` |
 | `P3-04`…`P3-14` | `QC-13` cửa ghi và Gate 1f · `QC-15` kết nối · `QC-16` chạy test bằng `scripts/be-check.sh` · `QC-17` tên test |

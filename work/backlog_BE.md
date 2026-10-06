@@ -339,11 +339,72 @@ chung, tiền và mốc trên dây, dấu lần gửi trên dây; `CLAUDE.md` §
 đường gọi vào cùng lát chấm nó. Đừng để lệnh so hợp đồng in rỗng mà không in hai danh sách (**F-017**).
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi* (nhận 2026-10-06, Claude Code; chủ repo giao *"hãy đọc kĩ và làm task này"*, Claude tự thi công):
+  `docs/product/3-be/` (mới: `01-hop-dong-api.md` · `openapi.yaml`) · `be/internal/apierr/` (mới) ·
+  migration bước 18 `20261006120000_ten_loi_tu_choi_trigger` (F-058) · `scripts/check-api-contract.sh` ·
+  `scripts/check-api-contract.test.sh` · `scripts/gate.sh` · `scripts/gate.test.sh` · `docs/decisions.md` ·
+  `CLAUDE.md` (§2 hàng *Hợp đồng API*, §5 dòng Gate 1g) · `docs/product/00-index.md` ·
+  `docs/product/2-db/10-quy-uoc-code.md` (`QC-10` vế trigger, `QC-14` dòng `apierr`) ·
+  `docs/product/2-db/07-thu-tu-migration.md` (bước 18) · `docs/product/2-db/04-luoc-do-duong-tien.md`
+  (tên lời từ chối) · kế hoạch pha 3 §5 · `work/backlog.md` · `work/backlog_BE.md` · `work/findings.md`.
+  Không một đường gọi nào, không `be/cmd/`.
+- *Thiết kế* (Claude, 2026-10-06; lý do và phương án bị loại: **ADR-084**): hợp đồng máy đọc là **OpenAPI
+  3.1** viết YAML, `docs/product/3-be/openapi.yaml`, `paths: {}`; khuôn và luật đọc ở `01-hop-dong-api.md`.
+  **Hợp đồng thắng code**; migration thắng hợp đồng về tên ràng buộc (**ADR-053** luật 2 không đổi). Hình
+  lỗi chung `{code, field?}`, mã là enum `ErrorCode` kèm status HTTP; khuôn chỉ có hai mã chung
+  (`internal_error` · `invalid_request`), mã của luật do lát thêm. Bảng **tên từ chối → mã** là phần mở rộng
+  `x-constraint-errors` của hợp đồng: mọi tên trong migration một dòng, giá trị là một mã, `internal`
+  (khoá chính — id do database sinh, `QD-10`) hoặc `unreviewed` (chưa lát nào xét; chạy như lỗi hệ thống
+  chung) — khuôn **không** đoán nghĩa người dùng của 200+ ràng buộc. F-058: migration mới cho mười lời từ
+  chối của trigger một tên `QC-10` qua `USING CONSTRAINT`, cùng mã lỗi và câu cũ. Code giữ phần công khai
+  ở `be/internal/apierr/`; **Gate 1g** `scripts/check-api-contract.sh` (chỉ đọc file, mọi lượt) so: đường
+  gọi hợp đồng ↔ `HandleFunc` trong `be/`, enum + status ↔ hằng Go, tên migration ↔ dòng ánh xạ, dòng có
+  mã ↔ bảng Go, và đổi hợp đồng ⇒ phải tăng `info.version`.
+- *Nghiệm thu* (viết trước khi sửa): (1) `docs/product/3-be/01-hop-dong-api.md` nói định dạng · hình lỗi
+  và ai giữ bảng ánh xạ · tiền · mốc · ngày bán · dấu lần gửi · phiên bản · ai thắng, không một tên đường
+  gọi; `openapi.yaml` có `paths: {}`. (2) Gate 1g chạy mọi lượt sau Gate 1f, in hai danh sách mỗi phía;
+  `scripts/check-api-contract.test.sh` (viết trước, đỏ khi chưa có script) xanh, có ca đỏ cho: đường gọi chỉ
+  ở code · chỉ ở hợp đồng · không nêu phương thức; tên migration thiếu dòng · dòng thừa; giá trị không phải
+  mã; mã ở hợp đồng thiếu hằng Go và ngược lại; status lệch; bảng Go lệch; đổi hợp đồng không tăng phiên
+  bản. (3) Trên cây thật Gate 1g `PASS` với 0 đường gọi mỗi phía và số tên migration = số dòng ánh xạ.
+  (4) Migration bước 18 xuôi · lùi · xuôi lại trong `db-check`; khối `QC-10` mới (mọi `RAISE EXCEPTION`
+  trong hàm của schema mang `CONSTRAINT`) ra 0 dòng sau bước 18 và **ra dòng** trước nó (đã thử); các test
+  `db/tests/` cũ vẫn xanh. (5) Test Go `TestQC10_…` qua `be-check.sh` trên PostgreSQL thật: lời từ chối của
+  trigger tới pgx mang đúng tên (`ConstraintName`), `apierr` dịch nó thành `internal_error` và trả tên để
+  ghi lại; tập tên đọc từ database sống (ràng buộc + chỉ mục duy nhất + tên trong thân hàm) **bằng** tập
+  khoá của `x-constraint-errors`. (6) `CLAUDE.md` §2 hàng *Hợp đồng API* trỏ file thật; `00-index.md` hàng
+  *Pha 3* **đang mở** + dòng hai file mới; **F-058** đóng. (7) `./scripts/gate.sh` xanh.
+- *Kiểm chứng:* `./scripts/check-api-contract.test.sh` · `./scripts/check-api-contract.sh --list` ·
+  `./scripts/be-check.sh` · `./scripts/db-check.sh` · `./scripts/gate.sh`; lỗi cài bằng tay cho (4) và (5);
+  đọc diff theo từng dòng nghiệm thu.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-06): thực hiện, duyệt và tích hợp **Claude Code** (không giao Codex — chủ repo giao thẳng
+cho phiên). Thiết kế và lý do: **ADR-084**.
+- *File đổi:* mới — `docs/product/3-be/01-hop-dong-api.md` · `docs/product/3-be/openapi.yaml` (OpenAPI 3.1,
+  `paths: {}`, 290 dòng `x-constraint-errors`) · `be/internal/apierr/apierr.go` · `be/internal/apierr/apierr_test.go`
+  · `db/migrations/20261006120000_ten_loi_tu_choi_trigger.{up,down}.sql` (bước 18) · `scripts/check-api-contract.sh`
+  (Gate 1g) · `scripts/check-api-contract.test.sh`; sửa — `scripts/gate.sh` · `scripts/gate.test.sh` ·
+  `scripts/verify.sh` (chú thích) · `CLAUDE.md` §2 · §5 · `docs/decisions.md` (ADR-084) · `docs/product/00-index.md`
+  · `docs/product/2-db/10-quy-uoc-code.md` (`QC-10` vế trigger + khối `sql` thứ hai, `QC-14` dòng `apierr`, §9) ·
+  `07-thu-tu-migration.md` (bước 18) · `04-luoc-do-duong-tien.md` (tên lời từ chối) · kế hoạch pha 3 §1 · §5 ·
+  `work/findings.md` (F-058 Fixed) · `work/backlog.md` · entry này.
+- *Bằng chứng theo nghiệm thu:* (1) tài liệu khuôn đủ mười mục, không tên đường gọi; Gate 1d `4 file .md đã soát`.
+  (2) `./scripts/check-api-contract.test.sh` viết trước, đỏ `FAIL — 34 ca` khi chưa có script, nay
+  `check-api-contract.test: OK`. (3) `check-api-contract: PASS — hợp đồng 0.1.0; 0 đường gọi ở hợp đồng, 0 ở code;
+  2 mã lỗi; 290 tên từ chối ở migration, 290 dòng ánh xạ (42 internal, 248 unreviewed, 0 dòng mang mã công khai)`.
+  (4) `db-check: PASS — 18 bước xuôi · lùi · xuôi lại, 18 khối kiểm QC, 36 file test…`; lùi bước 18 ⇒ `lược đồ giống
+  hệt lúc trước bước ấy`. Lỗi cài (rút bước 18 ra khỏi `db/migrations/`) ⇒ `FAIL QC-10 (sql) — 2 dòng:
+  cash_day_reconciled_guard|RAISE EXCEPTION không mang tên · reconciled_day_nonempty_guard|…`. (5) `be-check: PASS`:
+  `lời từ chối nguyên văn: cash_count_line: không được ghi số của ngày đã đối soát xong (SQLSTATE 23001, constraint
+  "cash_count_line_reconciled_day_locked_check")` · `… (SQLSTATE 23514, constraint "reconciled_day_cash_count_has_lines_check")`
+  · `database sống: 290 tên; x-constraint-errors: 290 dòng`. Cùng lỗi cài ⇒ hai test đỏ: `constraint ""` và `database
+  sống: 280 tên … chỉ ở hợp đồng: [cash_count_line_reconciled_day_locked_check …]`. (6) `CLAUDE.md` §2 · `00-index.md`
+  · F-058 như trên. (7) `./scripts/gate.sh` ⇒ `PASS gate không cổng nào đỏ`.
+- *Duyệt (Gate 4):* test Go sửa một lần sau lần chạy đầu — lỗi ở chính test (tham số `set_config` truyền `int64`
+  vào `text`), không nới điều kiện. `apierr.Write` · `Error.Status` chưa có ai gọi: là bản code của `x-http-status`
+  và hình lỗi, lát đầu có đường gọi (`P3-05`) dùng chúng.
+- *Còn lại:* 248 dòng `unreviewed` — mỗi lát xét dòng của bảng mình ghi (`01-hop-dong-api.md` §4). Gate 1g không so
+  thân request · response với struct Go (giới hạn có tên, ADR-084).
 
 [↑ đầu file](#top)
 

@@ -2,7 +2,7 @@
 # Gate 1 — the change builds and its tests pass.
 #
 # gate.sh calls it after the file-only gates, and SKIPS it when the turn changed documentation
-# only (ADR-005) — that is why Gates 1b · 1c · 1d · 1e · 1f live outside this script and
+# only (ADR-005) — that is why Gates 1b · 1c · 1d · 1e · 1f · 1g live outside this script and
 # run on every turn. Run by hand: ./scripts/verify.sh
 #
 # What it runs, in order; each step runs only when its trigger exists:

@@ -1,0 +1,350 @@
+# Hợp đồng API — Bánh cuốn Bà Thanh Cao Bằng. Owner: hàng *Hợp đồng API* ở CLAUDE.md §2.
+# Khuôn, luật đọc và luật đổi file này: docs/product/3-be/01-hop-dong-api.md (P3-04, ADR-084).
+# Hợp đồng thắng code; migration thắng hợp đồng về tên ràng buộc (ADR-053 luật 2).
+# Gate 1g (scripts/check-api-contract.sh) đọc file này theo khuôn §2 của tài liệu trên:
+# thụt hai dấu cách, mỗi khoá một dòng, không dùng neo hay khối gộp của YAML.
+openapi: 3.1.0
+info:
+  title: Bánh cuốn Bà Thanh — API
+  version: 0.1.0
+  description: >-
+    Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
+    mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
+# Mỗi lát thêm đường gọi của mình; khuôn bắt đầu rỗng (P3-04, Bẫy: không chép prompt-fullstack §3.6).
+paths: {}
+components:
+  schemas:
+    ErrorCode:
+      type: string
+      description: >-
+        Mã lỗi công khai. FE quyết hiện gì theo mã, không theo status, không theo chữ.
+        Mã của một luật do lát dựng cửa của luật ấy thêm (01-hop-dong-api.md §3).
+      enum:
+        - internal_error
+        - invalid_request
+      x-http-status:
+        internal_error: 500
+        invalid_request: 400
+    Error:
+      type: object
+      description: Hình lỗi chung của mọi lời từ chối (01-hop-dong-api.md §3).
+      required: [code]
+      additionalProperties: false
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorCode'
+        field:
+          type: string
+          description: Tên trường của yêu cầu gây lỗi, khi lỗi chỉ được về một trường.
+    MoneyVnd:
+      type: integer
+      format: int64
+      minimum: 0
+      description: Số tiền, số nguyên đồng, không âm (QD-20 · QD-21); không chuỗi, không phần lẻ.
+    Instant:
+      type: string
+      format: date-time
+      description: Một thời điểm RFC 3339 có độ lệch múi giờ (QD-30); mốc tính tiền do backend cấp.
+    SaleDate:
+      type: string
+      format: date
+      description: Ngày bán YYYY-MM-DD, quy bằng múi giờ của quán, do backend tính (QD-31).
+    SubmissionCode:
+      type: string
+      format: uuid
+      pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+      description: Dấu lần gửi (I-024), phía gửi đặt một lần lúc bấm gửi, giữ nguyên khi gửi lại.
+# Tên từ chối → mã (ADR-082 điểm 5). Mọi tên ở db/migrations/ một dòng: một mã của ErrorCode,
+# internal (không bao giờ là luật người dùng chạm tới) hoặc unreviewed (chưa lát nào xét — chạy như
+# internal_error). Lát dựng cửa chạm một bảng thì xét lại dòng của bảng ấy (01-hop-dong-api.md §4).
+x-constraint-errors:
+  attendance_day_cancel_note_only_when_cancelled_check: unreviewed
+  attendance_day_cancelled_after_created_check: unreviewed
+  attendance_day_cancelled_by_iff_cancelled_check: unreviewed
+  attendance_day_cancelled_by_person_fkey: unreviewed
+  attendance_day_one_live_per_worker_day_key: unreviewed
+  attendance_day_person_fkey: unreviewed
+  attendance_day_pkey: internal
+  attendance_day_worker_person_fkey: unreviewed
+  bill_amounts_not_negative_check: unreviewed
+  bill_debtor_iff_debt_check: unreviewed
+  bill_debtor_name_not_blank_check: unreviewed
+  bill_id_debt_key: unreviewed
+  bill_id_order_prepaid_key: unreviewed
+  bill_one_per_order_key: unreviewed
+  bill_one_per_session_key: unreviewed
+  bill_one_unit_check: unreviewed
+  bill_paper_columns_check: unreviewed
+  bill_paper_ledger_fkey: unreviewed
+  bill_paper_position_in_range_check: unreviewed
+  bill_paper_position_key: unreviewed
+  bill_parts_equal_due_check: unreviewed
+  bill_person_fkey: unreviewed
+  bill_pkey: internal
+  bill_prepaid_only_standalone_check: unreviewed
+  bill_prepayment_use_fkey: unreviewed
+  bill_sales_order_fkey: unreviewed
+  bill_table_session_fkey: unreviewed
+  cash_count_line_amount_check: unreviewed
+  cash_count_line_cash_count_fkey: unreviewed
+  cash_count_line_one_per_denomination_key: unreviewed
+  cash_count_line_pkey: internal
+  cash_count_line_reconciled_day_locked_check: unreviewed
+  cash_count_line_reconciled_day_truncate_check: unreviewed
+  cash_count_one_per_day_key: unreviewed
+  cash_count_person_fkey: unreviewed
+  cash_count_pkey: internal
+  cash_count_reconciled_day_locked_check: unreviewed
+  cash_count_reconciled_day_truncate_check: unreviewed
+  counter_duty_ended_after_started_check: unreviewed
+  counter_duty_one_at_a_time_excl: unreviewed
+  counter_duty_person_fkey: unreviewed
+  counter_duty_pkey: internal
+  debt_collection_after_key: unreviewed
+  debt_collection_amounts_check: unreviewed
+  debt_collection_before_key: unreviewed
+  debt_collection_bill_fkey: unreviewed
+  debt_collection_first_payment_key: unreviewed
+  debt_collection_follows_fkey: unreviewed
+  debt_collection_person_fkey: unreviewed
+  debt_collection_pkey: internal
+  dining_table_label_key: unreviewed
+  dining_table_label_not_blank_check: unreviewed
+  dining_table_pkey: internal
+  holiday_bonus_person_fkey: unreviewed
+  holiday_bonus_pkey: internal
+  holiday_bonus_positive_amount_check: unreviewed
+  holiday_bonus_worker_person_fkey: unreviewed
+  menu_component_base_price_non_negative_check: unreviewed
+  menu_component_name_key: unreviewed
+  menu_component_name_not_blank_check: unreviewed
+  menu_component_pkey: internal
+  menu_component_station_menu_component_fkey: unreviewed
+  menu_component_station_once_key: unreviewed
+  menu_component_station_pkey: internal
+  menu_component_station_station_code_check: unreviewed
+  menu_item_component_menu_component_fkey: unreviewed
+  menu_item_component_menu_item_fkey: unreviewed
+  menu_item_component_once_key: unreviewed
+  menu_item_component_pkey: internal
+  menu_item_component_quantity_positive_check: unreviewed
+  menu_item_name_key: unreviewed
+  menu_item_name_not_blank_check: unreviewed
+  menu_item_option_group_menu_item_fkey: unreviewed
+  menu_item_option_group_once_key: unreviewed
+  menu_item_option_group_option_group_fkey: unreviewed
+  menu_item_option_group_pkey: internal
+  menu_item_pkey: internal
+  menu_option_name_in_group_key: unreviewed
+  menu_option_name_not_blank_check: unreviewed
+  menu_option_option_group_fkey: unreviewed
+  menu_option_pkey: internal
+  menu_option_surcharge_non_negative_check: unreviewed
+  opening_float_line_amount_check: unreviewed
+  opening_float_line_one_per_denomination_key: unreviewed
+  opening_float_line_opening_float_fkey: unreviewed
+  opening_float_line_pkey: internal
+  opening_float_line_reconciled_day_locked_check: unreviewed
+  opening_float_line_reconciled_day_truncate_check: unreviewed
+  opening_float_one_per_day_key: unreviewed
+  opening_float_person_fkey: unreviewed
+  opening_float_pkey: internal
+  opening_float_reconciled_day_locked_check: unreviewed
+  opening_float_reconciled_day_truncate_check: unreviewed
+  option_group_name_key: unreviewed
+  option_group_name_not_blank_check: unreviewed
+  option_group_pkey: internal
+  option_group_prerequisite_menu_option_fkey: unreviewed
+  option_group_prerequisite_once_key: unreviewed
+  option_group_prerequisite_option_group_fkey: unreviewed
+  option_group_prerequisite_pkey: internal
+  order_intake_pause_ended_after_started_check: unreviewed
+  order_intake_pause_ended_by_iff_ended_check: unreviewed
+  order_intake_pause_ended_by_person_fkey: unreviewed
+  order_intake_pause_one_at_a_time_excl: unreviewed
+  order_intake_pause_pkey: internal
+  order_intake_pause_started_by_person_fkey: unreviewed
+  order_line_component_base_price_non_negative_check: unreviewed
+  order_line_component_count_positive_check: unreviewed
+  order_line_component_id_line_quantity_key: unreviewed
+  order_line_component_line_fkey: unreviewed
+  order_line_component_menu_component_fkey: unreviewed
+  order_line_component_name_not_blank_check: unreviewed
+  order_line_component_once_key: unreviewed
+  order_line_component_pkey: internal
+  order_line_component_position_in_range_check: unreviewed
+  order_line_component_position_key: unreviewed
+  order_line_component_previous_position_fkey: unreviewed
+  order_line_component_quantity_positive_check: unreviewed
+  order_line_id_component_count_key: unreviewed
+  order_line_id_order_quantity_key: unreviewed
+  order_line_item_name_not_blank_check: unreviewed
+  order_line_last_component_fkey: unreviewed
+  order_line_line_total_non_negative_check: unreviewed
+  order_line_menu_item_fkey: unreviewed
+  order_line_option_group_name_not_blank_check: unreviewed
+  order_line_option_menu_option_fkey: unreviewed
+  order_line_option_name_not_blank_check: unreviewed
+  order_line_option_once_key: unreviewed
+  order_line_option_order_line_fkey: unreviewed
+  order_line_option_pkey: internal
+  order_line_option_surcharge_non_negative_check: unreviewed
+  order_line_pkey: internal
+  order_line_quantity_positive_check: unreviewed
+  order_line_sales_order_fkey: unreviewed
+  order_line_unit_price_non_negative_check: unreviewed
+  paper_ledger_entry_count_positive_check: unreviewed
+  paper_ledger_id_day_count_key: unreviewed
+  paper_ledger_one_per_day_key: unreviewed
+  paper_ledger_person_fkey: unreviewed
+  paper_ledger_pkey: internal
+  person_display_name_not_blank_check: unreviewed
+  person_pkey: internal
+  prepayment_amounts_check: unreviewed
+  prepayment_id_order_amounts_key: unreviewed
+  prepayment_id_order_key: unreviewed
+  prepayment_one_per_order_key: unreviewed
+  prepayment_person_fkey: unreviewed
+  prepayment_pkey: internal
+  prepayment_sales_order_fkey: unreviewed
+  prepayment_use_balance_check: unreviewed
+  prepayment_use_bill_fkey: unreviewed
+  prepayment_use_chain_key: unreviewed
+  prepayment_use_first_fkey: unreviewed
+  prepayment_use_no_key: unreviewed
+  prepayment_use_no_positive_check: unreviewed
+  prepayment_use_one_per_bill_key: unreviewed
+  prepayment_use_one_per_refund_key: unreviewed
+  prepayment_use_one_target_check: unreviewed
+  prepayment_use_pkey: internal
+  prepayment_use_prepayment_fkey: unreviewed
+  prepayment_use_previous_fkey: unreviewed
+  prepayment_use_refund_fkey: unreviewed
+  prepayment_use_take_check: unreviewed
+  production_batch_id_rolled_back_key: unreviewed
+  production_batch_item_batch_fkey: unreviewed
+  production_batch_item_live_key: unreviewed
+  production_batch_item_live_station_job_fkey: unreviewed
+  production_batch_item_made_for_station_job_fkey: unreviewed
+  production_batch_item_once_key: unreviewed
+  production_batch_item_pkey: internal
+  production_batch_item_station_job_fkey: unreviewed
+  production_batch_item_transfer_fkey: unreviewed
+  production_batch_made_by_person_fkey: unreviewed
+  production_batch_pkey: internal
+  production_batch_rolled_back_after_made_check: unreviewed
+  production_batch_rolled_back_by_iff_rolled_back_check: unreviewed
+  production_batch_rolled_back_by_person_fkey: unreviewed
+  qr_code_code_key: unreviewed
+  qr_code_code_not_blank_check: unreviewed
+  qr_code_dining_table_fkey: unreviewed
+  qr_code_id_table_key: unreviewed
+  qr_code_one_current_per_table_key: unreviewed
+  qr_code_person_fkey: unreviewed
+  qr_code_pkey: internal
+  qr_code_replaced_after_issued_check: unreviewed
+  reconciled_day_cash_count_fkey: unreviewed
+  reconciled_day_cash_count_has_lines_check: unreviewed
+  reconciled_day_one_per_day_key: unreviewed
+  reconciled_day_opening_float_fkey: unreviewed
+  reconciled_day_opening_float_has_lines_check: unreviewed
+  reconciled_day_person_fkey: unreviewed
+  reconciled_day_pkey: internal
+  record_revision_changes_something_check: unreviewed
+  record_revision_images_of_target_check: unreviewed
+  record_revision_person_fkey: unreviewed
+  record_revision_pkey: internal
+  record_revision_reason_not_blank_check: unreviewed
+  record_revision_target_table_code_check: unreviewed
+  refund_amount_positive_check: unreviewed
+  refund_bill_fkey: unreviewed
+  refund_id_prepayment_amount_key: unreviewed
+  refund_method_code_check: unreviewed
+  refund_one_target_check: unreviewed
+  refund_person_fkey: unreviewed
+  refund_pkey: internal
+  refund_prepayment_fkey: unreviewed
+  refund_prepayment_use_fkey: unreviewed
+  refund_reason_not_blank_check: unreviewed
+  refund_source_iff_bill_check: unreviewed
+  refund_source_method_code_check: unreviewed
+  sales_order_bill_fkey: unreviewed
+  sales_order_channel_code_check: unreviewed
+  sales_order_door_delivery_address_check: unreviewed
+  sales_order_handover_code_check: unreviewed
+  sales_order_id_if_approved_key: unreviewed
+  sales_order_id_if_cancelled_key: unreviewed
+  sales_order_id_if_standalone_key: unreviewed
+  sales_order_pkey: internal
+  sales_order_qr_code_iff_qr_channel_check: unreviewed
+  sales_order_qr_code_table_fkey: unreviewed
+  sales_order_session_iff_table_channel_check: unreviewed
+  sales_order_session_table_fkey: unreviewed
+  sales_order_status_check: unreviewed
+  sales_order_submission_code_key: unreviewed
+  sales_order_submission_code_not_blank_check: unreviewed
+  sales_order_takeaway_handover_check: unreviewed
+  sales_order_takeaway_needed_at_check: unreviewed
+  sales_order_takeaway_phone_check: unreviewed
+  shop_blind_spell_declared_by_person_fkey: unreviewed
+  shop_blind_spell_ended_after_started_check: unreviewed
+  shop_blind_spell_ended_by_iff_ended_check: unreviewed
+  shop_blind_spell_ended_by_person_fkey: unreviewed
+  shop_blind_spell_one_at_a_time_excl: unreviewed
+  shop_blind_spell_pkey: internal
+  staff_advance_approver_person_fkey: unreviewed
+  staff_advance_person_fkey: unreviewed
+  staff_advance_pkey: internal
+  staff_advance_positive_amount_check: unreviewed
+  staff_advance_worker_person_fkey: unreviewed
+  station_job_component_columns_check: unreviewed
+  station_job_id_if_made_or_served_key: unreviewed
+  station_job_id_order_key: unreviewed
+  station_job_made_in_batch_fkey: unreviewed
+  station_job_one_sauce_per_order_key: unreviewed
+  station_job_order_line_component_fkey: unreviewed
+  station_job_order_line_fkey: unreviewed
+  station_job_pkey: internal
+  station_job_position_in_range_check: unreviewed
+  station_job_position_key: unreviewed
+  station_job_sales_order_fkey: unreviewed
+  station_job_station_code_check: unreviewed
+  station_job_status_check: unreviewed
+  station_job_transfer_changes_owner_check: unreviewed
+  station_job_transfer_from_station_job_fkey: unreviewed
+  station_job_transfer_item_to_key: unreviewed
+  station_job_transfer_person_fkey: unreviewed
+  station_job_transfer_pkey: internal
+  station_job_transfer_production_batch_item_fkey: unreviewed
+  station_job_transfer_to_station_job_fkey: unreviewed
+  supply_day_entry_kind_code_check: unreviewed
+  supply_day_entry_measure_nonnegative_finite_check: unreviewed
+  supply_day_entry_one_kind_per_item_day_key: unreviewed
+  supply_day_entry_person_fkey: unreviewed
+  supply_day_entry_pkey: internal
+  supply_day_entry_supply_item_fkey: unreviewed
+  supply_item_name_key: unreviewed
+  supply_item_name_not_blank_check: unreviewed
+  supply_item_pkey: internal
+  supply_item_purchase_unit_not_blank_check: unreviewed
+  table_session_bill_fkey: unreviewed
+  table_session_id_closed_key: unreviewed
+  table_session_id_if_closed_key: unreviewed
+  table_session_member_cleaned_after_close_check: unreviewed
+  table_session_member_dining_table_fkey: unreviewed
+  table_session_member_one_unpaid_session_key: unreviewed
+  table_session_member_pkey: internal
+  table_session_member_session_fkey: unreviewed
+  table_session_member_table_once_key: unreviewed
+  table_session_pkey: internal
+  table_session_status_check: unreviewed
+  wrong_make_note_cancelled_after_created_check: unreviewed
+  wrong_make_note_cancelled_by_iff_cancelled_check: unreviewed
+  wrong_make_note_cancelled_by_person_fkey: unreviewed
+  wrong_make_note_cancelled_order_fkey: unreviewed
+  wrong_make_note_live_key: unreviewed
+  wrong_make_note_live_station_job_fkey: unreviewed
+  wrong_make_note_note_not_blank_check: unreviewed
+  wrong_make_note_person_fkey: unreviewed
+  wrong_make_note_pkey: internal
+  wrong_make_note_station_job_order_fkey: unreviewed
