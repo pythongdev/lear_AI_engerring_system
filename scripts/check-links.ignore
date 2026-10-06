@@ -11,10 +11,6 @@
 docs/decisions.md :: work/journal.md              # ADR-002 — phương án đã bị loại: file này cố ý không được tạo
 docs/prompt-guideline.md :: order/pricing.go      # ví dụ trong template L1/L2, không phải file của repo này
 docs/product/2-db/10-quy-uoc-code.md :: fe/package.json  # P2-12 QC-09 — pha 4 tạo file này; gỡ dòng này ở lượt tạo nó
-CLAUDE.md :: scripts/check-write-paths.sh        # P3-03 — Codex đang tạo ở worktree; gỡ lúc tích hợp
-CLAUDE.md :: scripts/be-check.sh                 # P3-03 — Codex đang tạo ở worktree; gỡ lúc tích hợp
-docs/decisions.md :: scripts/check-write-paths.sh  # P3-03 — Codex đang tạo ở worktree; gỡ lúc tích hợp
-docs/decisions.md :: scripts/be-check.sh         # P3-03 — Codex đang tạo ở worktree; gỡ lúc tích hợp
 
 # --- bản lưu docs/product.md: ảnh chụp ngày 2026-09-02, đường dẫn của NGÀY ẤY ---
 # 6 chỗ trong bản lưu nêu `docs/architecture.md`. File ấy dọn sang

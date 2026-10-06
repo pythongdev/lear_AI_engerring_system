@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Quality gate — runs Gate 3 (scope), Gate 1b (links), Gate 1c (doc status),
-# Gate 1d (phase boundary), Gate 1e (schema names), Gate 1 (verify), then Gate 7
+# Gate 1d (phase boundary), Gate 1e (schema names), Gate 1f (write paths), Gate 1 (verify), then Gate 7
 # (commit).
 #
 # Wired as a Stop hook in .claude/settings.json, which calls it as
@@ -19,6 +19,7 @@
 # in verify.sh. check-schema-names.sh (Gate 1e, ADR-053 luật 2, P2-09) sits next
 # to it for the same reason: a slice document can name a table the migrations
 # never create in a documentation-only turn, and it needs no database to notice.
+# check-write-paths.sh (Gate 1f) chạy mọi lượt vì chỉ đọc file (ADR-082 điểm 3, ADR-083).
 # check-commit-block.sh runs only in hook mode (it needs the transcript) and only
 # after the gate is green: no point asking for a commit message for a red change.
 #
@@ -121,6 +122,7 @@ step "Gate 1b" "check-links"          check-links.sh
 step "Gate 1c" "check-doc-status"     check-doc-status.sh
 step "Gate 1d" "check-phase-boundary" check-phase-boundary.sh
 step "Gate 1e" "check-schema-names"   check-schema-names.sh
+step "Gate 1f" "check-write-paths"    check-write-paths.sh
 
 code_changed=0
 while IFS= read -r line; do
@@ -134,7 +136,7 @@ while IFS= read -r line; do
 done < <(git -c core.quotepath=false status --porcelain --untracked-files=all)
 
 if [ "$code_changed" -eq 1 ]; then
-  step "Gate 1" "db-check" verify.sh
+  step "Gate 1" "db-check|be-check" verify.sh
 else
   report="$report$(printf '%-4s  %-8s %s' SKIP "Gate 1" "verify — chỉ tài liệu đổi, không chạy verify.sh")"$'\n'
 fi

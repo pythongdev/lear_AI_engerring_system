@@ -224,8 +224,9 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   nối quên đặt lộ ra ngay ở lần chạy bộ kiểm đầu tiên.
 - **Phép kiểm:** hàm `qd32` trong `scripts/db-check.sh` — in múi giờ ở `shop-facts.md` §1 cạnh múi
   giờ kết nối thật sự đọc ra, hai dòng phải giống hệt.
-  **Chỗ trống có tên:** kết nối của backend chạy thật chưa có. Lượt pha 3 tạo kết nối ấy thêm một
-  lệnh in `SHOW TimeZone` qua **chính** kết nối đó vào bộ kiểm.
+  Kết nối của backend (từ 2026-10-06, `P3-03`): test `TestQC15_` in `SHOW TimeZone` đọc qua
+  **chính** hàm kết nối của backend cạnh múi giờ ở `shop-facts.md` §1, hai giá trị phải bằng nhau —
+  `QC-15`, chạy bằng `scripts/be-check.sh` (`QC-16`).
 - **Nguồn:** owner — `QD-32`; để server UTC là phiên chọn 2026-09-27.
 
 ---
@@ -294,7 +295,7 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   | `db/scenario/` | ba scenario nghiệm thu diễn qua lược đồ, phần đọc lại và phép chấm `YC` — chạy ở bước 7 của `scripts/db-check.sh` (`11-cong-chat-luong-pha-2.md`, **ADR-067**) | `P2-13` |
   | `db/seed/` | bộ dựng dữ liệu mồi — đọc `master_plan/shop-facts.md` lúc chạy, in SQL; không cất con số nào của quán (`08-du-lieu-moi.md`) | `P2-10` |
   | `Makefile` | lệnh tắt cho database làm việc trên máy phát triển — chỉ gọi lại `compose.yaml` và `db/seed/`, không mang cấu hình riêng; bộ kiểm không đi qua nó | chủ repo yêu cầu 2026-09-29 |
-  | `be/` | backend | pha 3 |
+  | `be/` | backend — cấu trúc bên trong theo `QC-14` | `P3-03` |
   | `fe/` | frontend | pha 4 |
 
   Không đặt code ở chỗ khác mà không thêm một dòng vào bảng này trước.
@@ -321,10 +322,9 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   [ ! -e be ] || [ -f be/go.mod ] || echo "be/ có mà không có be/go.mod"
   [ ! -e fe ] || [ -f fe/package.json ] || echo "fe/ có mà không có fe/package.json"
   ```
-  **Chỗ trống có tên:** `scripts/verify.sh` hôm nay chỉ gọi Go và Node khi `go.mod` ·
-  `package.json` nằm **ở gốc**. Lượt pha 3 tạo `be/go.mod` sửa `verify.sh` trong **cùng** lượt;
-  thư viện web, cách truy cập database từ Go và khung test frontend chốt ở pha 3 · pha 4, dòng mới
-  vào file này.
+  Từ 2026-10-06 (`P3-03`) `scripts/verify.sh` dựng và kiểm Go trong `be/`, không ở gốc; phiên bản Go,
+  thư viện web, cách truy cập database và khung test backend là `QC-11`…`QC-17`. `verify.sh` vẫn
+  chỉ gọi Node khi `package.json` nằm ở gốc — khung test frontend chốt ở pha 4, dòng mới vào file này.
 - **Nguồn:** owner — `master_plan/prompt-fullstack.md` §3.4 cho ngôn ngữ; §3.4 là bản xuất khẩu
   (**ADR-035** luật 3), và câu *"MySQL 8.4"* của chính khối ấy đã bị thay bởi `QC-01` — nên các phần
   còn lại của §3.4 **chưa** được chủ repo đọc lại sau ngày ấy.
@@ -365,7 +365,167 @@ tên **ràng buộc** và **chỉ mục**.
 
 ---
 
-## 8. Bước sau đọc gì ở đây
+## 8. Backend — `QC-11`…`QC-17`
+
+Bảy mục dưới chốt ở `P3-03` (2026-10-06, Claude Code chọn, Codex thi công). Vì sao chọn thế và các
+phương án bị loại: `docs/decisions.md` **ADR-083**. Hai chữ *ô ghi* · *cửa ghi*: **ADR-082** điểm 1.
+
+### QC-11 — Go 1.27.1, một module ở `be/`
+
+- **Quy ước:** backend là **một** module Go ở `be/`, đường dẫn module `banhcuon/be`. Dòng `go` của
+  `be/go.mod` ghim **`go 1.27.1`** — đúng bản dùng ở máy phát triển, bộ kiểm và máy chạy thật; lệnh `go`
+  cũ hơn tự tải đúng bản ấy (`GOTOOLCHAIN=auto`, mặc định). Không dòng `toolchain` riêng. Lên bản mới là
+  sửa dòng `go` **và** mục này trong cùng một lượt. Phụ thuộc trực tiếp lúc dựng: `github.com/jackc/pgx/v5`
+  (`QC-13`); thêm một phụ thuộc trực tiếp nữa thì nói lý do ở mục dùng nó.
+- **Hậu quả nếu làm khác:** máy thật chạy một bản Go khác bộ kiểm thì bộ định tuyến chuẩn, `time` và
+  `database` của thư viện chuẩn có thể khác đúng chỗ test đã chứng minh — cùng lý lẽ `QC-01` cho
+  PostgreSQL.
+- **Phép kiểm:**
+  ```sh
+  grep -qx 'go 1.27.1' be/go.mod 2>/dev/null || echo "be/go.mod không ghim dòng 'go 1.27.1'"
+  grep -Eq '^(require )?[[:space:]]*github.com/jackc/pgx/v5 v5\.' be/go.mod 2>/dev/null || echo "be/go.mod không có github.com/jackc/pgx/v5"
+  grep -q '^module banhcuon/be$' be/go.mod 2>/dev/null || echo "be/go.mod không khai module banhcuon/be"
+  [ -f be/go.sum ] || echo "thiếu be/go.sum"
+  ```
+- **Nguồn:** ngôn ngữ — `QC-09`; phiên bản và module là phiên chọn 2026-10-06 (**ADR-083**; Go 1.27.1 là
+  bản ổn định mới nhất ngày ấy, `go.dev/dl`).
+
+### QC-12 — Web bằng `net/http` của thư viện chuẩn
+
+- **Quy ước:** HTTP đi qua `net/http` — `http.ServeMux` với mẫu có phương thức (`"POST /…"`) và tham số
+  đường dẫn. Không framework web, không bộ định tuyến ngoài. Cần một thứ thư viện chuẩn không có thì
+  sửa mục này **trước**, kèm lý do.
+- **Hậu quả nếu làm khác:** framework mang kiểu ngữ cảnh riêng; cửa ghi viết dựa vào nó thì test cửa
+  phải dựng cả framework, và lát sau chọn framework khác thì có hai cách viết một cửa.
+- **Phép kiểm:**
+  ```sh
+  grep -Ei 'gin-gonic|labstack/echo|go-chi/|gofiber|gorilla/mux|julienschmidt/httprouter|beego|go-kratos' be/go.mod 2>/dev/null
+  ```
+- **Nguồn:** phiên chọn 2026-10-06 (**ADR-083**); Gin của `master_plan/prompt-fullstack.md` §3.4 bị loại
+  ở ADR ấy.
+
+### QC-13 — Database bằng pgx v5 và SQL viết tay; câu ghi chỉ ở thư mục của một cửa; một hàm mở giao dịch
+
+- **Quy ước:**
+  - **Driver:** `github.com/jackc/pgx/v5` (`pgxpool`). Không ORM, không công cụ sinh code từ SQL.
+  - **Câu ghi chỉ ở một chỗ.** Mỗi câu `INSERT` · `UPDATE` của backend là một file
+    `be/internal/<gói>/sql/<cửa>/<câu>.sql` (mỗi tên `[a-z][a-z0-9_]*`). Thư mục `<cửa>` **là** cửa ghi
+    của **ADR-082** điểm 1, mã của nó là `<gói>/<cửa>`; Go nạp file bằng `embed`. Câu **đọc** đặt ở đâu
+    cũng được, kể cả file `.sql` ngay dưới `sql/`.
+  - **Không** `DELETE` · `TRUNCATE` (`shop_app` không xoá được — `QC-03`), **không** `MERGE`, `COPY`,
+    `CopyFrom` — hai thứ sau ghi theo cách lệnh liệt kê không đọc ra ô.
+  - Bảng viết trần hoặc `shop.<bảng>`; `UPDATE` nêu cột ở `SET cột = …` hoặc `SET (a, b) = …`.
+  - **Giao dịch mở bằng đúng một hàm** ở `be/internal/db/`. Không file `.go` nào khác (trừ file test)
+    gọi `Begin` · `BeginTx` · `BeginFunc` · `BeginTxFunc`.
+  - **Lệnh liệt kê đường ghi** (**ADR-082** điểm 3) là `scripts/check-write-paths.sh` — Gate 1f, chạy
+    mọi lượt; `--list` in bảng *ô ghi → cửa*. Nó đọc gì, đỏ khi nào: header của script.
+- **Hậu quả nếu làm khác:** câu ghi rải trong chuỗi Go thì *mỗi ô đúng một cửa* chỉ còn là lời hứa —
+  lệnh liệt kê phải phân tích mã Go, hoặc không dựng được. Mỗi lát một cách mở giao dịch thì ranh giới
+  tầng 2 (**ADR-082** điểm 2) không chấm chung được, và một cửa mở giao dịch trong hàm con trông y như cửa
+  đúng.
+- **Phép kiểm:**
+  ```sh
+  ./scripts/check-write-paths.sh >/dev/null 2>&1 || ./scripts/check-write-paths.sh 2>&1
+  grep -rnE '(\.|pgx\.)(Begin|BeginTx|BeginFunc|BeginTxFunc)\(' be --include='*.go' 2>/dev/null | grep -v '_test\.go:' | grep -v '^be/internal/db/'
+  grep -Ei 'gorm\.io|entgo\.io|sqlc-dev|jmoiron/sqlx|upper/db|uptrace/bun|lib/pq|go-pg/' be/go.mod 2>/dev/null
+  ```
+- **Nguồn:** phiên chọn 2026-10-06 (**ADR-083**), dựng để **ADR-082** điểm 3 chạy được không cần
+  database; sqlc của `master_plan/prompt-fullstack.md` §3.4 bị loại ở ADR ấy.
+
+### QC-14 — Cấu trúc trong `be/`
+
+- **Quy ước:**
+
+  | Đường dẫn | Chứa gì |
+  |---|---|
+  | `be/go.mod` · `be/go.sum` | module (`QC-11`) |
+  | `be/internal/db/` | hàm kết nối (`QC-15`), hàm mở giao dịch (`QC-13`), test khói |
+  | `be/internal/dbtest/` | đọc database kiểm từ môi trường cho test (`QC-16`); không câu ghi nào |
+  | `be/internal/<gói>/` | một gói một lát nghiệp vụ (`P3-05`…`P3-12`); cửa ghi là hàm exported của gói |
+  | `be/internal/<gói>/sql/<cửa>/` | câu ghi của cửa ấy (`QC-13`) |
+  | `be/cmd/<chương trình>/` | chương trình chạy — sinh ở bước có đường gọi đầu tiên, không sớm hơn |
+
+  Không đặt file `.go` ngoài `be/internal/` · `be/cmd/`, không thư mục khác ở gốc `be/`, mà không thêm
+  một dòng vào bảng này trước.
+- **Hậu quả nếu làm khác:** lát đầu đặt cửa ở `be/handlers/`, lát sau ở `be/<miền>/` — lệnh liệt kê
+  không tìm thấy cửa nằm ngoài khuôn `QC-13`, và `P3-13` đi tìm test của một vế ở ba chỗ.
+- **Phép kiểm:**
+  ```sh
+  [ -d be/internal/db ] || echo "thiếu be/internal/db"
+  find be -name '*.go' 2>/dev/null | grep -Ev '^be/(internal|cmd)/'
+  find be -mindepth 1 -maxdepth 1 2>/dev/null | grep -Ev '^be/(go\.mod|go\.sum|internal|cmd)$'
+  ```
+- **Nguồn:** phiên chọn 2026-10-06 (**ADR-083**); vị trí `be/` — `QC-08`.
+
+### QC-15 — Backend kết nối bằng `shop_app`, đặt múi giờ quán, và từ chối khi sai một trong hai
+
+- **Quy ước:** backend mở database bằng **đúng một** hàm ở `be/internal/db/`, nhận chuỗi kết nối và
+  múi giờ của quán. Hàm đặt tham số kết nối `TimeZone` bằng múi giờ ấy (`QC-06`), và với mỗi kết nối
+  mới đọc lại vai: khác `shop_app`, hay là superuser ⇒ trả lỗi, không trả kết nối. Múi giờ rỗng ⇒ trả
+  lỗi trước khi kết nối. Giá trị múi giờ là cấu hình lúc chạy; ở bộ kiểm, `scripts/be-check.sh` đọc
+  nó từ `master_plan/shop-facts.md` §1 như `db-check` (không chép); cách cấp cấu hình ở máy thật là
+  của pha 5.
+- **Hậu quả nếu làm khác:** chạy nhầm bằng `shop_owner` thì `QD-50` không giữ gì — chủ bảng xoá được
+  mọi thứ — và không ai biết, vì mọi lệnh vẫn chạy. Quên đặt múi giờ thì mọi mốc lệch 7 tiếng ở đúng
+  máy có server để UTC (`QC-06`).
+- **Phép kiểm:** test `TestQC15_…` (chạy bằng `scripts/be-check.sh`, `QC-16`) qua chính hàm kết nối:
+  vai đọc ra là `shop_app`, không superuser; `SHOW TimeZone` bằng múi giờ ở `shop-facts.md` §1 trong
+  khi một kết nối không đặt múi giờ đọc ra UTC — in cả ba giá trị; kết nối bằng `shop_owner`, hay múi
+  giờ rỗng ⇒ hàm trả lỗi. Test `TestQC03_…` cùng file: lệnh xoá qua kết nối ấy bị từ chối với mã
+  `42501`, in lời từ chối nguyên văn, số dòng không đổi. Khối dưới chỉ giữ cho hai test không biến mất:
+  ```sh
+  grep -qs '^func TestQC15_' be/internal/db/*_test.go || echo "thiếu test TestQC15_ ở be/internal/db/"
+  grep -qs '^func TestQC03_' be/internal/db/*_test.go || echo "thiếu test TestQC03_ ở be/internal/db/"
+  ```
+- **Nguồn:** owner — `QC-03` (vai), `QC-06` (múi giờ tường minh); từ chối ở hàm kết nối là phiên chọn
+  2026-10-06 (**ADR-083**).
+
+### QC-16 — Test backend: `go test` trên PostgreSQL thật, dựng bởi `scripts/be-check.sh`
+
+- **Quy ước:**
+  - Thư viện `testing` chuẩn. **Một** lệnh chạy cả bộ: `scripts/be-check.sh` — dựng database riêng
+    và rỗng (compose project `banhcuon_check_{PID}_be_…`, cổng ngẫu nhiên — khuôn tên mà
+    `db-check` cũng dọn khi tiến trình đã chết, **F-045**), chạy mọi migration từ số 0, xuất ra môi
+    trường chuỗi kết nối `shop_app` · `shop_owner` và múi giờ quán, chạy `go test -count=1 -p 1 -v ./...`
+    trong `be/`, rồi chỉ gỡ project của mình. Không Docker, hay database không lên ⇒ **FAIL**.
+  - Test cần database lấy kết nối qua `be/internal/dbtest/`; thiếu biến môi trường ⇒ test **đỏ**
+    với lời chỉ sang `scripts/be-check.sh`. Không `t.Skip`, không `testing.Short`, không database giả,
+    không mock driver, không testcontainers (một cách dựng database kiểm, không hai).
+  - **Gate 1:** `scripts/verify.sh` chạy gofmt · `go vet` · `go build` trong `be/`, và gọi
+    `scripts/be-check.sh` khi lượt đổi gì dưới `be/`, `db/`, ở `compose.yaml` hay
+    `scripts/be-check.sh`. Lượt chỉ đổi tài liệu thì không (`CLAUDE.md` §5).
+- **Hậu quả nếu làm khác:** test tự bỏ qua khi thiếu database là test không ai biết đã không chạy
+  (**F-007**). Test trên database giả xanh vì không có ai để từ chối — tầng 1 và tầng 2 không tồn
+  tại ở đó (`P3-03` *Bẫy*). Hai lần chạy dùng chung một database kiểm thì gỡ của nhau (**F-045**).
+- **Phép kiểm:**
+  ```sh
+  grep -q 'scripts/be-check.sh' scripts/verify.sh || echo "scripts/verify.sh không gọi scripts/be-check.sh"
+  grep -rnE 't\.Skip|testing\.Short' be --include='*.go' 2>/dev/null
+  grep -Ei 'sqlmock|pgxmock|sqlite|testcontainers' be/go.mod 2>/dev/null
+  ```
+- **Nguồn:** owner — **ADR-082** điểm 2 · 7 (test qua cửa trên PostgreSQL thật), **F-045**, **F-007**;
+  lệnh, tên project và biến môi trường là phiên chọn 2026-10-06 (**ADR-083**).
+
+### QC-17 — Tên test mang mã mệnh đề nó chấm
+
+- **Quy ước:** mỗi hàm test trong `be/` tên `Test<MÃ>_<MôTả>`, `<MÃ>` là `I` + ba số (mệnh đề ở
+  `quality/invariants.md`), `YC` + hai số (`docs/product/1-system-design/04-yeu-cau-du-lieu.md`) hoặc
+  `QC` + hai số (file này) — ví dụ `TestI017_HaiLoiGoiChenNhau`. Một hàm một mã; test chạm mệnh đề
+  thứ hai thì viết hàm thứ hai. `TestMain` là ngoại lệ duy nhất. Đây là **dấu truy** của **ADR-082**
+  điểm 4: `P3-13` đếm vế đã có test bằng `grep`, không bằng mắt.
+- **Hậu quả nếu làm khác:** test đặt tên theo hàm được gọi (`TestCreateOrder`) thì `P3-13` phải đọc
+  từng test mới biết nó chứng minh vế nào — đúng chỗ một vế thiếu test trông như đã có.
+- **Phép kiểm:**
+  ```sh
+  grep -rhoE '^func Test[A-Za-z0-9_]*' be --include='*_test.go' 2>/dev/null | sed 's/^func //' | grep -Ev '^(Test(I[0-9]{3}|YC[0-9]{2}|QC[0-9]{2})_[A-Za-z0-9_]+|TestMain)$'
+  for c in $(grep -rhoE '^func TestI[0-9]{3}_' be --include='*_test.go' 2>/dev/null | grep -oE 'I[0-9]{3}' | sort -u); do grep -q "^### I-${c#I} " quality/invariants.md || echo "test mang $c mà quality/invariants.md không có I-${c#I}"; done
+  ```
+- **Nguồn:** owner — **ADR-082** điểm 4 (*mỗi test truy được về một `I-0xx` bằng lệnh; hình của dấu truy
+  chọn ở `P3-03`*); hình tên là phiên chọn 2026-10-06 (**ADR-083**).
+
+---
+
+## 9. Bước sau đọc gì ở đây
 
 | Bước | Lấy gì |
 |---|---|
@@ -373,4 +533,5 @@ tên **ràng buộc** và **chỉ mục**.
 | `P2-09` | `QC-05` — thư mục và khuôn tên mà lệnh đối chiếu tên bảng `.md` ↔ migration đọc; đã đổi mục ấy thành *mỗi bước xuôi một bước lùi* (2026-09-29) |
 | `P2-11` | **xong 2026-09-30** — `QC-07` bộ kiểm gọi bộ đối chiếu; `QC-08` dòng `db/reconcile/` |
 | `P2-13` | **2026-09-30** — `QC-07` bước 7 của bộ kiểm diễn ba scenario; `QC-08` dòng `db/scenario/` |
-| pha 3 | `QC-06` chỗ trống kết nối backend · `QC-09` chỗ trống `verify.sh` và thư viện |
+| `P3-03` | **2026-10-06** — đóng chỗ trống của `QC-06` · `QC-09`; thêm `QC-11`…`QC-17` |
+| `P3-04`…`P3-14` | `QC-13` cửa ghi và Gate 1f · `QC-15` kết nối · `QC-16` chạy test bằng `scripts/be-check.sh` · `QC-17` tên test |

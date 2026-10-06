@@ -277,7 +277,31 @@ lát kia chạy trên bản giả — và bản giả không từ chối gì, n�
   `./scripts/be-check.sh` (một lần, rồi hai lần chồng nhau) · `cd be && go test ./...` (mong đỏ) ·
   `./scripts/db-check.sh` · `./scripts/gate.sh`; đọc diff theo từng dòng nghiệm thu.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-06): thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree
+`../lean_wt/P3-03`, nhánh `codex/P3-03` từ `bd6b2a8`), thiết kế · QC-11…QC-17 · ca hồi quy 1–16 · duyệt và
+tích hợp **Claude Code**. Phần thiết kế (ADR-083, dòng `CLAUDE.md` §5, entry này) đã vào commit `a8b6c6e`.
+- *File đổi ở lượt thi công:* `be/go.mod` · `be/go.sum` · `be/internal/db/db.go` (`Open`, `InTx`) ·
+  `be/internal/db/khoi_test.go` · `be/internal/dbtest/dbtest.go` · `scripts/check-write-paths.sh` (Gate 1f) ·
+  `scripts/check-write-paths.test.sh` (ca 1–16 Claude viết trước, đỏ 29 ca khi chưa có script; ca 17 trở đi
+  Codex thêm: RENAME · DROP · REVOKE từng loại · chú thích lồng · bốn loại ghi bị cấm) · `scripts/be-check.sh` ·
+  `scripts/verify.sh` (khối Go chuyển sang `be/`) · `scripts/gate.sh` · `scripts/gate.test.sh` ·
+  `docs/product/2-db/10-quy-uoc-code.md` (§8 mới; `QC-06` · `QC-08` · `QC-09` · bảng §9) ·
+  `scripts/check-links.ignore` (gỡ bốn dòng tạm đã vào `a8b6c6e`).
+- *Duyệt:* code khớp đặc tả; sửa một chỗ (cột của dòng `step "Gate 1f"`). Sandbox của Codex chặn Docker, nên
+  phần PostgreSQL thật do Claude chạy; hai ca `commit-msg.test.sh` đỏ trong sandbox là lỗi môi trường đã ghi ở
+  P3-02 (sandbox chặn `ps`), ngoài sandbox qua.
+- *Bằng chứng:* `./scripts/check-write-paths.test.sh` → `OK`; lệnh liệt kê trên migration thật với ba cửa giả
+  ⇒ `record_revision` đỏ *thuộc migration*, `sales_order` · `cash_count` liệt kê được. `./scripts/be-check.sh`
+  → `vai=shop_app, superuser=false; múi giờ quán=Asia/Ho_Chi_Minh; backend=Asia/Ho_Chi_Minh; kết nối không
+  đặt=Etc/UTC` · `ERROR: permission denied for table attendance_day (SQLSTATE 42501)` · `be-check: PASS`.
+  Lỗi cài (bỏ dòng đặt `timezone` trong `Open`) ⇒ `backend="Etc/UTC", quán="Asia/Ho_Chi_Minh"`,
+  `be-check: FAIL`; trả lại thì xanh. Hai lần `be-check` chồng nhau ⇒ cả hai PASS, không còn project kiểm nào.
+  `cd be && go test ./...` không qua be-check ⇒ `thiếu BANHCUON_TEST_APP_DSN: chạy qua ./scripts/be-check.sh
+  (QC-16)`, FAIL. `./scripts/gate.sh` ở worktree và clone chính ⇒ `PASS gate không cổng nào đỏ`, db-check
+  `17 khối kiểm QC`.
+- *Còn lại:* chưa có cửa nào nên Gate 1f đang đếm 0 ô; lát đầu có cửa (`P3-05` trở đi) là lần đầu nó liệt
+  kê ô thật. Ở database rỗng, vế *số dòng không đổi* của `TestQC03_` là 0 = 0; bằng chứng chính là mã `42501`.
+  **F-058** vẫn mở (lời từ chối của trigger không mang tên) — việc của `P3-04`.
 
 [↑ đầu file](#top)
 

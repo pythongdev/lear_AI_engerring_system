@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # Gate 1 — the change builds and its tests pass.
 #
-# gate.sh calls it as step 5, and SKIPS it when the turn changed documentation
-# only (ADR-005) — that is why Gates 1b · 1c · 1d live outside this script and
+# gate.sh calls it after the file-only gates, and SKIPS it when the turn changed documentation
+# only (ADR-005) — that is why Gates 1b · 1c · 1d · 1e · 1f live outside this script and
 # run on every turn. Run by hand: ./scripts/verify.sh
 #
 # What it runs, in order; each step runs only when its trigger exists:
-#   Go    — go.mod present: gofmt must list nothing, go build, go test.
+#   be    — be/go.mod present: gofmt must list nothing, go vet, go build.
+#           be-check.sh runs when be/, db/, compose.yaml or scripts/be-check.sh
+#           changed; it requires Docker and fails if Docker is unavailable.
 #   Node  — package.json present and npm installed: npm test / lint / build,
 #           each only if the package defines it (--if-present).
 #   db    — db/ exists AND this turn changed something under db/, compose.yaml,
@@ -24,13 +26,21 @@ set -euo pipefail
 
 echo "=== Lean AI Engineering Verification ==="
 
-if [ -f "go.mod" ]; then
-  echo "[Go] formatting"
-  test -z "$(gofmt -l .)"
-  echo "[Go] build"
-  go build ./...
-  echo "[Go] test"
-  go test ./...
+if [ -f "be/go.mod" ]; then
+  echo "[be] formatting"
+  test -z "$(gofmt -l be)"
+  echo "[be] vet"
+  (cd be && go vet ./...)
+  echo "[be] build"
+  (cd be && go build ./...)
+  if [ -n "$(git status --porcelain --untracked-files=all -- be db compose.yaml scripts/be-check.sh)" ]; then
+    echo "[be] scripts/be-check.sh"
+    "$(cd "$(dirname "$0")" && pwd)"/be-check.sh
+  else
+    echo "[be] skipped — nothing under be/, db/, compose.yaml or scripts/be-check.sh changed"
+  fi
+else
+  echo "[be] skipped — no be/go.mod"
 fi
 
 if [ -f "package.json" ]; then
