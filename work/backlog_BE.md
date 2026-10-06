@@ -165,11 +165,47 @@ bằng dấu gạch chéo; không tự coi chúng là component hay route.
 thử nó trên một đoạn hợp đồng thật trước khi tin.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi* (nhận 2026-10-06, Claude Code; thi công: Codex theo `docs/prompt-guideline.md` §6.1):
+  `scripts/check-phase-boundary.sh` · `scripts/check-phase-boundary.test.sh` · `work/backlog.md` ·
+  `work/backlog_BE.md`. Không tạo `docs/product/3-be/` (thư mục ấy sinh cùng dòng nội dung đầu tiên
+  của pha 3, ADR-035).
+- *Thiết kế* (Claude, 2026-10-06): vùng pha 3 có bộ mẫu thứ ba, **không** có mẫu SQL, **không** có
+  mẫu endpoint. Mẫu thẻ dùng lại hình của T-131 nhưng đòi **ký tự đứng trước `<` không phải chữ, số
+  hay `_`** — đúng chỗ phân biệt thẻ (`<DebtList />`, `{<DebtList />}`) với kiểu generic
+  (`Result<Order>`, `Array<OrderLine>`); generic Go viết bằng `[...]` nên không chạm mẫu. Route màn
+  hình: thuộc tính `path=` · `href=` · `to=` theo sau bởi dấu nháy hoặc `{`, và lệnh chuyển màn
+  `navigate(` · `router.push(` · `router.replace(` · `useNavigate` · `useRouter`. Đuôi
+  `.jsx` · `.tsx` · `.vue` giữ như cũ. Hai vùng cũ không đổi mẫu.
+- *Nghiệm thu* (viết trước khi giao): (1) mỗi hình sau trong một file `.md` đã đổi dưới
+  `docs/product/3-be/` cho exit 1 và output có `pha 3 đang đặt tên` cùng chính dòng ấy: sáu hình
+  thẻ của ca 18 (F-049), `<Route path="/no" element={<DebtList />} />`, `path="/menu/product"`,
+  `href="/no"`, `navigate("/no")`, `router.push("/no")`; (2) một file pha 3 mang endpoint (có và
+  không có `/` mở đầu, có `/api/` và `/v1/`), SQL (`CREATE TABLE` · `ON DELETE CASCADE` ·
+  `DELETE FROM` · `NOT NULL`), generic (`Result<Order>`, `Array<OrderLine>`, `func Page[T any]`) và
+  hai hình tên trong backtick cho exit 0 với `OK — 1 file .md đã soát` — **đọc rồi im**, không phải
+  bỏ qua; (3) dòng *skipping* nêu cả `docs/product/3-be`; (4) mọi ca 1–19 cũ vẫn `ok`;
+  (5) `./scripts/gate.sh` xanh.
+- *Kiểm chứng:* ca 20–23 trong `scripts/check-phase-boundary.test.sh` (Claude viết trước, đỏ trên
+  script cũ); Claude tự chạy lại test và gate trong worktree và ở clone chính.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-06): thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree
+`../lean_wt/P3-02`, nhánh `codex/P3-02` từ `c7da3ee`, đã gỡ), duyệt và tích hợp **Claude Code**.
+- *File đổi:* `scripts/check-phase-boundary.sh` (vùng thứ ba `PHASE3_DIR`, `PATTERN3`, `hits3`, ignore,
+  đếm file, dòng skipping và header nêu ba vùng) · `scripts/check-phase-boundary.test.sh` (ca 20–23 Claude
+  viết trước, đỏ 25 ca trên script cũ; ca 24–25 Codex thêm: các hình route/đuôi còn lại, ignore và đếm ba vùng).
+- *Duyệt sửa một điểm:* phiếu viết `` `<X>` `` như ký hiệu thay cho một thẻ, Codex đọc thành thẻ một chữ và nới
+  tên thẻ sang `[A-Z][A-Za-z]*` — `<T>` đứng sau dấu cách sẽ đỏ oan. Lỗi nằm ở phiếu nên Claude tự sửa: trả về
+  `+` như T-131, ca 24 dùng `` `<DebtList>` ``, ca 21 thêm dòng `Kiểu trả về <T> do nơi gọi chọn.` (đỏ với `*`,
+  im với `+`, đã thử).
+- *Bằng chứng:* `./scripts/check-phase-boundary.test.sh` → `check-phase-boundary.test: OK` (ca 1–19 cũ đều
+  `ok`); `./scripts/gate.sh` ở worktree và clone chính → `PASS gate không cổng nào đỏ`; `PATTERN3` chạy trên
+  toàn bộ `docs/product/1-system-design/`, `docs/product/2-db/`, `docs/decisions.md` → 0 dòng khớp.
+- *Ghi chú môi trường:* trong sandbox `workspace-write` của Codex hai ca `--amend` của
+  `scripts/commit-msg.test.sh` hỏng vì hook dò `--amend` bằng `ps`, sandbox chặn `ps`; ngoài sandbox cùng
+  commit thì qua. Không phải lỗi của task này. Mô hình mặc định trong cấu hình Codex (`gpt-6.1-sol`) bị tài
+  khoản ChatGPT từ chối, nên lượt này ghi đè `-m`.
+- *Còn lại:* không. Vùng pha 3 chưa có file nào, nên Gate 1d vẫn `SKIP` cho tới lát nội dung đầu tiên của
+  `docs/product/3-be/`.
 
 [↑ đầu file](#top)
 

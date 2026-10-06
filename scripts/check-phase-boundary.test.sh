@@ -198,6 +198,102 @@ Số tiền dùng numeric(12,0); hợp lệ ⇒ ghi nhận -> đối chiếu.
 EOF
 check "pha 2: dấu so sánh, mã giữ chỗ, kiểu số và mũi tên không bị kêu oan" 0 "OK — 1 file .md đã soát" "$(run "$r")"
 
+# ===== VÙNG PHA 3 — thêm 2026-10-06 bởi P3-02 ==============================
+# Bộ mẫu thứ ba: pha 3 PHẢI viết endpoint và được trích SQL, nên vùng này chỉ
+# đỏ với thứ pha 4 sở hữu — component, thẻ JSX, route màn hình. Thẻ đòi ký tự
+# đứng trước '<' không phải chữ/số/'_': đó là chỗ tách thẻ khỏi kiểu generic.
+PHASE3="docs/product/3-be"
+
+# 20 — mỗi hình thẻ (khuôn ca 18, F-049) và mỗi hình route màn hình là một ca.
+i=0
+while IFS= read -r example; do
+  i=$((i + 1))
+  r="$(newrepo "p3_fe_$i")"
+  mkdir -p "$r/$PHASE3"
+  printf '%s\n' "$example" > "$r/$PHASE3/01-hop-dong.md"
+  got="$(run "$r")"
+  check "pha 3: $example" 1 "pha 3 đang đặt tên" "$got"
+  check "pha 3: output nêu đúng dòng — $example" 1 "$example" "$got"
+done <<'EOF'
+<DebtTable rows={rows} />
+</DebtTable>
+<OrderCard order={o}>
+<DebtTable />
+<DebtTable>
+file `DebtList.tsx`
+<Route path="/no" element={<DebtList />} />
+path="/menu/product"
+href="/no"
+navigate("/no")
+router.push("/no")
+EOF
+
+# 21 — CA QUAN TRỌNG NHẤT CỦA NHÓM: hợp đồng pha 3 thật — endpoint, SQL,
+# generic, hai hình tên trong backtick — phải được ĐỌC rồi IM (không phải bỏ
+# qua: output đòi "OK — 1 file"). Không có ca này thì lần sửa sau dễ chép mẫu
+# của vùng pha 1 sang và đỏ ở mọi lát backend.
+r="$(newrepo p3_contract)"
+mkdir -p "$r/$PHASE3"
+cat > "$r/$PHASE3/01-hop-dong.md" <<'EOF'
+POST /api/orders tạo đơn; trả về Result<Order>.
+GET    staff/debts?status=open       danh sách nợ chưa thu
+DELETE /v1/orders/{id} chỉ hủy mềm.
+PATCH /orders/:id/lines trả về Array<OrderLine>.
+Bản nháp dọn bằng DELETE FROM order_draft WHERE created_at < now();
+Lược đồ gốc: CREATE TABLE orders; khoá ngoại ON DELETE CASCADE; cột so_luong BIGINT NOT NULL.
+Hàm phân trang func Page[T any](items []T) Page[T] trả map[string]Order.
+Tên `OrderService` và đường dẫn `/orders/{id}` để mắt người rà.
+So sánh a < b và b > a; thay <MÃ> bằng mã việc.
+Kiểu trả về <T> do nơi gọi chọn.
+EOF
+check "pha 3: endpoint · SQL · generic · backtick được đọc rồi im" 0 "OK — 1 file .md đã soát" "$(run "$r")"
+
+# 22 — dòng skipping phải nêu cả vùng pha 3, để SKIP không giấu một vùng.
+r="$(newrepo p3_skip)"
+check "không đổi gì: dòng skipping nêu vùng pha 3" 0 "$PHASE3" "$(run "$r")"
+
+# 23 — file pha 3 CHƯA TRACK vẫn bị chấm, và không bị gắn nhãn pha 2.
+r="$(newrepo p3_untracked)"
+mkdir -p "$r/$PHASE3"
+printf 'Màn Nợ dùng <DebtList /> để hiển thị.\n' > "$r/$PHASE3/nhap.md"
+got="$(run "$r")"
+check "pha 3: file chưa track vẫn bị chấm" 1 "pha 3 đang đặt tên" "$got"
+if [[ "$got" == *"pha 2 đang đặt tên"* ]]; then
+  echo "  FAIL pha 3: vi phạm vùng pha 3 bị gắn nhãn pha 2"
+  fails=$((fails + 1))
+else
+  echo "  ok   pha 3: vi phạm vùng pha 3 không bị gắn nhãn pha 2"
+fi
+
+# 24 — các hình còn lại của thiết kế vùng 3, gồm thẻ trong backtick.
+i=0
+while IFS= read -r example; do
+  i=$((i + 1))
+  r="$(newrepo "p3_extra_$i")"
+  mkdir -p "$r/$PHASE3"
+  printf '%s\n' "$example" > "$r/$PHASE3/01-hop-dong.md"
+  check "pha 3: mẫu bổ sung — $example" 1 "$example" "$(run "$r")"
+done <<'EOF'
+{<DebtList />}
+`<DebtList>`
+to={route}
+href='/no'
+router.replace("/no")
+useNavigate
+useRouter
+file `DebtList.jsx`
+file `DebtList.vue`
+EOF
+
+# 25 — ignore áp cả vùng 3; số file sạch đếm đủ ba vùng.
+r="$(newrepo p3_ignore_count)"
+mkdir -p "$r/$PHASE3"
+printf 'Hành vi tạo đơn.\n' > "$r/$PHASE1/01-ranh-gioi.md"
+printf 'CREATE TABLE orders (id BIGINT);\n' > "$r/$PHASE2/02-luoc-do.md"
+printf '<DebtList />\n' > "$r/$PHASE3/01-hop-dong.md"
+printf '# P3-02 — trích dẫn cố ý trong ca thử\n<DebtList />\n' > "$r/scripts/check-phase-boundary.ignore"
+check "pha 3: ignore có hiệu lực, đếm đủ ba vùng" 0 "OK — 3 file .md đã soát" "$(run "$r")"
+
 if [ "$fails" -ne 0 ]; then
   echo "check-phase-boundary.test: FAIL ($fails ca)"
   exit 1

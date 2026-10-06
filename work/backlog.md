@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] P3-02 **Gate 1d học vùng pha 3** — `scripts/check-phase-boundary.sh` chấm thêm `docs/product/3-be/`: đỏ với component · route màn hình · thẻ JSX, im với endpoint và SQL — L2. Mở 2026-10-05 sau `P3-01` (ADR-082). [chi tiết](backlog_BE.md#p3-02)
 - [ ] P3-03 **Quy ước code backend — dựng `be/`** — mỗi quy ước một `QC-XX` có phép kiểm; cùng lượt dựng **lệnh liệt kê đường ghi** vào gate (ADR-082 điểm 3) — L2. Mở 2026-10-05 sau `P3-01`. [chi tiết](backlog_BE.md#p3-03)
 - [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi, không cột *ngày bán của két* khi `U-072` còn mở. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
@@ -102,6 +101,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] P3-02 **Gate 1d học vùng pha 3** — `scripts/check-phase-boundary.sh` soát thêm `docs/product/3-be/` với bộ mẫu riêng: đỏ với thẻ JSX (ký tự trước `<` không phải chữ/số, tách khỏi generic), route màn hình, đuôi `.jsx`/`.tsx`/`.vue`; im với endpoint, SQL, generic; ca hồi quy 20–25 — L2 — 2026-10-06 · [chi tiết](backlog_BE.md#p3-02)
 - [x] P3-01 **Ranh giới và từ vựng pha 3** — *ô ghi* · *cửa ghi*, phép chấm tầng 2 · tầng 3, lệnh liệt kê đường ghi dựng ở `P3-03`, cổng đếm §1–§4 (admin ngoài), lời từ chối của database tới người dùng qua tên — **ADR-082**; mở **F-058** — L2 — 2026-10-05 · [chi tiết](backlog_BE.md#p3-01)
 - [x] T-137 Thêm một dòng con vào bản ghi đã có (món vào đơn · thành phần vào suất · xấp vào tiền đầu két) để lại vết trên bản ghi cha — migration bước 17 `20261005130000_vet_them_dong_con` (trigger `AFTER INSERT`, chế độ mềm như vết sửa); câu `I-024/3` · `I-011/1` · `I-021/7` chỉ kêu lần thêm không vết; khoá chặn đường lùi theo vết; **F-047** đóng — **ADR-081** — L2 — 2026-10-05 · [chi tiết](backlog_archive.md#t-137)
 - [x] T-136 Chủ repo ký chuyển sang pha 3 và xác nhận cách chia mười bốn bước — ghi ở cổng pha 2 §7, kế hoạch pha 3, ADR-076 *Sửa đổi*; `P3-01` vào *Ready* — 2026-10-05 · [chi tiết](backlog_archive.md#t-136)
