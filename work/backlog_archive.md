@@ -951,6 +951,48 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-137"></a>
+### T-137 — Thêm một dòng con vào bản ghi đã có không để lại vết ai thêm, lúc nào, từ gì sang gì (F-047)
+
+**Yêu cầu:** chủ repo, 2026-10-05: *"F-047 đọc kĩ và hoàn thành"*; cùng ngày chọn **làm ngay ở tầng
+database** thay vì chờ `P3-11` (kế hoạch pha 3 hẹn F-047 cho bước ấy). Mức **L2** (dữ liệu, `I-018`).
+Claude Code thiết kế và thi công.
+
+**Thiết kế:** `docs/decisions.md` **ADR-081**. Một trigger `AFTER INSERT` trên `order_line` ·
+`menu_item_component` · `opening_float_line`: dòng tạo **sau** bản ghi cha, trong giao dịch có khai lý do
+(`shop.revision_reason`), để lại một dòng `record_revision` trên **bản ghi cha** — bản trước là cha cùng các
+dòng con đã có, bản sau thêm đúng dòng ấy; người là người của giao dịch. Chế độ mềm như **F-046**: không khai
+lý do thì không vết, và ba câu đối chiếu thấy lần thêm ấy.
+
+**Acceptance (viết trước khi sửa):** (1) test mới `db/tests/i018_added_line_leaves_trail.sql` đỏ trên lược đồ
+16 bước, xanh sau migration — với mỗi bảng con: thêm có lý do ⇒ đúng một vết trên cha, mang người, lý do, bản
+trước không có dòng ấy, bản sau có; thêm cùng lúc với cha ⇒ không vết; thêm không lý do ⇒ không vết; có lý do
+mà không người ⇒ từ chối cả lần thêm; (2) một cặp migration **mới** bước 17, không sửa file cũ; lùi trên
+database rỗng trả lược đồ giống hệt; (3) ba câu `I-024/3` · `I-011/1` · `I-021/7` chỉ kêu khi lần thêm **không**
+có vết của chính dòng ấy, mỗi câu có lỗi cài kêu đúng mã; (4) `./scripts/db-check.sh` và `./scripts/gate.sh`
+PASS; (5) không bật chế độ nghiêm (việc của **F-046** · `P3-11`), không chọn hộ câu nghiệp vụ nào; (6) file lát,
+bước 17 ở `07-thu-tu-migration.md`, F-047 sang *Fixed*, con trỏ ở kế hoạch pha 3 đổi cùng lượt.
+
+**Bàn giao** — 2026-10-05 · thực hiện: **Claude Code**, cây chính, nhánh `chatgpt_involve` trên `88a808d`;
+**chưa review độc lập**. T-134 commit (`d4b630c`) trước lượt sửa tài liệu này; thay đổi chưa commit của
+**T-136** còn nằm cùng cây, và hai file mang cả phần T-136 lẫn phần T-137
+(`master_plan/BE_master_plan_banh_cuon_ba_thanh.md` · `work/backlog_BE.md`, khác khối dòng) — chọn khối bằng
+`git add -p` khi commit. File: cặp
+`db/migrations/20261005130000_vet_them_dong_con.up.sql` · `.down.sql`; `db/tests/i018_added_line_leaves_trail.sql`
+(mới); `db/reconcile/i024.sql` · `i011.sql` · `i021.sql`; `db/reconcile/proof/i011_1.sql` · `i021_7.sql`;
+`docs/product/2-db/02-luoc-do-ban-hang.md` · `06-luoc-do-nguoi-va-vet.md` §2 · §5 · `07-thu-tu-migration.md` ·
+`09-doi-chieu-bat-bien.md` §4 · §5; `docs/decisions.md` ADR-081; `work/findings.md` F-047; con trỏ ở
+`master_plan/BE_master_plan_banh_cuon_ba_thanh.md` · `work/backlog_BE.md`. Bằng chứng: test mới **đỏ** trên 16
+bước (`ERROR: F-047: database KHÔNG từ chối lần thêm có lý do mà không có người`), **xanh** sau bước 17;
+`./scripts/db-check.sh` ⇒ `db-check: PASS — 17 bước xuôi · lùi · xuôi lại, … 36 file test, … 102 câu …, 102 lỗi
+cài, … 32 mã YC`; `kêu i011_1 — I-011/1` · `kêu i021_7 — I-021/1 I-021/7` · `kêu i024_3 — I-024/3`. Database
+riêng `t137probe`, hai giao dịch COMMIT: đơn 5 thêm món có lý do ⇒ vết `sales_order|5|1|2|khách gọi thêm`, đơn 6
+thêm món không lý do ⇒ `I-024/3` chỉ in đơn 6; `migrate down 1` khi có vết ⇒ `đường lùi từ chối: record_revision
+đang giữ 1 vết thêm dòng con đã ghi …`, ba trigger còn nguyên. Không bật chế độ nghiêm (**F-046**), không chọn
+hộ câu nghiệp vụ nào. Còn ngỏ: ADR-081 *Không phủ*.
+
+[↑ đầu file](#top)
+
 <a id="t-136"></a>
 ### T-136 — Chủ repo ký chuyển sang pha 3 và xác nhận cách chia mười bốn bước
 

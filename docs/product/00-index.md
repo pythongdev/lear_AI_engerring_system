@@ -14,7 +14,7 @@ Hành vi nghiệp vụ của sản phẩm, cắt theo **pha** ở tầng ngoài 
 | 0 — BA (nghiệp vụ) | `0-ba/` | **đang mở** — xem bảng dưới |
 | 1 — System design | [`1-system-design/`](1-system-design/architecture.md) | **đang mở** — xem bảng dưới |
 | 2 — Database | [`2-db/`](2-db/01-quy-uoc-du-lieu.md) | **đang mở** — xem bảng dưới (mở 2026-09-26, `P2-03`) |
-| 3 — Backend | `3-be/` | **chưa mở** — [kế hoạch pha 3](../../master_plan/BE_master_plan_banh_cuon_ba_thanh.md) (2026-10-01, ADR-076); mở ở `P3-04` sau khi chủ repo ký chuyển pha |
+| 3 — Backend | `3-be/` | **chưa có file** — chủ repo ký chuyển pha 2026-10-05; [kế hoạch pha 3](../../master_plan/BE_master_plan_banh_cuon_ba_thanh.md) (ADR-076); thư mục ra đời ở `P3-04` |
 | 4 — Frontend | `4-fe/` | **chưa mở** |
 | 5 — Deploy | `5-deploy/` | **chưa mở** |
 

@@ -217,6 +217,7 @@ của pha 3 cần lời chủ quán trước khi viết.
 Mười hai ô dưới đây là **lời** của kế hoạch pha 2 §9; chỗ ký là đây. **Hôm nay 12/12 — mười hai ô tick
 KÈM bằng chứng** (2026-09-30: mười một ô ở `P2-13`, ô 9 ở `P2-14`). Đủ các ô **không** phải câu *"được, sang pha 3"*: ký chuyển
 pha là quyền **chủ repo** (kế hoạch §9), và bốn ô tick dưới đây mang một chỗ hở chạm tiền có mã.
+**Chủ repo ký chuyển sang pha 3 ngày 2026-10-05** (T-136), nguyên văn *"đồng ý chuyển sang pha 3. xác nhận cách chia mười bốn bước pha 3"*.
 
 - [x] **1. Mọi mã `I-0xx` của `quality/invariants.md` có câu truy vấn đối chiếu** — *PASS mã I-0xx —
   comm -3 rỗng: 24 mã ở quality/invariants.md, cùng từng ấy mã có câu*; trên dữ liệu mồi *reconcile:

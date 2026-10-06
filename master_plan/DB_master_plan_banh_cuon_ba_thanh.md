@@ -397,4 +397,4 @@ gửi ngược một dòng `F-XXX`, đúng luật hai sổ ([`prompt-fullstack.m
 Đo 2026-10-01: cổng pha 2 đã tick **12/12**, bằng chứng ở
 `docs/product/2-db/11-cong-chat-luong-pha-2.md` §7. Thứ tự pha tiếp theo ở
 [kế hoạch pha 3](BE_master_plan_banh_cuon_ba_thanh.md) (**ADR-076**).
-**Ký chuyển pha là quyền chủ repo; hôm nay chưa ký.**
+**Chủ repo ký chuyển sang pha 3 ngày 2026-10-05** (T-136; ghi ở `11-cong-chat-luong-pha-2.md` §7).
