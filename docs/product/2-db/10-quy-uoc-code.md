@@ -471,6 +471,7 @@ phương án bị loại: `docs/decisions.md` **ADR-083**. Hai chữ *ô ghi* ·
   | `be/internal/db/` | hàm kết nối (`QC-15`), hàm mở giao dịch (`QC-13`), test khói |
   | `be/internal/dbtest/` | đọc database kiểm từ môi trường cho test (`QC-16`); không câu ghi nào |
   | `be/internal/apierr/` | hình lỗi chung, hằng mã lỗi và bảng *tên từ chối → mã* — bản code của hợp đồng ([`../3-be/01-hop-dong-api.md`](../3-be/01-hop-dong-api.md) §3–§4, `P3-04`); Gate 1g so hai bản |
+  | `be/internal/authz/` | hàm chạy cửa có quyền (`authz.Run`), lớp quyền và khai báo cửa (`authz.Door`) — bản code của ma trận [`../3-be/02-vai-va-quyen.md`](../3-be/02-vai-va-quyen.md) (`P3-05`, **ADR-085**); không câu ghi nào |
   | `be/internal/<gói>/` | một gói một lát nghiệp vụ (`P3-05`…`P3-12`); cửa ghi là hàm exported của gói |
   | `be/internal/<gói>/sql/<cửa>/` | câu ghi của cửa ấy (`QC-13`) |
   | `be/cmd/<chương trình>/` | chương trình chạy — sinh ở bước có đường gọi đầu tiên, không sớm hơn |
@@ -565,4 +566,5 @@ phương án bị loại: `docs/decisions.md` **ADR-083**. Hai chữ *ô ghi* ·
 | `P2-13` | **2026-09-30** — `QC-07` bước 7 của bộ kiểm diễn ba scenario; `QC-08` dòng `db/scenario/` |
 | `P3-03` | **2026-10-06** — đóng chỗ trống của `QC-06` · `QC-09`; thêm `QC-11`…`QC-17` |
 | `P3-04` | **2026-10-06** — `QC-10` thêm vế lời từ chối của trigger (**F-058**); `QC-14` thêm dòng `be/internal/apierr/` |
+| `P3-05` | **2026-10-06** — `QC-14` thêm dòng `be/internal/authz/` |
 | `P3-04`…`P3-14` | `QC-13` cửa ghi và Gate 1f · `QC-15` kết nối · `QC-16` chạy test bằng `scripts/be-check.sh` · `QC-17` tên test |

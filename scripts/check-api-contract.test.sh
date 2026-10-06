@@ -298,6 +298,84 @@ check "28c tăng phiên bản ⇒ xanh" 0 "check-api-contract: PASS" "$(run "$c"
 edit "$c/openapi.yaml" 's/^  version: 0.2.0$/  version: 0.0.9/m'
 check "28d lùi phiên bản ⇒ đỏ" 1 "info.version 0.0.9 không lớn hơn 0.1.0 ở HEAD" "$(run "$c")"
 
+# 29–37: ma trận vai × cửa (P3-05, ADR-085) — thư mục cửa · dòng ma trận · khai báo
+# authz.Door phải là cùng một tập, lớp hai phía bằng nhau. Viết trước khi sửa script.
+with_door() { # with_door <ca> — một cửa khớp ở cả ba chỗ
+  local c="$1"
+  put "$c/be/internal/authz/authz.go" <<'EOF'
+package authz
+
+type Need string
+
+const (
+	NeedCounter Need = "quay"
+	NeedOwner   Need = "chu_quan"
+)
+
+type Door struct {
+	Code string
+	Need Need
+}
+EOF
+  put "$c/be/internal/qr/sql/doi_ma/cap_ma.sql" <<'EOF'
+SELECT qr_code_issue($1);
+EOF
+  put "$c/be/internal/qr/cua.go" <<'EOF'
+package qr
+
+var DoiMa = authz.Door{Code: "qr/doi_ma", Need: authz.NeedOwner}
+EOF
+  put "$c/be/internal/qr/cua_test.go" <<'EOF'
+package qr
+
+var cuaThu = authz.Door{Code: "test/chi_trong_test", Need: authz.NeedCounter}
+EOF
+  put "$c/02-vai-va-quyen.md" <<'EOF'
+# Ma trận thử
+
+| Cửa | Lớp | Nguồn |
+|---|---|---|
+| `qr/doi_ma` | `chu_quan` | U-062 |
+EOF
+}
+
+c="$(base door_ok)"; with_door "$c"
+check "29 cửa khớp thư mục · ma trận · khai báo ⇒ xanh" 0 "1 cửa, 1 dòng ma trận, 1 khai báo authz.Door" "$(run "$c")"
+check "29b --list in dòng ma trận" 0 "ma trận	qr/doi_ma	chu_quan" "$(run "$c" --list)"
+
+c="$(base door_no_row)"; with_door "$c"
+edit "$c/02-vai-va-quyen.md" 's/^\| `qr\/doi_ma`.*\n//m'
+check "30 thư mục cửa không có dòng ma trận ⇒ đỏ" 1 "cửa không có dòng ma trận: qr/doi_ma" "$(run "$c")"
+
+c="$(base door_row_only)"; with_door "$c"
+edit "$c/02-vai-va-quyen.md" 's/^(\| `qr\/doi_ma`.*\n)/$1| `don\/huy` | `quay` | §6.13 |\n/m'
+check "31 dòng ma trận không có thư mục cửa ⇒ đỏ" 1 "dòng ma trận không có cửa: don/huy" "$(run "$c")"
+
+c="$(base door_no_decl)"; with_door "$c"
+edit "$c/be/internal/qr/cua.go" 's/^var DoiMa.*\n//m'
+check "32 cửa không khai authz.Door (khai trong _test.go không tính) ⇒ đỏ" 1 "cửa không khai authz.Door: qr/doi_ma" "$(run "$c")"
+
+c="$(base door_need_diff)"; with_door "$c"
+edit "$c/be/internal/qr/cua.go" 's/authz.NeedOwner/authz.NeedCounter/'
+check "33 lớp ở ma trận khác lớp ở code ⇒ đỏ" 1 "lớp quyền của qr/doi_ma: ma trận chu_quan, code quay" "$(run "$c")"
+
+c="$(base door_need_unknown)"; with_door "$c"
+edit "$c/02-vai-va-quyen.md" 's/`chu_quan`/`ai_cung_duoc`/'
+check "34 lớp ở ma trận không phải lớp của authz ⇒ đỏ" 1 "lớp không có trong authz: ai_cung_duoc" "$(run "$c")"
+
+c="$(base door_row_twice)"; with_door "$c"
+edit "$c/02-vai-va-quyen.md" 's/^(\| `qr\/doi_ma`.*\n)/$1$1/m'
+check "35 một cửa hai dòng ma trận ⇒ đỏ" 1 "cửa có hơn một dòng ma trận: qr/doi_ma" "$(run "$c")"
+
+c="$(base door_decl_no_dir)"; with_door "$c"
+rm -r "$c/be/internal/qr/sql"
+edit "$c/02-vai-va-quyen.md" 's/^\| `qr\/doi_ma`.*\n//m'
+check "36 khai authz.Door mà không có thư mục cửa ⇒ đỏ" 1 "khai authz.Door mà không có cửa: qr/doi_ma" "$(run "$c")"
+
+c="$(base door_no_matrix)"; with_door "$c"
+rm "$c/02-vai-va-quyen.md"
+check "37 có cửa mà không có file ma trận ⇒ đỏ" 1 "không có ma trận" "$(run "$c")"
+
 if [ "$fails" -eq 0 ]; then
   echo "check-api-contract.test: OK"
 else

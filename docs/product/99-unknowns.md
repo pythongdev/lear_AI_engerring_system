@@ -15,6 +15,7 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
+  - [U-075](#u-075) — nhân viên và chủ quán cho máy biết "tôi là ai" bằng cách nào
   - [U-073](#u-073) — két lệch mà đã tìm ra lý do: có được bấm đối soát xong ngày ấy không
   - [U-072](#u-072) — tiền chi, tạm ứng, thưởng lấy khỏi két: trừ vào két của ngày bán nào
   - [U-071](#u-071) — huỷ một ô chấm công: ghi chú có bắt buộc không, và ai được bấm huỷ
@@ -36,6 +37,17 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 
 <a id="dang-mo"></a>
 ### Đang mở
+
+<a id="u-075"></a>
+- **U-075 — Nhân viên và chủ quán cho máy biết "tôi là ai" bằng cách nào: chọn tên
+  trên máy quầy không cần mã, mỗi người một mã số ngắn, mật khẩu, hay cách khác — và
+  máy quầy dùng chung thì đổi người (A đi ăn, B vào thay) làm thế nào?** Mở 2026-10-06
+  (nhận `P3-05`, Claude Code). `master_plan/shop-facts.md` §3 · §8.8 chốt *ai đứng quầy
+  lúc nào* nhưng không lời nào nói người ấy chứng minh mình là ai; mã số ngắn ở
+  `master_plan/prompt-fullstack.md` §3.6 chỉ là đề xuất viết trước, không phải lời chủ
+  quán. Ai trả lời: **chủ quán**. Chặn: cửa đăng nhập của `P3-05` và chương trình chạy
+  thật của backend — lát `P3-05` dựng quyền theo chỗ đứng đọc từ một người **đã được
+  xác định**, còn cách xác định chờ lời này (`docs/decisions.md` ADR-085).
 
 <a id="u-074"></a>
 - **U-074 — Số tiền đếm két của một ngày đã bấm "đối soát xong" mà sau đó

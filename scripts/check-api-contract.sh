@@ -5,10 +5,13 @@
 # ĐỌC GÌ: docs/product/3-be/openapi.yaml theo khuôn ở 01-hop-dong-api.md §2 (YAML
 #   thụt hai dấu cách; dòng # bỏ qua): openapi, info.version, paths (khoá mở đầu
 #   bằng /, phương thức thụt bốn), components.schemas.ErrorCode (enum, x-http-status),
-#   x-constraint-errors (tên: mã | internal | unreviewed). Mọi .go dưới be/ trừ
+#   x-constraint-errors (tên: mã | internal | unreviewed). Ma trận 02-vai-va-quyen.md
+#   cạnh hợp đồng: dòng | `gói/cửa` | `lớp` | (P3-05, ADR-085). Mọi .go dưới be/ trừ
 #   _test.go: .HandleFunc/.Handle("PHƯƠNG THỨC /đường", …); be/internal/apierr/:
 #   hằng `CodeX Code = "mã"`, dòng `CodeX: 500,` (status), dòng `"tên": CodeX,`
-#   (bảng ánh xạ công khai). *.up.sql theo tên file, bỏ chú thích --: CONSTRAINT x
+#   (bảng ánh xạ công khai); be/internal/authz/: hằng `NeedX Need = "lớp"`; mọi
+#   authz.Door{Code: "gói/cửa", Need: authz.NeedX}; thư mục be/internal/*/sql/*/
+#   là cửa (QC-13). *.up.sql theo tên file, bỏ chú thích --: CONSTRAINT x
 #   <loại>, CREATE UNIQUE INDEX x ON t, CONSTRAINT = 'x' trong thân hàm (lời từ
 #   chối của trigger, F-058); trừ đi DROP CONSTRAINT · DROP INDEX · DROP TABLE và
 #   theo RENAME CONSTRAINT · ALTER INDEX … RENAME TO.
@@ -16,7 +19,10 @@
 #   trần; tên ở migration thiếu dòng ánh xạ, dòng cho tên không còn; giá trị không
 #   phải mã; mã chỉ ở một phía; status thiếu hay lệch; bảng ánh xạ công khai lệch;
 #   không có internal_error; không phải OpenAPI 3.1; info.version sai khuôn; hợp
-#   đồng khác HEAD mà info.version không lớn hơn bản ở HEAD; có be/ mà thiếu hợp đồng.
+#   đồng khác HEAD mà info.version không lớn hơn bản ở HEAD; có be/ mà thiếu hợp đồng;
+#   thư mục cửa · dòng ma trận · khai báo authz.Door không cùng một tập, một cửa hai
+#   dòng hay hai khai báo, lớp ở ma trận khác code hoặc không phải lớp của authz,
+#   có cửa mà không có file ma trận.
 # KHÔNG BẮT: thân request/response so với struct Go; tên ràng buộc đặt ngầm (không
 #   viết CONSTRAINT) — test TestQC10_ ở be/internal/apierr/ so với database sống;
 #   tên ghép lúc chạy thì đỏ chứ không đoán. Không phải trình đọc YAML đầy đủ.
@@ -29,6 +35,7 @@ cd "$ROOT" || exit 1
 CONTRACT="${API_CONTRACT_FILE:-docs/product/3-be/openapi.yaml}"
 BE_DIR="${API_CONTRACT_BE_DIR:-be}"
 MIG_DIR="${API_CONTRACT_MIG_DIR:-db/migrations}"
+MATRIX="$(dirname "$CONTRACT")/02-vai-va-quyen.md"
 if [ ! -f "$CONTRACT" ] && [ ! -d "$BE_DIR" ]; then
   echo "check-api-contract: không có be/ lẫn hợp đồng, skipping"
   exit 0
@@ -43,13 +50,13 @@ trap 'rm -f "$HEAD_COPY"' EXIT
 if ! git -C "$(dirname "$CONTRACT")" show "HEAD:./$(basename "$CONTRACT")" > "$HEAD_COPY" 2>/dev/null; then
   : > "$HEAD_COPY"
 fi
-perl - "$CONTRACT" "$BE_DIR" "$MIG_DIR" "$HEAD_COPY" "${1:-}" <<'PERL'
+perl - "$CONTRACT" "$BE_DIR" "$MIG_DIR" "$HEAD_COPY" "$MATRIX" "${1:-}" <<'PERL'
 use strict;
 use warnings;
 use utf8;
 use File::Find;
 binmode STDOUT, ':encoding(UTF-8)';
-my ($contract, $be, $mig, $head, $flag) = @ARGV;
+my ($contract, $be, $mig, $head, $matrix, $flag) = @ARGV;
 $flag //= '';
 $be =~ s{/+$}{};
 my $failed = 0;
@@ -124,7 +131,7 @@ bad("$contract: mã không có status ở hợp đồng: $_") for set_diff($c->{
 bad("$contract: status cho mã không có trong enum: $_") for set_diff($c->{status}, $c->{enum});
 
 # --- code -------------------------------------------------------------------
-my (%routes, %consts, %gostatus, %gomap, $gofiles, @apierr_src);
+my (%routes, %consts, %gostatus, %gomap, $gofiles, @apierr_src, @authz_src, %decl);
 my $apierr = "$be/internal/apierr";
 my @gofiles;
 find({wanted => sub { push @gofiles, $File::Find::name if -f $_ && /\.go$/ && !/_test\.go$/; }, no_chdir => 1}, $be) if -d $be;
@@ -139,6 +146,12 @@ for my $f (sort @gofiles) {
         else { bad("$f:$line: đường gọi \"$pat\" không nêu phương thức (GET|POST|PUT|PATCH|DELETE /đường)"); }
     }
     push @apierr_src, $s if index($f, "$apierr/") == 0;
+    push @authz_src, $s if index($f, "$be/internal/authz/") == 0;
+    while ($s =~ /\bauthz\.Door\s*\{\s*Code:\s*"([^"]*)"\s*,\s*Need:\s*authz\.(Need\w+)\s*,?\s*\}/g) {
+        my $line = 1 + (substr($s, 0, $-[0]) =~ tr/\n/\n/);
+        bad("$f:$line: authz.Door khai hai lần cho cửa $1") if exists $decl{$1};
+        $decl{$1} = $2;
+    }
 }
 # Hai lượt: hằng trước, rồi status và bảng ánh xạ — hằng có thể ở file khác.
 my %value_of;
@@ -160,6 +173,42 @@ for my $code (sort keys %{$c->{status}}) {
 }
 bad("route: chỉ ở hợp đồng: $_") for set_diff($c->{paths}, \%routes);
 bad("route: chỉ ở code: $_") for set_diff(\%routes, $c->{paths});
+
+# --- ma trận vai × cửa (P3-05, ADR-085) ---------------------------------------
+# Ba tập phải bằng nhau: thư mục cửa be/internal/<gói>/sql/<cửa>/ · dòng ma trận ·
+# khai báo authz.Door ngoài _test.go; lớp ở ma trận bằng lớp ở code.
+my (%doors, %rows_m, %needs);
+for my $s (@authz_src) {
+    while ($s =~ /^\s*(Need\w+)\s+Need\s*=\s*"([a-z0-9_]+)"/mg) { $needs{$1} = $2; }
+}
+my %need_values = map { $_ => 1 } values %needs;
+if (-d "$be/internal") {
+    for my $d (glob("$be/internal/*/sql/*")) {
+        next unless -d $d;
+        $doors{"$1/$2"} = 1 if $d =~ m{/internal/([^/]+)/sql/([^/]+)$};
+    }
+}
+if (-f $matrix) {
+    my $n = 0;
+    for my $line (split /\n/, read_file($matrix)) {
+        $n++;
+        next unless $line =~ /^\|\s*`([a-z][a-z0-9_]*\/[a-z][a-z0-9_]*)`\s*\|\s*`([^`]*)`\s*\|/;
+        if (exists $rows_m{$1}) { bad("$matrix:$n: cửa có hơn một dòng ma trận: $1"); next; }
+        $rows_m{$1} = $2;
+        bad("$matrix:$n: lớp không có trong authz: $2") if !$need_values{$2};
+    }
+} elsif (%doors || %decl) {
+    bad("có cửa ghi mà không có ma trận $matrix (ADR-085)");
+}
+bad("cửa không có dòng ma trận: $_") for set_diff(\%doors, \%rows_m);
+bad("dòng ma trận không có cửa: $_") for set_diff(\%rows_m, \%doors);
+bad("cửa không khai authz.Door: $_") for set_diff(\%doors, \%decl);
+bad("khai authz.Door mà không có cửa: $_") for set_diff(\%decl, \%doors);
+for my $door (sort keys %decl) {
+    my $code_need = $needs{$decl{$door}} // "?$decl{$door}";
+    next unless exists $rows_m{$door} && $need_values{$rows_m{$door}};
+    bad("lớp quyền của $door: ma trận $rows_m{$door}, code $code_need") if $rows_m{$door} ne $code_need;
+}
 
 # --- migration --------------------------------------------------------------
 my (%names, %table_of);
@@ -231,6 +280,9 @@ if ($flag eq '--list') {
     print "code\t$_\n" for sort keys %routes;
     print "mã\t$_\t$c->{status}{$_}\n" for sort keys %{$c->{enum}};
     print "ánh xạ\t$_\t$c->{rows}{$_}\n" for sort keys %{$c->{rows}};
+    print "ma trận\t$_\t$rows_m{$_}\n" for sort keys %rows_m;
+    print "cửa\t$_\n" for sort keys %doors;
+    print "khai báo\t$_\t" . ($needs{$decl{$_}} // "?$decl{$_}") . "\n" for sort keys %decl;
 }
 printf "  %d đường gọi ở hợp đồng, %d ở code (%d file .go đã soát)\n",
     scalar(keys %{$c->{paths}}), scalar(keys %routes), $gofiles // 0;
@@ -239,6 +291,8 @@ print "  code:     $_\n" for sort keys %routes;
 my $summary = sprintf "hợp đồng %s; %d đường gọi ở hợp đồng, %d ở code; %d mã lỗi; %d tên từ chối ở migration, %d dòng ánh xạ (%d internal, %d unreviewed, %d dòng mang mã công khai)",
     $ver, scalar(keys %{$c->{paths}}), scalar(keys %routes), scalar(keys %{$c->{enum}}),
     scalar(keys %names), scalar(keys %{$c->{rows}}), $count{internal} // 0, $count{unreviewed} // 0, $count{public} // 0;
+$summary .= sprintf "; %d cửa, %d dòng ma trận, %d khai báo authz.Door",
+    scalar(keys %doors), scalar(keys %rows_m), scalar(keys %decl);
 if ($failed) { print "check-api-contract: FAIL — hợp đồng và code lệch; $summary\n"; exit 1; }
 print "check-api-contract: PASS — $summary\n";
 PERL

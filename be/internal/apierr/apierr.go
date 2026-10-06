@@ -17,23 +17,51 @@ type Code string
 const (
 	CodeInternalError  Code = "internal_error"
 	CodeInvalidRequest Code = "invalid_request"
+
+	// Quyền theo chỗ đứng (P3-05, ADR-085).
+	CodeUnauthenticated     Code = "unauthenticated"
+	CodeNotOnCounterDuty    Code = "not_on_counter_duty"
+	CodeOwnerOnly           Code = "owner_only"
+	CodeQRCodeNotCurrent    Code = "qr_code_not_current"
+	CodeDiningTableNotFound Code = "dining_table_not_found"
+	CodeQRCodeIssueConflict Code = "qr_code_issue_conflict"
 )
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
-	CodeInternalError:  500,
-	CodeInvalidRequest: 400,
+	CodeInternalError:       500,
+	CodeInvalidRequest:      400,
+	CodeUnauthenticated:     401,
+	CodeNotOnCounterDuty:    403,
+	CodeOwnerOnly:           403,
+	CodeQRCodeNotCurrent:    404,
+	CodeDiningTableNotFound: 404,
+	CodeQRCodeIssueConflict: 409,
 }
 
 // constraintCodes giữ đúng các dòng của x-constraint-errors mang mã công khai. Tên vắng mặt ở đây —
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
-var constraintCodes = map[string]Code{}
+var constraintCodes = map[string]Code{
+	"qr_code_dining_table_fkey":         CodeDiningTableNotFound,
+	"qr_code_one_current_per_table_key": CodeQRCodeIssueConflict,
+	// Lần đổi bắt đầu trước mà ghi sau một lần đổi khác: now() của nó sớm hơn mốc cấp của mã
+	// vừa sinh, nên "thay trước lúc cấp" bị từ chối — cùng một ca chen nhau.
+	"qr_code_replaced_after_issued_check": CodeQRCodeIssueConflict,
+}
 
 // Error là hình lỗi chung trên dây (schema Error của hợp đồng).
 type Error struct {
 	Code  Code   `json:"code"`
 	Field string `json:"field,omitempty"`
+}
+
+// Error cho Error đi qua đường lỗi của Go (errors.As) từ cửa tới chỗ gửi.
+func (e Error) Error() string {
+	if e.Field != "" {
+		return string(e.Code) + ": " + e.Field
+	}
+	return string(e.Code)
 }
 
 // Status trả status HTTP của mã theo hợp đồng.

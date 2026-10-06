@@ -442,11 +442,86 @@ tiền được — ngưỡng lệch 0đ hết nghĩa.
 suy ra bàn từ số bàn trong đường dẫn.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi* (nhận 2026-10-06, Claude Code; chủ repo giao *"hãy đọc kĩ task trên và làm yêu cầu codex làm bạn
+  kiểm tra"* — Claude thiết kế và viết test đỏ; phiếu giao Codex chạy hỏng vì model trong
+  cấu hình Codex không dùng được với tài khoản, chủ repo chọn **Claude tự thi công** ở clone chính): `docs/product/3-be/` (mới `02-vai-va-quyen.md`; `openapi.yaml`;
+  `01-hop-dong-api.md` §10) · `be/internal/apierr/` · `be/internal/authz/` (mới) · `be/internal/qr/` (mới) ·
+  `scripts/check-api-contract.sh` · `scripts/check-api-contract.test.sh` · `docs/product/2-db/10-quy-uoc-code.md`
+  (`QC-14` dòng `authz`) — `docs/decisions.md` (ADR-085) · `docs/product/99-unknowns.md` (U-075) ·
+  `CLAUDE.md` §2 · §5 · `work/`. **Không** cửa đăng nhập, không bảng phiên,
+  không migration, không `be/cmd/`.
+- *Câu cho chủ quán:* `shop-facts.md` không có lời nào về cách đăng nhập ⇒ mở **U-075** (2026-10-06). Lát này
+  không chọn mã số, không chọn mật khẩu.
+- *Thiết kế* (Claude, 2026-10-06; lý do và phương án bị loại: **ADR-085**): mỗi cửa khai **một lớp quyền**
+  (`authz.Door{Code: "<gói>/<cửa>", Need: …}`); lớp `quay` = người bấm có khoảng `counter_duty` chứa `now()`
+  của giao dịch cửa; lớp `chu_quan` = `person.is_owner`; hai lớp đọc độc lập (`YC-16`). `authz.Run` mở giao
+  dịch qua `db.InTx`, kiểm người · lớp, khai `shop.actor_person_id` bằng người đã kiểm, rồi chạy thân cửa.
+  Danh tính tới cửa qua giao diện `authz.Authenticator` — bản thật chờ **U-075**; test dùng bản trong `_test.go`.
+  Khách QR: đường gọi mang mã, bàn tra từ mã hiện hành (`I-023`); gửi kèm bàn ⇒ `invalid_request`. Cửa đầu
+  tiên: `qr/doi_ma` lớp `chu_quan`, gọi `qr_code_issue` sẵn có. Đường gọi: `GET /qr-codes/{code}` (khách) ·
+  `POST /dining-tables/{dining_table_id}/qr-code` (chủ quán). Mã mới: `unauthenticated` 401 ·
+  `not_on_counter_duty` 403 · `owner_only` 403 · `qr_code_not_current` 404 · `dining_table_not_found` 404 ·
+  `qr_code_issue_conflict` 409. Gate 1g thêm phép so **thư mục cửa ↔ dòng ma trận ↔ khai báo `authz.Door`**,
+  lớp hai phía bằng nhau. Dòng `x-constraint-errors` của `person` · `counter_duty` **giữ `unreviewed`** — lát
+  này không cửa nào ghi hai bảng ấy; lát ghi chúng (`P3-11`, lane admin) xét (sửa §10 của `01-hop-dong-api.md`).
+- *Nghiệm thu* (viết trước khi sửa): (1) `docs/product/3-be/02-vai-va-quyen.md` có luật đọc (lớp quyền, mốc
+  giao dịch, khách QR, danh tính chờ U-075) và bảng ma trận **một dòng mỗi cửa** — hôm nay đúng một dòng
+  `qr/doi_ma` · `chu_quan`; Gate 1d không kêu. (2) `openapi.yaml` có hai đường gọi trên, sáu mã mới kèm status,
+  `info.version` tăng; mọi dòng `qr_code_*` của `x-constraint-errors` đã xét (mã hoặc `internal`, lý do ở
+  *Bàn giao*), `constraintCodes` khớp. (3) Test đỏ do Claude viết trước — `be/internal/authz/authz_test.go` ·
+  `be/internal/qr/qr_test.go` — xanh qua `./scripts/be-check.sh` **mà không sửa điều kiện kiểm nào**: người
+  đã rời quầy · chủ quán không đứng quầy làm việc lớp `quay` ⇒ `not_on_counter_duty`, thân cửa không chạy;
+  người đang đứng quầy ⇒ chạy, người thao tác của giao dịch là chính người ấy; chủ quán đứng quầy qua cả hai
+  lớp; không người · người không tồn tại ⇒ `unauthenticated`; nhân viên đổi mã ⇒ `owner_only`, mã không đổi;
+  chủ quán đổi ⇒ mã mới, mã cũ ⇒ `qr_code_not_current`; khách gửi kèm bàn ⇒ `invalid_request` field
+  `dining_table_id`; bàn không có ⇒ `dining_table_not_found`. (4) Gate 1g đỏ cho bốn ca lệch (thư mục cửa
+  không dòng ma trận · dòng ma trận không thư mục · cửa không khai `authz.Door` · lớp hai phía khác) —
+  `check-api-contract.test.sh` viết ca trước khi sửa script; cây thật `PASS` in số mỗi phía. (5) `comm -3`
+  giữa danh sách thư mục cửa và danh sách dòng ma trận in rỗng, kèm cả hai danh sách. (6) `./scripts/gate.sh`
+  xanh ở worktree **và** ở clone chính sau tích hợp.
+- *Kiểm chứng:* `./scripts/be-check.sh` · `./scripts/check-api-contract.test.sh` ·
+  `./scripts/check-api-contract.sh --list` · lệnh `comm -3` của (5) · `./scripts/gate.sh`; Claude đọc diff theo
+  từng dòng nghiệm thu và tự chạy lại gate.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-06): thiết kế, test đỏ, thi công và duyệt — **Claude Code**. Phiếu giao Codex đã viết
+và chạy, nhưng Codex dừng ngay vì model trong `~/.codex/config.toml` không dùng được với tài khoản đang đăng
+nhập; chủ repo chọn để Claude tự thi công. Hệ quả: lát này **không có reviewer độc lập** — chưa ai ngoài
+người viết đọc diff. Thiết kế và lý do: **ADR-085**.
+- *File đổi:* mới — `docs/product/3-be/02-vai-va-quyen.md` · `be/internal/authz/authz.go` ·
+  `be/internal/authz/authz_test.go` · `be/internal/qr/qr.go` · `be/internal/qr/qr_test.go` ·
+  `be/internal/qr/sql/doi_ma/cap_ma.sql`; sửa — `docs/product/3-be/openapi.yaml` (0.1.0 → 0.2.0) ·
+  `docs/product/3-be/01-hop-dong-api.md` (§9 · §10) · `be/internal/apierr/apierr.go` ·
+  `scripts/check-api-contract.sh` · `scripts/check-api-contract.test.sh` · `docs/product/2-db/10-quy-uoc-code.md`
+  (`QC-14`, §9) · `docs/decisions.md` (ADR-085) · `docs/product/99-unknowns.md` (U-075) · `CLAUDE.md` §2 · §5 ·
+  `work/backlog.md` · entry này.
+- *Bằng chứng theo nghiệm thu:* (1) ma trận một dòng `qr/doi_ma` · `chu_quan`; `PASS Gate 1d … 3 file .md đã
+  soát`. (2) `check-api-contract: PASS — hợp đồng 0.2.0; 2 đường gọi ở hợp đồng, 2 ở code; 8 mã lỗi; 290 tên
+  từ chối ở migration, 290 dòng ánh xạ (46 internal, 241 unreviewed, 3 dòng mang mã công khai)`. Dòng `qr_code_*`:
+  `qr_code_dining_table_fkey` → `dining_table_not_found`; `qr_code_one_current_per_table_key` →
+  `qr_code_issue_conflict`; `qr_code_replaced_after_issued_check` → `qr_code_issue_conflict` (lần đầu xếp
+  `internal`; test chen nhau đỏ 2/5 lần chạy với `500 internal_error` — lần đổi bắt đầu trước mà ghi sau có
+  `now()` sớm hơn mốc cấp của mã vừa sinh, nên đây cũng là ca chen nhau); `qr_code_code_key` → `internal` (mã
+  sinh từ sha256 của UUID ngẫu nhiên, trùng là lỗi hệ thống); `qr_code_code_not_blank_check` → `internal`
+  (hàm `qr_code_issue` tự đặt `code`, không giá trị nào từ người gọi); `qr_code_id_table_key` → `internal`
+  (đích khoá ngoại, `id` do database sinh); `qr_code_person_fkey` → `internal` (`authz.Run` chỉ khai người đã
+  đọc được ở `person`). (3) Test đỏ viết trước — `go vet` lúc chưa có code: `no non-test Go files in
+  …/internal/authz` · `…/internal/qr`; sau thi công `be-check: PASS` lần chạy đầu, không sửa điều kiện kiểm:
+  `A đã rời quầy bấm việc của quầy: mã="not_on_counter_duty", thân cửa chạy=false` · `B đang đứng quầy: …
+  người thao tác=3 (B=3)` · `chủ quán không đứng quầy bấm việc của quầy: mã="not_on_counter_duty"` · `A đứng
+  quầy bấm việc của chủ quán: mã="owner_only"` · `chủ quán đứng quầy: lớp quay="", lớp chu_quan=""` · sáu
+  dòng `người 0 / -1 / 9000000000 … mã="unauthenticated", thân cửa chạy=false` · `POST … (người 10) ⇒ 403
+  owner_only` · `GET /qr-codes/<mã cũ> ⇒ 404 qr_code_not_current` · `?dining_table_id=5 ⇒ 400 invalid_request
+  field:dining_table_id` · `POST /dining-tables/9000000000/qr-code ⇒ 404 dining_table_not_found` · `16 lần đổi
+  chen nhau: 4 thành, 12 xung đột; mã hiện hành: 1`; sau khi sửa dòng `replaced_after_issued`, `be-check` chạy
+  lặp tám lần liền đều xanh (xem dưới). (4) `check-api-contract.test.sh` thêm ca 29–37 trước khi
+  sửa script: `FAIL — 10 ca`; sau đó `check-api-contract.test: OK`. (5) `comm -3` giữa `qr/doi_ma` (thư mục
+  cửa) và `qr/doi_ma` (ma trận) in rỗng. (6) `./scripts/gate.sh` ⇒ `PASS gate không cổng nào đỏ` (gồm
+  `be-check: PASS`, `db-check — 18 bước …`).
+- *Duyệt (Gate 4):* không câu ghi thẳng vào `qr_code` (Gate 1f `0 ô ghi, 1 cửa`); không `Authenticator` thật
+  ngoài file test (`grep … PersonID(` chỉ ra định nghĩa và một lời gọi); test không bị sửa.
+- *Còn lại:* cửa đăng nhập và `be/cmd/` chờ **U-075**; dòng `person` · `counter_duty` của `x-constraint-errors`
+  còn `unreviewed` — lát ghi hai bảng ấy (`P3-11`) xét; lớp `quay` chưa có cửa thật (`P3-07` thêm test qua cửa).
+  Một reviewer độc lập (Codex khi cấu hình chạy được, hoặc một phiên khác) nên đọc lại diff này.
 
 [↑ đầu file](#top)
 

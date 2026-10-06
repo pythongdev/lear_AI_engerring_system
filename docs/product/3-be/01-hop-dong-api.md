@@ -171,7 +171,7 @@ lượt**. Về tên ràng buộc, **migration thắng hợp đồng** (**ADR-05
 
 | Lệnh | Chạy khi nào | So gì |
 |---|---|---|
-| `./scripts/check-api-contract.sh` — **Gate 1g** | mọi lượt, kể cả lượt chỉ đổi tài liệu; chỉ đọc file | đường gọi ở hợp đồng ↔ `HandleFunc` · `Handle` trong `be/` (phải nêu phương thức); `ErrorCode` + status ↔ hằng và bảng status ở `be/internal/apierr/`; tên trong migration ↔ dòng của `x-constraint-errors`; dòng mang mã ↔ `constraintCodes`; phiên bản ↔ `HEAD`. In số mỗi phía; `--list` in từng dòng. Đọc gì, đỏ khi nào: header của script. |
+| `./scripts/check-api-contract.sh` — **Gate 1g** | mọi lượt, kể cả lượt chỉ đổi tài liệu; chỉ đọc file | đường gọi ở hợp đồng ↔ `HandleFunc` · `Handle` trong `be/` (phải nêu phương thức); `ErrorCode` + status ↔ hằng và bảng status ở `be/internal/apierr/`; thư mục cửa ↔ dòng ma trận của [`02-vai-va-quyen.md`](02-vai-va-quyen.md) ↔ khai báo `authz.Door`, lớp hai phía bằng nhau (`P3-05`); tên trong migration ↔ dòng của `x-constraint-errors`; dòng mang mã ↔ `constraintCodes`; phiên bản ↔ `HEAD`. In số mỗi phía; `--list` in từng dòng. Đọc gì, đỏ khi nào: header của script. |
 | `TestQC10_MoiTenTuChoiCoDongTrongHopDong` | `./scripts/be-check.sh` (Gate 1, khi `be/` · `db/` đổi) | tập tên đọc từ **database sống** ↔ dòng của `x-constraint-errors` — bắt cả tên Gate 1g không đọc được từ file |
 | `TestQC10_LoiTuChoiTriggerMangTen` | cùng chỗ | lời từ chối của trigger tới pgx mang tên, và `apierr` dịch nó qua tên |
 
@@ -183,7 +183,7 @@ theo schema của hợp đồng.
 
 | Bước | Lấy gì |
 |---|---|
-| `P3-05` | §3 mã của lời từ chối quyền (lát này thêm); §4 xét dòng của bảng người và trực quầy; thêm file ma trận vai × thao tác vào thư mục này |
+| `P3-05` | **xong 2026-10-06** — §3 thêm mã của lời từ chối quyền; §4 xét dòng `qr_code_*` (bảng cửa của lát ghi); dòng `person` · `counter_duty` để lại cho lát ghi hai bảng ấy (`P3-11`, lane admin); ma trận cửa × lớp ở [`02-vai-va-quyen.md`](02-vai-va-quyen.md), Gate 1g so nó với code (§9) |
 | `P3-06`…`P3-12` | §1 thêm đường gọi cùng lượt dựng cửa · §3 mã của luật · §4 xét dòng của bảng mình ghi · §5 · §6 · §7 tăng phiên bản; `P3-07` · `P3-08` thêm §8 |
 | `P3-13` | §9 — ô cổng *hợp đồng khớp code*: Gate 1g xanh và đã từng đỏ (`scripts/check-api-contract.test.sh`) |
 | pha 4 | `openapi.yaml` — sinh type; §3 cách đọc lỗi; §5 không tự tính |

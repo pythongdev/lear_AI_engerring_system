@@ -6,12 +6,93 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.1.0
+  version: 0.2.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
 # Mỗi lát thêm đường gọi của mình; khuôn bắt đầu rỗng (P3-04, Bẫy: không chép prompt-fullstack §3.6).
-paths: {}
+# Lớp quyền của mỗi cửa ghi: 02-vai-va-quyen.md (P3-05, ADR-085).
+paths:
+  # P3-05 — khách QR: mang MÃ, không mang bàn; bàn tra từ mã hiện hành (I-023). Không danh tính.
+  /qr-codes/{code}:
+    get:
+      operationId: getTableByQrCode
+      summary: Bàn mà mã QR hiện hành chỉ tới
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Mã đang hiện hành; nhãn của bàn nó chỉ tới.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QrTable'
+        '400':
+          description: Yêu cầu gửi kèm một định danh bàn (invalid_request, field dining_table_id).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Mã đã bị thay hoặc không tồn tại — cùng một mã lỗi (qr_code_not_current).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  # P3-05 — cửa qr/doi_ma, lớp chu_quan (U-062: chỉ chủ quán đổi mã).
+  /dining-tables/{dining_table_id}/qr-code:
+    post:
+      operationId: issueQrCode
+      summary: Cấp mã QR mới cho bàn; mã cũ hết hiện hành cùng mốc
+      parameters:
+        - name: dining_table_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '201':
+          description: Mã mới đã cấp; người cấp là người thao tác của giao dịch.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QrCodeIssued'
+        '400':
+          description: dining_table_id không phải số nguyên dương (invalid_request).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Không xác định được người bấm (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Người bấm không phải chủ quán (owner_only).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Bàn không tồn tại (dining_table_not_found).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Một lần đổi mã khác cho cùng bàn chen vào (qr_code_issue_conflict); gửi lại nếu vẫn muốn đổi.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     ErrorCode:
@@ -22,9 +103,21 @@ components:
       enum:
         - internal_error
         - invalid_request
+        - unauthenticated
+        - not_on_counter_duty
+        - owner_only
+        - qr_code_not_current
+        - dining_table_not_found
+        - qr_code_issue_conflict
       x-http-status:
         internal_error: 500
         invalid_request: 400
+        unauthenticated: 401
+        not_on_counter_duty: 403
+        owner_only: 403
+        qr_code_not_current: 404
+        dining_table_not_found: 404
+        qr_code_issue_conflict: 409
     Error:
       type: object
       description: Hình lỗi chung của mọi lời từ chối (01-hop-dong-api.md §3).
@@ -54,6 +147,27 @@ components:
       format: uuid
       pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
       description: Dấu lần gửi (I-024), phía gửi đặt một lần lúc bấm gửi, giữ nguyên khi gửi lại.
+    QrTable:
+      type: object
+      description: Bàn mà một mã QR hiện hành chỉ tới — chỉ nhãn, không định danh bàn (I-023).
+      required: [label]
+      additionalProperties: false
+      properties:
+        label:
+          type: string
+    QrCodeIssued:
+      type: object
+      description: Mã vừa cấp cho một bàn.
+      required: [code, dining_table_id, issued_at]
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        dining_table_id:
+          type: integer
+          format: int64
+        issued_at:
+          $ref: '#/components/schemas/Instant'
 # Tên từ chối → mã (ADR-082 điểm 5). Mọi tên ở db/migrations/ một dòng: một mã của ErrorCode,
 # internal (không bao giờ là luật người dùng chạm tới) hoặc unreviewed (chưa lát nào xét — chạy như
 # internal_error). Lát dựng cửa chạm một bảng thì xét lại dòng của bảng ấy (01-hop-dong-api.md §4).
@@ -235,14 +349,14 @@ x-constraint-errors:
   production_batch_rolled_back_after_made_check: unreviewed
   production_batch_rolled_back_by_iff_rolled_back_check: unreviewed
   production_batch_rolled_back_by_person_fkey: unreviewed
-  qr_code_code_key: unreviewed
-  qr_code_code_not_blank_check: unreviewed
-  qr_code_dining_table_fkey: unreviewed
-  qr_code_id_table_key: unreviewed
-  qr_code_one_current_per_table_key: unreviewed
-  qr_code_person_fkey: unreviewed
+  qr_code_code_key: internal
+  qr_code_code_not_blank_check: internal
+  qr_code_dining_table_fkey: dining_table_not_found
+  qr_code_id_table_key: internal
+  qr_code_one_current_per_table_key: qr_code_issue_conflict
+  qr_code_person_fkey: internal
   qr_code_pkey: internal
-  qr_code_replaced_after_issued_check: unreviewed
+  qr_code_replaced_after_issued_check: qr_code_issue_conflict
   reconciled_day_cash_count_fkey: unreviewed
   reconciled_day_cash_count_has_lines_check: unreviewed
   reconciled_day_one_per_day_key: unreviewed

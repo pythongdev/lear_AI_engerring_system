@@ -101,6 +101,7 @@ có câu trả lời mới từ người.
 | ADR-082 | **Tầng 2 · tầng 3 dịch sang pha 3**: *ô ghi* = bảng × loại ghi, *cửa ghi* = lối vào có tên, mỗi ô đúng một cửa; tầng 2 chấm bằng cắt giao dịch qua cửa, tầng 3 bằng lệnh liệt kê đường ghi (dựng ở `P3-03`, chạy trong gate) và test từ chối qua cửa ⇒ database không đổi; cổng pha 3 đếm §1–§4 của `03-bao-ve-invariant.md`, admin §5 ngoài (ADR-068); lời từ chối của database tới người dùng qua tên `QC-10`, kể cả trigger (F-058), bảng ánh xạ thuộc hợp đồng của `P3-04` | Đã chốt 2026-10-05 (giao cho phiên, P3-01; Codex kiểm kê, Claude chốt) | — | P3-01 · ADR-050 · ADR-068 · F-058 |
 | ADR-083 | **Backend nói chuyện với database bằng pgx v5 và SQL viết tay, mọi câu ghi trong file `.sql` dưới thư mục của một cửa** — nên lệnh liệt kê đường ghi của ADR-082 chỉ đọc file (Gate 1f); Go 1.27.1, web bằng `net/http` chuẩn; một hàm mở giao dịch; test Go trên PostgreSQL thật qua `scripts/be-check.sh`, thiếu database thì đỏ; quy ước ở `QC-11`…`QC-17` | Đã chốt 2026-10-06 (giao cho phiên, P3-03; Codex thi công, Claude chốt) | — | P3-03 · ADR-082 · ADR-053 · F-045 |
 | ADR-084 | **Hợp đồng API thắng code; migration thắng hợp đồng về tên ràng buộc**: hợp đồng là OpenAPI 3.1 một file YAML (`docs/product/3-be/openapi.yaml`, bắt đầu rỗng đường gọi), khuôn ở `01-hop-dong-api.md`; hình lỗi `{code, field?}`, mã kèm status; bảng *tên từ chối → mã* (`x-constraint-errors`) phủ mọi tên của migration, giá trị là mã · `internal` · `unreviewed`; Gate 1g so hợp đồng ↔ code ↔ migration mọi lượt, đổi hợp đồng phải tăng phiên bản; lời từ chối của trigger mang tên (F-058) | Đã chốt 2026-10-06 (giao cho phiên, P3-04; Claude chọn và thi công) | — | P3-04 · ADR-082 · ADR-053 · F-058 |
+| ADR-085 | **Quyền là một lớp của cửa, đọc tại mốc giao dịch của cửa ấy**: mỗi cửa khai đúng một lớp (`quay` · `chu_quan` mở ở P3-05), ma trận `02-vai-va-quyen.md` một dòng mỗi cửa, ba tập (thư mục cửa · dòng ma trận · khai báo Go) bằng nhau, Gate 1g chấm; `authz.Run` kiểm quyền và khai người thao tác trong cùng giao dịch; khách QR mang mã, không mang bàn; danh tính tách khỏi cách đăng nhập (U-075) | Đã chốt 2026-10-06 (giao cho phiên, P3-05; Claude thiết kế và thi công) | — | P3-05 · ADR-083 · ADR-084 · U-075 · U-062 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -5673,3 +5674,66 @@ của `01-hop-dong-api.md` thì đỏ hoặc không thấy, nên khuôn là lu�
 **Applies to:** `P3-05`…`P3-14`; `docs/product/3-be/`; `be/internal/apierr/`;
 `docs/product/2-db/10-quy-uoc-code.md` `QC-10` · `QC-14`; `scripts/check-api-contract.sh` ·
 `scripts/gate.sh` · `CLAUDE.md` §2 · §5; **F-058**.
+
+### ADR-085 — Quyền là một lớp của CỬA, đọc tại mốc giao dịch của chính cửa ấy; danh tính tách khỏi cách đăng nhập, và cách đăng nhập chờ chủ quán
+
+**Trạng thái:** Đã chốt 2026-10-06, **giao cho phiên** (task `P3-05`, bước 5/14 của pha 3; chủ repo giao
+*"hãy đọc kĩ task trên và làm yêu cầu codex làm bạn kiểm tra"*). Claude thiết kế và viết test từ chối
+trước; phiếu giao Codex không chạy được (model trong cấu hình Codex không dùng được với tài khoản), chủ
+repo chọn để Claude tự thi công. Quyết định này **không sở hữu ma trận** — dòng của nó ở
+`docs/product/3-be/02-vai-va-quyen.md`; ở đây chỉ giữ **vì sao** và **cái bị loại**.
+
+**Decision:**
+
+1. **Quyền gắn vào cửa, không gắn vào người.** Mỗi cửa ghi khai **đúng một lớp quyền** trong code
+   (`authz.Door{Code, Need}`), và ma trận ở `02-vai-va-quyen.md` có **đúng một dòng** cho mỗi cửa — mã
+   cửa `<gói>/<cửa>` của **ADR-083**. Ba tập — thư mục cửa dưới `be/internal/*/sql/`, dòng ma trận, khai
+   báo `authz.Door` — phải bằng nhau từng phần tử, và lớp ở ma trận phải bằng lớp ở code. Gate 1g chấm
+   điều ấy mọi lượt (mở rộng **ADR-084** điểm 5).
+2. **Hai lớp mở ở lát này:** `quay` — người bấm có một khoảng `counter_duty` chứa **mốc giao dịch của
+   cửa** (`now()` trong giao dịch ấy, `02-thoi-gian-ngay-ban.md`); `chu_quan` — `person.is_owner`. Hai lớp
+   đọc độc lập, nên chủ quán đứng quầy qua được cả hai (`YC-16`) và chủ quán không đứng quầy **không** qua
+   được `quay` (`architecture.md` §4). Lớp mới (ví dụ *quầy hoặc chủ quán* của sổ giấy) do lát cần nó
+   thêm, cùng lượt, kèm nguồn.
+3. **Một hàm chạy cửa có quyền:** `authz.Run` mở giao dịch qua `db.InTx`, kiểm người tồn tại, kiểm lớp
+   tại mốc giao dịch, khai `shop.actor_person_id` bằng **chính người đã kiểm**, rồi mới chạy thân cửa.
+   Người bấm và người được kiểm quyền vì thế không thể khác nhau, và cột *ai bấm* (`I-012` tầng 1) lấy
+   đúng người ấy. Không người ⇒ `unauthenticated`, thân cửa không chạy.
+4. **Khách QR không phải một người:** đường của khách mang **mã**, không mang bàn; bàn tra từ mã hiện
+   hành tại mốc giao dịch (`I-023`). Khách gửi kèm một định danh bàn ⇒ `invalid_request`, không dùng.
+5. **Danh tính tách khỏi cách đăng nhập.** Cửa nhận *người đã được xác định* qua một giao diện
+   `authz.Authenticator`; cách xác định (chọn tên, mã số, mật khẩu…) là **U-075**, chưa có lời. Lát này
+   **không** dựng cửa đăng nhập, không bảng phiên, không `be/cmd/` — test cấp danh tính bằng một
+   `Authenticator` chỉ sống trong file `_test.go`.
+6. **Đổi mã QR** là cửa đầu tiên mang lớp `chu_quan` (**U-062** đã đóng: chỉ chủ quán). Cửa gọi
+   `qr_code_issue` sẵn có — không câu ghi mới vào `qr_code`.
+
+**Why:**
+
+- **Quyền đọc trong giao dịch của cửa, không đọc ở tầng HTTP trước đó:** *chỗ đứng tại thời điểm bấm*
+  chỉ có một nghĩa đo được — mốc mà thao tác được ghi. Đọc ở một bước riêng trước giao dịch để hở một
+  khoảng mà người vừa rời quầy vẫn ghi được.
+- **Một lớp mỗi cửa và ba tập phải bằng nhau:** một cửa không khai lớp là một cửa ai cũng bấm được — đúng
+  thứ `P3-05` *Không làm thì mất gì*. Đòi bằng nhau thì quên khai là đỏ, không phải im.
+- **Không đoán cách đăng nhập:** đây là câu về cách quán làm việc (máy quầy dùng chung, người đổi giữa
+  buổi), không phải câu kỹ thuật; `CLAUDE.md` §3 luật 5. Tách danh tính khỏi cách đăng nhập để sáu lát sau
+  không chờ lời này.
+
+**Rejected alternatives:**
+
+- *Cột vai trên `person`, kiểm vai lúc bấm.* Bác: `architecture.md` §4 và `P3-05` *Bẫy* — chức vụ không
+  mở cửa nào.
+- *Người thao tác mặc định là người đang đứng quầy.* Bác ở `06-luoc-do-nguoi-va-vet.md` §2 (tầng 4 của
+  `I-012`): đoán thay xoá dấu của ca hai người dùng chung một chỗ đứng.
+- *Kiểm quyền ở middleware HTTP, giao dịch mở sau.* Bác: xem *Why* thứ nhất.
+- *Ma trận chỉ trong code (bảng Go), không có file tài liệu.* Bác: `CLAUDE.md` §2 hàng *Hợp đồng API* đã
+  hẹn file của `P3-05`, và pha 4 cần đọc ai được bấm gì mà không đọc Go.
+- *Dựng sẵn đăng nhập bằng mã số ngắn của `prompt-fullstack.md` §3.6.* Bác: đề xuất viết trước, chủ quán
+  chưa nói — **U-075**.
+
+**Giới hạn có tên:** chưa có cửa nào thuộc lớp `quay` ở lát này — test của lớp ấy chạy qua `authz.Run` trên
+PostgreSQL thật, chưa qua một cửa thật; lát đầu có cửa của quầy (`P3-07`) thêm test qua cửa. Mở · khép khoảng
+trực quầy là cửa của `P3-11`. Hai người dùng chung một danh tính thì máy không phân biệt được (`I-012` tầng 4).
+
+**Applies to:** `P3-05`…`P3-12`; `docs/product/3-be/02-vai-va-quyen.md`; `be/internal/authz/` ·
+`be/internal/qr/`; `scripts/check-api-contract.sh`; **U-075** · **U-062**.
