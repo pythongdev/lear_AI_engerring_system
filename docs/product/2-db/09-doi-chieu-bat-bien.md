@@ -113,7 +113,7 @@ tính chất của dữ liệu.
 | `I-011` tập 3 — lần đổi giá bị nhắc nhầm như đổi thành phần | chưa có câu | (A) như trên | pha 3 |
 | `I-013` tập 3 — kênh không có lượt kiểm ra đúng giá §4.8 | chưa có câu | (D) tính chất của bộ test theo kênh, không đọc được trên dữ liệu | pha 3 — test của cửa tính giá |
 | `I-014` tập 3 — tổng báo cáo khác tổng hai nguồn | chưa có câu | (A) lược đồ không cất báo cáo; phép cộng hai nguồn là của chính `I-005/3` | pha 3 — con số báo cáo |
-| `I-014` tập 6 — con số dựng lại hôm nay khác con số đã đối soát hôm ấy | chưa có câu | (A) dấu đối soát xong (`T-133`, **ADR-079** điểm 7) không mang con số nào; con số nào được chụp lúc đóng ngày là việc của cửa đóng ngày | pha 3 — `P3-09` |
+| `I-014` tập 6 — con số dựng lại hôm nay khác con số đã đối soát hôm ấy | chưa có câu | (A) dấu đối soát xong (`T-133`, **ADR-079** điểm 7) không mang con số nào; cửa không ghi tiền vào ngày đã ký (ADR-089 điểm 4, [đường tiền](../3-be/06-duong-tien.md)), không chụp con số; sửa tay ngoài cửa vẫn chưa có câu bắt | tầng 4; `P3-09` giữ ở cửa |
 | `I-014` tập 9 — trả lại trả trước làm giảm doanh thu | chưa có câu | (A) đọc con số doanh thu của báo cáo; công thức của `I-005/3` đã tách dòng *trả lại* khỏi dòng *hoàn* | pha 3 — con số báo cáo |
 | `I-015` tập 3 — phần không mang phương thức / ghi gộp | chưa có câu | (B) một lần thu là một dòng `bill`, mỗi phương thức một cột (`04-luoc-do-duong-tien.md` §1) | — (đúng theo cấu tạo) |
 | `I-015` tập 4 — các phần rơi vào hai ngày | chưa có câu | (B) mọi phần trên một dòng, một `booked_at` | — (đúng theo cấu tạo) |

@@ -4648,3 +4648,28 @@ P3-07 (phát hiện) · P3-11 (gỡ) · **ADR-087** · **F-046**
 
 **Status:**
 Open
+
+### F-061 — Phép kiểm tên test QC-17 chỉ chạy trong `db-check`, nên một lượt chỉ đổi `be/` không bao giờ bị chấm
+
+**Problem:**
+Đo 2026-10-09 (`P3-09`, Claude Code): khối phép kiểm `QC-17` của `docs/product/2-db/10-quy-uoc-code.md`
+(tên test mang mã `I`/`YC`/`QC`) chỉ được `scripts/db-check.sh` chạy, và `scripts/verify.sh` chỉ gọi
+`db-check` khi `db/`, `compose.yaml`, `scripts/db-check.sh`, `scripts/reconcile.sh` hay `docs/product/2-db/`
+đổi. `P3-08` chỉ đổi `be/` và `docs/product/3-be/` nên gate xanh với ba tên sai (`TestMangDiHinh_…` ×2,
+`TestS6_…`); `P3-09` sửa một file dưới `docs/product/2-db/` thì `db-check` chạy và đỏ vì chúng, cộng bốn
+tên sai của chính test đỏ `P3-09` viết.
+
+**Impact:**
+`P3-13` đếm vế đã có test bằng `grep` theo mã (**ADR-082** điểm 4); một tên sai làm vế ấy trông như chưa có
+test, hoặc làm lượt sau — không liên quan — đỏ vì nợ của lượt trước.
+
+**Decision / Fix:**
+Bảy tên đã đổi ở `P3-09` (không đổi điều kiện kiểm nào). Phép kiểm chưa dời: hướng đề nghị là
+`scripts/be-check.sh` (hoặc `verify.sh` khi `be/` đổi) chạy đúng hai dòng phép kiểm của `QC-17`. Chờ chủ
+repo chọn; đây là lần đầu — `quality/review-gate.md` *Vòng phản hồi* chỉ đòi sửa khi lặp lại.
+
+**Related task:**
+P3-08 (lọt) · P3-09 (phát hiện, đổi tên) · **ADR-082** · `QC-17`
+
+**Status:**
+Open
