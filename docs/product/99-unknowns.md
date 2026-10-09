@@ -15,6 +15,7 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
+  - [U-076](#u-076) — đơn mang đi, giao, đặt trước mà khách thiếu tiền: có cho nợ không
   - [U-075](#u-075) — nhân viên và chủ quán cho máy biết "tôi là ai" bằng cách nào
   - [U-073](#u-073) — két lệch mà đã tìm ra lý do: có được bấm đối soát xong ngày ấy không
   - [U-072](#u-072) — tiền chi, tạm ứng, thưởng lấy khỏi két: trừ vào két của ngày bán nào
@@ -37,6 +38,18 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 
 <a id="dang-mo"></a>
 ### Đang mở
+
+<a id="u-076"></a>
+- **U-076 — Đơn mang đi, giao tận nơi hay đặt trước qua điện thoại mà khách không
+  trả đủ lúc nhận hàng thì quán có cho nợ như khách ngồi bàn không — và nếu có, người
+  đi giao có được ghi nợ tại chỗ khách không?** Mở 2026-10-09 (nhận `P3-09`, Claude
+  Code). `master_plan/shop-facts.md` §6.14 chốt cho nợ khi **đóng phiên bàn**;
+  `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.7(b) cũng chỉ nói về phiên.
+  Lược đồ cất được nợ trên hoá đơn đơn lẻ nhưng không lời nào nói quán làm thế. Hỏi
+  về cái quán: *"khách gọi giao tận nơi, tới nơi khách thiếu 20 nghìn, thì người giao
+  cho nợ rồi về, hay mang hàng về, hay gọi về quán hỏi?"* **Chủ quán** trả lời. Chặn:
+  phần nợ của hai cửa thu tiền đơn lẻ — cửa từ chối mọi khoản nợ trên đơn lẻ kèm mã
+  `standalone_debt_undecided` cho tới khi có lời (`docs/decisions.md` ADR-089).
 
 <a id="u-075"></a>
 - **U-075 — Nhân viên và chủ quán cho máy biết "tôi là ai" bằng cách nào: chọn tên

@@ -105,6 +105,7 @@ có câu trả lời mới từ người.
 | ADR-086 | **Một hàm tính giá `gia.Tinh`, gọi từ tính thử, menu và cửa ghi đơn; một cửa tạo lượt gọi `don/tao_luot_goi` cho cả năm kênh** — `P3-06` dựng phần giá (tổ hợp, ngừng bán, ảnh chụp) và lối vào đặt hộ tại quầy, chưa đường gọi HTTP; `P3-07` · `P3-08` thêm phần kênh vào chính cửa ấy; cửa từ chối, không sửa hộ, không tự điền mặc định (**F-059**); bốn cửa sửa menu của chủ quán bắt buộc lý do, để vết | Đã chốt 2026-10-06 (giao cho phiên, P3-06; Claude thiết kế, Codex thi công) | — | P3-06 · ADR-082 · ADR-085 · F-059 |
 | ADR-087 | **Luồng tại bàn: cửa tạo lượt gọi tự tìm phiên từ bàn (mở phiên ở lượt gọi đầu, tầng 1 chặn hai phiên, cửa thử lại); cột trạng thái của đơn và của phiên mỗi cột một cửa chuyển `vongdoi/…` chạy trong giao dịch của cửa gọi; cửa đóng `hoadon/dong` ghi hoá đơn + đóng phiên trong một giao dịch** — lớp quyền mới `quay_hoac_ma_ban` · `nguoi_quan` · `theo_cua_goi`; cửa ghép bàn chưa dựng | Đã chốt 2026-10-06 (giao cho phiên, P3-07; Claude thiết kế, Codex thi công) | — | P3-07 · ADR-082 · ADR-085 · ADR-086 · F-060 |
 | ADR-088 | **Luồng ngoài bàn: ba kênh không gắn bàn tạo đơn qua chính cửa `don/tao_luot_goi` (lớp đổi thành `quay_hoac_khach` — thêm nhánh khách web); cửa xét I-008 cho cả năm kênh, sau dấu lần gửi, tại `now()` của giao dịch qua một đồng hồ test thay được; cửa `don/roi_quan` từ chối kèm mã khi đơn còn việc trạm chưa ra bàn (S-6)** | Đã chốt 2026-10-09 (giao cho phiên, P3-08; Claude thiết kế, Codex thi công) | — | P3-08 · ADR-061 · ADR-078 · ADR-086 · ADR-087 |
+| ADR-089 | **Đường tiền: mười ba cửa chia ba gói (`hoadon` · `tratruoc` · `ket`), mỗi lần tiền đổi tay một cửa có người, ba ô ghi dùng chung qua cửa `theo_cua_goi`; ngày bán của mọi dòng tiền đọc từ một đồng hồ chung; cửa đóng ngày tính phép trừ két và từ chối kèm mã khi lệch (U-073); không cửa nào ghi tiền vào ngày đã ký; giảm giá (U-058) và nợ của đơn lẻ (U-076) từ chối kèm mã** — lớp quyền mới `quay_hoac_chu_quan`; không migration; huỷ đơn đã xác nhận để lại cho `P3-10` | Đã chốt 2026-10-09 (giao cho phiên, P3-09; Claude thiết kế, Codex thi công) | — | P3-09 · ADR-037 · ADR-059 · ADR-075 · ADR-079 · ADR-087 · ADR-088 · U-058 · U-073 · U-076 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -6008,3 +6009,104 @@ hàng ở quá khứ — cửa không xét, chưa có luật cho máy; **đườ
 
 **Applies to:** `P3-08`…`P3-12`; `be/internal/don/` · `be/internal/authz/` · `be/internal/apierr/`;
 `docs/product/3-be/05-luong-mang-di.md` · `openapi.yaml` · `02-vai-va-quyen.md`; **S-6** · **ADR-078**.
+
+---
+
+### ADR-089 — Đường tiền: mỗi lần tiền đổi tay một cửa có người; một đồng hồ cho ngày bán; cửa đóng ngày không đóng ngày lệch; không ghi tiền vào ngày đã ký
+
+**Trạng thái:** Đã chốt 2026-10-09, **giao cho phiên** (task `P3-09`, bước 9/14 của pha 3; chủ repo giao
+*"hãy đọc kĩ và làm yêu cầu codex làm"*). Claude thiết kế và viết test đỏ trước; Codex thi công trong
+worktree riêng; Claude duyệt và tích hợp. Quyết định này **không sở hữu** chỗ cất (`04-luoc-do-duong-tien.md`
+và migration — lát này không thêm migration), công thức đối soát (`architecture.md` §6.4, `I-021`), hay tầng
+của `I-005` `I-012` `I-014` `I-015` `I-021` (`03-bao-ve-invariant.md`). Đường gọi và mã: `openapi.yaml`; cách
+đọc lát: `docs/product/3-be/06-duong-tien.md`.
+
+**Context:**
+`P3-07` dựng cửa đóng phiên ghi hoá đơn có thu chia phương thức và nợ (`hoadon/dong`). Mọi đường tiền còn
+lại chưa có cửa: hoá đơn của đơn lẻ (lược đồ buộc đơn lẻ *Hoàn thành* phải có hoá đơn —
+`sales_order_bill_fkey`), trả trước và trả lại trả trước (chuỗi số dư `prepayment_use`), hoàn tiền, thu nợ
+dần (chuỗi **ADR-075**), tiền đầu két, số đếm két và dấu đối soát xong (**ADR-079**). Ngưỡng 0đ
+(`shop-facts.md` §6.10) chỉ chạy được khi **mọi** đồng tiền vào hay ra két đi qua một cửa mang người
+(`I-012`), và mọi dòng của cùng một ngày mang **cùng** ngày bán.
+
+**Decision:**
+
+1. **Mười ba cửa, ba gói; mỗi ô ghi đúng một cửa (ADR-082).** Cửa có lối vào — mỗi lần tiền đổi tay một
+   cửa: `hoadon/dong` (đã có), **`trao_tai_quay`** (đơn tới lấy — `pickup`, và `phone_preorder` trao tại quán —
+   từ *Đang thực hiện* tới *Hoàn thành*, lớp `quay`), **`giao_xong`** (đơn giao tận nơi từ *Đang giao* tới
+   *Hoàn thành* — người đi giao bấm *đã giao + đã thu tiền*, lớp `nguoi_quan`, `shop-facts.md` §6.7, lời đóng
+   U-057), **`hoan`** (hoàn cho một hoá đơn, lớp `quay`, §6.4), **`thu_no`** (một lần trả của chuỗi **ADR-075**,
+   lớp `quay`, §6.14), **`tra_lai`** (trả lại phần trả trước chưa thành doanh thu, lớp `quay`, §6.4 · **ADR-059**);
+   `tratruoc/` **`nhan`** (POS xác nhận đã nhận tiền, lớp `quay`, §6.3); `ket/` **`khai_dau_ket`** · **`dem`** ·
+   **`doi_soat_xong`**, lớp mới **`quay_hoac_chu_quan`**. Ba ô có nhiều cửa vào cần chúng nên câu ghi nằm ở
+   **cửa không lối vào** (`theo_cua_goi`, khuôn `vongdoi/chuyen_don` của **ADR-087** điểm 3), chạy trong giao
+   dịch của cửa gọi: **`hoadon/ghi`** thêm `bill` (gọi từ `dong` · `trao_tai_quay` · `giao_xong`);
+   **`hoadon/ghi_hoan`** thêm `refund` (gọi từ `hoan` · `tra_lai`); **`tratruoc/dung`** thêm `prepayment_use`
+   (gọi từ `hoadon/ghi` khi hoá đơn có phần trả trước, và từ `hoadon/tra_lai`). `tra_lai` ở gói `hoadon` để
+   chỉ có một chiều phụ thuộc `hoadon → tratruoc` (Go không cho hai gói import lẫn nhau). Cửa có lối vào của ba ô ấy chỉ đọc,
+   khoá và xét; nó không mang câu ghi của ô ấy. Mỗi cửa một thư mục `sql/<cửa>/` (`QC-13`), một dòng ma trận,
+   một `authz.Door`. *Sửa đổi 2026-10-09 (cùng ngày, trước khi có dòng code nào):* bản đầu để ba cửa cùng thêm
+   `bill` — Codex dừng ở Gate 1f, đúng; bản thứ hai để `tra_lai` ở `tratruoc` gây vòng import — Codex dừng, đúng.
+2. **Hoá đơn đơn lẻ = tổng dòng đơn, và chuyển đơn sang *Hoàn thành* trong cùng giao dịch** qua
+   `vongdoi.ChuyenDon`. Đơn trao tại quầy phải không còn việc trạm chưa ra bàn (`05-vong-doi.md` §5.2 dòng
+   *Đang thực hiện → Hoàn thành*), không thì `order_jobs_not_served`. Đơn giao tận nơi chỉ đi `giao_xong`,
+   đơn trao tại quầy chỉ đi `trao_tai_quay`; đi nhầm ⇒ `order_handover_mismatch`. Phần trả trước dùng cho
+   hoá đơn do **người bấm khai** (`prepaid_cash_vnd` · `prepaid_transfer_vnd`), cửa nối đúng một mắt chuỗi;
+   cửa **không tự chia** số dư — phần dư đi `tra_lai` khi POS quyết.
+3. **Một đồng hồ cho ngày bán.** Gói `ngayban` giữ `DongHo` (bản thật: `now()` của chính giao dịch; chỉ
+   test thay, như `don.DongHo` của **ADR-088** điểm 4). Mọi cửa ghi tiền ghi `booked_at` bằng mốc ấy và
+   `sale_date` bằng ngày lịch của nó theo múi giờ của quán (`QD-31` · `QD-32`) — **tường minh**, không để
+   mặc định của cột. Lý do: một ngày bán giả phải dựng được trọn trong test mà không chạm ngày thật, và
+   mọi phần của một lần thu chung một mốc (`YC-19`) dù cửa nào ghi.
+4. **Không cửa nào ghi tiền vào một ngày đã ký.** Mọi cửa ghi tiền xét `reconciled_day` của ngày bán mình
+   sắp ghi, trong cùng giao dịch, có ⇒ `sale_day_reconciled`, không ghi gì. Đây là phần tầng 3 của
+   *doanh thu ngày đã đối soát không bao giờ đổi* (`shop-facts.md` §6.4, `I-014`): **thay cho** chụp con
+   số vào dấu — `I-014` tập 6 vẫn không có câu, và một lần sửa tay ngoài cửa vẫn không bị bắt (tầng 4,
+   ghi ở `09-doi-chieu-bat-bien.md`). *Suy ra, không phải lời chủ quán:* việc tiền xảy ra sau lúc ký mà
+   cùng ngày lịch thì chờ sang ngày sau mới ghi được.
+5. **Cửa đóng ngày tính phép trừ két, và không đóng ngày lệch.** Thứ tự xét: có số đếm **và** tiền đầu
+   két ⇒ không thì `cash_day_incomplete`; chưa có dấu ⇒ không thì `sale_day_already_reconciled`; không
+   còn lượt sổ giấy chưa nhập (**ADR-037**) ⇒ không thì `paper_entries_pending`; không có khoản chi mà
+   ngày khai khác ngày ghi chạm ngày ấy (**U-072**, **ADR-079** điểm 5) ⇒ không thì
+   `cash_day_expense_date_undecided`; két − tiền đầu két = vế phải ⇒ không thì `cash_day_not_balanced`.
+   Vế cuối là `architecture.md` §6.4 luật 3 (*không có nút "đóng ca dù lệch"*) đọc cho tới khi **U-073**
+   có lời — cửa không chọn hộ chủ quán phần *đã tìm ra lý do*. Đường đọc
+   `GET /sale-days/{sale_date}/cash-reconciliation` trả bốn con số của cùng phép tính.
+6. **Phép trừ két ở cửa là bản thứ hai của `pg_temp.ket_ngay`** (`db/reconcile/prelude.sql`), có chủ ý: cửa
+   chạy bằng vai ghi trong giao dịch, bộ đối chiếu chạy sau giờ đóng bằng hàm tạm. Chúng được giữ bằng nhau
+   bằng **test**, không bằng lời hứa: test dựng một ngày đủ mọi hạng tử qua cửa, nạp prelude bằng
+   `scripts/reconcile.sh --emit-prelude` và so hai con số; cài một lần thu ghi nhầm phương thức thì cả hai
+   cùng kêu đúng một số.
+7. **Hai thao tác chờ lời bị từ chối kèm mã.** Giảm giá cả đơn (`discount_vnd` > 0 ở ba cửa đóng) ⇒
+   `order_discount_undecided` (**U-058**); nợ trên hoá đơn đơn lẻ ⇒ `standalone_debt_undecided` (**U-076**).
+   Không ghi gì.
+8. **Lớp `quay_hoac_chu_quan`** cho ba cửa của két: `shop-facts.md` §6.27 — *POS hoặc chủ quán* chấm con số
+   của ngày cuối buổi; **ADR-079** đọc số đếm cùng nguồn. *Suy ra:* khai tiền đầu két cũng thuộc lớp ấy — chủ
+   quán bỏ tiền cho POS (§8.5), không lời nào nói ai gõ con số.
+9. **Không làm ở lát này:** huỷ đơn từ *Đã xác nhận* trở đi (cùng lượt với việc trạm và bánh làm sai — `P3-10`;
+   trả lại trả trước của đơn huỷ đi `tra_lai`); sửa một dòng tiền đã ghi và sửa tiền đầu két (cửa cập nhật có
+   lý do — `P3-11`); nhập bù sổ giấy (`P3-11`); khoản chi của `I-029` (`P2A-05`); tin nhắn báo có (`I-015`
+   tập 5, chưa có chỗ cất).
+
+**Why:**
+- *Điểm 1.* Mỗi lần tiền đổi tay là một hạng tử riêng của §6.4; gộp hai hạng tử vào một cửa là hai lớp quyền
+  trong một cửa, hoặc một cửa đọc cờ để biết mình đang làm gì.
+- *Điểm 2.* Lược đồ đã buộc *Hoàn thành ⇒ có hoá đơn*; chuyển trạng thái ở cửa khác là một giao dịch không
+  `COMMIT` được. Chia số dư trả trước theo một thứ tự là luật mà chủ quán chưa nói.
+- *Điểm 4.* Không chụp con số thì không cần migration, và lời từ chối đứng **trước** lần ghi hỏng thay vì một
+  câu đối chiếu đứng sau nó. Cái giá đã ghi ở điểm 4.
+- *Điểm 5.* Cửa đóng một ngày lệch là chọn hộ U-073; cửa từ chối mọi ngày là vô dụng. Ngày 0đ thì cả hai
+  câu trả lời có thể của U-073 đều cho đóng.
+- *Điểm 6.* Một hàm SQL chung bằng migration là bản tốt hơn, nhưng nó đổi bộ đối chiếu của `P2-11` và thêm
+  một bước migration cho một việc mà một test so được; ghi ở đây để lát sau đổi được.
+
+**Rejected alternatives:**
+- *Một cửa `thu_tien` nhận cờ kênh.* Bác: hai lớp quyền (quầy · người đi giao), hai trạng thái nguồn.
+- *Cửa đóng ngày cho đóng ngày lệch nếu kèm lý do.* Bác: chọn hộ U-073 và trái §6.4 luật 3.
+- *Chụp doanh thu và số két vào dấu đối soát.* Bác lúc này: cần migration và vẫn không bắt được lần sửa tay.
+- *Cột ngày bán để mặc định.* Bác: test không dựng được một ngày riêng; một lần thu chạy qua nửa đêm giữa hai
+  câu ghi có thể mang hai ngày.
+
+**Applies to:** `P3-09`…`P3-11`; `be/internal/hoadon/` · `be/internal/tratruoc/` · `be/internal/ket/` ·
+`be/internal/ngayban/` · `be/internal/authz/` · `be/internal/apierr/`; `docs/product/3-be/06-duong-tien.md` ·
+`openapi.yaml` · `02-vai-va-quyen.md`; **U-058** · **U-073** · **U-076**.

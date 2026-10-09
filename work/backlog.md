@@ -96,6 +96,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] P3-09 **Đường tiền** — thu đơn lẻ (trao tại quầy · giao xong), nhận và trả lại trả trước, hoàn tiền, thu nợ dần, tiền đầu két, đếm két, đối soát xong ngày; giảm giá từ chối kèm mã (U-058), ngày lệch từ chối kèm mã (U-073); một ngày bán giả qua cửa ⇒ 0đ lệch — **ADR-089** — L2 — Claude thiết kế và viết test đỏ, Codex thi công (worktree `../lean_wt/P3-09`) — nhận 2026-10-09 · [chi tiết](backlog_BE.md#p3-09)
+
 
 <a id="done"></a>
 ## Done

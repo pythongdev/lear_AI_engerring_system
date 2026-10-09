@@ -933,9 +933,50 @@ các lần trả nối thành chuỗi. Giảm giá cả đơn còn chờ U-058 �
 **Bẫy:** đừng ghi một lần thu nợ thành một khoản bán mới (`YC-10`). Đừng tự đặt trần giảm giá.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi* (nhận 2026-10-09, Claude Code; chủ repo giao *"hãy đọc kĩ và làm yêu cầu codex làm"* — Claude
+  thiết kế và viết test đỏ; Codex thi công ở worktree `../lean_wt/P3-09`, nhánh `codex/P3-09` từ `af45bde`;
+  Claude duyệt và tích hợp): `be/internal/hoadon/` · mới `be/internal/tratruoc/` · `be/internal/ket/` ·
+  `be/internal/ngayban/` · `be/internal/authz/` (lớp `quay_hoac_chu_quan`) · `be/internal/apierr/` ·
+  `be/internal/vongdoi/` (chỉ nếu cần) · `be/internal/don/don_test.go` (một chỗ có chủ ý ở `dung()`) ·
+  `docs/product/3-be/` (`openapi.yaml`, `01-hop-dong-api.md`, `02-vai-va-quyen.md`, mới `06-duong-tien.md`) ·
+  `docs/product/00-index.md` · `docs/product/2-db/04-luoc-do-duong-tien.md` §5 · `09-doi-chieu-bat-bien.md`
+  (dòng `I-014` tập 6) — `docs/decisions.md` (ADR-089) · `docs/product/99-unknowns.md` (U-076) · `work/`.
+  **Không** migration, không cửa huỷ đơn đã xác nhận (`P3-10`), không cửa sửa dòng tiền đã ghi (`P3-11`).
+- *Vế tầng 3 lát chạm* — lấy bằng `grep -nE '^\| \*\*`I-0(05|12|14|15|21)`' docs/product/1-system-design/03-bao-ve-invariant.md`
+  (2026-10-09): `I-012` dòng 100 — mọi thao tác chạm tiền đi qua cửa có người, hai ca tên người khác (người
+  đi giao; chủ quán trên mặt quản trị); `I-014` dòng 102 — trả trước chỉ vào doanh thu qua hoá đơn của chính
+  đơn; `I-021` dòng 104 — không đường nào làm vơi két ngoài các hạng tử của công thức. `I-005` dòng 98 ·
+  `I-015` dòng 103 là tầng 1 (lược đồ) — lát thi hành qua cửa, không thêm tầng.
+- *Câu cho chủ quán:* mở **U-076** (nợ trên đơn lẻ — cửa từ chối kèm mã). **U-058** · **U-073** đã có tên;
+  cửa từ chối kèm mã, không chọn hộ.
+- *Thiết kế* (Claude, 2026-10-09; lý do và phương án bị loại: **ADR-089**): chín cửa có lối vào mới, ba gói —
+  `hoadon/trao_tai_quay` `POST /orders/{id}/handover` (`quay`) · `hoadon/giao_xong` `POST /orders/{id}/delivered`
+  (`nguoi_quan`) · `hoadon/hoan` `POST /bills/{id}/refunds` (`quay`) · `hoadon/thu_no`
+  `POST /bills/{id}/debt-collections` (`quay`) · `tratruoc/nhan` `POST /orders/{id}/prepayment` (`quay`) ·
+  `hoadon/tra_lai` `POST /prepayments/{id}/returns` (`quay`) · `ket/khai_dau_ket` `POST /opening-floats` ·
+  `ket/dem` `POST /cash-counts` · `ket/doi_soat_xong` `POST /sale-days/{sale_date}/reconciliation` (ba cửa
+  `quay_hoac_chu_quan`); ba cửa không lối vào `theo_cua_goi` giữ ba ô ghi dùng chung — `hoadon/ghi` (thêm `bill`) ·
+  `hoadon/ghi_hoan` (thêm `refund`) · `tratruoc/dung` (thêm `prepayment_use`), sửa đổi cùng ngày sau khi Codex dừng ở
+  Gate 1f, và `tra_lai` chuyển sang `hoadon` để gỡ vòng import (ADR-089 điểm 1); hai đường đọc `GET /debts` · `GET /sale-days/{sale_date}/cash-reconciliation`;
+  `hoadon/dong` nhận thêm giảm giá (từ chối) và ngày đã ký (từ chối). Đồng hồ chung `ngayban.DongHo`.
+- *Nghiệm thu* (viết trước khi sửa): (1) Test đỏ do Claude viết trước — `be/internal/don/duong_tien_test.go`
+  (mới), cùng một chỗ sửa có chủ ý ở `dung()` của `don_test.go` (gắn đường gọi `tratruoc` · `ket`) — xanh qua
+  `./scripts/be-check.sh` **mà không sửa điều kiện kiểm nào**: hoá đơn đơn lẻ qua hai cửa trao, đúng lớp, đúng
+  trạng thái nguồn, đơn đi nhầm cửa và đơn còn việc trạm bị từ chối; giảm giá và nợ đơn lẻ từ chối kèm mã;
+  trả trước nhận · trả lại · thành doanh thu theo chuỗi, không quá số dư; thu nợ dần theo chuỗi **ADR-075**,
+  không sinh hoá đơn; hoàn có đủ vết; tiền đầu két và số đếm theo mệnh giá, một lần mỗi ngày, quầy hoặc chủ
+  quán; **một ngày bán giả qua cửa ⇒ 0đ lệch ở cả cửa lẫn `pg_temp.ket_ngay` của bộ đối chiếu**; lỗi cài một
+  lần thu ghi nhầm phương thức ⇒ cả hai kêu đúng số, ngày không đóng được; ngày thiếu số · còn sổ giấy · chờ
+  U-072 không đóng được; ngày đã ký không nhận tiền mới, ngày sau thì nhận. Mọi test của `P3-05`…`P3-08` vẫn
+  xanh. (2) `openapi.yaml` có mười một đường gọi mới, mã mới kèm status, `info.version` tăng; tên ràng buộc
+  của bảng tiền lát đụng tới được xét (mã công khai hoặc `internal`). (3) Ma trận có mười hai dòng mới và lớp
+  `quay_hoac_chu_quan` kèm nguồn; Gate 1g `PASS`. (4) Gate 1f `PASS` — mỗi ô ghi của bảng tiền đúng một cửa.
+  (5) File lát `docs/product/3-be/06-duong-tien.md` có dòng ở `00-index.md`; chỗ trống của
+  `04-luoc-do-duong-tien.md` §5 và dòng `I-014` tập 6 ở `09-doi-chieu-bat-bien.md` trỏ đúng. (6)
+  `./scripts/gate.sh` xanh ở worktree **và** ở clone chính sau tích hợp.
+- *Kiểm chứng:* `./scripts/be-check.sh` (Claude tự chạy lại) · `./scripts/check-api-contract.sh --list` ·
+  `./scripts/check-write-paths.sh --list` · lỗi cài (bỏ kiểm ngày đã ký; bỏ hạng tử hoàn chéo ở phép trừ của
+  cửa) ⇒ test đỏ · `./scripts/gate.sh`; Claude đọc diff theo từng dòng nghiệm thu, đối chiếu bảng red flag Gate 4.
 
 **Bàn giao:** —
 
