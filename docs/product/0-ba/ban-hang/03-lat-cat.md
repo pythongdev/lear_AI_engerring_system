@@ -336,7 +336,10 @@ Trọn đường đi, từ lúc nhấc máy:
   thì nhập thêm địa chỉ (§3.2.4).
 - *Hệ thống* tính tổng tiền và tạo đơn. Đơn **không đi qua bước duyệt** — vào thẳng trạng thái
   **Đã xác nhận** (§2.2, bước 7).
-- Bếp làm và *nhân viên quán* đóng gói như bước 8, không khác đơn của hai kênh kia một điểm nào.
+- Bếp làm và *nhân viên quán* đóng gói như bước 8, không khác đơn của hai kênh kia một điểm nào —
+  trừ **lúc** làm: đơn đặt trước **không** làm ngay lúc nhận; máy nhắc POS và bếp trước giờ khách
+  cần hàng 20 phút và 10 phút, và bếp làm lúc ấy (chủ quán chốt 2026-10-09, đóng `U-077`;
+  `shop-facts.md` §5.2 điểm 5).
 - **Kết thúc kiểu thứ nhất — khách tới lấy:** *Khách* tới quán đúng giờ đã hẹn, *người đứng quầy*
   trao hàng và thu tiền tại quầy. Đơn **hoàn thành**.
 - **Kết thúc kiểu thứ hai — quán giao:** đơn mang trạng thái **"đang giao"**, *nhân viên quán* đem

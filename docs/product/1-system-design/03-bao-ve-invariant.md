@@ -405,23 +405,22 @@ phải câu mệnh đề; lời của từng mệnh đề đọc ở nhà của 
    thay chủ quán kết luận thiếu hay đủ.
 3. **`I-027` là một ô cho một ngày, không phải một mốc giờ.** Lời đóng `U-065` · `U-069`
    (2026-09-30): chủ quán tick, mỗi người mỗi ngày một ô. Đừng dựng giờ tới, giờ về hay ô theo
-   buổi. Tick nhầm thì **huỷ**, ô đã huỷ ở lại (lời đóng `U-070`); đừng bắt buộc ghi chú hay xét
-   người huỷ khi [U-071](../99-unknowns.md) chưa có lời.
+   buổi. Tick nhầm thì **huỷ**, ô đã huỷ ở lại (lời đóng `U-070`); lời đóng [U-071](../99-unknowns.md)
+   (2026-10-09) bắt buộc ghi chú và chỉ cho chủ quán huỷ — siết ở `T-141`.
 4. **Tạm ứng, thưởng và khoản chi của loại nguồn két vào phép trừ két, mỗi khoản ĐÚNG MỘT ngày
    bán.** Lời [U-066](../99-unknowns.md) · [U-067](../99-unknowns.md) (2026-09-30, *từ két bán
    hàng*) và lời *trong ngày, trước lúc đếm két* (2026-10-01) đã vào `I-021` · `I-028` · `I-029` ở
-   T-125 (**ADR-074**). Đừng dựng cột *ngày bán của két* hay chọn hộ ngày nào khi
-   [U-072](../99-unknowns.md) chưa có lời; đừng đặt dấu nguồn tiền lên từng khoản — nguồn nằm ở
+   T-125 (**ADR-074**). Ngày bán của khoản là **ngày người ghi khai** (lời đóng
+   [U-072](../99-unknowns.md), 2026-10-09) — không cần cột *ngày bán của két*; đừng đặt dấu nguồn tiền lên từng khoản — nguồn nằm ở
    **loại** chi.
 
 ### 5.2 Chỗ cố ý để trống
 
-- **[U-071](../99-unknowns.md)** — ghi chú huỷ có bắt buộc không, ai được bấm huỷ; đọc nguyên văn câu
-  hỏi ở owner. `U-065` · `U-069` · `U-070` đã có lời 2026-09-30, và hàng `I-027` đã viết lại theo ba
-  lời ấy.
+- ~~[U-071](../99-unknowns.md)~~ — đóng 2026-10-09: ghi chú huỷ bắt buộc, chỉ chủ quán huỷ; hàng
+  `I-027` đã thêm vế ấy, lược đồ siết ở `T-141`. `U-065` · `U-069` · `U-070` đã có lời 2026-09-30.
 - **Ngày bán mà một khoản rời két trừ vào** — nguồn tiền đã có lời (`U-066` · `U-067`, 2026-09-30;
-  *trong ngày, trước lúc đếm két*, 2026-10-01) và đã vào `I-021` · `I-028` · `I-029` ở T-125; còn
-  luật chọn ngày bán: [U-072](../99-unknowns.md).
+  *trong ngày, trước lúc đếm két*, 2026-10-01) và đã vào `I-021` · `I-028` · `I-029` ở T-125; luật
+  chọn ngày bán đóng 2026-10-09: **ngày người ghi khai** ([U-072](../99-unknowns.md)).
 
 ### 5.3 Bước sau đọc gì ở §5
 

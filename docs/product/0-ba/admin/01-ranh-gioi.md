@@ -105,15 +105,15 @@ khối dưới đây nói **hành vi** — thứ mục này sở hữu — của
   tick; **không** ô nào sinh ra khoản trừ. Muộn bao nhiêu phút thì ghi nhận là muộn, và nghỉ có báo
   trước có bị trừ không, thì **chưa có lời** (`C32` · `C30`). Tick nhầm thì **huỷ** ô ấy bằng một nút
   huỷ, có phần ghi chú để sau kiểm lại; ô đã huỷ không biến mất (lời đóng `U-070`, 2026-09-30). Ghi
-  chú có bắt buộc không và ai được bấm huỷ thì chưa có lời —
-  [99-unknowns.md](../../99-unknowns.md) **U-071**. Chấm công **không** thay mốc đổi người ở
+  chú **bắt buộc** và **chỉ chủ quán** bấm huỷ (chủ quán chốt 2026-10-09, đóng
+  [99-unknowns.md](../../99-unknowns.md) **U-071**). Chấm công **không** thay mốc đổi người ở
   quầy của lời `C36`: hai việc khác nhau (§8.8).
 - **Tạm ứng và thưởng — mỗi khoản là một lần đưa tiền có người nhận và có ngày** (§8.7, `C28` ·
   `C29`). Tạm ứng phải có **chủ quán duyệt**. Hai loại khoản này **không** phải tiền bán hàng và
   không thao tác nào ở §2–§6 sinh ra chúng. Tiền lấy **từ két bán hàng** (chủ quán chốt 2026-09-30, trả lời
   U-067), **trong ngày, trước lúc đếm két** (2026-10-01), nên mỗi khoản vào phép đối soát két cuối
-  ngày (`quality/invariants.md` `I-021`); tính vào két của ngày bán nào thì chưa có lời —
-  [99-unknowns.md](../../99-unknowns.md) **U-072**. Khoản ấy trừ vào hay cộng vào lương thế nào cũng chưa có lời (`C26` · `C33`).
+  ngày (`quality/invariants.md` `I-021`); tính vào két của **ngày người ghi khai** cho khoản (chủ quán chốt 2026-10-09, đóng
+  [99-unknowns.md](../../99-unknowns.md) **U-072**). Khoản ấy trừ vào hay cộng vào lương thế nào cũng chưa có lời (`C26` · `C33`).
 - **Khoản chi ngoài tiền hàng và lương — ghi từng khoản theo loại** (§8.10, `E44` · `E45`). Danh
   sách loại là thứ quán kể thêm dần. **Tiền hàng và lương không ghi thành khoản chi.** Điện, nước, wifi,
   xăng xe trả **từ két bán hàng** (chủ quán chốt 2026-09-30, trả lời U-066), **trong ngày, trước

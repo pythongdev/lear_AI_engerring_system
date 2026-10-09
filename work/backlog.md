@@ -88,6 +88,10 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
+- [ ] T-140 **Đường tiền theo lời 2026-10-09** — nợ trên đơn lẻ được ghi kèm ghi chú, người đi giao ghi nợ tại chỗ (gỡ `standalone_debt_undecided`, U-076); chỉ chủ quán bấm đối soát xong, mọi ngày, ngày lệch bắt giải thích (gỡ `cash_day_not_balanced`, đổi lớp cửa, U-073); ngày két của tạm ứng · thưởng · khoản chi là ngày khai (gỡ `cash_day_expense_date_undecided`, bỏ dấu `cho_u072` của bộ đối chiếu, U-072); con trỏ ở `docs/product/2-db/04` · `09` · `3-be/06` và ADR-089 *Sửa đổi*. **Chờ commit `P3-09`** (worktree dựng từ `HEAD`). Đường sửa số đã ký chờ **U-078** — L2 — Claude thiết kế và viết test đỏ, Codex thi công · [chi tiết](#t-139)
+- [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
+- [ ] T-142 **Đơn đặt trước nổ việc theo giờ nhắc** — `phone_preorder` không nổ lúc tạo; nhắc POS và bếp trước giờ khách cần 20 và 10 phút (U-077); sửa ADR-090 điểm 1. **Chờ `P3-10` xong** — L2 — Claude thiết kế, Codex thi công · [chi tiết](#t-139)
+- [ ] T-143 **Đăng nhập bằng chọn tên** — bản thật của `authz.Authenticator` (U-075), đổi người trên máy quầy dùng chung theo mốc `C36`; ADR-085 *Sửa đổi* — L2 — Claude thiết kế, Codex thi công · [chi tiết](#t-139)
 - [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi, không cột *ngày bán của két* khi `U-072` còn mở. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
@@ -103,6 +107,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-139 Ghi lời chủ quán cho bảy câu `U-071` … `U-077` vào owner — `shop-facts.md` §5.2 · §6.10 · §6.14 · §8.7 · §8.8 · §8.10 · §7.1, `I-021` · `I-027` · `I-028` · `I-029`, con trỏ trong `docs/product/`; mở **U-078**; code và lược đồ đi theo ở `T-140` … `T-143` — L1 — Claude Code — 2026-10-09 · [chi tiết](#t-139)
 - [x] P3-09 **Đường tiền** — hoá đơn đơn lẻ qua hai cửa trao (`/orders/{id}/handover` lớp `quay` · `/orders/{id}/delivered` lớp `nguoi_quan`), trả trước nhận · trả lại · thành doanh thu theo chuỗi, hoàn có đủ vết, thu nợ dần (ADR-075), tiền đầu két · đếm két · đối soát xong ngày (lớp mới `quay_hoac_chu_quan`); ba ô ghi dùng chung qua cửa `theo_cua_goi`; một đồng hồ ngày bán; không ghi tiền vào ngày đã ký; ngày lệch, giảm giá, nợ đơn lẻ từ chối kèm mã (U-073 · U-058 · U-076); một ngày bán giả qua cửa ⇒ 0đ lệch ở cửa và bộ đối chiếu; mở **F-061** — **ADR-089** — L2 — Codex thi công, Claude thiết kế, duyệt và chạy mọi test trên PostgreSQL — 2026-10-09 · [chi tiết](backlog_BE.md#p3-09)
 - [x] P3-08 **Luồng mang đi · giao · đặt trước** — ba kênh không gắn bàn (bốn hình liên hệ) qua **chính** cửa `don/tao_luot_goi`: khách web `POST /online-orders`, hotline `POST /phone-orders`, lớp đổi thành `quay_hoac_khach`; thiếu liên hệ ⇒ `invalid_request` theo trường (`I-022`); đơn không phiên, dấu chéo đường bị từ chối (`I-007`); gửi lại trước I-008 (`I-024`); I-008 tạm dừng → giờ bán → quán mù cho **cả năm** kênh tại `now()` của giao dịch; cửa `don/roi_quan` (Đang giao) từ chối `delivery_served_mark_undecided` khi còn việc chưa ra bàn (**S-6**) — **ADR-088** — L2 — Codex thi công, Claude thiết kế, duyệt và chạy mọi test trên PostgreSQL — 2026-10-09 · [chi tiết](backlog_BE.md#p3-08)
 - [x] P3-07 **Luồng tại bàn từng bước** — lượt gọi đặt hộ (`POST /table-orders`) và khách QR (`POST /qr-codes/{code}/orders`) qua **một** cửa `don/tao_luot_goi` (lớp `quay_hoac_ma_ban`), phiên do cửa tìm từ bàn, mở ở lượt gọi đầu, tầng 1 chặn hai phiên và cửa chạy lại; gửi lại cùng dấu ⇒ một đơn; duyệt · từ chối · tính tiền · đóng (`hoadon/dong`, một giao dịch, nợ không chặn) · dọn bàn; mỗi cột trạng thái một cửa chuyển `vongdoi/…`, bảng chuyển so với §5.2 · §5.3 lúc chạy; mở **F-060** — **ADR-087** — L2 — Codex thi công, Claude thiết kế, duyệt và chạy mọi test trên PostgreSQL — 2026-10-09 · [chi tiết](backlog_BE.md#p3-07)
@@ -313,6 +318,33 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-139"></a>
+### T-139 — Ghi lời chủ quán cho U-071 … U-077
+
+**Yêu cầu:** chủ repo, 2026-10-09, chuyển lời chủ quán cho bảy câu đang mở và nhờ *"cập nhật các
+thông tin trên, yêu cầu codex làm bạn kiểm tra"*. Ghi lời chủ quán và đóng câu hỏi là việc Claude
+không giao (`CLAUDE.md` §7.4, ADR-054) — chủ repo chọn trong phiên: **Claude ghi, Codex làm phần
+code** sau. Cùng phiên, chủ repo chọn thêm ba vế trong câu hỏi có sẵn phương án: U-077 nhắc hai lần
+(20 và 10 phút), U-076 *cả mang đi đều được*, U-073 *mọi ngày*.
+
+**Mức:** L1 — chỉ ghi lời vào owner, không đổi code hay lược đồ.
+
+**Acceptance:**
+- [x] Bảy câu rời *Đang mở*, vào *Đã có lời giải* với nguyên văn; mục lục sửa cùng lượt.
+- [x] Mỗi lời vào đúng mục nghiệp vụ của `master_plan/shop-facts.md` và một dòng §7.1.
+- [x] Vế lời không trả lời (đối soát lại sau khi sửa số đã ký) mở thành **U-078**, không suy hộ.
+- [x] `I-021` · `I-027` · `I-028` · `I-029` nói luật mới và nói lớp nào chưa theo.
+- [x] Con trỏ trong `docs/product/` (trừ file của `P3-09` chưa commit) và kế hoạch lược đồ admin không còn nói các câu ấy chưa có lời.
+- [x] `./scripts/gate.sh` xanh.
+
+**Không làm ở đây — vì sao:** `docs/product/2-db/04` · `09`, `docs/product/3-be/*`, `docs/decisions.md`
+và code `be/` · `db/` đang mang thay đổi chưa commit của `P3-09`, và chúng tả **cái code đang làm**
+— chúng đổi cùng code ở `T-140` … `T-143`. Mã từ chối `standalone_debt_undecided` ·
+`cash_day_not_balanced` · `cash_day_expense_date_undecided` và đơn hotline nổ lúc tạo (ADR-090 điểm
+1) vẫn chạy cho tới các task ấy.
+
+**Bàn giao:** thực hiện Claude Code, chưa review độc lập; nhánh `chatgpt_involve`, base `48212c9`.
 
 <a id="t-138"></a>
 ### T-138 — Vết cập nhật đang ở chế độ mềm: một lần sửa không khai lý do đi qua mà không để lại vết (F-046)

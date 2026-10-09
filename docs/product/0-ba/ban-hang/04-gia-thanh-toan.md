@@ -247,6 +247,9 @@ thức, chủ quán chốt 2026-08-31 (`shop-facts.md` §6.14, `docs/decisions.m
   quỵt tiền khoá luôn cái bàn đó.
 - **Một khoản nợ KHÔNG phải tiền đã thu.** Nó vào doanh thu của **ngày ghi nợ**, nhưng không vào
   két ngày hôm đó — chi tiết và cách nó hiện ra lúc đối soát ở §3.1.6 và §4.9.
+- **Đơn mang đi cũng được nợ** — giao tận nơi, tới lấy, đặt trước qua điện thoại; người đi giao ghi
+  nợ ngay tại chỗ khách, và khoản nợ có **ghi chú** để chủ quán biết (chủ quán chốt 2026-10-09,
+  đóng `U-076`; `shop-facts.md` §6.14). Đơn lẻ không có phiên để đóng: nợ ghi lúc trao hàng.
 
 ### 4.8 Hoàn tiền — quầy quyết từng ca, và mọi lần đều để lại vết
 

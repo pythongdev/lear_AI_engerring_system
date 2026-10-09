@@ -83,8 +83,8 @@ câu mệnh đề ở owner.
 - **Người khác tick trên máy chủ quán đang mở** là giới hạn tầng 4 của owner: dữ liệu không
   phân biệt được người đang cầm máy. Không coi tên người tick là bằng chứng đã chặn được việc ấy.
 - **Ghi chú huỷ và người huỷ** — database nhận một lần huỷ **không ghi chú** và **không xét** người
-  huỷ có phải chủ quán không; test in thẳng cả hai. Lời chủ quán chưa nói (**U-071**); cửa huỷ của
-  pha 3 đứng trên chỗ này.
+  huỷ có phải chủ quán không; test in thẳng cả hai. Lời chủ quán đóng **U-071** ngày 2026-10-09
+  bắt buộc ghi chú và chỉ cho chủ quán huỷ — lát này chưa siết, việc siết là `T-141`.
 - **Bỏ huỷ** không có đường riêng: vai ghi sửa được ba dấu huỷ, nên xoá trắng chúng là một lần cập
   nhật đi qua vết ở chế độ mềm (**F-046**). Khoá duy nhất vẫn chặn việc ấy khi đã có ô tick lại.
 - **Vết sửa bằng tay** dùng cơ chế chung của `P2-08`. **F-046** vẫn áp dụng: sửa không khai lý do
@@ -105,7 +105,7 @@ cột trạng thái hay mã có/không để cần bảng ánh xạ `QD-40`.
 
 | Chỗ trống | Lược đồ hôm nay đứng thế nào | Ai gỡ |
 |---|---|---|
-| Ghi chú huỷ có bắt buộc không, ai được bấm huỷ — **U-071**, `docs/product/99-unknowns.md` | ghi chú trống được; người huỷ chỉ cần là người của quán | chủ quán trả lời; owner cập nhật trước khi siết |
+| Ghi chú huỷ có bắt buộc không, ai được bấm huỷ — **U-071**, `docs/product/99-unknowns.md` | ghi chú trống được; người huỷ chỉ cần là người của quán | chủ quán đóng 2026-10-09 (bắt buộc, chỉ chủ quán); siết ở `T-141` |
 | Ngưỡng đi muộn — **C32**, `master_plan/shop-facts.md` §8.7 | không giờ tới, không ngưỡng, không dấu đi muộn | chủ quán; Claude ghi lời trước khi dựng |
 | Ngày nghỉ — **C30**, cùng owner | không ô không mang nghĩa ngày nghỉ đã ghi; không chỗ cất loại nghỉ | chủ quán; Claude làm rõ vế còn thiếu |
 | Công đổi ra lương — **C26 · C33**, cùng owner | không đơn giá, không công thức hay khoản tiền nối từ ô | chủ quán làm rõ đơn vị, kỳ trả và đơn giá; Claude quyết thiết kế sau |

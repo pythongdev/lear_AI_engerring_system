@@ -29,8 +29,8 @@ liệu, dựng theo thứ tự nào, và mỗi bước chứng minh xong bằng 
 | Mảng · owner của lời | Đủ luật để có chỗ cất | Chưa đủ — chặn bởi |
 |---|---|---|
 | Nguyên liệu · `shop-facts.md` §8.4 | danh mục hàng mua vào, thêm dần, một phần đã có đơn vị mua · mỗi ngày mỗi thứ hai con số *mua vào* và *đã dùng*, người nhập tay · thời gian nhập · tổng cộng dồn và hiệu số máy trừ hộ | đơn vị của các tên cũ và đơn vị ghi lượng đã dùng (`B12`) · một thứ nhiều mối (`B15`) · nợ nhà cung cấp (`B16`) · lượng kiểm đếm cuối buổi (`B18`) · thứ nào để được tới mai (`B19`) |
-| Con người · §8.7 · §8.8 | trực quầy theo thời điểm — **đã dựng** ở `P2-08` · chủ quán tick ô *có đi làm* cho từng người từng ngày (`U-069` đóng 2026-09-30, thay `C31` ở vế người đánh dấu) · tạm ứng do chủ quán duyệt · thưởng lễ Tết | ghi chú huỷ một ô chấm công có bắt buộc không, ai được bấm huỷ (**U-071** — mở 2026-09-30 ở `P2A-03`; `U-070` đã đóng cùng ngày: nút huỷ, có ghi chú) · vế nối tạm ứng và thưởng vào đối soát két (`U-067` đã đóng 2026-09-30: *từ két bán hàng*; mệnh đề chưa viết lại — task `T-125`) · công thức lương: đơn giá, đơn vị tính, kỳ trả (`C26` · `C33`) · tăng ca (`C27`) · thưởng ngày đông (`C28`) · nghỉ có báo trước (`C30`) · tổng đầu người (`C23`) · ai xem được gì (`C34` · `C35` · `F55`) |
-| Tài chính · §8.10 | khoản chi ngoài tiền hàng và lương: các loại chủ quán đã kể | ngày bán mà một khoản chi rời két trừ vào (`U-072`; nguồn tiền đã có lời và đã vào `I-021` · `I-029` ở `T-125`, 2026-10-01, **ADR-074**) · chu kỳ wifi, xăng xe (`E45`) · phân bổ chi phí tháng vào lãi/lỗ ngày (`E47`) · ai ghi và xác nhận tiền mang về nhà (`E49`) · báo thuế (`E50`) · hạn nộp và xử lý thiếu/muộn của người giao (`E51`) |
+| Con người · §8.7 · §8.8 | trực quầy theo thời điểm — **đã dựng** ở `P2-08` · chủ quán tick ô *có đi làm* cho từng người từng ngày (`U-069` đóng 2026-09-30, thay `C31` ở vế người đánh dấu) · tạm ứng do chủ quán duyệt · thưởng lễ Tết | ghi chú huỷ một ô chấm công (**U-071** — đóng 2026-10-09: bắt buộc, chỉ chủ quán huỷ; siết ở `T-141`) · vế nối tạm ứng và thưởng vào đối soát két (`U-067` đã đóng 2026-09-30: *từ két bán hàng*; mệnh đề chưa viết lại — task `T-125`) · công thức lương: đơn giá, đơn vị tính, kỳ trả (`C26` · `C33`) · tăng ca (`C27`) · thưởng ngày đông (`C28`) · nghỉ có báo trước (`C30`) · tổng đầu người (`C23`) · ai xem được gì (`C34` · `C35` · `F55`) |
+| Tài chính · §8.10 | khoản chi ngoài tiền hàng và lương: các loại chủ quán đã kể | ngày bán mà một khoản chi rời két trừ vào (`U-072` — đóng 2026-10-09: ngày người ghi khai; nguồn tiền đã có lời và đã vào `I-021` · `I-029` ở `T-125`, 2026-10-01, **ADR-074**) · chu kỳ wifi, xăng xe (`E45`) · phân bổ chi phí tháng vào lãi/lỗ ngày (`E47`) · ai ghi và xác nhận tiền mang về nhà (`E49`) · báo thuế (`E50`) · hạn nộp và xử lý thiếu/muộn của người giao (`E51`) |
 | Sản phẩm · §8.9 | — không thuộc kế hoạch này: là lát menu và đường tiền của mảng bán hàng | combo chưa có danh mục · giảm giá cả đơn (**U-058**) · món mới, đặc sản (`D37` · `D38`) |
 
 Mã chữ cái (`B12`, `C26`…) là câu ở `work/admin-questions.md` §3; mã `U-XXX` ở
@@ -179,8 +179,8 @@ viết ngày 2026-09-30; chủ repo đổi được.
    đóng — *một ô "có đi làm" do chủ quán tick* — và lời ấy va với `C31` ở vế ai bấm; chấm công khi ấy
    phụ thuộc **U-069**. *Cập nhật 2026-09-30 (`P2A-03`):* `U-069` đã đóng — chủ quán tick hết, mỗi
    người mỗi ngày một ô — nên lát chấm công không còn câu chặn; câu mở ra khi ấy, **U-070** (gỡ một ô
-   tick nhầm), cũng đóng cùng ngày — nút huỷ, có ghi chú — và lát đã dựng theo lời ấy; còn mở là
-   **U-071**, không chặn lát.
+   tick nhầm), cũng đóng cùng ngày — nút huỷ, có ghi chú — và lát đã dựng theo lời ấy; **U-071**
+   đóng 2026-10-09 (ghi chú bắt buộc, chỉ chủ quán huỷ) — siết ở `T-141`, không chặn lát.
 5. **Khoản chi được coi là phụ thuộc U-066** vì lời chủ quán chỉ nói nguồn tiền của chi lặt vặt.
    *Cập nhật 2026-09-30 (T-124):* `U-066` đã đóng — điện, nước, wifi, xăng xe *từ két bán hàng* —
    nên khoản chi chạm đối soát cuối ngày; lát chờ task `T-125` viết vế ấy vào mệnh đề.

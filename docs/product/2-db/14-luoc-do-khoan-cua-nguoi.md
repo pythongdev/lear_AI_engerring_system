@@ -77,7 +77,7 @@ trỏ câu `NOTICE` của file ấy. Vế vết sửa chưa đạt đủ tầng 
   **không sửa đè hôm nay thấp hơn tầng pha 1 đã chốt**, cùng khoản nợ với `I-018`. Cửa ghi pha 3
   và câu đối chiếu phải giữ vế còn thiếu; quyền sửa theo cột không làm cơ chế vết thành nghiêm.
 - **Chưa nối két**: task `T-125` đã viết lại mệnh đề và phép trừ két (**ADR-074**: hạng tử *chi từ két*
-  đọc thẳng hai bảng này, không cần cột nối); ngày bán trừ két chờ `U-072`. Câu đối chiếu là `I-021/1`
+  đọc thẳng hai bảng này, không cần cột nối); ngày bán trừ két là **ngày người ghi khai** (chủ quán chốt 2026-10-09, đóng `U-072`; bộ đối chiếu đổi ở `T-140`). Câu đối chiếu là `I-021/1`
   (`T-133`, 2026-10-05): khoản có ngày khai bằng ngày ghi vào hạng tử, ngày chạm một khoản mà hai ngày
   khác nhau thì câu không kết luận (`09-doi-chieu-bat-bien.md` §4).
   Lát này không thay việc ấy bằng một dấu nối dựng sẵn. *(Cập nhật 2026-10-01, `P2A-09`)*
@@ -96,7 +96,7 @@ thành luật thứ hai. Lát không có trạng thái hay mã loại để cầ
 
 | Chỗ trống | Lược đồ hôm nay đứng thế nào | Ai gỡ |
 |---|---|---|
-| Nối khoản vào két | không đường nối; mệnh đề đã viết lại ở `T-125` (**ADR-074**) và không đòi cột nối — *(Cập nhật 2026-10-01, `P2A-09`)* | ngày bán trừ két: `U-072`; câu đối chiếu hạng tử: `I-021/1` (`T-133`, 2026-10-05), trừ ngày chờ `U-072` |
+| Nối khoản vào két | không đường nối; mệnh đề đã viết lại ở `T-125` (**ADR-074**) và không đòi cột nối — *(Cập nhật 2026-10-01, `P2A-09`)* | ngày bán trừ két: ngày người ghi khai (đóng `U-072` 2026-10-09); câu đối chiếu hạng tử: `I-021/1` (`T-133`, 2026-10-05) — còn bỏ qua ngày có hai ngày khác nhau cho tới `T-140` |
 | Vết sửa không khai lý do | chế độ mềm, chưa bảo vệ đủ vế không sửa đè | đường gỡ **F-046** ở `work/findings.md`, cho mọi bảng |
 | Câu đối chiếu `I-028` | đã có câu `db/reconcile/i028.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01); ánh xạ ở [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §1 · §2 | `P2A-07` đã viết câu và lỗi cài, 2026-10-01 |
 | Trừ hay cộng vào lương — **C26 · C33**, `master_plan/shop-facts.md` §8.7 | không dấu đã trừ, không công thức hay kỳ lương | chủ quán làm rõ, Claude quyết thiết kế sau |

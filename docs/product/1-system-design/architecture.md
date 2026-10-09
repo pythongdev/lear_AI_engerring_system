@@ -361,8 +361,8 @@ tiền thực nhận trong ngày  ( mặt + chuyển khoản, đếm được tr
 **ADR-074**). Chủ quán chốt khoản chi ngoài tiền hàng và lương, tạm ứng và thưởng lấy **từ két bán
 hàng**, **trong ngày, trước lúc đếm két** (`shop-facts.md` §8.7 · §8.10). Mỗi khoản có người ghi
 (luật 2 dưới đây); khoản chi chỉ vào dòng này khi **loại** của nó mang nguồn két. Khoản ấy thuộc
-dòng của ngày bán nào khi tiền lấy một hôm mà ghi hôm khác thì chưa có lời — `U-072`
-(`docs/product/99-unknowns.md`). Phần tiền mặt của dòng này là hạng tử *chi từ két* của
+dòng của **ngày người ghi khai** cho khoản, không phải ngày tiền rời két (chủ quán chốt 2026-10-09,
+đóng `U-072`, `docs/product/99-unknowns.md`). Phần tiền mặt của dòng này là hạng tử *chi từ két* của
 `quality/invariants.md` **I-021**.
 
 **Ba dòng trả trước là chiều ngược của hai dòng nợ** (thêm 2026-09-28, T-112, `docs/decisions.md`

@@ -833,9 +833,10 @@ thưởng của `I-028`, và mọi khoản chi của `I-029` mà **loại** củ
 lặt vặt bằng tiền riêng của chủ quán (`E46`) **không** đứng ở đây — nó là tiền hàng, không phải
 khoản chi, và không rời két. Mỗi khoản trong hạng tử đã có người đứng tên — người ghi, và với tạm
 ứng thêm người duyệt — nên hạng tử mở ra được thành danh sách từng khoản như mọi hạng tử khác.
-⛔ **Khoản ấy trừ vào két của NGÀY BÁN NÀO chưa có lời** — ngày tiền rời két hay ngày người ghi khai
-cho khoản: **U-072** (`docs/product/99-unknowns.md`). Mệnh đề giữ vế *mỗi khoản rời két trừ vào
-đúng MỘT ngày bán*; luật chọn ngày ấy chờ lời, không tự đặt.
+**Khoản ấy trừ vào két của NGÀY NGƯỜI GHI KHAI cho khoản**, không phải ngày tiền rời két (chủ
+quán chốt 2026-10-09, đóng **U-072**; `master_plan/shop-facts.md` §8.10 `E46`). Mệnh đề giữ vế
+*mỗi khoản rời két trừ vào đúng MỘT ngày bán* — ngày ấy là ngày khai. *Thêm 2026-10-09, T-139;
+bộ đối chiếu và cửa đóng ngày còn đọc theo luật cũ cho tới `T-140`.*
 
 *Thêm bốn hạng tử cuối 2026-09-28 (T-112, `docs/decisions.md` **ADR-059**, đóng
 `work/findings.md` **F-037**).* Ba hạng tử trả trước là phần tiền mặt của ba dòng trả trước trong
@@ -1238,11 +1239,12 @@ Mệnh đề của mức 2 mảng con người (`master_plan/shop-facts.md` §8.
   ngày của một ô không đổi được — tick nhầm thì huỷ rồi tick ô đúng.
 - **Không ô nào sinh ra khoản trừ.** Đi muộn không bị trừ tiền (`C32`); không đường nào đi từ một ô
   chấm công tới một khoản trừ tiền.
+- **Mỗi lần huỷ có ghi chú, và người huỷ là chủ quán** (chủ quán chốt 2026-10-09, đóng **U-071**;
+  `master_plan/shop-facts.md` §8.7). Một lần huỷ không ghi chú, hay do người không phải chủ quán
+  bấm, không phải một lần huỷ. *Thêm 2026-10-09, T-139; lược đồ chấm công còn nhận cả hai cho tới
+  `T-141`.*
 
-**Mệnh đề không nói** ghi chú của một lần huỷ có **bắt buộc** không, và không nói **ai** được bấm huỷ
-— lời chủ quán chỉ nói *có* phần ghi chú (`docs/product/99-unknowns.md` **U-071**); chừng nào câu ấy
-chưa có lời thì một lần huỷ không ghi chú vẫn là một lần huỷ, và người huỷ chỉ cần là người của quán.
-Nó không nói huỷ rồi có được **tick lại** đúng người, đúng ngày ấy không: mệnh đề chỉ giữ *nhiều nhất
+**Mệnh đề không nói** huỷ rồi có được **tick lại** đúng người, đúng ngày ấy không: mệnh đề chỉ giữ *nhiều nhất
 một ô còn hiệu lực*, nên một ô mới sau khi ô cũ đã huỷ không bị cấm. Nó không nói chủ quán có được tick **bù cho
 một ngày đã qua** hay không: ngày của ô và lúc tick là hai thứ đọc riêng, mệnh đề không buộc chúng
 trùng nhau. Nó không nói **muộn bao nhiêu phút thì ghi nhận là muộn** — `C32` chưa nêu ngưỡng ấy, và
@@ -1303,8 +1305,10 @@ Mệnh đề cho hai loại tiền chủ quán đưa cho người làm (`master_
   `master_plan/shop-facts.md` §8.10). Không có khoản tạm ứng hay thưởng nào *không* rời két, nên vế
   này không cần dấu nguồn tiền trên từng khoản. *Thêm 2026-10-01, T-125, **ADR-074**.*
 
-**Mệnh đề không nói** khoản ấy trừ vào két của **ngày bán nào** — ngày tiền rời két hay ngày người ghi
-khai cho khoản (`docs/product/99-unknowns.md` **U-072**). Nó không nói khoản ấy **trừ vào hay cộng vào lương** thế nào (chờ
+Khoản ấy trừ vào két của **ngày người ghi khai cho khoản** (chủ quán chốt 2026-10-09, đóng
+**U-072**) — vế ngày ở `I-021`.
+
+**Mệnh đề không nói khoản ấy **trừ vào hay cộng vào lương** thế nào (chờ
 `C26` · `C33`), không nói **ai duyệt thưởng**, và chỉ phủ **thưởng lễ Tết** — vế thưởng ngày đông
 khách của `C28` chưa có lời.
 
@@ -1354,8 +1358,10 @@ ghi rõ ở mục Why; câu *tiền lấy từ đâu* mở thành **U-067** cùn
 Và vì mỗi khoản có số tiền và ngày: **tổng chi của một khoảng ngày là phép cộng** các khoản trong
 khoảng ấy, không phải một con số ghi riêng.
 
-**Mệnh đề không nói** khoản chi của loại mang nguồn két trừ vào két của **ngày bán nào** — ngày tiền
-rời két hay ngày chi người ghi khai (`docs/product/99-unknowns.md` **U-072**) — cũng không nói chu kỳ của wifi và xăng xe (`E45`), hay cách phân bổ khoản tháng vào lãi/lỗ ngày (`E47`).
+Khoản chi của loại mang nguồn két trừ vào két của **ngày người ghi khai cho khoản** (chủ quán chốt
+2026-10-09, đóng **U-072**) — vế ngày ở `I-021`.
+
+**Mệnh đề không nói** chu kỳ của wifi và xăng xe (`E45`), hay cách phân bổ khoản tháng vào lãi/lỗ ngày (`E47`).
 
 **Giới hạn đã biết:** máy giữ được rằng mỗi khoản chi **mang đúng một loại trong danh sách**. Máy
 **không ngăn được** một người gõ tiền mua trứng dưới một loại khác, và cũng không ngăn được người

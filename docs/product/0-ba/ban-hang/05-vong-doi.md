@@ -79,7 +79,9 @@ Bốn điều phải đọc kèm bảng, rồi một việc không nằm trong b
 - **`Đã xác nhận` → `Đang thực hiện` là một bước của hệ thống, không phải một nút của người.** Ở
   quán này việc xuống bếp ngay khi đơn được xác nhận (§3.1.1 bước 6), nên hai trạng thái ấy cách
   nhau một khoảnh khắc. Đừng thiết kế một màn hình chờ ai đó bấm *"bắt đầu làm"*: không có ai bấm
-  (§5.4).
+  (§5.4). **Ngoại lệ về LÚC, không về NGƯỜI — đơn đặt trước qua hotline:** đơn không làm ngay lúc
+  nhận; máy nhắc POS và bếp trước giờ khách cần hàng 20 phút và 10 phút, và bếp làm lúc ấy (chủ quán
+  chốt 2026-10-09, đóng `U-077`; `shop-facts.md` §5.2 điểm 5). Vẫn không ai phải bấm.
 - **`Đang giao` chỉ có ở đơn giao tận nơi**, và nó là trạng thái BA-07 **thêm** so với kế hoạch gốc
   §7. Lý do ghi rõ: chủ quán chốt 2026-08-30 rằng **quán tự đi giao** và đơn giao mang trạng thái
   *"đang giao"* để quầy nhìn được đơn nào còn trên đường và **ai đang cầm tiền chưa về**

@@ -509,6 +509,16 @@ hứa là đã đủ** — gặp điểm khác thứ tám thì ghi thêm vào đ
 4. **Nước chấm phải gói riêng** — trạm `canh` vẫn sinh việc cho đơn mang đi, chỉ khác cách đưa.
 5. **`pickup` có giờ hẹn lấy**, `phone_preorder` là đơn đặt trước nên cũng có mốc giờ khách cần
    hàng. Luồng tại bàn không có khái niệm hẹn giờ.
+   **Đơn đặt trước qua điện thoại KHÔNG làm ngay lúc nhận — máy nhắc POS và bếp HAI lần, trước
+   giờ khách cần hàng 20 phút và 10 phút, và bếp làm lúc ấy** (chủ quán chốt 2026-10-09, đóng
+   `U-077`; chủ repo chuyển lời trong hội thoại, vế *nhắc hai lần* chọn trong câu hỏi có sẵn phương
+   án). Nguyên văn: *"9h20 làm , đặt lịch hen có hẹn giờ thông báo cho pos và bếp để làm"* — khách
+   gọi lúc 6 giờ 10 dặn 9 giờ 30 lấy thì 9 giờ 20 bếp làm; lời bổ sung: *"nhắc 2 lần trước 20 phut
+   và trước 10 phut"*. Đơn đặt hôm nay lấy ngày mai đi cùng một đường: nhắc theo giờ khách cần hàng
+   của ngày mai. **Không ai phải bấm cho đơn xuống bếp** — mốc là giờ hẹn, máy nhắc. Lời không nói
+   đơn có hiện trên bảng bếp trước lần nhắc đầu không, và không nói đơn nhận khi chỉ còn chưa tới
+   20 phút thì nhắc thế nào; lời chỉ nói về `phone_preorder`, không nói về giờ hẹn lấy của
+   `pickup`.
 6. **Thu tiền lúc trao hàng, có thể ở ngoài quán** — đơn giao tận nơi thu ngay tại chỗ khách, không
    phải ở quầy. Luồng tại bàn luôn thu ở quầy lúc đóng phiên. **Và chỉ luồng này có nhánh trả
    trước** (§6.3): khách mang đi được chọn trả tiền ngay lúc đặt, khách ngồi bàn thì không.
@@ -876,6 +886,17 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       có thể bị một chỗ thừa ở ngân hàng che mất, và ngưỡng 0đ không còn nghĩa gì.
     - ⇒ **Một lần thu chia hai phương thức (§6.18) phải ghi rõ từng phần**, nếu không thì không
       xếp được vào nguồn nào để đối chiếu.
+    - **Chỉ CHỦ QUÁN bấm "đối soát xong" — mọi ngày; ngày két lệch thì chủ quán bấm được, nhưng
+      phải ghi giải thích** (chủ quán chốt 2026-10-09, đóng `U-073`). Nguyên văn: *"chỉ có chủ quán
+      dc bấm và cần note đi giải thích"*; chủ repo chuyển thêm lời chọn trong câu hỏi có sẵn
+      phương án: câu ấy áp cho **mọi ngày**, ngày khớp 0đ cũng vậy — POS không bấm đối soát xong.
+      Luật *lệch 1 đồng cũng phải tìm ra lý do* vẫn đúng: lý do tìm ra được ghi thành giải thích,
+      ngày ấy đóng được mà không phải sửa sổ cho hết lệch. *POS hoặc chủ quán ngồi lại chấm con số*
+      sau nhập bù (§6.27) là việc **chấm**, không phải lần bấm này.
+    - **Số đếm két của một ngày đã đối soát xong mà đếm nhầm thì CHỦ QUÁN sửa** (chủ quán chốt
+      2026-10-09, đóng `U-074`). Nguyên văn: *"chủ quán"*. Lời không nói sửa xong ngày ấy có phải
+      bấm đối soát xong lại không, và lần sửa có phải ghi lý do không —
+      `docs/product/99-unknowns.md` **U-078**.
 11. **Sổ giấy là kế hoạch dự phòng BẮT BUỘC.** Mất điện, mất mạng, hoặc máy hỏng ⇒ quán chuyển sang
     ghi tay và **không dừng bán**.
     - **Người giữ sổ và người nhập lại: POS hoặc chủ quán** (chủ quán chốt 2026-09-02, trả lời
@@ -1000,6 +1021,13 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       giả mỗi lần có người nợ hoặc trả nợ.
     - ⇒ **Một lần trả nợ không bao giờ được ghi thành một khoản bán mới.** Ghi thành khoản bán là
       **tính doanh thu hai lần** cho cùng một bữa ăn — lỗi tiền nặng hơn cả việc quên thu.
+    - **Đơn mang đi, giao tận nơi và đặt trước qua điện thoại cũng được NỢ, và khoản nợ ấy phải có
+      GHI CHÚ để chủ quán biết** (chủ quán chốt 2026-10-09, đóng `U-076`). Nguyên văn: *"giao tận
+      nới và cho nợ nhưng cần note lại để chủ quán biết"*; chủ repo chuyển thêm lời chọn trong câu
+      hỏi có sẵn phương án: *cả mang đi đều được* — mọi đơn không ngồi bàn, kể cả khách tới quầy
+      lấy. **Người đi giao được ghi nợ ngay tại chỗ khách.** Mọi vế ở trên đứng nguyên cho khoản
+      nợ của đơn lẻ: ghi ai nợ và nợ bao nhiêu, doanh thu tính ngày ghi nợ, trả dần được. Lời không
+      nói ghi chú ấy gồm gì ngoài việc để chủ quán biết.
 15. **Khách đang ngồi bàn gọi thêm suất để ĐEM VỀ thì suất ấy thuộc PHIÊN BÀN, kèm note "đem về"**
     (chủ quán chốt 2026-08-31, trả lời U-010). Không mở đơn `pickup` hay `delivery` nào cho nó —
     chủ quán chọn đường này vì *"thế này quản lý đơn giản hơn"*.
@@ -1399,6 +1427,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-09-30 | Chủ quán trả lời U-069 (P2A-03): **chủ quán tick hết** ô *có đi làm*, nhân viên không bấm — thay `C31` ở vế người đánh dấu; **mỗi người mỗi ngày một ô** | §8.7 |
 | 2026-09-30 | Chủ quán trả lời U-070 và U-068 (P2A-03, lượt hai): ô tick nhầm được **huỷ bằng nút huỷ, có phần ghi chú để kiểm lại**; *thời gian nhập* ở mục tổng quan là **lúc hàng mua về**. Mở U-071 (ghi chú huỷ có bắt buộc không, ai được bấm huỷ). U-058 nhận lại lời cũ lần thứ năm, vẫn mở | §8.7 · §8.4 |
 | 2026-10-01 | Tiền trả điện, nước, wifi, xăng xe, tạm ứng và thưởng **rời két trong ngày, trước lúc đếm két cuối ngày** — không lấy từ tiền cuối buổi mang về (chủ repo trả lời trong phiên T-125, chọn trong phương án có sẵn). Khoản ấy trừ vào két của ngày bán nào thì chưa nói, mở U-072 | §8.10 · §8.7 |
+| 2026-10-09 | Chủ quán trả lời bảy câu (T-139), chủ repo chuyển lời trong hội thoại và chọn thêm ba vế trong câu hỏi có sẵn phương án: đơn đặt trước qua điện thoại **không làm ngay**, máy **nhắc POS và bếp trước giờ khách cần 20 phút và 10 phút** (U-077); **mọi đơn mang đi được nợ, người đi giao ghi nợ tại chỗ, kèm ghi chú cho chủ quán** (U-076); **chọn tên** để cho máy biết mình là ai (U-075); **chủ quán sửa** số đếm két đã đối soát (U-074 — mở U-078 cho vế đối soát lại); **chỉ chủ quán bấm đối soát xong, mọi ngày, ngày lệch phải ghi giải thích** (U-073); khoản rời két trừ vào **ngày người ghi khai** (U-072); **ghi chú huỷ ô chấm công bắt buộc, chỉ chủ quán huỷ** (U-071) | §5.2 · §6.14 · §6.10 · §8.7 · §8.8 · §8.10 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -1874,9 +1903,9 @@ cách chọn trong hai câu hỏi có sẵn phương án, và xác nhận đó l
 - **Mỗi người mỗi ngày một ô.** Lời chọn: *"Một ô cho cả ngày"* — không tách sáng, chiều hay buổi.
 - **Tick nhầm thì HUỶ, và lần huỷ có ghi chú để kiểm lại** — chủ quán chốt 2026-09-30 (đóng
   `U-070`). Nguyên văn: *"làm thêm nut huỷ, và có phần note lại để sau đó có thể kiểm"*. ⇒ ô tick
-  nhầm được huỷ bằng một nút huỷ; ô đã huỷ **không biến mất**, nó ở lại cùng phần ghi chú. Lời không
-  nói ghi chú có bắt buộc không, cũng không nói ai được bấm huỷ —
-  `docs/product/99-unknowns.md` **U-071**.
+  nhầm được huỷ bằng một nút huỷ; ô đã huỷ **không biến mất**, nó ở lại cùng phần ghi chú.
+  **Ghi chú huỷ là BẮT BUỘC, và chỉ CHỦ QUÁN bấm huỷ** (chủ quán chốt 2026-10-09, đóng `U-071`).
+  Nguyên văn: *"ghi chú có bắt buộc chỉ chủ quán dc làm"*.
 - **Lời không nói:** chủ quán
   có tick bù cho một ngày đã qua được không; một ô ngày đổi ra lương thế nào khi `C26` nói *theo
   buổi và theo tuần*. Không tự suy vế nào. `C32` (đi muộn không trừ tiền) và `C35` (nhân viên xem
@@ -1945,6 +1974,13 @@ thêm một yêu cầu nào.
   `quality/invariants.md` I-012 là người thực hiện thao tác, không mặc định POS.
   Luồng người giao ở §6.7 và quyền chủ quán sửa giá/thành phần ở §6.17 giữ nguyên.
 
+**Bổ sung 2026-10-09 — nhân viên và chủ quán cho máy biết mình là ai bằng cách CHỌN TÊN** (chủ quán
+chốt, đóng `U-075`; nguyên văn *"chọn tên"*). Không mã số, không mật khẩu. Lời không nói máy quầy
+dùng chung đổi người thế nào (A đi ăn, B vào thay) ngoài việc chọn tên; mốc đổi người ở quầy vẫn
+theo luật `C36` ở trên. ⇒ Mọi việc chỉ chủ quán được làm (đổi mã QR · bấm đối soát xong · huỷ ô
+chấm công · sửa số đếm két đã đối soát) chỉ được giữ bằng việc chọn đúng tên — chủ quán đã chọn
+cách ấy.
+
 **Lời này KHÔNG chạm chấm công.** *Lúc này ai đứng quầy* và *hôm nay người này làm mấy giờ* là hai
 câu khác nhau; câu thứ hai là mức 2 của §8.7 đã có lời đáp `C30` · `C31` · `C32` ngày 2026-09-25 ở §8.7; các vế còn thiếu
 ở `work/admin-questions.md` §3.
@@ -1981,7 +2017,7 @@ không tự cho khách gửi giá hoặc cho người đứng quầy đặt giá
 |---|---|
 | E44 | Ngoài tiền hàng và lương, các khoản chi được nêu là điện, nước, wifi, xăng xe. |
 | E45 | Điện, nước là khoản cố định hằng tháng; giò, trứng, rau, quất là các khoản mua lặt vặt trong ngày. “Cố định” ở đây chưa chốt số tiền không đổi. |
-| E46 | Chi lặt vặt dùng tiền riêng của chủ quán. Điện, nước, wifi, xăng xe trả **từ két bán hàng** (chủ quán chốt 2026-09-30, trả lời U-066; nguyên văn “từ két bán hàng”). Tiền ấy — cùng tiền tạm ứng và thưởng của §8.7 — rời két **trong ngày, trước lúc đếm két cuối ngày**, không phải lấy từ tiền cuối buổi đã mang về nhà (chủ repo trả lời 2026-10-01 trong phiên T-125, bằng cách chọn trong các phương án có sẵn). Lấy vào két của ngày bán nào khi tiền lấy một hôm mà ghi hôm khác thì chưa nói (`U-072`). Khoản chi nào ngoài các khoản vừa kể thì chưa nói nguồn. |
+| E46 | Chi lặt vặt dùng tiền riêng của chủ quán. Điện, nước, wifi, xăng xe trả **từ két bán hàng** (chủ quán chốt 2026-09-30, trả lời U-066; nguyên văn “từ két bán hàng”). Tiền ấy — cùng tiền tạm ứng và thưởng của §8.7 — rời két **trong ngày, trước lúc đếm két cuối ngày**, không phải lấy từ tiền cuối buổi đã mang về nhà (chủ repo trả lời 2026-10-01 trong phiên T-125, bằng cách chọn trong các phương án có sẵn). Khoản ấy trừ vào két của **ngày người ghi khai cho khoản**, không phải ngày tiền rời két (chủ quán chốt 2026-10-09, đóng `U-072`; nguyên văn “ngày người ghi khai”). Khoản chi nào ngoài các khoản vừa kể thì chưa nói nguồn. |
 | E47 | Muốn xem lãi/lỗ theo ngày. |
 | E48 | Muốn biết cả món bán chạy và giờ đông khách. |
 | E49 | Tiền cuối buổi để ở nhà; cần ghi lại đường đi của khoản tiền đó. |

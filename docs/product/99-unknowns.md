@@ -15,12 +15,7 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
-  - [U-077](#u-077) — đơn đặt trước qua điện thoại cho giờ sau, ngày sau: xuống bếp lúc nhận hay lúc gần giờ
-  - [U-076](#u-076) — đơn mang đi, giao, đặt trước mà khách thiếu tiền: có cho nợ không
-  - [U-075](#u-075) — nhân viên và chủ quán cho máy biết "tôi là ai" bằng cách nào
-  - [U-073](#u-073) — két lệch mà đã tìm ra lý do: có được bấm đối soát xong ngày ấy không
-  - [U-072](#u-072) — tiền chi, tạm ứng, thưởng lấy khỏi két: trừ vào két của ngày bán nào
-  - [U-071](#u-071) — huỷ một ô chấm công: ghi chú có bắt buộc không, và ai được bấm huỷ
+  - [U-078](#u-078) — chủ quán sửa số đếm két của ngày đã đối soát xong: có phải bấm đối soát lại không, có ghi lý do không
   - [U-058](#u-058) — giảm giá cả đơn nhập tay: phạm vi bản đầu và giới hạn
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
@@ -40,95 +35,17 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 <a id="dang-mo"></a>
 ### Đang mở
 
-<a id="u-077"></a>
-- **U-077 — Khách gọi điện đặt trước lúc 6 giờ 10 để 9 giờ 30 mới lấy (hay đặt hôm nay
-  để mai lấy), thì bếp có thấy đơn ấy và làm ngay không, hay quầy giữ lại tới gần giờ mới
-  cho xuống bếp — và nếu giữ lại thì ai, lúc nào cho xuống?** Mở 2026-10-09 (nhận `P3-10`,
-  Claude Code). `docs/product/0-ba/ban-hang/05-vong-doi.md` §5.2 viết *Đã xác nhận →
-  Đang thực hiện* là bước của hệ thống, cách nhau một khoảnh khắc, và §3.2.3 của
-  `03-lat-cat.md` nói đơn hotline vào thẳng *Đã xác nhận* rồi *bếp làm như bước 8* —
-  không chữ nào nói tới **giờ khách cần hàng** của đơn đặt trước, trong khi quán nhận
-  đặt trước tối đa một ngày (`master_plan/shop-facts.md` §6.26). Lát `P3-10` làm đúng
-  chữ đang có: đơn hotline nổ việc trạm ngay lúc tạo (`docs/decisions.md` ADR-090 điểm
-  1), nên một đơn cho ngày mai nằm trên bảng bếp hôm nay. Hỏi về cái quán: *"chị Lan gọi
-  lúc 6 giờ dặn 9 giờ rưỡi qua lấy 3 suất — bếp làm luôn hay đợi gần giờ mới làm?"*
-  **Chủ quán** trả lời. Chặn: chưa chặn bước nào; lời *"đợi gần giờ"* đổi chỗ gọi cửa
-  nổ đơn của kênh `phone_preorder` và cần một mốc *cho xuống bếp*.
-
-<a id="u-076"></a>
-- **U-076 — Đơn mang đi, giao tận nơi hay đặt trước qua điện thoại mà khách không
-  trả đủ lúc nhận hàng thì quán có cho nợ như khách ngồi bàn không — và nếu có, người
-  đi giao có được ghi nợ tại chỗ khách không?** Mở 2026-10-09 (nhận `P3-09`, Claude
-  Code). `master_plan/shop-facts.md` §6.14 chốt cho nợ khi **đóng phiên bàn**;
-  `docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.7(b) cũng chỉ nói về phiên.
-  Lược đồ cất được nợ trên hoá đơn đơn lẻ nhưng không lời nào nói quán làm thế. Hỏi
-  về cái quán: *"khách gọi giao tận nơi, tới nơi khách thiếu 20 nghìn, thì người giao
-  cho nợ rồi về, hay mang hàng về, hay gọi về quán hỏi?"* **Chủ quán** trả lời. Chặn:
-  phần nợ của hai cửa thu tiền đơn lẻ — cửa từ chối mọi khoản nợ trên đơn lẻ kèm mã
-  `standalone_debt_undecided` cho tới khi có lời (`docs/decisions.md` ADR-089).
-
-<a id="u-075"></a>
-- **U-075 — Nhân viên và chủ quán cho máy biết "tôi là ai" bằng cách nào: chọn tên
-  trên máy quầy không cần mã, mỗi người một mã số ngắn, mật khẩu, hay cách khác — và
-  máy quầy dùng chung thì đổi người (A đi ăn, B vào thay) làm thế nào?** Mở 2026-10-06
-  (nhận `P3-05`, Claude Code). `master_plan/shop-facts.md` §3 · §8.8 chốt *ai đứng quầy
-  lúc nào* nhưng không lời nào nói người ấy chứng minh mình là ai; mã số ngắn ở
-  `master_plan/prompt-fullstack.md` §3.6 chỉ là đề xuất viết trước, không phải lời chủ
-  quán. Ai trả lời: **chủ quán**. Chặn: cửa đăng nhập của `P3-05` và chương trình chạy
-  thật của backend — lát `P3-05` dựng quyền theo chỗ đứng đọc từ một người **đã được
-  xác định**, còn cách xác định chờ lời này (`docs/decisions.md` ADR-085).
-
-<a id="u-074"></a>
-- **U-074 — Số tiền đếm két của một ngày đã bấm "đối soát xong" mà sau đó
-  phát hiện đếm nhầm (sót một xấp, ghi sai mệnh giá) thì có được sửa không,
-  ai được sửa, và sửa thì ngày ấy có phải đối soát lại không?** Mở 2026-10-05
-  (lượt review `T-133`, Claude Code). `master_plan/shop-facts.md` §6 mục 4 nói
-  con số đã ký của một ngày không bao giờ đổi về sau; không lời nào nói về một
-  lần đếm nhầm phát hiện muộn. Ai trả lời: **chủ quán**. Chặn: đường sửa số
-  đếm sau khi ký — `T-134` khoá số đếm của ngày đã ký và **không** dựng đường
-  sửa nào trước lời này (`work/findings.md` F-056).
-
-<a id="u-073"></a>
-- **U-073 — Một ngày két đếm được lệch với sổ (dù chỉ 1 đồng) mà POS hay chủ
-  quán đã tìm ra lý do, thì có được bấm "đối soát xong" ngày ấy không — hay
-  phải sửa sổ cho hết lệch rồi mới đóng? Lý do ấy ghi ở đâu?** Mở 2026-10-05
-  (`T-133`, Claude Code). `master_plan/shop-facts.md` §6.10 nói *lệch 1 đồng
-  cũng phải tìm ra lý do*; không lời nào nói tìm ra rồi thì ngày ấy đóng được
-  chưa. Hỏi về cái quán: *"tối đếm két thiếu 20 nghìn, biết là do thối nhầm
-  cho khách, thì hôm ấy coi như đối soát xong chưa?"* **Chủ quán** trả lời.
-  **Không chặn lược đồ:** dấu đối soát xong (`docs/decisions.md` **ADR-079**)
-  không đòi phép trừ ra 0, và câu `I-021/1` kêu mọi ngày lệch dù có dấu hay
-  không. Chặn cửa đóng ngày của pha 3 (`P3-09`): nó có cho bấm khi còn lệch
-  không, và có ô lý do không. Không tự chọn.
-
-<a id="u-072"></a>
-- **U-072 — Tiền lấy khỏi két để trả điện, nước, wifi, xăng xe, tạm ứng hay
-  thưởng thì trừ vào két của NGÀY BÁN NÀO — ngày tiền rời két, hay ngày người
-  ghi khai cho khoản ấy?** Mở 2026-10-01 (`T-125`, Claude Code). Lời
-  2026-09-30 (đóng `U-066` · `U-067`) nói tiền ấy lấy *từ két bán hàng*; lời
-  2026-10-01 nói nó rời két *trong ngày, trước lúc đếm két*
-  (`master_plan/shop-facts.md` §8.10 dòng `E46`). Không lời nào nói một khoản
-  lấy tiền hôm nay mà ghi vào máy hôm sau thì thuộc két hôm nào. Hỏi về cái
-  quán, không về cái bảng: *"có khi nào lấy tiền trong két trả tiền điện hay
-  đưa tạm ứng, mà để hôm sau mới ghi lại không? Nếu có, khoản ấy tính vào két
-  của hôm lấy tiền hay hôm ghi?"* **Chủ quán** trả lời. **Không chặn lược đồ:**
-  mỗi khoản đã mang cả ngày khai lẫn lúc ghi (`docs/decisions.md` **ADR-073**
-  điểm 4, **ADR-074**), nên `P2A-05` dựng được. Chặn phép đọc hạng tử *chi từ
-  két* của `quality/invariants.md` `I-021` — câu đối chiếu của nó và màn đối
-  soát pha 3/4. Không tự chọn ngày nào.
-
-<a id="u-071"></a>
-- **U-071 — Khi huỷ một ô *có đi làm*, phần ghi chú có BẮT BUỘC không, và chỉ
-  chủ quán được bấm huỷ hay người khác cũng được?** Mở 2026-09-30 (`P2A-03`,
-  Claude Code). Lời đóng `U-070` cùng ngày — *"làm thêm nút huỷ, và có phần
-  note lại để sau đó có thể kiểm"* — nói **có** phần ghi chú, không nói bỏ
-  trống nó thì có huỷ được không; và không nói **ai** bấm nút ấy (lời `U-069`
-  chỉ nói chủ quán *tick*). Hỏi về cái quán, không về cái bảng: *"bấm huỷ mà
-  không ghi gì vào phần note thì có được không? Và nút huỷ chỉ chủ quán bấm,
-  hay người đứng quầy cũng bấm được?"* **Chủ quán** trả lời. **Không chặn bước
-  lược đồ nào:** lát chấm công nhận một lần huỷ không ghi chú và không xét
-  người huỷ có phải chủ quán không. Chặn việc siết hai chỗ ấy, và chặn cửa huỷ
-  của pha 3. Không tự chọn *bắt buộc* hay *chỉ chủ quán*.
+<a id="u-078"></a>
+- **U-078 — Chủ quán sửa số đếm két của một ngày đã bấm "đối soát xong" (đếm nhầm,
+  sót một xấp) thì sửa xong ngày ấy có phải bấm "đối soát xong" lại không, và lần sửa có
+  phải ghi lý do không?** Mở 2026-10-09 (`T-139`, Claude Code) từ lời đóng `U-074` cùng
+  ngày — *"chủ quán"* — nói **ai** sửa, không nói ngày đã ký có phải ký lại không.
+  `master_plan/shop-facts.md` §6.10 nay chốt chỉ chủ quán bấm đối soát xong và ngày lệch
+  phải ghi giải thích. Hỏi về cái quán: *"tối qua chị đã bấm đối soát xong, sáng nay
+  thấy sót một xấp 200 nghìn — chị sửa số xong thì có bấm đối soát lại hôm qua không,
+  và có ghi vì sao sửa không?"* **Chủ quán** trả lời. Chặn: đường sửa số đã ký — database
+  khoá số đếm của ngày đã ký với mọi vai (`docs/decisions.md` ADR-080), và đường sửa chỉ
+  dựng khi có lời này.
 
 <a id="u-058"></a>
 - **U-058 — Phạm vi bản đầu và giới hạn của giảm giá nhập tay cho cả đơn?**
@@ -275,6 +192,28 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ quán trả lời 2026-10-09 (T-139), chủ repo chuyển nguyên văn trong hội thoại; cùng lượt, chủ
+repo chọn thêm ba vế trong câu hỏi có sẵn phương án (đánh dấu *lời chọn* bên dưới).** Lời đáp đã
+vào owner; phần code và lược đồ đi theo ở các task `T-140` … `T-143` của `work/backlog.md`.
+
+<a id="u-077"></a>
+<a id="u-076"></a>
+<a id="u-075"></a>
+<a id="u-074"></a>
+<a id="u-073"></a>
+<a id="u-072"></a>
+<a id="u-071"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-077 — Đơn đặt trước qua điện thoại cho giờ sau, ngày sau: bếp làm ngay hay quầy giữ tới gần giờ, ai cho xuống~~ | “9h20 làm , đặt lịch hen có hẹn giờ thông báo cho pos và bếp để làm”; *lời chọn*: “nhắc 2 lần trước 20 phut và trước 10 phut”. **Không làm ngay**: máy nhắc POS và bếp hai lần, trước giờ khách cần hàng 20 phút và 10 phút; không ai phải bấm cho đơn xuống. Lời không nói đơn có hiện trên bảng bếp trước lần nhắc đầu không — chọn cách bày là việc thiết kế của `T-142`, không phải luật quán. | `master_plan/shop-facts.md` §5.2 điểm 5 |
+| ~~U-076 — Đơn mang đi, giao, đặt trước mà khách không trả đủ: có cho nợ không, người đi giao có ghi nợ tại chỗ không~~ | “giao tận nới và cho nợ nhưng cần note lại để chủ quán biết”; *lời chọn*: “Cả mang đi đều được”. **Có**, mọi đơn không ngồi bàn; người đi giao ghi nợ tại chỗ khách; khoản nợ có **ghi chú** để chủ quán biết. | `master_plan/shop-facts.md` §6.14 |
+| ~~U-075 — Nhân viên và chủ quán cho máy biết "tôi là ai" bằng cách nào~~ | “chọn tên”. Không mã, không mật khẩu. Lời không nói cách đổi người trên máy quầy dùng chung ngoài việc chọn tên. | `master_plan/shop-facts.md` §8.8 |
+| ~~U-074 — Số đếm két của ngày đã đối soát xong mà đếm nhầm: có sửa được không, ai sửa, có phải đối soát lại không~~ | “chủ quán”. **Chủ quán sửa.** Vế *có phải đối soát lại không* chưa có lời ⇒ mở **U-078**. | `master_plan/shop-facts.md` §6.10 |
+| ~~U-073 — Két lệch mà đã tìm ra lý do: có được bấm đối soát xong không, lý do ghi ở đâu~~ | “chỉ có chủ quán dc bấm và cần note đi giải thích”; *lời chọn*: “Mọi ngày”. **Chỉ chủ quán** bấm đối soát xong, mọi ngày; ngày lệch **bấm được**, kèm **giải thích** bắt buộc. | `master_plan/shop-facts.md` §6.10 |
+| ~~U-072 — Tiền chi, tạm ứng, thưởng lấy khỏi két: trừ vào két của ngày bán nào~~ | “ngày người ghi khai”. Khoản trừ vào két của **ngày khai** của khoản, không phải ngày tiền rời két. | `master_plan/shop-facts.md` §8.10 `E46` · `quality/invariants.md` `I-021` |
+| ~~U-071 — Huỷ một ô chấm công: ghi chú có bắt buộc không, ai được bấm huỷ~~ | “ghi chú có bắt buộc chỉ chủ quán dc làm”. Ghi chú huỷ **bắt buộc**; **chỉ chủ quán** bấm huỷ. | `master_plan/shop-facts.md` §8.7 · `quality/invariants.md` `I-027` |
 
 **Chủ quán trả lời 2026-09-30 (P2A-03, lượt hai), chủ repo chuyển nguyên văn trong hội thoại và xác
 nhận đó là lời chủ quán:**
