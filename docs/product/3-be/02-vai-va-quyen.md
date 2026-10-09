@@ -48,6 +48,7 @@ Lời từ chối của quyền mang mã riêng (`01-hop-dong-api.md` §3): `una
 | Lớp | Qua khi | Nguồn |
 |---|---|---|
 | `quay` | người bấm có một khoảng `counter_duty` chứa mốc giao dịch của cửa | `architecture.md` §4 điều 1; `shop-facts.md` §3 · §6.13 · §8.8 (`C36`) |
+| `quay_hoac_chu_quan` | người có thật mang cờ chủ quán hoặc đang đứng quầy; thiếu người trả unauthenticated, người thường ngoài quầy trả not_on_counter_duty | `shop-facts.md` §6.27 (*POS hoặc chủ quán*); ADR-079; khai tiền đầu két là **suy luận, ADR-089 điểm 8** |
 | `chu_quan` | người bấm mang cờ chủ quán (`person.is_owner`), đứng đâu cũng được | `shop-facts.md` §3 (chủ quán là vai riêng, ngoài năm trạm); `YC-16` |
 | `quay_hoac_khach` | người có thật đang đứng quầy; hoặc không có người và mang mã QR hiện hành, bàn tra từ mã trong giao dịch; hoặc khách web không người gửi delivery / pickup; khách không khai người thao tác | `02-kenh-ban.md` bảng kênh — Delivery/Pickup khách tự bấm trên web; §1 câu 5; `I-023`; ADR-087; ADR-088 |
 | `nguoi_quan` | người bấm là một `person` có thật, không cần đứng đâu | `05-vong-doi.md` §5.3 dòng dọn bàn; `U-055` — **suy luận của phiên, ADR-087 điểm 7** (2026-10-06) |
@@ -78,6 +79,18 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `ban/da_don` | `nguoi_quan` | `05-vong-doi.md` §5.3; `U-055`; suy luận của phiên, ADR-087 điểm 7 |
 | `vongdoi/chuyen_don` | `theo_cua_goi` | `I-016`; ADR-087 điểm 3 |
 | `vongdoi/chuyen_phien` | `theo_cua_goi` | `I-016`; ADR-087 điểm 3 |
+| `hoadon/trao_tai_quay` | `quay` | ADR-089 điểm 1–2; trao hàng tại quầy |
+| `hoadon/giao_xong` | `nguoi_quan` | shop-facts.md §6.7; ADR-089 điểm 1–2 — người đi giao bấm |
+| `hoadon/hoan` | `quay` | shop-facts.md §6.4; ADR-089 điểm 1 |
+| `hoadon/thu_no` | `quay` | shop-facts.md §6.14; ADR-075; ADR-089 điểm 1 |
+| `tratruoc/nhan` | `quay` | shop-facts.md §6.3; ADR-089 điểm 1 |
+| `hoadon/tra_lai` | `quay` | shop-facts.md §6.4; ADR-059; ADR-089 điểm 1 |
+| `ket/khai_dau_ket` | `quay_hoac_chu_quan` | ADR-089 điểm 8 — suy luận từ shop-facts.md §8.5 |
+| `ket/dem` | `quay_hoac_chu_quan` | shop-facts.md §6.27; ADR-079; ADR-089 điểm 8 |
+| `ket/doi_soat_xong` | `quay_hoac_chu_quan` | shop-facts.md §6.27; ADR-079; ADR-089 điểm 5, 8 |
+| `hoadon/ghi` | `theo_cua_goi` | ADR-089 điểm 1; ADR-087 điểm 3 |
+| `hoadon/ghi_hoan` | `theo_cua_goi` | ADR-089 điểm 1; ADR-087 điểm 3 |
+| `tratruoc/dung` | `theo_cua_goi` | ADR-089 điểm 1; ADR-087 điểm 3 |
 
 **Lát sau thêm dòng thế nào:** cùng lượt dựng cửa — thư mục cửa, khai báo `authz.Door{Code, Need}` ngoài
 file test, và một dòng ở đây trỏ nguồn nghiệp vụ. Thiếu một trong ba thì Gate 1g đỏ.

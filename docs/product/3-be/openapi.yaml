@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.5.0
+  version: 0.6.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -674,6 +674,290 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /orders/{sales_order_id}/handover:
+    post:
+      operationId: handoverOrder
+      parameters:
+        - name: sales_order_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HandoverRequest'
+      responses:
+        '201':
+          description: Thành công theo ADR-089.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderBillCreated'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders/{sales_order_id}/delivered:
+    post:
+      operationId: deliverOrder
+      parameters:
+        - name: sales_order_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HandoverRequest'
+      responses:
+        '201':
+          description: Thành công theo ADR-089.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderBillCreated'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /bills/{bill_id}/refunds:
+    post:
+      operationId: refundBill
+      parameters:
+        - name: bill_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+      responses:
+        '201':
+          description: Thành công theo ADR-089.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefundCreated'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /bills/{bill_id}/debt-collections:
+    post:
+      operationId: collectDebt
+      parameters:
+        - name: bill_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoneyPartsRequest'
+      responses:
+        '201':
+          description: Thành công theo ADR-089.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DebtCollected'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders/{sales_order_id}/prepayment:
+    post:
+      operationId: receivePrepayment
+      parameters:
+        - name: sales_order_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoneyPartsRequest'
+      responses:
+        '201':
+          description: Thành công theo ADR-089.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrepaymentCreated'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /prepayments/{prepayment_id}/returns:
+    post:
+      operationId: returnPrepayment
+      parameters:
+        - name: prepayment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrepaymentReturnRequest'
+      responses:
+        '201':
+          description: Thành công theo ADR-089.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrepaymentReturned'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /opening-floats:
+    post:
+      operationId: declareOpeningFloat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CashLinesRequest'
+      responses:
+        '201':
+          description: Thành công theo ADR-089.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpeningFloatCreated'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /cash-counts:
+    post:
+      operationId: recordCashCount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CashLinesRequest'
+      responses:
+        '201':
+          description: Thành công theo ADR-089.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashCountCreated'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sale-days/{sale_date}/reconciliation:
+    post:
+      operationId: reconcileSaleDay
+      parameters:
+        - name: sale_date
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SaleDate'
+      responses:
+        '201':
+          description: Thành công theo ADR-089.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DayReconciled'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /debts:
+    get:
+      operationId: listDebts
+      responses:
+        '200':
+          description: Thành công theo ADR-089.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Debts'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sale-days/{sale_date}/cash-reconciliation:
+    get:
+      operationId: getCashReconciliation
+      parameters:
+        - name: sale_date
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SaleDate'
+      responses:
+        '200':
+          description: Thành công theo ADR-089.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashReconciliation'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     OnlineOrderRequest:
@@ -911,6 +1195,8 @@ components:
       required: [cash_vnd, transfer_vnd, debt_vnd]
       additionalProperties: true
       properties:
+        discount_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
         cash_vnd:
           $ref: '#/components/schemas/MoneyVnd'
         transfer_vnd:
@@ -971,6 +1257,230 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DiningTable'
+    MoneyPartsRequest:
+      description: Hai phần không âm; tổng phải lớn hơn 0 và nằm trong bigint.
+      type: object
+      required: [cash_vnd, transfer_vnd]
+      additionalProperties: true
+      properties:
+        cash_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        transfer_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    HandoverRequest:
+      type: object
+      required: [cash_vnd, transfer_vnd]
+      additionalProperties: true
+      properties:
+        cash_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        transfer_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        prepaid_cash_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        prepaid_transfer_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        debt_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        discount_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        debtor_name:
+          type: string
+          pattern: '\S'
+    RefundRequest:
+      type: object
+      required: [amount_vnd, method_code, source_method_code, reason]
+      additionalProperties: true
+      properties:
+        amount_vnd:
+          type: integer
+          format: int64
+          minimum: 1
+        method_code:
+          type: string
+          enum: [cash, transfer]
+        source_method_code:
+          type: string
+          enum: [cash, transfer]
+        reason:
+          type: string
+          pattern: '\S'
+    PrepaymentReturnRequest:
+      description: Lấy theo phương thức đã nhận; tổng hai phần lớn hơn 0 và là amount_vnd của lần trả lại.
+      type: object
+      required: [method_code, take_cash_vnd, take_transfer_vnd, reason]
+      additionalProperties: true
+      properties:
+        method_code:
+          type: string
+          enum: [cash, transfer]
+        take_cash_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        take_transfer_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        reason:
+          type: string
+          pattern: '\S'
+    CashLine:
+      type: object
+      required: [denomination_vnd, amount_vnd]
+      additionalProperties: true
+      properties:
+        denomination_vnd:
+          type: integer
+          format: int64
+          minimum: 1
+        amount_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    CashLinesRequest:
+      description: Mệnh giá không trùng; amount_vnd là bội không âm của denomination_vnd; tổng nằm trong bigint.
+      type: object
+      required: [lines]
+      additionalProperties: true
+      properties:
+        lines:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/CashLine'
+    OrderBillCreated:
+      type: object
+      required: [bill_id, sales_order_id, due_vnd, status]
+      additionalProperties: false
+      properties:
+        bill_id:
+          type: integer
+          format: int64
+        sales_order_id:
+          type: integer
+          format: int64
+        due_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        status:
+          type: string
+          const: completed
+    RefundCreated:
+      type: object
+      required: [refund_id, bill_id]
+      additionalProperties: false
+      properties:
+        refund_id:
+          type: integer
+          format: int64
+        bill_id:
+          type: integer
+          format: int64
+    DebtCollected:
+      type: object
+      required: [debt_collection_id, bill_id, remaining_vnd]
+      additionalProperties: false
+      properties:
+        debt_collection_id:
+          type: integer
+          format: int64
+        bill_id:
+          type: integer
+          format: int64
+        remaining_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    PrepaymentCreated:
+      type: object
+      required: [prepayment_id, sales_order_id]
+      additionalProperties: false
+      properties:
+        prepayment_id:
+          type: integer
+          format: int64
+        sales_order_id:
+          type: integer
+          format: int64
+    PrepaymentReturned:
+      type: object
+      required: [refund_id, prepayment_id, amount_vnd]
+      additionalProperties: false
+      properties:
+        refund_id:
+          type: integer
+          format: int64
+        prepayment_id:
+          type: integer
+          format: int64
+        amount_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    OpeningFloatCreated:
+      type: object
+      required: [opening_float_id, sale_date, total_vnd]
+      additionalProperties: false
+      properties:
+        opening_float_id:
+          type: integer
+          format: int64
+        sale_date:
+          $ref: '#/components/schemas/SaleDate'
+        total_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    CashCountCreated:
+      type: object
+      required: [cash_count_id, sale_date, total_vnd]
+      additionalProperties: false
+      properties:
+        cash_count_id:
+          type: integer
+          format: int64
+        sale_date:
+          $ref: '#/components/schemas/SaleDate'
+        total_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    DayReconciled:
+      type: object
+      required: [reconciled_day_id, sale_date]
+      additionalProperties: false
+      properties:
+        reconciled_day_id:
+          type: integer
+          format: int64
+        sale_date:
+          $ref: '#/components/schemas/SaleDate'
+    Debt:
+      type: object
+      required: [bill_id, debtor_name, debt_vnd, remaining_vnd]
+      additionalProperties: false
+      properties:
+        bill_id:
+          type: integer
+          format: int64
+        debtor_name:
+          type: string
+        debt_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        remaining_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    Debts:
+      type: object
+      required: [debts]
+      additionalProperties: false
+      properties:
+        debts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Debt'
+    CashReconciliation:
+      type: object
+      required: [sale_date, counted_vnd, opening_float_vnd, expected_vnd, gap_vnd]
+      additionalProperties: false
+      properties:
+        sale_date:
+          $ref: '#/components/schemas/SaleDate'
+        counted_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        opening_float_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        expected_vnd:
+          type: integer
+          format: int64
+        gap_vnd:
+          type: integer
+          format: int64
     ErrorCode:
       type: string
       description: >-
@@ -1005,7 +1515,47 @@ components:
         - outside_selling_hours
         - shop_not_seeing_orders
         - delivery_served_mark_undecided
+        - order_discount_undecided
+        - standalone_debt_undecided
+        - order_handover_mismatch
+        - order_jobs_not_served
+        - prepayment_balance_exceeded
+        - bill_not_found
+        - prepayment_not_found
+        - bill_has_no_debt
+        - debt_already_settled
+        - debt_overpaid
+        - order_not_prepayable
+        - prepayment_already_received
+        - opening_float_already_declared
+        - cash_count_already_recorded
+        - sale_day_reconciled
+        - cash_day_incomplete
+        - sale_day_already_reconciled
+        - paper_entries_pending
+        - cash_day_expense_date_undecided
+        - cash_day_not_balanced
       x-http-status:
+        order_discount_undecided: 409
+        standalone_debt_undecided: 409
+        order_handover_mismatch: 409
+        order_jobs_not_served: 409
+        prepayment_balance_exceeded: 409
+        bill_not_found: 404
+        prepayment_not_found: 404
+        bill_has_no_debt: 409
+        debt_already_settled: 409
+        debt_overpaid: 409
+        order_not_prepayable: 409
+        prepayment_already_received: 409
+        opening_float_already_declared: 409
+        cash_count_already_recorded: 409
+        sale_day_reconciled: 409
+        cash_day_incomplete: 409
+        sale_day_already_reconciled: 409
+        paper_entries_pending: 409
+        cash_day_expense_date_undecided: 409
+        cash_day_not_balanced: 409
         order_intake_paused: 409
         outside_selling_hours: 409
         shop_not_seeing_orders: 409
@@ -1371,28 +1921,28 @@ x-constraint-errors:
   bill_prepayment_use_fkey: internal
   bill_sales_order_fkey: internal
   bill_table_session_fkey: internal
-  cash_count_line_amount_check: unreviewed
-  cash_count_line_cash_count_fkey: unreviewed
-  cash_count_line_one_per_denomination_key: unreviewed
+  cash_count_line_amount_check: internal
+  cash_count_line_cash_count_fkey: internal
+  cash_count_line_one_per_denomination_key: internal
   cash_count_line_pkey: internal
-  cash_count_line_reconciled_day_locked_check: unreviewed
-  cash_count_line_reconciled_day_truncate_check: unreviewed
-  cash_count_one_per_day_key: unreviewed
-  cash_count_person_fkey: unreviewed
+  cash_count_line_reconciled_day_locked_check: sale_day_reconciled
+  cash_count_line_reconciled_day_truncate_check: internal
+  cash_count_one_per_day_key: cash_count_already_recorded
+  cash_count_person_fkey: internal
   cash_count_pkey: internal
-  cash_count_reconciled_day_locked_check: unreviewed
-  cash_count_reconciled_day_truncate_check: unreviewed
+  cash_count_reconciled_day_locked_check: sale_day_reconciled
+  cash_count_reconciled_day_truncate_check: internal
   counter_duty_ended_after_started_check: unreviewed
   counter_duty_one_at_a_time_excl: unreviewed
   counter_duty_person_fkey: unreviewed
   counter_duty_pkey: internal
-  debt_collection_after_key: unreviewed
-  debt_collection_amounts_check: unreviewed
-  debt_collection_before_key: unreviewed
-  debt_collection_bill_fkey: unreviewed
-  debt_collection_first_payment_key: unreviewed
-  debt_collection_follows_fkey: unreviewed
-  debt_collection_person_fkey: unreviewed
+  debt_collection_after_key: internal
+  debt_collection_amounts_check: debt_overpaid
+  debt_collection_before_key: internal
+  debt_collection_bill_fkey: internal
+  debt_collection_first_payment_key: internal
+  debt_collection_follows_fkey: internal
+  debt_collection_person_fkey: internal
   debt_collection_pkey: internal
   dining_table_label_key: internal
   dining_table_label_not_blank_check: internal
@@ -1426,17 +1976,17 @@ x-constraint-errors:
   menu_option_option_group_fkey: internal
   menu_option_pkey: internal
   menu_option_surcharge_non_negative_check: internal
-  opening_float_line_amount_check: unreviewed
-  opening_float_line_one_per_denomination_key: unreviewed
-  opening_float_line_opening_float_fkey: unreviewed
+  opening_float_line_amount_check: internal
+  opening_float_line_one_per_denomination_key: internal
+  opening_float_line_opening_float_fkey: internal
   opening_float_line_pkey: internal
-  opening_float_line_reconciled_day_locked_check: unreviewed
-  opening_float_line_reconciled_day_truncate_check: unreviewed
-  opening_float_one_per_day_key: unreviewed
-  opening_float_person_fkey: unreviewed
+  opening_float_line_reconciled_day_locked_check: sale_day_reconciled
+  opening_float_line_reconciled_day_truncate_check: internal
+  opening_float_one_per_day_key: opening_float_already_declared
+  opening_float_person_fkey: internal
   opening_float_pkey: internal
-  opening_float_reconciled_day_locked_check: unreviewed
-  opening_float_reconciled_day_truncate_check: unreviewed
+  opening_float_reconciled_day_locked_check: sale_day_reconciled
+  opening_float_reconciled_day_truncate_check: internal
   option_group_name_key: unreviewed
   option_group_name_not_blank_check: unreviewed
   option_group_pkey: internal
@@ -1486,27 +2036,27 @@ x-constraint-errors:
   paper_ledger_pkey: internal
   person_display_name_not_blank_check: unreviewed
   person_pkey: internal
-  prepayment_amounts_check: unreviewed
-  prepayment_id_order_amounts_key: unreviewed
-  prepayment_id_order_key: unreviewed
-  prepayment_one_per_order_key: unreviewed
-  prepayment_person_fkey: unreviewed
+  prepayment_amounts_check: internal
+  prepayment_id_order_amounts_key: internal
+  prepayment_id_order_key: internal
+  prepayment_one_per_order_key: prepayment_already_received
+  prepayment_person_fkey: internal
   prepayment_pkey: internal
-  prepayment_sales_order_fkey: unreviewed
-  prepayment_use_balance_check: unreviewed
-  prepayment_use_bill_fkey: unreviewed
-  prepayment_use_chain_key: unreviewed
-  prepayment_use_first_fkey: unreviewed
-  prepayment_use_no_key: unreviewed
-  prepayment_use_no_positive_check: unreviewed
-  prepayment_use_one_per_bill_key: unreviewed
-  prepayment_use_one_per_refund_key: unreviewed
-  prepayment_use_one_target_check: unreviewed
+  prepayment_sales_order_fkey: internal
+  prepayment_use_balance_check: prepayment_balance_exceeded
+  prepayment_use_bill_fkey: internal
+  prepayment_use_chain_key: internal
+  prepayment_use_first_fkey: internal
+  prepayment_use_no_key: internal
+  prepayment_use_no_positive_check: internal
+  prepayment_use_one_per_bill_key: internal
+  prepayment_use_one_per_refund_key: internal
+  prepayment_use_one_target_check: internal
   prepayment_use_pkey: internal
-  prepayment_use_prepayment_fkey: unreviewed
-  prepayment_use_previous_fkey: unreviewed
-  prepayment_use_refund_fkey: unreviewed
-  prepayment_use_take_check: unreviewed
+  prepayment_use_prepayment_fkey: internal
+  prepayment_use_previous_fkey: internal
+  prepayment_use_refund_fkey: internal
+  prepayment_use_take_check: internal
   production_batch_id_rolled_back_key: unreviewed
   production_batch_item_batch_fkey: unreviewed
   production_batch_item_live_key: unreviewed
@@ -1529,12 +2079,12 @@ x-constraint-errors:
   qr_code_person_fkey: internal
   qr_code_pkey: internal
   qr_code_replaced_after_issued_check: qr_code_issue_conflict
-  reconciled_day_cash_count_fkey: unreviewed
-  reconciled_day_cash_count_has_lines_check: unreviewed
-  reconciled_day_one_per_day_key: unreviewed
-  reconciled_day_opening_float_fkey: unreviewed
-  reconciled_day_opening_float_has_lines_check: unreviewed
-  reconciled_day_person_fkey: unreviewed
+  reconciled_day_cash_count_fkey: cash_day_incomplete
+  reconciled_day_cash_count_has_lines_check: cash_day_incomplete
+  reconciled_day_one_per_day_key: sale_day_already_reconciled
+  reconciled_day_opening_float_fkey: cash_day_incomplete
+  reconciled_day_opening_float_has_lines_check: cash_day_incomplete
+  reconciled_day_person_fkey: internal
   reconciled_day_pkey: internal
   record_revision_changes_something_check: unreviewed
   record_revision_images_of_target_check: unreviewed
@@ -1542,18 +2092,18 @@ x-constraint-errors:
   record_revision_pkey: internal
   record_revision_reason_not_blank_check: unreviewed
   record_revision_target_table_code_check: unreviewed
-  refund_amount_positive_check: unreviewed
-  refund_bill_fkey: unreviewed
-  refund_id_prepayment_amount_key: unreviewed
-  refund_method_code_check: unreviewed
-  refund_one_target_check: unreviewed
-  refund_person_fkey: unreviewed
+  refund_amount_positive_check: internal
+  refund_bill_fkey: internal
+  refund_id_prepayment_amount_key: internal
+  refund_method_code_check: internal
+  refund_one_target_check: internal
+  refund_person_fkey: internal
   refund_pkey: internal
-  refund_prepayment_fkey: unreviewed
-  refund_prepayment_use_fkey: unreviewed
-  refund_reason_not_blank_check: unreviewed
-  refund_source_iff_bill_check: unreviewed
-  refund_source_method_code_check: unreviewed
+  refund_prepayment_fkey: internal
+  refund_prepayment_use_fkey: internal
+  refund_reason_not_blank_check: internal
+  refund_source_iff_bill_check: internal
+  refund_source_method_code_check: internal
   sales_order_bill_fkey: internal
   sales_order_channel_code_check: internal
   sales_order_door_delivery_address_check: internal

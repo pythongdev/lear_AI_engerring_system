@@ -15,6 +15,27 @@ import (
 type Code string
 
 const (
+	CodeOrderDiscountUndecided      Code = "order_discount_undecided"
+	CodeStandaloneDebtUndecided     Code = "standalone_debt_undecided"
+	CodeOrderHandoverMismatch       Code = "order_handover_mismatch"
+	CodeOrderJobsNotServed          Code = "order_jobs_not_served"
+	CodePrepaymentBalanceExceeded   Code = "prepayment_balance_exceeded"
+	CodeBillNotFound                Code = "bill_not_found"
+	CodePrepaymentNotFound          Code = "prepayment_not_found"
+	CodeBillHasNoDebt               Code = "bill_has_no_debt"
+	CodeDebtAlreadySettled          Code = "debt_already_settled"
+	CodeDebtOverpaid                Code = "debt_overpaid"
+	CodeOrderNotPrepayable          Code = "order_not_prepayable"
+	CodePrepaymentAlreadyReceived   Code = "prepayment_already_received"
+	CodeOpeningFloatAlreadyDeclared Code = "opening_float_already_declared"
+	CodeCashCountAlreadyRecorded    Code = "cash_count_already_recorded"
+	CodeSaleDayReconciled           Code = "sale_day_reconciled"
+	CodeCashDayIncomplete           Code = "cash_day_incomplete"
+	CodeSaleDayAlreadyReconciled    Code = "sale_day_already_reconciled"
+	CodePaperEntriesPending         Code = "paper_entries_pending"
+	CodeCashDayExpenseDateUndecided Code = "cash_day_expense_date_undecided"
+	CodeCashDayNotBalanced          Code = "cash_day_not_balanced"
+
 	CodeOrderIntakePaused           Code = "order_intake_paused"
 	CodeOutsideSellingHours         Code = "outside_selling_hours"
 	CodeShopNotSeeingOrders         Code = "shop_not_seeing_orders"
@@ -53,6 +74,27 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
+	CodeOrderDiscountUndecided:      409,
+	CodeStandaloneDebtUndecided:     409,
+	CodeOrderHandoverMismatch:       409,
+	CodeOrderJobsNotServed:          409,
+	CodePrepaymentBalanceExceeded:   409,
+	CodeBillNotFound:                404,
+	CodePrepaymentNotFound:          404,
+	CodeBillHasNoDebt:               409,
+	CodeDebtAlreadySettled:          409,
+	CodeDebtOverpaid:                409,
+	CodeOrderNotPrepayable:          409,
+	CodePrepaymentAlreadyReceived:   409,
+	CodeOpeningFloatAlreadyDeclared: 409,
+	CodeCashCountAlreadyRecorded:    409,
+	CodeSaleDayReconciled:           409,
+	CodeCashDayIncomplete:           409,
+	CodeSaleDayAlreadyReconciled:    409,
+	CodePaperEntriesPending:         409,
+	CodeCashDayExpenseDateUndecided: 409,
+	CodeCashDayNotBalanced:          409,
+
 	CodeOrderIntakePaused:           409,
 	CodeOutsideSellingHours:         409,
 	CodeShopNotSeeingOrders:         409,
@@ -89,6 +131,21 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"prepayment_use_balance_check":                   CodePrepaymentBalanceExceeded,
+	"prepayment_one_per_order_key":                   CodePrepaymentAlreadyReceived,
+	"opening_float_one_per_day_key":                  CodeOpeningFloatAlreadyDeclared,
+	"cash_count_one_per_day_key":                     CodeCashCountAlreadyRecorded,
+	"reconciled_day_one_per_day_key":                 CodeSaleDayAlreadyReconciled,
+	"debt_collection_amounts_check":                  CodeDebtOverpaid,
+	"cash_count_reconciled_day_locked_check":         CodeSaleDayReconciled,
+	"cash_count_line_reconciled_day_locked_check":    CodeSaleDayReconciled,
+	"opening_float_reconciled_day_locked_check":      CodeSaleDayReconciled,
+	"opening_float_line_reconciled_day_locked_check": CodeSaleDayReconciled,
+	"reconciled_day_cash_count_fkey":                 CodeCashDayIncomplete,
+	"reconciled_day_cash_count_has_lines_check":      CodeCashDayIncomplete,
+	"reconciled_day_opening_float_fkey":              CodeCashDayIncomplete,
+	"reconciled_day_opening_float_has_lines_check":   CodeCashDayIncomplete,
+
 	"bill_parts_equal_due_check":        CodePaymentPartsMismatch,
 	"bill_debtor_iff_debt_check":        CodeDebtorNameMismatch,
 	"qr_code_dining_table_fkey":         CodeDiningTableNotFound,

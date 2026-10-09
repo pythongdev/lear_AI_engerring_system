@@ -26,9 +26,11 @@ import (
 	"banhcuon/be/internal/don"
 	"banhcuon/be/internal/gia"
 	"banhcuon/be/internal/hoadon"
+	"banhcuon/be/internal/ket"
 	"banhcuon/be/internal/menu"
 	"banhcuon/be/internal/phien"
 	"banhcuon/be/internal/qr"
+	"banhcuon/be/internal/tratruoc"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -70,6 +72,9 @@ func dung(t *testing.T) khung {
 	phien.Routes(mux, pool, xacThucTest{})
 	hoadon.Routes(mux, pool, xacThucTest{})
 	ban.Routes(mux, pool, xacThucTest{})
+	// P3-09 thêm có chủ ý (ADR-089): đường gọi của trả trước và của két.
+	tratruoc.Routes(mux, pool, xacThucTest{})
+	ket.Routes(mux, pool, xacThucTest{})
 	srv := httptest.NewServer(mux)
 	t.Cleanup(srv.Close)
 	// P3-08 thêm có chủ ý (ADR-088): cửa tạo lượt gọi xét giờ bán tại mốc của đồng hồ (I-008), nên mọi

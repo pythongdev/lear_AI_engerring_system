@@ -15,7 +15,7 @@ func (camDocNguoi) PersonID(*http.Request) (int64, bool) {
 }
 
 // Pool nil và bộ đọc người từ chối mọi lần gọi: yêu cầu sai hình phải dừng trước cả hai.
-func TestMangDiHinh_TruocQuyen(t *testing.T) {
+func TestQC14_MangDiHinhTruocQuyen(t *testing.T) {
 	for _, ca := range []struct{ name, body, field string }{
 		{"dấu trước bàn", `{"submission_code":"sai","dining_table_id":null}`, "submission_code"},
 		{"bàn trước kênh", `{"dining_table_id":null}`, "dining_table_id"},
@@ -50,7 +50,7 @@ func TestMangDiHinh_TruocQuyen(t *testing.T) {
 	}
 }
 
-func TestMangDiHinh_DauSoChuVaKhoanhKhac(t *testing.T) {
+func TestI024_MangDiHinhDauSoChuVaKhoanhKhac(t *testing.T) {
 	doc := func(them string) YeuCauTaiQuay {
 		t.Helper()
 		var raw map[string]json.RawMessage

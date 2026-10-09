@@ -4,6 +4,7 @@ package hoadon
 import (
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
+	"banhcuon/be/internal/ngayban"
 	"banhcuon/be/internal/phien"
 	"banhcuon/be/internal/vongdoi"
 	_ "embed"
@@ -22,16 +23,15 @@ var khoaPhien string
 //go:embed sql/dong/khoa_don.sql
 var khoaDon string
 
-//go:embed sql/dong/them.sql
-var them string
-
 func Routes(mux *http.ServeMux, pool *pgxpool.Pool, auth authz.Authenticator) {
+	tienRoutes(mux, pool, auth)
 	mux.HandleFunc("POST /table-sessions/{table_session_id}/closing", func(w http.ResponseWriter, r *http.Request) {
 		id, ok := apierr.ReadID(w, r, "table_session_id")
 		if !ok {
 			return
 		}
 		var yc struct {
+			DiscountVnd int64   `json:"discount_vnd"`
 			CashVnd     *int64  `json:"cash_vnd"`
 			TransferVnd *int64  `json:"transfer_vnd"`
 			DebtVnd     *int64  `json:"debt_vnd"`
@@ -49,6 +49,10 @@ func Routes(mux *http.ServeMux, pool *pgxpool.Pool, auth authz.Authenticator) {
 				return
 			}
 		}
+		if yc.DiscountVnd < 0 {
+			apierr.Write(w, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "discount_vnd"})
+			return
+		}
 		if yc.DebtorName != nil && strings.TrimSpace(*yc.DebtorName) == "" {
 			apierr.Write(w, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "debtor_name"})
 			return
@@ -58,11 +62,18 @@ func Routes(mux *http.ServeMux, pool *pgxpool.Pool, auth authz.Authenticator) {
 			person, _ = auth.PersonID(r)
 		}
 		err := authz.Run(r.Context(), pool, person, Dong, func(tx pgx.Tx) error {
+			if yc.DiscountVnd > 0 {
+				return apierr.Error{Code: apierr.CodeOrderDiscountUndecided}
+			}
 			var status string
 			if err := tx.QueryRow(r.Context(), khoaPhien, id).Scan(&status); err != nil {
 				if errors.Is(err, pgx.ErrNoRows) {
 					return apierr.Error{Code: apierr.CodeTableSessionNotFound}
 				}
+				return err
+			}
+			moc, _, err := ngayban.ChoGhi(r.Context(), tx)
+			if err != nil {
 				return err
 			}
 			if err := vongdoi.KiemChuyenPhien(status, "closed"); err != nil {
@@ -85,7 +96,8 @@ func Routes(mux *http.ServeMux, pool *pgxpool.Pool, auth authz.Authenticator) {
 			if err != nil {
 				return err
 			}
-			if err := tx.QueryRow(r.Context(), them, id, due, *yc.CashVnd, *yc.TransferVnd, *yc.DebtVnd, yc.DebtorName).Scan(&bill); err != nil {
+			bill, err = Ghi(r.Context(), tx, NoiDung{Phien: &id, Due: due, Cash: *yc.CashVnd, Transfer: *yc.TransferVnd, Debt: *yc.DebtVnd, Debtor: yc.DebtorName, Moc: moc})
+			if err != nil {
 				return err
 			}
 			return vongdoi.ChuyenPhien(r.Context(), tx, id, "closed")

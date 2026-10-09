@@ -197,3 +197,32 @@ func TestI012_LoiCuaThanCuaLuiCaGiaoDich(t *testing.T) {
 		t.Fatalf("thân cửa lỗi mà vẫn ghi %d dòng", n)
 	}
 }
+
+// ADR-089 điểm 8: lớp két cộng quyền quầy và cờ chủ quán.
+func TestI012_QuayHoacChuQuanTuChoiNguoiNgoaiQuay(t *testing.T) {
+	k := dung(t)
+	d := authz.Door{Code: "test/ket", Need: authz.NeedCounterOrOwner}
+	thuong := k.nguoi(t, "người thường", false)
+	chu := k.nguoi(t, "chủ quán", true)
+	k.roiQuay(t)
+	for _, c := range []struct {
+		id   int64
+		code apierr.Code
+	}{
+		{0, apierr.CodeUnauthenticated}, {thuong, apierr.CodeNotOnCounterDuty},
+	} {
+		code, _, ran := k.chay(t, c.id, d)
+		if code != c.code || ran {
+			t.Fatalf("người %d: mã %s, đã chạy %v", c.id, code, ran)
+		}
+	}
+	code, actor, ran := k.chay(t, chu, d)
+	if code != "" || !ran || actor != chu {
+		t.Fatalf("chủ quán: %s %d %v", code, actor, ran)
+	}
+	k.vaoQuay(t, thuong)
+	code, actor, ran = k.chay(t, thuong, d)
+	if code != "" || !ran || actor != thuong {
+		t.Fatalf("người quầy: %s %d %v", code, actor, ran)
+	}
+}

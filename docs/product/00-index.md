@@ -114,6 +114,7 @@ Các lát lược đồ sau **thêm** dòng vào bảng này, không ghi đè d�
 | **Hàm tính giá** — một hàm, ba đường gọi (tính thử · menu · cửa tạo lượt gọi), thứ tự kiểm, bảng ca test đọc §4.8 lúc chạy, chỗ trống (P3-06, ADR-086) | [3-be/03-ham-gia.md](3-be/03-ham-gia.md) |
 | **Luồng tại bàn** — cửa và ô ghi, khoá phiên trước đơn, gửi lại cùng dấu, đóng nguyên tử, dọn từng bàn (P3-07, ADR-087) | [3-be/04-luong-tai-ban.md](3-be/04-luong-tai-ban.md) |
 | **Luồng mang đi** — liên hệ, dấu lần gửi, giờ bán và khoảng ngừng nhận đơn, rời quán và chỗ trống S-6 (P3-08, ADR-088) | [3-be/05-luong-mang-di.md](3-be/05-luong-mang-di.md) |
+| **Đường tiền** — hoá đơn đơn lẻ, hoàn, thu nợ, trả trước, đồng hồ ngày bán, đếm két và ký ngày ở ngưỡng 0đ (P3-09, ADR-089) | [3-be/06-duong-tien.md](3-be/06-duong-tien.md) |
 
 Các lát `P3-05`…`P3-13` **thêm** dòng vào bảng này cùng file của mình (kế hoạch pha 3 §5).
 

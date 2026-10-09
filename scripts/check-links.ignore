@@ -11,7 +11,6 @@
 docs/decisions.md :: work/journal.md              # ADR-002 — phương án đã bị loại: file này cố ý không được tạo
 docs/prompt-guideline.md :: order/pricing.go      # ví dụ trong template L1/L2, không phải file của repo này
 docs/product/2-db/10-quy-uoc-code.md :: fe/package.json  # P2-12 QC-09 — pha 4 tạo file này; gỡ dòng này ở lượt tạo nó
-docs/decisions.md :: docs/product/3-be/06-duong-tien.md  # P3-09 — Codex tạo file lát trong worktree; gỡ dòng này lúc tích hợp
 docs/decisions.md :: docs/product/3-be/07-san-xuat-theo-me.md  # P3-10 — Codex tạo file lát trong worktree; gỡ dòng này lúc tích hợp
 
 # --- bản lưu docs/product.md: ảnh chụp ngày 2026-09-02, đường dẫn của NGÀY ẤY ---

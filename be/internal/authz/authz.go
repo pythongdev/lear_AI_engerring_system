@@ -20,6 +20,8 @@ import (
 type Need string
 
 const (
+	NeedCounterOrOwner Need = "quay_hoac_chu_quan"
+
 	// NeedCounterOrCustomer: người đang đứng quầy, hoặc khách QR/web không người (ADR-087 · ADR-088).
 	NeedCounterOrCustomer Need = "quay_hoac_khach"
 	// NeedPerson: một người của quán có thật, đứng đâu cũng được (ADR-087 điểm 7).
@@ -76,7 +78,7 @@ func Run(ctx context.Context, pool *pgxpool.Pool, personID int64, d Door, fn fun
 // RunAs kiểm quyền lại ở mỗi giao dịch, kể cả một lần chạy lại sau tranh chấp.
 func RunAs(ctx context.Context, pool *pgxpool.Pool, caller Caller, d Door, fn func(pgx.Tx, Granted) error) error {
 	switch d.Need {
-	case NeedCounter, NeedOwner, NeedCounterOrCustomer, NeedPerson:
+	case NeedCounterOrOwner, NeedCounter, NeedOwner, NeedCounterOrCustomer, NeedPerson:
 	default:
 		return fmt.Errorf("cửa %q không có lối vào trực tiếp cho lớp %q", d.Code, d.Need)
 	}
@@ -106,7 +108,7 @@ func RunAs(ctx context.Context, pool *pgxpool.Pool, caller Caller, d Door, fn fu
 		if d.Need == NeedOwner && !owner {
 			return apierr.Error{Code: apierr.CodeOwnerOnly}
 		}
-		if d.Need == NeedCounter || d.Need == NeedCounterOrCustomer {
+		if d.Need == NeedCounter || d.Need == NeedCounterOrCustomer || (d.Need == NeedCounterOrOwner && !owner) {
 			var onDuty bool
 			if err := tx.QueryRow(ctx, kiemQuay, caller.PersonID).Scan(&onDuty); err != nil {
 				return err

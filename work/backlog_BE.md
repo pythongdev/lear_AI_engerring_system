@@ -978,7 +978,44 @@ các lần trả nối thành chuỗi. Giảm giá cả đơn còn chờ U-058 �
   `./scripts/check-write-paths.sh --list` · lỗi cài (bỏ kiểm ngày đã ký; bỏ hạng tử hoàn chéo ở phép trừ của
   cửa) ⇒ test đỏ · `./scripts/gate.sh`; Claude đọc diff theo từng dòng nghiệm thu, đối chiếu bảng red flag Gate 4.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-09): thiết kế, test đỏ, duyệt và tích hợp — **Claude Code**; thi công — **Codex**
+(`codex exec -m gpt-6-astra`, worktree `../lean_wt/P3-09`, nhánh `codex/P3-09` từ `af45bde`; sandbox của Codex không
+tới được Docker nên mọi lần chạy trên PostgreSQL thật là Claude chạy). Thiết kế và lý do: **ADR-089**; cách đọc lát
+và chỗ trống: `docs/product/3-be/06-duong-tien.md`.
+- *Ba vòng giao:* vòng 1 Codex dừng trước dòng code đầu — thiết kế để ba cửa cùng thêm `bill`, trái **ADR-082**
+  (Gate 1f); vòng 2 dừng — cách chia gói gây vòng import `hoadon ↔ tratruoc`. Cả hai là lỗi của phiếu, Codex dừng
+  đúng; ADR-089 điểm 1 mang dòng *Sửa đổi*. Vòng 3 phiếu viết lại: ba cửa `theo_cua_goi` (`hoadon/ghi` ·
+  `hoadon/ghi_hoan` · `tratruoc/dung`) giữ ba ô dùng chung, `tra_lai` ở gói `hoadon`.
+- *File đổi:* mới — `be/internal/hoadon/ghi.go` · `tien.go` · `sql/{ghi,ghi_hoan,giao_xong,hoan,thu_no,tra_lai,trao_tai_quay}/`
+  · `sql/no.sql` · `be/internal/tratruoc/` · `be/internal/ket/` · `be/internal/ngayban/` · `be/internal/don/duong_tien_test.go`
+  (Claude) · `duong_tien_hinh_test.go` (Codex) · `docs/product/3-be/06-duong-tien.md`; sửa — `be/internal/hoadon/hoadon.go`
+  (xoá `sql/dong/them.sql`) · `be/internal/authz/` · `be/internal/apierr/` · `be/internal/don/don_test.go` (`dung()`) ·
+  `mang_di_test.go` · `mang_di_hinh_test.go` (chỉ đổi tên test, **F-061**) · `openapi.yaml` (0.5.0 → 0.6.0) ·
+  `01-hop-dong-api.md` · `02-vai-va-quyen.md` · `00-index.md` · `04-luoc-do-duong-tien.md` §5 · `09-doi-chieu-bat-bien.md`
+  · `scripts/check-links.ignore` (gỡ dòng tạm) · `work/findings.md` (F-061) · `work/backlog.md` · entry này. ADR-089 ·
+  U-076 · nhận việc đã vào commit `03b179e`.
+- *Duyệt:* `duong_tien_test.go` không đổi điều kiện kiểm nào từ lúc giao (Codex không chạm, `4e5c513c…`); Claude sửa
+  sau đó hai lỗi khung của chính mình — nhãn bàn trùng khi một test dựng nhiều phiên, và giảm giá 5.000 trên đơn mẫu
+  4.000 làm tiền mặt âm — cùng đổi tên bốn test theo `QC-17`. Claude đọc diff thật của `ket_ngay.sql` (chép đúng
+  từng hạng tử của `pg_temp.ket_ngay`), `ngayban.go`, `ket.go` (thứ tự xét của điểm 5), `ghi.go`. Codex thêm một
+  khoá tư vấn theo ngày — cửa tiền giữ khoá chung, cửa ký giữ khoá riêng — để không lần ghi nào lọt giữa phép tính
+  két và lần ký; chặt hơn thiết kế, giữ. Không red flag Gate 4.
+- *Bằng chứng theo nghiệm thu:* (1) `be-check: PASS` ở worktree, mọi gói `ok`; ngày giả `2031-03-14: két 1215000 −
+  đầu két 1200000 = vế phải 15000 ⇒ lệch 0 (cửa và bộ đối chiếu)`; lỗi cài trong test `hoá đơn 15 ghi chuyển khoản
+  4000 ⇒ lệch 4000 ở cả cửa và bộ đối chiếu; ngày không đóng`. **Lỗi cài thêm** (từng cái một): bỏ hạng tử hoàn chéo
+  ở phép trừ của cửa ⇒ `--- FAIL: TestI021_MotNgayBanGiaQuaCuaRa0dLech` (`expected_vnd:14000 gap_vnd:1000`); bỏ kiểm
+  ngày đã ký ⇒ cùng test đỏ (`muốn 409 sale_day_reconciled …, nhận 201`); gỡ cả hai, `shasum -c` về đúng từng byte.
+  (2)(3) `check-api-contract: PASS — hợp đồng 0.6.0; 30 đường gọi ở hợp đồng, 30 ở code; 48 mã lỗi; … 26 cửa, 26 dòng
+  ma trận, 26 khai báo authz.Door`. (4) `check-write-paths: PASS — 24 ô ghi, 26 cửa, 81 file đã soát`. (5) dòng
+  `06-duong-tien.md` ở `00-index.md`. (6) `./scripts/gate.sh` ở worktree ⇒ `PASS gate không cổng nào đỏ` (be-check,
+  db-check, Gate 1f · 1g). Ở clone chính sau `git apply`: `diff -rq be ../lean_wt/P3-09/be` rỗng, bốn file tài liệu
+  giống hệt. Gate ở clone chính lần đầu đỏ vì việc của phiên khác (migration chưa theo dõi
+  `20261009120000_vet_che_do_nghiem` của `P3-11` cùng sửa đổi dưới `db/` — không file nào thuộc lát này); sau khi
+  phiên ấy rời clone chính, `./scripts/gate.sh` ở clone chính ⇒ `PASS gate không cổng nào đỏ` (be-check, db-check
+  `102 câu … 102 lỗi cài`, Gate 1f `24 ô ghi, 26 cửa`, Gate 1g hợp đồng 0.6.0).
+- *Còn lại:* **U-076** · **U-073** · **U-058** — cửa từ chối kèm mã; hai đường đọc chưa đòi người gọi, `GET /debts`
+  trả tên người nợ — gỡ cùng **U-075**, trước khi backend chạy thật; huỷ đơn đã xác nhận (`P3-10`); sửa dòng tiền,
+  sửa tiền đầu két, nhập bù (`P3-11`); **F-061**.
 
 [↑ đầu file](#top)
 

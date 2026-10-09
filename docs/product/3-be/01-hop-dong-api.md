@@ -179,6 +179,10 @@ Tra dấu sau quyền và trước I-008: gửi lại trả trạng thái hiện
 ngừng nhận đơn; khác nội dung trả `submission_code_conflict`. Tranh chấp dấu chạy lại cả giao dịch
 như tại bàn. Cách thi công: [luồng mang đi](05-luong-mang-di.md).
 
+**Đường tiền** (`P3-09`, ADR-089, 2026-10-09): không tạo đơn mới nên không nhận submission_code.
+Mỗi lần bấm thu, hoàn, đếm hay ký là một thao tác; gửi lại không mang nghĩa trả lại kết quả cũ.
+Khoá đơn/phiên, chuỗi và khoá duy nhất giữ lời từ chối tương ứng. Cách đọc: [đường tiền](06-duong-tien.md).
+
 ## 9. Hợp đồng thắng code — và lệnh chấm điều ấy
 
 **Hợp đồng thắng code** (**ADR-084**): code khác hợp đồng là lỗi của code. Đổi một đường gọi, một mã hay
@@ -203,7 +207,8 @@ theo schema của hợp đồng.
 | `P3-06` | **xong 2026-10-06** — §1 thêm sáu đường gọi (tính thử, menu, bốn cửa sửa menu); §3 sáu mã của giá và menu; §4 xét dòng của bảng menu và bảng dòng đơn (`internal`), dòng `sales_order_*` để lại cho phần kênh của cửa tạo lượt gọi (`P3-07` · `P3-08`); hàm và bảng ca: [`03-ham-gia.md`](03-ham-gia.md) |
 | `P3-07` | **xong 2026-10-06** — thêm tám đường gọi tại bàn, mười mã; xét ràng buộc của đơn tại bàn, phiên, bàn và hoá đơn; §8 so nội dung và trả lại đơn; [luồng tại bàn](04-luong-tai-ban.md) |
 | `P3-08` | **xong 2026-10-09** — ba đường gọi ngoài bàn, bốn mã 409; liên hệ tối thiểu, dấu lần gửi, I-008 cho cả năm kênh và rời quán có chặn S-6; xét năm ràng buộc liên hệ; [luồng mang đi](05-luong-mang-di.md) |
-| `P3-09`…`P3-12` | §1 thêm đường gọi cùng lượt dựng cửa · §3 mã của luật · §4 xét dòng của bảng mình ghi · §5 · §6 · §7 tăng phiên bản |
+| `P3-09` | hợp đồng 0.6.0; mười một đường gọi; xét mọi tên của bảng tiền; booked_at/ngày bán do đồng hồ giao dịch cấp, ngày ký nhận từ đường dẫn (ADR-089 điểm 3, 5); [đường tiền](06-duong-tien.md) |
+| `P3-10`…`P3-12` | §1 thêm đường gọi cùng lượt dựng cửa · §3 mã của luật · §4 xét dòng của bảng mình ghi · §5 · §6 · §7 tăng phiên bản |
 | `P3-13` | §9 — ô cổng *hợp đồng khớp code*: Gate 1g xanh và đã từng đỏ (`scripts/check-api-contract.test.sh`) |
 | pha 4 | `openapi.yaml` — sinh type; §3 cách đọc lỗi; §5 không tự tính |
 

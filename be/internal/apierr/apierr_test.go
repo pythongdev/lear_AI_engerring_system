@@ -57,13 +57,14 @@ func TestQC10_LoiTuChoiTriggerMangTen(t *testing.T) {
 
 	cases := []struct {
 		name, sql, sqlstate, constraint string
+		code                            apierr.Code
 	}{
 		{"ghi_so_ngay_da_ky",
 			"INSERT INTO shop.cash_count_line (cash_count_id, denomination_vnd, amount_vnd) SELECT id, 20000, 20000 FROM shop.cash_count WHERE sale_date = '2026-01-01'",
-			"23001", "cash_count_line_reconciled_day_locked_check"},
+			"23001", "cash_count_line_reconciled_day_locked_check", apierr.CodeSaleDayReconciled},
 		{"dau_tren_so_dem_rong",
 			"INSERT INTO shop.reconciled_day (sale_date) VALUES ('2026-01-02')",
-			"23514", "reconciled_day_cash_count_has_lines_check"},
+			"23514", "reconciled_day_cash_count_has_lines_check", apierr.CodeCashDayIncomplete},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -79,8 +80,8 @@ func TestQC10_LoiTuChoiTriggerMangTen(t *testing.T) {
 				t.Fatalf("mong SQLSTATE %s + %q, nhận %s + %q", c.sqlstate, c.constraint, pg.Code, pg.ConstraintName)
 			}
 			got, name := apierr.FromDB(err)
-			if got.Code != apierr.CodeInternalError || name != c.constraint {
-				t.Fatalf("FromDB: mong internal_error + %q (dòng unreviewed), nhận %+v + %q", c.constraint, got, name)
+			if got.Code != c.code || name != c.constraint {
+				t.Fatalf("FromDB: mong %s + %q (ADR-089), nhận %+v + %q", c.code, c.constraint, got, name)
 			}
 		})
 	}

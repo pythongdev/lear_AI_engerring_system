@@ -726,7 +726,7 @@ func TestI012_CuaNgoaiBanCuaNguoiPhaiDungQuay(t *testing.T) {
 // Cửa rời quán là chỗ suy luận S-6 đặt mốc ấy (shop-facts.md §7.2). Đơn còn việc trạm chưa ra bàn thì
 // rời quán buộc cửa phải chọn: tự ghi "đã ra bàn" (đoán S-6) hay để lại (đoán ngược) — cửa từ chối kèm
 // mã của chỗ đang mở, không đổi gì.
-func TestS6_RoiQuanKhiConViecTramChuaRaBanBiTuChoi(t *testing.T) {
+func TestI016_RoiQuanKhiConViecTramChuaRaBanBiTuChoi(t *testing.T) {
 	n := dungNgoai(t)
 	for _, ca := range []struct {
 		ten  string

@@ -1,0 +1,1 @@
+SELECT id FROM bill WHERE id = $1 FOR UPDATE
