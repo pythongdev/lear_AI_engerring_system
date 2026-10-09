@@ -104,6 +104,7 @@ có câu trả lời mới từ người.
 | ADR-085 | **Quyền là một lớp của cửa, đọc tại mốc giao dịch của cửa ấy**: mỗi cửa khai đúng một lớp (`quay` · `chu_quan` mở ở P3-05), ma trận `02-vai-va-quyen.md` một dòng mỗi cửa, ba tập (thư mục cửa · dòng ma trận · khai báo Go) bằng nhau, Gate 1g chấm; `authz.Run` kiểm quyền và khai người thao tác trong cùng giao dịch; khách QR mang mã, không mang bàn; danh tính tách khỏi cách đăng nhập (U-075) | Đã chốt 2026-10-06 (giao cho phiên, P3-05; Claude thiết kế và thi công) | — | P3-05 · ADR-083 · ADR-084 · U-075 · U-062 |
 | ADR-086 | **Một hàm tính giá `gia.Tinh`, gọi từ tính thử, menu và cửa ghi đơn; một cửa tạo lượt gọi `don/tao_luot_goi` cho cả năm kênh** — `P3-06` dựng phần giá (tổ hợp, ngừng bán, ảnh chụp) và lối vào đặt hộ tại quầy, chưa đường gọi HTTP; `P3-07` · `P3-08` thêm phần kênh vào chính cửa ấy; cửa từ chối, không sửa hộ, không tự điền mặc định (**F-059**); bốn cửa sửa menu của chủ quán bắt buộc lý do, để vết | Đã chốt 2026-10-06 (giao cho phiên, P3-06; Claude thiết kế, Codex thi công) | — | P3-06 · ADR-082 · ADR-085 · F-059 |
 | ADR-087 | **Luồng tại bàn: cửa tạo lượt gọi tự tìm phiên từ bàn (mở phiên ở lượt gọi đầu, tầng 1 chặn hai phiên, cửa thử lại); cột trạng thái của đơn và của phiên mỗi cột một cửa chuyển `vongdoi/…` chạy trong giao dịch của cửa gọi; cửa đóng `hoadon/dong` ghi hoá đơn + đóng phiên trong một giao dịch** — lớp quyền mới `quay_hoac_ma_ban` · `nguoi_quan` · `theo_cua_goi`; cửa ghép bàn chưa dựng | Đã chốt 2026-10-06 (giao cho phiên, P3-07; Claude thiết kế, Codex thi công) | — | P3-07 · ADR-082 · ADR-085 · ADR-086 · F-060 |
+| ADR-088 | **Luồng ngoài bàn: ba kênh không gắn bàn tạo đơn qua chính cửa `don/tao_luot_goi` (lớp đổi thành `quay_hoac_khach` — thêm nhánh khách web); cửa xét I-008 cho cả năm kênh, sau dấu lần gửi, tại `now()` của giao dịch qua một đồng hồ test thay được; cửa `don/roi_quan` từ chối kèm mã khi đơn còn việc trạm chưa ra bàn (S-6)** | Đã chốt 2026-10-09 (giao cho phiên, P3-08; Claude thiết kế, Codex thi công) | — | P3-08 · ADR-061 · ADR-078 · ADR-086 · ADR-087 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -5920,3 +5921,90 @@ rời quầy / sau khi mã bị thay bị từ chối (điểm 2).
 **Applies to:** `P3-07`…`P3-10`; `be/internal/don/` · `be/internal/vongdoi/` · `be/internal/phien/` ·
 `be/internal/hoadon/` · `be/internal/ban/` · `be/internal/authz/`; `docs/product/3-be/04-luong-tai-ban.md` ·
 `openapi.yaml` · `02-vai-va-quyen.md`; **F-060** · **F-046** · **U-055**.
+
+### ADR-088 — Luồng ngoài bàn: ba kênh không gắn bàn qua chính cửa tạo lượt gọi; cửa xét I-008 cho cả năm kênh sau dấu lần gửi; cửa rời quán không đoán S-6
+
+**Trạng thái:** Đã chốt 2026-10-09, **giao cho phiên** (task `P3-08`, bước 8/14 của pha 3; chủ repo giao
+*"hãy đọc kĩ va làm yêu cầu codex làm bạn kiểm tra"*). Claude thiết kế và viết test đỏ trước; Codex thi
+công trong worktree riêng; Claude duyệt. Quyết định này **không sở hữu** mức liên hệ tối thiểu
+(`master_plan/shop-facts.md` §6.5, ràng buộc ở migration bước `lien_he_don_mang_di`), giờ bán
+(`shop-facts.md` §1), vòng đời (`05-vong-doi.md` §5.2), hay tầng của `I-007` `I-008` `I-022` `I-024`
+(của `03-bao-ve-invariant.md`). Đường gọi và mã: `openapi.yaml`; cách đọc lát:
+`docs/product/3-be/05-luong-mang-di.md`.
+
+**Decision:**
+
+1. **Không mở cửa thứ hai.** `delivery` · `pickup` (khách tự gửi trên web) và `phone_preorder` (người
+   đứng quầy nhập hộ) đi qua **chính** cửa `don/tao_luot_goi` (**ADR-086** điểm 2), bằng hai đường gọi:
+   `POST /online-orders` (khách, không người) và `POST /phone-orders` (người). Lớp của cửa đổi từ
+   `quay_hoac_ma_ban` thành **`quay_hoac_khach`**: người đang đứng quầy; hoặc không người mà mang mã QR
+   hiện hành; hoặc không người là khách web gửi đơn `delivery` / `pickup`. Hai kênh web được mở cho
+   người lạ vì đó là luật kênh — *khách tự bấm trên web* (`02-kenh-ban.md`) — và chính vì thế chúng phải
+   qua quầy duyệt (`shop-facts.md` §6.2). Đơn hotline đi nhánh người đứng quầy: `05-vong-doi.md` §5.2
+   dòng đầu ghi *người đứng quầy* nhập đơn hotline.
+2. **Thiếu liên hệ là thiếu trường bắt buộc.** Đường gọi kiểm hình trước quyền: số điện thoại, địa chỉ khi
+   giao tận nơi, giờ cần hàng khi tới lấy hoặc hotline, cách trao hàng của hotline — thiếu hay chỉ có
+   khoảng trắng ⇒ `invalid_request` kèm tên trường. Tầng 1 (năm ràng buộc trên `sales_order`) vẫn là chỗ
+   giữ thật; cửa không để database từ chối theo chúng, nên năm dòng ấy là `internal`. Cửa đòi **đúng** mức
+   §6.5, không hơn (vế ngược của `I-022`): tên, ghi chú, giờ cần hàng của đơn giao không chặn.
+3. **Thứ tự trong cửa: hình → quyền → dấu → I-008 → kênh → giá → ghi.** Dấu đứng trước I-008 vì lần gửi
+   lại không tạo đơn mới (`I-024` tầng 3, **ADR-061**): gửi lại lúc đã tạm dừng hay đã hết giờ vẫn nhận
+   lại đơn cũ. I-008 xét ba điều kiện **theo thứ tự, dừng ở cái đầu tiên chặn** — tạm dừng
+   (`order_intake_pause`, khoảng `[)`) ⇒ `order_intake_paused`; ngoài giờ bán, hai đầu tính là trong giờ
+   như `db/reconcile/i008.sql` tập 1 ⇒ `outside_selling_hours`; quán mù (`shop_blind_spell`, `[)`), chỉ ba
+   kênh khách tự bấm ⇒ `shop_not_seeing_orders`. Áp cho **cả năm** kênh, kể cả hai kênh tại bàn của
+   `P3-07`: `I-008` nói *không đơn nào*, và tập 1 · 2 của phép đối chiếu đọc mọi đơn. I-008 đứng trước mọi
+   lần đọc hay mở phiên bàn, nên lời từ chối không ghi dòng nào.
+4. **Mốc là `now()` của giao dịch, qua một đồng hồ test thay được.** Mốc xét giờ bán phải là mốc ghi
+   `created_at` — cùng một `now()` — không phải đồng hồ của máy gửi (`02-thoi-gian-ngay-ban.md` §3, *bẫy*
+   của entry `P3-08`). Cửa đọc nó qua `don.DongHo`; bản thật trả `now()` của chính giao dịch, test giữ
+   điều ấy, và mọi test khác thay nó bằng một mốc cố định. Giờ mở và giờ đóng là hằng trong code, trỏ
+   `shop-facts.md` §1; test đọc shop-facts lúc chạy nên hai bản lệch là đỏ (cùng cách bảng chuyển của
+   **ADR-087** điểm 3). Giờ cần hàng khách gửi lên bị cắt về micro giây ngay lúc đọc — độ chính xác
+   của cột — để lần gửi lại so đúng mốc đã ghi (thêm lúc duyệt, 2026-10-09; Codex nêu ca nano giây).
+5. **Cửa đọc khoảng quán mù đã có chỗ cất, không phát hiện nó.** Entry `P3-08` bước 5 giao vế *mất kết
+   nối* cho `P3-12`; phần của `P3-12` là cách máy biết quán mù và cửa ghi khoảng mù. Bảng
+   `shop_blind_spell` đã có từ **ADR-078**, và mệnh đề chỉ đòi *một khi hệ thống đã xác định quán đang mù,
+   cửa phải chặn đúng ba kênh* — nên chỗ nối đúng nhất là cửa **đọc** bảng ấy ngay từ lát này. `P3-12`
+   không phải sửa cửa tạo lượt gọi, chỉ phải ghi khoảng.
+6. **Cửa rời quán `don/roi_quan`** (lớp `quay`): đơn giao tận nơi *Đang thực hiện → Đang giao*, do người
+   đứng quầy bấm lúc đơn rời quán (`05-vong-doi.md` §5.2, `shop-facts.md` §6.7, U-023 đã đóng). Đơn tới
+   lấy, đơn tại bàn, đơn chưa *Đang thực hiện* ⇒ `order_transition_not_allowed`.
+7. **S-6 bị từ chối kèm mã, không đoán.** Suy luận S-6 (`shop-facts.md` §7.2) đặt mốc *"đã ra bàn"* của đơn
+   giao vào **đúng** lần bấm rời quán. Nếu đơn còn một việc trạm chưa *served* thì cửa rời quán buộc phải
+   chọn: tự ghi *đã ra bàn* (theo suy luận) hay để nguyên (theo cách đọc ngược — *tới tay khách*). Cửa
+   không chọn: còn việc chưa ra bàn ⇒ `delivery_served_mark_undecided`, không đổi gì; không còn ⇒ chuyển
+   bình thường. Cửa **không bao giờ** ghi `station_job`. Hệ quả nói thẳng: khi `P3-10` nổ việc trạm, đơn
+   giao sẽ không rời quán được qua máy cho tới khi chủ quán trả lời S-6 — đó là giá của việc không đoán, và
+   là lý do câu ấy phải được hỏi trước `P3-10`.
+
+**Why:**
+
+- **Một cửa cho năm kênh** giữ đúng một chỗ xét I-008, một chỗ tra dấu và một hàm giá — ba kênh thêm một
+  cửa thì có hai chỗ phải nhớ thứ tự tạm dừng → giờ bán → quán mù.
+- **Dấu trước I-008** là câu của `03-bao-ve-invariant.md` hàng `I-024`; đặt I-008 trước thì một khách mất
+  mạng gửi lại lúc 11:00:05 nhận lời *hết giờ* cho một đơn quán đã nhận.
+- **Đồng hồ thay được** là cách duy nhất để test giờ bán tất định mà không đổi `now()` của PostgreSQL;
+  bản thật vẫn là `now()`, và một test giữ điều ấy.
+
+**Rejected alternatives:**
+
+- *Một cửa `don/tao_don_mang_di` riêng.* Bác — **ADR-086** điểm 2 đã hẹn đổi lớp, không mở cửa thứ hai.
+- *Để database từ chối thiếu liên hệ và dịch tên ràng buộc ra một mã.* Bác: lời từ chối của ràng buộc
+  không mang tên trường, nên FE không biết ô nào thiếu; thiếu trường bắt buộc đã có mã `invalid_request`
+  kèm `field` (`01-hop-dong-api.md` §3).
+- *Chỉ xét I-008 ở ba kênh ngoài bàn.* Bác: `I-008` nói *không đơn nào*; tập 1 · 2 của phép đối chiếu
+  đọc cả đơn tại bàn.
+- *Mốc xét giờ bán lấy từ Go (`time.Now()`).* Bác: hai đồng hồ — Go và database — là đúng thứ §3 của
+  `02-thoi-gian-ngay-ban.md` cấm; đơn tạo lúc 11:00:00.4 có thể qua bên này mà rơi ngoài giờ bên kia.
+- *Cửa rời quán tự ghi "đã ra bàn" cho mọi việc trạm của đơn.* Bác — đó là S-6 đọc thành luật.
+
+**Giới hạn có tên:** cửa bật · tắt **tạm dừng nhận đơn** chưa có — *ai bấm* chưa có lời
+(`architecture.md` §7 dòng *Hết nguyên liệu → tạm dừng nhận đơn*), khoảng tạm dừng hôm nay chỉ ghi tay ở
+database; **phát hiện quán mù** và cửa ghi khoảng mù — `P3-12`; **Hoàn thành** của đơn lẻ cần hoá đơn đơn
+lẻ (`sales_order_bill_fkey`) — `P3-09` · `P3-10`; giới hạn *đặt trước tối đa một ngày* (U-036) và giờ cần
+hàng ở quá khứ — cửa không xét, chưa có luật cho máy; **đường đọc** *quán đang nhận đơn không* cho web
+(`shop-facts.md` §6 quy tắc 8) chưa có.
+
+**Applies to:** `P3-08`…`P3-12`; `be/internal/don/` · `be/internal/authz/` · `be/internal/apierr/`;
+`docs/product/3-be/05-luong-mang-di.md` · `openapi.yaml` · `02-vai-va-quyen.md`; **S-6** · **ADR-078**.

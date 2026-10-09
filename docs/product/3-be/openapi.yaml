@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.4.0
+  version: 0.5.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -390,6 +390,86 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /online-orders:
+    post:
+      operationId: createOnlineOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnlineOrderRequest'
+      responses:
+        '201':
+          description: Đã tạo.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TakeawayOrder'
+        '200':
+          description: Thành công; gửi lại trả trạng thái hiện tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TakeawayOrder'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /phone-orders:
+    post:
+      operationId: createPhoneOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhoneOrderRequest'
+      responses:
+        '201':
+          description: Đã tạo.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TakeawayOrder'
+        '200':
+          description: Thành công; gửi lại trả trạng thái hiện tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TakeawayOrder'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders/{sales_order_id}/departure:
+    post:
+      operationId: departOrder
+      parameters:
+        - name: sales_order_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Đơn giao tận nơi đã rời quán; hai trường phiên là null.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderTransition'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /table-orders:
     post:
       operationId: createTableOrder
@@ -596,6 +676,140 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    OnlineOrderRequest:
+      type: object
+      description: >-
+        Kiểm submission_code, trường cấm, kênh/cách trao, liên hệ rồi lines.
+        Chuỗi bắt buộc phải còn nội dung sau khi bỏ khoảng trắng; giữ nguyên từng byte khi ghi.
+        Cấm dining_table_id và table_session_id kể cả null; bỏ trường lạ khác, kể cả giá.
+      not:
+        anyOf:
+          - required: [dining_table_id]
+          - required: [table_session_id]
+      required: [submission_code, channel_code, customer_phone, lines]
+      additionalProperties: true
+      allOf:
+        - if:
+            properties:
+              channel_code:
+                const: delivery
+          then:
+            required: [delivery_address]
+            properties:
+              delivery_address:
+                type: string
+                minLength: 1
+        - if:
+            properties:
+              channel_code:
+                const: pickup
+          then:
+            required: [customer_needed_at]
+            properties:
+              customer_needed_at:
+                $ref: '#/components/schemas/Instant'
+      properties:
+        submission_code:
+          $ref: '#/components/schemas/SubmissionCode'
+        channel_code:
+          type: string
+          enum: [delivery, pickup]
+        customer_phone:
+          type: string
+          minLength: 1
+        delivery_address:
+          type: [string, 'null']
+        customer_needed_at:
+          type: [string, 'null']
+          format: date-time
+          description: RFC 3339 có độ lệch; bắt buộc khi pickup.
+        customer_name:
+          type: [string, 'null']
+        contact_note:
+          type: [string, 'null']
+        lines:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/PriceLineRequest'
+    PhoneOrderRequest:
+      type: object
+      description: >-
+        Kiểm submission_code, trường cấm, kênh/cách trao, liên hệ rồi lines.
+        Chuỗi bắt buộc phải còn nội dung sau khi bỏ khoảng trắng; giữ nguyên từng byte khi ghi.
+        Cấm dining_table_id và table_session_id kể cả null; bỏ trường lạ khác, kể cả giá.
+      not:
+        anyOf:
+          - required: [dining_table_id]
+          - required: [table_session_id]
+      required: [submission_code, handover_code, customer_phone, customer_needed_at, lines]
+      additionalProperties: true
+      allOf:
+        - if:
+            properties:
+              handover_code:
+                const: door_delivery
+          then:
+            required: [delivery_address]
+            properties:
+              delivery_address:
+                type: string
+                minLength: 1
+      properties:
+        submission_code:
+          $ref: '#/components/schemas/SubmissionCode'
+        handover_code:
+          type: string
+          enum: [door_delivery, shop_pickup]
+        customer_phone:
+          type: string
+          minLength: 1
+        delivery_address:
+          type: [string, 'null']
+        customer_needed_at:
+          $ref: '#/components/schemas/Instant'
+        customer_name:
+          type: [string, 'null']
+        contact_note:
+          type: [string, 'null']
+        lines:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/PriceLineRequest'
+    TakeawayOrder:
+      type: object
+      required: [sales_order_id, channel_code, handover_code, status, total_vnd, lines, customer_phone, delivery_address, customer_needed_at, customer_name, contact_note]
+      additionalProperties: false
+      properties:
+        sales_order_id:
+          type: integer
+          format: int64
+        channel_code:
+          type: string
+          enum: [delivery, pickup, phone_preorder]
+        status:
+          type: string
+        total_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceLine'
+        handover_code:
+          type: string
+          enum: [door_delivery, shop_pickup]
+        customer_phone:
+          type: string
+        delivery_address:
+          type: [string, 'null']
+        customer_needed_at:
+          type: [string, 'null']
+          format: date-time
+        customer_name:
+          type: [string, 'null']
+        contact_note:
+          type: [string, 'null']
     TableOrderLineRequest:
       allOf:
         - $ref: '#/components/schemas/PriceLineRequest'
@@ -787,7 +1001,15 @@ components:
         - table_session_has_open_orders
         - payment_parts_mismatch
         - debtor_name_mismatch
+        - order_intake_paused
+        - outside_selling_hours
+        - shop_not_seeing_orders
+        - delivery_served_mark_undecided
       x-http-status:
+        order_intake_paused: 409
+        outside_selling_hours: 409
+        shop_not_seeing_orders: 409
+        delivery_served_mark_undecided: 409
         internal_error: 500
         invalid_request: 400
         unauthenticated: 401
@@ -1334,8 +1556,8 @@ x-constraint-errors:
   refund_source_method_code_check: unreviewed
   sales_order_bill_fkey: internal
   sales_order_channel_code_check: internal
-  sales_order_door_delivery_address_check: unreviewed
-  sales_order_handover_code_check: unreviewed
+  sales_order_door_delivery_address_check: internal
+  sales_order_handover_code_check: internal
   sales_order_id_if_approved_key: internal
   sales_order_id_if_cancelled_key: internal
   sales_order_id_if_standalone_key: internal
@@ -1347,9 +1569,9 @@ x-constraint-errors:
   sales_order_status_check: internal
   sales_order_submission_code_key: internal
   sales_order_submission_code_not_blank_check: internal
-  sales_order_takeaway_handover_check: unreviewed
-  sales_order_takeaway_needed_at_check: unreviewed
-  sales_order_takeaway_phone_check: unreviewed
+  sales_order_takeaway_handover_check: internal
+  sales_order_takeaway_needed_at_check: internal
+  sales_order_takeaway_phone_check: internal
   shop_blind_spell_declared_by_person_fkey: unreviewed
   shop_blind_spell_ended_after_started_check: unreviewed
   shop_blind_spell_ended_by_iff_ended_check: unreviewed

@@ -28,7 +28,7 @@ const docMaVuaCap = `SELECT code, dining_table_id,
        to_char(issued_at, 'YYYY-MM-DD"T"HH24:MI:SS.USTZH:TZM')
   FROM qr_code WHERE id = $1`
 
-// Một bản câu tra mã ở authz, tránh vòng import với lớp quay_hoac_ma_ban.
+// Một bản câu tra mã ở authz, tránh vòng import với lớp quay_hoac_khach.
 type Querier = authz.Querier
 type Seat = authz.Seat
 

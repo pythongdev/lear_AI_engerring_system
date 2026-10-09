@@ -34,9 +34,11 @@ cửa ghi đúng một dòng. Cột *Lớp* ở đây và khai báo `authz.Door`
    chủ quán; chủ quán không đứng quầy **không** qua được lớp của quầy (`YC-16`, `shop-facts.md` §6.13).
 4. **Người bấm là người đã được kiểm.** Cửa khai người thao tác của giao dịch bằng **chính** người vừa
    qua lớp, rồi mới chạy thân cửa — cột *ai bấm* của mọi thao tác chạm tiền lấy đúng người ấy (`I-012`
-   tầng 1). Không xác định được người ở cửa cần người ⇒ `unauthenticated`, thân cửa không chạy; nhánh khách QR ở câu 5 không khai người.
-5. **Khách QR không phải một người của quán.** Đường của khách mang **mã**, không mang bàn; bàn tra từ
-   mã đang hiện hành (`I-023`). Khách gửi kèm một định danh bàn ⇒ `invalid_request`, không dùng.
+   tầng 1). Không xác định được người ở cửa cần người ⇒ `unauthenticated`, thân cửa không chạy; nhánh khách ở câu 5 không khai người.
+5. **Khách QR và khách web không phải một người của quán.** Đường QR mang **mã**, không mang bàn;
+   bàn tra từ mã đang hiện hành (`I-023`). Khách web tự gửi `delivery` / `pickup`, không đọc người
+   kể cả có header. Khách gửi kèm một định danh bàn ⇒ `invalid_request`, không dùng; đơn web còn
+   cấm mã phiên (`I-007`). Cả hai nhánh khách không khai người thao tác (ADR-088).
 
 Lời từ chối của quyền mang mã riêng (`01-hop-dong-api.md` §3): `unauthenticated` · `not_on_counter_duty` ·
 `owner_only`; status ở hợp đồng.
@@ -47,7 +49,7 @@ Lời từ chối của quyền mang mã riêng (`01-hop-dong-api.md` §3): `una
 |---|---|---|
 | `quay` | người bấm có một khoảng `counter_duty` chứa mốc giao dịch của cửa | `architecture.md` §4 điều 1; `shop-facts.md` §3 · §6.13 · §8.8 (`C36`) |
 | `chu_quan` | người bấm mang cờ chủ quán (`person.is_owner`), đứng đâu cũng được | `shop-facts.md` §3 (chủ quán là vai riêng, ngoài năm trạm); `YC-16` |
-| `quay_hoac_ma_ban` | người có thật đang đứng quầy; hoặc không có người và mang mã QR hiện hành, bàn tra từ mã trong giao dịch; khách không khai người thao tác | §1 câu 5; `I-023`; ADR-087 |
+| `quay_hoac_khach` | người có thật đang đứng quầy; hoặc không có người và mang mã QR hiện hành, bàn tra từ mã trong giao dịch; hoặc khách web không người gửi delivery / pickup; khách không khai người thao tác | `02-kenh-ban.md` bảng kênh — Delivery/Pickup khách tự bấm trên web; §1 câu 5; `I-023`; ADR-087; ADR-088 |
 | `nguoi_quan` | người bấm là một `person` có thật, không cần đứng đâu | `05-vong-doi.md` §5.3 dòng dọn bàn; `U-055` — **suy luận của phiên, ADR-087 điểm 7** (2026-10-06) |
 | `theo_cua_goi` | không có lối vào; `authz.Run` từ chối, hàm nhận giao dịch đã kiểm quyền của cửa gọi | ADR-087 điểm 3 |
 
@@ -63,12 +65,13 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | Cửa | Lớp | Nguồn |
 |---|---|---|
 | `qr/doi_ma` | `chu_quan` | `shop-facts.md` §6 quy tắc 2 — **U-062** đã đóng: chỉ chủ quán đổi mã, đổi khi quán bị hack |
-| `don/tao_luot_goi` | `quay_hoac_ma_ban` | `shop-facts.md` §2 — Staff POS; §1 câu 5 và `I-023` — khách QR; ADR-087 |
+| `don/tao_luot_goi` | `quay_hoac_khach` | `shop-facts.md` §2 — Staff POS; §1 câu 5 và `I-023` — khách QR; `02-kenh-ban.md` bảng kênh — khách web và người nhập hotline; ADR-087; ADR-088 |
 | `menu/doi_gia_thanh_phan` | `chu_quan` | `architecture.md` §6.1 · `I-012` (chủ quán đổi giá) |
 | `menu/doi_phu_thu` | `chu_quan` | `architecture.md` §6.1 · `I-012` |
 | `menu/sua_thanh_phan` | `chu_quan` | `architecture.md` §6.1 · `I-011` · `I-012` |
 | `menu/ngung_ban` | `chu_quan` | `architecture.md` §6.1 · `03-lat-cat.md` §3.3.4 |
 | `don/duyet` | `quay` | `05-vong-doi.md` §5.2 — quầy duyệt đơn chờ xác nhận |
+| `don/roi_quan` | `quay` | `05-vong-doi.md` §5.2 dòng *Đang thực hiện → Đang giao*; `shop-facts.md` §6.7 (U-023) |
 | `don/tu_choi` | `quay` | `05-vong-doi.md` §5.2 — quầy từ chối đơn chờ xác nhận |
 | `phien/tinh_tien` | `quay` | `05-vong-doi.md` §5.3 — quầy tính tổng phiên |
 | `hoadon/dong` | `quay` | `05-vong-doi.md` §5.3 — đóng phiên đã thu hoặc cho nợ |
@@ -84,7 +87,7 @@ file test, và một dòng ở đây trỏ nguồn nghiệp vụ. Thiếu một 
 | Chỗ trống | Hôm nay | Ai gỡ |
 |---|---|---|
 | **Cách đăng nhập** của nhân viên và chủ quán | cửa nhận người qua giao diện `authz.Authenticator`; chưa có bản thật, chưa có chương trình chạy | chủ quán — **U-075** |
-| **Cửa lớp `quay` đầu tiên** | đã có đường gọi ở `P3-07`: duyệt, từ chối, tính tiền, đóng; tạo lượt gọi đổi sang `quay_hoac_ma_ban` | [Luồng tại bàn](04-luong-tai-ban.md) |
+| **Cửa lớp `quay` đầu tiên** | đã có đường gọi ở `P3-07`: duyệt, từ chối, tính tiền, đóng; tạo lượt gọi đổi sang `quay_hoac_khach` | [Luồng tại bàn](04-luong-tai-ban.md) |
 | **Mở · khép khoảng trực quầy** | khoảng trực chỉ ghi được bằng tay ở database | `P3-11` |
 | **Hai người dùng chung một danh tính** | máy không phân biệt được (`I-012` tầng 4) | không gỡ ở máy — đối chiếu `I-012/3` |
 

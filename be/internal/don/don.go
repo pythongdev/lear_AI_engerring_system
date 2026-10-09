@@ -1,4 +1,4 @@
-// Package don giữ một cửa tạo lượt gọi cho mọi kênh, và cửa duyệt/từ chối tại bàn.
+// Package don giữ một cửa tạo lượt gọi cho mọi kênh, và các cửa duyệt, từ chối, rời quán.
 package don
 
 import (
@@ -19,7 +19,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var TaoLuotGoi = authz.Door{Code: "don/tao_luot_goi", Need: authz.NeedCounterOrQR}
+var TaoLuotGoi = authz.Door{Code: "don/tao_luot_goi", Need: authz.NeedCounterOrCustomer}
 
 //go:embed sql/tao_luot_goi/them_don.sql
 var themDon string
@@ -53,8 +53,11 @@ type YeuCauTaiQuay struct {
 	SubmissionCode string    `json:"submission_code"`
 	DiningTableID  int64     `json:"dining_table_id"`
 	Lines          []DongGoi `json:"lines"`
+	kenh           string    `json:"-"`
+	ngoaiBan       *LienHe   `json:"-"`
 }
 type DaTao struct {
+	LienHe         LienHe     `json:"-"`
 	SalesOrderID   int64      `json:"sales_order_id"`
 	TableSessionID int64      `json:"table_session_id"`
 	DiningTableID  int64      `json:"dining_table_id"`
@@ -80,7 +83,7 @@ func tao(ctx context.Context, pool *pgxpool.Pool, caller authz.Caller, yc YeuCau
 	if !submissionPattern.MatchString(yc.SubmissionCode) {
 		return DaTao{}, false, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "submission_code"}
 	}
-	if caller.QRCode == "" && yc.DiningTableID <= 0 {
+	if yc.ngoaiBan == nil && caller.QRCode == "" && yc.DiningTableID <= 0 {
 		return DaTao{}, false, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "dining_table_id"}
 	}
 	var out DaTao
@@ -105,6 +108,9 @@ func tao(ctx context.Context, pool *pgxpool.Pool, caller authz.Caller, yc YeuCau
 				if caller.QRCode != "" {
 					same = saved.ChannelCode == "qr_table" && code == caller.QRCode
 				}
+				if yc.ngoaiBan != nil {
+					same = saved.ChannelCode == yc.kenh && cungLienHe(saved.LienHe, *yc.ngoaiBan)
+				}
 				if !same || !cungDong(saved.Lines, takeaways, yc.Lines) {
 					return apierr.Error{Code: apierr.CodeSubmissionCodeConflict}
 				}
@@ -123,30 +129,38 @@ func tao(ctx context.Context, pool *pgxpool.Pool, caller authz.Caller, yc YeuCau
 				qrID = &seat.QRCodeID
 				channel = "qr_table"
 			}
-			if _, err := ban.Doc(ctx, tx, tableID); err != nil {
+			if yc.ngoaiBan != nil {
+				channel = yc.kenh
+			}
+			if err := xetNhanDon(ctx, tx, channel); err != nil {
 				return err
 			}
 			var sessionID int64
 			var sessionStatus string
-			err = tx.QueryRow(ctx, khoaPhien, tableID).Scan(&sessionID, &sessionStatus)
-			if errors.Is(err, pgx.ErrNoRows) {
-				b, err := ban.Doc(ctx, tx, tableID)
-				if err != nil {
+			if yc.ngoaiBan == nil {
+				if _, err := ban.Doc(ctx, tx, tableID); err != nil {
 					return err
 				}
-				if b.State == "needs_cleaning" {
-					return apierr.Error{Code: apierr.CodeDiningTableNeedsCleaning}
-				}
-				// Không dùng kết quả kiểm phiên để chặn. Khoá duy nhất quyết tranh chấp tạo đầu.
-				if err := tx.QueryRow(ctx, themPhien).Scan(&sessionID); err != nil {
+				err = tx.QueryRow(ctx, khoaPhien, tableID).Scan(&sessionID, &sessionStatus)
+				if errors.Is(err, pgx.ErrNoRows) {
+					b, err := ban.Doc(ctx, tx, tableID)
+					if err != nil {
+						return err
+					}
+					if b.State == "needs_cleaning" {
+						return apierr.Error{Code: apierr.CodeDiningTableNeedsCleaning}
+					}
+					// Không dùng kết quả kiểm phiên để chặn. Khoá duy nhất quyết tranh chấp tạo đầu.
+					if err := tx.QueryRow(ctx, themPhien).Scan(&sessionID); err != nil {
+						return err
+					}
+					if _, err := tx.Exec(ctx, themBan, sessionID, tableID); err != nil {
+						return err
+					}
+					sessionStatus = "open"
+				} else if err != nil {
 					return err
 				}
-				if _, err := tx.Exec(ctx, themBan, sessionID, tableID); err != nil {
-					return err
-				}
-				sessionStatus = "open"
-			} else if err != nil {
-				return err
 			}
 			lines := make([]gia.DongYeuCau, len(yc.Lines))
 			for i, d := range yc.Lines {
@@ -160,13 +174,24 @@ func tao(ctx context.Context, pool *pgxpool.Pool, caller authz.Caller, yc YeuCau
 			if err != nil {
 				return err
 			}
-			if err := tx.QueryRow(ctx, themDon, channel, status, sessionID, tableID, yc.SubmissionCode, qrID).Scan(&out.SalesOrderID); err != nil {
+			var lh LienHe
+			if yc.ngoaiBan != nil {
+				lh = *yc.ngoaiBan
+			}
+			if err := tx.QueryRow(ctx, themDon, channel, status, sessionID, tableID, yc.SubmissionCode, qrID, lh.HandoverCode, lh.CustomerPhone, lh.DeliveryAddress, lh.CustomerNeededAt, lh.CustomerName, lh.ContactNote).Scan(&out.SalesOrderID); err != nil {
 				return err
 			}
 			for index, d := range kq.Lines {
 				var dongID int64
 				n := len(d.Components)
-				if err := tx.QueryRow(ctx, themDong, out.SalesOrderID, d.Quantity, d.MenuItemID, d.ItemName, d.UnitPriceVnd, n, yc.Lines[index].IsTakeaway).Scan(&dongID); err != nil {
+				query := themDong
+				args := []any{out.SalesOrderID, d.Quantity, d.MenuItemID, d.ItemName, d.UnitPriceVnd, n}
+				if yc.ngoaiBan == nil {
+					args = append(args, yc.Lines[index].IsTakeaway)
+				} else {
+					query = themDongMangDi
+				}
+				if err := tx.QueryRow(ctx, query, args...).Scan(&dongID); err != nil {
 					return err
 				}
 				for i, c := range d.Components {
@@ -200,9 +225,13 @@ func tao(ctx context.Context, pool *pgxpool.Pool, caller authz.Caller, yc YeuCau
 func docDaTao(ctx context.Context, tx pgx.Tx, submission string) (DaTao, string, []bool, error) {
 	var out DaTao
 	var code string
-	var raw, take []byte
-	err := tx.QueryRow(ctx, docDon, submission).Scan(&out.SalesOrderID, &out.TableSessionID, &out.DiningTableID, &out.ChannelCode, &out.Status, &code, &out.TotalVnd, &raw, &take)
+	var raw, take, neededAt []byte
+	err := tx.QueryRow(ctx, docDon, submission).Scan(&out.SalesOrderID, &out.TableSessionID, &out.DiningTableID, &out.ChannelCode, &out.Status, &code, &out.TotalVnd, &raw, &take, &out.LienHe.HandoverCode, &out.LienHe.CustomerPhone, &out.LienHe.DeliveryAddress, &neededAt, &out.LienHe.CustomerName, &out.LienHe.ContactNote)
 	if err != nil {
+		return DaTao{}, "", nil, err
+	}
+	// PostgreSQL kết xuất mốc JSON theo múi giờ phiên kết nối (hợp đồng §6).
+	if err := json.Unmarshal(neededAt, &out.LienHe.CustomerNeededAt); err != nil {
 		return DaTao{}, "", nil, err
 	}
 	if err := json.Unmarshal(raw, &out.Lines); err != nil {

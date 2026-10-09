@@ -813,11 +813,93 @@ ngoài bàn đi đường riêng.
 **Bẫy:** đừng đọc giờ bán từ đồng hồ của máy gửi đơn (`02-thoi-gian-ngay-ban.md`).
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi* (nhận 2026-10-09, Claude Code; chủ repo giao *"hãy đọc kĩ va làm yêu cầu codex làm bạn kiểm
+  tra"* — Claude thiết kế và viết test đỏ; Codex thi công ở worktree `../lean_wt/P3-08`, nhánh `codex/P3-08`
+  từ `f5202ae`; Claude duyệt và tích hợp): `be/internal/don/` · `be/internal/authz/` (lớp đổi tên, nhánh khách
+  web) · `be/internal/apierr/` · `be/internal/vongdoi/` (chỉ nếu cần) · `be/internal/qr/qr.go` (comment lớp) ·
+  `docs/product/3-be/` (`openapi.yaml`, `01-hop-dong-api.md` §8 · §10, `02-vai-va-quyen.md` §2 · §3,
+  `03-ham-gia.md`, `04-luong-tai-ban.md` dòng lớp, mới `05-luong-mang-di.md`) · `docs/product/00-index.md` —
+  `docs/decisions.md` (ADR-088) · `work/`. **Không** migration, không cửa bật/tắt tạm dừng, không cửa ghi
+  khoảng mù, không ghi `station_job`, không cửa thu tiền đơn lẻ.
+- *Tên lát:* entry gọi *"bốn kênh ngoài bàn"*; kênh không gắn bàn có **ba** (`02-kenh-ban.md` §2.1 —
+  `delivery` · `pickup` · `phone_preorder`), với **bốn hình liên hệ** vì hotline có hai cách trao hàng. Cách đọc
+  của phiên; lát làm cả ba kênh, bốn hình.
+- *Vế tầng 3 lát chạm* — lấy bằng `grep -nE '^\| \*\*`I-0(07|08|22|24)`' docs/product/1-system-design/03-bao-ve-invariant.md`
+  (2026-10-09): `I-007` dòng 99 — tầng 3, không thao tác nào nối đơn mang đi vào một phiên bàn (vế *không
+  thuộc phiên* là tầng 1); `I-024` dòng 106 — tầng 3, tra dấu **trước** mọi điều kiện của `I-008`, gửi lại nhận
+  đúng đơn, cùng dấu khác nội dung bị từ chối, nội dung giống hệt không phải trùng; `I-022` dòng 224 — vế
+  ngược tầng 3: cửa đòi đúng mức §6.5, không hơn (bốn vế *thiếu* là tầng 1); `I-008` dòng 297 — tầng 3, đúng
+  một cửa tạo lượt gọi xét tạm dừng → giờ bán → quán mù theo thứ tự, quán mù chỉ chặn ba kênh khách tự bấm.
+- *Câu cho chủ quán:* không mở câu mới. **S-6** đã có tên ở `master_plan/shop-facts.md` §7.2 — cửa rời quán từ
+  chối kèm mã khi đơn còn việc trạm chưa ra bàn (ADR-088 điểm 7); câu ấy phải được hỏi trước `P3-10`. *Ai bấm
+  tạm dừng nhận đơn* chưa có lời (`architecture.md` §7) — lát chỉ **đọc** khoảng tạm dừng.
+- *Thiết kế* (Claude, 2026-10-09; lý do và phương án bị loại: **ADR-088**): `POST /online-orders` (khách web) ·
+  `POST /phone-orders` (người đứng quầy) qua `don/tao_luot_goi`, lớp đổi thành `quay_hoac_khach`; thiếu liên hệ ⇒
+  `invalid_request` + `field`; thứ tự hình → quyền → dấu → I-008 → kênh → giá → ghi, I-008 cho cả năm kênh tại
+  `now()` của giao dịch qua `don.DongHo`; cửa mới `don/roi_quan` (`POST /orders/{id}/departure`, lớp `quay`).
+  Bốn mã mới: `order_intake_paused` · `outside_selling_hours` · `shop_not_seeing_orders` ·
+  `delivery_served_mark_undecided`.
+- *Nghiệm thu* (viết trước khi sửa): (1) Test đỏ do Claude viết trước — `be/internal/don/mang_di_test.go`
+  (mới), cùng một chỗ sửa có chủ ý ở `dung()` của `be/internal/don/don_test.go` (mọi test của gói chạy ở mốc cố
+  định trong giờ bán) — xanh qua `./scripts/be-check.sh` **mà không sửa điều kiện kiểm nào**: đồng hồ thật =
+  `now()` của giao dịch; giờ bán đọc từ `shop-facts.md` §1, hai đầu trong giờ, ở năm kênh; tạm dừng chặn năm
+  kênh kể cả ngoài giờ, đúng lúc tắt nhận lại; quán mù chặn ba kênh khách tự bấm, không chặn hai kênh người
+  nhập; mù + ngoài giờ ⇒ ngoài giờ, mù + tạm dừng ⇒ tạm dừng; gửi lại lúc tạm dừng · ngoài giờ ⇒ 200 cùng đơn;
+  mười lăm ca thiếu liên hệ ⇒ `invalid_request` đúng trường, không ghi gì; bốn ca *nên có* không chặn; đơn
+  ngoài bàn không phiên, không bàn, không mã, không trả trường phiên/bàn; dấu chéo đường tại bàn ↔ ngoài bàn ⇒
+  `submission_code_conflict`; ba lần ⇒ một đơn, chen nhau năm lần ⇒ một đơn, cùng khoảnh khắc khác độ lệch là
+  cùng nội dung; bốn hình đi qua duyệt · từ chối · rời quán, vết rời quán mang người quầy; rời quán chỉ cho
+  giao tận nơi ở *Đang thực hiện*; S-6 ⇒ `delivery_served_mark_undecided`, đơn và việc trạm đứng nguyên; hai cửa
+  của người từ chối người không đứng quầy và không người. Mọi test của `P3-05`…`P3-07` vẫn xanh. (2)
+  `openapi.yaml` có ba đường gọi mới, bốn mã kèm status, `info.version` 0.5.0; năm dòng liên hệ của
+  `sales_order_*` ⇒ `internal`; `order_intake_pause_*` · `shop_blind_spell_*` giữ `unreviewed`. (3) Ma trận có
+  dòng `don/roi_quan`, lớp đổi tên ở §2 kèm nguồn; Gate 1g `PASS`. (4) Gate 1f `PASS`, không ô ghi mới. (5) File
+  lát `docs/product/3-be/05-luong-mang-di.md` có dòng ở `00-index.md`. (6) `./scripts/gate.sh` xanh ở worktree
+  **và** ở clone chính sau tích hợp.
+- *Kiểm chứng:* `./scripts/be-check.sh` (Claude tự chạy lại, ít nhất hai lần — có test chen nhau) ·
+  `./scripts/check-api-contract.sh --list` · `./scripts/check-write-paths.sh --list` · lỗi cài (đặt I-008 trước
+  tra dấu; bỏ kiểm S-6) ⇒ test đỏ · `./scripts/gate.sh`; Claude đọc diff theo từng dòng nghiệm thu, đối chiếu
+  bảng red flag Gate 4.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-09): thiết kế, test đỏ, duyệt và tích hợp — **Claude Code**; thi công — **Codex**
+(`codex exec -m gpt-6-astra`, worktree `../lean_wt/P3-08`, nhánh `codex/P3-08` từ `f5202ae`; lần gọi đầu với model
+mặc định của config `gpt-6.1-sol` bị từ chối vì tài khoản ChatGPT không dùng được model ấy, không file nào đổi;
+sandbox của Codex không tới được Docker nên mọi lần chạy trên PostgreSQL thật là Claude chạy). Thiết kế và lý do:
+**ADR-088**; cách đọc lát và chỗ trống: `docs/product/3-be/05-luong-mang-di.md`.
+- *File đổi:* mới — `be/internal/don/mang_di.go` · `roi_quan.go` · `sql/roi_quan/` (hai câu khoá/đọc) ·
+  `sql/tao_luot_goi/them_dong_mang_di.sql` · hai file test `mang_di_test.go` (Claude) · `mang_di_hinh_test.go`
+  (Codex, không database) · `docs/product/3-be/05-luong-mang-di.md`; sửa — `be/internal/don/don.go` · `http.go` ·
+  `doc_don.sql` · `them_don.sql` · `don_test.go` (một chỗ có chủ ý ở `dung()`) · `be/internal/authz/authz.go` ·
+  `be/internal/apierr/apierr.go` · `be/internal/vongdoi/vongdoi.go` (tách `KiemChuyenDon`) · `be/internal/qr/qr.go`
+  (comment) · `openapi.yaml` (0.4.0 → 0.5.0) · `01-hop-dong-api.md` §8 · §10 · `02-vai-va-quyen.md` · `03-ham-gia.md` ·
+  `04-luong-tai-ban.md` · `docs/product/00-index.md` · `docs/decisions.md` (ADR-088) · `work/backlog.md` · entry này.
+- *Duyệt:* `mang_di_test.go` · `don_test.go` · `tai_ban_test.go` **không đổi một byte** từ lúc giao (`2e747c7a…` ·
+  `2d07e991…` · `0458b1a6…`). Claude đọc diff thật của `mang_di.go` · `roi_quan.go` · `don.go` · `http.go` · `authz.go` ·
+  `vongdoi.go` và mọi file SQL: tra dấu trước `xetNhanDon`, `xetNhanDon` trước mọi lần đọc/mở phiên bàn, ba câu đọc
+  inline không thư mục cửa, khách web không đọc người, rời quán kiểm cặp trước S-6 và không ghi `station_job`.
+  `kiemHinhDong` cũng chạy ở hai đường tại bàn — **không** đổi luật: `PriceLineRequest` của hợp đồng đã đòi
+  `menu_item_id` · `quantity ≥ 1` · `option_ids`, code nay khớp hợp đồng. Claude sửa ba thứ: (1) **quyết** câu Codex
+  dừng lại hỏi — giờ cần hàng có phần nhỏ hơn micro giây làm lần gửi lại conflict ⇒ cắt về micro giây lúc đọc (độ
+  chính xác của cột, ADR-088 điểm 4), thêm một ca vào `mang_di_hinh_test.go` và một vế ở `01-hop-dong-api.md` §8; (2)
+  viết phép cắt bằng phép trừ nano giây lẻ, vì Gate 1f đọc `Truncate(` thành câu `TRUNCATE` ngoài cửa (bắt nhầm, gặp
+  một lần — chưa mở finding); (3) đầu file lát và bảng chỗ trống bỏ dòng *chờ Claude duyệt/quyết*. Không red flag Gate 4.
+- *Bằng chứng theo nghiệm thu:* (1) `be-check: PASS` ở worktree (86 test, mọi gói `ok`) và lần nữa trong gate; ví dụ
+  `delivery lúc 05:59:59 ⇒ 409 outside_selling_hours` · `lúc 06:00:00 ⇒ 201` · `lúc 11:00:00 ⇒ 201` · `lúc 11:00:01 ⇒ 409`
+  ở cả năm kênh; `quán mù, staff_pos ⇒ 201` · `quán mù, delivery ⇒ 409 shop_not_seeing_orders`; `đơn 33: gửi lại lúc tạm
+  dừng và lúc ngoài giờ ⇒ 200 cùng đơn`; `5 lần gửi cùng dấu chen nhau ⇒ 1 lần 201, 1 đơn trả về, 1 đơn trong database`;
+  `giao (web) 57: pending_confirmation → confirmed → in_progress → delivering, vết mang người quầy`; `hotline giao 65 đang
+  làm, việc nước chấm 2 chưa ra bàn ⇒ delivery_served_mark_undecided`. **Lỗi cài** (cả hai cùng lượt): (a) gọi
+  `xetNhanDon` trước tra dấu ⇒ `--- FAIL: TestI024_GuiLaiKhongXetLaiGioBanVaTamDung` (`muốn 200, nhận 409
+  order_intake_paused`); (b) bỏ kiểm S-6 ⇒ `--- FAIL: TestS6_RoiQuanKhiConViecTramChuaRaBanBiTuChoi` (`nhận 200 …
+  delivering`); gỡ cả hai, `shasum -c` hai file về đúng từng byte. (2)(3) `check-api-contract: PASS — hợp đồng 0.5.0; 19
+  đường gọi ở hợp đồng, 19 ở code; 28 mã lỗi; … (129 internal, 156 unreviewed, 5 dòng mang mã công khai); 14 cửa, 14 dòng
+  ma trận, 14 khai báo authz.Door`. (4) `check-write-paths: PASS — 15 ô ghi, 14 cửa, 51 file đã soát`. (5) dòng
+  `05-luong-mang-di.md` ở `00-index.md`. (6) `./scripts/gate.sh` ở clone chính sau `git apply` ⇒ `PASS gate không cổng nào
+  đỏ` (`be-check` PASS, Gate 1f `15 ô ghi, 14 cửa`, Gate 1g hợp đồng 0.5.0).
+- *Còn lại:* **S-6** phải được hỏi chủ quán **trước `P3-10`** — khi việc trạm được nổ, đơn giao không rời quán qua máy
+  được cho tới khi có lời; cửa bật/tắt tạm dừng nhận đơn (*ai bấm* chưa có lời, `architecture.md` §7); phát hiện quán mù
+  và cửa ghi khoảng mù — `P3-12`; Hoàn thành của đơn lẻ (hoá đơn đơn lẻ) — `P3-09` · `P3-10`; *đặt trước tối đa một
+  ngày* và giờ cần hàng ở quá khứ không xét; đường đọc *quán đang nhận đơn không* cho web chưa có.
 
 [↑ đầu file](#top)
 

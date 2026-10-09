@@ -63,8 +63,8 @@ menu đổi giữa hai lần gọi — và khi ấy con số trên đơn là con
 (`I-009`: mốc khoá là từng lượt gọi; một phiên vắt qua lần đổi giá mang hai mức giá là đúng).
 
 **Cửa tạo lượt gọi là MỘT cho cả năm kênh** (**ADR-086** điểm 2). `P3-06` dựng phần **giá**; `P3-07` thêm mở phiên, đường gọi đặt hộ và khách QR,
-trạng thái đầu theo kênh, lớp `quay_hoac_ma_ban`, gửi lại cùng dấu. Phần kênh tại bàn và thứ tự giao dịch
-ở [luồng tại bàn](04-luong-tai-ban.md); kênh ngoài bàn thêm vào **chính cửa này** ở `P3-08`.
+trạng thái đầu theo kênh, lớp `quay_hoac_khach`, gửi lại cùng dấu. Phần kênh tại bàn và thứ tự giao dịch
+ở [luồng tại bàn](04-luong-tai-ban.md); kênh ngoài bàn đã thêm vào **chính cửa này** ở `P3-08`, xem [luồng mang đi](05-luong-mang-di.md).
 
 ## 3. Bảng ca test — đọc lúc chạy, không gõ lại
 
@@ -91,8 +91,8 @@ Ca của test sửa menu dùng menu **giả** riêng (`test-…`), không chạm
 |---|---|---|
 | **Mặc định *Thịt · Thường*** (§4.6 luật 8) | không có chỗ cất; dòng thiếu nhân bị từ chối | **F-059** — trước khi pha 4 dựng màn gọi món |
 | **Đường gọi HTTP, mở phiên, khách QR** | đã dựng ở `P3-07` | [luồng tại bàn](04-luong-tai-ban.md) |
-| **Bốn kênh ngoài bàn**, liên hệ tối thiểu (`I-022`) | chưa có lối vào | `P3-08` |
-| **Giờ bán · tạm dừng · quán mù** (`I-008`) trước khi tạo lượt gọi | cửa chưa xét | `P3-08` · `P3-12` |
+| **Ba kênh không gắn bàn**, bốn hình liên hệ (`I-022`) | đã có đường web và hotline ở `P3-08` | [luồng mang đi](05-luong-mang-di.md) |
+| **Giờ bán · tạm dừng · quán mù** (`I-008`) trước khi tạo lượt gọi | đã xét cả năm kênh ở `P3-08`; cửa đọc `shop_blind_spell`, cách máy phát hiện và cửa ghi khoảng mù thuộc `P3-12` | [luồng mang đi](05-luong-mang-di.md) · `P3-12` |
 | **Dấu lần gửi trùng** (`I-024`) | đã xử lý tại bàn ở `P3-07`; ràng buộc trùng dấu là `internal` vì cửa chạy lại | [luồng tại bàn](04-luong-tai-ban.md) |
 | **Lời nhắc *đang trong giờ bán*** trước khi đổi thành phần suất (`I-011`) | máy giữ vết (người · lúc · cái gì); lời nhắc chưa có | pha 4, đọc nguồn giờ bán của cửa `I-008` |
 | **Thêm · bỏ một thành phần của suất**, đổi tên món, bán lại món đã ngừng | chưa có cửa; bỏ một thành phần còn vướng *không xoá* (`QD-50`) | khi chủ quán cần — một lát sau, kèm ADR nếu cần đổi lược đồ |

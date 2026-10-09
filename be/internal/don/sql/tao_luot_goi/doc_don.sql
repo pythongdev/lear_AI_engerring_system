@@ -14,6 +14,7 @@ SELECT o.id, coalesce(o.table_session_id, 0), coalesce(o.dining_table_id, 0), o.
    'option_name',p.option_name,'surcharge_vnd',p.surcharge_vnd) ORDER BY p.menu_option_id),'[]'::jsonb)
    FROM order_line_option p WHERE p.order_line_id = l.id)
  ) ORDER BY l.id),'[]'::jsonb) FROM order_line l WHERE l.sales_order_id = o.id),
- (SELECT coalesce(jsonb_agg(l.is_takeaway ORDER BY l.id),'[]'::jsonb) FROM order_line l WHERE l.sales_order_id = o.id)
+ (SELECT coalesce(jsonb_agg(l.is_takeaway ORDER BY l.id),'[]'::jsonb) FROM order_line l WHERE l.sales_order_id = o.id),
+ coalesce(o.handover_code,''), coalesce(o.customer_phone,''), o.delivery_address, coalesce(to_jsonb(o.customer_needed_at), 'null'::jsonb), o.customer_name, o.contact_note
 FROM sales_order o LEFT JOIN qr_code q ON q.id = o.qr_code_id
 WHERE o.submission_code = $1

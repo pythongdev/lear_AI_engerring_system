@@ -170,6 +170,15 @@ nội dung. So số dòng và từng dòng **theo thứ tự**: `menu_item_id`, 
 đã bị thay vẫn bị từ chối, kể cả cùng dấu. Khi tranh chấp khoá duy nhất của dấu hoặc phiên bàn, cửa
 chạy lại toàn bộ giao dịch (tối đa bốn lần), từ quyền tới đọc dấu; không gộp theo nội dung.
 
+**Cách so nội dung ngoài bàn** (`P3-08`, ADR-088, 2026-10-09): cùng đường gọi và kênh
+(web khác hotline, delivery khác pickup, ngoài bàn khác tại bàn), cùng `handover_code`.
+`customer_phone`, `delivery_address`, `customer_name`, `contact_note` so từng byte, vắng mặt tương
+đương null; không bỏ khoảng trắng khi ghi hay so. `customer_needed_at` so cùng khoảnh khắc,
+không so chuỗi độ lệch múi giờ, sau khi cắt về micro giây (độ chính xác của cột). Các dòng so như tại bàn, dấu đem về luôn mặc định false.
+Tra dấu sau quyền và trước I-008: gửi lại trả trạng thái hiện tại cùng ảnh chụp, kể cả quán vừa
+ngừng nhận đơn; khác nội dung trả `submission_code_conflict`. Tranh chấp dấu chạy lại cả giao dịch
+như tại bàn. Cách thi công: [luồng mang đi](05-luong-mang-di.md).
+
 ## 9. Hợp đồng thắng code — và lệnh chấm điều ấy
 
 **Hợp đồng thắng code** (**ADR-084**): code khác hợp đồng là lỗi của code. Đổi một đường gọi, một mã hay
@@ -193,7 +202,8 @@ theo schema của hợp đồng.
 | `P3-05` | **xong 2026-10-06** — §3 thêm mã của lời từ chối quyền; §4 xét dòng `qr_code_*` (bảng cửa của lát ghi); dòng `person` · `counter_duty` để lại cho lát ghi hai bảng ấy (`P3-11`, lane admin); ma trận cửa × lớp ở [`02-vai-va-quyen.md`](02-vai-va-quyen.md), Gate 1g so nó với code (§9) |
 | `P3-06` | **xong 2026-10-06** — §1 thêm sáu đường gọi (tính thử, menu, bốn cửa sửa menu); §3 sáu mã của giá và menu; §4 xét dòng của bảng menu và bảng dòng đơn (`internal`), dòng `sales_order_*` để lại cho phần kênh của cửa tạo lượt gọi (`P3-07` · `P3-08`); hàm và bảng ca: [`03-ham-gia.md`](03-ham-gia.md) |
 | `P3-07` | **xong 2026-10-06** — thêm tám đường gọi tại bàn, mười mã; xét ràng buộc của đơn tại bàn, phiên, bàn và hoá đơn; §8 so nội dung và trả lại đơn; [luồng tại bàn](04-luong-tai-ban.md) |
-| `P3-08`…`P3-12` | §1 thêm đường gọi cùng lượt dựng cửa · §3 mã của luật · §4 xét dòng của bảng mình ghi · §5 · §6 · §7 tăng phiên bản; `P3-07` · `P3-08` thêm §8 |
+| `P3-08` | **xong 2026-10-09** — ba đường gọi ngoài bàn, bốn mã 409; liên hệ tối thiểu, dấu lần gửi, I-008 cho cả năm kênh và rời quán có chặn S-6; xét năm ràng buộc liên hệ; [luồng mang đi](05-luong-mang-di.md) |
+| `P3-09`…`P3-12` | §1 thêm đường gọi cùng lượt dựng cửa · §3 mã của luật · §4 xét dòng của bảng mình ghi · §5 · §6 · §7 tăng phiên bản |
 | `P3-13` | §9 — ô cổng *hợp đồng khớp code*: Gate 1g xanh và đã từng đỏ (`scripts/check-api-contract.test.sh`) |
 | pha 4 | `openapi.yaml` — sinh type; §3 cách đọc lỗi; §5 không tự tính |
 

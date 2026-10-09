@@ -31,7 +31,7 @@ hai cửa của `vongdoi` nhận `pgx.Tx` của cửa gọi, không mở giao d�
 
 | Cửa | Ô ghi sở hữu | Lớp |
 |---|---|---|
-| `don/tao_luot_goi` | thêm `sales_order`, `order_line`, `order_line_component`, `order_line_option`, `table_session`, `table_session_member` | `quay_hoac_ma_ban` |
+| `don/tao_luot_goi` | thêm `sales_order`, `order_line`, `order_line_component`, `order_line_option`, `table_session`, `table_session_member` | `quay_hoac_khach` |
 | `don/duyet` | không; gọi cửa chuyển đơn và phiên | `quay` |
 | `don/tu_choi` | không; gọi cửa chuyển đơn | `quay` |
 | `phien/tinh_tien` | không; gọi cửa chuyển phiên | `quay` |
@@ -41,7 +41,7 @@ hai cửa của `vongdoi` nhận `pgx.Tx` của cửa gọi, không mở giao d�
 | `vongdoi/chuyen_phien` | sửa `table_session.status`, `table_session_member.session_closed` | `theo_cua_goi` |
 
 `authz.RunAs` kiểm người và quyền ngay trong giao dịch. Người có danh tính phải có thật và đang
-đứng quầy; không lấy mã QR làm đường thoát khi người ấy thiếu quyền. Nhánh không người phải mang mã
+đứng quầy; không lấy mã QR làm đường thoát khi người ấy thiếu quyền. Nhánh QR không người phải mang mã
 hiện hành, bàn tra từ mã qua một câu SQL duy nhất ở `authz.CurrentTable`; `qr.CurrentTable` gọi lại
 hàm này để tránh vòng import. Khách không khai `shop.actor_person_id`.
 
@@ -61,6 +61,8 @@ Tạo lượt gọi thực hiện theo thứ tự trong một giao dịch:
    `gia.DongYeuCau` cộng `is_takeaway`. Bỏ trường lạ, kể cả giá. Riêng `table_session_id` luôn bị từ
    chối; đường khách còn từ chối `dining_table_id`, kể cả khi trường cấm mang `null`.
 2. Kiểm quyền, rồi tra dấu lần gửi (§3). Đã có dấu thì trả lại hoặc từ chối, không tạo gì.
+   Chưa có dấu thì xét I-008 trước mọi lần đọc hoặc mở phiên; thứ tự và đồng hồ ở
+   [luồng mang đi](05-luong-mang-di.md) §3 (P3-08, ADR-088).
 3. Đặt hộ đọc bàn tồn tại; khách lấy bàn từ mã đã kiểm. Khoá phiên chưa đóng của bàn bằng
    `FOR UPDATE OF s`, điều kiện chưa đóng đọc trên chính dòng phiên bị khoá. Nếu đóng chen vào lúc
    chờ khoá, câu đọc xét lại dòng ấy rồi cửa đọc lại trạng thái bàn.
@@ -185,7 +187,8 @@ mang mã công khai ở §4 có bản trong `apierr.constraintCodes`. Các dòng
 
 `sales_order_takeaway_handover_check`, `sales_order_takeaway_needed_at_check`,
 `sales_order_takeaway_phone_check`, `sales_order_door_delivery_address_check` và
-`sales_order_handover_code_check` **giữ `unreviewed`** cho `P3-08`: cửa tại bàn không ghi các cột ấy.
+`sales_order_handover_code_check` đã được `P3-08` xét là `internal`, xem
+[luồng mang đi](05-luong-mang-di.md) §5; cửa tại bàn không ghi các cột ấy.
 Các phần trả trước và sổ giấy của hoá đơn để mặc định, vì vậy những tên tương ứng được xét `internal`
 trong phạm vi cửa này; lát ngoài bàn hoặc nhập sổ giấy phải xét lại khi mở đường ghi tới chúng.
 

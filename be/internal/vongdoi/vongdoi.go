@@ -87,16 +87,8 @@ func CoVet(ctx context.Context, tx pgx.Tx, reason string, fn func() error) error
 	return nil
 }
 
-// Cửa gọi phải khoá phiên trước khi gọi ChuyenDon.
-func ChuyenDon(ctx context.Context, tx pgx.Tx, id int64, den string) error {
-	var tu, kenh string
-	var trao *string
-	if err := tx.QueryRow(ctx, khoaDon, id).Scan(&tu, &kenh, &trao); err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return apierr.Error{Code: apierr.CodeSalesOrderNotFound}
-		}
-		return err
-	}
+// KiemChuyenDon dùng cùng bảng và điều kiện với ChuyenDon, chưa ghi gì.
+func KiemChuyenDon(tu, den, kenh string, trao *string) error {
 	hop := coCap(CapDon(), tu, den)
 	if tu == "new" {
 		dau, err := TrangThaiDauDon(kenh)
@@ -107,6 +99,22 @@ func ChuyenDon(ctx context.Context, tx pgx.Tx, id int64, den string) error {
 	}
 	if !hop {
 		return apierr.Error{Code: apierr.CodeOrderTransitionNotAllowed}
+	}
+	return nil
+}
+
+// Cửa gọi phải khoá phiên trước khi gọi ChuyenDon nếu đơn có phiên.
+func ChuyenDon(ctx context.Context, tx pgx.Tx, id int64, den string) error {
+	var tu, kenh string
+	var trao *string
+	if err := tx.QueryRow(ctx, khoaDon, id).Scan(&tu, &kenh, &trao); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return apierr.Error{Code: apierr.CodeSalesOrderNotFound}
+		}
+		return err
+	}
+	if err := KiemChuyenDon(tu, den, kenh, trao); err != nil {
+		return err
 	}
 	return CoVet(ctx, tx, CuaChuyenDon.Code+": "+tu+" → "+den, func() error { _, err := tx.Exec(ctx, chuyenDon, id, den); return err })
 }

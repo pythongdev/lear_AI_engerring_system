@@ -72,6 +72,9 @@ func dung(t *testing.T) khung {
 	ban.Routes(mux, pool, xacThucTest{})
 	srv := httptest.NewServer(mux)
 	t.Cleanup(srv.Close)
+	// P3-08 thêm có chủ ý (ADR-088): cửa tạo lượt gọi xét giờ bán tại mốc của đồng hồ (I-008), nên mọi
+	// test của gói chạy ở một mốc cố định trong giờ bán, bất kể lúc chạy; test của I-008 tự đặt mốc.
+	datDongHo(t, mocMacDinh(t))
 	k := khung{ctx: ctx, pool: pool, srv: srv, owner: owner}
 	k.napMenuThat(t)
 	return k

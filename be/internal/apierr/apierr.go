@@ -15,6 +15,11 @@ import (
 type Code string
 
 const (
+	CodeOrderIntakePaused           Code = "order_intake_paused"
+	CodeOutsideSellingHours         Code = "outside_selling_hours"
+	CodeShopNotSeeingOrders         Code = "shop_not_seeing_orders"
+	CodeDeliveryServedMarkUndecided Code = "delivery_served_mark_undecided"
+
 	CodeSubmissionCodeConflict           Code = "submission_code_conflict"
 	CodeDiningTableNeedsCleaning         Code = "dining_table_needs_cleaning"
 	CodeDiningTableNotNeedingCleaning    Code = "dining_table_not_needing_cleaning"
@@ -48,6 +53,11 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
+	CodeOrderIntakePaused:           409,
+	CodeOutsideSellingHours:         409,
+	CodeShopNotSeeingOrders:         409,
+	CodeDeliveryServedMarkUndecided: 409,
+
 	CodeSubmissionCodeConflict:           409,
 	CodeDiningTableNeedsCleaning:         409,
 	CodeDiningTableNotNeedingCleaning:    409,

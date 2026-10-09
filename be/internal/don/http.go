@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"banhcuon/be/internal/apierr"
@@ -41,6 +42,9 @@ type handler struct {
 
 func Routes(mux *http.ServeMux, pool *pgxpool.Pool, auth authz.Authenticator) {
 	h := handler{pool, auth}
+	mux.HandleFunc("POST /online-orders", h.taoOnline)
+	mux.HandleFunc("POST /phone-orders", h.taoPhone)
+	mux.HandleFunc("POST /orders/{sales_order_id}/departure", h.roiQuan)
 	mux.HandleFunc("POST /table-orders", h.taoTaiQuay)
 	mux.HandleFunc("POST /qr-codes/{code}/orders", h.taoQR)
 	mux.HandleFunc("POST /orders/{sales_order_id}/approval", h.duyet)
@@ -77,6 +81,10 @@ func (h handler) taoHTTP(w http.ResponseWriter, r *http.Request, qr string) {
 			apierr.Write(w, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "dining_table_id"})
 			return
 		}
+	}
+	if err := kiemHinhDong(raw["lines"]); err != nil {
+		apierr.WriteError(w, err)
+		return
 	}
 	if err := json.Unmarshal(raw["lines"], &yc.Lines); err != nil {
 		apierr.Write(w, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "lines"})
@@ -142,4 +150,38 @@ func (h handler) chuyen(w http.ResponseWriter, r *http.Request, door authz.Door,
 		return
 	}
 	apierr.JSON(w, http.StatusOK, map[string]any{"sales_order_id": id, "status": den, "table_session_id": sessionID, "table_session_status": sessionStatus})
+}
+
+// Kiểm hình các dòng trước quyền; tra món và tổ hợp vẫn thuộc gia.Tinh trong giao dịch.
+func kiemHinhDong(raw json.RawMessage) error {
+	var lines []struct {
+		MenuItemID *int64    `json:"menu_item_id"`
+		Quantity   *int32    `json:"quantity"`
+		OptionIDs  *[]*int64 `json:"option_ids"`
+	}
+	if err := json.Unmarshal(raw, &lines); err != nil || len(lines) == 0 {
+		return apierr.Error{Code: apierr.CodeInvalidRequest, Field: "lines"}
+	}
+	for i, line := range lines {
+		field := ""
+		switch {
+		case line.MenuItemID == nil:
+			field = "menu_item_id"
+		case line.Quantity == nil || *line.Quantity <= 0:
+			field = "quantity"
+		case line.OptionIDs == nil:
+			field = "option_ids"
+		default:
+			for _, id := range *line.OptionIDs {
+				if id == nil {
+					field = "option_ids"
+					break
+				}
+			}
+		}
+		if field != "" {
+			return apierr.Error{Code: apierr.CodeInvalidRequest, Field: fmt.Sprintf("lines[%d].%s", i, field)}
+		}
+	}
+	return nil
 }

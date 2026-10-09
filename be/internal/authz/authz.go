@@ -20,8 +20,8 @@ import (
 type Need string
 
 const (
-	// NeedCounterOrQR: người đang đứng quầy, hoặc không người mà mang mã QR hiện hành (ADR-087 điểm 8).
-	NeedCounterOrQR Need = "quay_hoac_ma_ban"
+	// NeedCounterOrCustomer: người đang đứng quầy, hoặc khách QR/web không người (ADR-087 · ADR-088).
+	NeedCounterOrCustomer Need = "quay_hoac_khach"
 	// NeedPerson: một người của quán có thật, đứng đâu cũng được (ADR-087 điểm 7).
 	NeedPerson Need = "nguoi_quan"
 	// NeedCallingDoor: cửa không lối vào, chạy trong giao dịch của cửa gọi (ADR-087 điểm 3).
@@ -53,10 +53,11 @@ const (
 	kiemChuQuan = `SELECT is_owner FROM person WHERE id = $1`
 )
 
-// Caller là người gửi yêu cầu: một người của quán, hoặc (chỉ lớp quay_hoac_ma_ban) một mã QR.
+// Caller là người gửi yêu cầu: một người của quán, hoặc (chỉ lớp quay_hoac_khach) một mã QR hoặc khách web.
 type Caller struct {
 	PersonID int64
 	QRCode   string
+	Online   bool
 }
 
 // Granted là thứ đã qua lớp: người đã kiểm, hoặc bàn tra từ mã hiện hành.
@@ -75,15 +76,18 @@ func Run(ctx context.Context, pool *pgxpool.Pool, personID int64, d Door, fn fun
 // RunAs kiểm quyền lại ở mỗi giao dịch, kể cả một lần chạy lại sau tranh chấp.
 func RunAs(ctx context.Context, pool *pgxpool.Pool, caller Caller, d Door, fn func(pgx.Tx, Granted) error) error {
 	switch d.Need {
-	case NeedCounter, NeedOwner, NeedCounterOrQR, NeedPerson:
+	case NeedCounter, NeedOwner, NeedCounterOrCustomer, NeedPerson:
 	default:
 		return fmt.Errorf("cửa %q không có lối vào trực tiếp cho lớp %q", d.Code, d.Need)
 	}
 	return db.InTx(ctx, pool, func(tx pgx.Tx) error {
 		g := Granted{PersonID: caller.PersonID}
 		if caller.PersonID <= 0 {
-			if d.Need != NeedCounterOrQR || caller.QRCode == "" {
+			if d.Need != NeedCounterOrCustomer || (caller.QRCode == "" && !caller.Online) {
 				return apierr.Error{Code: apierr.CodeUnauthenticated}
+			}
+			if caller.Online && caller.QRCode == "" {
+				return fn(tx, g)
 			}
 			seat, err := CurrentTable(ctx, tx, caller.QRCode)
 			if err != nil {
@@ -102,7 +106,7 @@ func RunAs(ctx context.Context, pool *pgxpool.Pool, caller Caller, d Door, fn fu
 		if d.Need == NeedOwner && !owner {
 			return apierr.Error{Code: apierr.CodeOwnerOnly}
 		}
-		if d.Need == NeedCounter || d.Need == NeedCounterOrQR {
+		if d.Need == NeedCounter || d.Need == NeedCounterOrCustomer {
 			var onDuty bool
 			if err := tx.QueryRow(ctx, kiemQuay, caller.PersonID).Scan(&onDuty); err != nil {
 				return err
