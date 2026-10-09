@@ -15,6 +15,7 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
+  - [U-077](#u-077) — đơn đặt trước qua điện thoại cho giờ sau, ngày sau: xuống bếp lúc nhận hay lúc gần giờ
   - [U-076](#u-076) — đơn mang đi, giao, đặt trước mà khách thiếu tiền: có cho nợ không
   - [U-075](#u-075) — nhân viên và chủ quán cho máy biết "tôi là ai" bằng cách nào
   - [U-073](#u-073) — két lệch mà đã tìm ra lý do: có được bấm đối soát xong ngày ấy không
@@ -38,6 +39,21 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 
 <a id="dang-mo"></a>
 ### Đang mở
+
+<a id="u-077"></a>
+- **U-077 — Khách gọi điện đặt trước lúc 6 giờ 10 để 9 giờ 30 mới lấy (hay đặt hôm nay
+  để mai lấy), thì bếp có thấy đơn ấy và làm ngay không, hay quầy giữ lại tới gần giờ mới
+  cho xuống bếp — và nếu giữ lại thì ai, lúc nào cho xuống?** Mở 2026-10-09 (nhận `P3-10`,
+  Claude Code). `docs/product/0-ba/ban-hang/05-vong-doi.md` §5.2 viết *Đã xác nhận →
+  Đang thực hiện* là bước của hệ thống, cách nhau một khoảnh khắc, và §3.2.3 của
+  `03-lat-cat.md` nói đơn hotline vào thẳng *Đã xác nhận* rồi *bếp làm như bước 8* —
+  không chữ nào nói tới **giờ khách cần hàng** của đơn đặt trước, trong khi quán nhận
+  đặt trước tối đa một ngày (`master_plan/shop-facts.md` §6.26). Lát `P3-10` làm đúng
+  chữ đang có: đơn hotline nổ việc trạm ngay lúc tạo (`docs/decisions.md` ADR-090 điểm
+  1), nên một đơn cho ngày mai nằm trên bảng bếp hôm nay. Hỏi về cái quán: *"chị Lan gọi
+  lúc 6 giờ dặn 9 giờ rưỡi qua lấy 3 suất — bếp làm luôn hay đợi gần giờ mới làm?"*
+  **Chủ quán** trả lời. Chặn: chưa chặn bước nào; lời *"đợi gần giờ"* đổi chỗ gọi cửa
+  nổ đơn của kênh `phone_preorder` và cần một mốc *cho xuống bếp*.
 
 <a id="u-076"></a>
 - **U-076 — Đơn mang đi, giao tận nơi hay đặt trước qua điện thoại mà khách không

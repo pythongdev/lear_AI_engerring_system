@@ -1015,9 +1015,59 @@ giữa lúc tay đang tráng bánh.
 phải sơ suất.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi* (nhận 2026-10-09, Claude Code; chủ repo giao *"hãy đọc kĩ và làm yêu cầu codex làm bạn kiểm tra"* —
+  Claude thiết kế và viết test đỏ; Codex thi công ở worktree `../lean_wt/P3-10`, nhánh `codex/P3-10` từ `03b179e`;
+  Claude duyệt và tích hợp **sau** `P3-09`, đang chạy song song ở `../lean_wt/P3-09`): mới `be/internal/sanxuat/` ·
+  `be/internal/vongdoi/` (bảng việc trạm, `chuyen_viec`) · `be/internal/don/` (gọi cửa nổ, cửa huỷ, năm file test) ·
+  `be/internal/authz/` (chỉ nếu cần) · `be/internal/apierr/` · `docs/product/3-be/` (`openapi.yaml`,
+  `01-hop-dong-api.md`, `02-vai-va-quyen.md`, mới `07-san-xuat-theo-me.md`) · `docs/product/00-index.md` ·
+  `docs/product/2-db/05-luoc-do-san-xuat.md` §3 · §5 (trỏ cửa) — `docs/decisions.md` (ADR-090) ·
+  `docs/product/99-unknowns.md` (U-077) · `master_plan/BE_master_plan_banh_cuon_ba_thanh.md` (hàng S-5 · P3-10) ·
+  `work/`. **Không** migration, không realtime (`P3-12`), không huỷ đơn đã *Hoàn thành* (đường hoàn tiền), không
+  cửa sửa đơn (`P3-11`).
+- *Vế tầng 2 · 3 · 4 lát chạm* — lấy bằng `grep -nE '^\| \*\*`I-0(04|16|19|20)`' docs/product/1-system-design/03-bao-ve-invariant.md`
+  (2026-10-09): `I-004` dòng 220 — tầng 2 nổ đủ việc cùng giao dịch (cả nước chấm · canh, **ADR-056**), tầng 3 đơn
+  huỷ rút nhu cầu (đọc theo **F-044**: mọi phép đọc lọc đơn huỷ), tầng 4 quầy chọn bàn nhận, đổi chủ cùng giao
+  dịch; `I-016` dòng 222 — tầng 3, một hàm xác thực cho vòng đời việc trạm §5.4; `I-019` dòng 343 — tầng 3, một hàm
+  gom (vế tổng là tầng 1, lược đồ suy ra); `I-020` dòng 344 — tầng 2 một lần bấm phủ mọi bàn và lùi trả mọi bàn,
+  tầng 3 ba trạng thái qua `I-016`, tầng 4 vết lùi (vế trần là tầng 1).
+- *Câu cho chủ quán:* mở **U-077** (đơn đặt trước cho giờ sau, ngày sau xuống bếp lúc nào — cửa làm đúng chữ đang
+  có: nổ lúc nhận). **S-5** không còn chặn cửa: chủ repo chọn cửa nhận danh sách đơn vị (2026-10-09, ADR-090 điểm
+  4) — câu vẫn nên hỏi chủ quán trước khi pha 4 dựng màn quầy. **S-6** đọc như ADR-088 điểm 7. Ai được huỷ ghi chú
+  bánh làm sai, đích của lần chuyển gồm cả đơn lẻ — **suy ra của phiên** (ADR-090 điểm 6 · 7).
+- *Thiết kế* (Claude, 2026-10-09; lý do và phương án bị loại: **ADR-090**): gói mới `sanxuat` — `no_don`
+  (`theo_cua_goi`, gọi từ `don/duyet` và `don/tao_luot_goi` kênh `staff_pos` · `phone_preorder`) · `bam_me`
+  `POST /production-batches` · `lui_me` `POST /production-batches/{id}/rollback` · `ra_ban` `POST /served-marks` ·
+  `chuyen` `POST /station-job-transfers` · `ghi_lam_sai` `POST /wrong-make-notes` · `huy_ghi_lam_sai`
+  `POST /wrong-make-notes/{id}/cancellation` (sáu cửa lớp `quay`); `don/huy` `POST /orders/{id}/cancellation`
+  (`quay`); `vongdoi/chuyen_viec` (`theo_cua_goi`, `CapViec()` bốn cặp §5.4); hai đường đọc
+  `GET /production-board[?station_code=]` · `GET /station-jobs/{id}/transfer-candidates` qua một hàm gom.
+- *Nghiệm thu* (viết trước khi sửa): (1) Test đỏ do Claude viết trước — `be/internal/don/san_xuat_test.go` (mới,
+  20 test) và `TestI016_BangChuyenViecKhopVongDoi` ở `be/internal/vongdoi/vongdoi_test.go`, cùng các chỗ sửa có chủ
+  ý ở `don_test.go` (`dung()` gắn `sanxuat.Routes`; đặt hộ ra `in_progress`) · `tai_ban_test.go` (ba điều kiện
+  `confirmed` → `in_progress`) · `mang_di_test.go` (hotline và duyệt ra `in_progress`; đơn giao qua mẻ và đã ra bàn
+  rồi mới rời quán; S-6 dùng nước chấm của chính lần nổ) — xanh qua `./scripts/be-check.sh` **mà không sửa điều kiện
+  kiểm nào** (đo lúc giao bằng `shasum`, 2026-10-09: 22 test đỏ + gói `vongdoi` không biên dịch, 63 test xanh): đơn
+  chờ duyệt không việc nào, duyệt và lượt gọi của người nổ đủ việc so với phép đếm độc lập, vết *Đã xác nhận →
+  Đang thực hiện* mang người; cắt giữa lần nổ ⇒ đơn còn chờ duyệt, 0 việc; gửi lại không nổ lần hai; một lần bấm
+  phủ hai bàn, mẻ mang người; năm lần bấm sai ⇒ bốn mã, database y nguyên; năm lần bấm chen nhau một đơn vị ⇒ một
+  201; lùi trả cả hai bàn về đúng từng chữ, có mốc và người, lùi lần hai · mẻ lạ · mẻ đã có đơn vị ra bàn ⇒ ba mã;
+  đã ra bàn nhận đúng tập, cả lần hoặc không gì, vết mang người, đơn vị cuối của đơn gắn bàn ⇒ *Hoàn thành*, đơn lẻ
+  không tự *Hoàn thành* và rời quán được; bảng nhu cầu: một hàng một khoá, tổng = cộng các phần, phần của từng bàn và
+  đơn lẻ khớp phép đếm độc lập, đơn huỷ không có phần; huỷ đơn rút nhu cầu, đơn vị ở lại, Hoàn thành → Huỷ ⇒
+  `completed_order_cancel_not_ready`; ứng viên chuyển chỉ là đơn vị chờ đúng khoá, chuyển đổi chủ cùng giao dịch có
+  vết, chuyển khác khoá vẫn ghi được (tầng 4), nguồn · đích sai ⇒ hai mã; ghi chú bánh làm sai và huỷ ghi chú theo
+  ADR-077, ghi chú còn hiệu lực chặn chuyển và lùi; bảy cửa từ chối người không đứng quầy (kể cả chủ quán) và không
+  người; mọi ô ghi của năm bảng sản xuất thuộc cửa `quay` hoặc `theo_cua_goi`; chín đường gọi có trên mux; bảng của
+  code bằng §5.4. Mọi test của `P3-05`…`P3-08` vẫn xanh. (2) `openapi.yaml` có chín đường gọi mới, mã mới kèm status,
+  `info.version` tăng; tên ràng buộc của năm bảng sản xuất được xét (mã công khai hoặc `internal`). (3) Ma trận có
+  chín dòng mới; Gate 1g `PASS`. (4) Gate 1f `PASS` — mỗi ô ghi của năm bảng đúng một cửa. (5) File lát
+  `docs/product/3-be/07-san-xuat-theo-me.md` có dòng ở `00-index.md`; §3 · §5 của `05-luoc-do-san-xuat.md` trỏ cửa. (6)
+  `./scripts/gate.sh` xanh ở worktree **và** ở clone chính sau tích hợp.
+- *Kiểm chứng:* `./scripts/be-check.sh` (Claude tự chạy lại, ít nhất hai lần — có test chen nhau) ·
+  `./scripts/check-api-contract.sh --list` · `./scripts/check-write-paths.sh --list` · lỗi cài (bỏ khoá đơn vị ở
+  cửa bấm mẻ; cho cửa đã ra bàn bỏ qua một đơn vị sai thay vì từ chối cả lần) ⇒ test đỏ · `./scripts/gate.sh`;
+  Claude đọc diff theo từng dòng nghiệm thu, đối chiếu bảng red flag Gate 4.
 
 **Bàn giao:** —
 

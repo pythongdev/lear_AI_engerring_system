@@ -96,6 +96,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-138 **Vết cập nhật bật chế độ nghiêm** — sửa (và thêm dòng con vào cha đã có) mà không khai lý do bị database từ chối; một ngoại lệ hẹp cho lượt gọi thêm của khách QR (**F-060**); cửa đổi mã QR tự khai lý do; `table_session_member` mang người, ghép bàn bắt buộc có người; gỡ **F-046** — L2 — Claude Code — nhận 2026-10-09 · [chi tiết](#t-138)
+- [ ] P3-10 **Sản xuất theo mẻ** — duyệt (và lượt gọi của người) nổ đơn trong cùng giao dịch; một lần bấm một mẻ, lùi trả mọi bàn; *đã ra bàn* nhận đúng tập đơn vị quầy chọn (**S-5** không bị chọn hộ — chủ repo chọn 2026-10-09); đơn huỷ: đổi chủ phần đã làm do quầy chọn, ghi chú bánh làm sai; một hàm gom cho bảng nhu cầu; ba trạm bếp không cửa ghi nào; mở **U-077** — **ADR-090** — L2 — Claude thiết kế và viết test đỏ, Codex thi công (worktree `../lean_wt/P3-10`) — nhận 2026-10-09 · [chi tiết](backlog_BE.md#p3-10)
 - [ ] P3-09 **Đường tiền** — thu đơn lẻ (trao tại quầy · giao xong), nhận và trả lại trả trước, hoàn tiền, thu nợ dần, tiền đầu két, đếm két, đối soát xong ngày; giảm giá từ chối kèm mã (U-058), ngày lệch từ chối kèm mã (U-073); một ngày bán giả qua cửa ⇒ 0đ lệch — **ADR-089** — L2 — Claude thiết kế và viết test đỏ, Codex thi công (worktree `../lean_wt/P3-09`) — nhận 2026-10-09 · [chi tiết](backlog_BE.md#p3-09)
 
 
@@ -311,6 +313,37 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-138"></a>
+### T-138 — Vết cập nhật đang ở chế độ mềm: một lần sửa không khai lý do đi qua mà không để lại vết (F-046)
+
+**Yêu cầu:** chủ repo, 2026-10-09: *"F-046 hãy đọc kĩ và hoàn thành"* — làm ngay phần **F-046** ở tầng
+database, không chờ `P3-11` (cùng tiền lệ `T-137` với **F-047**). Phần nhập bù và trực quầy của `P3-11` ở lại
+bước ấy. Mức **L2** (dữ liệu, `I-018`). Claude Code thiết kế và thi công.
+
+**Thiết kế:** `docs/decisions.md` **ADR-091**. Một migration mới đi tới (bước 19) thay thân hai hàm vết:
+sửa đổi nội dung mà không khai lý do ⇒ từ chối, tên `record_revision_reason_declared_check`; thêm dòng con vào
+cha đã có mà không khai lý do ⇒ từ chối cùng tên. Ngoại lệ duy nhất: phiên chuyển *Chờ thanh toán → Đang phục
+vụ* không người không lý do, chỉ khi chính giao dịch ấy vừa thêm một đơn `qr_table` vào phiên (**F-060** vế b).
+`qr_code_issue` tự khai lý do cho lần thay mã. `table_session_member` thêm cột người (mặc định người của giao
+dịch); dòng gắn vào phiên đã có (ghép bàn) thiếu người ⇒ từ chối; dòng mở phiên được trống người (khách QR mở).
+
+**Acceptance (viết trước khi sửa):** (1) test mới `db/tests/i018_strict_revision.sql` đỏ trên lược đồ 18 bước,
+xanh sau bước 19: sửa không lý do ⇒ từ chối đúng tên; sửa có lý do ⇒ vết đủ bốn thứ; sửa không đổi gì không
+lý do ⇒ đi qua, không vết; thêm dòng con vào cha đã có không lý do ⇒ từ chối; ngoại lệ QR đi qua chỉ khi giao
+dịch vừa thêm đơn QR vào phiên, mọi biến thể khác ⇒ từ chối; đổi mã QR không khai lý do ⇒ có vết trên mã cũ;
+ghép bàn không người ⇒ từ chối, mở phiên không người ⇒ đi qua; (2) một cặp migration **mới**, không sửa file
+cũ (`QC-05`); lùi trên database rỗng trả lược đồ giống hệt; (3) mọi file `db/tests/` · `db/seed/` ·
+`db/scenario/` · `db/reconcile/proof/` khai lý do trước mỗi lần sửa, không file nào bị tắt kiểm;
+(4) mọi cửa cập nhật của `be/` có một test *sửa ⇒ có vết* hoặc đã có; `./scripts/be-check.sh` xanh;
+(5) tên từ chối mới có dòng ở `openapi.yaml` `x-constraint-errors`, phiên bản hợp đồng tăng; (6)
+`./scripts/db-check.sh` và `./scripts/gate.sh` PASS; (7) **F-046** → *Fixed*, **F-060** ghi lại phần còn mở,
+`06-luoc-do-nguoi-va-vet.md` §3 · §5, bước 19 ở `07-thu-tu-migration.md`, con trỏ ở `P3-11`; không chọn hộ
+câu nghiệp vụ nào.
+
+**Bàn giao:** —
+
+[↑ đầu file](#top)
 
 <a id="p1-01"></a>
 ### Mười hai bước của pha 1 — mô tả dài ở `work/backlog_SD.md`
