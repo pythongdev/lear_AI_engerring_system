@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.6.0
+  version: 0.7.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -958,8 +958,554 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /production-batches:
+    post:
+      operationId: makeProductionBatch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StationJobSelection'
+      responses:
+        '201':
+          description: Thành công; luật cửa ở 07-san-xuat-theo-me.md.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductionBatchMade'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /production-batches/{id}/rollback:
+    post:
+      operationId: rollbackProductionBatch
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Thành công; luật cửa ở 07-san-xuat-theo-me.md.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductionBatchRolledBack'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /served-marks:
+    post:
+      operationId: markServed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServedMarkRequest'
+      responses:
+        '200':
+          description: Thành công; luật cửa ở 07-san-xuat-theo-me.md.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServedMark'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /station-job-transfers:
+    post:
+      operationId: transferStationJobs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StationJobTransfersRequest'
+      responses:
+        '201':
+          description: Thành công; luật cửa ở 07-san-xuat-theo-me.md.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StationJobTransfersCreated'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wrong-make-notes:
+    post:
+      operationId: writeWrongMakeNote
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WrongMakeNoteRequest'
+      responses:
+        '201':
+          description: Thành công; luật cửa ở 07-san-xuat-theo-me.md.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WrongMakeNoteCreated'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wrong-make-notes/{id}/cancellation:
+    post:
+      operationId: cancelWrongMakeNote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Thành công; luật cửa ở 07-san-xuat-theo-me.md.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WrongMakeNoteCancelled'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders/{sales_order_id}/cancellation:
+    post:
+      operationId: cancelOrder
+      parameters:
+        - name: sales_order_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Thành công; luật cửa ở 07-san-xuat-theo-me.md.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCancelled'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /production-board:
+    get:
+      operationId: getProductionBoard
+      parameters:
+        - name: station_code
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Thành công; luật cửa ở 07-san-xuat-theo-me.md.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductionBoard'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /station-jobs/{id}/transfer-candidates:
+    get:
+      operationId: getTransferCandidates
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Thành công; luật cửa ở 07-san-xuat-theo-me.md.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferCandidates'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
+    StationJobSelection:
+      type: 'object'
+      required:
+        - 'station_job_ids'
+      properties:
+        station_job_ids:
+          type: 'array'
+          items:
+            type: 'integer'
+            format: 'int64'
+            minimum: 1
+          minItems: 1
+          uniqueItems: true
+    ProductionBatchMade:
+      type: 'object'
+      required:
+        - 'production_batch_id'
+        - 'made_at'
+        - 'station_job_ids'
+      properties:
+        production_batch_id:
+          type: 'integer'
+          format: 'int64'
+          minimum: 1
+        made_at:
+          $ref: '#/components/schemas/Instant'
+        station_job_ids:
+          type: 'array'
+          items:
+            type: 'integer'
+            format: 'int64'
+            minimum: 1
+    ProductionBatchRolledBack:
+      type: 'object'
+      required:
+        - 'production_batch_id'
+        - 'rolled_back_at'
+        - 'station_job_ids'
+      properties:
+        production_batch_id:
+          type: 'integer'
+          format: 'int64'
+          minimum: 1
+        rolled_back_at:
+          $ref: '#/components/schemas/Instant'
+        station_job_ids:
+          type: 'array'
+          items:
+            type: 'integer'
+            format: 'int64'
+            minimum: 1
+    ServedMarkRequest:
+      description: 'Số cái từng thứ cho MỘT bàn, hoặc một đơn không bàn — đúng một trong hai mã (S-5, 2026-10-09).'
+      type: 'object'
+      required:
+        - 'items'
+      properties:
+        dining_table_id:
+          type: 'integer'
+          format: 'int64'
+          minimum: 1
+        sales_order_id:
+          type: 'integer'
+          format: 'int64'
+          minimum: 1
+        items:
+          type: 'array'
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/ServedItem'
+    ServedItem:
+      description: 'Một hàng của bảng nhu cầu (khoá gom) và số cái vừa bưng.'
+      type: 'object'
+      required:
+        - 'station_code'
+        - 'menu_component_id'
+        - 'filling_option_ids'
+        - 'quantity'
+      properties:
+        station_code:
+          type: 'string'
+        menu_component_id:
+          type:
+            - 'integer'
+            - 'null'
+          format: 'int64'
+        filling_option_ids:
+          type: 'array'
+          items:
+            type: 'integer'
+            format: 'int64'
+          uniqueItems: true
+        quantity:
+          type: 'integer'
+          format: 'int64'
+          minimum: 1
+    ServedMark:
+      type: 'object'
+      required:
+        - 'station_job_ids'
+        - 'completed_order_ids'
+      properties:
+        station_job_ids:
+          type: 'array'
+          items:
+            type: 'integer'
+            format: 'int64'
+            minimum: 1
+        completed_order_ids:
+          type: 'array'
+          items:
+            type: 'integer'
+            format: 'int64'
+            minimum: 1
+    StationJobTransfersRequest:
+      type: 'object'
+      required:
+        - 'transfers'
+      properties:
+        transfers:
+          type: 'array'
+          items:
+            type: 'object'
+            required:
+              - 'from_station_job_id'
+              - 'to_station_job_id'
+            properties:
+              from_station_job_id:
+                type: 'integer'
+                format: 'int64'
+                minimum: 1
+              to_station_job_id:
+                type: 'integer'
+                format: 'int64'
+                minimum: 1
+          minItems: 1
+    StationJobTransfersCreated:
+      type: 'object'
+      required:
+        - 'station_job_transfer_ids'
+      properties:
+        station_job_transfer_ids:
+          type: 'array'
+          items:
+            type: 'integer'
+            format: 'int64'
+            minimum: 1
+    WrongMakeNoteRequest:
+      type: 'object'
+      required:
+        - 'station_job_id'
+      properties:
+        station_job_id:
+          type: 'integer'
+          format: 'int64'
+          minimum: 1
+        note:
+          type: 'string'
+          minLength: 1
+          description: 'Nếu có phải còn chữ sau khi bỏ khoảng trắng; giữ nguyên từng byte.'
+    WrongMakeNoteCreated:
+      type: 'object'
+      required:
+        - 'wrong_make_note_id'
+        - 'station_job_id'
+        - 'note'
+      properties:
+        wrong_make_note_id:
+          type: 'integer'
+          format: 'int64'
+          minimum: 1
+        station_job_id:
+          type: 'integer'
+          format: 'int64'
+          minimum: 1
+        note:
+          type:
+            - 'string'
+            - 'null'
+    WrongMakeNoteCancelled:
+      type: 'object'
+      required:
+        - 'wrong_make_note_id'
+        - 'cancelled_at'
+      properties:
+        wrong_make_note_id:
+          type: 'integer'
+          format: 'int64'
+          minimum: 1
+        cancelled_at:
+          $ref: '#/components/schemas/Instant'
+    OrderCancelled:
+      type: 'object'
+      required:
+        - 'sales_order_id'
+        - 'status'
+      properties:
+        sales_order_id:
+          type: 'integer'
+          format: 'int64'
+          minimum: 1
+        status:
+          type: 'string'
+          enum:
+            - 'cancelled'
+    ProductionPart:
+      type: 'object'
+      required:
+        - 'dining_table_id'
+        - 'sales_order_id'
+        - 'ordered'
+        - 'pending'
+        - 'made'
+        - 'served'
+        - 'missing'
+      properties:
+        dining_table_id:
+          type:
+            - 'integer'
+            - 'null'
+          format: 'int64'
+        sales_order_id:
+          type:
+            - 'integer'
+            - 'null'
+          format: 'int64'
+        ordered:
+          type: 'integer'
+          format: 'int64'
+          minimum: 0
+        pending:
+          type: 'integer'
+          format: 'int64'
+          minimum: 0
+        made:
+          type: 'integer'
+          format: 'int64'
+          minimum: 0
+        served:
+          type: 'integer'
+          format: 'int64'
+          minimum: 0
+        missing:
+          type: 'integer'
+          format: 'int64'
+          minimum: 0
+    ProductionRow:
+      type: 'object'
+      required:
+        - 'station_code'
+        - 'menu_component_id'
+        - 'component_name'
+        - 'filling_option_ids'
+        - 'ordered'
+        - 'pending'
+        - 'made'
+        - 'served'
+        - 'missing'
+        - 'parts'
+      properties:
+        station_code:
+          type: 'string'
+        menu_component_id:
+          type:
+            - 'integer'
+            - 'null'
+          format: 'int64'
+        component_name:
+          type: 'string'
+        filling_option_ids:
+          type: 'array'
+          items:
+            type: 'integer'
+            format: 'int64'
+            minimum: 1
+        ordered:
+          type: 'integer'
+          format: 'int64'
+          minimum: 0
+        pending:
+          type: 'integer'
+          format: 'int64'
+          minimum: 0
+        made:
+          type: 'integer'
+          format: 'int64'
+          minimum: 0
+        served:
+          type: 'integer'
+          format: 'int64'
+          minimum: 0
+        missing:
+          type: 'integer'
+          format: 'int64'
+          minimum: 0
+        parts:
+          type: 'array'
+          items:
+            $ref: '#/components/schemas/ProductionPart'
+    ProductionBoard:
+      type: 'object'
+      required:
+        - 'rows'
+      properties:
+        rows:
+          type: 'array'
+          items:
+            $ref: '#/components/schemas/ProductionRow'
+    TransferCandidates:
+      type: 'object'
+      required:
+        - 'station_job_id'
+        - 'candidates'
+      properties:
+        station_job_id:
+          type: 'integer'
+          format: 'int64'
+          minimum: 1
+        candidates:
+          type: 'array'
+          items:
+            type: 'object'
+            required:
+              - 'station_job_id'
+              - 'sales_order_id'
+              - 'dining_table_id'
+            properties:
+              station_job_id:
+                type: 'integer'
+                format: 'int64'
+                minimum: 1
+              sales_order_id:
+                type: 'integer'
+                format: 'int64'
+                minimum: 1
+              dining_table_id:
+                type:
+                  - 'integer'
+                  - 'null'
+                format: 'int64'
     OnlineOrderRequest:
       type: object
       description: >-
@@ -1535,6 +2081,19 @@ components:
         - paper_entries_pending
         - cash_day_expense_date_undecided
         - cash_day_not_balanced
+        - station_job_not_found
+        - station_job_transition_not_allowed
+        - production_batch_not_found
+        - production_batch_already_rolled_back
+        - production_batch_has_served_units
+        - station_job_has_wrong_make_note
+        - transfer_source_not_available
+        - transfer_target_not_waiting
+        - wrong_make_note_not_allowed
+        - wrong_make_note_not_found
+        - wrong_make_note_already_cancelled
+        - completed_order_cancel_not_ready
+        - served_quantity_exceeds_made
       x-http-status:
         order_discount_undecided: 409
         standalone_debt_undecided: 409
@@ -1556,6 +2115,20 @@ components:
         paper_entries_pending: 409
         cash_day_expense_date_undecided: 409
         cash_day_not_balanced: 409
+        station_job_not_found: 404
+        station_job_transition_not_allowed: 409
+        production_batch_not_found: 404
+        production_batch_already_rolled_back: 409
+        production_batch_has_served_units: 409
+        station_job_has_wrong_make_note: 409
+        transfer_source_not_available: 409
+        transfer_target_not_waiting: 409
+        wrong_make_note_not_allowed: 409
+        wrong_make_note_not_found: 404
+        wrong_make_note_already_cancelled: 409
+        completed_order_cancel_not_ready: 409
+        served_quantity_exceeds_made: 409
+
         order_intake_paused: 409
         outside_selling_hours: 409
         shop_not_seeing_orders: 409
@@ -2057,20 +2630,20 @@ x-constraint-errors:
   prepayment_use_previous_fkey: internal
   prepayment_use_refund_fkey: internal
   prepayment_use_take_check: internal
-  production_batch_id_rolled_back_key: unreviewed
-  production_batch_item_batch_fkey: unreviewed
-  production_batch_item_live_key: unreviewed
-  production_batch_item_live_station_job_fkey: unreviewed
-  production_batch_item_made_for_station_job_fkey: unreviewed
-  production_batch_item_once_key: unreviewed
+  production_batch_id_rolled_back_key: internal
+  production_batch_item_batch_fkey: internal
+  production_batch_item_live_key: internal
+  production_batch_item_live_station_job_fkey: internal
+  production_batch_item_made_for_station_job_fkey: internal
+  production_batch_item_once_key: internal
   production_batch_item_pkey: internal
-  production_batch_item_station_job_fkey: unreviewed
-  production_batch_item_transfer_fkey: unreviewed
-  production_batch_made_by_person_fkey: unreviewed
+  production_batch_item_station_job_fkey: internal
+  production_batch_item_transfer_fkey: internal
+  production_batch_made_by_person_fkey: internal
   production_batch_pkey: internal
-  production_batch_rolled_back_after_made_check: unreviewed
-  production_batch_rolled_back_by_iff_rolled_back_check: unreviewed
-  production_batch_rolled_back_by_person_fkey: unreviewed
+  production_batch_rolled_back_after_made_check: internal
+  production_batch_rolled_back_by_iff_rolled_back_check: internal
+  production_batch_rolled_back_by_person_fkey: internal
   qr_code_code_key: internal
   qr_code_code_not_blank_check: internal
   qr_code_dining_table_fkey: dining_table_not_found
@@ -2133,26 +2706,26 @@ x-constraint-errors:
   staff_advance_pkey: internal
   staff_advance_positive_amount_check: unreviewed
   staff_advance_worker_person_fkey: unreviewed
-  station_job_component_columns_check: unreviewed
-  station_job_id_if_made_or_served_key: unreviewed
-  station_job_id_order_key: unreviewed
-  station_job_made_in_batch_fkey: unreviewed
-  station_job_one_sauce_per_order_key: unreviewed
-  station_job_order_line_component_fkey: unreviewed
-  station_job_order_line_fkey: unreviewed
+  station_job_component_columns_check: internal
+  station_job_id_if_made_or_served_key: internal
+  station_job_id_order_key: internal
+  station_job_made_in_batch_fkey: internal
+  station_job_one_sauce_per_order_key: internal
+  station_job_order_line_component_fkey: internal
+  station_job_order_line_fkey: internal
   station_job_pkey: internal
-  station_job_position_in_range_check: unreviewed
-  station_job_position_key: unreviewed
-  station_job_sales_order_fkey: unreviewed
-  station_job_station_code_check: unreviewed
-  station_job_status_check: unreviewed
-  station_job_transfer_changes_owner_check: unreviewed
-  station_job_transfer_from_station_job_fkey: unreviewed
-  station_job_transfer_item_to_key: unreviewed
-  station_job_transfer_person_fkey: unreviewed
+  station_job_position_in_range_check: internal
+  station_job_position_key: internal
+  station_job_sales_order_fkey: internal
+  station_job_station_code_check: internal
+  station_job_status_check: internal
+  station_job_transfer_changes_owner_check: internal
+  station_job_transfer_from_station_job_fkey: internal
+  station_job_transfer_item_to_key: internal
+  station_job_transfer_person_fkey: internal
   station_job_transfer_pkey: internal
-  station_job_transfer_production_batch_item_fkey: unreviewed
-  station_job_transfer_to_station_job_fkey: unreviewed
+  station_job_transfer_production_batch_item_fkey: internal
+  station_job_transfer_to_station_job_fkey: internal
   supply_day_entry_kind_code_check: unreviewed
   supply_day_entry_measure_nonnegative_finite_check: unreviewed
   supply_day_entry_one_kind_per_item_day_key: unreviewed
@@ -2174,13 +2747,13 @@ x-constraint-errors:
   table_session_member_table_once_key: internal
   table_session_pkey: internal
   table_session_status_check: internal
-  wrong_make_note_cancelled_after_created_check: unreviewed
-  wrong_make_note_cancelled_by_iff_cancelled_check: unreviewed
-  wrong_make_note_cancelled_by_person_fkey: unreviewed
-  wrong_make_note_cancelled_order_fkey: unreviewed
-  wrong_make_note_live_key: unreviewed
-  wrong_make_note_live_station_job_fkey: unreviewed
-  wrong_make_note_note_not_blank_check: unreviewed
-  wrong_make_note_person_fkey: unreviewed
+  wrong_make_note_cancelled_after_created_check: internal
+  wrong_make_note_cancelled_by_iff_cancelled_check: internal
+  wrong_make_note_cancelled_by_person_fkey: internal
+  wrong_make_note_cancelled_order_fkey: wrong_make_note_not_allowed
+  wrong_make_note_live_key: station_job_has_wrong_make_note
+  wrong_make_note_live_station_job_fkey: station_job_has_wrong_make_note
+  wrong_make_note_note_not_blank_check: internal
+  wrong_make_note_person_fkey: internal
   wrong_make_note_pkey: internal
-  wrong_make_note_station_job_order_fkey: unreviewed
+  wrong_make_note_station_job_order_fkey: internal

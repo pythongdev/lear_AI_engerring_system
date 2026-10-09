@@ -115,6 +115,7 @@ Các lát lược đồ sau **thêm** dòng vào bảng này, không ghi đè d�
 | **Luồng tại bàn** — cửa và ô ghi, khoá phiên trước đơn, gửi lại cùng dấu, đóng nguyên tử, dọn từng bàn (P3-07, ADR-087) | [3-be/04-luong-tai-ban.md](3-be/04-luong-tai-ban.md) |
 | **Luồng mang đi** — liên hệ, dấu lần gửi, giờ bán và khoảng ngừng nhận đơn, rời quán và chỗ trống S-6 (P3-08, ADR-088) | [3-be/05-luong-mang-di.md](3-be/05-luong-mang-di.md) |
 | **Đường tiền** — hoá đơn đơn lẻ, hoàn, thu nợ, trả trước, đồng hồ ngày bán, đếm két và ký ngày ở ngưỡng 0đ (P3-09, ADR-089) | [3-be/06-duong-tien.md](3-be/06-duong-tien.md) |
+| **Sản xuất theo mẻ** — nổ đơn, bấm/lùi mẻ, ra bàn, chuyển phần đã làm, ghi chú bánh làm sai, huỷ đơn và một hàm gom nhu cầu (P3-10, ADR-090) | [3-be/07-san-xuat-theo-me.md](3-be/07-san-xuat-theo-me.md) |
 
 Các lát `P3-05`…`P3-13` **thêm** dòng vào bảng này cùng file của mình (kế hoạch pha 3 §5).
 

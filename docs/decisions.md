@@ -106,7 +106,7 @@ có câu trả lời mới từ người.
 | ADR-087 | **Luồng tại bàn: cửa tạo lượt gọi tự tìm phiên từ bàn (mở phiên ở lượt gọi đầu, tầng 1 chặn hai phiên, cửa thử lại); cột trạng thái của đơn và của phiên mỗi cột một cửa chuyển `vongdoi/…` chạy trong giao dịch của cửa gọi; cửa đóng `hoadon/dong` ghi hoá đơn + đóng phiên trong một giao dịch** — lớp quyền mới `quay_hoac_ma_ban` · `nguoi_quan` · `theo_cua_goi`; cửa ghép bàn chưa dựng | Đã chốt 2026-10-06 (giao cho phiên, P3-07; Claude thiết kế, Codex thi công) | — | P3-07 · ADR-082 · ADR-085 · ADR-086 · F-060 |
 | ADR-088 | **Luồng ngoài bàn: ba kênh không gắn bàn tạo đơn qua chính cửa `don/tao_luot_goi` (lớp đổi thành `quay_hoac_khach` — thêm nhánh khách web); cửa xét I-008 cho cả năm kênh, sau dấu lần gửi, tại `now()` của giao dịch qua một đồng hồ test thay được; cửa `don/roi_quan` từ chối kèm mã khi đơn còn việc trạm chưa ra bàn (S-6)** | Đã chốt 2026-10-09 (giao cho phiên, P3-08; Claude thiết kế, Codex thi công) | — | P3-08 · ADR-061 · ADR-078 · ADR-086 · ADR-087 |
 | ADR-089 | **Đường tiền: mười ba cửa chia ba gói (`hoadon` · `tratruoc` · `ket`), mỗi lần tiền đổi tay một cửa có người, ba ô ghi dùng chung qua cửa `theo_cua_goi`; ngày bán của mọi dòng tiền đọc từ một đồng hồ chung; cửa đóng ngày tính phép trừ két và từ chối kèm mã khi lệch (U-073); không cửa nào ghi tiền vào ngày đã ký; giảm giá (U-058) và nợ của đơn lẻ (U-076) từ chối kèm mã** — lớp quyền mới `quay_hoac_chu_quan`; không migration; huỷ đơn đã xác nhận để lại cho `P3-10` | Đã chốt 2026-10-09 (giao cho phiên, P3-09; Claude thiết kế, Codex thi công) | — | P3-09 · ADR-037 · ADR-059 · ADR-075 · ADR-079 · ADR-087 · ADR-088 · U-058 · U-073 · U-076 |
-| ADR-090 | **Sản xuất theo mẻ: duyệt (và lượt gọi của người) nổ đơn trong cùng giao dịch qua cửa `sanxuat/no_don`; mẻ, lùi mẻ, đã ra bàn, đổi chủ phần đã làm, ghi chú bánh làm sai, huỷ đơn đều là cửa lớp `quay`; "đã ra bàn" nhận đúng tập đơn vị quầy chọn (S-5 không bị chọn hộ); một hàm gom cho bảng nhu cầu; ba trạm bếp không có cửa ghi nào** — không migration; huỷ đơn Hoàn thành chưa dựng (đường hoàn tiền) | Đã chốt 2026-10-09 (giao cho phiên, P3-10; điểm 4 chủ repo chọn; Claude thiết kế, Codex thi công) | — | P3-10 · ADR-056 · ADR-077 · ADR-087 · ADR-088 · ADR-089 · S-5 · S-6 · U-077 · F-044 |
+| ADR-090 | **Sản xuất theo mẻ: duyệt (và lượt gọi của người) nổ đơn trong cùng giao dịch qua cửa `sanxuat/no_don`; mẻ, lùi mẻ, đã ra bàn, đổi chủ phần đã làm, ghi chú bánh làm sai, huỷ đơn đều là cửa lớp `quay`; "đã ra bàn" nhận ~~đúng tập đơn vị quầy chọn~~ **số cái từng thứ cho một bàn** (lời S-5, sửa đổi 2026-10-09); một hàm gom cho bảng nhu cầu; ba trạm bếp không có cửa ghi nào** — không migration; huỷ đơn Hoàn thành chưa dựng (đường hoàn tiền) | Đã chốt 2026-10-09 (giao cho phiên, P3-10; điểm 4 chủ repo chọn; Claude thiết kế, Codex thi công) | — | P3-10 · ADR-056 · ADR-077 · ADR-087 · ADR-088 · ADR-089 · S-5 · S-6 · U-077 · F-044 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -6112,7 +6112,7 @@ dần (chuỗi **ADR-075**), tiền đầu két, số đếm két và dấu đ�
 `be/internal/ngayban/` · `be/internal/authz/` · `be/internal/apierr/`; `docs/product/3-be/06-duong-tien.md` ·
 `openapi.yaml` · `02-vai-va-quyen.md`; **U-058** · **U-073** · **U-076**.
 
-### ADR-090 — Sản xuất theo mẻ: duyệt nổ đơn trong cùng giao dịch; mẻ, lùi mẻ, đã ra bàn và đổi chủ đều là cửa của quầy; "đã ra bàn" nhận đúng tập đơn vị quầy chọn
+### ADR-090 — Sản xuất theo mẻ: duyệt nổ đơn trong cùng giao dịch; mẻ, lùi mẻ, đã ra bàn và đổi chủ đều là cửa của quầy; "đã ra bàn" nhận số cái từng thứ cho một bàn (sửa đổi 2026-10-09)
 
 **Trạng thái:** Đã chốt 2026-10-09, **giao cho phiên** (task `P3-10`, bước 10/14 của pha 3; chủ repo giao
 *"hãy đọc kĩ và làm yêu cầu codex làm bạn kiểm tra"*). Điểm 4 là **lựa chọn của chủ repo** trong phiên cùng
@@ -6151,6 +6151,11 @@ nổ việc trạm mà cửa ấy từ chối thì **không đơn nào** tới *
    qua lần đổi chủ (điểm 6) — lúc ấy nó đã nằm ngoài mọi phép đếm, nên đó không phải một cặp của §5.4 mà là
    hệ quả của *"việc trạm sống chết theo đơn"* (§5.4 cuối mục). Lùi một mẻ có đơn vị đã ra bàn bị từ chối
    (§5.4 không có *Đã ra bàn → Chưa làm*; `05-luoc-do-san-xuat.md` §3).
+   *Sửa đổi 2026-10-09 (Claude, lúc duyệt bản thi công — Codex nêu mâu thuẫn giữa câu trên và điểm 5):* đơn
+   vị của đơn đã huỷ **cũng** rời *đã làm* khi mẻ của nó bị lùi (`vongdoi.LuiViecCuaMe`, chỉ cặp *Đã làm xong →
+   Chưa làm*). Lùi mẻ nghĩa là mẻ ấy không có thật; giữ đơn vị ở *đã làm* để lại một thứ không ai làm mà cửa
+   chuyển sẽ đem cộng cho bàn khác (`I-019` · `I-020`). Ghi chú bánh làm sai còn hiệu lực vẫn chặn lùi.
+   *Suy ra của phiên*, không phải lời chủ quán; test `TestI020_LuiMeTraCaDonViCuaDonDaHuy`.
 4. **Cửa `sanxuat/ra_ban` (`POST /served-marks`) nhận đúng tập đơn vị quầy chọn** — một danh sách mã việc
    trạm, mọi đơn vị ở *Đã làm xong* của đơn chưa huỷ, cả lần bấm hoặc không gì. Cửa **không** chọn *theo bàn*
    hay *theo mẻ*: lời của chủ quán cho **S-5** chỉ đổi cách màn quầy (pha 4) gom danh sách, không đổi cửa.
@@ -6158,6 +6163,16 @@ nổ việc trạm mà cửa ấy từ chối thì **không đơn nào** tới *
    đơn **gắn bàn** ra bàn ⇒ đơn *Hoàn thành* trong cùng giao dịch (§5.2: *mọi việc trạm đã ra tới tay khách*,
    người đứng quầy, trên POS — lần bấm cuối chính là thao tác ấy). Đơn **lẻ** không tự *Hoàn thành* ở đây:
    *Hoàn thành* của nó ghi hoá đơn ở cửa trao (ADR-089 điểm 2).
+   *Sửa đổi 2026-10-09 (S-5 có lời, cùng ngày, trước khi tích hợp):* chủ quán — POS **nhập số cái của từng
+   thứ, cho một bàn**, rồi bấm *đã bưng ra bàn* (`shop-facts.md` §5.4). Cửa đổi thân: `{"dining_table_id"}`
+   **hoặc** `{"sales_order_id"}` (đơn không bàn) cùng `items: [{station_code, menu_component_id,
+   filling_option_ids, quantity}]` — một item là đúng một hàng của bảng nhu cầu, khoá đọc từ **cùng** định
+   nghĩa khoá của hàm gom (điểm 8), không định nghĩa thứ hai. Cửa khoá phiên rồi đơn của phần ấy, chọn
+   `quantity` đơn vị *Đã làm xong* đúng khoá, **lượt gọi sớm hơn trước** (đơn rồi mã việc), đổi sang *Đã ra
+   bàn*; thiếu cái đã làm cho một item ⇒ từ chối cả lần (`served_quantity_exceeds_made`), không ghi gì.
+   Danh sách mã đơn vị bị bỏ: pha 4 không có đường đọc nào trả mã ấy, và lời chủ quán là con số.
+   *Suy ra của phiên* (không phải lời chủ quán): thứ tự *lượt gọi sớm hơn trước* — các cái cùng thứ cùng bàn
+   như nhau, chỉ đổi lúc đơn nào *Hoàn thành*; đơn không bàn bấm theo mã đơn.
 5. **Một lần bấm *đã làm xong* là một mẻ** — danh sách đơn vị *Chưa làm* của đơn chưa huỷ, có thể của nhiều
    bàn; cả lần hoặc không gì; khoá các đơn vị trước khi xét để hai lần bấm chen nhau không cùng giữ một đơn
    vị. Lùi trả **mọi** đơn vị của mẻ cùng lúc, mang mốc và người lùi. Máy không đề xuất, không chia mẻ

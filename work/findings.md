@@ -4020,11 +4020,17 @@ không phải lời pha 1. Việc của pha 1: viết lại tập ấy thành m�
 `05-vong-doi.md` §5.4 đổi trước, rồi lát `P2-07` nhận một migration mới). Không sửa trong lượt
 `P2-07` vì `03-bao-ve-invariant.md` đang mang thay đổi chưa commit của phiên khác.
 
+**Fix 2026-10-09** (Claude, P3-10; chủ repo: *"F-044 → tuỳ theo bạn"*): chọn nhánh thứ nhất — tập thứ
+năm của `I-004` ở `03-bao-ve-invariant.md` §2 viết lại thành *mọi phần của một đơn đã Huỷ mà phép đọc
+nhu cầu còn đếm*, rỗng được. Không thêm trạng thái huỷ cho việc trạm: §5.4 và một migration phải đổi chỉ để
+một tập đối chiếu rỗng, trong khi cửa của `P3-10` đã đọc đúng như thế (bảng nhu cầu lọc đơn Huỷ; test qua cửa
+`TestI004_HuyDonRutNhuCauViecChuaXong`). `09-doi-chieu-bat-bien.md` ghi tập ấy là phép đọc, không câu.
+
 **Related task:**
-`work/backlog_DB.md` → **P2-07** · `P2-11` (câu truy vấn của tập ấy)
+`work/backlog_DB.md` → **P2-07** · `P2-11` (câu truy vấn của tập ấy) · `work/backlog_BE.md` → **P3-10**
 
 **Status:**
-Open
+Closed (2026-10-09)
 
 ### F-045 — Hai phiên chạy `db-check` cùng lúc dùng chung một compose project, nên gỡ database của nhau và báo đỏ giả
 

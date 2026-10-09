@@ -245,8 +245,9 @@ func TestI016_LuotGoiDauMoPhienVaKenhQuyetTrangThai(t *testing.T) {
 	r := c.datHo(t, c.quay, banA, dauLanGui(t), c.dong(false))
 	canDat(t, r, http.StatusCreated)
 	phienA, donA := r.so(t, "table_session_id"), r.so(t, "sales_order_id")
-	if r.chu("channel_code") != "staff_pos" || r.chu("status") != "confirmed" || r.so(t, "dining_table_id") != banA {
-		t.Fatalf("đặt hộ: muốn staff_pos · confirmed · bàn %d, nhận %v", banA, r.body)
+	// P3-10 đổi có chủ ý (ADR-090 điểm 1): đơn đã xác nhận nổ ngay sang Đang thực hiện, cùng giao dịch.
+	if r.chu("channel_code") != "staff_pos" || r.chu("status") != "in_progress" || r.so(t, "dining_table_id") != banA {
+		t.Fatalf("đặt hộ: muốn staff_pos · in_progress · bàn %d, nhận %v", banA, r.body)
 	}
 	if s := c.trangThaiPhien(t, phienA); s != "serving" {
 		t.Fatalf("đơn đầu đã xác nhận ⇒ phiên Đang phục vụ (§5.3), nhận %s", s)
@@ -273,11 +274,11 @@ func TestI016_LuotGoiDauMoPhienVaKenhQuyetTrangThai(t *testing.T) {
 	}
 	d := c.duyet(t, c.quay, donB)
 	canDat(t, d, http.StatusOK)
-	if d.chu("status") != "confirmed" || d.chu("table_session_status") != "serving" || c.trangThaiPhien(t, phienB) != "serving" {
-		t.Fatalf("duyệt đơn đầu ⇒ đơn Đã xác nhận, phiên Đang phục vụ; nhận %v", d.body)
+	if d.chu("status") != "in_progress" || d.chu("table_session_status") != "serving" || c.trangThaiPhien(t, phienB) != "serving" {
+		t.Fatalf("duyệt đơn đầu ⇒ đơn nổ sang Đang thực hiện (ADR-090), phiên Đang phục vụ; nhận %v", d.body)
 	}
 	t.Logf("QR ở bàn trống ⇒ phiên mở, chờ duyệt; duyệt ⇒ %s · %s", c.trangThaiDon(t, donB), c.anhPhien(t, phienB))
-	if c.trangThaiDon(t, donA) != "confirmed" {
+	if c.trangThaiDon(t, donA) != "in_progress" {
 		t.Fatal("đơn A không được đổi")
 	}
 }

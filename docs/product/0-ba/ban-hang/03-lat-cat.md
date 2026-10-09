@@ -856,7 +856,7 @@ Con số chỉ thay đổi khi có người bấm, và cả hai mốc đều b�
 | Mốc | Đơn vị bấm | Ai bấm | Chốt ngày |
 |---|---|---|---|
 | **đã làm xong** | **một mẻ** | người đứng quầy | 2026-09-01 (U-017) |
-| **đã bưng ra bàn** | **S-5** — *suy ra*, chưa xác nhận; xem dưới | người đứng quầy | 2026-09-01 (U-021) |
+| **đã bưng ra bàn** | **số cái từng thứ, cho một bàn** (S-5, chốt 2026-10-09); xem dưới | người đứng quầy | 2026-09-01 (U-021) · 2026-10-09 (S-5) |
 
 - **Ba trạm bếp không bấm gì** — chủ quán bỏ mọi nút bấm ở trạm bếp ngày 2026-08-31 (đóng
   **U-009**). Người tráng bánh, người gấp bánh và người lấy canh không nhận thêm một thao tác nào.
@@ -865,11 +865,9 @@ Con số chỉ thay đổi khi có người bấm, và cả hai mốc đều b�
   bấm *"đã làm xong"* đẩy nhiều việc — có khi của nhiều bàn — sang `Đã làm xong, còn ở bếp` cùng
   lúc. ⇒ Con số ở quầy **nhảy theo bậc**, cả mẻ một lần; đó là đúng, không phải lỗi đếm. Và một
   lần bấm ấy **phải chia được** về từng bàn (§3.4.4).
-- **Đơn vị bấm của *đã bưng ra bàn* thì chưa ai hỏi chủ quán.** Chỗ suy ra là **S-5**
-  (`shop-facts.md` §7.2): *suy ra* là theo **bàn**, không theo mẻ — một mẻ phục vụ nhiều bàn, còn
-  bưng thì bưng tới **một** bàn. Chủ quán mới chỉ nói **ai** bấm, chưa nói **theo gì**. §3.4 để
-  nguyên chỗ ấy là suy ra: **đừng đọc nó thành lời chủ quán**, và đừng dựng bảng quầy như thể câu
-  ấy đã chốt.
+- **Đơn vị bấm của *đã bưng ra bàn* là số cái của từng thứ, cho một bàn** (chủ quán chốt
+  2026-10-09, trả lời **S-5**): POS nhập số lượng rồi bấm *đã bưng ra bàn*. Lời và phần suy ra của
+  phiên ở `shop-facts.md` §5.4 — không chép xuống đây.
 - **Bấm nhầm thì lùi được, và không có mốc thời gian cứng** (chủ quán chốt 2026-09-01, trả lời
   **U-024**): *"có đường lui, thời gian tuỳ theo thực tế để POS quyết định"*. Không có "trong vòng
   N phút" — người đứng quầy nhìn tình huống thật rồi quyết, cùng một kiểu với quyền hoàn tiền

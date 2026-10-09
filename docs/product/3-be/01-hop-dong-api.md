@@ -208,7 +208,8 @@ theo schema của hợp đồng.
 | `P3-07` | **xong 2026-10-06** — thêm tám đường gọi tại bàn, mười mã; xét ràng buộc của đơn tại bàn, phiên, bàn và hoá đơn; §8 so nội dung và trả lại đơn; [luồng tại bàn](04-luong-tai-ban.md) |
 | `P3-08` | **xong 2026-10-09** — ba đường gọi ngoài bàn, bốn mã 409; liên hệ tối thiểu, dấu lần gửi, I-008 cho cả năm kênh và rời quán có chặn S-6; xét năm ràng buộc liên hệ; [luồng mang đi](05-luong-mang-di.md) |
 | `P3-09` | hợp đồng 0.6.0; mười một đường gọi; xét mọi tên của bảng tiền; booked_at/ngày bán do đồng hồ giao dịch cấp, ngày ký nhận từ đường dẫn (ADR-089 điểm 3, 5); [đường tiền](06-duong-tien.md) |
-| `P3-10`…`P3-12` | §1 thêm đường gọi cùng lượt dựng cửa · §3 mã của luật · §4 xét dòng của bảng mình ghi · §5 · §6 · §7 tăng phiên bản |
+| `P3-10` | hợp đồng 0.7.0; chín đường gọi của sản xuất theo mẻ (mẻ, lùi mẻ, đã ra bàn theo số cái, chuyển, ghi chú bánh làm sai, huỷ đơn, bảng nhu cầu); xét ràng buộc của năm bảng sản xuất; [sản xuất theo mẻ](07-san-xuat-theo-me.md) |
+| `P3-11`…`P3-12` | §1 thêm đường gọi cùng lượt dựng cửa · §3 mã của luật · §4 xét dòng của bảng mình ghi · §5 · §6 · §7 tăng phiên bản |
 | `P3-13` | §9 — ô cổng *hợp đồng khớp code*: Gate 1g xanh và đã từng đỏ (`scripts/check-api-contract.test.sh`) |
 | pha 4 | `openapi.yaml` — sinh type; §3 cách đọc lỗi; §5 không tự tính |
 

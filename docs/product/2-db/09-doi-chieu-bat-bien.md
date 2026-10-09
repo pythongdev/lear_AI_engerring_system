@@ -55,7 +55,7 @@ Số `n` của `I-0xx/n` là **thứ tự của tập** trong ô *Phép đối c
 | `I-001` | 1 → `I-001/1` · 2 → `I-001/2` |
 | `I-002` | 1 → `I-002/1` · 2 → `I-002/2` · 3 → `I-002/3` |
 | `I-003` | 1 → `I-003/1` · 2 → `I-003/2` · 3 → §2 |
-| `I-004` | 1 → `I-004/1` · 2 → `I-004/2` · 3 → `I-004/3` · 4 → `I-004/4` · 5 → §2 (**F-044**) · 6 → `I-004/6` · 7 → `I-004/7` |
+| `I-004` | 1 → `I-004/1` · 2 → `I-004/2` · 3 → `I-004/3` · 4 → `I-004/4` · 5 → §2 (phép đọc, **F-044** đã đóng) · 6 → `I-004/6` · 7 → `I-004/7` |
 | `I-005` | 1 → `I-005/1` · 2 → `I-005/2` · 3 → `I-005/3` |
 | `I-006` | 1 → **`I-007/1`** (pha 1: *cùng một tập với `I-007`, không đối chiếu hai lần*) · 2 → `I-006/2` |
 | `I-007` | 1 → `I-007/1` · 2 → `I-007/2` · 3 → `I-007/3` |
@@ -101,7 +101,7 @@ tính chất của dữ liệu.
 | Tập (thứ tự ở ô pha 1) | Trạng thái | Vì sao | Ai nợ |
 |---|---|---|---|
 | `I-003` tập 3 — bàn kẹt: đủ hai điều kiện mà không Trống | chưa có câu | (B) bàn **không** có cột trạng thái (`02-luoc-do-ban-hang.md` §3); *Trống* đọc ra từ chi tiết, nên "đủ điều kiện mà không Trống" không có dữ liệu nào để mâu thuẫn | — (đúng theo cấu tạo) |
-| `I-004` tập 5 — việc Chưa làm của đơn đã Huỷ | chưa có câu | (C) tập không bao giờ rỗng: việc trạm không có trạng thái huỷ, không dòng nào bị xoá | pha 1 — **F-044** |
+| `I-004` tập 5 — phần của đơn đã Huỷ trên phép đọc nhu cầu | không có câu — đúng theo cấu tạo | (C) tập là một **phép đọc**, không phải dữ liệu: việc Chưa làm của đơn Huỷ nằm lại đúng luật; pha 1 viết lại tập 2026-10-09 (**F-044** đóng), kiểm ở tầng 3 bằng test qua cửa của bảng nhu cầu | — |
 | ~~`I-008` tập 2 — đơn tạo trong khoảng tạm dừng~~ | **có câu 2026-10-01** — `I-008/2` | chỗ cất `order_intake_pause` dựng ở `T-132` (`YC-34`, **ADR-078**, đóng **F-050**) | — |
 | ~~`I-008` tập 3 — đơn ba kênh khách tự bấm trong khoảng quán không nhìn thấy đơn~~ | **có câu 2026-10-01** — `I-008/3` | chỗ cất `shop_blind_spell` dựng ở `T-132`; khoảng tính từ lúc quán hết nhìn thấy (`U-061`) | — |
 | `I-008` tập 4 — đơn hai kênh nhân viên bị chặn nhầm | chưa có câu | (A) lần từ chối tạo đơn không để lại bản ghi | pha 3 |

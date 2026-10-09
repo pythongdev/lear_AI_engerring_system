@@ -299,6 +299,28 @@ UPDATE renamed_table SET id = 1;
 EOF
 check "REVOKE đi theo RENAME trong cùng file" 1 "thuộc migration" "$(run "$c")"
 
+c="$(base cap_lai_cot)"
+put "$c/mig/20260102000000_b.up.sql" <<'EOF'
+CREATE TABLE column_granted (id bigint, a text, b text, c text);
+REVOKE UPDATE ON column_granted FROM shop_app;
+GRANT UPDATE (a, b) ON column_granted TO shop_app;
+EOF
+put "$c/be/internal/order/sql/restricted/update.sql" <<'EOF'
+UPDATE column_granted SET a = 'x', b = 'y';
+EOF
+check "GRANT UPDATE (cột) sau REVOKE trao lại đúng cột" 0 "PASS" "$(run "$c")"
+put "$c/be/internal/order/sql/restricted/update.sql" <<'EOF'
+UPDATE column_granted SET a = 'x', c = 'z';
+EOF
+check "cột không được trao lại vẫn thuộc migration" 1 "column_granted sửa thuộc migration" "$(run "$c")"
+put "$c/mig/20260103000000_c.up.sql" <<'EOF'
+REVOKE UPDATE ON column_granted FROM shop_app;
+EOF
+put "$c/be/internal/order/sql/restricted/update.sql" <<'EOF'
+UPDATE column_granted SET a = 'x';
+EOF
+check "REVOKE sau GRANT cột rút cả quyền cột" 1 "thuộc migration" "$(run "$c")"
+
 c="$(base ham_sua)"
 put "$c/mig/20260102000000_b.up.sql" <<'EOF'
 CREATE TABLE function_owned (id bigint);

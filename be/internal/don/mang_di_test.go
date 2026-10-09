@@ -202,7 +202,8 @@ func (n ngoai) quanMu(t *testing.T, tu, toi time.Time) {
 		VALUES ($1, $2, $3) RETURNING id`, tu, toi, n.chu)
 }
 
-// dangLam: đơn tới Đang thực hiện — dựng tay; nổ việc trạm là của P3-10.
+// dangLam: đơn tới Đang thực hiện — dựng tay. Từ P3-10 (ADR-090) duyệt và lượt gọi của người đã nổ
+// đơn sang Đang thực hiện, nên với các đơn ấy lệnh này không đổi gì; để lại cho đơn dựng tay.
 func (n ngoai) dangLam(t *testing.T, don int64) {
 	t.Helper()
 	if _, err := n.owner.Exec(n.ctx, "UPDATE shop.sales_order SET status = 'in_progress' WHERE id = $1", don); err != nil {
@@ -428,8 +429,8 @@ func TestI022_TruongNenCoKhongChanTaoDon(t *testing.T) {
 	}{
 		{"giao không giờ, không tên", false, lienHeGiao(), "delivery", "door_delivery", "pending_confirmation", "cần=- tên=-"},
 		{"tới lấy không địa chỉ", false, lienHeLay(), "pickup", "shop_pickup", "pending_confirmation", "đc=-"},
-		{"hotline tới lấy không địa chỉ", true, lienHeHotlineLay(), "phone_preorder", "shop_pickup", "confirmed", "đc=-"},
-		{"hotline giao kèm tên và ghi chú", true, coTen, "phone_preorder", "door_delivery", "confirmed", "tên=chị Lan ghi=gọi trước khi tới"},
+		{"hotline tới lấy không địa chỉ", true, lienHeHotlineLay(), "phone_preorder", "shop_pickup", "in_progress", "đc=-"},
+		{"hotline giao kèm tên và ghi chú", true, coTen, "phone_preorder", "door_delivery", "in_progress", "tên=chị Lan ghi=gọi trước khi tới"},
 	} {
 		var r traLoi
 		if ca.hotl {
@@ -545,8 +546,8 @@ func TestI024_MangDiGuiLaiBaLanMotDon(t *testing.T) {
 	canDat(t, n.duyet(t, n.quay, r.so(t, "sales_order_id")), http.StatusOK)
 	lai := n.web(t, dau, lienHeGiao())
 	canDat(t, lai, http.StatusOK)
-	if lai.chu("status") != "confirmed" {
-		t.Fatalf("gửi lại sau khi duyệt: trạng thái %q, muốn confirmed", lai.chu("status"))
+	if lai.chu("status") != "in_progress" { // P3-10 (ADR-090 điểm 1): duyệt nổ ngay
+		t.Fatalf("gửi lại sau khi duyệt: trạng thái %q, muốn in_progress", lai.chu("status"))
 	}
 	// Cùng khoảnh khắc viết theo độ lệch khác vẫn là cùng nội dung.
 	dau = dauLanGui(t)
@@ -646,11 +647,13 @@ func TestI016_BonHinhMangDiQuaCuaCuaLat(t *testing.T) {
 	}
 	d := n.duyet(t, n.quay, giao)
 	canDat(t, d, http.StatusOK)
-	if d.chu("status") != "confirmed" || d.body["table_session_id"] != nil {
+	// P3-10 đổi có chủ ý (ADR-090 điểm 1): duyệt nổ đơn sang Đang thực hiện; rời quán còn việc chưa ra
+	// bàn ⇒ S-6; quầy bấm mẻ và đã ra bàn qua cửa (phucVuHet) rồi mới rời quán.
+	if d.chu("status") != "in_progress" || d.body["table_session_id"] != nil {
 		t.Fatalf("duyệt đơn giao: %v", d.body)
 	}
-	canMa(t, n.roiQuan(t, n.quay, giao), http.StatusConflict, "order_transition_not_allowed", "")
-	n.dangLam(t, giao)
+	canMa(t, n.roiQuan(t, n.quay, giao), http.StatusConflict, "delivery_served_mark_undecided", "")
+	n.phucVuHet(t, n.quay, giao)
 	rq := n.roiQuan(t, n.quay, giao)
 	canDat(t, rq, http.StatusOK)
 	if rq.chu("status") != "delivering" || n.trangThaiDon(t, giao) != "delivering" || vet(giao, "in_progress", "delivering") != 1 {
@@ -678,11 +681,11 @@ func TestI016_BonHinhMangDiQuaCuaCuaLat(t *testing.T) {
 	hg := n.hotline(t, n.quay, dauLanGui(t), lienHeHotlineGiao())
 	canDat(t, hg, http.StatusCreated)
 	hGiao := hg.so(t, "sales_order_id")
-	if hg.chu("status") != "confirmed" {
-		t.Fatalf("đơn hotline: %q, muốn confirmed (vào thẳng)", hg.chu("status"))
+	if hg.chu("status") != "in_progress" {
+		t.Fatalf("đơn hotline: %q, muốn in_progress (vào thẳng, nổ ngay — ADR-090)", hg.chu("status"))
 	}
 	canMa(t, n.duyet(t, n.quay, hGiao), http.StatusConflict, "order_transition_not_allowed", "")
-	n.dangLam(t, hGiao)
+	n.phucVuHet(t, n.quay, hGiao)
 	canDat(t, n.roiQuan(t, n.quay, hGiao), http.StatusOK)
 	if n.trangThaiDon(t, hGiao) != "delivering" {
 		t.Fatal("đơn hotline giao tận nơi phải rời quán được")
@@ -740,8 +743,8 @@ func TestI016_RoiQuanKhiConViecTramChuaRaBanBiTuChoi(t *testing.T) {
 			canDat(t, n.duyet(t, n.quay, r.so(t, "sales_order_id")), http.StatusOK)
 		}
 		don := r.so(t, "sales_order_id")
-		n.dangLam(t, don)
-		viec := n.id(t, `INSERT INTO shop.station_job (sales_order_id, station_code, position) VALUES ($1, 'canh', 1) RETURNING id`, don)
+		// P3-10 đổi có chủ ý (ADR-090 điểm 1): đơn đã nổ, nước chấm là việc của chính lần nổ.
+		viec := n.id(t, `SELECT id FROM shop.station_job WHERE sales_order_id = $1 AND order_line_id IS NULL`, don)
 		truoc := n.anhDon(t, don) + " | " + n.docChu(t, "SELECT status FROM shop.station_job WHERE id = $1", viec)
 		canMa(t, n.roiQuan(t, n.quay, don), http.StatusConflict, "delivery_served_mark_undecided", "")
 		if sau := n.anhDon(t, don) + " | " + n.docChu(t, "SELECT status FROM shop.station_job WHERE id = $1", viec); sau != truoc {

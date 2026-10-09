@@ -345,7 +345,8 @@ việc trạm phải ở `Đã ra bàn` trước khi đơn sang `Hoàn thành`. 
 
 **Cổng này chấm tài liệu BA, KHÔNG chấm backlog BA.** Kể cả khi cả chín mục xanh, hai việc vẫn
 còn mở ở `work/backlog.md`: **BA-12** (§3.4 — lát cắt sản xuất theo mẻ) và **S-5**, câu chủ quán
-chưa được hỏi mà BA-12 cần trước khi dựng bảng quầy. Ai ký cổng này thì ký kèm một câu về hai
+chưa được hỏi mà BA-12 cần trước khi dựng bảng quầy (*S-5 có lời 2026-10-09 — `shop-facts.md`
+§5.4*). Ai ký cổng này thì ký kèm một câu về hai
 việc đó.
 
 ### Lỗ hổng phát hiện khi diễn ba scenario — BIÊN BẢN CỦA BA-11, ĐÃ XỬ XONG

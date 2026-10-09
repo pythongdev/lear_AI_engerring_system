@@ -1106,7 +1106,30 @@ phải sơ suất.
   cửa bấm mẻ; cho cửa đã ra bàn bỏ qua một đơn vị sai thay vì từ chối cả lần) ⇒ test đỏ · `./scripts/gate.sh`;
   Claude đọc diff theo từng dòng nghiệm thu, đối chiếu bảng red flag Gate 4.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-09): thiết kế, test đỏ, duyệt và tích hợp — **Claude Code**; thi công — **Codex**
+(worktree `../lean_wt/P3-10`, nhánh `codex/P3-10` từ `03b179e`; Codex không chạy được Docker, mọi lần chạy trên PostgreSQL
+thật là Claude chạy). Thiết kế: **ADR-090** (điểm 3 và điểm 4 mang dòng *Sửa đổi* 2026-10-09); cách đọc lát:
+`docs/product/3-be/07-san-xuat-theo-me.md`.
+- *S-5 có lời giữa lát* (chủ quán 2026-10-09, `shop-facts.md` §5.4): cửa `POST /served-marks` đổi từ *tập đơn vị quầy
+  chọn* sang *một bàn (hoặc một đơn không bàn) + số cái từng thứ*; Claude viết lại test của cửa ấy trước, Codex thi công
+  lại. Mã mới `served_quantity_exceeds_made`.
+- *Tích hợp vào clone chính* (sau `P3-09` · `T-139`, base `c7698f8`): `git diff HEAD` của worktree áp ba chiều; năm file
+  đụng `P3-09` (`apierr.go` · `don_test.go` · `00-index.md` · `02-vai-va-quyen.md` · `openapi.yaml`) gộp giữ cả hai bên,
+  hợp đồng nâng **0.7.0**, thêm hàng `P3-10` ở `01-hop-dong-api.md` §7, gỡ dòng ignore tạm của `07-san-xuat-theo-me.md`.
+  Bảy test của `P3-09` đỏ sau gộp vì dựng tay đơn sang *Đang thực hiện* — sửa **phần dựng** ở `duong_tien_test.go` cho
+  đơn đi qua mẻ và đã ra bàn bằng cửa (`phucVuHet`), như `P3-10` đã làm ở `mang_di_test.go`; một điều kiện đổi có chủ ý:
+  trao đơn hotline chưa làm giờ trả `order_jobs_not_served` thay `order_transition_not_allowed` — ca *Đã xác nhận chưa
+  tới Đang thực hiện* không còn dựng được qua cửa (ADR-090 điểm 1).
+- *Duyệt:* Claude đọc `me.go` · `ra_ban.go` · `khoa.go`: khoá phiên → đơn → đơn vị ở mọi cửa, lùi mẻ và chuyển khoá mẻ
+  trước; đã ra bàn khoá đơn của phần trước khi chọn cái, chọn lượt gọi sớm hơn trước, thiếu thì từ chối cả lần; đơn lẻ
+  không tự *Hoàn thành*. Không red flag Gate 4.
+- *Bằng chứng:* `./scripts/gate.sh` ở clone chính ⇒ `PASS gate không cổng nào đỏ` (be-check; db-check 102 câu · 102 lỗi
+  cài; Gate 1f `36 ô ghi, 35 cửa`; Gate 1g `hợp đồng 0.7.0; 39 đường gọi ở hợp đồng, 39 ở code; 61 mã lỗi … 35 cửa, 35 dòng
+  ma trận`). be-check chạy lại lần hai trên code sạch: xanh. **Lỗi cài** (từng cái, trả về bằng `shasum -c`): bỏ ba
+  `FOR UPDATE` của `khoaTap` ⇒ `--- FAIL: TestI020_HaiLanBamCungDonViChenNhau`; cửa đã ra bàn bỏ kiểm thiếu cái ⇒
+  `--- FAIL: TestI020_DaRaBanTheoSoCaiTungThuChoMotBan`.
+- *Còn lại:* **U-077** đã có lời — đơn đặt trước nổ theo giờ nhắc ở `T-142`; **S-6** (đơn giao, mốc đã ra bàn); huỷ đơn
+  đã *Hoàn thành* (đường hoàn tiền) chưa dựng; chưa đo lại `shasum` của file test đỏ so với lúc giao.
 
 [↑ đầu file](#top)
 

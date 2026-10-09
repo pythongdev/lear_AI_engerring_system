@@ -156,3 +156,19 @@ func TestI016_TrangThaiDauTheoKenh(t *testing.T) {
 		t.Fatal("kênh lạ phải bị từ chối")
 	}
 }
+
+// P3-10 (ADR-090 điểm 3): vòng đời việc trạm §5.4 có đúng một bảng của code, so với bảng của owner đọc
+// LÚC CHẠY; tên → mã đọc ở bảng §4 của docs/product/2-db/05-luoc-do-san-xuat.md.
+func TestI016_BangChuyenViecKhopVongDoi(t *testing.T) {
+	bang := muc(t, docFile(t, "docs/product/2-db/05-luoc-do-san-xuat.md"), "## 4.")
+	dong := regexp.MustCompile("(?m)^\\| `station_job\\.status` \\| `([a-z_]+)` \\| (.+?) \\(§5\\.4\\) \\|$")
+	ma := map[string]string{}
+	for _, m := range dong.FindAllStringSubmatch(bang, -1) {
+		ma[strings.TrimSpace(m[2])] = m[1]
+	}
+	if len(ma) != 3 {
+		t.Fatalf("§4 của 05-luoc-do-san-xuat.md phải đọc ra ba mã việc trạm, đọc được %v", ma)
+	}
+	owner := capCuaOwner(t, "### 5.4", ma)
+	soHaiTap(t, "vòng đời việc trạm §5.4", owner, capCuaCode(vongdoi.CapViec()))
+}

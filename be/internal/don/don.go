@@ -13,6 +13,7 @@ import (
 	"banhcuon/be/internal/authz"
 	"banhcuon/be/internal/ban"
 	"banhcuon/be/internal/gia"
+	"banhcuon/be/internal/sanxuat"
 	"banhcuon/be/internal/vongdoi"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -207,6 +208,11 @@ func tao(ctx context.Context, pool *pgxpool.Pool, caller authz.Caller, yc YeuCau
 			}
 			if (status == "confirmed" && sessionStatus == "open") || sessionStatus == "awaiting_payment" {
 				if err := vongdoi.ChuyenPhien(ctx, tx, sessionID, "serving"); err != nil {
+					return err
+				}
+			}
+			if status == "confirmed" {
+				if err := sanxuat.NoDon(ctx, tx, out.SalesOrderID); err != nil {
 					return err
 				}
 			}

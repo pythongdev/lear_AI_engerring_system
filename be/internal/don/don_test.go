@@ -30,6 +30,7 @@ import (
 	"banhcuon/be/internal/menu"
 	"banhcuon/be/internal/phien"
 	"banhcuon/be/internal/qr"
+	"banhcuon/be/internal/sanxuat"
 	"banhcuon/be/internal/tratruoc"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -75,6 +76,9 @@ func dung(t *testing.T) khung {
 	// P3-09 thêm có chủ ý (ADR-089): đường gọi của trả trước và của két.
 	tratruoc.Routes(mux, pool, xacThucTest{})
 	ket.Routes(mux, pool, xacThucTest{})
+	// P3-10 thêm có chủ ý (ADR-090): đường gọi của sản xuất theo mẻ — mẻ, lùi mẻ, đã ra bàn, chuyển,
+	// ghi chú bánh làm sai, huỷ đơn, bảng nhu cầu.
+	sanxuat.Routes(mux, pool, xacThucTest{})
 	srv := httptest.NewServer(mux)
 	t.Cleanup(srv.Close)
 	// P3-08 thêm có chủ ý (ADR-088): cửa tạo lượt gọi xét giờ bán tại mốc của đồng hồ (I-008), nên mọi
@@ -432,9 +436,10 @@ func TestI012_GhiDonPhaiDungQuay(t *testing.T) {
 	}
 	t.Logf("B đứng quầy ⇒ đơn %d kênh %s trạng thái %s", out.SalesOrderID, kenh, trangThai)
 	// P3-07 đổi điều kiện này có chủ ý (ADR-087 điểm 4): Mới là khoảnh khắc, kênh quyết ngay — đặt hộ
-	// không phải duyệt ⇒ Đã xác nhận (05-vong-doi.md §5.2 dòng "Mới → Đã xác nhận").
-	if kenh != "staff_pos" || trangThai != "confirmed" || out.Status != "confirmed" {
-		t.Fatalf("lượt gọi đặt hộ tại quầy: muốn staff_pos · confirmed (05-vong-doi.md §5.2)")
+	// không phải duyệt ⇒ Đã xác nhận (05-vong-doi.md §5.2 dòng "Mới → Đã xác nhận"). P3-10 đổi lần nữa có
+	// chủ ý (ADR-090 điểm 1): Đã xác nhận → Đang thực hiện là bước của hệ thống trong cùng giao dịch.
+	if kenh != "staff_pos" || trangThai != "in_progress" || out.Status != "in_progress" {
+		t.Fatalf("lượt gọi đặt hộ tại quầy: muốn staff_pos · in_progress (05-vong-doi.md §5.2)")
 	}
 }
 

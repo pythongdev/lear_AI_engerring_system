@@ -9,6 +9,7 @@ import (
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
+	"banhcuon/be/internal/sanxuat"
 	"banhcuon/be/internal/vongdoi"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -42,6 +43,7 @@ type handler struct {
 
 func Routes(mux *http.ServeMux, pool *pgxpool.Pool, auth authz.Authenticator) {
 	h := handler{pool, auth}
+	mux.HandleFunc("POST /orders/{sales_order_id}/cancellation", h.huy)
 	mux.HandleFunc("POST /online-orders", h.taoOnline)
 	mux.HandleFunc("POST /phone-orders", h.taoPhone)
 	mux.HandleFunc("POST /orders/{sales_order_id}/departure", h.roiQuan)
@@ -142,6 +144,12 @@ func (h handler) chuyen(w http.ResponseWriter, r *http.Request, door authz.Door,
 				return err
 			}
 			*sessionStatus = "serving"
+		}
+		if den == "confirmed" {
+			if err := sanxuat.NoDon(r.Context(), tx, id); err != nil {
+				return err
+			}
+			den = "in_progress"
 		}
 		return nil
 	})

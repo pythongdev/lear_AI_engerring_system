@@ -36,6 +36,20 @@ const (
 	CodeCashDayExpenseDateUndecided Code = "cash_day_expense_date_undecided"
 	CodeCashDayNotBalanced          Code = "cash_day_not_balanced"
 
+	CodeStationJobNotFound               Code = "station_job_not_found"
+	CodeStationJobTransitionNotAllowed   Code = "station_job_transition_not_allowed"
+	CodeProductionBatchNotFound          Code = "production_batch_not_found"
+	CodeProductionBatchAlreadyRolledBack Code = "production_batch_already_rolled_back"
+	CodeProductionBatchHasServedUnits    Code = "production_batch_has_served_units"
+	CodeStationJobHasWrongMakeNote       Code = "station_job_has_wrong_make_note"
+	CodeTransferSourceNotAvailable       Code = "transfer_source_not_available"
+	CodeTransferTargetNotWaiting         Code = "transfer_target_not_waiting"
+	CodeWrongMakeNoteNotAllowed          Code = "wrong_make_note_not_allowed"
+	CodeWrongMakeNoteNotFound            Code = "wrong_make_note_not_found"
+	CodeWrongMakeNoteAlreadyCancelled    Code = "wrong_make_note_already_cancelled"
+	CodeCompletedOrderCancelNotReady     Code = "completed_order_cancel_not_ready"
+	CodeServedQuantityExceedsMade        Code = "served_quantity_exceeds_made"
+
 	CodeOrderIntakePaused           Code = "order_intake_paused"
 	CodeOutsideSellingHours         Code = "outside_selling_hours"
 	CodeShopNotSeeingOrders         Code = "shop_not_seeing_orders"
@@ -95,6 +109,20 @@ var statusOf = map[Code]int{
 	CodeCashDayExpenseDateUndecided: 409,
 	CodeCashDayNotBalanced:          409,
 
+	CodeStationJobNotFound:               404,
+	CodeStationJobTransitionNotAllowed:   409,
+	CodeProductionBatchNotFound:          404,
+	CodeProductionBatchAlreadyRolledBack: 409,
+	CodeProductionBatchHasServedUnits:    409,
+	CodeStationJobHasWrongMakeNote:       409,
+	CodeTransferSourceNotAvailable:       409,
+	CodeTransferTargetNotWaiting:         409,
+	CodeWrongMakeNoteNotAllowed:          409,
+	CodeWrongMakeNoteNotFound:            404,
+	CodeWrongMakeNoteAlreadyCancelled:    409,
+	CodeCompletedOrderCancelNotReady:     409,
+	CodeServedQuantityExceedsMade:        409,
+
 	CodeOrderIntakePaused:           409,
 	CodeOutsideSellingHours:         409,
 	CodeShopNotSeeingOrders:         409,
@@ -146,10 +174,13 @@ var constraintCodes = map[string]Code{
 	"reconciled_day_opening_float_fkey":              CodeCashDayIncomplete,
 	"reconciled_day_opening_float_has_lines_check":   CodeCashDayIncomplete,
 
-	"bill_parts_equal_due_check":        CodePaymentPartsMismatch,
-	"bill_debtor_iff_debt_check":        CodeDebtorNameMismatch,
-	"qr_code_dining_table_fkey":         CodeDiningTableNotFound,
-	"qr_code_one_current_per_table_key": CodeQRCodeIssueConflict,
+	"wrong_make_note_live_station_job_fkey": CodeStationJobHasWrongMakeNote,
+	"wrong_make_note_live_key":              CodeStationJobHasWrongMakeNote,
+	"wrong_make_note_cancelled_order_fkey":  CodeWrongMakeNoteNotAllowed,
+	"bill_parts_equal_due_check":            CodePaymentPartsMismatch,
+	"bill_debtor_iff_debt_check":            CodeDebtorNameMismatch,
+	"qr_code_dining_table_fkey":             CodeDiningTableNotFound,
+	"qr_code_one_current_per_table_key":     CodeQRCodeIssueConflict,
 	// Lần đổi bắt đầu trước mà ghi sau một lần đổi khác: now() của nó sớm hơn mốc cấp của mã
 	// vừa sinh, nên "thay trước lúc cấp" bị từ chối — cùng một ca chen nhau.
 	"qr_code_replaced_after_issued_check": CodeQRCodeIssueConflict,

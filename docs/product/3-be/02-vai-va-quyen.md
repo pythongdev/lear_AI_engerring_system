@@ -91,6 +91,15 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `hoadon/ghi` | `theo_cua_goi` | ADR-089 điểm 1; ADR-087 điểm 3 |
 | `hoadon/ghi_hoan` | `theo_cua_goi` | ADR-089 điểm 1; ADR-087 điểm 3 |
 | `tratruoc/dung` | `theo_cua_goi` | ADR-089 điểm 1; ADR-087 điểm 3 |
+| `sanxuat/no_don` | `theo_cua_goi` | `05-vong-doi.md` §5.2 · §5.4; ADR-090 — nổ cùng giao dịch duyệt hoặc tạo đơn đã xác nhận |
+| `sanxuat/bam_me` | `quay` | `shop-facts.md` §5.4; `05-vong-doi.md` §5.4; ADR-090 — POS bấm mẻ, bếp chỉ đọc |
+| `sanxuat/lui_me` | `quay` | `shop-facts.md` §5.4; `05-vong-doi.md` §5.4; ADR-090 — quầy lùi mẻ |
+| `sanxuat/ra_ban` | `quay` | `05-vong-doi.md` §5.4; `shop-facts.md` §5.4 (S-5, 2026-10-09); ADR-090 điểm 4 — số cái từng thứ cho một bàn |
+| `sanxuat/chuyen` | `quay` | `shop-facts.md` §5.4; ADR-090 điểm 7 — quầy chọn đích; gồm đơn lẻ là suy luận của phiên |
+| `sanxuat/ghi_lam_sai` | `quay` | `shop-facts.md` §5.4; ADR-077; ADR-090 — quầy quyết không có nơi nhận |
+| `sanxuat/huy_ghi_lam_sai` | `quay` | ADR-077; ADR-090 điểm 6 — quầy huỷ ghi chú là suy luận của phiên |
+| `don/huy` | `quay` | `05-vong-doi.md` §5.2; ADR-090 — huỷ đơn đã xác nhận hoặc đang thực hiện |
+| `vongdoi/chuyen_viec` | `theo_cua_goi` | `05-vong-doi.md` §5.4; `I-016`; ADR-090 — một cửa sở hữu trạng thái việc |
 
 **Lát sau thêm dòng thế nào:** cùng lượt dựng cửa — thư mục cửa, khai báo `authz.Door{Code, Need}` ngoài
 file test, và một dòng ở đây trỏ nguồn nghiệp vụ. Thiếu một trong ba thì Gate 1g đỏ.

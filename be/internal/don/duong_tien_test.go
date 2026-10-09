@@ -87,7 +87,8 @@ func (n tien) donGiao(t *testing.T) (int64, int64) {
 	r := n.hotline(t, n.quay, dauLanGui(t), lienHeHotlineGiao())
 	canDat(t, r, http.StatusCreated)
 	don := r.so(t, "sales_order_id")
-	n.dangLam(t, don)
+	// P3-10 (ADR-090 điểm 1): hotline nổ ngay; quầy bấm mẻ và đã ra bàn qua cửa rồi mới rời quán (S-6).
+	n.phucVuHet(t, n.quay, don)
 	canDat(t, n.roiQuan(t, n.quay, don), http.StatusOK)
 	return don, r.so(t, "total_vnd")
 }
@@ -263,11 +264,12 @@ func TestI015_TraoTaiQuayGhiHoaDonDonLe(t *testing.T) {
 		t.Fatalf("tổng đơn %d quá nhỏ cho test", tong)
 	}
 
-	// Đã xác nhận chưa tới Đang thực hiện: không có dòng Đã xác nhận → Hoàn thành ở §5.2.
+	// P3-10 đổi có chủ ý (ADR-090 điểm 1): hotline nổ ngay sang Đang thực hiện, nên ca "Đã xác nhận chưa
+	// tới Đang thực hiện" không còn dựng được qua cửa; đơn chưa làm bị từ chối vì việc trạm chưa ra bàn.
 	truoc := n.demTien(t)
-	canMa(t, n.traoTaiQuay(t, n.quay, d, thu(tong, 0)), http.StatusConflict, "order_transition_not_allowed", "")
+	canMa(t, n.traoTaiQuay(t, n.quay, d, thu(tong, 0)), http.StatusConflict, "order_jobs_not_served", "")
 	n.khongDoi(t, truoc, "trao đơn chưa làm")
-	n.dangLam(t, d)
+	n.phucVuHet(t, n.quay, d)
 
 	canMa(t, n.traoTaiQuay(t, n.quay, d, map[string]any{"transfer_vnd": tong}), http.StatusBadRequest, "invalid_request", "cash_vnd")
 	canMa(t, n.traoTaiQuay(t, n.quay, d, thu(-1, tong+1)), http.StatusBadRequest, "invalid_request", "cash_vnd")
@@ -311,7 +313,7 @@ func TestI012_GiaoXongDoNguoiDiGiaoBam(t *testing.T) {
 	giao := n.nguoi(t, "người đi giao", false) // không đứng quầy, không là chủ quán
 	dG, tongG := n.donGiao(t)
 	dL, tongL := n.donLay(t)
-	n.dangLam(t, dL)
+	n.phucVuHet(t, n.quay, dL)
 
 	truoc := n.demTien(t)
 	canMa(t, n.giaoXong(t, giao, dL, thu(tongL, 0)), http.StatusConflict, "order_handover_mismatch", "")
@@ -335,9 +337,7 @@ func TestI012_GiaoXongDoNguoiDiGiaoBam(t *testing.T) {
 func TestI016_TraoTaiQuayKhiConViecChuaRaBanBiTuChoi(t *testing.T) {
 	n := dungTien(t)
 	n.datNgay(t, 4)
-	d, tong := n.donLay(t)
-	n.dangLam(t, d)
-	n.id(t, `INSERT INTO shop.station_job (sales_order_id, station_code, position) VALUES ($1, 'canh', 1) RETURNING id`, d)
+	d, tong := n.donLay(t) // P3-10 (ADR-090 điểm 1): đơn đã nổ, việc trạm chưa ra bàn là của chính lần nổ
 	truoc := n.demTien(t)
 	canMa(t, n.traoTaiQuay(t, n.quay, d, thu(tong, 0)), http.StatusConflict, "order_jobs_not_served", "")
 	n.khongDoi(t, truoc, "trao khi còn việc trạm")
@@ -353,7 +353,7 @@ func TestI015_GiamGiaCaDonBiTuChoiChoU058(t *testing.T) {
 	n.datNgay(t, 5)
 	giao := n.nguoi(t, "người đi giao", false)
 	dL, tongL := n.donLay(t)
-	n.dangLam(t, dL)
+	n.phucVuHet(t, n.quay, dL)
 	dG, tongG := n.donGiao(t)
 	phien, tongP := n.phienDaTinh(t)
 
@@ -377,7 +377,7 @@ func TestI005_NoTrenDonLeBiTuChoiChoU076(t *testing.T) {
 	n.datNgay(t, 6)
 	giao := n.nguoi(t, "người đi giao", false)
 	dL, tongL := n.donLay(t)
-	n.dangLam(t, dL)
+	n.phucVuHet(t, n.quay, dL)
 	dG, tongG := n.donGiao(t)
 	truoc := n.demTien(t)
 	no := func(tong int64) map[string]any {
@@ -439,7 +439,7 @@ func TestYC23_TraTruocNhanTraLaiVaDungChoHoaDon(t *testing.T) {
 	}
 
 	// Phần còn lại thành doanh thu qua hoá đơn của chính đơn — không quá số dư.
-	n.dangLam(t, d)
+	n.phucVuHet(t, n.quay, d)
 	truoc = n.demTien(t)
 	canMa(t, n.traoTaiQuay(t, n.quay, d, voi(thu(tong-tt, 0), map[string]any{"prepaid_transfer_vnd": tt})),
 		http.StatusConflict, "prepayment_balance_exceeded", "")
@@ -456,7 +456,7 @@ func TestYC23_TraTruocNhanTraLaiVaDungChoHoaDon(t *testing.T) {
 
 	// Đơn đã xong thì không nhận trả trước nữa.
 	dX, tongX := n.donLay(t)
-	n.dangLam(t, dX)
+	n.phucVuHet(t, n.quay, dX)
 	canDat(t, n.traoTaiQuay(t, n.quay, dX, thu(tongX, 0)), http.StatusCreated)
 	canMa(t, n.nhanTraTruoc(t, n.quay, dX, tongX, 0), http.StatusConflict, "order_not_prepayable", "")
 }
@@ -653,7 +653,7 @@ func TestI021_MotNgayBanGiaQuaCuaRa0dLech(t *testing.T) {
 	dP, tongP := n.donLay(t) // P: trả trước nửa đơn bằng tiền mặt, trao tại quầy cùng ngày
 	ttP := nghin(tongP / 2)
 	canDat(t, n.nhanTraTruoc(t, n.quay, dP, ttP, 0), http.StatusCreated)
-	n.dangLam(t, dP)
+	n.phucVuHet(t, n.quay, dP)
 	canDat(t, n.traoTaiQuay(t, n.quay, dP, voi(thu(tongP-ttP, 0), map[string]any{"prepaid_cash_vnd": ttP})), http.StatusCreated)
 
 	dG, tongG := n.donGiao(t) // G: người đi giao thu tiền mặt tại chỗ khách

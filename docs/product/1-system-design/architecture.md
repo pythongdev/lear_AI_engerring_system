@@ -223,10 +223,9 @@ xong"* đẩy nhiều việc — có khi của nhiều bàn — sang cùng lúc:
 Hai con số lệch nhau **đúng bằng** *đã làm xong, còn ở bếp*. Gộp chúng làm một là quay lại phương
 án ba con số cũ (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.4.2).
 
-⚠️ **Đơn vị bấm của "đã bưng ra bàn" vẫn là chỗ suy ra, chưa hỏi chủ quán — `S-5`**
-(`master_plan/shop-facts.md` §7.2). Phương án hẹp đang dùng ở bảng trên: theo **bàn**, không theo
-mẻ — một mẻ phục vụ nhiều bàn, còn bưng thì bưng tới một bàn. Chủ quán mới chỉ nói **ai** bấm, chưa
-nói **theo gì**; nếu lời trả lời khác đi thì cột này viết lại.
+**Đơn vị bấm của "đã bưng ra bàn" — `S-5` có lời 2026-10-09:** POS nhập **số cái của từng thứ, cho
+một bàn**, rồi bấm (`master_plan/shop-facts.md` §5.4). Phương án *theo bàn, không theo mẻ* ở bảng
+trên đứng nguyên; lời mới thêm vế *theo số cái*.
 
 **Đơn bị huỷ sau khi bếp đã làm xong phần của nó** (chủ quán chốt 2026-09-06, đóng `U-033`, nguyên
 văn *"tính vào bàn khác, pos sẽ cập nhật bánh này đem ra cho bàn nào"*): phần đã làm xong **không**

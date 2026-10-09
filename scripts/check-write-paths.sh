@@ -7,7 +7,8 @@
 #   CONFLICT là ô sửa từng cột SET, kể cả bộ (a,b), tách ở ngoặc ngoài cùng.
 #   *.up.sql theo tên: CREATE/DROP/RENAME xác định bảng còn tồn tại; bảng được
 #   ghi trong thân hàm $$ thuộc migration; REVOKE INSERT/UPDATE FROM shop_app
-#   giữ riêng loại ghi ấy. --list in bảng<TAB>loại<TAB>cột hoặc -<TAB>gói/cửa.
+#   giữ riêng loại ghi ấy; GRANT UPDATE (cột…) TO shop_app đứng sau trao lại
+#   đúng các cột ấy, REVOKE đứng sau nữa rút cả quyền cột (như PostgreSQL). --list in bảng<TAB>loại<TAB>cột hoặc -<TAB>gói/cửa.
 # ĐỎ KHI NÀO: hai cửa chung ô, tên cửa sai, câu ghi ngoài cửa, bảng đích không
 #   nhận ra, SET không đọc ra cột, ghi ô thuộc migration; DELETE/TRUNCATE/MERGE/
 #   COPY không có ô. Mỗi lỗi một dòng có file và dòng khi xác định được.
@@ -35,7 +36,7 @@ use File::Find;
 binmode STDOUT, ':encoding(UTF-8)';
 my ($be, $mig, $flag) = @ARGV;
 $be =~ s{/+$}{};
-my (%tables, %owned, %cells, %doors);
+my (%tables, %owned, %granted, %cells, %doors);
 my ($failed, $files) = (0, 0);
 my $id = qr/[a-z_][a-z0-9_]*/i;
 my $target = qr/$id(?:\s*\.\s*$id)?/;
@@ -69,24 +70,31 @@ for my $f (@migrations) {
         |ALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?($target)\s+RENAME\s+TO\s+($id)
         |CREATE\s+(?:OR\s+REPLACE\s+)?FUNCTION\b(?:(?!\$\$).)*\$\$(.*?)\$\$
         |REVOKE\s+([^;]+?)\s+ON\s+(?:TABLE\s+)?([^;]+?)\s+FROM\s+shop_app\b
+        |GRANT\s+UPDATE\s*\(([^)]+)\)\s+ON\s+(?:TABLE\s+)?($target)\s+TO\s+shop_app\b
     )/gixs) {
-        my ($create, $drop, $old, $new, $body, $rights, $names) = ($1, $2, $3, $4, $5, $6, $7);
+        my ($create, $drop, $old, $new, $body, $rights, $names, $cols, $grant_on) = ($1, $2, $3, $4, $5, $6, $7, $8, $9);
         if (defined $create) { $tables{table_name($create)} = 1; }
         elsif (defined $drop) {
             $drop =~ s/\s+(CASCADE|RESTRICT)\s*$//i;
-            for (split /,/, $drop) { my $t = table_name($_); delete $tables{$t}; delete $owned{$t}; }
+            for (split /,/, $drop) { my $t = table_name($_); delete $tables{$t}; delete $owned{$t}; delete $granted{$t}; }
         } elsif (defined $old) {
             ($old, $new) = (table_name($old), table_name($new));
             delete $tables{$old}; $tables{$new} = 1;
             $owned{$new} = delete $owned{$old} if exists $owned{$old};
+            $granted{$new} = delete $granted{$old} if exists $granted{$old};
         } elsif (defined $body) {
             while ($body =~ /\b(?:INSERT\s+INTO|UPDATE(?:\s+ONLY)?)\s+($target)/gi) {
                 $owned{table_name($1)}{'*'} = 1;
             }
+        } elsif (defined $cols) {
+            $granted{table_name($grant_on)}{lc $_} = 1 for split /\s*,\s*/, $cols =~ s/^\s+|\s+$//gr;
         } else {
             for my $t (split /,/, $names) {
                 $owned{table_name($t)}{'thêm'} = 1 if $rights =~ /\bINSERT\b/i;
-                $owned{table_name($t)}{'sửa'} = 1 if $rights =~ /\bUPDATE\b/i;
+                if ($rights =~ /\bUPDATE\b/i) {
+                    $owned{table_name($t)}{'sửa'} = 1;
+                    delete $granted{table_name($t)};
+                }
             }
         }
     }
@@ -94,7 +102,8 @@ for my $f (@migrations) {
 sub add_cell {
     my ($f, $line, $door, $table, $kind, $col) = @_;
     if (!$tables{$table}) { error_at($f, $line, "không nhận ra bảng đích $table"); }
-    if ($owned{$table}{'*'} || $owned{$table}{$kind}) { error_at($f, $line, "ô $table $kind thuộc migration"); }
+    my $regranted = $kind eq 'sửa' && $granted{$table}{$col};
+    if ($owned{$table}{'*'} || ($owned{$table}{$kind} && !$regranted)) { error_at($f, $line, "ô $table $kind thuộc migration"); }
     $cells{join("\t", $table, $kind, $col)}{$door} = "$f:$line";
 }
 sub assignments {
