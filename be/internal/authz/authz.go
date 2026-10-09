@@ -20,6 +20,12 @@ import (
 type Need string
 
 const (
+	// NeedCounterOrQR: người đang đứng quầy, hoặc không người mà mang mã QR hiện hành (ADR-087 điểm 8).
+	NeedCounterOrQR Need = "quay_hoac_ma_ban"
+	// NeedPerson: một người của quán có thật, đứng đâu cũng được (ADR-087 điểm 7).
+	NeedPerson Need = "nguoi_quan"
+	// NeedCallingDoor: cửa không lối vào, chạy trong giao dịch của cửa gọi (ADR-087 điểm 3).
+	NeedCallingDoor Need = "theo_cua_goi"
 	// NeedCounter: người bấm có một khoảng counter_duty chứa mốc giao dịch của cửa (YC-15).
 	NeedCounter Need = "quay"
 	// NeedOwner: người bấm mang cờ chủ quán, đứng đâu cũng được (YC-16).
@@ -47,42 +53,67 @@ const (
 	kiemChuQuan = `SELECT is_owner FROM person WHERE id = $1`
 )
 
+// Caller là người gửi yêu cầu: một người của quán, hoặc (chỉ lớp quay_hoac_ma_ban) một mã QR.
+type Caller struct {
+	PersonID int64
+	QRCode   string
+}
+
+// Granted là thứ đã qua lớp: người đã kiểm, hoặc bàn tra từ mã hiện hành.
+type Granted struct {
+	PersonID int64
+	Seat
+}
+
 // Run mở giao dịch, kiểm người và lớp của d tại mốc giao dịch, khai người thao tác của giao dịch
 // (shop.actor_person_id) bằng chính người đã kiểm, rồi mới chạy fn. Bị từ chối thì fn không chạy
 // và lỗi là apierr.Error; lỗi của fn trả nguyên, giao dịch lùi.
 func Run(ctx context.Context, pool *pgxpool.Pool, personID int64, d Door, fn func(pgx.Tx) error) error {
-	if d.Need != NeedCounter && d.Need != NeedOwner {
-		return fmt.Errorf("cửa %q khai lớp quyền lạ %q", d.Code, d.Need)
-	}
-	if personID <= 0 {
-		return apierr.Error{Code: apierr.CodeUnauthenticated}
+	return RunAs(ctx, pool, Caller{PersonID: personID}, d, func(tx pgx.Tx, _ Granted) error { return fn(tx) })
+}
+
+// RunAs kiểm quyền lại ở mỗi giao dịch, kể cả một lần chạy lại sau tranh chấp.
+func RunAs(ctx context.Context, pool *pgxpool.Pool, caller Caller, d Door, fn func(pgx.Tx, Granted) error) error {
+	switch d.Need {
+	case NeedCounter, NeedOwner, NeedCounterOrQR, NeedPerson:
+	default:
+		return fmt.Errorf("cửa %q không có lối vào trực tiếp cho lớp %q", d.Code, d.Need)
 	}
 	return db.InTx(ctx, pool, func(tx pgx.Tx) error {
-		var chuQuan bool
-		if err := tx.QueryRow(ctx, kiemChuQuan, personID).Scan(&chuQuan); err != nil {
+		g := Granted{PersonID: caller.PersonID}
+		if caller.PersonID <= 0 {
+			if d.Need != NeedCounterOrQR || caller.QRCode == "" {
+				return apierr.Error{Code: apierr.CodeUnauthenticated}
+			}
+			seat, err := CurrentTable(ctx, tx, caller.QRCode)
+			if err != nil {
+				return err
+			}
+			g.Seat = seat
+			return fn(tx, g)
+		}
+		var owner bool
+		if err := tx.QueryRow(ctx, kiemChuQuan, caller.PersonID).Scan(&owner); err != nil {
 			if errors.Is(err, pgx.ErrNoRows) {
 				return apierr.Error{Code: apierr.CodeUnauthenticated}
 			}
 			return err
 		}
-		switch d.Need {
-		case NeedOwner:
-			if !chuQuan {
-				return apierr.Error{Code: apierr.CodeOwnerOnly}
-			}
-		case NeedCounter:
-			var dangDung bool
-			if err := tx.QueryRow(ctx, kiemQuay, personID).Scan(&dangDung); err != nil {
+		if d.Need == NeedOwner && !owner {
+			return apierr.Error{Code: apierr.CodeOwnerOnly}
+		}
+		if d.Need == NeedCounter || d.Need == NeedCounterOrQR {
+			var onDuty bool
+			if err := tx.QueryRow(ctx, kiemQuay, caller.PersonID).Scan(&onDuty); err != nil {
 				return err
 			}
-			if !dangDung {
+			if !onDuty {
 				return apierr.Error{Code: apierr.CodeNotOnCounterDuty}
 			}
 		}
-		if _, err := tx.Exec(ctx, "SELECT set_config('shop.actor_person_id', $1, true)",
-			strconv.FormatInt(personID, 10)); err != nil {
+		if _, err := tx.Exec(ctx, "SELECT set_config('shop.actor_person_id', $1, true)", strconv.FormatInt(caller.PersonID, 10)); err != nil {
 			return err
 		}
-		return fn(tx)
+		return fn(tx, g)
 	})
 }

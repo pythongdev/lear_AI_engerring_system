@@ -56,16 +56,15 @@ nên dòng thiếu nhân bị từ chối (**F-059**).
 |---|---|---|
 | `POST /price-quotes` | **tính thử** — khách, quầy, ai cũng gọi được; trường giá gửi kèm bị bỏ (`I-013`) | không |
 | `GET /menu` | món đang bán, nhóm tuỳ chọn, và **giá của mọi tổ hợp hợp lệ** — mỗi giá tính bằng `gia.Tinh`. FE nhận kết quả, không nhận công thức (`01-hop-dong-api.md` §5) | không |
-| cửa `don/tao_luot_goi` | **ghi một lượt gọi** — gọi `gia.Tinh` trong giao dịch của cửa **trước** mọi câu ghi, rồi chép đúng kết quả vào dòng đơn và ảnh chụp | `sales_order` · `order_line` · `order_line_component` · `order_line_option` |
+| cửa `don/tao_luot_goi` | **ghi một lượt gọi** — gọi `gia.Tinh` trong giao dịch của cửa **trước** mọi câu ghi đơn và dòng đơn, rồi chép đúng kết quả vào dòng đơn và ảnh chụp | `sales_order` · `order_line` · `order_line_component` · `order_line_option` |
 
 Vì cả ba gọi cùng một hàm, con số khách thấy ở tính thử và con số quầy ghi vào đơn chỉ khác được khi
 menu đổi giữa hai lần gọi — và khi ấy con số trên đơn là con số đúng **tại mốc lượt gọi của nó**
 (`I-009`: mốc khoá là từng lượt gọi; một phiên vắt qua lần đổi giá mang hai mức giá là đúng).
 
-**Cửa tạo lượt gọi là MỘT cho cả năm kênh** (**ADR-086** điểm 2). Lát này dựng phần **giá** của nó và một
-lối vào: người đứng quầy đặt hộ vào một phiên bàn đã có (`staff_pos`, trạng thái `new` —
-`05-vong-doi.md` §5.2 dòng đầu), lớp `quay`, **chưa có đường gọi HTTP**. Phần kênh vào **chính cửa này**
-ở `P3-07` · `P3-08` (§4).
+**Cửa tạo lượt gọi là MỘT cho cả năm kênh** (**ADR-086** điểm 2). `P3-06` dựng phần **giá**; `P3-07` thêm mở phiên, đường gọi đặt hộ và khách QR,
+trạng thái đầu theo kênh, lớp `quay_hoac_ma_ban`, gửi lại cùng dấu. Phần kênh tại bàn và thứ tự giao dịch
+ở [luồng tại bàn](04-luong-tai-ban.md); kênh ngoài bàn thêm vào **chính cửa này** ở `P3-08`.
 
 ## 3. Bảng ca test — đọc lúc chạy, không gõ lại
 
@@ -91,10 +90,10 @@ Ca của test sửa menu dùng menu **giả** riêng (`test-…`), không chạm
 | Chỗ trống | Hôm nay | Ai gỡ |
 |---|---|---|
 | **Mặc định *Thịt · Thường*** (§4.6 luật 8) | không có chỗ cất; dòng thiếu nhân bị từ chối | **F-059** — trước khi pha 4 dựng màn gọi món |
-| **Đường gọi HTTP của cửa tạo lượt gọi**, mở phiên từ lượt gọi đầu, lối vào của khách QR | chưa có; cửa nhận lượt gọi của quầy vào phiên đã có | `P3-07` |
+| **Đường gọi HTTP, mở phiên, khách QR** | đã dựng ở `P3-07` | [luồng tại bàn](04-luong-tai-ban.md) |
 | **Bốn kênh ngoài bàn**, liên hệ tối thiểu (`I-022`) | chưa có lối vào | `P3-08` |
 | **Giờ bán · tạm dừng · quán mù** (`I-008`) trước khi tạo lượt gọi | cửa chưa xét | `P3-08` · `P3-12` |
-| **Dấu lần gửi trùng** (`I-024`) — gửi lại nhận lại đúng đơn | cửa chưa xét; dòng `sales_order_submission_code_key` còn `unreviewed` | `P3-07` |
+| **Dấu lần gửi trùng** (`I-024`) | đã xử lý tại bàn ở `P3-07`; ràng buộc trùng dấu là `internal` vì cửa chạy lại | [luồng tại bàn](04-luong-tai-ban.md) |
 | **Lời nhắc *đang trong giờ bán*** trước khi đổi thành phần suất (`I-011`) | máy giữ vết (người · lúc · cái gì); lời nhắc chưa có | pha 4, đọc nguồn giờ bán của cửa `I-008` |
 | **Thêm · bỏ một thành phần của suất**, đổi tên món, bán lại món đã ngừng | chưa có cửa; bỏ một thành phần còn vướng *không xoá* (`QD-50`) | khi chủ quán cần — một lát sau, kèm ADR nếu cần đổi lược đồ |
 | **Yêu cầu gốc của khách** (vế *"tổ hợp khác tổ hợp khách gửi"* của đối chiếu `I-010`) | không cất: cửa từ chối chứ không sửa, nên tổ hợp đã ghi **là** tổ hợp đã gửi | — |

@@ -677,11 +677,109 @@ nguyên tử (`I-017`) · dọn bàn (`I-003`) — mỗi vế tầng 2 · tầng
 cả hai; để ràng buộc tầng 1 từ chối và dịch lời từ chối.
 
 **Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+- *Phạm vi* (nhận 2026-10-06, Claude Code; chủ repo giao *"hãy đọc kivaf làm yêu cầu codex làm bạn kiểm
+  tra"* — Claude thiết kế và viết test đỏ; Codex thi công ở worktree `../lean_wt/P3-07`, nhánh
+  `codex/P3-07` từ `a57a966`; Claude duyệt và tích hợp): `be/internal/don/` · `be/internal/vongdoi/` (mới) ·
+  `be/internal/phien/` (mới) · `be/internal/hoadon/` (mới) · `be/internal/ban/` (mới) · `be/internal/authz/`
+  (ba lớp mới) · `be/internal/qr/` (chỉ nếu tra bàn từ mã chuyển sang `authz`) · `be/internal/apierr/` ·
+  `docs/product/3-be/` (`openapi.yaml`, `02-vai-va-quyen.md` §2 · §3 · §4, `01-hop-dong-api.md` §8 · §10, mới
+  `04-luong-tai-ban.md`) · `docs/product/00-index.md` · `master_plan/BE_master_plan_banh_cuon_ba_thanh.md` §5
+  (chỉ dòng tên file nếu đổi) — `docs/decisions.md` (ADR-087) · `work/findings.md` (F-060) · `work/`. **Không**
+  migration, không `be/cmd/`, không cửa ghép bàn, không nổ việc trạm, không huỷ đơn đã xác nhận.
+- *Vế tầng 2 · tầng 3 lát chạm* — lấy bằng `grep -nE '^\| \*\*`I-0(01|02|03|06|16|17|24)`' docs/product/1-system-design/03-bao-ve-invariant.md`
+  (2026-10-06): `I-002` dòng 97 — tầng 3, một cửa quyết lượt gọi thuộc đơn vị tính tiền nào, hoá đơn cộng lại
+  từ lượt gọi, kể cả lượt gọi lúc *Chờ thanh toán* và từ bàn ghép (vế *một phiên một hoá đơn* là tầng 1);
+  `I-024` dòng 106 — tầng 3 hai vế: lần gửi lại nhận lại đúng đơn / cùng dấu khác nội dung bị từ chối, và
+  nội dung giống hệt không phải là trùng (hai vế tầng 1 đã có từ `T-116`); `I-001` dòng 218 — chỉ tầng 1,
+  lát này dịch lời từ chối của nó thành *chạy lại*; `I-003` dòng 219 — tầng 3, một cửa tới *Cần dọn* (đóng
+  phiên), một cửa tới *Trống* (dọn đúng bàn ấy), nhóm ghép dọn từng bàn; `I-006` dòng 221 — tầng 3, suất đem
+  về đi vào phiên bàn (vế chiều ngược là tầng 1 của `I-007`); `I-016` dòng 222 — tầng 3, đúng một hàm xác
+  thực mỗi vòng đời, cặp ngoài bảng bị từ chối; `I-017` dòng 223 — tầng 2, đọc mọi đơn (cả bàn ghép) và ghi
+  *Đã đóng* trong một giao dịch, tiền chưa thu không chặn.
+- *Câu cho chủ quán:* không mở câu mới. Lớp của cửa dọn bàn là **suy luận của phiên** (ADR-087 điểm 7 —
+  `U-055`: bốn trạm ngoài quầy không ghi chỗ đứng); chuyển do khách kích không vết ⇒ **F-060**.
+- *Thiết kế* (Claude, 2026-10-06; lý do và phương án bị loại: **ADR-087**): `don/tao_luot_goi` đổi lớp sang
+  `quay_hoac_ma_ban`, tìm phiên từ bàn, mở phiên ở lượt gọi đầu, chạy lại khi tầng 1 từ chối; hai cửa chuyển
+  `vongdoi/chuyen_don` · `vongdoi/chuyen_phien` (lớp `theo_cua_goi`, không lối vào) sở hữu ba ô trạng thái;
+  `don/duyet` · `don/tu_choi` · `phien/tinh_tien` · `hoadon/dong` lớp `quay`; `ban/da_don` lớp `nguoi_quan`;
+  đọc `GET /dining-tables`. Tám đường gọi mới, mười mã mới (`submission_code_conflict` ·
+  `dining_table_needs_cleaning` · `dining_table_not_needing_cleaning` · `sales_order_not_found` ·
+  `table_session_not_found` · `order_transition_not_allowed` · `table_session_transition_not_allowed` ·
+  `table_session_has_open_orders` · `payment_parts_mismatch` · `debtor_name_mismatch`).
+- *Nghiệm thu* (viết trước khi sửa): (1) Test đỏ do Claude viết trước — `be/internal/vongdoi/vongdoi_test.go` ·
+  `be/internal/don/tai_ban_test.go`, cùng hai chỗ sửa có chủ ý ở `be/internal/don/don_test.go` (khung đăng ký
+  đường gọi mới; đơn đặt hộ tạo ra ở *Đã xác nhận*, không còn *Mới* — ADR-087 điểm 4) — xanh qua
+  `./scripts/be-check.sh` **mà không sửa điều kiện kiểm nào**: bảng chuyển của code bằng §5.2 · §5.3 đọc lúc
+  chạy; lượt gọi đầu mở phiên, kênh quyết trạng thái đầu; tám lượt gọi đầu chen nhau ⇒ một phiên; cùng dấu ba
+  lần ⇒ một đơn (201 rồi 200), gửi lại sau khi đơn đổi trạng thái vẫn trả đơn ấy, cùng dấu khác nội dung ⇒
+  `submission_code_conflict`, năm lần gửi chen nhau ⇒ một đơn; gọi thêm lúc *Chờ thanh toán* và gọi từ bàn
+  ghép vào cùng phiên, hoá đơn cộng đủ; suất đem về không sinh đơn lẻ; cặp ngoài bảng ⇒ hai mã từ chối, phiên
+  đứng nguyên; chuyển do người bấm có vết mang người; đóng bị chặn bởi đơn chưa xong (cả đơn chờ duyệt), không
+  bị chặn bởi nợ; **cắt** sau lần ghi thứ hai của cửa đóng ⇒ database y như trước; đóng ⟂ gọi thêm tám vòng
+  ⇒ không phiên *Đã đóng* nào còn đơn chưa xong; bàn trống cần cả đóng lẫn dọn, nhóm ghép dọn từng bàn; khách
+  QR mang mã, mã đã thay ⇒ `qr_code_not_current`; năm cửa lớp `quay` từ chối người không đứng quầy và không
+  người. Mọi test của `P3-05` · `P3-06` vẫn xanh. (2) `openapi.yaml` có tám đường gọi mới, mười mã kèm status,
+  `info.version` 0.4.0; dòng `x-constraint-errors` của `sales_order_*` (phần kênh tại bàn) · `table_session_*` ·
+  `table_session_member_*` · `bill_*` · `dining_table_*` đã xét — mã hoặc `internal` kèm lý do ở file lát;
+  dòng chỉ kênh ngoài bàn chạm được (`sales_order_takeaway_*`, `…door_delivery…`, `…handover…`) giữ
+  `unreviewed` cho `P3-08`. (3) Ma trận có bảy dòng mới, ba lớp mới ở §2 kèm nguồn; Gate 1g `PASS`. (4) Gate 1f:
+  ô *sửa* `sales_order.status` → `vongdoi/chuyen_don`; `table_session.status` · `table_session_member.session_closed`
+  → `vongdoi/chuyen_phien`; *thêm* `table_session` · `table_session_member` → `don/tao_luot_goi`; *thêm*
+  `bill` → `hoadon/dong`; *sửa* `table_session_member.cleaned_at` → `ban/da_don`. (5) File lát
+  `docs/product/3-be/04-luong-tai-ban.md` có dòng ở `00-index.md`. (6) `./scripts/gate.sh` xanh ở worktree **và**
+  ở clone chính sau tích hợp.
+- *Kiểm chứng:* `./scripts/be-check.sh` (Claude tự chạy lại, ít nhất hai lần — có test chen nhau) ·
+  `./scripts/check-api-contract.sh --list` · `./scripts/check-write-paths.sh --list` · lỗi cài (bỏ khoá dòng
+  phiên ở cửa đóng, bỏ lần chạy lại ở cửa tạo lượt gọi) ⇒ test đỏ · `./scripts/gate.sh`; Claude đọc diff theo
+  từng dòng nghiệm thu, đối chiếu bảng red flag Gate 4.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-09): thiết kế, test đỏ, duyệt và tích hợp — **Claude Code**; thi công — **Codex**
+(`codex exec -m gpt-6-astra`, worktree `../lean_wt/P3-07`, nhánh `codex/P3-07` từ `a57a966`; lần đầu dừng giữa chừng
+vì hết hạn mức, lần tiếp tục làm nốt file lát; sandbox của Codex không tới được Docker nên mọi lần chạy trên
+PostgreSQL thật là Claude chạy). Thiết kế và lý do: **ADR-087**; cách đọc lát và chỗ trống:
+`docs/product/3-be/04-luong-tai-ban.md`.
+- *File đổi:* mới — `be/internal/vongdoi/` · `be/internal/phien/` · `be/internal/hoadon/` · `be/internal/ban/`
+  (mỗi gói một `.go` và thư mục `sql/<cửa>/`) · `be/internal/don/http.go` · `be/internal/don/sql/duyet/` ·
+  `sql/tu_choi/` · bốn file mới dưới `sql/tao_luot_goi/` · `be/internal/authz/qr.go` · `be/internal/apierr/http.go` ·
+  hai file test `be/internal/don/tai_ban_test.go` · `be/internal/vongdoi/vongdoi_test.go` ·
+  `docs/product/3-be/04-luong-tai-ban.md`; sửa — `be/internal/don/don.go` (+ `them_don.sql` · `them_dong.sql`,
+  `don_test.go`) · `be/internal/authz/authz.go` · `be/internal/qr/qr.go` · `be/internal/apierr/apierr.go` ·
+  `docs/product/3-be/openapi.yaml` (0.3.0 → 0.4.0) · `02-vai-va-quyen.md` · `01-hop-dong-api.md` §8 · §10 ·
+  `03-ham-gia.md` · `docs/product/00-index.md` · `docs/decisions.md` (ADR-087) · `work/findings.md` (F-060) ·
+  `work/backlog.md` · entry này.
+- *Duyệt:* ba file test **không đổi một byte** (`shasum` lúc giao = lúc nhận: `0458b1a6…` · `90cb8ce1…` ·
+  `796bab04…`). Claude đọc diff thật của `vongdoi.go` · `don.go` · `don/http.go` · `hoadon.go` · `phien.go` ·
+  `ban.go` · `authz.go` và mọi file SQL: tra dấu trước khi tạo, khoá dòng phiên rồi mới tới đơn, chỉ chạy lại
+  trên hai tên tầng 1, mọi câu sửa `status` nằm dưới `vongdoi/sql/`, cửa đóng ghi hoá đơn rồi mới đóng phiên
+  trong một giao dịch, một chỗ cộng tiền `phien.TongTien`. Claude sửa ba thứ: comment của `authz.Run` bị dời
+  lên `Caller` (trả về chỗ, thêm chú thích ba lớp mới); file lát trỏ thẳng **ADR-087** và **F-060** thay vì
+  *"phiếu"*; §7 của file lát trỏ về khối này thay vì chép kết quả. Không red flag Gate 4.
+- *Bằng chứng theo nghiệm thu:* (1) `be-check: PASS` hai lần liền ở worktree (58 test) và lần thứ ba trong gate;
+  ví dụ `8 lượt gọi đầu chen nhau ở một bàn trống ⇒ phiên 7 serving | bàn 23:đóng=f:dọn=f | đơn 18…25:confirmed` ·
+  `5 lần gửi cùng dấu chen nhau ⇒ 1 lần 201, 1 đơn trả về, 1 đơn trong database` · `cắt giữa lúc đóng ⇒ 500
+  internal_error, database y như trước: phiên 31 awaiting_payment | bàn 38:đóng=f:dọn=f | đơn 42:completed |
+  hoá đơn -` · `vòng đời đơn §5.2 — owner 12 cặp` · `vòng đời phiên §5.3 — owner 5 cặp`. **Lỗi cài:** (b) chỉ thử
+  một lần ở cửa tạo lượt gọi ⇒ `--- FAIL: TestI001_LuotGoiDauChenNhauMotPhien` · `--- FAIL:
+  TestI024_GuiLaiChenNhauMotDon` (`table_session_member_one_unpaid_session_key` lọt ra thành 500); (a) bỏ `FOR UPDATE`
+  ở bốn câu khoá phiên/đơn ⇒ `--- FAIL: TestI017_DongVaGoiThemChenNhau` (cửa đóng và gọi thêm sửa đè dòng phiên,
+  `table_session_member_session_fkey` ⇒ 500); gỡ cả hai, file về đúng từng byte. Một lần cài (a) đầu tiên **không**
+  cài được (biến danh sách file không tách trong zsh) và ra `PASS` — không tính làm bằng chứng. Giới hạn: test
+  chen nhau đóng ⟂ gọi thêm ra *8 vòng đóng trước, 0 vòng gọi trước* ở cả ba lần chạy sạch, nên nhánh *gọi
+  thắng trước* chưa từng được đi qua bằng thời điểm thật. (2) `hợp đồng 0.4.0; 16 đường gọi ở hợp đồng, 16 ở
+  code; 24 mã lỗi; 290 tên … (124 internal, 161 unreviewed, 5 dòng mang mã công khai)`. (3) `13 cửa, 13 dòng ma
+  trận, 13 khai báo authz.Door`. (4) `check-write-paths --list`: `sales_order sửa status → vongdoi/chuyen_don` ·
+  `table_session sửa status` · `table_session_member sửa session_closed → vongdoi/chuyen_phien` · `table_session`
+  · `table_session_member` *thêm* → `don/tao_luot_goi` · `bill thêm → hoadon/dong` · `table_session_member sửa
+  cleaned_at → ban/da_don` — `PASS — 15 ô ghi, 13 cửa`. (5) dòng `04-luong-tai-ban.md` ở `00-index.md`. (6)
+  `./scripts/gate.sh` ⇒ `PASS gate không cổng nào đỏ` ở worktree; ở clone chính sau `git apply` — xem báo cáo của
+  lượt tích hợp.
+- *Còn lại:* cửa ghép bàn (ô thêm `table_session_member` đã thuộc cửa tạo lượt gọi — ADR-087 *Giới hạn*);
+  duyệt chưa nổ việc trạm, đơn chưa tới *Hoàn thành* qua cửa — `P3-10`; huỷ đơn đã xác nhận trở đi — `P3-09` ·
+  `P3-10`; vết của chuyển do khách kích — **F-060**, `P3-11`; dòng `x-constraint-errors` của hoá đơn và đơn lẻ
+  (`bill_sales_order_fkey`, `bill_prepaid_*`, `sales_order_bill_fkey`, `sales_order_id_if_standalone_key`) là
+  `internal` **trong phạm vi cửa tại bàn** — `P3-08` · `P3-09` xét lại khi mở đường ghi tới chúng; nhánh *gọi thêm
+  thắng trước khi đóng* chưa có ca tất định.
+
 
 [↑ đầu file](#top)
 

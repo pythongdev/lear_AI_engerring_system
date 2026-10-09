@@ -15,6 +15,17 @@ import (
 type Code string
 
 const (
+	CodeSubmissionCodeConflict           Code = "submission_code_conflict"
+	CodeDiningTableNeedsCleaning         Code = "dining_table_needs_cleaning"
+	CodeDiningTableNotNeedingCleaning    Code = "dining_table_not_needing_cleaning"
+	CodeSalesOrderNotFound               Code = "sales_order_not_found"
+	CodeTableSessionNotFound             Code = "table_session_not_found"
+	CodeOrderTransitionNotAllowed        Code = "order_transition_not_allowed"
+	CodeTableSessionTransitionNotAllowed Code = "table_session_transition_not_allowed"
+	CodeTableSessionHasOpenOrders        Code = "table_session_has_open_orders"
+	CodePaymentPartsMismatch             Code = "payment_parts_mismatch"
+	CodeDebtorNameMismatch               Code = "debtor_name_mismatch"
+
 	CodeInternalError  Code = "internal_error"
 	CodeInvalidRequest Code = "invalid_request"
 
@@ -37,6 +48,17 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
+	CodeSubmissionCodeConflict:           409,
+	CodeDiningTableNeedsCleaning:         409,
+	CodeDiningTableNotNeedingCleaning:    409,
+	CodeSalesOrderNotFound:               404,
+	CodeTableSessionNotFound:             404,
+	CodeOrderTransitionNotAllowed:        409,
+	CodeTableSessionTransitionNotAllowed: 409,
+	CodeTableSessionHasOpenOrders:        409,
+	CodePaymentPartsMismatch:             422,
+	CodeDebtorNameMismatch:               422,
+
 	CodeInternalError:             500,
 	CodeInvalidRequest:            400,
 	CodeUnauthenticated:           401,
@@ -57,6 +79,8 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"bill_parts_equal_due_check":        CodePaymentPartsMismatch,
+	"bill_debtor_iff_debt_check":        CodeDebtorNameMismatch,
 	"qr_code_dining_table_fkey":         CodeDiningTableNotFound,
 	"qr_code_one_current_per_table_key": CodeQRCodeIssueConflict,
 	// Lần đổi bắt đầu trước mà ghi sau một lần đổi khác: now() của nó sớm hơn mốc cấp của mã

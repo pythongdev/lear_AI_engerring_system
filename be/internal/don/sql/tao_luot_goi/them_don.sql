@@ -1,4 +1,3 @@
--- Cửa don/tao_luot_goi (P3-06, lớp quay). Vế kênh mở rộng ở P3-07/P3-08.
-INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code)
-VALUES ('staff_pos', 'new', $1, $2, $3)
+INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code, qr_code_id)
+VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING id

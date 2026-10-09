@@ -4619,3 +4619,32 @@ P3-06 (phát hiện) · **ADR-086** · `03-luoc-do-menu-gia.md` §5
 
 **Status:**
 Open
+
+### F-060 — Chuyển trạng thái do khách QR kích không có người để ghi vết, nên phép đối chiếu `I-016` không dựng lại được lần chuyển ấy
+
+**Problem:**
+Đo 2026-10-06 (`P3-07`, Claude Code): `record_revision.person_id` là `NOT NULL` (`I-018` tầng 1,
+`db/migrations/20260928140000_nguoi_va_vet.up.sql`), và trigger vết lấy người từ người thao tác của giao
+dịch. Khách quét QR **không phải một người của quán** (`docs/product/3-be/02-vai-va-quyen.md` §1 câu 5),
+nên giao dịch của khách không khai người. Khi khách gọi thêm lúc phiên đang *Chờ thanh toán*, phiên phải
+quay về *Đang phục vụ* (`05-vong-doi.md` §5.3) — một lần sửa `table_session.status` mà nếu khai lý do thì
+trigger vết bị từ chối cả giao dịch, còn không khai thì lần sửa đi qua **không vết** (chế độ mềm, **F-046**).
+**ADR-087** điểm 5 chọn vế sau.
+
+**Impact:**
+Phép đối chiếu của `I-016` (`03-bao-ve-invariant.md` hàng `I-016`: dựng lại lịch sử chuyển trạng thái từ
+vết) thiếu đúng lần chuyển này: lịch sử của phiên đọc ra *Chờ thanh toán → … → Chờ thanh toán* với một
+bước ở giữa không có dòng nào. Không lệch tiền — lượt gọi vẫn vào đúng phiên (`I-002`) và hoá đơn cộng lại
+lúc đóng — nhưng một bước vòng đời không truy được.
+
+**Decision / Fix:**
+Chưa chốt. Hai hướng, cùng một migration mới đi tới khi `P3-11` bật chế độ vết nghiêm: (a) vết của một
+lần sửa do **hệ thống** kích mang một dấu *"hệ thống, theo lượt gọi của khách"* thay cho người, kèm khoá
+về lượt gọi gây ra nó; (b) phép đối chiếu `I-016` đọc lần chuyển ấy từ chính lượt gọi (đơn QR tạo lúc phiên
+đang *Chờ thanh toán*) thay vì từ vết. Chọn ở `P3-11`, có ADR nếu chọn (a).
+
+**Related task:**
+P3-07 (phát hiện) · P3-11 (gỡ) · **ADR-087** · **F-046**
+
+**Status:**
+Open

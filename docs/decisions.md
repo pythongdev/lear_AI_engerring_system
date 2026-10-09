@@ -103,6 +103,7 @@ có câu trả lời mới từ người.
 | ADR-084 | **Hợp đồng API thắng code; migration thắng hợp đồng về tên ràng buộc**: hợp đồng là OpenAPI 3.1 một file YAML (`docs/product/3-be/openapi.yaml`, bắt đầu rỗng đường gọi), khuôn ở `01-hop-dong-api.md`; hình lỗi `{code, field?}`, mã kèm status; bảng *tên từ chối → mã* (`x-constraint-errors`) phủ mọi tên của migration, giá trị là mã · `internal` · `unreviewed`; Gate 1g so hợp đồng ↔ code ↔ migration mọi lượt, đổi hợp đồng phải tăng phiên bản; lời từ chối của trigger mang tên (F-058) | Đã chốt 2026-10-06 (giao cho phiên, P3-04; Claude chọn và thi công) | — | P3-04 · ADR-082 · ADR-053 · F-058 |
 | ADR-085 | **Quyền là một lớp của cửa, đọc tại mốc giao dịch của cửa ấy**: mỗi cửa khai đúng một lớp (`quay` · `chu_quan` mở ở P3-05), ma trận `02-vai-va-quyen.md` một dòng mỗi cửa, ba tập (thư mục cửa · dòng ma trận · khai báo Go) bằng nhau, Gate 1g chấm; `authz.Run` kiểm quyền và khai người thao tác trong cùng giao dịch; khách QR mang mã, không mang bàn; danh tính tách khỏi cách đăng nhập (U-075) | Đã chốt 2026-10-06 (giao cho phiên, P3-05; Claude thiết kế và thi công) | — | P3-05 · ADR-083 · ADR-084 · U-075 · U-062 |
 | ADR-086 | **Một hàm tính giá `gia.Tinh`, gọi từ tính thử, menu và cửa ghi đơn; một cửa tạo lượt gọi `don/tao_luot_goi` cho cả năm kênh** — `P3-06` dựng phần giá (tổ hợp, ngừng bán, ảnh chụp) và lối vào đặt hộ tại quầy, chưa đường gọi HTTP; `P3-07` · `P3-08` thêm phần kênh vào chính cửa ấy; cửa từ chối, không sửa hộ, không tự điền mặc định (**F-059**); bốn cửa sửa menu của chủ quán bắt buộc lý do, để vết | Đã chốt 2026-10-06 (giao cho phiên, P3-06; Claude thiết kế, Codex thi công) | — | P3-06 · ADR-082 · ADR-085 · F-059 |
+| ADR-087 | **Luồng tại bàn: cửa tạo lượt gọi tự tìm phiên từ bàn (mở phiên ở lượt gọi đầu, tầng 1 chặn hai phiên, cửa thử lại); cột trạng thái của đơn và của phiên mỗi cột một cửa chuyển `vongdoi/…` chạy trong giao dịch của cửa gọi; cửa đóng `hoadon/dong` ghi hoá đơn + đóng phiên trong một giao dịch** — lớp quyền mới `quay_hoac_ma_ban` · `nguoi_quan` · `theo_cua_goi`; cửa ghép bàn chưa dựng | Đã chốt 2026-10-06 (giao cho phiên, P3-07; Claude thiết kế, Codex thi công) | — | P3-07 · ADR-082 · ADR-085 · ADR-086 · F-060 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -5813,3 +5814,109 @@ xét dấu lần gửi trùng (`I-024`, `P3-07`), chưa có lối vào của kh�
 
 **Applies to:** `P3-06`…`P3-08`; `be/internal/gia/` · `be/internal/don/` · `be/internal/menu/`;
 `docs/product/3-be/03-ham-gia.md` · `openapi.yaml` · `02-vai-va-quyen.md`; **F-059** · **F-046**.
+
+### ADR-087 — Luồng tại bàn: cửa tạo lượt gọi tìm phiên từ bàn; mỗi cột trạng thái một cửa chuyển chạy trong giao dịch của cửa gọi; đóng phiên và ghi hoá đơn là một cửa, một giao dịch
+
+**Trạng thái:** Đã chốt 2026-10-06, **giao cho phiên** (task `P3-07`, bước 7/14 của pha 3; chủ repo giao
+*"hãy đọc kĩ và làm yêu cầu codex làm bạn kiểm tra"*). Claude thiết kế và viết test đỏ trước; Codex thi
+công trong worktree riêng; Claude duyệt. Quyết định này **không sở hữu** vòng đời — bảng ở
+`docs/product/0-ba/ban-hang/05-vong-doi.md` §5.2 · §5.3 — và không sở hữu tầng của `I-001` `I-002` `I-003`
+`I-006` `I-016` `I-017` `I-024` (của `03-bao-ve-invariant.md`). Đường gọi và mã: `openapi.yaml`; cách đọc
+lát: `docs/product/3-be/04-luong-tai-ban.md`.
+
+**Decision:**
+
+1. **Người gọi không chọn đơn vị tính tiền.** Lượt gọi tại bàn mang **bàn** (người đứng quầy) hoặc
+   **mã QR** (khách), không mang phiên; cửa `don/tao_luot_goi` tìm phiên chưa đóng của bàn ấy và gắn lượt
+   gọi vào đó (`I-002` tầng 3 · `I-006` tầng 3). Bàn chưa có phiên ⇒ cửa mở phiên ở **chính** lượt gọi
+   ấy (`05-vong-doi.md` §5.3 dòng đầu). Hai lượt gọi đầu chen nhau ở một bàn trống: **không** kiểm *"bàn
+   đã có phiên chưa"* rồi mới ghi — chỉ mục `table_session_member_one_unpaid_session_key` (`I-001` tầng 1)
+   từ chối lần ghi thứ hai, và cửa **chạy lại** cả giao dịch, lần sau tìm thấy phiên vừa mở. Bàn mà phiên
+   gần nhất đã đóng và chưa dọn ⇒ từ chối `dining_table_needs_cleaning` (`I-003` tầng 3: không dòng nào
+   của §5.3 đi từ *Bàn cần dọn* tới *Mở*).
+2. **Dấu lần gửi tra trước mọi điều kiện của việc tạo đơn** (`I-024`, **ADR-061**): sau lớp quyền, cửa tìm
+   đơn mang dấu ấy; có thì so **nội dung yêu cầu** (bàn hoặc mã, từng dòng: món · số suất · tập lựa chọn
+   · dấu đem về) — khớp ⇒ trả đúng đơn ấy với trạng thái hiện tại, khác ⇒ `submission_code_conflict`. Hai
+   lần gửi cùng dấu chen nhau: ràng buộc `sales_order_submission_code_key` từ chối lần sau, cửa chạy lại
+   và đi đường trả lại đơn. **Quyền đứng trước dấu**: một lần gửi lại của người đã rời quầy, hay của khách
+   cầm mã đã bị thay, bị từ chối như một lần gửi mới — giới hạn có tên, không phải đường mất đơn (đơn
+   đã có vẫn nằm trong phiên).
+3. **Mỗi cột trạng thái đúng một cửa chuyển** (`I-016`; **ADR-082** điểm 1 đã gọi tên *cửa chuyển trạng
+   thái*): `vongdoi/chuyen_don` sở hữu ô sửa `sales_order.status`; `vongdoi/chuyen_phien` sở hữu ô sửa
+   `table_session.status` và `table_session_member.session_closed` (bản soi phải đổi cùng lệnh đóng). Hai
+   cửa này **không có lối vào riêng**: chúng chạy **trong giao dịch** của cửa gọi (tạo lượt gọi, duyệt,
+   từ chối, tính tiền, đóng), khoá dòng, tra bảng (nguồn, đích) của đúng vòng đời rồi mới ghi; cặp ngoài
+   bảng ⇒ `order_transition_not_allowed` · `table_session_transition_not_allowed`. Lớp quyền của chúng là
+   lớp mới `theo_cua_goi`: `authz.Run` **từ chối** chạy một cửa mang lớp ấy như một lối vào. Bảng (nguồn,
+   đích) trong code là bản thứ hai của §5.2 · §5.3, nên test **đọc lúc chạy** hai bảng ấy cùng bảng tên → mã
+   của `02-luoc-do-ban-hang.md` §4 và đỏ khi hai bên lệch.
+4. **Trạng thái đầu của đơn do kênh quyết, ghi thẳng lúc tạo.** *Mới* là một khoảnh khắc (§5.2): cửa tra
+   hai dòng *Mới → …* theo kênh và ghi luôn trạng thái đích — đặt hộ ⇒ *Đã xác nhận*, khách QR ⇒ *Chờ xác
+   nhận*. Đơn đặt hộ của `P3-06` từng dừng ở *Mới* vì phần kênh chưa có; test của `P3-06` đổi điều kiện ấy
+   **có chủ ý** ở lát này.
+5. **Chuyển trạng thái do người bấm để lại vết**: cửa chuyển khai lý do (mã cửa và cặp chuyển) cho trigger
+   vết đúng quanh câu sửa của mình rồi gỡ ngay, nên mỗi lần chuyển có *bản trước · bản sau · người · lúc*
+   — nguyên liệu của phép đối chiếu `I-016` — mà các câu thêm dòng con trong cùng giao dịch không sinh vết
+   thừa (**ADR-081**). Chuyển do **khách** kích (*Chờ thanh toán → Đang phục vụ* khi khách quét QR gọi thêm)
+   không có người để ghi: nó đi **không vết**, chế độ mềm — **F-060**.
+6. **Đóng phiên là một cửa, một giao dịch** — `hoadon/dong`, lớp `quay`, chủ ô thêm dòng vào `bill`
+   (`I-017` tầng 2). Thứ tự, bên trong một giao dịch: khoá phiên → phiên phải ở *Chờ thanh toán* → khoá
+   **mọi** đơn của phiên (mọi bàn của nhóm ghép, vì đơn gắn phiên) → còn đơn chưa *Hoàn thành* / *Huỷ* ⇒
+   `table_session_has_open_orders` → cộng thành tiền mọi dòng của mọi đơn không Huỷ (`I-002`: hoá đơn
+   cộng lại từ lượt gọi, không nhận con số từ người gọi) → ghi hoá đơn với phần tiền người gọi khai →
+   chuyển phiên sang *Đã đóng* qua `vongdoi/chuyen_phien`. **Tiền chưa thu không chặn**: khai nợ kèm tên
+   người nợ là đường chính thức (§5.3, `I-017` vế ba); ràng buộc của `bill` giữ *phần tiền cộng đúng số
+   phải trả* và *có nợ ⟺ có tên* ở tầng 1, cửa dịch tên của chúng ra `payment_parts_mismatch` ·
+   `debtor_name_mismatch`. Mọi cửa ghi vào một phiên khoá **dòng phiên trước, rồi tới đơn** — cùng một thứ
+   tự để đóng và gọi thêm chen nhau thì một bên chờ bên kia, không bên nào đọc trạng thái cũ.
+   Cửa này mang tên **hoá đơn**, không mang tên phiên: đơn lẻ Hoàn thành cũng phải có hoá đơn
+   (`sales_order_bill_fkey`), và ô thêm dòng vào `bill` chỉ được một cửa — `P3-09` thêm nhánh đơn lẻ, giảm
+   giá (**U-058**) và nhập bù vào **chính** cửa này.
+7. **Dọn bàn**: cửa `ban/da_don` sở hữu ô sửa `table_session_member.cleaned_at`, chỉ cho dòng mà phiên đã
+   đóng và chưa dọn (`I-003`); khác thế ⇒ `dining_table_not_needing_cleaning`. Trạng thái của cái bàn
+   (*empty* · *in_session* · *needs_cleaning*) **đọc ra** từ chi tiết bằng một câu đọc dùng chung cho
+   `GET /dining-tables` và cho kiểm tra *bàn cần dọn* của cửa tạo lượt gọi — không cột nào cất nó
+   (`02-luoc-do-ban-hang.md` §3). Lớp của cửa là lớp mới `nguoi_quan`: **một người của quán đã xác định
+   được**. Lý do: §5.3 giao việc này cho *người canh & dọn* ở trạm `don_ban`, nhưng bốn trạm ngoài quầy
+   **không** ghi mốc ai đứng đâu (**U-055**), nên máy không kiểm được chỗ đứng ấy; lớp yếu nhất kiểm được
+   là *có người*, và vết của lần dọn mang người ấy. Đây là **suy luận của phiên**, không phải lời chủ quán.
+8. **Khách QR mang mã, không mang bàn** (`02-vai-va-quyen.md` §1 câu 5): cửa tạo lượt gọi đổi lớp từ
+   `quay` sang lớp mới `quay_hoac_ma_ban` — qua khi người bấm đang đứng quầy, **hoặc** không có người và
+   yêu cầu mang một mã đang hiện hành (bàn tra từ mã tại mốc giao dịch, `I-023`). Đây là cách **ADR-086**
+   điểm 2 đã hẹn (*đổi lớp của cửa, không mở cửa thứ hai*). Yêu cầu của khách mang định danh bàn, hay yêu
+   cầu đặt hộ mang định danh phiên ⇒ `invalid_request` với `field`, không dùng.
+
+**Why:**
+
+- **Phiên do cửa tìm, không do người gọi chọn** là đúng câu tầng 3 của `I-002` (*chỉ một cửa ghi quyết định
+  một lượt gọi thuộc đơn vị tính tiền nào*); nhận một định danh phiên từ máy gửi là để máy gửi quyết.
+- **Để tầng 1 từ chối rồi chạy lại** thay vì *đọc rồi ghi* — đúng cái bẫy của entry `P3-07` và lý lẽ của
+  `I-024`: kiểm trước thua đúng ca hai máy bấm cùng lúc.
+- **Cửa chuyển không lối vào riêng**: luật *mỗi ô một cửa* buộc mọi lần đổi `status` đi qua một chỗ, mà
+  lần đổi ấy xảy ra **giữa** việc của một cửa khác (duyệt đổi đơn *và* phiên; gọi thêm đổi phiên). Một cửa
+  có lối vào riêng mà các cửa kia gọi qua HTTP thì tách một giao dịch làm hai — đúng thứ `I-017` cấm.
+- **Đóng phiên và ghi hoá đơn không tách được**: lược đồ đã buộc *phiên Đã đóng ⟺ có hoá đơn* bằng hai
+  khoá ngoại hoãn (`table_session_bill_fkey` · `bill_table_session_fkey`); hai cửa thì cả hai đều phải
+  ghi cả hai ô.
+
+**Rejected alternatives:**
+
+- *Một cửa `phien/mo` riêng trước lượt gọi đầu.* Bác: §5.3 mở phiên **bằng** lượt gọi đầu; một phiên mở
+  mà chưa có lượt gọi là một trạng thái §5 không có, và hai cửa cùng thêm dòng `table_session_member`.
+- *Ghi `new` rồi sửa sang trạng thái theo kênh trong cùng giao dịch.* Bác: lần sửa ấy mang người của
+  giao dịch, mà khách QR không có người — vết hoặc thiếu người (bị từ chối), hoặc phải tắt riêng cho khách;
+  hai dòng *Mới → …* là việc của hệ thống trong cùng khoảnh khắc tạo.
+- *Cửa đóng nhận `due_vnd` từ quầy.* Bác: `I-002` và `01-hop-dong-api.md` §5 — FE không cộng tiền.
+- *Lớp `quay` cho cửa dọn bàn.* Bác: bắt người canh & dọn chạy ra quầy, hay bắt quầy bấm thay, là đổi luật
+  §5.3 bằng một lựa chọn kỹ thuật.
+
+**Giới hạn có tên:** **cửa ghép bàn chưa dựng** — nó thêm dòng `table_session_member`, ô đã thuộc cửa tạo
+lượt gọi; chọn cửa nào sở hữu ô ấy (gộp ghép vào một cửa *bàn vào phiên* hay chuyển ô sang cửa ghép) để
+lát dựng ghép bàn quyết, có ADR; test của lát này dựng nhóm ghép bằng tay. Duyệt đơn **chưa** nổ việc trạm
+và đơn chưa đi được tới *Đang thực hiện* · *Hoàn thành* (`P3-10`); huỷ đơn đã xác nhận trở đi chưa có cửa
+(`P3-09` hoàn tiền · `P3-10` phần đã làm). Chuyển do khách kích không vết — **F-060**. Lần gửi lại sau khi
+rời quầy / sau khi mã bị thay bị từ chối (điểm 2).
+
+**Applies to:** `P3-07`…`P3-10`; `be/internal/don/` · `be/internal/vongdoi/` · `be/internal/phien/` ·
+`be/internal/hoadon/` · `be/internal/ban/` · `be/internal/authz/`; `docs/product/3-be/04-luong-tai-ban.md` ·
+`openapi.yaml` · `02-vai-va-quyen.md`; **F-060** · **F-046** · **U-055**.

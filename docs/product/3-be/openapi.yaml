@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.3.0
+  version: 0.4.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -390,8 +390,373 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /table-orders:
+    post:
+      operationId: createTableOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableOrderRequest'
+      responses:
+        '201':
+          description: Đã tạo.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableOrder'
+        '200':
+          description: Thành công; gửi lại trả trạng thái hiện tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableOrder'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /qr-codes/{code}/orders:
+    post:
+      operationId: createQrOrder
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QrOrderRequest'
+      responses:
+        '201':
+          description: Đã tạo.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableOrder'
+        '200':
+          description: Thành công; gửi lại trả trạng thái hiện tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableOrder'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders/{sales_order_id}/approval:
+    post:
+      operationId: approveOrder
+      parameters:
+        - name: sales_order_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Thành công; gửi lại trả trạng thái hiện tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderTransition'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders/{sales_order_id}/rejection:
+    post:
+      operationId: rejectOrder
+      parameters:
+        - name: sales_order_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Thành công; gửi lại trả trạng thái hiện tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderTransition'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /table-sessions/{table_session_id}/bill-request:
+    post:
+      operationId: requestBill
+      parameters:
+        - name: table_session_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Thành công; gửi lại trả trạng thái hiện tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionDue'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /table-sessions/{table_session_id}/closing:
+    post:
+      operationId: closeSession
+      parameters:
+        - name: table_session_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClosingRequest'
+      responses:
+        '201':
+          description: Đã tạo.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillCreated'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /dining-tables/{dining_table_id}/cleaning:
+    post:
+      operationId: cleanTable
+      parameters:
+        - name: dining_table_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Thành công; gửi lại trả trạng thái hiện tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableCleaned'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /dining-tables:
+    get:
+      operationId: getDiningTables
+      responses:
+        '200':
+          description: Thành công; gửi lại trả trạng thái hiện tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiningTables'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
+    TableOrderLineRequest:
+      allOf:
+        - $ref: '#/components/schemas/PriceLineRequest'
+        - type: object
+          properties:
+            is_takeaway:
+              type: boolean
+              default: false
+    TableOrderRequest:
+      type: object
+      description: Cấm table_session_id; bỏ qua trường lạ khác kể cả giá.
+      not:
+        required: [table_session_id]
+      required: [submission_code, lines, dining_table_id]
+      additionalProperties: true
+      properties:
+        submission_code:
+          $ref: '#/components/schemas/SubmissionCode'
+        lines:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/TableOrderLineRequest'
+        dining_table_id:
+          type: integer
+          format: int64
+          minimum: 1
+    QrOrderRequest:
+      type: object
+      description: Cấm dining_table_id và table_session_id; bàn tra từ mã hiện hành.
+      not:
+        anyOf:
+          - required: [dining_table_id]
+          - required: [table_session_id]
+      required: [submission_code, lines]
+      additionalProperties: true
+      properties:
+        submission_code:
+          $ref: '#/components/schemas/SubmissionCode'
+        lines:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/TableOrderLineRequest'
+    TableOrder:
+      type: object
+      required: [sales_order_id, table_session_id, dining_table_id, channel_code, status, total_vnd, lines]
+      additionalProperties: false
+      properties:
+        sales_order_id:
+          type: integer
+          format: int64
+        table_session_id:
+          type: integer
+          format: int64
+        dining_table_id:
+          type: integer
+          format: int64
+        channel_code:
+          type: string
+          enum: [staff_pos, qr_table]
+        status:
+          type: string
+        total_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceLine'
+    OrderTransition:
+      type: object
+      required: [sales_order_id, status, table_session_id, table_session_status]
+      additionalProperties: false
+      properties:
+        sales_order_id:
+          type: integer
+          format: int64
+        status:
+          type: string
+        table_session_id:
+          type: [integer, 'null']
+          format: int64
+        table_session_status:
+          type: [string, 'null']
+    SessionDue:
+      type: object
+      required: [table_session_id, status, due_vnd]
+      additionalProperties: false
+      properties:
+        table_session_id:
+          type: integer
+          format: int64
+        status:
+          type: string
+        due_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    ClosingRequest:
+      type: object
+      required: [cash_vnd, transfer_vnd, debt_vnd]
+      additionalProperties: true
+      properties:
+        cash_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        transfer_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        debt_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        debtor_name:
+          type: string
+          pattern: '\S'
+    BillCreated:
+      type: object
+      required: [bill_id, table_session_id, due_vnd]
+      additionalProperties: false
+      properties:
+        bill_id:
+          type: integer
+          format: int64
+        table_session_id:
+          type: integer
+          format: int64
+        due_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    TableCleaned:
+      type: object
+      required: [dining_table_id, state]
+      additionalProperties: false
+      properties:
+        dining_table_id:
+          type: integer
+          format: int64
+        state:
+          type: string
+          enum: [empty, in_session, needs_cleaning]
+    DiningTable:
+      type: object
+      required: [dining_table_id, label, state]
+      additionalProperties: false
+      properties:
+        dining_table_id:
+          type: integer
+          format: int64
+        label:
+          type: string
+        state:
+          type: string
+          enum: [empty, in_session, needs_cleaning]
+        table_session_id:
+          type: integer
+          format: int64
+        table_session_status:
+          type: string
+    DiningTables:
+      type: object
+      required: [tables]
+      additionalProperties: false
+      properties:
+        tables:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiningTable'
     ErrorCode:
       type: string
       description: >-
@@ -412,6 +777,16 @@ components:
         - menu_item_component_not_found
         - menu_item_discontinued
         - option_combination_invalid
+        - submission_code_conflict
+        - dining_table_needs_cleaning
+        - dining_table_not_needing_cleaning
+        - sales_order_not_found
+        - table_session_not_found
+        - order_transition_not_allowed
+        - table_session_transition_not_allowed
+        - table_session_has_open_orders
+        - payment_parts_mismatch
+        - debtor_name_mismatch
       x-http-status:
         internal_error: 500
         invalid_request: 400
@@ -427,6 +802,16 @@ components:
         menu_item_component_not_found: 404
         menu_item_discontinued: 409
         option_combination_invalid: 422
+        submission_code_conflict: 409
+        dining_table_needs_cleaning: 409
+        dining_table_not_needing_cleaning: 409
+        sales_order_not_found: 404
+        table_session_not_found: 404
+        order_transition_not_allowed: 409
+        table_session_transition_not_allowed: 409
+        table_session_has_open_orders: 409
+        payment_parts_mismatch: 422
+        debtor_name_mismatch: 422
     Error:
       type: object
       description: Hình lỗi chung của mọi lời từ chối (01-hop-dong-api.md §3).
@@ -745,25 +1130,25 @@ x-constraint-errors:
   attendance_day_person_fkey: unreviewed
   attendance_day_pkey: internal
   attendance_day_worker_person_fkey: unreviewed
-  bill_amounts_not_negative_check: unreviewed
-  bill_debtor_iff_debt_check: unreviewed
-  bill_debtor_name_not_blank_check: unreviewed
-  bill_id_debt_key: unreviewed
-  bill_id_order_prepaid_key: unreviewed
-  bill_one_per_order_key: unreviewed
-  bill_one_per_session_key: unreviewed
-  bill_one_unit_check: unreviewed
-  bill_paper_columns_check: unreviewed
-  bill_paper_ledger_fkey: unreviewed
-  bill_paper_position_in_range_check: unreviewed
-  bill_paper_position_key: unreviewed
-  bill_parts_equal_due_check: unreviewed
-  bill_person_fkey: unreviewed
+  bill_amounts_not_negative_check: internal
+  bill_debtor_iff_debt_check: debtor_name_mismatch
+  bill_debtor_name_not_blank_check: internal
+  bill_id_debt_key: internal
+  bill_id_order_prepaid_key: internal
+  bill_one_per_order_key: internal
+  bill_one_per_session_key: internal
+  bill_one_unit_check: internal
+  bill_paper_columns_check: internal
+  bill_paper_ledger_fkey: internal
+  bill_paper_position_in_range_check: internal
+  bill_paper_position_key: internal
+  bill_parts_equal_due_check: payment_parts_mismatch
+  bill_person_fkey: internal
   bill_pkey: internal
-  bill_prepaid_only_standalone_check: unreviewed
-  bill_prepayment_use_fkey: unreviewed
-  bill_sales_order_fkey: unreviewed
-  bill_table_session_fkey: unreviewed
+  bill_prepaid_only_standalone_check: internal
+  bill_prepayment_use_fkey: internal
+  bill_sales_order_fkey: internal
+  bill_table_session_fkey: internal
   cash_count_line_amount_check: unreviewed
   cash_count_line_cash_count_fkey: unreviewed
   cash_count_line_one_per_denomination_key: unreviewed
@@ -787,8 +1172,8 @@ x-constraint-errors:
   debt_collection_follows_fkey: unreviewed
   debt_collection_person_fkey: unreviewed
   debt_collection_pkey: internal
-  dining_table_label_key: unreviewed
-  dining_table_label_not_blank_check: unreviewed
+  dining_table_label_key: internal
+  dining_table_label_not_blank_check: internal
   dining_table_pkey: internal
   holiday_bonus_person_fkey: unreviewed
   holiday_bonus_pkey: internal
@@ -947,21 +1332,21 @@ x-constraint-errors:
   refund_reason_not_blank_check: unreviewed
   refund_source_iff_bill_check: unreviewed
   refund_source_method_code_check: unreviewed
-  sales_order_bill_fkey: unreviewed
-  sales_order_channel_code_check: unreviewed
+  sales_order_bill_fkey: internal
+  sales_order_channel_code_check: internal
   sales_order_door_delivery_address_check: unreviewed
   sales_order_handover_code_check: unreviewed
-  sales_order_id_if_approved_key: unreviewed
-  sales_order_id_if_cancelled_key: unreviewed
-  sales_order_id_if_standalone_key: unreviewed
+  sales_order_id_if_approved_key: internal
+  sales_order_id_if_cancelled_key: internal
+  sales_order_id_if_standalone_key: internal
   sales_order_pkey: internal
-  sales_order_qr_code_iff_qr_channel_check: unreviewed
-  sales_order_qr_code_table_fkey: unreviewed
-  sales_order_session_iff_table_channel_check: unreviewed
-  sales_order_session_table_fkey: unreviewed
-  sales_order_status_check: unreviewed
-  sales_order_submission_code_key: unreviewed
-  sales_order_submission_code_not_blank_check: unreviewed
+  sales_order_qr_code_iff_qr_channel_check: internal
+  sales_order_qr_code_table_fkey: internal
+  sales_order_session_iff_table_channel_check: internal
+  sales_order_session_table_fkey: internal
+  sales_order_status_check: internal
+  sales_order_submission_code_key: internal
+  sales_order_submission_code_not_blank_check: internal
   sales_order_takeaway_handover_check: unreviewed
   sales_order_takeaway_needed_at_check: unreviewed
   sales_order_takeaway_phone_check: unreviewed
@@ -1006,17 +1391,17 @@ x-constraint-errors:
   supply_item_name_not_blank_check: unreviewed
   supply_item_pkey: internal
   supply_item_purchase_unit_not_blank_check: unreviewed
-  table_session_bill_fkey: unreviewed
-  table_session_id_closed_key: unreviewed
-  table_session_id_if_closed_key: unreviewed
-  table_session_member_cleaned_after_close_check: unreviewed
-  table_session_member_dining_table_fkey: unreviewed
-  table_session_member_one_unpaid_session_key: unreviewed
+  table_session_bill_fkey: internal
+  table_session_id_closed_key: internal
+  table_session_id_if_closed_key: internal
+  table_session_member_cleaned_after_close_check: internal
+  table_session_member_dining_table_fkey: internal
+  table_session_member_one_unpaid_session_key: internal
   table_session_member_pkey: internal
-  table_session_member_session_fkey: unreviewed
-  table_session_member_table_once_key: unreviewed
+  table_session_member_session_fkey: internal
+  table_session_member_table_once_key: internal
   table_session_pkey: internal
-  table_session_status_check: unreviewed
+  table_session_status_check: internal
   wrong_make_note_cancelled_after_created_check: unreviewed
   wrong_make_note_cancelled_by_iff_cancelled_check: unreviewed
   wrong_make_note_cancelled_by_person_fkey: unreviewed

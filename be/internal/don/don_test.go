@@ -20,11 +20,15 @@ import (
 	"time"
 
 	"banhcuon/be/internal/apierr"
+	"banhcuon/be/internal/ban"
 	"banhcuon/be/internal/db"
 	"banhcuon/be/internal/dbtest"
 	"banhcuon/be/internal/don"
 	"banhcuon/be/internal/gia"
+	"banhcuon/be/internal/hoadon"
 	"banhcuon/be/internal/menu"
+	"banhcuon/be/internal/phien"
+	"banhcuon/be/internal/qr"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -60,6 +64,12 @@ func dung(t *testing.T) khung {
 	mux := http.NewServeMux()
 	gia.Routes(mux, pool)
 	menu.Routes(mux, pool, xacThucTest{})
+	// P3-07: đường gọi của luồng tại bàn (ADR-087).
+	qr.Routes(mux, pool, xacThucTest{})
+	don.Routes(mux, pool, xacThucTest{})
+	phien.Routes(mux, pool, xacThucTest{})
+	hoadon.Routes(mux, pool, xacThucTest{})
+	ban.Routes(mux, pool, xacThucTest{})
 	srv := httptest.NewServer(mux)
 	t.Cleanup(srv.Close)
 	k := khung{ctx: ctx, pool: pool, srv: srv, owner: owner}
@@ -205,7 +215,9 @@ func (k khung) vaoQuay(t *testing.T, nguoi int64) {
 	}
 }
 
-// phienBan: một bàn có một phiên đang mở — dựng tay; cửa mở phiên là của P3-07.
+// phienBan: một bàn có một phiên đang mở — dựng tay để test giá không phụ thuộc lượt gọi đầu. Từ
+// P3-07 cửa tự tìm phiên từ BÀN (I-002 tầng 3: người gọi không chọn đơn vị tính tiền), nên phien chỉ
+// còn để test đọc lại.
 type phienBan struct{ phien, ban int64 }
 
 func (k khung) phienBan(t *testing.T) phienBan {
@@ -234,12 +246,19 @@ func dongYeuCau(c caGia) gia.DongYeuCau {
 
 func (k khung) tao(t *testing.T, nguoi int64, p phienBan, dong ...gia.DongYeuCau) (don.DaTao, error) {
 	t.Helper()
-	return don.Tao(k.ctx, k.pool, nguoi, don.YeuCauTaiQuay{
+	goi := make([]don.DongGoi, len(dong))
+	for i, d := range dong {
+		goi[i] = don.DongGoi{DongYeuCau: d}
+	}
+	out, err := don.Tao(k.ctx, k.pool, nguoi, don.YeuCauTaiQuay{
 		SubmissionCode: dauLanGui(t),
-		TableSessionID: p.phien,
 		DiningTableID:  p.ban,
-		Lines:          dong,
+		Lines:          goi,
 	})
+	if err == nil && out.TableSessionID != p.phien {
+		t.Fatalf("lượt gọi tại bàn %d vào phiên %d, muốn phiên đang mở %d", p.ban, out.TableSessionID, p.phien)
+	}
+	return out, err
 }
 
 // demGhi: số dòng của bốn bảng mà cửa ghi — lời từ chối không được đổi con số nào.
@@ -404,8 +423,10 @@ func TestI012_GhiDonPhaiDungQuay(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Logf("B đứng quầy ⇒ đơn %d kênh %s trạng thái %s", out.SalesOrderID, kenh, trangThai)
-	if kenh != "staff_pos" || trangThai != "new" {
-		t.Fatalf("lượt gọi đặt hộ tại quầy: muốn staff_pos · new (05-vong-doi.md §5.2 dòng đầu)")
+	// P3-07 đổi điều kiện này có chủ ý (ADR-087 điểm 4): Mới là khoảnh khắc, kênh quyết ngay — đặt hộ
+	// không phải duyệt ⇒ Đã xác nhận (05-vong-doi.md §5.2 dòng "Mới → Đã xác nhận").
+	if kenh != "staff_pos" || trangThai != "confirmed" || out.Status != "confirmed" {
+		t.Fatalf("lượt gọi đặt hộ tại quầy: muốn staff_pos · confirmed (05-vong-doi.md §5.2)")
 	}
 }
 
