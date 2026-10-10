@@ -88,10 +88,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-140 **Đường tiền theo lời 2026-10-09** — nợ trên đơn lẻ được ghi kèm ghi chú, người đi giao ghi nợ tại chỗ (gỡ `standalone_debt_undecided`, U-076); chỉ chủ quán bấm đối soát xong, mọi ngày, ngày lệch bắt giải thích (gỡ `cash_day_not_balanced`, đổi lớp cửa, U-073); ngày két của tạm ứng · thưởng · khoản chi là ngày khai (gỡ `cash_day_expense_date_undecided`, bỏ dấu `cho_u072` của bộ đối chiếu, U-072); con trỏ ở `docs/product/2-db/04` · `09` · `3-be/06` và ADR-089 *Sửa đổi*. **Chờ commit `P3-09`** (worktree dựng từ `HEAD`). Đường sửa số đã ký chờ **U-078** — L2 — Claude thiết kế và viết test đỏ, Codex thi công · [chi tiết](#t-139)
+- [ ] T-146 **Sửa số đếm két của ngày đã ký** — chủ quán sửa số đếm của một ngày đã đối soát xong, kèm lý do bắt buộc; lần sửa mở lại ngày ấy (dấu cũ, con số cũ giữ làm vết) cho tới khi chủ quán bấm đối soát xong lại (lời đóng **U-078**, `shop-facts.md` §6.10). Đổi khoá của **ADR-080** (hiện chặn mọi vai) bằng một migration mới và một cửa lớp `chu_quan`; ADR mới. **Chờ commit `T-140`** — L2 — Claude thiết kế và viết test đỏ, Codex thi công
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
-- [ ] T-142 **Đơn đặt trước nổ việc theo giờ nhắc** — `phone_preorder` không nổ lúc tạo; nhắc POS và bếp trước giờ khách cần 20 và 10 phút (U-077); sửa ADR-090 điểm 1. **Chờ `P3-10` xong** — L2 — Claude thiết kế, Codex thi công · [chi tiết](#t-139)
-- [ ] T-143 **Đăng nhập bằng chọn tên** — bản thật của `authz.Authenticator` (U-075), đổi người trên máy quầy dùng chung theo mốc `C36`; ADR-085 *Sửa đổi* — L2 — Claude thiết kế, Codex thi công · [chi tiết](#t-139)
 - [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi, không cột *ngày bán của két* khi `U-072` còn mở. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
@@ -100,12 +98,19 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-138 **Vết cập nhật bật chế độ nghiêm** — sửa (và thêm dòng con vào cha đã có) mà không khai lý do bị database từ chối; một ngoại lệ hẹp cho lượt gọi thêm của khách QR (**F-060**); cửa đổi mã QR tự khai lý do; `table_session_member` mang người, ghép bàn bắt buộc có người; gỡ **F-046** — L2 — Claude Code — nhận 2026-10-09 · [chi tiết](#t-138)
+- [ ] T-148 **Điều kiện trước đổi stack backend (BE-STACK-00)** — dời phép kiểm tên test `QC-17` vào `scripts/be-check.sh` (**F-061**); biến `BE_CHECK_KEEP_DB=1` giữ database khi test đỏ; tìm nguyên nhân `TestI020_DaRaBanTheoSoCaiTungThuChoMotBan` từng đỏ 1/~10 lượt — L2 — Claude Code · [chi tiết](#t-148)
 
 
 <a id="done"></a>
 ## Done
 
+- [x] T-147 **Huỷ đơn đã Hoàn thành** — cửa `don/huy` nhận *Hoàn thành → Huỷ* (lời U-027, `shop-facts.md` §6.19), gỡ mã `completed_order_cancel_not_ready`; cửa không đụng tiền, hoàn do quầy quyết qua cửa hoàn của `P3-09` — phần còn sót của `P3-10`; **ADR-090** điểm 7 *Sửa đổi* — L2 — Claude thiết kế và viết test đỏ, Codex thi công (worktree `../lean_wt/T-147`) — 2026-10-10 · [chi tiết](#t-147)
+- [x] T-145 Ghi lời chủ quán cho **U-078** vào owner — `99-unknowns.md` (đóng), `shop-facts.md` §6.10 và §7.1 (lời và cách đọc của phiên tách riêng), con trỏ ở ADR-089 *Sửa đổi*; mở `T-146` cho code — L1 — Claude Code — 2026-10-10
+- [x] T-143 **Đăng nhập bằng chọn tên** — bản thật `authz.ChonTen` đọc header `X-Person-Id` (U-075); chọn tên ở máy quầy là một mốc đổi người ai ra · ai vào cùng `now()` (`C36` · `U-056`) qua cửa `nguoi/vao_quay` · `nguoi/roi_quay` · `nguoi/khep_quay`; `GET /people` · `GET /counter-duty/current`; mã `counter_duty_changed`; hợp đồng 0.11.0 — ADR-085 *Sửa đổi 2026-10-10* — L2 — Claude thiết kế, viết test đỏ, duyệt và tích hợp, Codex thi công (worktree `../lean_wt/T-143`) — 2026-10-10 · [chi tiết](#t-143)
+- [x] T-138 **Vết cập nhật bật chế độ nghiêm** — sửa (và thêm dòng con vào cha đã có) mà không khai lý do bị database từ chối; một ngoại lệ hẹp cho lượt gọi thêm của khách QR (**F-060**); cửa đổi mã QR tự khai lý do; `table_session_member` mang người, ghép bàn bắt buộc có người; gỡ **F-046**; migration bước 20, hợp đồng 0.10.0 — **ADR-092** — L2 — Claude Code thiết kế và làm bản đầu, Codex đưa về nền mới, Claude duyệt và tích hợp — 2026-10-10 · [chi tiết](#t-138)
+- [x] T-144 **Cửa đã ra bàn đòi đủ trường của từng mục** — một mục thiếu `menu_component_id` hay có `filling_option_ids` null từng được đọc thành nước chấm và ghi *đã ra bàn* thật (đo trên code `880b741`: việc trạm 317 ⇒ 200); nay `invalid_request` field `items`; thêm test đơn có bàn bấm theo mã đơn ⇒ `invalid_request` field `sales_order_id`. Phát hiện bởi Codex duyệt độc lập (chỉ đọc) phần S-5 của `P3-10` — L1 — Claude Code — 2026-10-10. Bằng chứng: test mới đỏ trên code cũ (`san_xuat_test.go:662: muốn 400 … nhận 200 … station_job_ids:[317]`), xanh sau sửa (`be-check: PASS`)
+- [x] T-142 **Đơn đặt trước nổ việc theo giờ nhắc** — `phone_preorder` không nổ lúc tạo; nhắc POS và bếp trước giờ khách cần 20 và 10 phút (U-077); cửa nhả đơn hẹn máy POS tự gọi — **ADR-091**, ADR-090 điểm 1 *Sửa đổi* — L2 — Claude thiết kế và viết test đỏ, Codex thi công (worktree `../lean_wt/T-142`) — 2026-10-10 · [chi tiết](#t-142)
+- [x] T-140 **Đường tiền theo lời 2026-10-09** — nợ trên đơn lẻ được ghi kèm ghi chú, người đi giao ghi nợ tại chỗ (gỡ `standalone_debt_undecided`, U-076); chỉ chủ quán bấm đối soát xong, mọi ngày, ngày lệch bắt giải thích (gỡ `cash_day_not_balanced`, đổi lớp cửa, U-073); ngày két của tạm ứng · thưởng · khoản chi là ngày khai (gỡ `cash_day_expense_date_undecided`, bỏ dấu `cho_u072` của bộ đối chiếu, U-072); con trỏ ở `docs/product/2-db/04` · `09` · `3-be/06` và ADR-089 *Sửa đổi*. Đường sửa số đã ký chờ **U-078** — **ADR-089** *Sửa đổi* — L2 — Claude thiết kế và viết test đỏ, Codex thi công (worktree `../lean_wt/T-140`) — 2026-10-10 · [chi tiết](#t-140)
 - [x] P3-10 **Sản xuất theo mẻ** — duyệt (và lượt gọi của người) nổ đơn trong cùng giao dịch; một lần bấm một mẻ, lùi trả mọi bàn; *đã ra bàn* nhận một bàn (hoặc một đơn không bàn) + số cái từng thứ theo lời **S-5** 2026-10-09; đơn huỷ: đổi chủ phần đã làm do quầy chọn, ghi chú bánh làm sai; một hàm gom cho bảng nhu cầu; ba trạm bếp không cửa ghi nào; hợp đồng 0.7.0; gỡ **F-044** — **ADR-090** — L2 — Claude thiết kế, viết test đỏ, duyệt và tích hợp, Codex thi công — 2026-10-09 · [chi tiết](backlog_BE.md#p3-10)
 - [x] T-139 Ghi lời chủ quán cho bảy câu `U-071` … `U-077` vào owner — `shop-facts.md` §5.2 · §6.10 · §6.14 · §8.7 · §8.8 · §8.10 · §7.1, `I-021` · `I-027` · `I-028` · `I-029`, con trỏ trong `docs/product/`; mở **U-078**; code và lược đồ đi theo ở `T-140` … `T-143` — L1 — Claude Code — 2026-10-09 · [chi tiết](#t-139)
 - [x] P3-09 **Đường tiền** — hoá đơn đơn lẻ qua hai cửa trao (`/orders/{id}/handover` lớp `quay` · `/orders/{id}/delivered` lớp `nguoi_quan`), trả trước nhận · trả lại · thành doanh thu theo chuỗi, hoàn có đủ vết, thu nợ dần (ADR-075), tiền đầu két · đếm két · đối soát xong ngày (lớp mới `quay_hoac_chu_quan`); ba ô ghi dùng chung qua cửa `theo_cua_goi`; một đồng hồ ngày bán; không ghi tiền vào ngày đã ký; ngày lệch, giảm giá, nợ đơn lẻ từ chối kèm mã (U-073 · U-058 · U-076); một ngày bán giả qua cửa ⇒ 0đ lệch ở cửa và bộ đối chiếu; mở **F-061** — **ADR-089** — L2 — Codex thi công, Claude thiết kế, duyệt và chạy mọi test trên PostgreSQL — 2026-10-09 · [chi tiết](backlog_BE.md#p3-09)
@@ -319,6 +324,180 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
 
+<a id="t-148"></a>
+### T-148 — Điều kiện trước đổi stack backend: QC-17 vào be-check, giữ database khi đỏ, test I-020 chập chờn
+
+**Yêu cầu:** chủ repo, 2026-10-10 — phiếu `docs/private/be_feature/prompts/BE-STACK-00-dieu-kien-truoc-L2.md`
+(*"hãy đọc kĩ task trên và hoàn thành"*). Mục đích: nền backend phân biệt được lỗi cũ với lỗi do đổi stack.
+Mức **L2** (gate và test của `I-020`). Claude tự làm, không giao Codex.
+
+**Acceptance (viết trước khi sửa, 2026-10-10):**
+- [ ] (1) `T-138`, `T-140`, `T-142`, `T-143` đã đóng hoặc bàn giao tạm dừng rõ người giữ; không ai viết song song vào `be/`.
+- [ ] (2) Cây thử chỉ đổi `be/`: thêm `TestSaiTen` ⇒ phép kiểm `QC-17` đỏ; trả tên hợp lệ ⇒ xanh (lệnh và output hai lượt).
+- [ ] (3) `BE_CHECK_KEEP_DB=1` ⇒ test đỏ thì không dọn compose project, in tên project, DSN, lệnh dọn; mặc định dọn như cũ; ghi ở header.
+- [ ] (4) ≥10 lượt `./scripts/be-check.sh` có log từng lượt; nguyên nhân `TestI020_DaRaBanTheoSoCaiTungThuChoMotBan` ghi kèm dữ liệu lúc lỗi, bản sửa và ca tái hiện — hoặc ghi rõ chưa tái hiện được.
+- [ ] (5) Sau sửa test ấy xanh; cài lại lỗi nguyên nhân ⇒ ca hồi quy đỏ; gỡ ⇒ xanh.
+- [ ] (6) `./scripts/gate.sh` không có `FAIL`; `SKIP` ghi là chưa chạy.
+
+[↑ đầu file](#top)
+
+<a id="t-147"></a>
+### T-147 — Huỷ đơn đã Hoàn thành: chủ quán cho huỷ, cửa vẫn từ chối
+
+**Yêu cầu:** chủ repo, 2026-10-10 — *"P3-10 … hãy hoàn thành nốt task trên còn thiếu cái gì yêu cầu codex làm
+và bạn kiểm tra"*. Phần còn sót của `P3-10`: ADR-090 điểm 7 hoãn *Hoàn thành → Huỷ* vì đường hoàn tiền chưa có;
+`P3-09` đã dựng đường ấy. Lời chủ quán: U-027 (`shop-facts.md` §6.19 — *"có thể huỷ được, để POS quyết định
+trong thực tế"*). Mức **L2** (đơn đã thu tiền). Thiết kế: **ADR-090** điểm 7 *Sửa đổi 2026-10-10*.
+
+**Acceptance (viết trước khi sửa, 2026-10-10):**
+- [x] (1) Hai test đỏ do Claude viết ở `be/internal/don/huy_hoan_thanh_test.go` xanh qua `./scripts/be-check.sh`
+      mà không sửa điều kiện kiểm nào (`shasum` lúc giao `fdf02fdf…`, sau sửa khung của Claude `c9a7206f…`; `san_xuat_test.go` `26dfac3e…` — bỏ dòng
+      khẳng định mã cũ, có chủ ý): đơn gắn bàn *Hoàn thành* ⇒ huỷ 200, vết *completed → cancelled* mang người
+      quầy, đơn vị đã ra bàn ở lại, phần của đơn rời bảng nhu cầu, tiền của phiên chỉ còn đơn chưa huỷ, huỷ lần
+      hai ⇒ `order_transition_not_allowed`; đơn lẻ đã thu ⇒ chủ quán không đứng quầy bị từ chối, quầy huỷ 200,
+      hoá đơn và mọi bảng tiền y nguyên, cửa hoàn vẫn nhận hoá đơn ấy. Đo trên code cũ: hai test đỏ đúng lý do
+      (`muốn 200, nhận 409 map[code:completed_order_cancel_not_ready]`), mọi test khác xanh.
+- [x] (2) Mã `completed_order_cancel_not_ready` gỡ khỏi `apierr.go` và `openapi.yaml`; `info.version` tăng;
+      Gate 1g `PASS`.
+- [x] (3) `docs/product/3-be/07-san-xuat-theo-me.md` §3 *Huỷ đơn* nói luật mới; hàng `T-147` ở
+      `01-hop-dong-api.md` §7.
+- [x] (4) Lỗi cài: cửa huỷ trả lại từ chối `completed` ⇒ hai test đỏ; trả về bằng `shasum -c`.
+- [x] (5) `./scripts/gate.sh` xanh ở worktree và ở clone chính sau tích hợp.
+
+**Bàn giao** (2026-10-10): thiết kế, test đỏ, duyệt, tích hợp — **Claude Code**; thi công — **Codex**
+(`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-147`, nhánh `codex/T-147` từ `7610bcc` cộng thay đổi chưa
+commit của cây chính lúc giao; Codex hết hạn mức trước khi viết báo cáo, sandbox không tới Docker — Claude duyệt
+thẳng trên diff và chạy mọi lần PostgreSQL).
+- *Codex đổi đúng năm file của phiếu:* `huy.go` (`completed` đi cùng đường `confirmed`/`in_progress`), `apierr.go` và
+  `openapi.yaml` (gỡ mã, hợp đồng **0.12.0**), hàng `T-147` ở `01-hop-dong-api.md` §7, `07-san-xuat-theo-me.md` §3.
+  Hai file test đúng hash lúc giao.
+- *Sửa của Claude:* khung test đơn lẻ so `demTien` gồm cả số đơn Hoàn thành, mà huỷ thì con số ấy giảm đúng 1 —
+  phép so nay bỏ con số ấy, giữ mọi bảng tiền (`chiTien`); không điều kiện nào về cửa bị nới.
+- *Bằng chứng:* worktree `be-check: PASS`; **lỗi cài** — cửa huỷ bỏ `completed` ⇒ `--- FAIL:
+  TestI004_HuyDonHoanThanhGanBanRutKhoiTienCuaPhien` · `TestI014_HuyDonLeDaThuGiuHoaDonHoanDoQuayQuyet`, trả về bằng
+  `shasum -c`. Clone chính sau `git apply` ⇒ `PASS gate không cổng nào đỏ` (Gate 1g hợp đồng 0.12.0, 60 mã lỗi;
+  be-check; db-check 20 bước, 102 câu, 102 lỗi cài). Không red flag Gate 4.
+- *Còn lại:* **S-6** (đơn giao, quầy bấm *đã ra bàn* lúc nào) chưa hỏi chủ quán.
+
+[↑ đầu file](#top)
+
+<a id="t-143"></a>
+### T-143 — Đăng nhập bằng chọn tên, và chọn tên ở máy quầy là mốc đổi người
+
+**Yêu cầu:** chủ repo, 2026-10-10 — *"hãy hoàn thành T-138, T-140, T-142, T-143 yêu cầu codex làm và bạn kiểm
+tra"*. Lời chủ quán: U-075 *"chọn tên"* (đóng ở T-139), C36 · U-056 (`shop-facts.md` §8.8). Thiết kế:
+**ADR-085** *Sửa đổi 2026-10-10 (T-143)*.
+
+**Mức:** L2 — cách mọi cửa ghi biết người bấm (`I-012`), dữ liệu trực quầy (`YC-15`), hợp đồng công khai.
+
+**Acceptance (viết trước khi giao):**
+- [x] Test đỏ do Claude viết trước xanh qua `./scripts/be-check.sh` mà không đổi một byte (`shasum` lúc giao:
+      `e4918ced88af815f1bddf5ebcafc7df4da060f5b  be/internal/nguoi/nguoi_test.go` ·
+      `df9ca2f9a0df014f785bcf51ddcb2e9449b108fe  be/internal/authz/chon_ten_test.go`): header `X-Person-Id` chỉ nhận số
+      nguyên dương thuần; không chọn tên ⇒ 401; vào quầy là một mốc — giờ người ra đúng bằng giờ người vào, lần khép
+      có vết mang người vào; chọn lại tên mình không tạo mốc; rời quầy chỉ người đang đứng; vào quầy qua cửa mở quyền
+      lớp `quay`; năm người vào cùng lúc ⇒ 201 hoặc 409 `counter_duty_changed`, chuỗi khoảng không đứt, đúng một khoảng mở;
+      danh sách tên để chọn.
+- [x] Hai cửa `nguoi/vao_quay` (`nguoi_quan`) · `nguoi/roi_quay` (`quay`), mỗi cửa một `authz.Door`, một dòng ma trận,
+      câu ghi trong `sql/<cửa>/`; Gate 1f · 1g `PASS`; hợp đồng tăng phiên bản.
+- [x] `docs/product/3-be/02` · `04` · `06` · `01` không còn nói cách đăng nhập chờ U-075; quyền đọc `GET /debts` vẫn
+      ghi là còn mở.
+- [x] `./scripts/gate.sh` xanh ở clone chính sau tích hợp.
+
+**Bàn giao** (2026-10-10): thiết kế (ADR-085 *Sửa đổi*), test đỏ, duyệt, tích hợp — **Claude Code**; thi công — **Codex**
+(`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-143`, nhánh `codex/T-143` từ `7610bcc` + T-140 · T-142 stage sẵn làm nền).
+- *Vòng 1:* Codex dừng đúng luật vì `shasum` lệch — Claude đổi tên hàm test sau khi giao (`TestC36_`/`TestU075_` →
+  `TestYC15_`/`TestI012_`, cho khớp `QC-17`); Claude xác nhận hash mới, Codex thi công.
+- *Duyệt của Claude:* `vao_quay` chạy câu khép nằm trong thư mục của `roi_quay` — hai cửa cùng ghi ô
+  `counter_duty.ended_at`, Gate 1f không thấy vì chấm theo vị trí file ⇒ vòng 2: thêm cửa `nguoi/khep_quay` lớp
+  `theo_cua_goi` làm chủ duy nhất của ô ấy; thêm chú thích package. Hai file test đúng hash sau cả hai vòng. Không red
+  flag Gate 4.
+- *Bằng chứng:* `be-check` ở worktree `PASS` (8 test mới, gồm năm người vào cùng lúc: `N0 ⇒ 201 · N1…N3 ⇒ 409
+  counter_duty_changed · N4 ⇒ 201`, chuỗi khoảng không đứt). **Lỗi cài** ở clone chính: bỏ `vongdoi.CoVet` khỏi cửa khép
+  ⇒ `POST /counter-duty ⇒ 500` và `--- FAIL: TestYC15_VaoQuayLaMotMocDoiAiVaoAiRa` · `…NguoiDangDungVaoLaiKhongTaoMocMoi` ·
+  `…RoiQuayChiNguoiDangDung`; trả về bằng bản sao (`shasum` `e78048b9…` khớp). Clone chính sau tích hợp cùng T-138:
+  `PASS gate không cổng nào đỏ` (Gate 1g `hợp đồng 0.11.0; 45 đường gọi …; 39 cửa, 39 dòng ma trận`).
+- *Còn lại:* ai được đọc `GET /debts` (`06-duong-tien.md`); chương trình chạy `be/cmd/` (kế hoạch đổi stack).
+
+<a id="t-140"></a>
+### T-140 — Đường tiền theo lời 2026-10-09: nợ đơn lẻ có ghi chú, chỉ chủ quán ký ngày, khoản chi theo ngày khai
+
+**Yêu cầu:** chủ repo, 2026-10-09 — *"viết prompt để thực hiện … yêu cầu codex làm bạn kiểm tra, hoàn thành
+trong 1 session, bạn toàn quyền quyết định"*. Lời chủ quán đã ở owner từ `T-139` (U-072 · U-073 · U-076).
+Thiết kế: **ADR-089** *Sửa đổi 2026-10-09 (T-140)*.
+
+**Mức:** L2 — tiền, dữ liệu cất (một migration mới), hợp đồng công khai.
+
+**Acceptance:**
+- [x] Test đỏ do Claude viết trước ở `be/internal/don/duong_tien_test.go` (`shasum` lúc giao
+      `91447ae595b27c6bf3b9192d599a9be403ff0592`) xanh qua `./scripts/be-check.sh` mà không đổi một byte:
+      `TestI005_NoTrenDonLeCoGhiChuChoChuQuan` · `TestI021_CaiMotLanThuSaiDoiSoatKeu` ·
+      `TestI021_CuaDongNgayTuChoiNgayChuaXong` · `TestI012_CuaTienCanNguoiCoTen` · `TestI021_MotNgayBanGiaQuaCuaRa0dLech`.
+- [x] Một migration mới (không sửa file đã có, `QC-05`): `bill.debt_note`, `bill_standalone_debt_note_check`,
+      `bill_debt_note_only_with_debt_check`, `reconciled_day.gap_vnd` · `gap_explanation`,
+      `reconciled_day_gap_explained_check`; có `down`; `db/tests/` có một test từ chối cho mỗi ràng buộc mới;
+      `./scripts/db-check.sh` xanh.
+- [x] `cho_u072` biến mất khỏi `db/reconcile/` và `be/internal/ket/`; bộ đối chiếu vẫn bắt đúng lỗi cài cũ.
+- [x] Ba mã `standalone_debt_undecided` · `cash_day_not_balanced` · `cash_day_expense_date_undecided` gỡ khỏi
+      code và hợp đồng; hai mã mới `debt_note_required` · `gap_explanation_required` có status; hợp đồng tăng
+      phiên bản; Gate 1g · 1f `PASS`.
+- [x] `docs/product/2-db/04` · `07` · `09`, `docs/product/3-be/02` · `06` nói luật mới.
+- [x] `./scripts/gate.sh` xanh ở worktree và ở clone chính sau tích hợp.
+
+**Bàn giao** (2026-10-10): thiết kế, test đỏ, duyệt, tích hợp — **Claude Code**; thi công — **Codex**
+(`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-140`, nhánh `codex/T-140` từ `880b741`; Codex hết hạn mức ngay
+trước khi viết báo cáo, nên Claude duyệt thẳng trên diff thật; sandbox của Codex không tới Docker, mọi lần chạy
+PostgreSQL là Claude chạy).
+- *Duyệt và sửa của Claude:* migration đổi tên `20261009120000_…` → **`20261009140000_no_don_le_va_doi_soat`** (trùng mốc
+  với `20261009120000_vet_che_do_nghiem` của `T-138` đang ở worktree khác); `db/tests/i012_money_operation_names_a_person.sql`
+  thêm `debt_note` cho hoá đơn đơn lẻ có nợ (ràng buộc mới đúng ra phải chặn dòng dựng cũ); hai lỗi khung của chính test
+  đỏ — xấp 95.000 tờ 10.000 → hai xấp (`shasum` sau sửa `d1fd0784…`). Codex không đổi điều kiện kiểm nào (`shasum` khớp
+  `91447ae5…` lúc nhận lại). Hàng hợp đồng gom về bảng §7 của `01-hop-dong-api.md`. Không red flag Gate 4.
+- *Bằng chứng:* `./scripts/gate.sh` ở worktree ⇒ `PASS gate` (be-check; db-check `19 bước … 38 file test … 102 câu … 102
+  lỗi cài`; Gate 1g hợp đồng 0.8.0). **Lỗi cài:** `ket/doi_soat_xong` về lớp `quay_hoac_chu_quan` ⇒
+  `--- FAIL: TestI021_CaiMotLanThuSaiDoiSoatKeu` · `TestI021_CuaDongNgayTuChoiNgayChuaXong` · `TestI012_CuaTienCanNguoiCoTen`;
+  bộ đối chiếu trừ khoản chi theo ngày ghi vào máy ⇒ `--- FAIL: TestI021_CuaDongNgayTuChoiNgayChuaXong`; trả về bằng
+  `shasum -c`. Ở clone chính sau tích hợp cùng `T-142`: `PASS gate không cổng nào đỏ`.
+- *Sửa sót lúc tích hợp T-138 (Claude, 2026-10-10):* `db/scenario/yc.sql` YC-31 · YC-32 còn in *"U-072 — chưa có luật chọn
+  ngày"*; nay đọc *trừ vào két ngày khai* và phép kiểm thành `KHÔNG CHỖ: không cột ngày bán riêng — két trừ theo ngày khai
+  paid_date` (db-check `PASS`, 32 mã YC).
+- *Còn lại:* đường sửa số đếm đã ký — **U-078**; nợ tại bàn không đòi ghi chú (lời chỉ nói đơn lẻ).
+
+<a id="t-142"></a>
+### T-142 — Đơn đặt trước qua điện thoại nổ việc ở lần nhắc đầu
+
+**Yêu cầu:** như `T-140`. Lời chủ quán: U-077 (`shop-facts.md` §5.2 điểm 5). Thiết kế: **ADR-091**;
+**ADR-090** điểm 1 *Sửa đổi*.
+
+**Mức:** L2 — vòng đời đơn và cửa ghi mới trên hợp đồng công khai.
+
+**Acceptance:**
+- [x] Test đỏ do Claude viết trước xanh qua `./scripts/be-check.sh` mà không đổi một byte (`shasum` lúc giao:
+      `5eed9f6356584cc00465ebfb911a8d74cbaa95ea  be/internal/don/dat_truoc_test.go` ·
+      `1c31d6db39e894035f0087fdfd875d16939ed2ae  be/internal/don/mang_di_test.go` ·
+      `4663e74d4de226014f479d77f3ea6b6fb813a24c  be/internal/don/san_xuat_test.go`): đơn hẹn không nổ lúc nhận;
+      21 phút trước chưa nổ, 20 phút nổ đủ việc với vết mang người; nhả lại không nổ lần hai; nhắc `[20]` rồi
+      `[20][10]`; nhận sát giờ thì nổ ngay; cửa nhả lớp `quay`; năm lần nhả chen nhau nổ đúng một lần;
+      `pickup` của khách vẫn nổ lúc duyệt.
+- [x] Cửa `don/nha_hen` một dòng ma trận, một `authz.Door`; hai đường gọi mới trên hợp đồng, phiên bản tăng;
+      Gate 1f · 1g `PASS`.
+- [x] `docs/product/3-be/05` · `07` nói luật mới; không migration.
+- [x] `./scripts/gate.sh` xanh ở worktree và ở clone chính sau tích hợp.
+
+**Bàn giao** (2026-10-10): thiết kế (**ADR-091**), test đỏ, duyệt, tích hợp — **Claude Code**; thi công — **Codex**
+(worktree `../lean_wt/T-142`, nhánh `codex/T-142` từ `880b741`).
+- *Duyệt:* `don.go` (đơn hẹn nổ ngay chỉ khi lần nhắc đầu đã tới lúc nhận), `dat_truoc.go` (khoá `FOR UPDATE SKIP LOCKED`
+  theo giờ cần rồi mã, xét lại trạng thái, nổ qua `sanxuat.NoDon`; đường đọc nhắc chỉ đọc), `sql/nha_hen/khoa_don.sql`.
+  Ba file test đúng `shasum` lúc giao. Claude sửa một lỗi khung của chính test đỏ: giờ nhận đơn rơi ngoài giờ bán
+  06:00–11:00 — chuyển sang mỗi test một ngày 25…29/1/2031 (`shasum` sau sửa `74355924…`). Hợp đồng nâng **0.9.0** (`T-140`
+  giữ 0.8.0). Không red flag Gate 4.
+- *Bằng chứng:* be-check ở worktree `PASS`. **Lỗi cài:** đơn hẹn nổ ngay lúc nhận ⇒ `--- FAIL:` sáu test
+  (`TestI004_DatTruocKhongNoLucNhan` · `…NoDungLanNhacDau` · `TestI012_CuaNhaHenPhaiDungQuay` · `…HaiLanNhaChenNhauNoMotLan` ·
+  `TestI022_TruongNenCoKhongChanTaoDon` · `TestI016_BonHinhMangDiQuaCuaCuaLat`); bỏ khoá ở cửa nhả ⇒
+  `--- FAIL: TestI004_HaiLanNhaChenNhauNoMotLan`; trả về bằng `shasum -c`. Clone chính: `PASS gate` (Gate 1g `hợp đồng 0.9.0;
+  41 đường gọi … 36 cửa`).
+- *Còn lại:* nhịp máy POS gọi cửa nhả (pha 4) hoặc tiến trình nền (`P3-12`); nhắc hai lần chưa có kênh đẩy (`P3-12`).
+
 <a id="t-139"></a>
 ### T-139 — Ghi lời chủ quán cho U-071 … U-077
 
@@ -371,9 +550,24 @@ cũ (`QC-05`); lùi trên database rỗng trả lược đồ giống hệt; (3)
 (5) tên từ chối mới có dòng ở `openapi.yaml` `x-constraint-errors`, phiên bản hợp đồng tăng; (6)
 `./scripts/db-check.sh` và `./scripts/gate.sh` PASS; (7) **F-046** → *Fixed*, **F-060** ghi lại phần còn mở,
 `06-luoc-do-nguoi-va-vet.md` §3 · §5, bước 19 ở `07-thu-tu-migration.md`, con trỏ ở `P3-11`; không chọn hộ
-câu nghiệp vụ nào.
+câu nghiệp vụ nào. *Đánh số lại 2026-10-10:* bước 19 nay là của `T-140`, nên T-138 là **bước 20**
+(`20261010120000_vet_che_do_nghiem`) và ADR của nó là **ADR-092** (ADR-091 đã về `T-142`).
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-10): thiết kế, migration, test và bản đầu — **Claude Code** 2026-10-09 trên nhánh
+`claude/T-138` (`f4f64f8`, nền `48212c9`, chưa đưa về). Đưa về nền mới (HEAD `7610bcc` + T-140 · T-142 chưa commit) —
+**Codex** (worktree `../lean_wt/T-138b`, nhánh `codex/T-138b`); duyệt, chạy PostgreSQL, tích hợp — **Claude**.
+- *Codex làm:* áp đủ 65 file của `f4f64f8` (trừ `docs/decisions.md` · `work/` · `master_plan/`, Claude tự ghép);
+  gộp tay `mang_di_test.go`, `06` · `07` · `09` · `13` · `14` của `docs/product/2-db/`, `openapi.yaml`; đổi tên
+  migration, đổi số ADR, bước 20; bọc fixture của test đường tiền mới (`duong_tien_test.go`) bằng `coVet`; hợp
+  đồng **0.10.0**. Rà mọi cửa có câu UPDATE: cả mười một cửa đã khai lý do (`vongdoi.CoVet` hoặc `khaiLyDo` của
+  menu), không cửa nào phải sửa.
+- *Claude duyệt:* migration và `i018_strict_revision.sql` bằng `diff` với `f4f64f8` — chỉ khác số ADR và số bước;
+  bước 19 không định nghĩa lại hàm vết nên đường lùi bước 20 vẫn trả đúng chữ bước 5 · 8 · 17; dòng `-` của
+  `_test.go` không chạm điều kiện kiểm nào. Ghép ADR-092, F-046 → *Fixed*, cập nhật F-060, `BE_master_plan`,
+  `backlog_AD.md`. Không red flag Gate 4.
+- *Bằng chứng (Claude chạy, worktree):* `db-check: PASS — 20 bước xuôi · lùi · xuôi lại, 18 khối kiểm QC, 39 file
+  test, … 102 câu …, 102 lỗi cài, ba scenario …` · `be-check: PASS — mọi test backend qua PostgreSQL thật đều đạt`.
+- *Còn lại:* phép đối chiếu `I-016` cho lần chuyển do khách QR kích (**F-060**, `P3-11`).
 
 [↑ đầu file](#top)
 

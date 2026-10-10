@@ -37,6 +37,12 @@ không chép nó vào đây "cho đủ".
 Tên trường trong JSON: **snake_case tiếng Anh**; trường ứng với một cột thì **trùng tên cột**
 (`01-quy-uoc-du-lieu.md` `QD-01`) — một tên, ba tầng, không bảng dịch nào ở giữa.
 
+**Danh tính ở cửa ghi:** chọn tên, bản thật `authz.ChonTen` đọc header `X-Person-Id`
+(chủ quán chốt 2026-10-09, U-075; ADR-085 *Sửa đổi 2026-10-10*). Header chỉ chứa chữ số
+thập phân, biểu diễn số nguyên dương int64; `authz.RunAs` kiểm người có thật trong giao dịch.
+`securitySchemes.PersonIdentity` trong hợp đồng mô tả cách gửi; các đường đọc, tính thử giá
+và đường khách QR/web giữ `security: []` theo hành vi hiện có.
+
 ## 2. Khuôn viết — để một lệnh đọc được mà không cần trình đọc YAML
 
 Gate 1g đọc file bằng một bộ đọc khuôn, không phải trình đọc YAML đầy đủ — cùng lối Gate 1f đọc SQL
@@ -209,6 +215,11 @@ theo schema của hợp đồng.
 | `P3-08` | **xong 2026-10-09** — ba đường gọi ngoài bàn, bốn mã 409; liên hệ tối thiểu, dấu lần gửi, I-008 cho cả năm kênh và rời quán có chặn S-6; xét năm ràng buộc liên hệ; [luồng mang đi](05-luong-mang-di.md) |
 | `P3-09` | hợp đồng 0.6.0; mười một đường gọi; xét mọi tên của bảng tiền; booked_at/ngày bán do đồng hồ giao dịch cấp, ngày ký nhận từ đường dẫn (ADR-089 điểm 3, 5); [đường tiền](06-duong-tien.md) |
 | `P3-10` | hợp đồng 0.7.0; chín đường gọi của sản xuất theo mẻ (mẻ, lùi mẻ, đã ra bàn theo số cái, chuyển, ghi chú bánh làm sai, huỷ đơn, bảng nhu cầu); xét ràng buộc của năm bảng sản xuất; [sản xuất theo mẻ](07-san-xuat-theo-me.md) |
+| `T-140` | hợp đồng 0.8.0; nợ đơn lẻ kèm `debt_note` ở hai cửa trao, `GET /debts` trả ghi chú; `ket/doi_soat_xong` lớp `chu_quan`, ngày lệch đòi `gap_explanation`, dấu cất `gap_vnd`; khoản chi theo ngày khai; gỡ ba mã chờ lời (ADR-089 *Sửa đổi*); [đường tiền](06-duong-tien.md) |
+| `T-142` | hợp đồng 0.9.0; `POST /preorder-releases` (`don/nha_hen`, lớp `quay`) và `GET /preorder-reminders`; đơn đặt trước qua điện thoại nổ ở lần nhắc đầu (ADR-091); [luồng mang đi](05-luong-mang-di.md) |
+| `T-138` | hợp đồng 0.10.0; chế độ nghiêm của vết cập nhật và người ghép bàn: thêm ba tên từ chối vào `x-constraint-errors` (ADR-092) |
+| `T-143` | hợp đồng 0.11.0; `GET /people`, `GET /counter-duty/current`, `POST /counter-duty`, `POST /counter-duty/end`; chọn tên qua `X-Person-Id` và `authz.ChonTen`; mã `counter_duty_changed` (409), xét ba ràng buộc của `counter_duty`; [vai và quyền](02-vai-va-quyen.md), ADR-085 *Sửa đổi 2026-10-10* |
+| `T-147` | hợp đồng 0.12.0; gỡ mã từ chối huỷ đơn Hoàn thành vì đường hoàn chưa sẵn sàng; cửa huỷ nhận đơn Hoàn thành, không đụng tiền (ADR-090 điểm 7 *Sửa đổi 2026-10-10*); [sản xuất theo mẻ](07-san-xuat-theo-me.md) |
 | `P3-11`…`P3-12` | §1 thêm đường gọi cùng lượt dựng cửa · §3 mã của luật · §4 xét dòng của bảng mình ghi · §5 · §6 · §7 tăng phiên bản |
 | `P3-13` | §9 — ô cổng *hợp đồng khớp code*: Gate 1g xanh và đã từng đỏ (`scripts/check-api-contract.test.sh`) |
 | pha 4 | `openapi.yaml` — sinh type; §3 cách đọc lỗi; §5 không tự tính |

@@ -22,7 +22,7 @@ là một đơn vị, không có ô tổng lưu riêng. **POS là nơi duy nhấ
 hai đường đọc không có cửa ghi hay kiểm quyền, cùng hình `GET /dining-tables`.
 
 Nguồn của lựa chọn triển khai là phiếu ADR-090 ngày 2026-10-09. Chỗ nào là suy luận của phiên,
-hoặc cần Claude/chủ quán quyết tiếp, được giữ tên ở §6. Hợp đồng 0.7.0 là bản trên dây.
+hoặc cần Claude/chủ quán quyết tiếp, được giữ tên ở §6. Hợp đồng 0.9.0 là bản trên dây.
 
 ## 1. Cửa, ô ghi và lớp quyền
 
@@ -44,8 +44,14 @@ Các cửa nội bộ nhận giao dịch của cửa gọi, không có đường
 
 ## 2. Nổ đơn và vòng đời việc
 
-Sau khi ghi đủ ảnh chụp dòng đơn, kênh `staff_pos` và `phone_preorder` gọi `NoDon` nếu trạng thái
-đầu là `confirmed`. Duyệt đơn chờ xác nhận cũng gọi nó trong cùng giao dịch. Hàm chuyển đơn sang
+Sau khi ghi đủ ảnh chụp dòng đơn, kênh `staff_pos` gọi `NoDon` nếu trạng thái đầu là `confirmed`.
+Theo phiếu T-142 (thiết kế ADR-091, Claude, 2026-10-09), `phone_preorder` giữ `confirmed` đến lần
+nhắc đầu, trước giờ khách cần 20 phút theo `don.DongHo`; nhận lúc mốc đó đã tới thì nổ ngay trong
+giao dịch tạo. Máy POS tự gọi cửa `don/nha_hen` lớp `quay`, khóa đơn rồi gọi `NoDon` trong cùng
+giao dịch, vết mang người gọi; không cần người bấm xuống bếp. Lần nhắc trước 10 phút chỉ đọc,
+không nổ thêm. Cách nhả và danh sách nhắc ở [luồng mang đi](05-luong-mang-di.md) §2.
+Duyệt đơn chờ xác nhận cũng gọi `NoDon` trong cùng giao dịch, gồm `pickup`/`delivery` của khách.
+Hàm chuyển đơn sang
 `in_progress` rồi ghi mọi (dòng, thành phần đã chụp, trạm của thành phần) với vị trí 1 đến tích
 số suất và số thành phần; sau cùng ghi đúng một nước chấm cấp đơn tại `canh` (ADR-056).
 Bất kỳ lỗi nào lùi cả đơn, phiên và các việc. Trả trạng thái sau nổ; tra dấu gửi lại trước nhánh
@@ -89,8 +95,10 @@ Huỷ đơn khoá phiên trước đơn theo cùng thứ tự. Các danh sách �
 - **Ghi chú bánh làm sai:** chỉ việc `made`/`served` của đơn huỷ; không ghi chú sống thứ hai.
   Chữ tuỳ chọn, có thì phải còn chữ sau khi bỏ khoảng trắng; không cắt hay chuẩn hoá khi lưu.
   Huỷ ghi chú khoá dòng, chỉ ghi hai cột người/mốc huỷ, có vết, không xoá dòng (ADR-077).
-- **Huỷ đơn:** chỉ `confirmed`/`in_progress` đi qua cửa này. `completed` trả
-  `completed_order_cancel_not_ready`; các trạng thái khác trả `order_transition_not_allowed`.
+- **Huỷ đơn:** `confirmed`/`in_progress`/`completed` đi qua cửa này, chuyển sang `cancelled` qua
+  `vongdoi.ChuyenDon`; các trạng thái khác trả `order_transition_not_allowed`.
+  Cửa không đụng tiền: không ghi hoàn, không sửa hoá đơn, nợ hay trả trước; hoàn do quầy quyết
+  qua cửa hoàn (ADR-090 điểm 7 *Sửa đổi 2026-10-10*), không tự hoàn hay đòi hoàn kèm.
   Chờ xác nhận vẫn đi cửa từ chối. Không sửa hay xoá việc khi huỷ đơn.
 
 ## 4. Một hàm gom cho bảng và ứng viên
@@ -144,7 +152,6 @@ chép ba ánh xạ công khai mới. Các bảng chỉ đọc như `menu_compone
 |---|---|---|
 | ~~**S-5 — bấm đã ra bàn theo đơn vị nào**~~ | **Có lời 2026-10-09:** số cái từng thứ cho một bàn (§3). Còn suy ra của phiên: lượt gọi sớm hơn trước, đơn không bàn bấm theo mã đơn — ADR-090 điểm 4 *Sửa đổi*. | Chủ quán, `shop-facts.md` §5.4. |
 | **S-6 — lúc quầy bấm đã ra bàn cho đơn giao** | Giữ ADR-088: rời quán khi còn việc chưa served bị từ chối bằng `delivery_served_mark_undecided`; không tự phục vụ ở cửa rời quán. | Chủ quán, `shop-facts.md` §7.2. |
-| **U-077 — đơn đặt trước nổ lúc nhận** | Hotline nổ khi tạo đã xác nhận, không dựng bộ hẹn giờ — làm đúng chữ đang có, câu hỏi ở [`../99-unknowns.md`](../99-unknowns.md). | Chủ quán quyết thời điểm. |
 | **F-044 — đối chiếu việc chưa làm của đơn huỷ** | Hiểu vế rút nhu cầu là lọc đơn huỷ khỏi bảng đọc; dữ liệu việc vẫn ở lại. | Pha 1 sửa phép đối chiếu, `work/findings.md`. |
 | **Hoàn thành → Huỷ** | Có cặp vòng đời nhưng cửa huỷ trả mã chưa dựng đường hoàn tiền. | Lát đường tiền; không tự bỏ giới hạn. |
 | **Ai huỷ ghi chú** | Quầy theo suy luận của phiên, ADR-090 điểm 6; không diễn đạt thành lời chủ quán. | Claude/chủ quán. |
@@ -161,7 +168,7 @@ chép ba ánh xạ công khai mới. Các bảng chỉ đọc như `menu_compone
 | `go build ./...`, `go vet ./...` trong `be/`; `gofmt -l be/` | Biên dịch, phân tích tĩnh, định dạng. |
 | `be/internal/don/san_xuat_lui_huy_test.go` | Lùi mẻ trả cả việc của đơn huỷ; việc vừa lùi không còn là nguồn chuyển; ghi chú làm sai vẫn chặn lùi. |
 | `./scripts/check-write-paths.sh --list` | Liệt kê ô ghi, kiểm một cửa mỗi ô; đọc `GRANT UPDATE (cột)` sau `REVOKE` như PostgreSQL. |
-| `./scripts/check-api-contract.sh` | Hợp đồng 0.7.0, đường gọi, mã, ma trận, khai báo cửa khớp. |
+| `./scripts/check-api-contract.sh` | Hợp đồng 0.9.0, đường gọi, mã, ma trận, khai báo cửa khớp. |
 | `./scripts/gate.sh` | Bộ kiểm chung, gồm dựng PostgreSQL thật. |
 
 Danh sách trên là phép kiểm cần chạy, không phải lời khẳng định xanh. Output thật và năm hash

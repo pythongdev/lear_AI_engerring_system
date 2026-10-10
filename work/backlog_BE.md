@@ -1111,8 +1111,9 @@ phải sơ suất.
 thật là Claude chạy). Thiết kế: **ADR-090** (điểm 3 và điểm 4 mang dòng *Sửa đổi* 2026-10-09); cách đọc lát:
 `docs/product/3-be/07-san-xuat-theo-me.md`.
 - *S-5 có lời giữa lát* (chủ quán 2026-10-09, `shop-facts.md` §5.4): cửa `POST /served-marks` đổi từ *tập đơn vị quầy
-  chọn* sang *một bàn (hoặc một đơn không bàn) + số cái từng thứ*; Claude viết lại test của cửa ấy trước, Codex thi công
-  lại. Mã mới `served_quantity_exceeds_made`.
+  chọn* sang *một bàn (hoặc một đơn không bàn) + số cái từng thứ*; Claude viết lại test của cửa ấy **và** tự thi công
+  lại cửa (`ra_ban.go`) — *sửa 2026-10-09: bản trước của dòng này ghi "Codex thi công lại", sai; lần chạy Codex cuối
+  của lát kết thúc 17:44, trước lời S-5.* Mã mới `served_quantity_exceeds_made`.
 - *Tích hợp vào clone chính* (sau `P3-09` · `T-139`, base `c7698f8`): `git diff HEAD` của worktree áp ba chiều; năm file
   đụng `P3-09` (`apierr.go` · `don_test.go` · `00-index.md` · `02-vai-va-quyen.md` · `openapi.yaml`) gộp giữ cả hai bên,
   hợp đồng nâng **0.7.0**, thêm hàng `P3-10` ở `01-hop-dong-api.md` §7, gỡ dòng ignore tạm của `07-san-xuat-theo-me.md`.
@@ -1129,7 +1130,10 @@ thật là Claude chạy). Thiết kế: **ADR-090** (điểm 3 và điểm 4 ma
   `FOR UPDATE` của `khoaTap` ⇒ `--- FAIL: TestI020_HaiLanBamCungDonViChenNhau`; cửa đã ra bàn bỏ kiểm thiếu cái ⇒
   `--- FAIL: TestI020_DaRaBanTheoSoCaiTungThuChoMotBan`.
 - *Còn lại:* **U-077** đã có lời — đơn đặt trước nổ theo giờ nhắc ở `T-142`; **S-6** (đơn giao, mốc đã ra bàn); huỷ đơn
-  đã *Hoàn thành* (đường hoàn tiền) chưa dựng; chưa đo lại `shasum` của file test đỏ so với lúc giao.
+  đã *Hoàn thành* — dựng ở `T-147` (2026-10-10, ADR-090 điểm 7 *Sửa đổi*); `shasum` đo lại 2026-10-09: Codex trả bản thi công
+  với cả năm file test đúng hash lúc giao (`221b6b49…` cho `san_xuat_test.go`); mọi thay đổi test sau đó là bản viết
+  lại S-5 của Claude. Phần S-5 do Claude vừa viết test vừa thi công nên đã nhờ Codex duyệt độc lập (chỉ đọc) ở
+  phiên `T-140`/`T-142`.
 
 [↑ đầu file](#top)
 

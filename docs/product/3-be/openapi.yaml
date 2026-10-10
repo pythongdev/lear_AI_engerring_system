@@ -6,17 +6,132 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.7.0
+  version: 0.12.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
 # Mỗi lát thêm đường gọi của mình; khuôn bắt đầu rỗng (P3-04, Bẫy: không chép prompt-fullstack §3.6).
 # Lớp quyền của mỗi cửa ghi: 02-vai-va-quyen.md (P3-05, ADR-085).
+security:
+  - PersonIdentity: []
 paths:
+  /people:
+    get:
+      operationId: listPeople
+      security: []
+      summary: Danh sách người để chọn tên, xếp theo display_name
+      responses:
+        '200':
+          description: Danh sách người; mảng rỗng nếu chưa có người.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/People'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /counter-duty/current:
+    get:
+      operationId: getCurrentCounterDuty
+      security: []
+      summary: Người đang đứng quầy; không đòi danh tính người đọc
+      responses:
+        '200':
+          description: Khoảng đang mở, hoặc cả bốn trường đều null khi quầy trống.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentCounterDuty'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /counter-duty:
+    post:
+      operationId: enterCounterDuty
+      summary: Người đã chọn tên vào quầy — nguoi/vao_quay, lớp nguoi_quan
+      description: >-
+        Không nhận thân yêu cầu; người vào lấy từ X-Person-Id. Khoá khoảng đang mở trong giao dịch.
+        Chính người đang đứng vào lại thì không ghi gì. Thay người khác thì khép khoảng cũ có vết
+        và mở khoảng mới tại cùng now() của giao dịch. Nếu khoảng của người khác bắt đầu từ mốc
+        giao dịch trở đi, hoặc chèn đụng khoảng trực khác, trả counter_duty_changed.
+      responses:
+        '200':
+          description: Chính người đang đứng vào lại; trả khoảng cũ, replaced_person_id là null.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnteredCounterDuty'
+        '201':
+          description: Đã mở khoảng mới; replaced_person_id là người ra, hoặc null nếu quầy trống.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnteredCounterDuty'
+        '401':
+          description: Chưa chọn tên, header không hợp lệ hoặc người không tồn tại (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Quầy vừa đổi người trong lúc bấm (counter_duty_changed); giao dịch lùi.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /counter-duty/end:
+    post:
+      operationId: endCounterDuty
+      summary: Người đang đứng quầy rời quầy — nguoi/roi_quay, lớp quay
+      description: Không nhận thân yêu cầu; khép khoảng của người gọi tại now() của giao dịch, có vết.
+      responses:
+        '200':
+          description: Khoảng trực đã khép; không mở khoảng thay thế.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndedCounterDuty'
+        '401':
+          description: Không xác định được người bấm (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Người gọi không đứng quầy (not_on_counter_duty).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Mốc khép không sau mốc mở (counter_duty_changed); giao dịch lùi.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   # P3-05 — khách QR: mang MÃ, không mang bàn; bàn tra từ mã hiện hành (I-023). Không danh tính.
   /qr-codes/{code}:
     get:
       operationId: getTableByQrCode
+      security: []
       summary: Bàn mà mã QR hiện hành chỉ tới
       parameters:
         - name: code
@@ -96,6 +211,7 @@ paths:
   /menu:
     get:
       operationId: getMenu
+      security: []
       summary: Món đang bán và giá mọi tổ hợp hợp lệ
       responses:
         '200':
@@ -113,6 +229,7 @@ paths:
   /price-quotes:
     post:
       operationId: quotePrices
+      security: []
       summary: Tính thử; bỏ qua mọi trường lạ kể cả giá gửi lên
       requestBody:
         required: true
@@ -393,6 +510,7 @@ paths:
   /online-orders:
     post:
       operationId: createOnlineOrder
+      security: []
       requestBody:
         required: true
         content:
@@ -418,9 +536,67 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /preorder-releases:
+    post:
+      operationId: releasePreorders
+      description: Máy POS tự gọi bằng người đang đứng quầy; nhả đơn điện thoại tới mốc cần hàng trừ 20 phút trong một giao dịch. Không cần người bấm xuống bếp.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Các đơn được nhả lần này, theo giờ cần hàng rồi mã đơn; mảng rỗng khi không nhả đơn nào. Đơn đang bị khóa để lượt sau xử lý.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [released_order_ids]
+                properties:
+                  released_order_ids:
+                    type: array
+                    items:
+                      type: integer
+                      format: int64
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /preorder-reminders:
+    get:
+      operationId: getPreorderReminders
+      security: []
+      description: Chỉ đọc, không kiểm quyền như production-board; dùng don.DongHo, không ghi dữ liệu.
+      responses:
+        '200':
+          description: Đơn điện thoại confirmed hoặc in_progress, theo giờ cần hàng rồi mã đơn; không gồm đơn đã xong hoặc hủy.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [preorders]
+                properties:
+                  preorders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PreorderReminder'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /phone-orders:
     post:
       operationId: createPhoneOrder
+      description: Tạo ở confirmed; nếu giờ cần hàng trừ 20 phút đã tới theo don.DongHo thì nổ ngay và trả in_progress. Gửi lại dấu chỉ trả đơn cũ, không nổ.
       requestBody:
         required: true
         content:
@@ -501,6 +677,7 @@ paths:
   /qr-codes/{code}/orders:
     post:
       operationId: createQrOrder
+      security: []
       parameters:
         - name: code
           in: path
@@ -661,6 +838,7 @@ paths:
   /dining-tables:
     get:
       operationId: getDiningTables
+      security: []
       responses:
         '200':
           description: Thành công; gửi lại trả trạng thái hiện tại.
@@ -907,6 +1085,12 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/SaleDate'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReconciliationRequest'
       responses:
         '201':
           description: Thành công theo ADR-089.
@@ -923,6 +1107,7 @@ paths:
   /debts:
     get:
       operationId: listDebts
+      security: []
       responses:
         '200':
           description: Thành công theo ADR-089.
@@ -939,6 +1124,7 @@ paths:
   /sale-days/{sale_date}/cash-reconciliation:
     get:
       operationId: getCashReconciliation
+      security: []
       parameters:
         - name: sale_date
           in: path
@@ -1121,6 +1307,7 @@ paths:
   /production-board:
     get:
       operationId: getProductionBoard
+      security: []
       parameters:
         - name: station_code
           in: query
@@ -1143,6 +1330,7 @@ paths:
   /station-jobs/{id}/transfer-candidates:
     get:
       operationId: getTransferCandidates
+      security: []
       parameters:
         - name: id
           in: path
@@ -1165,7 +1353,122 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 components:
+  securitySchemes:
+    PersonIdentity:
+      type: apiKey
+      in: header
+      name: X-Person-Id
+      description: >-
+        Chọn tên (chủ quán chốt 2026-10-09, U-075; ADR-085 Sửa đổi 2026-10-10).
+        Giá trị gồm chỉ chữ số thập phân ASCII, biểu diễn số nguyên dương int64 của người đã chọn.
+        authz.ChonTen đọc header; authz.RunAs kiểm người tồn tại và lớp quyền trong giao dịch.
+        Không mật khẩu: máy tin tên được chọn. Áp dụng cho mọi cửa ghi cần người;
+        đường đọc, tính thử giá và đường khách QR/web dùng security rỗng, giữ hành vi hiện có.
   schemas:
+    Person:
+      type: object
+      additionalProperties: false
+      required: [person_id, display_name, is_owner]
+      properties:
+        person_id:
+          type: integer
+          format: int64
+          minimum: 1
+        display_name:
+          type: string
+        is_owner:
+          type: boolean
+    People:
+      type: object
+      additionalProperties: false
+      required: [people]
+      properties:
+        people:
+          type: array
+          items:
+            $ref: '#/components/schemas/Person'
+    CurrentCounterDuty:
+      type: object
+      additionalProperties: false
+      required: [person_id, display_name, counter_duty_id, started_at]
+      properties:
+        person_id:
+          type: [integer, 'null']
+          format: int64
+          minimum: 1
+        display_name:
+          type: [string, 'null']
+        counter_duty_id:
+          type: [integer, 'null']
+          format: int64
+          minimum: 1
+        started_at:
+          anyOf:
+            - $ref: '#/components/schemas/Instant'
+            - type: 'null'
+    EnteredCounterDuty:
+      type: object
+      additionalProperties: false
+      required: [counter_duty_id, person_id, started_at, replaced_person_id]
+      properties:
+        counter_duty_id:
+          type: integer
+          format: int64
+          minimum: 1
+        person_id:
+          type: integer
+          format: int64
+          minimum: 1
+        started_at:
+          $ref: '#/components/schemas/Instant'
+        replaced_person_id:
+          type: [integer, 'null']
+          format: int64
+          minimum: 1
+    EndedCounterDuty:
+      type: object
+      additionalProperties: false
+      required: [counter_duty_id, person_id, started_at, ended_at]
+      properties:
+        counter_duty_id:
+          type: integer
+          format: int64
+          minimum: 1
+        person_id:
+          type: integer
+          format: int64
+          minimum: 1
+        started_at:
+          $ref: '#/components/schemas/Instant'
+        ended_at:
+          $ref: '#/components/schemas/Instant'
+    PreorderReminder:
+      type: object
+      additionalProperties: false
+      required: [sales_order_id, customer_needed_at, status, remind_at, due_reminders]
+      properties:
+        sales_order_id:
+          type: integer
+          format: int64
+        customer_needed_at:
+          $ref: '#/components/schemas/Instant'
+        status:
+          type: string
+          enum: [confirmed, in_progress]
+        remind_at:
+          description: Hai mốc theo thứ tự giờ cần hàng trừ 20 phút, trừ 10 phút.
+          type: array
+          minItems: 2
+          maxItems: 2
+          items:
+            $ref: '#/components/schemas/Instant'
+        due_reminders:
+          description: Các mốc đã tới theo don.DongHo, theo thứ tự 20 rồi 10 phút.
+          type: array
+          enum: [[], [20], [20, 10]]
+          items:
+            type: integer
+            enum: [20, 10]
     StationJobSelection:
       type: 'object'
       required:
@@ -1833,6 +2136,9 @@ components:
         debtor_name:
           type: string
           pattern: '\S'
+        debt_note:
+          type: [string, 'null']
+          description: Bắt buộc không trắng khi có nợ; cắt khoảng trắng hai đầu. Không nợ chỉ nhận vắng hoặc null.
     RefundRequest:
       type: object
       required: [amount_vnd, method_code, source_method_code, reason]
@@ -1977,9 +2283,16 @@ components:
           $ref: '#/components/schemas/SaleDate'
         total_vnd:
           $ref: '#/components/schemas/MoneyVnd'
+    ReconciliationRequest:
+      type: object
+      additionalProperties: true
+      properties:
+        gap_explanation:
+          type: [string, 'null']
+          description: Ngày lệch bắt buộc giải thích không trắng; cắt khoảng trắng hai đầu, không gõ cất null. Chỉ chủ quán được ký.
     DayReconciled:
       type: object
-      required: [reconciled_day_id, sale_date]
+      required: [reconciled_day_id, sale_date, gap_vnd, gap_explanation]
       additionalProperties: false
       properties:
         reconciled_day_id:
@@ -1987,9 +2300,14 @@ components:
           format: int64
         sale_date:
           $ref: '#/components/schemas/SaleDate'
+        gap_vnd:
+          type: integer
+          format: int64
+        gap_explanation:
+          type: [string, 'null']
     Debt:
       type: object
-      required: [bill_id, debtor_name, debt_vnd, remaining_vnd]
+      required: [bill_id, debtor_name, debt_vnd, remaining_vnd, debt_note]
       additionalProperties: false
       properties:
         bill_id:
@@ -2001,6 +2319,8 @@ components:
           $ref: '#/components/schemas/MoneyVnd'
         remaining_vnd:
           $ref: '#/components/schemas/MoneyVnd'
+        debt_note:
+          type: [string, 'null']
     Debts:
       type: object
       required: [debts]
@@ -2037,6 +2357,7 @@ components:
         - invalid_request
         - unauthenticated
         - not_on_counter_duty
+        - counter_duty_changed
         - owner_only
         - qr_code_not_current
         - dining_table_not_found
@@ -2062,7 +2383,7 @@ components:
         - shop_not_seeing_orders
         - delivery_served_mark_undecided
         - order_discount_undecided
-        - standalone_debt_undecided
+        - debt_note_required
         - order_handover_mismatch
         - order_jobs_not_served
         - prepayment_balance_exceeded
@@ -2079,8 +2400,7 @@ components:
         - cash_day_incomplete
         - sale_day_already_reconciled
         - paper_entries_pending
-        - cash_day_expense_date_undecided
-        - cash_day_not_balanced
+        - gap_explanation_required
         - station_job_not_found
         - station_job_transition_not_allowed
         - production_batch_not_found
@@ -2092,11 +2412,10 @@ components:
         - wrong_make_note_not_allowed
         - wrong_make_note_not_found
         - wrong_make_note_already_cancelled
-        - completed_order_cancel_not_ready
         - served_quantity_exceeds_made
       x-http-status:
         order_discount_undecided: 409
-        standalone_debt_undecided: 409
+        debt_note_required: 422
         order_handover_mismatch: 409
         order_jobs_not_served: 409
         prepayment_balance_exceeded: 409
@@ -2113,8 +2432,7 @@ components:
         cash_day_incomplete: 409
         sale_day_already_reconciled: 409
         paper_entries_pending: 409
-        cash_day_expense_date_undecided: 409
-        cash_day_not_balanced: 409
+        gap_explanation_required: 422
         station_job_not_found: 404
         station_job_transition_not_allowed: 409
         production_batch_not_found: 404
@@ -2126,7 +2444,6 @@ components:
         wrong_make_note_not_allowed: 409
         wrong_make_note_not_found: 404
         wrong_make_note_already_cancelled: 409
-        completed_order_cancel_not_ready: 409
         served_quantity_exceeds_made: 409
 
         order_intake_paused: 409
@@ -2137,6 +2454,7 @@ components:
         invalid_request: 400
         unauthenticated: 401
         not_on_counter_duty: 403
+        counter_duty_changed: 409
         owner_only: 403
         qr_code_not_current: 404
         dining_table_not_found: 404
@@ -2467,6 +2785,9 @@ components:
 # internal (không bao giờ là luật người dùng chạm tới) hoặc unreviewed (chưa lát nào xét — chạy như
 # internal_error). Lát dựng cửa chạm một bảng thì xét lại dòng của bảng ấy (01-hop-dong-api.md §4).
 x-constraint-errors:
+  bill_standalone_debt_note_check: debt_note_required
+  bill_debt_note_only_with_debt_check: internal
+  reconciled_day_gap_explained_check: gap_explanation_required
   attendance_day_cancel_note_only_when_cancelled_check: unreviewed
   attendance_day_cancelled_after_created_check: unreviewed
   attendance_day_cancelled_by_iff_cancelled_check: unreviewed
@@ -2505,9 +2826,9 @@ x-constraint-errors:
   cash_count_pkey: internal
   cash_count_reconciled_day_locked_check: sale_day_reconciled
   cash_count_reconciled_day_truncate_check: internal
-  counter_duty_ended_after_started_check: unreviewed
-  counter_duty_one_at_a_time_excl: unreviewed
-  counter_duty_person_fkey: unreviewed
+  counter_duty_ended_after_started_check: counter_duty_changed
+  counter_duty_one_at_a_time_excl: counter_duty_changed
+  counter_duty_person_fkey: internal
   counter_duty_pkey: internal
   debt_collection_after_key: internal
   debt_collection_amounts_check: debt_overpaid
@@ -2663,6 +2984,7 @@ x-constraint-errors:
   record_revision_images_of_target_check: unreviewed
   record_revision_person_fkey: unreviewed
   record_revision_pkey: internal
+  record_revision_reason_declared_check: internal
   record_revision_reason_not_blank_check: unreviewed
   record_revision_target_table_code_check: unreviewed
   refund_amount_positive_check: internal
@@ -2741,7 +3063,9 @@ x-constraint-errors:
   table_session_id_if_closed_key: internal
   table_session_member_cleaned_after_close_check: internal
   table_session_member_dining_table_fkey: internal
+  table_session_member_merge_person_required_check: unreviewed
   table_session_member_one_unpaid_session_key: internal
+  table_session_member_person_fkey: internal
   table_session_member_pkey: internal
   table_session_member_session_fkey: internal
   table_session_member_table_once_key: internal

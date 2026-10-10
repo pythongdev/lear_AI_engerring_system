@@ -16,7 +16,7 @@ type Code string
 
 const (
 	CodeOrderDiscountUndecided      Code = "order_discount_undecided"
-	CodeStandaloneDebtUndecided     Code = "standalone_debt_undecided"
+	CodeDebtNoteRequired            Code = "debt_note_required"
 	CodeOrderHandoverMismatch       Code = "order_handover_mismatch"
 	CodeOrderJobsNotServed          Code = "order_jobs_not_served"
 	CodePrepaymentBalanceExceeded   Code = "prepayment_balance_exceeded"
@@ -33,8 +33,7 @@ const (
 	CodeCashDayIncomplete           Code = "cash_day_incomplete"
 	CodeSaleDayAlreadyReconciled    Code = "sale_day_already_reconciled"
 	CodePaperEntriesPending         Code = "paper_entries_pending"
-	CodeCashDayExpenseDateUndecided Code = "cash_day_expense_date_undecided"
-	CodeCashDayNotBalanced          Code = "cash_day_not_balanced"
+	CodeGapExplanationRequired      Code = "gap_explanation_required"
 
 	CodeStationJobNotFound               Code = "station_job_not_found"
 	CodeStationJobTransitionNotAllowed   Code = "station_job_transition_not_allowed"
@@ -47,7 +46,6 @@ const (
 	CodeWrongMakeNoteNotAllowed          Code = "wrong_make_note_not_allowed"
 	CodeWrongMakeNoteNotFound            Code = "wrong_make_note_not_found"
 	CodeWrongMakeNoteAlreadyCancelled    Code = "wrong_make_note_already_cancelled"
-	CodeCompletedOrderCancelNotReady     Code = "completed_order_cancel_not_ready"
 	CodeServedQuantityExceedsMade        Code = "served_quantity_exceeds_made"
 
 	CodeOrderIntakePaused           Code = "order_intake_paused"
@@ -72,6 +70,7 @@ const (
 	// Quyền theo chỗ đứng (P3-05, ADR-085).
 	CodeUnauthenticated     Code = "unauthenticated"
 	CodeNotOnCounterDuty    Code = "not_on_counter_duty"
+	CodeCounterDutyChanged  Code = "counter_duty_changed"
 	CodeOwnerOnly           Code = "owner_only"
 	CodeQRCodeNotCurrent    Code = "qr_code_not_current"
 	CodeDiningTableNotFound Code = "dining_table_not_found"
@@ -89,7 +88,7 @@ const (
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
 	CodeOrderDiscountUndecided:      409,
-	CodeStandaloneDebtUndecided:     409,
+	CodeDebtNoteRequired:            422,
 	CodeOrderHandoverMismatch:       409,
 	CodeOrderJobsNotServed:          409,
 	CodePrepaymentBalanceExceeded:   409,
@@ -106,8 +105,7 @@ var statusOf = map[Code]int{
 	CodeCashDayIncomplete:           409,
 	CodeSaleDayAlreadyReconciled:    409,
 	CodePaperEntriesPending:         409,
-	CodeCashDayExpenseDateUndecided: 409,
-	CodeCashDayNotBalanced:          409,
+	CodeGapExplanationRequired:      422,
 
 	CodeStationJobNotFound:               404,
 	CodeStationJobTransitionNotAllowed:   409,
@@ -120,7 +118,6 @@ var statusOf = map[Code]int{
 	CodeWrongMakeNoteNotAllowed:          409,
 	CodeWrongMakeNoteNotFound:            404,
 	CodeWrongMakeNoteAlreadyCancelled:    409,
-	CodeCompletedOrderCancelNotReady:     409,
 	CodeServedQuantityExceedsMade:        409,
 
 	CodeOrderIntakePaused:           409,
@@ -143,6 +140,7 @@ var statusOf = map[Code]int{
 	CodeInvalidRequest:            400,
 	CodeUnauthenticated:           401,
 	CodeNotOnCounterDuty:          403,
+	CodeCounterDutyChanged:        409,
 	CodeOwnerOnly:                 403,
 	CodeQRCodeNotCurrent:          404,
 	CodeDiningTableNotFound:       404,
@@ -159,6 +157,10 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"counter_duty_one_at_a_time_excl":                CodeCounterDutyChanged,
+	"counter_duty_ended_after_started_check":         CodeCounterDutyChanged,
+	"bill_standalone_debt_note_check":                CodeDebtNoteRequired,
+	"reconciled_day_gap_explained_check":             CodeGapExplanationRequired,
 	"prepayment_use_balance_check":                   CodePrepaymentBalanceExceeded,
 	"prepayment_one_per_order_key":                   CodePrepaymentAlreadyReceived,
 	"opening_float_one_per_day_key":                  CodeOpeningFloatAlreadyDeclared,

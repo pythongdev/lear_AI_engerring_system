@@ -39,10 +39,7 @@ func (h handler) huy(w http.ResponseWriter, r *http.Request) {
 		if err := tx.QueryRow(r.Context(), duyetKhoaDon, id).Scan(&st); err != nil {
 			return err
 		}
-		if st == "completed" {
-			return apierr.Error{Code: apierr.CodeCompletedOrderCancelNotReady}
-		}
-		if st != "confirmed" && st != "in_progress" {
+		if st != "confirmed" && st != "in_progress" && st != "completed" {
 			return apierr.Error{Code: apierr.CodeOrderTransitionNotAllowed}
 		}
 		return vongdoi.ChuyenDon(r.Context(), tx, id, "cancelled")

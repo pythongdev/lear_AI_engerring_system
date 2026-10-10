@@ -375,8 +375,9 @@ func TestI004_DuyetNoDuViecTrongCungGiaoDich(t *testing.T) {
 		t.Fatalf("Đã xác nhận → Đang thực hiện: %d vết mang người quầy, muốn 1", v)
 	}
 	t.Logf("QR %d: chờ duyệt 0 việc; duyệt ⇒ in_progress, %s", donQR, n.soViecCo(t, donQR))
-	// Bốn kênh còn lại: kênh của người nổ ngay lúc tạo; kênh khách tự bấm chờ duyệt rồi mới nổ.
-	for _, kenh := range []string{"staff_pos", "phone_preorder", "delivery", "pickup"} {
+	// Ba kênh còn lại: đặt hộ nổ ngay lúc tạo; kênh khách tự bấm chờ duyệt rồi mới nổ. Đơn đặt trước qua
+	// điện thoại nổ theo giờ nhắc — T-142 (U-077), dat_truoc_test.go.
+	for _, kenh := range []string{"staff_pos", "delivery", "pickup"} {
 		r := n.taoKenh(t, kenh)
 		canDat(t, r, http.StatusCreated)
 		don := r.so(t, "sales_order_id")
@@ -650,6 +651,21 @@ func TestI020_DaRaBanTheoSoCaiTungThuChoMotBan(t *testing.T) {
 	// Chưa làm → Đã ra bàn thẳng không có ở §5.4: bàn chỉ có cái chưa làm ⇒ thiếu cái đã làm.
 	ban3, _, don3, _ := c.phienDangPhucVu(t, "ra bàn thẳng")
 	canMa(t, c.raBanSo(t, c.quay, ban3, 0, c.mucCua(t, c.viec(t, don3, "pending")[0], 1)), http.StatusConflict, "served_quantity_exceeds_made", "")
+	// T-144 (duyệt độc lập phần S-5): đơn có bàn không bấm theo mã đơn — phần của nó là bàn.
+	anh = c.anhSanXuat(t, tat...)
+	canMa(t, c.raBanSo(t, c.quay, 0, don3, c.mucCua(t, c.viec(t, don3, "pending")[0], 1)), http.StatusBadRequest, "invalid_request", "sales_order_id")
+	// T-144: thiếu menu_component_id, hay filling_option_ids null, là thân sai — không được đọc thành nước chấm.
+	for _, muc := range []map[string]any{
+		{"station_code": "canh", "filling_option_ids": []int64{}, "quantity": 1},
+		{"station_code": "canh", "menu_component_id": nil, "quantity": 1},
+		{"station_code": "canh", "menu_component_id": nil, "filling_option_ids": nil, "quantity": 1},
+	} {
+		canMa(t, c.post(t, "/served-marks", c.quay, map[string]any{"dining_table_id": ban, "items": []any{muc}}),
+			http.StatusBadRequest, "invalid_request", "items")
+	}
+	if s := c.anhSanXuat(t, tat...); s != anh {
+		t.Fatalf("thân sai mà vẫn đổi: %s → %s", anh, s)
+	}
 
 	// Nhiều lần bấm chen nhau, mỗi lần đòi hết số đã làm còn lại của thứ ấy ⇒ đúng một lần thành.
 	con := sau.daLam
@@ -706,6 +722,7 @@ func TestI016_DonLeKhongTuHoanThanh(t *testing.T) {
 	r := n.hotline(t, n.quay, dauLanGui(t), lienHeHotlineGiao())
 	canDat(t, r, http.StatusCreated)
 	don := r.so(t, "sales_order_id")
+	n.denGioLam(t, don) // T-142: đơn đặt trước nổ ở lần nhắc đầu
 	n.phucVuHet(t, n.quay, don)
 	if s := n.trangThaiDon(t, don); s != "in_progress" {
 		t.Fatalf("đơn lẻ mọi việc đã ra bàn: %s, muốn in_progress", s)
@@ -863,17 +880,11 @@ func TestI004_HuyDonRutNhuCauViecChuaXong(t *testing.T) {
 	}
 	canMa(t, c.huyDon(t, c.quay, don), http.StatusConflict, "order_transition_not_allowed", "")
 	canMa(t, c.huyDon(t, c.quay, 1<<40), http.StatusNotFound, "sales_order_not_found", "")
-	// Chờ xác nhận đi cửa từ chối, không đi cửa huỷ; Hoàn thành → Huỷ chưa dựng (đường hoàn tiền — ADR-090 điểm 7).
+	// Chờ xác nhận đi cửa từ chối, không đi cửa huỷ. Hoàn thành → Huỷ: huy_hoan_thanh_test.go (T-147).
 	ma := c.capMaQR(t, c.banMoi(t, "huỷ qr"))
 	q := c.goiQR(t, ma, dauLanGui(t), c.dong(false))
 	canMa(t, c.huyDon(t, c.quay, q.so(t, "sales_order_id")), http.StatusConflict, "order_transition_not_allowed", "")
-	_, _, donXong, _ := c.phienDangPhucVu(t, "huỷ xong")
-	c.phucVuHet(t, c.quay, donXong)
-	if c.trangThaiDon(t, donXong) != "completed" {
-		t.Fatal("phục vụ hết đơn gắn bàn ⇒ Hoàn thành")
-	}
-	canMa(t, c.huyDon(t, c.quay, donXong), http.StatusConflict, "completed_order_cancel_not_ready", "")
-	t.Logf("huỷ đơn %d ⇒ bàn %d rời bảng nhu cầu, %d đơn vị chưa làm ở lại; Hoàn thành → Huỷ ⇒ mã chưa dựng", don, ban, len(v))
+	t.Logf("huỷ đơn %d ⇒ bàn %d rời bảng nhu cầu, %d đơn vị chưa làm ở lại", don, ban, len(v))
 }
 
 func TestI004_PhanDaLamCuaDonHuyDoiChuDoQuayChon(t *testing.T) {
