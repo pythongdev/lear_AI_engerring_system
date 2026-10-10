@@ -204,7 +204,7 @@ Thư mục `internal` lồng trong miền giúp ngăn miền khác import trực
 
 **4d. `sqlc.yaml` mẫu**
 
-Mẫu tối thiểu cho cửa đổi mã, đặt tại `be/sqlc.yaml`:
+Mẫu tối thiểu cho cửa đổi mã, đặt tại `sqlc.yaml` trong thư mục `be/`:
 
 ```yaml
 version: "2"
