@@ -4673,9 +4673,41 @@ test, hoặc làm lượt sau — không liên quan — đỏ vì nợ của lư
 Bảy tên đã đổi ở `P3-09` (không đổi điều kiện kiểm nào). Phép kiểm chưa dời: hướng đề nghị là
 `scripts/be-check.sh` (hoặc `verify.sh` khi `be/` đổi) chạy đúng hai dòng phép kiểm của `QC-17`. Chờ chủ
 repo chọn; đây là lần đầu — `quality/review-gate.md` *Vòng phản hồi* chỉ đòi sửa khi lặp lại.
+*Lặp lần hai* (2026-10-09, Claude Code, lúc duyệt `P3-10` ở worktree `../lean_wt/P3-10`): lát ấy sửa
+`docs/product/2-db/05-luoc-do-san-xuat.md` nên `db-check` chạy và gate đỏ ở `QC-17` vì đúng ba tên của `P3-08`
+(base `03b179e` chưa có bản đổi tên của `P3-09`) — một lượt không đụng các test ấy trả nợ của lượt trước. Đủ điều
+kiện *Vòng phản hồi* để dời phép kiểm; vẫn chờ chủ repo chọn chỗ.
 
 **Related task:**
 P3-08 (lọt) · P3-09 (phát hiện, đổi tên) · **ADR-082** · `QC-17`
+
+**Status:**
+Open
+
+### F-062 — Test chen nhau không có cổng xuất phát chạy nối đuôi, nên bỏ khoá ở cửa mà test vẫn xanh
+
+**Problem:**
+Đo 2026-10-09 (Claude Code, lúc duyệt `P3-10`): `TestI020_HaiLanBamCungDonViChenNhau` bắn năm goroutine gọi
+`POST /production-batches` ngay khi tạo, không chờ một cổng chung. Mỗi lần gọi xong trong vài phần nghìn giây nên
+năm lần chạy nối đuôi; cài lỗi bỏ mọi `FOR UPDATE` của `sanxuat/khoa.go` và `vongdoi/sql/chuyen_viec/khoa.sql`
+⇒ test **xanh**. Thêm cổng (`<-cong` rồi `close(cong)`) với 20 lần ⇒ bắt khoảng hai trên ba lần chạy (vài lần trả
+500 từ `production_batch_item_live_key`); lặp trên mọi đơn vị chờ của đơn ⇒ bắt 3/3, code thật vẫn xanh.
+
+**Impact:**
+Một test chen nhau xanh được đọc là bằng chứng *khoá đúng* (`I-020`, và mọi vế "một lần thành" khác), trong khi
+nó không bao giờ chen. Bỏ khoá ở một cửa tiền hay cửa sản xuất sẽ lọt qua gate. Hai test hiện còn cùng hình dạng,
+chưa đo bằng lỗi cài: `TestI024_MangDiGuiLaiChenNhauMotDon` (`be/internal/don/mang_di_test.go`) và
+`TestI023_HaiLanDoiCungLucKhongThanhLoiHeThong` (`be/internal/qr/qr_test.go`). Hai test chen nhau của
+`tai_ban_test.go` đã có cổng `batDau`.
+
+**Decision / Fix:**
+Hai test chen nhau của `P3-10` đã có cổng và lặp nhiều vòng (`const chenNhau`, `be/internal/don/san_xuat_test.go`,
+commit `880b741`). Luật cho test chen nhau mới: mọi goroutine chờ một cổng chung, và bằng chứng là **một lỗi cài
+bỏ khoá làm test đỏ** — không phải test xanh. Hai test còn lại chưa sửa: việc nhỏ cho lượt kế đụng `don/` hay
+`qr/`. Chưa thêm phép kiểm máy: đây là lần đầu (*Vòng phản hồi*).
+
+**Related task:**
+P3-10 (phát hiện, sửa hai test) · P3-08 · P3-02
 
 **Status:**
 Open
