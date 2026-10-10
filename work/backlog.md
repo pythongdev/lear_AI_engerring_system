@@ -98,12 +98,12 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-148 **Điều kiện trước đổi stack backend (BE-STACK-00)** — dời phép kiểm tên test `QC-17` vào `scripts/be-check.sh` (**F-061**); biến `BE_CHECK_KEEP_DB=1` giữ database khi test đỏ; tìm nguyên nhân `TestI020_DaRaBanTheoSoCaiTungThuChoMotBan` từng đỏ 1/~10 lượt — L2 — Claude Code · [chi tiết](#t-148)
 
 
 <a id="done"></a>
 ## Done
 
+- [x] T-148 **Điều kiện trước đổi stack backend (BE-STACK-00)** — phép kiểm tên test `QC-17` chạy trong `scripts/be-check.sh` (gỡ **F-061**); `BE_CHECK_KEEP_DB=1` giữ database khi test đỏ; "test chập chờn" `TestI020_DaRaBanTheoSoCaiTungThuChoMotBan` là lỗi cài của phiên khác lọt vào gate cùng cây (**F-063**), code và test không đổi — L2 — Claude Code — 2026-10-10 · [chi tiết](#t-148)
 - [x] T-147 **Huỷ đơn đã Hoàn thành** — cửa `don/huy` nhận *Hoàn thành → Huỷ* (lời U-027, `shop-facts.md` §6.19), gỡ mã `completed_order_cancel_not_ready`; cửa không đụng tiền, hoàn do quầy quyết qua cửa hoàn của `P3-09` — phần còn sót của `P3-10`; **ADR-090** điểm 7 *Sửa đổi* — L2 — Claude thiết kế và viết test đỏ, Codex thi công (worktree `../lean_wt/T-147`) — 2026-10-10 · [chi tiết](#t-147)
 - [x] T-145 Ghi lời chủ quán cho **U-078** vào owner — `99-unknowns.md` (đóng), `shop-facts.md` §6.10 và §7.1 (lời và cách đọc của phiên tách riêng), con trỏ ở ADR-089 *Sửa đổi*; mở `T-146` cho code — L1 — Claude Code — 2026-10-10
 - [x] T-143 **Đăng nhập bằng chọn tên** — bản thật `authz.ChonTen` đọc header `X-Person-Id` (U-075); chọn tên ở máy quầy là một mốc đổi người ai ra · ai vào cùng `now()` (`C36` · `U-056`) qua cửa `nguoi/vao_quay` · `nguoi/roi_quay` · `nguoi/khep_quay`; `GET /people` · `GET /counter-duty/current`; mã `counter_duty_changed`; hợp đồng 0.11.0 — ADR-085 *Sửa đổi 2026-10-10* — L2 — Claude thiết kế, viết test đỏ, duyệt và tích hợp, Codex thi công (worktree `../lean_wt/T-143`) — 2026-10-10 · [chi tiết](#t-143)
@@ -332,12 +332,43 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 Mức **L2** (gate và test của `I-020`). Claude tự làm, không giao Codex.
 
 **Acceptance (viết trước khi sửa, 2026-10-10):**
-- [ ] (1) `T-138`, `T-140`, `T-142`, `T-143` đã đóng hoặc bàn giao tạm dừng rõ người giữ; không ai viết song song vào `be/`.
-- [ ] (2) Cây thử chỉ đổi `be/`: thêm `TestSaiTen` ⇒ phép kiểm `QC-17` đỏ; trả tên hợp lệ ⇒ xanh (lệnh và output hai lượt).
-- [ ] (3) `BE_CHECK_KEEP_DB=1` ⇒ test đỏ thì không dọn compose project, in tên project, DSN, lệnh dọn; mặc định dọn như cũ; ghi ở header.
-- [ ] (4) ≥10 lượt `./scripts/be-check.sh` có log từng lượt; nguyên nhân `TestI020_DaRaBanTheoSoCaiTungThuChoMotBan` ghi kèm dữ liệu lúc lỗi, bản sửa và ca tái hiện — hoặc ghi rõ chưa tái hiện được.
-- [ ] (5) Sau sửa test ấy xanh; cài lại lỗi nguyên nhân ⇒ ca hồi quy đỏ; gỡ ⇒ xanh.
-- [ ] (6) `./scripts/gate.sh` không có `FAIL`; `SKIP` ghi là chưa chạy.
+- [x] (1) `T-138`, `T-140`, `T-142`, `T-143` đã đóng hoặc bàn giao tạm dừng rõ người giữ; không ai viết song song vào `be/`.
+- [x] (2) Cây thử chỉ đổi `be/`: thêm `TestSaiTen` ⇒ phép kiểm `QC-17` đỏ; trả tên hợp lệ ⇒ xanh (lệnh và output hai lượt).
+- [x] (3) `BE_CHECK_KEEP_DB=1` ⇒ test đỏ thì không dọn compose project, in tên project, DSN, lệnh dọn; mặc định dọn như cũ; ghi ở header.
+- [x] (4) ≥10 lượt `./scripts/be-check.sh` có log từng lượt; nguyên nhân `TestI020_DaRaBanTheoSoCaiTungThuChoMotBan` ghi kèm dữ liệu lúc lỗi, bản sửa và ca tái hiện — hoặc ghi rõ chưa tái hiện được.
+- [x] (5) Sau sửa test ấy xanh; cài lại lỗi nguyên nhân ⇒ ca hồi quy đỏ; gỡ ⇒ xanh.
+- [x] (6) `./scripts/gate.sh` không có `FAIL`; `SKIP` ghi là chưa chạy.
+
+**Bàn giao** (2026-10-10): thiết kế, thi công, chạy PostgreSQL — **Claude Code**, không giao Codex (phiếu nói vậy);
+chưa ai duyệt độc lập. Cây chính, nhánh `chatgpt_involve`, nền `00b7ee9` cộng thay đổi chưa commit của
+`T-138` · `T-140` · `T-142` · `T-143` · `T-144` · `T-147` (đều Done, chờ chủ repo commit; T-148 không sửa file nào của chúng
+ngoài `work/backlog.md` và `work/findings.md`, là hai file dùng chung). File của T-148: `scripts/be-check.sh`,
+`scripts/be-check.test.sh` (mới), `scripts/verify.sh` (header), `scripts/check-links.ignore` (một dòng), `work/findings.md` (F-061 gỡ, F-063 mới), `work/backlog.md`.
+Log ở scratchpad phiên `f9049835…/scratchpad/` (`loop1/`, `hA/` `hB/` `hC/` `oA/` `oC/`, `keep_on.log`, `keep_off.log`,
+`du_lieu_luc_do.txt`).
+- *(1)* Bốn task đều ở *Done* (dòng Done 2026-10-10); worktree `../lean_wt/T-140` · `T-142` · `T-138` · `P3-10-fix`
+  không còn thay đổi đang viết vào cây chính. 94 file chưa commit của cây chính là phần đã tích hợp của chúng.
+- *(2)* Cây thử `git worktree add --detach` từ `HEAD`, chép be-check mới và ẩn bằng `skip-worktree` nên `git status`
+  chỉ còn `?? be/internal/don/sai_ten_test.go`. Lượt 1 `func TestSaiTen` ⇒ `be-check: FAIL — QC-17 tên test không
+  mang mã mệnh đề … TestSaiTen`, exit 1; `verify.sh` cũng dừng ở dòng ấy. Lượt 2 đổi thành `TestQC17_TenHopLe` ⇒
+  `PASS be-check QC-17`, `--- PASS: TestQC17_TenHopLe`, `be-check: PASS`, exit 0. `scripts/be-check.test.sh` giữ bốn ca.
+- *(3)* Lỗi cài ở cây riêng: `BE_CHECK_KEEP_DB=1` ⇒ exit 1, in `giữ database lúc đỏ: project banhcuon_check_55261_…`,
+  hai DSN, `dọn khi xong: docker compose -p … down -v`; `docker compose ls` thấy project `running`; lệnh dọn được in
+  gỡ sạch. Không đặt biến ⇒ exit 1, project không còn.
+- *(4)* 633 lượt không đỏ: 20 lượt `be-check` đầy đủ (`loop1/`, 30–35 giây mỗi lượt); 200 lượt riêng test ấy, mỗi lượt
+  database sạch từ bản mẫu; 200 lượt khi máy chạy thêm mười tiến trình `yes`; 7 lượt cả gói `don`; 206 lượt trên code
+  `880b741`. **Nguyên nhân** tìm trong log phiên trên máy, không phải đoán: lần đỏ là Stop hook 2026-10-09 21:55 ở cây
+  chính, trong 52 giây một phiên khác cài lỗi "bỏ khối thiếu cái" vào `ra_ban.go` cùng cây — **F-063**. Dữ liệu lúc
+  đỏ (tái hiện, database giữ lại): bàn 121, hàng `gap_banh`/1 có đơn vị 324 (đơn 119) đã bưng ở bước "1 cái" và 327
+  (đơn 120) là cái đã làm duy nhất; test đòi 2 ⇒ bản lỗi bưng 327, `200 … station_job_ids:[327]`. **Bản sửa:** không
+  sửa code hay test (không có lỗi ở đó); đề nghị luật *lỗi cài chỉ trong worktree riêng* chờ chủ repo (F-063).
+- *(5)* Ca hồi quy là chính test hiện có: code sạch ⇒ `--- PASS`; cài lại lỗi ⇒ `san_xuat_test.go:637: muốn 409
+  served_quantity_exceeds_made …, nhận 200 … station_job_ids:[4]`, `--- FAIL`; trả bằng bản sao, `shasum -c` ⇒
+  `ra_ban.go: OK`, `--- PASS`.
+- *(6)* `./scripts/gate.sh` ở cây chính ⇒ exit 0, `PASS gate không cổng nào đỏ`, không dòng `SKIP` (Gate 3 · 1b–1g; be-check;
+  db-check 20 bước, 102 câu, 102 lỗi cài; 13 file `scripts/*.test.sh`). Lượt đầu Gate 1b đỏ vì
+  `docs/private/be_feature/prompts/README.md` (đã commit ở `00b7ee9`) nêu `be/sqlc.yaml`, file bước 02 mới tạo — scope
+  T-148 mở thêm `scripts/check-links.ignore`, một dòng ngoại lệ có hạn theo tiền lệ `fe/package.json`; gỡ ở lượt tạo file.
 
 [↑ đầu file](#top)
 

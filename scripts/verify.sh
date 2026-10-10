@@ -8,7 +8,8 @@
 # What it runs, in order; each step runs only when its trigger exists:
 #   be    — be/go.mod present: gofmt must list nothing, go vet, go build.
 #           be-check.sh runs when be/, db/, compose.yaml or scripts/be-check.sh
-#           changed; it requires Docker and fails if Docker is unavailable.
+#           changed; it requires Docker and fails if Docker is unavailable. It runs the
+#           QC-17 test-name check first, so a turn that changes only be/ is checked (F-061).
 #   Node  — package.json present and npm installed: npm test / lint / build,
 #           each only if the package defines it (--if-present).
 #   db    — db/ exists AND this turn changed something under db/, compose.yaml,

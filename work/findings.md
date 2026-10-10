@@ -107,7 +107,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-043 | Một lần gửi đơn phải thành đúng một đơn — pha 1 không có mệnh đề nào | Fixed |
 | F-044 | Một tập đối chiếu của hàng `I-004` không bao giờ rỗng được — việc trạm không có trạng thái huỷ | Open |
 | F-045 | Hai phiên chạy `db-check` cùng lúc dùng chung một compose project ⇒ gỡ database của nhau, đỏ giả | Fixed |
-| F-046 | Vết cập nhật ở chế độ mềm — lần sửa không khai lý do đi qua mà không vết (chủ repo chọn, P2-08) | Open |
+| F-046 | Vết cập nhật ở chế độ mềm — lần sửa không khai lý do đi qua mà không vết (chủ repo chọn, P2-08) | Fixed (T-138, 2026-10-10) |
 | F-047 | Thêm một dòng con vào bản ghi đã có (món vào đơn, thành phần vào suất, xấp mệnh giá vào tiền đầu két) không để lại vết ai thêm (P2-11) | Fixed |
 | F-048 | Số tiền mặt đếm được cuối ngày và dấu *ngày đã đối soát xong* không có chỗ cất, không bước nào nhận — đối soát ngưỡng 0đ không chạy được trên dữ liệu (P2-13) | Fixed |
 | F-049 | Gate 1d mù với thẻ component có thuộc tính, thẻ đóng, tên component và route viết trong backtick — hai ca hồi quy chỉ thử hình thẻ ít gặp nhất (P2-14) | Fixed |
@@ -4094,11 +4094,17 @@ liệu mồi khai lý do trước mỗi lần sửa; (3) cùng lượt thêm c�
 `docs/product/2-db/06-luoc-do-nguoi-va-vet.md` §5. Làm sau khi hai file kia đã commit, tốt nhất cùng
 lượt pha 3 dựng cửa ghi duy nhất.
 
+**Gỡ 2026-10-10 (`T-138`, Claude Code thiết kế; Codex đưa về nền mới, Claude duyệt):** migration bước 20
+`20261010120000_vet_che_do_nghiem` làm đủ ba vế trên — sửa đổi nội dung, hay thêm dòng con vào cha đã có,
+mà không khai lý do ⇒ `record_revision_reason_declared_check`; mọi file dựng dữ liệu khai lý do;
+`table_session_member.person_id`, ghép bàn bắt buộc có người. Một ngoại lệ hẹp cho lượt gọi thêm của khách
+QR — phần còn mở ở **F-060**. Thiết kế: `docs/decisions.md` **ADR-092**.
+
 **Related task:**
-`work/backlog_DB.md` → **P2-08** · pha 3
+`work/backlog_DB.md` → **P2-08** · pha 3 · `T-138`
 
 **Status:**
-Open
+Fixed
 
 ### F-047 — Thêm một dòng con vào một bản ghi đã có không để lại vết ai thêm, lúc nào, từ gì sang gì
 
@@ -4648,6 +4654,10 @@ Chưa chốt. Hai hướng, cùng một migration mới đi tới khi `P3-11` b�
 lần sửa do **hệ thống** kích mang một dấu *"hệ thống, theo lượt gọi của khách"* thay cho người, kèm khoá
 về lượt gọi gây ra nó; (b) phép đối chiếu `I-016` đọc lần chuyển ấy từ chính lượt gọi (đơn QR tạo lúc phiên
 đang *Chờ thanh toán*) thay vì từ vết. Chọn ở `P3-11`, có ADR nếu chọn (a).
+*Cập nhật 2026-10-10 (`T-138`, ADR-092):* chế độ nghiêm đã bật; lần chuyển này đi qua không vết nhờ **một
+ngoại lệ kiểm trong database** (không người, không lý do, chỉ cột trạng thái, đúng cặp, và chính giao dịch
+vừa thêm đơn `qr_table` vào phiên). Phép đối chiếu `I-016` vẫn chưa dựng lại được bước ấy — chọn (a) hay
+(b) vẫn ở `P3-11`.
 
 **Related task:**
 P3-07 (phát hiện) · P3-11 (gỡ) · **ADR-087** · **F-046**
@@ -4677,12 +4687,17 @@ repo chọn; đây là lần đầu — `quality/review-gate.md` *Vòng phản h
 `docs/product/2-db/05-luoc-do-san-xuat.md` nên `db-check` chạy và gate đỏ ở `QC-17` vì đúng ba tên của `P3-08`
 (base `03b179e` chưa có bản đổi tên của `P3-09`) — một lượt không đụng các test ấy trả nợ của lượt trước. Đủ điều
 kiện *Vòng phản hồi* để dời phép kiểm; vẫn chờ chủ repo chọn chỗ.
+*Gỡ 2026-10-10 (`T-148`, Claude Code; chủ repo giao qua phiếu `BE-STACK-00`):* `scripts/be-check.sh` chạy các khối
+phép kiểm sh dưới `### QC-17` của `10-quy-uoc-code.md` — đọc từ owner lúc chạy, không chép — trước khi dựng
+database; một dòng output ⇒ `FAIL`. `verify.sh` gọi be-check khi `be/` đổi, nên lượt chỉ đổi `be/` nay bị chấm.
+`scripts/be-check.test.sh` giữ bốn ca (tên đúng xanh; `TestSaiTen` đỏ; mã `I` không có ở invariants đỏ; owner
+mất khối đỏ). Bằng chứng ở cây thử chỉ đổi `be/`: entry `T-148`. `db-check` vẫn chạy khối ấy như cũ.
 
 **Related task:**
-P3-08 (lọt) · P3-09 (phát hiện, đổi tên) · **ADR-082** · `QC-17`
+P3-08 (lọt) · P3-09 (phát hiện, đổi tên) · `T-148` (gỡ) · **ADR-082** · `QC-17`
 
 **Status:**
-Open
+Fixed
 
 ### F-062 — Test chen nhau không có cổng xuất phát chạy nối đuôi, nên bỏ khoá ở cửa mà test vẫn xanh
 
@@ -4708,6 +4723,38 @@ bỏ khoá làm test đỏ** — không phải test xanh. Hai test còn lại ch
 
 **Related task:**
 P3-10 (phát hiện, sửa hai test) · P3-08 · P3-02
+
+**Status:**
+Open
+
+### F-063 — "Test chập chờn" `TestI020_DaRaBanTheoSoCaiTungThuChoMotBan` là lỗi cài của phiên khác lọt vào gate: hai phiên cùng một cây làm việc
+
+**Problem:**
+Ngày 2026-10-09 lúc 21:55 (giờ quán), Stop hook của một phiên Claude Code chạy gate ở cây chính và đỏ ở
+`san_xuat_test.go:636: muốn 409 served_quantity_exceeds_made …, nhận 200 … station_job_ids:[300]`; chạy lại thì
+xanh, nên nó được ghi là test chập chờn "1 lần / khoảng 10 lần" và một phiếu Codex (`P3-10-fix`) đi tìm lỗi ở cửa.
+Đo 2026-10-10 (`T-148`, Claude Code, đọc log các phiên trên máy): cùng lúc đó, một phiên khác — đang duyệt `P3-10`
+**trong cùng cây chính** — cài lỗi số 2 vào `be/internal/sanxuat/ra_ban.go` (bỏ khối *thiếu cái thì từ chối cả
+lần*) lúc 21:54:13, chạy be-check, rồi trả file bằng `shasum -c` lúc 21:55:05. Gate của phiên thứ nhất biên dịch
+đúng bản mang lỗi cài. Lỗi cài ấy cho đúng chữ ký đã thấy: đòi 2 cái khi chỉ còn 1 cái đã làm ⇒ 200 với một đơn vị
+của lượt gọi thứ hai.
+
+**Impact:**
+Một lần đỏ do cây bị người khác sửa giữa chừng được đọc thành lỗi `I-020` ở cửa, tốn một phiếu Codex và chặn kế
+hoạch đổi stack (`BE-STACK-00`). Ngược lại cũng nguy hiểm: một lần **xanh** của gate trên cây đang có người cài lỗi
+hay sửa dở không chứng minh gì về code sẽ commit.
+
+**Decision / Fix:**
+Không có lỗi ở code hay ở test — không sửa `ra_ban.go` hay `san_xuat_test.go`. Bằng chứng (`T-148`): 633 lượt chạy
+không lượt nào đỏ (20 lượt `be-check` đầy đủ; 407 lượt riêng test này trên code hiện tại, 200 lượt khi máy bị ép
+CPU; 206 lượt trên code `880b741`); cài lại đúng lỗi của 2026-10-09 ⇒ test đỏ cùng chữ ký (`:637 … station_job_ids:[327]`,
+dữ liệu giữ bằng `BE_CHECK_KEEP_DB=1`: đơn vị 327 thuộc đơn thứ hai của bàn, đơn vị cùng hàng của đơn đầu đã bưng ở
+bước "1 cái"); gỡ ⇒ xanh. Đây là vi phạm *một người viết một cây* của `CLAUDE.md` §7.4. Đề nghị, chưa thành luật (lần
+đầu — *Vòng phản hồi*): lỗi cài chỉ làm trong worktree riêng, không bao giờ trong cây mà phiên khác hay Stop hook có
+thể build. Chủ repo chọn có ghi thành luật ở `quality/review-gate.md` hay không.
+
+**Related task:**
+P3-10 (lỗi cài, lần đỏ) · `P3-10-fix` (phiếu đi tìm) · `T-148` (tìm ra) · **F-045** (cùng họ: hai lần chạy chung tài nguyên)
 
 **Status:**
 Open
