@@ -99,7 +99,7 @@ có câu trả lời mới từ người.
 | ADR-080 | **Ngày đã đối soát xong thì số đếm và tiền đầu két đứng yên; dấu không đứng trên số rỗng**: trigger từ chối mọi `INSERT` · `UPDATE` · `DELETE` · `TRUNCATE` trên `cash_count` · `cash_count_line` · `opening_float` · `opening_float_line` của ngày có `reconciled_day`, **mọi vai, không vai nào miễn**; dấu bị từ chối khi số đếm hay tiền đầu két của ngày không có dòng mệnh giá nào; không đường sửa số đã ký (`U-074`), không đòi lệch 0 (`U-073`) | Đã chốt 2026-10-05 (hướng của F-056 · F-057: phiếu việc của chủ repo 2026-10-05; hình trigger: giao cho phiên, T-134) | — | T-134 · F-056 · F-057 · ADR-079 |
 | ADR-081 | **Thêm một dòng con vào bản ghi đã có để lại vết trên bản ghi cha**: trigger `AFTER INSERT` trên `order_line` · `menu_item_component` · `opening_float_line` — dòng tạo sau cha, giao dịch có khai lý do ⇒ một `record_revision` của **cha**, bản trước có các dòng con trước dòng ấy, bản sau thêm đúng dòng ấy; **chế độ mềm** như bước 8 (không lý do ⇒ không vết, câu đối chiếu thấy); ba câu `I-024/3` · `I-011/1` · `I-021/7` chỉ kêu lần thêm không có vết của chính dòng | Đã chốt 2026-10-05 (làm ngay ở tầng database: chủ repo; hình vết: phiên, T-137) | — | T-137 · F-047 · F-046 · ADR-080 |
 | ADR-082 | **Tầng 2 · tầng 3 dịch sang pha 3**: *ô ghi* = bảng × loại ghi, *cửa ghi* = lối vào có tên, mỗi ô đúng một cửa; tầng 2 chấm bằng cắt giao dịch qua cửa, tầng 3 bằng lệnh liệt kê đường ghi (dựng ở `P3-03`, chạy trong gate) và test từ chối qua cửa ⇒ database không đổi; cổng pha 3 đếm §1–§4 của `03-bao-ve-invariant.md`, admin §5 ngoài (ADR-068); lời từ chối của database tới người dùng qua tên `QC-10`, kể cả trigger (F-058), bảng ánh xạ thuộc hợp đồng của `P3-04` | Đã chốt 2026-10-05 (giao cho phiên, P3-01; Codex kiểm kê, Claude chốt) | — | P3-01 · ADR-050 · ADR-068 · F-058 |
-| ADR-083 | **Backend nói chuyện với database bằng pgx v5 và SQL viết tay, mọi câu ghi trong file `.sql` dưới thư mục của một cửa** — nên lệnh liệt kê đường ghi của ADR-082 chỉ đọc file (Gate 1f); Go 1.27.1, web bằng `net/http` chuẩn; một hàm mở giao dịch; test Go trên PostgreSQL thật qua `scripts/be-check.sh`, thiếu database thì đỏ; quy ước ở `QC-11`…`QC-17` | Đã chốt 2026-10-06 (giao cho phiên, P3-03; Codex thi công, Claude chốt) | — | P3-03 · ADR-082 · ADR-053 · F-045 |
+| ADR-083 | **Backend nói chuyện với database bằng pgx v5 và SQL viết tay, mọi câu ghi trong file `.sql` dưới thư mục của một cửa** — nên lệnh liệt kê đường ghi của ADR-082 chỉ đọc file (Gate 1f); Go 1.27.1, web bằng `net/http` chuẩn; một hàm mở giao dịch; test Go trên PostgreSQL thật qua `scripts/be-check.sh`, thiếu database thì đỏ; quy ước ở `QC-11`…`QC-17` | Đã chốt 2026-10-06 (giao cho phiên, P3-03; Codex thi công, Claude chốt); **điểm 1 (vế không sinh code) và điểm 6 thay bởi ADR-093** 2026-10-10 | — | P3-03 · ADR-082 · ADR-053 · F-045 · ADR-093 |
 | ADR-084 | **Hợp đồng API thắng code; migration thắng hợp đồng về tên ràng buộc**: hợp đồng là OpenAPI 3.1 một file YAML (`docs/product/3-be/openapi.yaml`, bắt đầu rỗng đường gọi), khuôn ở `01-hop-dong-api.md`; hình lỗi `{code, field?}`, mã kèm status; bảng *tên từ chối → mã* (`x-constraint-errors`) phủ mọi tên của migration, giá trị là mã · `internal` · `unreviewed`; Gate 1g so hợp đồng ↔ code ↔ migration mọi lượt, đổi hợp đồng phải tăng phiên bản; lời từ chối của trigger mang tên (F-058) | Đã chốt 2026-10-06 (giao cho phiên, P3-04; Claude chọn và thi công) | — | P3-04 · ADR-082 · ADR-053 · F-058 |
 | ADR-085 | **Quyền là một lớp của cửa, đọc tại mốc giao dịch của cửa ấy**: mỗi cửa khai đúng một lớp (`quay` · `chu_quan` mở ở P3-05), ma trận `02-vai-va-quyen.md` một dòng mỗi cửa, ba tập (thư mục cửa · dòng ma trận · khai báo Go) bằng nhau, Gate 1g chấm; `authz.Run` kiểm quyền và khai người thao tác trong cùng giao dịch; khách QR mang mã, không mang bàn; danh tính tách khỏi cách đăng nhập (U-075) — *sửa đổi 2026-10-10 (T-143):* đăng nhập là **chọn tên** (`authz.ChonTen`, header `X-Person-Id`); cửa `nguoi/vao_quay` · `nguoi/roi_quay` ghi mốc đổi người ở quầy | Đã chốt 2026-10-06 (giao cho phiên, P3-05; Claude thiết kế và thi công); sửa đổi 2026-10-10 (T-143; Claude thiết kế, Codex thi công) | — | P3-05 · T-143 · ADR-083 · ADR-084 · U-075 · U-062 · C36 |
 | ADR-086 | **Một hàm tính giá `gia.Tinh`, gọi từ tính thử, menu và cửa ghi đơn; một cửa tạo lượt gọi `don/tao_luot_goi` cho cả năm kênh** — `P3-06` dựng phần giá (tổ hợp, ngừng bán, ảnh chụp) và lối vào đặt hộ tại quầy, chưa đường gọi HTTP; `P3-07` · `P3-08` thêm phần kênh vào chính cửa ấy; cửa từ chối, không sửa hộ, không tự điền mặc định (**F-059**); bốn cửa sửa menu của chủ quán bắt buộc lý do, để vết | Đã chốt 2026-10-06 (giao cho phiên, P3-06; Claude thiết kế, Codex thi công) | — | P3-06 · ADR-082 · ADR-085 · F-059 |
@@ -109,6 +109,7 @@ có câu trả lời mới từ người.
 | ADR-090 | **Sản xuất theo mẻ: duyệt (và lượt gọi của người) nổ đơn trong cùng giao dịch qua cửa `sanxuat/no_don`; mẻ, lùi mẻ, đã ra bàn, đổi chủ phần đã làm, ghi chú bánh làm sai, huỷ đơn đều là cửa lớp `quay`; "đã ra bàn" nhận ~~đúng tập đơn vị quầy chọn~~ **số cái từng thứ cho một bàn** (lời S-5, sửa đổi 2026-10-09); một hàm gom cho bảng nhu cầu; ba trạm bếp không có cửa ghi nào** — không migration; huỷ đơn Hoàn thành qua cùng cửa, không đụng tiền (*sửa đổi 2026-10-10*, T-147) | Đã chốt 2026-10-09 (giao cho phiên, P3-10; điểm 4 chủ repo chọn; Claude thiết kế, Codex thi công); sửa đổi 2026-10-10 (Claude, T-147) | — | P3-10 · T-147 · ADR-056 · ADR-077 · ADR-087 · ADR-088 · ADR-089 · S-5 · S-6 · U-077 · F-044 |
 | ADR-091 | **Đơn đặt trước qua điện thoại nổ ở lần nhắc đầu (giờ khách cần − 20 phút) qua cửa `don/nha_hen` (`POST /preorder-releases`, lớp `quay`) mà máy POS tự gọi theo nhịp; nhận sát giờ thì nổ ngay; đường đọc `GET /preorder-reminders` trả hai mốc nhắc và mốc đã tới** — không migration; `pickup` của khách không đổi | Đã chốt 2026-10-09 (T-142; Claude thiết kế, Codex thi công) | — | T-142 · U-077 · ADR-088 · ADR-090 · P3-12 |
 | ADR-092 | **Vết cập nhật bật chế độ nghiêm**: migration bước 20 thay thân hai hàm vết — sửa đổi nội dung, hay thêm dòng con vào cha đã có, mà giao dịch không khai lý do ⇒ `record_revision_reason_declared_check`; một ngoại lệ hẹp kiểm trong database cho lượt gọi thêm của khách QR (*Chờ thanh toán → Đang phục vụ*, F-060 vế b); `qr_code_issue` tự khai lý do; `table_session_member.person_id`, ghép bàn bắt buộc có người; lỗi cài tắt đúng trigger vết của một bảng | Đã chốt 2026-10-09 (làm ngay ở tầng database: chủ repo; hình chế độ nghiêm và ngoại lệ: phiên, T-138); đánh số lại 2026-10-10 | — | T-138 · F-046 · F-060 · ADR-081 · ADR-087 |
+| ADR-093 | **Backend đổi sang Gin v1.12.0 và sqlc v1.31.1, cấu trúc kết hợp**: handler · service · repository trong từng miền, code sinh ở `<miền>/internal/sqlcgen/` mỗi miền một gói; câu ghi vẫn một file `.sql` dưới thư mục của một cửa, thêm một dòng `-- name:`; Go 1.27.2, migrate v4.20.1; một hàm mở giao dịch, chuyển sang `platform/postgres` ở T-151; miền đã chuyển = có mục trong `sqlc.yaml`; thay điểm 1 · 6 của ADR-083; quy ước ở `QC-05` · `QC-11`…`QC-14` | Đã chốt 2026-10-10 (stack và cấu trúc: chủ repo; luật chuyển tiếp và chia task: Claude, T-149) | — | T-149…T-166 · ADR-082 · ADR-083 · ADR-084 · ADR-085 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -5557,6 +5558,12 @@ thứ ba của §9; `P3-03` (lệnh liệt kê, dấu truy test → `I-0xx`); `P
 `docs/prompt-guideline.md` §6.1. Quyết định này **không sở hữu quy ước** — chữ của từng quy ước là
 `docs/product/2-db/10-quy-uoc-code.md` `QC-11`…`QC-17`; ở đây chỉ giữ **vì sao** và **cái bị loại**.
 
+**Sửa đổi 2026-10-10 (chủ repo; ghi 2026-10-11 ở T-149):** điểm 1 ở vế *không sinh code* và điểm 6 **bị thay
+bởi ADR-093** — Gin v1.12.0, sqlc v1.31.1 sinh code từ chính file `.sql` của cửa, Go 1.27.2, cấu trúc kết hợp.
+Điểm 3 giữ luật *một hàm mở giao dịch*; hàm ấy chuyển sang `be/internal/platform/postgres/` ở `T-151`. Các
+điểm 2, 4, 5 và mục *Rejected* về ORM, database giả giữ nguyên. Hai mục *Rejected* đầu (sqlc, Gin) là lý lẽ
+của ngày 2026-10-06, giữ làm lịch sử.
+
 **Decision:**
 
 1. **Truy cập database: pgx v5, SQL viết tay, không ORM, không sinh code.** Mọi câu **ghi** (thêm, sửa)
@@ -6400,3 +6407,83 @@ gọi là phần còn lại của **F-060**; ai tạo đơn `staff_pos` (`U-026`
 `db/reconcile/proof/` · fixture `_test.go` dưới `be/internal/` · `openapi.yaml` `x-constraint-errors` ·
 `docs/product/2-db/06-luoc-do-nguoi-va-vet.md` §3 · §5 · `07-thu-tu-migration.md` (bước 20) · F-046 · F-060 ·
 **ADR-081** · **ADR-087** · task `T-138`.
+
+### ADR-093 — Backend đổi sang Gin và sqlc, cấu trúc kết hợp: handler · service · repository nằm trong từng miền, code sinh riêng mỗi miền; câu ghi vẫn ở thư mục của một cửa
+
+**Trạng thái:** **Đã chốt** 2026-10-10 — stack và cấu trúc kết hợp **chủ repo chọn** (*"đổi từ chia ngang
+sang kết hợp, chủ repo chọn"*, kế hoạch `docs/private/be_feature/be-stack-migration-steps.md` §0–§2). Ghi vào
+owner 2026-10-11 (Claude Code, task `T-149`, bước 01/09). Bản ghim do Claude tra trên `proxy.golang.org` và
+`go.dev/dl` ngày 2026-10-10. Luật chuyển tiếp ở điểm 3 và cách chia mười bảy task là phiên chọn (Claude, T-149).
+**Thay điểm 1 và điểm 6 của ADR-083**; các điểm khác của ADR-083 và toàn bộ ADR-082 · ADR-084 · ADR-085 giữ
+nguyên. Chữ của từng quy ước là `docs/product/2-db/10-quy-uoc-code.md` `QC-05` · `QC-11`…`QC-14`; ở đây
+chỉ giữ **vì sao** và **cái bị loại**.
+
+**Context:**
+ADR-083 (2026-10-06) chọn `net/http` và pgx với SQL viết tay, bác sqlc và Gin vì thêm công cụ phải ghim.
+Tới 2026-10-10 backend có mười ba miền dưới `be/internal/` (danh sách: `QC-14`). Mỗi miền tự dựng cách đọc
+dòng, quét cột và đăng ký đường gọi. Chủ repo chọn đổi sang Gin và sqlc, theo file mẫu
+`be-structure-guidline.md` cạnh kế hoạch (chưa track, không phải owner), nhưng đặt ba tầng trong từng miền. Mẫu đến
+từ dự án khác, nên năm điểm giữ tiền và dữ liệu đúng (kế hoạch §1) không đổi.
+
+**Decision:**
+
+1. **Bản ghim:** Go `1.27.2` (dòng `go` của `be/go.mod`) · `github.com/gin-gonic/gin v1.12.0` ·
+   `github.com/sqlc-dev/sqlc v1.31.1` là **công cụ**, ghim bằng dòng `tool` của `be/go.mod` và chạy
+   `go tool sqlc` · `github.com/jackc/pgx/v5 v5.11.0` giữ, sqlc sinh với `sql_package: pgx/v5` ·
+   golang-migrate `v4.20.1` (image ở `compose.yaml`). Thay điểm 6 của ADR-083.
+2. **Truy cập database: pgx v5 và code sqlc sinh từ chính file `.sql`.** Thay điểm 1 của ADR-083 ở vế *không
+   sinh code*. Vế còn lại giữ nguyên: mỗi câu ghi là **một** file `.sql` dưới `be/internal/<miền>/sql/<cửa>/`,
+   và thư mục ấy là cửa ghi của ADR-082 điểm 1. Thêm: mỗi file mang đúng một dòng `-- name:`, tên duy nhất
+   trong miền. sqlc đọc lược đồ thẳng từ `db/migrations/`, không chép tay. Code sinh nằm ở
+   `be/internal/<miền>/internal/sqlcgen/`, mỗi miền một gói, không sửa tay; `scripts/verify.sh` sinh lại rồi so.
+3. **Chuyển tiếp từng miền.** Một miền *đã chuyển* khi và chỉ khi nó có mục trong `sqlc.yaml` ở gốc `be/`;
+   danh sách đọc từ chính file ấy, không khai ở chỗ thứ hai (Claude chốt 2026-10-10, phiếu bước 02). Luật
+   `-- name:` của Gate 1f áp cho miền đã chuyển; miền chưa chuyển giữ luật cũ tới bước 08 (`T-165`). Nếu sqlc
+   không nhận một cấu hình chưa có mục nào thì file sinh cùng mục `menu` ở `T-152`; thiếu file nghĩa là chưa
+   miền nào chuyển.
+4. **Cấu trúc kết hợp:** mỗi miền có `handler.go` (Gin, file duy nhất của miền được import Gin) →
+   `service.go` (logic cửa, `authz.Door`, `authz.Run`) → `repository.go` (nhận `pgx.Tx`, gọi `sqlcgen`, không
+   mở, không commit giao dịch). Phụ thuộc đi một chiều. `cmd/server` là composition root, `middleware/` chỉ gắn
+   người vào `gin.Context`. Mã cửa `<miền>/<cửa>` giữ nguyên vì ma trận quyền và `openapi.yaml` dùng nó.
+5. **Hàm mở giao dịch đổi chỗ, không đổi luật** (điểm 3 của ADR-083): vẫn đúng **một** hàm. Nó chuyển từ
+   `be/internal/db/` sang `be/internal/platform/postgres/` (`InTx`, cùng `Open` của `QC-15`) ở bước 03
+   (`T-151`). Tới lúc ấy owner vẫn là chỗ cũ; ADR này không tuyên bố đã chuyển.
+6. **Đường gọi:** mỗi đường gọi đăng ký một lần trong `handler.go` của miền, bằng phương thức Gin và đường dẫn
+   viết liền một chuỗi; không `Group`, `Any`, `Handle`, không nối chuỗi, không wildcard. Gate 1g đọc cả khuôn
+   cũ lẫn khuôn Gin tới `T-165`, rồi khuôn cũ thành đỏ. Hình lỗi `{code, field?}` giữ nguyên (ADR-084);
+   `apierr` không import Gin, handler truyền `c.Writer` (Claude chốt 2026-10-10).
+7. **Giữ nguyên, không đem từ mẫu:** PostgreSQL 17 + golang-migrate ở `db/migrations/`; quyền kiểm trong cùng
+   giao dịch (`authz.Run`, ADR-085); test trên PostgreSQL thật, thiếu database thì đỏ, tên mang mã mệnh đề
+   (ADR-083 điểm 5, `QC-16` · `QC-17`). Không Redis, rate limit, JWT, SSE, jobs, `pkg/`, Dockerfile/Air, quy
+   ước UUID của mẫu. Không bước nào đổi hành vi của cửa, migration hay dữ liệu.
+
+**Why — chủ repo chọn kết hợp vì bốn lý do (kế hoạch §1):**
+
+- **Package là ranh giới thật của Go.** Code sinh đặt trong `<miền>/internal/` thì trình biên dịch tự chặn
+  miền khác gọi câu ghi của miền này. Luật *mỗi ô ghi đúng một cửa* (ADR-082) được giữ mà không cần phép kiểm
+  phân tích code Go.
+- **Chia ngang thì cả `service/` là một package**, mọi service thấy mọi câu ghi, ranh giới chỉ còn một luật gate.
+- **Một cửa sửa ở một thư mục**, không phải ba.
+- **Thư mục `sql/<cửa>/` giữ nguyên tên và vị trí**, nên Gate 1f không đổi khuôn đường dẫn.
+
+Cái ADR-083 lo khi bác sqlc là thêm một công cụ phải ghim và thêm một cổng chống lệch. Hai việc ấy nay có chỗ:
+dòng `tool` của `go.mod` ghim mà không cần cgo hay image riêng, và `verify.sh` sinh lại rồi so (`QC-13`).
+Gin thêm một phụ thuộc trực tiếp nhưng chỉ ở tầng handler. Cửa ghi vẫn là hàm Go thường ở `service.go`,
+test cửa không phải dựng framework (lo ngại của `QC-12` cũ).
+
+**Rejected alternatives:**
+
+- *Chia ngang đúng như mẫu* — `internal/handler/`, `internal/service/`, `internal/repository/`, câu SQL gom ở
+  `be/query/`. Bác vì lý do một và hai ở trên: mất ranh giới package, mọi service nhìn thấy mọi câu ghi.
+- *Mỗi cửa một gói sinh* (đề xuất lát 0 của Codex, `docs/private/be_feature/BE-STACK-de-xuat-codex.md`):
+  khoảng 35 gói làm `sqlc.yaml` quá dài. Chọn mỗi miền một gói. Trong một miền, gọi đúng cửa vẫn do duyệt và
+  test cửa giữ (ADR-082).
+
+**Hệ quả có tên:** Gin từ chối lúc đăng ký nếu hai đường gọi cùng tiền tố, cùng vị trí mang hai tên tham số
+khác nhau. Hợp đồng ngày 2026-10-11 không có cặp nào như thế. Một lần đổi hợp đồng sau phải giữ điều ấy
+(`QC-12`), và test dựng router ở bước 03 đỏ khi phạm. Mười bảy task `T-150`…`T-166`, mỗi task một commit lùi
+được riêng: `work/backlog.md` → `T-149`.
+
+**Applies to:** `docs/product/2-db/10-quy-uoc-code.md` `QC-05` · `QC-11`…`QC-14`; `be/` · `compose.yaml` ·
+`scripts/check-write-paths.sh` · `scripts/check-api-contract.sh` · `scripts/verify.sh`; task `T-149`…`T-166`;
+**ADR-083** điểm 1 · 6 (thay) · điểm 3 (đổi chỗ ở `T-151`).

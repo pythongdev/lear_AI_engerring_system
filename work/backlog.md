@@ -89,6 +89,23 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## Ready
 
 - [ ] T-146 **Sửa số đếm két của ngày đã ký** — chủ quán sửa số đếm của một ngày đã đối soát xong, kèm lý do bắt buộc; lần sửa mở lại ngày ấy (dấu cũ, con số cũ giữ làm vết) cho tới khi chủ quán bấm đối soát xong lại (lời đóng **U-078**, `shop-facts.md` §6.10). Đổi khoá của **ADR-080** (hiện chặn mọi vai) bằng một migration mới và một cửa lớp `chu_quan`; ADR mới. **Chờ commit `T-140`** — L2 — Claude thiết kế và viết test đỏ, Codex thi công
+- [ ] T-150 **Đổi stack backend · bước 02 — công cụ và gate, chưa chuyển cửa nào** — `go 1.27.2`, gin v1.12.0, dòng `tool` sqlc v1.31.1, migrate v4.20.1; sqlc đọc toàn bộ `db/migrations/` (không được ⇒ dừng); Gate 1f luật `-- name:` cho miền có mục trong sqlc.yaml, Gate 1g đọc route Gin, phép kiểm import Gin, `verify.sh` sinh lại và so — **ADR-093** — L2 — Codex thi công, Claude duyệt. **Chờ chủ repo commit phần đã Done chưa commit** (T-138 · T-140 · T-142 · T-143 · T-147 · T-149) · [chi tiết](#t-149)
+- [ ] T-151 **Đổi stack · bước 03 — nền**: `internal/db` → `internal/platform/postgres` (`Open`, `InTx`), `dbtest` → `testhelper`, `middleware/`, `cmd/server` dựng Gin router và nối miền cũ qua `gin.WrapH` — L2 — Codex, Claude duyệt · chờ T-150 · [chi tiết](#t-149)
+- [ ] T-152 **Đổi stack · bước 04 — miền mẫu `menu`** (handler · service · repository · `internal/sqlcgen`) — L2 — Codex, Claude duyệt · chờ T-151 · [chi tiết](#t-149)
+- [ ] T-153 **Đổi stack · bước 05 — miền `qr`** — L2 — Codex, Claude duyệt · chờ T-152 · [chi tiết](#t-149)
+- [ ] T-154 **Đổi stack · bước 05 — miền `gia`** — L2 — Codex, Claude duyệt · chờ T-153 · [chi tiết](#t-149)
+- [ ] T-155 **Đổi stack · bước 05 — miền `ngayban`** — L2 — Codex, Claude duyệt · chờ T-154 · [chi tiết](#t-149)
+- [ ] T-156 **Đổi stack · bước 05 — miền `ban`** — L2 — Codex, Claude duyệt · chờ T-155 · [chi tiết](#t-149)
+- [ ] T-157 **Đổi stack · bước 05 — miền `phien`** — L2 — Codex, Claude duyệt · chờ T-156 · [chi tiết](#t-149)
+- [ ] T-158 **Đổi stack · bước 05 — miền `vongdoi`** (giữ API nhận `pgx.Tx`, lớp `theo_cua_goi`) — L2 — Codex, Claude duyệt · chờ T-157 · [chi tiết](#t-149)
+- [ ] T-159 **Đổi stack · bước 05 — miền `nguoi`** (miền thứ mười ba, sinh ở T-143) — L2 — Codex, Claude duyệt · chờ T-158 · [chi tiết](#t-149)
+- [ ] T-160 **Đổi stack · bước 06 — miền `tratruoc`** — L2 — Codex, Claude duyệt, Claude cài lỗi thu sai · chờ T-159 · [chi tiết](#t-149)
+- [ ] T-161 **Đổi stack · bước 06 — miền `hoadon`** — L2 — Codex, Claude duyệt, Claude cài lỗi thu sai · chờ T-160 · [chi tiết](#t-149)
+- [ ] T-162 **Đổi stack · bước 06 — miền `ket`** — L2 — Codex, Claude duyệt, Claude cài lỗi thu sai · chờ T-161 · [chi tiết](#t-149)
+- [ ] T-163 **Đổi stack · bước 07 — miền `sanxuat`** (giữ API `pgx.Tx` cho `don`; be-check ≥ 2 lần) — L2 — Codex, Claude duyệt · chờ T-162 · [chi tiết](#t-149)
+- [ ] T-164 **Đổi stack · bước 07 — miền `don`** (be-check ≥ 2 lần) — L2 — Codex, Claude duyệt · chờ T-163 · [chi tiết](#t-149)
+- [ ] T-165 **Đổi stack · bước 08 — dọn**: gỡ `gin.WrapH` và khuôn route cũ khỏi Gate 1g, luật `-- name:` áp mọi miền, Claude siết `QC-13` · `QC-14` lần cuối — L1 — Codex, Claude duyệt · chờ T-164 · [chi tiết](#t-149)
+- [ ] T-166 **Đổi stack · bước 09 — rà chéo** cây thật với `QC-14`, `--list` hai gate và tập tên test so với nền T-150 — L1 — Claude · chờ T-165 · [chi tiết](#t-149)
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
 - [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi, không cột *ngày bán của két* khi `U-072` còn mở. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
@@ -99,10 +116,10 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## In Progress
 
 
-
 <a id="done"></a>
 ## Done
 
+- [x] T-149 **Đổi stack backend · bước 01 — ghi quyết định Gin + sqlc + cấu trúc kết hợp vào owner** — ADR mới thay điểm 1 và 6 của ADR-083; `QC-05` · `QC-11`…`QC-14`; chia bước 02…09 thành T-150…T-166 — L3 — Claude Code, không giao Codex — 2026-10-11 · [chi tiết](#t-149)
 - [x] T-148 **Điều kiện trước đổi stack backend (BE-STACK-00)** — phép kiểm tên test `QC-17` chạy trong `scripts/be-check.sh` (gỡ **F-061**); `BE_CHECK_KEEP_DB=1` giữ database khi test đỏ; "test chập chờn" `TestI020_DaRaBanTheoSoCaiTungThuChoMotBan` là lỗi cài của phiên khác lọt vào gate cùng cây (**F-063**), code và test không đổi — L2 — Claude Code — 2026-10-10 · [chi tiết](#t-148)
 - [x] T-147 **Huỷ đơn đã Hoàn thành** — cửa `don/huy` nhận *Hoàn thành → Huỷ* (lời U-027, `shop-facts.md` §6.19), gỡ mã `completed_order_cancel_not_ready`; cửa không đụng tiền, hoàn do quầy quyết qua cửa hoàn của `P3-09` — phần còn sót của `P3-10`; **ADR-090** điểm 7 *Sửa đổi* — L2 — Claude thiết kế và viết test đỏ, Codex thi công (worktree `../lean_wt/T-147`) — 2026-10-10 · [chi tiết](#t-147)
 - [x] T-145 Ghi lời chủ quán cho **U-078** vào owner — `99-unknowns.md` (đóng), `shop-facts.md` §6.10 và §7.1 (lời và cách đọc của phiên tách riêng), con trỏ ở ADR-089 *Sửa đổi*; mở `T-146` cho code — L1 — Claude Code — 2026-10-10
@@ -323,6 +340,86 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-149"></a>
+### T-149 — Stack backend đã duyệt (Gin + sqlc, cấu trúc kết hợp) mà owner vẫn ghi `net/http`, cấm sqlc, và chưa có task nào cho bước 02…09
+
+**Yêu cầu:** chủ repo, 2026-10-11 — phiếu `docs/private/be_feature/prompts/BE-STACK-01-ghi-quyet-dinh-L3.md`
+(*"claude hãy làm"*). Stack chủ repo duyệt 2026-10-10 (kế hoạch `docs/private/be_feature/be-stack-migration-steps.md`
+§0–§2), không mở lại. Mức **L3**: đổi quyết định kiến trúc của ADR-083 và luật mà gate cùng mọi bước sau đọc.
+Claude tự làm, không giao Codex (phiếu nói vậy). Chỉ tài liệu: không code, không migration, không invariant.
+
+**Acceptance (viết trước khi sửa, 2026-10-11):**
+- [x] (1) ADR mới (số kế tiếp, tra bằng lệnh) ngày 2026-10-10, người quyết là chủ repo; thay điểm 1 và 6 của ADR-083, giữ ADR-082 · 084 · 085; có bốn lý do chọn kết hợp và hai phương án bị loại đúng kế hoạch §1; ghi việc chuyển hàm mở giao dịch sang `platform/postgres` là việc của bước 03, luật một hàm giữ nguyên.
+- [x] (2) `QC-05` · `QC-11` · `QC-12` · `QC-13` · `QC-14` ghi đủ bản ghim, cây, luật route và import, mỗi mục một phép kiểm chạy được và in rỗng trên cây hôm nay; đối chiếu từng mục với kế hoạch §0–§2, không lệch.
+- [x] (3) Mỗi bước 02…09 có task trong *Ready* theo thứ tự, mức, người làm; bước 05 và 06 mỗi miền một task, bước 07 hai task; mỗi task có mốc xanh để lùi riêng, không đổi dữ liệu. Acceptance từng bước nằm ở phiếu của bước (luật *entry trỏ, prompt giữ*).
+- [x] (4) Rà thiết kế trước code: ghi các điểm thiếu thông tin và bước mà mỗi điểm chặn.
+- [x] (5) `./scripts/gate.sh` không có `FAIL`; `SKIP` ghi là chưa chạy. `be-check` và lỗi cài không áp dụng cho bước chỉ tài liệu.
+
+**Chia lát — bước 02…09** (Claude, 2026-10-11). Mỗi task là **một commit**, xanh trước và sau. Hỏng thì
+`git revert` đúng commit ấy, lùi theo thứ tự ngược. Không task nào đổi migration hay dữ liệu, nên lùi không
+đụng database. Từ T-151, adapter `gin.WrapH` giữ các miền chưa chuyển vẫn chạy, nên dừng ở giữa dãy vẫn
+là một trạng thái chạy được. Phiếu và Acceptance của từng bước: `docs/private/be_feature/prompts/BE-STACK-<NN>-…`.
+
+| Task | Bước | Miền / việc | Mức | Mốc xanh để lùi |
+|---|---|---|---|---|
+| T-150 | 02 | công cụ, Gate 1f · 1g, phép kiểm import Gin, `verify.sh` sinh lại | L2 | `--list` hai gate không đổi; chưa cửa nào chuyển |
+| T-151 | 03 | `platform/postgres`, `testhelper`, `middleware`, `cmd/server` + `gin.WrapH` | L2 | tập đường gọi khớp hợp đồng như trước |
+| T-152 | 04 | `menu` | L2 | test `menu` xanh, không đổi điều kiện kiểm |
+| T-153…T-159 | 05 | `qr` → `gia` → `ngayban` → `ban` → `phien` → `vongdoi` → `nguoi` | L2 (Claude chấm lại lúc giao) | mỗi miền một commit |
+| T-160…T-162 | 06 | `tratruoc` → `hoadon` → `ket` | L2 | mỗi miền một commit; lỗi thu sai cài được bắt |
+| T-163 · T-164 | 07 | `sanxuat` → `don` | L2 | be-check ≥ 2 lượt xanh mỗi task |
+| T-165 | 08 | gỡ adapter và khuôn route cũ, luật `-- name:` cho mọi miền | L1 | gate xanh không còn nhánh chuyển tiếp |
+| T-166 | 09 | rà chéo | L1 | không đổi code |
+
+**Rà thiết kế trước code — điểm còn thiếu và bước chúng chặn** (Claude, 2026-10-11):
+- *Chặn T-150 (giao Codex):* worktree tạo từ `HEAD` không thấy phần Done chưa commit của T-138 · T-140 · T-142 ·
+  T-143 · T-147, cũng không thấy T-149. Chủ repo commit trước, hoặc chưa giao.
+- *Chặn thứ tự T-146 với T-150:* T-146 thêm một cửa vào `ket`. Đổi stack đòi không ai viết `be/` song song
+  (T-148 Acceptance 1), nên T-146 phải xong trước T-150 hoặc chờ sau T-166. Đã xếp T-146 trên dãy này. Chủ repo đổi được.
+- *T-150 — sqlc.yaml rỗng:* chưa biết sqlc v1.31.1 có nhận cấu hình chưa có mục `sql:` nào hay không. Đã chốt ở
+  ADR-093 điểm 3: nhận thì file sinh ở T-150, không nhận thì sinh ở T-152 cùng mục `menu`. Dòng ngoại lệ Gate 1b
+  của `docs/private/be_feature/prompts/README.md` giữ tới lượt tạo file. Thiếu file nghĩa là chưa miền nào chuyển.
+- *T-151 — owner phải đổi cùng lượt:* `QC-15` · `QC-16` và phép kiểm của chúng nêu `be/internal/db/` ·
+  `be/internal/dbtest/`. Chuyển thư mục mà không sửa thì db-check đỏ. Claude sửa hai mục ấy và siết phép kiểm
+  `QC-13` · `QC-14` (bỏ `internal/db`) lúc tích hợp T-151; Codex không sửa owner.
+- *T-151 — danh tính:* `authz.ChonTen` (T-143) đọc header `X-Person-Id`. `middleware/` chỉ gắn người vào
+  `gin.Context`, không thay `authz.Run`; Claude liệt kê đúng file gọi nền trước khi giao.
+- *T-151 trở đi — tên tham số đường dẫn:* Gin từ chối lúc đăng ký nếu cùng tiền tố, cùng vị trí có hai tên tham
+  số khác nhau. 45 đường của `openapi.yaml` (cây làm việc 2026-10-11) không có cặp nào như thế (Claude đọc bằng
+  awk); luật ghi ở `QC-12`, test `TestQC12_` dựng router sẽ đỏ nếu một lần đổi hợp đồng sau phạm.
+- *T-150 — con trỏ trong hợp đồng:* `docs/product/3-be/01-hop-dong-api.md` §2 điều 2 giải thích `{tên}` bằng
+  "cùng cú pháp với mẫu của `net/http` (`QC-12`)". Câu ấy còn đúng tới T-165 (miền chưa chuyển vẫn dùng
+  `ServeMux`), nhưng lý lẽ đổi khi Gate 1g đọc `:tên` của Gin. Phiếu bước 01 cấm sửa tài liệu hợp đồng, nên
+  Claude sửa câu ấy lúc tích hợp T-150 (cùng lượt Gate 1g học khuôn Gin), không để Codex sửa.
+- *T-155:* tên thật của các test `TestYC01_` · `TestYC10_` chạm ranh giới ngày phải kiểm kê trước khi giao (phiếu bước 05).
+- *T-159:* miền `nguoi` (T-143) không có trong danh sách §2 kế hoạch. Thêm một task bước 05 theo luật đã chốt
+  ở `prompts/README.md` (Claude, 2026-10-10).
+- *Siết phép kiểm theo bước* (Claude làm lúc tích hợp): T-150 — `QC-05` chỉ còn migrate v4.20.1, `QC-11` chỉ còn
+  `go 1.27.2` và đòi gin · sqlc có mặt; T-151 — `QC-13` · `QC-14` bỏ `internal/db`; T-165 — `QC-12` bỏ khuôn
+  `ServeMux`, `QC-13` luật `-- name:` cho mọi miền, `QC-14` lần cuối.
+
+**Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
+độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·
+T-143 · T-147 · T-148. T-149 không sửa file nào của chúng ngoài `work/backlog.md` là file dùng chung; `docs/decisions.md` và
+`10-quy-uoc-code.md` không có thay đổi chưa commit của ai trước lượt này. File: `docs/decisions.md`,
+`docs/product/2-db/10-quy-uoc-code.md`, `work/backlog.md`. Log ở scratchpad phiên `17725f75…/scratchpad/`
+(`gate1.log`, `gate2.log`, `10-before.md`, `blk_QC-*.sh`, `fake1/`, `fake2/`).
+- *(1)* `grep -o 'ADR-[0-9]*' docs/decisions.md | sort -u | tail -1` ⇒ `ADR-092` trước lượt; ADR mới là **ADR-093**,
+  dòng bảng tổng hợp, ADR-083 có mục *Sửa đổi* và dòng bảng trỏ sang ADR-093.
+- *(2)* Năm khối `sh` (`QC-05` · `QC-11`…`QC-14`) chạy riêng trên cây thật ⇒ cả năm in rỗng. Cây giả có lỗi cài
+  (`fake1/`: gin v1.11.0, sqlc v1.30.0 thiếu dòng `tool`, `service.go` import Gin có bí danh, `.Group(`,
+  `tx.Commit(` ngoài nơi mở giao dịch, hai chỗ giữ hàm mở giao dịch, miền khác import `sqlcgen`, migrate v4.19.0,
+  thư mục lạ ở gốc `be/`, miền có `sqlcgen` thiếu tầng) ⇒ mỗi lỗi một dòng đỏ đúng mục. Hai hình `go.mod` đích của
+  T-150 (`require` khối và một dòng, `tool` một dòng và khối) ⇒ `QC-11` in rỗng. Gate lượt đầu: `db-check — … 18 khối kiểm QC`.
+  Đối chiếu kế hoạch §0 (năm bản ghim) · §1 (năm điểm giữ, bốn lý do, hai phương án bị loại) · §2 (cây) bằng mắt, không lệch.
+- *(3)* Bảng *Chia lát* ở trên; mười bảy dòng T-150…T-166 trong *Ready*, xếp dưới T-146.
+- *(4)* Danh sách *Rà thiết kế* ở trên, mười điểm, mỗi điểm nêu bước bị chặn.
+- *(5)* `./scripts/gate.sh` hai lượt ⇒ exit 0, `PASS gate không cổng nào đỏ`, không dòng `SKIP` (Gate 1 chạy đủ vì
+  cây có thay đổi `be/` · `db/` của task khác: be-check, db-check 20 bước, 13 file `scripts/*.test.sh`).
+  `be-check` có chạy nhưng không chứng minh gì cho T-149, vì task này không đổi code; không cài lỗi trong code.
+
+[↑ đầu file](#top)
 
 <a id="t-148"></a>
 ### T-148 — Điều kiện trước đổi stack backend: QC-17 vào be-check, giữ database khi đỏ, test I-020 chập chờn
