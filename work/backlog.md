@@ -88,8 +88,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-146 **Sửa số đếm két của ngày đã ký** — chủ quán sửa số đếm của một ngày đã đối soát xong, kèm lý do bắt buộc; lần sửa mở lại ngày ấy (dấu cũ, con số cũ giữ làm vết) cho tới khi chủ quán bấm đối soát xong lại (lời đóng **U-078**, `shop-facts.md` §6.10). Đổi khoá của **ADR-080** (hiện chặn mọi vai) bằng một migration mới và một cửa lớp `chu_quan`; ADR mới. **Chờ commit `T-140`** — L2 — Claude thiết kế và viết test đỏ, Codex thi công
-- [ ] T-150 **Đổi stack backend · bước 02 — công cụ và gate, chưa chuyển cửa nào** — `go 1.27.2`, gin v1.12.0, dòng `tool` sqlc v1.31.1, migrate v4.20.1; sqlc đọc toàn bộ `db/migrations/` (không được ⇒ dừng); Gate 1f luật `-- name:` cho miền có mục trong sqlc.yaml, Gate 1g đọc route Gin, phép kiểm import Gin, `verify.sh` sinh lại và so — **ADR-093** — L2 — Codex thi công, Claude duyệt. **Chờ chủ repo commit phần đã Done chưa commit** (T-138 · T-140 · T-142 · T-143 · T-147 · T-149) · [chi tiết](#t-149)
+- [ ] T-150 **Đổi stack backend · bước 02 — công cụ và gate, chưa chuyển cửa nào** — `go 1.27.2`, gin v1.12.0, dòng `tool` sqlc v1.31.1, migrate v4.20.1; sqlc đọc toàn bộ `db/migrations/` (không được ⇒ dừng); Gate 1f luật `-- name:` cho miền có mục trong sqlc.yaml, Gate 1g đọc route Gin, phép kiểm import Gin, `verify.sh` sinh lại và so — **ADR-093** — L2 — Codex thi công, Claude duyệt. **Chờ chủ repo commit phần đã Done chưa commit** (T-138 · T-140 · T-142 · T-143 · T-144 · T-145; T-147 · T-149 đã commit). sqlc đọc được toàn bộ migration — thử 2026-10-11, xem chi tiết · [chi tiết](#t-149)
 - [ ] T-151 **Đổi stack · bước 03 — nền**: `internal/db` → `internal/platform/postgres` (`Open`, `InTx`), `dbtest` → `testhelper`, `middleware/`, `cmd/server` dựng Gin router và nối miền cũ qua `gin.WrapH` — L2 — Codex, Claude duyệt · chờ T-150 · [chi tiết](#t-149)
 - [ ] T-152 **Đổi stack · bước 04 — miền mẫu `menu`** (handler · service · repository · `internal/sqlcgen`) — L2 — Codex, Claude duyệt · chờ T-151 · [chi tiết](#t-149)
 - [ ] T-153 **Đổi stack · bước 05 — miền `qr`** — L2 — Codex, Claude duyệt · chờ T-152 · [chi tiết](#t-149)
@@ -106,6 +105,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 - [ ] T-164 **Đổi stack · bước 07 — miền `don`** (be-check ≥ 2 lần) — L2 — Codex, Claude duyệt · chờ T-163 · [chi tiết](#t-149)
 - [ ] T-165 **Đổi stack · bước 08 — dọn**: gỡ `gin.WrapH` và khuôn route cũ khỏi Gate 1g, luật `-- name:` áp mọi miền, Claude siết `QC-13` · `QC-14` lần cuối — L1 — Codex, Claude duyệt · chờ T-164 · [chi tiết](#t-149)
 - [ ] T-166 **Đổi stack · bước 09 — rà chéo** cây thật với `QC-14`, `--list` hai gate và tập tên test so với nền T-150 — L1 — Claude · chờ T-165 · [chi tiết](#t-149)
+- [ ] T-146 **Sửa số đếm két của ngày đã ký** — chủ quán sửa số đếm của một ngày đã đối soát xong, kèm lý do bắt buộc; lần sửa mở lại ngày ấy (dấu cũ, con số cũ giữ làm vết) cho tới khi chủ quán bấm đối soát xong lại (lời đóng **U-078**, `shop-facts.md` §6.10). Đổi khoá của **ADR-080** (hiện chặn mọi vai) bằng một migration mới và một cửa lớp `chu_quan`; ADR mới. **Chờ T-166** (chủ repo chọn 2026-10-11: làm dãy đổi stack trước, T-146 viết thẳng theo cấu trúc Gin + sqlc) — L2 — Claude thiết kế và viết test đỏ, Codex thi công
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
 - [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi, không cột *ngày bán của két* khi `U-072` còn mở. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
@@ -377,6 +377,14 @@ là một trạng thái chạy được. Phiếu và Acceptance của từng bư
   T-143 · T-147, cũng không thấy T-149. Chủ repo commit trước, hoặc chưa giao.
 - *Chặn thứ tự T-146 với T-150:* T-146 thêm một cửa vào `ket`. Đổi stack đòi không ai viết `be/` song song
   (T-148 Acceptance 1), nên T-146 phải xong trước T-150 hoặc chờ sau T-166. Đã xếp T-146 trên dãy này. Chủ repo đổi được.
+  **Chủ repo chọn 2026-10-11: T-146 chờ sau T-166**; dòng *Ready* đã dời xuống dưới T-166.
+- *T-150 — thử sqlc trước giao (Claude, 2026-10-11, scratchpad phiên `8eaa6732…/scratchpad/t150probe/`, không đụng repo):*
+  go1.27.2 + `go get -tool github.com/sqlc-dev/sqlc/cmd/sqlc@v1.31.1` ⇒ `go tool sqlc version` in `v1.31.1`;
+  `schema:` trỏ cả thư mục `db/migrations/` (20 bước, kể cả hai file chưa track của T-138 · T-140) và hai query mẫu
+  của `menu` (đọc `menu_item … FOR UPDATE`, `UPDATE menu_component … RETURNING`) ⇒ `sqlc generate` exit 0,
+  `models.go` 42 kiểu bảng = 42 `CREATE TABLE` trong `*.up.sql`, tên bảng trần, có `DoiGia(ctx, DoiGiaParams)`.
+  Điều kiện DỪNG của Acceptance 1 không xảy ra. Ghi để phiếu biết: biểu thức `x IS NOT NULL` không ép kiểu sinh
+  `interface{}`, nên query đích cần `::boolean`. Vẫn chặn giao: chờ commit T-138 · T-140 · T-142 · T-143 · T-144 · T-145.
 - *T-150 — sqlc.yaml rỗng:* chưa biết sqlc v1.31.1 có nhận cấu hình chưa có mục `sql:` nào hay không. Đã chốt ở
   ADR-093 điểm 3: nhận thì file sinh ở T-150, không nhận thì sinh ở T-152 cùng mục `menu`. Dòng ngoại lệ Gate 1b
   của `docs/private/be_feature/prompts/README.md` giữ tới lượt tạo file. Thiếu file nghĩa là chưa miền nào chuyển.
