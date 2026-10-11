@@ -83,7 +83,6 @@ func dung(t *testing.T) khung {
 	mux := http.NewServeMux()
 	gia.Routes(mux, pool)
 	// P3-07: đường gọi của luồng tại bàn (ADR-087).
-	qr.Routes(mux, pool, xacThucTest{})
 	don.Routes(mux, pool, xacThucTest{})
 	phien.Routes(mux, pool, xacThucTest{})
 	hoadon.Routes(mux, pool, xacThucTest{})
@@ -98,6 +97,7 @@ func dung(t *testing.T) khung {
 	r := gin.New()
 	r.Use(middleware.GanNguoi(xacThucTest{}))
 	menu.Routes(r, menu.NewService(pool))
+	qr.Routes(r, qr.NewService(pool))
 	r.NoRoute(func(c *gin.Context) {
 		c.Status(http.StatusOK)
 		mux.ServeHTTP(c.Writer, c.Request)

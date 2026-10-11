@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-153 **Đổi stack · bước 05 — miền `qr`** — L2 — Codex, Claude duyệt · chờ T-152 · [chi tiết](#t-149)
 - [ ] T-154 **Đổi stack · bước 05 — miền `gia`** — L2 — Codex, Claude duyệt · chờ T-153 · [chi tiết](#t-149)
 - [ ] T-155 **Đổi stack · bước 05 — miền `ngayban`** — L2 — Codex, Claude duyệt · chờ T-154 · [chi tiết](#t-149)
 - [ ] T-156 **Đổi stack · bước 05 — miền `ban`** — L2 — Codex, Claude duyệt · chờ T-155 · [chi tiết](#t-149)
@@ -116,6 +115,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-153 **Đổi stack · bước 05 — miền `qr`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; router giữ `HEAD` như `GET`, `UseRawPath` (ca `%2F` của duyệt T-152) — L2 — Codex thi công (worktree `../lean_wt/T-153`), Claude viết test trước, duyệt, cài lỗi và tích hợp — 2026-10-11 · [chi tiết](#t-149)
 - [x] T-169 **Đóng F-059: mặc định của nhóm tuỳ chọn thành dữ liệu** — migration bước 21 `menu_option.is_default` + `menu_option_one_default_per_group_key` (mỗi nhóm nhiều nhất một, khoá chặn khi lùi); `db/seed/seed.pl` đọc `shop-facts.md` §4.6 luật 8 lúc chạy (`--defaults-tsv`, bốn lỗi cài trên bản sao ⇒ dừng hoặc theo đúng), `db-check` so cờ với owner; `GET /menu` trả `is_default` (hợp đồng 0.13.0); cửa và tính thử vẫn không tự điền. Acceptance (viết trước): test database hai chiều · seed đọc owner · test Go so cờ với luật 8 + tổ hợp chọn sẵn có giá, bỏ cờ khỏi câu đọc ⇒ đỏ · `TestI010_TuChoiKhongSuaHo` không đổi · owner tài liệu theo kịp · gate xanh — **ADR-094** — L2 — Claude Code (worktree `../lean_wt/T-169`, chưa ai duyệt độc lập) — 2026-10-11
 - [x] T-168 **Đóng F-062: hai test chen nhau còn lại chờ cổng chung** — `TestI024_MangDiGuiLaiChenNhauMotDon` · `TestI023_HaiLanDoiCungLucKhongThanhLoiHeThong` thêm cổng `cong`; đo bằng lỗi cài trong worktree riêng (luật T-167): bỏ chạy lại trên `sales_order_submission_code_key` · bỏ ánh xạ `qr_code_one_current_per_table_key` ⇒ đỏ 10/10 mỗi test, cả trước lẫn sau khi thêm cổng (nghi ngờ của F-062 không đúng với hai test này); code thật ⇒ xanh 10/10; không thêm vòng lặp vì một vòng đã bắt đủ — L1 — Claude Code — 2026-10-11
 - [x] T-167 **Đóng F-063: lỗi cài chỉ làm trong worktree riêng** — luật mới ở `quality/review-gate.md` Gate 1 (chủ repo chọn ghi thành luật), F-063 → Fixed — L1 — Claude Code — 2026-10-11
@@ -558,6 +558,55 @@ không giao Codex, **chưa ai duyệt độc lập**. File: `be/sqlc.yaml` (mớ
   `newRouter`, cùng lượt chọn `HEAD`), kèm test `TestQC12_…` chấm ca `%2F`, ghi vào `QC-12`.
 - *Ghi nhận, không sửa:* `menu_test.go` · `don_test.go` dựng Gin riêng (menu chưa tắt `RedirectTrailingSlash`, don chưa bật
   `HandleMethodNotAllowed`) thay vì gọi `newRouter`; cấu hình thật vẫn do `TestQC12_Router*` chấm.
+
+**T-153 — Acceptance và điểm Claude chốt trước giao** (Claude, 2026-10-11). Mức **L2**: sai thì người không phải chủ quán
+đổi được mã QR, hay khách vào được bàn qua mã cũ (`I-023`), hoặc lần đổi mã mất vết (`I-018`). Phiếu mẫu
+`docs/private/be_feature/prompts/BE-STACK-05-mien-nho-L2.md`; Acceptance dưới **thay** dòng `qr` của phiếu: dòng ấy thiếu
+`TestI018_DoiMaDeLaiVetTrenMaCu` và test bên gọi ở `don`. Tên test kiểm bằng `rg '^func Test'` ở nền `fbbdaef`.
+1. Sáu test của miền — `TestI023_ChiChuQuanDoiDuocMa` · `TestI023_MaCuBiTuChoi` · `TestI023_KhachKhongChonDuocBan` ·
+   `TestI023_BanKhongCoThiTuChoi` · `TestI023_HaiLanDoiCungLucKhongThanhLoiHeThong` · `TestI018_DoiMaDeLaiVetTrenMaCu` — và test
+   bên gọi `TestI023_KhachQRVaoPhienCuaBanQuaMaHienHanh` (`don/tai_ban_test.go`) PASS trên PostgreSQL thật. Thân test không đổi;
+   chỉ phần dựng router ở `qr/qr_test.go` · `don/don_test.go` đổi. Tập tên test trước/sau: `diff` rỗng.
+2. Miền `qr` dùng cây kết hợp: `handler.go` (Gin), `service.go` (cửa `qr/doi_ma` giữ `NeedOwner`, `authz.Run`; đường đọc mã mở
+   giao dịch bằng `postgres.InTx`, handler không chạm database), `repository.go` (nhận `pgx.Tx`, gọi `sqlcgen`); câu ghi giữ ở
+   `sql/doi_ma/cap_ma.sql` thêm `-- name:`; câu đọc mã vừa cấp thành `sql/*.sql`; `be/sqlc.yaml` thêm mục `qr`. Ghi vào `qr_code`
+   vẫn chỉ qua hàm `qr_code_issue` của migration, không thêm ô ghi backend. `go tool sqlc generate` không đổi file sinh,
+   `check-sqlcgen` · Gate 1f · 1g · 1h PASS; `--list` hai gate trước/sau chỉ khác dòng đếm file đã soát.
+3. Router giữ hành vi `ServeMux`: `HEAD` lên đường `GET` của Gin chạy như `GET` (cùng status, không thân) mà không đăng ký đường
+   `HEAD` nào (Gate 1g đếm đường); khác phương thức khác vẫn 405 kèm `Allow`. Tham số mang `%2F` khớp như `ServeMux` (`UseRawPath`).
+   Hai test Claude viết trước ở `be/cmd/server/router_test.go`: `TestQC12_RouterGiuDauGachMaHoaTrongThamSo` đỏ ở nền (`PUT
+   /menu-components/1%2F2/base-price` ⇒ 404 văn bản); `TestQC12_RouterHEADLenDuongGinChayNhuGET` xanh ở nền (`qr` còn sau
+   `ServeMux`) — test giữ hành vi, lỗi cài (4) chứng minh nó bắt được.
+   Năm `TestQC12_Router*` cũ PASS không sửa.
+4. Lỗi cài Claude chạy khi duyệt, mỗi lần một lỗi: cửa đổi mã hạ xuống `NeedPerson` ⇒ `TestI023_ChiChuQuanDoiDuocMa` đỏ; bỏ
+   `UseRawPath` ⇒ test `%2F` đỏ; bỏ xử lý `HEAD` ⇒ test `HEAD` đỏ; miền khác import `qr/internal/sqlcgen` ⇒ `go build` đỏ.
+5. `./scripts/gate.sh` ở cây tích hợp: exit 0, không `FAIL`, không `SKIP`.
+- *Điểm chốt:* giữ `HEAD` như `GET` (không ghi quyết định đổi): `TestQC12_RouterHEADChayNhuGET` chấm `GET /menu` của `gia` ở
+  T-154 và không được sửa, nên cách giữ phải có từ lượt `GET` Gin đầu tiên. Tên `DoiMa`, `CurrentTable`, `Querier`, `Seat` giữ
+  exported. Câu tra mã hiện hành vẫn ở `authz` (cửa QR của `don` dùng chung, tránh vòng import), không chép sang `qr/sql/`.
+- *Owner Claude sửa lúc tích hợp:* `QC-12` (luật `HEAD`, `UseRawPath`), bảng §9 của `10-quy-uoc-code.md`.
+
+**T-153 — Bàn giao** (2026-10-11). Thi công: **Codex** (`gpt-6-astra`, worktree `../lean_wt/T-153`, nhánh `codex/T-153` từ
+`fbbdaef`; sandbox không Docker nên không chạy được test PostgreSQL, báo đúng vậy). Duyệt, cài lỗi, tích hợp: **Claude** — patch
+từ worktree áp bằng `git apply`, `diff -r be` hai cây rỗng; một vòng, không trả Codex. File: `be/internal/qr/handler.go` ·
+`service.go` · `repository.go` (mới; `qr.go` xoá) · `sql/doc_ma_vua_cap.sql` (mới) · `sql/doi_ma/cap_ma.sql` (thêm `-- name:`, `;`) ·
+`internal/sqlcgen/` (sinh) · `be/sqlc.yaml` · `be/cmd/server/router.go` · `router_test.go` (hai test Claude) · `be/internal/qr/qr_test.go` ·
+`be/internal/don/don_test.go` (chỉ hàm `dung`); owner do Claude: `10-quy-uoc-code.md` (`QC-12`, bảng §9). Log: scratchpad phiên
+`4f357359…/scratchpad/T-153-*` (phiếu, báo cáo Codex, `--list` · tên test trước/sau, be-check nền/sau, bốn log lỗi cài, gate).
+- *(1)* `be-check` trên PostgreSQL thật: sáu test miền và `TestI023_KhachQRVaoPhienCuaBanQuaMaHienHanh` PASS. Diff hai file test
+  chỉ ở hàm `dung` (và hai import Gin/middleware của `qr_test.go`). Tập tên test trước/sau: chỉ thêm hai `TestQC12_Router*` của Claude.
+- *(2)* `check-sqlcgen` PASS; Gate 1f · 1g · 1h PASS; `CapMa` sinh `SELECT qr_code_issue($1)`, không ô ghi mới. `--list` trước/sau
+  chỉ khác dòng đếm file (1f 138 → 145, 1g 54 → 60).
+- *(3)* Bảy `TestQC12_Router*` PASS. `HEAD`: `NoMethod` đổi sang `GET` chỉ khi `Allow` có `GET`, gỡ `Allow`, gọi lại `ServeHTTP` qua
+  writer bỏ thân (Codex chọn thay `HandleContext` vì hàm ấy đặt lại writer); không đường `HEAD` nào đăng ký.
+- *(4)* Lỗi cài trong worktree riêng `../lean_wt/T-153-fault` (**F-063**), mỗi lần một lỗi rồi chép lại bản Codex: (A) `NeedPerson` ⇒
+  `TestI023_ChiChuQuanDoiDuocMa` đỏ (người quầy đổi mã nhận 201); (B) bỏ `UseRawPath` ⇒ test `%2F` đỏ (404 văn bản); (C) bỏ khối
+  `NoMethod` ⇒ test `HEAD` đỏ (`HEAD`=405, `GET`=404); (D) `menu` import `qr/internal/sqlcgen` ⇒ `go build` đỏ *use of internal package
+  … not allowed*. Worktree lỗi cài còn file `be/internal/menu/zz_fault.go` (lệnh xoá bị chặn trong phiên) — bỏ đi được, không ai đọc.
+- *(5)* `./scripts/gate.sh` ở cây chính sau tích hợp: exit 0, `PASS gate không cổng nào đỏ`, không dòng `SKIP`; be-check PASS, db-check
+  21 bước PASS, 15 file `scripts/*.test.sh` qua.
+- *Cho T-154:* `gia` đưa `GET /menu` lên Gin — `TestQC12_RouterHEADChayNhuGET` sẽ chấm khối `NoMethod` này; `gia` không có
+  `authz.Door`, hai đường đọc công khai cần `postgres.InTx` như đường đọc mã của `qr`.
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·

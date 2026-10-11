@@ -201,3 +201,35 @@ func TestQC12_RouterThuTuTuChoiVaThanLoi(t *testing.T) {
 	kiemLoi(t, goi(r, "PUT", "/menu-components/5/base-price", than, map[string]string{authz.HeaderNguoi: "abc"}), 401, "unauthenticated", "")
 	kiemLoi(t, goi(r, "PUT", "/menu-components/5/base-price", than, map[string]string{authz.HeaderNguoi: "999999999"}), 401, "unauthenticated", "")
 }
+
+// T-153 (Claude viết trước): qr đưa đường GET đầu tiên lên Gin. ServeMux khớp HEAD với mẫu GET, nên
+// HEAD lên đường GET của Gin phải ra cùng status như GET, không thân — mà không đăng ký đường HEAD
+// nào (Gate 1g đếm đường). Phương thức khác vẫn 405 kèm Allow.
+func TestQC12_RouterHEADLenDuongGinChayNhuGET(t *testing.T) {
+	r := dungRouter(t)
+	get := goi(r, "GET", "/qr-codes/khong-co-ma-nay", "", nil)
+	kiemLoi(t, get, http.StatusNotFound, "qr_code_not_current", "")
+	head := goi(r, "HEAD", "/qr-codes/khong-co-ma-nay", "", nil)
+	if head.Code != get.Code {
+		t.Fatalf("HEAD=%d, GET=%d; muốn cùng status — thân HEAD=%q", head.Code, get.Code, head.Body.String())
+	}
+	if ct := head.Header().Get("Content-Type"); ct != get.Header().Get("Content-Type") {
+		t.Fatalf("HEAD Content-Type=%q, GET=%q", ct, get.Header().Get("Content-Type"))
+	}
+	w := goi(r, "PUT", "/qr-codes/khong-co-ma-nay", "", nil)
+	if w.Code != http.StatusMethodNotAllowed {
+		t.Fatalf("PUT lên đường chỉ GET: status=%d, muốn 405 — thân=%q", w.Code, w.Body.String())
+	}
+	if allow := w.Header().Get("Allow"); !strings.Contains(allow, "GET") {
+		t.Fatalf("405 thiếu Allow chứa GET: %q", allow)
+	}
+}
+
+// T-153 (Claude viết trước, phát hiện của duyệt T-152): ServeMux khớp mẫu trên đường dẫn còn mã hoá,
+// nên %2F nằm trong một tham số, không tách đoạn. Gin phải giữ y vậy trên đường đã chuyển.
+func TestQC12_RouterGiuDauGachMaHoaTrongThamSo(t *testing.T) {
+	r := dungRouter(t)
+	than := `{"base_price_vnd": 1000, "reason": "test"}`
+	kiemLoi(t, goi(r, "PUT", "/menu-components/1%2F2/base-price", than, nil), 400, "invalid_request", "menu_component_id")
+	kiemLoi(t, goi(r, "GET", "/qr-codes/a%2Fb", "", nil), 404, "qr_code_not_current", "")
+}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strings"
 
 	"banhcuon/be/internal/authz"
 	"banhcuon/be/internal/ban"
@@ -25,8 +26,10 @@ func newRouter(pool *pgxpool.Pool, auth authz.Authenticator) *gin.Engine {
 	// Đường Gin giữ hành vi của ServeMux hôm nay (QC-12): khác phương thức ⇒ 405 kèm Allow, dấu / cuối ⇒ 404.
 	r.HandleMethodNotAllowed = true
 	r.RedirectTrailingSlash = false
+	r.UseRawPath = true
 	r.Use(middleware.GanNguoi(auth))
 	menu.Routes(r, menu.NewService(pool))
+	qr.Routes(r, qr.NewService(pool))
 	legacy := http.NewServeMux()
 	ban.Routes(legacy, pool, auth)
 	don.Routes(legacy, pool, auth)
@@ -35,7 +38,6 @@ func newRouter(pool *pgxpool.Pool, auth authz.Authenticator) *gin.Engine {
 	ket.Routes(legacy, pool, auth)
 	nguoi.Routes(legacy, pool, auth)
 	phien.Routes(legacy, pool, auth)
-	qr.Routes(legacy, pool, auth)
 	sanxuat.Routes(legacy, pool, auth)
 	tratruoc.Routes(legacy, pool, auth)
 	wrapLegacy := gin.WrapH(legacy)
@@ -44,5 +46,36 @@ func newRouter(pool *pgxpool.Pool, auth authz.Authenticator) *gin.Engine {
 		c.Status(http.StatusOK)
 		wrapLegacy(c)
 	})
+	r.NoMethod(func(c *gin.Context) {
+		if c.Request.Method != http.MethodHead {
+			return
+		}
+		// NoMethod chỉ chuyển HEAD khi Gin tìm thấy đường GET tương ứng.
+		for _, method := range strings.Split(c.Writer.Header().Get("Allow"), ",") {
+			if strings.TrimSpace(method) != http.MethodGet {
+				continue
+			}
+			c.Writer.Header().Del("Allow")
+			c.Request.Method = http.MethodGet
+			// Dựng context mới vì HandleContext đặt lại Writer, làm mất lớp bỏ thân.
+			c.Status(http.StatusOK)
+			r.ServeHTTP(headWriter{ResponseWriter: c.Writer}, c.Request)
+			c.Request.Method = http.MethodHead
+			return
+		}
+	})
 	return r
+}
+
+// headWriter giữ status và header của GET, chỉ bỏ phần thân của HEAD.
+type headWriter struct{ gin.ResponseWriter }
+
+func (w headWriter) Write(b []byte) (int, error) {
+	w.WriteHeaderNow()
+	return len(b), nil
+}
+
+func (w headWriter) WriteString(s string) (int, error) {
+	w.WriteHeaderNow()
+	return len(s), nil
 }

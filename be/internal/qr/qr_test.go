@@ -13,9 +13,11 @@ import (
 	"testing"
 	"time"
 
+	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/qr"
 	"banhcuon/be/internal/testhelper"
+	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -61,9 +63,10 @@ func dung(t *testing.T) khung {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { owner.Close(context.Background()) })
-	mux := http.NewServeMux()
-	qr.Routes(mux, pool, xacThucTest{})
-	srv := httptest.NewServer(mux)
+	r := gin.New()
+	r.Use(middleware.GanNguoi(xacThucTest{}))
+	qr.Routes(r, qr.NewService(pool))
+	srv := httptest.NewServer(r)
 	t.Cleanup(srv.Close)
 	return khung{ctx: ctx, srv: srv, owner: owner}
 }

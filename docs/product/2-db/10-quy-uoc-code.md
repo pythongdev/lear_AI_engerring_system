@@ -452,9 +452,13 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   - Hai đường gọi cùng tiền tố, cùng vị trí thì cùng tên tham số: Gin từ chối đăng ký khi khác tên.
   - Router dựng ở `newRouter` (`be/cmd/server/`) đặt `HandleMethodNotAllowed = true` và `RedirectTrailingSlash = false`:
     đường Gin giữ hành vi của `ServeMux` — khác phương thức ⇒ 405 kèm `Allow`, dấu `/` cuối ⇒ 404, không chuyển hướng
-    (Claude chốt 2026-10-11, `T-152`; test `TestQC12_RouterDauGachCuoiVaPhuongThuc`). Gin không chạy `HEAD` như `GET`
-    (với cấu hình này `HEAD` lên đường Gin ⇒ 405): miền đầu tiên chuyển một đường `GET` (`qr`, `T-153`) chọn giữ hành vi
-    hay ghi quyết định đổi; `TestQC12_RouterHEADChayNhuGET` chấm đường đọc menu của `gia` (`T-154`) và không được sửa cho xanh.
+    (Claude chốt 2026-10-11, `T-152`; test `TestQC12_RouterDauGachCuoiVaPhuongThuc`).
+  - `HEAD` lên một đường `GET` của Gin chạy như `GET` — cùng status và header, không thân — như `ServeMux` khớp `HEAD`
+    với mẫu `GET`. Không đăng ký đường `HEAD` nào (Gate 1g đếm đường): `newRouter` bắt `HEAD` ở `NoMethod` khi `Allow` có
+    `GET`, phục vụ lại như `GET` qua writer bỏ thân. `UseRawPath = true`: khớp đường trên bản còn mã hoá, nên `%2F` nằm
+    trong một tham số như `ServeMux` (Claude chốt 2026-10-11, `T-153` — giữ hành vi, không ghi quyết định đổi; test
+    `TestQC12_RouterHEADLenDuongGinChayNhuGET` · `TestQC12_RouterGiuDauGachMaHoaTrongThamSo`). `TestQC12_RouterHEADChayNhuGET`
+    chấm đường đọc menu của `gia` (`T-154`) và không được sửa cho xanh.
   - *Chuyển tiếp (2026-10-11, T-149):* miền chưa chuyển giữ `http.ServeMux` với mẫu có phương thức, nối vào
     router Gin qua `gin.WrapH` ở `be/cmd/server/` (từ `T-151`). `T-165` gỡ adapter, từ đó khuôn cũ là đỏ.
 - **Hậu quả nếu làm khác:** service import Gin thì logic cửa dính vào kiểu ngữ cảnh của framework, test cửa
@@ -648,4 +652,5 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
 | `T-150` | **2026-10-11** — siết phép kiểm `QC-05` (chỉ v4.20.1) · `QC-11` (chỉ `go 1.27.2`, gin · sqlc bắt buộc); `QC-12` thêm Gate 1h; `QC-13` khuôn `sqlc.yaml` và dấu `;`; `QC-16` chỉ chấm phụ thuộc trực tiếp và import Go |
 | `T-151` | **2026-10-11** — `QC-13` · `QC-14` · `QC-15` · `QC-16` theo chỗ mới: `be/internal/platform/postgres/` (`Open`, `InTx`), `be/internal/testhelper/`; phép kiểm đỏ khi chỗ cũ còn; `QC-14` dòng `be/cmd/server/` nêu `NoRoute` + `gin.WrapH` |
 | `T-152` | **2026-10-11** — `QC-12` cấu hình router (405 kèm `Allow`, dấu `/` cuối ⇒ 404); `QC-14` dòng `sqlc.yaml` (sinh cùng mục `menu`) — `menu` là miền đầu tiên đã chuyển |
+| `T-153` | **2026-10-11** — `QC-12` `HEAD` lên đường `GET` của Gin chạy như `GET`, `UseRawPath` giữ `%2F` trong tham số — `qr` chuyển, đường `GET` Gin đầu tiên |
 | `P3-04`…`P3-14` | `QC-13` cửa ghi và Gate 1f · `QC-15` kết nối · `QC-16` chạy test bằng `scripts/be-check.sh` · `QC-17` tên test |
