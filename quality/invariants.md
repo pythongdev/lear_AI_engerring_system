@@ -836,7 +836,7 @@ khoản chi, và không rời két. Mỗi khoản trong hạng tử đã có ng�
 **Khoản ấy trừ vào két của NGÀY NGƯỜI GHI KHAI cho khoản**, không phải ngày tiền rời két (chủ
 quán chốt 2026-10-09, đóng **U-072**; `master_plan/shop-facts.md` §8.10 `E46`). Mệnh đề giữ vế
 *mỗi khoản rời két trừ vào đúng MỘT ngày bán* — ngày ấy là ngày khai. *Thêm 2026-10-09, T-139;
-bộ đối chiếu và cửa đóng ngày còn đọc theo luật cũ cho tới `T-140`.*
+bộ đối chiếu và cửa đóng ngày đọc theo luật này từ `T-140` (2026-10-09).*
 
 *Thêm bốn hạng tử cuối 2026-09-28 (T-112, `docs/decisions.md` **ADR-059**, đóng
 `work/findings.md` **F-037**).* Ba hạng tử trả trước là phần tiền mặt của ba dòng trả trước trong
