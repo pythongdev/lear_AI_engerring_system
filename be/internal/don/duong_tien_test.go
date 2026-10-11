@@ -22,8 +22,8 @@ import (
 	"testing"
 	"time"
 
-	"banhcuon/be/internal/dbtest"
 	"banhcuon/be/internal/ngayban"
+	"banhcuon/be/internal/testhelper"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -241,7 +241,7 @@ func (n tien) ketNgayDoiChieu(t *testing.T, ngay int) (demDuoc, dauKet, vePhai i
 	if err != nil {
 		t.Fatalf("reconcile.sh --emit-prelude: %v", err)
 	}
-	conn, err := pgx.Connect(n.ctx, dbtest.OwnerDSN(t))
+	conn, err := pgx.Connect(n.ctx, testhelper.OwnerDSN(t))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -253,7 +253,7 @@ func (n tien) ketNgayDoiChieu(t *testing.T, ngay int) (demDuoc, dauKet, vePhai i
 		t.Fatalf("nạp prelude của bộ đối chiếu: %v", err)
 	}
 	if err := conn.QueryRow(n.ctx, `SELECT dem_duoc, dau_ket, ve_phai FROM pg_temp.ket_ngay($1)
-		WHERE ngay = $2::date`, dbtest.ShopTZ(t), ngayChu(ngay)).Scan(&demDuoc, &dauKet, &vePhai); err != nil {
+		WHERE ngay = $2::date`, testhelper.ShopTZ(t), ngayChu(ngay)).Scan(&demDuoc, &dauKet, &vePhai); err != nil {
 		t.Fatalf("ket_ngay ngày %s: %v", ngayChu(ngay), err)
 	}
 	return

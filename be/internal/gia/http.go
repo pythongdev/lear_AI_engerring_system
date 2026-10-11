@@ -10,7 +10,7 @@ import (
 	"sort"
 
 	"banhcuon/be/internal/apierr"
-	"banhcuon/be/internal/db"
+	"banhcuon/be/internal/platform/postgres"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -39,7 +39,7 @@ func (h handler) tinhThu(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var out KetQua
-	err := db.InTx(r.Context(), h.pool, func(tx pgx.Tx) error {
+	err := postgres.InTx(r.Context(), h.pool, func(tx pgx.Tx) error {
 		var err error
 		out, err = Tinh(r.Context(), tx, yc.Lines)
 		return err
@@ -70,7 +70,7 @@ func (h handler) docMenu(w http.ResponseWriter, r *http.Request) {
 	out := struct {
 		Items []monMenu `json:"items"`
 	}{Items: []monMenu{}}
-	err := db.InTx(r.Context(), h.pool, func(tx pgx.Tx) error {
+	err := postgres.InTx(r.Context(), h.pool, func(tx pgx.Tx) error {
 		rows, err := tx.Query(r.Context(), docMonDangBan)
 		if err != nil {
 			return err

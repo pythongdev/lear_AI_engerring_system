@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"banhcuon/be/internal/apierr"
-	"banhcuon/be/internal/dbtest"
+	"banhcuon/be/internal/testhelper"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
@@ -23,7 +23,7 @@ const contractPath = "../../../docs/product/3-be/openapi.yaml"
 func TestQC10_LoiTuChoiTriggerMangTen(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	conn, err := pgx.Connect(ctx, dbtest.OwnerDSN(t))
+	conn, err := pgx.Connect(ctx, testhelper.OwnerDSN(t))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -92,7 +92,7 @@ func TestQC10_LoiTuChoiTriggerMangTen(t *testing.T) {
 func TestQC10_MoiTenTuChoiCoDongTrongHopDong(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	conn, err := pgx.Connect(ctx, dbtest.OwnerDSN(t))
+	conn, err := pgx.Connect(ctx, testhelper.OwnerDSN(t))
 	if err != nil {
 		t.Fatal(err)
 	}

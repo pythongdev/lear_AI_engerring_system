@@ -55,7 +55,7 @@ bill.debt_note. Tên người nợ vẫn bắt buộc. Nợ tại bàn không đ
 GET /debts trả debt_note trên mỗi dòng, null khi không có.
 
 `ngayban.DongHo` bản thật đọc `now()` của giao dịch; mọi dòng tiền có booked_at dùng cùng mốc
-cho booked_at và `sale_date = $n::timestamptz::date`. Pool do `db.Open` đặt TimeZone của quán,
+cho booked_at và `sale_date = $n::timestamptz::date`. Pool do `postgres.Open` (`QC-15`) đặt TimeZone của quán,
 nên ngày không phụ thuộc múi giờ máy Go. Tiền đầu két và số đếm lấy ngày cùng cách; chúng không
 có cột booked_at. Dấu đối soát nhận ngày cần ký từ đường dẫn theo ADR-089 điểm 5.
 

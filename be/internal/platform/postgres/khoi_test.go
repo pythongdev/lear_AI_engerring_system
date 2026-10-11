@@ -1,4 +1,4 @@
-package db_test
+package postgres_test
 
 import (
 	"context"
@@ -6,18 +6,18 @@ import (
 	"testing"
 	"time"
 
-	"banhcuon/be/internal/db"
-	"banhcuon/be/internal/dbtest"
+	"banhcuon/be/internal/platform/postgres"
+	"banhcuon/be/internal/testhelper"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
 func TestQC15_KetNoiBackend(t *testing.T) {
-	appDSN, ownerDSN, shopTZ := dbtest.AppDSN(t), dbtest.OwnerDSN(t), dbtest.ShopTZ(t)
+	appDSN, ownerDSN, shopTZ := testhelper.AppDSN(t), testhelper.OwnerDSN(t), testhelper.ShopTZ(t)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	t.Run("vai_va_mui_gio", func(t *testing.T) {
-		pool, err := db.Open(ctx, appDSN, shopTZ)
+		pool, err := postgres.Open(ctx, appDSN, shopTZ)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -50,7 +50,7 @@ func TestQC15_KetNoiBackend(t *testing.T) {
 		}
 	})
 	t.Run("tu_choi_owner", func(t *testing.T) {
-		pool, err := db.Open(ctx, ownerDSN, shopTZ)
+		pool, err := postgres.Open(ctx, ownerDSN, shopTZ)
 		if pool != nil {
 			pool.Close()
 		}
@@ -59,7 +59,7 @@ func TestQC15_KetNoiBackend(t *testing.T) {
 		}
 	})
 	t.Run("tu_choi_mui_gio_rong", func(t *testing.T) {
-		pool, err := db.Open(ctx, "DSN không hợp lệ để chứng minh kiểm trước kết nối", "")
+		pool, err := postgres.Open(ctx, "DSN không hợp lệ để chứng minh kiểm trước kết nối", "")
 		if pool != nil {
 			pool.Close()
 		}
@@ -70,7 +70,7 @@ func TestQC15_KetNoiBackend(t *testing.T) {
 }
 
 func TestQC03_ShopAppKhongXoaDuoc(t *testing.T) {
-	appDSN, ownerDSN, shopTZ := dbtest.AppDSN(t), dbtest.OwnerDSN(t), dbtest.ShopTZ(t)
+	appDSN, ownerDSN, shopTZ := testhelper.AppDSN(t), testhelper.OwnerDSN(t), testhelper.ShopTZ(t)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	owner, err := pgx.Connect(ctx, ownerDSN)
@@ -92,7 +92,7 @@ func TestQC03_ShopAppKhongXoaDuoc(t *testing.T) {
 		return n
 	}
 	before := count()
-	pool, err := db.Open(ctx, appDSN, shopTZ)
+	pool, err := postgres.Open(ctx, appDSN, shopTZ)
 	if err != nil {
 		t.Fatal(err)
 	}

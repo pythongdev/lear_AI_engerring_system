@@ -25,9 +25,9 @@ import (
 	"testing"
 	"time"
 
-	"banhcuon/be/internal/db"
-	"banhcuon/be/internal/dbtest"
 	"banhcuon/be/internal/don"
+	"banhcuon/be/internal/platform/postgres"
+	"banhcuon/be/internal/testhelper"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -66,7 +66,7 @@ func gioBan(t *testing.T) (mo, dong time.Duration) {
 
 func muiGio(t *testing.T) *time.Location {
 	t.Helper()
-	loc, err := time.LoadLocation(dbtest.ShopTZ(t))
+	loc, err := time.LoadLocation(testhelper.ShopTZ(t))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -242,7 +242,7 @@ func khongCoTruong(t *testing.T, r traLoi, truong ...string) {
 // phải đồng hồ của máy gửi (02-thoi-gian-ngay-ban.md §3).
 func TestI008_MocLaNowCuaGiaoDich(t *testing.T) {
 	k := dung(t)
-	err := db.InTx(k.ctx, k.pool, func(tx pgx.Tx) error {
+	err := postgres.InTx(k.ctx, k.pool, func(tx pgx.Tx) error {
 		moc, err := dongHoGoc(k.ctx, tx)
 		if err != nil {
 			return err

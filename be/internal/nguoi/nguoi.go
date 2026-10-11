@@ -12,7 +12,7 @@ import (
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
-	"banhcuon/be/internal/db"
+	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/vongdoi"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -86,7 +86,7 @@ func Routes(mux *http.ServeMux, pool *pgxpool.Pool, auth authz.Authenticator) {
 		result := struct {
 			People []person `json:"people"`
 		}{People: []person{}}
-		err := db.InTx(request.Context(), pool, func(tx pgx.Tx) error {
+		err := postgres.InTx(request.Context(), pool, func(tx pgx.Tx) error {
 			rows, err := tx.Query(request.Context(), "SELECT id, display_name, is_owner FROM person ORDER BY display_name, id")
 			if err != nil {
 				return err
@@ -109,7 +109,7 @@ func Routes(mux *http.ServeMux, pool *pgxpool.Pool, auth authz.Authenticator) {
 	})
 	mux.HandleFunc("GET /counter-duty/current", func(writer http.ResponseWriter, request *http.Request) {
 		var result currentDuty
-		err := db.InTx(request.Context(), pool, func(tx pgx.Tx) error {
+		err := postgres.InTx(request.Context(), pool, func(tx pgx.Tx) error {
 			err := tx.QueryRow(request.Context(), `SELECT duty.person_id, person.display_name, duty.id, duty.started_at
 			 FROM counter_duty duty JOIN person ON person.id = duty.person_id WHERE duty.ended_at IS NULL`).Scan(
 				&result.PersonID, &result.DisplayName, &result.CounterDutyID, &result.StartedAt)

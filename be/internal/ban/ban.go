@@ -9,7 +9,7 @@ import (
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
-	"banhcuon/be/internal/db"
+	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/vongdoi"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -58,7 +58,7 @@ func Routes(mux *http.ServeMux, pool *pgxpool.Pool, auth authz.Authenticator) {
 		out := struct {
 			Tables []Ban `json:"tables"`
 		}{Tables: []Ban{}}
-		err := db.InTx(r.Context(), pool, func(tx pgx.Tx) error {
+		err := postgres.InTx(r.Context(), pool, func(tx pgx.Tx) error {
 			rows, err := tx.Query(r.Context(), doc+" ORDER BY t.id")
 			if err != nil {
 				return err

@@ -11,7 +11,7 @@ import (
 	"strconv"
 
 	"banhcuon/be/internal/apierr"
-	"banhcuon/be/internal/db"
+	"banhcuon/be/internal/platform/postgres"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -82,7 +82,7 @@ func RunAs(ctx context.Context, pool *pgxpool.Pool, caller Caller, d Door, fn fu
 	default:
 		return fmt.Errorf("cửa %q không có lối vào trực tiếp cho lớp %q", d.Code, d.Need)
 	}
-	return db.InTx(ctx, pool, func(tx pgx.Tx) error {
+	return postgres.InTx(ctx, pool, func(tx pgx.Tx) error {
 		g := Granted{PersonID: caller.PersonID}
 		if caller.PersonID <= 0 {
 			if d.Need != NeedCounterOrCustomer || (caller.QRCode == "" && !caller.Online) {

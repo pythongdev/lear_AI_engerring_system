@@ -9,7 +9,7 @@ import (
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
-	"banhcuon/be/internal/db"
+	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/sanxuat"
 	"github.com/jackc/pgx/v5"
 )
@@ -82,7 +82,7 @@ type NhacHen struct {
 func (h handler) nhacHen(w http.ResponseWriter, r *http.Request) {
 	preorders := make([]NhacHen, 0)
 	// Đường đọc không kiểm quyền hay khai người; giao dịch chỉ để dùng cùng DongHo.
-	err := db.InTx(r.Context(), h.pool, func(tx pgx.Tx) error {
+	err := postgres.InTx(r.Context(), h.pool, func(tx pgx.Tx) error {
 		moc, err := DongHo(r.Context(), tx)
 		if err != nil {
 			return err

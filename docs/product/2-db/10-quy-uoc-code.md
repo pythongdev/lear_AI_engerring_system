@@ -493,8 +493,8 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   - **Không** `DELETE` · `TRUNCATE` (`shop_app` không xoá được — `QC-03`), **không** `MERGE`, `COPY`,
     `CopyFrom` — hai thứ sau ghi theo cách lệnh liệt kê không đọc ra ô.
   - Bảng viết trần hoặc `shop.<bảng>`; `UPDATE` nêu cột ở `SET cột = …` hoặc `SET (a, b) = …`.
-  - **Giao dịch mở bằng đúng một hàm.** Hôm nay là hàm ở `be/internal/db/`; từ `T-151` là `InTx` ở
-    `be/internal/platform/postgres/` (**ADR-093** điểm 5). Không file `.go` nào khác (trừ file test) gọi
+  - **Giao dịch mở bằng đúng một hàm:** `InTx` ở `be/internal/platform/postgres/` (**ADR-093** điểm 5; dời từ
+    `be/internal/db/` ở `T-151`, 2026-10-11). Không file `.go` nào khác (trừ file test) gọi
     `Begin` · `BeginTx` · `BeginFunc` · `BeginTxFunc`, `Commit` hay `Rollback`; nhãn *generated* không miễn.
     Service mở giao dịch qua `authz.Run` (ADR-085); repository **nhận** `pgx.Tx`.
   - **Lệnh liệt kê đường ghi** (**ADR-082** điểm 3) là `scripts/check-write-paths.sh` — Gate 1f, chạy
@@ -506,12 +506,12 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
 - **Phép kiểm:**
   ```sh
   ./scripts/check-write-paths.sh >/dev/null 2>&1 || ./scripts/check-write-paths.sh 2>&1
-  grep -rnE '(\.|pgx\.)(Begin|BeginTx|BeginFunc|BeginTxFunc|Commit|Rollback)\(' be --include='*.go' 2>/dev/null | grep -v '_test\.go:' | grep -vE '^be/internal/(db|platform/postgres)/'
-  [ -d be/internal/db ] && [ -d be/internal/platform/postgres ] && echo "hai chỗ giữ hàm mở giao dịch: be/internal/db và be/internal/platform/postgres"
+  grep -rnE '(\.|pgx\.)(Begin|BeginTx|BeginFunc|BeginTxFunc|Commit|Rollback)\(' be --include='*.go' 2>/dev/null | grep -v '_test\.go:' | grep -vE '^be/internal/platform/postgres/'
+  [ -d be/internal/db ] && echo "be/internal/db còn tồn tại: hàm mở giao dịch chỉ ở be/internal/platform/postgres (T-151)"
   grep -Ei 'gorm\.io|entgo\.io|jmoiron/sqlx|upper/db|uptrace/bun|lib/pq|go-pg/' be/go.mod 2>/dev/null
   grep -rlE '/internal/sqlcgen"' be --include='*.go' 2>/dev/null | grep -vE '(/repository|_test)\.go$'
   ```
-  Dòng ba: trong lúc chuyển không được có hai chỗ. Dòng cuối: chỉ repository gọi code sinh. Luật `-- name:`
+  Dòng ba: chỗ cũ đã dời ở `T-151`, không được sống lại. Dòng cuối: chỉ repository gọi code sinh. Luật `-- name:`
   và phép so code sinh do Gate 1f và `verify.sh` chấm (từ `T-150`).
 - **Nguồn:** phiên chọn 2026-10-06 (**ADR-083**), dựng để **ADR-082** điểm 3 chạy được không cần database;
   sqlc **chủ repo duyệt 2026-10-10** (**ADR-093** điểm 2); luật *miền đã chuyển* là Claude chốt 2026-10-10
@@ -525,9 +525,9 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   |---|---|
   | `be/go.mod` · `be/go.sum` | module, bản ghim, dòng `tool` của sqlc (`QC-11`) |
   | `sqlc.yaml` ở gốc `be/` | một mục `sql:` mỗi miền đã chuyển (`QC-13`); sinh ở `T-150`, hoặc `T-152` nếu sqlc không nhận cấu hình rỗng |
-  | `be/cmd/server/` | composition root: dựng router Gin, gắn `middleware/`, gọi hàm đăng ký của từng miền (`QC-12`); sinh ở `T-151` |
-  | `be/internal/db/` → `be/internal/platform/postgres/` | hàm kết nối (`QC-15`), hàm mở giao dịch duy nhất (`QC-13`), test khói; đổi chỗ ở `T-151` |
-  | `be/internal/dbtest/` → `be/internal/testhelper/` | đọc database kiểm từ môi trường cho test (`QC-16`); không câu ghi nào; đổi tên ở `T-151` |
+  | `be/cmd/server/` | composition root: dựng router Gin (`newRouter`), gắn `middleware/`, gọi hàm đăng ký của từng miền (`QC-12`); miền chưa chuyển nối qua `NoRoute` bọc `gin.WrapH` tới `T-165`; sinh ở `T-151` |
+  | `be/internal/platform/postgres/` | hàm kết nối (`QC-15`), hàm mở giao dịch duy nhất (`QC-13`), test khói; dời từ `be/internal/db/` ở `T-151` |
+  | `be/internal/testhelper/` | đọc database kiểm từ môi trường cho test (`QC-16`); không câu ghi nào; đổi tên từ `be/internal/dbtest/` ở `T-151` |
   | `be/internal/apierr/` | hình lỗi chung, hằng mã lỗi và bảng *tên từ chối → mã* — bản code của hợp đồng ([`../3-be/01-hop-dong-api.md`](../3-be/01-hop-dong-api.md) §3–§4, `P3-04`); Gate 1g so hai bản; không import Gin |
   | `be/internal/authz/` | hàm chạy cửa có quyền (`authz.Run`), lớp quyền và khai báo cửa (`authz.Door`) — bản code của ma trận [`../3-be/02-vai-va-quyen.md`](../3-be/02-vai-va-quyen.md) (`P3-05`, **ADR-085**); không câu ghi nào |
   | `be/internal/middleware/` | gắn người vào `gin.Context`; không kiểm quyền, không thay `authz.Run`; sinh ở `T-151` |
@@ -547,7 +547,8 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   từ chỗ không ai duyệt.
 - **Phép kiểm:**
   ```sh
-  [ -d be/internal/db ] || [ -d be/internal/platform/postgres ] || echo "thiếu be/internal/platform/postgres (trước T-151: be/internal/db)"
+  [ -d be/internal/platform/postgres ] || echo "thiếu be/internal/platform/postgres"
+  for d in be/internal/db be/internal/dbtest; do [ -d "$d" ] && echo "$d đã dời ở T-151 mà còn"; done
   find be -name '*.go' 2>/dev/null | grep -Ev '^be/(internal|cmd)/'
   find be -mindepth 1 -maxdepth 1 2>/dev/null | grep -Ev '^be/(go\.mod|go\.sum|sqlc\.yaml|internal|cmd)$'
   for d in be/internal/*/internal/sqlcgen; do [ -d "$d" ] || continue; m="${d%/internal/sqlcgen}"; for f in handler.go service.go repository.go; do [ -f "$m/$f" ] || echo "$m có sqlcgen mà thiếu $f"; done; done
@@ -557,7 +558,7 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
 
 ### QC-15 — Backend kết nối bằng `shop_app`, đặt múi giờ quán, và từ chối khi sai một trong hai
 
-- **Quy ước:** backend mở database bằng **đúng một** hàm ở `be/internal/db/`, nhận chuỗi kết nối và
+- **Quy ước:** backend mở database bằng **đúng một** hàm, `Open` ở `be/internal/platform/postgres/` (`T-151`), nhận chuỗi kết nối và
   múi giờ của quán. Hàm đặt tham số kết nối `TimeZone` bằng múi giờ ấy (`QC-06`), và với mỗi kết nối
   mới đọc lại vai: khác `shop_app`, hay là superuser ⇒ trả lỗi, không trả kết nối. Múi giờ rỗng ⇒ trả
   lỗi trước khi kết nối. Giá trị múi giờ là cấu hình lúc chạy; ở bộ kiểm, `scripts/be-check.sh` đọc
@@ -572,8 +573,8 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   giờ rỗng ⇒ hàm trả lỗi. Test `TestQC03_…` cùng file: lệnh xoá qua kết nối ấy bị từ chối với mã
   `42501`, in lời từ chối nguyên văn, số dòng không đổi. Khối dưới chỉ giữ cho hai test không biến mất:
   ```sh
-  grep -qs '^func TestQC15_' be/internal/db/*_test.go || echo "thiếu test TestQC15_ ở be/internal/db/"
-  grep -qs '^func TestQC03_' be/internal/db/*_test.go || echo "thiếu test TestQC03_ ở be/internal/db/"
+  grep -qs '^func TestQC15_' be/internal/platform/postgres/*_test.go || echo "thiếu test TestQC15_ ở be/internal/platform/postgres/"
+  grep -qs '^func TestQC03_' be/internal/platform/postgres/*_test.go || echo "thiếu test TestQC03_ ở be/internal/platform/postgres/"
   ```
 - **Nguồn:** owner — `QC-03` (vai), `QC-06` (múi giờ tường minh); từ chối ở hàm kết nối là phiên chọn
   2026-10-06 (**ADR-083**).
@@ -586,7 +587,7 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
     `db-check` cũng dọn khi tiến trình đã chết, **F-045**), chạy mọi migration từ số 0, xuất ra môi
     trường chuỗi kết nối `shop_app` · `shop_owner` và múi giờ quán, chạy `go test -count=1 -p 1 -v ./...`
     trong `be/`, rồi chỉ gỡ project của mình. Không Docker, hay database không lên ⇒ **FAIL**.
-  - Test cần database lấy kết nối qua `be/internal/dbtest/`; thiếu biến môi trường ⇒ test **đỏ**
+  - Test cần database lấy kết nối qua `be/internal/testhelper/` (đổi tên từ `dbtest` ở `T-151`); thiếu biến môi trường ⇒ test **đỏ**
     với lời chỉ sang `scripts/be-check.sh`. Không `t.Skip`, không `testing.Short`, không database giả,
     không mock driver, không testcontainers (một cách dựng database kiểm, không hai).
   - **Gate 1:** `scripts/verify.sh` chạy gofmt · `go vet` · `go build` trong `be/`, và gọi
@@ -640,4 +641,5 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
 | `P3-05` | **2026-10-06** — `QC-14` thêm dòng `be/internal/authz/` |
 | `T-149` | **2026-10-11** — `QC-05` migrate v4.20.1; `QC-11`…`QC-14` sửa theo **ADR-093** (Gin, sqlc, cấu trúc kết hợp), kèm vế chuyển tiếp; `T-150` · `T-151` · `T-165` siết phép kiểm |
 | `T-150` | **2026-10-11** — siết phép kiểm `QC-05` (chỉ v4.20.1) · `QC-11` (chỉ `go 1.27.2`, gin · sqlc bắt buộc); `QC-12` thêm Gate 1h; `QC-13` khuôn `sqlc.yaml` và dấu `;`; `QC-16` chỉ chấm phụ thuộc trực tiếp và import Go |
+| `T-151` | **2026-10-11** — `QC-13` · `QC-14` · `QC-15` · `QC-16` theo chỗ mới: `be/internal/platform/postgres/` (`Open`, `InTx`), `be/internal/testhelper/`; phép kiểm đỏ khi chỗ cũ còn; `QC-14` dòng `be/cmd/server/` nêu `NoRoute` + `gin.WrapH` |
 | `P3-04`…`P3-14` | `QC-13` cửa ghi và Gate 1f · `QC-15` kết nối · `QC-16` chạy test bằng `scripts/be-check.sh` · `QC-17` tên test |

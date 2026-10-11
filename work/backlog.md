@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-151 **Đổi stack · bước 03 — nền**: `internal/db` → `internal/platform/postgres` (`Open`, `InTx`), `dbtest` → `testhelper`, `middleware/`, `cmd/server` dựng Gin router và nối miền cũ qua `gin.WrapH` — L2 — Codex, Claude duyệt · chờ T-150 · [chi tiết](#t-149)
 - [ ] T-152 **Đổi stack · bước 04 — miền mẫu `menu`** (handler · service · repository · `internal/sqlcgen`) — L2 — Codex, Claude duyệt · chờ T-151 · [chi tiết](#t-149)
 - [ ] T-153 **Đổi stack · bước 05 — miền `qr`** — L2 — Codex, Claude duyệt · chờ T-152 · [chi tiết](#t-149)
 - [ ] T-154 **Đổi stack · bước 05 — miền `gia`** — L2 — Codex, Claude duyệt · chờ T-153 · [chi tiết](#t-149)
@@ -118,6 +117,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-151 **Đổi stack backend · bước 03 — nền** — `internal/db` → `internal/platform/postgres` (`Open`, `InTx`), `dbtest` → `testhelper`, `middleware.GanNguoi`, `cmd/server` dựng router Gin (`newRouter`) và nối mười một miền cũ qua `NoRoute` bọc `gin.WrapH`; sáu test `TestQC12_*` mới; `QC-13`…`QC-16` theo chỗ mới — L2 — Codex thi công (worktree `../lean_wt/T-151`), Claude viết test trước, duyệt, cài lỗi và tích hợp — 2026-10-11 · [chi tiết](#t-149)
 - [x] T-150 **Đổi stack backend · bước 02 — công cụ và gate, chưa chuyển cửa nào** — `go 1.27.2`, gin v1.12.0, dòng `tool` sqlc v1.31.1, migrate v4.20.1; Gate 1f luật `-- name:` và miễn code sinh khớp nguồn cho miền có mục trong `sqlc.yaml`, Gate 1g đọc route Gin, Gate 1h `check-gin-imports.sh`, `check-sqlcgen.sh` trong `verify.sh`; `be/sqlc.yaml` chưa tạo (sqlc không nhận cấu hình rỗng) — **ADR-093** — L2 — Codex thi công (worktree `../lean_wt/T-150`), Claude duyệt, cài lỗi và tích hợp — 2026-10-11 · [chi tiết](#t-149)
 - [x] T-149 **Đổi stack backend · bước 01 — ghi quyết định Gin + sqlc + cấu trúc kết hợp vào owner** — ADR mới thay điểm 1 và 6 của ADR-083; `QC-05` · `QC-11`…`QC-14`; chia bước 02…09 thành T-150…T-166 — L3 — Claude Code, không giao Codex — 2026-10-11 · [chi tiết](#t-149)
 - [x] T-148 **Điều kiện trước đổi stack backend (BE-STACK-00)** — phép kiểm tên test `QC-17` chạy trong `scripts/be-check.sh` (gỡ **F-061**); `BE_CHECK_KEEP_DB=1` giữ database khi test đỏ; "test chập chờn" `TestI020_DaRaBanTheoSoCaiTungThuChoMotBan` là lỗi cài của phiên khác lọt vào gate cùng cây (**F-063**), code và test không đổi — L2 — Claude Code — 2026-10-10 · [chi tiết](#t-148)
@@ -446,6 +446,56 @@ Log: scratchpad phiên `8eaa6732…/scratchpad/T-150-*`.
   `scripts/*.test.sh` qua; `check-sqlcgen: chưa miền nào chuyển`.
 - *Cho T-152:* sqlc đòi mỗi câu kết bằng `;` — bốn file cửa của `menu` hôm nay không có; comment đứng ngay sau dòng
   `-- name:` có thể bị sqlc tách khỏi hằng, nên đặt chú thích trước dòng ấy. Gin còn `// indirect` tới T-151.
+
+**T-151 — Acceptance và điểm Claude chốt trước giao** (Claude, 2026-10-11). Acceptance là sáu dòng của phiếu
+`docs/private/be_feature/prompts/BE-STACK-03-nen-L2.md`, viết trước thi công. Mức **L2**: sai thì hàm mở giao dịch
+hay hàm kết nối đổi hành vi (`I-012`, `QC-15`), hoặc một đường gọi của hợp đồng không còn tới cửa. Điểm chốt thêm:
+- *Hình nối miền cũ:* một `http.ServeMux` chung, mỗi miền chưa chuyển gọi `Routes(mux, …)` như hôm nay; router Gin
+  nhận nó bằng **`NoRoute`** bọc `gin.WrapH`, không đăng ký lại từng đường (Gate 1g sẽ đếm trùng). `ServeMux` tự khớp
+  mẫu và tự điền `PathValue`, nên tham số đường dẫn, dấu `/` cuối, 404, 405 và `HEAD` giữ y hành vi hôm nay. Trước khi
+  chuyển cho `ServeMux`, adapter đặt lại status về 200 (Gin đặt sẵn 404 cho `NoRoute`; handler ghi thân mà không gọi
+  `WriteHeader` sẽ ra 404). `HandleMethodNotAllowed` để mặc định `false`.
+- *Hàm dựng router:* `newRouter(pool *pgxpool.Pool, auth authz.Authenticator) *gin.Engine` ở `be/cmd/server/router.go`;
+  `main.go` đọc cấu hình, gọi `postgres.Open`, `gin.New()` (không `Logger`/`Recovery` mặc định, giữ cách lỗi hôm nay),
+  `authz.ChonTen{}`. Biến môi trường của server: `BANHCUON_DATABASE_URL`, `BANHCUON_SHOP_TZ`, `BANHCUON_ADDR`
+  (Claude chọn 2026-10-11; cách cấp cấu hình ở máy thật là việc của pha 5, `QC-15`).
+- *Middleware:* `middleware.GanNguoi(auth)` đọc người qua `Authenticator`, gắn vào `gin.Context`, không bao giờ từ chối hay
+  dừng chuỗi; `middleware.Nguoi(c)` đọc lại. Quyền vẫn chỉ kiểm trong `authz.Run`.
+- *Test Claude viết trước (đỏ tới khi có code):* `be/cmd/server/router_test.go` — `TestQC12_RouterPhucVuMoiDuongCuaHopDong`
+  (mỗi đường của `openapi.yaml` tới một handler, không rơi vào 404/405 của `ServeMux`), `TestQC12_RouterGiuThamSoDuongDan`,
+  `TestQC12_RouterDauGachCuoiVaPhuongThuc`, `TestQC12_RouterHEADChayNhuGET`, `TestQC12_RouterThuTuTuChoiVaThanLoi`;
+  `be/internal/middleware/nguoi_test.go` — `TestQC12_MiddlewareGanNguoiKhongTuChoi`. Tên trong Acceptance
+  (`TestQC15_KetNoiBackend` · `TestQC03_ShopAppKhongXoaDuoc` · `TestI012_LoiCuaThanCuaLuiCaGiaoDich`) đều có ở nền `c9114c6`.
+- *File gọi nền (chỉ đổi import và tên gói):* `apierr/apierr_test.go` · `authz/authz.go` · `authz/authz_test.go` · `ban/ban.go` ·
+  `don/dat_truoc.go` · `don/don_test.go` · `don/duong_tien_test.go` · `don/mang_di_test.go` · `gia/gia_test.go` · `gia/http.go` ·
+  `hoadon/tien.go` · `ket/ket.go` · `menu/menu_test.go` · `nguoi/nguoi.go` · `nguoi/nguoi_test.go` · `qr/qr_test.go` (dưới
+  `be/internal/`). `scripts/check-write-paths.sh` không đọc vị trí hàm mở giao dịch (phép quét ở khối `QC-13`), nên không đổi.
+- *Lỗi cài Claude chạy khi duyệt:* bỏ một `Routes` khỏi `newRouter`; bỏ dòng đặt lại status; middleware dừng chuỗi khi thiếu
+  người; `InTx` commit khi thân lỗi; `Open` bỏ kiểm vai. Mỗi lỗi phải làm đúng test tương ứng đỏ.
+- *Owner Claude sửa lúc tích hợp:* `QC-13` · `QC-14` (bỏ `internal/db`), `QC-15` · `QC-16` (đường dẫn mới), bảng §9 của
+  `10-quy-uoc-code.md`; con trỏ `db.Open` ở `docs/product/3-be/05-luong-mang-di.md` · `06-duong-tien.md`.
+
+**T-151 — Bàn giao** (2026-10-11). Thi công: **Codex** (`gpt-6-astra`, worktree `../lean_wt/T-151`, nhánh `codex/T-151` từ
+`c9114c6`); `go.mod` · `go.sum` (gin thành phụ thuộc trực tiếp) và hai file test do Claude làm sẵn vì sandbox không có mạng.
+Duyệt, cài lỗi, tích hợp vào cây chính: **Claude** (patch từ worktree, `diff -rq be` hai cây rỗng). Codex không `git mv` được
+(sandbox chặn index); Claude đổi tên `db.go` → `postgres.go`, `dbtest.go` → `testhelper.go`. Mười sáu file gọi nền: chỉ dòng import
+và tiền tố gói (lọc diff bằng `grep -v` hai khuôn ấy ⇒ rỗng); thân `Open` · `InTx` giữ nguyên (`diff` với `HEAD` chỉ khác dòng `package`).
+Owner do Claude: `10-quy-uoc-code.md` (`QC-13` · `QC-14` · `QC-15` · `QC-16`, bảng §9), `3-be/05-luong-mang-di.md` · `06-duong-tien.md`.
+Log: scratchpad phiên `17b8f2e9…/scratchpad/T-151-*` (phiếu, báo cáo, log Codex, `--list` trước/sau, gate, `T-151-fault/`).
+- *(1) · (2) · (3)* `be-check` trên PostgreSQL thật: `TestQC15_KetNoiBackend` (ba ca con) · `TestQC03_ShopAppKhongXoaDuoc` ·
+  `TestI012_LoiCuaThanCuaLuiCaGiaoDich` · `TestQC12_MiddlewareGanNguoiKhongTuChoi` và mọi test `apierr` · `authz` PASS.
+- *(4)* `--list` hai gate trước/sau: danh sách ô ghi, cửa, đường gọi, mã giống hệt; chỉ khác dòng đếm số file đã soát
+  (113 → 116, 36 → 39 — ba file Go mới). Gate 1g: 45 đường ở hợp đồng, 45 ở code, không trùng.
+- *(5)* Năm `TestQC12_Router*` PASS qua đúng `newRouter`. Lỗi cài, mỗi lần một lỗi rồi gỡ: (A) bỏ `ket.Routes` ⇒
+  `…PhucVuMoiDuongCuaHopDong` đỏ ở bốn đường của két (404 văn bản của `ServeMux`); (C) middleware dừng chuỗi khi thiếu người ⇒
+  test middleware và năm test router đỏ; (D) `InTx` commit khi thân lỗi ⇒ `TestI012_LoiCuaThanCuaLuiCaGiaoDich` đỏ; (E) `Open` bỏ
+  kiểm vai ⇒ `TestQC15_KetNoiBackend` đỏ. (B) bỏ dòng đặt lại status 200 ⇒ **vẫn xanh**: hôm nay không handler cũ nào ghi thân
+  mà thiếu `WriteHeader`, nên dòng ấy là phòng xa, chưa có test chấm.
+- *(6)* `./scripts/gate.sh` ở cây chính sau tích hợp: exit 0, `PASS gate không cổng nào đỏ`, không dòng `SKIP`; be-check PASS,
+  db-check 20 bước + 18 khối QC PASS, 15 file `scripts/*.test.sh` qua.
+- *Cho T-152:* khi `menu` đăng ký đường Gin thật, yêu cầu sai phương thức lên đường ấy rơi xuống `NoRoute` ⇒ `ServeMux` trả 404
+  thay vì 405, và `HEAD` không còn chạy như `GET`; `TestQC12_RouterDauGachCuoiVaPhuongThuc` · `…HEADChayNhuGET` sẽ đỏ — T-152
+  phải chọn cách giữ hành vi (vd. `HandleMethodNotAllowed`) hay ghi quyết định đổi, không sửa test cho xanh.
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·

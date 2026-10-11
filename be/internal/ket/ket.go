@@ -4,8 +4,8 @@ package ket
 import (
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
-	"banhcuon/be/internal/db"
 	"banhcuon/be/internal/ngayban"
+	"banhcuon/be/internal/platform/postgres"
 	_ "embed"
 	"errors"
 	"fmt"
@@ -168,7 +168,7 @@ func (h handler) doc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var s SoKet
-	err := db.InTx(r.Context(), h.pool, func(tx pgx.Tx) error { var err error; s, err = docSo(r, tx, ngay); return err })
+	err := postgres.InTx(r.Context(), h.pool, func(tx pgx.Tx) error { var err error; s, err = docSo(r, tx, ngay); return err })
 	if err != nil {
 		apierr.WriteError(w, err)
 		return

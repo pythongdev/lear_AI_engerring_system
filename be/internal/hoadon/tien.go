@@ -9,8 +9,8 @@ import (
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
-	"banhcuon/be/internal/db"
 	"banhcuon/be/internal/ngayban"
+	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/tratruoc"
 	"banhcuon/be/internal/vongdoi"
 	"github.com/jackc/pgx/v5"
@@ -384,7 +384,7 @@ func (h handler) thuNo(w http.ResponseWriter, r *http.Request) {
 
 func (h handler) docNo(w http.ResponseWriter, r *http.Request) {
 	debts := []map[string]any{}
-	err := db.InTx(r.Context(), h.pool, func(tx pgx.Tx) error {
+	err := postgres.InTx(r.Context(), h.pool, func(tx pgx.Tx) error {
 		rows, err := tx.Query(r.Context(), danhSachNo)
 		if err != nil {
 			return err

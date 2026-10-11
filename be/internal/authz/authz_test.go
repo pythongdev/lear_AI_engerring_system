@@ -11,8 +11,8 @@ import (
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
-	"banhcuon/be/internal/db"
-	"banhcuon/be/internal/dbtest"
+	"banhcuon/be/internal/platform/postgres"
+	"banhcuon/be/internal/testhelper"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -47,12 +47,12 @@ func dung(t *testing.T) khung {
 	t.Helper()
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	t.Cleanup(cancel)
-	pool, err := db.Open(ctx, dbtest.AppDSN(t), dbtest.ShopTZ(t))
+	pool, err := postgres.Open(ctx, testhelper.AppDSN(t), testhelper.ShopTZ(t))
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Cleanup(pool.Close)
-	owner, err := pgx.Connect(ctx, dbtest.OwnerDSN(t))
+	owner, err := pgx.Connect(ctx, testhelper.OwnerDSN(t))
 	if err != nil {
 		t.Fatal(err)
 	}

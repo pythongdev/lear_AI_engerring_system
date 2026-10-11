@@ -1,5 +1,5 @@
-// Package dbtest đọc cấu hình database riêng do bộ kiểm dựng.
-package dbtest
+// Package testhelper đọc cấu hình database riêng do bộ kiểm dựng.
+package testhelper
 
 import (
 	"os"

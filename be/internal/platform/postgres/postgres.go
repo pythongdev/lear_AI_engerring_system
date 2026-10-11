@@ -1,5 +1,5 @@
-// Package db giữ cấu hình kết nối và ranh giới giao dịch của backend.
-package db
+// Package postgres giữ cấu hình kết nối và ranh giới giao dịch của backend.
+package postgres
 
 import (
 	"context"

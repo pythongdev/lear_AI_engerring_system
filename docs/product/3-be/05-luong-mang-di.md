@@ -82,7 +82,7 @@ cũ, không tự nhả dù đã tới giờ nhắc. Hình trên dây do `openapi
 
 `don.DongHo` bản thật đọc `SELECT now()` từ **chính giao dịch** được đưa vào; chỉ test thay nó.
 Giờ bán là hai hằng code trỏ `shop-facts.md` §1, so trên giờ địa phương theo múi giờ phiên kết nối
-mà `db.Open` đã đặt. Hai đầu tính là trong giờ, cùng cách tập 1 của
+mà `postgres.Open` (`QC-15`) đã đặt. Hai đầu tính là trong giờ, cùng cách tập 1 của
 [`../../../db/reconcile/i008.sql`](../../../db/reconcile/i008.sql). Test đọc giờ bán từ owner lúc chạy.
 
 Cửa xét lần lượt và dừng ở điều kiện đầu tiên chặn:
