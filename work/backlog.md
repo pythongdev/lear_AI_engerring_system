@@ -543,6 +543,22 @@ không giao Codex, **chưa ai duyệt độc lập**. File: `be/sqlc.yaml` (mớ
 - *Cho T-153:* `qr` có đường `GET` đầu tiên lên Gin; với cấu hình này `HEAD` lên đường ấy ⇒ 405 (trước: chạy như `GET`) — chọn giữ
   hay ghi quyết định đổi (`QC-12`).
 
+**T-152 — Duyệt độc lập** (2026-10-11). Người duyệt: **Codex** (`gpt-6-astra`, chỉ đọc, worktree tách `../lean_wt/T-152-review`
+ở `4d8271e`, so với `259676c`); Claude kiểm lại từng điểm. Log: scratchpad phiên `3bdd9af1…/scratchpad/T-152-review-*`.
+- *Codex:* không lỗi chặn về ghi dữ liệu — bốn cửa giữ `NeedOwner` + `authz.Run`, khoá `FOR UPDATE` và thứ tự đọc như `menu.go`
+  cũ, rollback khi lỗi, `ErrNoRows`/ràng buộc giữ ánh xạ, kiểu `int64`/`int32`, mốc `now()` + `to_char` không đổi; năm hunk test
+  chỉ đổi phần dựng router, không assert nào đổi. Gate 1f · 1g · 1h, `go build`, `go vet` PASS.
+- *Claude chạy bù ở `4d8271e`:* `be-check` PASS (sáu test Acceptance, năm `TestQC12_Router*`); `go tool sqlc generate` không đổi
+  file sinh; cài import `menu/internal/sqlcgen` từ `qr` ⇒ *use of internal package … not allowed*, gỡ ⇒ build xanh. Gate ở HEAD
+  `ef43aeb`: exit 0, không FAIL.
+- *Phát hiện (Codex, Claude xác nhận bằng yêu cầu thật):* `PUT /menu-components/1%2F2/base-price` ở `259676c` ⇒ 400
+  `{"code":"invalid_request","field":"menu_component_id"}`; ở `4d8271e` ⇒ 404 văn bản `404 page not found` (Gin khớp trên
+  `URL.Path` đã giải mã). Ngoài hợp đồng, không chạm dữ liệu, nhưng lệch "giữ hành vi HTTP" của phiếu. Thử `r.UseRawPath = true`
+  trong worktree duyệt ⇒ ca `%2F` về lại 400 JSON, `be-check` PASS. **Claude chốt:** sửa ở **T-153** (lần đầu `qr` sửa
+  `newRouter`, cùng lượt chọn `HEAD`), kèm test `TestQC12_…` chấm ca `%2F`, ghi vào `QC-12`.
+- *Ghi nhận, không sửa:* `menu_test.go` · `don_test.go` dựng Gin riêng (menu chưa tắt `RedirectTrailingSlash`, don chưa bật
+  `HandleMethodNotAllowed`) thay vì gọi `newRouter`; cấu hình thật vẫn do `TestQC12_Router*` chấm.
+
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·
 T-143 · T-147 · T-148. T-149 không sửa file nào của chúng ngoài `work/backlog.md` là file dùng chung; `docs/decisions.md` và
