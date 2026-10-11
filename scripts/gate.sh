@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Quality gate — runs Gate 3 (scope), Gate 1b (links), Gate 1c (doc status),
 # Gate 1d (phase boundary), Gate 1e (schema names), Gate 1f (write paths), Gate 1g (API contract),
-# Gate 1 (verify), then Gate 7 (commit).
+# Gate 1h (Gin imports), Gate 1 (verify), then Gate 7 (commit).
 #
 # Wired as a Stop hook in .claude/settings.json, which calls it as
 #   ./scripts/gate.sh --hook
@@ -22,6 +22,7 @@
 # check-write-paths.sh (Gate 1f) chạy mọi lượt vì chỉ đọc file (ADR-082 điểm 3, ADR-083).
 # check-api-contract.sh (Gate 1g) cũng thế: hợp đồng nằm dưới docs/, nên lượt chỉ sửa
 # hợp đồng là lượt Gate 1 bỏ qua (ADR-084).
+# check-gin-imports.sh (Gate 1h) chạy mọi lượt, chỉ đọc import Go (QC-12).
 # check-commit-block.sh runs only in hook mode (it needs the transcript) and only
 # after the gate is green: no point asking for a commit message for a red change.
 #
@@ -126,6 +127,7 @@ step "Gate 1d" "check-phase-boundary" check-phase-boundary.sh
 step "Gate 1e" "check-schema-names"   check-schema-names.sh
 step "Gate 1f" "check-write-paths"    check-write-paths.sh
 step "Gate 1g" "check-api-contract"   check-api-contract.sh
+step "Gate 1h" "check-gin-imports"    check-gin-imports.sh
 
 code_changed=0
 while IFS= read -r line; do

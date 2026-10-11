@@ -50,8 +50,9 @@ Gate 1g đọc file bằng một bộ đọc khuôn, không phải trình đọc
 
 1. Thụt **hai dấu cách** mỗi bậc; dòng chú thích mở đầu bằng `#`.
 2. Khoá đường gọi nằm ở bậc 1 dưới `paths:`, mở đầu bằng `/`; phương thức (`get` · `post` · `put` ·
-   `patch` · `delete`) ở bậc 2 ngay dưới nó. Tham số đường dẫn viết `{tên}` — cùng cú pháp với mẫu của
-   `net/http` (`QC-12`), nên hai phía so được từng chữ.
+   `patch` · `delete`) ở bậc 2 ngay dưới nó. Tham số đường dẫn viết `{tên}`. Miền còn dùng mẫu của
+   `net/http` viết đúng `{tên}`; miền đã sang Gin viết `:tên` và Gate 1g đổi `:tên` thành `{tên}` trước khi so
+   (`QC-12`, từ `T-150`), nên hai phía vẫn so được từng chữ.
 3. Enum mã lỗi ở `components.schemas.ErrorCode.enum`, mỗi mã một dòng `- mã`; status của mỗi mã ở
    `ErrorCode.x-http-status`, mỗi dòng `mã: status`.
 4. Bảng ánh xạ ở khoá gốc `x-constraint-errors`, mỗi dòng `tên: giá trị` (§4).

@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-150 **Đổi stack backend · bước 02 — công cụ và gate, chưa chuyển cửa nào** — `go 1.27.2`, gin v1.12.0, dòng `tool` sqlc v1.31.1, migrate v4.20.1; sqlc đọc toàn bộ `db/migrations/` (không được ⇒ dừng); Gate 1f luật `-- name:` cho miền có mục trong sqlc.yaml, Gate 1g đọc route Gin, phép kiểm import Gin, `verify.sh` sinh lại và so — **ADR-093** — L2 — Codex thi công, Claude duyệt. **Chờ chủ repo commit phần đã Done chưa commit** (T-138 · T-140 · T-142 · T-143 · T-144 · T-145; T-147 · T-149 đã commit). sqlc đọc được toàn bộ migration — thử 2026-10-11, xem chi tiết · [chi tiết](#t-149)
 - [ ] T-151 **Đổi stack · bước 03 — nền**: `internal/db` → `internal/platform/postgres` (`Open`, `InTx`), `dbtest` → `testhelper`, `middleware/`, `cmd/server` dựng Gin router và nối miền cũ qua `gin.WrapH` — L2 — Codex, Claude duyệt · chờ T-150 · [chi tiết](#t-149)
 - [ ] T-152 **Đổi stack · bước 04 — miền mẫu `menu`** (handler · service · repository · `internal/sqlcgen`) — L2 — Codex, Claude duyệt · chờ T-151 · [chi tiết](#t-149)
 - [ ] T-153 **Đổi stack · bước 05 — miền `qr`** — L2 — Codex, Claude duyệt · chờ T-152 · [chi tiết](#t-149)
@@ -119,6 +118,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-150 **Đổi stack backend · bước 02 — công cụ và gate, chưa chuyển cửa nào** — `go 1.27.2`, gin v1.12.0, dòng `tool` sqlc v1.31.1, migrate v4.20.1; Gate 1f luật `-- name:` và miễn code sinh khớp nguồn cho miền có mục trong `sqlc.yaml`, Gate 1g đọc route Gin, Gate 1h `check-gin-imports.sh`, `check-sqlcgen.sh` trong `verify.sh`; `be/sqlc.yaml` chưa tạo (sqlc không nhận cấu hình rỗng) — **ADR-093** — L2 — Codex thi công (worktree `../lean_wt/T-150`), Claude duyệt, cài lỗi và tích hợp — 2026-10-11 · [chi tiết](#t-149)
 - [x] T-149 **Đổi stack backend · bước 01 — ghi quyết định Gin + sqlc + cấu trúc kết hợp vào owner** — ADR mới thay điểm 1 và 6 của ADR-083; `QC-05` · `QC-11`…`QC-14`; chia bước 02…09 thành T-150…T-166 — L3 — Claude Code, không giao Codex — 2026-10-11 · [chi tiết](#t-149)
 - [x] T-148 **Điều kiện trước đổi stack backend (BE-STACK-00)** — phép kiểm tên test `QC-17` chạy trong `scripts/be-check.sh` (gỡ **F-061**); `BE_CHECK_KEEP_DB=1` giữ database khi test đỏ; "test chập chờn" `TestI020_DaRaBanTheoSoCaiTungThuChoMotBan` là lỗi cài của phiên khác lọt vào gate cùng cây (**F-063**), code và test không đổi — L2 — Claude Code — 2026-10-10 · [chi tiết](#t-148)
 - [x] T-147 **Huỷ đơn đã Hoàn thành** — cửa `don/huy` nhận *Hoàn thành → Huỷ* (lời U-027, `shop-facts.md` §6.19), gỡ mã `completed_order_cancel_not_ready`; cửa không đụng tiền, hoàn do quầy quyết qua cửa hoàn của `P3-09` — phần còn sót của `P3-10`; **ADR-090** điểm 7 *Sửa đổi* — L2 — Claude thiết kế và viết test đỏ, Codex thi công (worktree `../lean_wt/T-147`) — 2026-10-10 · [chi tiết](#t-147)
@@ -384,10 +384,13 @@ là một trạng thái chạy được. Phiếu và Acceptance của từng bư
   của `menu` (đọc `menu_item … FOR UPDATE`, `UPDATE menu_component … RETURNING`) ⇒ `sqlc generate` exit 0,
   `models.go` 42 kiểu bảng = 42 `CREATE TABLE` trong `*.up.sql`, tên bảng trần, có `DoiGia(ctx, DoiGiaParams)`.
   Điều kiện DỪNG của Acceptance 1 không xảy ra. Ghi để phiếu biết: biểu thức `x IS NOT NULL` không ép kiểu sinh
-  `interface{}`, nên query đích cần `::boolean`. Vẫn chặn giao: chờ commit T-138 · T-140 · T-142 · T-143 · T-144 · T-145.
+  `interface{}`, nên query đích cần `::boolean`. Chặn giao đã gỡ: T-138 · T-140 · T-144 commit 2026-10-11 (`18497ee`, `9f55b21`);
+  T-145 chỉ đổi tài liệu owner, không chạm phần T-150 đọc.
 - *T-150 — sqlc.yaml rỗng:* chưa biết sqlc v1.31.1 có nhận cấu hình chưa có mục `sql:` nào hay không. Đã chốt ở
   ADR-093 điểm 3: nhận thì file sinh ở T-150, không nhận thì sinh ở T-152 cùng mục `menu`. Dòng ngoại lệ Gate 1b
   của `docs/private/be_feature/prompts/README.md` giữ tới lượt tạo file. Thiếu file nghĩa là chưa miền nào chuyển.
+  **Đã thử 2026-10-11 (Claude):** `sql: []` và file không có `sql:` đều ⇒ `error parsing sqlc.yaml: no packages`, exit 1.
+  Vậy T-150 **không** tạo `be/sqlc.yaml`; file sinh ở T-152 cùng mục `menu`, dòng ngoại lệ Gate 1b giữ tới đó.
 - *T-151 — owner phải đổi cùng lượt:* `QC-15` · `QC-16` và phép kiểm của chúng nêu `be/internal/db/` ·
   `be/internal/dbtest/`. Chuyển thư mục mà không sửa thì db-check đỏ. Claude sửa hai mục ấy và siết phép kiểm
   `QC-13` · `QC-14` (bỏ `internal/db`) lúc tích hợp T-151; Codex không sửa owner.
@@ -406,6 +409,43 @@ là một trạng thái chạy được. Phiếu và Acceptance của từng bư
 - *Siết phép kiểm theo bước* (Claude làm lúc tích hợp): T-150 — `QC-05` chỉ còn migrate v4.20.1, `QC-11` chỉ còn
   `go 1.27.2` và đòi gin · sqlc có mặt; T-151 — `QC-13` · `QC-14` bỏ `internal/db`; T-165 — `QC-12` bỏ khuôn
   `ServeMux`, `QC-13` luật `-- name:` cho mọi miền, `QC-14` lần cuối.
+
+**T-150 — Acceptance và điểm Claude chốt trước giao** (Claude, 2026-10-11). Acceptance là chín dòng của phiếu
+`docs/private/be_feature/prompts/BE-STACK-02-cong-cu-va-gate-L2.md` (luật *entry trỏ, prompt giữ*), viết trước thi công.
+Mức **L2**: sai thì gate để lọt câu ghi ngoài cửa, tức hỏng bảo vệ `I-012` · `I-018` của ADR-082. Điểm chốt thêm vì thử thật:
+- `be/sqlc.yaml` không tạo ở T-150 (mục trên). Mọi ca có `sqlc.yaml` chạy bằng fixture trong thư mục tạm.
+- Khuôn một mục của `sqlc.yaml` (T-152 viết theo): `engine: postgresql`, `schema: ../db/migrations`, `queries:` là danh sách
+  `internal/<miền>/sql` cộng **từng** `internal/<miền>/sql/<cửa>` (sqlc không đọc thư mục con — thử 2026-10-11),
+  `gen.go`: `package: sqlcgen`, `out: internal/<miền>/internal/sqlcgen`, `sql_package: pgx/v5`. Gate 1f đỏ khi một mục
+  lệch khuôn ấy hoặc thiếu một thư mục cửa đang có.
+- Hai file cùng tên ở hai cửa (vd. `nguoi/sql/vao_quay/khoa.sql` · `roi_quay/khoa.sql`) bị sqlc gộp vào một file sinh, nên
+  phép miễn của Gate 1f khớp theo `-- name:`, không theo tên file.
+- File mới: `scripts/check-gin-imports.sh` · `.test.sh` (gọi trong `scripts/gate.sh`, mọi lượt, chỉ đọc file) và
+  `scripts/check-sqlcgen.sh` · `.test.sh` (gọi trong `scripts/verify.sh`). Claude thêm dòng vào `CLAUDE.md` §5 lúc tích hợp.
+- Phiếu, báo cáo và log: scratchpad phiên `8eaa6732…/scratchpad/T-150-*`.
+
+**T-150 — Bàn giao** (2026-10-11). Thi công: **Codex** (`gpt-6-astra`, worktree `../lean_wt/T-150`, nhánh `codex/T-150`
+từ `f70dfb3`); go.mod · go.sum · compose do Claude làm sẵn vì sandbox của Codex không có mạng. Duyệt, cài lỗi, tích
+hợp vào cây chính: **Claude**. File: `be/go.mod` · `be/go.sum` · `compose.yaml` · `scripts/check-write-paths.sh` · `.test.sh` ·
+`scripts/check-api-contract.sh` · `.test.sh` · `scripts/check-gin-imports.sh` · `.test.sh` (mới) · `scripts/check-sqlcgen.sh` ·
+`.test.sh` (mới) · `scripts/verify.sh` · `scripts/gate.sh` · `scripts/gate.test.sh`; owner do Claude: `CLAUDE.md` §5 (Gate 1h),
+`10-quy-uoc-code.md` (`QC-05` · `QC-11` siết, `QC-12` · `QC-13` · `QC-16`, bảng §9), `3-be/01-hop-dong-api.md` §2 điều 2.
+Log: scratchpad phiên `8eaa6732…/scratchpad/T-150-*`.
+- *Claude sửa thêm khi duyệt:* `gate.test.sh` thiếu stub Gate 1h (Codex dừng đúng vì ngoài scope); Gate 1g để lọt
+  `{tên}` trong đường Gin (Gin đọc là chữ thường) — nay đỏ, có ca `brace`. **QC-16** cấm `sqlite` trong `go.mod` đỏ vì
+  dòng `tool` của sqlc kéo `ncruces/go-sqlite3 // indirect`; phép kiểm nay chấm phụ thuộc trực tiếp và import Go.
+- *Lỗi cài trên bản sao `be/` thật, miền `menu` chuyển thử bằng sqlc.yaml đúng khuôn:* (A) file cửa chưa `-- name:` ⇒
+  Gate 1f đỏ bốn file của `menu`, mười hai miền khác im; (B) annotation + `;` rồi `go tool sqlc generate` ⇒ 1f và
+  `check-sqlcgen` xanh, `--list` ô → cửa không đổi; (C) sửa cột SET trong hằng sinh ⇒ 1f `lệch nguồn` + sqlcgen đỏ;
+  (D) xoá một file sinh ⇒ sqlcgen đỏ; (E) thêm file dư ⇒ sqlcgen đỏ; (F) file giả "Code generated" có câu ghi không
+  nguồn ⇒ 1f `thiếu nguồn` + `câu ghi ngoài mọi cửa`; (G) `Begin` trong code sinh ⇒ khối `QC-13` in dòng. Trên cây
+  worktree: (H) `menu.go` import Gin bí danh trong khối nhiều dòng, `service.go` import `gin/binding` ⇒ Gate 1h đỏ đúng
+  file:dòng, `handler.go` xanh; (I) `r.POST(` nhiều dòng với `:ma` thay `{menu_component_id}` ⇒ Gate 1g `route: chỉ ở
+  code`. Gỡ hết ⇒ xanh. `--list` hai gate trên cây thật trước/sau: `diff` rỗng.
+- *Gate cây chính* (sau tích hợp): exit 0, không `SKIP`; be-check PASS, db-check 20 bước + 18 khối QC PASS, 15 file
+  `scripts/*.test.sh` qua; `check-sqlcgen: chưa miền nào chuyển`.
+- *Cho T-152:* sqlc đòi mỗi câu kết bằng `;` — bốn file cửa của `menu` hôm nay không có; comment đứng ngay sau dòng
+  `-- name:` có thể bị sqlc tách khỏi hằng, nên đặt chú thích trước dòng ấy. Gin còn `// indirect` tới T-151.
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·

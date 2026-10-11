@@ -33,6 +33,7 @@ newrepo() { # newrepo <tên> → repo tạm, mọi cổng giả đều xanh và 
   stub "$d" check-schema-names.sh 0 "check-schema-names: PASS — 2 bảng ở migration, 2 bảng tài liệu nhắc, comm -3 rỗng"
   stub "$d" check-write-paths.sh 0 "check-write-paths: PASS — 0 ô ghi, 0 cửa, 0 file đã soát"
   stub "$d" check-api-contract.sh 0 "check-api-contract: PASS — hợp đồng 0.1.0; 0 đường gọi ở hợp đồng, 0 ở code"
+  stub "$d" check-gin-imports.sh 0 "check-gin-imports: PASS"
   stub "$d" verify.sh 0 "=== Lean AI Engineering Verification ===
 [db] skipped — nothing under db/ changed
 [test] /abs/scripts/x.test.sh

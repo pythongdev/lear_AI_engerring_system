@@ -168,8 +168,7 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
 
 - **Quy ước:**
   - **Công cụ:** golang-migrate **v4.20.1** (image `migrate/migrate`; chủ repo duyệt 2026-10-10, **ADR-093**
-    điểm 1 — *chuyển tiếp:* `compose.yaml` còn v4.18.3 tới `T-150`, phép kiểm nhận cả hai, Claude siết lúc
-    tích hợp `T-150`), chạy bằng service `migrate` trong `compose.yaml`
+    điểm 1; `compose.yaml` lên bản này ở `T-150`, 2026-10-11), chạy bằng service `migrate` trong `compose.yaml`
     (`docker compose run --rm migrate`, thêm lệnh con như `down 1` · `version` · `force <số>`) —
     không cần cài gì lên máy ngoài Docker.
   - **Thư mục:** `db/migrations/`. Lược đồ vào schema `shop`; bảng ghi phiên bản của công cụ nằm ở
@@ -200,7 +199,7 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   for f in db/migrations/*.down.sql; do [ -f "${f%.down.sql}.up.sql" ] || echo "lùi mà không có xuôi: $f"; done
   grep -L 'đường lùi từ chối' db/migrations/*.down.sql
   git diff --name-only --diff-filter=MDR HEAD -- db/migrations
-  grep -Eq '^[[:space:]]*image: migrate/migrate:v4\.(18\.3|20\.1)$' compose.yaml || echo "compose.yaml không ghim image migrate/migrate:v4.20.1"
+  grep -Eq '^[[:space:]]*image: migrate/migrate:v4\.20\.1$' compose.yaml || echo "compose.yaml không ghim image migrate/migrate:v4.20.1"
   ```
   Dòng đầu: tên sai khuôn. Hai dòng sau: một bước thiếu nửa kia. Dòng thứ tư: file lùi không có khoá
   chặn. Dòng cuối: file migration đã commit bị sửa, xoá hay đổi tên. File lùi gỡ **đúng** thứ bước
@@ -419,18 +418,18 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   | `github.com/sqlc-dev/sqlc` | `v1.31.1` | **công cụ**, không phải thư viện: dòng `tool github.com/sqlc-dev/sqlc/cmd/sqlc`, chạy `go tool sqlc` (`QC-13`) |
 
   Thêm một phụ thuộc trực tiếp hay một công cụ nữa thì nói lý do ở mục dùng nó.
-  *Chuyển tiếp (2026-10-11, T-149):* tới khi `T-150` xong, `be/go.mod` còn `go 1.27.1` và chưa có gin,
-  sqlc; phép kiểm dưới nhận cả hai trạng thái. Claude siết nó lúc tích hợp `T-150`: chỉ `go 1.27.2`, và gin ·
-  sqlc phải có mặt.
+  `be/go.mod` lên các bản này ở `T-150` (2026-10-11). Gin mang `// indirect` tới khi `T-151` import nó lần đầu;
+  phép kiểm không phân biệt hai trạng thái ấy.
 - **Hậu quả nếu làm khác:** máy thật chạy một bản Go khác bộ kiểm thì `time`, `database` của thư viện chuẩn
   có thể khác đúng chỗ test đã chứng minh, cùng lý lẽ `QC-01` cho PostgreSQL. sqlc không ghim thì hai máy sinh
   hai bản code khác nhau từ cùng một file `.sql`, và phép so của `verify.sh` đỏ ở máy này, xanh ở máy kia.
 - **Phép kiểm:**
   ```sh
-  grep -Eqx 'go 1\.27\.[12]' be/go.mod 2>/dev/null || echo "be/go.mod không ghim dòng 'go 1.27.2'"
+  grep -Eqx 'go 1\.27\.2' be/go.mod 2>/dev/null || echo "be/go.mod không ghim dòng 'go 1.27.2'"
   grep -Eq '^(require )?[[:space:]]*github.com/jackc/pgx/v5 v5\.11\.0( |$)' be/go.mod 2>/dev/null || echo "be/go.mod không ghim github.com/jackc/pgx/v5 v5.11.0"
-  if grep -q 'github.com/gin-gonic/gin ' be/go.mod 2>/dev/null; then grep -Eq '^(require )?[[:space:]]*github.com/gin-gonic/gin v1\.12\.0( |$)' be/go.mod || echo "be/go.mod không ghim github.com/gin-gonic/gin v1.12.0"; fi
-  if grep -q 'sqlc-dev/sqlc' be/go.mod 2>/dev/null; then grep -Eq '^[[:space:]]*(require[[:space:]]+)?github.com/sqlc-dev/sqlc v1\.31\.1( |$)' be/go.mod || echo "be/go.mod không ghim github.com/sqlc-dev/sqlc v1.31.1"; grep -Eq '^(tool[[:space:]]+|[[:space:]]+)github.com/sqlc-dev/sqlc/cmd/sqlc$' be/go.mod || echo "be/go.mod thiếu dòng tool github.com/sqlc-dev/sqlc/cmd/sqlc"; fi
+  grep -Eq '^(require )?[[:space:]]*github.com/gin-gonic/gin v1\.12\.0( |$)' be/go.mod 2>/dev/null || echo "be/go.mod không ghim github.com/gin-gonic/gin v1.12.0"
+  grep -Eq '^[[:space:]]*(require[[:space:]]+)?github.com/sqlc-dev/sqlc v1\.31\.1( |$)' be/go.mod 2>/dev/null || echo "be/go.mod không ghim github.com/sqlc-dev/sqlc v1.31.1"
+  grep -Eq '^(tool[[:space:]]+|[[:space:]]+)github.com/sqlc-dev/sqlc/cmd/sqlc$' be/go.mod 2>/dev/null || echo "be/go.mod thiếu dòng tool github.com/sqlc-dev/sqlc/cmd/sqlc"
   grep -q '^module banhcuon/be$' be/go.mod 2>/dev/null || echo "be/go.mod không khai module banhcuon/be"
   [ -f be/go.sum ] || echo "thiếu be/go.sum"
   ```
@@ -461,9 +460,12 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   grep -Ei 'labstack/echo|go-chi/|gofiber|gorilla/mux|julienschmidt/httprouter|beego|go-kratos' be/go.mod 2>/dev/null
   grep -rlE '"github\.com/gin-gonic/' be --include='*.go' 2>/dev/null | grep -vE '(_test|/handler)\.go$' | grep -vE '^be/(cmd/server|internal/middleware)/'
   grep -rnE '\.(Group|Any|Handle)\(' be --include='*.go' 2>/dev/null | grep -v '_test\.go:'
+  ./scripts/check-gin-imports.sh >/dev/null 2>&1 || ./scripts/check-gin-imports.sh 2>&1
   ```
-  Dòng hai: file không được phép mà import Gin. Dòng ba: hình đăng ký Gate 1g không đọc được. Luật đầy đủ về
-  hình đường gọi (nối chuỗi, wildcard, tên tham số so với hợp đồng) do Gate 1g chấm.
+  Dòng hai: file không được phép mà import Gin. Dòng ba: hình đăng ký Gate 1g không đọc được. Dòng cuối: Gate 1h
+  (từ `T-150`) — cùng luật import như dòng hai nhưng đọc khối `import`, bỏ chú thích và chuỗi ngoài import. Luật
+  đầy đủ về hình đường gọi (nối chuỗi, wildcard, `{tên}` trong đường Gin, tên tham số so với hợp đồng, đường gọi
+  đăng ký hai lần) do Gate 1g chấm.
 - **Nguồn:** **chủ repo duyệt 2026-10-10** (**ADR-093** điểm 4 · 6); luật import và khuôn đăng ký là phiên
   chọn (Claude, kế hoạch §2 và phiếu bước 02, 2026-10-10). Thay quy ước `net/http` của **ADR-083** điểm 6.
 
@@ -485,6 +487,9 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   - Code sinh được Gate 1f miễn luật *câu ghi trong chuỗi Go* **chỉ khi** khớp nguồn: `scripts/verify.sh`
     sinh lại vào thư mục tạm và so cả tập file với `internal/*/internal/sqlcgen/` (từ `T-150`). Chỉ
     `repository.go` của chính miền gọi `sqlcgen`; miền khác không import được, luật `internal` của Go chặn.
+  - **Khuôn một mục của `sqlc.yaml`** là khuôn duy nhất Gate 1f nhận; nó nằm ở header của
+    `scripts/check-write-paths.sh`. `queries:` liệt kê `internal/<miền>/sql` **và từng** `internal/<miền>/sql/<cửa>`,
+    vì sqlc không đọc thư mục con. sqlc đòi mỗi câu kết bằng `;` (Claude thử 2026-10-11, `T-150`).
   - **Không** `DELETE` · `TRUNCATE` (`shop_app` không xoá được — `QC-03`), **không** `MERGE`, `COPY`,
     `CopyFrom` — hai thứ sau ghi theo cách lệnh liệt kê không đọc ra ô.
   - Bảng viết trần hoặc `shop.<bảng>`; `UPDATE` nêu cột ở `SET cột = …` hoặc `SET (a, b) = …`.
@@ -594,8 +599,12 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   ```sh
   grep -q 'scripts/be-check.sh' scripts/verify.sh || echo "scripts/verify.sh không gọi scripts/be-check.sh"
   grep -rnE 't\.Skip|testing\.Short' be --include='*.go' 2>/dev/null
-  grep -Ei 'sqlmock|pgxmock|sqlite|testcontainers' be/go.mod 2>/dev/null
+  grep -Ei 'sqlmock|pgxmock|sqlite|testcontainers' be/go.mod 2>/dev/null | grep -v '// indirect'
+  grep -rnE '"[^"]*(sqlmock|pgxmock|sqlite|testcontainers)[^"]*"' be --include='*.go' 2>/dev/null
   ```
+  Dòng ba chỉ chấm phụ thuộc trực tiếp: dòng `tool` của sqlc (`QC-11`) kéo `github.com/ncruces/go-sqlite3`
+  vào `go.mod` dưới dạng `// indirect`, vì sqlc tự hỗ trợ engine sqlite; code của ta không dùng nó. Dòng bốn
+  chặn code Go import một gói như thế dù `go.mod` còn ghi `// indirect` (Claude sửa 2026-10-11, `T-150`).
 - **Nguồn:** owner — **ADR-082** điểm 2 · 7 (test qua cửa trên PostgreSQL thật), **F-045**, **F-007**;
   lệnh, tên project và biến môi trường là phiên chọn 2026-10-06 (**ADR-083**).
 
@@ -630,4 +639,5 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
 | `P3-04` | **2026-10-06** — `QC-10` thêm vế lời từ chối của trigger (**F-058**); `QC-14` thêm dòng `be/internal/apierr/` |
 | `P3-05` | **2026-10-06** — `QC-14` thêm dòng `be/internal/authz/` |
 | `T-149` | **2026-10-11** — `QC-05` migrate v4.20.1; `QC-11`…`QC-14` sửa theo **ADR-093** (Gin, sqlc, cấu trúc kết hợp), kèm vế chuyển tiếp; `T-150` · `T-151` · `T-165` siết phép kiểm |
+| `T-150` | **2026-10-11** — siết phép kiểm `QC-05` (chỉ v4.20.1) · `QC-11` (chỉ `go 1.27.2`, gin · sqlc bắt buộc); `QC-12` thêm Gate 1h; `QC-13` khuôn `sqlc.yaml` và dấu `;`; `QC-16` chỉ chấm phụ thuộc trực tiếp và import Go |
 | `P3-04`…`P3-14` | `QC-13` cửa ghi và Gate 1f · `QC-15` kết nối · `QC-16` chạy test bằng `scripts/be-check.sh` · `QC-17` tên test |

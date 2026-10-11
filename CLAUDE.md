@@ -201,11 +201,15 @@ It runs, in order — each script's header is the owner of how it works:
    code and the migrations: routes, error codes, every refusal name mapped,
    every write door one role-matrix row, version bumped when it changed
    (ADR-084, ADR-085). Every turn; reads files only.
-8. `scripts/verify.sh` (Gate 1) — build, tests, `scripts/db-check.sh` when the
+8. `scripts/check-gin-imports.sh` (Gate 1h) — only a domain's `handler.go`,
+   `be/cmd/server/` and `be/internal/middleware/` import Gin (QC-12, ADR-093).
+   Every turn; reads files only.
+9. `scripts/verify.sh` (Gate 1) — build, tests, `scripts/check-sqlcgen.sh`
+   (regenerate sqlc code and compare), `scripts/db-check.sh` when the
    database side changed, `scripts/be-check.sh` when `be/` or the database
    changed, every `scripts/*.test.sh`. Skipped for docs-only turns.
-9. `scripts/check-commit-block.sh` (Gate 7/7b) — **Claude hook mode only**, once
-   1–8 are green: the turn must hand over the §6.1 block, and the block's
+10. `scripts/check-commit-block.sh` (Gate 7/7b) — **Claude hook mode only**, once
+   1–9 are green: the turn must hand over the §6.1 block, and the block's
    file list must fit the scope of the task its subject names (ADR-006,
    ADR-063). Speaks at most once per tree state.
 
@@ -214,7 +218,7 @@ Gates 1b, 1c and 1d each take a deliberate exception in their own
 the gate red until removed. `work/` (and the folders each header names) is not
 checked by 1b or 1c — a dead path or broken sentence quoted there is evidence.
 
-Codex runs the gate directly: that runs steps 1–8, **not** Gate 7/7b, so Codex
+Codex runs the gate directly: that runs steps 1–9, **not** Gate 7/7b, so Codex
 checks the commit block against §6.1 by hand — file list, scope, and the real
 staged index. A green direct gate does not prove the block was checked.
 

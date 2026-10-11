@@ -7,7 +7,8 @@
 #   bằng /, phương thức thụt bốn), components.schemas.ErrorCode (enum, x-http-status),
 #   x-constraint-errors (tên: mã | internal | unreviewed). Ma trận 02-vai-va-quyen.md
 #   cạnh hợp đồng: dòng | `gói/cửa` | `lớp` | (P3-05, ADR-085). Mọi .go dưới be/ trừ
-#   _test.go: .HandleFunc/.Handle("PHƯƠNG THỨC /đường", …); be/internal/apierr/:
+#   _test.go: bỏ chú thích Go trước khi đọc route; .GET/.POST/.PUT/.PATCH/.DELETE
+#   nhận chuỗi trần, đổi :tên thành {tên}; .HandleFunc/.Handle("PHƯƠNG THỨC /đường", …); be/internal/apierr/:
 #   hằng `CodeX Code = "mã"`, dòng `CodeX: 500,` (status), dòng `"tên": CodeX,`
 #   (bảng ánh xạ công khai); be/internal/authz/: hằng `NeedX Need = "lớp"`; mọi
 #   authz.Door{Code: "gói/cửa", Need: authz.NeedX}; thư mục be/internal/*/sql/*/
@@ -23,6 +24,8 @@
 #   thư mục cửa · dòng ma trận · khai báo authz.Door không cùng một tập, một cửa hai
 #   dòng hay hai khai báo, lớp ở ma trận khác code hoặc không phải lớp của authz,
 #   có cửa mà không có file ma trận.
+#   Group/Any, Handle của Gin, đường động/nối chuỗi/wildcard, {tên} trong đường Gin
+#   (Gin đọc nó là chữ thường, phải viết :tên) và route trùng đều đỏ.
 # KHÔNG BẮT: thân request/response so với struct Go; tên ràng buộc đặt ngầm (không
 #   viết CONSTRAINT) — test TestQC10_ ở be/internal/apierr/ so với database sống;
 #   tên ghép lúc chạy thì đỏ chứ không đoán. Không phải trình đọc YAML đầy đủ.
@@ -138,12 +141,39 @@ find({wanted => sub { push @gofiles, $File::Find::name if -f $_ && /\.go$/ && !/
 for my $f (sort @gofiles) {
     $gofiles++;
     my $s = read_file($f);
-    while ($s =~ /\.(?:HandleFunc|Handle)\(\s*("([^"\\]*)"|[^)\s][^,)]*)/g) {
-        my ($raw, $pat) = ($1, $2);
-        my $line = 1 + (substr($s, 0, $-[0]) =~ tr/\n/\n/);
-        if (!defined $pat) { bad("$f:$line: không đọc được mẫu đường gọi $raw — viết chuỗi trần"); next; }
-        if ($pat =~ m{^(GET|POST|PUT|PATCH|DELETE) (/\S*)$}) { $routes{"$1 $2"} = 1; }
-        else { bad("$f:$line: đường gọi \"$pat\" không nêu phương thức (GET|POST|PUT|PATCH|DELETE /đường)"); }
+    # Lexer giữ nguyên chuỗi, che chú thích và giữ số dòng.
+    my $route_src = $s;
+    $route_src =~ s{"(?:\\.|[^"\\])*"|`[^`]*`|'(?:\\.|[^'\\])*'|//[^\n]*|/\*.*?\*/}{
+        my $token = $&;
+        if ($token =~ m{^/}) { $token =~ s/[^\n]/ /g; }
+        $token;
+    }gse;
+    # Bỏ qua literal ngoài lời gọi để chữ giống route trong chuỗi không thành route.
+    while ($route_src =~ /"(?:\\.|[^"\\])*"|`[^`]*`|'(?:\\.|[^'\\])*'|\.\s*(HandleFunc|Handle|GET|POST|PUT|PATCH|DELETE|Group|Any)\s*\(/g) {
+        next unless defined $1;
+        my $method = $1;
+        my $line = 1 + (substr($route_src, 0, $-[0]) =~ tr/\n/\n/);
+        if ($method eq 'Group' || $method eq 'Any') {
+            bad("$f:$line: không nhận .$method("); next;
+        }
+        my $rest = substr($route_src, pos($route_src));
+        if ($rest !~ /^\s*"([^"\\]*)"\s*,/) {
+            bad("$f:$line: không đọc được mẫu đường gọi — viết chuỗi trần, không nối chuỗi"); next;
+        }
+        my $pat = $1;
+        my $route;
+        if ($method eq 'Handle' || $method eq 'HandleFunc') {
+            if ($pat =~ m{^(GET|POST|PUT|PATCH|DELETE) (/\S*)$}) { $route = "$1 $2"; }
+            else { bad("$f:$line: đường gọi \"$pat\" không nêu phương thức (GET|POST|PUT|PATCH|DELETE /đường)"); next; }
+        } else {
+            if ($pat !~ m{^/\S*$} || $pat =~ /[*{}]/) {
+                bad("$f:$line: đường Gin sai khuôn hoặc có wildcard: $pat"); next;
+            }
+            $pat =~ s{(^|/):([^/]+)}{$1 . "{" . $2 . "}"}ge;
+            $route = "$method $pat";
+        }
+        bad("$f:$line: route đăng ký hai lần: $route (trước ở $routes{$route})") if exists $routes{$route};
+        $routes{$route} = "$f:$line";
     }
     push @apierr_src, $s if index($f, "$apierr/") == 0;
     push @authz_src, $s if index($f, "$be/internal/authz/") == 0;

@@ -376,6 +376,69 @@ c="$(base door_no_matrix)"; with_door "$c"
 rm "$c/02-vai-va-quyen.md"
 check "37 có cửa mà không có file ma trận ⇒ đỏ" 1 "không có ma trận" "$(run "$c")"
 
+# Route Gin và chuyển tiếp net/http: cùng tập route chuẩn hoá.
+gin_route() {
+  local c="$1"
+  with_route "$c"
+  put "$c/be/internal/order/http.go" <<'EOF'
+package order
+func Routes(r *gin.Engine) {
+  r.GET("/orders/:id", get)
+  r.
+    POST (
+      "/orders/:id"
+      , post)
+}
+EOF
+}
+c="$(base gin_ok)"; gin_route "$c"
+check 'Gin đúng, :id và đăng ký nhiều dòng' 0 '2 đường gọi ở hợp đồng, 2 ở code' "$(run "$c")"
+c="$(base gin_method)"; gin_route "$c"
+edit "$c/be/internal/order/http.go" 's/GET/PUT/'
+check 'Gin sai phương thức' 1 'chỉ ở code: PUT /orders/{id}' "$(run "$c")"
+c="$(base gin_parameter)"; gin_route "$c"
+edit "$c/be/internal/order/http.go" 's/:id/:ma/g'
+check 'Gin sai tên tham số' 1 'chỉ ở code: GET /orders/{ma}' "$(run "$c")"
+c="$(base gin_duplicate)"; gin_route "$c"
+printf '\nfunc duplicate() { r.HandleFunc("GET /orders/{id}", get) }\n' >> "$c/be/internal/order/http.go"
+check 'route trùng khác khuôn' 1 'http.go:10: route đăng ký hai lần' "$(run "$c")"
+c="$(base gin_duplicate_same)"; gin_route "$c"
+printf '\nr.GET("/orders/:id", get)\n' >> "$c/be/internal/order/http.go"
+check 'route trùng cùng khuôn' 1 'http.go:10: route đăng ký hai lần' "$(run "$c")"
+c="$(base gin_comment)"; gin_route "$c"
+edit "$c/be/internal/order/http.go" 's/r\.GET/\/\/r.GET/; s/r\.\n/\/\*r.\n/; s/, post\)/, post)\*\//'
+check 'route trong chú thích không tính' 1 'chỉ ở hợp đồng: GET /orders/{id}' "$(run "$c")"
+c="$(base old_comment)"; with_route "$c"
+edit "$c/be/internal/order/http.go" 's/mux\.HandleFunc/\/\/mux.HandleFunc/; s/mux\.HandleFunc\(\n/\/\*mux.HandleFunc(\n/; s/, post\)/, post)*\//'
+check 'route cũ trong chú thích không tính' 1 'chỉ ở hợp đồng: GET /orders/{id}' "$(run "$c")"
+for kind in Group Any Handle concat wildcard brace variable sprintf raw; do
+  c="$(base "gin_bad_$kind")"
+  case "$kind" in
+    Group) call='r.Group("/a")'; want='không nhận .Group(' ;;
+    Any) call='r.Any("/a", h)'; want='không nhận .Any(' ;;
+    Handle) call='r.Handle("POST", "/a", h)'; want='không nêu phương thức' ;;
+    concat) call='r.GET("/a" + x, h)'; want='không đọc được mẫu đường gọi' ;;
+    wildcard) call='r.GET("/a/*path", h)'; want='wildcard' ;;
+    brace) call='r.GET("/a/{id}", h)'; want='đường Gin sai khuôn' ;;
+    variable) call='r.GET(path, h)'; want='không đọc được mẫu đường gọi' ;;
+    sprintf) call='r.GET(fmt.Sprintf("/a"), h)'; want='không đọc được mẫu đường gọi' ;;
+    raw) call='r.GET(`/a`, h)'; want='không đọc được mẫu đường gọi' ;;
+  esac
+  printf 'package order\nfunc x() { %s }\n' "$call" | put "$c/be/internal/order/http.go"
+  got="$(run "$c")"
+  check "Gin cấm $kind" 1 "$want" "$got"
+  check "Gin $kind có file:dòng" 1 'http.go:2:' "$got"
+done
+c="$(base comment_strings)"
+put "$c/be/internal/order/http.go" <<'EOF'
+package order
+var a = "// r.GET(\"/not-a-route\", h)"
+var b = `/* r.Group("/not-a-route") */`
+// r.GET("/x", h)
+/* r.HandleFunc("POST /y", h) */
+EOF
+check 'chuỗi và chú thích không thành route' 0 'check-api-contract: PASS' "$(run "$c")"
+
 if [ "$fails" -eq 0 ]; then
   echo "check-api-contract.test: OK"
 else

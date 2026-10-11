@@ -2,11 +2,11 @@
 # Gate 1 — the change builds and its tests pass.
 #
 # gate.sh calls it after the file-only gates, and SKIPS it when the turn changed documentation
-# only (ADR-005) — that is why Gates 1b · 1c · 1d · 1e · 1f · 1g live outside this script and
+# only (ADR-005) — that is why Gates 1b · 1c · 1d · 1e · 1f · 1g · 1h live outside this script and
 # run on every turn. Run by hand: ./scripts/verify.sh
 #
 # What it runs, in order; each step runs only when its trigger exists:
-#   be    — be/go.mod present: gofmt must list nothing, go vet, go build.
+#   be    — be/go.mod present: gofmt must list nothing, go vet, go build, check-sqlcgen.sh (regenerate in a temporary tree and compare).
 #           be-check.sh runs when be/, db/, compose.yaml or scripts/be-check.sh
 #           changed; it requires Docker and fails if Docker is unavailable. It runs the
 #           QC-17 test-name check first, so a turn that changes only be/ is checked (F-061).
@@ -34,6 +34,8 @@ if [ -f "be/go.mod" ]; then
   (cd be && go vet ./...)
   echo "[be] build"
   (cd be && go build ./...)
+  echo "[be] scripts/check-sqlcgen.sh"
+  "$(cd "$(dirname "$0")" && pwd)"/check-sqlcgen.sh
   if [ -n "$(git status --porcelain --untracked-files=all -- be db compose.yaml scripts/be-check.sh)" ]; then
     echo "[be] scripts/be-check.sh"
     "$(cd "$(dirname "$0")" && pwd)"/be-check.sh

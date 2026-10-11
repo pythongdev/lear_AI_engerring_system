@@ -9,9 +9,13 @@
 #   ghi trong thân hàm $$ thuộc migration; REVOKE INSERT/UPDATE FROM shop_app
 #   giữ riêng loại ghi ấy; GRANT UPDATE (cột…) TO shop_app đứng sau trao lại
 #   đúng các cột ấy, REVOKE đứng sau nữa rút cả quyền cột (như PostgreSQL). --list in bảng<TAB>loại<TAB>cột hoặc -<TAB>gói/cửa.
+#   sqlc.yaml theo đúng khuôn ADR-093: mỗi mục một miền, đủ sql/ và các cửa;
+#   nguồn đã chuyển có một annotation và một câu. Không chạy sqlc.
 # ĐỎ KHI NÀO: hai cửa chung ô, tên cửa sai, câu ghi ngoài cửa, bảng đích không
 #   nhận ra, SET không đọc ra cột, ghi ô thuộc migration; DELETE/TRUNCATE/MERGE/
 #   COPY không có ô. Mỗi lỗi một dòng có file và dòng khi xác định được.
+#   Cấu hình lệch khuôn, annotation/câu/tên sai; sqlcgen thiếu mục, thiếu nguồn
+#   hoặc lệch nguồn. Chỉ từng hằng backtick khớp nguồn được miễn câu ghi ngoài cửa.
 # KHÔNG BẮT: SQL động ghép từ nhiều chuỗi; không phân tích ngữ nghĩa Go, không
 #   chứng minh quyền hay giao dịch. Không kiểm cột có trong schema hay không.
 #   Bỏ file Go test và SQL testdata ngoài cửa; SELECT FOR UPDATE là câu đọc.
@@ -55,6 +59,59 @@ sub clean {
 sub table_name { my $t = lc shift; $t =~ s/\s//g; $t =~ s/^shop\.//; return $t; }
 sub error_at { my ($f, $line, $msg) = @_; print "$f:$line: $msg\n"; $failed = 1; }
 sub line_at { my ($s, $at) = @_; return 1 + (substr($s, 0, $at) =~ tr/\n/\n/); }
+# Khuôn sqlc duy nhất: đọc tuần tự, không chấp nhận khoá lạ hoặc lặp.
+my (%converted, %sources);
+my $config = "$be/sqlc.yaml";
+if (-f $config) {
+    my @lines = split /\n/, read_file($config);
+    my @rows;
+    for my $i (0..$#lines) {
+        next if $lines[$i] =~ /^\s*(?:#.*)?$/;
+        push @rows, [$lines[$i], $i + 1];
+    }
+    my $take = sub {
+        my ($pattern, $label) = @_;
+        my $row = shift @rows;
+        if (!$row || $row->[0] !~ $pattern) {
+            error_at($config, $row ? $row->[1] : scalar(@lines), "lệch khuôn sqlc.yaml: $label");
+            return undef;
+        }
+        return $row;
+    };
+    $take->(qr/^version: "2"$/, 'version');
+    $take->(qr/^sql:$/, 'sql');
+    error_at($config, 2, 'lệch khuôn sqlc.yaml: thiếu mục') unless @rows;
+    while (@rows) {
+        my $entry = $take->(qr/^  - engine: postgresql$/, 'engine') or last;
+        $take->(qr/^    schema: \.\.\/db\/migrations$/, 'schema') or last;
+        $take->(qr/^    queries:$/, 'queries') or last;
+        my (@queries, %queries);
+        while (@rows && $rows[0][0] =~ /^      - (\S+)$/) {
+            my $q = $1; my $row = shift @rows;
+            push @queries, [$q, $row->[1]];
+            error_at($config, $row->[1], "queries lặp $q") if $queries{$q}++;
+        }
+        $take->(qr/^    gen:$/, 'gen') or last;
+        $take->(qr/^      go:$/, 'go') or last;
+        $take->(qr/^        package: sqlcgen$/, 'package') or last;
+        my $out = $take->(qr{^        out: internal/[a-z][a-z0-9_]*/internal/sqlcgen$}, 'out') or last;
+        $out->[0] =~ m{out: internal/([^/]+)/};
+        my $domain = $1;
+        $take->(qr/^        sql_package: pgx\/v5$/, 'sql_package') or last;
+        error_at($config, $entry->[1], "hai mục cùng miền $domain") if $converted{$domain}++;
+        my $root = "internal/$domain/sql";
+        for my $q (@queries) {
+            error_at($config, $q->[1], "queries ngoài $root: $q->[0]")
+                unless $q->[0] =~ m{^\Q$root\E(?:/[a-z][a-z0-9_]*)?$};
+        }
+        error_at($config, $entry->[1], "thiếu queries $root") unless $queries{$root};
+        for my $dir (sort glob "$be/$root/*") {
+            next unless -d $dir;
+            my $q = substr($dir, length($be) + 1);
+            error_at($config, $entry->[1], "thiếu thư mục cửa $q") unless $queries{$q};
+        }
+    }
+}
 my @migrations;
 if (-d $mig) {
     opendir my $dh, $mig or die "$mig: $!\n";
@@ -129,6 +186,29 @@ sub assignments {
 }
 my @paths;
 find({wanted => sub { push @paths, $File::Find::name; }, no_chdir => 1}, $be);
+# Đọc nguồn trước code sinh: tên query là khoá, không phải tên file.
+for my $f (sort @paths) {
+    if (-d $f && $f =~ m{^\Q$be\E/internal/([^/]+)/internal/sqlcgen$} && !$converted{$1}) {
+        error_at($f, 1, 'sqlcgen của miền không có mục trong sqlc.yaml');
+    }
+    next unless -f $f && $f =~ m{^\Q$be\E/internal/([^/]+)/sql/.*\.sql$} && $converted{$1};
+    my $domain = $1;
+    my $raw = read_file($f);
+    my @names = ($raw =~ /^-- name: ([A-Za-z_][A-Za-z0-9_]*) :(?:one|many|exec|execrows|execresult|execlastid|copyfrom|batchexec|batchmany|batchone)[ \t]*$/mg);
+    if (@names != 1) { error_at($f, 1, 'phải có đúng một dòng -- name:'); }
+    my @stmts = grep { /\S/ } split /;/, clean($raw);
+    error_at($f, 1, 'phải có đúng một câu SQL') if @stmts != 1;
+    next unless @names == 1;
+    my $name = $names[0];
+    if (exists $sources{$domain}{$name}) { error_at($f, 1, "trùng tên query $name trong miền $domain"); next; }
+    # sqlc bỏ phần trước annotation, dấu ; cuối và khoảng trắng ngoài câu.
+    $raw =~ s/\A.*?(?=^-- name: )//ms;
+    $raw =~ s/\s+\z//;
+    $raw =~ s/;\z//;
+    $raw .= "\n";
+    $raw =~ s/[ \t]+$//mg;
+    $sources{$domain}{$name} = $raw;
+}
 for my $f (sort @paths) {
     next if $f eq $be;
     my $rel = substr($f, length($be) + 1);
@@ -146,6 +226,20 @@ for my $f (sort @paths) {
     next if !$door && $f =~ /\.sql$/ && $rel =~ m{(?:^|/)testdata/};
     $files++;
     my $s = read_file($f);
+    if ($rel =~ m{^internal/([^/]+)/internal/sqlcgen/.*\.go$} && $converted{$1}) {
+        my $domain = $1;
+        # Chỉ che literal của hằng đã khớp; mọi phần còn lại vẫn bị luật cũ đọc.
+        $s =~ s{//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\])*"|`[^`]*`|'(?:\\.|[^'\\])*'|\bconst\s+[A-Za-z_]\w*\s*=\s*`(-- name: ([A-Za-z_]\w*)[^`]*)`}{
+            my ($whole, $body, $name, $at) = ($&, $1, $2, $-[0]);
+            my $norm = $body // ''; $norm =~ s/[ \t]+$//mg;
+            if (!defined $body) { $whole; }
+            elsif (!exists $sources{$domain}{$name}) {
+                error_at($f, line_at($s, $at), "thiếu nguồn query $name"); $whole;
+            } elsif ($norm ne $sources{$domain}{$name}) {
+                error_at($f, line_at($s, $at), "lệch nguồn query $name"); $whole;
+            } else { blank($whole); }
+        }gse;
+    }
     $s = clean($s) if $f =~ /\.sql$/;
     my $write = qr/\b(?:INSERT\s+INTO|UPDATE\s+(?:ONLY\s+)?$target(?:\s+(?:AS\s+)?$id)?\s+SET|DELETE\s+FROM|TRUNCATE|MERGE\s+INTO|COPY\s+$target\s*(?:FROM\b|\()|CopyFrom\s*\()/i;
     if (!$door || $f =~ /\.go$/) {
