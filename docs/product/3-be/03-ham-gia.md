@@ -47,15 +47,16 @@ nó **và** nó không có điều kiện, hoặc ít nhất một lựa chọn 
 (`option_group_prerequisite` — *Lượng nhân chỉ có khi nhân ≠ Chay* là hai dòng, đọc theo tập).
 
 **Từ chối, không sửa hộ, không tự điền.** Cửa không bao giờ thêm, bỏ hay đổi một lựa chọn để yêu cầu
-thành hợp lệ (`I-010`) — kể cả mặc định *Thịt · Thường* của luật 8: dữ liệu chưa có chỗ cất mặc định,
-nên dòng thiếu nhân bị từ chối (**F-059**).
+thành hợp lệ (`I-010`) — kể cả mặc định *Thịt · Thường* của luật 8: dòng thiếu nhân bị từ chối. Mặc
+định là **dữ liệu** từ 2026-10-11 (cờ `menu_option.is_default`, **ADR-094**, đóng **F-059**) và chỉ để
+màn gọi món **chọn sẵn** — khách thấy, đổi được, rồi gửi đủ mã lựa chọn. `Tinh` không đọc cờ ấy.
 
 ## 2. Ba đường gọi
 
 | Đường | Là gì | Ghi gì |
 |---|---|---|
 | `POST /price-quotes` | **tính thử** — khách, quầy, ai cũng gọi được; trường giá gửi kèm bị bỏ (`I-013`) | không |
-| `GET /menu` | món đang bán, nhóm tuỳ chọn, và **giá của mọi tổ hợp hợp lệ** — mỗi giá tính bằng `gia.Tinh`. FE nhận kết quả, không nhận công thức (`01-hop-dong-api.md` §5) | không |
+| `GET /menu` | món đang bán, nhóm tuỳ chọn (mỗi lựa chọn mang cờ **mặc định** để chọn sẵn — **ADR-094**), và **giá của mọi tổ hợp hợp lệ** — mỗi giá tính bằng `gia.Tinh`. FE nhận kết quả, không nhận công thức (`01-hop-dong-api.md` §5) | không |
 | cửa `don/tao_luot_goi` | **ghi một lượt gọi** — gọi `gia.Tinh` trong giao dịch của cửa **trước** mọi câu ghi đơn và dòng đơn, rồi chép đúng kết quả vào dòng đơn và ảnh chụp | `sales_order` · `order_line` · `order_line_component` · `order_line_option` |
 
 Vì cả ba gọi cùng một hàm, con số khách thấy ở tính thử và con số quầy ghi vào đơn chỉ khác được khi
@@ -81,7 +82,7 @@ Ca của test sửa menu dùng menu **giả** riêng (`test-…`), không chạm
 
 | Test | Chứng minh |
 |---|---|
-| `be/internal/gia/gia_test.go` | §4.8 qua tính thử và qua menu; giá gửi lên bị bỏ; năm hình tổ hợp sai; món ngừng bán; yêu cầu sai hình |
+| `be/internal/gia/gia_test.go` | §4.8 qua tính thử và qua menu; giá gửi lên bị bỏ; năm hình tổ hợp sai; món ngừng bán; yêu cầu sai hình; cờ mặc định trên menu đúng luật 8 đọc lúc chạy (`perl db/seed/seed.pl --defaults-tsv`), tổ hợp chọn sẵn có giá trên menu và qua tính thử |
 | `be/internal/don/don_test.go` | §4.8 qua cửa ghi đơn = con số tính thử; quyền của quầy; một dòng sai ⇒ cả lượt gọi bị từ chối; sửa menu sau khi đặt ⇒ đơn cũ đứng nguyên, lượt gọi mới cùng phiên ăn giá mới; món ngừng bán bị cửa từ chối |
 | `be/internal/menu/menu_test.go` | bốn cửa của chủ quán: chỉ chủ quán, bắt buộc lý do, mỗi lần sửa một vết mang người và lý do, không đường gọi nào nhận giá suất |
 
@@ -89,7 +90,7 @@ Ca của test sửa menu dùng menu **giả** riêng (`test-…`), không chạm
 
 | Chỗ trống | Hôm nay | Ai gỡ |
 |---|---|---|
-| **Mặc định *Thịt · Thường*** (§4.6 luật 8) | không có chỗ cất; dòng thiếu nhân bị từ chối | **F-059** — trước khi pha 4 dựng màn gọi món |
+| **Mặc định *Thịt · Thường*** (§4.6 luật 8) | **đã cất** 2026-10-11 (`T-169`, **ADR-094**); `GET /menu` trả cờ, màn gọi món chọn sẵn; dòng thiếu nhân vẫn bị từ chối. Chủ quán đổi mặc định: chưa có cửa — sửa owner rồi dựng lại dữ liệu mồi | cửa đổi mặc định — khi chủ quán cần |
 | **Đường gọi HTTP, mở phiên, khách QR** | đã dựng ở `P3-07` | [luồng tại bàn](04-luong-tai-ban.md) |
 | **Ba kênh không gắn bàn**, bốn hình liên hệ (`I-022`) | đã có đường web và hotline ở `P3-08` | [luồng mang đi](05-luong-mang-di.md) |
 | **Giờ bán · tạm dừng · quán mù** (`I-008`) trước khi tạo lượt gọi | đã xét cả năm kênh ở `P3-08`; cửa đọc `shop_blind_spell`, cách máy phát hiện và cửa ghi khoảng mù thuộc `P3-12` | [luồng mang đi](05-luong-mang-di.md) · `P3-12` |

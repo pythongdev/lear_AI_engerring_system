@@ -48,7 +48,7 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ## Mục lục
 
-Tổng: 59 finding — 55 Fixed/Resolved/Closed, 4 Open (đếm lại ngày 2026-10-06, lúc ghi F-059 ở P3-06; trước đó cùng ngày, *58 — 55/3*, lúc đóng F-058 ở P3-04; trước đó 2026-10-05, *58 — 54/4*, lúc ghi F-058 ở P3-01; trước đó cùng ngày, *57 — 54/3*, lúc đóng F-047 ở T-137; trước đó cùng ngày, *57 — 53/4*, lúc đóng F-056 · F-057 ở T-134; trước đó cùng ngày, *57 — 51/6*, lúc ghi F-056 · F-057 ở lượt review T-133; trước đó cùng ngày, *55 — 51/4*, lúc đóng F-048 ở T-133; trước đó 2026-10-01, *55 — 50/5*, lúc đóng F-050 ở T-132; trước đó cùng ngày, *55 — 49/6*, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
+Tổng: 59 hàng trong bảng dưới — 57 Fixed/Resolved/Closed, 2 Open (đếm lại ngày 2026-10-11, lúc đóng F-059 ở T-169, bằng `awk` trên cột Status; bảng **chưa có hàng** F-060…F-064 dù thân năm mục ấy đã có bên dưới — lượt này không thêm; trước đó 2026-10-06, *59 — 55/4*, lúc ghi F-059 ở P3-06; trước đó cùng ngày, *58 — 55/3*, lúc đóng F-058 ở P3-04; trước đó 2026-10-05, *58 — 54/4*, lúc ghi F-058 ở P3-01; trước đó cùng ngày, *57 — 54/3*, lúc đóng F-047 ở T-137; trước đó cùng ngày, *57 — 53/4*, lúc đóng F-056 · F-057 ở T-134; trước đó cùng ngày, *57 — 51/6*, lúc ghi F-056 · F-057 ở lượt review T-133; trước đó cùng ngày, *55 — 51/4*, lúc đóng F-048 ở T-133; trước đó 2026-10-01, *55 — 50/5*, lúc đóng F-050 ở T-132; trước đó cùng ngày, *55 — 49/6*, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
 chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
 `scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
 trôi (bài học F-001, F-005, F-006).
@@ -120,7 +120,7 @@ F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn
 | F-056 | Số đếm cuối ngày của một ngày ĐÃ đóng dấu đối soát vẫn đổi được bằng một xấp mệnh giá thêm sau, không vết — dấu không giữ con số nó ký (review T-133) | Fixed |
 | F-057 | Một ngày đóng dấu đối soát được khi số đếm hay tiền đầu két không có dòng mệnh giá nào — *chưa đếm* và *đếm ra 0* cùng một hình (review T-133) | Fixed |
 | F-058 | Bốn lời từ chối do trigger phát ra (khoá ngày đã đối soát, ADR-080) chỉ mang mã lỗi chung và một câu tiếng Việt, không mang tên theo `QC-10` — backend pha 3 không nhận ra luật nào vừa chặn (P3-01) | Fixed |
-| F-059 | Mặc định *Thịt · Thường* (`shop-facts.md` §4.6 luật 8) chưa có chỗ cất trong dữ liệu, nên cửa tạo lượt gọi từ chối dòng thiếu lựa chọn thay vì điền — pha 4 cần nó trước màn gọi món (P3-06) | Open |
+| F-059 | Mặc định *Thịt · Thường* (`shop-facts.md` §4.6 luật 8) chưa có chỗ cất trong dữ liệu, nên cửa tạo lượt gọi từ chối dòng thiếu lựa chọn thay vì điền — pha 4 cần nó trước màn gọi món (P3-06) | Fixed (T-169, 2026-10-11) |
 
 ---
 
@@ -4626,11 +4626,20 @@ nhiều nhất một), dữ liệu mồi đọc nó từ `shop-facts.md` §4.6 l
 cho yêu cầu); chọn sẵn là việc của màn hình, khách thấy và đổi được. Làm **trước** khi pha 4 dựng màn
 gọi món; hình của dấu chọn ở lượt ấy, có ADR nếu có hơn một cách.
 
+2026-10-11 (`T-169`, Claude Code, **ADR-094**): làm đúng hướng trên. Migration bước 21
+`20261011120000_mac_dinh_lua_chon` thêm `menu_option.is_default`, khoá `menu_option_one_default_per_group_key`
+(mỗi nhóm nhiều nhất một; `db/tests/i010_one_default_per_group.sql`); `db/seed/seed.pl` đọc luật 8 lúc chạy,
+dừng khi câu luật nêu tên lạ (bốn lỗi cài trên bản sao của owner, `08-du-lieu-moi.md` §3); `db-check` so cờ trong
+database với `--defaults-tsv`; `GET /menu` trả `is_default` (hợp đồng 0.13.0) và
+`TestI010_MenuChoBietMacDinhDeChonSan` so cờ với luật 8, tổ hợp chọn sẵn có giá trên menu và qua tính thử — bỏ
+cờ khỏi câu đọc ⇒ test đỏ. Cửa không đọc cờ; `TestI010_TuChoiKhongSuaHo` không đổi. Còn lại: chưa có cửa cho chủ
+quán đổi mặc định (**ADR-094** *Giới hạn có tên*).
+
 **Related task:**
-P3-06 (phát hiện) · **ADR-086** · `03-luoc-do-menu-gia.md` §5
+P3-06 (phát hiện) · `T-169` (sửa) · **ADR-086** · **ADR-094** · `03-luoc-do-menu-gia.md` §5
 
 **Status:**
-Open
+Fixed
 
 ### F-060 — Chuyển trạng thái do khách QR kích không có người để ghi vết, nên phép đối chiếu `I-016` không dựng lại được lần chuyển ấy
 

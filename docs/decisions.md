@@ -110,6 +110,7 @@ có câu trả lời mới từ người.
 | ADR-091 | **Đơn đặt trước qua điện thoại nổ ở lần nhắc đầu (giờ khách cần − 20 phút) qua cửa `don/nha_hen` (`POST /preorder-releases`, lớp `quay`) mà máy POS tự gọi theo nhịp; nhận sát giờ thì nổ ngay; đường đọc `GET /preorder-reminders` trả hai mốc nhắc và mốc đã tới** — không migration; `pickup` của khách không đổi | Đã chốt 2026-10-09 (T-142; Claude thiết kế, Codex thi công) | — | T-142 · U-077 · ADR-088 · ADR-090 · P3-12 |
 | ADR-092 | **Vết cập nhật bật chế độ nghiêm**: migration bước 20 thay thân hai hàm vết — sửa đổi nội dung, hay thêm dòng con vào cha đã có, mà giao dịch không khai lý do ⇒ `record_revision_reason_declared_check`; một ngoại lệ hẹp kiểm trong database cho lượt gọi thêm của khách QR (*Chờ thanh toán → Đang phục vụ*, F-060 vế b); `qr_code_issue` tự khai lý do; `table_session_member.person_id`, ghép bàn bắt buộc có người; lỗi cài tắt đúng trigger vết của một bảng | Đã chốt 2026-10-09 (làm ngay ở tầng database: chủ repo; hình chế độ nghiêm và ngoại lệ: phiên, T-138); đánh số lại 2026-10-10 | — | T-138 · F-046 · F-060 · ADR-081 · ADR-087 |
 | ADR-093 | **Backend đổi sang Gin v1.12.0 và sqlc v1.31.1, cấu trúc kết hợp**: handler · service · repository trong từng miền, code sinh ở `<miền>/internal/sqlcgen/` mỗi miền một gói; câu ghi vẫn một file `.sql` dưới thư mục của một cửa, thêm một dòng `-- name:`; Go 1.27.2, migrate v4.20.1; một hàm mở giao dịch, chuyển sang `platform/postgres` ở T-151; miền đã chuyển = có mục trong `sqlc.yaml`; thay điểm 1 · 6 của ADR-083; quy ước ở `QC-05` · `QC-11`…`QC-14` | Đã chốt 2026-10-10 (stack và cấu trúc: chủ repo; luật chuyển tiếp và chia task: Claude, T-149) | — | T-149…T-166 · ADR-082 · ADR-083 · ADR-084 · ADR-085 |
+| ADR-094 | **Mặc định của nhóm tuỳ chọn là dữ liệu**: cờ `menu_option.is_default`, mỗi nhóm nhiều nhất một (`menu_option_one_default_per_group_key`, migration bước 21); dữ liệu mồi đọc `shop-facts.md` §4.6 luật 8 lúc chạy; `GET /menu` trả cờ để màn gọi món chọn sẵn; cửa tạo lượt gọi và tính thử **vẫn không** tự điền (`I-010`); chưa có cửa đổi mặc định | Đã chốt 2026-10-11 (giao cho phiên, T-169; Claude) | — | T-169 · F-059 · ADR-086 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -5811,7 +5812,8 @@ công trong worktree riêng; Claude duyệt. Quyết định này **không sở 
    (luật 3, đọc theo tập ở `option_group_prerequisite`); sai bất kỳ ⇒ cả yêu cầu bị từ chối
    (`option_combination_invalid`). Thiếu lựa chọn **không** được điền mặc định: mặc định *Thịt ·
    Thường* (luật 8) chưa có chỗ cất trong dữ liệu (`03-luoc-do-menu-gia.md` §5), và điền nó bằng tên
-   lựa chọn viết trong code là bản thứ hai của sự thật — **F-059**.
+   lựa chọn viết trong code là bản thứ hai của sự thật — **F-059**. *Sửa đổi 2026-10-11 (T-169):* mặc định
+   đã có chỗ cất (**ADR-094**); vế *cửa không tự điền* của điểm này giữ nguyên.
 4. **Bốn cửa sửa menu của chủ quán**, lớp `chu_quan`: giá thành phần, phụ thu, số lượng của một thành
    phần trong suất, ngừng bán. Mỗi cửa **bắt buộc lý do** và khai nó cho trigger vết trong cùng giao
    dịch, nên mỗi lần sửa để lại *cái gì · bản trước · bản sau · ai · lúc nào* (`I-018` · `I-012` ·
@@ -6487,3 +6489,54 @@ khác nhau. Hợp đồng ngày 2026-10-11 không có cặp nào như thế. M�
 **Applies to:** `docs/product/2-db/10-quy-uoc-code.md` `QC-05` · `QC-11`…`QC-14`; `be/` · `compose.yaml` ·
 `scripts/check-write-paths.sh` · `scripts/check-api-contract.sh` · `scripts/verify.sh`; task `T-149`…`T-166`;
 **ADR-083** điểm 1 · 6 (thay) · điểm 3 (đổi chỗ ở `T-151`).
+
+### ADR-094 — Mặc định của nhóm tuỳ chọn là dữ liệu trên `menu_option`, chỉ để màn gọi món chọn sẵn; cửa vẫn không tự điền
+
+**Trạng thái:** Đã chốt 2026-10-11, **giao cho phiên** (task `T-169`; chủ repo giao *"F-059 … hãy đọc kĩ và
+hoàn thành"*). Claude Code thiết kế và thi công. Quyết định này **không sở hữu** luật mặc định — luật ở
+`master_plan/shop-facts.md` §4.6 luật 8 (lời chủ quán) — và không đổi tầng của `I-010` (tầng 3, cửa từ chối).
+
+**Decision:**
+
+1. **Chỗ cất:** cột `menu_option.is_default` (`boolean`, mặc định `false`) và khoá duy nhất từng phần
+   `menu_option_one_default_per_group_key` trên `option_group_id` khi cờ bật — mỗi nhóm **nhiều nhất một**
+   mặc định; nhóm không có mặc định là hợp lệ. Migration bước 21 `20261011120000_mac_dinh_lua_chon`; file lùi
+   từ chối khi có cờ đã bật.
+2. **Ai ghi:** dữ liệu mồi (`db/seed/seed.pl`) đọc luật 8 **lúc chạy** — mỗi nhóm lấy cụm *"chữ đầu tên nhóm +
+   tên lựa chọn"* dài nhất trong câu luật; câu nêu một tên không có ở §4.4, mất chữ *mặc định* hay không nêu
+   nhóm nào ⇒ bộ dựng dừng. Không tên lựa chọn nào viết trong `db/` hay `be/` (**F-001**). **Chưa có cửa**
+   cho chủ quán đổi mặc định: đổi là sửa owner rồi dựng lại dữ liệu mồi, như mọi phần menu chưa có cửa.
+   Vì không đường gọi nào ghi cờ, dòng `x-constraint-errors` của khoá mới là `internal`.
+3. **Ai đọc:** `GET /menu` trả `is_default` trên **mỗi** lựa chọn của mỗi nhóm (hợp đồng 0.13.0) để màn gọi
+   món chọn sẵn. `gia.Tinh` — và vì thế tính thử cùng cửa tạo lượt gọi — **không đọc** cờ: dòng thiếu lựa
+   chọn vẫn bị từ chối `option_combination_invalid` (**ADR-086** điểm 3).
+
+**Why:**
+
+- **Luật 8 có lời chủ quán nhưng không chỗ nào trong máy giữ** (**F-059**): màn gọi món muốn chọn sẵn phải
+  tự viết *Thịt · Thường* — bản thứ ba của một sự thật mà owner là `shop-facts.md`, gãy im lặng khi chủ quán
+  đổi tên lựa chọn.
+- **Chọn sẵn ở màn hình, không điền ở cửa:** `I-010` cấm hệ thống *thêm* tuỳ chọn để biến yêu cầu thành hợp
+  lệ. Chọn sẵn thì khách **thấy** lựa chọn trước khi gửi và đổi được; điền ở cửa thì đơn mang một lựa chọn
+  khách không bấm, đúng hình *sửa hộ* mà `I-010` đóng.
+- **Cờ trên lựa chọn thay vì khoá ngoại trên nhóm:** một cột và một khoá duy nhất từng phần giữ trọn luật
+  *nhiều nhất một*; khoá ngoại `option_group.default_menu_option_id` cần thêm khoá hai cột để buộc lựa chọn
+  thuộc đúng nhóm ấy, và `GET /menu` vẫn phải nối lại để đánh dấu từng lựa chọn.
+
+**Rejected alternatives:**
+
+- *Cửa tạo lượt gọi tự điền mặc định khi dòng thiếu nhóm.* Bác: *Why* thứ hai; giữ **ADR-086** điểm 3.
+- *Mặc định theo từng món (`menu_item_option_group.default_menu_option_id`).* Bác: luật 8 nói một mặc định cho
+  mọi suất, và nhóm dùng chung là thiết kế của `03-luoc-do-menu-gia.md` §1 — khai lại mỗi suất là năm chỗ
+  phải sửa cùng lúc.
+- *`option_group.default_menu_option_id`.* Bác: *Why* thứ ba.
+- *Migration tự bật cờ theo tên lựa chọn.* Bác: tên lựa chọn trong migration là bản chép của owner (**F-001**);
+  owner được đọc lúc chạy bởi dữ liệu mồi.
+
+**Giới hạn có tên:** không cửa nào đổi mặc định (thêm khi chủ quán cần, lớp `chu_quan`, bắt buộc lý do như bốn
+cửa sửa menu của **ADR-086** điểm 4); database **không** buộc tổ hợp các mặc định là một tổ hợp hợp lệ — test
+`TestI010_MenuChoBietMacDinhDeChonSan` chấm điều ấy trên menu thật.
+
+**Applies to:** `T-169`; `db/migrations/20261011120000_mac_dinh_lua_chon.*` · `db/seed/seed.pl` ·
+`be/internal/gia/`; `docs/product/2-db/03-luoc-do-menu-gia.md` · `07-thu-tu-migration.md` · `08-du-lieu-moi.md` ·
+`docs/product/3-be/03-ham-gia.md` · `openapi.yaml`; **F-059** · **ADR-086**.

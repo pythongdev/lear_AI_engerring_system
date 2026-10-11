@@ -136,6 +136,7 @@ type MenuOption struct {
 	Name          string
 	SurchargeVnd  int64
 	CreatedAt     pgtype.Timestamptz
+	IsDefault     bool
 }
 
 type OpeningFloat struct {

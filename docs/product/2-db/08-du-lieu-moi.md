@@ -47,7 +47,7 @@ vai dựng lược đồ: dữ liệu mồi đi đúng đường quyền mà d�
 | `dining_table` | §1 dòng *Số bàn* | một bàn mỗi số, tên `1`…*N* — §1 chốt bàn mang tên theo số, không khu, không tên khác |
 | `qr_code` | — | mỗi bàn một mã, sinh **qua** `qr_code_issue` (`I-023`, `02-luoc-do-ban-hang.md` §2 hàng `I-023`), không chèn thẳng |
 | `menu_component` | §4.2 | một hàng một họ thành phần; giá gốc là cột *Chay* (§4.6 luật 2); *nhận nhân* khi ba cột giá không bằng nhau |
-| `option_group` · `menu_option` | §4.4 bảng đầu | tên nhóm là chữ đậm của cột *Nhóm tuỳ chọn*; phụ thu là cột *Món lẻ* — mức cho **mỗi** phần nhận nhân (§4.4 câu dưới bảng, §4.6 luật 5) |
+| `option_group` · `menu_option` | §4.4 bảng đầu · §4.6 luật 8 | tên nhóm là chữ đậm của cột *Nhóm tuỳ chọn*; phụ thu là cột *Món lẻ* — mức cho **mỗi** phần nhận nhân (§4.4 câu dưới bảng, §4.6 luật 5); cờ mặc định đọc từ luật 8 (`T-169`) |
 | `option_group_prerequisite` | §4.4 cột *Nhóm tuỳ chọn*, cụm *khi … ≠ …* | tập điều kiện = mọi lựa chọn của nhóm được nhắc, trừ lựa chọn sau dấu ≠ (§4.6 luật 3) |
 | `menu_item` | §4.9 cột *Chủ quán gọi tên* | mỗi hàng một dòng menu; tên hiển thị ở §2 |
 | `menu_item_component` | §4.5 cột *Bếp làm ra* | *số · loại từ · tên*, nối bằng ` + `; tên nối về họ thành phần của §4.2 |
@@ -102,6 +102,11 @@ Bổ sung `P2A-06` (2026-10-01): bước 4 đối chiếu `perl db/seed/seed.pl 
 với tên trong database bằng `comm -3` trên hai danh sách đã `sort`; rỗng mới PASS,
 lệch thì FAIL và in cả hai danh sách. Số hàng và số hàng chưa có đơn vị lấy từ database.
 
+Bổ sung `T-169` (2026-10-11, **ADR-094**): bộ dựng đọc **mặc định của nhóm** từ §4.6 luật 8 — mỗi nhóm
+lấy cụm *"chữ đầu tên nhóm + tên lựa chọn"* dài nhất trong câu luật — và bật cờ `menu_option.is_default`
+của đúng lựa chọn ấy; không tên lựa chọn nào viết trong script. Bước 4 so `perl db/seed/seed.pl
+--defaults-tsv` với cờ trong database bằng `comm -3`, như tên hàng mua vào.
+
 **Biết kêu** — cùng lệnh, chạy trên một bản sao hỏng của owner (biến môi trường `SHOP_FACTS`, chỉ để
 thử; mặc định luôn là owner):
 
@@ -116,6 +121,9 @@ thử; mặc định luôn là owner):
 | §8.4 một ô *Đơn vị mua* rỗng | stderr gọi tên hàng thiếu đơn vị, exit 1, stdout rỗng |
 | §8.4 tên lặp trong cùng một danh sách sau `lc` và bỏ khoảng trắng đầu/cuối | stderr gọi tên lặp và danh sách, exit 1, stdout rỗng |
 | §8.4 thêm một hàng hợp lệ, tên mới vào bảng (ca không hỏng) | `--supply-names` thêm đúng một dòng; không khoá số hàng trong code |
+| §4.6 luật 8 nêu một nhân không có ở §4.4 (*nhân Bò*) | bộ dựng dừng, gọi tên nhóm và câu luật, exit 1 (`T-169`) |
+| §4.6 luật 8 mất chữ *mặc định* · không nêu nhóm nào | bộ dựng dừng, in câu luật, exit 1 (`T-169`) |
+| §4.6 luật 8 đổi sang *nhân Thịt + mộc nhĩ* (ca không hỏng) | `--defaults-tsv` ra *Nhân = Thịt + mộc nhĩ* — cụm dài nhất thắng, *Thịt* không ăn mất tên dài hơn (`T-169`) |
 
 ---
 
@@ -127,7 +135,7 @@ thử; mặc định luôn là owner):
 | **Đơn vị mua của các tên chỉ có ở danh sách 2026-09-06** | để trống (`NULL`); câu hỏi ở `work/admin-questions.md` B12. Lời chủ quán 2026-09-30 cho các tên ấy còn là **bản nháp ở B12, chưa về owner** nên bộ dựng không đọc; về bảng *Hàng mua vào* của §8.4 thì lần dựng sau tự mang đơn vị | chủ quán qua owner §8.4 |
 | **Số chỗ ngồi của bàn** (§1) | không cột nào cất; dữ liệu mồi không dựng | — cần thì một migration mới |
 | **Ô giá ⚠ của giò bán rời** (`S-9`, §7.2) | dựng đúng ô owner đang ghi; ca 12 khớp ô ấy. Chủ quán đọc ô khác ⇒ owner đổi, dữ liệu mồi đổi theo | chủ quán |
-| **Bắt buộc chọn một nhân** và **mặc định Thịt · Thường** (§4.4 · §4.6 luật 7 · 8) | không cất (`03-luoc-do-menu-gia.md` §5); các ca của §4.8 đều ghi rõ lựa chọn nên không cần mặc định | pha 3 |
+| **Bắt buộc chọn một nhân** (§4.4 · §4.6 luật 7) | không cất (`03-luoc-do-menu-gia.md` §5); cửa của `P3-06` giữ. **Mặc định Thịt · Thường** (luật 8) **dựng từ 2026-10-11** — xem §3 bổ sung `T-169` | `P3-06` · `T-169` |
 | **Lượt chỉ sửa `shop-facts.md`** không gọi bộ kiểm | cổng coi file `.md` là tài liệu và bỏ qua `verify.sh`, nên đổi giá ở owner **không** tự chạy lại các ca giá | lượt sửa giá chạy tay `./scripts/db-check.sh` |
 | **Dựng lại trên database đã có dữ liệu** | không làm được — chỉ vào database rỗng | `P2-09` (thứ tự dựng lại từ số không) |
 

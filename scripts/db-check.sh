@@ -251,6 +251,20 @@ if seed_sql="$(perl db/seed/seed.pl 2>&1)"; then
     else
       fail "tên hàng mua vào — không đọc được owner hoặc database"
     fi
+    # T-169, ADR-094: mặc định của nhóm trong database = mặc định đọc từ §4.6 luật 8.
+    if defaults="$(perl db/seed/seed.pl --defaults-tsv)" &&
+       stored_defaults="$(psql_q -F "$(printf '\t')" -c 'SELECT g.name, o.name FROM menu_option o
+           JOIN option_group g ON g.id = o.option_group_id WHERE o.is_default')"; then
+      d="$(comm -3 <(printf '%s\n' "$defaults" | sort) <(printf '%s\n' "$stored_defaults" | sort))"
+      if [ -n "$defaults" ] && [ -z "$d" ]; then
+        echo "PASS mặc định của nhóm — $(printf '%s\n' "$defaults" | tr '\t' '=' | paste -sd ',' - | sed 's/,/ · /g') (§4.6 luật 8 ↔ menu_option.is_default)"
+      else
+        fail "mặc định của nhóm — owner và database lệch:"
+        printf 'owner:\n%s\ndatabase:\n%s\n' "$defaults" "$stored_defaults" | sed 's/^/     /'
+      fi
+    else
+      fail "mặc định của nhóm — không đọc được owner hoặc database"
+    fi
     if out="$(perl db/seed/seed.pl --price-cases | psql_f -f - 2>&1)"; then
       echo "PASS §4.8 ca giá"; printf '%s\n' "$out" | sed 's/^psql:[^N]*NOTICE: */     /'
     else

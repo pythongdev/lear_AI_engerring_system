@@ -10,6 +10,7 @@
 #   perl db/seed/seed.pl                 # SQL dựng dữ liệu mồi (vai shop_app, một giao dịch)
 #   perl db/seed/seed.pl --supply-names  # tên hàng mua vào sẽ chèn, mỗi dòng một tên
 #   perl db/seed/seed.pl --price-cases   # SQL tính lại các ca giá của §4.8 từ database
+#   perl db/seed/seed.pl --defaults-tsv  # mặc định đọc từ §4.6 luật 8, mỗi dòng: nhóm <TAB> lựa chọn
 #   perl db/seed/seed.pl --price-cases-tsv  # các ca §4.8 cho test cửa giá của pha 3 (P3-06), mỗi dòng:
 #        số ca <TAB> dòng menu <TAB> số suất <TAB> nhóm=lựa chọn|… <TAB> giá kỳ vọng hoặc REJECT
 #
@@ -136,6 +137,31 @@ for my $x (grep { $_->{req_group} } @grp) {
   $x->{req} = [ grep { $_ ne $x->{req_not} } map { $_->[0] } @{ $ref->{opt} } ];
   die_owner("§4.4: '$x->{req_not}' không phải lựa chọn của '$ref->{name}'")
     if @{ $x->{req} } == @{ $ref->{opt} };
+}
+
+# --- §4.6 luật 8: mặc định của nhóm (T-169, ADR-094) -------------------------------------
+# Câu luật nói "<chữ đầu tên nhóm, viết thường> <tên lựa chọn>" — hình của owner hôm nay. Mỗi nhóm lấy
+# cụm DÀI NHẤT khớp (một tên lựa chọn có thể là đầu của tên khác); nhóm không có cụm nào thì không có
+# mặc định. Không đọc ra mặc định nào ⇒ owner đổi hình câu, FAIL.
+{
+  my ($rule) = grep { /^8\.\s/ } section('### 4.6 ');
+  die_owner('§4.6: không thấy luật 8') unless defined $rule;
+  $rule = lc clean($rule);
+  die_owner("§4.6 luật 8 không còn nói về mặc định: '$rule'") unless $rule =~ /mặc định/;
+  my $found = 0;
+  for my $g (@grp) {
+    my ($kw) = split ' ', lc $g->{name};
+    my ($best) = sort { length $b->[0] <=> length $a->[0] }
+                 grep { my $o = lc $_->[0]; $rule =~ /(?<!\p{L})\Q$kw $o\E(?!\p{L})/ } @{ $g->{opt} };
+    if (!$best) {
+      die_owner("§4.6 luật 8 nói '$kw …' mà không lựa chọn nào của '$g->{name}' (§4.4) khớp: '$rule'")
+        if $rule =~ /(?<!\p{L})\Q$kw\E\s+\p{L}/;
+      next;
+    }
+    $g->{default} = $best->[0];
+    $found++;
+  }
+  die_owner("§4.6 luật 8: không đọc ra lựa chọn mặc định nào của §4.4 trong '$rule'") unless $found;
 }
 
 # Ba cột giá §4.2 phải là giá chay + phụ thu §4.4 (§4.6 luật 2 · 5); lệch ⇒ hai owner cãi nhau.
@@ -279,6 +305,7 @@ my $mode = $ARGV[0] // '';
 if ($mode eq '--supply-names') { print "$_->[0]\n" for @supplies; exit 0 }
 if ($mode eq '--price-cases') { price_cases(); exit 0 }
 if ($mode eq '--price-cases-tsv') { price_cases_tsv(); exit 0 }
+if ($mode eq '--defaults-tsv') { print "$_->{name}\t$_->{default}\n" for grep { $_->{default} } @grp; exit 0 }
 die "seed.pl: tham số lạ '$mode'\n" if $mode ne '';
 
 print "-- Dữ liệu mồi P2-10, sinh từ $FACTS lúc chạy — không sửa tay, không lưu lại.\n";
@@ -303,12 +330,14 @@ for my $f (@fam) {
   }
 }
 
-print "\n-- §4.4 nhóm tuỳ chọn; phụ thu cột Món lẻ = cho MỖI phần nhận nhân (§4.6 luật 5).\n";
+print "\n-- §4.4 nhóm tuỳ chọn; phụ thu cột Món lẻ = cho MỖI phần nhận nhân (§4.6 luật 5);\n";
+print "-- mặc định của nhóm đọc từ §4.6 luật 8 — chỉ để màn gọi món chọn sẵn (ADR-094).\n";
 for my $g (@grp) {
   printf "INSERT INTO option_group (name) VALUES (%s);\n", sqlq($g->{name});
   for (@{ $g->{opt} }) {
-    printf "INSERT INTO menu_option (option_group_id, name, surcharge_vnd)"
-      . " SELECT id, %s, %d FROM option_group WHERE name = %s;\n", sqlq($_->[0]), $_->[1], sqlq($g->{name});
+    printf "INSERT INTO menu_option (option_group_id, name, surcharge_vnd, is_default)"
+      . " SELECT id, %s, %d, %s FROM option_group WHERE name = %s;\n", sqlq($_->[0]), $_->[1],
+      (defined $g->{default} && $g->{default} eq $_->[0]) ? 'true' : 'false', sqlq($g->{name});
   }
 }
 print "-- §4.4 / §4.6 luật 3: nhóm phụ thuộc chỉ có khi một lựa chọn trong tập được chọn.\n";

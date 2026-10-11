@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.12.0
+  version: 0.13.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -2625,7 +2625,7 @@ components:
           $ref: '#/components/schemas/MoneyVnd'
     MenuOption:
       type: object
-      required: [menu_option_id, option_name]
+      required: [menu_option_id, option_name, is_default]
       additionalProperties: false
       properties:
         menu_option_id:
@@ -2633,6 +2633,11 @@ components:
           format: int64
         option_name:
           type: string
+        is_default:
+          type: boolean
+          description: >-
+            Lựa chọn màn gọi món chọn sẵn khi khách chưa chạm nhóm (shop-facts §4.6 luật 8); mỗi nhóm
+            nhiều nhất một. Cửa tạo lượt gọi và tính thử không tự điền — FE gửi option_ids đầy đủ (ADR-094).
     MenuOptionGroup:
       type: object
       required: [option_group_id, option_group_name, prerequisite_option_ids, options]
@@ -2866,6 +2871,7 @@ x-constraint-errors:
   menu_item_option_group_pkey: internal
   menu_item_pkey: internal
   menu_option_name_in_group_key: internal
+  menu_option_one_default_per_group_key: internal
   menu_option_name_not_blank_check: internal
   menu_option_option_group_fkey: internal
   menu_option_pkey: internal

@@ -424,6 +424,97 @@ func TestI010_TuChoiKhongSuaHo(t *testing.T) {
 	tuChoi(t, r, http.StatusUnprocessableEntity, "option_combination_invalid", "lines[1].option_ids")
 }
 
+// §4.6 luật 8 (T-169, ADR-094): menu nói lựa chọn nào là mặc định — đúng cái owner nói, đọc lúc chạy
+// qua seed.pl --defaults-tsv — để màn gọi món chọn sẵn; tổ hợp chọn sẵn ấy có giá trên menu và qua
+// tính thử. Cửa vẫn không tự điền: dòng thiếu lựa chọn bị từ chối (TestI010_TuChoiKhongSuaHo).
+func TestI010_MenuChoBietMacDinhDeChonSan(t *testing.T) {
+	k := dung(t)
+	macDinh := map[string]string{}
+	for _, dong := range strings.Split(strings.TrimSpace(chaySeed(t, "--defaults-tsv")), "\n") {
+		g, l, ok := strings.Cut(dong, "\t")
+		if !ok {
+			t.Fatalf("dòng mặc định sai hình: %q", dong)
+		}
+		macDinh[g] = l
+	}
+	r := k.goi(t, "GET", "/menu", nil)
+	if r.status != http.StatusOK {
+		t.Fatalf("GET /menu: %d %v", r.status, r.body)
+	}
+	soMonCoNhom := 0
+	items, _ := r.body["items"].([]any)
+	for _, it := range items {
+		m := it.(map[string]any)
+		groups, _ := m["option_groups"].([]any)
+		if len(groups) == 0 {
+			continue
+		}
+		soMonCoNhom++
+		// Tổ hợp chọn sẵn: mặc định của mọi nhóm có mặt khi các mặc định kia đã chọn (luật 3, theo tập).
+		macDinhCuaNhom := map[int64]int64{}
+		dieuKien := map[int64][]any{}
+		for _, g := range groups {
+			gm := g.(map[string]any)
+			gid := so(t, gm["option_group_id"], "option_group_id")
+			dieuKien[gid], _ = gm["prerequisite_option_ids"].([]any)
+			var co []string
+			for _, o := range gm["options"].([]any) {
+				om := o.(map[string]any)
+				la, ok := om["is_default"].(bool)
+				if !ok {
+					t.Fatalf("%v · %v: lựa chọn thiếu cờ is_default: %v", m["item_name"], gm["option_group_name"], om)
+				}
+				if la {
+					co = append(co, om["option_name"].(string))
+					macDinhCuaNhom[gid] = so(t, om["menu_option_id"], "menu_option_id")
+				}
+			}
+			ten := gm["option_group_name"].(string)
+			muon, coMuon := macDinh[ten]
+			if (coMuon && (len(co) != 1 || co[0] != muon)) || (!coMuon && len(co) != 0) {
+				t.Fatalf("%v · %s: menu đánh dấu mặc định %v, §4.6 luật 8 nói %q", m["item_name"], ten, co, muon)
+			}
+		}
+		chon := []int64{}
+		daChon := map[float64]bool{}
+		for _, id := range macDinhCuaNhom {
+			daChon[float64(id)] = true
+		}
+		for gid, id := range macDinhCuaNhom {
+			coMat := len(dieuKien[gid]) == 0
+			for _, p := range dieuKien[gid] {
+				coMat = coMat || daChon[p.(float64)]
+			}
+			if coMat {
+				chon = append(chon, id)
+			}
+		}
+		sort.Slice(chon, func(i, j int) bool { return chon[i] < chon[j] })
+		var giaMenu int64 = -1
+		for _, p := range m["prices"].([]any) {
+			pm := p.(map[string]any)
+			var ids []int64
+			for _, x := range pm["option_ids"].([]any) {
+				ids = append(ids, int64(x.(float64)))
+			}
+			if fmt.Sprint(ids) == fmt.Sprint(chon) {
+				giaMenu = so(t, pm["unit_price_vnd"], "unit_price_vnd")
+			}
+		}
+		if giaMenu < 0 {
+			t.Fatalf("%v: tổ hợp chọn sẵn %v không có giá trên menu", m["item_name"], chon)
+		}
+		q := tinhThu(k, t, map[string]any{"menu_item_id": so(t, m["menu_item_id"], "menu_item_id"), "quantity": 1, "option_ids": chon})
+		if q.status != http.StatusOK || so(t, dongThu(t, q, 0)["unit_price_vnd"], "unit_price_vnd") != giaMenu {
+			t.Fatalf("%v: tính thử tổ hợp chọn sẵn %v ⇒ %d %v, menu kể %d", m["item_name"], chon, q.status, q.body, giaMenu)
+		}
+		t.Logf("%v: chọn sẵn %v ⇒ %d", m["item_name"], chon, giaMenu)
+	}
+	if soMonCoNhom == 0 {
+		t.Fatal("menu không có món nào mang nhóm tuỳ chọn — test không chấm gì")
+	}
+}
+
 // I-009 tầng 3: món đã ngừng bán bị từ chối tại mốc của cửa, và không còn trên menu.
 func TestI009_MonNgungBanBiTuChoi(t *testing.T) {
 	k := dung(t)

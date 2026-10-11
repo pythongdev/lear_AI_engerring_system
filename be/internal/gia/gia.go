@@ -57,9 +57,11 @@ type KetQua struct {
 	TotalVnd int64  `json:"total_vnd"`
 }
 
+// IsDefault chỉ để màn gọi món chọn sẵn (§4.6 luật 8, ADR-094); Tinh không đọc nó.
 type luaChonMenu struct {
 	MenuOptionID int64  `json:"menu_option_id"`
 	OptionName   string `json:"option_name"`
+	IsDefault    bool   `json:"is_default"`
 }
 
 type nhomMenu struct {
@@ -76,7 +78,7 @@ const docNhom = `SELECT COALESCE(jsonb_agg(jsonb_build_object(
  'prerequisite_option_ids', (SELECT COALESCE(jsonb_agg(p.menu_option_id ORDER BY p.menu_option_id), '[]'::jsonb)
    FROM option_group_prerequisite p WHERE p.option_group_id = g.id),
  'options', (SELECT COALESCE(jsonb_agg(jsonb_build_object(
-   'menu_option_id', o.id, 'option_name', o.name) ORDER BY o.id), '[]'::jsonb)
+   'menu_option_id', o.id, 'option_name', o.name, 'is_default', o.is_default) ORDER BY o.id), '[]'::jsonb)
    FROM menu_option o WHERE o.option_group_id = g.id)) ORDER BY g.id), '[]'::jsonb)
  FROM menu_item_option_group ig JOIN option_group g ON g.id = ig.option_group_id
  WHERE ig.menu_item_id = $1`
