@@ -15,7 +15,6 @@
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
-  - [U-078](#u-078) — chủ quán sửa số đếm két của ngày đã đối soát xong: có phải bấm đối soát lại không, có ghi lý do không
   - [U-058](#u-058) — giảm giá cả đơn nhập tay: phạm vi bản đầu và giới hạn
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
@@ -34,18 +33,6 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 
 <a id="dang-mo"></a>
 ### Đang mở
-
-<a id="u-078"></a>
-- **U-078 — Chủ quán sửa số đếm két của một ngày đã bấm "đối soát xong" (đếm nhầm,
-  sót một xấp) thì sửa xong ngày ấy có phải bấm "đối soát xong" lại không, và lần sửa có
-  phải ghi lý do không?** Mở 2026-10-09 (`T-139`, Claude Code) từ lời đóng `U-074` cùng
-  ngày — *"chủ quán"* — nói **ai** sửa, không nói ngày đã ký có phải ký lại không.
-  `master_plan/shop-facts.md` §6.10 nay chốt chỉ chủ quán bấm đối soát xong và ngày lệch
-  phải ghi giải thích. Hỏi về cái quán: *"tối qua chị đã bấm đối soát xong, sáng nay
-  thấy sót một xấp 200 nghìn — chị sửa số xong thì có bấm đối soát lại hôm qua không,
-  và có ghi vì sao sửa không?"* **Chủ quán** trả lời. Chặn: đường sửa số đã ký — database
-  khoá số đếm của ngày đã ký với mọi vai (`docs/decisions.md` ADR-080), và đường sửa chỉ
-  dựng khi có lời này.
 
 <a id="u-058"></a>
 - **U-058 — Phạm vi bản đầu và giới hạn của giảm giá nhập tay cho cả đơn?**
@@ -192,6 +179,15 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ quán trả lời 2026-10-10 (T-145), chủ repo chuyển nguyên văn trong hội thoại.** Lời đáp đã vào
+owner; đường sửa số đã ký dựng ở `T-146` của `work/backlog.md`.
+
+<a id="u-078"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-078 — Chủ quán sửa số đếm két của một ngày đã bấm "đối soát xong": sửa xong có phải bấm đối soát lại không, lần sửa có phải ghi lý do không~~ | “cần bâms đối soát lại và ghi thêm lý do”. **Có, cả hai:** sửa xong thì ngày ấy phải **bấm "đối soát xong" lại**, và lần sửa **ghi lý do**. Lời không nói ai bấm lại (luật *chỉ chủ quán bấm* của `U-073` đứng nguyên), và không nói ngày ấy có được bán tiếp hay ghi tiền thêm trong lúc chưa bấm lại. | `master_plan/shop-facts.md` §6.10 |
 
 **Chủ quán trả lời 2026-10-09 (T-139), chủ repo chuyển nguyên văn trong hội thoại; cùng lượt, chủ
 repo chọn thêm ba vế trong câu hỏi có sẵn phương án (đánh dấu *lời chọn* bên dưới).** Lời đáp đã

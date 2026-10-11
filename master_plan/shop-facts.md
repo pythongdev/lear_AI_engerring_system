@@ -905,9 +905,15 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       ngày ấy đóng được mà không phải sửa sổ cho hết lệch. *POS hoặc chủ quán ngồi lại chấm con số*
       sau nhập bù (§6.27) là việc **chấm**, không phải lần bấm này.
     - **Số đếm két của một ngày đã đối soát xong mà đếm nhầm thì CHỦ QUÁN sửa** (chủ quán chốt
-      2026-10-09, đóng `U-074`). Nguyên văn: *"chủ quán"*. Lời không nói sửa xong ngày ấy có phải
-      bấm đối soát xong lại không, và lần sửa có phải ghi lý do không —
-      `docs/product/99-unknowns.md` **U-078**.
+      2026-10-09, đóng `U-074`). Nguyên văn: *"chủ quán"*.
+    - **Sửa số đếm của ngày đã đối soát xong thì ngày ấy phải BẤM "ĐỐI SOÁT XONG" LẠI, và lần sửa
+      phải GHI LÝ DO** (chủ quán chốt 2026-10-10, đóng `U-078`; chủ repo chuyển nguyên văn trong hội
+      thoại: *"cần bâms đối soát lại và ghi thêm lý do"*). Lần bấm lại theo đúng luật ở trên: chỉ chủ
+      quán, ngày còn lệch thì kèm giải thích.
+    - ⇒ *Cách đọc của phiên, không phải lời chủ quán:* lần sửa **mở lại** ngày ấy — dấu *đối soát
+      xong* cũ không còn đứng cho con số mới, nên ngày ấy là *chưa đối soát xong* cho tới lần bấm
+      lại; dấu cũ, con số cũ và lý do sửa được giữ làm vết, không xoá. Lời không nói trong lúc chưa
+      bấm lại có được ghi thêm tiền vào ngày ấy không — đường sửa (`T-146`) chỉ mở cho số đếm.
 11. **Sổ giấy là kế hoạch dự phòng BẮT BUỘC.** Mất điện, mất mạng, hoặc máy hỏng ⇒ quán chuyển sang
     ghi tay và **không dừng bán**.
     - **Người giữ sổ và người nhập lại: POS hoặc chủ quán** (chủ quán chốt 2026-09-02, trả lời
@@ -1440,6 +1446,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-01 | Tiền trả điện, nước, wifi, xăng xe, tạm ứng và thưởng **rời két trong ngày, trước lúc đếm két cuối ngày** — không lấy từ tiền cuối buổi mang về (chủ repo trả lời trong phiên T-125, chọn trong phương án có sẵn). Khoản ấy trừ vào két của ngày bán nào thì chưa nói, mở U-072 | §8.10 · §8.7 |
 | 2026-10-09 | **"Đã bưng ra bàn" bấm theo số cái từng thứ, cho một bàn** (trả lời **S-5**, P3-10) — nguyên văn *"pos sẽ bấm số lượng hàng hoá đem ra sau đó pos sẽ bấm đã bưng ra bàn"*; vế *đếm theo gì, cho ai* chọn trong phương án có sẵn: *"số cái từng thứ, cho 1 bàn"*. *Thứ tự đánh dấu khi bàn đã làm dư, và đơn không bàn bấm thế nào, là suy ra ⇒ ADR-090 Sửa đổi* | §5.4 |
 | 2026-10-09 | Chủ quán trả lời bảy câu (T-139), chủ repo chuyển lời trong hội thoại và chọn thêm ba vế trong câu hỏi có sẵn phương án: đơn đặt trước qua điện thoại **không làm ngay**, máy **nhắc POS và bếp trước giờ khách cần 20 phút và 10 phút** (U-077); **mọi đơn mang đi được nợ, người đi giao ghi nợ tại chỗ, kèm ghi chú cho chủ quán** (U-076); **chọn tên** để cho máy biết mình là ai (U-075); **chủ quán sửa** số đếm két đã đối soát (U-074 — mở U-078 cho vế đối soát lại); **chỉ chủ quán bấm đối soát xong, mọi ngày, ngày lệch phải ghi giải thích** (U-073); khoản rời két trừ vào **ngày người ghi khai** (U-072); **ghi chú huỷ ô chấm công bắt buộc, chỉ chủ quán huỷ** (U-071) | §5.2 · §6.14 · §6.10 · §8.7 · §8.8 · §8.10 |
+| 2026-10-10 | Chủ quán trả lời **U-078** (T-145), chủ repo chuyển nguyên văn trong hội thoại: *"cần bâms đối soát lại và ghi thêm lý do"* — sửa số đếm của ngày đã đối soát xong thì **bấm đối soát xong lại** và **ghi lý do sửa**. *Sửa mở lại ngày ấy, dấu cũ giữ làm vết* là cách đọc của phiên | §6.10 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
