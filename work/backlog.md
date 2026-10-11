@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-152 **Đổi stack · bước 04 — miền mẫu `menu`** (handler · service · repository · `internal/sqlcgen`) — L2 — Codex, Claude duyệt · chờ T-151 · [chi tiết](#t-149)
 - [ ] T-153 **Đổi stack · bước 05 — miền `qr`** — L2 — Codex, Claude duyệt · chờ T-152 · [chi tiết](#t-149)
 - [ ] T-154 **Đổi stack · bước 05 — miền `gia`** — L2 — Codex, Claude duyệt · chờ T-153 · [chi tiết](#t-149)
 - [ ] T-155 **Đổi stack · bước 05 — miền `ngayban`** — L2 — Codex, Claude duyệt · chờ T-154 · [chi tiết](#t-149)
@@ -117,6 +116,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-152 **Đổi stack backend · bước 04 — miền mẫu `menu`** — `handler.go` (Gin) · `service.go` (bốn `authz.Door`, `authz.Run`) · `repository.go` (`pgx.Tx`, `sqlcgen`); bảy câu đọc thành `sql/*.sql`, bốn câu ghi thêm `-- name:` và `;`; `be/sqlc.yaml` sinh cùng mục `menu`; router `HandleMethodNotAllowed`, `RedirectTrailingSlash = false` (`QC-12`) — L2 — Claude Code thi công, chưa ai duyệt độc lập — 2026-10-11 · [chi tiết](#t-149)
 - [x] T-151 **Đổi stack backend · bước 03 — nền** — `internal/db` → `internal/platform/postgres` (`Open`, `InTx`), `dbtest` → `testhelper`, `middleware.GanNguoi`, `cmd/server` dựng router Gin (`newRouter`) và nối mười một miền cũ qua `NoRoute` bọc `gin.WrapH`; sáu test `TestQC12_*` mới; `QC-13`…`QC-16` theo chỗ mới — L2 — Codex thi công (worktree `../lean_wt/T-151`), Claude viết test trước, duyệt, cài lỗi và tích hợp — 2026-10-11 · [chi tiết](#t-149)
 - [x] T-150 **Đổi stack backend · bước 02 — công cụ và gate, chưa chuyển cửa nào** — `go 1.27.2`, gin v1.12.0, dòng `tool` sqlc v1.31.1, migrate v4.20.1; Gate 1f luật `-- name:` và miễn code sinh khớp nguồn cho miền có mục trong `sqlc.yaml`, Gate 1g đọc route Gin, Gate 1h `check-gin-imports.sh`, `check-sqlcgen.sh` trong `verify.sh`; `be/sqlc.yaml` chưa tạo (sqlc không nhận cấu hình rỗng) — **ADR-093** — L2 — Codex thi công (worktree `../lean_wt/T-150`), Claude duyệt, cài lỗi và tích hợp — 2026-10-11 · [chi tiết](#t-149)
 - [x] T-149 **Đổi stack backend · bước 01 — ghi quyết định Gin + sqlc + cấu trúc kết hợp vào owner** — ADR mới thay điểm 1 và 6 của ADR-083; `QC-05` · `QC-11`…`QC-14`; chia bước 02…09 thành T-150…T-166 — L3 — Claude Code, không giao Codex — 2026-10-11 · [chi tiết](#t-149)
@@ -496,6 +496,49 @@ Log: scratchpad phiên `17b8f2e9…/scratchpad/T-151-*` (phiếu, báo cáo, log
 - *Cho T-152:* khi `menu` đăng ký đường Gin thật, yêu cầu sai phương thức lên đường ấy rơi xuống `NoRoute` ⇒ `ServeMux` trả 404
   thay vì 405, và `HEAD` không còn chạy như `GET`; `TestQC12_RouterDauGachCuoiVaPhuongThuc` · `…HEADChayNhuGET` sẽ đỏ — T-152
   phải chọn cách giữ hành vi (vd. `HandleMethodNotAllowed`) hay ghi quyết định đổi, không sửa test cho xanh.
+
+**T-152 — Acceptance và điểm Claude chốt trước thi công** (Claude, 2026-10-11). Acceptance là bốn dòng của phiếu
+`docs/private/be_feature/prompts/BE-STACK-04-mien-menu-L2.md`, viết trước khi sửa; sáu tên test trong dòng (1) đều có ở nền
+`259676c` (`rg '^func Test' be/internal/menu`). Mức **L2**: sai thì một lần sửa giá, phụ thu, thành phần hay ngừng bán ghi mà
+không qua quyền hay không để vết (`I-012` · `I-018`), hoặc ghi đè mốc ngừng bán (`I-009`). Người thi công: **Claude Code**, không
+giao Codex — chủ repo giao thẳng trong phiên ("hãy đọc kĩ và hoàn thành T-152"); T-151 đã commit (`259676c`) trước khi sửa.
+- *Tầng:* `handler.go` (Gin: đọc tham số và thân, kiểm hình, thứ tự từ chối y như `menu.go` hôm nay — tham số → JSON → trường →
+  lý do → quyền), `service.go` (bốn `authz.Door`, `authz.Run`, logic trong giao dịch), `repository.go` (nhận `pgx.Tx`, gọi
+  `sqlcgen`). Câu đọc (khoá dòng, kiểm tồn tại, khai lý do) thành file `sql/*.sql`; bốn câu ghi giữ nguyên chỗ, thêm `-- name:`
+  và `;`. Người đọc từ `middleware.Nguoi(c)`; hàm đăng ký `menu.Routes(r *gin.Engine, svc *menu.Service)`.
+- *Router:* đường Gin thật đầu tiên làm 405 và dấu `/` cuối lệch `ServeMux` (bàn giao T-151 *Cho T-152*). Giữ hành vi:
+  `HandleMethodNotAllowed = true` (405 kèm `Allow`), `RedirectTrailingSlash = false` (404, không chuyển hướng). `HEAD` không
+  đổi ở bước này vì `menu` không có đường `GET`; ghi luật vào `QC-12`. Không sửa test router.
+- *File test được đổi phần dựng router:* `be/internal/menu/menu_test.go` · `be/internal/don/don_test.go` (cả hai gọi
+  `menu.Routes`). Thân các test giữ nguyên.
+- *Lỗi cài Claude chạy:* import `menu/internal/sqlcgen` từ miền khác ⇒ `go build` đỏ *use of internal package not allowed*;
+  sửa tay một hằng sinh ⇒ Gate 1f + `check-sqlcgen` đỏ; bỏ kiểm quyền trong service ⇒ `TestI012_ChiChuQuanSuaMenu` đỏ; bỏ khai
+  lý do ⇒ `TestI018_SuaMenuCoLyDoVaDeVet` đỏ; bỏ `HandleMethodNotAllowed` ⇒ `TestQC12_RouterDauGachCuoiVaPhuongThuc` đỏ.
+- *Owner Claude sửa cùng lượt:* `QC-12` (cấu hình router), `QC-14` dòng `sqlc.yaml` (sinh ở T-152), bảng §9 của
+  `10-quy-uoc-code.md`; gỡ dòng ngoại lệ `be/sqlc.yaml` ở `scripts/check-links.ignore` (file nay có).
+
+**T-152 — Bàn giao** (2026-10-11). Thi công: **Claude Code** trên cây chính, nhánh `chatgpt_involve`, nền `259676c` (T-151);
+không giao Codex, **chưa ai duyệt độc lập**. File: `be/sqlc.yaml` (mới) · `be/internal/menu/handler.go` · `service.go` ·
+`repository.go` (mới; `menu.go` bị xoá, bản cũ lưu ở scratchpad) · `be/internal/menu/sql/*.sql` (bảy câu đọc mới) · bốn file cửa
+(thêm `-- name:`, `;`, `AS discontinued_at`) · `be/internal/menu/internal/sqlcgen/` (sinh) · `be/cmd/server/router.go` ·
+`be/internal/menu/menu_test.go` · `be/internal/don/don_test.go` (chỉ phần dựng router); owner: `10-quy-uoc-code.md` (`QC-12`,
+`QC-14`, bảng §9), `scripts/check-links.ignore` (gỡ dòng `be/sqlc.yaml`). Log: scratchpad phiên `a68ab2b0…/scratchpad/T-152-*`.
+- *(1)* `be-check` trên PostgreSQL thật: sáu test `TestI012_ChiChuQuanSuaMenu` · `TestI018_SuaMenuCoLyDoVaDeVet` ·
+  `TestI018_GiaTriSaiKhongGhi` · `TestI018_KhongTimThayKhongGhi` · `TestI009_NgungBanHaiLan` · `TestI013_KhongCoDuongSuaGiaSuat`
+  PASS; năm `TestQC12_Router*` và test `don` PASS. Tập tên test trước/sau: `diff` rỗng.
+- *(2)* `go tool sqlc generate` + `go build ./...` exit 0; `check-sqlcgen: PASS`; Gate 1f · 1g · 1h PASS. `--list` hai gate
+  trước/sau: ô ghi, cửa, đường gọi, mã giống hệt; chỉ khác dòng đếm file đã soát (1f 116 → 138, 1g 39 → 54 — file sinh và file SQL).
+- *(3)* Lỗi cài trên bản sao repo (`T-152-fault/`): (A) `qr` import `menu/internal/sqlcgen` ⇒ `go build` đỏ *use of internal
+  package … not allowed*, gỡ ⇒ xanh; (B) sửa tay hằng `DoiGia` ⇒ Gate 1f *câu ghi ngoài mọi cửa* + `check-sqlcgen` đỏ; (C) cửa
+  đổi giá hạ xuống `NeedCounterOrOwner` ⇒ `TestI012_ChiChuQuanSuaMenu` nhận 200 thay 403; (D) bỏ khai lý do khi ngừng bán ⇒ 500,
+  đỏ `TestI018_SuaMenuCoLyDoVaDeVet` · `TestI009_NgungBanHaiLan` · `TestI009_SuaMenuSauKhiDatDonCuKhongDoi`; (E) bỏ
+  `HandleMethodNotAllowed` ⇒ `TestQC12_RouterDauGachCuoiVaPhuongThuc` nhận 404 thay 405.
+- *(4)* `./scripts/gate.sh` ở cây chính: xem khối cuối của phiên (dán trong báo cáo).
+- *Đã biết, không test chấm, ngoài hợp đồng:* đường dẫn không sạch (`//`, `..`) lên đường của `menu` không còn được `ServeMux`
+  chuyển hướng 301; `%2F` trong tham số không còn khớp đường. `KhaiLyDo` dùng `$1` trần vì Gate 1f so nguyên văn và sqlc viết lại
+  `sqlc.arg(...)` thành `$1`.
+- *Cho T-153:* `qr` có đường `GET` đầu tiên lên Gin; với cấu hình này `HEAD` lên đường ấy ⇒ 405 (trước: chạy như `GET`) — chọn giữ
+  hay ghi quyết định đổi (`QC-12`).
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·

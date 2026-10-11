@@ -15,8 +15,10 @@ import (
 	"time"
 
 	"banhcuon/be/internal/menu"
+	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/testhelper"
+	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -62,9 +64,11 @@ func dung(t *testing.T) khung {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { owner.Close(context.Background()) })
-	mux := http.NewServeMux()
-	menu.Routes(mux, pool, xacThucTest{})
-	srv := httptest.NewServer(mux)
+	r := gin.New()
+	r.HandleMethodNotAllowed = true
+	r.Use(middleware.GanNguoi(xacThucTest{}))
+	menu.Routes(r, menu.NewService(pool))
+	srv := httptest.NewServer(r)
 	t.Cleanup(srv.Close)
 	return khung{ctx: ctx, srv: srv, owner: owner}
 }

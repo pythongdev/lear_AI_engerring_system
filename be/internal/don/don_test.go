@@ -26,12 +26,14 @@ import (
 	"banhcuon/be/internal/hoadon"
 	"banhcuon/be/internal/ket"
 	"banhcuon/be/internal/menu"
+	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/phien"
 	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/qr"
 	"banhcuon/be/internal/sanxuat"
 	"banhcuon/be/internal/testhelper"
 	"banhcuon/be/internal/tratruoc"
+	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -80,7 +82,6 @@ func dung(t *testing.T) khung {
 	t.Cleanup(func() { owner.Close(context.Background()) })
 	mux := http.NewServeMux()
 	gia.Routes(mux, pool)
-	menu.Routes(mux, pool, xacThucTest{})
 	// P3-07: đường gọi của luồng tại bàn (ADR-087).
 	qr.Routes(mux, pool, xacThucTest{})
 	don.Routes(mux, pool, xacThucTest{})
@@ -93,7 +94,15 @@ func dung(t *testing.T) khung {
 	// P3-10 thêm có chủ ý (ADR-090): đường gọi của sản xuất theo mẻ — mẻ, lùi mẻ, đã ra bàn, chuyển,
 	// ghi chú bánh làm sai, huỷ đơn, bảng nhu cầu.
 	sanxuat.Routes(mux, pool, xacThucTest{})
-	srv := httptest.NewServer(mux)
+	// T-152: menu đã chuyển sang Gin; các miền chưa chuyển chạy sau NoRoute như be/cmd/server/router.go.
+	r := gin.New()
+	r.Use(middleware.GanNguoi(xacThucTest{}))
+	menu.Routes(r, menu.NewService(pool))
+	r.NoRoute(func(c *gin.Context) {
+		c.Status(http.StatusOK)
+		mux.ServeHTTP(c.Writer, c.Request)
+	})
+	srv := httptest.NewServer(r)
 	t.Cleanup(srv.Close)
 	// P3-08 thêm có chủ ý (ADR-088): cửa tạo lượt gọi xét giờ bán tại mốc của đồng hồ (I-008), nên mọi
 	// test của gói chạy ở một mốc cố định trong giờ bán, bất kể lúc chạy; test của I-008 tự đặt mốc.

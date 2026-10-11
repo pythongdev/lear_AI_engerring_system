@@ -1,0 +1,15 @@
+version: "2"
+sql:
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/menu/sql
+      - internal/menu/sql/doi_gia_thanh_phan
+      - internal/menu/sql/doi_phu_thu
+      - internal/menu/sql/ngung_ban
+      - internal/menu/sql/sua_thanh_phan
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/menu/internal/sqlcgen
+        sql_package: pgx/v5

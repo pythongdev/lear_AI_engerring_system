@@ -450,6 +450,11 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
     Không `Group`, `Any`, `Handle`, không nối chuỗi đường dẫn, không wildcard — Gate 1g đọc được khuôn này và
     đỏ ở mọi hình khác (từ `T-150`).
   - Hai đường gọi cùng tiền tố, cùng vị trí thì cùng tên tham số: Gin từ chối đăng ký khi khác tên.
+  - Router dựng ở `newRouter` (`be/cmd/server/`) đặt `HandleMethodNotAllowed = true` và `RedirectTrailingSlash = false`:
+    đường Gin giữ hành vi của `ServeMux` — khác phương thức ⇒ 405 kèm `Allow`, dấu `/` cuối ⇒ 404, không chuyển hướng
+    (Claude chốt 2026-10-11, `T-152`; test `TestQC12_RouterDauGachCuoiVaPhuongThuc`). Gin không chạy `HEAD` như `GET`
+    (với cấu hình này `HEAD` lên đường Gin ⇒ 405): miền đầu tiên chuyển một đường `GET` (`qr`, `T-153`) chọn giữ hành vi
+    hay ghi quyết định đổi; `TestQC12_RouterHEADChayNhuGET` chấm đường đọc menu của `gia` (`T-154`) và không được sửa cho xanh.
   - *Chuyển tiếp (2026-10-11, T-149):* miền chưa chuyển giữ `http.ServeMux` với mẫu có phương thức, nối vào
     router Gin qua `gin.WrapH` ở `be/cmd/server/` (từ `T-151`). `T-165` gỡ adapter, từ đó khuôn cũ là đỏ.
 - **Hậu quả nếu làm khác:** service import Gin thì logic cửa dính vào kiểu ngữ cảnh của framework, test cửa
@@ -524,7 +529,7 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   | Đường dẫn | Chứa gì |
   |---|---|
   | `be/go.mod` · `be/go.sum` | module, bản ghim, dòng `tool` của sqlc (`QC-11`) |
-  | `sqlc.yaml` ở gốc `be/` | một mục `sql:` mỗi miền đã chuyển (`QC-13`); sinh ở `T-150`, hoặc `T-152` nếu sqlc không nhận cấu hình rỗng |
+  | `sqlc.yaml` ở gốc `be/` | một mục `sql:` mỗi miền đã chuyển (`QC-13`); sinh ở `T-152` cùng mục `menu` (sqlc v1.31.1 không nhận cấu hình rỗng — thử ở `T-150`) |
   | `be/cmd/server/` | composition root: dựng router Gin (`newRouter`), gắn `middleware/`, gọi hàm đăng ký của từng miền (`QC-12`); miền chưa chuyển nối qua `NoRoute` bọc `gin.WrapH` tới `T-165`; sinh ở `T-151` |
   | `be/internal/platform/postgres/` | hàm kết nối (`QC-15`), hàm mở giao dịch duy nhất (`QC-13`), test khói; dời từ `be/internal/db/` ở `T-151` |
   | `be/internal/testhelper/` | đọc database kiểm từ môi trường cho test (`QC-16`); không câu ghi nào; đổi tên từ `be/internal/dbtest/` ở `T-151` |
@@ -642,4 +647,5 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
 | `T-149` | **2026-10-11** — `QC-05` migrate v4.20.1; `QC-11`…`QC-14` sửa theo **ADR-093** (Gin, sqlc, cấu trúc kết hợp), kèm vế chuyển tiếp; `T-150` · `T-151` · `T-165` siết phép kiểm |
 | `T-150` | **2026-10-11** — siết phép kiểm `QC-05` (chỉ v4.20.1) · `QC-11` (chỉ `go 1.27.2`, gin · sqlc bắt buộc); `QC-12` thêm Gate 1h; `QC-13` khuôn `sqlc.yaml` và dấu `;`; `QC-16` chỉ chấm phụ thuộc trực tiếp và import Go |
 | `T-151` | **2026-10-11** — `QC-13` · `QC-14` · `QC-15` · `QC-16` theo chỗ mới: `be/internal/platform/postgres/` (`Open`, `InTx`), `be/internal/testhelper/`; phép kiểm đỏ khi chỗ cũ còn; `QC-14` dòng `be/cmd/server/` nêu `NoRoute` + `gin.WrapH` |
+| `T-152` | **2026-10-11** — `QC-12` cấu hình router (405 kèm `Allow`, dấu `/` cuối ⇒ 404); `QC-14` dòng `sqlc.yaml` (sinh cùng mục `menu`) — `menu` là miền đầu tiên đã chuyển |
 | `P3-04`…`P3-14` | `QC-13` cửa ghi và Gate 1f · `QC-15` kết nối · `QC-16` chạy test bằng `scripts/be-check.sh` · `QC-17` tên test |

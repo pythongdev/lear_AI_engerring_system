@@ -22,14 +22,17 @@ import (
 
 func newRouter(pool *pgxpool.Pool, auth authz.Authenticator) *gin.Engine {
 	r := gin.New()
+	// Đường Gin giữ hành vi của ServeMux hôm nay (QC-12): khác phương thức ⇒ 405 kèm Allow, dấu / cuối ⇒ 404.
+	r.HandleMethodNotAllowed = true
+	r.RedirectTrailingSlash = false
 	r.Use(middleware.GanNguoi(auth))
+	menu.Routes(r, menu.NewService(pool))
 	legacy := http.NewServeMux()
 	ban.Routes(legacy, pool, auth)
 	don.Routes(legacy, pool, auth)
 	gia.Routes(legacy, pool)
 	hoadon.Routes(legacy, pool, auth)
 	ket.Routes(legacy, pool, auth)
-	menu.Routes(legacy, pool, auth)
 	nguoi.Routes(legacy, pool, auth)
 	phien.Routes(legacy, pool, auth)
 	qr.Routes(legacy, pool, auth)
