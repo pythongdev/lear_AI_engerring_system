@@ -31,6 +31,12 @@ Build, test, lint, format. Deterministic, không phụ thuộc sự chú ý củ
 
 Đỏ = chưa xong. Không có ngoại lệ, không có "chỉ là lint thôi".
 
+**Lỗi cài chỉ làm trong worktree riêng** (2026-10-11, chủ repo, T-167). Muốn chứng
+minh một test biết kêu bằng cách cài lỗi vào code, thì cài trong một worktree tạo
+riêng cho lượt ấy (`git worktree add`), không bao giờ trong cây mà phiên khác hay
+Stop hook có thể build. Gate chạy ở cây chung trong lúc lỗi đang cài sẽ đỏ thành
+"test chập chờn", và xanh ở đó cũng không chứng minh gì về code sẽ commit (F-063).
+
 ## Gate 1b — Máy chấm tài liệu
 
 ```bash

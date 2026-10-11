@@ -4721,11 +4721,19 @@ commit `880b741`). Luật cho test chen nhau mới: mọi goroutine chờ một 
 bỏ khoá làm test đỏ** — không phải test xanh. Hai test còn lại chưa sửa: việc nhỏ cho lượt kế đụng `don/` hay
 `qr/`. Chưa thêm phép kiểm máy: đây là lần đầu (*Vòng phản hồi*).
 
+*Gỡ 2026-10-11 (`T-168`, Claude Code; lỗi cài trong worktree riêng theo luật T-167):* đo trước khi sửa thì hai
+test còn lại **không** cùng bệnh — lỗi cài bỏ khoá ở cửa làm test **cũ** đỏ 10/10 mỗi test: bỏ chạy lại trên
+`sales_order_submission_code_key` ở `canThuLai` (`don/don.go`) ⇒ `500 internal_error` ở `mang_di_test.go`;
+bỏ ánh xạ `qr_code_one_current_per_table_key` → 409 (`apierr/apierr.go`) ⇒ `500` ở `qr_test.go`. Lý do: mỗi lần
+gọi đủ dài (định giá, nhiều câu SQL) để các goroutine chồng lên nhau; code thật cho 11–12 trên 16 lần đổi mã là
+xung đột. Vẫn thêm cổng chung `cong` cho cả hai, theo luật ở trên — để test không dựa vào tốc độ máy; không
+thêm vòng lặp vì một vòng đã bắt 10/10. Sau sửa: lỗi cài ⇒ đỏ 10/10 mỗi test; code thật ⇒ xanh 10/10 mỗi test.
+
 **Related task:**
-P3-10 (phát hiện, sửa hai test) · P3-08 · P3-02
+P3-10 (phát hiện, sửa hai test) · P3-08 · P3-02 · `T-168` (gỡ)
 
 **Status:**
-Open
+Fixed
 
 ### F-063 — "Test chập chờn" `TestI020_DaRaBanTheoSoCaiTungThuChoMotBan` là lỗi cài của phiên khác lọt vào gate: hai phiên cùng một cây làm việc
 
@@ -4753,8 +4761,11 @@ bước "1 cái"); gỡ ⇒ xanh. Đây là vi phạm *một người viết m�
 đầu — *Vòng phản hồi*): lỗi cài chỉ làm trong worktree riêng, không bao giờ trong cây mà phiên khác hay Stop hook có
 thể build. Chủ repo chọn có ghi thành luật ở `quality/review-gate.md` hay không.
 
+2026-10-11 (chủ repo, `T-167`): chọn ghi thành luật. `quality/review-gate.md` Gate 1 — *Lỗi cài chỉ làm trong
+worktree riêng*. Luật viết, chưa có phép kiểm máy: lần đầu (*Vòng phản hồi*); lặp lại lần hai thì thành cơ chế.
+
 **Related task:**
-P3-10 (lỗi cài, lần đỏ) · `P3-10-fix` (phiếu đi tìm) · `T-148` (tìm ra) · **F-045** (cùng họ: hai lần chạy chung tài nguyên)
+P3-10 (lỗi cài, lần đỏ) · `P3-10-fix` (phiếu đi tìm) · `T-148` (tìm ra) · `T-167` (ghi luật) · **F-045** (cùng họ: hai lần chạy chung tài nguyên)
 
 **Status:**
-Open
+Fixed
