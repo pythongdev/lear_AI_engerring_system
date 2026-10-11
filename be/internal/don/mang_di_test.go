@@ -604,15 +604,20 @@ func TestI024_MangDiNoiDungGiongHetHaiDauLaHaiDon(t *testing.T) {
 func TestI024_MangDiGuiLaiChenNhauMotDon(t *testing.T) {
 	n := dungNgoai(t)
 	dau := dauLanGui(t)
+	// Cổng chung (F-062): mọi lần gửi cùng xuất phát; cài lỗi bỏ chạy lại trên
+	// sales_order_submission_code_key ⇒ đỏ 10/10 (đo 2026-10-11, T-168).
 	var wg sync.WaitGroup
+	cong := make(chan struct{})
 	kq := make([]traLoi, 5)
 	for i := range kq {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
+			<-cong
 			kq[i] = n.web(t, dau, lienHeLay())
 		}(i)
 	}
+	close(cong)
 	wg.Wait()
 	tao, ids := 0, map[int64]bool{}
 	for _, r := range kq {

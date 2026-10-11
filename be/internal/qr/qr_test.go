@@ -233,12 +233,16 @@ func TestI023_HaiLanDoiCungLucKhongThanhLoiHeThong(t *testing.T) {
 	k := dung(t)
 	chu := k.nguoi(t, "chủ quán", true)
 	ban := k.ban(t, "bàn 5")
+	// Cổng chung (F-062): mọi lần đổi cùng xuất phát; cài lỗi bỏ ánh xạ
+	// qr_code_one_current_per_table_key ⇒ đỏ 10/10 (đo 2026-10-11, T-168).
 	var wg sync.WaitGroup
+	cong := make(chan struct{})
 	statuses := make(chan traVe, 16)
 	for i := 0; i < 16; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
+			<-cong
 			r, err := k.goiTran("POST", doiMa(ban), chu)
 			if err != nil {
 				r = traVe{status: -1, body: map[string]any{"loi": err.Error()}}
@@ -246,6 +250,7 @@ func TestI023_HaiLanDoiCungLucKhongThanhLoiHeThong(t *testing.T) {
 			statuses <- r
 		}()
 	}
+	close(cong)
 	wg.Wait()
 	close(statuses)
 	thanh, xung := 0, 0
