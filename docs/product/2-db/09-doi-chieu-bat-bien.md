@@ -120,9 +120,9 @@ tính chất của dữ liệu.
 | `I-015` tập 5 — tổng chuyển khoản khác tin nhắn báo có | chưa có câu | (A) không cất tin nhắn báo có; **F-048** chỉ đòi số đếm két và dấu đối soát, `T-133` không nhận phần này | chủ repo — chưa bước nào nhận |
 | `I-015` tập 6 — tổng tiền mặt không khớp két | chưa có câu | trỏ sang `I-021` tập 1 — pha 1 nói *mệnh đề ấy là `I-021`*; câu ấy là `I-021/1` | — (một tập, một câu) |
 | `I-017` tập 3 — lần đóng phiên bị từ chối vì tiền | chưa có câu | (A) lần từ chối không để lại bản ghi | pha 3 |
-| `I-018` tập 2 — lần ghi đè của hai người không dựng lại được bản người trước | chưa có câu | (A) vết chỉ có khi lần sửa khai lý do; không cất phiên thao tác nào | pha 3 — cùng việc với **F-046** |
+| `I-018` tập 2 — lần ghi đè của hai người không dựng lại được bản người trước | chưa có câu | (A) không cất phiên thao tác nào; từ bước 20 mọi lần sửa có vết (**F-046** gỡ ở `T-138`), nên bản người trước đọc được từ bản trước của vết người sau — câu cho tập này chưa viết | pha 3 |
 | `I-019` tập 2 — hai dòng nhu cầu chung một khoá / một khoá tách hai dòng | chưa có câu | (B) không dòng nhu cầu nào được cất: bảng nhu cầu cộng lại từ `station_job` theo khoá gom (`05-luoc-do-san-xuat.md` §1) | pha 3 — hàm gom của màn bếp đọc đúng khoá; test của nó |
-| `I-021` tập 2 — trừ vào đúng một ngày bán | chưa có câu | (A) chưa có luật chọn ngày, chờ **U-072**; trong lúc chờ, `I-021/1` không kết luận ngày nào chạm một khoản mà ngày khai khác ngày ghi (§4) | chủ quán qua **U-072** |
+| `I-021` tập 2 — trừ vào đúng một ngày bán | chưa có câu | (A) không có cột ngày két thứ hai; `I-021/1` trừ mọi tạm ứng/thưởng theo paid_date, dù ghi hôm khác (§4) | T-140; khoản chi I-029 chờ P2A-05 |
 | `I-021` tập 4 — ngày chưa có tiền đầu két bị đọc là lệch | chưa có câu | (A) đọc cách **báo cáo** gọi tên ngày ấy; về phía dữ liệu, `I-021/1` bỏ qua ngày thiếu tiền đầu két và `reconciled_day_opening_float_fkey` không cho bấm xong (`T-133`) | pha 3 — màn đối soát |
 | `I-021` tập 5 — phép trừ chạy trên tổng gộp | chưa có câu | (A) đọc phép trừ của báo cáo | pha 3 |
 | `I-021` tập 6 — con số doanh thu có cộng tiền đầu két | chưa có câu | (A) đọc con số của báo cáo; tiền đầu két ở bảng riêng, ngoài mọi cột tiền đã thu (**`I-021`** tầng 1) | pha 3 |
@@ -130,7 +130,7 @@ tính chất của dữ liệu.
 | `I-026` tập 1 — tổng và cộng dồn | chưa có câu | (B) tổng không có chỗ cất (**ADR-071**) | — (đúng theo cấu tạo) |
 | `I-026` tập 2 — hiệu số | chưa có câu | (B) hiệu số không có chỗ cất (**ADR-071**) | — (đúng theo cấu tạo) |
 | `I-028` tập 5 — không phải tiền bán hàng | chưa có câu | (B) không cột nào nối khoản sang doanh thu hay tiền đã thu (**ADR-073**) | — (đúng theo cấu tạo) |
-| `I-028` tập 6 — rời két | chưa có câu | (A) trỏ sang `I-021` tập 2 — luật chọn ngày chờ **U-072**; khoản có ngày khai bằng ngày ghi đã vào hạng tử *chi từ két* của `I-021/1` | như `I-021` tập 2 |
+| `I-028` tập 6 — rời két | chưa có câu | (A) trỏ sang `I-021` tập 2; mọi khoản vào hạng tử *chi từ két* theo paid_date | như `I-021` tập 2 |
 
 ### 2.1 Mệnh đề chưa có lát — cả mệnh đề chưa có câu
 
@@ -187,19 +187,23 @@ một thao tác — mười ba file lỗi cũ khai thêm hai mã ấy, mỗi fil
 Mỗi dòng là **lựa chọn của phiên**, chưa có lời chủ repo; đổi được, nhưng đổi ở đây trước khi câu
 làm khác.
 
-- **Vết ở chế độ mềm (F-046).** Lần sửa không khai lý do không để lại vết, nên các câu đọc từ vết —
-  `I-009/1` · `I-016/1` · `I-017/2` · `I-018/1` · nhánh *sửa* của `I-011/1` và `I-021/7` · `QD-33/b` —
-  không thấy nó. Ngược lại, lần đổi **giá** menu không khai lý do làm hàm *giá tại mốc* đọc giá hiện
-  hành, nên `I-013/1` kêu ở mọi dòng cũ mang giá trước: tiếng kêu ấy đúng — nó chỉ ra một lần sửa
-  mất vết — nhưng nó mang mã `I-013`, không mang mã `I-018`.
+- **Lần đổi mất vết chỉ còn đến từ đường vượt database.** Tới 2026-10-09 vết ở chế độ mềm (**F-046**):
+  lần sửa không khai lý do không để lại vết. Từ bước 20 (`T-138`, **ADR-092**) database từ chối lần ấy,
+  trừ một ngoại lệ hẹp — khách QR gọi thêm kéo phiên *Chờ thanh toán → Đang phục vụ* (**F-060**), mà
+  `I-016/1` không thấy. Còn lại, một lần đổi không vết chỉ có khi ai đó vượt database (chủ lược đồ tắt
+  trigger vết), và các câu đọc từ vết — `I-009/1` · `I-016/1` · `I-017/2` · `I-018/1` · nhánh *sửa* của
+  `I-011/1` và `I-021/7` · `QD-33/b` — không thấy nó. Lần đổi **giá** menu vượt vết làm hàm *giá tại
+  mốc* đọc giá hiện hành, nên `I-013/1` kêu ở mọi dòng cũ mang giá trước: tiếng kêu ấy đúng — nó chỉ
+  ra một lần sửa mất vết — nhưng nó mang mã `I-013`, không mang mã `I-018`. Lỗi cài cần lần đổi mất vết
+  thì tắt đúng các trigger vết của một bảng rồi bật lại (hàm `bc_vet` của `db/reconcile/proof/baseline.sql`).
 - **Thêm một dòng con không có vết.** Vết cập nhật chụp lần **sửa** một dòng đã có; lần **thêm** một
   dòng con vào một bản ghi đã có — thêm món vào đơn, thêm thành phần vào suất, thêm xấp mệnh giá vào
   tiền đầu két — không để lại *ai thêm*. `I-024/3`, `I-011/1`, `I-021/7` đọc đúng hình ấy và **kêu**
   cả ở lần thêm hợp lệ. Ghi thành **F-047** (`work/findings.md`). **Gỡ 2026-10-05 (`T-137`,
   **ADR-081**):** lần thêm có khai lý do để lại một vết trên bản ghi cha (bản trước không có dòng, bản
-  sau có); ba câu nay chỉ kêu dòng thêm sau cha mà **không** có vết thêm của chính nó — tức lần thêm
-  không khai lý do (chế độ mềm, **F-046**). Lỗi cài `i011_1` · `i021_7` · `i024_3` xoá lý do trước khi
-  thêm, vì ngày mẫu khai lý do cho cả giao dịch.
+  sau có); ba câu nay chỉ kêu dòng thêm sau cha mà **không** có vết thêm của chính nó — tới bước 20 là
+  lần thêm không khai lý do (chế độ mềm, **F-046**), từ bước 20 chỉ còn lần thêm vượt database. Lỗi cài
+  `i011_1` · `i021_7` · `i024_3` tắt trigger vết của bảng con trước khi thêm (`T-138`).
 - **`I-016/1` so với bảng §5 hôm nay**, không với bảng tại lúc chuyển: §5 chưa có lịch sử phiên bản
   đọc được bằng máy. Bảng đổi thì một lần chuyển cũ đúng luật cũ có thể kêu.
 - **Lúc đóng phiên** là mốc `booked_at` của hoá đơn phiên — phiên không có cột mốc đóng
@@ -218,17 +222,15 @@ làm khác.
   ứng, thưởng — mang một phần tiền bằng đúng độ lớn chỗ lệch. Không có, hay hơn một, là chỗ lệch vô danh.
   Câu chỉ đọc **vế tiền mặt**: tin nhắn báo có không có chỗ cất (`I-015` tập 5). Lỗi hai thao tác bù
   nhau thành một chỗ lệch bằng phần tiền của một thao tác thứ ba thì câu không phân biệt được.
-- **Ngày chờ `U-072`** (`T-133`): hàm `ket_ngay` (`db/reconcile/prelude.sql`) đánh dấu mọi ngày chạm một khoản tạm ứng hay thưởng
-  mà ngày khai khác ngày ghi theo múi giờ quán; `I-021/1` và `I-012/2` không kết luận ngày ấy — chọn hộ
-  một trong hai ngày là chọn hộ chủ quán (**ADR-074** điểm 4). Hai ngày trùng nhau thì hai cách hiểu
-  cho cùng một ngày, nên khoản vào hạng tử. Dấu đối soát xong **không** đòi phép trừ ra 0 (**U-073**):
-  `I-021/1` kêu ngày lệch dù đã bấm xong.
+- **Ngày khai khoản chi** (T-140, 2026-10-09, ADR-089 Sửa đổi): hàm ket_ngay trừ tạm ứng
+  và thưởng theo paid_date, không bỏ qua ngày có ngày khai khác ngày ghi. Hai bản ở cửa và bộ
+  đối chiếu giữ cùng hạng tử. Chủ quán ký ngày lệch phải ghi giải thích; `I-021/1` vẫn kêu dù đã ký.
 - **`I-021/3`** chỉ in ngày có **hơn một** con số tiền đầu két; ngày **chưa có** con số nào là *chưa
   đối soát xong* (tập 4 của pha 1, **ADR-037**), không phải lệch.
 - **Chuỗi vết đứt (P2A-07, 2026-10-01).** `I-025/2` · `I-028/4` đọc dòng đã có vết đúng bảng,
   đúng dòng: bản sau mới nhất (theo `revised_at, id`) khác dòng hiện tại, hoặc bản trước của một
-  vết khác bản sau của vết liền trước. Dòng chưa từng có vết thì lần sửa không khai lý do không
-  câu nào thấy (**F-046**). Hai ảnh và dòng hiện tại so theo **giá trị** của kiểu dòng
+  vết khác bản sau của vết liền trước. Dòng chưa từng có vết thì lần sửa vượt vết không câu nào
+  thấy — từ bước 20 chỉ còn đường vượt database (**F-046** gỡ ở `T-138`). Hai ảnh và dòng hiện tại so theo **giá trị** của kiểu dòng
   (`jsonb_populate_record`), không theo chữ của ảnh: ảnh in mốc `timestamptz` theo múi giờ của phiên
   ghi, nên so chữ thì một phiên đọc đặt múi giờ khác làm mọi dòng có vết kêu oan — Claude thấy lúc
   duyệt, khi lỗi cài `qd32` (đổi múi giờ) làm hai câu này kêu theo.
@@ -249,5 +251,5 @@ làm khác.
 | `P2-13` | §3 — lệnh và phần chứng minh chạy trong `./scripts/db-check.sh`; §2 là danh sách tập chưa được chấm, đọc trước khi tick cổng |
 | `P2A-05` | Bước còn nợ câu `I-029`; khi viết câu thì **gỡ dòng của mệnh đề ấy ở §2.1 trong cùng thay đổi**. Cùng lượt: khoản chi của loại mang nguồn két vào hạng tử *chi từ két* của hàm `ket_ngay` (`db/reconcile/prelude.sql`) (`db/reconcile/prelude.sql`) — thiếu nó thì `I-021/1` kêu mọi ngày có trả tiền điện |
 | `P2-14` | §1 — mỗi mã `I-0xx` có câu; file này không nhắc đường gọi hay màn hình nào của pha 3 · pha 4 |
-| pha 3 | §2 các dòng *pha 3* — mỗi chỗ cất mới là một migration, kèm câu và file lỗi mới ở `db/reconcile/`; §4 — **F-046** (**F-047** gỡ ở `T-137`) |
+| pha 3 | §2 các dòng *pha 3* — mỗi chỗ cất mới là một migration, kèm câu và file lỗi mới ở `db/reconcile/`; §4 — phần còn mở của **F-060** (**F-047** gỡ ở `T-137`, **F-046** gỡ ở `T-138`) |
 | chủ repo | §2 dòng *chủ repo* còn lại — tin nhắn báo có (`I-015` tập 5). Số đếm két và dấu đối soát xong: `T-133`, 2026-10-05 |

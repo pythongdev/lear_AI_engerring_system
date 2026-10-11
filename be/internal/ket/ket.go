@@ -1,4 +1,4 @@
-// Package ket khai tiền đầu két, đếm và ký ngày ở ngưỡng lệch 0đ (ADR-089).
+// Package ket khai tiền đầu két, đếm và chủ quán ký ngày kèm giải thích khi lệch (ADR-089).
 package ket
 
 import (
@@ -13,12 +13,13 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"math"
 	"net/http"
+	"strings"
 	"time"
 )
 
 var KhaiDauKet = authz.Door{Code: "ket/khai_dau_ket", Need: authz.NeedCounterOrOwner}
 var Dem = authz.Door{Code: "ket/dem", Need: authz.NeedCounterOrOwner}
-var DoiSoatXong = authz.Door{Code: "ket/doi_soat_xong", Need: authz.NeedCounterOrOwner}
+var DoiSoatXong = authz.Door{Code: "ket/doi_soat_xong", Need: authz.NeedOwner}
 
 //go:embed sql/khai_dau_ket/them.sql
 var dauThem string
@@ -150,17 +151,16 @@ type SoKet struct {
 	Gap      int64  `json:"gap_vnd"`
 }
 
-func docSo(r *http.Request, tx pgx.Tx, ngay string) (SoKet, bool, error) {
+func docSo(r *http.Request, tx pgx.Tx, ngay string) (SoKet, error) {
 	var s SoKet
 	var date time.Time
-	var cho bool
-	err := tx.QueryRow(r.Context(), ketSQL, ngay).Scan(&date, &s.Counted, &s.Opening, &s.Expected, &cho)
+	err := tx.QueryRow(r.Context(), ketSQL, ngay).Scan(&date, &s.Counted, &s.Opening, &s.Expected)
 	if errors.Is(err, pgx.ErrNoRows) {
 		err = apierr.Error{Code: apierr.CodeCashDayIncomplete}
 	}
 	s.SaleDate = ngay
 	s.Gap = s.Counted - s.Opening - s.Expected
-	return s, cho, err
+	return s, err
 }
 func (h handler) doc(w http.ResponseWriter, r *http.Request) {
 	ngay, ok := docNgay(w, r)
@@ -168,7 +168,7 @@ func (h handler) doc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var s SoKet
-	err := db.InTx(r.Context(), h.pool, func(tx pgx.Tx) error { var err error; s, _, err = docSo(r, tx, ngay); return err })
+	err := db.InTx(r.Context(), h.pool, func(tx pgx.Tx) error { var err error; s, err = docSo(r, tx, ngay); return err })
 	if err != nil {
 		apierr.WriteError(w, err)
 		return
@@ -180,12 +180,26 @@ func (h handler) ky(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+	var p struct {
+		GapExplanation *string `json:"gap_explanation"`
+	}
+	if !apierr.ReadJSON(w, r, &p) {
+		return
+	}
+	var explanation *string
+	if p.GapExplanation != nil {
+		trimmed := strings.TrimSpace(*p.GapExplanation)
+		if trimmed != "" {
+			explanation = &trimmed
+		}
+	}
+	var gap int64
 	var id int64
 	err := authz.Run(r.Context(), h.pool, h.person(r), DoiSoatXong, func(tx pgx.Tx) error {
 		if err := ngayban.Khoa(r.Context(), tx, ngay, true); err != nil {
 			return err
 		}
-		so, cho, err := docSo(r, tx, ngay)
+		so, err := docSo(r, tx, ngay)
 		if err != nil {
 			return err
 		}
@@ -202,17 +216,15 @@ func (h handler) ky(w http.ResponseWriter, r *http.Request) {
 		if co {
 			return apierr.Error{Code: apierr.CodePaperEntriesPending}
 		}
-		if cho {
-			return apierr.Error{Code: apierr.CodeCashDayExpenseDateUndecided}
+		gap = so.Gap
+		if gap != 0 && explanation == nil {
+			return apierr.Error{Code: apierr.CodeGapExplanationRequired}
 		}
-		if so.Gap != 0 {
-			return apierr.Error{Code: apierr.CodeCashDayNotBalanced}
-		}
-		return tx.QueryRow(r.Context(), kyThem, ngay).Scan(&id)
+		return tx.QueryRow(r.Context(), kyThem, ngay, gap, explanation).Scan(&id)
 	})
 	if err != nil {
 		apierr.WriteError(w, err)
 		return
 	}
-	apierr.JSON(w, 201, map[string]any{"reconciled_day_id": id, "sale_date": ngay})
+	apierr.JSON(w, 201, map[string]any{"reconciled_day_id": id, "sale_date": ngay, "gap_vnd": gap, "gap_explanation": explanation})
 }

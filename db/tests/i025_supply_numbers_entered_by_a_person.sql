@@ -2,8 +2,12 @@
 -- mang ai nhập · ngày của con số · lúc gõ; thiếu một trong ba thì không tồn tại được; danh mục
 -- thêm dần, đơn vị mua trống được; sửa một con số là một lần cập nhật có vết (I-018); không thao
 -- tác bán hàng nào chạm tới sổ; lược đồ không cất ngưỡng, định lượng suất hay kết luận thiếu.
--- Chế độ MỀM của vết (work/findings.md F-046) áp cả ở đây: sửa không khai lý do thì không có vết.
+-- Chế độ NGHIÊM của vết từ bước 20 (T-138, ADR-092) áp cả ở đây: sửa không khai lý do bị từ chối.
 -- Lát: 12-luoc-do-nguyen-lieu.md.
+
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người sửa là người
+-- thao tác mà từng khối khai. Khối nào xoá lý do là để thử lời từ chối.
+DO $$ BEGIN PERFORM set_config('shop.revision_reason', 'test-i025_supply_numbers_entered_by_a_person', true); END $$;
 DO $$
 DECLARE chu bigint; nv bigint; gao bigint; hanh bigint; e_mua bigint; e_dung bigint; e_le bigint;
         o1 bigint; n bigint; snap text; cols text; r record;
@@ -131,14 +135,16 @@ BEGIN
     RAISE EXCEPTION 'I-025: sửa một con số có khai lý do mà không để lại bản trước 7 · bản sau 8';
   END IF;
   RAISE NOTICE 'I-025 sửa con số — trước %, sau %, lý do "%", % sửa', r.truoc, r.sau, r.reason, r.display_name;
-  -- Chế độ mềm (F-046): sửa KHÔNG khai lý do đi qua mà không để lại vết — nói thẳng, không giấu.
+  -- Chế độ nghiêm (T-138, ADR-092; F-046 đã gỡ): sửa KHÔNG khai lý do bị từ chối — không lần sửa nào
+  -- của sổ đi qua mà mất vết.
   PERFORM set_config('shop.revision_reason', '', true);
-  n := (SELECT COUNT(*) FROM record_revision WHERE target_table_code = 'supply_day_entry');
-  UPDATE supply_day_entry SET entered_measure = 8.5 WHERE id = e_dung;
-  RAISE NOTICE 'I-025 chế độ mềm — sửa không khai lý do: % vết mới (F-046)',
-    (SELECT COUNT(*) FROM record_revision WHERE target_table_code = 'supply_day_entry') - n;
-  PERFORM set_config('shop.revision_reason', 'test-trả về con số đã cân', true);
-  UPDATE supply_day_entry SET entered_measure = 8 WHERE id = e_dung;
+  BEGIN
+    UPDATE supply_day_entry SET entered_measure = 8.5 WHERE id = e_dung;
+    RAISE EXCEPTION 'I-025: database KHÔNG từ chối lần sửa con số không khai lý do';
+  EXCEPTION WHEN check_violation THEN
+    RAISE NOTICE 'I-025 chế độ nghiêm — sửa không khai lý do bị từ chối: %', SQLERRM;
+  END;
+  PERFORM set_config('shop.revision_reason', 'test-cân lại cuối buổi', true);
 
   -- Không xoá cứng (QD-50): vai ghi của hệ thống không xoá được con số hay một thứ trong danh mục.
   BEGIN
@@ -200,7 +206,7 @@ BEGIN
   -- …và phần chạy thật, thu nhỏ: một đơn tới lấy được tạo, thu tiền, hoàn thành ⇒ sổ không đổi
   -- một con số nào. Buổi bán đủ năm kênh của mục Verification là việc của cổng P2A-08.
   SELECT md5(string_agg(to_jsonb(e)::text, '|' ORDER BY e.id)) INTO snap FROM supply_day_entry e;
-  PERFORM set_config('shop.revision_reason', '', true);
+  PERFORM set_config('shop.revision_reason', 'test-bán một đơn tới lấy', true);
   INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at,
                            submission_code)
   VALUES ('pickup', 'confirmed', 'shop_pickup', '0900000001', now(), gen_random_uuid()::text)

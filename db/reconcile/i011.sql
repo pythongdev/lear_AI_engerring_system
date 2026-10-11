@@ -7,7 +7,8 @@
 -- Hai hình: thành phần THÊM vào một suất đã có, trong giờ bán, mà suất không có vết thêm của chính
 -- dòng ấy (T-137, ADR-081: bản trước không có dòng, bản sau có — đọc ra đổi gì · lúc nào · ai); và
 -- một lần SỬA thành phần có khai lý do mà vết thiếu người — không tồn tại được khi ràng buộc còn.
--- Lần sửa hay lần thêm không khai lý do không có vết (F-046): lần thêm thì câu này thấy, lần sửa thì không.
+-- Từ bước 20 (T-138) database từ chối lần sửa hay lần thêm không khai lý do; lần đổi vượt database
+-- (tắt trigger vết) thì không vết: lần thêm thì câu này thấy, lần sửa thì không.
 SELECT c.menu_item_id AS mon, c.id AS dong_thanh_phan, 'thêm' AS kieu,
        (c.created_at AT TIME ZONE :mui_gio) AS luc
 FROM menu_item_component c JOIN menu_item m ON m.id = c.menu_item_id

@@ -206,7 +206,10 @@ func (n ngoai) quanMu(t *testing.T, tu, toi time.Time) {
 // đơn sang Đang thực hiện, nên với các đơn ấy lệnh này không đổi gì; để lại cho đơn dựng tay.
 func (n ngoai) dangLam(t *testing.T, don int64) {
 	t.Helper()
-	if _, err := n.owner.Exec(n.ctx, "UPDATE shop.sales_order SET status = 'in_progress' WHERE id = $1", don); err != nil {
+	if err := n.coVet(func(tx pgx.Tx) error {
+		_, err := tx.Exec(n.ctx, "UPDATE shop.sales_order SET status = 'in_progress' WHERE id = $1", don)
+		return err
+	}); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -429,8 +432,9 @@ func TestI022_TruongNenCoKhongChanTaoDon(t *testing.T) {
 	}{
 		{"giao không giờ, không tên", false, lienHeGiao(), "delivery", "door_delivery", "pending_confirmation", "cần=- tên=-"},
 		{"tới lấy không địa chỉ", false, lienHeLay(), "pickup", "shop_pickup", "pending_confirmation", "đc=-"},
-		{"hotline tới lấy không địa chỉ", true, lienHeHotlineLay(), "phone_preorder", "shop_pickup", "in_progress", "đc=-"},
-		{"hotline giao kèm tên và ghi chú", true, coTen, "phone_preorder", "door_delivery", "in_progress", "tên=chị Lan ghi=gọi trước khi tới"},
+		// T-142 (U-077): đơn đặt trước vào Đã xác nhận, chưa nổ — giờ khách cần còn xa hơn 20 phút.
+		{"hotline tới lấy không địa chỉ", true, lienHeHotlineLay(), "phone_preorder", "shop_pickup", "confirmed", "đc=-"},
+		{"hotline giao kèm tên và ghi chú", true, coTen, "phone_preorder", "door_delivery", "confirmed", "tên=chị Lan ghi=gọi trước khi tới"},
 	} {
 		var r traLoi
 		if ca.hotl {
@@ -681,10 +685,11 @@ func TestI016_BonHinhMangDiQuaCuaCuaLat(t *testing.T) {
 	hg := n.hotline(t, n.quay, dauLanGui(t), lienHeHotlineGiao())
 	canDat(t, hg, http.StatusCreated)
 	hGiao := hg.so(t, "sales_order_id")
-	if hg.chu("status") != "in_progress" {
-		t.Fatalf("đơn hotline: %q, muốn in_progress (vào thẳng, nổ ngay — ADR-090)", hg.chu("status"))
+	if hg.chu("status") != "confirmed" {
+		t.Fatalf("đơn hotline: %q, muốn confirmed (vào thẳng, nổ theo giờ nhắc — T-142)", hg.chu("status"))
 	}
 	canMa(t, n.duyet(t, n.quay, hGiao), http.StatusConflict, "order_transition_not_allowed", "")
+	n.denGioLam(t, hGiao)
 	n.phucVuHet(t, n.quay, hGiao)
 	canDat(t, n.roiQuan(t, n.quay, hGiao), http.StatusOK)
 	if n.trangThaiDon(t, hGiao) != "delivering" {
@@ -738,6 +743,7 @@ func TestI016_RoiQuanKhiConViecTramChuaRaBanBiTuChoi(t *testing.T) {
 		var r traLoi
 		if ca.hotl {
 			r = n.hotline(t, n.quay, dauLanGui(t), lienHeHotlineGiao())
+			n.denGioLam(t, r.so(t, "sales_order_id")) // T-142: đơn đặt trước nổ ở lần nhắc đầu
 		} else {
 			r = n.web(t, dauLanGui(t), lienHeGiao())
 			canDat(t, n.duyet(t, n.quay, r.so(t, "sales_order_id")), http.StatusOK)

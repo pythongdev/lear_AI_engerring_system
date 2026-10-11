@@ -4,6 +4,10 @@
 -- đầu tính từ lúc quán hết nhìn thấy (U-061) · máy phát hiện hay người bấm · lúc kết thúc · ai bấm
 -- mở lại — mở lại là NÚT, không tự mở khi tín hiệu về (U-043). Một thời điểm có một câu trả lời cho
 -- mỗi khoảng. Thiết kế: docs/decisions.md ADR-078. Viết TRƯỚC migration (T-132, Claude Code).
+
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người sửa là người
+-- thao tác mà từng khối khai. Khối nào xoá lý do là để thử lời từ chối.
+DO $$ BEGIN PERFORM set_config('shop.revision_reason', 'test-yc34_order_intake_stops', true); END $$;
 DO $$
 DECLARE a bigint; b bigint; p1 bigint; m1 bigint; t0 timestamptz; r record; cols text;
 BEGIN

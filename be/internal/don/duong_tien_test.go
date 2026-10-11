@@ -180,6 +180,12 @@ func (n tien) doiSoatXong(t *testing.T, nguoi int64, ngay int) traLoi {
 	return n.post(t, fmt.Sprintf("/sale-days/%s/reconciliation", ngayChu(ngay)), nguoi, map[string]any{})
 }
 
+// doiSoatGiaiThich: chủ quán bấm đối soát xong kèm giải thích (T-140, U-073 — ngày lệch phải có).
+func (n tien) doiSoatGiaiThich(t *testing.T, nguoi int64, ngay int, giaiThich any) traLoi {
+	t.Helper()
+	return n.post(t, fmt.Sprintf("/sale-days/%s/reconciliation", ngayChu(ngay)), nguoi, map[string]any{"gap_explanation": giaiThich})
+}
+
 func (n tien) docDoiSoat(t *testing.T, nguoi int64, ngay int) traLoi {
 	t.Helper()
 	status, out := n.goi(t, "GET", fmt.Sprintf("/sale-days/%s/cash-reconciliation", ngayChu(ngay)), nguoi, nil)
@@ -223,7 +229,7 @@ func (n tien) canHoaDon(t *testing.T, hd int64, muon string) {
 
 // ketNgayDoiChieu: phép trừ két của ngày ấy theo BỘ ĐỐI CHIẾU của P2-11 — prelude đọc lúc chạy từ
 // scripts/reconcile.sh --emit-prelude, hàm tạm pg_temp.ket_ngay, trên một kết nối chủ lược đồ riêng.
-func (n tien) ketNgayDoiChieu(t *testing.T, ngay int) (demDuoc, dauKet, vePhai int64, choU072 bool) {
+func (n tien) ketNgayDoiChieu(t *testing.T, ngay int) (demDuoc, dauKet, vePhai int64) {
 	t.Helper()
 	goc, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
 	if err != nil {
@@ -246,8 +252,8 @@ func (n tien) ketNgayDoiChieu(t *testing.T, ngay int) (demDuoc, dauKet, vePhai i
 	if _, err := conn.Exec(n.ctx, string(prelude)); err != nil {
 		t.Fatalf("nạp prelude của bộ đối chiếu: %v", err)
 	}
-	if err := conn.QueryRow(n.ctx, `SELECT dem_duoc, dau_ket, ve_phai, cho_u072 FROM pg_temp.ket_ngay($1)
-		WHERE ngay = $2::date`, dbtest.ShopTZ(t), ngayChu(ngay)).Scan(&demDuoc, &dauKet, &vePhai, &choU072); err != nil {
+	if err := conn.QueryRow(n.ctx, `SELECT dem_duoc, dau_ket, ve_phai FROM pg_temp.ket_ngay($1)
+		WHERE ngay = $2::date`, dbtest.ShopTZ(t), ngayChu(ngay)).Scan(&demDuoc, &dauKet, &vePhai); err != nil {
 		t.Fatalf("ket_ngay ngày %s: %v", ngayChu(ngay), err)
 	}
 	return
@@ -372,20 +378,74 @@ func TestI015_GiamGiaCaDonBiTuChoiChoU058(t *testing.T) {
 	canDat(t, n.traoTaiQuay(t, n.quay, dL, voi(thu(tongL, 0), map[string]any{"discount_vnd": 0})), http.StatusCreated)
 }
 
-func TestI005_NoTrenDonLeBiTuChoiChoU076(t *testing.T) {
+func TestI005_NoTrenDonLeCoGhiChuChoChuQuan(t *testing.T) {
+	// T-140 · U-076 (chủ quán 2026-10-09, shop-facts.md §6.14): mọi đơn không ngồi bàn được nợ, kèm ghi chú
+	// để chủ quán biết; người đi giao ghi nợ ngay tại chỗ khách. Ghi ai nợ và nợ bao nhiêu như nợ tại bàn.
 	n := dungTien(t)
 	n.datNgay(t, 6)
 	giao := n.nguoi(t, "người đi giao", false)
 	dL, tongL := n.donLay(t)
 	n.phucVuHet(t, n.quay, dL)
 	dG, tongG := n.donGiao(t)
-	truoc := n.demTien(t)
-	no := func(tong int64) map[string]any {
-		return voi(thu(tong-1000, 0), map[string]any{"debt_vnd": 1000, "debtor_name": "anh Sáu"})
+	no := func(tong int64, ghiChu any) map[string]any {
+		return voi(thu(tong-1000, 0), map[string]any{"debt_vnd": 1000, "debtor_name": "anh Sáu", "debt_note": ghiChu})
 	}
-	canMa(t, n.traoTaiQuay(t, n.quay, dL, no(tongL)), http.StatusConflict, "standalone_debt_undecided", "")
-	canMa(t, n.giaoXong(t, giao, dG, no(tongG)), http.StatusConflict, "standalone_debt_undecided", "")
-	n.khongDoi(t, truoc, "nợ trên đơn lẻ")
+
+	// Thiếu ghi chú (vắng, rỗng, toàn khoảng trắng) ⇒ từ chối cả lần, không ghi gì.
+	truoc := n.demTien(t)
+	for _, ghiChu := range []any{nil, "", "   "} {
+		canMa(t, n.traoTaiQuay(t, n.quay, dL, no(tongL, ghiChu)), http.StatusUnprocessableEntity, "debt_note_required", "")
+		canMa(t, n.giaoXong(t, giao, dG, no(tongG, ghiChu)), http.StatusUnprocessableEntity, "debt_note_required", "")
+	}
+	// Ghi chú mà không nợ đồng nào ⇒ thân sai.
+	canMa(t, n.traoTaiQuay(t, n.quay, dL, voi(thu(tongL, 0), map[string]any{"debt_note": "nhầm"})),
+		http.StatusBadRequest, "invalid_request", "debt_note")
+	n.khongDoi(t, truoc, "nợ đơn lẻ thiếu ghi chú")
+
+	// Quầy ghi nợ khi trao tại quầy; người đi giao ghi nợ tại chỗ khách.
+	r := n.traoTaiQuay(t, n.quay, dL, no(tongL, "khách quen, hẹn thứ bảy trả"))
+	canDat(t, r, http.StatusCreated)
+	hdL := r.so(t, "bill_id")
+	r = n.giaoXong(t, giao, dG, no(tongG, "  chị ở số 12 hẹn cuối tháng  "))
+	canDat(t, r, http.StatusCreated)
+	hdG := r.so(t, "bill_id")
+	for _, c := range []struct {
+		hd   int64
+		muon string
+	}{
+		{hdL, fmt.Sprintf("nợ=1000 tên=anh Sáu ghi=khách quen, hẹn thứ bảy trả người=%d", n.quay)},
+		{hdG, fmt.Sprintf("nợ=1000 tên=anh Sáu ghi=chị ở số 12 hẹn cuối tháng người=%d", giao)},
+	} {
+		if got := n.docChu(t, "SELECT format('nợ=%s tên=%s ghi=%s người=%s', debt_vnd, debtor_name, debt_note, person_id) FROM shop.bill WHERE id = $1", c.hd); got != c.muon {
+			t.Fatalf("hoá đơn %d: %s, muốn %s", c.hd, got, c.muon)
+		}
+	}
+
+	// Chủ quán thấy ghi chú trong danh sách nợ.
+	status, out := n.goi(t, "GET", "/debts", n.quay, nil)
+	if status != http.StatusOK {
+		t.Fatalf("GET /debts: %d %v", status, out)
+	}
+	thay := map[int64]string{}
+	ds, _ := out["debts"].([]any)
+	for _, x := range ds {
+		m, _ := x.(map[string]any)
+		id, _ := m["bill_id"].(float64)
+		ghi, _ := m["debt_note"].(string)
+		thay[int64(id)] = ghi
+	}
+	if thay[hdL] != "khách quen, hẹn thứ bảy trả" || thay[hdG] != "chị ở số 12 hẹn cuối tháng" {
+		t.Fatalf("danh sách nợ không mang ghi chú: %v", thay)
+	}
+
+	// Database tự giữ luật: một hoá đơn đơn lẻ có nợ mà không ghi chú thì không ghi được (tầng 1).
+	if err := n.coVet(func(tx pgx.Tx) error {
+		_, err := tx.Exec(n.ctx, "UPDATE shop.bill SET debt_note = NULL WHERE id = $1", hdG)
+		return err
+	}); err == nil ||
+		!strings.Contains(err.Error(), "bill_standalone_debt_note_check") {
+		t.Fatalf("xoá ghi chú nợ của đơn lẻ phải bị bill_standalone_debt_note_check từ chối, nhận %v", err)
+	}
 }
 
 // --- trả trước: nhận, trả lại, thành doanh thu qua hoá đơn của chính đơn (YC-23 · I-014) -----------
@@ -693,10 +753,10 @@ func TestI021_MotNgayBanGiaQuaCuaRa0dLech(t *testing.T) {
 		t.Fatalf("đối soát qua cửa: muốn đếm %d, đầu két %d, vế phải %d, lệch 0; nhận %v", dem, dauKet, dem-dauKet, r.body)
 	}
 	// Bộ đối chiếu của P2-11 ra đúng con số ấy.
-	demDC, dauDC, veDC, u072 := n.ketNgayDoiChieu(t, D)
-	if u072 || demDC != dem || dauDC != dauKet || veDC != dem-dauKet {
-		t.Fatalf("ket_ngay của bộ đối chiếu: đếm %d đầu két %d vế phải %d chờ U-072 %v; cửa nói %d %d %d",
-			demDC, dauDC, veDC, u072, dem, dauKet, dem-dauKet)
+	demDC, dauDC, veDC := n.ketNgayDoiChieu(t, D)
+	if demDC != dem || dauDC != dauKet || veDC != dem-dauKet {
+		t.Fatalf("ket_ngay của bộ đối chiếu: đếm %d đầu két %d vế phải %d; cửa nói %d %d %d",
+			demDC, dauDC, veDC, dem, dauKet, dem-dauKet)
 	}
 	t.Logf("ngày %s: két %d − đầu két %d = vế phải %d ⇒ lệch 0 (cửa và bộ đối chiếu)", ngayChu(D), dem, dauKet, veDC)
 
@@ -759,7 +819,10 @@ func TestI021_CaiMotLanThuSaiDoiSoatKeu(t *testing.T) {
 	hd, tong := n.hoaDonBan(t)
 
 	// Tiền mặt đã vào két, máy ghi thành chuyển khoản.
-	if _, err := n.owner.Exec(n.ctx, "UPDATE shop.bill SET cash_vnd = 0, transfer_vnd = due_vnd WHERE id = $1", hd); err != nil {
+	if err := n.coVet(func(tx pgx.Tx) error {
+		_, err := tx.Exec(n.ctx, "UPDATE shop.bill SET cash_vnd = 0, transfer_vnd = due_vnd WHERE id = $1", hd)
+		return err
+	}); err != nil {
 		t.Fatal(err)
 	}
 	canDat(t, n.demKet(t, n.quay, []xap{{50000, 100000}, {1000, tong}}), http.StatusCreated)
@@ -769,14 +832,27 @@ func TestI021_CaiMotLanThuSaiDoiSoatKeu(t *testing.T) {
 	if r.so(t, "gap_vnd") != tong {
 		t.Fatalf("lần thu ghi nhầm %d phải làm lệch đúng %d; cửa đọc %v", tong, tong, r.body)
 	}
-	demDC, dauDC, veDC, _ := n.ketNgayDoiChieu(t, E)
+	demDC, dauDC, veDC := n.ketNgayDoiChieu(t, E)
 	if demDC-dauDC-veDC != tong {
 		t.Fatalf("bộ đối chiếu phải kêu lệch %d, ra %d", tong, demDC-dauDC-veDC)
 	}
+	// T-140 · U-073: chỉ chủ quán bấm; ngày lệch phải có giải thích; lệch được ghi lại cùng giải thích.
 	truoc := n.demTien(t)
-	canMa(t, n.doiSoatXong(t, n.quay, E), http.StatusConflict, "cash_day_not_balanced", "")
-	n.khongDoi(t, truoc, "đóng ngày lệch")
-	t.Logf("lỗi cài: hoá đơn %d ghi chuyển khoản %d ⇒ lệch %d ở cả cửa và bộ đối chiếu; ngày không đóng", hd, tong, tong)
+	canMa(t, n.doiSoatXong(t, n.quay, E), http.StatusForbidden, "owner_only", "")
+	for _, giaiThich := range []any{nil, "", "  "} {
+		canMa(t, n.doiSoatGiaiThich(t, n.chu, E, giaiThich), http.StatusUnprocessableEntity, "gap_explanation_required", "")
+	}
+	n.khongDoi(t, truoc, "đóng ngày lệch không giải thích")
+	r = n.doiSoatGiaiThich(t, n.chu, E, "khách chuyển khoản nhưng đưa tiền mặt, ghi nhầm phương thức")
+	canDat(t, r, http.StatusCreated)
+	if r.so(t, "gap_vnd") != tong || r.chu("gap_explanation") != "khách chuyển khoản nhưng đưa tiền mặt, ghi nhầm phương thức" {
+		t.Fatalf("dấu đối soát ngày lệch: %v", r.body)
+	}
+	if got := n.docChu(t, "SELECT format('lệch=%s người=%s', gap_vnd, person_id) FROM shop.reconciled_day WHERE sale_date = $1::date",
+		ngayChu(E)); got != fmt.Sprintf("lệch=%d người=%d", tong, n.chu) {
+		t.Fatalf("dấu đối soát: %s", got)
+	}
+	t.Logf("lỗi cài: hoá đơn %d ghi chuyển khoản %d ⇒ lệch %d ở cả cửa và bộ đối chiếu; chủ quán đóng kèm giải thích", hd, tong, tong)
 }
 
 // --- cửa đóng ngày: ngày chưa đủ điều kiện thì chưa xong (ADR-037 · ADR-079 · U-072) --------------
@@ -787,38 +863,49 @@ func TestI021_CuaDongNgayTuChoiNgayChuaXong(t *testing.T) {
 
 	n.datNgay(t, 17) // có tiền đầu két, chưa đếm
 	canDat(t, n.khaiDauKet(t, n.quay, dau), http.StatusCreated)
-	canMa(t, n.doiSoatXong(t, n.quay, 17), http.StatusConflict, "cash_day_incomplete", "")
+	canMa(t, n.doiSoatXong(t, n.chu, 17), http.StatusConflict, "cash_day_incomplete", "")
 	canMa(t, n.docDoiSoat(t, n.quay, 17), http.StatusConflict, "cash_day_incomplete", "")
 
 	n.datNgay(t, 18) // đã đếm, không có tiền đầu két
 	canDat(t, n.demKet(t, n.quay, dau), http.StatusCreated)
-	canMa(t, n.doiSoatXong(t, n.quay, 18), http.StatusConflict, "cash_day_incomplete", "")
+	canMa(t, n.doiSoatXong(t, n.chu, 18), http.StatusConflict, "cash_day_incomplete", "")
 
 	n.datNgay(t, 19) // khớp, nhưng sổ giấy còn một lượt chưa nhập
 	canDat(t, n.khaiDauKet(t, n.quay, dau), http.StatusCreated)
 	canDat(t, n.demKet(t, n.quay, dau), http.StatusCreated)
 	n.id(t, "INSERT INTO shop.paper_ledger (sale_date, entry_count, person_id) VALUES ($1::date, 1, $2) RETURNING id", ngayChu(19), n.quay)
-	canMa(t, n.doiSoatXong(t, n.quay, 19), http.StatusConflict, "paper_entries_pending", "")
+	canMa(t, n.doiSoatXong(t, n.chu, 19), http.StatusConflict, "paper_entries_pending", "")
 
-	n.datNgay(t, 21) // khoản tạm ứng khai ngày 21, ghi vào máy ngày khác ⇒ chờ U-072
+	// T-140 · U-072 (chủ quán 2026-10-09): khoản rời két trừ vào két của NGÀY NGƯỜI GHI KHAI, dù ghi vào
+	// máy hôm khác. Tạm ứng 5.000 khai ngày 21, két 21 đếm thiếu đúng 5.000 ⇒ khớp, đóng được không cần giải thích.
+	n.datNgay(t, 21)
 	canDat(t, n.khaiDauKet(t, n.quay, dau), http.StatusCreated)
-	canDat(t, n.demKet(t, n.quay, dau), http.StatusCreated)
-	n.id(t, `INSERT INTO shop.staff_advance (worker_person_id, amount_vnd, paid_date, approver_person_id, person_id)
-		VALUES ($1, 5000, $2::date, $3, $3) RETURNING id`, n.quay, ngayChu(21), n.chu)
-	canMa(t, n.doiSoatXong(t, n.quay, 21), http.StatusConflict, "cash_day_expense_date_undecided", "")
+	canDat(t, n.demKet(t, n.quay, []xap{{10000, 90000}, {5000, 5000}}), http.StatusCreated)
+	n.id(t, `INSERT INTO shop.staff_advance (worker_person_id, amount_vnd, paid_date, approver_person_id, person_id, created_at)
+		VALUES ($1, 5000, $2::date, $3, $3, $4::date + interval '3 days 10 hours') RETURNING id`, n.quay, ngayChu(21), n.chu, ngayChu(21))
+	if demDC, dauDC, veDC := n.ketNgayDoiChieu(t, 21); demDC-dauDC != veDC || veDC != -5000 {
+		t.Fatalf("bộ đối chiếu ngày 21: đếm %d đầu két %d vế phải %d — tạm ứng phải trừ vào ngày khai", demDC, dauDC, veDC)
+	}
+	r := n.doiSoatXong(t, n.chu, 21)
+	canDat(t, r, http.StatusCreated)
+	if r.so(t, "gap_vnd") != 0 {
+		t.Fatalf("ngày 21 phải khớp 0đ: %v", r.body)
+	}
 
 	n.datNgay(t, 22) // ngày không bán gì, két khớp ⇒ đóng được, một lần
 	canDat(t, n.khaiDauKet(t, n.quay, dau), http.StatusCreated)
 	canDat(t, n.demKet(t, n.quay, dau), http.StatusCreated)
 	khac := n.nguoi(t, "phục vụ, không đứng quầy", false)
-	canMa(t, n.doiSoatXong(t, khac, 22), http.StatusForbidden, "not_on_counter_duty", "")
+	// T-140 · U-073: chỉ chủ quán — người đứng quầy cũng bị từ chối, mọi ngày, kể cả ngày khớp 0đ.
+	canMa(t, n.doiSoatXong(t, khac, 22), http.StatusForbidden, "owner_only", "")
+	canMa(t, n.doiSoatXong(t, n.quay, 22), http.StatusForbidden, "owner_only", "")
 	canMa(t, n.doiSoatXong(t, 0, 22), http.StatusUnauthorized, "unauthenticated", "")
-	canDat(t, n.doiSoatXong(t, n.quay, 22), http.StatusCreated)
+	canDat(t, n.doiSoatXong(t, n.chu, 22), http.StatusCreated)
 	truoc := n.demTien(t)
 	canMa(t, n.doiSoatXong(t, n.chu, 22), http.StatusConflict, "sale_day_already_reconciled", "")
 	n.khongDoi(t, truoc, "đóng ngày hai lần")
 	if got := n.docSo(t, "SELECT count(*) FROM shop.reconciled_day WHERE sale_date IN ($1::date, $2::date, $3::date, $4::date)",
-		ngayChu(17), ngayChu(18), ngayChu(19), ngayChu(21)); got != 0 {
+		ngayChu(17), ngayChu(18), ngayChu(19), ngayChu(20)); got != 0 {
 		t.Fatalf("ngày chưa xong mà có dấu: %d", got)
 	}
 }
@@ -843,7 +930,6 @@ func TestI012_CuaTienCanNguoiCoTen(t *testing.T) {
 		{"/bills/1/debt-collections", thu(1000, 0), true},
 		{"/opening-floats", cacXap(dauKetMau()), true},
 		{"/cash-counts", cacXap(dauKetMau()), true},
-		{"/sale-days/" + ngayChu(20) + "/reconciliation", map[string]any{}, true},
 	}
 	for _, c := range cua {
 		canMa(t, n.post(t, c.path, 0, c.body), http.StatusUnauthorized, "unauthenticated", "")
@@ -851,5 +937,10 @@ func TestI012_CuaTienCanNguoiCoTen(t *testing.T) {
 			canMa(t, n.post(t, c.path, khac, c.body), http.StatusForbidden, "not_on_counter_duty", "")
 		}
 	}
+	// T-140 · U-073: cửa đối soát xong là lớp chủ quán.
+	ky := "/sale-days/" + ngayChu(20) + "/reconciliation"
+	canMa(t, n.post(t, ky, 0, map[string]any{}), http.StatusUnauthorized, "unauthenticated", "")
+	canMa(t, n.post(t, ky, khac, map[string]any{}), http.StatusForbidden, "owner_only", "")
+	canMa(t, n.post(t, ky, n.quay, map[string]any{}), http.StatusForbidden, "owner_only", "")
 	n.khongDoi(t, truoc, "cửa tiền không người")
 }

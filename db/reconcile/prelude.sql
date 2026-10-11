@@ -13,8 +13,8 @@ CREATE TEMP TABLE dc_status_map (table_name text, code text);
 
 -- Giá trị một cột tiền của một dòng menu CÓ HIỆU LỰC tại mốc p_t: bản trước của lần sửa đầu tiên
 -- sau p_t có đổi cột ấy (vết cập nhật, I-018), hoặc giá trị hiện hành nếu từ p_t tới nay không
--- lần sửa nào đổi nó. Lần sửa không khai lý do không để lại vết (chế độ mềm, work/findings.md
--- F-046) — với nó, hàm đọc giá hiện hành, và câu dùng hàm sẽ kêu ở dòng cũ.
+-- lần sửa nào đổi nó. Lần sửa vượt vết (từ bước 20 chỉ còn đường vượt database, T-138) — với nó,
+-- hàm đọc giá hiện hành, và câu dùng hàm sẽ kêu ở dòng cũ.
 CREATE FUNCTION pg_temp.gia_tai(p_bang text, p_id bigint, p_cot text, p_hien_hanh bigint,
                                 p_t timestamptz) RETURNS bigint LANGUAGE sql STABLE AS $f$
   SELECT coalesce(
@@ -62,7 +62,7 @@ CREATE FUNCTION pg_temp.luc_no(p_don bigint) RETURNS timestamptz LANGUAGE sql ST
 $f$;
 
 -- Chuỗi vết đứt (P2A-07): chỉ đọc dòng đã có vết; thứ tự toàn phần là revised_at, id.
--- Không có vết thì không suy ra được lần sửa mất vết (F-046, file 09 §4).
+-- Không có vết thì không suy ra được lần sửa mất vết (file 09 §4).
 -- So theo GIÁ TRỊ của dòng, không theo chữ của ảnh: mỗi ảnh đổi về đúng kiểu dòng của bảng bằng
 -- jsonb_populate_record. Ảnh jsonb in timestamptz theo múi giờ của phiên GHI, nên so chữ thì một
 -- phiên đọc đặt múi giờ khác làm mọi dòng có vết kêu oan.
@@ -89,17 +89,16 @@ $f$;
 -- két đếm được, tiền đầu két, vế phải cộng lại từng hạng tử từ chi tiết (04-luoc-do-duong-tien.md
 -- §3 bảng hạng tử). Ngày thiếu một trong hai không có dòng: nó CHƯA đối soát xong, không phải lệch
 -- (I-021 điều kiện biên thứ nhất, ADR-037). Hạng tử CHI TỪ KÉT đọc tạm ứng và thưởng (I-028); khoản
--- chi của I-029 chưa có lát (P2A-05 thêm nó vào đây). Một khoản mà ngày khai khác ngày ghi theo múi giờ
--- của quán thì ngày két của nó chờ U-072: mọi ngày nó chạm được trả về với cho_u072 = true, và hai
--- câu dùng hàm này không kết luận ngày ấy. p_tz là múi giờ của quán (:mui_gio).
+-- chi của I-029 chưa có lát (P2A-05 thêm nó vào đây). Chi trừ theo paid_date dù ghi hôm khác
+-- (T-140, lời chủ quán 2026-10-09). Giữ tham số p_tz cho các lời gọi hiện có.
 CREATE FUNCTION pg_temp.ket_ngay(p_tz text)
-RETURNS TABLE (ngay date, dem_duoc bigint, dau_ket bigint, ve_phai bigint, cho_u072 boolean)
+RETURNS TABLE (ngay date, dem_duoc bigint, dau_ket bigint, ve_phai bigint)
 LANGUAGE sql STABLE AS $f$
   WITH chi AS (
-    SELECT paid_date AS ngay_khai, (created_at AT TIME ZONE p_tz)::date AS ngay_ghi, amount_vnd
+    SELECT paid_date AS ngay_khai, amount_vnd
     FROM staff_advance
     UNION ALL
-    SELECT paid_date, (created_at AT TIME ZONE p_tz)::date, amount_vnd FROM holiday_bonus),
+    SELECT paid_date, amount_vnd FROM holiday_bonus),
   hang_tu(ngay, tien) AS (
     -- doanh thu TIỀN MẶT: phần tiền mặt của hoá đơn (kể cả trả trước nhận bằng tiền mặt) − hoàn cho
     -- khoản đã thu bằng tiền mặt
@@ -118,7 +117,7 @@ LANGUAGE sql STABLE AS $f$
     UNION ALL SELECT sale_date, -prepaid_cash_vnd FROM bill
     UNION ALL SELECT sale_date, -amount_vnd FROM refund
       WHERE prepayment_id IS NOT NULL AND method_code = 'cash'
-    -- − chi từ két (ngày khai; chỉ quyết được khi ngày khai bằng ngày ghi — xem cho_u072)
+    -- − chi từ két (paid_date — ngày người ghi khai)
     UNION ALL SELECT ngay_khai, -amount_vnd FROM chi),
   dem AS (
     SELECT c.sale_date AS ngay, coalesce(sum(x.amount_vnd), 0)::bigint AS tien
@@ -129,8 +128,6 @@ LANGUAGE sql STABLE AS $f$
     FROM opening_float f LEFT JOIN opening_float_line x ON x.opening_float_id = f.id
     GROUP BY f.sale_date)
   SELECT dem.ngay, dem.tien, dau.tien,
-         coalesce((SELECT sum(h.tien) FROM hang_tu h WHERE h.ngay = dem.ngay), 0)::bigint,
-         EXISTS (SELECT 1 FROM chi WHERE chi.ngay_khai <> chi.ngay_ghi
-                                     AND dem.ngay IN (chi.ngay_khai, chi.ngay_ghi))
+         coalesce((SELECT sum(h.tien) FROM hang_tu h WHERE h.ngay = dem.ngay), 0)::bigint
   FROM dem JOIN dau ON dau.ngay = dem.ngay
 $f$;

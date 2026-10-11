@@ -8,6 +8,7 @@ import (
 	"errors"
 	"regexp"
 	"slices"
+	"time"
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
@@ -211,7 +212,15 @@ func tao(ctx context.Context, pool *pgxpool.Pool, caller authz.Caller, yc YeuCau
 					return err
 				}
 			}
-			if status == "confirmed" {
+			noNgay := status == "confirmed"
+			if channel == "phone_preorder" {
+				moc, err := DongHo(ctx, tx)
+				if err != nil {
+					return err
+				}
+				noNgay = !lh.CustomerNeededAt.Add(-20 * time.Minute).After(moc)
+			}
+			if noNgay {
 				if err := sanxuat.NoDon(ctx, tx, out.SalesOrderID); err != nil {
 					return err
 				}

@@ -4,6 +4,10 @@
 -- và không đổi được người hay ngày; lược đồ không cất giờ tới, ngưỡng đi muộn hay một khoản trừ. Vế "người tick là chủ quán" là tầng 3 — database KHÔNG xét, test nói
 -- thẳng. Chạy đúng kịch bản của mục Verification ở quality/invariants.md I-027.
 -- Lát: 13-luoc-do-cham-cong.md. Thiết kế: docs/decisions.md ADR-072.
+
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người sửa là người
+-- thao tác mà từng khối khai. Khối nào xoá lý do là để thử lời từ chối.
+DO $$ BEGIN PERFORM set_config('shop.revision_reason', 'test-i027_attendance_one_box_per_worker_day', true); END $$;
 DO $$
 DECLARE chu bigint; a bigint; b bigint; o1 bigint; o2 bigint; n bigint; cols text; r record;
 BEGIN

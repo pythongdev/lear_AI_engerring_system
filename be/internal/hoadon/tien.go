@@ -120,12 +120,19 @@ func (h handler) trao(w http.ResponseWriter, r *http.Request, cua authz.Door, kh
 	if !ok {
 		return
 	}
-	var p ThanhToan
+	var p struct {
+		ThanhToan
+		DebtNote *string `json:"debt_note"`
+	}
 	if !apierr.ReadJSON(w, r, &p) {
 		return
 	}
 	if err := p.Kiem(); err != nil {
 		apierr.WriteError(w, err)
+		return
+	}
+	if p.Debt == 0 && p.DebtNote != nil {
+		apierr.WriteError(w, sai("debt_note"))
 		return
 	}
 	var bill, due int64
@@ -134,7 +141,11 @@ func (h handler) trao(w http.ResponseWriter, r *http.Request, cua authz.Door, kh
 			return apierr.Error{Code: apierr.CodeOrderDiscountUndecided}
 		}
 		if p.Debt > 0 {
-			return apierr.Error{Code: apierr.CodeStandaloneDebtUndecided}
+			if p.DebtNote == nil || strings.TrimSpace(*p.DebtNote) == "" {
+				return apierr.Error{Code: apierr.CodeDebtNoteRequired}
+			}
+			note := strings.TrimSpace(*p.DebtNote)
+			p.DebtNote = &note
 		}
 		var phien *int64
 		var status, kenh string
@@ -175,7 +186,7 @@ func (h handler) trao(w http.ResponseWriter, r *http.Request, cua authz.Door, kh
 		if err := tx.QueryRow(r.Context(), tongSQL, id).Scan(&due); err != nil {
 			return err
 		}
-		bill, err = Ghi(r.Context(), tx, NoiDung{Don: &id, Due: due, Cash: *p.Cash, Transfer: *p.Transfer, PrepaidCash: p.PrepaidCash, PrepaidTransfer: p.PrepaidTransfer, Debt: p.Debt, Debtor: p.Debtor, Moc: moc})
+		bill, err = Ghi(r.Context(), tx, NoiDung{Don: &id, Due: due, Cash: *p.Cash, Transfer: *p.Transfer, PrepaidCash: p.PrepaidCash, PrepaidTransfer: p.PrepaidTransfer, Debt: p.Debt, Debtor: p.Debtor, DebtNote: p.DebtNote, Moc: moc})
 		if err != nil {
 			return err
 		}
@@ -382,10 +393,11 @@ func (h handler) docNo(w http.ResponseWriter, r *http.Request) {
 		for rows.Next() {
 			var id, debt, remain int64
 			var name string
-			if err := rows.Scan(&id, &name, &debt, &remain); err != nil {
+			var note *string
+			if err := rows.Scan(&id, &name, &debt, &remain, &note); err != nil {
 				return err
 			}
-			debts = append(debts, map[string]any{"bill_id": id, "debtor_name": name, "debt_vnd": debt, "remaining_vnd": remain})
+			debts = append(debts, map[string]any{"bill_id": id, "debtor_name": name, "debt_vnd": debt, "remaining_vnd": remain, "debt_note": note})
 		}
 		return rows.Err()
 	})

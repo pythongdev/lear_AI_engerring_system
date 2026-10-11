@@ -3,6 +3,14 @@
 -- thành phần của suất — không cất ở đâu. Đổi phụ thu một lần, ở một dòng ⇒ mọi suất
 -- đổi đúng Δ × số phần nhận nhân. Và: dòng đơn không có cột "giá khách gửi" nào.
 -- Số và tên dưới đây là GIẢ; menu thật do P2-10 dựng. Lát: 03-luoc-do-menu-gia.md.
+
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người
+-- sửa là một người thử của file, khai ngay đây.
+DO $$ DECLARE p bigint; BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người sửa') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+  PERFORM set_config('shop.revision_reason', 'test-i013_surcharge_changes_in_one_place', true);
+END $$;
 DO $$
 DECLARE
   c_banh bigint; c_trung bigint; c_gio bigint; g_nhan bigint; o_thit bigint;

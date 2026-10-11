@@ -43,6 +43,8 @@ type handler struct {
 
 func Routes(mux *http.ServeMux, pool *pgxpool.Pool, auth authz.Authenticator) {
 	h := handler{pool, auth}
+	mux.HandleFunc("POST /preorder-releases", h.nhaHen)
+	mux.HandleFunc("GET /preorder-reminders", h.nhacHen)
 	mux.HandleFunc("POST /orders/{sales_order_id}/cancellation", h.huy)
 	mux.HandleFunc("POST /online-orders", h.taoOnline)
 	mux.HandleFunc("POST /phone-orders", h.taoPhone)

@@ -1,7 +1,8 @@
 -- I-018 — docs/product/1-system-design/03-bao-ve-invariant.md §3, cột phải. Mỗi khối `-- @@` là
 -- MỘT tập "phải rỗng"; 0 dòng là đạt. Ánh xạ tập ↔ câu: docs/product/2-db/09-doi-chieu-bat-bien.md.
--- Vết đang ở CHẾ ĐỘ MỀM (work/findings.md F-046): lần sửa không khai lý do không để lại vết nào, và
--- không câu nào ở đây thấy nó — hai câu dưới chỉ đọc được vết ĐÃ có. Tập thứ hai của pha 1 (lần ghi
+-- Vết ở CHẾ ĐỘ NGHIÊM từ bước 20 (T-138, ADR-092; F-046 đã gỡ): database từ chối lần sửa không khai lý
+-- do. Lần đổi vượt database không để lại vết, và không câu nào ở đây thấy nó — hai câu dưới chỉ đọc
+-- được vết ĐÃ có. Tập thứ hai của pha 1 (lần ghi
 -- đè của hai người cùng thao tác một bàn) KHÔNG có câu — file 09 §2.
 
 -- @@ I-018/1 — lần cập nhật mà vết thiếu một trong bốn thứ: bản trước, bản sau, lý do, người sửa

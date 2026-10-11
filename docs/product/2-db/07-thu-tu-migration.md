@@ -17,11 +17,11 @@ lược đồ từ số không · chỗ chứng minh từng điều ấy chạy 
 
 ---
 
-## 1. Thứ tự dựng — mười tám bước
+## 1. Thứ tự dựng — hai mươi bước
 
 Công cụ chạy các bước theo **tên file**, tức theo mốc giờ ở đầu tên (`QC-05`). Thứ tự dưới đây là
 thứ tự ấy; cột *đứng trên* nói bước nào phải có trước, vì bước sau thêm cột, khoá ngoại hay ràng
-buộc vào bảng của nó. Dựng lại từ số không là chạy đúng mười tám bước này, từ trên xuống; lùi là đi
+buộc vào bảng của nó. Dựng lại từ số không là chạy đúng hai mươi bước này, từ trên xuống; lùi là đi
 ngược từ dưới lên, **từng bước một**.
 
 | # | File (`db/migrations/`, bỏ đuôi) | Lát | Dựng gì | Đứng trên |
@@ -44,6 +44,8 @@ ngược từ dưới lên, **từng bước một**.
 | 16 | `20261005120000_khoa_so_dem_ngay_da_ky` | `T-134` | khoá ghi số đếm và tiền đầu két của ngày đã ký với mọi vai; dấu không đứng trên dòng đầu không có dòng mệnh giá (**ADR-080**, **F-056** · **F-057**) | 6 · 15 |
 | 17 | `20261005130000_vet_them_dong_con` | `T-137` | trigger `record_revision_capture_added_line` trên `order_line` · `menu_item_component` · `opening_float_line`: thêm một dòng con vào bản ghi đã có, có khai lý do, để lại vết trên bản ghi cha (**ADR-081**, **F-047**) | 1 · 2 · 6 · 8 |
 | 18 | `20261006120000_ten_loi_tu_choi_trigger` | `P3-04` | thay thân `cash_day_reconciled_guard()` · `reconciled_day_nonempty_guard()`: mười lời từ chối của trigger mang tên `QC-10` qua `USING CONSTRAINT`, cùng điều kiện, cùng mã lỗi, cùng câu (**ADR-084**, **F-058**) | 16 |
+| 19 | `20261009140000_no_don_le_va_doi_soat` | `T-140` | bill.debt_note và hai check; reconciled_day.gap_vnd · gap_explanation và check ngày lệch có giải thích (ADR-089 Sửa đổi) | 6 · 15 |
+| 20 | `20261010120000_vet_che_do_nghiem` | `T-138` | vết cập nhật **chế độ nghiêm**: thay thân `record_revision_capture()` · `record_revision_capture_added_line()` — sửa hay thêm dòng con không khai lý do ⇒ `record_revision_reason_declared_check`, một ngoại lệ hẹp cho lượt gọi thêm của khách QR; `qr_code_issue()` tự khai lý do; cột `table_session_member.person_id` và trigger ghép bàn phải có người (**ADR-092**, **F-046**) | 1 · 5 · 8 · 17 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
@@ -108,6 +110,15 @@ bước 16 (so được từng dòng bằng ảnh chụp §4) và ghi lý do nga
 Hệ quả của việc lùi: backend nhận lại lời từ chối không tên và dịch nó thành `internal_error`.
 
 ---
+
+**Khoá chặn bước 19** (2026-10-09, T-140): không lùi khi bill.debt_note khác NULL hoặc reconciled_day có gap_vnd khác 0 hay gap_explanation khác NULL; đường lùi gỡ đúng ba cột và ba check đã thêm.
+
+**Khoá chặn bước 20** (2026-10-09, `T-138`, **ADR-092**): `table_session_member` có dù một dòng mang người
+(`person_id` khác trống) thì từ chối trước khi gỡ gì — gỡ cột lúc ấy là xoá *ai mở phiên, ai ghép bàn* đã
+ghi (luật 2). Khi không dòng nào mang người, gỡ trigger, hàm và cột, rồi trả thân ba hàm về **đúng chữ**
+của bước 5 · 8 · 17; hệ quả của việc lùi là chế độ mềm trở lại (**F-046**). Từ bước này, mọi bước sau
+sửa dữ liệu phải khai `shop.revision_reason` và `shop.actor_person_id` như một cửa.
+
 
 ## 3. Khi một lệnh migration hỏng giữa chừng
 

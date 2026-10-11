@@ -27,6 +27,7 @@ type NoiDung struct {
 	Phien, Don                                              *int64
 	Due, Cash, Transfer, PrepaidCash, PrepaidTransfer, Debt int64
 	Debtor                                                  *string
+	DebtNote                                                *string
 	Moc                                                     time.Time
 }
 
@@ -61,7 +62,7 @@ func Ghi(ctx context.Context, tx pgx.Tx, b NoiDung) (int64, error) {
 			return 0, err
 		}
 	}
-	err := tx.QueryRow(ctx, ghiSQL, b.Phien, b.Don, b.Due, b.Cash, b.Transfer, b.PrepaidCash, b.PrepaidTransfer, b.Debt, b.Debtor, b.Moc).Scan(&id)
+	err := tx.QueryRow(ctx, ghiSQL, b.Phien, b.Don, b.Due, b.Cash, b.Transfer, b.PrepaidCash, b.PrepaidTransfer, b.Debt, b.Debtor, b.Moc, b.DebtNote).Scan(&id)
 	if err != nil {
 		return 0, err
 	}

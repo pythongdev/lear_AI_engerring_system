@@ -5,8 +5,9 @@
 -- đọc ra ai thêm, từ bao nhiêu sang bao nhiêu.
 -- T-134: lỗi cài cố ý vượt khoá ngày đã ký để dựng dữ liệu hỏng cho phép đối chiếu.
 ALTER TABLE opening_float_line DISABLE TRIGGER opening_float_line_reconciled_guard_trg;
--- T-137: lần thêm lén không khai lý do, nên trigger vết thêm dòng con (ADR-081) không ghi gì.
-SELECT set_config('shop.revision_reason', '', true);
+-- T-138: chế độ nghiêm từ chối lần thêm không lý do, nên lỗi cài tắt trigger vết của bảng (pg_temp.bc_vet).
+DO $$ BEGIN PERFORM pg_temp.bc_vet('opening_float_line', false); END $$;
 INSERT INTO opening_float_line (opening_float_id, denomination_vnd, amount_vnd, created_at)
 SELECT id, 2000, 20000, created_at + interval '1 minute' FROM opening_float WHERE sale_date = pg_temp.bc_ngay();
 ALTER TABLE opening_float_line ENABLE TRIGGER opening_float_line_reconciled_guard_trg;
+DO $$ BEGIN PERFORM pg_temp.bc_vet('opening_float_line', true); END $$;

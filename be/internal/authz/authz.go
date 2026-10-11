@@ -41,8 +41,8 @@ type Door struct {
 	Need Need
 }
 
-// Authenticator cho cửa biết người gửi yêu cầu là ai. Cách xác định chờ chủ quán (U-075):
-// chưa có bản thật nào; test cấp bản của mình trong file _test.go.
+// Authenticator cho cửa biết người gửi yêu cầu là ai. ChonTen đọc X-Person-Id của người
+// đã chọn tên (U-075); RunAs kiểm người có thật và quyền trong giao dịch của cửa.
 type Authenticator interface {
 	PersonID(r *http.Request) (int64, bool)
 }

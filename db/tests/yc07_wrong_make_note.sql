@@ -7,6 +7,10 @@
 -- Dựng chung của file (pg_temp — mất cùng ROLLBACK). Menu, tên và số đều GIẢ (test-…); hàm don ·
 -- no_don · bam_me đứng THAY các cửa của pha 3, cùng hình db/tests/i004_station_jobs_follow_approval.sql.
 -- Người thao tác của giao dịch (P2-08, 06-luoc-do-nguoi-va-vet.md §0).
+
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người sửa là người
+-- thao tác mà từng khối khai. Khối nào xoá lý do là để thử lời từ chối.
+DO $$ BEGIN PERFORM set_config('shop.revision_reason', 'test-yc07_wrong_make_note', true); END $$;
 DO $$
 DECLARE p bigint;
 BEGIN

@@ -2,6 +2,10 @@
 -- riêng — ngày quán bán thật (booked_at · sale_date) và lúc gõ (created_at) — cùng NGƯỜI NHẬP BÙ,
 -- khác người bán; một ngày đọc ra "còn N lượt trên giấy chưa nhập"; lượt nhập bù không rơi vào ngày
 -- gõ và không vượt số lượt đã khai trên sổ. Lát: 06-luoc-do-nguoi-va-vet.md.
+
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người sửa là người
+-- thao tác mà từng khối khai. Khối nào xoá lý do là để thử lời từ chối.
+DO $$ BEGIN PERFORM set_config('shop.revision_reason', 'test-yc08_paper_backfill_two_moments', true); END $$;
 DO $$
 DECLARE a bigint; b bigint; so bigint; o bigint; bl bigint; hom_qua date := CURRENT_DATE - 1;
         i integer; r record;

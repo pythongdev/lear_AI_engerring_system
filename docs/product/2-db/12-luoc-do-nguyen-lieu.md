@@ -15,7 +15,7 @@ trỏ, không chép kiểu hay điều kiện thành bản thứ hai (**F-001**)
   `docs/product/1-system-design/03-bao-ve-invariant.md` §5; yêu cầu dữ liệu ở
   `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §9 · §9.1;
 - **người và cơ chế vết** — [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md), dùng lại
-  lát `P2-08`, kể cả chế độ mềm **F-046**: sửa không khai lý do chưa để lại vết;
+  lát `P2-08`; từ bước 20 (`T-138`, **ADR-092**) sửa không khai lý do bị database từ chối (**F-046** đã gỡ);
 - **quyền và cửa đọc tính tổng** — pha 3; **dữ liệu mồi** — `P2A-06`; **câu đối chiếu** — đã có câu `db/reconcile/i025.sql` · `db/reconcile/i026.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01);
 - **quy ước cất và kiểm** — [`01-quy-uoc-du-lieu.md`](01-quy-uoc-du-lieu.md) ·
   [`10-quy-uoc-code.md`](10-quy-uoc-code.md); thứ tự và đường lùi ở
@@ -67,7 +67,7 @@ Tầng theo `03-bao-ve-invariant.md` §5, không tự nâng hay hạ. Trong cộ
 | **`I-025`** — đủ ai · ngày · lúc gõ | 1 | các cột dấu người và hai mốc của `supply_day_entry`; `supply_day_entry_person_fkey`; người mặc định lấy từ giao dịch | test I-025 — *I-025 bị từ chối (không có người nhập)* · *(không có ngày của con số)* · *(người nhập không phải người của quán)*; *YC-28 con số* đọc riêng hai mốc |
 | **`I-025`** — không thao tác bán hàng nào chạm | 3 | **không có gì nối** sổ với đơn · phiên · mẻ · tiền: không khoá ngoại, không hàm, không trigger dẫn từ bán hàng vào sổ. Giới hạn đã biết là sửa tay; buổi bán đủ năm kênh thuộc cổng `P2A-08` | test I-025 — *I-025 đọc lược đồ — 0 khoá ngoại sang đơn · phiên · mẻ · tiền, 0 hàm nhắc tới sổ, 0 trigger ngoài trigger vết*; *I-025 sau một đơn tạo · thu tiền · hoàn thành — sổ nguyên liệu không đổi* |
 | **`I-025`** — máy không giữ thứ gì để tự tính | 3 | danh sách cột đóng của hai bảng; không chỗ cất ngưỡng, định lượng suất hay kết luận thiếu | test I-025 so danh sách cột từng chữ — *I-025 đọc lược đồ — supply_item* · *I-025 đọc lược đồ — supply_day_entry … không ngưỡng, không định lượng suất, không tổng cất sẵn* |
-| **`I-025`** — sửa là cập nhật có vết | theo `I-018` | `supply_item_record_revision_trg` · `supply_day_entry_record_revision_trg` dùng `record_revision_capture()`; chế độ mềm **F-046**, §3 | test I-025 — *I-025 sửa con số — trước 7, sau 8*; *I-025 chế độ mềm — sửa không khai lý do: 0 vết mới (F-046)* |
+| **`I-025`** — sửa là cập nhật có vết | theo `I-018` | `supply_item_record_revision_trg` · `supply_day_entry_record_revision_trg` dùng `record_revision_capture()`; chế độ nghiêm từ bước 20 (`T-138`), §3 | test I-025 — *I-025 sửa con số — trước 7, sau 8*; *I-025 chế độ nghiêm — sửa không khai lý do bị từ chối* |
 | **`I-026`** — tổng là phép cộng, hiệu số là phép trừ | 1 | **không có chỗ cất tổng**; cùng hình bảng nhu cầu của `I-019` ở [`05-luoc-do-san-xuat.md`](05-luoc-do-san-xuat.md). Chỉ con số ngày được ghi; phép đọc hôm nay nằm trong test, §3 nói nợ cửa đọc | test I-025 — *I-025 đọc lược đồ — supply_day_entry*; test I-026 — *I-026 ba ngày — tổng đã nhập 15, tổng đã dùng 13, hiệu số 2*; *I-026 sau khi sửa một con số ngày — tổng đã nhập 15, tổng đã dùng 15, hiệu số 0* |
 | **`I-026`** — cộng dồn, không đặt lại | 3 | không cột lô, không cột lần mua nào để lọc; một chỗ tính tổng của pha 3 còn nợ (§3) | test I-026 — *I-026 ba ngày … (ngày thứ ba mua thêm, tổng không đặt lại)*; test I-025 so danh sách cột |
 | **`I-026`** — một thứ · một ngày · một đáp số | 1 | `supply_day_entry_one_kind_per_item_day_key` | test I-026 — *I-026 bị từ chối (hai con số mua vào cho một thứ, một ngày)* · *(hai con số đã dùng cho một thứ, một ngày)* |
@@ -86,9 +86,8 @@ Tầng theo `03-bao-ve-invariant.md` §5, không tự nâng hay hạ. Trong cộ
   phải bằng chứng cửa đọc thật chỉ có một chỗ tính.
 - **Cửa nhập khai người thao tác và lý do sửa.** Dấu người lấy từ giao dịch, vết sửa dùng lại cơ
   chế của `P2-08`; pha 3 phải khai đúng người thật và lý do, không suy người từ con số.
-- **F-046 áp cả ở đây:** sửa không khai lý do vẫn đi qua mà không có vết. Đây là nợ chế độ mềm
-  đã ghi ở `work/findings.md`, không phải đã thi hành đủ vế mọi lần sửa của `I-018`. Lát không
-  đổi hàm vết hay tự dựng trigger nghiêm riêng; gỡ theo cùng lượt của lát người.
+- **F-046 đã gỡ ở đây cùng mọi bảng** (2026-10-09, `T-138`, **ADR-092**): bước 20 đổi hàm vết chung
+  sang chế độ nghiêm, nên sửa không khai lý do bị từ chối; lát không dựng trigger nghiêm riêng.
 
 ---
 

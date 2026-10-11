@@ -3,6 +3,10 @@
 -- còn thiếu sau lần ấy; các lần trả nối thành chuỗi, nên trả vượt, rẽ nhánh, trả khi đã hết nợ và
 -- khai sai số còn thiếu đều bị database từ chối. Viết TRƯỚC migration (T-126, Claude Code).
 -- Người thao tác của giao dịch (P2-08, 06-luoc-do-nguoi-va-vet.md §0).
+
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người sửa là người
+-- thao tác mà từng khối khai. Khối nào xoá lý do là để thử lời từ chối.
+DO $$ BEGIN PERFORM set_config('shop.revision_reason', 'test-yc02_debt_paid_in_parts', true); END $$;
 DO $$
 DECLARE p bigint;
 BEGIN

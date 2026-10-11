@@ -1,6 +1,14 @@
 -- I-017 (tầng 2): phần lược đồ nợ — đóng phiên và đánh dấu mọi bàn của phiên sống
 -- hoặc chết CÙNG MỘT giao dịch. Đọc trạng thái mọi đơn trong giao dịch ấy là việc
 -- của thao tác đóng phiên ở pha 3. Lát: 02-luoc-do-ban-hang.md.
+
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người sửa — và
+-- người ghép bàn, bắt buộc từ bước 20 — là một người thử của file, khai ngay đây.
+DO $$ DECLARE p bigint; BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người đứng quầy') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+  PERFORM set_config('shop.revision_reason', 'test-i017_close_session_atomic', true);
+END $$;
 DO $$
 DECLARE t4 bigint; t5 bigint; s1 bigint; st text;
 BEGIN

@@ -1,5 +1,13 @@
 -- I-001 (tầng 1): một bàn thuộc nhiều nhất một phiên CHƯA ĐÓNG — phủ cả chờ
 -- thanh toán; ghép bàn (một phiên nhiều bàn) vẫn được. Lát: 02-luoc-do-ban-hang.md.
+
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người sửa — và
+-- người ghép bàn, bắt buộc từ bước 20 — là một người thử của file, khai ngay đây.
+DO $$ DECLARE p bigint; BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người đứng quầy') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+  PERFORM set_config('shop.revision_reason', 'test-i001_one_unpaid_session_per_table', true);
+END $$;
 DO $$
 DECLARE t4 bigint; t5 bigint; s1 bigint; s2 bigint;
 BEGIN

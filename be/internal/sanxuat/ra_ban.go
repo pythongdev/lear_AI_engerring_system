@@ -37,6 +37,26 @@ type mucRa struct {
 	MenuComponentID  *int64  `json:"menu_component_id"`
 	FillingOptionIDs []int64 `json:"filling_option_ids"`
 	Quantity         int64   `json:"quantity"`
+	// Hợp đồng đòi cả hai trường (menu_component_id được null — nước chấm; filling_option_ids không null).
+	// Thiếu trường không được đọc thành nước chấm (T-144, duyệt độc lập phần S-5).
+	coThanhPhan, coNhan bool
+}
+
+func (m *mucRa) UnmarshalJSON(b []byte) error {
+	type tho mucRa
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	var x tho
+	if err := json.Unmarshal(b, &x); err != nil {
+		return err
+	}
+	*m = mucRa(x)
+	_, m.coThanhPhan = raw["menu_component_id"]
+	nhan, co := raw["filling_option_ids"]
+	m.coNhan = co && string(nhan) != "null"
+	return nil
 }
 
 type yeuCauRa struct {
@@ -65,7 +85,7 @@ func docRa(w http.ResponseWriter, r *http.Request) (yeuCauRa, bool) {
 		}
 		slices.Sort(m.FillingOptionIDs)
 		khoa, _ := json.Marshal([]any{m.StationCode, m.MenuComponentID, m.FillingOptionIDs})
-		if m.StationCode == "" || m.Quantity <= 0 || daCo[string(khoa)] ||
+		if m.StationCode == "" || m.Quantity <= 0 || daCo[string(khoa)] || !m.coThanhPhan || !m.coNhan ||
 			len(slices.Compact(slices.Clone(m.FillingOptionIDs))) != len(m.FillingOptionIDs) {
 			hop = false
 		}

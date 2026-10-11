@@ -30,6 +30,20 @@ type khung struct {
 	owner *pgx.Conn
 }
 
+// coVet chạy câu dựng dữ liệu trong một giao dịch có khai người và lý do: từ bước 20 (T-138, ADR-092)
+// database từ chối lần sửa — và lần thêm dòng con vào bản ghi đã có — mà giao dịch không khai.
+func (k khung) coVet(fn func(pgx.Tx) error) error {
+	return pgx.BeginFunc(k.ctx, k.owner, func(tx pgx.Tx) error {
+		if _, err := tx.Exec(k.ctx, `WITH co AS (SELECT id FROM shop.person WHERE display_name = 'test-người dựng dữ liệu' ORDER BY id LIMIT 1),
+			moi AS (INSERT INTO shop.person (display_name) SELECT 'test-người dựng dữ liệu' WHERE NOT EXISTS (SELECT 1 FROM co) RETURNING id)
+			SELECT set_config('shop.actor_person_id', id::text, true), set_config('shop.revision_reason', 'test-dựng dữ liệu', true)
+			FROM (SELECT id FROM co UNION ALL SELECT id FROM moi) p`); err != nil {
+			return err
+		}
+		return fn(tx)
+	})
+}
+
 func dung(t *testing.T) khung {
 	t.Helper()
 	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
@@ -422,15 +436,21 @@ func TestI009_MonNgungBanBiTuChoi(t *testing.T) {
 	if err := k.owner.QueryRow(k.ctx, `INSERT INTO shop.menu_item (name) VALUES ($1) RETURNING id`, ten).Scan(&mon); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := k.owner.Exec(k.ctx, `INSERT INTO shop.menu_item_component (menu_item_id, menu_component_id, quantity)
-		VALUES ($1, $2, 1)`, mon, comp); err != nil {
+	if err := k.coVet(func(tx pgx.Tx) error {
+		_, err := tx.Exec(k.ctx, `INSERT INTO shop.menu_item_component (menu_item_id, menu_component_id, quantity)
+		VALUES ($1, $2, 1)`, mon, comp)
+		return err
+	}); err != nil {
 		t.Fatal(err)
 	}
 	dong := map[string]any{"menu_item_id": mon, "quantity": 1, "option_ids": []int64{}}
 	if r := tinhThu(k, t, dong); r.status != http.StatusOK {
 		t.Fatalf("món đang bán phải tính được: %d %v", r.status, r.body)
 	}
-	if _, err := k.owner.Exec(k.ctx, `UPDATE shop.menu_item SET discontinued_at = now() WHERE id = $1`, mon); err != nil {
+	if err := k.coVet(func(tx pgx.Tx) error {
+		_, err := tx.Exec(k.ctx, `UPDATE shop.menu_item SET discontinued_at = now() WHERE id = $1`, mon)
+		return err
+	}); err != nil {
 		t.Fatal(err)
 	}
 	r := tinhThu(k, t, dong)

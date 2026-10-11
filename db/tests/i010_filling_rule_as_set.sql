@@ -3,6 +3,14 @@
 -- nằm TRỌN trong dữ liệu, theo TẬP — không nửa nào phải sống ở code — và ảnh chụp
 -- tuỳ chọn giữ MÃ GỐC để phép đếm không gãy khi đổi tên hiển thị.
 -- Tên dưới đây là tên giả; menu thật do P2-10 dựng. Lát: 03-luoc-do-menu-gia.md.
+
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người
+-- sửa là một người thử của file, khai ngay đây.
+DO $$ DECLARE p bigint; BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người sửa') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+  PERFORM set_config('shop.revision_reason', 'test-i010_filling_rule_as_set', true);
+END $$;
 DO $$
 DECLARE
   g_nhan bigint; g_luong bigint; o_chay bigint; o_thit bigint; o_moc bigint; o_nam bigint;

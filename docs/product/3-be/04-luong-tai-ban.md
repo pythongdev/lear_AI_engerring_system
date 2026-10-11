@@ -201,7 +201,7 @@ trong phạm vi cửa này; lát ngoài bàn hoặc nhập sổ giấy phải x�
 | **Huỷ từ đơn đã xác nhận trở đi** | bảng vongdoi có cặp của owner; cửa tu_choi chỉ dùng cho pending_confirmation | `P3-09` / `P3-10` |
 | **Vết của khách QR** | không có người thao tác nên không khai lý do; gọi thêm khi chờ thanh toán chuyển phiên mà chưa để lại vết | **F-060** (`work/findings.md`) — `P3-11` gỡ, cùng lượt bật vết nghiêm |
 | **Gửi lại sau khi rời quầy hoặc mã bị thay** | kiểm quyền trước dấu; trả not_on_counter_duty hoặc qr_code_not_current, không trả lại đơn | giới hạn đã chốt ADR-087 |
-| **Cách xác thực danh tính** | chỉ có giao diện Authenticator và bản test | chủ quán chốt 2026-10-09 **chọn tên** (đóng **U-075**, [unknowns](../99-unknowns.md)); bản thật dựng ở `T-143` |
+| **Cách xác thực danh tính** | bản thật `authz.ChonTen` đã dựng ở T-143, đọc header `X-Person-Id` qua giao diện `Authenticator` | chủ quán chốt 2026-10-09 **chọn tên** (đóng **U-075**, [unknowns](../99-unknowns.md)); ADR-085 *Sửa đổi 2026-10-10* |
 
 ## 7. Bằng chứng cần chạy
 

@@ -15,6 +15,8 @@ import (
 	"strings"
 	"sync"
 	"testing"
+
+	"github.com/jackc/pgx/v5"
 )
 
 // --- khung của luồng tại bàn -------------------------------------------------------------------
@@ -142,7 +144,10 @@ func (c canh) donBan(t *testing.T, nguoi, ban int64) traLoi {
 // xong: đơn tới Hoàn thành — dựng tay; cửa ghi đã phục vụ là của P3-10.
 func (c canh) xong(t *testing.T, don int64) {
 	t.Helper()
-	if _, err := c.owner.Exec(c.ctx, "UPDATE shop.sales_order SET status = 'completed' WHERE id = $1", don); err != nil {
+	if err := c.coVet(func(tx pgx.Tx) error {
+		_, err := tx.Exec(c.ctx, "UPDATE shop.sales_order SET status = 'completed' WHERE id = $1", don)
+		return err
+	}); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -585,6 +590,33 @@ func TestI016_ChuyenTrangThaiDeLaiVet(t *testing.T) {
 		}
 		t.Logf("vết %s %d: %s → %s, người %d", v.bang, v.id, v.tu, v.den, c.quay)
 	}
+}
+
+// Khách QR gọi thêm lúc Chờ thanh toán: phiên về Đang phục vụ qua cửa thật dù chế độ vết nghiêm (bước 20,
+// T-138, ADR-092) — ngoại lệ hẹp của database, vì khách không phải người của quán. Lần chuyển ấy không có
+// vết; bằng chứng của nó là lượt gọi QR vừa vào phiên (F-060).
+func TestI016_KhachQRGoiThemLucChoThanhToan(t *testing.T) {
+	c := dungBan(t)
+	ban := c.banMoi(t, "bàn")
+	ma := c.capMaQR(t, ban)
+	q := c.goiQR(t, ma, dauLanGui(t), c.dong(false))
+	canDat(t, q, http.StatusCreated)
+	don, phien := q.so(t, "sales_order_id"), q.so(t, "table_session_id")
+	canDat(t, c.duyet(t, c.quay, don), http.StatusOK)
+	c.xong(t, don)
+	canDat(t, c.tinhTien(t, c.quay, phien), http.StatusOK)
+	them := c.goiQR(t, ma, dauLanGui(t), c.dong(false))
+	canDat(t, them, http.StatusCreated)
+	if them.so(t, "table_session_id") != phien || c.trangThaiPhien(t, phien) != "serving" {
+		t.Fatalf("khách QR gọi thêm lúc Chờ thanh toán ⇒ cùng phiên %d, phiên về Đang phục vụ; nhận %v, phiên %s",
+			phien, them.body, c.trangThaiPhien(t, phien))
+	}
+	n := c.docSo(t, `SELECT count(*) FROM shop.record_revision WHERE target_table_code = 'table_session' AND target_row = $1
+		AND before_image ->> 'status' = 'awaiting_payment' AND after_image ->> 'status' = 'serving'`, phien)
+	if n != 0 {
+		t.Fatalf("lần chuyển do khách kích có %d vết, muốn 0 (không có người để ghi)", n)
+	}
+	t.Logf("khách QR gọi thêm lúc Chờ thanh toán ⇒ phiên %d về serving, 0 vết, đơn %d", phien, them.so(t, "sales_order_id"))
 }
 
 // --- I-017: đóng phiên — chặn bởi món, không chặn bởi tiền; một giao dịch -----------------------------

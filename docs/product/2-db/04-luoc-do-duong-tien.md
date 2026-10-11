@@ -200,7 +200,7 @@ tên đứng trước để dòng không trông như một dòng tên bảng ở
 | ~~**Ai bấm** — vế thứ năm của `YC-01`, người trực quầy lúc ghi nợ và thu nợ, người nhận trả trước, người khai tiền đầu két~~ — **gỡ 2026-09-28 (`P2-08`)** | `person_id` bắt buộc trên `bill` · `debt_collection` · `prepayment` · `refund` · `opening_float`, mặc định người thao tác của giao dịch; *người đang trực lúc ấy* đọc từ `counter_duty` — [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) §1 · §2 | `P2-08` — xong |
 | ~~**Trả một phần khoản nợ**~~ — **gỡ 2026-10-01 (`T-126`)** | mỗi lần trả một dòng, còn thiếu trước · sau nối thành chuỗi do database giữ (§2, **ADR-075**); POS giữ tổng nợ, ngày giờ từng lần trả và số còn thiếu theo lời chủ quán đóng `U-063` (`shop-facts.md` §6.14) | `T-126` — migration mới `20261001120000_tra_no_dan` |
 | **Giảm giá cả đơn** (`shop-facts.md` §8.9) | hoá đơn **không** có cột giảm giá; `due_vnd` là số phải trả sau cùng. [Cửa đường tiền](../3-be/06-duong-tien.md) từ chối giảm giá dương với `order_discount_undecided` (ADR-089). | chủ quán — **U-058** (phạm vi bản đầu, giới hạn, lý do); lát nào dựng nó thêm cột bằng migration mới |
-| ~~**Số tiền mặt đếm được cuối ngày**, và dấu *ngày đã đối soát xong*~~ — **gỡ 2026-10-05 (`T-133`)** | `cash_count` · `cash_count_line` · `reconciled_day` — §7 (**ADR-079**, đóng **F-048**). Còn lại: dấu không mang con số đã đối soát nên tập 6 của `I-014` chưa có câu (cửa đóng ngày `P3-09`); ngày lệch có đóng được không — **U-073**. [Cửa đường tiền](../3-be/06-duong-tien.md) từ chối ngày lệch với `cash_day_not_balanced`, ngày đã ký với `sale_day_reconciled` (ADR-089). | `T-133` — migration mới `20261001150000_dem_ket_doi_soat` |
+| ~~**Số tiền mặt đếm được cuối ngày**, và dấu *ngày đã đối soát xong*~~ — **gỡ 2026-10-05 (`T-133`)** | `cash_count` · `cash_count_line` · `reconciled_day` — §7 (**ADR-079**, đóng **F-048**). Còn lại: dấu không mang con số doanh thu đã đối soát nên tập 6 của `I-014` chưa có câu (cửa đóng ngày `P3-09`); chỉ chủ quán ký ngày; ngày lệch bắt giải thích và cất số lệch (T-140, ADR-089 Sửa đổi). [Cửa đường tiền](../3-be/06-duong-tien.md) vẫn từ chối ghi tiền vào ngày đã ký với `sale_day_reconciled`. | `T-133` — migration mới `20261001150000_dem_ket_doi_soat` |
 | **Con số tiền đầu két mặc định** (*cố định, sửa được* — `shop-facts.md` §8.5) | lát chỉ cất con số **của từng ngày**; con số mặc định là cấu hình của mảng tài chính | lane admin (`work/backlog_AD.md` ADM-01); dữ liệu mồi `P2-10` |
 | **Một đơn nhiều khoản trả trước** | `prepayment_one_per_order_key` — một đơn, nhiều nhất một khoản. Owner chỉ tả **một** lần trả trước lúc đặt (`shop-facts.md` §6.3) | phiên chọn 2026-09-28 — gỡ bằng migration mới nếu quán cần |
 | **Vết của một lần sửa** một dòng tiền đã ghi (bản trước, bản sau — `YC-13`), vế *mốc không dời* của `QD-33` | **từ `P2-08`**: vết cập nhật chụp bản trước và bản sau khi giao dịch khai lý do; câu *mốc tính tiền bị dời* đọc từ vết ([`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) §2). Chế độ mềm — một lần sửa không khai lý do không có vết | **F-046** |
@@ -258,11 +258,17 @@ kể cả chủ lược đồ. Xét cả ngày trước và sau khi dời dòng,
 | **`I-021`** tập 1 — két − tiền đầu két = vế phải, ngưỡng 0đ | 5 · 4 | câu `I-021/1` qua hàm `ket_ngay` (`db/reconcile/prelude.sql`); con số đếm có phải số thật không là tầng 4 | `db/reconcile/proof/i021_1.sql` |
 | **`I-012`** tập 2 — chỗ lệch chỉ ra đúng một thao tác | 5 | câu `I-012/2`, đọc hẹp — [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §3 | `db/reconcile/proof/i012_2.sql` |
 
-**Không làm:** dấu **không** đòi phép trừ ra 0 (**U-073**); dấu **không** mang con số doanh thu nào (`I-014`
-tập 6 chờ cửa đóng ngày `P3-09`); không cất tin nhắn báo có (`I-015` tập 5); không cột *ngày bán của két*
-trên tạm ứng và thưởng — ngày có khoản mà ngày khai khác ngày ghi chờ **U-072**, hai câu dùng hàm không kết
-luận ngày ấy. *Suy ra, không phải lời chủ quán:* đếm theo mệnh giá như tiền đầu két, mỗi ngày một lần đếm,
-*đối soát xong* đòi có số đếm (**ADR-079**).
+**T-140, 2026-10-09 (ADR-089 Sửa đổi):** bill thêm debt_note text COLLATE "vi-x-icu",
+nullable. bill_standalone_debt_note_check bắt nợ đơn lẻ có ghi chú không trắng;
+bill_debt_note_only_with_debt_check cấm ghi chú khi không nợ. Nợ tại bàn không đòi ghi chú.
+reconciled_day thêm gap_vnd bigint NOT NULL DEFAULT 0 và gap_explanation text COLLATE "vi-x-icu";
+reconciled_day_gap_explained_check bắt số lệch khác 0 có giải thích không trắng. Cửa cắt khoảng
+trắng hai đầu, lưu số lệch của cùng phép tính đường đọc; chỉ chủ quán ký.
+Migration mới bước 19; test từ chối ở db/tests/i005_standalone_debt_note.sql và
+db/tests/i021_reconciled_gap_explained.sql.
+
+Dấu không mang con số doanh thu (I-014 tập 6); chưa cất tin nhắn báo có (I-015 tập 5).
+Tạm ứng và thưởng trừ theo paid_date dù ghi hôm khác, không thêm cột ngày két.
 
 **Tham số của `01-quy-uoc-du-lieu.md` §0:** không bảng nào vào `:bang_ky_thuat` hay
 `:bang_khong_quan_he_so_hoc` — hai cột tiền của `cash_count_line` có điều kiện kiểm nối chúng (`QD-22`).

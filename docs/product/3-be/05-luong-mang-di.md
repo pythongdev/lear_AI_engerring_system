@@ -21,6 +21,7 @@ so dấu với liên hệ, rời quán và phần xét ràng buộc của lát.
 | `don/duyet` | không; gọi chuyển đơn, chuyển phiên nếu có | `quay` |
 | `don/tu_choi` | không; gọi chuyển đơn | `quay` |
 | `don/roi_quan` | không; gọi chuyển đơn | `quay` |
+| `don/nha_hen` | không; gọi `sanxuat/no_don` trong cùng giao dịch | `quay` |
 | `vongdoi/chuyen_don` | sửa `sales_order.status` | `theo_cua_goi` |
 
 Hai đường `POST /online-orders` và `POST /phone-orders` vào **chính** `don/tao_luot_goi`.
@@ -55,8 +56,27 @@ sở hữu; mức bắt buộc và vế ngược của I-022 ở `shop-facts.md`
    `qr_code_id` NULL. Không có đường nối đơn ngoài bàn vào phiên; dấu đi qua đường khác bị conflict.
 5. Gọi `gia.Tinh` trong cùng giao dịch; ghi đơn, liên hệ và ảnh chụp các dòng. Trạng thái đầu lấy
    `vongdoi.TrangThaiDauDon(kenh)`; `order_line.is_takeaway` để database dùng mặc định false.
+   Theo phiếu T-142 (thiết kế ADR-091, Claude, 2026-10-09), `phone_preorder` giữ `confirmed`,
+   chưa nổ việc; nếu giờ cần hàng trừ 20 phút đã tới theo `don.DongHo` thì gọi `sanxuat.NoDon`
+   ngay trong giao dịch tạo. `staff_pos` vẫn nổ ngay; `pickup`/`delivery` của khách nổ lúc duyệt.
 6. Đọc lại và trả **201** theo `TakeawayOrder`, hoàn toàn vắng hai trường bàn/phiên. Gửi lại giữ
    cùng hình và trạng thái hiện tại. Duyệt/từ chối dùng cửa đã có, trả hai trường phiên là null.
+
+### Nhả đơn hẹn và đọc nhắc
+
+Máy POS tự gọi `POST /preorder-releases` bằng người đang đứng quầy; người không phải bấm cho
+đơn xuống bếp. Cửa `don/nha_hen` nhận thân rỗng hoặc `{}`, lấy mốc từ `don.DongHo`, khóa các đơn
+`phone_preorder` còn `confirmed` có giờ cần hàng trừ 20 phút không lớn hơn mốc ấy, theo giờ hẹn
+rồi mã đơn, bằng `FOR UPDATE SKIP LOCKED`. Đơn đang bị khóa để lượt gọi sau xử lý; xét lại trạng
+thái sau khóa rồi gọi `sanxuat.NoDon` cho từng đơn trong cùng giao dịch. Vết chuyển trạng thái
+mang người gọi; lỗi lùi cả lần. Trả **200** với `released_order_ids`, luôn là mảng kể cả khi rỗng.
+
+`GET /preorder-reminders` chỉ đọc, cùng kiểu quyền với `GET /production-board`: không kiểm
+người hay lớp cửa ghi. Danh sách gồm đơn điện thoại ở `confirmed` hoặc `in_progress`, sắp theo
+giờ cần hàng rồi mã đơn. Mỗi dòng có hai mốc `remind_at` trước giờ cần hàng 20 và 10 phút;
+`due_reminders` là `[]`, `[20]` hoặc `[20, 10]` theo cùng `don.DongHo`. Lần nhắc thứ hai không
+nổ thêm việc. Đơn đã xong hoặc hủy không còn trong danh sách. Gửi lại dấu tạo đơn chỉ trả đơn
+cũ, không tự nhả dù đã tới giờ nhắc. Hình trên dây do `openapi.yaml` sở hữu.
 
 ## 3. Đồng hồ và I-008
 

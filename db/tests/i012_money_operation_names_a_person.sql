@@ -4,6 +4,10 @@
 -- bấm "đã giao + đã thu tiền" tại chỗ khách, POS khai tên (shop-facts §8.8, U-057).
 -- Lát: 06-luoc-do-nguoi-va-vet.md.
 
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người sửa là người
+-- thao tác mà từng khối khai. Khối nào xoá lý do là để thử lời từ chối.
+DO $$ BEGIN PERFORM set_config('shop.revision_reason', 'test-i012_money_operation_names_a_person', true); END $$;
+
 -- Thao tác chạm tiền ở quầy mà người bấm không phải người đứng quầy lúc bấm — P2-11 gom. Hai ca
 -- không bấm ở quầy đứng ngoài: hoá đơn nhập bù (người bấm là người nhập, 06-… §2 hàng YC-08) và
 -- hoá đơn đơn giao tận nơi (người đi giao thu tại chỗ khách).
@@ -80,8 +84,8 @@ BEGIN
                            submission_code)
   VALUES ('pickup', 'confirmed', 'shop_pickup', '0900000004', now(), gen_random_uuid()::text)
   RETURNING id INTO o4;
-  INSERT INTO bill (sales_order_id, due_vnd, cash_vnd, debt_vnd, debtor_name)
-  VALUES (o4, 50000, 30000, 20000, 'test-chú Tư') RETURNING id INTO b4;
+  INSERT INTO bill (sales_order_id, due_vnd, cash_vnd, debt_vnd, debtor_name, debt_note)
+  VALUES (o4, 50000, 30000, 20000, 'test-chú Tư', 'test-nợ đơn lẻ, hẹn trả sau (T-140)') RETURNING id INTO b4;
   UPDATE sales_order SET status = 'completed' WHERE id = o4;
   BEGIN
     INSERT INTO debt_collection (bill_id, debt_vnd, cash_vnd, person_id) VALUES (b4, 20000, 20000, NULL);

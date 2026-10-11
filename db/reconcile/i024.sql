@@ -17,7 +17,7 @@ WHERE btrim(coalesce(o.submission_code, '')) = ''
 -- @@ I-024/3 — đơn mà nội dung hiện tại khác nội dung lúc tạo mà không có một lần sửa mang vết
 -- Nội dung lúc tạo = các dòng ghi cùng lúc với đơn. Một dòng tạo SAU đơn mà không có vết THÊM của
 -- chính dòng ấy trên đơn (T-137, ADR-081: bản trước không có dòng, bản sau có) là lần gửi lại đã trở
--- thành đường sửa đơn. Lần thêm không khai lý do không có vết (F-046) — câu này thấy nó.
+-- thành đường sửa đơn. Lần thêm vượt vết (từ bước 20 chỉ còn đường vượt database, T-138) — câu này thấy nó.
 SELECT o.id AS don, o.created_at AS luc_tao, min(l.created_at) AS luc_dong_them
 FROM sales_order o JOIN order_line l ON l.sales_order_id = o.id
 WHERE l.created_at > o.created_at

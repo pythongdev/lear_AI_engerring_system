@@ -50,6 +50,20 @@ type khung struct {
 	owner *pgx.Conn
 }
 
+// coVet chạy câu dựng dữ liệu trong một giao dịch có khai người và lý do: từ bước 20 (T-138, ADR-092)
+// database từ chối lần sửa — và lần thêm dòng con vào bản ghi đã có — mà giao dịch không khai.
+func (k khung) coVet(fn func(pgx.Tx) error) error {
+	return pgx.BeginFunc(k.ctx, k.owner, func(tx pgx.Tx) error {
+		if _, err := tx.Exec(k.ctx, `WITH co AS (SELECT id FROM shop.person WHERE display_name = 'test-người dựng dữ liệu' ORDER BY id LIMIT 1),
+			moi AS (INSERT INTO shop.person (display_name) SELECT 'test-người dựng dữ liệu' WHERE NOT EXISTS (SELECT 1 FROM co) RETURNING id)
+			SELECT set_config('shop.actor_person_id', id::text, true), set_config('shop.revision_reason', 'test-dựng dữ liệu', true)
+			FROM (SELECT id FROM co UNION ALL SELECT id FROM moi) p`); err != nil {
+			return err
+		}
+		return fn(tx)
+	})
+}
+
 func dung(t *testing.T) khung {
 	t.Helper()
 	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
@@ -92,7 +106,7 @@ func dung(t *testing.T) khung {
 func (k khung) id(t *testing.T, sql string, args ...any) int64 {
 	t.Helper()
 	var id int64
-	if err := k.owner.QueryRow(k.ctx, sql, args...).Scan(&id); err != nil {
+	if err := k.coVet(func(tx pgx.Tx) error { return tx.QueryRow(k.ctx, sql, args...).Scan(&id) }); err != nil {
 		t.Fatalf("%s: %v", sql, err)
 	}
 	return id
@@ -217,7 +231,10 @@ func (k khung) nguoi(t *testing.T, ten string, chuQuan bool) int64 {
 func (k khung) vaoQuay(t *testing.T, nguoi int64) {
 	t.Helper()
 	time.Sleep(2 * time.Millisecond)
-	if _, err := k.owner.Exec(k.ctx, "UPDATE shop.counter_duty SET ended_at = now() WHERE ended_at IS NULL"); err != nil {
+	if err := k.coVet(func(tx pgx.Tx) error {
+		_, err := tx.Exec(k.ctx, "UPDATE shop.counter_duty SET ended_at = now() WHERE ended_at IS NULL")
+		return err
+	}); err != nil {
 		t.Fatal(err)
 	}
 	time.Sleep(2 * time.Millisecond)

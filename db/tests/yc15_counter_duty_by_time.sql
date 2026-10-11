@@ -3,6 +3,14 @@
 -- quầy vào quyền quản trị; lát không đòi năm người và không ghi mốc đổi ở bốn trạm ngoài quầy
 -- (shop-facts §8.8, U-055); mỗi lần huỷ · hoàn · ghi nợ đọc ra người đang trực lúc ấy.
 -- Lát: 06-luoc-do-nguoi-va-vet.md.
+
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người
+-- sửa là một người thử của file, khai ngay đây.
+DO $$ DECLARE p bigint; BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người sửa') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+  PERFORM set_config('shop.revision_reason', 'test-yc15_counter_duty_by_time', true);
+END $$;
 DO $$
 DECLARE a bigint; b bigint; chu bigint; d_a bigint; d_b bigint; r record; t0 timestamptz;
 BEGIN

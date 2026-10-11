@@ -25,6 +25,24 @@ CREATE FUNCTION pg_temp.bc_ban(p_so text) RETURNS bigint LANGUAGE sql STABLE AS 
   SELECT id FROM dining_table WHERE label = p_so
 $f$;
 
+-- Lỗi cài cần một lần đổi KHÔNG vết: từ T-138 (chế độ nghiêm, ADR-092) database từ chối lần sửa không
+-- khai lý do, nên lỗi cài tắt đúng các trigger vết của một bảng — dữ liệu mà một đường vượt database
+-- (chủ lược đồ sửa tay) để lại, thứ bộ đối chiếu vẫn phải thấy. Lỗi cài bật lại ngay sau lần đổi lén:
+-- QD-52 kêu khi một trigger vết còn tắt. ALTER TABLE không chạy khi bảng còn sự kiện ràng buộc hoãn,
+-- nên chấm hết chúng trước (trạng thái lúc ấy phải đứng được, như lúc COMMIT).
+CREATE FUNCTION pg_temp.bc_vet(p_bang text, p_bat boolean) RETURNS void LANGUAGE plpgsql AS $f$
+DECLARE t text;
+BEGIN
+  SET CONSTRAINTS ALL IMMEDIATE;
+  SET CONSTRAINTS ALL DEFERRED;
+  FOR t IN SELECT tgname FROM pg_trigger
+           WHERE tgrelid = p_bang::regclass AND NOT tgisinternal
+             AND tgfoid IN ('record_revision_capture'::regproc, 'record_revision_capture_added_line'::regproc)
+  LOOP
+    EXECUTE format('ALTER TABLE %I %s TRIGGER %I', p_bang, CASE WHEN p_bat THEN 'ENABLE' ELSE 'DISABLE' END, t);
+  END LOOP;
+END $f$;
+
 -- Giá một suất (shop-facts §4.6 luật 1 · 5), NULL khi tổ hợp không hợp lệ (luật 3).
 CREATE FUNCTION pg_temp.bc_gia(it bigint, sel bigint[]) RETURNS bigint LANGUAGE plpgsql AS $f$
 DECLARE bad int; base bigint; n_fill bigint; sur bigint;
@@ -314,7 +332,7 @@ BEGIN
   -- mà thử cột tiền của hai bảng ấy. Chúng KHÔNG nối vào két hay doanh thu của ngày mẫu (I-028,
   -- task T-125 ở work/backlog.md), nên không câu đối chiếu nào của ngày này đổi kết quả.
   -- Người ghi khai thẳng trên dòng: không đổi người thao tác của ngày mẫu, các file lỗi cài đọc nó.
-  -- T-133: lúc ghi đặt trong chính ngày khai, để ngày két của hai khoản không chờ U-072.
+  -- T-140: khoản trừ theo ngày khai; mốc ghi của mẫu giữ nguyên.
   INSERT INTO staff_advance (worker_person_id, amount_vnd, paid_date, approver_person_id, person_id, created_at)
   VALUES (giao, 200000, pg_temp.bc_ngay(), chu, chu, pg_temp.bc_luc('10:50'));
   INSERT INTO holiday_bonus (worker_person_id, amount_vnd, paid_date, person_id, created_at)

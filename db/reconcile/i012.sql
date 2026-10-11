@@ -7,11 +7,11 @@
 -- Cách đọc của T-133 (file 09 §3): một chỗ lệch "chỉ ra được" một thao tác khi trong ngày ấy có
 -- ĐÚNG MỘT thao tác chạm tiền mang một phần tiền bằng đúng độ lớn chỗ lệch — ví dụ một lần thu ghi
 -- nhầm phương thức. Không thao tác nào, hay hơn một, là chỗ lệch vô danh. Chỉ vế tiền mặt: tin nhắn
--- báo có chưa có chỗ cất, nên vế chuyển khoản không có câu (I-015 tập 5). Ngày chờ U-072 không kết luận.
+-- báo có chưa có chỗ cất, nên vế chuyển khoản không có câu (I-015 tập 5). Khoản chi tính theo ngày khai.
 WITH lech AS (
   SELECT k.ngay, k.dem_duoc - k.dau_ket - k.ve_phai AS lech
   FROM pg_temp.ket_ngay(:mui_gio) k
-  WHERE NOT k.cho_u072 AND k.dem_duoc - k.dau_ket <> k.ve_phai),
+  WHERE k.dem_duoc - k.dau_ket <> k.ve_phai),
 op(bang, id, ngay, tien) AS (
   SELECT 'bill', id, sale_date, unnest(ARRAY[cash_vnd, transfer_vnd, prepaid_cash_vnd]) FROM bill
   UNION ALL SELECT 'debt_collection', id, sale_date, unnest(ARRAY[cash_vnd, transfer_vnd]) FROM debt_collection

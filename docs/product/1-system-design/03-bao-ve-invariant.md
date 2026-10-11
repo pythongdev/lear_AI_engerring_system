@@ -74,7 +74,7 @@ Bốn luật đọc, ba luật đầu là của kế hoạch §7, luật thứ t
    mỗi file lát `02`…`06` trong [`../2-db/`](../2-db/02-luoc-do-ban-hang.md)); tên, kiểu và ràng buộc
    ở file migration (**ADR-053** luật 2). Luật này **không đổi**: cột giữa ở đây vẫn là **tầng pha 1
    chốt**, không phải biên nhận — vế nào đang đứng thấp hơn tầng của nó thì file lát nói ra kèm mã
-   (hôm nay: `I-018`, `work/findings.md` **F-046**).
+   (tới 2026-10-09: `I-018`, `work/findings.md` **F-046** — gỡ ở `T-138`, **ADR-092**).
 5. **Đơn vị của bảng là VẾ, không phải MÃ.** Mỗi vế trong lời của một mệnh đề ở
    `quality/invariants.md` phải có **một tầng** ở cột giữa **và** **một tập** ở cột phải sẽ có
    phần tử nếu đúng vế ấy hỏng — hoặc một câu nói thẳng vì sao chưa có tập (như ca *chưa có luật*

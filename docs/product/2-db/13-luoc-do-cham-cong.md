@@ -15,7 +15,7 @@ trỏ, không chép kiểu hay điều kiện thành bản thứ hai (**F-001**)
   `docs/product/1-system-design/03-bao-ve-invariant.md` §5; yêu cầu dữ liệu ở
   `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §9, dòng `YC-30`;
 - **người và cơ chế vết** — [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md), dùng lại
-  lát `P2-08`, kể cả chế độ mềm **F-046**: sửa không khai lý do chưa để lại vết;
+  lát `P2-08`; từ bước 20 (`T-138`, **ADR-092**) sửa không khai lý do bị database từ chối (**F-046** đã gỡ);
 - **cửa ghi xét người tick** — pha 3; **câu đối chiếu** — đã có câu `db/reconcile/i027.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01);
 - **quy ước cất và kiểm** — [`01-quy-uoc-du-lieu.md`](01-quy-uoc-du-lieu.md) ·
   [`10-quy-uoc-code.md`](10-quy-uoc-code.md); thứ tự và đường lùi ở
@@ -86,9 +86,9 @@ câu mệnh đề ở owner.
   huỷ có phải chủ quán không; test in thẳng cả hai. Lời chủ quán đóng **U-071** ngày 2026-10-09
   bắt buộc ghi chú và chỉ cho chủ quán huỷ — lát này chưa siết, việc siết là `T-141`.
 - **Bỏ huỷ** không có đường riêng: vai ghi sửa được ba dấu huỷ, nên xoá trắng chúng là một lần cập
-  nhật đi qua vết ở chế độ mềm (**F-046**). Khoá duy nhất vẫn chặn việc ấy khi đã có ô tick lại.
-- **Vết sửa bằng tay** dùng cơ chế chung của `P2-08`. **F-046** vẫn áp dụng: sửa không khai lý do
-  chưa để lại vết. Thu quyền cập nhật của `shop_app` không làm cơ chế chung thành chế độ nghiêm.
+  nhật đi qua vết — từ bước 20 phải khai lý do (`T-138`). Khoá duy nhất vẫn chặn việc ấy khi đã có ô tick lại.
+- **Vết sửa bằng tay** dùng cơ chế chung của `P2-08`, ở chế độ nghiêm từ bước 20 (`T-138`, **ADR-092**;
+  **F-046** đã gỡ): sửa không khai lý do bị từ chối.
 
 ---
 

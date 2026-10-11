@@ -5,8 +5,8 @@
 
 -- @@ I-009/1 — dòng đơn có giá, tên món hoặc món đọc ra khác giá trị đã khoá mà không phải một lần sửa dòng
 -- Vết cho thấy giá trị đã khoá của dòng đổi trong khi mốc khoá đứng yên: dòng bị ghi đè — kiểu đọc
--- lại theo menu hiện hành — chứ không phải người sửa dòng. Lần ghi đè không khai lý do không có vết
--- (F-046) và không câu nào thấy.
+-- lại theo menu hiện hành — chứ không phải người sửa dòng. Lần ghi đè vượt vết (từ bước 20 chỉ còn
+-- đường vượt database, T-138) không câu nào thấy.
 SELECT r.target_row AS dong, r.revised_at AS luc,
        r.before_image ->> 'unit_price_vnd' AS gia_truoc, r.after_image ->> 'unit_price_vnd' AS gia_sau,
        r.before_image ->> 'item_name' AS ten_truoc, r.after_image ->> 'item_name' AS ten_sau

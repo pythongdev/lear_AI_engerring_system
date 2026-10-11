@@ -30,7 +30,7 @@ Mỗi dòng tiền mới có người đã qua `authz.Run`. Ba cửa không lố
 | `hoadon/tra_lai` | gọi ghi hoàn và dùng trả trước | `quay` |
 | `ket/khai_dau_ket` | thêm opening_float và opening_float_line | `quay_hoac_chu_quan` |
 | `ket/dem` | thêm cash_count và cash_count_line | `quay_hoac_chu_quan` |
-| `ket/doi_soat_xong` | thêm reconciled_day | `quay_hoac_chu_quan` |
+| `ket/doi_soat_xong` | thêm reconciled_day | `chu_quan` |
 | `hoadon/ghi` | thêm bill; gọi dùng trả trước nếu có phần trả trước | `theo_cua_goi` |
 | `hoadon/ghi_hoan` | thêm refund | `theo_cua_goi` |
 | `tratruoc/dung` | thêm prepayment_use | `theo_cua_goi` |
@@ -46,9 +46,13 @@ HTTP kiểm hình trước khi đọc người; tiền là số nguyên không �
 Lý do hoàn không trắng; phương thức là cash hoặc transfer. Xấp tiền có mệnh giá dương, số tiền
 không âm và chia hết cho mệnh giá, không trùng mệnh giá trong một yêu cầu.
 
-Sau quyền là khoá dòng → tồn tại → ngày đã ký → điều kiện nghiệp vụ → ghi. Riêng giảm giá dương
-và nợ đơn lẻ dương trả `order_discount_undecided` và `standalone_debt_undecided` ngay sau
-quyền, trước đọc đơn. Hoá đơn đóng phiên cũng từ chối giảm giá dương.
+Sau quyền là khoá dòng → tồn tại → ngày đã ký → điều kiện nghiệp vụ → ghi. Giảm giá dương
+trả `order_discount_undecided` ngay sau quyền, trước đọc đơn; hoá đơn đóng phiên cũng từ chối.
+T-140 (2026-10-09, ADR-089 Sửa đổi): hai cửa đơn lẻ nhận debt_note. Sau lỗi thân hiện có,
+không nợ mà có ghi chú khác null trả 400 invalid_request field debt_note; có nợ mà ghi chú
+vắng/null/trắng trả 422 debt_note_required. Ghi chú hợp lệ cắt khoảng trắng hai đầu và cất
+bill.debt_note. Tên người nợ vẫn bắt buộc. Nợ tại bàn không đổi, debt_note luôn NULL.
+GET /debts trả debt_note trên mỗi dòng, null khi không có.
 
 `ngayban.DongHo` bản thật đọc `now()` của giao dịch; mọi dòng tiền có booked_at dùng cùng mốc
 cho booked_at và `sale_date = $n::timestamptz::date`. Pool do `db.Open` đặt TimeZone của quán,
@@ -91,16 +95,18 @@ trả lại trả trước bằng tiền mặt, chi tạm ứng và thưởng th
 
 Cửa ký xét theo thứ tự ADR-089 điểm 5:
 
-| Điều kiện chặn | Mã 409 |
+| Điều kiện chặn | Mã và status |
 |---|---|
-| Thiếu số đếm hoặc tiền đầu két | `cash_day_incomplete` |
-| Đã có dấu | `sale_day_already_reconciled` |
-| Còn lượt sổ giấy chưa nhập | `paper_entries_pending` |
-| Tạm ứng/thưởng có ngày khai khác ngày ghi và chạm ngày đang xét | `cash_day_expense_date_undecided` |
-| Gap khác 0, dù chỉ một đồng | `cash_day_not_balanced` |
+| Thiếu số đếm hoặc tiền đầu két | `cash_day_incomplete` — 409 |
+| Đã có dấu | `sale_day_already_reconciled` — 409 |
+| Còn lượt sổ giấy chưa nhập | `paper_entries_pending` — 409 |
+| Gap khác 0 và giải thích vắng/null/trắng | `gap_explanation_required` — 422 |
 
-Chỉ ngày đủ điều kiện mới thêm dấu. Không có ô lý do để đóng ngày lệch. Ngày có khoản chi chờ
-U-072 vẫn đọc được bốn con số; cửa ký từ chối, không chọn hộ ngày tiền rời két.
+Chỉ chủ quán được ký, người đứng quầy không phải chủ quán nhận 403 owner_only.
+Ngày đủ điều kiện thêm dấu với gap_vnd bằng phép tính đường đọc và gap_explanation đã cắt
+khoảng trắng; không gõ cất NULL. Ngày khớp vẫn nhận giải thích nếu có. Trả 201 gồm
+reconciled_day_id, sale_date, gap_vnd, gap_explanation. Tạm ứng/thưởng trừ theo paid_date,
+dù ghi vào máy hôm khác (lời chủ quán 2026-10-09; ADR-089 Sửa đổi).
 Số đếm hoặc đầu két có dòng đầu nhưng không có xấp là dữ liệu ngoài cửa; trigger từ chối ký
 với `cash_day_incomplete`.
 
@@ -112,6 +118,8 @@ opening_float_line, cash_count, cash_count_line và reconciled_day đã được
 | Nhóm tên | Mã hoặc cách xét | Lý do |
 |---|---|---|
 | bill_parts_equal_due_check; bill_debtor_iff_debt_check | payment_parts_mismatch; debtor_name_mismatch | giữ ánh xạ từ lát tại bàn; cửa kiểm tổng và tên trước ghi |
+| bill_standalone_debt_note_check; reconciled_day_gap_explained_check | debt_note_required; gap_explanation_required | ghi chú nợ đơn lẻ và giải thích ngày lệch bắt buộc |
+| bill_debt_note_only_with_debt_check | internal | cửa chặn ghi chú khi không nợ |
 | prepayment_use_balance_check | prepayment_balance_exceeded | không lấy quá số dư theo từng phương thức |
 | prepayment_one_per_order_key | prepayment_already_received | một khoản cho một đơn |
 | opening_float_one_per_day_key; cash_count_one_per_day_key | opening_float_already_declared; cash_count_already_recorded | mỗi ngày một lần khai/đếm |
@@ -140,10 +148,7 @@ holiday_bonus giữ nguyên; chúng thuộc lát ghi của mình.
 | Khoản chi I-029 | chưa có bảng khoản chi, chưa có hạng tử ấy | P2A-05 |
 | Tin nhắn báo có | chưa có chỗ cất, chưa đối soát chuyển khoản bằng tin nhắn | lát sau |
 | U-058 — giảm giá cả đơn | giảm giá dương bị từ chối bằng order_discount_undecided | chủ quán |
-| U-073 — đóng ngày lệch đã tìm ra lý do | lệch khác 0 bị từ chối bằng cash_day_not_balanced | chủ quán |
-| U-076 — khách đơn lẻ chưa trả đủ | nợ dương bị từ chối bằng standalone_debt_undecided | chủ quán |
-| U-072 — ngày két của khoản chi | ngày khai khác ngày ghi bị từ chối ký bằng cash_day_expense_date_undecided | chủ quán |
-| Quyền đọc của `GET /debts` · `GET /sale-days/{sale_date}/cash-reconciliation` | như mọi đường đọc hiện có, không đòi người gọi — mà `GET /debts` trả **tên người nợ** (`YC-11`); chưa có chương trình chạy thật nên chưa lộ ra đâu | cùng lượt với cách đăng nhập — **U-075**; trước khi backend chạy thật (Claude, 2026-10-09) |
+| Quyền đọc của `GET /debts` · `GET /sale-days/{sale_date}/cash-reconciliation` | như mọi đường đọc hiện có, không đòi người gọi — mà `GET /debts` trả **tên người nợ** (`YC-11`); chưa có chương trình chạy thật nên chưa lộ ra đâu | còn mở; trước khi backend chạy thật (Claude, 2026-10-09) |
 | I-014 tập 6 — con số đã ký | cửa không ghi tiền vào ngày đã ký; không chụp con số, sửa tay ngoài cửa vẫn chưa có câu bắt | tầng 4; ADR-089 điểm 4 |
 
 Các câu hỏi nằm ở [99-unknowns.md](../99-unknowns.md); tài liệu này không đóng hay trả lời chúng.

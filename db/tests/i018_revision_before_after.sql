@@ -1,8 +1,8 @@
 -- I-018 (tầng 1 · tầng 2) và YC-12 · YC-13 · YC-14: một lần sửa có khai lý do để lại bản TRƯỚC,
 -- bản SAU, LÝ DO, NGƯỜI SỬA — chụp trong cùng câu lệnh với lần sửa; hai người ghi đè thì bản của
 -- người trước dựng lại được; vết thiếu một trong bốn thứ không tồn tại được; vết sống khi bản ghi
--- gốc bị xoá và vai ghi của hệ thống không sửa được nó. Chế độ MỀM (chủ repo chọn 2026-09-28): sửa
--- không khai lý do thì không có vết — work/findings.md F-046. Lát: 06-luoc-do-nguoi-va-vet.md.
+-- gốc bị xoá và vai ghi của hệ thống không sửa được nó. Chế độ NGHIÊM từ bước 20 (T-138, ADR-092; F-046
+-- đã gỡ): sửa không khai lý do bị từ chối — db/tests/i018_strict_revision.sql. Lát: 06-luoc-do-nguoi-va-vet.md.
 
 -- Vế "mốc tính tiền không dời" của QD-33 (01-quy-uoc-du-lieu.md), đọc từ vết — P2-11 gom.
 CREATE FUNCTION pg_temp.moc_bi_doi() RETURNS TABLE (bang text, dong bigint, truoc text, sau text)
@@ -25,10 +25,16 @@ BEGIN
   VALUES ('pickup', 'confirmed', 'shop_pickup', '0900000001', now(), gen_random_uuid()::text)
   RETURNING id INTO o1;
 
-  -- Chế độ mềm: sửa KHÔNG khai lý do ⇒ không vết nào (F-046).
+  -- Chế độ nghiêm: sửa KHÔNG khai lý do ⇒ từ chối, số điện thoại không đổi, không vết nào.
+  BEGIN
+    UPDATE sales_order SET customer_phone = '0900000009' WHERE id = o1;
+    RAISE EXCEPTION 'I-018: database KHÔNG từ chối lần sửa không khai lý do';
+  EXCEPTION WHEN check_violation THEN
+    RAISE NOTICE 'I-018 chế độ nghiêm — sửa không khai lý do bị từ chối: %', SQLERRM;
+  END;
+  -- Số điện thoại ban đầu, có lý do: bản trước của lần sửa sau là số này.
+  PERFORM set_config('shop.revision_reason', 'test-ghi số khách đọc lần đầu', true);
   UPDATE sales_order SET customer_phone = '0900000009' WHERE id = o1;
-  RAISE NOTICE 'I-018 chế độ mềm — sửa không khai lý do: % vết (F-046)',
-    (SELECT COUNT(*) FROM record_revision WHERE target_row = o1);
 
   -- B sửa số điện thoại, có lý do; rồi C sửa đè lên — người bấm sau thắng (shop-facts §6.22).
   PERFORM set_config('shop.revision_reason', 'test-khách đọc lại số', true);
@@ -177,7 +183,7 @@ BEGIN
     RAISE EXCEPTION 'QD-33: tập "mốc tính tiền bị dời" không rỗng trước khi cài lỗi';
   END IF;
   PERFORM set_config('shop.actor_person_id', b::text, true);
-  PERFORM set_config('shop.revision_reason', '', true);
+  PERFORM set_config('shop.revision_reason', 'test-thu tiền và hoàn thành đơn', true);
   INSERT INTO bill (sales_order_id, due_vnd, cash_vnd) VALUES (o1, 50000, 50000) RETURNING id INTO bl;
   UPDATE sales_order SET status = 'completed' WHERE id = o1;
   PERFORM set_config('shop.revision_reason', 'test-dời mốc sang hôm qua', true);

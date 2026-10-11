@@ -4,6 +4,14 @@
 -- Một dòng đơn thiếu giá · thiếu tên · thiếu ảnh chụp thành phần thì không ghi được.
 -- Số dưới đây là số GIẢ, không phải giá quán (giá thật: shop-facts.md §4.2 · §4.4).
 -- Lát: 03-luoc-do-menu-gia.md.
+
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người
+-- sửa là một người thử của file, khai ngay đây.
+DO $$ DECLARE p bigint; BEGIN
+  INSERT INTO person (display_name) VALUES ('test-người sửa') RETURNING id INTO p;
+  PERFORM set_config('shop.actor_person_id', p::text, true);
+  PERFORM set_config('shop.revision_reason', 'test-i009_snapshot_survives_menu_change', true);
+END $$;
 DO $$
 DECLARE
   c_banh bigint; c_gio bigint; m_gio bigint; g_nhan bigint; g_luong bigint;

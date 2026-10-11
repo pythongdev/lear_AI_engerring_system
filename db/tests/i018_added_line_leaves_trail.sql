@@ -2,8 +2,8 @@
 -- vào một đơn đã tạo (sửa đơn, shop-facts §6.19) · thêm thành phần vào một suất đã có (I-011) · thêm một
 -- xấp mệnh giá vào tiền đầu két đã khai (I-021). Giao dịch khai lý do ⇒ một vết trên BẢN GHI CHA, bản
 -- trước không có dòng ấy, bản sau có, người là người của giao dịch. Dòng tạo cùng lúc với cha là nội dung
--- lúc tạo, không phải lần sửa ⇒ không vết. Chế độ MỀM như F-046: không khai lý do ⇒ không vết, và câu
--- đối chiếu thấy nó. Lát: 06-luoc-do-nguoi-va-vet.md.
+-- lúc tạo, không phải lần sửa ⇒ không vết. Chế độ NGHIÊM từ bước 20 (T-138, ADR-092; F-046 đã gỡ): không
+-- khai lý do ⇒ database từ chối lần thêm. Lát: 06-luoc-do-nguoi-va-vet.md.
 
 DO $$
 DECLARE b bigint; c_banh bigint; c_gio bigint; m bigint; so bigint; f bigint;
@@ -40,8 +40,9 @@ BEGIN
     RAISE EXCEPTION 'F-047: dòng ghi cùng lúc với bản ghi cha bị chụp thành một lần sửa';
   END IF;
 
-  -- Ba bản ghi cha và dòng đầu của chúng "đã có từ trước": lùi mốc tạo ba giờ, không khai lý do.
-  PERFORM set_config('shop.revision_reason', '', true);
+  -- Ba bản ghi cha và dòng đầu của chúng "đã có từ trước": lùi mốc tạo ba giờ. Lần lùi ấy cũng là một
+  -- lần sửa, nên có vết của nó; các phép đếm dưới chỉ đọc vết thêm dòng con (bản sau mang khoá bảng con).
+  PERFORM set_config('shop.revision_reason', 'test-dựng bản ghi đã có', true);
   UPDATE sales_order SET created_at = now() - interval '3 hours' WHERE id = so;
   UPDATE menu_item SET created_at = now() - interval '3 hours' WHERE id = m;
   UPDATE opening_float SET created_at = now() - interval '3 hours' WHERE id = f;
@@ -49,14 +50,15 @@ BEGIN
   UPDATE menu_item_component SET created_at = now() - interval '3 hours' WHERE id = mc_dau;
   UPDATE opening_float_line SET created_at = now() - interval '3 hours' WHERE id = x_dau;
 
-  -- Chế độ mềm: thêm KHÔNG khai lý do ⇒ không vết (F-046; câu I-021/7 thấy lần thêm ấy).
-  INSERT INTO opening_float_line (opening_float_id, denomination_vnd, amount_vnd)
-  VALUES (f, 1000, 5000) RETURNING id INTO x_len;
-  n := (SELECT count(*) FROM record_revision WHERE target_table_code = 'opening_float' AND target_row = f);
-  RAISE NOTICE 'F-047 chế độ mềm — thêm xấp không khai lý do: % vết', n;
-  IF n <> 0 THEN
-    RAISE EXCEPTION 'F-047: lần thêm không khai lý do vẫn để vết — chế độ nghiêm là việc của F-046';
-  END IF;
+  -- Chế độ nghiêm: thêm KHÔNG khai lý do vào cha đã có ⇒ từ chối, không dòng nào, không vết nào.
+  PERFORM set_config('shop.revision_reason', '', true);
+  BEGIN
+    INSERT INTO opening_float_line (opening_float_id, denomination_vnd, amount_vnd)
+    VALUES (f, 1000, 5000) RETURNING id INTO x_len;
+    RAISE EXCEPTION 'F-046: database KHÔNG từ chối lần thêm xấp không khai lý do';
+  EXCEPTION WHEN check_violation THEN
+    RAISE NOTICE 'F-046 chế độ nghiêm — thêm xấp không khai lý do bị từ chối: %', SQLERRM;
+  END;
 
   -- Khai lý do mà không khai người: lần thêm bị từ chối cùng vết của nó.
   BEGIN
@@ -90,11 +92,13 @@ BEGIN
                           ('menu_item', m, 'menu_item_component', mc_them, mc_dau),
                           ('opening_float', f, 'opening_float_line', x_them, x_dau)) t(cha, id, con, dong, cu)
   LOOP
-    n := (SELECT count(*) FROM record_revision WHERE target_table_code = v.cha AND target_row = v.id);
+    n := (SELECT count(*) FROM record_revision
+          WHERE target_table_code = v.cha AND target_row = v.id AND after_image ? v.con);
     IF n <> 1 THEN
       RAISE EXCEPTION 'F-047: thêm một dòng % vào % đã có để lại % vết trên cha, cần đúng 1', v.con, v.cha, n;
     END IF;
-    SELECT * INTO STRICT r FROM record_revision WHERE target_table_code = v.cha AND target_row = v.id;
+    SELECT * INTO STRICT r FROM record_revision
+    WHERE target_table_code = v.cha AND target_row = v.id AND after_image ? v.con;
     IF r.person_id IS DISTINCT FROM b
        OR NOT r.after_image -> v.con @> jsonb_build_array(jsonb_build_object('id', v.dong))
        OR r.before_image -> v.con @> jsonb_build_array(jsonb_build_object('id', v.dong))

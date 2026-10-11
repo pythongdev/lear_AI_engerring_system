@@ -33,6 +33,20 @@ type khung struct {
 	owner *pgx.Conn
 }
 
+// coVet chạy câu dựng dữ liệu trong một giao dịch có khai người và lý do: từ bước 20 (T-138, ADR-092)
+// database từ chối lần sửa — và lần thêm dòng con vào bản ghi đã có — mà giao dịch không khai.
+func (k khung) coVet(fn func(pgx.Tx) error) error {
+	return pgx.BeginFunc(k.ctx, k.owner, func(tx pgx.Tx) error {
+		if _, err := tx.Exec(k.ctx, `WITH co AS (SELECT id FROM shop.person WHERE display_name = 'test-người dựng dữ liệu' ORDER BY id LIMIT 1),
+			moi AS (INSERT INTO shop.person (display_name) SELECT 'test-người dựng dữ liệu' WHERE NOT EXISTS (SELECT 1 FROM co) RETURNING id)
+			SELECT set_config('shop.actor_person_id', id::text, true), set_config('shop.revision_reason', 'test-dựng dữ liệu', true)
+			FROM (SELECT id FROM co UNION ALL SELECT id FROM moi) p`); err != nil {
+			return err
+		}
+		return fn(tx)
+	})
+}
+
 func dung(t *testing.T) khung {
 	t.Helper()
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
@@ -79,7 +93,10 @@ func (k khung) ban(t *testing.T, nhan string) int64 {
 func (k khung) vaoQuay(t *testing.T, nguoi int64) {
 	t.Helper()
 	time.Sleep(2 * time.Millisecond)
-	if _, err := k.owner.Exec(k.ctx, "UPDATE shop.counter_duty SET ended_at = now() WHERE ended_at IS NULL"); err != nil {
+	if err := k.coVet(func(tx pgx.Tx) error {
+		_, err := tx.Exec(k.ctx, "UPDATE shop.counter_duty SET ended_at = now() WHERE ended_at IS NULL")
+		return err
+	}); err != nil {
 		t.Fatal(err)
 	}
 	time.Sleep(2 * time.Millisecond)
@@ -251,4 +268,34 @@ func TestI023_HaiLanDoiCungLucKhongThanhLoiHeThong(t *testing.T) {
 	if thanh == 0 || hienHanh != 1 {
 		t.Fatal("phải có ít nhất một lần thành và đúng một mã hiện hành")
 	}
+}
+
+// I-018 qua cửa đổi mã: từ bước 20 (T-138, ADR-092) vết ở chế độ nghiêm; lần thay mã sửa mã cũ trong
+// hàm qr_code_issue, hàm tự khai lý do, nên mã cũ có đúng một vết mang người của cửa.
+func TestI018_DoiMaDeLaiVetTrenMaCu(t *testing.T) {
+	k := dung(t)
+	chu := k.nguoi(t, "chủ quán", true)
+	ban := k.ban(t, "bàn vết")
+	if r := k.goi(t, "POST", doiMa(ban), chu); r.status != http.StatusCreated {
+		t.Fatalf("cấp mã đầu: muốn 201, nhận %d", r.status)
+	}
+	var cu int64
+	if err := k.owner.QueryRow(k.ctx, "SELECT id FROM shop.qr_code WHERE dining_table_id = $1 AND replaced_at IS NULL", ban).Scan(&cu); err != nil {
+		t.Fatal(err)
+	}
+	if r := k.goi(t, "POST", doiMa(ban), chu); r.status != http.StatusCreated {
+		t.Fatalf("đổi mã: muốn 201, nhận %d", r.status)
+	}
+	var n, nguoi int64
+	var truoc, sau bool
+	var lyDo string
+	if err := k.owner.QueryRow(k.ctx, `SELECT count(*) OVER (), person_id, before_image ->> 'replaced_at' IS NULL,
+		after_image ->> 'replaced_at' IS NOT NULL, reason
+		FROM shop.record_revision WHERE target_table_code = 'qr_code' AND target_row = $1`, cu).Scan(&n, &nguoi, &truoc, &sau, &lyDo); err != nil {
+		t.Fatalf("mã cũ không có vết: %v", err)
+	}
+	if n != 1 || nguoi != chu || !truoc || !sau || lyDo == "" {
+		t.Fatalf("vết của mã cũ: %d dòng, người %d (muốn %d), trước còn hiện hành %v, sau đã thay %v, lý do %q", n, nguoi, chu, truoc, sau, lyDo)
+	}
+	t.Logf("đổi mã ⇒ mã cũ %d có một vết: người %d, lý do %q", cu, nguoi, lyDo)
 }

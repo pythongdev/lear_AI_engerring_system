@@ -10,6 +10,7 @@ DO $$ DECLARE o bigint; l bigint; BEGIN
   INSERT INTO order_line_option (order_line_id, menu_option_id, option_group_name, option_name, surcharge_vnd)
   SELECT l, mo.id, g.name, mo.name, mo.surcharge_vnd
   FROM menu_option mo JOIN option_group g ON g.id = mo.option_group_id WHERE mo.name = 'Nhiều nhân';
-  PERFORM set_config('shop.revision_reason', '', true);
+  PERFORM pg_temp.bc_vet('order_line', false);
   UPDATE order_line SET unit_price_vnd = pg_temp.gia_dong_tai(l) WHERE id = l;
+  PERFORM pg_temp.bc_vet('order_line', true);
 END $$;

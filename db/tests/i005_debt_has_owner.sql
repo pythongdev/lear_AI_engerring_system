@@ -4,6 +4,10 @@
 -- Bộ kiểm ROLLBACK cuối file, nên mọi ràng buộc hoãn được ép chạy bằng SET CONSTRAINTS.
 -- Người thao tác của giao dịch (P2-08, 06-luoc-do-nguoi-va-vet.md §0): mọi cột "ai bấm" lấy mặc
 -- định từ đây — không khai thì thao tác chạm tiền, mẻ, lần chuyển, mã QR đều không ghi được.
+
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người sửa là người
+-- thao tác mà từng khối khai. Khối nào xoá lý do là để thử lời từ chối.
+DO $$ BEGIN PERFORM set_config('shop.revision_reason', 'test-i005_debt_has_owner', true); END $$;
 DO $$
 DECLARE p bigint;
 BEGIN

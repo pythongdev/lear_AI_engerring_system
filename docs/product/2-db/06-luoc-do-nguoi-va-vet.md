@@ -6,16 +6,18 @@ Pha 2 · bước `P2-08` · viết 2026-09-28 (Claude Code). File này **thêm**
 
 **Bản nào thắng** (`docs/decisions.md` **ADR-053** luật 2): tên bảng · tên cột · kiểu · ràng buộc
 thuộc file migration
-[`db/migrations/20260928140000_nguoi_va_vet.up.sql`](../../../db/migrations/20260928140000_nguoi_va_vet.up.sql).
-File này giữ **ý định, lý do và ánh xạ** sang `I-0xx` / `YC-xx`. Nó nhắc tên bảng và tên ràng buộc
+[`db/migrations/20260928140000_nguoi_va_vet.up.sql`](../../../db/migrations/20260928140000_nguoi_va_vet.up.sql);
+chế độ nghiêm của vết và cột người của `table_session_member` thuộc bước 20,
+[`db/migrations/20261010120000_vet_che_do_nghiem.up.sql`](../../../db/migrations/20261010120000_vet_che_do_nghiem.up.sql)
+(2026-10-09, `T-138`, **ADR-092**). File này giữ **ý định, lý do và ánh xạ** sang `I-0xx` / `YC-xx`. Nó nhắc tên bảng và tên ràng buộc
 để trỏ, **không** chép lại kiểu hay điều kiện thành bản thứ hai (**F-001**). Hai bản lệch nhau ⇒ một
 dòng `F-XXX`, không lặng lẽ sửa bên nào.
 
 **File này KHÔNG sở hữu:**
 - **luật nghiệp vụ và tầng bảo vệ** — `quality/invariants.md` và
   `docs/product/1-system-design/03-bao-ve-invariant.md` hàng `I-012` · `I-018`. Lát này thi hành
-  tầng đã chốt, không nâng, không hạ (**ADR-050** luật 1) — chỗ duy nhất chưa thi hành đủ có tên:
-  **F-046** (§3);
+  tầng đã chốt, không nâng, không hạ (**ADR-050** luật 1) — chỗ chưa thi hành đủ từng có tên **F-046**
+  (chế độ mềm của vết), gỡ 2026-10-09 ở bước 20 (§3);
 - **mảng con người của quản trị** — chấm công, lương, vai thường lệ của từng người, ai được xem gì
   (`shop-facts.md` §8.7, `work/backlog_AD.md`). Lát này chỉ dựng **người** và **ai đứng quầy lúc
   nào** — chỗ giao nhau kế hoạch pha 2 §3 hẹn trước; lane admin dùng lại, không dựng lại;
@@ -87,8 +89,9 @@ là yêu cầu hình dạng (`04-yeu-cau-du-lieu.md` §1 · §3 · §4). Tên �
 | **`I-012`** vế *hình dạng vết: thiếu ai bấm thì không tồn tại được* | 1 | `person_id` `NOT NULL` (khoá ngoại về `person`) trên `bill` · `debt_collection` · `prepayment` · `refund` · `opening_float` · `station_job_transfer` · `qr_code`; `made_by_person_id` trên `production_batch`; `production_batch_rolled_back_by_iff_rolled_back_check`. *Cái gì · bao nhiêu · lúc mấy giờ* đã là cột bắt buộc từ `P2-06` | cùng file — tám lời `null value in column "person_id" …` / `"made_by_person_id"` / check lùi mẻ; `i004_…` — lần chuyển không người chọn |
 | **`I-012`** vế *cái tên trong vết là người thật đã bấm* | 4 | máy **không** ngăn hai người dùng chung một chỗ đứng (hàng pha 1). Cái máy giữ thay vào: người bấm và người đứng quầy lúc bấm cùng đọc được, nên câu đối chiếu *thao tác ở quầy mà người bấm không phải người đứng quầy lúc ấy* chỉ ra đúng một dòng. Hai ca không bấm ở quầy đứng ngoài tập: hoá đơn **đơn giao tận nơi** (người đi giao) và hoá đơn **nhập bù** (người nhập) | cùng file — tập rỗng trước khi cài lỗi; chủ quán tự hoàn khi không đứng quầy ⇒ *refund …: người bấm chủ quán, người đứng quầy lúc ấy A* |
 | **`I-018`** vế *hình dạng vết: thiếu một trong bốn thứ thì không tồn tại được* | 1 | `record_revision`: `before_image` · `after_image` · `reason` · `person_id` `NOT NULL`; `record_revision_reason_not_blank_check`; `record_revision_images_of_target_check` (hai bản chụp là của đúng dòng ấy); `record_revision_changes_something_check`; `record_revision_target_table_code_check` | `db/tests/i018_revision_before_after.sql` — sáu lời từ chối |
-| **`I-018`** vế *vết ghi cùng giao dịch với lần sửa* | 2 | trigger `record_revision_capture` (`AFTER UPDATE`, mọi bảng trừ bảng vết) chụp bản trước và bản sau **trong cùng câu lệnh** với lần sửa, khi giao dịch đã khai lý do — cắt giữa chừng thì không nửa nào sống; khai lý do mà không khai người sửa thì **lần sửa bị từ chối cùng vết**. `QD-52` kiểm mọi bảng mang trigger ấy và nó đang bật. **Chế độ mềm:** sửa không khai lý do thì đi qua mà không vết — **F-046**, §3 | cùng file — *cắt giữa chừng — số điện thoại 0922222222, số vết 2 (trước khi cắt 2)*; *sửa có lý do, không người sửa* bị từ chối; *chế độ mềm: 0 vết* |
-| **`I-018`** vế *lần **thêm** một dòng con vào bản ghi đã có cũng giữ bản trước, bản sau, lý do, người* — món vào đơn đã tạo · thành phần vào suất đã có · xấp mệnh giá vào tiền đầu két đã khai (bổ sung 2026-10-05, `T-137`, **ADR-081**, gỡ **F-047**) | 2 | trigger `record_revision_capture_added_line` (`AFTER INSERT` trên `order_line` · `menu_item_component` · `opening_float_line`): dòng có mốc tạo **muộn hơn** bản ghi cha, trong giao dịch đã khai lý do, để lại một vết trên **bản ghi cha** — bản trước là cha cùng các dòng con có trước dòng ấy (khoá tên bảng con), bản sau thêm đúng dòng ấy. Dòng ghi cùng lúc với cha là nội dung lúc tạo, không vết. Cùng **chế độ mềm** với dòng trên: không khai lý do thì không vết, và ba câu `I-024/3` · `I-011/1` · `I-021/7` gọi tên lần thêm ấy. Bản thắng: [`db/migrations/20261005130000_vet_them_dong_con.up.sql`](../../../db/migrations/20261005130000_vet_them_dong_con.up.sql) (bước 17) | `db/tests/i018_added_line_leaves_trail.sql` — *thêm order_line vào sales_order — 1 dòng → 2 dòng*; *dòng ghi cùng lúc với cha: 0 vết*; *chế độ mềm: 0 vết*; *thêm có lý do, không người* bị từ chối |
+| **`I-018`** vế *vết ghi cùng giao dịch với lần sửa* | 2 | trigger `record_revision_capture` (`AFTER UPDATE`, mọi bảng trừ bảng vết) chụp bản trước và bản sau **trong cùng câu lệnh** với lần sửa, khi giao dịch đã khai lý do — cắt giữa chừng thì không nửa nào sống; khai lý do mà không khai người sửa thì **lần sửa bị từ chối cùng vết**. `QD-52` kiểm mọi bảng mang trigger ấy và nó đang bật. **Chế độ nghiêm** từ bước 20 (2026-10-09, `T-138`, **ADR-092**, gỡ **F-046**): lần sửa **đổi nội dung** mà giao dịch không khai lý do bị từ chối, `record_revision_reason_declared_check`; câu sửa không đổi gì vẫn đi qua. Một ngoại lệ hẹp cho lượt gọi thêm của khách QR — §3 | cùng file — *cắt giữa chừng — số điện thoại 0922222222, số vết 3 (trước khi cắt 3)*; *sửa có lý do, không người sửa* bị từ chối; *chế độ nghiêm — sửa không khai lý do bị từ chối*; `db/tests/i018_strict_revision.sql` — đỏ trên 18 bước, xanh trên 20 |
+| **`I-018`** vế *lần **thêm** một dòng con vào bản ghi đã có cũng giữ bản trước, bản sau, lý do, người* — món vào đơn đã tạo · thành phần vào suất đã có · xấp mệnh giá vào tiền đầu két đã khai (bổ sung 2026-10-05, `T-137`, **ADR-081**, gỡ **F-047**) | 2 | trigger `record_revision_capture_added_line` (`AFTER INSERT` trên `order_line` · `menu_item_component` · `opening_float_line`): dòng có mốc tạo **muộn hơn** bản ghi cha, trong giao dịch đã khai lý do, để lại một vết trên **bản ghi cha** — bản trước là cha cùng các dòng con có trước dòng ấy (khoá tên bảng con), bản sau thêm đúng dòng ấy. Dòng ghi cùng lúc với cha là nội dung lúc tạo, không vết. Từ bước 20 cùng **chế độ nghiêm** với dòng trên: thêm vào cha đã có mà không khai lý do thì bị từ chối, cùng tên `record_revision_reason_declared_check`; ba câu `I-024/3` · `I-011/1` · `I-021/7` còn gọi tên lần thêm vượt database (lỗi cài tắt trigger vết). Bản thắng: [`db/migrations/20261005130000_vet_them_dong_con.up.sql`](../../../db/migrations/20261005130000_vet_them_dong_con.up.sql) (bước 17) | `db/tests/i018_added_line_leaves_trail.sql` — *thêm order_line vào sales_order — 1 dòng → 2 dòng*; *dòng ghi cùng lúc với cha: 0 vết*; *chế độ nghiêm — thêm xấp không khai lý do bị từ chối*; *thêm có lý do, không người* bị từ chối |
+| **`I-012`** vế *ai ghép bàn* (bổ sung 2026-10-09, `T-138`, **ADR-092**) | 1 | `table_session_member.person_id`, mặc định là người của giao dịch (`table_session_member_person_fkey`). Dòng **mở** phiên được trống — khách QR mở phiên bằng lượt gọi (**ADR-087** điểm 1); dòng gắn vào phiên **đã có** bàn trống người ⇒ `table_session_member_merge_person_required_check` | `db/tests/i018_strict_revision.sql` — *mở phiên không người: được* · *ghép bàn không người bị từ chối* · *ghép bàn có người: được* |
 | **`I-018`** · **`YC-13`** — dựng lại bản trước, bản sau; ca **hai người ghi đè** | 1 · 2 | bản chụp cả dòng; lần đè của người sau có bản trước **là** bản của người trước | cùng file — *trước 0900000009, sau 0911111111 … B* · *trước 0911111111, sau 0922222222 … C*; *bản của B dựng lại từ vết của C: 0911111111* |
 | **`YC-12`** — vết sống độc lập với bản ghi nó nói về | — | không khoá ngoại từ vết về bản gốc (`QD-03`: cột trỏ nhiều bảng không mang `_id`); vai `shop_app` không xoá (`QD-50`), **không sửa** và **không chèn thẳng** được vết — vết chỉ sinh qua trigger, chạy bằng quyền chủ lược đồ (`SECURITY DEFINER`; review độc lập 2026-09-29 tìm ra một vết bịa chèn được trước khi sửa) | cùng file — *bàn … đã xoá — vết vẫn đọc: "test-9" → "test-9b"*; `permission denied for table record_revision` khi sửa và khi chèn thẳng; *shop_app sửa ⇒ vết qua trigger* |
 | **`YC-14`** — không có nút hoàn tác; sửa là cập nhật giữ hai phía | 2 | cùng trigger: mọi lần cập nhật — kể cả lùi mẻ, đổi trạng thái đơn, đổi giá — có khai lý do thì giữ cả hai phía | cùng file — chủ quán *đổi giá — trước 900, sau 1000* |
@@ -118,16 +121,18 @@ mọi bảng phải mang trigger và trigger phải đang bật, nếu không c�
   nhưng không gì buộc một lần sửa phải tăng phiên bản; và nó thêm một cột vào mọi bảng;
 - *chế độ nghiêm ngay* — từ chối mọi lần sửa không khai; chủ repo chọn hoãn (**F-046**): bật lúc này
   phải sửa mọi file test và dữ liệu mồi, gồm hai file đang mang thay đổi chưa commit của phiên khác.
+  **Bật 2026-10-09** ở bước 20 (`T-138`, **ADR-092**), khi mọi cửa sửa của pha 3 đã khai lý do.
 
 ---
 
 ## 3. Cái không phải tầng 1 — lược đồ nợ gì, pha 3 nợ gì
 
-- **`I-018` — mọi lần sửa đều có vết (F-046, chế độ mềm).** Hôm nay một lần sửa **không** khai lý do
-  đi qua mà không để lại vết. Vế ấy đang được giữ bởi cửa cập nhật của pha 3 (tầng 3) và một câu đối
-  chiếu, **thấp hơn** tầng pha 1 đã chốt — chủ repo chọn có tên, không phải hạ tầng im lặng. **Gỡ:**
-  một migration đổi `record_revision_capture` thành từ chối lần sửa không khai, cùng lượt mọi file
-  test và dữ liệu mồi khai lý do — sau khi `i009` · `i013` của phiên khác đã commit và cửa pha 3 có.
+- **`I-018` — mọi lần sửa đều có vết: đã giữ ở tầng 2 từ bước 20** (2026-10-09, `T-138`, **ADR-092**;
+  **F-046** đã gỡ). Một ngoại lệ có tên: khách QR gọi thêm lúc phiên *Chờ thanh toán* kéo phiên về
+  *Đang phục vụ* mà không có người của quán để ghi vết — lần sửa ấy đi qua không vết **chỉ khi** chính
+  giao dịch đã thêm một đơn `qr_table` vào phiên, chỉ cột trạng thái đổi đúng cặp ấy, không người, không
+  lý do. Lượt gọi là bằng chứng của lần chuyển; phép đối chiếu `I-016` đọc nó từ lượt gọi là phần còn mở
+  của **F-060**. Từ bước 20, mọi migration sau sửa dữ liệu cũng phải khai lý do và người.
 - **Vết của đổi trạng thái — duyệt, huỷ, đóng phiên nhầm.** Chúng là lần cập nhật một dòng
   `sales_order` / `table_session`; khai lý do (*"duyệt"*, *"huỷ: khách đổi ý"*) thì vết giữ trạng
   thái trước, sau, người bấm. **Pha 3 nợ:** hàm xác thực chuyển trạng thái của `I-016` khai lý do mỗi
@@ -163,8 +168,8 @@ Lát này **không** có cột `status` (không dòng ánh xạ `QD-40`) và kh�
 
 | Chỗ trống | Lược đồ hôm nay đứng thế nào | Ai gỡ |
 |---|---|---|
-| **Chế độ nghiêm của vết cập nhật** | chế độ mềm — §3 | **F-046** (`work/findings.md`) |
-| **Ai mở phiên, ai ghép bàn** (`I-012` liệt *ghép bàn* là thao tác chạm tiền) | `table_session_member` **chưa** có cột người: thêm cột bắt buộc vào nó là sửa gần hai mươi file test, gồm file của phiên khác. Lần ghép bàn **có** vết khi cửa ghép khai lý do (dòng phiên đổi) — nhưng dòng bàn mới gắn vào là một lần **thêm**, không phải sửa; trigger vết thêm dòng con của `T-137` (§2) **không** phủ bảng này (**ADR-081** *Không phủ*) | cùng lượt gỡ **F-046** |
+| ~~**Chế độ nghiêm của vết cập nhật**~~ — **gỡ 2026-10-09 (`T-138`)** | bước 20 (**ADR-092**), ngoại lệ khách QR ở §3 | **F-046** — xong |
+| ~~**Ai ghép bàn**~~ — **gỡ 2026-10-09 (`T-138`)**; **ai mở phiên** khi khách QR mở | `table_session_member.person_id` (§2): ghép bàn bắt buộc có người; dòng mở phiên của khách trống người — khách không phải người của quán | `T-138` — xong; mở phiên của khách: không gỡ (đúng luật) |
 | **Ai tạo đơn, ai sửa một dòng đơn** (`U-026`) | tạo đơn là thêm, không có vết sửa; sửa dòng có vết khi khai lý do. Người tạo đơn `staff_pos` chưa có cột | pha 3 quyết có cần; một migration mới |
 | **Ai bấm *"đã ra bàn"*** | đơn vị bấm của mốc ấy là **số cái từng thứ, cho một bàn** (`S-5`, có lời 2026-10-09 — [`05-luoc-do-san-xuat.md`](05-luoc-do-san-xuat.md) §5) — không có bản ghi lần bấm nào để gắn người; lời không đòi vết từng lần bấm. Lần đổi trạng thái đơn vị có vết khi khai lý do | ~~chủ quán — `S-5`~~ có lời 2026-10-09 |
 | **Người bán của một lượt nhập bù khi hôm ấy quầy không khai ai đứng** | người bán đọc từ `counter_duty` tại giờ bán trên giấy; hôm mất điện có thể không ai khai được mốc đổi | pha 3 · người giữ sổ khai bù khoảng trực nếu cần |
@@ -184,4 +189,4 @@ không được xoá) và không bảng nào vào `:bang_khong_quan_he_so_hoc` �
 | `P2-10` | **xong 2026-09-28** — dữ liệu mồi thêm một người cho mỗi vai của `shop-facts.md` §3 và chủ quán, tên hiển thị là tên vai; chủ quán là người thao tác lúc cấp mã QR |
 | `P2-11` | §2 cột *Bằng chứng*: câu *thao tác ở quầy mà người bấm không đứng quầy* (`i012_…`), câu *mốc tính tiền bị dời* (`i018_…`), *còn N lượt trên giấy* (`yc08_…`); phép đối chiếu của `I-016` đọc vết cập nhật |
 | lane admin | `person` và `counter_duty` — dùng lại cho mảng con người, không dựng bảng người thứ hai |
-| pha 3 | §0 người thao tác và lý do khai ở **mọi** giao dịch ghi; §3 ba chỗ *Pha 3 nợ*; gỡ **F-046** |
+| pha 3 | §0 người thao tác và lý do khai ở **mọi** giao dịch ghi — từ bước 20 database từ chối lần sửa không khai (**F-046** gỡ ở `T-138`); §3 các chỗ *Pha 3 nợ* |

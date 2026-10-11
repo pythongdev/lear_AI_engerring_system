@@ -15,7 +15,7 @@ buộc chỉ để trỏ, không chép kiểu hay điều kiện thành bản th
   `docs/product/1-system-design/03-bao-ve-invariant.md` §5; yêu cầu dữ liệu ở
   `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §9, dòng `YC-31` · `YC-32`;
 - **người và cơ chế vết** — [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md), dùng lại
-  lát `P2-08`, kể cả chế độ mềm **F-046** ở `work/findings.md`;
+  lát `P2-08`; từ bước 20 (`T-138`, **ADR-092**) chế độ nghiêm — **F-046** đã gỡ;
 - **cửa ghi xét người duyệt** — pha 3; **câu đối chiếu** — đã có câu `db/reconcile/i028.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01);
 - **quy ước cất và kiểm** — [`01-quy-uoc-du-lieu.md`](01-quy-uoc-du-lieu.md) ·
   [`10-quy-uoc-code.md`](10-quy-uoc-code.md); thứ tự và đường lùi ở
@@ -60,7 +60,7 @@ trỏ câu `NOTICE` của file ấy. Vế vết sửa chưa đạt đủ tầng 
 | **`I-028` · `YC-31` · `YC-32`** — người ghi và lúc ghi | 1 | hai dấu bắt buộc; `staff_advance_person_fkey` · `holiday_bonus_person_fkey`; mặc định theo cơ chế chung của lát người và vết | test I-028 — hai câu *không có người ghi*, *người ghi không phải người của quán*; *YC-31 tạm ứng* · *YC-32 thưởng lễ Tết* đọc tên người ghi và có lúc ghi |
 | **`I-028` · `YC-31`** — tạm ứng có người duyệt | 1 | dấu bắt buộc phải khai; `staff_advance_approver_person_fkey` | test I-028 — *tạm ứng không có người duyệt* · *người duyệt không phải người của quán*; *kiểm ngược* in số khoản thiếu người duyệt |
 | **`I-028` · `YC-31`** — người duyệt là chủ quán | 3 | database không xét; cửa ghi pha 3 và câu đối chiếu giữ vế này | test I-028 — *tầng 3 — tạm ứng do người KHÔNG phải chủ quán duyệt: database nhận* |
-| **`I-028` · `YC-31` · `YC-32`** — không sửa đè | theo `I-018`, còn nợ F-046 | trigger vết trên hai bảng dùng cơ chế chung; `record_revision` giữ bản trước, bản sau, lý do, người sửa khi có khai lý do | test I-028 — *sửa khoản* đọc ba lần sửa bằng vai ghi; *chế độ mềm — sửa số tiền không khai lý do: 0 vết mới (F-046)* |
+| **`I-028` · `YC-31` · `YC-32`** — không sửa đè | theo `I-018` (F-046 gỡ ở `T-138`) | trigger vết trên hai bảng dùng cơ chế chung; `record_revision` giữ bản trước, bản sau, lý do, người sửa khi có khai lý do | test I-028 — *sửa khoản* đọc ba lần sửa bằng vai ghi; *chế độ nghiêm — sửa số tiền không khai lý do bị từ chối* (`T-138`) |
 | **`I-028` · `YC-31` · `YC-32`** — không phải tiền bán hàng | 3 | hai bảng chỉ nối về người, không đường sang doanh thu hay tiền đã thu | test I-028 — *không phải tiền bán hàng* so số dòng mọi bảng khác; *đọc lược đồ — 0 khoá ngoại ngoài các khoá về người, 0 hàm nhắc tới hai bảng, 0 trigger ngoài trigger vết* |
 | **`YC-32`** — không cất sẵn thưởng ngày đông khách | — | hình đóng của `holiday_bonus` theo ADR-073 điểm 1 · 8 | test I-028 — *đọc lược đồ — holiday_bonus* so danh sách cột từng chữ, không người duyệt, không loại thưởng, không chỗ cho thưởng ngày đông khách |
 | **ADR-073 điểm 6 · `QD-50`** — quyền của vai ghi | — | thu quyền sửa cả bảng, chỉ cấp lại ba dấu được sửa; không cấp quyền xoá | test I-028 — *vai shop_app ghi được một khoản tạm ứng và một khoản thưởng*; *sửa khoản*; ba câu *không đổi được (shop_app)* và hai câu *QD-50 … không xoá được (shop_app)* |
@@ -73,11 +73,11 @@ trỏ câu `NOTICE` của file ấy. Vế vết sửa chưa đạt đủ tầng 
   và khai đúng người thao tác. Sửa tay bỏ qua cửa ghi là giới hạn đã biết.
 - **Không phải tiền bán hàng** là tầng 3. Lát không dựng đường nối tới doanh thu hay tiền đã thu;
   phép đọc lược đồ và so số dòng trong test chỉ chứng minh phạm vi đó.
-- **Vết ở chế độ mềm (F-046)**: sửa không khai lý do vẫn đi qua mà không để lại vết. Vì vậy vế
-  **không sửa đè hôm nay thấp hơn tầng pha 1 đã chốt**, cùng khoản nợ với `I-018`. Cửa ghi pha 3
-  và câu đối chiếu phải giữ vế còn thiếu; quyền sửa theo cột không làm cơ chế vết thành nghiêm.
+- **Vết ở chế độ nghiêm từ bước 20** (`T-138`, **ADR-092**): tới 2026-10-09 sửa không khai lý do vẫn
+  đi qua mà không vết (**F-046**), nên vế **không sửa đè** đứng thấp hơn tầng pha 1 đã chốt; nay
+  database từ chối lần sửa ấy, và vế này giữ ở tầng 2 như `I-018`.
 - **Chưa nối két**: task `T-125` đã viết lại mệnh đề và phép trừ két (**ADR-074**: hạng tử *chi từ két*
-  đọc thẳng hai bảng này, không cần cột nối); ngày bán trừ két là **ngày người ghi khai** (chủ quán chốt 2026-10-09, đóng `U-072`; bộ đối chiếu đổi ở `T-140`). Câu đối chiếu là `I-021/1`
+  đọc thẳng hai bảng này, không cần cột nối); ngày bán trừ két là **ngày người ghi khai** (chủ quán chốt 2026-10-09, đóng `U-072`; bộ đối chiếu đọc theo lời ấy từ `T-140`). Câu đối chiếu là `I-021/1`
   (`T-133`, 2026-10-05): khoản có ngày khai bằng ngày ghi vào hạng tử, ngày chạm một khoản mà hai ngày
   khác nhau thì câu không kết luận (`09-doi-chieu-bat-bien.md` §4).
   Lát này không thay việc ấy bằng một dấu nối dựng sẵn. *(Cập nhật 2026-10-01, `P2A-09`)*
@@ -97,7 +97,7 @@ thành luật thứ hai. Lát không có trạng thái hay mã loại để cầ
 | Chỗ trống | Lược đồ hôm nay đứng thế nào | Ai gỡ |
 |---|---|---|
 | Nối khoản vào két | không đường nối; mệnh đề đã viết lại ở `T-125` (**ADR-074**) và không đòi cột nối — *(Cập nhật 2026-10-01, `P2A-09`)* | ngày bán trừ két: ngày người ghi khai (đóng `U-072` 2026-10-09); câu đối chiếu hạng tử: `I-021/1` (`T-133`, 2026-10-05) — còn bỏ qua ngày có hai ngày khác nhau cho tới `T-140` |
-| Vết sửa không khai lý do | chế độ mềm, chưa bảo vệ đủ vế không sửa đè | đường gỡ **F-046** ở `work/findings.md`, cho mọi bảng |
+| ~~Vết sửa không khai lý do~~ — **gỡ 2026-10-09 (`T-138`)** | chế độ nghiêm, bước 20 (**ADR-092**) | **F-046** — xong |
 | Câu đối chiếu `I-028` | đã có câu `db/reconcile/i028.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01); ánh xạ ở [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §1 · §2 | `P2A-07` đã viết câu và lỗi cài, 2026-10-01 |
 | Trừ hay cộng vào lương — **C26 · C33**, `master_plan/shop-facts.md` §8.7 | không dấu đã trừ, không công thức hay kỳ lương | chủ quán làm rõ, Claude quyết thiết kế sau |
 | Trả lại tạm ứng — `I-028` mục Why | không trạng thái hay đường trả lại | chủ quán cho lời, Claude ghi owner trước |

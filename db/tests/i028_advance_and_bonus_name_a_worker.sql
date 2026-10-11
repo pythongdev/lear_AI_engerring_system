@@ -2,10 +2,14 @@
 -- được CỦA AI · BAO NHIÊU · LÚC NÀO · AI GHI; một khoản tạm ứng không tồn tại được khi không có
 -- người duyệt; sửa số tiền, người nhận hay ngày là một lần cập nhật có vết (I-018); hai loại khoản
 -- này không phải tiền bán hàng và CHƯA nối vào két (task T-125 ở work/backlog.md). Vế "người duyệt
--- là chủ quán" là tầng 3 — database KHÔNG xét, test nói thẳng. Chế độ MỀM của vết
--- (work/findings.md F-046) áp cả ở đây: sửa không khai lý do thì không có vết.
+-- là chủ quán" là tầng 3 — database KHÔNG xét, test nói thẳng. Chế độ NGHIÊM của vết từ bước 20
+-- (T-138, ADR-092) áp cả ở đây: sửa không khai lý do bị từ chối.
 -- Chạy đúng kịch bản của mục Verification ở quality/invariants.md I-028.
 -- Lát: 14-luoc-do-khoan-cua-nguoi.md. Thiết kế: docs/decisions.md ADR-073.
+
+-- Chế độ nghiêm của vết (T-138, ADR-092): mọi lần sửa trong file này khai lý do; người sửa là người
+-- thao tác mà từng khối khai. Khối nào xoá lý do là để thử lời từ chối.
+DO $$ BEGIN PERFORM set_config('shop.revision_reason', 'test-i028_advance_and_bonus_name_a_worker', true); END $$;
 DO $$
 DECLARE chu bigint; a bigint; b bigint; u1 bigint; t1 bigint; n bigint; snap text; snap_sau text;
         cols text; r record;
@@ -234,12 +238,15 @@ BEGIN
     RAISE EXCEPTION 'I-028: lần sửa có khai lý do không để lại đủ bản trước · bản sau · lý do · người sửa';
   END IF;
 
-  -- Chế độ mềm, nói thẳng (F-046): sửa KHÔNG khai lý do vẫn đi qua và không để lại vết. Vế "không
-  -- sửa đè" của I-028 hôm nay thấp hơn tầng pha 1 đã chốt, cùng khoản nợ với F-046.
-  n := (SELECT COUNT(*) FROM record_revision WHERE target_table_code = 'staff_advance');
-  UPDATE staff_advance SET amount_vnd = 750000 WHERE id = u1;
-  RAISE NOTICE 'I-028 chế độ mềm — sửa số tiền không khai lý do: % vết mới (F-046)',
-    (SELECT COUNT(*) FROM record_revision WHERE target_table_code = 'staff_advance') - n;
+  -- Chế độ nghiêm (T-138, ADR-092; F-046 đã gỡ): sửa KHÔNG khai lý do bị từ chối, nên vế "không sửa
+  -- đè" của I-028 nay giữ ở tầng database.
+  BEGIN
+    UPDATE staff_advance SET amount_vnd = 750000 WHERE id = u1;
+    RAISE EXCEPTION 'I-028: database KHÔNG từ chối lần sửa số tiền không khai lý do';
+  EXCEPTION WHEN check_violation THEN
+    RAISE NOTICE 'I-028 chế độ nghiêm — sửa số tiền không khai lý do bị từ chối: %', SQLERRM;
+  END;
+  PERFORM set_config('shop.revision_reason', 'test-i028_advance_and_bonus_name_a_worker', true);
 
   -- Vai ghi của hệ thống: ghi được một khoản; KHÔNG đổi được người duyệt, người ghi hay lúc ghi
   -- của một khoản đã có (mệnh đề chỉ nói sửa số tiền · người nhận · ngày); KHÔNG xoá được (QD-50).

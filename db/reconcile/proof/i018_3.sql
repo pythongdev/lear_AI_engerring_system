@@ -6,7 +6,8 @@ DO $$ DECLARE mc bigint := (SELECT id FROM menu_component WHERE name = 'Giò'); 
   UPDATE record_revision SET revised_at = pg_temp.bc_luc('10:02')
    WHERE target_table_code = 'menu_component' AND target_row = mc;
   SELECT id INTO l FROM order_line WHERE sales_order_id = (SELECT id FROM bc WHERE ten = 'don_lay');
-  PERFORM set_config('shop.revision_reason', '', true);
+  PERFORM pg_temp.bc_vet('order_line', false);
   UPDATE order_line SET priced_at = pg_temp.bc_luc('10:30') WHERE id = l;
   UPDATE order_line SET unit_price_vnd = pg_temp.gia_dong_tai(l) WHERE id = l;
+  PERFORM pg_temp.bc_vet('order_line', true);
 END $$;
