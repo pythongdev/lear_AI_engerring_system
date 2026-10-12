@@ -1297,10 +1297,32 @@ từng mục.
 
 **Bẫy:** đừng tick một ô vì *"nhìn chung đạt"*.
 
-**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+**Nhận việc** — Claude Code, 2026-10-13. `P3-02` → `P3-12` Done. Chủ repo xếp thêm: **nhận sau `T-175` và `T-174`**
+(giảm giá và nhập bù có lời từ `T-173`; ô cổng *không câu nghiệp vụ nào đang mở mà cửa phải đoán* cần hai cửa ấy).
+Mức **L2**. Chia hai phần: Codex viết bộ diễn scenario; **Claude chạy, chấm và ký** — Codex không ký ô nào.
+- *Phạm vi:* `be/internal/don/scenario_test.go` (mới, phần Codex) · `docs/product/3-be/10-cong-chat-luong-pha-3.md` (mới,
+  phần Claude) · `docs/product/00-index.md` · `work/findings.md` · `docs/product/99-unknowns.md` (chỗ hụt).
+- *Nghiệm thu:*
+  1. `TestI002_Scenario1_QRTaiBanBaLuotMotHoaDon` — mười bảy bước của `0-ba/ban-hang/08-scenario.md` §8 Scenario 1, **mỗi
+     bước một lời gọi HTTP thật** (router thật, PostgreSQL thật; SQL chỉ để dựng menu · người · quầy · bàn như test hiện
+     có), mỗi bước một `t.Logf` *S1 bước n: METHOD path ⇒ status {rút gọn}*; khẳng định mọi dòng *Kết quả mong đợi*: một
+     hoá đơn = tổng ba lượt (giá đọc lúc chạy từ `shop-facts.md` qua helper giá có sẵn, không viết số cứng), sáu việc lượt 1
+     trên ba trạm, lượt 3 sau tính tiền đưa phiên về Đang phục vụ và vào cùng hoá đơn, trả tiền mặt + chuyển khoản, đóng
+     phiên, dọn bàn, bàn Trống, một phiên.
+  2. `TestI007_Scenario2_BaDonMangDiBaKenh` — A delivery, B pickup trả trước, C hotline tới lấy; ba đơn lẻ không phiên; C
+     vào thẳng Đã xác nhận; A qua Đang giao; B không thu lại; C thu tại quầy; ba việc nước chấm. Hai *Lỗ hổng* của scenario
+     đã có lời (S-5, S-6 — đọc `05-luong-mang-di.md`, `07-san-xuat-theo-me.md`): diễn theo cửa hiện có; cửa từ chối một bước
+     vì luật còn mở thì in mã ấy, không lách.
+  3. `TestI009_Scenario3_DoiGiaGiuaBuoi` — đổi giá chay qua cửa, gọi thêm, một hoá đơn hai mức giá; ngừng bán; sửa thành
+     phần combo; đọc lại đơn cũ không đổi.
+  4. `TestI021_MotNgayDienQuaCuaRa0dLech` — cả ba scenario trên **một** ngày bán sạch, khai đầu két, đếm đúng tiền mặt, chủ
+     quán ký ⇒ lệch 0đ; bộ đối chiếu (`scripts/reconcile.sh`, dùng lại helper của `TestI021_MotNgayBanGiaQuaCuaRa0dLech`) rỗng.
+  5. File cổng `10-cong-chat-luong-pha-3.md`: mỗi ô của kế hoạch pha 3 §9 **ký kèm đúng *cách chứng minh* viết ở ô**
+     (lệnh + output dán thật, kể cả `comm -3` giữa danh sách vế tầng 2 · tầng 3 của `03-bao-ve-invariant.md` §1–§4 ở mức
+     hàng `I-0xx` và tập `TestI0xx` — **ADR-082** điểm 4), hoặc để trống kèm lý do và mã. Không tick ô nào vì *nhìn chung đạt*.
+  6. Chỗ hụt lộ ra khi diễn ⇒ `F-XXX`/`U-XXX`, **không sửa code trong lượt chấm**. `00-index.md` thêm dòng. Gate xanh.
+- *Kiểm chứng:* Claude chạy bốn test trên PostgreSQL, dán output vào file cổng; cài lỗi một lượt gọi thêm sang hoá đơn
+  thứ hai (worktree riêng) ⇒ (1) đỏ. **Ký chuyển sang pha 4 là quyền chủ repo** — file cổng chỉ nêu ô nào đã ký.
 
 **Bàn giao:** —
 
