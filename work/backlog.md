@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-156 **Đổi stack · bước 05 — miền `ban`** — L2 — Codex, Claude duyệt · chờ T-155 · [chi tiết](#t-149)
 - [ ] T-157 **Đổi stack · bước 05 — miền `phien`** — L2 — Codex, Claude duyệt · chờ T-156 · [chi tiết](#t-149)
 - [ ] T-158 **Đổi stack · bước 05 — miền `vongdoi`** (giữ API nhận `pgx.Tx`, lớp `theo_cua_goi`) — L2 — Codex, Claude duyệt · chờ T-157 · [chi tiết](#t-149)
 - [ ] T-159 **Đổi stack · bước 05 — miền `nguoi`** (miền thứ mười ba, sinh ở T-143) — L2 — Codex, Claude duyệt · chờ T-158 · [chi tiết](#t-149)
@@ -109,6 +108,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-156 **Đổi stack · bước 05 — miền `ban`** — L2 — Codex thi công (worktree `../lean_wt/T-156`), Claude duyệt · [chi tiết](#t-149)
 
 <a id="done"></a>
 ## Done
@@ -691,6 +691,25 @@ Claude: `10-quy-uoc-code.md` (`QC-14`, bảng §9), `work/findings.md` (**F-064*
   trong test); (C) cửa ký dùng khoá chung ⇒ **be-check xanh**, không test nào bắt — khoảng trống có từ trước, ghi **F-064**, không sửa ở
   task chuyển stack; (D) `ket` import `ngayban/internal/sqlcgen` ⇒ `go build` đỏ.
 - *(4)* `./scripts/gate.sh` ở cây chính sau tích hợp: exit 0, không `FAIL`, không `SKIP`.
+
+**T-156 — Acceptance và điểm Claude chốt trước giao** (Claude, 2026-10-12). Mức **L2**: sai thì bàn hiện trống khi phiên cũ chưa
+dọn hay ngược lại (`I-003`), lần dọn mất vết người (`I-012` · `I-018`), hoặc cửa tạo lượt gọi của `don` đọc sai bàn. Phiếu mẫu
+`BE-STACK-05-mien-nho-L2.md` ghi `ban/phien` là `TestI017_*`; kiểm ở nền `b85e574` thì test chạm đường của `ban` là các test dưới
+(`TestI017_*` chỉ hai test gọi đọc bàn) — Acceptance dưới **thay** dòng ấy.
+1. `TestI003_BanGhepDonTungBan` · `TestI003_BanTrongCanHaiDieuKien` · `TestI016_LuotGoiDauMoPhienVaKenhQuyetTrangThai` ·
+   `TestI017_DongVaGoiThemChenNhau` · `TestI017_TienChuaThuKhongChanDong` · `TestQC12_DuongGoiCuaLuongTaiBan` ·
+   `TestQC12_DuongGoiCuaSanXuat` (`don/tai_ban_test.go`) và bảy `TestQC12_Router*` PASS trên PostgreSQL thật, cùng toàn bộ be-check.
+   Chỉ phần dựng router ở `don/don_test.go` (hàm `dung`) đổi. Tập tên test trước/sau: `diff` rỗng.
+2. `ban` dùng cây kết hợp: `handler.go` (Gin: `GET /dining-tables`, `POST /dining-tables/:dining_table_id/cleaning`; tham số sai ⇒
+   400 field `dining_table_id` như `apierr.ReadID`), `service.go` (`DaDon` giữ `NeedPerson`, `authz.Run`; danh sách bàn mở giao dịch
+   bằng `postgres.InTx`; `Doc(ctx, tx, id)` và kiểu `Ban` exported giữ chữ ký cho `don/don.go`; lần dọn vẫn bọc `vongdoi.CoVet` với
+   lý do `ban/da_don: needs_cleaning → empty`), `repository.go` (`pgx.Tx`, `sqlcgen`). `sql/da_don/khoa.sql` · `don.sql` giữ câu,
+   thêm `-- name:` và `;`; câu đọc bàn thành `sql/*.sql`. `be/sqlc.yaml` thêm mục `ban`. `check-sqlcgen` · Gate 1f · 1g · 1h PASS;
+   `--list` hai gate trước/sau chỉ khác dòng đếm file đã soát (ô `table_session_member.cleaned_at` → `ban/da_don` không đổi).
+3. Lỗi cài Claude chạy trong worktree riêng, mỗi lần một lỗi: bỏ từ chối khi bàn không cần dọn ⇒ `TestI003_BanTrongCanHaiDieuKien`
+   đỏ; trạng thái `needs_cleaning` bỏ vế `cleaned_at IS NULL` (sinh lại) ⇒ test `I-003` đỏ; bỏ `vongdoi.CoVet` quanh câu dọn ⇒ test
+   dọn bàn đỏ (chế độ vết nghiêm, ADR-092); `don` import `ban/internal/sqlcgen` ⇒ `go build` đỏ.
+4. `./scripts/gate.sh` ở cây tích hợp: exit 0, không `FAIL`, không `SKIP`.
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·
