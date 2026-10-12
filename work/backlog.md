@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-155 **Đổi stack · bước 05 — miền `ngayban`** — L2 — Codex, Claude duyệt · chờ T-154 · [chi tiết](#t-149)
 - [ ] T-156 **Đổi stack · bước 05 — miền `ban`** — L2 — Codex, Claude duyệt · chờ T-155 · [chi tiết](#t-149)
 - [ ] T-157 **Đổi stack · bước 05 — miền `phien`** — L2 — Codex, Claude duyệt · chờ T-156 · [chi tiết](#t-149)
 - [ ] T-158 **Đổi stack · bước 05 — miền `vongdoi`** (giữ API nhận `pgx.Tx`, lớp `theo_cua_goi`) — L2 — Codex, Claude duyệt · chờ T-157 · [chi tiết](#t-149)
@@ -114,6 +113,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-155 **Đổi stack · bước 05 — miền `ngayban`** — `service.go` · `repository.go` + `sqlcgen`, không `handler.go` (`QC-14` sửa: miền không đường gọi); bốn hàm exported giữ chữ ký; lỗi cài khoá ký không bị bắt ⇒ **F-064** — L2 — Codex thi công (worktree `../lean_wt/T-155`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-154 **Đổi stack · bước 05 — miền `gia`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; `Tinh` giữ phép tính và chữ ký cho `don`, `HEAD /menu` qua khối `NoMethod` — L2 — Codex thi công (worktree `../lean_wt/T-154`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-153 **Đổi stack · bước 05 — miền `qr`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; router giữ `HEAD` như `GET`, `UseRawPath` (ca `%2F` của duyệt T-152) — L2 — Codex thi công (worktree `../lean_wt/T-153`), Claude viết test trước, duyệt, cài lỗi và tích hợp — 2026-10-11 · [chi tiết](#t-149)
 - [x] T-169 **Đóng F-059: mặc định của nhóm tuỳ chọn thành dữ liệu** — migration bước 21 `menu_option.is_default` + `menu_option_one_default_per_group_key` (mỗi nhóm nhiều nhất một, khoá chặn khi lùi); `db/seed/seed.pl` đọc `shop-facts.md` §4.6 luật 8 lúc chạy (`--defaults-tsv`, bốn lỗi cài trên bản sao ⇒ dừng hoặc theo đúng), `db-check` so cờ với owner; `GET /menu` trả `is_default` (hợp đồng 0.13.0); cửa và tính thử vẫn không tự điền. Acceptance (viết trước): test database hai chiều · seed đọc owner · test Go so cờ với luật 8 + tổ hợp chọn sẵn có giá, bỏ cờ khỏi câu đọc ⇒ đỏ · `TestI010_TuChoiKhongSuaHo` không đổi · owner tài liệu theo kịp · gate xanh — **ADR-094** — L2 — Claude Code (worktree `../lean_wt/T-169`, chưa ai duyệt độc lập) — 2026-10-11
@@ -651,6 +651,46 @@ owner do Claude: `10-quy-uoc-code.md` (bảng §9). Log: scratchpad phiên `b0c5
   db-check 21 bước PASS, 15 file `scripts/*.test.sh` qua (lượt đầu đỏ Gate 1b vì dòng §9 mới viết đường dẫn tắt — đã sửa).
 - *Ghi nhận, không sửa:* câu nhóm tuỳ chọn nay có hai bản SQL (ghi ở §9 của `10-quy-uoc-code.md`); `gia_test.go` dựng Gin trần
   (không `HandleMethodNotAllowed`) — không test nào của `gia` chấm 405, cấu hình thật vẫn do `TestQC12_Router*` chấm.
+
+**T-155 — Acceptance và điểm Claude chốt trước giao** (Claude, 2026-10-12). Mức **L2**: sai thì một khoản tiền rơi vào ngày bán
+khác (`I-014` · `I-021`), hoặc ghi được vào ngày đã đối soát xong (ADR-089 điểm 3, ADR-080). `ngayban` không có đường gọi và
+không cửa ghi: bốn hàm exported (`DongHo` · `Khoa` · `DaKy` · `ChoGhi`) nhận `pgx.Tx` của cửa gọi ở `ket` · `hoadon` · `tratruoc`.
+Kiểm kê dòng `ngayban` của phiếu (*"các ca ranh giới ngày trong `TestYC01_*` và `TestYC10_*`"*) ở nền `f2f242a`: chỉ có
+`TestYC01_HoanTienCoDuVet` · `TestYC10_ThuNoDanQuaCua`, không test nào đặt mốc sát nửa đêm (mọi mốc là giờ mở cửa + 1 giờ). Vì
+vậy Acceptance dưới **thay** dòng ấy bằng cả mười test đường tiền — mọi cửa tiền đều qua `ChoGhi`.
+1. Mười test ở `don/duong_tien_test.go` — `TestI015_TraoTaiQuayGhiHoaDonDonLe` · `TestI015_GiamGiaCaDonBiTuChoiChoU058` ·
+   `TestI005_NoTrenDonLeCoGhiChuChoChuQuan` · `TestYC23_TraTruocNhanTraLaiVaDungChoHoaDon` · `TestYC10_ThuNoDanQuaCua` ·
+   `TestYC01_HoanTienCoDuVet` · `TestI021_TienDauKetVaSoDemKet` · `TestI021_MotNgayBanGiaQuaCuaRa0dLech` ·
+   `TestI021_CaiMotLanThuSaiDoiSoatKeu` · `TestI021_CuaDongNgayTuChoiNgayChuaXong` — và toàn bộ `be-check` PASS trên PostgreSQL
+   thật. Không file test nào đổi. Tập tên test trước/sau: `diff` rỗng.
+2. `ngayban` dùng cây kết hợp **không `handler.go`**: `service.go` giữ nguyên tên và chữ ký bốn hàm exported (`DongHo` vẫn là
+   biến kiểu `func(context.Context, pgx.Tx) (time.Time, error)` để test thay được), `repository.go` nhận `pgx.Tx` gọi `sqlcgen`;
+   năm câu đọc (`now()`, quy ngày, hai khoá, ngày đã ký) thành `sql/*.sql`, nghĩa giữ nguyên (khoá chung/riêng, namespace `309`,
+   quy ngày bằng múi giờ phiên); `be/sqlc.yaml` thêm mục `ngayban`. `ket` · `hoadon` · `tratruoc` không đổi. `check-sqlcgen` ·
+   Gate 1f · 1g · 1h PASS; `--list` hai gate trước/sau chỉ khác dòng đếm file đã soát.
+3. Lỗi cài Claude chạy trong worktree riêng (luật T-167), mỗi lần một lỗi: `ChoGhi` bỏ kiểm ngày đã ký ⇒
+   `TestI021_MotNgayBanGiaQuaCuaRa0dLech` đỏ; quy ngày lệch một ngày ⇒ test đối soát đỏ; `ket` import `ngayban/internal/sqlcgen` ⇒
+   `go build` đỏ; cửa ký dùng khoá chung — ghi kết quả thật (bắt hay không) vào bàn giao, không đoán.
+4. `./scripts/gate.sh` ở cây tích hợp: exit 0, không `FAIL`, không `SKIP`.
+- *Owner Claude sửa trước giao:* `QC-14` — miền không đường gọi không có `handler.go`, phép kiểm chỉ đòi `handler.go` khi miền có
+  `func Routes` (thử trên cây thật ⇒ rỗng, cây giả có `Routes` mà thiếu `handler.go` ⇒ một dòng đỏ). Áp cả cho `vongdoi` (T-158).
+
+**T-155 — Bàn giao** (2026-10-12). Thi công: **Codex** (`gpt-6-astra`, worktree `../lean_wt/T-155`, nhánh `codex/T-155` từ
+`f2f242a`; sandbox không Docker, báo đúng vậy). Duyệt, cài lỗi, tích hợp: **Claude** — patch áp bằng `git apply`, `diff -r be` hai
+cây rỗng; một vòng. File: `be/internal/ngayban/service.go` · `repository.go` (mới; `ngayban.go` xoá) · `sql/da_ky.sql` ·
+`dong_ho.sql` · `khoa_chung.sql` · `khoa_rieng.sql` · `quy_ngay.sql` (mới) · `internal/sqlcgen/` (sinh) · `be/sqlc.yaml`; owner do
+Claude: `10-quy-uoc-code.md` (`QC-14`, bảng §9), `work/findings.md` (**F-064**). Log: scratchpad phiên `b0c518fc…/scratchpad/T-155-*`.
+- *(1)* `be-check` trên PostgreSQL thật (gate ở worktree): mười test đường tiền PASS. Không file test nào đổi; tập tên test trước/sau
+  `diff` rỗng.
+- *(2)* Bốn hàm exported giữ chữ ký; `DongHo` vẫn là biến. Ép kiểu thêm: `now()::timestamptz`, `$1::text::date` (tham số vẫn là
+  chuỗi). `ket` · `hoadon` · `tratruoc` · `don` không đổi. `check-sqlcgen` · Gate 1f · 1g · 1h PASS; `--list` trước/sau chỉ khác dòng
+  đếm file (1f 154 → 167, 1g 66 → 74).
+- *(3)* Lỗi cài trong `../lean_wt/T-155-fault`, mỗi lần một lỗi rồi hoàn nguyên (`diff -r be` với bản Codex rỗng): (A) `ChoGhi` bỏ
+  kiểm ngày đã ký ⇒ `TestI021_MotNgayBanGiaQuaCuaRa0dLech` đỏ; (B) quy ngày `+ 1` rồi sinh lại ⇒ `TestI021_MotNgayBanGiaQuaCuaRa0dLech` ·
+  `TestI021_TienDauKetVaSoDemKet` đỏ — sửa `.sql` mà **không** sinh lại thì `TestQC13_TramBepKhongCoCuaGhi` đỏ (Gate 1f *lệch nguồn*
+  trong test); (C) cửa ký dùng khoá chung ⇒ **be-check xanh**, không test nào bắt — khoảng trống có từ trước, ghi **F-064**, không sửa ở
+  task chuyển stack; (D) `ket` import `ngayban/internal/sqlcgen` ⇒ `go build` đỏ.
+- *(4)* `./scripts/gate.sh` ở cây chính sau tích hợp: exit 0, không `FAIL`, không `SKIP`.
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·

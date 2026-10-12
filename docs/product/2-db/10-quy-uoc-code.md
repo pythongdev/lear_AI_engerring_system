@@ -540,7 +540,7 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   | `be/internal/apierr/` | hình lỗi chung, hằng mã lỗi và bảng *tên từ chối → mã* — bản code của hợp đồng ([`../3-be/01-hop-dong-api.md`](../3-be/01-hop-dong-api.md) §3–§4, `P3-04`); Gate 1g so hai bản; không import Gin |
   | `be/internal/authz/` | hàm chạy cửa có quyền (`authz.Run`), lớp quyền và khai báo cửa (`authz.Door`) — bản code của ma trận [`../3-be/02-vai-va-quyen.md`](../3-be/02-vai-va-quyen.md) (`P3-05`, **ADR-085**); không câu ghi nào |
   | `be/internal/middleware/` | gắn người vào `gin.Context`; không kiểm quyền, không thay `authz.Run`; sinh ở `T-151` |
-  | `be/internal/<miền>/` | một miền nghiệp vụ. Đã chuyển: `handler.go` (Gin) → `service.go` (logic cửa, `authz.Door`, `authz.Run`; cửa lớp `theo_cua_goi` giữ API nhận `pgx.Tx`) → `repository.go` (nhận `pgx.Tx`, gọi `sqlcgen`). Chưa chuyển: hình cũ, cửa là hàm exported của gói |
+  | `be/internal/<miền>/` | một miền nghiệp vụ. Đã chuyển: `handler.go` (Gin) → `service.go` (logic cửa, `authz.Door`, `authz.Run`; cửa lớp `theo_cua_goi` giữ API nhận `pgx.Tx`) → `repository.go` (nhận `pgx.Tx`, gọi `sqlcgen`). Miền không có đường gọi nào (`ngayban` · `vongdoi` — chỉ được cửa của miền khác gọi trong giao dịch của nó) không có `handler.go` (Claude chốt 2026-10-12, `T-155`). Chưa chuyển: hình cũ, cửa là hàm exported của gói |
   | `be/internal/<miền>/sql/<cửa>/` | câu ghi của cửa ấy (`QC-13`) |
   | `be/internal/<miền>/sql/` | câu đọc, file `.sql` ngay dưới thư mục |
   | `be/internal/<miền>/internal/sqlcgen/` | code sqlc sinh cho riêng miền; không sửa tay |
@@ -560,10 +560,11 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   for d in be/internal/db be/internal/dbtest; do [ -d "$d" ] && echo "$d đã dời ở T-151 mà còn"; done
   find be -name '*.go' 2>/dev/null | grep -Ev '^be/(internal|cmd)/'
   find be -mindepth 1 -maxdepth 1 2>/dev/null | grep -Ev '^be/(go\.mod|go\.sum|sqlc\.yaml|internal|cmd)$'
-  for d in be/internal/*/internal/sqlcgen; do [ -d "$d" ] || continue; m="${d%/internal/sqlcgen}"; for f in handler.go service.go repository.go; do [ -f "$m/$f" ] || echo "$m có sqlcgen mà thiếu $f"; done; done
+  for d in be/internal/*/internal/sqlcgen; do [ -d "$d" ] || continue; m="${d%/internal/sqlcgen}"; for f in service.go repository.go; do [ -f "$m/$f" ] || echo "$m có sqlcgen mà thiếu $f"; done; [ -f "$m/handler.go" ] || ! grep -qs '^func Routes' "$m"/*.go || echo "$m có Routes mà thiếu handler.go"; done
   ```
 - **Nguồn:** cấu trúc kết hợp **chủ repo chọn 2026-10-10** (**ADR-093** điểm 4, kế hoạch §2); bảng và phép kiểm
-  là phiên chọn (Claude, T-149, 2026-10-11); vị trí `be/` — `QC-08`. Bản trước: phiên chọn 2026-10-06 (**ADR-083**).
+  là phiên chọn (Claude, T-149, 2026-10-11); miền không đường gọi bỏ `handler.go` — Claude, T-155, 2026-10-12 (một file
+  rỗng chỉ để qua phép kiểm là nghi thức, không phải tầng); vị trí `be/` — `QC-08`. Bản trước: phiên chọn 2026-10-06 (**ADR-083**).
 
 ### QC-15 — Backend kết nối bằng `shop_app`, đặt múi giờ quán, và từ chối khi sai một trong hai
 
@@ -654,4 +655,5 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
 | `T-152` | **2026-10-11** — `QC-12` cấu hình router (405 kèm `Allow`, dấu `/` cuối ⇒ 404); `QC-14` dòng `sqlc.yaml` (sinh cùng mục `menu`) — `menu` là miền đầu tiên đã chuyển |
 | `T-153` | **2026-10-11** — `QC-12` `HEAD` lên đường `GET` của Gin chạy như `GET`, `UseRawPath` giữ `%2F` trong tham số — `qr` chuyển, đường `GET` Gin đầu tiên |
 | `T-154` | **2026-10-12** — không đổi luật; `gia` chuyển, `HEAD /menu` nay đi khối `NoMethod` của `QC-12`. Ghi cho miền sau (`QC-13`): cột `COALESCE(...)` hay truy vấn con trả `jsonb` cần ép `::boolean` · `::jsonb` thì sqlc mới sinh `bool` · `[]byte`; sqlc không ghép hằng, nên câu nhóm tuỳ chọn có hai bản (`be/internal/gia/sql/doc_nhom.sql` và truy vấn con trong `be/internal/gia/sql/doc_mon.sql`) — sửa một thì sửa cả hai |
+| `T-155` | **2026-10-12** — `QC-14` miền không có đường gọi (`ngayban` · `vongdoi`) không có `handler.go`; phép kiểm chỉ đòi `handler.go` khi miền có `func Routes` — `ngayban` chuyển |
 | `P3-04`…`P3-14` | `QC-13` cửa ghi và Gate 1f · `QC-15` kết nối · `QC-16` chạy test bằng `scripts/be-check.sh` · `QC-17` tên test |

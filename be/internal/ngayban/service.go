@@ -2,33 +2,29 @@
 package ngayban
 
 import (
-	"banhcuon/be/internal/apierr"
 	"context"
-	"github.com/jackc/pgx/v5"
 	"time"
+
+	"banhcuon/be/internal/apierr"
+	"github.com/jackc/pgx/v5"
 )
 
 var DongHo func(context.Context, pgx.Tx) (time.Time, error) = func(ctx context.Context, tx pgx.Tx) (time.Time, error) {
-	var moc time.Time
-	err := tx.QueryRow(ctx, "SELECT now()").Scan(&moc)
-	return moc, err
+	return newRepository(tx).dongHo(ctx)
 }
 
 // Khoa giữ ngày trong suốt giao dịch: cửa tiền dùng khoá chung, cửa ký dùng khoá riêng.
 // Nhờ vậy không lần ghi nào lọt giữa phép tính két và lần ký. 309 là namespace của lát.
 func Khoa(ctx context.Context, tx pgx.Tx, ngay string, ky bool) error {
-	sql := "SELECT pg_advisory_xact_lock_shared(309, $1::date - DATE '2000-01-01')"
+	repo := newRepository(tx)
 	if ky {
-		sql = "SELECT pg_advisory_xact_lock(309, $1::date - DATE '2000-01-01')"
+		return repo.khoaRieng(ctx, ngay)
 	}
-	_, err := tx.Exec(ctx, sql, ngay)
-	return err
+	return repo.khoaChung(ctx, ngay)
 }
 
 func DaKy(ctx context.Context, tx pgx.Tx, ngay string) (bool, error) {
-	var co bool
-	err := tx.QueryRow(ctx, "SELECT EXISTS (SELECT 1 FROM reconciled_day WHERE sale_date = $1::date)", ngay).Scan(&co)
-	return co, err
+	return newRepository(tx).daKy(ctx, ngay)
 }
 
 // ChoGhi đọc một mốc, quy ngày bằng PostgreSQL, rồi giữ ngày chưa ký cho tới COMMIT.
@@ -37,8 +33,8 @@ func ChoGhi(ctx context.Context, tx pgx.Tx) (time.Time, string, error) {
 	if err != nil {
 		return moc, "", err
 	}
-	var ngay string
-	if err = tx.QueryRow(ctx, "SELECT $1::timestamptz::date::text", moc).Scan(&ngay); err != nil {
+	ngay, err := newRepository(tx).quyNgay(ctx, moc)
+	if err != nil {
 		return moc, "", err
 	}
 	if err = Khoa(ctx, tx, ngay, false); err != nil {

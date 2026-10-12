@@ -4778,3 +4778,28 @@ P3-10 (lỗi cài, lần đỏ) · `P3-10-fix` (phiếu đi tìm) · `T-148` (t�
 
 **Status:**
 Fixed
+
+### F-064 — Khoá riêng của cửa ký ngày không có test: đổi thành khoá chung mà be-check vẫn xanh
+
+**Problem:**
+`ngayban.Khoa` giữ ngày bán bằng khoá tư vấn: cửa tiền lấy khoá **chung**, cửa ký ngày (`ket/doi_soat_xong`)
+lấy khoá **riêng**, để không lần ghi tiền nào lọt vào giữa phép tính két và lần ký (ADR-089 điểm 3). Đo
+2026-10-12 (`T-155`, Claude Code, worktree lỗi cài riêng): sửa `Khoa` cho nhánh `ky=true` cũng lấy khoá chung ⇒
+`be-check` **xanh**, không test nào đỏ. Các test đường tiền chỉ chạy tuần tự; không test nào cho một cửa tiền và cửa
+ký chạy chen nhau.
+
+**Impact:**
+Một lần sửa sau làm mất khoá riêng thì một khoản thu có thể ghi vào ngày đúng lúc ngày ấy đang được ký: con số đối
+soát đã ký thiếu khoản ấy, mà ngày đã khoá không nhận sửa (`I-021`, ADR-080). Gate không báo gì.
+
+**Decision / Fix:**
+Chưa sửa — `T-155` chỉ chuyển stack, giữ nguyên hành vi (khoá vẫn đúng ở code hôm nay). Đề nghị: một test chen nhau có
+cổng xuất phát chung (khuôn F-062) cho một cửa tiền và `ket/doi_soat_xong` cùng ngày; kỳ vọng: hoặc khoản thu ghi trước
+và có trong số đã ký, hoặc bị từ chối `sale_day_reconciled` — không bao giờ ghi vào ngày đã ký mà thiếu trong số ký. Lỗi
+cài chứng minh: nhánh `ky=true` dùng khoá chung ⇒ test đỏ.
+
+**Related task:**
+`T-155` (đo) · ADR-089 · **F-062** (khuôn test chen nhau)
+
+**Status:**
+Open

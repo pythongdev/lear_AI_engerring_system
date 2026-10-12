@@ -32,3 +32,12 @@ sql:
         package: sqlcgen
         out: internal/gia/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/ngayban/sql
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/ngayban/internal/sqlcgen
+        sql_package: pgx/v5
