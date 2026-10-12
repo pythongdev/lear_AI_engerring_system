@@ -107,11 +107,11 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-157 **Đổi stack · bước 05 — miền `phien`** — L2 — Codex thi công (worktree `../lean_wt/T-157`), Claude duyệt · [chi tiết](#t-149)
 
 <a id="done"></a>
 ## Done
 
+- [x] T-157 **Đổi stack · bước 05 — miền `phien`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; `TongTien` giữ chữ ký `pgx.Tx` cho `hoadon` — L2 — Codex thi công (worktree `../lean_wt/T-157`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-156 **Đổi stack · bước 05 — miền `ban`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; `Doc` · `Ban` giữ chữ ký cho `don`, lần dọn vẫn trong `vongdoi.CoVet` — L2 — Codex thi công (worktree `../lean_wt/T-156`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-155 **Đổi stack · bước 05 — miền `ngayban`** — `service.go` · `repository.go` + `sqlcgen`, không `handler.go` (`QC-14` sửa: miền không đường gọi); bốn hàm exported giữ chữ ký; lỗi cài khoá ký không bị bắt ⇒ **F-064** — L2 — Codex thi công (worktree `../lean_wt/T-155`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-154 **Đổi stack · bước 05 — miền `gia`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; `Tinh` giữ phép tính và chữ ký cho `don`, `HEAD /menu` qua khối `NoMethod` — L2 — Codex thi công (worktree `../lean_wt/T-154`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
@@ -746,6 +746,22 @@ cửa đóng. Tên test kiểm ở nền `55ada1b` bằng đường `bill-reques
    `TestI004_HuyDonHoanThanhGanBanRutKhoiTienCuaPhien` đỏ; cửa hạ xuống `NeedPerson` ⇒ `TestI012_CuaTaiBanPhaiDungQuay` đỏ; bỏ
    `vongdoi.ChuyenPhien` ⇒ test `I-016`/`I-017` đỏ; `hoadon` import `phien/internal/sqlcgen` ⇒ `go build` đỏ.
 4. `./scripts/gate.sh` ở cây tích hợp: exit 0, không `FAIL`; `SKIP` ghi là không chạy.
+
+**T-157 — Bàn giao** (2026-10-12). Thi công: **Codex** (`gpt-6-astra`, worktree `../lean_wt/T-157`, nhánh `codex/T-157` từ `55ada1b`;
+sandbox không Docker). Duyệt, cài lỗi, tích hợp: **Claude** — patch áp bằng `git apply`, `diff -r be` hai cây rỗng; một vòng. File:
+`be/internal/phien/handler.go` · `service.go` · `repository.go` (mới; `phien.go` xoá) · `sql/tong_tien.sql` (mới) · `sql/tinh_tien/khoa.sql`
+(thêm `-- name:`, `;`) · `internal/sqlcgen/` (sinh) · `be/sqlc.yaml` · `be/cmd/server/router.go` · `be/internal/don/don_test.go` (chỉ hàm
+`dung`). Log: scratchpad phiên `b0c518fc…/scratchpad/T-157-*`.
+- *(1)* `be-check` trên PostgreSQL thật (gate ở worktree): 23 test Acceptance (kể cả bảy `TestQC12_Router*`) PASS, không test nào FAIL.
+  Tập tên test trước/sau: `diff` rỗng.
+- *(2)* `TinhTien` giữ `NeedCounter`, thứ tự khoá → chuyển → cộng; `TongTien` giữ chữ ký, câu cộng nguyên văn. `check-sqlcgen` · Gate
+  1f · 1g · 1h PASS; `--list` trước/sau chỉ khác dòng đếm file (1f 177 → 184, 1g 82 → 88).
+- *(3)* Lỗi cài trong `../lean_wt/T-157-fault`, mỗi lần một lỗi rồi hoàn nguyên (`diff -r be` rỗng): (A) bỏ vế loại đơn huỷ, sinh lại ⇒
+  `TestI004_HuyDonHoanThanhGanBanRutKhoiTienCuaPhien` · `TestI017_DongPhienBiChanBoiMonChuaXong` đỏ; (B) `NeedPerson` ⇒
+  `TestI012_CuaTaiBanPhaiDungQuay` đỏ; (C) bỏ `vongdoi.ChuyenPhien` ⇒ mười bốn test (`I-002` · `I-003` · `I-016` · `I-017` · `I-021` ·
+  `YC-01` · `YC-10` …) đỏ; (D) `hoadon` import `phien/internal/sqlcgen` ⇒ `go build` đỏ.
+- *(4)* `./scripts/gate.sh` ở cây chính sau tích hợp: exit 0, không `FAIL`; hai `SKIP` (Gate 1d, `db`) là cổng không chạy vì không đổi gì
+  thuộc chúng, không tính là đạt. be-check PASS.
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·

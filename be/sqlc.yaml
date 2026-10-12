@@ -51,3 +51,13 @@ sql:
         package: sqlcgen
         out: internal/ban/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/phien/sql
+      - internal/phien/sql/tinh_tien
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/phien/internal/sqlcgen
+        sql_package: pgx/v5
