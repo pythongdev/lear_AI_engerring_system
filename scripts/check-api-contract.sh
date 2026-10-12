@@ -8,7 +8,7 @@
 #   x-constraint-errors (tên: mã | internal | unreviewed). Ma trận 02-vai-va-quyen.md
 #   cạnh hợp đồng: dòng | `gói/cửa` | `lớp` | (P3-05, ADR-085). Mọi .go dưới be/ trừ
 #   _test.go: bỏ chú thích Go trước khi đọc route; .GET/.POST/.PUT/.PATCH/.DELETE
-#   nhận chuỗi trần, đổi :tên thành {tên}; .HandleFunc/.Handle("PHƯƠNG THỨC /đường", …); be/internal/apierr/:
+#   nhận chuỗi trần, đổi :tên thành {tên}; be/internal/apierr/:
 #   hằng `CodeX Code = "mã"`, dòng `CodeX: 500,` (status), dòng `"tên": CodeX,`
 #   (bảng ánh xạ công khai); be/internal/authz/: hằng `NeedX Need = "lớp"`; mọi
 #   authz.Door{Code: "gói/cửa", Need: authz.NeedX}; thư mục be/internal/*/sql/*/
@@ -16,7 +16,7 @@
 #   <loại>, CREATE UNIQUE INDEX x ON t, CONSTRAINT = 'x' trong thân hàm (lời từ
 #   chối của trigger, F-058); trừ đi DROP CONSTRAINT · DROP INDEX · DROP TABLE và
 #   theo RENAME CONSTRAINT · ALTER INDEX … RENAME TO.
-# ĐỎ KHI NÀO: đường gọi chỉ ở một phía, không nêu phương thức, mẫu không phải chuỗi
+# ĐỎ KHI NÀO: đường gọi chỉ ở một phía, mẫu không phải chuỗi
 #   trần; tên ở migration thiếu dòng ánh xạ, dòng cho tên không còn; giá trị không
 #   phải mã; mã chỉ ở một phía; status thiếu hay lệch; bảng ánh xạ công khai lệch;
 #   không có internal_error; không phải OpenAPI 3.1; info.version sai khuôn; hợp
@@ -24,8 +24,9 @@
 #   thư mục cửa · dòng ma trận · khai báo authz.Door không cùng một tập, một cửa hai
 #   dòng hay hai khai báo, lớp ở ma trận khác code hoặc không phải lớp của authz,
 #   có cửa mà không có file ma trận.
-#   Group/Any, Handle của Gin, đường động/nối chuỗi/wildcard, {tên} trong đường Gin
-#   (Gin đọc nó là chữ thường, phải viết :tên) và route trùng đều đỏ.
+#   Group/Any, Handle của Gin, HandleFunc/Handle của ServeMux (khuôn chuyển tiếp, gỡ ở
+#   T-165), đường động/nối chuỗi/wildcard, {tên} trong đường Gin (Gin đọc nó là chữ
+#   thường, phải viết :tên) và route trùng đều đỏ.
 # KHÔNG BẮT: thân request/response so với struct Go; tên ràng buộc đặt ngầm (không
 #   viết CONSTRAINT) — test TestQC10_ ở be/internal/apierr/ so với database sống;
 #   tên ghép lúc chạy thì đỏ chứ không đoán. Không phải trình đọc YAML đầy đủ.
@@ -153,7 +154,7 @@ for my $f (sort @gofiles) {
         next unless defined $1;
         my $method = $1;
         my $line = 1 + (substr($route_src, 0, $-[0]) =~ tr/\n/\n/);
-        if ($method eq 'Group' || $method eq 'Any') {
+        if ($method eq 'Group' || $method eq 'Any' || $method eq 'Handle' || $method eq 'HandleFunc') {
             bad("$f:$line: không nhận .$method("); next;
         }
         my $rest = substr($route_src, pos($route_src));
@@ -161,17 +162,11 @@ for my $f (sort @gofiles) {
             bad("$f:$line: không đọc được mẫu đường gọi — viết chuỗi trần, không nối chuỗi"); next;
         }
         my $pat = $1;
-        my $route;
-        if ($method eq 'Handle' || $method eq 'HandleFunc') {
-            if ($pat =~ m{^(GET|POST|PUT|PATCH|DELETE) (/\S*)$}) { $route = "$1 $2"; }
-            else { bad("$f:$line: đường gọi \"$pat\" không nêu phương thức (GET|POST|PUT|PATCH|DELETE /đường)"); next; }
-        } else {
-            if ($pat !~ m{^/\S*$} || $pat =~ /[*{}]/) {
-                bad("$f:$line: đường Gin sai khuôn hoặc có wildcard: $pat"); next;
-            }
-            $pat =~ s{(^|/):([^/]+)}{$1 . "{" . $2 . "}"}ge;
-            $route = "$method $pat";
+        if ($pat !~ m{^/\S*$} || $pat =~ /[*{}]/) {
+            bad("$f:$line: đường Gin sai khuôn hoặc có wildcard: $pat"); next;
         }
+        $pat =~ s{(^|/):([^/]+)}{$1 . "{" . $2 . "}"}ge;
+        my $route = "$method $pat";
         bad("$f:$line: route đăng ký hai lần: $route (trước ở $routes{$route})") if exists $routes{$route};
         $routes{$route} = "$f:$line";
     }

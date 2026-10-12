@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-165 **Đổi stack · bước 08 — dọn**: gỡ `gin.WrapH` và khuôn route cũ khỏi Gate 1g, luật `-- name:` áp mọi miền, Claude siết `QC-13` · `QC-14` lần cuối — L1 — Codex, Claude duyệt · chờ T-164 · [chi tiết](#t-149)
 - [ ] T-166 **Đổi stack · bước 09 — rà chéo** cây thật với `QC-14`, `--list` hai gate và tập tên test so với nền T-150 — L1 — Claude · chờ T-165 · [chi tiết](#t-149)
 - [ ] T-146 **Sửa số đếm két của ngày đã ký** — chủ quán sửa số đếm của một ngày đã đối soát xong, kèm lý do bắt buộc; lần sửa mở lại ngày ấy (dấu cũ, con số cũ giữ làm vết) cho tới khi chủ quán bấm đối soát xong lại (lời đóng **U-078**, `shop-facts.md` §6.10). Đổi khoá của **ADR-080** (hiện chặn mọi vai) bằng một migration mới và một cửa lớp `chu_quan`; ADR mới. **Chờ T-166** (chủ repo chọn 2026-10-11: làm dãy đổi stack trước, T-146 viết thẳng theo cấu trúc Gin + sqlc) — L2 — Claude thiết kế và viết test đỏ, Codex thi công
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
@@ -104,6 +103,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-165 **Đổi stack · bước 08 — dọn**: `router.go` bỏ `ServeMux` · `gin.WrapH` · `NoRoute`; Gate 1g đỏ ở `.HandleFunc(` · `.Handle(`; Gate 1f đòi mục `sqlc.yaml` và `-- name:` cho mọi miền; `QC-12` · `QC-13` · `QC-14` bỏ vế chuyển tiếp, thêm ba phép kiểm — L1 — Claude thi công và cài lỗi; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-164 **Đổi stack · bước 07 — miền `don`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; mười đường lên Gin, sáu cửa giữ mã và lớp, `Tao` · `DongHo` giữ chữ ký; `router.go` không còn đường nào sau `NoRoute` — L2 — Claude thi công, cài lỗi và tích hợp; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-163 **Đổi stack · bước 07 — miền `sanxuat`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; tám đường lên Gin, bảy cửa giữ mã và lớp, `NoDon` giữ chữ ký `pgx.Tx`; khoá gom hai bản giữ bằng `TestI019_KhoaGomMotDinhNghia`; lỗi cài khoá mẻ không bị bắt ⇒ **F-066** — L2 — Claude thi công (Codex hết hạn mức), cài lỗi và tích hợp; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-172 **Đóng F-065: test cho nhánh `counter_duty_changed` của cửa vào quầy** — `TestYC15_VaoChenCungMocBiTuChoi`; F-065 sửa lại: tầng 1 (`counter_duty_ended_after_started_check`) đã bắt cùng mã, test ghim hành vi HTTP — L1 — Claude Code — 2026-10-12 · [chi tiết](#t-171)
@@ -1083,6 +1083,38 @@ năm file câu đọc mới ngay dưới `sql/` (`dong_ho` · `tam_dung` · `ngo
   `use of internal package … not allowed`.
 - *(5)* `./scripts/gate.sh` ở cây chính: `exit=0`, `PASS gate không cổng nào đỏ`, không dòng `SKIP`.
 - *Bước 07 xong:* mọi miền đã sang Gin; `ServeMux` chuyển tiếp ở `router.go` rỗng, `T-165` gỡ.
+
+**T-165 — Acceptance và điểm Claude chốt trước thi công** (Claude, 2026-10-12). Mức **L1**: sai thì một đường gọi lệch hợp đồng hay một
+câu ghi không qua sqlc lọt qua gate, nhưng không đổi hành vi chạy — mọi miền đã chuyển ở T-164. Thi công: **Claude** trên cây chính,
+nền `695a6a0`. Không miền mới nào xuất hiện sau mốc kế hoạch (mười ba miền của `QC-14`, đếm lại 2026-10-12).
+1. `rg -n 'gin\.WrapH' be` không có kết quả (exit 1); `be/cmd/server/router.go` không còn `http.NewServeMux` · `NoRoute`; hành vi 404 · 405
+   · `HEAD` giữ, `TestQC12_Router*` của `be/cmd/server/` không đổi và PASS.
+2. Gate 1g: `.HandleFunc(` · `.Handle(` (khuôn `ServeMux`) ⇒ đỏ có `file:dòng`; route Gin hợp lệ ⇒ xanh; Group · Any · Handle · nối chuỗi ·
+   wildcard vẫn đỏ. `check-api-contract.test.sh` đổi fixture nền sang Gin và thêm ca *route HandleFunc cũ ⇒ đỏ*.
+3. Gate 1f: miền có file `.sql` mà không có mục `sqlc.yaml` ⇒ đỏ (bỏ vế chuyển tiếp); khuôn SQL và ô ghi không đổi — `--list` trước/sau
+   `diff` chỉ khác dòng đếm nếu có. `check-write-paths.test.sh`: ca `sqlc_old` đổi chiều thành đỏ; fixture "miền cũ" (thử bộ đọc ô ghi)
+   được dựng `-- name:` và mục `sqlc.yaml` trước khi chạy, câu SQL và điều kiện kiểm của chúng không đổi.
+4. Claude cập nhật `QC-12` · `QC-13` · `QC-14` khớp cây thực tế, bỏ các vế *chuyển tiếp*, thêm phép kiểm `gin.WrapH` · `http.NewServeMux`;
+   năm khối `sh` chạy trên cây thật in rỗng.
+5. `./scripts/gate.sh` exit 0, không `FAIL`; `SKIP` ghi là không chạy.
+
+**T-165 — Bàn giao** (2026-10-12). Thi công: **Claude Code** trên cây chính, nhánh `chatgpt_involve`, nền `695a6a0`; **chưa ai duyệt
+độc lập**. File: `be/cmd/server/router.go` · `router_test.go` (chỉ chú thích đầu file) · `scripts/check-api-contract.sh` · `.test.sh` ·
+`scripts/check-write-paths.sh` · `.test.sh` · `docs/product/2-db/10-quy-uoc-code.md` (`QC-12` · `QC-13` · `QC-14`, §9 dòng `T-165`).
+Log: scratchpad phiên `90d2e35e…/scratchpad/T-165-*`.
+- *(1)* `rg -n 'gin\.WrapH' be` ⇒ exit 1, không dòng nào. `router.go` không còn `http.NewServeMux` · `NoRoute`; `be-check` riêng: `exit=0`,
+  `PASS=136 FAIL=0 SKIP=0`, bảy `TestQC12_Router*` PASS (404 · 405 kèm `Allow` · `HEAD` giữ).
+- *(2)* `check-api-contract.test.sh` 54 → 55 ca, `OK`: fixture nền sang Gin; ca mới `5 route HandleFunc cũ ⇒ đỏ` (`http.go:4: không nhận
+  .HandleFunc(`) · `5b` (`.Handle(`) · `route HandleFunc cũ cạnh route Gin ⇒ đỏ`; `Gin đúng` xanh; Group · Any · Handle · nối chuỗi · wildcard
+  · brace · biến · Sprintf · raw vẫn đỏ có `file:dòng`. Lỗi cài trên bản sao `be/` (`../lean_wt/T-164-fault`): `mux.HandleFunc("GET /menu")`
+  ở `cmd/server` ⇒ `lo.go:11: không nhận .HandleFunc(`.
+- *(3)* `check-write-paths.test.sh` 63 → 64 ca, `OK`: ca `sqlc_old` đổi chiều thành đỏ, thêm `sqlc_old_beside`; fixture "miền cũ" của `base()`
+  được `sqlc_hoa` dựng `-- name:` và `sqlc.yaml` ngay trước khi chạy, câu SQL và điều kiện kiểm không đổi. `--list` 1f · 1g trước/sau `diff`
+  rỗng. Lỗi cài: miền `moi` có `sql/x.sql` không mục ⇒ `x.sql:1: miền moi có file .sql mà không có mục trong sqlc.yaml`.
+- *(4)* Ba khối `sh` `QC-12` · `QC-13` · `QC-14` chạy riêng trên cây thật ⇒ in rỗng. Lỗi cài trên bản sao: `gin.WrapH(http.NewServeMux())` ⇒
+  dòng `QC-12`; `//go:embed sql/doc_mon.sql` ở `menu` ⇒ dòng `QC-13`; `internal/moi/sql/` không `sqlcgen` ⇒ dòng `QC-14`. Gỡ hết, `diff -r be` rỗng.
+  Không miền mới sau mốc kế hoạch: mười ba miền, mỗi miền có `sql/` đều có `sqlcgen` và đúng một mục `sqlc.yaml`.
+- *(5)* `./scripts/gate.sh`: `exit=0`, `PASS gate không cổng nào đỏ`, không dòng `SKIP`; `db-check` đọc 18 khối QC.
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·

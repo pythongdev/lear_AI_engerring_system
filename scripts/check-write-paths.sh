@@ -10,12 +10,14 @@
 #   giữ riêng loại ghi ấy; GRANT UPDATE (cột…) TO shop_app đứng sau trao lại
 #   đúng các cột ấy, REVOKE đứng sau nữa rút cả quyền cột (như PostgreSQL). --list in bảng<TAB>loại<TAB>cột hoặc -<TAB>gói/cửa.
 #   sqlc.yaml theo đúng khuôn ADR-093: mỗi mục một miền, đủ sql/ và các cửa;
-#   nguồn đã chuyển có một annotation và một câu. Không chạy sqlc.
+#   mọi .sql dưới internal/<miền>/sql/ có một annotation và một câu (từ T-165
+#   không còn miền chưa chuyển). Không chạy sqlc.
 # ĐỎ KHI NÀO: hai cửa chung ô, tên cửa sai, câu ghi ngoài cửa, bảng đích không
 #   nhận ra, SET không đọc ra cột, ghi ô thuộc migration; DELETE/TRUNCATE/MERGE/
 #   COPY không có ô. Mỗi lỗi một dòng có file và dòng khi xác định được.
-#   Cấu hình lệch khuôn, annotation/câu/tên sai; sqlcgen thiếu mục, thiếu nguồn
-#   hoặc lệch nguồn. Chỉ từng hằng backtick khớp nguồn được miễn câu ghi ngoài cửa.
+#   Cấu hình lệch khuôn, miền có .sql mà không có mục, annotation/câu/tên sai;
+#   sqlcgen thiếu mục, thiếu nguồn hoặc lệch nguồn. Chỉ từng hằng backtick khớp
+#   nguồn được miễn câu ghi ngoài cửa.
 # KHÔNG BẮT: SQL động ghép từ nhiều chuỗi; không phân tích ngữ nghĩa Go, không
 #   chứng minh quyền hay giao dịch. Không kiểm cột có trong schema hay không.
 #   Bỏ file Go test và SQL testdata ngoài cửa; SELECT FOR UPDATE là câu đọc.
@@ -60,7 +62,7 @@ sub table_name { my $t = lc shift; $t =~ s/\s//g; $t =~ s/^shop\.//; return $t; 
 sub error_at { my ($f, $line, $msg) = @_; print "$f:$line: $msg\n"; $failed = 1; }
 sub line_at { my ($s, $at) = @_; return 1 + (substr($s, 0, $at) =~ tr/\n/\n/); }
 # Khuôn sqlc duy nhất: đọc tuần tự, không chấp nhận khoá lạ hoặc lặp.
-my (%converted, %sources);
+my (%converted, %sources, %unlisted);
 my $config = "$be/sqlc.yaml";
 if (-f $config) {
     my @lines = split /\n/, read_file($config);
@@ -191,8 +193,12 @@ for my $f (sort @paths) {
     if (-d $f && $f =~ m{^\Q$be\E/internal/([^/]+)/internal/sqlcgen$} && !$converted{$1}) {
         error_at($f, 1, 'sqlcgen của miền không có mục trong sqlc.yaml');
     }
-    next unless -f $f && $f =~ m{^\Q$be\E/internal/([^/]+)/sql/.*\.sql$} && $converted{$1};
+    next unless -f $f && $f =~ m{^\Q$be\E/internal/([^/]+)/sql/.*\.sql$};
     my $domain = $1;
+    if (!$converted{$domain}) {
+        error_at($f, 1, "miền $domain có file .sql mà không có mục trong sqlc.yaml (QC-13)") unless $unlisted{$domain}++;
+        next;
+    }
     my $raw = read_file($f);
     my @names = ($raw =~ /^-- name: ([A-Za-z_][A-Za-z0-9_]*) :(?:one|many|exec|execrows|execresult|execlastid|copyfrom|batchexec|batchmany|batchone)[ \t]*$/mg);
     if (@names != 1) { error_at($f, 1, 'phải có đúng một dòng -- name:'); }

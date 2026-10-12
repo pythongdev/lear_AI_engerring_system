@@ -19,8 +19,38 @@ trap 'rm -rf "$TMPROOT"' EXIT
 fails=0
 TAB="$(printf '\t')"
 
+# T-165: mọi miền phải có mục sqlc.yaml và mỗi .sql một dòng -- name: (QC-13). Fixture "miền cũ" của
+# base() chỉ thử bộ đọc ô ghi, nên run() dựng hai thứ ấy cho ca có dấu .mien_cu ngay trước khi chạy:
+# thêm annotation cho file chưa có (tên lấy từ đường dẫn), viết lại sqlc.yaml theo khuôn từ các thư mục
+# đang có. Câu SQL và điều kiện kiểm của ca không đổi; ca sqlc_* tự dựng cấu hình, không mang dấu.
+sqlc_hoa() {
+  [ -f "$1/.mien_cu" ] || return 0
+  perl - "$1/be" <<'PERL'
+use strict; use warnings; use File::Find;
+my $be = shift;
+my @domains = sort grep { -d "$_/sql" } glob "$be/internal/*";
+my $yaml = "version: \"2\"\nsql:\n";
+for my $dir (@domains) {
+    (my $d = $dir) =~ s{.*/}{};
+    find({no_chdir => 1, wanted => sub {
+        return unless -f $_ && /\.sql$/;
+        open my $h, '<', $_ or die "$_: $!"; local $/; my $raw = <$h>; close $h;
+        return if $raw =~ /^-- name: /m;
+        (my $name = substr($_, length("$dir/sql/"))) =~ s/\.sql$//;
+        $name =~ s/[^A-Za-z0-9]+/_/g;
+        open $h, '>', $_ or die "$_: $!"; print $h "-- name: Q_$name :exec\n$raw"; close $h;
+    }}, "$dir/sql");
+    $yaml .= "  - engine: postgresql\n    schema: ../db/migrations\n    queries:\n      - internal/$d/sql\n";
+    $yaml .= "      - internal/$d/sql/" . ($_ =~ s{.*/}{}r) . "\n" for sort grep { -d } glob "$dir/sql/*";
+    $yaml .= "    gen:\n      go:\n        package: sqlcgen\n        out: internal/$d/internal/sqlcgen\n        sql_package: pgx/v5\n";
+}
+open my $h, '>', "$be/sqlc.yaml" or die $!; print $h $yaml; close $h;
+PERL
+}
+
 run() { # run <ca> [cờ…] → in "<exit>|<output một dòng>"
   local c="$1" out rc; shift
+  sqlc_hoa "$c"
   out="$(WRITE_PATHS_BE_DIR="$c/be" WRITE_PATHS_MIG_DIR="$c/mig" "$SCRIPT" "$@" 2>&1)"
   rc=$?
   printf '%s|%s' "$rc" "$(printf '%s' "$out" | tr '\n' ' ')"
@@ -94,6 +124,7 @@ EOF
   put "$c/be/internal/order/testdata/fixture.sql" <<'EOF'
 INSERT INTO ghost_table (x) VALUES (1);
 EOF
+  : > "$c/.mien_cu"
   printf '%s' "$c"
 }
 
@@ -335,7 +366,7 @@ INSERT INTO function_owned (id) VALUES (1);
 EOF
 check "hàm ghi giữ mọi loại của bảng" 1 "thuộc migration" "$(run "$c")"
 
-# Miền mới dùng cấu hình thật theo khuôn; miền cũ vẫn được test ở trên.
+# Miền dùng cấu hình thật theo khuôn; fixture ở trên được sqlc_hoa dựng cấu hình trước khi chạy.
 config_entry() {
   local domain="$1"
   cat <<EOF
@@ -400,10 +431,16 @@ put "$c/be/internal/menu/sql/ghi/a.sql" <<'EOF'
 UPDATE menu_item SET name = ';' /* ; */ WHERE id = $1 -- ;
 EOF
 check 'dấu ; trong chuỗi/chú thích, không ; cuối' 0 'check-write-paths: PASS' "$(run "$c")"
+# T-165 gỡ vế chuyển tiếp: miền có .sql mà không có mục sqlc.yaml là đỏ, có hay không có file cấu hình.
 c="$(converted sqlc_old)"
 rm "$c/be/sqlc.yaml"
 printf 'UPDATE menu_item SET name = 1;\n' > "$c/be/internal/menu/sql/ghi/a.sql"
-check 'miền chưa chuyển không annotation' 0 'check-write-paths: PASS' "$(run "$c")"
+check 'miền không mục, không sqlc.yaml ⇒ đỏ' 1 'a.sql:1: miền menu có file .sql mà không có mục trong sqlc.yaml' "$(run "$c")"
+c="$(converted sqlc_old_beside)"
+put "$c/be/internal/order/sql/ghi/b.sql" <<'EOF'
+UPDATE menu_item SET price_vnd = 1;
+EOF
+check 'miền không mục cạnh miền có mục ⇒ đỏ' 1 'b.sql:1: miền order có file .sql mà không có mục trong sqlc.yaml' "$(run "$c")"
 c="$(converted sqlc_missing_door)"
 mkdir -p "$c/be/internal/menu/sql/khac"
 check 'thiếu thư mục cửa' 1 'sqlc.yaml:3: thiếu thư mục cửa' "$(run "$c")"

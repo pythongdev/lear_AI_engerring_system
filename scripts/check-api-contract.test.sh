@@ -146,10 +146,10 @@ with_route() { # with_route <ca> — một đường gọi ở cả hợp đồn
   put "$c/be/internal/order/http.go" <<'EOF'
 package order
 
-func Routes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /orders/{id}", get)
-	mux.HandleFunc(
-		"POST /orders/{id}", post)
+func Routes(r *gin.Engine) {
+	r.GET("/orders/:id", get)
+	r.POST(
+		"/orders/:id", post)
 }
 EOF
 }
@@ -168,27 +168,33 @@ c="$(base route_code_only)"
 put "$c/be/internal/order/http.go" <<'EOF'
 package order
 
-func Routes(mux *http.ServeMux) { mux.HandleFunc("POST /orders", create) }
+func Routes(r *gin.Engine) { r.POST("/orders", create) }
 EOF
 check "3 đường gọi chỉ ở code ⇒ đỏ" 1 "chỉ ở code: POST /orders" "$(run "$c")"
 
 c="$(base route_contract_only)"; with_route "$c"
-edit "$c/be/internal/order/http.go" 's/\tmux.HandleFunc\(\n\t\t"POST \/orders\/\{id\}", post\)\n//'
+edit "$c/be/internal/order/http.go" 's/\tr.POST\(\n\t\t"\/orders\/:id", post\)\n//'
 check "4 đường gọi chỉ ở hợp đồng ⇒ đỏ" 1 "chỉ ở hợp đồng: POST /orders/{id}" "$(run "$c")"
 
-c="$(base route_no_method)"
+# T-165: khuôn ServeMux của giai đoạn chuyển tiếp là đỏ, kể cả khi nêu phương thức và khớp hợp đồng.
+c="$(base route_old_handlefunc)"; with_route "$c"
 put "$c/be/internal/order/http.go" <<'EOF'
 package order
 
-func Routes(mux *http.ServeMux) { mux.Handle("/orders", h) }
+func Routes(mux *http.ServeMux) {
+	mux.HandleFunc("GET /orders/{id}", get)
+	mux.Handle("POST /orders/{id}", post)
+}
 EOF
-check "5 đường gọi không nêu phương thức ⇒ đỏ" 1 "không nêu phương thức" "$(run "$c")"
+got="$(run "$c")"
+check "5 route HandleFunc cũ ⇒ đỏ" 1 "http.go:4: không nhận .HandleFunc(" "$got"
+check "5b route Handle cũ ⇒ đỏ" 1 "http.go:5: không nhận .Handle(" "$got"
 
 c="$(base route_dynamic)"
 put "$c/be/internal/order/http.go" <<'EOF'
 package order
 
-func Routes(mux *http.ServeMux) { mux.HandleFunc(pattern, h) }
+func Routes(r *gin.Engine) { r.POST(pattern, h) }
 EOF
 check "6 mẫu đường gọi không phải chuỗi trần ⇒ đỏ" 1 "không đọc được mẫu đường gọi" "$(run "$c")"
 
@@ -376,7 +382,7 @@ c="$(base door_no_matrix)"; with_door "$c"
 rm "$c/02-vai-va-quyen.md"
 check "37 có cửa mà không có file ma trận ⇒ đỏ" 1 "không có ma trận" "$(run "$c")"
 
-# Route Gin và chuyển tiếp net/http: cùng tập route chuẩn hoá.
+# Route Gin: :tên chuẩn hoá thành {tên}; khuôn net/http cũ là đỏ (T-165).
 gin_route() {
   local c="$1"
   with_route "$c"
@@ -400,23 +406,23 @@ c="$(base gin_parameter)"; gin_route "$c"
 edit "$c/be/internal/order/http.go" 's/:id/:ma/g'
 check 'Gin sai tên tham số' 1 'chỉ ở code: GET /orders/{ma}' "$(run "$c")"
 c="$(base gin_duplicate)"; gin_route "$c"
-printf '\nfunc duplicate() { r.HandleFunc("GET /orders/{id}", get) }\n' >> "$c/be/internal/order/http.go"
-check 'route trùng khác khuôn' 1 'http.go:10: route đăng ký hai lần' "$(run "$c")"
+printf '\nfunc duplicate() { mux.HandleFunc("GET /orders/{id}", get) }\n' >> "$c/be/internal/order/http.go"
+check 'route HandleFunc cũ cạnh route Gin ⇒ đỏ' 1 'http.go:10: không nhận .HandleFunc(' "$(run "$c")"
 c="$(base gin_duplicate_same)"; gin_route "$c"
 printf '\nr.GET("/orders/:id", get)\n' >> "$c/be/internal/order/http.go"
 check 'route trùng cùng khuôn' 1 'http.go:10: route đăng ký hai lần' "$(run "$c")"
 c="$(base gin_comment)"; gin_route "$c"
 edit "$c/be/internal/order/http.go" 's/r\.GET/\/\/r.GET/; s/r\.\n/\/\*r.\n/; s/, post\)/, post)\*\//'
 check 'route trong chú thích không tính' 1 'chỉ ở hợp đồng: GET /orders/{id}' "$(run "$c")"
-c="$(base old_comment)"; with_route "$c"
-edit "$c/be/internal/order/http.go" 's/mux\.HandleFunc/\/\/mux.HandleFunc/; s/mux\.HandleFunc\(\n/\/\*mux.HandleFunc(\n/; s/, post\)/, post)*\//'
-check 'route cũ trong chú thích không tính' 1 'chỉ ở hợp đồng: GET /orders/{id}' "$(run "$c")"
+c="$(base old_comment)"; gin_route "$c"
+printf '\n// mux.HandleFunc("GET /orders/{id}", get)\n/* mux.Handle("POST /orders/{id}", post) */\n' >> "$c/be/internal/order/http.go"
+check 'route cũ trong chú thích không tính' 0 '2 đường gọi ở hợp đồng, 2 ở code' "$(run "$c")"
 for kind in Group Any Handle concat wildcard brace variable sprintf raw; do
   c="$(base "gin_bad_$kind")"
   case "$kind" in
     Group) call='r.Group("/a")'; want='không nhận .Group(' ;;
     Any) call='r.Any("/a", h)'; want='không nhận .Any(' ;;
-    Handle) call='r.Handle("POST", "/a", h)'; want='không nêu phương thức' ;;
+    Handle) call='r.Handle("POST", "/a", h)'; want='không nhận .Handle(' ;;
     concat) call='r.GET("/a" + x, h)'; want='không đọc được mẫu đường gọi' ;;
     wildcard) call='r.GET("/a/*path", h)'; want='wildcard' ;;
     brace) call='r.GET("/a/{id}", h)'; want='đường Gin sai khuôn' ;;

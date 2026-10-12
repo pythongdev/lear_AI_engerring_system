@@ -1,6 +1,6 @@
 // Test hàm dựng router (T-151, QC-12). Viết TRƯỚC khi có router — Claude viết, Codex làm cho xanh
 // mà không sửa điều kiện kiểm nào. Mọi yêu cầu đi qua đúng newRouter mà main.go dùng, trên PostgreSQL
-// thật (QC-16): miền chưa chuyển chạy sau adapter gin.WrapH, nên hành vi phải y như ServeMux hôm nay.
+// thật (QC-16). Từ T-165 mọi miền chạy trên Gin, không còn adapter; hành vi vẫn phải y như ServeMux trước đổi stack.
 package main
 
 import (
