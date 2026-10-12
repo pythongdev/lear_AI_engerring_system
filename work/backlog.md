@@ -102,11 +102,11 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-172 **Đóng F-065: test cho nhánh `counter_duty_changed` của cửa vào quầy** — khoảng đang mở bắt đầu sau mốc giao dịch ⇒ 409, không dòng nào đổi — L1 — Claude Code · [chi tiết](#t-171)
 
 <a id="done"></a>
 ## Done
 
+- [x] T-172 **Đóng F-065: test cho nhánh `counter_duty_changed` của cửa vào quầy** — `TestYC15_VaoChenCungMocBiTuChoi`; F-065 sửa lại: tầng 1 (`counter_duty_ended_after_started_check`) đã bắt cùng mã, test ghim hành vi HTTP — L1 — Claude Code — 2026-10-12 · [chi tiết](#t-171)
 - [x] T-171 **Đóng F-064: test chen nhau cho khoá riêng của cửa ký ngày** — `TestI021_TienChenLucKyNgayKhongLotVaoSoDaKy`, dựng tất định bằng khoá bảng của chủ lược đồ; lỗi cài khoá chung ⇒ đỏ — L1 — Claude Code — 2026-10-12 · [chi tiết](#t-171)
 - [x] T-162 **Đổi stack · bước 06 — miền `ket`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; bốn đường lên Gin, ba cửa giữ mã và lớp; test hình trước quyền không còn `ServeMux` — L2 — Claude thi công (Codex hết hạn mức), cài lỗi và tích hợp; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-161 **Đổi stack · bước 06 — miền `hoadon`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; bảy đường lên Gin, chín cửa giữ mã và lớp, `Ghi` · `GhiHoan` giữ chữ ký — L2 — Claude thi công (Codex hết hạn mức), cài lỗi và tích hợp; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
@@ -374,6 +374,16 @@ duyệt độc lập. File: `be/internal/don/duong_tien_test.go` (helper `choDen
    C. PASS trên PostgreSQL thật.
 2. Lỗi cài trong worktree riêng: bỏ nhánh `if changed` ⇒ test mới đỏ. Gỡ ⇒ xanh.
 3. F-065 → Fixed, kèm tên test; `./scripts/gate.sh` không `FAIL`.
+
+**T-172 — Bàn giao** (2026-10-12). Thi công và cài lỗi: **Claude Code** trên cây chính, nền `820d84d`; chưa ai duyệt độc lập. File:
+`be/internal/nguoi/nguoi_test.go` (test mới, import `strings`), `work/findings.md` (F-065 → Fixed, kèm phần sửa nhận định).
+- *(1)* `be-check` trên PostgreSQL thật: `TestYC15_VaoChenCungMocBiTuChoi` PASS (1,6 s — chờ qua mốc của khoảng dựng sẵn), mọi `TestYC15_*`
+  khác PASS, không test nào FAIL. Lượt đầu test đỏ vì so `[]khoang` bằng `fmt.Sprint` (in địa chỉ con trỏ `*time.Time`) và để lại khoảng
+  mở tương lai làm hai test sau đỏ theo ⇒ so bằng chuỗi giá trị, thêm `t.Cleanup` khép khoảng ấy.
+- *(2)* **Acceptance (2) đổi lỗi cài, có lý do:** bỏ nhánh `if changed` ⇒ be-check xanh vì ràng buộc database từ chối cùng mã (xem F-065).
+  Lỗi cài thay: nhánh chen trả khoảng hiện có như thành công ⇒ test đỏ *muốn 409 "counter_duty_changed", nhận 200*. Worktree
+  `../lean_wt/T-171-fault`, file gỡ về bản đúng.
+- *(3)* `./scripts/gate.sh` ở cây chính: exit 0, không `FAIL`; `SKIP` nếu có là cổng không chạy, không tính là đạt.
 
 [↑ đầu file](#top)
 

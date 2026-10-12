@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strconv"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -269,6 +270,67 @@ func TestYC15_RoiQuayChiNguoiDangDung(t *testing.T) {
 	lai := k.goi(t, "POST", "/counter-duty/end", a)
 	if lai.status != http.StatusForbidden || lai.ma() != apierr.CodeNotOnCounterDuty {
 		t.Fatal("A đã rời quầy bấm rời lần nữa: muốn 403 not_on_counter_duty")
+	}
+}
+
+// F-065 · T-172: người khác vào quầy chen trong cùng mốc — khoảng đang mở bắt đầu từ mốc của giao dịch này trở
+// đi — thì từ chối counter_duty_changed, không khép khoảng ấy thành dài 0 (YC-15, C36). Dựng tất định: chủ lược
+// đồ thêm một khoảng mở cho C bắt đầu sau mốc hiện tại, đúng hình mà một giao dịch chen trước để lại.
+func TestYC15_VaoChenCungMocBiTuChoi(t *testing.T) {
+	k := dung(t)
+	a := k.nguoi(t, "A", false)
+	b := k.nguoi(t, "B", false)
+	c := k.nguoi(t, "C", false)
+	k.vao(t, a)
+	time.Sleep(2 * time.Millisecond)
+	if r := k.goi(t, "POST", "/counter-duty/end", a); r.status != http.StatusOK {
+		t.Fatalf("A rời quầy: muốn 200, nhận %d", r.status)
+	}
+	var cID int64
+	var batDau time.Time
+	if err := k.owner.QueryRow(k.ctx, `INSERT INTO shop.counter_duty (person_id, started_at)
+		VALUES ($1, clock_timestamp() + interval '1500 milliseconds') RETURNING id, started_at`, c).Scan(&cID, &batDau); err != nil {
+		t.Fatal(err)
+	}
+	// Khoảng của C phải được khép dù test đỏ ở đâu, nếu không mọi lần vào quầy sau đó đều gặp counter_duty_changed.
+	t.Cleanup(func() {
+		if len(k.dangMo(t)) == 1 && k.dangMo(t)[0].id == cID {
+			time.Sleep(time.Until(batDau) + 50*time.Millisecond)
+			if r, err := k.goiTran("POST", "/counter-duty", strconv.FormatInt(b, 10)); err != nil || r.status != http.StatusCreated {
+				t.Errorf("dọn: B vào thay C sau mốc: %v %v", r, err)
+			}
+		}
+	})
+	anh := func(ds []khoang) string {
+		var out []string
+		for _, x := range ds {
+			ket := "mở"
+			if x.ketThuc != nil {
+				ket = x.ketThuc.UTC().Format(time.RFC3339Nano)
+			}
+			out = append(out, fmt.Sprintf("%d:%d:%s→%s", x.id, x.person, x.batDau.UTC().Format(time.RFC3339Nano), ket))
+		}
+		return strings.Join(out, " · ")
+	}
+	truoc := anh(k.khoangTu(t))
+
+	r := k.vao(t, b)
+	if r.status != http.StatusConflict || r.ma() != apierr.CodeCounterDutyChanged {
+		t.Fatalf("B vào khi khoảng của C bắt đầu sau mốc giao dịch: muốn 409 %q, nhận %d %v",
+			apierr.CodeCounterDutyChanged, r.status, r.body)
+	}
+	sau := anh(k.khoangTu(t))
+	if sau != truoc {
+		t.Fatalf("lời từ chối mà khoảng trực đổi:\n trước %v\n sau   %v", truoc, sau)
+	}
+	if mo := k.dangMo(t); len(mo) != 1 || mo[0].id != cID {
+		t.Fatalf("khoảng đang mở phải còn đúng khoảng của C (%d): %v", cID, mo)
+	}
+
+	time.Sleep(time.Until(batDau) + 50*time.Millisecond)
+	lai := k.vao(t, b)
+	if lai.status != http.StatusCreated || lai.so("replaced_person_id") != c {
+		t.Fatalf("qua mốc của C, B vào: muốn 201 thay C, nhận %d %v", lai.status, lai.body)
 	}
 }
 

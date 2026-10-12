@@ -4830,5 +4830,13 @@ kỳ vọng 409 `counter_duty_changed` và không dòng nào đổi. Lỗi cài 
 **Related task:**
 `T-159` (đo) · YC-15 · **F-064** (cùng họ: nhánh chen nhau không có test)
 
+2026-10-12 (`T-172`, Claude Code): **nhận định ở trên nói quá — sửa lại.** Bỏ nhánh `if changed` thì cửa khép khoảng của người kia với
+`ended_at = now()` ≤ `started_at`, và ràng buộc `counter_duty_ended_after_started_check` của database từ chối với **cùng** mã
+`counter_duty_changed` (hợp đồng ánh xạ), cả giao dịch lùi — không thể có khoảng dài 0. Nhánh Go là lớp thứ hai trên tầng 1; lỗi cài ở T-159
+xanh vì tầng 1 bắt, không phải vì thiếu bảo vệ (cùng hình lỗi cài B của T-161 · T-162). Vẫn thêm test `TestYC15_VaoChenCungMocBiTuChoi` để
+ghim hành vi ở hợp đồng HTTP — 409, không dòng nào đổi, qua mốc thì vào được — dù tầng nào từ chối: dựng tất định bằng một khoảng mở chủ lược
+đồ thêm, bắt đầu sau mốc hiện tại; `t.Cleanup` khép nó cả khi test đỏ. Lỗi cài (worktree `../lean_wt/T-171-fault`): nhánh chen trả khoảng hiện
+có như thành công ⇒ test đỏ (200 thay 409); bỏ nhánh ⇒ xanh như đã giải thích.
+
 **Status:**
-Open
+Fixed
