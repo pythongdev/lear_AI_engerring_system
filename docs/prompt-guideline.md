@@ -323,6 +323,13 @@ giao** việc mà kết quả là một sự thật nghiệp vụ: trả lời h
 `master_plan/shop-facts.md`, chốt ADR, ghi lời chủ quán vào `docs/product/`.
 Việc ngắn hơn khoảng mười phút thì Claude tự làm thường rẻ hơn viết phiếu.
 
+**Đo trên máy này 2026-10-12 (Claude Code, P3-11…P3-12):** model mặc định trong `~/.codex/config.toml` bị tài khoản
+ChatGPT từ chối ⇒ luôn gọi kèm `-m gpt-6-astra`; sandbox `workspace-write` không tới được Docker ⇒ Codex chỉ chạy
+build · vet · sqlc · gate tĩnh, **Claude chạy `be-check` · `db-check`**; hết hạn mức giữa chừng thì làm tiếp bằng
+`codex exec resume <session id> -m gpt-6-astra "…"` (mã phiên ở dòng `session id:` của log), và phiếu nên dặn Codex viết
+báo cáo ngay khi xong code — một lần hết hạn mức trước báo cáo để lại diff không lời tự khai (`P3-12`). Một tiến trình
+Codex chạy nền chết theo phiên Claude đã gọi nó.
+
 **Chuẩn bị một lần:** `./scripts/install-hooks.sh` trong clone chính;
 `codex login status`; worktree đặt **ngoài** repo (ví dụ `../lean_wt/`); không
 bao giờ chạy Codex với `--dangerously-bypass-approvals-and-sandbox`.
