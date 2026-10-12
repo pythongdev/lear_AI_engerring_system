@@ -306,8 +306,7 @@ khác bảng giá §4.2 và bảng phụ thu §4.4 ở đúng chỗ đó: hai b�
 ### 4.6 Chín quy tắc cấu tạo giá
 
 **Cập nhật 2026-09-27:** chủ quán ghi tên khách và nhập số tiền giảm cả đơn
-(D41/U-058, §8.9); phạm vi bản đầu và giới hạn còn ở `docs/product/99-unknowns.md`
-U-058. D42 đã sửa: có combo, xem §8.9. Chưa dùng công thức dưới đây như hợp đồng đầy đủ cho giảm giá.
+(D41/U-058, §8.9); **2026-10-12** U-058 đóng: có trong bản đầu, không trần, không bắt lý do (§8.9 D41). D42 đã sửa: có combo, xem §8.9. Chưa dùng công thức dưới đây như hợp đồng đầy đủ cho giảm giá.
 
 1. **Giá một suất bán = TỔNG giá các thành phần của suất** (§4.5 cho thành phần, §4.2 cho giá từng
    thành phần). Đây là luật gốc, tám luật dưới đều là hệ quả.
@@ -933,6 +932,10 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       bán 30 suất ghi giấy, hôm sau mới nhập ⇒ 30 suất ấy nằm trong doanh thu của **hôm mất điện**.
       Cùng chiều với luật nợ (§6.14, *doanh thu tính ngày ghi nợ*): tiền về lúc nào không đổi được
       **ngày bán**.
+    - **Nhập bù gõ lại TỪNG MÓN, kèm BÀN (ăn tại bàn) hoặc MANG ĐI, đúng như đã bán** (chủ quán chốt
+      **2026-10-12**, trả lời **U-079** — nguyên văn: *"từ món kèm bàn và mang đi bán như nào nhập như
+      thế"*). Menu đổi giá giữa ngày bán và ngày gõ thì lượt nhập bù tính **giá lúc bán trên giấy**
+      (*lời chọn* của chủ repo trong câu hỏi có sẵn phương án, cùng ngày).
     - ⇒ *Cách đọc, không phải lời chủ quán nói thẳng:* hai lời chốt trên gộp lại thì **doanh thu
       của một ngày đã đối soát CÓ đổi về sau** — đúng một ca, và là ca này. Nên **một ngày còn lượt
       bán trên giấy chưa nhập là một ngày CHƯA đối soát xong**: dòng *"còn N lượt bán trên giấy chưa
@@ -1447,6 +1450,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-09 | **"Đã bưng ra bàn" bấm theo số cái từng thứ, cho một bàn** (trả lời **S-5**, P3-10) — nguyên văn *"pos sẽ bấm số lượng hàng hoá đem ra sau đó pos sẽ bấm đã bưng ra bàn"*; vế *đếm theo gì, cho ai* chọn trong phương án có sẵn: *"số cái từng thứ, cho 1 bàn"*. *Thứ tự đánh dấu khi bàn đã làm dư, và đơn không bàn bấm thế nào, là suy ra ⇒ ADR-090 Sửa đổi* | §5.4 |
 | 2026-10-09 | Chủ quán trả lời bảy câu (T-139), chủ repo chuyển lời trong hội thoại và chọn thêm ba vế trong câu hỏi có sẵn phương án: đơn đặt trước qua điện thoại **không làm ngay**, máy **nhắc POS và bếp trước giờ khách cần 20 phút và 10 phút** (U-077); **mọi đơn mang đi được nợ, người đi giao ghi nợ tại chỗ, kèm ghi chú cho chủ quán** (U-076); **chọn tên** để cho máy biết mình là ai (U-075); **chủ quán sửa** số đếm két đã đối soát (U-074 — mở U-078 cho vế đối soát lại); **chỉ chủ quán bấm đối soát xong, mọi ngày, ngày lệch phải ghi giải thích** (U-073); khoản rời két trừ vào **ngày người ghi khai** (U-072); **ghi chú huỷ ô chấm công bắt buộc, chỉ chủ quán huỷ** (U-071) | §5.2 · §6.14 · §6.10 · §8.7 · §8.8 · §8.10 |
 | 2026-10-10 | Chủ quán trả lời **U-078** (T-145), chủ repo chuyển nguyên văn trong hội thoại: *"cần bâms đối soát lại và ghi thêm lý do"* — sửa số đếm của ngày đã đối soát xong thì **bấm đối soát xong lại** và **ghi lý do sửa**. *Sửa mở lại ngày ấy, dấu cũ giữ làm vết* là cách đọc của phiên | §6.10 |
+| 2026-10-12 | Chủ quán trả lời **U-079** (T-173), chủ repo chuyển lời: *"từ món kèm bàn và mang đi bán như nào nhập như thế"* — nhập bù gõ lại từng món kèm bàn hoặc mang đi; chủ repo chọn trong câu hỏi có sẵn phương án: giá lúc bán trên giấy. Cùng lượt **U-058** đóng bằng lời chọn: giảm giá cả đơn có trong bản đầu, không trần, không bắt lý do | §6.11 · §8.9 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -2007,7 +2011,7 @@ câu khác nhau; câu thứ hai là mức 2 của §8.7 đã có lời đáp `C3
 ### 8.9 Sản phẩm — câu trả lời D37–D43
 
 **Chủ quán trả lời 2026-09-25 (T-092).** Đây là dữ kiện về quán; những vế chưa
-rõ bên dưới chưa đủ để chốt cách thực hiện trong phần mềm.
+rõ bên dưới chưa đủ để chốt cách thực hiện trong phần mềm. (D41 có thêm lời 2026-10-12, xem dòng của nó.)
 
 | Câu | Dữ kiện chủ quán cung cấp |
 |---|---|
@@ -2015,7 +2019,7 @@ rõ bên dưới chưa đủ để chốt cách thực hiện trong phần mềm
 | D38 | Gần Tết sẽ bán thêm đặc sản vùng miền. Chưa nêu món cụ thể hoặc trả lời vế chỉ bán cuối tuần. |
 | D39 | Một năm đổi giá một lần. Chưa nêu thời điểm trong ngày; không suy thành máy chỉ cho đổi mỗi năm một lần. |
 | D40 | Chủ quán đổi giá. Đây là quyền đổi bảng giá, chưa phải quyền giảm giá riêng cho khách ở D41. |
-| D41 | Đôi khi giảm giá cho khách quen. Chủ quán trả lời U-058 ngày 2026-09-25: “chủ quán” — chủ quán được giảm giá. Bổ sung 2026-09-27 (T-099): “ghi tên người tôi sẽ nhập số tiền giảm gía”; chủ quán làm rõ tên là **tên khách được giảm giá**, số tiền giảm áp dụng **cả đơn**. Chủ quán nhập số tiền giảm, không tính theo phần trăm. **Tái xác nhận 2026-09-27 (T-102): “ghi tên khách được giảm giá; chủ quán nhập số tiền giảm cho cả đơn”.** Chủ quán gửi lại đúng lời ấy lần thứ ba 2026-09-28 (T-118) và lần thứ tư 2026-09-30 (T-124). Phạm vi bản đầu, giới hạn và yêu cầu ghi lý do còn ở U-058. |
+| D41 | Đôi khi giảm giá cho khách quen. Chủ quán trả lời U-058 ngày 2026-09-25: “chủ quán” — chủ quán được giảm giá. Bổ sung 2026-09-27 (T-099): “ghi tên người tôi sẽ nhập số tiền giảm gía”; chủ quán làm rõ tên là **tên khách được giảm giá**, số tiền giảm áp dụng **cả đơn**. Chủ quán nhập số tiền giảm, không tính theo phần trăm. **Tái xác nhận 2026-09-27 (T-102): “ghi tên khách được giảm giá; chủ quán nhập số tiền giảm cho cả đơn”.** Chủ quán gửi lại đúng lời ấy lần thứ ba 2026-09-28 (T-118), lần thứ tư 2026-09-30 (T-124) và lần thứ sáu 2026-10-12 (T-173). **Đóng U-058 2026-10-12** — *lời chọn* của chủ repo trong câu hỏi có sẵn phương án: giảm giá cả đơn **có trong bản bán hàng đầu tiên**, **không trần** số tiền giảm, **không bắt ghi lý do**. *Cách đọc của phiên:* số giảm không vượt tổng đơn (tiền phải trả không âm). |
 | D42 | Nguyên văn: “không.” Câu hỏi gồm combo, suất trẻ em, suất lớn / nhỏ. Chủ quán sửa vế combo ngày 2026-09-25 (U-059): “có combos”. Quán có combo; không dùng lời “không” trước đó để xoá suất Đầy đủ ở §4.3–§4.9. Chưa có danh mục combo mới, thành phần hay giá mới. |
 | D43 | Menu QR cho khách cần ảnh món. Chưa chốt quyền sửa ảnh hoặc thứ tự hiển thị. |
 

@@ -59,8 +59,8 @@ Không gán người hệ thống và không sửa chế độ nghiêm.
 
 ## 5. Giới hạn có tên
 
-Chưa có cửa nhập bù hoá đơn — **U-079**, câu cho chủ quán về một lượt trên giấy sẽ được gõ lại
-thành gì. Phiếu ADR-095 giao phần này về Claude; câu hỏi thuộc
+Chưa có cửa nhập bù hoá đơn. **U-079** đóng 2026-10-12 (gõ lại từng món kèm bàn hoặc mang đi, giá lúc bán trên giấy —
+`shop-facts.md` §6 quy tắc 11); cửa đi theo ở `T-174`. Phiếu ADR-095 giao phần này về Claude; câu hỏi thuộc
 [99-unknowns.md](../99-unknowns.md). Ngày đã khai sổ chưa ký được cho tới khi có lời và cửa
 nhập bù được dựng. Không có cửa sửa số lượt đã khai; thay đổi ấy cần quyết định riêng.
 

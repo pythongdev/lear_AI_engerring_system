@@ -151,7 +151,7 @@ staff_advance và holiday_bonus thuộc lát ghi của mình.
 | Sửa dòng tiền, sửa tiền đầu két, nhập bù | không có cửa ở lát này | P3-11 |
 | Khoản chi I-029 | chưa có bảng khoản chi, chưa có hạng tử ấy | P2A-05 |
 | Tin nhắn báo có | chưa có chỗ cất, chưa đối soát chuyển khoản bằng tin nhắn | lát sau |
-| U-058 — giảm giá cả đơn | giảm giá dương bị từ chối bằng order_discount_undecided | chủ quán |
+| ~~U-058 — giảm giá cả đơn~~ — **đóng 2026-10-12** (có trong bản đầu, không trần, không lý do; `shop-facts.md` §8.9 D41) | hôm nay giảm giá dương vẫn bị từ chối bằng order_discount_undecided; cửa đi theo ở `T-175` | — |
 | Quyền đọc của `GET /debts` · `GET /sale-days/{sale_date}/cash-reconciliation` | như mọi đường đọc hiện có, không đòi người gọi — mà `GET /debts` trả **tên người nợ** (`YC-11`); chưa có chương trình chạy thật nên chưa lộ ra đâu | còn mở; trước khi backend chạy thật (Claude, 2026-10-09) |
 | I-014 tập 6 — con số đã ký | cửa không ghi tiền vào ngày đã ký; không chụp con số, sửa tay ngoài cửa vẫn chưa có câu bắt | tầng 4; ADR-089 điểm 4 |
 

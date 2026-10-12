@@ -133,7 +133,7 @@ Bảng ca giá §4.8 là **bảng ca test** của hàm giá `P3-06`; test **đ�
 |---|---|---|---|
 | ~~**S-5**~~ | bấm *"đã bưng ra bàn"* theo **đơn vị nào** — **có lời 2026-10-09**: số cái từng thứ, cho một bàn (`shop-facts.md` §5.4) | `P3-10` — cửa nhận *bàn + từng thứ + số cái* (ADR-090 điểm 4 *Sửa đổi*) | — |
 | **S-6** | đơn giao tận nơi, quầy bấm mốc *"đã ra bàn"* **lúc nào** | `P3-08` · `P3-10` | chủ quán |
-| **U-058** | giảm giá cả đơn: có trong bản đầu không · trần · có bắt ghi lý do không | `P3-09` | chủ quán |
+| ~~**U-058**~~ — đóng 2026-10-12 | giảm giá cả đơn: có trong bản đầu, không trần, không bắt lý do (`shop-facts.md` §8.9) | `P3-09` → cửa ở `T-175` | — |
 | **F-044** | một tập đối chiếu của `I-004` không bao giờ rỗng | `P3-10` (và `P2-11`) | pha 1/2 |
 | ~~**F-047**~~ | **đóng 2026-10-05 (`T-137`, ADR-081)**: lần thêm dòng con có khai lý do để lại vết trên bản ghi cha (migration bước 17); ba câu `I-024/3` · `I-011/1` · `I-021/7` chỉ kêu lần thêm không vết | `P3-11` — cửa sửa đơn khai lý do khi thêm món; chế độ nghiêm cho cả lần thêm đi cùng F-046 | — |
 | ~~**F-046**~~ | **đóng 2026-10-10 (`T-138`, ADR-092)**: chế độ nghiêm bật ở migration bước 20, phủ cả vết thêm dòng con; ngoại lệ hẹp cho lượt gọi thêm của khách QR (phần còn mở của F-060) | làm ngay ở tầng database, không chờ `P3-11` (chủ repo) | `T-138` |

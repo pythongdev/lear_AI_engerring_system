@@ -14,9 +14,7 @@
      (docs/decisions.md ADR-007 · work/findings.md F-008). Chuyển mấy dòng dưới
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
-- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
-  - [U-058](#u-058) — giảm giá cả đơn nhập tay: phạm vi bản đầu và giới hạn
-  - [U-079](#u-079) — nhập bù sổ giấy gõ lại những gì, giá theo lúc nào
+- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**. Hiện không câu nào (2026-10-12).
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
 - [Đã có lời giải](#da-co-loi-giai) — câu đã đóng, xếp theo lượt trả lời của chủ quán, kèm nguyên
@@ -35,41 +33,7 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 <a id="dang-mo"></a>
 ### Đang mở
 
-<a id="u-058"></a>
-- **U-058 — Phạm vi bản đầu và giới hạn của giảm giá nhập tay cho cả đơn?**
-  Mở 2026-09-25; chủ quán bổ sung 2026-09-27 (T-099): **ghi tên khách được
-  giảm giá; chủ quán nhập số tiền giảm cho cả đơn**, không phải phần trăm
-  hoặc giảm từng món. **Tái xác nhận 2026-09-27 (T-102): “ghi tên khách được
-  giảm giá; chủ quán nhập số tiền giảm cho cả đơn”.** Owner
-  `master_plan/shop-facts.md` §8.9.
-  Quyền, cách nhập, người được ghi tên và đối tượng áp dụng đã rõ. Còn
-  **chủ quán** chốt có đưa vào bản bán hàng đầu tiên không, giới hạn số tiền
-  và có cần ghi lý do không. Chặn phần phạm vi MVP và giới hạn kiểm tra của
-  `0-ba/ban-hang/04-gia-thanh-toan.md` §4.2 · §4.11; không hỏi lại cách giảm.
-  **Lần thứ ba 2026-09-28 (T-118)** chủ quán gửi lại đúng lời ấy — vẫn chưa có
-  lời cho ba vế còn mở; lần hỏi sau nên hỏi thẳng từng vế (có trong bản đầu
-  không · trần số tiền giảm · có bắt ghi lý do không).
-  **Lần thứ tư 2026-09-30 (T-124)** chủ quán vẫn gửi đúng lời ấy — *“ghi tên
-  khách được giảm giá; chủ quán nhập số tiền giảm cho cả đơn”* — ba vế trên
-  vẫn chưa có lời, câu **ở lại đây**. Không tự đọc bốn lần im lặng thành *không
-  có trần* hay *không cần lý do*.
-  **Lần thứ năm 2026-09-30 (`P2A-03`)** vẫn đúng lời ấy — *“ghi tên khách được
-  giảm giá; chủ quán nhập số tiền giảm cho cả đơn”* — ba vế (có trong bản đầu
-  không · trần số tiền giảm · có bắt ghi lý do không) vẫn chưa có lời, câu
-  **ở lại đây**.
-
-<a id="u-079"></a>
-- **U-079 — Nhập bù một lượt bán trên sổ giấy thì gõ lại những gì: từng món (kèm bàn hay kênh mang đi) hay chỉ số tiền và cách trả? Giá tính theo menu lúc nào?**
-  Mở 2026-10-12 (`P3-11`, Claude Code). `shop-facts.md` §6.11 nói *ai* nhập
-  (POS hoặc chủ quán), *khi nào* (ngay khi có thể) và doanh thu rơi vào *ngày
-  bán*; lời chưa nói một lượt trên giấy được gõ lại thành gì. Máy buộc mỗi hoá
-  đơn gắn một phiên bàn đã đóng hoặc một đơn mang đi có số điện thoại, và số
-  tiền do hệ thống tính từ món (`I-013`) — nên cần biết: (1) gõ lại từng món
-  hay chỉ tổng tiền; (2) lượt ăn tại bàn có phải chọn lại bàn không; (3) menu
-  đổi giá giữa ngày bán và ngày gõ thì tính giá nào. Người trả lời: **chủ
-  quán**. Chặn: cửa nhập bù hoá đơn của `P3-11` (cửa khai sổ giấy và phép đếm
-  *còn N lượt* đã dựng; ngày còn lượt chưa nhập bị cửa ký ngày từ chối kèm mã
-  `paper_entries_pending`, ADR-095).
+*(Không câu nào đang mở — đo 2026-10-12, T-173.)*
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
 chủ quán quyết theo tình hình thực tế, không có luật cứng.** Lượt một (T-042) đóng U-022, U-025 và
@@ -193,6 +157,18 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ quán trả lời 2026-10-12 (T-173), chủ repo chuyển lời trong hội thoại; cùng lượt chủ repo chọn trong câu
+hỏi có sẵn phương án hai vế còn lại (đánh dấu *lời chọn*).** Lời đáp đã vào owner; code đi theo ở `T-174` (nhập bù) và
+`T-175` (giảm giá) của `work/backlog.md`.
+
+<a id="u-079"></a>
+<a id="u-058"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-079 — Nhập bù một lượt bán trên sổ giấy thì gõ lại những gì: từng món (kèm bàn hay kênh mang đi) hay chỉ số tiền và cách trả? Giá tính theo menu lúc nào?~~ | “từ món kèm bàn và mang đi bán như nào nhập như thế”. **Gõ lại từng món, kèm bàn (ăn tại bàn) hoặc mang đi, đúng như đã bán.** *Lời chọn* (chủ repo, 2026-10-12): menu đổi giá giữa ngày bán và ngày gõ thì tính **giá lúc bán trên giấy**. | `master_plan/shop-facts.md` §6 quy tắc 11 |
+| ~~U-058 — Phạm vi bản đầu và giới hạn của giảm giá nhập tay cho cả đơn?~~ | “ghi tên khách được giảm giá; chủ quán nhập số tiền giảm cho cả đơn” (lần thứ sáu cùng lời). *Lời chọn* (chủ repo, 2026-10-12): **có** trong bản bán hàng đầu tiên, **không trần** số tiền giảm, **không bắt** ghi lý do. Số giảm không vượt tổng đơn là suy luận của phiên (tiền phải trả không âm), không phải lời. | `master_plan/shop-facts.md` §8.9 D41 |
 
 **Chủ quán trả lời 2026-10-10 (T-145), chủ repo chuyển nguyên văn trong hội thoại.** Lời đáp đã vào
 owner; đường sửa số đã ký dựng ở `T-146` của `work/backlog.md`.
