@@ -108,11 +108,11 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-156 **Đổi stack · bước 05 — miền `ban`** — L2 — Codex thi công (worktree `../lean_wt/T-156`), Claude duyệt · [chi tiết](#t-149)
 
 <a id="done"></a>
 ## Done
 
+- [x] T-156 **Đổi stack · bước 05 — miền `ban`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; `Doc` · `Ban` giữ chữ ký cho `don`, lần dọn vẫn trong `vongdoi.CoVet` — L2 — Codex thi công (worktree `../lean_wt/T-156`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-155 **Đổi stack · bước 05 — miền `ngayban`** — `service.go` · `repository.go` + `sqlcgen`, không `handler.go` (`QC-14` sửa: miền không đường gọi); bốn hàm exported giữ chữ ký; lỗi cài khoá ký không bị bắt ⇒ **F-064** — L2 — Codex thi công (worktree `../lean_wt/T-155`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-154 **Đổi stack · bước 05 — miền `gia`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; `Tinh` giữ phép tính và chữ ký cho `don`, `HEAD /menu` qua khối `NoMethod` — L2 — Codex thi công (worktree `../lean_wt/T-154`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-153 **Đổi stack · bước 05 — miền `qr`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; router giữ `HEAD` như `GET`, `UseRawPath` (ca `%2F` của duyệt T-152) — L2 — Codex thi công (worktree `../lean_wt/T-153`), Claude viết test trước, duyệt, cài lỗi và tích hợp — 2026-10-11 · [chi tiết](#t-149)
@@ -710,6 +710,24 @@ dọn hay ngược lại (`I-003`), lần dọn mất vết người (`I-012` ·
    đỏ; trạng thái `needs_cleaning` bỏ vế `cleaned_at IS NULL` (sinh lại) ⇒ test `I-003` đỏ; bỏ `vongdoi.CoVet` quanh câu dọn ⇒ test
    dọn bàn đỏ (chế độ vết nghiêm, ADR-092); `don` import `ban/internal/sqlcgen` ⇒ `go build` đỏ.
 4. `./scripts/gate.sh` ở cây tích hợp: exit 0, không `FAIL`, không `SKIP`.
+
+**T-156 — Bàn giao** (2026-10-12). Thi công: **Codex** (`gpt-6-astra`, worktree `../lean_wt/T-156`, nhánh `codex/T-156` từ
+`b85e574`; sandbox không Docker, báo đúng vậy; báo cáo có tự viết khối commit — ngoài vai, Claude bỏ). Duyệt, cài lỗi, tích hợp:
+**Claude** — patch áp lên `cc280e4` bằng `git apply`, `diff -r be` hai cây rỗng; một vòng. File: `be/internal/ban/handler.go` ·
+`service.go` · `repository.go` (mới; `ban.go` xoá) · `sql/doc_ban.sql` · `doc_cac_ban.sql` (mới) · `sql/da_don/khoa.sql` · `don.sql`
+(thêm `-- name:`, `;`) · `internal/sqlcgen/` (sinh) · `be/sqlc.yaml` · `be/cmd/server/router.go` · `be/internal/don/don_test.go` (chỉ
+hàm `dung`). Log: scratchpad phiên `b0c518fc…/scratchpad/T-156-*`.
+- *(1)* `be-check` trên PostgreSQL thật (gate ở worktree): bảy test Acceptance, `TestQC12_DuongGoiCuaLuongNgoaiBan` và bảy
+  `TestQC12_Router*` PASS. Tập tên test trước/sau: `diff` rỗng.
+- *(2)* `DaDon` giữ `NeedPerson`; `Doc` · `Ban` giữ chữ ký; cột `s.id` · `s.status` nullable sinh `pgtype.Int8` · `pgtype.Text`,
+  repository đổi về `nil` để `omitempty` giữ; `CASE … END::text`. `check-sqlcgen` · Gate 1f · 1g · 1h PASS; `--list` trước/sau chỉ
+  khác dòng đếm file (1f 167 → 177, 1g 74 → 82).
+- *(3)* Lỗi cài trong `../lean_wt/T-156-fault`, mỗi lần một lỗi rồi hoàn nguyên (`diff -r be` rỗng): (A) bỏ từ chối bàn không cần
+  dọn ⇒ `TestI003_BanTrongCanHaiDieuKien` đỏ; (B) `needs_cleaning` bỏ vế `cleaned_at IS NULL`, sinh lại ⇒ `TestI003_BanGhepDonTungBan`
+  · `…BanTrongCanHaiDieuKien` đỏ; (C) câu dọn bỏ `vongdoi.CoVet` ⇒ hai test `I-003` đỏ (vết nghiêm từ chối); (D) `don` import
+  `ban/internal/sqlcgen` ⇒ `go build` đỏ.
+- *(4)* `./scripts/gate.sh` ở cây chính sau tích hợp: exit 0, không `FAIL`; hai `SKIP` là cổng không chạy vì không đổi gì thuộc
+  chúng (Gate 1d — không tài liệu pha nào đổi; `db` — không gì phía database đổi), không tính là đạt. be-check PASS.
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·

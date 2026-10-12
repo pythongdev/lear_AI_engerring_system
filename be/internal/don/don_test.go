@@ -85,7 +85,6 @@ func dung(t *testing.T) khung {
 	don.Routes(mux, pool, xacThucTest{})
 	phien.Routes(mux, pool, xacThucTest{})
 	hoadon.Routes(mux, pool, xacThucTest{})
-	ban.Routes(mux, pool, xacThucTest{})
 	// P3-09 thêm có chủ ý (ADR-089): đường gọi của trả trước và của két.
 	tratruoc.Routes(mux, pool, xacThucTest{})
 	ket.Routes(mux, pool, xacThucTest{})
@@ -98,6 +97,7 @@ func dung(t *testing.T) khung {
 	menu.Routes(r, menu.NewService(pool))
 	qr.Routes(r, qr.NewService(pool))
 	gia.Routes(r, gia.NewService(pool))
+	ban.Routes(r, ban.NewService(pool))
 	r.NoRoute(func(c *gin.Context) {
 		c.Status(http.StatusOK)
 		mux.ServeHTTP(c.Writer, c.Request)
