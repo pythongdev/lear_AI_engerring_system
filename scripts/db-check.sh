@@ -115,6 +115,15 @@ if [ "$n_mig" -gt 0 ]; then
   prev=0; schema_dump > "$snap/0"
   for f in $versions; do
     v="${f%%_*}"
+    if [ "$v" = 20261013120000 ]; then
+      if out="$({ echo 'BEGIN;'; cat db/tests/i015_bill_discount.sql; echo 'ROLLBACK;'; } | psql_f -f - 2>&1)"; then
+        fail "T-175 đỏ bước 22 — test giảm giá đi qua trước bước 23"
+      elif printf '%s\n' "$out" | grep -q 'discount_vnd.*does not exist'; then
+        echo "PASS T-175 đỏ bước 22 — chưa có discount_vnd"
+      else
+        fail "T-175 đỏ bước 22 — lỗi khác điều cần chứng minh: $out"
+      fi
+    fi
     if [ "$v" = 20261012120000 ]; then
       if out="$({ echo 'BEGIN;'; cat db/tests/i021_reopened_day.sql; echo 'ROLLBACK;'; } | psql_f -f - 2>&1)"; then
         fail "T-146 đỏ bước 21 — test mở lại đã đi qua khi chưa có bước 22"
@@ -128,6 +137,23 @@ if [ "$n_mig" -gt 0 ]; then
     if out="$(migrate up 1)"; then
       schema_dump > "$snap/$v"; echo "PASS xuôi ${f%.up.sql}"
       printf '%s\n' "$prev" > "$snap/$v.prev"; prev="$v"
+      if [ "$v" = 20261013120000 ]; then
+        if out="$({ echo 'BEGIN;'; cat db/tests/i015_bill_discount.sql;
+                    echo '\echo T175_TEST_GREEN';
+                    cat db/migrations/20261013120000_giam_gia_ca_don.down.sql;
+                    echo 'ROLLBACK;'; } | psql_f -f - 2>&1)"; then
+          fail "T-175 đường lùi — không từ chối giảm dương"
+        elif printf '%s\n' "$out" | grep -q '^T175_TEST_GREEN$' &&
+             printf '%s\n' "$out" | grep -q 'đường lùi từ chối: đang giữ giảm giá dương'; then
+          if d="$(diff "$snap/$v" <(schema_dump))"; then
+            echo "PASS T-175 xanh bước 23; đường lùi từ chối giảm dương, lược đồ không đổi"
+          else
+            fail "T-175 đường lùi — lược đồ đã đổi: $d"
+          fi
+        else
+          fail "T-175 bước 23 hoặc khoá chặn — lỗi khác điều cần chứng minh: $out"
+        fi
+      fi
       if [ "$v" = 20261012120000 ]; then
         if out="$({ echo 'BEGIN;'; cat db/tests/i021_reopened_day.sql;
                     echo "\\echo T146_TEST_GREEN";

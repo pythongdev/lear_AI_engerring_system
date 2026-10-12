@@ -35,7 +35,7 @@ func (r repository) khoaKhoanTraTruoc(ctx context.Context, don *int64) (int64, e
 func (r repository) themHoaDon(ctx context.Context, b NoiDung) (int64, error) {
 	return r.q.ThemHoaDon(ctx, sqlcgen.ThemHoaDonParams{TableSessionID: so(b.Phien), SalesOrderID: so(b.Don), DueVnd: b.Due,
 		CashVnd: b.Cash, TransferVnd: b.Transfer, PrepaidCashVnd: b.PrepaidCash, PrepaidTransferVnd: b.PrepaidTransfer,
-		DebtVnd: b.Debt, DebtorName: chu(b.Debtor), BookedAt: moc(b.Moc), DebtNote: chu(b.DebtNote)})
+		DiscountVnd: b.Discount, DiscountCustomerName: chu(b.DiscountCustomerName), DebtVnd: b.Debt, DebtorName: chu(b.Debtor), BookedAt: moc(b.Moc), DebtNote: chu(b.DebtNote)})
 }
 
 func (r repository) themHoan(ctx context.Context, bill, prepayment *int64, amount int64, method string, source *string, reason string, m time.Time) (int64, error) {
@@ -157,4 +157,8 @@ func soTuDong(v any) (*int64, error) {
 	default:
 		return nil, fmt.Errorf("hoadon: kiểu số lạ %T", v)
 	}
+}
+
+func (r repository) chuQuanGiamGia(ctx context.Context, nguoi int64) (bool, error) {
+	return r.q.ChuQuanGiamGia(ctx, nguoi)
 }

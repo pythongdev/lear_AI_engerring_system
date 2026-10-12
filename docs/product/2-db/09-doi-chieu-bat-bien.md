@@ -253,3 +253,7 @@ làm khác.
 | `P2-14` | §1 — mỗi mã `I-0xx` có câu; file này không nhắc đường gọi hay màn hình nào của pha 3 · pha 4 |
 | pha 3 | §2 các dòng *pha 3* — mỗi chỗ cất mới là một migration, kèm câu và file lỗi mới ở `db/reconcile/`; §4 — phần còn mở của **F-060** (**F-047** gỡ ở `T-137`, **F-046** gỡ ở `T-138`) |
 | chủ repo | §2 dòng *chủ repo* còn lại — tin nhắn báo có (`I-015` tập 5). Số đếm két và dấu đối soát xong: `T-133`, 2026-10-05 |
+
+## Giảm giá cả đơn (T-175, ADR-098)
+
+Từ bước 23, `I-005/1`, `I-005/3` và `I-015/1` · `I-015/2` đọc số sau giảm (`due_vnd − discount_vnd`) để so với phần trả và nợ. `I-012` đọc số tiền sau giảm của thao tác. `I-002/2` và `I-007/2` vẫn dùng tổng dòng trước giảm; không trừ giảm khi so hoá đơn với dòng đơn. Phép trừ két vẫn đọc phần tiền mặt. `TestI021_NgayCoGiamGiaRa0dLech` chạy các câu tiền liên quan do `scripts/reconcile.sh --emit-queries` xuất trên ngày/hoá đơn đã giảm, đồng thời so phép trừ két và dấu ký qua HTTP.

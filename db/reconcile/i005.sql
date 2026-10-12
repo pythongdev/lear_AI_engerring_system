@@ -2,13 +2,13 @@
 -- MỘT tập "phải rỗng"; 0 dòng là đạt. Ánh xạ tập ↔ câu: docs/product/2-db/09-doi-chieu-bat-bien.md.
 
 -- @@ I-005/1 — phiên đã đóng mà đã thu + đã ghi nợ khác số phải trả
-SELECT b.table_session_id AS phien, b.id AS hoa_don, b.due_vnd AS phai_tra,
+SELECT b.table_session_id AS phien, b.id AS hoa_don, (b.due_vnd - b.discount_vnd) AS phai_tra,
        b.cash_vnd + b.transfer_vnd + b.prepaid_cash_vnd + b.prepaid_transfer_vnd AS da_thu,
        b.debt_vnd AS no
 FROM bill b
 WHERE b.table_session_id IS NOT NULL
   AND b.cash_vnd + b.transfer_vnd + b.prepaid_cash_vnd + b.prepaid_transfer_vnd + b.debt_vnd
-      <> b.due_vnd
+      <> (b.due_vnd - b.discount_vnd)
 
 -- @@ I-005/2 — khoản nợ không truy được về đúng một đơn vị tính tiền và đúng một người
 SELECT b.id AS hoa_don, b.debt_vnd AS no, b.debtor_name AS nguoi_no,
@@ -30,7 +30,7 @@ WITH h AS (
   UNION ALL SELECT sale_date, cash_vnd + transfer_vnd, 0 FROM prepayment
   UNION ALL SELECT sale_date, -amount_vnd, 0 FROM refund
   -- vế phải: doanh thu − nợ ghi, nợ cũ thu, trả trước nhận, − trả trước thành doanh thu, − trả lại, − hoàn
-  UNION ALL SELECT sale_date, 0, due_vnd - debt_vnd FROM bill
+  UNION ALL SELECT sale_date, 0, due_vnd - discount_vnd - debt_vnd FROM bill
   UNION ALL SELECT sale_date, 0, coalesce(remaining_before_vnd, debt_vnd) - remaining_vnd FROM debt_collection
   UNION ALL SELECT sale_date, 0, cash_vnd + transfer_vnd FROM prepayment
   UNION ALL SELECT b.sale_date, 0, -u.take_vnd FROM prepayment_use u JOIN bill b ON b.id = u.bill_id

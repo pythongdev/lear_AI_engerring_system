@@ -352,30 +352,157 @@ func TestI016_TraoTaiQuayKhiConViecChuaRaBanBiTuChoi(t *testing.T) {
 	}
 }
 
-// --- hai thao tác chờ lời chủ quán: từ chối kèm mã, không ghi gì --------------------------------
-
-func TestI015_GiamGiaCaDonBiTuChoiChoU058(t *testing.T) {
-	n := dungTien(t)
-	n.datNgay(t, 5)
-	giao := n.nguoi(t, "người đi giao", false)
-	dL, tongL := n.donLay(t)
-	n.phucVuHet(t, n.quay, dL)
-	dG, tongG := n.donGiao(t)
-	phien, tongP := n.phienDaTinh(t)
-
-	truoc := n.demTien(t)
-	giam := map[string]any{"discount_vnd": 1000} // đơn mẫu của §4.8 chỉ vài nghìn đồng
-	canMa(t, n.traoTaiQuay(t, n.quay, dL, voi(thu(tongL-1000, 0), giam)), http.StatusConflict, "order_discount_undecided", "")
-	canMa(t, n.giaoXong(t, giao, dG, voi(thu(tongG-1000, 0), giam)), http.StatusConflict, "order_discount_undecided", "")
-	canMa(t, n.post(t, fmt.Sprintf("/table-sessions/%d/closing", phien), n.quay,
-		voi(map[string]any{"cash_vnd": tongP - 1000, "transfer_vnd": 0, "debt_vnd": 0}, giam)),
-		http.StatusConflict, "order_discount_undecided", "")
-	n.khongDoi(t, truoc, "giảm giá")
-	if n.trangThaiPhien(t, phien) != "awaiting_payment" || n.trangThaiDon(t, dL) != "in_progress" || n.trangThaiDon(t, dG) != "delivering" {
-		t.Fatal("lời từ chối giảm giá mà đổi trạng thái")
+// T-175 thay TestI015_GiamGiaCaDonBiTuChoiChoU058 theo ADR-098 (QC-17).
+// Ba cửa dùng cùng dữ liệu thanh toán; mỗi ca dựng đủ đơn/phiên trước khi chuyển quầy.
+func (n tien) cuaGiamGia(t *testing.T, cua string) (string, int64) {
+	t.Helper()
+	switch cua {
+	case "dong":
+		id, tong := n.phienDaTinh(t)
+		return fmt.Sprintf("/table-sessions/%d/closing", id), tong
+	case "trao_tai_quay":
+		id, tong := n.donLay(t)
+		n.phucVuHet(t, n.quay, id)
+		return fmt.Sprintf("/orders/%d/handover", id), tong
+	default:
+		id, tong := n.donGiao(t)
+		return fmt.Sprintf("/orders/%d/delivered", id), tong
 	}
-	// Không giảm (0) là không có gì chờ lời.
-	canDat(t, n.traoTaiQuay(t, n.quay, dL, voi(thu(tongL, 0), map[string]any{"discount_vnd": 0})), http.StatusCreated)
+}
+
+func TestI015_ChuQuanGiamGiaCaDon(t *testing.T) {
+	for i, cua := range []string{"dong", "trao_tai_quay", "giao_xong"} {
+		t.Run(cua, func(t *testing.T) {
+			n := dungTien(t)
+			n.datNgay(t, 5+i)
+			path, tong := n.cuaGiamGia(t, cua)
+			n.vaoQuay(t, n.chu)
+			r := n.post(t, path, n.chu, map[string]any{"cash_vnd": tong - 2000, "transfer_vnd": 0,
+				"debt_vnd": 1000, "debtor_name": "Khách nợ", "debt_note": "Còn thiếu",
+				"discount_vnd": 1000, "discount_customer_name": "Khách quen"})
+			canDat(t, r, http.StatusCreated)
+			hd := r.so(t, "bill_id")
+			if r.so(t, "due_vnd") != tong {
+				t.Fatal("tổng dòng bị đổi")
+			}
+			got := n.docChu(t, `SELECT format('%s|%s|%s|%s|%s', due_vnd, discount_vnd,
+     discount_customer_name, cash_vnd+transfer_vnd+prepaid_cash_vnd+prepaid_transfer_vnd+debt_vnd, person_id)
+     FROM shop.bill WHERE id=$1`, hd)
+			if want := fmt.Sprintf("%d|1000|Khách quen|%d|%d", tong, tong-1000, n.chu); got != want {
+				t.Fatalf("muốn %s, có %s", want, got)
+			}
+			status, out := n.goi(t, "GET", "/debts", n.chu, nil)
+			debts := traLoi{status, out}
+			canDat(t, debts, http.StatusOK)
+			found := false
+			for _, item := range debts.body["debts"].([]any) {
+				d := item.(map[string]any)
+				if fmt.Sprint(d["bill_id"]) == fmt.Sprint(hd) {
+					found = true
+					if fmt.Sprint(d["debt_vnd"]) != "1000" || fmt.Sprint(d["remaining_vnd"]) != "1000" {
+						t.Fatalf("nợ đổi theo giảm: %v", d)
+					}
+				}
+			}
+			if !found {
+				t.Fatal("GET /debts thiếu hoá đơn")
+			}
+		})
+	}
+}
+
+func TestI015_GiamGiaTuChoi(t *testing.T) {
+	for _, cua := range []string{"dong", "trao_tai_quay", "giao_xong"} {
+		t.Run(cua, func(t *testing.T) {
+			n := dungTien(t)
+			n.datNgay(t, 8)
+			path, tong := n.cuaGiamGia(t, cua)
+			body := map[string]any{"cash_vnd": tong - 1000, "transfer_vnd": 0, "debt_vnd": 0,
+				"discount_vnd": 1000, "discount_customer_name": "Khách quen"}
+			truoc := n.demTien(t)
+			canMa(t, n.post(t, path, n.quay, body), http.StatusForbidden, "owner_only", "")
+			n.vaoQuay(t, n.chu)
+			for _, ten := range []any{nil, "", "   "} {
+				canMa(t, n.post(t, path, n.chu, voi(body, map[string]any{"discount_customer_name": ten})), http.StatusBadRequest, "invalid_request", "discount_customer_name")
+			}
+			canMa(t, n.post(t, path, n.chu, voi(body, map[string]any{"discount_vnd": 0, "cash_vnd": tong})), http.StatusBadRequest, "invalid_request", "discount_customer_name")
+			canMa(t, n.post(t, path, n.chu, voi(body, map[string]any{"discount_vnd": tong + 1, "cash_vnd": 0})), http.StatusBadRequest, "invalid_request", "discount_vnd")
+			canMa(t, n.post(t, path, n.chu, voi(body, map[string]any{"discount_vnd": -1})), http.StatusBadRequest, "invalid_request", "discount_vnd")
+			n.khongDoi(t, truoc, "giảm giá bị từ chối")
+			// Giảm toàn bộ được, không có trần khác tổng đơn.
+			canDat(t, n.post(t, path, n.chu, voi(body, map[string]any{"discount_vnd": tong, "cash_vnd": 0})), http.StatusCreated)
+		})
+	}
+}
+
+func TestI021_NgayCoGiamGiaRa0dLech(t *testing.T) {
+	n := dungTien(t)
+	const day = 27 // ngày riêng: 30 · 31 là của so_giay_test.go (Claude sửa 2026-10-13)
+	n.datNgay(t, day)
+	path, tong := n.cuaGiamGia(t, "dong")
+	n.vaoQuay(t, n.chu)
+	canDat(t, n.khaiDauKet(t, n.chu, dauKetMau()), http.StatusCreated)
+	r := n.post(t, path, n.chu, map[string]any{"cash_vnd": tong - 1000, "transfer_vnd": 0,
+		"debt_vnd": 0, "discount_vnd": 1000, "discount_customer_name": "Khách quen"})
+	canDat(t, r, http.StatusCreated)
+	hd := r.so(t, "bill_id")
+	xaps := dauKetMau()
+	xaps[len(xaps)-1].soTien += tong - 1000
+	canDat(t, n.demKet(t, n.chu, xaps), http.StatusCreated)
+	r = n.docDoiSoat(t, n.chu, day)
+	canDat(t, r, http.StatusOK)
+	if r.so(t, "gap_vnd") != 0 || r.so(t, "expected_vnd") != tong-1000 {
+		t.Fatalf("đối soát: %v", r.body)
+	}
+	canDat(t, n.doiSoatXong(t, n.chu, day), http.StatusCreated)
+	if got := n.docSo(t, "SELECT gap_vnd FROM shop.reconciled_day WHERE sale_date=$1::date", ngayChu(day)); got != 0 {
+		t.Fatalf("ký lệch %d", got)
+	}
+	dem, dau, ve := n.ketNgayDoiChieu(t, day)
+	if dem-dau != ve || ve != tong-1000 {
+		t.Fatalf("két đối chiếu %d - %d != %d", dem, dau, ve)
+	}
+	// Chạy các tập đối chiếu tiền do chính script xuất, giới hạn dòng của ngày/hoá đơn này:
+	// database kiểm dùng chung còn chứa các lỗi cài cố ý của test khác.
+	root, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
+	if err != nil {
+		t.Fatal(err)
+	}
+	cmd := exec.Command("./scripts/reconcile.sh", "--emit-queries")
+	cmd.Dir = strings.TrimSpace(string(root))
+	queries, err := cmd.Output()
+	if err != nil {
+		t.Fatal(err)
+	}
+	conn, err := pgx.Connect(n.ctx, testhelper.OwnerDSN(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close(context.Background())
+	if _, err = conn.Exec(n.ctx, "SET search_path TO shop, public"); err != nil {
+		t.Fatal(err)
+	}
+	checked := 0
+	for _, block := range strings.Split(string(queries), "\\echo ") {
+		if !strings.HasPrefix(block, "'@@@|I-005/") && !strings.HasPrefix(block, "'@@@|I-015/") && !strings.HasPrefix(block, "'@@@|I-002/") {
+			continue
+		}
+		begin := strings.Index(block, "FROM (\n")
+		end := strings.LastIndex(block, "\n) q;")
+		if begin < 0 || end < 0 {
+			t.Fatalf("câu đối chiếu sai hình: %s", block)
+		}
+		query := block[begin+len("FROM (\n") : end]
+		var count int64
+		err = conn.QueryRow(n.ctx, "SELECT count(*) FROM ("+query+") q WHERE to_jsonb(q)->>'ngay'=$1 OR to_jsonb(q)->>'hoa_don'=$2 OR to_jsonb(q)->>'phien'=$3", ngayChu(day), fmt.Sprint(hd), n.docChu(t, "SELECT table_session_id::text FROM shop.bill WHERE id=$1", hd)).Scan(&count)
+		if err != nil || count != 0 {
+			t.Fatalf("đối chiếu %s: %d dòng, %v", strings.SplitN(block, "\n", 2)[0], count, err)
+		}
+		checked++
+	}
+	if checked < 6 {
+		t.Fatalf("chỉ chạy %d tập đối chiếu", checked)
+	}
 }
 
 func TestI005_NoTrenDonLeCoGhiChuChoChuQuan(t *testing.T) {
@@ -600,7 +727,7 @@ func TestYC10_ThuNoDanQuaCua(t *testing.T) {
 	if got := n.docSo(t, "SELECT count(*) FROM shop.bill"); got != soHoaDon {
 		t.Fatalf("thu nợ sinh hoá đơn mới: %d → %d (YC-10)", soHoaDon, got)
 	}
-	if got := n.docSo(t, "SELECT coalesce(sum(due_vnd), 0) FROM shop.bill WHERE sale_date = $1::date", ngayChu(10)); got != 0 {
+	if got := n.docSo(t, "SELECT coalesce(sum(due_vnd - discount_vnd), 0) FROM shop.bill WHERE sale_date = $1::date", ngayChu(10)); got != 0 {
 		t.Fatalf("doanh thu ngày thu nợ phải 0, có %d", got)
 	}
 }
@@ -773,7 +900,7 @@ func TestI021_MotNgayBanGiaQuaCuaRa0dLech(t *testing.T) {
 	// I-014 · YC-10 · YC-23: doanh thu ngày D = năm hoá đơn − ba lần hoàn cho hoá đơn; thu nợ và trả trước
 	// chưa thành doanh thu (Q, R) không vào.
 	doanhThu := tongA + tongB + tongC + tongP + tongG - 3000
-	if got := n.docSo(t, `SELECT (SELECT coalesce(sum(due_vnd), 0) FROM shop.bill WHERE sale_date = $1::date)
+	if got := n.docSo(t, `SELECT (SELECT coalesce(sum(due_vnd - discount_vnd), 0) FROM shop.bill WHERE sale_date = $1::date)
 		- (SELECT coalesce(sum(amount_vnd), 0) FROM shop.refund WHERE bill_id IS NOT NULL AND sale_date = $1::date)`, ngayChu(D)); got != doanhThu {
 		t.Fatalf("doanh thu ngày %s: muốn %d, có %d", ngayChu(D), doanhThu, got)
 	}

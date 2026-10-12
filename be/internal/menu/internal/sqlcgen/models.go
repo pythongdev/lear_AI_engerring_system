@@ -20,25 +20,27 @@ type AttendanceDay struct {
 }
 
 type Bill struct {
-	ID                 int64
-	TableSessionID     pgtype.Int8
-	SalesOrderID       pgtype.Int8
-	DueVnd             int64
-	CashVnd            int64
-	TransferVnd        int64
-	PrepaidCashVnd     int64
-	PrepaidTransferVnd int64
-	DebtVnd            int64
-	DebtorName         pgtype.Text
-	IDIfPrepaid        pgtype.Int8
-	BookedAt           pgtype.Timestamptz
-	SaleDate           pgtype.Date
-	CreatedAt          pgtype.Timestamptz
-	PersonID           int64
-	PaperLedgerID      pgtype.Int8
-	PaperEntryCount    pgtype.Int4
-	PaperPosition      pgtype.Int4
-	DebtNote           pgtype.Text
+	ID                   int64
+	TableSessionID       pgtype.Int8
+	SalesOrderID         pgtype.Int8
+	DueVnd               int64
+	CashVnd              int64
+	TransferVnd          int64
+	PrepaidCashVnd       int64
+	PrepaidTransferVnd   int64
+	DebtVnd              int64
+	DebtorName           pgtype.Text
+	IDIfPrepaid          pgtype.Int8
+	BookedAt             pgtype.Timestamptz
+	SaleDate             pgtype.Date
+	CreatedAt            pgtype.Timestamptz
+	PersonID             int64
+	PaperLedgerID        pgtype.Int8
+	PaperEntryCount      pgtype.Int4
+	PaperPosition        pgtype.Int4
+	DebtNote             pgtype.Text
+	DiscountVnd          int64
+	DiscountCustomerName pgtype.Text
 }
 
 type CashCount struct {

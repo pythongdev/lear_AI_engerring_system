@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.16.0
+  version: 0.17.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -2328,6 +2328,10 @@ components:
       properties:
         discount_vnd:
           $ref: '#/components/schemas/MoneyVnd'
+          description: Số giảm cả đơn, mặc định 0, không vượt tổng dòng; chỉ chủ quán nhập.
+        discount_customer_name:
+          type: [string, 'null']
+          description: Tên khách không trắng khi giảm dương; không giảm chỉ nhận vắng hoặc null.
         cash_vnd:
           $ref: '#/components/schemas/MoneyVnd'
         transfer_vnd:
@@ -2415,6 +2419,10 @@ components:
           $ref: '#/components/schemas/MoneyVnd'
         discount_vnd:
           $ref: '#/components/schemas/MoneyVnd'
+          description: Số giảm cả đơn, mặc định 0, không vượt tổng dòng; chỉ chủ quán nhập.
+        discount_customer_name:
+          type: [string, 'null']
+          description: Tên khách không trắng khi giảm dương; không giảm chỉ nhận vắng hoặc null.
         debtor_name:
           type: string
           pattern: '\S'
@@ -2761,7 +2769,6 @@ components:
         - outside_selling_hours
         - shop_not_seeing_orders
         - delivery_served_mark_undecided
-        - order_discount_undecided
         - debt_note_required
         - order_handover_mismatch
         - order_jobs_not_served
@@ -2800,7 +2807,6 @@ components:
         shop_already_blind: 409
         shop_not_blind: 409
         intake_state_changed: 409
-        order_discount_undecided: 409
         debt_note_required: 422
         order_handover_mismatch: 409
         order_jobs_not_served: 409
@@ -3201,6 +3207,8 @@ x-constraint-errors:
   bill_paper_ledger_fkey: internal
   bill_paper_position_in_range_check: internal
   bill_paper_position_key: internal
+  bill_discount_not_negative_check: invalid_request
+  bill_discount_customer_name_check: invalid_request
   bill_parts_equal_due_check: payment_parts_mismatch
   bill_person_fkey: internal
   bill_pkey: internal

@@ -21,7 +21,6 @@ const (
 	CodeShopNotBlind             Code = "shop_not_blind"
 	CodeIntakeStateChanged       Code = "intake_state_changed"
 
-	CodeOrderDiscountUndecided      Code = "order_discount_undecided"
 	CodeDebtNoteRequired            Code = "debt_note_required"
 	CodeOrderHandoverMismatch       Code = "order_handover_mismatch"
 	CodeOrderJobsNotServed          Code = "order_jobs_not_served"
@@ -101,7 +100,6 @@ var statusOf = map[Code]int{
 	CodeShopNotBlind:             409,
 	CodeIntakeStateChanged:       409,
 
-	CodeOrderDiscountUndecided:      409,
 	CodeDebtNoteRequired:            422,
 	CodeOrderHandoverMismatch:       409,
 	CodeOrderJobsNotServed:          409,
@@ -201,6 +199,8 @@ var constraintCodes = map[string]Code{
 	"wrong_make_note_live_station_job_fkey": CodeStationJobHasWrongMakeNote,
 	"wrong_make_note_live_key":              CodeStationJobHasWrongMakeNote,
 	"wrong_make_note_cancelled_order_fkey":  CodeWrongMakeNoteNotAllowed,
+	"bill_discount_not_negative_check":      CodeInvalidRequest,
+	"bill_discount_customer_name_check":     CodeInvalidRequest,
 	"bill_parts_equal_due_check":            CodePaymentPartsMismatch,
 	"bill_debtor_iff_debt_check":            CodeDebtorNameMismatch,
 	"qr_code_dining_table_fkey":             CodeDiningTableNotFound,

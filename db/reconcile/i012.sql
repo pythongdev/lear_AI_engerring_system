@@ -28,7 +28,7 @@ WHERE (SELECT count(DISTINCT (o.bang, o.id)) FROM op o
 
 -- @@ I-012/1 — thao tác chạm tiền thiếu một trong bốn câu: cái gì đổi, bao nhiêu, ai bấm, lúc mấy giờ
 WITH op AS (
-  SELECT 'bill' AS bang, id, person_id, booked_at AS luc, due_vnd AS bao_nhieu FROM bill
+  SELECT 'bill' AS bang, id, person_id, booked_at AS luc, due_vnd - discount_vnd AS bao_nhieu FROM bill
   UNION ALL SELECT 'debt_collection', id, person_id, booked_at,
                    coalesce(remaining_before_vnd, debt_vnd) - remaining_vnd FROM debt_collection
   UNION ALL SELECT 'prepayment', id, person_id, booked_at, cash_vnd + transfer_vnd FROM prepayment

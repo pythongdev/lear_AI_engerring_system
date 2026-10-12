@@ -62,6 +62,10 @@ func (h handler) dong(c *gin.Context) {
 		apierr.Write(c.Writer, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "discount_vnd"})
 		return
 	}
+	if err := kiemTenGiam(yc.DiscountVnd, yc.DiscountCustomerName); err != nil {
+		apierr.WriteError(c.Writer, err)
+		return
+	}
 	if yc.DebtorName != nil && strings.TrimSpace(*yc.DebtorName) == "" {
 		apierr.Write(c.Writer, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "debtor_name"})
 		return

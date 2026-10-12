@@ -77,7 +77,7 @@ Tầng ở cột thứ hai là tầng **pha 1 đã chốt** (`03-bao-ve-invarian
 
 | Mệnh đề | Tầng | Lược đồ giữ bằng | Bằng chứng |
 |---|:--:|---|---|
-| **`I-005`** vế *phiên đóng thu thiếu thì phải có khoản nợ đứng tên với đúng phần thiếu* | 1 | `bill_parts_equal_due_check` — tiền mặt + chuyển khoản + trả trước + **nợ** = số phải trả, trên **một** dòng. `bill_debtor_iff_debt_check` · `bill_debtor_name_not_blank_check` — có nợ **khi và chỉ khi** có tên người nợ, tên trắng là thiếu. `bill_amounts_not_negative_check` — không phần nào âm. Và **phiên đã đóng không thiếu hoá đơn được**: `table_session_bill_fkey` (phiên → hoá đơn) cùng `bill_table_session_fkey` (hoá đơn → phiên **đã đóng**), hai khoá ngoại hoãn tới `COMMIT` trên cột tự tính `id_if_closed` — đóng phiên mà không ghi hoá đơn, hay ghi hoá đơn cho phiên chưa đóng, thì giao dịch không `COMMIT` được | `db/tests/i005_debt_has_owner.sql` |
+| **`I-005`** vế *phiên đóng thu thiếu thì phải có khoản nợ đứng tên với đúng phần thiếu* | 1 | `bill_parts_equal_due_check` — tiền mặt + chuyển khoản + trả trước + **nợ** + **giảm giá** = tổng dòng trước giảm, trên **một** dòng. `bill_debtor_iff_debt_check` · `bill_debtor_name_not_blank_check` — có nợ **khi và chỉ khi** có tên người nợ, tên trắng là thiếu. `bill_amounts_not_negative_check` — không phần nào âm. Và **phiên đã đóng không thiếu hoá đơn được**: `table_session_bill_fkey` (phiên → hoá đơn) cùng `bill_table_session_fkey` (hoá đơn → phiên **đã đóng**), hai khoá ngoại hoãn tới `COMMIT` trên cột tự tính `id_if_closed` — đóng phiên mà không ghi hoá đơn, hay ghi hoá đơn cho phiên chưa đóng, thì giao dịch không `COMMIT` được | `db/tests/i005_debt_has_owner.sql` |
 | **`I-005`** vế *khoản nợ không nằm trong tập tiền đã thu* | 1 | nợ là **cột riêng** (`debt_vnd`); tiền đã thu là `cash_vnd` + `transfer_vnd`. Không có đường ghi nào đặt một con số vào cả hai | cùng file |
 | **`YC-11`** — ghi nợ là chỗ **duy nhất** phiên bàn hỏi danh tính | — | `bill_debtor_iff_debt_check` giữ cả chiều ngược: **không** nợ thì **không** được mang tên. Không bảng nào khác của lát bán hàng có cột tên cho phiên bàn | cùng file |
 | **`I-002`** vế *một phiên một hoá đơn* · **`I-007`** vế *một đơn lẻ đúng một lần thu khi đóng* | 1 | `bill_one_per_session_key` · `bill_one_per_order_key`. Đây là khoá mà `02-luoc-do-ban-hang.md` §5 để lại cho lát này | `i015_split_payment.sql` · `yc02_debt_outlives_session.sql` |
@@ -159,7 +159,7 @@ Bị loại:
 
 | Hạng tử | Cộng cột nào | Điều kiện |
 |---|---|---|
-| doanh thu trong ngày | `bill.due_vnd` − `refund.amount_vnd` | refund: có `bill_id` |
+| doanh thu trong ngày | `bill.due_vnd − bill.discount_vnd` − `refund.amount_vnd` | refund: có `bill_id` |
 | doanh thu **tiền mặt** (`I-021`) | `bill.cash_vnd` + `bill.prepaid_cash_vnd` − `refund.amount_vnd` | refund: có `bill_id`, `source_method_code` là tiền mặt |
 | nợ ghi trong ngày | `bill.debt_vnd` | — |
 | nợ cũ thu được hôm nay (tiền mặt, cho `I-021`) | `debt_collection.cash_vnd` (+ `transfer_vnd` cho tiền thực nhận tổng); vế công thức `I-005/3` cộng `coalesce(remaining_before_vnd, debt_vnd) - remaining_vnd` | mỗi lần trả; hai vế đọc hai nhóm cột khác nhau (**ADR-075**) |
@@ -199,7 +199,7 @@ tên đứng trước để dòng không trông như một dòng tên bảng ở
 |---|---|---|
 | ~~**Ai bấm** — vế thứ năm của `YC-01`, người trực quầy lúc ghi nợ và thu nợ, người nhận trả trước, người khai tiền đầu két~~ — **gỡ 2026-09-28 (`P2-08`)** | `person_id` bắt buộc trên `bill` · `debt_collection` · `prepayment` · `refund` · `opening_float`, mặc định người thao tác của giao dịch; *người đang trực lúc ấy* đọc từ `counter_duty` — [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) §1 · §2 | `P2-08` — xong |
 | ~~**Trả một phần khoản nợ**~~ — **gỡ 2026-10-01 (`T-126`)** | mỗi lần trả một dòng, còn thiếu trước · sau nối thành chuỗi do database giữ (§2, **ADR-075**); POS giữ tổng nợ, ngày giờ từng lần trả và số còn thiếu theo lời chủ quán đóng `U-063` (`shop-facts.md` §6.14) | `T-126` — migration mới `20261001120000_tra_no_dan` |
-| **Giảm giá cả đơn** (`shop-facts.md` §8.9) | hoá đơn **không** có cột giảm giá; `due_vnd` là số phải trả sau cùng. [Cửa đường tiền](../3-be/06-duong-tien.md) từ chối giảm giá dương với `order_discount_undecided` (ADR-089). | ~~chủ quán — **U-058**~~ đóng 2026-10-12 (có trong bản đầu, không trần, không lý do); cột thêm bằng migration mới ở `T-175` |
+| **Giảm giá cả đơn** (`shop-facts.md` §8.9) | Bước 23 thêm `discount_vnd` và `discount_customer_name`; `due_vnd` giữ tổng dòng trước giảm, doanh thu trừ giảm. Chỉ chủ quán nhập kèm tên khách, không trần ngoài tổng đơn, không lý do. | ADR-098, `db/tests/i015_bill_discount.sql`; [cửa đường tiền](../3-be/06-duong-tien.md) |
 | ~~**Số tiền mặt đếm được cuối ngày**, và dấu *ngày đã đối soát xong*~~ — **gỡ 2026-10-05 (`T-133`)** | `cash_count` · `cash_count_line` · `reconciled_day` — §7 (**ADR-079**, đóng **F-048**). Còn lại: dấu không mang con số doanh thu đã đối soát nên tập 6 của `I-014` chưa có câu (cửa đóng ngày `P3-09`); chỉ chủ quán ký ngày; ngày lệch bắt giải thích và cất số lệch (T-140, ADR-089 Sửa đổi). [Cửa đường tiền](../3-be/06-duong-tien.md) vẫn từ chối ghi tiền vào ngày đã ký với `sale_day_reconciled`. | `T-133` — migration mới `20261001150000_dem_ket_doi_soat` |
 | **Con số tiền đầu két mặc định** (*cố định, sửa được* — `shop-facts.md` §8.5) | lát chỉ cất con số **của từng ngày**; con số mặc định là cấu hình của mảng tài chính | lane admin (`work/backlog_AD.md` ADM-01); dữ liệu mồi `P2-10` |
 | **Một đơn nhiều khoản trả trước** | `prepayment_one_per_order_key` — một đơn, nhiều nhất một khoản. Owner chỉ tả **một** lần trả trước lúc đặt (`shop-facts.md` §6.3) | phiên chọn 2026-09-28 — gỡ bằng migration mới nếu quán cần |
@@ -288,3 +288,7 @@ thêm dòng con cho cash_count_line của ngày từng ký: ảnh phiếu cha tr
 xấp; ngày chưa từng ký giữ hành vi đếm ban đầu. Test tầng database:
 `db/tests/i021_reopened_day.sql`. Phép đối chiếu `db/reconcile/i014.sql` tập 5 chỉ xét dấu
 đang đứng, tránh đọc lịch sử mở lại như ngày đã xong hoặc đếm trùng khi ký lại.
+
+## Giảm giá cả đơn — bước 23 (T-175, ADR-098)
+
+`bill_discount_not_negative_check` giữ giảm không âm; `bill_discount_customer_name_check` bắt tên khách không trắng khi giảm dương và chỉ nhận NULL khi không giảm. `bill_parts_equal_due_check` cộng phần giảm vào tổng các phần thanh toán. Giảm bằng tổng dòng cho phép trả 0đ; hoá đơn cũ nhận giảm 0. Không có cửa sửa giảm sau khi ghi; sai đi cửa hoàn. Test ràng buộc: `db/tests/i015_bill_discount.sql`.

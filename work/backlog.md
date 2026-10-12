@@ -98,11 +98,11 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-175 **Giảm giá cả đơn** — cột giảm giá trên hoá đơn, chỉ chủ quán nhập kèm tên khách, không trần, không lý do; doanh thu sau giảm (lời U-058) — **ADR-098** — L2 — Claude thiết kế, Codex thi công · [chi tiết](#t-175)
 
 <a id="done"></a>
 ## Done
 
+- [x] T-175 **Giảm giá cả đơn** — migration bước 23 `bill.discount_vnd` · `discount_customer_name`, phần trả + giảm = tổng dòng; ba cửa trao tiền nhận giảm giá chỉ khi người là chủ quán, kèm tên khách, không trần, không lý do; câu doanh thu ở `db/reconcile/` trừ giảm; gỡ `order_discount_undecided`; hợp đồng 0.17.0 (lời U-058) — **ADR-098** — L2 — Codex thi công (worktree `../lean_wt/T-175`), Claude thiết kế, duyệt, cài lỗi và tích hợp — 2026-10-13 · [chi tiết](#t-175)
 - [x] P3-12 **Realtime và dự phòng** — bộ phát SSE một tiến trình (`platform/realtime`), luồng `GET /production-board/events` · `GET /counter/events`, phát sau COMMIT; đường kéo `GET /counter/queue` và `GET /production-board` trả `read_at` · `poll_interval_seconds` 20; miền mới `nhandon` (tạm dừng · tiếp tục · báo mù · mở lại, cửa dùng chung `nhandon/ghi_mu`); đơn tự bấm khi không luồng quầy ⇒ khoảng mù + `shop_not_seeing_orders`; cắt thử PT-1…PT-6 ở `09-realtime-du-phong.md`; hợp đồng 0.16.0 — **ADR-097** — L2 — Codex thi công (worktree `../lean_wt/P3-12`, ba lượt do hạn mức, không kịp viết báo cáo), Claude thiết kế, duyệt, sửa test, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](backlog_BE.md#p3-12)
 - [x] T-146 **Sửa số đếm két của ngày đã ký** — migration bước 22 `reconciled_day_reopening` + dấu nối chuỗi (`previous_reconciled_day_id`, khoá duy nhất từng phần); khoá ADR-080 cho sửa số đếm khi dấu mới nhất đã mở lại, tiền đầu két vẫn khoá; cửa `ket/sua_dem` (`PUT /sale-days/{sale_date}/cash-count`, lớp `chu_quan`, lý do bắt buộc) và cửa dùng chung `ket/ghi_dong_dem` (`theo_cua_goi`); ký lại nối dấu; đường đọc trả chuỗi dấu; cửa tiền khác vẫn coi ngày từng ký là đóng; hợp đồng 0.15.0 — **ADR-096** — L2 — Codex thi công (worktree `../lean_wt/T-146`, ba lượt do hạn mức), Claude thiết kế, duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-146)
 - [x] T-173 Ghi lời chủ quán cho **U-079** (nhập bù gõ lại từng món kèm bàn hoặc mang đi; giá lúc bán trên giấy — lời chọn) và **U-058** (giảm giá cả đơn: có trong bản đầu, không trần, không bắt lý do — lời chọn) vào owner — `99-unknowns.md` (đóng, không còn câu đang mở), `shop-facts.md` §6 quy tắc 11 · §4.6 · §8.9 D41 · nhật ký; con trỏ ở `3-be/06` · `3-be/08` · `0-ba/ban-hang/04` · `2-db/04` · kế hoạch pha 3; mở `T-174` · `T-175` — L1 — Claude Code — 2026-10-12
@@ -1282,7 +1282,22 @@ Mức **L2**: tiền, hàm giá, hợp đồng. Thiết kế: **ADR-099**. Luậ
 - *Kiểm chứng:* Claude chạy lại gate; cài lỗi trong worktree riêng: bỏ kiểm *chủ quán* ⇒ (3) đỏ; câu doanh thu ở
   `db/reconcile/` quên trừ giảm ⇒ (4) đỏ; bỏ ràng buộc tên khách ⇒ (1) đỏ.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-13): thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-175`, nhánh
+`codex/T-175` từ `16ca623`, một lượt, có báo cáo). Thiết kế (`16ca623`), duyệt, cài lỗi và tích hợp: **Claude Code**.
+- *File:* migration `20261013120000_giam_gia_ca_don.*` · `db/tests/i015_bill_discount.sql` · `scripts/db-check.sh` (đỏ bước
+  22, xanh bước 23, chặn lùi) · `db/reconcile/` (`i005` · `i012` · `i015`) · `db/scenario/doc_lai.sql` · `be/internal/hoadon/`
+  (ba cửa, câu đọc `chu_quan.sql`) · `be/internal/apierr/` · `sqlcgen` các miền (cột mới) · test `duong_tien_test.go` ·
+  `docs/product/3-be/{06-duong-tien.md,openapi.yaml}` · `docs/product/2-db/{04,07,09}-*.md`.
+- *Claude sửa khi duyệt:* `TestI021_NgayCoGiamGiaRa0dLech` ký ngày 31 — ngày `TestYC08_KhaiSoGiayQuaCua` cần khai sổ ⇒
+  chuyển sang ngày 27 (chưa test nào dùng). Test cũ `TestI015_GiamGiaCaDonBiTuChoiChoU058` thay bằng hai test mới vì lời
+  U-058 đổi hành vi (Nghiệm thu 5).
+- *Kiểm chứng:* worktree và cây chính `./scripts/gate.sh` exit 0 — db-check *23 bước … 42 file test*, `PASS T-175 đỏ bước
+  22` · `PASS T-175 xanh bước 23; đường lùi từ chối giảm dương`; be-check *mọi test backend qua PostgreSQL thật đều đạt*.
+  Lỗi cài ở ba worktree tách rời (đã gỡ): bỏ kiểm chủ quán ⇒ `TestI015_GiamGiaTuChoi` đỏ cả ba cửa; `i005.sql` quên trừ giảm
+  ⇒ `TestI021_NgayCoGiamGiaRa0dLech` đỏ; bỏ `bill_discount_customer_name_check` ⇒ `db/tests/i015_bill_discount.sql` đỏ.
+- *Ghi nhận, không chặn:* `scripts/db-check.sh:435` in *Broken pipe* (`grep -m1` đóng ống trước `printf`) — code cũ, bước
+  vẫn PASS. *Còn lại:* không. *Duyệt độc lập:* chưa (Codex thi công, Claude duyệt).
+- *Phiên sau* làm `T-174` → `P3-13` → `P3-14`; cách gọi Codex: `docs/prompt-guideline.md` §6.1 đoạn *Đo trên máy này*.
 
 <a id="t-146"></a>
 ### T-146 — Chủ quán sửa số đếm két của ngày đã ký

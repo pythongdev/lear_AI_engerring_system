@@ -13,22 +13,24 @@ import (
 
 const themHoaDon = `-- name: ThemHoaDon :one
 INSERT INTO bill (table_session_id, sales_order_id, due_vnd, cash_vnd, transfer_vnd,
- prepaid_cash_vnd, prepaid_transfer_vnd, debt_vnd, debtor_name, booked_at, sale_date, debt_note)
-VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$10::timestamptz::date,$11) RETURNING id
+ prepaid_cash_vnd, prepaid_transfer_vnd, debt_vnd, debtor_name, booked_at, sale_date, debt_note, discount_vnd, discount_customer_name)
+VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$10::timestamptz::date,$11,$12,$13) RETURNING id
 `
 
 type ThemHoaDonParams struct {
-	TableSessionID     pgtype.Int8
-	SalesOrderID       pgtype.Int8
-	DueVnd             int64
-	CashVnd            int64
-	TransferVnd        int64
-	PrepaidCashVnd     int64
-	PrepaidTransferVnd int64
-	DebtVnd            int64
-	DebtorName         pgtype.Text
-	BookedAt           pgtype.Timestamptz
-	DebtNote           pgtype.Text
+	TableSessionID       pgtype.Int8
+	SalesOrderID         pgtype.Int8
+	DueVnd               int64
+	CashVnd              int64
+	TransferVnd          int64
+	PrepaidCashVnd       int64
+	PrepaidTransferVnd   int64
+	DebtVnd              int64
+	DebtorName           pgtype.Text
+	BookedAt             pgtype.Timestamptz
+	DebtNote             pgtype.Text
+	DiscountVnd          int64
+	DiscountCustomerName pgtype.Text
 }
 
 func (q *Queries) ThemHoaDon(ctx context.Context, arg ThemHoaDonParams) (int64, error) {
@@ -44,6 +46,8 @@ func (q *Queries) ThemHoaDon(ctx context.Context, arg ThemHoaDonParams) (int64, 
 		arg.DebtorName,
 		arg.BookedAt,
 		arg.DebtNote,
+		arg.DiscountVnd,
+		arg.DiscountCustomerName,
 	)
 	var id int64
 	err := row.Scan(&id)

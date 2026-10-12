@@ -143,7 +143,7 @@ BEGIN
   RAISE NOTICE 'S2 đọc lại: 3 đơn vị thanh toán · A % đ (tiền mặt, người thu %) · B % đ (trả trước chuyển khoản nhận % — hoá đơn lúc %) · C % đ (tiền mặt, %) · tổng % đ',
     ba.due_vnd, (SELECT display_name FROM person WHERE id = ba.person_id), bb.due_vnd,
     to_char(p.booked_at, 'HH24:MI'), to_char(bb.booked_at, 'HH24:MI'), bc.due_vnd,
-    (SELECT display_name FROM person WHERE id = bc.person_id), ba.due_vnd + bb.due_vnd + bc.due_vnd;
+    (SELECT display_name FROM person WHERE id = bc.person_id), ba.due_vnd - ba.discount_vnd + bb.due_vnd - bb.discount_vnd + bc.due_vnd - bc.discount_vnd;
   RAISE NOTICE 'S2 đọc lại: đường A: % · B: % · C: %', pg_temp.dl_duong('sales_order', a),
     pg_temp.dl_duong('sales_order', b), pg_temp.dl_duong('sales_order', c);
 END $$;
@@ -213,9 +213,9 @@ END $$;
 -- Tiền của cả ba scenario, cộng từ hoá đơn — so với phép cộng tay ở file cổng §4.
 SELECT format('TIỀN ba scenario: S1 %s · S2 %s · S3 %s · cộng %s đ',
   (SELECT due_vnd FROM bill WHERE table_session_id = pg_temp.dl_phien('5')),
-  (SELECT sum(due_vnd) FROM bill WHERE sales_order_id IS NOT NULL AND sale_date = pg_temp.dl_ngay()),
+  (SELECT sum(due_vnd - discount_vnd) FROM bill WHERE sales_order_id IS NOT NULL AND sale_date = pg_temp.dl_ngay()),
   (SELECT due_vnd FROM bill WHERE table_session_id = pg_temp.dl_phien('3')),
-  (SELECT sum(due_vnd) FROM bill WHERE sale_date = pg_temp.dl_ngay()));
+  (SELECT sum(due_vnd - discount_vnd) FROM bill WHERE sale_date = pg_temp.dl_ngay()));
 
 -- S4 — kết nối này không có bảng tạm/hàm của lượt ghi. Các số mong đợi viết tay
 -- từ dữ liệu diễn ở s4_ngay_quan_tri.sql; không dùng tổng vừa đọc làm đáp số.

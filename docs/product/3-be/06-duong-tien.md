@@ -49,7 +49,6 @@ Lý do hoàn không trắng; phương thức là cash hoặc transfer. Xấp ti�
 không âm và chia hết cho mệnh giá, không trùng mệnh giá trong một yêu cầu.
 
 Sau quyền là khoá dòng → tồn tại → ngày đã ký → điều kiện nghiệp vụ → ghi. Giảm giá dương
-trả `order_discount_undecided` ngay sau quyền, trước đọc đơn; hoá đơn đóng phiên cũng từ chối.
 T-140 (2026-10-09, ADR-089 Sửa đổi): hai cửa đơn lẻ nhận debt_note. Sau lỗi thân hiện có,
 không nợ mà có ghi chú khác null trả 400 invalid_request field debt_note; có nợ mà ghi chú
 vắng/null/trắng trả 422 debt_note_required. Ghi chú hợp lệ cắt khoảng trắng hai đầu và cất
@@ -175,7 +174,6 @@ staff_advance và holiday_bonus thuộc lát ghi của mình.
 | Sửa dòng tiền, sửa tiền đầu két, nhập bù | không có cửa ở lát này | P3-11 |
 | Khoản chi I-029 | chưa có bảng khoản chi, chưa có hạng tử ấy | P2A-05 |
 | Tin nhắn báo có | chưa có chỗ cất, chưa đối soát chuyển khoản bằng tin nhắn | lát sau |
-| ~~U-058 — giảm giá cả đơn~~ — **đóng 2026-10-12** (có trong bản đầu, không trần, không lý do; `shop-facts.md` §8.9 D41) | hôm nay giảm giá dương vẫn bị từ chối bằng order_discount_undecided; cửa đi theo ở `T-175` | — |
 | Quyền đọc của `GET /debts` · `GET /sale-days/{sale_date}/cash-reconciliation` | như mọi đường đọc hiện có, không đòi người gọi — mà `GET /debts` trả **tên người nợ** (`YC-11`); chưa có chương trình chạy thật nên chưa lộ ra đâu | còn mở; trước khi backend chạy thật (Claude, 2026-10-09) |
 | I-014 tập 6 — con số đã ký | cửa không ghi tiền vào ngày đã ký; không chụp con số, sửa tay ngoài cửa vẫn chưa có câu bắt | tầng 4; ADR-089 điểm 4 |
 
@@ -196,3 +194,7 @@ Danh sách này là yêu cầu chạy; kết quả thật nằm trong báo cáo 
 sau khi Claude tích hợp.
 
 [↑ đầu file](#top)
+
+## Giảm giá cả đơn (T-175, ADR-098)
+
+Ba cửa `hoadon/dong`, `hoadon/trao_tai_quay`, `hoadon/giao_xong` nhận `discount_vnd` (mặc định 0) và `discount_customer_name`. Người đã qua quyền cửa phải có `is_owner` để giảm dương, nếu không trả `owner_only`. Có giảm bắt tên khách không trắng; không giảm chỉ nhận tên vắng hoặc null, sai trả `invalid_request` ở `discount_customer_name`. Giảm âm hoặc vượt tổng dòng trả `invalid_request` ở `discount_vnd`. Không trần khác tổng đơn và không bắt lý do. Tổng các phần trả, nợ và giảm bằng `due_vnd`; doanh thu là `due_vnd − discount_vnd`. Không có cửa sửa giảm sau khi ghi, sai đi cửa hoàn. Đường đọc nợ giữ nguyên.

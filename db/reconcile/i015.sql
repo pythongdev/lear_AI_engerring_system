@@ -5,15 +5,15 @@
 -- được trong hình ấy; tập tin nhắn báo có chưa có chỗ cất; tập két là I-021 — file 09 §2.
 
 -- @@ I-015/1 — lần thu mà tổng các phần thiếu so với số phải trả và phần thiếu không đúng bằng khoản nợ
-SELECT b.id AS hoa_don, b.due_vnd AS phai_tra,
+SELECT b.id AS hoa_don, (b.due_vnd - b.discount_vnd) AS phai_tra,
        b.cash_vnd + b.transfer_vnd + b.prepaid_cash_vnd + b.prepaid_transfer_vnd AS cac_phan,
        b.debt_vnd AS no
 FROM bill b
-WHERE b.cash_vnd + b.transfer_vnd + b.prepaid_cash_vnd + b.prepaid_transfer_vnd < b.due_vnd
-  AND b.debt_vnd <> b.due_vnd - (b.cash_vnd + b.transfer_vnd + b.prepaid_cash_vnd + b.prepaid_transfer_vnd)
+WHERE b.cash_vnd + b.transfer_vnd + b.prepaid_cash_vnd + b.prepaid_transfer_vnd < (b.due_vnd - b.discount_vnd)
+  AND b.debt_vnd <> (b.due_vnd - b.discount_vnd) - (b.cash_vnd + b.transfer_vnd + b.prepaid_cash_vnd + b.prepaid_transfer_vnd)
 
 -- @@ I-015/2 — lần thu mà tổng các phần vượt số phải trả
-SELECT b.id AS hoa_don, b.due_vnd AS phai_tra,
+SELECT b.id AS hoa_don, (b.due_vnd - b.discount_vnd) AS phai_tra,
        b.cash_vnd + b.transfer_vnd + b.prepaid_cash_vnd + b.prepaid_transfer_vnd AS cac_phan
 FROM bill b
-WHERE b.cash_vnd + b.transfer_vnd + b.prepaid_cash_vnd + b.prepaid_transfer_vnd > b.due_vnd
+WHERE b.cash_vnd + b.transfer_vnd + b.prepaid_cash_vnd + b.prepaid_transfer_vnd > (b.due_vnd - b.discount_vnd)

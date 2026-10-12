@@ -31,13 +31,14 @@ var CuaGhiHoan = authz.Door{Code: "hoadon/ghi_hoan", Need: authz.NeedCallingDoor
 func sai(field string) error { return apierr.Error{Code: apierr.CodeInvalidRequest, Field: field} }
 
 type ThanhToan struct {
-	Cash            *int64  `json:"cash_vnd"`
-	Transfer        *int64  `json:"transfer_vnd"`
-	PrepaidCash     int64   `json:"prepaid_cash_vnd"`
-	PrepaidTransfer int64   `json:"prepaid_transfer_vnd"`
-	Debt            int64   `json:"debt_vnd"`
-	Discount        int64   `json:"discount_vnd"`
-	Debtor          *string `json:"debtor_name"`
+	Cash                 *int64  `json:"cash_vnd"`
+	Transfer             *int64  `json:"transfer_vnd"`
+	PrepaidCash          int64   `json:"prepaid_cash_vnd"`
+	PrepaidTransfer      int64   `json:"prepaid_transfer_vnd"`
+	Debt                 int64   `json:"debt_vnd"`
+	Discount             int64   `json:"discount_vnd"`
+	DiscountCustomerName *string `json:"discount_customer_name"`
+	Debtor               *string `json:"debtor_name"`
 }
 
 func (p ThanhToan) Kiem() error {
@@ -56,6 +57,27 @@ func (p ThanhToan) Kiem() error {
 	}
 	if p.Debtor != nil && strings.TrimSpace(*p.Debtor) == "" {
 		return sai("debtor_name")
+	}
+	return kiemTenGiam(p.Discount, p.DiscountCustomerName)
+}
+
+func kiemTenGiam(discount int64, name *string) error {
+	if (discount > 0 && (name == nil || strings.TrimSpace(*name) == "")) || (discount == 0 && name != nil) {
+		return sai("discount_customer_name")
+	}
+	return nil
+}
+
+func kiemChuGiam(ctx context.Context, tx pgx.Tx, nguoi, discount int64) error {
+	if discount <= 0 {
+		return nil
+	}
+	owner, err := newRepository(tx).chuQuanGiamGia(ctx, nguoi)
+	if err != nil {
+		return err
+	}
+	if !owner {
+		return apierr.Error{Code: apierr.CodeOwnerOnly}
 	}
 	return nil
 }
@@ -113,17 +135,24 @@ func (p TraLaiYeuCau) Kiem() error {
 }
 
 type NoiDung struct {
-	Phien, Don                                              *int64
-	Due, Cash, Transfer, PrepaidCash, PrepaidTransfer, Debt int64
-	Debtor                                                  *string
-	DebtNote                                                *string
-	Moc                                                     time.Time
+	Phien, Don                                                        *int64
+	Due, Cash, Transfer, PrepaidCash, PrepaidTransfer, Debt, Discount int64
+	DiscountCustomerName                                              *string
+	Debtor                                                            *string
+	DebtNote                                                          *string
+	Moc                                                               time.Time
 }
 
 // Ghi là ô thêm bill duy nhất; cửa gọi giữ khoá đơn/phiên và ngày chưa ký.
 func Ghi(ctx context.Context, tx pgx.Tx, b NoiDung) (int64, error) {
 	// Trừ dần để tránh tràn bigint khi yêu cầu có nhiều phần tiền rất lớn.
-	con := b.Due
+	if b.Discount < 0 || b.Discount > b.Due {
+		return 0, sai("discount_vnd")
+	}
+	if err := kiemTenGiam(b.Discount, b.DiscountCustomerName); err != nil {
+		return 0, err
+	}
+	con := b.Due - b.Discount
 	for _, v := range []int64{b.Cash, b.Transfer, b.PrepaidCash, b.PrepaidTransfer, b.Debt} {
 		if v < 0 || v > con {
 			return 0, apierr.Error{Code: apierr.CodePaymentPartsMismatch}
@@ -174,17 +203,18 @@ func NewService(pool *pgxpool.Pool) *Service { return &Service{pool: pool} }
 
 // DongYeuCau là thân của cửa đóng phiên, đã qua kiểm hình ở handler.
 type DongYeuCau struct {
-	DiscountVnd int64   `json:"discount_vnd"`
-	CashVnd     *int64  `json:"cash_vnd"`
-	TransferVnd *int64  `json:"transfer_vnd"`
-	DebtVnd     *int64  `json:"debt_vnd"`
-	DebtorName  *string `json:"debtor_name"`
+	DiscountVnd          int64   `json:"discount_vnd"`
+	DiscountCustomerName *string `json:"discount_customer_name"`
+	CashVnd              *int64  `json:"cash_vnd"`
+	TransferVnd          *int64  `json:"transfer_vnd"`
+	DebtVnd              *int64  `json:"debt_vnd"`
+	DebtorName           *string `json:"debtor_name"`
 }
 
 func (s *Service) DongPhien(ctx context.Context, nguoi, id int64, yc DongYeuCau) (bill, due int64, err error) {
 	err = authz.Run(ctx, s.pool, nguoi, Dong, func(tx pgx.Tx) error {
-		if yc.DiscountVnd > 0 {
-			return apierr.Error{Code: apierr.CodeOrderDiscountUndecided}
+		if err := kiemChuGiam(ctx, tx, nguoi, yc.DiscountVnd); err != nil {
+			return err
 		}
 		repo := newRepository(tx)
 		status, err := repo.khoaPhien(ctx, id)
@@ -214,7 +244,7 @@ func (s *Service) DongPhien(ctx context.Context, nguoi, id int64, yc DongYeuCau)
 		if err != nil {
 			return err
 		}
-		bill, err = Ghi(ctx, tx, NoiDung{Phien: &id, Due: due, Cash: *yc.CashVnd, Transfer: *yc.TransferVnd, Debt: *yc.DebtVnd, Debtor: yc.DebtorName, Moc: moc})
+		bill, err = Ghi(ctx, tx, NoiDung{Phien: &id, Due: due, Discount: yc.DiscountVnd, DiscountCustomerName: yc.DiscountCustomerName, Cash: *yc.CashVnd, Transfer: *yc.TransferVnd, Debt: *yc.DebtVnd, Debtor: yc.DebtorName, Moc: moc})
 		if err != nil {
 			return err
 		}
@@ -230,8 +260,8 @@ func (s *Service) Trao(ctx context.Context, nguoi, id int64, p ThanhToan, debtNo
 		cua = GiaoXong
 	}
 	err = authz.Run(ctx, s.pool, nguoi, cua, func(tx pgx.Tx) error {
-		if p.Discount > 0 {
-			return apierr.Error{Code: apierr.CodeOrderDiscountUndecided}
+		if err := kiemChuGiam(ctx, tx, nguoi, p.Discount); err != nil {
+			return err
 		}
 		if p.Debt > 0 {
 			if debtNote == nil || strings.TrimSpace(*debtNote) == "" {
@@ -278,7 +308,7 @@ func (s *Service) Trao(ctx context.Context, nguoi, id int64, p ThanhToan, debtNo
 		if due, err = repo.tongDon(ctx, id, giao); err != nil {
 			return err
 		}
-		bill, err = Ghi(ctx, tx, NoiDung{Don: &id, Due: due, Cash: *p.Cash, Transfer: *p.Transfer, PrepaidCash: p.PrepaidCash, PrepaidTransfer: p.PrepaidTransfer, Debt: p.Debt, Debtor: p.Debtor, DebtNote: debtNote, Moc: moc})
+		bill, err = Ghi(ctx, tx, NoiDung{Don: &id, Due: due, Discount: p.Discount, DiscountCustomerName: p.DiscountCustomerName, Cash: *p.Cash, Transfer: *p.Transfer, PrepaidCash: p.PrepaidCash, PrepaidTransfer: p.PrepaidTransfer, Debt: p.Debt, Debtor: p.Debtor, DebtNote: debtNote, Moc: moc})
 		if err != nil {
 			return err
 		}
