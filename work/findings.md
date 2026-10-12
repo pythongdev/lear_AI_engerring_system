@@ -2475,6 +2475,13 @@ Nội dung bị cuốn đi đúng nên không mất gì, nhưng subject của c�
 khối commit của một phiên **làm việc ở worktree riêng** được dán vào **clone chính**, nên đường dẫn
 `work/…` trong khối khớp file của phiên khác.
 
+**Lặp lại 2026-10-12 (ghi bởi Claude Code, phiên P3-11…P3-12):** khi commit `T-146`, phiên lấy danh sách
+file bằng *mọi* file khác `HEAD` cộng *mọi* file chưa được theo dõi, chỉ loại một tên đã biết — và cuốn theo
+`docs/private/be_feature/be_feature.md`, file của người khác xuất hiện giữa phiên. Phát hiện ngay lượt sau (Gate 1b
+kêu đường dẫn hỏng của file ấy), commit chưa push nên sửa bằng `--amend` (`ce7e8f2` → `8734cfe`), file trả về dạng
+chưa theo dõi. Hình mới: lỗi không nằm ở khối dán của người dùng mà ở **cách phiên tự dựng danh sách** — lọc theo
+*file lạ đã biết* thay vì theo **scope của task**. Từ `P3-12` phiên lọc danh sách bằng các mẫu của chính scope file.
+
 **Status:**
 Open
 
