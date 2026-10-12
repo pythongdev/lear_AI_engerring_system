@@ -3,7 +3,6 @@ package vongdoi
 
 import (
 	"context"
-	_ "embed"
 	"errors"
 	"fmt"
 
@@ -14,21 +13,6 @@ import (
 
 var CuaChuyenDon = authz.Door{Code: "vongdoi/chuyen_don", Need: authz.NeedCallingDoor}
 var CuaChuyenPhien = authz.Door{Code: "vongdoi/chuyen_phien", Need: authz.NeedCallingDoor}
-
-//go:embed sql/chuyen_don/khoa.sql
-var khoaDon string
-
-//go:embed sql/chuyen_don/chuyen.sql
-var chuyenDon string
-
-//go:embed sql/chuyen_phien/khoa.sql
-var khoaPhien string
-
-//go:embed sql/chuyen_phien/chuyen.sql
-var chuyenPhien string
-
-//go:embed sql/chuyen_phien/dong_ban.sql
-var dongBan string
 
 // CapDon và CapPhien trả bản riêng để bên gọi không sửa bảng dùng chung.
 func CapDon() [][2]string {
@@ -68,12 +52,13 @@ func TrangThaiDauDon(kenh string) (string, error) {
 
 // CoVet khai và gỡ lý do sát câu sửa. Khách QR không khai lý do (F-060).
 func CoVet(ctx context.Context, tx pgx.Tx, reason string, fn func() error) error {
-	var actor bool
-	if err := tx.QueryRow(ctx, "SELECT actor_person_id() IS NOT NULL").Scan(&actor); err != nil {
+	repo := newRepository(tx)
+	actor, err := repo.coNguoi(ctx)
+	if err != nil {
 		return err
 	}
 	if actor {
-		if _, err := tx.Exec(ctx, "SELECT set_config('shop.revision_reason', $1, true)", reason); err != nil {
+		if err := repo.khaiLyDo(ctx, reason); err != nil {
 			return err
 		}
 	}
@@ -81,8 +66,7 @@ func CoVet(ctx context.Context, tx pgx.Tx, reason string, fn func() error) error
 		return err
 	}
 	if actor {
-		_, err := tx.Exec(ctx, "SELECT set_config('shop.revision_reason', '', true)")
-		return err
+		return repo.goLyDo(ctx)
 	}
 	return nil
 }
@@ -105,9 +89,9 @@ func KiemChuyenDon(tu, den, kenh string, trao *string) error {
 
 // Cửa gọi phải khoá phiên trước khi gọi ChuyenDon nếu đơn có phiên.
 func ChuyenDon(ctx context.Context, tx pgx.Tx, id int64, den string) error {
-	var tu, kenh string
-	var trao *string
-	if err := tx.QueryRow(ctx, khoaDon, id).Scan(&tu, &kenh, &trao); err != nil {
+	repo := newRepository(tx)
+	tu, kenh, trao, err := repo.khoaDon(ctx, id)
+	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return apierr.Error{Code: apierr.CodeSalesOrderNotFound}
 		}
@@ -116,11 +100,12 @@ func ChuyenDon(ctx context.Context, tx pgx.Tx, id int64, den string) error {
 	if err := KiemChuyenDon(tu, den, kenh, trao); err != nil {
 		return err
 	}
-	return CoVet(ctx, tx, CuaChuyenDon.Code+": "+tu+" → "+den, func() error { _, err := tx.Exec(ctx, chuyenDon, id, den); return err })
+	return CoVet(ctx, tx, CuaChuyenDon.Code+": "+tu+" → "+den, func() error { return repo.chuyenDon(ctx, id, den) })
 }
 func ChuyenPhien(ctx context.Context, tx pgx.Tx, id int64, den string) error {
-	var tu string
-	if err := tx.QueryRow(ctx, khoaPhien, id).Scan(&tu); err != nil {
+	repo := newRepository(tx)
+	tu, err := repo.khoaPhien(ctx, id)
+	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return apierr.Error{Code: apierr.CodeTableSessionNotFound}
 		}
@@ -130,11 +115,11 @@ func ChuyenPhien(ctx context.Context, tx pgx.Tx, id int64, den string) error {
 		return err
 	}
 	reason := CuaChuyenPhien.Code + ": " + tu + " → " + den
-	if err := CoVet(ctx, tx, reason, func() error { _, err := tx.Exec(ctx, chuyenPhien, id, den); return err }); err != nil {
+	if err := CoVet(ctx, tx, reason, func() error { return repo.chuyenPhien(ctx, id, den) }); err != nil {
 		return err
 	}
 	if den == "closed" {
-		return CoVet(ctx, tx, reason, func() error { _, err := tx.Exec(ctx, dongBan, id); return err })
+		return CoVet(ctx, tx, reason, func() error { return repo.dongBan(ctx, id) })
 	}
 	return nil
 }

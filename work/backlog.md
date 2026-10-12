@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-158 **Đổi stack · bước 05 — miền `vongdoi`** (giữ API nhận `pgx.Tx`, lớp `theo_cua_goi`) — L2 — Codex, Claude duyệt · chờ T-157 · [chi tiết](#t-149)
 - [ ] T-159 **Đổi stack · bước 05 — miền `nguoi`** (miền thứ mười ba, sinh ở T-143) — L2 — Codex, Claude duyệt · chờ T-158 · [chi tiết](#t-149)
 - [ ] T-160 **Đổi stack · bước 06 — miền `tratruoc`** — L2 — Codex, Claude duyệt, Claude cài lỗi thu sai · chờ T-159 · [chi tiết](#t-149)
 - [ ] T-161 **Đổi stack · bước 06 — miền `hoadon`** — L2 — Codex, Claude duyệt, Claude cài lỗi thu sai · chờ T-160 · [chi tiết](#t-149)
@@ -111,6 +110,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-158 **Đổi stack · bước 05 — miền `vongdoi`** — `service.go` · `viec.go` · `repository.go` + `sqlcgen`, không `handler.go`; mọi API exported nhận `pgx.Tx` giữ chữ ký, bảy câu ghi giữ nguyên văn — L2 — Codex thi công (worktree `../lean_wt/T-158`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-157 **Đổi stack · bước 05 — miền `phien`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; `TongTien` giữ chữ ký `pgx.Tx` cho `hoadon` — L2 — Codex thi công (worktree `../lean_wt/T-157`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-156 **Đổi stack · bước 05 — miền `ban`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; `Doc` · `Ban` giữ chữ ký cho `don`, lần dọn vẫn trong `vongdoi.CoVet` — L2 — Codex thi công (worktree `../lean_wt/T-156`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-155 **Đổi stack · bước 05 — miền `ngayban`** — `service.go` · `repository.go` + `sqlcgen`, không `handler.go` (`QC-14` sửa: miền không đường gọi); bốn hàm exported giữ chữ ký; lỗi cài khoá ký không bị bắt ⇒ **F-064** — L2 — Codex thi công (worktree `../lean_wt/T-155`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
@@ -762,6 +762,39 @@ sandbox không Docker). Duyệt, cài lỗi, tích hợp: **Claude** — patch �
   `YC-01` · `YC-10` …) đỏ; (D) `hoadon` import `phien/internal/sqlcgen` ⇒ `go build` đỏ.
 - *(4)* `./scripts/gate.sh` ở cây chính sau tích hợp: exit 0, không `FAIL`; hai `SKIP` (Gate 1d, `db`) là cổng không chạy vì không đổi gì
   thuộc chúng, không tính là đạt. be-check PASS.
+
+**T-158 — Acceptance và điểm Claude chốt trước giao** (Claude, 2026-10-12). Mức **L2**: sai thì đơn, phiên hay việc trạm chuyển
+trạng thái ngoài bảng (`I-016`), lần chuyển mất vết (`I-018`, chế độ nghiêm ADR-092), hoặc phiên đóng mà bàn không chờ dọn (`I-003`).
+`vongdoi` không có đường gọi; ba cửa lớp `theo_cua_goi` (`vongdoi/chuyen_don` · `chuyen_phien` · `chuyen_viec`) và hàm exported
+chạy trong giao dịch của cửa gọi ở `don` · `hoadon` · `phien` · `ban` · `sanxuat` · `nguoi`. Không `handler.go` (`QC-14`, T-155).
+1. Bốn test ở `vongdoi/vongdoi_test.go` và mọi `TestI016_*` (mười hai, kiểm ở nền `9d8580a`), cùng toàn bộ be-check PASS trên PostgreSQL
+   thật. Không file test nào đổi. Tập tên test trước/sau: `diff` rỗng.
+2. Cây kết hợp không `handler.go`: `service.go` (+ file service phụ nếu cần, vd. giữ `viec.go` thành phần của service — Claude chấp
+   nhận miễn không file nào ngoài `repository.go` gọi `sqlcgen`) giữ **mọi** tên exported và chữ ký (`CuaChuyenDon` · `CuaChuyenPhien` ·
+   `CuaChuyenViec` · `CapDon` · `CapPhien` · `CapViec` · `KiemChuyenDon` · `KiemChuyenPhien` · `KiemChuyenViec` · `TrangThaiDauDon` ·
+   `CoVet` · `ChuyenDon` · `ChuyenPhien` · `ChuyenViec` · `LuiViecCuaMe` · `NhaNguonChuyen`); không miền gọi nào đổi. Bảy file cửa giữ
+   câu, thêm `-- name:` và `;`; ba câu đọc trong chuỗi Go (`actor_person_id()`, hai `set_config`, phép kiểm vết chuyển) thành `sql/*.sql`.
+   `check-sqlcgen` · Gate 1f · 1g · 1h PASS; `--list` hai gate trước/sau chỉ khác dòng đếm file (ô → cửa không đổi).
+3. Lỗi cài Claude chạy trong worktree riêng, mỗi lần một lỗi: thêm một cặp lạ vào `CapDon` ⇒ `TestI016_BangChuyenDonKhopVongDoi` đỏ;
+   `CoVet` bỏ khai lý do ⇒ test chuyển trạng thái đỏ (vết nghiêm từ chối); đóng phiên bỏ câu `dong_ban` ⇒ test `I-003` đỏ; miền khác
+   import `vongdoi/internal/sqlcgen` ⇒ `go build` đỏ.
+4. `./scripts/gate.sh` ở cây tích hợp: exit 0, không `FAIL`; `SKIP` ghi là không chạy.
+
+**T-158 — Bàn giao** (2026-10-12). Thi công: **Codex** (`gpt-6-astra`, worktree `../lean_wt/T-158`, nhánh `codex/T-158` từ `9d8580a`;
+sandbox không Docker). Duyệt, cài lỗi, tích hợp: **Claude** — patch áp bằng `git apply`, `diff -r be` hai cây rỗng; một vòng. File:
+`be/internal/vongdoi/service.go` · `repository.go` (mới; `vongdoi.go` xoá) · `viec.go` (đọc qua repository) · `sql/co_nguoi.sql` ·
+`co_vet_chuyen.sql` · `go_ly_do.sql` · `khai_ly_do.sql` (mới) · bảy file cửa (thêm `-- name:`, `;`) · `internal/sqlcgen/` (sinh) ·
+`be/sqlc.yaml`. Log: scratchpad phiên `b0c518fc…/scratchpad/T-158-*`.
+- *(1)* `be-check` trên PostgreSQL thật (gate ở worktree): mười hai `TestI016_*` (gồm bốn của `vongdoi_test.go`) PASS, không test nào
+  FAIL; không file test nào đổi, tập tên test trước/sau `diff` rỗng.
+- *(2)* Mọi tên exported giữ chữ ký; không miền gọi nào đổi (`git diff --stat` ngoài `vongdoi` rỗng). sqlc sinh `$2` trạng thái là
+  `string` mà không cần ép kiểu, nên câu ghi giữ nguyên văn; câu đọc người thêm `::boolean`. `check-sqlcgen` · Gate 1f · 1g · 1h PASS;
+  `--list` trước/sau chỉ khác dòng đếm file (1f 184 → 198, 1g 88 → 98).
+- *(3)* Lỗi cài trong `../lean_wt/T-158-fault`, mỗi lần một lỗi rồi hoàn nguyên (`diff -r be` rỗng): (A) thêm cặp `completed → new`
+  vào `CapDon` ⇒ `TestI016_BangChuyenDonKhopVongDoi` đỏ; (B) `CoVet` bỏ khai lý do ⇒ hơn 70 test đỏ ở mọi miền (vết nghiêm từ chối);
+  (C) đóng phiên bỏ câu `dong_ban` ⇒ `I-002` · `I-003` · `I-017` · `I-021` · `YC-01` · `YC-10` đỏ; (D) `don` import
+  `vongdoi/internal/sqlcgen` ⇒ `go build` đỏ.
+- *(4)* `./scripts/gate.sh` ở cây chính sau tích hợp: exit 0, không `FAIL`; `SKIP` nếu có là cổng không chạy, không tính là đạt.
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·

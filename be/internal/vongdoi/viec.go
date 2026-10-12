@@ -2,7 +2,6 @@ package vongdoi
 
 import (
 	"context"
-	_ "embed"
 	"errors"
 
 	"banhcuon/be/internal/apierr"
@@ -11,12 +10,6 @@ import (
 )
 
 var CuaChuyenViec = authz.Door{Code: "vongdoi/chuyen_viec", Need: authz.NeedCallingDoor}
-
-//go:embed sql/chuyen_viec/khoa.sql
-var khoaViec string
-
-//go:embed sql/chuyen_viec/chuyen.sql
-var chuyenViec string
 
 func CapViec() [][2]string {
 	return [][2]string{{"", "pending"}, {"pending", "made"}, {"made", "served"}, {"made", "pending"}}
@@ -47,19 +40,16 @@ func NhaNguonChuyen(ctx context.Context, tx pgx.Tx, id, transferID int64) error 
 }
 
 func doiViec(ctx context.Context, tx pgx.Tx, id int64, den string, transferID int64, luiMe bool) error {
-	var tu, don string
-	if err := tx.QueryRow(ctx, khoaViec, id).Scan(&tu, &don); err != nil {
+	repo := newRepository(tx)
+	tu, don, err := repo.khoaViec(ctx, id)
+	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return apierr.Error{Code: apierr.CodeStationJobNotFound}
 		}
 		return err
 	}
 	if transferID != 0 {
-		var hop bool
-		err := tx.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM station_job_transfer t
-		 JOIN production_batch_item i ON i.id = t.production_batch_item_id
-		 WHERE t.id = $1 AND t.from_station_job_id = $2 AND i.station_job_id = t.to_station_job_id
-		 AND NOT i.batch_rolled_back)`, transferID, id).Scan(&hop)
+		hop, err := repo.coVetChuyen(ctx, transferID, id)
 		if err != nil {
 			return err
 		}
@@ -75,7 +65,6 @@ func doiViec(ctx context.Context, tx pgx.Tx, id int64, den string, transferID in
 		}
 	}
 	return CoVet(ctx, tx, CuaChuyenViec.Code+": "+tu+" → "+den, func() error {
-		_, err := tx.Exec(ctx, chuyenViec, id, den)
-		return err
+		return repo.chuyenViec(ctx, id, den)
 	})
 }

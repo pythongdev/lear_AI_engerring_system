@@ -1,1 +1,2 @@
-UPDATE table_session SET status = $2 WHERE id = $1
+-- name: ChuyenPhien :exec
+UPDATE table_session SET status = $2 WHERE id = $1;
