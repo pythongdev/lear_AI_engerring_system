@@ -99,11 +99,11 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-146 **Sửa số đếm két của ngày đã ký** — bảng mở lại dấu, dấu nối chuỗi, khoá ADR-080 đổi một vế, cửa `ket/sua_dem` lớp `chu_quan`; lời U-074 · U-078 — **ADR-096** — L2 — Claude thiết kế, Codex thi công · [chi tiết](#t-146)
 
 <a id="done"></a>
 ## Done
 
+- [x] T-146 **Sửa số đếm két của ngày đã ký** — migration bước 22 `reconciled_day_reopening` + dấu nối chuỗi (`previous_reconciled_day_id`, khoá duy nhất từng phần); khoá ADR-080 cho sửa số đếm khi dấu mới nhất đã mở lại, tiền đầu két vẫn khoá; cửa `ket/sua_dem` (`PUT /sale-days/{sale_date}/cash-count`, lớp `chu_quan`, lý do bắt buộc) và cửa dùng chung `ket/ghi_dong_dem` (`theo_cua_goi`); ký lại nối dấu; đường đọc trả chuỗi dấu; cửa tiền khác vẫn coi ngày từng ký là đóng; hợp đồng 0.15.0 — **ADR-096** — L2 — Codex thi công (worktree `../lean_wt/T-146`, ba lượt do hạn mức), Claude thiết kế, duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-146)
 - [x] T-173 Ghi lời chủ quán cho **U-079** (nhập bù gõ lại từng món kèm bàn hoặc mang đi; giá lúc bán trên giấy — lời chọn) và **U-058** (giảm giá cả đơn: có trong bản đầu, không trần, không bắt lý do — lời chọn) vào owner — `99-unknowns.md` (đóng, không còn câu đang mở), `shop-facts.md` §6 quy tắc 11 · §4.6 · §8.9 D41 · nhật ký; con trỏ ở `3-be/06` · `3-be/08` · `0-ba/ban-hang/04` · `2-db/04` · kế hoạch pha 3; mở `T-174` · `T-175` — L1 — Claude Code — 2026-10-12
 - [x] P3-11 **Vết sửa · sổ giấy · F-060** — `TestI018_MoiCuaSuaCoVet` (mười hai cửa sửa, đủ hai ảnh · lý do · người) và `TestI018_TapCuaSuaKhopTapCa`; đối chiếu `I-016` tha khoảng hở *Chờ thanh toán → Đang phục vụ* chỉ khi có đơn `qr_table` trong khoảng (**F-060** Fixed, hướng (b)); cửa `ket/khai_so_giay` (`POST /sale-days/{sale_date}/paper-ledger`, mã `paper_ledger_already_declared`); cửa ký ngày đọc chung phép *còn N*, `GET …/cash-reconciliation` trả hai trường sổ giấy; hợp đồng 0.14.0; cửa nhập bù hoá đơn chờ **U-079** — **ADR-095** — L2 — Claude thiết kế, duyệt, cài lỗi và tích hợp, Codex thi công (worktree `../lean_wt/P3-11`) — 2026-10-12 · [chi tiết](backlog_BE.md#p3-11)
 - [x] T-166 **Đổi stack · bước 09 — rà chéo**: `--list` 1f · 1g ở `be25683` khớp nền `f70dfb3` (khác duy nhất là dòng ánh xạ của T-169); 27 commit không mất tên test (124 → 136); hai câu owner lệch cây thật sửa ở `QC-13` · `QC-14`; **F-067** (sáu task L2 không duyệt độc lập) — L1 — Claude Code — 2026-10-12 · [chi tiết](#t-149)
@@ -1259,7 +1259,21 @@ dữ liệu đã ký và một migration. Thiết kế: **ADR-096**. Luật: `ma
 - *Ghi chú quy trình:* L2 của pha 3 đòi Claude viết test đỏ trước; lượt này Claude viết Nghiệm thu tới từng ca, Codex viết
   test và code, Claude cài lỗi để chứng minh test bắt được — cùng cách đã dùng ở `P3-11`.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-12): thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-146`, nhánh
+`codex/T-146` từ `8059062`; ba lượt vì hết hạn mức hai lần; sandbox không tới Docker). Thiết kế (`c434865`), duyệt, cài lỗi
+và tích hợp: **Claude Code**.
+- *Claude duyệt giữa chừng:* Codex hỏi ô INSERT `cash_count_line` dùng chung — Claude chọn cửa `ket/ghi_dong_dem` lớp
+  `theo_cua_goi` (tiền lệ `hoadon/ghi`), ghi ở ma trận. *Claude sửa khi duyệt:* `TestQC14_SuaDemHinhTruocQuyen` đọc lỗi
+  trong lớp bọc `error` không có trong hợp đồng — sửa hình đọc về `{code, field}`.
+- *Phần thêm ngoài phiếu, Claude chấp nhận:* trigger vết thêm dòng con phủ `cash_count_line` thêm vào ngày đã mở lại
+  (lần thêm mệnh giá mới cũng có vết, `I-018`); `db/reconcile/i014.sql` đọc *dấu đang đứng*.
+- *Kiểm chứng:* worktree và cây chính `./scripts/gate.sh` exit 0 — db-check *22 bước xuôi · lùi · xuôi lại … 41 file
+  test*, `PASS T-146 đỏ bước 21` · `PASS T-146 xanh bước 22; đường lùi từ chối lịch sử mở lại`; be-check *mọi test
+  backend qua PostgreSQL thật đều đạt*. Lỗi cài ở ba worktree tách rời (đã gỡ): cửa sửa bỏ dòng mở lại ⇒
+  `TestI021_ChuQuanSuaSoDemNgayDaKy` · `…SuaSoDemChenLucKy` · `TestI018_MoiCuaSuaCoVet/ket/sua_dem` đỏ; `DaKy` chỉ tính
+  dấu đang đứng ⇒ đúng `TestI021_NgayMoLaiVanDongVoiCuaTien` đỏ; khoá database bỏ điều kiện dấu đang đứng ⇒
+  `db/tests/i021_reopened_day.sql` · `i021_reconciled_day_frozen.sql` đỏ.
+- *Còn lại:* không. *Duyệt độc lập:* chưa (Codex thi công, Claude duyệt).
 
 <a id="t-147"></a>
 ### T-147 — Huỷ đơn đã Hoàn thành: chủ quán cho huỷ, cửa vẫn từ chối

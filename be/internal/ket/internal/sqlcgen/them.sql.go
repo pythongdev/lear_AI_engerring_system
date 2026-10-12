@@ -34,17 +34,24 @@ func (q *Queries) ThemDem(ctx context.Context, dollar_1 pgtype.Timestamptz) (int
 }
 
 const themKyNgay = `-- name: ThemKyNgay :one
-INSERT INTO reconciled_day (sale_date, gap_vnd, gap_explanation) VALUES ($1::date, $2, $3) RETURNING id
+INSERT INTO reconciled_day (sale_date, gap_vnd, gap_explanation, previous_reconciled_day_id)
+VALUES ($1::date, $2, $3, $4) RETURNING id
 `
 
 type ThemKyNgayParams struct {
-	Column1        pgtype.Date
-	GapVnd         int64
-	GapExplanation pgtype.Text
+	Column1                 pgtype.Date
+	GapVnd                  int64
+	GapExplanation          pgtype.Text
+	PreviousReconciledDayID pgtype.Int8
 }
 
 func (q *Queries) ThemKyNgay(ctx context.Context, arg ThemKyNgayParams) (int64, error) {
-	row := q.db.QueryRow(ctx, themKyNgay, arg.Column1, arg.GapVnd, arg.GapExplanation)
+	row := q.db.QueryRow(ctx, themKyNgay,
+		arg.Column1,
+		arg.GapVnd,
+		arg.GapExplanation,
+		arg.PreviousReconciledDayID,
+	)
 	var id int64
 	err := row.Scan(&id)
 	return id, err

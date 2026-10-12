@@ -6,17 +6,21 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"time"
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
 	"banhcuon/be/internal/ngayban"
 	"banhcuon/be/internal/platform/postgres"
+	"banhcuon/be/internal/vongdoi"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var KhaiDauKet = authz.Door{Code: "ket/khai_dau_ket", Need: authz.NeedCounterOrOwner}
 var KhaiSoGiay = authz.Door{Code: "ket/khai_so_giay", Need: authz.NeedCounterOrOwner}
+var SuaDem = authz.Door{Code: "ket/sua_dem", Need: authz.NeedOwner}
+var GhiDongDem = authz.Door{Code: "ket/ghi_dong_dem", Need: authz.NeedCallingDoor}
 var Dem = authz.Door{Code: "ket/dem", Need: authz.NeedCounterOrOwner}
 var DoiSoatXong = authz.Door{Code: "ket/doi_soat_xong", Need: authz.NeedOwner}
 
@@ -52,14 +56,30 @@ func (p YeuCau) Kiem() (int64, error) {
 	return total, nil
 }
 
+type MoLai struct {
+	Reason    string    `json:"reason"`
+	PersonID  int64     `json:"person_id"`
+	CreatedAt time.Time `json:"created_at"`
+}
+type Dau struct {
+	ID          int64     `json:"reconciled_day_id"`
+	PreviousID  *int64    `json:"previous_reconciled_day_id"`
+	PersonID    int64     `json:"person_id"`
+	CreatedAt   time.Time `json:"created_at"`
+	Gap         int64     `json:"gap_vnd"`
+	Explanation *string   `json:"gap_explanation"`
+	Reopening   *MoLai    `json:"reopening"`
+}
 type SoKet struct {
-	PaperEntriesDeclared *int32 `json:"paper_entries_declared"`
-	PaperEntriesPending  int64  `json:"paper_entries_pending"`
-	SaleDate             string `json:"sale_date"`
-	Counted              int64  `json:"counted_vnd"`
-	Opening              int64  `json:"opening_float_vnd"`
-	Expected             int64  `json:"expected_vnd"`
-	Gap                  int64  `json:"gap_vnd"`
+	Status               *string `json:"status"`
+	Reconciliations      []Dau   `json:"reconciliations"`
+	PaperEntriesDeclared *int32  `json:"paper_entries_declared"`
+	PaperEntriesPending  int64   `json:"paper_entries_pending"`
+	SaleDate             string  `json:"sale_date"`
+	Counted              int64   `json:"counted_vnd"`
+	Opening              int64   `json:"opening_float_vnd"`
+	Expected             int64   `json:"expected_vnd"`
+	Gap                  int64   `json:"gap_vnd"`
 }
 
 type Service struct{ pool *pgxpool.Pool }
@@ -79,6 +99,9 @@ func (s *Service) GhiSo(ctx context.Context, nguoi int64, dem bool, p YeuCau) (i
 		}
 		ngay = d
 		id, err = newRepository(tx).ghiSo(ctx, dem, moc, p.Lines)
+		if err == nil && dem {
+			err = ghiDongDem(ctx, tx, id, p.Lines)
+		}
 		return err
 	})
 	return id, ngay, err
@@ -102,7 +125,22 @@ func (s *Service) DocSo(ctx context.Context, ngay string) (SoKet, error) {
 	var so SoKet
 	err := postgres.InTx(ctx, s.pool, func(tx pgx.Tx) error {
 		var err error
+		// Cùng khoá ngày với cửa sửa/ký để các lần đọc không trộn hai đời dấu.
+		if err = ngayban.Khoa(ctx, tx, ngay, false); err != nil {
+			return err
+		}
 		so, err = docSo(ctx, tx, ngay)
+		if err != nil {
+			return err
+		}
+		so.Reconciliations, err = newRepository(tx).docDau(ctx, ngay)
+		if err == nil && len(so.Reconciliations) > 0 {
+			status := "reconciled"
+			if so.Reconciliations[len(so.Reconciliations)-1].Reopening != nil {
+				status = "reopened"
+			}
+			so.Status = &status
+		}
 		return err
 	})
 	return so, err
@@ -118,12 +156,17 @@ func (s *Service) KyNgay(ctx context.Context, nguoi int64, ngay string, explanat
 		if err != nil {
 			return err
 		}
-		co, err := ngayban.DaKy(ctx, tx, ngay)
+		dau, err := newRepository(tx).docDau(ctx, ngay)
 		if err != nil {
 			return err
 		}
-		if co {
-			return apierr.Error{Code: apierr.CodeSaleDayAlreadyReconciled}
+		var previous *int64
+		if len(dau) > 0 {
+			cuoi := dau[len(dau)-1]
+			if cuoi.Reopening == nil {
+				return apierr.Error{Code: apierr.CodeSaleDayAlreadyReconciled}
+			}
+			previous = &cuoi.ID
 		}
 		repo := newRepository(tx)
 		if so.PaperEntriesPending > 0 {
@@ -133,7 +176,7 @@ func (s *Service) KyNgay(ctx context.Context, nguoi int64, ngay string, explanat
 		if gap != 0 && explanation == nil {
 			return apierr.Error{Code: apierr.CodeGapExplanationRequired}
 		}
-		id, err = repo.themKyNgay(ctx, ngay, gap, explanation)
+		id, err = repo.themKyNgay(ctx, ngay, gap, explanation, previous)
 		return err
 	})
 	return id, gap, err
@@ -166,6 +209,72 @@ func (s *Service) KhaiGiay(ctx context.Context, nguoi int64, ngay string, so int
 		}
 		id, err = repo.themSoGiay(ctx, ngay, so)
 		return err
+	})
+	return id, err
+}
+
+// ghiDongDem là cửa không lối vào: dùng giao dịch đã kiểm quyền của dem hoặc sua_dem.
+func ghiDongDem(ctx context.Context, tx pgx.Tx, id int64, lines []Dong) error {
+	r := newRepository(tx)
+	for _, l := range lines {
+		if err := r.themDongDem(ctx, id, l); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// SuaSoDem giữ cùng khoá riêng với ký ngày; mở lại và thay số cùng sống hoặc cùng lùi.
+func (s *Service) SuaSoDem(ctx context.Context, nguoi int64, ngay string, p YeuCau, reason string) (id int64, err error) {
+	err = authz.Run(ctx, s.pool, nguoi, SuaDem, func(tx pgx.Tx) error {
+		if err := ngayban.Khoa(ctx, tx, ngay, true); err != nil {
+			return err
+		}
+		repo := newRepository(tx)
+		dau, err := repo.docDau(ctx, ngay)
+		if err != nil {
+			return err
+		}
+		if len(dau) == 0 {
+			return apierr.Error{Code: apierr.CodeSaleDayNotReconciled}
+		}
+		cuoi := dau[len(dau)-1]
+		if cuoi.Reopening == nil {
+			if err := repo.moLai(ctx, cuoi.ID, ngay, reason); err != nil {
+				return err
+			}
+		}
+		id, err = repo.docDem(ctx, ngay)
+		if err != nil {
+			return err
+		}
+		old, err := repo.docXap(ctx, id)
+		if err != nil {
+			return err
+		}
+		wanted := make(map[int64]int64, len(p.Lines))
+		for _, l := range p.Lines {
+			wanted[*l.Denomination] = *l.Amount
+		}
+		return vongdoi.CoVet(ctx, tx, reason, func() error {
+			for _, l := range old {
+				amount := wanted[l.menhGia] // xấp bị bỏ về 0, không xoá dòng
+				if amount != l.soTien {
+					if err := repo.datSo(ctx, l.id, amount); err != nil {
+						return err
+					}
+				}
+				delete(wanted, l.menhGia)
+			}
+			for _, l := range p.Lines {
+				if _, ok := wanted[*l.Denomination]; ok {
+					if err := ghiDongDem(ctx, tx, id, []Dong{l}); err != nil {
+						return err
+					}
+				}
+			}
+			return nil
+		})
 	})
 	return id, err
 }

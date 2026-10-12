@@ -115,9 +115,39 @@ if [ "$n_mig" -gt 0 ]; then
   prev=0; schema_dump > "$snap/0"
   for f in $versions; do
     v="${f%%_*}"
+    if [ "$v" = 20261012120000 ]; then
+      if out="$({ echo 'BEGIN;'; cat db/tests/i021_reopened_day.sql; echo 'ROLLBACK;'; } | psql_f -f - 2>&1)"; then
+        fail "T-146 đỏ bước 21 — test mở lại đã đi qua khi chưa có bước 22"
+      elif printf '%s\n' "$out" | grep -q 'previous_reconciled_day_id.*does not exist'; then
+        echo "PASS T-146 đỏ bước 21 — chưa có previous_reconciled_day_id"
+      else
+        fail "T-146 đỏ bước 21 — lỗi khác điều cần chứng minh:"
+        printf '%s\n' "$out" | tail -8
+      fi
+    fi
     if out="$(migrate up 1)"; then
       schema_dump > "$snap/$v"; echo "PASS xuôi ${f%.up.sql}"
       printf '%s\n' "$prev" > "$snap/$v.prev"; prev="$v"
+      if [ "$v" = 20261012120000 ]; then
+        if out="$({ echo 'BEGIN;'; cat db/tests/i021_reopened_day.sql;
+                    echo "\\echo T146_TEST_GREEN";
+                    # Chỉ còn dòng mở lại, chưa có dấu nối: riêng nó cũng phải chặn lùi.
+                    echo 'DELETE FROM reconciled_day WHERE previous_reconciled_day_id IS NOT NULL;';
+                    cat db/migrations/20261012120000_mo_lai_so_dem.down.sql;
+                    echo 'ROLLBACK;'; } | psql_f -f - 2>&1)"; then
+          fail "T-146 đường lùi — không từ chối lịch sử mở lại"
+        elif printf '%s\n' "$out" | grep -q '^T146_TEST_GREEN$' &&
+             printf '%s\n' "$out" | grep -q 'đường lùi từ chối: đang giữ dòng mở lại'; then
+          if d="$(diff "$snap/$v" <(schema_dump))"; then
+            echo "PASS T-146 xanh bước 22; đường lùi từ chối lịch sử mở lại, lược đồ không đổi"
+          else
+            fail "T-146 đường lùi — lược đồ đã đổi: $d"
+          fi
+        else
+          fail "T-146 bước 22 hoặc khoá chặn — lỗi khác điều cần chứng minh:"
+          printf '%s\n' "$out" | tail -12
+        fi
+      fi
     else
       fail "xuôi ${f%.up.sql}"; printf '%s\n' "$out" | tail -20 | sed 's/^/     /'; mig_ok=0; break
     fi

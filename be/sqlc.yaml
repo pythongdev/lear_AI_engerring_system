@@ -117,6 +117,8 @@ sql:
     schema: ../db/migrations
     queries:
       - internal/ket/sql
+      - internal/ket/sql/sua_dem
+      - internal/ket/sql/ghi_dong_dem
       - internal/ket/sql/dem
       - internal/ket/sql/doi_soat_xong
       - internal/ket/sql/khai_so_giay

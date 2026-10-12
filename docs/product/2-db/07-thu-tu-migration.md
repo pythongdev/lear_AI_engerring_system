@@ -17,11 +17,11 @@ lược đồ từ số không · chỗ chứng minh từng điều ấy chạy 
 
 ---
 
-## 1. Thứ tự dựng — hai mươi mốt bước
+## 1. Thứ tự dựng — hai mươi hai bước
 
 Công cụ chạy các bước theo **tên file**, tức theo mốc giờ ở đầu tên (`QC-05`). Thứ tự dưới đây là
 thứ tự ấy; cột *đứng trên* nói bước nào phải có trước, vì bước sau thêm cột, khoá ngoại hay ràng
-buộc vào bảng của nó. Dựng lại từ số không là chạy đúng hai mươi mốt bước này, từ trên xuống; lùi là đi
+buộc vào bảng của nó. Dựng lại từ số không là chạy đúng hai mươi hai bước này, từ trên xuống; lùi là đi
 ngược từ dưới lên, **từng bước một**.
 
 | # | File (`db/migrations/`, bỏ đuôi) | Lát | Dựng gì | Đứng trên |
@@ -47,6 +47,7 @@ ngược từ dưới lên, **từng bước một**.
 | 19 | `20261009140000_no_don_le_va_doi_soat` | `T-140` | bill.debt_note và hai check; reconciled_day.gap_vnd · gap_explanation và check ngày lệch có giải thích (ADR-089 Sửa đổi) | 6 · 15 |
 | 20 | `20261010120000_vet_che_do_nghiem` | `T-138` | vết cập nhật **chế độ nghiêm**: thay thân `record_revision_capture()` · `record_revision_capture_added_line()` — sửa hay thêm dòng con không khai lý do ⇒ `record_revision_reason_declared_check`, một ngoại lệ hẹp cho lượt gọi thêm của khách QR; `qr_code_issue()` tự khai lý do; cột `table_session_member.person_id` và trigger ghép bàn phải có người (**ADR-092**, **F-046**) | 1 · 5 · 8 · 17 |
 | 21 | `20261011120000_mac_dinh_lua_chon` | `T-169` | cờ `menu_option.is_default` và khoá duy nhất `menu_option_one_default_per_group_key`: mặc định của nhóm tuỳ chọn thành dữ liệu, mỗi nhóm nhiều nhất một (**ADR-094**, đóng **F-059**) | 2 |
+| 22 | `20261012120000_mo_lai_so_dem` | `T-146` | `reconciled_day_reopening`, chuỗi dấu và khoá số đếm theo dấu đang đứng (ADR-096) | 15 · 18 · 19 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
@@ -125,6 +126,14 @@ sửa dữ liệu phải khai `shop.revision_reason` và `shop.actor_person_id` 
 Database có dữ liệu mồi luôn có cờ bật, nên trên database ấy bước 21 là bước đầu từ chối. Khi không cờ
 nào bật, gỡ khoá duy nhất rồi cột, trả lược đồ về trước bước. Thêm cột với giá trị mặc định không chạm
 dòng nào, nên bước xuôi không cần khai lý do cho vết.
+
+
+**Khoá chặn bước 22** (2026-10-12, T-146, ADR-096): có dù một dòng mở lại hoặc dấu có
+previous_reconciled_day_id thì từ chối trước khi gỡ gì. Khi chưa có lịch sử ấy, gỡ bảng mở lại,
+cột nối và các khoá mới; khôi phục khoá một dấu mỗi ngày và đúng thân hàm khoá của bước 18.
+Gỡ trigger thêm xấp của cash_count_line và trả hàm vết thêm dòng con về đúng thân bước 20.
+Bộ kiểm chạy test mở lại trước bước 22 (đỏ), sau bước 22 (xanh), rồi thử đường lùi trên lịch sử
+trong giao dịch không giữ dữ liệu; lời từ chối phải xuất hiện và lược đồ phải giữ nguyên.
 
 
 ## 3. Khi một lệnh migration hỏng giữa chừng

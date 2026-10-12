@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.14.0
+  version: 0.15.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -1066,6 +1066,35 @@ paths:
       responses:
         '201':
           description: Thành công theo ADR-089.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashCountCreated'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sale-days/{sale_date}/cash-count:
+    put:
+      operationId: correctReconciledCashCount
+      description: Chủ quán sửa toàn bộ xấp của ngày từng ký, kèm lý do; mở lại dấu đang đứng. Xấp cũ vắng trong yêu cầu về 0, không xoá (ADR-096).
+      parameters:
+        - name: sale_date
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SaleDate'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CashCountCorrectionRequest'
+      responses:
+        '200':
+          description: Đã sửa số đếm; ngày ở trạng thái mở lại.
           content:
             application/json:
               schema:
@@ -2312,6 +2341,16 @@ components:
           $ref: '#/components/schemas/SaleDate'
         total_vnd:
           $ref: '#/components/schemas/MoneyVnd'
+    CashCountCorrectionRequest:
+      allOf:
+        - $ref: '#/components/schemas/CashLinesRequest'
+        - type: object
+          required: [reason]
+          properties:
+            reason:
+              type: string
+              minLength: 1
+              description: Bắt buộc không trắng; cắt khoảng trắng hai đầu, dùng cho dòng mở lại và vết sửa.
     ReconciliationRequest:
       type: object
       additionalProperties: true
@@ -2361,9 +2400,18 @@ components:
             $ref: '#/components/schemas/Debt'
     CashReconciliation:
       type: object
-      required: [sale_date, counted_vnd, opening_float_vnd, expected_vnd, gap_vnd, paper_entries_declared, paper_entries_pending]
+      required: [sale_date, counted_vnd, opening_float_vnd, expected_vnd, gap_vnd, paper_entries_declared, paper_entries_pending, status, reconciliations]
       additionalProperties: false
       properties:
+        status:
+          type: [string, 'null']
+          enum: [reconciled, reopened, null]
+          description: null khi chưa từng ký; reopened khi không còn dấu đang đứng.
+        reconciliations:
+          type: array
+          description: Chuỗi dấu từ gốc tới mới nhất, gồm lý do và người mở lại của từng dấu.
+          items:
+            $ref: '#/components/schemas/ReconciliationStamp'
         sale_date:
           $ref: '#/components/schemas/SaleDate'
         counted_vnd:
@@ -2386,6 +2434,46 @@ components:
           format: int64
           minimum: 0
           description: Số khai trừ số hoá đơn của sổ; 0 khi không có sổ.
+    ReconciliationStamp:
+      type: object
+      additionalProperties: false
+      required: [reconciled_day_id, previous_reconciled_day_id, person_id, created_at, gap_vnd, gap_explanation, reopening]
+      properties:
+        reconciled_day_id:
+          type: integer
+          format: int64
+        previous_reconciled_day_id:
+          type: [integer, 'null']
+          format: int64
+        person_id:
+          type: integer
+          format: int64
+        created_at:
+          type: string
+          format: date-time
+        gap_vnd:
+          type: integer
+          format: int64
+        gap_explanation:
+          type: [string, 'null']
+        reopening:
+          oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/DayReopening'
+    DayReopening:
+      type: object
+      additionalProperties: false
+      required: [reason, person_id, created_at]
+      properties:
+        reason:
+          type: string
+          minLength: 1
+        person_id:
+          type: integer
+          format: int64
+        created_at:
+          type: string
+          format: date-time
     PaperLedgerRequest:
       type: object
       required: [entry_count]
@@ -2460,6 +2548,7 @@ components:
         - cash_count_already_recorded
         - sale_day_reconciled
         - cash_day_incomplete
+        - sale_day_not_reconciled
         - sale_day_already_reconciled
         - paper_ledger_already_declared
         - paper_entries_pending
@@ -2493,6 +2582,7 @@ components:
         cash_count_already_recorded: 409
         sale_day_reconciled: 409
         cash_day_incomplete: 409
+        sale_day_not_reconciled: 409
         sale_day_already_reconciled: 409
         paper_entries_pending: 409
         paper_ledger_already_declared: 409
@@ -3050,6 +3140,15 @@ x-constraint-errors:
   reconciled_day_opening_float_has_lines_check: cash_day_incomplete
   reconciled_day_person_fkey: internal
   reconciled_day_pkey: internal
+  reconciled_day_id_sale_date_key: internal
+  reconciled_day_previous_key: internal
+  reconciled_day_previous_fkey: internal
+  reconciled_day_reopening_pkey: internal
+  reconciled_day_reopening_once_key: internal
+  reconciled_day_reopening_id_sale_date_key: internal
+  reconciled_day_reopening_day_fkey: internal
+  reconciled_day_reopening_person_fkey: internal
+  reconciled_day_reopening_reason_check: internal
   record_revision_changes_something_check: unreviewed
   record_revision_images_of_target_check: unreviewed
   record_revision_person_fkey: unreviewed

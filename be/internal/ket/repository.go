@@ -28,9 +28,7 @@ func (r repository) ghiSo(ctx context.Context, dem bool, moc time.Time, lines []
 		return 0, err
 	}
 	for _, l := range lines {
-		if dem {
-			err = r.q.ThemDongDem(ctx, sqlcgen.ThemDongDemParams{CashCountID: id, DenominationVnd: *l.Denomination, AmountVnd: *l.Amount})
-		} else {
+		if !dem {
 			err = r.q.ThemDongDauKet(ctx, sqlcgen.ThemDongDauKetParams{OpeningFloatID: id, DenominationVnd: *l.Denomination, AmountVnd: *l.Amount})
 		}
 		if err != nil {
@@ -64,7 +62,7 @@ func (r repository) themSoGiay(ctx context.Context, ngay string, so int32) (int6
 }
 
 // ngay đã qua docNgay ở handler (YYYY-MM-DD hợp lệ).
-func (r repository) themKyNgay(ctx context.Context, ngay string, gap int64, explanation *string) (int64, error) {
+func (r repository) themKyNgay(ctx context.Context, ngay string, gap int64, explanation *string, previous *int64) (int64, error) {
 	d, err := time.Parse("2006-01-02", ngay)
 	if err != nil {
 		return 0, err
@@ -73,5 +71,60 @@ func (r repository) themKyNgay(ctx context.Context, ngay string, gap int64, expl
 	if explanation != nil {
 		giai = pgtype.Text{String: *explanation, Valid: true}
 	}
-	return r.q.ThemKyNgay(ctx, sqlcgen.ThemKyNgayParams{Column1: pgtype.Date{Time: d, Valid: true}, GapVnd: gap, GapExplanation: giai})
+	var truoc pgtype.Int8
+	if previous != nil {
+		truoc = pgtype.Int8{Int64: *previous, Valid: true}
+	}
+	return r.q.ThemKyNgay(ctx, sqlcgen.ThemKyNgayParams{Column1: pgtype.Date{Time: d, Valid: true}, GapVnd: gap, GapExplanation: giai, PreviousReconciledDayID: truoc})
+}
+
+func (r repository) docDau(ctx context.Context, ngay string) ([]Dau, error) {
+	rows, err := r.q.DocDauNgay(ctx, ngay)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]Dau, 0, len(rows))
+	for _, row := range rows {
+		d := Dau{ID: row.ID, PersonID: row.PersonID, CreatedAt: row.CreatedAt.Time, Gap: row.GapVnd}
+		if row.PreviousReconciledDayID.Valid {
+			v := row.PreviousReconciledDayID.Int64
+			d.PreviousID = &v
+		}
+		if row.GapExplanation.Valid {
+			v := row.GapExplanation.String
+			d.Explanation = &v
+		}
+		if row.Reason.Valid {
+			d.Reopening = &MoLai{Reason: row.Reason.String, PersonID: row.ReopeningPersonID.Int64, CreatedAt: row.ReopenedAt.Time}
+		}
+		out = append(out, d)
+	}
+	return out, nil
+}
+
+func (r repository) themDongDem(ctx context.Context, id int64, l Dong) error {
+	return r.q.ThemDongDem(ctx, sqlcgen.ThemDongDemParams{CashCountID: id, DenominationVnd: *l.Denomination, AmountVnd: *l.Amount})
+}
+func (r repository) moLai(ctx context.Context, id int64, ngay, reason string) error {
+	return r.q.MoLaiNgay(ctx, sqlcgen.MoLaiNgayParams{ReconciledDayID: id, Column2: ngay, Reason: reason})
+}
+func (r repository) docDem(ctx context.Context, ngay string) (int64, error) {
+	return r.q.DocDem(ctx, ngay)
+}
+
+type xapDem struct{ id, menhGia, soTien int64 }
+
+func (r repository) docXap(ctx context.Context, id int64) ([]xapDem, error) {
+	rows, err := r.q.DocXapDem(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]xapDem, 0, len(rows))
+	for _, row := range rows {
+		out = append(out, xapDem{row.ID, row.DenominationVnd, row.AmountVnd})
+	}
+	return out, nil
+}
+func (r repository) datSo(ctx context.Context, id, amount int64) error {
+	return r.q.DatSoDem(ctx, sqlcgen.DatSoDemParams{ID: id, AmountVnd: amount})
 }

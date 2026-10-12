@@ -96,6 +96,8 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `hoadon/tra_lai` | `quay` | shop-facts.md §6.4; ADR-059; ADR-089 điểm 1 |
 | `ket/khai_dau_ket` | `quay_hoac_chu_quan` | ADR-089 điểm 8 — suy luận từ shop-facts.md §8.5 |
 | `ket/khai_so_giay` | `quay_hoac_chu_quan` | shop-facts.md §6 quy tắc 11 và 27; ADR-037; ADR-095 điểm 3 |
+| `ket/sua_dem` | `chu_quan` | ADR-096, shop-facts.md §6.10 U-074 · U-078; sửa số đếm ngày từng ký có lý do |
+| `ket/ghi_dong_dem` | `theo_cua_goi` | Claude duyệt 2026-10-12 bổ sung ADR-096: sở hữu INSERT cash_count_line, đếm và sửa gọi trong cùng giao dịch |
 | `ket/dem` | `quay_hoac_chu_quan` | shop-facts.md §6.27; ADR-079; ADR-089 điểm 8 |
 | `ket/doi_soat_xong` | `chu_quan` | shop-facts.md U-073; ADR-089 Sửa đổi |
 | `hoadon/ghi` | `theo_cua_goi` | ADR-089 điểm 1; ADR-087 điểm 3 |

@@ -29,6 +29,7 @@ const (
 	CodePrepaymentAlreadyReceived   Code = "prepayment_already_received"
 	CodeOpeningFloatAlreadyDeclared Code = "opening_float_already_declared"
 	CodeCashCountAlreadyRecorded    Code = "cash_count_already_recorded"
+	CodeSaleDayNotReconciled        Code = "sale_day_not_reconciled"
 	CodeSaleDayReconciled           Code = "sale_day_reconciled"
 	CodeCashDayIncomplete           Code = "cash_day_incomplete"
 	CodeSaleDayAlreadyReconciled    Code = "sale_day_already_reconciled"
@@ -102,6 +103,7 @@ var statusOf = map[Code]int{
 	CodePrepaymentAlreadyReceived:   409,
 	CodeOpeningFloatAlreadyDeclared: 409,
 	CodeCashCountAlreadyRecorded:    409,
+	CodeSaleDayNotReconciled:        409,
 	CodeSaleDayReconciled:           409,
 	CodeCashDayIncomplete:           409,
 	CodeSaleDayAlreadyReconciled:    409,

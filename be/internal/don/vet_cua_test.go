@@ -16,6 +16,7 @@ import (
 	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/nguoi"
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5"
 )
 
 type caVet struct {
@@ -32,6 +33,33 @@ type dichVet struct {
 
 // Cùng một bảng cấp ca cho test HTTP và phép so tập thư mục: không có danh sách thứ hai.
 var cacCaVet = []caVet{
+	{"ket/sua_dem", func(t *testing.T, c canh) dichVet {
+		const day = "2031-05-20"
+		var line int64
+		if err := c.coVet(func(tx pgx.Tx) error {
+			var opening, counted int64
+			if err := tx.QueryRow(c.ctx, "INSERT INTO shop.opening_float(sale_date) VALUES ($1::date) RETURNING id", day).Scan(&opening); err != nil {
+				return err
+			}
+			if _, err := tx.Exec(c.ctx, "INSERT INTO shop.opening_float_line(opening_float_id,denomination_vnd,amount_vnd) VALUES ($1,1000,1000)", opening); err != nil {
+				return err
+			}
+			if err := tx.QueryRow(c.ctx, "INSERT INTO shop.cash_count(sale_date) VALUES ($1::date) RETURNING id", day).Scan(&counted); err != nil {
+				return err
+			}
+			if err := tx.QueryRow(c.ctx, "INSERT INTO shop.cash_count_line(cash_count_id,denomination_vnd,amount_vnd) VALUES ($1,1000,1000) RETURNING id", counted).Scan(&line); err != nil {
+				return err
+			}
+			_, err := tx.Exec(c.ctx, "INSERT INTO shop.reconciled_day(sale_date) VALUES ($1::date)", day)
+			return err
+		}); err != nil {
+			t.Fatal(err)
+		}
+		return dichVet{"cash_count_line", line, c.chu, "amount_vnd", float64(1000), float64(2000), func() {
+			status, body := c.goi(t, "PUT", "/sale-days/"+day+"/cash-count", c.chu, voi(cacXap([]xap{{1000, 2000}}), map[string]any{"reason": "kiểm vết sửa két"}))
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
 	{"ban/da_don", func(t *testing.T, c canh) dichVet {
 		ban, phien, don, tong := c.phienDangPhucVu(t, "vết dọn")
 		c.xong(t, don)

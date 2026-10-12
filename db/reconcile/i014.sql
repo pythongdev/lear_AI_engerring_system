@@ -11,7 +11,9 @@
 SELECT r.sale_date AS ngay, p.entry_count AS so_luot_tren_giay,
        p.entry_count - (SELECT count(*) FROM bill b WHERE b.paper_ledger_id = p.id) AS con_chua_nhap
 FROM reconciled_day r JOIN paper_ledger p ON p.sale_date = r.sale_date
-WHERE p.entry_count > (SELECT count(*) FROM bill b WHERE b.paper_ledger_id = p.id)
+-- ADR-096: chỉ dấu đang đứng nói ngày đã xong; dấu cũ đã mở lại là lịch sử.
+WHERE NOT EXISTS (SELECT 1 FROM reconciled_day_reopening o WHERE o.reconciled_day_id = r.id)
+  AND p.entry_count > (SELECT count(*) FROM bill b WHERE b.paper_ledger_id = p.id)
 
 -- @@ I-014/1 — khoản tiền đứng ở hơn một nguồn
 SELECT b.id AS hoa_don, b.table_session_id AS phien, b.sales_order_id AS don

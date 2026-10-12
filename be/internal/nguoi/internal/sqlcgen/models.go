@@ -292,12 +292,22 @@ type QrCode struct {
 }
 
 type ReconciledDay struct {
-	ID             int64
-	SaleDate       pgtype.Date
-	PersonID       int64
-	CreatedAt      pgtype.Timestamptz
-	GapVnd         int64
-	GapExplanation pgtype.Text
+	ID                      int64
+	SaleDate                pgtype.Date
+	PersonID                int64
+	CreatedAt               pgtype.Timestamptz
+	GapVnd                  int64
+	GapExplanation          pgtype.Text
+	PreviousReconciledDayID pgtype.Int8
+}
+
+type ReconciledDayReopening struct {
+	ID              int64
+	ReconciledDayID int64
+	SaleDate        pgtype.Date
+	Reason          string
+	PersonID        int64
+	CreatedAt       pgtype.Timestamptz
 }
 
 type RecordRevision struct {

@@ -15,6 +15,7 @@ func Routes(r *gin.Engine, svc *Service) {
 	r.POST("/opening-floats", h.khai)
 	r.POST("/sale-days/:sale_date/paper-ledger", h.khaiGiay)
 	r.POST("/cash-counts", h.dem)
+	r.PUT("/sale-days/:sale_date/cash-count", h.suaDem)
 	r.POST("/sale-days/:sale_date/reconciliation", h.ky)
 	r.GET("/sale-days/:sale_date/cash-reconciliation", h.doc)
 }
@@ -118,4 +119,34 @@ func (h handler) khaiGiay(c *gin.Context) {
 		return
 	}
 	apierr.JSON(c.Writer, http.StatusCreated, map[string]any{"paper_ledger_id": id, "sale_date": ngay, "entry_count": *p.EntryCount})
+}
+
+func (h handler) suaDem(c *gin.Context) {
+	ngay, ok := docNgay(c)
+	if !ok {
+		return
+	}
+	var p struct {
+		Lines  []Dong  `json:"lines"`
+		Reason *string `json:"reason"`
+	}
+	if !apierr.ReadJSON(c.Writer, c.Request, &p) {
+		return
+	}
+	yc := YeuCau{Lines: p.Lines}
+	total, err := yc.Kiem()
+	if err != nil {
+		apierr.WriteError(c.Writer, err)
+		return
+	}
+	if p.Reason == nil || strings.TrimSpace(*p.Reason) == "" {
+		apierr.Write(c.Writer, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "reason"})
+		return
+	}
+	id, err := h.svc.SuaSoDem(c.Request.Context(), nguoi(c), ngay, yc, strings.TrimSpace(*p.Reason))
+	if err != nil {
+		apierr.WriteError(c.Writer, err)
+		return
+	}
+	apierr.JSON(c.Writer, http.StatusOK, map[string]any{"cash_count_id": id, "sale_date": ngay, "total_vnd": total})
 }

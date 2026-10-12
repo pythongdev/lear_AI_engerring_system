@@ -29,7 +29,9 @@ Mỗi dòng tiền mới có người đã qua `authz.Run`. Ba cửa không lố
 | `tratruoc/nhan` | thêm prepayment | `quay` |
 | `hoadon/tra_lai` | gọi ghi hoàn và dùng trả trước | `quay` |
 | `ket/khai_dau_ket` | thêm opening_float và opening_float_line | `quay_hoac_chu_quan` |
-| `ket/dem` | thêm cash_count và cash_count_line | `quay_hoac_chu_quan` |
+| `ket/dem` | thêm cash_count; gọi ghi_dong_dem | `quay_hoac_chu_quan` |
+| `ket/sua_dem` | mở lại dấu, sửa amount_vnd của xấp; gọi ghi_dong_dem cho xấp mới | `chu_quan` |
+| `ket/ghi_dong_dem` | thêm cash_count_line trong giao dịch cửa gọi | `theo_cua_goi` |
 | `ket/doi_soat_xong` | thêm reconciled_day | `chu_quan` |
 | `hoadon/ghi` | thêm bill; gọi dùng trả trước nếu có phần trả trước | `theo_cua_goi` |
 | `hoadon/ghi_hoan` | thêm refund | `theo_cua_goi` |
@@ -98,7 +100,7 @@ Cửa ký xét theo thứ tự ADR-089 điểm 5:
 | Điều kiện chặn | Mã và status |
 |---|---|
 | Thiếu số đếm hoặc tiền đầu két | `cash_day_incomplete` — 409 |
-| Đã có dấu | `sale_day_already_reconciled` — 409 |
+| Đã có dấu đang đứng | `sale_day_already_reconciled` — 409 |
 | Còn lượt sổ giấy chưa nhập | `paper_entries_pending` — 409 |
 | Gap khác 0 và giải thích vắng/null/trắng | `gap_explanation_required` — 422 |
 
@@ -114,6 +116,28 @@ Khai sổ giấy, hai trường `paper_entries_declared` · `paper_entries_pendi
 bằng chứng chặn ký khi còn lượt giấy: [08-vet-va-nhap-bu.md](08-vet-va-nhap-bu.md)
 (P3-11, ADR-095, 2026-10-12). Cửa khai giữ khoá chung của ngày như cửa tiền.
 
+### Sửa số đếm, lịch sử mở lại và ký lại (T-146, 2026-10-12, ADR-096)
+
+`PUT /sale-days/{sale_date}/cash-count` nhận toàn bộ danh sách xấp như cửa đếm, cộng reason
+bắt buộc không trắng. Thứ tự: kiểm ngày và thân → quyền chủ quán → khoá riêng của ngày →
+chưa từng ký trả 409 sale_day_not_reconciled → mở lại dấu đang đứng nếu có → đặt số mới.
+Xấp cũ không được gửi về 0, không xoá; xấp mới thêm qua `ket/ghi_dong_dem`, lớp theo_cua_goi
+(Claude duyệt 2026-10-12). Cửa đếm lần đầu cũng gọi cửa này; UPDATE chỉ thuộc `ket/sua_dem`.
+Ngày đang mở lại sửa tiếp được, không thêm dòng mở lại trùng dấu. Mở lại, sửa và vết cùng
+một giao dịch; lỗi ghi làm lùi tất cả. Vết UPDATE thuộc từng xấp; vết INSERT xấp mới thuộc
+phiếu cash_count, giữ hai ảnh có danh sách xấp như ADR-081. Lý do vết là reason đã cắt hai đầu,
+người là chủ quán qua quyền. Gửi lại số giống hệt không sinh vết UPDATE giả (trigger hiện có).
+
+Đường đọc trả status là null khi chưa từng ký, reopened khi dấu cuối đã mở lại, reconciled
+khi còn dấu đang đứng; reconciliations là chuỗi từ dấu gốc tới mới nhất, gồm người, lúc,
+số lệch, giải thích và thông tin mở lại. Đường đọc giữ khoá chung của ngày trong giao dịch
+để các số và lịch sử thuộc cùng một lần sửa/ký. Cửa ký nối dấu mới vào dấu cuối đã mở lại;
+quy tắc giải thích khi lệch và còn lượt sổ giấy áp như lần đầu. `ngayban.DaKy` vẫn đọc
+ngày từng ký, nên các cửa tiền khác không mở theo số đếm.
+
+Các khoá mới của chuỗi và bảng mở lại ánh xạ internal: cửa giữ khoá riêng ngày, tự chọn dấu
+trước và ngày; người đã qua quyền, lý do do handler kiểm. Khoá dấu gốc giữ mã từ chối cũ.
+
 ## 5. Nhận việc — xét tên từ chối
 
 Mọi tên của bill, debt_collection, prepayment, prepayment_use, refund, opening_float,
@@ -127,7 +151,7 @@ opening_float_line, cash_count, cash_count_line và reconciled_day đã được
 | prepayment_use_balance_check | prepayment_balance_exceeded | không lấy quá số dư theo từng phương thức |
 | prepayment_one_per_order_key | prepayment_already_received | một khoản cho một đơn |
 | opening_float_one_per_day_key; cash_count_one_per_day_key | opening_float_already_declared; cash_count_already_recorded | mỗi ngày một lần khai/đếm |
-| reconciled_day_one_per_day_key | sale_day_already_reconciled | mỗi ngày một dấu |
+| reconciled_day_one_per_day_key | sale_day_already_reconciled | mỗi ngày một dấu gốc; ký lại nối dấu đã mở lại |
 | debt_collection_amounts_check | debt_overpaid | giữ chuỗi nợ giảm đúng và không âm |
 | Bốn tên kết thúc reconciled_day_locked_check | sale_day_reconciled | trigger khoá cả đầu và các dòng xấp của ngày đã ký |
 | Hai khoá ngoại từ reconciled_day về số đếm/đầu két; hai has_lines_check | cash_day_incomplete | dấu phải có cả hai số không rỗng |
@@ -164,7 +188,7 @@ Các câu hỏi nằm ở [99-unknowns.md](../99-unknowns.md); tài liệu này 
 | `TestQC14_HinhDuongTienTruocQuyen` | yêu cầu sai bị chặn trước đọc người/database |
 | `TestI012_QuayHoacChuQuanTuChoiNguoiNgoaiQuay` | authz.Run từ chối thiếu người và người ngoài quầy; nhận chủ quán/quầy |
 | `be/internal/don/duong_tien_test.go` qua `./scripts/be-check.sh` | một ngày đủ đường tiền ra 0đ; lỗi cài làm cửa và bộ đối chiếu cùng kêu; tiền và trạng thái cùng lùi; vết, quyền, chuỗi và ngày ký |
-| `./scripts/check-write-paths.sh --list` | mỗi ô ghi đúng một cửa, ba ô dùng chung có cửa riêng |
+| `./scripts/check-write-paths.sh --list` | mỗi ô ghi đúng một cửa, các ô dùng chung có cửa riêng |
 | `./scripts/check-api-contract.sh --list` | đường gọi, mã, ánh xạ, ma trận và Door bằng nhau |
 | `./scripts/gate.sh` | các cổng chung và bộ kiểm backend |
 
