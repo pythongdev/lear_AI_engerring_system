@@ -115,6 +115,7 @@ có câu trả lời mới từ người.
 | ADR-096 | **Chủ quán sửa số đếm két của ngày đã ký**: bảng `reconciled_day_reopening` (một lần mở lại một dấu, lý do bắt buộc); dấu mới nối vào dấu cũ đã mở lại qua `previous_reconciled_day_id`, mỗi ngày nhiều nhất một dấu đang đứng ở tầng 1; khoá của ADR-080 cho sửa số đếm khi dấu mới nhất đã mở lại, tiền đầu két vẫn khoá; cửa `ket/sua_dem` lớp `chu_quan`; cửa tiền khác vẫn coi ngày từng ký là đóng | Đã chốt 2026-10-12 (giao cho phiên, T-146; Claude thiết kế, Codex thi công) | — | T-146 · ADR-079 · ADR-080 · ADR-089 · U-074 · U-078 |
 | ADR-097 | **Realtime và dự phòng**: SSE chỉ mang tín hiệu *đọc lại* (`hello` · `changed` · `heartbeat` 10 giây), phát sau COMMIT của mọi cửa ghi; đường kéo 20 giây đọc cùng chỗ (`read_at`, `poll_interval_seconds`); quán còn nhìn thấy = còn một luồng quầy đang mở; đơn tự bấm tới lúc không luồng ⇒ ghi khoảng mù (bắt đầu không sớm hơn lúc khoảng trước khép) rồi từ chối; nút tạm dừng (`chu_quan`), báo mù và mở lại (`quay_hoac_chu_quan`) | Đã chốt 2026-10-12 (giao cho phiên, P3-12; Claude thiết kế, Codex thi công) | — | P3-12 · ADR-041 · ADR-045 · ADR-047 · ADR-078 · ADR-088 · U-043 · U-053 · U-061 |
 | ADR-098 | **Giảm giá cả đơn**: hai cột `bill.discount_vnd` · `discount_customer_name` (migration mới), phần trả + giảm = `due_vnd` (tổng dòng); doanh thu = `due_vnd − discount_vnd`; chỉ chủ quán nhập, ở ba cửa trao tiền, kèm tên khách; không trần, không lý do; gỡ `order_discount_undecided` | Đã chốt 2026-10-12 (giao cho phiên, T-175; lời U-058; Claude thiết kế, Codex thi công) | — | T-175 · ADR-089 · U-058 |
+| ADR-099 | **Cửa nhập bù hoá đơn từ sổ giấy**: `POST /sale-days/{sale_date}/paper-entries` (`quay_hoac_chu_quan`); từng món như đã bán; mang đi = `phone_preorder`, tại bàn = phiên mở và đóng ở `sold_at`; giá dựng lại ở mốc bán qua cùng hàm giá đọc vết sửa giá; đơn `completed`, không sinh việc bếp | Đã chốt 2026-10-13 (giao cho phiên, T-174; lời U-079; Claude thiết kế, Codex thi công) | — | T-174 · ADR-037 · ADR-086 · ADR-095 · ADR-098 · U-079 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -6758,3 +6759,40 @@ khách bắt buộc khi có giảm (lời nói *ghi tên khách được giảm 
 **Applies to:** `T-175`; `db/migrations/` · `db/tests/` · `db/reconcile/` · `be/internal/hoadon/`;
 `docs/product/2-db/04-luoc-do-duong-tien.md` · `07-thu-tu-migration.md` · `docs/product/3-be/06-duong-tien.md` ·
 `openapi.yaml`; **ADR-089** · **U-058**.
+
+### ADR-099 — Cửa nhập bù hoá đơn từ sổ giấy: gõ lại từng món như đã bán, giá dựng lại ở mốc bán, không sinh việc bếp
+
+**Trạng thái:** Đã chốt 2026-10-13, **giao cho phiên** (task `T-174`; lời **U-079** ở `master_plan/shop-facts.md` §6
+quy tắc 11, đóng ở `T-173`). Claude Code thiết kế, Codex thi công. Thực hiện điểm 5 của **ADR-095**.
+
+**Decision:**
+
+1. **Một đường gọi:** `POST /sale-days/{sale_date}/paper-entries`, lớp `quay_hoac_chu_quan` (người giữ sổ và nhập lại:
+   POS hoặc chủ quán). Thân: `paper_position` (1…số khai), `sold_at` (giờ trên giấy — thuộc `sale_date` theo múi giờ quán,
+   trước `now()`), `kind` = `table` (kèm `dining_table_id`) hoặc `takeaway` (kèm đúng các trường liên hệ của đơn hotline:
+   điện thoại, cách trao, giờ cần, địa chỉ khi giao — `I-022`), `items` cùng hình lượt gọi, phần trả như cửa trao tiền
+   (`cash_vnd` · `transfer_vnd` · `debt_vnd` + `debtor_name`/`debt_note`; giảm giá như **ADR-098**).
+2. **Mang đi trên giấy là đơn `phone_preorder`** (*cách đọc của phiên*: khi mất mạng khách đặt qua hotline và quán ghi
+   giấy cùng POS — §6 quy tắc 11, lời U-035; không kênh mang đi nào khác không gắn bàn mà người của quán nhập). **Tại bàn
+   là một phiên bàn của bàn ấy mở và đóng ở `sold_at`**, một đơn `staff_pos`.
+3. **Giá ở mốc bán, cùng một hàm giá** (`gia.Tinh`, **ADR-086**) đọc menu **tại một mốc**: dòng menu có vết sửa sau mốc
+   thì dùng bản trước của vết sửa sớm nhất sau mốc; dòng tạo sau mốc thì không có ở mốc; món ngừng bán sau mốc vẫn bán
+   được ở mốc. Đường hiện tại gọi hàm ấy với mốc `now()`. Không đường tính giá thứ hai (`grep` chứng minh).
+4. **Không sinh việc bếp, không đi vòng đời từng bước:** đơn tạo ở `completed`, phiên `closed`, bàn đã dọn ở `sold_at`;
+   hoá đơn `booked_at = sold_at`, `sale_date` của sổ, `paper_ledger_id` · `paper_entry_count` · `paper_position`, người là
+   người nhập bù. Một giao dịch; mọi câu sửa khai lý do vết *nhập bù sổ giấy*. Khoá chung của ngày như mọi cửa tiền.
+5. **Từ chối:** ngày chưa khai sổ ⇒ `paper_ledger_missing`; vị trí đã nhập ⇒ ánh xạ `bill_paper_position_key`; vị trí
+   ngoài 1…N ⇒ `invalid_request` field `paper_position`; `sold_at` ngoài ngày ⇒ `invalid_request` field `sold_at`; ngày đã
+   ký ⇒ `sale_day_reconciled`; bàn có phiên chồng lên `sold_at` ⇒ ánh xạ ràng buộc chồng phiên.
+
+**Why:** lời chủ quán *bán như nào nhập như thế* — từng món, bàn hoặc mang đi, giá lúc bán; doanh thu rơi vào ngày bán
+(**ADR-037**). Bếp đã làm trên giấy, sinh việc trạm là sinh việc ma. Vết sửa giá (`I-018`) đã giữ bản trước của mọi lần
+đổi, nên không cần bảng lịch sử giá.
+
+**Rejected alternatives:** *nhập số tiền tay* — trái `I-013` và lời; *giá hiện tại* — trái lời chọn; *bảng lịch sử giá
+riêng* — bản thứ hai của sự thật vết đã giữ; *nổ việc rồi đánh dấu đã ra bàn* — sinh việc trạm không ai làm.
+
+**Suy ra, không phải lời chủ quán:** mang đi = `phone_preorder`; phiên tại bàn mở và đóng cùng `sold_at`; dọn bàn ở `sold_at`.
+
+**Applies to:** `T-174`; `be/internal/hoadon/` · `be/internal/gia/` · `be/internal/don/` (nếu cần) ·
+`docs/product/3-be/08-vet-va-nhap-bu.md` · `openapi.yaml`; **ADR-037** · **ADR-086** · **ADR-095** · **ADR-098** · **U-079**.

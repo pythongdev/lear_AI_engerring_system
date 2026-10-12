@@ -88,7 +88,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-174 **Cửa nhập bù hoá đơn từ sổ giấy** — gõ lại từng món kèm bàn (phiên đã đóng) hoặc mang đi, ngày bán và mốc bán là của giấy, giá lúc bán trên giấy dựng lại từ vết sửa giá; người nhập bù là người đã qua quyền (lời **U-079**, `shop-facts.md` §6 quy tắc 11; lược đồ `paper_ledger` · `bill.paper_*` có sẵn, ADR-095 điểm 5) — L2 — Claude thiết kế, Codex thi công; trước `P3-13`
+- [ ] T-174 **Cửa nhập bù hoá đơn từ sổ giấy** — gõ lại từng món kèm bàn (phiên đã đóng) hoặc mang đi, ngày bán và mốc bán là của giấy, giá lúc bán trên giấy dựng lại từ vết sửa giá; người nhập bù là người đã qua quyền (lời **U-079**, `shop-facts.md` §6 quy tắc 11; lược đồ `paper_ledger` · `bill.paper_*` có sẵn, ADR-095 điểm 5) — **ADR-099** — L2 — Claude thiết kế, Codex thi công; sau `T-175`, trước `P3-13` · [chi tiết](#t-174)
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
 - [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi, không cột *ngày bán của két* khi `U-072` còn mở. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
@@ -1230,6 +1230,32 @@ Log ở scratchpad phiên `f9049835…/scratchpad/` (`loop1/`, `hA/` `hB/` `hC/`
   T-148 mở thêm `scripts/check-links.ignore`, một dòng ngoại lệ có hạn theo tiền lệ `fe/package.json`; gỡ ở lượt tạo file.
 
 [↑ đầu file](#top)
+
+<a id="t-174"></a>
+### T-174 — Cửa nhập bù hoá đơn từ sổ giấy
+
+**Nhận việc** — Claude Code, 2026-10-13 (viết trước, nhận sau khi `T-175` Done vì cùng gói `hoadon` và cần giảm giá).
+Mức **L2**: tiền, hàm giá, hợp đồng. Thiết kế: **ADR-099**. Luật: `master_plan/shop-facts.md` §6 quy tắc 11 (U-079).
+- *Phạm vi:* `be/internal/hoadon/` · `be/internal/gia/` · `be/internal/don/` (dựng phiên/đơn quá khứ, test) ·
+  `be/internal/apierr/` · `be/internal/authz/` (khai cửa) · `docs/product/3-be/` (`08-vet-va-nhap-bu.md`, `03-ham-gia.md`,
+  `02-vai-va-quyen.md`, `openapi.yaml`). Không migration (lược đồ sổ giấy có từ `P2-08`).
+- *Nghiệm thu:*
+  1. `TestYC08_NhapBuTaiBanQuaCua`: ngày khai 2 lượt; nhập lượt 1 tại bàn ⇒ một phiên đóng ở `sold_at`, một hoá đơn
+     `booked_at = sold_at`, `sale_date` của sổ, `created_at` hôm nay, người nhập bù là người bấm; không việc trạm nào;
+     *còn N* từ 2 về 1.
+  2. `TestYC08_NhapBuMangDiQuaCua`: lượt mang đi ⇒ đơn `phone_preorder` `completed` có liên hệ; thiếu điện thoại ⇒
+     `invalid_request` theo trường (`I-022`).
+  3. `TestI009_NhapBuTinhGiaLucBan`: đổi giá một thành phần sau `sold_at` ⇒ lượt nhập bù tính giá cũ, đơn mới tính giá
+     mới, cả hai qua cùng `gia.Tinh`; món ngừng bán sau `sold_at` vẫn nhập bù được; `grep` một đường tính giá.
+  4. `TestYC08_NhapBuTuChoi`: chưa khai sổ · vị trí trùng · vị trí ngoài 1…N · `sold_at` ngoài ngày · ngày đã ký · sai
+     lớp quyền ⇒ đúng mã của ADR-099 điểm 5.
+  5. `TestI021_NgayGiayNhapDuRa0dLech`: ngày mất điện khai N lượt, nhập đủ N qua cửa, đếm két ⇒ ký ngày được và lệch 0đ
+     (hết `paper_entries_pending`); bộ đối chiếu trên ngày ấy rỗng.
+  6. Test cũ không đổi khẳng định; hợp đồng nâng một bậc phụ; `./scripts/gate.sh` xanh (be-check, db-check).
+- *Kiểm chứng:* Claude chạy lại gate; cài lỗi trong worktree riêng: hàm giá đọc menu hiện tại thay vì ở mốc ⇒ (3) đỏ;
+  bỏ kiểm vị trí trùng ở tầng cửa và tầng 1 vẫn bắt ⇒ (4) vẫn đúng mã; hoá đơn lấy `now()` làm `booked_at` ⇒ (1) đỏ.
+
+**Bàn giao:** —
 
 <a id="t-175"></a>
 ### T-175 — Giảm giá cả đơn
