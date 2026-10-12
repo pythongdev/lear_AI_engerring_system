@@ -113,3 +113,15 @@ sql:
         package: sqlcgen
         out: internal/hoadon/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/ket/sql
+      - internal/ket/sql/dem
+      - internal/ket/sql/doi_soat_xong
+      - internal/ket/sql/khai_dau_ket
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/ket/internal/sqlcgen
+        sql_package: pgx/v5

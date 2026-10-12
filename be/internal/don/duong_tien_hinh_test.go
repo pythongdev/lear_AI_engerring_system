@@ -7,34 +7,20 @@ import (
 	"banhcuon/be/internal/tratruoc"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 )
 
-type khongDocNguoi struct{ t *testing.T }
-
-func (a khongDocNguoi) PersonID(*http.Request) (int64, bool) {
-	a.t.Fatal("hình sai mà đọc người")
-	return 0, false
-}
-
 // Không pool: mọi ca phải bị chặn trước quyền và trước database.
 func TestQC14_HinhDuongTienTruocQuyen(t *testing.T) {
-	mux := http.NewServeMux()
-	a := khongDocNguoi{t}
-	ket.Routes(mux, nil, a)
-	// Miền đã sang Gin gắn không qua middleware.GanNguoi: middleware đọc người cho mọi yêu cầu theo
-	// thiết kế (T-151), nên vế "không đọc người" chỉ còn chấm được ở miền ServeMux; pool nil vẫn bắt
-	// mọi lần chạm quyền hay database trước khi chặn hình (T-160).
+	// Ba miền đường tiền đã sang Gin (T-160…T-162), gắn không qua middleware.GanNguoi: middleware đọc
+	// người cho mọi yêu cầu theo thiết kế (T-151), nên vế "không đọc người" của bản ServeMux cũ không
+	// còn là thuộc tính của handler; pool nil vẫn bắt mọi lần chạm quyền hay database trước khi chặn hình.
 	r := gin.New()
 	tratruoc.Routes(r, tratruoc.NewService(nil))
 	hoadon.Routes(r, hoadon.NewService(nil))
-	r.NoRoute(func(c *gin.Context) {
-		c.Status(http.StatusOK)
-		mux.ServeHTTP(c.Writer, c.Request)
-	})
+	ket.Routes(r, ket.NewService(nil))
 	cases := []struct{ path, body, field string }{
 		{"/orders/1/handover", `{"transfer_vnd":1}`, "cash_vnd"},
 		{"/orders/1/delivered", `{"cash_vnd":-1,"transfer_vnd":1}`, "cash_vnd"},

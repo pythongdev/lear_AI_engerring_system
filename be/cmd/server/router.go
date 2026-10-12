@@ -36,9 +36,9 @@ func newRouter(pool *pgxpool.Pool, auth authz.Authenticator) *gin.Engine {
 	nguoi.Routes(r, nguoi.NewService(pool))
 	tratruoc.Routes(r, tratruoc.NewService(pool))
 	hoadon.Routes(r, hoadon.NewService(pool))
+	ket.Routes(r, ket.NewService(pool))
 	legacy := http.NewServeMux()
 	don.Routes(legacy, pool, auth)
-	ket.Routes(legacy, pool, auth)
 	sanxuat.Routes(legacy, pool, auth)
 	wrapLegacy := gin.WrapH(legacy)
 	r.NoRoute(func(c *gin.Context) {

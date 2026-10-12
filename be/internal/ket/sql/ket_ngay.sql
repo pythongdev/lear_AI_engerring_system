@@ -1,4 +1,5 @@
 -- ADR-089 điểm 6: bản đọc của cửa, giữ từng hạng tử bằng test so với pg_temp.ket_ngay.
+-- name: KetNgay :one
   WITH chi AS (
     SELECT paid_date AS ngay_khai, amount_vnd
     FROM staff_advance
@@ -35,4 +36,4 @@
   SELECT dem.ngay, dem.tien, dau.tien,
          coalesce((SELECT sum(h.tien) FROM hang_tu h WHERE h.ngay = dem.ngay), 0)::bigint
   FROM dem JOIN dau ON dau.ngay = dem.ngay
-  WHERE dem.ngay = $1::date
+  WHERE dem.ngay = $1::text::date;

@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-162 **Đổi stack · bước 06 — miền `ket`** — L2 — Codex, Claude duyệt, Claude cài lỗi thu sai · chờ T-161 · [chi tiết](#t-149)
 - [ ] T-163 **Đổi stack · bước 07 — miền `sanxuat`** (giữ API `pgx.Tx` cho `don`; be-check ≥ 2 lần) — L2 — Codex, Claude duyệt · chờ T-162 · [chi tiết](#t-149)
 - [ ] T-164 **Đổi stack · bước 07 — miền `don`** (be-check ≥ 2 lần) — L2 — Codex, Claude duyệt · chờ T-163 · [chi tiết](#t-149)
 - [ ] T-165 **Đổi stack · bước 08 — dọn**: gỡ `gin.WrapH` và khuôn route cũ khỏi Gate 1g, luật `-- name:` áp mọi miền, Claude siết `QC-13` · `QC-14` lần cuối — L1 — Codex, Claude duyệt · chờ T-164 · [chi tiết](#t-149)
@@ -107,6 +106,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-162 **Đổi stack · bước 06 — miền `ket`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; bốn đường lên Gin, ba cửa giữ mã và lớp; test hình trước quyền không còn `ServeMux` — L2 — Claude thi công (Codex hết hạn mức), cài lỗi và tích hợp; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-161 **Đổi stack · bước 06 — miền `hoadon`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; bảy đường lên Gin, chín cửa giữ mã và lớp, `Ghi` · `GhiHoan` giữ chữ ký — L2 — Claude thi công (Codex hết hạn mức), cài lỗi và tích hợp; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-160 **Đổi stack · bước 06 — miền `tratruoc`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; `KiemSoDu` · `Dung` · `PhanTien` giữ chữ ký cho `hoadon`; test hình trước quyền gắn miền Gin không `GanNguoi` — L2 — Codex bắt đầu (SQL + code sinh) rồi hết hạn mức, Claude thi công phần còn lại, cài lỗi và tích hợp; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-159 **Đổi stack · bước 05 — miền `nguoi`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; bốn đường lên Gin, lần khép vẫn trong `vongdoi.CoVet`; lỗi cài nhánh `counter_duty_changed` không bị bắt ⇒ **F-065** — L2 — Codex thi công (worktree `../lean_wt/T-159`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
@@ -910,6 +910,43 @@ duyệt độc lập**. Tích hợp bằng patch, `diff -r be` hai cây rỗng. 
   `payment_parts_mismatch` (hợp đồng ánh xạ) — tầng 1 bắt, không phải lỗ hổng; (C) thu nợ không trừ số đã trả ⇒ `TestYC10_ThuNoDanQuaCua` ·
   `TestI021_MotNgayBanGiaQuaCuaRa0dLech` đỏ; (D) `ket` import `hoadon/internal/sqlcgen` ⇒ `go build` đỏ.
 - *(4)* `./scripts/gate.sh` ở cây chính sau tích hợp: exit 0, không `FAIL`; `SKIP` nếu có là cổng không chạy, không tính là đạt.
+
+**T-162 — Acceptance và điểm Claude chốt trước thi công** (Claude, 2026-10-12). Mức **L2**: sai thì tiền đầu két hay số đếm ghi vào
+ngày khác, phép đối soát cộng sai một nguồn (`I-021`), ngày được ký khi còn sổ giấy chưa nhập hay khi lệch mà không giải thích, hoặc
+người không phải chủ quán ký được (`I-012`, ADR-080, ADR-089). `ket` có bốn đường, ba cửa (`khai_dau_ket` · `dem` lớp
+`quay_hoac_chu_quan`, `doi_soat_xong` lớp `chu_quan`); không miền production nào gọi vào. Thi công: **Claude**, worktree `../lean_wt/T-162`.
+Tên test kiểm ở nền `7c5632f` theo đường dẫn trong test.
+1. `TestI012_CuaTienCanNguoiCoTen` · bốn `TestI021_*` · `TestQC14_HinhDuongTienTruocQuyen`, cùng mười ba test `duong_tien_test.go`, bảy
+   `TestQC12_Router*` và toàn bộ be-check PASS trên PostgreSQL thật. Tập tên test trước/sau: `diff` rỗng.
+2. Test đổi chỉ ở phần dựng router: `don/don_test.go` (hàm `dung`) và đầu `TestQC14_HinhDuongTienTruocQuyen` — `ket` sang `gin.New()` không
+   `GanNguoi`. Đây là miền đường tiền cuối cùng, nên `ServeMux`, `NoRoute` và authenticator `khongDocNguoi` của test hết người dùng và được
+   bỏ; bảng ca và điều kiện kiểm không đổi (quyết định ở phiếu, mục *Test hình trước quyền*).
+3. Cây kết hợp: `handler.go` (Gin; ngày `sale_date` kiểm như `docNgay` — `YYYY-MM-DD` hợp lệ, không thì 400 field `sale_date`; thân JSON,
+   `Kiem` trước quyền; status 201/200 và thân giữ), `service.go` (ba `authz.Door` giữ mã, lớp; cửa ký: khoá riêng ngày → đọc số két →
+   đã ký ⇒ `sale_day_already_reconciled` → còn sổ giấy ⇒ `paper_entries_pending` → lệch mà không giải thích ⇒ `gap_explanation_required`
+   → ghi; `SoKet` · `YeuCau` · `Dong` giữ tên), `repository.go`. Bảy file SQL giữ câu và thư mục, thêm `-- name:` và `;`; câu ghi nguyên
+   văn, ép kiểu chỉ ở câu đọc (`ket_ngay.sql` · `giay.sql`). `check-sqlcgen` · Gate 1f · 1g · 1h PASS; `--list` trước/sau chỉ khác dòng đếm file.
+4. Lỗi cài trong worktree riêng, mỗi lần một lỗi: **đối soát cộng sai một nguồn** — `ket_ngay.sql` bỏ hạng tử nợ cũ thu bằng tiền mặt (sinh
+   lại) ⇒ test đối soát `I-021` đỏ; ký ngày lệch mà không đòi giải thích ⇒ test `I-021` đỏ; số đếm ghi đảo mệnh giá và số tiền ⇒ test số đếm
+   đỏ; miền khác import `ket/internal/sqlcgen` ⇒ `go build` đỏ. Lỗi nào không bị bắt thì ghi kết quả thật.
+5. `./scripts/gate.sh` ở cây tích hợp: exit 0, không `FAIL`; `SKIP` ghi là không chạy.
+
+**T-162 — Bàn giao** (2026-10-12). Thi công: **Claude Code** (worktree `../lean_wt/T-162`, nhánh `claude/T-162` từ `7c5632f`); **chưa ai
+duyệt độc lập**. Tích hợp bằng patch, `diff -r be` hai cây rỗng. File: `be/internal/ket/handler.go` · `service.go` · `repository.go` (mới;
+`ket.go` xoá) · bảy file SQL (thêm `-- name:`, `;`; câu ghi nguyên văn; `ket_ngay.sql` · `doi_soat_xong/giay.sql` đổi `$1::date` thành
+`$1::text::date` để tham số là chuỗi) · `internal/sqlcgen/` (sinh) · `be/sqlc.yaml` · `be/cmd/server/router.go` · `be/internal/don/don_test.go`
+(hàm `dung`) · `be/internal/don/duong_tien_hinh_test.go` (bỏ `ServeMux`, `NoRoute`, `khongDocNguoi` — hết người dùng; bảng ca không đổi).
+Log: scratchpad phiên `b0c518fc…/scratchpad/T-162-*`.
+- *(1)* `be-check` trên PostgreSQL thật (gate ở worktree, lượt đầu): mọi test PASS, không test nào FAIL. Tập tên test trước/sau: `diff` rỗng.
+- *(2)* Thứ tự cửa ký giữ (khoá riêng ngày → số két → đã ký → sổ giấy → giải thích → ghi). Câu ghi ký ngày nhận `pgtype.Date`: repository
+  đổi chuỗi đã kiểm ở handler. `check-sqlcgen` · Gate 1f · 1g · 1h PASS; `--list` trước/sau chỉ khác dòng đếm file (1f 227 → 235, 1g 125 → 133).
+- *(3)* Lỗi cài trong `../lean_wt/T-162-fault`, mỗi lần một lỗi rồi hoàn nguyên (`diff -r be` rỗng): (A) **đối soát cộng sai một nguồn** —
+  `ket_ngay.sql` bỏ hạng tử nợ cũ thu bằng tiền mặt, sinh lại ⇒ `TestI021_MotNgayBanGiaQuaCuaRa0dLech` đỏ (bộ đối chiếu `pg_temp.ket_ngay`
+  nói khác cửa); (B) ký ngày lệch không đòi giải thích ở Go ⇒ be-check **xanh** vì ràng buộc `reconciled_day_gap_explained_check` từ chối với
+  cùng mã `gap_explanation_required` — tầng 1 bắt, không phải lỗ hổng; (C) dòng số đếm ghi thêm một mệnh giá ⇒ ba `TestI021_*` đỏ;
+  (D) `hoadon` import `ket/internal/sqlcgen` ⇒ `go build` đỏ.
+- *(4)* `./scripts/gate.sh` ở cây chính sau tích hợp: exit 0, không `FAIL`; `SKIP` nếu có là cổng không chạy, không tính là đạt.
+- *Bước 06 xong:* ba miền đường tiền đã chuyển; `be/cmd/server/router.go` chỉ còn `don` · `sanxuat` sau `NoRoute` (bước 07, T-163 · T-164).
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·
