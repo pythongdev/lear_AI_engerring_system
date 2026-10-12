@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-159 **Đổi stack · bước 05 — miền `nguoi`** (miền thứ mười ba, sinh ở T-143) — L2 — Codex, Claude duyệt · chờ T-158 · [chi tiết](#t-149)
 - [ ] T-160 **Đổi stack · bước 06 — miền `tratruoc`** — L2 — Codex, Claude duyệt, Claude cài lỗi thu sai · chờ T-159 · [chi tiết](#t-149)
 - [ ] T-161 **Đổi stack · bước 06 — miền `hoadon`** — L2 — Codex, Claude duyệt, Claude cài lỗi thu sai · chờ T-160 · [chi tiết](#t-149)
 - [ ] T-162 **Đổi stack · bước 06 — miền `ket`** — L2 — Codex, Claude duyệt, Claude cài lỗi thu sai · chờ T-161 · [chi tiết](#t-149)
@@ -110,6 +109,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-159 **Đổi stack · bước 05 — miền `nguoi`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; bốn đường lên Gin, lần khép vẫn trong `vongdoi.CoVet`; lỗi cài nhánh `counter_duty_changed` không bị bắt ⇒ **F-065** — L2 — Codex thi công (worktree `../lean_wt/T-159`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-158 **Đổi stack · bước 05 — miền `vongdoi`** — `service.go` · `viec.go` · `repository.go` + `sqlcgen`, không `handler.go`; mọi API exported nhận `pgx.Tx` giữ chữ ký, bảy câu ghi giữ nguyên văn — L2 — Codex thi công (worktree `../lean_wt/T-158`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-157 **Đổi stack · bước 05 — miền `phien`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; `TongTien` giữ chữ ký `pgx.Tx` cho `hoadon` — L2 — Codex thi công (worktree `../lean_wt/T-157`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-156 **Đổi stack · bước 05 — miền `ban`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; `Doc` · `Ban` giữ chữ ký cho `don`, lần dọn vẫn trong `vongdoi.CoVet` — L2 — Codex thi công (worktree `../lean_wt/T-156`), Claude duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-149)
@@ -794,6 +794,39 @@ sandbox không Docker). Duyệt, cài lỗi, tích hợp: **Claude** — patch �
   vào `CapDon` ⇒ `TestI016_BangChuyenDonKhopVongDoi` đỏ; (B) `CoVet` bỏ khai lý do ⇒ hơn 70 test đỏ ở mọi miền (vết nghiêm từ chối);
   (C) đóng phiên bỏ câu `dong_ban` ⇒ `I-002` · `I-003` · `I-017` · `I-021` · `YC-01` · `YC-10` đỏ; (D) `don` import
   `vongdoi/internal/sqlcgen` ⇒ `go build` đỏ.
+- *(4)* `./scripts/gate.sh` ở cây chính sau tích hợp: exit 0, không `FAIL`; `SKIP` nếu có là cổng không chạy, không tính là đạt.
+
+**T-159 — Acceptance và điểm Claude chốt trước giao** (Claude, 2026-10-12). Mức **L2**: sai thì người không chọn tên vẫn vào quầy, hai
+người cùng đứng quầy, mốc đổi người mất vế *ai ra · ai vào* (`I-012`, YC-15, C36), hoặc lần khép mất vết (`I-018`). `nguoi` có bốn
+đường (`GET /people`, `GET /counter-duty/current`, `POST /counter-duty`, `POST /counter-duty/end`), ba cửa (`nguoi/vao_quay`
+`nguoi_quan`, `nguoi/roi_quay` `quay`, `nguoi/khep_quay` `theo_cua_goi`), không miền nào gọi hàm của nó. Tên test kiểm ở nền `66411c2`.
+1. Bảy test ở `nguoi/nguoi_test.go` (năm `TestYC15_*`, `TestI012_KhongChonTenThiKhongVaoQuay`, `TestI012_DanhSachTenDeChon`) và bảy
+   `TestQC12_Router*` PASS trên PostgreSQL thật, cùng toàn bộ be-check. Chỉ phần dựng router ở `nguoi_test.go` (hàm `dung`: Gin +
+   `middleware.GanNguoi(authz.ChonTen{})`) đổi. Tập tên test trước/sau: `diff` rỗng.
+2. Cây kết hợp: `handler.go` (bốn đường, status `201`/`200` của vào quầy giữ), `service.go` (ba `authz.Door` giữ mã, lớp; thứ tự khoá →
+   cùng người ⇒ 200 → đổi chen ⇒ `counter_duty_changed` → khép trong `vongdoi.CoVet` với lý do nguyên văn → thêm khoảng),
+   `repository.go`. Bốn file cửa giữ câu, thêm `-- name:` (tên khác nhau cho hai `khoa.sql`), `;`; hai câu đọc trong chuỗi Go thành
+   `sql/*.sql`. `be/sqlc.yaml` thêm mục `nguoi`. `check-sqlcgen` · Gate 1f · 1g · 1h PASS; `--list` hai gate trước/sau chỉ khác dòng đếm.
+3. Lỗi cài Claude chạy trong worktree riêng, mỗi lần một lỗi: bỏ từ chối `counter_duty_changed` ⇒ test YC-15 chen nhau đỏ; `roi_quay` hạ
+   xuống `NeedPerson` ⇒ `TestYC15_RoiQuayChiNguoiDangDung` đỏ; khép quầy bỏ `vongdoi.CoVet` ⇒ test vào quầy đỏ; miền khác import
+   `nguoi/internal/sqlcgen` ⇒ `go build` đỏ.
+4. `./scripts/gate.sh` ở cây tích hợp: exit 0, không `FAIL`; `SKIP` ghi là không chạy.
+
+**T-159 — Bàn giao** (2026-10-12). Thi công: **Codex** (`gpt-6-astra`, worktree `../lean_wt/T-159`, nhánh `codex/T-159` từ `66411c2`;
+sandbox không Docker). Duyệt, cài lỗi, tích hợp: **Claude** — patch áp lên `a7716b5` bằng `git apply`, `diff -r be` hai cây rỗng; một
+vòng. File: `be/internal/nguoi/handler.go` · `service.go` · `repository.go` (mới; `nguoi.go` xoá) · `sql/danh_sach.sql` · `hien_tai.sql`
+(mới) · bốn file cửa (thêm `-- name:`, `;`) · `internal/sqlcgen/` (sinh) · `be/sqlc.yaml` · `be/cmd/server/router.go` ·
+`be/internal/nguoi/nguoi_test.go` (chỉ hàm `dung`, import); owner do Claude: `work/findings.md` (**F-065**). Log: scratchpad phiên
+`b0c518fc…/scratchpad/T-159-*`.
+- *(1)* `be-check` trên PostgreSQL thật (gate ở worktree): bảy test `nguoi` và bảy `TestQC12_Router*` PASS, không test nào FAIL. Tập tên
+  test trước/sau: `diff` rỗng.
+- *(2)* Ba cửa giữ mã, lớp; status 201/200 của vào quầy giữ; mốc `pgtype.Timestamptz` đổi về `time.Time` ở repository.
+  `check-sqlcgen` · Gate 1f · 1g · 1h PASS; `--list` trước/sau chỉ khác dòng đếm file (1f 198 → 209, 1g 98 → 107).
+- *(3)* Lỗi cài trong `../lean_wt/T-159-fault`, mỗi lần một lỗi rồi hoàn nguyên (`diff -r be` rỗng): (A) bỏ từ chối
+  `counter_duty_changed` ⇒ **be-check xanh** — cài lại đúng lỗi trên code cũ `66411c2` (`../lean_wt/T-159-base`) cũng xanh: khoảng trống
+  có từ trước, ghi **F-065**; (B) `roi_quay` hạ xuống `NeedPerson` ⇒ be-check xanh (khoá dòng của cửa đã đòi người đang đứng quầy, cùng
+  403 `not_on_counter_duty`) nhưng **Gate 1g đỏ** *lớp quyền của nguoi/roi_quay: ma trận quay, code nguoi_quan* — bắt ở gate, không phải
+  lỗ hổng; (C) khép quầy bỏ `vongdoi.CoVet` ⇒ năm `TestYC15_*` đỏ; (D) `ban` import `nguoi/internal/sqlcgen` ⇒ `go build` đỏ.
 - *(4)* `./scripts/gate.sh` ở cây chính sau tích hợp: exit 0, không `FAIL`; `SKIP` nếu có là cổng không chạy, không tính là đạt.
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt

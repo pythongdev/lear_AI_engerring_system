@@ -16,9 +16,11 @@ import (
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
+	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/nguoi"
 	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/testhelper"
+	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -47,9 +49,10 @@ func dung(t *testing.T) khung {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { owner.Close(context.Background()) })
-	mux := http.NewServeMux()
-	nguoi.Routes(mux, pool, authz.ChonTen{})
-	srv := httptest.NewServer(mux)
+	r := gin.New()
+	r.Use(middleware.GanNguoi(authz.ChonTen{}))
+	nguoi.Routes(r, nguoi.NewService(pool))
+	srv := httptest.NewServer(r)
 	t.Cleanup(srv.Close)
 	var batDau time.Time
 	if err := owner.QueryRow(ctx, "SELECT clock_timestamp()").Scan(&batDau); err != nil {

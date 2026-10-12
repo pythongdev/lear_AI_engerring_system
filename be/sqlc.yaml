@@ -73,3 +73,15 @@ sql:
         package: sqlcgen
         out: internal/vongdoi/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/nguoi/sql
+      - internal/nguoi/sql/vao_quay
+      - internal/nguoi/sql/roi_quay
+      - internal/nguoi/sql/khep_quay
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/nguoi/internal/sqlcgen
+        sql_package: pgx/v5

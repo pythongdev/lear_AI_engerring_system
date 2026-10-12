@@ -4803,3 +4803,27 @@ cài chứng minh: nhánh `ky=true` dùng khoá chung ⇒ test đỏ.
 
 **Status:**
 Open
+
+### F-065 — Nhánh từ chối `counter_duty_changed` của cửa vào quầy không có test: bỏ nó mà be-check vẫn xanh
+
+**Problem:**
+Cửa `nguoi/vao_quay` từ chối `counter_duty_changed` khi khoảng đang mở bắt đầu ở chính mốc của giao dịch này
+(`started_at >= now()` — một người khác vừa vào quầy chen trong cùng mốc). Đo 2026-10-12 (`T-159`, Claude Code, worktree lỗi cài
+riêng): đổi `if changed` thành `if false && changed` ⇒ `be-check` **xanh**, cả trên code mới lẫn code cũ trước chuyển stack
+(`66411c2`). `TestYC15_NamNguoiVaoCungLucVanMotChuoiMoc` cho năm người vào chen nhau nhưng các giao dịch nối đuôi nhau qua khoá
+dòng, nên không lần nào thấy `started_at >= now()`.
+
+**Impact:**
+Một lần sửa sau bỏ hay làm sai nhánh này thì một người có thể khép khoảng của người vừa vào trong cùng mốc, để lại một khoảng dài
+0 và một mốc *ai ra · ai vào* không ai thực sự đổi ca (YC-15, C36, `I-012`). Gate không báo gì.
+
+**Decision / Fix:**
+Chưa sửa — `T-159` chỉ chuyển stack, giữ nguyên hành vi. Đề nghị: một test dựng sẵn khoảng đang mở có `started_at` bằng mốc giao
+dịch (đặt bằng tài khoản owner trong cùng giao dịch, hoặc đồng hồ cố định như `ngayban.DongHo`) rồi gọi vào quầy với người khác;
+kỳ vọng 409 `counter_duty_changed` và không dòng nào đổi. Lỗi cài chứng minh: nhánh bị bỏ ⇒ test đỏ.
+
+**Related task:**
+`T-159` (đo) · YC-15 · **F-064** (cùng họ: nhánh chen nhau không có test)
+
+**Status:**
+Open
