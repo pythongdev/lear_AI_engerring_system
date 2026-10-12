@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-157 **Đổi stack · bước 05 — miền `phien`** — L2 — Codex, Claude duyệt · chờ T-156 · [chi tiết](#t-149)
 - [ ] T-158 **Đổi stack · bước 05 — miền `vongdoi`** (giữ API nhận `pgx.Tx`, lớp `theo_cua_goi`) — L2 — Codex, Claude duyệt · chờ T-157 · [chi tiết](#t-149)
 - [ ] T-159 **Đổi stack · bước 05 — miền `nguoi`** (miền thứ mười ba, sinh ở T-143) — L2 — Codex, Claude duyệt · chờ T-158 · [chi tiết](#t-149)
 - [ ] T-160 **Đổi stack · bước 06 — miền `tratruoc`** — L2 — Codex, Claude duyệt, Claude cài lỗi thu sai · chờ T-159 · [chi tiết](#t-149)
@@ -108,6 +107,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-157 **Đổi stack · bước 05 — miền `phien`** — L2 — Codex thi công (worktree `../lean_wt/T-157`), Claude duyệt · [chi tiết](#t-149)
 
 <a id="done"></a>
 ## Done
@@ -728,6 +728,24 @@ hàm `dung`). Log: scratchpad phiên `b0c518fc…/scratchpad/T-156-*`.
   `ban/internal/sqlcgen` ⇒ `go build` đỏ.
 - *(4)* `./scripts/gate.sh` ở cây chính sau tích hợp: exit 0, không `FAIL`; hai `SKIP` là cổng không chạy vì không đổi gì thuộc
   chúng (Gate 1d — không tài liệu pha nào đổi; `db` — không gì phía database đổi), không tính là đạt. be-check PASS.
+
+**T-157 — Acceptance và điểm Claude chốt trước giao** (Claude, 2026-10-12). Mức **L2**: sai thì số tiền phải trả của phiên lệch
+(`I-002` — cộng nhầm đơn đã huỷ, `I-004`), người không ở quầy tính tiền được (`I-012`), hoặc phiên chuyển trạng thái ngoài bảng (`I-016`).
+`phien` có một cửa (`phien/tinh_tien`, `quay`) và hàm exported `TongTien(ctx, tx, id)` mà `hoadon/hoadon.go` gọi trong giao dịch của
+cửa đóng. Tên test kiểm ở nền `55ada1b` bằng đường `bill-request` trong test.
+1. `TestI002_BanGhepGoiVaoPhienCuaNhom` · `TestI002_GoiThemLucChoThanhToanVaoCungPhien` · `TestI006_SuatDemVeThuocPhienBan` ·
+   `TestI012_CuaTaiBanPhaiDungQuay` · `TestI016_ChuyenNgoaiBangBiTuChoi` · `TestI016_ChuyenTrangThaiDeLaiVet` ·
+   `TestI016_KhachQRGoiThemLucChoThanhToan` · bốn `TestI017_*` · `TestI004_HuyDonHoanThanhGanBanRutKhoiTienCuaPhien` ·
+   `TestI020_DaRaBanTheoSoCaiTungThuChoMotBan` · `TestQC12_DuongGoiCuaLuongTaiBan` và bảy `TestQC12_Router*` PASS trên PostgreSQL thật,
+   cùng toàn bộ be-check. Chỉ hàm `dung` của `don/don_test.go` đổi. Tập tên test trước/sau: `diff` rỗng.
+2. `phien` dùng cây kết hợp: `handler.go` (Gin, `POST /table-sessions/:table_session_id/bill-request`), `service.go` (`TinhTien` giữ
+   `NeedCounter`, `authz.Run`; thứ tự khoá phiên → `vongdoi.ChuyenPhien(… "awaiting_payment")` → `TongTien`; `TongTien` giữ chữ ký
+   `pgx.Tx`), `repository.go`; `sql/tinh_tien/khoa.sql` thêm `-- name:`, `;`; câu cộng tiền thành `sql/*.sql`. `hoadon` không đổi.
+   `check-sqlcgen` · Gate 1f · 1g · 1h PASS; `--list` hai gate trước/sau chỉ khác dòng đếm file đã soát.
+3. Lỗi cài Claude chạy trong worktree riêng, mỗi lần một lỗi: `TongTien` bỏ vế loại đơn đã huỷ (sinh lại) ⇒
+   `TestI004_HuyDonHoanThanhGanBanRutKhoiTienCuaPhien` đỏ; cửa hạ xuống `NeedPerson` ⇒ `TestI012_CuaTaiBanPhaiDungQuay` đỏ; bỏ
+   `vongdoi.ChuyenPhien` ⇒ test `I-016`/`I-017` đỏ; `hoadon` import `phien/internal/sqlcgen` ⇒ `go build` đỏ.
+4. `./scripts/gate.sh` ở cây tích hợp: exit 0, không `FAIL`; `SKIP` ghi là không chạy.
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·
