@@ -9,13 +9,19 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"sort"
 
 	"banhcuon/be/internal/apierr"
+	"banhcuon/be/internal/platform/postgres"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // Querier là thứ đọc được — pool hoặc giao dịch đang mở của cửa.
 type Querier interface {
+	Exec(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error)
+	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
 	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
 }
 
@@ -71,31 +77,6 @@ type nhomMenu struct {
 	Options               []luaChonMenu `json:"options"`
 }
 
-// Một câu đọc lấy cả tên, thành phần, nhóm và lựa chọn: không trộn hai phiên bản của một
-// dòng menu khi chủ quán sửa giữa các lần đọc. Mốc ngừng bán là now() của giao dịch.
-const docNhom = `SELECT COALESCE(jsonb_agg(jsonb_build_object(
- 'option_group_id', g.id, 'option_group_name', g.name,
- 'prerequisite_option_ids', (SELECT COALESCE(jsonb_agg(p.menu_option_id ORDER BY p.menu_option_id), '[]'::jsonb)
-   FROM option_group_prerequisite p WHERE p.option_group_id = g.id),
- 'options', (SELECT COALESCE(jsonb_agg(jsonb_build_object(
-   'menu_option_id', o.id, 'option_name', o.name, 'is_default', o.is_default) ORDER BY o.id), '[]'::jsonb)
-   FROM menu_option o WHERE o.option_group_id = g.id)) ORDER BY g.id), '[]'::jsonb)
- FROM menu_item_option_group ig JOIN option_group g ON g.id = ig.option_group_id
- WHERE ig.menu_item_id = $1`
-
-const docMon = `SELECT m.name, COALESCE(m.discontinued_at <= now(), false),
- (SELECT COALESCE(jsonb_agg(jsonb_build_object(
-   'menu_component_id', c.id, 'component_name', c.name, 'quantity', ic.quantity,
-   'takes_filling', c.takes_filling, 'base_price_vnd', c.base_price_vnd) ORDER BY ic.id), '[]'::jsonb)
-  FROM menu_item_component ic JOIN menu_component c ON c.id = ic.menu_component_id
-  WHERE ic.menu_item_id = m.id),
- (` + docNhom + `),
- (SELECT COALESCE(jsonb_agg(jsonb_build_object(
-   'menu_option_id', o.id, 'option_group_id', g.id, 'option_group_name', g.name,
-   'option_name', o.name, 'surcharge_vnd', o.surcharge_vnd) ORDER BY o.id), '[]'::jsonb)
-  FROM menu_option o JOIN option_group g ON g.id = o.option_group_id WHERE o.id = ANY($2::bigint[]))
- FROM menu_item m WHERE m.id = $1`
-
 type luaChonDaDoc struct {
 	LuaChon
 	OptionGroupID int64 `json:"option_group_id"`
@@ -118,7 +99,8 @@ func Tinh(ctx context.Context, q Querier, lines []DongYeuCau) (KetQua, error) {
 		d := Dong{MenuItemID: yc.MenuItemID, Quantity: yc.Quantity, Options: []LuaChon{}}
 		var ngung bool
 		var tpJSON, nhomJSON, chonJSON []byte
-		err := q.QueryRow(ctx, docMon, yc.MenuItemID, yc.OptionIDs).Scan(&d.ItemName, &ngung, &tpJSON, &nhomJSON, &chonJSON)
+		var err error
+		d.ItemName, ngung, tpJSON, nhomJSON, chonJSON, err = newRepository(q).docMon(ctx, yc.MenuItemID, yc.OptionIDs)
 		if errors.Is(err, pgx.ErrNoRows) {
 			return tuChoi(apierr.CodeMenuItemNotFound, "menu_item_id")
 		}
@@ -234,4 +216,87 @@ func nhan(a, b int64) (int64, error) {
 		return 0, fmt.Errorf("gia: tích vượt miền số nguyên đồng")
 	}
 	return a * b, nil
+}
+
+type Service struct{ pool *pgxpool.Pool }
+
+func NewService(pool *pgxpool.Pool) *Service { return &Service{pool: pool} }
+func (s *Service) TinhThu(ctx context.Context, lines []DongYeuCau) (KetQua, error) {
+	var out KetQua
+	err := postgres.InTx(ctx, s.pool, func(tx pgx.Tx) error {
+		var err error
+		out, err = Tinh(ctx, tx, lines)
+		return err
+	})
+	return out, err
+}
+
+type menuKetQua struct {
+	Items []monMenu `json:"items"`
+}
+
+type giaMenu struct {
+	OptionIDs    []int64 `json:"option_ids"`
+	UnitPriceVnd int64   `json:"unit_price_vnd"`
+}
+
+type monMenu struct {
+	MenuItemID   int64      `json:"menu_item_id"`
+	ItemName     string     `json:"item_name"`
+	OptionGroups []nhomMenu `json:"option_groups"`
+	Prices       []giaMenu  `json:"prices"`
+}
+
+func (s *Service) DocMenu(ctx context.Context) (menuKetQua, error) {
+	out := menuKetQua{Items: []monMenu{}}
+	err := postgres.InTx(ctx, s.pool, func(tx pgx.Tx) error {
+		repo := newRepository(tx)
+		items, err := repo.docMonDangBan(ctx)
+		if err != nil {
+			return err
+		}
+		for _, m := range items {
+			raw, err := repo.docNhom(ctx, m.MenuItemID)
+			if err != nil {
+				return err
+			}
+			if err := json.Unmarshal(raw, &m.OptionGroups); err != nil {
+				return err
+			}
+			// Mỗi nhóm ứng viên: không chọn, hoặc chọn một lựa chọn. Tinh là chỗ duy nhất quyết
+			// nhóm có mặt và tổ hợp có hợp lệ không; không mang một bản luật khác vào đường menu.
+			if err := keGia(ctx, tx, &m, 0, nil); err != nil {
+				return err
+			}
+			out.Items = append(out.Items, m)
+		}
+		return nil
+	})
+	return out, err
+}
+
+func keGia(ctx context.Context, q Querier, m *monMenu, nhom int, ids []int64) error {
+	if nhom == len(m.OptionGroups) {
+		chon := append([]int64{}, ids...)
+		sort.Slice(chon, func(i, j int) bool { return chon[i] < chon[j] })
+		kq, err := Tinh(ctx, q, []DongYeuCau{{MenuItemID: m.MenuItemID, Quantity: 1, OptionIDs: chon}})
+		if err != nil {
+			var e apierr.Error
+			if errors.As(err, &e) && e.Code == apierr.CodeOptionCombinationInvalid {
+				return nil
+			}
+			return err
+		}
+		m.Prices = append(m.Prices, giaMenu{OptionIDs: chon, UnitPriceVnd: kq.Lines[0].UnitPriceVnd})
+		return nil
+	}
+	if err := keGia(ctx, q, m, nhom+1, ids); err != nil {
+		return err
+	}
+	for _, o := range m.OptionGroups[nhom].Options {
+		if err := keGia(ctx, q, m, nhom+1, append(ids, o.MenuOptionID)); err != nil {
+			return err
+		}
+	}
+	return nil
 }

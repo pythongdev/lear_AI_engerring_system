@@ -1,0 +1,21 @@
+-- name: DocMon :one
+SELECT m.name, COALESCE(m.discontinued_at <= now(), false)::boolean AS ngung,
+ (SELECT COALESCE(jsonb_agg(jsonb_build_object(
+   'menu_component_id', c.id, 'component_name', c.name, 'quantity', ic.quantity,
+   'takes_filling', c.takes_filling, 'base_price_vnd', c.base_price_vnd) ORDER BY ic.id), '[]'::jsonb)
+  FROM menu_item_component ic JOIN menu_component c ON c.id = ic.menu_component_id
+  WHERE ic.menu_item_id = m.id)::jsonb AS thanh_phan,
+ (SELECT COALESCE(jsonb_agg(jsonb_build_object(
+ 'option_group_id', g.id, 'option_group_name', g.name,
+ 'prerequisite_option_ids', (SELECT COALESCE(jsonb_agg(p.menu_option_id ORDER BY p.menu_option_id), '[]'::jsonb)
+   FROM option_group_prerequisite p WHERE p.option_group_id = g.id),
+ 'options', (SELECT COALESCE(jsonb_agg(jsonb_build_object(
+   'menu_option_id', o.id, 'option_name', o.name, 'is_default', o.is_default) ORDER BY o.id), '[]'::jsonb)
+   FROM menu_option o WHERE o.option_group_id = g.id)) ORDER BY g.id), '[]'::jsonb)
+ FROM menu_item_option_group ig JOIN option_group g ON g.id = ig.option_group_id
+ WHERE ig.menu_item_id = $1)::jsonb AS nhom,
+ (SELECT COALESCE(jsonb_agg(jsonb_build_object(
+   'menu_option_id', o.id, 'option_group_id', g.id, 'option_group_name', g.name,
+   'option_name', o.name, 'surcharge_vnd', o.surcharge_vnd) ORDER BY o.id), '[]'::jsonb)
+  FROM menu_option o JOIN option_group g ON g.id = o.option_group_id WHERE o.id = ANY($2::bigint[]))::jsonb AS lua_chon
+ FROM menu_item m WHERE m.id = $1;

@@ -21,6 +21,7 @@ import (
 	"banhcuon/be/internal/gia"
 	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/testhelper"
+	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -58,9 +59,9 @@ func dung(t *testing.T) khung {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { owner.Close(context.Background()) })
-	mux := http.NewServeMux()
-	gia.Routes(mux, pool)
-	srv := httptest.NewServer(mux)
+	r := gin.New()
+	gia.Routes(r, gia.NewService(pool))
+	srv := httptest.NewServer(r)
 	t.Cleanup(srv.Close)
 	k := khung{ctx: ctx, srv: srv, owner: owner}
 	k.napMenuThat(t)

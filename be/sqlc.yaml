@@ -23,3 +23,12 @@ sql:
         package: sqlcgen
         out: internal/qr/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/gia/sql
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/gia/internal/sqlcgen
+        sql_package: pgx/v5
