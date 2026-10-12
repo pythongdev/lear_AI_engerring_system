@@ -4801,8 +4801,13 @@ cài chứng minh: nhánh `ky=true` dùng khoá chung ⇒ test đỏ.
 **Related task:**
 `T-155` (đo) · ADR-089 · **F-062** (khuôn test chen nhau)
 
+2026-10-12 (`T-171`, Claude Code): đã sửa — test `TestI021_TienChenLucKyNgayKhongLotVaoSoDaKy` dựng tất định thay vì vòng lặp:
+chủ lược đồ giữ `LOCK TABLE shop.prepayment IN SHARE MODE`, cửa nhận trả trước dừng ở câu thêm (đã giữ khoá chung, đã thấy ngày chưa
+ký), chủ quán ký cùng ngày, test đợi tới khi lần ký đợi khoá `advisory` (đọc `pg_stat_activity`) rồi nhả. Đúng ⇒ số đã ký = số két sau
+cùng = `−` khoản trả trước. Lỗi cài (worktree `../lean_wt/T-171-fault`): nhánh `ky=true` dùng khoá chung ⇒ test đỏ; gỡ ⇒ xanh.
+
 **Status:**
-Open
+Fixed
 
 ### F-065 — Nhánh từ chối `counter_duty_changed` của cửa vào quầy không có test: bỏ nó mà be-check vẫn xanh
 

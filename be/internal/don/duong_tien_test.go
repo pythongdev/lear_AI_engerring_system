@@ -910,6 +910,91 @@ func TestI021_CuaDongNgayTuChoiNgayChuaXong(t *testing.T) {
 	}
 }
 
+// --- I-021 · ADR-089 điểm 3: cửa ký giữ khoá RIÊNG của ngày, nên không khoản tiền nào lọt vào số đã ký (F-064) ---
+
+// choDen chờ tới khi đúng một yêu cầu đang đợi khoá loại `cho` (`relation` · `advisory`) mà câu chạy chứa `cau`
+// (rỗng ⇒ mọi câu), hoặc tới khi `xong` đóng. Đọc pg_stat_activity trên kết nối chủ lược đồ, mỗi lần một giao dịch.
+func (n tien) choDen(t *testing.T, cho, cau string, xong <-chan struct{}) bool {
+	t.Helper()
+	for han := time.Now().Add(15 * time.Second); time.Now().Before(han); time.Sleep(20 * time.Millisecond) {
+		select {
+		case <-xong:
+			return false
+		default:
+		}
+		if n.docSo(t, `SELECT count(*) FROM pg_stat_activity WHERE wait_event_type = 'Lock' AND wait_event = $1
+			AND query LIKE '%' || $2 || '%'`, cho, cau) > 0 {
+			return true
+		}
+	}
+	t.Fatalf("15 giây không thấy yêu cầu nào đợi khoá %s (%q)", cho, cau)
+	return false
+}
+
+// Dựng tất định (T-171), không trông vào lịch chạy: chủ lược đồ giữ khoá bảng prepayment, nên cửa nhận trả trước
+// dừng ở câu thêm SAU khi đã giữ khoá chung của ngày và đã thấy ngày chưa ký. Chủ quán bấm ký đúng lúc ấy. Đúng
+// thì lần ký đợi cửa tiền xong rồi mới tính số; khoá chung ở cửa ký thì lần ký tính số thiếu khoản trả trước, rồi
+// khoản ấy vẫn ghi vào ngày đã ký — số đã ký lệch số két thật mà không ai sửa được nữa.
+func TestI021_TienChenLucKyNgayKhongLotVaoSoDaKy(t *testing.T) {
+	n := dungTien(t)
+	n.datNgay(t, 28)
+	dau := []xap{{10000, 100000}}
+	canDat(t, n.khaiDauKet(t, n.quay, dau), http.StatusCreated)
+	canDat(t, n.demKet(t, n.quay, dau), http.StatusCreated)
+	d, tong := n.donLay(t)
+	tt := nghin(tong / 2)
+	if tt < 1000 {
+		t.Fatalf("tổng đơn %d quá nhỏ cho test", tong)
+	}
+
+	giu, err := pgx.Connect(n.ctx, testhelper.OwnerDSN(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer giu.Close(context.Background())
+	tx, err := giu.Begin(n.ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer tx.Rollback(context.Background())
+	if _, err := tx.Exec(n.ctx, "LOCK TABLE shop.prepayment IN SHARE MODE"); err != nil {
+		t.Fatal(err)
+	}
+
+	var tra, ky traLoi
+	traXong, kyXong := make(chan struct{}), make(chan struct{})
+	go func() { defer close(traXong); tra = n.nhanTraTruoc(t, n.quay, d, tt, 0) }()
+	if !n.choDen(t, "relation", "INSERT INTO prepayment", traXong) {
+		t.Fatalf("cửa nhận trả trước xong trước khi bị chặn: %d %v", tra.status, tra.body)
+	}
+	go func() {
+		defer close(kyXong)
+		ky = n.doiSoatGiaiThich(t, n.chu, 28, "test: trả trước chen lúc ký")
+	}()
+	// Đúng: lần ký đợi khoá riêng của ngày. Khoá chung ở cửa ký: lần ký xong luôn — vẫn đi tiếp để test nói rõ hậu quả.
+	kyCho := n.choDen(t, "advisory", "", kyXong)
+	if err := tx.Commit(n.ctx); err != nil {
+		t.Fatal(err)
+	}
+	<-traXong
+	<-kyXong
+	canDat(t, tra, http.StatusCreated)
+	canDat(t, ky, http.StatusCreated)
+	daKy := ky.so(t, "gap_vnd")
+	sauCung := n.docDoiSoat(t, n.chu, 28)
+	canDat(t, sauCung, http.StatusOK)
+	if daKy != sauCung.so(t, "gap_vnd") {
+		t.Fatalf("số lệch đã ký %d nhưng két bây giờ lệch %d: khoản trả trước %d lọt vào ngày đã ký (lần ký có đợi khoá: %v)",
+			daKy, sauCung.so(t, "gap_vnd"), tt, kyCho)
+	}
+	if daKy != -tt {
+		t.Fatalf("lần ký phải thấy khoản trả trước %d: số lệch đã ký %d", tt, daKy)
+	}
+	if !kyCho {
+		t.Fatal("lần ký không đợi khoá riêng của ngày trong lúc một cửa tiền còn giữ khoá chung")
+	}
+}
+
 // --- mọi cửa ghi tiền cần một người; cửa lớp quay cần người đang đứng quầy -----------------------
 
 func TestI012_CuaTienCanNguoiCoTen(t *testing.T) {

@@ -102,10 +102,12 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-172 **Đóng F-065: test cho nhánh `counter_duty_changed` của cửa vào quầy** — khoảng đang mở bắt đầu sau mốc giao dịch ⇒ 409, không dòng nào đổi — L1 — Claude Code · [chi tiết](#t-171)
 
 <a id="done"></a>
 ## Done
 
+- [x] T-171 **Đóng F-064: test chen nhau cho khoá riêng của cửa ký ngày** — `TestI021_TienChenLucKyNgayKhongLotVaoSoDaKy`, dựng tất định bằng khoá bảng của chủ lược đồ; lỗi cài khoá chung ⇒ đỏ — L1 — Claude Code — 2026-10-12 · [chi tiết](#t-171)
 - [x] T-162 **Đổi stack · bước 06 — miền `ket`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; bốn đường lên Gin, ba cửa giữ mã và lớp; test hình trước quyền không còn `ServeMux` — L2 — Claude thi công (Codex hết hạn mức), cài lỗi và tích hợp; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-161 **Đổi stack · bước 06 — miền `hoadon`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; bảy đường lên Gin, chín cửa giữ mã và lớp, `Ghi` · `GhiHoan` giữ chữ ký — L2 — Claude thi công (Codex hết hạn mức), cài lỗi và tích hợp; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-160 **Đổi stack · bước 06 — miền `tratruoc`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; `KiemSoDu` · `Dung` · `PhanTien` giữ chữ ký cho `hoadon`; test hình trước quyền gắn miền Gin không `GanNguoi` — L2 — Codex bắt đầu (SQL + code sinh) rồi hết hạn mức, Claude thi công phần còn lại, cài lỗi và tích hợp; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
@@ -343,6 +345,37 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-171"></a>
+### T-171 · T-172 — Hai nhánh chen nhau không có test (F-064 · F-065)
+
+**Yêu cầu:** chủ repo, 2026-10-12 (*"spawn agent hoặc làm luôn trong session này f-064 và f-065"*). Claude làm trong phiên, không
+giao Codex. Mức **L1** mỗi task: chỉ thêm test, không đổi code chạy; một commit mỗi task. Hai finding đo ở T-155 · T-159 (lỗi cài
+không bị bắt). Dựng tất định, không dựa vào may rủi lịch chạy (khác khuôn vòng lặp của F-062).
+
+**T-171 — Acceptance (viết trước, 2026-10-12):**
+1. Test mới `TestI021_TienChenLucKyNgayKhongLotVaoSoDaKy` (`be/internal/don/duong_tien_test.go`): ngày 28 có tiền đầu két và số đếm khớp;
+   một kết nối chủ lược đồ giữ `LOCK TABLE shop.prepayment IN SHARE MODE`; cửa nhận trả trước tiền mặt chạy tới khi bị chặn ở câu thêm
+   (đã giữ khoá chung của ngày, đã qua kiểm ngày chưa ký); chủ quán bấm ký kèm giải thích; nhả khoá. Kỳ vọng: cả hai 201, số lệch đã ký
+   bằng số lệch đọc lại sau cùng và bằng `−` khoản trả trước (lần ký thấy khoản ấy). PASS trên PostgreSQL thật.
+2. Lỗi cài trong worktree riêng: `ngayban.Khoa` dùng khoá chung cho cửa ký ⇒ test mới đỏ (khoản trả trước lọt vào ngày đã ký). Gỡ ⇒ xanh.
+3. F-064 → Fixed, kèm tên test; `./scripts/gate.sh` không `FAIL`.
+
+**T-171 — Bàn giao** (2026-10-12). Thi công và cài lỗi: **Claude Code** trên cây chính, nhánh `chatgpt_involve`, nền `8b4510c`; chưa ai
+duyệt độc lập. File: `be/internal/don/duong_tien_test.go` (helper `choDen` + test mới), `work/findings.md` (F-064 → Fixed).
+- *(1)* `be-check` trên PostgreSQL thật: `TestI021_TienChenLucKyNgayKhongLotVaoSoDaKy` PASS (0,25 s), không test nào FAIL.
+- *(2)* Lỗi cài trong `../lean_wt/T-171-fault` (nền `8b4510c` + hai file test): `ngayban.Khoa` nhánh `ky=true` gọi khoá chung ⇒ test đỏ;
+  file gỡ về bản đúng ⇒ worktree chỉ còn hai file test.
+- *(3)* `./scripts/gate.sh` ở cây chính: exit 0, không `FAIL`; hai `SKIP` (Gate 1d, `db`) là cổng không chạy, không tính là đạt.
+
+**T-172 — Acceptance (viết trước, 2026-10-12):**
+1. Test mới `TestYC15_VaoChenCungMocBiTuChoi` (`be/internal/nguoi/nguoi_test.go`): không khoảng nào mở; chủ lược đồ thêm một khoảng mở cho C bắt
+   đầu sau mốc hiện tại; B vào quầy ⇒ 409 `counter_duty_changed`, số khoảng và khoảng đang mở không đổi; qua mốc ấy, B vào lại ⇒ 201, thay
+   C. PASS trên PostgreSQL thật.
+2. Lỗi cài trong worktree riêng: bỏ nhánh `if changed` ⇒ test mới đỏ. Gỡ ⇒ xanh.
+3. F-065 → Fixed, kèm tên test; `./scripts/gate.sh` không `FAIL`.
+
+[↑ đầu file](#top)
 
 <a id="t-149"></a>
 ### T-149 — Stack backend đã duyệt (Gin + sqlc, cấu trúc kết hợp) mà owner vẫn ghi `net/http`, cấm sqlc, và chưa có task nào cho bước 02…09
