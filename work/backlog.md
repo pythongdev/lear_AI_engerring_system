@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-163 **Đổi stack · bước 07 — miền `sanxuat`** (giữ API `pgx.Tx` cho `don`; be-check ≥ 2 lần) — L2 — Codex, Claude duyệt · chờ T-162 · [chi tiết](#t-149)
 - [ ] T-164 **Đổi stack · bước 07 — miền `don`** (be-check ≥ 2 lần) — L2 — Codex, Claude duyệt · chờ T-163 · [chi tiết](#t-149)
 - [ ] T-165 **Đổi stack · bước 08 — dọn**: gỡ `gin.WrapH` và khuôn route cũ khỏi Gate 1g, luật `-- name:` áp mọi miền, Claude siết `QC-13` · `QC-14` lần cuối — L1 — Codex, Claude duyệt · chờ T-164 · [chi tiết](#t-149)
 - [ ] T-166 **Đổi stack · bước 09 — rà chéo** cây thật với `QC-14`, `--list` hai gate và tập tên test so với nền T-150 — L1 — Claude · chờ T-165 · [chi tiết](#t-149)
@@ -106,6 +105,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-163 **Đổi stack · bước 07 — miền `sanxuat`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; tám đường lên Gin, bảy cửa giữ mã và lớp, `NoDon` giữ chữ ký `pgx.Tx`; khoá gom hai bản giữ bằng `TestI019_KhoaGomMotDinhNghia`; lỗi cài khoá mẻ không bị bắt ⇒ **F-066** — L2 — Claude thi công (Codex hết hạn mức), cài lỗi và tích hợp; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-172 **Đóng F-065: test cho nhánh `counter_duty_changed` của cửa vào quầy** — `TestYC15_VaoChenCungMocBiTuChoi`; F-065 sửa lại: tầng 1 (`counter_duty_ended_after_started_check`) đã bắt cùng mã, test ghim hành vi HTTP — L1 — Claude Code — 2026-10-12 · [chi tiết](#t-171)
 - [x] T-171 **Đóng F-064: test chen nhau cho khoá riêng của cửa ký ngày** — `TestI021_TienChenLucKyNgayKhongLotVaoSoDaKy`, dựng tất định bằng khoá bảng của chủ lược đồ; lỗi cài khoá chung ⇒ đỏ — L1 — Claude Code — 2026-10-12 · [chi tiết](#t-171)
 - [x] T-162 **Đổi stack · bước 06 — miền `ket`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; bốn đường lên Gin, ba cửa giữ mã và lớp; test hình trước quyền không còn `ServeMux` — L2 — Claude thi công (Codex hết hạn mức), cài lỗi và tích hợp; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
@@ -990,6 +990,51 @@ Log: scratchpad phiên `b0c518fc…/scratchpad/T-162-*`.
   (D) `hoadon` import `ket/internal/sqlcgen` ⇒ `go build` đỏ.
 - *(4)* `./scripts/gate.sh` ở cây chính sau tích hợp: exit 0, không `FAIL`; `SKIP` nếu có là cổng không chạy, không tính là đạt.
 - *Bước 06 xong:* ba miền đường tiền đã chuyển; `be/cmd/server/router.go` chỉ còn `don` · `sanxuat` sau `NoRoute` (bước 07, T-163 · T-164).
+
+**T-163 — Acceptance và điểm Claude chốt trước thi công** (Claude, 2026-10-12). Mức **L2**: sai thì bếp làm thừa hay thiếu, một
+mẻ lùi trả sai đơn vị, quầy bấm *đã ra bàn* mà đơn không tới *Hoàn thành*, hay trạm bếp ghi được (`I-004` · `I-016` · `I-019` ·
+`I-020`, ADR-090). `sanxuat` có tám đường, bảy cửa (sáu lớp `quay`, `no_don` lớp `theo_cua_goi`); `don` gọi `NoDon(ctx, tx, id)` ở
+ba chỗ. Thi công: **Claude** trên cây chính, nhánh `chatgpt_involve`, nền `0c4cade`. Tên test kiểm ở nền bằng `rg '^func Test'`.
+1. Mười chín test của `don/san_xuat_test.go` · `san_xuat_lui_huy_test.go` — bảy `TestI020_*` (kể cả
+   `TestI020_DaRaBanTheoSoCaiTungThuChoMotBan`), bảy `TestI004_*`, `TestI016_DonLeKhongTuHoanThanh`,
+   `TestI019_BangNhuCauTachNguocVeTungBan`, `TestYC07_GhiChuBanhLamSaiVaHuyGhiChu`, `TestI012_CuaSanXuatPhaiDungQuay`,
+   `TestQC13_TramBepKhongCoCuaGhi`, `TestQC12_DuongGoiCuaSanXuat` — cùng mọi `TestI016_*` · `TestI017_*` · `TestI018_*` và toàn bộ
+   be-check PASS trên PostgreSQL thật, **hai lượt**. Điều kiện kiểm không đổi.
+2. Test đổi chỉ ở phần dựng router: `don/don_test.go` (hàm `dung`) — `sanxuat` sang Gin như `ket`. Tập tên test trước/sau: chỉ
+   thêm đúng một tên ở điểm 4, không mất tên nào.
+3. Cây kết hợp: `handler.go` (Gin, tám đường, tham số `:id` đúng `{id}` của hợp đồng; mọi lời từ chối hình trước quyền như cũ),
+   `service.go` (bảy `authz.Door` giữ mã và lớp; `NoDon(ctx, pgx.Tx, int64)` giữ chữ ký; thứ tự khoá mẻ → phiên → đơn → việc giữ),
+   `repository.go`. Mười một file câu ghi giữ thư mục và câu, thêm `-- name:` và `;`; câu đọc trong chuỗi Go dời thành file ngay
+   dưới `sql/`, ép kiểu chỉ ở câu đọc. `check-sqlcgen` · Gate 1f · 1g · 1h PASS; `--list` trước/sau chỉ khác dòng đếm file.
+4. **Một định nghĩa khoá gom** (ADR-090 điểm 8, `I-019` tầng 3): sqlc không ghép đoạn câu giữa hai file, nên đoạn `viec` của bảng
+   nhu cầu và của cửa đã ra bàn nằm ở hai file `.sql` giữa hai dòng đánh dấu. Một test mới `TestI019_KhoaGomMotDinhNghia` đỏ khi hai
+   đoạn lệch một byte — thay cho hằng `viecGom` dùng chung (Claude chốt; không đổi luật, chỉ đổi chỗ giữ). File lát
+   `07-san-xuat-theo-me.md` trỏ tên mới.
+5. Lỗi cài, mỗi lần một lỗi rồi hoàn nguyên: bỏ `FOR UPDATE` ở câu khoá việc ⇒ test chen nhau `TestI020_HaiLanBamCungDonViChenNhau`
+   đỏ; bỏ khoá mẻ ở cửa chuyển/lùi; đổi một byte đoạn khoá gom ở một file ⇒ `TestI019_KhoaGomMotDinhNghia` đỏ; miền khác import
+   `sanxuat/internal/sqlcgen` ⇒ `go build` đỏ. Lỗi nào không bị bắt thì ghi kết quả thật.
+6. `./scripts/gate.sh` ở cây chính: exit 0, không `FAIL`; `SKIP` ghi là không chạy.
+
+**T-163 — Bàn giao** (2026-10-12). Thi công: **Claude Code** trên cây chính, nhánh `chatgpt_involve`, nền `0c4cade`; **chưa ai duyệt
+độc lập**. File: `be/internal/sanxuat/handler.go` · `service.go` · `repository.go` · `khoa_gom_test.go` (mới; tám file `.go` cũ xoá) ·
+mười một file câu ghi (chỉ thêm dòng `-- name:`, câu nguyên văn) · mười lăm file câu đọc mới ngay dưới `sql/` (câu cũ trong chuỗi Go) ·
+`internal/sqlcgen/` (sinh) · `be/sqlc.yaml` · `be/cmd/server/router.go` · `be/internal/don/don_test.go` (hàm `dung`) ·
+`docs/product/3-be/07-san-xuat-theo-me.md` (trỏ chỗ mới của khoá gom) · `docs/product/2-db/10-quy-uoc-code.md` §9 (dòng `T-163`: ba
+đặc tính sqlc cho `T-164`) · `work/findings.md` (**F-066**). Log: scratchpad phiên `c4c4182b…/scratchpad/T-163-*`.
+- *(1)* `./scripts/be-check.sh` hai lượt liền: `exit=0`, `PASS=136 FAIL=0` cả hai; mười chín test sản xuất và `TestI019_KhoaGomMotDinhNghia`
+  PASS. Lượt thứ ba trong gate PASS.
+- *(2)* Tập tên test trước/sau: `diff` chỉ thêm `TestI019_KhoaGomMotDinhNghia`. Test đổi chỉ ở `dung` (đăng ký `sanxuat` sang Gin).
+- *(3)* `--list` trước/sau: 1f chỉ khác dòng đếm file (235 → 271), 1g chỉ khác dòng đếm file (133 → 154) — ô ghi, cửa, đường gọi không
+  đổi. `check-sqlcgen` · Gate 1f · 1g · 1h PASS. Thứ tự khoá giữ: mẻ → phiên → đơn → việc; `NoDon(ctx, pgx.Tx, int64)` giữ chữ ký cho `don`.
+  Ba chỗ câu đọc đổi hình mà không đổi nghĩa, vì Gate 1f đòi code sinh khớp nguồn từng chữ: `v.*` liệt kê cột; nguồn null của bảng nhu
+  cầu thành mã 0 (identity từ 1, handler từ chối ≤ 0); `IS NOT DISTINCT FROM` thành cờ *là nước chấm* (client gửi được 0, nên không dùng mã 0).
+- *(4)* Đoạn khoá gom ở `be/internal/sanxuat/sql/gom.sql` · `chon_da_lam.sql` giữa hai dòng đánh dấu thụt vào (sqlc bỏ chú thích ở cột 0).
+- *(5)* Lỗi cài trên cây chính, mỗi lần một lỗi, hoàn nguyên bằng bản lưu (`diff -r` rỗng): (A) bỏ `FOR UPDATE` ở ba câu khoá của
+  `khoaTap` ⇒ `--- FAIL: TestI020_HaiLanBamCungDonViChenNhau`; (B) bỏ khoá mẻ ở `khoa_me.sql` · `khoa_me_nguon.sql` ⇒ be-check **xanh** —
+  không test chen lùi ⟂ chuyển, chưa đo tầng 1 có bắt thay không ⇒ **F-066**; (C) đổi `ORDER BY` trong đoạn khoá gom một file ⇒
+  `--- FAIL: TestI019_KhoaGomMotDinhNghia`; (D) `hoadon` import `sanxuat/internal/sqlcgen` ⇒ `go build`: `use of internal package … not allowed`.
+- *(6)* `./scripts/gate.sh` ở cây chính: `exit=0`, `PASS gate không cổng nào đỏ`, không dòng `SKIP` (be-check, db-check 21 bước, 15 file `scripts/*.test.sh` đều chạy).
+- *Còn lại:* `router.go` chỉ còn `don` sau `NoRoute` (`T-164`); **F-066** chờ một task thêm test.
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·

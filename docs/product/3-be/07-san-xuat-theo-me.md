@@ -84,7 +84,7 @@ Huỷ đơn khoá phiên trước đơn theo cùng thứ tự. Các danh sách �
   bàn; đơn có bàn thì bấm theo bàn) và `items` — mỗi item một hàng của bảng nhu cầu (`station_code`,
   `menu_component_id` null với nước chấm, `filling_option_ids`, `quantity` ≥ 1), không hàng nào hai lần.
   Cửa khoá phiên rồi các đơn `in_progress` của phần ấy, chọn đủ `quantity` cái `made` đúng khoá — khoá
-  đọc từ `viecGom`, cùng định nghĩa với §4 — **lượt gọi sớm hơn trước** (đơn rồi mã việc; suy ra của
+  đọc từ đoạn *khoá gom* của `be/internal/sanxuat/sql/chon_da_lam.sql`, cùng định nghĩa với §4 — **lượt gọi sớm hơn trước** (đơn rồi mã việc; suy ra của
   phiên, ADR-090 điểm 4 *Sửa đổi*). Thiếu cái đã làm cho một item ⇒ `served_quantity_exceeds_made` cho
   cả lần. Chuyển sang `served` qua chuyển việc, rồi đơn gắn phiên mà mọi việc đã served thì hoàn thành
   trong cùng giao dịch; đơn lẻ không tự hoàn thành. Trả `station_job_ids` đã chọn và `completed_order_ids`.
@@ -103,10 +103,13 @@ Huỷ đơn khoá phiên trước đơn theo cùng thứ tự. Các danh sách �
 
 ## 4. Một hàm gom cho bảng và ứng viên
 
-`docGom` ở `sanxuat` dùng một câu SQL với một nguồn khoá: trạm + mã gốc thành phần đã chụp
+`DocGom` ở `sanxuat` dùng một câu SQL (`be/internal/sanxuat/sql/gom.sql`) với một nguồn khoá: trạm + mã gốc thành phần đã chụp
 (null cho nước chấm) + tập mã lựa chọn đã chụp, sắp tăng, **chỉ khi** thành phần nhận nhân.
 Tên hiển thị không tham gia khoá; nếu nhiều ảnh chụp cùng mã khác tên, lấy tên nhỏ nhất theo
 thứ tự so của database để kết quả ổn định. Không đọc lại tên hay lựa chọn từ menu hiện tại.
+sqlc không ghép đoạn câu giữa hai file, nên từ `T-163` (2026-10-12, Claude) nguồn khoá là đoạn nằm giữa hai
+dòng `-- khoá gom: đầu` · `-- khoá gom: cuối` ở `be/internal/sanxuat/sql/gom.sql` và `be/internal/sanxuat/sql/chon_da_lam.sql`, giống từng byte;
+`TestI019_KhoaGomMotDinhNghia` đỏ khi hai bản lệch. Vẫn là một định nghĩa — hai bản chép do test giữ.
 
 Bảng lọc đơn huỷ; giữ đơn `in_progress` hoặc thuộc phiên chưa đóng. Câu đọc lọc phần còn sống
 ngay ở bước đầu (cộng việc nguồn khi hỏi ứng viên), nên không quét cả lịch sử mỗi lần đọc. Mỗi phần là một bàn theo

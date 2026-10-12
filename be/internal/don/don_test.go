@@ -83,9 +83,6 @@ func dung(t *testing.T) khung {
 	mux := http.NewServeMux()
 	// P3-07: đường gọi của luồng tại bàn (ADR-087).
 	don.Routes(mux, pool, xacThucTest{})
-	// P3-10 thêm có chủ ý (ADR-090): đường gọi của sản xuất theo mẻ — mẻ, lùi mẻ, đã ra bàn, chuyển,
-	// ghi chú bánh làm sai, huỷ đơn, bảng nhu cầu.
-	sanxuat.Routes(mux, pool, xacThucTest{})
 	// T-152: menu đã chuyển sang Gin; các miền chưa chuyển chạy sau NoRoute như be/cmd/server/router.go.
 	r := gin.New()
 	r.Use(middleware.GanNguoi(xacThucTest{}))
@@ -97,6 +94,9 @@ func dung(t *testing.T) khung {
 	tratruoc.Routes(r, tratruoc.NewService(pool))
 	hoadon.Routes(r, hoadon.NewService(pool))
 	ket.Routes(r, ket.NewService(pool))
+	// P3-10 thêm có chủ ý (ADR-090): đường gọi của sản xuất theo mẻ — mẻ, lùi mẻ, đã ra bàn, chuyển,
+	// ghi chú bánh làm sai, huỷ đơn, bảng nhu cầu. T-163: sang Gin như ket.
+	sanxuat.Routes(r, sanxuat.NewService(pool))
 	r.NoRoute(func(c *gin.Context) {
 		c.Status(http.StatusOK)
 		mux.ServeHTTP(c.Writer, c.Request)

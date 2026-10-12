@@ -4840,3 +4840,28 @@ có như thành công ⇒ test đỏ (200 thay 409); bỏ nhánh ⇒ xanh như �
 
 **Status:**
 Fixed
+
+### F-066 — Khoá mẻ của cửa lùi và cửa chuyển không có test chen nhau: bỏ cả hai `FOR UPDATE` mà be-check vẫn xanh
+
+**Problem:**
+Cửa `sanxuat/lui_me` khoá dòng mẻ (`khoa_me.sql`) và cửa `sanxuat/chuyen` khoá mẻ của nguồn (`khoa_me_nguon.sql`) **trước** phiên,
+đơn, việc, để chủ hiện tại của từng phần mẻ đọc sau khoá không đổi giữa chừng (ADR-090 điểm 6; comment của `Service.Chuyen`). Đo
+2026-10-12 (`T-163`, Claude Code, cây chính, lỗi cài rồi hoàn nguyên): bỏ `FOR UPDATE` ở cả hai câu, sinh lại ⇒ `./scripts/be-check.sh`
+**xanh**. Không test nào cho lùi một mẻ chen với chuyển một phần của chính mẻ ấy.
+
+**Impact:**
+Chưa đo được tầng 1 có bắt thay hay không (khác **F-065**, nơi ràng buộc database từ chối cùng mã). Nếu không: lùi đọc chủ cũ của một
+phần mẻ trong lúc chuyển đổi chủ, trả nhầm đơn vị về *Chưa làm* và để đơn vị mới giữ *Đã làm xong* của một mẻ đã lùi — bếp làm thiếu
+hoặc bảng nhu cầu sai (`I-020`). Một lần sửa sau bỏ khoá mẻ thì gate không báo gì.
+
+**Decision / Fix:**
+Chưa sửa — `T-163` chỉ chuyển stack, giữ nguyên hành vi. Đề nghị: một test `TestI020_*` dựng một mẻ có phần của đơn đã huỷ, rồi
+chạy chen nhau nhiều vòng `POST /production-batches/{id}/rollback` và `POST /station-job-transfers` từ phần ấy; kỳ vọng sau mỗi vòng
+đúng một cửa thắng, không đơn vị nào giữ *Đã làm xong* của mẻ đã lùi. Lỗi cài chứng minh: bỏ khoá mẻ ⇒ test đỏ; nếu vẫn xanh vì
+tầng 1 bắt, ghi tên ràng buộc như **F-065**.
+
+**Related task:**
+`T-163` (đo) · ADR-090 · **F-064** · **F-065** (cùng họ: nhánh chen nhau không có test)
+
+**Status:**
+Open

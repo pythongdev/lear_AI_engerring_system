@@ -1,3 +1,4 @@
+-- name: NoThanhPhan :exec
 INSERT INTO station_job (sales_order_id, order_line_id, order_line_component_id, station_code,
  line_quantity, component_quantity, position)
 SELECT $1, l.id, c.id, s.station_code, l.quantity, c.quantity, g.p
