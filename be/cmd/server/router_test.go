@@ -99,6 +99,11 @@ func duongHopDong(t *testing.T) []duong {
 		}
 		if m := reDuong.FindStringSubmatch(line); m != nil {
 			cur = m[1]
+			// P3-12: chỉ bỏ hai đường SSE mới khỏi phép kiểm JSON này;
+			// mọi đường cũ và mọi khẳng định giữ nguyên. Luồng được chấm qua httptest.Server riêng.
+			if cur == "/counter/events" || cur == "/production-board/events" {
+				cur = ""
+			}
 			continue
 		}
 		if !strings.HasPrefix(line, " ") {

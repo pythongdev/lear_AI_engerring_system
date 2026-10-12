@@ -15,6 +15,8 @@ import (
 
 	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/nguoi"
+	"banhcuon/be/internal/nhandon"
+	"banhcuon/be/internal/platform/realtime"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 )
@@ -104,6 +106,30 @@ var cacCaVet = []caVet{
 		c.srv = srv
 		id := c.docSo(t, "SELECT id FROM shop.counter_duty WHERE person_id=$1 AND ended_at IS NULL", c.quay)
 		return dichVet{"counter_duty", id, c.quay, "ended_at", nil, "mốc", func() { canDat(t, c.post(t, "/counter-duty/end", c.quay, map[string]any{}), 200) }}
+	}},
+	// Hai cửa khép khoảng của P3-12 (Claude thêm 2026-10-12 khi duyệt: TestI018_TapCuaSuaKhopTapCa đòi).
+	{"nhandon/mo_lai", func(t *testing.T, c canh) dichVet {
+		c.srv = nhandonSrv(t, c)
+		// Database dùng chung giữa các test: một khoảng đang mở (do test trước để lại) thì khép chính nó.
+		id := c.docSo(t, "SELECT coalesce(max(id),0) FROM shop.shop_blind_spell WHERE ended_at IS NULL")
+		if id == 0 {
+			canDat(t, c.post(t, "/shop-blind/declaration", c.quay, map[string]any{}), http.StatusOK)
+			id = c.docSo(t, "SELECT id FROM shop.shop_blind_spell WHERE ended_at IS NULL")
+		}
+		return dichVet{"shop_blind_spell", id, c.quay, "ended_at", nil, "mốc", func() {
+			canDat(t, c.post(t, "/shop-blind/reopening", c.quay, map[string]any{}), http.StatusOK)
+		}}
+	}},
+	{"nhandon/tiep_tuc", func(t *testing.T, c canh) dichVet {
+		c.srv = nhandonSrv(t, c)
+		id := c.docSo(t, "SELECT coalesce(max(id),0) FROM shop.order_intake_pause WHERE ended_at IS NULL")
+		if id == 0 {
+			canDat(t, c.post(t, "/order-intake/pause", c.chu, map[string]any{}), http.StatusOK)
+			id = c.docSo(t, "SELECT id FROM shop.order_intake_pause WHERE ended_at IS NULL")
+		}
+		return dichVet{"order_intake_pause", id, c.chu, "ended_at", nil, "mốc", func() {
+			canDat(t, c.post(t, "/order-intake/resume", c.chu, map[string]any{}), http.StatusOK)
+		}}
 	}},
 	{"sanxuat/chuyen", func(t *testing.T, c canh) dichVet {
 		_, _, don, _ := c.phienDangPhucVu(t, "nguồn")
@@ -267,4 +293,15 @@ func TestI018_TapCuaSuaKhopTapCa(t *testing.T) {
 		t.Fatalf("cửa UPDATE = %v\nca test = %v", keys(updates), keys(cases))
 	}
 	t.Logf("%d cửa UPDATE khớp %d ca", len(updates), len(cases))
+}
+
+// nhandonSrv dựng router riêng cho miền nhandon, cùng cách ca nguoi/khep_quay dựng miền nguoi.
+func nhandonSrv(t *testing.T, c canh) *httptest.Server {
+	t.Helper()
+	r := gin.New()
+	r.Use(middleware.GanNguoi(xacThucTest{}))
+	nhandon.Routes(r, nhandon.NewService(c.pool, realtime.New(0)))
+	srv := httptest.NewServer(r)
+	t.Cleanup(srv.Close)
+	return srv
 }

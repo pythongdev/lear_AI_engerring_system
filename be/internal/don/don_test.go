@@ -29,6 +29,7 @@ import (
 	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/phien"
 	"banhcuon/be/internal/platform/postgres"
+	"banhcuon/be/internal/platform/realtime"
 	"banhcuon/be/internal/qr"
 	"banhcuon/be/internal/sanxuat"
 	"banhcuon/be/internal/testhelper"
@@ -95,7 +96,7 @@ func dung(t *testing.T) khung {
 	// ghi chú bánh làm sai, huỷ đơn, bảng nhu cầu. T-163: sang Gin như ket.
 	sanxuat.Routes(r, sanxuat.NewService(pool))
 	// P3-07: đường gọi của luồng tại bàn (ADR-087).
-	don.Routes(r, don.NewService(pool))
+	don.Routes(r, don.NewService(pool, realtime.AlwaysSeeing{}))
 	srv := httptest.NewServer(r)
 	t.Cleanup(srv.Close)
 	// P3-08 thêm có chủ ý (ADR-088): cửa tạo lượt gọi xét giờ bán tại mốc của đồng hồ (I-008), nên mọi

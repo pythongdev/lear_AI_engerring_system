@@ -12,7 +12,9 @@ import (
 	"banhcuon/be/internal/authz"
 	"banhcuon/be/internal/ban"
 	"banhcuon/be/internal/gia"
+	"banhcuon/be/internal/nhandon"
 	"banhcuon/be/internal/platform/postgres"
+	"banhcuon/be/internal/platform/realtime"
 	"banhcuon/be/internal/sanxuat"
 	"banhcuon/be/internal/vongdoi"
 	"github.com/jackc/pgx/v5"
@@ -82,12 +84,17 @@ type NhacHen struct {
 
 var submissionPattern = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
 
-type Service struct{ pool *pgxpool.Pool }
+type Service struct {
+	pool       *pgxpool.Pool
+	visibility realtime.Visibility
+}
 
-func NewService(pool *pgxpool.Pool) *Service { return &Service{pool: pool} }
+func NewService(pool *pgxpool.Pool, visibility realtime.Visibility) *Service {
+	return &Service{pool: pool, visibility: visibility}
+}
 
 func Tao(ctx context.Context, pool *pgxpool.Pool, personID int64, yc YeuCauTaiQuay) (DaTao, error) {
-	out, _, err := NewService(pool).Tao(ctx, authz.Caller{PersonID: personID}, yc)
+	out, _, err := NewService(pool, nil).Tao(ctx, authz.Caller{PersonID: personID}, yc)
 	return out, err
 }
 
@@ -152,7 +159,7 @@ func (s *Service) Tao(ctx context.Context, caller authz.Caller, yc YeuCauTaiQuay
 			if yc.ngoaiBan != nil {
 				channel = yc.kenh
 			}
-			if err := xetNhanDon(ctx, tx, channel); err != nil {
+			if err := s.xetNhanDon(ctx, tx, channel); err != nil {
 				return err
 			}
 			var sessionID int64
@@ -243,6 +250,28 @@ func (s *Service) Tao(ctx context.Context, caller authz.Caller, yc YeuCauTaiQuay
 			out, _, _, err = repo.docDon(ctx, yc.SubmissionCode)
 			return err
 		})
+		var blind blindDetected
+		if errors.As(err, &blind) {
+			// Giao dịch đơn đã lùi: không giữ kết nối của nó khi mở giao dịch riêng.
+			// Cửa vẫn kiểm lại đúng caller; chỉ cửa ghi_mu sở hữu INSERT, máy không đứng tên người khai.
+			for retry := 0; retry < 4; retry++ {
+				err = authz.RunAs(ctx, s.pool, caller, TaoLuotGoi, func(tx pgx.Tx, _ authz.Granted) error {
+					_, err := nhandon.GhiMu(ctx, tx, blind.since, 0)
+					if errors.Is(err, pgx.ErrNoRows) {
+						return nil
+					}
+					return err
+				})
+				var pg *pgconn.PgError
+				if !errors.As(err, &pg) || pg.ConstraintName != "shop_blind_spell_one_at_a_time_excl" {
+					break
+				}
+			}
+			if err == nil {
+				err = apierr.Error{Code: apierr.CodeShopNotSeeingOrders}
+			}
+			break
+		}
 		if !canThuLai(err) {
 			break
 		}
@@ -254,7 +283,11 @@ func (s *Service) Tao(ctx context.Context, caller authz.Caller, yc YeuCauTaiQuay
 }
 
 // Giờ bán theo master_plan/shop-facts.md §1, giữ trong be/internal/don/sql/ngoai_gio.sql.
-func xetNhanDon(ctx context.Context, tx pgx.Tx, kenh string) error {
+type blindDetected struct{ since time.Time }
+
+func (b blindDetected) Error() string { return "shop_not_seeing_orders" }
+
+func (s *Service) xetNhanDon(ctx context.Context, tx pgx.Tx, kenh string) error {
 	moc, err := DongHo(ctx, tx)
 	if err != nil {
 		return err
@@ -274,6 +307,12 @@ func xetNhanDon(ctx context.Context, tx pgx.Tx, kenh string) error {
 		return apierr.Error{Code: apierr.CodeOutsideSellingHours}
 	}
 	if kenh == "delivery" || kenh == "pickup" || kenh == "qr_table" {
+		if s.visibility == nil {
+			return apierr.Error{Code: apierr.CodeInternalError}
+		}
+		if seeing, since := s.visibility.Seeing(); !seeing {
+			return blindDetected{since: since}
+		}
 		if biChan, err = repo.quanMu(ctx, moc); err != nil {
 			return err
 		}

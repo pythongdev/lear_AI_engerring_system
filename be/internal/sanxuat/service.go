@@ -2,9 +2,11 @@
 package sanxuat
 
 import (
+	"banhcuon/be/internal/platform/realtime"
 	"context"
 	"encoding/json"
 	"errors"
+	"time"
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
@@ -69,9 +71,14 @@ type capChuyen struct {
 	To   int64 `json:"to_station_job_id"`
 }
 
-type Service struct{ pool *pgxpool.Pool }
+type Service struct {
+	pool   *pgxpool.Pool
+	broker *realtime.Broker
+}
 
-func NewService(pool *pgxpool.Pool) *Service { return &Service{pool: pool} }
+func NewService(pool *pgxpool.Pool) *Service                  { return &Service{pool: pool} }
+func (s *Service) WithRealtime(b *realtime.Broker) *Service   { s.broker = b; return s }
+func (s *Service) Moc(ctx context.Context) (time.Time, error) { return postgres.ReadTime(ctx, s.pool) }
 
 // Mọi cửa khoá phiên trước đơn, rồi các đơn vị theo id. Chủ của station_job
 // không đổi; lần chuyển chỉ đổi chủ của production_batch_item.

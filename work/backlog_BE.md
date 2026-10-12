@@ -1240,12 +1240,33 @@ cho từng phụ thuộc — lời, chưa phải hành vi.
 
 **Bẫy:** đừng coi *"kênh đẩy chạy được"* là biên nhận — biên nhận là *"mất kênh đẩy thì vẫn đúng"*.
 
-**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+**Nhận việc** — Claude Code, 2026-10-12. `P3-10` Done. Mức **L2**. Thiết kế: **ADR-097**.
+- *Phạm vi:* `be/` (bộ phát, hai luồng, đường đọc quầy, miền `nhandon`, cửa tạo lượt gọi, `authz`, `platform/postgres`) ·
+  `docs/product/3-be/` (`09-realtime-du-phong.md` mới, `openapi.yaml`, `02-vai-va-quyen.md`) · `docs/product/00-index.md`.
+  Không migration (hai bảng có từ `T-132`).
+- *Nghiệm thu:* phiếu giao việc (scratchpad phiên, không lưu repo) — không luồng quầy ⇒ ba kênh tự bấm bị từ chối và ghi
+  khoảng mù, hai kênh của người vẫn tạo; mở luồng ⇒ nhận; đóng rồi mở lại luồng ⇒ vẫn mù tới nút mở lại; nút mở lại,
+  báo mù, tạm dừng có người và đúng lớp; khoảng mù đọc lại được; đường đẩy `hello` · `changed` sau COMMIT, không `changed`
+  khi lùi, có `heartbeat`; đường kéo đúng khi mất đẩy; cắt thử PT-1…PT-6; hợp đồng và ma trận; tên test cũ không mất.
+- *Kiểm chứng:* Claude chạy gate trên PostgreSQL, cài lỗi trong worktree riêng.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-12): thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree `../lean_wt/P3-12`, nhánh
+`codex/P3-12` từ `8059062`, song song với `T-146`; ba lượt vì hết hạn mức, lượt cuối dừng trước báo cáo nên **không có
+báo cáo** — Claude đọc diff và chạy mọi kiểm). Thiết kế, duyệt và tích hợp: **Claude Code**. Cách đọc lát:
+`docs/product/3-be/09-realtime-du-phong.md`.
+- *Claude chốt giữa chừng:* Codex hỏi mốc bắt đầu khoảng mù khi bấm mở lại lúc chưa có luồng — mốc muộn hơn giữa lúc luồng
+  quầy cuối đóng và lúc khoảng trước khép (ADR-097 điểm 5); test `TestI008_MoLaiKhiChuaCoLuongKhongChongKhoang`.
+- *Claude sửa khi duyệt:* (1) mười hai test realtime đỏ vì chạy `seed.pl` từ `be/cmd/server` (không mở được
+  `shop-facts.md`) — chạy từ gốc repo như `chaySeed`; (2) `TestI018_TapCuaSuaKhopTapCa` đỏ — thêm ca vết `nhandon/mo_lai` ·
+  `nhandon/tiep_tuc`; (3) hai ca ấy va khoảng năm 2031 do `mang_di_test.go` dựng tay bằng đồng hồ giả — helper `tamDung` ·
+  `quanMu` dọn hàng của mình bằng `t.Cleanup`, khẳng định cũ không đổi; (4) gộp với `T-146`: phiên bản hợp đồng 0.16.0.
+- *Chọn khi thi công, Claude chấp nhận:* hạn 5 giây cho mọi giao dịch; luồng SSE đọc mốc database ở mỗi `heartbeat` (ghi ở
+  ADR-097).
+- *Kiểm chứng:* `./scripts/gate.sh` exit 0 ở worktree và ở cây chính sau gộp (xem dòng dưới). Lỗi cài ở hai worktree tách
+  rời (đã gỡ): bộ phát luôn báo *đang nhìn thấy* ⇒ mười test đỏ, gồm `TestI008_KhongLuongQuayThiBaKenhTuBamBiTuChoi` ·
+  `TestI008_CoLuongQuayThiNhanDon` · `TestYC34_KhoangMuDocLaiDuoc`; khoảng mù mới bỏ mốc khép của khoảng trước ⇒ đúng
+  `TestI008_MoLaiKhiChuaCoLuongKhongChongKhoang` đỏ.
+- *Còn lại:* hình của màn khi rỗng và câu chữ thông báo cho khách là việc pha 4. *Duyệt độc lập:* chưa.
 
 [↑ đầu file](#top)
 

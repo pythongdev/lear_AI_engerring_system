@@ -77,6 +77,15 @@ func Run(ctx context.Context, pool *pgxpool.Pool, personID int64, d Door, fn fun
 
 // RunAs kiểm quyền lại ở mỗi giao dịch, kể cả một lần chạy lại sau tranh chấp.
 func RunAs(ctx context.Context, pool *pgxpool.Pool, caller Caller, d Door, fn func(pgx.Tx, Granted) error) error {
+	return runAs(postgres.WriteContext(ctx), pool, caller, d, fn)
+}
+
+// Read kiểm cùng lớp quyền, nhưng giao dịch đọc không phát changed.
+func Read(ctx context.Context, pool *pgxpool.Pool, personID int64, need Need, fn func(pgx.Tx) error) error {
+	return runAs(ctx, pool, Caller{PersonID: personID}, Door{Need: need}, func(tx pgx.Tx, _ Granted) error { return fn(tx) })
+}
+
+func runAs(ctx context.Context, pool *pgxpool.Pool, caller Caller, d Door, fn func(pgx.Tx, Granted) error) error {
 	switch d.Need {
 	case NeedCounterOrOwner, NeedCounter, NeedOwner, NeedCounterOrCustomer, NeedPerson:
 	default:

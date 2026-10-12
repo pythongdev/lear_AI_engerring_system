@@ -70,6 +70,11 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 
 | Cửa | Lớp | Nguồn |
 |---|---|---|
+| `nhandon/tam_dung` | `chu_quan` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — tạm dừng cả năm kênh |
+| `nhandon/tiep_tuc` | `chu_quan` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — khép khoảng tạm dừng |
+| `nhandon/bao_mu` | `quay_hoac_chu_quan` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — người khai quán mù; gọi cửa ghi_mu |
+| `nhandon/mo_lai` | `quay_hoac_chu_quan` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — người mở lại, kể cả khi chưa có luồng quầy |
+| `nhandon/ghi_mu` | `theo_cua_goi` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — một cửa INSERT khoảng mù cho máy và người; máy gọi sau khi giao dịch đơn đã lùi |
 | `nguoi/vao_quay` | `nguoi_quan` | `shop-facts.md` §8.8 (C36 · U-056 · U-075); ADR-085 *Sửa đổi 2026-10-10*, phiếu T-143 — người đã chọn tên vào quầy, khép khoảng cũ và mở khoảng mới cùng mốc |
 | `nguoi/roi_quay` | `quay` | `shop-facts.md` §8.8 (C36 · U-056); ADR-085 *Sửa đổi 2026-10-10*, phiếu T-143 — người đang đứng rời quầy |
 | `nguoi/khep_quay` | `theo_cua_goi` | ADR-085 *Sửa đổi 2026-10-10*; ADR-087 điểm 3 — chủ duy nhất của ô `counter_duty.ended_at`, chạy trong giao dịch đã kiểm quyền của cửa gọi |

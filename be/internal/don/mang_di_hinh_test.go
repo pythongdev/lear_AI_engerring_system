@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"banhcuon/be/internal/platform/realtime"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,7 +15,7 @@ import (
 // theo thiết kế (T-151), nên vế "không đọc người" của bản ServeMux cũ không còn là thuộc tính của handler.
 func TestQC14_MangDiHinhTruocQuyen(t *testing.T) {
 	r := gin.New()
-	Routes(r, NewService(nil))
+	Routes(r, NewService(nil, realtime.AlwaysSeeing{}))
 	for _, ca := range []struct{ name, body, field string }{
 		{"dấu trước bàn", `{"submission_code":"sai","dining_table_id":null}`, "submission_code"},
 		{"bàn trước kênh", `{"dining_table_id":null}`, "dining_table_id"},

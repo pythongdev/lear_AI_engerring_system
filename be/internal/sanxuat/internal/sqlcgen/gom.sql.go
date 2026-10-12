@@ -59,7 +59,7 @@ WITH viec AS MATERIALIZED (
 )
 SELECT EXISTS (SELECT 1 FROM nguon)::boolean AS co_nguon,
  coalesce((SELECT available FROM nguon), false)::boolean AS nguon_hop,
- (CASE WHEN $2::bigint = 0 THEN jsonb_build_object('rows', coalesce(
+ (CASE WHEN $2::bigint = 0 THEN jsonb_build_object('read_at', now(), 'poll_interval_seconds', $3::integer, 'rows', coalesce(
    (SELECT jsonb_agg(to_jsonb(h) ORDER BY station_code, menu_component_id, filling_option_ids)
     FROM hang h), '[]'::jsonb))
  ELSE jsonb_build_object('station_job_id', $2::bigint, 'candidates', coalesce((
@@ -75,6 +75,7 @@ SELECT EXISTS (SELECT 1 FROM nguon)::boolean AS co_nguon,
 type GomParams struct {
 	Column1 string
 	Column2 int64
+	Column3 int32
 }
 
 type GomRow struct {
@@ -87,7 +88,7 @@ type GomRow struct {
 // chuyển của nguồn $2; $1 lọc trạm, rỗng là mọi trạm. Tổng và phần chia đọc trong cùng câu,
 // nên không lệch khi quầy bấm giữa hai lần đọc.
 func (q *Queries) Gom(ctx context.Context, arg GomParams) (GomRow, error) {
-	row := q.db.QueryRow(ctx, gom, arg.Column1, arg.Column2)
+	row := q.db.QueryRow(ctx, gom, arg.Column1, arg.Column2, arg.Column3)
 	var i GomRow
 	err := row.Scan(&i.CoNguon, &i.NguonHop, &i.KetQua)
 	return i, err

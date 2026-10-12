@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -43,13 +44,30 @@ func Open(ctx context.Context, dsn, shopTZ string) (*pgxpool.Pool, error) {
 
 // InTx là ranh giới giao dịch mở ở cửa (ADR-082 điểm 2).
 func InTx(ctx context.Context, pool *pgxpool.Pool, fn func(pgx.Tx) error) error {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
 	tx, err := pool.Begin(ctx)
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback(ctx)
-	if err := fn(tx); err != nil {
+	deadline, _ := ctx.Deadline()
+	if err := fn(boundedTx{Tx: tx, deadline: deadline}); err != nil {
 		return err
 	}
-	return tx.Commit(ctx)
+	var at time.Time
+	publish, _ := ctx.Value(notificationKey{}).(func(time.Time))
+	writing, _ := ctx.Value(writeKey{}).(bool)
+	if writing && publish != nil {
+		if err := tx.QueryRow(ctx, "SELECT now()").Scan(&at); err != nil {
+			return err
+		}
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return err
+	}
+	if writing && publish != nil {
+		publish(at)
+	}
+	return nil
 }

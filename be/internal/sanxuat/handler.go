@@ -21,6 +21,7 @@ func Routes(r *gin.Engine, svc *Service) {
 	r.POST("/wrong-make-notes", h.ghiLamSai)
 	r.POST("/wrong-make-notes/:id/cancellation", h.huyGhiLamSai)
 	r.GET("/production-board", h.bang)
+	r.GET("/production-board/events", h.events)
 	r.GET("/station-jobs/:id/transfer-candidates", h.ungVien)
 }
 
@@ -219,4 +220,17 @@ func (h handler) ungVien(c *gin.Context) {
 		return
 	}
 	apierr.JSON(c.Writer, http.StatusOK, out)
+}
+
+func (h handler) events(c *gin.Context) {
+	at, err := h.svc.Moc(c.Request.Context())
+	if err != nil {
+		apierr.WriteError(c.Writer, err)
+		return
+	}
+	if h.svc.broker == nil {
+		apierr.Write(c.Writer, apierr.Error{Code: apierr.CodeInternalError})
+		return
+	}
+	h.svc.broker.Serve(c.Writer, c.Request, false, false, at, h.svc.Moc)
 }

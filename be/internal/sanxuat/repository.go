@@ -1,6 +1,7 @@
 package sanxuat
 
 import (
+	"banhcuon/be/internal/platform/realtime"
 	"context"
 	"encoding/json"
 
@@ -28,7 +29,7 @@ func (r repository) gom(ctx context.Context, tram string, nguon *int64) (co, hop
 	if nguon != nil {
 		ma = *nguon
 	}
-	row, err := r.q.Gom(ctx, sqlcgen.GomParams{Column1: tram, Column2: ma})
+	row, err := r.q.Gom(ctx, sqlcgen.GomParams{Column1: tram, Column2: ma, Column3: realtime.PollIntervalSeconds})
 	return row.CoNguon, row.NguonHop, row.KetQua, err
 }
 

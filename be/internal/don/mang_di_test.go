@@ -192,14 +192,18 @@ func (n ngoai) demTatCa(t *testing.T) string {
 
 func (n ngoai) tamDung(t *testing.T, bat, tat time.Time) {
 	t.Helper()
-	n.id(t, `INSERT INTO shop.order_intake_pause (started_at, started_by_person_id, ended_at, ended_by_person_id)
+	id := n.id(t, `INSERT INTO shop.order_intake_pause (started_at, started_by_person_id, ended_at, ended_by_person_id)
 		VALUES ($1, $2, $3, $2) RETURNING id`, bat, n.chu, tat)
+	// Khoảng dựng tay ở đồng hồ giả (năm 2031) không được rò sang test khác: một khoảng mở từ hôm nay sẽ chồng nó
+	// (Claude thêm 2026-10-12, P3-12).
+	t.Cleanup(func() { n.owner.Exec(n.ctx, "DELETE FROM shop.order_intake_pause WHERE id = $1", id) })
 }
 
 func (n ngoai) quanMu(t *testing.T, tu, toi time.Time) {
 	t.Helper()
-	n.id(t, `INSERT INTO shop.shop_blind_spell (started_at, ended_at, ended_by_person_id)
+	id := n.id(t, `INSERT INTO shop.shop_blind_spell (started_at, ended_at, ended_by_person_id)
 		VALUES ($1, $2, $3) RETURNING id`, tu, toi, n.chu)
+	t.Cleanup(func() { n.owner.Exec(n.ctx, "DELETE FROM shop.shop_blind_spell WHERE id = $1", id) })
 }
 
 // dangLam: đơn tới Đang thực hiện — dựng tay. Từ P3-10 (ADR-090) duyệt và lượt gọi của người đã nổ

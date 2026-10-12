@@ -113,6 +113,7 @@ có câu trả lời mới từ người.
 | ADR-094 | **Mặc định của nhóm tuỳ chọn là dữ liệu**: cờ `menu_option.is_default`, mỗi nhóm nhiều nhất một (`menu_option_one_default_per_group_key`, migration bước 21); dữ liệu mồi đọc `shop-facts.md` §4.6 luật 8 lúc chạy; `GET /menu` trả cờ để màn gọi món chọn sẵn; cửa tạo lượt gọi và tính thử **vẫn không** tự điền (`I-010`); chưa có cửa đổi mặc định | Đã chốt 2026-10-11 (giao cho phiên, T-169; Claude) | — | T-169 · F-059 · ADR-086 |
 | ADR-095 | **Vết sửa, sổ giấy và F-060 ở pha 3**: mỗi cửa có câu sửa một test *sửa ⇒ vết đủ bốn thứ*, một test so tập cửa sửa với tập ca; phép đối chiếu `I-016` dựng bước *Chờ thanh toán → Đang phục vụ* do khách QR kích từ chính lượt gọi `qr_table` (hướng (b) của **F-060**, không người hệ thống giả); cửa `ket/khai_so_giay` (lớp `quay_hoac_chu_quan`) khai số lượt trên giấy của một ngày chưa ký; cửa ký ngày từ chối `paper_entries_pending` khi còn lượt chưa nhập; cửa nhập bù hoá đơn chờ **U-079** | Đã chốt 2026-10-12 (giao cho phiên, P3-11; chủ repo giao toàn quyền làm nốt pha 3; Claude thiết kế, Codex thi công) | — | P3-11 · F-060 · ADR-037 · ADR-087 · ADR-089 · ADR-092 · U-079 |
 | ADR-096 | **Chủ quán sửa số đếm két của ngày đã ký**: bảng `reconciled_day_reopening` (một lần mở lại một dấu, lý do bắt buộc); dấu mới nối vào dấu cũ đã mở lại qua `previous_reconciled_day_id`, mỗi ngày nhiều nhất một dấu đang đứng ở tầng 1; khoá của ADR-080 cho sửa số đếm khi dấu mới nhất đã mở lại, tiền đầu két vẫn khoá; cửa `ket/sua_dem` lớp `chu_quan`; cửa tiền khác vẫn coi ngày từng ký là đóng | Đã chốt 2026-10-12 (giao cho phiên, T-146; Claude thiết kế, Codex thi công) | — | T-146 · ADR-079 · ADR-080 · ADR-089 · U-074 · U-078 |
+| ADR-097 | **Realtime và dự phòng**: SSE chỉ mang tín hiệu *đọc lại* (`hello` · `changed` · `heartbeat` 10 giây), phát sau COMMIT của mọi cửa ghi; đường kéo 20 giây đọc cùng chỗ (`read_at`, `poll_interval_seconds`); quán còn nhìn thấy = còn một luồng quầy đang mở; đơn tự bấm tới lúc không luồng ⇒ ghi khoảng mù (bắt đầu không sớm hơn lúc khoảng trước khép) rồi từ chối; nút tạm dừng (`chu_quan`), báo mù và mở lại (`quay_hoac_chu_quan`) | Đã chốt 2026-10-12 (giao cho phiên, P3-12; Claude thiết kế, Codex thi công) | — | P3-12 · ADR-041 · ADR-045 · ADR-047 · ADR-078 · ADR-088 · U-043 · U-053 · U-061 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -6656,3 +6657,69 @@ trong yêu cầu về 0đ; tiền đầu két không sửa được qua đườn
 **Applies to:** `T-146`; `db/migrations/` (bước 22) · `db/tests/` · `be/internal/ket/`; `docs/product/2-db/04-luoc-do-duong-tien.md` ·
 `07-thu-tu-migration.md` · `docs/product/3-be/06-duong-tien.md` · `02-vai-va-quyen.md` · `openapi.yaml`;
 **ADR-079** · **ADR-080** · **ADR-089** · **U-074** · **U-078**.
+
+### ADR-097 — Realtime và dự phòng: đường đẩy SSE chỉ mang tín hiệu "đọc lại", đường kéo 20 giây đọc cùng chỗ; quán còn nhìn thấy = còn một màn quầy đang nối đường đẩy
+
+**Trạng thái:** Đã chốt 2026-10-12, **giao cho phiên** (bước `P3-12`; chủ repo 2026-10-12 giao toàn quyền làm nốt pha 3).
+Claude Code thiết kế, Codex thi công. Luật ở `docs/product/1-system-design/05-realtime-va-du-phong.md` §1 · §3,
+`01-ranh-gioi-he-thong.md` §3 và `master_plan/shop-facts.md` §6 quy tắc 8 · 11 (lời U-035 · U-043 · U-053 · U-061);
+ràng buộc RB-1…RB-4 (**ADR-041** · **ADR-045**) giữ nguyên.
+
+**Decision:**
+
+1. **Đường đẩy là Server-Sent Events, chỉ mang tín hiệu.** Hai luồng: `GET /production-board/events` (màn trạm) và
+   `GET /counter/events` (màn quầy, lớp `quay`). Mỗi sự kiện là `changed` (không mang dữ liệu nghiệp vụ, chỉ mốc của
+   database) — màn nhận thì gọi lại đường đọc của nó. Sự kiện `hello` ngay khi nối (màn đọc lại ngay khi nối lại — bắt
+   lại trạng thái mà không mất việc), và `heartbeat` mỗi 10 giây (tính chất *nói được là còn sống*, §1.1). Một bộ phát
+   trong bộ nhớ của **một** tiến trình (RB-1), không hàng đợi (RB-2).
+2. **Phát sau COMMIT, cho mọi cửa ghi.** `authz.Run` (hoặc lớp bọc giao dịch duy nhất) gọi bộ phát **sau** khi giao
+   dịch của cửa ghi commit thành công, cho cả hai luồng — thừa tín hiệu chỉ tốn một lần đọc lại; thiếu tín hiệu thì
+   đường kéo bù. Giao dịch lùi thì không phát.
+3. **Đường kéo đọc cùng chỗ, một chu kỳ cho cả hệ thống.** `GET /production-board` và đường đọc mới
+   `GET /counter/queue` (đơn chờ xác nhận + trạng thái nhận đơn: đang tạm dừng từ lúc nào, quán đang mù từ lúc nào)
+   trả `read_at` (mốc `now()` của database) và `poll_interval_seconds` = **20** — một hằng số trong code, trong hợp
+   đồng; số 20 là đề xuất của `master_plan/prompt-fullstack.md` §6.8, pha 3 nhận làm con số.
+4. **Quán còn nhìn thấy = có ít nhất một luồng `GET /counter/events` đang mở** của một người qua lớp `quay`. Bộ phát
+   giữ số luồng quầy đang mở và mốc luồng cuối cùng đóng (hoặc mốc tiến trình khởi động). Không cửa sổ thời gian nào
+   cho phép nhận đơn khi không có luồng (U-061: không tự chọn thời gian phát hiện); `heartbeat` là cách luồng biết nó
+   còn sống, không phải khoảng chờ được nhận đơn.
+5. **Khi một đơn của ba kênh khách tự bấm (`delivery` · `pickup` · `qr_table`) tới lúc không có luồng quầy nào,** cửa
+   tạo lượt gọi ghi một khoảng `shop_blind_spell` (`started_at` = mốc **muộn hơn** giữa lúc luồng quầy cuối cùng đóng và lúc khoảng mù gần nhất đã khép, chặn trên bởi `now()` — nên khoảng mới không chồng khoảng cũ; nút mở lại không bị chặn khi chưa có luồng quầy vì đó là quyết định của người (U-043), và nếu quầy vẫn mù thì đơn tự bấm kế tiếp mở khoảng mới từ lúc bấm mở lại — Claude chốt 2026-10-12 theo câu hỏi của Codex;
+   `declared_by_person_id` trống) trong **giao dịch riêng đã commit**, rồi từ chối đơn bằng mã quán mù hiện có. Đã có
+   khoảng mở thì không ghi thêm. Hai kênh của người (`staff_pos` · `phone_preorder`) không xét điều kiện này (I-008).
+   Khoảng chỉ ghi khi có một đơn bị từ chối — lần mất kết nối không ai đặt thì không có doanh thu nào bị mất.
+6. **Ba nút có người.** `POST /order-intake/pause` · `POST /order-intake/resume` (tạm dừng nhận đơn — nút **của chủ
+   quán**, §6 quy tắc 8 ⇒ lớp `chu_quan`); `POST /shop-blind/declaration` (POS hoặc chủ quán qua 5G bấm tắt ba kênh,
+   U-043 · U-053 ⇒ lớp `quay_hoac_chu_quan`, ghi `declared_by_person_id`); `POST /shop-blind/reopening` (nút mở lại,
+   U-043 ⇒ lớp `quay_hoac_chu_quan`, khép khoảng đang mở với người bấm). Không gì tự mở lại khi tín hiệu về.
+7. **Máy báo:** luồng quầy, khi có khoảng mù mở, phát `changed` để màn đọc `GET /counter/queue` và thấy `blind_since`;
+   màn hiện gì là việc của pha 4.
+8. **Cắt thử từng phụ thuộc** (`01-ranh-gioi-he-thong.md` §2): mỗi `PT-x` một test tên `TestI008_…`/`TestYC…_…` theo
+   mệnh đề nó chấm, dán output vào file lát `09-realtime-du-phong.md`.
+
+**Why:**
+
+- *Tín hiệu thay dữ liệu:* luật 3 của §1.2 — hai đường trả về cùng một sự thật. Đường đẩy không mang con số nào thì
+  không thể khác đường kéo.
+- *Phát cho mọi cửa:* một bảng *cửa nào chạm màn nào* là bản thứ hai của ma trận ghi, sẽ trôi; một quán một tiến trình
+  thì đọc lại thừa không đáng kể.
+- *Dấu hiệu là luồng quầy:* §3 luật 2 — dấu hiệu chạy trên **cùng** đường mà đơn mới tới quầy.
+- *Ghi khoảng mù lúc có đơn bị từ chối:* §3 luật 4 đòi đọc lại được lần hệ thống tự chuyển sang mù; lần từ chối là
+  lúc hệ thống thật sự chuyển. Ghi ở mỗi lần luồng chớp tắt thì một lần khởi động lại tiến trình đòi bấm nút dù không
+  ai đặt — bắt quán bấm nút vô cớ.
+
+**Rejected alternatives:**
+
+- *WebSocket.* Bác: chỉ cần một chiều (§1.1); SSE là HTTP thường, Gin có sẵn.
+- *Đẩy dữ liệu đầy đủ qua luồng.* Bác: *Why* thứ nhất.
+- *Một cửa sổ chờ N giây trước khi coi là mù.* Bác: U-061.
+- *LISTEN/NOTIFY của PostgreSQL.* Bác lúc này: RB-1 một tiến trình; thêm một kết nối và một phụ thuộc mà không đổi
+  hành vi. Mở lại khi RB-1 bị xem lại.
+
+**Chọn khi thi công, Claude chấp nhận khi duyệt (2026-10-12):** mọi giao dịch có hạn 5 giây (`postgres.InTx`) để cửa không treo khi database không trả lời (vế PT-2); luồng SSE đọc mốc database ở mỗi `heartbeat`, database không trả lời thì luồng đóng — với luồng quầy, đó là quán mù.
+
+**Suy ra, không phải lời chủ quán** (`CLAUDE.md` §7.2): nút tạm dừng lớp `chu_quan`; nút báo mù và mở lại lớp
+`quay_hoac_chu_quan`; khoảng mù chỉ ghi khi có đơn bị từ chối; chu kỳ 20 giây; nhịp `heartbeat` 10 giây.
+
+**Applies to:** `P3-12`; `be/` (bộ phát, hai luồng, đường đọc quầy, ba nút, cửa tạo lượt gọi); `docs/product/3-be/09-realtime-du-phong.md` ·
+`openapi.yaml` · `02-vai-va-quyen.md`; **ADR-041** · **ADR-045** · **ADR-047** · **ADR-078** · **ADR-088**.

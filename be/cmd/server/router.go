@@ -13,7 +13,9 @@ import (
 	"banhcuon/be/internal/menu"
 	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/nguoi"
+	"banhcuon/be/internal/nhandon"
 	"banhcuon/be/internal/phien"
+	"banhcuon/be/internal/platform/realtime"
 	"banhcuon/be/internal/qr"
 	"banhcuon/be/internal/sanxuat"
 	"banhcuon/be/internal/tratruoc"
@@ -22,7 +24,12 @@ import (
 )
 
 func newRouter(pool *pgxpool.Pool, auth authz.Authenticator) *gin.Engine {
+	return routerWithRealtime(pool, auth, realtime.New(0))
+}
+
+func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtime.Broker) *gin.Engine {
 	r := gin.New()
+	r.Use(middleware.Realtime(b))
 	// Đường Gin giữ hành vi của ServeMux hôm nay (QC-12): khác phương thức ⇒ 405 kèm Allow, dấu / cuối ⇒ 404.
 	r.HandleMethodNotAllowed = true
 	r.RedirectTrailingSlash = false
@@ -37,8 +44,9 @@ func newRouter(pool *pgxpool.Pool, auth authz.Authenticator) *gin.Engine {
 	tratruoc.Routes(r, tratruoc.NewService(pool))
 	hoadon.Routes(r, hoadon.NewService(pool))
 	ket.Routes(r, ket.NewService(pool))
-	sanxuat.Routes(r, sanxuat.NewService(pool))
-	don.Routes(r, don.NewService(pool))
+	sanxuat.Routes(r, sanxuat.NewService(pool).WithRealtime(b))
+	don.Routes(r, don.NewService(pool, b))
+	nhandon.Routes(r, nhandon.NewService(pool, b))
 	r.NoMethod(func(c *gin.Context) {
 		if c.Request.Method != http.MethodHead {
 			return
@@ -49,6 +57,7 @@ func newRouter(pool *pgxpool.Pool, auth authz.Authenticator) *gin.Engine {
 				continue
 			}
 			c.Writer.Header().Del("Allow")
+			c.Request = c.Request.WithContext(realtime.HeadContext(c.Request.Context()))
 			c.Request.Method = http.MethodGet
 			// Dựng context mới vì HandleContext đặt lại Writer, làm mất lớp bỏ thân.
 			c.Status(http.StatusOK)

@@ -15,6 +15,12 @@ import (
 type Code string
 
 const (
+	CodeOrderIntakeAlreadyPaused Code = "order_intake_already_paused"
+	CodeOrderIntakeNotPaused     Code = "order_intake_not_paused"
+	CodeShopAlreadyBlind         Code = "shop_already_blind"
+	CodeShopNotBlind             Code = "shop_not_blind"
+	CodeIntakeStateChanged       Code = "intake_state_changed"
+
 	CodeOrderDiscountUndecided      Code = "order_discount_undecided"
 	CodeDebtNoteRequired            Code = "debt_note_required"
 	CodeOrderHandoverMismatch       Code = "order_handover_mismatch"
@@ -89,6 +95,12 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
+	CodeOrderIntakeAlreadyPaused: 409,
+	CodeOrderIntakeNotPaused:     409,
+	CodeShopAlreadyBlind:         409,
+	CodeShopNotBlind:             409,
+	CodeIntakeStateChanged:       409,
+
 	CodeOrderDiscountUndecided:      409,
 	CodeDebtNoteRequired:            422,
 	CodeOrderHandoverMismatch:       409,
@@ -161,6 +173,11 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"order_intake_pause_one_at_a_time_excl":        CodeOrderIntakeAlreadyPaused,
+	"shop_blind_spell_one_at_a_time_excl":          CodeShopAlreadyBlind,
+	"order_intake_pause_ended_after_started_check": CodeIntakeStateChanged,
+	"shop_blind_spell_ended_after_started_check":   CodeIntakeStateChanged,
+
 	"paper_ledger_one_per_day_key":                   CodePaperLedgerAlreadyDeclared,
 	"counter_duty_one_at_a_time_excl":                CodeCounterDutyChanged,
 	"counter_duty_ended_after_started_check":         CodeCounterDutyChanged,
