@@ -489,8 +489,10 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
     Không ORM, không công cụ sinh code nào khác.
   - **Câu ghi chỉ ở một chỗ.** Mỗi câu `INSERT` · `UPDATE` của backend là một file
     `be/internal/<miền>/sql/<cửa>/<câu>.sql` (mỗi tên `[a-z][a-z0-9_]*`). Thư mục `<cửa>` **là** cửa ghi
-    của **ADR-082** điểm 1, mã của nó là `<miền>/<cửa>`. Câu **đọc** là file `.sql` ngay dưới `sql/`; không
-    file `.go` nào giữ câu SQL hay nạp file `.sql` bằng `embed`.
+    của **ADR-082** điểm 1, mã của nó là `<miền>/<cửa>`. Câu **đọc** của miền là file `.sql` ngay dưới `sql/`;
+    trong một miền, không file `.go` nào ngoài `internal/sqlcgen/` giữ câu SQL hay nạp file `.sql` bằng `embed`.
+    `authz` · `platform/postgres` không phải miền: giữ vài câu **đọc** trong chuỗi Go (kiểm quầy, mã QR, vai kết nối),
+    không câu ghi (sửa 2026-10-12, `T-166` — câu `T-165` viết rộng hơn cây thật).
   - **Mọi miền có thư mục `sql/`** có đúng một mục trong `sqlc.yaml` ở gốc `be/` (Gate 1f đỏ khi thiếu, từ `T-165`).
     Mỗi file `.sql` có **đúng một** câu và **đúng một** dòng `-- name:`, tên duy nhất trong miền; code sinh ở
     `be/internal/<miền>/internal/sqlcgen/`, một gói mỗi miền, không sửa tay. Mỗi mục của `sqlc.yaml` đọc lược
@@ -544,7 +546,7 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   | `be/internal/apierr/` | hình lỗi chung, hằng mã lỗi và bảng *tên từ chối → mã* — bản code của hợp đồng ([`../3-be/01-hop-dong-api.md`](../3-be/01-hop-dong-api.md) §3–§4, `P3-04`); Gate 1g so hai bản; không import Gin |
   | `be/internal/authz/` | hàm chạy cửa có quyền (`authz.Run`), lớp quyền và khai báo cửa (`authz.Door`) — bản code của ma trận [`../3-be/02-vai-va-quyen.md`](../3-be/02-vai-va-quyen.md) (`P3-05`, **ADR-085**); không câu ghi nào |
   | `be/internal/middleware/` | gắn người vào `gin.Context`; không kiểm quyền, không thay `authz.Run`; sinh ở `T-151` |
-  | `be/internal/<miền>/` | một miền nghiệp vụ: `handler.go` (Gin) → `service.go` (logic cửa, `authz.Door`, `authz.Run`; cửa lớp `theo_cua_goi` giữ API nhận `pgx.Tx`) → `repository.go` (nhận `pgx.Tx`, gọi `sqlcgen`). Miền không có đường gọi nào (`ngayban` · `vongdoi` — chỉ được cửa của miền khác gọi trong giao dịch của nó) không có `handler.go` (Claude chốt 2026-10-12, `T-155`). Mọi miền ở hình này từ `T-164` |
+  | `be/internal/<miền>/` | một miền nghiệp vụ: `handler.go` (Gin) → `service.go` (logic cửa, `authz.Door`, `authz.Run`; cửa lớp `theo_cua_goi` giữ API nhận `pgx.Tx`; tầng này được chia thêm file cùng gói khi một cửa dài — `be/internal/vongdoi/viec.go`, Claude chấp nhận ở `T-158`, ghi vào đây ở `T-166`) → `repository.go` (nhận `pgx.Tx`, gọi `sqlcgen`). Miền không có đường gọi nào (`ngayban` · `vongdoi` — chỉ được cửa của miền khác gọi trong giao dịch của nó) không có `handler.go` (Claude chốt 2026-10-12, `T-155`). Mọi miền ở hình này từ `T-164` |
   | `be/internal/<miền>/sql/<cửa>/` | câu ghi của cửa ấy (`QC-13`) |
   | `be/internal/<miền>/sql/` | câu đọc, file `.sql` ngay dưới thư mục |
   | `be/internal/<miền>/internal/sqlcgen/` | code sqlc sinh cho riêng miền; không sửa tay |

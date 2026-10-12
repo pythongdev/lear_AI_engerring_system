@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-166 **Đổi stack · bước 09 — rà chéo** cây thật với `QC-14`, `--list` hai gate và tập tên test so với nền T-150 — L1 — Claude · chờ T-165 · [chi tiết](#t-149)
 - [ ] T-146 **Sửa số đếm két của ngày đã ký** — chủ quán sửa số đếm của một ngày đã đối soát xong, kèm lý do bắt buộc; lần sửa mở lại ngày ấy (dấu cũ, con số cũ giữ làm vết) cho tới khi chủ quán bấm đối soát xong lại (lời đóng **U-078**, `shop-facts.md` §6.10). Đổi khoá của **ADR-080** (hiện chặn mọi vai) bằng một migration mới và một cửa lớp `chu_quan`; ADR mới. **Chờ T-166** (chủ repo chọn 2026-10-11: làm dãy đổi stack trước, T-146 viết thẳng theo cấu trúc Gin + sqlc) — L2 — Claude thiết kế và viết test đỏ, Codex thi công
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
 - [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi, không cột *ngày bán của két* khi `U-072` còn mở. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
@@ -103,6 +102,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-166 **Đổi stack · bước 09 — rà chéo**: `--list` 1f · 1g ở `be25683` khớp nền `f70dfb3` (khác duy nhất là dòng ánh xạ của T-169); 27 commit không mất tên test (124 → 136); hai câu owner lệch cây thật sửa ở `QC-13` · `QC-14`; **F-067** (sáu task L2 không duyệt độc lập) — L1 — Claude Code — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-165 **Đổi stack · bước 08 — dọn**: `router.go` bỏ `ServeMux` · `gin.WrapH` · `NoRoute`; Gate 1g đỏ ở `.HandleFunc(` · `.Handle(`; Gate 1f đòi mục `sqlc.yaml` và `-- name:` cho mọi miền; `QC-12` · `QC-13` · `QC-14` bỏ vế chuyển tiếp, thêm ba phép kiểm — L1 — Claude thi công và cài lỗi; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-164 **Đổi stack · bước 07 — miền `don`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; mười đường lên Gin, sáu cửa giữ mã và lớp, `Tao` · `DongHo` giữ chữ ký; `router.go` không còn đường nào sau `NoRoute` — L2 — Claude thi công, cài lỗi và tích hợp; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
 - [x] T-163 **Đổi stack · bước 07 — miền `sanxuat`** — `handler.go` · `service.go` · `repository.go` + `sqlcgen`; tám đường lên Gin, bảy cửa giữ mã và lớp, `NoDon` giữ chữ ký `pgx.Tx`; khoá gom hai bản giữ bằng `TestI019_KhoaGomMotDinhNghia`; lỗi cài khoá mẻ không bị bắt ⇒ **F-066** — L2 — Claude thi công (Codex hết hạn mức), cài lỗi và tích hợp; chưa ai duyệt độc lập — 2026-10-12 · [chi tiết](#t-149)
@@ -1115,6 +1115,46 @@ Log: scratchpad phiên `90d2e35e…/scratchpad/T-165-*`.
   dòng `QC-12`; `//go:embed sql/doc_mon.sql` ở `menu` ⇒ dòng `QC-13`; `internal/moi/sql/` không `sqlcgen` ⇒ dòng `QC-14`. Gỡ hết, `diff -r be` rỗng.
   Không miền mới sau mốc kế hoạch: mười ba miền, mỗi miền có `sql/` đều có `sqlcgen` và đúng một mục `sqlc.yaml`.
 - *(5)* `./scripts/gate.sh`: `exit=0`, `PASS gate không cổng nào đỏ`, không dòng `SKIP`; `db-check` đọc 18 khối QC.
+
+**T-166 — Acceptance và điểm Claude chốt trước rà** (Claude, 2026-10-12). Mức **L1**, chỉ đọc: sai thì đợt chuyển được tuyên bố xong mà
+một ô ghi, một route, một mã lỗi hay một test đã mất. Không sửa code; chỉ ghi `work/backlog.md` và `work/findings.md` nếu có vấn đề lặp
+lại. Nền bước 02 là commit `f70dfb3` (nền của T-150); dựng lại `--list` bằng chính script ở commit ấy trong worktree tách rời, không dựa
+vào log của phiên khác.
+1. Cây thật đối chiếu §2 kế hoạch và `QC-14`: mỗi miền ba tầng (hai với `ngayban` · `vongdoi`), một gói sinh mỗi miền, SQL ở `sql/` ·
+   `sql/<cửa>/`; mọi sai lệch được liệt kê và giải quyết hoặc ghi rõ vì sao chấp nhận.
+2. `--list` Gate 1f · 1g ở `f70dfb3` so với `be25683`: tập ô ghi → cửa giống hệt; route, mã lỗi + status, ánh xạ tên từ chối, cửa → lớp
+   giống hệt; khác biệt chỉ ở dòng đếm file. So từng dòng, không dựa riêng vào số lượng.
+3. Tập tên test ở mỗi commit từ `f70dfb3` tới `be25683`: không commit nào làm mất tên; đọc diff `*_test.go` của đợt, mọi thay đổi điều
+   kiện kiểm có lý do đã duyệt (phần dựng router, test mới, ca sửa nguyên nhân ở bước 00).
+4. `verify.sh` · `be-check.sh` · `gate.sh` xanh ở `be25683`; bằng chứng lỗi cài của T-152…T-165 có trong entry, mỗi task một dòng
+   đọc lại. Vấn đề làm chậm lặp lại có bằng chứng ⇒ `F-XXX`.
+5. `./scripts/gate.sh` không `FAIL`; `SKIP` ghi là không chạy.
+
+**T-166 — Bàn giao** (2026-10-12). Rà: **Claude Code** trên cây chính, nền `be25683`; không sửa code. File: `work/backlog.md` ·
+`work/findings.md` (**F-067**) · `docs/product/2-db/10-quy-uoc-code.md` (scope mở rộng, nói trong lượt: hai câu owner lệch cây thật — là
+sửa tài liệu, không phải code). Nền dựng lại ở worktree tách rời `../lean_wt/T-166-base` (`f70dfb3`), chạy chính script của commit ấy.
+Log: scratchpad phiên `90d2e35e…/scratchpad/T-166-*`, `names_<commit>.txt`.
+- *(1) Cây thật ⇄ §2 kế hoạch ⇄ `QC-14`:* mười ba miền; mười một có `handler.go` · `service.go` · `repository.go`, `ngayban` · `vongdoi`
+  không đường gọi nên không `handler.go` (`QC-14`, T-155); mọi miền có `sql/` đều có `internal/sqlcgen/` và đúng một mục `sqlc.yaml`;
+  không `go:embed`, không câu SQL trong `.go` của miền ngoài `sqlcgen`. Sai lệch và cách giải quyết: (a) §2 kế hoạch liệt kê mười hai
+  miền, thiếu `nguoi` — kế hoạch là con trỏ, `QC-14` (owner) đúng, không sửa; (b) `cmd/server/` có `router.go` ngoài `main.go` — đúng
+  `QC-14` (`newRouter`); (c) `vongdoi/viec.go` giữ một `authz.Door` ngoài `service.go` — Claude chấp nhận ở T-158 nhưng `QC-14` chưa
+  nói, nay ghi vào dòng miền; (d) câu `QC-13` do T-165 viết "không file `.go` nào giữ câu SQL" sai với `authz` · `platform/postgres`
+  (không phải miền, giữ câu đọc) — thu hẹp về "trong một miền". Ba khối `QC-12` · `QC-13` · `QC-14` sau sửa in rỗng. Không còn lệch mở.
+- *(2) `--list`:* 1f `f70dfb3` → `be25683` khác đúng một dòng — đếm file 113 → 292; 38 ô ghi, 39 cửa giống từng dòng. 1g khác ba dòng:
+  đếm file 36 → 170, dòng tổng (hợp đồng 0.12.0 → 0.13.0, 296 → 297 tên), và một dòng `ánh xạ menu_option_one_default_per_group_key
+  internal` — `git log -S` chỉ ra `ef43aeb` (**T-169**, ADR-094), task riêng chen giữa đợt, không phải chuyển stack. 45 route, 60 mã
+  lỗi + status, 39 cửa → lớp giống từng dòng.
+- *(3) Tên test:* từng commit trong 27 commit `f70dfb3..be25683` so với commit trước — không commit nào mất tên; 124 → 136, mười hai
+  tên thêm ở T-151 (6) · T-153 (2) · T-169 · T-171 · T-172 · T-163 (1 mỗi). Mọi dòng xoá trong `be/**/_test.go` của đợt (đọc hết) thuộc
+  ba loại: đổi gói `db` → `platform/postgres`, `dbtest` → `testhelper`; dựng router `ServeMux` → Gin; và vế "không đọc người trước khi
+  kiểm hình" của `TestQC14_HinhDuongTienTruocQuyen` (T-160) · `TestQC14_MangDiHinhTruocQuyen` (T-164) — **nới có chủ ý**: middleware
+  đọc người cho mọi yêu cầu theo thiết kế T-151; vế "không chạm quyền, không chạm database" vẫn giữ bằng pool nil. Không `t.Fatal`,
+  mã mong đợi hay bảng ca nào đổi.
+- *(4)* `be-check` riêng ở cây tích hợp: `exit=0`, `PASS=136 FAIL=0 SKIP=0`. `verify` trong gate PASS (15 `*.test.sh`). Bằng chứng lỗi cài
+  có trong entry của cả mười sáu task T-150…T-165 (đọc lại từng dòng *Lỗi cài*); T-163 cài trên cây chính trái luật T-167 ⇒ **F-067**.
+- *(5)* `./scripts/gate.sh` lượt cuối: `exit=0`, `PASS gate không cổng nào đỏ`; một dòng `SKIP Gate 1 be` (lượt không đổi `be/`) — cổng
+  **không chạy**, bù bằng `be-check` riêng ở dòng (4).
 
 **Bàn giao** (2026-10-11): thiết kế và viết — **Claude Code**, không giao Codex (phiếu nói vậy); chưa ai duyệt
 độc lập. Cây chính, nhánh `chatgpt_involve`, nền `a085af4` cộng phần Done chưa commit của T-138 · T-140 · T-142 ·

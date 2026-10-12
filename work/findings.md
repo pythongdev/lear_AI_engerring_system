@@ -4865,3 +4865,29 @@ tầng 1 bắt, ghi tên ràng buộc như **F-065**.
 
 **Status:**
 Open
+
+### F-067 — Sáu task L2 đổi stack liền nhau không ai duyệt độc lập; một lần cài lỗi lọt ra cây chính
+
+**Problem:**
+`ADR-054` giao Codex thi công, Claude duyệt; khi Codex hết hạn mức (2026-10-12), Claude vừa thi công vừa tự duyệt sáu task L2 liền
+`T-160` … `T-165` (đường tiền, sản xuất, đơn, dọn gate). Entry bàn giao của cả sáu đều ghi *chưa ai duyệt độc lập* — đo 2026-10-12 ở
+rà chéo `T-166` (Claude Code, đọc `work/backlog.md`). Cùng đợt, `T-163` cài lỗi **trên cây chính** rồi hoàn nguyên bằng bản lưu, trái
+luật của `T-167` (`quality/review-gate.md` Gate 1: lỗi cài chỉ trong worktree riêng); không lỗi nào lọt vào commit, nhưng đó là đúng
+đường dẫn tới **F-063**.
+
+**Impact:**
+Rà chéo `T-166` dò được thứ gate đọc ra (ô ghi, route, mã lỗi, tên test, dòng xoá trong test) nhưng không thay một người đọc khác: một
+lỗi logic giữ nguyên tên test và `--list` vẫn lọt. `T-146` (sửa số đếm két, L2, đường tiền) viết thẳng lên cây này. Rà chéo của chính
+`T-166` còn bắt được hai câu owner do chính người thi công viết lệch cây thật (`QC-13` · `QC-14`, sửa trong `T-166`) — loại lỗi một
+người duyệt độc lập thường thấy trước.
+
+**Decision / Fix:**
+Chưa sửa. Đề nghị cho chủ repo quyết: trước khi bắt đầu `T-146`, một lượt duyệt độc lập (Codex khi có lại hạn mức, hoặc phiên Claude
+khác lạnh ngữ cảnh) trên diff `1728c0d^..be25683` phần `be/internal/{tratruoc,hoadon,ket,sanxuat,don}/` theo `quality/review-gate.md`;
+và khi Claude buộc phải thi công thay Codex, cài lỗi vẫn trong worktree riêng như `T-164` đã làm.
+
+**Related task:**
+`T-160` · `T-161` · `T-162` · `T-163` · `T-164` · `T-165` · `T-166` (đo) · `T-167` · ADR-054 · **F-063**
+
+**Status:**
+Open
