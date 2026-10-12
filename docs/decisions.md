@@ -112,6 +112,7 @@ có câu trả lời mới từ người.
 | ADR-093 | **Backend đổi sang Gin v1.12.0 và sqlc v1.31.1, cấu trúc kết hợp**: handler · service · repository trong từng miền, code sinh ở `<miền>/internal/sqlcgen/` mỗi miền một gói; câu ghi vẫn một file `.sql` dưới thư mục của một cửa, thêm một dòng `-- name:`; Go 1.27.2, migrate v4.20.1; một hàm mở giao dịch, chuyển sang `platform/postgres` ở T-151; miền đã chuyển = có mục trong `sqlc.yaml`; thay điểm 1 · 6 của ADR-083; quy ước ở `QC-05` · `QC-11`…`QC-14` | Đã chốt 2026-10-10 (stack và cấu trúc: chủ repo; luật chuyển tiếp và chia task: Claude, T-149) | — | T-149…T-166 · ADR-082 · ADR-083 · ADR-084 · ADR-085 |
 | ADR-094 | **Mặc định của nhóm tuỳ chọn là dữ liệu**: cờ `menu_option.is_default`, mỗi nhóm nhiều nhất một (`menu_option_one_default_per_group_key`, migration bước 21); dữ liệu mồi đọc `shop-facts.md` §4.6 luật 8 lúc chạy; `GET /menu` trả cờ để màn gọi món chọn sẵn; cửa tạo lượt gọi và tính thử **vẫn không** tự điền (`I-010`); chưa có cửa đổi mặc định | Đã chốt 2026-10-11 (giao cho phiên, T-169; Claude) | — | T-169 · F-059 · ADR-086 |
 | ADR-095 | **Vết sửa, sổ giấy và F-060 ở pha 3**: mỗi cửa có câu sửa một test *sửa ⇒ vết đủ bốn thứ*, một test so tập cửa sửa với tập ca; phép đối chiếu `I-016` dựng bước *Chờ thanh toán → Đang phục vụ* do khách QR kích từ chính lượt gọi `qr_table` (hướng (b) của **F-060**, không người hệ thống giả); cửa `ket/khai_so_giay` (lớp `quay_hoac_chu_quan`) khai số lượt trên giấy của một ngày chưa ký; cửa ký ngày từ chối `paper_entries_pending` khi còn lượt chưa nhập; cửa nhập bù hoá đơn chờ **U-079** | Đã chốt 2026-10-12 (giao cho phiên, P3-11; chủ repo giao toàn quyền làm nốt pha 3; Claude thiết kế, Codex thi công) | — | P3-11 · F-060 · ADR-037 · ADR-087 · ADR-089 · ADR-092 · U-079 |
+| ADR-096 | **Chủ quán sửa số đếm két của ngày đã ký**: bảng `reconciled_day_reopening` (một lần mở lại một dấu, lý do bắt buộc); dấu mới nối vào dấu cũ đã mở lại qua `previous_reconciled_day_id`, mỗi ngày nhiều nhất một dấu đang đứng ở tầng 1; khoá của ADR-080 cho sửa số đếm khi dấu mới nhất đã mở lại, tiền đầu két vẫn khoá; cửa `ket/sua_dem` lớp `chu_quan`; cửa tiền khác vẫn coi ngày từng ký là đóng | Đã chốt 2026-10-12 (giao cho phiên, T-146; Claude thiết kế, Codex thi công) | — | T-146 · ADR-079 · ADR-080 · ADR-089 · U-074 · U-078 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -6595,3 +6596,63 @@ không đổi tầng của `I-016` · `I-018`.
 **Applies to:** `P3-11`; `be/internal/ket/` · `be/internal/*/…_test.go` (test vết) · `db/reconcile/i016.sql`;
 file lát mới `08-vet-va-nhap-bu.md` cùng `06-duong-tien.md` trong thư mục `3-be` · `02-vai-va-quyen.md` · `openapi.yaml`;
 **F-060** · **ADR-037** · **ADR-087** · **ADR-089** · **ADR-092** · **U-079**.
+
+### ADR-096 — Chủ quán sửa số đếm két của ngày đã ký: lần sửa mở lại dấu bằng một dòng mở lại có lý do, dấu mới nối vào dấu cũ, các cửa tiền khác vẫn coi ngày từng ký là đóng
+
+**Trạng thái:** Đã chốt 2026-10-12, **giao cho phiên** (task `T-146`; chủ repo 2026-10-12 giao toàn quyền làm nốt
+pha 3). Claude Code thiết kế, Codex thi công. Luật ở `master_plan/shop-facts.md` §6.10 (lời **U-074** · **U-078**);
+quyết định này **sửa điểm 4 của ADR-080** (*không dựng đường sửa số đã ký*) và thay hàm khoá của điểm 1 bằng một
+migration mới; điểm 2, 3, 5 của ADR-080 giữ nguyên.
+
+**Decision:**
+
+1. **Bảng mới `reconciled_day_reopening`** — một lần mở lại một dấu: `reconciled_day_id` (duy nhất, khoá ngoại),
+   `sale_date` (khoá ngoại hai cột về dấu), `reason` không trắng, `person_id` mặc định người thao tác, `created_at`.
+   Một dấu mở lại nhiều nhất một lần; không sửa, không xoá (`QD-50`).
+2. **Dấu nối thành chuỗi.** `reconciled_day` thêm `previous_reconciled_day_id` (duy nhất, khoá ngoại hai cột
+   `(previous_reconciled_day_id, sale_date)` về `reconciled_day_reopening (reconciled_day_id, sale_date)`); khoá
+   `reconciled_day_one_per_day_key` thay bằng khoá duy nhất từng phần trên `sale_date` khi `previous_reconciled_day_id`
+   trống. ⇒ mỗi ngày có **nhiều nhất một dấu đang đứng** (dấu chưa bị mở lại), dấu thứ hai chỉ ghi được khi dấu
+   trước đã mở lại, chuỗi không rẽ nhánh — tất cả ở tầng 1.
+3. **Khoá của ADR-080 đổi một vế.** `cash_count` · `cash_count_line` bị khoá khi ngày có **dấu đang đứng**;
+   `opening_float` · `opening_float_line` vẫn bị khoá khi ngày có **bất kỳ** dấu nào (đường sửa chỉ mở cho số đếm).
+   Không vai nào miễn, giữ điểm 2 của ADR-080.
+4. **Cửa `ket/sua_dem`** (`PUT /sale-days/{sale_date}/cash-count`, lớp `chu_quan`): thân là danh sách xấp đủ như
+   cửa đếm (`ket/dem`) cộng `reason` bắt buộc không trắng. Ngày chưa từng ký ⇒ `sale_day_not_reconciled` (dùng cửa
+   đếm). Trong một giao dịch, sau khoá riêng của ngày (khoá của cửa ký): nếu ngày có dấu đang đứng thì ghi một dòng
+   mở lại; rồi đặt số đếm mới — xấp có trong yêu cầu nhận số mới, xấp cũ không có trong yêu cầu về 0đ (không xoá
+   dòng) — với `reason` là lý do vết (`I-018`). Ngày đã mở lại mà chưa ký lại thì sửa tiếp được, mỗi lần một vết.
+5. **Ký lại.** Cửa `ket/doi_soat_xong` ghi dấu mới với `previous_reconciled_day_id` là dấu đã mở lại gần nhất;
+   ngày có dấu đang đứng ⇒ `sale_day_reconciled` như cũ. Luật giải thích khi lệch (U-073) và luật sổ giấy (ADR-095)
+   áp như lần ký đầu.
+6. **Cửa tiền khác không đổi.** `ngayban.DaKy` vẫn trả *ngày đã có dấu* (đã từng ký) ⇒ mọi cửa ghi tiền vào ngày ấy
+   vẫn `sale_day_reconciled`, kể cả lúc ngày đang mở lại.
+7. **Đường đọc.** `GET /sale-days/{sale_date}/cash-reconciliation` trả trạng thái ký (`reconciled` · `reopened` ·
+   không) và chuỗi dấu (người, lúc, lệch, giải thích, lý do mở lại).
+8. **Migration mới, đường lùi có khoá chặn:** có dù một dòng mở lại hay một dấu có `previous_reconciled_day_id` thì
+   từ chối lùi.
+
+**Why:**
+
+- *Dòng mở lại thay cho xoá hay sửa dấu:* lời U-078 đòi bấm lại **và** ghi lý do; dấu cũ, con số cũ phải đọc lại
+  được (`I-018`, `QD-50`). Dấu cũ đứng nguyên, dòng mở lại nói *ai, lúc nào, vì sao*, số cũ nằm trong vết.
+- *Chuỗi ở tầng 1:* một cờ *đang đứng* trên dấu là ô thứ hai cho cùng sự thật; khoá duy nhất từng phần + khoá ngoại
+  về dòng mở lại giữ *nhiều nhất một dấu đang đứng* mà không trigger nào.
+- *Cửa tiền khác vẫn đóng:* lời không nói được ghi thêm tiền vào ngày đang mở lại (`shop-facts.md` §6.10, cách đọc
+  của phiên); mở nhiều nhất có thể là chọn hộ chủ quán. Đóng là hướng an toàn và đổi được về sau.
+- *Một cửa sửa gộp mở lại + đếm:* lời gắn hai việc vào một lần sửa; tách hai cửa thì có trạng thái *đã mở lại mà
+  số chưa đổi* không ai muốn.
+
+**Rejected alternatives:**
+
+- *Xoá dấu cũ rồi ký lại.* Bác: `QD-50`, và mất vết.
+- *Cột `reopened_at` trên `reconciled_day`.* Bác: `shop_app` không có quyền `UPDATE` trên dấu (ADR-079), mở quyền là
+  mở cả việc dời dấu.
+- *Mở lại cho mọi cửa tiền.* Bác ở lượt này: *Why* thứ ba.
+
+**Suy ra, không phải lời chủ quán** (`CLAUDE.md` §7.2): lần sửa mở lại ngày; cửa tiền khác vẫn đóng; xấp không có
+trong yêu cầu về 0đ; tiền đầu két không sửa được qua đường này.
+
+**Applies to:** `T-146`; `db/migrations/` (bước 22) · `db/tests/` · `be/internal/ket/`; `docs/product/2-db/04-luoc-do-duong-tien.md` ·
+`07-thu-tu-migration.md` · `docs/product/3-be/06-duong-tien.md` · `02-vai-va-quyen.md` · `openapi.yaml`;
+**ADR-079** · **ADR-080** · **ADR-089** · **U-074** · **U-078**.

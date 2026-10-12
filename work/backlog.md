@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-146 **Sửa số đếm két của ngày đã ký** — chủ quán sửa số đếm của một ngày đã đối soát xong, kèm lý do bắt buộc; lần sửa mở lại ngày ấy (dấu cũ, con số cũ giữ làm vết) cho tới khi chủ quán bấm đối soát xong lại (lời đóng **U-078**, `shop-facts.md` §6.10). Đổi khoá của **ADR-080** (hiện chặn mọi vai) bằng một migration mới và một cửa lớp `chu_quan`; ADR mới. **Chờ T-166** (chủ repo chọn 2026-10-11: làm dãy đổi stack trước, T-146 viết thẳng theo cấu trúc Gin + sqlc) — L2 — Claude thiết kế và viết test đỏ, Codex thi công
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
 - [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi, không cột *ngày bán của két* khi `U-072` còn mở. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
@@ -98,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-146 **Sửa số đếm két của ngày đã ký** — bảng mở lại dấu, dấu nối chuỗi, khoá ADR-080 đổi một vế, cửa `ket/sua_dem` lớp `chu_quan`; lời U-074 · U-078 — **ADR-096** — L2 — Claude thiết kế, Codex thi công · [chi tiết](#t-146)
 
 <a id="done"></a>
 ## Done
@@ -1226,6 +1226,37 @@ Log ở scratchpad phiên `f9049835…/scratchpad/` (`loop1/`, `hA/` `hB/` `hC/`
   T-148 mở thêm `scripts/check-links.ignore`, một dòng ngoại lệ có hạn theo tiền lệ `fe/package.json`; gỡ ở lượt tạo file.
 
 [↑ đầu file](#top)
+
+<a id="t-146"></a>
+### T-146 — Chủ quán sửa số đếm két của ngày đã ký
+
+**Nhận việc** — Claude Code, 2026-10-12 (chủ repo giao toàn quyền làm nốt pha 3; T-166 đã Done). Mức **L2**: chạm tiền,
+dữ liệu đã ký và một migration. Thiết kế: **ADR-096**. Luật: `master_plan/shop-facts.md` §6.10 (U-074 · U-078).
+- *Phạm vi:* `db/migrations/` (một cặp file mới, bước 22) · `db/tests/` · `db/reconcile/` (nếu câu đọc dấu cần đổi) ·
+  `be/internal/ket/` · `be/internal/apierr/` · `docs/product/3-be/` (`06-duong-tien.md`, `02-vai-va-quyen.md`, `openapi.yaml`) ·
+  `docs/product/2-db/` (`04-luoc-do-duong-tien.md`, `07-thu-tu-migration.md`, `09-doi-chieu-bat-bien.md` nếu đổi câu) ·
+  `scripts/db-check.sh` (nếu cần gọi test mới).
+- *Nghiệm thu:*
+  1. Test database `db/tests/i021_reopened_day.sql`: mở lại cần lý do không trắng và người; một dấu mở lại nhiều nhất một
+     lần; dấu thứ hai của ngày khi dấu trước chưa mở lại ⇒ từ chối; dấu nối vào dấu của ngày khác ⇒ từ chối; sửa số đếm
+     khi dấu đang đứng ⇒ từ chối như cũ, khi dấu đã mở lại ⇒ đi qua có vết; tiền đầu két ngày đã mở lại ⇒ vẫn từ chối;
+     `TRUNCATE` vẫn bị chặn. Đỏ trên bước 21, xanh trên bước 22. Đường lùi từ chối khi có dòng mở lại.
+  2. `TestI021_ChuQuanSuaSoDemNgayDaKy` (qua HTTP): ngày đã ký, chủ quán `PUT /sale-days/{d}/cash-count` kèm lý do ⇒ số
+     mới, ngày ở trạng thái mở lại, vết của từng dòng đổi mang lý do và người; ký lại ⇒ dấu mới trỏ dấu cũ; đường đọc trả
+     chuỗi dấu và lý do mở lại.
+  3. `TestI021_SuaSoDemTuChoi…`: thiếu hoặc trắng lý do ⇒ `invalid_request` field `reason`; người không phải chủ quán ⇒ từ
+     chối quyền; ngày chưa từng ký ⇒ `sale_day_not_reconciled`; thân xấp sai ⇒ như cửa đếm.
+  4. `TestI021_NgayMoLaiVanDongVoiCuaTien`: ngày đang mở lại, cửa tiền khác (thu, hoàn, đầu két, đếm thường) ⇒
+     `sale_day_reconciled`.
+  5. `TestI021_SuaSoDemChenLucKy` dựng tất định như `TestI021_TienChenLucKyNgayKhongLotVaoSoDaKy`.
+  6. Test cũ không đổi khẳng định; ký lần đầu, ngày lệch cần giải thích, sổ giấy (ADR-095) áp cho lần ký lại.
+  7. `./scripts/gate.sh` xanh (be-check, db-check trên PostgreSQL).
+- *Kiểm chứng:* Claude chạy lại gate; cài lỗi trong worktree riêng (luật `T-167`): bỏ điều kiện *dấu đang đứng* ở khoá ⇒
+  test (1) đỏ; cửa sửa không ghi dòng mở lại ⇒ (2) đỏ; `ngayban.DaKy` đổi sang *dấu đang đứng* ⇒ (4) đỏ.
+- *Ghi chú quy trình:* L2 của pha 3 đòi Claude viết test đỏ trước; lượt này Claude viết Nghiệm thu tới từng ca, Codex viết
+  test và code, Claude cài lỗi để chứng minh test bắt được — cùng cách đã dùng ở `P3-11`.
+
+**Bàn giao:** —
 
 <a id="t-147"></a>
 ### T-147 — Huỷ đơn đã Hoàn thành: chủ quán cho huỷ, cửa vẫn từ chối
