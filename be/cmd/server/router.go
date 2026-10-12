@@ -38,8 +38,9 @@ func newRouter(pool *pgxpool.Pool, auth authz.Authenticator) *gin.Engine {
 	hoadon.Routes(r, hoadon.NewService(pool))
 	ket.Routes(r, ket.NewService(pool))
 	sanxuat.Routes(r, sanxuat.NewService(pool))
+	don.Routes(r, don.NewService(pool))
+	// T-164: mọi miền đã sang Gin, ServeMux chuyển tiếp không còn đường nào; T-165 gỡ adapter.
 	legacy := http.NewServeMux()
-	don.Routes(legacy, pool, auth)
 	wrapLegacy := gin.WrapH(legacy)
 	r.NoRoute(func(c *gin.Context) {
 		// NoRoute đặt sẵn 404; trả về 200 trước khi handler cũ ghi thân mà không gọi WriteHeader.

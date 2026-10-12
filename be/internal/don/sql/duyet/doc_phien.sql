@@ -1,1 +1,2 @@
-SELECT table_session_id FROM sales_order WHERE id = $1
+-- name: DuyetDocPhien :one
+SELECT table_session_id FROM sales_order WHERE id = $1;

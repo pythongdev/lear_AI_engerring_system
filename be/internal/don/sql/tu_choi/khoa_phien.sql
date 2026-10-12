@@ -1,1 +1,2 @@
-SELECT status FROM table_session WHERE id = $1 FOR UPDATE
+-- name: TuChoiKhoaPhien :one
+SELECT status FROM table_session WHERE id = $1 FOR UPDATE;

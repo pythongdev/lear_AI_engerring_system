@@ -1,1 +1,2 @@
-SELECT status FROM sales_order WHERE id = $1 FOR UPDATE
+-- name: TuChoiKhoaDon :one
+SELECT status FROM sales_order WHERE id = $1 FOR UPDATE;

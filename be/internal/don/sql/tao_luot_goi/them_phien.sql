@@ -1,1 +1,2 @@
-INSERT INTO table_session (status) VALUES ('open') RETURNING id
+-- name: ThemPhien :one
+INSERT INTO table_session (status) VALUES ('open') RETURNING id;

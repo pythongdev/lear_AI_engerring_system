@@ -1,1 +1,2 @@
-SELECT status, handover_code FROM sales_order WHERE id = $1 FOR UPDATE
+-- name: RoiQuanKhoaDon :one
+SELECT status, handover_code FROM sales_order WHERE id = $1 FOR UPDATE;

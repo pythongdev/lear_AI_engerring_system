@@ -80,10 +80,7 @@ func dung(t *testing.T) khung {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { owner.Close(context.Background()) })
-	mux := http.NewServeMux()
-	// P3-07: đường gọi của luồng tại bàn (ADR-087).
-	don.Routes(mux, pool, xacThucTest{})
-	// T-152: menu đã chuyển sang Gin; các miền chưa chuyển chạy sau NoRoute như be/cmd/server/router.go.
+	// T-152: menu đã chuyển sang Gin; T-164: miền cuối cùng (don) cũng vậy, không còn NoRoute.
 	r := gin.New()
 	r.Use(middleware.GanNguoi(xacThucTest{}))
 	menu.Routes(r, menu.NewService(pool))
@@ -97,10 +94,8 @@ func dung(t *testing.T) khung {
 	// P3-10 thêm có chủ ý (ADR-090): đường gọi của sản xuất theo mẻ — mẻ, lùi mẻ, đã ra bàn, chuyển,
 	// ghi chú bánh làm sai, huỷ đơn, bảng nhu cầu. T-163: sang Gin như ket.
 	sanxuat.Routes(r, sanxuat.NewService(pool))
-	r.NoRoute(func(c *gin.Context) {
-		c.Status(http.StatusOK)
-		mux.ServeHTTP(c.Writer, c.Request)
-	})
+	// P3-07: đường gọi của luồng tại bàn (ADR-087).
+	don.Routes(r, don.NewService(pool))
 	srv := httptest.NewServer(r)
 	t.Cleanup(srv.Close)
 	// P3-08 thêm có chủ ý (ADR-088): cửa tạo lượt gọi xét giờ bán tại mốc của đồng hồ (I-008), nên mọi

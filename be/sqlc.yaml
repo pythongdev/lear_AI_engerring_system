@@ -141,3 +141,18 @@ sql:
         package: sqlcgen
         out: internal/sanxuat/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/don/sql
+      - internal/don/sql/duyet
+      - internal/don/sql/huy
+      - internal/don/sql/nha_hen
+      - internal/don/sql/roi_quan
+      - internal/don/sql/tao_luot_goi
+      - internal/don/sql/tu_choi
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/don/internal/sqlcgen
+        sql_package: pgx/v5

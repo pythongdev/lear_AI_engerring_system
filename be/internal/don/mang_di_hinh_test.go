@@ -2,20 +2,19 @@ package don
 
 import (
 	"encoding/json"
-	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/gin-gonic/gin"
 )
 
-type camDocNguoi struct{}
-
-func (camDocNguoi) PersonID(*http.Request) (int64, bool) {
-	panic("đã đọc người trước khi kiểm xong hình")
-}
-
-// Pool nil và bộ đọc người từ chối mọi lần gọi: yêu cầu sai hình phải dừng trước cả hai.
+// Pool nil: yêu cầu sai hình phải dừng trước quyền và trước database. T-164: don sang Gin, gắn không qua
+// middleware.GanNguoi như TestQC14_HinhDuongTienTruocQuyen (T-160) — middleware đọc người cho mọi yêu cầu
+// theo thiết kế (T-151), nên vế "không đọc người" của bản ServeMux cũ không còn là thuộc tính của handler.
 func TestQC14_MangDiHinhTruocQuyen(t *testing.T) {
+	r := gin.New()
+	Routes(r, NewService(nil))
 	for _, ca := range []struct{ name, body, field string }{
 		{"dấu trước bàn", `{"submission_code":"sai","dining_table_id":null}`, "submission_code"},
 		{"bàn trước kênh", `{"dining_table_id":null}`, "dining_table_id"},
@@ -38,7 +37,7 @@ func TestQC14_MangDiHinhTruocQuyen(t *testing.T) {
 			}
 			raw, _ := json.Marshal(body)
 			rec := httptest.NewRecorder()
-			handler{auth: camDocNguoi{}}.taoOnline(rec, httptest.NewRequest("POST", "/online-orders", strings.NewReader(string(raw))))
+			r.ServeHTTP(rec, httptest.NewRequest("POST", "/online-orders", strings.NewReader(string(raw))))
 			var out struct{ Code, Field string }
 			if err := json.Unmarshal(rec.Body.Bytes(), &out); err != nil {
 				t.Fatal(err)
