@@ -416,6 +416,36 @@ BEGIN
   PERFORM set_config('shop.actor_person_id', pg_temp.bc_nguoi('Người đứng quầy')::text, true);
 END $$;
 
+-- P3-11 / F-060: mô hình hai vết có khoảng hở QR. Giống các ca i017, mốc của vết
+-- được đặt theo ngày mẫu vì db-check diễn nhiều giao dịch trong một giao dịch bao ngoài.
+-- TestI016_KhoangHoQRQuaCua kiểm riêng đường HTTP và ngoại lệ trigger thật.
+CREATE FUNCTION pg_temp.bc_f060(p_qr boolean) RETURNS bigint LANGUAGE plpgsql AS $f$
+DECLARE b bigint; s bigint; o bigint; r bigint;
+BEGIN
+  INSERT INTO dining_table(label) VALUES ('proof F060 ' || p_qr::text) RETURNING id INTO b;
+  PERFORM qr_code_issue(b);
+  s := pg_temp.bc_phien(ARRAY[b]);
+  UPDATE table_session SET status = 'serving' WHERE id = s;
+  UPDATE table_session SET status = 'awaiting_payment' WHERE id = s;
+  SELECT max(id) INTO r FROM record_revision WHERE target_table_code = 'table_session' AND target_row = s;
+  UPDATE record_revision SET revised_at = pg_temp.bc_luc('10:00') WHERE id = r;
+  IF p_qr THEN
+    o := pg_temp.bc_don('qr_table', s, b, pg_temp.bc_luc('10:01'));
+    PERFORM pg_temp.bc_mon(o, 'Giò bán rời', 1, ARRAY[]::text[]);
+    UPDATE sales_order SET status = 'pending_confirmation' WHERE id = o;
+  END IF;
+  -- Dựng lần chuyển không vết; nhánh false là lỗi cài vượt database.
+  PERFORM pg_temp.bc_vet('table_session', false);
+  UPDATE table_session SET status = 'serving' WHERE id = s;
+  PERFORM pg_temp.bc_vet('table_session', true);
+  UPDATE table_session SET status = 'awaiting_payment' WHERE id = s;
+  UPDATE record_revision SET revised_at = pg_temp.bc_luc('10:02')
+   WHERE target_table_code = 'table_session' AND target_row = s AND id > r;
+  RETURN s;
+END $f$;
+-- Có QR trong khoảng: bộ đối chiếu trên ngày mẫu phải vẫn trả mọi tập rỗng.
+DO $$ BEGIN PERFORM pg_temp.bc_f060(true); END $$;
+
 -- Ngày mẫu phải qua MỌI ràng buộc hoãn, như lúc COMMIT.
 SET CONSTRAINTS ALL IMMEDIATE;
 SET CONSTRAINTS ALL DEFERRED;

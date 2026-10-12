@@ -49,3 +49,20 @@ func (q *Queries) ThemKyNgay(ctx context.Context, arg ThemKyNgayParams) (int64, 
 	err := row.Scan(&id)
 	return id, err
 }
+
+const themSoGiay = `-- name: ThemSoGiay :one
+INSERT INTO paper_ledger (sale_date, entry_count)
+VALUES ($1::text::date, $2) RETURNING id
+`
+
+type ThemSoGiayParams struct {
+	Column1    string
+	EntryCount int32
+}
+
+func (q *Queries) ThemSoGiay(ctx context.Context, arg ThemSoGiayParams) (int64, error) {
+	row := q.db.QueryRow(ctx, themSoGiay, arg.Column1, arg.EntryCount)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}

@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.13.0
+  version: 0.14.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -1070,6 +1070,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CashCountCreated'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sale-days/{sale_date}/paper-ledger:
+    post:
+      operationId: declarePaperLedger
+      description: POS hoặc chủ quán khai sổ ngày không sau hôm nay; từ chối ngày đã ký (ADR-095).
+      parameters:
+        - name: sale_date
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SaleDate'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaperLedgerRequest'
+      responses:
+        '201':
+          description: Đã khai sổ giấy.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaperLedgerCreated'
         default:
           description: Lời từ chối theo ErrorCode và x-http-status.
           content:
@@ -2332,7 +2361,7 @@ components:
             $ref: '#/components/schemas/Debt'
     CashReconciliation:
       type: object
-      required: [sale_date, counted_vnd, opening_float_vnd, expected_vnd, gap_vnd]
+      required: [sale_date, counted_vnd, opening_float_vnd, expected_vnd, gap_vnd, paper_entries_declared, paper_entries_pending]
       additionalProperties: false
       properties:
         sale_date:
@@ -2347,6 +2376,39 @@ components:
         gap_vnd:
           type: integer
           format: int64
+        paper_entries_declared:
+          type: [integer, 'null']
+          format: int32
+          minimum: 1
+          description: Số lượt khai trên sổ; null khi ngày không có sổ.
+        paper_entries_pending:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Số khai trừ số hoá đơn của sổ; 0 khi không có sổ.
+    PaperLedgerRequest:
+      type: object
+      required: [entry_count]
+      additionalProperties: false
+      properties:
+        entry_count:
+          type: integer
+          format: int32
+          minimum: 1
+    PaperLedgerCreated:
+      type: object
+      required: [paper_ledger_id, sale_date, entry_count]
+      additionalProperties: false
+      properties:
+        paper_ledger_id:
+          type: integer
+          format: int64
+        sale_date:
+          $ref: '#/components/schemas/SaleDate'
+        entry_count:
+          type: integer
+          format: int32
+          minimum: 1
     ErrorCode:
       type: string
       description: >-
@@ -2399,6 +2461,7 @@ components:
         - sale_day_reconciled
         - cash_day_incomplete
         - sale_day_already_reconciled
+        - paper_ledger_already_declared
         - paper_entries_pending
         - gap_explanation_required
         - station_job_not_found
@@ -2432,6 +2495,7 @@ components:
         cash_day_incomplete: 409
         sale_day_already_reconciled: 409
         paper_entries_pending: 409
+        paper_ledger_already_declared: 409
         gap_explanation_required: 422
         station_job_not_found: 404
         station_job_transition_not_allowed: 409
@@ -2929,10 +2993,10 @@ x-constraint-errors:
   order_line_quantity_positive_check: internal
   order_line_sales_order_fkey: internal
   order_line_unit_price_non_negative_check: internal
-  paper_ledger_entry_count_positive_check: unreviewed
-  paper_ledger_id_day_count_key: unreviewed
-  paper_ledger_one_per_day_key: unreviewed
-  paper_ledger_person_fkey: unreviewed
+  paper_ledger_entry_count_positive_check: internal
+  paper_ledger_id_day_count_key: internal
+  paper_ledger_one_per_day_key: paper_ledger_already_declared
+  paper_ledger_person_fkey: internal
   paper_ledger_pkey: internal
   person_display_name_not_blank_check: unreviewed
   person_pkey: internal

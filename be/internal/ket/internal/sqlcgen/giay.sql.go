@@ -7,16 +7,24 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const conSoGiay = `-- name: ConSoGiay :one
-SELECT EXISTS (SELECT 1 FROM paper_ledger p WHERE p.sale_date = $1::text::date
- AND p.entry_count > (SELECT count(*) FROM bill b WHERE b.paper_ledger_id = p.id))
+const docSoGiay = `-- name: DocSoGiay :one
+SELECT p.entry_count, coalesce(p.entry_count - (SELECT count(*) FROM bill b WHERE b.paper_ledger_id = p.id), 0)::bigint AS pending
+FROM (SELECT $1::text::date AS sale_date) d
+LEFT JOIN paper_ledger p ON p.sale_date = d.sale_date
 `
 
-func (q *Queries) ConSoGiay(ctx context.Context, dollar_1 string) (bool, error) {
-	row := q.db.QueryRow(ctx, conSoGiay, dollar_1)
-	var exists bool
-	err := row.Scan(&exists)
-	return exists, err
+type DocSoGiayRow struct {
+	EntryCount pgtype.Int4
+	Pending    int64
+}
+
+func (q *Queries) DocSoGiay(ctx context.Context, dollar_1 string) (DocSoGiayRow, error) {
+	row := q.db.QueryRow(ctx, docSoGiay, dollar_1)
+	var i DocSoGiayRow
+	err := row.Scan(&i.EntryCount, &i.Pending)
+	return i, err
 }

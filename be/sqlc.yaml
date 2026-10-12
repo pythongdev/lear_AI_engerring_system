@@ -119,6 +119,7 @@ sql:
       - internal/ket/sql
       - internal/ket/sql/dem
       - internal/ket/sql/doi_soat_xong
+      - internal/ket/sql/khai_so_giay
       - internal/ket/sql/khai_dau_ket
     gen:
       go:

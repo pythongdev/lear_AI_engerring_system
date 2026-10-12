@@ -111,6 +111,7 @@ có câu trả lời mới từ người.
 | ADR-092 | **Vết cập nhật bật chế độ nghiêm**: migration bước 20 thay thân hai hàm vết — sửa đổi nội dung, hay thêm dòng con vào cha đã có, mà giao dịch không khai lý do ⇒ `record_revision_reason_declared_check`; một ngoại lệ hẹp kiểm trong database cho lượt gọi thêm của khách QR (*Chờ thanh toán → Đang phục vụ*, F-060 vế b); `qr_code_issue` tự khai lý do; `table_session_member.person_id`, ghép bàn bắt buộc có người; lỗi cài tắt đúng trigger vết của một bảng | Đã chốt 2026-10-09 (làm ngay ở tầng database: chủ repo; hình chế độ nghiêm và ngoại lệ: phiên, T-138); đánh số lại 2026-10-10 | — | T-138 · F-046 · F-060 · ADR-081 · ADR-087 |
 | ADR-093 | **Backend đổi sang Gin v1.12.0 và sqlc v1.31.1, cấu trúc kết hợp**: handler · service · repository trong từng miền, code sinh ở `<miền>/internal/sqlcgen/` mỗi miền một gói; câu ghi vẫn một file `.sql` dưới thư mục của một cửa, thêm một dòng `-- name:`; Go 1.27.2, migrate v4.20.1; một hàm mở giao dịch, chuyển sang `platform/postgres` ở T-151; miền đã chuyển = có mục trong `sqlc.yaml`; thay điểm 1 · 6 của ADR-083; quy ước ở `QC-05` · `QC-11`…`QC-14` | Đã chốt 2026-10-10 (stack và cấu trúc: chủ repo; luật chuyển tiếp và chia task: Claude, T-149) | — | T-149…T-166 · ADR-082 · ADR-083 · ADR-084 · ADR-085 |
 | ADR-094 | **Mặc định của nhóm tuỳ chọn là dữ liệu**: cờ `menu_option.is_default`, mỗi nhóm nhiều nhất một (`menu_option_one_default_per_group_key`, migration bước 21); dữ liệu mồi đọc `shop-facts.md` §4.6 luật 8 lúc chạy; `GET /menu` trả cờ để màn gọi món chọn sẵn; cửa tạo lượt gọi và tính thử **vẫn không** tự điền (`I-010`); chưa có cửa đổi mặc định | Đã chốt 2026-10-11 (giao cho phiên, T-169; Claude) | — | T-169 · F-059 · ADR-086 |
+| ADR-095 | **Vết sửa, sổ giấy và F-060 ở pha 3**: mỗi cửa có câu sửa một test *sửa ⇒ vết đủ bốn thứ*, một test so tập cửa sửa với tập ca; phép đối chiếu `I-016` dựng bước *Chờ thanh toán → Đang phục vụ* do khách QR kích từ chính lượt gọi `qr_table` (hướng (b) của **F-060**, không người hệ thống giả); cửa `ket/khai_so_giay` (lớp `quay_hoac_chu_quan`) khai số lượt trên giấy của một ngày chưa ký; cửa ký ngày từ chối `paper_entries_pending` khi còn lượt chưa nhập; cửa nhập bù hoá đơn chờ **U-079** | Đã chốt 2026-10-12 (giao cho phiên, P3-11; chủ repo giao toàn quyền làm nốt pha 3; Claude thiết kế, Codex thi công) | — | P3-11 · F-060 · ADR-037 · ADR-087 · ADR-089 · ADR-092 · U-079 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -6540,3 +6541,57 @@ cửa sửa menu của **ADR-086** điểm 4); database **không** buộc tổ h
 **Applies to:** `T-169`; `db/migrations/20261011120000_mac_dinh_lua_chon.*` · `db/seed/seed.pl` ·
 `be/internal/gia/`; `docs/product/2-db/03-luoc-do-menu-gia.md` · `07-thu-tu-migration.md` · `08-du-lieu-moi.md` ·
 `docs/product/3-be/03-ham-gia.md` · `openapi.yaml`; **F-059** · **ADR-086**.
+
+### ADR-095 — Vết sửa, sổ giấy và F-060 ở pha 3: test vết theo từng cửa sửa, đối chiếu I-016 từ lượt gọi QR, khai sổ giấy và chặn ký ngày còn lượt giấy
+
+**Trạng thái:** Đã chốt 2026-10-12, **giao cho phiên** (bước `P3-11`; chủ repo 2026-10-12: *"hãy làm nốt tất cả
+task còn lại của pha này tôi cho bạn toàn quyền"*). Claude Code thiết kế, Codex thi công. Quyết định này **không
+sở hữu** luật sổ giấy — luật ở `master_plan/shop-facts.md` §6 quy tắc 11 và 27 (lời chủ quán) và **ADR-037** — và
+không đổi tầng của `I-016` · `I-018`.
+
+**Decision:**
+
+1. **Vết theo từng cửa sửa.** Mỗi cửa có một file `UPDATE` dưới `be/internal/<miền>/sql/<cửa>/` có **một** test
+   gọi cửa qua HTTP (hoặc qua cửa gọi nó, với cửa lớp `theo_cua_goi`) rồi đọc `record_revision` của đúng dòng ấy:
+   bản trước, bản sau, lý do không trắng, người là người đã qua `authz.Run`. Một test liệt kê đọc thư mục `sql/`
+   lúc chạy, lấy tập cửa có câu `UPDATE`, và so với tập ca của bảng test — cửa sửa mới không có ca thì đỏ.
+   Không migration: chế độ nghiêm đã bật ở bước 20 (**ADR-092**).
+2. **F-060 theo hướng (b).** Phép đối chiếu `I-016` (`db/reconcile/i016.sql`) coi một khoảng hở giữa hai vết
+   liền nhau của một phiên — bản sau của vết trước là *Chờ thanh toán*, bản trước của vết sau là *Đang phục vụ* —
+   là hợp lệ **khi và chỉ khi** có một đơn `qr_table` của phiên ấy tạo trong khoảng giữa hai mốc vết. Khoảng hở
+   khác vẫn là một dòng lệch. Không người hệ thống, không migration.
+3. **Khai sổ giấy.** Cửa `ket/khai_so_giay` (`POST /sale-days/{sale_date}/paper-ledger`, thân `entry_count`), lớp
+   `quay_hoac_chu_quan` — người giữ sổ là *POS hoặc chủ quán* (§6 quy tắc 11). Ngày sau hôm nay ⇒ `invalid_request`
+   field `sale_date`; số lượt không dương ⇒ `invalid_request` field `entry_count`; ngày đã có sổ ⇒ mã ánh xạ từ
+   `paper_ledger_one_per_day_key`; ngày đã ký ⇒ `sale_day_reconciled`. Cửa giữ khoá tư vấn chung của ngày như
+   mọi cửa tiền (**ADR-089**, `06-duong-tien.md` §2), nên không chen được vào giữa lần ký.
+4. **Ký ngày còn lượt giấy.** Cửa `ket/doi_soat_xong` đọc *còn N* (số khai − số hoá đơn của sổ) sau khoá riêng
+   của ngày; `N > 0` ⇒ 409 `paper_entries_pending` (**ADR-037** điểm 2; mã và status có sẵn từ `P3-09`, lượt này giữ nguyên). `GET /sale-days/{sale_date}/cash-reconciliation`
+   trả `paper_entries_declared` (null khi ngày không có sổ) và `paper_entries_pending`.
+5. **Cửa nhập bù hoá đơn chưa dựng.** Một lượt trên giấy gõ lại thành gì là câu cho chủ quán (**U-079**); ngày đã
+   khai sổ vì thế không ký được cho tới khi câu ấy có lời và cửa được dựng — cửa **từ chối kèm mã**, không đoán.
+
+**Why:**
+
+- **Test theo cửa, so bằng lệnh:** `I-018` tầng 2 do database giữ; cái pha 3 nợ là chứng minh *mọi* cửa sửa đi qua
+  đường ấy với lý do và người thật. Một danh sách viết tay sẽ trôi khi thêm cửa (**F-017**); đọc thư mục lúc chạy thì không.
+- **Hướng (b) thay (a):** (a) cần một hàng `person` không phải người của quán, hoặc nới `record_revision.person_id`
+  `NOT NULL` — cả hai làm yếu `I-012` (*cái tên trong vết là người thật*). (b) đọc một sự thật đã có chỗ cất — đơn QR
+  và mốc tạo của nó — và chỉ tha đúng một cặp trạng thái, đúng ngoại lệ hẹp **ADR-092** đã cho qua ở tầng database.
+- **Từ chối ký ngày đã khai sổ:** đúng chữ **ADR-037** điểm 2; ngày ấy chưa tới lúc chấm, không phải *lệch được tha*.
+- **Khai sổ cho ngày đã ký bị từ chối:** *suy luận của phiên, không phải lời chủ quán* — một ngày đã ký mà mang
+  `N > 0` là đúng trạng thái ADR-037 nói không được tồn tại. Đường mở lại ngày đã ký là của `T-146` (lời **U-078**).
+
+**Rejected alternatives:**
+
+- *Người hệ thống cho vết do khách QR kích (hướng (a) của F-060).* Bác: *Why* thứ hai.
+- *Cửa nhập bù nhận một số tiền gõ tay.* Bác: số tiền do hệ thống tính từ món (`I-013`); và đó là chọn hộ chủ quán.
+- *Cửa nhập bù tạo đơn mang đi với món theo menu hiện tại.* Bác ở lượt này: đoán ba vế của **U-079**.
+- *Cửa sửa số lượt đã khai.* Không dựng: khoá ngoại ba cột của `bill` soi số lượt; sửa cần một quyết định riêng khi
+  có ca thật.
+
+**Giới hạn có tên:** chưa có cửa nhập bù hoá đơn (**U-079**); chưa có cửa sửa số lượt đã khai.
+
+**Applies to:** `P3-11`; `be/internal/ket/` · `be/internal/*/…_test.go` (test vết) · `db/reconcile/i016.sql`;
+file lát mới `08-vet-va-nhap-bu.md` cùng `06-duong-tien.md` trong thư mục `3-be` · `02-vai-va-quyen.md` · `openapi.yaml`;
+**F-060** · **ADR-037** · **ADR-087** · **ADR-089** · **ADR-092** · **U-079**.

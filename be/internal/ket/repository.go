@@ -46,8 +46,21 @@ func (r repository) ketNgay(ctx context.Context, ngay string) (int64, int64, int
 	return row.Tien, row.Tien_2, row.Column4, err
 }
 
-func (r repository) conSoGiay(ctx context.Context, ngay string) (bool, error) {
-	return r.q.ConSoGiay(ctx, ngay)
+func (r repository) soGiay(ctx context.Context, ngay string) (*int32, int64, error) {
+	row, err := r.q.DocSoGiay(ctx, ngay)
+	var declared *int32
+	if row.EntryCount.Valid {
+		declared = &row.EntryCount.Int32
+	}
+	return declared, row.Pending, err
+}
+
+func (r repository) ngayTuongLai(ctx context.Context, ngay string, moc time.Time) (bool, error) {
+	return r.q.NgaySoGiayTuongLai(ctx, sqlcgen.NgaySoGiayTuongLaiParams{Column1: ngay, Column2: pgtype.Timestamptz{Time: moc, Valid: true}})
+}
+
+func (r repository) themSoGiay(ctx context.Context, ngay string, so int32) (int64, error) {
+	return r.q.ThemSoGiay(ctx, sqlcgen.ThemSoGiayParams{Column1: ngay, EntryCount: so})
 }
 
 // ngay đã qua docNgay ở handler (YYYY-MM-DD hợp lệ).

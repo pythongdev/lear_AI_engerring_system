@@ -16,6 +16,7 @@ import (
 )
 
 var KhaiDauKet = authz.Door{Code: "ket/khai_dau_ket", Need: authz.NeedCounterOrOwner}
+var KhaiSoGiay = authz.Door{Code: "ket/khai_so_giay", Need: authz.NeedCounterOrOwner}
 var Dem = authz.Door{Code: "ket/dem", Need: authz.NeedCounterOrOwner}
 var DoiSoatXong = authz.Door{Code: "ket/doi_soat_xong", Need: authz.NeedOwner}
 
@@ -52,11 +53,13 @@ func (p YeuCau) Kiem() (int64, error) {
 }
 
 type SoKet struct {
-	SaleDate string `json:"sale_date"`
-	Counted  int64  `json:"counted_vnd"`
-	Opening  int64  `json:"opening_float_vnd"`
-	Expected int64  `json:"expected_vnd"`
-	Gap      int64  `json:"gap_vnd"`
+	PaperEntriesDeclared *int32 `json:"paper_entries_declared"`
+	PaperEntriesPending  int64  `json:"paper_entries_pending"`
+	SaleDate             string `json:"sale_date"`
+	Counted              int64  `json:"counted_vnd"`
+	Opening              int64  `json:"opening_float_vnd"`
+	Expected             int64  `json:"expected_vnd"`
+	Gap                  int64  `json:"gap_vnd"`
 }
 
 type Service struct{ pool *pgxpool.Pool }
@@ -87,6 +90,9 @@ func docSo(ctx context.Context, tx pgx.Tx, ngay string) (SoKet, error) {
 	s.Counted, s.Opening, s.Expected, err = newRepository(tx).ketNgay(ctx, ngay)
 	if errors.Is(err, pgx.ErrNoRows) {
 		err = apierr.Error{Code: apierr.CodeCashDayIncomplete}
+	}
+	if err == nil {
+		s.PaperEntriesDeclared, s.PaperEntriesPending, err = newRepository(tx).soGiay(ctx, ngay)
 	}
 	s.Gap = s.Counted - s.Opening - s.Expected
 	return s, err
@@ -120,10 +126,7 @@ func (s *Service) KyNgay(ctx context.Context, nguoi int64, ngay string, explanat
 			return apierr.Error{Code: apierr.CodeSaleDayAlreadyReconciled}
 		}
 		repo := newRepository(tx)
-		if co, err = repo.conSoGiay(ctx, ngay); err != nil {
-			return err
-		}
-		if co {
+		if so.PaperEntriesPending > 0 {
 			return apierr.Error{Code: apierr.CodePaperEntriesPending}
 		}
 		gap = so.Gap
@@ -134,4 +137,35 @@ func (s *Service) KyNgay(ctx context.Context, nguoi int64, ngay string, explanat
 		return err
 	})
 	return id, gap, err
+}
+
+// KhaiGiay giữ khoá chung của NGÀY KHAI, kể cả khi nhập sổ của ngày trước.
+func (s *Service) KhaiGiay(ctx context.Context, nguoi int64, ngay string, so int32) (id int64, err error) {
+	err = authz.Run(ctx, s.pool, nguoi, KhaiSoGiay, func(tx pgx.Tx) error {
+		moc, err := ngayban.DongHo(ctx, tx)
+		if err != nil {
+			return err
+		}
+		repo := newRepository(tx)
+		tuongLai, err := repo.ngayTuongLai(ctx, ngay, moc)
+		if err != nil {
+			return err
+		}
+		if tuongLai {
+			return apierr.Error{Code: apierr.CodeInvalidRequest, Field: "sale_date"}
+		}
+		if err := ngayban.Khoa(ctx, tx, ngay, false); err != nil {
+			return err
+		}
+		daKy, err := ngayban.DaKy(ctx, tx, ngay)
+		if err != nil {
+			return err
+		}
+		if daKy {
+			return apierr.Error{Code: apierr.CodeSaleDayReconciled}
+		}
+		id, err = repo.themSoGiay(ctx, ngay, so)
+		return err
+	})
+	return id, err
 }

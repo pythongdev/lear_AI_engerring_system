@@ -4668,11 +4668,18 @@ ngoại lệ kiểm trong database** (không người, không lý do, chỉ cộ
 vừa thêm đơn `qr_table` vào phiên). Phép đối chiếu `I-016` vẫn chưa dựng lại được bước ấy — chọn (a) hay
 (b) vẫn ở `P3-11`.
 
+*Cập nhật 2026-10-12 (P3-11, ADR-095):* hướng (b) đã dựng ở `db/reconcile/i016.sql`:
+khoảng hở giữa hai vết liền nhau của phiên chỉ được tha cho cặp Chờ thanh toán → Đang phục vụ
+khi có đơn `qr_table` của cùng phiên tạo giữa hai mốc vết. Khoảng hở khác vẫn trả một dòng lệch.
+Không thêm người hệ thống, không migration. Proof `db/reconcile/proof/i016_gap_without_qr.sql` và test
+`TestI016_KhoangHoQRQuaCua`; Claude chạy trên PostgreSQL 2026-10-12 (be-check, db-check xanh) và cài lỗi bỏ điều
+kiện kênh ⇒ test đỏ.
+
 **Related task:**
 P3-07 (phát hiện) · P3-11 (gỡ) · **ADR-087** · **F-046**
 
 **Status:**
-Open
+Fixed
 
 ### F-061 — Phép kiểm tên test QC-17 chỉ chạy trong `db-check`, nên một lượt chỉ đổi `be/` không bao giờ bị chấm
 

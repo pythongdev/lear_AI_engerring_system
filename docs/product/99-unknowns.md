@@ -16,6 +16,7 @@
 
 - [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**:
   - [U-058](#u-058) — giảm giá cả đơn nhập tay: phạm vi bản đầu và giới hạn
+  - [U-079](#u-079) — nhập bù sổ giấy gõ lại những gì, giá theo lúc nào
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
 - [Đã có lời giải](#da-co-loi-giai) — câu đã đóng, xếp theo lượt trả lời của chủ quán, kèm nguyên
@@ -56,6 +57,19 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
   giảm giá; chủ quán nhập số tiền giảm cho cả đơn”* — ba vế (có trong bản đầu
   không · trần số tiền giảm · có bắt ghi lý do không) vẫn chưa có lời, câu
   **ở lại đây**.
+
+<a id="u-079"></a>
+- **U-079 — Nhập bù một lượt bán trên sổ giấy thì gõ lại những gì: từng món (kèm bàn hay kênh mang đi) hay chỉ số tiền và cách trả? Giá tính theo menu lúc nào?**
+  Mở 2026-10-12 (`P3-11`, Claude Code). `shop-facts.md` §6.11 nói *ai* nhập
+  (POS hoặc chủ quán), *khi nào* (ngay khi có thể) và doanh thu rơi vào *ngày
+  bán*; lời chưa nói một lượt trên giấy được gõ lại thành gì. Máy buộc mỗi hoá
+  đơn gắn một phiên bàn đã đóng hoặc một đơn mang đi có số điện thoại, và số
+  tiền do hệ thống tính từ món (`I-013`) — nên cần biết: (1) gõ lại từng món
+  hay chỉ tổng tiền; (2) lượt ăn tại bàn có phải chọn lại bàn không; (3) menu
+  đổi giá giữa ngày bán và ngày gõ thì tính giá nào. Người trả lời: **chủ
+  quán**. Chặn: cửa nhập bù hoá đơn của `P3-11` (cửa khai sổ giấy và phép đếm
+  *còn N lượt* đã dựng; ngày còn lượt chưa nhập bị cửa ký ngày từ chối kèm mã
+  `paper_entries_pending`, ADR-095).
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
 chủ quán quyết theo tình hình thực tế, không có luật cứng.** Lượt một (T-042) đóng U-022, U-025 và

@@ -13,6 +13,7 @@ import (
 func Routes(r *gin.Engine, svc *Service) {
 	h := handler{svc: svc}
 	r.POST("/opening-floats", h.khai)
+	r.POST("/sale-days/:sale_date/paper-ledger", h.khaiGiay)
 	r.POST("/cash-counts", h.dem)
 	r.POST("/sale-days/:sale_date/reconciliation", h.ky)
 	r.GET("/sale-days/:sale_date/cash-reconciliation", h.doc)
@@ -94,4 +95,27 @@ func (h handler) ky(c *gin.Context) {
 		return
 	}
 	apierr.JSON(c.Writer, http.StatusCreated, map[string]any{"reconciled_day_id": id, "sale_date": ngay, "gap_vnd": gap, "gap_explanation": explanation})
+}
+
+func (h handler) khaiGiay(c *gin.Context) {
+	ngay, ok := docNgay(c)
+	if !ok {
+		return
+	}
+	var p struct {
+		EntryCount *int32 `json:"entry_count"`
+	}
+	if !apierr.ReadJSON(c.Writer, c.Request, &p) {
+		return
+	}
+	if p.EntryCount == nil || *p.EntryCount <= 0 {
+		apierr.Write(c.Writer, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "entry_count"})
+		return
+	}
+	id, err := h.svc.KhaiGiay(c.Request.Context(), nguoi(c), ngay, *p.EntryCount)
+	if err != nil {
+		apierr.WriteError(c.Writer, err)
+		return
+	}
+	apierr.JSON(c.Writer, http.StatusCreated, map[string]any{"paper_ledger_id": id, "sale_date": ngay, "entry_count": *p.EntryCount})
 }

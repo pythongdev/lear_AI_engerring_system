@@ -1164,12 +1164,55 @@ Sổ giấy là đường suy giảm khi mất mạng (`01-ranh-gioi-he-thong.md
 
 **Bẫy:** đừng sửa file migration đã commit để bật chế độ nghiêm (`QC-05`).
 
-**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+**Nhận việc** — Claude Code, 2026-10-12. `P3-05` · `P3-09` Done. Mức **L2** (chạm cửa ký ngày, đường tiền).
+Thiết kế: **ADR-095**. Đã thay đổi so với lúc viết entry: chế độ nghiêm đã bật ở `T-138` (**F-046** đóng), trực quầy đã
+dựng ở `T-143` — bước này không làm lại hai thứ ấy. Cửa nhập bù hoá đơn **không dựng** — chờ **U-079**.
+- *Phạm vi:* `be/internal/ket/` · test vết trong `be/internal/**/_test.go` · `be/internal/apierr/` · `be/internal/authz/`
+  (khai cửa mới) · `db/reconcile/i016.sql` · `db/reconcile/proof/` · `docs/product/3-be/` (`08-vet-va-nhap-bu.md` mới,
+  `openapi.yaml`, `01`, `02`, `06`) · `docs/product/00-index.md` · `work/findings.md` (F-060). Không migration.
+- *Nghiệm thu:*
+  1. `TestI018_MoiCuaSuaCoVet` — một ca con cho **mỗi** cửa có câu `UPDATE` (mười hai cửa đo 2026-10-12: `ban/da_don` ·
+     `menu/doi_gia_thanh_phan` · `menu/doi_phu_thu` · `menu/ngung_ban` · `menu/sua_thanh_phan` · `nguoi/khep_quay` ·
+     `sanxuat/chuyen` · `sanxuat/huy_ghi_lam_sai` · `sanxuat/lui_me` · `vongdoi/chuyen_don` · `vongdoi/chuyen_phien` ·
+     `vongdoi/chuyen_viec`), gọi qua đường gọi thật (cửa `theo_cua_goi` qua cửa gọi nó), đọc `record_revision` của
+     đúng dòng: bản trước ≠ bản sau ở cột cửa đổi, lý do không trắng, `person_id` là người đã qua quyền.
+  2. `TestI018_TapCuaSuaKhopTapCa` — đọc `be/internal/*/sql/*/*.sql` lúc chạy, tập cửa có `UPDATE` bằng tập ca của (1);
+     lỗi cài: thêm một thư mục cửa có `UPDATE` ⇒ đỏ.
+  3. **F-060 (b):** `db/reconcile/i016.sql` tha khoảng hở *Chờ thanh toán → Đang phục vụ* chỉ khi có đơn `qr_table` của
+     phiên tạo giữa hai mốc vết; proof mới: lượt gọi thêm của khách QR ⇒ tập rỗng; cùng khoảng hở không đơn QR ⇒ một
+     dòng. `./scripts/db-check.sh` xanh. F-060 → *Fixed*.
+  4. `ket/khai_so_giay` — `TestYC08_KhaiSoGiay…`: khai được (người, số lượt, ngày); ngày sau hôm nay · số lượt ≤ 0 ⇒
+     `invalid_request` đúng field; khai lần hai cùng ngày ⇒ mã của `paper_ledger_one_per_day_key`; ngày đã ký ⇒
+     `sale_day_reconciled`; người không ở lớp `quay_hoac_chu_quan` ⇒ từ chối quyền.
+  5. `TestI014_KyNgayConLuotGiayBiTuChoi` — ngày khai 2 lượt, 0 hoá đơn nhập bù ⇒ 409 `paper_entries_pending` (mã có sẵn từ `P3-09`; Claude sửa 2026-10-12, phiếu đầu ghi nhầm 422), không
+     dòng `reconciled_day`; ngày không có sổ ký như cũ (test ký ngày cũ không đổi). `GET …/cash-reconciliation` trả
+     `paper_entries_declared` · `paper_entries_pending`.
+  6. `TestI014_KhaiSoChenLucKyNgay` — dựng tất định như `TestI021_TienChenLucKyNgayKhongLotVaoSoDaKy`: khai sổ chen
+     lúc ký ⇒ hoặc khai trước và ký bị từ chối, hoặc ký trước và khai bị `sale_day_reconciled`; lỗi cài bỏ khoá ⇒ đỏ.
+  7. Hợp đồng `openapi.yaml` thêm đường, mã `paper_ledger_already_declared`, ánh xạ tên ràng buộc, nâng phiên bản; ma trận
+     `02-vai-va-quyen.md` thêm một dòng; `08-vet-va-nhap-bu.md` mới (+ dòng `00-index.md`); `./scripts/gate.sh` xanh.
+- *Kiểm chứng:* Claude chạy lại gate và `scripts/be-check.sh` ở cây chính; lỗi cài trong worktree riêng (luật `T-167`)
+  cho (2), (5), (6) và bỏ điều kiện đơn QR ở (3).
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-12): thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree `../lean_wt/P3-11`, nhánh
+`codex/P3-11` từ `9e0dc28`, một vòng; sandbox không tới Docker nên mọi lần chạy PostgreSQL là Claude chạy); thiết kế,
+duyệt, cài lỗi và tích hợp: **Claude Code**. Thiết kế: **ADR-095**; cách đọc lát: `docs/product/3-be/08-vet-va-nhap-bu.md`.
+- *File đổi:* `be/internal/ket/` (cửa khai sổ, đọc *còn N* chung cho ký và đường đọc, sqlcgen) · `be/internal/apierr/apierr.go` ·
+  `be/sqlc.yaml` · test mới `be/internal/don/{vet_cua,vet_qr,so_giay}_test.go` · `db/reconcile/i016.sql` ·
+  `db/reconcile/proof/{baseline,i016_gap_without_qr}.sql` · `docs/product/3-be/{08-vet-va-nhap-bu,02-vai-va-quyen,06-duong-tien}.md`
+  · `openapi.yaml` (0.14.0) · `docs/product/00-index.md` · `docs/decisions.md` (ADR-095) · `docs/product/99-unknowns.md` (U-079)
+  · `work/findings.md` (F-060 Fixed).
+- *Claude sửa khi duyệt:* (1) phiếu ghi nhầm 422 cho `paper_entries_pending` — mã ấy có sẵn từ `P3-09` với 409 trong
+  hợp đồng; giữ 409, hoàn nguyên dòng test cũ Codex đã đổi; (2) mười hai ca vết đỏ vì kết nối `owner` của test không ở
+  múi giờ quán (hai bản in mốc khác nhau) — test đặt `TimeZone` của kết nối ấy theo pool; (3) lỗi cài *bỏ điều kiện kênh*
+  ở `i016.sql` lọt test của Codex — thêm ca đơn `staff_pos` trong khoảng ⇒ một dòng.
+- *Kiểm chứng:* cây chính `./scripts/gate.sh` exit 0 — be-check *mọi test backend qua PostgreSQL thật đều đạt*,
+  db-check *102 câu … 103 lỗi cài*, Gate 1g *hợp đồng 0.14.0; 46 đường gọi; 40 cửa, 40 dòng ma trận*. Lỗi cài ở worktree
+  tách rời `../lean_wt/P3-11-fault` (đã gỡ): bỏ phép chặn còn giấy ⇒ `TestI021_CuaDongNgayTuChoiNgayChuaXong` ·
+  `TestI014_KyNgayConLuotGiayBiTuChoi` đỏ; bỏ khoá ngày ở cửa khai ⇒ `TestI014_KhaiSoChenLucKyNgay` đỏ
+  (`muốn 409 paper_entries_pending … nhận 201`); bỏ điều kiện kênh ⇒ `TestI016_KhoangHoQRQuaCua` đỏ (`có 0 dòng, cần 1`).
+- *Còn lại:* cửa nhập bù hoá đơn chờ **U-079**; chưa có cửa sửa số lượt đã khai (ADR-095 *Giới hạn có tên*).
+- *Duyệt độc lập:* chưa (người thi công là Codex, người duyệt là Claude).
 
 [↑ đầu file](#top)
 

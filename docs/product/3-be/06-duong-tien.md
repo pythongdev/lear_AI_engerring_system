@@ -110,6 +110,10 @@ dù ghi vào máy hôm khác (lời chủ quán 2026-10-09; ADR-089 Sửa đổi
 Số đếm hoặc đầu két có dòng đầu nhưng không có xấp là dữ liệu ngoài cửa; trigger từ chối ký
 với `cash_day_incomplete`.
 
+Khai sổ giấy, hai trường `paper_entries_declared` · `paper_entries_pending` của đường đọc và
+bằng chứng chặn ký khi còn lượt giấy: [08-vet-va-nhap-bu.md](08-vet-va-nhap-bu.md)
+(P3-11, ADR-095, 2026-10-12). Cửa khai giữ khoá chung của ngày như cửa tiền.
+
 ## 5. Nhận việc — xét tên từ chối
 
 Mọi tên của bill, debt_collection, prepayment, prepayment_use, refund, opening_float,
@@ -136,8 +140,8 @@ opening_float_line, cash_count, cash_count_line và reconciled_day đã được
 | Bốn tên kết thúc reconciled_day_truncate_check | internal | backend không có đường TRUNCATE |
 
 Các nhóm internal bao phủ những tên còn lại của mười bảng; danh sách từng tên ở
-`x-constraint-errors` của hợp đồng. Tên của bảng chỉ đọc như paper_ledger, staff_advance,
-holiday_bonus giữ nguyên; chúng thuộc lát ghi của mình.
+`x-constraint-errors` của hợp đồng. Tên của paper_ledger được xét ở [08-vet-va-nhap-bu.md](08-vet-va-nhap-bu.md);
+staff_advance và holiday_bonus thuộc lát ghi của mình.
 
 ## 6. Chỗ trống có tên
 

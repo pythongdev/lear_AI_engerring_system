@@ -32,6 +32,7 @@ const (
 	CodeSaleDayReconciled           Code = "sale_day_reconciled"
 	CodeCashDayIncomplete           Code = "cash_day_incomplete"
 	CodeSaleDayAlreadyReconciled    Code = "sale_day_already_reconciled"
+	CodePaperLedgerAlreadyDeclared  Code = "paper_ledger_already_declared"
 	CodePaperEntriesPending         Code = "paper_entries_pending"
 	CodeGapExplanationRequired      Code = "gap_explanation_required"
 
@@ -105,6 +106,7 @@ var statusOf = map[Code]int{
 	CodeCashDayIncomplete:           409,
 	CodeSaleDayAlreadyReconciled:    409,
 	CodePaperEntriesPending:         409,
+	CodePaperLedgerAlreadyDeclared:  409,
 	CodeGapExplanationRequired:      422,
 
 	CodeStationJobNotFound:               404,
@@ -157,6 +159,7 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"paper_ledger_one_per_day_key":                   CodePaperLedgerAlreadyDeclared,
 	"counter_duty_one_at_a_time_excl":                CodeCounterDutyChanged,
 	"counter_duty_ended_after_started_check":         CodeCounterDutyChanged,
 	"bill_standalone_debt_note_check":                CodeDebtNoteRequired,
