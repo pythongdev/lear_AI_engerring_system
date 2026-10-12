@@ -96,3 +96,20 @@ sql:
         package: sqlcgen
         out: internal/tratruoc/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/hoadon/sql
+      - internal/hoadon/sql/dong
+      - internal/hoadon/sql/ghi
+      - internal/hoadon/sql/ghi_hoan
+      - internal/hoadon/sql/giao_xong
+      - internal/hoadon/sql/hoan
+      - internal/hoadon/sql/thu_no
+      - internal/hoadon/sql/tra_lai
+      - internal/hoadon/sql/trao_tai_quay
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/hoadon/internal/sqlcgen
+        sql_package: pgx/v5

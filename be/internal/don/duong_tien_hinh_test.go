@@ -24,13 +24,13 @@ func (a khongDocNguoi) PersonID(*http.Request) (int64, bool) {
 func TestQC14_HinhDuongTienTruocQuyen(t *testing.T) {
 	mux := http.NewServeMux()
 	a := khongDocNguoi{t}
-	hoadon.Routes(mux, nil, a)
 	ket.Routes(mux, nil, a)
 	// Miền đã sang Gin gắn không qua middleware.GanNguoi: middleware đọc người cho mọi yêu cầu theo
 	// thiết kế (T-151), nên vế "không đọc người" chỉ còn chấm được ở miền ServeMux; pool nil vẫn bắt
 	// mọi lần chạm quyền hay database trước khi chặn hình (T-160).
 	r := gin.New()
 	tratruoc.Routes(r, tratruoc.NewService(nil))
+	hoadon.Routes(r, hoadon.NewService(nil))
 	r.NoRoute(func(c *gin.Context) {
 		c.Status(http.StatusOK)
 		mux.ServeHTTP(c.Writer, c.Request)

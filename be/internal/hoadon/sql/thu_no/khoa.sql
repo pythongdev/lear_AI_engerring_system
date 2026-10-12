@@ -1,1 +1,2 @@
-SELECT debt_vnd FROM bill WHERE id = $1 FOR UPDATE
+-- name: KhoaHoaDonNo :one
+SELECT debt_vnd FROM bill WHERE id = $1 FOR UPDATE;
