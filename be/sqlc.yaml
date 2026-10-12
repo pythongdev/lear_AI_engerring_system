@@ -85,3 +85,14 @@ sql:
         package: sqlcgen
         out: internal/nguoi/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/tratruoc/sql
+      - internal/tratruoc/sql/nhan
+      - internal/tratruoc/sql/dung
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/tratruoc/internal/sqlcgen
+        sql_package: pgx/v5

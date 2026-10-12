@@ -2,35 +2,19 @@
 package tratruoc
 
 import (
+	"context"
+	"errors"
+	"math"
+
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
 	"banhcuon/be/internal/ngayban"
-	"context"
-	_ "embed"
-	"errors"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"math"
-	"net/http"
 )
 
 var Nhan = authz.Door{Code: "tratruoc/nhan", Need: authz.NeedCounter}
 var CuaDung = authz.Door{Code: "tratruoc/dung", Need: authz.NeedCallingDoor}
-
-//go:embed sql/nhan/khoa.sql
-var khoaDon string
-
-//go:embed sql/nhan/them.sql
-var them string
-
-//go:embed sql/dung/khoa.sql
-var khoaKhoan string
-
-//go:embed sql/dung/du.sql
-var docDu string
-
-//go:embed sql/dung/them.sql
-var themMat string
 
 // PhanTien là hai phần bắt buộc của một lần nhận tiền.
 type PhanTien struct {
@@ -53,48 +37,33 @@ func (p PhanTien) Kiem() error {
 	return nil
 }
 
-func Routes(mux *http.ServeMux, pool *pgxpool.Pool, auth authz.Authenticator) {
-	mux.HandleFunc("POST /orders/{sales_order_id}/prepayment", func(w http.ResponseWriter, r *http.Request) {
-		id, ok := apierr.ReadID(w, r, "sales_order_id")
-		if !ok {
-			return
-		}
-		var p PhanTien
-		if !apierr.ReadJSON(w, r, &p) {
-			return
-		}
-		if err := p.Kiem(); err != nil {
-			apierr.WriteError(w, err)
-			return
-		}
-		var person, out int64
-		if auth != nil {
-			person, _ = auth.PersonID(r)
-		}
-		err := authz.Run(r.Context(), pool, person, Nhan, func(tx pgx.Tx) error {
-			var phien *int64
-			var status string
-			if err := tx.QueryRow(r.Context(), khoaDon, id).Scan(&phien, &status); err != nil {
-				if errors.Is(err, pgx.ErrNoRows) {
-					return apierr.Error{Code: apierr.CodeSalesOrderNotFound}
-				}
-				return err
-			}
-			moc, _, err := ngayban.ChoGhi(r.Context(), tx)
-			if err != nil {
-				return err
-			}
-			if phien != nil || (status != "pending_confirmation" && status != "confirmed" && status != "in_progress") {
-				return apierr.Error{Code: apierr.CodeOrderNotPrepayable}
-			}
-			return tx.QueryRow(r.Context(), them, id, *p.Cash, *p.Transfer, moc).Scan(&out)
-		})
+type Service struct{ pool *pgxpool.Pool }
+
+func NewService(pool *pgxpool.Pool) *Service { return &Service{pool: pool} }
+
+// NhanTien chạy cửa tratruoc/nhan; p đã qua Kiem ở handler.
+func (s *Service) NhanTien(ctx context.Context, nguoi, id int64, p PhanTien) (int64, error) {
+	var out int64
+	err := authz.Run(ctx, s.pool, nguoi, Nhan, func(tx pgx.Tx) error {
+		repo := newRepository(tx)
+		phien, status, err := repo.khoaDon(ctx, id)
 		if err != nil {
-			apierr.WriteError(w, err)
-			return
+			if errors.Is(err, pgx.ErrNoRows) {
+				return apierr.Error{Code: apierr.CodeSalesOrderNotFound}
+			}
+			return err
 		}
-		apierr.JSON(w, http.StatusCreated, map[string]any{"prepayment_id": out, "sales_order_id": id})
+		moc, _, err := ngayban.ChoGhi(ctx, tx)
+		if err != nil {
+			return err
+		}
+		if phien != nil || (status != "pending_confirmation" && status != "confirmed" && status != "in_progress") {
+			return apierr.Error{Code: apierr.CodeOrderNotPrepayable}
+		}
+		out, err = repo.themKhoan(ctx, id, *p.Cash, *p.Transfer, moc)
+		return err
 	})
+	return out, err
 }
 
 // SoDu là mắt cuối đã khoá của một khoản; mắt đầu dùng số đã nhận.
@@ -104,16 +73,21 @@ type SoDu struct {
 }
 
 func KiemSoDu(ctx context.Context, tx pgx.Tx, id, cash, transfer int64) (SoDu, error) {
+	repo := newRepository(tx)
 	var s SoDu
-	if err := tx.QueryRow(ctx, khoaKhoan, id).Scan(&s.Don, &s.Cash, &s.Transfer); err != nil {
+	var err error
+	if s.Don, s.Cash, s.Transfer, err = repo.khoaKhoan(ctx, id); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return s, apierr.Error{Code: apierr.CodePrepaymentNotFound}
 		}
 		return s, err
 	}
-	err := tx.QueryRow(ctx, docDu, id).Scan(&s.UseNo, &s.Cash, &s.Transfer)
+	useNo, du, chuyen, err := repo.docDu(ctx, id)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		return s, err
+	}
+	if err == nil {
+		s.UseNo, s.Cash, s.Transfer = useNo, du, chuyen
 	}
 	if cash > s.Cash || transfer > s.Transfer {
 		return s, apierr.Error{Code: apierr.CodePrepaymentBalanceExceeded}
@@ -127,6 +101,5 @@ func Dung(ctx context.Context, tx pgx.Tx, id, cash, transfer int64, bill, refund
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec(ctx, themMat, id, s.Don, s.UseNo+1, s.Cash, s.Transfer, cash, transfer, bill, refund)
-	return err
+	return newRepository(tx).themMat(ctx, id, s.Don, s.UseNo+1, s.Cash, s.Transfer, cash, transfer, bill, refund)
 }

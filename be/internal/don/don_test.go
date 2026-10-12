@@ -84,8 +84,7 @@ func dung(t *testing.T) khung {
 	// P3-07: đường gọi của luồng tại bàn (ADR-087).
 	don.Routes(mux, pool, xacThucTest{})
 	hoadon.Routes(mux, pool, xacThucTest{})
-	// P3-09 thêm có chủ ý (ADR-089): đường gọi của trả trước và của két.
-	tratruoc.Routes(mux, pool, xacThucTest{})
+	// P3-09 thêm có chủ ý (ADR-089): đường gọi của két (trả trước đã chuyển sang Gin ở T-160).
 	ket.Routes(mux, pool, xacThucTest{})
 	// P3-10 thêm có chủ ý (ADR-090): đường gọi của sản xuất theo mẻ — mẻ, lùi mẻ, đã ra bàn, chuyển,
 	// ghi chú bánh làm sai, huỷ đơn, bảng nhu cầu.
@@ -98,6 +97,7 @@ func dung(t *testing.T) khung {
 	gia.Routes(r, gia.NewService(pool))
 	ban.Routes(r, ban.NewService(pool))
 	phien.Routes(r, phien.NewService(pool))
+	tratruoc.Routes(r, tratruoc.NewService(pool))
 	r.NoRoute(func(c *gin.Context) {
 		c.Status(http.StatusOK)
 		mux.ServeHTTP(c.Writer, c.Request)

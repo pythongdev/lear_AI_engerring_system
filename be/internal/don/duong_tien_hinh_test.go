@@ -6,6 +6,7 @@ import (
 	"banhcuon/be/internal/ket"
 	"banhcuon/be/internal/tratruoc"
 	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -24,8 +25,16 @@ func TestQC14_HinhDuongTienTruocQuyen(t *testing.T) {
 	mux := http.NewServeMux()
 	a := khongDocNguoi{t}
 	hoadon.Routes(mux, nil, a)
-	tratruoc.Routes(mux, nil, a)
 	ket.Routes(mux, nil, a)
+	// Miền đã sang Gin gắn không qua middleware.GanNguoi: middleware đọc người cho mọi yêu cầu theo
+	// thiết kế (T-151), nên vế "không đọc người" chỉ còn chấm được ở miền ServeMux; pool nil vẫn bắt
+	// mọi lần chạm quyền hay database trước khi chặn hình (T-160).
+	r := gin.New()
+	tratruoc.Routes(r, tratruoc.NewService(nil))
+	r.NoRoute(func(c *gin.Context) {
+		c.Status(http.StatusOK)
+		mux.ServeHTTP(c.Writer, c.Request)
+	})
 	cases := []struct{ path, body, field string }{
 		{"/orders/1/handover", `{"transfer_vnd":1}`, "cash_vnd"},
 		{"/orders/1/delivered", `{"cash_vnd":-1,"transfer_vnd":1}`, "cash_vnd"},
@@ -52,7 +61,7 @@ func TestQC14_HinhDuongTienTruocQuyen(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.path+"/"+c.field, func(t *testing.T) {
 			w := httptest.NewRecorder()
-			mux.ServeHTTP(w, httptest.NewRequest("POST", c.path, strings.NewReader(c.body)))
+			r.ServeHTTP(w, httptest.NewRequest("POST", c.path, strings.NewReader(c.body)))
 			var e apierr.Error
 			if err := json.Unmarshal(w.Body.Bytes(), &e); err != nil {
 				t.Fatal(err)

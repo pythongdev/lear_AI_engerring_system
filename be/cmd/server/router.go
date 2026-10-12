@@ -34,12 +34,12 @@ func newRouter(pool *pgxpool.Pool, auth authz.Authenticator) *gin.Engine {
 	ban.Routes(r, ban.NewService(pool))
 	phien.Routes(r, phien.NewService(pool))
 	nguoi.Routes(r, nguoi.NewService(pool))
+	tratruoc.Routes(r, tratruoc.NewService(pool))
 	legacy := http.NewServeMux()
 	don.Routes(legacy, pool, auth)
 	hoadon.Routes(legacy, pool, auth)
 	ket.Routes(legacy, pool, auth)
 	sanxuat.Routes(legacy, pool, auth)
-	tratruoc.Routes(legacy, pool, auth)
 	wrapLegacy := gin.WrapH(legacy)
 	r.NoRoute(func(c *gin.Context) {
 		// NoRoute đặt sẵn 404; trả về 200 trước khi handler cũ ghi thân mà không gọi WriteHeader.
