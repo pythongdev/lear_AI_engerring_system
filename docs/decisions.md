@@ -114,6 +114,7 @@ có câu trả lời mới từ người.
 | ADR-095 | **Vết sửa, sổ giấy và F-060 ở pha 3**: mỗi cửa có câu sửa một test *sửa ⇒ vết đủ bốn thứ*, một test so tập cửa sửa với tập ca; phép đối chiếu `I-016` dựng bước *Chờ thanh toán → Đang phục vụ* do khách QR kích từ chính lượt gọi `qr_table` (hướng (b) của **F-060**, không người hệ thống giả); cửa `ket/khai_so_giay` (lớp `quay_hoac_chu_quan`) khai số lượt trên giấy của một ngày chưa ký; cửa ký ngày từ chối `paper_entries_pending` khi còn lượt chưa nhập; cửa nhập bù hoá đơn chờ **U-079** | Đã chốt 2026-10-12 (giao cho phiên, P3-11; chủ repo giao toàn quyền làm nốt pha 3; Claude thiết kế, Codex thi công) | — | P3-11 · F-060 · ADR-037 · ADR-087 · ADR-089 · ADR-092 · U-079 |
 | ADR-096 | **Chủ quán sửa số đếm két của ngày đã ký**: bảng `reconciled_day_reopening` (một lần mở lại một dấu, lý do bắt buộc); dấu mới nối vào dấu cũ đã mở lại qua `previous_reconciled_day_id`, mỗi ngày nhiều nhất một dấu đang đứng ở tầng 1; khoá của ADR-080 cho sửa số đếm khi dấu mới nhất đã mở lại, tiền đầu két vẫn khoá; cửa `ket/sua_dem` lớp `chu_quan`; cửa tiền khác vẫn coi ngày từng ký là đóng | Đã chốt 2026-10-12 (giao cho phiên, T-146; Claude thiết kế, Codex thi công) | — | T-146 · ADR-079 · ADR-080 · ADR-089 · U-074 · U-078 |
 | ADR-097 | **Realtime và dự phòng**: SSE chỉ mang tín hiệu *đọc lại* (`hello` · `changed` · `heartbeat` 10 giây), phát sau COMMIT của mọi cửa ghi; đường kéo 20 giây đọc cùng chỗ (`read_at`, `poll_interval_seconds`); quán còn nhìn thấy = còn một luồng quầy đang mở; đơn tự bấm tới lúc không luồng ⇒ ghi khoảng mù (bắt đầu không sớm hơn lúc khoảng trước khép) rồi từ chối; nút tạm dừng (`chu_quan`), báo mù và mở lại (`quay_hoac_chu_quan`) | Đã chốt 2026-10-12 (giao cho phiên, P3-12; Claude thiết kế, Codex thi công) | — | P3-12 · ADR-041 · ADR-045 · ADR-047 · ADR-078 · ADR-088 · U-043 · U-053 · U-061 |
+| ADR-098 | **Giảm giá cả đơn**: hai cột `bill.discount_vnd` · `discount_customer_name` (migration mới), phần trả + giảm = `due_vnd` (tổng dòng); doanh thu = `due_vnd − discount_vnd`; chỉ chủ quán nhập, ở ba cửa trao tiền, kèm tên khách; không trần, không lý do; gỡ `order_discount_undecided` | Đã chốt 2026-10-12 (giao cho phiên, T-175; lời U-058; Claude thiết kế, Codex thi công) | — | T-175 · ADR-089 · U-058 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -6723,3 +6724,37 @@ ràng buộc RB-1…RB-4 (**ADR-041** · **ADR-045**) giữ nguyên.
 
 **Applies to:** `P3-12`; `be/` (bộ phát, hai luồng, đường đọc quầy, ba nút, cửa tạo lượt gọi); `docs/product/3-be/09-realtime-du-phong.md` ·
 `openapi.yaml` · `02-vai-va-quyen.md`; **ADR-041** · **ADR-045** · **ADR-047** · **ADR-078** · **ADR-088**.
+
+### ADR-098 — Giảm giá cả đơn: cột trên hoá đơn, chỉ chủ quán nhập, kèm tên khách; doanh thu là số sau giảm
+
+**Trạng thái:** Đã chốt 2026-10-12, **giao cho phiên** (task `T-175`; lời **U-058** ở `master_plan/shop-facts.md` §8.9 D41).
+Claude Code thiết kế, Codex thi công. Sửa điểm *giảm giá từ chối kèm mã* của **ADR-089**.
+
+**Decision:**
+
+1. **Chỗ cất:** migration mới thêm vào `bill` hai cột `discount_vnd` (`bigint NOT NULL DEFAULT 0`, không âm) và
+   `discount_customer_name` (văn bản); `bill_discount_customer_name_check`: có giảm (`> 0`) ⇔ tên không trắng.
+   `bill_parts_equal_due_check` thay bằng bản mới cùng tên: tiền mặt + chuyển khoản + trả trước + nợ + giảm = `due_vnd`.
+   `due_vnd` vẫn là tổng các dòng đơn (giá trước giảm); giảm không vượt `due_vnd` vì mọi phần không âm.
+2. **Doanh thu và đối soát:** doanh thu của hoá đơn = `due_vnd − discount_vnd`; két chỉ đọc phần tiền mặt nên phép
+   trừ két không đổi. Mọi câu ở `db/reconcile/` và đường đọc cộng doanh thu từ `due_vnd` phải trừ giảm giá.
+3. **Ai nhập:** ba cửa trao tiền (`hoadon/dong` · `hoadon/trao_tai_quay` · `hoadon/giao_xong`) nhận `discount_vnd` và
+   `discount_customer_name`. Giảm dương mà người đã qua quyền **không phải chủ quán** ⇒ `owner_only` (lời: *chủ quán
+   nhập*). Không trần, không lý do (lời chọn U-058). Thiếu tên khi có giảm ⇒ `invalid_request` field
+   `discount_customer_name`; tên khi không giảm ⇒ `invalid_request` cùng field. Mã `order_discount_undecided` bị gỡ.
+4. **Không có cửa sửa giảm giá sau khi hoá đơn đã ghi** — hoá đơn không sửa (đã là luật); sai thì hoàn (`hoadon/hoan`).
+5. Migration lùi có khoá chặn: có dòng giảm dương thì từ chối lùi.
+
+**Why:** cột trên hoá đơn vì giảm là *của một lần thu tiền cả đơn* (§8.9: cho cả đơn); doanh thu đọc được ngay từ một
+dòng. Giữ `due_vnd` là tổng dòng để phép đối chiếu *hoá đơn = tổng dòng đơn* (I-002) đứng nguyên. Chủ quán là người duy
+nhất giảm vì lời nói *chủ quán nhập* — người đứng quầy không đặt giá (§8.9 *Những điều chưa suy ra*).
+
+**Rejected alternatives:** *giảm trên từng dòng đơn* — lời nói cả đơn; *bảng giảm giá riêng* — một hoá đơn nhiều nhất
+một lần giảm, bảng riêng là thêm một nối không cần; *trừ thẳng vào `due_vnd`* — phá phép đối chiếu tổng dòng.
+
+**Suy ra, không phải lời chủ quán:** giảm không vượt tổng đơn; lời từ chối `owner_only` cho người khác chủ quán; tên
+khách bắt buộc khi có giảm (lời nói *ghi tên khách được giảm giá*).
+
+**Applies to:** `T-175`; `db/migrations/` · `db/tests/` · `db/reconcile/` · `be/internal/hoadon/`;
+`docs/product/2-db/04-luoc-do-duong-tien.md` · `07-thu-tu-migration.md` · `docs/product/3-be/06-duong-tien.md` ·
+`openapi.yaml`; **ADR-089** · **U-058**.

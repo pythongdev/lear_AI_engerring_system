@@ -89,7 +89,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## Ready
 
 - [ ] T-174 **Cửa nhập bù hoá đơn từ sổ giấy** — gõ lại từng món kèm bàn (phiên đã đóng) hoặc mang đi, ngày bán và mốc bán là của giấy, giá lúc bán trên giấy dựng lại từ vết sửa giá; người nhập bù là người đã qua quyền (lời **U-079**, `shop-facts.md` §6 quy tắc 11; lược đồ `paper_ledger` · `bill.paper_*` có sẵn, ADR-095 điểm 5) — L2 — Claude thiết kế, Codex thi công; trước `P3-13`
-- [ ] T-175 **Giảm giá cả đơn** — chủ quán nhập số tiền giảm cho cả đơn kèm tên khách; không trần (không vượt tổng đơn), không bắt lý do; migration thêm cột giảm giá vào hoá đơn, gỡ mã `order_discount_undecided`, đối soát và doanh thu theo số sau giảm (lời **U-058**, `shop-facts.md` §8.9 D41) — L2 — Claude thiết kế, Codex thi công; trước `P3-13`
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
 - [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi, không cột *ngày bán của két* khi `U-072` còn mở. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
@@ -99,6 +98,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-175 **Giảm giá cả đơn** — cột giảm giá trên hoá đơn, chỉ chủ quán nhập kèm tên khách, không trần, không lý do; doanh thu sau giảm (lời U-058) — **ADR-098** — L2 — Claude thiết kế, Codex thi công · [chi tiết](#t-175)
 
 <a id="done"></a>
 ## Done
@@ -1230,6 +1230,33 @@ Log ở scratchpad phiên `f9049835…/scratchpad/` (`loop1/`, `hA/` `hB/` `hC/`
   T-148 mở thêm `scripts/check-links.ignore`, một dòng ngoại lệ có hạn theo tiền lệ `fe/package.json`; gỡ ở lượt tạo file.
 
 [↑ đầu file](#top)
+
+<a id="t-175"></a>
+### T-175 — Giảm giá cả đơn
+
+**Nhận việc** — Claude Code, 2026-10-12. Mức **L2**: tiền, lược đồ, hợp đồng. Thiết kế: **ADR-098**. Luật:
+`master_plan/shop-facts.md` §8.9 D41 (lời U-058, đóng ở `T-173`).
+- *Phạm vi:* `db/migrations/` (một cặp file mới, bước 23) · `db/tests/` · `db/reconcile/` · `db/scenario/` (nếu câu
+  đọc lại doanh thu đổi) · `scripts/db-check.sh` · `be/internal/hoadon/` · `be/internal/apierr/` · `be/internal/don/*_test.go`
+  · `docs/product/3-be/` (`06-duong-tien.md`, `openapi.yaml`) · `docs/product/2-db/` (`04-luoc-do-duong-tien.md`,
+  `07-thu-tu-migration.md`, `09-doi-chieu-bat-bien.md`).
+- *Nghiệm thu:*
+  1. Test database `db/tests/i015_bill_discount.sql`: giảm âm ⇒ từ chối; có giảm mà tên trống ⇒ từ chối; tên mà không
+     giảm ⇒ từ chối; tiền mặt + chuyển khoản + trả trước + nợ + giảm khác `due_vnd` ⇒ từ chối; giảm bằng `due_vnd` (trả 0)
+     ⇒ được. Đỏ trên bước 22, xanh trên bước 23; đường lùi từ chối khi có giảm dương.
+  2. `TestI015_ChuQuanGiamGiaCaDon` (qua HTTP, mỗi cửa `hoadon/dong` · `hoadon/trao_tai_quay` · `hoadon/giao_xong` một
+     ca): chủ quán đứng quầy giảm kèm tên ⇒ hoá đơn mang giảm, phần trả = tổng − giảm, `GET /debts`/đường đọc không đổi.
+  3. `TestI015_GiamGiaTuChoi`: người không phải chủ quán giảm ⇒ `owner_only`; thiếu tên ⇒ `invalid_request` field
+     `discount_customer_name`; tên mà không giảm ⇒ cùng mã; giảm vượt tổng ⇒ `invalid_request` field `discount_vnd`.
+  4. `TestI021_NgayCoGiamGiaRa0dLech`: một ngày có hoá đơn giảm giá đi qua cửa ⇒ ký ngày lệch 0đ; bộ đối chiếu
+     `scripts/reconcile.sh` trên ngày ấy rỗng (doanh thu đọc sau giảm).
+  5. `TestI015_GiamGiaCaDonBiTuChoiChoU058` đổi thành chứng minh hành vi mới (đổi tên theo QC-17, nói rõ ở Bàn giao);
+     mã `order_discount_undecided` gỡ khỏi hợp đồng; hợp đồng nâng 0.17.0.
+  6. `./scripts/gate.sh` xanh (be-check, db-check).
+- *Kiểm chứng:* Claude chạy lại gate; cài lỗi trong worktree riêng: bỏ kiểm *chủ quán* ⇒ (3) đỏ; câu doanh thu ở
+  `db/reconcile/` quên trừ giảm ⇒ (4) đỏ; bỏ ràng buộc tên khách ⇒ (1) đỏ.
+
+**Bàn giao:** —
 
 <a id="t-146"></a>
 ### T-146 — Chủ quán sửa số đếm két của ngày đã ký
