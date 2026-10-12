@@ -1,6 +1,6 @@
 # BE-STACK-06 — Đường tiền (L2)
 
-Bước **06/09** (dãy bắt đầu ở 00). **Cần xong trước bước này:** 05 đủ sáu miền Done; miền liền trước trong nhóm Done.
+Bước **06/09** (dãy bắt đầu ở 00). **Cần xong trước bước này:** 05 đủ bảy miền Done (T-153…T-159); miền liền trước trong nhóm Done.
 **Chặn:** 07 sau khi đủ ba miền. **Người làm:** Codex làm, Claude duyệt.
 Kế hoạch: [be-stack-migration-steps.md](../be-stack-migration-steps.md), Bước 06.
 
@@ -12,7 +12,9 @@ nhóm nhiều miền phải đủ mọi task tiền nhiệm. Kế hoạch là co
 Stack đã được chủ repo duyệt 2026-10-10: Go 1.27.2, gin v1.12.0, sqlc v1.31.1 (dòng tool,
 chạy go tool sqlc), pgx/v5 v5.11.0, migrate v4.20.1; không mở lại lựa chọn.
 
-Đọc be/internal/<MIEN>/ và be/internal/don/duong_tien*test.go; quality/invariants.md I-005, I-015, I-021; docs/product/3-be/06-duong-tien.md và hợp đồng, ma trận quyền.
+Đọc `be/internal/<MIEN>/`; test của đường tiền nằm hết ở `be/internal/don/` (`duong_tien_test.go`, `duong_tien_hinh_test.go`,
+phần dựng router của `don_test.go`) — ba thư mục miền không có test riêng. Đọc `quality/invariants.md` I-005, I-012, I-014,
+I-015, I-021; `docs/product/3-be/06-duong-tien.md`, hợp đồng và ma trận quyền.
 
 ## Goal
 
@@ -20,7 +22,13 @@ Chuyển đúng một miền đường tiền mỗi lượt mà không đổi k�
 
 ## Scope
 
-be/internal/<MIEN>/, be/sqlc.yaml, be/cmd/server/; phần dựng router trong test bên gọi do Claude liệt kê. Thay <MIEN> theo tratruoc → hoadon → ket; chạy lại prompt một lần mỗi miền, ba task riêng.
+`be/internal/<MIEN>/`, `be/sqlc.yaml`, `be/cmd/server/router.go`, và phần dựng router của hai file test bên gọi:
+`be/internal/don/don_test.go` (hàm `dung`) · `be/internal/don/duong_tien_hinh_test.go` (đầu `TestQC14_HinhDuongTienTruocQuyen`).
+Thay `<MIEN>` theo `tratruoc` → `hoadon` → `ket`; mỗi miền một task.
+
+Bên gọi giữa các miền: `hoadon` gọi `tratruoc.KiemSoDu` · `tratruoc.Dung` · kiểu `tratruoc.PhanTien`; `hoadon` · `ket` ·
+`tratruoc` gọi `ngayban` (đã chuyển, T-155). Task của một miền **giữ nguyên tên và chữ ký** mọi thứ exported mà miền khác
+dùng, để bên gọi không phải sửa. Không giữ được thì DỪNG và báo Claude — Claude thêm file bên gọi vào scope, không tự mở.
 
 Claude giữ riêng `work/backlog.md`, entry chi tiết đang có và `work/scope/<MÃ>.txt`.
 Ngoài phạm vi: thay luật nghiệp vụ, sửa migration, hợp đồng API, shop facts hoặc invariants;
@@ -29,170 +37,76 @@ khai riêng; Codex không được sửa owner chỉ vì Claude có quyền sử
 
 ## Constraints
 
-Giữ I-005 nghĩa vụ tiền, I-015 trả trước, I-021 két/đối soát; đọc nguyên văn các vế hiện hành ở quality/invariants.md trước viết Acceptance chi tiết. Không sửa phép tính để hợp kiểu sinh.
+Giữ I-005 (đóng phiên còn nợ phải ghi ai nợ, bao nhiêu), I-012 (mọi thao tác chạm tiền có người và mốc), I-014 (trả trước chưa là
+doanh thu của ngày nào), I-015 (một lần thu chia nhiều phương thức, tổng khớp), I-021 (két cuối ngày khớp doanh thu tiền mặt sau
+bù trả trước, hoàn chéo, nợ cũ, chi); đọc nguyên văn các vế hiện hành ở `quality/invariants.md` trước viết Acceptance chi tiết.
+Không sửa phép tính để hợp kiểu sinh.
 
 Giữ năm điểm §1 kế hoạch: PostgreSQL 17 + golang-migrate ở db/migrations/; mỗi câu ghi một file
 trong cửa; một hàm mở giao dịch và quyền cùng giao dịch; lỗi {code, field?}; test PostgreSQL thật,
 thiếu DB đỏ, tên mang mã mệnh đề. Không dùng mock để chứng minh cửa.
 
-- Mọi test hiện có của miền giữ nguyên điều kiện kiểm; chỉ phần dựng router trong test được đổi.
-- `check-write-paths.sh --list` trước/sau chỉ khác đường dẫn. Output hiện chỉ in bảng/loại/cột/cửa,
-  không chứa đường dẫn, nên `diff -u` hai output phải rỗng; không đổi mã cửa hay ô ghi.
+- Mọi test hiện có giữ nguyên điều kiện kiểm; chỉ phần dựng router trong test được đổi.
+- `check-write-paths.sh --list` trước/sau chỉ khác dòng đếm file đã soát; không đổi mã cửa hay ô ghi.
 - Dùng `internal/<MIEN>/handler.go`, `service.go`, `repository.go`, `sql/<cửa>/<câu>.sql`,
-  `sql/*.sql`, `internal/sqlcgen/`; thay <MIEN> bằng miền của task. Handler không gọi DB;
-  service/repository không import Gin, repository nhận pgx.Tx, không Begin/commit.
-  Service khai authz.Door, gọi authz.Run; API theo_cua_goi nhận pgx.Tx.
+  `sql/*.sql`, `internal/sqlcgen/`. Handler không gọi DB; service/repository không import Gin, repository
+  nhận `pgx.Tx`, không Begin/Commit. Service khai `authz.Door`, gọi `authz.Run`; API `theo_cua_goi` nhận `pgx.Tx`.
+- Câu ghi giữ nguyên văn, chỉ thêm `-- name:` và `;` (Gate 1f so nguyên văn với hằng sinh); ép kiểu chỉ ở câu đọc.
+- `apierr.ReadID` đọc `PathValue` của `ServeMux`; ở Gin, handler đọc `c.Param` và trả cùng lỗi (400, field là tên tham số).
+
+**Test hình trước quyền** (Claude chốt 2026-10-12). `TestQC14_HinhDuongTienTruocQuyen` gắn cả ba miền vào một `ServeMux` với
+authenticator làm test dừng ngay khi bị hỏi người, và `pool = nil`. Ở Gin, người được đọc bởi `middleware.GanNguoi` cho **mọi**
+yêu cầu (T-151 — middleware không bao giờ từ chối), nên vế "không đọc người" không còn là thuộc tính của handler. Cách giữ: miền
+đã chuyển gắn vào `gin.New()` **không** `GanNguoi`, với service dựng từ `pool = nil`, miền chưa chuyển vẫn gắn vào `ServeMux` cũ
+sau `NoRoute`. Mọi ca hình sai vẫn phải ra 400 đúng `field` trước `authz.Run` và trước database — `pool = nil` làm mọi lần chạm
+database thành panic, nên test vẫn chứng minh *hình trước quyền*. Bảng ca và điều kiện kiểm không đổi.
 
 ## Acceptance
 
-- Toàn bộ TestI005_*, TestI015_*, TestI021_*, TestYC01_*, TestYC10_*, TestYC23_* hiện có xanh qua be-check trên PostgreSQL thật; lưu tên cụ thể từ output, đối chiếu danh sách trước giao.
+Claude ghi Acceptance cụ thể của từng miền vào entry task trước khi giao, với tên test thật kiểm bằng `rg '^func Test'` ở nền:
+
+- Mười test ở `duong_tien_test.go` (`TestI015_*` · `TestI005_*` · `TestYC23_*` · `TestYC10_*` · `TestYC01_*` · bốn `TestI021_*`),
+  `TestQC14_HinhDuongTienTruocQuyen` và mọi test khác đi qua đường của miền (tìm theo đường dẫn trong test, không chỉ theo tiền tố)
+  xanh qua be-check trên PostgreSQL thật; lưu tên cụ thể từ output.
 - Ca nhận/dùng/trả trước, thu nợ/hoàn, đếm két/đối soát, từ chối và rollback liên quan miền đều giữ kết quả và người thao tác.
-- Claude cài một lỗi thu sai trong cây thử; test tiền và phép đối soát liên quan phải báo sai; lưu test/mã đối soát/output. Hoàn nguyên lỗi và chạy lại xanh trước tích hợp.
-- Mỗi miền có ba file tầng và một internal/sqlcgen/, SQL giữ nguyên thư mục cửa; build, sinh lại và hai gate đạt.
-- `./scripts/gate.sh` không có FAIL; SKIP được ghi là chưa chạy, không tính PASS.
+- Lỗi cài trong **worktree riêng** (luật T-167, `quality/review-gate.md` Gate 1), mỗi lần một lỗi, đỏ đúng test rồi hoàn nguyên:
+  `tratruoc` — trừ sai số dư khi dùng; `hoadon` — ghi lệch phần tiền mặt của một lần thu; `ket` — câu đối soát cộng sai một nguồn.
+  Lỗi nào không bị bắt thì ghi kết quả thật, không đoán (khuôn F-064).
+- Mỗi miền có ba file tầng và một `internal/sqlcgen/`, SQL giữ nguyên thư mục cửa; build, sinh lại, Gate 1f · 1g · 1h đạt.
+- `./scripts/gate.sh` không có `FAIL`; `SKIP` được ghi là chưa chạy, không tính PASS.
 
 ## Verify
 
-Chạy từ gốc repo (ngoại trừ lệnh có `cd be`). Thay `<MIEN>` khi có bằng miền đang làm.
-Claude lưu output trước/sau vào scratchpad và liên kết trong entry task; không ghi log riêng theo công cụ.
+Chạy từ gốc repo (ngoại trừ lệnh có `cd be`). Claude lưu output trước/sau vào scratchpad và liên kết trong entry task.
 
 ```bash
-rg '^func Test(I005|I015|I021|YC01|YC10|YC23)_' be/internal
+rg '^func Test' be/internal/don/duong_tien_test.go be/internal/don/duong_tien_hinh_test.go
 ./scripts/check-write-paths.sh --list
 ./scripts/check-api-contract.sh --list
 ./scripts/be-check.sh
 ./scripts/gate.sh
 ```
 
-Exit 0 là mong đợi cho các lệnh kiểm, ngoại trừ ca lỗi cài cố ý và `rg` tìm thứ phải vắng mặt.
-Claude chạy `./scripts/be-check.sh` bằng Docker/PostgreSQL thật; Codex không có Docker phải báo
-chưa chạy, không sửa skip, không khai gate xanh nếu gate bị chặn bởi môi trường.
-
-Trước sửa, lưu `./scripts/check-write-paths.sh --list > <scratchpad>/<MÃ>-writes-before.txt`
-và `./scripts/check-api-contract.sh --list > <scratchpad>/<MÃ>-api-before.txt`; sau sửa lưu
-hai file `*-after.txt`, chạy `diff -u` từng cặp, mong đợi rỗng và exit 0.
-Lưu tập tên bằng `rg --no-filename '^func Test' be/internal | sort` trước/sau; rà diff điều kiện kiểm.
+Exit 0 là mong đợi, ngoại trừ ca lỗi cài cố ý. Claude chạy `./scripts/be-check.sh` bằng Docker/PostgreSQL thật; Codex không có
+Docker phải báo chưa chạy, không sửa skip, không khai gate xanh. Trước/sau sửa lưu hai `--list` và
+`rg --no-filename '^func Test' be/internal be/cmd | sort`; `diff` chỉ được khác dòng đếm file.
 
 ## Unknowns
 
-Unknown nghiệp vụ còn mở ở owner không được đóng hay quyết trong lần chuyển stack. Gặp ca không có kỳ vọng đã chốt thì để nguyên hành vi và báo Claude.
-
-Gặp mâu thuẫn owner hoặc thiếu dữ kiện thì dừng phần phụ thuộc và báo Claude; không quyết thay.
-Nếu cần ADR, dùng số ADR kế tiếp (tra bằng `grep -o 'ADR-[0-9]*' docs/decisions.md | sort -u | tail -1`),
-không ghim số trước. Đây không phải yêu cầu tạo thêm ADR ở mỗi miền.
+Unknown nghiệp vụ còn mở ở owner không được đóng hay quyết trong lần chuyển stack. Gặp ca không có kỳ vọng đã chốt thì để
+nguyên hành vi và báo Claude. Gặp mâu thuẫn owner hoặc thiếu dữ kiện thì dừng phần phụ thuộc và báo Claude; không quyết thay.
 
 ## Claude làm
 
-1. Chấm mức theo hậu quả, nhận task hiện có hoặc lấy số `T-XXX` kế tiếp bằng
-   `grep -o 'T-[0-9]*' work/backlog.md | sort -Vu | tail -1`, kiểm chưa trùng rồi tăng số.
-   Không đoán mã. Ghi Acceptance trước thay đổi, trạng thái ở backlog, bàn giao trong entry hiện có.
-2. Khai scope từng file, kiểm thay đổi chưa commit và base. Khi giao Codex, tạo
-   `git worktree add ../lean_wt/<MÃ> -b codex/<MÃ>`; worktree từ HEAD không thấy thay đổi chưa commit.
-   Nếu phụ thuộc phần chưa commit thì chờ chủ repo commit hoặc chưa giao. Tài liệu private chưa track
-   phải được Claude đưa nguyên nội dung cần thiết vào phiếu scratchpad, không giả định worktree thấy nó.
-3. Với L2, Claude chuẩn bị test hồi quy/vế invariant và ca cài lỗi trước thi công; kiểm Acceptance có tên
-   test thật bằng `rg '^func Test'` ở file liên quan. Khi tên trong mẫu không có ở base mới, ghi thiếu và
-   xác định ca tương đương từ owner trước giao, không bỏ tiêu chí. L3 chỉ ghi quyết định và chia lát.
-4. Ghi scope trong worktree, thêm dòng cấm riêng cho work/backlog.md, docs/decisions.md,
-   docs/product/99-unknowns.md, master_plan/, quality/invariants.md, CLAUDE.md. Điền phiếu dưới vào
-   scratchpad; thay mọi placeholder và rà Acceptance/Verify với base thực tế.
-   Kiểm `codex exec --help`, `codex login status`, rồi gọi nền bằng lệnh bên dưới. Model
-   gpt-6.1-sol trong ~/.codex/config.toml không chạy với tài khoản hiện tại, nên chỉ định gpt-6-astra.
-5. Đọc báo cáo, diff thật và file mới bằng git diff/status trong worktree; duyệt theo
-   quality/review-gate.md. Claude tự chạy gate, ./scripts/be-check.sh và lỗi cài theo Acceptance;
-   lỗi cài phải đỏ đúng chỗ, gỡ hết lỗi rồi xanh. Tối đa hai vòng trả Codex; vòng ba viết lại phiếu
-   hoặc Claude sửa. L1 bước dọn vẫn kiểm fixture route cũ bị từ chối.
-6. Claude tích hợp đúng diff đã duyệt, gồm file mới, theo docs/prompt-guideline.md §6.1; kiểm không
-   đè phần người khác. Chạy gate và be-check tại cây tích hợp, ghi người thực hiện/duyệt, base/nhánh,
-   file và bằng chứng trong entry rồi mới Done. Codex không tích hợp hay commit.
-
-Bàn giao khối commit theo `CLAUDE.md` §6.1: lấy danh sách từ `git diff --name-only HEAD` và
-`git ls-files --others --exclude-standard`, kiểm `git diff --cached --name-only`; nếu có staged của
-người khác thì báo và không đưa khối sẽ gom chúng. Liệt kê từng file đúng scope, không thêm scope
-file, không `git add -A` hay `git add .`. Claude viết khối `git add <từng-file>` và
-`git commit -m "<MÃ>: <nội dung>" -m "<lý do và kiểm thực chạy>"` để chủ repo dùng, không tự commit.
-Giữ scope đến khi commit xong. Gate trực tiếp không chạy Gate 7/7b, phải tự đối chiếu khối này.
+1. Chấm mức, nhận task trong backlog (T-160 · T-161 · T-162), ghi Acceptance trước thay đổi, chuyển In Progress.
+2. Khai `work/scope/<MÃ>.txt`; tạo `git worktree add ../lean_wt/<MÃ> -b codex/<MÃ>` từ HEAD đã commit miền trước; ghi scope
+   trong worktree kèm dòng cấm `work/`, `docs/`, `master_plan/`, `quality/`, `CLAUDE.md`. Lưu `--list` và tập tên test trước.
+3. Viết phiếu vào scratchpad theo khuôn `docs/prompt-guideline.md` §6.1, không placeholder; gọi nền
+   `codex exec -m gpt-6-astra -C ../lean_wt/<MÃ> -s workspace-write -o <scratchpad>/<MÃ>-bao-cao.md - < <phiếu>`.
+4. Đọc báo cáo và diff thật; chạy gate trong worktree; cài lỗi trong worktree riêng; tối đa hai vòng trả Codex.
+5. Tích hợp bằng patch, chạy gate ở cây chính, ghi bàn giao trong entry, chuyển Done, đưa khối commit §6.1.
 
 ## Report
 
-Báo bằng tiếng Việt: đã đổi gì; lệnh thực chạy, output và bảng Acceptance → bằng chứng; vấn đề chưa
-xử lý và việc tiếp theo. Phân biệt PASS/SKIP/chưa chạy. Claude thêm khối commit §6.1 sau khi kiểm index.
-
-## Phiếu Codex
-
-Claude thay `<MÃ>`, `<MỨC>`, `<MIEN>` (nếu có), đường dẫn scratchpad; chốt danh sách file cụ thể trước gửi.
-Bảy mục dưới giữ đúng mẫu `docs/prompt-guideline.md` §6.1. Không gửi phiếu còn placeholder.
-
-````markdown
-# Phiếu giao việc — <MÃ> (mức L<MỨC>)
-
-Bạn là người thi công. Người quyết định là Claude; bạn không quyết thay.
-
-## Bắt đầu
-1. Đọc AGENTS.md rồi CLAUDE.md. Chạy ./scripts/brief.sh.
-2. Chỉ đọc thêm: docs/product/2-db/10-quy-uoc-code.md §8; docs/decisions.md ADR-082/083/084/085
-   và ADR mới ghi ở bước 01; docs/product/3-be/openapi.yaml, docs/product/3-be/02-vai-va-quyen.md;
-   quality/invariants.md ở các mã nêu dưới; Đọc be/internal/<MIEN>/ và be/internal/don/duong_tien*test.go; quality/invariants.md I-005, I-015, I-021; docs/product/3-be/06-duong-tien.md và hợp đồng, ma trận quyền.
-   Đọc `AGENTS.md` → `CLAUDE.md`, chạy `./scripts/brief.sh`; đọc trạng thái thật trong
-`work/backlog.md`, entry bàn giao, nhánh, `git status --short` và diff. Kiểm bước trước đã Done;
-nhóm nhiều miền phải đủ mọi task tiền nhiệm. Kế hoạch là con trỏ, owner ở `CLAUDE.md` §2 thắng.
-Stack đã được chủ repo duyệt 2026-10-10: Go 1.27.2, gin v1.12.0, sqlc v1.31.1 (dòng tool,
-chạy go tool sqlc), pgx/v5 v5.11.0, migrate v4.20.1; không mở lại lựa chọn.
-
-Giữ I-005 nghĩa vụ tiền, I-015 trả trước, I-021 két/đối soát; đọc nguyên văn các vế hiện hành ở quality/invariants.md trước viết Acceptance chi tiết. Không sửa phép tính để hợp kiểu sinh.
-Unknown nghiệp vụ còn mở ở owner không được đóng hay quyết trong lần chuyển stack. Gặp ca không có kỳ vọng đã chốt thì để nguyên hành vi và báo Claude.
-
-## Việc cần làm
-Chuyển đúng một miền đường tiền mỗi lượt mà không đổi kết quả thu, trả và đối soát.
-be/internal/<MIEN>/, be/sqlc.yaml, be/cmd/server/; phần dựng router trong test bên gọi do Claude liệt kê. Thay <MIEN> theo tratruoc → hoadon → ket; chạy lại prompt một lần mỗi miền, ba task riêng.
-Giữ I-005 nghĩa vụ tiền, I-015 trả trước, I-021 két/đối soát; đọc nguyên văn các vế hiện hành ở quality/invariants.md trước viết Acceptance chi tiết. Không sửa phép tính để hợp kiểu sinh.
-- Mọi test hiện có của miền giữ nguyên điều kiện kiểm; chỉ phần dựng router trong test được đổi.
-- `check-write-paths.sh --list` trước/sau chỉ khác đường dẫn. Output hiện chỉ in bảng/loại/cột/cửa,
-  không chứa đường dẫn, nên `diff -u` hai output phải rỗng; không đổi mã cửa hay ô ghi.
-- Dùng `internal/<MIEN>/handler.go`, `service.go`, `repository.go`, `sql/<cửa>/<câu>.sql`,
-  `sql/*.sql`, `internal/sqlcgen/`; thay <MIEN> bằng miền của task. Handler không gọi DB;
-  service/repository không import Gin, repository nhận pgx.Tx, không Begin/commit.
-  Service khai authz.Door, gọi authz.Run; API theo_cua_goi nhận pgx.Tx.
-
-
-## Acceptance (mỗi dòng phải có bằng chứng trong báo cáo)
-- [ ] Toàn bộ TestI005_*, TestI015_*, TestI021_*, TestYC01_*, TestYC10_*, TestYC23_* hiện có xanh qua be-check trên PostgreSQL thật; lưu tên cụ thể từ output, đối chiếu danh sách trước giao.
-- [ ] Ca nhận/dùng/trả trước, thu nợ/hoàn, đếm két/đối soát, từ chối và rollback liên quan miền đều giữ kết quả và người thao tác.
-- [ ] Claude cài một lỗi thu sai trong cây thử; test tiền và phép đối soát liên quan phải báo sai; lưu test/mã đối soát/output. Hoàn nguyên lỗi và chạy lại xanh trước tích hợp.
-- [ ] Mỗi miền có ba file tầng và một internal/sqlcgen/, SQL giữ nguyên thư mục cửa; build, sinh lại và hai gate đạt.
-- [ ] ./scripts/gate.sh xanh; nếu thiếu Docker thì dán FAIL và nêu chưa hoàn tất, Claude chạy bù.
-Lệnh kiểm (Claude chạy phần DB/cài lỗi; Codex chạy phần có môi trường):
-```bash
-rg '^func Test(I005|I015|I021|YC01|YC10|YC23)_' be/internal
-./scripts/check-write-paths.sh --list
-./scripts/check-api-contract.sh --list
-./scripts/be-check.sh
-./scripts/gate.sh
-```
-Các lệnh kiểm mong đợi exit 0; ca lỗi cài mong đợi đỏ. Thiếu Docker thì báo chưa chạy.
-Lưu --list và tập tên test trước/sau trong scratchpad; diff -u phải rỗng về ô/cửa/route/tên test.
-Mọi test hiện có của miền giữ nguyên điều kiện kiểm; chỉ phần dựng router trong test được đổi.
-check-write-paths.sh --list trước/sau chỉ khác đường dẫn (output không có path thì phải giống hệt).
-
-## Phạm vi
-Đã khai trong work/scope/<MÃ>.txt. Chỉ sửa file khớp scope: be/internal/<MIEN>/, be/sqlc.yaml, be/cmd/server/; phần dựng router trong test bên gọi do Claude liệt kê. Thay <MIEN> theo tratruoc → hoadon → ket; chạy lại prompt một lần mỗi miền, ba task riêng. Claude đã thu hẹp thành từng file trong scope worktree; phần owner chỉ Claude làm.
-Cần thêm file thì DỪNG và ghi vào báo cáo, không tự mở rộng scope.
-
-## Cấm
-- Không commit, không sửa work/backlog.md, docs/decisions.md, docs/product/99-unknowns.md,
-  master_plan/, quality/invariants.md, CLAUDE.md. Không sửa owner quy ước thay Claude.
-- Không bịa luật nghiệp vụ. Chỗ nào chưa rõ: để nguyên hành vi, ghi câu hỏi.
-- Không git add -A, không xoá file ngoài scope, không sửa migration hay hợp đồng.
-- Không đổi điều kiện kiểm test để xanh, không Skip khi thiếu database. Không mở lại stack đã chốt.
-
-## Báo cáo (tin nhắn cuối cùng, đúng khuôn này)
-1. File đã đổi / tạo (lấy từ git status --short, không nhớ lại).
-2. Output cuối của ./scripts/gate.sh, dán nguyên.
-3. Bảng Acceptance → bằng chứng (tên test hoặc lệnh + output).
-4. Câu hỏi còn mở / điều đã phải giả định.
-5. Việc chưa xong.
-````
-
-```bash
-codex exec -m gpt-6-astra -C ../lean_wt/<MÃ> -s workspace-write -o <scratchpad>/<MÃ>-bao-cao.md - < <phiếu>
-```
+Báo bằng tiếng Việt: đã đổi gì; lệnh thực chạy, output và bảng Acceptance → bằng chứng; vấn đề chưa xử lý và việc tiếp theo.
+Phân biệt PASS/SKIP/chưa chạy. Claude thêm khối commit §6.1 sau khi kiểm index.
