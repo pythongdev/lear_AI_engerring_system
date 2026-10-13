@@ -1,4 +1,5 @@
-# Lệnh tắt cho database LÀM VIỆC trên máy phát triển (compose project `banhcuon`).
+# Lệnh tắt cho database LÀM VIỆC trên máy phát triển (compose project `banhcuon`),
+# và cho trang Swagger UI đọc hợp đồng API (`make swagger`).
 # Hướng dẫn từng bước: docs/guideline/chay-database-tren-may.md; bảng tra lệnh:
 # docs/command/make.md. Chỗ đặt file này:
 # docs/product/2-db/10-quy-uoc-code.md QC-08.
@@ -15,7 +16,7 @@ SHOP_TZ := $(shell grep -m1 '^| Múi giờ |' master_plan/shop-facts.md | grep -
 PSQL    := docker compose exec -e PGTZ=$(SHOP_TZ) db psql -X -U shop_owner -d banhcuon
 
 .DEFAULT_GOAL := help
-.PHONY: help setup up migrate seed psql shell status stop reset check-tz
+.PHONY: help setup up migrate seed psql shell status stop reset swagger swagger-stop check-tz
 
 help: ## Liệt kê các lệnh
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-9s %s\n", $$1, $$2}'
@@ -51,6 +52,13 @@ stop: ## Tắt database, GIỮ dữ liệu
 reset: ## XOÁ SẠCH dữ liệu rồi dựng lại từ đầu (setup)
 	docker compose rm -sfv db
 	$(MAKE) setup
+
+swagger: ## Bật Swagger UI cho hợp đồng API — http://127.0.0.1:8081/docs/
+	docker compose up -d swagger
+	@echo "Swagger UI: http://127.0.0.1:$${SWAGGER_PORT:-8081}/docs/  (Try it out gọi server Go ở cổng 8080 của máy)"
+
+swagger-stop: ## Tắt Swagger UI
+	docker compose stop swagger
 
 check-tz:
 	@[ -n "$(SHOP_TZ)" ] || { echo "Không đọc được múi giờ ở master_plan/shop-facts.md §1 (dòng '| Múi giờ |')"; exit 1; }

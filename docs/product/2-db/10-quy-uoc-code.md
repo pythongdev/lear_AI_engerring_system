@@ -290,14 +290,15 @@ ghim của công cụ.
 
   | Đường dẫn | Chứa gì | Ai tạo |
   |---|---|---|
-  | `compose.yaml` | database + công cụ migration cho máy phát triển và bộ kiểm | `P2-12` |
+  | `compose.yaml` | database + công cụ migration cho máy phát triển và bộ kiểm; service `swagger` (profile `tools`) cho máy phát triển xem hợp đồng API | `P2-12`; `swagger` chủ repo yêu cầu 2026-10-13 |
   | `db/init/` | dựng vai, schema, mặc định cấp quyền — chạy một lần khi database khởi tạo | `P2-12` |
   | `db/migrations/` | lược đồ, theo `QC-05` | `P2-04`…`P2-08` |
   | `db/tests/` | test database, theo `QC-07` | `P2-04`…`P2-08` · `P2-11` |
   | `db/reconcile/` | bộ đối chiếu chạy sau khi đóng quán — một file câu một mệnh đề, `qd.sql` cho nhóm quy ước, `prelude.sql` bảng và hàm tạm; `proof/` ngày bán mẫu và lỗi cài (`09-doi-chieu-bat-bien.md`) | `P2-11` |
   | `db/scenario/` | ba scenario nghiệm thu diễn qua lược đồ, phần đọc lại và phép chấm `YC` — chạy ở bước 7 của `scripts/db-check.sh` (`11-cong-chat-luong-pha-2.md`, **ADR-067**) | `P2-13` |
   | `db/seed/` | bộ dựng dữ liệu mồi — đọc `master_plan/shop-facts.md` lúc chạy, in SQL; không cất con số nào của quán (`08-du-lieu-moi.md`) | `P2-10` |
-  | `Makefile` | lệnh tắt cho database làm việc trên máy phát triển — chỉ gọi lại `compose.yaml` và `db/seed/`, không mang cấu hình riêng; bộ kiểm không đi qua nó | chủ repo yêu cầu 2026-09-29 |
+  | `Makefile` | lệnh tắt cho database làm việc trên máy phát triển và cho Swagger UI — chỉ gọi lại `compose.yaml` và `db/seed/`, không mang cấu hình riêng; bộ kiểm không đi qua nó | chủ repo yêu cầu 2026-09-29 |
+  | `tools/swagger/` | template nginx của service `swagger`: phục vụ Swagger UI ở `/docs/` từ `docs/product/3-be/openapi.yaml` (chỉ đọc) và chuyển mọi đường khác sang server Go trên máy; không phải hợp đồng, không phải code chạy thật | chủ repo yêu cầu 2026-10-13 |
   | `be/` | backend — cấu trúc bên trong theo `QC-14` | `P3-03` |
   | `fe/` | frontend | pha 4 |
 

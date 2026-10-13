@@ -1,9 +1,11 @@
-# Database cho máy phát triển và cho bộ kiểm — CHỈ cho hai việc ấy, không phải
-# cấu hình chạy thật. Quy ước: docs/product/2-db/10-quy-uoc-code.md (QC-01…QC-03,
-# QC-05). Mật khẩu ở đây là mật khẩu máy phát triển, không dùng ở đâu khác.
+# Database cho máy phát triển và cho bộ kiểm, cùng trang Swagger UI đọc hợp đồng API —
+# CHỈ cho máy phát triển, không phải cấu hình chạy thật. Quy ước:
+# docs/product/2-db/10-quy-uoc-code.md (QC-01…QC-03, QC-05, QC-08). Mật khẩu ở đây là
+# mật khẩu máy phát triển, không dùng ở đâu khác.
 #
 #   docker compose up -d --wait db              # database để làm việc
 #   docker compose run --rm migrate             # chạy mọi migration ở db/migrations/
+#   docker compose up -d swagger                # Swagger UI — http://127.0.0.1:8081/docs/
 #   ./scripts/db-check.sh                       # bộ kiểm — dựng một database RIÊNG, rỗng
 name: banhcuon
 
@@ -49,3 +51,23 @@ services:
       - -database
       - postgres://shop_owner:shop_owner_dev@db:5432/banhcuon?sslmode=disable&search_path=shop&x-migrations-table=%22public%22.%22schema_migrations%22&x-migrations-table-quoted=1
     command: ["up"]
+
+  swagger:
+    image: swaggerapi/swagger-ui:v5.32.5
+    profiles: ["tools"]
+    # Chỉ ĐỌC hợp đồng docs/product/3-be/openapi.yaml (owner: CLAUDE.md §2); sửa file
+    # rồi tải lại trang là thấy, không cần dựng lại. Nút "Try it out" đi qua nginx của
+    # service này tới server Go trên máy (BE_UPSTREAM, mặc định cổng 8080 của máy) —
+    # cấu hình: tools/swagger/default.conf.template. Cửa có quyền cần header X-Person-Id
+    # (nút Authorize).
+    environment:
+      SWAGGER_JSON: /contract/openapi.yaml
+      BASE_URL: /docs
+      BE_UPSTREAM: ${BE_UPSTREAM:-host.docker.internal:8080}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:${SWAGGER_PORT:-8081}:8080"
+    volumes:
+      - ./docs/product/3-be/openapi.yaml:/contract/openapi.yaml:ro
+      - ./tools/swagger/default.conf.template:/etc/nginx/templates/default.conf.template:ro

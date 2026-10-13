@@ -75,7 +75,28 @@ make status           # không thấy banhcuon-db-1 ⇒ database chưa bật; ch
 - **"Không đọc được múi giờ ở master_plan/shop-facts.md"**: dòng `| Múi giờ |` trong file đó
   bị đổi hình; `make psql` và `make seed` dừng lại thay vì chạy sai múi giờ.
 
-## 9. Không nằm trong `make`
+## 9. Xem hợp đồng API bằng Swagger UI
+```bash
+make swagger          # bật Swagger UI — mở http://127.0.0.1:8081/docs/
+make swagger-stop     # tắt
+```
+Trang đọc thẳng [openapi.yaml](../product/3-be/openapi.yaml) — hợp đồng API, nơi duy nhất ghi đường
+gọi và mã lỗi. Sửa file đó rồi tải lại trang là thấy, không cần bật lại. Trang chỉ để **xem và gọi
+thử**; muốn đổi hợp đồng thì sửa file theo luật ở
+[01-hop-dong-api.md](../product/3-be/01-hop-dong-api.md). Viết 2026-10-13.
+
+Nút **Try it out** gửi request qua chính cổng 8081, rồi được chuyển sang server Go ở cổng `8080`
+của máy, nên phải bật server trước (database đang chạy, vai `shop_app`):
+```bash
+cd be && BANHCUON_DATABASE_URL="postgres://shop_app:shop_app_dev@127.0.0.1:5433/banhcuon?sslmode=disable" \
+  BANHCUON_SHOP_TZ="<múi giờ>" go run ./cmd/server
+```
+`<múi giờ>` là giá trị dòng `| Múi giờ |` ở `master_plan/shop-facts.md` §1 — đọc ở đó, đừng chép vào đây.
+Cửa cần quyền đòi header `X-Person-Id`: bấm **Authorize**, điền số `person_id` lấy từ `GET /people`.
+Server chưa bật thì Try it out trả `502 Bad Gateway` — không phải lỗi của hợp đồng. Đổi cổng:
+`SWAGGER_PORT=9000 make swagger`; server Go ở chỗ khác: `BE_UPSTREAM=host.docker.internal:9090 make swagger`.
+
+## 10. Không nằm trong `make`
 ```bash
 ./scripts/db-check.sh # bộ kiểm database — dựng database RIÊNG, kiểm xong gỡ đi
 ./scripts/gate.sh     # toàn bộ cổng kiểm của repo

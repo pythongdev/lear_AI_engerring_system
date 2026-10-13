@@ -1,0 +1,61 @@
+# Cấu hình nginx cho service `swagger` ở compose.yaml — thay template mặc định của image
+# swaggerapi/swagger-ui:v5.32.5. Phần trong `location $BASE_URL` chép nguyên từ template của
+# image (entrypoint 40-swagger-ui.sh chèn chỗ gốc của file hợp đồng vào đó lúc chạy — đừng
+# viết tên dấu ấy trong chú thích, script thay cả chú thích); đổi image thì so lại.
+# Thêm đúng một thứ: `location /` chuyển mọi đường gọi khác sang server Go trên máy, để nút
+# "Try it out" gọi cùng origin với trang — server Go không trả header CORS.
+# Biến $PORT · $BASE_URL · $BE_UPSTREAM do compose.yaml đặt; nginx thay lúc khởi động.
+
+  types {
+    text/plain yaml;
+    text/plain yml;
+  }
+
+  gzip on;
+  gzip_static on;
+  gzip_disable "msie6";
+
+  gzip_vary on;
+  gzip_types text/plain text/css application/javascript;
+
+  map $request_method $access_control_max_age {
+    OPTIONS 1728000; # 20 days
+  }
+  server_tokens off; # Hide Nginx version
+
+  server {
+    listen            $PORT;
+    server_name       localhost;
+    index             index.html index.htm;
+
+    location $BASE_URL {
+      absolute_redirect off;
+      alias            /usr/share/nginx/html/;
+      expires 1d;
+
+      location ~ swagger-initializer.js {
+        expires -1;
+        include templates/cors.conf;
+      }
+
+      location ~* \.(?:json|yml|yaml)$ {
+        #SWAGGER_ROOT
+        expires -1;
+
+        include templates/cors.conf;
+      }
+
+      include templates/cors.conf;
+      include templates/embedding.conf;
+    }
+
+    # Mọi đường không phải trang Swagger ⇒ server Go. SSE (/…/events) cần tắt đệm.
+    location / {
+      proxy_pass         http://$BE_UPSTREAM;
+      proxy_http_version 1.1;
+      proxy_set_header   Host $host;
+      proxy_set_header   Connection "";
+      proxy_buffering    off;
+      proxy_read_timeout 1h;
+    }
+  }
