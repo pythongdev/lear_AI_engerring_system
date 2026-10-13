@@ -300,7 +300,7 @@ ghim của công cụ.
   | `Makefile` | lệnh tắt cho database làm việc trên máy phát triển và cho Swagger UI — chỉ gọi lại `compose.yaml` và `db/seed/`, không mang cấu hình riêng; bộ kiểm không đi qua nó | chủ repo yêu cầu 2026-09-29 |
   | `tools/swagger/` | template nginx của service `swagger`: phục vụ Swagger UI ở `/docs/` từ `docs/product/3-be/openapi.yaml` (chỉ đọc) và chuyển mọi đường khác sang server Go trên máy; không phải hợp đồng, không phải code chạy thật | chủ repo yêu cầu 2026-10-13 |
   | `be/` | backend — cấu trúc bên trong theo `QC-14` | `P3-03` |
-  | `fe/` | frontend | pha 4 |
+  | `fe/` | frontend — một gói npm, cấu trúc và bản ghim theo `QC-18`; cây route ở `docs/product/4-fe/01-khung-fe.md` | `P4-02` |
 
   Không đặt code ở chỗ khác mà không thêm một dòng vào bảng này trước.
 - **Hậu quả nếu làm khác:** phiên đầu tiên của pha 3 đặt backend ở gốc repo, phiên của pha 4 đặt
@@ -333,7 +333,8 @@ ghim của công cụ.
   ```
   Từ 2026-10-06 (`P3-03`) `scripts/verify.sh` dựng và kiểm Go trong `be/`, không ở gốc; phiên bản Go,
   thư viện web, cách truy cập database và khung test backend là `QC-11`…`QC-17`. `verify.sh` vẫn
-  chỉ gọi Node khi `package.json` nằm ở gốc — khung test frontend chốt ở pha 4, dòng mới vào file này.
+  chỉ gọi Node khi `package.json` nằm ở gốc; `fe/` dựng 2026-10-13 (`P4-02`) với bản ghim, khung test và lệnh ở
+  `QC-18` — nối `fe/` vào `verify.sh` là `P4-03`.
 - **Nguồn:** owner — `master_plan/prompt-fullstack.md` §3.4 cho ngôn ngữ; §3.4 là bản xuất khẩu
   (**ADR-035** luật 3), và câu *"MySQL 8.4"* của chính khối ấy đã bị thay bởi `QC-01` — nên các phần
   còn lại của §3.4 **chưa** được chủ repo đọc lại sau ngày ấy.
@@ -673,4 +674,67 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
 | `T-163` | **2026-10-12** — không đổi luật; `sanxuat` chuyển. Ghi cho miền sau (`QC-13`), Claude thử với sqlc v1.31.1: hàm `arg` · `narg` của sqlc và cột `x.*` bị sqlc viết lại trong code sinh nên Gate 1f báo *lệch nguồn* — dùng `$N` có ép kiểu và liệt kê cột; dòng chú thích ở cột 0 **trong** thân câu bị bỏ, dòng thụt vào thì giữ — thụt chú thích vào; sqlc không sinh tham số null từ `$N::bigint`, nên câu cần null dùng cờ `$N::boolean` hoặc mã 0 khi mã thật bắt đầu từ 1 và handler từ chối ≤ 0 |
 | `T-164` | **2026-10-12** — không đổi luật; `don` chuyển, miền cuối cùng — `be/cmd/server/` không còn đường nào sau `NoRoute`, adapter chờ `T-165` gỡ. Ghi thêm (`QC-13`), Claude thử với sqlc v1.31.1: tham số trong `nullif($N, '')` không ép kiểu sinh `interface{}` — truyền chuỗi Go thì PostgreSQL vẫn suy `text` như trước; tên file `.sql` trùng ở hai thư mục cửa (`be/internal/don/sql/duyet/khoa_don.sql` · `be/internal/don/sql/tu_choi/khoa_don.sql`) gộp vào một file sinh, hợp lệ khi `-- name:` khác nhau |
 | `T-165` | **2026-10-12** — giai đoạn chuyển tiếp kết thúc: `QC-12` bỏ `ServeMux` · `gin.WrapH` · `NoRoute` (Gate 1g đỏ ở `.HandleFunc(` · `.Handle(`), thêm phép kiểm adapter; `QC-13` luật `-- name:` và mục `sqlc.yaml` cho mọi miền có `sql/` (Gate 1f đỏ khi thiếu), thêm phép kiểm `embed`; `QC-14` bỏ vế *chưa chuyển*, thêm phép kiểm `sql/` ⇒ `sqlcgen` |
+| `P4-02` | **2026-10-13** — `QC-08` dòng `fe/`; `QC-09` trỏ `QC-18`; thêm `QC-18` (frontend) |
+| `P4-03`…`P4-12` | `QC-18` bản ghim, lệnh và cấu hình Next; nối `fe/` vào cổng ở `P4-03` |
 | `P3-04`…`P3-14` | `QC-13` cửa ghi và Gate 1f · `QC-15` kết nối · `QC-16` chạy test bằng `scripts/be-check.sh` · `QC-17` tên test |
+
+---
+
+## 10. Frontend — `QC-18`
+
+### QC-18 — `fe/` là một gói npm, mọi phụ thuộc ghim số chính xác; type sinh từ hợp đồng; cache và telemetry của Next tắt
+
+- **Quy ước:** `fe/` là **một** gói npm (`banhcuon-fe`) chạy trên Node 24 (`QC-09`); lockfile `fe/package-lock.json`
+  được commit, cài bằng `npm ci` (**ADR-102** điểm 6). `fe/.npmrc` đặt `save-exact=true`: **mọi** dòng của
+  `dependencies` · `devDependencies` là số chính xác, không dải. Bản ghim của các thứ **ADR-100** · **ADR-102** đã
+  chọn, tra npm 2026-10-13:
+
+  | Gói | Bản | Vai |
+  |---|---|---|
+  | `next` · `eslint-config-next` | `16.4.0` | khung App Router (`QC-09`) và luật lint đi kèm |
+  | `react` · `react-dom` | `19.3.0` | |
+  | `typescript` | `5.9.3` | bản `create-next-app` 16.4.0 chọn |
+  | `shadcn` | `4.21.4` | CLI primitive, chạy `npx shadcn add` trong `fe/` (**ADR-100** điểm 3); khởi tạo nền Radix, kiểu `radix-nova`, màu nền `neutral` — `fe/components.json` |
+  | `tailwindcss` | `4.3.3` | |
+  | `@tanstack/react-query` | `5.104.2` | dữ liệu server (**ADR-102** điểm 4) |
+  | `zustand` | `5.0.15` | nháp và tên đang chọn (**ADR-102** điểm 4) |
+  | `react-hook-form` · `zod` · `@hookform/resolvers` | `7.90.0` · `4.6.7` · `5.9.1` | form (**ADR-102** điểm 5) |
+  | `openapi-typescript` · `openapi-fetch` | `7.13.0` · `0.17.0` | sinh type · lớp gọi có kiểu (**ADR-102** điểm 5) |
+  | `vitest` · `@testing-library/react` · `jsdom` | `5.0.4` · `16.3.3` · `30.1.2` | khung test (**ADR-102** điểm 5) |
+
+  Các gói còn lại trong `fe/package.json` là thứ các gói trên kéo theo khi khởi tạo (`radix-ui`, `lucide-react`,
+  `cn`, …) — vẫn ghim số chính xác. Thêm một phụ thuộc trực tiếp ngoài bảng thì nói lý do ở mục dùng nó; lên bản là
+  một task (**ADR-102** điểm 8, dòng *nextjs §4.7*).
+
+  **Lệnh** — chạy trong `fe/`: `npm run dev` · `build` · `start` · `lint` · `typecheck` (sinh kiểu route của Next rồi
+  `tsc`) · `test` (Vitest, `fe/vitest.config.mts`) · `gen:api` (sinh type từ
+  `docs/product/3-be/openapi.yaml`; file sinh được commit và không sửa tay — tên và chỗ của nó:
+  `docs/product/4-fe/01-khung-fe.md` §3.1). Ba lệnh chạy Next đặt
+  `NEXT_TELEMETRY_DISABLED=1` ngay trong lệnh (**ADR-102** điểm 6).
+
+  **Cấu hình Next** (`fe/next.config.ts`): `cacheComponents` và `partialPrefetching` — hai cờ `create-next-app`
+  16.4.0 bật sẵn — **tắt**, vì **ADR-102** điểm 3 cấm cơ chế cache của Next bọc dữ liệu server và hoãn prefetch;
+  `compress` tắt để luồng sự kiện qua tầng chuyển tiếp không bị đệm. **Font**: font hệ thống, không tải font từ
+  mạng lúc build — font mặc định của bộ khởi tạo không có bộ chữ tiếng Việt.
+
+  Địa chỉ backend là biến môi trường phía server `BANHCUON_BE_URL`; tầng chuyển tiếp và lớp gọi API:
+  `docs/product/4-fe/01-khung-fe.md` §3.
+- **Hậu quả nếu làm khác:** dải phiên bản ⇒ hai máy cài hai bản khác nhau từ cùng một `package.json`, và một
+  bản vá của Next đổi hành vi cache ngay dưới chân màn giá (kế hoạch pha 4 §10). Để `cacheComponents` bật ⇒ một
+  chỉ thị cache gõ vào một thành phần là đủ để màn giữ giá cũ. Type gõ tay ⇒ hợp đồng đổi một trường mà không ai biết.
+- **Phép kiểm:**
+  ```sh
+  [ -f fe/package.json ] || { echo "thiếu fe/package.json"; exit 0; }
+  [ -f fe/package-lock.json ] || echo "thiếu fe/package-lock.json"
+  grep -qx 'save-exact=true' fe/.npmrc 2>/dev/null || echo "fe/.npmrc không đặt save-exact=true"
+  grep -nE '"[^"]+": "[~^><=*]' fe/package.json | grep -v '"node":' | sed 's/^/fe\/package.json dải phiên bản: /'
+  for pv in next:16.4.0 react:19.3.0 react-dom:19.3.0 shadcn:4.21.4 @tanstack/react-query:5.104.2 zustand:5.0.15 openapi-typescript:7.13.0 openapi-fetch:0.17.0 react-hook-form:7.90.0 zod:4.6.7 vitest:5.0.4; do
+    grep -qF "\"${pv%%:*}\": \"${pv#*:}\"" fe/package.json || echo "fe/package.json không ghim ${pv%%:*} ${pv#*:}"
+  done
+  for s in dev build start; do grep -qE "\"$s\": \"NEXT_TELEMETRY_DISABLED=1 " fe/package.json || echo "lệnh npm $s không tắt telemetry"; done
+  grep -qE '"gen:api": "openapi-typescript \.\./docs/product/3-be/openapi\.yaml ' fe/package.json || echo "thiếu lệnh gen:api sinh từ openapi.yaml"
+  for f in cacheComponents partialPrefetching compress; do grep -qE "^ *$f: false," fe/next.config.ts || echo "fe/next.config.ts không tắt $f"; done
+  ```
+  So file sinh với hợp đồng và chạy lint, kiểu, test trong cổng: `P4-03`.
+- **Nguồn:** phiên chọn 2026-10-13 (Claude Code, `P4-02`) trên lựa chọn của **ADR-100** · **ADR-102** — bản ghim,
+  tắt hai cờ cache của Next, nén, font hệ thống; số bản tra từ npm cùng ngày.

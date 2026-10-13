@@ -163,7 +163,54 @@ ai biết.
 
 **Bẫy:** đừng dựng trang nào ở đây; đừng thêm cả bộ primitive shadcn; đừng gõ tay một type nào của hợp đồng.
 
-**Nhận việc:** —
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
+- *Phạm vi* (nhận 2026-10-13, Claude Code; chủ repo giao *"hãy đọc kĩ và làm task trên"* — Claude tự dựng, không
+  phiếu Codex, nên **chưa có reviewer độc lập**): `fe/` (khung Next.js, shadcn khởi tạo, type sinh, lớp gọi API, tầng
+  chuyển tiếp sang backend, một test) · `docs/product/4-fe/` (file đầu tiên) · `docs/product/00-index.md` ·
+  `CLAUDE.md` (hàng §2 *Route, component*) · `docs/product/2-db/10-quy-uoc-code.md` (`QC-08` dòng `fe/`, `QC-09`,
+  `QC-18` mới) · `scripts/check-links.ignore` (gỡ dòng `fe/package.json`) · `master_plan/FE_master_plan_banh_cuon_ba_thanh.md`
+  (§5 con trỏ) · `work/backlog.md` (`P4-01` → *Done*: đã commit `f14f2b1`, thư mục `fe/` rỗng chặn gate nay được
+  bước này lấp) · file này · `work/findings.md` (chỉ khi gặp chỗ lệch). **Không** `scripts/verify.sh` hay script cổng
+  nào — nối `fe/` vào cổng là `P4-03`; không `docs/product/3-be/` hay `be/`.
+- *Nghiệm thu* (viết trước khi dựng):
+  1. `fe/` có `package.json` với mọi phụ thuộc ghim **số chính xác** (không `^` `~`), `package-lock.json` của npm,
+     `components.json` của shadcn; `npm ci` rồi `npm run build` trong `fe/` thành công.
+  2. Type sinh từ `docs/product/3-be/openapi.yaml` bằng openapi-typescript qua **một** lệnh npm; chạy lại lệnh ấy
+     trên bản commit thì `git diff` của file sinh rỗng; cạnh lệnh sinh ghi `int64` → số JavaScript (**ADR-102** điểm 5).
+  3. Một lớp gọi API (openapi-fetch) duy nhất: đọc lời từ chối theo `Error.code` (không theo status, không theo chữ),
+     giữ `field`; phân biệt *backend từ chối kèm mã* · *không có phản hồi* · *phản hồi lạ hình*; gửi `X-Person-Id`
+     khi có người đã chọn; danh sách mã đọc từ type sinh, không gõ tay.
+  4. Test Vitest gọi lớp API với một lời từ chối mẫu của hợp đồng (`option_combination_invalid` kèm `field`) ra đúng
+     mã và trường; thêm ca mã lạ và ca mất phản hồi; `npm test` xanh.
+  5. Trình duyệt chỉ gọi server Next; tầng chuyển tiếp không cache, không đệm `text/event-stream`, chuyển nguyên
+     `X-Person-Id`; địa chỉ backend là biến môi trường phía server. Chứng minh trên app thật: `GET /menu` và một đường
+     có `X-Person-Id` qua Next ra đúng thân backend trả.
+  6. Telemetry của Next tắt ngay trong lệnh npm (**ADR-102** điểm 6); không primitive shadcn nào dưới
+     `fe/src/components/ui/`; không trang nghiệp vụ nào.
+  7. `docs/product/4-fe/` có file đầu tiên (cây route, nguồn dữ liệu mỗi màn để trống tới bước dựng, danh mục
+     component rỗng); hàng §2 *Route, component* trỏ file ấy **cùng lượt**; `QC-18` mới có bảng bản ghim và phép kiểm
+     in rỗng khi đạt; dòng ignore `fe/package.json` gỡ; `./scripts/gate.sh` xanh.
+- *Kiểm chứng:* `cd fe && npm ci && npm run gen:api && git diff --exit-code src/lib/api/schema.d.ts && npm test && npm run lint && npm run build`;
+  chạy backend + `npm run start`, `curl` qua cổng Next; khối `sh` của `QC-18` chạy tay in rỗng; `./scripts/gate.sh`.
+
+**Bàn giao** (2026-10-13, Claude Code; nhánh `fe_admin`, base `f14f2b1`; chưa commit; **chưa có reviewer độc lập** —
+chủ repo giao thẳng cho Claude, không phiếu Codex). File: `fe/` (mười chín file theo dõi, `node_modules/` · `.next/` bị
+`fe/.gitignore` loại) · `docs/product/4-fe/01-khung-fe.md` (mới) · `docs/product/00-index.md` · `CLAUDE.md` (hàng §2) ·
+`docs/product/2-db/10-quy-uoc-code.md` (`QC-08` · `QC-09` · `QC-18` mới · bảng §9) · `scripts/check-links.ignore` ·
+`master_plan/FE_master_plan_banh_cuon_ba_thanh.md` §5 · `work/backlog.md` (`P4-01` → *Done*, `P4-02` → *Done*, `P4-03`
+→ *Ready*) · file này. Nghiệm thu → bằng chứng: 1 — `QC-18` phép kiểm in rỗng (chạy tay và trong `db-check`: *19 khối
+kiểm QC*), bốn lỗi cài trên bản chép (dải `^`, telemetry, `cacheComponents`) đều đỏ; `npm ci` · `npm run build` xanh;
+2 — `npm run gen:api` chạy lại cho cùng `shasum`; dòng `int64` ở `01-khung-fe.md` §3.1; 3 — `fe/src/lib/api/client.ts`,
+mã đọc từ `errorCodeValues` sinh; 4 — `npm test`: *8 passed*; 5 — đo trên backend thật + `next start`, ghi ở
+`01-khung-fe.md` §3.2 (cùng `shasum` `GET /menu`, `401`/`403` theo `X-Person-Id`, `hello` của SSE tới sau 0,01 giây,
+backend tắt ⇒ `502` kèm header); 6 — ba lệnh Next đặt `NEXT_TELEMETRY_DISABLED=1`, `fe/src/components/` không tồn tại,
+trang `/` chỉ giữ chỗ; 7 — `01-khung-fe.md`, hàng §2, dòng ignore gỡ, `./scripts/gate.sh` xanh. Lệch khỏi khung mặc định,
+mỗi cái có lý do ở `QC-18`: tắt `cacheComponents` · `partialPrefetching` · `compress` của Next 16.4; bỏ font Geist (tải
+từ mạng lúc build, không bộ chữ tiếng Việt); không `AGENTS.md` của `create-next-app` (luật AI chỉ ở `CLAUDE.md`).
+`npm audit`: 9 mức cao, **tất cả trong công cụ dev** (lint, CLI shadcn — gốc `braces`), `npm audit --omit=dev` = 0;
+không nâng vì bản sửa là hạ `eslint-config-next` về 14. Gate 1d từng đỏ vì đường dẫn file sinh trong `QC-18` khớp mẫu
+route — viết lại câu, trỏ sang `01-khung-fe.md`. **Việc tiếp:** `P4-03` nối `fe/` vào cổng (so file sinh với hợp
+đồng, lint, kiểu, test, hai phép chặn). Tuỳ chọn: Codex rà diff này theo Nghiệm thu.
 
 [↑ đầu file](#top)
 

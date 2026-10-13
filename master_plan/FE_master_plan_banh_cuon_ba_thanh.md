@@ -61,7 +61,7 @@ trong pha 4**: backend của nó chưa có (**ADR-068**). Trang của chủ quá
 
 ## 5. Đầu ra pha 4 nằm ở đâu
 
-- **Code:** `fe/` (`QC-08`), ra đời ở `P4-02`.
+- **Code:** `fe/` (`QC-08` · `QC-18`), ra đời ở `P4-02` (2026-10-13).
 - **Tài liệu:** `docs/product/4-fe/`, ra đời ở `P4-02` cùng lượt hàng *Route, component* của `CLAUDE.md` §2 có
   owner thật (**ADR-035**). Trước lượt ấy không file nào được kể tên route hay component như một sự thật.
 - **Quyết định:** `docs/decisions.md`; luật code frontend vào `10-quy-uoc-code.md` thành `QC-XX` mới.

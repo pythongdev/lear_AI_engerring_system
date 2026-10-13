@@ -15,7 +15,7 @@ Hành vi nghiệp vụ của sản phẩm, cắt theo **pha** ở tầng ngoài 
 | 1 — System design | [`1-system-design/`](1-system-design/architecture.md) | **đang mở** — xem bảng dưới |
 | 2 — Database | [`2-db/`](2-db/01-quy-uoc-du-lieu.md) | **đang mở** — xem bảng dưới (mở 2026-09-26, `P2-03`) |
 | 3 — Backend | [`3-be/`](3-be/01-hop-dong-api.md) | **đang mở** — xem bảng dưới (mở 2026-10-06, `P3-04`); [kế hoạch pha 3](../../master_plan/BE_master_plan_banh_cuon_ba_thanh.md) (ADR-076) |
-| 4 — Frontend | `4-fe/` | **chưa mở** |
+| 4 — Frontend | [`4-fe/`](4-fe/01-khung-fe.md) | **đang mở** — xem bảng dưới (mở 2026-10-13, `P4-02`); [kế hoạch pha 4](../../master_plan/FE_master_plan_banh_cuon_ba_thanh.md) (ADR-101) |
 | 5 — Deploy | `5-deploy/` | **chưa mở** |
 
 Thư mục của pha **4–5** chưa tồn tại và cố ý chưa tồn tại: nó ra đời cùng dòng nội dung đầu tiên
@@ -121,6 +121,14 @@ Các lát lược đồ sau **thêm** dòng vào bảng này, không ghi đè d�
 | **Cổng chất lượng pha 3** — ba scenario diễn qua API thật, một ngày bán giả qua cửa lệch 0đ, trạng thái ký của mười hai ô sang pha 4 (P3-13) | [3-be/10-cong-chat-luong-pha-3.md](3-be/10-cong-chat-luong-pha-3.md) |
 
 Các lát `P3-05`…`P3-13` **thêm** dòng vào bảng này cùng file của mình (kế hoạch pha 3 §5).
+
+## Pha 4 — Frontend
+
+| Mục | File |
+|---|---|
+| **Khung frontend** — cây route · nguồn dữ liệu mỗi màn · lớp gọi API sinh từ hợp đồng và ba hình thất bại · tầng chuyển tiếp cùng origin · danh mục component dùng chung (P4-02, áp ADR-102) | [4-fe/01-khung-fe.md](4-fe/01-khung-fe.md) |
+
+Các bước `P4-03`…`P4-12` **thêm** dòng vào bảng này cùng file của mình (kế hoạch pha 4 §5).
 
 ## Luật ghi
 
