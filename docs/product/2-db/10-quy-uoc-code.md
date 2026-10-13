@@ -319,6 +319,9 @@ ghim của công cụ.
   LTS** — theo `master_plan/prompt-fullstack.md` §3.4 (chủ repo viết 2026-08-31). Phiên bản ghim ở
   `be/go.mod` và `fe/package.json` **lúc pha 3 · pha 4 tạo chúng**, không ở đây — chưa có dòng code
   nào để ghim.
+  **Thư viện FE — chủ repo chọn 2026-10-13:** giao diện bằng **shadcn/ui**, dữ liệu server bằng
+  **TanStack Query**, trạng thái phía client bằng **Zustand**. Phiên bản ghim, khung test và cách dùng
+  từng thư viện chốt ở pha 4; hướng dẫn tham khảo (không phải owner): `docs/private/fe/shared/`.
 - **Hậu quả nếu làm khác:** pha 3 mở ra không có ngôn ngữ nào đã nói, và phiên đầu tiên chọn theo
   sở thích của nó (**ADR-039**, lý do hàng *Quy ước code* tồn tại).
 - **Phép kiểm:**
