@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.18.0
+  version: 0.18.1
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -14,10 +14,38 @@ info:
 # Lớp quyền của mỗi cửa ghi: 02-vai-va-quyen.md (P3-05, ADR-085).
 security:
   - PersonIdentity: []
+# Nhóm trong Swagger UI = gói miền dưới be/internal/ đăng ký đường gọi ấy (chỉ để đọc, không phải luật).
+tags:
+  - name: nguoi
+    description: Người và ca quầy — danh sách người để chọn tên, vào và rời ca quầy.
+  - name: menu
+    description: Sửa menu — đổi giá thành phần, phụ thu, thành phần của món, ngừng bán.
+  - name: gia
+    description: Đọc menu và tính thử giá — hàm giá duy nhất (03-ham-gia.md).
+  - name: ban
+    description: Bàn — trạng thái các bàn, đánh dấu đã dọn (04-luong-tai-ban.md).
+  - name: qr
+    description: Mã QR của bàn — khách đọc bàn từ mã, chủ quán đổi mã.
+  - name: phien
+    description: Phiên bàn — khách gọi tính tiền (04-luong-tai-ban.md).
+  - name: don
+    description: Tạo và đổi trạng thái đơn — tại quầy, QR, online, điện thoại, đặt trước; duyệt, từ chối, huỷ, rời quán (04 · 05).
+  - name: nhandon
+    description: Nhận đơn ở quầy — hàng chờ, tạm dừng nhận đơn, báo mù và mở lại, tín hiệu realtime (09-realtime-du-phong.md).
+  - name: sanxuat
+    description: Sản xuất theo mẻ — bấm mẻ, lùi mẻ, ra bàn, chuyển việc trạm, ghi làm sai, bảng trạm (07-san-xuat-theo-me.md).
+  - name: tratruoc
+    description: Trả trước — nhận tiền trả trước của đơn (06-duong-tien.md).
+  - name: hoadon
+    description: Hoá đơn — trao, giao xong, đóng phiên, hoàn tiền, thu nợ, trả lại trả trước, nhập bù từ sổ giấy (06 · 08-vet-va-nhap-bu.md).
+  - name: ket
+    description: Két và ngày bán — tiền đầu ngày, đếm két, khai sổ giấy, ký đối chiếu ngày (06-duong-tien.md).
 paths:
   /production-board/events:
     get:
       operationId: productionEvents
+      tags:
+        - sanxuat
       summary: Tín hiệu đọc lại cho màn trạm
       security: []
       description: >-
@@ -39,6 +67,8 @@ paths:
   /counter/events:
     get:
       operationId: counterEvents
+      tags:
+        - nhandon
       summary: Tín hiệu đọc lại cho quầy, lớp quay
       description: >-
         SSE hello ngay khi nối, changed sau COMMIT, heartbeat mỗi 10 giây.
@@ -59,6 +89,8 @@ paths:
   /counter/queue:
     get:
       operationId: counterQueue
+      tags:
+        - nhandon
       summary: Đơn chờ xác nhận và trạng thái nhận đơn, lớp quay
       description: >-
         Không nhận thân yêu cầu. Mốc từ database; không tự mở lại khoảng mù khi luồng nối lại.
@@ -78,6 +110,8 @@ paths:
   /order-intake/pause:
     post:
       operationId: pauseIntake
+      tags:
+        - nhandon
       summary: nhandon/tam_dung, lớp chu_quan
       description: >-
         Không nhận thân yêu cầu. Mốc từ database; không tự mở lại khoảng mù khi luồng nối lại.
@@ -97,6 +131,8 @@ paths:
   /order-intake/resume:
     post:
       operationId: resumeIntake
+      tags:
+        - nhandon
       summary: nhandon/tiep_tuc, lớp chu_quan
       description: >-
         Không nhận thân yêu cầu. Mốc từ database; không tự mở lại khoảng mù khi luồng nối lại.
@@ -116,6 +152,8 @@ paths:
   /shop-blind/declaration:
     post:
       operationId: declareBlind
+      tags:
+        - nhandon
       summary: nhandon/bao_mu gọi nhandon/ghi_mu, lớp quay_hoac_chu_quan
       description: >-
         Không nhận thân yêu cầu. Mốc từ database; không tự mở lại khoảng mù khi luồng nối lại.
@@ -135,6 +173,8 @@ paths:
   /shop-blind/reopening:
     post:
       operationId: reopenBlind
+      tags:
+        - nhandon
       summary: nhandon/mo_lai, lớp quay_hoac_chu_quan
       description: >-
         Không nhận thân yêu cầu. Mốc từ database; không tự mở lại khoảng mù khi luồng nối lại.
@@ -154,6 +194,8 @@ paths:
   /people:
     get:
       operationId: listPeople
+      tags:
+        - nguoi
       security: []
       summary: Danh sách người để chọn tên, xếp theo display_name
       responses:
@@ -172,6 +214,8 @@ paths:
   /counter-duty/current:
     get:
       operationId: getCurrentCounterDuty
+      tags:
+        - nguoi
       security: []
       summary: Người đang đứng quầy; không đòi danh tính người đọc
       responses:
@@ -190,6 +234,8 @@ paths:
   /counter-duty:
     post:
       operationId: enterCounterDuty
+      tags:
+        - nguoi
       summary: Người đã chọn tên vào quầy — nguoi/vao_quay, lớp nguoi_quan
       description: >-
         Không nhận thân yêu cầu; người vào lấy từ X-Person-Id. Khoá khoảng đang mở trong giao dịch.
@@ -230,6 +276,8 @@ paths:
   /counter-duty/end:
     post:
       operationId: endCounterDuty
+      tags:
+        - nguoi
       summary: Người đang đứng quầy rời quầy — nguoi/roi_quay, lớp quay
       description: Không nhận thân yêu cầu; khép khoảng của người gọi tại now() của giao dịch, có vết.
       responses:
@@ -267,6 +315,8 @@ paths:
   /qr-codes/{code}:
     get:
       operationId: getTableByQrCode
+      tags:
+        - qr
       security: []
       summary: Bàn mà mã QR hiện hành chỉ tới
       parameters:
@@ -298,6 +348,8 @@ paths:
   /dining-tables/{dining_table_id}/qr-code:
     post:
       operationId: issueQrCode
+      tags:
+        - qr
       summary: Cấp mã QR mới cho bàn; mã cũ hết hiện hành cùng mốc
       parameters:
         - name: dining_table_id
@@ -347,6 +399,8 @@ paths:
   /menu:
     get:
       operationId: getMenu
+      tags:
+        - gia
       security: []
       summary: Món đang bán và giá mọi tổ hợp hợp lệ
       responses:
@@ -365,6 +419,8 @@ paths:
   /price-quotes:
     post:
       operationId: quotePrices
+      tags:
+        - gia
       security: []
       summary: Tính thử; bỏ qua mọi trường lạ kể cả giá gửi lên
       requestBody:
@@ -413,6 +469,8 @@ paths:
   /menu-components/{menu_component_id}/base-price:
     put:
       operationId: changeComponentPrice
+      tags:
+        - menu
       summary: Đổi giá gốc thành phần, có lý do
       parameters:
         - name: menu_component_id
@@ -468,6 +526,8 @@ paths:
   /menu-options/{menu_option_id}/surcharge:
     put:
       operationId: changeOptionSurcharge
+      tags:
+        - menu
       summary: Đổi phụ thu, có lý do
       parameters:
         - name: menu_option_id
@@ -523,6 +583,8 @@ paths:
   /menu-items/{menu_item_id}/components/{menu_component_id}:
     put:
       operationId: changeItemComponent
+      tags:
+        - menu
       summary: Đổi số lượng thành phần suất, có lý do
       parameters:
         - name: menu_item_id
@@ -585,6 +647,8 @@ paths:
   /menu-items/{menu_item_id}/discontinuation:
     post:
       operationId: discontinueMenuItem
+      tags:
+        - menu
       summary: Ngừng bán món, giữ nguyên mốc khi ngừng lần nữa
       parameters:
         - name: menu_item_id
@@ -646,6 +710,8 @@ paths:
   /online-orders:
     post:
       operationId: createOnlineOrder
+      tags:
+        - don
       security: []
       requestBody:
         required: true
@@ -675,6 +741,8 @@ paths:
   /preorder-releases:
     post:
       operationId: releasePreorders
+      tags:
+        - don
       description: Máy POS tự gọi bằng người đang đứng quầy; nhả đơn điện thoại tới mốc cần hàng trừ 20 phút trong một giao dịch. Không cần người bấm xuống bếp.
       requestBody:
         required: false
@@ -707,6 +775,8 @@ paths:
   /preorder-reminders:
     get:
       operationId: getPreorderReminders
+      tags:
+        - don
       security: []
       description: Chỉ đọc, không kiểm quyền như production-board; dùng don.DongHo, không ghi dữ liệu.
       responses:
@@ -732,6 +802,8 @@ paths:
   /phone-orders:
     post:
       operationId: createPhoneOrder
+      tags:
+        - don
       description: Tạo ở confirmed; nếu giờ cần hàng trừ 20 phút đã tới theo don.DongHo thì nổ ngay và trả in_progress. Gửi lại dấu chỉ trả đơn cũ, không nổ.
       requestBody:
         required: true
@@ -761,6 +833,8 @@ paths:
   /orders/{sales_order_id}/departure:
     post:
       operationId: departOrder
+      tags:
+        - don
       parameters:
         - name: sales_order_id
           in: path
@@ -785,6 +859,8 @@ paths:
   /table-orders:
     post:
       operationId: createTableOrder
+      tags:
+        - don
       requestBody:
         required: true
         content:
@@ -813,6 +889,8 @@ paths:
   /qr-codes/{code}/orders:
     post:
       operationId: createQrOrder
+      tags:
+        - don
       security: []
       parameters:
         - name: code
@@ -848,6 +926,8 @@ paths:
   /orders/{sales_order_id}/approval:
     post:
       operationId: approveOrder
+      tags:
+        - don
       parameters:
         - name: sales_order_id
           in: path
@@ -872,6 +952,8 @@ paths:
   /orders/{sales_order_id}/rejection:
     post:
       operationId: rejectOrder
+      tags:
+        - don
       parameters:
         - name: sales_order_id
           in: path
@@ -896,6 +978,8 @@ paths:
   /table-sessions/{table_session_id}/bill-request:
     post:
       operationId: requestBill
+      tags:
+        - phien
       parameters:
         - name: table_session_id
           in: path
@@ -920,6 +1004,8 @@ paths:
   /table-sessions/{table_session_id}/closing:
     post:
       operationId: closeSession
+      tags:
+        - hoadon
       parameters:
         - name: table_session_id
           in: path
@@ -950,6 +1036,8 @@ paths:
   /dining-tables/{dining_table_id}/cleaning:
     post:
       operationId: cleanTable
+      tags:
+        - ban
       parameters:
         - name: dining_table_id
           in: path
@@ -974,6 +1062,8 @@ paths:
   /dining-tables:
     get:
       operationId: getDiningTables
+      tags:
+        - ban
       security: []
       responses:
         '200':
@@ -991,6 +1081,8 @@ paths:
   /orders/{sales_order_id}/handover:
     post:
       operationId: handoverOrder
+      tags:
+        - hoadon
       parameters:
         - name: sales_order_id
           in: path
@@ -1021,6 +1113,8 @@ paths:
   /orders/{sales_order_id}/delivered:
     post:
       operationId: deliverOrder
+      tags:
+        - hoadon
       parameters:
         - name: sales_order_id
           in: path
@@ -1051,6 +1145,8 @@ paths:
   /bills/{bill_id}/refunds:
     post:
       operationId: refundBill
+      tags:
+        - hoadon
       parameters:
         - name: bill_id
           in: path
@@ -1081,6 +1177,8 @@ paths:
   /bills/{bill_id}/debt-collections:
     post:
       operationId: collectDebt
+      tags:
+        - hoadon
       parameters:
         - name: bill_id
           in: path
@@ -1111,6 +1209,8 @@ paths:
   /orders/{sales_order_id}/prepayment:
     post:
       operationId: receivePrepayment
+      tags:
+        - tratruoc
       parameters:
         - name: sales_order_id
           in: path
@@ -1141,6 +1241,8 @@ paths:
   /prepayments/{prepayment_id}/returns:
     post:
       operationId: returnPrepayment
+      tags:
+        - hoadon
       parameters:
         - name: prepayment_id
           in: path
@@ -1171,6 +1273,8 @@ paths:
   /opening-floats:
     post:
       operationId: declareOpeningFloat
+      tags:
+        - ket
       requestBody:
         required: true
         content:
@@ -1193,6 +1297,8 @@ paths:
   /cash-counts:
     post:
       operationId: recordCashCount
+      tags:
+        - ket
       requestBody:
         required: true
         content:
@@ -1215,6 +1321,8 @@ paths:
   /sale-days/{sale_date}/cash-count:
     put:
       operationId: correctReconciledCashCount
+      tags:
+        - ket
       description: Chủ quán sửa toàn bộ xấp của ngày từng ký, kèm lý do; mở lại dấu đang đứng. Xấp cũ vắng trong yêu cầu về 0, không xoá (ADR-096).
       parameters:
         - name: sale_date
@@ -1244,6 +1352,8 @@ paths:
   /sale-days/{sale_date}/paper-entries:
     post:
       operationId: createPaperEntry
+      tags:
+        - hoadon
       summary: Nhập bù một lượt bán trên sổ giấy
       description: >-
         Quầy hoặc chủ quán. Một giao dịch giữ khoá chung của ngày chưa ký.
@@ -1278,6 +1388,8 @@ paths:
   /sale-days/{sale_date}/paper-ledger:
     post:
       operationId: declarePaperLedger
+      tags:
+        - ket
       description: POS hoặc chủ quán khai sổ ngày không sau hôm nay; từ chối ngày đã ký (ADR-095).
       parameters:
         - name: sale_date
@@ -1307,6 +1419,8 @@ paths:
   /sale-days/{sale_date}/reconciliation:
     post:
       operationId: reconcileSaleDay
+      tags:
+        - ket
       parameters:
         - name: sale_date
           in: path
@@ -1335,6 +1449,8 @@ paths:
   /debts:
     get:
       operationId: listDebts
+      tags:
+        - hoadon
       security: []
       responses:
         '200':
@@ -1352,6 +1468,8 @@ paths:
   /sale-days/{sale_date}/cash-reconciliation:
     get:
       operationId: getCashReconciliation
+      tags:
+        - ket
       security: []
       parameters:
         - name: sale_date
@@ -1375,6 +1493,8 @@ paths:
   /production-batches:
     post:
       operationId: makeProductionBatch
+      tags:
+        - sanxuat
       requestBody:
         required: true
         content:
@@ -1397,6 +1517,8 @@ paths:
   /production-batches/{id}/rollback:
     post:
       operationId: rollbackProductionBatch
+      tags:
+        - sanxuat
       parameters:
         - name: id
           in: path
@@ -1421,6 +1543,8 @@ paths:
   /served-marks:
     post:
       operationId: markServed
+      tags:
+        - sanxuat
       requestBody:
         required: true
         content:
@@ -1443,6 +1567,8 @@ paths:
   /station-job-transfers:
     post:
       operationId: transferStationJobs
+      tags:
+        - sanxuat
       requestBody:
         required: true
         content:
@@ -1465,6 +1591,8 @@ paths:
   /wrong-make-notes:
     post:
       operationId: writeWrongMakeNote
+      tags:
+        - sanxuat
       requestBody:
         required: true
         content:
@@ -1487,6 +1615,8 @@ paths:
   /wrong-make-notes/{id}/cancellation:
     post:
       operationId: cancelWrongMakeNote
+      tags:
+        - sanxuat
       parameters:
         - name: id
           in: path
@@ -1511,6 +1641,8 @@ paths:
   /orders/{sales_order_id}/cancellation:
     post:
       operationId: cancelOrder
+      tags:
+        - don
       parameters:
         - name: sales_order_id
           in: path
@@ -1535,6 +1667,8 @@ paths:
   /production-board:
     get:
       operationId: getProductionBoard
+      tags:
+        - sanxuat
       security: []
       parameters:
         - name: station_code
@@ -1558,6 +1692,8 @@ paths:
   /station-jobs/{id}/transfer-candidates:
     get:
       operationId: getTransferCandidates
+      tags:
+        - sanxuat
       security: []
       parameters:
         - name: id
