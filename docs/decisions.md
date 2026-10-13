@@ -6807,3 +6807,35 @@ trong cùng giao dịch với hoá đơn — khoá ngoại hoãn `table_session_
 khách ngồi là được — **bỏ lời từ chối *bàn có phiên chồng lên `sold_at`*** ở điểm 5 (không có dữ liệu để biết chồng). Bàn
 không tồn tại ⇒ `invalid_request` field `dining_table_id`. Lý do: thêm cột mốc phiên là đổi lược đồ cho một kiểm không lời
 chủ quán nào đòi; hoá đơn đã mang mốc bán.
+
+### ADR-100 — Pha 4 dựng giao diện bằng shadcn/ui: mọi primitive lấy từ CLI shadcn, không bộ UI thứ hai
+
+**Trạng thái:** Đã chốt 2026-10-13, **chủ repo quyết** (*"yêu cầu dung shadcn"*, ngay sau khi ký mở pha 4 ở `T-176`).
+Ghi ở `T-177` (Claude Code). Là nền của bước chốt nền tảng pha 4; các phần còn để mở nói ở cuối ADR này.
+
+**Decision:**
+
+1. **Primitive giao diện của `fe/` là shadcn/ui** (nền Radix, Tailwind CSS 4) — nút, ô nhập, hộp thoại, bảng, nhãn, thông báo…
+   Mỗi primitive được thêm bằng CLI shadcn vào `fe/src/components/ui/`, **từng cái khi một màn cần**, không thêm cả bộ.
+2. **Không bộ UI thứ hai** (MUI, Ant Design, Chakra, Mantine, Headless UI…) và **không tự viết lại** một primitive shadcn đã
+   có. Cần hành vi khác ⇒ biến thể `cva`, class, token theme, hoặc component bọc ở tầng trên — không sửa tay focus,
+   bàn phím hay accessibility của primitive.
+3. **Ghim phiên bản**: CLI shadcn chạy theo một bản ghim ghi ở file cấu hình shadcn và file gói của `fe/`; `latest` không
+   phải phiên bản đã duyệt. Bản ghim chốt ở lượt dựng khung `fe/`.
+4. Phần còn lại của stack đã được chủ repo chọn cùng ngày và ghi ở tài liệu tham khảo pha 4
+   (`docs/private/fe/fe_guidance/fe-01-rendering.md` §1): Next.js 16.4 App Router + TypeScript, TanStack Query cho dữ liệu
+   server, Zustand cho trạng thái client. ADR này chỉ chốt vế UI; chép lại các vế kia vào owner pha 4 là việc của bước chốt
+   nền tảng.
+
+**Why:** chủ repo yêu cầu. Lý lẽ đi kèm: code primitive nằm trong repo (không phải hộp đen trong `node_modules`) nên Codex
+và Claude đọc, duyệt và sửa biến thể được; Radix lo bàn phím và accessibility; một bộ UI duy nhất giữ mọi màn — quầy, bếp,
+khách, chủ quán — cùng một ngôn ngữ, và phiếu việc không phải đoán dùng thư viện nào.
+
+**Rejected alternatives:** *bộ UI đóng gói sẵn (MUI, Ant Design)* — chủ repo không chọn; *tự viết primitive* — tốn công và
+dễ hỏng accessibility; *trộn shadcn với một bộ khác cho màn admin* — hai ngôn ngữ giao diện, review phải đọc hai cách.
+
+**Còn để mở (không phải ADR này quyết):** thư viện form (React Hook Form + Zod mới là đề xuất), khung test frontend, công cụ
+sinh type từ `docs/product/3-be/openapi.yaml`, theme và token màu.
+
+**Applies to:** mọi bước pha 4 có giao diện; `fe/` (chưa tồn tại); `docs/private/fe/fe_guidance/fe-04-shared-components.md`
+§1–§2 (đề xuất ba tầng component và danh sách primitive — tham khảo, chưa phải owner); **T-176**.
