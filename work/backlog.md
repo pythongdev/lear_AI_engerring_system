@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] P4-01 **Ranh giới, từ vựng và nền của pha 4** — một ADR: mỗi loại màn lấy dữ liệu và đọc lại sau ghi thế nào, state ở đâu; chốt phần ADR-100 để mở (form, khung test, sinh type, ghim); không code — L2 · [chi tiết](backlog_FE.md#p4-01)
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
 - [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi, không cột *ngày bán của két* khi `U-072` còn mở. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
@@ -97,6 +96,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="in-progress"></a>
 ## In Progress
+
+- [ ] P4-01 **Ranh giới, từ vựng và nền của pha 4** — một ADR: mỗi loại màn lấy dữ liệu và đọc lại sau ghi thế nào, state ở đâu; chốt phần ADR-100 để mở (form, khung test, sinh type, theme) và nền của `fe/` (gói, cách gọi backend, danh tính trên SSE); không code — L2 · [chi tiết](backlog_FE.md#p4-01) — Claude Code viết ADR, Codex kiểm kê chỉ đọc (nếu giao) — nhận 2026-10-13
 
 
 <a id="done"></a>
