@@ -30,3 +30,97 @@ docs/product.md :: docs/architecture.md
 # xuất hiện trong docs/decisions.md, nên một pointer MỚI viết nhầm về đường cũ trong file này
 # sẽ không bị Gate 1b bắt. Ai thêm pointer vào docs/decisions.md thì tự kiểm bằng mắt.
 docs/decisions.md :: docs/architecture.md
+
+# --- docs/private/: ghi chép riêng của chủ repo, chép từ dự án "claude restaurant" ---
+# Đường dẫn trỏ vào cây thư mục của dự án kia (wireframe, store/*.ts, internal/handler/...),
+# không bao giờ mở được ở repo này. Giữ làm tài liệu tham khảo cho pha 4 (T-176, 2026-10-13);
+# kế hoạch pha 4 quyết giữ (gỡ link) hay bỏ từng file — gỡ dòng ở lượt ấy.
+docs/private/be_feature/be-structure-guidline.md :: cmd/server/main.go  # T-176 — bản chép dự án khác
+docs/private/be_feature/be-structure-guidline.md :: migrations/0NN_reservations.sql  # T-176 — bản chép dự án khác
+docs/private/be_feature/be-structure-guidline.md :: query/reservations.sql  # T-176 — bản chép dự án khác
+docs/private/be_feature/be-structure-guidline.md :: internal/db/reservations.sql.go  # T-176 — bản chép dự án khác
+docs/private/be_feature/be-structure-guidline.md :: internal/repository/reservation_repo.go  # T-176 — bản chép dự án khác
+docs/private/be_feature/be-structure-guidline.md :: internal/service/reservation_service.go  # T-176 — bản chép dự án khác
+docs/private/be_feature/be-structure-guidline.md :: internal/handler/reservation_handler.go  # T-176 — bản chép dự án khác
+docs/private/be_feature/be_feature.md :: internal/ai/client.go  # T-176 — bản chép dự án khác
+docs/private/be_feature/be_feature.md :: service/errors.go  # T-176 — bản chép dự án khác
+docs/private/fe/shared/04-rendering-and-loading.md :: docs/fe/wireframes/shared/_INDEX_RENDERING_STRATEGY.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/RENDERING_STRATEGY_COMPARISON.md :: client_menu_page_v2/tech_description.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: admin_main/admin_main_training/admin_staff_training_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: admin_main/admin_main_categories/admin_main_categories_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: admin_main/admin_main_combos/admin_main_combos_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: admin_main/admin_main_marketing/admin_main_marketing_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: admin_main/admin_main_product/admin_main_product_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: admin_main/admin_main_staff/admin_main_staff_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: admin_main/admin_main_staff_task_boad/admin_main_staff_task_boad_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: admin_main/admin_main_storage/admin_main_storage_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: admin_main/admin_main_topping/admin_main_topping_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: admin_main/admin_overview/admin_overview_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: admin_main/admin_summary/admin_summary_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: client_favourite_page/client_favourite_page_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: client_info_page/client_info_page_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: client_menu_page/menu_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: client_tracking/client_tracking_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: client_product_detail/client_product_detail_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: admin_main/admin_main_todo_list/admin_main_todo_list_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/WIREFRAME_INDEX.md :: client_order_page/client_order_page_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_RENDERING_STRATEGY.md :: ../client_menu_page/menu_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_RENDERING_STRATEGY.md :: ../admin_main/admin_main_product/admin_main_product_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_RENDERING_STRATEGY.md :: ../admin_main/admin_main_staff/admin_main_staff_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_RENDERING_STRATEGY.md :: ../admin_main/admin_main_storage/admin_main_storage_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_RENDERING_STRATEGY.md :: ../admin_main/admin_main_staff_task_boad/admin_main_staff_task_boad_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_RENDERING_STRATEGY.md :: ../admin_main/admin_main_todo_list/admin_main_todo_list_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_RENDERING_STRATEGY.md :: ../admin_main/admin_main_topping/admin_main_topping_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_RENDERING_STRATEGY.md :: ../client_favourite_page/client_favourite_page_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_RENDERING_STRATEGY.md :: ../admin_main/admin_summary/admin_summary_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_RENDERING_STRATEGY.md :: ../client_product_detail/client_product_detail_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_RENDERING_STRATEGY.md :: ../client_tracking/client_tracking_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_RENDERING_STRATEGY.md :: ../admin_main/admin_overview/admin_overview_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_RENDERING_STRATEGY.md :: ../client_info_page/client_info_page_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_RENDERING_STRATEGY.md :: ../client_order_page/client_order_page_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: store/cart.ts  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: store/favourites.ts  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: store/settings.ts  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: store/auth.ts  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../client_menu_page/menu_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../admin_main/admin_main_categories/admin_main_categories_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../admin_main/admin_main_training/admin_staff_training_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../admin_main/admin_main_combos/admin_main_combos_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../admin_main/admin_main_marketing/admin_main_marketing_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../admin_main/admin_main_product/admin_main_product_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../admin_main/admin_main_staff/admin_main_staff_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../admin_main/admin_main_storage/admin_main_storage_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../admin_main/admin_main_staff_task_boad/admin_main_staff_task_boad_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../admin_main/admin_main_todo_list/admin_main_todo_list_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../admin_main/admin_main_topping/admin_main_topping_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../client_favourite_page/client_favourite_page_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../admin_main/admin_summary/admin_summary_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../client_info_page/client_info_page_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../client_product_detail/client_product_detail_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../client_tracking/client_tracking_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../admin_main/admin_overview/admin_overview_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_SHARING_COMPONENT.md :: ../client_order_page/client_order_page_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: store/cart.ts  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: store/favourites.ts  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: store/settings.ts  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: store/auth.ts  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: store/trainingStore.ts  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: store/overviewStore.ts  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../client_menu_page/menu_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../admin_main/admin_main_categories/admin_main_categories_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../admin_main/admin_main_combos/admin_main_combos_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../admin_main/admin_main_training/admin_staff_training_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../admin_main/admin_main_marketing/admin_main_marketing_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../admin_main/admin_main_staff/admin_main_staff_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../admin_main/admin_main_product/admin_main_product_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../admin_main/admin_main_storage/admin_main_storage_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../admin_main/admin_main_staff_task_boad/admin_main_staff_task_boad_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../admin_main/admin_main_todo_list/admin_main_todo_list_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../admin_main/admin_main_topping/admin_main_topping_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../client_favourite_page/client_favourite_page_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../admin_main/admin_summary/admin_summary_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../client_product_detail/client_product_detail_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../client_tracking/client_tracking_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../admin_main/admin_overview/admin_overview_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../client_info_page/client_info_page_wireframe_v1.md  # T-176 — bản chép dự án khác
+docs/private/fe/shared/_INDEX_STATE_MANAGEMENT.md :: ../client_order_page/client_order_page_wireframe_v1.md  # T-176 — bản chép dự án khác

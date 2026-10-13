@@ -5,8 +5,8 @@
 > phát hành **2026-10-06**, qua bản Claude tải và chép lại ngày 2026-10-13.
 > Đây là **tài liệu tham khảo**, KHÔNG là owner của route, component hay quy ước FE nào.
 > Owner route/component chưa có; sinh ở pha 4 cùng `docs/product/4-fe/`, theo
-> [CLAUDE.md §2](../../../CLAUDE.md). Khung test FE và lựa chọn phiên bản ghim chốt ở pha 4
-> theo [quy ước code, QC-09](../../product/2-db/10-quy-uoc-code.md);
+> [CLAUDE.md §2](../../../../CLAUDE.md). Khung test FE và lựa chọn phiên bản ghim chốt ở pha 4
+> theo [quy ước code, QC-09](../../../product/2-db/10-quy-uoc-code.md);
 > phiên bản cụ thể được ghim trong file `package.json` trong `fe/`, quy ước test bổ sung vào owner quy ước code.
 > **Khi lệch, owner thắng.** Các đề xuất bên dưới không cho phép phiên AI tự chốt thay Claude/chủ repo.
 
@@ -92,7 +92,7 @@ phiên bản của dự án; nhãn `latest` không cố định ở 16.4.
 
 ### Khởi tạo và cấu hình — đề xuất, chưa chốt
 
-[QC-08 và QC-09](../../product/2-db/10-quy-uoc-code.md) đặt frontend ở `fe/`, có
+[QC-08 và QC-09](../../../product/2-db/10-quy-uoc-code.md) đặt frontend ở `fe/`, có
 file `package.json` trong `fe/`, dùng Next.js + TypeScript trên Node 24 LTS. Phiên mở pha 4 cần chốt
 bản patch, công cụ quản lý gói và khung test trước khi dựng; không tạo package ở gốc
 chỉ để bộ kiểm hiện tại tìm thấy. QC-09 lưu ý bộ kiểm Node hiện còn tìm package ở gốc,
@@ -128,8 +128,8 @@ Cần rà cấu hình do trình khởi tạo sinh, đặc biệt `agentFeedback`
 
 ### Type và lỗi đi từ hợp đồng
 
-Sinh type từ [openapi.yaml](../../product/3-be/openapi.yaml), theo
-[luật đọc hợp đồng](../../product/3-be/01-hop-dong-api.md); công cụ sinh type do pha 4 chọn.
+Sinh type từ [openapi.yaml](../../../product/3-be/openapi.yaml), theo
+[luật đọc hợp đồng](../../../product/3-be/01-hop-dong-api.md); công cụ sinh type do pha 4 chọn.
 **Hợp đồng thắng code.** FE không tự đặt mã lỗi hoặc lấy danh sách API trong prompt cũ.
 Đọc khuôn `Error` và `ErrorCode` ngay trong hợp đồng: `code` bắt buộc, `field` có thể vắng;
 chữ cho người dùng là việc pha 4 thiết kế theo mã, không suy từ HTTP status hay chữ lỗi database.
@@ -138,8 +138,8 @@ chữ cho người dùng là việc pha 4 thiết kế theo mã, không suy từ
 ### Tiền, giá và hệ quả cho cache
 
 FE **không tính giá, không gửi giá**; hiển thị kết quả BE trả, theo
-[hàm giá](../../product/3-be/03-ham-gia.md) và
-[hợp đồng API §5](../../product/3-be/01-hop-dong-api.md).
+[hàm giá](../../../product/3-be/03-ham-gia.md) và
+[hợp đồng API §5](../../../product/3-be/01-hop-dong-api.md).
 Không dùng ví dụ cache theo giờ của Next.js làm chính sách cho giá của quán.
 
 **Suy luận áp dụng của Codex ngày 2026-10-13, quyết định cuối thuộc pha 4:** dữ liệu chạm tiền,
@@ -164,31 +164,31 @@ làm mới dữ liệu sống và không tự bảo đảm dữ liệu tiền c�
 ### Danh tính, quyền, CORS và cổng — quan sát hiện trạng
 
 Code server chọn `authz.ChonTen{}` tại
-[be/cmd/server/main.go:33](../../../be/cmd/server/main.go#L33);
-router gắn `GanNguoi` tại [be/cmd/server/router.go:37](../../../be/cmd/server/router.go#L37).
+[be/cmd/server/main.go:33](../../../../be/cmd/server/main.go#L33);
+router gắn `GanNguoi` tại [be/cmd/server/router.go:37](../../../../be/cmd/server/router.go#L37).
 Middleware gọi `auth.PersonID(c.Request)` rồi gắn danh tính vào context tại
-[be/internal/middleware/nguoi.go:12](../../../be/internal/middleware/nguoi.go#L12),
+[be/internal/middleware/nguoi.go:12](../../../../be/internal/middleware/nguoi.go#L12),
 không tự kiểm quyền; chú thích đầu file nói quyền được kiểm trong giao dịch của cửa.
-Đối chiếu mục `components.securitySchemes.PersonIdentity` trong [openapi.yaml](../../product/3-be/openapi.yaml), cơ chế hiện tại là
+Đối chiếu mục `components.securitySchemes.PersonIdentity` trong [openapi.yaml](../../../product/3-be/openapi.yaml), cơ chế hiện tại là
 chọn tên và gửi header `X-Person-Id`, không phải phiên đăng nhập bằng cookie hay mật khẩu.
 Định dạng giá trị và trường hợp áp dụng đọc `securitySchemes.PersonIdentity` cùng `security`
 của từng operation; không tự áp header cho tất cả đường gọi.
-Quyền phải đọc [owner vai và quyền](../../product/3-be/02-vai-va-quyen.md), không suy từ việc
+Quyền phải đọc [owner vai và quyền](../../../product/3-be/02-vai-va-quyen.md), không suy từ việc
 FE có ẩn nút hay không. Tài liệu này không chép ma trận quyền.
 
 Trong hai thư mục code được giao đọc, chưa thấy middleware CORS hoặc thiết lập
 `Access-Control-*`; router đăng ký middleware `GanNguoi` tại
-[be/cmd/server/router.go:37](../../../be/cmd/server/router.go#L37).
+[be/cmd/server/router.go:37](../../../../be/cmd/server/router.go#L37).
 **Cấu hình CORS cho FE triển khai: chưa xác định**; không suy rộng rằng tầng proxy bên ngoài
 cũng không có CORS. Server lấy `BANHCUON_ADDR`, mặc định `:8080`, tại
-[be/cmd/server/main.go:23](../../../be/cmd/server/main.go#L23).
+[be/cmd/server/main.go:23](../../../../be/cmd/server/main.go#L23).
 Hợp đồng hiện không khai `servers`; vì vậy chưa lấy được URL kết nối FE từ mục đó.
 **Đề xuất pha 4:** chốt cùng origin/proxy hay gọi khác origin, rồi kiểm đường gọi thực tế,
 bao gồm header danh tính và kết nối realtime, trước khi viết lớp gọi API.
 
 ### Thư viện để pha 4 xem xét — đề xuất, chưa chốt
 
-[prompt-fullstack.md §3.4](../../../master_plan/prompt-fullstack.md) có tiêu đề cũ “Stack đã chốt”,
+[prompt-fullstack.md §3.4](../../../../master_plan/prompt-fullstack.md) có tiêu đề cũ “Stack đã chốt”,
 nhưng banner của chính mục nói phần còn lại chỉ là đề xuất; QC-09 cũng nhắc phải đọc lại.
 Các ứng viên FE bên dưới **chưa được tài liệu này thông qua**:
 

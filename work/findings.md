@@ -4982,6 +4982,7 @@ dựng theo một suy đoán. (2)–(4) là lời hứa treo: pha 4 đọc chún
 **Decision / Fix:**
 Chưa sửa — lượt rà không sửa. (1) là câu hỏi cho chủ repo/chủ quán (Telegram còn cần không khi đã có SSE; nếu cần thì pha nào dựng) —
 nên thành một `U-XXX` trước khi ký chuyển pha 4. (2)–(4): một task L1 ghi *pha 3 không quyết, đẩy sang …* ở đúng owner. Hai câu trôi: L0.
+2026-10-13, T-176 (Claude Code): (1) đã thành **U-080** ở `docs/product/99-unknowns.md` khi chủ repo ký mở pha 4; (2)–(4) và hai câu trôi vẫn chưa làm.
 
 **Related task:**
 `P3-14` · `P3-12` · `T-174` · ADR-097 · ADR-099 · ADR-041 · PT-5

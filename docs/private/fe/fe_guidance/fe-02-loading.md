@@ -227,7 +227,7 @@ Prefetch chỉ đọc, không gọi mutation; key và adapter dùng chung với 
 Không kéo dài `staleTime` của giá chỉ để né lần đọc sau prefetch; dữ liệu lấy trước vẫn có thể cũ.
 Với Mẫu P, giữ ranh giới dữ liệu công khai không cần danh tính của file 1.
 Thời điểm hoãn bằng `navigation()`/`prefetch()` và Partial Prefetching đọc
-[tài liệu Next.js](../nextjs-16-4-huong-dan-fe.md); chúng không thay invalidate hoặc đường kéo.
+[tài liệu Next.js](nextjs-16-4-huong-dan-fe.md); chúng không thay invalidate hoặc đường kéo.
 
 ## 7. Câu hỏi còn mở
 
@@ -241,7 +241,7 @@ Các điểm **chưa xác định** sau dành cho Claude/pha 4, không thay đ�
 
 ## 8. Liên kết
 
-[fe-01-rendering — mẫu S/P/R và provider](fe-01-rendering.md) · [Next.js 16.4](../nextjs-16-4-huong-dan-fe.md)
+[fe-01-rendering — mẫu S/P/R và provider](fe-01-rendering.md) · [Next.js 16.4](nextjs-16-4-huong-dan-fe.md)
 · [Hợp đồng API](../../../product/3-be/01-hop-dong-api.md) · [OpenAPI](../../../product/3-be/openapi.yaml)
 · [Realtime BE](../../../product/3-be/09-realtime-du-phong.md).
 Bộ hướng dẫn: [fe-01-rendering](fe-01-rendering.md) · [fe-02-loading](fe-02-loading.md) · [fe-03-state-management](fe-03-state-management.md) · [fe-04-shared-components](fe-04-shared-components.md); danh sách trang (fe-05-danh-sach-trang.md) viết sau.

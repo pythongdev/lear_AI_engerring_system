@@ -107,6 +107,9 @@ Mười hai ô dưới đây là **lời** của kế hoạch pha 3 §9; chỗ k
 
 Hôm nay **10/12 ô tick**, hai ô trống có mã (2026-10-13, Claude Code: chín ô ở `P3-13`, ô 10 ở `P3-14`). Đủ các ô **không** phải câu *"được, sang pha
 4"*: ký chuyển pha là quyền **chủ repo** (kế hoạch §9).
+**Chủ repo ký chuyển sang pha 4 ngày 2026-10-13** (T-176), nguyên văn *"mở phase 4"*, khi cổng đứng **10/12**: ô 1 ·
+ô 2 vẫn trống và **`F-068` mang sang pha 4 ở trạng thái Open** — nợ test của `be/`, không chặn bước nào của pha 4 vì pha 4
+không đổi cửa. Câu Telegram của `F-070` thành **U-080** trước khi màn quầy của pha 4 được thiết kế.
 
 - [ ] **1. Mọi vế tầng 3 của `03-bao-ve-invariant.md` §1–§4 có một test từ chối qua cửa** — **TRỐNG, `F-068`.**
   Ở mức hàng (ADR-082 điểm 4) lệnh chạy đủ: 18 hàng có vế tầng 3 (`I-002 I-003 I-004 I-006 I-007 I-008 I-009 I-010

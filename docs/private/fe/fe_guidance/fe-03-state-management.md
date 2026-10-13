@@ -21,7 +21,7 @@ Dùng **Mẫu S — shell tĩnh + client sống**, **Mẫu P — prefetch server
 
 Ngày bán trong URL là **lựa chọn để đọc**, khác ngày bán BE đã gắn với một bản ghi. Dữ liệu query có thể được lọc qua `select` hay tính cách trình bày tại render; không cất bản lọc sang store. Form sửa dữ liệu giữ **ý định sửa** tách biệt với bản BE, không là cache thứ hai. Một trường nháp đã thuộc store nhiều màn thì form đọc/ghi qua action; không đồng bộ hai bản bằng effect.
 
-`params`/`searchParams` của Server Component theo [tài liệu Next.js](../nextjs-16-4-huong-dan-fe.md); client đọc URL bằng hook App Router. Parse và kiểm đầu vào trước khi gọi API; tham số không hợp lệ không được âm thầm biến thành ngày hiện tại. Không đưa thông tin liên hệ hay dấu lần gửi lên URL.
+`params`/`searchParams` của Server Component theo [tài liệu Next.js](nextjs-16-4-huong-dan-fe.md); client đọc URL bằng hook App Router. Parse và kiểm đầu vào trước khi gọi API; tham số không hợp lệ không được âm thầm biến thành ngày hiện tại. Không đưa thông tin liên hệ hay dấu lần gửi lên URL.
 
 ## 2. Query key factory theo domain BE — đề xuất
 
@@ -242,7 +242,7 @@ Các điểm **chưa xác định** dành cho Claude/pha 4, không sửa owner t
 
 ## 9. Liên kết
 
-[fe-01-rendering](fe-01-rendering.md) · [fe-02-loading](fe-02-loading.md) · [Next.js 16.4](../nextjs-16-4-huong-dan-fe.md)
+[fe-01-rendering](fe-01-rendering.md) · [fe-02-loading](fe-02-loading.md) · [Next.js 16.4](nextjs-16-4-huong-dan-fe.md)
 · [Hợp đồng API](../../../product/3-be/01-hop-dong-api.md) · [OpenAPI](../../../product/3-be/openapi.yaml)
 · [Bản chụp domain BE](../../be_feature/be_feature_hien_tai.md).
 Bộ hướng dẫn: [fe-01-rendering](fe-01-rendering.md) · [fe-02-loading](fe-02-loading.md) · [fe-03-state-management](fe-03-state-management.md) · [fe-04-shared-components](fe-04-shared-components.md); danh sách trang (fe-05-danh-sach-trang.md) viết sau.

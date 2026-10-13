@@ -211,6 +211,6 @@ Các điểm **chưa xác định** dành cho Claude/pha 4, không sửa owner t
 ## 8. Liên kết
 
 [fe-01-rendering](fe-01-rendering.md) · [fe-02-loading](fe-02-loading.md) · [fe-03-state-management](fe-03-state-management.md)
-· [Next.js 16.4](../nextjs-16-4-huong-dan-fe.md) · [OpenAPI](../../../product/3-be/openapi.yaml)
+· [Next.js 16.4](nextjs-16-4-huong-dan-fe.md) · [OpenAPI](../../../product/3-be/openapi.yaml)
 · [Sản xuất theo mẻ](../../../product/3-be/07-san-xuat-theo-me.md) · [Realtime BE](../../../product/3-be/09-realtime-du-phong.md).
 Bộ hướng dẫn: [fe-01-rendering](fe-01-rendering.md) · [fe-02-loading](fe-02-loading.md) · [fe-03-state-management](fe-03-state-management.md) · [fe-04-shared-components](fe-04-shared-components.md); danh sách trang (fe-05-danh-sach-trang.md) viết sau.

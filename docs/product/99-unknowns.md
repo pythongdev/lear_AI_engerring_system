@@ -33,7 +33,7 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 <a id="dang-mo"></a>
 ### Đang mở
 
-*(Không câu nào đang mở — đo 2026-10-12, T-173.)*
+- **U-080** — Đơn web mới báo về quầy bằng gì khi pha 3 đã dựng màn quầy đẩy SSE (`GET /counter/events`, ADR-097): bot Telegram (`master_plan/shop-facts.md` §1, chủ repo đặt tên 2026-09-07) **còn cần** cạnh màn quầy, **thay** cho nó, hay bỏ; nếu còn cần thì pha nào dựng. Người trả lời: chủ quán / chủ repo. Chặn: thiết kế màn quầy nhận đơn web của pha 4 (PT-5 đòi quầy biết đơn mới *mà không phải ngồi canh màn hình*). Mở 2026-10-13, T-176, từ `F-070` điểm 1.
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
 chủ quán quyết theo tình hình thực tế, không có luật cứng.** Lượt một (T-042) đóng U-022, U-025 và

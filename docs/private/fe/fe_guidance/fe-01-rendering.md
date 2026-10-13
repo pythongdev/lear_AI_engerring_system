@@ -12,7 +12,7 @@ Stack: Next.js 16.4 App Router + TypeScript ở `fe/`; UI bằng **shadcn/ui**, 
 Tailwind CSS 4 và Radix; dữ liệu server bằng **TanStack Query**, trạng thái client bằng **Zustand** — nguồn: **chủ repo chọn 2026-10-13**. Vị trí code và nền stack theo
 [QC-08, QC-09](../../../product/2-db/10-quy-uoc-code.md).
 Phiên bản ghim, khung test và công cụ sinh type OpenAPI **chưa chốt**, để pha 4.
-Lựa chọn này cập nhật phần thư viện còn để mở trong [tài liệu Next.js](../nextjs-16-4-huong-dan-fe.md).
+Lựa chọn này cập nhật phần thư viện còn để mở trong [tài liệu Next.js](nextjs-16-4-huong-dan-fe.md).
 
 Các ranh giới cache, giá, danh tính và lỗi bên dưới là **đề xuất của Claude, pha 4 chốt**,
 đặt ngày 2026-10-13 theo phiếu. Dữ liệu server chỉ sống trong cache TanStack Query; Zustand **không bao giờ** giữ bản sao dữ liệu server. Giỏ/nháp đơn chỉ giữ lựa chọn,
@@ -120,7 +120,7 @@ Mẫu S ở đây chỉ minh họa cách render; màn quầy thực tế cần t
 
 Server lấy menu theo request, chuyển cache qua `dehydrate`; `MenuClient` dùng cùng key.
 Dùng `Suspense` để tách phần đọc động khỏi shell khi bật Cache Components như
-[tài liệu Next.js](../nextjs-16-4-huong-dan-fe.md) mô tả.
+[tài liệu Next.js](nextjs-16-4-huong-dan-fe.md) mô tả.
 
 ```tsx
 // Server Component; mọi tên nội bộ là đề xuất
@@ -225,7 +225,7 @@ không có tùy chọn header. Cách mang `X-Person-Id` cho `/counter/events` th
 Cache HTML/RSC độc lập có thể giữ bản cũ dù TanStack Query đã invalidate; cache Query là nơi duy nhất quản lý dữ liệu server phía FE. Hydration chỉ chuyển dữ liệu ban đầu, không làm nó bất biến.
 Cache Components và Partial Prefetching giúp tách khung, hoãn phần động; chúng không thay
 SSE/refetch. `ensureStatic` gần như không dùng cho các nhóm màn này; không đặt ở layout
-bao trùm dữ liệu sống. Chi tiết API theo [tài liệu Next.js](../nextjs-16-4-huong-dan-fe.md).
+bao trùm dữ liệu sống. Chi tiết API theo [tài liệu Next.js](nextjs-16-4-huong-dan-fe.md).
 
 Server Component không đọc Zustand/localStorage, không biết người đang bấm. Client Component
 cũng có thể render ban đầu ở server: chỉ đọc browser storage sau mount/hydration, giữ lần render
@@ -244,7 +244,7 @@ Các điểm **chưa xác định** dưới đây dành cho Claude/pha 4, không
 
 ## 9. Liên kết
 
-[Tài liệu Next.js 16.4](../nextjs-16-4-huong-dan-fe.md) · [Hợp đồng API](../../../product/3-be/01-hop-dong-api.md)
+[Tài liệu Next.js 16.4](nextjs-16-4-huong-dan-fe.md) · [Hợp đồng API](../../../product/3-be/01-hop-dong-api.md)
 · [OpenAPI](../../../product/3-be/openapi.yaml) · [Hàm giá](../../../product/3-be/03-ham-gia.md)
 · [Realtime BE](../../../product/3-be/09-realtime-du-phong.md).
 Bộ hướng dẫn: [fe-01-rendering](fe-01-rendering.md) · [fe-02-loading](fe-02-loading.md) · [fe-03-state-management](fe-03-state-management.md) · [fe-04-shared-components](fe-04-shared-components.md); danh sách trang (fe-05-danh-sach-trang.md) viết sau.
