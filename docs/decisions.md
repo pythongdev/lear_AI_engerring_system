@@ -116,6 +116,8 @@ có câu trả lời mới từ người.
 | ADR-097 | **Realtime và dự phòng**: SSE chỉ mang tín hiệu *đọc lại* (`hello` · `changed` · `heartbeat` 10 giây), phát sau COMMIT của mọi cửa ghi; đường kéo 20 giây đọc cùng chỗ (`read_at`, `poll_interval_seconds`); quán còn nhìn thấy = còn một luồng quầy đang mở; đơn tự bấm tới lúc không luồng ⇒ ghi khoảng mù (bắt đầu không sớm hơn lúc khoảng trước khép) rồi từ chối; nút tạm dừng (`chu_quan`), báo mù và mở lại (`quay_hoac_chu_quan`) | Đã chốt 2026-10-12 (giao cho phiên, P3-12; Claude thiết kế, Codex thi công) | — | P3-12 · ADR-041 · ADR-045 · ADR-047 · ADR-078 · ADR-088 · U-043 · U-053 · U-061 |
 | ADR-098 | **Giảm giá cả đơn**: hai cột `bill.discount_vnd` · `discount_customer_name` (migration mới), phần trả + giảm = `due_vnd` (tổng dòng); doanh thu = `due_vnd − discount_vnd`; chỉ chủ quán nhập, ở ba cửa trao tiền, kèm tên khách; không trần, không lý do; gỡ `order_discount_undecided` | Đã chốt 2026-10-12 (giao cho phiên, T-175; lời U-058; Claude thiết kế, Codex thi công) | — | T-175 · ADR-089 · U-058 |
 | ADR-099 | **Cửa nhập bù hoá đơn từ sổ giấy**: `POST /sale-days/{sale_date}/paper-entries` (`quay_hoac_chu_quan`); từng món như đã bán; mang đi = `phone_preorder`, tại bàn = phiên mở và đóng ở `sold_at`; giá dựng lại ở mốc bán qua cùng hàm giá đọc vết sửa giá; đơn `completed`, không sinh việc bếp | Đã chốt 2026-10-13 (giao cho phiên, T-174; lời U-079; Claude thiết kế, Codex thi công) | — | T-174 · ADR-037 · ADR-086 · ADR-095 · ADR-098 · U-079 |
+| ADR-100 | **Pha 4 dùng shadcn/ui**: mọi primitive giao diện lấy từ CLI shadcn vào `fe/src/components/ui/`, không bộ UI thứ hai, không tự viết lại primitive; bản ghim chốt lúc dựng `fe/` | Đã chốt 2026-10-13 (chủ repo quyết, T-178) | — | T-176 · QC-09 |
+| ADR-101 | **Kế hoạch pha 4**: `master_plan/FE_master_plan_banh_cuon_ba_thanh.md`, mã `P4-01`…`P4-12`, sổ `work/backlog_FE.md`; nền → trang thử *Menu & giá* → màn quầy; không đổi hợp đồng, không tính tiền ở trình duyệt; admin ngoài pha 4 | Đã chốt 2026-10-13 (giao cho phiên, T-178); cách chia chờ chủ repo xác nhận | — | T-176 · ADR-076 · ADR-068 · ADR-100 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -6811,7 +6813,7 @@ chủ quán nào đòi; hoá đơn đã mang mốc bán.
 ### ADR-100 — Pha 4 dựng giao diện bằng shadcn/ui: mọi primitive lấy từ CLI shadcn, không bộ UI thứ hai
 
 **Trạng thái:** Đã chốt 2026-10-13, **chủ repo quyết** (*"yêu cầu dung shadcn"*, ngay sau khi ký mở pha 4 ở `T-176`).
-Ghi ở `T-177` (Claude Code). Là nền của bước chốt nền tảng pha 4; các phần còn để mở nói ở cuối ADR này.
+Ghi ở `T-178` (Claude Code). Là nền của bước chốt nền tảng pha 4; các phần còn để mở nói ở cuối ADR này.
 
 **Decision:**
 
@@ -6839,3 +6841,35 @@ sinh type từ `docs/product/3-be/openapi.yaml`, theme và token màu.
 
 **Applies to:** mọi bước pha 4 có giao diện; `fe/` (chưa tồn tại); `docs/private/fe/fe_guidance/fe-04-shared-components.md`
 §1–§2 (đề xuất ba tầng component và danh sách primitive — tham khảo, chưa phải owner); **T-176**.
+
+### ADR-101 — Pha 4 có kế hoạch riêng ở `master_plan/`, mã bước `P4-XX`, sổ `work/backlog_FE.md`; trang chủ quán *Menu & giá* là trang thử
+
+**Trạng thái:** **Đã chốt** 2026-10-13, **giao cho phiên** (Claude Code, task `T-178`). Chủ repo ký mở pha 4 cùng ngày
+(`T-176`, *"mở phase 4"*), rồi hỏi *"backlog của phase 4 đâu"* — lời **giao việc**, không phải lời xác nhận cách
+chia bước dưới đây (`CLAUDE.md` §7.2). Chép hình dạng của **ADR-076** (pha 3) · **ADR-049** (pha 2) · **ADR-051**.
+
+**Decision:**
+
+1. **Kế hoạch pha 4 ở `master_plan/FE_master_plan_banh_cuon_ba_thanh.md`**, không sở hữu sự thật nào: thứ tự · mức ·
+   đầu ra kiểm chứng được là của nó; trạng thái là của `work/backlog.md`.
+2. **Mã bước `P4-01`…`P4-12`**, mô tả dài ở **`work/backlog_FE.md`**, khuôn entry của **ADR-051**.
+3. **Ba thứ pha 4 không được làm:** đổi hợp đồng API (gửi ngược `F-XXX` về pha 3), tính tiền ở trình duyệt
+   (**ADR-086**), đoán luật quán (`U-XXX`).
+4. **Thứ tự:** nền (`P4-01` ADR · `P4-02` khung `fe/` · `P4-03` cổng frontend · `P4-04` danh tính) rồi **trang thử
+   *Menu & giá*** (`P4-05`) trước màn quầy — theo yêu cầu chủ repo *"build page product với crud trước"*. Phạm vi
+   trang đọc từ cửa của pha 3: xem, sửa có lý do, ngừng bán; không tạo món, không xoá.
+5. **`docs/product/4-fe/` và `fe/` ra đời ở `P4-02`**, cùng lượt hàng §2 *Route, component* có owner.
+6. **Mảng admin không nằm trong pha 4** — backend admin chưa mở (**ADR-068**).
+
+**Why:** hình dạng đã chạy ba pha; trang *Menu & giá* có ít cửa nhất mà vẫn chạm tiền, nên khuôn rút từ nó đã qua
+một lần duyệt chạm tiền trước khi nhân sang màn quầy; cổng frontend đứng trước mọi màn vì không có nó thì báo cáo
+của Codex không có bằng chứng (`CLAUDE.md` §5).
+
+**Rejected alternatives:** *dựng theo danh sách trang của `docs/private/fe/PAGES_INDEX.md`* — bản chép dự án khác,
+trang không khớp cửa của quán này; *làm trang sản phẩm trước khi có khung và cổng* — trang thử không có bằng chứng
+và khuôn rút ra chưa qua cổng; *đưa mảng admin vào pha 4* — không có cửa backend.
+
+**Suy ra, chờ chủ repo xác nhận:** cách chia mười hai bước; trang thử đứng sau danh tính; mảng admin ngoài pha 4.
+
+**Applies to:** `T-178`; `master_plan/FE_master_plan_banh_cuon_ba_thanh.md` · `work/backlog_FE.md` · `CLAUDE.md` §2;
+**ADR-035** · **ADR-068** · **ADR-076** · **ADR-100**.
