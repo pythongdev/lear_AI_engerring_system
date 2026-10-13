@@ -4905,3 +4905,29 @@ và khi Claude buộc phải thi công thay Codex, cài lỗi vẫn trong worktr
 
 **Status:**
 Open
+
+### F-068 — Cổng pha 3: hai hàng tầng 3 không có lời từ chối qua cửa, và vế tầng 2 của I-020 chưa bị cắt thử
+
+**Problem:**
+Chấm cổng pha 3 (`P3-13`, Claude Code, 2026-10-13) theo *cách chứng minh* viết ở kế hoạch pha 3 §9. Ô 1 (*mọi vế tầng 3 có một test
+từ chối qua cửa*): `comm -3` giữa hàng `I-0xx` có vế tầng 3 ở `03-bao-ve-invariant.md` §1–§4 và tập `TestI0xx` rỗng, nhưng
+`TestI006_SuatDemVeThuocPhienBan` và `TestI019_BangNhuCauTachNguocVeTungBan` · `TestI019_KhoaGomMotDinhNghia` chỉ chứng minh đường
+đúng — không test nào dựng trạng thái sai của vế tầng 3 ấy qua cửa để in một lời từ chối. Ô 2 (*mọi vế tầng 2 đã bị cắt thử*): chỉ
+`TestI004_CatGiuaLanNoKhongNuaNaoSong` và `TestI017_CatGiuaLucDongKhongNuaNaoSong` cắt qua cửa (cái sau cắt sau lần ghi hoá đơn nên
+phủ cả vế tầng 2 của `I-015`); hai vế tầng 2 của `I-020` (một mẻ phủ nhiều bàn một lần bấm · đường lùi) không có test cắt; vế
+*đồng thời* của `I-018` (và `I-009` dựa vào nó) chỉ có bằng chứng ở tầng database (trigger vết cùng câu lệnh, `db/tests/i018_*`).
+
+**Impact:**
+Hai ô cổng để trống. Không chạm tiền trực tiếp (`I-020` là sản xuất; `I-018` là vết), nhưng *"cửa ghi đúng mà chưa ai cắt nó"* là
+đúng hình của `F-066`: bỏ ranh giới giao dịch ở cửa bấm mẻ thì be-check vẫn có thể xanh.
+
+**Decision / Fix:**
+Chưa sửa — lượt chấm không sửa code (`P3-13` Nghiệm thu 6). Đề nghị một task L2: test cắt giữa lần bấm mẻ và giữa lần lùi mẻ (mẫu
+`TestI004_CatGiuaLanNoKhongNuaNaoSong`), một ca cắt sau lần sửa có vết qua một cửa sửa, và một test từ chối qua cửa cho vế tầng 3
+của `I-006` (kênh không gắn bàn mang `dining_table_id`) và `I-019`; rồi ký lại ô 1 · ô 2 ở `docs/product/3-be/10-cong-chat-luong-pha-3.md`.
+
+**Related task:**
+`P3-13` · `P3-03` · ADR-082 · **F-066**
+
+**Status:**
+Open

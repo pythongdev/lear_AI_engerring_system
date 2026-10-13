@@ -1324,7 +1324,19 @@ Mức **L2**. Chia hai phần: Codex viết bộ diễn scenario; **Claude chạ
 - *Kiểm chứng:* Claude chạy bốn test trên PostgreSQL, dán output vào file cổng; cài lỗi một lượt gọi thêm sang hoá đơn
   thứ hai (worktree riêng) ⇒ (1) đỏ. **Ký chuyển sang pha 4 là quyền chủ repo** — file cổng chỉ nêu ô nào đã ký.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-13): bộ diễn `be/internal/don/scenario_test.go` do **Codex** viết (`codex exec -m gpt-6-astra`, worktree
+`../lean_wt/P3-13`, nhánh `codex/P3-13` từ `b0c45c2`, hai lượt). Chạy, đọc diff, cài lỗi, chấm và **ký** file cổng
+`docs/product/3-be/10-cong-chat-luong-pha-3.md`: **Claude Code**. Codex không ký ô nào.
+- *Lượt 2 Codex:* chạy lúc 11:01 (ngoài giờ bán) `TestI021_MotNgayDienQuaCuaRa0dLech` đỏ — *'@@@|I-008/1': 8 dòng lệch*:
+  `sales_order.created_at` theo giờ thật, đồng hồ của cửa trong test là đồng hồ giả; Codex bỏ qua ba tập `I-008` có
+  ghi lý do. Chạy lại 11:03: xanh.
+- *Kiểm chứng:* `./scripts/be-check.sh` ở worktree và `./scripts/gate.sh` ở cây chính xanh — bốn test PASS
+  (`TestI002_Scenario1_QRTaiBanBaLuotMotHoaDon` · `TestI007_Scenario2_BaDonMangDiBaKenh` · `TestI009_Scenario3_DoiGiaGiuaBuoi`
+  · `TestI021_MotNgayDienQuaCuaRa0dLech`); ngày giả *gap_vnd 0*, 77 tập đối chiếu rỗng. Lỗi cài (worktree tách rời, đã gỡ):
+  `phien/sql/tong_tien.sql` bỏ lượt QR gọi sau tính tiền ⇒ *tổng phiên: có 93000 muốn 96000*, đỏ ở ba test.
+- *Ký:* **9/12** ô — 3 · 4 · 5 · 6 · 7 · 8 · 9 · 11 · 12. Trống: ô 1 · ô 2 (**F-068**: test từ chối cho vế tầng 3 của
+  `I-006` · `I-019`; test cắt cho `I-020` và cắt qua cửa cho `I-018`), ô 10 (chờ `P3-14`). Chỗ hụt khác: **S-6** vẫn chưa có
+  lời (cửa từ chối kèm mã). **Ký chuyển pha 4 là quyền chủ repo.** *Duyệt độc lập:* chưa (Codex viết test, Claude chấm).
 
 [↑ đầu file](#top)
 
