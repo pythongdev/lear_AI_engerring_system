@@ -105,7 +105,7 @@ và `TestI021_MotNgayDien…`.
 Mười hai ô dưới đây là **lời** của kế hoạch pha 3 §9; chỗ ký là đây. Một ô tick khi **cách chứng minh viết kèm
 ô ấy** chạy đủ; thiếu một phần thì để trống kèm lý do và mã — không ô nào tick vì *nhìn chung đạt*.
 
-Hôm nay **9/12 ô tick**, ba ô trống có mã (2026-10-13, Claude Code). Đủ các ô **không** phải câu *"được, sang pha
+Hôm nay **10/12 ô tick**, hai ô trống có mã (2026-10-13, Claude Code: chín ô ở `P3-13`, ô 10 ở `P3-14`). Đủ các ô **không** phải câu *"được, sang pha
 4"*: ký chuyển pha là quyền **chủ repo** (kế hoạch §9).
 
 - [ ] **1. Mọi vế tầng 3 của `03-bao-ve-invariant.md` §1–§4 có một test từ chối qua cửa** — **TRỐNG, `F-068`.**
@@ -129,7 +129,7 @@ Hôm nay **9/12 ô tick**, ba ô trống có mã (2026-10-13, Claude Code). Đ�
   giá … (tính thử …), thành tiền …, tổng … (§4.8 đòi …)* khớp từng đồng (ca 11 *TỪ CHỐI ở cả hai đường*); cùng bảng
   qua tính thử `TestI013_BangCaGiaQuaTinhThu`. `grep 'gia.Tinh('` ngoài test: `be/internal/don/service.go` (cửa tạo
   lượt gọi) · `be/internal/hoadon/nhap_bu.go` (nhập bù, ở mốc `sold_at`) · trong `be/internal/gia/` (tính thử · menu);
-  không chỗ nào ngoài `gia` cộng giá gốc hay phụ thu (hai dòng ở `don/repository.go` chỉ chép ảnh chụp đã tính).
+  không chỗ nào ngoài `gia` cộng giá gốc hay phụ thu (hai dòng ở `be/internal/don/repository.go` chỉ chép ảnh chụp đã tính).
 - [x] **5. Hợp đồng khớp code** — *check-api-contract: PASS — hợp đồng 0.18.0; 55 đường gọi ở hợp đồng, 55 ở code; 68
   mã lỗi; 308 tên từ chối ở migration, 308 dòng ánh xạ*; biết đỏ: `scripts/check-api-contract.test.sh` *OK*, gồm *3
   đường gọi chỉ ở code ⇒ đỏ (exit 1)* · *4 đường gọi chỉ ở hợp đồng ⇒ đỏ (exit 1)*.
@@ -150,8 +150,12 @@ Hôm nay **9/12 ô tick**, ba ô trống có mã (2026-10-13, Claude Code). Đ�
   PASS (và không route ngân hàng tự ghi tiền); PT-4 `TestI021_MotNgayBanGiaQuaCuaRa0dLech` · `TestI021_CaiMotLanThuSaiDoiSoatKeu`
   PASS; PT-5 `TestI008_MatDayVanDocDuocDonDaNhan` PASS; PT-6 `TestYC08_KhaiSoGiayQuaCua` · `TestI014_KyNgayConLuotGiayBiTuChoi`
   · `TestI014_KhaiSoChenLucKyNgay` PASS, và từ `T-174` đường bù trọn vẹn `TestI021_NgayGiayNhapDuRa0dLech` PASS.
-- [ ] **10. Không component · route màn hình nào trong file pha 3** — **TRỐNG, chờ `P3-14`** (bước sau, chạy bộ lọc
-  trên mọi file pha 3 và dán cả lệnh chưa lọc cạnh lệnh đã lọc).
+- [x] **10. Không component · route màn hình nào trong file pha 3** — ký ở `P3-14` (2026-10-13). Bộ mẫu pha 3 của Gate 1d
+  (`PATTERN3`, đọc lúc chạy từ `scripts/check-phase-boundary.sh`) chạy trên **mọi** file của `docs/product/3-be/` kể cả
+  `openapi.yaml`, không chỉ file đổi: **chưa lọc 0 dòng**, `check-phase-boundary.ignore` không có dòng nào của `3-be` ⇒
+  **đã lọc 0 dòng**; dòng mồi chứng minh mẫu khớp được trên máy này (một thẻ JSX tên viết hoa và một lời gọi điều hướng của router khớp; một kiểu generic `Map` hai tham số không khớp — **F-017**). Lưới rộng thêm bằng mắt (`component|màn hình|screen|button|modal|
+  react|giao diện`, và chữ *màn*): chỉ còn *interface* Go `Authenticator` và các câu nói **bên đọc** của một hành vi API
+  (*màn đọc lại*, *màn tự kéo — pha 4*) — không tên component, không route.
 - [x] **11. Không câu nghiệp vụ nào đang mở mà một cửa phải đoán thay** — `docs/product/99-unknowns.md` không còn câu
   nào dưới *Đang mở* (brief 2026-10-13). Bảng §4 của kế hoạch: bấm *đã ra bàn* theo đơn vị nào có lời 2026-10-09; giảm
   giá cả đơn có lời 2026-10-12 và cửa ở `T-175`; chỉ **S-6** chưa có lời ⇒ cửa rời quán **từ chối** kèm
@@ -167,3 +171,6 @@ Hôm nay **9/12 ô tick**, ba ô trống có mã (2026-10-13, Claude Code). Đ�
   tầng 2 của `I-020` và cắt qua cửa cho vế đồng thời của `I-018`. Lượt chấm không sửa code.
 - **S-6** — đơn giao tận nơi, quầy bấm *đã ra bàn* lúc nào: chủ quán, `master_plan/shop-facts.md` §7.2. Không chặn ô
   nào (cửa từ chối kèm mã), nhưng Scenario 2 chưa diễn được đúng trình tự BA *trao tại chỗ khách*.
+- **`F-069`** — lượt rà `P3-14`: `master_plan/prompt-fullstack.md` §3.6 giữ một bề mặt API cũ khác hẳn hợp đồng.
+- **`F-070`** — lượt rà `P3-14`: bốn lời hứa *việc của pha 3* chưa có dòng nào nhận — đứng đầu là **Telegram báo đơn web về
+  quầy** (`master_plan/shop-facts.md` §1), pha 3 chỉ dựng SSE; nên thành một câu hỏi cho chủ repo trước khi ký chuyển pha 4.

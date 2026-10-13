@@ -4931,3 +4931,60 @@ của `I-006` (kênh không gắn bàn mang `dining_table_id`) và `I-019`; rồ
 
 **Status:**
 Open
+
+### F-069 — `master_plan/prompt-fullstack.md` §3.6 vẫn giữ một bề mặt API khác hẳn hợp đồng pha 3
+
+**Problem:**
+Rà pointer `P3-14` (Claude Code, 2026-10-13): mẫu endpoint của Gate 1d (`PAT_API2`) chạy trên mọi file `.md` ở `docs/product/` và
+`master_plan/` ngoài hợp đồng khớp 61 dòng. 39 đường gọi văn xuôi pha 3 nhắc tới đều có trong `docs/product/3-be/openapi.yaml`
+(so bằng Python, có đường mồi bịa bị bắt). Riêng `master_plan/prompt-fullstack.md` §3.6 (viết 2026-08-31, trước pha 3) có 16 dòng
+kê một API khác: `/api/v1`, `POST staff/login` (mật khẩu hoặc PIN), JWT theo `role`, `POST staff/sessions/:id/checkout`,
+`PATCH staff/orders/:id/confirm`, `GET staff/stream?station=`, `GET admin/reports/daily` … — không đường nào trong số ấy có ở hợp đồng.
+Đầu file tự khai *bản xuất khẩu, nhà thật thắng*, nhưng danh sách nhà thật nó kể không có `openapi.yaml`.
+
+**Impact:**
+Pha 4 sinh type từ hợp đồng (`CLAUDE.md` §2); một phiên đọc `prompt-fullstack.md` như đầu vào sẽ dựng FE theo đường gọi không tồn tại.
+Đúng hình **F-040** · **F-041**: bản chép trước pha, trông hợp lý, không cổng nào đọc `master_plan/`.
+
+**Decision / Fix:**
+Chưa sửa — lượt rà không sửa. Đề nghị (L0/L1, chủ repo chọn): thêm `docs/product/3-be/openapi.yaml` vào danh sách nhà thật ở đầu
+file và thay §3.6 bằng một con trỏ, hoặc chuyển file sang `work/proposals/` như một bản không được dùng.
+
+**Related task:**
+`P3-14` · **F-040** · **F-041** · **F-001** · ADR-084
+
+**Status:**
+Open
+
+### F-070 — Bốn lời hứa *việc của pha 3* chưa có dòng nào ở pha 3 nhận, đứng đầu là Telegram báo đơn web về quầy
+
+**Problem:**
+Rà `P3-14` (Claude Code, 2026-10-13), các câu ở owner pha 0–2 và `shop-facts.md` giao việc cho pha 3. Đã có nhà: tên giao thức
+realtime (`1-system-design/05-realtime-va-du-phong.md:50` → SSE, `3-be/09-realtime-du-phong.md`), tập 2 của `I-010`
+(`2-db/09-doi-chieu-bat-bien.md:109` → `3-be/03-ham-gia.md` §4 *không cất*), ba câu của mảng admin (đẩy hợp lệ — admin ngoài pha 3,
+ADR-068). **Chưa ai nhận:**
+1. **Telegram báo đơn web mới về quầy** — `master_plan/shop-facts.md` §1 (dòng *Báo đơn web mới về quầy*, chủ repo đặt tên
+   2026-09-07) và dòng *Chưa chốt: token/cấu hình bot Telegram … việc của pha 3 (BE)*. `be/` và `docs/product/3-be/` không có chữ
+   Telegram nào; pha 3 dựng `GET /counter/events` (SSE) và `GET /counter/queue` (**ADR-097**) mà không nói SSE thay hay đứng cạnh
+   Telegram. PT-5 (`1-system-design/01-ranh-gioi-he-thong.md` §2) đòi quầy biết đơn mới *mà không phải ngồi canh màn hình*.
+2. **Nhà cung cấp và cấu hình VPS** — cùng dòng `shop-facts.md`, vế *pha 3 (BE)*; pha 3 không có dòng nào (vế pha 5 còn chờ `T-109`).
+3. **Ai tạo một đơn `staff_pos`** — `2-db/06-luoc-do-nguoi-va-vet.md` bảng chỗ trống, dòng `U-026`: *pha 3 quyết có cần; một
+   migration mới*; không file pha 3 nào quyết.
+4. **Người bán của một lượt nhập bù khi hôm ấy không ai khai đứng quầy** — cùng bảng, *pha 3 · người giữ sổ khai bù khoảng trực*;
+   **ADR-099** chỉ chốt *người là người nhập bù*.
+Kèm hai câu trôi ở pha 3: bảng PT của `3-be/09-realtime-du-phong.md` còn ghi *Đã viết, chờ PostgreSQL* cho PT-1 · PT-2 · PT-5 dù
+`P3-12` Done và các test ấy PASS trong mọi `be-check`; dòng của `08-vet-va-nhap-bu.md` ở `docs/product/00-index.md` chưa kể cửa nhập bù.
+
+**Impact:**
+(1) chạm luồng bán: đơn web mới chỉ hiện trên màn quầy đang mở; nếu chủ quán vẫn trông vào tin Telegram thì pha 4 sẽ dựng thiếu, hoặc
+dựng theo một suy đoán. (2)–(4) là lời hứa treo: pha 4 đọc chúng như *pha 3 đã quyết*.
+
+**Decision / Fix:**
+Chưa sửa — lượt rà không sửa. (1) là câu hỏi cho chủ repo/chủ quán (Telegram còn cần không khi đã có SSE; nếu cần thì pha nào dựng) —
+nên thành một `U-XXX` trước khi ký chuyển pha 4. (2)–(4): một task L1 ghi *pha 3 không quyết, đẩy sang …* ở đúng owner. Hai câu trôi: L0.
+
+**Related task:**
+`P3-14` · `P3-12` · `T-174` · ADR-097 · ADR-099 · ADR-041 · PT-5
+
+**Status:**
+Open

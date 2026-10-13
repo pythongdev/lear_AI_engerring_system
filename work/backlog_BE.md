@@ -1365,11 +1365,35 @@ bộ lọc rỗng vì không có lỗi.
 
 **Bẫy:** đừng tin một output rỗng.
 
-**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
-- *Phạm vi:* —
-- *Nghiệm thu:* —
-- *Kiểm chứng:* —
+**Nhận việc** — Claude Code, 2026-10-13 (`P3-13` Done ở `8ee8b7c`). Mức **L1**: lượt rà, chỉ đọc; chỗ sai ⇒ `F-XXX`,
+không sửa trong lượt rà.
+- *Phạm vi:* `work/findings.md` (chỗ sai) · `docs/product/3-be/10-cong-chat-luong-pha-3.md` (ký ô 10) · `work/backlog_BE.md`
+  · `work/backlog.md`.
+- *Nghiệm thu:*
+  1. Bộ mẫu pha 3 của Gate 1d (`PATTERN3`, đọc lúc chạy từ `scripts/check-phase-boundary.sh`) chạy trên **mọi** file của
+     `docs/product/3-be/`, không chỉ file đổi; in cả số dòng **chưa lọc** (trước `check-phase-boundary.ignore`) cạnh số
+     dòng **đã lọc**, và một dòng mồi chứng minh mẫu khớp được trên máy này (**F-017**).
+  2. Hợp đồng là nguồn duy nhất: mẫu endpoint (`PAT_API2`) chạy trên mọi file ngoài `docs/product/3-be/openapi.yaml`
+     ở `docs/product/` và `master_plan/` — mỗi dòng khớp được xếp *trỏ về hợp đồng* hay *bản chép*.
+  3. `grep -rn '3-be'` và `grep -rn 'pha 3'` (ngoài `work/`): mọi câu hứa *việc của pha 3* trỏ được vào một dòng thật,
+     hoặc thành một `F-XXX`.
+  4. Ô 10 của file cổng ký kèm output (1); `./scripts/gate.sh` xanh.
+- *Kiểm chứng:* Claude chạy từng lệnh, dán output vào *Bàn giao*; dòng mồi là bằng chứng bộ lọc không rỗng vì viết sai.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-13): thực hiện **Claude Code** (lượt rà L1, chỉ đọc; không giao Codex). *Duyệt độc lập:* chưa.
+- *Nghiệm thu 1:* `PATTERN3` đọc lúc chạy từ `scripts/check-phase-boundary.sh`, chạy trên mọi file `docs/product/3-be/` (cả
+  `openapi.yaml`): **chưa lọc 0 dòng**, ignore không có dòng `3-be` ⇒ **đã lọc 0**; dòng mồi khớp thẻ JSX và lời gọi điều hướng,
+  không khớp generic `Map`. Lần trích mẫu đầu ra **rỗng** và khớp 5284 dòng — đúng bẫy **F-017**, bắt được nhờ in số chưa lọc
+  và dòng mồi. Lưới rộng thêm bằng mắt: không component, không route.
+- *Nghiệm thu 2:* `PAT_API2` trên `docs/product/` + `master_plan/` ngoài hợp đồng: 61 dòng. 39 đường gọi văn xuôi pha 3 nhắc tới
+  đều có trong `openapi.yaml` (55 đường; so bằng Python, đường mồi bịa bị bắt). Bản chép: `master_plan/prompt-fullstack.md` §3.6 —
+  **F-069**.
+- *Nghiệm thu 3:* chưa lọc `'3-be'` 208 dòng · `'pha 3'` 1192 dòng; lọc câu hứa ở owner pha 0–2, `shop-facts.md`, kế hoạch pha 2:
+  26 dòng. Đã có nhà: realtime → SSE; `I-010` tập 2 → `03-ham-gia.md` §4; ba câu admin → ngoài pha 3 (ADR-068). Chưa ai nhận:
+  Telegram báo đơn web về quầy, VPS (vế pha 3), ai tạo đơn `staff_pos`, người bán của lượt nhập bù — **F-070**; kèm hai câu trôi
+  (bảng PT của `09-realtime-du-phong.md`, dòng `08` ở `00-index.md`).
+- *Nghiệm thu 4:* ô 10 ký ở `10-cong-chat-luong-pha-3.md` ⇒ **10/12**. Cùng lượt sửa một đường dẫn rút gọn
+  (`be/internal/don/repository.go`) mà Gate 1b bắt trong file cổng. `./scripts/gate.sh` xanh.
+- *Còn lại:* ô 1 · ô 2 (**F-068**); **F-069** · **F-070** chờ chủ repo chọn hướng. **Ký chuyển pha 4 là quyền chủ repo.**
 
 [↑ đầu file](#top)
