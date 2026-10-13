@@ -7,11 +7,13 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const themDong = `-- name: ThemDong :one
-INSERT INTO order_line (sales_order_id, quantity, menu_item_id, item_name, unit_price_vnd, component_count, is_takeaway)
-VALUES ($1, $2, $3, $4, $5, $6, $7)
+INSERT INTO order_line (sales_order_id, quantity, menu_item_id, item_name, unit_price_vnd, component_count, is_takeaway, priced_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7, COALESCE($8::timestamptz, now()))
 RETURNING id
 `
 
@@ -23,6 +25,7 @@ type ThemDongParams struct {
 	UnitPriceVnd   int64
 	ComponentCount int32
 	IsTakeaway     bool
+	Column8        pgtype.Timestamptz
 }
 
 func (q *Queries) ThemDong(ctx context.Context, arg ThemDongParams) (int64, error) {
@@ -34,6 +37,7 @@ func (q *Queries) ThemDong(ctx context.Context, arg ThemDongParams) (int64, erro
 		arg.UnitPriceVnd,
 		arg.ComponentCount,
 		arg.IsTakeaway,
+		arg.Column8,
 	)
 	var id int64
 	err := row.Scan(&id)

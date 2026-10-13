@@ -298,3 +298,6 @@ func docNgoaiBan(raw map[string]json.RawMessage, phone bool) (YeuCauTaiQuay, err
 	yc.ngoaiBan = &lh
 	return yc, nil
 }
+
+// KiemHinhDong dùng cùng phép kiểm dòng cho cửa nhập bù (items); tra giá ở service.
+func KiemHinhDong(raw json.RawMessage) error { return kiemHinhDong(raw) }

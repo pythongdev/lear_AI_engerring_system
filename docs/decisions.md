@@ -6796,3 +6796,14 @@ riêng* — bản thứ hai của sự thật vết đã giữ; *nổ việc r�
 
 **Applies to:** `T-174`; `be/internal/hoadon/` · `be/internal/gia/` · `be/internal/don/` (nếu cần) ·
 `docs/product/3-be/08-vet-va-nhap-bu.md` · `openapi.yaml`; **ADR-037** · **ADR-086** · **ADR-095** · **ADR-098** · **U-079**.
+
+**Sửa đổi 2026-10-13 (Claude Code, lúc thi công T-174 — Codex dừng vì điểm 2 · 5 không khớp lược đồ):** `table_session`
+không có cột mốc mở/đóng, và lược đồ không có ràng buộc chồng phiên theo thời gian — chỉ mục
+`table_session_member_one_unpaid_session_key` chỉ chặn hai phiên **chưa đóng** của một bàn. Đọc lại, không migration:
+(a) phiên nhập bù được **tạo thẳng ở `closed`** (dòng `table_session_member` `session_closed = true`, `cleaned_at = sold_at`)
+trong cùng giao dịch với hoá đơn — khoá ngoại hoãn `table_session_bill_fkey` giữ "phiên đóng thì có hoá đơn"; không đi qua
+`open`/`serving`, nên không câu UPDATE nào trên phiên; (b) mốc bán của phiên **là** `bill.booked_at = sold_at`, các
+`created_at` là lúc gõ; (c) vì phiên sinh ra đã đóng, nó không chạm chỉ mục một-phiên-chưa-đóng: nhập bù cho bàn đang có
+khách ngồi là được — **bỏ lời từ chối *bàn có phiên chồng lên `sold_at`*** ở điểm 5 (không có dữ liệu để biết chồng). Bàn
+không tồn tại ⇒ `invalid_request` field `dining_table_id`. Lý do: thêm cột mốc phiên là đổi lược đồ cho một kiểm không lời
+chủ quán nào đòi; hoá đơn đã mang mốc bán.

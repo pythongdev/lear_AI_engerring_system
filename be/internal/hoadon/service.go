@@ -135,6 +135,8 @@ func (p TraLaiYeuCau) Kiem() error {
 }
 
 type NoiDung struct {
+	PaperLedgerID                                                     *int64
+	PaperEntryCount, PaperPosition                                    *int32
 	Phien, Don                                                        *int64
 	Due, Cash, Transfer, PrepaidCash, PrepaidTransfer, Debt, Discount int64
 	DiscountCustomerName                                              *string

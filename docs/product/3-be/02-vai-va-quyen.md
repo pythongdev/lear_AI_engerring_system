@@ -89,6 +89,7 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `don/roi_quan` | `quay` | `05-vong-doi.md` §5.2 dòng *Đang thực hiện → Đang giao*; `shop-facts.md` §6.7 (U-023) |
 | `don/tu_choi` | `quay` | `05-vong-doi.md` §5.2 — quầy từ chối đơn chờ xác nhận |
 | `phien/tinh_tien` | `quay` | `05-vong-doi.md` §5.3 — quầy tính tổng phiên |
+| `hoadon/nhap_bu` | `quay_hoac_chu_quan` | ADR-099 và sửa đổi 2026-10-13; nhập bù sổ giấy |
 | `hoadon/dong` | `quay` | `05-vong-doi.md` §5.3 — đóng phiên đã thu hoặc cho nợ |
 | `ban/da_don` | `nguoi_quan` | `05-vong-doi.md` §5.3; `U-055`; suy luận của phiên, ADR-087 điểm 7 |
 | `vongdoi/chuyen_don` | `theo_cua_goi` | `I-016`; ADR-087 điểm 3 |

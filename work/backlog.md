@@ -88,7 +88,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-174 **Cửa nhập bù hoá đơn từ sổ giấy** — gõ lại từng món kèm bàn (phiên đã đóng) hoặc mang đi, ngày bán và mốc bán là của giấy, giá lúc bán trên giấy dựng lại từ vết sửa giá; người nhập bù là người đã qua quyền (lời **U-079**, `shop-facts.md` §6 quy tắc 11; lược đồ `paper_ledger` · `bill.paper_*` có sẵn, ADR-095 điểm 5) — **ADR-099** — L2 — Claude thiết kế, Codex thi công; sau `T-175`, trước `P3-13` · [chi tiết](#t-174)
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
 - [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi, không cột *ngày bán của két* khi `U-072` còn mở. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
@@ -102,6 +101,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-174 **Cửa nhập bù hoá đơn từ sổ giấy** — gõ lại từng món kèm bàn (phiên đã đóng) hoặc mang đi, ngày bán và mốc bán là của giấy, giá lúc bán trên giấy dựng lại từ vết sửa giá; người nhập bù là người đã qua quyền (lời **U-079**, `shop-facts.md` §6 quy tắc 11; lược đồ `paper_ledger` · `bill.paper_*` có sẵn, ADR-095 điểm 5) — **ADR-099** — L2 — Codex thi công (worktree `../lean_wt/T-174`, hai lượt do hạn mức), Claude thiết kế, sửa đổi ADR, viết test nghiệm thu, duyệt, cài lỗi và tích hợp — 2026-10-13 · [chi tiết](#t-174)
 - [x] T-175 **Giảm giá cả đơn** — migration bước 23 `bill.discount_vnd` · `discount_customer_name`, phần trả + giảm = tổng dòng; ba cửa trao tiền nhận giảm giá chỉ khi người là chủ quán, kèm tên khách, không trần, không lý do; câu doanh thu ở `db/reconcile/` trừ giảm; gỡ `order_discount_undecided`; hợp đồng 0.17.0 (lời U-058) — **ADR-098** — L2 — Codex thi công (worktree `../lean_wt/T-175`), Claude thiết kế, duyệt, cài lỗi và tích hợp — 2026-10-13 · [chi tiết](#t-175)
 - [x] P3-12 **Realtime và dự phòng** — bộ phát SSE một tiến trình (`platform/realtime`), luồng `GET /production-board/events` · `GET /counter/events`, phát sau COMMIT; đường kéo `GET /counter/queue` và `GET /production-board` trả `read_at` · `poll_interval_seconds` 20; miền mới `nhandon` (tạm dừng · tiếp tục · báo mù · mở lại, cửa dùng chung `nhandon/ghi_mu`); đơn tự bấm khi không luồng quầy ⇒ khoảng mù + `shop_not_seeing_orders`; cắt thử PT-1…PT-6 ở `09-realtime-du-phong.md`; hợp đồng 0.16.0 — **ADR-097** — L2 — Codex thi công (worktree `../lean_wt/P3-12`, ba lượt do hạn mức, không kịp viết báo cáo), Claude thiết kế, duyệt, sửa test, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](backlog_BE.md#p3-12)
 - [x] T-146 **Sửa số đếm két của ngày đã ký** — migration bước 22 `reconciled_day_reopening` + dấu nối chuỗi (`previous_reconciled_day_id`, khoá duy nhất từng phần); khoá ADR-080 cho sửa số đếm khi dấu mới nhất đã mở lại, tiền đầu két vẫn khoá; cửa `ket/sua_dem` (`PUT /sale-days/{sale_date}/cash-count`, lớp `chu_quan`, lý do bắt buộc) và cửa dùng chung `ket/ghi_dong_dem` (`theo_cua_goi`); ký lại nối dấu; đường đọc trả chuỗi dấu; cửa tiền khác vẫn coi ngày từng ký là đóng; hợp đồng 0.15.0 — **ADR-096** — L2 — Codex thi công (worktree `../lean_wt/T-146`, ba lượt do hạn mức), Claude thiết kế, duyệt, cài lỗi và tích hợp — 2026-10-12 · [chi tiết](#t-146)
@@ -1255,7 +1255,31 @@ Mức **L2**: tiền, hàm giá, hợp đồng. Thiết kế: **ADR-099**. Luậ
 - *Kiểm chứng:* Claude chạy lại gate; cài lỗi trong worktree riêng: hàm giá đọc menu hiện tại thay vì ở mốc ⇒ (3) đỏ;
   bỏ kiểm vị trí trùng ở tầng cửa và tầng 1 vẫn bắt ⇒ (4) vẫn đúng mã; hoá đơn lấy `now()` làm `booked_at` ⇒ (1) đỏ.
 
-**Bàn giao:** —
+**Bàn giao** (2026-10-13): thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-174`, nhánh
+`codex/T-174` từ `bb6510c`, hai lượt; lượt 2 hết hạn mức trước khi viết test và báo cáo). Thiết kế, sửa đổi ADR, test
+nghiệm thu, duyệt, cài lỗi và tích hợp: **Claude Code**.
+- *Lượt 1 Codex dừng đúng chỗ:* ADR-099 nói phiên "mở và đóng ở `sold_at`" và "ánh xạ ràng buộc chồng phiên", nhưng
+  `table_session` không có cột mốc và lược đồ không có ràng buộc chồng theo thời gian ⇒ Claude ghi **ADR-099 *Sửa đổi
+  2026-10-13***: phiên tạo thẳng `closed`, mốc bán ở `bill.booked_at`, bỏ lời từ chối chồng phiên; không migration.
+- *File:* cửa `be/internal/hoadon/nhap_bu.go` + `sql/nhap_bu/` (đăng ký ở `be/sqlc.yaml`) · `hoadon/{handler,repository,
+  service}.go` · `sql/ghi/them.sql` (cột sổ giấy) · `be/internal/don/nhap_bu.go` (`GhiNhapBu`, dùng các ô INSERT của
+  `tao_luot_goi`; `them_phien` · `them_ban` · `them_dong*` nhận trạng thái/`cleaned_at`/`priced_at`, đường cũ không đổi) ·
+  `be/internal/gia/` (đọc menu tại mốc) · `apierr` (`paper_ledger_missing`, `paper_position_already_entered`, ánh xạ
+  `bill_paper_position_key`) · sqlcgen · `docs/product/3-be/{02,03,08}-*.md` · `openapi.yaml` 0.18.0 · test
+  `be/internal/don/{gia_tai_moc_test.go (Codex), nhap_bu_test.go (Claude)}`.
+- *Claude sửa khi duyệt:* (1) câu `gia/sql/doc_mon.sql` quét `record_revision` theo từng dòng của bảy bảng menu
+  (bảng vết không có chỉ mục theo dòng) ⇒ `GET /menu` quá hạn 5 giây, ba test giá cũ đỏ; viết lại thành một CTE `vet`
+  quét một lần. (2) Codex dời ngày của hai test cũ (`duong_tien_test.go` ngày 22 · `huy_hoan_thanh_test.go` ngày 25/26)
+  để lấy ngày cho T-174 ⇒ hoàn lại; T-174 dùng tháng 6/2031 (chưa test nào dùng). (3) Viết năm test Nghiệm thu 1–5;
+  ca giá dùng giờ thật vì vết sửa giá mang `revised_at` thật — mốc 2031 giả đứng sau mọi lần sửa.
+- *Kiểm chứng:* worktree và cây chính `./scripts/gate.sh` exit 0 — `PASS Gate 1 be-check — mọi test backend qua
+  PostgreSQL thật đều đạt`, `PASS Gate 1g … hợp đồng 0.18.0; 55 đường gọi`, `PASS Gate 1f … 47 ô ghi, 48 cửa`; db-check
+  SKIP đúng (không đổi `db/`). Lỗi cài ở ba worktree tách rời (đã gỡ): `gia.Tinh` không truyền `sold_at` ⇒
+  `TestI009_NhapBuTinhGiaLucBan` đỏ (`menu_item_discontinued`); bỏ kiểm vị trí trùng ở tầng cửa ⇒ `TestYC08_NhapBuTuChoi`
+  vẫn xanh, đúng `paper_position_already_entered` qua ánh xạ ràng buộc; `booked_at` lấy giờ cửa ⇒
+  `TestYC08_NhapBuTaiBanQuaCua` · `TestYC08_NhapBuMangDiQuaCua` đỏ.
+- *Nghiệm thu 6:* không test cũ nào đổi khẳng định. Cửa chỉ INSERT ⇒ không ca mới ở `TestI018_MoiCuaSuaCoVet`
+  (`TestI018_TapCuaSuaKhopTapCa` xanh). *Còn lại:* không. *Duyệt độc lập:* chưa (Codex thi công code, Claude viết test và duyệt).
 
 <a id="t-175"></a>
 ### T-175 — Giảm giá cả đơn

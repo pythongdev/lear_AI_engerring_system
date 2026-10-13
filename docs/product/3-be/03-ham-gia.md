@@ -21,8 +21,17 @@ ai gọi nó — và bảng ca test của hàm ấy; cùng danh sách chỗ tr�
 ## 1. Một hàm
 
 `gia.Tinh` ở `be/internal/gia/` là **chỗ duy nhất** cộng giá. Nó nhận các dòng *món · số suất · mã lựa
-chọn* — **không** một trường giá nào — đọc menu **trong giao dịch của người gọi**, tại `now()` của giao
-dịch ấy, và trả mỗi dòng: tên món, đơn giá, thành tiền, ảnh chụp thành phần và tuỳ chọn đã tính.
+chọn* — **không** một trường giá nào — đọc menu **trong giao dịch của người gọi**, và trả mỗi dòng:
+tên món, đơn giá, thành tiền, ảnh chụp thành phần và tuỳ chọn đã tính.
+
+**Đọc tại một mốc** (2026-10-13, thi công phần giá của `T-174` theo **ADR-099** điểm 3):
+`gia.Tinh(ctx, tx, lines)` dùng `now()` của giao dịch; truyền thêm một mốc `time.Time` thì đọc menu
+ở mốc ấy. Đây vẫn là cùng một hàm kiểm tổ hợp và cộng giá. Với mỗi dòng trong bảy bảng menu,
+`be/internal/gia/sql/doc_mon.sql` bỏ dòng có `created_at` sau mốc; nếu có vết sửa sau mốc thì dùng `before_image`
+của vết sớm nhất (xếp theo `revised_at`, rồi `id`), nếu không thì dùng dòng hiện tại. Tên, thành phần,
+giá gốc, phụ thu, nhóm, điều kiện nhóm và lựa chọn đều đọc ở cùng mốc. Món ngừng bán sau mốc vẫn
+được tính ở mốc; món chưa được tạo thì trả `menu_item_not_found`. Cửa nhập bù `hoadon/nhap_bu` truyền
+`sold_at` ([08-vet-va-nhap-bu.md](08-vet-va-nhap-bu.md) §5).
 
 Công thức là luật 1 và luật 5 của `shop-facts.md` §4.6, đọc trên dữ liệu: đơn giá = tổng *số lượng ×
 giá gốc* của các thành phần của suất, cộng *số phần nhận nhân* × tổng phụ thu của các lựa chọn đã chọn.
@@ -37,7 +46,7 @@ Số phần nhận nhân đọc ra từ thành phần (`takes_filling`), không 
 | 1 | không dòng nào | `invalid_request` (`lines`) | `01-hop-dong-api.md` §3 |
 | 2 | số suất < 1 | `invalid_request` (`quantity`) | — |
 | 3 | món không tồn tại | `menu_item_not_found` | — |
-| 4 | món đã ngừng bán tại mốc giao dịch | `menu_item_discontinued` | `I-009` tầng 3 · **ADR-056** |
+| 4 | món đã ngừng bán tại mốc tính giá | `menu_item_discontinued` | `I-009` tầng 3 · **ADR-056** |
 | 5 | một mã lựa chọn không tồn tại | `menu_option_not_found` | — |
 | 6 | tổ hợp sai (dưới) | `option_combination_invalid` | `I-010` · §4.6 luật 3 · 7 |
 
@@ -84,6 +93,7 @@ Ca của test sửa menu dùng menu **giả** riêng (`test-…`), không chạm
 |---|---|
 | `be/internal/gia/gia_test.go` | §4.8 qua tính thử và qua menu; giá gửi lên bị bỏ; năm hình tổ hợp sai; món ngừng bán; yêu cầu sai hình; cờ mặc định trên menu đúng luật 8 đọc lúc chạy (`perl db/seed/seed.pl --defaults-tsv`), tổ hợp chọn sẵn có giá trên menu và qua tính thử |
 | `be/internal/don/don_test.go` | §4.8 qua cửa ghi đơn = con số tính thử; quyền của quầy; một dòng sai ⇒ cả lượt gọi bị từ chối; sửa menu sau khi đặt ⇒ đơn cũ đứng nguyên, lượt gọi mới cùng phiên ăn giá mới; món ngừng bán bị cửa từ chối |
+| `be/internal/don/gia_tai_moc_test.go` | `TestI009_GiaTaiMocDungVetSomNhat`: hai lần sửa dùng bản trước sớm nhất, đơn mới dùng giá mới, ngừng bán sau mốc và món chưa tạo; `TestI009_GiaMacDinhDungMocGiaoDich`: mặc định giữ `now()` của giao dịch dù menu được sửa giữa giao dịch |
 | `be/internal/menu/menu_test.go` | bốn cửa của chủ quán: chỉ chủ quán, bắt buộc lý do, mỗi lần sửa một vết mang người và lý do, không đường gọi nào nhận giá suất |
 
 ## 4. Chỗ trống có tên

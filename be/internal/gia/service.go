@@ -10,6 +10,7 @@ import (
 	"log"
 	"math"
 	"sort"
+	"time"
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/platform/postgres"
@@ -83,8 +84,16 @@ type luaChonDaDoc struct {
 }
 
 // Tinh kiểm từng dòng theo thứ tự gửi; lỗi đầu tiên thắng, không có kết quả một phần.
+// Không truyền mốc thì SQL dùng now() của giao dịch; nhập bù truyền sold_at (ADR-099).
 // Mọi tổ hợp phải do người gọi chọn đủ, không có đường tự điền lựa chọn mặc định.
-func Tinh(ctx context.Context, q Querier, lines []DongYeuCau) (KetQua, error) {
+func Tinh(ctx context.Context, q Querier, lines []DongYeuCau, taiMoc ...time.Time) (KetQua, error) {
+	if len(taiMoc) > 1 {
+		return KetQua{}, fmt.Errorf("gia: chỉ nhận một mốc tính giá")
+	}
+	var moc *time.Time
+	if len(taiMoc) == 1 {
+		moc = &taiMoc[0]
+	}
 	if len(lines) == 0 {
 		return KetQua{}, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "lines"}
 	}
@@ -100,7 +109,7 @@ func Tinh(ctx context.Context, q Querier, lines []DongYeuCau) (KetQua, error) {
 		var ngung bool
 		var tpJSON, nhomJSON, chonJSON []byte
 		var err error
-		d.ItemName, ngung, tpJSON, nhomJSON, chonJSON, err = newRepository(q).docMon(ctx, yc.MenuItemID, yc.OptionIDs)
+		d.ItemName, ngung, tpJSON, nhomJSON, chonJSON, err = newRepository(q).docMon(ctx, yc.MenuItemID, yc.OptionIDs, moc)
 		if errors.Is(err, pgx.ErrNoRows) {
 			return tuChoi(apierr.CodeMenuItemNotFound, "menu_item_id")
 		}

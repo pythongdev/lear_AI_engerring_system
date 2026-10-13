@@ -7,18 +7,28 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const themBan = `-- name: ThemBan :exec
-INSERT INTO table_session_member (table_session_id, dining_table_id) VALUES ($1,$2)
+INSERT INTO table_session_member (table_session_id, dining_table_id, session_closed, cleaned_at)
+VALUES ($1,$2,$3,$4)
 `
 
 type ThemBanParams struct {
 	TableSessionID int64
 	DiningTableID  int64
+	SessionClosed  bool
+	CleanedAt      pgtype.Timestamptz
 }
 
 func (q *Queries) ThemBan(ctx context.Context, arg ThemBanParams) error {
-	_, err := q.db.Exec(ctx, themBan, arg.TableSessionID, arg.DiningTableID)
+	_, err := q.db.Exec(ctx, themBan,
+		arg.TableSessionID,
+		arg.DiningTableID,
+		arg.SessionClosed,
+		arg.CleanedAt,
+	)
 	return err
 }

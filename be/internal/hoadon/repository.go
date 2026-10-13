@@ -35,7 +35,7 @@ func (r repository) khoaKhoanTraTruoc(ctx context.Context, don *int64) (int64, e
 func (r repository) themHoaDon(ctx context.Context, b NoiDung) (int64, error) {
 	return r.q.ThemHoaDon(ctx, sqlcgen.ThemHoaDonParams{TableSessionID: so(b.Phien), SalesOrderID: so(b.Don), DueVnd: b.Due,
 		CashVnd: b.Cash, TransferVnd: b.Transfer, PrepaidCashVnd: b.PrepaidCash, PrepaidTransferVnd: b.PrepaidTransfer,
-		DiscountVnd: b.Discount, DiscountCustomerName: chu(b.DiscountCustomerName), DebtVnd: b.Debt, DebtorName: chu(b.Debtor), BookedAt: moc(b.Moc), DebtNote: chu(b.DebtNote)})
+		DiscountVnd: b.Discount, DiscountCustomerName: chu(b.DiscountCustomerName), DebtVnd: b.Debt, DebtorName: chu(b.Debtor), BookedAt: moc(b.Moc), DebtNote: chu(b.DebtNote), PaperLedgerID: so(b.PaperLedgerID), PaperEntryCount: so32(b.PaperEntryCount), PaperPosition: so32(b.PaperPosition)})
 }
 
 func (r repository) themHoan(ctx context.Context, bill, prepayment *int64, amount int64, method string, source *string, reason string, m time.Time) (int64, error) {
@@ -161,4 +161,33 @@ func soTuDong(v any) (*int64, error) {
 
 func (r repository) chuQuanGiamGia(ctx context.Context, nguoi int64) (bool, error) {
 	return r.q.ChuQuanGiamGia(ctx, nguoi)
+}
+
+func so32(v *int32) pgtype.Int4 {
+	if v == nil {
+		return pgtype.Int4{}
+	}
+	return pgtype.Int4{Int32: *v, Valid: true}
+}
+func (r repository) docSoNhapBu(ctx context.Context, ngay string) (int64, int32, error) {
+	d, err := time.Parse("2006-01-02", ngay)
+	if err != nil {
+		return 0, 0, err
+	}
+	row, err := r.q.DocSoNhapBu(ctx, pgtype.Date{Time: d, Valid: true})
+	return row.ID, row.EntryCount, err
+}
+func (r repository) trungViTriGiay(ctx context.Context, id int64, pos int32) (bool, error) {
+	return r.q.TrungViTriGiay(ctx, sqlcgen.TrungViTriGiayParams{PaperLedgerID: so(&id), PaperPosition: so32(&pos)})
+}
+func (r repository) mocNhapBu(ctx context.Context, sold time.Time, ngay string, now time.Time) (bool, []byte, error) {
+	d, err := time.Parse("2006-01-02", ngay)
+	if err != nil {
+		return false, nil, err
+	}
+	row, err := r.q.MocNhapBu(ctx, sqlcgen.MocNhapBuParams{Column1: moc(sold), Column2: pgtype.Date{Time: d, Valid: true}, Column3: moc(now)})
+	return row.HopLe, row.BookedAt, err
+}
+func (r repository) banNhapBu(ctx context.Context, id int64) (bool, error) {
+	return r.q.BanNhapBu(ctx, id)
 }

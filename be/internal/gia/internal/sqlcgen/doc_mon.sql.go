@@ -7,34 +7,104 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const docMon = `-- name: DocMon :one
-SELECT m.name, COALESCE(m.discontinued_at <= now(), false)::boolean AS ngung,
+WITH vet AS MATERIALIZED (
+ SELECT DISTINCT ON (r.target_table_code, r.target_row) r.target_table_code, r.target_row, r.before_image
+ FROM record_revision r
+ WHERE r.revised_at > COALESCE($3::timestamptz, now())
+   AND r.target_table_code IN ('menu_item', 'menu_component', 'menu_item_component', 'option_group',
+                               'menu_option', 'menu_item_option_group', 'option_group_prerequisite')
+ ORDER BY r.target_table_code, r.target_row, r.revised_at, r.id
+),
+menu_item_tai_moc AS (
+ SELECT (COALESCE(v.before_image, to_jsonb(goc))->>'id')::bigint AS id,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'name')::text AS name,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'discontinued_at')::timestamptz AS discontinued_at
+ FROM menu_item goc
+ LEFT JOIN vet v ON v.target_table_code = 'menu_item' AND v.target_row = goc.id
+ WHERE goc.created_at <= COALESCE($3::timestamptz, now())
+),
+menu_component_tai_moc AS (
+ SELECT (COALESCE(v.before_image, to_jsonb(goc))->>'id')::bigint AS id,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'name')::text AS name,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'takes_filling')::boolean AS takes_filling,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'base_price_vnd')::bigint AS base_price_vnd
+ FROM menu_component goc
+ LEFT JOIN vet v ON v.target_table_code = 'menu_component' AND v.target_row = goc.id
+ WHERE goc.created_at <= COALESCE($3::timestamptz, now())
+),
+menu_item_component_tai_moc AS (
+ SELECT (COALESCE(v.before_image, to_jsonb(goc))->>'id')::bigint AS id,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'menu_item_id')::bigint AS menu_item_id,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'menu_component_id')::bigint AS menu_component_id,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'quantity')::integer AS quantity
+ FROM menu_item_component goc
+ LEFT JOIN vet v ON v.target_table_code = 'menu_item_component' AND v.target_row = goc.id
+ WHERE goc.created_at <= COALESCE($3::timestamptz, now())
+),
+option_group_tai_moc AS (
+ SELECT (COALESCE(v.before_image, to_jsonb(goc))->>'id')::bigint AS id,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'name')::text AS name
+ FROM option_group goc
+ LEFT JOIN vet v ON v.target_table_code = 'option_group' AND v.target_row = goc.id
+ WHERE goc.created_at <= COALESCE($3::timestamptz, now())
+),
+menu_option_tai_moc AS (
+ SELECT (COALESCE(v.before_image, to_jsonb(goc))->>'id')::bigint AS id,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'option_group_id')::bigint AS option_group_id,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'name')::text AS name,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'surcharge_vnd')::bigint AS surcharge_vnd,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'is_default')::boolean AS is_default
+ FROM menu_option goc
+ LEFT JOIN vet v ON v.target_table_code = 'menu_option' AND v.target_row = goc.id
+ WHERE goc.created_at <= COALESCE($3::timestamptz, now())
+),
+menu_item_option_group_tai_moc AS (
+ SELECT (COALESCE(v.before_image, to_jsonb(goc))->>'id')::bigint AS id,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'menu_item_id')::bigint AS menu_item_id,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'option_group_id')::bigint AS option_group_id
+ FROM menu_item_option_group goc
+ LEFT JOIN vet v ON v.target_table_code = 'menu_item_option_group' AND v.target_row = goc.id
+ WHERE goc.created_at <= COALESCE($3::timestamptz, now())
+),
+option_group_prerequisite_tai_moc AS (
+ SELECT (COALESCE(v.before_image, to_jsonb(goc))->>'id')::bigint AS id,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'option_group_id')::bigint AS option_group_id,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'menu_option_id')::bigint AS menu_option_id
+ FROM option_group_prerequisite goc
+ LEFT JOIN vet v ON v.target_table_code = 'option_group_prerequisite' AND v.target_row = goc.id
+ WHERE goc.created_at <= COALESCE($3::timestamptz, now())
+)
+SELECT m.name, COALESCE(m.discontinued_at <= COALESCE($3::timestamptz, now()), false)::boolean AS ngung,
  (SELECT COALESCE(jsonb_agg(jsonb_build_object(
    'menu_component_id', c.id, 'component_name', c.name, 'quantity', ic.quantity,
    'takes_filling', c.takes_filling, 'base_price_vnd', c.base_price_vnd) ORDER BY ic.id), '[]'::jsonb)
-  FROM menu_item_component ic JOIN menu_component c ON c.id = ic.menu_component_id
+  FROM menu_item_component_tai_moc ic JOIN menu_component_tai_moc c ON c.id = ic.menu_component_id
   WHERE ic.menu_item_id = m.id)::jsonb AS thanh_phan,
  (SELECT COALESCE(jsonb_agg(jsonb_build_object(
  'option_group_id', g.id, 'option_group_name', g.name,
  'prerequisite_option_ids', (SELECT COALESCE(jsonb_agg(p.menu_option_id ORDER BY p.menu_option_id), '[]'::jsonb)
-   FROM option_group_prerequisite p WHERE p.option_group_id = g.id),
+   FROM option_group_prerequisite_tai_moc p WHERE p.option_group_id = g.id),
  'options', (SELECT COALESCE(jsonb_agg(jsonb_build_object(
    'menu_option_id', o.id, 'option_name', o.name, 'is_default', o.is_default) ORDER BY o.id), '[]'::jsonb)
-   FROM menu_option o WHERE o.option_group_id = g.id)) ORDER BY g.id), '[]'::jsonb)
- FROM menu_item_option_group ig JOIN option_group g ON g.id = ig.option_group_id
- WHERE ig.menu_item_id = $1)::jsonb AS nhom,
+   FROM menu_option_tai_moc o WHERE o.option_group_id = g.id)) ORDER BY g.id), '[]'::jsonb)
+ FROM menu_item_option_group_tai_moc ig JOIN option_group_tai_moc g ON g.id = ig.option_group_id
+ WHERE ig.menu_item_id = $1::bigint)::jsonb AS nhom,
  (SELECT COALESCE(jsonb_agg(jsonb_build_object(
    'menu_option_id', o.id, 'option_group_id', g.id, 'option_group_name', g.name,
    'option_name', o.name, 'surcharge_vnd', o.surcharge_vnd) ORDER BY o.id), '[]'::jsonb)
-  FROM menu_option o JOIN option_group g ON g.id = o.option_group_id WHERE o.id = ANY($2::bigint[]))::jsonb AS lua_chon
- FROM menu_item m WHERE m.id = $1
+  FROM menu_option_tai_moc o JOIN option_group_tai_moc g ON g.id = o.option_group_id WHERE o.id = ANY($2::bigint[]))::jsonb AS lua_chon
+ FROM menu_item_tai_moc m WHERE m.id = $1::bigint
 `
 
 type DocMonParams struct {
-	MenuItemID int64
-	Column2    []int64
+	Column1 int64
+	Column2 []int64
+	Column3 pgtype.Timestamptz
 }
 
 type DocMonRow struct {
@@ -46,7 +116,7 @@ type DocMonRow struct {
 }
 
 func (q *Queries) DocMon(ctx context.Context, arg DocMonParams) (DocMonRow, error) {
-	row := q.db.QueryRow(ctx, docMon, arg.MenuItemID, arg.Column2)
+	row := q.db.QueryRow(ctx, docMon, arg.Column1, arg.Column2, arg.Column3)
 	var i DocMonRow
 	err := row.Scan(
 		&i.Name,

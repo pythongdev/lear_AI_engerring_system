@@ -10,11 +10,11 @@ import (
 )
 
 const themPhien = `-- name: ThemPhien :one
-INSERT INTO table_session (status) VALUES ('open') RETURNING id
+INSERT INTO table_session (status) VALUES ($1) RETURNING id
 `
 
-func (q *Queries) ThemPhien(ctx context.Context) (int64, error) {
-	row := q.db.QueryRow(ctx, themPhien)
+func (q *Queries) ThemPhien(ctx context.Context, status string) (int64, error) {
+	row := q.db.QueryRow(ctx, themPhien, status)
 	var id int64
 	err := row.Scan(&id)
 	return id, err

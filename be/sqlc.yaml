@@ -100,6 +100,7 @@ sql:
     schema: ../db/migrations
     queries:
       - internal/hoadon/sql
+      - internal/hoadon/sql/nhap_bu
       - internal/hoadon/sql/dong
       - internal/hoadon/sql/ghi
       - internal/hoadon/sql/ghi_hoan

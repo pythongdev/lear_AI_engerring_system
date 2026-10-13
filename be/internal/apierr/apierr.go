@@ -15,11 +15,13 @@ import (
 type Code string
 
 const (
-	CodeOrderIntakeAlreadyPaused Code = "order_intake_already_paused"
-	CodeOrderIntakeNotPaused     Code = "order_intake_not_paused"
-	CodeShopAlreadyBlind         Code = "shop_already_blind"
-	CodeShopNotBlind             Code = "shop_not_blind"
-	CodeIntakeStateChanged       Code = "intake_state_changed"
+	CodePaperLedgerMissing          Code = "paper_ledger_missing"
+	CodePaperPositionAlreadyEntered Code = "paper_position_already_entered"
+	CodeOrderIntakeAlreadyPaused    Code = "order_intake_already_paused"
+	CodeOrderIntakeNotPaused        Code = "order_intake_not_paused"
+	CodeShopAlreadyBlind            Code = "shop_already_blind"
+	CodeShopNotBlind                Code = "shop_not_blind"
+	CodeIntakeStateChanged          Code = "intake_state_changed"
 
 	CodeDebtNoteRequired            Code = "debt_note_required"
 	CodeOrderHandoverMismatch       Code = "order_handover_mismatch"
@@ -94,11 +96,13 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
-	CodeOrderIntakeAlreadyPaused: 409,
-	CodeOrderIntakeNotPaused:     409,
-	CodeShopAlreadyBlind:         409,
-	CodeShopNotBlind:             409,
-	CodeIntakeStateChanged:       409,
+	CodePaperLedgerMissing:          409,
+	CodePaperPositionAlreadyEntered: 409,
+	CodeOrderIntakeAlreadyPaused:    409,
+	CodeOrderIntakeNotPaused:        409,
+	CodeShopAlreadyBlind:            409,
+	CodeShopNotBlind:                409,
+	CodeIntakeStateChanged:          409,
 
 	CodeDebtNoteRequired:            422,
 	CodeOrderHandoverMismatch:       409,
@@ -171,6 +175,7 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"bill_paper_position_key":                      CodePaperPositionAlreadyEntered,
 	"order_intake_pause_one_at_a_time_excl":        CodeOrderIntakeAlreadyPaused,
 	"shop_blind_spell_one_at_a_time_excl":          CodeShopAlreadyBlind,
 	"order_intake_pause_ended_after_started_check": CodeIntakeStateChanged,

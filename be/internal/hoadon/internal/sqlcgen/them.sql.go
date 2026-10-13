@@ -13,8 +13,8 @@ import (
 
 const themHoaDon = `-- name: ThemHoaDon :one
 INSERT INTO bill (table_session_id, sales_order_id, due_vnd, cash_vnd, transfer_vnd,
- prepaid_cash_vnd, prepaid_transfer_vnd, debt_vnd, debtor_name, booked_at, sale_date, debt_note, discount_vnd, discount_customer_name)
-VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$10::timestamptz::date,$11,$12,$13) RETURNING id
+ prepaid_cash_vnd, prepaid_transfer_vnd, debt_vnd, debtor_name, booked_at, sale_date, debt_note, discount_vnd, discount_customer_name, paper_ledger_id, paper_entry_count, paper_position)
+VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$10::timestamptz::date,$11,$12,$13,$14,$15,$16) RETURNING id
 `
 
 type ThemHoaDonParams struct {
@@ -31,6 +31,9 @@ type ThemHoaDonParams struct {
 	DebtNote             pgtype.Text
 	DiscountVnd          int64
 	DiscountCustomerName pgtype.Text
+	PaperLedgerID        pgtype.Int8
+	PaperEntryCount      pgtype.Int4
+	PaperPosition        pgtype.Int4
 }
 
 func (q *Queries) ThemHoaDon(ctx context.Context, arg ThemHoaDonParams) (int64, error) {
@@ -48,6 +51,9 @@ func (q *Queries) ThemHoaDon(ctx context.Context, arg ThemHoaDonParams) (int64, 
 		arg.DebtNote,
 		arg.DiscountVnd,
 		arg.DiscountCustomerName,
+		arg.PaperLedgerID,
+		arg.PaperEntryCount,
+		arg.PaperPosition,
 	)
 	var id int64
 	err := row.Scan(&id)

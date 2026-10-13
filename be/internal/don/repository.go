@@ -83,7 +83,7 @@ func (r repository) khoaPhien(ctx context.Context, tableID int64) (int64, string
 	return row.ID, row.Status, err
 }
 
-func (r repository) themPhien(ctx context.Context) (int64, error) { return r.q.ThemPhien(ctx) }
+func (r repository) themPhien(ctx context.Context) (int64, error) { return r.q.ThemPhien(ctx, "open") }
 
 func (r repository) themBan(ctx context.Context, sessionID, tableID int64) error {
 	return r.q.ThemBan(ctx, sqlcgen.ThemBanParams{TableSessionID: sessionID, DiningTableID: tableID})
@@ -105,13 +105,16 @@ func (r repository) themDon(ctx context.Context, channel, status string, session
 
 // themDong ghi một dòng đã tính giá; takeaway nil là đơn ngoài bàn (cột mang về để mặc định).
 func (r repository) themDong(ctx context.Context, donID int64, d gia.Dong, takeaway *bool) (int64, error) {
+	return r.themDongTaiMoc(ctx, donID, d, takeaway, pgtype.Timestamptz{})
+}
+func (r repository) themDongTaiMoc(ctx context.Context, donID int64, d gia.Dong, takeaway *bool, at pgtype.Timestamptz) (int64, error) {
 	n := int32(len(d.Components))
 	if takeaway == nil {
 		return r.q.ThemDongMangDi(ctx, sqlcgen.ThemDongMangDiParams{SalesOrderID: donID, Quantity: d.Quantity,
-			MenuItemID: d.MenuItemID, ItemName: d.ItemName, UnitPriceVnd: d.UnitPriceVnd, ComponentCount: n})
+			MenuItemID: d.MenuItemID, ItemName: d.ItemName, UnitPriceVnd: d.UnitPriceVnd, ComponentCount: n, Column7: at})
 	}
 	return r.q.ThemDong(ctx, sqlcgen.ThemDongParams{SalesOrderID: donID, Quantity: d.Quantity, MenuItemID: d.MenuItemID,
-		ItemName: d.ItemName, UnitPriceVnd: d.UnitPriceVnd, ComponentCount: n, IsTakeaway: *takeaway})
+		ItemName: d.ItemName, UnitPriceVnd: d.UnitPriceVnd, ComponentCount: n, IsTakeaway: *takeaway, Column8: at})
 }
 
 func (r repository) themThanhPhan(ctx context.Context, dongID int64, viTri, n int32, c gia.ThanhPhan) error {
@@ -192,4 +195,18 @@ func (r repository) roiQuanKhoaDon(ctx context.Context, id int64) (string, *stri
 
 func (r repository) roiQuanDocViec(ctx context.Context, id int64) (bool, error) {
 	return r.q.RoiQuanDocViec(ctx, id)
+}
+
+// Nhập bù dùng cùng các ô INSERT của tao_luot_goi, tạo thẳng phiên đã đóng.
+func (r repository) themPhienGiay(ctx context.Context, tableID int64, sold time.Time) (int64, error) {
+	id, err := r.q.ThemPhien(ctx, "closed")
+	if err != nil {
+		return 0, err
+	}
+	err = r.q.ThemBan(ctx, sqlcgen.ThemBanParams{TableSessionID: id, DiningTableID: tableID, SessionClosed: true, CleanedAt: mocPG(sold)})
+	return id, err
+}
+
+func (r repository) themDongGiay(ctx context.Context, id int64, d gia.Dong, takeaway *bool, sold time.Time) (int64, error) {
+	return r.themDongTaiMoc(ctx, id, d, takeaway, mocPG(sold))
 }

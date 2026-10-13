@@ -1,9 +1,11 @@
 package hoadon
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/middleware"
@@ -13,6 +15,7 @@ import (
 
 func Routes(r *gin.Engine, svc *Service) {
 	h := handler{svc: svc}
+	r.POST("/sale-days/:sale_date/paper-entries", h.nhapBu)
 	r.POST("/orders/:sales_order_id/handover", h.traoTaiQuay)
 	r.POST("/orders/:sales_order_id/delivered", h.giaoXong)
 	r.POST("/bills/:bill_id/refunds", h.hoan)
@@ -179,4 +182,27 @@ func (h handler) docNo(c *gin.Context) {
 		return
 	}
 	apierr.JSON(c.Writer, 200, map[string]any{"debts": debts})
+}
+
+func (h handler) nhapBu(c *gin.Context) {
+	ngay := c.Param("sale_date")
+	if d, err := time.Parse("2006-01-02", ngay); err != nil || d.Format("2006-01-02") != ngay {
+		apierr.WriteError(c.Writer, sai("sale_date"))
+		return
+	}
+	var raw map[string]json.RawMessage
+	if !apierr.ReadJSON(c.Writer, c.Request, &raw) {
+		return
+	}
+	p, err := docNhapBu(raw)
+	if err != nil {
+		apierr.WriteError(c.Writer, err)
+		return
+	}
+	out, err := h.svc.NhapGiay(c.Request.Context(), nguoi(c), ngay, p)
+	if err != nil {
+		apierr.WriteError(c.Writer, err)
+		return
+	}
+	apierr.JSON(c.Writer, http.StatusCreated, out)
 }
