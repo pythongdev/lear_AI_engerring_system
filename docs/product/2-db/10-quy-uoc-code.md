@@ -321,7 +321,9 @@ ghim của công cụ.
   nào để ghim.
   **Thư viện FE — chủ repo chọn 2026-10-13:** giao diện bằng **shadcn/ui**, dữ liệu server bằng
   **TanStack Query**, trạng thái phía client bằng **Zustand**. Phiên bản ghim, khung test và cách dùng
-  từng thư viện chốt ở pha 4; hướng dẫn tham khảo (không phải owner): `docs/private/fe/shared/`.
+  từng thư viện chốt ở pha 4 — **ADR-102** (P4-01, 2026-10-13) chốt form, khung test, sinh type,
+  theme, trình quản lý gói và cách gọi backend; số phiên bản ghim ở `P4-02`. Hướng dẫn tham khảo (không phải
+  owner): `docs/private/fe/fe_guidance/`.
 - **Hậu quả nếu làm khác:** pha 3 mở ra không có ngôn ngữ nào đã nói, và phiên đầu tiên chọn theo
   sở thích của nó (**ADR-039**, lý do hàng *Quy ước code* tồn tại).
 - **Phép kiểm:**

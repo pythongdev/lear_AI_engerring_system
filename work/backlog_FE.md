@@ -128,6 +128,20 @@ kiểm kê chỉ đọc nếu được giao.
 - *Kiểm chứng:* đọc diff theo từng dòng nghiệm thu; `ls -d fe docs/product/4-fe` (cả hai *No such file*);
   `grep -n "^[0-9]\." ` trên mục *Câu hỏi còn mở* của năm file đối chiếu với bảng điểm 5; `./scripts/gate.sh`.
 
+**Bàn giao** (2026-10-13, Claude Code; nhánh `fe_admin`, base `c903709`; chưa commit). **ADR-102** đã chốt, giao cho
+phiên. Chia vai: chủ repo bảo Codex làm, Claude kiểm; Codex được giao kiểm kê chỉ đọc (`codex exec -s read-only`) nhưng
+hết hạn mức ngay lượt đầu (*usage limit*, mở lại 17:41) trước khi đọc file nào — Claude tự kiểm kê, nên **chưa có
+reviewer độc lập**. File đổi: `docs/decisions.md` (ADR-102, dòng bảng tổng hợp, dòng *Còn để mở* của ADR-100) ·
+`master_plan/FE_master_plan_banh_cuon_ba_thanh.md` (§6 dòng `P4-01`, §10) · `docs/product/2-db/10-quy-uoc-code.md`
+(`QC-09` trỏ ADR-102 và `fe_guidance/`) · file này. Nghiệm thu → bằng chứng: 1 — ADR-102 điểm 1; 2 — điểm 2 · 3 (phép
+chấm `P4-03` · `P4-05`); 3 — điểm 4; 4 — điểm 5 · 6 · 7, danh tính SSE không cần `F-XXX` (đo: `be/internal/authz/chon_ten.go`
+chỉ đọc header, không CORS dưới `be/`); 5 — điểm 8, đủ 27 câu của năm file; 6 — không khối code, không số phiên bản, chỉ
+đường gọi của hợp đồng; 7 — diff ba file trên; 8 — `docs/product/4-fe` không tồn tại, **nhưng `fe/` có một thư mục rỗng
+không ai theo dõi** (tạo 12:27 hôm nay, trước phiên này), làm phép kiểm `QC-09` của `db-check` đỏ (*"fe/ có mà không có
+fe/package.json"*); mọi gate khác xanh. Phiên không được phép gỡ nó. **Việc tiếp:** chủ repo `rmdir fe`, chạy lại
+`./scripts/gate.sh`; xanh thì chuyển `P4-01` sang *Done* và mở `P4-02` ở *Ready*. Tuỳ chọn: Codex rà ADR-102 theo
+Nghiệm thu khi có hạn mức.
+
 [↑ đầu file](#top)
 
 ---

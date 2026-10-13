@@ -118,6 +118,7 @@ có câu trả lời mới từ người.
 | ADR-099 | **Cửa nhập bù hoá đơn từ sổ giấy**: `POST /sale-days/{sale_date}/paper-entries` (`quay_hoac_chu_quan`); từng món như đã bán; mang đi = `phone_preorder`, tại bàn = phiên mở và đóng ở `sold_at`; giá dựng lại ở mốc bán qua cùng hàm giá đọc vết sửa giá; đơn `completed`, không sinh việc bếp | Đã chốt 2026-10-13 (giao cho phiên, T-174; lời U-079; Claude thiết kế, Codex thi công) | — | T-174 · ADR-037 · ADR-086 · ADR-095 · ADR-098 · U-079 |
 | ADR-100 | **Pha 4 dùng shadcn/ui**: mọi primitive giao diện lấy từ CLI shadcn vào `fe/src/components/ui/`, không bộ UI thứ hai, không tự viết lại primitive; bản ghim chốt lúc dựng `fe/` | Đã chốt 2026-10-13 (chủ repo quyết, T-178) | — | T-176 · QC-09 |
 | ADR-101 | **Kế hoạch pha 4**: `master_plan/FE_master_plan_banh_cuon_ba_thanh.md`, mã `P4-01`…`P4-12`, sổ `work/backlog_FE.md`; nền → trang thử *Menu & giá* → màn quầy; không đổi hợp đồng, không tính tiền ở trình duyệt; admin ngoài pha 4 | Đã chốt 2026-10-13 (giao cho phiên, T-178); cách chia chờ chủ repo xác nhận | — | T-176 · ADR-076 · ADR-068 · ADR-100 |
+| ADR-102 | **Thước của pha 4**: bốn nhóm màn × cách lấy dữ liệu · ghi xong · mất kết nối · số tiền; ghi xong thì đọc lại, không cache giá; state ba chỗ, đổi người xoá sạch; RHF + Zod, Vitest + RTL, openapi-typescript + openapi-fetch, token CSS shadcn, npm; cùng origin qua Next; luồng quầy mang `X-Person-Id` bằng fetch đọc luồng — không đổi hợp đồng | Đã chốt 2026-10-13 (giao cho phiên, P4-01) | — | ADR-097 · ADR-100 · ADR-101 · U-075 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -6837,7 +6838,7 @@ khách, chủ quán — cùng một ngôn ngữ, và phiếu việc không phả
 dễ hỏng accessibility; *trộn shadcn với một bộ khác cho màn admin* — hai ngôn ngữ giao diện, review phải đọc hai cách.
 
 **Còn để mở (không phải ADR này quyết):** thư viện form (React Hook Form + Zod mới là đề xuất), khung test frontend, công cụ
-sinh type từ `docs/product/3-be/openapi.yaml`, theme và token màu.
+sinh type từ `docs/product/3-be/openapi.yaml`, theme và token màu. **Đã chốt 2026-10-13 ở ADR-102** điểm 5 (P4-01).
 
 **Applies to:** mọi bước pha 4 có giao diện; `fe/` (chưa tồn tại); `docs/private/fe/fe_guidance/fe-04-shared-components.md`
 §1–§2 (đề xuất ba tầng component và danh sách primitive — tham khảo, chưa phải owner); **T-176**.
@@ -6873,3 +6874,136 @@ và khuôn rút ra chưa qua cổng; *đưa mảng admin vào pha 4* — không 
 
 **Applies to:** `T-178`; `master_plan/FE_master_plan_banh_cuon_ba_thanh.md` · `work/backlog_FE.md` · `CLAUDE.md` §2;
 **ADR-035** · **ADR-068** · **ADR-076** · **ADR-100**.
+
+### ADR-102 — Thước của pha 4: màn đọc từ backend, ghi xong thì đọc lại, không cache giá; trình duyệt chỉ nói với Next, danh tính đi bằng header trên cả luồng quầy
+
+**Trạng thái:** Đã chốt 2026-10-13, **giao cho phiên** (Claude Code, bước `P4-01`; chủ repo bảo *"hãy hoàn thành task
+trên"* cùng ngày). Codex được giao phần kiểm kê chỉ đọc nhưng hết hạn mức trước khi chạy; Claude tự kiểm kê. Đóng bốn
+phần *Còn để mở* của **ADR-100**; vế stack chủ repo chọn (Next.js App Router, TanStack Query, Zustand, shadcn/ui) đọc ở
+`docs/product/2-db/10-quy-uoc-code.md` `QC-09` và **ADR-100**, không chép lại ở đây. Đề xuất gốc:
+`docs/private/fe/fe_guidance/` (tham khảo, không owner) — ADR này chọn và bác từ đó.
+
+**Decision:**
+
+1. **Bốn nhóm người dùng, bốn cột.** Mỗi màn của pha 4 thuộc đúng một nhóm và đọc dòng của nhóm ấy; ô không ghi
+   nguồn là lựa chọn của ADR này.
+
+   | Nhóm | Cách lấy dữ liệu | Ghi xong làm gì | Mất kết nối bày gì | Dữ liệu chạm tiền đọc từ đâu |
+   |---|---|---|---|---|
+   | **Trạm chỉ đọc** | `GET /production-board` (công khai), kéo lại mỗi `poll_interval_seconds` **kể cả khi luồng sống**; `GET /production-board/events` chỉ là tín hiệu *đọc lại* (**ADR-097** điểm 1 · 3; `09-realtime-du-phong.md` §3) | Không ghi — màn không có nút (`05-realtime-va-du-phong.md` §1.3; bấm mẻ ở quầy) | Luôn hiện mốc `read_at` của lần đọc thành công cuối và phân biệt *rỗng vì hết việc* với *rỗng vì không đọc được* (`05-realtime-va-du-phong.md` §1.3); không nút thử lại | Không có số tiền |
+   | **Quầy** | Đường đọc lớp `quay` kèm `X-Person-Id` (điểm 7); `GET /counter/queue` kéo theo chu kỳ của nó; `GET /counter/events` mở **suốt ca** ở vùng không bị tháo khi đổi phần nội dung, vì luồng ấy là dấu hiệu *quán còn nhìn thấy* (**ADR-097** điểm 4) | Chờ backend trả thành công rồi đọc lại mọi đường đọc màn đang dùng; không cập nhật lạc quan (điểm 2) | Dải báo mất luồng luôn nhìn thấy; *quán mù* và *tạm dừng* chỉ hiện theo `blind_since` · `paused_since` backend trả, không tự suy từ một lần lỗi luồng (**ADR-097** điểm 7; `09-realtime-du-phong.md` §3) | Số backend trả trên đường đọc hoặc `POST /price-quotes` (`01-hop-dong-api.md` §5, **I-013**) |
+   | **Chủ quán** | Đường đọc lớp `chu_quan` kèm `X-Person-Id`; đọc khi mở màn, khi quay lại cửa sổ, khi mạng về, sau mỗi lần ghi; kéo theo chu kỳ chỉ khi đường đọc trả `poll_interval_seconds` | Như quầy (điểm 2) | Lỗi đọc giữ bản cũ **kèm** cảnh báo và mốc, không bày bản cũ như hiện tại | Số backend trả; giá trên `GET /menu` (`03-ham-gia.md`) |
+   | **Khách** | Đường đọc công khai (`GET /menu`, `GET /qr-codes/{code}`) không danh tính; được lấy trước ở server **cho từng request**, không cache trang hay dữ liệu ở tầng Next (điểm 3) | Hiện đúng thứ backend trả; mỗi lần bấm gửi sinh **một** `submission_code` và giữ nó cho mọi lần gửi lại của lần bấm ấy (`01-hop-dong-api.md` §8, **I-024**) | Lần gửi mất phản hồi là *chưa rõ kết quả*, không là *thất bại*; không tự gửi lại — người bấm lại thì gửi đúng dấu cũ | `POST /price-quotes` ngay trước khi gửi; số trên màn là số tính thử mới nhất, không cộng ở trình duyệt |
+
+2. **Ghi xong thì đọc lại từ backend.** Không cập nhật lạc quan cho thao tác chạm đơn hay tiền; không ghi tay số hay
+   trạng thái nào vào cache dữ liệu server từ phía trình duyệt — kể cả từ thân phản hồi của lệnh ghi hay từ dữ liệu
+   kèm tín hiệu SSE; cache chỉ được làm mất hiệu lực rồi đọc lại. Lệnh ghi đã thành công mà lần đọc lại lỗi thì màn nói
+   *đã ghi, chưa cập nhật được* — không mời gửi lại. Lệnh ghi không thử lại ngầm; đường đọc không thử lại lời từ chối có
+   `code`.
+3. **Dữ liệu chạm tiền không được giữ cũ.** Mọi dữ liệu server có thời gian còn tươi bằng không và đọc lại khi quay lại
+   cửa sổ, khi mạng về; không cơ chế cache nào của Next (cache trang, cache theo thời gian, cache thành phần) bọc dữ liệu
+   có giá, đơn, bàn, trạm hay tiền — cache của thư viện truy vấn là chỗ duy nhất giữ dữ liệu server ở phía FE. **Phép
+   chấm:** `P4-03` thêm vào cổng frontend một phép chặn tĩnh cho (a) cú pháp cache của Next trong `fe/` và (b) lệnh ghi
+   tay vào cache dữ liệu server, mỗi phép một ca hồi quy biết đỏ; `P4-05` chứng minh trên app thật cùng backend: chủ quán
+   đổi giá ⇒ màn hiện số mới mà không tải lại trang.
+4. **State ở ba chỗ, mỗi thứ một chỗ.**
+   - *Dữ liệu server* (menu, đơn, hàng chờ, trạm, người, két, nợ…) — **chỉ** ở cache của TanStack Query; Zustand không
+     bao giờ giữ bản sao.
+   - *Nháp của người dùng* (giỏ, lượt gọi đang soạn) — Zustand, theo khoá ngữ cảnh (bàn, mã QR, đơn điện thoại…) để giỏ
+     bàn này không đổ sang bàn khác; **chỉ món, số lượng, tuỳ chọn — không một số tiền nào**; không lưu xuống bộ nhớ
+     trình duyệt ở bản đầu. Nháp một form, hộp thoại đang mở: state cục bộ của form. Bộ lọc, ngày bán đang xem, mục
+     đang mở: trên URL.
+   - *Tên đang chọn* — Zustand, lưu trên máy (lời **U-075**: *"chọn tên"*, máy tin tên được chọn); chỉ giữ mã người
+     và nhãn lúc chọn, không cờ quyền — quyền đọc từ backend (`02-vai-va-quyen.md`). Server không đọc tên đang chọn.
+   - **Đổi người** (chọn tên khác, hay bỏ chọn): xoá **toàn bộ** cache dữ liệu server, bỏ mọi nháp, đóng rồi mở lại
+     luồng quầy với người mới. Lý do: đường đọc lớp `quay` · `chu_quan` trả theo người gọi, và một nháp người trước soạn
+     mà gửi dưới tên người sau là ghi sai người gửi. Lệnh ghi đang bay không huỷ được trên dây; kết quả của nó không ghi
+     vào cache của người mới vì cache đã xoá và sẽ đọc lại.
+5. **Bốn phần mở của ADR-100.**
+   - *Thư viện form:* **React Hook Form + Zod**, ghép qua thành phần form mà bản shadcn đã ghim cung cấp (ADR-100 điểm 1 ·
+     2). Zod chỉ kiểm **hình** theo hợp đồng (bắt buộc, kiểu, độ dài); luật và giá là của backend — lời từ chối có
+     `field` gắn vào đúng ô (`01-hop-dong-api.md` §3). Lý do: tài liệu form của shadcn dựng trên hai thư viện này, nên
+     không phải viết lớp nối riêng.
+   - *Khung test frontend:* **Vitest + React Testing Library** trên môi trường DOM giả lập, chạy trong cổng frontend
+     (`P4-03`). Lý do: chạy TypeScript và ESM không cần bước biên dịch riêng, một khung cho cả lớp gọi API lẫn thành
+     phần. Kiểm trên trình duyệt thật (cắt backend, luồng thật) **không** chọn công cụ ở đây: `P4-06` · `P4-12` chạy app
+     thật cùng backend và dán bằng chứng; cần tự động hoá thì bước ấy mở ADR.
+   - *Sinh type từ `openapi.yaml`:* **openapi-typescript** sinh type (không sinh code chạy), **openapi-fetch** là lớp
+     gọi có kiểu theo đường gọi của hợp đồng. Lý do: không đường gọi nào phải gõ kiểu tay (ô cổng §9 thứ nhất), và lớp
+     gọi mỏng đủ để `P4-02` bọc thêm việc đọc `Error`. Số `int64` của hợp đồng sinh thành số của JavaScript — chấp nhận
+     vì mã và số tiền của một quán nằm xa giới hạn số nguyên an toàn; `P4-02` ghi điều ấy cạnh lệnh sinh.
+   - *Theme và token:* **biến CSS của shadcn** là token màu duy nhất, một theme sáng, bảng màu trung tính mặc định của
+     lệnh khởi tạo; màn không gõ thẳng mã màu. Đổi màu thương hiệu là sửa token một chỗ — sở thích của chủ repo, không
+     chặn bước nào. Theme tối cho màn trạm: `P4-09` quyết sau khi xem trên thiết bị thật.
+6. **Ba phần nền.**
+   - *Trình quản lý gói:* **npm**, lockfile của npm nằm trong `fe/` và được commit, cổng cài bằng lệnh cài đúng
+     lockfile. Lý do: đi kèm Node (`QC-09`), không thêm một công cụ phải ghim. **Cách ghim:** phiên bản chính xác
+     trong file gói của `fe/` cho Next, React, shadcn CLI và các thư viện của điểm 5, không dải phiên bản; số cụ thể là của
+     `P4-02` (**ADR-100** điểm 3).
+   - *Cách gọi backend:* **cùng origin.** Trình duyệt chỉ gọi server Next; Next chuyển tiếp sang backend, địa chỉ backend
+     là biến môi trường phía server. Lý do: `be/` không có CORS (đo 2026-10-13: không middleware hay header
+     `Access-Control-*` nào dưới `be/`), và pha 4 không đổi backend (**ADR-101** điểm 3); cùng origin cũng là cách
+     `tools/swagger/` đã đứng trước server Go. Cơ chế chuyển tiếp do `P4-02` chọn, với một ràng buộc: **không đệm** luồng
+     `text/event-stream`.
+   - *Telemetry và phản hồi cho agent của Next:* tắt ở `P4-02`; bật lại là quyết của chủ repo — không gửi dữ liệu ra
+     ngoài khi chưa ai đồng ý.
+7. **Danh tính trên luồng quầy: không đổi hợp đồng, không đổi backend.** Trình duyệt mở `GET /counter/events` bằng
+   **fetch đọc luồng**, không bằng `EventSource`, nên gửi `X-Person-Id` trong header như mọi đường gọi khác
+   (`openapi.yaml` `PersonIdentity`; `be/internal/authz/chon_ten.go` chỉ đọc header, không đọc query hay cookie). Vì vậy
+   **không cần `F-XXX`** gửi về pha 3. `EventSource` vẫn dùng được cho luồng trạm công khai, nhưng lớp realtime của
+   `P4-06` dùng một cách nối cho cả hai luồng. Ba điều `P4-06` phải chứng minh trên app thật: (a) đóng tab quầy ⇒ backend
+   thấy luồng quầy đóng — một tầng chuyển tiếp giữ luồng lên backend sau khi trình duyệt đã đi sẽ làm sai dấu hiệu
+   *quán còn nhìn thấy* của **ADR-097** điểm 4; (b) tự nối lại, và mỗi lần nối lại đọc lại nhờ `hello`; (c) luồng không
+   bị đệm. Chứng minh được (a) hay (c) là **không** làm được qua Next ⇒ lúc ấy mới là `F-XXX` gửi về pha 3.
+8. **Câu hỏi còn mở của `fe_guidance` đi đâu** (mỗi câu một chỗ; *ADR* = điểm của ADR này):
+
+   | Câu | Đi đâu |
+   |---|---|
+   | fe-01 §8.1 · fe-02 §7.2 · fe-03 §8.4 (vế SSE) · nextjs §4.4 — danh tính SSE, origin, CORS, URL theo môi trường | ADR điểm 6 · 7; biến môi trường cụ thể: `P4-02` |
+   | fe-01 §8.2 · fe-03 §8.4 (vế giá) — khách biết giá vừa đổi | ADR điểm 1 dòng *Khách* · 3: không tín hiệu riêng; đọc lại khi quay lại cửa sổ và tính thử ngay trước khi gửi. Cần hơn thế ⇒ `F-XXX` gửi pha 3 ở `P4-10` |
+   | fe-01 §8.3 · fe-02 §7.1 — tín hiệu → nhóm dữ liệu đọc lại, chu kỳ trước lần đọc đầu, ngưỡng thiếu `heartbeat`, tab nền | `P4-06` |
+   | fe-01 §8.4 · fe-03 §8.1 — lưu tên, dọn cache khi đổi người, lệnh ghi đang bay | ADR điểm 4; nhiều tab cùng máy: `P4-04` |
+   | fe-01 §8.4 (vế owner) · nextjs §4.5 — owner FE nhận cách render, cache, realtime | `docs/product/4-fe/`, mở ở `P4-02` (**ADR-035**), dựa trên ADR này |
+   | fe-01 §8.5 · fe-02 §7.5 · fe-03 §8.5 · fe-04 §7.5 · nextjs §4.1 · §4.2 — bản ghim, khung test, sinh type, form, gói | ADR điểm 5 · 6; số phiên bản: `P4-02`; nối `fe/` vào cổng: `P4-03` |
+   | fe-01 §8.5 (vế API thiếu) · fe-02 §7.3 · fe-03 §8.3 · fe-04 §7.1 — đường đọc hay enum hợp đồng còn thiếu | bước gặp nó (`P4-07` · `P4-08` · `P4-09` · `P4-11`) ghi `F-XXX` gửi pha 3; màn chờ (**ADR-101** điểm 3) |
+   | fe-02 §7.4 · fe-04 §7.2 — chữ theo `ErrorCode`, gắn `field`, nhãn trạng thái | lớp đọc lỗi: `P4-02`; mỗi mã có chữ: ô cổng §9 (`P4-03` chấm, mỗi bước thêm chữ cho mã của mình). **Chữ hiện cho khách** (kể cả lúc ngừng nhận đơn) là luật quán (kế hoạch §2) ⇒ `U-XXX` mở ở `P4-10` |
+   | fe-02 §7.5 (vế cấu hình sau đo) | `P4-05` — trang thử rút khuôn |
+   | fe-03 §8.2 — dấu gửi lại sống qua tải lại trang, bỏ nháp sau lỗi | `P4-07` (đơn điện thoại, POS) · `P4-10` (khách) |
+   | fe-04 §7.3 — cài đặt máy trạm, theme tối, cỡ chữ trên thiết bị thật | `P4-09`; token: ADR điểm 5 |
+   | fe-04 §7.4 — thành phần dùng chung thật, danh mục ở đâu | danh mục ở `docs/product/4-fe/` (`P4-02`); nâng lên dùng chung khi có nơi dùng thứ hai |
+   | fe-04 §7.5 (vế kiểm accessibility) | `P4-03` |
+   | nextjs §4.3 — thư viện nhận, ranh giới state | ADR điểm 4 · 5 và **ADR-100** |
+   | nextjs §4.6 — trang tĩnh, hoãn prefetch | mặc định không; `P4-10` xét sau khi đo |
+   | nextjs §4.7 — telemetry, ai duyệt đổi phiên bản | ADR điểm 6; đổi phiên bản là một task, Claude duyệt (**ADR-054**) |
+
+**Why:**
+
+- *Đọc lại thay vì vá cache:* rủi ro lớn nhất của pha là màn giữ giá cũ (kế hoạch §10). Một nguồn số duy nhất — backend —
+  và một cách duy nhất để màn biết số mới — đọc lại — là cùng lý lẽ **ADR-097** dùng cho SSE: tín hiệu không mang số thì
+  không thể khác đường đọc. Ghi vào cache từ trình duyệt là bản thứ hai của sự thật.
+- *Xoá sạch khi đổi người:* máy quầy dùng chung, tên là lời tự khai (U-075); dọn một phần thì phải biết đường đọc nào
+  phụ thuộc người — một danh sách sẽ trôi, như bảng *cửa nào chạm màn nào* **ADR-097** đã bác.
+- *Cùng origin + fetch đọc luồng:* giải được danh tính trên SSE mà không chạm hợp đồng hay backend — hai thứ pha 4 không
+  được đổi; mỗi phương án khác đều cần một trong hai.
+
+**Rejected alternatives:**
+
+- *Cập nhật lạc quan, hay ghi phản hồi của lệnh ghi vào cache.* Bác: *Why* thứ nhất; nhanh hơn một lần đọc trên mạng nội
+  bộ của một quán không đáng một bản số thứ hai.
+- *Danh tính SSE qua tham số trên đường dẫn hay cookie.* Bác: backend chỉ đọc header — cả hai là đổi hợp đồng và backend.
+- *Next tự thêm header ở tầng chuyển tiếp từ cookie của riêng FE.* Bác lúc này: thêm một chỗ cất danh tính thứ hai; giữ
+  làm đường lùi nếu `P4-06` chứng minh fetch đọc luồng không đi được.
+- *Khác origin + CORS ở backend.* Bác: đổi backend; thêm cấu hình theo môi trường mà một quán một máy không cần.
+- *pnpm hay Yarn.* Bác: thêm một công cụ phải ghim, không đổi điều gì quán thấy.
+- *Jest.* Bác: cần thêm bước biên dịch TypeScript/ESM; Vitest làm cùng việc ít cấu hình hơn.
+- *Sinh cả client đầy đủ từ hợp đồng (bộ sinh code).* Bác: sinh nhiều code không ai đọc; type + lớp gọi mỏng đủ cho ô cổng
+  *không gõ tay*.
+- *Lưu nháp có giá tạm.* Bác: `01-hop-dong-api.md` §5, **I-013**.
+
+**Suy ra, không phải lời chủ quán hay chủ repo** (`CLAUDE.md` §7.2): mọi lựa chọn ở điểm 5 · 6 · 7; *bỏ nháp khi đổi
+người*; *khách không có tín hiệu đổi giá riêng*; *không tự gửi lại lần gửi chưa rõ kết quả*; *telemetry tắt*. Chủ repo
+đổi bất kỳ điểm nào thì sửa ADR này trước khi bước dựa vào nó bắt đầu.
+
+**Applies to:** `P4-01`; mọi bước `P4-02`…`P4-12`; `fe/` (chưa tồn tại); `docs/product/2-db/10-quy-uoc-code.md` `QC-09`;
+`master_plan/FE_master_plan_banh_cuon_ba_thanh.md` §6 · §10; **ADR-054** · **ADR-086** · **ADR-097** · **ADR-100** ·
+**ADR-101** · **U-075** · **I-013** · **I-024**.
