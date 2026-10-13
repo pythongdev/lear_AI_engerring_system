@@ -1,0 +1,1 @@
+Đã làm gì. Sổ pha 4 work/backlog_FE.md có thêm một mục admin gồm mười một bước, P4A-01 đến P4A-11. Mỗi bước ứng với một hoặc vài trang admin trong PAGES_INDEX, kể cả marketing, đào tạo và giao việc như anh/chị chọn. Mỗi bước ghi trang nguồn, dữ kiện quán đã có, phần không lấy từ bản cũ, phần áp dụng từ fe_guidance và cái bẫy cần tránh.
