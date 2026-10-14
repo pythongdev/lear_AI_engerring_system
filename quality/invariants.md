@@ -1347,7 +1347,7 @@ ghi rõ ở mục Why; câu *tiền lấy từ đâu* mở thành **U-067** cùn
 - **Mỗi khoản đủ bốn câu.** Một khoản chi tồn tại thì đọc ra được **loại** của nó, **số tiền** —
   lớn hơn 0 —, **ngày** chi, và **ai ghi**.
 - **Loại là một trong các loại quán đã kể, và danh sách ấy thêm được.** Hôm nay: điện, nước, wifi,
-  xăng xe (`E44`). §8.10 nói thẳng *không suy rằng quán không có khoản chi nào khác*, nên thêm một
+  xăng xe (`E44`), và **marketing** (lời đóng `U-085`, 2026-10-14). §8.10 nói thẳng *không suy rằng quán không có khoản chi nào khác*, nên thêm một
   loại mới là việc bình thường; một khoản chi **không mang loại nào** thì không tồn tại được.
 - **Tiền hàng và lương không đứng ở đây.** Giò, trứng, rau, quất là tiền hàng (§8.10, *Giới hạn lời
   đáp*); tiền mua hàng và tiền trả cho người làm không bao giờ được ghi thành một khoản chi, để một
@@ -1359,6 +1359,8 @@ ghi rõ ở mục Why; câu *tiền lấy từ đâu* mở thành **U-067** cùn
   nguồn** thì không tồn tại được: `E46` nói thẳng loại chi nào ngoài bốn loại ấy *chưa nói nguồn*,
   nên thêm một loại mới là phải hỏi nguồn của nó cùng lúc, không được để máy đoán. *Thêm
   2026-10-01, T-125, **ADR-074**.*
+  **Marketing** mang nguồn **tiền riêng của chủ quán** (lời đóng `U-093`, 2026-10-14) — khoản của
+  nó không rời két, nên không vào hạng tử *chi từ két* của ngày nào. *Thêm 2026-10-14, P2A-10.*
 
 Và vì mỗi khoản có số tiền và ngày: **tổng chi của một khoảng ngày là phép cộng** các khoản trong
 khoảng ấy, không phải một con số ghi riêng.
@@ -1396,3 +1398,141 @@ không phải một phép máy chấm được.
 ghi rõ ở mục Why.*
 *Thêm vế thứ tư ở T-125, 2026-10-01 — từ lời đóng `U-066`; nguồn đặt trên **loại** chứ không trên
 từng khoản là lựa chọn thiết kế, không phải lời chủ quán (**ADR-074**).*
+*Thêm loại marketing và nguồn tiền riêng của nó ở P2A-10, 2026-10-14 — từ lời đóng `U-085` · `U-093`.*
+
+### I-030 — Mỗi việc giao đọc ra được NỘI DUNG · NGƯỜI NHẬN · AI TẠO · LÚC TẠO; chỉ chủ quán và POS tạo, sửa, ẩn và đánh dấu xong; mỗi lần đánh dấu là một sự kiện có tên, không phải một cờ bị đè; việc đã ẩn không biến mất
+
+**Invariant:**
+Mệnh đề của việc giao trên máy (`master_plan/shop-facts.md` §8.7, lời đóng `U-084` · `U-089`,
+2026-10-14). Năm vế:
+
+- **Mỗi việc đủ bốn câu.** Một việc tồn tại thì đọc ra được **nội dung** — không rỗng —, **người
+  nhận** — đúng một người thuộc tập người của quán, cùng tập với `I-027` —, **ai tạo** và **lúc
+  tạo**.
+- **Người tạo, sửa, ẩn và đánh dấu là chủ quán hoặc POS.** Lời: *chủ quán và POS tạo, sửa, xoá việc;
+  chủ quán và POS đánh dấu xong*. *POS* là người đang đứng quầy, như ở `shop-facts.md` §6.27.
+- **Mỗi lần đánh dấu xong là một sự kiện mang người bấm và lúc bấm.** Việc *đã xong* hay chưa là thứ
+  **đọc ra** từ sự kiện mới nhất, không phải một cờ ghi đè: một lần đánh dấu nhầm được gỡ bằng một
+  sự kiện *bỏ đánh dấu* cũng mang người và lúc, và cả hai sự kiện ở lại.
+- **Sửa một việc là cập nhật có vết** theo `I-018`: bản trước, bản sau, lý do và người sửa.
+- ***Xoá* là ẩn, không xoá cứng.** Một việc đã ẩn đọc lại được — kể cả nội dung, người nhận, các
+  lần đánh dấu —, cùng **ai ẩn** và **lúc ẩn**.
+
+**Mệnh đề không nói** việc có **hạn** hay không, có ghi chú riêng hay không, hay một việc giao cho
+nhiều người cùng lúc: lời giao trường của một việc cho thiết kế, và thiết kế không thêm trường để
+sẵn. Nó không nói người **nhận** việc có được tự đánh dấu xong không — lời chỉ nêu chủ quán và POS.
+Hướng dẫn công việc gắn với việc giao là `I-031`, không phải mệnh đề này.
+
+**Giới hạn đã biết:** máy giữ được rằng mỗi sự kiện mang **một** tên người; nó không ngăn được một
+người khác bấm trên chiếc máy chủ quán hay POS đang mở — cùng hình chỗ đứng dùng chung của `I-012`.
+
+**Why:**
+Một việc giao là lời chủ quán nhờ một người làm. Không có người nhận thì không ai chịu việc; không
+có tên người đánh dấu xong thì khi người làm và chủ quán nhớ khác nhau, máy không trả lời được *ai
+nói việc này đã xong*. Đánh dấu bằng sự kiện thay cho một cờ là để *xong rồi lại chưa xong* không
+xoá mất lần xong trước. Vế *đúng một người nhận* là **suy ra** của phiên (`CLAUDE.md` §7.2;
+**ADR-105**): lời nói *giao việc cho người làm*, không nói một việc có nhiều người nhận; giao cho hai
+người là hai việc. Vế *bỏ đánh dấu* cũng là **suy ra** — từ quyền *sửa* trong lời `U-089`.
+
+**Verification:**
+Kịch bản âm: tạo một việc không có nội dung, không có người nhận, có người nhận ngoài tập người của
+quán, hoặc không có người tạo ⇒ **bị từ chối**; người không phải chủ quán, không đứng quầy tạo hay
+đánh dấu xong một việc ⇒ **bị từ chối**; một sự kiện đánh dấu không có người bấm ⇒ **bị từ chối**;
+xoá cứng một việc ⇒ **bị từ chối**. Kịch bản dương: chủ quán giao một việc cho một người, POS đánh
+dấu xong ⇒ đọc lại được nội dung, người nhận, ai tạo, lúc tạo, ai đánh dấu xong, lúc nào. Kịch bản
+gỡ: đánh dấu xong rồi bỏ đánh dấu ⇒ việc đọc ra *chưa xong*, và cả hai sự kiện còn. Kịch bản ẩn: ẩn
+một việc ⇒ nó vẫn đọc lại được kèm ai ẩn và lúc ẩn. Kiểm ngược: mọi việc có nội dung, đúng một
+người nhận thuộc tập người của quán, người tạo và lúc tạo; mọi sự kiện đánh dấu có người và lúc;
+mọi việc đã ẩn có người ẩn và lúc ẩn.
+
+*Viết ở P2A-10, 2026-10-14, Claude Code — từ lời chủ quán đóng `U-084` · `U-089`. Hai chỗ suy ra ghi
+ở mục Why; tầng giữ vế *chủ quán hoặc POS* chọn ở **ADR-105**.*
+
+### I-031 — Mỗi hướng dẫn công việc thuộc ĐÚNG MỘT việc giao; mỗi ghi nhận đào tạo thuộc ĐÚNG MỘT người của quán, mang tên người ghi và lúc ghi; đánh giá chỉ có hai giá trị ĐẠT · CHƯA
+
+**Invariant:**
+Mệnh đề của hướng dẫn công việc và theo dõi đào tạo (`master_plan/shop-facts.md` §8.7, lời đóng
+`U-086` · `U-090` · `U-091`, 2026-10-14). Năm vế:
+
+- **Hướng dẫn gắn đúng một việc giao.** Mỗi việc giao mang hướng dẫn của chính nó (lời đóng
+  `U-091`); một hướng dẫn không gắn việc nào, hay gắn hai việc, không tồn tại được.
+- **Hướng dẫn là chữ, ảnh hoặc video.** Ảnh và video là **chỗ trỏ tới tệp**, không phải tệp nằm
+  trong dữ liệu; chỗ giữ tệp là lựa chọn của lát `P2A-12`.
+- **Mỗi ghi nhận đào tạo đọc ra được VỀ AI · AI GHI · LÚC GHI.** *Về ai* là đúng một người thuộc tập
+  người của quán; người ghi là chủ quán hoặc POS (lời: *chủ quán hoặc POS ghi nhận xét*).
+- **Một ghi nhận mang nhận xét, đánh giá, hoặc cả hai — không rỗng cả hai; đánh giá chỉ có hai giá
+  trị: *đạt* (làm được việc) · *chưa*.** Không có giá trị thứ ba, không có điểm số.
+- **Sửa là cập nhật có vết** theo `I-018`; ***xoá* là ẩn**, ghi nhận đã ẩn đọc lại được kèm ai ẩn,
+  lúc ẩn. Cùng áp cho hướng dẫn.
+
+**Mệnh đề không nói** một ghi nhận đào tạo có gắn với một việc giao hay không — lời nói *đánh giá
+người ấy làm được việc hay chưa*, về **người**, nên ghi nhận đứng trên người; nó không nói đánh giá
+mới nhất có thay đánh giá cũ không — mọi ghi nhận đều ở lại, đọc theo lúc ghi. Nó không nói người
+làm có xem được ghi nhận về mình không: đó là quyền xem, việc của pha 3.
+
+**Why:**
+Một đánh giá *đạt · chưa* không có tên người đánh giá là một lời không ai chịu. Giữ hai giá trị là
+chép đúng lời *làm được việc hay chưa*; một thang điểm là luật chưa ai nói. Hướng dẫn gắn việc giao
+vì lời đóng `U-091` chọn *từng việc được giao*, không phải *từng loại công việc*. Vế *không rỗng cả
+hai* và vế *ghi nhận đứng trên người, không trên việc* là **suy ra** (`CLAUDE.md` §7.2;
+**ADR-105**).
+
+**Verification:**
+Kịch bản âm: tạo một hướng dẫn không gắn việc giao nào ⇒ **bị từ chối**; tạo một ghi nhận không về
+ai, về một người ngoài tập người của quán, không có người ghi, rỗng cả nhận xét lẫn đánh giá, hoặc
+mang một đánh giá khác *đạt* và *chưa* ⇒ **bị từ chối**; xoá cứng một ghi nhận ⇒ **bị từ chối**.
+Kịch bản dương: POS ghi *chưa* kèm nhận xét cho một người, một tuần sau chủ quán ghi *đạt* ⇒ đọc lại
+được cả hai, đúng thứ tự, mỗi cái có người ghi và lúc ghi. Kịch bản hướng dẫn: gắn một hướng dẫn chữ
+và một ảnh vào một việc giao ⇒ đọc lại được từ việc ấy, không từ việc khác. Kiểm ngược: mọi hướng
+dẫn thuộc đúng một việc giao; mọi ghi nhận có người được ghi, người ghi, lúc ghi và không rỗng; mọi
+đánh giá thuộc hai giá trị.
+
+*Viết ở P2A-10, 2026-10-14, Claude Code — từ lời chủ quán đóng `U-086` · `U-090` · `U-091`. Hai chỗ
+suy ra ghi ở mục Why.*
+
+### I-032 — Mỗi món thuộc NHIỀU NHẤT MỘT danh mục có thật; mỗi combo gồm ít nhất một món có thật và mang ĐÚNG MỘT giá chủ quán đặt, không cộng từ giá các món; danh mục và combo bị ẩn chứ không xoá
+
+**Invariant:**
+Mệnh đề của danh mục món và combo do chủ quán tự quản lý (`master_plan/shop-facts.md` §8.9, lời
+đóng `U-082` · `U-092`, 2026-10-14; lời chủ repo T-188 cùng ngày). Sáu vế:
+
+- **Danh mục do chủ quán đặt tên và thêm dần;** một tên đứng một lần trong danh sách danh mục còn
+  dùng.
+- **Một món thuộc nhiều nhất một danh mục, và danh mục ấy có thật.** Món chưa xếp vào danh mục nào
+  vẫn là món, vẫn bán được.
+- **Một combo gồm ít nhất một món có thật,** mỗi món kèm số phần của nó trong combo — một số nguyên
+  lớn hơn 0.
+- **Giá combo là MỘT con số chủ quán đặt** — số nguyên đồng lớn hơn 0 —, **không** phải tổng giá các
+  món trong nó (lời đóng `U-092`). Đổi giá combo là cập nhật có vết theo `I-018`, và một đơn đã tạo
+  không đổi giá khi combo đổi giá (`I-009`).
+- **Danh mục và combo bị ẩn chứ không xoá;** ẩn có người và lúc. Người lập, sửa và ẩn chúng là
+  **chủ quán** (lời `U-082`: chủ quán tự quản lý menu).
+
+*Topping* trong lời `U-082` là tuỳ chọn phụ thu sẵn có của §4.4 · §4.6 — không phải một thứ mới; mệnh
+đề này không thêm gì cho nó (`I-010` giữ tổ hợp tuỳ chọn).
+
+- **Giá combo không đổi giữa buổi** — chủ quán sửa giá combo ngoài buổi bán (chủ repo trả lời
+  2026-10-14, T-188; `shop-facts.md` §8.9).
+
+Tuỳ chọn phụ thu khách chọn trong một combo **cộng thêm** vào giá combo (cùng lời T-188): đó là luật
+của hàm giá (`I-013`), không phải một chỗ cất — mệnh đề này chỉ giữ rằng giá combo là một con số
+riêng. **Mệnh đề không nói** danh mục gồm những nhóm nào.
+
+**Why:**
+Hai bản giá cho cùng một combo — một bản đặt, một bản cộng — là hai đáp số cho cùng một đơn; lời
+đóng `U-092` chọn một. Món thuộc nhiều nhất một danh mục và *món chưa xếp vẫn bán được* là **suy ra**
+(`CLAUDE.md` §7.2; **ADR-105**): menu hôm nay chưa có danh mục, nên bắt mọi món phải có một danh mục
+sẽ chặn bán cho tới khi chủ quán xếp xong. *Ít nhất một món*, *số phần lớn hơn 0* và *số nguyên đồng lớn
+hơn 0* cũng là suy ra, cùng lý do với vế số tiền của `I-028`.
+
+**Verification:**
+Kịch bản âm: xếp một món vào một danh mục không có thật, hay vào hai danh mục cùng lúc ⇒ **bị từ
+chối**; tạo một combo không có món nào, có giá 0đ hay giá lẻ đồng ⇒ **bị từ chối**; xoá cứng một
+danh mục hay một combo ⇒ **bị từ chối**; đổi giá combo trong giờ bán ⇒ **bị từ chối**. Kịch bản dương: chủ quán lập danh mục *Bánh cuốn*, xếp ba
+món vào, lập một combo hai món với giá riêng ⇒ đọc lại được; giá combo không đổi khi giá một món
+trong nó đổi. Kịch bản sửa: đổi giá combo ⇒ đọc ra giá cũ, giá mới, người sửa. Kiểm ngược: mọi món
+có nhiều nhất một danh mục và danh mục ấy có thật; mọi combo có ít nhất một món và đúng một giá lớn
+hơn 0.
+
+*Viết ở P2A-10, 2026-10-14, Claude Code — từ lời chủ quán đóng `U-082` · `U-092` và lời chủ repo T-188
+(phụ thu cộng thêm, giá combo không đổi giữa buổi). Ba chỗ suy ra ghi ở mục Why.*

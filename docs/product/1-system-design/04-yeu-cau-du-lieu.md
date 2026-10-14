@@ -10,7 +10,7 @@
 
 > **Mục này sở hữu yêu cầu dữ liệu:** YC-01…YC-20, YC-22…YC-25 và YC-34 để pha 2 tự chấm lược đồ;
 > YC-21 (§8) để pha 5 nghiệm thu bảo toàn và khôi phục. Yêu cầu không chốt cơ chế triển khai.
-> YC-26…YC-33 ở §9 là của mảng admin, do các bước `P2A-XX` chấm.
+> YC-26…YC-33 và YC-35…YC-37 ở §9 là của mảng admin, do các bước `P2A-XX` chấm.
 >
 > **Nó không sở hữu một luật nghiệp vụ nào.** Giá, giờ bán, ai được bấm cái gì, ngưỡng lệch 0đ đều
 > thuộc `master_plan/shop-facts.md` (**ADR-001**). Cột *Luật nguồn* dưới đây **trỏ** về đó và cố ý
@@ -37,7 +37,7 @@
 ## 0. Cách đọc — hai dạng câu, và một mã
 
 YC-01…YC-20, YC-22…YC-25 và YC-34 mang mã `YC-XX` và dùng hai dạng câu dưới đây. YC-21 ở §8 là yêu cầu
-khôi phục, nghiệm thu ở pha vận hành; YC-26…YC-33 ở §9 là của mảng admin, dùng cùng hai dạng
+khôi phục, nghiệm thu ở pha vận hành; YC-26…YC-33 và YC-35…YC-37 ở §9 là của mảng admin, dùng cùng hai dạng
 câu và do các bước `P2A-XX` chấm:
 
 | Dạng | Câu mở đầu | Pha 2 chấm thế nào |
@@ -245,7 +245,7 @@ dùng thật.
 với YC-01…YC-20, YC-22…YC-25 và YC-34, mỗi dòng hỏi **hai** câu — *đọc ra được không* và *dựng được trạng thái sai không*. Dòng nào không
 trả lời được là một chỗ lược đồ còn thiếu, **không phải** một dòng viết chưa rõ; sửa lược đồ, và
 chỉ quay lại sửa dòng ở đây khi chính luật nghiệp vụ đã đổi ở owner của nó.
-YC-26…YC-33 ở §9 là của mảng admin, do các bước `P2A-XX` chấm.
+YC-26…YC-33 và YC-35…YC-37 ở §9 là của mảng admin, do các bước `P2A-XX` chấm.
 **Đã chấm — 2026-09-30, `P2-13`** (pointer thêm ở `P2-14`): bảng chấm hai câu nằm ở
 [`../2-db/11-cong-chat-luong-pha-2.md`](../2-db/11-cong-chat-luong-pha-2.md) §5, và những kết cục
 chỉ ra chỗ lược đồ còn thiếu ở §6 của file ấy.
@@ -291,7 +291,8 @@ T-109 phải hoàn tất trước khi đưa hệ thống vào bán thật. Pha 2
 
 ## 9. Mảng QUẢN TRỊ (admin) — mục riêng có nhãn (P2A-01, 2026-09-30)
 
-Đây là yêu cầu cho **phần admin đã đủ luật** theo cột giữa bảng §2 của
+Đây là yêu cầu cho **phần admin đã đủ luật** theo cột giữa bảng §2 và bảng lượt hai (P2A-10,
+2026-10-14) của
 `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md`, đứng riêng theo `docs/decisions.md`
 **ADR-013**. Bốn luật đọc của §0 áp dụng **trừ luật 4**: các dòng này không có dòng đối ứng ở
 [`architecture.md`](architecture.md) §8; mảng admin ở §14 của file ấy. Hành vi nghiệp vụ đọc ở
@@ -307,10 +308,19 @@ T-109 phải hoàn tất trước khi đưa hệ thống vào bán thật. Pha 2
 | **Chủ quán tick ô *có đi làm* cho từng người, từng ngày** | **YC-30** | **Ghi được:** mỗi ô *có đi làm* đọc lại được sau nhiều ngày *người này, ngày này, có đi làm*, cùng **ai** đã tick và **lúc** tick; người được chấm và người tick đều là người của tập người đã có (`YC-15`), không phải danh sách thứ hai. Một ô tick nhầm **huỷ được**, và ô đã huỷ đọc lại được *ai huỷ, lúc huỷ, ghi chú*. **Không xảy ra được:** một ô không gắn người nào, không có ngày hoặc không có người tick; hai ô còn hiệu lực cho cùng một người trong cùng một ngày; một ô tách theo buổi hay mang mốc lúc tới, lúc về; một ô bị xoá mất, hay một lần huỷ không có người huỷ; hay một ô sinh ra một khoản trừ tiền. *Viết lại 2026-09-30 (`P2A-03`) theo lời đóng `U-069` · `U-070`; bản trước viết theo `C31`.* | `shop-facts.md` §8.7 (lời `U-065` · `U-069` · `U-070`; `C32`) · `I-027` |
 | **Tạm ứng do chủ quán duyệt** | **YC-31** | **Ghi được:** mỗi khoản tạm ứng đọc lại được sau nhiều ngày — của ai, bao nhiêu, lúc nào, ai duyệt và ai ghi — và đọc ra được nó là tiền rời két, giữ **cả** ngày khai **lẫn** lúc ghi để hạng tử *chi từ két* của `I-021` gắn nó vào một ngày bán. **Không xảy ra được:** một khoản tạm ứng không có người duyệt, một khoản bị sửa đè, một khoản tạm ứng nằm trong doanh thu hoặc tiền đã thu của một ngày, hay một con số tổng tiền rời két đứng riêng thay cho phép cộng các khoản. *Thêm vế két 2026-10-01 (T-125, **ADR-074**); luật chọn ngày bán chờ `U-072`.* | `shop-facts.md` §8.7 (`C29`) · `I-028` · `I-018` |
 | **Thưởng lễ Tết** | **YC-32** | **Ghi được:** mỗi khoản thưởng lễ Tết đọc ra được của ai, bao nhiêu, lúc nào và ai ghi, và là tiền rời két — cùng hai mốc như `YC-31`. **Không xảy ra được:** một khoản thưởng thiếu người nhận hay số tiền, một khoản bị sửa đè, hay một chỗ cất sẵn cho thưởng ngày đông khách vì vế ấy của `C28` chưa có lời. *Thêm vế két 2026-10-01 (T-125, **ADR-074**).* | `shop-facts.md` §8.7 (`C28`) · `I-028` · `I-018` |
-| **Khoản chi ngoài tiền hàng và lương, theo loại** | **YC-33** | **Ghi được:** mỗi khoản chi đọc ra được loại, số tiền, ngày, lúc ghi và ai ghi; mỗi **loại** đọc ra được **nguồn tiền** của nó — két bán hàng hay không; danh sách loại thêm được, và tổng chi một khoảng ngày **đọc ra được bằng một phép cộng**. **Không xảy ra được:** một khoản chi không mang loại nào, một loại không mang nguồn tiền, tiền hàng hay lương được ghi thành một khoản chi, hoặc một con số tổng chi đứng riêng. *Thêm vế nguồn 2026-10-01 (T-125, **ADR-074**); luật chọn ngày bán cho khoản nguồn két chờ `U-072`.* | `shop-facts.md` §8.10 (`E44` · `E45` và *Giới hạn lời đáp*) · `I-029` |
+| **Khoản chi ngoài tiền hàng và lương, theo loại** | **YC-33** | **Ghi được:** mỗi khoản chi đọc ra được loại, số tiền, ngày, lúc ghi và ai ghi; mỗi **loại** đọc ra được **nguồn tiền** của nó — két bán hàng hay không; danh sách loại thêm được, và tổng chi một khoảng ngày **đọc ra được bằng một phép cộng**. **Không xảy ra được:** một khoản chi không mang loại nào, một loại không mang nguồn tiền, tiền hàng hay lương được ghi thành một khoản chi, hoặc một con số tổng chi đứng riêng. *Thêm vế nguồn 2026-10-01 (T-125, **ADR-074**); luật chọn ngày bán cho khoản nguồn két chờ `U-072`.* *Thêm loại marketing, nguồn tiền riêng — không rời két, 2026-10-14 (P2A-10).* | `shop-facts.md` §8.10 (`E44` · `E45` và *Giới hạn lời đáp*) · §8.10 (lời đóng `U-085` · `U-093`) · `I-029` |
+| **Giao việc** | **YC-35** | **Ghi được:** mỗi việc đọc lại được sau nhiều ngày — nội dung, đúng một người nhận thuộc tập người của quán, ai tạo, lúc tạo; mỗi lần đánh dấu xong hoặc bỏ đánh dấu có người bấm và lúc bấm, trạng thái đọc từ sự kiện mới nhất; sửa có vết, việc đã ẩn còn nội dung, người nhận và mọi lần đánh dấu, cùng ai ẩn và lúc ẩn. **Không xảy ra được:** một việc có nội dung rỗng, không có đúng một người nhận thuộc tập người của quán, thiếu người tạo hoặc lúc tạo; người không phải chủ quán và không đứng quầy lúc ấy tạo, sửa, ẩn hay đánh dấu; một sự kiện đánh dấu xong hoặc bỏ đánh dấu thiếu người hay lúc, bị ghi đè hoặc mất đi; trạng thái đã xong là cờ ghi riêng thay vì đọc từ sự kiện mới nhất; sửa không có bản trước, bản sau, lý do và người sửa theo `I-018`; việc bị xoá cứng, ẩn làm mất nội dung, người nhận hay các lần đánh dấu, hoặc ẩn thiếu người và lúc. Giới hạn: máy không ngăn được người khác bấm trên máy đang mở; mỗi sự kiện vẫn mang một tên người (`I-030`). | `shop-facts.md` §8.7 (lời đóng `U-084` · `U-089`) · `I-030` · `I-018` |
+| **Hướng dẫn công việc và theo dõi đào tạo** | **YC-36** | **Ghi được:** từ mỗi việc giao đọc lại được hướng dẫn của chính nó bằng chữ, ảnh hoặc video — ảnh và video là chỗ trỏ tới tệp; mỗi ghi nhận đào tạo đọc lại được sau nhiều ngày về đúng một người của quán, ai ghi, lúc ghi, nhận xét và đánh giá *đạt · chưa* khi có; mọi ghi nhận ở lại theo lúc ghi; cả hướng dẫn và ghi nhận sửa có vết, ẩn vẫn đọc lại được cùng ai ẩn và lúc ẩn. **Không xảy ra được:** hướng dẫn không gắn đúng một việc giao; tệp ảnh hoặc video được cất trong dữ liệu thay cho chỗ trỏ; ghi nhận không về đúng một người của quán, thiếu người ghi hoặc lúc ghi, hay người ghi không phải chủ quán và không đứng quầy lúc ấy; rỗng cả nhận xét lẫn đánh giá, hoặc đánh giá khác *đạt · chưa*; hướng dẫn hay ghi nhận bị sửa không có vết `I-018`, bị xoá cứng, ẩn không đọc lại được hoặc thiếu người ẩn, lúc ẩn; một ghi nhận mới làm mất ghi nhận cũ. | `shop-facts.md` §8.7 (lời đóng `U-086` · `U-090` · `U-091`) · `I-031` · `I-018` |
+| **Danh mục món và combo** | **YC-37** | **Ghi được:** chủ quán đặt tên và thêm danh mục, xếp món vào; món chưa xếp vẫn bán được; mỗi combo đọc lại được sau nhiều ngày các món và số phần, cùng một giá riêng chủ quán đặt; đổi giá có vết, đơn đã tạo giữ giá của nó; danh mục và combo đã ẩn vẫn đọc lại được cùng ai ẩn và lúc ẩn. **Không xảy ra được:** một tên đứng nhiều lần trong danh mục còn dùng; món thuộc hơn một danh mục hoặc danh mục không có thật, hay món chưa xếp bị chặn bán; combo không có món, có món không có thật, thiếu số phần hoặc số phần không lớn hơn 0; combo không mang đúng một giá nguyên đồng lớn hơn 0 do chủ quán đặt, lấy tổng giá món làm giá combo hoặc đổi theo giá món; đổi giá thiếu vết `I-018`, làm đổi giá đơn đã tạo (`I-009`) hoặc xảy ra trong giờ bán; danh mục hay combo bị xoá cứng, ẩn không đọc lại được hoặc thiếu người ẩn, lúc ẩn; người lập, sửa hay ẩn không phải chủ quán. | `shop-facts.md` §8.9 (lời đóng `U-082` · `U-092`; lời chủ repo T-188) · `I-032` · `I-009` · `I-018` |
+
+*Ba dòng YC-35…YC-37 thêm 2026-10-14 (P2A-10), theo mệnh đề và thiết kế của Claude Code,
+`docs/decisions.md` **ADR-105**.*
 
 Vế *trực quầy theo thời điểm* của kế hoạch §2 **không có dòng mới** vì nó đã là `YC-04` ·
 `YC-15` (§4 của file này) và đã dựng ở `P2-08`.
+
+Vế *tài khoản đăng nhập* (`shop-facts.md` §8.8, `docs/decisions.md` **ADR-104**)
+**chờ thiết kế `T-181`**; chưa có dòng YC cho vế này, không viết yêu cầu hộ thiết kế.
 
 ### 9.1 Chỗ chưa chắc của mục này — đánh dấu, không suy hộ
 
@@ -319,6 +329,7 @@ Vế *trực quầy theo thời điểm* của kế hoạch §2 **không có dò
 | **[U-071](../99-unknowns.md)** — huỷ một ô chấm công: ghi chú có bắt buộc không, và ai được bấm huỷ; mở 2026-09-30 ở `P2A-03`. Hai câu trước của dòng này đã đóng cùng ngày: `U-069` (chủ quán tick hết, mỗi người mỗi ngày một ô) và `U-070` (nút huỷ, có phần ghi chú) | `YC-30` | `YC-30` đòi lần huỷ có **người huỷ**, **không** đòi ghi chú và **không** đòi người huỷ là chủ quán. **Có lời 2026-10-09 (đóng `U-071`): ghi chú bắt buộc, chỉ chủ quán huỷ** — lược đồ siết ở `T-141`. |
 | **Ngày bán mà một khoản rời két trừ vào** — [U-072](../99-unknowns.md), mở 2026-10-01 ở `T-125`. Nguồn tiền đã có lời: `U-066` · `U-067` đóng 2026-09-30 (*từ két bán hàng*), rời két *trong ngày, trước lúc đếm két* (2026-10-01) | `YC-31` · `YC-32` · `YC-33` | Ba dòng đòi giữ **cả** ngày khai lẫn lúc ghi, **không** đòi một cột *ngày bán của két*. **Có lời 2026-10-09 (đóng `U-072`): ngày người ghi khai** — phép đọc dùng ngày khai, không đổi lược đồ; bộ đối chiếu và cửa đóng ngày đổi ở `T-140`. |
 | **Chữ *thời gian nhập*** — `U-068` đã đóng 2026-09-30: **lúc hàng mua về**, không phải lúc gõ số vào máy | `YC-28` | `YC-28` vẫn đòi ghi **cả hai** mốc; mốc bày cho chủ quán là mốc thứ nhất. Mốc ấy là **ngày** của con số, không phải giờ: lời đáp không nói có cần giờ hay không, nên `YC-28` **không** thêm vế nào; màn nào bày gì là pha 4. |
+| **Tài khoản đăng nhập** — `shop-facts.md` §8.8, **ADR-104**; chờ thiết kế `T-181` | chưa có dòng | Không cất gì cho nó hôm nay; chờ thiết kế được chủ repo duyệt, không viết yêu cầu hộ. |
 | **B12** của `work/admin-questions.md` §3 — đơn vị của các tên cũ và đơn vị ghi lượng đã dùng | `YC-26` · `YC-29` | Đơn vị chưa có lời thì để trống; máy cộng trừ đúng con số người gõ, không quy đổi. |
 | **C32** · **C30** của `work/admin-questions.md` §3 — muộn bao nhiêu phút thì ghi nhận là muộn; nghỉ có báo trước có bị trừ không | `YC-30` | `YC-30` chỉ đòi *chấm muộn không sinh khoản trừ*. Ngưỡng và ngày nghỉ chưa có lời: không dòng nào đòi, và không cất sẵn chỗ cho chúng. |
 

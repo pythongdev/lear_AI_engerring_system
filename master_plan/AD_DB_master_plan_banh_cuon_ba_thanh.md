@@ -142,7 +142,7 @@ thái: nó ở `work/backlog.md`.
 | **P2A-12** | **Lát đào tạo** — ghi nhận về một người: nhận xét, *đạt · chưa*, ai ghi, lúc ghi; hướng dẫn công việc chữ · ảnh · video | P2A-10 · `P2A-11` cho vế hướng dẫn (gắn việc giao, U-091) | Ghi nhận đọc lại được với đủ bốn thứ; hướng dẫn gắn đúng một việc giao; *đạt · chưa* không có giá trị thứ ba; ảnh · video cất đường dẫn, không cất tệp trong database (chỗ giữ tệp là quyết định của bước, có ADR) | Đánh giá người làm không truy được ai đánh giá | L2 |
 | **P2A-13** | **Lát danh mục món và combo** — danh mục do chủ quán đặt tên, món thuộc danh mục; combo gồm những món nào và giá riêng của nó | P2A-10 | Món gắn một danh mục có thật; danh mục, combo ẩn chứ không xoá; mỗi combo một giá chủ quán đặt (U-092), số nguyên đồng lớn hơn 0, đổi giá để lại vết; lát không sửa hàm giá — combo vào hàm giá là việc backend | Hai bản giá cho cùng một combo | L2 |
 | **P2A-14** | **Lát tài khoản đăng nhập** — tài khoản của một `person`: tên đăng nhập, mật khẩu đã băm, Gmail, trạng thái chờ duyệt · đã duyệt · khoá, vai; phiên đăng nhập; mã đặt lại mật khẩu | `T-181` — **thiết kế đăng nhập được chủ repo duyệt** (**ADR-104**) | Tài khoản chưa duyệt không mở được phiên; không cột nào cất mật khẩu thô; một Gmail một tài khoản; đăng nhập ở quầy ghi được mốc `C36` vào trực quầy sẵn có | Người nghỉ việc vẫn vào máy, hoặc mật khẩu lộ cả quán | L2 |
-| **P2A-15** | **Đối chiếu và cổng lượt hai** — câu đối chiếu cho mệnh đề của `P2A-10`; diễn một ngày quản trị lượt hai (giao việc · đánh dấu xong · ghi nhận đào tạo · chủ quán thêm món vào danh mục); khuôn `P2A-07` · `P2A-08` | P2A-11 → P2A-14 đã `Done` hoặc ghi *vắng* | `comm -3` mã mệnh đề ↔ mã câu rỗng; mỗi lỗi cài kêu đúng câu; mỗi bước của ngày ghi rồi đọc lại được | Mệnh đề lượt hai chỉ có trên giấy | L2 |
+| **P2A-15** | **Đối chiếu và cổng lượt hai** — rà `comm -3` và câu ngang lát cho mệnh đề của `P2A-10` (câu của từng mệnh đề viết ở lát của nó từ 2026-10-14, **ADR-105** điểm 6); diễn một ngày quản trị lượt hai (giao việc · đánh dấu xong · ghi nhận đào tạo · chủ quán thêm món vào danh mục); khuôn `P2A-07` · `P2A-08` | P2A-11 → P2A-14 đã `Done` hoặc ghi *vắng* | `comm -3` mã mệnh đề ↔ mã câu rỗng; mỗi lỗi cài kêu đúng câu; mỗi bước của ngày ghi rồi đọc lại được | Mệnh đề lượt hai chỉ có trên giấy | L2 |
 | **P2A-16** | **Rà ranh giới pha và pointer lượt hai** — khuôn `P2A-09` trên file lát `16-`…`19-` và migration của chúng | P2A-15 | Như `P2A-09`: cặp lệnh chưa lọc · đã lọc, dòng cài biết kêu, pointer từ §2 `CLAUDE.md` và `docs/product/00-index.md` đúng | Pha 3 đọc dòng hợp đồng do lát viết hộ | L1 |
 
 **Lượt hai — chạy song song được:** `P2A-11` · `P2A-12` · `P2A-13` sau `P2A-10`; `P2A-14` chạy riêng theo `T-181`.
@@ -151,7 +151,7 @@ Lát nào còn chờ câu thì dựng phần đã có lời và ghi rõ phần c
 **Chạy song song được:** `P2A-02` · `P2A-03` · `P2A-04` · `P2A-05` sau khi `P2A-01` xong — bốn lát
 không dùng chung mệnh đề nào, nhưng dùng chung người và vết của `P2-08`; lát vào sau **thêm** file
 và **thêm** dòng mục lục (`work/findings.md` **F-010** · **F-014**). Lát còn bị chặn (`P2A-05` chờ chủ repo duyệt
-**ADR-074**; `P2A-03` hết bị chặn 2026-09-30) **không** giữ chân các bước chung: `P2A-07` · `P2A-08` chạy trên những lát đã `Done` và
+**ADR-074** — *duyệt 2026-10-14, T-188*; `P2A-03` hết bị chặn 2026-09-30) **không** giữ chân các bước chung: `P2A-07` · `P2A-08` chạy trên những lát đã `Done` và
 ghi rõ lát nào còn vắng.
 
 **Ba việc chung của pha 2 không thành bước riêng ở đây**, vì từ 2026-09-29 chúng là luật của mọi
@@ -195,7 +195,7 @@ tiếp dãy `P2A-XX` — không chen vào bước đã có.
 | 7 | Không lát nào cất thứ thuộc §6 | phép lọc ở `P2A-09`, cộng một lượt đọc bằng mắt |
 | 8 | Không endpoint · route · component nào trong file lát admin | phép lọc `P2A-09` theo mẫu rộng của `P2-14`, cộng output Gate 1d — Gate 1d hẹp hơn phép lọc (`work/findings.md` **F-049**), nên một mình nó không ký được ô |
 
-Lát còn bị chặn (`P2A-05` chờ duyệt **ADR-074**; `P2A-03` hết bị chặn 2026-09-30) khi cổng ký thì ô của nó ghi **vắng, chờ câu nào** — không
+Lát còn bị chặn (`P2A-05` chờ duyệt **ADR-074** — *duyệt 2026-10-14, T-188*; `P2A-03` hết bị chặn 2026-09-30) khi cổng ký thì ô của nó ghi **vắng, chờ câu nào** — không
 ghi *đạt*.
 
 ---

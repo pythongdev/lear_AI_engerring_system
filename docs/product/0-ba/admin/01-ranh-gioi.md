@@ -124,6 +124,28 @@ khối dưới đây nói **hành vi** — thứ mục này sở hữu — của
 Bốn khối này **không** đổi câu ngay trên: chúng là hành vi của từng lời đã có, không phải *mức sâu*
 của mảng tài chính.
 
+**Hành vi của lượt hai — viết 2026-10-14 (`P2A-10`, Claude Code).** Lời chủ quán 2026-10-14 ở
+`master_plan/shop-facts.md` §8.7 · §8.9 · §8.10; mục này nói hành vi, không chép lời. Yêu cầu dữ liệu ở
+[`04-yeu-cau-du-lieu.md`](../../1-system-design/04-yeu-cau-du-lieu.md) §9; mệnh đề ở `quality/invariants.md`
+`I-029`…`I-032`; lựa chọn thiết kế ở `docs/decisions.md` **ADR-105**.
+
+- **Giao việc — chủ quán và POS giao, sửa, ẩn và đánh dấu xong** (§8.7, lời đóng `U-084` · `U-089`). Mỗi việc
+  có nội dung và **một** người nhận là người của quán. *Xoá* là **ẩn**: việc đã ẩn còn đọc lại được. Đánh dấu
+  xong ghi **ai** bấm và **lúc** bấm; bấm nhầm thì **bỏ đánh dấu**, cả hai lần đều ở lại. Hạn của việc và việc
+  cho nhiều người **không** có — lời không nói, thiết kế không thêm.
+- **Hướng dẫn công việc và theo dõi đào tạo** (§8.7, lời đóng `U-086` · `U-090` · `U-091`). Mỗi việc giao mang
+  hướng dẫn **của chính nó** — chữ, ảnh, video. Chủ quán hoặc POS ghi **nhận xét** về một người và đánh giá
+  người ấy **đạt** hay **chưa** làm được việc; sửa để lại vết, *xoá* là ẩn. Đánh giá không có giá trị thứ
+  ba.
+- **Danh mục món và combo — chủ quán tự quản lý** (§8.9, lời đóng `U-082` · `U-092`). Chủ quán đặt tên danh
+  mục, xếp món vào; món chưa xếp **vẫn bán được**. Combo có **giá riêng** chủ quán đặt, không cộng từ giá các
+  món. *Xoá* món, danh mục hay combo là ẩn · ngừng bán. *Topping* là tuỳ chọn phụ thu sẵn có, **không** là một
+  thứ mới. Tuỳ chọn phụ thu khách chọn trong combo **cộng thêm** vào giá combo, và giá combo **không đổi giữa
+  buổi** — chủ quán sửa ngoài buổi bán (chủ repo trả lời 2026-10-14, T-188).
+- **Chi phí marketing là một loại khoản chi** (§8.10, lời đóng `U-085` · `U-093`), trả bằng **tiền riêng** của
+  chủ quán: nó **không** vào phép đối soát két cuối ngày.
+- **Tài khoản đăng nhập** (§8.8, **ADR-104**) — hành vi chờ thiết kế `T-181`; mục này chưa nói gì thêm.
+
 **Luật viết cho mọi lần cập nhật admin sau này:** nội dung admin vào **mục riêng có nhãn**, không
 chen vào mục của mảng bán hàng — `docs/decisions.md` **ADR-013**.
 
