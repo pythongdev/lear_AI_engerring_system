@@ -53,8 +53,8 @@ hình dạng chép của `work/backlog_BE.md` (**ADR-051**).
 | P4-12 | [Cổng chất lượng pha 4 và rà ranh giới](#p4-12) |
 | P4A-01…P4A-11 | Mảng admin, đang bị chặn — sổ riêng [`backlog_FE_AD.md`](backlog_FE_AD.md) |
 
-**Chỗ đang chặn** — bảng sống ở kế hoạch §4. `P4-04` chờ thiết kế đăng nhập bằng mật khẩu (**ADR-104**, **U-088**); vế giao hàng của `P4-07`
-chờ **S-6**. Mọi `P4A-XX` chờ backend admin có cửa (**ADR-068**), bốn bước chờ thêm **U-087**…**U-090** (kế hoạch §6a,
+**Chỗ đang chặn** — bảng sống ở kế hoạch §4. `P4-04` chờ thiết kế đăng nhập bằng mật khẩu (**ADR-104**, `T-181`); vế giao hàng của `P4-07`
+chờ **S-6**. Mọi `P4A-XX` chờ backend admin có cửa (**ADR-068**), ba bước chờ thêm **U-087** · **U-089** · **U-090** (kế hoạch §6a,
 sổ `backlog_FE_AD.md`).
 
 ---
@@ -295,7 +295,7 @@ cổng và `go vet` không ghi được cache — Claude chạy lại ngoài san
 
 **Phụ thuộc** · bước 4/12 · **cần xong trước:** `P4-03` · **dừng 2026-10-14:** chủ quán thay *chọn tên* bằng tài khoản
 mật khẩu riêng (U-083 thay U-075, **ADR-104**) — Goal dưới đây là luật cũ, viết lại sau khi thiết kế đăng nhập được
-duyệt và **U-088** đóng
+duyệt (`T-181`; U-088 đã đóng 2026-10-14)
 
 **Goal:** chọn tên (T-143, U-075), vào · rời quầy; khung riêng cho bốn loại người dùng — quầy, chủ quán, trạm
 (chỉ đọc, không nút), khách; nút hiện theo lớp quyền của [`02-vai-va-quyen.md`](../docs/product/3-be/02-vai-va-quyen.md)

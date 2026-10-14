@@ -1457,6 +1457,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-10 | Chủ quán trả lời **U-078** (T-145), chủ repo chuyển nguyên văn trong hội thoại: *"cần bâms đối soát lại và ghi thêm lý do"* — sửa số đếm của ngày đã đối soát xong thì **bấm đối soát xong lại** và **ghi lý do sửa**. *Sửa mở lại ngày ấy, dấu cũ giữ làm vết* là cách đọc của phiên | §6.10 |
 | 2026-10-12 | Chủ quán trả lời **U-079** (T-173), chủ repo chuyển lời: *"từ món kèm bàn và mang đi bán như nào nhập như thế"* — nhập bù gõ lại từng món kèm bàn hoặc mang đi; chủ repo chọn trong câu hỏi có sẵn phương án: giá lúc bán trên giấy. Cùng lượt **U-058** đóng bằng lời chọn: giảm giá cả đơn có trong bản đầu, không trần, không bắt lý do | §6.11 · §8.9 |
 | 2026-10-14 | Chủ quán trả lời bảy câu (T-180), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn phương án ba vế: **đơn web báo về quầy bằng sự kiện SSE**, thay Telegram (U-080); trang tổng kết **cho tất cả thông tin** — KPI doanh thu, món bán chạy, hiệu suất nhân viên, cảnh báo sắp hết (U-081, mở U-087); chủ quán **cần thêm · xoá món, danh mục, combo, topping** (U-082, *lời chọn*); **mỗi người làm một tài khoản, mật khẩu riêng** — *lời chọn*: thay U-075 hoàn toàn (U-083, mở U-088, **ADR-104**); **có** giao việc (U-084, mở U-089); chi phí marketing là **một khoản chi** của mảng tài chính (U-085); **có** hướng dẫn và theo dõi đào tạo (U-086, mở U-090) | §1 · §8.6 · §8.7 · §8.8 · §8.9 · §8.10 |
+| 2026-10-14 | Chủ quán trả lời lượt hai (T-182), chủ repo chuyển lời và chọn trong câu hỏi có sẵn phương án ba vế: báo cáo tổng kết **theo ngày**; hiệu suất nhân viên **theo đề xuất của Claude, chủ repo duyệt** (U-087); máy **tự cảnh báo sắp hết, báo POS kiểm tra** — lật một phần U-045, ngưỡng còn mở; **người làm tự đăng ký, chủ quán duyệt, tự đặt mật khẩu, Gmail để đặt lại khi quên, đăng nhập ở quầy là mốc đổi người** (đóng U-088); **chỉ chủ quán và POS giao việc** (U-089); hướng dẫn là **chữ, ảnh, video theo việc** (U-090) | §8.4 · §8.6 · §8.7 · §8.8 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -1723,7 +1724,16 @@ con số là cặp **mua vào · đã dùng** ở trên (`U-034`, 2026-09-06).
 
 - **Chốt *cách ghi*, không chốt *ghi cái gì*.** Danh mục nguyên liệu **bắt đầu có tên** (xem ngay
   trên, 2026-09-06, còn bổ sung dần); một phần đơn vị mua đã có ngày 2026-09-25, bảng trên.
-  Ngưỡng nhắc sắp hết thì **không có** — chủ quán tự kết luận (2026-09-15, ngay trên).
+  Ngưỡng nhắc sắp hết thì **không có** — chủ quán tự kết luận (2026-09-15, ngay trên). **Sửa 2026-10-14:** xem
+  đoạn *Cảnh báo sắp hết* ngay dưới.
+
+**Sửa 2026-10-14 — MÁY TỰ CẢNH BÁO SẮP HẾT, báo POS kiểm tra** (chủ quán, lượt hai của T-182; nguyên văn *"cảnh báo
+sắp hết là máy tự cảnh báo thông báo cho pos để kiểm tra"*). Lời này **lật một phần `U-045`**: máy được nhắc, và
+người nhận nhắc là **POS**, việc của POS là **kiểm tra** — máy vẫn không tự kết luận thiếu, không tự tắt món, không tự
+đặt hàng (§8.3). Mức sổ ghi tay điện tử đứng nguyên: máy không quy suất bán ra lượng nguyên liệu. Còn thiếu đúng một
+vế, và thiếu vế ấy thì máy không biết lúc nào nhắc: **ngưỡng** của từng thứ, ai đặt, theo đơn vị nào (B12 chưa có) —
+`docs/product/99-unknowns.md` **U-087**. Danh mục §8.4 sẽ cần cột ngưỡng khi U-087 đóng; câu *"Danh mục nguyên liệu
+KHÔNG mọc cột ngưỡng"* ở trên là luật cũ.
 - **Không nói mảng này có vào bản chạy đầu tiên hay không.** Đó là câu của
   `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7, và câu ấy đã chốt riêng ngày 2026-09-02
   (U-030): **không** mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên.
@@ -1879,6 +1889,12 @@ cả thông tin"* cho bốn thứ câu hỏi nêu): **KPI doanh thu · món bán
 Món bán chạy khớp `E48` ở §8.10. Lời **không** nói kỳ báo cáo, không nói hiệu suất nhân viên đo bằng gì, và *cảnh báo
 sắp hết* va lời `U-045` (§8.4: máy không kết luận thiếu) — ba vế ấy là **U-087**; tới khi nó đóng, §8.4 đứng nguyên.
 
+**Lượt hai 2026-10-14 (T-182).** Báo cáo **theo ngày** — ngày bán của `docs/product/1-system-design/02-thoi-gian-ngay-ban.md`
+là cách đọc của phiên. **Hiệu suất nhân viên** — chủ quán bảo *"bạn đề xuất"*; Claude đề xuất, chủ repo duyệt: mỗi
+người, theo ngày, máy **chỉ đếm số liệu đã có**, không chấm điểm, không xếp hạng — số ngày công (ô *có đi làm* §8.7),
+số đơn ghi lúc người ấy đứng quầy (§8.8), số lần đi giao, số lần huỷ · hoàn tiền người ấy bấm. **Cảnh báo sắp hết** là
+máy nhắc POS kiểm tra (§8.4 *Sửa 2026-10-14*); ngưỡng còn ở **U-087**.
+
 ### 8.7 Mảng CON NGƯỜI — làm tới **cả ba mức**: ai đang trực trạm · chấm công · tính lương
 
 **Chủ quán chốt 2026-09-01, xác nhận lại 2026-09-20** (việc đi hỏi: `work/backlog_AD.md` ADM-53).
@@ -1961,7 +1977,9 @@ là pha 4 (`docs/decisions.md` **ADR-035**). Mục này chỉ nói quán muốn 
 **Bổ sung 2026-10-14 — GIAO VIỆC và ĐÀO TẠO cũng ở trong phần mềm** (chủ quán, đóng `U-084` · `U-086`; nguyên văn
 *"có"* cho cả hai). Quán giao việc cho người làm trên máy, và có hướng dẫn công việc cùng theo dõi đào tạo trên máy.
 Hai lời chốt **có làm**, chưa chốt **làm gì**: một việc gồm gì, ai giao, ai đánh dấu xong là **U-089**; hướng dẫn dạng
-gì, theo dõi gì là **U-090**. Hai thứ này không phải mức thứ tư của bảng ba mức ở trên — đó là cách đọc của phiên.
+gì, theo dõi gì là **U-090**. **Lượt hai 2026-10-14 (T-182):** **chỉ chủ quán và POS** được giao việc; hướng dẫn công
+việc là **chữ, ảnh, video, theo từng việc**. Vế còn thiếu vẫn ở U-089 (một việc gồm gì, ai đánh dấu xong) và U-090
+(theo dõi ghi gì). Hai thứ này không phải mức thứ tư của bảng ba mức ở trên — đó là cách đọc của phiên.
 
 ### 8.8 Mức 1 của mảng CON NGƯỜI — **mỗi lần đổi người ở QUẦY là một mốc có giờ**
 
@@ -2026,6 +2044,19 @@ cách ấy.
 còn *ai chọn tên nào máy tin người ấy*. Đoạn *chọn tên* ngay trên giữ làm vết, không còn là luật. Ai tạo tài khoản,
 quên mật khẩu thì sao, máy quầy dùng chung đổi người thế nào và mốc `C36` gắn vào đâu là **U-088**. Hệ quả cho thiết
 kế và code đã dựng theo `U-075` (T-143): `docs/decisions.md` **ADR-104**.
+
+**Lượt hai 2026-10-14 — tài khoản làm thế nào** (đóng `U-088`; nguyên văn *"người làm tự làm mật khẩu. dùng google
+mail quên tự đặt lại"*, chủ repo chọn ba vế trong câu hỏi có sẵn phương án):
+
+1. **Người làm tự đăng ký**; tài khoản chỉ dùng được sau khi **chủ quán duyệt** và gán vai.
+2. **Người làm tự đặt mật khẩu** của mình.
+3. Mỗi tài khoản gắn một **Gmail**, và Gmail **chỉ để nhận thư đặt lại mật khẩu** khi quên — người làm tự đặt lại.
+   Đăng nhập vẫn bằng tài khoản và mật khẩu của hệ thống, không phải đăng nhập bằng Google.
+4. Ở **máy quầy dùng chung**, người trước **đăng xuất**, người sau **đăng nhập**, và **lần đăng nhập ấy là mốc đổi
+   người ở quầy** của `C36` (ai vào, ai ra, lúc mấy giờ).
+
+*Cách đọc của phiên, chưa ai xác nhận:* đặt lại mật khẩu qua thư cần mạng và một dịch vụ gửi thư — mất mạng thì không
+đặt lại được, đó là một phụ thuộc ngoài mới; màn trạm chỉ đọc giữ công khai như hiện nay.
 
 **Lời này KHÔNG chạm chấm công.** *Lúc này ai đứng quầy* và *hôm nay người này làm mấy giờ* là hai
 câu khác nhau; câu thứ hai là mức 2 của §8.7 đã có lời đáp `C30` · `C31` · `C32` ngày 2026-09-25 ở §8.7; các vế còn thiếu

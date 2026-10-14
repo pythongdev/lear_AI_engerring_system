@@ -14,7 +14,7 @@
      (docs/decisions.md ADR-007 · work/findings.md F-008). Chuyển mấy dòng dưới
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
-- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**. Bốn câu tính tới 2026-10-14: U-087 · U-088 · U-089 · U-090.
+- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**. Ba câu tính tới 2026-10-14 (T-182): U-087 · U-089 · U-090.
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
 - [Đã có lời giải](#da-co-loi-giai) — câu đã đóng, xếp theo lượt trả lời của chủ quán, kèm nguyên
@@ -34,13 +34,11 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 ### Đang mở
 
 <a id="u-087"></a>
-- **U-087** — Trang *tổng kết* của chủ quán (lời U-081 2026-10-14: *"cho tất cả thông tin"* — KPI doanh thu, món bán chạy, hiệu suất nhân viên, cảnh báo sắp hết) còn thiếu ba vế: báo cáo **theo kỳ nào** (ngày bán, tuần, tháng…); **hiệu suất nhân viên** đo bằng gì; và **cảnh báo sắp hết** là máy tự cảnh báo — trái `U-045` (*"chủ quán tự đọc rồi đưa ra kết luận"*, `master_plan/shop-facts.md` §8.4) — hay chỉ bày số thiếu của §8.4 cho chủ quán tự đọc. Người trả lời: chủ quán. Chặn: `P4A-03`. Mở 2026-10-14, T-180.
-<a id="u-088"></a>
-- **U-088** — Mỗi người làm có **một tài khoản, mật khẩu riêng** (lời U-083 2026-10-14, thay U-075): ai tạo tài khoản và đặt mật khẩu ban đầu; quên mật khẩu thì ai đặt lại; máy quầy dùng chung đổi người thế nào (người trước đăng xuất, người sau đăng nhập — mốc đổi người ở quầy `C36` gắn vào việc đăng nhập hay vẫn là một thao tác riêng); màn trạm chỉ đọc có phải đăng nhập không. Người trả lời: chủ quán / chủ repo. Chặn: thiết kế danh tính mới (**ADR-104**), `P4-04`, `P4A-06`. Mở 2026-10-14, T-180.
+- **U-087** — Máy **tự cảnh báo sắp hết** một nguyên liệu và báo POS kiểm tra (lời 2026-10-14, lượt hai; lật một phần `U-045`) — nhưng *sắp hết* là khi nào: **ngưỡng** của từng thứ là bao nhiêu, ai đặt (chủ quán?), đo bằng đơn vị nào (đơn vị tính câu **B12** chưa có), và so ngưỡng với *số thiếu = tổng đã nhập − tổng đã dùng* của `master_plan/shop-facts.md` §8.4 hay với con số kiểm lại cuối buổi. Hai vế đầu của câu cũ đã có lời: báo cáo **theo ngày**, hiệu suất nhân viên theo đề xuất đã duyệt (§8.6). Người trả lời: chủ quán. Chặn: vế cảnh báo của `P4A-03`, `P4A-09`. Mở 2026-10-14, T-180; hẹp lại 2026-10-14, T-182.
 <a id="u-089"></a>
-- **U-089** — Quán **có** giao việc trong phần mềm (lời U-084 2026-10-14): một việc gồm những gì (nội dung, người nhận, hạn), **ai giao** (chỉ chủ quán hay cả POS), và **ai đánh dấu xong**. Người trả lời: chủ quán. Chặn: `P4A-07`. Mở 2026-10-14, T-180.
+- **U-089** — Quán có giao việc, và **chỉ chủ quán và POS** được giao (lời 2026-10-14, lượt hai). Còn thiếu: một việc gồm những gì (nội dung, người nhận, hạn), và **ai đánh dấu xong** (người nhận tự bấm hay người giao xác nhận). Người trả lời: chủ quán. Chặn: `P4A-07`. Mở 2026-10-14, T-180; hẹp lại 2026-10-14, T-182.
 <a id="u-090"></a>
-- **U-090** — Quán **có** hướng dẫn công việc và theo dõi đào tạo trong phần mềm (lời U-086 2026-10-14): hướng dẫn ở dạng gì (chữ, ảnh, video), theo trạm hay theo việc, và *theo dõi* nghĩa là ghi gì (người đã đọc, đã làm được, ai xác nhận). Người trả lời: chủ quán. Chặn: `P4A-11`. Mở 2026-10-14, T-180.
+- **U-090** — Hướng dẫn công việc là **chữ, ảnh, video, theo từng việc** (lời 2026-10-14, lượt hai). Còn thiếu: *theo dõi đào tạo* ghi gì (người đã xem, đã làm được), và ai xác nhận một người đã làm được. Người trả lời: chủ quán. Chặn: `P4A-11`. Mở 2026-10-14, T-180; hẹp lại 2026-10-14, T-182.
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
 chủ quán quyết theo tình hình thực tế, không có luật cứng.** Lượt một (T-042) đóng U-022, U-025 và
@@ -164,6 +162,16 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ quán trả lời 2026-10-14, lượt hai (T-182), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn
+phương án ba vế (đánh dấu *lời chọn*).** Lời đáp đã vào owner (`master_plan/shop-facts.md` §8.8 · §8.4 · §8.6 · §8.7);
+cùng lượt `U-087`, `U-089`, `U-090` nhận lời một phần và hẹp lại ở mục đang mở.
+
+<a id="u-088"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-088 — Tài khoản mật khẩu: ai tạo, quên mật khẩu thì sao, máy quầy dùng chung đổi người thế nào, màn trạm có đăng nhập không?~~ | “người làm tự làm mật khẩu. dùng google mail quên tự đặt lại”. *Lời chọn* (chủ repo): Gmail **chỉ để nhận thư đặt lại mật khẩu**, không phải đăng nhập bằng Google; **người làm tự đăng ký, chủ quán duyệt** và gán vai; ở máy quầy dùng chung **người trước đăng xuất, người sau đăng nhập, và lần đăng nhập ấy là mốc đổi người** (`C36`). Màn trạm chỉ đọc lời không nói — giữ công khai như hợp đồng hiện tại là cách đọc của phiên (**ADR-104** *Sửa đổi*). | `master_plan/shop-facts.md` §8.8 · **ADR-104** |
 
 **Chủ quán trả lời 2026-10-14 (T-180), chủ repo chuyển lời trong hội thoại; cùng lượt chủ repo chọn trong câu hỏi có
 sẵn phương án ba vế (đánh dấu *lời chọn*).** Lời đáp đã vào owner; vế còn thiếu mở thành `U-087`…`U-090`; việc thay

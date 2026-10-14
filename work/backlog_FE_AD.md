@@ -50,7 +50,7 @@ Một bước `P4A-XX` chỉ *Ready* khi đủ ba điều: chủ repo mở kế 
 **Lời chủ quán 2026-10-14 (T-180).** Sáu câu của sổ này đã đóng (`docs/product/99-unknowns.md`, mục đã có lời giải):
 chủ quán **muốn** trang tổng kết, tự quản lý menu, giao việc, ghi chi phí marketing, và hướng dẫn · theo dõi đào tạo;
 mỗi người làm có **tài khoản, mật khẩu riêng** — lời này thay *chọn tên* (**ADR-104**). Vế chưa rõ mở thành
-`U-087`…`U-090`. Lời mới **không** mở bước nào: điều (a) — backend admin có cửa — vẫn chưa có, và `P4-04` đang dừng.
+`U-087`…`U-090`; lượt hai cùng ngày (T-182) đóng `U-088` và hẹp ba câu còn lại. Lời mới **không** mở bước nào: điều (a) — backend admin có cửa — vẫn chưa có, và `P4-04` đang dừng.
 
 **`PAGES_INDEX.md` cho danh sách trang, không cho cách làm.** Bản ấy chép dự án khác — đăng nhập JWT, WebSocket, CRUD
 tự do — và mọi link của nó đã chết. Cách làm theo **ADR-102** và `docs/private/fe/fe_guidance/`; chỗ trang nguồn trái
@@ -118,7 +118,7 @@ ra đời ở `P4-02` (**ADR-035**).
 **Trang nguồn:** `/admin/summary` — báo cáo: KPI doanh thu, món bán chạy, hiệu suất nhân viên, cảnh báo sắp hết hàng. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
 
-**Goal:** trang tổng kết cho chủ quán bày bốn thứ chủ quán gọi tên 2026-10-14 (U-081, *"cho tất cả thông tin"*): **KPI doanh thu · món bán chạy · hiệu suất nhân viên · cảnh báo sắp hết**. Kỳ báo cáo, cách đo hiệu suất nhân viên, và *cảnh báo sắp hết* có được trái §8.4 không chờ **U-087** — trước lời ấy chỉ hai thứ đầu có định nghĩa.
+**Goal:** trang tổng kết cho chủ quán bày bốn thứ chủ quán gọi tên 2026-10-14 (U-081, *"cho tất cả thông tin"*): **KPI doanh thu · món bán chạy · hiệu suất nhân viên · cảnh báo sắp hết**. Lượt hai cùng ngày: báo cáo **theo ngày bán**; hiệu suất nhân viên là **số đếm, không chấm điểm, không xếp hạng** — ngày công, số đơn ghi lúc đứng quầy, số lần đi giao, số lần huỷ · hoàn tiền người ấy bấm; *cảnh báo sắp hết* là máy nhắc POS kiểm tra. Chỉ **ngưỡng** sắp hết còn chờ **U-087** — trước lời ấy trang không bày cảnh báo.
 
 **Dữ kiện quán đã có:** bốn thứ ở `master_plan/shop-facts.md` §8.6 (bổ sung 2026-10-14); món bán chạy khớp `E48` §8.10; luật cộng doanh thu từ hai nguồn và hoàn trừ vào ngày hoàn ở `master_plan/shop-facts.md` §6; doanh thu ngày đã đối soát không đổi; mức sâu của mảng tài chính **chưa chốt** (§8.2).
 
@@ -191,12 +191,12 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-06"></a>
 ### P4A-06 — Trang nhân viên của bản cũ quản lý tài khoản mật khẩu, còn quán này vào máy bằng chọn tên
 
-**Phụ thuộc** · bước admin 6/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-088** · thiết kế đăng nhập của **ADR-104**
+**Phụ thuộc** · bước admin 6/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · thiết kế đăng nhập `T-181` (**ADR-104**)
 
 **Trang nguồn:** `/admin/staff` — CRUD tài khoản nhân viên: vai, bật · tắt. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
 
-**Goal:** chủ quán quản lý **tài khoản** của người làm — mỗi người một tài khoản, mật khẩu riêng (U-083, 2026-10-14, thay chọn tên). Ai tạo tài khoản, ai đặt lại mật khẩu khi quên chờ **U-088**.
+**Goal:** chủ quán quản lý **tài khoản** của người làm — mỗi người một tài khoản, mật khẩu riêng (U-083, 2026-10-14, thay chọn tên). Lượt hai (U-088 đóng): người làm **tự đăng ký**, trang này là chỗ chủ quán **duyệt** và gán vai, khoá tài khoản người nghỉ; mật khẩu người làm tự đặt và tự đặt lại qua Gmail — trang không bày, không đổi mật khẩu của ai.
 
 **Dữ kiện quán đã có:** tài khoản mật khẩu riêng (`master_plan/shop-facts.md` §8.8 sửa 2026-10-14, **ADR-104**; luật cũ chọn tên của `T-143` · `U-075` còn chạy trong code tới khi thiết kế mới được duyệt); mảng con người ba mức (`master_plan/shop-facts.md` §8.7); mốc đổi người ở quầy (§8.8); bốn vai và năm trạm (§3).
 
@@ -222,7 +222,7 @@ ra đời ở `P4-02` (**ADR-035**).
 **Trang nguồn:** `/admin/staff/task-board` · `/admin/todo-list` — bảng việc theo người và danh sách việc của cả nhóm. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
 
-**Goal:** quán **có** giao việc trong phần mềm (U-084, 2026-10-14). Một việc gồm gì, ai giao, ai đánh dấu xong chờ **U-089** — trước lời ấy bước này không có trường, cột hay nút nào.
+**Goal:** quán **có** giao việc trong phần mềm (U-084, 2026-10-14). **Chỉ chủ quán và POS** giao việc (lượt hai). Một việc gồm gì và ai đánh dấu xong chờ **U-089** — trước lời ấy bước này không có trường, cột hay nút nào.
 
 **Dữ kiện quán đã có:** `master_plan/shop-facts.md` §8.7 (bổ sung 2026-10-14) — chỉ lời *có làm*.
 
@@ -267,7 +267,7 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-09"></a>
 ### P4A-09 — Trang kho của bản cũ dự báo ngày hết hàng, còn quán này cấm máy kết luận thiếu
 
-**Phụ thuộc** · bước admin 9/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
+**Phụ thuộc** · bước admin 9/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-087** (ngưỡng sắp hết)
 
 **Trang nguồn:** `/admin/storage` — quản lý kho: cảnh báo sắp hết, nối món với tồn kho, dự báo ngày hết. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
@@ -282,7 +282,9 @@ ra đời ở `P4-02` (**ADR-035**).
 
 **Không làm thì mất gì:** máy nói *sắp hết* thay chủ quán, trái lời đã chốt.
 
-**Bẫy:** số thiếu là số backend trả, không trừ ở trình duyệt.
+**Sửa 2026-10-14:** máy **nhắc POS kiểm tra** khi một thứ sắp hết (`master_plan/shop-facts.md` §8.4 *Sửa 2026-10-14*); ngưỡng còn chờ **U-087**, nên tới khi nó đóng trang vẫn không có cảnh báo. Cột *dự kiến hết* và *dùng/ngày* vẫn không lấy.
+
+**Bẫy:** số thiếu là số backend trả, không trừ ở trình duyệt; nhắc sắp hết là việc của backend, không so ngưỡng ở trình duyệt.
 
 **Nhận việc:** —
 
@@ -322,7 +324,7 @@ ra đời ở `P4-02` (**ADR-035**).
 **Trang nguồn:** `/admin/training` — hướng dẫn công việc và theo dõi hoàn thành. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
 
-**Goal:** quán **có** hướng dẫn công việc và theo dõi đào tạo trong phần mềm (U-086, 2026-10-14). Hướng dẫn dạng gì, theo dõi gì chờ **U-090**.
+**Goal:** quán **có** hướng dẫn công việc và theo dõi đào tạo trong phần mềm (U-086, 2026-10-14). Hướng dẫn là **chữ, ảnh, video, theo từng việc** (lượt hai). Theo dõi đào tạo ghi gì chờ **U-090**.
 
 **Dữ kiện quán đã có:** `master_plan/shop-facts.md` §8.7 (bổ sung 2026-10-14) — chỉ lời *có làm*.
 

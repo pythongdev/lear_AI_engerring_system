@@ -7087,3 +7087,11 @@ phát tiếng khi có đơn mới hay không là việc thiết kế của `P4-0
 
 **Applies to:** `T-180`; `P4-04` · `P4-07` · `P4A-06`; **ADR-041** · **ADR-085** · **ADR-097** · **ADR-102** điểm 7;
 `master_plan/shop-facts.md` §1 · §8.8; `docs/product/99-unknowns.md` U-088.
+
+**Sửa đổi 2026-10-14 (T-182, chủ quán lượt hai; đóng `U-088`).** Người làm **tự đăng ký**, **chủ quán duyệt** và gán
+vai; người làm tự đặt mật khẩu; **Gmail chỉ để nhận thư đặt lại mật khẩu** (không đăng nhập bằng Google); ở máy quầy
+dùng chung, **lần đăng nhập là mốc đổi người** của `C36` — nút *vào quầy* riêng của T-143 không còn là luật. Owner:
+`master_plan/shop-facts.md` §8.8. Điểm 2 đứng nguyên: không ai code trước khi thiết kế `T-181` được chủ repo duyệt;
+`T-181` hết chờ `U-088`. *Suy ra, chờ chủ repo xác nhận:* màn trạm chỉ đọc giữ công khai như hợp đồng hiện tại; thư đặt
+lại mật khẩu là một phụ thuộc ngoài mới, phải vào `docs/product/1-system-design/01-ranh-gioi-he-thong.md` cùng
+đường suy giảm của nó trong thiết kế `T-181`.
