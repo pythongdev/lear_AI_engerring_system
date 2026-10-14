@@ -33,6 +33,12 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 <a id="dang-mo"></a>
 ### Đang mở
 
+- **U-081** — Trang *tổng kết* của chủ quán (`/admin/summary` trong `docs/private/fe/PAGES_INDEX.md`: KPI doanh thu, món bán chạy, hiệu suất nhân viên, cảnh báo sắp hết) bày những con số nào, theo kỳ nào; mảng tài chính chưa chốt mức sâu (`master_plan/shop-facts.md` §8.2). Người trả lời: chủ quán. Chặn: `P4A-03`. Mở 2026-10-13, T-179 (ADR-103).
+- **U-082** — Chủ quán có cần **thêm · xoá món, quản lý danh mục, danh sách combo, danh sách topping** trong phần mềm không (`PAGES_INDEX.md`: `/admin/products` · `/admin/combos` · `/admin/categories` · `/admin/toppings`); hôm nay không có cửa nào làm việc đó, *món ngoài bảng giá* là *đã quyết định không làm* (§6.12), D37 · D38 · D42 chưa có danh mục mới (§8.9). Người trả lời: chủ quán. Chặn: `P4A-04` · `P4A-05`. Mở 2026-10-13, T-179 (ADR-103).
+- **U-083** — Trang *nhân viên* (`/admin/staff`: tạo tài khoản, đặt vai, khoá · mở) có nghĩa gì khi người dùng vào máy bằng **chọn tên**, không mật khẩu (T-143, `U-075`): chủ quán thêm · ẩn tên người, đổi vai, hay cần tài khoản thật. Người trả lời: chủ quán / chủ repo. Chặn: `P4A-06`. Mở 2026-10-13, T-179 (ADR-103).
+- **U-084** — Quán có cần **giao việc** cho người làm trong phần mềm không (`/admin/staff/task-board` · `/admin/todo-list`); chưa có dòng nào trong `master_plan/shop-facts.md` nói về việc này. Người trả lời: chủ quán. Chặn: `P4A-07`. Mở 2026-10-13, T-179 (ADR-103).
+- **U-085** — Quán có ghi **chi phí marketing** trong phần mềm không, và nó là một khoản chi của mảng tài chính hay một mục riêng (`/admin/marketing`); chưa có dữ kiện. Người trả lời: chủ quán. Chặn: `P4A-10`. Mở 2026-10-13, T-179 (ADR-103).
+- **U-086** — Quán có cần **hướng dẫn công việc và theo dõi đào tạo** người làm trong phần mềm không (`/admin/training`); chưa có dữ kiện. Người trả lời: chủ quán. Chặn: `P4A-11`. Mở 2026-10-13, T-179 (ADR-103).
 - **U-080** — Đơn web mới báo về quầy bằng gì khi pha 3 đã dựng màn quầy đẩy SSE (`GET /counter/events`, ADR-097): bot Telegram (`master_plan/shop-facts.md` §1, chủ repo đặt tên 2026-09-07) **còn cần** cạnh màn quầy, **thay** cho nó, hay bỏ; nếu còn cần thì pha nào dựng. Người trả lời: chủ quán / chủ repo. Chặn: thiết kế màn quầy nhận đơn web của pha 4 (PT-5 đòi quầy biết đơn mới *mà không phải ngồi canh màn hình*). Mở 2026-10-13, T-176, từ `F-070` điểm 1.
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc

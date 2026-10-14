@@ -69,6 +69,7 @@ is a bug to fix now.
 | Tasks — mô tả dài của **pha 2**, `P2-01`…`P2-14` | `work/backlog_DB.md` |
 | Tasks — mô tả dài của **pha 3**, `P3-01`…`P3-14` | `work/backlog_BE.md` (ADR-076) |
 | Tasks — mô tả dài của **pha 4**, `P4-01`…`P4-12` | `work/backlog_FE.md` (ADR-101) |
+| Tasks — mô tả dài của **FE admin**, `P4A-01`…`P4A-11` (đang bị chặn) | `work/backlog_FE_AD.md` (ADR-103) |
 | Tasks — mô tả dài của **mảng admin**, `ADM-01`…`ADM-53` | `work/backlog_AD.md` |
 | Tasks — mô tả dài của **lược đồ admin**, `P2A-01`…`P2A-09` | `work/backlog_AD_DB.md`; thứ tự, mức và cổng: `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` (ADR-068) |
 | Câu hỏi cho chủ quán về mảng admin, và chỗ chủ quán trả lời | `work/admin-questions.md` §3 |

@@ -119,6 +119,7 @@ có câu trả lời mới từ người.
 | ADR-100 | **Pha 4 dùng shadcn/ui**: mọi primitive giao diện lấy từ CLI shadcn vào `fe/src/components/ui/`, không bộ UI thứ hai, không tự viết lại primitive; bản ghim chốt lúc dựng `fe/` | Đã chốt 2026-10-13 (chủ repo quyết, T-178) | — | T-176 · QC-09 |
 | ADR-101 | **Kế hoạch pha 4**: `master_plan/FE_master_plan_banh_cuon_ba_thanh.md`, mã `P4-01`…`P4-12`, sổ `work/backlog_FE.md`; nền → trang thử *Menu & giá* → màn quầy; không đổi hợp đồng, không tính tiền ở trình duyệt; admin ngoài pha 4 | Đã chốt 2026-10-13 (giao cho phiên, T-178); cách chia chờ chủ repo xác nhận | — | T-176 · ADR-076 · ADR-068 · ADR-100 |
 | ADR-102 | **Thước của pha 4**: bốn nhóm màn × cách lấy dữ liệu · ghi xong · mất kết nối · số tiền; ghi xong thì đọc lại, không cache giá; state ba chỗ, đổi người xoá sạch; RHF + Zod, Vitest + RTL, openapi-typescript + openapi-fetch, token CSS shadcn, npm; cùng origin qua Next; luồng quầy mang `X-Person-Id` bằng fetch đọc luồng — không đổi hợp đồng | Đã chốt 2026-10-13 (giao cho phiên, P4-01) | — | ADR-097 · ADR-100 · ADR-101 · U-075 |
+| ADR-103 | **Mảng admin vào sổ pha 4 dưới dạng bước bị chặn**: mười một bước `P4A-01`…`P4A-11` theo đúng các trang admin của `docs/private/fe/PAGES_INDEX.md`, mô tả ở sổ riêng `work/backlog_FE_AD.md`; không bước nào *Ready* khi backend admin chưa có cửa và câu hỏi của nó chưa đóng; sửa ADR-101 điểm 6, không mở backend admin | Đã chốt 2026-10-13 (chủ repo, T-179) | — | P4A-01…P4A-11 · U-081…U-086 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7007,3 +7008,46 @@ người*; *khách không có tín hiệu đổi giá riêng*; *không tự gử
 **Applies to:** `P4-01`; mọi bước `P4-02`…`P4-12`; `fe/` (chưa tồn tại); `docs/product/2-db/10-quy-uoc-code.md` `QC-09`;
 `master_plan/FE_master_plan_banh_cuon_ba_thanh.md` §6 · §10; **ADR-054** · **ADR-086** · **ADR-097** · **ADR-100** ·
 **ADR-101** · **U-075** · **I-013** · **I-024**.
+
+### ADR-103 — Mảng admin vào sổ pha 4 dưới dạng mười một bước bị chặn, theo đúng danh sách trang của `PAGES_INDEX.md`
+
+**Trạng thái:** **Đã chốt** 2026-10-13, **chủ repo** (Claude Code, task `T-179`). Nguyên văn: *"work/backlog_FE.md
+hãy cập nhật file trên làm cả phần admin kết hợp với docs/private/fe/PAGES_INDEX.md docs/private/fe/fe_guidance"*.
+Claude hỏi lại hai câu; chủ repo chọn **"Thêm bước admin bị chặn"** (không chọn *mở backend admin trước*, không chọn
+*chỉ ghi làm tham khảo*) và chọn phạm vi **"Đúng các trang trong PAGES_INDEX"**, kể cả trang không có dữ kiện quán.
+Đây là câu của chủ repo về FE admin mà **ADR-101** mục *Suy ra* còn chờ.
+
+**Decision:**
+
+1. **Sửa ADR-101 điểm 6.** Mảng admin **có** bước trong pha 4: mười một bước `P4A-01`…`P4A-11`, mô tả dài ở **sổ
+   riêng `work/backlog_FE_AD.md`** — chủ repo cùng ngày: *"hãy tạo thêm 1 file backlo_fe_ad.md cho các task của
+   admin"* (tên chuẩn hoá theo `backlog_FE.md` · `backlog_AD_DB.md`, cùng khuôn ADR-051); thứ tự · mức · chặn ở
+   `master_plan/FE_master_plan_banh_cuon_ba_thanh.md` §6a; hàng §2 của `CLAUDE.md`.
+2. **Không mở backend admin.** ADR-068 vẫn đúng ở tầng API: chưa có cửa admin nào trong
+   `docs/product/3-be/openapi.yaml`. Mỗi bước `P4A-XX` vì thế **bị chặn**, và chỉ được *Ready* khi đủ ba điều:
+   (a) chủ repo mở một kế hoạch backend admin và cửa mà trang cần đã có trong hợp đồng; (b) câu `U-XXX` của bước,
+   nếu có, đã đóng; (c) `P4-04` đã *Done*. Pha 4 vẫn không đổi hợp đồng (ADR-101 điểm 3).
+3. **Danh sách trang lấy đúng từ `PAGES_INDEX.md`, cách làm thì không.** Bản ấy chép dự án khác: đăng nhập JWT,
+   WebSocket, CRUD tự do. Pha 4 vẫn theo **ADR-102** (danh tính bằng chọn tên, đọc lại sau ghi, luồng SSE) và
+   `docs/private/fe/fe_guidance/`. Tên route trong `PAGES_INDEX.md` chỉ là **tên nguồn của trang**, không phải route
+   đã chốt — owner của route ra đời ở `P4-02` (**ADR-035**).
+4. **Trang không có dữ kiện quán không được bịa luật.** Mỗi nhóm như vậy có một câu mở: báo cáo tổng kết (**U-081**),
+   thêm · xoá món, combo, danh mục, topping (**U-082**), tài khoản nhân viên (**U-083**), giao việc (**U-084**),
+   marketing (**U-085**), đào tạo (**U-086**). Chỗ `PAGES_INDEX.md` trái với dữ kiện đã có thì dữ kiện thắng: trang
+   kho không có *dự kiến hết* vì máy không kết luận thiếu (`master_plan/shop-facts.md` §8.4, `U-045` đã đóng).
+5. **Bước admin không chặn cổng pha 4.** Cổng §9 và `P4-12` không chờ `P4A-XX`.
+
+**Why:** chủ repo muốn thấy phần admin trong sổ frontend ngay; viết mô tả trước mà không cho bước nào *Ready* giữ
+được cả lời ấy lẫn sự thật là chưa có cửa backend để gọi. Ghi bước bị chặn rẻ hơn mở một lane backend chưa ai lên
+kế hoạch, và không màn nào bị dựng trên một cửa không tồn tại.
+
+**Rejected alternatives:** *mở backend admin trước rồi mới viết bước frontend* — chủ repo không chọn; *chỉ trỏ tới
+`PAGES_INDEX.md` làm tham khảo* — chủ repo không chọn; *chỉ giữ trang có dữ kiện quán* — chủ repo chọn đúng danh sách
+`PAGES_INDEX.md`, nên trang chưa có luật nhận một câu `U-XXX` thay vì bị bỏ.
+
+**Suy ra, chờ chủ repo xác nhận:** cách gộp trang thành mười một bước và mức của từng bước; điều (c) ở điểm 2;
+điểm 5. Ba nhóm admin đã có dữ kiện và lược đồ nhưng **không có trang** trong `PAGES_INDEX.md` — chấm công (§8.7),
+khoản của người, khoản chi (§8.10) — chưa có bước; thêm hay không là lời của chủ repo.
+
+**Applies to:** `T-179`; `work/backlog_FE.md` · `master_plan/FE_master_plan_banh_cuon_ba_thanh.md`;
+**ADR-035** · **ADR-051** · **ADR-068** · **ADR-101** · **ADR-102**.

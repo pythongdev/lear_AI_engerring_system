@@ -1,7 +1,8 @@
 <a id="top"></a>
 # Backlog — pha 4 · FE
 
-Mô tả dài của mười hai bước `P4-01`…`P4-12`. Dựng 2026-10-13 (T-178) sau khi chủ repo ký mở pha 4 (T-176) và hỏi
+Mô tả dài của mười hai bước `P4-01`…`P4-12`. Mười một bước admin `P4A-01`…`P4A-11` (đang bị chặn) có sổ riêng:
+[`work/backlog_FE_AD.md`](backlog_FE_AD.md) (2026-10-13, T-179, **ADR-103**). Dựng 2026-10-13 (T-178) sau khi chủ repo ký mở pha 4 (T-176) và hỏi
 **"backlog của phase 4 đâu"**. Vì sao pha 4 có sổ riêng: `docs/decisions.md` **ADR-036** luật 1 và **ADR-101**;
 hình dạng chép của `work/backlog_BE.md` (**ADR-051**).
 
@@ -50,8 +51,10 @@ hình dạng chép của `work/backlog_BE.md` (**ADR-051**).
 | P4-10 | [Khách — QR tại bàn và đơn web](#p4-10) |
 | P4-11 | [Chủ quán — két và ngày bán](#p4-11) |
 | P4-12 | [Cổng chất lượng pha 4 và rà ranh giới](#p4-12) |
+| P4A-01…P4A-11 | Mảng admin, đang bị chặn — sổ riêng [`backlog_FE_AD.md`](backlog_FE_AD.md) |
 
-**Chỗ đang chặn** — bảng sống ở kế hoạch §4. `P4-07` chờ **U-080** (Telegram); vế giao hàng chờ **S-6**.
+**Chỗ đang chặn** — bảng sống ở kế hoạch §4. `P4-07` chờ **U-080** (Telegram); vế giao hàng chờ **S-6**. Mọi `P4A-XX`
+chờ backend admin có cửa (**ADR-068**), sáu bước chờ thêm **U-081**…**U-086** (kế hoạch §6a, sổ `backlog_FE_AD.md`).
 
 ---
 

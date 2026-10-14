@@ -35,8 +35,9 @@ trong `./scripts/gate.sh`** — không có nó, báo cáo của Codex về một
 | **Tự tính tiền ở trình duyệt** — cộng giá gốc, phụ thu, giảm giá, tổng | Một hàm tính giá duy nhất ở backend (**ADR-086**, `I-013`); [`01-hop-dong-api.md`](../docs/product/3-be/01-hop-dong-api.md) §5 | Gọi tính thử (`POST /price-quotes`) hoặc đọc số backend trả |
 | **Đoán một luật quán** — chữ hiện cho khách, ai thấy nút nào ngoài ma trận vai | `CLAUDE.md` §3.5 | Mở `U-XXX`; màn bày lời từ chối của backend, không chặn thay |
 
-Ngoài ra **mảng admin** (nguyên liệu, chấm công, khoản của người, khoản chi — `ADM-XX`, `P2A-XX`) **không nằm
-trong pha 4**: backend của nó chưa có (**ADR-068**). Trang của chủ quán trong pha 4 chỉ là trang **có cửa ở pha 3**.
+Ngoài ra **mảng admin** có mười một bước `P4A-01`…`P4A-11` trong sổ pha 4 (**ADR-103**, chủ repo 2026-10-13), nhưng
+**mọi bước ấy đang bị chặn**: backend admin chưa có cửa (**ADR-068**). Trang của chủ quán **dựng được** trong pha 4 chỉ
+là trang **có cửa ở pha 3**. Danh sách và điều kiện mở: §6a.
 
 ## 3. Pha 4 nhận gì từ pha trước — đọc trước khi viết dòng code đầu tiên
 
@@ -57,6 +58,7 @@ trong pha 4**: backend của nó chưa có (**ADR-068**). Trang của chủ quá
 |---|---|---|
 | **U-080** — Telegram báo đơn web còn cần không khi đã có SSE | `P4-07` (màn quầy nhận đơn) | không chặn trang chủ quán |
 | **S-6** — đơn giao tận nơi bấm *đã ra bàn* lúc nào | `P4-07` vế giao hàng | cửa backend đang từ chối kèm mã; màn bày lời ấy |
+| **Backend admin chưa có cửa** (ADR-068) · **U-081**…**U-086** | mọi `P4A-XX` | §6a; không chặn cổng pha 4 |
 | **F-068** | không chặn bước nào | nợ test của `be/`; sửa trong lane backend |
 
 ## 5. Đầu ra pha 4 nằm ở đâu
@@ -88,6 +90,31 @@ với page product … build page product với crud trước"*): trang ấy có
 ra từ nó đã qua một lần duyệt chạm tiền trước khi nhân sang màn quầy. **Không bước nào là L3**; mỗi bước làm
 xong trong một phiên, bước to (`P4-07`, `P4-08`) được chẻ tiếp ở lúc nhận nếu một phiên không đủ.
 
+## 6a. Mười một bước admin — `P4A-01`…`P4A-11`, đều đang bị chặn
+
+**Nguồn:** chủ repo 2026-10-13 (**ADR-103**): thêm bước admin **bị chặn**, theo **đúng các trang admin** của
+`docs/private/fe/PAGES_INDEX.md`. Tên route ở cột hai là **tên nguồn** trong bản ấy, không phải route đã chốt
+(owner route ra đời ở `P4-02`). Mô tả dài của từng bước: [`work/backlog_FE_AD.md`](../work/backlog_FE_AD.md).
+Cách làm theo **ADR-102**, không theo JWT · WebSocket của `PAGES_INDEX.md`.
+
+**Một bước `P4A-XX` chỉ *Ready* khi đủ ba điều:** (a) chủ repo mở kế hoạch backend admin và cửa trang cần đã có trong
+`docs/product/3-be/openapi.yaml`; (b) câu `U-XXX` ở cột *Chặn thêm* đã đóng; (c) `P4-04` đã *Done*. Bước admin không
+chặn `P4-12` hay cổng §9.
+
+| ID | Trang (tên nguồn trong `PAGES_INDEX.md`) | Dữ kiện quán đã có | Chặn thêm | Mức |
+|---|---|---|---|---|
+| **P4A-01** | **Khung admin** — vỏ chung của `/admin/*` | lớp `chu_quan` ([`02-vai-va-quyen.md`](../docs/product/3-be/02-vai-va-quyen.md)) | — | L1 |
+| **P4A-02** | **Tổng quan** — `/admin/overview` | bảy thứ chủ quán muốn thấy, `master_plan/shop-facts.md` §8.6; *số tiền dự tính* không phải doanh thu đã đối soát | — | L2 |
+| **P4A-03** | **Tổng kết** — `/admin/summary` | doanh thu cộng hai nguồn, hoàn trừ ngày hoàn (§6); mức sâu tài chính chưa chốt (§8.2) | **U-081** | L2 |
+| **P4A-04** | **Sản phẩm** — `/admin/products` | sửa giá · ngừng bán đã ở `P4-05`; thêm · xoá món không có cửa (§6.12, §8.9) | **U-082** | L2 |
+| **P4A-05** | **Combo · danh mục · topping** — `/admin/combos` · `/admin/categories` · `/admin/toppings` | quán có combo (§8.9 D42); nhóm tuỳ chọn và phụ thu §4.4 | **U-082** | L2 |
+| **P4A-06** | **Nhân viên** — `/admin/staff` | chọn tên, không mật khẩu (T-143); mảng con người §8.7 | **U-083** | L2 |
+| **P4A-07** | **Giao việc** — `/admin/staff/task-board` · `/admin/todo-list` | chưa có | **U-084** | L1 |
+| **P4A-08** | **Nguyên liệu** — `/admin/ingredients` | sổ ghi tay điện tử §8.4; lược đồ `P2A-02` | — | L1 |
+| **P4A-09** | **Kho** — `/admin/storage` | §8.4: máy **không** kết luận thiếu ⇒ không có *dự kiến hết* | — | L1 |
+| **P4A-10** | **Marketing** — `/admin/marketing` | chưa có | **U-085** | L1 |
+| **P4A-11** | **Đào tạo** — `/admin/training` | chưa có | **U-086** | L1 |
+
 ## 7. Trang *Menu & giá* có gì — đọc từ cửa, không từ chữ *CRUD*
 
 Cửa của pha 3 cho chủ quán **xem**, **sửa có lý do** (giá gốc thành phần, phụ thu, số lượng thành phần suất) và
@@ -100,7 +127,9 @@ một nút ở pha 4.
 
 - **Cách chia mười hai bước và thứ tự §6.** Lời chủ repo mới là *mở pha 4* và *trang sản phẩm trước*.
 - **Trang thử đứng sau danh tính (`P4-04`)**: mọi cửa menu là lớp `chu_quan`, không có danh tính thì không gọi được.
-- **Mảng admin ngoài pha 4** — suy từ ADR-068 (*backend admin chưa mở*), chưa có câu nào của chủ repo về FE admin.
+- **Cách gộp trang admin thành mười một bước `P4A-XX`, mức của từng bước, và việc chúng không chặn cổng §9** — chủ repo
+  chỉ nói *thêm bước admin bị chặn, đúng các trang trong PAGES_INDEX* (2026-10-13, **ADR-103**). Chấm công, khoản của
+  người, khoản chi có dữ kiện nhưng không có trang trong `PAGES_INDEX.md`, nên chưa có bước.
 
 ## 9. Cổng chất lượng pha 4 — chỉ sang pha 5 khi đủ các ô, mỗi ô có bằng chứng
 
