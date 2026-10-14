@@ -209,7 +209,9 @@ It runs, in order — each script's header is the owner of how it works:
 9. `scripts/verify.sh` (Gate 1) — build, tests, `scripts/check-sqlcgen.sh`
    (regenerate sqlc code and compare), `scripts/db-check.sh` when the
    database side changed, `scripts/be-check.sh` when `be/` or the database
-   changed, every `scripts/*.test.sh`. Skipped for docs-only turns.
+   changed, `scripts/check-fe-rules.sh` when `fe/` exists and
+   `scripts/fe-check.sh` when `fe/` or the contract changed, every
+   `scripts/*.test.sh`. Skipped for docs-only turns.
 10. `scripts/check-commit-block.sh` (Gate 7/7b) — **Claude hook mode only**, once
    1–9 are green: the turn must hand over the §6.1 block, and the block's
    file list must fit the scope of the task its subject names (ADR-006,

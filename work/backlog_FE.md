@@ -235,7 +235,55 @@ có bằng chứng (`CLAUDE.md` §5).
 **Bẫy:** phép chặn tiền theo mẫu chữ sẽ có ca lọt — ghi rõ giới hạn trong header của script, phần còn lại là mắt
 người ở Gate 4.
 
-**Nhận việc:** —
+**Nhận việc** — *điền lúc nhận, khi mọi bước ở* Cần xong trước *đã `Done`* (**ADR-051**):
+- *Phạm vi* (nhận 2026-10-14, Claude Code; chủ repo chọn *"Gỡ chặn theo thứ tự"* để đi tới `P4A-01`…`P4A-03` — Claude
+  thiết kế, viết test hồi quy trước, Codex thi công trong worktree `../lean_wt/P4-03`, Claude duyệt): `scripts/check-fe-rules.sh`
+  (mới, chỉ đọc file) · `scripts/check-fe-rules.test.sh` (mới, **Claude viết trước**) · `scripts/fe-check.sh` (mới, chạy
+  npm) · `scripts/fe-check.test.sh` (mới) · `scripts/verify.sh` (nối hai script) · `docs/product/2-db/10-quy-uoc-code.md`
+  (`QC-18`: câu *nối `fe/` là `P4-03`* thành lệnh thật) · `docs/product/4-fe/01-khung-fe.md` (con trỏ tới cổng) ·
+  `CLAUDE.md` §5 bước 9 (một vế) · `work/backlog.md` · file này. **Không** sửa `fe/src/` hay `fe/package.json` trừ khi cổng
+  đỏ trên code thật — khi ấy dừng và báo; không `be/`, không `docs/product/3-be/`.
+- *Nghiệm thu* (viết trước khi dựng):
+  1. `scripts/check-fe-rules.sh` (đổi gốc bằng `FE_RULES_DIR`, mặc định `fe`) đọc mọi `.ts` `.tsx` `.js` `.jsx` `.mjs`
+     `.cjs` và `package.json` dưới gốc ấy, trừ `node_modules/` `.next/` và file sinh `src/lib/api/schema.ts`; in
+     `<đường dẫn tương đối>:<dòng>: <luật>: …` cho mỗi vi phạm, dòng cuối `check-fe-rules: PASS` (exit 0) hoặc
+     `check-fe-rules: FAIL — …` (exit 1). Bốn luật: `cong-tien` (toán tử số học có toán hạng mang tên tiền, kể cả
+     `reduce` cộng dồn) · `bo-ui-ngoai` (import hay phụ thuộc thư viện UI ngoài shadcn, **ADR-100**) · `cache-next`
+     (`"use cache"`, `unstable_cache`, `cacheLife`, `cacheTag`, `export const revalidate`, `force-static`, `force-cache`,
+     `next: { revalidate }` — **ADR-102** điểm 3a) · `ghi-tay-cache` (`setQueryData`, `setQueriesData` — **ADR-102**
+     điểm 2 · 3b). Chú thích không bao giờ tính; header ghi rõ ca lọt của `cong-tien`.
+  2. `scripts/check-fe-rules.test.sh` (Claude viết trước, Codex **không sửa ca nào**) xanh; mỗi luật có ít nhất một ca đỏ
+     và một ca xanh gần giống.
+  3. `scripts/fe-check.sh`: trong `fe/` cài đúng lockfile khi chưa cài (`npm ci`), rồi `npm run lint` · `npm run
+     typecheck` · `npm test` · `npm run build`; **sinh lại type vào thư mục tạm và so với `src/lib/api/schema.ts`** đã
+     commit — lệch ⇒ đỏ, in lệnh sửa (`npm run gen:api`); không sửa `fe/`. Đổi gốc cho test bằng biến môi trường.
+  4. `scripts/fe-check.test.sh` chứng minh phép so type biết đỏ: bản chép `openapi.yaml` thêm một đường gọi ⇒ đỏ; bản
+     thật ⇒ xanh; không mạng. Khi `fe/node_modules` chưa có, test in rõ lý do và không giả là đã chạy ca đỏ.
+  5. `scripts/verify.sh`: khi có `fe/package.json` luôn chạy `check-fe-rules.sh`; chạy `fe-check.sh` khi lượt đổi gì
+     dưới `fe/`, `docs/product/3-be/openapi.yaml` hay hai script ấy (cùng hình nhánh `be-check`); header ghi điều ấy.
+  6. Trên code thật của `fe/`: `check-fe-rules.sh` PASS, `fe-check.sh` xanh; mỗi luật cài lỗi trong **worktree riêng**
+     (`quality/review-gate.md` Gate 1, luật T-167) ⇒ `./scripts/gate.sh` đỏ, gỡ ⇒ xanh.
+  7. `QC-18` và `01-khung-fe.md` trỏ tới hai script; `CLAUDE.md` §5 bước 9 nêu `fe-check.sh`; `./scripts/gate.sh` xanh.
+- *Kiểm chứng:* `./scripts/check-fe-rules.test.sh` · `./scripts/fe-check.test.sh` · `./scripts/fe-check.sh` ·
+  bốn lỗi cài (một mỗi luật) + một lỗi lệch type trong worktree riêng, mỗi cái `./scripts/gate.sh` đỏ · `./scripts/gate.sh`
+  xanh ở clone chính sau tích hợp.
+
+**Bàn giao** (2026-10-14; thực hiện: Codex — `check-fe-rules.sh` · `fe-check.sh` · `fe-check.test.sh` · `verify.sh`, worktree
+`../lean_wt/P4-03` nhánh `codex/P4-03` base `b55737b`, một lượt; Claude viết `check-fe-rules.test.sh` trước, duyệt, sửa
+luật `cong-tien`, cài lỗi và tích hợp vào `fe_admin`; chưa commit). File: `scripts/check-fe-rules.sh` ·
+`scripts/check-fe-rules.test.sh` · `scripts/fe-check.sh` · `scripts/fe-check.test.sh` (bốn file mới) · `scripts/verify.sh` ·
+`docs/product/2-db/10-quy-uoc-code.md` (`QC-09` · `QC-18`) · `docs/product/4-fe/01-khung-fe.md` §3.1 · `CLAUDE.md` §5 bước 9 ·
+`work/backlog.md` · file này. Nghiệm thu → bằng chứng: 1 · 2 — `check-fe-rules.test.sh` *OK* (hash không đổi qua lượt
+Codex; Claude thêm hai ca sau duyệt); 3 — `fe-check.sh` ngoài sandbox: *apigen PASS*, *8 passed*, *Compiled successfully*,
+*fe-check: PASS*; 4 — `fe-check.test.sh`: bản thật exit 0, bản thêm đường gọi exit 1; 5 — `verify.sh` in `[fe]
+scripts/check-fe-rules.sh` rồi `[fe] scripts/fe-check.sh`; 6 — trong worktree: bốn lỗi cài vào `fe/src/lib/` ⇒ mỗi luật
+đỏ đúng tên, gỡ ⇒ PASS; `verify.sh` với `p.price + 1` ⇒ exit 1, với một dòng thêm vào `schema.ts` ⇒ exit 1 *type sinh
+lệch hợp đồng*; 7 — `./scripts/gate.sh` ở clone chính: *không cổng nào đỏ* (db-check chạy trên Docker vì lượt đổi
+`docs/product/2-db/`). **Lỗi duyệt bắt được:** luật `cong-tien` của Codex khớp tên tiền theo chuỗi con và cho tên bắt
+đầu giữa từ — `feedbackCount + 1`, `patientIndex - 1`, `coffeeSize * 2`, `giaiDoan + 1` đều đỏ nhầm; Claude sửa thành
+khớp theo đoạn camelCase/snake_case và neo đầu tên, thêm ca `money_ok_word_parts` · `money_segment_snake`. Ca nhầm còn
+lại, ghi ở header: tên có đoạn `total` mà không phải tiền (`totalPages`). Trong sandbox Codex, `next build` không mở được
+cổng và `go vet` không ghi được cache — Claude chạy lại ngoài sandbox. **Việc tiếp:** `P4-04`.
 
 [↑ đầu file](#top)
 

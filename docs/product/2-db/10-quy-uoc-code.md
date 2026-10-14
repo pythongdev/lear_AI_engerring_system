@@ -334,7 +334,7 @@ ghim của công cụ.
   Từ 2026-10-06 (`P3-03`) `scripts/verify.sh` dựng và kiểm Go trong `be/`, không ở gốc; phiên bản Go,
   thư viện web, cách truy cập database và khung test backend là `QC-11`…`QC-17`. `verify.sh` vẫn
   chỉ gọi Node khi `package.json` nằm ở gốc; `fe/` dựng 2026-10-13 (`P4-02`) với bản ghim, khung test và lệnh ở
-  `QC-18` — nối `fe/` vào `verify.sh` là `P4-03`.
+  `QC-18`; từ 2026-10-14 (`P4-03`) `verify.sh` kiểm `fe/` bằng `scripts/check-fe-rules.sh` và `scripts/fe-check.sh`.
 - **Nguồn:** owner — `master_plan/prompt-fullstack.md` §3.4 cho ngôn ngữ; §3.4 là bản xuất khẩu
   (**ADR-035** luật 3), và câu *"MySQL 8.4"* của chính khối ấy đã bị thay bởi `QC-01` — nên các phần
   còn lại của §3.4 **chưa** được chủ repo đọc lại sau ngày ấy.
@@ -735,6 +735,10 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   grep -qE '"gen:api": "openapi-typescript \.\./docs/product/3-be/openapi\.yaml ' fe/package.json || echo "thiếu lệnh gen:api sinh từ openapi.yaml"
   for f in cacheComponents partialPrefetching compress; do grep -qE "^ *$f: false," fe/next.config.ts || echo "fe/next.config.ts không tắt $f"; done
   ```
-  So file sinh với hợp đồng và chạy lint, kiểu, test trong cổng: `P4-03`.
+  **Trong cổng** (từ 2026-10-14, `P4-03`): `scripts/verify.sh` luôn chạy `scripts/check-fe-rules.sh` khi có
+  `fe/package.json` — bốn phép chặn tĩnh: cộng tiền ở frontend, bộ UI ngoài shadcn (**ADR-100**), cú pháp cache của
+  Next và ghi tay vào cache dữ liệu server (**ADR-102** điểm 2 · 3); và chạy `scripts/fe-check.sh` khi lượt đổi gì
+  dưới `fe/` hay `docs/product/3-be/openapi.yaml` — `npm ci` khi chưa cài, `lint` · `typecheck` · `test` · `build`,
+  rồi sinh lại type vào thư mục tạm và so với file sinh đã commit. Giới hạn của từng phép: header của hai script.
 - **Nguồn:** phiên chọn 2026-10-13 (Claude Code, `P4-02`) trên lựa chọn của **ADR-100** · **ADR-102** — bản ghim,
   tắt hai cờ cache của Next, nén, font hệ thống; số bản tra từ npm cùng ngày.

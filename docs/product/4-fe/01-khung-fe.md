@@ -42,7 +42,7 @@ khi ấy ghi lý do.
 
 - **Type sinh, không gõ tay.** `fe/src/lib/api/schema.ts` sinh từ `openapi.yaml` bằng `npm run gen:api` trong `fe/`
   (openapi-typescript, cờ `--enum-values` để có danh sách mã lỗi lúc chạy). Hợp đồng đổi ⇒ chạy lại lệnh và
-  commit file sinh cùng lượt; `P4-03` làm cổng đỏ khi file sinh lệch hợp đồng.
+  commit file sinh cùng lượt; `scripts/fe-check.sh` (`P4-03`) làm cổng đỏ khi file sinh lệch hợp đồng.
 - **`int64` sinh thành số JavaScript** (`number`). Chấp nhận vì mã và số tiền của một quán nằm xa giới hạn số
   nguyên an toàn (**ADR-102** điểm 5).
 - **Mọi lời gọi đi qua `fe/src/lib/api/client.ts`** (openapi-fetch có kiểu theo đường gọi): `createApi` dựng

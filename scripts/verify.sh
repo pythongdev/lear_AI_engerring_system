@@ -10,6 +10,10 @@
 #           be-check.sh runs when be/, db/, compose.yaml or scripts/be-check.sh
 #           changed; it requires Docker and fails if Docker is unavailable. It runs the
 #           QC-17 test-name check first, so a turn that changes only be/ is checked (F-061).
+#   fe    — fe/package.json present: always check-fe-rules.sh; fe-check.sh runs
+#           lint, typecheck, tests, build and compares generated API types when fe/,
+#           docs/product/3-be/openapi.yaml, scripts/fe-check.sh or
+#           scripts/check-fe-rules.sh changed. Missing node_modules: npm ci.
 #   Node  — package.json present and npm installed: npm test / lint / build,
 #           each only if the package defines it (--if-present).
 #   db    — db/ exists AND this turn changed something under db/, compose.yaml,
@@ -44,6 +48,19 @@ if [ -f "be/go.mod" ]; then
   fi
 else
   echo "[be] skipped — no be/go.mod"
+fi
+
+if [ -f "fe/package.json" ]; then
+  echo "[fe] scripts/check-fe-rules.sh"
+  "$(cd "$(dirname "$0")" && pwd)"/check-fe-rules.sh
+  if [ -n "$(git status --porcelain --untracked-files=all -- fe docs/product/3-be/openapi.yaml scripts/fe-check.sh scripts/check-fe-rules.sh)" ]; then
+    echo "[fe] scripts/fe-check.sh"
+    "$(cd "$(dirname "$0")" && pwd)"/fe-check.sh
+  else
+    echo "[fe] skipped — nothing under fe/, docs/product/3-be/openapi.yaml, scripts/fe-check.sh or scripts/check-fe-rules.sh changed"
+  fi
+else
+  echo "[fe] skipped — no fe/package.json"
 fi
 
 if [ -f "package.json" ]; then
