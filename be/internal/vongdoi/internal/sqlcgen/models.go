@@ -8,6 +8,28 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Account struct {
+	ID                   int64
+	Username             string
+	Email                string
+	RequestedDisplayName string
+	Status               string
+	PersonID             pgtype.Int8
+	RoleCode             pgtype.Text
+	DecidedAt            pgtype.Timestamptz
+	DecidedByPersonID    pgtype.Int8
+	CreatedAt            pgtype.Timestamptz
+}
+
+type AccountPassword struct {
+	ID                 int64
+	AccountID          int64
+	PasswordHash       string
+	SetByPersonID      pgtype.Int8
+	MustChangePassword bool
+	CreatedAt          pgtype.Timestamptz
+}
+
 type AssignedTask struct {
 	ID               int64
 	Content          string
@@ -123,6 +145,17 @@ type HolidayBonu struct {
 	PaidDate       pgtype.Date
 	PersonID       int64
 	CreatedAt      pgtype.Timestamptz
+}
+
+type LoginSession struct {
+	ID            int64
+	AccountID     int64
+	TokenHash     []byte
+	CreatedAt     pgtype.Timestamptz
+	ExpiresAt     pgtype.Timestamptz
+	EndedAt       pgtype.Timestamptz
+	EndReason     pgtype.Text
+	CounterDutyID pgtype.Int8
 }
 
 type MenuCategory struct {
@@ -288,6 +321,15 @@ type PaperLedger struct {
 	PersonID   int64
 	DeclaredAt pgtype.Timestamptz
 	CreatedAt  pgtype.Timestamptz
+}
+
+type PasswordReset struct {
+	ID        int64
+	AccountID int64
+	TokenHash []byte
+	CreatedAt pgtype.Timestamptz
+	ExpiresAt pgtype.Timestamptz
+	UsedAt    pgtype.Timestamptz
 }
 
 type Person struct {

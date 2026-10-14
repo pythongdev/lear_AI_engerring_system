@@ -144,7 +144,11 @@ của mảng tài chính.
   buổi** — chủ quán sửa ngoài buổi bán (chủ repo trả lời 2026-10-14, T-188).
 - **Chi phí marketing là một loại khoản chi** (§8.10, lời đóng `U-085` · `U-093`), trả bằng **tiền riêng** của
   chủ quán: nó **không** vào phép đối soát két cuối ngày.
-- **Tài khoản đăng nhập** (§8.8, **ADR-104**) — hành vi chờ thiết kế `T-181`; mục này chưa nói gì thêm.
+- **Tài khoản đăng nhập** (§8.8, lời đóng `U-083` · `U-088`; thiết kế **ADR-109**, chủ repo duyệt 2026-10-14).
+  Người làm **tự đăng ký** và tự đặt mật khẩu; tài khoản chỉ dùng được sau khi **chủ quán duyệt** và gán vai, chủ
+  quán **khoá** được khi người nghỉ việc. Gmail **chỉ để nhận thư đặt lại** mật khẩu. Ở máy quầy dùng chung, người
+  trước đăng xuất, người sau đăng nhập, và **lần đăng nhập ở quầy là mốc đổi người** `C36`. Thư không đi được thì
+  chủ quán đặt một mật khẩu tạm, người làm đổi ở lần đăng nhập kế.
 
 **Luật viết cho mọi lần cập nhật admin sau này:** nội dung admin vào **mục riêng có nhãn**, không
 chen vào mục của mảng bán hàng — `docs/decisions.md` **ADR-013**.

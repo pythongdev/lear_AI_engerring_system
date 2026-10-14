@@ -496,3 +496,12 @@ mỗi chỗ một ghi chú có ngày, không đổi lời nghiệp vụ: `14-luo
 viết lại ở `T-125`), `13-luoc-do-cham-cong.md` (*ba* khoá về người, khớp test), `../00-index.md` (người
 dựng ở `P2-08`), `../1-system-design/architecture.md` §14 (trực quầy đã có chỗ cất), `work/backlog_AD.md`
 hai chỗ (Goal chấm công cũ hơn lời một ô mỗi ngày; lược đồ vết đã dựng).
+
+
+### Lát tài khoản đăng nhập — P2A-14 (2026-10-14)
+
+Ý định: [19-luoc-do-tai-khoan.md](19-luoc-do-tai-khoan.md); test Claude viết trước:
+`db/tests/i033_account_session_and_reset.sql`. Câu đối chiếu `db/reconcile/i033.sql`,
+mỗi câu một lỗi cài trong `db/reconcile/proof/`; YC-38 đọc và sai ở `db/scenario/yc.sql`.
+Bước 27 có khoá chặn lùi. Chưa ký nghiệm thu database: Claude chạy test, lỗi cài,
+vòng xuôi · lùi · xuôi lại và toàn bộ `./scripts/db-check.sh` tại clone chính.

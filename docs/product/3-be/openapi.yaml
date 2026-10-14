@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.21.0
+  version: 0.22.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -3485,6 +3485,43 @@ components:
 # internal (không bao giờ là luật người dùng chạm tới) hoặc unreviewed (chưa lát nào xét — chạy như
 # internal_error). Lát dựng cửa chạm một bảng thì xét lại dòng của bảng ấy (01-hop-dong-api.md §4).
 x-constraint-errors:
+  account_decided_by_person_fkey: unreviewed
+  account_email_check: unreviewed
+  account_email_key: unreviewed
+  account_password_account_fkey: unreviewed
+  account_password_hash_check: unreviewed
+  account_password_pkey: internal
+  account_password_set_by_person_fkey: unreviewed
+  account_password_temporary_check: unreviewed
+  account_person_fkey: unreviewed
+  account_person_key: unreviewed
+  account_pkey: internal
+  account_requested_display_name_check: unreviewed
+  account_role_code_check: unreviewed
+  account_status_check: unreviewed
+  account_status_shape_check: unreviewed
+  account_username_check: unreviewed
+  account_username_key: unreviewed
+  login_session_account_fkey: unreviewed
+  login_session_active_account_check: unreviewed
+  login_session_counter_duty_fkey: unreviewed
+  login_session_counter_duty_key: unreviewed
+  login_session_duty_person_check: unreviewed
+  login_session_end_pair_check: unreviewed
+  login_session_end_reason_check: unreviewed
+  login_session_ended_at_check: unreviewed
+  login_session_ended_immutable_check: unreviewed
+  login_session_expiry_check: unreviewed
+  login_session_pkey: internal
+  login_session_token_hash_check: unreviewed
+  login_session_token_key: unreviewed
+  password_reset_account_fkey: unreviewed
+  password_reset_expiry_check: unreviewed
+  password_reset_pkey: internal
+  password_reset_token_hash_check: unreviewed
+  password_reset_token_key: unreviewed
+  password_reset_used_at_check: unreviewed
+  password_reset_used_once_check: unreviewed
   bill_standalone_debt_note_check: debt_note_required
   bill_debt_note_only_with_debt_check: internal
   reconciled_day_gap_explained_check: gap_explanation_required

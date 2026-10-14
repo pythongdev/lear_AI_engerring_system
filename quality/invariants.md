@@ -1536,3 +1536,56 @@ hơn 0.
 
 *Viết ở P2A-10, 2026-10-14, Claude Code — từ lời chủ quán đóng `U-082` · `U-092` và lời chủ repo T-188
 (phụ thu cộng thêm, giá combo không đổi giữa buổi). Ba chỗ suy ra ghi ở mục Why.*
+
+### I-033 — Mỗi tài khoản gắn NHIỀU NHẤT MỘT người của quán và chỉ dùng được sau khi CHỦ QUÁN DUYỆT; mật khẩu chỉ tồn tại dạng BĂM; mã phiên và mã đặt lại chỉ tồn tại dạng băm, có hạn; đăng nhập ở quầy là đúng một mốc trực quầy của chính người ấy
+
+**Invariant:**
+Mệnh đề của tài khoản đăng nhập (`master_plan/shop-facts.md` §8.8, lời đóng `U-083` · `U-088`,
+2026-10-14; thiết kế `docs/decisions.md` **ADR-109**, chủ repo duyệt cùng ngày). Bảy vế:
+
+- **Một tài khoản, nhiều nhất một người; một người, nhiều nhất một tài khoản.** Tài khoản *chờ duyệt*
+  hay *bị từ chối* chưa gắn người nào; tài khoản *hoạt động* hay *khoá* gắn đúng một người thuộc tập
+  người của quán, mang một vai trong bốn vai của `shop-facts.md` §3, cùng **ai duyệt** và **lúc duyệt**.
+  Một lần từ chối cũng mang ai quyết và lúc quyết.
+- **Tên đăng nhập và Gmail mỗi thứ đứng một lần**, không phân biệt hoa thường.
+- **Mật khẩu chỉ tồn tại dạng băm argon2id.** Không chỗ nào cất mật khẩu thô hay mã hoá hai chiều; mỗi
+  lần đặt mật khẩu là một bản mới, bản cũ ở lại, mật khẩu hiện hành là bản mới nhất. Mật khẩu tạm do
+  chủ quán đặt mang tên chủ quán và buộc đổi ở lần đăng nhập kế.
+- **Chỉ tài khoản hoạt động có phiên còn hiệu lực.** Khoá, đặt lại, đổi mật khẩu hay đăng xuất kết thúc
+  phiên kèm lý do; một phiên đã kết thúc không mở lại được.
+- **Mã phiên và mã đặt lại chỉ tồn tại dạng băm** và có hạn: phiên sống nhiều nhất 7 ngày kể từ lúc mở,
+  mã đặt lại nhiều nhất 30 phút và dùng nhiều nhất một lần, trong hạn.
+- **Đăng nhập ở quầy gắn đúng một khoảng trực quầy, và khoảng ấy là của chính người đăng nhập** — không
+  có chỗ cất mốc đổi người thứ hai ngoài trực quầy (`YC-15`).
+- **Tài khoản không bị xoá cứng**; đổi trạng thái, vai hay người gắn là cập nhật có vết theo `I-018`.
+
+**Mệnh đề không nói** đăng nhập sai bao nhiêu lần thì chặn, hay mỗi Gmail nhận bao nhiêu thư một giờ —
+hai con số của **ADR-109** giữ ở cửa backend, không phải trạng thái dữ liệu. Nó không nói vai mở quyền
+nào — vai không mở quyền (**ADR-109** điểm 3); quyền vẫn đọc từ trực quầy và cờ chủ quán. Nó không nói
+đổi Gmail hay đổi tên đăng nhập — lời không nói.
+
+**Giới hạn đã biết:** máy giữ được rằng một phiên mang một tài khoản; nó không ngăn được người khác dùng
+máy đang đăng nhập dở, cùng hình chỗ đứng dùng chung của `I-012`. Nó không biết một mật khẩu có yếu
+hay đã lộ — chỉ biết bản cất là băm.
+
+**Why:**
+Lời quán đổi *chọn tên* sang *tài khoản mật khẩu riêng* để mọi thao tác chạm tiền mang đúng người bấm.
+Một người có hai tài khoản thì hai tên đăng nhập cùng ký một người; một tài khoản chưa duyệt mở được
+phiên thì người lạ tự đăng ký là vào máy. Mật khẩu hay mã phiên cất thô thì một bản sao database là cả
+quán bị lộ. Đăng nhập quầy ghi vào trực quầy sẵn có để *ai đứng quầy lúc ấy* có một câu trả lời duy
+nhất. Các con số 7 ngày, 30 phút và vế *Gmail không buộc đuôi* là **suy ra** của phiên, chủ repo xác
+nhận cùng lần duyệt **ADR-109**.
+
+**Verification:**
+Kịch bản âm: tài khoản chờ duyệt gắn người, tài khoản hoạt động thiếu người, vai, người duyệt hay lúc
+duyệt, hai tài khoản cùng một người, tên đăng nhập hay Gmail trùng (kể cả khác hoa thường), một bản
+mật khẩu không mang dạng băm argon2id, một mã phiên hay mã đặt lại không phải băm 32 byte, một phiên
+sống quá 7 ngày, một mã đặt lại sống quá 30 phút hay dùng ngoài hạn, một phiên đã kết thúc mở lại,
+hai phiên cùng một khoảng trực, xoá cứng một tài khoản ⇒ **bị từ chối**. Kịch bản dương: tự đăng ký,
+chủ quán duyệt và gán vai, đặt mật khẩu, đăng nhập ở quầy, đăng xuất ⇒ đọc lại được ai duyệt, lúc nào,
+vai, phiên mở lúc nào, kết thúc vì sao, khoảng trực quầy của chính người ấy. Kịch bản đổi mật khẩu:
+đặt hai lần ⇒ hai bản còn, bản mới nhất là hiện hành. Kiểm ngược: mọi phiên còn hiệu lực thuộc một tài
+khoản hoạt động; mọi phiên gắn trực quầy gắn khoảng của chính người của tài khoản ấy.
+
+*Viết ở P2A-14, 2026-10-14, Claude Code — từ lời chủ quán đóng `U-083` · `U-088` và thiết kế
+**ADR-109** chủ repo duyệt. Chỗ suy ra ghi ở mục Why.*

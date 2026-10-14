@@ -948,4 +948,34 @@ BEGIN
   PERFORM set_config('shop.revision_reason', coalesce(ly_do_truoc, ''), true);
 END $$;
 
+-- YC-38: tự đăng ký, duyệt, mở phiên, dùng mã đặt lại, kết thúc phiên.
+DO $$
+DECLARE acc bigint; p bigint; sess bigint; rst bigint; chu bigint := pg_temp.sc_nguoi('Chủ quán');
+  actor_truoc text := current_setting('shop.actor_person_id', true);
+  ly_do_truoc text := current_setting('shop.revision_reason', true);
+BEGIN
+  PERFORM set_config('shop.actor_person_id', chu::text, true);
+  PERFORM set_config('shop.revision_reason', 'YC-38 duyệt và kết thúc phiên', true);
+  INSERT INTO person (display_name) VALUES ('YC-38 người đăng ký') RETURNING id INTO p;
+  INSERT INTO account (username, email, requested_display_name)
+    VALUES ('yc38.account', 'yc38@example.com', 'YC-38 người đăng ký') RETURNING id INTO acc;
+  INSERT INTO account_password (account_id, password_hash) VALUES (acc, '$argon2id$scenario');
+  UPDATE account SET status = 'hoat_dong', person_id = p, role_code = 'quay', decided_at = now(), decided_by_person_id = chu WHERE id = acc;
+  INSERT INTO login_session (account_id, token_hash, expires_at)
+    VALUES (acc, sha256('yc38-session'), now() + interval '7 days') RETURNING id INTO sess;
+  INSERT INTO password_reset (account_id, token_hash, expires_at)
+    VALUES (acc, sha256('yc38-reset'), now() + interval '30 minutes') RETURNING id INTO rst;
+  UPDATE password_reset SET used_at = now() WHERE id = rst;
+  UPDATE login_session SET ended_at = now(), end_reason = 'dat_lai_mat_khau' WHERE id = sess;
+  PERFORM pg_temp.yc_doc('YC-38', (SELECT format('%s · người %s · vai %s · duyệt %s lúc %s · mật khẩu %s bản · phiên kết thúc %s vì %s · mã dùng %s',
+    a.username, pg_temp.yc_ten(a.person_id), a.role_code, pg_temp.yc_ten(a.decided_by_person_id), a.decided_at,
+    (SELECT count(*) FROM account_password WHERE account_id = a.id), s.ended_at, s.end_reason, r.used_at)
+    FROM account a JOIN login_session s ON s.account_id = a.id JOIN password_reset r ON r.account_id = a.id
+    WHERE a.username = 'yc38.account'));
+  PERFORM pg_temp.yc_tu_choi('YC-38', 'mở lại phiên đã kết thúc',
+    format('UPDATE login_session SET ended_at = NULL, end_reason = NULL WHERE id = %s', sess));
+  PERFORM set_config('shop.actor_person_id', coalesce(actor_truoc, ''), true);
+  PERFORM set_config('shop.revision_reason', coalesce(ly_do_truoc, ''), true);
+END $$;
+
 ROLLBACK;

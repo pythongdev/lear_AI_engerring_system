@@ -125,7 +125,7 @@ có câu trả lời mới từ người.
 | ADR-106 | **Lát khoản chi: hai bảng `expense_category` · `expense`; nguồn tiền là một cờ bắt buộc trên loại, không sửa được sau khi có loại; khoản giữ bốn câu của `I-029` và không gì hơn** | Đã chốt 2026-10-14, giao cho phiên (Claude Code, `P2A-05`) | — | P2A-05 · ADR-074 · I-029 |
 | ADR-107 | **Lát đào tạo: tệp ảnh · video nằm NGOÀI database, trong kho tệp trên chính nơi hệ thống chạy (PT-2), database cất một khoá tệp tương đối ngắn**; hướng dẫn là một dòng mỗi chữ · ảnh · video, gắn đúng một việc giao; ghi nhận đào tạo đứng trên người, nhận xét và đánh giá `pass` · `not_yet` tuỳ chọn nhưng không rỗng cả hai; về ai, ai ghi, việc của hướng dẫn không sửa được | Đã chốt 2026-10-14 (giao cho phiên, P2A-12) | — | P2A-12 · I-031 · YC-36 · ADR-105 |
 | ADR-108 | **Lát danh mục và combo: bốn bảng thêm cạnh lát menu, không thêm cột vào bảng món**; món nhiều nhất một danh mục bằng bảng xếp có khoá duy nhất trên món; combo mang `price_vnd` riêng, *ít nhất một món* là trigger ràng buộc hoãn tới lúc kết thúc giao dịch; tên danh mục duy nhất trong danh mục còn dùng; *không đổi giá giữa buổi* và *chỉ chủ quán* ở cửa backend | Đã chốt 2026-10-14 (giao cho phiên, P2A-13) | — | P2A-13 · I-032 · YC-37 · ADR-105 |
-| ADR-109 | **Đăng nhập bằng tài khoản** (thiết kế `T-181`): tài khoản tách khỏi `person`, bốn trạng thái, chủ quán duyệt và gán vai (vai không mở quyền); mật khẩu argon2id; phiên là cookie mang mã ngẫu nhiên, băm ở database, 7 ngày; đăng nhập `tai_quay` mở trực quầy qua `nguoi/vao_quay`; đặt lại qua thư 30 phút một lần, thư là `PT-7`; gỡ `X-Person-Id`; ba lát `P2A-14` → backend → `P4-04` | **Đề xuất — chờ chủ repo duyệt** (2026-10-14, Claude Code, T-181) | — | `P2A-14` · `P4-04` · `P4A-06` · ADR-085 · ADR-102 · ADR-104 |
+| ADR-109 | **Đăng nhập bằng tài khoản** (thiết kế `T-181`): tài khoản tách khỏi `person`, bốn trạng thái, chủ quán duyệt và gán vai (vai không mở quyền); mật khẩu argon2id; phiên là cookie mang mã ngẫu nhiên, băm ở database, 7 ngày; đăng nhập `tai_quay` mở trực quầy qua `nguoi/vao_quay`; đặt lại qua thư 30 phút một lần, thư là `PT-7`; gỡ `X-Person-Id`; ba lát `P2A-14` → backend → `P4-04` | Đã chốt 2026-10-14 (chủ repo duyệt, T-181) | — | `P2A-14` · `P4-04` · `P4A-06` · ADR-085 · ADR-102 · ADR-104 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7265,10 +7265,7 @@ backend, cùng lý do **ADR-105** điểm 1.
 
 ### ADR-109 — Đăng nhập bằng tài khoản: mật khẩu băm argon2id, phiên là cookie mang mã ngẫu nhiên, đăng nhập ở quầy mở trực quầy
 
-**Trạng thái:** **Đề xuất — chờ chủ repo duyệt** (2026-10-14, Claude Code, task `T-181`, mức **L3**). Lời quán ở
-`master_plan/shop-facts.md` §8.8 (*Lượt hai 2026-10-14*, đóng `U-088`); mọi điểm dưới đây là **lựa chọn thiết kế của
-phiên**, không phải lời chủ quán. **ADR-104** điểm 2 đứng nguyên: không ai code mật khẩu trước khi chủ repo duyệt mục
-này. Duyệt xong thì đổi dòng trạng thái thành *Đã chốt* kèm ngày và người duyệt, rồi `P2A-14` mới nhận việc.
+**Trạng thái:** **Đã chốt** 2026-10-14 — chủ repo duyệt nguyên bản trong hội thoại (nguyên văn *"duyệt"*), gồm cả năm điểm ở *Suy ra* (Claude Code, task `T-181`, mức **L3**). Lời quán ở `master_plan/shop-facts.md` §8.8 (*Lượt hai 2026-10-14*, đóng `U-088`); mọi điểm dưới đây là **thiết kế của phiên được chủ repo duyệt**, không phải lời chủ quán. **ADR-104** điểm 2 được gỡ: code đi theo ba lát của điểm 12, bắt đầu từ `P2A-14`.
 
 **Context:** lời chủ quán đã nói bốn điều — tự đăng ký, chủ quán duyệt và gán vai; tự đặt mật khẩu; Gmail chỉ để nhận
 thư đặt lại; ở máy quầy dùng chung, lần đăng nhập là mốc đổi người `C36`. Code hiện tại tin header `X-Person-Id`
@@ -7314,16 +7311,16 @@ người**, không đổi ma trận vai × cửa của `docs/product/3-be/02-vai
 9. **Thư đặt lại là phụ thuộc ngoài mới `PT-7`** của `docs/product/1-system-design/01-ranh-gioi-he-thong.md`, cùng
    đường suy giảm: dịch vụ gửi thư chết thì **không ai tự đặt lại được**, mọi thứ khác chạy; người quên mật khẩu nhờ
    chủ quán **khoá rồi mở lại tài khoản kèm mật khẩu tạm** mà người ấy phải đổi ở lần đăng nhập kế. Dòng `PT-7` và
-   đường suy giảm được viết ở bước thi công đầu tiên sau khi mục này được duyệt.
+   đường suy giảm được viết ở `P2A-14`, bước thi công đầu tiên.
 10. **Khởi tạo chủ quán đầu tiên:** không ai duyệt được người duyệt đầu tiên, nên một lệnh chạy trên máy chủ (không phải
     cửa HTTP) tạo tài khoản `hoat_dong` cho một `person` có `is_owner`. Chủ quán thứ hai trở đi cũng qua lệnh ấy.
 11. **Đọc công khai giữ như hợp đồng hiện tại:** màn trạm chỉ đọc, khách QR và khách web không đăng nhập. `GET /people`
     thôi công khai (lớp `nguoi_quan`) vì danh sách tên chỉ còn dùng cho người đã đăng nhập (giao việc, khai người giao).
 12. **Chia thi công làm ba lát, đúng thứ tự:** (a) `P2A-14` — lược đồ ba bảng *tài khoản* · *phiên đăng nhập* · *mã đặt
     lại*, cột liên kết phiên → `counter_duty`, mệnh đề mới ở `quality/invariants.md` và dòng `YC` ở
-    `04-yeu-cau-du-lieu.md` (Claude viết, thay dòng *chờ* của **ADR-105** điểm 7), test hồi quy viết trước;
+    `04-yeu-cau-du-lieu.md` (Claude viết, thay dòng *chờ* của **ADR-105** điểm 7), dòng `PT-7`, test hồi quy viết trước;
     (b) một task backend mới — cửa đăng ký · đăng nhập · đăng xuất · đặt lại · duyệt · khoá, `Authenticator` mới, gỡ
-    `ChonTen`, đổi hợp đồng `openapi.yaml` (đổi khớp nối ⇒ tăng phiên bản phụ), dòng `PT-7`; (c) `P4-04` dựng lại màn
+    `ChonTen`, đổi hợp đồng `openapi.yaml` (đổi khớp nối ⇒ tăng phiên bản phụ); (c) `P4-04` dựng lại màn
     đăng nhập thay màn chọn tên. Lát (b) và (c) chưa có mã trong backlog — tạo khi (a) xong.
 
 **Why:** tách tài khoản khỏi `person` giữ nguyên mọi khoá ngoại *ai bấm* và cho phép người đăng ký trước khi chủ quán
@@ -7340,7 +7337,7 @@ quầy* — chặt hơn, nhưng hôm nay ai cũng vào quầy được từ mọ
 mới cần lời quán, không phải phần của thiết kế này; *giữ `X-Person-Id` song song một thời gian* — một đường tin lời
 người gửi còn mở là cả thiết kế vô nghĩa.
 
-**Suy ra, chờ chủ repo xác nhận:** (1) Gmail không bị buộc đuôi `@gmail.com` — lời nói *google mail*, phiên đọc là
+**Suy ra, chủ repo xác nhận 2026-10-14 cùng lần duyệt:** (1) Gmail không bị buộc đuôi `@gmail.com` — lời nói *google mail*, phiên đọc là
 *một địa chỉ thư nhận được*; (2) hạn phiên 7 ngày, chặn 15 phút sau 5 lần sai, mã đặt lại 30 phút, 3 thư một giờ, mật
 khẩu tối thiểu 8 ký tự — con số của phiên; (3) đường *chủ quán khoá rồi mở lại kèm mật khẩu tạm* khi thư không đi —
 lời chỉ nói người làm tự đặt lại; (4) vai không mở quyền, chỉ chọn khung màn; (5) chủ quán cũng đăng nhập bằng tài
@@ -7349,3 +7346,9 @@ khoản như mọi người (đã có lời **ADR-104**: *kể cả chủ quán*
 **Applies to:** task `T-181` → `P2A-14` · task backend sau nó · `P4-04` · `P4A-06`; **ADR-085** (`Authenticator`) ·
 **ADR-102** điểm 7 (danh tính đi bằng header — bị thay ở lát b) · **ADR-104** · **ADR-105** điểm 7;
 `master_plan/shop-facts.md` §3 · §8.8; `docs/product/3-be/02-vai-va-quyen.md`; `be/internal/authz/`.
+
+**Sửa đổi 2026-10-14 (P2A-14, Claude Code — suy ra của phiên, chưa ai xác nhận).** Điểm 3 thêm một mã vai thứ năm,
+`owner`, chỉ cho tài khoản của chủ quán: `shop-facts.md` §3 gọi chủ quán (`owner`) là **một vai riêng ngoài năm trạm**,
+nên tài khoản chủ quán không phải mang một trong bốn vai trạm. Chỉ lệnh khởi tạo ở điểm 10 đặt được mã ấy, màn duyệt
+không; quyền vẫn đọc từ cờ `is_owner`, không từ mã vai. Mã bốn vai trạm: `quay` · `trang_banh` · `gap_banh` ·
+`canh_don_ban` (vai *canh & dọn* của §3 không có mã ở owner; `canh_don_ban` là tên của phiên).

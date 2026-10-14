@@ -1829,6 +1829,76 @@ là đầu ra của thiết kế ấy, không viết trước.
 **Bẫy hay sửa nhầm nhất:** header `X-Person-Id` và luật chọn tên của `T-143` còn chạy tới khi thiết kế thay; trực quầy
 `counter_duty` đã có — đăng nhập ghi vào nó, không mở bảng mốc thứ hai.
 
+**Nhận việc** — 2026-10-14 (Claude Code), mức **L2**; `T-181` Done cùng ngày (**ADR-109** chủ repo duyệt nguyên văn
+*"duyệt"*). Chủ repo giao *"làm T-181 và P2A-14, rồi P2A-15 và P2A-16 — yêu cầu codex làm bạn kiểm tra"*: **Claude**
+viết mệnh đề `I-033`, dòng `PT-7`, hành vi ở `01-ranh-gioi.md`, chọn hình lược đồ và viết test đỏ trước; **Codex**
+thi công migration, file lát, câu đối chiếu, lỗi cài, dòng chấm `YC-38`, hàng `I-033` ở `03-bao-ve-invariant.md` và dòng
+`YC-38` ở `04-yeu-cau-du-lieu.md` trong worktree riêng; **Claude** chạy `db-check`, sinh lại code sqlc và duyệt.
+- *Hình (Claude chọn, theo **ADR-109**):* bốn bảng.
+  `account` — `username` (chữ thường `[a-z0-9._-]`, 3–32, duy nhất) · `email` (chữ thường, có `@`, duy nhất) ·
+  `requested_display_name` (không trắng) · `status` ∈ `cho_duyet` · `hoat_dong` · `khoa` · `tu_choi` (QD-40, chữ của
+  owner **ADR-109**) · `person_id` (nullable, duy nhất) · `role_code` ∈ `quay` · `trang_banh` · `gap_banh` ·
+  `canh_don_ban` · `owner` (**ADR-109** *Sửa đổi*) · `decided_at` · `decided_by_person_id`; một ràng buộc hình theo
+  trạng thái: chờ duyệt ⇒ không người, vai, quyết; từ chối ⇒ không người, vai, có quyết; hoạt động · khoá ⇒ đủ cả bốn.
+  `shop_app` chỉ sửa được `status` · `person_id` · `role_code` · `decided_at` · `decided_by_person_id`.
+  `account_password` — chỉ thêm: `account_id` · `password_hash` (tiền tố `$argon2id$`) · `set_by_person_id` (nullable) ·
+  `must_change_password` = có người đặt; bản hiện hành là bản mới nhất.
+  `login_session` — `account_id` · `token_hash` bytea 32 byte duy nhất · `expires_at` (sau lúc mở, nhiều nhất 7 ngày) ·
+  `ended_at` + `end_reason` ∈ `dang_xuat` · `doi_mat_khau` · `dat_lai_mat_khau` · `khoa_tai_khoan` (cả hai hoặc không) ·
+  `counter_duty_id` (nullable, duy nhất); trigger từ chối (`check_violation`) mở phiên cho tài khoản không `hoat_dong`,
+  gắn khoảng trực của người khác, và mở lại hay đổi một phiên đã kết thúc; `shop_app` chỉ sửa `ended_at` · `end_reason`.
+  `password_reset` — `account_id` · `token_hash` bytea 32 byte duy nhất · `expires_at` (nhiều nhất 30 phút) · `used_at`
+  (trong hạn); trigger từ chối dùng lần hai; `shop_app` chỉ sửa `used_at`.
+  Mọi bảng mang trigger vết (QD-52), không quyền xoá (QD-50). Số lần sai và số thư một giờ **không** có chỗ cất — tầng
+  3, đếm ở backend (**ADR-109** điểm 5 · 8).
+- *Nghiệm thu:*
+  1. `db/tests/i033_account_session_and_reset.sql` (Claude viết, **đỏ** trước khi có lược đồ) **xanh**, không sửa một
+     dòng nào của test.
+  2. Mọi vế tầng 1 của `I-033` có ràng buộc thật: dựng trạng thái sai ⇒ database từ chối, lời từ chối in ra.
+  3. Câu đối chiếu `I-033` ở `db/reconcile/` cho mọi vế có tập — kể cả *phiên còn hiệu lực của tài khoản không hoạt
+     động* và *tài khoản mang vai `owner` mà người không có cờ chủ quán* — mỗi câu một lỗi cài kêu đúng nó.
+  4. `YC-38` có một dòng *đọc* và một dòng *sai* ở `db/scenario/yc.sql`.
+  5. Bước lùi có khoá chặn; vòng xuôi · lùi · xuôi lại xanh.
+  6. File lát `19-luoc-do-tai-khoan.md`; hàng *Schema* của `CLAUDE.md` §2, `00-index.md`, `07-thu-tu-migration.md`,
+     `03-bao-ve-invariant.md` (hàng `I-033`, dòng `P2A-14` của §5.3), `04-yeu-cau-du-lieu.md` (`YC-38`, gỡ hai dòng
+     *chờ `T-181`*) trỏ đúng; tên ràng buộc mới ánh xạ ở `openapi.yaml`, hợp đồng tăng phiên bản; Gate 1e · 1g xanh.
+  7. `./scripts/db-check.sh` và `./scripts/gate.sh` xanh ở clone chính.
+
+**Bàn giao** — 2026-10-14 · thực hiện: **Codex** (migration, file lát, 12 câu đối chiếu và lỗi cài, khối `YC-38`, hàng
+`I-033` · dòng `YC-38` ở pha 1, ánh xạ ràng buộc, code sqlc, dòng `bytea` của QC-04) và **Claude Code** (mệnh đề, `PT-7`,
+hành vi, hình lược đồ, test đỏ trước, hai chỗ sửa sau `db-check`) · duyệt: **Claude Code** · nhánh `fe_admin`, trên
+`cf109ed` · chưa commit.
+
+*Kết quả.* Migration `20261014170000_tai_khoan` — bốn bảng `account` · `account_password` · `login_session` ·
+`password_reset`, ba trigger từ chối có tên ràng buộc, bước lùi có khoá chặn; file lát
+[`19-luoc-do-tai-khoan.md`](../docs/product/2-db/19-luoc-do-tai-khoan.md); câu `db/reconcile/i033.sql` (`I-033/1`…`/12`)
+và 12 lỗi cài; hợp đồng lên **0.22.0**. Codex thêm kiểu `bytea` vào QC-04, giới hạn ở cột hậu tố `_hash` — Claude giữ,
+vì hình giao việc đòi băm 32 byte.
+
+*Codex làm gì, Claude duyệt ra sao.* Sandbox của Codex không tới Docker lẫn bộ đệm build Go, nên Codex nộp phần viết
+chưa chạy, kèm bảng khối test → ràng buộc → SQLSTATE; test còn nguyên từng byte. `db-check` lần đầu ở clone chính:
+test `i033` **xanh**, nhưng hai câu quy ước kêu trên mọi lỗi cài — cả hai do hình của Claude đụng phép kiểm cũ, Claude
+sửa: (1) phép kiểm `QD-33` cấm mọi cột có chữ *account* (chặn tên đồng nghĩa mốc tính tiền) nên bắt nhầm khoá ngoại
+`account_id`; phép kiểm nay chỉ xét cột kiểu thời điểm hoặc ngày, có dòng ghi ngày ở `01-quy-uoc-du-lieu.md`; (2)
+parser bảng ánh xạ `QD-40` của `scripts/reconcile.sh` chỉ nhận dòng có hậu tố `(§5.x)` của vòng đời bán hàng, nên không
+đọc được `account.status`; parser nay nhận dòng không hậu tố, phép chuyển trạng thái vẫn chỉ đọc dòng có hậu tố.
+
+*Nghiệm thu → bằng chứng* (`./scripts/gate.sh` ở clone chính, 2026-10-14, exit 0):
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| 1 | trước lược đồ: `FAIL Gate 1 db/tests/i033_account_session_and_reset.sql`; sau: `PASS db/tests/i033_account_session_and_reset.sql`, `git diff` của test rỗng |
+| 2 | 41 dòng `I-033 bị từ chối (…)` mang tên ràng buộc, vd. `login_session_active_account_check`, `account_status_shape_check` |
+| 3 | `PASS kêu i033_1 — I-033/1` … `PASS kêu i033_12 — I-033/12`; `PASS mã I-0xx — 32 mã có câu + 1 mã chưa có lát = 33 mã` |
+| 4 | `YC-38 đọc · yc38.account … phiên kết thúc … vì dat_lai_mat_khau · mã dùng …`; `YC-38 sai · mở lại phiên đã kết thúc ⇒ TỪ CHỐI`; `PASS chấm YC — 36 mã` |
+| 5 | `PASS xuôi 20261014170000_tai_khoan` · `PASS lùi 20261014170000_tai_khoan — lược đồ giống hệt lúc trước bước ấy` |
+| 6 | `PASS Gate 1e — 55 bảng ở migration, 55 bảng tài liệu nhắc`; `PASS Gate 1g — hợp đồng 0.22.0 … 399 tên từ chối, 399 dòng ánh xạ` |
+| 7 | `PASS Gate 1 be-check` · `PASS Gate 1 db-check — 27 bước … 46 file test … 133 lỗi cài … 36 mã YC` · `PASS gate` |
+
+*Còn lại.* Cửa đăng ký · đăng nhập · đăng xuất · đặt lại · duyệt · khoá, `Authenticator` mới và việc gỡ `X-Person-Id`
+là lát backend (b) của **ADR-109** điểm 12 — chưa có mã task. Vai `owner` là suy ra của phiên (**ADR-109** *Sửa đổi*),
+chưa ai xác nhận. Số lần sai và số thư một giờ không có chỗ cất — đếm ở backend.
+
 [↑ đầu file](#top)
 
 ---

@@ -395,8 +395,12 @@ nào, kiểu gì* (§5). Năm mục dưới đây là câu trả lời.
   FROM information_schema.columns
   WHERE table_schema = :schema
     AND column_name <> 'booked_at'
+    AND data_type IN ('timestamp with time zone', 'date')
     AND (column_name LIKE '%book%' OR column_name LIKE '%account%' OR column_name LIKE '%post%');
   ```
+  Phép kiểm chỉ xét **cột mốc** (kiểu thời điểm hoặc ngày) — thêm 2026-10-14 (`P2A-14`, Claude Code): lát tài
+  khoản có khoá ngoại `account_id`, một cột `bigint` không phải mốc tính tiền; tên đồng nghĩa mà quy ước chặn là
+  tên của một **mốc**.
   Vế *không dời* đọc bằng vết cập nhật (`YC-13`): mọi lần cập nhật đổi `booked_at` của một bản ghi
   đã có ⇒ **0 dòng** — câu `QD-33/b` của `db/reconcile/qd.sql` (`P2-11`, 2026-09-30).
 - **Nguồn:** owner cho nghĩa — `02-thoi-gian-ngay-ban.md` §2 · §2.2 · §3, `04-yeu-cau-du-lieu.md`

@@ -193,8 +193,9 @@ emit_prelude() {
     for my $f (@ARGV) {
       open my $fh, "<", $f or die "$f: $!";
       while (<$fh>) {
-        next unless /^\| `([a-z_]+)\.status` \| `([a-z_]+)` \| (.+?) \(§(5\.\d)\) \|/;
-        $map{"$4|$3"} = [$1, $2];
+        # Hậu tố (§5.x) chỉ có ở trạng thái của vòng đời bán hàng; trạng thái khác (vd. account.status) không mang nó.
+        next unless /^\| `([a-z_]+)\.status` \| `([a-z_]+)` \| (.+?)(?: \(§(5\.\d)\))? \|/;
+        $map{"$4|$3"} = [$1, $2] if defined $4;
         push @rows, "INSERT INTO pg_temp.dc_status_map VALUES (\x27$1\x27, \x27$2\x27);\n";
       }
     }
