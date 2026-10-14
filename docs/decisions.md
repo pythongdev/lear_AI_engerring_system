@@ -125,6 +125,7 @@ có câu trả lời mới từ người.
 | ADR-106 | **Lát khoản chi: hai bảng `expense_category` · `expense`; nguồn tiền là một cờ bắt buộc trên loại, không sửa được sau khi có loại; khoản giữ bốn câu của `I-029` và không gì hơn** | Đã chốt 2026-10-14, giao cho phiên (Claude Code, `P2A-05`) | — | P2A-05 · ADR-074 · I-029 |
 | ADR-107 | **Lát đào tạo: tệp ảnh · video nằm NGOÀI database, trong kho tệp trên chính nơi hệ thống chạy (PT-2), database cất một khoá tệp tương đối ngắn**; hướng dẫn là một dòng mỗi chữ · ảnh · video, gắn đúng một việc giao; ghi nhận đào tạo đứng trên người, nhận xét và đánh giá `pass` · `not_yet` tuỳ chọn nhưng không rỗng cả hai; về ai, ai ghi, việc của hướng dẫn không sửa được | Đã chốt 2026-10-14 (giao cho phiên, P2A-12) | — | P2A-12 · I-031 · YC-36 · ADR-105 |
 | ADR-108 | **Lát danh mục và combo: bốn bảng thêm cạnh lát menu, không thêm cột vào bảng món**; món nhiều nhất một danh mục bằng bảng xếp có khoá duy nhất trên món; combo mang `price_vnd` riêng, *ít nhất một món* là trigger ràng buộc hoãn tới lúc kết thúc giao dịch; tên danh mục duy nhất trong danh mục còn dùng; *không đổi giá giữa buổi* và *chỉ chủ quán* ở cửa backend | Đã chốt 2026-10-14 (giao cho phiên, P2A-13) | — | P2A-13 · I-032 · YC-37 · ADR-105 |
+| ADR-109 | **Đăng nhập bằng tài khoản** (thiết kế `T-181`): tài khoản tách khỏi `person`, bốn trạng thái, chủ quán duyệt và gán vai (vai không mở quyền); mật khẩu argon2id; phiên là cookie mang mã ngẫu nhiên, băm ở database, 7 ngày; đăng nhập `tai_quay` mở trực quầy qua `nguoi/vao_quay`; đặt lại qua thư 30 phút một lần, thư là `PT-7`; gỡ `X-Person-Id`; ba lát `P2A-14` → backend → `P4-04` | **Đề xuất — chờ chủ repo duyệt** (2026-10-14, Claude Code, T-181) | — | `P2A-14` · `P4-04` · `P4A-06` · ADR-085 · ADR-102 · ADR-104 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7261,3 +7262,90 @@ backend, cùng lý do **ADR-105** điểm 1.
 
 **Applies to:** `db/migrations/` (lát danh mục và combo) · file lát `18-` của `docs/product/2-db/` (sinh ra ở
 `P2A-13`) · `quality/invariants.md` `I-032` · `docs/product/3-be/03-ham-gia.md` (việc sau của backend) · task `P2A-13`.
+
+### ADR-109 — Đăng nhập bằng tài khoản: mật khẩu băm argon2id, phiên là cookie mang mã ngẫu nhiên, đăng nhập ở quầy mở trực quầy
+
+**Trạng thái:** **Đề xuất — chờ chủ repo duyệt** (2026-10-14, Claude Code, task `T-181`, mức **L3**). Lời quán ở
+`master_plan/shop-facts.md` §8.8 (*Lượt hai 2026-10-14*, đóng `U-088`); mọi điểm dưới đây là **lựa chọn thiết kế của
+phiên**, không phải lời chủ quán. **ADR-104** điểm 2 đứng nguyên: không ai code mật khẩu trước khi chủ repo duyệt mục
+này. Duyệt xong thì đổi dòng trạng thái thành *Đã chốt* kèm ngày và người duyệt, rồi `P2A-14` mới nhận việc.
+
+**Context:** lời chủ quán đã nói bốn điều — tự đăng ký, chủ quán duyệt và gán vai; tự đặt mật khẩu; Gmail chỉ để nhận
+thư đặt lại; ở máy quầy dùng chung, lần đăng nhập là mốc đổi người `C36`. Code hiện tại tin header `X-Person-Id`
+(`authz.ChonTen`, T-143) — ai gửi số nào máy tin người ấy. **ADR-085** đã tách *danh tính* (`authz.Authenticator`) khỏi
+*quyền* (lớp của cửa, đọc `counter_duty` và cờ `is_owner` trong giao dịch), nên thiết kế này thay **cách nhận ra
+người**, không đổi ma trận vai × cửa của `docs/product/3-be/02-vai-va-quyen.md`.
+
+**Decision:**
+
+1. **Một tài khoản gắn đúng một `person`, một `person` có nhiều nhất một tài khoản.** Bảng `person` giữ nguyên: tên
+   hiển thị và cờ `is_owner` vẫn ở đó, mọi cột *ai bấm* vẫn trỏ `person`. Tài khoản là bảng mới của lát `P2A-14`.
+2. **Bốn trạng thái của tài khoản: `cho_duyet` → `hoat_dong` ↔ `khoa`, và `tu_choi`.** Tự đăng ký tạo tài khoản
+   `cho_duyet` **chưa gắn `person`**, mang tên đăng nhập, tên hiển thị người ấy khai, Gmail và mật khẩu đã băm. Chủ quán
+   duyệt thì hoặc gắn vào một `person` sẵn có chưa có tài khoản, hoặc tạo `person` mới từ tên đã khai; cùng lúc gán vai.
+   Chỉ tài khoản `hoat_dong` mở được phiên. Khoá là đổi trạng thái có người và lúc, không xoá (`QD-50`); khoá xong mọi
+   phiên đang mở của tài khoản ấy hết hiệu lực ngay. `tu_choi` giữ vết một lần đăng ký chủ quán không nhận.
+3. **Vai được gán là một trong bốn vai của `shop-facts.md` §3** (`quay` · `trang_banh` · `gap_banh` · `canh_don_ban`),
+   cất trên tài khoản. **Vai không mở cửa nào** (**ADR-085**, chức vụ không mở cửa): nó chỉ chọn khung màn mặc định ở
+   pha 4 (`P4-04`). Quyền vẫn là chỗ đứng (`counter_duty`) và cờ chủ quán. Đặt cờ chủ quán **không** có đường qua màn
+   duyệt — chỉ đường khởi tạo ở điểm 10.
+4. **Tên đăng nhập và Gmail đều duy nhất, so không phân biệt hoa thường;** người làm đăng nhập bằng tên đăng nhập và
+   mật khẩu, không bằng Gmail, không bằng Google (lời §8.8 vế 3). Địa chỉ không bị buộc đuôi `@gmail.com` — xem *Suy ra*.
+5. **Mật khẩu chỉ cất dạng băm argon2id** (chuỗi PHC `$argon2id$v=19$m=…` có muối riêng), không cột nào cất mật khẩu
+   thô hay mã hoá hai chiều; database kiểm cột băm mang tiền tố `$argon2id$`. Mật khẩu tối thiểu 8 ký tự, không luật ký
+   tự đặc biệt. Năm lần sai liền cho một tài khoản thì tài khoản ấy chặn đăng nhập 15 phút (không phải trạng thái
+   `khoa`, tự hết).
+6. **Phiên đăng nhập là một dòng ở database, trình duyệt giữ mã ngẫu nhiên 32 byte trong cookie** `HttpOnly` ·
+   `Secure` · `SameSite=Strict`; database chỉ cất băm SHA-256 của mã. Mỗi yêu cầu, `Authenticator` mới tra băm → phiên
+   còn hạn, chưa kết thúc, tài khoản `hoat_dong` → `person_id`. Phiên hết hạn sau **7 ngày** kể từ lúc đăng nhập (không
+   gia hạn trượt); đăng xuất, đổi mật khẩu, đặt lại mật khẩu, khoá tài khoản đều kết thúc phiên có lý do. Cửa ghi còn
+   kiểm thêm header `Origin` trùng nguồn của quán. Header `X-Person-Id` và `authz.ChonTen` bị gỡ ở cùng thay đổi bật
+   đăng nhập — không có thời kỳ chạy cả hai.
+7. **Đăng nhập ở máy quầy là mốc `C36`:** yêu cầu đăng nhập mang cờ `tai_quay`; có cờ thì trong **cùng giao dịch** với
+   lần mở phiên, backend gọi đúng logic của cửa `nguoi/vao_quay` sẵn có (khép khoảng của người đang đứng, mở khoảng
+   mới) và phiên ghi lại khoảng trực nó đã mở. Đăng xuất **của chính phiên ấy** khép khoảng ấy (`nguoi/roi_quay`).
+   Đăng xuất ở máy khác không đụng trực quầy. Không mở bảng mốc thứ hai — `counter_duty` là chỗ duy nhất (`YC-15`).
+   Cửa `POST /counter-duty` công khai bị gỡ khỏi hợp đồng; `POST /counter-duty/end` giữ cho trường hợp rời quầy mà
+   không đăng xuất. Người quên đăng xuất thì lần đăng nhập `tai_quay` của người sau thay khoảng như hôm nay.
+8. **Đặt lại mật khẩu qua thư:** người quên nhập Gmail; máy **luôn trả cùng một câu** dù địa chỉ có tài khoản hay không
+   (không để lộ ai làm ở quán). Có tài khoản `hoat_dong` thì máy gửi một mã ngẫu nhiên, database cất băm, sống **30
+   phút**, dùng **một lần**; đặt lại xong mọi phiên của tài khoản kết thúc. Mỗi Gmail nhiều nhất 3 thư một giờ. Thư gửi
+   qua SMTP của một dịch vụ gửi thư; tên dịch vụ là cấu hình triển khai, không phải luật.
+9. **Thư đặt lại là phụ thuộc ngoài mới `PT-7`** của `docs/product/1-system-design/01-ranh-gioi-he-thong.md`, cùng
+   đường suy giảm: dịch vụ gửi thư chết thì **không ai tự đặt lại được**, mọi thứ khác chạy; người quên mật khẩu nhờ
+   chủ quán **khoá rồi mở lại tài khoản kèm mật khẩu tạm** mà người ấy phải đổi ở lần đăng nhập kế. Dòng `PT-7` và
+   đường suy giảm được viết ở bước thi công đầu tiên sau khi mục này được duyệt.
+10. **Khởi tạo chủ quán đầu tiên:** không ai duyệt được người duyệt đầu tiên, nên một lệnh chạy trên máy chủ (không phải
+    cửa HTTP) tạo tài khoản `hoat_dong` cho một `person` có `is_owner`. Chủ quán thứ hai trở đi cũng qua lệnh ấy.
+11. **Đọc công khai giữ như hợp đồng hiện tại:** màn trạm chỉ đọc, khách QR và khách web không đăng nhập. `GET /people`
+    thôi công khai (lớp `nguoi_quan`) vì danh sách tên chỉ còn dùng cho người đã đăng nhập (giao việc, khai người giao).
+12. **Chia thi công làm ba lát, đúng thứ tự:** (a) `P2A-14` — lược đồ ba bảng *tài khoản* · *phiên đăng nhập* · *mã đặt
+    lại*, cột liên kết phiên → `counter_duty`, mệnh đề mới ở `quality/invariants.md` và dòng `YC` ở
+    `04-yeu-cau-du-lieu.md` (Claude viết, thay dòng *chờ* của **ADR-105** điểm 7), test hồi quy viết trước;
+    (b) một task backend mới — cửa đăng ký · đăng nhập · đăng xuất · đặt lại · duyệt · khoá, `Authenticator` mới, gỡ
+    `ChonTen`, đổi hợp đồng `openapi.yaml` (đổi khớp nối ⇒ tăng phiên bản phụ), dòng `PT-7`; (c) `P4-04` dựng lại màn
+    đăng nhập thay màn chọn tên. Lát (b) và (c) chưa có mã trong backlog — tạo khi (a) xong.
+
+**Why:** tách tài khoản khỏi `person` giữ nguyên mọi khoá ngoại *ai bấm* và cho phép người đăng ký trước khi chủ quán
+quyết họ là ai trong quán; phiên cất ở database (thay vì mã tự chứa như JWT) để khoá tài khoản và đăng xuất có hiệu lực
+ngay, điều quán cần khi người nghỉ việc; gắn đăng nhập quầy vào cửa `vao_quay` sẵn có dùng lại đúng luật một người một
+lúc đã có ràng buộc `counter_duty_one_at_a_time_excl` (`YC-15`) thay vì viết luật thứ hai; trả cùng một câu ở đặt lại chặn việc dò Gmail của
+người làm.
+
+**Rejected alternatives:** *JWT ký, không bảng phiên* — không thu hồi được trước hạn, trái nhu cầu khoá ngay; *bcrypt*
+— chạy được nhưng argon2id là lựa chọn mặc định hiện nay cho mật khẩu mới, cùng gói `golang.org/x/crypto`; *đăng nhập
+bằng Google* — lời §8.8 vế 3 nói rõ không; *cột mật khẩu trên `person`* — trộn người với cách đăng nhập, và người chờ
+duyệt sẽ là một `person` mà mọi cột *ai bấm* trỏ tới được; *đăng ký máy quầy bằng mã thiết bị để chỉ máy ấy mở trực
+quầy* — chặt hơn, nhưng hôm nay ai cũng vào quầy được từ mọi máy (`nguoi/vao_quay` lớp `nguoi_quan`), nên đây là luật
+mới cần lời quán, không phải phần của thiết kế này; *giữ `X-Person-Id` song song một thời gian* — một đường tin lời
+người gửi còn mở là cả thiết kế vô nghĩa.
+
+**Suy ra, chờ chủ repo xác nhận:** (1) Gmail không bị buộc đuôi `@gmail.com` — lời nói *google mail*, phiên đọc là
+*một địa chỉ thư nhận được*; (2) hạn phiên 7 ngày, chặn 15 phút sau 5 lần sai, mã đặt lại 30 phút, 3 thư một giờ, mật
+khẩu tối thiểu 8 ký tự — con số của phiên; (3) đường *chủ quán khoá rồi mở lại kèm mật khẩu tạm* khi thư không đi —
+lời chỉ nói người làm tự đặt lại; (4) vai không mở quyền, chỉ chọn khung màn; (5) chủ quán cũng đăng nhập bằng tài
+khoản như mọi người (đã có lời **ADR-104**: *kể cả chủ quán*).
+
+**Applies to:** task `T-181` → `P2A-14` · task backend sau nó · `P4-04` · `P4A-06`; **ADR-085** (`Authenticator`) ·
+**ADR-102** điểm 7 (danh tính đi bằng header — bị thay ở lát b) · **ADR-104** · **ADR-105** điểm 7;
+`master_plan/shop-facts.md` §3 · §8.8; `docs/product/3-be/02-vai-va-quyen.md`; `be/internal/authz/`.
