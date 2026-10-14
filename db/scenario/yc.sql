@@ -859,6 +859,26 @@ BEGIN
     'không cột ngày bán riêng — két trừ theo ngày khai paid_date (U-072, chủ quán 2026-10-09)');
 END $$;
 
+-- YC-33 — đọc khoản của S4, nguồn ở loại; các thử sai đều tự lùi theo khuôn YC.
+DO $$
+DECLARE a bigint;
+BEGIN
+  SELECT e.id INTO STRICT a FROM expense e JOIN expense_category c ON c.id = e.expense_category_id
+  WHERE e.paid_date = pg_temp.sc_ngay() AND c.name = 'Điện';
+  PERFORM pg_temp.yc_doc('YC-33', (SELECT string_agg(format('%s · nguồn két %s · %s đ · ngày %s · ghi %s lúc %s',
+    c.name, c.paid_from_till, e.amount_vnd, e.paid_date, pg_temp.yc_ten(e.person_id), e.created_at), ' | ' ORDER BY e.id)
+    FROM expense e JOIN expense_category c ON c.id = e.expense_category_id WHERE e.paid_date = pg_temp.sc_ngay()));
+  PERFORM pg_temp.yc_tu_choi('YC-33', 'khoản thiếu loại',
+    format('UPDATE expense SET expense_category_id = NULL WHERE id = %s', a));
+  PERFORM pg_temp.yc_tu_choi('YC-33', 'khoản tiền 0',
+    format('UPDATE expense SET amount_vnd = 0 WHERE id = %s', a));
+  PERFORM pg_temp.yc_tu_choi('YC-33', 'loại thiếu nguồn',
+    $q$INSERT INTO expense_category (name) VALUES ('Loại không nguồn YC-33')$q$);
+  PERFORM pg_temp.yc_tu_choi('YC-33', 'sửa khoản không khai lý do',
+    format($q$DO $d$ BEGIN PERFORM set_config('shop.revision_reason', '', true);
+      UPDATE expense SET amount_vnd = 300001 WHERE id = %s; END $d$ $q$, a));
+END $$;
+
 -- YC-35 dựng ngay trong giao dịch này; ngày quản trị lượt hai thuộc P2A-15.
 DO $$
 DECLARE v bigint; chu bigint := pg_temp.sc_nguoi('Chủ quán');

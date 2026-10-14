@@ -299,6 +299,18 @@ my @supplies;
   @supplies = map { $merged{$_} } sort keys %merged;
 }
 
+# --- §8.10: loại chi và nguồn đã chốt (ADR-106) -------------------------------------------
+# Tên phải còn trong owner; nguồn theo E46 và lời đóng U-093, không mặc định cho loại mới.
+my @expenses = (['Điện', 1], ['Nước', 1], ['Wifi', 1], ['Xăng xe', 1], ['Marketing', 0]);
+{
+  my $sec = lc join("\n", section('### 8.10 '));
+  for my $e (@expenses) {
+    my $name = lc $e->[0];
+    die_owner("§8.10: không còn tên loại chi '$e->[0]'")
+      unless $sec =~ /(?<!\p{L})\Q$name\E(?!\p{L})/;
+  }
+}
+
 # --- in SQL -----------------------------------------------------------------------------
 my $mode = $ARGV[0] // '';
 
@@ -379,6 +391,12 @@ print "\n-- §8.4 danh mục hàng mua vào; chưa có đơn vị thì để NUL
 for my $r (@supplies) {
   printf "INSERT INTO supply_item (name, purchase_unit) VALUES (%s, %s);\n",
     sqlq($r->[0]), defined $r->[1] ? sqlq($r->[1]) : 'NULL';
+}
+
+print "\n-- §8.10: điện, nước, wifi, xăng xe từ két; marketing tiền riêng (U-093).\n";
+for my $e (@expenses) {
+  printf "INSERT INTO expense_category (name, paid_from_till) VALUES (%s, %s);\n",
+    sqlq($e->[0]), $e->[1] ? 'true' : 'false';
 }
 
 print "\nCOMMIT;\n";

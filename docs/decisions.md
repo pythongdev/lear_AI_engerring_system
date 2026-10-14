@@ -7316,12 +7316,12 @@ người**, không đổi ma trận vai × cửa của `docs/product/3-be/02-vai
     cửa HTTP) tạo tài khoản `hoat_dong` cho một `person` có `is_owner`. Chủ quán thứ hai trở đi cũng qua lệnh ấy.
 11. **Đọc công khai giữ như hợp đồng hiện tại:** màn trạm chỉ đọc, khách QR và khách web không đăng nhập. `GET /people`
     thôi công khai (lớp `nguoi_quan`) vì danh sách tên chỉ còn dùng cho người đã đăng nhập (giao việc, khai người giao).
-12. **Chia thi công làm ba lát, đúng thứ tự:** (a) `P2A-14` — lược đồ ba bảng *tài khoản* · *phiên đăng nhập* · *mã đặt
-    lại*, cột liên kết phiên → `counter_duty`, mệnh đề mới ở `quality/invariants.md` và dòng `YC` ở
+12. **Chia thi công làm ba lát, đúng thứ tự:** (a) `P2A-14` — lược đồ bốn bảng *tài khoản* · *bản mật khẩu* · *phiên đăng
+    nhập* · *mã đặt lại* (sửa chữ 2026-10-14: bản đầu ghi *ba bảng*, lát dựng bốn — mật khẩu tách bảng riêng chỉ thêm), cột liên kết phiên → `counter_duty`, mệnh đề mới ở `quality/invariants.md` và dòng `YC` ở
     `04-yeu-cau-du-lieu.md` (Claude viết, thay dòng *chờ* của **ADR-105** điểm 7), dòng `PT-7`, test hồi quy viết trước;
     (b) một task backend mới — cửa đăng ký · đăng nhập · đăng xuất · đặt lại · duyệt · khoá, `Authenticator` mới, gỡ
     `ChonTen`, đổi hợp đồng `openapi.yaml` (đổi khớp nối ⇒ tăng phiên bản phụ); (c) `P4-04` dựng lại màn
-    đăng nhập thay màn chọn tên. Lát (b) và (c) chưa có mã trong backlog — tạo khi (a) xong.
+    đăng nhập thay màn chọn tên. Lát (b) và (c) chưa có mã trong backlog — tạo khi (a) xong. *(a) xong 2026-10-14 (`3419303`); lát (b) đăng ký là `T-190`.*
 
 **Why:** tách tài khoản khỏi `person` giữ nguyên mọi khoá ngoại *ai bấm* và cho phép người đăng ký trước khi chủ quán
 quyết họ là ai trong quán; phiên cất ở database (thay vì mã tự chứa như JWT) để khoá tài khoản và đăng xuất có hiệu lực
@@ -7347,7 +7347,7 @@ khoản như mọi người (đã có lời **ADR-104**: *kể cả chủ quán*
 **ADR-102** điểm 7 (danh tính đi bằng header — bị thay ở lát b) · **ADR-104** · **ADR-105** điểm 7;
 `master_plan/shop-facts.md` §3 · §8.8; `docs/product/3-be/02-vai-va-quyen.md`; `be/internal/authz/`.
 
-**Sửa đổi 2026-10-14 (P2A-14, Claude Code — suy ra của phiên, chưa ai xác nhận).** Điểm 3 thêm một mã vai thứ năm,
+**Sửa đổi 2026-10-14 (P2A-14, Claude Code; chủ repo xác nhận cùng ngày, nguyên văn *"owner cho chủ quán"*).** Điểm 3 thêm một mã vai thứ năm,
 `owner`, chỉ cho tài khoản của chủ quán: `shop-facts.md` §3 gọi chủ quán (`owner`) là **một vai riêng ngoài năm trạm**,
 nên tài khoản chủ quán không phải mang một trong bốn vai trạm. Chỉ lệnh khởi tạo ở điểm 10 đặt được mã ấy, màn duyệt
 không; quyền vẫn đọc từ cờ `is_owner`, không từ mã vai. Mã bốn vai trạm: `quay` · `trang_banh` · `gap_banh` ·

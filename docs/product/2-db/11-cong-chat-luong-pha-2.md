@@ -378,7 +378,7 @@ D là ngày diễn; cặp số D-1 chỉ để kiểm đọc nhiều ngày, khô
 | S4.7 | Huỷ ô nhầm, ghi chú | §8.7 dòng 1870–1874 | Chủ quán huỷ, lúc huỷ, đúng ghi chú; không suy thành quyền huỷ độc quyền |
 | S4.8 | Tạm ứng 100000 đ có người duyệt | §8.7 dòng 1835, 1858–1861 | Người nhận, tiền, ngày, lúc ghi, người ghi và Chủ quán duyệt |
 | S4.9 | Thưởng lễ Tết 50000 đ | §8.7 dòng 1834, 1858–1861 | Người nhận, tiền, ngày, lúc ghi và người ghi |
-| Vắng | Ghi khoản chi | P2A-05 chưa Done | **vắng, chờ ADR-074** |
+| S4.10 | Ghi khoản chi | §8.10 E44 · E46, lời đóng U-085 · U-093 | Điện 300000 đ từ két; marketing 500000 đ tiền riêng; Chủ quán ghi, đủ hai mốc (P2A-05; Claude chạy 2026-10-14: `S4.10 ghi khoản chi điện 300000 đ, marketing 500000 đ` · `PASS đọc lại … ở kết nối khác`) |
 
 Phần đọc lại ở kết nối khác so với các giá trị viết tay trên, sai thì RAISE EXCEPTION.
 S4 so toàn bộ dòng của đường tiền trước/sau admin; đổi thì dừng, không sửa các
@@ -400,7 +400,7 @@ Bảng dưới là phép chấm trong [`db/scenario/yc.sql`](../../../db/scenari
 | Tick và huỷ ↔ YC-30 ↔ §8.7 dòng 1866–1874 | Hai người, người tick, ô huỷ và người huỷ | TỪ CHỐI ô trùng và huỷ thiếu người; GỌI TÊN người tick không là chủ quán I-027/4 (proof/i027_4) |
 | Tạm ứng ↔ YC-31 ↔ §8.7 dòng 1835, 1858–1861 | Khoản, người nhận, hai mốc, người ghi, người duyệt | TỪ CHỐI thiếu người duyệt; GỌI TÊN duyệt không là chủ quán I-028/3 (proof/i028_3); DỰNG ĐƯỢC sửa đè (F-046); CHƯA TRẢ LỜI ĐƯỢC ngày trừ két (U-072) |
 | Thưởng lễ Tết ↔ YC-32 ↔ §8.7 dòng 1834, 1858–1861 | Khoản, người nhận, hai mốc, người ghi | TỪ CHỐI thiếu người/tiền; KHÔNG CHỖ loại thưởng ngày đông khách; DỰNG ĐƯỢC sửa đè (F-046); CHƯA TRẢ LỜI ĐƯỢC ngày trừ két (U-072) |
-| Khoản chi ↔ YC-33 ↔ owner §9 | Vắng | **vắng, chờ ADR-074** — không dựng thay |
+| Khoản chi ↔ YC-33 ↔ owner §9 | Loại, nguồn, tiền, ngày, người và lúc ghi | Thử thiếu loại, tiền 0, loại thiếu nguồn, sửa thiếu lý do; khối YC-33 ở `yc.sql` (P2A-05; Claude chạy 2026-10-14: `PASS chấm YC — 37 mã, mỗi mã đọc + sai`, bốn dòng `YC-33 sai … ⇒ TỪ CHỐI`) |
 
 Phần trực quầy dùng YC-04 · YC-15 đã có; không tạo mã admin thứ hai.
 Chỗ hở tên công tơ đã được lát nguyên liệu §5 nêu: máy nhận tên tự do, không thể coi
@@ -426,12 +426,12 @@ Mã nằm trong owner nhưng chưa có đủ đọc + sai được in NOTE; đã
 có ở owner thì FAIL và phải gỡ dòng. YC-21 thuộc §8, pha vận hành, không thuộc tập
 owner giao pha 2; script đọc phần trước §8 và cả §9, không bỏ mã admin bằng hằng số.
 
-- YC-33 — chờ P2A-05 (ADR-074)
+Không còn YC chưa có lát trong danh sách này (P2A-05, 2026-10-14).
 
 ### 9.4 Cổng kế hoạch §7 — ô 1–6 ký 2026-10-01, mỗi ô một output thật
 
 Lượt chạy: `./scripts/db-check.sh` trong worktree `P2A-08`, exit 0. Lát khoản chi (`P2A-05`, `YC-33`,
-`I-029`) **vắng, chờ ADR-074** ở mọi ô — không ghi *đạt* cho nó.
+`I-029`) khi ấy chưa có. P2A-05 bổ sung lát 2026-10-14; Claude chạy `db-check` cùng ngày: `PASS xuôi` · `PASS lùi 20261014180000_khoan_chi`, `PASS kêu i029_1`…`i029_3`, `PASS mã I-0xx — comm -3 rỗng: 33 mã … cùng từng ấy mã có câu`, `PASS đối chiếu trên ngày vừa diễn — 114 câu I-0xx · 22 câu QD, mọi tập rỗng`, `TIỀN ba scenario: S1 96000 · S2 95000 · S3 54000` không đổi — lát khoản chi hết *vắng* ở mọi ô. Lượt rà tĩnh của lát mới ở §9.7.
 
 | Ô | Output | Trạng thái |
 |---|---|---|
@@ -441,8 +441,8 @@ Lượt chạy: `./scripts/db-check.sh` trong worktree `P2A-08`, exit 0. Lát kh
 | 4 | `PASS xuôi 20260930100000_so_nguyen_lieu` · `…110000_cham_cong` · `…120000_khoan_cua_nguoi`; `PASS lùi …` ba bước, *lược đồ giống hệt lúc trước bước ấy*; `PASS xuôi lại — 11 bước từ số không, lược đồ giống hệt lần xuôi đầu (1289 dòng)` | **ký** |
 | 5 | `PASS  Gate 1e  check-schema-names — 36 bảng ở migration, 36 bảng tài liệu nhắc, comm -3 rỗng` | **ký** |
 | 6 | `PASS ba scenario + ngày quản trị diễn qua lược đồ — 41 dòng bước, mỗi bước một giao dịch COMMIT` · `PASS đọc lại ba scenario + ngày quản trị ở kết nối khác — mọi dòng Kết quả mong đợi đúng` (S4.1…S4.9 đọc lại, *tổng Gạo: mua 12 · dùng 13 · hiệu số -1*) · `TIỀN ba scenario: S1 96000 · S2 95000 · S3 54000 · cộng 245000 đ` — không đổi so với §4 | **ký** — bước *ghi khoản chi* vắng |
-| 7 | §9.6: lượt §6 chín nhóm — tài liệu 38 dòng · mã 11 dòng trúng, **0 dòng *cất***; bảng 5 bảng · 32 cột của ba migration admin đọc bằng mắt, không tên nào giữ thứ của §6; mỗi nhóm có dòng thử kêu đúng | **ký** 2026-10-01 — `P2A-05` vắng |
-| 8 | §9.6: chín lượt A1…D của `P2-14` trên 18 file tài liệu · 1403 dòng và 36 file mã · 3868 dòng, **0** endpoint · route · component; dòng còn lại xếp loại từng dòng; hai dòng *quyền* loại 5 Claude xếp loại 3 + 2 (hợp lệ); `PASS  Gate 1d` | **ký** 2026-10-01 — `P2A-05` vắng |
+| 7 | §9.6: lượt §6 chín nhóm — tài liệu 38 dòng · mã 11 dòng trúng, **0 dòng *cất***; bảng 5 bảng · 32 cột của ba migration admin đọc bằng mắt, không tên nào giữ thứ của §6; mỗi nhóm có dòng thử kêu đúng | **ký** 2026-10-01; P2A-05 rà 2026-10-14 ở §9.7 |
+| 8 | §9.6: chín lượt A1…D của `P2-14` trên 18 file tài liệu · 1403 dòng và 36 file mã · 3868 dòng, **0** endpoint · route · component; dòng còn lại xếp loại từng dòng; hai dòng *quyền* loại 5 Claude xếp loại 3 + 2 (hợp lệ); `PASS  Gate 1d` | **ký** 2026-10-01; P2A-05 rà 2026-10-14 ở §9.7 |
 
 ⚠️ Ký kèm, không phải đạt trọn: trong các dòng admin, bốn kết cục `DỰNG ĐƯỢC` (vết mềm **F-046** ×3, tên
 công tơ ở [`12-luoc-do-nguyen-lieu.md`](12-luoc-do-nguyen-lieu.md) §5) và hai `CHƯA TRẢ LỜI ĐƯỢC` (ngày trừ
@@ -657,3 +657,52 @@ dòng 110–113 — mỗi chỗ nói đúng lát được gán. Chiều về: c�
 `I-030`…`I-033` · `YC-35`…`YC-38` · `ADR-053` · `ADR-092` · `ADR-105`…`ADR-109` · `QD-20` · `QD-21` · `QD-50`…`QD-52` ·
 `QD-60` · `QD-61` · `shop-facts.md` §8.7 · §8.9 — đều có ở owner. Gate 1b · 1c · 1d · 1e xanh cùng lượt.
 
+
+### 9.7 Lượt rà lát khoản chi — P2A-05, 2026-10-14
+
+Codex chạy nguyên các lượt lọc của phiếu bằng `bash`, truyền glob trực tiếp:
+
+```bash
+bash /tmp/p2a05-loc.sh docs/product/2-db/15-luoc-do-khoan-chi.md db/migrations/20261014180000_khoan_chi.*.sql
+```
+
+Chưa lọc và đã lọc (output thật):
+
+```text
+TẬP: 3 file · 105 dòng chưa lọc
+== A1: 0
+== A2: 0
+== A3: 0
+== B1: 0
+== B2: 0
+== B3: 0
+== C1: 0
+== C2: 0
+== D1: 0
+== D2: 0
+== S6 lương: 1
+docs/product/2-db/15-luoc-do-khoan-chi.md:45:Tiền hàng và lương không thuộc khoản chi: đây là giới hạn nghiệp vụ I-029, máy không đoán nghĩa tên loại.
+== S6 nợ NCC: 1
+docs/product/2-db/15-luoc-do-khoan-chi.md:46:Không cất ghi chú, kỳ, nhà cung cấp, hay ngày bán của két (ADR-106 điểm 5).
+== S6 kiểm đếm: 0
+== S6 lãi lỗ: 2
+docs/product/2-db/15-luoc-do-khoan-chi.md:38:/3 chuỗi vết đứt; ba lỗi cài `db/reconcile/proof/i029_1.sql`…`db/reconcile/proof/i029_3.sql` dùng khoản tiền riêng để không gây lệch két.
+docs/product/2-db/15-luoc-do-khoan-chi.md:47:Không dựng công thức lãi/lỗ, phân bổ tháng, thuế hay tiền mang về nhà; các việc ấy ngoài lát.
+== S6 mang về · nộp · thuế: 1
+docs/product/2-db/15-luoc-do-khoan-chi.md:47:Không dựng công thức lãi/lỗ, phân bổ tháng, thuế hay tiền mang về nhà; các việc ấy ngoài lát.
+== S6 quyền xem: 0
+== S6 giảm giá: 0
+```
+
+Xếp loại từng dòng còn lại; số dòng thuộc file lát `15-luoc-do-khoan-chi.md`:
+
+| Dòng | Lượt trúng | Xếp loại và lý do |
+|---|---|---|
+| 38 | S6 lãi lỗ | Trúng chữ “lỗi”, nói lỗi cài chứng minh đối chiếu, không giữ con số lãi/lỗ. |
+| 45 | S6 lương | Nêu giới hạn I-029: tiền hàng và lương không thuộc khoản chi, không cất hay tính lương. |
+| 46 | S6 nợ NCC | Nêu thứ không cất theo ADR-106; không dựng nợ nhà cung cấp. |
+| 47 | S6 lãi lỗ; S6 mang về · nộp · thuế | Nêu các việc ngoài lát; không đặt tên chỗ cất hoặc công thức cho chúng. |
+
+Kết quả ô 7: đọc cả hai bảng, không cột giữ việc ngoài lát. Kết quả ô 8: các lượt A1…D2 đều 0;
+không tên đường gọi, đường giao diện hay thành phần giao diện. Các dòng trúng còn lại đều là giới hạn hoặc
+bằng chứng kiểm. Đây là kết quả rà tĩnh, không thay kết quả chạy database ở ô 1–6.

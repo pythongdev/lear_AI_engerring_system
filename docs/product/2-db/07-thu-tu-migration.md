@@ -53,6 +53,7 @@ ngược từ dưới lên, **từng bước một**.
 | 25 | `20261014150000_dao_tao` | `P2A-12` | `assigned_task_guide` · `training_record` và trigger vết; vai ghi chỉ sửa nội dung và dấu ẩn; khoá chặn từ chối lùi khi một trong hai bảng có dòng, gỡ ghi nhận rồi hướng dẫn | 8 · 20 · 24 |
 | 26 | `20261014160000_danh_muc_combo` | `P2A-13` | `menu_category` · `menu_item_category` · `menu_combo` · `menu_combo_item`, trigger vết và kiểm combo có món hoãn tới cuối giao dịch; khoá chặn từ chối lùi khi bất kỳ bảng nào có dòng; gỡ trigger ràng buộc và hàm, rồi thành phần combo, combo, xếp món, danh mục | 2 · 8 · 20 |
 | 27 | `20261014170000_tai_khoan` | `P2A-14` | `account` · `account_password` · `login_session` · `password_reset`; trigger nghiệp vụ và vết; lùi chặn nếu một bảng có dòng, gỡ mã và phiên, mật khẩu, tài khoản rồi hàm | 8 · 20 |
+| 28 | `20261014180000_khoan_chi` | `P2A-05` | `expense_category` · `expense`, nguồn trên loại bất biến với vai ghi; trigger vết nghiêm; lùi chặn khi một trong hai bảng có dòng, gỡ khoản trước loại (ADR-106) | 8 · 20 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`

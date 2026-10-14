@@ -80,6 +80,7 @@ Số `n` của `I-0xx/n` là **thứ tự của tập** trong ô *Phép đối c
 | `I-026` | 1 · 2 → §2 · 3 → `I-026/3` · 4 → `I-026/4` |
 | `I-027` | 1 → `I-027/1` · 2 → `I-027/2` · 3 → `I-027/3` · 4 → `I-027/4` |
 | `I-028` | 1 → `I-028/1` · 2 → `I-028/2` · 3 → `I-028/3` · 4 → `I-028/4` · 5 · 6 → §2 |
+| `I-029` | đủ loại · tiền · ngày · người/lúc ghi → `I-029/1`; loại đủ tên, nguồn → `I-029/2`; chuỗi vết → `I-029/3`; nguồn két và ngày khai → `I-021/1`; nghĩa tiền hàng/lương do người đọc danh sách, không tự đoán |
 | `I-030` | đủ bốn câu → `I-030/1` · ai được làm (tạo, sửa, ẩn, đánh dấu) → `I-030/2` · sự kiện thiếu người/lúc → `I-030/3` · ẩn thiếu người/lúc → `I-030/4`; sửa có vết dùng `I-018/1` |
 | `I-031` | gắn việc → `I-031/1` · đủ dấu → `I-031/2` · ai được ghi → `I-031/3` · không rỗng → `I-031/4` · hai giá trị → `I-031/5` · ẩn thiếu người/lúc → `I-031/6`; sửa có vết dùng `I-018/1` |
 | `I-032` | tên danh mục → `I-032/1` · món thuộc danh mục → `I-032/2` · ít nhất một món → `I-032/3` · món và số phần → `I-032/4` · giá riêng → `I-032/5` · ngoài buổi → `I-032/6` · ẩn → `I-032/7` · chủ quán (kể cả người xếp món vào danh mục, thêm 2026-10-14 ở P2A-15) → `I-032/8`; sửa có vết dùng `I-018`, đơn cũ giữ giá dùng `I-009` |
@@ -126,7 +127,7 @@ tính chất của dữ liệu.
 | `I-017` tập 3 — lần đóng phiên bị từ chối vì tiền | chưa có câu | (A) lần từ chối không để lại bản ghi | pha 3 |
 | `I-018` tập 2 — lần ghi đè của hai người không dựng lại được bản người trước | chưa có câu | (A) không cất phiên thao tác nào; từ bước 20 mọi lần sửa có vết (**F-046** gỡ ở `T-138`), nên bản người trước đọc được từ bản trước của vết người sau — câu cho tập này chưa viết | pha 3 |
 | `I-019` tập 2 — hai dòng nhu cầu chung một khoá / một khoá tách hai dòng | chưa có câu | (B) không dòng nhu cầu nào được cất: bảng nhu cầu cộng lại từ `station_job` theo khoá gom (`05-luoc-do-san-xuat.md` §1) | pha 3 — hàm gom của màn bếp đọc đúng khoá; test của nó |
-| `I-021` tập 2 — trừ vào đúng một ngày bán | chưa có câu | (A) không có cột ngày két thứ hai; `I-021/1` trừ mọi tạm ứng/thưởng theo paid_date, dù ghi hôm khác (§4) | T-140; khoản chi I-029 chờ P2A-05 |
+| `I-021` tập 2 — trừ vào đúng một ngày bán | chưa có câu | (A) không có cột ngày két thứ hai; `I-021/1` trừ mọi tạm ứng/thưởng và khoản chi của loại mang nguồn két theo paid_date, dù ghi hôm khác (§4) | T-140; P2A-05 thêm khoản chi của loại mang nguồn két |
 | `I-021` tập 4 — ngày chưa có tiền đầu két bị đọc là lệch | chưa có câu | (A) đọc cách **báo cáo** gọi tên ngày ấy; về phía dữ liệu, `I-021/1` bỏ qua ngày thiếu tiền đầu két và `reconciled_day_opening_float_fkey` không cho bấm xong (`T-133`) | pha 3 — màn đối soát |
 | `I-021` tập 5 — phép trừ chạy trên tổng gộp | chưa có câu | (A) đọc phép trừ của báo cáo | pha 3 |
 | `I-021` tập 6 — con số doanh thu có cộng tiền đầu két | chưa có câu | (A) đọc con số của báo cáo; tiền đầu két ở bảng riêng, ngoài mọi cột tiền đã thu (**`I-021`** tầng 1) | pha 3 |
@@ -171,7 +172,7 @@ của mệnh đề ấy trong cùng thay đổi.
 
 | Mệnh đề | Trạng thái | Vì sao | Ai nợ |
 |---|---|---|---|
-| `I-029` | chưa có lát | lát khoản chi (`P2A-05`) chưa dựng, chờ chủ repo duyệt **ADR-074** | `P2A-05` |
+Không còn mệnh đề chưa có lát trong danh sách này (P2A-05, 2026-10-14).
 
 ---
 
@@ -277,7 +278,7 @@ làm khác.
 | Bước | Lấy gì |
 |---|---|
 | `P2-13` | §3 — lệnh và phần chứng minh chạy trong `./scripts/db-check.sh`; §2 là danh sách tập chưa được chấm, đọc trước khi tick cổng |
-| `P2A-05` | Bước còn nợ câu `I-029`; khi viết câu thì **gỡ dòng của mệnh đề ấy ở §2.1 trong cùng thay đổi**. Cùng lượt: khoản chi của loại mang nguồn két vào hạng tử *chi từ két* của hàm `ket_ngay` (`db/reconcile/prelude.sql`) (`db/reconcile/prelude.sql`) — thiếu nó thì `I-021/1` kêu mọi ngày có trả tiền điện |
+| `P2A-05` | Đã thêm `I-029/1`…`I-029/3` và ba lỗi cài cùng số; `ket_ngay` đọc khoản chi của loại mang nguồn két theo ngày khai. Ngày mẫu thêm hai nguồn và số đếm trừ khoản két cùng lượt. |
 | `P2-14` | §1 — mỗi mã `I-0xx` có câu; file này không nhắc đường gọi hay màn hình nào của pha 3 · pha 4 |
 | pha 3 | §2 các dòng *pha 3* — mỗi chỗ cất mới là một migration, kèm câu và file lỗi mới ở `db/reconcile/`; §4 — phần còn mở của **F-060** (**F-047** gỡ ở `T-137`, **F-046** gỡ ở `T-138`) |
 | chủ repo | §2 dòng *chủ repo* còn lại — tin nhắn báo có (`I-015` tập 5). Số đếm két và dấu đối soát xong: `T-133`, 2026-10-05 |

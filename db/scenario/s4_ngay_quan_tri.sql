@@ -5,7 +5,7 @@
 -- Không gán đơn vị lượng đã dùng, không quy đổi. D là ngày diễn; đọc cặp số D-1 và D
 -- để chứng minh giữ được nhiều ngày, không suy thành quy tắc cho phép nhập bù.
 -- Chủ quán huỷ trong ca diễn là lựa chọn dữ liệu, không quyết ai được huỷ (U-071).
--- Ghi khoản chi: vắng, chờ ADR-074 — P2A-05 chưa Done; không dựng bảng hay dòng thay.
+-- P2A-05: S4.10 ghi điện từ két và marketing bằng tiền riêng (§8.10, ADR-106).
 
 -- S4.1 — master_plan/shop-facts.md §8.4 dòng 1552–1556, 1616–1617.
 DO $$
@@ -101,6 +101,16 @@ BEGIN
   PERFORM pg_temp.sc_buoc('Chủ quán', 'S4.9 — thưởng lễ Tết 50000 đ');
   INSERT INTO holiday_bonus (worker_person_id, amount_vnd, paid_date)
   VALUES (pg_temp.sc_nguoi('Người canh & dọn'), 50000, pg_temp.sc_ngay());
+  RAISE NOTICE 'S4.9 thưởng lễ Tết 50000 đ';
+END $$;
+
+-- S4.10 — master_plan/shop-facts.md §8.10 E44 · E46 và lời đóng U-085 · U-093.
+DO $$
+BEGIN
+  PERFORM pg_temp.sc_buoc('Chủ quán', 'S4.10 — ghi khoản chi điện 300000 đ, marketing 500000 đ');
+  INSERT INTO expense (expense_category_id, amount_vnd, paid_date)
+  SELECT id, CASE WHEN paid_from_till THEN 300000 ELSE 500000 END, pg_temp.sc_ngay()
+  FROM expense_category WHERE name IN ('Điện', 'Marketing');
   IF EXISTS (
     WITH sau AS (
       SELECT 'bill' AS bang, to_jsonb(x) AS dong FROM bill x
@@ -116,5 +126,5 @@ BEGIN
   ) THEN
     RAISE EXCEPTION 'S4 DỪNG: khoản admin làm đổi đường tiền bán hàng/két — báo Claude, không sửa đáp số S1…S3';
   END IF;
-  RAISE NOTICE 'S4.9 thưởng lễ Tết 50000 đ';
+  RAISE NOTICE 'S4.10 ghi khoản chi điện 300000 đ, marketing 500000 đ';
 END $$;

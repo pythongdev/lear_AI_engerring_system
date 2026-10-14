@@ -649,6 +649,30 @@ kiểm tra"*. Thiết kế **ADR-106**; test viết trước, đỏ trước cod
   7. Lượt rà `P2A-09` trên file của lát: không endpoint · route · component; ô 7 · 8 hết *vắng*.
   8. `./scripts/gate.sh` và `./scripts/db-check.sh` xanh ở clone chính sau khi đưa về.
 
+**Bàn giao** — 2026-10-14 · thực hiện: **Codex** (migration, file lát `15-`, phép trừ két, ngày mẫu, câu `I-029` và ba lỗi
+cài, bước S4.10, khối `YC-33`, dữ liệu mồi năm loại, ánh xạ ràng buộc, sqlc, lượt rà §9.7) và **Claude Code** (hình
+**ADR-106**, test đỏ trước, chạy database, ký ô) · duyệt: **Claude Code** · nhánh `fe_admin`, trên `184c83a`. Worktree cũ
+dựng từ `fae8b0f` chỉ mang test, gỡ; worktree mới từ `184c83a`.
+
+*Codex làm gì, Claude duyệt ra sao.* Codex nộp phần viết chưa chạy (sandbox không tới Docker), test nguyên byte.
+`db-check` lần đầu: test `i029` **xanh**, nhưng `FAIL QD-34 — 1 dòng` — bảng `expense_category` thiếu `created_at` (ADR-106
+không liệt kê, nhưng `QD-34` đòi mọi bảng); Claude gửi lại Codex một điểm, Codex thêm cột và sinh lại sqlc; chạy lại xanh.
+
+*Nghiệm thu → bằng chứng* (`db-check` ở worktree, rồi `./scripts/gate.sh` ở clone chính, 2026-10-14):
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| 1 | `PASS db/tests/i029_expense_names_category_amount_date_writer.sql`; `PASS xuôi` · `PASS lùi 20261014180000_khoan_chi — lược đồ giống hệt` |
+| 2 | phép trừ két cộng `expense` của loại `paid_from_till` theo `paid_date`; `PASS ngày bán mẫu đúng — 136 câu chạy, mọi tập rỗng` |
+| 3 | `PASS kêu i029_1 — I-029/1` · `i029_2` · `i029_3`; `PASS mã I-0xx — comm -3 rỗng: 33 mã … cùng từng ấy mã có câu` (hết danh sách *chưa có lát*) |
+| 4 | `S4.10 ghi khoản chi điện 300000 đ, marketing 500000 đ`; `YC-33 đọc · Điện · nguồn két t …`; `PASS chấm YC — 37 mã` |
+| 5 | `seed.pl` năm loại — điện · nước · wifi · xăng xe nguồn két, marketing không; kiểm tên trong §8.10 |
+| 6 | file lát `15-luoc-do-khoan-chi.md`, bước 28 ở `07-thu-tu-migration.md`; `check-sqlcgen: PASS` |
+| 7 | §9.7: A1…D2 = 0; dòng §6 trúng đều là câu *khai không dựng*; ô 7 · 8 hết *vắng* |
+| 8 | `db-check: PASS — 28 bước … 47 file test … 138 lỗi cài … 37 mã YC`; `TIỀN ba scenario: S1 96000 · S2 95000 · S3 54000` không đổi |
+
+*Còn lại.* Lãi/lỗ, phân bổ tháng, thuế — ngoài lát (kế hoạch §6). Cửa ghi khoản chi là việc của backend admin.
+
 **Bẫy hay sửa nhầm nhất:**
 - **Tiền hàng không vào đây.** §8.10 cấm cộng trùng giò, trứng, rau, quất với mua hàng.
 - **Danh sách loại chi chưa đóng.** §8.10 cấm suy rằng quán không có khoản nào khác ⇒ loại chi

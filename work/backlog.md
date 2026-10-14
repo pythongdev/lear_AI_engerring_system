@@ -89,7 +89,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-190 **Backend đăng nhập bằng tài khoản** — lát (b) của **ADR-109** điểm 12, đứng trên lược đồ `P2A-14` (đã dựng): cửa đăng ký · đăng nhập (cờ `tai_quay` mở trực quầy qua `nguoi/vao_quay` cùng giao dịch) · đăng xuất (khép trực của chính phiên) · đặt lại mật khẩu qua thư (`PT-7`, trả cùng một câu, mã 30 phút một lần) · đổi mật khẩu · chủ quán duyệt · từ chối · khoá · đặt mật khẩu tạm; `Authenticator` mới đọc cookie phiên, gỡ `authz.ChonTen` và header `X-Person-Id` cùng thay đổi; lệnh khởi tạo chủ quán trên máy chủ (vai `owner`); đếm lần sai và số thư ở backend; hợp đồng `openapi.yaml` tăng phiên bản phụ, ma trận vai thêm dòng; hai câu đối chiếu để lại cho lát này (mốc phiên ↔ trực, đặt lại ↔ bản mật khẩu mới) — L2 (chạm mọi cửa ghi), Claude viết test trước, Codex thi công; `P4-04` (màn đăng nhập) chờ task này. Đăng ký 2026-10-14 (chủ repo: *"đăng kí task"*) · [thiết kế](../docs/decisions.md)
 - [ ] P4-04 **ĐANG DỪNG — không nhặt theo thứ tự trên xuống** (2026-10-14, **ADR-104**: chủ quán thay chọn tên bằng tài khoản mật khẩu riêng; chờ thiết kế đăng nhập L3 ở `T-181`; U-088 đã đóng). **Danh tính và khung theo vai** — chọn tên, vào · rời quầy (T-143), khung riêng cho quầy · chủ quán · trạm (chỉ đọc) · khách; nút hiện theo lớp quyền nhưng backend vẫn là người chặn; gỡ điều (c) cho `P4A-01`…`P4A-11` — L2 · [chi tiết](backlog_FE.md#p4-04)
 - [ ] T-186 **Lát tỉ lệ nhắc sắp hết** — thêm tỉ lệ nhắc (mặc định 20%, chủ quán đặt) vào danh mục nguyên liệu của lát `P2A-02`, sửa phép đọc lược đồ của `I-025` và test của nó cùng thay đổi; lời ở `master_plan/shop-facts.md` §8.4 (U-087 đóng 2026-10-14) — L2, Claude viết test đỏ trước
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
@@ -100,6 +99,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-190 **Backend đăng nhập bằng tài khoản** — lát (b) của **ADR-109** điểm 12, đứng trên lược đồ `P2A-14` (đã dựng): cửa đăng ký · đăng nhập (cờ `tai_quay` mở trực quầy qua `nguoi/vao_quay` cùng giao dịch) · đăng xuất (khép trực của chính phiên) · đặt lại mật khẩu qua thư (`PT-7`, trả cùng một câu, mã 30 phút một lần) · đổi mật khẩu · chủ quán duyệt · từ chối · khoá · đặt mật khẩu tạm; `Authenticator` mới đọc cookie phiên, gỡ `authz.ChonTen` và header `X-Person-Id` cùng thay đổi; lệnh khởi tạo chủ quán trên máy chủ (vai `owner`); đếm lần sai và số thư ở backend; hợp đồng `openapi.yaml` tăng phiên bản phụ, ma trận vai thêm dòng; hai câu đối chiếu để lại cho lát này (mốc phiên ↔ trực, đặt lại ↔ bản mật khẩu mới) — L2 (chạm mọi cửa ghi), Claude viết test trước (`be/internal/taikhoan/taikhoan_test.go`, 2026-10-14), Codex thi công; `P4-04` (màn đăng nhập) chờ task này. Đăng ký 2026-10-14 (chủ repo: *"đăng kí task"*) · [thiết kế](../docs/decisions.md)
 
 
 <a id="done"></a>

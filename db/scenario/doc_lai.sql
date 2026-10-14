@@ -279,6 +279,15 @@ BEGIN
   PERFORM pg_temp.dl_dung(rec.amount_vnd = 50000 AND rec.nguoi_nhan = 'Người canh & dọn'
     AND rec.nguoi_ghi = 'Chủ quán' AND rec.created_at IS NOT NULL, 'S4.9 khoản thưởng');
   RAISE NOTICE 'S4.9 đọc lại: thưởng % đ · người ghi %', rec.amount_vnd, rec.nguoi_ghi;
+  PERFORM pg_temp.dl_dung((SELECT count(*) = 2 AND bool_and(
+      e.amount_vnd = CASE WHEN c.paid_from_till THEN 300000 ELSE 500000 END
+      AND c.paid_from_till = (c.name = 'Điện')
+      AND p.display_name = 'Chủ quán' AND e.created_at IS NOT NULL)
+    FROM expense e JOIN expense_category c ON c.id = e.expense_category_id
+    JOIN person p ON p.id = e.person_id
+    WHERE e.paid_date = pg_temp.dl_ngay() AND c.name IN ('Điện', 'Marketing')),
+    'S4.10 khoản chi đủ loại, nguồn, tiền, ngày, người và lúc ghi');
+  RAISE NOTICE 'S4.10 đọc lại: điện 300000 đ từ két · marketing 500000 đ tiền riêng · Chủ quán ghi';
 END $$;
 
 -- ============================================================ S5 — kết nối khác, không dùng sc hay ID tạm.

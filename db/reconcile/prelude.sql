@@ -88,8 +88,8 @@ $f$;
 -- Phép trừ két của I-021 cho từng ngày bán có CẢ số đếm cuối ngày LẪN tiền đầu két (T-133, F-048):
 -- két đếm được, tiền đầu két, vế phải cộng lại từng hạng tử từ chi tiết (04-luoc-do-duong-tien.md
 -- §3 bảng hạng tử). Ngày thiếu một trong hai không có dòng: nó CHƯA đối soát xong, không phải lệch
--- (I-021 điều kiện biên thứ nhất, ADR-037). Hạng tử CHI TỪ KÉT đọc tạm ứng và thưởng (I-028); khoản
--- chi của I-029 chưa có lát (P2A-05 thêm nó vào đây). Chi trừ theo paid_date dù ghi hôm khác
+-- (I-021 điều kiện biên thứ nhất, ADR-037). Hạng tử CHI TỪ KÉT đọc tạm ứng, thưởng (I-028)
+-- và khoản chi của loại paid_from_till (I-029, ADR-106). Chi trừ theo paid_date dù ghi hôm khác
 -- (T-140, lời chủ quán 2026-10-09). Giữ tham số p_tz cho các lời gọi hiện có.
 CREATE FUNCTION pg_temp.ket_ngay(p_tz text)
 RETURNS TABLE (ngay date, dem_duoc bigint, dau_ket bigint, ve_phai bigint)
@@ -98,7 +98,10 @@ LANGUAGE sql STABLE AS $f$
     SELECT paid_date AS ngay_khai, amount_vnd
     FROM staff_advance
     UNION ALL
-    SELECT paid_date, amount_vnd FROM holiday_bonus),
+    SELECT paid_date, amount_vnd FROM holiday_bonus
+    UNION ALL
+    SELECT e.paid_date, e.amount_vnd FROM expense e
+    JOIN expense_category c ON c.id = e.expense_category_id WHERE c.paid_from_till),
   hang_tu(ngay, tien) AS (
     -- doanh thu TIỀN MẶT: phần tiền mặt của hoá đơn (kể cả trả trước nhận bằng tiền mặt) − hoàn cho
     -- khoản đã thu bằng tiền mặt

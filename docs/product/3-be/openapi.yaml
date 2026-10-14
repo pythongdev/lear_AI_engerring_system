@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.22.0
+  version: 0.23.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -3886,3 +3886,12 @@ x-constraint-errors:
   menu_item_category_menu_item_key: unreviewed
   menu_item_category_person_fkey: unreviewed
   menu_item_category_pkey: internal
+
+  # P2A-05 — chưa có cửa ghi; khoá chính là lỗi nội bộ.
+  expense_category_pkey: internal
+  expense_category_name_key: unreviewed
+  expense_category_name_not_blank_check: unreviewed
+  expense_pkey: internal
+  expense_category_fkey: unreviewed
+  expense_person_fkey: unreviewed
+  expense_positive_amount_check: unreviewed

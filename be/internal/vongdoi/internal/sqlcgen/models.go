@@ -138,6 +138,22 @@ type DiningTable struct {
 	CreatedAt pgtype.Timestamptz
 }
 
+type Expense struct {
+	ID                int64
+	ExpenseCategoryID int64
+	AmountVnd         int64
+	PaidDate          pgtype.Date
+	PersonID          int64
+	CreatedAt         pgtype.Timestamptz
+}
+
+type ExpenseCategory struct {
+	ID           int64
+	Name         string
+	PaidFromTill bool
+	CreatedAt    pgtype.Timestamptz
+}
+
 type HolidayBonu struct {
 	ID             int64
 	WorkerPersonID int64
