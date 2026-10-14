@@ -66,7 +66,7 @@ chuyển thêm năm vế sang cột giữa, đọc ở owner, không chép về 
 | Mỗi người một tài khoản, mật khẩu riêng; tự đăng ký, chủ quán duyệt; Gmail để đặt lại | §8.8 (U-083 · U-088, **ADR-104**) | `P2A-14` — chờ thiết kế `T-181` |
 | Chi phí marketing là một loại chi | §8.10 (U-085) | thêm vào `P2A-05` — nguồn tiền chờ **U-093** |
 
-Vế **còn chặn** sau lượt hai: ngưỡng sắp hết (**U-087**) — thêm vào §6. Vế *đơn vị* của `B12` đã có lời lượt ba (mỗi
+Vế ngưỡng sắp hết (**U-087**) đóng 2026-10-14 ở lượt bốn: mỗi thứ một tỉ lệ do chủ quán đặt, mặc định 20% — cột ấy vào lát nguyên liệu ở `work/backlog.md` **T-186**. Vế *đơn vị* của `B12` đã có lời lượt ba (mỗi
 thứ một đơn vị riêng, §8.4) nên không còn chặn sổ nguyên liệu; mười hai tên cũ chưa có đơn vị vẫn để trống tới khi
 chủ quán khai. Trang tổng kết và hiệu suất nhân viên (§8.6) **chỉ đọc** dữ liệu đã có chỗ cất — không thành bước
 lược đồ; nếu backend admin thấy thiếu một cột để đếm thì gửi ngược một `F-XXX`.
@@ -177,7 +177,7 @@ tiếp dãy `P2A-XX` — không chen vào bước đã có.
 | Báo thuế | `E50` | — chưa có việc |
 | Ai xem được lương, công, con số tiền | `C34` · `C35` · `F55` — và là việc của pha 3 | ADM-24 · ADM-51 |
 | Giảm giá cả đơn · combo · món mới | **U-058** · `D37` · `D38` — và là lát của mảng bán hàng | ADM-32 |
-| Ngưỡng nhắc sắp hết của từng nguyên liệu (thêm 2026-10-14) | **U-087** | trang tổng kết, trang kho (`P4A-03` · `P4A-09`) |
+| ~~Ngưỡng nhắc sắp hết của từng nguyên liệu~~ — **đã có lời 2026-10-14** (U-087 đóng: tỉ lệ chủ quán đặt, mặc định 20%) | — | lược đồ ở `T-186` |
 
 ---
 

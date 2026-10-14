@@ -1144,6 +1144,11 @@ Mệnh đề của **mảng quản trị** — sổ nguyên liệu ở mức *s�
 - **Máy không giữ thứ gì để tự tính thay người.** Không có định lượng của một suất bán, không có
   ngưỡng nhắc sắp hết cho bất kỳ thứ nào, và không có kết luận *thiếu* · *sắp hết* nào do máy đặt ra
   — cả ba là bảng *máy KHÔNG làm* của §8.4 (chốt 2026-09-04 và 2026-09-15).
+  **Sửa 2026-10-14 (T-185, chủ quán đóng `U-087`):** vế *không có ngưỡng nhắc* hẹp lại. Mỗi thứ được có **một tỉ
+  lệ nhắc do chủ quán đặt** (mặc định 20%), và máy **nhắc POS kiểm tra** khi phần còn lại dưới tỉ lệ ấy của lần nhập
+  gần nhất. Tỉ lệ là con số **người nhập** nên vế 1 áp cho nó; lời nhắc **không phải** một con số nguyên liệu và không
+  đổi con số nào. Vẫn cấm: định lượng một suất, kết luận *thiếu*, tự tắt món. Phép đọc lược đồ ở *Verification* đổi
+  theo ở bước lược đồ thêm cột tỉ lệ (`work/backlog.md` **T-186**); tới lúc ấy test cũ còn xanh vì lược đồ chưa đổi.
 - **Sửa một con số đã nhập là một lần cập nhật.** Nó để lại bản trước, bản sau, lý do và người sửa
   theo `I-018`; không có đường sửa đè.
 

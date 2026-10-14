@@ -58,7 +58,7 @@ là trang **có cửa ở pha 3**. Danh sách và điều kiện mở: §6a.
 |---|---|---|
 | **ADR-104** · `T-181` — đăng nhập bằng tài khoản mật khẩu thay chọn tên (chủ quán 2026-10-14) | `P4-04`, rồi mọi bước cần danh tính | chờ thiết kế L3 `T-181` được chủ repo duyệt; U-088 đã đóng; U-080 (Telegram) đã đóng 2026-10-14 — báo đơn bằng SSE |
 | **S-6** — đơn giao tận nơi bấm *đã ra bàn* lúc nào | `P4-07` vế giao hàng | cửa backend đang từ chối kèm mã; màn bày lời ấy |
-| **Backend admin chưa có cửa** (ADR-068) · **U-087** (ngưỡng) | mọi `P4A-XX` | §6a; không chặn cổng pha 4; U-081…U-086 đã đóng 2026-10-14 |
+| **Backend admin chưa có cửa** (ADR-068) | mọi `P4A-XX` | §6a; không chặn cổng pha 4; U-081…U-086 đã đóng 2026-10-14 |
 | **F-068** | không chặn bước nào | nợ test của `be/`; sửa trong lane backend |
 
 ## 5. Đầu ra pha 4 nằm ở đâu
@@ -105,13 +105,13 @@ chặn `P4-12` hay cổng §9.
 |---|---|---|---|---|
 | **P4A-01** | **Khung admin** — vỏ chung của `/admin/*` | lớp `chu_quan` ([`02-vai-va-quyen.md`](../docs/product/3-be/02-vai-va-quyen.md)) | — | L1 |
 | **P4A-02** | **Tổng quan** — `/admin/overview` | bảy thứ chủ quán muốn thấy, `master_plan/shop-facts.md` §8.6; *số tiền dự tính* không phải doanh thu đã đối soát | — | L2 |
-| **P4A-03** | **Tổng kết** — `/admin/summary` | bốn thứ chủ quán muốn, theo ngày, hiệu suất nhân viên đã định nghĩa (§8.6 bổ sung 2026-10-14); doanh thu cộng hai nguồn, hoàn trừ ngày hoàn (§6) | **U-087** | L2 |
+| **P4A-03** | **Tổng kết** — `/admin/summary` | bốn thứ chủ quán muốn, theo ngày, hiệu suất nhân viên đã định nghĩa (§8.6 bổ sung 2026-10-14); doanh thu cộng hai nguồn, hoàn trừ ngày hoàn (§6) | — | L2 |
 | **P4A-04** | **Sản phẩm** — `/admin/products` | sửa giá · ngừng bán đã ở `P4-05`; chủ quán **cần** thêm · xoá món (§8.9 bổ sung 2026-10-14), chưa có cửa | — | L2 |
 | **P4A-05** | **Combo · danh mục · topping** — `/admin/combos` · `/admin/categories` · `/admin/toppings` | chủ quán **cần** cả ba (§8.9 bổ sung 2026-10-14); quán có combo (D42); topping là tuỳ chọn phụ thu §4.4 · §4.6 | — | L2 |
 | **P4A-06** | **Nhân viên** — `/admin/staff` | mỗi người một tài khoản, mật khẩu riêng (§8.8 sửa 2026-10-14, **ADR-104**): tự đăng ký, chủ quán duyệt; mảng con người §8.7 | thiết kế `T-181` | L2 |
 | **P4A-07** | **Giao việc** — `/admin/staff/task-board` · `/admin/todo-list` | chủ quán và POS tạo · sửa · xoá việc và đánh dấu xong (§8.7, 2026-10-14); chưa có lược đồ | — | L1 |
 | **P4A-08** | **Nguyên liệu** — `/admin/ingredients` | sổ ghi tay điện tử §8.4; lược đồ `P2A-02` | — | L1 |
-| **P4A-09** | **Kho** — `/admin/storage` | §8.4: máy **không** kết luận thiếu ⇒ không có *dự kiến hết*; **sửa 2026-10-14:** máy nhắc POS kiểm tra khi sắp hết | **U-087** (ngưỡng) | L1 |
+| **P4A-09** | **Kho** — `/admin/storage` | §8.4: máy **không** kết luận thiếu ⇒ không có *dự kiến hết*; **sửa 2026-10-14:** máy nhắc POS kiểm tra khi còn dưới tỉ lệ chủ quán đặt (U-087 đóng) | lược đồ `T-186` | L1 |
 | **P4A-10** | **Marketing** — `/admin/marketing` | một **khoản chi** của mảng tài chính (§8.10 bổ sung 2026-10-14) | — | L1 |
 | **P4A-11** | **Đào tạo** — `/admin/training` | hướng dẫn chữ · ảnh · video theo việc; chủ quán hoặc POS ghi nhận xét và đánh giá đạt · chưa (§8.7, 2026-10-14); chưa có lược đồ | — | L1 |
 

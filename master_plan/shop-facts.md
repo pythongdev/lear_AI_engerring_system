@@ -1459,6 +1459,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-14 | Chủ quán trả lời bảy câu (T-180), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn phương án ba vế: **đơn web báo về quầy bằng sự kiện SSE**, thay Telegram (U-080); trang tổng kết **cho tất cả thông tin** — KPI doanh thu, món bán chạy, hiệu suất nhân viên, cảnh báo sắp hết (U-081, mở U-087); chủ quán **cần thêm · xoá món, danh mục, combo, topping** (U-082, *lời chọn*); **mỗi người làm một tài khoản, mật khẩu riêng** — *lời chọn*: thay U-075 hoàn toàn (U-083, mở U-088, **ADR-104**); **có** giao việc (U-084, mở U-089); chi phí marketing là **một khoản chi** của mảng tài chính (U-085); **có** hướng dẫn và theo dõi đào tạo (U-086, mở U-090) | §1 · §8.6 · §8.7 · §8.8 · §8.9 · §8.10 |
 | 2026-10-14 | Chủ quán trả lời lượt hai (T-182), chủ repo chuyển lời và chọn trong câu hỏi có sẵn phương án ba vế: báo cáo tổng kết **theo ngày**; hiệu suất nhân viên **theo đề xuất của Claude, chủ repo duyệt** (U-087); máy **tự cảnh báo sắp hết, báo POS kiểm tra** — lật một phần U-045, ngưỡng còn mở; **người làm tự đăng ký, chủ quán duyệt, tự đặt mật khẩu, Gmail để đặt lại khi quên, đăng nhập ở quầy là mốc đổi người** (đóng U-088); **chỉ chủ quán và POS giao việc** (U-089); hướng dẫn là **chữ, ảnh, video theo việc** (U-090) | §8.4 · §8.6 · §8.7 · §8.8 |
 | 2026-10-14 | Chủ quán trả lời lượt ba (T-183): **chủ quán và POS tạo, sửa, xoá việc giao và đánh dấu xong** (đóng U-089); **chủ quán hoặc POS ghi nhận xét và đánh giá người làm làm được việc hay chưa** (đóng U-090); hàng về thì **nhập khối lượng theo đơn vị riêng của từng thứ**, mỗi ngày có người **nhập lượng đã dùng**, máy tự trừ ra phần còn lại (U-087 — vế ngưỡng sắp hết vẫn mở) | §8.4 · §8.7 |
+| 2026-10-14 | Chủ quán trả lời lượt bốn (T-185): máy **nhắc POS kiểm tra khi phần còn lại xuống dưới một tỉ lệ của khối lượng lần nhập gần nhất**; *lời chọn* của chủ repo: **mỗi nguyên liệu một tỉ lệ, chủ quán đặt, mặc định 20%** (đóng U-087; sửa I-025 vế 3) | §8.4 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -1736,7 +1737,12 @@ vế, và thiếu vế ấy thì máy không biết lúc nào nhắc: **ngưỡn
 `docs/product/99-unknowns.md` **U-087**. **Lượt ba 2026-10-14 (T-183):** hàng mua về thì nhập **khối lượng theo đơn vị
 riêng của từng thứ** (chủ quán chọn *"mỗi thứ một đơn vị riêng"* — kg, lít, chai, quả…; nhập và dùng cùng đơn vị ấy),
 mỗi ngày có người **nhập lượng đã dùng**, và máy **tự trừ** ra phần còn lại — khớp phép trừ `U-051` ở trên. Lời này trả
-vế đơn vị của câu **B12** (`work/admin-questions.md`); ngưỡng thì chưa. Danh mục §8.4 sẽ cần cột ngưỡng khi U-087 đóng; câu *"Danh mục nguyên liệu
+vế đơn vị của câu **B12** (`work/admin-questions.md`); ngưỡng thì chưa. **Lượt bốn 2026-10-14 (T-185), đóng `U-087`:** nguyên văn *"Nhắc khi còn dưới một tỉ lệ của lần nhập gần nhất"* —
+máy nhắc POS kiểm tra khi **phần còn lại** của một thứ xuống **dưới một tỉ lệ của khối lượng lần nhập gần nhất** của
+chính thứ ấy. *Lời chọn* của chủ repo trong câu hỏi có sẵn phương án: **mỗi nguyên liệu một tỉ lệ, chủ quán đặt**; thứ
+nào chưa đặt thì **mặc định 20%**. Tỉ lệ là một con số **người nhập**, nên mức sổ ghi tay điện tử đứng nguyên; máy vẫn
+không kết luận thiếu, không tự tắt món. *Cách đọc của phiên:* *phần còn lại* là phép trừ `U-051` ở trên. Danh mục §8.4
+vì thế có thêm cột tỉ lệ; câu *"Danh mục nguyên liệu
 KHÔNG mọc cột ngưỡng"* ở trên là luật cũ.
 - **Không nói mảng này có vào bản chạy đầu tiên hay không.** Đó là câu của
   `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7, và câu ấy đã chốt riêng ngày 2026-09-02
@@ -1897,7 +1903,7 @@ sắp hết* va lời `U-045` (§8.4: máy không kết luận thiếu) — ba v
 là cách đọc của phiên. **Hiệu suất nhân viên** — chủ quán bảo *"bạn đề xuất"*; Claude đề xuất, chủ repo duyệt: mỗi
 người, theo ngày, máy **chỉ đếm số liệu đã có**, không chấm điểm, không xếp hạng — số ngày công (ô *có đi làm* §8.7),
 số đơn ghi lúc người ấy đứng quầy (§8.8), số lần đi giao, số lần huỷ · hoàn tiền người ấy bấm. **Cảnh báo sắp hết** là
-máy nhắc POS kiểm tra (§8.4 *Sửa 2026-10-14*); ngưỡng còn ở **U-087**.
+máy nhắc POS kiểm tra (§8.4 *Sửa 2026-10-14*), khi phần còn lại dưới tỉ lệ chủ quán đặt cho thứ ấy (đóng `U-087`).
 
 ### 8.7 Mảng CON NGƯỜI — làm tới **cả ba mức**: ai đang trực trạm · chấm công · tính lương
 

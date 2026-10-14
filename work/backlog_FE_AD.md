@@ -50,7 +50,7 @@ Một bước `P4A-XX` chỉ *Ready* khi đủ ba điều: chủ repo mở kế 
 **Lời chủ quán 2026-10-14 (T-180).** Sáu câu của sổ này đã đóng (`docs/product/99-unknowns.md`, mục đã có lời giải):
 chủ quán **muốn** trang tổng kết, tự quản lý menu, giao việc, ghi chi phí marketing, và hướng dẫn · theo dõi đào tạo;
 mỗi người làm có **tài khoản, mật khẩu riêng** — lời này thay *chọn tên* (**ADR-104**). Vế chưa rõ mở thành
-`U-087`…`U-090`; lượt hai và ba cùng ngày (T-182 · T-183) đóng `U-088`, `U-089`, `U-090`; chỉ `U-087` (ngưỡng sắp hết) còn mở. Lời mới **không** mở bước nào: điều (a) — backend admin có cửa — vẫn chưa có, và `P4-04` đang dừng.
+`U-087`…`U-090`; lượt hai và ba cùng ngày (T-182 · T-183) đóng `U-088`, `U-089`, `U-090`; lượt bốn (T-185) đóng `U-087` — không câu nào của sổ này còn mở. Lời mới **không** mở bước nào: điều (a) — backend admin có cửa — vẫn chưa có, và `P4-04` đang dừng.
 
 **`PAGES_INDEX.md` cho danh sách trang, không cho cách làm.** Bản ấy chép dự án khác — đăng nhập JWT, WebSocket, CRUD
 tự do — và mọi link của nó đã chết. Cách làm theo **ADR-102** và `docs/private/fe/fe_guidance/`; chỗ trang nguồn trái
@@ -113,12 +113,12 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-03"></a>
 ### P4A-03 — Trang tổng kết đòi những con số mà mảng tài chính chưa chốt
 
-**Phụ thuộc** · bước admin 3/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-087**
+**Phụ thuộc** · bước admin 3/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
 
 **Trang nguồn:** `/admin/summary` — báo cáo: KPI doanh thu, món bán chạy, hiệu suất nhân viên, cảnh báo sắp hết hàng. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
 
-**Goal:** trang tổng kết cho chủ quán bày bốn thứ chủ quán gọi tên 2026-10-14 (U-081, *"cho tất cả thông tin"*): **KPI doanh thu · món bán chạy · hiệu suất nhân viên · cảnh báo sắp hết**. Lượt hai cùng ngày: báo cáo **theo ngày bán**; hiệu suất nhân viên là **số đếm, không chấm điểm, không xếp hạng** — ngày công, số đơn ghi lúc đứng quầy, số lần đi giao, số lần huỷ · hoàn tiền người ấy bấm; *cảnh báo sắp hết* là máy nhắc POS kiểm tra. Chỉ **ngưỡng** sắp hết còn chờ **U-087** — trước lời ấy trang không bày cảnh báo.
+**Goal:** trang tổng kết cho chủ quán bày bốn thứ chủ quán gọi tên 2026-10-14 (U-081, *"cho tất cả thông tin"*): **KPI doanh thu · món bán chạy · hiệu suất nhân viên · cảnh báo sắp hết**. Lượt hai cùng ngày: báo cáo **theo ngày bán**; hiệu suất nhân viên là **số đếm, không chấm điểm, không xếp hạng** — ngày công, số đơn ghi lúc đứng quầy, số lần đi giao, số lần huỷ · hoàn tiền người ấy bấm; *cảnh báo sắp hết* là máy nhắc POS kiểm tra. Ngưỡng: còn dưới tỉ lệ chủ quán đặt cho từng thứ, mặc định 20% của lần nhập gần nhất (U-087 đóng, lượt bốn).
 
 **Dữ kiện quán đã có:** bốn thứ ở `master_plan/shop-facts.md` §8.6 (bổ sung 2026-10-14); món bán chạy khớp `E48` §8.10; luật cộng doanh thu từ hai nguồn và hoàn trừ vào ngày hoàn ở `master_plan/shop-facts.md` §6; doanh thu ngày đã đối soát không đổi; mức sâu của mảng tài chính **chưa chốt** (§8.2).
 
@@ -267,7 +267,7 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-09"></a>
 ### P4A-09 — Trang kho của bản cũ dự báo ngày hết hàng, còn quán này cấm máy kết luận thiếu
 
-**Phụ thuộc** · bước admin 9/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-087** (ngưỡng sắp hết)
+**Phụ thuộc** · bước admin 9/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · lược đồ tỉ lệ nhắc `T-186`
 
 **Trang nguồn:** `/admin/storage` — quản lý kho: cảnh báo sắp hết, nối món với tồn kho, dự báo ngày hết. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
@@ -282,7 +282,7 @@ ra đời ở `P4-02` (**ADR-035**).
 
 **Không làm thì mất gì:** máy nói *sắp hết* thay chủ quán, trái lời đã chốt.
 
-**Sửa 2026-10-14:** máy **nhắc POS kiểm tra** khi một thứ sắp hết (`master_plan/shop-facts.md` §8.4 *Sửa 2026-10-14*); ngưỡng còn chờ **U-087**, nên tới khi nó đóng trang vẫn không có cảnh báo. Cột *dự kiến hết* và *dùng/ngày* vẫn không lấy.
+**Sửa 2026-10-14:** máy **nhắc POS kiểm tra** khi một thứ sắp hết (`master_plan/shop-facts.md` §8.4 *Sửa 2026-10-14*); nhắc khi phần còn lại dưới **tỉ lệ chủ quán đặt cho thứ ấy** (mặc định 20%) của lần nhập gần nhất — U-087 đóng, lượt bốn; trang này là chỗ chủ quán đặt tỉ lệ. Cột *dự kiến hết* và *dùng/ngày* vẫn không lấy.
 
 **Bẫy:** số thiếu là số backend trả, không trừ ở trình duyệt; nhắc sắp hết là việc của backend, không so ngưỡng ở trình duyệt.
 

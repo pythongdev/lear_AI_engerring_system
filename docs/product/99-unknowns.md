@@ -14,7 +14,7 @@
      (docs/decisions.md ADR-007 · work/findings.md F-008). Chuyển mấy dòng dưới
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
-- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**. Bốn câu tính tới 2026-10-14 (T-184): U-087, U-091, U-092, U-093.
+- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**. Ba câu tính tới 2026-10-14 (T-185): U-091, U-092, U-093.
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
 - [Đã có lời giải](#da-co-loi-giai) — câu đã đóng, xếp theo lượt trả lời của chủ quán, kèm nguyên
@@ -33,8 +33,6 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 <a id="dang-mo"></a>
 ### Đang mở
 
-<a id="u-087"></a>
-- **U-087** — Máy nhắc POS kiểm tra khi một nguyên liệu **sắp hết** (lời 2026-10-14), và đã biết *còn lại = tổng đã nhập − tổng đã dùng* theo **đơn vị riêng của từng thứ** (lượt ba, `master_plan/shop-facts.md` §8.4) — nhưng **còn lại bao nhiêu thì là sắp hết**: chủ quán đặt một số ngưỡng cho từng thứ, một tỉ lệ của lần nhập gần nhất, hay cách khác. Lượt ba hỏi đúng câu này, lời trả *"tuỳ từng trường hợp sẽ nhập đơn vị khác nhau"* nói về đơn vị, chưa nói ngưỡng. Người trả lời: chủ quán. Chặn: vế cảnh báo của `P4A-03`, `P4A-09`. Mở 2026-10-14, T-180; hẹp lại hai lần cùng ngày, T-182 · T-183.
 <a id="u-091"></a>
 - **U-091** — Hướng dẫn công việc là chữ, ảnh, video **"theo từng việc"** (`master_plan/shop-facts.md` §8.7, lượt hai 2026-10-14) — *việc* ấy là **từng việc được giao** (một việc giao có hướng dẫn riêng của nó) hay **từng loại công việc** của quán (tráng bánh, đứng quầy, đi giao… — một bản hướng dẫn dùng lại cho mọi người)? Hai cách cho hai hình dữ liệu khác nhau. Người trả lời: chủ quán. Chặn: lát đào tạo `P2A-12` (`master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` §5). Mở 2026-10-14, T-184.
 <a id="u-092"></a>
@@ -164,6 +162,16 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ quán trả lời 2026-10-14, lượt bốn (T-185), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn
+phương án vế *ai đặt* (đánh dấu *lời chọn*).** Lời đáp đã vào owner (`master_plan/shop-facts.md` §8.4) và sửa
+`quality/invariants.md` **I-025** vế 3.
+
+<a id="u-087"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-087 — Còn lại bao nhiêu thì máy nhắc POS "sắp hết"?~~ | “Nhắc khi còn dưới một tỉ lệ của lần nhập gần nhất.” **Máy nhắc POS kiểm tra khi phần còn lại của một nguyên liệu xuống dưới một tỉ lệ của khối lượng lần nhập gần nhất.** *Lời chọn* (chủ repo): **mỗi nguyên liệu một tỉ lệ, chủ quán đặt**; chưa đặt thì mặc định **20%**. | `master_plan/shop-facts.md` §8.4 · `quality/invariants.md` I-025 |
 
 **Chủ quán trả lời 2026-10-14, lượt ba (T-183), chủ repo chuyển lời trong hội thoại.** Lời đáp đã vào owner
 (`master_plan/shop-facts.md` §8.7 · §8.4). `U-087` nhận lời về đơn vị và cách trừ, vế ngưỡng còn mở.
