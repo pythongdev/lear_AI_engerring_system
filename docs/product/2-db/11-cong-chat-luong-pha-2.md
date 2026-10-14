@@ -505,3 +505,117 @@ hai chỗ (Goal chấm công cũ hơn lời một ô mỗi ngày; lược đồ 
 mỗi câu một lỗi cài trong `db/reconcile/proof/`; YC-38 đọc và sai ở `db/scenario/yc.sql`.
 Bước 27 có khoá chặn lùi. Chưa ký nghiệm thu database: Claude chạy test, lỗi cài,
 vòng xuôi · lùi · xuôi lại và toàn bộ `./scripts/db-check.sh` tại clone chính.
+
+## 10. Ngày quản trị lượt hai — P2A-15
+
+Biên bản 2026-10-14: Codex thi công theo phiếu Claude, **scenario chưa chạy database**.
+Không dùng output của lượt trước làm bằng chứng cho lượt hai. Claude chạy db-check, đọc lại
+ở kết nối khác và ký ô 1–6 sau; ô 7 · 8 thuộc bước rà ranh giới lượt hai P2A-16.
+
+### 10.1 Bước ở quán và nguồn đã chốt
+
+File [s5_ngay_quan_tri_luot_hai.sql](../../../db/scenario/s5_ngay_quan_tri_luot_hai.sql)
+chạy sau s4; chín khối DO, mỗi khối một giao dịch tự COMMIT, khai người và lý do qua sc_buoc.
+Phần S5 của [doc_lai.sql](../../../db/scenario/doc_lai.sql) không dùng ID hay bảng tạm của phiên ghi;
+mỗi bước so đáp số viết tay qua dl_dung, sai thì RAISE EXCEPTION.
+
+Tên người dùng lại dữ liệu diễn; tài khoản, Gmail, băm mật khẩu viết sẵn, mã phiên, nội dung việc,
+hướng dẫn, nhận xét, tên danh mục, tên combo, hai suất và 27000 đ đều là dữ liệu diễn.
+Ngày là ngày mai theo múi giờ kết nối. Khoảng cũ trong mo_ngay là 05:30–11:30;
+trực mới 11:35–12:10 không chồng khoảng cũ. Bước danh mục 12:00 ngoài giờ bán 06:00–11:00
+(shop-facts §1 dòng 26). Không sửa giá món hay bán combo; không suy thêm luật nghiệp vụ.
+
+| Bước · giờ | Việc diễn | Nguồn master_plan/shop-facts.md (dòng tại 2026-10-14) | Đọc lại viết tay |
+|---|---|---|---|
+| S5.1 · 11:31 | Người làm tự đăng ký, tự đặt mật khẩu | §8.8 dòng 2071–2074 | Bản trước lúc duyệt là cho_duyet, chưa gắn người/vai; mật khẩu đầu còn, người tự đặt |
+| S5.2 · 11:32 | Chủ quán duyệt, gắn Người canh & dọn, gán vai quầy | §8.8 dòng 2071–2072 | Hoạt động, đúng người, vai quay, Chủ quán duyệt đúng mốc |
+| S5.3 · 11:35 | Đăng nhập quầy; khép trực đang có nếu có, mở trực và phiên cùng giao dịch | §8.8 dòng 2075–2076, 2019–2021 | Phiên và trực cùng người, mở 11:35, khép 12:10, không chồng trực khác |
+| S5.4 · 11:40 | Chủ quán giao việc, hướng dẫn chữ của việc ấy | §8.7 dòng 1992–1998, 2000–2002 | Đúng người giao/nhận, nội dung, hướng dẫn chữ gắn chính việc |
+| S5.5 · 11:45 | POS đánh dấu xong | §8.7 dòng 1994–1995 | Sự kiện mới nhất theo created_at, id là done; người bấm đứng quầy lúc ấy, thuộc phiên S5.3 |
+| S5.6 · 11:50 | Chủ quán ghi nhận đào tạo đạt kèm nhận xét | §8.7 dòng 1995–1998 | pass, đúng nhận xét, người học, người ghi và mốc |
+| S5.7 · 12:00 | Chủ quán thêm danh mục, xếp Suất trứng tái, lập combo giá riêng | §8.9 dòng 2107–2112, 2114–2118 | Món thuộc danh mục mới, combo hai suất giá riêng 27000 đ, Chủ quán lập ngoài giờ bán |
+| S5.8 · 12:10 | Đăng xuất và khép trực của phiên | §8.8 dòng 2075–2076, 2019–2021 | dang_xuat và khoảng trực của chính phiên kết thúc 12:10 |
+| S5.9 · 12:12–12:20 | Phiên ngoài quầy làm tiền đề; quên mật khẩu, cấp và dùng mã đặt lại | §8.8 dòng 2061–2064, 2072–2074 | Hai bản mật khẩu; mã cấp 12:15, hạn 12:45, dùng một lần 12:20; phiên kết thúc vì dat_lai_mat_khau; không còn phiên mở |
+
+S5.9 tạo một phiên ngoài quầy lúc 12:12 trong khối diễn để có phiên thực sự phải kết thúc;
+không gửi thư hay chứng minh cửa đăng nhập. Hạn mã và kết thúc phiên theo thiết kế lát
+[19-luoc-do-tai-khoan.md](19-luoc-do-tai-khoan.md) và phiếu giao việc, không gán thành lời quán.
+S5 chụp đường tiền trước/sau bằng EXCEPT ALL hai chiều như S4; khác thì dừng.
+Các phép đọc và dòng TIỀN của ba scenario bán hàng giữ nguyên; chưa có output tiền của lượt chạy mới.
+
+### 10.2 Rà mã mệnh đề, câu đối chiếu và dòng chấm YC
+
+Đọc file thật ngày 2026-10-14; số dòng dưới đây thuộc nền đang có. Bốn mã không nằm trong danh sách
+*mệnh đề chưa có lát* của [09-doi-chieu-bat-bien.md](09-doi-chieu-bat-bien.md) §2.1.
+Đây là rà tĩnh; có file lỗi không chứng minh lỗi đã chạy và kêu đúng.
+
+| Mệnh đề ↔ yêu cầu ↔ nguồn | Câu đang có (dòng bắt đầu trong db/reconcile/) | Dòng chấm trong db/scenario/yc.sql |
+|---|---|---|
+| I-030 ↔ YC-35 ↔ §8.7 dòng 1992–1998 | i030.sql: /1 dòng 3, /2 dòng 10, /3 dòng 29, /4 dòng 34 | Đọc 872; từ chối 878; gọi tên I-030/2 ở 880 |
+| I-031 ↔ YC-36 ↔ §8.7 dòng 1993–1998, 2000–2002 | i031.sql: /1 dòng 4, /2 dòng 9, /3 dòng 16, /4 dòng 25, /5 dòng 29, /6 dòng 33 | Đọc 899; từ chối 907; gọi tên I-031/3 ở 909 |
+| I-032 ↔ YC-37 ↔ §8.9 dòng 2107–2118 | i032.sql: /1 dòng 4, /2 dòng 8, /3 dòng 13, /4 dòng 17, /5 dòng 22, /6 dòng 26, /7 dòng 35, /8 dòng 44 | Đọc 931; từ chối 943; gọi tên I-032/6 và /8 ở 945–946 |
+| I-033 ↔ YC-38 ↔ §8.8 dòng 2061–2076 | i033.sql: /1 dòng 3, /2 dòng 15, /3 dòng 19, /4 dòng 25, /5 dòng 30, /6 dòng 34, /7 dòng 38, /8 dòng 44, /9 dòng 50, /10 dòng 58, /11 dòng 65, /12 dòng 69 | Đọc 970; từ chối mở lại phiên ở 975 |
+
+Rà `comm -3` đã chạy: mã mệnh đề ↔ mã câu **4/4, rỗng**; mã YC ↔ dòng đọc
+**4/4, rỗng**; mã YC ↔ dòng sai **4/4, rỗng**; mã câu ↔ mã trong dòng đầu file lỗi
+**30/30, rỗng**. Mỗi câu có file lỗi cùng số i030_1…i030_4, i031_1…i031_6,
+i032_1…i032_8, i033_1…i033_12 ở db/reconcile/proof/. Cách lấy tập để tái lập:
+
+```bash
+comm -3 <(rg -o 'I-03[0-3]' quality/invariants.md | sort -u) \
+  <(rg --no-filename '^-- @@ I-03[0-3]/' db/reconcile/i03[0-3].sql | sed -E 's/^-- @@ (I-[0-9]+).*/\1/' | sort -u)
+for kind in yc_doc yc_tu_choi; do
+  comm -3 <(rg -o 'YC-3[5-8]' docs/product/1-system-design/04-yeu-cau-du-lieu.md | sort -u) \
+    <(rg "$kind\('YC-3[5-8]'" db/scenario/yc.sql | rg -o 'YC-3[5-8]' | sort -u)
+done
+comm -3 <(rg --no-filename '^-- @@ I-03[0-3]/' db/reconcile/i03[0-3].sql | sed -E 's/^-- @@ (I-[0-9]+\/[0-9]+).*/\1/' | sort -u) \
+  <(head -n 1 db/reconcile/proof/i03[0-3]_*.sql | rg -o 'I-03[0-3]/[0-9]+' | sort -u)
+```
+
+### 10.3 Rà ngang lát và giới hạn để Claude quyết
+
+Đã có câu ngang lát: I-030/2 nối việc/sự kiện/vết với người và khoảng trực;
+I-031/1 nối hướng dẫn với việc, I-031/3 nối ghi nhận với trực;
+I-032/2 và /4 nối món, /8 xét chủ quán; I-033/3 nối phiên với trực của chính người,
+I-033/5 nối vai owner với cờ chủ quán. Vết dùng I-018/1, đơn cũ giữ giá dùng I-009.
+S5 đi qua I-030/2 và I-033/3 bằng người không có cờ chủ quán; chưa chạy để chứng minh tập rỗng.
+
+Các tập ứng viên **chưa có câu** thấy khi đọc bốn file đối chiếu, chỉ liệt kê để Claude xét:
+
+| Tập ngang lát chưa có câu | Vì sao chưa được các câu hiện có bao phủ |
+|---|---|
+| Phiên quầy có mốc tạo/kết thúc lệch khoảng trực, hoặc đã đăng xuất mà trực chưa khép | I-033/3 kiểm người, tồn tại và duy nhất; chưa so mốc. S5 đọc lại cặp mốc riêng, không thay câu chung |
+| Mã đặt lại đã dùng nhưng thiếu bản mật khẩu mới hoặc còn phiên cũ chưa kết thúc | I-033/10 kiểm hình/hạn mã; /2 chỉ xét trạng thái tài khoản; chưa nối lần dùng mã, bản mật khẩu và mọi phiên |
+| Tài khoản được duyệt bởi người không có cờ chủ quán | I-033/1 kiểm người quyết có thật; /5 xét người mang vai owner, không xét người duyệt |
+| Người xếp món vào danh mục không phải chủ quán | I-032/8 đọc danh mục/combo và vết của hai bảng ấy, chưa đọc liên kết món–danh mục |
+| Người gắn/sửa/ẩn hướng dẫn hoặc sửa/ẩn ghi nhận đào tạo ngoài chủ quán/POS | I-031/3 chỉ xét người và lúc tạo ghi nhận; /1 và /6 kiểm liên kết/dấu ẩn, không xét vai ở các thao tác còn lại |
+
+Giới hạn không có tập phân biệt từ dữ liệu còn lại: người khác bấm hộ; lịch sử bị xoá vượt quyền;
+tệp hướng dẫn ngoài database đã mất; cờ chủ quán không có lịch sử. Giá riêng tình cờ bằng tổng món
+không chứng minh đã cộng giá. Không thêm câu, không quyết thay Claude về các tập trên.
+
+**Claude quyết 2026-10-14** (P2A-15, Claude Code — lựa chọn của phiên, theo mệnh đề đang đứng):
+
+1. *Người duyệt tài khoản không phải chủ quán* ⇒ **câu mới `I-033/13`** — người duyệt, từ chối, khoá hay sửa một tài
+   khoản (cột người quyết và vết sửa của `account`) không mang cờ chủ quán; lỗi cài `db/reconcile/proof/i033_13.sql`. Vế *chủ quán
+   duyệt* của `I-033` là tầng 3, cùng khuôn `I-030/2` · `I-032/8`.
+2. *Người xếp món vào danh mục không phải chủ quán* ⇒ **mở rộng `I-032/8`** đọc thêm `menu_item_category`: xếp món là
+   sửa danh mục; lỗi cài `db/reconcile/proof/i032_9.sql`.
+3. *Mốc phiên quầy lệch khoảng trực* và *mã đặt lại đã dùng mà thiếu bản mật khẩu mới hay còn phiên mở* ⇒ **chưa có
+   câu**: cả hai là cùng một giao dịch của cửa đăng nhập · đặt lại (**ADR-109** điểm 7 · 8), chưa dựng. Người nợ: lát
+   backend (b) của **ADR-109** điểm 12 viết câu cùng lúc dựng cửa; S5 đã đọc lại cặp mốc ấy bằng tay.
+4. *Người sửa hay ẩn hướng dẫn, ghi nhận đào tạo ngoài chủ quán · POS* ⇒ **không có câu**: `I-031` chỉ nói *người ghi*
+   là chủ quán hoặc POS, không nói ai được sửa hay ẩn — viết câu là đặt luật hộ lời quán.
+
+### 10.4 Tám ô cổng kế hoạch §7 áp cho lượt hai
+
+| Ô | Nội dung | Output / người ký |
+|---|---|---|
+| 1 | Vế ↔ YC ↔ lời đã chốt; chấm đọc và sai YC-35…YC-38 | Claude ký 2026-10-14: `PASS chấm YC — 36 mã, mỗi mã đọc + sai`; `YC-35`…`YC-38` mỗi mã một dòng *đọc* và ít nhất một dòng *sai* (vd. `YC-38 sai · mở lại phiên đã kết thúc ⇒ TỪ CHỐI`); vế ↔ `YC` ↔ lời ở `04-yeu-cau-du-lieu.md` §9 |
+| 2 | Ràng buộc tầng 1 từ chối dữ liệu sai I-030…I-033 | Claude ký 2026-10-14: test `db/tests/i030_*` · `i031_*` · `i032_*` · `i033_*` PASS, in 17 · 38 · 32 · 41 dòng `… bị từ chối (…)` mang tên ràng buộc |
+| 3 | Câu chạy rỗng trên ngày đúng và kêu đúng lỗi cài | Claude ký 2026-10-14: `PASS ngày bán mẫu đúng — 133 câu chạy, mọi tập rỗng`; `PASS kêu i030_1` … `PASS kêu i033_13 — I-033/13`, `PASS kêu i032_9 — I-032/8`; `db-check` 135 lỗi cài |
+| 4 | Migration lượt hai xuôi · lùi · xuôi lại thật | Claude ký 2026-10-14: `PASS xuôi` và `PASS lùi … lược đồ giống hệt lúc trước bước ấy` cho `20261014140000_giao_viec` · `150000_dao_tao` · `160000_danh_muc_combo` · `170000_tai_khoan` |
+| 5 | Tên bảng tài liệu khớp migration, output Gate 1e | Claude ký 2026-10-14: `check-schema-names: PASS — 55 bảng ở migration, 55 bảng tài liệu nhắc, comm -3 rỗng` |
+| 6 | S5 COMMIT từng bước, đọc lại kết nối khác, tiền không đổi | Claude ký 2026-10-14: `PASS ba scenario + ngày quản trị diễn qua lược đồ — 50 dòng bước`; `PASS đọc lại … ở kết nối khác`, S5.1…S5.9 mỗi bước một dòng *đọc lại*; `PASS đối chiếu trên ngày vừa diễn — 111 câu I-0xx · 22 câu QD, mọi tập rỗng`; `TIỀN ba scenario: S1 96000 · S2 95000 · S3 54000 · cộng 245000 đ` — không đổi |
+| 7 | Không lát nào cất thứ thuộc §6 của kế hoạch | *của `P2A-16`* |
+| 8 | Không endpoint · route · component trong lát admin | *của `P2A-16`* |

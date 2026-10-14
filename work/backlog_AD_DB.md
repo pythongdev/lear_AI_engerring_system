@@ -1911,6 +1911,41 @@ chưa ai xác nhận. Số lần sai và số thư một giờ không có chỗ 
 **Goal:** khuôn [`P2A-07`](#p2a-07) và [`P2A-08`](#p2a-08) cho lượt hai — mỗi mệnh đề mới có câu đối chiếu biết kêu,
 và một ngày quản trị lượt hai ghi rồi đọc lại được.
 
+**Nhận việc** — 2026-10-14 (Claude Code), mức **L2**; `P2A-11` → `P2A-14` đã `Done` (P2A-14 commit `3419303`), không lát
+nào vắng. Chủ repo giao *"yêu cầu codex làm bạn kiểm tra"*: **Codex** viết ngày lượt hai, phần đọc lại và mục cổng §10
+trong worktree riêng; **Claude** chạy database, quyết các tập ngang lát, viết câu mới và ký ô 1–6.
+- *Nghiệm thu:*
+  1. `db/scenario/s5_ngay_quan_tri_luot_hai.sql` — chín bước khuôn **ADR-067**, mỗi bước trỏ một dòng `shop-facts.md` §8:
+     tự đăng ký · chủ quán duyệt · đăng nhập ở quầy · giao việc kèm hướng dẫn · POS đánh dấu xong · ghi nhận đào tạo ·
+     danh mục và combo · đăng xuất · đặt lại mật khẩu.
+  2. `doc_lai.sql` đọc lại từng bước ở kết nối khác; các dòng `TIỀN` của ba scenario bán hàng không đổi.
+  3. Bộ đối chiếu trên ngày vừa diễn rỗng.
+  4. Rà `comm -3` mã ↔ câu lượt hai; tập ngang lát chưa có câu được Claude quyết từng tập.
+  5. Mục `## 10` ở `11-cong-chat-luong-pha-2.md`; ô 1–6 ký kèm output thật, ô 7 · 8 của `P2A-16`.
+  6. `./scripts/db-check.sh` và `./scripts/gate.sh` xanh ở clone chính.
+
+**Bàn giao** — 2026-10-14 · thực hiện: **Codex** (S5, đọc lại S5, §10.1–§10.4) và **Claude Code** (quyết năm tập ngang
+lát, câu `I-033/13`, mở rộng `I-032/8`, hai lỗi cài, ký ô 1–6) · duyệt: **Claude Code** · nhánh `fe_admin`, trên `3419303`.
+
+*Codex làm gì, Claude duyệt ra sao.* Codex không chạy được database, nộp ba file chưa chạy; `db-check` trong worktree của
+Claude xanh ngay lần đầu. Codex liệt kê năm tập ngang lát chưa có câu; Claude quyết ở §10.3: *người duyệt tài khoản không
+phải chủ quán* ⇒ câu mới `I-033/13`; *người xếp món vào danh mục không phải chủ quán* ⇒ `I-032/8` đọc thêm
+`menu_item_category`; *mốc phiên lệch trực* và *đặt lại thiếu mật khẩu mới* ⇒ chưa có câu, người nợ: lát backend của
+**ADR-109** điểm 12; *ai được sửa, ẩn ghi nhận đào tạo* ⇒ không câu — `I-031` không nói.
+
+*Nghiệm thu → bằng chứng* (`db-check` ở worktree trên nền này, rồi `./scripts/gate.sh` ở clone chính, 2026-10-14):
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| 1 | `PASS ba scenario + ngày quản trị diễn qua lược đồ — 50 dòng bước`; `S5.1 tự đăng ký chờ duyệt …` … `S5.9 mã dùng một lần trong hạn …` |
+| 2 | `PASS đọc lại … ở kết nối khác`; `S5.1 đọc lại` … `S5.9 đọc lại`; `TIỀN ba scenario: S1 96000 · S2 95000 · S3 54000 · cộng 245000 đ` |
+| 3 | `PASS đối chiếu trên ngày vừa diễn — 111 câu I-0xx · 22 câu QD, mọi tập rỗng · 1 mệnh đề chưa có lát` |
+| 4 | §10.2 `comm -3` rỗng 4–4; `PASS kêu i033_13 — I-033/13` · `PASS kêu i032_9 — I-032/8` |
+| 5 | §10.4 ô 1–6 *Claude ký 2026-10-14* kèm output; ô 7 · 8 *của `P2A-16`* |
+| 6 | `db-check: PASS — … 135 lỗi cài … 36 mã YC`; gate ở clone chính — xem khối commit |
+
+*Còn lại.* Hai tập để lát backend nói ở trên; ô 7 · 8 là `P2A-16`.
+
 [↑ đầu file](#top)
 
 ---

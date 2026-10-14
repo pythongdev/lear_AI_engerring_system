@@ -69,3 +69,11 @@ AND before_image ->> 'ended_at' IS NOT NULL
 -- @@ I-033/12 — vết sửa mã đặt lại đã dùng
 SELECT id FROM record_revision WHERE target_table_code = 'password_reset'
 AND before_image ->> 'used_at' IS NOT NULL
+
+-- @@ I-033/13 — người duyệt, từ chối, khoá hoặc sửa một tài khoản không phải chủ quán
+-- Tầng 3 (ADR-109 điểm 2; khuôn I-030/2 · I-032/8): đọc cờ chủ quán hiện hành. Thêm 2026-10-14, P2A-15, Claude Code.
+WITH thao_tac AS (
+  SELECT id AS dong, decided_by_person_id AS person_id FROM account WHERE decided_by_person_id IS NOT NULL
+  UNION ALL SELECT target_row, person_id FROM record_revision WHERE target_table_code = 'account'
+)
+SELECT x.* FROM thao_tac x JOIN person p ON p.id = x.person_id WHERE NOT p.is_owner

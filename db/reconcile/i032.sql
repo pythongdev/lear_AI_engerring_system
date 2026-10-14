@@ -46,6 +46,8 @@ WHERE (x.hidden_at IS NOT NULL AND p.id IS NULL)
 WITH thao_tac AS (
   SELECT 'menu_category' AS bang, 'tao' AS loai, id AS dong, person_id FROM menu_category
   UNION ALL SELECT 'menu_combo', 'tao', id, person_id FROM menu_combo
+  -- Xếp món vào danh mục là sửa danh mục (thêm 2026-10-14, P2A-15, Claude Code).
+  UNION ALL SELECT 'menu_item_category', 'xep', id, person_id FROM menu_item_category
   UNION ALL SELECT 'menu_category', 'an', id, hidden_by_person_id FROM menu_category WHERE hidden_at IS NOT NULL
   UNION ALL SELECT 'menu_combo', 'an', id, hidden_by_person_id FROM menu_combo WHERE hidden_at IS NOT NULL
   UNION ALL SELECT target_table_code, 'sua', target_row, person_id FROM record_revision

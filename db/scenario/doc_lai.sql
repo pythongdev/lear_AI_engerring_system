@@ -280,3 +280,127 @@ BEGIN
     AND rec.nguoi_ghi = 'Chủ quán' AND rec.created_at IS NOT NULL, 'S4.9 khoản thưởng');
   RAISE NOTICE 'S4.9 đọc lại: thưởng % đ · người ghi %', rec.amount_vnd, rec.nguoi_ghi;
 END $$;
+
+-- ============================================================ S5 — kết nối khác, không dùng sc hay ID tạm.
+DO $$
+DECLARE rec record; acc bigint; task bigint;
+  d date := pg_temp.dl_ngay();
+BEGIN
+  SELECT id INTO STRICT acc FROM account
+  WHERE username = 's5.nguoi.lam' AND pg_temp.dl_cua_ngay(created_at);
+  -- S5.1: trạng thái ban đầu đọc từ bản trước của lần duyệt, không từ trạng thái hiện hành.
+  PERFORM pg_temp.dl_dung((SELECT count(*) = 1 FROM record_revision
+    WHERE target_table_code = 'account' AND target_row = acc
+      AND before_image ->> 'status' = 'cho_duyet'
+      AND before_image ->> 'person_id' IS NULL AND before_image ->> 'role_code' IS NULL
+      AND before_image ->> 'decided_at' IS NULL AND before_image ->> 'decided_by_person_id' IS NULL)
+    AND (SELECT count(*) = 1 FROM account_password WHERE account_id = acc
+      AND password_hash = '$argon2id$s5-ban-dau-du-lieu-dien'
+      AND set_by_person_id IS NULL AND NOT must_change_password
+      AND created_at = (d + time '11:31') AT TIME ZONE current_setting('TimeZone')),
+    'S5.1 tự đăng ký chưa gắn người, mật khẩu đầu do người làm tự đặt');
+  RAISE NOTICE 'S5.1 đọc lại: chờ duyệt chưa gắn người ở bản trước; bản mật khẩu đầu còn nguyên';
+
+  SELECT a.*, p.display_name AS nguoi, q.display_name AS nguoi_duyet INTO STRICT rec
+  FROM account a JOIN person p ON p.id = a.person_id JOIN person q ON q.id = a.decided_by_person_id
+  WHERE a.id = acc;
+  PERFORM pg_temp.dl_dung(rec.status = 'hoat_dong' AND rec.nguoi = 'Người canh & dọn'
+    AND rec.role_code = 'quay' AND rec.nguoi_duyet = 'Chủ quán'
+    AND rec.decided_at = (d + time '11:32') AT TIME ZONE current_setting('TimeZone'),
+    'S5.2 người, vai, ai duyệt và lúc duyệt');
+  RAISE NOTICE 'S5.2 đọc lại: Người canh & dọn, vai quay, Chủ quán duyệt 11:32';
+
+  SELECT s.*, c.person_id AS nguoi_truc, c.started_at, c.ended_at AS het_truc,
+    a.person_id AS nguoi_tk, p.display_name AS ten_truc INTO STRICT rec
+  FROM login_session s JOIN account a ON a.id = s.account_id
+  JOIN counter_duty c ON c.id = s.counter_duty_id JOIN person p ON p.id = c.person_id
+  WHERE s.account_id = acc AND s.token_hash = sha256('s5-phien-quay'::bytea);
+  PERFORM pg_temp.dl_dung(rec.nguoi_truc = rec.nguoi_tk AND rec.ten_truc = 'Người canh & dọn'
+    AND rec.started_at = (d + time '11:35') AT TIME ZONE current_setting('TimeZone')
+    AND rec.created_at = rec.started_at
+    AND rec.het_truc = (d + time '12:10') AT TIME ZONE current_setting('TimeZone')
+    AND NOT EXISTS (SELECT 1 FROM counter_duty c WHERE c.id <> rec.counter_duty_id
+      AND c.started_at < rec.het_truc AND (c.ended_at IS NULL OR c.ended_at > rec.started_at)),
+    'S5.3 phiên và trực đúng người, đúng mốc, không chồng trực khác');
+  RAISE NOTICE 'S5.3 đọc lại: phiên quầy gắn chính người đăng nhập, trực 11:35–12:10 không chồng';
+
+  SELECT t.id INTO STRICT task FROM assigned_task t
+  WHERE t.content = 'S5 lau bàn dụng cụ (dữ liệu diễn)' AND pg_temp.dl_cua_ngay(t.created_at);
+  SELECT t.*, p.display_name AS nguoi_giao, q.display_name AS nguoi_nhan,
+    g.guide_kind_code, g.body, g.file_code, g.created_at AS luc_huong_dan,
+    gp.display_name AS nguoi_huong_dan INTO STRICT rec
+  FROM assigned_task t JOIN person p ON p.id = t.person_id
+  JOIN person q ON q.id = t.assignee_person_id
+  JOIN assigned_task_guide g ON g.assigned_task_id = t.id
+  JOIN person gp ON gp.id = g.person_id WHERE t.id = task;
+  PERFORM pg_temp.dl_dung(rec.nguoi_giao = 'Chủ quán' AND rec.nguoi_nhan = 'Người canh & dọn'
+    AND rec.guide_kind_code = 'text' AND rec.body = 'S5 dùng khăn sạch lau bàn dụng cụ (dữ liệu diễn)'
+    AND rec.file_code IS NULL AND rec.nguoi_huong_dan = 'Chủ quán'
+    AND rec.created_at = (d + time '11:40') AT TIME ZONE current_setting('TimeZone')
+    AND rec.luc_huong_dan = rec.created_at, 'S5.4 việc và hướng dẫn đúng việc, người, nội dung');
+  RAISE NOTICE 'S5.4 đọc lại: Chủ quán giao đúng người, hướng dẫn chữ của chính việc';
+
+  SELECT m.*, p.display_name AS nguoi_bam INTO STRICT rec
+  FROM assigned_task_mark m JOIN person p ON p.id = m.person_id
+  WHERE m.assigned_task_id = task ORDER BY m.created_at DESC, m.id DESC LIMIT 1;
+  PERFORM pg_temp.dl_dung(rec.mark_code = 'done' AND rec.nguoi_bam = 'Người canh & dọn'
+    AND rec.created_at = (d + time '11:45') AT TIME ZONE current_setting('TimeZone')
+    AND (SELECT count(*) = 1 FROM counter_duty c JOIN login_session s ON s.counter_duty_id = c.id
+      WHERE c.person_id = rec.person_id AND c.started_at <= rec.created_at
+        AND (c.ended_at IS NULL OR rec.created_at < c.ended_at)
+        AND s.token_hash = sha256('s5-phien-quay'::bytea)),
+    'S5.5 sự kiện mới nhất là done, người bấm đang đứng quầy của S5.3');
+  RAISE NOTICE 'S5.5 đọc lại: đã xong từ sự kiện mới nhất; người đánh dấu đang đứng quầy lúc 11:45';
+
+  SELECT t.*, p.display_name AS nguoi_ghi, q.display_name AS nguoi_hoc INTO STRICT rec
+  FROM training_record t JOIN person p ON p.id = t.person_id JOIN person q ON q.id = t.trainee_person_id
+  WHERE t.remark = 'S5 lau sạch bàn dụng cụ (dữ liệu diễn)' AND pg_temp.dl_cua_ngay(t.created_at);
+  PERFORM pg_temp.dl_dung(rec.rating_code = 'pass' AND rec.nguoi_ghi = 'Chủ quán'
+    AND rec.nguoi_hoc = 'Người canh & dọn'
+    AND rec.created_at = (d + time '11:50') AT TIME ZONE current_setting('TimeZone'),
+    'S5.6 đạt, nhận xét, người học và người ghi');
+  RAISE NOTICE 'S5.6 đọc lại: đạt, Chủ quán nhận xét Người canh & dọn';
+
+  SELECT c.name AS danh_muc, i.name AS mon, b.name AS combo, b.price_vnd, bi.quantity,
+    c.created_at AS luc_danh_muc, b.created_at AS luc_combo,
+    p.display_name AS nguoi_lap, q.display_name AS nguoi_xep, r.display_name AS nguoi_combo
+  INTO STRICT rec FROM menu_category c JOIN menu_item_category ic ON ic.menu_category_id = c.id
+  JOIN menu_item i ON i.id = ic.menu_item_id JOIN menu_combo_item bi ON bi.menu_item_id = i.id
+  JOIN menu_combo b ON b.id = bi.menu_combo_id JOIN person p ON p.id = c.person_id
+  JOIN person q ON q.id = ic.person_id JOIN person r ON r.id = b.person_id
+  WHERE c.name = 'S5 món sau buổi (dữ liệu diễn)' AND b.name = 'S5 combo hai suất (dữ liệu diễn)'
+    AND pg_temp.dl_cua_ngay(c.created_at) AND pg_temp.dl_cua_ngay(b.created_at);
+  PERFORM pg_temp.dl_dung(rec.mon = 'Suất trứng tái' AND rec.price_vnd = 27000 AND rec.quantity = 2
+    AND rec.nguoi_lap = 'Chủ quán' AND rec.nguoi_xep = 'Chủ quán' AND rec.nguoi_combo = 'Chủ quán'
+    AND rec.luc_danh_muc = (d + time '12:00') AT TIME ZONE current_setting('TimeZone')
+    AND rec.luc_combo = rec.luc_danh_muc, 'S5.7 danh mục, món, thành phần và giá riêng 27000');
+  RAISE NOTICE 'S5.7 đọc lại: Suất trứng tái thuộc danh mục mới, combo 2 suất giá riêng 27000 đ lúc 12:00';
+
+  SELECT s.end_reason, s.ended_at, c.ended_at AS het_truc INTO STRICT rec
+  FROM login_session s JOIN counter_duty c ON c.id = s.counter_duty_id
+  WHERE s.account_id = acc AND s.token_hash = sha256('s5-phien-quay'::bytea);
+  PERFORM pg_temp.dl_dung(rec.end_reason = 'dang_xuat'
+    AND rec.ended_at = (d + time '12:10') AT TIME ZONE current_setting('TimeZone')
+    AND rec.het_truc = rec.ended_at, 'S5.8 đăng xuất và khép chính trực của phiên');
+  RAISE NOTICE 'S5.8 đọc lại: dang_xuat lúc 12:10, trực của phiên khép cùng lúc';
+
+  SELECT * INTO STRICT rec FROM password_reset
+  WHERE account_id = acc AND token_hash = sha256('s5-ma-dat-lai'::bytea);
+  PERFORM pg_temp.dl_dung(rec.created_at = (d + time '12:15') AT TIME ZONE current_setting('TimeZone')
+    AND rec.expires_at = (d + time '12:45') AT TIME ZONE current_setting('TimeZone')
+    AND rec.used_at = (d + time '12:20') AT TIME ZONE current_setting('TimeZone')
+    AND rec.used_at >= rec.created_at AND rec.used_at < rec.expires_at
+    AND (SELECT count(*) = 1 FROM record_revision WHERE target_table_code = 'password_reset'
+      AND target_row = rec.id AND before_image ->> 'used_at' IS NULL AND after_image ->> 'used_at' IS NOT NULL)
+    AND (SELECT count(*) = 2 FROM account_password WHERE account_id = acc)
+    AND (SELECT password_hash = '$argon2id$s5-dat-lai-du-lieu-dien' AND set_by_person_id IS NULL
+        AND NOT must_change_password AND created_at = (d + time '12:20') AT TIME ZONE current_setting('TimeZone')
+      FROM account_password WHERE account_id = acc ORDER BY created_at DESC, id DESC LIMIT 1)
+    AND (SELECT count(*) = 1 FROM login_session WHERE account_id = acc
+      AND token_hash = sha256('s5-phien-ngoai-quay'::bytea) AND counter_duty_id IS NULL
+      AND end_reason = 'dat_lai_mat_khau'
+      AND ended_at = (d + time '12:20') AT TIME ZONE current_setting('TimeZone'))
+    AND NOT EXISTS (SELECT 1 FROM login_session WHERE account_id = acc AND ended_at IS NULL),
+    'S5.9 hai bản mật khẩu, mã dùng một lần trong hạn, không còn phiên mở');
+  RAISE NOTICE 'S5.9 đọc lại: hai bản mật khẩu, mã đã dùng trong hạn, phiên kết thúc vì dat_lai_mat_khau';
+END $$;
