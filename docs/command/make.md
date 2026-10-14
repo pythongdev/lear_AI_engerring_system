@@ -103,3 +103,18 @@ Server chưa bật thì Try it out trả `502 Bad Gateway` — không phải l�
 ```
 Hai lệnh này không đụng tới database làm việc: dữ liệu bạn xem bằng `make psql` vẫn còn nguyên
 sau khi chúng chạy.
+
+### Khởi tạo chủ quán và cấu hình đăng nhập (T-190)
+
+Server cần `BANHCUON_DATABASE_URL` (vai shop_app), `BANHCUON_SHOP_TZ` và
+`BANHCUON_ORIGIN` (origin giao diện, không dấu `/` cuối). SMTP và đường suy giảm
+được mô tả ở [hợp đồng API](../product/3-be/01-hop-dong-api.md).
+
+Chạy lệnh ở thư mục `be/`; mật khẩu đọc một dòng từ stdin, không có cờ mật khẩu:
+
+```sh
+go run ./cmd/khoitao-chu-quan -username chuquan -email chuquan@example.com -display-name 'Chủ quán'
+```
+
+Cấp stdin từ nguồn bí mật của môi trường triển khai. Lệnh dùng cùng DSN và múi giờ
+như server, tạo người có cờ chủ quán và tài khoản vai owner trong cùng giao dịch.

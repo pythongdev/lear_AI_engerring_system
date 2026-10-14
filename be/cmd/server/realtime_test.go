@@ -19,10 +19,10 @@ import (
 	"testing"
 	"time"
 
-	"banhcuon/be/internal/authz"
 	"banhcuon/be/internal/don"
 	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/platform/realtime"
+	"banhcuon/be/internal/taikhoan"
 	"banhcuon/be/internal/testhelper"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -130,7 +130,7 @@ func rtSetup(t *testing.T, heartbeat time.Duration) *rtFixture {
 	at := time.Date(tomorrow.Year(), tomorrow.Month(), tomorrow.Day(), 8, 0, 0, 0, loc)
 	don.DongHo = func(context.Context, pgx.Tx) (time.Time, error) { return at, nil }
 	t.Cleanup(func() { don.DongHo = old })
-	f.server = httptest.NewServer(routerWithRealtime(pool, authz.ChonTen{}, f.broker))
+	f.server = httptest.NewServer(routerWithRealtime(pool, taikhoan.NewAuthenticator(pool), f.broker))
 	t.Cleanup(f.server.Close)
 	_, b := f.request("POST", fmt.Sprintf("/dining-tables/%d/qr-code", f.table), f.ownerID, nil, 201)
 	f.qr = b["code"].(string)
@@ -139,7 +139,7 @@ func rtSetup(t *testing.T, heartbeat time.Duration) *rtFixture {
 	t.Cleanup(func() {
 		for _, p := range []string{"/order-intake/resume", "/shop-blind/reopening"} {
 			req, _ := http.NewRequest("POST", f.server.URL+p, nil)
-			req.Header.Set(authz.HeaderNguoi, strconv.FormatInt(f.ownerID, 10))
+			req.AddCookie(&http.Cookie{Name: taikhoan.CookiePhien, Value: testhelper.Session(f.t, f.ownerID)})
 			res, err := http.DefaultClient.Do(req)
 			if err == nil {
 				res.Body.Close()
@@ -181,7 +181,7 @@ func (f *rtFixture) request(method, path string, person int64, body any, want in
 	}
 	req.Header.Set("Content-Type", "application/json")
 	if person != 0 {
-		req.Header.Set(authz.HeaderNguoi, strconv.FormatInt(person, 10))
+		req.AddCookie(&http.Cookie{Name: taikhoan.CookiePhien, Value: testhelper.Session(f.t, person)})
 	}
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -254,7 +254,7 @@ func (f *rtFixture) stream(path string, person int64) *rtStream {
 	f.t.Helper()
 	req, _ := http.NewRequestWithContext(f.ctx, "GET", f.server.URL+path, nil)
 	if person != 0 {
-		req.Header.Set(authz.HeaderNguoi, strconv.FormatInt(person, 10))
+		req.AddCookie(&http.Cookie{Name: taikhoan.CookiePhien, Value: testhelper.Session(f.t, person)})
 	}
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -572,7 +572,7 @@ func TestI008_PT2_DatabaseMatVaNoiLai(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer pool.Close()
-	server := httptest.NewServer(routerWithRealtime(pool, authz.ChonTen{}, f.broker))
+	server := httptest.NewServer(routerWithRealtime(pool, taikhoan.NewAuthenticator(pool), f.broker))
 	defer server.Close()
 	original := f.server
 	f.server = server

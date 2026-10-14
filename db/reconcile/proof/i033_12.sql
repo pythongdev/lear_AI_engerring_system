@@ -13,3 +13,5 @@ UPDATE password_reset SET used_at = now() WHERE token_hash = sha256('proof-reset
 ALTER TABLE password_reset DISABLE TRIGGER password_reset_used_guard_trg;
 UPDATE password_reset SET used_at = now() + interval '1 minute' WHERE token_hash = sha256('proof-reset');
 ALTER TABLE password_reset ENABLE TRIGGER password_reset_used_guard_trg;
+-- Bản mật khẩu mới cùng mốc lần dùng (T-190): lỗi cài chỉ còn vế *sửa mã đã dùng*, không thiếu mật khẩu của I-033/15.
+INSERT INTO account_password (account_id, password_hash, created_at) VALUES ((SELECT id FROM account WHERE username = 'proof.account'), '$argon2id$proof-moi', now() + interval '1 minute');

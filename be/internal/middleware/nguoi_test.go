@@ -9,15 +9,15 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"banhcuon/be/internal/authz"
 	"banhcuon/be/internal/middleware"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 func TestQC12_MiddlewareGanNguoiKhongTuChoi(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
-	r.Use(middleware.GanNguoi(authz.ChonTen{}))
+	r.Use(middleware.GanNguoi(identityFixture{}))
 	r.GET("/thu", func(c *gin.Context) {
 		id, ok := middleware.Nguoi(c)
 		c.String(http.StatusOK, fmt.Sprintf("%d %t", id, ok))
@@ -35,7 +35,7 @@ func TestQC12_MiddlewareGanNguoiKhongTuChoi(t *testing.T) {
 	for _, c := range cases {
 		req := httptest.NewRequest("GET", "/thu", nil)
 		if c.header != "" {
-			req.Header.Set(authz.HeaderNguoi, c.header)
+			req.AddCookie(&http.Cookie{Name: "test_identity", Value: c.header})
 		}
 		w := httptest.NewRecorder()
 		r.ServeHTTP(w, req)
@@ -43,4 +43,18 @@ func TestQC12_MiddlewareGanNguoiKhongTuChoi(t *testing.T) {
 			t.Fatalf("header %q: status=%d thân=%q, muốn 200 %q", c.header, w.Code, w.Body.String(), c.muon)
 		}
 	}
+}
+
+type identityFixture struct{}
+
+func (identityFixture) PersonID(r *http.Request) (int64, bool) {
+	c, err := r.Cookie("test_identity")
+	if err != nil {
+		return 0, false
+	}
+	id, err := strconv.ParseInt(c.Value, 10, 64)
+	if err != nil || id <= 0 {
+		return 0, false
+	}
+	return id, true
 }

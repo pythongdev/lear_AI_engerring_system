@@ -32,19 +32,13 @@ import (
 	"banhcuon/be/internal/platform/realtime"
 	"banhcuon/be/internal/qr"
 	"banhcuon/be/internal/sanxuat"
+	"banhcuon/be/internal/taikhoan"
 	"banhcuon/be/internal/testhelper"
 	"banhcuon/be/internal/tratruoc"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
-
-type xacThucTest struct{}
-
-func (xacThucTest) PersonID(r *http.Request) (int64, bool) {
-	id, err := strconv.ParseInt(r.Header.Get("X-Test-Person-Id"), 10, 64)
-	return id, err == nil
-}
 
 type khung struct {
 	ctx   context.Context
@@ -83,7 +77,7 @@ func dung(t *testing.T) khung {
 	t.Cleanup(func() { owner.Close(context.Background()) })
 	// T-152: menu đã chuyển sang Gin; T-164: miền cuối cùng (don) cũng vậy, không còn NoRoute.
 	r := gin.New()
-	r.Use(middleware.GanNguoi(xacThucTest{}))
+	r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(pool)))
 	menu.Routes(r, menu.NewService(pool))
 	qr.Routes(r, qr.NewService(pool))
 	gia.Routes(r, gia.NewService(pool))
@@ -328,7 +322,7 @@ func (k khung) goi(t *testing.T, method, path string, nguoi int64, body any) (in
 	}
 	req.Header.Set("Content-Type", "application/json")
 	if nguoi != 0 {
-		req.Header.Set("X-Test-Person-Id", strconv.FormatInt(nguoi, 10))
+		req.AddCookie(&http.Cookie{Name: taikhoan.CookiePhien, Value: testhelper.Session(t, nguoi)})
 	}
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

@@ -11,6 +11,22 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const khoaKhoang = `-- name: KhoaKhoang :one
+SELECT id FROM counter_duty WHERE id=$1 AND person_id=$2 AND ended_at IS NULL FOR UPDATE
+`
+
+type KhoaKhoangParams struct {
+	ID       int64
+	PersonID int64
+}
+
+func (q *Queries) KhoaKhoang(ctx context.Context, arg KhoaKhoangParams) (int64, error) {
+	row := q.db.QueryRow(ctx, khoaKhoang, arg.ID, arg.PersonID)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
 const khoaNguoi = `-- name: KhoaNguoi :one
 SELECT id FROM counter_duty WHERE person_id = $1 AND ended_at IS NULL FOR UPDATE
 `

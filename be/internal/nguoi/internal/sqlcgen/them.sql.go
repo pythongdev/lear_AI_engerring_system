@@ -11,6 +11,22 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const taoNguoi = `-- name: TaoNguoi :one
+INSERT INTO person (display_name,is_owner) VALUES ($1,$2) RETURNING id
+`
+
+type TaoNguoiParams struct {
+	DisplayName string
+	IsOwner     bool
+}
+
+func (q *Queries) TaoNguoi(ctx context.Context, arg TaoNguoiParams) (int64, error) {
+	row := q.db.QueryRow(ctx, taoNguoi, arg.DisplayName, arg.IsOwner)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
 const themKhoang = `-- name: ThemKhoang :one
 INSERT INTO counter_duty (person_id, started_at) VALUES ($1, now())
 RETURNING id, person_id, started_at

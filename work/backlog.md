@@ -99,12 +99,12 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-190 **Backend đăng nhập bằng tài khoản** — lát (b) của **ADR-109** điểm 12, đứng trên lược đồ `P2A-14` (đã dựng): cửa đăng ký · đăng nhập (cờ `tai_quay` mở trực quầy qua `nguoi/vao_quay` cùng giao dịch) · đăng xuất (khép trực của chính phiên) · đặt lại mật khẩu qua thư (`PT-7`, trả cùng một câu, mã 30 phút một lần) · đổi mật khẩu · chủ quán duyệt · từ chối · khoá · đặt mật khẩu tạm; `Authenticator` mới đọc cookie phiên, gỡ `authz.ChonTen` và header `X-Person-Id` cùng thay đổi; lệnh khởi tạo chủ quán trên máy chủ (vai `owner`); đếm lần sai và số thư ở backend; hợp đồng `openapi.yaml` tăng phiên bản phụ, ma trận vai thêm dòng; hai câu đối chiếu để lại cho lát này (mốc phiên ↔ trực, đặt lại ↔ bản mật khẩu mới) — L2 (chạm mọi cửa ghi), Claude viết test trước (`be/internal/taikhoan/taikhoan_test.go`, 2026-10-14), Codex thi công; `P4-04` (màn đăng nhập) chờ task này. Đăng ký 2026-10-14 (chủ repo: *"đăng kí task"*) · [thiết kế](../docs/decisions.md)
 
 
 <a id="done"></a>
 ## Done
 
+- [x] T-190 **Backend đăng nhập bằng tài khoản** — package `taikhoan`: đăng ký · đăng nhập (cờ `at_counter` mở trực quầy cùng giao dịch) · đăng xuất (khép trực của chính phiên) · đổi · đặt lại mật khẩu qua thư (cùng một câu, 3 thư/giờ, mã 30 phút một lần) · chủ quán duyệt · từ chối · khoá · mở lại kèm mật khẩu tạm; argon2id, phiên là cookie `banhcuon_phien` băm SHA-256; cửa ghi khác nguồn bị chặn; gỡ `authz.ChonTen` · `X-Person-Id` · `POST /counter-duty`; lệnh `be/cmd/khoitao-chu-quan`; hợp đồng 0.24.0 (63 cửa); câu `I-033/14` · `/15`. Codex thi công, hết hạn mức giữa chừng, Claude làm nốt và duyệt; be-check · db-check (140 lỗi cài) · gate xanh — 2026-10-14 · [chi tiết](#t-190)
 - [x] P2A-05 **Lát khoản chi** — `expense_category` (cờ nguồn `paid_from_till` bắt buộc, không sửa được) · `expense` (loại, số tiền, ngày khai, người ghi; sửa có vết, không xoá) theo **ADR-106** (bước migration 28); phép trừ két cộng khoản của loại trả từ két; câu `I-029` và ba lỗi cài, bước S4.10, `YC-33` chấm đọc + sai, dữ liệu mồi năm loại đúng nguồn §8.10; lược đồ admin hết lát *vắng*. Codex thi công, Claude viết test trước, chạy database, gửi lại một lỗi `QD-34`; `db-check` 138 lỗi cài, gate xanh — 2026-10-14 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [x] P2A-16 **Rà ranh giới pha và pointer lượt hai** — khuôn `P2A-09` trên bốn file lát `16-`…`19-`, bốn migration, câu đối chiếu, test và S5 (53 file · 2826 dòng) cùng đoạn lượt hai trong file có sẵn: 0 endpoint · route · component, 0 dòng cất thứ thuộc §6, 0 dòng quyền loại 5, 0 con trỏ lệch, mỗi lượt kêu đúng dòng cài; ô 7 · 8 ký. Codex hết hạn mức, Claude tự làm theo lời chủ repo, chưa review độc lập — 2026-10-14 · [chi tiết](backlog_AD_DB.md#p2a-16)
 - [x] P2A-15 **Đối chiếu và cổng lượt hai** — ngày quản trị lượt hai `s5` chín bước (đăng ký · duyệt · đăng nhập quầy · giao việc · đánh dấu · đào tạo · danh mục và combo · đăng xuất · đặt lại mật khẩu), đọc lại ở kết nối khác, đối chiếu trên ngày diễn rỗng, tiền ba scenario không đổi; năm tập ngang lát Claude quyết — câu mới `I-033/13`, `I-032/8` đọc thêm xếp món, hai tập để lát backend; ô 1–6 ký. Codex thi công, Claude chạy database và duyệt; `db-check` 135 lỗi cài, gate xanh — 2026-10-14 · [chi tiết](backlog_AD_DB.md#p2a-15)
@@ -1518,6 +1518,33 @@ PostgreSQL là Claude chạy).
   ngày"*; nay đọc *trừ vào két ngày khai* và phép kiểm thành `KHÔNG CHỖ: không cột ngày bán riêng — két trừ theo ngày khai
   paid_date` (db-check `PASS`, 32 mã YC).
 - *Còn lại:* đường sửa số đếm đã ký — **U-078**; nợ tại bàn không đòi ghi chú (lời chỉ nói đơn lẻ).
+
+<a id="t-190"></a>
+### T-190 — Backend đăng nhập bằng tài khoản
+
+**Yêu cầu:** lát (b) của **ADR-109** điểm 12; chủ repo 2026-10-14 *"Làm T-190 … yêu cầu codex làm bạn kiểm tra"*. **Mức:** L2.
+
+**Bàn giao** — 2026-10-14 · thực hiện: **Codex** (package `taikhoan`, authenticator, `middleware.CungNguon`, lệnh khởi tạo,
+SMTP, gỡ `ChonTen`, chuyển test cũ sang phiên thật qua `testhelper.Session`, hợp đồng · ma trận · `04-luong-tai-ban.md`) và
+**Claude Code** (hình API trong phiếu, 8 test viết trước `be/internal/taikhoan/taikhoan_test.go`; sau khi Codex hết hạn mức:
+ba ca vết `I-018` cho `taikhoan/doi_trang_thai` · `ket_thuc_phien` · `dat_lai`, câu `I-033/14` · `/15` và lỗi cài, chỉnh
+lỗi cài `i033_3` · `i033_12` cho khỏi kêu câu mới, dồn sqlc về `repository.go` theo QC-13, câu dựng test về `testdata/`,
+sinh lại `fe/src/lib/api/schema.ts`, sửa con trỏ `chon_ten.go` ở ADR cũ) · duyệt: **Claude Code**, chưa review độc lập ·
+nhánh `fe_admin`, trên `1ead504`. Một bản T-190 thứ hai do phiên khác viết thẳng vào cây chính (17:42–17:45) bị gỡ theo lời
+chủ repo (*"bản worktree"*); bản sao ở scratchpad của phiên.
+
+*Claude chốt (thiết kế, không phải lời quán):* (1) cùng người đăng nhập tại quầy lần hai ⇒ khép khoảng cũ, mở khoảng mới cùng
+mốc, gắn phiên mới; (2) `must_change_password` chỉ là cờ trả về — backend không chặn cửa khác, màn `P4-04` buộc đổi;
+(3) đếm lần sai trong bộ nhớ tiến trình, đếm thư bằng dòng `password_reset`; (4) tên test mang `I033` thay `ADR109` (QC-17).
+
+*Nghiệm thu → bằng chứng* (clone chính, 2026-10-14): test viết trước — `ok banhcuon/be/internal/taikhoan`; vết —
+`18 cửa UPDATE khớp 18 ca`; `grep ChonTen|HeaderNguoi|X-Person-Id` trong `be/` rỗng (trừ test kiểm header bị bỏ qua);
+`PASS Gate 1g — hợp đồng 0.24.0; 66 đường gọi ở hợp đồng, 66 ở code; 63 cửa, 63 dòng ma trận`; `PASS kêu i033_14 —
+I-033/14` · `PASS kêu i033_15 — I-033/15`; `PASS gate không cổng nào đỏ`.
+
+*Còn lại:* `fe/` còn gửi `X-Person-Id` — `P4-04`. Server cần `BANHCUON_ORIGIN`; SMTP chưa cấu hình thì không gửi thư (PT-7).
+
+[↑ đầu file](#top)
 
 <a id="t-189"></a>
 ### T-189 — Tối ưu SEO nền cho frontend

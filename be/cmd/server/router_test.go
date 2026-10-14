@@ -15,8 +15,8 @@ import (
 	"testing"
 	"time"
 
-	"banhcuon/be/internal/authz"
 	"banhcuon/be/internal/platform/postgres"
+	"banhcuon/be/internal/taikhoan"
 	"banhcuon/be/internal/testhelper"
 	"github.com/gin-gonic/gin"
 )
@@ -32,7 +32,7 @@ func dungRouter(t *testing.T) *gin.Engine {
 		t.Fatal(err)
 	}
 	t.Cleanup(pool.Close)
-	return newRouter(pool, authz.ChonTen{})
+	return newRouter(pool, taikhoan.NewAuthenticator(pool))
 }
 
 func goi(r http.Handler, method, path, body string, header map[string]string) *httptest.ResponseRecorder {
@@ -203,8 +203,8 @@ func TestQC12_RouterThuTuTuChoiVaThanLoi(t *testing.T) {
 	kiemLoi(t, goi(r, "PUT", "/menu-components/abc/base-price", "{", nil), 400, "invalid_request", "menu_component_id")
 	kiemLoi(t, goi(r, "PUT", "/menu-components/5/base-price", "{", nil), 400, "invalid_request", "")
 	than := `{"base_price_vnd": 1000, "reason": "test"}`
-	kiemLoi(t, goi(r, "PUT", "/menu-components/5/base-price", than, map[string]string{authz.HeaderNguoi: "abc"}), 401, "unauthenticated", "")
-	kiemLoi(t, goi(r, "PUT", "/menu-components/5/base-price", than, map[string]string{authz.HeaderNguoi: "999999999"}), 401, "unauthenticated", "")
+	kiemLoi(t, goi(r, "PUT", "/menu-components/5/base-price", than, map[string]string{"Cookie": taikhoan.CookiePhien + "=abc"}), 401, "unauthenticated", "")
+	kiemLoi(t, goi(r, "PUT", "/menu-components/5/base-price", than, map[string]string{"Cookie": taikhoan.CookiePhien + "=999999999"}), 401, "unauthenticated", "")
 }
 
 // T-153 (Claude viết trước): qr đưa đường GET đầu tiên lên Gin. ServeMux khớp HEAD với mẫu GET, nên

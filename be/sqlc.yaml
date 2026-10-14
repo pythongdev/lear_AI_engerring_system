@@ -77,6 +77,7 @@ sql:
     schema: ../db/migrations
     queries:
       - internal/nguoi/sql
+      - internal/nguoi/sql/tao_nguoi
       - internal/nguoi/sql/vao_quay
       - internal/nguoi/sql/roi_quay
       - internal/nguoi/sql/khep_quay
@@ -173,4 +174,27 @@ sql:
       go:
         package: sqlcgen
         out: internal/nhandon/internal/sqlcgen
+        sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/taikhoan/sql
+      - internal/taikhoan/sql/dang_ky
+      - internal/taikhoan/sql/dang_nhap
+      - internal/taikhoan/sql/dang_xuat
+      - internal/taikhoan/sql/dat_lai
+      - internal/taikhoan/sql/doi_mat_khau
+      - internal/taikhoan/sql/doi_trang_thai
+      - internal/taikhoan/sql/duyet
+      - internal/taikhoan/sql/ghi_mat_khau
+      - internal/taikhoan/sql/ket_thuc_phien
+      - internal/taikhoan/sql/khoa
+      - internal/taikhoan/sql/khoi_tao
+      - internal/taikhoan/sql/mo_khoa
+      - internal/taikhoan/sql/tu_choi
+      - internal/taikhoan/sql/yeu_cau_dat_lai
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/taikhoan/internal/sqlcgen
         sql_package: pgx/v5

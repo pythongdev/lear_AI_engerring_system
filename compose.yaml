@@ -58,8 +58,8 @@ services:
     # Chỉ ĐỌC hợp đồng docs/product/3-be/openapi.yaml (owner: CLAUDE.md §2); sửa file
     # rồi tải lại trang là thấy, không cần dựng lại. Nút "Try it out" đi qua nginx của
     # service này tới server Go trên máy (BE_UPSTREAM, mặc định cổng 8080 của máy) —
-    # cấu hình: tools/swagger/default.conf.template. Cửa có quyền cần header X-Person-Id
-    # (nút Authorize).
+    # cấu hình: tools/swagger/default.conf.template. Cửa có quyền cần cookie đăng nhập;
+    # server đặt BANHCUON_ORIGIN theo nguồn giao diện. Cookie Secure cần HTTPS.
     environment:
       SWAGGER_JSON: /contract/openapi.yaml
       BASE_URL: /docs

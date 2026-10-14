@@ -1,7 +1,9 @@
 package main
 
 import (
+	"banhcuon/be/internal/taikhoan"
 	"net/http"
+	"os"
 	"strings"
 
 	"banhcuon/be/internal/authz"
@@ -29,6 +31,7 @@ func newRouter(pool *pgxpool.Pool, auth authz.Authenticator) *gin.Engine {
 
 func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtime.Broker) *gin.Engine {
 	r := gin.New()
+	r.Use(middleware.CungNguon(os.Getenv("BANHCUON_ORIGIN")))
 	r.Use(middleware.Realtime(b))
 	// Đường Gin giữ hành vi của ServeMux hôm nay (QC-12): khác phương thức ⇒ 405 kèm Allow, dấu / cuối ⇒ 404.
 	r.HandleMethodNotAllowed = true
@@ -41,6 +44,7 @@ func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtim
 	ban.Routes(r, ban.NewService(pool))
 	phien.Routes(r, phien.NewService(pool))
 	nguoi.Routes(r, nguoi.NewService(pool))
+	taikhoan.Routes(r, taikhoan.NewService(pool, taikhoan.SMTPFromEnv()))
 	tratruoc.Routes(r, tratruoc.NewService(pool))
 	hoadon.Routes(r, hoadon.NewService(pool))
 	ket.Routes(r, ket.NewService(pool))

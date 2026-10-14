@@ -1,6 +1,6 @@
 // Test đỏ của đăng nhập bằng chọn tên và mốc đổi người ở quầy (T-143; U-075, C36 · U-056; ADR-085
 // Sửa đổi 2026-10-10). Viết TRƯỚC khi có package nguoi — Claude viết, Codex làm cho xanh mà không sửa
-// điều kiện kiểm nào. Danh tính đi qua bản THẬT authz.ChonTen, không qua bản chỉ cho test.
+// điều kiện kiểm nào. Danh tính đi qua bản THẬT Authenticator cookie, không qua bản chỉ cho test.
 package nguoi_test
 
 import (
@@ -20,6 +20,7 @@ import (
 	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/nguoi"
 	"banhcuon/be/internal/platform/postgres"
+	"banhcuon/be/internal/taikhoan"
 	"banhcuon/be/internal/testhelper"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
@@ -51,7 +52,7 @@ func dung(t *testing.T) khung {
 	}
 	t.Cleanup(func() { owner.Close(context.Background()) })
 	r := gin.New()
-	r.Use(middleware.GanNguoi(authz.ChonTen{}))
+	r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(pool)))
 	nguoi.Routes(r, nguoi.NewService(pool))
 	srv := httptest.NewServer(r)
 	t.Cleanup(srv.Close)
@@ -89,13 +90,36 @@ func (t traVe) ma() apierr.Code {
 }
 
 // goiTran không chạm t — gọi được từ goroutine. nguoi = "" thì không gửi header nào.
-func (k khung) goiTran(method, path, nguoi string) (traVe, error) {
+func (k khung) goiTran(method, path, person string) (traVe, error) {
+	if method == "POST" && path == "/counter-duty" {
+		id, _ := strconv.ParseInt(person, 10, 64)
+		value, created, err := nguoi.NewService(k.pool).VaoQuay(k.ctx, id)
+		w := httptest.NewRecorder()
+		if err != nil {
+			apierr.WriteError(w, err)
+		} else {
+			status := 200
+			if created {
+				status = 201
+			}
+			apierr.JSON(w, status, value)
+		}
+		out := traVe{status: w.Code, body: map[string]any{}}
+		_ = json.Unmarshal(w.Body.Bytes(), &out.body)
+		return out, nil
+	}
+	nguoi := person
 	req, err := http.NewRequestWithContext(k.ctx, method, k.srv.URL+path, nil)
 	if err != nil {
 		return traVe{}, err
 	}
 	if nguoi != "" {
-		req.Header.Set(authz.HeaderNguoi, nguoi)
+		id, _ := strconv.ParseInt(nguoi, 10, 64)
+		token, err := testhelper.SessionToken(k.ctx, id)
+		if err != nil {
+			return traVe{}, err
+		}
+		req.AddCookie(&http.Cookie{Name: taikhoan.CookiePhien, Value: token})
 	}
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -334,7 +358,7 @@ func TestYC15_VaoChenCungMocBiTuChoi(t *testing.T) {
 	}
 }
 
-func TestI012_KhongChonTenThiKhongVaoQuay(t *testing.T) {
+func TestI012_KhongDanhTinhThiKhongVaoQuay(t *testing.T) {
 	k := dung(t)
 	for _, h := range []string{"", "abc", "0", "-4", "999999999"} {
 		r, err := k.goiTran("POST", "/counter-duty", h)
@@ -442,7 +466,7 @@ func TestI012_DanhSachTenDeChon(t *testing.T) {
 	k := dung(t)
 	a := k.nguoi(t, "A", false)
 	cq := k.nguoi(t, "Chủ", true)
-	r := k.goi(t, "GET", "/people", 0)
+	r := k.goi(t, "GET", "/people", a)
 	if r.status != http.StatusOK {
 		t.Fatalf("danh sách tên: muốn 200, nhận %d", r.status)
 	}

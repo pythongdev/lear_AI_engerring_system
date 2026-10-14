@@ -60,3 +60,10 @@ func mocThoiGian(v pgtype.Timestamptz) *time.Time {
 	}
 	return &v.Time
 }
+
+func (r repository) taoNguoi(ctx context.Context, name string, owner bool) (int64, error) {
+	return r.q.TaoNguoi(ctx, sqlcgen.TaoNguoiParams{DisplayName: name, IsOwner: owner})
+}
+func (r repository) khoaKhoang(ctx context.Context, id, person int64) (int64, error) {
+	return r.q.KhoaKhoang(ctx, sqlcgen.KhoaKhoangParams{ID: id, PersonID: person})
+}

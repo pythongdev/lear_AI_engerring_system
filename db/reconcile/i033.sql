@@ -77,3 +77,18 @@ WITH thao_tac AS (
   UNION ALL SELECT target_row, person_id FROM record_revision WHERE target_table_code = 'account'
 )
 SELECT x.* FROM thao_tac x JOIN person p ON p.id = x.person_id WHERE NOT p.is_owner
+
+-- @@ I-033/14 — phiên quầy lệch mốc khoảng trực nó mở, hoặc đăng xuất mà khoảng của nó chưa khép
+-- Đăng nhập tại quầy mở khoảng và phiên trong cùng giao dịch; đăng xuất khép khoảng của chính phiên (ADR-109 điểm 7).
+-- Khoảng đã bị lần đăng nhập quầy sau khép trước thì đăng xuất không đụng nó — khép sớm hơn không phải lệch.
+SELECT s.id FROM login_session s JOIN counter_duty d ON d.id = s.counter_duty_id
+WHERE d.started_at <> s.created_at
+   OR (s.end_reason = 'dang_xuat' AND (d.ended_at IS NULL OR d.ended_at > s.ended_at))
+
+-- @@ I-033/15 — mã đặt lại đã dùng mà thiếu bản mật khẩu mới, hoặc còn phiên mở từ trước lần dùng
+-- Dùng mã, thêm bản mật khẩu và kết thúc mọi phiên là một giao dịch (ADR-109 điểm 8): cùng một mốc.
+SELECT r.id FROM password_reset r
+WHERE r.used_at IS NOT NULL
+  AND (NOT EXISTS (SELECT 1 FROM account_password p WHERE p.account_id = r.account_id AND p.created_at = r.used_at)
+       OR EXISTS (SELECT 1 FROM login_session s WHERE s.account_id = r.account_id AND s.created_at < r.used_at
+                    AND (s.ended_at IS NULL OR s.ended_at > r.used_at)))

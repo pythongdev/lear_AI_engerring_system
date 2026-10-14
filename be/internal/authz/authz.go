@@ -20,6 +20,7 @@ import (
 type Need string
 
 const (
+	NeedPublic         Need = "cong_khai"
 	NeedCounterOrOwner Need = "quay_hoac_chu_quan"
 
 	// NeedCounterOrCustomer: người đang đứng quầy, hoặc khách QR/web không người (ADR-087 · ADR-088).
@@ -41,8 +42,7 @@ type Door struct {
 	Need Need
 }
 
-// Authenticator cho cửa biết người gửi yêu cầu là ai. ChonTen đọc X-Person-Id của người
-// đã chọn tên (U-075); RunAs kiểm người có thật và quyền trong giao dịch của cửa.
+// Authenticator xác định người qua phiên; RunAs kiểm quyền trong giao dịch của cửa.
 type Authenticator interface {
 	PersonID(r *http.Request) (int64, bool)
 }
@@ -87,12 +87,15 @@ func Read(ctx context.Context, pool *pgxpool.Pool, personID int64, need Need, fn
 
 func runAs(ctx context.Context, pool *pgxpool.Pool, caller Caller, d Door, fn func(pgx.Tx, Granted) error) error {
 	switch d.Need {
-	case NeedCounterOrOwner, NeedCounter, NeedOwner, NeedCounterOrCustomer, NeedPerson:
+	case NeedPublic, NeedCounterOrOwner, NeedCounter, NeedOwner, NeedCounterOrCustomer, NeedPerson:
 	default:
 		return fmt.Errorf("cửa %q không có lối vào trực tiếp cho lớp %q", d.Code, d.Need)
 	}
 	return postgres.InTx(ctx, pool, func(tx pgx.Tx) error {
 		g := Granted{PersonID: caller.PersonID}
+		if d.Need == NeedPublic {
+			return fn(tx, Granted{})
+		}
 		if caller.PersonID <= 0 {
 			if d.Need != NeedCounterOrCustomer || (caller.QRCode == "" && !caller.Online) {
 				return apierr.Error{Code: apierr.CodeUnauthenticated}

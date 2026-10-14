@@ -37,11 +37,11 @@ không chép nó vào đây "cho đủ".
 Tên trường trong JSON: **snake_case tiếng Anh**; trường ứng với một cột thì **trùng tên cột**
 (`01-quy-uoc-du-lieu.md` `QD-01`) — một tên, ba tầng, không bảng dịch nào ở giữa.
 
-**Danh tính ở cửa ghi:** chọn tên, bản thật `authz.ChonTen` đọc header `X-Person-Id`
-(chủ quán chốt 2026-10-09, U-075; ADR-085 *Sửa đổi 2026-10-10*). Header chỉ chứa chữ số
-thập phân, biểu diễn số nguyên dương int64; `authz.RunAs` kiểm người có thật trong giao dịch.
-`securitySchemes.PersonIdentity` trong hợp đồng mô tả cách gửi; các đường đọc, tính thử giá
-và đường khách QR/web giữ `security: []` theo hành vi hiện có.
+**Danh tính ở cửa ghi:** cookie `banhcuon_phien`, `taikhoan.NewAuthenticator` tra băm SHA-256
+của mã phiên theo ADR-109. Cookie HttpOnly, Secure, SameSite=Strict, Path=/, sống 7 ngày.
+Quyền vẫn do `authz.RunAs` kiểm trong giao dịch. `GET /people` thuộc lớp `nguoi_quan`.
+Đăng nhập, đăng ký và đặt lại mật khẩu công khai; đường khách QR/web và các đường đọc khác
+được giữ theo security của hợp đồng. Cửa ghi từ Origin khác `BANHCUON_ORIGIN` bị từ chối.
 
 ## 2. Khuôn viết — để một lệnh đọc được mà không cần trình đọc YAML
 
@@ -219,10 +219,24 @@ theo schema của hợp đồng.
 | `T-140` | hợp đồng 0.8.0; nợ đơn lẻ kèm `debt_note` ở hai cửa trao, `GET /debts` trả ghi chú; `ket/doi_soat_xong` lớp `chu_quan`, ngày lệch đòi `gap_explanation`, dấu cất `gap_vnd`; khoản chi theo ngày khai; gỡ ba mã chờ lời (ADR-089 *Sửa đổi*); [đường tiền](06-duong-tien.md) |
 | `T-142` | hợp đồng 0.9.0; `POST /preorder-releases` (`don/nha_hen`, lớp `quay`) và `GET /preorder-reminders`; đơn đặt trước qua điện thoại nổ ở lần nhắc đầu (ADR-091); [luồng mang đi](05-luong-mang-di.md) |
 | `T-138` | hợp đồng 0.10.0; chế độ nghiêm của vết cập nhật và người ghép bàn: thêm ba tên từ chối vào `x-constraint-errors` (ADR-092) |
-| `T-143` | hợp đồng 0.11.0; `GET /people`, `GET /counter-duty/current`, `POST /counter-duty`, `POST /counter-duty/end`; chọn tên qua `X-Person-Id` và `authz.ChonTen`; mã `counter_duty_changed` (409), xét ba ràng buộc của `counter_duty`; [vai và quyền](02-vai-va-quyen.md), ADR-085 *Sửa đổi 2026-10-10* |
+| `T-143` | hợp đồng 0.11.0; `GET /people`, `GET /counter-duty/current`, `POST /counter-duty`, `POST /counter-duty/end`; cơ chế chọn tên cũ (đã thay bởi ADR-109, T-190); mã `counter_duty_changed` (409), xét ba ràng buộc của `counter_duty`; [vai và quyền](02-vai-va-quyen.md), ADR-085 *Sửa đổi 2026-10-10* |
 | `T-147` | hợp đồng 0.12.0; gỡ mã từ chối huỷ đơn Hoàn thành vì đường hoàn chưa sẵn sàng; cửa huỷ nhận đơn Hoàn thành, không đụng tiền (ADR-090 điểm 7 *Sửa đổi 2026-10-10*); [sản xuất theo mẻ](07-san-xuat-theo-me.md) |
 | `P3-11`…`P3-12` | §1 thêm đường gọi cùng lượt dựng cửa · §3 mã của luật · §4 xét dòng của bảng mình ghi · §5 · §6 · §7 tăng phiên bản |
 | `P3-13` | §9 — ô cổng *hợp đồng khớp code*: Gate 1g xanh và đã từng đỏ (`scripts/check-api-contract.test.sh`) |
 | pha 4 | `openapi.yaml` — sinh type; §3 cách đọc lỗi; §5 không tự tính |
 
 [↑ đầu file](#top)
+
+T-190 (2026-10-14): hợp đồng 0.24.0 thêm tài khoản và phiên theo ADR-109; bỏ đường
+`POST /counter-duty`. Cấu hình chạy: `BANHCUON_ORIGIN` là origin chính xác của giao diện
+(ví dụ `https://quan.example`, không dấu `/` cuối), bắt buộc khi chạy server. Backend giữ
+cookie Secure cả ở máy phát triển; trình duyệt cần HTTPS hoặc môi trường localhost hỗ trợ.
+
+SMTP PT-7 đọc `BANHCUON_SMTP_HOST`, `BANHCUON_SMTP_PORT` (mặc định 587),
+`BANHCUON_SMTP_FROM`, `BANHCUON_SMTP_USER`, `BANHCUON_SMTP_PASSWORD`.
+Dịch vụ phải hỗ trợ STARTTLS. Không cấu hình hoặc gửi lỗi thì log “không gửi được thư”,
+yêu cầu vẫn trả 202; mã đã lưu vẫn tính vào hạn mức ba thư mỗi giờ.
+
+Nhận việc ánh xạ: tên/email trùng trả mã riêng; username/email/tên hiển thị sai và liên kết
+person không hợp lệ trả invalid_request. Các ràng buộc tài khoản còn lại được giữ bởi
+hình giao dịch và mã do server cấp; vi phạm là lỗi nội bộ, không chuyển câu database ra ngoài.

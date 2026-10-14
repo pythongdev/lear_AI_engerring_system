@@ -15,9 +15,7 @@ cửa ghi đúng một dòng. Cột *Lớp* ở đây và khai báo `authz.Door`
 - **ai đứng quầy lúc nào** — dữ liệu ở bảng `counter_duty`
   ([`../2-db/06-luoc-do-nguoi-va-vet.md`](../2-db/06-luoc-do-nguoi-va-vet.md) §1); cửa mở · khép khoảng
   trực đã có ở `T-143`: `nguoi/vao_quay` · `nguoi/roi_quay`;
-- **cách một người cho máy biết mình là ai** — chủ quán chốt 2026-10-09 **chọn tên** (U-075,
-  `shop-facts.md` §8.8); bản thật `authz.ChonTen` đọc header `X-Person-Id`, theo ADR-085
-  *Sửa đổi 2026-10-10*;
+- **cách đăng nhập** — ADR-109: tài khoản và cookie phiên, qua `authz.Authenticator`;
 - **đường gọi, mã lỗi** — [`openapi.yaml`](openapi.yaml), khuôn ở [`01-hop-dong-api.md`](01-hop-dong-api.md).
 
 ---
@@ -44,15 +42,14 @@ cửa ghi đúng một dòng. Cột *Lớp* ở đây và khai báo `authz.Door`
 Lời từ chối của quyền mang mã riêng (`01-hop-dong-api.md` §3): `unauthenticated` · `not_on_counter_duty` ·
 `owner_only`; status ở hợp đồng.
 
-Không có mật khẩu nên ai chọn tên nào máy tin người ấy — chủ quán đã chọn cách ấy
-(`shop-facts.md` §8.8, bổ sung 2026-10-09). **Luật này đã bị thay 2026-10-14** (U-083, tài khoản có mật khẩu riêng; **ADR-104**); câu
-này tả code đang chạy, đứng tới khi thiết kế đăng nhập mới được duyệt. `authz.ChonTen` chỉ đọc danh tính; `authz.RunAs`
-kiểm người tồn tại và lớp quyền của cửa trong giao dịch.
+Danh tính lấy từ phiên đăng nhập còn hiệu lực; `authz.RunAs` kiểm người và lớp quyền
+trong giao dịch. Vai trên tài khoản chỉ chọn khung màn, không mở quyền (ADR-109).
 
 ## 2. Lớp quyền
 
 | Lớp | Qua khi | Nguồn |
 |---|---|---|
+| `cong_khai` | không đòi phiên; chính cửa kiểm mật khẩu hoặc mã khi cần | ADR-109; phiếu T-190 |
 | `quay` | người bấm có một khoảng `counter_duty` chứa mốc giao dịch của cửa | `architecture.md` §4 điều 1; `shop-facts.md` §3 · §6.13 · §8.8 (`C36`) |
 | `quay_hoac_chu_quan` | người có thật mang cờ chủ quán hoặc đang đứng quầy; thiếu người trả unauthenticated, người thường ngoài quầy trả not_on_counter_duty | `shop-facts.md` §6.27 (*POS hoặc chủ quán*); ADR-079; khai tiền đầu két là **suy luận, ADR-089 điểm 8** |
 | `chu_quan` | người bấm mang cờ chủ quán (`person.is_owner`), đứng đâu cũng được | `shop-facts.md` §3 (chủ quán là vai riêng, ngoài năm trạm); `YC-16` |
@@ -71,12 +68,27 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 
 | Cửa | Lớp | Nguồn |
 |---|---|---|
+| `taikhoan/dang_ky` | `cong_khai` | Phiếu T-190, ADR-109; cửa dang_ky |
+| `taikhoan/dang_nhap` | `cong_khai` | Phiếu T-190, ADR-109; cửa dang_nhap |
+| `taikhoan/dang_xuat` | `nguoi_quan` | Phiếu T-190, ADR-109; cửa dang_xuat |
+| `taikhoan/dat_lai` | `cong_khai` | Phiếu T-190, ADR-109; cửa dat_lai |
+| `taikhoan/doi_mat_khau` | `nguoi_quan` | Phiếu T-190, ADR-109; cửa doi_mat_khau |
+| `taikhoan/doi_trang_thai` | `theo_cua_goi` | Phiếu T-190, ADR-109; cửa doi_trang_thai |
+| `taikhoan/duyet` | `chu_quan` | Phiếu T-190, ADR-109; cửa duyet |
+| `taikhoan/ghi_mat_khau` | `theo_cua_goi` | Phiếu T-190, ADR-109; cửa ghi_mat_khau |
+| `taikhoan/ket_thuc_phien` | `theo_cua_goi` | Phiếu T-190, ADR-109; cửa ket_thuc_phien |
+| `taikhoan/khoa` | `chu_quan` | Phiếu T-190, ADR-109; cửa khoa |
+| `taikhoan/khoi_tao` | `cong_khai` | Phiếu T-190, ADR-109; cửa khoi_tao |
+| `taikhoan/mo_khoa` | `chu_quan` | Phiếu T-190, ADR-109; cửa mo_khoa |
+| `taikhoan/tu_choi` | `chu_quan` | Phiếu T-190, ADR-109; cửa tu_choi |
+| `taikhoan/yeu_cau_dat_lai` | `cong_khai` | Phiếu T-190, ADR-109; cửa yeu_cau_dat_lai |
+| `nguoi/tao_nguoi` | `theo_cua_goi` | ADR-109 — duyệt hoặc khởi tạo gọi trong giao dịch |
 | `nhandon/tam_dung` | `chu_quan` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — tạm dừng cả năm kênh |
 | `nhandon/tiep_tuc` | `chu_quan` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — khép khoảng tạm dừng |
 | `nhandon/bao_mu` | `quay_hoac_chu_quan` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — người khai quán mù; gọi cửa ghi_mu |
 | `nhandon/mo_lai` | `quay_hoac_chu_quan` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — người mở lại, kể cả khi chưa có luồng quầy |
 | `nhandon/ghi_mu` | `theo_cua_goi` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — một cửa INSERT khoảng mù cho máy và người; máy gọi sau khi giao dịch đơn đã lùi |
-| `nguoi/vao_quay` | `nguoi_quan` | `shop-facts.md` §8.8 (C36 · U-056 · U-075); ADR-085 *Sửa đổi 2026-10-10*, phiếu T-143 — người đã chọn tên vào quầy, khép khoảng cũ và mở khoảng mới cùng mốc |
+| `nguoi/vao_quay` | `theo_cua_goi` | ADR-109 điểm 7 — đăng nhập gọi cùng giao dịch |
 | `nguoi/roi_quay` | `quay` | `shop-facts.md` §8.8 (C36 · U-056); ADR-085 *Sửa đổi 2026-10-10*, phiếu T-143 — người đang đứng rời quầy |
 | `nguoi/khep_quay` | `theo_cua_goi` | ADR-085 *Sửa đổi 2026-10-10*; ADR-087 điểm 3 — chủ duy nhất của ô `counter_duty.ended_at`, chạy trong giao dịch đã kiểm quyền của cửa gọi |
 | `qr/doi_ma` | `chu_quan` | `shop-facts.md` §6 quy tắc 2 — **U-062** đã đóng: chỉ chủ quán đổi mã, đổi khi quán bị hack |
@@ -124,7 +136,7 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 file test, và một dòng ở đây trỏ nguồn nghiệp vụ. Thiếu một trong ba thì Gate 1g đỏ.
 
 `nguoi/khep_quay` giữ câu SQL duy nhất sửa `counter_duty.ended_at`, không có lối vào HTTP.
-`nguoi/vao_quay` và `nguoi/roi_quay` kiểm lớp của mình, khoá khoảng rồi gọi thân cửa khép
+Đăng nhập gọi `nguoi/vao_quay` cùng giao dịch; `nguoi/roi_quay` kiểm lớp của mình, khoá khoảng rồi gọi thân cửa khép
 trong chính giao dịch ấy. Cửa khép dùng `vongdoi.CoVet` với lý do mang mã cửa gọi;
 khi bấm rời, chỉ khoảng mở của chính người gọi được khép.
 
@@ -132,9 +144,9 @@ khi bấm rời, chỉ khoảng mở của chính người gọi được khép.
 
 | Chỗ trống | Hôm nay | Ai gỡ |
 |---|---|---|
-| **Cách đăng nhập** của nhân viên và chủ quán | **luật đổi 2026-10-14:** mỗi người một tài khoản, mật khẩu riêng (U-083 thay U-075); người làm tự đăng ký, chủ quán duyệt, Gmail để đặt lại mật khẩu, đăng nhập ở quầy là mốc đổi người (U-088, `shop-facts.md` §8.8); thiết kế chưa có — task L3 `T-181` (**ADR-104**). Code đang chạy vẫn là luật cũ: `authz.ChonTen` đọc header `X-Person-Id` qua giao diện `authz.Authenticator` | chủ quán 2026-10-14 (U-083); ADR-104; luật cũ: U-075, ADR-085 *Sửa đổi 2026-10-10*, T-143 |
+| **Cách đăng nhập** của nhân viên và chủ quán | Tài khoản mật khẩu riêng, cookie phiên, duyệt và đặt lại qua thư | ADR-109; T-190 |
 | **Cửa lớp `quay` đầu tiên** | đã có đường gọi ở `P3-07`: duyệt, từ chối, tính tiền, đóng; tạo lượt gọi đổi sang `quay_hoac_khach` | [Luồng tại bàn](04-luong-tai-ban.md) |
-| **Mở · khép khoảng trực quầy** | đã có `POST /counter-duty` và `POST /counter-duty/end`, cùng hai đường đọc danh sách tên và người đang đứng | T-143; [`openapi.yaml`](openapi.yaml) |
+| **Mở · khép khoảng trực quầy** | đăng nhập `at_counter` mở trực; `POST /counter-duty/end` rời quầy; danh sách tên cần đăng nhập | T-143; [`openapi.yaml`](openapi.yaml) |
 | **Hai người dùng chung một danh tính** | máy không phân biệt được (`I-012` tầng 4) | không gỡ ở máy — đối chiếu `I-012/3` |
 
 [↑ đầu file](#top)

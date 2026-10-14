@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	"banhcuon/be/internal/authz"
 	"banhcuon/be/internal/platform/postgres"
+	"banhcuon/be/internal/taikhoan"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,12 +24,15 @@ func main() {
 	if addr == "" {
 		addr = ":8080"
 	}
+	if os.Getenv("BANHCUON_ORIGIN") == "" {
+		log.Fatal("thiếu BANHCUON_ORIGIN")
+	}
 	gin.SetMode(gin.ReleaseMode)
 	pool, err := postgres.Open(context.Background(), dsn, tz)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer pool.Close()
-	server := http.Server{Addr: addr, Handler: newRouter(pool, authz.ChonTen{})}
+	server := http.Server{Addr: addr, Handler: newRouter(pool, taikhoan.NewAuthenticator(pool))}
 	log.Fatal(server.ListenAndServe())
 }

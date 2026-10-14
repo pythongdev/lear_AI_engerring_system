@@ -6958,7 +6958,7 @@ phần *Còn để mở* của **ADR-100**; vế stack chủ repo chọn (Next.j
      ngoài khi chưa ai đồng ý.
 7. **Danh tính trên luồng quầy: không đổi hợp đồng, không đổi backend.** Trình duyệt mở `GET /counter/events` bằng
    **fetch đọc luồng**, không bằng `EventSource`, nên gửi `X-Person-Id` trong header như mọi đường gọi khác
-   (`openapi.yaml` `PersonIdentity`; `be/internal/authz/chon_ten.go` chỉ đọc header, không đọc query hay cookie). Vì vậy
+   (`openapi.yaml` `PersonIdentity`; `authz.ChonTen` (gỡ ở `T-190`, 2026-10-14) chỉ đọc header, không đọc query hay cookie). Vì vậy
    **không cần `F-XXX`** gửi về pha 3. `EventSource` vẫn dùng được cho luồng trạm công khai, nhưng lớp realtime của
    `P4-06` dùng một cách nối cho cả hai luồng. Ba điều `P4-06` phải chứng minh trên app thật: (a) đóng tab quầy ⇒ backend
    thấy luồng quầy đóng — một tầng chuyển tiếp giữ luồng lên backend sau khi trình duyệt đã đi sẽ làm sai dấu hiệu

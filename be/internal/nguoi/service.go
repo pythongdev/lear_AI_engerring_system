@@ -16,7 +16,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var VaoQuay = authz.Door{Code: "nguoi/vao_quay", Need: authz.NeedPerson}
+var VaoQuay = authz.Door{Code: "nguoi/vao_quay", Need: authz.NeedCallingDoor}
 var RoiQuay = authz.Door{Code: "nguoi/roi_quay", Need: authz.NeedCounter}
 var CuaKhepQuay = authz.Door{Code: "nguoi/khep_quay", Need: authz.NeedCallingDoor}
 
@@ -51,9 +51,9 @@ type Service struct{ pool *pgxpool.Pool }
 
 func NewService(pool *pgxpool.Pool) *Service { return &Service{pool: pool} }
 
-func (s *Service) DanhSach(ctx context.Context) ([]person, error) {
+func (s *Service) DanhSach(ctx context.Context, personID int64) ([]person, error) {
 	var result []person
-	err := postgres.InTx(ctx, s.pool, func(tx pgx.Tx) error {
+	err := authz.Read(ctx, s.pool, personID, authz.NeedPerson, func(tx pgx.Tx) error {
 		var err error
 		result, err = newRepository(tx).danhSach(ctx)
 		return err
@@ -77,7 +77,7 @@ func (s *Service) HienTai(ctx context.Context) (currentDuty, error) {
 func (s *Service) VaoQuay(ctx context.Context, personID int64) (enteredDuty, bool, error) {
 	var result enteredDuty
 	created := true
-	err := authz.Run(ctx, s.pool, personID, VaoQuay, func(tx pgx.Tx) error {
+	err := authz.Run(ctx, s.pool, personID, authz.Door{Code: VaoQuay.Code, Need: authz.NeedPerson}, func(tx pgx.Tx) error {
 		repo := newRepository(tx)
 		current, changed, err := repo.khoaQuay(ctx)
 		if err != nil && !errors.Is(err, pgx.ErrNoRows) {
@@ -131,4 +131,42 @@ func khepQuay(ctx context.Context, tx pgx.Tx, dutyID int64, reason string) (ende
 		return err
 	})
 	return result, err
+}
+
+// Các hàm dưới nhận giao dịch đã kiểm quyền; taikhoan quyết định khi nào thay khoảng.
+var CuaTaoNguoi = authz.Door{Code: "nguoi/tao_nguoi", Need: authz.NeedCallingDoor}
+
+func TaoNguoi(ctx context.Context, tx pgx.Tx, name string, owner bool) (int64, error) {
+	return newRepository(tx).taoNguoi(ctx, name, owner)
+}
+func KhoaQuay(ctx context.Context, tx pgx.Tx) (int64, error) {
+	d, changed, err := newRepository(tx).khoaQuay(ctx)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, err
+	}
+	if changed {
+		return 0, apierr.Error{Code: apierr.CodeCounterDutyChanged}
+	}
+	return d.CounterDutyID, nil
+}
+func MoKhoang(ctx context.Context, tx pgx.Tx, personID int64) (int64, error) {
+	d, err := newRepository(tx).themKhoang(ctx, personID)
+	return d.CounterDutyID, err
+}
+func KhepKhoang(ctx context.Context, tx pgx.Tx, id int64, reason string) error {
+	_, err := khepQuay(ctx, tx, id, reason)
+	return err
+}
+func KhepKhoangCuaPhien(ctx context.Context, tx pgx.Tx, id, personID int64) error {
+	_, err := newRepository(tx).khoaKhoang(ctx, id, personID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	return KhepKhoang(ctx, tx, id, "taikhoan/dang_xuat")
 }

@@ -15,6 +15,17 @@ import (
 type Code string
 
 const (
+	CodeUsernameTaken           Code = "username_taken"
+	CodeEmailTaken              Code = "email_taken"
+	CodePasswordTooShort        Code = "password_too_short"
+	CodeInvalidCredentials      Code = "invalid_credentials"
+	CodeLoginTemporarilyBlocked Code = "login_temporarily_blocked"
+	CodeResetTokenInvalid       Code = "reset_token_invalid"
+	CodeAccountNotPending       Code = "account_not_pending"
+	CodeAccountNotActive        Code = "account_not_active"
+	CodeAccountNotLocked        Code = "account_not_locked"
+	CodeCrossOriginWrite        Code = "cross_origin_write"
+
 	CodePaperLedgerMissing          Code = "paper_ledger_missing"
 	CodePaperPositionAlreadyEntered Code = "paper_position_already_entered"
 	CodeOrderIntakeAlreadyPaused    Code = "order_intake_already_paused"
@@ -96,6 +107,17 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
+	CodeUsernameTaken:           409,
+	CodeEmailTaken:              409,
+	CodePasswordTooShort:        400,
+	CodeInvalidCredentials:      401,
+	CodeLoginTemporarilyBlocked: 429,
+	CodeResetTokenInvalid:       400,
+	CodeAccountNotPending:       409,
+	CodeAccountNotActive:        409,
+	CodeAccountNotLocked:        409,
+	CodeCrossOriginWrite:        403,
+
 	CodePaperLedgerMissing:          409,
 	CodePaperPositionAlreadyEntered: 409,
 	CodeOrderIntakeAlreadyPaused:    409,
@@ -175,6 +197,14 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"account_username_key":                 CodeUsernameTaken,
+	"account_email_key":                    CodeEmailTaken,
+	"account_username_check":               CodeInvalidRequest,
+	"account_email_check":                  CodeInvalidRequest,
+	"account_requested_display_name_check": CodeInvalidRequest,
+	"account_person_key":                   CodeInvalidRequest,
+	"account_person_fkey":                  CodeInvalidRequest,
+
 	"bill_paper_position_key":                      CodePaperPositionAlreadyEntered,
 	"order_intake_pause_one_at_a_time_excl":        CodeOrderIntakeAlreadyPaused,
 	"shop_blind_spell_one_at_a_time_excl":          CodeShopAlreadyBlind,

@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"strconv"
 	"sync"
 	"testing"
 	"time"
@@ -16,18 +15,11 @@ import (
 	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/qr"
+	"banhcuon/be/internal/taikhoan"
 	"banhcuon/be/internal/testhelper"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 )
-
-// xacThucTest: danh tính chỉ cho test — bản thật chờ U-075. Không file ngoài _test.go được có nó.
-type xacThucTest struct{}
-
-func (xacThucTest) PersonID(r *http.Request) (int64, bool) {
-	id, err := strconv.ParseInt(r.Header.Get("X-Test-Person-Id"), 10, 64)
-	return id, err == nil
-}
 
 type khung struct {
 	ctx   context.Context
@@ -64,7 +56,7 @@ func dung(t *testing.T) khung {
 	}
 	t.Cleanup(func() { owner.Close(context.Background()) })
 	r := gin.New()
-	r.Use(middleware.GanNguoi(xacThucTest{}))
+	r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(pool)))
 	qr.Routes(r, qr.NewService(pool))
 	srv := httptest.NewServer(r)
 	t.Cleanup(srv.Close)
@@ -131,7 +123,11 @@ func (k khung) goiTran(method, path string, nguoi int64) (traVe, error) {
 		return traVe{}, err
 	}
 	if nguoi != 0 {
-		req.Header.Set("X-Test-Person-Id", strconv.FormatInt(nguoi, 10))
+		token, err := testhelper.SessionToken(k.ctx, nguoi)
+		if err != nil {
+			return traVe{}, err
+		}
+		req.AddCookie(&http.Cookie{Name: taikhoan.CookiePhien, Value: token})
 	}
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

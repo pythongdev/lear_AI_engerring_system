@@ -1,6 +1,8 @@
 package don_test
 
 import (
+	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -17,6 +19,8 @@ import (
 	"banhcuon/be/internal/nguoi"
 	"banhcuon/be/internal/nhandon"
 	"banhcuon/be/internal/platform/realtime"
+	"banhcuon/be/internal/taikhoan"
+	"banhcuon/be/internal/testhelper"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 )
@@ -99,13 +103,58 @@ var cacCaVet = []caVet{
 	}},
 	{"nguoi/khep_quay", func(t *testing.T, c canh) dichVet {
 		r := gin.New()
-		r.Use(middleware.GanNguoi(xacThucTest{}))
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
 		nguoi.Routes(r, nguoi.NewService(c.pool))
 		srv := httptest.NewServer(r)
 		t.Cleanup(srv.Close)
 		c.srv = srv
 		id := c.docSo(t, "SELECT id FROM shop.counter_duty WHERE person_id=$1 AND ended_at IS NULL", c.quay)
 		return dichVet{"counter_duty", id, c.quay, "ended_at", nil, "mốc", func() { canDat(t, c.post(t, "/counter-duty/end", c.quay, map[string]any{}), 200) }}
+	}},
+	// Ba cửa sửa của tài khoản (T-190, Claude thêm khi duyệt: TestI018_TapCuaSuaKhopTapCa đòi).
+	{"taikhoan/doi_trang_thai", func(t *testing.T, c canh) dichVet {
+		c.srv = taikhoanSrv(t, c, nil)
+		testhelper.Session(t, c.quay)
+		id := c.docSo(t, "SELECT id FROM shop.account WHERE person_id=$1", c.quay)
+		return dichVet{"account", id, c.chu, "status", "hoat_dong", "khoa", func() {
+			canDat(t, c.post(t, fmt.Sprintf("/accounts/%d/lock", id), c.chu, map[string]any{}), 200)
+		}}
+	}},
+	{"taikhoan/ket_thuc_phien", func(t *testing.T, c canh) dichVet {
+		c.srv = taikhoanSrv(t, c, nil)
+		token := testhelper.Session(t, c.quay)
+		h := sha256.Sum256([]byte(token))
+		id := c.docSo(t, "SELECT id FROM shop.login_session WHERE token_hash=$1", h[:])
+		return dichVet{"login_session", id, c.quay, "ended_at", nil, "mốc", func() {
+			req, err := http.NewRequestWithContext(c.ctx, "POST", c.srv.URL+"/sessions/current/end", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			req.AddCookie(&http.Cookie{Name: taikhoan.CookiePhien, Value: token})
+			res, err := http.DefaultClient.Do(req)
+			if err != nil {
+				t.Fatal(err)
+			}
+			res.Body.Close()
+			if res.StatusCode != 200 {
+				t.Fatalf("đăng xuất: %d", res.StatusCode)
+			}
+		}}
+	}},
+	{"taikhoan/dat_lai", func(t *testing.T, c canh) dichVet {
+		thu := &thuVet{}
+		c.srv = taikhoanSrv(t, c, thu)
+		testhelper.Session(t, c.quay)
+		email := fmt.Sprintf("test.%d@session.test", c.quay)
+		canDat(t, c.post(t, "/password-reset-requests", 0, map[string]any{"email": email}), 202)
+		if thu.ma == "" {
+			t.Fatal("không có mã đặt lại")
+		}
+		h := sha256.Sum256([]byte(thu.ma))
+		id := c.docSo(t, "SELECT id FROM shop.password_reset WHERE token_hash=$1", h[:])
+		return dichVet{"password_reset", id, c.quay, "used_at", nil, "mốc", func() {
+			canDat(t, c.post(t, "/password-resets", 0, map[string]any{"token": thu.ma, "new_password": "mat-khau-vet-moi"}), 200)
+		}}
 	}},
 	// Hai cửa khép khoảng của P3-12 (Claude thêm 2026-10-12 khi duyệt: TestI018_TapCuaSuaKhopTapCa đòi).
 	{"nhandon/mo_lai", func(t *testing.T, c canh) dichVet {
@@ -299,8 +348,26 @@ func TestI018_TapCuaSuaKhopTapCa(t *testing.T) {
 func nhandonSrv(t *testing.T, c canh) *httptest.Server {
 	t.Helper()
 	r := gin.New()
-	r.Use(middleware.GanNguoi(xacThucTest{}))
+	r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
 	nhandon.Routes(r, nhandon.NewService(c.pool, realtime.New(0)))
+	srv := httptest.NewServer(r)
+	t.Cleanup(srv.Close)
+	return srv
+}
+
+// thuVet giữ mã đặt lại thay cho dịch vụ gửi thư.
+type thuVet struct{ ma string }
+
+func (m *thuVet) SendPasswordReset(_ context.Context, _, token string) error {
+	m.ma = token
+	return nil
+}
+
+func taikhoanSrv(t *testing.T, c canh, thu taikhoan.Mailer) *httptest.Server {
+	t.Helper()
+	r := gin.New()
+	r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+	taikhoan.Routes(r, taikhoan.NewService(c.pool, thu))
 	srv := httptest.NewServer(r)
 	t.Cleanup(srv.Close)
 	return srv

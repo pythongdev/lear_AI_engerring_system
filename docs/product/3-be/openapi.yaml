@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.23.0
+  version: 0.24.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -41,6 +41,359 @@ tags:
   - name: ket
     description: Két và ngày bán — tiền đầu ngày, đếm két, khai sổ giấy, ký đối chiếu ngày (06-duong-tien.md).
 paths:
+  /accounts:
+    post:
+      operationId: registerAccount
+      tags: [taikhoan]
+      summary: registerAccount — ADR-109
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email, display_name, password]
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                display_name:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: Thành công theo ADR-109.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResult'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: listAccounts
+      tags: [taikhoan]
+      summary: listAccounts — ADR-109
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [cho_duyet, hoat_dong, khoa, tu_choi]
+      responses:
+        '200':
+          description: Thành công theo ADR-109.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accounts'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sessions:
+    post:
+      operationId: login
+      tags: [taikhoan]
+      summary: login — ADR-109
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                at_counter:
+                  type: boolean
+      responses:
+        '201':
+          description: Thành công theo ADR-109.
+          headers:
+            Set-Cookie:
+              description: Cookie HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=604800 khi mở, 0 khi xoá.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sessions/current:
+    get:
+      operationId: currentSession
+      tags: [taikhoan]
+      summary: currentSession — ADR-109
+      responses:
+        '200':
+          description: Thành công theo ADR-109.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sessions/current/end:
+    post:
+      operationId: endSession
+      tags: [taikhoan]
+      summary: endSession — ADR-109
+      responses:
+        '200':
+          description: Thành công theo ADR-109.
+          headers:
+            Set-Cookie:
+              description: Cookie HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=604800 khi mở, 0 khi xoá.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /accounts/current/password:
+    post:
+      operationId: changePassword
+      tags: [taikhoan]
+      summary: changePassword — ADR-109
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [current_password, new_password]
+              properties:
+                current_password:
+                  type: string
+                new_password:
+                  type: string
+      responses:
+        '200':
+          description: Thành công theo ADR-109.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /password-reset-requests:
+    post:
+      operationId: requestPasswordReset
+      tags: [taikhoan]
+      summary: requestPasswordReset — ADR-109
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+      responses:
+        '202':
+          description: Thành công theo ADR-109.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /password-resets:
+    post:
+      operationId: resetPassword
+      tags: [taikhoan]
+      summary: resetPassword — ADR-109
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, new_password]
+              properties:
+                token:
+                  type: string
+                new_password:
+                  type: string
+      responses:
+        '200':
+          description: Thành công theo ADR-109.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /accounts/{account_id}/approval:
+    post:
+      operationId: approveAccount
+      tags: [taikhoan]
+      summary: approveAccount — ADR-109
+      parameters:
+        - in: path
+          name: account_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role_code]
+              properties:
+                role_code:
+                  type: string
+                person_id:
+                  type: integer
+      responses:
+        '200':
+          description: Thành công theo ADR-109.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResult'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /accounts/{account_id}/rejection:
+    post:
+      operationId: rejectAccount
+      tags: [taikhoan]
+      summary: rejectAccount — ADR-109
+      parameters:
+        - in: path
+          name: account_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Thành công theo ADR-109.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResult'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /accounts/{account_id}/lock:
+    post:
+      operationId: lockAccount
+      tags: [taikhoan]
+      summary: lockAccount — ADR-109
+      parameters:
+        - in: path
+          name: account_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Thành công theo ADR-109.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResult'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /accounts/{account_id}/unlock:
+    post:
+      operationId: unlockAccount
+      tags: [taikhoan]
+      summary: unlockAccount — ADR-109
+      parameters:
+        - in: path
+          name: account_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [temporary_password]
+              properties:
+                temporary_password:
+                  type: string
+      responses:
+        '200':
+          description: Thành công theo ADR-109.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResult'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /production-board/events:
     get:
       operationId: productionEvents
@@ -196,7 +549,6 @@ paths:
       operationId: listPeople
       tags:
         - nguoi
-      security: []
       summary: Danh sách người để chọn tên, xếp theo display_name
       responses:
         '200':
@@ -225,48 +577,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CurrentCounterDuty'
-        default:
-          description: Lời từ chối theo ErrorCode và x-http-status.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /counter-duty:
-    post:
-      operationId: enterCounterDuty
-      tags:
-        - nguoi
-      summary: Người đã chọn tên vào quầy — nguoi/vao_quay, lớp nguoi_quan
-      description: >-
-        Không nhận thân yêu cầu; người vào lấy từ X-Person-Id. Khoá khoảng đang mở trong giao dịch.
-        Chính người đang đứng vào lại thì không ghi gì. Thay người khác thì khép khoảng cũ có vết
-        và mở khoảng mới tại cùng now() của giao dịch. Nếu khoảng của người khác bắt đầu từ mốc
-        giao dịch trở đi, hoặc chèn đụng khoảng trực khác, trả counter_duty_changed.
-      responses:
-        '200':
-          description: Chính người đang đứng vào lại; trả khoảng cũ, replaced_person_id là null.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EnteredCounterDuty'
-        '201':
-          description: Đã mở khoảng mới; replaced_person_id là người ra, hoặc null nếu quầy trống.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EnteredCounterDuty'
-        '401':
-          description: Chưa chọn tên, header không hợp lệ hoặc người không tồn tại (unauthenticated).
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '409':
-          description: Quầy vừa đổi người trong lúc bấm (counter_duty_changed); giao dịch lùi.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
         default:
           description: Lời từ chối theo ErrorCode và x-http-status.
           content:
@@ -1720,15 +2030,76 @@ components:
   securitySchemes:
     PersonIdentity:
       type: apiKey
-      in: header
-      name: X-Person-Id
-      description: >-
-        Chọn tên (chủ quán chốt 2026-10-09, U-075; ADR-085 Sửa đổi 2026-10-10).
-        Giá trị gồm chỉ chữ số thập phân ASCII, biểu diễn số nguyên dương int64 của người đã chọn.
-        authz.ChonTen đọc header; authz.RunAs kiểm người tồn tại và lớp quyền trong giao dịch.
-        Không mật khẩu: máy tin tên được chọn. Áp dụng cho mọi cửa ghi cần người;
-        đường đọc, tính thử giá và đường khách QR/web dùng security rỗng, giữ hành vi hiện có.
+      in: cookie
+      name: banhcuon_phien
+      description: Phiên đăng nhập theo ADR-109; HttpOnly, Secure, SameSite=Strict, hạn 7 ngày.
   schemas:
+    Success:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+    AccountResult:
+      type: object
+      required: [account_id, status]
+      properties:
+        account_id:
+          type: integer
+          format: int64
+        status:
+          type: string
+          enum: [cho_duyet, hoat_dong, khoa, tu_choi]
+        person_id:
+          type: integer
+          format: int64
+    Session:
+      type: object
+      required: [person_id, display_name, role_code, is_owner, must_change_password, counter_duty_id]
+      properties:
+        person_id:
+          type: integer
+          format: int64
+        display_name:
+          type: string
+        role_code:
+          type: string
+          enum: [owner, quay, trang_banh, gap_banh, canh_don_ban]
+        is_owner:
+          type: boolean
+        must_change_password:
+          type: boolean
+        counter_duty_id:
+          type: integer
+          format: int64
+    Accounts:
+      type: object
+      required: [accounts]
+      properties:
+        accounts:
+          type: array
+          items:
+            type: object
+            required: [account_id, username, email, display_name, status, role_code, person_id, created_at]
+            properties:
+              account_id:
+                type: integer
+              username:
+                type: string
+              email:
+                type: string
+              display_name:
+                type: string
+              status:
+                type: string
+              role_code:
+                type: [string, "null"]
+              person_id:
+                type: [integer, "null"]
+              created_at:
+                type: string
+                format: date-time
     Person:
       type: object
       additionalProperties: false
@@ -3032,6 +3403,16 @@ components:
         Mã lỗi công khai. FE quyết hiện gì theo mã, không theo status, không theo chữ.
         Mã của một luật do lát dựng cửa của luật ấy thêm (01-hop-dong-api.md §3).
       enum:
+        - username_taken
+        - email_taken
+        - password_too_short
+        - invalid_credentials
+        - login_temporarily_blocked
+        - reset_token_invalid
+        - account_not_pending
+        - account_not_active
+        - account_not_locked
+        - cross_origin_write
         - order_intake_already_paused
         - order_intake_not_paused
         - shop_already_blind
@@ -3101,6 +3482,16 @@ components:
         - wrong_make_note_already_cancelled
         - served_quantity_exceeds_made
       x-http-status:
+        username_taken: 409
+        email_taken: 409
+        password_too_short: 400
+        invalid_credentials: 401
+        login_temporarily_blocked: 429
+        reset_token_invalid: 400
+        account_not_pending: 409
+        account_not_active: 409
+        account_not_locked: 409
+        cross_origin_write: 403
         order_intake_already_paused: 409
         order_intake_not_paused: 409
         shop_already_blind: 409
@@ -3486,22 +3877,22 @@ components:
 # internal_error). Lát dựng cửa chạm một bảng thì xét lại dòng của bảng ấy (01-hop-dong-api.md §4).
 x-constraint-errors:
   account_decided_by_person_fkey: unreviewed
-  account_email_check: unreviewed
-  account_email_key: unreviewed
+  account_email_check: invalid_request
+  account_email_key: email_taken
   account_password_account_fkey: unreviewed
   account_password_hash_check: unreviewed
   account_password_pkey: internal
   account_password_set_by_person_fkey: unreviewed
   account_password_temporary_check: unreviewed
-  account_person_fkey: unreviewed
-  account_person_key: unreviewed
+  account_person_fkey: invalid_request
+  account_person_key: invalid_request
   account_pkey: internal
-  account_requested_display_name_check: unreviewed
+  account_requested_display_name_check: invalid_request
   account_role_code_check: unreviewed
   account_status_check: unreviewed
   account_status_shape_check: unreviewed
-  account_username_check: unreviewed
-  account_username_key: unreviewed
+  account_username_check: invalid_request
+  account_username_key: username_taken
   login_session_account_fkey: unreviewed
   login_session_active_account_check: unreviewed
   login_session_counter_duty_fkey: unreviewed
