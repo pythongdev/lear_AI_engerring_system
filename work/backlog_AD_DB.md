@@ -1,7 +1,7 @@
 <a id="top"></a>
 # Backlog — lược đồ dữ liệu của mảng QUẢN TRỊ (admin)
 
-Mô tả dài của chín bước `P2A-01`…`P2A-09`. Dựng 2026-09-30 (T-122) theo lời chủ repo ngày
+Mô tả dài của mười sáu bước `P2A-01`…`P2A-16` (bảy bước cuối thêm 2026-10-14, T-184). Dựng 2026-09-30 (T-122) theo lời chủ repo ngày
 2026-09-29: *"tôi muốn làm luôn db cho phần admin"*. Vì sao nó là một sổ riêng và mang mã riêng:
 `docs/decisions.md` **ADR-068**. Hình dạng chép của `work/backlog_DB.md` (**ADR-049** · **ADR-051**).
 
@@ -41,6 +41,13 @@ Mô tả dài của chín bước `P2A-01`…`P2A-09`. Dựng 2026-09-30 (T-122)
 | P2A-07 | [Phép đối chiếu của admin vào bộ đối chiếu](#p2a-07) |
 | P2A-08 | [Cổng chất lượng — một ngày quản trị](#p2a-08) |
 | P2A-09 | [Rà ranh giới pha và pointer](#p2a-09) |
+| P2A-10 | [Yêu cầu dữ liệu và invariant lượt hai](#p2a-10) |
+| P2A-11 | [Lát giao việc](#p2a-11) |
+| P2A-12 | [Lát đào tạo](#p2a-12) |
+| P2A-13 | [Lát danh mục món và combo](#p2a-13) |
+| P2A-14 | [Lát tài khoản đăng nhập](#p2a-14) |
+| P2A-15 | [Đối chiếu và cổng lượt hai](#p2a-15) |
+| P2A-16 | [Rà ranh giới pha và pointer lượt hai](#p2a-16) |
 
 ---
 
@@ -1505,5 +1512,128 @@ lược đồ, migration hoặc nguồn con trỏ. Lượt `./scripts/gate.sh` s
 Gate 1 verify SKIP vì chỉ đổi tài liệu. Gate 1d soát 1 file, không phát hiện mẫu vi phạm;
 điều ấy không giải quyết hai đoạn quyền loại 5. Diff chỉ có hai hàng cổng và mục này; output cuối
 nguyên văn ở báo cáo phiếu. Claude còn phân loại hai đoạn quyền, xử lý bảy chỗ dẫn lệch, review và ký ô.
+
+[↑ đầu file](#top)
+
+---
+
+## Lượt hai — lời chủ quán 2026-10-14
+
+Thêm 2026-10-14 (T-184, Claude Code) khi chủ repo nói sẽ làm backend admin: lời chủ quán ba lượt cùng ngày (T-180 ·
+T-182 · T-183) đưa năm vế mới sang cột *đủ luật*. Bảng vế ↔ bước ở kế hoạch §2 *Đo lại 2026-10-14*; thứ tự, mức và
+đầu ra ở kế hoạch §5. Luật bốn câu ở đầu file áp nguyên: chưa entry nào có khối **Nhận việc**.
+
+<a id="p2a-10"></a>
+### P2A-10 — Bốn lát mới cần biết cái gì phải không xảy ra được, và pha 1 chưa viết dòng nào cho chúng
+
+**Phụ thuộc** · bước 10/16 · **cần xong trước:** `P2A-01` (đã xong).
+
+**Goal:** mỗi vế ở bảng *lượt hai* của kế hoạch §2 có một dòng `YC` và, khi đáng giữ, một mệnh đề `I-0xx` có tầng và
+phép đối chiếu — đúng như `P2A-01` đã làm cho lượt một.
+
+**Nói một câu, việc phải làm là gì:** nối dãy `YC` ở `04-yeu-cau-du-lieu.md` §9 và dãy mệnh đề ở
+`quality/invariants.md`; **không** viết cho vế đang chờ (`U-091` · `U-092` · `U-093` · `T-181`) ngoài một dòng *chờ*.
+
+**Bẫy hay sửa nhầm nhất:**
+- *Chủ quán và POS* là hai vai của `docs/product/3-be/02-vai-va-quyen.md`; mệnh đề nói *ai được làm*, còn giữ ở tầng
+  database hay tầng backend là lựa chọn có lý do của bước này (ADR nếu chọn).
+- *Xoá* trong lời chủ quán là ẩn có vết (`01-quy-uoc-du-lieu.md`) — cách đọc của phiên đã ghi ở `shop-facts.md` §8.7.
+
+[↑ đầu file](#top)
+
+---
+
+<a id="p2a-11"></a>
+### P2A-11 — Chủ quán và POS giao việc trên máy, và chưa có chỗ nào giữ một việc
+
+**Phụ thuộc** · bước 11/16 · **cần xong trước:** `P2A-10`.
+
+**Goal:** một việc giao đọc lại được — nội dung, người nhận, ai tạo và lúc nào, ai đánh dấu xong và lúc nào — kể cả
+sau khi bị ẩn.
+
+**Vì sao có task này:** `shop-facts.md` §8.7 lượt ba (U-089 đóng). Trang `P4A-07` của `work/backlog_FE_AD.md` và cửa
+backend của nó đứng trên lát này.
+
+**Bị chặn — hỏi gì trước.** Không. Trường của một việc (hạn, ghi chú…) chủ quán giao cho thiết kế — bước chọn và ghi
+lý do, không thêm trường *để sẵn*.
+
+**Bẫy hay sửa nhầm nhất:** đánh dấu xong rồi bỏ đánh dấu là hai sự kiện, không phải sửa đè một cờ; người nhận là
+`person` của `P2-08`, không phải tên gõ tay.
+
+[↑ đầu file](#top)
+
+---
+
+<a id="p2a-12"></a>
+### P2A-12 — Chủ quán đánh giá người làm đạt hay chưa, và đánh giá ấy chưa có chỗ cất
+
+**Phụ thuộc** · bước 12/16 · **cần xong trước:** `P2A-10` · **U-091** cho vế hướng dẫn.
+
+**Goal:** mỗi ghi nhận đào tạo đọc lại được — về ai, nhận xét gì, đạt hay chưa, ai ghi, lúc nào; hướng dẫn công việc
+(chữ · ảnh · video) có chỗ cất khi U-091 có lời.
+
+**Bị chặn — hỏi gì trước.** **U-091**: *theo từng việc* là từng việc được giao hay từng loại công việc. Phần ghi nhận
+dựng được ngay; phần hướng dẫn chờ. Chỗ giữ tệp ảnh · video là phụ thuộc ngoài mới (`01-ranh-gioi-he-thong.md`) — một
+ADR, không phải câu hỏi chủ quán.
+
+[↑ đầu file](#top)
+
+---
+
+<a id="p2a-13"></a>
+### P2A-13 — Chủ quán muốn tự xếp món vào danh mục và tự lập combo, mà lát menu chỉ biết món và giá
+
+**Phụ thuộc** · bước 13/16 · **cần xong trước:** `P2A-10` · **U-092** cho vế giá combo.
+
+**Goal:** danh mục món và combo do chủ quán tự đặt có chỗ cất; thêm · ẩn món dùng bảng món sẵn có của `P2-05`.
+
+**Bị chặn — hỏi gì trước.** **U-092** (giá combo cộng từ món hay giá riêng). Trước lời ấy: không cột giá combo, hàm
+giá `docs/product/3-be/03-ham-gia.md` không đổi.
+
+**Bẫy hay sửa nhầm nhất:**
+- *Topping* là nhóm tuỳ chọn phụ thu sẵn có (§4.4 · §4.6) — **không** dựng bảng topping mới.
+- Ngoại lệ ranh giới kế hoạch §3 điểm 5: lát **thêm** bảng, không sửa bảng giá; sửa giá · ngừng bán đã ở `P4-05`.
+
+[↑ đầu file](#top)
+
+---
+
+<a id="p2a-14"></a>
+### P2A-14 — Mỗi người làm sẽ đăng nhập bằng mật khẩu riêng, và lược đồ chỉ biết một cái tên
+
+**Phụ thuộc** · bước 14/16 · **cần xong trước:** `T-181` — thiết kế đăng nhập (L3) được chủ repo duyệt (**ADR-104**).
+
+**Goal:** tài khoản gắn với `person`: tự đăng ký, chờ chủ quán duyệt, gán vai, khoá được; mật khẩu chỉ cất dạng băm;
+đặt lại qua Gmail; đăng nhập ở máy quầy là mốc đổi người `C36`.
+
+**Bị chặn — hỏi gì trước.** Không câu chủ quán nào (U-088 đã đóng). Chặn là thiết kế `T-181`: hình bảng của lát này
+là đầu ra của thiết kế ấy, không viết trước.
+
+**Bẫy hay sửa nhầm nhất:** header `X-Person-Id` và luật chọn tên của `T-143` còn chạy tới khi thiết kế thay; trực quầy
+`counter_duty` đã có — đăng nhập ghi vào nó, không mở bảng mốc thứ hai.
+
+[↑ đầu file](#top)
+
+---
+
+<a id="p2a-15"></a>
+### P2A-15 — Lát lượt hai sẽ tự khai là xong, mà chưa ai diễn một ngày có giao việc và đào tạo qua chúng
+
+**Phụ thuộc** · bước 15/16 · **cần xong trước:** `P2A-11` → `P2A-14` đã `Done`, hoặc ghi *vắng, chờ câu nào*.
+
+**Goal:** khuôn [`P2A-07`](#p2a-07) và [`P2A-08`](#p2a-08) cho lượt hai — mỗi mệnh đề mới có câu đối chiếu biết kêu,
+và một ngày quản trị lượt hai ghi rồi đọc lại được.
+
+[↑ đầu file](#top)
+
+---
+
+<a id="p2a-16"></a>
+### P2A-16 — File lát lượt hai là cửa mới để pha 2 viết hộ pha 3
+
+**Phụ thuộc** · bước 16/16 · **cần xong trước:** `P2A-15`.
+
+**Goal:** khuôn [`P2A-09`](#p2a-09) trên `16-`…`19-luoc-do-*.md` và migration của chúng: không endpoint · route ·
+component, không cất thứ ở kế hoạch §6, pointer đúng.
 
 [↑ đầu file](#top)

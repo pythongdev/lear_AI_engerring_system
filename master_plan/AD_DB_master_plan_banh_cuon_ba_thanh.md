@@ -55,12 +55,30 @@ Mã chữ cái (`B12`, `C26`…) là câu ở `work/admin-questions.md` §3; mã
   nhưng chưa được gộp, và mã task của nó trùng một mã đã dùng ở đây. Kế hoạch này coi bốn câu ấy
   là **chưa trả lời**; không bước nào dưới đây cần chúng (thiết bị và quyền xem là pha 3–5).
 
+**Đo lại 2026-10-14 (T-184, Claude Code) — lượt hai.** Lời chủ quán 2026-10-14 (T-180 · T-182 · T-183)
+chuyển thêm năm vế sang cột giữa, đọc ở owner, không chép về đây:
+
+| Vế mới đủ luật | Owner của lời | Thành bước |
+|---|---|---|
+| Giao việc: chủ quán và POS tạo · sửa · xoá việc, đánh dấu xong | `shop-facts.md` §8.7 (U-084 · U-089) | `P2A-11` |
+| Đào tạo: hướng dẫn chữ · ảnh · video; ghi nhận xét và đánh giá đạt · chưa | §8.7 (U-086 · U-090) | `P2A-12` — vế hướng dẫn chờ **U-091** |
+| Danh mục món · combo do chủ quán tự quản lý; topping là tuỳ chọn phụ thu sẵn có | §8.9 (U-082) | `P2A-13` — vế giá combo chờ **U-092** |
+| Mỗi người một tài khoản, mật khẩu riêng; tự đăng ký, chủ quán duyệt; Gmail để đặt lại | §8.8 (U-083 · U-088, **ADR-104**) | `P2A-14` — chờ thiết kế `T-181` |
+| Chi phí marketing là một loại chi | §8.10 (U-085) | thêm vào `P2A-05` — nguồn tiền chờ **U-093** |
+
+Vế **còn chặn** sau lượt hai: ngưỡng sắp hết (**U-087**) — thêm vào §6. Vế *đơn vị* của `B12` đã có lời lượt ba (mỗi
+thứ một đơn vị riêng, §8.4) nên không còn chặn sổ nguyên liệu; mười hai tên cũ chưa có đơn vị vẫn để trống tới khi
+chủ quán khai. Trang tổng kết và hiệu suất nhân viên (§8.6) **chỉ đọc** dữ liệu đã có chỗ cất — không thành bước
+lược đồ; nếu backend admin thấy thiếu một cột để đếm thì gửi ngược một `F-XXX`.
+
 ---
 
 ## 3. Ranh giới — kế hoạch này KHÔNG làm gì
 
 1. **Không mở pha 3, pha 4 cho admin.** Lời ngày 2026-09-29 nói *db*. Ai được xem gì, màn nào bày
    gì, đường gọi nào — không bước nào ở đây viết (`docs/decisions.md` **ADR-035**).
+   *Bổ sung 2026-10-14 (T-184):* chủ repo nói sẽ làm backend admin (`work/backlog.md` mục *Thứ tự
+   làm*). Backend admin có kế hoạch riêng của nó; file này vẫn chỉ giữ lược đồ.
 2. **Không dựng chỗ cất cho phần chưa có lời.** Một cột *đơn giá lương* dựng trước khi chủ quán
    nói đơn giá tính theo gì là một quyết định nghiệp vụ nguỵ trang thành lược đồ (`CLAUDE.md`
    §3.5 — luật không có mức L0). Phần ấy ở §6, mỗi phần một dòng, không có bước.
@@ -71,6 +89,9 @@ Mã chữ cái (`B12`, `C26`…) là câu ở `work/admin-questions.md` §3; mã
 4. **Không viết tên bảng, tên cột ở file này hay ở sổ mô tả.** Chúng là đầu ra của từng lát.
 5. **Không sửa mảng bán hàng.** Giảm giá cả đơn, combo, món mới là việc của lát menu và đường
    tiền, chờ lời riêng của chúng.
+   *Ngoại lệ 2026-10-14 (T-184), cách đọc của phiên:* chủ quán **tự quản lý** danh mục món và combo
+   (U-082) là việc của trang admin, nên lát `P2A-13` **thêm** bảng cạnh lát menu `P2-05`, không sửa
+   bảng giá hay hàm tính giá; phần đụng giá combo đứng ở **U-092**.
 
 ---
 
@@ -85,6 +106,10 @@ không ghi đè (`docs/decisions.md` **ADR-053** luật 2).
 13-luoc-do-cham-cong.md          P2A-03 — lần chấm công của từng người
 14-luoc-do-khoan-cua-nguoi.md    P2A-04 — tạm ứng, thưởng
 15-luoc-do-khoan-chi.md          P2A-05 — khoản chi ngoài tiền hàng và lương
+16-luoc-do-giao-viec.md          P2A-11 — việc giao và lần đánh dấu xong
+17-luoc-do-dao-tao.md            P2A-12 — hướng dẫn công việc, ghi nhận đào tạo
+18-luoc-do-danh-muc-combo.md     P2A-13 — danh mục món, combo
+19-luoc-do-tai-khoan.md          P2A-14 — tài khoản đăng nhập
 ```
 
 `P2A-01` không mở file mới: nó **thêm** vào ba owner sẵn có của pha 1 và của invariant. `P2A-07` ·
@@ -94,7 +119,7 @@ không mở file cổng thứ hai. Mỗi lát sửa hàng *Schema* của `CLAUDE
 
 ---
 
-## 5. Chín bước — master task
+## 5. Mười sáu bước — master task (chín bước lượt một, bảy bước lượt hai từ 2026-10-14)
 
 Sáu cột, cùng khuôn với `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` §6. Không có cột trạng
 thái: nó ở `work/backlog.md`.
@@ -110,6 +135,17 @@ thái: nó ở `work/backlog.md`.
 | **P2A-07** | **Phép đối chiếu của admin vào bộ đối chiếu** — mỗi phép của `P2A-01` thành đúng một câu, vào cùng một lệnh sau khi đóng quán | P2A-02 → P2A-05 · P2A-06 | `comm -3` giữa mã mệnh đề mới ở `quality/invariants.md` và mã của bộ câu ⇒ rỗng; dữ liệu đúng ⇒ 0 dòng; **mỗi** lỗi cài ⇒ đúng câu của nó kêu | Mệnh đề admin chỉ tồn tại trên giấy | L2 |
 | **P2A-08** | **Cổng chất lượng** — diễn **một ngày quản trị** qua lược đồ (nhập sổ nguyên liệu · chấm công · ghi khoản chi · duyệt tạm ứng), chấm ngược từng dòng `YC` mới, ký ô 1–6 của §7 (ô 7 · 8 là của `P2A-09`) | P2A-01 → P2A-07 | Mỗi bước của ngày ấy ghi rồi đọc lại được bằng dữ liệu thật; mỗi dòng `YC` mới trả lời hai câu; chỗ không trả lời được thành `F-XXX`/`U-XXX`, không thiết kế bù | Lược đồ đẹp mà không chạy nổi một ngày của chủ quán | L2 |
 | **P2A-09** | **Rà ranh giới pha và pointer** trên các file lát admin, ký ô 7 · 8 của §7 | P2A-08 | Bộ lọc endpoint · route · component **và** bộ lọc chín phần ở §6 chạy trên mọi file và mọi đoạn lượt admin thêm (tập liệt kê ở entry), in cả lệnh chưa lọc cạnh lệnh đã lọc (**F-017**), mỗi lượt có một dòng cài để chứng minh biết kêu; lát còn vắng có dòng *vắng, rà lại khi lát ấy xong*; pointer từ `shop-facts.md` §8, `work/backlog_AD.md`, `architecture.md` §14, `docs/product/0-ba/admin/01-ranh-gioi.md`, hàng *Schema* của `CLAUDE.md` §2 và `docs/product/00-index.md` sang chỗ mới còn đúng | Pha 3 đọc một dòng hợp đồng do lát admin viết hộ như đầu vào đã chốt | L1 |
+
+| **P2A-10** | **Yêu cầu dữ liệu và invariant của lượt hai** — dòng `YC` và mệnh đề `I-0xx` mới cho đúng các vế ở bảng *lượt hai* §2, cùng tầng giữ và phép đối chiếu; khuôn của `P2A-01` | `P2A-01` | Mỗi vế ở bảng lượt hai có đúng một dòng `YC` hai câu trỏ về mục `shop-facts.md` đã chốt nó; vế còn chờ `U-091` · `U-092` · `U-093` · `T-181` ghi *chờ*, không viết hộ; hành vi ở `docs/product/0-ba/admin/01-ranh-gioi.md` | Bốn lát sau tự quyết *cái gì phải không xảy ra được* | L2 |
+| **P2A-11** | **Lát giao việc** — một việc: nội dung, người nhận, ai tạo, lúc tạo; ai đánh dấu xong và lúc nào; *xoá* là ẩn có vết | P2A-10 | Người không phải chủ quán hay POS tạo · đánh dấu xong ⇒ bị từ chối ở tầng nào `P2A-10` chọn; việc đã ẩn còn đọc lại được kèm ai ẩn; sửa để lại vết theo `P2-08`; có bước lùi, `db-check` xanh | Việc đã giao biến mất không ai biết ai xoá | L2 |
+| **P2A-12** | **Lát đào tạo** — ghi nhận về một người: nhận xét, *đạt · chưa*, ai ghi, lúc ghi; hướng dẫn công việc chữ · ảnh · video | P2A-10 · **U-091** cho vế hướng dẫn | Ghi nhận đọc lại được với đủ bốn thứ; *đạt · chưa* không có giá trị thứ ba; ảnh · video cất đường dẫn, không cất tệp trong database (chỗ giữ tệp là quyết định của bước, có ADR) | Đánh giá người làm không truy được ai đánh giá | L2 |
+| **P2A-13** | **Lát danh mục món và combo** — danh mục do chủ quán đặt tên, món thuộc danh mục; combo gồm những món nào | P2A-10 · **U-092** cho vế giá combo | Món gắn một danh mục có thật; danh mục, combo ẩn chứ không xoá; không cột giá nào trước khi U-092 có lời; hàm giá `P3-06` không đổi | Hai bản giá cho cùng một combo | L2 |
+| **P2A-14** | **Lát tài khoản đăng nhập** — tài khoản của một `person`: tên đăng nhập, mật khẩu đã băm, Gmail, trạng thái chờ duyệt · đã duyệt · khoá, vai; phiên đăng nhập; mã đặt lại mật khẩu | `T-181` — **thiết kế đăng nhập được chủ repo duyệt** (**ADR-104**) | Tài khoản chưa duyệt không mở được phiên; không cột nào cất mật khẩu thô; một Gmail một tài khoản; đăng nhập ở quầy ghi được mốc `C36` vào trực quầy sẵn có | Người nghỉ việc vẫn vào máy, hoặc mật khẩu lộ cả quán | L2 |
+| **P2A-15** | **Đối chiếu và cổng lượt hai** — câu đối chiếu cho mệnh đề của `P2A-10`; diễn một ngày quản trị lượt hai (giao việc · đánh dấu xong · ghi nhận đào tạo · chủ quán thêm món vào danh mục); khuôn `P2A-07` · `P2A-08` | P2A-11 → P2A-14 đã `Done` hoặc ghi *vắng* | `comm -3` mã mệnh đề ↔ mã câu rỗng; mỗi lỗi cài kêu đúng câu; mỗi bước của ngày ghi rồi đọc lại được | Mệnh đề lượt hai chỉ có trên giấy | L2 |
+| **P2A-16** | **Rà ranh giới pha và pointer lượt hai** — khuôn `P2A-09` trên file lát `16-`…`19-` và migration của chúng | P2A-15 | Như `P2A-09`: cặp lệnh chưa lọc · đã lọc, dòng cài biết kêu, pointer từ §2 `CLAUDE.md` và `docs/product/00-index.md` đúng | Pha 3 đọc dòng hợp đồng do lát viết hộ | L1 |
+
+**Lượt hai — chạy song song được:** `P2A-11` · `P2A-12` · `P2A-13` sau `P2A-10`; `P2A-14` chạy riêng theo `T-181`.
+Lát nào còn chờ câu thì dựng phần đã có lời và ghi rõ phần chờ, không dựng chỗ cất cho phần chờ.
 
 **Chạy song song được:** `P2A-02` · `P2A-03` · `P2A-04` · `P2A-05` sau khi `P2A-01` xong — bốn lát
 không dùng chung mệnh đề nào, nhưng dùng chung người và vết của `P2-08`; lát vào sau **thêm** file
@@ -141,6 +177,7 @@ tiếp dãy `P2A-XX` — không chen vào bước đã có.
 | Báo thuế | `E50` | — chưa có việc |
 | Ai xem được lương, công, con số tiền | `C34` · `C35` · `F55` — và là việc của pha 3 | ADM-24 · ADM-51 |
 | Giảm giá cả đơn · combo · món mới | **U-058** · `D37` · `D38` — và là lát của mảng bán hàng | ADM-32 |
+| Ngưỡng nhắc sắp hết của từng nguyên liệu (thêm 2026-10-14) | **U-087** | trang tổng kết, trang kho (`P4A-03` · `P4A-09`) |
 
 ---
 

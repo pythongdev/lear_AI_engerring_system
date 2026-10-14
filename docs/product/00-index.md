@@ -27,7 +27,7 @@ thư mục rỗng không gỡ được dòng nào cho ai.
 `docs/decisions.md` **ADR-049**). Kế hoạch ấy **không sở hữu sự thật nào**; thư mục `2-db/` mở ở
 bước `P2-03`, lượt viết dòng nội dung đầu tiên (2026-09-26).
 
-**Lược đồ của mảng admin** — chín bước `P2A-01`…`P2A-09`, chỉ cho phần đã đủ lời chủ quán — có
+**Lược đồ của mảng admin** — mười sáu bước `P2A-01`…`P2A-16` (bảy bước cuối thêm 2026-10-14), chỉ cho phần đã đủ lời chủ quán — có
 thứ tự và cổng ở `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` (viết 2026-09-30,
 `docs/decisions.md` **ADR-068**). Kế hoạch ấy cũng **không sở hữu sự thật nào**; file lát của nó
 ra đời ở từng bước, trong `2-db/`.
