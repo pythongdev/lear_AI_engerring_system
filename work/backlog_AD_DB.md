@@ -1958,4 +1958,30 @@ phải chủ quán* ⇒ câu mới `I-033/13`; *người xếp món vào danh m�
 **Goal:** khuôn [`P2A-09`](#p2a-09) trên `16-`…`19-luoc-do-*.md` và migration của chúng: không endpoint · route ·
 component, không cất thứ ở kế hoạch §6, pointer đúng.
 
+**Nhận việc** — 2026-10-14 (Claude Code), mức **L1**; `P2A-15` Done (`4daf7e1`). Phiếu đã giao Codex, nhưng Codex hết hạn
+mức trước khi sửa một dòng; chủ repo giao *"bạn tự làm P2A-16"* ⇒ **Claude** làm và ký, **chưa review độc lập**.
+*Nghiệm thu:* khuôn `P2A-09` (tập đếm, chín lệnh A1…D chưa lọc · đã lọc, lượt §6, phần mã kèm bảng tên đọc bằng mắt, mỗi
+lượt biết kêu trên bản sao, con trỏ hai chiều, gate xanh, `git diff` không đổi dòng nghiệp vụ hay lược đồ nào).
+
+**Bàn giao** — 2026-10-14 · thực hiện và duyệt: **Claude Code** · nhánh `fe_admin`, trên `4daf7e1`. Kết quả ở
+[`11-cong-chat-luong-pha-2.md`](../docs/product/2-db/11-cong-chat-luong-pha-2.md) §10.5; ô 7 · 8 của §10.4 ký. 0 dòng vi
+phạm, 0 dòng quyền loại 5, 0 con trỏ lệch; mọi lượt kêu đúng dòng cài. Lần chạy đầu bằng biến chuỗi trong zsh in 0 vì
+không đọc file nào (**F-017** lặp lại) — chạy lại bằng `bash` và glob. `git diff` chỉ chạm file cổng và hai file sổ việc.
+Lược đồ admin lượt hai `P2A-10`…`P2A-16` xong; còn `P2A-05` (lượt một) đang làm.
+
+*Mười dòng cài vào bản sao* (biết kêu, §10.5 — nguyên văn ở đây vì Gate 1d chấm file cổng):
+
+```text
+Cửa POST /auth/login trả cookie phiên cho người dùng.
+Gọi DELETE accounts để khoá.
+Màn `/admin/accounts` dùng <AccountTable rows={rows} /> trong `fe/src/app/admin/page.tsx`.
+Tên kiểu `AccountRow` và hàm `loginUser(` ở backend.
+Bảng `salary_period` giữ lương theo kỳ trả.
+Chủ quán được xem mọi tài khoản, người làm chỉ xem được của mình.
+Combo được giảm giá 10%.
+Cột nợ nhà cung cấp.
+Bảng kiểm đếm cuối buổi.
+Tiền nộp tiền ngân hàng và thuế.
+```
+
 [↑ đầu file](#top)

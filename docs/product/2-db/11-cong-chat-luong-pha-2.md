@@ -617,5 +617,43 @@ không chứng minh đã cộng giá. Không thêm câu, không quyết thay Cla
 | 4 | Migration lượt hai xuôi · lùi · xuôi lại thật | Claude ký 2026-10-14: `PASS xuôi` và `PASS lùi … lược đồ giống hệt lúc trước bước ấy` cho `20261014140000_giao_viec` · `150000_dao_tao` · `160000_danh_muc_combo` · `170000_tai_khoan` |
 | 5 | Tên bảng tài liệu khớp migration, output Gate 1e | Claude ký 2026-10-14: `check-schema-names: PASS — 55 bảng ở migration, 55 bảng tài liệu nhắc, comm -3 rỗng` |
 | 6 | S5 COMMIT từng bước, đọc lại kết nối khác, tiền không đổi | Claude ký 2026-10-14: `PASS ba scenario + ngày quản trị diễn qua lược đồ — 50 dòng bước`; `PASS đọc lại … ở kết nối khác`, S5.1…S5.9 mỗi bước một dòng *đọc lại*; `PASS đối chiếu trên ngày vừa diễn — 111 câu I-0xx · 22 câu QD, mọi tập rỗng`; `TIỀN ba scenario: S1 96000 · S2 95000 · S3 54000 · cộng 245000 đ` — không đổi |
-| 7 | Không lát nào cất thứ thuộc §6 của kế hoạch | *của `P2A-16`* |
-| 8 | Không endpoint · route · component trong lát admin | *của `P2A-16`* |
+| 7 | Không lát nào cất thứ thuộc §6 của kế hoạch | Claude ký 2026-10-14 (`P2A-16`, §10.5): lượt §6 trên 53 file mã và lát · 2826 dòng — *lương* 0 · *nhà cung cấp* 0 · *kiểm đếm* 0 · *lãi lỗ* 0 sau khi bỏ chữ *lỗi* (75 chưa lọc) · *nộp · thuế* 0 · *giảm giá* 0 · *quyền xem* 1 dòng loại 2; bảng tên bảng · cột đọc bằng mắt: 0 tên thuộc §6 |
+| 8 | Không endpoint · route · component trong lát admin | Claude ký 2026-10-14 (`P2A-16`, §10.5): chín lệnh A1…D của `P2-14` — A1 0 · B1 0 · B2 0 · B3 0 · C1 0 · C2 0 · D1 0 trên bốn file lát; A2 · A3 · D2 chỉ trúng SQL `DELETE` của test, cột `body`, hàm database; mỗi lượt kêu đúng dòng cài; Gate 1d `PASS` (hẹp hơn phép rà, **F-049**) |
+
+### 10.5 Rà ranh giới pha và con trỏ lượt hai — `P2A-16`
+
+Claude Code chạy 2026-10-14 trên nhánh `fe_admin` sau `4daf7e1`, khuôn `P2A-09`: chín lệnh A1…D chép nguyên văn từ khối
+*Bàn giao* của `P2-14`, chạy bằng `bash` với glob (một lần chạy đầu bằng biến chuỗi trong zsh đọc **không file nào** và
+in 0 — đúng bẫy **F-017**; số dưới đây là của lần chạy lại bằng glob), cộng lượt §6 của `P2A-09`.
+
+**Tập rà.** Bốn file lát `16-`…`19-luoc-do-*.md` (310 dòng); mã — bốn migration `202610141[4-7]0000_*`, câu
+`i030.sql`…`i033.sql` và lỗi cài, test `i030_*`…`i033_*`, `s5_ngay_quan_tri_luot_hai.sql` (cùng lát: 53 file · 2826 dòng);
+đoạn lượt hai trong file có sẵn — `I-030`…`I-033` của `quality/invariants.md`, §10 của file này, dòng `I-030`…`I-033`
+của `09-doi-chieu-bat-bien.md` · `03-bao-ve-invariant.md`, `YC-35`…`YC-38`, dòng `PT-7`, dòng `bytea` của QC-04, phần
+lượt hai của `docs/product/0-ba/admin/01-ranh-gioi.md` (7 đoạn · 362 dòng).
+
+| Lượt | Bốn file lát | Mã | Đoạn lượt hai | Dòng còn lại, xếp loại |
+|---|---|---|---|---|
+| A1 endpoint (Gate 1d) | 0 | 0 | 0 | — |
+| A2 endpoint rộng | 1 | 14 | 0 | `19-…:50` *không cấp DELETE theo QD-50* và 14 câu SQL `DELETE` của test và lỗi cài — quyền vai database, loại 1 |
+| A3 từ vựng API | 4 | 52 | 1 | cột `body` của hướng dẫn, `requested_display_name`, một URL là dữ liệu thử âm của `i031`; ô 8 của §10.4 — không phải hợp đồng |
+| B1 · B2 · B3 route | 0 · 0 · 0 | 0 · 0 · 0 | 0 · 0 · 1 | ô 8 của §10.4 |
+| C1 · C2 component | 0 · 0 | 0 · 0 | 0 · 0 | — |
+| D1 · D2 hàm | 0 · 6 | 0 · 0 | 0 · 0 | `now()` · `actor_person_id()` · `record_revision_capture()` — hàm database |
+| §6 lương · NCC · kiểm đếm · nộp · thuế · giảm giá | 0 | 0 | 0 | — |
+| §6 lãi lỗ | 11 chưa lọc · 0 | 75 chưa lọc · 0 | 6 chưa lọc · 0 | mọi dòng trúng là chữ *lỗi* |
+| §6 quyền xem | 1 | 0 | 2 | `19-…:75` *backend còn phải xét ai được duyệt … cookie … theo ADR-109* — giao việc cho pha 3, loại 2; `I-031` *quyền xem, việc của pha 3* — loại 2; dòng `PT-7` *đăng nhập bằng tài khoản* — lời khai phụ thuộc, không phải quyền |
+
+Không dòng nào loại 4 (vi phạm), không dòng nào loại 5. **Bảng tên đọc bằng mắt** (ô 7): `assigned_task` ·
+`assigned_task_mark` · `assigned_task_guide` · `training_record` · `menu_category` · `menu_item_category` · `menu_combo` ·
+`menu_combo_item` · `account` · `account_password` · `login_session` · `password_reset` và cột của chúng — không tên nào
+giữ lương, kỳ trả, nợ nhà cung cấp, kiểm đếm, lãi lỗ, nộp tiền, thuế, quyền xem hay giảm giá.
+
+**Biết kêu.** Bản sao bốn file lát ở thư mục tạm ngoài repo, cài mười dòng vào cuối — một đường gọi HTTP kèm cookie, một lệnh xoá dạng đường gọi, một đường dẫn màn kèm thẻ component và tên file giao diện, một tên kiểu PascalCase và một hàm camelCase, một bảng lương theo kỳ trả, một câu *ai được xem gì*, một câu giảm giá combo, một cột nợ nhà cung cấp, một bảng kiểm đếm, một câu nộp tiền và thuế. Mỗi lượt A1 · A2 · B1 · B2 · B3 · C1 · C2 · D1 và bảy nhóm §6 trả đúng dòng cài của nó. Nguyên văn mười dòng ở `work/backlog_AD_DB.md` mục `P2A-16` (*Bàn giao*) — chép vào đây thì chính Gate 1d kêu.
+
+**Con trỏ hai chiều — 0 chỗ lệch.** Chiều đi: hàng *Schema* của `CLAUDE.md` §2 nêu `16-` (P2A-11) · `17-` (P2A-12) ·
+`18-` (P2A-13) · `19-` (P2A-14); `docs/product/00-index.md` dòng 96–99; `07-thu-tu-migration.md` bước 24–27; kế hoạch §4
+dòng 110–113 — mỗi chỗ nói đúng lát được gán. Chiều về: các mã bốn lát nhắc tới — `I-009` · `I-011` · `I-018` ·
+`I-030`…`I-033` · `YC-35`…`YC-38` · `ADR-053` · `ADR-092` · `ADR-105`…`ADR-109` · `QD-20` · `QD-21` · `QD-50`…`QD-52` ·
+`QD-60` · `QD-61` · `shop-facts.md` §8.7 · §8.9 — đều có ở owner. Gate 1b · 1c · 1d · 1e xanh cùng lượt.
+
