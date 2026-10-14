@@ -1532,7 +1532,8 @@ T-182 · T-183) đưa năm vế mới sang cột *đủ luật*. Bảng vế ↔
 phép đối chiếu — đúng như `P2A-01` đã làm cho lượt một.
 
 **Nói một câu, việc phải làm là gì:** nối dãy `YC` ở `04-yeu-cau-du-lieu.md` §9 và dãy mệnh đề ở
-`quality/invariants.md`; **không** viết cho vế đang chờ (`U-091` · `U-092` · `U-093` · `T-181`) ngoài một dòng *chờ*.
+`quality/invariants.md`; **không** viết cho vế đang chờ (`T-181`) ngoài một dòng *chờ*. `U-091` · `U-092` · `U-093` đóng
+2026-10-14 (T-187) — viết theo lời ở `shop-facts.md` §8.7 · §8.9 · §8.10.
 
 **Bẫy hay sửa nhầm nhất:**
 - *Chủ quán và POS* là hai vai của `docs/product/3-be/02-vai-va-quyen.md`; mệnh đề nói *ai được làm*, còn giữ ở tầng
@@ -1567,13 +1568,13 @@ lý do, không thêm trường *để sẵn*.
 <a id="p2a-12"></a>
 ### P2A-12 — Chủ quán đánh giá người làm đạt hay chưa, và đánh giá ấy chưa có chỗ cất
 
-**Phụ thuộc** · bước 12/16 · **cần xong trước:** `P2A-10` · **U-091** cho vế hướng dẫn.
+**Phụ thuộc** · bước 12/16 · **cần xong trước:** `P2A-10` · `P2A-11` cho vế hướng dẫn.
 
 **Goal:** mỗi ghi nhận đào tạo đọc lại được — về ai, nhận xét gì, đạt hay chưa, ai ghi, lúc nào; hướng dẫn công việc
-(chữ · ảnh · video) có chỗ cất khi U-091 có lời.
+(chữ · ảnh · video) gắn với từng việc được giao.
 
-**Bị chặn — hỏi gì trước.** **U-091**: *theo từng việc* là từng việc được giao hay từng loại công việc. Phần ghi nhận
-dựng được ngay; phần hướng dẫn chờ. Chỗ giữ tệp ảnh · video là phụ thuộc ngoài mới (`01-ranh-gioi-he-thong.md`) — một
+**Bị chặn — hỏi gì trước.** Không. **U-091** đóng 2026-10-14: hướng dẫn gắn **từng việc được giao**, nên phần hướng
+dẫn đứng sau lát giao việc `P2A-11`. Chỗ giữ tệp ảnh · video là phụ thuộc ngoài mới (`01-ranh-gioi-he-thong.md`) — một
 ADR, không phải câu hỏi chủ quán.
 
 [↑ đầu file](#top)
@@ -1583,12 +1584,13 @@ ADR, không phải câu hỏi chủ quán.
 <a id="p2a-13"></a>
 ### P2A-13 — Chủ quán muốn tự xếp món vào danh mục và tự lập combo, mà lát menu chỉ biết món và giá
 
-**Phụ thuộc** · bước 13/16 · **cần xong trước:** `P2A-10` · **U-092** cho vế giá combo.
+**Phụ thuộc** · bước 13/16 · **cần xong trước:** `P2A-10`.
 
 **Goal:** danh mục món và combo do chủ quán tự đặt có chỗ cất; thêm · ẩn món dùng bảng món sẵn có của `P2-05`.
 
-**Bị chặn — hỏi gì trước.** **U-092** (giá combo cộng từ món hay giá riêng). Trước lời ấy: không cột giá combo, hàm
-giá `docs/product/3-be/03-ham-gia.md` không đổi.
+**Bị chặn — hỏi gì trước.** Không. **U-092** đóng 2026-10-14: **giá combo đặt riêng** — combo mang giá của chính nó,
+đổi giá để lại vết. Hàm giá `docs/product/3-be/03-ham-gia.md` phải học bán combo — việc của backend, không của lát.
+Tuỳ chọn phụ thu trong combo có cộng thêm không thì lời chưa nói (`shop-facts.md` §8.9) — hỏi trước khi backend bán combo.
 
 **Bẫy hay sửa nhầm nhất:**
 - *Topping* là nhóm tuỳ chọn phụ thu sẵn có (§4.4 · §4.6) — **không** dựng bảng topping mới.

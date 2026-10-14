@@ -14,7 +14,7 @@
      (docs/decisions.md ADR-007 · work/findings.md F-008). Chuyển mấy dòng dưới
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
-- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**. Ba câu tính tới 2026-10-14 (T-185): U-091, U-092, U-093.
+- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**. Không câu nào tính tới 2026-10-14 (T-187).
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
 - [Đã có lời giải](#da-co-loi-giai) — câu đã đóng, xếp theo lượt trả lời của chủ quán, kèm nguyên
@@ -33,12 +33,6 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 <a id="dang-mo"></a>
 ### Đang mở
 
-<a id="u-091"></a>
-- **U-091** — Hướng dẫn công việc là chữ, ảnh, video **"theo từng việc"** (`master_plan/shop-facts.md` §8.7, lượt hai 2026-10-14) — *việc* ấy là **từng việc được giao** (một việc giao có hướng dẫn riêng của nó) hay **từng loại công việc** của quán (tráng bánh, đứng quầy, đi giao… — một bản hướng dẫn dùng lại cho mọi người)? Hai cách cho hai hình dữ liệu khác nhau. Người trả lời: chủ quán. Chặn: lát đào tạo `P2A-12` (`master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` §5). Mở 2026-10-14, T-184.
-<a id="u-092"></a>
-- **U-092** — Chủ quán tự quản lý **danh sách combo** (`master_plan/shop-facts.md` §8.9, lời 2026-10-14), nhưng **giá một combo** lấy từ đâu: cộng giá các món trong combo như một suất thường (§4.7), hay chủ quán **đặt một giá riêng** cho combo (thường rẻ hơn tổng)? Và một combo gồm những món nào thì chủ quán khai lúc tạo — đúng không? Người trả lời: chủ quán. Chặn: phần combo của lát `P2A-13` và hàm tính giá (`docs/product/3-be/03-ham-gia.md`). Mở 2026-10-14, T-184.
-<a id="u-093"></a>
-- **U-093** — **Chi phí marketing** là một khoản chi (`master_plan/shop-facts.md` §8.10, lời 2026-10-14), nhưng trả **từ két bán hàng** hay **từ tiền riêng của chủ quán**? Mỗi loại chi phải mang nguồn tiền (**ADR-074**), và chi từ két thì trừ vào phép đếm két cuối ngày. Người trả lời: chủ quán. Chặn: loại chi *marketing* trong lát `P2A-05` (không chặn bốn loại `E44`). Mở 2026-10-14, T-184.
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
 chủ quán quyết theo tình hình thực tế, không có luật cứng.** Lượt một (T-042) đóng U-022, U-025 và
@@ -162,6 +156,19 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ repo trả lời 2026-10-14, lượt năm (T-187), trong hội thoại.** Lời đáp đã vào owner (`master_plan/shop-facts.md`
+§8.7 · §8.9 · §8.10).
+
+<a id="u-091"></a>
+<a id="u-092"></a>
+<a id="u-093"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-091 — Hướng dẫn "theo từng việc" là từng việc được giao hay từng loại công việc?~~ | “từng việc được giao”. **Mỗi việc được giao mang hướng dẫn của chính nó** (chữ · ảnh · video). | `master_plan/shop-facts.md` §8.7 |
+| ~~U-092 — Giá combo cộng từ món hay đặt riêng?~~ | “Giá combo đặt riêng”. **Chủ quán đặt một giá riêng cho mỗi combo**, không cộng giá các món trong combo. | `master_plan/shop-facts.md` §8.9 |
+| ~~U-093 — Chi phí marketing trả từ két hay tiền riêng?~~ | “tiền riêng”. **Chi phí marketing trả từ tiền riêng của chủ quán**, không rời két bán hàng. | `master_plan/shop-facts.md` §8.10 |
 
 **Chủ quán trả lời 2026-10-14, lượt bốn (T-185), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn
 phương án vế *ai đặt* (đánh dấu *lời chọn*).** Lời đáp đã vào owner (`master_plan/shop-facts.md` §8.4) và sửa

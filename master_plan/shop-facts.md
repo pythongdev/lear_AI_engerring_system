@@ -1460,6 +1460,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-14 | Chủ quán trả lời lượt hai (T-182), chủ repo chuyển lời và chọn trong câu hỏi có sẵn phương án ba vế: báo cáo tổng kết **theo ngày**; hiệu suất nhân viên **theo đề xuất của Claude, chủ repo duyệt** (U-087); máy **tự cảnh báo sắp hết, báo POS kiểm tra** — lật một phần U-045, ngưỡng còn mở; **người làm tự đăng ký, chủ quán duyệt, tự đặt mật khẩu, Gmail để đặt lại khi quên, đăng nhập ở quầy là mốc đổi người** (đóng U-088); **chỉ chủ quán và POS giao việc** (U-089); hướng dẫn là **chữ, ảnh, video theo việc** (U-090) | §8.4 · §8.6 · §8.7 · §8.8 |
 | 2026-10-14 | Chủ quán trả lời lượt ba (T-183): **chủ quán và POS tạo, sửa, xoá việc giao và đánh dấu xong** (đóng U-089); **chủ quán hoặc POS ghi nhận xét và đánh giá người làm làm được việc hay chưa** (đóng U-090); hàng về thì **nhập khối lượng theo đơn vị riêng của từng thứ**, mỗi ngày có người **nhập lượng đã dùng**, máy tự trừ ra phần còn lại (U-087 — vế ngưỡng sắp hết vẫn mở) | §8.4 · §8.7 |
 | 2026-10-14 | Chủ quán trả lời lượt bốn (T-185): máy **nhắc POS kiểm tra khi phần còn lại xuống dưới một tỉ lệ của khối lượng lần nhập gần nhất**; *lời chọn* của chủ repo: **mỗi nguyên liệu một tỉ lệ, chủ quán đặt, mặc định 20%** (đóng U-087; sửa I-025 vế 3) | §8.4 |
+| 2026-10-14 | Chủ repo trả lời lượt năm trong hội thoại (T-187): hướng dẫn công việc gắn **từng việc được giao** (đóng U-091); **giá combo đặt riêng** (đóng U-092); **chi phí marketing trả bằng tiền riêng** (đóng U-093) | §8.7 · §8.9 · §8.10 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -1995,6 +1996,10 @@ việc hay chưa**, cũng tạo · sửa · xoá được (U-090). *Cách đọc
 hạn) và của một ghi nhận đào tạo do thiết kế chọn, chủ quán giao việc ấy cho phiên; *xoá* là ẩn có vết, không xoá cứng
 (`docs/product/2-db/01-quy-uoc-du-lieu.md`). Hai thứ này không phải mức thứ tư của bảng ba mức ở trên — đó là cách đọc của phiên.
 
+**Lượt năm 2026-10-14 (T-187, đóng `U-091`; chủ repo trả lời trong hội thoại: *"từng việc được giao"*).** Hướng dẫn
+công việc chữ · ảnh · video gắn với **từng việc được giao** — mỗi việc giao mang hướng dẫn của chính nó, không phải một
+bản hướng dẫn chung cho một loại công việc.
+
 ### 8.8 Mức 1 của mảng CON NGƯỜI — **mỗi lần đổi người ở QUẦY là một mốc có giờ**
 
 **Chủ quán chốt 2026-09-20** — câu **`C36`**, hỏi qua `work/backlog_AD.md` **ADM-53** và chuyển về
@@ -2105,6 +2110,11 @@ giá riêng. *Cách đọc của phiên, chưa ai xác nhận:* *xoá món* là 
 (`docs/product/2-db/01-quy-uoc-du-lieu.md`); giá combo vẫn là tổng thành phần (§4.7); lời này không chạm §6.12 (món
 ngoài bảng giá gõ tay ở quầy). Danh mục gồm những nhóm nào thì lời không nói.
 
+**Lượt năm 2026-10-14 — GIÁ COMBO ĐẶT RIÊNG** (T-187, đóng `U-092`; chủ repo trả lời trong hội thoại: *"Giá combo đặt
+riêng"*). Chủ quán đặt **một giá riêng** cho mỗi combo; giá ấy **không** cộng từ giá các món trong combo — câu *giá
+combo vẫn là tổng thành phần* ở đoạn trên là cách đọc cũ, bỏ. *Lời không nói, chưa ai xác nhận:* tuỳ chọn phụ thu
+(§4.4) chọn trong một combo có cộng thêm vào giá combo không; combo có đổi giá giữa buổi theo §6.17 như món thường không.
+
 
 ### 8.10 Tài chính — câu trả lời E44–E51
 
@@ -2134,3 +2144,7 @@ không suy việc có báo thuế thành yêu cầu phần mềm tự kê khai. 
 *"khoản chi marketing"*): quán ghi chi phí marketing trong phần mềm, như một khoản chi cạnh các khoản `E44`, không
 phải một mục riêng có ngân sách hay chiến dịch. Nguồn tiền của khoản ấy (két hay tiền riêng) lời không nói — câu
 *khoản chi nào ngoài các khoản vừa kể thì chưa nói nguồn* ở `E46` áp cho nó.
+
+**Lượt năm 2026-10-14 — marketing trả bằng TIỀN RIÊNG** (T-187, đóng `U-093`; chủ repo trả lời trong hội thoại:
+*"tiền riêng"*). Chi phí marketing trả từ **tiền riêng của chủ quán**, không rời két bán hàng — nên không vào phép đếm
+két cuối ngày (**ADR-074**: nguồn tiền nằm trên loại chi).

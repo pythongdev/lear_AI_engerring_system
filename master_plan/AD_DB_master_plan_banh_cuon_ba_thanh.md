@@ -61,10 +61,10 @@ chuyển thêm năm vế sang cột giữa, đọc ở owner, không chép về 
 | Vế mới đủ luật | Owner của lời | Thành bước |
 |---|---|---|
 | Giao việc: chủ quán và POS tạo · sửa · xoá việc, đánh dấu xong | `shop-facts.md` §8.7 (U-084 · U-089) | `P2A-11` |
-| Đào tạo: hướng dẫn chữ · ảnh · video; ghi nhận xét và đánh giá đạt · chưa | §8.7 (U-086 · U-090) | `P2A-12` — vế hướng dẫn chờ **U-091** |
-| Danh mục món · combo do chủ quán tự quản lý; topping là tuỳ chọn phụ thu sẵn có | §8.9 (U-082) | `P2A-13` — vế giá combo chờ **U-092** |
+| Đào tạo: hướng dẫn chữ · ảnh · video; ghi nhận xét và đánh giá đạt · chưa | §8.7 (U-086 · U-090) | `P2A-12` — hướng dẫn gắn từng việc giao (U-091 đóng 2026-10-14) |
+| Danh mục món · combo do chủ quán tự quản lý; topping là tuỳ chọn phụ thu sẵn có | §8.9 (U-082) | `P2A-13` — giá combo đặt riêng (U-092 đóng 2026-10-14) |
 | Mỗi người một tài khoản, mật khẩu riêng; tự đăng ký, chủ quán duyệt; Gmail để đặt lại | §8.8 (U-083 · U-088, **ADR-104**) | `P2A-14` — chờ thiết kế `T-181` |
-| Chi phí marketing là một loại chi | §8.10 (U-085) | thêm vào `P2A-05` — nguồn tiền chờ **U-093** |
+| Chi phí marketing là một loại chi | §8.10 (U-085) | thêm vào `P2A-05` — nguồn tiền riêng (U-093 đóng 2026-10-14) |
 
 Vế ngưỡng sắp hết (**U-087**) đóng 2026-10-14 ở lượt bốn: mỗi thứ một tỉ lệ do chủ quán đặt, mặc định 20% — cột ấy vào lát nguyên liệu ở `work/backlog.md` **T-186**. Vế *đơn vị* của `B12` đã có lời lượt ba (mỗi
 thứ một đơn vị riêng, §8.4) nên không còn chặn sổ nguyên liệu; mười hai tên cũ chưa có đơn vị vẫn để trống tới khi
@@ -91,7 +91,8 @@ lược đồ; nếu backend admin thấy thiếu một cột để đếm thì 
    tiền, chờ lời riêng của chúng.
    *Ngoại lệ 2026-10-14 (T-184), cách đọc của phiên:* chủ quán **tự quản lý** danh mục món và combo
    (U-082) là việc của trang admin, nên lát `P2A-13` **thêm** bảng cạnh lát menu `P2-05`, không sửa
-   bảng giá hay hàm tính giá; phần đụng giá combo đứng ở **U-092**.
+   bảng giá của món; giá combo đặt riêng (U-092 đóng 2026-10-14) nằm trên combo, và hàm tính giá nhận
+   combo là việc của backend.
 
 ---
 
@@ -136,10 +137,10 @@ thái: nó ở `work/backlog.md`.
 | **P2A-08** | **Cổng chất lượng** — diễn **một ngày quản trị** qua lược đồ (nhập sổ nguyên liệu · chấm công · ghi khoản chi · duyệt tạm ứng), chấm ngược từng dòng `YC` mới, ký ô 1–6 của §7 (ô 7 · 8 là của `P2A-09`) | P2A-01 → P2A-07 | Mỗi bước của ngày ấy ghi rồi đọc lại được bằng dữ liệu thật; mỗi dòng `YC` mới trả lời hai câu; chỗ không trả lời được thành `F-XXX`/`U-XXX`, không thiết kế bù | Lược đồ đẹp mà không chạy nổi một ngày của chủ quán | L2 |
 | **P2A-09** | **Rà ranh giới pha và pointer** trên các file lát admin, ký ô 7 · 8 của §7 | P2A-08 | Bộ lọc endpoint · route · component **và** bộ lọc chín phần ở §6 chạy trên mọi file và mọi đoạn lượt admin thêm (tập liệt kê ở entry), in cả lệnh chưa lọc cạnh lệnh đã lọc (**F-017**), mỗi lượt có một dòng cài để chứng minh biết kêu; lát còn vắng có dòng *vắng, rà lại khi lát ấy xong*; pointer từ `shop-facts.md` §8, `work/backlog_AD.md`, `architecture.md` §14, `docs/product/0-ba/admin/01-ranh-gioi.md`, hàng *Schema* của `CLAUDE.md` §2 và `docs/product/00-index.md` sang chỗ mới còn đúng | Pha 3 đọc một dòng hợp đồng do lát admin viết hộ như đầu vào đã chốt | L1 |
 
-| **P2A-10** | **Yêu cầu dữ liệu và invariant của lượt hai** — dòng `YC` và mệnh đề `I-0xx` mới cho đúng các vế ở bảng *lượt hai* §2, cùng tầng giữ và phép đối chiếu; khuôn của `P2A-01` | `P2A-01` | Mỗi vế ở bảng lượt hai có đúng một dòng `YC` hai câu trỏ về mục `shop-facts.md` đã chốt nó; vế còn chờ `U-091` · `U-092` · `U-093` · `T-181` ghi *chờ*, không viết hộ; hành vi ở `docs/product/0-ba/admin/01-ranh-gioi.md` | Bốn lát sau tự quyết *cái gì phải không xảy ra được* | L2 |
+| **P2A-10** | **Yêu cầu dữ liệu và invariant của lượt hai** — dòng `YC` và mệnh đề `I-0xx` mới cho đúng các vế ở bảng *lượt hai* §2, cùng tầng giữ và phép đối chiếu; khuôn của `P2A-01` | `P2A-01` | Mỗi vế ở bảng lượt hai có đúng một dòng `YC` hai câu trỏ về mục `shop-facts.md` đã chốt nó; vế còn chờ `T-181` ghi *chờ*, không viết hộ; hành vi ở `docs/product/0-ba/admin/01-ranh-gioi.md` | Bốn lát sau tự quyết *cái gì phải không xảy ra được* | L2 |
 | **P2A-11** | **Lát giao việc** — một việc: nội dung, người nhận, ai tạo, lúc tạo; ai đánh dấu xong và lúc nào; *xoá* là ẩn có vết | P2A-10 | Người không phải chủ quán hay POS tạo · đánh dấu xong ⇒ bị từ chối ở tầng nào `P2A-10` chọn; việc đã ẩn còn đọc lại được kèm ai ẩn; sửa để lại vết theo `P2-08`; có bước lùi, `db-check` xanh | Việc đã giao biến mất không ai biết ai xoá | L2 |
-| **P2A-12** | **Lát đào tạo** — ghi nhận về một người: nhận xét, *đạt · chưa*, ai ghi, lúc ghi; hướng dẫn công việc chữ · ảnh · video | P2A-10 · **U-091** cho vế hướng dẫn | Ghi nhận đọc lại được với đủ bốn thứ; *đạt · chưa* không có giá trị thứ ba; ảnh · video cất đường dẫn, không cất tệp trong database (chỗ giữ tệp là quyết định của bước, có ADR) | Đánh giá người làm không truy được ai đánh giá | L2 |
-| **P2A-13** | **Lát danh mục món và combo** — danh mục do chủ quán đặt tên, món thuộc danh mục; combo gồm những món nào | P2A-10 · **U-092** cho vế giá combo | Món gắn một danh mục có thật; danh mục, combo ẩn chứ không xoá; không cột giá nào trước khi U-092 có lời; hàm giá `P3-06` không đổi | Hai bản giá cho cùng một combo | L2 |
+| **P2A-12** | **Lát đào tạo** — ghi nhận về một người: nhận xét, *đạt · chưa*, ai ghi, lúc ghi; hướng dẫn công việc chữ · ảnh · video | P2A-10 · `P2A-11` cho vế hướng dẫn (gắn việc giao, U-091) | Ghi nhận đọc lại được với đủ bốn thứ; hướng dẫn gắn đúng một việc giao; *đạt · chưa* không có giá trị thứ ba; ảnh · video cất đường dẫn, không cất tệp trong database (chỗ giữ tệp là quyết định của bước, có ADR) | Đánh giá người làm không truy được ai đánh giá | L2 |
+| **P2A-13** | **Lát danh mục món và combo** — danh mục do chủ quán đặt tên, món thuộc danh mục; combo gồm những món nào và giá riêng của nó | P2A-10 | Món gắn một danh mục có thật; danh mục, combo ẩn chứ không xoá; mỗi combo một giá chủ quán đặt (U-092), số nguyên đồng lớn hơn 0, đổi giá để lại vết; lát không sửa hàm giá — combo vào hàm giá là việc backend | Hai bản giá cho cùng một combo | L2 |
 | **P2A-14** | **Lát tài khoản đăng nhập** — tài khoản của một `person`: tên đăng nhập, mật khẩu đã băm, Gmail, trạng thái chờ duyệt · đã duyệt · khoá, vai; phiên đăng nhập; mã đặt lại mật khẩu | `T-181` — **thiết kế đăng nhập được chủ repo duyệt** (**ADR-104**) | Tài khoản chưa duyệt không mở được phiên; không cột nào cất mật khẩu thô; một Gmail một tài khoản; đăng nhập ở quầy ghi được mốc `C36` vào trực quầy sẵn có | Người nghỉ việc vẫn vào máy, hoặc mật khẩu lộ cả quán | L2 |
 | **P2A-15** | **Đối chiếu và cổng lượt hai** — câu đối chiếu cho mệnh đề của `P2A-10`; diễn một ngày quản trị lượt hai (giao việc · đánh dấu xong · ghi nhận đào tạo · chủ quán thêm món vào danh mục); khuôn `P2A-07` · `P2A-08` | P2A-11 → P2A-14 đã `Done` hoặc ghi *vắng* | `comm -3` mã mệnh đề ↔ mã câu rỗng; mỗi lỗi cài kêu đúng câu; mỗi bước của ngày ghi rồi đọc lại được | Mệnh đề lượt hai chỉ có trên giấy | L2 |
 | **P2A-16** | **Rà ranh giới pha và pointer lượt hai** — khuôn `P2A-09` trên file lát `16-`…`19-` và migration của chúng | P2A-15 | Như `P2A-09`: cặp lệnh chưa lọc · đã lọc, dòng cài biết kêu, pointer từ §2 `CLAUDE.md` và `docs/product/00-index.md` đúng | Pha 3 đọc dòng hợp đồng do lát viết hộ | L1 |
