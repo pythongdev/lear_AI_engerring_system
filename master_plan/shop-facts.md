@@ -1458,6 +1458,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-12 | Chủ quán trả lời **U-079** (T-173), chủ repo chuyển lời: *"từ món kèm bàn và mang đi bán như nào nhập như thế"* — nhập bù gõ lại từng món kèm bàn hoặc mang đi; chủ repo chọn trong câu hỏi có sẵn phương án: giá lúc bán trên giấy. Cùng lượt **U-058** đóng bằng lời chọn: giảm giá cả đơn có trong bản đầu, không trần, không bắt lý do | §6.11 · §8.9 |
 | 2026-10-14 | Chủ quán trả lời bảy câu (T-180), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn phương án ba vế: **đơn web báo về quầy bằng sự kiện SSE**, thay Telegram (U-080); trang tổng kết **cho tất cả thông tin** — KPI doanh thu, món bán chạy, hiệu suất nhân viên, cảnh báo sắp hết (U-081, mở U-087); chủ quán **cần thêm · xoá món, danh mục, combo, topping** (U-082, *lời chọn*); **mỗi người làm một tài khoản, mật khẩu riêng** — *lời chọn*: thay U-075 hoàn toàn (U-083, mở U-088, **ADR-104**); **có** giao việc (U-084, mở U-089); chi phí marketing là **một khoản chi** của mảng tài chính (U-085); **có** hướng dẫn và theo dõi đào tạo (U-086, mở U-090) | §1 · §8.6 · §8.7 · §8.8 · §8.9 · §8.10 |
 | 2026-10-14 | Chủ quán trả lời lượt hai (T-182), chủ repo chuyển lời và chọn trong câu hỏi có sẵn phương án ba vế: báo cáo tổng kết **theo ngày**; hiệu suất nhân viên **theo đề xuất của Claude, chủ repo duyệt** (U-087); máy **tự cảnh báo sắp hết, báo POS kiểm tra** — lật một phần U-045, ngưỡng còn mở; **người làm tự đăng ký, chủ quán duyệt, tự đặt mật khẩu, Gmail để đặt lại khi quên, đăng nhập ở quầy là mốc đổi người** (đóng U-088); **chỉ chủ quán và POS giao việc** (U-089); hướng dẫn là **chữ, ảnh, video theo việc** (U-090) | §8.4 · §8.6 · §8.7 · §8.8 |
+| 2026-10-14 | Chủ quán trả lời lượt ba (T-183): **chủ quán và POS tạo, sửa, xoá việc giao và đánh dấu xong** (đóng U-089); **chủ quán hoặc POS ghi nhận xét và đánh giá người làm làm được việc hay chưa** (đóng U-090); hàng về thì **nhập khối lượng theo đơn vị riêng của từng thứ**, mỗi ngày có người **nhập lượng đã dùng**, máy tự trừ ra phần còn lại (U-087 — vế ngưỡng sắp hết vẫn mở) | §8.4 · §8.7 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -1732,7 +1733,10 @@ sắp hết là máy tự cảnh báo thông báo cho pos để kiểm tra"*). L
 người nhận nhắc là **POS**, việc của POS là **kiểm tra** — máy vẫn không tự kết luận thiếu, không tự tắt món, không tự
 đặt hàng (§8.3). Mức sổ ghi tay điện tử đứng nguyên: máy không quy suất bán ra lượng nguyên liệu. Còn thiếu đúng một
 vế, và thiếu vế ấy thì máy không biết lúc nào nhắc: **ngưỡng** của từng thứ, ai đặt, theo đơn vị nào (B12 chưa có) —
-`docs/product/99-unknowns.md` **U-087**. Danh mục §8.4 sẽ cần cột ngưỡng khi U-087 đóng; câu *"Danh mục nguyên liệu
+`docs/product/99-unknowns.md` **U-087**. **Lượt ba 2026-10-14 (T-183):** hàng mua về thì nhập **khối lượng theo đơn vị
+riêng của từng thứ** (chủ quán chọn *"mỗi thứ một đơn vị riêng"* — kg, lít, chai, quả…; nhập và dùng cùng đơn vị ấy),
+mỗi ngày có người **nhập lượng đã dùng**, và máy **tự trừ** ra phần còn lại — khớp phép trừ `U-051` ở trên. Lời này trả
+vế đơn vị của câu **B12** (`work/admin-questions.md`); ngưỡng thì chưa. Danh mục §8.4 sẽ cần cột ngưỡng khi U-087 đóng; câu *"Danh mục nguyên liệu
 KHÔNG mọc cột ngưỡng"* ở trên là luật cũ.
 - **Không nói mảng này có vào bản chạy đầu tiên hay không.** Đó là câu của
   `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7, và câu ấy đã chốt riêng ngày 2026-09-02
@@ -1979,7 +1983,11 @@ là pha 4 (`docs/decisions.md` **ADR-035**). Mục này chỉ nói quán muốn 
 Hai lời chốt **có làm**, chưa chốt **làm gì**: một việc gồm gì, ai giao, ai đánh dấu xong là **U-089**; hướng dẫn dạng
 gì, theo dõi gì là **U-090**. **Lượt hai 2026-10-14 (T-182):** **chỉ chủ quán và POS** được giao việc; hướng dẫn công
 việc là **chữ, ảnh, video, theo từng việc**. Vế còn thiếu vẫn ở U-089 (một việc gồm gì, ai đánh dấu xong) và U-090
-(theo dõi ghi gì). Hai thứ này không phải mức thứ tư của bảng ba mức ở trên — đó là cách đọc của phiên.
+(theo dõi ghi gì). **Lượt ba 2026-10-14 (T-183), đóng cả hai câu:** **chủ quán và POS tạo, sửa, xoá việc giao, và
+chủ quán và POS đánh dấu xong** (U-089); **chủ quán hoặc POS ghi nhận xét về người làm và tự đánh giá người ấy làm được
+việc hay chưa**, cũng tạo · sửa · xoá được (U-090). *Cách đọc của phiên:* trường của một việc (nội dung, người nhận,
+hạn) và của một ghi nhận đào tạo do thiết kế chọn, chủ quán giao việc ấy cho phiên; *xoá* là ẩn có vết, không xoá cứng
+(`docs/product/2-db/01-quy-uoc-du-lieu.md`). Hai thứ này không phải mức thứ tư của bảng ba mức ở trên — đó là cách đọc của phiên.
 
 ### 8.8 Mức 1 của mảng CON NGƯỜI — **mỗi lần đổi người ở QUẦY là một mốc có giờ**
 

@@ -50,7 +50,7 @@ Một bước `P4A-XX` chỉ *Ready* khi đủ ba điều: chủ repo mở kế 
 **Lời chủ quán 2026-10-14 (T-180).** Sáu câu của sổ này đã đóng (`docs/product/99-unknowns.md`, mục đã có lời giải):
 chủ quán **muốn** trang tổng kết, tự quản lý menu, giao việc, ghi chi phí marketing, và hướng dẫn · theo dõi đào tạo;
 mỗi người làm có **tài khoản, mật khẩu riêng** — lời này thay *chọn tên* (**ADR-104**). Vế chưa rõ mở thành
-`U-087`…`U-090`; lượt hai cùng ngày (T-182) đóng `U-088` và hẹp ba câu còn lại. Lời mới **không** mở bước nào: điều (a) — backend admin có cửa — vẫn chưa có, và `P4-04` đang dừng.
+`U-087`…`U-090`; lượt hai và ba cùng ngày (T-182 · T-183) đóng `U-088`, `U-089`, `U-090`; chỉ `U-087` (ngưỡng sắp hết) còn mở. Lời mới **không** mở bước nào: điều (a) — backend admin có cửa — vẫn chưa có, và `P4-04` đang dừng.
 
 **`PAGES_INDEX.md` cho danh sách trang, không cho cách làm.** Bản ấy chép dự án khác — đăng nhập JWT, WebSocket, CRUD
 tự do — và mọi link của nó đã chết. Cách làm theo **ADR-102** và `docs/private/fe/fe_guidance/`; chỗ trang nguồn trái
@@ -217,14 +217,14 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-07"></a>
 ### P4A-07 — Bản cũ có bảng giao việc và danh sách việc, quán này chưa nói gì về giao việc
 
-**Phụ thuộc** · bước admin 7/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-089**
+**Phụ thuộc** · bước admin 7/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
 
 **Trang nguồn:** `/admin/staff/task-board` · `/admin/todo-list` — bảng việc theo người và danh sách việc của cả nhóm. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
 
-**Goal:** quán **có** giao việc trong phần mềm (U-084, 2026-10-14). **Chỉ chủ quán và POS** giao việc (lượt hai). Một việc gồm gì và ai đánh dấu xong chờ **U-089** — trước lời ấy bước này không có trường, cột hay nút nào.
+**Goal:** quán **có** giao việc trong phần mềm (U-084, 2026-10-14). **Chủ quán và POS** tạo · sửa · xoá việc giao và **đánh dấu xong** (U-089 đóng, lượt ba). Trường của một việc do thiết kế chọn — chủ quán giao cho phiên; *xoá* là ẩn có vết. Chưa có lược đồ và cửa backend cho việc giao — cần một lát lược đồ admin mới trước bước này.
 
-**Dữ kiện quán đã có:** `master_plan/shop-facts.md` §8.7 (bổ sung 2026-10-14) — chỉ lời *có làm*.
+**Dữ kiện quán đã có:** `master_plan/shop-facts.md` §8.7 (bổ sung 2026-10-14) — có làm, ai giao, ai đánh dấu xong.
 
 **Không lấy từ PAGES_INDEX:** toàn bộ mô hình việc · người nhận · hạn của dự án cũ.
 
@@ -319,14 +319,14 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-11"></a>
 ### P4A-11 — Bản cũ có trang đào tạo nhân viên, quán này chưa có dữ kiện nào về nó
 
-**Phụ thuộc** · bước admin 11/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-090**
+**Phụ thuộc** · bước admin 11/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
 
 **Trang nguồn:** `/admin/training` — hướng dẫn công việc và theo dõi hoàn thành. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
 
-**Goal:** quán **có** hướng dẫn công việc và theo dõi đào tạo trong phần mềm (U-086, 2026-10-14). Hướng dẫn là **chữ, ảnh, video, theo từng việc** (lượt hai). Theo dõi đào tạo ghi gì chờ **U-090**.
+**Goal:** quán **có** hướng dẫn công việc và theo dõi đào tạo trong phần mềm (U-086, 2026-10-14). Hướng dẫn là **chữ, ảnh, video, theo từng việc** (lượt hai); **chủ quán hoặc POS ghi nhận xét về người làm và đánh giá làm được việc hay chưa**, tạo · sửa · xoá được (U-090 đóng, lượt ba). Chưa có lược đồ và cửa backend — cần một lát lược đồ admin mới trước bước này.
 
-**Dữ kiện quán đã có:** `master_plan/shop-facts.md` §8.7 (bổ sung 2026-10-14) — chỉ lời *có làm*.
+**Dữ kiện quán đã có:** `master_plan/shop-facts.md` §8.7 (bổ sung 2026-10-14) — dạng hướng dẫn, ai ghi nhận xét, ai đánh giá.
 
 **Không lấy từ PAGES_INDEX:** toàn bộ mô hình bài hướng dẫn và tiến độ của dự án cũ.
 

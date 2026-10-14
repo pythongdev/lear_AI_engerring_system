@@ -14,7 +14,7 @@
      (docs/decisions.md ADR-007 · work/findings.md F-008). Chuyển mấy dòng dưới
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
-- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**. Ba câu tính tới 2026-10-14 (T-182): U-087 · U-089 · U-090.
+- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**. Một câu tính tới 2026-10-14 (T-183): U-087.
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
 - [Đã có lời giải](#da-co-loi-giai) — câu đã đóng, xếp theo lượt trả lời của chủ quán, kèm nguyên
@@ -34,11 +34,7 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 ### Đang mở
 
 <a id="u-087"></a>
-- **U-087** — Máy **tự cảnh báo sắp hết** một nguyên liệu và báo POS kiểm tra (lời 2026-10-14, lượt hai; lật một phần `U-045`) — nhưng *sắp hết* là khi nào: **ngưỡng** của từng thứ là bao nhiêu, ai đặt (chủ quán?), đo bằng đơn vị nào (đơn vị tính câu **B12** chưa có), và so ngưỡng với *số thiếu = tổng đã nhập − tổng đã dùng* của `master_plan/shop-facts.md` §8.4 hay với con số kiểm lại cuối buổi. Hai vế đầu của câu cũ đã có lời: báo cáo **theo ngày**, hiệu suất nhân viên theo đề xuất đã duyệt (§8.6). Người trả lời: chủ quán. Chặn: vế cảnh báo của `P4A-03`, `P4A-09`. Mở 2026-10-14, T-180; hẹp lại 2026-10-14, T-182.
-<a id="u-089"></a>
-- **U-089** — Quán có giao việc, và **chỉ chủ quán và POS** được giao (lời 2026-10-14, lượt hai). Còn thiếu: một việc gồm những gì (nội dung, người nhận, hạn), và **ai đánh dấu xong** (người nhận tự bấm hay người giao xác nhận). Người trả lời: chủ quán. Chặn: `P4A-07`. Mở 2026-10-14, T-180; hẹp lại 2026-10-14, T-182.
-<a id="u-090"></a>
-- **U-090** — Hướng dẫn công việc là **chữ, ảnh, video, theo từng việc** (lời 2026-10-14, lượt hai). Còn thiếu: *theo dõi đào tạo* ghi gì (người đã xem, đã làm được), và ai xác nhận một người đã làm được. Người trả lời: chủ quán. Chặn: `P4A-11`. Mở 2026-10-14, T-180; hẹp lại 2026-10-14, T-182.
+- **U-087** — Máy nhắc POS kiểm tra khi một nguyên liệu **sắp hết** (lời 2026-10-14), và đã biết *còn lại = tổng đã nhập − tổng đã dùng* theo **đơn vị riêng của từng thứ** (lượt ba, `master_plan/shop-facts.md` §8.4) — nhưng **còn lại bao nhiêu thì là sắp hết**: chủ quán đặt một số ngưỡng cho từng thứ, một tỉ lệ của lần nhập gần nhất, hay cách khác. Lượt ba hỏi đúng câu này, lời trả *"tuỳ từng trường hợp sẽ nhập đơn vị khác nhau"* nói về đơn vị, chưa nói ngưỡng. Người trả lời: chủ quán. Chặn: vế cảnh báo của `P4A-03`, `P4A-09`. Mở 2026-10-14, T-180; hẹp lại hai lần cùng ngày, T-182 · T-183.
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
 chủ quán quyết theo tình hình thực tế, không có luật cứng.** Lượt một (T-042) đóng U-022, U-025 và
@@ -162,6 +158,17 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ quán trả lời 2026-10-14, lượt ba (T-183), chủ repo chuyển lời trong hội thoại.** Lời đáp đã vào owner
+(`master_plan/shop-facts.md` §8.7 · §8.4). `U-087` nhận lời về đơn vị và cách trừ, vế ngưỡng còn mở.
+
+<a id="u-089"></a>
+<a id="u-090"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-089 — Một việc được giao gồm những gì, và ai đánh dấu xong?~~ | “có nhiều việc cần giao tạo function crud để chủ quán và pos có thể tạo xoá chỉnh sửa . chủ quan và pos đánh dấu xong.” **Chủ quán và POS tạo, sửa, xoá việc; chủ quán và POS đánh dấu xong.** Lời giao trường của một việc cho phiên thiết kế; *xoá* đọc là ẩn có vết, không xoá cứng — cách đọc của phiên. | `master_plan/shop-facts.md` §8.7 |
+| ~~U-090 — Theo dõi đào tạo ghi gì, ai xác nhận một người đã làm được?~~ | “theo dõi đào tạo chủ quán hay pos tự ghi nhạn xét bạn tạo crud cho việc chủ quan pos tự đánh giá làm dc việc hay chưa”. **Chủ quán hoặc POS ghi nhận xét về người làm, và tự đánh giá người ấy làm được việc hay chưa**; chủ quán và POS tạo, sửa, xoá các ghi nhận ấy. | `master_plan/shop-facts.md` §8.7 |
 
 **Chủ quán trả lời 2026-10-14, lượt hai (T-182), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn
 phương án ba vế (đánh dấu *lời chọn*).** Lời đáp đã vào owner (`master_plan/shop-facts.md` §8.8 · §8.4 · §8.6 · §8.7);
