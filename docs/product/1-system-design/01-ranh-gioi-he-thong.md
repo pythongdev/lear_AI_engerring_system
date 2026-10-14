@@ -75,6 +75,10 @@ trỏ được vào đúng một dòng. Nó không phải một mã dùng chung 
 - **PT-2 chết, cả hai bên đều mù.** Khách không đặt được, quán không ghi được. Quán vẫn bán bằng
   tay tại chỗ và qua điện thoại; hai kênh khách tự bấm thì **mất hẳn** trong khoảng thời gian ấy —
   không có đường nào bù được một đơn chưa bao giờ tồn tại.
+- **Kho tệp ảnh · video hướng dẫn nằm trong PT-2, không phải phụ thuộc thứ bảy** (2026-10-14,
+  Claude Code, `docs/decisions.md` **ADR-107**, lựa chọn của phiên): tệp nằm trên chính nơi hệ
+  thống chạy, nên PT-2 chết thì kho chết cùng và đường suy giảm là của PT-2. Bản sao lưu database
+  không chứa tệp — sao lưu kho là việc của vận hành.
 
 **Bốn thứ KHÔNG có trong bảng trên, và chúng vắng mặt có chủ ý** — chủ quán chưa nói tới thứ nào
 trong bốn thứ này, nên viết chúng vào đây là **đặt ra một dữ kiện quán** (`CLAUDE.md` §3.5): máy in
