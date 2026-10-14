@@ -80,6 +80,9 @@ Số `n` của `I-0xx/n` là **thứ tự của tập** trong ô *Phép đối c
 | `I-026` | 1 · 2 → §2 · 3 → `I-026/3` · 4 → `I-026/4` |
 | `I-027` | 1 → `I-027/1` · 2 → `I-027/2` · 3 → `I-027/3` · 4 → `I-027/4` |
 | `I-028` | 1 → `I-028/1` · 2 → `I-028/2` · 3 → `I-028/3` · 4 → `I-028/4` · 5 · 6 → §2 |
+| `I-030` | đủ bốn câu → `I-030/1` · ai được làm (tạo, sửa, ẩn, đánh dấu) → `I-030/2` · sự kiện thiếu người/lúc → `I-030/3` · ẩn thiếu người/lúc → `I-030/4`; sửa có vết dùng `I-018/1` |
+| `I-031` | gắn việc → `I-031/1` · đủ dấu → `I-031/2` · ai được ghi → `I-031/3` · không rỗng → `I-031/4` · hai giá trị → `I-031/5` · ẩn thiếu người/lúc → `I-031/6`; sửa có vết dùng `I-018/1` |
+| `I-032` | tên danh mục → `I-032/1` · món thuộc danh mục → `I-032/2` · ít nhất một món → `I-032/3` · món và số phần → `I-032/4` · giá riêng → `I-032/5` · ngoài buổi → `I-032/6` · ẩn → `I-032/7` · chủ quán → `I-032/8`; sửa có vết dùng `I-018`, đơn cũ giữ giá dùng `I-009` |
 
 Vế mà pha 1 đã nói thẳng là **không có tập** (`I-022` vế ngược, `I-023` vế *không đoán được*, hai vế
 của `I-024`) không có dòng nào ở đây: chúng là kịch bản của `quality/invariants.md`, không phải phép
@@ -131,6 +134,30 @@ tính chất của dữ liệu.
 | `I-026` tập 2 — hiệu số | chưa có câu | (B) hiệu số không có chỗ cất (**ADR-071**) | — (đúng theo cấu tạo) |
 | `I-028` tập 5 — không phải tiền bán hàng | chưa có câu | (B) không cột nào nối khoản sang doanh thu hay tiền đã thu (**ADR-073**) | — (đúng theo cấu tạo) |
 | `I-028` tập 6 — rời két | chưa có câu | (A) trỏ sang `I-021` tập 2; mọi khoản vào hạng tử *chi từ két* theo paid_date | như `I-021` tập 2 |
+
+`I-030` không có tập dữ liệu cho cờ xong không tồn tại, sự kiện hoặc việc đã bị xoá mất,
+và người khác bấm hộ trên máy đang mở. Test
+`db/tests/i030_assigned_task_names_assignee_and_marks.sql` đọc lược đồ, đánh dấu rồi gỡ,
+ẩn rồi đọc lại; không coi các phần ấy là đã được câu đối chiếu chấm.
+`I-030/2` đọc cả vết sửa của hai bảng, dùng người sửa và lúc sửa; trực quầy theo khoảng
+`[started_at, ended_at)`, còn cờ chủ quán đọc từ `person.is_owner` hiện hành vì không có
+lịch sử cờ này. Người hoặc mốc thiếu được các câu đủ dấu và `I-018/1` gọi tên.
+
+`I-031` không có tập dạng dữ liệu cho chỗ trỏ tệp (đọc lược đồ và kiểm khoá tệp theo
+ADR-107), hay phần đã bị xoá mất, kể cả ghi nhận cũ bị thay mất khi không còn dấu để đọc.
+Test `db/tests/i031_task_guide_and_training_record.sql` đọc lược đồ, ghi hai lần rồi ẩn và đọc lại;
+file lát [17-luoc-do-dao-tao.md](17-luoc-do-dao-tao.md) nêu giới hạn kho tệp.
+`I-031/3` chỉ xét ghi nhận có lúc ghi, đọc khoảng trực quầy `[started_at, ended_at)` và
+cờ `person.is_owner` hiện hành như `I-030/2`; thiếu người/lúc thuộc `I-031/2`.
+Vết sửa của cả hai bảng dùng tập chung `I-018/1`, không nhân đôi câu và lỗi cài.
+
+`I-032` chưa có tập cho món chưa xếp bị chặn bán (lần bị chặn không sinh dữ liệu),
+không cộng từ giá món (giá đặt có thể tình cờ bằng tổng), và phần đã xoá mất (không còn dấu).
+Kiểm bằng đọc lược đồ và kịch bản của `db/tests/i032_category_and_combo_own_price.sql`;
+vết sửa dùng tập chung `I-018`, đơn cũ giữ giá dùng `I-009`, không viết lại câu.
+`I-032/6` chỉ xét vết có lúc, đọc giờ và múi giờ qua tham số owner như `I-011`;
+`I-032/8` đọc cờ chủ quán hiện hành như `I-030/2`, không xét trực quầy.
+Ý định và giới hạn ở [18-luoc-do-danh-muc-combo.md](18-luoc-do-danh-muc-combo.md).
 
 ### 2.1 Mệnh đề chưa có lát — cả mệnh đề chưa có câu
 

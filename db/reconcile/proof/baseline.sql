@@ -446,6 +446,79 @@ END $f$;
 -- Có QR trong khoảng: bộ đối chiếu trên ngày mẫu phải vẫn trả mọi tập rỗng.
 DO $$ BEGIN PERFORM pg_temp.bc_f060(true); END $$;
 
+-- P2A-11: chủ quán tạo và sửa, POS đánh dấu tại khoảng trực, chủ quán ẩn.
+DO $$
+DECLARE v bigint; chu bigint := pg_temp.bc_nguoi('Chủ quán');
+  -- Trả lại người thao tác và lý do sau khối: các lỗi cài chạy sau ngày mẫu đọc người thao tác của
+  -- phiên (khối trước đặt người đứng quầy); đổi nó ở đây làm I-012/3 kêu oan.
+  actor_truoc text := current_setting('shop.actor_person_id', true);
+  ly_do_truoc text := current_setting('shop.revision_reason', true);
+BEGIN
+  PERFORM set_config('shop.actor_person_id', chu::text, true);
+  PERFORM set_config('shop.revision_reason', 'ngày mẫu giao việc', true);
+  INSERT INTO assigned_task (content, assignee_person_id, created_at)
+  VALUES ('Rửa nồi hấp', pg_temp.bc_nguoi('Người gấp bánh'), pg_temp.bc_luc('06:00')) RETURNING id INTO v;
+  INSERT INTO assigned_task_mark (assigned_task_id, mark_code, person_id, created_at)
+  VALUES (v, 'done', pg_temp.bc_nguoi('Người đứng quầy'), pg_temp.bc_luc('07:00')),
+         (v, 'undone', chu, pg_temp.bc_luc('07:05'));
+  UPDATE assigned_task SET content = 'Rửa hai nồi hấp', hidden_at = pg_temp.bc_luc('08:00'),
+    hidden_by_person_id = chu WHERE id = v;
+  PERFORM set_config('shop.actor_person_id', coalesce(actor_truoc, ''), true);
+  PERFORM set_config('shop.revision_reason', coalesce(ly_do_truoc, ''), true);
+END $$;
+
+-- P2A-12: ba loại hướng dẫn, hai ghi nhận theo lúc ghi; sửa và ẩn vẫn đọc lại được.
+DO $$
+DECLARE v bigint; g bigint; t bigint; chu bigint := pg_temp.bc_nguoi('Chủ quán');
+  actor_truoc text := current_setting('shop.actor_person_id', true);
+  ly_do_truoc text := current_setting('shop.revision_reason', true);
+BEGIN
+  PERFORM set_config('shop.actor_person_id', chu::text, true);
+  PERFORM set_config('shop.revision_reason', 'ngày mẫu đào tạo', true);
+  SELECT min(id) INTO v FROM assigned_task;
+  INSERT INTO assigned_task_guide (assigned_task_id, guide_kind_code, body, created_at)
+  VALUES (v, 'text', 'Rửa sạch cả hai nồi', pg_temp.bc_luc('06:05')) RETURNING id INTO g;
+  INSERT INTO assigned_task_guide (assigned_task_id, guide_kind_code, file_code, created_at)
+  VALUES (v, 'image', 'huong-dan/noi.jpg', pg_temp.bc_luc('06:06')),
+         (v, 'video', 'huong-dan/noi.mp4', pg_temp.bc_luc('06:07'));
+  INSERT INTO training_record (trainee_person_id, remark, rating_code, person_id, created_at)
+  VALUES (pg_temp.bc_nguoi('Người gấp bánh'), 'Cần rửa lại mép nồi', 'not_yet',
+          pg_temp.bc_nguoi('Người đứng quầy'), pg_temp.bc_luc('07:00')) RETURNING id INTO t;
+  INSERT INTO training_record (trainee_person_id, rating_code, created_at)
+  VALUES (pg_temp.bc_nguoi('Người gấp bánh'), 'pass', pg_temp.bc_luc('08:00'));
+  UPDATE assigned_task_guide SET body = 'Rửa sạch cả mép nồi', hidden_at = pg_temp.bc_luc('08:10'),
+    hidden_by_person_id = chu WHERE id = g;
+  UPDATE training_record SET remark = 'Cần rửa lại mép nồi bên trái', hidden_at = pg_temp.bc_luc('08:10'),
+    hidden_by_person_id = chu WHERE id = t;
+  PERFORM set_config('shop.actor_person_id', coalesce(actor_truoc, ''), true);
+  PERFORM set_config('shop.revision_reason', coalesce(ly_do_truoc, ''), true);
+END $$;
+
+-- P2A-13: danh mục còn dùng và đã ẩn; combo có giá riêng, đổi giá ngoài buổi.
+DO $$
+DECLARE d bigint; c bigint; chu bigint := pg_temp.bc_nguoi('Chủ quán');
+  actor_truoc text := current_setting('shop.actor_person_id', true);
+  ly_do_truoc text := current_setting('shop.revision_reason', true);
+BEGIN
+  PERFORM set_config('shop.actor_person_id', chu::text, true);
+  PERFORM set_config('shop.revision_reason', 'ngày mẫu danh mục combo', true);
+  INSERT INTO menu_category (name, created_at) VALUES ('Mẫu danh mục', pg_temp.bc_luc('00:00')) RETURNING id INTO d;
+  INSERT INTO menu_item_category (menu_item_id, menu_category_id)
+    SELECT id, d FROM menu_item ORDER BY id LIMIT 2;
+  INSERT INTO menu_category (name) VALUES ('Mẫu danh mục còn dùng');
+  INSERT INTO menu_combo (name, price_vnd, created_at)
+    VALUES ('Mẫu combo', 25000, pg_temp.bc_luc('00:00')) RETURNING id INTO c;
+  INSERT INTO menu_combo_item (menu_combo_id, menu_item_id, quantity)
+    SELECT c, id, 2 FROM menu_item ORDER BY id LIMIT 2;
+  UPDATE menu_combo SET price_vnd = 27000, hidden_at = pg_temp.bc_luc('00:00'), hidden_by_person_id = chu WHERE id = c;
+  UPDATE menu_category SET hidden_at = pg_temp.bc_luc('00:00'), hidden_by_person_id = chu WHERE id = d;
+  -- Như các vết mô phỏng ở trên: mốc ngày mẫu thay mốc đồng hồ của lần chạy.
+  UPDATE record_revision SET revised_at = pg_temp.bc_luc('00:00')
+    WHERE target_table_code IN ('menu_category', 'menu_combo') AND reason = 'ngày mẫu danh mục combo';
+  PERFORM set_config('shop.actor_person_id', coalesce(actor_truoc, ''), true);
+  PERFORM set_config('shop.revision_reason', coalesce(ly_do_truoc, ''), true);
+END $$;
+
 -- Ngày mẫu phải qua MỌI ràng buộc hoãn, như lúc COMMIT.
 SET CONSTRAINTS ALL IMMEDIATE;
 SET CONSTRAINTS ALL DEFERRED;

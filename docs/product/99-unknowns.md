@@ -133,6 +133,12 @@ về **người đứng quầy**, và lời đáp — *"Có — ghi cả mốc �
 `quality/invariants.md` **I-012** đòi *ai bấm* ở **hai cửa ghi ngoài quầy**. Nguyên văn lời đáp và
 phạm vi của nó ở `master_plan/shop-facts.md` **§8.8**.
 
+- **U-094** — Ba dữ kiện để trang quán hiện đúng trên Google (mở 2026-10-14, T-189): (1) **địa chỉ quán** đầy đủ;
+  (2) **ngày nào trong tuần** quán mở 6h–11h, có ngày nghỉ không (`master_plan/shop-facts.md` chỉ có khung giờ);
+  (3) **tên miền** chính thức của trang web. Kèm một việc duyệt chữ: câu mô tả hiện dưới tên quán trên Google, bản
+  nháp ở `fe/src/app/layout.tsx`. Ai trả lời: chủ quán (1, 2, chữ mô tả), chủ repo (3). Chặn gì: JSON-LD chưa có
+  `address` · `openingHours`; chưa có canonical và `sitemap.xml` cho tới khi đặt `BANHCUON_SITE_URL`. Không chặn bán hàng.
+
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
 

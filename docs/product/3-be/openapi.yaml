@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.18.1
+  version: 0.21.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -3488,6 +3488,17 @@ x-constraint-errors:
   bill_standalone_debt_note_check: debt_note_required
   bill_debt_note_only_with_debt_check: internal
   reconciled_day_gap_explained_check: gap_explanation_required
+  assigned_task_assignee_person_fkey: unreviewed
+  assigned_task_content_check: unreviewed
+  assigned_task_hidden_after_created_check: unreviewed
+  assigned_task_hidden_by_iff_hidden_check: unreviewed
+  assigned_task_hidden_by_person_fkey: unreviewed
+  assigned_task_mark_assigned_task_fkey: unreviewed
+  assigned_task_mark_mark_code_check: unreviewed
+  assigned_task_mark_person_fkey: unreviewed
+  assigned_task_mark_pkey: internal
+  assigned_task_person_fkey: unreviewed
+  assigned_task_pkey: internal
   attendance_day_cancel_note_only_when_cancelled_check: unreviewed
   attendance_day_cancelled_after_created_check: unreviewed
   attendance_day_cancelled_by_iff_cancelled_check: unreviewed
@@ -3793,3 +3804,48 @@ x-constraint-errors:
   wrong_make_note_person_fkey: internal
   wrong_make_note_pkey: internal
   wrong_make_note_station_job_order_fkey: internal
+  assigned_task_guide_assigned_task_fkey: unreviewed
+  assigned_task_guide_content_check: unreviewed
+  assigned_task_guide_file_code_check: unreviewed
+  assigned_task_guide_guide_kind_code_check: unreviewed
+  assigned_task_guide_hidden_after_created_check: unreviewed
+  assigned_task_guide_hidden_by_iff_hidden_check: unreviewed
+  assigned_task_guide_hidden_by_person_fkey: unreviewed
+  assigned_task_guide_person_fkey: unreviewed
+  assigned_task_guide_pkey: internal
+  training_record_hidden_after_created_check: unreviewed
+  training_record_hidden_by_iff_hidden_check: unreviewed
+  training_record_hidden_by_person_fkey: unreviewed
+  training_record_not_empty_check: unreviewed
+  training_record_person_fkey: unreviewed
+  training_record_pkey: internal
+  training_record_rating_code_check: unreviewed
+  training_record_remark_check: unreviewed
+  training_record_trainee_person_fkey: unreviewed
+
+  # P2A-13 — chưa có cửa ghi; khoá chính là lỗi nội bộ.
+  menu_category_active_name_key: unreviewed
+  menu_category_hidden_after_created_check: unreviewed
+  menu_category_hidden_by_iff_hidden_check: unreviewed
+  menu_category_hidden_by_person_fkey: unreviewed
+  menu_category_name_not_blank_check: unreviewed
+  menu_category_person_fkey: unreviewed
+  menu_category_pkey: internal
+  menu_combo_has_item_check: unreviewed
+  menu_combo_hidden_after_created_check: unreviewed
+  menu_combo_hidden_by_iff_hidden_check: unreviewed
+  menu_combo_hidden_by_person_fkey: unreviewed
+  menu_combo_item_menu_combo_fkey: unreviewed
+  menu_combo_item_menu_item_fkey: unreviewed
+  menu_combo_item_once_key: unreviewed
+  menu_combo_item_pkey: internal
+  menu_combo_item_quantity_positive_check: unreviewed
+  menu_combo_name_not_blank_check: unreviewed
+  menu_combo_person_fkey: unreviewed
+  menu_combo_pkey: internal
+  menu_combo_price_positive_check: unreviewed
+  menu_item_category_menu_category_fkey: unreviewed
+  menu_item_category_menu_item_fkey: unreviewed
+  menu_item_category_menu_item_key: unreviewed
+  menu_item_category_person_fkey: unreviewed
+  menu_item_category_pkey: internal

@@ -17,11 +17,11 @@ lược đồ từ số không · chỗ chứng minh từng điều ấy chạy 
 
 ---
 
-## 1. Thứ tự dựng — hai mươi ba bước
+## 1. Thứ tự dựng — hai mươi bốn bước
 
 Công cụ chạy các bước theo **tên file**, tức theo mốc giờ ở đầu tên (`QC-05`). Thứ tự dưới đây là
 thứ tự ấy; cột *đứng trên* nói bước nào phải có trước, vì bước sau thêm cột, khoá ngoại hay ràng
-buộc vào bảng của nó. Dựng lại từ số không là chạy đúng hai mươi ba bước này, từ trên xuống; lùi là đi
+buộc vào bảng của nó. Dựng lại từ số không là chạy đúng hai mươi bốn bước này, từ trên xuống; lùi là đi
 ngược từ dưới lên, **từng bước một**.
 
 | # | File (`db/migrations/`, bỏ đuôi) | Lát | Dựng gì | Đứng trên |
@@ -49,6 +49,9 @@ ngược từ dưới lên, **từng bước một**.
 | 21 | `20261011120000_mac_dinh_lua_chon` | `T-169` | cờ `menu_option.is_default` và khoá duy nhất `menu_option_one_default_per_group_key`: mặc định của nhóm tuỳ chọn thành dữ liệu, mỗi nhóm nhiều nhất một (**ADR-094**, đóng **F-059**) | 2 |
 | 22 | `20261012120000_mo_lai_so_dem` | `T-146` | `reconciled_day_reopening`, chuỗi dấu và khoá số đếm theo dấu đang đứng (ADR-096) | 15 · 18 · 19 |
 | 23 | `20261013120000_giam_gia_ca_don` | `T-175` | Hai cột giảm giá trên `bill`, tổng phần trả cộng giảm bằng tổng dòng (ADR-098) | 4 |
+| 24 | `20261014140000_giao_viec` | `P2A-11` | `assigned_task` · `assigned_task_mark` và trigger vết; vai ghi sửa nội dung, người nhận, dấu ẩn; sự kiện chỉ thêm; lùi chặn khi một trong hai bảng có dòng, gỡ sự kiện trước | 8 · 20 |
+| 25 | `20261014150000_dao_tao` | `P2A-12` | `assigned_task_guide` · `training_record` và trigger vết; vai ghi chỉ sửa nội dung và dấu ẩn; khoá chặn từ chối lùi khi một trong hai bảng có dòng, gỡ ghi nhận rồi hướng dẫn | 8 · 20 · 24 |
+| 26 | `20261014160000_danh_muc_combo` | `P2A-13` | `menu_category` · `menu_item_category` · `menu_combo` · `menu_combo_item`, trigger vết và kiểm combo có món hoãn tới cuối giao dịch; khoá chặn từ chối lùi khi bất kỳ bảng nào có dòng; gỡ trigger ràng buộc và hàm, rồi thành phần combo, combo, xếp món, danh mục | 2 · 8 · 20 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`

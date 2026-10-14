@@ -90,7 +90,7 @@ có câu trả lời mới từ người.
 | ADR-071 | **Sổ nguyên liệu: một con số người gõ là MỘT dòng; tổng không có chỗ cất; con số là `numeric` đúng như gõ** — hai bảng (danh mục · con số ngày), mỗi con số mang người nhập, ngày và lúc gõ của riêng nó; tổng và hiệu số chỉ đọc ra bằng phép cộng; vết sửa dùng lại trigger sẵn có ở chế độ mềm; bước khoá chặn của `db-check` lùi qua các bước còn rỗng tới bước đầu tiên có dữ liệu | Đã chốt 2026-09-30 (giao cho phiên, P2A-02) | — | P2A-02 · P2A-04 · P2A-05 · P2A-06 · P2A-07 |
 | ADR-072 | **Chấm công: một ô *có đi làm* là MỘT dòng của một người một ngày; không có dòng là không có ô; ô tick nhầm được HUỶ tại chỗ, không xoá và không đổi** — một bảng, mỗi ô mang người được chấm, ngày, người tick và lúc tick; khoá duy nhất trên (người, ngày) của các ô còn hiệu lực; ô đã huỷ ở lại cùng người huỷ, lúc huỷ và ghi chú; vai ghi tick và huỷ được, không sửa người hay ngày, không xoá; *người tick là chủ quán* giữ ở tầng 3, database không xét | Đã chốt 2026-09-30 (giao cho phiên, P2A-03) | — | P2A-03 · P2A-07 · P2A-08 |
 | ADR-073 | **Tạm ứng và thưởng: HAI bảng, mỗi khoản một dòng; người duyệt là một dấu riêng chỉ tạm ứng có; vai ghi chỉ sửa được số tiền · người nhận · ngày; không cột nào nối sang két** — mỗi khoản mang người nhận, số tiền lớn hơn 0, ngày của khoản, người ghi và lúc ghi; *người duyệt là chủ quán* giữ ở tầng 3, database không xét; vết sửa ở chế độ mềm như mọi bảng (F-046); nối két chờ task `T-125` | Đã chốt 2026-09-30 (giao cho phiên, P2A-04) | — | P2A-04 · P2A-07 · P2A-08 · T-125 |
-| ADR-074 | **Tiền RA khỏi két trong ngày là MỘT hạng tử của `I-021` — *chi từ két* — gồm mọi tạm ứng, mọi thưởng và khoản chi của loại mang nguồn két; nguồn tiền nằm trên LOẠI chi, không trên từng khoản; không cột *ngày bán của két* nào trước khi `U-072` có lời** — viết lại `I-021` · `I-028` · `I-029` · `YC-31`…`YC-33` theo lời đóng `U-066` · `U-067` và lời *trong ngày, trước lúc đếm két*; không migration nào cho tạm ứng và thưởng; câu đối chiếu của hạng tử chờ `U-072` và `F-048` | Đã chốt 2026-10-01 (giao cho phiên, T-125) | — | T-125 · P2A-05 · P2A-07 · ADR-073 |
+| ADR-074 | **Tiền RA khỏi két trong ngày là MỘT hạng tử của `I-021` — *chi từ két* — gồm mọi tạm ứng, mọi thưởng và khoản chi của loại mang nguồn két; nguồn tiền nằm trên LOẠI chi, không trên từng khoản; không cột *ngày bán của két* nào trước khi `U-072` có lời** — viết lại `I-021` · `I-028` · `I-029` · `YC-31`…`YC-33` theo lời đóng `U-066` · `U-067` và lời *trong ngày, trước lúc đếm két*; không migration nào cho tạm ứng và thưởng; câu đối chiếu của hạng tử chờ `U-072` và `F-048` | Đã chốt 2026-10-01 (giao cho phiên, T-125); chủ repo duyệt 2026-10-14 (T-188) | — | T-125 · P2A-05 · P2A-07 · ADR-073 |
 | ADR-075 | **Khách trả nợ dần: mỗi lần trả là MỘT dòng `debt_collection` mang *số còn thiếu sau lần ấy*; các lần trả nối nhau thành chuỗi bằng khoá ngoại, nên trả vượt, rẽ nhánh và trả khi đã hết nợ đều bị database từ chối** — bỏ luật *một khoản nợ thu đủ một lần*; lần đầu nối vào số nợ của hoá đơn, lần sau nối vào số còn thiếu của lần trước; *đã trả xong* là có lần trả còn thiếu 0, không cột trạng thái | Đã chốt 2026-10-01 (giao cho phiên, T-126) | — | T-126 · ADR-059 · U-063 |
 | ADR-076 | **Pha 3 có kế hoạch riêng** `master_plan/BE_master_plan_banh_cuon_ba_thanh.md`, mã bước `P3-01`…`P3-14`, sổ mô tả `work/backlog_BE.md` theo khuôn **ADR-051**; chẻ theo nhóm mệnh đề, không theo endpoint; admin ngoài pha 3 (**ADR-068**); `P3-01` chỉ nhận được sau khi **chủ repo ký chuyển pha** | Đã chốt 2026-10-01 (giao cho phiên, T-120) | — | T-120 · ADR-049 · ADR-051 · ADR-068 |
 | ADR-077 | **Bánh làm sai: mỗi ghi chú một dòng `wrong_make_note` gắn vào đúng một đơn vị đã làm của một đơn đã Huỷ**, mang người ghi · lúc ghi · chữ tuỳ chọn; ghi chú còn hiệu lực giữ đơn vị ở *đã làm* (không chuyển, không lùi), ghi nhầm thì **huỷ tại chỗ** có người và lúc, dòng ở lại; `I-004/6` loại thứ đã ghi chú; *không bàn nào chờ* là tầng 4 | Đã chốt 2026-10-01 (giao cho phiên, T-127; hình ghi chú và cách gỡ: lời chủ repo) | — | T-127 · U-064 · ADR-072 |
@@ -121,6 +121,10 @@ có câu trả lời mới từ người.
 | ADR-102 | **Thước của pha 4**: bốn nhóm màn × cách lấy dữ liệu · ghi xong · mất kết nối · số tiền; ghi xong thì đọc lại, không cache giá; state ba chỗ, đổi người xoá sạch; RHF + Zod, Vitest + RTL, openapi-typescript + openapi-fetch, token CSS shadcn, npm; cùng origin qua Next; luồng quầy mang `X-Person-Id` bằng fetch đọc luồng — không đổi hợp đồng | Đã chốt 2026-10-13 (giao cho phiên, P4-01) | — | ADR-097 · ADR-100 · ADR-101 · U-075 |
 | ADR-103 | **Mảng admin vào sổ pha 4 dưới dạng bước bị chặn**: mười một bước `P4A-01`…`P4A-11` theo đúng các trang admin của `docs/private/fe/PAGES_INDEX.md`, mô tả ở sổ riêng `work/backlog_FE_AD.md`; không bước nào *Ready* khi backend admin chưa có cửa và câu hỏi của nó chưa đóng; sửa ADR-101 điểm 6, không mở backend admin | Đã chốt 2026-10-13 (chủ repo, T-179) | — | P4A-01…P4A-11 · U-081…U-086 |
 | ADR-104 | **Lời chủ quán 2026-10-14 lật hai luật đã dựng**: mỗi người làm một tài khoản, mật khẩu riêng thay *chọn tên* (U-083 thay U-075), và đơn web báo về quầy bằng SSE thay Telegram (U-080 sửa ADR-041); `P4-04` dừng chờ thiết kế đăng nhập, không ai code mật khẩu trước khi thiết kế được duyệt | Đã chốt 2026-10-14 (chủ quán / chủ repo, T-180) | — | T-180 · U-088 · P4-04 · P4A-06 |
+| ADR-105 | **Mệnh đề lượt hai của mảng admin (`I-030`…`I-032`)**: vế *chủ quán hoặc POS* và *chủ quán* giữ ở **tầng 3** (cửa ghi của backend), database giữ *người có thật*; một việc một người nhận; đánh dấu xong là sự kiện, không phải cờ; ghi nhận đào tạo đứng trên người; món nhiều nhất một danh mục; câu đối chiếu của mỗi mệnh đề viết ở lát của nó | Đã chốt 2026-10-14 (giao cho phiên, P2A-10) | — | P2A-10 · P2A-11…P2A-13 · P2A-15 |
+| ADR-106 | **Lát khoản chi: hai bảng `expense_category` · `expense`; nguồn tiền là một cờ bắt buộc trên loại, không sửa được sau khi có loại; khoản giữ bốn câu của `I-029` và không gì hơn** | Đã chốt 2026-10-14, giao cho phiên (Claude Code, `P2A-05`) | — | P2A-05 · ADR-074 · I-029 |
+| ADR-107 | **Lát đào tạo: tệp ảnh · video nằm NGOÀI database, trong kho tệp trên chính nơi hệ thống chạy (PT-2), database cất một khoá tệp tương đối ngắn**; hướng dẫn là một dòng mỗi chữ · ảnh · video, gắn đúng một việc giao; ghi nhận đào tạo đứng trên người, nhận xét và đánh giá `pass` · `not_yet` tuỳ chọn nhưng không rỗng cả hai; về ai, ai ghi, việc của hướng dẫn không sửa được | Đã chốt 2026-10-14 (giao cho phiên, P2A-12) | — | P2A-12 · I-031 · YC-36 · ADR-105 |
+| ADR-108 | **Lát danh mục và combo: bốn bảng thêm cạnh lát menu, không thêm cột vào bảng món**; món nhiều nhất một danh mục bằng bảng xếp có khoá duy nhất trên món; combo mang `price_vnd` riêng, *ít nhất một món* là trigger ràng buộc hoãn tới lúc kết thúc giao dịch; tên danh mục duy nhất trong danh mục còn dùng; *không đổi giá giữa buổi* và *chỉ chủ quán* ở cửa backend | Đã chốt 2026-10-14 (giao cho phiên, P2A-13) | — | P2A-13 · I-032 · YC-37 · ADR-105 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -4947,7 +4951,9 @@ ghi, lúc ghi không sửa được bằng vai ghi; chủ quán cũng là một 
 lời chủ repo hay chủ quán (`CLAUDE.md` §7.2); chủ repo đổi được. Lời giao 2026-10-01 là *"P2A-05 …
 hãy đọc kĩ và làm"*; phiên chỉ ra `P2A-05` bị chặn bởi `T-125`, chủ repo chọn *làm `T-125` trước*.
 Task mức **L3**: đây là bản thiết kế, **chưa có dòng code nào**; chủ repo duyệt nó trước khi
-`P2A-05` dựng lược đồ.
+`P2A-05` dựng lược đồ. **Chủ repo duyệt 2026-10-14** (T-188, nguyên văn *"P2A-05: duyệt"*) — `P2A-05`
+hết bị chặn. Điểm 4 đã có lời từ `U-072` (ngày người ghi khai, **ADR-079** *Sửa đổi* 2026-10-09). Loại
+*marketing* thêm 2026-10-14 mang nguồn **tiền riêng** (`U-093`) nên không vào hạng tử *chi từ két*.
 
 **Context:**
 Chủ quán chốt 2026-09-30 (đóng `U-066` · `U-067`, `master_plan/shop-facts.md` §8.7 · §8.10): điện,
@@ -7095,3 +7101,163 @@ dùng chung, **lần đăng nhập là mốc đổi người** của `C36` — n
 `T-181` hết chờ `U-088`. *Suy ra, chờ chủ repo xác nhận:* màn trạm chỉ đọc giữ công khai như hợp đồng hiện tại; thư đặt
 lại mật khẩu là một phụ thuộc ngoài mới, phải vào `docs/product/1-system-design/01-ranh-gioi-he-thong.md` cùng
 đường suy giảm của nó trong thiết kế `T-181`.
+
+### ADR-105 — Mệnh đề lượt hai của mảng admin: ai được làm giữ ở cửa backend, mỗi lần đánh dấu là một sự kiện, và năm chỗ suy ra có tên
+
+**Trạng thái:** **Đã chốt** 2026-10-14, **giao cho phiên** (Claude Code, task `P2A-10`; thi công hai file pha 1:
+Codex) — chủ repo giao *"yêu cầu codex làm và bạn kiểm tra"*, không chọn từng điểm; mọi điểm dưới đây là lựa chọn
+của phiên, không phải lời chủ quán (`CLAUDE.md` §7.2), chủ repo đổi được.
+
+**Context:** lời chủ quán 2026-10-14 (`master_plan/shop-facts.md` §8.7 · §8.9 · §8.10; đóng `U-082` · `U-084` ·
+`U-085` · `U-086` · `U-089` · `U-090` · `U-091` · `U-092` · `U-093`) đưa giao việc, đào tạo, danh mục món · combo và
+loại chi marketing sang *đủ luật*. Lời nói **ai được làm** và **làm gì**, giao trường của một việc và của một ghi
+nhận cho thiết kế. Bước `P2A-10` phải viết mệnh đề trước khi ba lát `P2A-11`…`P2A-13` dựng.
+
+**Decision:**
+
+1. **Vế *người làm là chủ quán hoặc POS* (`I-030` · `I-031`) và *người làm là chủ quán* (`I-032`) giữ ở tầng 3** —
+   cửa ghi của backend xét lớp quyền, như vế *người tick là chủ quán* của `I-027` và *người duyệt là chủ quán* của
+   `I-028`. Database giữ tầng 1 phần nó giữ được: mọi người được nhắc tới là **một người có thật thuộc tập người của
+   quán**. *POS* là người đang đứng quầy — một trạng thái theo thời điểm (`C36`), và cách nhận ra nó đang được thiết
+   kế lại ở `T-181` (**ADR-104**); một ràng buộc database đọc trực quầy sẽ buộc lược đồ vào tín hiệu sắp đổi.
+2. **Một việc giao có đúng một người nhận** (`I-030`). Giao cho hai người là hai việc.
+3. **Đánh dấu xong là một sự kiện mang người và lúc; gỡ một lần đánh dấu nhầm là một sự kiện *bỏ đánh dấu***
+   (`I-030`). *Đã xong* đọc ra từ sự kiện mới nhất. Suy ra từ quyền *sửa* của lời `U-089`.
+4. **Ghi nhận đào tạo đứng trên một người, không gắn một việc giao;** một ghi nhận mang nhận xét, đánh giá
+   *đạt · chưa*, hoặc cả hai, không rỗng cả hai (`I-031`). Hướng dẫn công việc thì gắn đúng một việc giao — đó là
+   lời (`U-091`), không phải lựa chọn.
+5. **Một món thuộc nhiều nhất một danh mục, món chưa xếp vẫn bán được; một combo gồm ít nhất một món, mỗi món kèm số
+   phần lớn hơn 0; giá combo là số nguyên đồng lớn hơn 0** (`I-032`).
+6. **Câu đối chiếu của mỗi mệnh đề mới viết ở lát dựng nó** — `I-030` ở `P2A-11`, `I-031` ở `P2A-12`, `I-032` ở
+   `P2A-13` — và lát ấy gỡ dòng *chưa có lát* của mệnh đề mình ở `docs/product/2-db/09-doi-chieu-bat-bien.md` §2.1
+   (**ADR-070**) trong cùng thay đổi. `P2A-15` còn lại việc rà `comm -3` và diễn một ngày lượt hai. Đây là đường (a)
+   của `work/findings.md` **F-052**, áp cho lượt hai.
+7. **Vế tài khoản đăng nhập không có mệnh đề** cho tới khi thiết kế `T-181` được chủ repo duyệt; file yêu cầu ghi
+   một dòng *chờ*.
+
+**Why:** điểm 1 giữ lược đồ khỏi một tín hiệu đang thiết kế lại mà vẫn có một nơi duy nhất chặn người ngoài vai;
+điểm 3 giữ lịch sử *ai nói đã xong* khi người làm và chủ quán nhớ khác nhau; điểm 2, 4, 5 chọn hình hẹp nhất đủ
+cho lời, để lời sau mở rộng được mà không phải gỡ; điểm 6 tránh để mệnh đề chỉ có trên giấy qua ba lát.
+
+**Rejected alternatives:** *trigger database đọc trực quầy để chặn người không đứng quầy* — buộc lược đồ vào cách
+nhận POS sắp đổi ở `T-181`; *cờ đã xong ghi đè* — mất lần xong trước; *nhiều người nhận một việc* — lời không nói,
+và một việc nhiều người thì *ai đánh dấu xong cho ai* là câu mới; *bắt mọi món có danh mục* — menu hôm nay chưa có
+danh mục, bắt buộc sẽ chặn bán; *dồn câu đối chiếu về `P2A-15`* — ba mệnh đề đứng không câu qua ba lát.
+
+**Applies to:** `P2A-10` · `P2A-11` · `P2A-12` · `P2A-13` · `P2A-15`; `quality/invariants.md` `I-029` …`I-032`;
+`docs/product/1-system-design/03-bao-ve-invariant.md` §5; `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §9;
+**ADR-070** · **ADR-104**.
+
+### ADR-106 — Lát khoản chi: nguồn tiền là cờ bắt buộc trên loại, không sửa được; khoản giữ đúng bốn câu của `I-029`
+
+**Trạng thái:** **Đã chốt** 2026-10-14, **giao cho phiên** (Claude Code, task `P2A-05`; thi công: Codex) — chủ repo
+duyệt **ADR-074** và giao *"yêu cầu codex làm bạn kiểm tra"*; hình bảng dưới đây là lựa chọn của phiên, không phải lời
+chủ quán (`CLAUDE.md` §7.2), chủ repo đổi được.
+
+**Context:** **ADR-074** đặt nguồn tiền trên **loại** chi, bắt buộc. `I-029` đòi mỗi khoản đọc ra loại · số tiền · ngày ·
+ai ghi. Loại hôm nay: điện, nước, wifi, xăng xe (nguồn két, `E46`) và marketing (tiền riêng, `U-093`), danh sách thêm
+được (§8.10).
+
+**Decision:**
+1. **Hai bảng:** `expense_category` (tên, cờ `paid_from_till`) và `expense` (loại, `amount_vnd`, `paid_date`, người ghi
+   `person_id` mặc định từ người thao tác, `created_at`) — cùng hình `staff_advance` của **ADR-073**.
+2. **Nguồn là một cờ boolean `NOT NULL` không mặc định** — chỉ hai nguồn có lời (két · không phải két); không mã chữ,
+   vì không owner nào viết mã máy đọc cho nguồn (`QD-02`).
+3. **Vai `shop_app` không sửa được cờ nguồn của một loại đã có, chỉ sửa được tên.** Đổi nguồn là viết lại két của
+   mọi ngày cũ; loại đổi nguồn thì thêm loại mới.
+4. **Vai `shop_app` sửa được loại · số tiền · ngày của một khoản, có vết (chế độ nghiêm); không xoá loại hay khoản**
+   (`QD-50`).
+5. **Không cột ghi chú, kỳ, nhà cung cấp hay ngày bán của két** — lời chưa đòi; ngày két là `paid_date` (ngày người ghi
+   khai, `U-072`).
+6. **Hạng tử *chi từ két* của bộ đối chiếu cộng khoản của loại có `paid_from_till`**, theo `paid_date`.
+
+**Why:** cờ bắt buộc làm *loại không khai nguồn thì không tồn tại* thành ràng buộc database; khoá cờ sau khi ghi giữ
+phép trừ két của ngày đã đối soát không đổi ngầm.
+
+**Rejected alternatives:** *nguồn trên từng khoản* — bác ở **ADR-074** điểm 3; *mã chữ `source_code`* — thêm một tập
+mã không owner; *cho sửa nguồn có vết* — vết không cứu được ngày đã đối soát (**ADR-079**).
+
+**Applies to:** `db/migrations/` (lát khoản chi) · file lát `15-` của `docs/product/2-db/` (sinh ra ở `P2A-05`) · `db/reconcile/prelude.sql`
+· `quality/invariants.md` `I-029` · `I-021` · task `P2A-05`.
+
+### ADR-107 — Lát đào tạo: tệp ảnh · video nằm ngoài database, trên chính nơi hệ thống chạy; database cất một khoá tệp
+
+**Trạng thái:** **Đã chốt** 2026-10-14, **giao cho phiên** (Claude Code, task `P2A-12`; thi công: Codex) — chủ repo
+giao *"yêu cầu codex làm bạn kiểm tra"*, không chọn từng điểm; mọi điểm dưới đây là lựa chọn của phiên, không phải
+lời chủ quán (`CLAUDE.md` §7.2), chủ repo đổi được.
+
+**Context:** `I-031` đòi hướng dẫn công việc là chữ, ảnh hoặc video, gắn đúng một việc giao (lời đóng `U-091`), và
+ảnh · video là **chỗ trỏ tới tệp**; kế hoạch lược đồ admin §5 giao *chỗ giữ tệp* cho bước này kèm một ADR. Quán có
+một nơi chạy hệ thống (`PT-2`, `01-ranh-gioi-he-thong.md`); chưa có dịch vụ lưu tệp nào.
+
+**Decision:**
+1. **Tệp ảnh · video nằm ngoài database, trong một kho tệp trên chính nơi hệ thống chạy (`PT-2`)** — backend ghi tệp
+   vào kho và phát nó ra; không dịch vụ lưu tệp bên ngoài. Vì kho nằm cùng `PT-2`, đây **không** phải phụ thuộc ngoài
+   thứ bảy: `PT-2` chết thì kho chết cùng, đường suy giảm là của `PT-2`. Cách dựng kho (thư mục, volume, sao lưu) là
+   việc của backend và vận hành.
+2. **Database cất một *khoá tệp* ở cột `file_code`: tên tương đối ngắn trong kho** — chữ thường, số, `.` `_` `-` `/`,
+   mở đầu bằng chữ hoặc số, dài nhiều nhất 255 ký tự, không chứa `..`. Khoá tệp là định danh máy đọc nên mang hậu tố
+   `_code` và so từng byte (`QD-61`), không theo cách so tiếng Việt của `QD-60`. Không URL, không đường tuyệt đối, không dữ liệu nhúng; không cột
+   `bytea` hay large object. Giới hạn độ dài là cái làm *cất tệp trong dữ liệu thay chỗ trỏ* (`YC-36`) thành ràng buộc.
+3. **Hướng dẫn: một dòng mỗi mẩu**, loại `text` · `image` · `video`; `text` có chữ không trắng và không khoá tệp,
+   `image` · `video` có khoá tệp và không chữ. Một việc mang nhiều mẩu; mỗi mẩu gắn đúng một việc, không chuyển sang
+   việc khác, không đổi loại. Mẩu mang người gắn, lúc gắn, dấu ẩn có người và lúc.
+4. **Ghi nhận đào tạo: một dòng về đúng một người** — nhận xét (không trắng nếu có), đánh giá `pass` · `not_yet` (nếu
+   có), không rỗng cả hai; người ghi mặc định từ người thao tác, lúc ghi do database cấp; về ai, ai ghi, lúc ghi không
+   sửa được bằng vai ghi — ghi nhầm người thì ẩn rồi ghi lại.
+5. **Sửa có vết theo `I-018`** (trigger vết chung, chế độ nghiêm **ADR-092**); không quyền xoá (`QD-50`).
+
+**Why:** điểm 1 chọn đường không thêm phụ thuộc mới cho một quán một máy chủ — thêm một dịch vụ lưu tệp là thêm một
+thứ có thể chết mà chỉ để giữ vài ảnh hướng dẫn; điểm 2 làm câu *không cất tệp* kiểm được bằng database, không chỉ
+bằng đọc lược đồ; điểm 3, 4 chọn hình hẹp nhất đủ cho lời, mở rộng được mà không phải gỡ.
+
+**Hệ quả phải nhớ:** bản sao lưu database **không** chứa tệp — sao lưu kho tệp là việc riêng của vận hành; một khoá
+tệp trỏ tới tệp đã mất vẫn hợp lệ ở database (đọc ra *tệp không mở được*, chữ của hướng dẫn vẫn đọc được).
+
+**Rejected alternatives:** *cất tệp trong database* (`bytea`) — trái `I-031`, phình bản sao lưu; *dịch vụ lưu tệp bên
+ngoài* (kho đối tượng trên mạng) — phụ thuộc ngoài mới, cần đường suy giảm và tài khoản riêng, chưa có lý do; *dán
+liên kết video bên ngoài* — tệp hướng dẫn của quán nằm ở nơi quán không giữ, link chết không ai biết; *ghi nhận gắn
+việc giao* — bác ở **ADR-105** điểm 4.
+
+**Applies to:** `db/migrations/` (lát đào tạo) · file lát `17-` của `docs/product/2-db/` (sinh ra ở `P2A-12`) ·
+`quality/invariants.md` `I-031` · `docs/product/1-system-design/01-ranh-gioi-he-thong.md` `PT-2` · task `P2A-12`.
+
+### ADR-108 — Lát danh mục và combo: thêm bốn bảng cạnh lát menu, combo mang giá riêng, *ít nhất một món* kiểm lúc kết thúc giao dịch
+
+**Trạng thái:** **Đã chốt** 2026-10-14, **giao cho phiên** (Claude Code, task `P2A-13`; thi công: Codex) — chủ repo
+giao *"yêu cầu codex làm bạn kiểm tra"*; hình bảng dưới đây là lựa chọn của phiên, không phải lời chủ quán
+(`CLAUDE.md` §7.2), chủ repo đổi được.
+
+**Context:** `I-032` (lời đóng `U-082` · `U-092`, lời chủ repo T-188) đòi danh mục do chủ quán đặt, món nhiều nhất một
+danh mục, combo gồm ít nhất một món với số phần, giá combo riêng nguyên đồng lớn hơn 0, ẩn chứ không xoá. Kế hoạch lược
+đồ admin §3 điểm 5: lát **thêm** bảng cạnh lát menu `P2-05`, không sửa bảng giá của món.
+
+**Decision:**
+1. **Bốn bảng mới, không thêm cột vào bảng món:** `menu_category` (tên, người lập, lúc lập, dấu ẩn) · `menu_item_category`
+   (món — khoá duy nhất, danh mục, người xếp, lúc xếp) · `menu_combo` (tên, `price_vnd`, người lập, lúc lập, dấu ẩn) ·
+   `menu_combo_item` (combo, món, số phần — mỗi món một dòng trong một combo).
+2. **Món nhiều nhất một danh mục = khoá duy nhất trên món ở bảng xếp**; chưa xếp = không dòng. Chuyển danh mục là sửa
+   có vết; **bỏ xếp về *chưa xếp* chưa có đường** — lời không nói, và không có quyền xoá (`QD-50`).
+3. **Tên danh mục duy nhất trong các danh mục chưa ẩn** (chỉ mục duy nhất có điều kiện); danh mục đã ẩn nhường tên.
+   Tên combo **không** buộc duy nhất — mệnh đề không đòi.
+4. **Giá combo là cột `price_vnd` bigint lớn hơn 0 trên combo**, thành phần combo không cất giá; đổi giá có vết.
+5. **Combo ít nhất một món: trigger ràng buộc `DEFERRABLE INITIALLY DEFERRED` trên lần chèn combo**, từ chối với
+   `check_violation` và tên `menu_combo_has_item_check` (`USING CONSTRAINT`, theo khuôn **ADR-082** điểm 5.4); thành phần
+   combo không xoá được, không chuyển sang combo khác, không đổi món — chỉ đổi số phần. Đổi thành phần là lập combo mới
+   và ẩn combo cũ.
+6. **Vế *người làm là chủ quán* và *không đổi giá giữa buổi* giữ ở cửa backend (tầng 3)** — như **ADR-105** điểm 1;
+   database nhận, câu đối chiếu bắt.
+7. **Lát không chạm đơn và hàm giá:** đơn bán combo cần chỗ cất của dòng đơn và hàm giá học combo — việc của backend
+   (`docs/product/3-be/03-ham-gia.md`), có migration riêng khi tới.
+
+**Why:** bảng xếp riêng giữ bảng món và mọi truy vấn đang đọc nó nguyên vẹn, nên *món chưa xếp vẫn bán được* đúng theo
+cấu tạo; trigger hoãn là cách duy nhất database giữ *ít nhất một dòng con* khi cha và con chèn trong cùng giao dịch;
+khoá thành phần combo làm *ít nhất một món* đúng mãi sau lúc lập, không cần trigger trên xoá.
+
+**Rejected alternatives:** *cột danh mục trên bảng món* — sửa bảng của `P2-05`, đổi code sinh của backend món; *giá
+combo cộng từ món* — bác ở lời đóng `U-092`; *cho xoá thành phần combo có kiểm còn ít nhất một* — thêm đường xoá trái
+`QD-50` cho một nhu cầu lời chưa nói; *trigger xét giờ bán ở database* — buộc lược đồ vào định nghĩa buổi bán của
+backend, cùng lý do **ADR-105** điểm 1.
+
+**Applies to:** `db/migrations/` (lát danh mục và combo) · file lát `18-` của `docs/product/2-db/` (sinh ra ở
+`P2A-13`) · `quality/invariants.md` `I-032` · `docs/product/3-be/03-ham-gia.md` (việc sau của backend) · task `P2A-13`.

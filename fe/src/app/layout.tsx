@@ -1,8 +1,21 @@
 import type { Metadata } from "next";
+import { SITE_DESCRIPTION, SITE_NAME, siteUrl } from "@/lib/seo";
 import "./globals.css";
 
+const baseUrl = siteUrl();
+
 export const metadata: Metadata = {
-  title: "Bánh cuốn Bà Thanh",
+  title: { default: SITE_NAME, template: `%s · ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    locale: "vi_VN",
+    siteName: SITE_NAME,
+    type: "website",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
+  robots: { index: false, follow: false },
+  ...(baseUrl ? { metadataBase: new URL(baseUrl) } : {}),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

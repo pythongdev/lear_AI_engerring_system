@@ -8,6 +8,36 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type AssignedTask struct {
+	ID               int64
+	Content          string
+	AssigneePersonID int64
+	PersonID         int64
+	CreatedAt        pgtype.Timestamptz
+	HiddenAt         pgtype.Timestamptz
+	HiddenByPersonID pgtype.Int8
+}
+
+type AssignedTaskGuide struct {
+	ID               int64
+	AssignedTaskID   int64
+	GuideKindCode    string
+	Body             pgtype.Text
+	FileCode         pgtype.Text
+	PersonID         int64
+	CreatedAt        pgtype.Timestamptz
+	HiddenAt         pgtype.Timestamptz
+	HiddenByPersonID pgtype.Int8
+}
+
+type AssignedTaskMark struct {
+	ID             int64
+	AssignedTaskID int64
+	MarkCode       string
+	PersonID       int64
+	CreatedAt      pgtype.Timestamptz
+}
+
 type AttendanceDay struct {
 	ID                  int64
 	WorkerPersonID      int64
@@ -95,6 +125,33 @@ type HolidayBonu struct {
 	CreatedAt      pgtype.Timestamptz
 }
 
+type MenuCategory struct {
+	ID               int64
+	Name             string
+	PersonID         int64
+	CreatedAt        pgtype.Timestamptz
+	HiddenAt         pgtype.Timestamptz
+	HiddenByPersonID pgtype.Int8
+}
+
+type MenuCombo struct {
+	ID               int64
+	Name             string
+	PriceVnd         int64
+	PersonID         int64
+	CreatedAt        pgtype.Timestamptz
+	HiddenAt         pgtype.Timestamptz
+	HiddenByPersonID pgtype.Int8
+}
+
+type MenuComboItem struct {
+	ID          int64
+	MenuComboID int64
+	MenuItemID  int64
+	Quantity    int32
+	CreatedAt   pgtype.Timestamptz
+}
+
 type MenuComponent struct {
 	ID           int64
 	Name         string
@@ -114,6 +171,14 @@ type MenuItem struct {
 	ID             int64
 	Name           string
 	DiscontinuedAt pgtype.Timestamptz
+	CreatedAt      pgtype.Timestamptz
+}
+
+type MenuItemCategory struct {
+	ID             int64
+	MenuItemID     int64
+	MenuCategoryID int64
+	PersonID       int64
 	CreatedAt      pgtype.Timestamptz
 }
 
@@ -438,6 +503,17 @@ type TableSessionMember struct {
 	CleanedAt      pgtype.Timestamptz
 	CreatedAt      pgtype.Timestamptz
 	PersonID       pgtype.Int8
+}
+
+type TrainingRecord struct {
+	ID               int64
+	TraineePersonID  int64
+	Remark           pgtype.Text
+	RatingCode       pgtype.Text
+	PersonID         int64
+	CreatedAt        pgtype.Timestamptz
+	HiddenAt         pgtype.Timestamptz
+	HiddenByPersonID pgtype.Int8
 }
 
 type WrongMakeNote struct {

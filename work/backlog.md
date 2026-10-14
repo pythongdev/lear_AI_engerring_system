@@ -91,10 +91,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 - [ ] P4-04 **ĐANG DỪNG — không nhặt theo thứ tự trên xuống** (2026-10-14, **ADR-104**: chủ quán thay chọn tên bằng tài khoản mật khẩu riêng; chờ thiết kế đăng nhập L3 ở `T-181`; U-088 đã đóng). **Danh tính và khung theo vai** — chọn tên, vào · rời quầy (T-143), khung riêng cho quầy · chủ quán · trạm (chỉ đọc) · khách; nút hiện theo lớp quyền nhưng backend vẫn là người chặn; gỡ điều (c) cho `P4A-01`…`P4A-11` — L2 · [chi tiết](backlog_FE.md#p4-04)
 - [ ] T-181 **Thiết kế đăng nhập bằng tài khoản mật khẩu** thay chọn tên (**ADR-104** và *Sửa đổi*; `U-088` đã đóng 2026-10-14): người làm tự đăng ký, chủ quán duyệt và gán vai; mật khẩu tự đặt, cách giữ mật khẩu; đặt lại qua thư Gmail (phụ thuộc ngoài mới, đường suy giảm khi mất mạng); phiên đăng nhập thay header `X-Person-Id`; đăng nhập ở máy quầy là mốc đổi người `C36`; cửa đổi trong hợp đồng. Thiết kế được chủ repo duyệt trước mọi dòng code, rồi mới viết phiếu cho Codex — L3, Claude Code thiết kế
-- [ ] P2A-10 **Yêu cầu dữ liệu và invariant lượt hai** — dòng `YC` và mệnh đề mới cho giao việc, đào tạo, danh mục món · combo, tài khoản, loại chi marketing (lời chủ quán 2026-10-14); vế chờ `T-181` chỉ ghi *chờ* (`U-091`…`U-093` đóng 2026-10-14, T-187); mở đường cho `P2A-11`…`P2A-16` — L2 · [chi tiết](backlog_AD_DB.md#p2a-10)
 - [ ] T-186 **Lát tỉ lệ nhắc sắp hết** — thêm tỉ lệ nhắc (mặc định 20%, chủ quán đặt) vào danh mục nguyên liệu của lát `P2A-02`, sửa phép đọc lược đồ của `I-025` và test của nó cùng thay đổi; lời ở `master_plan/shop-facts.md` §8.4 (U-087 đóng 2026-10-14) — L2, Claude viết test đỏ trước
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
-- [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi (`U-072` đóng 2026-10-09: trừ vào két của *ngày người ghi khai*); loại *marketing* thêm 2026-10-14, nguồn **tiền riêng** (`U-093` đóng, T-187) nên không vào phép đếm két. **Chờ chủ repo duyệt `docs/decisions.md` ADR-074** (thiết kế của T-125, mức L3) trước khi dựng — L2 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
 [↑ đầu file](#top)
@@ -102,11 +100,18 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] P2A-05 Lát khoản chi — khoản chi ngoài tiền hàng và lương, theo loại; **mỗi loại mang nguồn tiền** (bốn loại `E44` mang nguồn két), khoản giữ ngày khai và lúc ghi (`U-072` đóng 2026-10-09: trừ vào két của *ngày người ghi khai*); loại *marketing* thêm 2026-10-14, nguồn **tiền riêng** (`U-093` đóng, T-187) nên không vào phép đếm két. **ADR-074** chủ repo duyệt 2026-10-14 (T-188) — L2 — Claude viết test trước và duyệt, Codex thi công · [chi tiết](backlog_AD_DB.md#p2a-05)
 
 
 <a id="done"></a>
 ## Done
 
+- [x] T-189 **Tối ưu SEO nền cho frontend** — mặc định mọi route `noindex`, trang công khai bật bằng một danh sách duy nhất ở `fe/src/lib/seo.ts`; metadata chung (tiêu đề, mô tả, Open Graph), `robots.txt` chặn `/api/`, `sitemap.xml` sinh từ danh sách ấy, JSON-LD `Restaurant` chỉ với dữ kiện đã có; báo cáo `docs/product/4-fe/02-toi-uu-seo.md`; địa chỉ, ngày mở cửa, tên miền chờ `U-094` — L1 — Codex thi công, Claude duyệt, sửa một lỗi lint và tích hợp; gate xanh, 20 test fe qua — 2026-10-14 · [chi tiết](#t-189)
+- [x] P2A-13 **Lát danh mục món và combo** — danh mục, món nhiều nhất một danh mục, combo có giá riêng không đổi giữa buổi; thi hành `I-032` · `YC-37`, câu đối chiếu viết ở lát (**ADR-105** điểm 6); không sửa hàm giá — **ADR-108**: bốn bảng cạnh lát menu, combo giá riêng, *ít nhất một món* hoãn tới cuối giao dịch; tám câu đối chiếu, hợp đồng 0.21.0. Codex thi công, Claude viết test trước và duyệt; `db-check` · gate xanh — 2026-10-14 · [chi tiết](backlog_AD_DB.md#p2a-13)
+- [x] P2A-12 **Lát đào tạo** — hướng dẫn chữ · ảnh · video gắn đúng một việc giao (`P2A-11` đã dựng), ghi nhận *đạt · chưa* về một người; thi hành `I-031` · `YC-36`, câu đối chiếu viết ở lát (**ADR-105** điểm 6); chỗ giữ tệp ảnh · video là quyết định của bước, có ADR — **ADR-107**: tệp trong kho trên nơi hệ thống chạy, database cất `file_code`; hai bảng, sáu câu đối chiếu, hợp đồng 0.20.0. Codex thi công, Claude viết test trước và duyệt; `db-check` · gate xanh — 2026-10-14 · [chi tiết](backlog_AD_DB.md#p2a-12)
+- [x] P2A-11 **Lát giao việc** — hai bảng `assigned_task` · `assigned_task_mark` (bước migration 24, lùi có khoá chặn); đánh dấu là sự kiện chỉ thêm, *đã xong* đọc từ sự kiện mới nhất, *xoá* là ẩn có người và lúc; thi hành `I-030` · `YC-35`, **ADR-105**; câu đối chiếu và bốn lỗi cài; hợp đồng 0.19.0 ánh xạ 11 ràng buộc. Codex thi công, Claude viết test trước và duyệt; `db-check` · `be-check` · gate xanh — 2026-10-14 · [chi tiết](backlog_AD_DB.md#p2a-11)
+- [x] P2A-10 **Yêu cầu dữ liệu và invariant lượt hai** — mệnh đề `I-030` (giao việc) · `I-031` (hướng dẫn, đào tạo) · `I-032` (danh mục món, combo), loại marketing vào `I-029`; `YC-35`…`YC-37`, marketing vào `YC-33`, tài khoản *chờ `T-181`*; hành vi ở `01-ranh-gioi.md` §1.6; **ADR-105**. Codex thi công hai file pha 1, Claude viết mệnh đề và duyệt; `db-check` xanh, gate xanh — 2026-10-14 · [chi tiết](backlog_AD_DB.md#p2a-10)
+- [x] T-188 **Ghi ba lời chủ repo** — duyệt **ADR-074** (gỡ chặn `P2A-05`); phụ thu tuỳ chọn trong combo cộng thêm vào giá combo; giá combo không đổi giữa buổi (`shop-facts.md` §8.9) — L1 — Claude Code — 2026-10-14 · [chi tiết](../master_plan/shop-facts.md)
 - [x] T-187 **Ghi lời lượt năm, đóng U-091…U-093** — hướng dẫn gắn từng việc giao; giá combo đặt riêng; marketing trả bằng tiền riêng; gỡ chặn `P2A-12` · `P2A-13` và loại chi marketing của `P2A-05` — L1 — Claude Code — 2026-10-14 · [chi tiết](../docs/product/99-unknowns.md#da-co-loi-giai)
 - [x] T-185 **Ghi lời chủ quán lượt bốn, đóng U-087** — máy nhắc POS kiểm tra khi phần còn lại dưới tỉ lệ của lần nhập gần nhất; mỗi nguyên liệu một tỉ lệ, chủ quán đặt, mặc định 20%; sửa `I-025` vế 3; cột tỉ lệ để cho `T-186` — L1 — Claude Code — 2026-10-14 · [chi tiết](../docs/product/99-unknowns.md#da-co-loi-giai)
 - [x] T-184 **Lược đồ admin lượt hai** — lời chủ quán 2026-10-14 thành bước `P2A-10`…`P2A-16` ở kế hoạch lược đồ admin và sổ mô tả; mở câu chặn mới; chủ repo nói sẽ làm backend admin — L1 — Claude Code — 2026-10-14 · [chi tiết](backlog_AD_DB.md#p2a-10)
@@ -1509,6 +1514,51 @@ PostgreSQL là Claude chạy).
   ngày"*; nay đọc *trừ vào két ngày khai* và phép kiểm thành `KHÔNG CHỖ: không cột ngày bán riêng — két trừ theo ngày khai
   paid_date` (db-check `PASS`, 32 mã YC).
 - *Còn lại:* đường sửa số đếm đã ký — **U-078**; nợ tại bàn không đòi ghi chú (lời chỉ nói đơn lẻ).
+
+<a id="t-189"></a>
+### T-189 — Tối ưu SEO nền cho frontend
+
+**Yêu cầu:** chủ repo 2026-10-14, *"hãy tối ưu seo cho hệ thống này và làm 1 file báo cáo cách tối ưu. yêu cầu codex làm
+bạn kiểm tra"*. Trước đó (cùng ngày) Claude kiểm và thấy `fe/` chỉ có `title` và `lang="vi"`.
+
+**Mức:** L1 — đổi hành vi của trang (cái gì hiện trên máy tìm kiếm), không chạm tiền, dữ liệu hay hợp đồng.
+
+**Thiết kế (Claude):** phần lớn màn là nội bộ (quầy, chủ quán, trạm, admin) và trang QR gắn bàn, nên **mặc định
+`noindex, nofollow` ở layout gốc**; trang công khai **bật** bằng cách nằm trong **một** danh sách `PUBLIC_ROUTES`
+ở `fe/src/lib/seo.ts` — quên khai thì trang ẩn, không lộ. Sitemap sinh từ chính danh sách ấy. Địa chỉ gốc đọc từ
+biến môi trường `BANHCUON_SITE_URL` (không tiền tố `NEXT_PUBLIC_`, như `BANHCUON_BE_URL`); thiếu biến thì không
+`metadataBase`, không canonical, sitemap rỗng, `robots.txt` không có dòng `Sitemap`. JSON-LD chỉ mang dữ kiện đã có
+ở `master_plan/shop-facts.md`: tên quán, hotline; **không** địa chỉ, **không** giờ mở cửa (thiếu ngày trong tuần) —
+`U-094`. Mô tả trang là bản nháp ghép từ dữ kiện có sẵn, chờ chủ quán duyệt chữ trong `U-094`.
+
+**Acceptance:**
+- [x] Layout gốc: `title` có `default` và `template` `"%s · Bánh cuốn Bà Thanh"`, `description`, Open Graph
+      (`locale` `vi_VN`, `siteName`, `type` `website`), `robots` mặc định `index: false, follow: false`;
+      `metadataBase` chỉ khi `BANHCUON_SITE_URL` có giá trị.
+- [x] `fe/src/lib/seo.ts` giữ `PUBLIC_ROUTES` (lúc này chỉ `/`) và một hàm cho trang công khai trả metadata
+      `index: true, follow: true` cùng canonical; `/` dùng hàm ấy.
+- [x] `fe/src/app/robots.ts`: cho `/`, chặn `/api/`; dòng `Sitemap` chỉ khi có địa chỉ gốc.
+- [x] `fe/src/app/sitemap.ts`: đúng `PUBLIC_ROUTES` thành URL tuyệt đối khi có địa chỉ gốc; rỗng khi không.
+- [x] JSON-LD `Restaurant` trên `/`: `name`, `telephone`, `url` khi có địa chỉ gốc; không khoá `address`,
+      không khoá `openingHours`; chuỗi JSON thoát `<`.
+- [x] Test Vitest phủ năm dòng trên, kể cả hai nhánh có và không có `BANHCUON_SITE_URL`.
+- [x] `docs/product/4-fe/01-khung-fe.md` ghi luật *mặc định ẩn, bật bằng danh sách*, hai route `robots.txt` ·
+      `sitemap.xml`, và luật trang công khai phải render nội dung ở server; báo cáo
+      `docs/product/4-fe/02-toi-uu-seo.md` nói đã làm gì, vì sao, cách thêm một trang công khai, cách tự kiểm, còn gì chờ.
+- [x] Không cú pháp cache của Next (`check-fe-rules.sh` xanh); `./scripts/gate.sh` xanh ở worktree và ở clone chính.
+
+**Bàn giao** (2026-10-14): thiết kế, Acceptance, duyệt, tích hợp — **Claude Code**; thi công — **Codex**
+(worktree `../lean_wt/T-189`, nhánh `codex/T-189` từ `dc41c54`).
+- *Duyệt:* đủ A1–A5 đúng thiết kế; Next gộp metadata nông nên `robots` của trang thay hẳn của layout. Claude sửa ba chỗ:
+  `seo.test.ts` truyền `children` qua prop (ESLint `react/no-children-prop` đỏ) ⇒ gọi thẳng `Layout(...)`; báo cáo trỏ
+  `U-094` về `docs/product/99-unknowns.md`; thử bọc backtick hai route mới thì Gate 1b đọc `/robots.txt` thành đường
+  dẫn ⇒ để như Codex viết. Sandbox Codex không chạy được Go cache và `npm ci` ⇒ Codex không có kết quả test; Claude chạy.
+- *Bằng chứng:* worktree `./scripts/gate.sh` ⇒ `PASS gate`; `fe-check: PASS` (`Test Files 2 passed`, `Tests 20 passed`).
+  Build thật với `BANHCUON_SITE_URL=https://example.vn`: `robots.txt` có `Disallow: /api/` và `Sitemap:`; `sitemap.xml`
+  một `<loc>https://example.vn/</loc>`; `/` có `robots index, follow`, canonical, `og:*`, JSON-LD không `address`;
+  đường lạ `/khong-co` ra `noindex, nofollow`.
+- *Còn lại:* `U-094` (địa chỉ, ngày mở, tên miền, duyệt chữ mô tả); ảnh Open Graph và favicon cần ảnh của quán;
+  `P4-10` phải render trang khách ở server.
 
 <a id="t-142"></a>
 ### T-142 — Đơn đặt trước qua điện thoại nổ việc ở lần nhắc đầu

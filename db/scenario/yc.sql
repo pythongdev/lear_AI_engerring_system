@@ -859,4 +859,93 @@ BEGIN
     'không cột ngày bán riêng — két trừ theo ngày khai paid_date (U-072, chủ quán 2026-10-09)');
 END $$;
 
+-- YC-35 dựng ngay trong giao dịch này; ngày quản trị lượt hai thuộc P2A-15.
+DO $$
+DECLARE v bigint; chu bigint := pg_temp.sc_nguoi('Chủ quán');
+BEGIN
+  PERFORM set_config('shop.actor_person_id', chu::text, true);
+  PERFORM set_config('shop.revision_reason', 'YC-35 sửa rồi ẩn việc', true);
+  INSERT INTO assigned_task (content, assignee_person_id)
+  VALUES ('Rửa nồi hấp', pg_temp.sc_nguoi('Người gấp bánh')) RETURNING id INTO v;
+  INSERT INTO assigned_task_mark (assigned_task_id, mark_code) VALUES (v, 'done'), (v, 'undone');
+  UPDATE assigned_task SET content = 'Rửa hai nồi hấp', hidden_at = now(), hidden_by_person_id = chu WHERE id = v;
+  PERFORM pg_temp.yc_doc('YC-35', (SELECT format('%s · nhận %s · tạo %s lúc %s · các lần đánh dấu: %s · mới nhất %s · ẩn %s lúc %s',
+    t.content, pg_temp.yc_ten(t.assignee_person_id), pg_temp.yc_ten(t.person_id), t.created_at,
+    (SELECT string_agg(format('%s bởi %s lúc %s', m.mark_code, pg_temp.yc_ten(m.person_id), m.created_at),
+      ' | ' ORDER BY m.created_at, m.id) FROM assigned_task_mark m WHERE m.assigned_task_id = t.id),
+    (SELECT m.mark_code FROM assigned_task_mark m WHERE m.assigned_task_id = t.id ORDER BY m.created_at DESC, m.id DESC LIMIT 1),
+    pg_temp.yc_ten(t.hidden_by_person_id), t.hidden_at) FROM assigned_task t WHERE t.id = v));
+  PERFORM pg_temp.yc_tu_choi('YC-35', 'việc không có người nhận',
+    $q$INSERT INTO assigned_task (content) VALUES ('Việc thiếu người nhận')$q$);
+  PERFORM pg_temp.yc_goi_ten('YC-35', 'người tạo không là chủ quán và không đứng quầy lúc ấy', 'tầng 3', 'I-030/2', 'i030_2');
+END $$;
+
+-- YC-36: đọc hướng dẫn đúng việc và ghi nhận về người, kể cả sau khi ẩn.
+DO $$
+DECLARE v bigint; g bigint; t bigint; chu bigint := pg_temp.sc_nguoi('Chủ quán');
+  actor_truoc text := current_setting('shop.actor_person_id', true);
+  ly_do_truoc text := current_setting('shop.revision_reason', true);
+BEGIN
+  PERFORM set_config('shop.actor_person_id', chu::text, true);
+  PERFORM set_config('shop.revision_reason', 'YC-36 sửa rồi ẩn', true);
+  INSERT INTO assigned_task (content, assignee_person_id)
+  VALUES ('Gấp bánh', pg_temp.sc_nguoi('Người gấp bánh')) RETURNING id INTO v;
+  INSERT INTO assigned_task_guide (assigned_task_id, guide_kind_code, body)
+  VALUES (v, 'text', 'Gấp ba nếp') RETURNING id INTO g;
+  INSERT INTO training_record (trainee_person_id, remark, rating_code)
+  VALUES (pg_temp.sc_nguoi('Người gấp bánh'), 'Gấp đều tay', 'pass') RETURNING id INTO t;
+  UPDATE assigned_task_guide SET hidden_at = now(), hidden_by_person_id = chu WHERE id = g;
+  UPDATE training_record SET hidden_at = now(), hidden_by_person_id = chu WHERE id = t;
+  PERFORM pg_temp.yc_doc('YC-36', (SELECT format(
+    'việc %s · hướng dẫn %s · gắn %s lúc %s · ẩn %s lúc %s · ghi nhận về %s: %s / %s · ghi %s lúc %s · ẩn %s lúc %s',
+    a.content, h.body, pg_temp.yc_ten(h.person_id), h.created_at,
+    pg_temp.yc_ten(h.hidden_by_person_id), h.hidden_at, pg_temp.yc_ten(r.trainee_person_id),
+    r.remark, r.rating_code, pg_temp.yc_ten(r.person_id), r.created_at,
+    pg_temp.yc_ten(r.hidden_by_person_id), r.hidden_at)
+    FROM assigned_task a JOIN assigned_task_guide h ON h.assigned_task_id = a.id
+    CROSS JOIN training_record r WHERE a.id = v AND h.id = g AND r.id = t));
+  PERFORM pg_temp.yc_tu_choi('YC-36', 'ghi nhận rỗng cả nhận xét lẫn đánh giá',
+    format('INSERT INTO training_record (trainee_person_id) VALUES (%s)', pg_temp.sc_nguoi('Người gấp bánh')));
+  PERFORM pg_temp.yc_goi_ten('YC-36', 'người ghi không là chủ quán và không đứng quầy lúc ấy', 'tầng 3', 'I-031/3', 'i031_3');
+  PERFORM set_config('shop.actor_person_id', coalesce(actor_truoc, ''), true);
+  PERFORM set_config('shop.revision_reason', coalesce(ly_do_truoc, ''), true);
+END $$;
+
+-- YC-37: danh mục và combo đọc lại được sau sửa giá, ẩn; giá là dữ liệu thử.
+DO $$
+DECLARE d bigint; c bigint; m bigint; chu bigint := pg_temp.sc_nguoi('Chủ quán');
+  actor_truoc text := current_setting('shop.actor_person_id', true);
+  ly_do_truoc text := current_setting('shop.revision_reason', true);
+BEGIN
+  PERFORM set_config('shop.actor_person_id', chu::text, true);
+  PERFORM set_config('shop.revision_reason', 'YC-37 đổi giá rồi ẩn', true);
+  SELECT id INTO m FROM menu_item ORDER BY id LIMIT 1;
+  INSERT INTO menu_category (name) VALUES ('YC-37 danh mục') RETURNING id INTO d;
+  INSERT INTO menu_item_category (menu_item_id, menu_category_id) VALUES (m, d);
+  INSERT INTO menu_combo (name, price_vnd) VALUES ('YC-37 combo', 25000) RETURNING id INTO c;
+  INSERT INTO menu_combo_item (menu_combo_id, menu_item_id, quantity) VALUES (c, m, 2);
+  SET CONSTRAINTS ALL IMMEDIATE;
+  SET CONSTRAINTS ALL DEFERRED;
+  UPDATE menu_combo SET price_vnd = 27000, hidden_at = now(), hidden_by_person_id = chu WHERE id = c;
+  UPDATE menu_category SET hidden_at = now(), hidden_by_person_id = chu WHERE id = d;
+  PERFORM pg_temp.yc_doc('YC-37', (SELECT format(
+    'danh mục %s · món %s · lập %s lúc %s · ẩn %s lúc %s · combo %s · món %s ×%s · giá riêng %sđ · lập %s lúc %s · ẩn %s lúc %s · vết giá %s → %s · sửa %s · lý do %s',
+    cat.name, i.name, pg_temp.yc_ten(cat.person_id), cat.created_at,
+    pg_temp.yc_ten(cat.hidden_by_person_id), cat.hidden_at,
+    cb.name, i.name, ci.quantity, cb.price_vnd, pg_temp.yc_ten(cb.person_id), cb.created_at,
+    pg_temp.yc_ten(cb.hidden_by_person_id), cb.hidden_at,
+    r.before_image ->> 'price_vnd', r.after_image ->> 'price_vnd', pg_temp.yc_ten(r.person_id), r.reason)
+    FROM menu_category cat JOIN menu_item_category x ON x.menu_category_id = cat.id
+    JOIN menu_item i ON i.id = x.menu_item_id
+    JOIN menu_combo_item ci ON ci.menu_item_id = i.id JOIN menu_combo cb ON cb.id = ci.menu_combo_id
+    JOIN record_revision r ON r.target_table_code = 'menu_combo' AND r.target_row = cb.id
+    WHERE cat.id = d AND cb.id = c));
+  PERFORM pg_temp.yc_tu_choi('YC-37', 'combo giá 0đ',
+    'INSERT INTO menu_combo (name, price_vnd) VALUES (''YC-37 giá sai'', 0)');
+  PERFORM pg_temp.yc_goi_ten('YC-37', 'đổi giá trong giờ bán', 'tầng 3', 'I-032/6', 'i032_6');
+  PERFORM pg_temp.yc_goi_ten('YC-37', 'người lập, sửa, ẩn không phải chủ quán', 'tầng 3', 'I-032/8', 'i032_8');
+  PERFORM set_config('shop.actor_person_id', coalesce(actor_truoc, ''), true);
+  PERFORM set_config('shop.revision_reason', coalesce(ly_do_truoc, ''), true);
+END $$;
+
 ROLLBACK;

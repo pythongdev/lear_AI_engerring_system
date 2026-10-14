@@ -24,7 +24,17 @@ Mỗi màn thêm **một dòng** ở đây cùng lượt dựng nó, và nhóm n
 | Route | Nhóm (ADR-102) | Là gì | Bước dựng |
 |---|---|---|---|
 | `/` | — | trang giữ chỗ của khung, không dữ liệu, không màn nghiệp vụ | `P4-02` |
+| /robots.txt | — | chỉ dẫn thu thập cho máy tìm kiếm | `T-189` |
+| /sitemap.xml | — | danh sách URL công khai | `T-189` |
 | `/api/[...path]` | — | **tầng chuyển tiếp** cùng origin, không phải màn (§3.2) | `P4-02` |
+
+### Hiện trên máy tìm kiếm
+
+Bổ sung 2026-10-14 theo phiếu `T-189`: layout gốc mặc định ẩn khỏi máy tìm kiếm. Trang công khai phải nằm
+trong `PUBLIC_ROUTES` ở `fe/src/lib/seo.ts`, gọi `publicPageMetadata(path)` tại trang và thêm dòng vào bảng
+route cùng lượt. Nội dung trang công khai phải render ở server, không chỉ tải bằng React Query phía trình duyệt.
+Biến phía server `BANHCUON_SITE_URL` đọc lúc build; thiếu biến thì không có địa chỉ canonical, sitemap rỗng và
+robots.txt không khai sitemap. Cách kiểm và phần còn chờ: [báo cáo SEO](02-toi-uu-seo.md).
 
 ## 2. Nguồn dữ liệu mỗi màn
 

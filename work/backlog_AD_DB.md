@@ -628,7 +628,26 @@ Chủ quán muốn xem lãi/lỗ (`E47`); vế *chi* của phép tính ấy chư
 
 **Bị chặn — hỏi gì trước.** Không câu hỏi nào chặn lược đồ. `U-072` (khoản rời két trừ vào két của
 ngày bán nào) còn mở nhưng **không** chặn: lát giữ cả ngày khai lẫn lúc ghi (**ADR-074** điểm 4).
-Thứ chặn là lượt chủ repo duyệt **ADR-074**.
+Thứ chặn là lượt chủ repo duyệt **ADR-074** — **đã duyệt 2026-10-14** (T-188); `U-072` đóng 2026-10-09 (ngày người
+ghi khai, **ADR-079** *Sửa đổi*). Loại *marketing* (U-085 · U-093, 2026-10-14) mang nguồn **tiền riêng**.
+
+**Nhận việc** — điền 2026-10-14 (Claude Code); mức **L2**. Chủ repo duyệt **ADR-074** và giao *"yêu cầu codex làm bạn
+kiểm tra"*. Thiết kế **ADR-106**; test viết trước, đỏ trước code:
+`db/tests/i029_expense_names_category_amount_date_writer.sql` (Claude). Codex thi công trong worktree
+`../lean_wt/P2A-05`, nhánh `codex/P2A-05`; Claude chạy `db-check` (sandbox Codex không tới Docker).
+- *Nghiệm thu:*
+  1. Migration mới (bước kế tiếp, có bước lùi có khoá chặn) dựng đúng hình **ADR-106**; test i029 xanh.
+  2. Hạng tử *chi từ két* ở `db/reconcile/prelude.sql` cộng khoản của loại `paid_from_till`, theo `paid_date`;
+     ngày bán mẫu `baseline.sql` có một khoản loại két và một khoản loại không két, số đếm két chỉnh cùng lượt
+     — mọi câu vẫn rỗng.
+  3. Câu `db/reconcile/i029.sql` cùng lỗi cài ở `proof/`, mỗi lỗi kêu đúng câu; dòng `I-029` ở
+     `09-doi-chieu-bat-bien.md` §2.1 gỡ cùng lượt; `qd21_so_am` chạm cột `_vnd` mới.
+  4. Scenario `s4_ngay_quan_tri.sql` diễn bước *ghi khoản chi*; `YC-33` ra khỏi danh sách *YC chưa có lát*
+     (`11-cong-chat-luong-pha-2.md` §9.3) và được chấm đọc + sai.
+  5. Dữ liệu mồi có năm loại với đúng nguồn của `shop-facts.md` §8.10; seed kiểm tên có trong §8.10.
+  6. File lát `15-luoc-do-khoan-chi.md`, dòng ở `07-thu-tu-migration.md`; Gate 1e xanh; `models.go` sinh lại.
+  7. Lượt rà `P2A-09` trên file của lát: không endpoint · route · component; ô 7 · 8 hết *vắng*.
+  8. `./scripts/gate.sh` và `./scripts/db-check.sh` xanh ở clone chính sau khi đưa về.
 
 **Bẫy hay sửa nhầm nhất:**
 - **Tiền hàng không vào đây.** §8.10 cấm cộng trùng giò, trứng, rau, quất với mua hàng.
@@ -1540,6 +1559,44 @@ phép đối chiếu — đúng như `P2A-01` đã làm cho lượt một.
   database hay tầng backend là lựa chọn có lý do của bước này (ADR nếu chọn).
 - *Xoá* trong lời chủ quán là ẩn có vết (`01-quy-uoc-du-lieu.md`) — cách đọc của phiên đã ghi ở `shop-facts.md` §8.7.
 
+**Nhận việc** — 2026-10-14 (Claude Code), mức **L2**. Chủ repo giao *"yêu cầu codex làm và bạn kiểm tra"*; chia vai
+theo `CLAUDE.md` §7.4 như `P2A-01`: **Claude** viết mệnh đề, hành vi, ADR và danh sách chưa có lát; **Codex** thi công
+hai file pha 1 trong worktree riêng; Claude duyệt diff thật và chạy lại gate. *Nghiệm thu:* (1) mỗi vế ở bảng lượt hai
+có đúng một dòng `YC` hai câu, hoặc trỏ dòng sẵn có, hoặc ghi *chờ*; (2) mỗi dòng trỏ mục `shop-facts.md` đã có lời;
+(3) mỗi câu *không xảy ra được* đáng giữ là vế của một mệnh đề có *Invariant* · *Why* · *Verification*; (4) mỗi vế
+có tầng và tập, hoặc câu nói vì sao chưa có tập; (5) hành vi ở `01-ranh-gioi.md` §1.6; (6) không tên bảng · cột ·
+endpoint; (7) mệnh đề mới không làm đỏ `reconcile.sh --codes` hay bước chấm YC của `db-check`.
+
+**Bàn giao** — 2026-10-14 · thực hiện: **Codex** (hai file pha 1, theo phiếu) và **Claude Code** (mệnh đề, hành vi,
+ADR, hai danh sách chưa có lát) · duyệt: **Claude Code** · nhánh `fe_admin`, trên `fae8b0f` · chưa commit.
+
+*Kết quả.* Ba mệnh đề mới `I-030` (giao việc) · `I-031` (hướng dẫn, đào tạo) · `I-032` (danh mục món, combo) và loại
+marketing vào `I-029`, ở `quality/invariants.md`; tầng và tập ở `03-bao-ve-invariant.md` §5; ba dòng `YC-35`…`YC-37`
+và marketing vào `YC-33` ở `04-yeu-cau-du-lieu.md` §9; vế tài khoản ghi *chờ `T-181`*; hành vi ở
+`docs/product/0-ba/admin/01-ranh-gioi.md` §1.6; lựa chọn thiết kế ở `docs/decisions.md` **ADR-105** (giao cho phiên).
+Ba mệnh đề vào §2.1 của `09-doi-chieu-bat-bien.md` và ba mã YC vào §9.3 của `11-cong-chat-luong-pha-2.md`, mỗi dòng
+mang lát nợ nó — thiếu hai danh sách này thì `db-check` đỏ ngay ở lát đầu (bài học **F-052**).
+
+*Codex làm gì, Claude duyệt ra sao.* Codex trả về đúng hai file. Nó nêu một chỗ phiếu lệch nguồn: phiếu đòi *số phần
+trong combo lớn hơn 0* mà `I-032` chỉ nói *kèm số phần* — Claude nhận, sửa `I-032` và **ADR-105** điểm 5, rồi thêm vế
+ấy vào câu *không xảy ra được* của `YC-37`. Một lời chủ repo tới giữa lượt (T-188, phiên khác: phụ thu trong combo cộng
+thêm, giá combo không đổi giữa buổi) — câu Claude định mở thành `U-094` đã có lời nên **không mở**, lời ấy vào
+`I-032` vế 6 và khối hành vi.
+
+*Nghiệm thu → bằng chứng* (clone chính, 2026-10-14):
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| 1 · 2 | `YC-35` → §8.7 (`U-084` · `U-089`) · `YC-36` → §8.7 (`U-086` · `U-090` · `U-091`) · `YC-37` → §8.9 (`U-082` · `U-092`, T-188) · marketing → `YC-33` §8.10 (`U-085` · `U-093`) · tài khoản → *chờ `T-181`*; báo cáo Codex: mỗi dòng đúng một nhãn *Ghi được* và một *Không xảy ra được* |
+| 3 | `### I-030` · `### I-031` · `### I-032`, mỗi cái ba mục; chỗ suy ra ghi ở *Why* và **ADR-105** |
+| 4 | `comm -3` mã `### I-0xx` ↔ mã hàng file tầng ⇒ rỗng (báo cáo Codex, đọc lại diff) |
+| 5 | khối *Hành vi của lượt hai* ở §1.6 |
+| 6 | lọc `snake_case` trên phần thêm ⇒ rỗng; `PASS Gate 1d — 4 file .md đã soát` |
+| 7 | `./scripts/reconcile.sh --codes` ⇒ `PASS mã I-0xx — 28 mã có câu + 4 mã chưa có lát = 32 mã`; `./scripts/db-check.sh` ⇒ `db-check: PASS … 32 mã YC`, `PASS chấm YC — 32 mã` cùng bốn dòng `NOTE YC-33 · 35 · 36 · 37 chưa có lát`; `./scripts/gate.sh` xanh |
+
+*Chưa làm được.* Test hồi quy cho ba mệnh đề mới đi theo lát: `I-030` ở `P2A-11`, `I-031` ở `P2A-12`, `I-032` ở
+`P2A-13`, câu đối chiếu cũng thế (**ADR-105** điểm 6). Vế tài khoản chờ `T-181`.
+
 [↑ đầu file](#top)
 
 ---
@@ -1561,6 +1618,60 @@ lý do, không thêm trường *để sẵn*.
 **Bẫy hay sửa nhầm nhất:** đánh dấu xong rồi bỏ đánh dấu là hai sự kiện, không phải sửa đè một cờ; người nhận là
 `person` của `P2-08`, không phải tên gõ tay.
 
+**Nhận việc** — 2026-10-14 (Claude Code), mức **L2**; `P2A-10` đã Done cùng ngày (chưa commit). Chủ repo giao *"yêu
+cầu codex làm và bạn kiểm tra"*: **Claude** chọn hình lược đồ và viết test đỏ trước; **Codex** thi công migration, file
+lát, câu đối chiếu và dòng chấm YC trong worktree riêng; **Claude** chạy `db-check` (sandbox Codex không tới Docker),
+sinh lại code sqlc ở clone chính và duyệt.
+- *Hình (Claude chọn, theo **ADR-105**):* hai bảng — việc giao (nội dung, người nhận, người tạo, lúc tạo, lúc ẩn và
+  người ẩn) và sự kiện đánh dấu (việc, mã *xong* · *bỏ đánh dấu*, người bấm, lúc bấm). Việc không cất cờ xong; sự kiện
+  chỉ thêm, không sửa, không xoá. Không trường *hạn* hay *ghi chú* — lời không nói.
+- *Nghiệm thu:*
+  1. `db/tests/i030_assigned_task_names_assignee_and_marks.sql` (Claude viết, **đỏ** trước khi có lược đồ) **xanh**,
+     không sửa một dòng nào của test.
+  2. Mọi vế tầng 1 của `I-030` có ràng buộc thật: dựng trạng thái sai ⇒ database từ chối, lời từ chối in ra.
+  3. Câu đối chiếu `I-030` ở `db/reconcile/` cho mọi vế có tập, mỗi câu một lỗi cài kêu đúng nó; dòng `I-030` gỡ khỏi
+     `09-doi-chieu-bat-bien.md` §2.1 (**ADR-105** điểm 6).
+  4. `YC-35` có một dòng *đọc* và một dòng *sai* ở `db/scenario/yc.sql`; dòng `YC-35` gỡ khỏi §9.3 của file cổng.
+  5. Bước lùi có khoá chặn; vòng xuôi · lùi · xuôi lại xanh.
+  6. File lát `16-luoc-do-giao-viec.md`; hàng *Schema* của `CLAUDE.md` §2, `00-index.md`, `07-thu-tu-migration.md` trỏ
+     đúng; Gate 1e xanh.
+  7. `./scripts/db-check.sh` và `./scripts/gate.sh` xanh ở clone chính.
+
+**Bàn giao** — 2026-10-14 · thực hiện: **Codex** (migration, file lát, câu đối chiếu, lỗi cài, dòng chấm YC, code
+sqlc) và **Claude Code** (hình lược đồ, test đỏ trước, ánh xạ ràng buộc ở hợp đồng, hai chỗ sửa sau `db-check`) ·
+duyệt: **Claude Code** · nhánh `fe_admin`, trên `dc41c54` · chưa commit.
+
+*Kết quả.* Migration `20261014140000_giao_viec` (hai bảng `assigned_task` · `assigned_task_mark`, bước lùi có khoá
+chặn), file lát [`16-luoc-do-giao-viec.md`](../docs/product/2-db/16-luoc-do-giao-viec.md), test
+`db/tests/i030_assigned_task_names_assignee_and_marks.sql`, câu `db/reconcile/i030.sql` với bốn lỗi cài, khối `YC-35`
+ở `db/scenario/yc.sql`; dòng `I-030` và `YC-35` gỡ khỏi hai danh sách chưa có lát; 11 tên ràng buộc mới vào
+`x-constraint-errors` của `docs/product/3-be/openapi.yaml` (khoá chính `internal`, còn lại `unreviewed` — chưa có cửa,
+`01-hop-dong-api.md` §4 luật 2), hợp đồng lên **0.19.0**; `models.go` sinh lại ở clone chính.
+
+*Codex làm gì, Claude duyệt ra sao.* Worktree của Codex mang sẵn nền `P2A-10` trong index, nên `git diff` chỉ là việc
+của Codex; test của Claude còn nguyên từng byte. Codex dựng đúng hình phiếu và tự nêu hai chỗ ngoài tầm: hợp đồng API
+ngoài scope (Gate 1g đòi ánh xạ ràng buộc mới) và sandbox không tới Docker. `db-check` lần đầu ở clone chính bắt **hai
+lỗi** của phần Codex, Claude sửa: (1) khối ngày mẫu giao việc ở `db/reconcile/proof/baseline.sql` đổi người thao tác
+của phiên sang chủ quán mà không trả lại, nên năm lỗi cài cũ (`i014_2` · `i014_4` · `i014_8` · `i017_1` · `i017_2`)
+kêu oan thêm `I-012/3` — nay khối giữ rồi trả lại người thao tác và lý do; (2) câu `I-030/2` coi một sự kiện mất lúc
+bấm là *ngoài khoảng trực quầy*, nên lỗi cài `i030_3` kêu cả `I-030/2` — nay câu chỉ xét thao tác có lúc (thiếu lúc là
+tập `I-030/3`). Một lần `be-check` đỏ không để lại dòng `FAIL` nào; chạy riêng ⇒ exit 0, chạy lại cả gate ⇒ xanh.
+
+*Nghiệm thu → bằng chứng* (`./scripts/gate.sh` ở clone chính, 2026-10-14, exit 0):
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| 1 | trước lược đồ: `FAIL db/tests/i030_…sql — relation "assigned_task" does not exist`; sau: `PASS db/tests/i030_assigned_task_names_assignee_and_marks.sql`, test không đổi (`cmp` với bản viết trước) |
+| 2 | 20 dòng `I-030 bị từ chối (…)` in tên ràng buộc thật, vd. `assigned_task_hidden_by_iff_hidden_check`, `permission denied for table assigned_task_mark` (sửa · xoá sự kiện) |
+| 3 | `PASS kêu i030_1 — I-030/1` … `PASS kêu i030_4 — I-030/4`; `PASS mã I-0xx — 29 mã có câu + 3 mã chưa có lát = 32 mã` |
+| 4 | `YC-35 đọc · Rửa hai nồi hấp · nhận Người gấp bánh · tạo Chủ quán … mới nhất undone · ẩn Chủ quán`; `PASS chấm YC — 33 mã` |
+| 5 | `PASS xuôi 20261014140000_giao_viec` · `PASS lùi … lược đồ giống hệt lúc trước bước ấy` · `NOTE khoá chặn — … còn rỗng, lùi được` |
+| 6 | `PASS Gate 1e — 45 bảng ở migration, 45 bảng tài liệu nhắc`; `PASS Gate 1g — hợp đồng 0.19.0 … 319 tên từ chối, 319 dòng ánh xạ` |
+| 7 | `PASS Gate 1 be-check` · `PASS Gate 1 db-check — 24 bước … 43 file test … 107 lỗi cài … 33 mã YC` · `PASS gate` |
+
+*Còn lại.* Vế *chủ quán hoặc POS* chỉ có câu đối chiếu, chưa có cửa ghi — việc của backend admin. Câu `I-030/2` đọc
+cờ chủ quán **hiện hành** (lược đồ không giữ lịch sử cờ). Diễn một ngày lượt hai là `P2A-15`.
+
 [↑ đầu file](#top)
 
 ---
@@ -1577,6 +1688,61 @@ lý do, không thêm trường *để sẵn*.
 dẫn đứng sau lát giao việc `P2A-11`. Chỗ giữ tệp ảnh · video là phụ thuộc ngoài mới (`01-ranh-gioi-he-thong.md`) — một
 ADR, không phải câu hỏi chủ quán.
 
+**Nhận việc** — 2026-10-14 (Claude Code), mức **L2**; `P2A-11` Done cùng ngày (chưa commit). Chủ repo giao *"hãy đọc
+kĩ và làm, yêu cầu codex làm, bạn kiểm tra"* cho `P2A-12` và `P2A-13`: **Claude** chọn hình lược đồ, viết **ADR-107** và
+test đỏ trước; **Codex** thi công migration, file lát, câu đối chiếu, lỗi cài, dòng chấm YC và ánh xạ ràng buộc ở hợp
+đồng trong worktree riêng; **Claude** chạy `db-check` (sandbox Codex không tới Docker), sinh lại code sqlc ở clone chính
+và duyệt. Làm **trước** `P2A-13`: hai lát chung file đối chiếu, file cổng, kịch bản YC và hợp đồng, nên không chạy song
+song (`docs/prompt-guideline.md` §6.1).
+- *Hình (Claude chọn, **ADR-107**):* hai bảng — `assigned_task_guide` (việc giao, loại `text` · `image` · `video`, chữ
+  hoặc khoá tệp, người gắn, lúc gắn, dấu ẩn) và `training_record` (về ai, nhận xét, đánh giá `pass` · `not_yet`, người
+  ghi, lúc ghi, dấu ẩn). Tệp nằm trong kho trên nơi hệ thống chạy (`PT-2`), database cất khoá tệp ngắn, không cột tệp.
+- *Nghiệm thu:*
+  1. `db/tests/i031_task_guide_and_training_record.sql` (Claude viết, **đỏ** trước khi có lược đồ) **xanh**, không sửa
+     một dòng nào của test.
+  2. Mọi vế tầng 1 của `I-031` có ràng buộc thật: dựng trạng thái sai ⇒ database từ chối, lời từ chối in ra.
+  3. Câu đối chiếu `I-031` ở `db/reconcile/` cho mọi vế có tập, mỗi câu một lỗi cài kêu đúng nó; dòng `I-031` gỡ khỏi
+     `09-doi-chieu-bat-bien.md` §2.1 (**ADR-105** điểm 6).
+  4. `YC-36` có một dòng *đọc* và một dòng *sai* ở `db/scenario/yc.sql`; dòng `YC-36` gỡ khỏi §9.3 của file cổng.
+  5. Bước lùi có khoá chặn; vòng xuôi · lùi · xuôi lại xanh.
+  6. File lát `17-luoc-do-dao-tao.md`; hàng *Schema* của `CLAUDE.md` §2, `00-index.md`, `07-thu-tu-migration.md` trỏ
+     đúng; mọi tên ràng buộc mới có dòng ánh xạ ở hợp đồng; Gate 1e · 1g xanh.
+  7. `./scripts/db-check.sh` và `./scripts/gate.sh` xanh ở clone chính.
+
+**Bàn giao** — 2026-10-14 · thực hiện: **Codex** (migration, file lát, sáu câu đối chiếu và lỗi cài, ngày mẫu, khối
+`YC-36`, ánh xạ ở hợp đồng, code sqlc) và **Claude Code** (hình lược đồ, **ADR-107**, test đỏ trước, câu `PT-2` ở
+`01-ranh-gioi-he-thong.md`, hàng *Schema* của `CLAUDE.md`) · duyệt: **Claude Code** · nhánh `fe_admin`, trên `dc41c54` ·
+chưa commit.
+
+*Kết quả.* Migration `20261014150000_dao_tao` (bước 25: `assigned_task_guide` · `training_record`, lùi có khoá chặn),
+file lát [`17-luoc-do-dao-tao.md`](../docs/product/2-db/17-luoc-do-dao-tao.md), câu `db/reconcile/i031.sql` (`I-031/1`…`/6`)
+với sáu lỗi cài, khối `YC-36` ở `db/scenario/yc.sql`; dòng `I-031` và `YC-36` gỡ khỏi hai danh sách chưa có lát; 18 tên
+ràng buộc mới vào `x-constraint-errors`, hợp đồng lên **0.20.0**.
+
+*Codex làm gì, Claude duyệt ra sao.* Trước khi giao, Claude tự dựng thử lược đồ trên một database tạm: test `i031`
+xanh, nhưng bộ đối chiếu đỏ ở `QD-60` vì cột khoá tệp tên `file_key` (định danh máy đọc mà mang cách so tiếng Việt).
+Lỗi ấy ở hình Claude đưa; Codex cũng tự nêu nó trong báo cáo lượt đầu và **giữ nguyên hình**, không tự thêm ngoại lệ.
+Claude quyết đổi thành `file_code` so từng byte (`QD-61`), sửa test (trước khi lược đồ xanh, chỉ đổi tên cột) và
+**ADR-107** điểm 2; Codex đổi theo ở một vòng sửa. Diff còn lại đạt ngay lượt đầu: ngày mẫu trả lại người thao tác
+và lý do vết (lỗi số 1 của `P2A-11` không lặp), câu `I-031/3` chỉ xét dòng có lúc (lỗi số 2 không lặp).
+
+*Nghiệm thu → bằng chứng* (`./scripts/db-check.sh` trong worktree, 2026-10-14 — Claude chạy, sandbox Codex không tới
+Docker):
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| 1 | trước lược đồ: `FAIL db/tests/i031_…sql — relation "assigned_task_guide" does not exist`; sau: `PASS db/tests/i031_task_guide_and_training_record.sql`; `git diff --quiet -- db/tests/` ⇒ exit 0 |
+| 2 | các dòng `I-031 bị từ chối (…)` in tên ràng buộc thật, vd. `training_record_not_empty_check`, `assigned_task_guide_file_code_check`, `permission denied` cho sửa người ghi và xoá cứng |
+| 3 | `PASS kêu i031_1 — I-031/1` … `PASS kêu i031_6 — I-031/6`; `PASS mã I-0xx — 30 mã có câu + 2 mã chưa có lát = 32 mã` |
+| 4 | `YC-36 đọc · việc Gấp bánh · hướng dẫn Gấp ba nếp · gắn Chủ quán …`; `YC-36 sai · ghi nhận rỗng … ⇒ TỪ CHỐI`; `PASS chấm YC — 34 mã` |
+| 5 | `PASS xuôi 20261014150000_dao_tao` · `PASS lùi … lược đồ giống hệt lúc trước bước ấy (1800 dòng)` · `NOTE khoá chặn — … còn rỗng, lùi được` |
+| 6 | báo cáo Codex: `PASS Gate 1e — 47 bảng ở migration, 47 bảng tài liệu nhắc`; `PASS Gate 1g — hợp đồng 0.20.0 … 337 tên từ chối, 337 dòng ánh xạ`; `check-sqlcgen: PASS` |
+| 7 | `./scripts/gate.sh` ở clone chính sau khi `P2A-13` đưa về, 2026-10-14, exit 0: `PASS Gate 1 db-check — 26 bước … 45 file test … 121 lỗi cài … 35 mã YC` · `PASS Gate 1 be-check` |
+
+*Còn lại.* Dòng `FAIL` duy nhất của `db-check` trong worktree là test `i032` — test đỏ của `P2A-13`, đúng như dự kiến;
+nên gate xanh ở clone chính (nghiệm thu 7) chỉ chạy được sau khi `P2A-13` đưa về. Vế *chủ quán hoặc POS* chỉ có câu đối
+chiếu, chưa có cửa ghi — việc của backend admin; kho tệp và sao lưu nó là việc backend và vận hành (**ADR-107**).
+
 [↑ đầu file](#top)
 
 ---
@@ -1590,11 +1756,60 @@ ADR, không phải câu hỏi chủ quán.
 
 **Bị chặn — hỏi gì trước.** Không. **U-092** đóng 2026-10-14: **giá combo đặt riêng** — combo mang giá của chính nó,
 đổi giá để lại vết. Hàm giá `docs/product/3-be/03-ham-gia.md` phải học bán combo — việc của backend, không của lát.
-Tuỳ chọn phụ thu trong combo có cộng thêm không thì lời chưa nói (`shop-facts.md` §8.9) — hỏi trước khi backend bán combo.
+Tuỳ chọn phụ thu trong combo **cộng thêm** vào giá combo, và giá combo không đổi giữa buổi — chủ repo trả lời 2026-10-14
+(T-188, `shop-facts.md` §8.9); cả hai là luật của hàm giá và cửa sửa giá, không phải chỗ cất.
 
 **Bẫy hay sửa nhầm nhất:**
 - *Topping* là nhóm tuỳ chọn phụ thu sẵn có (§4.4 · §4.6) — **không** dựng bảng topping mới.
 - Ngoại lệ ranh giới kế hoạch §3 điểm 5: lát **thêm** bảng, không sửa bảng giá; sửa giá · ngừng bán đã ở `P4-05`.
+
+**Nhận việc** — 2026-10-14 (Claude Code), mức **L2**, cùng lời giao với `P2A-12`; chia vai như `P2A-12`. Phiếu Codex
+chạy **sau** khi `P2A-12` đưa về clone chính (chung file đối chiếu, file cổng, kịch bản YC và hợp đồng).
+- *Hình (Claude chọn, **ADR-108**):* bốn bảng thêm cạnh lát menu, không thêm cột vào `menu_item` — `menu_category` ·
+  `menu_item_category` (món duy nhất) · `menu_combo` (`price_vnd`) · `menu_combo_item` (số phần, mỗi món một dòng);
+  *ít nhất một món* là trigger ràng buộc hoãn `menu_combo_has_item_check`; tên danh mục duy nhất trong danh mục chưa ẩn.
+- *Nghiệm thu:*
+  1. `db/tests/i032_category_and_combo_own_price.sql` (Claude viết, **đỏ** trước khi có lược đồ) **xanh**, không sửa
+     một dòng nào của test.
+  2. Mọi vế tầng 1 · tầng 2 của `I-032` có ràng buộc thật: dựng trạng thái sai ⇒ database từ chối, lời từ chối in ra.
+  3. Câu đối chiếu `I-032` ở `db/reconcile/` cho mọi vế có tập, mỗi câu một lỗi cài kêu đúng nó; dòng `I-032` gỡ khỏi
+     `09-doi-chieu-bat-bien.md` §2.1.
+  4. `YC-37` có một dòng *đọc* và một dòng *sai* ở `db/scenario/yc.sql`; dòng `YC-37` gỡ khỏi §9.3 của file cổng.
+  5. Bước lùi có khoá chặn; vòng xuôi · lùi · xuôi lại xanh.
+  6. File lát `18-luoc-do-danh-muc-combo.md`; hàng *Schema* của `CLAUDE.md` §2, `00-index.md`, `07-thu-tu-migration.md`
+     trỏ đúng; mọi tên ràng buộc mới có dòng ánh xạ ở hợp đồng; Gate 1e · 1g xanh.
+  7. `./scripts/db-check.sh` và `./scripts/gate.sh` xanh ở clone chính; hàm giá và bảng món không đổi.
+
+**Bàn giao** — 2026-10-14 · thực hiện: **Codex** (migration, file lát, tám câu đối chiếu và lỗi cài, ngày mẫu, khối
+`YC-37`, ánh xạ ở hợp đồng, code sqlc) và **Claude Code** (hình lược đồ, **ADR-108**, test đỏ trước, hàng *Schema* của
+`CLAUDE.md`) · duyệt: **Claude Code** · nhánh `fe_admin`, trên `dc41c54`, sau `P2A-12` · chưa commit.
+
+*Kết quả.* Migration `20261014160000_danh_muc_combo` (bước 26: `menu_category` · `menu_item_category` · `menu_combo` ·
+`menu_combo_item`, trigger ràng buộc hoãn `menu_combo_has_item_check`, lùi có khoá chặn), file lát
+[`18-luoc-do-danh-muc-combo.md`](../docs/product/2-db/18-luoc-do-danh-muc-combo.md), câu `db/reconcile/i032.sql`
+(`I-032/1`…`/8`) với tám lỗi cài, khối `YC-37`; dòng `I-032` và `YC-37` gỡ khỏi hai danh sách chưa có lát; 25 tên ràng
+buộc mới vào `x-constraint-errors`, hợp đồng lên **0.21.0**. Bảng món, lát menu và hàm giá không đổi.
+
+*Codex làm gì, Claude duyệt ra sao.* Claude dựng thử lược đồ trên database tạm trước khi giao: test `i032` xanh. Codex
+đạt ngay lượt đầu, không vòng sửa; Claude đọc migration và tám câu, rồi chạy database. Một giới hạn ghi lại, không phải
+lỗi: câu `I-032/6` so giờ trong ngày của lần đổi giá với giờ bán theo khuôn câu `I-011`, không xét hôm ấy quán có bán
+hay không — kêu chặt hơn cần, không sót.
+
+*Nghiệm thu → bằng chứng* (`./scripts/db-check.sh` trong worktree, rồi `./scripts/gate.sh` ở clone chính, 2026-10-14):
+
+| Nghiệm thu | Bằng chứng |
+|---|---|
+| 1 | trước lược đồ: `FAIL db/tests/i032_…sql — relation "menu_category" does not exist`; sau: `PASS db/tests/i032_category_and_combo_own_price.sql`; `git diff --quiet -- db/tests/` ⇒ exit 0 |
+| 2 | các dòng `I-032 bị từ chối (…)`, gồm combo không món lúc ép kiểm (`menu_combo_has_item_check`), giá 0đ (`menu_combo_price_positive_check`), món hai danh mục (`unique_violation`), xoá cứng (`permission denied`) |
+| 3 | `PASS kêu i032_1 — I-032/1` … `PASS kêu i032_8 — I-032/8`; `PASS mã I-0xx — 31 mã có câu + 1 mã chưa có lát = 32 mã` |
+| 4 | `YC-37 đọc · danh mục … combo … giá riêng 27000đ … vết giá 25000 → 27000`; `YC-37 sai · combo giá 0đ ⇒ TỪ CHỐI`; `PASS chấm YC — 35 mã` |
+| 5 | `PASS xuôi 20261014160000_danh_muc_combo` · `PASS lùi … giống hệt lúc trước bước ấy (1879 dòng)` · `NOTE khoá chặn — … còn rỗng, lùi được` |
+| 6 | `PASS Gate 1e — 51 bảng ở migration, 51 bảng tài liệu nhắc`; `PASS Gate 1g — hợp đồng 0.21.0 … 362 tên từ chối, 362 dòng ánh xạ` |
+| 7 | `./scripts/gate.sh` ở clone chính, exit 0: `PASS Gate 1 be-check` · `PASS Gate 1 db-check — 26 bước … 121 lỗi cài … 35 mã YC` · `PASS Gate 1 verify` |
+
+*Còn lại.* Đơn bán combo (chỗ cất ở dòng đơn) và hàm giá học combo — việc của backend (**ADR-108** điểm 7); vế *chủ
+quán* và *không đổi giá giữa buổi* chỉ có câu đối chiếu, chưa có cửa ghi; *bỏ xếp* món về chưa xếp chưa có đường
+(**ADR-108** điểm 2).
 
 [↑ đầu file](#top)
 

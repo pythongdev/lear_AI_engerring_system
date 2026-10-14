@@ -408,6 +408,16 @@ vế cấm nhận cặp số công tơ là đã chặn. Claude nhận để ghi 
 F-046 là nợ chung của vết sửa mềm; F-048 là chỗ chưa cất số két đếm và dấu đối soát,
 không được lấp trong lượt này. U-071 chưa quyết người huỷ và tính bắt buộc của ghi chú.
 
+Lát đào tạo (`P2A-12`, 2026-10-14): khối `YC-36` ở `db/scenario/yc.sql` đọc hướng dẫn
+của đúng việc và ghi nhận về người cùng người ghi, lúc ghi, người/lúc ẩn; thử từ chối ghi nhận
+rỗng cả nhận xét lẫn đánh giá. Vế tầng 3 dẫn câu `I-031/3` và lỗi cài `i031_3`.
+Ý định và bằng chứng của lát: [17-luoc-do-dao-tao.md](17-luoc-do-dao-tao.md).
+
+Lát danh mục và combo (`P2A-13`, 2026-10-14): khối `YC-37` ở `db/scenario/yc.sql`
+đọc danh mục và món, combo và số phần, giá riêng, vết đổi giá, người/lúc ẩn;
+thử combo giá 0đ bị từ chối. Vế tầng 3 dẫn `I-032/6` và `I-032/8`, lỗi cài cùng số.
+Lát và giới hạn: [18-luoc-do-danh-muc-combo.md](18-luoc-do-danh-muc-combo.md).
+
 ### 9.3 YC chưa có lát
 
 Danh sách máy đọc của bước 7 `scripts/db-check.sh`, cùng nguyên tắc tự hết hạn ADR-070
