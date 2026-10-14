@@ -14,7 +14,7 @@
      (docs/decisions.md ADR-007 · work/findings.md F-008). Chuyển mấy dòng dưới
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
-- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**. Hiện không câu nào (2026-10-12).
+- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**. Bốn câu tính tới 2026-10-14: U-087 · U-088 · U-089 · U-090.
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
 - [Đã có lời giải](#da-co-loi-giai) — câu đã đóng, xếp theo lượt trả lời của chủ quán, kèm nguyên
@@ -33,13 +33,14 @@ mục là một hợp đồng, không phải chuyện trình bày — cách vi�
 <a id="dang-mo"></a>
 ### Đang mở
 
-- **U-081** — Trang *tổng kết* của chủ quán (`/admin/summary` trong `docs/private/fe/PAGES_INDEX.md`: KPI doanh thu, món bán chạy, hiệu suất nhân viên, cảnh báo sắp hết) bày những con số nào, theo kỳ nào; mảng tài chính chưa chốt mức sâu (`master_plan/shop-facts.md` §8.2). Người trả lời: chủ quán. Chặn: `P4A-03`. Mở 2026-10-13, T-179 (ADR-103).
-- **U-082** — Chủ quán có cần **thêm · xoá món, quản lý danh mục, danh sách combo, danh sách topping** trong phần mềm không (`PAGES_INDEX.md`: `/admin/products` · `/admin/combos` · `/admin/categories` · `/admin/toppings`); hôm nay không có cửa nào làm việc đó, *món ngoài bảng giá* là *đã quyết định không làm* (§6.12), D37 · D38 · D42 chưa có danh mục mới (§8.9). Người trả lời: chủ quán. Chặn: `P4A-04` · `P4A-05`. Mở 2026-10-13, T-179 (ADR-103).
-- **U-083** — Trang *nhân viên* (`/admin/staff`: tạo tài khoản, đặt vai, khoá · mở) có nghĩa gì khi người dùng vào máy bằng **chọn tên**, không mật khẩu (T-143, `U-075`): chủ quán thêm · ẩn tên người, đổi vai, hay cần tài khoản thật. Người trả lời: chủ quán / chủ repo. Chặn: `P4A-06`. Mở 2026-10-13, T-179 (ADR-103).
-- **U-084** — Quán có cần **giao việc** cho người làm trong phần mềm không (`/admin/staff/task-board` · `/admin/todo-list`); chưa có dòng nào trong `master_plan/shop-facts.md` nói về việc này. Người trả lời: chủ quán. Chặn: `P4A-07`. Mở 2026-10-13, T-179 (ADR-103).
-- **U-085** — Quán có ghi **chi phí marketing** trong phần mềm không, và nó là một khoản chi của mảng tài chính hay một mục riêng (`/admin/marketing`); chưa có dữ kiện. Người trả lời: chủ quán. Chặn: `P4A-10`. Mở 2026-10-13, T-179 (ADR-103).
-- **U-086** — Quán có cần **hướng dẫn công việc và theo dõi đào tạo** người làm trong phần mềm không (`/admin/training`); chưa có dữ kiện. Người trả lời: chủ quán. Chặn: `P4A-11`. Mở 2026-10-13, T-179 (ADR-103).
-- **U-080** — Đơn web mới báo về quầy bằng gì khi pha 3 đã dựng màn quầy đẩy SSE (`GET /counter/events`, ADR-097): bot Telegram (`master_plan/shop-facts.md` §1, chủ repo đặt tên 2026-09-07) **còn cần** cạnh màn quầy, **thay** cho nó, hay bỏ; nếu còn cần thì pha nào dựng. Người trả lời: chủ quán / chủ repo. Chặn: thiết kế màn quầy nhận đơn web của pha 4 (PT-5 đòi quầy biết đơn mới *mà không phải ngồi canh màn hình*). Mở 2026-10-13, T-176, từ `F-070` điểm 1.
+<a id="u-087"></a>
+- **U-087** — Trang *tổng kết* của chủ quán (lời U-081 2026-10-14: *"cho tất cả thông tin"* — KPI doanh thu, món bán chạy, hiệu suất nhân viên, cảnh báo sắp hết) còn thiếu ba vế: báo cáo **theo kỳ nào** (ngày bán, tuần, tháng…); **hiệu suất nhân viên** đo bằng gì; và **cảnh báo sắp hết** là máy tự cảnh báo — trái `U-045` (*"chủ quán tự đọc rồi đưa ra kết luận"*, `master_plan/shop-facts.md` §8.4) — hay chỉ bày số thiếu của §8.4 cho chủ quán tự đọc. Người trả lời: chủ quán. Chặn: `P4A-03`. Mở 2026-10-14, T-180.
+<a id="u-088"></a>
+- **U-088** — Mỗi người làm có **một tài khoản, mật khẩu riêng** (lời U-083 2026-10-14, thay U-075): ai tạo tài khoản và đặt mật khẩu ban đầu; quên mật khẩu thì ai đặt lại; máy quầy dùng chung đổi người thế nào (người trước đăng xuất, người sau đăng nhập — mốc đổi người ở quầy `C36` gắn vào việc đăng nhập hay vẫn là một thao tác riêng); màn trạm chỉ đọc có phải đăng nhập không. Người trả lời: chủ quán / chủ repo. Chặn: thiết kế danh tính mới (**ADR-104**), `P4-04`, `P4A-06`. Mở 2026-10-14, T-180.
+<a id="u-089"></a>
+- **U-089** — Quán **có** giao việc trong phần mềm (lời U-084 2026-10-14): một việc gồm những gì (nội dung, người nhận, hạn), **ai giao** (chỉ chủ quán hay cả POS), và **ai đánh dấu xong**. Người trả lời: chủ quán. Chặn: `P4A-07`. Mở 2026-10-14, T-180.
+<a id="u-090"></a>
+- **U-090** — Quán **có** hướng dẫn công việc và theo dõi đào tạo trong phần mềm (lời U-086 2026-10-14): hướng dẫn ở dạng gì (chữ, ảnh, video), theo trạm hay theo việc, và *theo dõi* nghĩa là ghi gì (người đã đọc, đã làm được, ai xác nhận). Người trả lời: chủ quán. Chặn: `P4A-11`. Mở 2026-10-14, T-180.
 
 **Ngày 2026-09-02 chủ quán trả lời BẢY câu, trong hai lượt, và cả bảy cùng một hình dạng: POS hoặc
 chủ quán quyết theo tình hình thực tế, không có luật cứng.** Lượt một (T-042) đóng U-022, U-025 và
@@ -163,6 +164,28 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ quán trả lời 2026-10-14 (T-180), chủ repo chuyển lời trong hội thoại; cùng lượt chủ repo chọn trong câu hỏi có
+sẵn phương án ba vế (đánh dấu *lời chọn*).** Lời đáp đã vào owner; vế còn thiếu mở thành `U-087`…`U-090`; việc thay
+`U-075` ghi ở `docs/decisions.md` **ADR-104**.
+
+<a id="u-080"></a>
+<a id="u-081"></a>
+<a id="u-082"></a>
+<a id="u-083"></a>
+<a id="u-084"></a>
+<a id="u-085"></a>
+<a id="u-086"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-080 — Đơn web mới báo về quầy bằng gì khi màn quầy đã đẩy SSE: Telegram còn cần, thay, hay bỏ?~~ | “sse event”. **Đơn web mới báo về quầy bằng sự kiện SSE của màn quầy** (`GET /counter/events`). *Cách đọc của phiên:* Telegram không còn là đường báo đơn (thay dòng §1 chốt 2026-09-07, **ADR-041**); lời không nói màn quầy có kêu tiếng hay không. | `master_plan/shop-facts.md` §1 · **ADR-104** |
+| ~~U-081 — Trang tổng kết bày những con số nào, theo kỳ nào?~~ | “cho tất cả thông tin” — KPI doanh thu, món bán chạy, hiệu suất nhân viên, cảnh báo sắp hết. *Lời chọn* (chủ repo): ghi phần đã có, mở câu mới cho kỳ báo cáo, cách đo hiệu suất và chỗ va `U-045` ⇒ **U-087**. | `master_plan/shop-facts.md` §8.6 |
+| ~~U-082 — Chủ quán có cần thêm · xoá món, quản lý danh mục, combo, topping không?~~ | Lời chủ quán chỉ chép lại câu hỏi; *lời chọn* (chủ repo): **có, cả bốn** — topping hiểu là tuỳ chọn phụ thu của §4.6, không phải một món có giá riêng. | `master_plan/shop-facts.md` §8.9 |
+| ~~U-083 — Trang nhân viên nghĩa là gì khi người dùng vào máy bằng chọn tên?~~ | “mỗi nhân viên 1 tk có mật khẩu riêng”. *Lời chọn* (chủ repo): lời này **thay U-075 hoàn toàn** — mọi người làm, kể cả chủ quán, vào máy bằng tài khoản và mật khẩu riêng. Vế còn thiếu ⇒ **U-088**. | `master_plan/shop-facts.md` §8.8 · **ADR-104** |
+| ~~U-084 — Quán có cần giao việc cho người làm trong phần mềm không?~~ | “có”. Một việc gồm gì, ai giao, ai đánh dấu xong ⇒ **U-089**. | `master_plan/shop-facts.md` §8.7 |
+| ~~U-085 — Quán có ghi chi phí marketing, và nó là khoản chi của mảng tài chính hay một mục riêng?~~ | “khoản chi marketing”. **Có ghi, và là một khoản chi của mảng tài chính**, không phải mục riêng. Nguồn tiền (két hay tiền riêng) lời không nói. | `master_plan/shop-facts.md` §8.10 |
+| ~~U-086 — Quán có cần hướng dẫn công việc và theo dõi đào tạo trong phần mềm không?~~ | “có”. Hướng dẫn dạng gì, theo dõi gì ⇒ **U-090**. | `master_plan/shop-facts.md` §8.7 |
 
 **Chủ quán trả lời 2026-10-12 (T-173), chủ repo chuyển lời trong hội thoại; cùng lượt chủ repo chọn trong câu
 hỏi có sẵn phương án hai vế còn lại (đánh dấu *lời chọn*).** Lời đáp đã vào owner; code đi theo ở `T-174` (nhập bù) và

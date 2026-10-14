@@ -27,7 +27,7 @@
 | Múi giờ | `Asia/Ho_Chi_Minh` |
 | Số bàn | **15** |
 | Thanh toán | Tiền mặt tại quầy · Chuyển khoản **VietQR tĩnh** |
-| Báo đơn web mới về quầy | **Telegram** — bot gửi tin nhắn báo đơn mới vào quầy |
+| Báo đơn web mới về quầy | **Sự kiện SSE của màn quầy** — thay Telegram từ 2026-10-14 (chủ quán, đóng U-080; **ADR-104**) |
 | Hạ tầng vận hành | **Một VPS** duy nhất chạy toàn bộ hệ thống |
 
 **Hai dòng "Báo đơn web mới" và "Hạ tầng vận hành" chốt 2026-09-07 (chủ repo).** Đây là chỗ đặt
@@ -40,6 +40,11 @@ hai cái tên, đúng đường đã chọn ở F-027: pha 1 giữ nguyên cách
 `shop-facts.md` — xem `docs/decisions.md` **ADR-041**. **Chưa chốt**: token/cấu hình bot Telegram,
 nhà cung cấp và cấu hình VPS cụ thể — đó là việc của pha 3 (BE) và pha 5 (Deploy), không phải một
 dữ kiện quán (ADR-035).
+
+**Sửa 2026-10-14 — đường báo đơn web đổi từ Telegram sang SSE** (chủ quán, đóng `U-080`; nguyên văn
+*"sse event"*). Đơn web mới báo về quầy bằng sự kiện SSE của màn quầy. *Cách đọc của phiên:* bot Telegram không còn
+là đường báo đơn, nên vế *token/cấu hình bot Telegram* ở trên hết việc; lời không nói màn quầy có phát tiếng hay không
+(PT-5 đòi quầy biết đơn mới *mà không phải ngồi canh màn hình*) — xem `docs/decisions.md` **ADR-104**.
 
 **VietQR tĩnh nghĩa là mã cố định** — không phải mã sinh riêng cho từng hoá đơn. Hệ quả: hệ thống
 **không tự biết tiền đã về tài khoản**; người ở quầy phải tự nhìn báo có rồi bấm xác nhận đã nhận
@@ -1451,6 +1456,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-09 | Chủ quán trả lời bảy câu (T-139), chủ repo chuyển lời trong hội thoại và chọn thêm ba vế trong câu hỏi có sẵn phương án: đơn đặt trước qua điện thoại **không làm ngay**, máy **nhắc POS và bếp trước giờ khách cần 20 phút và 10 phút** (U-077); **mọi đơn mang đi được nợ, người đi giao ghi nợ tại chỗ, kèm ghi chú cho chủ quán** (U-076); **chọn tên** để cho máy biết mình là ai (U-075); **chủ quán sửa** số đếm két đã đối soát (U-074 — mở U-078 cho vế đối soát lại); **chỉ chủ quán bấm đối soát xong, mọi ngày, ngày lệch phải ghi giải thích** (U-073); khoản rời két trừ vào **ngày người ghi khai** (U-072); **ghi chú huỷ ô chấm công bắt buộc, chỉ chủ quán huỷ** (U-071) | §5.2 · §6.14 · §6.10 · §8.7 · §8.8 · §8.10 |
 | 2026-10-10 | Chủ quán trả lời **U-078** (T-145), chủ repo chuyển nguyên văn trong hội thoại: *"cần bâms đối soát lại và ghi thêm lý do"* — sửa số đếm của ngày đã đối soát xong thì **bấm đối soát xong lại** và **ghi lý do sửa**. *Sửa mở lại ngày ấy, dấu cũ giữ làm vết* là cách đọc của phiên | §6.10 |
 | 2026-10-12 | Chủ quán trả lời **U-079** (T-173), chủ repo chuyển lời: *"từ món kèm bàn và mang đi bán như nào nhập như thế"* — nhập bù gõ lại từng món kèm bàn hoặc mang đi; chủ repo chọn trong câu hỏi có sẵn phương án: giá lúc bán trên giấy. Cùng lượt **U-058** đóng bằng lời chọn: giảm giá cả đơn có trong bản đầu, không trần, không bắt lý do | §6.11 · §8.9 |
+| 2026-10-14 | Chủ quán trả lời bảy câu (T-180), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn phương án ba vế: **đơn web báo về quầy bằng sự kiện SSE**, thay Telegram (U-080); trang tổng kết **cho tất cả thông tin** — KPI doanh thu, món bán chạy, hiệu suất nhân viên, cảnh báo sắp hết (U-081, mở U-087); chủ quán **cần thêm · xoá món, danh mục, combo, topping** (U-082, *lời chọn*); **mỗi người làm một tài khoản, mật khẩu riêng** — *lời chọn*: thay U-075 hoàn toàn (U-083, mở U-088, **ADR-104**); **có** giao việc (U-084, mở U-089); chi phí marketing là **một khoản chi** của mảng tài chính (U-085); **có** hướng dẫn và theo dõi đào tạo (U-086, mở U-090) | §1 · §8.6 · §8.7 · §8.8 · §8.9 · §8.10 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -1868,6 +1874,11 @@ nguyên liệu và con người đã có. đối với menu: tôi muốn có …
 **Mục này chốt TẬP CON SỐ, không chốt cách bày và không chốt nhịp cập nhật.** Bày thế nào là pha 4;
 đẩy dữ liệu về máy chủ quán bằng đường nào là **P1-08** của pha 1. Cả hai đều không được viết ở đây.
 
+**Bổ sung 2026-10-14 — trang TỔNG KẾT, khác mục tổng quan ở trên** (chủ quán, đóng `U-081`; nguyên văn *"cho tất
+cả thông tin"* cho bốn thứ câu hỏi nêu): **KPI doanh thu · món bán chạy · hiệu suất nhân viên · cảnh báo sắp hết**.
+Món bán chạy khớp `E48` ở §8.10. Lời **không** nói kỳ báo cáo, không nói hiệu suất nhân viên đo bằng gì, và *cảnh báo
+sắp hết* va lời `U-045` (§8.4: máy không kết luận thiếu) — ba vế ấy là **U-087**; tới khi nó đóng, §8.4 đứng nguyên.
+
 ### 8.7 Mảng CON NGƯỜI — làm tới **cả ba mức**: ai đang trực trạm · chấm công · tính lương
 
 **Chủ quán chốt 2026-09-01, xác nhận lại 2026-09-20** (việc đi hỏi: `work/backlog_AD.md` ADM-53).
@@ -1947,6 +1958,11 @@ ngày qua `work/backlog_AD.md` **ADM-21** — đọc ở **§8.8**, không đọ
 **Lời này KHÔNG nói mảng con người lưu ở đâu hay bày thế nào.** Chỗ cất dữ liệu là pha 2, màn hình
 là pha 4 (`docs/decisions.md` **ADR-035**). Mục này chỉ nói quán muốn máy làm tới đâu.
 
+**Bổ sung 2026-10-14 — GIAO VIỆC và ĐÀO TẠO cũng ở trong phần mềm** (chủ quán, đóng `U-084` · `U-086`; nguyên văn
+*"có"* cho cả hai). Quán giao việc cho người làm trên máy, và có hướng dẫn công việc cùng theo dõi đào tạo trên máy.
+Hai lời chốt **có làm**, chưa chốt **làm gì**: một việc gồm gì, ai giao, ai đánh dấu xong là **U-089**; hướng dẫn dạng
+gì, theo dõi gì là **U-090**. Hai thứ này không phải mức thứ tư của bảng ba mức ở trên — đó là cách đọc của phiên.
+
 ### 8.8 Mức 1 của mảng CON NGƯỜI — **mỗi lần đổi người ở QUẦY là một mốc có giờ**
 
 **Chủ quán chốt 2026-09-20** — câu **`C36`**, hỏi qua `work/backlog_AD.md` **ADM-53** và chuyển về
@@ -2004,6 +2020,13 @@ theo luật `C36` ở trên. ⇒ Mọi việc chỉ chủ quán được làm (�
 chấm công · sửa số đếm két đã đối soát) chỉ được giữ bằng việc chọn đúng tên — chủ quán đã chọn
 cách ấy.
 
+**Sửa 2026-10-14 — mỗi người làm MỘT TÀI KHOẢN, MẬT KHẨU RIÊNG; thay lời *chọn tên* ở trên** (chủ quán, đóng
+`U-083`; nguyên văn *"mỗi nhân viên 1 tk có mật khẩu riêng"*). Chủ repo chọn cùng lượt, trong câu hỏi có sẵn phương
+án: lời này **thay U-075 hoàn toàn** — mọi người làm, kể cả chủ quán, vào máy bằng tài khoản và mật khẩu riêng; không
+còn *ai chọn tên nào máy tin người ấy*. Đoạn *chọn tên* ngay trên giữ làm vết, không còn là luật. Ai tạo tài khoản,
+quên mật khẩu thì sao, máy quầy dùng chung đổi người thế nào và mốc `C36` gắn vào đâu là **U-088**. Hệ quả cho thiết
+kế và code đã dựng theo `U-075` (T-143): `docs/decisions.md` **ADR-104**.
+
 **Lời này KHÔNG chạm chấm công.** *Lúc này ai đứng quầy* và *hôm nay người này làm mấy giờ* là hai
 câu khác nhau; câu thứ hai là mức 2 của §8.7 đã có lời đáp `C30` · `C31` · `C32` ngày 2026-09-25 ở §8.7; các vế còn thiếu
 ở `work/admin-questions.md` §3.
@@ -2030,6 +2053,13 @@ không tự cho khách gửi giá hoặc cho người đứng quầy đặt giá
 để xoá suất Đầy đủ. Các vế hỏi tiếp ở `work/admin-questions.md` §3 và
 `docs/product/99-unknowns.md` U-058; vế combo đã xác nhận có, xem §8.9.
 
+**Bổ sung 2026-10-14 — chủ quán CẦN tự quản lý menu trong phần mềm** (đóng `U-082`; lời chủ quán chỉ chép lại câu
+hỏi, *lời chọn* của chủ repo trong câu hỏi có sẵn phương án: **có, cả bốn**): **thêm · xoá món**, **danh mục món**,
+**danh sách combo**, **danh sách topping**. *Topping* ở đây là tuỳ chọn phụ thu của §4.4 · §4.6, không phải một món có
+giá riêng. *Cách đọc của phiên, chưa ai xác nhận:* *xoá món* là ngừng bán · ẩn, không xoá cứng
+(`docs/product/2-db/01-quy-uoc-du-lieu.md`); giá combo vẫn là tổng thành phần (§4.7); lời này không chạm §6.12 (món
+ngoài bảng giá gõ tay ở quầy). Danh mục gồm những nhóm nào thì lời không nói.
+
 
 ### 8.10 Tài chính — câu trả lời E44–E51
 
@@ -2054,3 +2084,8 @@ là tiền hàng; không suy thành một khoản chi khác để cộng trùng 
 Không suy rằng quán không có khoản chi nào khác ngoài danh sách E44, cũng
 không suy việc có báo thuế thành yêu cầu phần mềm tự kê khai. Các vế hỏi tiếp
 được giữ tại `work/admin-questions.md` §3, nhóm E.
+
+**Bổ sung 2026-10-14 — CHI PHÍ MARKETING là một khoản chi của mảng tài chính** (chủ quán, đóng `U-085`; nguyên văn
+*"khoản chi marketing"*): quán ghi chi phí marketing trong phần mềm, như một khoản chi cạnh các khoản `E44`, không
+phải một mục riêng có ngân sách hay chiến dịch. Nguồn tiền của khoản ấy (két hay tiền riêng) lời không nói — câu
+*khoản chi nào ngoài các khoản vừa kể thì chưa nói nguồn* ở `E46` áp cho nó.

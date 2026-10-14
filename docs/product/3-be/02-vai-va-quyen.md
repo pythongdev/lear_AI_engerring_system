@@ -45,7 +45,8 @@ Lời từ chối của quyền mang mã riêng (`01-hop-dong-api.md` §3): `una
 `owner_only`; status ở hợp đồng.
 
 Không có mật khẩu nên ai chọn tên nào máy tin người ấy — chủ quán đã chọn cách ấy
-(`shop-facts.md` §8.8, bổ sung 2026-10-09). `authz.ChonTen` chỉ đọc danh tính; `authz.RunAs`
+(`shop-facts.md` §8.8, bổ sung 2026-10-09). **Luật này đã bị thay 2026-10-14** (U-083, tài khoản có mật khẩu riêng; **ADR-104**); câu
+này tả code đang chạy, đứng tới khi thiết kế đăng nhập mới được duyệt. `authz.ChonTen` chỉ đọc danh tính; `authz.RunAs`
 kiểm người tồn tại và lớp quyền của cửa trong giao dịch.
 
 ## 2. Lớp quyền
@@ -131,7 +132,7 @@ khi bấm rời, chỉ khoảng mở của chính người gọi được khép.
 
 | Chỗ trống | Hôm nay | Ai gỡ |
 |---|---|---|
-| **Cách đăng nhập** của nhân viên và chủ quán | chọn tên; bản thật `authz.ChonTen` đọc header `X-Person-Id` qua giao diện `authz.Authenticator`; chưa có chương trình chạy | chủ quán chốt 2026-10-09 (U-075); ADR-085 *Sửa đổi 2026-10-10*; T-143 đã dựng |
+| **Cách đăng nhập** của nhân viên và chủ quán | **luật đổi 2026-10-14:** mỗi người một tài khoản, mật khẩu riêng (U-083 thay U-075); thiết kế chưa có, chờ `U-088` và task L3 của **ADR-104**. Code đang chạy vẫn là luật cũ: `authz.ChonTen` đọc header `X-Person-Id` qua giao diện `authz.Authenticator` | chủ quán 2026-10-14 (U-083); ADR-104; luật cũ: U-075, ADR-085 *Sửa đổi 2026-10-10*, T-143 |
 | **Cửa lớp `quay` đầu tiên** | đã có đường gọi ở `P3-07`: duyệt, từ chối, tính tiền, đóng; tạo lượt gọi đổi sang `quay_hoac_khach` | [Luồng tại bàn](04-luong-tai-ban.md) |
 | **Mở · khép khoảng trực quầy** | đã có `POST /counter-duty` và `POST /counter-duty/end`, cùng hai đường đọc danh sách tên và người đang đứng | T-143; [`openapi.yaml`](openapi.yaml) |
 | **Hai người dùng chung một danh tính** | máy không phân biệt được (`I-012` tầng 4) | không gỡ ở máy — đối chiếu `I-012/3` |

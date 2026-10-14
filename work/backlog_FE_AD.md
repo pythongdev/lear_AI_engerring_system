@@ -47,6 +47,11 @@ Một bước `P4A-XX` chỉ *Ready* khi đủ ba điều: chủ repo mở kế 
 `docs/product/3-be/openapi.yaml`; câu `U-XXX` của bước đã đóng; `P4-04` đã *Done*. Bước admin **không chặn**
 `P4-12` hay cổng pha 4.
 
+**Lời chủ quán 2026-10-14 (T-180).** Sáu câu của sổ này đã đóng (`docs/product/99-unknowns.md`, mục đã có lời giải):
+chủ quán **muốn** trang tổng kết, tự quản lý menu, giao việc, ghi chi phí marketing, và hướng dẫn · theo dõi đào tạo;
+mỗi người làm có **tài khoản, mật khẩu riêng** — lời này thay *chọn tên* (**ADR-104**). Vế chưa rõ mở thành
+`U-087`…`U-090`. Lời mới **không** mở bước nào: điều (a) — backend admin có cửa — vẫn chưa có, và `P4-04` đang dừng.
+
 **`PAGES_INDEX.md` cho danh sách trang, không cho cách làm.** Bản ấy chép dự án khác — đăng nhập JWT, WebSocket, CRUD
 tự do — và mọi link của nó đã chết. Cách làm theo **ADR-102** và `docs/private/fe/fe_guidance/`; chỗ trang nguồn trái
 dữ kiện quán thì dữ kiện thắng (**ADR-103** điểm 4).
@@ -63,7 +68,7 @@ ra đời ở `P4-02` (**ADR-035**).
 
 **Goal:** một khung chung cho các trang `P4A-02`…`P4A-11`: thanh điều hướng giữa các trang admin đã mở được, chỉ hiện với người có lớp `chu_quan`; trang chưa có cửa backend không hiện trong thanh. Backend vẫn là người chặn — khung ẩn trang là tiện, không phải bảo vệ (giống `P4-04`).
 
-**Dữ kiện quán đã có:** ma trận vai [`02-vai-va-quyen.md`](../docs/product/3-be/02-vai-va-quyen.md) (lớp `chu_quan`); danh tính chọn tên `T-143`; mảng quản trị đứng riêng khỏi bán hàng (`master_plan/shop-facts.md` §8 mở đầu).
+**Dữ kiện quán đã có:** ma trận vai [`02-vai-va-quyen.md`](../docs/product/3-be/02-vai-va-quyen.md) (lớp `chu_quan`); danh tính bằng tài khoản mật khẩu riêng (`master_plan/shop-facts.md` §8.8 sửa 2026-10-14, **ADR-104** — thay chọn tên của `T-143`); mảng quản trị đứng riêng khỏi bán hàng (`master_plan/shop-facts.md` §8 mở đầu).
 
 **Không lấy từ PAGES_INDEX:** `AuthGuard` · `RoleGuard minRole=MANAGER` theo JWT và đoạn *mobile bottom bar* đề xuất — quán này nhận danh tính bằng header theo **ADR-102**; vai `MANAGER` không có trong ma trận vai.
 
@@ -108,14 +113,14 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-03"></a>
 ### P4A-03 — Trang tổng kết đòi những con số mà mảng tài chính chưa chốt
 
-**Phụ thuộc** · bước admin 3/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-081**
+**Phụ thuộc** · bước admin 3/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-087**
 
 **Trang nguồn:** `/admin/summary` — báo cáo: KPI doanh thu, món bán chạy, hiệu suất nhân viên, cảnh báo sắp hết hàng. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
 
-**Goal:** trang tổng kết cho chủ quán — **phạm vi chờ U-081**: con số nào, theo kỳ nào. Trước lời ấy bước này không có danh sách số liệu.
+**Goal:** trang tổng kết cho chủ quán bày bốn thứ chủ quán gọi tên 2026-10-14 (U-081, *"cho tất cả thông tin"*): **KPI doanh thu · món bán chạy · hiệu suất nhân viên · cảnh báo sắp hết**. Kỳ báo cáo, cách đo hiệu suất nhân viên, và *cảnh báo sắp hết* có được trái §8.4 không chờ **U-087** — trước lời ấy chỉ hai thứ đầu có định nghĩa.
 
-**Dữ kiện quán đã có:** luật cộng doanh thu từ hai nguồn và hoàn trừ vào ngày hoàn ở `master_plan/shop-facts.md` §6; doanh thu ngày đã đối soát không đổi; mức sâu của mảng tài chính **chưa chốt** (§8.2).
+**Dữ kiện quán đã có:** bốn thứ ở `master_plan/shop-facts.md` §8.6 (bổ sung 2026-10-14); món bán chạy khớp `E48` §8.10; luật cộng doanh thu từ hai nguồn và hoàn trừ vào ngày hoàn ở `master_plan/shop-facts.md` §6; doanh thu ngày đã đối soát không đổi; mức sâu của mảng tài chính **chưa chốt** (§8.2).
 
 **Không lấy từ PAGES_INDEX:** *hiệu suất nhân viên* và *cảnh báo sắp hết* như những con số máy tự kết luận — §8.4 nói máy không kết luận thiếu nguyên liệu, và chưa có lời nào về chấm điểm người làm.
 
@@ -134,16 +139,16 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-04"></a>
 ### P4A-04 — Trang sản phẩm của bản cũ cho thêm và xoá món, còn quán này chưa có cửa nào như thế
 
-**Phụ thuộc** · bước admin 4/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-082**
+**Phụ thuộc** · bước admin 4/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
 
 **Trang nguồn:** `/admin/products` — CRUD sản phẩm. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
 
-**Goal:** phần **sửa giá, sửa thành phần suất, ngừng bán** đã thuộc `P4-05` và không lặp ở đây. Bước này chỉ giữ phần còn lại — thêm · xoá · sửa thông tin món — và **phạm vi chờ U-082**.
+**Goal:** phần **sửa giá, sửa thành phần suất, ngừng bán** đã thuộc `P4-05` và không lặp ở đây. Bước này giữ phần còn lại — **thêm · xoá · sửa thông tin món** — mà chủ quán đã nói **cần** 2026-10-14 (U-082, lời chọn của chủ repo).
 
-**Dữ kiện quán đã có:** menu do chủ quán gọi tên (`master_plan/shop-facts.md` §4.9); *món ngoài bảng giá* là đã quyết định không làm (§6.12); D37 · D38 chưa có danh mục mới, D43 cần ảnh món nhưng chưa chốt quyền sửa ảnh (§8.9).
+**Dữ kiện quán đã có:** chủ quán cần tự thêm · xoá món (`master_plan/shop-facts.md` §8.9, bổ sung 2026-10-14; *xoá* đọc là ngừng bán · ẩn, không xoá cứng); menu do chủ quán gọi tên (§4.9); *món ngoài bảng giá* là đã quyết định không làm (§6.12); D37 · D38 chưa có danh mục mới, D43 cần ảnh món nhưng chưa chốt quyền sửa ảnh (§8.9).
 
-**Không lấy từ PAGES_INDEX:** nút *thêm món* và *xoá món* trước khi có lời U-082 và cửa backend; hai trang không được giữ hai bản sửa giá.
+**Không lấy từ PAGES_INDEX:** nút *thêm món* và *xoá món* trước khi có cửa backend; hai trang không được giữ hai bản sửa giá.
 
 **Theo fe_guidance:** mutation chờ xác nhận rồi đọc lại (`fe-02-loading.md` §3) và khuôn hộp thoại sửa có lý do mà `P4-05` rút ra.
 
@@ -160,16 +165,16 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-05"></a>
 ### P4A-05 — Combo, danh mục và topping có trang quản lý ở bản cũ nhưng chưa có danh sách ở quán này
 
-**Phụ thuộc** · bước admin 5/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-082**
+**Phụ thuộc** · bước admin 5/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
 
 **Trang nguồn:** `/admin/combos` · `/admin/categories` · `/admin/toppings` — ba trang CRUD. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
 
-**Goal:** quản lý combo, danh mục món và tuỳ chọn thêm — **phạm vi chờ U-082**. Phụ thu của tuỳ chọn đã đổi được ở `P4-05`; bước này không lặp phần ấy.
+**Goal:** quản lý combo, danh mục món và tuỳ chọn thêm — chủ quán đã nói **cần cả ba** 2026-10-14 (U-082, `master_plan/shop-facts.md` §8.9). Phụ thu của tuỳ chọn đã đổi được ở `P4-05`; bước này không lặp phần ấy.
 
 **Dữ kiện quán đã có:** quán có combo (`master_plan/shop-facts.md` §8.9 D42) nhưng chưa có danh mục combo mới; nhóm tuỳ chọn và phụ thu §4.4; giá suất là tổng thành phần §4.5 · §4.6.
 
-**Không lấy từ PAGES_INDEX:** khái niệm *topping* như một món có giá riêng — ở quán này tuỳ chọn là **phụ thu theo phần nhận nhân** (§4.6), không phải món cộng thêm; khái niệm *danh mục* chưa có dữ kiện.
+**Không lấy từ PAGES_INDEX:** khái niệm *topping* như một món có giá riêng — ở quán này tuỳ chọn là **phụ thu theo phần nhận nhân** (§4.6), không phải món cộng thêm; danh mục gồm những nhóm nào chưa có dữ kiện — trang để chủ quán tự đặt, không gieo sẵn nhóm của dự án cũ.
 
 **Theo fe_guidance:** query key theo domain backend ở `fe-03-state-management.md` §2 — ba trang đọc cùng domain menu với `P4-05`, không mở key riêng.
 
@@ -186,20 +191,20 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-06"></a>
 ### P4A-06 — Trang nhân viên của bản cũ quản lý tài khoản mật khẩu, còn quán này vào máy bằng chọn tên
 
-**Phụ thuộc** · bước admin 6/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-083**
+**Phụ thuộc** · bước admin 6/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-088** · thiết kế đăng nhập của **ADR-104**
 
 **Trang nguồn:** `/admin/staff` — CRUD tài khoản nhân viên: vai, bật · tắt. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
 
-**Goal:** chủ quán quản lý danh sách người làm — **phạm vi chờ U-083**: thêm · ẩn tên, đổi vai, hay tài khoản thật.
+**Goal:** chủ quán quản lý **tài khoản** của người làm — mỗi người một tài khoản, mật khẩu riêng (U-083, 2026-10-14, thay chọn tên). Ai tạo tài khoản, ai đặt lại mật khẩu khi quên chờ **U-088**.
 
-**Dữ kiện quán đã có:** chọn tên, không mật khẩu (`T-143`, `U-075`); mảng con người ba mức (`master_plan/shop-facts.md` §8.7); mốc đổi người ở quầy (§8.8); bốn vai và năm trạm (§3).
+**Dữ kiện quán đã có:** tài khoản mật khẩu riêng (`master_plan/shop-facts.md` §8.8 sửa 2026-10-14, **ADR-104**; luật cũ chọn tên của `T-143` · `U-075` còn chạy trong code tới khi thiết kế mới được duyệt); mảng con người ba mức (`master_plan/shop-facts.md` §8.7); mốc đổi người ở quầy (§8.8); bốn vai và năm trạm (§3).
 
-**Không lấy từ PAGES_INDEX:** tạo tài khoản có mật khẩu và vai `chef / cashier / staff / manager` — không khớp bốn vai của quán; trang đăng ký `/register` cũng không lấy.
+**Không lấy từ PAGES_INDEX:** vai `chef / cashier / staff / manager` — không khớp bốn vai của quán; luồng JWT của dự án cũ — cách đăng nhập là của thiết kế ADR-104; trang đăng ký `/register` cũng không lấy.
 
 **Theo fe_guidance:** store chọn tên ở `fe-03-state-management.md` §4 — đổi người thì xoá sạch dữ liệu của người trước (**ADR-102**).
 
-**Không làm thì mất gì:** trang dựng một mô hình đăng nhập thứ hai cạnh chọn tên.
+**Không làm thì mất gì:** chủ quán không có chỗ tạo hay khoá tài khoản, và một người nghỉ việc vẫn vào được máy.
 
 **Bẫy:** ẩn một người không được làm mất vết những gì người ấy đã ghi (không xoá cứng — `docs/product/2-db/01-quy-uoc-du-lieu.md`).
 
@@ -212,14 +217,14 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-07"></a>
 ### P4A-07 — Bản cũ có bảng giao việc và danh sách việc, quán này chưa nói gì về giao việc
 
-**Phụ thuộc** · bước admin 7/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-084**
+**Phụ thuộc** · bước admin 7/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-089**
 
 **Trang nguồn:** `/admin/staff/task-board` · `/admin/todo-list` — bảng việc theo người và danh sách việc của cả nhóm. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
 
-**Goal:** **phạm vi chờ U-084**: quán có cần giao việc trong phần mềm không. Trước lời ấy bước này không có trường, cột hay nút nào.
+**Goal:** quán **có** giao việc trong phần mềm (U-084, 2026-10-14). Một việc gồm gì, ai giao, ai đánh dấu xong chờ **U-089** — trước lời ấy bước này không có trường, cột hay nút nào.
 
-**Dữ kiện quán đã có:** chưa có dòng nào trong `master_plan/shop-facts.md`.
+**Dữ kiện quán đã có:** `master_plan/shop-facts.md` §8.7 (bổ sung 2026-10-14) — chỉ lời *có làm*.
 
 **Không lấy từ PAGES_INDEX:** toàn bộ mô hình việc · người nhận · hạn của dự án cũ.
 
@@ -288,18 +293,18 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-10"></a>
 ### P4A-10 — Bản cũ có trang chi phí marketing, quán này chưa có dữ kiện nào về nó
 
-**Phụ thuộc** · bước admin 10/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-085**
+**Phụ thuộc** · bước admin 10/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
 
 **Trang nguồn:** `/admin/marketing` — ngân sách, phân bổ, dòng thời gian chiến dịch. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
 
-**Goal:** **phạm vi chờ U-085**: quán có ghi chi phí marketing không, và đó là một khoản chi của mảng tài chính hay một mục riêng.
+**Goal:** ghi chi phí marketing như **một khoản chi của mảng tài chính** (U-085, 2026-10-14) — không phải một mục riêng có ngân sách hay chiến dịch.
 
-**Dữ kiện quán đã có:** chưa có; khoản chi của mảng tài chính ở `master_plan/shop-facts.md` §8.10 không nhắc marketing.
+**Dữ kiện quán đã có:** `master_plan/shop-facts.md` §8.10 (bổ sung 2026-10-14); nguồn tiền của khoản (két hay tiền riêng) chưa nói. Lược đồ khoản chi là `P2A-05` (đang chờ duyệt ADR-074).
 
 **Không lấy từ PAGES_INDEX:** toàn bộ mô hình ngân sách và chiến dịch của dự án cũ.
 
-**Theo fe_guidance:** không áp được trước khi có phạm vi.
+**Theo fe_guidance:** form và mutation chờ xác nhận rồi đọc lại như `P4A-08`; trang này có thể là một bộ lọc của trang khoản chi chứ không phải trang riêng — chọn ở thiết kế.
 
 **Không làm thì mất gì:** một sổ chi thứ hai lệch với khoản chi của mảng tài chính.
 
@@ -312,14 +317,14 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-11"></a>
 ### P4A-11 — Bản cũ có trang đào tạo nhân viên, quán này chưa có dữ kiện nào về nó
 
-**Phụ thuộc** · bước admin 11/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-086**
+**Phụ thuộc** · bước admin 11/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · **U-090**
 
 **Trang nguồn:** `/admin/training` — hướng dẫn công việc và theo dõi hoàn thành. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
 
-**Goal:** **phạm vi chờ U-086**: quán có cần hướng dẫn và theo dõi đào tạo trong phần mềm không.
+**Goal:** quán **có** hướng dẫn công việc và theo dõi đào tạo trong phần mềm (U-086, 2026-10-14). Hướng dẫn dạng gì, theo dõi gì chờ **U-090**.
 
-**Dữ kiện quán đã có:** chưa có dòng nào trong `master_plan/shop-facts.md`.
+**Dữ kiện quán đã có:** `master_plan/shop-facts.md` §8.7 (bổ sung 2026-10-14) — chỉ lời *có làm*.
 
 **Không lấy từ PAGES_INDEX:** toàn bộ mô hình bài hướng dẫn và tiến độ của dự án cũ.
 

@@ -120,6 +120,7 @@ có câu trả lời mới từ người.
 | ADR-101 | **Kế hoạch pha 4**: `master_plan/FE_master_plan_banh_cuon_ba_thanh.md`, mã `P4-01`…`P4-12`, sổ `work/backlog_FE.md`; nền → trang thử *Menu & giá* → màn quầy; không đổi hợp đồng, không tính tiền ở trình duyệt; admin ngoài pha 4 | Đã chốt 2026-10-13 (giao cho phiên, T-178); cách chia chờ chủ repo xác nhận | — | T-176 · ADR-076 · ADR-068 · ADR-100 |
 | ADR-102 | **Thước của pha 4**: bốn nhóm màn × cách lấy dữ liệu · ghi xong · mất kết nối · số tiền; ghi xong thì đọc lại, không cache giá; state ba chỗ, đổi người xoá sạch; RHF + Zod, Vitest + RTL, openapi-typescript + openapi-fetch, token CSS shadcn, npm; cùng origin qua Next; luồng quầy mang `X-Person-Id` bằng fetch đọc luồng — không đổi hợp đồng | Đã chốt 2026-10-13 (giao cho phiên, P4-01) | — | ADR-097 · ADR-100 · ADR-101 · U-075 |
 | ADR-103 | **Mảng admin vào sổ pha 4 dưới dạng bước bị chặn**: mười một bước `P4A-01`…`P4A-11` theo đúng các trang admin của `docs/private/fe/PAGES_INDEX.md`, mô tả ở sổ riêng `work/backlog_FE_AD.md`; không bước nào *Ready* khi backend admin chưa có cửa và câu hỏi của nó chưa đóng; sửa ADR-101 điểm 6, không mở backend admin | Đã chốt 2026-10-13 (chủ repo, T-179) | — | P4A-01…P4A-11 · U-081…U-086 |
+| ADR-104 | **Lời chủ quán 2026-10-14 lật hai luật đã dựng**: mỗi người làm một tài khoản, mật khẩu riêng thay *chọn tên* (U-083 thay U-075), và đơn web báo về quầy bằng SSE thay Telegram (U-080 sửa ADR-041); `P4-04` dừng chờ thiết kế đăng nhập, không ai code mật khẩu trước khi thiết kế được duyệt | Đã chốt 2026-10-14 (chủ quán / chủ repo, T-180) | — | T-180 · U-088 · P4-04 · P4A-06 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7051,3 +7052,38 @@ khoản của người, khoản chi (§8.10) — chưa có bước; thêm hay kh
 
 **Applies to:** `T-179`; `work/backlog_FE.md` · `master_plan/FE_master_plan_banh_cuon_ba_thanh.md`;
 **ADR-035** · **ADR-051** · **ADR-068** · **ADR-101** · **ADR-102**.
+
+### ADR-104 — Lời chủ quán 2026-10-14 lật hai luật đã dựng: tài khoản có mật khẩu thay chọn tên, SSE thay Telegram
+
+**Trạng thái:** **Đã chốt** 2026-10-14 — lời chủ quán do chủ repo chuyển trong hội thoại (Claude Code, task `T-180`).
+Nguyên văn: U-083 *"mỗi nhân viên 1 tk có mật khẩu riêng"*; U-080 *"sse event"*. Lời U-083 trái lời U-075 đã chốt
+2026-10-09 (*"chọn tên"*, không mã, không mật khẩu); Claude hỏi lại, chủ repo chọn **"Thay U-075 hoàn toàn"** — mọi
+người làm, kể cả chủ quán, vào máy bằng tài khoản và mật khẩu riêng.
+
+**Decision:**
+
+1. **Danh tính đổi từ chọn tên sang tài khoản có mật khẩu riêng.** `master_plan/shop-facts.md` §8.8 là owner của lời;
+   đoạn *chọn tên* ở đó giữ làm vết. ADR-085 đã tách *danh tính* khỏi *cách đăng nhập* (`authz.Authenticator`), nên
+   lời mới đổi **cách đăng nhập**, không đổi ma trận vai × cửa của `docs/product/3-be/02-vai-va-quyen.md`.
+2. **Code đã dựng theo U-075 đứng nguyên tới khi thiết kế mới được duyệt.** T-143 (`authz.ChonTen` đọc header
+   `X-Person-Id`) và ADR-102 điểm 7 (danh tính đi bằng header) là luật cũ còn chạy; không ai sửa chúng, và không ai
+   dựng đăng nhập mật khẩu, trước khi có một task thiết kế mức **L3** (danh tính chạm mọi cửa ghi tiền, chạm hợp đồng
+   API) được chủ repo duyệt và `U-088` đã đóng.
+3. **`P4-04` dừng.** Bước *Danh tính và khung theo vai* của pha 4 dựng màn chọn tên — đúng thứ vừa bị thay. Nó rời đầu
+   *Ready* và chờ thiết kế ở điểm 2. `P4A-06` (trang nhân viên) chờ thêm `U-088`.
+4. **Đường báo đơn web về quầy là sự kiện SSE của màn quầy** (`GET /counter/events`, ADR-097), thay Telegram mà
+   ADR-041 đặt tên 2026-09-07. `master_plan/shop-facts.md` §1 là owner; ADR-041 đứng nguyên ở vế PT-2 (một VPS).
+   `P4-07` hết chờ U-080.
+
+**Why:** lời chủ quán là sự thật nghiệp vụ (CLAUDE.md §3.5) — khi nó lật một luật đã có code, chỗ nguy hiểm là một
+phiên sau đọc `P4-04` ở đầu *Ready* rồi dựng tiếp màn chọn tên. Ghi một ADR chặn đường ấy rẻ hơn gỡ màn sau.
+
+**Rejected alternatives:** *chỉ áp mật khẩu cho trang admin, quầy vẫn chọn tên* — chủ repo không chọn; *để U-083 mở
+và hỏi lại chủ quán* — chủ repo không chọn; *giao Codex dựng đăng nhập ngay* — chưa có thiết kế, `U-088` còn mở, và
+CLAUDE.md §7.4 giữ thiết kế ở Claude.
+
+**Suy ra, chờ chủ repo xác nhận:** Telegram không còn làm gì trong hệ thống (lời chỉ nói *sse event*); màn quầy có
+phát tiếng khi có đơn mới hay không là việc thiết kế của `P4-07`, không phải dữ kiện quán; mức L3 của task thiết kế.
+
+**Applies to:** `T-180`; `P4-04` · `P4-07` · `P4A-06`; **ADR-041** · **ADR-085** · **ADR-097** · **ADR-102** điểm 7;
+`master_plan/shop-facts.md` §1 · §8.8; `docs/product/99-unknowns.md` U-088.

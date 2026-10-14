@@ -53,8 +53,9 @@ hình dạng chép của `work/backlog_BE.md` (**ADR-051**).
 | P4-12 | [Cổng chất lượng pha 4 và rà ranh giới](#p4-12) |
 | P4A-01…P4A-11 | Mảng admin, đang bị chặn — sổ riêng [`backlog_FE_AD.md`](backlog_FE_AD.md) |
 
-**Chỗ đang chặn** — bảng sống ở kế hoạch §4. `P4-07` chờ **U-080** (Telegram); vế giao hàng chờ **S-6**. Mọi `P4A-XX`
-chờ backend admin có cửa (**ADR-068**), sáu bước chờ thêm **U-081**…**U-086** (kế hoạch §6a, sổ `backlog_FE_AD.md`).
+**Chỗ đang chặn** — bảng sống ở kế hoạch §4. `P4-04` chờ thiết kế đăng nhập bằng mật khẩu (**ADR-104**, **U-088**); vế giao hàng của `P4-07`
+chờ **S-6**. Mọi `P4A-XX` chờ backend admin có cửa (**ADR-068**), bốn bước chờ thêm **U-087**…**U-090** (kế hoạch §6a,
+sổ `backlog_FE_AD.md`).
 
 ---
 
@@ -292,7 +293,9 @@ cổng và `go vet` không ghi được cache — Claude chạy lại ngoài san
 <a id="p4-04"></a>
 ### P4-04 — Mọi cửa đều cần biết *ai bấm* và *đang đứng đâu*, mà chưa màn nào hỏi
 
-**Phụ thuộc** · bước 4/12 · **cần xong trước:** `P4-03`
+**Phụ thuộc** · bước 4/12 · **cần xong trước:** `P4-03` · **dừng 2026-10-14:** chủ quán thay *chọn tên* bằng tài khoản
+mật khẩu riêng (U-083 thay U-075, **ADR-104**) — Goal dưới đây là luật cũ, viết lại sau khi thiết kế đăng nhập được
+duyệt và **U-088** đóng
 
 **Goal:** chọn tên (T-143, U-075), vào · rời quầy; khung riêng cho bốn loại người dùng — quầy, chủ quán, trạm
 (chỉ đọc, không nút), khách; nút hiện theo lớp quyền của [`02-vai-va-quyen.md`](../docs/product/3-be/02-vai-va-quyen.md)
@@ -352,7 +355,7 @@ kết nối luôn nhìn thấy** (màn trạm: không nút đóng).
 <a id="p4-07"></a>
 ### P4-07 — Màn quầy: nhận và ghi đơn
 
-**Phụ thuộc** · bước 7/12 · **cần xong trước:** `P4-05` · `P4-06` · **U-080** (Telegram)
+**Phụ thuộc** · bước 7/12 · **cần xong trước:** `P4-05` · `P4-06` (U-080 đóng 2026-10-14: đơn web báo về quầy bằng SSE, không Telegram)
 
 **Goal:** hàng đợi quầy, duyệt · từ chối đơn chờ, POS tạo lượt gọi, đơn điện thoại, nhả đơn hẹn; vế giao hàng
 bày lời từ chối của **S-6** tới khi có lời. Chẻ tiếp lúc nhận nếu một phiên không đủ.
