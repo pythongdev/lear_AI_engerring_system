@@ -1461,6 +1461,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-14 | Chủ quán trả lời lượt ba (T-183): **chủ quán và POS tạo, sửa, xoá việc giao và đánh dấu xong** (đóng U-089); **chủ quán hoặc POS ghi nhận xét và đánh giá người làm làm được việc hay chưa** (đóng U-090); hàng về thì **nhập khối lượng theo đơn vị riêng của từng thứ**, mỗi ngày có người **nhập lượng đã dùng**, máy tự trừ ra phần còn lại (U-087 — vế ngưỡng sắp hết vẫn mở) | §8.4 · §8.7 |
 | 2026-10-14 | Chủ quán trả lời lượt bốn (T-185): máy **nhắc POS kiểm tra khi phần còn lại xuống dưới một tỉ lệ của khối lượng lần nhập gần nhất**; *lời chọn* của chủ repo: **mỗi nguyên liệu một tỉ lệ, chủ quán đặt, mặc định 20%** (đóng U-087; sửa I-025 vế 3) | §8.4 |
 | 2026-10-14 | Chủ repo trả lời lượt năm trong hội thoại (T-187): hướng dẫn công việc gắn **từng việc được giao** (đóng U-091); **giá combo đặt riêng** (đóng U-092); **chi phí marketing trả bằng tiền riêng** (đóng U-093) | §8.7 · §8.9 · §8.10 |
+| 2026-10-14 | Chủ repo trả lời trong hội thoại (T-188): phụ thu tuỳ chọn trong combo **cộng thêm** vào giá combo; giá combo **không đổi giữa buổi**; duyệt **ADR-074** (lát khoản chi `P2A-05`) | §8.9 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -2112,8 +2113,9 @@ ngoài bảng giá gõ tay ở quầy). Danh mục gồm những nhóm nào thì
 
 **Lượt năm 2026-10-14 — GIÁ COMBO ĐẶT RIÊNG** (T-187, đóng `U-092`; chủ repo trả lời trong hội thoại: *"Giá combo đặt
 riêng"*). Chủ quán đặt **một giá riêng** cho mỗi combo; giá ấy **không** cộng từ giá các món trong combo — câu *giá
-combo vẫn là tổng thành phần* ở đoạn trên là cách đọc cũ, bỏ. *Lời không nói, chưa ai xác nhận:* tuỳ chọn phụ thu
-(§4.4) chọn trong một combo có cộng thêm vào giá combo không; combo có đổi giá giữa buổi theo §6.17 như món thường không.
+combo vẫn là tổng thành phần* ở đoạn trên là cách đọc cũ, bỏ. **Chủ repo trả lời
+cùng ngày (T-188):** tuỳ chọn phụ thu (§4.4) khách chọn trong một combo **có cộng thêm** vào giá combo; giá combo
+**không đổi giữa buổi** — chủ quán sửa giá combo ngoài buổi bán.
 
 
 ### 8.10 Tài chính — câu trả lời E44–E51
