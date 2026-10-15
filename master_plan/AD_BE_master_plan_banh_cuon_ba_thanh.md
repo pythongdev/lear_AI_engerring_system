@@ -50,7 +50,7 @@ cho chúng — trang của chúng là việc của sổ FE admin, không phải 
 
 | ID | Việc | Cần xong trước | Đầu ra kiểm chứng được | Mức |
 |---|---|---|---|:--:|
-| **P3A-01** | **Cửa khoản chi** | `T-190` · `U-095` (lớp tạm `chu_quan` tới khi có lời) | ghi · sửa có lý do · đọc theo khoảng ngày, loại, nguồn; test qua PostgreSQL thật; tổng là phép cộng của backend | L2 |
+| **P3A-01** | **Cửa khoản chi** | `T-190` (lớp `chu_quan` — lời đóng `U-095`, 2026-10-15) | ghi · sửa có lý do · đọc theo khoảng ngày, loại, nguồn; test qua PostgreSQL thật; tổng là phép cộng của backend | L2 |
 | **P3A-02** | **Cửa sổ nguyên liệu** | `T-190` | ghi dòng ngày, sửa có vết, đọc tổng và hiệu số đúng phép của `I-026`; lớp `chu_quan` (§8.4: chủ quán nhập tay) | L2 |
 | **P3A-03** | **Cửa giao việc** | `T-190` | lớp `quay_hoac_chu_quan` (`I-030`); mỗi lần đánh dấu là một sự kiện; ẩn có vết | L2 |
 | **P3A-04** | **Cửa đào tạo** | `P3A-03` | lớp `quay_hoac_chu_quan` (`I-031`); tệp đi theo chỗ giữ tệp mà lát `P2A-12` đã chọn | L2 |

@@ -1462,6 +1462,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-14 | Chủ quán trả lời lượt bốn (T-185): máy **nhắc POS kiểm tra khi phần còn lại xuống dưới một tỉ lệ của khối lượng lần nhập gần nhất**; *lời chọn* của chủ repo: **mỗi nguyên liệu một tỉ lệ, chủ quán đặt, mặc định 20%** (đóng U-087; sửa I-025 vế 3) | §8.4 |
 | 2026-10-14 | Chủ repo trả lời lượt năm trong hội thoại (T-187): hướng dẫn công việc gắn **từng việc được giao** (đóng U-091); **giá combo đặt riêng** (đóng U-092); **chi phí marketing trả bằng tiền riêng** (đóng U-093) | §8.7 · §8.9 · §8.10 |
 | 2026-10-14 | Chủ repo trả lời trong hội thoại (T-188): phụ thu tuỳ chọn trong combo **cộng thêm** vào giá combo; giá combo **không đổi giữa buổi**; duyệt **ADR-074** (lát khoản chi `P2A-05`) | §8.9 |
+| 2026-10-15 | Chủ repo trả lời lượt sáu trong hội thoại (T-192): **chỉ chủ quán ghi khoản chi** (đóng U-095); mức nhắc sắp hết **theo từng thứ, chủ quán ghi** — xác nhận vế *lời chọn* của lượt bốn, mặc định 20% đứng nguyên | §8.10 · §8.4 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -1745,7 +1746,10 @@ chính thứ ấy. *Lời chọn* của chủ repo trong câu hỏi có sẵn ph
 nào chưa đặt thì **mặc định 20%**. Tỉ lệ là một con số **người nhập**, nên mức sổ ghi tay điện tử đứng nguyên; máy vẫn
 không kết luận thiếu, không tự tắt món. *Cách đọc của phiên:* *phần còn lại* là phép trừ `U-051` ở trên. Danh mục §8.4
 vì thế có thêm cột tỉ lệ; câu *"Danh mục nguyên liệu
-KHÔNG mọc cột ngưỡng"* ở trên là luật cũ.
+KHÔNG mọc cột ngưỡng"* ở trên là luật cũ. **Lượt sáu 2026-10-15 (T-192):** chủ repo nhắc lại trong hội thoại —
+nguyên văn *"tuỳ từng loại mặt hàng chủ quán sẽ ghi mức độ nhắc nhở"*: mức nhắc đặt **theo từng thứ**, do **chủ quán
+ghi**. Lời này xác nhận thẳng vế *mỗi nguyên liệu một tỉ lệ, chủ quán đặt* mà lượt bốn là *lời chọn*; lời không nhắc
+mặc định 20%, nên mặc định ấy đứng nguyên như lượt bốn ghi.
 - **Không nói mảng này có vào bản chạy đầu tiên hay không.** Đó là câu của
   `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7, và câu ấy đã chốt riêng ngày 2026-09-02
   (U-030): **không** mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên.
@@ -2150,3 +2154,7 @@ phải một mục riêng có ngân sách hay chiến dịch. Nguồn tiền c�
 **Lượt năm 2026-10-14 — marketing trả bằng TIỀN RIÊNG** (T-187, đóng `U-093`; chủ repo trả lời trong hội thoại:
 *"tiền riêng"*). Chi phí marketing trả từ **tiền riêng của chủ quán**, không rời két bán hàng — nên không vào phép đếm
 két cuối ngày (**ADR-074**: nguồn tiền nằm trên loại chi).
+
+**Lượt sáu 2026-10-15 — CHỈ CHỦ QUÁN ghi khoản chi** (T-192, đóng `U-095`; chủ repo trả lời trong hội thoại: *"chỉ chủ
+quán dc ghi"*). Một khoản chi — mọi loại, kể cả loại trả từ két — chỉ chủ quán ghi được; người đứng quầy không ghi.
+*Cách đọc của phiên:* lời nói *ghi*; sửa một khoản đã ghi cũng chỉ chủ quán, vì sửa là ghi lại.

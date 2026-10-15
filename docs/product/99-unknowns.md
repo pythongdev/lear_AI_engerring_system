@@ -139,11 +139,6 @@ phạm vi của nó ở `master_plan/shop-facts.md` **§8.8**.
   nháp ở `fe/src/app/layout.tsx`. Ai trả lời: chủ quán (1, 2, chữ mô tả), chủ repo (3). Chặn gì: JSON-LD chưa có
   `address` · `openingHours`; chưa có canonical và `sitemap.xml` cho tới khi đặt `BANHCUON_SITE_URL`. Không chặn bán hàng.
 
-- **U-095** — Ai được ghi một khoản chi (tiền điện, nước, wifi, xăng xe, marketing): chỉ chủ quán, hay người đứng quầy
-  (POS) cũng ghi được khi trả tiền từ két? (mở 2026-10-14, T-191). `master_plan/shop-facts.md` §8.10 nói các loại chi
-  và nguồn tiền, không nói người ghi; `I-029` chỉ đòi *ai ghi* được lưu. Ai trả lời: chủ quán. Chặn gì: lớp quyền của
-  cửa khoản chi `P3A-01` — tới khi có lời, cửa chỉ mở cho chủ quán (**ADR-110** điểm 3). Không chặn bán hàng.
-
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
 
@@ -167,6 +162,15 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ repo trả lời 2026-10-15, lượt sáu (T-192), trong hội thoại.** Lời đáp đã vào owner (`master_plan/shop-facts.md`
+§8.10 · §8.4).
+
+<a id="u-095"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-095 — Ai được ghi một khoản chi: chỉ chủ quán, hay cả người đứng quầy?~~ | “chỉ chủ quán dc ghi”. **Chỉ chủ quán ghi được một khoản chi**; người đứng quầy không ghi, kể cả khoản trả từ két. | `master_plan/shop-facts.md` §8.10 |
 
 **Chủ repo trả lời 2026-10-14, lượt năm (T-187), trong hội thoại.** Lời đáp đã vào owner (`master_plan/shop-facts.md`
 §8.7 · §8.9 · §8.10).
