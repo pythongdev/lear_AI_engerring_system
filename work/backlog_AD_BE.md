@@ -1,5 +1,5 @@
 <a id="top"></a>
-# Sổ mô tả — backend admin (`P3A-01`…`P3A-10`)
+# Sổ mô tả — backend admin (`P3A-01`…`P3A-11`)
 
 Thứ tự, mức và cổng: [`master_plan/AD_BE_master_plan_banh_cuon_ba_thanh.md`](../master_plan/AD_BE_master_plan_banh_cuon_ba_thanh.md).
 Trạng thái: `work/backlog.md`. Mỗi entry giữ mô tả dài; *Nhận việc* điền khi bước được nhận. Viết 2026-10-14 (T-191,
@@ -257,9 +257,47 @@ cửa phần danh mục; combo là `P3A-06`.
 <a id="p3a-06"></a>
 ### P3A-06 — Combo có giá riêng nhưng hàm giá chưa biết combo
 
-**Goal:** thêm · đổi giá · ẩn combo; combo đi qua **hàm giá duy nhất** với giá chủ quán đặt, ca test mới ở bảng ca của
-`docs/product/3-be/03-ham-gia.md`.
+**Goal:** chủ quán lập combo (tên, giá riêng, các món kèm số phần), đổi giá ngoài giờ bán, ẩn và đọc combo — cửa cho trang
+`P4A-05`. **Bán** combo (hàm giá, dòng đơn, bếp) là `P3A-11`.
+**Đứng trên:** lát `P2A-13` (`docs/product/2-db/18-luoc-do-danh-muc-combo.md`), `I-032` — lớp `chu_quan`; lời quán ở
+`master_plan/shop-facts.md` §8.9 (đóng `U-092`, T-188, lượt bảy 2026-10-15).
 **Bẫy:** giá combo **không** là tổng giá món (`I-032`, U-092); đổi giá trong giờ bán là câu `I-032/6`.
+**Nhận việc:** 2026-10-15 · Claude Code (thiết kế, test trước, duyệt) · Codex thi công ở `../lean_wt/P3A-06`, nhánh
+`codex/P3A-06` từ `7304895`. Mức L2 — giá do chủ quán đặt. Chủ repo chọn tách phần bán sang `P3A-11` (2026-10-15).
+
+*Thiết kế (Claude, không phải lời quán — **ADR-116**):* bốn đường — `GET`/`POST /menu-combos`,
+`PUT /menu-combos/{menu_combo_id}/price`, `POST /menu-combos/{menu_combo_id}/hiding`; ba cửa `combo/them` · `doi_gia` · `an`,
+mọi đường lớp `chu_quan` kể cả đọc. Lập một lần đủ món (có thật, chưa ngừng bán, mỗi món một lần, số phần nguyên dương);
+không cửa đổi tên hay thành phần. Đổi giá đòi lý do và bị từ chối trong giờ bán, hai đầu tính là trong giờ; phép *trong giờ
+bán* dời về `be/internal/ngayban`, cửa nhận đơn dùng lại. Combo đã ẩn đứng yên, đọc kèm ẩn vẫn trả. `GET /menu`, `gia.Tinh`
+không đổi.
+
+*Acceptance:*
+- [ ] Bảy test viết trước ở `be/internal/combo/combo_test.go` xanh qua PostgreSQL thật, điều kiện kiểm không đổi.
+- [ ] Người đứng quầy bị `owner_only`, không phiên bị `unauthenticated` ở cả bốn đường; database không đổi.
+- [ ] Combo đọc lại tên, giá đã đặt, người lập, món theo thứ tự gửi kèm số phần; món trong combo không mang giá.
+- [ ] Đổi giá: thiếu lý do bị từ chối; trong giờ bán (cả hai đầu) bị `menu_combo_price_in_sales_hours`; ngoài giờ có vết
+      giá cũ, giá mới, lý do, người sửa.
+- [ ] Giờ bán chỉ còn một chỗ trong `be/` (`ngayban`); test `I-008` của `don` vẫn xanh.
+- [ ] Không file nào dưới `be/internal/gia/`, `be/internal/menu/`, `db/` đổi.
+- [ ] Hợp đồng tăng MINOR, ba mã lỗi mới, mười dòng `menu_combo*` của `x-constraint-errors` đã xét, ba dòng ma trận, hai
+      ca vết.
+- [ ] `./scripts/gate.sh` xanh ở clone chính; `be-check` do Claude chạy.
+
+[↑ đầu file](#top)
+
+---
+
+<a id="p3a-11"></a>
+### P3A-11 — Combo đã lập mà chưa bán được
+
+**Goal:** bán một combo ở mọi kênh: giá = giá combo + phụ thu chủ quán đặt theo **từng món** của combo cho lựa chọn khách
+chọn ở món ấy (`master_plan/shop-facts.md` §8.9, lượt bảy); khách chọn nhân riêng từng món.
+**Đứng trên:** `P3A-06`; `docs/product/3-be/03-ham-gia.md`; **ADR-108** điểm 7 · **ADR-116** điểm 6.
+**Bẫy:** `order_line` bắt buộc đúng một món — dòng đơn mang combo cần migration; bếp nhận việc theo thành phần của dòng đơn
+(lát `P2-07`); hoá đơn, nhập bù, đối chiếu `I-009` · `I-013` đọc dòng đơn. Chỗ cất phụ thu theo món của combo chưa có.
+**Bị chặn bởi:** `U-096` (lựa chọn chưa đặt mức thì tính sao). Mức L3: Claude viết ADR, chủ repo duyệt trước mọi code, rồi
+tách lát L1/L2.
 **Nhận việc:** —
 
 [↑ đầu file](#top)

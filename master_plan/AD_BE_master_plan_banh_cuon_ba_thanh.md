@@ -46,7 +46,7 @@ cho chúng — trang của chúng là việc của sổ FE admin, không phải 
   lãi/lỗ, thuế, tiền mang về, hiệu suất nhân viên chấm điểm).
 - **Frontend không cộng tiền** (**ADR-086**): mọi tổng, hiệu số, giá combo là số backend trả.
 
-## 4. Mười bước
+## 4. Mười một bước (đếm 2026-10-15)
 
 | ID | Việc | Cần xong trước | Đầu ra kiểm chứng được | Mức |
 |---|---|---|---|:--:|
@@ -55,7 +55,8 @@ cho chúng — trang của chúng là việc của sổ FE admin, không phải 
 | **P3A-03** | **Cửa giao việc** | `T-190` | lớp `quay_hoac_chu_quan` (`I-030`); mỗi lần đánh dấu là một sự kiện; ẩn có vết | L2 |
 | **P3A-04** | **Cửa đào tạo** | `P3A-03` | lớp `quay_hoac_chu_quan` (`I-031`); tệp đi theo chỗ giữ tệp mà lát `P2A-12` đã chọn | L2 |
 | **P3A-05** | **Cửa danh mục món** | `T-190` | lớp `chu_quan` (`I-032`); ẩn chứ không xoá | L1 |
-| **P3A-06** | **Combo vào hàm giá** | `P3A-05` | combo một giá chủ quán đặt, đi qua hàm giá duy nhất (`docs/product/3-be/03-ham-gia.md`), ca test mới ở bảng ca | L2 |
+| **P3A-06** | **Cửa combo của chủ quán** | `P3A-05` | lập · đổi giá ngoài giờ bán · ẩn · đọc combo, lớp `chu_quan`; bán combo tách sang `P3A-11` (**ADR-116**, chủ repo chọn tách 2026-10-15) | L2 |
+| **P3A-11** | **Bán combo** | `P3A-06` · `U-096` | giá = giá combo + phụ thu chủ quán đặt theo món của combo, qua hàm giá duy nhất (`docs/product/3-be/03-ham-gia.md`); dòng đơn, bếp, hoá đơn; ADR duyệt trước code | L3 |
 | **P3A-07** | **Thêm và sửa thông tin món** | `P3A-05` | món mới vào menu đọc được ở mọi kênh; không trang thứ hai sửa giá | L2 |
 | **P3A-08** | **Đọc kho và nhắc POS** | `P3A-02` · `T-186` | tổng · hiệu số · nhắc khi dưới tỉ lệ, số do backend tính | L2 |
 | **P3A-09** | **Đọc tổng quan cho chủ quán** | `T-190` | một cửa đọc bảy thứ §8.6; *tạm tính* tách khỏi doanh thu đã đối soát | L2 |

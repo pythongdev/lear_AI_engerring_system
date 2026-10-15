@@ -132,6 +132,7 @@ có câu trả lời mới từ người.
 | ADR-113 | **Cửa giao việc** (`P3A-03`): mọi đường lớp `quay_hoac_chu_quan` kể cả đọc; người nhận không tự đánh dấu; *đã xong* đọc từ sự kiện mới nhất; đánh dấu thừa bị từ chối; việc đã ẩn đứng yên; sửa và ẩn đòi lý do | Đã chốt 2026-10-15 (Claude, phiếu P3A-03) | — | `P3A-03` · ADR-110 · ADR-105 |
 | ADR-114 | **Cửa đào tạo** (`P3A-04`): lớp `quay_hoac_chu_quan` kể cả đọc và tải tệp; kho tệp là thư mục `BANHCUON_FILE_DIR`; loại tệp nhận bằng nội dung, ảnh ≤ 10 MiB, video (gồm `.mov`) ≤ 100 MiB; không tệp mồ côi; chỉ mẩu chữ sửa được; ghi nhận sửa thay cả hai trường | Đã chốt 2026-10-15 (Claude, phiếu P3A-04) | — | `P3A-04` · ADR-110 · ADR-107 |
 | ADR-115 | **Cửa danh mục món** (`P3A-05`): mọi đường lớp `chu_quan` kể cả đọc; đọc riêng `GET /menu-categories`, không đưa danh mục vào `GET /menu`; ẩn được danh mục còn món, món về nhóm *chưa xếp*; chuyển món đòi lý do, xếp lần đầu không; không đường bỏ xếp | Đã chốt 2026-10-15 (Claude, phiếu P3A-05) | — | `P3A-05` · ADR-110 · ADR-108 |
+| ADR-116 | **Cửa combo của chủ quán** (`P3A-06`): lập · đổi giá · ẩn · đọc, lớp `chu_quan` kể cả đọc; đổi giá đòi lý do và bị từ chối trong giờ bán; giờ bán dời về `ngayban`; bán combo tách sang `P3A-11` (L3) | Đã chốt 2026-10-15 (Claude, phiếu P3A-06; tách bước: chủ repo) | — | `P3A-06` · `P3A-11` · ADR-108 · ADR-110 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7542,3 +7543,39 @@ lược đồ.
 
 **Applies to:** `be/internal/danhmuc/`; **ADR-110** · **ADR-108** · **ADR-113**. Câu còn mở cho chủ repo: khách và quầy
 có thấy menu chia theo danh mục không — chưa mở thành `U-XXX` vì chưa bước nào cần.
+
+### ADR-116 — Cửa combo của chủ quán: lập, đổi giá ngoài giờ bán, ẩn; bán combo tách sang bước sau
+
+**Trạng thái:** **Đã chốt** 2026-10-15. Lớp `chu_quan` đọc từ `I-032` vế 6 theo **ADR-110** điểm 3; *giá đặt riêng* là lời
+đóng `U-092`; *không đổi giá giữa buổi* là lời chủ repo T-188; *tách hai bước* là lựa chọn của chủ repo trong câu hỏi có sẵn
+phương án (2026-10-15). Mọi điểm khác là **lựa chọn của phiên** (Claude Code, phiếu `P3A-06`), không phải lời quán.
+
+**Context:** lát `P2A-13` cất combo và thành phần (`menu_combo` · `menu_combo_item`), vai ứng dụng sửa được tên, giá, dấu ẩn
+và số phần, không xoá. Bán một combo cần dòng đơn mang combo — bảng `order_line` bắt buộc đúng một món — và phụ thu mà chủ
+quán đặt theo từng món của combo (`master_plan/shop-facts.md` §8.9, lượt bảy), chưa có chỗ cất. Một lựa chọn chưa đặt mức thì
+tính sao là `U-096`.
+
+**Decision:**
+
+1. **Bước `P3A-06` chỉ mở cửa quản trị:** `GET /menu-combos`, `POST /menu-combos`, `PUT /menu-combos/{id}/price`,
+   `POST /menu-combos/{id}/hiding`; ba cửa `combo/them` · `combo/doi_gia` · `combo/an`; mọi đường lớp `chu_quan`, kể cả đọc.
+   `GET /menu` và `gia.Tinh` không đổi — combo chưa bán được.
+2. **Lập combo một lần, đủ món:** tên, giá nguyên đồng dương, ít nhất một món có thật và chưa ngừng bán, mỗi món một lần,
+   số phần nguyên dương; món đọc lại theo thứ tự gửi. Không cửa đổi tên hay đổi thành phần — đổi thành phần là lập combo mới
+   rồi ẩn combo cũ (**ADR-108** điểm 5).
+3. **Đổi giá đòi lý do, có vết, và bị từ chối trong giờ bán** (`menu_combo_price_in_sales_hours`); hai đầu giờ bán tính là
+   trong giờ, như `I-008`. Lập và ẩn không bị khoá theo giờ.
+4. **Giờ bán ở một chỗ:** phép *trong giờ bán* chuyển sang `be/internal/ngayban` (nguồn thời gian của quán, ADR-089) và cửa
+   nhận đơn dùng lại nó; con số giờ không có bản thứ hai trong `be/`.
+5. **Combo đã ẩn đứng yên:** không đổi giá, không ẩn lần nữa; đọc kèm ẩn vẫn trả nó kèm món.
+6. **Bán combo là bước `P3A-11` (L3):** chỗ cất phụ thu theo món của combo, dòng đơn mang combo, `gia.Tinh` học combo, bếp
+   và hoá đơn — thiết kế viết thành ADR riêng, chủ repo duyệt trước khi có code; chờ lời `U-096`.
+
+**Why:** điểm 1 và 6 để trang `P4A-05` có cửa ngay mà không đụng đường tiền của đơn; điểm 2 giữ *ít nhất một món* bằng
+một lần ghi; điểm 4 tránh hai bản giờ bán lệch nhau.
+
+**Rejected alternatives:** *làm một bước cả quản trị lẫn bán* — một thay đổi L3 chạm đơn, bếp, két chặn trang quản trị;
+*cho lập combo với món đã ngừng bán* — combo không bán được ngay từ lúc lập; *khoá cả ẩn theo giờ bán* — lời chỉ khoá giá.
+
+**Applies to:** `be/internal/combo/` · `be/internal/ngayban/` · `be/internal/don/` (đọc giờ bán) · `P3A-06` · `P3A-11`;
+**ADR-108** · **ADR-110** · **ADR-115**.
