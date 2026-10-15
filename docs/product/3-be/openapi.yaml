@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.30.0
+  version: 0.32.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -122,6 +122,39 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UpdateMenuComboPrice'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuCombo'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-combos/{menu_combo_id}/surcharges:
+    put:
+      operationId: setMenuComboSurcharges
+      tags: [combo]
+      summary: Đặt mức phụ thu theo món của combo, ngoài giờ bán, có lý do.
+      description: Lớp chu_quan (I-034, ADR-117 điểm 6). Kiểm hình trước quyền và database theo thứ tự — path id sai hoặc không dương trả 400 field=menu_combo_id; reason cắt khoảng trắng, thiếu hoặc rỗng trả 400 field=reason; surcharges thiếu hoặc rỗng trả 400 field=surcharges; rồi từng phần tử — menu_item_id ≤ 0 trả field=surcharges[i].menu_item_id, menu_option_id ≤ 0 trả field=surcharges[i].menu_option_id, surcharge_vnd thiếu, null, không nguyên hoặc âm trả field=surcharges[i].surcharge_vnd, cặp món · lựa chọn đã có ở phần tử trước trả field=surcharges[i].menu_option_id; sai kiểu JSON như chuỗi trả invalid_request không cần field. Trong giao dịch, khoá combo; không có trả 404 menu_combo_not_found; đã ẩn trả 409 menu_combo_hidden; trong giờ bán (hai đầu tính là trong giờ) trả 409 menu_combo_surcharge_in_sales_hours. Rồi từng phần tử theo thứ tự — món không thuộc combo trả 404 menu_combo_item_not_found field=surcharges[i].menu_item_id; lựa chọn không có trả 404 menu_option_not_found field=surcharges[i].menu_option_id; lựa chọn không thuộc nhóm nào mà món mang trả 422 option_combination_invalid field=surcharges[i].menu_option_id. Cặp chưa có thì thêm, đã có thì đổi có vết và lý do, mức giữ nguyên thì không ghi. Cặp không nhắc tới đứng nguyên; không có đường xoá — bỏ mức là đặt 0. Cặp chưa đặt mức thì hàm giá cộng 0đ (U-096).
+      parameters:
+        - name: menu_combo_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetMenuComboSurcharges'
       responses:
         '200':
           description: Thành công.
@@ -1751,7 +1784,7 @@ paths:
       tags:
         - gia
       security: []
-      summary: Món đang bán và giá mọi tổ hợp hợp lệ
+      summary: Món đang bán và giá mọi tổ hợp hợp lệ; combo đang bán kèm mức theo món
       responses:
         '200':
           description: Thành công.
@@ -1804,7 +1837,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '422':
-          description: Tổ hợp sai bị từ chối nguyên yêu cầu (option_combination_invalid); không sửa hộ.
+          description: Tổ hợp sai bị từ chối nguyên yêu cầu (option_combination_invalid), hoặc suất của combo không khớp combo (combo_portions_mismatch); không sửa hộ.
           content:
             application/json:
               schema:
@@ -3075,7 +3108,7 @@ components:
   schemas:
     MenuComboItem:
       type: object
-      required: [menu_item_id, item_name, quantity, discontinued]
+      required: [menu_item_id, item_name, quantity, discontinued, surcharges]
       properties:
         menu_item_id:
           type: integer
@@ -3089,6 +3122,54 @@ components:
         discontinued:
           type: boolean
           description: discontinued_at IS NOT NULL; món ngừng bán vẫn có mặt khi đọc combo.
+        surcharges:
+          type: array
+          description: Mức chủ quán đặt cho từng lựa chọn của món này trong combo, theo menu_option_id; cặp chưa đặt không có mặt (hàm giá cộng 0đ). Rỗng trả [].
+          items:
+            $ref: '#/components/schemas/MenuComboSurcharge'
+    MenuComboSurcharge:
+      type: object
+      required: [menu_option_id, option_group_name, option_name, surcharge_vnd]
+      properties:
+        menu_option_id:
+          type: integer
+          format: int64
+        option_group_name:
+          type: string
+        option_name:
+          type: string
+        surcharge_vnd:
+          type: integer
+          format: int64
+          minimum: 0
+    SetMenuComboSurcharges:
+      type: object
+      required: [reason, surcharges]
+      properties:
+        reason:
+          type: string
+          minLength: 1
+        surcharges:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/SetMenuComboSurcharge'
+    SetMenuComboSurcharge:
+      type: object
+      required: [menu_item_id, menu_option_id, surcharge_vnd]
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
+          minimum: 1
+        menu_option_id:
+          type: integer
+          format: int64
+          minimum: 1
+        surcharge_vnd:
+          type: integer
+          format: int64
+          minimum: 0
     MenuCombo:
       type: object
       required: [menu_combo_id, name, price_vnd, person_id, person_name, created_at, hidden_at, hidden_by_person_id, hidden_by_name, items]
@@ -5099,6 +5180,9 @@ components:
         - menu_combo_not_found
         - menu_combo_hidden
         - menu_combo_price_in_sales_hours
+        - menu_combo_item_not_found
+        - menu_combo_surcharge_in_sales_hours
+        - combo_portions_mismatch
         - menu_category_not_found
         - menu_category_hidden
         - menu_category_name_taken
@@ -5205,6 +5289,9 @@ components:
         menu_combo_not_found: 404
         menu_combo_hidden: 409
         menu_combo_price_in_sales_hours: 409
+        menu_combo_item_not_found: 404
+        menu_combo_surcharge_in_sales_hours: 409
+        combo_portions_mismatch: 422
         menu_category_not_found: 404
         menu_category_hidden: 409
         menu_category_name_taken: 409
@@ -5360,7 +5447,40 @@ components:
           $ref: '#/components/schemas/Instant'
     PriceLineRequest:
       type: object
-      description: Không nhận giá; trường lạ bị bỏ qua. Nhóm có mặt phải được chọn đúng một lựa chọn.
+      description: >-
+        Không nhận giá; trường lạ bị bỏ qua. Một dòng là MÓN (menu_item_id, option_ids) hoặc COMBO (menu_combo_id,
+        portions — ADR-117 điểm 4). Dòng món: nhóm có mặt phải được chọn đúng một lựa chọn; portions phải vắng.
+        Dòng combo: quantity là số combo; không menu_item_id (field=menu_item_id), không option_ids
+        (field=option_ids), portions không rỗng (field=portions), mỗi phần tử quantity ≥ 1
+        (field=portions[j].quantity); rồi combo không có tại mốc ⇒ 404 menu_combo_not_found, đã ẩn tại mốc ⇒ 409
+        menu_combo_hidden (field=menu_combo_id); suất mang món không thuộc combo ⇒ 422 combo_portions_mismatch
+        field=portions[j].menu_item_id; tổng suất của một món khác số phần × số combo ⇒ 422 combo_portions_mismatch
+        field=portions; rồi mỗi suất qua bước kiểm của món ấy với field=portions[j].<trường>.
+      required: [quantity]
+      additionalProperties: true
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
+        menu_combo_id:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+        option_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        portions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceLinePortion'
+    PriceLinePortion:
+      type: object
+      description: Một nhóm suất cùng món, cùng tổ hợp trong một combo — mỗi suất chọn nhân riêng (lượt tám).
       required: [menu_item_id, quantity, option_ids]
       additionalProperties: true
       properties:
@@ -5421,12 +5541,24 @@ components:
           $ref: '#/components/schemas/MoneyVnd'
     PriceLine:
       type: object
-      required: [menu_item_id, item_name, quantity, unit_price_vnd, line_total_vnd, components, options]
+      description: >-
+        Dòng món mang menu_item_id. Dòng combo mang menu_combo_id, item_name là tên combo, unit_price_vnd là giá combo
+        tại mốc, components và options rỗng, portions là các suất — mỗi suất là một PriceLine món có unit_price_vnd =
+        tổng mức combo của lựa chọn (cặp chưa đặt mức là 0đ) và options[].surcharge_vnd là mức đã áp; line_total_vnd
+        của dòng combo = giá combo × số combo + tổng line_total_vnd của các suất.
+      required: [item_name, quantity, unit_price_vnd, line_total_vnd, components, options]
       additionalProperties: false
       properties:
         menu_item_id:
           type: integer
           format: int64
+        menu_combo_id:
+          type: integer
+          format: int64
+        portions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceLine'
         item_name:
           type: string
         quantity:
@@ -5523,13 +5655,70 @@ components:
             $ref: '#/components/schemas/MenuPrice'
     Menu:
       type: object
-      required: [items]
+      required: [items, combos]
       additionalProperties: false
       properties:
         items:
           type: array
           items:
             $ref: '#/components/schemas/MenuItem'
+        combos:
+          type: array
+          description: >-
+            Combo đang bán — chưa ẩn và mọi món còn bán — theo tên rồi id. Không kê giá mọi tổ hợp như món lẻ (số tổ
+            hợp nhân theo số suất); con số cuối lấy từ POST /price-quotes (ADR-117 điểm 5).
+          items:
+            $ref: '#/components/schemas/MenuSaleCombo'
+    MenuSaleCombo:
+      type: object
+      required: [menu_combo_id, name, price_vnd, items]
+      additionalProperties: false
+      properties:
+        menu_combo_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        price_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        items:
+          type: array
+          description: Theo thứ tự lập combo.
+          items:
+            $ref: '#/components/schemas/MenuSaleComboItem'
+    MenuSaleComboItem:
+      type: object
+      required: [menu_item_id, item_name, quantity, option_groups, surcharges]
+      additionalProperties: false
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
+        item_name:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+        option_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuOptionGroup'
+        surcharges:
+          type: array
+          description: Mức mỗi suất cho từng lựa chọn đã đặt, theo menu_option_id; lựa chọn vắng mặt là 0đ (U-096).
+          items:
+            $ref: '#/components/schemas/MenuSaleComboSurcharge'
+    MenuSaleComboSurcharge:
+      type: object
+      required: [menu_option_id, surcharge_vnd]
+      additionalProperties: false
+      properties:
+        menu_option_id:
+          type: integer
+          format: int64
+        surcharge_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
     ComponentPriceChange:
       type: object
       required: [base_price_vnd, reason]
@@ -6025,6 +6214,25 @@ x-constraint-errors:
   menu_item_category_menu_item_key: internal
   menu_item_category_person_fkey: internal
   menu_item_category_pkey: internal
+
+  # T-193 — lát bán combo (ADR-117). T-194 đã xét bảng mức: cửa đặt mức tìm món của combo, lựa chọn, nhóm món mang và
+  # dòng cũ (khoá) trước khi ghi, đọc mức ≥ 0 ở handler — mọi tên dưới đây là nội bộ. T-196 đã xét dòng order_line:
+  # cửa ghi đơn dựng dòng combo và suất con từ kết quả gia.Tinh (đã kiểm combo, suất, tổ hợp) — hình sai là lỗi hệ thống.
+  menu_combo_item_option_surcharge_menu_combo_item_fkey: internal
+  menu_combo_item_option_surcharge_menu_option_fkey: internal
+  menu_combo_item_option_surcharge_non_negative_check: internal
+  menu_combo_item_option_surcharge_once_key: internal
+  menu_combo_item_option_surcharge_option_of_item_check: internal
+  menu_combo_item_option_surcharge_person_fkey: internal
+  menu_combo_item_option_surcharge_pkey: internal
+  order_line_combo_has_child_check: internal
+  order_line_combo_line_shape_check: internal
+  order_line_combo_parent_fkey: internal
+  order_line_combo_parent_key: internal
+  order_line_item_has_component_count_check: internal
+  order_line_item_xor_combo_check: internal
+  order_line_menu_combo_fkey: internal
+  order_line_option_item_line_check: internal
 
   # P2A-05 — chưa có cửa ghi; khoá chính là lỗi nội bộ.
   # P3A-01: định danh do DB sinh; hình do handler kiểm; người đã qua quyền.

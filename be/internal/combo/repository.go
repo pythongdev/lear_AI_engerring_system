@@ -70,3 +70,33 @@ func (r repository) docMenuCombo(ctx context.Context, id int64) (MenuCombo, erro
 	}
 	return out.Combos[0], nil
 }
+
+// datMuc kiểm một cặp món · lựa chọn của combo rồi thêm mức mới hay đổi mức cũ; mức không đổi thì không ghi.
+func (r repository) datMuc(ctx context.Context, id int64, i int, m MucDat) error {
+	ci, e := r.q.TimMonCombo(ctx, sqlcgen.TimMonComboParams{MenuComboID: id, MenuItemID: m.MenuItemID})
+	if errors.Is(e, pgx.ErrNoRows) {
+		return apierr.Error{Code: apierr.CodeMenuComboItemNotFound, Field: fmt.Sprintf("surcharges[%d].menu_item_id", i)}
+	}
+	if e != nil {
+		return e
+	}
+	k, e := r.q.KiemLuaChon(ctx, sqlcgen.KiemLuaChonParams{Column1: m.MenuOptionID, Column2: ci})
+	if e != nil {
+		return e
+	}
+	field := fmt.Sprintf("surcharges[%d].menu_option_id", i)
+	if !k.Co {
+		return apierr.Error{Code: apierr.CodeMenuOptionNotFound, Field: field}
+	}
+	if !k.Thuoc {
+		return apierr.Error{Code: apierr.CodeOptionCombinationInvalid, Field: field}
+	}
+	cu, e := r.q.KhoaMuc(ctx, sqlcgen.KhoaMucParams{MenuComboItemID: ci, MenuOptionID: m.MenuOptionID})
+	if errors.Is(e, pgx.ErrNoRows) {
+		return r.q.ThemMuc(ctx, sqlcgen.ThemMucParams{MenuComboItemID: ci, MenuOptionID: m.MenuOptionID, SurchargeVnd: m.SurchargeVND})
+	}
+	if e != nil || cu.SurchargeVnd == m.SurchargeVND {
+		return e
+	}
+	return r.q.DoiMuc(ctx, sqlcgen.DoiMucParams{ID: cu.ID, SurchargeVnd: m.SurchargeVND})
+}

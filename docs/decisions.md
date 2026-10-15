@@ -133,7 +133,7 @@ có câu trả lời mới từ người.
 | ADR-114 | **Cửa đào tạo** (`P3A-04`): lớp `quay_hoac_chu_quan` kể cả đọc và tải tệp; kho tệp là thư mục `BANHCUON_FILE_DIR`; loại tệp nhận bằng nội dung, ảnh ≤ 10 MiB, video (gồm `.mov`) ≤ 100 MiB; không tệp mồ côi; chỉ mẩu chữ sửa được; ghi nhận sửa thay cả hai trường | Đã chốt 2026-10-15 (Claude, phiếu P3A-04) | — | `P3A-04` · ADR-110 · ADR-107 |
 | ADR-115 | **Cửa danh mục món** (`P3A-05`): mọi đường lớp `chu_quan` kể cả đọc; đọc riêng `GET /menu-categories`, không đưa danh mục vào `GET /menu`; ẩn được danh mục còn món, món về nhóm *chưa xếp*; chuyển món đòi lý do, xếp lần đầu không; không đường bỏ xếp | Đã chốt 2026-10-15 (Claude, phiếu P3A-05) | — | `P3A-05` · ADR-110 · ADR-108 |
 | ADR-116 | **Cửa combo của chủ quán** (`P3A-06`): lập · đổi giá · ẩn · đọc, lớp `chu_quan` kể cả đọc; đổi giá đòi lý do và bị từ chối trong giờ bán; giờ bán dời về `ngayban`; bán combo tách sang `P3A-11` (L3) | Đã chốt 2026-10-15 (Claude, phiếu P3A-06; tách bước: chủ repo) | — | `P3A-06` · `P3A-11` · ADR-108 · ADR-110 |
-| ADR-117 | **Bán combo** (`P3A-11`): mức phụ thu theo món của combo là bảng riêng, chưa đặt = 0đ; combo trên đơn là dòng combo mang giá combo cùng các dòng suất con mang mức, trong chính `order_line` — tổng đơn vẫn là Σ `line_total_vnd`; `gia.Tinh` học combo; bốn lát `T-193`…`T-196` | Chờ chủ repo duyệt (Claude, 2026-10-15) | — | `P3A-11` · I-034 · ADR-086 · ADR-116 |
+| ADR-117 | **Bán combo** (`P3A-11`): mức phụ thu theo món của combo là bảng riêng, chưa đặt = 0đ; combo trên đơn là dòng combo mang giá combo cùng các dòng suất con mang mức, trong chính `order_line` — tổng đơn vẫn là Σ `line_total_vnd`; `gia.Tinh` học combo; bốn lát `T-193`…`T-196` | Đã chốt 2026-10-15 (Claude viết, chủ repo duyệt) | — | `P3A-11` · I-034 · ADR-086 · ADR-116 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7583,7 +7583,7 @@ một lần ghi; điểm 4 tránh hai bản giờ bán lệch nhau.
 
 ### ADR-117 — Bán combo: mức phụ thu theo món của combo là bảng riêng; combo trên đơn là một dòng combo cùng các dòng suất con trong chính `order_line`
 
-**Trạng thái:** **Chờ chủ repo duyệt** (viết 2026-10-15, Claude Code, `P3A-11`). Lời quán: giá combo đặt riêng (`U-092`),
+**Trạng thái:** **Đã chốt** 2026-10-15 — chủ repo duyệt trong hội thoại (viết cùng ngày, Claude Code, `P3A-11`). Lời quán: giá combo đặt riêng (`U-092`),
 phụ thu cộng thêm và giá không đổi giữa buổi (T-188), nhân riêng từng món và mức theo món của combo (lượt bảy), *cộng 0đ* ·
 *mỗi suất chọn riêng* · *mỗi suất một lần* · *khoá như giá combo* (lượt tám, đóng `U-096`) — `master_plan/shop-facts.md`
 §8.9, mệnh đề `I-034`. Mọi điểm dưới đây là **lựa chọn của phiên**, không phải lời quán.

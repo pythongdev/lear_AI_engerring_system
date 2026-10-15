@@ -20,6 +20,7 @@ import (
 	"banhcuon/be/internal/vongdoi"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -210,24 +211,12 @@ func (s *Service) Tao(ctx context.Context, caller authz.Caller, yc YeuCauTaiQuay
 				return err
 			}
 			for index, d := range kq.Lines {
-				n := int32(len(d.Components))
 				var takeaway *bool
 				if yc.ngoaiBan == nil {
 					takeaway = &yc.Lines[index].IsTakeaway
 				}
-				dongID, err := repo.themDong(ctx, out.SalesOrderID, d, takeaway)
-				if err != nil {
+				if err := repo.ghiDong(ctx, out.SalesOrderID, d, takeaway, pgtype.Timestamptz{}); err != nil {
 					return err
-				}
-				for i, c := range d.Components {
-					if err := repo.themThanhPhan(ctx, dongID, int32(i+1), n, c); err != nil {
-						return err
-					}
-				}
-				for _, o := range d.Options {
-					if err := repo.themLuaChon(ctx, dongID, o); err != nil {
-						return err
-					}
 				}
 			}
 			if (status == "confirmed" && sessionStatus == "open") || sessionStatus == "awaiting_payment" {
@@ -330,21 +319,30 @@ func cungDong(saved []gia.Dong, takeaways []bool, requested []DongGoi) bool {
 	}
 	for i, d := range saved {
 		r := requested[i]
-		if d.MenuItemID != r.MenuItemID || d.Quantity != r.Quantity || takeaways[i] != r.IsTakeaway {
+		if d.MenuItemID != r.MenuItemID || d.MenuComboID != r.MenuComboID || d.Quantity != r.Quantity ||
+			takeaways[i] != r.IsTakeaway || !cungLuaChon(d.Options, r.OptionIDs) || len(d.Portions) != len(r.Portions) {
 			return false
 		}
-		a := make([]int64, len(d.Options))
-		for j, o := range d.Options {
-			a[j] = o.MenuOptionID
-		}
-		b := slices.Clone(r.OptionIDs)
-		slices.Sort(a)
-		slices.Sort(b)
-		if !slices.Equal(slices.Compact(a), slices.Compact(b)) {
-			return false
+		// Suất con ghi theo thứ tự gửi, đọc lại theo thứ tự ghi (ADR-117).
+		for j, p := range d.Portions {
+			q := r.Portions[j]
+			if p.MenuItemID != q.MenuItemID || p.Quantity != q.Quantity || !cungLuaChon(p.Options, q.OptionIDs) {
+				return false
+			}
 		}
 	}
 	return true
+}
+
+func cungLuaChon(saved []gia.LuaChon, requested []int64) bool {
+	a := make([]int64, len(saved))
+	for j, o := range saved {
+		a[j] = o.MenuOptionID
+	}
+	b := slices.Clone(requested)
+	slices.Sort(a)
+	slices.Sort(b)
+	return slices.Equal(slices.Compact(a), slices.Compact(b))
 }
 
 func cungChu(a, b *string) bool { return (a == nil && b == nil) || (a != nil && b != nil && *a == *b) }

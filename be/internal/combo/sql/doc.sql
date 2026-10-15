@@ -11,7 +11,11 @@ SELECT jsonb_build_object('combos', coalesce((SELECT jsonb_agg(jsonb_build_objec
  'person_name', c.person_name, 'created_at', c.created_at, 'hidden_at', c.hidden_at,
  'hidden_by_person_id', c.hidden_by_person_id, 'hidden_by_name', c.hidden_by_name,
  'items', coalesce((SELECT jsonb_agg(jsonb_build_object('menu_item_id', m.id,
- 'item_name', m.name, 'quantity', x.quantity, 'discontinued', m.discontinued_at IS NOT NULL) ORDER BY x.id)
+ 'item_name', m.name, 'quantity', x.quantity, 'discontinued', m.discontinued_at IS NOT NULL,
+ 'surcharges', coalesce((SELECT jsonb_agg(jsonb_build_object('menu_option_id', o.id, 'option_group_name', g.name,
+ 'option_name', o.name, 'surcharge_vnd', s.surcharge_vnd) ORDER BY o.id)
+ FROM menu_combo_item_option_surcharge s JOIN menu_option o ON o.id = s.menu_option_id
+ JOIN option_group g ON g.id = o.option_group_id WHERE s.menu_combo_item_id = x.id), '[]'::jsonb)) ORDER BY x.id)
  FROM menu_combo_item x JOIN menu_item m ON m.id = x.menu_item_id
  WHERE x.menu_combo_id = c.id), '[]'::jsonb)) ORDER BY c.name, c.id)
  FROM combos c), '[]'::jsonb))::jsonb AS result;

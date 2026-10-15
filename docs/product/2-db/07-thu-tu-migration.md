@@ -54,6 +54,7 @@ ngược từ dưới lên, **từng bước một**.
 | 26 | `20261014160000_danh_muc_combo` | `P2A-13` | `menu_category` · `menu_item_category` · `menu_combo` · `menu_combo_item`, trigger vết và kiểm combo có món hoãn tới cuối giao dịch; khoá chặn từ chối lùi khi bất kỳ bảng nào có dòng; gỡ trigger ràng buộc và hàm, rồi thành phần combo, combo, xếp món, danh mục | 2 · 8 · 20 |
 | 27 | `20261014170000_tai_khoan` | `P2A-14` | `account` · `account_password` · `login_session` · `password_reset`; trigger nghiệp vụ và vết; lùi chặn nếu một bảng có dòng, gỡ mã và phiên, mật khẩu, tài khoản rồi hàm | 8 · 20 |
 | 28 | `20261014180000_khoan_chi` | `P2A-05` | `expense_category` · `expense`, nguồn trên loại bất biến với vai ghi; trigger vết nghiêm; lùi chặn khi một trong hai bảng có dòng, gỡ khoản trước loại (ADR-106) | 8 · 20 |
+| 29 | `20261015120000_ban_combo` | `T-193` | `menu_combo_item_option_surcharge` và trigger vết, kiểm lựa chọn thuộc nhóm món mang; `order_line` thêm dòng combo và dòng suất con (`menu_combo_id`, `parent_order_line_id`, hai cột sinh ra, khoá ngoại về cha cùng đơn và cùng dấu đem về, trigger hoãn *ít nhất một dòng con*), `order_line_option` chặn lựa chọn trên dòng combo; lùi chặn khi có mức hay dòng combo/dòng con, trả hai NOT NULL (ADR-117) | 2 · 8 · 20 · 26 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`

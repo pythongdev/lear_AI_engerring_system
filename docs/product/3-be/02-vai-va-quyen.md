@@ -147,6 +147,7 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `combo/them` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); giá riêng: lời đóng `U-092`; không đổi giá giữa buổi: lời T-188; ADR-116; phiếu P3A-06 |
 | `combo/doi_gia` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); giá riêng: lời đóng `U-092`; không đổi giá giữa buổi: lời T-188; ADR-116; phiếu P3A-06 |
 | `combo/an` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); giá riêng: lời đóng `U-092`; không đổi giá giữa buổi: lời T-188; ADR-116; phiếu P3A-06 |
+| `combo/dat_muc` | `chu_quan` | `I-034` — phụ thu trong combo chủ quán đặt theo từng món (lượt bảy, `master_plan/shop-facts.md` §8.9); khoá như giá combo, chỉ ngoài giờ bán (lượt tám, đóng `U-096`); ADR-117 điểm 6; T-194 |
 | `danhmuc/them` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); ADR-105 điểm 1; ADR-115; phiếu P3A-05 |
 | `danhmuc/doi_ten` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); ADR-105 điểm 1; ADR-115; phiếu P3A-05 |
 | `danhmuc/an` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); ADR-105 điểm 1; ADR-115; phiếu P3A-05 |

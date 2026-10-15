@@ -316,7 +316,7 @@ chọn ở món ấy (`master_plan/shop-facts.md` §8.9, lượt bảy); khách 
 **Bị chặn bởi:** ~~`U-096`~~ — đóng 2026-10-15 (lượt tám: cộng 0đ). Mức L3: Claude viết ADR, chủ repo duyệt trước mọi
 code, rồi tách lát L1/L2.
 **Nhận việc:** 2026-10-15 · Claude Code (thiết kế, test trước, duyệt) · thiết kế **ADR-117**, mệnh đề `I-034`, lời lượt tám ở
-`master_plan/shop-facts.md` §8.9. **Chờ chủ repo duyệt ADR-117 — chưa phiếu Codex nào được phát.**
+`master_plan/shop-facts.md` §8.9. Chủ repo duyệt ADR-117 2026-10-15, giao Codex từng lát (Claude làm nốt nếu Codex hết hạn mức).
 
 *Bốn lát (ADR-117 điểm 8) — mỗi lát một phiếu Codex trong worktree riêng `../lean_wt/<mã>`, Claude viết test đỏ trước,
 chạy `db-check` · `be-check`, đọc diff thật rồi mới chấm Done:*
@@ -326,6 +326,25 @@ chạy `db-check` · `be-check`, đọc diff thật rồi mới chấm Done:*
   ý định `docs/product/2-db/20-luoc-do-ban-combo.md`. *Acceptance:* test `db/tests/i034_*` xanh qua `db-check` — dòng combo
   thiếu dòng con, dòng con trỏ sang đơn khác, dòng mang cả món lẫn combo, dòng combo có thành phần, mức âm đều bị từ chối;
   test cũ `i004` · `i009` · `i013` · `i019` · `i020` xanh không sửa; Gate 1e xanh; down-migration dựng lại được.
+  *Bàn giao T-193 (2026-10-15):* thực hiện **Claude Code** — phiếu đã giao Codex ở `../lean_wt/T-193` nhưng Codex hết hạn
+  mức trước khi sửa dòng nào; duyệt: chưa ai duyệt độc lập. File: migration `20261015120000_ban_combo` (xuôi, lùi có khoá
+  chặn), `db/tests/i034_combo_on_order.sql` (viết trước, đỏ vì thiếu bảng, nay xanh), `db/reconcile/i034.sql` bảy tập
+  kèm `db/reconcile/proof/i034_1…7.sql`, ngày mẫu thêm một đơn tới lấy mang combo, `i013.sql` · `i009.sql` (I-009/2) bỏ
+  qua dòng combo và dòng con, test `i032` cho `order_line` trỏ tới combo, `20-luoc-do-ban-combo.md`, bước 29 ở `07`,
+  dòng `I-034` ở `09`, sqlc sinh lại và `be/internal/don/repository.go` bọc hai cột nullable, hợp đồng 0.30.1 (mười lăm
+  dòng `x-constraint-errors`, mười ba `unreviewed` chờ T-194 · T-196). Bằng chứng: `db-check: PASS — 29 bước xuôi · lùi
+  · xuôi lại … 145 câu … 147 lỗi cài`; `be-check: PASS`; `./scripts/gate.sh` xanh. Lệch so với phiếu: thêm `I-034/7`
+  (giá dòng combo = giá combo tại mốc) và `I-034/5` so mức **tại mốc** chứ không chỉ mức đã chụp.
+  *Bàn giao T-194…T-196 (2026-10-15):* thực hiện **Claude Code** (Codex hết hạn mức tới 19:29, chủ repo dặn Claude làm
+  nốt); duyệt độc lập: chưa. Test viết trước từng lát rồi mới code: `be/internal/combo/muc_test.go` (4 test),
+  `be/internal/gia/combo_test.go` (4), `be/internal/don/combo_test.go` (3), ca vết `combo/dat_muc` trong
+  `be/internal/don/vet_cua_test.go`. Code: cửa `combo/dat_muc`; `gia.Tinh` tách `tinhMon` và thêm `tinhCombo`, đọc
+  combo tại mốc (`be/internal/gia/sql/doc_combo.sql`), `GET /menu` thêm `combos`; `don` ghi dòng qua `ghiDong` cho cả
+  cửa tạo lượt gọi và nhập bù, `kiemHinhDong` nhận dòng combo, `cungDong` so suất. Hợp đồng 0.32.0 (đường đặt mức,
+  `PriceLineRequest` · `PriceLine` mang combo, `Menu.combos`, ba mã lỗi mới), `fe/src/lib/api/schema.ts` sinh lại và
+  `tsc` sạch; `03-ham-gia.md` §1.1; ma trận thêm `combo/dat_muc`. Bằng chứng: mười một `--- PASS: TestI034_*`,
+  `be-check: PASS`, `./scripts/gate.sh` xanh. **Còn lại ngoài P3A-11:** màn FE gọi combo và trang chủ quán đặt mức
+  (`P4A-05` và màn gọi món pha 4); báo cáo món bán chạy (`P3A-10`) phải đếm suất con theo món và dòng combo riêng.
 - **`T-194` — cửa đặt mức (L2).** ADR-117 điểm 6. *Acceptance:* chỉ chủ quán; thiếu lý do, lựa chọn không thuộc nhóm của
   món, combo đã ẩn, trong giờ bán (cả hai đầu) bị từ chối; ngoài giờ có vết mức cũ, mức mới, lý do, người; `GET
   /menu-combos` trả mức; hợp đồng tăng MINOR.

@@ -20,10 +20,10 @@ RETURNING id
 type ThemDongMangDiParams struct {
 	SalesOrderID   int64
 	Quantity       int32
-	MenuItemID     int64
+	MenuItemID     pgtype.Int8
 	ItemName       string
 	UnitPriceVnd   int64
-	ComponentCount int32
+	ComponentCount pgtype.Int4
 	Column7        pgtype.Timestamptz
 }
 

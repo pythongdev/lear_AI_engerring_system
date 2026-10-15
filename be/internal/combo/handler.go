@@ -16,6 +16,7 @@ func Routes(r *gin.Engine, svc *Service) {
 	r.POST("/menu-combos", h.them)
 	r.PUT("/menu-combos/:menu_combo_id/price", h.doiGia)
 	r.POST("/menu-combos/:menu_combo_id/hiding", h.an)
+	r.PUT("/menu-combos/:menu_combo_id/surcharges", h.datMuc)
 }
 
 type handler struct{ svc *Service }
@@ -156,5 +157,79 @@ func (h handler) doc(c *gin.Context) {
 		kemAn = raw[0] == "true"
 	}
 	out, e := h.svc.Doc(c.Request.Context(), nguoi(c), kemAn)
+	tra(c, 200, out, e)
+}
+
+// docMuc đọc một mức nguyên đồng ≥ 0; thiếu, null, lẻ hay âm mang field của phần tử, sai kiểu JSON là invalid_request.
+func docMuc(c *gin.Context, raw json.RawMessage, field string) (int64, bool) {
+	if len(raw) == 0 || string(raw) == "null" {
+		sai(c, field)
+		return 0, false
+	}
+	if raw[0] == '"' {
+		sai(c, "")
+		return 0, false
+	}
+	var n json.Number
+	if e := json.Unmarshal(raw, &n); e != nil {
+		sai(c, "")
+		return 0, false
+	}
+	muc, e := n.Int64()
+	if e != nil || muc < 0 {
+		sai(c, field)
+		return 0, false
+	}
+	return muc, true
+}
+func (h handler) datMuc(c *gin.Context) {
+	id, ok := ma(c, "menu_combo_id")
+	if !ok {
+		return
+	}
+	var p struct {
+		Reason     string `json:"reason"`
+		Surcharges []struct {
+			MenuItemID   int64           `json:"menu_item_id"`
+			MenuOptionID int64           `json:"menu_option_id"`
+			Surcharge    json.RawMessage `json:"surcharge_vnd"`
+		} `json:"surcharges"`
+	}
+	if !apierr.ReadJSON(c.Writer, c.Request, &p) {
+		return
+	}
+	p.Reason = strings.TrimSpace(p.Reason)
+	if p.Reason == "" {
+		sai(c, "reason")
+		return
+	}
+	if len(p.Surcharges) == 0 {
+		sai(c, "surcharges")
+		return
+	}
+	cac := make([]MucDat, 0, len(p.Surcharges))
+	seen := map[[2]int64]bool{}
+	for i, m := range p.Surcharges {
+		if m.MenuItemID <= 0 {
+			sai(c, fmt.Sprintf("surcharges[%d].menu_item_id", i))
+			return
+		}
+		if m.MenuOptionID <= 0 {
+			sai(c, fmt.Sprintf("surcharges[%d].menu_option_id", i))
+			return
+		}
+		muc, ok := docMuc(c, m.Surcharge, fmt.Sprintf("surcharges[%d].surcharge_vnd", i))
+		if !ok {
+			return
+		}
+		cap := [2]int64{m.MenuItemID, m.MenuOptionID}
+		if seen[cap] {
+			sai(c, fmt.Sprintf("surcharges[%d].menu_option_id", i))
+			return
+		}
+		seen[cap] = true
+		cac = append(cac, MucDat{MenuItemID: m.MenuItemID, MenuOptionID: m.MenuOptionID, SurchargeVND: muc})
+	}
+	out, e := h.svc.DatMuc(c.Request.Context(), nguoi(c), id, p.Reason, cac)
 	tra(c, 200, out, e)
 }

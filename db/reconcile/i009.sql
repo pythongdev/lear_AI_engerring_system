@@ -26,7 +26,8 @@ WITH d AS (
          (SELECT coalesce(string_agg(x.menu_option_id::text, ',' ORDER BY x.menu_option_id), '')
           FROM order_line_option x WHERE x.order_line_id = l.id) AS tuy_chon
   FROM order_line l JOIN sales_order o ON o.id = l.sales_order_id
-  WHERE o.table_session_id IS NOT NULL)
+  -- Suất trong combo mang mức combo, không giá món lẻ (ADR-117): không so với dòng thường.
+  WHERE o.table_session_id IS NOT NULL AND l.menu_combo_id IS NULL AND l.parent_order_line_id IS NULL)
 SELECT a.phien, a.id AS dong_truoc, b.id AS dong_sau, a.unit_price_vnd AS gia_da_khoa,
        a.gia_tai_moc AS gia_luc_truoc, b.gia_tai_moc AS gia_luc_sau
 FROM d a JOIN d b

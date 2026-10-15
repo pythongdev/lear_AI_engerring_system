@@ -41,19 +41,8 @@ func GhiNhapBu(ctx context.Context, tx pgx.Tx, tableID int64, sold time.Time, lh
 		if tableID != 0 {
 			takeaway = &items[i].IsTakeaway
 		}
-		line, err := repo.themDongGiay(ctx, order, d, takeaway, sold)
-		if err != nil {
+		if err := repo.ghiDong(ctx, order, d, takeaway, mocPG(sold)); err != nil {
 			return 0, nil, err
-		}
-		for j, c := range d.Components {
-			if err := repo.themThanhPhan(ctx, line, int32(j+1), int32(len(d.Components)), c); err != nil {
-				return 0, nil, err
-			}
-		}
-		for _, o := range d.Options {
-			if err := repo.themLuaChon(ctx, line, o); err != nil {
-				return 0, nil, err
-			}
 		}
 	}
 	return order, session, nil

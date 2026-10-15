@@ -60,12 +60,26 @@ thành hợp lệ (`I-010`) — kể cả mặc định *Thịt · Thường* c�
 định là **dữ liệu** từ 2026-10-11 (cờ `menu_option.is_default`, **ADR-094**, đóng **F-059**) và chỉ để
 màn gọi món **chọn sẵn** — khách thấy, đổi được, rồi gửi đủ mã lựa chọn. `Tinh` không đọc cờ ấy.
 
-## 2. Ba đường gọi
+### 1.1 Combo — cùng hàm, thêm bốn bước (T-195, **ADR-117** điểm 4)
+
+Một dòng vào là **món** hoặc **combo**: mã combo, số combo và các **suất** — mỗi suất *món · số suất · mã lựa chọn*
+(mỗi suất chọn nhân riêng, `master_plan/shop-facts.md` §8.9 lượt tám). Sau bước 1–2, dòng combo kiểm theo thứ tự: hình
+(không mã món, không mã lựa chọn ở dòng, có ít nhất một suất, mỗi suất ≥ 1); combo không có tại mốc
+`menu_combo_not_found`; combo đã ẩn tại mốc `menu_combo_hidden`; suất mang món không thuộc combo, hoặc tổng suất một món
+khác số phần × số combo, `combo_portions_mismatch`; rồi **mỗi suất** qua bước 3–6 của món ấy — `field` là
+`lines[i].portions[j].<trường>`.
+
+Giá: dòng combo mang **giá combo tại mốc** (con số chủ quán đặt, `I-032` — không cộng giá món); mỗi suất mang đơn giá =
+tổng **mức chủ quán đặt cho lựa chọn ấy theo món ấy của combo** (bảng `menu_combo_item_option_surcharge`; cặp chưa đặt
+là 0đ, lời đóng `U-096`), cộng **mỗi suất một lần** — không đếm phần nhận nhân. Combo, món của nó và mức đọc **tại cùng
+mốc** với menu (`be/internal/gia/sql/doc_combo.sql`), nên nhập bù ăn giá ngày bán. Thành tiền của dòng combo = giá combo
+× số combo + thành tiền các suất. Mệnh đề: `I-034`.
+
 
 | Đường | Là gì | Ghi gì |
 |---|---|---|
 | `POST /price-quotes` | **tính thử** — khách, quầy, ai cũng gọi được; trường giá gửi kèm bị bỏ (`I-013`) | không |
-| `GET /menu` | món đang bán, nhóm tuỳ chọn (mỗi lựa chọn mang cờ **mặc định** để chọn sẵn — **ADR-094**), và **giá của mọi tổ hợp hợp lệ** — mỗi giá tính bằng `gia.Tinh`. FE nhận kết quả, không nhận công thức (`01-hop-dong-api.md` §5) | không |
+| `GET /menu` | món đang bán, nhóm tuỳ chọn (mỗi lựa chọn mang cờ **mặc định** để chọn sẵn — **ADR-094**), và **giá của mọi tổ hợp hợp lệ** — mỗi giá tính bằng `gia.Tinh`. FE nhận kết quả, không nhận công thức (`01-hop-dong-api.md` §5). Thêm **combo đang bán** (chưa ẩn, mọi món còn bán): giá combo, món kèm số phần, nhóm và mức từng lựa chọn — không kê giá mọi tổ hợp của combo vì số tổ hợp nhân theo số suất; con số cuối lấy từ tính thử (**ADR-117** điểm 5) | không |
 | cửa `don/tao_luot_goi` | **ghi một lượt gọi** — gọi `gia.Tinh` trong giao dịch của cửa **trước** mọi câu ghi đơn và dòng đơn, rồi chép đúng kết quả vào dòng đơn và ảnh chụp | `sales_order` · `order_line` · `order_line_component` · `order_line_option` |
 
 Vì cả ba gọi cùng một hàm, con số khách thấy ở tính thử và con số quầy ghi vào đơn chỉ khác được khi
@@ -94,6 +108,7 @@ Ca của test sửa menu dùng menu **giả** riêng (`test-…`), không chạm
 | `be/internal/gia/gia_test.go` | §4.8 qua tính thử và qua menu; giá gửi lên bị bỏ; năm hình tổ hợp sai; món ngừng bán; yêu cầu sai hình; cờ mặc định trên menu đúng luật 8 đọc lúc chạy (`perl db/seed/seed.pl --defaults-tsv`), tổ hợp chọn sẵn có giá trên menu và qua tính thử |
 | `be/internal/don/don_test.go` | §4.8 qua cửa ghi đơn = con số tính thử; quyền của quầy; một dòng sai ⇒ cả lượt gọi bị từ chối; sửa menu sau khi đặt ⇒ đơn cũ đứng nguyên, lượt gọi mới cùng phiên ăn giá mới; món ngừng bán bị cửa từ chối |
 | `be/internal/don/gia_tai_moc_test.go` | `TestI009_GiaTaiMocDungVetSomNhat`: hai lần sửa dùng bản trước sớm nhất, đơn mới dùng giá mới, ngừng bán sau mốc và món chưa tạo; `TestI009_GiaMacDinhDungMocGiaoDich`: mặc định giữ `now()` của giao dịch dù menu được sửa giữa giao dịch |
+| `be/internal/gia/combo_test.go` | combo: giá theo từng suất, mức mỗi suất một lần, chưa đặt mức 0đ, giá gửi kèm bị bỏ; mười một lời từ chối đúng thứ tự; đọc tại mốc trước lần sửa giá và mức; menu bày combo đang bán kèm mức, bỏ combo có món ngừng bán |
 | `be/internal/menu/menu_test.go` | bốn cửa của chủ quán: chỉ chủ quán, bắt buộc lý do, mỗi lần sửa một vết mang người và lý do, không đường gọi nào nhận giá suất |
 
 ## 4. Chỗ trống có tên

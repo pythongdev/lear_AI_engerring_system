@@ -201,6 +201,15 @@ type MenuComboItem struct {
 	CreatedAt   pgtype.Timestamptz
 }
 
+type MenuComboItemOptionSurcharge struct {
+	ID              int64
+	MenuComboItemID int64
+	MenuOptionID    int64
+	SurchargeVnd    int64
+	PersonID        int64
+	CreatedAt       pgtype.Timestamptz
+}
+
 type MenuComponent struct {
 	ID           int64
 	Name         string
@@ -293,17 +302,21 @@ type OrderIntakePause struct {
 }
 
 type OrderLine struct {
-	ID             int64
-	SalesOrderID   int64
-	Quantity       int32
-	IsTakeaway     bool
-	CreatedAt      pgtype.Timestamptz
-	MenuItemID     int64
-	ItemName       string
-	UnitPriceVnd   int64
-	LineTotalVnd   pgtype.Int8
-	PricedAt       pgtype.Timestamptz
-	ComponentCount int32
+	ID                int64
+	SalesOrderID      int64
+	Quantity          int32
+	IsTakeaway        bool
+	CreatedAt         pgtype.Timestamptz
+	MenuItemID        pgtype.Int8
+	ItemName          string
+	UnitPriceVnd      int64
+	LineTotalVnd      pgtype.Int8
+	PricedAt          pgtype.Timestamptz
+	ComponentCount    pgtype.Int4
+	MenuComboID       pgtype.Int8
+	ParentOrderLineID pgtype.Int8
+	IsComboLine       pgtype.Bool
+	ParentIsComboLine pgtype.Bool
 }
 
 type OrderLineComponent struct {

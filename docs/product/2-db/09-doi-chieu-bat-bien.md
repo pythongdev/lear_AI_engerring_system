@@ -85,6 +85,7 @@ Số `n` của `I-0xx/n` là **thứ tự của tập** trong ô *Phép đối c
 | `I-031` | gắn việc → `I-031/1` · đủ dấu → `I-031/2` · ai được ghi → `I-031/3` · không rỗng → `I-031/4` · hai giá trị → `I-031/5` · ẩn thiếu người/lúc → `I-031/6`; sửa có vết dùng `I-018/1` |
 | `I-032` | tên danh mục → `I-032/1` · món thuộc danh mục → `I-032/2` · ít nhất một món → `I-032/3` · món và số phần → `I-032/4` · giá riêng → `I-032/5` · ngoài buổi → `I-032/6` · ẩn → `I-032/7` · chủ quán (kể cả người xếp món vào danh mục, thêm 2026-10-14 ở P2A-15) → `I-032/8`; sửa có vết dùng `I-018`, đơn cũ giữ giá dùng `I-009` |
 | `I-033` | hình trạng thái → `I-033/1` · phiên còn hiệu lực khi không hoạt động → `I-033/2` · trực quầy sai người → `I-033/3` · băm hiện hành → `I-033/4` · vai owner thiếu cờ → `I-033/5` · hoạt động thiếu mật khẩu → `I-033/6` · định danh → `I-033/7` · dấu bản mật khẩu → `I-033/8` · hình phiên → `I-033/9` · hình mã đặt lại → `I-033/10` · sửa phiên kết thúc → `I-033/11` · sửa mã đã dùng → `I-033/12` · người duyệt, khoá hay sửa tài khoản là chủ quán → `I-033/13` (thêm 2026-10-14 ở P2A-15) · mốc phiên quầy ↔ khoảng trực → `I-033/14` · mã đặt lại đã dùng ↔ bản mật khẩu mới và phiên cũ → `I-033/15` (thêm 2026-10-14 ở T-190, hai tập P2A-15 để cho lát backend); vết chung `I-018/1` |
+| `I-034` | mức theo món của combo → `I-034/1` · dòng combo đủ hình → `I-034/2` · dòng con trỏ đúng → `I-034/3` · đủ suất → `I-034/4` · tiền suất bằng mức tại mốc và mức đã chụp → `I-034/5` · mức khoá trong giờ bán → `I-034/6` · giá combo tại mốc → `I-034/7`; tiền đơn là Σ dòng nên *giá combo cộng mức* là `I-034/5` cộng `I-034/7` |
 
 Vế mà pha 1 đã nói thẳng là **không có tập** (`I-022` vế ngược, `I-023` vế *không đoán được*, hai vế
 của `I-024`) không có dòng nào ở đây: chúng là kịch bản của `quality/invariants.md`, không phải phép
@@ -160,6 +161,12 @@ vết sửa dùng tập chung `I-018`, đơn cũ giữ giá dùng `I-009`, khôn
 `I-032/6` chỉ xét vết có lúc, đọc giờ và múi giờ qua tham số owner như `I-011`;
 `I-032/8` đọc cờ chủ quán hiện hành như `I-030/2`, không xét trực quầy.
 Ý định và giới hạn ở [18-luoc-do-danh-muc-combo.md](18-luoc-do-danh-muc-combo.md).
+
+`I-034/4` đọc thành phần combo **hiện hành**: chủ quán đổi số phần sau khi đặt thì câu báo một combo cũ là thiếu
+suất dù lúc đặt đủ — đọc kèm vết `menu_combo_item` (`I-018`) trước khi kết luận. Vế *giá khách gửi bị bỏ* không có
+tập (giá gửi không được cất); kiểm bằng test của cửa ghi (T-196).
+`I-034/6` đọc giờ và múi giờ qua tham số owner như `I-032/6`. Kịch bản database ở
+`db/tests/i034_combo_on_order.sql`; ý định ở [20-luoc-do-ban-combo.md](20-luoc-do-ban-combo.md).
 
 ### 2.1 Mệnh đề chưa có lát — cả mệnh đề chưa có câu
 

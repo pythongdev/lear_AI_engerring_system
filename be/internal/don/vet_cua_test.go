@@ -85,6 +85,56 @@ var cacCaVet = []caVet{
 		}}
 	}},
 
+	{"combo/dat_muc", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		combo.Routes(r, combo.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		var id, mon, luaChon, muc int64
+		// Combo một món mang một nhóm tuỳ chọn, và một mức đã đặt; món đã ngừng bán không lọt vào GET /menu.
+		if err := c.coVet(func(tx pgx.Tx) error {
+			if err := tx.QueryRow(c.ctx, "INSERT INTO shop.menu_item(name, discontinued_at) VALUES ($1, now()) RETURNING id", t.Name()).Scan(&mon); err != nil {
+				return err
+			}
+			var nhom int64
+			if err := tx.QueryRow(c.ctx, "INSERT INTO shop.option_group(name) VALUES ($1) RETURNING id", t.Name()).Scan(&nhom); err != nil {
+				return err
+			}
+			if err := tx.QueryRow(c.ctx, "INSERT INTO shop.menu_option(option_group_id, name, surcharge_vnd) VALUES ($1, 'nhiều', 0) RETURNING id", nhom).Scan(&luaChon); err != nil {
+				return err
+			}
+			if _, err := tx.Exec(c.ctx, "INSERT INTO shop.menu_item_option_group(menu_item_id, option_group_id) VALUES ($1, $2)", mon, nhom); err != nil {
+				return err
+			}
+			if err := tx.QueryRow(c.ctx, "INSERT INTO shop.menu_combo(name, price_vnd) VALUES ($1, 1000) RETURNING id", t.Name()).Scan(&id); err != nil {
+				return err
+			}
+			var ci int64
+			if err := tx.QueryRow(c.ctx, "INSERT INTO shop.menu_combo_item(menu_combo_id, menu_item_id, quantity) VALUES ($1,$2,1) RETURNING id", id, mon).Scan(&ci); err != nil {
+				return err
+			}
+			return tx.QueryRow(c.ctx, "INSERT INTO shop.menu_combo_item_option_surcharge(menu_combo_item_id, menu_option_id, surcharge_vnd) VALUES ($1,$2,1000) RETURNING id", ci, luaChon).Scan(&muc)
+		}); err != nil {
+			t.Fatal(err)
+		}
+		loc, err := time.LoadLocation(testhelper.ShopTZ(t))
+		if err != nil {
+			t.Fatal(err)
+		}
+		// Nửa đêm theo múi giờ quán nằm ngoài giờ bán.
+		moc := time.Date(2031, 7, 1, 0, 0, 0, 0, loc)
+		goc := ngayban.DongHo
+		ngayban.DongHo = func(context.Context, pgx.Tx) (time.Time, error) { return moc, nil }
+		t.Cleanup(func() { ngayban.DongHo = goc })
+		return dichVet{"menu_combo_item_option_surcharge", muc, c.chu, "surcharge_vnd", float64(1000), float64(2000), func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/menu-combos/%d/surcharges", id), c.chu, map[string]any{"reason": "đổi mức combo kiểm vết",
+				"surcharges": []any{map[string]any{"menu_item_id": mon, "menu_option_id": luaChon, "surcharge_vnd": 2000}}})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+
 	{"combo/an", func(t *testing.T, c canh) dichVet {
 		r := gin.New()
 		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))

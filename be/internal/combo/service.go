@@ -1,4 +1,4 @@
-// Package combo giữ combo có giá riêng của chủ quán (P3A-06, I-032).
+// Package combo giữ combo có giá riêng của chủ quán (P3A-06, I-032) và mức phụ thu theo món của combo (T-194, I-034).
 package combo
 
 import (
@@ -16,12 +16,22 @@ import (
 var Them = authz.Door{Code: "combo/them", Need: authz.NeedOwner}
 var DoiGia = authz.Door{Code: "combo/doi_gia", Need: authz.NeedOwner}
 var An = authz.Door{Code: "combo/an", Need: authz.NeedOwner}
+var DatMuc = authz.Door{Code: "combo/dat_muc", Need: authz.NeedOwner}
 
 type Mon struct {
 	Quantity     int32  `json:"quantity"`
 	ID           int64  `json:"menu_item_id"`
 	Name         string `json:"item_name"`
 	Discontinued bool   `json:"discontinued"`
+	Surcharges   []Muc  `json:"surcharges"`
+}
+
+// Muc là mức chủ quán đặt cho một lựa chọn của một món trong combo; cặp chưa đặt không có mặt (0đ, U-096).
+type Muc struct {
+	SurchargeVND    int64  `json:"surcharge_vnd"`
+	MenuOptionID    int64  `json:"menu_option_id"`
+	OptionGroupName string `json:"option_group_name"`
+	OptionName      string `json:"option_name"`
 }
 type MenuCombo struct {
 	PriceVND     int64      `json:"price_vnd"`
@@ -116,4 +126,45 @@ func (s *Service) An(ctx context.Context, nguoi, id int64, reason string) (out M
 type ThanhPhan struct {
 	MenuItemID int64 `json:"menu_item_id"`
 	Quantity   int32 `json:"quantity"`
+}
+
+// MucDat là một cặp món · lựa chọn và mức muốn đặt.
+type MucDat struct {
+	MenuItemID   int64
+	MenuOptionID int64
+	SurchargeVND int64
+}
+
+// DatMuc đặt mức phụ thu theo món của combo: khoá như giá combo — chỉ ngoài giờ bán, có lý do (lượt tám, ADR-117 điểm 6).
+func (s *Service) DatMuc(ctx context.Context, nguoi, id int64, reason string, cac []MucDat) (out MenuCombo, err error) {
+	err = authz.Run(ctx, s.pool, nguoi, DatMuc, func(tx pgx.Tx) error {
+		r := newRepository(tx)
+		if e := r.khoa(ctx, id); e != nil {
+			return e
+		}
+		moc, e := ngayban.DongHo(ctx, tx)
+		if e != nil {
+			return e
+		}
+		ngoai, e := ngayban.NgoaiGio(ctx, tx, moc)
+		if e != nil {
+			return e
+		}
+		if !ngoai {
+			return apierr.Error{Code: apierr.CodeMenuComboSurchargeInSalesHours}
+		}
+		if e := vongdoi.CoVet(ctx, tx, reason, func() error {
+			for i, m := range cac {
+				if e := r.datMuc(ctx, id, i, m); e != nil {
+					return e
+				}
+			}
+			return nil
+		}); e != nil {
+			return e
+		}
+		out, e = r.docMenuCombo(ctx, id)
+		return e
+	})
+	return
 }

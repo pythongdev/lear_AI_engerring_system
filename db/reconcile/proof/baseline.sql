@@ -528,6 +528,69 @@ BEGIN
   PERFORM set_config('shop.revision_reason', coalesce(ly_do_truoc, ''), true);
 END $$;
 
+-- T-193 (ADR-117): combo đang bán. Chủ quán đặt mức cho "Nhiều nhân" của món Bánh cuốn trong combo rồi đổi mức trước
+-- buổi; đơn tới lấy gọi một combo hai suất — một suất Thịt · Nhiều nhân (mang mức), một suất Chay (chưa đặt mức ⇒ 0đ);
+-- trả chuyển khoản để số đếm két không đổi. Dòng combo mang giá combo, dòng suất con mang mức (I-034).
+DO $$
+DECLARE c bigint; ci bigint; it bigint; s bigint; o bigint; lc bigint; l bigint; sel bigint[]; tc text[]; n integer;
+  gia bigint;
+  chu bigint := pg_temp.bc_nguoi('Chủ quán');
+  a bigint := pg_temp.bc_nguoi('Người đứng quầy');
+  actor_truoc text := current_setting('shop.actor_person_id', true);
+  ly_do_truoc text := current_setting('shop.revision_reason', true);
+  luc timestamptz := pg_temp.bc_luc('10:15');
+BEGIN
+  PERFORM set_config('shop.actor_person_id', chu::text, true);
+  PERFORM set_config('shop.revision_reason', 'ngày mẫu bán combo', true);
+  SELECT id INTO STRICT it FROM menu_item WHERE name = 'Bánh cuốn';
+  INSERT INTO menu_combo (name, price_vnd, created_at)
+    VALUES ('Mẫu combo đang bán', 30000, pg_temp.bc_luc('00:00')) RETURNING id INTO c;
+  INSERT INTO menu_combo_item (menu_combo_id, menu_item_id, quantity, created_at)
+    VALUES (c, it, 2, pg_temp.bc_luc('00:00')) RETURNING id INTO ci;
+  INSERT INTO menu_combo_item_option_surcharge (menu_combo_item_id, menu_option_id, surcharge_vnd, created_at)
+    SELECT ci, id, 3000, pg_temp.bc_luc('00:00') FROM menu_option WHERE name = 'Nhiều nhân' RETURNING id INTO s;
+  UPDATE menu_combo_item_option_surcharge SET surcharge_vnd = 4000 WHERE id = s;
+  UPDATE record_revision SET revised_at = pg_temp.bc_luc('00:00')
+    WHERE target_table_code = 'menu_combo_item_option_surcharge' AND reason = 'ngày mẫu bán combo';
+
+  PERFORM set_config('shop.actor_person_id', a::text, true);
+  INSERT INTO sales_order (channel_code, status, handover_code, customer_phone, customer_needed_at,
+                           submission_code, created_at)
+  VALUES ('pickup', 'new', 'shop_pickup', '0900000012', pg_temp.bc_luc('10:30'),
+          gen_random_uuid()::text, luc) RETURNING id INTO o;
+  INSERT INTO order_line (sales_order_id, quantity, menu_combo_id, item_name, unit_price_vnd, priced_at, created_at)
+  VALUES (o, 1, c, 'Mẫu combo đang bán', 30000, luc, luc) RETURNING id INTO lc;
+  FOREACH tc SLICE 1 IN ARRAY ARRAY[ARRAY['Thịt', 'Nhiều nhân'], ARRAY['Chay', 'Chay']] LOOP
+    SELECT array_agg(DISTINCT id) INTO sel FROM menu_option WHERE name = ANY (tc);
+    SELECT coalesce(sum(x.surcharge_vnd), 0) INTO gia FROM menu_combo_item_option_surcharge x
+      WHERE x.menu_combo_item_id = ci AND x.menu_option_id = ANY (sel);
+    SELECT count(*) INTO n FROM menu_item_component WHERE menu_item_id = it;
+    INSERT INTO order_line (sales_order_id, quantity, menu_item_id, item_name, unit_price_vnd, component_count,
+                            parent_order_line_id, priced_at, created_at)
+    VALUES (o, 1, it, 'Bánh cuốn', gia, n, lc, luc, luc) RETURNING id INTO l;
+    INSERT INTO order_line_component (order_line_id, position, line_component_count, menu_component_id,
+                                      component_name, quantity, takes_filling, base_price_vnd)
+    SELECT l, row_number() OVER (ORDER BY ic.id), n, ic.menu_component_id, mc.name, ic.quantity,
+           mc.takes_filling, mc.base_price_vnd
+    FROM menu_item_component ic JOIN menu_component mc ON mc.id = ic.menu_component_id WHERE ic.menu_item_id = it;
+    INSERT INTO order_line_option (order_line_id, menu_option_id, option_group_name, option_name, surcharge_vnd)
+    SELECT l, o2.id, g.name, o2.name,
+           coalesce((SELECT x.surcharge_vnd FROM menu_combo_item_option_surcharge x
+                     WHERE x.menu_combo_item_id = ci AND x.menu_option_id = o2.id), 0)
+    FROM menu_option o2 JOIN option_group g ON g.id = o2.option_group_id WHERE o2.id = ANY (sel);
+  END LOOP;
+  UPDATE sales_order SET status = 'pending_confirmation' WHERE id = o;
+  UPDATE sales_order SET status = 'confirmed' WHERE id = o;
+  PERFORM pg_temp.bc_no(o);
+  PERFORM pg_temp.bc_lam_het(o);
+  UPDATE sales_order SET status = 'completed' WHERE id = o;
+  INSERT INTO bill (sales_order_id, due_vnd, transfer_vnd, booked_at, sale_date)
+  VALUES (o, pg_temp.bc_tong(o), pg_temp.bc_tong(o), pg_temp.bc_luc('10:30'), pg_temp.bc_ngay());
+  INSERT INTO bc VALUES ('don_combo', o), ('dong_combo', lc), ('muc_combo', s);
+  PERFORM set_config('shop.actor_person_id', coalesce(actor_truoc, ''), true);
+  PERFORM set_config('shop.revision_reason', coalesce(ly_do_truoc, ''), true);
+END $$;
+
 -- Ngày mẫu phải qua MỌI ràng buộc hoãn, như lúc COMMIT.
 SET CONSTRAINTS ALL IMMEDIATE;
 SET CONSTRAINTS ALL DEFERRED;

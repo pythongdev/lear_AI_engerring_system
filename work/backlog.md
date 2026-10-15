@@ -89,10 +89,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-193 **Lát lược đồ bán combo** — bảng mức phụ thu theo món của combo, dòng combo và dòng suất con trong `order_line`, test `I-034` tầng database; chờ duyệt **ADR-117** — L2, Claude test đỏ, Codex thi công · [chi tiết](backlog_AD_BE.md#p3a-11)
-- [ ] T-194 **Cửa đặt mức phụ thu trong combo** — `PUT /menu-combos/{id}/surcharges`, ngoài giờ bán, có lý do; chờ `T-193` — L2 · [chi tiết](backlog_AD_BE.md#p3a-11)
-- [ ] T-195 **Hàm giá học combo** — `gia.Tinh`, tính thử, combo trên `GET /menu`; chờ `T-193` — L2 · [chi tiết](backlog_AD_BE.md#p3a-11)
-- [ ] T-196 **Ghi đơn mang combo** — năm kênh, đọc đơn lồng, bếp, nhập bù; chờ `T-195` — L2 · [chi tiết](backlog_AD_BE.md#p3a-11)
 - [ ] P3A-07 **Thêm và sửa thông tin món**; chờ `P3A-05` — L2 · [chi tiết](backlog_AD_BE.md#p3a-07)
 - [ ] P3A-08 **Đọc kho và nhắc POS**; chờ `P3A-02` · `T-186` — L2 · [chi tiết](backlog_AD_BE.md#p3a-08)
 - [ ] P3A-09 **Đọc tổng quan cho chủ quán** — bảy thứ §8.6; chờ `T-190` — L2 · [chi tiết](backlog_AD_BE.md#p3a-09)
@@ -106,12 +102,16 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] P3A-11 **Bán combo** — thiết kế **ADR-117** chờ chủ repo duyệt; `U-096` đóng (cộng 0đ), mệnh đề `I-034`; bốn lát `T-193`…`T-196` — 2026-10-15 — L3 · [chi tiết](backlog_AD_BE.md#p3a-11)
 
 
 <a id="done"></a>
 ## Done
 
+- [x] P3A-11 **Bán combo** — bốn lát `T-193`…`T-196` xong: combo bán được ở cả năm kênh và nhập bù; giá = giá combo tại mốc + mức chủ quán đặt theo món, mỗi suất một lần, chưa đặt 0đ; **ADR-117** (chủ repo duyệt 2026-10-15), mệnh đề `I-034`, `U-096` đóng; Claude làm cả bốn lát vì Codex hết hạn mức ngay lát đầu; gate xanh — 2026-10-15 — L3 · [chi tiết](backlog_AD_BE.md#p3a-11)
+- [x] T-196 **Ghi đơn mang combo** — cửa tạo lượt gọi và nhập bù ghi dòng combo rồi suất con trong cùng giao dịch; đọc đơn lồng suất dưới combo; gửi lại cùng dấu so cả suất; bếp nhận việc theo suất con; bảy dòng `order_line_*` của `x-constraint-errors` xét là nội bộ; **ADR-117** điểm 2 · 5 · 7; Claude làm; be-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-11)
+- [x] T-195 **Hàm giá học combo** — `gia.Tinh` nhận dòng combo (mã combo, số combo, các suất), bốn bước kiểm mới, giá = giá combo tại mốc + mức mỗi suất, chưa đặt mức 0đ; tính thử và `GET /menu` bày combo đang bán; hợp đồng 0.32.0, mã `combo_portions_mismatch`; `03-ham-gia.md` §1.1; **ADR-117** điểm 4 · 5; Claude làm (Codex hết hạn mức); be-check xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-11)
+- [x] T-194 **Cửa đặt mức phụ thu trong combo** — `PUT /menu-combos/{id}/surcharges`, cửa `combo/dat_muc` lớp `chu_quan`, ngoài giờ bán, có lý do và vết; `GET /menu-combos` trả mức theo món; hợp đồng 0.31.0, hai mã lỗi mới; **ADR-117** điểm 6; Claude làm (Codex hết hạn mức); be-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-11)
+- [x] T-193 **Lát lược đồ bán combo** — `menu_combo_item_option_surcharge`; dòng combo và dòng suất con trong `order_line` (bước 29, `20261015120000_ban_combo`); đối chiếu `I-034/1`…`/7` kèm bảy lỗi cài; I-013 · I-009/2 bỏ qua dòng combo; **ADR-117**; Claude làm (Codex hết hạn mức); db-check · be-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-11)
 - [x] P3A-06 **Cửa combo của chủ quán** — package `combo`: lập combo một lần đủ món (có thật, chưa ngừng bán, số phần nguyên dương) với giá chủ quán đặt, đổi giá có lý do và có vết — bị từ chối trong giờ bán, ẩn, đọc kèm món; chỉ chủ quán, cả đọc; phép giờ bán dời về `ngayban`; hợp đồng 0.30.0; **ADR-116**; bán combo là `P3A-11`. Codex thi công, Claude viết test trước và duyệt; be-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-06)
 - [x] P3A-05 **Cửa danh mục món** — package `danhmuc`: thêm · đổi tên · ẩn danh mục (ẩn được khi còn món, món về nhóm *chưa xếp*), xếp và chuyển món (chuyển đòi lý do, có vết), đọc mọi món gom theo danh mục ở `GET /menu-categories`; chỉ chủ quán, cả đọc; `GET /menu` không đổi; hợp đồng 0.29.0; **ADR-115**. Codex thi công, Claude viết test trước và duyệt; be-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-05)
 - [x] P3A-04 **Cửa đào tạo** — package `daotao`: hướng dẫn chữ · ảnh · video gắn một việc giao (tệp ở kho `BANHCUON_FILE_DIR`, database cất khoá, loại nhận bằng nội dung, không tệp mồ côi), sửa chữ · ẩn có lý do, phát tệp; ghi nhận *đạt · chưa* kèm nhận xét về một người, sửa · ẩn, đọc theo lúc ghi; lớp `quay_hoac_chu_quan` cả đọc; hợp đồng 0.28.0; **ADR-114**. Codex thi công, Claude viết test trước và duyệt; be-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-04)

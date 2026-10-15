@@ -13,9 +13,24 @@ SELECT o.id, coalesce(o.table_session_id, 0), coalesce(o.dining_table_id, 0), o.
   'options',(SELECT coalesce(jsonb_agg(jsonb_build_object(
    'menu_option_id',p.menu_option_id,'option_group_name',p.option_group_name,
    'option_name',p.option_name,'surcharge_vnd',p.surcharge_vnd) ORDER BY p.menu_option_id),'[]'::jsonb)
-   FROM order_line_option p WHERE p.order_line_id = l.id)
- ) ORDER BY l.id),'[]'::jsonb) FROM order_line l WHERE l.sales_order_id = o.id)::jsonb,
- (SELECT coalesce(jsonb_agg(l.is_takeaway ORDER BY l.id),'[]'::jsonb) FROM order_line l WHERE l.sales_order_id = o.id)::jsonb,
+   FROM order_line_option p WHERE p.order_line_id = l.id),
+  -- Dòng combo (ADR-117): suất con lồng dưới nó theo thứ tự ghi; dòng món không có portions.
+  'menu_combo_id',l.menu_combo_id,
+  'portions',CASE WHEN l.menu_combo_id IS NOT NULL THEN (SELECT coalesce(jsonb_agg(jsonb_build_object(
+  'menu_item_id',k.menu_item_id,'item_name',k.item_name,'quantity',k.quantity,
+  'unit_price_vnd',k.unit_price_vnd,'line_total_vnd',k.line_total_vnd,
+  'components',(SELECT coalesce(jsonb_agg(jsonb_build_object(
+   'menu_component_id',c.menu_component_id,'component_name',c.component_name,'quantity',c.quantity,
+   'takes_filling',c.takes_filling,'base_price_vnd',c.base_price_vnd) ORDER BY c.position),'[]'::jsonb)
+   FROM order_line_component c WHERE c.order_line_id = k.id),
+  'options',(SELECT coalesce(jsonb_agg(jsonb_build_object(
+   'menu_option_id',p.menu_option_id,'option_group_name',p.option_group_name,
+   'option_name',p.option_name,'surcharge_vnd',p.surcharge_vnd) ORDER BY p.menu_option_id),'[]'::jsonb)
+   FROM order_line_option p WHERE p.order_line_id = k.id)
+  ) ORDER BY k.id),'[]'::jsonb) FROM order_line k WHERE k.parent_order_line_id = l.id) END
+ ) ORDER BY l.id),'[]'::jsonb) FROM order_line l WHERE l.sales_order_id = o.id AND l.parent_order_line_id IS NULL)::jsonb,
+ (SELECT coalesce(jsonb_agg(l.is_takeaway ORDER BY l.id),'[]'::jsonb) FROM order_line l
+  WHERE l.sales_order_id = o.id AND l.parent_order_line_id IS NULL)::jsonb,
  coalesce(o.handover_code,''), coalesce(o.customer_phone,''), o.delivery_address, coalesce(to_jsonb(o.customer_needed_at), 'null'::jsonb)::jsonb, o.customer_name, o.contact_note
 FROM sales_order o LEFT JOIN qr_code q ON q.id = o.qr_code_id
 WHERE o.submission_code = $1;

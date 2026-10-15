@@ -15,20 +15,23 @@ import (
 type Code string
 
 const (
-	CodeMenuComboPriceInSalesHours   Code = "menu_combo_price_in_sales_hours"
-	CodeMenuComboHidden              Code = "menu_combo_hidden"
-	CodeMenuComboNotFound            Code = "menu_combo_not_found"
-	CodeMenuCategoryNotFound         Code = "menu_category_not_found"
-	CodeMenuCategoryHidden           Code = "menu_category_hidden"
-	CodeMenuCategoryNameTaken        Code = "menu_category_name_taken"
-	CodeMenuItemAlreadyInCategory    Code = "menu_item_already_in_category"
-	CodeAssignedTaskGuideNotFound    Code = "assigned_task_guide_not_found"
-	CodeAssignedTaskGuideHidden      Code = "assigned_task_guide_hidden"
-	CodeAssignedTaskGuideNotText     Code = "assigned_task_guide_not_text"
-	CodeAssignedTaskGuideFileMissing Code = "assigned_task_guide_file_missing"
-	CodeFileTooLarge                 Code = "file_too_large"
-	CodeTrainingRecordNotFound       Code = "training_record_not_found"
-	CodeTrainingRecordHidden         Code = "training_record_hidden"
+	CodeMenuComboPriceInSalesHours     Code = "menu_combo_price_in_sales_hours"
+	CodeMenuComboHidden                Code = "menu_combo_hidden"
+	CodeMenuComboNotFound              Code = "menu_combo_not_found"
+	CodeMenuComboItemNotFound          Code = "menu_combo_item_not_found"
+	CodeComboPortionsMismatch          Code = "combo_portions_mismatch"
+	CodeMenuComboSurchargeInSalesHours Code = "menu_combo_surcharge_in_sales_hours"
+	CodeMenuCategoryNotFound           Code = "menu_category_not_found"
+	CodeMenuCategoryHidden             Code = "menu_category_hidden"
+	CodeMenuCategoryNameTaken          Code = "menu_category_name_taken"
+	CodeMenuItemAlreadyInCategory      Code = "menu_item_already_in_category"
+	CodeAssignedTaskGuideNotFound      Code = "assigned_task_guide_not_found"
+	CodeAssignedTaskGuideHidden        Code = "assigned_task_guide_hidden"
+	CodeAssignedTaskGuideNotText       Code = "assigned_task_guide_not_text"
+	CodeAssignedTaskGuideFileMissing   Code = "assigned_task_guide_file_missing"
+	CodeFileTooLarge                   Code = "file_too_large"
+	CodeTrainingRecordNotFound         Code = "training_record_not_found"
+	CodeTrainingRecordHidden           Code = "training_record_hidden"
 
 	CodeAssignedTaskNotFound    Code = "assigned_task_not_found"
 	CodePersonNotFound          Code = "person_not_found"
@@ -138,20 +141,23 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
-	CodeMenuComboPriceInSalesHours:   409,
-	CodeMenuComboHidden:              409,
-	CodeMenuComboNotFound:            404,
-	CodeMenuCategoryNotFound:         404,
-	CodeMenuCategoryHidden:           409,
-	CodeMenuCategoryNameTaken:        409,
-	CodeMenuItemAlreadyInCategory:    409,
-	CodeAssignedTaskGuideNotFound:    404,
-	CodeAssignedTaskGuideHidden:      409,
-	CodeAssignedTaskGuideNotText:     409,
-	CodeAssignedTaskGuideFileMissing: 404,
-	CodeFileTooLarge:                 413,
-	CodeTrainingRecordNotFound:       404,
-	CodeTrainingRecordHidden:         409,
+	CodeMenuComboPriceInSalesHours:     409,
+	CodeMenuComboHidden:                409,
+	CodeMenuComboNotFound:              404,
+	CodeMenuComboItemNotFound:          404,
+	CodeComboPortionsMismatch:          422,
+	CodeMenuComboSurchargeInSalesHours: 409,
+	CodeMenuCategoryNotFound:           404,
+	CodeMenuCategoryHidden:             409,
+	CodeMenuCategoryNameTaken:          409,
+	CodeMenuItemAlreadyInCategory:      409,
+	CodeAssignedTaskGuideNotFound:      404,
+	CodeAssignedTaskGuideHidden:        409,
+	CodeAssignedTaskGuideNotText:       409,
+	CodeAssignedTaskGuideFileMissing:   404,
+	CodeFileTooLarge:                   413,
+	CodeTrainingRecordNotFound:         404,
+	CodeTrainingRecordHidden:           409,
 
 	CodeAssignedTaskNotFound:          404,
 	CodePersonNotFound:                404,

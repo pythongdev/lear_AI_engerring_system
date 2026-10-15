@@ -187,30 +187,51 @@ func (h handler) nhacHen(c *gin.Context) {
 	apierr.JSON(c.Writer, http.StatusOK, map[string]any{"preorders": preorders})
 }
 
-// Kiểm hình các dòng trước quyền; tra món và tổ hợp vẫn thuộc gia.Tinh trong giao dịch.
+// Kiểm hình các dòng trước quyền; tra món, combo và tổ hợp vẫn thuộc gia.Tinh trong giao dịch. Dòng mang
+// menu_combo_id là dòng combo: số combo và các suất, mỗi suất có hình như một dòng món (ADR-117 điểm 4).
 func kiemHinhDong(raw json.RawMessage) error {
-	var lines []struct {
+	type dongMon struct {
 		MenuItemID *int64    `json:"menu_item_id"`
 		Quantity   *int32    `json:"quantity"`
 		OptionIDs  *[]*int64 `json:"option_ids"`
 	}
+	var lines []struct {
+		dongMon
+		MenuComboID *int64     `json:"menu_combo_id"`
+		Portions    *[]dongMon `json:"portions"`
+	}
 	if err := json.Unmarshal(raw, &lines); err != nil || len(lines) == 0 {
 		return apierr.Error{Code: apierr.CodeInvalidRequest, Field: "lines"}
 	}
+	hinhMon := func(d dongMon, coMon bool) string {
+		switch {
+		case coMon && d.MenuItemID == nil:
+			return "menu_item_id"
+		case d.Quantity == nil || *d.Quantity <= 0:
+			return "quantity"
+		case !coMon:
+			return ""
+		case d.OptionIDs == nil:
+			return "option_ids"
+		}
+		for _, id := range *d.OptionIDs {
+			if id == nil {
+				return "option_ids"
+			}
+		}
+		return ""
+	}
 	for i, line := range lines {
 		field := ""
-		switch {
-		case line.MenuItemID == nil:
-			field = "menu_item_id"
-		case line.Quantity == nil || *line.Quantity <= 0:
-			field = "quantity"
-		case line.OptionIDs == nil:
-			field = "option_ids"
-		default:
-			for _, id := range *line.OptionIDs {
-				if id == nil {
-					field = "option_ids"
-					break
+		if line.MenuComboID == nil {
+			field = hinhMon(line.dongMon, true)
+		} else if field = hinhMon(line.dongMon, false); field == "" {
+			if line.Portions == nil || len(*line.Portions) == 0 {
+				field = "portions"
+			}
+			for j := 0; field == "" && j < len(*line.Portions); j++ {
+				if f := hinhMon((*line.Portions)[j], true); f != "" {
+					field = fmt.Sprintf("portions[%d].%s", j, f)
 				}
 			}
 		}

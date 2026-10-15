@@ -99,18 +99,64 @@ func (r repository) themDon(ctx context.Context, channel, status string, session
 		DeliveryAddress: chuPG(lh.DeliveryAddress), CustomerNeededAt: can, CustomerName: chuPG(lh.CustomerName), ContactNote: chuPG(lh.ContactNote)})
 }
 
-// themDong ghi một dòng đã tính giá; takeaway nil là đơn ngoài bàn (cột mang về để mặc định).
-func (r repository) themDong(ctx context.Context, donID int64, d gia.Dong, takeaway *bool) (int64, error) {
-	return r.themDongTaiMoc(ctx, donID, d, takeaway, pgtype.Timestamptz{})
-}
 func (r repository) themDongTaiMoc(ctx context.Context, donID int64, d gia.Dong, takeaway *bool, at pgtype.Timestamptz) (int64, error) {
-	n := int32(len(d.Components))
+	// Dòng món luôn có món và số thành phần; hai cột chỉ rỗng ở dòng combo (ADR-117).
+	mon := pgtype.Int8{Int64: d.MenuItemID, Valid: true}
+	n := pgtype.Int4{Int32: int32(len(d.Components)), Valid: true}
 	if takeaway == nil {
 		return r.q.ThemDongMangDi(ctx, sqlcgen.ThemDongMangDiParams{SalesOrderID: donID, Quantity: d.Quantity,
-			MenuItemID: d.MenuItemID, ItemName: d.ItemName, UnitPriceVnd: d.UnitPriceVnd, ComponentCount: n, Column7: at})
+			MenuItemID: mon, ItemName: d.ItemName, UnitPriceVnd: d.UnitPriceVnd, ComponentCount: n, Column7: at})
 	}
-	return r.q.ThemDong(ctx, sqlcgen.ThemDongParams{SalesOrderID: donID, Quantity: d.Quantity, MenuItemID: d.MenuItemID,
+	return r.q.ThemDong(ctx, sqlcgen.ThemDongParams{SalesOrderID: donID, Quantity: d.Quantity, MenuItemID: mon,
 		ItemName: d.ItemName, UnitPriceVnd: d.UnitPriceVnd, ComponentCount: n, IsTakeaway: *takeaway, Column8: at})
+}
+
+// ghiDong ghi một dòng đã tính giá cùng ảnh chụp của nó — dòng món, hoặc dòng combo rồi các suất con của nó trong cùng
+// giao dịch (ADR-117 điểm 2). takeaway nil là đơn ngoài bàn; mốc rỗng là now() của giao dịch.
+func (r repository) ghiDong(ctx context.Context, donID int64, d gia.Dong, takeaway *bool, at pgtype.Timestamptz) error {
+	if d.MenuComboID == 0 {
+		id, err := r.themDongTaiMoc(ctx, donID, d, takeaway, at)
+		if err != nil {
+			return err
+		}
+		return r.ghiAnh(ctx, id, d)
+	}
+	mangVe := takeaway != nil && *takeaway
+	combo, err := r.q.ThemDongCombo(ctx, sqlcgen.ThemDongComboParams{SalesOrderID: donID, Quantity: d.Quantity,
+		MenuComboID: pgtype.Int8{Int64: d.MenuComboID, Valid: true}, ItemName: d.ItemName, UnitPriceVnd: d.UnitPriceVnd,
+		IsTakeaway: mangVe, Column7: at})
+	if err != nil {
+		return err
+	}
+	for _, s := range d.Portions {
+		id, err := r.q.ThemDongCon(ctx, sqlcgen.ThemDongConParams{SalesOrderID: donID, Quantity: s.Quantity,
+			MenuItemID: pgtype.Int8{Int64: s.MenuItemID, Valid: true}, ItemName: s.ItemName, UnitPriceVnd: s.UnitPriceVnd,
+			ComponentCount:    pgtype.Int4{Int32: int32(len(s.Components)), Valid: true},
+			ParentOrderLineID: pgtype.Int8{Int64: combo, Valid: true}, IsTakeaway: mangVe, Column9: at})
+		if err != nil {
+			return err
+		}
+		if err := r.ghiAnh(ctx, id, s); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// ghiAnh chép ảnh chụp thành phần và lựa chọn của một dòng món.
+func (r repository) ghiAnh(ctx context.Context, id int64, d gia.Dong) error {
+	n := int32(len(d.Components))
+	for i, c := range d.Components {
+		if err := r.themThanhPhan(ctx, id, int32(i+1), n, c); err != nil {
+			return err
+		}
+	}
+	for _, o := range d.Options {
+		if err := r.themLuaChon(ctx, id, o); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (r repository) themThanhPhan(ctx context.Context, dongID int64, viTri, n int32, c gia.ThanhPhan) error {
@@ -201,8 +247,4 @@ func (r repository) themPhienGiay(ctx context.Context, tableID int64, sold time.
 	}
 	err = r.q.ThemBan(ctx, sqlcgen.ThemBanParams{TableSessionID: id, DiningTableID: tableID, SessionClosed: true, CleanedAt: mocPG(sold)})
 	return id, err
-}
-
-func (r repository) themDongGiay(ctx context.Context, id int64, d gia.Dong, takeaway *bool, sold time.Time) (int64, error) {
-	return r.themDongTaiMoc(ctx, id, d, takeaway, mocPG(sold))
 }

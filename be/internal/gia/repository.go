@@ -2,6 +2,7 @@ package gia
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"banhcuon/be/internal/gia/internal/sqlcgen"
@@ -39,4 +40,47 @@ func (r repository) docMonDangBan(ctx context.Context) ([]monMenu, error) {
 		items = append(items, monMenu{MenuItemID: row.ID, ItemName: row.Name, OptionGroups: []nhomMenu{}, Prices: []giaMenu{}})
 	}
 	return items, nil
+}
+
+type comboDaDoc struct {
+	Name     string
+	PriceVnd int64
+	An       bool
+	Mon      []struct {
+		MenuItemID int64 `json:"menu_item_id"`
+		Quantity   int64 `json:"quantity"`
+	}
+	Muc []struct {
+		MenuItemID   int64 `json:"menu_item_id"`
+		MenuOptionID int64 `json:"menu_option_id"`
+		SurchargeVnd int64 `json:"surcharge_vnd"`
+	}
+}
+
+// docCombo đọc combo, món và mức tại cùng mốc với menu (ADR-117 điểm 4).
+func (r repository) docCombo(ctx context.Context, id int64, moc *time.Time) (comboDaDoc, error) {
+	var at pgtype.Timestamptz
+	if moc != nil {
+		at = pgtype.Timestamptz{Time: *moc, Valid: true}
+	}
+	row, err := r.q.DocCombo(ctx, sqlcgen.DocComboParams{Column1: id, Column2: at})
+	if err != nil {
+		return comboDaDoc{}, err
+	}
+	c := comboDaDoc{Name: row.Name, PriceVnd: row.PriceVnd, An: row.An}
+	if err := json.Unmarshal(row.Mon, &c.Mon); err != nil {
+		return comboDaDoc{}, err
+	}
+	err = json.Unmarshal(row.Muc, &c.Muc)
+	return c, err
+}
+
+func (r repository) docComboDangBan(ctx context.Context) ([]comboMenu, error) {
+	raw, err := r.q.DocComboDangBan(ctx)
+	if err != nil {
+		return nil, err
+	}
+	out := []comboMenu{}
+	err = json.Unmarshal(raw, &out)
+	return out, err
 }

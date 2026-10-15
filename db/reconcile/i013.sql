@@ -8,9 +8,12 @@
 SELECT l.id AS dong, l.item_name AS mon, l.priced_at AS moc_khoa, l.unit_price_vnd AS gia_da_khoa,
        pg_temp.gia_dong_tai(l.id) AS gia_tai_moc
 FROM order_line l
-WHERE l.unit_price_vnd IS DISTINCT FROM pg_temp.gia_dong_tai(l.id)
+-- Dòng combo và dòng suất con theo giá combo và mức combo: I-034/5 · I-034/7 (ADR-117).
+WHERE l.menu_combo_id IS NULL AND l.parent_order_line_id IS NULL
+  AND l.unit_price_vnd IS DISTINCT FROM pg_temp.gia_dong_tai(l.id)
 
 -- @@ I-013/2 — dòng đơn giá 0đ cho một suất không có giá 0đ
 SELECT l.id AS dong, l.item_name AS mon, pg_temp.gia_dong_tai(l.id) AS gia_tai_moc
 FROM order_line l
-WHERE l.unit_price_vnd = 0 AND pg_temp.gia_dong_tai(l.id) > 0
+WHERE l.menu_combo_id IS NULL AND l.parent_order_line_id IS NULL
+  AND l.unit_price_vnd = 0 AND pg_temp.gia_dong_tai(l.id) > 0

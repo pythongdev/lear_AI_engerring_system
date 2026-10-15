@@ -48,6 +48,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/menu-combos/{menu_combo_id}/surcharges": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Đặt mức phụ thu theo món của combo, ngoài giờ bán, có lý do.
+         * @description Lớp chu_quan (I-034, ADR-117 điểm 6). Kiểm hình trước quyền và database theo thứ tự — path id sai hoặc không dương trả 400 field=menu_combo_id; reason cắt khoảng trắng, thiếu hoặc rỗng trả 400 field=reason; surcharges thiếu hoặc rỗng trả 400 field=surcharges; rồi từng phần tử — menu_item_id ≤ 0 trả field=surcharges[i].menu_item_id, menu_option_id ≤ 0 trả field=surcharges[i].menu_option_id, surcharge_vnd thiếu, null, không nguyên hoặc âm trả field=surcharges[i].surcharge_vnd, cặp món · lựa chọn đã có ở phần tử trước trả field=surcharges[i].menu_option_id; sai kiểu JSON như chuỗi trả invalid_request không cần field. Trong giao dịch, khoá combo; không có trả 404 menu_combo_not_found; đã ẩn trả 409 menu_combo_hidden; trong giờ bán (hai đầu tính là trong giờ) trả 409 menu_combo_surcharge_in_sales_hours. Rồi từng phần tử theo thứ tự — món không thuộc combo trả 404 menu_combo_item_not_found field=surcharges[i].menu_item_id; lựa chọn không có trả 404 menu_option_not_found field=surcharges[i].menu_option_id; lựa chọn không thuộc nhóm nào mà món mang trả 422 option_combination_invalid field=surcharges[i].menu_option_id. Cặp chưa có thì thêm, đã có thì đổi có vết và lý do, mức giữ nguyên thì không ghi. Cặp không nhắc tới đứng nguyên; không có đường xoá — bỏ mức là đặt 0. Cặp chưa đặt mức thì hàm giá cộng 0đ (U-096).
+         */
+        put: operations["setMenuComboSurcharges"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/menu-combos/{menu_combo_id}/hiding": {
         parameters: {
             query?: never;
@@ -980,7 +1000,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Món đang bán và giá mọi tổ hợp hợp lệ */
+        /** Món đang bán và giá mọi tổ hợp hợp lệ; combo đang bán kèm mức theo món */
         get: operations["getMenu"];
         put?: never;
         post?: never;
@@ -1672,6 +1692,28 @@ export interface components {
             quantity: number;
             /** @description discontinued_at IS NOT NULL; món ngừng bán vẫn có mặt khi đọc combo. */
             discontinued: boolean;
+            /** @description Mức chủ quán đặt cho từng lựa chọn của món này trong combo, theo menu_option_id; cặp chưa đặt không có mặt (hàm giá cộng 0đ). Rỗng trả []. */
+            surcharges: components["schemas"]["MenuComboSurcharge"][];
+        };
+        MenuComboSurcharge: {
+            /** Format: int64 */
+            menu_option_id: number;
+            option_group_name: string;
+            option_name: string;
+            /** Format: int64 */
+            surcharge_vnd: number;
+        };
+        SetMenuComboSurcharges: {
+            reason: string;
+            surcharges: components["schemas"]["SetMenuComboSurcharge"][];
+        };
+        SetMenuComboSurcharge: {
+            /** Format: int64 */
+            menu_item_id: number;
+            /** Format: int64 */
+            menu_option_id: number;
+            /** Format: int64 */
+            surcharge_vnd: number;
         };
         MenuCombo: {
             /** Format: int64 */
@@ -2632,7 +2674,7 @@ export interface components {
          * @description Mã lỗi công khai. FE quyết hiện gì theo mã, không theo status, không theo chữ. Mã của một luật do lát dựng cửa của luật ấy thêm (01-hop-dong-api.md §3).
          * @enum {string}
          */
-        ErrorCode: "menu_combo_not_found" | "menu_combo_hidden" | "menu_combo_price_in_sales_hours" | "menu_category_not_found" | "menu_category_hidden" | "menu_category_name_taken" | "menu_item_already_in_category" | "expense_category_not_found" | "expense_not_found" | "supply_item_unit_already_set" | "supply_day_entry_already_recorded" | "supply_item_name_taken" | "supply_day_entry_not_found" | "assigned_task_guide_not_found" | "assigned_task_guide_hidden" | "assigned_task_guide_not_text" | "assigned_task_guide_file_missing" | "file_too_large" | "training_record_not_found" | "training_record_hidden" | "assigned_task_not_found" | "person_not_found" | "assigned_task_hidden" | "assigned_task_already_done" | "assigned_task_not_done" | "supply_item_not_found" | "expense_category_name_taken" | "username_taken" | "email_taken" | "password_too_short" | "invalid_credentials" | "login_temporarily_blocked" | "reset_token_invalid" | "account_not_pending" | "account_not_active" | "account_not_locked" | "cross_origin_write" | "order_intake_already_paused" | "order_intake_not_paused" | "shop_already_blind" | "shop_not_blind" | "intake_state_changed" | "internal_error" | "invalid_request" | "unauthenticated" | "not_on_counter_duty" | "counter_duty_changed" | "owner_only" | "qr_code_not_current" | "dining_table_not_found" | "qr_code_issue_conflict" | "menu_item_not_found" | "menu_option_not_found" | "menu_component_not_found" | "menu_item_component_not_found" | "menu_item_discontinued" | "option_combination_invalid" | "submission_code_conflict" | "dining_table_needs_cleaning" | "dining_table_not_needing_cleaning" | "sales_order_not_found" | "table_session_not_found" | "order_transition_not_allowed" | "table_session_transition_not_allowed" | "table_session_has_open_orders" | "payment_parts_mismatch" | "debtor_name_mismatch" | "order_intake_paused" | "outside_selling_hours" | "shop_not_seeing_orders" | "delivery_served_mark_undecided" | "debt_note_required" | "order_handover_mismatch" | "order_jobs_not_served" | "prepayment_balance_exceeded" | "bill_not_found" | "prepayment_not_found" | "bill_has_no_debt" | "debt_already_settled" | "debt_overpaid" | "order_not_prepayable" | "prepayment_already_received" | "opening_float_already_declared" | "cash_count_already_recorded" | "sale_day_reconciled" | "cash_day_incomplete" | "sale_day_not_reconciled" | "sale_day_already_reconciled" | "paper_ledger_missing" | "paper_position_already_entered" | "paper_ledger_already_declared" | "paper_entries_pending" | "gap_explanation_required" | "station_job_not_found" | "station_job_transition_not_allowed" | "production_batch_not_found" | "production_batch_already_rolled_back" | "production_batch_has_served_units" | "station_job_has_wrong_make_note" | "transfer_source_not_available" | "transfer_target_not_waiting" | "wrong_make_note_not_allowed" | "wrong_make_note_not_found" | "wrong_make_note_already_cancelled" | "served_quantity_exceeds_made";
+        ErrorCode: "menu_combo_not_found" | "menu_combo_hidden" | "menu_combo_price_in_sales_hours" | "menu_combo_item_not_found" | "menu_combo_surcharge_in_sales_hours" | "combo_portions_mismatch" | "menu_category_not_found" | "menu_category_hidden" | "menu_category_name_taken" | "menu_item_already_in_category" | "expense_category_not_found" | "expense_not_found" | "supply_item_unit_already_set" | "supply_day_entry_already_recorded" | "supply_item_name_taken" | "supply_day_entry_not_found" | "assigned_task_guide_not_found" | "assigned_task_guide_hidden" | "assigned_task_guide_not_text" | "assigned_task_guide_file_missing" | "file_too_large" | "training_record_not_found" | "training_record_hidden" | "assigned_task_not_found" | "person_not_found" | "assigned_task_hidden" | "assigned_task_already_done" | "assigned_task_not_done" | "supply_item_not_found" | "expense_category_name_taken" | "username_taken" | "email_taken" | "password_too_short" | "invalid_credentials" | "login_temporarily_blocked" | "reset_token_invalid" | "account_not_pending" | "account_not_active" | "account_not_locked" | "cross_origin_write" | "order_intake_already_paused" | "order_intake_not_paused" | "shop_already_blind" | "shop_not_blind" | "intake_state_changed" | "internal_error" | "invalid_request" | "unauthenticated" | "not_on_counter_duty" | "counter_duty_changed" | "owner_only" | "qr_code_not_current" | "dining_table_not_found" | "qr_code_issue_conflict" | "menu_item_not_found" | "menu_option_not_found" | "menu_component_not_found" | "menu_item_component_not_found" | "menu_item_discontinued" | "option_combination_invalid" | "submission_code_conflict" | "dining_table_needs_cleaning" | "dining_table_not_needing_cleaning" | "sales_order_not_found" | "table_session_not_found" | "order_transition_not_allowed" | "table_session_transition_not_allowed" | "table_session_has_open_orders" | "payment_parts_mismatch" | "debtor_name_mismatch" | "order_intake_paused" | "outside_selling_hours" | "shop_not_seeing_orders" | "delivery_served_mark_undecided" | "debt_note_required" | "order_handover_mismatch" | "order_jobs_not_served" | "prepayment_balance_exceeded" | "bill_not_found" | "prepayment_not_found" | "bill_has_no_debt" | "debt_already_settled" | "debt_overpaid" | "order_not_prepayable" | "prepayment_already_received" | "opening_float_already_declared" | "cash_count_already_recorded" | "sale_day_reconciled" | "cash_day_incomplete" | "sale_day_not_reconciled" | "sale_day_already_reconciled" | "paper_ledger_missing" | "paper_position_already_entered" | "paper_ledger_already_declared" | "paper_entries_pending" | "gap_explanation_required" | "station_job_not_found" | "station_job_transition_not_allowed" | "production_batch_not_found" | "production_batch_already_rolled_back" | "production_batch_has_served_units" | "station_job_has_wrong_make_note" | "transfer_source_not_available" | "transfer_target_not_waiting" | "wrong_make_note_not_allowed" | "wrong_make_note_not_found" | "wrong_make_note_already_cancelled" | "served_quantity_exceeds_made";
         /** @description Hình lỗi chung của mọi lời từ chối (01-hop-dong-api.md §3). */
         Error: {
             code: components["schemas"]["ErrorCode"];
@@ -2670,8 +2712,21 @@ export interface components {
             dining_table_id: number;
             issued_at: components["schemas"]["Instant"];
         };
-        /** @description Không nhận giá; trường lạ bị bỏ qua. Nhóm có mặt phải được chọn đúng một lựa chọn. */
+        /** @description Không nhận giá; trường lạ bị bỏ qua. Một dòng là MÓN (menu_item_id, option_ids) hoặc COMBO (menu_combo_id, portions — ADR-117 điểm 4). Dòng món: nhóm có mặt phải được chọn đúng một lựa chọn; portions phải vắng. Dòng combo: quantity là số combo; không menu_item_id (field=menu_item_id), không option_ids (field=option_ids), portions không rỗng (field=portions), mỗi phần tử quantity ≥ 1 (field=portions[j].quantity); rồi combo không có tại mốc ⇒ 404 menu_combo_not_found, đã ẩn tại mốc ⇒ 409 menu_combo_hidden (field=menu_combo_id); suất mang món không thuộc combo ⇒ 422 combo_portions_mismatch field=portions[j].menu_item_id; tổng suất của một món khác số phần × số combo ⇒ 422 combo_portions_mismatch field=portions; rồi mỗi suất qua bước kiểm của món ấy với field=portions[j].<trường>. */
         PriceLineRequest: {
+            /** Format: int64 */
+            menu_item_id?: number;
+            /** Format: int64 */
+            menu_combo_id?: number;
+            /** Format: int32 */
+            quantity: number;
+            option_ids?: number[];
+            portions?: components["schemas"]["PriceLinePortion"][];
+        } & {
+            [key: string]: unknown;
+        };
+        /** @description Một nhóm suất cùng món, cùng tổ hợp trong một combo — mỗi suất chọn nhân riêng (lượt tám). */
+        PriceLinePortion: {
             /** Format: int64 */
             menu_item_id: number;
             /** Format: int32 */
@@ -2702,9 +2757,13 @@ export interface components {
             option_name: string;
             surcharge_vnd: components["schemas"]["MoneyVnd"];
         };
+        /** @description Dòng món mang menu_item_id. Dòng combo mang menu_combo_id, item_name là tên combo, unit_price_vnd là giá combo tại mốc, components và options rỗng, portions là các suất — mỗi suất là một PriceLine món có unit_price_vnd = tổng mức combo của lựa chọn (cặp chưa đặt mức là 0đ) và options[].surcharge_vnd là mức đã áp; line_total_vnd của dòng combo = giá combo × số combo + tổng line_total_vnd của các suất. */
         PriceLine: {
             /** Format: int64 */
-            menu_item_id: number;
+            menu_item_id?: number;
+            /** Format: int64 */
+            menu_combo_id?: number;
+            portions?: components["schemas"]["PriceLine"][];
             item_name: string;
             /** Format: int32 */
             quantity: number;
@@ -2745,6 +2804,31 @@ export interface components {
         };
         Menu: {
             items: components["schemas"]["MenuItem"][];
+            /** @description Combo đang bán — chưa ẩn và mọi món còn bán — theo tên rồi id. Không kê giá mọi tổ hợp như món lẻ (số tổ hợp nhân theo số suất); con số cuối lấy từ POST /price-quotes (ADR-117 điểm 5). */
+            combos: components["schemas"]["MenuSaleCombo"][];
+        };
+        MenuSaleCombo: {
+            /** Format: int64 */
+            menu_combo_id: number;
+            name: string;
+            price_vnd: components["schemas"]["MoneyVnd"];
+            /** @description Theo thứ tự lập combo. */
+            items: components["schemas"]["MenuSaleComboItem"][];
+        };
+        MenuSaleComboItem: {
+            /** Format: int64 */
+            menu_item_id: number;
+            item_name: string;
+            /** Format: int32 */
+            quantity: number;
+            option_groups: components["schemas"]["MenuOptionGroup"][];
+            /** @description Mức mỗi suất cho từng lựa chọn đã đặt, theo menu_option_id; lựa chọn vắng mặt là 0đ (U-096). */
+            surcharges: components["schemas"]["MenuSaleComboSurcharge"][];
+        };
+        MenuSaleComboSurcharge: {
+            /** Format: int64 */
+            menu_option_id: number;
+            surcharge_vnd: components["schemas"]["MoneyVnd"];
         };
         ComponentPriceChange: {
             base_price_vnd: components["schemas"]["MoneyVnd"];
@@ -2882,6 +2966,41 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["UpdateMenuComboPrice"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MenuCombo"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    setMenuComboSurcharges: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                menu_combo_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetMenuComboSurcharges"];
             };
         };
         responses: {
@@ -4890,7 +5009,7 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
-            /** @description Tổ hợp sai bị từ chối nguyên yêu cầu (option_combination_invalid); không sửa hộ. */
+            /** @description Tổ hợp sai bị từ chối nguyên yêu cầu (option_combination_invalid), hoặc suất của combo không khớp combo (combo_portions_mismatch); không sửa hộ. */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -6458,4 +6577,4 @@ export const refundRequestSource_method_codeValues: ReadonlyArray<FlattenedDeepR
 export const prepaymentReturnRequestMethod_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PrepaymentReturnRequest"]["method_code"]> = ["cash", "transfer"];
 export const paperEntryRequestKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaperEntryRequest"]["kind"]> = ["table", "takeaway"];
 export const paperEntryRequestHandover_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaperEntryRequest"]["handover_code"]> = ["shop_pickup", "door_delivery"];
-export const errorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ErrorCode"]> = ["menu_combo_not_found", "menu_combo_hidden", "menu_combo_price_in_sales_hours", "menu_category_not_found", "menu_category_hidden", "menu_category_name_taken", "menu_item_already_in_category", "expense_category_not_found", "expense_not_found", "supply_item_unit_already_set", "supply_day_entry_already_recorded", "supply_item_name_taken", "supply_day_entry_not_found", "assigned_task_guide_not_found", "assigned_task_guide_hidden", "assigned_task_guide_not_text", "assigned_task_guide_file_missing", "file_too_large", "training_record_not_found", "training_record_hidden", "assigned_task_not_found", "person_not_found", "assigned_task_hidden", "assigned_task_already_done", "assigned_task_not_done", "supply_item_not_found", "expense_category_name_taken", "username_taken", "email_taken", "password_too_short", "invalid_credentials", "login_temporarily_blocked", "reset_token_invalid", "account_not_pending", "account_not_active", "account_not_locked", "cross_origin_write", "order_intake_already_paused", "order_intake_not_paused", "shop_already_blind", "shop_not_blind", "intake_state_changed", "internal_error", "invalid_request", "unauthenticated", "not_on_counter_duty", "counter_duty_changed", "owner_only", "qr_code_not_current", "dining_table_not_found", "qr_code_issue_conflict", "menu_item_not_found", "menu_option_not_found", "menu_component_not_found", "menu_item_component_not_found", "menu_item_discontinued", "option_combination_invalid", "submission_code_conflict", "dining_table_needs_cleaning", "dining_table_not_needing_cleaning", "sales_order_not_found", "table_session_not_found", "order_transition_not_allowed", "table_session_transition_not_allowed", "table_session_has_open_orders", "payment_parts_mismatch", "debtor_name_mismatch", "order_intake_paused", "outside_selling_hours", "shop_not_seeing_orders", "delivery_served_mark_undecided", "debt_note_required", "order_handover_mismatch", "order_jobs_not_served", "prepayment_balance_exceeded", "bill_not_found", "prepayment_not_found", "bill_has_no_debt", "debt_already_settled", "debt_overpaid", "order_not_prepayable", "prepayment_already_received", "opening_float_already_declared", "cash_count_already_recorded", "sale_day_reconciled", "cash_day_incomplete", "sale_day_not_reconciled", "sale_day_already_reconciled", "paper_ledger_missing", "paper_position_already_entered", "paper_ledger_already_declared", "paper_entries_pending", "gap_explanation_required", "station_job_not_found", "station_job_transition_not_allowed", "production_batch_not_found", "production_batch_already_rolled_back", "production_batch_has_served_units", "station_job_has_wrong_make_note", "transfer_source_not_available", "transfer_target_not_waiting", "wrong_make_note_not_allowed", "wrong_make_note_not_found", "wrong_make_note_already_cancelled", "served_quantity_exceeds_made"];
+export const errorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ErrorCode"]> = ["menu_combo_not_found", "menu_combo_hidden", "menu_combo_price_in_sales_hours", "menu_combo_item_not_found", "menu_combo_surcharge_in_sales_hours", "combo_portions_mismatch", "menu_category_not_found", "menu_category_hidden", "menu_category_name_taken", "menu_item_already_in_category", "expense_category_not_found", "expense_not_found", "supply_item_unit_already_set", "supply_day_entry_already_recorded", "supply_item_name_taken", "supply_day_entry_not_found", "assigned_task_guide_not_found", "assigned_task_guide_hidden", "assigned_task_guide_not_text", "assigned_task_guide_file_missing", "file_too_large", "training_record_not_found", "training_record_hidden", "assigned_task_not_found", "person_not_found", "assigned_task_hidden", "assigned_task_already_done", "assigned_task_not_done", "supply_item_not_found", "expense_category_name_taken", "username_taken", "email_taken", "password_too_short", "invalid_credentials", "login_temporarily_blocked", "reset_token_invalid", "account_not_pending", "account_not_active", "account_not_locked", "cross_origin_write", "order_intake_already_paused", "order_intake_not_paused", "shop_already_blind", "shop_not_blind", "intake_state_changed", "internal_error", "invalid_request", "unauthenticated", "not_on_counter_duty", "counter_duty_changed", "owner_only", "qr_code_not_current", "dining_table_not_found", "qr_code_issue_conflict", "menu_item_not_found", "menu_option_not_found", "menu_component_not_found", "menu_item_component_not_found", "menu_item_discontinued", "option_combination_invalid", "submission_code_conflict", "dining_table_needs_cleaning", "dining_table_not_needing_cleaning", "sales_order_not_found", "table_session_not_found", "order_transition_not_allowed", "table_session_transition_not_allowed", "table_session_has_open_orders", "payment_parts_mismatch", "debtor_name_mismatch", "order_intake_paused", "outside_selling_hours", "shop_not_seeing_orders", "delivery_served_mark_undecided", "debt_note_required", "order_handover_mismatch", "order_jobs_not_served", "prepayment_balance_exceeded", "bill_not_found", "prepayment_not_found", "bill_has_no_debt", "debt_already_settled", "debt_overpaid", "order_not_prepayable", "prepayment_already_received", "opening_float_already_declared", "cash_count_already_recorded", "sale_day_reconciled", "cash_day_incomplete", "sale_day_not_reconciled", "sale_day_already_reconciled", "paper_ledger_missing", "paper_position_already_entered", "paper_ledger_already_declared", "paper_entries_pending", "gap_explanation_required", "station_job_not_found", "station_job_transition_not_allowed", "production_batch_not_found", "production_batch_already_rolled_back", "production_batch_has_served_units", "station_job_has_wrong_make_note", "transfer_source_not_available", "transfer_target_not_waiting", "wrong_make_note_not_allowed", "wrong_make_note_not_found", "wrong_make_note_already_cancelled", "served_quantity_exceeds_made"];
