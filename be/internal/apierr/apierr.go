@@ -15,6 +15,9 @@ import (
 type Code string
 
 const (
+	CodeMenuComboPriceInSalesHours   Code = "menu_combo_price_in_sales_hours"
+	CodeMenuComboHidden              Code = "menu_combo_hidden"
+	CodeMenuComboNotFound            Code = "menu_combo_not_found"
 	CodeMenuCategoryNotFound         Code = "menu_category_not_found"
 	CodeMenuCategoryHidden           Code = "menu_category_hidden"
 	CodeMenuCategoryNameTaken        Code = "menu_category_name_taken"
@@ -135,6 +138,9 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
+	CodeMenuComboPriceInSalesHours:   409,
+	CodeMenuComboHidden:              409,
+	CodeMenuComboNotFound:            404,
 	CodeMenuCategoryNotFound:         404,
 	CodeMenuCategoryHidden:           409,
 	CodeMenuCategoryNameTaken:        409,
@@ -251,6 +257,7 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"menu_combo_item_menu_item_fkey":             CodeMenuItemNotFound,
 	"menu_category_active_name_key":              CodeMenuCategoryNameTaken,
 	"menu_item_category_menu_category_fkey":      CodeMenuCategoryNotFound,
 	"menu_item_category_menu_item_fkey":          CodeMenuItemNotFound,

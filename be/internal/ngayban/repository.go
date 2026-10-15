@@ -34,3 +34,7 @@ func (r repository) khoaRieng(ctx context.Context, ngay string) error {
 func (r repository) daKy(ctx context.Context, ngay string) (bool, error) {
 	return r.q.DaKy(ctx, ngay)
 }
+
+func (r repository) ngoaiGio(ctx context.Context, moc time.Time) (bool, error) {
+	return r.q.NgoaiGio(ctx, pgtype.Timestamptz{Time: moc, Valid: true})
+}

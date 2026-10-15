@@ -8,6 +8,7 @@ import (
 
 	"banhcuon/be/internal/authz"
 	"banhcuon/be/internal/ban"
+	"banhcuon/be/internal/combo"
 	"banhcuon/be/internal/danhmuc"
 	"banhcuon/be/internal/daotao"
 	"banhcuon/be/internal/don"
@@ -56,6 +57,7 @@ func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtim
 	khoanchi.Routes(r, khoanchi.NewService(pool))
 	nguyenlieu.Routes(r, nguyenlieu.NewService(pool))
 	danhmuc.Routes(r, danhmuc.NewService(pool))
+	combo.Routes(r, combo.NewService(pool))
 	giaoviec.Routes(r, giaoviec.NewService(pool))
 	daotao.Routes(r, daotao.NewService(pool, os.Getenv("BANHCUON_FILE_DIR")))
 	sanxuat.Routes(r, sanxuat.NewService(pool).WithRealtime(b))

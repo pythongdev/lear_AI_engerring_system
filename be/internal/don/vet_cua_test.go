@@ -14,12 +14,15 @@ import (
 	"sort"
 	"strings"
 	"testing"
+	"time"
 
+	"banhcuon/be/internal/combo"
 	"banhcuon/be/internal/danhmuc"
 	"banhcuon/be/internal/daotao"
 	"banhcuon/be/internal/giaoviec"
 	"banhcuon/be/internal/khoanchi"
 	"banhcuon/be/internal/middleware"
+	"banhcuon/be/internal/ngayban"
 	"banhcuon/be/internal/nguoi"
 	"banhcuon/be/internal/nguyenlieu"
 	"banhcuon/be/internal/nhandon"
@@ -44,6 +47,73 @@ type dichVet struct {
 
 // Cùng một bảng cấp ca cho test HTTP và phép so tập thư mục: không có danh sách thứ hai.
 var cacCaVet = []caVet{
+	{"combo/doi_gia", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		combo.Routes(r, combo.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		var id int64
+		// Cả combo và món kèm cùng giao dịch để thoả trigger hoãn.
+		// Món đã ngừng bán không lọt vào GET /menu.
+		if err := c.coVet(func(tx pgx.Tx) error {
+			var mon int64
+			if err := tx.QueryRow(c.ctx, "INSERT INTO shop.menu_item(name, discontinued_at) VALUES ($1, now()) RETURNING id", t.Name()).Scan(&mon); err != nil {
+				return err
+			}
+			if err := tx.QueryRow(c.ctx, "INSERT INTO shop.menu_combo(name, price_vnd) VALUES ($1, 1000) RETURNING id", t.Name()).Scan(&id); err != nil {
+				return err
+			}
+			_, err := tx.Exec(c.ctx, "INSERT INTO shop.menu_combo_item(menu_combo_id, menu_item_id, quantity) VALUES ($1,$2,1)", id, mon)
+			return err
+		}); err != nil {
+			t.Fatal(err)
+		}
+		loc, err := time.LoadLocation(testhelper.ShopTZ(t))
+		if err != nil {
+			t.Fatal(err)
+		}
+		// Nửa đêm theo múi giờ quán nằm ngoài giờ bán.
+		moc := time.Date(2031, 7, 1, 0, 0, 0, 0, loc)
+		goc := ngayban.DongHo
+		ngayban.DongHo = func(context.Context, pgx.Tx) (time.Time, error) { return moc, nil }
+		t.Cleanup(func() { ngayban.DongHo = goc })
+		return dichVet{"menu_combo", id, c.chu, "price_vnd", float64(1000), float64(2000), func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/menu-combos/%d/price", id), c.chu, map[string]any{"price_vnd": 2000, "reason": "đổi giá combo kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+
+	{"combo/an", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		combo.Routes(r, combo.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		var id int64
+		// Cả combo và món kèm cùng giao dịch để thoả trigger hoãn.
+		// Món đã ngừng bán không lọt vào GET /menu.
+		if err := c.coVet(func(tx pgx.Tx) error {
+			var mon int64
+			if err := tx.QueryRow(c.ctx, "INSERT INTO shop.menu_item(name, discontinued_at) VALUES ($1, now()) RETURNING id", t.Name()).Scan(&mon); err != nil {
+				return err
+			}
+			if err := tx.QueryRow(c.ctx, "INSERT INTO shop.menu_combo(name, price_vnd) VALUES ($1, 1000) RETURNING id", t.Name()).Scan(&id); err != nil {
+				return err
+			}
+			_, err := tx.Exec(c.ctx, "INSERT INTO shop.menu_combo_item(menu_combo_id, menu_item_id, quantity) VALUES ($1,$2,1)", id, mon)
+			return err
+		}); err != nil {
+			t.Fatal(err)
+		}
+		return dichVet{"menu_combo", id, c.chu, "hidden_at", nil, "mốc", func() {
+			status, body := c.goi(t, "POST", fmt.Sprintf("/menu-combos/%d/hiding", id), c.chu, map[string]any{"reason": "ẩn combo kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+
 	{"danhmuc/doi_ten", func(t *testing.T, c canh) dichVet {
 		r := gin.New()
 		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))

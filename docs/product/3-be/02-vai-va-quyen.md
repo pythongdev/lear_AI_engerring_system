@@ -144,6 +144,9 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `daotao/ghi_nhan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |
 | `daotao/sua_ghi_nhan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |
 | `daotao/an_ghi_nhan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |
+| `combo/them` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); giá riêng: lời đóng `U-092`; không đổi giá giữa buổi: lời T-188; ADR-116; phiếu P3A-06 |
+| `combo/doi_gia` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); giá riêng: lời đóng `U-092`; không đổi giá giữa buổi: lời T-188; ADR-116; phiếu P3A-06 |
+| `combo/an` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); giá riêng: lời đóng `U-092`; không đổi giá giữa buổi: lời T-188; ADR-116; phiếu P3A-06 |
 | `danhmuc/them` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); ADR-105 điểm 1; ADR-115; phiếu P3A-05 |
 | `danhmuc/doi_ten` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); ADR-105 điểm 1; ADR-115; phiếu P3A-05 |
 | `danhmuc/an` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); ADR-105 điểm 1; ADR-115; phiếu P3A-05 |

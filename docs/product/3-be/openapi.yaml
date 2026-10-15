@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.29.0
+  version: 0.30.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -16,6 +16,8 @@ security:
   - PersonIdentity: []
 # Nhóm trong Swagger UI = gói miền dưới be/internal/ đăng ký đường gọi ấy (chỉ để đọc, không phải luật).
 tags:
+  - name: combo
+    description: Combo có giá riêng do chủ quán quản lý (I-032, ADR-116).
   - name: danhmuc
     description: Danh mục món do chủ quán quản lý (P3A-05).
   - name: daotao
@@ -51,6 +53,121 @@ tags:
   - name: ket
     description: Két và ngày bán — tiền đầu ngày, đếm két, khai sổ giấy, ký đối chiếu ngày (06-duong-tien.md).
 paths:
+  /menu-combos:
+    get:
+      operationId: listMenuCombos
+      tags: [combo]
+      summary: Đọc combo của chủ quán.
+      description: Lớp chu_quan, kể cả đọc. include_hidden vắng hoặc false thì bỏ combo ẩn, true thì kèm, giá trị khác trả 400 field=include_hidden trước quyền và database. Combo theo name (collation của cột) rồi id; items theo menu_combo_item.id, giữ thứ tự gửi khi lập. Món ngừng bán vẫn đọc được, không mang giá.
+      parameters:
+        - name: include_hidden
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuComboList'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createMenuCombo
+      tags: [combo]
+      summary: Lập combo với một giá riêng.
+      description: Lớp chu_quan. Kiểm hình trước quyền và database theo thứ tự name, price_vnd, items, rồi từng phần tử. name cắt khoảng trắng, thiếu hoặc rỗng trả 400 field=name. price_vnd thiếu, không nguyên (kể cả 1500.5), hoặc không dương trả 400 field=price_vnd; sai kiểu JSON như chuỗi trả invalid_request không cần field. items thiếu hoặc rỗng trả field=items. Từng phần tử kiểm menu_item_id dương, quantity nguyên dương, rồi món không trùng phần tử trước; lỗi mang field=items[i].menu_item_id hoặc items[i].quantity. Sau quyền, đọc từng món theo thứ tự; không có trả 404 menu_item_not_found, ngừng bán trả 409 menu_item_discontinued, cùng field=items[i].menu_item_id. Chèn combo và mọi thành phần trong cùng giao dịch; trigger hoãn kiểm lúc COMMIT. Giá riêng do chủ quán đặt, không cộng giá món. Lập không bị khoá theo giờ bán. Người lập và mốc do database cấp.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMenuCombo'
+      responses:
+        '201':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuCombo'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-combos/{menu_combo_id}/price:
+    put:
+      operationId: updateMenuComboPrice
+      tags: [combo]
+      summary: Đổi giá combo ngoài giờ bán, có lý do.
+      description: Lớp chu_quan. Kiểm hình trước quyền và database; path id sai hoặc không dương trả 400 field=menu_combo_id. price_vnd thiếu, không nguyên (kể cả số lẻ), hoặc không dương trả 400 field=price_vnd; sai kiểu JSON như chuỗi trả invalid_request không cần field. Sau đó reason cắt khoảng trắng, thiếu hoặc rỗng trả 400 field=reason. Trong giao dịch, khoá combo; không có trả 404 menu_combo_not_found; đã ẩn trả 409 menu_combo_hidden. Lấy ngayban.DongHo rồi xét giờ bán bằng múi giờ phiên kết nối, hai đầu đều trong giờ; trong giờ trả 409 menu_combo_price_in_sales_hours. Đổi giá ngoài giờ có vết và lý do.
+      parameters:
+        - name: menu_combo_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMenuComboPrice'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuCombo'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-combos/{menu_combo_id}/hiding:
+    post:
+      operationId: hideMenuCombo
+      tags: [combo]
+      summary: Ẩn combo có lý do.
+      description: Lớp chu_quan. Kiểm hình trước quyền và database; path id sai hoặc không dương trả 400 field=menu_combo_id. reason cắt khoảng trắng, thiếu hoặc rỗng trả 400 field=reason. Khoá combo; không có trả 404 menu_combo_not_found, đã ẩn trả 409 menu_combo_hidden. Ghi hidden_at=now(), hidden_by_person_id=actor_person_id(), có vết và lý do. Không khoá theo giờ bán. Thành phần ở lại. Không có cửa đổi tên, thành phần hoặc số phần.
+      parameters:
+        - name: menu_combo_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HideMenuCombo'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuCombo'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /menu-categories:
     get:
       operationId: listMenuCategories
@@ -2956,6 +3073,111 @@ components:
       name: banhcuon_phien
       description: Phiên đăng nhập theo ADR-109; HttpOnly, Secure, SameSite=Strict, hạn 7 ngày.
   schemas:
+    MenuComboItem:
+      type: object
+      required: [menu_item_id, item_name, quantity, discontinued]
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
+        item_name:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+        discontinued:
+          type: boolean
+          description: discontinued_at IS NOT NULL; món ngừng bán vẫn có mặt khi đọc combo.
+    MenuCombo:
+      type: object
+      required: [menu_combo_id, name, price_vnd, person_id, person_name, created_at, hidden_at, hidden_by_person_id, hidden_by_name, items]
+      properties:
+        menu_combo_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        price_vnd:
+          type: integer
+          format: int64
+          minimum: 1
+        person_id:
+          type: integer
+          format: int64
+        person_name:
+          type: string
+        created_at:
+          $ref: '#/components/schemas/Instant'
+        hidden_at:
+          oneOf:
+            - $ref: '#/components/schemas/Instant'
+            - type: 'null'
+        hidden_by_person_id:
+          type: [integer, 'null']
+          format: int64
+        hidden_by_name:
+          type: [string, 'null']
+        items:
+          type: array
+          description: Theo menu_combo_item.id, tức thứ tự gửi khi lập; không có trường giá trên từng món.
+          items:
+            $ref: '#/components/schemas/MenuComboItem'
+    MenuComboList:
+      type: object
+      required: [combos]
+      properties:
+        combos:
+          type: array
+          description: Theo tên combo (collation của cột), rồi id; rỗng trả [].
+          items:
+            $ref: '#/components/schemas/MenuCombo'
+    CreateMenuCombo:
+      type: object
+      required: [name, price_vnd, items]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        price_vnd:
+          type: integer
+          format: int64
+          minimum: 1
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/CreateMenuComboItem'
+    CreateMenuComboItem:
+      type: object
+      required: [menu_item_id, quantity]
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
+          minimum: 1
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+    UpdateMenuComboPrice:
+      type: object
+      required: [price_vnd, reason]
+      properties:
+        price_vnd:
+          type: integer
+          format: int64
+          minimum: 1
+        reason:
+          type: string
+          minLength: 1
+    HideMenuCombo:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+          minLength: 1
     MenuCategoryItem:
       type: object
       required: [menu_item_id, item_name, discontinued]
@@ -4874,6 +5096,9 @@ components:
         Mã lỗi công khai. FE quyết hiện gì theo mã, không theo status, không theo chữ.
         Mã của một luật do lát dựng cửa của luật ấy thêm (01-hop-dong-api.md §3).
       enum:
+        - menu_combo_not_found
+        - menu_combo_hidden
+        - menu_combo_price_in_sales_hours
         - menu_category_not_found
         - menu_category_hidden
         - menu_category_name_taken
@@ -4977,6 +5202,9 @@ components:
         - wrong_make_note_already_cancelled
         - served_quantity_exceeds_made
       x-http-status:
+        menu_combo_not_found: 404
+        menu_combo_hidden: 409
+        menu_combo_price_in_sales_hours: 409
         menu_category_not_found: 404
         menu_category_hidden: 409
         menu_category_name_taken: 409
@@ -5779,19 +6007,19 @@ x-constraint-errors:
   menu_category_name_not_blank_check: internal
   menu_category_person_fkey: internal
   menu_category_pkey: internal
-  menu_combo_has_item_check: unreviewed
-  menu_combo_hidden_after_created_check: unreviewed
-  menu_combo_hidden_by_iff_hidden_check: unreviewed
-  menu_combo_hidden_by_person_fkey: unreviewed
-  menu_combo_item_menu_combo_fkey: unreviewed
-  menu_combo_item_menu_item_fkey: unreviewed
-  menu_combo_item_once_key: unreviewed
+  menu_combo_has_item_check: internal
+  menu_combo_hidden_after_created_check: internal
+  menu_combo_hidden_by_iff_hidden_check: internal
+  menu_combo_hidden_by_person_fkey: internal
+  menu_combo_item_menu_combo_fkey: internal
+  menu_combo_item_menu_item_fkey: menu_item_not_found
+  menu_combo_item_once_key: internal
   menu_combo_item_pkey: internal
-  menu_combo_item_quantity_positive_check: unreviewed
-  menu_combo_name_not_blank_check: unreviewed
-  menu_combo_person_fkey: unreviewed
+  menu_combo_item_quantity_positive_check: internal
+  menu_combo_name_not_blank_check: internal
+  menu_combo_person_fkey: internal
   menu_combo_pkey: internal
-  menu_combo_price_positive_check: unreviewed
+  menu_combo_price_positive_check: internal
   menu_item_category_menu_category_fkey: menu_category_not_found
   menu_item_category_menu_item_fkey: menu_item_not_found
   menu_item_category_menu_item_key: internal

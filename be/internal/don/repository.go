@@ -48,10 +48,6 @@ func (r repository) tamDung(ctx context.Context, moc time.Time) (bool, error) {
 	return r.q.TamDung(ctx, mocPG(moc))
 }
 
-func (r repository) ngoaiGio(ctx context.Context, moc time.Time) (bool, error) {
-	return r.q.NgoaiGio(ctx, mocPG(moc))
-}
-
 func (r repository) quanMu(ctx context.Context, moc time.Time) (bool, error) {
 	return r.q.QuanMu(ctx, mocPG(moc))
 }

@@ -12,6 +12,7 @@ import (
 	"banhcuon/be/internal/authz"
 	"banhcuon/be/internal/ban"
 	"banhcuon/be/internal/gia"
+	"banhcuon/be/internal/ngayban"
 	"banhcuon/be/internal/nhandon"
 	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/platform/realtime"
@@ -282,7 +283,7 @@ func (s *Service) Tao(ctx context.Context, caller authz.Caller, yc YeuCauTaiQuay
 	return out, replay, nil
 }
 
-// Giờ bán theo master_plan/shop-facts.md §1, giữ trong be/internal/don/sql/ngoai_gio.sql.
+// Giờ bán theo master_plan/shop-facts.md §1, giữ trong be/internal/ngayban/sql/ngoai_gio.sql.
 type blindDetected struct{ since time.Time }
 
 func (b blindDetected) Error() string { return "shop_not_seeing_orders" }
@@ -300,7 +301,7 @@ func (s *Service) xetNhanDon(ctx context.Context, tx pgx.Tx, kenh string) error 
 	if biChan {
 		return apierr.Error{Code: apierr.CodeOrderIntakePaused}
 	}
-	if biChan, err = repo.ngoaiGio(ctx, moc); err != nil {
+	if biChan, err = ngayban.NgoaiGio(ctx, tx, moc); err != nil {
 		return err
 	}
 	if biChan {

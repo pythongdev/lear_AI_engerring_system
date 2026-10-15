@@ -46,3 +46,8 @@ func ChoGhi(ctx context.Context, tx pgx.Tx) (time.Time, string, error) {
 	}
 	return moc, ngay, err
 }
+
+// NgoaiGio dùng múi giờ phiên kết nối; cả hai đầu giờ bán đều ở trong giờ.
+func NgoaiGio(ctx context.Context, tx pgx.Tx, moc time.Time) (bool, error) {
+	return newRepository(tx).ngoaiGio(ctx, moc)
+}

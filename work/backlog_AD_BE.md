@@ -273,16 +273,33 @@ bán* dời về `be/internal/ngayban`, cửa nhận đơn dùng lại. Combo đ
 không đổi.
 
 *Acceptance:*
-- [ ] Bảy test viết trước ở `be/internal/combo/combo_test.go` xanh qua PostgreSQL thật, điều kiện kiểm không đổi.
-- [ ] Người đứng quầy bị `owner_only`, không phiên bị `unauthenticated` ở cả bốn đường; database không đổi.
-- [ ] Combo đọc lại tên, giá đã đặt, người lập, món theo thứ tự gửi kèm số phần; món trong combo không mang giá.
-- [ ] Đổi giá: thiếu lý do bị từ chối; trong giờ bán (cả hai đầu) bị `menu_combo_price_in_sales_hours`; ngoài giờ có vết
+- [x] Bảy test viết trước ở `be/internal/combo/combo_test.go` xanh qua PostgreSQL thật, điều kiện kiểm không đổi.
+- [x] Người đứng quầy bị `owner_only`, không phiên bị `unauthenticated` ở cả bốn đường; database không đổi.
+- [x] Combo đọc lại tên, giá đã đặt, người lập, món theo thứ tự gửi kèm số phần; món trong combo không mang giá.
+- [x] Đổi giá: thiếu lý do bị từ chối; trong giờ bán (cả hai đầu) bị `menu_combo_price_in_sales_hours`; ngoài giờ có vết
       giá cũ, giá mới, lý do, người sửa.
-- [ ] Giờ bán chỉ còn một chỗ trong `be/` (`ngayban`); test `I-008` của `don` vẫn xanh.
-- [ ] Không file nào dưới `be/internal/gia/`, `be/internal/menu/`, `db/` đổi.
-- [ ] Hợp đồng tăng MINOR, ba mã lỗi mới, mười dòng `menu_combo*` của `x-constraint-errors` đã xét, ba dòng ma trận, hai
+- [x] Giờ bán chỉ còn một chỗ trong `be/` (`ngayban`); test `I-008` của `don` vẫn xanh.
+- [x] Không file nào dưới `be/internal/gia/`, `be/internal/menu/`, `db/` đổi.
+- [x] Hợp đồng tăng MINOR, ba mã lỗi mới, mười dòng `menu_combo*` của `x-constraint-errors` đã xét, ba dòng ma trận, hai
       ca vết.
-- [ ] `./scripts/gate.sh` xanh ở clone chính; `be-check` do Claude chạy.
+- [x] `./scripts/gate.sh` xanh ở clone chính; `be-check` do Claude chạy.
+
+**Bàn giao** — 2026-10-15 · thực hiện: **Codex** (package `be/internal/combo` — handler, service, repository, SQL và mã
+sinh sqlc, câu đọc một lệnh SQL; `TestQC14_HinhComboTruocQuyenVaDatabase`; phép giờ bán dời về
+`be/internal/ngayban/sql/ngoai_gio.sql`, `don` gọi `ngayban.NgoaiGio`; hợp đồng 0.30.0, ba mã lỗi, mười dòng `menu_combo*`
+đã xét, ba dòng ma trận; hai ca vết ở `be/internal/don/vet_cua_test.go`) · **Claude Code** (thiết kế, bảy test viết trước,
+ADR-116; khi duyệt: gofmt chính test của mình — chỉ khoảng trắng, điều kiện kiểm không đổi; sinh lại
+`fe/src/lib/api/schema.ts`) · duyệt: **Claude Code**, chưa review độc lập · worktree từ `7304895`, áp vào clone chính.
+
+*Nghiệm thu → bằng chứng* (clone chính, 2026-10-15): `--- PASS` cả bảy `TestI032_*Combo*` (`ChiChuQuanQuanLyCombo`,
+`ComboMotGiaRiengDocLaiDuoc`, `LapComboSaiBiTuChoi`, `DoiGiaComboCoLyDoDeVet`, `KhongDoiGiaComboTrongGioBan`,
+`AnComboChuKhongXoa`, `ComboSaiHinhBiTuChoi`) và `TestQC14_HinhComboTruocQuyenVaDatabase`;
+`--- PASS: TestI018_MoiCuaSuaCoVet/combo/doi_gia` · `combo/an`; mười sáu `TestI008_*` của `don` xanh, kể cả
+`TestI008_GioBanHaiDauTinhLaTrongGio`; `grep -rn "06:00\|11:00" be --include='*.sql'` chỉ ra
+`be/internal/ngayban/sql/ngoai_gio.sql`; `git diff HEAD -- be/internal/gia be/internal/menu db` rỗng; `be-check: PASS`;
+Gate 1g `hợp đồng 0.30.0; 101 đường gọi ở hợp đồng, 101 ở code; … 87 cửa, 87 dòng ma trận`.
+
+*Còn lại:* combo lập được mà **chưa bán được** — `P3A-11`, chờ `U-096`. Trang `P4A-05` đủ cửa cho phần combo.
 
 [↑ đầu file](#top)
 

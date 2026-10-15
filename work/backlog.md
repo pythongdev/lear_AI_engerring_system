@@ -93,7 +93,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 - [ ] P3A-08 **Đọc kho và nhắc POS**; chờ `P3A-02` · `T-186` — L2 · [chi tiết](backlog_AD_BE.md#p3a-08)
 - [ ] P3A-09 **Đọc tổng quan cho chủ quán** — bảy thứ §8.6; chờ `T-190` — L2 · [chi tiết](backlog_AD_BE.md#p3a-09)
 - [ ] P3A-10 **Đọc tổng kết** — theo ngày bán, món bán chạy; chờ `P3A-08` — L2 · [chi tiết](backlog_AD_BE.md#p3a-10)
-- [ ] P3A-11 **Bán combo** — phụ thu chủ quán đặt theo món của combo, dòng đơn mang combo, `gia.Tinh` học combo, bếp và hoá đơn; ADR duyệt trước code; chờ `P3A-06` · `U-096` — L3 · [chi tiết](backlog_AD_BE.md#p3a-11)
+- [ ] P3A-11 **Bán combo** — phụ thu chủ quán đặt theo món của combo, dòng đơn mang combo, `gia.Tinh` học combo, bếp và hoá đơn; ADR duyệt trước code; chờ `U-096` — L3 · [chi tiết](backlog_AD_BE.md#p3a-11)
 - [ ] T-186 **Lát tỉ lệ nhắc sắp hết** — thêm tỉ lệ nhắc (theo từng thứ, chủ quán ghi — chủ repo nhắc lại 2026-10-15, T-192; mặc định 20%) vào danh mục nguyên liệu của lát `P2A-02`, sửa phép đọc lược đồ của `I-025` và test của nó cùng thay đổi; lời ở `master_plan/shop-facts.md` §8.4 (U-087 đóng 2026-10-14) — L2, Claude viết test đỏ trước
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
@@ -103,12 +103,12 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] P3A-06 **Cửa combo của chủ quán** — lập · đổi giá (ngoài giờ bán, có lý do) · ẩn · đọc; bán combo tách sang `P3A-11` (**ADR-116**); Codex thi công, Claude test trước và duyệt — 2026-10-15 — L2 · [chi tiết](backlog_AD_BE.md#p3a-06)
 
 
 <a id="done"></a>
 ## Done
 
+- [x] P3A-06 **Cửa combo của chủ quán** — package `combo`: lập combo một lần đủ món (có thật, chưa ngừng bán, số phần nguyên dương) với giá chủ quán đặt, đổi giá có lý do và có vết — bị từ chối trong giờ bán, ẩn, đọc kèm món; chỉ chủ quán, cả đọc; phép giờ bán dời về `ngayban`; hợp đồng 0.30.0; **ADR-116**; bán combo là `P3A-11`. Codex thi công, Claude viết test trước và duyệt; be-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-06)
 - [x] P3A-05 **Cửa danh mục món** — package `danhmuc`: thêm · đổi tên · ẩn danh mục (ẩn được khi còn món, món về nhóm *chưa xếp*), xếp và chuyển món (chuyển đòi lý do, có vết), đọc mọi món gom theo danh mục ở `GET /menu-categories`; chỉ chủ quán, cả đọc; `GET /menu` không đổi; hợp đồng 0.29.0; **ADR-115**. Codex thi công, Claude viết test trước và duyệt; be-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-05)
 - [x] P3A-04 **Cửa đào tạo** — package `daotao`: hướng dẫn chữ · ảnh · video gắn một việc giao (tệp ở kho `BANHCUON_FILE_DIR`, database cất khoá, loại nhận bằng nội dung, không tệp mồ côi), sửa chữ · ẩn có lý do, phát tệp; ghi nhận *đạt · chưa* kèm nhận xét về một người, sửa · ẩn, đọc theo lúc ghi; lớp `quay_hoac_chu_quan` cả đọc; hợp đồng 0.28.0; **ADR-114**. Codex thi công, Claude viết test trước và duyệt; be-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-04)
 - [x] P3A-03 **Cửa giao việc** — package `giaoviec`: tạo · sửa · ẩn có lý do · đánh dấu xong và bỏ đánh dấu (mỗi lần một sự kiện, *đã xong* đọc ra từ sự kiện mới nhất, đánh dấu thừa bị từ chối) · đọc theo người nhận; lớp `quay_hoac_chu_quan` cả đọc; hợp đồng 0.27.0; **ADR-113**. Codex thi công, Claude viết test trước và duyệt; be-check · db-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-03)

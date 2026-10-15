@@ -264,3 +264,15 @@ sql:
         package: sqlcgen
         out: internal/danhmuc/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/combo/sql
+      - internal/combo/sql/them
+      - internal/combo/sql/doi_gia
+      - internal/combo/sql/an
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/combo/internal/sqlcgen
+        sql_package: pgx/v5
