@@ -1463,6 +1463,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-14 | Chủ repo trả lời lượt năm trong hội thoại (T-187): hướng dẫn công việc gắn **từng việc được giao** (đóng U-091); **giá combo đặt riêng** (đóng U-092); **chi phí marketing trả bằng tiền riêng** (đóng U-093) | §8.7 · §8.9 · §8.10 |
 | 2026-10-14 | Chủ repo trả lời trong hội thoại (T-188): phụ thu tuỳ chọn trong combo **cộng thêm** vào giá combo; giá combo **không đổi giữa buổi**; duyệt **ADR-074** (lát khoản chi `P2A-05`) | §8.9 |
 | 2026-10-15 | Chủ repo trả lời lượt sáu trong hội thoại (T-192): **chỉ chủ quán ghi khoản chi** (đóng U-095); mức nhắc sắp hết **theo từng thứ, chủ quán ghi** — xác nhận vế *lời chọn* của lượt bốn, mặc định 20% đứng nguyên | §8.10 · §8.4 |
+| 2026-10-15 | Chủ repo trả lời lượt bảy trong hội thoại (P3A-06): giá mỗi combo **chủ quán tự đưa**; khách chọn nhân **riêng từng món** trong combo; phụ thu trong combo **chủ quán đặt theo từng món của combo**, không đếm +1.000 mỗi phần; mở U-096 | §8.9 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
@@ -2120,6 +2121,24 @@ riêng"*). Chủ quán đặt **một giá riêng** cho mỗi combo; giá ấy *
 combo vẫn là tổng thành phần* ở đoạn trên là cách đọc cũ, bỏ. **Chủ repo trả lời
 cùng ngày (T-188):** tuỳ chọn phụ thu (§4.4) khách chọn trong một combo **có cộng thêm** vào giá combo; giá combo
 **không đổi giữa buổi** — chủ quán sửa giá combo ngoài buổi bán.
+
+**Lượt bảy 2026-10-15 — NHÂN VÀ PHỤ THU TRONG COMBO** (P3A-06; chủ repo trả lời trong hội thoại, nguyên văn *"mỗi 1
+combos tôi sẽ tự đưa giá"*, rồi chọn trong câu hỏi có sẵn phương án). Ba vế:
+
+1. **Giá mỗi combo do chủ quán tự đưa** — nhắc lại lời đóng `U-092`; không combo nào có sẵn trong bảng giá §4.2–§4.8.
+2. **Khách chọn nhân riêng cho từng món trong combo** — combo gồm suất bánh cuốn và suất trứng thì mỗi suất chọn loại
+   nhân và lượng nhân của nó. Luật 7 của §4.6 (*một dòng đơn một loại nhân*) không áp cho cả combo như một khối.
+3. **Phụ thu trong combo do chủ quán đặt, theo từng món trong combo** — không đếm *+1.000 mỗi phần nhận nhân* của §4.4.
+   Chủ quán đặt, cho từng món của một combo, mức phụ thu của mỗi lựa chọn; món nào khách chọn gì thì cộng mức chủ quán
+   đặt cho lựa chọn ấy của món ấy vào giá combo. Câu *phụ thu cộng thêm vào giá combo* của lượt T-188 đứng nguyên;
+   lượt này nói cộng **bao nhiêu**.
+
+*Combo* ở lượt này là combo chủ quán lập (`quality/invariants.md` `I-032`), **không** phải suất *Combo "Đầy đủ"* của
+§4.3–§4.5 — suất ấy là một dòng menu, giữ giá tổng thành phần và phụ thu ×4 như cũ.
+
+*Cách đọc của phiên, chưa ai xác nhận:* tổ hợp lựa chọn của mỗi món trong combo theo đúng luật của món ấy (luật 3 · 7
+của §4.6 áp **từng món** — *Chay + Nhiều nhân* vẫn bị từ chối). Chưa nói: lựa chọn chủ quán chưa đặt mức thì tính 0đ
+hay combo chưa bán được — `docs/product/99-unknowns.md` **U-096**.
 
 
 ### 8.10 Tài chính — câu trả lời E44–E51

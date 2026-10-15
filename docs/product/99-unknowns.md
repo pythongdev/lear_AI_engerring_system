@@ -139,6 +139,11 @@ phạm vi của nó ở `master_plan/shop-facts.md` **§8.8**.
   nháp ở `fe/src/app/layout.tsx`. Ai trả lời: chủ quán (1, 2, chữ mô tả), chủ repo (3). Chặn gì: JSON-LD chưa có
   `address` · `openingHours`; chưa có canonical và `sitemap.xml` cho tới khi đặt `BANHCUON_SITE_URL`. Không chặn bán hàng.
 
+- **U-096** — Trong một combo, chủ quán chưa đặt mức phụ thu cho một lựa chọn của một món (ví dụ chưa đặt *nhiều
+  nhân* cho suất trứng của combo ấy): khách chọn lựa chọn đó thì **cộng 0đ**, hay combo **chưa bán được** tới khi chủ
+  quán đặt đủ mức? (mở 2026-10-15, P3A-06; lời lượt bảy ở `master_plan/shop-facts.md` §8.9). Ai trả lời: chủ quán.
+  Chặn gì: task bán combo — combo vào hàm giá, dòng đơn, bếp; không chặn cửa chủ quán thêm · đổi giá · ẩn combo.
+
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
 
