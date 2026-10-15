@@ -89,7 +89,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] P3A-05 **Cửa danh mục món** — thêm · đổi tên · ẩn · xếp món; chờ `T-190` — L1 · [chi tiết](backlog_AD_BE.md#p3a-05)
 - [ ] P3A-06 **Combo vào hàm giá** — giá chủ quán đặt qua hàm giá duy nhất; chờ `P3A-05` — L2 · [chi tiết](backlog_AD_BE.md#p3a-06)
 - [ ] P3A-07 **Thêm và sửa thông tin món**; chờ `P3A-05` — L2 · [chi tiết](backlog_AD_BE.md#p3a-07)
 - [ ] P3A-08 **Đọc kho và nhắc POS**; chờ `P3A-02` · `T-186` — L2 · [chi tiết](backlog_AD_BE.md#p3a-08)
@@ -109,6 +108,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] P3A-05 **Cửa danh mục món** — package `danhmuc`: thêm · đổi tên · ẩn danh mục (ẩn được khi còn món, món về nhóm *chưa xếp*), xếp và chuyển món (chuyển đòi lý do, có vết), đọc mọi món gom theo danh mục ở `GET /menu-categories`; chỉ chủ quán, cả đọc; `GET /menu` không đổi; hợp đồng 0.29.0; **ADR-115**. Codex thi công, Claude viết test trước và duyệt; be-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-05)
 - [x] P3A-04 **Cửa đào tạo** — package `daotao`: hướng dẫn chữ · ảnh · video gắn một việc giao (tệp ở kho `BANHCUON_FILE_DIR`, database cất khoá, loại nhận bằng nội dung, không tệp mồ côi), sửa chữ · ẩn có lý do, phát tệp; ghi nhận *đạt · chưa* kèm nhận xét về một người, sửa · ẩn, đọc theo lúc ghi; lớp `quay_hoac_chu_quan` cả đọc; hợp đồng 0.28.0; **ADR-114**. Codex thi công, Claude viết test trước và duyệt; be-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-04)
 - [x] P3A-03 **Cửa giao việc** — package `giaoviec`: tạo · sửa · ẩn có lý do · đánh dấu xong và bỏ đánh dấu (mỗi lần một sự kiện, *đã xong* đọc ra từ sự kiện mới nhất, đánh dấu thừa bị từ chối) · đọc theo người nhận; lớp `quay_hoac_chu_quan` cả đọc; hợp đồng 0.27.0; **ADR-113**. Codex thi công, Claude viết test trước và duyệt; be-check · db-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-03)
 - [x] P3A-02 **Cửa sổ nguyên liệu** — package `nguyenlieu`: thêm thứ, đặt đơn vị một lần, ghi con số *mua vào · đã dùng* của một ngày, sửa có lý do, đọc tổng và hiệu số từ một câu SQL; con số là chuỗi thập phân; chỉ chủ quán; hợp đồng 0.26.0; **ADR-112**. Codex thi công, Claude viết test trước và duyệt; be-check · db-check · fe-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-02)

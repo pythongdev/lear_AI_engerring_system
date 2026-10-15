@@ -212,7 +212,43 @@ xét lại khi mở pha vận hành. Trang `P4A-11` có cửa.
 
 **Goal:** thêm · đổi tên · ẩn danh mục, xếp món vào danh mục, đọc menu theo danh mục.
 **Đứng trên:** lát `P2A-13` (`docs/product/2-db/18-luoc-do-danh-muc-combo.md`), `I-032` — lớp `chu_quan`.
-**Nhận việc:** —
+**Nhận việc:** 2026-10-15 · Claude Code (thiết kế, test trước, duyệt) · Codex thi công ở `../lean_wt/P3A-05`, nhánh
+`codex/P3A-05` từ `7da137b` cộng thay đổi chưa commit của `P3A-04` (đặt sẵn ở index). Mức L1; Claude viết test trước dù
+L1 không bắt buộc.
+
+*Thiết kế (Claude, không phải lời quán — **ADR-115**):* năm đường — `GET`/`POST /menu-categories`,
+`PUT /menu-categories/{menu_category_id}`, `POST …/hiding`, `PUT /menu-items/{menu_item_id}/category`; bốn cửa
+`danhmuc/them` · `doi_ten` · `an` · `xep_mon`, mọi đường lớp `chu_quan` kể cả đọc. Đọc trả mọi món của bảng món, mỗi món
+đúng một chỗ: trong danh mục của nó hoặc ở `uncategorized_items`. Ẩn được danh mục còn món; chuyển món đòi lý do, xếp lần
+đầu không; không đường bỏ xếp. `GET /menu` (hàm giá) không đổi.
+
+*Acceptance:*
+- [x] Tám test viết trước ở `be/internal/danhmuc/danhmuc_test.go` xanh qua PostgreSQL thật; điều kiện kiểm không đổi.
+- [x] Người đứng quầy bị `owner_only`, không phiên bị `unauthenticated` ở cả năm đường; database không đổi.
+- [x] Mỗi món đọc ra đúng một chỗ; danh mục đã ẩn đưa món về nhóm chưa xếp, đọc kèm ẩn trả lại.
+- [x] Tên danh mục còn dùng không trùng; đổi tên, ẩn và chuyển món có vết mang lý do.
+- [x] Không file nào dưới `be/internal/gia/`, `be/internal/menu/`, `db/` đổi.
+- [x] Hợp đồng 0.29.0, bốn mã lỗi mới, chín dòng `menu_category_*` · `menu_item_category_*` đã xét, bốn dòng ma trận,
+      ba ca vết.
+- [x] `./scripts/gate.sh` xanh ở clone chính; `be-check` do Claude chạy.
+
+**Bàn giao** — 2026-10-15 · thực hiện: **Codex** (package `be/internal/danhmuc` — handler, service, repository, SQL và mã
+sinh sqlc, câu đọc một lệnh SQL; `TestQC14_HinhDanhMucTruocQuyenVaDatabase`; hợp đồng 0.29.0, bốn mã lỗi, ánh xạ tên
+từ chối, bốn dòng ma trận; ba ca vết ở `be/internal/don/vet_cua_test.go`) · **Claude Code** (thiết kế, tám test viết
+trước, ADR-115; khi duyệt: be-check lần đầu đỏ năm test của `gia` và `don` vì món test không thành phần lọt vào
+`GET /menu` — sửa test của chính mình cho món test ngừng bán khi xong, và ca vết `danhmuc/xep_mon` dựng món đã ngừng
+bán; sinh lại `fe/src/lib/api/schema.ts`) · duyệt: **Claude Code**, chưa review độc lập · worktree từ `7da137b`, áp vào
+clone chính cùng nền.
+
+*Nghiệm thu → bằng chứng* (worktree, 2026-10-15): `--- PASS` cả tám `TestI032_*` và
+`TestQC14_HinhDanhMucTruocQuyenVaDatabase`; `--- PASS: TestI018_MoiCuaSuaCoVet/danhmuc/doi_ten` · `an` · `xep_mon`;
+`be-check: PASS — mọi test backend qua PostgreSQL thật đều đạt`; Gate 1g `hợp đồng 0.29.0; 97 đường gọi ở hợp đồng, 97
+ở code; … 84 cửa, 84 dòng ma trận`; `git diff HEAD -- be/internal/gia be/internal/menu db` rỗng. Gate ở clone chính: xem
+khối commit.
+
+*Còn lại:* `GET /menu` trả 500 khi có một món đang bán không có thành phần — bước `P3A-07` (thêm món) phải giữ điều ấy.
+Khách và quầy có thấy menu chia theo danh mục không là câu cho chủ repo, chưa mở `U-XXX` (ADR-115). Trang `P4A-05` có
+cửa phần danh mục; combo là `P3A-06`.
 
 [↑ đầu file](#top)
 

@@ -1,0 +1,24 @@
+-- name: Doc :one
+WITH categories AS (
+ SELECT c.id, c.name, c.person_id, p.display_name AS person_name, c.created_at,
+ c.hidden_at, c.hidden_by_person_id, h.display_name AS hidden_by_name
+ FROM menu_category c JOIN person p ON p.id = c.person_id
+ LEFT JOIN person h ON h.id = c.hidden_by_person_id
+ WHERE ($1::bigint = 0 OR c.id = $1) AND ($2::boolean OR c.hidden_at IS NULL)
+), items AS (
+ SELECT m.id, m.name, m.discontinued_at IS NOT NULL AS discontinued, c.id AS category_id
+ FROM menu_item m LEFT JOIN menu_item_category x ON x.menu_item_id = m.id
+ LEFT JOIN categories c ON c.id = x.menu_category_id
+)
+SELECT jsonb_build_object(
+ 'categories', coalesce((SELECT jsonb_agg(jsonb_build_object(
+ 'menu_category_id', c.id, 'name', c.name, 'person_id', c.person_id,
+ 'person_name', c.person_name, 'created_at', c.created_at, 'hidden_at', c.hidden_at,
+ 'hidden_by_person_id', c.hidden_by_person_id, 'hidden_by_name', c.hidden_by_name,
+ 'items', coalesce((SELECT jsonb_agg(jsonb_build_object('menu_item_id', m.id,
+ 'item_name', m.name, 'discontinued', m.discontinued) ORDER BY m.name, m.id)
+ FROM items m WHERE m.category_id = c.id), '[]'::jsonb)) ORDER BY c.name, c.id)
+ FROM categories c), '[]'::jsonb),
+ 'uncategorized_items', coalesce((SELECT jsonb_agg(jsonb_build_object('menu_item_id', m.id,
+ 'item_name', m.name, 'discontinued', m.discontinued) ORDER BY m.name, m.id)
+ FROM items m WHERE m.category_id IS NULL), '[]'::jsonb))::jsonb AS result;

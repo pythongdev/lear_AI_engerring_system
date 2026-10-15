@@ -131,6 +131,7 @@ có câu trả lời mới từ người.
 | ADR-112 | **Cửa sổ nguyên liệu** (`P3A-02`): mọi đường lớp `chu_quan`; con số trên dây là chuỗi thập phân, không qua số thực; tổng và hiệu số từ một câu SQL; đơn vị đặt một lần cho thứ chưa có; sửa chỉ đổi con số | Đã chốt 2026-10-15 (Claude, phiếu P3A-02) | — | `P3A-02` · ADR-110 · ADR-071 |
 | ADR-113 | **Cửa giao việc** (`P3A-03`): mọi đường lớp `quay_hoac_chu_quan` kể cả đọc; người nhận không tự đánh dấu; *đã xong* đọc từ sự kiện mới nhất; đánh dấu thừa bị từ chối; việc đã ẩn đứng yên; sửa và ẩn đòi lý do | Đã chốt 2026-10-15 (Claude, phiếu P3A-03) | — | `P3A-03` · ADR-110 · ADR-105 |
 | ADR-114 | **Cửa đào tạo** (`P3A-04`): lớp `quay_hoac_chu_quan` kể cả đọc và tải tệp; kho tệp là thư mục `BANHCUON_FILE_DIR`; loại tệp nhận bằng nội dung, ảnh ≤ 10 MiB, video (gồm `.mov`) ≤ 100 MiB; không tệp mồ côi; chỉ mẩu chữ sửa được; ghi nhận sửa thay cả hai trường | Đã chốt 2026-10-15 (Claude, phiếu P3A-04) | — | `P3A-04` · ADR-110 · ADR-107 |
+| ADR-115 | **Cửa danh mục món** (`P3A-05`): mọi đường lớp `chu_quan` kể cả đọc; đọc riêng `GET /menu-categories`, không đưa danh mục vào `GET /menu`; ẩn được danh mục còn món, món về nhóm *chưa xếp*; chuyển món đòi lý do, xếp lần đầu không; không đường bỏ xếp | Đã chốt 2026-10-15 (Claude, phiếu P3A-05) | — | `P3A-05` · ADR-110 · ADR-108 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7509,3 +7510,35 @@ không dòng nào trỏ tới khi bước gắn không xảy ra; *cho sửa kho�
 
 **Applies to:** `be/internal/daotao/`, `be/cmd/server/`; **ADR-110** · **ADR-107** · **ADR-113**.
 
+### ADR-115 — Cửa danh mục món: chỉ chủ quán, đọc riêng khỏi hàm giá, ẩn được danh mục còn món
+
+**Trạng thái:** **Đã chốt** 2026-10-15. Lớp `chu_quan` đọc từ `I-032` vế 6 (lời đóng `U-082`, 2026-10-14: chủ quán tự
+quản lý menu) theo **ADR-110** điểm 3; mọi điểm khác là **lựa chọn của phiên** (Claude Code, phiếu `P3A-05`) — chủ repo
+giao *"codex làm bạn kiểm tra, bạn toàn quyền làm"*, không chọn từng điểm; không phải lời quán.
+
+**Context:** lát `P2A-13` cất danh mục và dòng xếp món (`menu_item_category`, nhiều nhất một dòng mỗi món), vai ứng dụng
+không có quyền xoá dòng xếp và lát không cho danh mục rỗng. `GET /menu` thuộc hàm giá duy nhất (`docs/product/3-be/03-ham-gia.md`).
+`I-032` không nói ai đọc được danh mục, không nói ẩn danh mục còn món thì món ra sao.
+
+**Decision:**
+
+1. **Mọi đường lớp `chu_quan`, kể cả đọc** — danh mục là việc quản trị menu của chủ quán.
+2. **Đọc riêng ở `GET /menu-categories`**, mỗi món của bảng món (kể cả đã ngừng bán) đứng đúng một chỗ: trong danh mục
+   của nó, hoặc ở `uncategorized_items`. `GET /menu` không đổi — khách và quầy chưa thấy món theo nhóm.
+3. **Ẩn được danh mục còn món;** dòng xếp ở lại, đọc mặc định đưa món ấy về nhóm *chưa xếp*, đọc kèm ẩn trả nó về danh mục
+   đã ẩn. Danh mục đã ẩn không đổi tên, không ẩn lần nữa, không nhận món — như việc đã ẩn (**ADR-113** điểm 3).
+4. **Xếp lần đầu không đòi lý do; chuyển sang danh mục khác đòi lý do** — chỉ lần chuyển là sửa có vết (`I-018`). Xếp lại
+   đúng danh mục cũ bị từ chối `menu_item_already_in_category`. Lời từ chối thiếu lý do khi chuyển nằm sau lần đọc dòng
+   xếp — ngoại lệ duy nhất của QC-14 ở cửa này.
+5. **Không có đường bỏ một món khỏi danh mục** — lược đồ không cho; muốn gom lại thì chuyển sang danh mục khác hoặc ẩn
+   danh mục.
+
+**Why:** điểm 2 giữ hàm giá (L2) ngoài một bước L1; điểm 3 để chủ quán bỏ một nhóm mà không phải chuyển từng món trước;
+điểm 4 không bắt lý do cho việc chưa sửa gì.
+
+**Rejected alternatives:** *thêm danh mục vào `GET /menu`* — đổi hợp đồng của hàm giá và đặt quyền xem nhóm cho khách
+khi chưa ai nói; *từ chối ẩn danh mục còn món* — món không bỏ xếp được nên chủ quán sẽ kẹt; *mở đường bỏ xếp* — đòi đổi
+lược đồ.
+
+**Applies to:** `be/internal/danhmuc/`; **ADR-110** · **ADR-108** · **ADR-113**. Câu còn mở cho chủ repo: khách và quầy
+có thấy menu chia theo danh mục không — chưa mở thành `U-XXX` vì chưa bước nào cần.

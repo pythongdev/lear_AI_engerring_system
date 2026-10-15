@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.28.0
+  version: 0.29.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -16,6 +16,8 @@ security:
   - PersonIdentity: []
 # Nhóm trong Swagger UI = gói miền dưới be/internal/ đăng ký đường gọi ấy (chỉ để đọc, không phải luật).
 tags:
+  - name: danhmuc
+    description: Danh mục món do chủ quán quản lý (P3A-05).
   - name: daotao
     description: Hướng dẫn công việc và ghi nhận đào tạo (P3A-04).
   - name: giaoviec
@@ -49,6 +51,154 @@ tags:
   - name: ket
     description: Két và ngày bán — tiền đầu ngày, đếm két, khai sổ giấy, ký đối chiếu ngày (06-duong-tien.md).
 paths:
+  /menu-categories:
+    get:
+      operationId: listMenuCategories
+      tags: [danhmuc]
+      summary: Đọc toàn bộ món gom theo danh mục.
+      description: Lớp chu_quan. Mọi lỗi hình xét trước quyền và database, trừ lý do chuyển món cần đọc dòng xếp trước. Path id phải là số nguyên dương, sai trả invalid_request với field tương ứng. include_hidden vắng hoặc false thì bỏ danh mục ẩn, true thì kèm, giá trị khác trả 400 field=include_hidden. Danh mục theo name rồi id; món theo name rồi id, theo collation của cột. Mỗi món kể cả ngừng bán xuất hiện đúng một lần; món chưa xếp hoặc thuộc danh mục bị bỏ nằm trong uncategorized_items.
+      parameters:
+        - name: include_hidden
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuCategoryList'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createMenuCategory
+      tags: [danhmuc]
+      summary: Thêm danh mục món.
+      description: Lớp chu_quan. Mọi lỗi hình xét trước quyền và database, trừ lý do chuyển món cần đọc dòng xếp trước. Path id phải là số nguyên dương, sai trả invalid_request với field tương ứng. name cắt khoảng trắng, thiếu hoặc rỗng trả 400 field=name. Trùng tên danh mục còn dùng trả 409 menu_category_name_taken; danh mục ẩn nhường tên. Người lập và mốc do database cấp.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMenuCategory'
+      responses:
+        '201':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuCategory'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-categories/{menu_category_id}:
+    put:
+      operationId: renameMenuCategory
+      tags: [danhmuc]
+      summary: Đổi tên danh mục có lý do.
+      description: Lớp chu_quan. Mọi lỗi hình xét trước quyền và database, trừ lý do chuyển món cần đọc dòng xếp trước. Path id phải là số nguyên dương, sai trả invalid_request với field tương ứng. name và reason cắt khoảng trắng, thiếu hoặc rỗng trả 400 với field tương ứng. Không có trả 404 menu_category_not_found; đã ẩn trả 409 menu_category_hidden; trùng tên còn dùng trả 409 menu_category_name_taken. Sửa có vết.
+      parameters:
+        - name: menu_category_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMenuCategory'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuCategory'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-categories/{menu_category_id}/hiding:
+    post:
+      operationId: hideMenuCategory
+      tags: [danhmuc]
+      summary: Ẩn danh mục có lý do, kể cả khi còn món.
+      description: Lớp chu_quan. Mọi lỗi hình xét trước quyền và database, trừ lý do chuyển món cần đọc dòng xếp trước. Path id phải là số nguyên dương, sai trả invalid_request với field tương ứng. reason cắt khoảng trắng, thiếu hoặc rỗng trả 400 field=reason. Không có trả 404 menu_category_not_found; đã ẩn trả 409 menu_category_hidden. Ẩn có vết, người và mốc; các dòng xếp món ở lại, đọc mặc định đưa món về uncategorized_items.
+      parameters:
+        - name: menu_category_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HideMenuCategory'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuCategory'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-items/{menu_item_id}/category:
+    put:
+      operationId: assignMenuItemCategory
+      tags: [danhmuc]
+      summary: Xếp hoặc chuyển món vào một danh mục.
+      description: Lớp chu_quan. Mọi lỗi hình xét trước quyền và database, trừ lý do chuyển món cần đọc dòng xếp trước. Path id phải là số nguyên dương, sai trả invalid_request với field tương ứng. menu_category_id thiếu hoặc không dương trả 400 field=menu_category_id. Khoá món rồi danh mục đích; không có trả 404 menu_item_not_found hoặc menu_category_not_found, đích đã ẩn trả 409 menu_category_hidden. Chưa xếp thì thêm, không cần hay lưu reason. Đã ở đích trả 409 menu_item_already_in_category. Chuyển từ danh mục khác kể cả đã ẩn cần reason sau cắt khoảng trắng, thiếu hoặc rỗng trả 400 field=reason sau khi đọc dòng xếp; chuyển có vết. Không có đường bỏ xếp. Trả danh mục đích đọc lại sau ghi.
+      parameters:
+        - name: menu_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignMenuItemCategory'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuCategory'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /assigned-tasks/{assigned_task_id}/guides:
     get:
       operationId: listAssignedTaskGuides
@@ -2806,6 +2956,97 @@ components:
       name: banhcuon_phien
       description: Phiên đăng nhập theo ADR-109; HttpOnly, Secure, SameSite=Strict, hạn 7 ngày.
   schemas:
+    MenuCategoryItem:
+      type: object
+      required: [menu_item_id, item_name, discontinued]
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
+        item_name:
+          type: string
+        discontinued:
+          type: boolean
+          description: discontinued_at IS NOT NULL; món ngừng bán vẫn có mặt và xếp được.
+    MenuCategory:
+      type: object
+      required: [menu_category_id, name, person_id, person_name, created_at, hidden_at, hidden_by_person_id, hidden_by_name, items]
+      properties:
+        menu_category_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        person_id:
+          type: integer
+          format: int64
+        person_name:
+          type: string
+        created_at:
+          $ref: '#/components/schemas/Instant'
+        hidden_at:
+          oneOf:
+            - $ref: '#/components/schemas/Instant'
+            - type: 'null'
+        hidden_by_person_id:
+          type: [integer, 'null']
+          format: int64
+        hidden_by_name:
+          type: [string, 'null']
+        items:
+          type: array
+          description: Theo tên món (collation của cột), rồi id; không có món trả mảng rỗng.
+          items:
+            $ref: '#/components/schemas/MenuCategoryItem'
+    MenuCategoryList:
+      type: object
+      required: [categories, uncategorized_items]
+      properties:
+        categories:
+          type: array
+          description: Theo tên danh mục (collation của cột), rồi id.
+          items:
+            $ref: '#/components/schemas/MenuCategory'
+        uncategorized_items:
+          type: array
+          description: Món chưa xếp hoặc danh mục của nó không có trong categories; theo tên món rồi id.
+          items:
+            $ref: '#/components/schemas/MenuCategoryItem'
+    CreateMenuCategory:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+    UpdateMenuCategory:
+      type: object
+      required: [name, reason]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        reason:
+          type: string
+          minLength: 1
+    HideMenuCategory:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+          minLength: 1
+    AssignMenuItemCategory:
+      type: object
+      required: [menu_category_id]
+      properties:
+        menu_category_id:
+          type: integer
+          format: int64
+          minimum: 1
+        reason:
+          type: string
+          description: Bắt buộc không rỗng sau cắt khoảng trắng khi chuyển danh mục; không lưu khi xếp lần đầu.
     AssignedTaskGuide:
       type: object
       description: Body là chuỗi với text, null với image/video. Khoá tệp không đưa ra dây; tải qua đường /file.
@@ -4633,6 +4874,10 @@ components:
         Mã lỗi công khai. FE quyết hiện gì theo mã, không theo status, không theo chữ.
         Mã của một luật do lát dựng cửa của luật ấy thêm (01-hop-dong-api.md §3).
       enum:
+        - menu_category_not_found
+        - menu_category_hidden
+        - menu_category_name_taken
+        - menu_item_already_in_category
         - expense_category_not_found
         - expense_not_found
         - supply_item_unit_already_set
@@ -4732,6 +4977,10 @@ components:
         - wrong_make_note_already_cancelled
         - served_quantity_exceeds_made
       x-http-status:
+        menu_category_not_found: 404
+        menu_category_hidden: 409
+        menu_category_name_taken: 409
+        menu_item_already_in_category: 409
         expense_category_not_found: 404
         expense_not_found: 404
         supply_item_unit_already_set: 409
@@ -5521,13 +5770,14 @@ x-constraint-errors:
   training_record_remark_check: internal
   training_record_trainee_person_fkey: person_not_found
 
-  # P2A-13 — chưa có cửa ghi; khoá chính là lỗi nội bộ.
-  menu_category_active_name_key: unreviewed
-  menu_category_hidden_after_created_check: unreviewed
-  menu_category_hidden_by_iff_hidden_check: unreviewed
-  menu_category_hidden_by_person_fkey: unreviewed
-  menu_category_name_not_blank_check: unreviewed
-  menu_category_person_fkey: unreviewed
+  # P2A-13 — P3A-05 đã xét danh mục và xếp món; combo chờ P3A-06.
+  # CHECK hình/người do handler, authz và database cấp; khoá món chặn xếp trùng. Khoá chính là nội bộ.
+  menu_category_active_name_key: menu_category_name_taken
+  menu_category_hidden_after_created_check: internal
+  menu_category_hidden_by_iff_hidden_check: internal
+  menu_category_hidden_by_person_fkey: internal
+  menu_category_name_not_blank_check: internal
+  menu_category_person_fkey: internal
   menu_category_pkey: internal
   menu_combo_has_item_check: unreviewed
   menu_combo_hidden_after_created_check: unreviewed
@@ -5542,10 +5792,10 @@ x-constraint-errors:
   menu_combo_person_fkey: unreviewed
   menu_combo_pkey: internal
   menu_combo_price_positive_check: unreviewed
-  menu_item_category_menu_category_fkey: unreviewed
-  menu_item_category_menu_item_fkey: unreviewed
-  menu_item_category_menu_item_key: unreviewed
-  menu_item_category_person_fkey: unreviewed
+  menu_item_category_menu_category_fkey: menu_category_not_found
+  menu_item_category_menu_item_fkey: menu_item_not_found
+  menu_item_category_menu_item_key: internal
+  menu_item_category_person_fkey: internal
   menu_item_category_pkey: internal
 
   # P2A-05 — chưa có cửa ghi; khoá chính là lỗi nội bộ.

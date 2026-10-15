@@ -15,6 +15,10 @@ import (
 type Code string
 
 const (
+	CodeMenuCategoryNotFound         Code = "menu_category_not_found"
+	CodeMenuCategoryHidden           Code = "menu_category_hidden"
+	CodeMenuCategoryNameTaken        Code = "menu_category_name_taken"
+	CodeMenuItemAlreadyInCategory    Code = "menu_item_already_in_category"
 	CodeAssignedTaskGuideNotFound    Code = "assigned_task_guide_not_found"
 	CodeAssignedTaskGuideHidden      Code = "assigned_task_guide_hidden"
 	CodeAssignedTaskGuideNotText     Code = "assigned_task_guide_not_text"
@@ -131,6 +135,10 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
+	CodeMenuCategoryNotFound:         404,
+	CodeMenuCategoryHidden:           409,
+	CodeMenuCategoryNameTaken:        409,
+	CodeMenuItemAlreadyInCategory:    409,
 	CodeAssignedTaskGuideNotFound:    404,
 	CodeAssignedTaskGuideHidden:      409,
 	CodeAssignedTaskGuideNotText:     409,
@@ -243,6 +251,9 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"menu_category_active_name_key":              CodeMenuCategoryNameTaken,
+	"menu_item_category_menu_category_fkey":      CodeMenuCategoryNotFound,
+	"menu_item_category_menu_item_fkey":          CodeMenuItemNotFound,
 	"assigned_task_guide_assigned_task_fkey":     CodeAssignedTaskNotFound,
 	"training_record_trainee_person_fkey":        CodePersonNotFound,
 	"assigned_task_assignee_person_fkey":         CodePersonNotFound,

@@ -15,6 +15,7 @@ import (
 	"strings"
 	"testing"
 
+	"banhcuon/be/internal/danhmuc"
 	"banhcuon/be/internal/daotao"
 	"banhcuon/be/internal/giaoviec"
 	"banhcuon/be/internal/khoanchi"
@@ -43,6 +44,53 @@ type dichVet struct {
 
 // Cùng một bảng cấp ca cho test HTTP và phép so tập thư mục: không có danh sách thứ hai.
 var cacCaVet = []caVet{
+	{"danhmuc/doi_ten", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		danhmuc.Routes(r, danhmuc.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+
+		cu, moi := "test-cũ · "+t.Name(), "test-mới · "+t.Name()
+		id := c.id(t, "INSERT INTO shop.menu_category(name) VALUES ($1) RETURNING id", cu)
+		return dichVet{"menu_category", id, c.chu, "name", cu, moi, func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/menu-categories/%d", id), c.chu, map[string]any{"name": moi, "reason": "đổi tên danh mục kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	{"danhmuc/an", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		danhmuc.Routes(r, danhmuc.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+
+		id := c.id(t, "INSERT INTO shop.menu_category(name) VALUES ($1) RETURNING id", "test-ẩn · "+t.Name())
+		return dichVet{"menu_category", id, c.chu, "hidden_at", nil, "mốc", func() {
+			status, body := c.goi(t, "POST", fmt.Sprintf("/menu-categories/%d/hiding", id), c.chu, map[string]any{"reason": "ẩn danh mục kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	{"danhmuc/xep_mon", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		danhmuc.Routes(r, danhmuc.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+
+		cu := c.id(t, "INSERT INTO shop.menu_category(name) VALUES ($1) RETURNING id", "test-cũ · "+t.Name())
+		moi := c.id(t, "INSERT INTO shop.menu_category(name) VALUES ($1) RETURNING id", "test-mới · "+t.Name())
+		// Món đã ngừng bán: không có thành phần nên không được lọt vào GET /menu của các test sau.
+		mon := c.id(t, "INSERT INTO shop.menu_item(name, discontinued_at) VALUES ($1, now()) RETURNING id", t.Name())
+		id := c.id(t, "INSERT INTO shop.menu_item_category(menu_item_id,menu_category_id) VALUES ($1,$2) RETURNING id", mon, cu)
+		return dichVet{"menu_item_category", id, c.chu, "menu_category_id", float64(cu), float64(moi), func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/menu-items/%d/category", mon), c.chu, map[string]any{"menu_category_id": moi, "reason": "chuyển danh mục kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
 	{"ket/sua_dem", func(t *testing.T, c canh) dichVet {
 		const day = "2031-05-20"
 		var line int64
