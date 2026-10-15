@@ -232,6 +232,9 @@ T-190 (2026-10-14): hợp đồng 0.24.0 thêm tài khoản và phiên theo ADR-
 (ví dụ `https://quan.example`, không dấu `/` cuối), bắt buộc khi chạy server. Backend giữ
 cookie Secure cả ở máy phát triển; trình duyệt cần HTTPS hoặc môi trường localhost hỗ trợ.
 
+P3A-04 (2026-10-15): `BANHCUON_FILE_DIR` là thư mục kho tệp của hướng dẫn công việc (ADR-107, ADR-114),
+bắt buộc khi chạy server; phải tồn tại và ghi được. Sao lưu database **không** chứa tệp — sao lưu thư mục riêng.
+
 SMTP PT-7 đọc `BANHCUON_SMTP_HOST`, `BANHCUON_SMTP_PORT` (mặc định 587),
 `BANHCUON_SMTP_FROM`, `BANHCUON_SMTP_USER`, `BANHCUON_SMTP_PASSWORD`.
 Dịch vụ phải hỗ trợ STARTTLS. Không cấu hình hoặc gửi lỗi thì log “không gửi được thư”,

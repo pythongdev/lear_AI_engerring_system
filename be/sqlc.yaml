@@ -236,3 +236,18 @@ sql:
         package: sqlcgen
         out: internal/giaoviec/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/daotao/sql
+      - internal/daotao/sql/gan_huong_dan
+      - internal/daotao/sql/sua_huong_dan
+      - internal/daotao/sql/an_huong_dan
+      - internal/daotao/sql/ghi_nhan
+      - internal/daotao/sql/sua_ghi_nhan
+      - internal/daotao/sql/an_ghi_nhan
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/daotao/internal/sqlcgen
+        sql_package: pgx/v5

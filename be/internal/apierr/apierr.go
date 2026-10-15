@@ -15,6 +15,14 @@ import (
 type Code string
 
 const (
+	CodeAssignedTaskGuideNotFound    Code = "assigned_task_guide_not_found"
+	CodeAssignedTaskGuideHidden      Code = "assigned_task_guide_hidden"
+	CodeAssignedTaskGuideNotText     Code = "assigned_task_guide_not_text"
+	CodeAssignedTaskGuideFileMissing Code = "assigned_task_guide_file_missing"
+	CodeFileTooLarge                 Code = "file_too_large"
+	CodeTrainingRecordNotFound       Code = "training_record_not_found"
+	CodeTrainingRecordHidden         Code = "training_record_hidden"
+
 	CodeAssignedTaskNotFound    Code = "assigned_task_not_found"
 	CodePersonNotFound          Code = "person_not_found"
 	CodeAssignedTaskHidden      Code = "assigned_task_hidden"
@@ -123,6 +131,14 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
+	CodeAssignedTaskGuideNotFound:    404,
+	CodeAssignedTaskGuideHidden:      409,
+	CodeAssignedTaskGuideNotText:     409,
+	CodeAssignedTaskGuideFileMissing: 404,
+	CodeFileTooLarge:                 413,
+	CodeTrainingRecordNotFound:       404,
+	CodeTrainingRecordHidden:         409,
+
 	CodeAssignedTaskNotFound:          404,
 	CodePersonNotFound:                404,
 	CodeAssignedTaskHidden:            409,
@@ -227,6 +243,8 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"assigned_task_guide_assigned_task_fkey":     CodeAssignedTaskNotFound,
+	"training_record_trainee_person_fkey":        CodePersonNotFound,
 	"assigned_task_assignee_person_fkey":         CodePersonNotFound,
 	"assigned_task_mark_assigned_task_fkey":      CodeAssignedTaskNotFound,
 	"supply_item_name_key":                       CodeSupplyItemNameTaken,

@@ -159,7 +159,8 @@ lại`; `PASS gate không cổng nào đỏ`.
 **Đứng trên:** lát `P2A-12` (`docs/product/2-db/17-luoc-do-dao-tao.md`), `I-031` — lớp `quay_hoac_chu_quan`.
 **Bẫy:** tệp không vào database; chỗ giữ tệp theo quyết định của lát `P2A-12`.
 **Nhận việc:** 2026-10-15 · Claude Code (thiết kế, test trước, duyệt) · Codex thi công ở `../lean_wt/P3A-04`, nhánh
-`codex/P3A-04` từ `92c16a7` cộng thay đổi chưa commit của `P3A-01` … `P3A-03` (đặt sẵn ở index). Mức L2.
+`codex/P3A-04` từ `92c16a7` cộng thay đổi chưa commit của `P3A-01` … `P3A-03` (đặt sẵn ở index). Mức L2. Codex hết hạn
+mức hai lần trước khi sửa dòng nào (10:28, 11:19); chạy lại 14:29 tiếp phiên cũ.
 
 *Thiết kế (Claude, không phải lời quán — **ADR-114**):* chín đường — `GET`/`POST /assigned-tasks/{assigned_task_id}/guides`
 (gắn bằng `multipart/form-data`: `kind`, `body`, `file`), `PUT /assigned-task-guides/{id}`, `POST …/hiding`,
@@ -171,16 +172,36 @@ Chỉ mẩu chữ sửa được — đổi ảnh là ẩn rồi gắn mẩu m�
 ghi; sửa thay cả hai trường. Sửa và ẩn đòi lý do; mẩu và ghi nhận đã ẩn đứng yên, vẫn đọc lại được.
 
 *Acceptance:*
-- [ ] Tám test viết trước ở `be/internal/daotao/daotao_test.go` xanh qua PostgreSQL thật, file không đổi.
-- [ ] Người không đứng quầy, không là chủ quán bị `not_on_counter_duty`, không phiên bị `unauthenticated` ở cả chín
+- [x] Tám test viết trước ở `be/internal/daotao/daotao_test.go` xanh qua PostgreSQL thật, file không đổi.
+- [x] Người không đứng quầy, không là chủ quán bị `not_on_counter_duty`, không phiên bị `unauthenticated` ở cả chín
       đường; database và kho tệp không đổi.
-- [ ] Hướng dẫn đọc lại được từ đúng việc của nó; ảnh · video là tệp trong kho, database chỉ cất khoá; tải lại đúng byte
+- [x] Hướng dẫn đọc lại được từ đúng việc của nó; ảnh · video là tệp trong kho, database chỉ cất khoá; tải lại đúng byte
       và đúng loại; tệp sai loại, quá cỡ, hay bị từ chối trong giao dịch không để lại tệp.
-- [ ] Ghi nhận đọc ra về ai · ai ghi · lúc ghi, theo thứ tự ghi; rỗng cả hai hay đánh giá thứ ba bị từ chối; sửa và ẩn
+- [x] Ghi nhận đọc ra về ai · ai ghi · lúc ghi, theo thứ tự ghi; rỗng cả hai hay đánh giá thứ ba bị từ chối; sửa và ẩn
       có vết; đã ẩn đọc lại được.
-- [ ] Hợp đồng tăng MINOR, bảy mã lỗi mới, các dòng `assigned_task_guide_*` · `training_record_*` đã xét, sáu dòng ma
+- [x] Hợp đồng tăng MINOR, bảy mã lỗi mới, các dòng `assigned_task_guide_*` · `training_record_*` đã xét, sáu dòng ma
       trận, bốn ca vết; biến `BANHCUON_FILE_DIR` ghi ở `docs/command/make.md` và hợp đồng.
-- [ ] `./scripts/gate.sh` xanh ở clone chính; `be-check` do Claude chạy.
+- [x] `./scripts/gate.sh` xanh ở clone chính; `be-check` do Claude chạy.
+
+**Bàn giao** — 2026-10-15 · thực hiện: **Codex** (package `be/internal/daotao` — handler, service, repository, SQL và mã
+sinh sqlc; `TestQC14_HinhDaoTaoTruocQuyenVaDatabase` ở `handler_test.go`; hợp đồng 0.28.0, bảy mã lỗi, các dòng
+`assigned_task_guide_*` · `training_record_*` của `x-constraint-errors`, sáu dòng ma trận; bốn ca vết ở
+`be/internal/don/vet_cua_test.go`; `BANHCUON_FILE_DIR` ở `be/cmd/server/main.go` · `router.go`; con trỏ ở
+`17-luoc-do-dao-tao.md` §3) · **Claude Code** (thiết kế, tám test viết trước; khi duyệt: chuyển ghi chú biến kho tệp vào
+đúng đoạn cấu hình ở `01-hop-dong-api.md` và `docs/command/make.md`; xoá dòng trống cắt đôi bảng ma trận ở
+`02-vai-va-quyen.md` §3 — lỗi có từ bước trước; sinh lại `fe/src/lib/api/schema.ts` vì sandbox Codex thiếu
+`openapi-typescript`) · duyệt: **Claude Code**, chưa review độc lập · worktree từ `92c16a7`, áp vào clone chính trên
+`7da137b`.
+
+*Nghiệm thu → bằng chứng* (worktree, 2026-10-15, Docker bật): `--- PASS` cả tám `TestI031_*` và
+`TestQC14_HinhDaoTaoTruocQuyenVaDatabase`; `--- PASS: TestI018_MoiCuaSuaCoVet/daotao/sua_huong_dan` · `an_huong_dan` ·
+`sua_ghi_nhan` · `an_ghi_nhan`; `be-check: PASS — mọi test backend qua PostgreSQL thật đều đạt`; `git diff --exit-code`
+trên `daotao_test.go` thoát 0; Gate 1g `hợp đồng 0.28.0; 92 đường gọi ở hợp đồng, 92 ở code; … 80 cửa, 80 dòng ma
+trận`. Gate ở clone chính: xem khối commit.
+
+*Còn lại:* tệp tải lên được kiểm hình và ghi vào kho **trước** khi xét quyền (đúng thiết kế ADR-114 — lời từ chối hình
+trước quyền); người chưa đăng nhập làm máy ghi tạm tối đa ~100 MiB rồi xoá, không tệp mồ côi. Chưa giới hạn số lần —
+xét lại khi mở pha vận hành. Trang `P4A-11` có cửa.
 
 [↑ đầu file](#top)
 

@@ -70,8 +70,7 @@ thiếu người hoặc lúc thuộc `I-031/2`. Vết sửa của cả hai bản
 Chỗ trỏ tệp chưa có tập dạng dữ liệu: kiểm bằng đọc lược đồ và thử khoá tệp, không viết
 câu đối chiếu riêng. Theo ADR-107, kho tệp ở cùng nơi chạy hệ thống (PT-2); sao lưu database
 không chứa tệp, vận hành phải sao lưu kho riêng. Khoá trỏ tới tệp đã mất vẫn hợp lệ ở database:
-tệp không mở được nhưng chữ hướng dẫn vẫn đọc được. Dựng và phục vụ kho là việc của backend
-và vận hành.
+tệp không mở được nhưng chữ hướng dẫn vẫn đọc được. Cửa dựng và phục vụ kho ở `be/internal/daotao`, dùng biến `BANHCUON_FILE_DIR` (P3A-04).
 
 Phần đã bị xoá mất, kể cả ghi nhận cũ bị thay mất mà không còn dấu, chưa có tập để đối chiếu.
 Test ghi hai lần rồi ẩn và đọc lại cùng kiểm quyền xoá chứng minh đường ứng dụng giữ dữ liệu;

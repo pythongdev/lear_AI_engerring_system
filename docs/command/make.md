@@ -109,6 +109,8 @@ sau khi chúng chạy.
 Server cần `BANHCUON_DATABASE_URL` (vai shop_app), `BANHCUON_SHOP_TZ` và
 `BANHCUON_ORIGIN` (origin giao diện, không dấu `/` cuối). SMTP và đường suy giảm
 được mô tả ở [hợp đồng API](../product/3-be/01-hop-dong-api.md).
+Từ P3A-04 server cần thêm `BANHCUON_FILE_DIR` — thư mục kho tệp hướng dẫn, phải tồn tại và
+ghi được; sao lưu database **không** chứa tệp, sao lưu thư mục này riêng.
 
 Chạy lệnh ở thư mục `be/`; mật khẩu đọc một dòng từ stdin, không có cờ mật khẩu:
 

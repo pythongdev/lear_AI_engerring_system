@@ -15,6 +15,7 @@ import (
 	"strings"
 	"testing"
 
+	"banhcuon/be/internal/daotao"
 	"banhcuon/be/internal/giaoviec"
 	"banhcuon/be/internal/khoanchi"
 	"banhcuon/be/internal/middleware"
@@ -113,6 +114,60 @@ var cacCaVet = []caVet{
 		c.srv = srv
 		id := c.docSo(t, "SELECT id FROM shop.counter_duty WHERE person_id=$1 AND ended_at IS NULL", c.quay)
 		return dichVet{"counter_duty", id, c.quay, "ended_at", nil, "mốc", func() { canDat(t, c.post(t, "/counter-duty/end", c.quay, map[string]any{}), 200) }}
+	}},
+	{"daotao/sua_huong_dan", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		daotao.Routes(r, daotao.NewService(c.pool, t.TempDir()))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		task := c.id(t, "INSERT INTO shop.assigned_task(content,assignee_person_id) VALUES ('test-việc',$1) RETURNING id", c.chu)
+		id := c.id(t, "INSERT INTO shop.assigned_task_guide(assigned_task_id,guide_kind_code,body) VALUES ($1,'text','test-cũ') RETURNING id", task)
+		return dichVet{"assigned_task_guide", id, c.chu, "body", "test-cũ", "test-mới", func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/assigned-task-guides/%d", id), c.chu, map[string]any{"body": "test-mới", "reason": "sửa hướng dẫn kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	{"daotao/an_huong_dan", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		daotao.Routes(r, daotao.NewService(c.pool, t.TempDir()))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		task := c.id(t, "INSERT INTO shop.assigned_task(content,assignee_person_id) VALUES ('test-việc',$1) RETURNING id", c.chu)
+		id := c.id(t, "INSERT INTO shop.assigned_task_guide(assigned_task_id,guide_kind_code,body) VALUES ($1,'text','test-cũ') RETURNING id", task)
+		return dichVet{"assigned_task_guide", id, c.chu, "hidden_at", nil, "mốc", func() {
+			status, body := c.goi(t, "POST", fmt.Sprintf("/assigned-task-guides/%d/hiding", id), c.chu, map[string]any{"reason": "ẩn hướng dẫn kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	{"daotao/sua_ghi_nhan", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		daotao.Routes(r, daotao.NewService(c.pool, t.TempDir()))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		id := c.id(t, "INSERT INTO shop.training_record(trainee_person_id,rating_code) VALUES ($1,'not_yet') RETURNING id", c.chu)
+		return dichVet{"training_record", id, c.chu, "rating_code", "not_yet", "pass", func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/training-records/%d", id), c.chu, map[string]any{"rating": "pass", "reason": "sửa ghi nhận kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	{"daotao/an_ghi_nhan", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		daotao.Routes(r, daotao.NewService(c.pool, t.TempDir()))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		id := c.id(t, "INSERT INTO shop.training_record(trainee_person_id,rating_code) VALUES ($1,'not_yet') RETURNING id", c.chu)
+		return dichVet{"training_record", id, c.chu, "hidden_at", nil, "mốc", func() {
+			status, body := c.goi(t, "POST", fmt.Sprintf("/training-records/%d/hiding", id), c.chu, map[string]any{"reason": "ẩn ghi nhận kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
 	}},
 	{"giaoviec/sua", func(t *testing.T, c canh) dichVet {
 		r := gin.New()

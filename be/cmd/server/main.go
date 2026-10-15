@@ -27,6 +27,9 @@ func main() {
 	if os.Getenv("BANHCUON_ORIGIN") == "" {
 		log.Fatal("thiếu BANHCUON_ORIGIN")
 	}
+	if os.Getenv("BANHCUON_FILE_DIR") == "" {
+		log.Fatal("thiếu BANHCUON_FILE_DIR")
+	}
 	gin.SetMode(gin.ReleaseMode)
 	pool, err := postgres.Open(context.Background(), dsn, tz)
 	if err != nil {

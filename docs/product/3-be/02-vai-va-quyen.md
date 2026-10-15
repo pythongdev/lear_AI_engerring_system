@@ -138,7 +138,12 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `khoanchi/them_loai` | `chu_quan` | `shop-facts.md` §8.10 — lời đóng U-095 (2026-10-15): chỉ chủ quán ghi khoản chi; phiếu P3A-01 |
 | `khoanchi/ghi` | `chu_quan` | `shop-facts.md` §8.10 — lời đóng U-095 (2026-10-15): chỉ chủ quán ghi khoản chi; phiếu P3A-01 |
 | `khoanchi/sua` | `chu_quan` | `shop-facts.md` §8.10 — lời đóng U-095 (2026-10-15): chỉ chủ quán ghi khoản chi; phiếu P3A-01 |
-
+| `daotao/gan_huong_dan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |
+| `daotao/sua_huong_dan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |
+| `daotao/an_huong_dan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |
+| `daotao/ghi_nhan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |
+| `daotao/sua_ghi_nhan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |
+| `daotao/an_ghi_nhan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |
 | `giaoviec/tao` | `quay_hoac_chu_quan` | `I-030` — chủ quán và POS tạo, sửa, xoá, đánh dấu (lời đóng `U-084` · `U-089`, 2026-10-14); ADR-105 điểm 1; phiếu P3A-03 |
 | `giaoviec/sua` | `quay_hoac_chu_quan` | `I-030` — chủ quán và POS tạo, sửa, xoá, đánh dấu (lời đóng `U-084` · `U-089`, 2026-10-14); ADR-105 điểm 1; phiếu P3A-03 |
 | `giaoviec/an` | `quay_hoac_chu_quan` | `I-030` — chủ quán và POS tạo, sửa, xoá, đánh dấu (lời đóng `U-084` · `U-089`, 2026-10-14); ADR-105 điểm 1; phiếu P3A-03 |

@@ -4,6 +4,154 @@
  */
 
 export interface paths {
+    "/assigned-tasks/{assigned_task_id}/guides": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Đọc hướng dẫn theo thứ tự gắn.
+         * @description Lớp quay_hoac_chu_quan. Mọi lỗi hình được kiểm trước quyền và database; path id phải là số nguyên dương, sai trả invalid_request với field tương ứng. Thứ tự created_at, id tăng dần. Include_hidden vắng/false bỏ mẩu ẩn, true kèm, khác trả field=include_hidden. Việc không có trả assigned_task_not_found; việc đã ẩn vẫn đọc được.
+         */
+        get: operations["listAssignedTaskGuides"];
+        put?: never;
+        /**
+         * Gắn chữ, ảnh hoặc video vào việc.
+         * @description Lớp quay_hoac_chu_quan. Mọi lỗi hình được kiểm trước quyền và database; path id phải là số nguyên dương, sai trả invalid_request với field tương ứng. Kind thiếu/sai trả field=kind. Text cần body cắt khoảng trắng không rỗng (field=body), không phần file (field=file). Image/video không trường body (field=body), cần file không rỗng và đúng loại theo nội dung (field=file). Nhận JPEG, PNG, WebP tối đa 10 MiB; MP4, WebM, QuickTime tối đa 100 MiB, đúng bằng được nhận; quá cỡ trả file_too_large (413). Thân không multipart trả invalid_request. Khoá việc; không có trả assigned_task_not_found, đã ẩn trả assigned_task_hidden. Tệp ghi trước giao dịch, giao dịch lỗi xoá tệp vừa ghi; database chỉ giữ khoá.
+         */
+        post: operations["attachAssignedTaskGuide"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/assigned-task-guides/{assigned_task_guide_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Sửa chữ của hướng dẫn, có lý do.
+         * @description Lớp quay_hoac_chu_quan. Mọi lỗi hình được kiểm trước quyền và database; path id phải là số nguyên dương, sai trả invalid_request với field tương ứng. Body cắt khoảng trắng, rỗng trả field=body; reason cắt khoảng trắng, thiếu/rỗng trả field=reason. Khoá mẩu; không có trả assigned_task_guide_not_found, đã ẩn trả assigned_task_guide_hidden, mẩu ảnh/video trả assigned_task_guide_not_text. Sửa có vết, không đổi tệp.
+         */
+        put: operations["updateAssignedTaskGuide"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/assigned-task-guides/{assigned_task_guide_id}/hiding": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ẩn hướng dẫn, giữ tệp.
+         * @description Lớp quay_hoac_chu_quan. Mọi lỗi hình được kiểm trước quyền và database; path id phải là số nguyên dương, sai trả invalid_request với field tương ứng. Reason cắt khoảng trắng, thiếu/rỗng trả field=reason. Khoá mẩu; không có trả assigned_task_guide_not_found, đã ẩn trả assigned_task_guide_hidden. Ghi người và mốc ẩn, có vết; không xoá tệp.
+         */
+        post: operations["hideAssignedTaskGuide"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/assigned-task-guides/{assigned_task_guide_id}/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Tải tệp của hướng dẫn.
+         * @description Lớp quay_hoac_chu_quan. Mọi lỗi hình được kiểm trước quyền và database; path id phải là số nguyên dương, sai trả invalid_request với field tương ứng. Không có mẩu trả assigned_task_guide_not_found; mẩu chữ hoặc mất tệp trả assigned_task_guide_file_missing. Mẩu đã ẩn vẫn phát tệp. Content-Type theo đuôi khoá tệp, hỗ trợ Range bằng ServeContent (206 khi yêu cầu khoảng hợp lệ, 416 khi khoảng ngoài tệp).
+         */
+        get: operations["getAssignedTaskGuideFile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/training-records": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Đọc ghi nhận theo lúc ghi.
+         * @description Lớp quay_hoac_chu_quan. Mọi lỗi hình được kiểm trước quyền và database; path id phải là số nguyên dương, sai trả invalid_request với field tương ứng. Thứ tự created_at, id tăng dần. Trainee_person_id lọc tuỳ chọn, sai trả field=trainee_person_id. Include_hidden vắng/false bỏ ghi nhận ẩn, true kèm, khác trả field=include_hidden.
+         */
+        get: operations["listTrainingRecords"];
+        put?: never;
+        /**
+         * Ghi nhận đào tạo về một người.
+         * @description Lớp quay_hoac_chu_quan. Mọi lỗi hình được kiểm trước quyền và database; path id phải là số nguyên dương, sai trả invalid_request với field tương ứng. Trainee_person_id thiếu/không dương trả field=trainee_person_id. Remark vắng/null là không nhận xét, có thì cắt khoảng trắng và không rỗng (field=remark). Rating vắng/null là không đánh giá; chỉ nhận pass hoặc not_yet, sai kể cả chuỗi rỗng/số trả field=rating. Cả hai vắng/null trả field=remark. Người không có trả person_not_found. Người ghi và lúc ghi do database cấp.
+         */
+        post: operations["createTrainingRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/training-records/{training_record_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Thay nhận xét và đánh giá, có lý do.
+         * @description Lớp quay_hoac_chu_quan. Mọi lỗi hình được kiểm trước quyền và database; path id phải là số nguyên dương, sai trả invalid_request với field tương ứng. Kiểm reason trước hai trường còn lại; cắt khoảng trắng, thiếu/rỗng trả field=reason. Remark vắng/null là không nhận xét, có thì cắt khoảng trắng và không rỗng (field=remark). Rating vắng/null là không đánh giá; chỉ nhận pass hoặc not_yet, sai kể cả chuỗi rỗng/số trả field=rating. Cả hai vắng/null trả field=remark. Thay cả hai trường, vắng nghĩa là không còn. Khoá dòng; không có trả training_record_not_found, đã ẩn trả training_record_hidden. Giữ người được ghi nhận, người ghi và lúc ghi; sửa có vết.
+         */
+        put: operations["updateTrainingRecord"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/training-records/{training_record_id}/hiding": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ẩn ghi nhận đào tạo.
+         * @description Lớp quay_hoac_chu_quan. Mọi lỗi hình được kiểm trước quyền và database; path id phải là số nguyên dương, sai trả invalid_request với field tương ứng. Reason cắt khoảng trắng, thiếu/rỗng trả field=reason. Khoá dòng; không có trả training_record_not_found, đã ẩn trả training_record_hidden. Ghi người và mốc ẩn, có vết.
+         */
+        post: operations["hideTrainingRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/assigned-tasks": {
         parameters: {
             query?: never;
@@ -1368,6 +1516,80 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @description Body là chuỗi với text, null với image/video. Khoá tệp không đưa ra dây; tải qua đường /file. */
+        AssignedTaskGuide: {
+            /** Format: int64 */
+            assigned_task_guide_id: number;
+            /** Format: int64 */
+            assigned_task_id: number;
+            /** @enum {string} */
+            kind: "text" | "image" | "video";
+            body: string | null;
+            /** Format: int64 */
+            person_id: number;
+            person_name: string;
+            created_at: components["schemas"]["Instant"];
+            /** Format: date-time */
+            hidden_at: string | null;
+            /** Format: int64 */
+            hidden_by_person_id: number | null;
+            hidden_by_name: string | null;
+        };
+        TrainingRecord: {
+            /** Format: int64 */
+            training_record_id: number;
+            /** Format: int64 */
+            trainee_person_id: number;
+            trainee_name: string;
+            remark: string | null;
+            /** @enum {string|null} */
+            rating: "pass" | "not_yet" | null;
+            /** Format: int64 */
+            person_id: number;
+            person_name: string;
+            created_at: components["schemas"]["Instant"];
+            /** Format: date-time */
+            hidden_at: string | null;
+            /** Format: int64 */
+            hidden_by_person_id: number | null;
+            hidden_by_name: string | null;
+        };
+        AssignedTaskGuides: {
+            guides: components["schemas"]["AssignedTaskGuide"][];
+        };
+        TrainingRecords: {
+            training_records: components["schemas"]["TrainingRecord"][];
+        };
+        /** @description Text cần body và không file; image/video cần file và không body. Kiểm nội dung tệp, không tin tên hay Content-Type người gửi. */
+        CreateAssignedTaskGuide: {
+            /** @enum {string} */
+            kind: "text" | "image" | "video";
+            body?: string;
+            /** Format: binary */
+            file?: string;
+        };
+        UpdateAssignedTaskGuide: {
+            body: string;
+            reason: string;
+        };
+        HideTrainingItem: {
+            reason: string;
+        };
+        /** @description Ít nhất remark hoặc rating khác null. */
+        CreateTrainingRecord: {
+            /** Format: int64 */
+            trainee_person_id: number;
+            remark?: string | null;
+            /** @enum {string|null} */
+            rating?: "pass" | "not_yet" | null;
+        };
+        /** @description Thay cả hai trường; ít nhất remark hoặc rating khác null. */
+        UpdateTrainingRecord: {
+            remark?: string | null;
+            /** @enum {string|null} */
+            rating?: "pass" | "not_yet" | null;
+            reason: string;
+        };
         AssignedTaskMark: {
             /** Format: int64 */
             assigned_task_mark_id: number;
@@ -2168,7 +2390,7 @@ export interface components {
          * @description Mã lỗi công khai. FE quyết hiện gì theo mã, không theo status, không theo chữ. Mã của một luật do lát dựng cửa của luật ấy thêm (01-hop-dong-api.md §3).
          * @enum {string}
          */
-        ErrorCode: "expense_category_not_found" | "expense_not_found" | "supply_item_unit_already_set" | "supply_day_entry_already_recorded" | "supply_item_name_taken" | "supply_day_entry_not_found" | "assigned_task_not_found" | "person_not_found" | "assigned_task_hidden" | "assigned_task_already_done" | "assigned_task_not_done" | "supply_item_not_found" | "expense_category_name_taken" | "username_taken" | "email_taken" | "password_too_short" | "invalid_credentials" | "login_temporarily_blocked" | "reset_token_invalid" | "account_not_pending" | "account_not_active" | "account_not_locked" | "cross_origin_write" | "order_intake_already_paused" | "order_intake_not_paused" | "shop_already_blind" | "shop_not_blind" | "intake_state_changed" | "internal_error" | "invalid_request" | "unauthenticated" | "not_on_counter_duty" | "counter_duty_changed" | "owner_only" | "qr_code_not_current" | "dining_table_not_found" | "qr_code_issue_conflict" | "menu_item_not_found" | "menu_option_not_found" | "menu_component_not_found" | "menu_item_component_not_found" | "menu_item_discontinued" | "option_combination_invalid" | "submission_code_conflict" | "dining_table_needs_cleaning" | "dining_table_not_needing_cleaning" | "sales_order_not_found" | "table_session_not_found" | "order_transition_not_allowed" | "table_session_transition_not_allowed" | "table_session_has_open_orders" | "payment_parts_mismatch" | "debtor_name_mismatch" | "order_intake_paused" | "outside_selling_hours" | "shop_not_seeing_orders" | "delivery_served_mark_undecided" | "debt_note_required" | "order_handover_mismatch" | "order_jobs_not_served" | "prepayment_balance_exceeded" | "bill_not_found" | "prepayment_not_found" | "bill_has_no_debt" | "debt_already_settled" | "debt_overpaid" | "order_not_prepayable" | "prepayment_already_received" | "opening_float_already_declared" | "cash_count_already_recorded" | "sale_day_reconciled" | "cash_day_incomplete" | "sale_day_not_reconciled" | "sale_day_already_reconciled" | "paper_ledger_missing" | "paper_position_already_entered" | "paper_ledger_already_declared" | "paper_entries_pending" | "gap_explanation_required" | "station_job_not_found" | "station_job_transition_not_allowed" | "production_batch_not_found" | "production_batch_already_rolled_back" | "production_batch_has_served_units" | "station_job_has_wrong_make_note" | "transfer_source_not_available" | "transfer_target_not_waiting" | "wrong_make_note_not_allowed" | "wrong_make_note_not_found" | "wrong_make_note_already_cancelled" | "served_quantity_exceeds_made";
+        ErrorCode: "expense_category_not_found" | "expense_not_found" | "supply_item_unit_already_set" | "supply_day_entry_already_recorded" | "supply_item_name_taken" | "supply_day_entry_not_found" | "assigned_task_guide_not_found" | "assigned_task_guide_hidden" | "assigned_task_guide_not_text" | "assigned_task_guide_file_missing" | "file_too_large" | "training_record_not_found" | "training_record_hidden" | "assigned_task_not_found" | "person_not_found" | "assigned_task_hidden" | "assigned_task_already_done" | "assigned_task_not_done" | "supply_item_not_found" | "expense_category_name_taken" | "username_taken" | "email_taken" | "password_too_short" | "invalid_credentials" | "login_temporarily_blocked" | "reset_token_invalid" | "account_not_pending" | "account_not_active" | "account_not_locked" | "cross_origin_write" | "order_intake_already_paused" | "order_intake_not_paused" | "shop_already_blind" | "shop_not_blind" | "intake_state_changed" | "internal_error" | "invalid_request" | "unauthenticated" | "not_on_counter_duty" | "counter_duty_changed" | "owner_only" | "qr_code_not_current" | "dining_table_not_found" | "qr_code_issue_conflict" | "menu_item_not_found" | "menu_option_not_found" | "menu_component_not_found" | "menu_item_component_not_found" | "menu_item_discontinued" | "option_combination_invalid" | "submission_code_conflict" | "dining_table_needs_cleaning" | "dining_table_not_needing_cleaning" | "sales_order_not_found" | "table_session_not_found" | "order_transition_not_allowed" | "table_session_transition_not_allowed" | "table_session_has_open_orders" | "payment_parts_mismatch" | "debtor_name_mismatch" | "order_intake_paused" | "outside_selling_hours" | "shop_not_seeing_orders" | "delivery_served_mark_undecided" | "debt_note_required" | "order_handover_mismatch" | "order_jobs_not_served" | "prepayment_balance_exceeded" | "bill_not_found" | "prepayment_not_found" | "bill_has_no_debt" | "debt_already_settled" | "debt_overpaid" | "order_not_prepayable" | "prepayment_already_received" | "opening_float_already_declared" | "cash_count_already_recorded" | "sale_day_reconciled" | "cash_day_incomplete" | "sale_day_not_reconciled" | "sale_day_already_reconciled" | "paper_ledger_missing" | "paper_position_already_entered" | "paper_ledger_already_declared" | "paper_entries_pending" | "gap_explanation_required" | "station_job_not_found" | "station_job_transition_not_allowed" | "production_batch_not_found" | "production_batch_already_rolled_back" | "production_batch_has_served_units" | "station_job_has_wrong_make_note" | "transfer_source_not_available" | "transfer_target_not_waiting" | "wrong_make_note_not_allowed" | "wrong_make_note_not_found" | "wrong_make_note_already_cancelled" | "served_quantity_exceeds_made";
         /** @description Hình lỗi chung của mọi lời từ chối (01-hop-dong-api.md §3). */
         Error: {
             code: components["schemas"]["ErrorCode"];
@@ -2342,6 +2564,311 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    listAssignedTaskGuides: {
+        parameters: {
+            query?: {
+                include_hidden?: boolean;
+            };
+            header?: never;
+            path: {
+                assigned_task_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignedTaskGuides"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    attachAssignedTaskGuide: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assigned_task_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["CreateAssignedTaskGuide"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignedTaskGuide"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    updateAssignedTaskGuide: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assigned_task_guide_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateAssignedTaskGuide"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignedTaskGuide"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    hideAssignedTaskGuide: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assigned_task_guide_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HideTrainingItem"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignedTaskGuide"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getAssignedTaskGuideFile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assigned_task_guide_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "image/*": string;
+                    "video/*": string;
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listTrainingRecords: {
+        parameters: {
+            query?: {
+                trainee_person_id?: number;
+                include_hidden?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrainingRecords"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    createTrainingRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTrainingRecord"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrainingRecord"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    updateTrainingRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                training_record_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTrainingRecord"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrainingRecord"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    hideTrainingRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                training_record_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HideTrainingItem"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrainingRecord"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     listAssignedTasks: {
         parameters: {
             query?: {
@@ -5362,6 +5889,8 @@ type ReadonlyArray<T> = [
     unknown[]
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
 export const pathsAccountsGetParametersQueryStatusValues: ReadonlyArray<FlattenedDeepRequired<paths>["/accounts"]["get"]["parameters"]["query"]["status"]> = ["cho_duyet", "hoat_dong", "khoa", "tu_choi"];
+export const assignedTaskGuideKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AssignedTaskGuide"]["kind"]> = ["text", "image", "video"];
+export const createAssignedTaskGuideKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CreateAssignedTaskGuide"]["kind"]> = ["text", "image", "video"];
 export const assignedTaskMarkMarkValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AssignedTaskMark"]["mark"]> = ["done", "undone"];
 export const markAssignedTaskMarkValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["MarkAssignedTask"]["mark"]> = ["done", "undone"];
 export const supplyDayEntryKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["SupplyDayEntry"]["kind"]> = ["purchased", "used"];
@@ -5384,4 +5913,4 @@ export const refundRequestSource_method_codeValues: ReadonlyArray<FlattenedDeepR
 export const prepaymentReturnRequestMethod_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PrepaymentReturnRequest"]["method_code"]> = ["cash", "transfer"];
 export const paperEntryRequestKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaperEntryRequest"]["kind"]> = ["table", "takeaway"];
 export const paperEntryRequestHandover_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaperEntryRequest"]["handover_code"]> = ["shop_pickup", "door_delivery"];
-export const errorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ErrorCode"]> = ["expense_category_not_found", "expense_not_found", "supply_item_unit_already_set", "supply_day_entry_already_recorded", "supply_item_name_taken", "supply_day_entry_not_found", "assigned_task_not_found", "person_not_found", "assigned_task_hidden", "assigned_task_already_done", "assigned_task_not_done", "supply_item_not_found", "expense_category_name_taken", "username_taken", "email_taken", "password_too_short", "invalid_credentials", "login_temporarily_blocked", "reset_token_invalid", "account_not_pending", "account_not_active", "account_not_locked", "cross_origin_write", "order_intake_already_paused", "order_intake_not_paused", "shop_already_blind", "shop_not_blind", "intake_state_changed", "internal_error", "invalid_request", "unauthenticated", "not_on_counter_duty", "counter_duty_changed", "owner_only", "qr_code_not_current", "dining_table_not_found", "qr_code_issue_conflict", "menu_item_not_found", "menu_option_not_found", "menu_component_not_found", "menu_item_component_not_found", "menu_item_discontinued", "option_combination_invalid", "submission_code_conflict", "dining_table_needs_cleaning", "dining_table_not_needing_cleaning", "sales_order_not_found", "table_session_not_found", "order_transition_not_allowed", "table_session_transition_not_allowed", "table_session_has_open_orders", "payment_parts_mismatch", "debtor_name_mismatch", "order_intake_paused", "outside_selling_hours", "shop_not_seeing_orders", "delivery_served_mark_undecided", "debt_note_required", "order_handover_mismatch", "order_jobs_not_served", "prepayment_balance_exceeded", "bill_not_found", "prepayment_not_found", "bill_has_no_debt", "debt_already_settled", "debt_overpaid", "order_not_prepayable", "prepayment_already_received", "opening_float_already_declared", "cash_count_already_recorded", "sale_day_reconciled", "cash_day_incomplete", "sale_day_not_reconciled", "sale_day_already_reconciled", "paper_ledger_missing", "paper_position_already_entered", "paper_ledger_already_declared", "paper_entries_pending", "gap_explanation_required", "station_job_not_found", "station_job_transition_not_allowed", "production_batch_not_found", "production_batch_already_rolled_back", "production_batch_has_served_units", "station_job_has_wrong_make_note", "transfer_source_not_available", "transfer_target_not_waiting", "wrong_make_note_not_allowed", "wrong_make_note_not_found", "wrong_make_note_already_cancelled", "served_quantity_exceeds_made"];
+export const errorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ErrorCode"]> = ["expense_category_not_found", "expense_not_found", "supply_item_unit_already_set", "supply_day_entry_already_recorded", "supply_item_name_taken", "supply_day_entry_not_found", "assigned_task_guide_not_found", "assigned_task_guide_hidden", "assigned_task_guide_not_text", "assigned_task_guide_file_missing", "file_too_large", "training_record_not_found", "training_record_hidden", "assigned_task_not_found", "person_not_found", "assigned_task_hidden", "assigned_task_already_done", "assigned_task_not_done", "supply_item_not_found", "expense_category_name_taken", "username_taken", "email_taken", "password_too_short", "invalid_credentials", "login_temporarily_blocked", "reset_token_invalid", "account_not_pending", "account_not_active", "account_not_locked", "cross_origin_write", "order_intake_already_paused", "order_intake_not_paused", "shop_already_blind", "shop_not_blind", "intake_state_changed", "internal_error", "invalid_request", "unauthenticated", "not_on_counter_duty", "counter_duty_changed", "owner_only", "qr_code_not_current", "dining_table_not_found", "qr_code_issue_conflict", "menu_item_not_found", "menu_option_not_found", "menu_component_not_found", "menu_item_component_not_found", "menu_item_discontinued", "option_combination_invalid", "submission_code_conflict", "dining_table_needs_cleaning", "dining_table_not_needing_cleaning", "sales_order_not_found", "table_session_not_found", "order_transition_not_allowed", "table_session_transition_not_allowed", "table_session_has_open_orders", "payment_parts_mismatch", "debtor_name_mismatch", "order_intake_paused", "outside_selling_hours", "shop_not_seeing_orders", "delivery_served_mark_undecided", "debt_note_required", "order_handover_mismatch", "order_jobs_not_served", "prepayment_balance_exceeded", "bill_not_found", "prepayment_not_found", "bill_has_no_debt", "debt_already_settled", "debt_overpaid", "order_not_prepayable", "prepayment_already_received", "opening_float_already_declared", "cash_count_already_recorded", "sale_day_reconciled", "cash_day_incomplete", "sale_day_not_reconciled", "sale_day_already_reconciled", "paper_ledger_missing", "paper_position_already_entered", "paper_ledger_already_declared", "paper_entries_pending", "gap_explanation_required", "station_job_not_found", "station_job_transition_not_allowed", "production_batch_not_found", "production_batch_already_rolled_back", "production_batch_has_served_units", "station_job_has_wrong_make_note", "transfer_source_not_available", "transfer_target_not_waiting", "wrong_make_note_not_allowed", "wrong_make_note_not_found", "wrong_make_note_already_cancelled", "served_quantity_exceeds_made"];
