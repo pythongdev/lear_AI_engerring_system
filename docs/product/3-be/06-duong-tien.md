@@ -91,7 +91,7 @@ tiền, theo shop-facts.md §6.4. Hoàn vào ngày mới không sửa doanh thu 
 `be/internal/ket/sql/ket_ngay.sql` là bản đọc có chủ ý của `pg_temp.ket_ngay`
 (`db/reconcile/prelude.sql`, ADR-089 điểm 6). Giữ từng hạng tử: tiền mặt hoá đơn và phần trả trước,
 hoàn cho tiền mặt, hai chiều hoàn chéo, thu nợ, nhận trả trước, trừ trả trước thành doanh thu,
-trả lại trả trước bằng tiền mặt, chi tạm ứng và thưởng theo ngày khai. Không rút gọn công thức.
+trả lại trả trước bằng tiền mặt, chi tạm ứng và thưởng theo ngày khai. Cửa đọc két nay trừ cả khoản chi của loại trả từ két theo `paid_date`, cùng hình bộ đối chiếu (P3A-01). Không rút gọn công thức.
 Đường đọc và cửa ký dùng cùng file này. Gap = counted − opening − expected; expected và gap có thể âm.
 
 Cửa ký xét theo thứ tự ADR-089 điểm 5:
@@ -172,7 +172,7 @@ staff_advance và holiday_bonus thuộc lát ghi của mình.
 |---|---|---|
 | Huỷ đơn đã xác nhận | không thêm cửa huỷ; phần trả lại trả trước đã có cửa | P3-10 |
 | Sửa dòng tiền, sửa tiền đầu két, nhập bù | không có cửa ở lát này | P3-11 |
-| Khoản chi I-029 | chưa có bảng khoản chi, chưa có hạng tử ấy | P2A-05 |
+| Khoản chi I-029 | đã có bảng và hạng tử loại trả từ két theo ngày khai; cửa ghi, sửa và đọc chỉ cho chủ quán | P2A-05 · P3A-01 |
 | Tin nhắn báo có | chưa có chỗ cất, chưa đối soát chuyển khoản bằng tin nhắn | lát sau |
 | Quyền đọc của `GET /debts` · `GET /sale-days/{sale_date}/cash-reconciliation` | như mọi đường đọc hiện có, không đòi người gọi — mà `GET /debts` trả **tên người nợ** (`YC-11`); chưa có chương trình chạy thật nên chưa lộ ra đâu | còn mở; trước khi backend chạy thật (Claude, 2026-10-09) |
 | I-014 tập 6 — con số đã ký | cửa không ghi tiền vào ngày đã ký; không chụp con số, sửa tay ngoài cửa vẫn chưa có câu bắt | tầng 4; ADR-089 điểm 4 |
