@@ -126,6 +126,7 @@ có câu trả lời mới từ người.
 | ADR-107 | **Lát đào tạo: tệp ảnh · video nằm NGOÀI database, trong kho tệp trên chính nơi hệ thống chạy (PT-2), database cất một khoá tệp tương đối ngắn**; hướng dẫn là một dòng mỗi chữ · ảnh · video, gắn đúng một việc giao; ghi nhận đào tạo đứng trên người, nhận xét và đánh giá `pass` · `not_yet` tuỳ chọn nhưng không rỗng cả hai; về ai, ai ghi, việc của hướng dẫn không sửa được | Đã chốt 2026-10-14 (giao cho phiên, P2A-12) | — | P2A-12 · I-031 · YC-36 · ADR-105 |
 | ADR-108 | **Lát danh mục và combo: bốn bảng thêm cạnh lát menu, không thêm cột vào bảng món**; món nhiều nhất một danh mục bằng bảng xếp có khoá duy nhất trên món; combo mang `price_vnd` riêng, *ít nhất một món* là trigger ràng buộc hoãn tới lúc kết thúc giao dịch; tên danh mục duy nhất trong danh mục còn dùng; *không đổi giá giữa buổi* và *chỉ chủ quán* ở cửa backend | Đã chốt 2026-10-14 (giao cho phiên, P2A-13) | — | P2A-13 · I-032 · YC-37 · ADR-105 |
 | ADR-109 | **Đăng nhập bằng tài khoản** (thiết kế `T-181`): tài khoản tách khỏi `person`, bốn trạng thái, chủ quán duyệt và gán vai (vai không mở quyền); mật khẩu argon2id; phiên là cookie mang mã ngẫu nhiên, băm ở database, 7 ngày; đăng nhập `tai_quay` mở trực quầy qua `nguoi/vao_quay`; đặt lại qua thư 30 phút một lần, thư là `PT-7`; gỡ `X-Person-Id`; ba lát `P2A-14` → backend → `P4-04` | Đã chốt 2026-10-14 (chủ repo duyệt, T-181) | — | `P2A-14` · `P4-04` · `P4A-06` · ADR-085 · ADR-102 · ADR-104 |
+| ADR-110 | **Backend admin mở thi công theo trang** (`T-191`): mỗi trang `P4A-XX` ứng các cửa nó cần, mười bước `P3A-01`…`P3A-10` đứng trên lát lược đồ đã dựng; lớp của cửa đọc từ mệnh đề `I-0xx`, mệnh đề không nói thì `chu_quan` kèm một câu hỏi; các bước chạy nối tiếp vì cùng chạm hợp đồng | Đã chốt 2026-10-14 (lời chủ repo, T-191) | — | `P3A-01`…`P3A-10` · `P4A-01`…`P4A-11` · ADR-068 · ADR-085 · ADR-103 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7352,3 +7353,34 @@ khoản như mọi người (đã có lời **ADR-104**: *kể cả chủ quán*
 nên tài khoản chủ quán không phải mang một trong bốn vai trạm. Chỉ lệnh khởi tạo ở điểm 10 đặt được mã ấy, màn duyệt
 không; quyền vẫn đọc từ cờ `is_owner`, không từ mã vai. Mã bốn vai trạm: `quay` · `trang_banh` · `gap_banh` ·
 `canh_don_ban` (vai *canh & dọn* của §3 không có mã ở owner; `canh_don_ban` là tên của phiên).
+
+### ADR-110 — Backend admin mở thi công theo trang: mỗi trang admin ứng các cửa nó cần, lớp đọc từ mệnh đề
+
+**Trạng thái:** **Đã chốt** 2026-10-14. Điểm 1 là **lời chủ repo** trong phiên: *"mở một task lập kế hoạch backend
+admin rồi làm các cửa API mà từng trang cần"*. Điểm 2 · 3 · 4 **giao cho phiên** (Claude Code, task `T-191`) — lời gốc
+không nêu mã bước, lớp quyền hay thứ tự.
+
+**Context:** vế 2026-10-14 của **Đ-2** (`work/backlog.md`, *Thứ tự làm*) ghi *backend admin sẽ làm, chưa có kế hoạch*.
+Lát lược đồ admin `P2A-02`…`P2A-14` đã dựng; mười một trang `P4A-01`…`P4A-11` (**ADR-103**) bị chặn bởi điều (a) —
+*backend admin có cửa*.
+
+**Decision:**
+
+1. **Backend admin mở thi công** — kế hoạch `master_plan/AD_BE_master_plan_banh_cuon_ba_thanh.md`, sổ
+   `work/backlog_AD_BE.md`, mã bước `P3A-XX`.
+2. **Chia theo trang, không theo bảng:** mỗi bước làm đủ cửa một trang (hay một phần trang) cần, đứng trên một lát đã
+   dựng. Trang vỏ (`P4A-01`) và trang nhân viên (`P4A-06`) đã có cửa ở `T-190`; lát chấm công và khoản của người chưa
+   trang nào cần nên không có bước.
+3. **Lớp quyền của cửa đọc từ mệnh đề** `I-025`…`I-033` (vế *ai được ghi*). Mệnh đề không nói ⇒ lớp **hẹp nhất**
+   `chu_quan` cùng một `U-XXX` — hẹp là đường lùi, không phải luật. Lần đầu: khoản chi (`I-029`) ⇒ `U-095`.
+4. **Các bước chạy nối tiếp**, không song song: cùng chạm `openapi.yaml`, ma trận vai và `apierr`
+   (`docs/prompt-guideline.md` §6.1).
+
+**Why:** chia theo trang cho mỗi bước một đầu ra người dùng thấy được (trang mở được), và giữ pha 4 khỏi dựng trang
+trên cửa chưa có; lớp hẹp khi chưa có lời không mở quyền mà chủ quán chưa cho.
+
+**Rejected alternatives:** *một bước CRUD cho mỗi bảng* — đẻ cửa không trang nào gọi; *lớp `quay_hoac_chu_quan` cho
+khoản chi vì két ở quầy* — là suy ra về người ghi, chưa ai nói.
+
+**Applies to:** `P3A-01`…`P3A-10`; `work/backlog_FE_AD.md` điều (a); **ADR-068** · **ADR-085** · **ADR-103**.
+
