@@ -1589,3 +1589,38 @@ khoản hoạt động; mọi phiên gắn trực quầy gắn khoảng của ch
 
 *Viết ở P2A-14, 2026-10-14, Claude Code — từ lời chủ quán đóng `U-083` · `U-088` và thiết kế
 **ADR-109** chủ repo duyệt. Chỗ suy ra ghi ở mục Why.*
+
+### I-034 — Một combo trên đơn mang giá combo chủ quán đặt CỘNG mức phụ thu chủ quán đặt cho từng suất; mỗi suất chọn nhân riêng theo luật của món ấy; một combo trên đơn luôn đủ suất
+
+**Invariant:**
+Mệnh đề của việc bán combo chủ quán lập (`master_plan/shop-facts.md` §8.9, lượt bảy và lượt tám 2026-10-15, đóng
+`U-096`). Năm vế:
+
+- **Tiền của một combo trên đơn** = giá combo tại mốc lượt gọi **cộng**, với **mỗi suất** trong combo, tổng mức chủ quán
+  đặt cho lựa chọn khách chọn ở suất ấy, theo món ấy của combo ấy. Lựa chọn chủ quán chưa đặt mức thì cộng **0đ**.
+  Không cộng giá gốc các món (`I-032`), không đếm *+1.000 mỗi phần nhận nhân* của §4.4.
+- **Mỗi suất trong combo chọn nhân riêng**, theo đúng luật tổ hợp của món ấy (`I-010` áp **từng suất**); số suất của
+  mỗi món trên đơn đúng bằng số phần của món ấy trong combo nhân số combo khách gọi.
+- **Mức phụ thu trong combo do chủ quán đặt**, chỉ đổi **ngoài giờ bán**, có lý do và có vết (`I-018`); đơn đã tạo không
+  đổi khi mức đổi (`I-009`).
+- **Giá do khách gửi không bao giờ được dùng** cho combo, ở cả năm kênh (`I-013`).
+- **Một combo trên đơn luôn đủ suất**: không có combo thiếu món, không có suất của combo đứng ngoài combo của nó.
+
+**Why:**
+Lời chủ quán chọn một giá riêng cho combo (`U-092`) và một mức riêng cho từng món của combo (lượt bảy) — nên con số trên
+đơn không được rơi về công thức của món lẻ, nếu không cùng một combo có hai đáp số. *Mỗi suất một lần* và *cộng 0đ* là
+lời chọn của chủ repo (lượt tám). **Suy ra của phiên** (`CLAUDE.md` §7.2): mức là số nguyên đồng không âm, như phụ thu
+§4.4; combo đã ẩn hay có món đã ngừng bán tại mốc thì bị từ chối, như món ngừng bán (`I-009` tầng 3); *luôn đủ suất* —
+một combo thiếu suất thì bếp làm thiếu mà két vẫn thu đủ giá combo.
+
+**Verification:**
+Kịch bản âm: gọi combo đã ẩn, combo có món đã ngừng bán, combo thiếu hay thừa suất của một món, một suất mang tổ hợp sai
+luật của món ấy (*Chay + Nhiều nhân*), gửi kèm giá 0đ ⇒ **bị từ chối** hoặc giá gửi bị bỏ; đổi mức phụ thu trong giờ bán
+⇒ **bị từ chối**. Kịch bản dương: combo hai suất trứng, chủ quán đặt mức cho *Nhiều nhân* của món trứng trong combo ấy,
+một suất chọn *Nhiều nhân*, suất kia *Thường* ⇒ tiền = giá combo + một lần mức ấy; cả hai suất chọn *Nhiều nhân* ⇒ hai
+lần; một lựa chọn chưa đặt mức ⇒ cộng 0đ. Kịch bản sửa: đổi giá combo hay mức sau khi đặt ⇒ đơn cũ đứng nguyên, đơn mới
+ăn số mới. Kiểm ngược: tiền mỗi combo trên đơn bằng giá combo đã chụp cộng các mức đã chụp của suất của nó; mọi suất
+của combo thuộc đúng một combo đủ suất.
+
+*Viết ở P3A-11, 2026-10-15, Claude Code — từ lời lượt bảy, lượt tám (`master_plan/shop-facts.md` §8.9). Chỗ suy ra ghi
+ở mục Why.*

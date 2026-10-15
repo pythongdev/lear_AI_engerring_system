@@ -299,7 +299,7 @@ ADR-116; khi duyệt: gofmt chính test của mình — chỉ khoảng trắng, 
 `be/internal/ngayban/sql/ngoai_gio.sql`; `git diff HEAD -- be/internal/gia be/internal/menu db` rỗng; `be-check: PASS`;
 Gate 1g `hợp đồng 0.30.0; 101 đường gọi ở hợp đồng, 101 ở code; … 87 cửa, 87 dòng ma trận`.
 
-*Còn lại:* combo lập được mà **chưa bán được** — `P3A-11`, chờ `U-096`. Trang `P4A-05` đủ cửa cho phần combo.
+*Còn lại:* combo lập được mà **chưa bán được** — `P3A-11` (`U-096` đóng 2026-10-15). Trang `P4A-05` đủ cửa cho phần combo.
 
 [↑ đầu file](#top)
 
@@ -313,9 +313,29 @@ chọn ở món ấy (`master_plan/shop-facts.md` §8.9, lượt bảy); khách 
 **Đứng trên:** `P3A-06`; `docs/product/3-be/03-ham-gia.md`; **ADR-108** điểm 7 · **ADR-116** điểm 6.
 **Bẫy:** `order_line` bắt buộc đúng một món — dòng đơn mang combo cần migration; bếp nhận việc theo thành phần của dòng đơn
 (lát `P2-07`); hoá đơn, nhập bù, đối chiếu `I-009` · `I-013` đọc dòng đơn. Chỗ cất phụ thu theo món của combo chưa có.
-**Bị chặn bởi:** `U-096` (lựa chọn chưa đặt mức thì tính sao). Mức L3: Claude viết ADR, chủ repo duyệt trước mọi code, rồi
-tách lát L1/L2.
-**Nhận việc:** —
+**Bị chặn bởi:** ~~`U-096`~~ — đóng 2026-10-15 (lượt tám: cộng 0đ). Mức L3: Claude viết ADR, chủ repo duyệt trước mọi
+code, rồi tách lát L1/L2.
+**Nhận việc:** 2026-10-15 · Claude Code (thiết kế, test trước, duyệt) · thiết kế **ADR-117**, mệnh đề `I-034`, lời lượt tám ở
+`master_plan/shop-facts.md` §8.9. **Chờ chủ repo duyệt ADR-117 — chưa phiếu Codex nào được phát.**
+
+*Bốn lát (ADR-117 điểm 8) — mỗi lát một phiếu Codex trong worktree riêng `../lean_wt/<mã>`, Claude viết test đỏ trước,
+chạy `db-check` · `be-check`, đọc diff thật rồi mới chấm Done:*
+
+- **`T-193` — lược đồ (L2).** Migration mới: `menu_combo_item_option_surcharge`; `order_line` thêm `menu_combo_id`,
+  `parent_order_line_id`, `menu_item_id` và `component_count` thành nullable với ràng buộc hai tầng của ADR-117 điểm 3; file
+  ý định `docs/product/2-db/20-luoc-do-ban-combo.md`. *Acceptance:* test `db/tests/i034_*` xanh qua `db-check` — dòng combo
+  thiếu dòng con, dòng con trỏ sang đơn khác, dòng mang cả món lẫn combo, dòng combo có thành phần, mức âm đều bị từ chối;
+  test cũ `i004` · `i009` · `i013` · `i019` · `i020` xanh không sửa; Gate 1e xanh; down-migration dựng lại được.
+- **`T-194` — cửa đặt mức (L2).** ADR-117 điểm 6. *Acceptance:* chỉ chủ quán; thiếu lý do, lựa chọn không thuộc nhóm của
+  món, combo đã ẩn, trong giờ bán (cả hai đầu) bị từ chối; ngoài giờ có vết mức cũ, mức mới, lý do, người; `GET
+  /menu-combos` trả mức; hợp đồng tăng MINOR.
+- **`T-195` — hàm giá (L2).** ADR-117 điểm 4 · 5 (tính thử, menu). *Acceptance:* combo hai suất trứng — một *Nhiều nhân* có
+  mức, một *Thường* ⇒ giá combo + một mức; cả hai ⇒ hai mức; lựa chọn chưa đặt mức ⇒ 0đ; ba mã từ chối mới đúng thứ tự;
+  *Chay + Nhiều nhân* trong một suất bị `option_combination_invalid`; đọc tại mốc dùng giá và mức trước lần sửa; ca §4.8 cũ
+  xanh không đổi; `03-ham-gia.md` cập nhật.
+- **`T-196` — ghi đơn (L2).** ADR-117 điểm 2 · 5 · 7. *Acceptance:* năm kênh ghi combo bằng cùng con số tính thử; giá gửi
+  kèm bị bỏ; tổng hoá đơn = giá combo + mức đã chụp; bếp nhận đúng số việc theo suất con, nhân của từng suất giữ riêng;
+  đọc đơn lồng suất dưới combo; nhập bù combo dùng giá ngày bán; đổi giá combo sau khi đặt ⇒ đơn cũ đứng nguyên.
 
 [↑ đầu file](#top)
 

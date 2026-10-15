@@ -139,11 +139,6 @@ phạm vi của nó ở `master_plan/shop-facts.md` **§8.8**.
   nháp ở `fe/src/app/layout.tsx`. Ai trả lời: chủ quán (1, 2, chữ mô tả), chủ repo (3). Chặn gì: JSON-LD chưa có
   `address` · `openingHours`; chưa có canonical và `sitemap.xml` cho tới khi đặt `BANHCUON_SITE_URL`. Không chặn bán hàng.
 
-- **U-096** — Trong một combo, chủ quán chưa đặt mức phụ thu cho một lựa chọn của một món (ví dụ chưa đặt *nhiều
-  nhân* cho suất trứng của combo ấy): khách chọn lựa chọn đó thì **cộng 0đ**, hay combo **chưa bán được** tới khi chủ
-  quán đặt đủ mức? (mở 2026-10-15, P3A-06; lời lượt bảy ở `master_plan/shop-facts.md` §8.9). Ai trả lời: chủ quán.
-  Chặn gì: task bán combo — combo vào hàm giá, dòng đơn, bếp; không chặn cửa chủ quán thêm · đổi giá · ẩn combo.
-
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
 
@@ -167,6 +162,15 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ repo trả lời 2026-10-15, lượt tám (P3A-11), trong hội thoại.** Lời đáp đã vào owner (`master_plan/shop-facts.md`
+§8.9).
+
+<a id="u-096"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-096 — Trong combo, lựa chọn chủ quán chưa đặt mức phụ thu thì cộng 0đ hay combo chưa bán được?~~ | Chủ repo chọn trong câu hỏi có sẵn phương án: **cộng 0đ** — combo vẫn bán được. | `master_plan/shop-facts.md` §8.9 |
 
 **Chủ repo trả lời 2026-10-15, lượt sáu (T-192), trong hội thoại.** Lời đáp đã vào owner (`master_plan/shop-facts.md`
 §8.10 · §8.4).

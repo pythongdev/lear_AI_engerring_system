@@ -133,6 +133,7 @@ có câu trả lời mới từ người.
 | ADR-114 | **Cửa đào tạo** (`P3A-04`): lớp `quay_hoac_chu_quan` kể cả đọc và tải tệp; kho tệp là thư mục `BANHCUON_FILE_DIR`; loại tệp nhận bằng nội dung, ảnh ≤ 10 MiB, video (gồm `.mov`) ≤ 100 MiB; không tệp mồ côi; chỉ mẩu chữ sửa được; ghi nhận sửa thay cả hai trường | Đã chốt 2026-10-15 (Claude, phiếu P3A-04) | — | `P3A-04` · ADR-110 · ADR-107 |
 | ADR-115 | **Cửa danh mục món** (`P3A-05`): mọi đường lớp `chu_quan` kể cả đọc; đọc riêng `GET /menu-categories`, không đưa danh mục vào `GET /menu`; ẩn được danh mục còn món, món về nhóm *chưa xếp*; chuyển món đòi lý do, xếp lần đầu không; không đường bỏ xếp | Đã chốt 2026-10-15 (Claude, phiếu P3A-05) | — | `P3A-05` · ADR-110 · ADR-108 |
 | ADR-116 | **Cửa combo của chủ quán** (`P3A-06`): lập · đổi giá · ẩn · đọc, lớp `chu_quan` kể cả đọc; đổi giá đòi lý do và bị từ chối trong giờ bán; giờ bán dời về `ngayban`; bán combo tách sang `P3A-11` (L3) | Đã chốt 2026-10-15 (Claude, phiếu P3A-06; tách bước: chủ repo) | — | `P3A-06` · `P3A-11` · ADR-108 · ADR-110 |
+| ADR-117 | **Bán combo** (`P3A-11`): mức phụ thu theo món của combo là bảng riêng, chưa đặt = 0đ; combo trên đơn là dòng combo mang giá combo cùng các dòng suất con mang mức, trong chính `order_line` — tổng đơn vẫn là Σ `line_total_vnd`; `gia.Tinh` học combo; bốn lát `T-193`…`T-196` | Chờ chủ repo duyệt (Claude, 2026-10-15) | — | `P3A-11` · I-034 · ADR-086 · ADR-116 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7579,3 +7580,72 @@ một lần ghi; điểm 4 tránh hai bản giờ bán lệch nhau.
 
 **Applies to:** `be/internal/combo/` · `be/internal/ngayban/` · `be/internal/don/` (đọc giờ bán) · `P3A-06` · `P3A-11`;
 **ADR-108** · **ADR-110** · **ADR-115**.
+
+### ADR-117 — Bán combo: mức phụ thu theo món của combo là bảng riêng; combo trên đơn là một dòng combo cùng các dòng suất con trong chính `order_line`
+
+**Trạng thái:** **Chờ chủ repo duyệt** (viết 2026-10-15, Claude Code, `P3A-11`). Lời quán: giá combo đặt riêng (`U-092`),
+phụ thu cộng thêm và giá không đổi giữa buổi (T-188), nhân riêng từng món và mức theo món của combo (lượt bảy), *cộng 0đ* ·
+*mỗi suất chọn riêng* · *mỗi suất một lần* · *khoá như giá combo* (lượt tám, đóng `U-096`) — `master_plan/shop-facts.md`
+§8.9, mệnh đề `I-034`. Mọi điểm dưới đây là **lựa chọn của phiên**, không phải lời quán.
+
+**Context:** `P3A-06` cho chủ quán lập combo (`menu_combo` · `menu_combo_item`) mà chưa bán được. Bảng `order_line` bắt buộc
+đúng một món và ít nhất một thành phần; bếp sinh việc từ thành phần của dòng đơn (`sanxuat/no_don`); hoá đơn, phiên và két
+cộng `order_line.line_total_vnd` (`be/internal/hoadon/sql/giao_xong/tong.sql`, `be/internal/hoadon/sql/trao_tai_quay/tong.sql`,
+`be/internal/phien/sql/tong_tien.sql`). Không cửa nào hôm nay sửa hay huỷ một dòng
+đơn riêng lẻ — huỷ theo đơn, hoàn theo hoá đơn, bánh làm sai theo việc bếp.
+
+**Decision:**
+
+1. **Mức phụ thu theo món của combo là một bảng mới** `menu_combo_item_option_surcharge` (món của combo · lựa chọn · mức
+   nguyên đồng ≥ 0 · người · lúc), mỗi cặp một dòng, sửa có vết (`record_revision_capture`), không xoá — bỏ mức là đặt 0.
+   Lựa chọn phải thuộc một nhóm mà món ấy mang. Không cặp nào ⇒ mức 0đ (lượt tám vế 1). Không đụng `menu_option.surcharge_vnd`
+   — đó là phụ thu của món lẻ (§4.4).
+2. **Combo trên đơn là hai tầng trong chính `order_line`:**
+   - **dòng combo**: mang `menu_combo_id`, không món, không thành phần; `item_name` = tên combo đã chụp; `unit_price_vnd` =
+     giá combo tại mốc; `quantity` = số combo;
+   - **dòng suất con**: dòng thường (món, thành phần, lựa chọn chụp như hôm nay) thêm `parent_order_line_id` trỏ về dòng
+     combo **cùng đơn**; `unit_price_vnd` = tổng mức của các lựa chọn của **một** suất; `quantity` = số suất cùng tổ hợp;
+     `order_line_option.surcharge_vnd` chụp **mức combo đã áp**.
+
+   Vì thế tổng đơn vẫn là Σ `line_total_vnd`: mọi chỗ cộng tiền đúng mà **không sửa**, và chỗ đọc nào chưa học combo chỉ hiện
+   sai *hình* (dòng combo kèm các dòng con) chứ không sai *tiền*. Bếp sinh việc từ thành phần của dòng con như mọi dòng —
+   dòng combo không thành phần nên không sinh việc.
+3. **Ràng buộc ở database:** đúng một trong `menu_item_id` · `menu_combo_id`; dòng combo không cha, không thành phần, không
+   lựa chọn; dòng con trỏ về một dòng combo cùng đơn; mỗi dòng combo có ít nhất một dòng con (trigger hoãn tới cuối giao
+   dịch, như `menu_combo_has_item_check`); dòng con và dòng combo cùng dấu *đem về*. *Đủ suất* (số suất mỗi món = số phần ×
+   số combo) kiểm ở **cửa** và ở phép kiểm ngược của test — không viết thành trigger, vì nó đọc combo tại mốc.
+4. **`gia.Tinh` học combo, vẫn một hàm:** dòng vào thêm loại *combo* — mã combo, số combo, danh sách suất (*món · số suất ·
+   mã lựa chọn*). Kiểm thêm, sau sáu bước hiện có và theo thứ tự: combo không tồn tại `menu_combo_not_found`; combo đã ẩn tại
+   mốc `menu_combo_hidden`; suất mang món không thuộc combo hoặc số suất một món khác số phần × số combo
+   `combo_portions_mismatch`; rồi **mỗi suất** qua bước 3–6 của món ấy (`I-010` áp từng suất). Đọc combo và mức **tại cùng
+   mốc** như menu (vết sớm nhất sau mốc), nên nhập bù đúng giá ngày bán. Giá gửi kèm bị bỏ (`I-013`).
+5. **Ba đường gọi:** `POST /price-quotes` nhận dòng combo; cửa `don/tao_luot_goi` ghi dòng combo và dòng con trong **cùng
+   giao dịch**, năm kênh như nhau, rồi nhập bù `hoadon/nhap_bu` dùng chung; `GET /menu` thêm danh sách combo đang bán (chưa
+   ẩn, mọi món còn bán): tên, giá combo, món kèm số phần, nhóm tuỳ chọn của từng món và **mức của từng lựa chọn**. Menu
+   **không** liệt kê giá mọi tổ hợp của combo như với món lẻ — số tổ hợp nhân theo số suất; con số khách thấy trước khi gửi
+   lấy từ `POST /price-quotes`.
+6. **Cửa đặt mức của chủ quán:** `PUT /menu-combos/{menu_combo_id}/surcharges` — đặt mức của nhiều cặp *món · lựa chọn*
+   một lần, lớp `chu_quan`, đòi lý do, bị từ chối trong giờ bán (`menu_combo_surcharge_in_sales_hours`, dùng phép giờ bán của
+   `ngayban`), combo đã ẩn đứng yên; `GET /menu-combos` trả mức kèm món.
+7. **Một combo trên đơn đi nguyên khối:** cửa nào sau này sửa, huỷ hay chuyển một dòng đơn riêng lẻ phải từ chối dòng con
+   của combo hoặc làm trên cả combo. Hôm nay không cửa nào như vậy; việc bếp (làm, phục vụ, chuyển, làm sai) vẫn theo từng
+   suất.
+8. **Tách bốn lát, mỗi lát một phiếu Codex, Claude viết test đỏ trước và chạy `db-check` · `be-check`:**
+   `T-193` lược đồ (L2) → `T-194` cửa đặt mức (L2) → `T-195` hàm giá, tính thử, menu (L2) → `T-196` ghi đơn năm kênh, đọc
+   đơn lồng, bếp, nhập bù (L2).
+
+**Why:** điểm 2 chọn hình mà **tiền đúng do cấu tạo**: mọi chỗ cộng `line_total_vnd` đã có và sẽ có đều đúng mà không ai
+phải nhớ cộng thêm một bảng. Điểm 1 giữ mức combo tách khỏi phụ thu món lẻ nên đổi một bên không kéo bên kia (`I-013`).
+Điểm 4 giữ *một hàm cộng giá* (**ADR-086**). Điểm 5 tránh trả hàng trăm tổ hợp cho một combo hai món.
+
+**Rejected alternatives:**
+- *Bảng `order_combo` riêng mang giá combo, dòng con ở `order_line`* — mọi chỗ cộng tiền phải cộng hai bảng; quên một chỗ là
+  sai tiền mà test cũ vẫn xanh.
+- *Combo là một dòng, các suất là thành phần và lựa chọn của dòng ấy* — `order_line_component_once_key` và
+  `order_line_option_once_key` cấm hai suất cùng thành phần hay cùng lựa chọn, và bếp mất *tổ hợp nhân theo suất*.
+- *Chia giá combo xuống các dòng con* — con số chia là bịa; lời quán nói giá combo không cộng từ món.
+- *Một lựa chọn chung cho mọi suất của một món* — trái lượt tám vế 2.
+
+**Applies to:** `db/migrations/` (lát mới) · `docs/product/2-db/` (file lát mới) · `be/internal/gia/` · `be/internal/don/` ·
+`be/internal/hoadon/` · `be/internal/combo/` · `docs/product/3-be/03-ham-gia.md` · `openapi.yaml`; `I-034` · `I-009` ·
+`I-010` · `I-013` · `I-032`; **ADR-086** · **ADR-108** · **ADR-116**.
