@@ -15,8 +15,11 @@ import (
 	"strings"
 	"testing"
 
+	"banhcuon/be/internal/giaoviec"
+	"banhcuon/be/internal/khoanchi"
 	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/nguoi"
+	"banhcuon/be/internal/nguyenlieu"
 	"banhcuon/be/internal/nhandon"
 	"banhcuon/be/internal/platform/realtime"
 	"banhcuon/be/internal/taikhoan"
@@ -110,6 +113,76 @@ var cacCaVet = []caVet{
 		c.srv = srv
 		id := c.docSo(t, "SELECT id FROM shop.counter_duty WHERE person_id=$1 AND ended_at IS NULL", c.quay)
 		return dichVet{"counter_duty", id, c.quay, "ended_at", nil, "mốc", func() { canDat(t, c.post(t, "/counter-duty/end", c.quay, map[string]any{}), 200) }}
+	}},
+	{"giaoviec/sua", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		giaoviec.Routes(r, giaoviec.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		id := c.id(t, "INSERT INTO shop.assigned_task(content,assignee_person_id) VALUES ('test-cũ',$1) RETURNING id", c.chu)
+		return dichVet{"assigned_task", id, c.chu, "content", "test-cũ", "test-mới", func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/assigned-tasks/%d", id), c.chu, map[string]any{"content": "test-mới", "assignee_person_id": c.chu, "reason": "sửa việc kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	{"giaoviec/an", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		giaoviec.Routes(r, giaoviec.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		id := c.id(t, "INSERT INTO shop.assigned_task(content,assignee_person_id) VALUES ('test-cũ',$1) RETURNING id", c.chu)
+		return dichVet{"assigned_task", id, c.chu, "hidden_at", nil, "mốc", func() {
+			status, body := c.goi(t, "POST", fmt.Sprintf("/assigned-tasks/%d/hiding", id), c.chu, map[string]any{"reason": "ẩn việc kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	// Cửa sửa khoản chi (P3A-01, Claude thêm khi duyệt: TestI018_TapCuaSuaKhopTapCa đòi). Loại tiền riêng
+	// để ca không chạm két của ngày nào.
+	{"khoanchi/sua", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		khoanchi.Routes(r, khoanchi.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		loai := c.id(t, "INSERT INTO shop.expense_category(name,paid_from_till) VALUES ($1,false) RETURNING id", t.Name())
+		id := c.id(t, "INSERT INTO shop.expense(expense_category_id,amount_vnd,paid_date) VALUES ($1,1000,'2026-01-05') RETURNING id", loai)
+		return dichVet{"expense", id, c.chu, "amount_vnd", float64(1000), float64(2000), func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/expenses/%d", id), c.chu,
+				map[string]any{"expense_category_id": loai, "amount_vnd": 2000, "paid_date": "2026-01-05", "reason": "sửa khoản chi kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	{"nguyenlieu/dat_don_vi", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		nguyenlieu.Routes(r, nguyenlieu.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		id := c.id(t, "INSERT INTO shop.supply_item(name) VALUES ($1) RETURNING id", t.Name())
+		return dichVet{"supply_item", id, c.chu, "purchase_unit", nil, "kg", func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/supply-items/%d/purchase-unit", id), c.chu, map[string]any{"purchase_unit": "kg"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	{"nguyenlieu/sua_so", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		nguyenlieu.Routes(r, nguyenlieu.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		thu := c.id(t, "INSERT INTO shop.supply_item(name) VALUES ($1) RETURNING id", t.Name())
+		id := c.id(t, "INSERT INTO shop.supply_day_entry(supply_item_id,entry_date,kind_code,entered_measure) VALUES ($1,'2026-01-05','purchased',10) RETURNING id", thu)
+		return dichVet{"supply_day_entry", id, c.chu, "entered_measure", float64(10), float64(12), func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/supply-day-entries/%d", id), c.chu, map[string]any{"measure": "12", "reason": "sửa con số kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
 	}},
 	// Ba cửa sửa của tài khoản (T-190, Claude thêm khi duyệt: TestI018_TapCuaSuaKhopTapCa đòi).
 	{"taikhoan/doi_trang_thai", func(t *testing.T, c canh) dichVet {

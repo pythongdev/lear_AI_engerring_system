@@ -15,6 +15,22 @@ import (
 type Code string
 
 const (
+	CodeAssignedTaskNotFound    Code = "assigned_task_not_found"
+	CodePersonNotFound          Code = "person_not_found"
+	CodeAssignedTaskHidden      Code = "assigned_task_hidden"
+	CodeAssignedTaskAlreadyDone Code = "assigned_task_already_done"
+	CodeAssignedTaskNotDone     Code = "assigned_task_not_done"
+
+	CodeSupplyItemNotFound            Code = "supply_item_not_found"
+	CodeSupplyDayEntryNotFound        Code = "supply_day_entry_not_found"
+	CodeSupplyItemNameTaken           Code = "supply_item_name_taken"
+	CodeSupplyDayEntryAlreadyRecorded Code = "supply_day_entry_already_recorded"
+	CodeSupplyItemUnitAlreadySet      Code = "supply_item_unit_already_set"
+
+	CodeExpenseCategoryNotFound  Code = "expense_category_not_found"
+	CodeExpenseNotFound          Code = "expense_not_found"
+	CodeExpenseCategoryNameTaken Code = "expense_category_name_taken"
+
 	CodeUsernameTaken           Code = "username_taken"
 	CodeEmailTaken              Code = "email_taken"
 	CodePasswordTooShort        Code = "password_too_short"
@@ -107,6 +123,20 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
+	CodeAssignedTaskNotFound:          404,
+	CodePersonNotFound:                404,
+	CodeAssignedTaskHidden:            409,
+	CodeAssignedTaskAlreadyDone:       409,
+	CodeAssignedTaskNotDone:           409,
+	CodeExpenseCategoryNotFound:       404,
+	CodeSupplyItemNotFound:            404,
+	CodeSupplyDayEntryNotFound:        404,
+	CodeSupplyItemNameTaken:           409,
+	CodeSupplyDayEntryAlreadyRecorded: 409,
+	CodeSupplyItemUnitAlreadySet:      409,
+	CodeExpenseNotFound:               404,
+	CodeExpenseCategoryNameTaken:      409,
+
 	CodeUsernameTaken:           409,
 	CodeEmailTaken:              409,
 	CodePasswordTooShort:        400,
@@ -197,6 +227,14 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"assigned_task_assignee_person_fkey":         CodePersonNotFound,
+	"assigned_task_mark_assigned_task_fkey":      CodeAssignedTaskNotFound,
+	"supply_item_name_key":                       CodeSupplyItemNameTaken,
+	"supply_day_entry_one_kind_per_item_day_key": CodeSupplyDayEntryAlreadyRecorded,
+	"supply_day_entry_supply_item_fkey":          CodeSupplyItemNotFound,
+	"expense_category_name_key":                  CodeExpenseCategoryNameTaken,
+	"expense_category_fkey":                      CodeExpenseCategoryNotFound,
+
 	"account_username_key":                 CodeUsernameTaken,
 	"account_email_key":                    CodeEmailTaken,
 	"account_username_check":               CodeInvalidRequest,

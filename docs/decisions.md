@@ -127,6 +127,10 @@ có câu trả lời mới từ người.
 | ADR-108 | **Lát danh mục và combo: bốn bảng thêm cạnh lát menu, không thêm cột vào bảng món**; món nhiều nhất một danh mục bằng bảng xếp có khoá duy nhất trên món; combo mang `price_vnd` riêng, *ít nhất một món* là trigger ràng buộc hoãn tới lúc kết thúc giao dịch; tên danh mục duy nhất trong danh mục còn dùng; *không đổi giá giữa buổi* và *chỉ chủ quán* ở cửa backend | Đã chốt 2026-10-14 (giao cho phiên, P2A-13) | — | P2A-13 · I-032 · YC-37 · ADR-105 |
 | ADR-109 | **Đăng nhập bằng tài khoản** (thiết kế `T-181`): tài khoản tách khỏi `person`, bốn trạng thái, chủ quán duyệt và gán vai (vai không mở quyền); mật khẩu argon2id; phiên là cookie mang mã ngẫu nhiên, băm ở database, 7 ngày; đăng nhập `tai_quay` mở trực quầy qua `nguoi/vao_quay`; đặt lại qua thư 30 phút một lần, thư là `PT-7`; gỡ `X-Person-Id`; ba lát `P2A-14` → backend → `P4-04` | Đã chốt 2026-10-14 (chủ repo duyệt, T-181) | — | `P2A-14` · `P4-04` · `P4A-06` · ADR-085 · ADR-102 · ADR-104 |
 | ADR-110 | **Backend admin mở thi công theo trang** (`T-191`): mỗi trang `P4A-XX` ứng các cửa nó cần, mười bước `P3A-01`…`P3A-10` đứng trên lát lược đồ đã dựng; lớp của cửa đọc từ mệnh đề `I-0xx`, mệnh đề không nói thì `chu_quan` kèm một câu hỏi; các bước chạy nối tiếp vì cùng chạm hợp đồng | Đã chốt 2026-10-14 (lời chủ repo, T-191) | — | `P3A-01`…`P3A-10` · `P4A-01`…`P4A-11` · ADR-068 · ADR-085 · ADR-103 |
+| ADR-111 | **Cửa khoản chi** (`P3A-01`): mọi đường lớp `chu_quan` kể cả đọc; loại mới bắt buộc khai nguồn, không đổi nguồn hay tên; khoản của loại trả từ két không ghi vào ngày đã đối soát; cửa đọc két backend thêm hạng tử chi từ két cho khớp bộ đối chiếu | Đã chốt 2026-10-15 (Claude, phiếu P3A-01; lớp từ lời đóng U-095) | — | `P3A-01` · ADR-110 · ADR-074 · ADR-089 · ADR-096 |
+| ADR-112 | **Cửa sổ nguyên liệu** (`P3A-02`): mọi đường lớp `chu_quan`; con số trên dây là chuỗi thập phân, không qua số thực; tổng và hiệu số từ một câu SQL; đơn vị đặt một lần cho thứ chưa có; sửa chỉ đổi con số | Đã chốt 2026-10-15 (Claude, phiếu P3A-02) | — | `P3A-02` · ADR-110 · ADR-071 |
+| ADR-113 | **Cửa giao việc** (`P3A-03`): mọi đường lớp `quay_hoac_chu_quan` kể cả đọc; người nhận không tự đánh dấu; *đã xong* đọc từ sự kiện mới nhất; đánh dấu thừa bị từ chối; việc đã ẩn đứng yên; sửa và ẩn đòi lý do | Đã chốt 2026-10-15 (Claude, phiếu P3A-03) | — | `P3A-03` · ADR-110 · ADR-105 |
+| ADR-114 | **Cửa đào tạo** (`P3A-04`): lớp `quay_hoac_chu_quan` kể cả đọc và tải tệp; kho tệp là thư mục `BANHCUON_FILE_DIR`; loại tệp nhận bằng nội dung, ảnh ≤ 10 MiB, video (gồm `.mov`) ≤ 100 MiB; không tệp mồ côi; chỉ mẩu chữ sửa được; ghi nhận sửa thay cả hai trường | Đã chốt 2026-10-15 (Claude, phiếu P3A-04) | — | `P3A-04` · ADR-110 · ADR-107 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7383,4 +7387,125 @@ trên cửa chưa có; lớp hẹp khi chưa có lời không mở quyền mà c
 khoản chi vì két ở quầy* — là suy ra về người ghi, chưa ai nói.
 
 **Applies to:** `P3A-01`…`P3A-10`; `work/backlog_FE_AD.md` điều (a); **ADR-068** · **ADR-085** · **ADR-103**.
+
+### ADR-111 — Cửa khoản chi: chỉ chủ quán, nguồn khai một lần, ngày đã đối soát khoá két
+
+**Trạng thái:** **Đã chốt** 2026-10-15. Điểm 1 theo **lời chủ repo** đóng `U-095` cùng ngày (*"chỉ chủ quán dc ghi"*).
+Điểm 2–5 là **lựa chọn của phiên** (Claude Code, phiếu `P3A-01`), không phải lời quán.
+
+**Context:** lát `P2A-05` dựng `expense_category` · `expense` (**ADR-106**, nguồn trên loại — **ADR-074**) mà chưa có cửa.
+Khi thiết kế cửa, Claude thấy `be/internal/ket/sql/ket_ngay.sql` chưa trừ khoản chi từ két trong khi bộ đối chiếu
+`db/reconcile/prelude.sql` đã trừ — chưa sai chỉ vì chưa cửa nào ghi khoản chi.
+
+**Decision:**
+
+1. **Mọi đường của khoản chi lớp `chu_quan`**, kể cả hai đường đọc (`authz.Read`) — người đứng quầy không ghi, kể
+   cả khoản trả từ két; sửa cũng là ghi.
+2. **Loại mới bắt buộc khai `paid_from_till`**; không có đường đổi nguồn hay đổi tên loại (database đã cấm đổi nguồn).
+3. **Khoản của loại trả từ két không vào ngày đã đối soát** (`ngayban.DaKy` ⇒ `sale_day_reconciled`), cả khi ghi lẫn
+   khi sửa — xét ngày cũ và ngày mới, khoá theo thứ tự ngày tăng dần. Cùng luật với mọi cửa tiền đã có (ADR-089,
+   ADR-096): sửa két của ngày đã ký đi qua đường mở lại, không qua cửa khác. Khoản tiền riêng không chạm két nên
+   không bị khoá.
+4. **Ngày khai sau hôm nay của quán bị từ chối** (`invalid_request`), như cửa khai sổ giấy.
+5. **Cửa đọc két backend thêm hạng tử chi từ két**, cùng hình bộ đối chiếu; test so hai bản trên cùng ngày.
+
+**Why:** điểm 3 giữ con số đã ký không đổi sau lưng người ký (`I-021`, `I-014` tập 6); điểm 5 giữ một ngày bán chỉ
+có một đáp số cho két.
+
+**Rejected alternatives:** *cho ghi vào ngày đã ký rồi để đối soát lại kêu* — con số chủ quán đã ký đổi mà không ai
+mở lại ngày; *mở đường đọc khoản chi cho quầy* — chưa ai cho, và khoản chi là tiền của chủ quán.
+
+**Applies to:** `be/internal/khoanchi/`, `be/internal/ket/sql/ket_ngay.sql`; **ADR-110** · **ADR-074** · **ADR-089**.
+
+### ADR-112 — Cửa sổ nguyên liệu: con số là chuỗi thập phân, một chỗ tính tổng, đơn vị đặt một lần
+
+**Trạng thái:** **Đã chốt** 2026-10-15. Mọi điểm là **lựa chọn của phiên** (Claude Code, phiếu `P3A-02`), không phải lời
+quán; lớp quyền theo kế hoạch backend admin §4 (**ADR-110** điểm 3), đọc từ `master_plan/shop-facts.md` §8.4 —
+*chủ quán tự nhập số liệu* (2026-09-04).
+
+**Context:** lát `P2A-02` (**ADR-071**) cất con số `numeric` không âm và để *một chỗ tính tổng*, *ai được nhập* cho pha 3
+(`docs/product/2-db/12-luoc-do-nguyen-lieu.md` §3 · §5).
+
+**Decision:**
+
+1. **Mọi đường lớp `chu_quan`**, kể cả đọc. Bước `P3A-08` (nhắc POS) mở đường đọc riêng khi cần.
+2. **Con số trên dây là chuỗi thập phân**: gửi lên tối đa 9 chữ số nguyên và 3 chữ số lẻ, không âm, không mũ; đọc ra
+   do PostgreSQL viết, không số 0 thừa. Không qua `float64` — một phép cộng số thực lệch chữ số cuối, và hiệu số là
+   con số chủ quán dùng để tự kết luận thiếu.
+3. **Một câu SQL** tính tổng đã nhập, tổng đã dùng và hiệu số cho cả danh sách lẫn chi tiết (`I-026` tầng 3).
+4. **Đơn vị đặt một lần** cho thứ chưa có; đã có thì từ chối `supply_item_unit_already_set` — đổi đơn vị làm hai con số
+   của một thứ ghi theo hai đơn vị, vế hiệu số của `I-026` hỏng. Lý do của vết do cửa khai.
+5. **Sửa chỉ đổi con số**; thứ, ngày, loại đứng nguyên — muốn đổi thì đó là một con số khác.
+
+**Why:** giữ máy ở mức *chép con số người gõ* (`I-025`) và giữ một thứ một đáp số (`I-026`).
+
+**Rejected alternatives:** *số JSON* — tiện cho FE nhưng đi qua số thực; *cho đổi đơn vị có lý do* — chưa có lời về quy
+đổi (câu **B12**), nên đổi là làm sai phép trừ mà không ai thấy.
+
+**Applies to:** `be/internal/nguyenlieu/`; **ADR-110** · **ADR-071**; bước sau `P3A-08`.
+
+### ADR-113 — Cửa giao việc: chủ quán hoặc người đứng quầy, đánh dấu thừa bị từ chối, việc đã ẩn đứng yên
+
+**Trạng thái:** **Đã chốt** 2026-10-15. Lớp quyền đọc từ `I-030` (lời đóng `U-084` · `U-089`, 2026-10-14) theo
+**ADR-110** điểm 3; mọi điểm khác là **lựa chọn của phiên** (Claude Code, phiếu `P3A-03`) — chủ repo giao *"yêu cầu codex
+làm còn bạn kiểm tra"*, không chọn từng điểm; không phải lời quán.
+
+**Context:** lát `P2A-11` (**ADR-105** điểm 1–3) dựng `assigned_task` · `assigned_task_mark` và để vế *người làm là chủ
+quán hoặc POS* cho tầng 3. `I-030` không nói ai được **đọc** việc, không nói đánh dấu *xong* hai lần liền có nghĩa gì,
+và không nói việc đã ẩn còn sửa được không.
+
+**Decision:**
+
+1. **Mọi đường lớp `quay_hoac_chu_quan`, kể cả hai đường đọc** — POS phải đọc việc mới đánh dấu được; lời không cho ai
+   khác đọc. Người nhận không đứng quầy không tự đánh dấu (`I-030` *Mệnh đề không nói*).
+2. **Đánh dấu thừa bị từ chối:** *xong* khi đang xong ⇒ `assigned_task_already_done`; *bỏ* khi chưa xong ⇒
+   `assigned_task_not_done`. Mỗi sự kiện là một lần trạng thái đổi thật, nên đọc chuỗi sự kiện là đọc lịch sử. Cửa khoá
+   dòng việc trước khi đọc sự kiện mới nhất để hai người bấm cùng lúc không cùng lọt.
+3. **Việc đã ẩn đứng yên:** không sửa, không đánh dấu, không ẩn lần nữa (`assigned_task_hidden`); vẫn đọc lại được.
+   Không có đường *bỏ ẩn* — lời không nói.
+4. **Sửa và ẩn đều đòi lý do người gõ** (vết `I-018`); sửa thay cả nội dung lẫn người nhận, không đổi người tạo.
+5. **Người nhận là một `person` có thật** (`person_not_found`) — cùng tập người của `I-027`; không lọc thêm theo tài
+   khoản.
+
+**Why:** điểm 1 chọn lớp hẹp nhất đủ cho việc đánh dấu; điểm 2 giữ *ai nói đã xong* trả lời được bằng một sự kiện, không
+phải bằng sự kiện trùng; điểm 3 giữ việc đã xoá khỏi bị đổi sau lưng người đọc lại.
+
+**Rejected alternatives:** *đọc chỉ cho chủ quán* — POS không thấy việc để đánh dấu; *nhận đánh dấu thừa như no-op* —
+lời 201 mà không có sự kiện làm người bấm tưởng đã ghi; *cho người nhận tự đánh dấu* — lời chỉ nêu chủ quán và POS.
+
+**Applies to:** `be/internal/giaoviec/`; **ADR-110** · **ADR-105**; bước sau `P3A-04`.
+
+### ADR-114 — Cửa đào tạo: kho tệp là một thư mục khai bằng biến môi trường, loại tệp nhận bằng nội dung, không tệp mồ côi
+
+**Trạng thái:** **Đã chốt** 2026-10-15. Lớp quyền đọc từ `I-031` (*chủ quán hoặc POS ghi*, lời đóng `U-086` · `U-090` ·
+`U-091`, 2026-10-14) theo **ADR-110** điểm 3; mọi điểm khác là **lựa chọn của phiên** (Claude Code, phiếu `P3A-04`) — chủ
+repo giao *"yêu cầu codex làm còn bạn kiểm tra"*, không chọn từng điểm; không phải lời quán. Hai con số cỡ tệp là đoán,
+chủ repo đổi được.
+
+**Context:** **ADR-107** đặt tệp ảnh · video ngoài database, trên chính nơi hệ thống chạy, và để *cách dựng kho* cho
+backend. `I-031` không nói ai được đọc hướng dẫn và ghi nhận, không nói cỡ hay loại tệp.
+
+**Decision:**
+
+1. **Mọi đường lớp `quay_hoac_chu_quan`, kể cả đọc và tải tệp** — người làm xem ghi nhận về mình là quyền xem chưa ai
+   cho (`I-031` *Mệnh đề không nói*).
+2. **Kho tệp là một thư mục khai bằng `BANHCUON_FILE_DIR`**; thiếu thì server không chạy. Khoá tệp
+   `guides/<32 hex ngẫu nhiên>.<đuôi>`, không mang tên tệp người gửi.
+3. **Loại tệp nhận bằng nội dung**, không bằng tên hay Content-Type người gửi khai: ảnh jpg · png · webp, video mp4 · webm
+   và mov (máy iPhone quay ra mov). Cỡ tối đa: ảnh 10 MiB, video 100 MiB (`file_too_large`).
+4. **Không tệp mồ côi:** tệp ghi vào kho trước giao dịch; giao dịch lỗi vì bất kỳ lý do nào thì xoá tệp. Ẩn không xoá
+   tệp; tệp mất thì đường tải trả `assigned_task_guide_file_missing`, chữ của hướng dẫn vẫn đọc được.
+5. **Chỉ mẩu chữ sửa được;** đổi ảnh là ẩn mẩu cũ rồi gắn mẩu mới — vết của lần đổi là hai dòng đọc được, không phải
+   một khoá tệp bị thay.
+6. **Ghi nhận sửa thay cả nhận xét lẫn đánh giá** (vắng nghĩa là không còn), vẫn không rỗng cả hai; người được ghi nhận
+   không đổi — ghi nhầm người thì ẩn rồi ghi lại (**ADR-107** điểm 4).
+7. **Mẩu hướng dẫn và ghi nhận đã ẩn đứng yên**, như việc đã ẩn (**ADR-113** điểm 3); không gắn hướng dẫn vào việc đã ẩn.
+
+**Why:** điểm 3 chặn một tệp lạ đội tên ảnh đi vào kho rồi được phát ra cho máy quầy; điểm 4 giữ kho và database nói
+cùng một tập tệp; điểm 5 giữ lịch sử hướng dẫn đọc được bằng chính các dòng.
+
+**Rejected alternatives:** *tin Content-Type người gửi* — ai cũng khai được; *tải tệp riêng rồi gắn khoá sau* — sinh tệp
+không dòng nào trỏ tới khi bước gắn không xảy ra; *cho sửa khoá tệp* — mất ảnh cũ khỏi lịch sử.
+
+**Applies to:** `be/internal/daotao/`, `be/cmd/server/`; **ADR-110** · **ADR-107** · **ADR-113**.
 

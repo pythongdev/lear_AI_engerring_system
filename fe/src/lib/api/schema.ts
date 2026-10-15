@@ -4,6 +4,263 @@
  */
 
 export interface paths {
+    "/assigned-tasks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Đọc danh sách việc mới nhất trước.
+         * @description Lớp quay_hoac_chu_quan. Lọc người nhận nếu có; include_hidden vắng hoặc false thì bỏ việc ẩn, chỉ nhận true hoặc false. Sai bộ lọc trả invalid_request với field tương ứng. Thứ tự created_at DESC, id DESC. Mọi lỗi hình được xét trước quyền và database; path id phải là số nguyên dương, sai trả field=assigned_task_id.
+         */
+        get: operations["listAssignedTasks"];
+        put?: never;
+        /**
+         * Tạo việc cho một người.
+         * @description Lớp quay_hoac_chu_quan. Nội dung cắt khoảng trắng, thiếu hoặc rỗng trả field=content; người nhận thiếu hoặc không dương trả field=assignee_person_id. Người nhận không tồn tại trả person_not_found. Người tạo và lúc tạo do database cấp. Mọi lỗi hình được xét trước quyền và database; path id phải là số nguyên dương, sai trả field=assigned_task_id.
+         */
+        post: operations["createAssignedTask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/assigned-tasks/{assigned_task_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Đọc một việc kể cả đã ẩn.
+         * @description Lớp quay_hoac_chu_quan. Không có trả assigned_task_not_found; dùng chung câu đọc với danh sách. Mọi lỗi hình được xét trước quyền và database; path id phải là số nguyên dương, sai trả field=assigned_task_id.
+         */
+        get: operations["getAssignedTask"];
+        /**
+         * Sửa nội dung và người nhận có lý do.
+         * @description Lớp quay_hoac_chu_quan. Kiểm hình như tạo; reason cắt khoảng trắng, thiếu hoặc rỗng trả field=reason. Khoá việc trước khi xét; không có trả assigned_task_not_found, đã ẩn trả assigned_task_hidden, người nhận không có trả person_not_found. Giữ người tạo và lúc tạo; sửa có vết. Mọi lỗi hình được xét trước quyền và database; path id phải là số nguyên dương, sai trả field=assigned_task_id.
+         */
+        put: operations["updateAssignedTask"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/assigned-tasks/{assigned_task_id}/hiding": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ẩn việc có lý do.
+         * @description Lớp quay_hoac_chu_quan. Reason cắt khoảng trắng, thiếu hoặc rỗng trả field=reason. Khoá việc; không có trả assigned_task_not_found, đã ẩn trả assigned_task_hidden và giữ mốc cũ. Ghi người và lúc ẩn, có vết. Mọi lỗi hình được xét trước quyền và database; path id phải là số nguyên dương, sai trả field=assigned_task_id.
+         */
+        post: operations["hideAssignedTask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/assigned-tasks/{assigned_task_id}/marks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Đánh dấu xong hoặc bỏ đánh dấu.
+         * @description Lớp quay_hoac_chu_quan. Mark chỉ nhận done hoặc undone, sai hoặc thiếu trả field=mark. Khoá việc trước khi đọc sự kiện mới nhất; không có trả assigned_task_not_found, đã ẩn trả assigned_task_hidden. Done khi đang xong trả assigned_task_already_done; undone khi chưa xong trả assigned_task_not_done. Chỉ thêm một sự kiện, trả cả việc. Mọi lỗi hình được xét trước quyền và database; path id phải là số nguyên dương, sai trả field=assigned_task_id.
+         */
+        post: operations["markAssignedTask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/supply-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Chủ quán đọc danh mục theo tên.
+         * @description Cộng mọi ngày, không đặt lại; thứ chưa có con số trả ba chuỗi 0. Không suy lượng dùng hay kết luận thiếu.
+         */
+        get: operations["listSupplyItems"];
+        put?: never;
+        /**
+         * Chủ quán thêm thứ vào danh mục.
+         * @description Tên cắt khoảng trắng, thiếu hoặc rỗng trả invalid_request field=name. Đơn vị vắng hoặc null là chưa có; nếu có thì cắt khoảng trắng và từ chối rỗng với field=purchase_unit. Trùng tên trả supply_item_name_taken.
+         */
+        post: operations["createSupplyItem"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/supply-items/{supply_item_id}/purchase-unit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Chủ quán đặt đơn vị lần đầu.
+         * @description Đơn vị cắt khoảng trắng, thiếu/null/rỗng trả invalid_request field=purchase_unit. Mã không có trả supply_item_not_found; đã có đơn vị trả supply_item_unit_already_set. Cập nhật có vết với lý do nguyenlieu/dat_don_vi — đặt đơn vị lần đầu.
+         */
+        put: operations["setSupplyItemPurchaseUnit"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/supply-items/{supply_item_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Chủ quán đọc tổng và các con số của một thứ.
+         * @description Dùng cùng phép tổng của danh sách; con số ngày xếp theo entry_date giảm dần rồi kind. Mã không có trả supply_item_not_found.
+         */
+        get: operations["getSupplyItem"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/supply-day-entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Chủ quán ghi một con số ngày.
+         * @description Ngày phải có thật và không sau hôm nay của quán; sai trả invalid_request field=entry_date. Mã thứ thiếu hoặc ≤ 0 trả field=supply_item_id, loại sai trả field=kind, con số thiếu hoặc sai khuôn chuỗi trả field=measure. Thứ không có trả supply_item_not_found; trùng thứ/ngày/loại trả supply_day_entry_already_recorded.
+         */
+        post: operations["createSupplyDayEntry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/supply-day-entries/{supply_day_entry_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Chủ quán sửa con số có lý do.
+         * @description Chỉ sửa measure; giữ thứ, ngày, loại và người nhập ban đầu. Lý do cắt khoảng trắng, thiếu/rỗng trả invalid_request field=reason; con số thiếu hoặc sai khuôn chuỗi trả field=measure. Mã không có trả supply_day_entry_not_found.
+         */
+        put: operations["updateSupplyDayEntry"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/expense-categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Chủ quán đọc loại chi theo tên. */
+        get: operations["listExpenseCategories"];
+        put?: never;
+        /**
+         * Chủ quán thêm loại chi, khai rõ nguồn tiền.
+         * @description Tên cắt khoảng trắng hai đầu; tên rỗng hoặc nguồn thiếu/null trả invalid_request. Trùng tên trả expense_category_name_taken. Không có cửa đổi tên hay nguồn loại.
+         */
+        post: operations["createExpenseCategory"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/expenses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Chủ quán đọc khoản chi theo khoảng ngày, loại và nguồn.
+         * @description from và to bắt buộc, đúng YYYY-MM-DD và from ≤ to; sai trả invalid_request ở tham số sai. Sắp theo paid_date rồi expense_id; backend cộng total_vnd từ các khoản trả về.
+         */
+        get: operations["listExpenses"];
+        put?: never;
+        /**
+         * Chủ quán ghi khoản chi.
+         * @description Ngày khai không sau hôm nay của quán; loại từ két giữ khoá ngày và từ chối sale_day_reconciled nếu ngày đã ký. Loại không có trả expense_category_not_found.
+         */
+        post: operations["createExpense"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/expenses/{expense_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Chủ quán sửa khoản chi với lý do.
+         * @description Thay cả loại, số tiền và ngày; giữ người ghi lần đầu. Lý do cắt khoảng trắng, bắt buộc không rỗng. Khoá tăng dần mọi ngày két cũ/mới bị chạm; ngày đã ký trả sale_day_reconciled và không đổi khoản. Ngày mới không được ở tương lai; mã khoản không có trả expense_not_found, loại không có trả expense_category_not_found.
+         */
+        put: operations["updateExpense"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/accounts": {
         parameters: {
             query?: never;
@@ -1111,6 +1368,165 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        AssignedTaskMark: {
+            /** Format: int64 */
+            assigned_task_mark_id: number;
+            /** @enum {string} */
+            mark: "done" | "undone";
+            /** Format: int64 */
+            person_id: number;
+            person_name: string;
+            created_at: components["schemas"]["Instant"];
+        };
+        /** @description Tên người lấy từ person.display_name; person là người tạo. Ba trường hidden là null khi chưa ẩn. */
+        AssignedTask: {
+            /** Format: int64 */
+            assigned_task_id: number;
+            content: string;
+            /** Format: int64 */
+            assignee_person_id: number;
+            assignee_name: string;
+            /** Format: int64 */
+            person_id: number;
+            person_name: string;
+            created_at: components["schemas"]["Instant"];
+            /** @description Sự kiện mới nhất theo created_at DESC, id DESC là done; không sự kiện thì false. */
+            done: boolean;
+            /** @description Thứ tự created_at, id tăng dần; chưa có trả mảng rỗng. */
+            marks: components["schemas"]["AssignedTaskMark"][];
+            hidden_at: components["schemas"]["Instant"] | null;
+            /** Format: int64 */
+            hidden_by_person_id: number | null;
+            hidden_by_name: string | null;
+        };
+        AssignedTasks: {
+            assigned_tasks: components["schemas"]["AssignedTask"][];
+        };
+        CreateAssignedTask: {
+            content: string;
+            /** Format: int64 */
+            assignee_person_id: number;
+        };
+        UpdateAssignedTask: {
+            content: string;
+            /** Format: int64 */
+            assignee_person_id: number;
+            reason: string;
+        };
+        HideAssignedTask: {
+            reason: string;
+        };
+        MarkAssignedTask: {
+            /** @enum {string} */
+            mark: "done" | "undone";
+        };
+        /**
+         * @description Chuỗi thập phân chính xác; đọc bằng trim_scale của PostgreSQL, không số 0 thừa. Tổng có thể vượt 9 chữ số; hiệu số có thể âm. Yêu cầu ghi siết không âm và tối đa 9 chữ số nguyên tại schema thân.
+         * @example 1.75
+         * @example 10
+         * @example 0
+         * @example -4
+         */
+        Measure: string;
+        SupplyItem: {
+            /** Format: int64 */
+            supply_item_id: number;
+            name: string;
+            purchase_unit: string | null;
+            purchased_total: components["schemas"]["Measure"];
+            used_total: components["schemas"]["Measure"];
+            balance: components["schemas"]["Measure"];
+        };
+        SupplyItems: {
+            supply_items: components["schemas"]["SupplyItem"][];
+        };
+        SupplyItemDetail: components["schemas"]["SupplyItem"] & {
+            entries: components["schemas"]["SupplyDayEntry"][];
+        };
+        SupplyDayEntry: {
+            /** Format: int64 */
+            supply_day_entry_id: number;
+            /** Format: int64 */
+            supply_item_id: number;
+            entry_date: components["schemas"]["SaleDate"];
+            /** @enum {string} */
+            kind: "purchased" | "used";
+            measure: components["schemas"]["Measure"];
+            /** Format: int64 */
+            person_id: number;
+            person_name: string;
+            created_at: components["schemas"]["Instant"];
+        };
+        CreateSupplyItem: {
+            name: string;
+            purchase_unit?: string | null;
+        };
+        SetSupplyItemPurchaseUnit: {
+            purchase_unit: string;
+        };
+        CreateSupplyDayEntry: {
+            /** Format: int64 */
+            supply_item_id: number;
+            entry_date: components["schemas"]["SaleDate"];
+            /** @enum {string} */
+            kind: "purchased" | "used";
+            measure: components["schemas"]["Measure"];
+        };
+        UpdateSupplyDayEntry: {
+            measure: components["schemas"]["Measure"];
+            reason: string;
+        };
+        CreateExpenseCategory: {
+            /** @description Cắt khoảng trắng hai đầu, không được rỗng. */
+            name: string;
+            /** @description Bắt buộc khai rõ; không nhận null và không mặc định. */
+            paid_from_till: boolean;
+        };
+        ExpenseCategory: {
+            /** Format: int64 */
+            expense_category_id: number;
+            name: string;
+            paid_from_till: boolean;
+        };
+        ExpenseCategories: {
+            expense_categories: components["schemas"]["ExpenseCategory"][];
+        };
+        WriteExpense: {
+            /** Format: int64 */
+            expense_category_id: number;
+            /** Format: int64 */
+            amount_vnd: number;
+            /** @description Ngày người ghi khai (U-072), không sau hôm nay của quán. */
+            paid_date: components["schemas"]["SaleDate"];
+        };
+        UpdateExpense: components["schemas"]["WriteExpense"] & {
+            /** @description Cắt khoảng trắng hai đầu, không được rỗng; ghi vào vết sửa. */
+            reason: string;
+        };
+        Expense: {
+            /** Format: int64 */
+            expense_id: number;
+            /** Format: int64 */
+            expense_category_id: number;
+            category_name: string;
+            paid_from_till: boolean;
+            /** Format: int64 */
+            amount_vnd: number;
+            /** @description Ngày người ghi khai, cũng là ngày trừ két nếu loại trả từ két. */
+            paid_date: components["schemas"]["SaleDate"];
+            /** Format: int64 */
+            person_id: number;
+            /** @description person.display_name của người ghi lần đầu. */
+            person_name: string;
+            created_at: components["schemas"]["Instant"];
+        };
+        Expenses: {
+            from: components["schemas"]["SaleDate"];
+            to: components["schemas"]["SaleDate"];
+            expenses: components["schemas"]["Expense"][];
+            /** @description Backend cộng số tiền của tất cả khoản trả về (ADR-086). */
+            total_vnd: components["schemas"]["MoneyVnd"];
+        };
         Success: {
             /** @enum {string} */
             status: "ok";
@@ -1752,7 +2168,7 @@ export interface components {
          * @description Mã lỗi công khai. FE quyết hiện gì theo mã, không theo status, không theo chữ. Mã của một luật do lát dựng cửa của luật ấy thêm (01-hop-dong-api.md §3).
          * @enum {string}
          */
-        ErrorCode: "username_taken" | "email_taken" | "password_too_short" | "invalid_credentials" | "login_temporarily_blocked" | "reset_token_invalid" | "account_not_pending" | "account_not_active" | "account_not_locked" | "cross_origin_write" | "order_intake_already_paused" | "order_intake_not_paused" | "shop_already_blind" | "shop_not_blind" | "intake_state_changed" | "internal_error" | "invalid_request" | "unauthenticated" | "not_on_counter_duty" | "counter_duty_changed" | "owner_only" | "qr_code_not_current" | "dining_table_not_found" | "qr_code_issue_conflict" | "menu_item_not_found" | "menu_option_not_found" | "menu_component_not_found" | "menu_item_component_not_found" | "menu_item_discontinued" | "option_combination_invalid" | "submission_code_conflict" | "dining_table_needs_cleaning" | "dining_table_not_needing_cleaning" | "sales_order_not_found" | "table_session_not_found" | "order_transition_not_allowed" | "table_session_transition_not_allowed" | "table_session_has_open_orders" | "payment_parts_mismatch" | "debtor_name_mismatch" | "order_intake_paused" | "outside_selling_hours" | "shop_not_seeing_orders" | "delivery_served_mark_undecided" | "debt_note_required" | "order_handover_mismatch" | "order_jobs_not_served" | "prepayment_balance_exceeded" | "bill_not_found" | "prepayment_not_found" | "bill_has_no_debt" | "debt_already_settled" | "debt_overpaid" | "order_not_prepayable" | "prepayment_already_received" | "opening_float_already_declared" | "cash_count_already_recorded" | "sale_day_reconciled" | "cash_day_incomplete" | "sale_day_not_reconciled" | "sale_day_already_reconciled" | "paper_ledger_missing" | "paper_position_already_entered" | "paper_ledger_already_declared" | "paper_entries_pending" | "gap_explanation_required" | "station_job_not_found" | "station_job_transition_not_allowed" | "production_batch_not_found" | "production_batch_already_rolled_back" | "production_batch_has_served_units" | "station_job_has_wrong_make_note" | "transfer_source_not_available" | "transfer_target_not_waiting" | "wrong_make_note_not_allowed" | "wrong_make_note_not_found" | "wrong_make_note_already_cancelled" | "served_quantity_exceeds_made";
+        ErrorCode: "expense_category_not_found" | "expense_not_found" | "supply_item_unit_already_set" | "supply_day_entry_already_recorded" | "supply_item_name_taken" | "supply_day_entry_not_found" | "assigned_task_not_found" | "person_not_found" | "assigned_task_hidden" | "assigned_task_already_done" | "assigned_task_not_done" | "supply_item_not_found" | "expense_category_name_taken" | "username_taken" | "email_taken" | "password_too_short" | "invalid_credentials" | "login_temporarily_blocked" | "reset_token_invalid" | "account_not_pending" | "account_not_active" | "account_not_locked" | "cross_origin_write" | "order_intake_already_paused" | "order_intake_not_paused" | "shop_already_blind" | "shop_not_blind" | "intake_state_changed" | "internal_error" | "invalid_request" | "unauthenticated" | "not_on_counter_duty" | "counter_duty_changed" | "owner_only" | "qr_code_not_current" | "dining_table_not_found" | "qr_code_issue_conflict" | "menu_item_not_found" | "menu_option_not_found" | "menu_component_not_found" | "menu_item_component_not_found" | "menu_item_discontinued" | "option_combination_invalid" | "submission_code_conflict" | "dining_table_needs_cleaning" | "dining_table_not_needing_cleaning" | "sales_order_not_found" | "table_session_not_found" | "order_transition_not_allowed" | "table_session_transition_not_allowed" | "table_session_has_open_orders" | "payment_parts_mismatch" | "debtor_name_mismatch" | "order_intake_paused" | "outside_selling_hours" | "shop_not_seeing_orders" | "delivery_served_mark_undecided" | "debt_note_required" | "order_handover_mismatch" | "order_jobs_not_served" | "prepayment_balance_exceeded" | "bill_not_found" | "prepayment_not_found" | "bill_has_no_debt" | "debt_already_settled" | "debt_overpaid" | "order_not_prepayable" | "prepayment_already_received" | "opening_float_already_declared" | "cash_count_already_recorded" | "sale_day_reconciled" | "cash_day_incomplete" | "sale_day_not_reconciled" | "sale_day_already_reconciled" | "paper_ledger_missing" | "paper_position_already_entered" | "paper_ledger_already_declared" | "paper_entries_pending" | "gap_explanation_required" | "station_job_not_found" | "station_job_transition_not_allowed" | "production_batch_not_found" | "production_batch_already_rolled_back" | "production_batch_has_served_units" | "station_job_has_wrong_make_note" | "transfer_source_not_available" | "transfer_target_not_waiting" | "wrong_make_note_not_allowed" | "wrong_make_note_not_found" | "wrong_make_note_already_cancelled" | "served_quantity_exceeds_made";
         /** @description Hình lỗi chung của mọi lời từ chối (01-hop-dong-api.md §3). */
         Error: {
             code: components["schemas"]["ErrorCode"];
@@ -1926,6 +2342,568 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    listAssignedTasks: {
+        parameters: {
+            query?: {
+                assignee_person_id?: number;
+                include_hidden?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignedTasks"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    createAssignedTask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateAssignedTask"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignedTask"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getAssignedTask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assigned_task_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignedTask"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    updateAssignedTask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assigned_task_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateAssignedTask"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignedTask"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    hideAssignedTask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assigned_task_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HideAssignedTask"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignedTask"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    markAssignedTask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assigned_task_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MarkAssignedTask"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignedTask"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listSupplyItems: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplyItems"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    createSupplyItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateSupplyItem"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplyItem"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    setSupplyItemPurchaseUnit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                supply_item_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetSupplyItemPurchaseUnit"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplyItem"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getSupplyItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                supply_item_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplyItemDetail"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    createSupplyDayEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateSupplyDayEntry"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplyDayEntry"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    updateSupplyDayEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                supply_day_entry_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSupplyDayEntry"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplyDayEntry"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listExpenseCategories: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseCategories"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    createExpenseCategory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateExpenseCategory"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseCategory"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listExpenses: {
+        parameters: {
+            query: {
+                from: components["schemas"]["SaleDate"];
+                to: components["schemas"]["SaleDate"];
+                expense_category_id?: number;
+                /** @description Chỉ nhận true hoặc false. */
+                paid_from_till?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Expenses"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    createExpense: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WriteExpense"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Expense"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    updateExpense: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                expense_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateExpense"];
+            };
+        };
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Expense"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     listAccounts: {
         parameters: {
             query?: {
@@ -4384,6 +5362,10 @@ type ReadonlyArray<T> = [
     unknown[]
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
 export const pathsAccountsGetParametersQueryStatusValues: ReadonlyArray<FlattenedDeepRequired<paths>["/accounts"]["get"]["parameters"]["query"]["status"]> = ["cho_duyet", "hoat_dong", "khoa", "tu_choi"];
+export const assignedTaskMarkMarkValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AssignedTaskMark"]["mark"]> = ["done", "undone"];
+export const markAssignedTaskMarkValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["MarkAssignedTask"]["mark"]> = ["done", "undone"];
+export const supplyDayEntryKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["SupplyDayEntry"]["kind"]> = ["purchased", "used"];
+export const createSupplyDayEntryKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CreateSupplyDayEntry"]["kind"]> = ["purchased", "used"];
 export const successStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["Success"]["status"]> = ["ok"];
 export const accountResultStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AccountResult"]["status"]> = ["cho_duyet", "hoat_dong", "khoa", "tu_choi"];
 export const sessionRole_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["Session"]["role_code"]> = ["owner", "quay", "trang_banh", "gap_banh", "canh_don_ban"];
@@ -4402,4 +5384,4 @@ export const refundRequestSource_method_codeValues: ReadonlyArray<FlattenedDeepR
 export const prepaymentReturnRequestMethod_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PrepaymentReturnRequest"]["method_code"]> = ["cash", "transfer"];
 export const paperEntryRequestKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaperEntryRequest"]["kind"]> = ["table", "takeaway"];
 export const paperEntryRequestHandover_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaperEntryRequest"]["handover_code"]> = ["shop_pickup", "door_delivery"];
-export const errorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ErrorCode"]> = ["username_taken", "email_taken", "password_too_short", "invalid_credentials", "login_temporarily_blocked", "reset_token_invalid", "account_not_pending", "account_not_active", "account_not_locked", "cross_origin_write", "order_intake_already_paused", "order_intake_not_paused", "shop_already_blind", "shop_not_blind", "intake_state_changed", "internal_error", "invalid_request", "unauthenticated", "not_on_counter_duty", "counter_duty_changed", "owner_only", "qr_code_not_current", "dining_table_not_found", "qr_code_issue_conflict", "menu_item_not_found", "menu_option_not_found", "menu_component_not_found", "menu_item_component_not_found", "menu_item_discontinued", "option_combination_invalid", "submission_code_conflict", "dining_table_needs_cleaning", "dining_table_not_needing_cleaning", "sales_order_not_found", "table_session_not_found", "order_transition_not_allowed", "table_session_transition_not_allowed", "table_session_has_open_orders", "payment_parts_mismatch", "debtor_name_mismatch", "order_intake_paused", "outside_selling_hours", "shop_not_seeing_orders", "delivery_served_mark_undecided", "debt_note_required", "order_handover_mismatch", "order_jobs_not_served", "prepayment_balance_exceeded", "bill_not_found", "prepayment_not_found", "bill_has_no_debt", "debt_already_settled", "debt_overpaid", "order_not_prepayable", "prepayment_already_received", "opening_float_already_declared", "cash_count_already_recorded", "sale_day_reconciled", "cash_day_incomplete", "sale_day_not_reconciled", "sale_day_already_reconciled", "paper_ledger_missing", "paper_position_already_entered", "paper_ledger_already_declared", "paper_entries_pending", "gap_explanation_required", "station_job_not_found", "station_job_transition_not_allowed", "production_batch_not_found", "production_batch_already_rolled_back", "production_batch_has_served_units", "station_job_has_wrong_make_note", "transfer_source_not_available", "transfer_target_not_waiting", "wrong_make_note_not_allowed", "wrong_make_note_not_found", "wrong_make_note_already_cancelled", "served_quantity_exceeds_made"];
+export const errorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ErrorCode"]> = ["expense_category_not_found", "expense_not_found", "supply_item_unit_already_set", "supply_day_entry_already_recorded", "supply_item_name_taken", "supply_day_entry_not_found", "assigned_task_not_found", "person_not_found", "assigned_task_hidden", "assigned_task_already_done", "assigned_task_not_done", "supply_item_not_found", "expense_category_name_taken", "username_taken", "email_taken", "password_too_short", "invalid_credentials", "login_temporarily_blocked", "reset_token_invalid", "account_not_pending", "account_not_active", "account_not_locked", "cross_origin_write", "order_intake_already_paused", "order_intake_not_paused", "shop_already_blind", "shop_not_blind", "intake_state_changed", "internal_error", "invalid_request", "unauthenticated", "not_on_counter_duty", "counter_duty_changed", "owner_only", "qr_code_not_current", "dining_table_not_found", "qr_code_issue_conflict", "menu_item_not_found", "menu_option_not_found", "menu_component_not_found", "menu_item_component_not_found", "menu_item_discontinued", "option_combination_invalid", "submission_code_conflict", "dining_table_needs_cleaning", "dining_table_not_needing_cleaning", "sales_order_not_found", "table_session_not_found", "order_transition_not_allowed", "table_session_transition_not_allowed", "table_session_has_open_orders", "payment_parts_mismatch", "debtor_name_mismatch", "order_intake_paused", "outside_selling_hours", "shop_not_seeing_orders", "delivery_served_mark_undecided", "debt_note_required", "order_handover_mismatch", "order_jobs_not_served", "prepayment_balance_exceeded", "bill_not_found", "prepayment_not_found", "bill_has_no_debt", "debt_already_settled", "debt_overpaid", "order_not_prepayable", "prepayment_already_received", "opening_float_already_declared", "cash_count_already_recorded", "sale_day_reconciled", "cash_day_incomplete", "sale_day_not_reconciled", "sale_day_already_reconciled", "paper_ledger_missing", "paper_position_already_entered", "paper_ledger_already_declared", "paper_entries_pending", "gap_explanation_required", "station_job_not_found", "station_job_transition_not_allowed", "production_batch_not_found", "production_batch_already_rolled_back", "production_batch_has_served_units", "station_job_has_wrong_make_note", "transfer_source_not_available", "transfer_target_not_waiting", "wrong_make_note_not_allowed", "wrong_make_note_not_found", "wrong_make_note_already_cancelled", "served_quantity_exceeds_made"];

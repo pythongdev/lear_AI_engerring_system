@@ -89,8 +89,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] P3A-03 **Cửa giao việc** — tạo · sửa · ẩn · đánh dấu; lớp `quay_hoac_chu_quan` (`I-030`); chờ `T-190` — L2 · [chi tiết](backlog_AD_BE.md#p3a-03)
-- [ ] P3A-04 **Cửa đào tạo** — hướng dẫn gắn việc, ghi nhận *đạt · chưa*; chờ `P3A-03` — L2 · [chi tiết](backlog_AD_BE.md#p3a-04)
 - [ ] P3A-05 **Cửa danh mục món** — thêm · đổi tên · ẩn · xếp món; chờ `T-190` — L1 · [chi tiết](backlog_AD_BE.md#p3a-05)
 - [ ] P3A-06 **Combo vào hàm giá** — giá chủ quán đặt qua hàm giá duy nhất; chờ `P3A-05` — L2 · [chi tiết](backlog_AD_BE.md#p3a-06)
 - [ ] P3A-07 **Thêm và sửa thông tin món**; chờ `P3A-05` — L2 · [chi tiết](backlog_AD_BE.md#p3a-07)
@@ -106,12 +104,14 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] P3A-02 **Cửa sổ nguyên liệu** — danh mục, dòng ngày *mua vào · đã dùng*, tổng và hiệu số — L2 · [chi tiết](backlog_AD_BE.md#p3a-02)
+- [ ] P3A-04 **Cửa đào tạo** — hướng dẫn gắn việc, ghi nhận *đạt · chưa*; Codex thi công, Claude test trước và duyệt — 2026-10-15 — L2 · [chi tiết](backlog_AD_BE.md#p3a-04)
 
 
 <a id="done"></a>
 ## Done
 
+- [x] P3A-03 **Cửa giao việc** — package `giaoviec`: tạo · sửa · ẩn có lý do · đánh dấu xong và bỏ đánh dấu (mỗi lần một sự kiện, *đã xong* đọc ra từ sự kiện mới nhất, đánh dấu thừa bị từ chối) · đọc theo người nhận; lớp `quay_hoac_chu_quan` cả đọc; hợp đồng 0.27.0; **ADR-113**. Codex thi công, Claude viết test trước và duyệt; be-check · db-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-03)
+- [x] P3A-02 **Cửa sổ nguyên liệu** — package `nguyenlieu`: thêm thứ, đặt đơn vị một lần, ghi con số *mua vào · đã dùng* của một ngày, sửa có lý do, đọc tổng và hiệu số từ một câu SQL; con số là chuỗi thập phân; chỉ chủ quán; hợp đồng 0.26.0; **ADR-112**. Codex thi công, Claude viết test trước và duyệt; be-check · db-check · fe-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-02)
 - [x] P3A-01 **Cửa khoản chi** — package `khoanchi`: thêm loại (bắt buộc khai nguồn), ghi · sửa có lý do · đọc theo khoảng ngày, loại, nguồn, tổng do backend cộng; mọi đường chỉ chủ quán (U-095); khoản từ két không vào ngày đã đối soát; cửa đọc két nay trừ khoản chi từ két, khớp bộ đối chiếu; hợp đồng 0.25.0; **ADR-111**. Codex thi công, Claude viết test trước và duyệt; be-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-01)
 - [x] T-192 **Ghi lời chủ repo lượt sáu, đóng U-095** — chỉ chủ quán ghi (và sửa) khoản chi; mức nhắc sắp hết theo từng thứ, chủ quán ghi — xác nhận vế *lời chọn* của U-087, mặc định 20% đứng nguyên; `P3A-01` · `T-186` đổi theo — L1 — Claude Code — 2026-10-15 · [chi tiết](../docs/product/99-unknowns.md#u-095)
 - [x] P4-04 **Màn đăng ký · đăng nhập · đổi và đặt lại mật khẩu, khung theo vai** — lát (c) của **ADR-109**: tầng chuyển tiếp mang cookie phiên và Origin, thôi `X-Person-Id`; năm màn tài khoản; khung `/quay` · `/chu-quan` · `/tram` có gác và đăng xuất; 40 test FE, chạy thật trọn luồng đăng ký → duyệt → đăng nhập tại quầy → đăng xuất khép trực. Claude Code làm và duyệt (Codex hết hạn mức), chưa review độc lập — 2026-10-14 · [chi tiết](backlog_FE.md#p4-04)

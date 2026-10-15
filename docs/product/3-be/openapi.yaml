@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.24.0
+  version: 0.27.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -16,6 +16,12 @@ security:
   - PersonIdentity: []
 # Nhóm trong Swagger UI = gói miền dưới be/internal/ đăng ký đường gọi ấy (chỉ để đọc, không phải luật).
 tags:
+  - name: giaoviec
+    description: Giao việc và đánh dấu bằng sự kiện; chủ quán hoặc người đứng quầy (P3A-03).
+  - name: nguyenlieu
+    description: Sổ nguyên liệu do chủ quán ghi — tổng và hiệu số từ các con số ngày (P3A-02).
+  - name: khoanchi
+    description: Khoản chi và loại chi — chỉ chủ quán ghi, sửa có lý do và đọc (P3A-01).
   - name: nguoi
     description: Người và ca quầy — danh sách người để chọn tên, vào và rời ca quầy.
   - name: menu
@@ -41,6 +47,487 @@ tags:
   - name: ket
     description: Két và ngày bán — tiền đầu ngày, đếm két, khai sổ giấy, ký đối chiếu ngày (06-duong-tien.md).
 paths:
+  /assigned-tasks:
+    get:
+      operationId: listAssignedTasks
+      tags: [giaoviec]
+      summary: Đọc danh sách việc mới nhất trước.
+      description: Lớp quay_hoac_chu_quan. Lọc người nhận nếu có; include_hidden vắng hoặc false thì bỏ việc ẩn, chỉ nhận true hoặc false. Sai bộ lọc trả invalid_request với field tương ứng. Thứ tự created_at DESC, id DESC. Mọi lỗi hình được xét trước quyền và database; path id phải là số nguyên dương, sai trả field=assigned_task_id.
+      parameters:
+        - name: assignee_person_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: include_hidden
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignedTasks'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createAssignedTask
+      tags: [giaoviec]
+      summary: Tạo việc cho một người.
+      description: Lớp quay_hoac_chu_quan. Nội dung cắt khoảng trắng, thiếu hoặc rỗng trả field=content; người nhận thiếu hoặc không dương trả field=assignee_person_id. Người nhận không tồn tại trả person_not_found. Người tạo và lúc tạo do database cấp. Mọi lỗi hình được xét trước quyền và database; path id phải là số nguyên dương, sai trả field=assigned_task_id.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAssignedTask'
+      responses:
+        '201':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignedTask'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /assigned-tasks/{assigned_task_id}:
+    get:
+      operationId: getAssignedTask
+      tags: [giaoviec]
+      summary: Đọc một việc kể cả đã ẩn.
+      description: Lớp quay_hoac_chu_quan. Không có trả assigned_task_not_found; dùng chung câu đọc với danh sách. Mọi lỗi hình được xét trước quyền và database; path id phải là số nguyên dương, sai trả field=assigned_task_id.
+      parameters:
+        - name: assigned_task_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignedTask'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: updateAssignedTask
+      tags: [giaoviec]
+      summary: Sửa nội dung và người nhận có lý do.
+      description: Lớp quay_hoac_chu_quan. Kiểm hình như tạo; reason cắt khoảng trắng, thiếu hoặc rỗng trả field=reason. Khoá việc trước khi xét; không có trả assigned_task_not_found, đã ẩn trả assigned_task_hidden, người nhận không có trả person_not_found. Giữ người tạo và lúc tạo; sửa có vết. Mọi lỗi hình được xét trước quyền và database; path id phải là số nguyên dương, sai trả field=assigned_task_id.
+      parameters:
+        - name: assigned_task_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAssignedTask'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignedTask'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /assigned-tasks/{assigned_task_id}/hiding:
+    post:
+      operationId: hideAssignedTask
+      tags: [giaoviec]
+      summary: Ẩn việc có lý do.
+      description: Lớp quay_hoac_chu_quan. Reason cắt khoảng trắng, thiếu hoặc rỗng trả field=reason. Khoá việc; không có trả assigned_task_not_found, đã ẩn trả assigned_task_hidden và giữ mốc cũ. Ghi người và lúc ẩn, có vết. Mọi lỗi hình được xét trước quyền và database; path id phải là số nguyên dương, sai trả field=assigned_task_id.
+      parameters:
+        - name: assigned_task_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HideAssignedTask'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignedTask'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /assigned-tasks/{assigned_task_id}/marks:
+    post:
+      operationId: markAssignedTask
+      tags: [giaoviec]
+      summary: Đánh dấu xong hoặc bỏ đánh dấu.
+      description: Lớp quay_hoac_chu_quan. Mark chỉ nhận done hoặc undone, sai hoặc thiếu trả field=mark. Khoá việc trước khi đọc sự kiện mới nhất; không có trả assigned_task_not_found, đã ẩn trả assigned_task_hidden. Done khi đang xong trả assigned_task_already_done; undone khi chưa xong trả assigned_task_not_done. Chỉ thêm một sự kiện, trả cả việc. Mọi lỗi hình được xét trước quyền và database; path id phải là số nguyên dương, sai trả field=assigned_task_id.
+      parameters:
+        - name: assigned_task_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MarkAssignedTask'
+      responses:
+        '201':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignedTask'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /supply-items:
+    get:
+      operationId: listSupplyItems
+      tags: [nguyenlieu]
+      summary: Chủ quán đọc danh mục theo tên.
+      description: Cộng mọi ngày, không đặt lại; thứ chưa có con số trả ba chuỗi 0. Không suy lượng dùng hay kết luận thiếu.
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplyItems'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createSupplyItem
+      tags: [nguyenlieu]
+      summary: Chủ quán thêm thứ vào danh mục.
+      description: Tên cắt khoảng trắng, thiếu hoặc rỗng trả invalid_request field=name. Đơn vị vắng hoặc null là chưa có; nếu có thì cắt khoảng trắng và từ chối rỗng với field=purchase_unit. Trùng tên trả supply_item_name_taken.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSupplyItem'
+      responses:
+        '201':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplyItem'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /supply-items/{supply_item_id}/purchase-unit:
+    put:
+      operationId: setSupplyItemPurchaseUnit
+      tags: [nguyenlieu]
+      summary: Chủ quán đặt đơn vị lần đầu.
+      description: Đơn vị cắt khoảng trắng, thiếu/null/rỗng trả invalid_request field=purchase_unit. Mã không có trả supply_item_not_found; đã có đơn vị trả supply_item_unit_already_set. Cập nhật có vết với lý do nguyenlieu/dat_don_vi — đặt đơn vị lần đầu.
+      parameters:
+        - name: supply_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetSupplyItemPurchaseUnit'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplyItem'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /supply-items/{supply_item_id}:
+    get:
+      operationId: getSupplyItem
+      tags: [nguyenlieu]
+      summary: Chủ quán đọc tổng và các con số của một thứ.
+      description: Dùng cùng phép tổng của danh sách; con số ngày xếp theo entry_date giảm dần rồi kind. Mã không có trả supply_item_not_found.
+      parameters:
+        - name: supply_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplyItemDetail'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /supply-day-entries:
+    post:
+      operationId: createSupplyDayEntry
+      tags: [nguyenlieu]
+      summary: Chủ quán ghi một con số ngày.
+      description: Ngày phải có thật và không sau hôm nay của quán; sai trả invalid_request field=entry_date. Mã thứ thiếu hoặc ≤ 0 trả field=supply_item_id, loại sai trả field=kind, con số thiếu hoặc sai khuôn chuỗi trả field=measure. Thứ không có trả supply_item_not_found; trùng thứ/ngày/loại trả supply_day_entry_already_recorded.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSupplyDayEntry'
+      responses:
+        '201':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplyDayEntry'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /supply-day-entries/{supply_day_entry_id}:
+    put:
+      operationId: updateSupplyDayEntry
+      tags: [nguyenlieu]
+      summary: Chủ quán sửa con số có lý do.
+      description: Chỉ sửa measure; giữ thứ, ngày, loại và người nhập ban đầu. Lý do cắt khoảng trắng, thiếu/rỗng trả invalid_request field=reason; con số thiếu hoặc sai khuôn chuỗi trả field=measure. Mã không có trả supply_day_entry_not_found.
+      parameters:
+        - name: supply_day_entry_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSupplyDayEntry'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplyDayEntry'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /expense-categories:
+    get:
+      operationId: listExpenseCategories
+      tags: [khoanchi]
+      summary: Chủ quán đọc loại chi theo tên.
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseCategories'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createExpenseCategory
+      tags: [khoanchi]
+      summary: Chủ quán thêm loại chi, khai rõ nguồn tiền.
+      description: Tên cắt khoảng trắng hai đầu; tên rỗng hoặc nguồn thiếu/null trả invalid_request. Trùng tên trả expense_category_name_taken. Không có cửa đổi tên hay nguồn loại.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExpenseCategory'
+      responses:
+        '201':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseCategory'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /expenses:
+    post:
+      operationId: createExpense
+      tags: [khoanchi]
+      summary: Chủ quán ghi khoản chi.
+      description: Ngày khai không sau hôm nay của quán; loại từ két giữ khoá ngày và từ chối sale_day_reconciled nếu ngày đã ký. Loại không có trả expense_category_not_found.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteExpense'
+      responses:
+        '201':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Expense'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: listExpenses
+      tags: [khoanchi]
+      summary: Chủ quán đọc khoản chi theo khoảng ngày, loại và nguồn.
+      description: from và to bắt buộc, đúng YYYY-MM-DD và from ≤ to; sai trả invalid_request ở tham số sai. Sắp theo paid_date rồi expense_id; backend cộng total_vnd từ các khoản trả về.
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/SaleDate'
+        - name: to
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/SaleDate'
+        - name: expense_category_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: paid_from_till
+          in: query
+          description: Chỉ nhận true hoặc false.
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Expenses'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /expenses/{expense_id}:
+    put:
+      operationId: updateExpense
+      tags: [khoanchi]
+      summary: Chủ quán sửa khoản chi với lý do.
+      description: Thay cả loại, số tiền và ngày; giữ người ghi lần đầu. Lý do cắt khoảng trắng, bắt buộc không rỗng. Khoá tăng dần mọi ngày két cũ/mới bị chạm; ngày đã ký trả sale_day_reconciled và không đổi khoản. Ngày mới không được ở tương lai; mã khoản không có trả expense_not_found, loại không có trả expense_category_not_found.
+      parameters:
+        - name: expense_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateExpense'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Expense'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /accounts:
     post:
       operationId: registerAccount
@@ -2034,6 +2521,319 @@ components:
       name: banhcuon_phien
       description: Phiên đăng nhập theo ADR-109; HttpOnly, Secure, SameSite=Strict, hạn 7 ngày.
   schemas:
+    AssignedTaskMark:
+      type: object
+      required: [assigned_task_mark_id, mark, person_id, person_name, created_at]
+      properties:
+        assigned_task_mark_id:
+          type: integer
+          format: int64
+        mark:
+          type: string
+          enum: [done, undone]
+        person_id:
+          type: integer
+          format: int64
+        person_name:
+          type: string
+        created_at:
+          $ref: '#/components/schemas/Instant'
+    AssignedTask:
+      type: object
+      description: Tên người lấy từ person.display_name; person là người tạo. Ba trường hidden là null khi chưa ẩn.
+      required: [assigned_task_id, content, assignee_person_id, assignee_name, person_id, person_name, created_at, done, marks, hidden_at, hidden_by_person_id, hidden_by_name]
+      properties:
+        assigned_task_id:
+          type: integer
+          format: int64
+        content:
+          type: string
+        assignee_person_id:
+          type: integer
+          format: int64
+        assignee_name:
+          type: string
+        person_id:
+          type: integer
+          format: int64
+        person_name:
+          type: string
+        created_at:
+          $ref: '#/components/schemas/Instant'
+        done:
+          type: boolean
+          description: Sự kiện mới nhất theo created_at DESC, id DESC là done; không sự kiện thì false.
+        marks:
+          type: array
+          description: Thứ tự created_at, id tăng dần; chưa có trả mảng rỗng.
+          items:
+            $ref: '#/components/schemas/AssignedTaskMark'
+        hidden_at:
+          oneOf:
+            - $ref: '#/components/schemas/Instant'
+            - type: 'null'
+        hidden_by_person_id:
+          type: [integer, 'null']
+          format: int64
+        hidden_by_name:
+          type: [string, 'null']
+    AssignedTasks:
+      type: object
+      required: [assigned_tasks]
+      properties:
+        assigned_tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssignedTask'
+    CreateAssignedTask:
+      type: object
+      required: [content, assignee_person_id]
+      properties:
+        content:
+          type: string
+          minLength: 1
+        assignee_person_id:
+          type: integer
+          format: int64
+          minimum: 1
+    UpdateAssignedTask:
+      type: object
+      required: [content, assignee_person_id, reason]
+      properties:
+        content:
+          type: string
+          minLength: 1
+        assignee_person_id:
+          type: integer
+          format: int64
+          minimum: 1
+        reason:
+          type: string
+          minLength: 1
+    HideAssignedTask:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+          minLength: 1
+    MarkAssignedTask:
+      type: object
+      required: [mark]
+      properties:
+        mark:
+          type: string
+          enum: [done, undone]
+    Measure:
+      type: string
+      pattern: '^-?(0|[1-9][0-9]*)(\.[0-9]{1,3})?$'
+      description: Chuỗi thập phân chính xác; đọc bằng trim_scale của PostgreSQL, không số 0 thừa. Tổng có thể vượt 9 chữ số; hiệu số có thể âm. Yêu cầu ghi siết không âm và tối đa 9 chữ số nguyên tại schema thân.
+      examples: ['1.75', '10', '0', '-4']
+    SupplyItem:
+      type: object
+      required: [supply_item_id, name, purchase_unit, purchased_total, used_total, balance]
+      properties:
+        supply_item_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        purchase_unit:
+          type: [string, 'null']
+        purchased_total:
+          $ref: '#/components/schemas/Measure'
+        used_total:
+          $ref: '#/components/schemas/Measure'
+        balance:
+          $ref: '#/components/schemas/Measure'
+    SupplyItems:
+      type: object
+      required: [supply_items]
+      properties:
+        supply_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupplyItem'
+    SupplyItemDetail:
+      allOf:
+        - $ref: '#/components/schemas/SupplyItem'
+        - type: object
+          required: [entries]
+          properties:
+            entries:
+              type: array
+              items:
+                $ref: '#/components/schemas/SupplyDayEntry'
+    SupplyDayEntry:
+      type: object
+      required: [supply_day_entry_id, supply_item_id, entry_date, kind, measure, person_id, person_name, created_at]
+      properties:
+        supply_day_entry_id:
+          type: integer
+          format: int64
+        supply_item_id:
+          type: integer
+          format: int64
+        entry_date:
+          $ref: '#/components/schemas/SaleDate'
+        kind:
+          type: string
+          enum: [purchased, used]
+        measure:
+          $ref: '#/components/schemas/Measure'
+        person_id:
+          type: integer
+          format: int64
+        person_name:
+          type: string
+        created_at:
+          $ref: '#/components/schemas/Instant'
+    CreateSupplyItem:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        purchase_unit:
+          type: [string, 'null']
+          minLength: 1
+    SetSupplyItemPurchaseUnit:
+      type: object
+      required: [purchase_unit]
+      properties:
+        purchase_unit:
+          type: string
+          minLength: 1
+    CreateSupplyDayEntry:
+      type: object
+      required: [supply_item_id, entry_date, kind, measure]
+      properties:
+        supply_item_id:
+          type: integer
+          format: int64
+          minimum: 1
+        entry_date:
+          $ref: '#/components/schemas/SaleDate'
+        kind:
+          type: string
+          enum: [purchased, used]
+        measure:
+          $ref: '#/components/schemas/Measure'
+          pattern: '^(0|[1-9][0-9]{0,8})(\.[0-9]{1,3})?$'
+    UpdateSupplyDayEntry:
+      type: object
+      required: [measure, reason]
+      properties:
+        measure:
+          $ref: '#/components/schemas/Measure'
+          pattern: '^(0|[1-9][0-9]{0,8})(\.[0-9]{1,3})?$'
+        reason:
+          type: string
+          minLength: 1
+    CreateExpenseCategory:
+      type: object
+      required: [name, paid_from_till]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Cắt khoảng trắng hai đầu, không được rỗng.
+        paid_from_till:
+          type: boolean
+          description: Bắt buộc khai rõ; không nhận null và không mặc định.
+    ExpenseCategory:
+      type: object
+      required: [expense_category_id, name, paid_from_till]
+      properties:
+        expense_category_id:
+          type: integer
+          format: int64
+          minimum: 1
+        name:
+          type: string
+        paid_from_till:
+          type: boolean
+    ExpenseCategories:
+      type: object
+      required: [expense_categories]
+      properties:
+        expense_categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpenseCategory'
+    WriteExpense:
+      type: object
+      required: [expense_category_id, amount_vnd, paid_date]
+      properties:
+        expense_category_id:
+          type: integer
+          format: int64
+          minimum: 1
+        amount_vnd:
+          type: integer
+          format: int64
+          minimum: 1
+        paid_date:
+          $ref: '#/components/schemas/SaleDate'
+          description: Ngày người ghi khai (U-072), không sau hôm nay của quán.
+    UpdateExpense:
+      allOf:
+        - $ref: '#/components/schemas/WriteExpense'
+        - type: object
+          required: [reason]
+          properties:
+            reason:
+              type: string
+              minLength: 1
+              description: Cắt khoảng trắng hai đầu, không được rỗng; ghi vào vết sửa.
+    Expense:
+      type: object
+      required: [expense_id, expense_category_id, category_name, paid_from_till, amount_vnd, paid_date, person_id, person_name, created_at]
+      properties:
+        expense_id:
+          type: integer
+          format: int64
+          minimum: 1
+        expense_category_id:
+          type: integer
+          format: int64
+          minimum: 1
+        category_name:
+          type: string
+        paid_from_till:
+          type: boolean
+        amount_vnd:
+          type: integer
+          format: int64
+          minimum: 1
+        paid_date:
+          $ref: '#/components/schemas/SaleDate'
+          description: Ngày người ghi khai, cũng là ngày trừ két nếu loại trả từ két.
+        person_id:
+          type: integer
+          format: int64
+          minimum: 1
+        person_name:
+          type: string
+          description: person.display_name của người ghi lần đầu.
+        created_at:
+          $ref: '#/components/schemas/Instant'
+    Expenses:
+      type: object
+      required: [from, to, expenses, total_vnd]
+      properties:
+        from:
+          $ref: '#/components/schemas/SaleDate'
+        to:
+          $ref: '#/components/schemas/SaleDate'
+        expenses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Expense'
+        total_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+          description: Backend cộng số tiền của tất cả khoản trả về (ADR-086).
     Success:
       type: object
       required: [status]
@@ -3403,6 +4203,19 @@ components:
         Mã lỗi công khai. FE quyết hiện gì theo mã, không theo status, không theo chữ.
         Mã của một luật do lát dựng cửa của luật ấy thêm (01-hop-dong-api.md §3).
       enum:
+        - expense_category_not_found
+        - expense_not_found
+        - supply_item_unit_already_set
+        - supply_day_entry_already_recorded
+        - supply_item_name_taken
+        - supply_day_entry_not_found
+        - assigned_task_not_found
+        - person_not_found
+        - assigned_task_hidden
+        - assigned_task_already_done
+        - assigned_task_not_done
+        - supply_item_not_found
+        - expense_category_name_taken
         - username_taken
         - email_taken
         - password_too_short
@@ -3482,6 +4295,19 @@ components:
         - wrong_make_note_already_cancelled
         - served_quantity_exceeds_made
       x-http-status:
+        expense_category_not_found: 404
+        expense_not_found: 404
+        supply_item_unit_already_set: 409
+        supply_day_entry_already_recorded: 409
+        supply_item_name_taken: 409
+        supply_day_entry_not_found: 404
+        assigned_task_not_found: 404
+        person_not_found: 404
+        assigned_task_hidden: 409
+        assigned_task_already_done: 409
+        assigned_task_not_done: 409
+        supply_item_not_found: 404
+        expense_category_name_taken: 409
         username_taken: 409
         email_taken: 409
         password_too_short: 400
@@ -3916,16 +4742,16 @@ x-constraint-errors:
   bill_standalone_debt_note_check: debt_note_required
   bill_debt_note_only_with_debt_check: internal
   reconciled_day_gap_explained_check: gap_explanation_required
-  assigned_task_assignee_person_fkey: unreviewed
-  assigned_task_content_check: unreviewed
-  assigned_task_hidden_after_created_check: unreviewed
-  assigned_task_hidden_by_iff_hidden_check: unreviewed
-  assigned_task_hidden_by_person_fkey: unreviewed
-  assigned_task_mark_assigned_task_fkey: unreviewed
-  assigned_task_mark_mark_code_check: unreviewed
-  assigned_task_mark_person_fkey: unreviewed
+  assigned_task_assignee_person_fkey: person_not_found
+  assigned_task_content_check: internal
+  assigned_task_hidden_after_created_check: internal
+  assigned_task_hidden_by_iff_hidden_check: internal
+  assigned_task_hidden_by_person_fkey: internal
+  assigned_task_mark_assigned_task_fkey: assigned_task_not_found
+  assigned_task_mark_mark_code_check: internal
+  assigned_task_mark_person_fkey: internal
   assigned_task_mark_pkey: internal
-  assigned_task_person_fkey: unreviewed
+  assigned_task_person_fkey: internal
   assigned_task_pkey: internal
   attendance_day_cancel_note_only_when_cancelled_check: unreviewed
   attendance_day_cancelled_after_created_check: unreviewed
@@ -4199,16 +5025,16 @@ x-constraint-errors:
   station_job_transfer_pkey: internal
   station_job_transfer_production_batch_item_fkey: internal
   station_job_transfer_to_station_job_fkey: internal
-  supply_day_entry_kind_code_check: unreviewed
-  supply_day_entry_measure_nonnegative_finite_check: unreviewed
-  supply_day_entry_one_kind_per_item_day_key: unreviewed
-  supply_day_entry_person_fkey: unreviewed
+  supply_day_entry_kind_code_check: internal
+  supply_day_entry_measure_nonnegative_finite_check: internal
+  supply_day_entry_one_kind_per_item_day_key: supply_day_entry_already_recorded
+  supply_day_entry_person_fkey: internal
   supply_day_entry_pkey: internal
-  supply_day_entry_supply_item_fkey: unreviewed
-  supply_item_name_key: unreviewed
-  supply_item_name_not_blank_check: unreviewed
+  supply_day_entry_supply_item_fkey: supply_item_not_found
+  supply_item_name_key: supply_item_name_taken
+  supply_item_name_not_blank_check: internal
   supply_item_pkey: internal
-  supply_item_purchase_unit_not_blank_check: unreviewed
+  supply_item_purchase_unit_not_blank_check: internal
   table_session_bill_fkey: internal
   table_session_id_closed_key: internal
   table_session_id_if_closed_key: internal
@@ -4279,10 +5105,11 @@ x-constraint-errors:
   menu_item_category_pkey: internal
 
   # P2A-05 — chưa có cửa ghi; khoá chính là lỗi nội bộ.
+  # P3A-01: định danh do DB sinh; hình do handler kiểm; người đã qua quyền.
   expense_category_pkey: internal
-  expense_category_name_key: unreviewed
-  expense_category_name_not_blank_check: unreviewed
+  expense_category_name_key: expense_category_name_taken
+  expense_category_name_not_blank_check: internal
   expense_pkey: internal
-  expense_category_fkey: unreviewed
-  expense_person_fkey: unreviewed
-  expense_positive_amount_check: unreviewed
+  expense_category_fkey: expense_category_not_found
+  expense_person_fkey: internal
+  expense_positive_amount_check: internal

@@ -64,7 +64,7 @@ việc sửa tay không có vết thì mang giới hạn chung của `I-018`.
 
 Sự kiện hoặc việc bị xoá mất ngoài quyền ứng dụng không còn dấu để đối chiếu. Đọc lược đồ và
 kịch bản gỡ/ẩn là bằng chứng cho quyền ứng dụng, không phải chứng minh không ai vượt database.
-Vế tầng 4 bấm hộ cũng không có tập phân biệt được. Pha 3 nhận việc xét người thao tác;
+Vế tầng 4 bấm hộ cũng không có tập phân biệt được. Cửa `be/internal/giaoviec` xét người thao tác qua lớp `quay_hoac_chu_quan` (P3A-03);
 `P2A-15` rà bộ câu và diễn ngày lượt hai; `P2A-16` rà ranh giới pha.
 
 Lát không thêm bảng vào các tham số ngoại lệ của quy ước dữ liệu.

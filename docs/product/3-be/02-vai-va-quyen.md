@@ -131,6 +131,18 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `sanxuat/huy_ghi_lam_sai` | `quay` | ADR-077; ADR-090 điểm 6 — quầy huỷ ghi chú là suy luận của phiên |
 | `don/huy` | `quay` | `05-vong-doi.md` §5.2; ADR-090 — huỷ đơn đã xác nhận hoặc đang thực hiện |
 | `vongdoi/chuyen_viec` | `theo_cua_goi` | `05-vong-doi.md` §5.4; `I-016`; ADR-090 — một cửa sở hữu trạng thái việc |
+| `nguyenlieu/them_thu` | `chu_quan` | `shop-facts.md` §8.4 — chủ quán tự nhập số liệu (2026-09-04); kế hoạch AD_BE §4; phiếu P3A-02 |
+| `nguyenlieu/dat_don_vi` | `chu_quan` | `shop-facts.md` §8.4 — chủ quán tự nhập số liệu (2026-09-04); kế hoạch AD_BE §4; phiếu P3A-02 |
+| `nguyenlieu/ghi_so` | `chu_quan` | `shop-facts.md` §8.4 — chủ quán tự nhập số liệu (2026-09-04); kế hoạch AD_BE §4; phiếu P3A-02 |
+| `nguyenlieu/sua_so` | `chu_quan` | `shop-facts.md` §8.4 — chủ quán tự nhập số liệu (2026-09-04); kế hoạch AD_BE §4; phiếu P3A-02 |
+| `khoanchi/them_loai` | `chu_quan` | `shop-facts.md` §8.10 — lời đóng U-095 (2026-10-15): chỉ chủ quán ghi khoản chi; phiếu P3A-01 |
+| `khoanchi/ghi` | `chu_quan` | `shop-facts.md` §8.10 — lời đóng U-095 (2026-10-15): chỉ chủ quán ghi khoản chi; phiếu P3A-01 |
+| `khoanchi/sua` | `chu_quan` | `shop-facts.md` §8.10 — lời đóng U-095 (2026-10-15): chỉ chủ quán ghi khoản chi; phiếu P3A-01 |
+
+| `giaoviec/tao` | `quay_hoac_chu_quan` | `I-030` — chủ quán và POS tạo, sửa, xoá, đánh dấu (lời đóng `U-084` · `U-089`, 2026-10-14); ADR-105 điểm 1; phiếu P3A-03 |
+| `giaoviec/sua` | `quay_hoac_chu_quan` | `I-030` — chủ quán và POS tạo, sửa, xoá, đánh dấu (lời đóng `U-084` · `U-089`, 2026-10-14); ADR-105 điểm 1; phiếu P3A-03 |
+| `giaoviec/an` | `quay_hoac_chu_quan` | `I-030` — chủ quán và POS tạo, sửa, xoá, đánh dấu (lời đóng `U-084` · `U-089`, 2026-10-14); ADR-105 điểm 1; phiếu P3A-03 |
+| `giaoviec/danh_dau` | `quay_hoac_chu_quan` | `I-030` — chủ quán và POS tạo, sửa, xoá, đánh dấu (lời đóng `U-084` · `U-089`, 2026-10-14); ADR-105 điểm 1; phiếu P3A-03 |
 
 **Lát sau thêm dòng thế nào:** cùng lượt dựng cửa — thư mục cửa, khai báo `authz.Door{Code, Need}` ngoài
 file test, và một dòng ở đây trỏ nguồn nghiệp vụ. Thiếu một trong ba thì Gate 1g đỏ.

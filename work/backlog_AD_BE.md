@@ -19,8 +19,41 @@ không nói ⇒ `chu_quan` và một câu hỏi (kế hoạch §3).
 `P4A-10` là một bộ lọc *loại = marketing* của cùng cửa đọc.
 **Đứng trên:** lát `P2A-05` (`docs/product/2-db/15-luoc-do-khoan-chi.md`), `I-029`.
 **Bẫy:** nguồn tiền ở **loại**, không trên khoản; loại đã có không đổi nguồn được (database từ chối) — cửa không mở
-đường ấy. Ai được ghi chưa có lời: lớp `chu_quan` tới khi `U-095` đóng.
-**Nhận việc:** —
+đường ấy. Ai được ghi: **chỉ chủ quán** (lời đóng `U-095`, 2026-10-15, T-192) ⇒ lớp `chu_quan`, cả ghi lẫn sửa.
+**Nhận việc:** 2026-10-15 · Claude Code (thiết kế, test trước, duyệt) · Codex thi công ở `../lean_wt/P3A-01`, nhánh
+`codex/P3A-01` từ `4b25d7f`. Mức L2 — chạm két (`I-021`).
+
+*Thiết kế (Claude, không phải lời quán):* năm đường `GET`/`POST /expense-categories`, `POST /expenses`,
+`PUT /expenses/{expense_id}`, `GET /expenses?from&to[&expense_category_id][&paid_from_till]`; ba cửa
+`khoanchi/them_loai` · `ghi` · `sua`, mọi đường lớp `chu_quan` kể cả đọc; loại mới bắt buộc khai nguồn, không đường
+đổi nguồn hay tên; ngày khai sau hôm nay của quán bị từ chối; khoản của loại trả từ két vào ngày **đã đối soát** bị
+từ chối `sale_day_reconciled`, kể cả khi sửa dời ngày hay đổi loại — cùng luật với các cửa tiền khác (`ngayban.DaKy`).
+*Phát hiện khi thiết kế:* câu đọc két `be/internal/ket/sql/ket_ngay.sql` chưa trừ khoản chi từ két mà bộ đối chiếu
+`db/reconcile/prelude.sql` đã trừ (lát `P2A-05`) — chưa sai vì chưa cửa nào ghi khoản chi; bước này thêm hạng tử.
+
+*Acceptance:*
+- [x] Bảy test viết trước ở `be/internal/khoanchi/khoanchi_test.go` xanh qua PostgreSQL thật, file không đổi.
+- [x] Người đứng quầy bị `owner_only`, không phiên bị `unauthenticated` ở cả năm đường; database không đổi.
+- [x] Mỗi khoản đọc ra loại · số tiền · ngày khai · người ghi · lúc ghi; tổng của khoảng là backend cộng.
+- [x] Sửa không lý do bị từ chối; có lý do thì vết giữ bản trước, bản sau, lý do, người sửa.
+- [x] Khoản từ két trừ vào két của ngày khai — cửa đọc két và bộ đối chiếu cùng con số; tiền riêng không chạm két.
+- [x] Hợp đồng 0.25.0, ba mã lỗi mới, bảy dòng `expense*` của `x-constraint-errors` đã xét, ba dòng ma trận.
+- [x] `./scripts/gate.sh` xanh ở clone chính, `be-check` do Claude chạy (`db-check` không chạy: lát không chạm database).
+
+**Bàn giao** — 2026-10-15 · thực hiện: **Codex** (package `be/internal/khoanchi`, hạng tử chi từ két ở `ket_ngay.sql`,
+hợp đồng 0.25.0, ba mã lỗi, bảy dòng `expense*`, ba dòng ma trận, thêm `TestQC14_HinhKhoanChiTruocQuyen` ở
+`handler_test.go`) · **Claude Code** (thiết kế, bảy test viết trước; khi duyệt: sửa khung test của chính mình — mở
+khoảng trực chồng khoảng vừa khép, database từ chối `counter_duty_one_at_a_time_excl`; thêm ca `khoanchi/sua` vào
+`be/internal/don/vet_cua_test.go` vì `TestI018_TapCuaSuaKhopTapCa` đòi; sinh lại `fe/src/lib/api/schema.ts`; ADR-111) ·
+duyệt: **Claude Code**, chưa review độc lập · nhánh `fe_admin`, worktree từ `4b25d7f`, áp vào clone chính trên `52d88d3`.
+
+*Nghiệm thu → bằng chứng* (worktree và clone chính, 2026-10-15): `--- PASS` cả bảy `TestI029_*` · `TestI021_KhoanChi*`;
+`19 cửa UPDATE khớp 19 ca`; `be-check: PASS — mọi test backend qua PostgreSQL thật đều đạt`; `PASS Gate 1g — hợp đồng
+0.25.0; 71 đường gọi ở hợp đồng, 71 ở code; … 66 cửa, 66 dòng ma trận`; `fe-check: apigen PASS — schema.ts khớp hợp
+đồng`; `PASS gate không cổng nào đỏ`.
+
+*Còn lại:* `fe-check` chạy riêng đỏ 5 test ở `fe/src/components/tai-khoan/` (`ResizeObserver is not defined`) — file của
+`P4-04` chưa commit, không do bước này. Trang `P4A-10` có cửa.
 
 [↑ đầu file](#top)
 
@@ -33,7 +66,39 @@ không nói ⇒ `chu_quan` và một câu hỏi (kế hoạch §3).
 lý do; đọc tổng và hiệu số của một thứ theo phép của `I-026`.
 **Đứng trên:** lát `P2A-02` (`docs/product/2-db/12-luoc-do-nguyen-lieu.md`), `I-025` · `I-026`.
 **Bẫy:** máy chép con số người ghi, không tự suy lượng dùng từ món bán (§8.4); thứ chưa có đơn vị đọc ra *trống*.
-**Nhận việc:** —
+**Nhận việc:** 2026-10-15 · Claude Code (thiết kế, test trước, duyệt) · Codex thi công ở `../lean_wt/P3A-02`, nhánh
+`codex/P3A-02` từ `52d88d3` cộng thay đổi chưa commit của `P3A-01` (đặt sẵn ở index). Mức L2.
+
+*Thiết kế (Claude, không phải lời quán):* sáu đường `GET`/`POST /supply-items`, `PUT /supply-items/{id}/purchase-unit`,
+`GET /supply-items/{id}`, `POST /supply-day-entries`, `PUT /supply-day-entries/{id}`; bốn cửa `nguyenlieu/them_thu` ·
+`dat_don_vi` · `ghi_so` · `sua_so`, mọi đường lớp `chu_quan` (kế hoạch §4 đọc từ §8.4 *chủ quán tự nhập số liệu*);
+con số trên dây là **chuỗi thập phân** (tối đa 9 chữ số nguyên, 3 chữ số lẻ, không âm), đọc ra không số 0 thừa — không
+qua số thực; tổng và hiệu số từ **một** câu SQL cho cả hai đường đọc (`I-026` tầng 3); đơn vị **đặt một lần** cho thứ
+chưa có, đã có thì từ chối (đổi đơn vị làm hỏng vế hiệu số của `I-026`); sửa chỉ đổi con số, không đổi thứ · ngày · loại.
+
+*Acceptance:*
+- [x] Sáu test viết trước ở `be/internal/nguyenlieu/nguyenlieu_test.go` xanh qua PostgreSQL thật, file không đổi.
+- [x] Người đứng quầy bị `owner_only`, không phiên bị `unauthenticated` ở cả sáu đường; database không đổi.
+- [x] Mỗi con số đọc ra người nhập · ngày · lúc gõ; thứ chưa có đơn vị đọc ra `null`.
+- [x] Tổng đã nhập · đã dùng · hiệu số đúng phép của `I-026` (15/13/2 → sửa → 15/15/0; vượt ⇒ âm, nhận); danh sách và
+      chi tiết cùng đáp số; số lẻ cộng đúng.
+- [x] Một thứ · một ngày · một loại có một con số; trùng tên bị từ chối; sửa có lý do để vết bản trước, bản sau.
+- [x] Hợp đồng tăng MINOR, năm mã lỗi mới, mười dòng `supply_*` đã xét, bốn dòng ma trận; ca vết `nguyenlieu/*` sửa.
+- [x] `./scripts/gate.sh` xanh ở clone chính; `be-check` · `db-check` do Claude chạy.
+
+**Bàn giao** — 2026-10-15 · thực hiện: **Codex** (package `be/internal/nguyenlieu`, hợp đồng 0.26.0, năm mã lỗi, mười dòng
+`supply_*` — tám `unreviewed` được xét, hai khoá chính giữ `internal` —, bốn dòng ma trận, hai ca vết
+`nguyenlieu/dat_don_vi` · `sua_so` ở `be/internal/don/vet_cua_test.go`, con trỏ §3 · §5 ở `12-luoc-do-nguyen-lieu.md`,
+thêm `TestI025_HinhSaiTruocQuyenVaDatabase`) · **Claude Code** (thiết kế, sáu test viết trước, sinh lại
+`fe/src/lib/api/schema.ts`, ADR-112) · duyệt: **Claude Code**, chưa review độc lập · worktree `../lean_wt/P3A-02` từ
+`52d88d3` cộng P3A-01 đặt sẵn ở index; xanh lượt đầu, không gửi lại lỗi nào.
+
+*Nghiệm thu → bằng chứng* (2026-10-15): `--- PASS` cả sáu `TestI025_*` · `TestI026_*` của file viết trước;
+`21 cửa UPDATE khớp 21 ca`; `be-check: PASS`; `PASS Gate 1g — hợp đồng 0.26.0; 77 đường gọi ở hợp đồng, 77 ở code; …
+70 cửa, 70 dòng ma trận`; `db-check — 28 bước xuôi · lùi · xuôi lại … 140 lỗi cài`; `fe-check: apigen PASS`, `Tests 40
+passed (40)`; `PASS gate không cổng nào đỏ`.
+
+*Còn lại:* trang `P4A-08` có cửa; `P3A-08` (nhắc POS) còn chờ `T-186`.
 
 [↑ đầu file](#top)
 
@@ -45,7 +110,43 @@ lý do; đọc tổng và hiệu số của một thứ theo phép của `I-026`
 **Goal:** tạo · sửa · ẩn việc, đánh dấu xong và bỏ đánh dấu, đọc việc theo người nhận.
 **Đứng trên:** lát `P2A-11` (`docs/product/2-db/16-luoc-do-giao-viec.md`), `I-030` — lớp `quay_hoac_chu_quan`.
 **Bẫy:** mỗi lần đánh dấu là một dòng sự kiện, không đè cờ; người nhận tự đánh dấu — lời không nói, không mở.
-**Nhận việc:** —
+**Nhận việc:** 2026-10-15 · Claude Code (thiết kế, test trước, duyệt) · Codex thi công ở `../lean_wt/P3A-03`, nhánh
+`codex/P3A-03` từ `92c16a7` cộng thay đổi chưa commit của `P3A-01` · `P3A-02` (đặt sẵn ở index). Mức L2.
+
+*Thiết kế (Claude, không phải lời quán):* sáu đường `POST`/`GET /assigned-tasks` (lọc `assignee_person_id`,
+`include_hidden`), `GET`/`PUT /assigned-tasks/{assigned_task_id}`, `POST /assigned-tasks/{assigned_task_id}/hiding`,
+`POST /assigned-tasks/{assigned_task_id}/marks`; bốn cửa `giaoviec/tao` · `sua` · `an` · `danh_dau`, mọi đường lớp
+`quay_hoac_chu_quan` kể cả đọc — đọc là điều kiện để đánh dấu, lời không cho ai khác đọc; người nhận không đứng quầy
+không tự đánh dấu. Sửa và ẩn đòi lý do (vết `I-018`); việc đã ẩn không sửa, không đánh dấu, không ẩn lần nữa
+(`assigned_task_hidden`). Đánh dấu thừa bị từ chối — *xong* khi đang xong (`assigned_task_already_done`), *bỏ* khi chưa
+xong (`assigned_task_not_done`) — để mỗi sự kiện là một lần đổi thật; khoá dòng việc trước khi đọc sự kiện mới nhất.
+Người nhận không có ⇒ `person_not_found`. Danh sách mới nhất trước; sự kiện theo thứ tự bấm.
+
+*Acceptance:*
+- [x] Sáu test viết trước ở `be/internal/giaoviec/giaoviec_test.go` xanh qua PostgreSQL thật, file không đổi.
+- [x] Người không đứng quầy, không là chủ quán — kể cả người nhận — bị `not_on_counter_duty`, không phiên bị
+      `unauthenticated` ở cả sáu đường; database không đổi.
+- [x] Mỗi việc đọc ra nội dung · người nhận · ai tạo · lúc tạo; *đã xong* đọc từ sự kiện mới nhất; xong → bỏ còn hai
+      sự kiện có người và lúc.
+- [x] Sửa và ẩn không lý do bị từ chối; có lý do thì vết giữ bản trước, bản sau, lý do, người; việc đã ẩn đọc lại được.
+- [x] Hợp đồng tăng MINOR, năm mã lỗi mới, các dòng `assigned_task*` của `x-constraint-errors` đã xét, bốn dòng ma trận;
+      ca vết `giaoviec/sua` · `giaoviec/an` ở `be/internal/don/vet_cua_test.go`.
+- [x] `./scripts/gate.sh` xanh ở clone chính; `be-check` do Claude chạy.
+
+**Bàn giao** — 2026-10-15 · thực hiện: **Codex** (package `be/internal/giaoviec`, hợp đồng 0.27.0, năm mã lỗi, chín dòng
+`assigned_task*` — hai mang mã công khai, bảy `internal` —, bốn dòng ma trận, hai ca vết `giaoviec/sua` · `giaoviec/an` ở
+`be/internal/don/vet_cua_test.go`, con trỏ §3 ở `16-luoc-do-giao-viec.md`, `TestQC14_HinhGiaoViecTruocQuyenVaDatabase`) ·
+**Claude Code** (thiết kế, sáu test viết trước, xếp lại import theo khuôn package bên cạnh, sinh lại
+`fe/src/lib/api/schema.ts`, ADR-113) · duyệt: **Claude Code**, chưa review độc lập · worktree `../lean_wt/P3A-03` từ
+`92c16a7` cộng P3A-01 · P3A-02 đặt sẵn ở index; xanh lượt đầu, không gửi lại lỗi nào.
+
+*Nghiệm thu → bằng chứng* (clone chính, 2026-10-15): `--- PASS` cả sáu `TestI030_*` của file viết trước;
+`23 cửa UPDATE khớp 23 ca`; `be-check: PASS — mọi test backend qua PostgreSQL thật đều đạt`; `PASS Gate 1g — hợp đồng
+0.27.0; 83 đường gọi ở hợp đồng, 83 ở code; 91 mã lỗi … 74 cửa, 74 dòng ma trận`; `db-check — 28 bước xuôi · lùi · xuôi
+lại`; `PASS gate không cổng nào đỏ`.
+
+*Còn lại:* trang `P4A-07` có cửa; `P3A-04` (hướng dẫn gắn việc) dùng `assigned_task_not_found` · `assigned_task_hidden` ·
+`person_not_found` của bước này.
 
 [↑ đầu file](#top)
 
@@ -57,7 +158,29 @@ lý do; đọc tổng và hiệu số của một thứ theo phép của `I-026`
 **Goal:** hướng dẫn gắn một việc giao (chữ, tệp ảnh · video), ghi nhận *đạt · chưa* kèm nhận xét về một người.
 **Đứng trên:** lát `P2A-12` (`docs/product/2-db/17-luoc-do-dao-tao.md`), `I-031` — lớp `quay_hoac_chu_quan`.
 **Bẫy:** tệp không vào database; chỗ giữ tệp theo quyết định của lát `P2A-12`.
-**Nhận việc:** —
+**Nhận việc:** 2026-10-15 · Claude Code (thiết kế, test trước, duyệt) · Codex thi công ở `../lean_wt/P3A-04`, nhánh
+`codex/P3A-04` từ `92c16a7` cộng thay đổi chưa commit của `P3A-01` … `P3A-03` (đặt sẵn ở index). Mức L2.
+
+*Thiết kế (Claude, không phải lời quán — **ADR-114**):* chín đường — `GET`/`POST /assigned-tasks/{assigned_task_id}/guides`
+(gắn bằng `multipart/form-data`: `kind`, `body`, `file`), `PUT /assigned-task-guides/{id}`, `POST …/hiding`,
+`GET …/file`; `GET`/`POST /training-records`, `PUT /training-records/{id}`, `POST …/hiding`; sáu cửa `daotao/*`, mọi đường lớp
+`quay_hoac_chu_quan` kể cả đọc và tải tệp. Kho tệp là thư mục `BANHCUON_FILE_DIR` trên máy chạy hệ thống (ADR-107); khoá tệp
+`guides/<hex ngẫu nhiên>.<đuôi>`; loại tệp nhận bằng nội dung — ảnh jpg · png · webp ≤ 10 MiB, video mp4 · webm · mov
+≤ 100 MiB; lời từ chối không để tệp mồ côi; ẩn không xoá tệp; tệp mất ⇒ `assigned_task_guide_file_missing`, chữ vẫn đọc.
+Chỉ mẩu chữ sửa được — đổi ảnh là ẩn rồi gắn mẩu mới. Ghi nhận về một người, nhận xét và/hoặc *đạt · chưa*, đọc theo lúc
+ghi; sửa thay cả hai trường. Sửa và ẩn đòi lý do; mẩu và ghi nhận đã ẩn đứng yên, vẫn đọc lại được.
+
+*Acceptance:*
+- [ ] Tám test viết trước ở `be/internal/daotao/daotao_test.go` xanh qua PostgreSQL thật, file không đổi.
+- [ ] Người không đứng quầy, không là chủ quán bị `not_on_counter_duty`, không phiên bị `unauthenticated` ở cả chín
+      đường; database và kho tệp không đổi.
+- [ ] Hướng dẫn đọc lại được từ đúng việc của nó; ảnh · video là tệp trong kho, database chỉ cất khoá; tải lại đúng byte
+      và đúng loại; tệp sai loại, quá cỡ, hay bị từ chối trong giao dịch không để lại tệp.
+- [ ] Ghi nhận đọc ra về ai · ai ghi · lúc ghi, theo thứ tự ghi; rỗng cả hai hay đánh giá thứ ba bị từ chối; sửa và ẩn
+      có vết; đã ẩn đọc lại được.
+- [ ] Hợp đồng tăng MINOR, bảy mã lỗi mới, các dòng `assigned_task_guide_*` · `training_record_*` đã xét, sáu dòng ma
+      trận, bốn ca vết; biến `BANHCUON_FILE_DIR` ghi ở `docs/command/make.md` và hợp đồng.
+- [ ] `./scripts/gate.sh` xanh ở clone chính; `be-check` do Claude chạy.
 
 [↑ đầu file](#top)
 

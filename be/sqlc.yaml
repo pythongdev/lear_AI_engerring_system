@@ -198,3 +198,41 @@ sql:
         package: sqlcgen
         out: internal/taikhoan/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/khoanchi/sql
+      - internal/khoanchi/sql/them_loai
+      - internal/khoanchi/sql/ghi
+      - internal/khoanchi/sql/sua
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/khoanchi/internal/sqlcgen
+        sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/nguyenlieu/sql
+      - internal/nguyenlieu/sql/them_thu
+      - internal/nguyenlieu/sql/dat_don_vi
+      - internal/nguyenlieu/sql/ghi_so
+      - internal/nguyenlieu/sql/sua_so
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/nguyenlieu/internal/sqlcgen
+        sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/giaoviec/sql
+      - internal/giaoviec/sql/tao
+      - internal/giaoviec/sql/sua
+      - internal/giaoviec/sql/an
+      - internal/giaoviec/sql/danh_dau
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/giaoviec/internal/sqlcgen
+        sql_package: pgx/v5

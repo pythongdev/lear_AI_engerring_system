@@ -10,11 +10,14 @@ import (
 	"banhcuon/be/internal/ban"
 	"banhcuon/be/internal/don"
 	"banhcuon/be/internal/gia"
+	"banhcuon/be/internal/giaoviec"
 	"banhcuon/be/internal/hoadon"
 	"banhcuon/be/internal/ket"
+	"banhcuon/be/internal/khoanchi"
 	"banhcuon/be/internal/menu"
 	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/nguoi"
+	"banhcuon/be/internal/nguyenlieu"
 	"banhcuon/be/internal/nhandon"
 	"banhcuon/be/internal/phien"
 	"banhcuon/be/internal/platform/realtime"
@@ -48,6 +51,9 @@ func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtim
 	tratruoc.Routes(r, tratruoc.NewService(pool))
 	hoadon.Routes(r, hoadon.NewService(pool))
 	ket.Routes(r, ket.NewService(pool))
+	khoanchi.Routes(r, khoanchi.NewService(pool))
+	nguyenlieu.Routes(r, nguyenlieu.NewService(pool))
+	giaoviec.Routes(r, giaoviec.NewService(pool))
 	sanxuat.Routes(r, sanxuat.NewService(pool).WithRealtime(b))
 	don.Routes(r, don.NewService(pool, b))
 	nhandon.Routes(r, nhandon.NewService(pool, b))
