@@ -81,11 +81,12 @@ Tầng theo `03-bao-ve-invariant.md` §5, không tự nâng hay hạ. Trong cộ
 
 ## 3. Cái không phải tầng 1 — lược đồ nợ gì, pha 3 nợ gì
 
-- **Một chỗ tính tổng** là tầng 3 của `I-026`, thuộc cửa đọc pha 3: cộng mọi con số ngày của một
-  thứ. Lát không dựng view hay hàm tổng. Bằng chứng hôm nay là phép cộng trong test I-026; chưa
-  phải bằng chứng cửa đọc thật chỉ có một chỗ tính.
-- **Cửa nhập khai người thao tác và lý do sửa.** Dấu người lấy từ giao dịch, vết sửa dùng lại cơ
-  chế của `P2-08`; pha 3 phải khai đúng người thật và lý do, không suy người từ con số.
+- **Một chỗ tính tổng** là tầng 3 của `I-026`: `be/internal/nguyenlieu/sql/doc.sql` cộng mọi con số
+  ngày của một thứ; cả danh sách và chi tiết dùng chung câu ấy (P3A-02, 2026-10-15).
+  Test `TestI026_TongVaHieuSoLaPhepCongCacConSoNgay` đối chiếu hai đường đọc.
+- **Cửa nhập khai người thao tác và lý do sửa.** `be/internal/nguyenlieu/service.go` dùng `authz.Run`
+  khai người đã qua quyền và `vongdoi.CoVet` khai lý do sửa, dùng lại cơ chế `P2-08`
+  (P3A-02, 2026-10-15).
 - **F-046 đã gỡ ở đây cùng mọi bảng** (2026-10-09, `T-138`, **ADR-092**): bước 20 đổi hàm vết chung
   sang chế độ nghiêm, nên sửa không khai lý do bị từ chối; lát không dựng trigger nghiêm riêng.
 
@@ -113,7 +114,7 @@ viết mã máy đọc nào cho hai con số này nên `QD-02` không áp. Tên 
 | Con số không âm và hữu hạn | **phiên chọn**, không phải lời chủ quán; theo khuôn `QC-04`: không âm là ràng buộc kiểm của lát. Sửa con số gõ nhầm bằng cập nhật có vết, không bằng số âm | thiết kế ADR-071; cửa nhập pha 3 dùng cùng vết |
 | Ngừng dùng một thứ trong danh mục | chủ quán chưa nói; không cột trạng thái hay cờ nào, không xoá cứng (`QD-50`) | chủ quán; Claude ghi quyết định khi có lời |
 | Chỉ số công tơ điện · nước (`YC-27`) | đứng ngoài cặp số này; không dựng chỗ cất riêng. Máy **không ngăn được** một người gõ một cái tên như thế vào danh mục | chỗ người giữ, không giả là ràng buộc đã có |
-| Ai được nhập, ai được xem | lát cất người nhập, chưa quyết quyền | pha 3 |
+| Ai được nhập, ai được xem | chỉ chủ quán, cả ghi và đọc | P3A-02; `docs/product/3-be/02-vai-va-quyen.md` §3 |
 | Lượng kiểm đếm cuối buổi, nợ nhà cung cấp, một thứ nhiều mối, giá vốn | không dựng; ranh giới ở `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` §6 | chủ quán và bước được kế hoạch giao |
 | Dữ liệu mồi danh mục và câu đối chiếu `I-025` · `I-026` | đã có câu `db/reconcile/i025.sql` · `db/reconcile/i026.sql` và lỗi cài ở `db/reconcile/proof/` (P2A-07, 2026-10-01); ánh xạ ở [`09-doi-chieu-bat-bien.md`](09-doi-chieu-bat-bien.md) §1 · §2 | `P2A-06` dựng mồi; `P2A-07` đã viết câu và lỗi cài, 2026-10-01 |
 
