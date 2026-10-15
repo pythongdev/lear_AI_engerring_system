@@ -27,6 +27,13 @@ Mỗi màn thêm **một dòng** ở đây cùng lượt dựng nó, và nhóm n
 | /robots.txt | — | chỉ dẫn thu thập cho máy tìm kiếm | `T-189` |
 | /sitemap.xml | — | danh sách URL công khai | `T-189` |
 | `/api/[...path]` | — | **tầng chuyển tiếp** cùng origin, không phải màn (§3.2) | `P4-02` |
+| `/dang-nhap` | — | đăng nhập; *tại quầy* mở trực quầy (mốc `C36`, **ADR-109** điểm 7) | `P4-04` |
+| `/dang-ky` | — | tự đăng ký, chờ chủ quán duyệt | `P4-04` |
+| `/quen-mat-khau` | — | xin mã đặt lại (luôn cùng một câu) và đặt lại bằng mã trong thư | `P4-04` |
+| `/doi-mat-khau` | — | đổi mật khẩu; bắt buộc khi đang dùng mật khẩu tạm | `P4-04` |
+| `/quay` | quầy | khung quầy — màn nghiệp vụ dựng ở các bước sau | `P4-04` |
+| `/chu-quan` | chủ quán | khung chủ quán — màn nghiệp vụ dựng từ `P4-05` | `P4-04` |
+| `/tram` | trạm (chỉ đọc) | khung trạm — bảng dựng ở các bước sau | `P4-04` |
 
 ### Hiện trên máy tìm kiếm
 
@@ -67,11 +74,13 @@ khi ấy ghi lý do.
 
 - **Không thử lại** ở lớp này — lệnh ghi không thử lại ngầm, đường đọc không thử lại lời từ chối có `code`
   (**ADR-102** điểm 2). Thử lại đường đọc khi `no_response` là cấu hình của thư viện truy vấn, chốt ở `P4-05`.
-- **Danh tính.** `createApi({ personId })` gửi `X-Person-Id` bằng chữ số thập phân ở mỗi lời gọi khi đã có người
-  chọn tên, không gửi khi chưa chọn (`openapi.yaml` `PersonIdentity`, **U-075**). Tên đang chọn cất ở đâu là
-  `P4-04`.
+- **Danh tính** (sửa 2026-10-14, `P4-04`, **ADR-109** điểm 6): cookie phiên `banhcuon_phien` `HttpOnly` do backend
+  đặt; trình duyệt tự gửi tới `/api` cùng origin (`credentials: "same-origin"`), code **không** đọc hay cất mã phiên.
+  Header chọn tên `X-Person-Id` đã gỡ ở `T-190`. Phiên đọc bằng `usePhien()` (`fe/src/lib/auth/session.ts`,
+  `GET /sessions/current`; 401 ⇒ chưa đăng nhập); đăng nhập, đăng xuất, đổi mật khẩu xoá sạch cache của người trước.
+  Khung theo vai chọn ở `fe/src/lib/auth/khung.ts` — vai chọn màn, **không** mở quyền.
 - **Test:** `fe/src/lib/api/client.test.ts` — lời từ chối mẫu `option_combination_invalid` kèm `field`, mã lạ,
-  thân không phải JSON, mất kết nối, tầng chuyển tiếp không nối được backend, có và không có `X-Person-Id`.
+  thân không phải JSON, mất kết nối, tầng chuyển tiếp không nối được backend, không gửi header danh tính.
 
 ### 3.2 Tầng chuyển tiếp cùng origin
 
@@ -80,7 +89,9 @@ Trình duyệt chỉ gọi server Next (**ADR-102** điểm 6): `/api/<đường
 `http://127.0.0.1:8080`, cổng mặc định của `be/cmd/server`). File: `fe/src/app/api/[...path]/route.ts`.
 
 - Chạy cho từng request, không cache; trả nguyên status, thân, `Content-Type`, `Cache-Control`, `Allow`.
-- Chuyển `Accept`, `Content-Type`, `X-Person-Id`, `Last-Event-ID` — không header nào khác lên backend.
+- Chuyển `Accept`, `Content-Type`, `Cookie`, `Origin`, `Last-Event-ID` — không header nào khác lên backend
+  (sửa 2026-10-14, `P4-04`: `Origin` để backend chặn cửa ghi khác nguồn; `X-Person-Id` thôi chuyển). Trả về mọi
+  dòng `Set-Cookie` riêng rẽ, không gộp. Test: `fe/src/app/api/[...path]/route.test.ts`.
 - Thân backend đi ra dưới dạng luồng, nén tắt (`fe/next.config.ts`) ⇒ `text/event-stream` không bị đệm.
 - Đường dẫn lấy nguyên từ URL, không giải mã lại — `%2F` trong mã QR tới backend như cũ (`QC-12`).
 - Không nối được backend ⇒ `502` kèm header `x-banhcuon-upstream-unreachable` (lớp gọi API đọc thành
@@ -102,7 +113,9 @@ có nơi dùng thứ hai (**ADR-102** điểm 8) và thêm một dòng ở đây
 
 | Component | Ở đâu | Làm gì | Ai dùng | Bước |
 |---|---|---|---|---|
-| *(chưa có — `P4-02` không thêm primitive nào)* | | | | |
+| Primitive shadcn: `Button` · `Input` · `Label` · `Checkbox` · `Field` · `Card` · `Alert` · `Separator` | `fe/src/components/ui/` | sinh bằng CLI ghim, không sửa tay focus, bàn phím, accessibility (**ADR-100** điểm 2) | mọi màn | `P4-04` |
+| `TheTaiKhoan` · `Truong` · `Bao` · `NutGui` | `fe/src/components/tai-khoan/khung-form.tsx` | khung, ô nhập kèm lỗi, dòng báo, nút gửi của màn tài khoản — ghép từ primitive trên | năm màn tài khoản | `P4-04` |
+| `KhungTheoVai` | `fe/src/components/tai-khoan/khung-theo-vai.tsx` | gác lối vào khung theo phiên, thanh đầu có nút đăng xuất | `/quay` · `/chu-quan` · `/tram` | `P4-04` |
 
 ## 5. Bước sau đọc gì ở đây
 

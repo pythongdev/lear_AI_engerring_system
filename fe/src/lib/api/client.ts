@@ -70,25 +70,19 @@ export type ApiClient = Client<paths>;
 export type ApiOptions = {
   /** Trình duyệt: "/api" (tầng chuyển tiếp của Next). Server: `backendUrl()`. */
   baseUrl: string;
-  /** Người đang chọn tên (U-075); `null` khi chưa chọn. Đọc lại ở mỗi lời gọi. */
-  personId?: () => number | null;
   fetch?: (input: Request) => Promise<Response>;
 };
 
-export function createApi({ baseUrl, personId, fetch }: ApiOptions): ApiClient {
+/**
+ * Danh tính đi bằng cookie phiên `HttpOnly` (ADR-109 điểm 6): trình duyệt tự gửi tới `/api` cùng origin,
+ * code không đọc, không cất mã phiên. Không còn header chọn tên.
+ */
+export function createApi({ baseUrl, fetch }: ApiOptions): ApiClient {
   // cache "no-store": dữ liệu server chỉ được giữ ở cache của TanStack Query (ADR-102 điểm 3).
-  const client = createClient<paths>({ baseUrl, cache: "no-store", ...(fetch ? { fetch } : {}) });
-  if (personId) {
-    client.use({
-      onRequest({ request }) {
-        const id = personId();
-        // Hợp đồng PersonIdentity: chỉ chữ số thập phân, số nguyên dương.
-        if (id !== null && Number.isSafeInteger(id) && id > 0) {
-          request.headers.set("X-Person-Id", String(id));
-        }
-        return request;
-      },
-    });
-  }
-  return client;
+  return createClient<paths>({
+    baseUrl,
+    cache: "no-store",
+    credentials: "same-origin",
+    ...(fetch ? { fetch } : {}),
+  });
 }

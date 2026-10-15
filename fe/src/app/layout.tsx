@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ApiProvider } from "@/lib/api/provider";
 import { SITE_DESCRIPTION, SITE_NAME, siteUrl } from "@/lib/seo";
 import "./globals.css";
 
@@ -21,7 +22,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="vi" className="font-sans">
-      <body>{children}</body>
+      <body>
+        <ApiProvider>{children}</ApiProvider>
+      </body>
     </html>
   );
 }

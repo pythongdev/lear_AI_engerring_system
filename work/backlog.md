@@ -51,7 +51,7 @@ của file ấy chỉ nhận dữ kiện admin của quán).
 | Vế cũ (2026-09-01) | **đóng nốt chuỗi BA trước**, rồi mới chạy nhánh admin | **đã xong** — BA-08…BA-13 đều `Done` từ 2026-09-04 |
 | Vế mới (2026-09-20) | lane admin chạy **SONG SONG** với pha 2: *hỏi chủ quán về admin trong khi pha 2 chạy* | **đang hiệu lực** |
 | Vế 2026-09-29 | **chủ repo**: *"tôi muốn làm luôn db cho phần admin"* — nhắc lại 2026-09-30 (*"tiếp tục"*) | **đang hiệu lực** — mở thi công **lược đồ** admin cho phần đã đủ luật; `docs/decisions.md` **ADR-068** |
-| Vế 2026-10-14 | **chủ repo**: *"cập nhật backlog … cho db của admin, tôi sẽ làm be cho admin"* (T-184) | **đang hiệu lực** — lược đồ admin lượt hai `P2A-10`…`P2A-16`; backend admin sẽ làm, **chưa có kế hoạch** — kế hoạch và mã bước của nó là một task riêng |
+| Vế 2026-10-14 | **chủ repo**: *"cập nhật backlog … cho db của admin, tôi sẽ làm be cho admin"* (T-184) | **đang hiệu lực** — lược đồ admin lượt hai `P2A-10`…`P2A-16`; backend admin sẽ làm — kế hoạch mở 2026-10-14 ở `T-191` (**ADR-110**: `P3A-01`…`P3A-10`) |
 
 **Vế mới nói chính xác cái gì.** Chủ quán chọn *"Song song: hỏi chủ quán về admin trong khi pha 2
 chạy"*, và phương án ấy nói rõ hai nửa:
@@ -89,8 +89,15 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] P4-04 **ĐANG DỪNG — không nhặt theo thứ tự trên xuống** (2026-10-14, **ADR-104**: chủ quán thay chọn tên bằng tài khoản mật khẩu riêng; chờ thiết kế đăng nhập L3 ở `T-181`; U-088 đã đóng). **Danh tính và khung theo vai** — chọn tên, vào · rời quầy (T-143), khung riêng cho quầy · chủ quán · trạm (chỉ đọc) · khách; nút hiện theo lớp quyền nhưng backend vẫn là người chặn; gỡ điều (c) cho `P4A-01`…`P4A-11` — L2 · [chi tiết](backlog_FE.md#p4-04)
-- [ ] T-186 **Lát tỉ lệ nhắc sắp hết** — thêm tỉ lệ nhắc (mặc định 20%, chủ quán đặt) vào danh mục nguyên liệu của lát `P2A-02`, sửa phép đọc lược đồ của `I-025` và test của nó cùng thay đổi; lời ở `master_plan/shop-facts.md` §8.4 (U-087 đóng 2026-10-14) — L2, Claude viết test đỏ trước
+- [ ] P3A-03 **Cửa giao việc** — tạo · sửa · ẩn · đánh dấu; lớp `quay_hoac_chu_quan` (`I-030`); chờ `T-190` — L2 · [chi tiết](backlog_AD_BE.md#p3a-03)
+- [ ] P3A-04 **Cửa đào tạo** — hướng dẫn gắn việc, ghi nhận *đạt · chưa*; chờ `P3A-03` — L2 · [chi tiết](backlog_AD_BE.md#p3a-04)
+- [ ] P3A-05 **Cửa danh mục món** — thêm · đổi tên · ẩn · xếp món; chờ `T-190` — L1 · [chi tiết](backlog_AD_BE.md#p3a-05)
+- [ ] P3A-06 **Combo vào hàm giá** — giá chủ quán đặt qua hàm giá duy nhất; chờ `P3A-05` — L2 · [chi tiết](backlog_AD_BE.md#p3a-06)
+- [ ] P3A-07 **Thêm và sửa thông tin món**; chờ `P3A-05` — L2 · [chi tiết](backlog_AD_BE.md#p3a-07)
+- [ ] P3A-08 **Đọc kho và nhắc POS**; chờ `P3A-02` · `T-186` — L2 · [chi tiết](backlog_AD_BE.md#p3a-08)
+- [ ] P3A-09 **Đọc tổng quan cho chủ quán** — bảy thứ §8.6; chờ `T-190` — L2 · [chi tiết](backlog_AD_BE.md#p3a-09)
+- [ ] P3A-10 **Đọc tổng kết** — theo ngày bán, món bán chạy; chờ `P3A-08` — L2 · [chi tiết](backlog_AD_BE.md#p3a-10)
+- [ ] T-186 **Lát tỉ lệ nhắc sắp hết** — thêm tỉ lệ nhắc (theo từng thứ, chủ quán ghi — chủ repo nhắc lại 2026-10-15, T-192; mặc định 20%) vào danh mục nguyên liệu của lát `P2A-02`, sửa phép đọc lược đồ của `I-025` và test của nó cùng thay đổi; lời ở `master_plan/shop-facts.md` §8.4 (U-087 đóng 2026-10-14) — L2, Claude viết test đỏ trước
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
@@ -99,12 +106,17 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] P3A-02 **Cửa sổ nguyên liệu** — danh mục, dòng ngày *mua vào · đã dùng*, tổng và hiệu số — L2 · [chi tiết](backlog_AD_BE.md#p3a-02)
 
 
 <a id="done"></a>
 ## Done
 
+- [x] P3A-01 **Cửa khoản chi** — package `khoanchi`: thêm loại (bắt buộc khai nguồn), ghi · sửa có lý do · đọc theo khoảng ngày, loại, nguồn, tổng do backend cộng; mọi đường chỉ chủ quán (U-095); khoản từ két không vào ngày đã đối soát; cửa đọc két nay trừ khoản chi từ két, khớp bộ đối chiếu; hợp đồng 0.25.0; **ADR-111**. Codex thi công, Claude viết test trước và duyệt; be-check · gate xanh — 2026-10-15 · [chi tiết](backlog_AD_BE.md#p3a-01)
+- [x] T-192 **Ghi lời chủ repo lượt sáu, đóng U-095** — chỉ chủ quán ghi (và sửa) khoản chi; mức nhắc sắp hết theo từng thứ, chủ quán ghi — xác nhận vế *lời chọn* của U-087, mặc định 20% đứng nguyên; `P3A-01` · `T-186` đổi theo — L1 — Claude Code — 2026-10-15 · [chi tiết](../docs/product/99-unknowns.md#u-095)
+- [x] P4-04 **Màn đăng ký · đăng nhập · đổi và đặt lại mật khẩu, khung theo vai** — lát (c) của **ADR-109**: tầng chuyển tiếp mang cookie phiên và Origin, thôi `X-Person-Id`; năm màn tài khoản; khung `/quay` · `/chu-quan` · `/tram` có gác và đăng xuất; 40 test FE, chạy thật trọn luồng đăng ký → duyệt → đăng nhập tại quầy → đăng xuất khép trực. Claude Code làm và duyệt (Codex hết hạn mức), chưa review độc lập — 2026-10-14 · [chi tiết](backlog_FE.md#p4-04)
 - [x] T-190 **Backend đăng nhập bằng tài khoản** — package `taikhoan`: đăng ký · đăng nhập (cờ `at_counter` mở trực quầy cùng giao dịch) · đăng xuất (khép trực của chính phiên) · đổi · đặt lại mật khẩu qua thư (cùng một câu, 3 thư/giờ, mã 30 phút một lần) · chủ quán duyệt · từ chối · khoá · mở lại kèm mật khẩu tạm; argon2id, phiên là cookie `banhcuon_phien` băm SHA-256; cửa ghi khác nguồn bị chặn; gỡ `authz.ChonTen` · `X-Person-Id` · `POST /counter-duty`; lệnh `be/cmd/khoitao-chu-quan`; hợp đồng 0.24.0 (63 cửa); câu `I-033/14` · `/15`. Codex thi công, hết hạn mức giữa chừng, Claude làm nốt và duyệt; be-check · db-check (140 lỗi cài) · gate xanh — 2026-10-14 · [chi tiết](#t-190)
+- [x] T-191 **Kế hoạch backend admin** — mỗi trang `P4A-XX` ứng các cửa nó cần và lát lược đồ nó đứng trên; mười bước `P3A-01`…`P3A-10` (nối tiếp, cùng chạm hợp đồng) ở `master_plan/AD_BE_master_plan_banh_cuon_ba_thanh.md` và sổ `work/backlog_AD_BE.md`; trang vỏ và trang nhân viên lấy cửa của `T-190`; **ADR-110** ghi lời chủ repo; mở `U-095` (ai ghi khoản chi, cửa tạm `chu_quan`). Claude Code, chưa review độc lập; gate xanh — 2026-10-14 · [kế hoạch](../master_plan/AD_BE_master_plan_banh_cuon_ba_thanh.md)
 - [x] P2A-05 **Lát khoản chi** — `expense_category` (cờ nguồn `paid_from_till` bắt buộc, không sửa được) · `expense` (loại, số tiền, ngày khai, người ghi; sửa có vết, không xoá) theo **ADR-106** (bước migration 28); phép trừ két cộng khoản của loại trả từ két; câu `I-029` và ba lỗi cài, bước S4.10, `YC-33` chấm đọc + sai, dữ liệu mồi năm loại đúng nguồn §8.10; lược đồ admin hết lát *vắng*. Codex thi công, Claude viết test trước, chạy database, gửi lại một lỗi `QD-34`; `db-check` 138 lỗi cài, gate xanh — 2026-10-14 · [chi tiết](backlog_AD_DB.md#p2a-05)
 - [x] P2A-16 **Rà ranh giới pha và pointer lượt hai** — khuôn `P2A-09` trên bốn file lát `16-`…`19-`, bốn migration, câu đối chiếu, test và S5 (53 file · 2826 dòng) cùng đoạn lượt hai trong file có sẵn: 0 endpoint · route · component, 0 dòng cất thứ thuộc §6, 0 dòng quyền loại 5, 0 con trỏ lệch, mỗi lượt kêu đúng dòng cài; ô 7 · 8 ký. Codex hết hạn mức, Claude tự làm theo lời chủ repo, chưa review độc lập — 2026-10-14 · [chi tiết](backlog_AD_DB.md#p2a-16)
 - [x] P2A-15 **Đối chiếu và cổng lượt hai** — ngày quản trị lượt hai `s5` chín bước (đăng ký · duyệt · đăng nhập quầy · giao việc · đánh dấu · đào tạo · danh mục và combo · đăng xuất · đặt lại mật khẩu), đọc lại ở kết nối khác, đối chiếu trên ngày diễn rỗng, tiền ba scenario không đổi; năm tập ngang lát Claude quyết — câu mới `I-033/13`, `I-032/8` đọc thêm xếp món, hai tập để lát backend; ô 1–6 ký. Codex thi công, Claude chạy database và duyệt; `db-check` 135 lỗi cài, gate xanh — 2026-10-14 · [chi tiết](backlog_AD_DB.md#p2a-15)

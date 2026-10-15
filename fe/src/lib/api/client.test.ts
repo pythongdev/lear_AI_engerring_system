@@ -78,27 +78,19 @@ describe("lớp gọi API đọc lời từ chối theo hình Error của hợp 
   });
 });
 
-describe("lớp gọi API gửi danh tính đúng cách backend đọc", () => {
-  async function sentPersonHeader(personId: () => number | null): Promise<string | null> {
-    let seen: string | null = "chưa gọi";
+describe("lớp gọi API để cookie phiên làm danh tính (ADR-109 điểm 6)", () => {
+  it("không gửi header danh tính nào, và để trình duyệt gửi cookie cùng origin", async () => {
+    let seen: Request | undefined;
     const api = createApi({
       baseUrl: "http://fe.test/api",
-      personId,
       fetch: async (request) => {
-        seen = request.headers.get("X-Person-Id");
+        seen = request;
         return json(200, []);
       },
     });
     await call(api.GET("/people"));
-    return seen;
-  }
-
-  it("có người đã chọn tên thì gửi X-Person-Id bằng chữ số thập phân", async () => {
-    expect(await sentPersonHeader(() => 12)).toBe("12");
-  });
-
-  it("chưa chọn tên thì không gửi header", async () => {
-    expect(await sentPersonHeader(() => null)).toBeNull();
+    expect(seen?.headers.get("X-Person-Id")).toBeNull();
+    expect(seen?.credentials).toBe("same-origin");
   });
 
   it("thành công trả nguyên thân backend", async () => {

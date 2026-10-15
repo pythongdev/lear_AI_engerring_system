@@ -13,8 +13,10 @@ export const dynamic = "force-dynamic";
 
 const PREFIX = "/api";
 
-// X-Person-Id: danh tính chọn tên (openapi.yaml PersonIdentity). Last-Event-ID: nối lại luồng SSE.
-const REQUEST_HEADERS = ["accept", "content-type", "x-person-id", "last-event-id"];
+// Cookie: phiên đăng nhập banhcuon_phien (ADR-109 điểm 6). Origin: backend chặn cửa ghi khác nguồn
+// (middleware.CungNguon) — Origin của trình duyệt đi nguyên lên. Last-Event-ID: nối lại luồng SSE.
+// X-Person-Id (chọn tên) đã gỡ ở T-190: không chuyển.
+const REQUEST_HEADERS = ["accept", "content-type", "cookie", "origin", "last-event-id"];
 // Allow: lời 405 của QC-12.
 const RESPONSE_HEADERS = ["content-type", "cache-control", "allow"];
 
@@ -51,6 +53,8 @@ async function forward(request: Request): Promise<Response> {
     const value = upstream.headers.get(name);
     if (value !== null) out.set(name, value);
   }
+  // Set-Cookie: mỗi dòng đi riêng — gộp bằng dấu phẩy làm hỏng thuộc tính Expires.
+  for (const cookie of upstream.headers.getSetCookie()) out.append("set-cookie", cookie);
   if (!out.has("cache-control")) out.set("cache-control", "no-store");
   out.set("x-accel-buffering", "no");
   return new Response(upstream.body, { status: upstream.status, headers: out });

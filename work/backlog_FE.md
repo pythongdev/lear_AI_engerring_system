@@ -293,20 +293,64 @@ cổng và `go vet` không ghi được cache — Claude chạy lại ngoài san
 <a id="p4-04"></a>
 ### P4-04 — Mọi cửa đều cần biết *ai bấm* và *đang đứng đâu*, mà chưa màn nào hỏi
 
-**Phụ thuộc** · bước 4/12 · **cần xong trước:** `P4-03` · **dừng 2026-10-14:** chủ quán thay *chọn tên* bằng tài khoản
-mật khẩu riêng (U-083 thay U-075, **ADR-104**) — Goal dưới đây là luật cũ, viết lại sau khi thiết kế đăng nhập được
-duyệt (`T-181`; U-088 đã đóng 2026-10-14)
+**Phụ thuộc** · bước 4/12 · **cần xong trước:** `P4-03` · backend đăng nhập `T-190` (lát (c) của **ADR-109** điểm 12).
+*Viết lại 2026-10-14 (Claude Code, T-191 cùng phiên):* luật *chọn tên* (T-143, U-075) bị thay bởi tài khoản mật khẩu riêng
+(U-083, **ADR-104**); thiết kế đăng nhập **ADR-109** đã duyệt — Goal cũ bỏ.
 
-**Goal:** chọn tên (T-143, U-075), vào · rời quầy; khung riêng cho bốn loại người dùng — quầy, chủ quán, trạm
-(chỉ đọc, không nút), khách; nút hiện theo lớp quyền của [`02-vai-va-quyen.md`](../docs/product/3-be/02-vai-va-quyen.md)
-nhưng **backend vẫn là người chặn** — màn ẩn nút là tiện, không phải bảo vệ.
+**Goal:** màn **đăng ký** (tên đăng nhập, Gmail, tên hiển thị, mật khẩu ≥ 8) báo *chờ chủ quán duyệt*; màn **đăng nhập**
+có lựa chọn *đăng nhập tại quầy* (mốc `C36` — backend mở trực quầy); **đăng xuất**; **quên mật khẩu** (nhập Gmail, máy
+luôn nói cùng một câu) và **đặt lại** bằng mã trong thư; **đổi mật khẩu**, bắt buộc khi `must_change_password`. Sau đăng
+nhập, khung chọn theo `GET /sessions/current`: cờ chủ quán ⇒ khung chủ quán; vai `quay` ⇒ khung quầy; vai trạm ⇒ khung
+trạm (chỉ đọc); khách không đăng nhập. Nút hiện theo lớp quyền của [`02-vai-va-quyen.md`](../docs/product/3-be/02-vai-va-quyen.md)
+nhưng **backend vẫn là người chặn**. Tầng chuyển tiếp `/api` mang `cookie` và `origin` lên, `set-cookie` về, thôi mang
+`X-Person-Id`; lớp gọi API bỏ tuỳ chọn `personId`. Đổi người (đăng xuất, phiên hết hạn ⇒ 401) xoá sạch cache của người
+trước (**ADR-102**).
+
+**Acceptance:**
+1. Test đỏ viết trước `fe/src/app/api/[...path]/route.test.ts` (Claude) xanh, không sửa điều kiện kiểm.
+2. Test component cho từng màn: đăng ký, đăng nhập (có và không *tại quầy*), quên · đặt lại, đổi mật khẩu bắt buộc, khung
+   theo vai; mỗi lời từ chối của hợp đồng (`invalid_credentials`, `login_temporarily_blocked`, `username_taken`,
+   `email_taken`, `password_too_short`, `reset_token_invalid`) có chữ riêng, chọn theo `code`.
+3. `schema.ts` sinh lại từ hợp đồng của `T-190`; `grep -rn "X-Person-Id\|personId" fe/src` chỉ còn trong file test.
+4. Chạy thật: đăng ký → chủ quán duyệt (lệnh khởi tạo chủ quán) → đăng nhập tại quầy → `GET /counter-duty/current` ra
+   đúng người → đăng xuất khép trực; dán output.
+5. `./scripts/gate.sh` xanh (`fe-check`).
 
 **Không làm thì mất gì:** trang thử `P4-05` không gọi được cửa nào (mọi cửa menu là lớp `chu_quan`).
 
 **Bẫy:** đừng viết lại luật quyền ở frontend thành bảng thứ hai — đọc lớp của cửa từ một chỗ; ma trận lệch là
-lỗi của cổng §9 ô bảy.
+lỗi của cổng §9 ô bảy. Đừng cất mã phiên ở `localStorage` hay state — cookie `HttpOnly` là chỗ duy nhất. Đừng báo
+*Gmail không tồn tại* ở màn quên mật khẩu.
 
-**Nhận việc:** —
+**Nhận việc** — 2026-10-14 · thực hiện và duyệt: **Claude Code** (Codex hết hạn mức tới 21:39; chủ repo: *"bạn có thể
+sửa theo ý mình tôi cho phép"*) — **chưa review độc lập** · nhánh `fe_admin`, trên `1ead504` cộng `T-190` chưa commit.
+Đã làm: tầng chuyển tiếp mang `Cookie` · `Origin` lên, mọi `Set-Cookie` về, thôi `X-Person-Id`; `createApi` bỏ `personId`;
+`ApiProvider` (một client + một QueryClient); `usePhien` · `useDangNhap` · `useDangXuat`; năm màn `/dang-nhap` · `/dang-ky` ·
+`/quen-mat-khau` (gồm đặt lại bằng mã) · `/doi-mat-khau`; khung `/quay` · `/chu-quan` · `/tram` có gác và đăng xuất; dòng
+route · component ở `docs/product/4-fe/01-khung-fe.md`. *Claude chốt:* thư chỉ mang mã (không đường dẫn) ⇒ màn đặt lại có ô
+nhập mã; vào nhầm khung thì đưa về khung của mình; khung chỉ là tiện — backend vẫn chặn.
+
+*Nghiệm thu → bằng chứng* (2026-10-14):
+1. `route.test.ts` (Claude viết trước, ba ca đỏ đúng lý do) → xanh, điều kiện không đổi.
+2. `tai-khoan.test.tsx` 11 ca + `khung.test.ts` 8 ca: tại quầy / ngoài quầy / mật khẩu tạm / `invalid_credentials` /
+   `login_temporarily_blocked` / quên mật khẩu cùng một câu / `reset_token_invalid` / 401 ⇒ đăng nhập / nhầm khung / đăng
+   xuất; mỗi mã của sáu mã có trong hợp đồng và có chữ riêng — `Tests 40 passed (40)`.
+3. `schema.ts` sinh từ hợp đồng 0.24.0 (cùng `T-190`); `grep X-Person-Id fe/src` chỉ còn trong test kiểm nó không được gửi.
+4. Chạy thật (database dùng-xong-bỏ, backend thật, `next dev`, curl qua `/api`): đăng ký `201 cho_duyet` → đăng nhập khi
+   chưa duyệt `401 invalid_credentials` → lệnh khởi tạo `account_id=1 status=hoat_dong` → chủ quán đăng nhập `201`, cookie
+   `#HttpOnly_localhost` → duyệt `200 hoat_dong` → Lan đăng nhập tại quầy `201 counter_duty_id=1` → `GET /counter-duty/current`
+   ra Lan → Origin lạ `403 cross_origin_write` → đăng xuất `200` → phiên `401`, quầy trống → `X-Person-Id: 1` `401`; database:
+   `Lan|t|t|dang_xuat` (mốc mở phiên = mốc trực, khép cùng lúc).
+5. `./scripts/gate.sh` — xem bàn giao cuối phiên.
+
+*Sửa sau duyệt* (2026-10-15, chủ repo: *"yêu cầu fe dung shadcn đã có các componenent có sẵn"*; Claude Code): bản trên tự
+viết ô nhập, nút, nhãn, ô chọn — trái **ADR-100** điểm 2, `fe/src/components/ui/` còn trống. Thêm bằng CLI ghim
+(`npx shadcn add`, bản 4.21.4) tám primitive `button` · `input` · `label` · `checkbox` · `field` · `card` · `alert` ·
+`separator`; `khung-form.tsx` và khung theo vai ghép lại từ chúng, ô *Đăng nhập tại quầy* nối qua `Controller`;
+`vitest.setup.ts` giả `ResizeObserver` cho jsdom (Checkbox của Radix gọi nó). Không đổi hành vi: cùng 40 ca, `Tests 40
+passed (40)`; lint, kiểm kiểu sạch. `check-fe-rules.sh` chưa bắt primitive tự viết — mới hỏng một lần, chưa thêm luật.
+
+
 
 [↑ đầu file](#top)
 
