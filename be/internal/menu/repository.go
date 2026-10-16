@@ -65,3 +65,19 @@ func (r repository) suaSoLuong(ctx context.Context, monID, tpID int64, soLuong i
 func (r repository) ngungBan(ctx context.Context, id int64) (sqlcgen.NgungBanRow, error) {
 	return r.q.NgungBan(ctx, id)
 }
+
+func (r repository) themMon(ctx context.Context, ten string) (Mon, error) {
+	row, e := r.q.ThemMon(ctx, ten)
+	return Mon{row.ID, row.Name}, e
+}
+func (r repository) themThanhPhan(ctx context.Context, mon int64, tp ThanhPhanMoi) error {
+	id, e := r.q.ThemThanhPhan(ctx, sqlcgen.ThemThanhPhanParams{Name: tp.Name, BasePriceVnd: *tp.BasePriceVnd, TakesFilling: *tp.TakesFilling})
+	if e != nil {
+		return e
+	}
+	return r.q.GanThanhPhan(ctx, sqlcgen.GanThanhPhanParams{MenuItemID: mon, MenuComponentID: id, Quantity: tp.Quantity})
+}
+func (r repository) doiTenMon(ctx context.Context, id int64, ten string) (Mon, error) {
+	row, e := r.q.DoiTenMon(ctx, sqlcgen.DoiTenMonParams{ID: id, Name: ten})
+	return Mon{row.ID, row.Name}, e
+}

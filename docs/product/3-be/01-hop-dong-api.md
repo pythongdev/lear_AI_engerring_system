@@ -155,6 +155,11 @@ bản ở `HEAD` và đỏ khi file khác mà phiên bản không lớn hơn.
 - **Không phiên bản trong đường dẫn** (không tiền tố kiểu `/v1`). Quán có một backend và một FE, triển
   khai cùng nhau; hai phiên bản đường gọi chạy song song là thứ không ai cần mà phải giữ cả hai.
 
+**P3A-09 (2026-10-15):** tăng MINOR `0.33.0` → `0.34.0`, thêm
+`GET /owner-overview` và schema bảy mục §8.6; sinh lại type FE.
+Mục tiền tạm tính có schema riêng, hiện trả trạng thái chưa có công thức;
+không đưa doanh thu đã đối soát vào phản hồi tổng quan.
+
 ## 8. Dấu lần gửi trên dây
 
 Mọi đường gọi **tạo đơn hay tạo lượt gọi**, ở cả năm kênh, nhận dấu lần gửi của `I-024` trong **thân
@@ -243,3 +248,26 @@ yêu cầu vẫn trả 202; mã đã lưu vẫn tính vào hạn mức ba thư m
 Nhận việc ánh xạ: tên/email trùng trả mã riêng; username/email/tên hiển thị sai và liên kết
 person không hợp lệ trả invalid_request. Các ràng buộc tài khoản còn lại được giữ bởi
 hình giao dịch và mã do server cấp; vi phạm là lỗi nội bộ, không chuyển câu database ra ngoài.
+
+P3A-07 (2026-10-15, phiếu Claude): hợp đồng 0.33.0 thêm `POST /menu-items` và
+`PUT /menu-items/{menu_item_id}`. Tạo món kèm danh mục hiện và ít nhất một thành phần
+mới (tên, giá nền, số lượng, cờ nhận nhân) trong cùng giao dịch; tên trùng trả mã
+riêng, tên rỗng và giá/số lượng sai trả invalid_request. Đổi tên cần reason và có
+vết. Đổi danh mục dùng cửa xếp món đã có; không thêm đường sửa giá hay thành phần.
+Nhận việc ánh xạ: khoá chính do DB sinh; hai FK thành phần trỏ dòng vừa tạo và
+khoá duy nhất cặp món/thành phần dùng ID mới nên giữ internal. Thời điểm tạo do DB cấp.
+
+P3A-08 / T-186 (2026-10-16, phiếu Claude): hợp đồng 0.35.0 thêm `GET /supply-stock`
+và `PUT /supply-items/{supply_item_id}/reminder-ratio`, cùng lớp `chu_quan`. Các hình
+SupplyItem thêm tỉ lệ, ngày và lượng mua gần nhất, trạng thái tính nhắc và cờ nhắc kiểm tra.
+Cùng phép đọc giữ tổng mọi ngày theo I-026, so sánh numeric nghiêm ngặt `<`, không làm tròn.
+Tỉ lệ trên dây là chuỗi tỉ phần 0…1, thân ghi tối đa sáu chữ số lẻ (giới hạn kỹ thuật của API),
+0.2 biểu diễn 20%; không phải luật quán về độ chính xác. Cửa ghi bắt buộc reason, có vết I-018.
+Ràng buộc `supply_item_reminder_ratio_range_check` ánh xạ invalid_request; mặc định 0.2
+của migration không giả thành lần nhập có người.
+
+Câu hỏi chuyển Claude, chưa quyết nghiệp vụ: khi chưa có dòng mua, khi lần mua gần nhất bằng 0,
+và khi có dòng dùng trước ngày mua đầu tiên thì nhắc như thế nào? Hiện giữ nguyên tổng của sổ,
+trả lần lượt `no_purchase`, `latest_purchase_zero`, `usage_before_first_purchase` và cờ null.
+Cờ dành để POS kiểm tra không cấp cho POS quyền đọc kho: phiếu chỉ cho chủ quán đọc; đường
+hiển thị/gửi lời nhắc tới POS cần bước tích hợp được giao riêng.

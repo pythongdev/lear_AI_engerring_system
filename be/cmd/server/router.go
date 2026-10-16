@@ -2,6 +2,7 @@ package main
 
 import (
 	"banhcuon/be/internal/taikhoan"
+	"banhcuon/be/internal/tongquan"
 	"net/http"
 	"os"
 	"strings"
@@ -44,6 +45,7 @@ func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtim
 	r.RedirectTrailingSlash = false
 	r.UseRawPath = true
 	r.Use(middleware.GanNguoi(auth))
+	tongquan.Routes(r, tongquan.NewService(pool))
 	menu.Routes(r, menu.NewService(pool))
 	qr.Routes(r, qr.NewService(pool))
 	gia.Routes(r, gia.NewService(pool))

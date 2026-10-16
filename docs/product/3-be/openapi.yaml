@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.32.0
+  version: 0.35.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -16,6 +16,8 @@ security:
   - PersonIdentity: []
 # Nhóm trong Swagger UI = gói miền dưới be/internal/ đăng ký đường gọi ấy (chỉ để đọc, không phải luật).
 tags:
+  - name: tongquan
+    description: Tổng quan chỉ đọc cho chủ quán (P3A-09).
   - name: combo
     description: Combo có giá riêng do chủ quán quản lý (I-032, ADR-116).
   - name: danhmuc
@@ -53,6 +55,36 @@ tags:
   - name: ket
     description: Két và ngày bán — tiền đầu ngày, đếm két, khai sổ giấy, ký đối chiếu ngày (06-duong-tien.md).
 paths:
+  /owner-overview:
+    get:
+      operationId: getOwnerOverview
+      tags: [tongquan]
+      summary: Chủ quán đọc bảy mục tổng quan của shop-facts.md §8.6.
+      description: >-
+        Chỉ chu_quan; không phiên trả unauthenticated, người khác kể cả POS trả owner_only.
+        sale_date lấy mốc database theo múi giờ quán. Đây là ảnh hiện tại, không nhận ngày lịch sử.
+        Hai mục phần ra bàn dùng chung một lần đọc production-board, chỉ lấy parts có dining_table_id;
+        giữ từng nhóm thành phần và nhân, không cộng bánh, canh và nước chấm thành số suất.
+        Phạm vi là các phiên bàn còn mở của nguồn, không phải tổng đã bán trong ngày.
+        Nguyên liệu dùng lại supply-items và chi tiết từng thứ, cộng mọi ngày như nguồn hiện hành.
+        Các nguồn đọc trong giao dịch riêng, không bảo đảm một ảnh nguyên tử xuyên nguồn;
+        read_at của hai mục sản xuất là mốc riêng của bảng sản xuất.
+        Mục chưa đủ nguồn hoặc định nghĩa trả unavailable (chưa có), có name và reason; không trả số 0 giả.
+        provisional_sales chỉ là tiền TẠM TÍNH, hiện chưa có công thức; không trả số tiền.
+        Doanh thu đã đối soát không thuộc phản hồi này, không cộng hay thay bằng tiền két dự tính.
+      responses:
+        '200':
+          description: Bảy mục cùng trạng thái và nguồn đã có.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OwnerOverview'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /menu-combos:
     get:
       operationId: listMenuCombos
@@ -806,6 +838,68 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AssignedTask'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /supply-stock:
+    get:
+      operationId: getSupplyStock
+      tags: [nguyenlieu]
+      summary: Chủ quán đọc kho và lời nhắc POS kiểm tra.
+      description: |
+        Backend cộng mọi con số ngày, không đặt lại khi mua thêm (I-026).
+        balance là số thiếu theo §8.4 = purchased_total - used_total, không phải kết luận.
+        latest_purchase_date là ngày hàng mua về (entry_date lớn nhất của loại purchased), không phải lúc gõ.
+        check_reminder chỉ được tính khi reminder_status=ready, bằng balance < reminder_ratio × latest_purchase_measure.
+        Chưa có lần nhập, lần nhập gần nhất bằng 0, hoặc đã dùng trước ngày mua đầu tiên thì cờ null và trạng thái có tên;
+        giữ nguyên hai tổng hiện hành, không tự quyết các trường hợp §8.4 chưa nói rõ. Cửa này chỉ chu_quan đọc.
+      responses:
+        '200':
+          description: Các con số và cờ nhắc kiểm tra; không tự tắt món hay đặt hàng.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplyItems'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /supply-items/{supply_item_id}/reminder-ratio:
+    put:
+      operationId: setSupplyItemReminderRatio
+      tags: [nguyenlieu]
+      summary: Chủ quán đặt tỉ lệ nhắc kiểm tra của một nguyên liệu.
+      description: |
+        Cửa nguyenlieu/dat_ti_le, lớp chu_quan. Tỉ phần từ 0 đến 1 (gồm hai đầu), mặc định 0.2.
+        Chuỗi thập phân tối đa 6 chữ số lẻ; không làm tròn. Sai/thiếu/null trả invalid_request field=reminder_ratio.
+        reason cắt khoảng trắng và bắt buộc không rỗng; cập nhật có vết bản trước/sau và người đặt.
+        Mã không có trả supply_item_not_found. Không ghi lại các con số mua vào hay đã dùng.
+      parameters:
+        - name: supply_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetSupplyItemReminderRatio'
+      responses:
+        '200':
+          description: Nguyên liệu với tỉ lệ và lời nhắc đã tính lại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplyItem'
         default:
           description: Lời từ chối theo ErrorCode và x-http-status.
           content:
@@ -1838,6 +1932,124 @@ paths:
                 $ref: '#/components/schemas/Error'
         '422':
           description: Tổ hợp sai bị từ chối nguyên yêu cầu (option_combination_invalid), hoặc suất của combo không khớp combo (combo_portions_mismatch); không sửa hộ.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-items:
+    post:
+      operationId: createMenuItem
+      tags:
+        - menu
+      summary: Tạo món và thành phần ban đầu trong cùng giao dịch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuItemCreate'
+      responses:
+        '201':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItemIdentity'
+        '400':
+          description: Yêu cầu sai hình (invalid_request).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Chưa đăng nhập (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Chỉ chủ quán (owner_only).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Không tìm thấy món hoặc danh mục.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Tên món hoặc thành phần trùng, hoặc danh mục đã ẩn.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-items/{menu_item_id}:
+    put:
+      operationId: renameMenuItem
+      tags:
+        - menu
+      summary: Đổi tên món, có lý do
+      parameters:
+        - name: menu_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuItemRename'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItemIdentity'
+        '400':
+          description: Yêu cầu sai hình (invalid_request).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Chưa đăng nhập (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Chỉ chủ quán (owner_only).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Không tìm thấy món hoặc danh mục.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Tên món hoặc thành phần trùng, hoặc danh mục đã ẩn.
           content:
             application/json:
               schema:
@@ -3106,6 +3318,174 @@ components:
       name: banhcuon_phien
       description: Phiên đăng nhập theo ADR-109; HttpOnly, Secure, SameSite=Strict, hạn 7 ngày.
   schemas:
+    OverviewUnavailable:
+      type: object
+      additionalProperties: false
+      required: [status, name, reason]
+      properties:
+        status:
+          type: string
+          const: unavailable
+          description: Chưa có; không đồng nghĩa số không.
+        name:
+          type: string
+        reason:
+          type: string
+          enum:
+            - guest_count_source_missing
+            - sales_progress_definition_unspecified
+            - provisional_sales_formula_unspecified
+            - pos_headcount_source_missing
+            - staff_shortage_rule_unspecified
+            - menu_shortage_rule_unspecified
+    OverviewProvisionalSales:
+      description: Tiền bán TẠM TÍNH (§8.6 hàng 5), chưa có công thức được chốt; không phải doanh thu đã đối soát.
+      allOf:
+        - $ref: '#/components/schemas/OverviewUnavailable'
+        - type: object
+          properties:
+            name:
+              type: string
+              const: Tiền bán tạm tính
+            reason:
+              type: string
+              const: provisional_sales_formula_unspecified
+    OverviewPortion:
+      type: object
+      additionalProperties: false
+      required: [station_code, menu_component_id, component_name, filling_option_ids, quantity]
+      properties:
+        station_code:
+          type: string
+        menu_component_id:
+          type: [integer, 'null']
+          format: int64
+        component_name:
+          type: string
+        filling_option_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        quantity:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Tổng served hoặc missing của parts có bàn trong đúng nhóm nguồn, không quy ra số khách hay số suất.
+    OverviewPortions:
+      type: object
+      additionalProperties: false
+      required: [status, read_at, rows]
+      properties:
+        status:
+          type: string
+          const: available
+        read_at:
+          type: string
+          format: date-time
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/OverviewPortion'
+    OverviewSupplies:
+      type: object
+      additionalProperties: false
+      required: [status, items]
+      properties:
+        status:
+          type: string
+          const: available
+        items:
+          type: array
+          description: Dùng nguyên chi tiết sổ hiện hành; entry_date của purchased là ngày nhập, used_total là tổng dùng, balance là nhập trừ dùng. Không suy ra mức thiếu người hoặc thiếu món.
+          items:
+            $ref: '#/components/schemas/SupplyItemDetail'
+    OverviewShortages:
+      type: object
+      additionalProperties: false
+      required: [supplies, workers, menu_items]
+      properties:
+        supplies:
+          $ref: '#/components/schemas/OverviewSupplies'
+        workers:
+          $ref: '#/components/schemas/OverviewUnavailable'
+        menu_items:
+          $ref: '#/components/schemas/OverviewUnavailable'
+    OwnerOverview:
+      type: object
+      additionalProperties: false
+      required: [sale_date, read_at, serving_guests, served_portions, missing_portions, sales_progress, provisional_sales, workers_present, shortages]
+      properties:
+        sale_date:
+          type: string
+          format: date
+        read_at:
+          type: string
+          format: date-time
+          description: Mốc kiểm quyền và quy ngày bán; từng nguồn đọc tiếp sau mốc này.
+        serving_guests:
+          $ref: '#/components/schemas/OverviewUnavailable'
+        served_portions:
+          $ref: '#/components/schemas/OverviewPortions'
+        missing_portions:
+          $ref: '#/components/schemas/OverviewPortions'
+        sales_progress:
+          $ref: '#/components/schemas/OverviewUnavailable'
+        provisional_sales:
+          $ref: '#/components/schemas/OverviewProvisionalSales'
+        workers_present:
+          $ref: '#/components/schemas/OverviewUnavailable'
+        shortages:
+          $ref: '#/components/schemas/OverviewShortages'
+    MenuItemIdentity:
+      type: object
+      required: [menu_item_id, name]
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    MenuItemRename:
+      type: object
+      required: [name, reason]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        reason:
+          type: string
+          minLength: 1
+    MenuItemCreate:
+      type: object
+      description: Tạo các thành phần mới; không ghi đè thành phần có sẵn. Danh mục phải đang hiện. Giá món do gia.Tinh tính từ thành phần.
+      required: [name, menu_category_id, components]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        menu_category_id:
+          type: integer
+          format: int64
+          minimum: 1
+        components:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [name, base_price_vnd, quantity, takes_filling]
+            properties:
+              name:
+                type: string
+                minLength: 1
+              base_price_vnd:
+                $ref: '#/components/schemas/MoneyVnd'
+              quantity:
+                type: integer
+                format: int32
+                minimum: 1
+              takes_filling:
+                type: boolean
     MenuComboItem:
       type: object
       required: [menu_item_id, item_name, quantity, discontinued, surcharges]
@@ -3605,7 +3985,7 @@ components:
       examples: ['1.75', '10', '0', '-4']
     SupplyItem:
       type: object
-      required: [supply_item_id, name, purchase_unit, purchased_total, used_total, balance]
+      required: [supply_item_id, name, purchase_unit, purchased_total, used_total, balance, reminder_ratio, latest_purchase_date, latest_purchase_measure, reminder_status, check_reminder]
       properties:
         supply_item_id:
           type: integer
@@ -3620,6 +4000,24 @@ components:
           $ref: '#/components/schemas/Measure'
         balance:
           $ref: '#/components/schemas/Measure'
+        reminder_ratio:
+          type: string
+          pattern: '^(0(\.[0-9]+)?|1(\.0+)?)$'
+          description: Tỉ phần theo từng thứ; mặc định 0.2, tức 20%.
+        latest_purchase_date:
+          type: [string, 'null']
+          format: date
+          description: Ngày hàng mua về của dòng purchased gần nhất; null khi chưa có dòng mua.
+        latest_purchase_measure:
+          type: [string, 'null']
+          description: Khối lượng của dòng purchased gần nhất; null khi chưa có dòng mua.
+        reminder_status:
+          type: string
+          enum: [ready, no_purchase, latest_purchase_zero, usage_before_first_purchase]
+          description: Trạng thái tính lời nhắc; ba trạng thái sau chờ làm rõ nghiệp vụ và check_reminder là null.
+        check_reminder:
+          type: [boolean, 'null']
+          description: Nhắc POS kiểm tra khi phần còn lại dưới tỉ lệ của lần nhập gần nhất. Bằng hoặc trên thì false. Không phải kết luận.
     SupplyItems:
       type: object
       required: [supply_items]
@@ -3671,6 +4069,16 @@ components:
           minLength: 1
         purchase_unit:
           type: [string, 'null']
+          minLength: 1
+    SetSupplyItemReminderRatio:
+      type: object
+      required: [reminder_ratio, reason]
+      properties:
+        reminder_ratio:
+          type: string
+          pattern: '^(0(\.[0-9]{1,6})?|1(\.0{1,6})?)$'
+        reason:
+          type: string
           minLength: 1
     SetSupplyItemPurchaseUnit:
       type: object
@@ -5231,6 +5639,8 @@ components:
         - qr_code_not_current
         - dining_table_not_found
         - qr_code_issue_conflict
+        - menu_item_name_conflict
+        - menu_component_name_conflict
         - menu_item_not_found
         - menu_option_not_found
         - menu_component_not_found
@@ -5379,6 +5789,8 @@ components:
         qr_code_not_current: 404
         dining_table_not_found: 404
         qr_code_issue_conflict: 409
+        menu_item_name_conflict: 409
+        menu_component_name_conflict: 409
         menu_item_not_found: 404
         menu_option_not_found: 404
         menu_component_not_found: 404
@@ -5922,9 +6334,9 @@ x-constraint-errors:
   holiday_bonus_pkey: internal
   holiday_bonus_positive_amount_check: unreviewed
   holiday_bonus_worker_person_fkey: unreviewed
-  menu_component_base_price_non_negative_check: internal
-  menu_component_name_key: internal
-  menu_component_name_not_blank_check: internal
+  menu_component_base_price_non_negative_check: invalid_request
+  menu_component_name_key: menu_component_name_conflict
+  menu_component_name_not_blank_check: invalid_request
   menu_component_pkey: internal
   menu_component_station_menu_component_fkey: unreviewed
   menu_component_station_once_key: unreviewed
@@ -5934,9 +6346,9 @@ x-constraint-errors:
   menu_item_component_menu_item_fkey: internal
   menu_item_component_once_key: internal
   menu_item_component_pkey: internal
-  menu_item_component_quantity_positive_check: internal
-  menu_item_name_key: internal
-  menu_item_name_not_blank_check: internal
+  menu_item_component_quantity_positive_check: invalid_request
+  menu_item_name_key: menu_item_name_conflict
+  menu_item_name_not_blank_check: invalid_request
   menu_item_option_group_menu_item_fkey: unreviewed
   menu_item_option_group_once_key: unreviewed
   menu_item_option_group_option_group_fkey: unreviewed
@@ -6145,6 +6557,7 @@ x-constraint-errors:
   supply_item_name_not_blank_check: internal
   supply_item_pkey: internal
   supply_item_purchase_unit_not_blank_check: internal
+  supply_item_reminder_ratio_range_check: invalid_request
   table_session_bill_fkey: internal
   table_session_id_closed_key: internal
   table_session_id_if_closed_key: internal

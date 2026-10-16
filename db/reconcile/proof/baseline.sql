@@ -591,6 +591,27 @@ BEGIN
   PERFORM set_config('shop.revision_reason', coalesce(ly_do_truoc, ''), true);
 END $$;
 
+-- T-186: vết cũ chưa có reminder_ratio, rồi chủ quán đổi mặc định 0.2 thành 0.3.
+-- I-025/4 phải xanh cả chuỗi qua migration; không lấp khoá thiếu bằng tỉ lệ hiện tại 0.3.
+DO $$
+DECLARE item bigint; chu bigint;
+        old_actor text := current_setting('shop.actor_person_id', true);
+        old_reason text := current_setting('shop.revision_reason', true);
+BEGIN
+  SELECT id INTO chu FROM person WHERE is_owner ORDER BY id LIMIT 1;
+  INSERT INTO supply_item(name, purchase_unit) VALUES ('mẫu vết nguyên liệu trước bước 30', 'kg') RETURNING id INTO item;
+  INSERT INTO record_revision(target_table_code, target_row, before_image, after_image, reason, person_id)
+  SELECT 'supply_item', id,
+         (to_jsonb(i) - 'reminder_ratio') || jsonb_build_object('purchase_unit', NULL),
+         to_jsonb(i) - 'reminder_ratio', 'mẫu đặt đơn vị trước bước 30', chu
+  FROM supply_item i WHERE id = item;
+  PERFORM set_config('shop.actor_person_id', chu::text, true);
+  PERFORM set_config('shop.revision_reason', 'mẫu đặt tỉ lệ sau bước 30', true);
+  UPDATE supply_item SET reminder_ratio = 0.3 WHERE id = item;
+  PERFORM set_config('shop.actor_person_id', coalesce(old_actor, ''), true);
+  PERFORM set_config('shop.revision_reason', coalesce(old_reason, ''), true);
+END $$;
+
 -- Ngày mẫu phải qua MỌI ràng buộc hoãn, như lúc COMMIT.
 SET CONSTRAINTS ALL IMMEDIATE;
 SET CONSTRAINTS ALL DEFERRED;

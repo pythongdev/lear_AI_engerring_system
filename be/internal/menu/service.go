@@ -9,6 +9,7 @@ import (
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
+	"banhcuon/be/internal/danhmuc"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -134,4 +135,61 @@ func khongThay(err error, code apierr.Code) error {
 		return apierr.Error{Code: code}
 	}
 	return err
+}
+
+var ThemMon = authz.Door{Code: "menu/them_mon", Need: authz.NeedOwner}
+var DoiTenMon = authz.Door{Code: "menu/doi_ten", Need: authz.NeedOwner}
+
+type Mon struct {
+	MenuItemID int64  `json:"menu_item_id"`
+	Name       string `json:"name"`
+}
+type ThanhPhanMoi struct {
+	Name         string `json:"name"`
+	BasePriceVnd *int64 `json:"base_price_vnd"`
+	Quantity     int32  `json:"quantity"`
+	TakesFilling *bool  `json:"takes_filling"`
+}
+
+func (s *Service) ThemMon(ctx context.Context, nguoi int64, ten string, dm int64, cac []ThanhPhanMoi) (out Mon, err error) {
+	// Giữ nguyên tử cả với bên gọi nội bộ, không thể tạo món rỗng.
+	if len(cac) == 0 {
+		return out, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "components"}
+	}
+	err = authz.Run(ctx, s.pool, nguoi, ThemMon, func(tx pgx.Tx) error {
+		r := newRepository(tx)
+		var e error
+		out, e = r.themMon(ctx, ten)
+		if e != nil {
+			return e
+		}
+		if e = danhmuc.XepMonMoiTrongGiaoDich(ctx, tx, out.MenuItemID, dm); e != nil {
+			return e
+		}
+		for _, tp := range cac {
+			if tp.BasePriceVnd == nil || tp.TakesFilling == nil {
+				return apierr.Error{Code: apierr.CodeInvalidRequest, Field: "components"}
+			}
+			if e = r.themThanhPhan(ctx, out.MenuItemID, tp); e != nil {
+				return e
+			}
+		}
+		return nil
+	})
+	return
+}
+func (s *Service) DoiTenMon(ctx context.Context, nguoi, id int64, ten, lyDo string) (out Mon, err error) {
+	err = authz.Run(ctx, s.pool, nguoi, DoiTenMon, func(tx pgx.Tx) error {
+		r := newRepository(tx)
+		if _, e := r.khoaMonNgungBan(ctx, id); e != nil {
+			return khongThay(e, apierr.CodeMenuItemNotFound)
+		}
+		if e := r.khaiLyDo(ctx, strings.TrimSpace(lyDo)); e != nil {
+			return e
+		}
+		var e error
+		out, e = r.doiTenMon(ctx, id, ten)
+		return e
+	})
+	return
 }

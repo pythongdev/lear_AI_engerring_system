@@ -49,3 +49,32 @@ func TestI025_HinhSaiTruocQuyenVaDatabase(t *testing.T) {
 		})
 	}
 }
+
+// Không cần database: payload sai bị chặn trước mọi truy vấn.
+func TestQC14_TiLeNhacSaiTruocQuyenVaDatabase(t *testing.T) {
+	r := gin.New()
+	nguyenlieu.Routes(r, nguyenlieu.NewService(nil))
+	cases := []struct{ path, body, field string }{
+		{"/supply-items/0/reminder-ratio", `{}`, "supply_item_id"},
+		{"/supply-items/nope/reminder-ratio", `{}`, "supply_item_id"},
+		{"/supply-items/1/reminder-ratio", `{}`, "reminder_ratio"},
+		{"/supply-items/1/reminder-ratio", `{"reminder_ratio":"0.2"}`, "reason"},
+		{"/supply-items/1/reminder-ratio", `{"reminder_ratio":"0.2","reason":" \t"}`, "reason"},
+	}
+	for _, raw := range []string{`null`, `0.2`, `""`, `"NaN"`, `"Infinity"`, `"-0.1"`, `"1.001"`, `"20"`, `"1e-1"`, `".2"`, `"00.2"`, `" 0.2"`, `"0.1234567"`, `[]`, `{}`} {
+		cases = append(cases, struct{ path, body, field string }{"/supply-items/1/reminder-ratio", `{"reminder_ratio":` + raw + `,"reason":"test"}`, "reminder_ratio"})
+	}
+	for _, c := range cases {
+		t.Run(c.path+c.body, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			r.ServeHTTP(w, httptest.NewRequest("PUT", c.path, strings.NewReader(c.body)))
+			var out struct{ Code, Field string }
+			if err := json.Unmarshal(w.Body.Bytes(), &out); err != nil {
+				t.Fatal(err)
+			}
+			if w.Code != 400 || out.Code != "invalid_request" || out.Field != c.field {
+				t.Fatalf("muốn 400 invalid_request field=%s; nhận %d %s", c.field, w.Code, w.Body.String())
+			}
+		})
+	}
+}

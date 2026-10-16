@@ -36,7 +36,7 @@ Các bằng chứng dưới đây là câu `NOTICE` của hai file trong `db/tes
 
 | Bảng | Giữ gì | Vì sao là một bảng riêng · nguồn |
 |---|---|---|
-| `supply_item` | một thứ trong danh mục hàng mua vào, tên và đơn vị mua khi đã biết | owner: `master_plan/shop-facts.md` §8.4 · `YC-26`; danh mục thêm dần, đứng độc lập với con số từng ngày |
+| `supply_item` | một thứ trong danh mục hàng mua vào, tên, đơn vị mua khi đã biết và tỉ lệ nhắc do chủ quán đặt | owner: `master_plan/shop-facts.md` §8.4 · `YC-26`; danh mục thêm dần, đứng độc lập với con số từng ngày |
 | `supply_day_entry` | một con số của một thứ, một ngày, một loại; người nhập và lúc gõ của riêng con số ấy | owner: `I-025` · `YC-27` · `YC-28`; phiên chọn 2026-09-30: một dòng cho một con số để giữ riêng người và mốc |
 
 **Một con số là MỘT dòng**, không phải một dòng một ngày mang hai cột. Hai con số của một ngày
@@ -66,13 +66,13 @@ Tầng theo `03-bao-ve-invariant.md` §5, không tự nâng hay hạ. Trong cộ
 |---|:--:|---|---|
 | **`I-025`** — đủ ai · ngày · lúc gõ | 1 | các cột dấu người và hai mốc của `supply_day_entry`; `supply_day_entry_person_fkey`; người mặc định lấy từ giao dịch | test I-025 — *I-025 bị từ chối (không có người nhập)* · *(không có ngày của con số)* · *(người nhập không phải người của quán)*; *YC-28 con số* đọc riêng hai mốc |
 | **`I-025`** — không thao tác bán hàng nào chạm | 3 | **không có gì nối** sổ với đơn · phiên · mẻ · tiền: không khoá ngoại, không hàm, không trigger dẫn từ bán hàng vào sổ. Giới hạn đã biết là sửa tay; buổi bán đủ năm kênh thuộc cổng `P2A-08` | test I-025 — *I-025 đọc lược đồ — 0 khoá ngoại sang đơn · phiên · mẻ · tiền, 0 hàm nhắc tới sổ, 0 trigger ngoài trigger vết*; *I-025 sau một đơn tạo · thu tiền · hoàn thành — sổ nguyên liệu không đổi* |
-| **`I-025`** — máy không giữ thứ gì để tự tính | 3 | danh sách cột đóng của hai bảng; không chỗ cất ngưỡng, định lượng suất hay kết luận thiếu | test I-025 so danh sách cột từng chữ — *I-025 đọc lược đồ — supply_item* · *I-025 đọc lược đồ — supply_day_entry … không ngưỡng, không định lượng suất, không tổng cất sẵn* |
+| **`I-025`** — máy không giữ thứ gì để tự tính | 3 | danh sách cột đóng của hai bảng; từ T-186 cho phép tỉ lệ nhắc, vẫn không định lượng suất hay kết luận thiếu | test I-025 so danh sách cột từng chữ — *I-025 đọc lược đồ — supply_item* · *I-025 đọc lược đồ — supply_day_entry … không định lượng suất, không tổng cất sẵn* |
 | **`I-025`** — sửa là cập nhật có vết | theo `I-018` | `supply_item_record_revision_trg` · `supply_day_entry_record_revision_trg` dùng `record_revision_capture()`; chế độ nghiêm từ bước 20 (`T-138`), §3 | test I-025 — *I-025 sửa con số — trước 7, sau 8*; *I-025 chế độ nghiêm — sửa không khai lý do bị từ chối* |
 | **`I-026`** — tổng là phép cộng, hiệu số là phép trừ | 1 | **không có chỗ cất tổng**; cùng hình bảng nhu cầu của `I-019` ở [`05-luoc-do-san-xuat.md`](05-luoc-do-san-xuat.md). Chỉ con số ngày được ghi; phép đọc hôm nay nằm trong test, §3 nói nợ cửa đọc | test I-025 — *I-025 đọc lược đồ — supply_day_entry*; test I-026 — *I-026 ba ngày — tổng đã nhập 15, tổng đã dùng 13, hiệu số 2*; *I-026 sau khi sửa một con số ngày — tổng đã nhập 15, tổng đã dùng 15, hiệu số 0* |
 | **`I-026`** — cộng dồn, không đặt lại | 3 | không cột lô, không cột lần mua nào để lọc; một chỗ tính tổng của pha 3 còn nợ (§3) | test I-026 — *I-026 ba ngày … (ngày thứ ba mua thêm, tổng không đặt lại)*; test I-025 so danh sách cột |
 | **`I-026`** — một thứ · một ngày · một đáp số | 1 | `supply_day_entry_one_kind_per_item_day_key` | test I-026 — *I-026 bị từ chối (hai con số mua vào cho một thứ, một ngày)* · *(hai con số đã dùng cho một thứ, một ngày)* |
 | **`I-026`** — một thứ đứng một lần | 1 | `supply_item_name_key`; giới hạn so tên ở §5 | test I-026 — *I-026 bị từ chối (trùng tên trong danh mục)* |
-| **`YC-26`** — đơn vị trống được; không ngưỡng, không định lượng | — | `supply_item`, `supply_item_name_not_blank_check` · `supply_item_purchase_unit_not_blank_check`; danh sách cột đóng | test I-025 — *YC-26 danh mục* có đơn vị *(trống)*; *YC-26 bị từ chối (tên chỉ có khoảng trắng)* · *(đơn vị mua chỉ có khoảng trắng — chưa có lời thì để TRỐNG)*; *I-025 đọc lược đồ* |
+| **`YC-26`** — đơn vị trống được; tỉ lệ nhắc được phép, không định lượng | — | `supply_item`, `supply_item_name_not_blank_check` · `supply_item_purchase_unit_not_blank_check`; danh sách cột đóng | test I-025 — *YC-26 danh mục* có đơn vị *(trống)*; *YC-26 bị từ chối (tên chỉ có khoảng trắng)* · *(đơn vị mua chỉ có khoảng trắng — chưa có lời thì để TRỐNG)*; *I-025 đọc lược đồ* |
 | **`YC-27`** — hai loại con số, không loại thứ ba | — | `supply_day_entry_kind_code_check` · `supply_day_entry_supply_item_fkey` · `supply_day_entry_measure_nonnegative_finite_check`; nhóm chỉ số công tơ đứng ngoài, giới hạn §5 | test I-025 — *YC-27 bị từ chối (loại con số thứ ba)* · *(thứ không có trong danh mục)* · *(con số âm)* · *(NaN)*; *I-025 bị từ chối (không có con số)* |
 | **`YC-28`** — hai mốc và người nhập | 1 | ngày người khai và lúc gõ tách riêng; cùng các dấu của hàng `I-025` đầu bảng, không gộp hai nghĩa của thời gian nhập | test I-025 — *YC-28 con số* đọc tên người, ngày của con số và có lúc gõ |
 | **`YC-29`** — hiệu số âm được nhận | — | hiệu số là kết quả đọc, không có chỗ cất hay ràng buộc bắt nó mang kết luận của máy | test I-026 — *I-026 đã dùng vượt tổng đã nhập — nhận, hiệu số -4* |
@@ -123,7 +123,27 @@ viết mã máy đọc nào cho hai con số này nên `QD-02` không áp. Tên 
 
 ---
 
-## 6. Bước sau đọc gì ở đây
+## 6. Tỉ lệ nhắc kiểm tra — T-186 / P3A-08
+
+Bổ sung 2026-10-16 theo phiếu Claude, từ lời §8.4 và I-025 sửa 2026-10-14.
+Migration [`20261015130000_ti_le_nhac_nguyen_lieu.up.sql`](../../../db/migrations/20261015130000_ti_le_nhac_nguyen_lieu.up.sql)
+là owner của `supply_item.reminder_ratio` và `supply_item_reminder_ratio_range_check`.
+Mặc định áp cả dòng cũ; tỉ lệ không phải định lượng suất hoặc kết luận của máy. Miền kỹ thuật dùng
+tỉ phần gồm hai đầu, không làm tròn số lưu. Đường lùi theo bước 30 của
+[`07-thu-tu-migration.md`](07-thu-tu-migration.md).
+
+Cửa đặt tỉ lệ cập nhật có vết chung: bản trước/sau, lý do, người đặt và lúc sửa. Mặc định do migration
+cấp không được giả thành một lần nhập của chủ quán. Test `db/tests/i025_reminder_ratio.sql` kiểm
+mặc định, miền và vết; phép đọc lược đồ của test I-025 và kịch bản `db/scenario/yc.sql` cùng cho phép
+đúng cột mới. Đối chiếu `db/reconcile/i025.sql` bổ sung miền tỉ lệ và chuỗi vết danh mục, có lỗi cài
+riêng ở `db/reconcile/proof/i025_3.sql` và `db/reconcile/proof/i025_4.sql`.
+
+Phép đọc không cất thêm tổng hoặc cờ trong database. Các tình huống chưa có lời (chưa nhập,
+lần nhập gần nhất bằng 0, đã dùng trước ngày mua đầu tiên) được trả trạng thái và cờ null qua
+hợp đồng API; hai tổng hiện hành giữ nguyên theo I-026. Claude cần làm rõ trước khi quyết cách nhắc
+cho những tình huống ấy.
+
+## 7. Bước sau đọc gì ở đây
 
 | Bước | Lấy gì |
 |---|---|

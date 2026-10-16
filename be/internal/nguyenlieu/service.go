@@ -17,15 +17,21 @@ import (
 var ThemThu = authz.Door{Code: "nguyenlieu/them_thu", Need: authz.NeedOwner}
 var DatDonVi = authz.Door{Code: "nguyenlieu/dat_don_vi", Need: authz.NeedOwner}
 var GhiSo = authz.Door{Code: "nguyenlieu/ghi_so", Need: authz.NeedOwner}
+var DatTiLe = authz.Door{Code: "nguyenlieu/dat_ti_le", Need: authz.NeedOwner}
 var SuaSo = authz.Door{Code: "nguyenlieu/sua_so", Need: authz.NeedOwner}
 
 type Thu struct {
-	ID             int64   `json:"supply_item_id"`
-	Name           string  `json:"name"`
-	PurchaseUnit   *string `json:"purchase_unit"`
-	PurchasedTotal string  `json:"purchased_total"`
-	UsedTotal      string  `json:"used_total"`
-	Balance        string  `json:"balance"`
+	ReminderRatio         string  `json:"reminder_ratio"`
+	LatestPurchaseDate    *string `json:"latest_purchase_date"`
+	LatestPurchaseMeasure *string `json:"latest_purchase_measure"`
+	ReminderStatus        string  `json:"reminder_status"`
+	CheckReminder         *bool   `json:"check_reminder"`
+	ID                    int64   `json:"supply_item_id"`
+	Name                  string  `json:"name"`
+	PurchaseUnit          *string `json:"purchase_unit"`
+	PurchasedTotal        string  `json:"purchased_total"`
+	UsedTotal             string  `json:"used_total"`
+	Balance               string  `json:"balance"`
 }
 type ConSo struct {
 	ID         int64     `json:"supply_day_entry_id"`
@@ -144,6 +150,26 @@ func (s *Service) DocChiTiet(ctx context.Context, nguoi, id int64) (out ChiTiet,
 			return e
 		}
 		out.Entries, e = repo.docSo(ctx, id, 0)
+		return e
+	})
+	return
+}
+
+// DatTiLe chỉ ghi tỉ lệ; vết chung giữ người đặt, lúc sửa và lý do (I-025, I-018).
+func (s *Service) DatTiLe(ctx context.Context, nguoi, id int64, ratio, reason string) (out Thu, err error) {
+	err = authz.Run(ctx, s.pool, nguoi, DatTiLe, func(tx pgx.Tx) error {
+		repo := newRepository(tx)
+		_, e := repo.khoaThu(ctx, id)
+		if errors.Is(e, pgx.ErrNoRows) {
+			return apierr.Error{Code: apierr.CodeSupplyItemNotFound}
+		}
+		if e != nil {
+			return e
+		}
+		if e = vongdoi.CoVet(ctx, tx, reason, func() error { return repo.datTiLe(ctx, id, ratio) }); e != nil {
+			return e
+		}
+		out, e = repo.docThu(ctx, id)
 		return e
 	})
 	return

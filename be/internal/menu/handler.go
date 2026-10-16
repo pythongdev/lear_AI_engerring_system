@@ -3,6 +3,7 @@ package menu
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -17,6 +18,8 @@ import (
 // Routes: hình yêu cầu kiểm trước quyền; trạng thái chỉ đọc sau khi đã qua authz.Run (trong service).
 func Routes(r *gin.Engine, svc *Service) {
 	h := handler{svc: svc}
+	r.POST("/menu-items", h.themMon)
+	r.PUT("/menu-items/:menu_item_id", h.doiTenMon)
 	r.PUT("/menu-components/:menu_component_id/base-price", h.doiGiaThanhPhan)
 	r.PUT("/menu-options/:menu_option_id/surcharge", h.doiPhuThu)
 	r.PUT("/menu-items/:menu_item_id/components/:menu_component_id", h.suaThanhPhan)
@@ -192,4 +195,72 @@ func writeErr(c *gin.Context, err error) {
 		log.Printf("menu: lỗi hệ thống (tên từ chối %q): %v", name, err)
 	}
 	apierr.Write(c.Writer, e)
+}
+
+func (h handler) themMon(c *gin.Context) {
+	var p struct {
+		Name           string         `json:"name"`
+		MenuCategoryID int64          `json:"menu_category_id"`
+		Components     []ThanhPhanMoi `json:"components"`
+	}
+	if !apierr.ReadJSON(c.Writer, c.Request, &p) {
+		return
+	}
+	if strings.TrimSpace(p.Name) == "" {
+		saiTruong(c, "name")
+		return
+	}
+	if p.MenuCategoryID <= 0 {
+		saiTruong(c, "menu_category_id")
+		return
+	}
+	if len(p.Components) == 0 {
+		saiTruong(c, "components")
+		return
+	}
+	for i, tp := range p.Components {
+		field := ""
+		switch {
+		case strings.TrimSpace(tp.Name) == "":
+			field = "name"
+		case tp.BasePriceVnd == nil || *tp.BasePriceVnd < 0:
+			field = "base_price_vnd"
+		case tp.Quantity < 1:
+			field = "quantity"
+		case tp.TakesFilling == nil:
+			field = "takes_filling"
+		}
+		if field != "" {
+			saiTruong(c, fmt.Sprintf("components[%d].%s", i, field))
+			return
+		}
+	}
+	out, e := h.svc.ThemMon(c.Request.Context(), nguoi(c), p.Name, p.MenuCategoryID, p.Components)
+	if e != nil {
+		writeErr(c, e)
+		return
+	}
+	apierr.JSON(c.Writer, 201, out)
+}
+func (h handler) doiTenMon(c *gin.Context) {
+	id, ok := docID(c, "menu_item_id")
+	if !ok {
+		return
+	}
+	var p struct {
+		Name   string `json:"name"`
+		Reason string `json:"reason"`
+	}
+	if !apierr.ReadJSON(c.Writer, c.Request, &p) {
+		return
+	}
+	if strings.TrimSpace(p.Name) == "" {
+		saiTruong(c, "name")
+		return
+	}
+	if !coLyDo(c, p.Reason) {
+		return
+	}
+	out, e := h.svc.DoiTenMon(c.Request.Context(), nguoi(c), id, p.Name, p.Reason)
+	traVe(c, e, out)
 }

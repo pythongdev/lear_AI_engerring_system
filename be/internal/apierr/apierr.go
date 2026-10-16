@@ -15,6 +15,8 @@ import (
 type Code string
 
 const (
+	CodeMenuItemNameConflict           Code = "menu_item_name_conflict"
+	CodeMenuComponentNameConflict      Code = "menu_component_name_conflict"
 	CodeMenuComboPriceInSalesHours     Code = "menu_combo_price_in_sales_hours"
 	CodeMenuComboHidden                Code = "menu_combo_hidden"
 	CodeMenuComboNotFound              Code = "menu_combo_not_found"
@@ -149,6 +151,8 @@ var statusOf = map[Code]int{
 	CodeMenuComboSurchargeInSalesHours: 409,
 	CodeMenuCategoryNotFound:           404,
 	CodeMenuCategoryHidden:             409,
+	CodeMenuItemNameConflict:           409,
+	CodeMenuComponentNameConflict:      409,
 	CodeMenuCategoryNameTaken:          409,
 	CodeMenuItemAlreadyInCategory:      409,
 	CodeAssignedTaskGuideNotFound:      404,
@@ -263,19 +267,26 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
-	"menu_combo_item_menu_item_fkey":             CodeMenuItemNotFound,
-	"menu_category_active_name_key":              CodeMenuCategoryNameTaken,
-	"menu_item_category_menu_category_fkey":      CodeMenuCategoryNotFound,
-	"menu_item_category_menu_item_fkey":          CodeMenuItemNotFound,
-	"assigned_task_guide_assigned_task_fkey":     CodeAssignedTaskNotFound,
-	"training_record_trainee_person_fkey":        CodePersonNotFound,
-	"assigned_task_assignee_person_fkey":         CodePersonNotFound,
-	"assigned_task_mark_assigned_task_fkey":      CodeAssignedTaskNotFound,
-	"supply_item_name_key":                       CodeSupplyItemNameTaken,
-	"supply_day_entry_one_kind_per_item_day_key": CodeSupplyDayEntryAlreadyRecorded,
-	"supply_day_entry_supply_item_fkey":          CodeSupplyItemNotFound,
-	"expense_category_name_key":                  CodeExpenseCategoryNameTaken,
-	"expense_category_fkey":                      CodeExpenseCategoryNotFound,
+	"menu_item_name_key":                           CodeMenuItemNameConflict,
+	"menu_component_name_key":                      CodeMenuComponentNameConflict,
+	"menu_item_name_not_blank_check":               CodeInvalidRequest,
+	"menu_component_name_not_blank_check":          CodeInvalidRequest,
+	"menu_component_base_price_non_negative_check": CodeInvalidRequest,
+	"menu_item_component_quantity_positive_check":  CodeInvalidRequest,
+	"menu_combo_item_menu_item_fkey":               CodeMenuItemNotFound,
+	"menu_category_active_name_key":                CodeMenuCategoryNameTaken,
+	"menu_item_category_menu_category_fkey":        CodeMenuCategoryNotFound,
+	"menu_item_category_menu_item_fkey":            CodeMenuItemNotFound,
+	"assigned_task_guide_assigned_task_fkey":       CodeAssignedTaskNotFound,
+	"training_record_trainee_person_fkey":          CodePersonNotFound,
+	"assigned_task_assignee_person_fkey":           CodePersonNotFound,
+	"assigned_task_mark_assigned_task_fkey":        CodeAssignedTaskNotFound,
+	"supply_item_reminder_ratio_range_check":       CodeInvalidRequest,
+	"supply_item_name_key":                         CodeSupplyItemNameTaken,
+	"supply_day_entry_one_kind_per_item_day_key":   CodeSupplyDayEntryAlreadyRecorded,
+	"supply_day_entry_supply_item_fkey":            CodeSupplyItemNotFound,
+	"expense_category_name_key":                    CodeExpenseCategoryNameTaken,
+	"expense_category_fkey":                        CodeExpenseCategoryNotFound,
 
 	"account_username_key":                 CodeUsernameTaken,
 	"account_email_key":                    CodeEmailTaken,

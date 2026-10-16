@@ -15,6 +15,9 @@ func newRepository(tx pgx.Tx) repository { return repository{q: sqlcgen.New(tx)}
 func (r repository) them(ctx context.Context, ten, donVi string) (int64, error) {
 	return r.q.ThemThu(ctx, sqlcgen.ThemThuParams{Name: ten, Column2: donVi})
 }
+func (r repository) datTiLe(ctx context.Context, id int64, ratio string) error {
+	return r.q.DatTiLe(ctx, sqlcgen.DatTiLeParams{ID: id, Column2: ratio})
+}
 func (r repository) dat(ctx context.Context, id int64, donVi string) error {
 	return r.q.DatDonVi(ctx, sqlcgen.DatDonViParams{ID: id, Column2: donVi})
 }
@@ -49,7 +52,21 @@ func (r repository) doc(ctx context.Context, id int64) ([]Thu, error) {
 			u := v.PurchaseUnit.String
 			unit = &u
 		}
-		out = append(out, Thu{ID: v.ID, Name: v.Name, PurchaseUnit: unit, PurchasedTotal: v.PurchasedTotal, UsedTotal: v.UsedTotal, Balance: v.Balance})
+		item := Thu{ID: v.ID, Name: v.Name, PurchaseUnit: unit, PurchasedTotal: v.PurchasedTotal, UsedTotal: v.UsedTotal, Balance: v.Balance,
+			ReminderRatio: v.ReminderRatio, ReminderStatus: v.ReminderStatus}
+		if v.LatestPurchaseDate != "" {
+			d := v.LatestPurchaseDate
+			item.LatestPurchaseDate = &d
+		}
+		if v.LatestPurchaseMeasure != "" {
+			m := v.LatestPurchaseMeasure
+			item.LatestPurchaseMeasure = &m
+		}
+		if v.ReminderStatus == "ready" {
+			b := v.CheckReminder
+			item.CheckReminder = &b
+		}
+		out = append(out, item)
 	}
 	return out, nil
 }

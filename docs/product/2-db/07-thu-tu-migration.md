@@ -55,6 +55,7 @@ ngược từ dưới lên, **từng bước một**.
 | 27 | `20261014170000_tai_khoan` | `P2A-14` | `account` · `account_password` · `login_session` · `password_reset`; trigger nghiệp vụ và vết; lùi chặn nếu một bảng có dòng, gỡ mã và phiên, mật khẩu, tài khoản rồi hàm | 8 · 20 |
 | 28 | `20261014180000_khoan_chi` | `P2A-05` | `expense_category` · `expense`, nguồn trên loại bất biến với vai ghi; trigger vết nghiêm; lùi chặn khi một trong hai bảng có dòng, gỡ khoản trước loại (ADR-106) | 8 · 20 |
 | 29 | `20261015120000_ban_combo` | `T-193` | `menu_combo_item_option_surcharge` và trigger vết, kiểm lựa chọn thuộc nhóm món mang; `order_line` thêm dòng combo và dòng suất con (`menu_combo_id`, `parent_order_line_id`, hai cột sinh ra, khoá ngoại về cha cùng đơn và cùng dấu đem về, trigger hoãn *ít nhất một dòng con*), `order_line_option` chặn lựa chọn trên dòng combo; lùi chặn khi có mức hay dòng combo/dòng con, trả hai NOT NULL (ADR-117) | 2 · 8 · 20 · 26 |
+| 30 | `20261015130000_ti_le_nhac_nguyen_lieu` | `T-186` · `P3A-08` | `supply_item.reminder_ratio`, mặc định cho cả dòng cũ; ràng buộc tỉ phần hữu hạn. Lùi chặn khi có bất kỳ dòng danh mục nào, kể cả giá trị mặc định; bảng rỗng thì gỡ cột và ràng buộc kèm theo | 9 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
@@ -144,6 +145,12 @@ trong giao dịch không giữ dữ liệu; lời từ chối phải xuất hi�
 
 
 **Khoá chặn bước 23** (2026-10-13, T-175, ADR-098): có hoá đơn giảm dương thì từ chối lùi trước mọi thay đổi. Khi mọi giảm bằng 0, gỡ hai cột và trả `bill_parts_equal_due_check` về công thức cũ. `scripts/db-check.sh` chạy `i015_bill_discount.sql` đỏ trước bước 23, xanh sau bước 23, rồi thử lùi trên giảm dương trong giao dịch lùi lại; lược đồ phải không đổi.
+
+**Khoá chặn bước 30** (2026-10-16, phiếu T-186/P3A-08): một giá trị tỉ lệ, kể cả mặc định,
+là dữ liệu đã cất theo luật 2; không tự coi mặc định là dữ liệu được phép xoá. Còn dòng trong
+`supply_item` thì từ chối trước khi gỡ gì. Bảng rỗng thì gỡ `reminder_ratio` cùng ràng buộc miền.
+Bước xuôi dùng `ADD COLUMN ... DEFAULT` cấp 20% cho dòng cũ, không giả một người nhập hay sửa con số ngày.
+Test cột và miền: `db/tests/i025_reminder_ratio.sql`; xuôi · lùi · xuôi lại do `scripts/db-check.sh` chấm.
 
 ## 3. Khi một lệnh migration hỏng giữa chừng
 

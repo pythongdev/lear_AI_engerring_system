@@ -124,3 +124,16 @@ func (s *Service) XepMon(ctx context.Context, nguoi, mon, dm int64, reason strin
 	})
 	return
 }
+
+// XepMonMoiTrongGiaoDich dùng lại cửa xep_mon cho món vừa tạo. Bên gọi phải
+// đã kiểm lớp chu_quan; không mở giao dịch thứ hai, không sửa dòng xếp đã có.
+func XepMonMoiTrongGiaoDich(ctx context.Context, tx pgx.Tx, mon, dm int64) error {
+	r := newRepository(tx)
+	if e := r.khoaMon(ctx, mon); e != nil {
+		return e
+	}
+	if e := r.khoa(ctx, dm); e != nil {
+		return e
+	}
+	return r.xep(ctx, mon, dm)
+}

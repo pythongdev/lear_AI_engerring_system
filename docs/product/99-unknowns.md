@@ -14,7 +14,7 @@
      (docs/decisions.md ADR-007 · work/findings.md F-008). Chuyển mấy dòng dưới
      đây xuống dưới tiêu đề ấy là đẻ ra đúng bấy nhiêu câu hỏi ma. -->
 
-- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**. Không câu nào tính tới 2026-10-14 (T-187).
+- [Đang mở](#dang-mo) — câu chưa có lời giải; `scripts/brief.sh` in mục này vào **mọi phiên mới**. Không câu nào về bảng tổng quan: U-097…U-101 mở 2026-10-16 (P3A-09) và đóng cùng ngày (T-198).
 - [Cách viết một câu ở đây](#cach-viet) — hợp đồng hình dạng giữa mục này và `scripts/brief.sh`;
   đọc nó trước khi thêm, sửa hay đóng một câu
 - [Đã có lời giải](#da-co-loi-giai) — câu đã đóng, xếp theo lượt trả lời của chủ quán, kèm nguyên
@@ -162,6 +162,23 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ quán trả lời 2026-10-16 (T-198), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn phương án
+bốn vế.** Lời đáp đã vào owner (`master_plan/shop-facts.md` §8.6; chữ *offline* là chỗ suy ra **S-10** §7.2).
+
+<a id="u-097"></a>
+<a id="u-098"></a>
+<a id="u-099"></a>
+<a id="u-100"></a>
+<a id="u-101"></a>
+
+| Câu đã đóng | Lời chủ quán | Owner |
+|---|---|---|
+| ~~U-097 — §8.6 hàng 1 "đang làm cho bao nhiêu người ăn" đếm từ đâu?~~ | “pos sẽ nhập bàn đang phục vụ. và số lượng bánh đã đem ra cho các bàn”. *Lời chọn:* **số bàn đang phục vụ**, POS không nhập số khách từng bàn. | `master_plan/shop-facts.md` §8.6 |
+| ~~U-098 — §8.6 hàng 4 "bán được như nào rồi" đo bằng gì?~~ | “mỗi ngày tôi sẽ nhập số lượng tối thiểu”. *Lời chọn:* đơn vị **số bánh (cái)** — số bánh đã ra so với số bánh tối thiểu của ngày. | `master_plan/shop-facts.md` §8.6 |
+| ~~U-099 — §8.6 hàng 5 "số tiền dự tính đã bán được" cộng những gì?~~ | “số lượng bánh đem ra”. *Lời chọn:* **cộng giá các phần đã ra bàn**; vẫn là tạm tính. | `master_plan/shop-facts.md` §8.6 |
+| ~~U-100 — §8.6 hàng 2 · 3 có tính đơn không ngồi bàn không?~~ | “có tính ghi riêng số lượng giao hàng online và số lượng ofline”. **Có**, bày tách hai phần. | `master_plan/shop-facts.md` §8.6 · S-10 |
+| ~~U-101 — §8.6 hàng 7, so với cái gì thì gọi là thiếu người, thiếu món?~~ | “so với số lượng tôi thiểu 1 ngayf sô lượng này chủ quán sẽ nhập, thiếu món số lượng ít hơn số lượng khách đặt”. *Lời chọn:* **số người tối thiểu là con số riêng** chủ quán nhập mỗi ngày. | `master_plan/shop-facts.md` §8.6 |
 
 **Chủ repo trả lời 2026-10-15, lượt tám (P3A-11), trong hội thoại.** Lời đáp đã vào owner (`master_plan/shop-facts.md`
 §8.9).

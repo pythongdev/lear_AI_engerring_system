@@ -12,7 +12,9 @@ import (
 
 func Routes(r *gin.Engine, svc *Service) {
 	h := handler{svc: svc}
+	r.GET("/supply-stock", h.doc)
 	r.GET("/supply-items", h.doc)
+	r.PUT("/supply-items/:supply_item_id/reminder-ratio", h.datTiLe)
 	r.POST("/supply-items", h.them)
 	r.PUT("/supply-items/:supply_item_id/purchase-unit", h.dat)
 	r.GET("/supply-items/:supply_item_id", h.chiTiet)
@@ -148,5 +150,32 @@ func (h handler) chiTiet(c *gin.Context) {
 		return
 	}
 	out, err := h.svc.DocChiTiet(c.Request.Context(), nguoi(c), id)
+	tra(c, 200, out, err)
+}
+
+var ratioPattern = regexp.MustCompile(`^(0(\.[0-9]{1,6})?|1(\.0{1,6})?)$`)
+
+func (h handler) datTiLe(c *gin.Context) {
+	id, ok := ma(c, "supply_item_id")
+	if !ok {
+		return
+	}
+	var p struct {
+		Ratio  string `json:"reminder_ratio"`
+		Reason string `json:"reason"`
+	}
+	if !apierr.ReadJSON(c.Writer, c.Request, &p) {
+		return
+	}
+	if !ratioPattern.MatchString(p.Ratio) {
+		sai(c, "reminder_ratio")
+		return
+	}
+	p.Reason = strings.TrimSpace(p.Reason)
+	if p.Reason == "" {
+		sai(c, "reason")
+		return
+	}
+	out, err := h.svc.DatTiLe(c.Request.Context(), nguoi(c), id, p.Ratio, p.Reason)
 	tra(c, 200, out, err)
 }

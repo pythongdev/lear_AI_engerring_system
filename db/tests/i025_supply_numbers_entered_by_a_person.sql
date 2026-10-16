@@ -1,7 +1,7 @@
 -- I-025 (tầng 1 · tầng 3) và YC-26 · YC-27 · YC-28: mỗi con số nguyên liệu do một NGƯỜI gõ vào,
 -- mang ai nhập · ngày của con số · lúc gõ; thiếu một trong ba thì không tồn tại được; danh mục
 -- thêm dần, đơn vị mua trống được; sửa một con số là một lần cập nhật có vết (I-018); không thao
--- tác bán hàng nào chạm tới sổ; lược đồ không cất ngưỡng, định lượng suất hay kết luận thiếu.
+-- tác bán hàng nào chạm tới sổ; lược đồ chỉ cất tỉ lệ nhắc do người đặt, không định lượng suất hay kết luận thiếu.
 -- Chế độ NGHIÊM của vết từ bước 20 (T-138, ADR-092) áp cả ở đây: sửa không khai lý do bị từ chối.
 -- Lát: 12-luoc-do-nguyen-lieu.md.
 
@@ -163,8 +163,8 @@ BEGIN
   END;
 
   -- Vế "máy không giữ thứ gì để tự tính" (tầng 3, kiểm bằng ĐỌC LƯỢC ĐỒ): danh sách cột của hai
-  -- bảng là đúng danh sách dưới đây. Thêm một cột — một ngưỡng, một định lượng suất, một tổng cất
-  -- sẵn, một kết luận thiếu — là đổi mệnh đề I-025 · I-026 trước, rồi mới đổi dòng này.
+  -- bảng là đúng danh sách dưới đây. T-186 cho phép reminder_ratio theo I-025 sửa 2026-10-14;
+  -- vẫn không được cất định lượng suất, tổng hay kết luận thiếu.
   SELECT string_agg(table_name::text, ',' ORDER BY table_name::text COLLATE "C") INTO cols
   FROM information_schema.tables WHERE table_schema = 'shop' AND table_name LIKE 'supply%';
   IF cols IS DISTINCT FROM 'supply_day_entry,supply_item' THEN
@@ -172,7 +172,7 @@ BEGIN
   END IF;
   SELECT string_agg(column_name::text, ',' ORDER BY column_name::text COLLATE "C") INTO cols
   FROM information_schema.columns WHERE table_schema = 'shop' AND table_name = 'supply_item';
-  IF cols IS DISTINCT FROM 'created_at,id,name,purchase_unit' THEN
+  IF cols IS DISTINCT FROM 'created_at,id,name,purchase_unit,reminder_ratio' THEN
     RAISE EXCEPTION 'I-025: cột của supply_item khác danh sách đã duyệt: %', cols;
   END IF;
   RAISE NOTICE 'I-025 đọc lược đồ — supply_item: %', cols;
@@ -181,7 +181,7 @@ BEGIN
   IF cols IS DISTINCT FROM 'created_at,entered_measure,entry_date,id,kind_code,person_id,supply_item_id' THEN
     RAISE EXCEPTION 'I-025: cột của supply_day_entry khác danh sách đã duyệt: %', cols;
   END IF;
-  RAISE NOTICE 'I-025 đọc lược đồ — supply_day_entry: % — không ngưỡng, không định lượng suất, không tổng cất sẵn', cols;
+  RAISE NOTICE 'I-025 đọc lược đồ — supply_day_entry: % — không định lượng suất, không tổng cất sẵn; tỉ lệ nhắc ở supply_item', cols;
 
   -- Vế "không thao tác bán hàng nào chạm" (tầng 3), phần đọc được trên lược đồ: không khoá ngoại
   -- nào nối sổ với đơn · phiên · mẻ · tiền; không hàm nào của schema nhắc tới sổ; hai bảng không

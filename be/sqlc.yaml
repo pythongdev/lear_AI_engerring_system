@@ -4,6 +4,8 @@ sql:
     schema: ../db/migrations
     queries:
       - internal/menu/sql
+      - internal/menu/sql/them_mon
+      - internal/menu/sql/doi_ten
       - internal/menu/sql/doi_gia_thanh_phan
       - internal/menu/sql/doi_phu_thu
       - internal/menu/sql/ngung_ban
@@ -218,6 +220,7 @@ sql:
       - internal/nguyenlieu/sql/dat_don_vi
       - internal/nguyenlieu/sql/ghi_so
       - internal/nguyenlieu/sql/sua_so
+      - internal/nguyenlieu/sql/dat_ti_le
     gen:
       go:
         package: sqlcgen
@@ -276,4 +279,13 @@ sql:
       go:
         package: sqlcgen
         out: internal/combo/internal/sqlcgen
+        sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/tongquan/sql
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/tongquan/internal/sqlcgen
         sql_package: pgx/v5

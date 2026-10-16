@@ -259,6 +259,14 @@ var cacCaVet = []caVet{
 			c.suaMenu(t, c.chu, "PUT", fmt.Sprintf("/menu-options/%d/surcharge", id), map[string]any{"surcharge_vnd": 2000, "reason": "đổi phụ thu kiểm vết"})
 		}}
 	}},
+	{"menu/doi_ten", func(t *testing.T, c canh) dichVet {
+		cu, moi := "test-cũ · "+t.Name(), "test-mới · "+t.Name()
+		// Món đã ngừng bán: không có thành phần nên không được lọt vào GET /menu của các test sau.
+		id := c.id(t, "INSERT INTO shop.menu_item(name, discontinued_at) VALUES ($1, now()) RETURNING id", cu)
+		return dichVet{"menu_item", id, c.chu, "name", cu, moi, func() {
+			c.suaMenu(t, c.chu, "PUT", fmt.Sprintf("/menu-items/%d", id), map[string]any{"name": moi, "reason": "đổi tên món kiểm vết"})
+		}}
+	}},
 	{"menu/ngung_ban", func(t *testing.T, c canh) dichVet {
 		id := c.id(t, "INSERT INTO shop.menu_item(name) VALUES ($1) RETURNING id", t.Name())
 		return dichVet{"menu_item", id, c.chu, "discontinued_at", nil, "mốc", func() {
@@ -377,6 +385,20 @@ var cacCaVet = []caVet{
 		return dichVet{"expense", id, c.chu, "amount_vnd", float64(1000), float64(2000), func() {
 			status, body := c.goi(t, "PUT", fmt.Sprintf("/expenses/%d", id), c.chu,
 				map[string]any{"expense_category_id": loai, "amount_vnd": 2000, "paid_date": "2026-01-05", "reason": "sửa khoản chi kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	{"nguyenlieu/dat_ti_le", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		nguyenlieu.Routes(r, nguyenlieu.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		id := c.id(t, "INSERT INTO shop.supply_item(name) VALUES ($1) RETURNING id", t.Name())
+		return dichVet{"supply_item", id, c.chu, "reminder_ratio", float64(0.2), float64(0.3), func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/supply-items/%d/reminder-ratio", id), c.chu,
+				map[string]any{"reminder_ratio": "0.3", "reason": "đặt tỉ lệ kiểm vết"})
 			canDat(t, traLoi{status: status, body: body}, 200)
 		}}
 	}},

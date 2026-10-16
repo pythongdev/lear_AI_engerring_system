@@ -61,6 +61,11 @@ trong giao dịch. Vai trên tài khoản chỉ chọn khung màn, không mở q
 nó thêm, **cùng lượt**: một dòng ở bảng này kèm nguồn, một hằng ở `be/internal/authz/`, test từ chối qua
 `authz.Run`. Không thêm lớp *cho đủ* trước khi có cửa dùng nó.
 
+**Cửa đọc tổng quan (P3A-09, 2026-10-15):** `GET /owner-overview` thuộc lớp
+`chu_quan`, theo `master_plan/shop-facts.md` §8.6 và phiếu P3A-09.
+`authz.Read` kiểm trước khi đọc các nguồn; POS không phải chủ quán bị `owner_only`,
+không phiên bị `unauthenticated`. Miền `tongquan` không có cửa ghi.
+
 ## 3. Ma trận cửa × lớp
 
 Mỗi cửa ghi của backend — thư mục `be/internal/<gói>/sql/<cửa>/` (`QC-13`) — có **đúng một** dòng, và
@@ -93,6 +98,8 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `nguoi/khep_quay` | `theo_cua_goi` | ADR-085 *Sửa đổi 2026-10-10*; ADR-087 điểm 3 — chủ duy nhất của ô `counter_duty.ended_at`, chạy trong giao dịch đã kiểm quyền của cửa gọi |
 | `qr/doi_ma` | `chu_quan` | `shop-facts.md` §6 quy tắc 2 — **U-062** đã đóng: chỉ chủ quán đổi mã, đổi khi quán bị hack |
 | `don/tao_luot_goi` | `quay_hoac_khach` | `shop-facts.md` §2 — Staff POS; §1 câu 5 và `I-023` — khách QR; `02-kenh-ban.md` bảng kênh — khách web và người nhập hotline; ADR-087; ADR-088 |
+| `menu/them_mon` | `chu_quan` | Phiếu P3A-07; `shop-facts.md` §8.9, chủ quán tự thêm món |
+| `menu/doi_ten` | `chu_quan` | Phiếu P3A-07; `shop-facts.md` §8.9, chủ quán sửa thông tin món |
 | `menu/doi_gia_thanh_phan` | `chu_quan` | `architecture.md` §6.1 · `I-012` (chủ quán đổi giá) |
 | `menu/doi_phu_thu` | `chu_quan` | `architecture.md` §6.1 · `I-012` |
 | `menu/sua_thanh_phan` | `chu_quan` | `architecture.md` §6.1 · `I-011` · `I-012` |
@@ -134,6 +141,7 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `nguyenlieu/them_thu` | `chu_quan` | `shop-facts.md` §8.4 — chủ quán tự nhập số liệu (2026-09-04); kế hoạch AD_BE §4; phiếu P3A-02 |
 | `nguyenlieu/dat_don_vi` | `chu_quan` | `shop-facts.md` §8.4 — chủ quán tự nhập số liệu (2026-09-04); kế hoạch AD_BE §4; phiếu P3A-02 |
 | `nguyenlieu/ghi_so` | `chu_quan` | `shop-facts.md` §8.4 — chủ quán tự nhập số liệu (2026-09-04); kế hoạch AD_BE §4; phiếu P3A-02 |
+| `nguyenlieu/dat_ti_le` | `chu_quan` | `shop-facts.md` §8.4 — chủ quán đặt tỉ lệ theo từng thứ (T-185, T-192); phiếu P3A-08 |
 | `nguyenlieu/sua_so` | `chu_quan` | `shop-facts.md` §8.4 — chủ quán tự nhập số liệu (2026-09-04); kế hoạch AD_BE §4; phiếu P3A-02 |
 | `khoanchi/them_loai` | `chu_quan` | `shop-facts.md` §8.10 — lời đóng U-095 (2026-10-15): chỉ chủ quán ghi khoản chi; phiếu P3A-01 |
 | `khoanchi/ghi` | `chu_quan` | `shop-facts.md` §8.10 — lời đóng U-095 (2026-10-15): chỉ chủ quán ghi khoản chi; phiếu P3A-01 |
@@ -175,3 +183,5 @@ khi bấm rời, chỉ khoảng mở của chính người gọi được khép.
 | **Hai người dùng chung một danh tính** | máy không phân biệt được (`I-012` tầng 4) | không gỡ ở máy — đối chiếu `I-012/3` |
 
 [↑ đầu file](#top)
+
+P3A-08 (2026-10-15, phiếu Claude): `GET /supply-stock` chỉ lớp `chu_quan`; cờ nhắc dành cho POS kiểm tra không tự cấp quyền đọc kho cho POS.

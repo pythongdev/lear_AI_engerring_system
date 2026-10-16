@@ -760,10 +760,10 @@ BEGIN
   PERFORM pg_temp.yc_di_qua('YC-26', 'buộc có đơn vị mới cho thêm thứ',
     $q$INSERT INTO supply_item (name) VALUES ('YC-26 thử đơn vị trống')$q$,
     $d$EXISTS (SELECT 1 FROM supply_item WHERE name = 'YC-26 thử đơn vị trống' AND purchase_unit IS NULL)$d$);
-  PERFORM pg_temp.yc_khong_cho('YC-26', 'danh mục có ngưỡng hoặc định lượng suất',
+  PERFORM pg_temp.yc_khong_cho('YC-26', 'danh mục có định lượng suất hoặc kết luận',
     $d$(SELECT array_agg(column_name::text ORDER BY ordinal_position) FROM information_schema.columns
         WHERE table_schema = 'shop' AND table_name = 'supply_item') =
-        ARRAY['id','name','purchase_unit','created_at']$d$, 'đọc toàn bộ cột danh mục, không cột ngưỡng/định lượng');
+        ARRAY['id','name','purchase_unit','created_at','reminder_ratio']$d$, 'đọc toàn bộ cột danh mục: tỉ lệ nhắc được phép (T-186), không định lượng/kết luận');
 
   PERFORM pg_temp.yc_doc('YC-27', (SELECT string_agg(format('%s %s %s = %s', s.name, e.entry_date,
     e.kind_code, e.entered_measure), ' · ' ORDER BY s.name, e.entry_date, e.kind_code)

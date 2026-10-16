@@ -552,10 +552,11 @@ type SupplyDayEntry struct {
 }
 
 type SupplyItem struct {
-	ID           int64
-	Name         string
-	PurchaseUnit pgtype.Text
-	CreatedAt    pgtype.Timestamptz
+	ID            int64
+	Name          string
+	PurchaseUnit  pgtype.Text
+	CreatedAt     pgtype.Timestamptz
+	ReminderRatio pgtype.Numeric
 }
 
 type TableSession struct {

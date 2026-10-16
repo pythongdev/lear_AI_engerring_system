@@ -135,6 +135,7 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   | cờ có/không | `boolean` | — |
   | bản chụp một dòng `_image` (`QD-03`) — *thêm 2026-09-28, `P2-08`* | `jsonb` | vết cập nhật (`I-018`) giữ bản trước và bản sau của **mọi** bảng trong một bảng vết: một kiểu mang được một dòng bất kỳ, so được bằng `=`, đọc từng ô bằng `->>`. Chỉ cột hậu tố `_image` được dùng nó |
   | lượng người gõ, có thể lẻ `_measure` (`QD-03`) — *thêm 2026-09-30, `P2A-02`* | `numeric` (không khai độ chính xác) | sổ nguyên liệu giữ **đúng con số người gõ** (`quality/invariants.md` `I-025` · `I-026`): hàng mua theo cân có số lẻ, và `integer` buộc người gõ tự đổi sang đơn vị nhỏ hơn — đúng phép quy đổi máy không được làm. Số thực dấu phẩy động cộng dồn ra phần lẻ không ai gõ; `numeric(p,s)` làm tròn im lặng con số vượt `s`. Không âm và hữu hạn là ràng buộc kiểm của lát. Chỉ cột hậu tố `_measure` được dùng nó; **tiền không bao giờ** (`QD-20`) |
+  | tỉ lệ người đặt `_ratio` (`QD-03`) — *thêm 2026-10-16, `T-186`, chủ repo chọn* | `numeric` (không khai độ chính xác) | tỉ lệ nhắc kiểm tra của từng nguyên liệu (`I-025`) do chủ quán gõ: lời chốt chỉ cho mặc định 20%, không nói tỉ lệ phải tròn phần trăm, nên `integer` phần trăm đặt một giới hạn không ai chốt và `numeric(p,s)` làm tròn im lặng. Miền là ràng buộc kiểm của lát. Chỉ cột hậu tố `_ratio` được dùng nó; **tiền không bao giờ** (`QD-20`) |
   | băm mã phiên và mã đặt lại `_hash` (P2A-14, ADR-109, 2026-10-14) | `bytea` | băm SHA-256 32 byte theo hình Claude giao; so từng byte, độ dài do ràng buộc lát kiểm |
 
   Kiểu khác (mảng, `varchar`, số thực…) chỉ vào lược đồ khi một dòng mới được thêm vào
@@ -152,7 +153,8 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
                               'timestamp with time zone', 'jsonb', 'numeric', 'bytea')
          OR (data_type = 'bytea' AND column_name NOT LIKE '%!_hash' ESCAPE '!')
          OR (data_type = 'jsonb') <> (column_name LIKE '%!_image' ESCAPE '!')
-         OR (data_type = 'numeric') <> (column_name LIKE '%!_measure' ESCAPE '!')
+         OR (data_type = 'numeric') <> (column_name LIKE '%!_measure' ESCAPE '!'
+                                        OR column_name LIKE '%!_ratio' ESCAPE '!')
          OR (column_name = 'id' AND (data_type <> 'bigint' OR is_identity <> 'YES'
                                      OR identity_generation <> 'ALWAYS'))
          OR (column_name LIKE '%!_id'  ESCAPE '!' AND data_type <> 'bigint')
@@ -160,7 +162,7 @@ khối nào không phải phép kiểm thì **không** được rào bằng `sql
   ```
 - **Nguồn:** owner cho điều kiện — `QD-10` · `QD-20` · `QD-30` · `QD-60` · `QD-61`; tên kiểu là phiên
   chọn 2026-09-27. Dòng `_measure` là phiên chọn 2026-09-30 (`P2A-02`, `docs/decisions.md`
-  **ADR-071**) — chủ quán chưa nói con số gõ vào có lẻ hay không; kiểu này nhận cả hai.
+  **ADR-071**) — chủ quán chưa nói con số gõ vào có lẻ hay không; kiểu này nhận cả hai. Dòng `_ratio` do chủ repo chọn 2026-10-16 (`T-186`), giữa nó và tỉ lệ số nguyên phần trăm.
 
 ---
 

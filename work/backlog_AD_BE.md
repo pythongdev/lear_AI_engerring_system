@@ -367,7 +367,9 @@ chạy `db-check` · `be-check`, đọc diff thật rồi mới chấm Done:*
 có cửa — không mở cửa thứ hai.
 **Đứng trên:** lát menu `P2-05` (`docs/product/2-db/03-luoc-do-menu-gia.md`), §8.9.
 **Bẫy:** cột món mới cần mà lược đồ chưa có ⇒ dừng, mở task lược đồ.
-**Nhận việc:** —
+**Nhận việc:** 2026-10-15 · Claude Code (phiếu, duyệt) · Codex thi công ở `../lean_wt/P3A-07-09`, nhánh `codex/P3A-07-09` từ `3bdc76f`; Codex viết cả test trước (chủ repo dặn giao hết vì Claude sắp hết hạn mức — lệch ADR-054 vế *Claude viết test*). be-check · db-check chưa chạy.
+
+*Bàn giao (2026-10-16):* thực hiện Codex (nhánh `codex/P3A-07-09`), duyệt Claude Code. Cửa `menu/them_mon` (tạo món, xếp danh mục qua `danhmuc.XepMonMoiTrongGiaoDich`, tạo thành phần mới cùng giao dịch — không dùng lại thành phần đã có, lựa chọn thiết kế của Codex Claude chấp nhận) và `menu/doi_ten`; hai mã lỗi `menu_item_name_conflict` · `menu_component_name_conflict`. Claude thêm ca vết `menu/doi_ten` (món đã ngừng bán, để không làm `GET /menu` trả 500). Bằng chứng: `TestQC14_HinhThemDoiTenMon`, `TestI018_MoiCuaSuaCoVet/menu/doi_ten` PASS; be-check · gate xanh. Còn lại: trang `P4A-04`.
 
 [↑ đầu file](#top)
 
@@ -379,7 +381,9 @@ có cửa — không mở cửa thứ hai.
 **Goal:** đọc thời gian nhập, tổng đã dùng, số thiếu theo phép §8.4, và cờ *nhắc kiểm tra* khi phần còn lại dưới tỉ lệ
 chủ quán đặt.
 **Bị chặn bởi:** `T-186` (cột tỉ lệ nhắc).
-**Nhận việc:** —
+**Nhận việc:** 2026-10-15 · Claude Code (phiếu, duyệt) · Codex thi công ở `../lean_wt/P3A-07-09`, nhánh `codex/P3A-07-09` từ `3bdc76f`; Codex viết cả test trước (chủ repo dặn giao hết vì Claude sắp hết hạn mức — lệch ADR-054 vế *Claude viết test*). be-check · db-check chưa chạy.
+
+*Bàn giao (2026-10-16):* thực hiện Codex (ba lượt: hai lần dừng vì scope thiếu file vết và file sqlc sinh, một lần hết hạn mức), duyệt Claude Code. Gộp `T-186`: migration `20261015130000_ti_le_nhac_nguyen_lieu`, test `db/tests/i025_reminder_ratio.sql`, đối chiếu `i025` cập nhật. Claude: thêm dòng `_ratio` vào QC-04 (chủ repo chọn cách 1, 2026-10-16), chuyển kịch bản chạy tay `i025_reminder_migration.test.sh` ra khỏi repo (không gate nào gọi; db-check đã chấm xuôi · lùi). Bằng chứng: `TestI025_KhoTongVaBienNhacKiemTra` (15 · 14 · 1, biên 0.999/1/1.001), `TestI025_KhoChiChuQuanVaTiLeTheoTungThu`; `db-check: PASS — 30 bước xuôi · lùi · xuôi lại … 149 lỗi cài`; be-check · gate xanh. Chưa chứng minh test db đỏ trước migration trên database. Câu hỏi Codex ghi ở `01-hop-dong-api.md`: chưa có lần nhập hay lần nhập bằng 0 ⇒ trạng thái riêng, cờ `null`.
 
 [↑ đầu file](#top)
 
@@ -390,7 +394,38 @@ chủ quán đặt.
 
 **Goal:** một cửa đọc gom bảy thứ của §8.6 cho lớp `chu_quan`; thứ nào đã có cửa đọc thì dùng lại truy vấn của nó.
 **Bẫy:** *số tiền dự tính* là tạm tính, không bày như doanh thu đã đối soát.
-**Nhận việc:** —
+**Nhận việc:** 2026-10-15 · Claude Code (phiếu, duyệt) · Codex thi công ở `../lean_wt/P3A-07-09`, nhánh `codex/P3A-07-09` từ `3bdc76f`; Codex viết cả test trước (chủ repo dặn giao hết vì Claude sắp hết hạn mức — lệch ADR-054 vế *Claude viết test*). be-check · db-check chưa chạy.
+
+*Bàn giao (2026-10-16):* thực hiện Codex, duyệt Claude Code. `be/internal/tongquan` chỉ đọc, dùng lại `sanxuat.DocGom` và `nguyenlieu`; tạm tính không nằm cạnh doanh thu đã đối soát (hiện *chưa có*). Mục chưa đủ lời trả `{status: unavailable, reason}`, không trả 0: U-097 khách · U-098 tiến độ · U-099 tạm tính · U-100 phạm vi đếm phần (bản đầu chỉ bàn đang mở) · U-101 thiếu người/món; số người đang làm chờ `T-197`. Ngày bán tính giống `ngayban.quyNgay` nhưng chép truy vấn — nên gom về một hàm xuất khẩu. Bằng chứng: test `tongquan` PASS qua be-check; gate xanh.
+
+[↑ đầu file](#top)
+
+---
+
+<a id="t-199"></a>
+### T-199 — Mục tổng quan đủ số theo lời 2026-10-16
+
+**Goal:** năm mục `GET /owner-overview` đang trả *chưa có* (P3A-09) trả số theo lời chủ quán 2026-10-16
+(`master_plan/shop-facts.md` §8.6, khối *Năm vế còn hở*). Mở 2026-10-16 · Claude Code (T-198).
+
+**Acceptance (nháp — Claude chốt trước khi giao):**
+- Lát lược đồ mới: mỗi ngày bán tối đa một bộ *số bánh tối thiểu* · *số người tối thiểu*, số nguyên dương, chủ quán
+  ghi, sửa được trong ngày, có vết người ghi; file lược đồ mới ở `docs/product/2-db/`, migration có đường lùi.
+- Cửa ghi chỉ lớp `chu_quan`; một hàng ma trận quyền; hợp đồng `openapi.yaml` tăng phiên bản.
+- `serving_guests` = số bàn đang phục vụ (bàn đang mở), không nhập số khách.
+- `served_portions` · `missing_portions` gồm cả phần không có bàn, tách hai nhóm giao hàng online · offline (đọc
+  *offline* theo **S-10** cho tới khi chủ quán xác nhận).
+- `sales_progress` = số bánh (cái) đã ra so với số bánh tối thiểu; ngày chưa nhập ⇒ *chưa có*, không lấy ngày trước.
+- `provisional_sales` = tổng giá các phần đã ra, vẫn gắn nhãn tạm tính, không đứng cạnh doanh thu đã đối soát.
+- `shortages.workers` = số người đang làm (`T-197`) dưới số người tối thiểu; một trong hai chưa có ⇒ *chưa có*.
+- `shortages.menu_items` = món có số đã ra ít hơn số khách đặt.
+- Test trước cho từng mục, gồm ca *chưa nhập tối thiểu*; `./scripts/gate.sh` xanh; Claude tự chạy be-check · db-check.
+
+**Điểm thiết kế Claude phải chốt trước khi giao Codex** (không để Codex quyết): (1) *giá một phần đã ra* khi phần ấy
+thuộc combo — giá combo đặt riêng (§8.9) không bằng tổng thành phần, nên cần ADR chia hay tính theo dòng đơn;
+(2) thành phần nào được đếm là *bánh* cho hàng 4; (3) nguồn *online* là kênh nào trong năm kênh §2.
+
+**Chặn:** worktree từ `HEAD` chưa thấy `be/internal/tongquan` (P3A-07…09 chưa commit) — chủ repo commit trước.
 
 [↑ đầu file](#top)
 
