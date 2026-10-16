@@ -425,7 +425,7 @@ chủ quán đặt.
 thuộc combo — giá combo đặt riêng (§8.9) không bằng tổng thành phần, nên cần ADR chia hay tính theo dòng đơn;
 (2) thành phần nào được đếm là *bánh* cho hàng 4; (3) nguồn *online* là kênh nào trong năm kênh §2.
 
-**Chặn:** worktree từ `HEAD` chưa thấy `be/internal/tongquan` (P3A-07…09 chưa commit) — chủ repo commit trước.
+**Nền:** `be/internal/tongquan` đã ở `HEAD` từ commit P3A-07…09 (2026-10-16); worktree tạo từ đó.
 
 [↑ đầu file](#top)
 

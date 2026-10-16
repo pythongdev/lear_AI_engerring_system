@@ -1465,13 +1465,14 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-15 | Chủ repo trả lời lượt sáu trong hội thoại (T-192): **chỉ chủ quán ghi khoản chi** (đóng U-095); mức nhắc sắp hết **theo từng thứ, chủ quán ghi** — xác nhận vế *lời chọn* của lượt bốn, mặc định 20% đứng nguyên | §8.10 · §8.4 |
 | 2026-10-15 | Chủ repo trả lời lượt bảy trong hội thoại (P3A-06): giá mỗi combo **chủ quán tự đưa**; khách chọn nhân **riêng từng món** trong combo; phụ thu trong combo **chủ quán đặt theo từng món của combo**, không đếm +1.000 mỗi phần; mở U-096 | §8.9 |
 | 2026-10-15 | Chủ repo trả lời lượt tám trong hội thoại (P3A-11), chọn trong câu hỏi có sẵn phương án: lựa chọn chưa đặt mức trong combo **cộng 0đ** (đóng U-096); món nhiều suất trong combo **mỗi suất chọn nhân riêng**; mức phụ thu **cộng mỗi suất một lần**; mức phụ thu trong combo **khoá như giá combo** — chỉ đổi ngoài giờ bán | §8.9 |
+| 2026-10-16 | Chủ quán trả lời năm câu của mục tổng quan (T-198), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn phương án bốn vế: khách đang phục vụ **đếm bằng số bàn** (U-097); tiến độ là **số bánh đã ra so với số bánh tối thiểu chủ quán nhập mỗi ngày** (U-098); tạm tính **cộng giá các phần đã ra bàn** (U-099); mang đi và giao hàng **có** tính, bày **tách online · offline** (U-100, mở S-10); **thiếu người** so với **số người tối thiểu chủ quán nhập mỗi ngày**, **thiếu món** là món đã ra ít hơn khách đặt (U-101) | §8.6 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
 Mục này giữ những chỗ được **suy ra** từ luật đã chốt chứ không phải lời chủ quán nói thẳng. Bốn
 mục S-1–S-4 từng nằm đây đều đã được chủ quán xác nhận và đã lên §7.1; còn **bốn** mục chưa xác
 nhận — ~~**S-5**~~ (2026-09-01, T-039; **có lời 2026-10-09**, xem bảng) · **S-6** (2026-09-04, T-055) · **S-7** (2026-09-04, T-056) ·
-**S-8** (2026-09-08, T-068) · **S-9** (2026-09-08, T-069).
+**S-8** (2026-09-08, T-068) · **S-9** (2026-09-08, T-069) · **S-10** (2026-10-16, T-198).
 
 S-5 và S-6 sinh ra cùng một kiểu: chủ quán trả lời **ai bấm**, và câu hỏi còn một vế **bấm theo gì
 / bấm lúc nào** mà lời ấy không chạm tới. **S-7 là kiểu thứ hai**: chủ quán trả lời về **cả ngày**
@@ -1497,6 +1498,7 @@ chứ đừng tin câu này (`work/findings.md` **F-003** · **F-018**).
 | **S-7** — cửa sổ **06:00–11:00** của §1 có phải **đúng một buổi bán** | **2026-09-04**, chưa hỏi | *suy ra:* **có** — chủ quán nói *"quán chỉ bán buổi sáng"* (`A1`) và *"cứ đến giờ là bán"* (`A2`), nên cửa sổ giờ duy nhất quán có cũng là buổi duy nhất quán bán. Chủ quán **không** đọc ra một mốc bắt đầu và một mốc kết thúc của *buổi*; hai câu ấy nói về **cả ngày** chứ không nói về một buổi trong nhiều buổi. ⇒ Nếu suy ra này sai thì có buổi thứ hai ngoài 06:00–11:00, và §6.23 · **ADR-038** · **I-021** đều phải viết lại | §1 · §6.23 · **ADR-038** |
 | **S-8** — mục tổng quan §8.6 có bày **cả ba** đường của vế *"còn thiếu gì"* (nguyên liệu · người · món) không | **2026-09-08**, chưa hỏi | *suy ra:* **có** — chủ quán trả lời đúng ba vế câu hỏi đã đưa ra, theo thứ tự ấy (*"nguyên liệu và con người đã có, đối với menu…"*), nên ba vế được đọc là ba thứ mục tổng quan bày. Chủ quán **không** nói thẳng *"mục tổng quan hiện cả ba"*, và chữ *"đã có"* cũng có thể chỉ nghĩa là *hai thứ ấy hệ thống ghi ở đâu đó rồi*. ⇒ Nếu suy ra này sai thì §8.6 hàng 7 chỉ còn **một** đường (nguyên liệu), và §4.9 vẫn đứng nguyên vì nó là **menu**, không phải một dòng của mục tổng quan | §8.6 · §4.9 |
 | **S-9** — giá một chiếc **giò bán rời** có đúng bằng **9.000** không | **2026-09-08**, chưa hỏi | *suy ra:* **có** — luật 1 §4.6 nói giá một suất là **tổng giá các thành phần**, dòng *giò bán rời* gồm đúng một chiếc giò, và §4.2 định giá chiếc giò là 9.000 cho cả ba cột (giò không nhận nhân). Chủ quán 2026-09-08 chốt giò là **món bán rời khách gọi bao nhiêu cũng được**, nhưng **không** đọc ra giá của nó. ⇒ Nếu suy ra này sai — quán bán lẻ một chiếc giò đắt hơn giá nó đứng trong suất — thì ba ô ⚠ ở §4.3 sai, ca **12** của §4.8 sai, và luật 1 §4.6 có ngoại lệ đầu tiên kể từ khi được viết | §4.3 · §4.2 · §4.8 ca 12 |
+| **S-10** — chữ *offline* của U-100 gồm những gì | **2026-10-16**, chưa hỏi | *suy ra:* **mọi phần không phải giao hàng đặt online** — tại quán, mang đi, tới lấy, giao hàng đặt qua điện thoại. Lời chủ quán chỉ có hai chữ *giao hàng online* · *offline*; nếu *offline* thật ra chỉ là **giao hàng đặt ngoài web** (điện thoại) thì mục tổng quan còn thiếu một phần thứ ba cho bàn và mang đi | §8.6 |
 
 Mục này **không xoá** kể cả khi rỗng: chỗ suy ra tiếp theo phải nằm ở đây, tách khỏi §7.1
 (`work/findings.md` F-004). Thấy dòng nào trong repo còn nói *"§7.2 rỗng"* ⇒ đó là pointer cũ, sửa
@@ -1819,11 +1821,11 @@ chủ quán — đếm lại, đừng tin câu này (`work/findings.md` **F-003*
 
 | # | Chủ quán muốn thấy | Ghi chú |
 |---|---|---|
-| 1 | đang làm cho **bao nhiêu người ăn** | số khách đang được phục vụ |
-| 2 | **đưa ra được bao nhiêu** | phần đã ra bàn |
+| 1 | đang làm cho **bao nhiêu người ăn** | số khách đang được phục vụ — **đếm bằng số BÀN đang phục vụ** (chốt 2026-10-16, đóng U-097, khối ngay dưới) |
+| 2 | **đưa ra được bao nhiêu** | phần đã ra bàn — **có** tính mang đi và giao hàng, bày **tách** giao hàng online · offline (chốt 2026-10-16, đóng U-100) |
 | 3 | **còn thiếu bao nhiêu** | phần chưa ra bàn — cùng cặp với số 2 |
-| 4 | **bán được như nào rồi** | tiến độ bán trong buổi |
-| 5 | **số tiền dự tính đã bán được** | ⚠️ chữ *dự tính* là của chủ quán: đây là con số **tạm tính trong buổi**, **không** phải doanh thu đã đối soát (§6.10) và không bao giờ được bày ra như thể đã đối soát |
+| 4 | **bán được như nào rồi** | tiến độ bán trong buổi — **số bánh đã ra so với số bánh tối thiểu chủ quán nhập cho ngày** (chốt 2026-10-16, đóng U-098) |
+| 5 | **số tiền dự tính đã bán được** | ⚠️ chữ *dự tính* là của chủ quán: đây là con số **tạm tính trong buổi**, **không** phải doanh thu đã đối soát (§6.10) và không bao giờ được bày ra như thể đã đối soát. **Cộng giá các phần đã ra bàn** (chốt 2026-10-16, đóng U-099) |
 | 6 | có **bao nhiêu người đang làm** | **Số người thực tế đang làm ở quán** — chủ quán xác nhận 2026-09-27 (U-060, T-102). **POS khai và cập nhật con số này** — chủ quán chốt 2026-09-28 (đóng U-060, T-118); không tự lấy số vai hoặc số trạm làm con số này. |
 | 7 | **còn thiếu gì không** | **cả BA đường, không phải một** (chốt 2026-09-08, ba lượt): thiếu **NGUYÊN LIỆU** · thiếu **NGƯỜI** · thiếu **MÓN trên menu** — xem ngay dưới. Mỗi đường trỏ vào một tập **đã có chủ ở chỗ khác**, không đường nào có danh sách riêng ở đây (**F-001**): nguyên liệu → **Danh mục nguyên liệu** §8.4 · người → **bảng phân vai** §3 · món → **§4.9**. Chữ *thiếu* từ đâu ra: **nguyên liệu — máy KHÔNG kết luận, chủ quán tự đọc hai con số mua vào · đã dùng rồi tự kết luận** (chốt 2026-09-15, đóng `U-045`, §8.4), và **mục tổng quan bày ba thứ**: *thời gian nhập* · *tổng đã dùng* · *số thiếu = tổng đã nhập − tổng đã dùng* (chốt 2026-09-16, đóng `U-051`, §8.4); Mốc cộng dồn là ngày mua sản phẩm (U-054, lời bổ sung ghi nhận 2026-09-27, §8.4). ⛔ **Người** thì lời đầu tiên có ngày **2026-09-20** và đã về owner — **§8.8**, mốc đổi người **ở quầy** — nó phủ **một** trong năm trạm; nguồn cho cả quán có ngày **2026-09-28**: **POS khai số người thực tế** (hàng 6, đóng **`U-060`**) — *U-049 đóng 2026-09-08 (người đi giao là một trong bốn vai, POS chỉ định) và U-050 đóng 2026-09-15 (POS gánh trạm bị bỏ trống, khoảng trống do đi giao **không** là thiếu người) — cả hai ở §3* |
 
@@ -1836,6 +1838,29 @@ lấy bốn vai, năm trạm hay số người theo chấm công thay cho số t
 nguyên văn *"pos"* ⇒ **POS (người đứng quầy) khai và cập nhật** số người thực
 tế đang làm ở quán. Lời không nói cập nhật bao lâu một lần hay lúc nào; không
 tự đặt nhịp, và máy không tự tính con số này từ nguồn nào khác.
+
+**Năm vế còn hở của bảng — chủ quán trả lời 2026-10-16 (T-198), đóng U-097…U-101.** Chủ repo chuyển lời
+trong hội thoại, rồi chọn trong câu hỏi có sẵn phương án cho bốn chỗ lời có hai cách đọc (*lời chọn* dưới đây là
+lựa chọn ấy, cùng ngày, cùng người).
+
+- **Hàng 1 (U-097).** Nguyên văn *"pos sẽ nhập bàn đang phục vụ. và số lượng bánh đã đem ra cho các bàn"*. *Lời
+  chọn:* con số là **số BÀN đang phục vụ** — mỗi bàn POS mở là một; POS **không** nhập số khách của từng bàn. Vế
+  *số bánh đã đem ra* là hàng 2.
+- **Hàng 4 (U-098).** Nguyên văn *"mỗi ngày tôi sẽ nhập số lượng tối thiểu"*. *Lời chọn:* đơn vị là **số bánh
+  (cái)** ⇒ tiến độ là số bánh đã đem ra so với **số bánh tối thiểu chủ quán nhập cho ngày bán ấy**.
+- **Hàng 5 (U-099).** Nguyên văn *"số lượng bánh đem ra"*. *Lời chọn:* tiền tạm tính **cộng giá các phần đã ra
+  bàn**; phần chưa ra không tính. Nó vẫn là tạm tính, cảnh báo ở hàng 5 đứng nguyên.
+- **Hàng 2 · 3 (U-100).** Nguyên văn *"có tính ghi riêng số lượng giao hàng online và số lượng ofline"* ⇒ đơn mang
+  đi và giao hàng **có** vào hai con số này, và bày **tách hai phần**: giao hàng online · offline. *Chữ offline gồm
+  những gì là chỗ suy ra ⇒ **S-10** §7.2.*
+- **Hàng 7, vế người và món (U-101).** Nguyên văn *"so với số lượng tôi thiểu 1 ngayf sô lượng này chủ quán sẽ
+  nhập, thiếu món số lượng ít hơn số lượng khách đặt"*. *Lời chọn:* **số người tối thiểu là con số riêng** ⇒ mỗi
+  ngày chủ quán nhập **hai** số — bánh tối thiểu (hàng 4) và người tối thiểu; **thiếu người** khi số người đang làm
+  (hàng 6, POS khai) dưới người tối thiểu. **Thiếu món** khi một món có số đã đem ra **ít hơn** số khách đặt.
+
+*Cách đọc của phiên, chưa phải lời chủ quán* (`work/findings.md` **F-004**): ngày chủ quán chưa nhập số tối thiểu thì
+hàng 4 và vế thiếu người bày *chưa có*, không lấy số ngày trước; số tối thiểu là một số cho cả ngày, không chia theo
+trạm hay theo giờ — lời không nói chia.
 
 **Vế thứ bảy — *"còn thiếu gì không"* — chủ quán chốt 2026-09-08: thiếu NGUYÊN LIỆU.** Nguyên văn
 lượt ấy: *"về nguyên liệu hãy tham khảo «Danh mục nguyên liệu» tại `master_plan/shop-facts.md`"* ⇒

@@ -89,7 +89,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-199 **Mục tổng quan đủ số theo lời 2026-10-16** — lát lược đồ *số tối thiểu của ngày* (bánh · người, chủ quán nhập) + cửa ghi chủ quán + nối năm mục còn *chưa có* của `GET /owner-overview`: số bàn đang phục vụ, phần đã ra · còn thiếu gồm cả mang đi và giao hàng tách online · offline, tiến độ bánh, tạm tính, thiếu người · thiếu món — L2; Claude thiết kế (ADR cho cách tính tạm tính khi có combo) và viết test trước, Codex thi công; chờ commit P3A-07…09, vế thiếu người chờ `T-197` · [chi tiết](backlog_AD_BE.md#t-199)
+- [ ] T-199 **Mục tổng quan đủ số theo lời 2026-10-16** — lát lược đồ *số tối thiểu của ngày* (bánh · người, chủ quán nhập) + cửa ghi chủ quán + nối năm mục còn *chưa có* của `GET /owner-overview`: số bàn đang phục vụ, phần đã ra · còn thiếu gồm cả mang đi và giao hàng tách online · offline, tiến độ bánh, tạm tính, thiếu người · thiếu món — L2; Claude thiết kế (ADR cho cách tính tạm tính khi có combo) và viết test trước, Codex thi công; vế thiếu người chờ `T-197` · [chi tiết](backlog_AD_BE.md#t-199)
 - [ ] T-197 **Chỗ cất số người đang làm do POS khai** — §8.6 hàng 6 đã chốt (POS khai, đóng U-060) nhưng lược đồ chưa có chỗ cất: lát lược đồ + cửa ghi của POS + nối vào `GET /owner-overview` mục `workers_present` — L2 — mở 2026-10-16 từ P3A-09
 - [ ] P3A-10 **Đọc tổng kết** — theo ngày bán, món bán chạy; chờ `P3A-08` — L2 · [chi tiết](backlog_AD_BE.md#p3a-10)
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
