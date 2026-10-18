@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.35.0
+  version: 0.36.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -55,6 +55,37 @@ tags:
   - name: ket
     description: Két và ngày bán — tiền đầu ngày, đếm két, khai sổ giấy, ký đối chiếu ngày (06-duong-tien.md).
 paths:
+  /daily-minimums/{sale_date}:
+    put:
+      operationId: putDailyMinimum
+      tags: [tongquan]
+      summary: Chủ quán nhập cả hai số tối thiểu của một ngày bán.
+      description: Tạo hoặc sửa nguyên tử; không kế thừa ngày trước. Sửa có vết với lý do mã cửa tongquan/dat_toi_thieu. Cho phép ngày hợp lệ bất kỳ.
+      parameters:
+        - in: path
+          name: sale_date
+          required: true
+          schema:
+            $ref: '#/components/schemas/SaleDate'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DailyMinimumInput'
+      responses:
+        '200':
+          description: Hai số đã ghi cho ngày được chọn.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyMinimum'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /owner-overview:
     get:
       operationId: getOwnerOverview
@@ -63,15 +94,18 @@ paths:
       description: >-
         Chỉ chu_quan; không phiên trả unauthenticated, người khác kể cả POS trả owner_only.
         sale_date lấy mốc database theo múi giờ quán. Đây là ảnh hiện tại, không nhận ngày lịch sử.
-        Hai mục phần ra bàn dùng chung một lần đọc production-board, chỉ lấy parts có dining_table_id;
-        giữ từng nhóm thành phần và nhân, không cộng bánh, canh và nước chấm thành số suất.
-        Phạm vi là các phiên bàn còn mở của nguồn, không phải tổng đã bán trong ngày.
-        Nguyên liệu dùng lại supply-items và chi tiết từng thứ, cộng mọi ngày như nguồn hiện hành.
-        Các nguồn đọc trong giao dịch riêng, không bảo đảm một ảnh nguyên tử xuyên nguồn;
-        read_at của hai mục sản xuất là mốc riêng của bảng sản xuất.
-        Mục chưa đủ nguồn hoặc định nghĩa trả unavailable (chưa có), có name và reason; không trả số 0 giả.
-        provisional_sales chỉ là tiền TẠM TÍNH, hiện chưa có công thức; không trả số tiền.
-        Doanh thu đã đối soát không thuộc phản hồi này, không cộng hay thay bằng tiền két dự tính.
+        Phần đã ra và còn thiếu lấy từ DocGom, tách in_store (có bàn, kể cả đem về)
+        và online (không bàn), giữ nhóm thành phần và nhân. serving_guests đếm phiên chưa closed.
+        sales_progress đếm đơn vị (order_line_component_id, position) có mọi trạm served của thành phần chụp takes_filling trên đơn không huỷ
+        có created_at thuộc ngày bán hiện tại theo múi giờ quán, so với minimum_banh của đúng ngày.
+        provisional_sales cộng line_total_vnd của dòng không cha và mọi con khi tất cả việc của
+        đơn vị bán ấy served; cần có ít nhất một việc. Không chia giá combo, không trừ giảm cả đơn.
+        shortages.menu_items gom việc theo món hoặc combo gốc và tên chụp trên các đơn còn sống
+        như DocGom; ordered là số đơn vị thành phần, served là số đơn vị có mọi trạm served.
+        Việc không có thành phần là một việc/một đơn vị; không gán nước chấm cấp đơn cho món.
+        Nguyên liệu dùng lại sổ hiện hành. Các nguồn đọc riêng, không là ảnh nguyên tử xuyên nguồn.
+        Thiếu tối thiểu trả daily_minimum_missing; thiếu số người trả workers_present_missing.
+        Tiền tạm tính không phải doanh thu đã đối soát; doanh thu ấy không thuộc phản hồi này.
       responses:
         '200':
           description: Bảy mục cùng trạng thái và nguồn đã có.
@@ -3318,6 +3352,42 @@ components:
       name: banhcuon_phien
       description: Phiên đăng nhập theo ADR-109; HttpOnly, Secure, SameSite=Strict, hạn 7 ngày.
   schemas:
+    DailyMinimumInput:
+      type: object
+      additionalProperties: false
+      required: [minimum_banh, minimum_workers]
+      properties:
+        minimum_banh:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 2147483647
+        minimum_workers:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 2147483647
+    DailyMinimum:
+      type: object
+      additionalProperties: false
+      required: [sale_date, minimum_banh, minimum_workers, person_id, created_at]
+      properties:
+        sale_date:
+          $ref: '#/components/schemas/SaleDate'
+        minimum_banh:
+          type: integer
+          format: int32
+          minimum: 1
+        minimum_workers:
+          type: integer
+          format: int32
+          minimum: 1
+        person_id:
+          type: integer
+          format: int64
+          description: Người tạo; người sửa nằm trong record_revision.
+        created_at:
+          $ref: '#/components/schemas/Instant'
     OverviewUnavailable:
       type: object
       additionalProperties: false
@@ -3326,35 +3396,104 @@ components:
         status:
           type: string
           const: unavailable
-          description: Chưa có; không đồng nghĩa số không.
         name:
           type: string
         reason:
           type: string
-          enum:
-            - guest_count_source_missing
-            - sales_progress_definition_unspecified
-            - provisional_sales_formula_unspecified
-            - pos_headcount_source_missing
-            - staff_shortage_rule_unspecified
-            - menu_shortage_rule_unspecified
-    OverviewProvisionalSales:
-      description: Tiền bán TẠM TÍNH (§8.6 hàng 5), chưa có công thức được chốt; không phải doanh thu đã đối soát.
-      allOf:
+          enum: [daily_minimum_missing, workers_present_missing]
+        minimum_workers:
+          type: integer
+          format: int32
+          minimum: 1
+          description: Chỉ có khi đúng ngày đã nhập tối thiểu.
+    OverviewServingGuests:
+      type: object
+      additionalProperties: false
+      required: [status, name, quantity]
+      properties:
+        status:
+          const: available
+          type: string
+        name:
+          type: string
+        quantity:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Số phiên bàn chưa closed.
+    OverviewSalesProgress:
+      oneOf:
         - $ref: '#/components/schemas/OverviewUnavailable'
         - type: object
+          additionalProperties: false
+          required: [status, name, served_banh, minimum_banh]
           properties:
+            status:
+              type: string
+              const: available
             name:
               type: string
-              const: Tiền bán tạm tính
-            reason:
-              type: string
-              const: provisional_sales_formula_unspecified
+            served_banh:
+              type: integer
+              format: int64
+              minimum: 0
+            minimum_banh:
+              type: integer
+              format: int32
+              minimum: 1
+    OverviewProvisionalSales:
+      description: Tiền bán TẠM TÍNH; không phải doanh thu đã đối soát.
+      type: object
+      additionalProperties: false
+      required: [status, name, amount_vnd]
+      properties:
+        status:
+          type: string
+          const: available
+        name:
+          type: string
+          const: Tiền bán tạm tính
+        amount_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+    OverviewMenuShortages:
+      type: object
+      additionalProperties: false
+      required: [status, items]
+      properties:
+        status:
+          type: string
+          const: available
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [menu_item_id, menu_combo_id, name, ordered, served]
+            properties:
+              menu_item_id:
+                type: [integer, 'null']
+                format: int64
+              menu_combo_id:
+                type: [integer, 'null']
+                format: int64
+              name:
+                type: string
+              ordered:
+                type: integer
+                format: int64
+                minimum: 1
+              served:
+                type: integer
+                format: int64
+                minimum: 0
     OverviewPortion:
       type: object
       additionalProperties: false
-      required: [station_code, menu_component_id, component_name, filling_option_ids, quantity]
+      required: [group, station_code, menu_component_id, component_name, filling_option_ids, quantity]
       properties:
+        group:
+          type: string
+          enum: [in_store, online]
         station_code:
           type: string
         menu_component_id:
@@ -3371,7 +3510,7 @@ components:
           type: integer
           format: int64
           minimum: 0
-          description: Tổng served hoặc missing của parts có bàn trong đúng nhóm nguồn, không quy ra số khách hay số suất.
+          description: Tổng served hoặc missing của parts trong đúng nhóm nguồn và group, không quy ra số khách hay số suất.
     OverviewPortions:
       type: object
       additionalProperties: false
@@ -3410,7 +3549,7 @@ components:
         workers:
           $ref: '#/components/schemas/OverviewUnavailable'
         menu_items:
-          $ref: '#/components/schemas/OverviewUnavailable'
+          $ref: '#/components/schemas/OverviewMenuShortages'
     OwnerOverview:
       type: object
       additionalProperties: false
@@ -3424,13 +3563,13 @@ components:
           format: date-time
           description: Mốc kiểm quyền và quy ngày bán; từng nguồn đọc tiếp sau mốc này.
         serving_guests:
-          $ref: '#/components/schemas/OverviewUnavailable'
+          $ref: '#/components/schemas/OverviewServingGuests'
         served_portions:
           $ref: '#/components/schemas/OverviewPortions'
         missing_portions:
           $ref: '#/components/schemas/OverviewPortions'
         sales_progress:
-          $ref: '#/components/schemas/OverviewUnavailable'
+          $ref: '#/components/schemas/OverviewSalesProgress'
         provisional_sales:
           $ref: '#/components/schemas/OverviewProvisionalSales'
         workers_present:
@@ -6224,6 +6363,11 @@ components:
 # internal (không bao giờ là luật người dùng chạm tới) hoặc unreviewed (chưa lát nào xét — chạy như
 # internal_error). Lát dựng cửa chạm một bảng thì xét lại dòng của bảng ấy (01-hop-dong-api.md §4).
 x-constraint-errors:
+  daily_minimum_pkey: internal
+  daily_minimum_sale_date_key: internal
+  daily_minimum_person_fkey: internal
+  daily_minimum_banh_positive_check: invalid_request
+  daily_minimum_workers_positive_check: invalid_request
   account_decided_by_person_fkey: unreviewed
   account_email_check: invalid_request
   account_email_key: email_taken

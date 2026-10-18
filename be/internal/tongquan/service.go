@@ -1,4 +1,4 @@
-// Package tongquan gom các nguồn đọc cho chủ quán; không có cửa ghi (P3A-09).
+// Package tongquan gom nguồn đọc và giữ cửa số tối thiểu của ngày (T-199).
 package tongquan
 
 import (
@@ -14,16 +14,20 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// ChuaCo không có trường số: chưa biết không phải số 0.
+// ChuaCo không bịa số thực tế; có thể kèm mức tối thiểu đã nhập.
 type ChuaCo struct {
-	Status string `json:"status"`
-	Name   string `json:"name"`
-	Reason string `json:"reason"`
+	Status         string `json:"status"`
+	Name           string `json:"name"`
+	Reason         string `json:"reason,omitempty"`
+	MinimumWorkers *int32 `json:"minimum_workers,omitempty"`
 }
 
-func chuaCo(name, reason string) ChuaCo { return ChuaCo{"unavailable", name, reason} }
+func chuaCo(name, reason string) ChuaCo {
+	return ChuaCo{Status: "unavailable", Name: name, Reason: reason}
+}
 
 type Phan struct {
+	Group            string  `json:"group"`
 	StationCode      string  `json:"station_code"`
 	MenuComponentID  *int64  `json:"menu_component_id"`
 	ComponentName    string  `json:"component_name"`
@@ -42,19 +46,18 @@ type NguyenLieu struct {
 type Thieu struct {
 	Supplies  NguyenLieu `json:"supplies"`
 	Workers   ChuaCo     `json:"workers"`
-	MenuItems ChuaCo     `json:"menu_items"`
+	MenuItems ThieuMon   `json:"menu_items"`
 }
 
-// TongQuan có đúng bảy mục §8.6, ngoài metadata. Không có doanh thu đã đối soát
-// trong hình này. Tiền tạm tính chưa có công thức được chốt, không lấy số két thay thế.
+// TongQuan không chứa doanh thu đã đối soát.
 type TongQuan struct {
 	SaleDate         string    `json:"sale_date"`
 	ReadAt           time.Time `json:"read_at"`
-	ServingGuests    ChuaCo    `json:"serving_guests"`
+	ServingGuests    SoPhien   `json:"serving_guests"`
 	ServedPortions   CacPhan   `json:"served_portions"`
 	MissingPortions  CacPhan   `json:"missing_portions"`
-	SalesProgress    ChuaCo    `json:"sales_progress"`
-	ProvisionalSales ChuaCo    `json:"provisional_sales"`
+	SalesProgress    TienDo    `json:"sales_progress"`
+	ProvisionalSales TamTinh   `json:"provisional_sales"`
 	WorkersPresent   ChuaCo    `json:"workers_present"`
 	Shortages        Thieu     `json:"shortages"`
 }
@@ -66,6 +69,7 @@ func NewService(pool *pgxpool.Pool) *Service { return &Service{pool: pool} }
 func (s *Service) Doc(ctx context.Context, nguoi int64) (out TongQuan, err error) {
 	var ngay string
 	var moc time.Time
+	var tong soTong
 	// Kiểm quyền trước mọi nguồn; đóng giao dịch trước các service khác để không
 	// giữ một kết nối trong lúc chờ kết nối thứ hai (pool có thể chỉ có một).
 	err = authz.Read(ctx, s.pool, nguoi, authz.NeedOwner, func(tx pgx.Tx) error {
@@ -74,7 +78,12 @@ func (s *Service) Doc(ctx context.Context, nguoi int64) (out TongQuan, err error
 		if e != nil {
 			return e
 		}
-		ngay, e = newRepository(tx).ngay(ctx, moc)
+		repo := newRepository(tx)
+		ngay, e = repo.ngay(ctx, moc)
+		if e != nil {
+			return e
+		}
+		tong, e = repo.tong(ctx, ngay)
 		return e
 	})
 	if err != nil {
@@ -97,7 +106,11 @@ func (s *Service) Doc(ctx context.Context, nguoi int64) (out TongQuan, err error
 		}
 		details = append(details, detail)
 	}
-	return lap(ngay, moc, board, details)
+	out, err = lap(ngay, moc, board, details)
+	if err == nil {
+		out.apDung(tong)
+	}
+	return
 }
 
 func lap(ngay string, moc time.Time, raw json.RawMessage, supplies []nguyenlieu.ChiTiet) (TongQuan, error) {
@@ -121,33 +134,88 @@ func lap(ngay string, moc time.Time, raw json.RawMessage, supplies []nguyenlieu.
 	served := CacPhan{Status: "available", ReadAt: board.ReadAt, Rows: []Phan{}}
 	missing := CacPhan{Status: "available", ReadAt: board.ReadAt, Rows: []Phan{}}
 	for _, row := range board.Rows {
-		a := Phan{StationCode: row.StationCode, MenuComponentID: row.MenuComponentID, ComponentName: row.ComponentName, FillingOptionIDs: row.FillingOptionIDs}
-		b := a
-		coBan := false
-		for _, part := range row.Parts {
-			if part.DiningTableID == nil {
-				continue
+		for _, group := range []string{"in_store", "online"} {
+			a := Phan{Group: group, StationCode: row.StationCode, MenuComponentID: row.MenuComponentID, ComponentName: row.ComponentName, FillingOptionIDs: row.FillingOptionIDs}
+			if a.FillingOptionIDs == nil {
+				a.FillingOptionIDs = []int64{}
 			}
-			coBan = true
-			a.Quantity += part.Served
-			b.Quantity += part.Missing
-		}
-		if coBan {
-			served.Rows = append(served.Rows, a)
-			missing.Rows = append(missing.Rows, b)
+			b := a
+			co := false
+			for _, part := range row.Parts {
+				if (part.DiningTableID != nil) != (group == "in_store") {
+					continue
+				}
+				co = true
+				a.Quantity += part.Served
+				b.Quantity += part.Missing
+			}
+			if co {
+				served.Rows = append(served.Rows, a)
+				missing.Rows = append(missing.Rows, b)
+			}
 		}
 	}
 	return TongQuan{
 		SaleDate: ngay, ReadAt: moc,
-		ServingGuests:  chuaCo("Khách đang được phục vụ", "guest_count_source_missing"),
+		ServingGuests:  SoPhien{Status: "available", Name: "Khách đang được phục vụ"},
 		ServedPortions: served, MissingPortions: missing,
-		SalesProgress:    chuaCo("Tiến độ bán trong buổi", "sales_progress_definition_unspecified"),
-		ProvisionalSales: chuaCo("Tiền bán tạm tính", "provisional_sales_formula_unspecified"),
-		WorkersPresent:   chuaCo("Người thực tế đang làm", "pos_headcount_source_missing"),
+		SalesProgress:    TienDo{Status: "unavailable", Name: "Tiến độ bán trong buổi", Reason: "daily_minimum_missing"},
+		ProvisionalSales: TamTinh{Status: "available", Name: "Tiền bán tạm tính"},
+		WorkersPresent:   chuaCo("Người thực tế đang làm", "workers_present_missing"),
 		Shortages: Thieu{
 			Supplies:  NguyenLieu{Status: "available", Items: supplies},
-			Workers:   chuaCo("Thiếu người", "staff_shortage_rule_unspecified"),
-			MenuItems: chuaCo("Thiếu món trên menu", "menu_shortage_rule_unspecified"),
+			Workers:   chuaCo("Thiếu người", "workers_present_missing"),
+			MenuItems: ThieuMon{Status: "available", Items: []Mon{}},
 		},
 	}, nil
+}
+
+type SoPhien struct {
+	Status   string `json:"status"`
+	Name     string `json:"name"`
+	Quantity int64  `json:"quantity"`
+}
+type TienDo struct {
+	Status      string `json:"status"`
+	Name        string `json:"name"`
+	Reason      string `json:"reason,omitempty"`
+	ServedBanh  *int64 `json:"served_banh,omitempty"`
+	MinimumBanh *int32 `json:"minimum_banh,omitempty"`
+}
+type TamTinh struct {
+	Status    string `json:"status"`
+	Name      string `json:"name"`
+	AmountVnd int64  `json:"amount_vnd"`
+}
+type Mon struct {
+	MenuItemID  *int64 `json:"menu_item_id"`
+	MenuComboID *int64 `json:"menu_combo_id"`
+	Name        string `json:"name"`
+	Ordered     int64  `json:"ordered"`
+	Served      int64  `json:"served"`
+}
+type ThieuMon struct {
+	Status string `json:"status"`
+	Items  []Mon  `json:"items"`
+}
+type soTong struct {
+	Serving        int64  `json:"serving"`
+	ServedBanh     int64  `json:"served_banh"`
+	MinimumBanh    *int32 `json:"minimum_banh"`
+	MinimumWorkers *int32 `json:"minimum_workers"`
+	AmountVnd      int64  `json:"amount_vnd"`
+	MenuItems      []Mon  `json:"menu_items"`
+}
+
+func (out *TongQuan) apDung(t soTong) {
+	out.ServingGuests.Quantity = t.Serving
+	out.ProvisionalSales.AmountVnd = t.AmountVnd
+	if t.MinimumBanh != nil {
+		out.SalesProgress.Status = "available"
+		out.SalesProgress.Reason = ""
+		out.SalesProgress.MinimumBanh = t.MinimumBanh
+		out.SalesProgress.ServedBanh = &t.ServedBanh
+	}
+	out.Shortages.Workers.MinimumWorkers = t.MinimumWorkers
+	out.Shortages.MenuItems.Items = t.MenuItems
 }

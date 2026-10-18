@@ -271,3 +271,24 @@ và khi có dòng dùng trước ngày mua đầu tiên thì nhắc như thế n
 trả lần lượt `no_purchase`, `latest_purchase_zero`, `usage_before_first_purchase` và cờ null.
 Cờ dành để POS kiểm tra không cấp cho POS quyền đọc kho: phiếu chỉ cho chủ quán đọc; đường
 hiển thị/gửi lời nhắc tới POS cần bước tích hợp được giao riêng.
+
+T-199 (2026-10-18, phiếu Claude, ADR-118): hợp đồng 0.36.0 thêm cửa chủ quán
+`PUT /daily-minimums/{sale_date}` và nối các mục tổng quan. Hai số bắt buộc là integer dương;
+ngày nhận từ path vì chủ quán nhập cho ngày được chọn. Không hạn chế quá khứ/tương lai ngoài
+ngày lịch hợp lệ. Upsert cùng hai số, lý do sửa do cửa khai bằng mã cửa; không thêm yêu cầu nhập lý do.
+Nhận việc ánh xạ: hai check dương là invalid_request; PK do DB sinh, FK là người đã kiểm quyền,
+khoá duy nhất theo ngày được upsert giải quyết nên internal. Người/lúc trên kết quả là lần tạo,
+các lần sửa lưu trong record_revision.
+
+Lựa chọn kỹ thuật hẹp cần Claude duyệt: ngày của đơn lấy created_at quy bằng timezone PostgreSQL;
+đơn vị bán chưa có việc trạm không được tính đã ra hết. Tiền của đơn vị gồm tổng dòng gốc và con,
+bao gồm phụ thu con; không tính việc nước chấm cấp đơn vào đơn vị vì không trỏ dòng đơn.
+Thiếu món gom theo ID món/combo gốc và tên đã chụp;
+phạm vi đơn sống dùng đúng điều kiện DocGom. Phần có bàn và không bàn phân biệt bằng group
+in_store/online trên từng hàng, không đổi khoá thành phần và nhân.
+
+Claude sửa thiết kế ở vòng duyệt 1 (2026-10-18, T-199): tiến độ bánh và số đặt/đã ra
+của thiếu món đếm đơn vị `(order_line_component_id, position)`, không đếm số trạm.
+Một đơn vị đã ra khi mọi việc trạm của nó served; bánh chỉ lấy thành phần chụp takes_filling.
+Việc nước chấm cấp đơn không có thành phần vẫn là một việc/một đơn vị; không gán nó
+cho món hay combo vì không trỏ dòng đơn. Điều kiện da_ra của tiền tạm tính giữ nguyên.

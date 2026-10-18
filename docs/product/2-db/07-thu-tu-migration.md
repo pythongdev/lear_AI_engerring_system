@@ -56,6 +56,7 @@ ngược từ dưới lên, **từng bước một**.
 | 28 | `20261014180000_khoan_chi` | `P2A-05` | `expense_category` · `expense`, nguồn trên loại bất biến với vai ghi; trigger vết nghiêm; lùi chặn khi một trong hai bảng có dòng, gỡ khoản trước loại (ADR-106) | 8 · 20 |
 | 29 | `20261015120000_ban_combo` | `T-193` | `menu_combo_item_option_surcharge` và trigger vết, kiểm lựa chọn thuộc nhóm món mang; `order_line` thêm dòng combo và dòng suất con (`menu_combo_id`, `parent_order_line_id`, hai cột sinh ra, khoá ngoại về cha cùng đơn và cùng dấu đem về, trigger hoãn *ít nhất một dòng con*), `order_line_option` chặn lựa chọn trên dòng combo; lùi chặn khi có mức hay dòng combo/dòng con, trả hai NOT NULL (ADR-117) | 2 · 8 · 20 · 26 |
 | 30 | `20261015130000_ti_le_nhac_nguyen_lieu` | `T-186` · `P3A-08` | `supply_item.reminder_ratio`, mặc định cho cả dòng cũ; ràng buộc tỉ phần hữu hạn. Lùi chặn khi có bất kỳ dòng danh mục nào, kể cả giá trị mặc định; bảng rỗng thì gỡ cột và ràng buộc kèm theo | 9 |
+| 31 | `20261018120000_so_toi_thieu` | `T-199` | `daily_minimum`, hai số nguyên dương duy nhất theo ngày và trigger vết; vai ghi chỉ sửa hai số, không xoá; lùi chặn khi bảng có dòng, rỗng thì gỡ trigger và bảng (ADR-118 theo phiếu Claude 2026-10-18) | 8 · 20 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`

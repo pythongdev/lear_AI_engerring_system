@@ -4,6 +4,26 @@
  */
 
 export interface paths {
+    "/daily-minimums/{sale_date}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Chủ quán nhập cả hai số tối thiểu của một ngày bán.
+         * @description Tạo hoặc sửa nguyên tử; không kế thừa ngày trước. Sửa có vết với lý do mã cửa tongquan/dat_toi_thieu. Cho phép ngày hợp lệ bất kỳ.
+         */
+        put: operations["putDailyMinimum"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/owner-overview": {
         parameters: {
             query?: never;
@@ -13,7 +33,7 @@ export interface paths {
         };
         /**
          * Chủ quán đọc bảy mục tổng quan của shop-facts.md §8.6.
-         * @description Chỉ chu_quan; không phiên trả unauthenticated, người khác kể cả POS trả owner_only. sale_date lấy mốc database theo múi giờ quán. Đây là ảnh hiện tại, không nhận ngày lịch sử. Hai mục phần ra bàn dùng chung một lần đọc production-board, chỉ lấy parts có dining_table_id; giữ từng nhóm thành phần và nhân, không cộng bánh, canh và nước chấm thành số suất. Phạm vi là các phiên bàn còn mở của nguồn, không phải tổng đã bán trong ngày. Nguyên liệu dùng lại supply-items và chi tiết từng thứ, cộng mọi ngày như nguồn hiện hành. Các nguồn đọc trong giao dịch riêng, không bảo đảm một ảnh nguyên tử xuyên nguồn; read_at của hai mục sản xuất là mốc riêng của bảng sản xuất. Mục chưa đủ nguồn hoặc định nghĩa trả unavailable (chưa có), có name và reason; không trả số 0 giả. provisional_sales chỉ là tiền TẠM TÍNH, hiện chưa có công thức; không trả số tiền. Doanh thu đã đối soát không thuộc phản hồi này, không cộng hay thay bằng tiền két dự tính.
+         * @description Chỉ chu_quan; không phiên trả unauthenticated, người khác kể cả POS trả owner_only. sale_date lấy mốc database theo múi giờ quán. Đây là ảnh hiện tại, không nhận ngày lịch sử. Phần đã ra và còn thiếu lấy từ DocGom, tách in_store (có bàn, kể cả đem về) và online (không bàn), giữ nhóm thành phần và nhân. serving_guests đếm phiên chưa closed. sales_progress đếm đơn vị (order_line_component_id, position) có mọi trạm served của thành phần chụp takes_filling trên đơn không huỷ có created_at thuộc ngày bán hiện tại theo múi giờ quán, so với minimum_banh của đúng ngày. provisional_sales cộng line_total_vnd của dòng không cha và mọi con khi tất cả việc của đơn vị bán ấy served; cần có ít nhất một việc. Không chia giá combo, không trừ giảm cả đơn. shortages.menu_items gom việc theo món hoặc combo gốc và tên chụp trên các đơn còn sống như DocGom; ordered là số đơn vị thành phần, served là số đơn vị có mọi trạm served. Việc không có thành phần là một việc/một đơn vị; không gán nước chấm cấp đơn cho món. Nguyên liệu dùng lại sổ hiện hành. Các nguồn đọc riêng, không là ảnh nguyên tử xuyên nguồn. Thiếu tối thiểu trả daily_minimum_missing; thiếu số người trả workers_present_missing. Tiền tạm tính không phải doanh thu đã đối soát; doanh thu ấy không thuộc phản hồi này.
          */
         get: operations["getOwnerOverview"];
         put?: never;
@@ -1786,24 +1806,82 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        OverviewUnavailable: {
+        DailyMinimumInput: {
+            /** Format: int32 */
+            minimum_banh: number;
+            /** Format: int32 */
+            minimum_workers: number;
+        };
+        DailyMinimum: {
+            sale_date: components["schemas"]["SaleDate"];
+            /** Format: int32 */
+            minimum_banh: number;
+            /** Format: int32 */
+            minimum_workers: number;
             /**
-             * @description Chưa có; không đồng nghĩa số không.
-             * @constant
+             * Format: int64
+             * @description Người tạo; người sửa nằm trong record_revision.
              */
+            person_id: number;
+            created_at: components["schemas"]["Instant"];
+        };
+        OverviewUnavailable: {
+            /** @constant */
             status: "unavailable";
             name: string;
             /** @enum {string} */
-            reason: "guest_count_source_missing" | "sales_progress_definition_unspecified" | "provisional_sales_formula_unspecified" | "pos_headcount_source_missing" | "staff_shortage_rule_unspecified" | "menu_shortage_rule_unspecified";
+            reason: "daily_minimum_missing" | "workers_present_missing";
+            /**
+             * Format: int32
+             * @description Chỉ có khi đúng ngày đã nhập tối thiểu.
+             */
+            minimum_workers?: number;
         };
-        /** @description Tiền bán TẠM TÍNH (§8.6 hàng 5), chưa có công thức được chốt; không phải doanh thu đã đối soát. */
-        OverviewProvisionalSales: components["schemas"]["OverviewUnavailable"] & {
+        OverviewServingGuests: {
             /** @constant */
-            name?: "Tiền bán tạm tính";
+            status: "available";
+            name: string;
+            /**
+             * Format: int64
+             * @description Số phiên bàn chưa closed.
+             */
+            quantity: number;
+        };
+        OverviewSalesProgress: components["schemas"]["OverviewUnavailable"] | {
             /** @constant */
-            reason?: "provisional_sales_formula_unspecified";
+            status: "available";
+            name: string;
+            /** Format: int64 */
+            served_banh: number;
+            /** Format: int32 */
+            minimum_banh: number;
+        };
+        /** @description Tiền bán TẠM TÍNH; không phải doanh thu đã đối soát. */
+        OverviewProvisionalSales: {
+            /** @constant */
+            status: "available";
+            /** @constant */
+            name: "Tiền bán tạm tính";
+            amount_vnd: components["schemas"]["MoneyVnd"];
+        };
+        OverviewMenuShortages: {
+            /** @constant */
+            status: "available";
+            items: {
+                /** Format: int64 */
+                menu_item_id: number | null;
+                /** Format: int64 */
+                menu_combo_id: number | null;
+                name: string;
+                /** Format: int64 */
+                ordered: number;
+                /** Format: int64 */
+                served: number;
+            }[];
         };
         OverviewPortion: {
+            /** @enum {string} */
+            group: "in_store" | "online";
             station_code: string;
             /** Format: int64 */
             menu_component_id: number | null;
@@ -1811,7 +1889,7 @@ export interface components {
             filling_option_ids: number[];
             /**
              * Format: int64
-             * @description Tổng served hoặc missing của parts có bàn trong đúng nhóm nguồn, không quy ra số khách hay số suất.
+             * @description Tổng served hoặc missing của parts trong đúng nhóm nguồn và group, không quy ra số khách hay số suất.
              */
             quantity: number;
         };
@@ -1831,7 +1909,7 @@ export interface components {
         OverviewShortages: {
             supplies: components["schemas"]["OverviewSupplies"];
             workers: components["schemas"]["OverviewUnavailable"];
-            menu_items: components["schemas"]["OverviewUnavailable"];
+            menu_items: components["schemas"]["OverviewMenuShortages"];
         };
         OwnerOverview: {
             /** Format: date */
@@ -1841,10 +1919,10 @@ export interface components {
              * @description Mốc kiểm quyền và quy ngày bán; từng nguồn đọc tiếp sau mốc này.
              */
             read_at: string;
-            serving_guests: components["schemas"]["OverviewUnavailable"];
+            serving_guests: components["schemas"]["OverviewServingGuests"];
             served_portions: components["schemas"]["OverviewPortions"];
             missing_portions: components["schemas"]["OverviewPortions"];
-            sales_progress: components["schemas"]["OverviewUnavailable"];
+            sales_progress: components["schemas"]["OverviewSalesProgress"];
             provisional_sales: components["schemas"]["OverviewProvisionalSales"];
             workers_present: components["schemas"]["OverviewUnavailable"];
             shortages: components["schemas"]["OverviewShortages"];
@@ -3097,6 +3175,41 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    putDailyMinimum: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sale_date: components["schemas"]["SaleDate"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DailyMinimumInput"];
+            };
+        };
+        responses: {
+            /** @description Hai số đã ghi cho ngày được chọn. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyMinimum"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     getOwnerOverview: {
         parameters: {
             query?: never;
@@ -7011,7 +7124,8 @@ type ReadonlyArray<T> = [
     unknown[]
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
 export const pathsAccountsGetParametersQueryStatusValues: ReadonlyArray<FlattenedDeepRequired<paths>["/accounts"]["get"]["parameters"]["query"]["status"]> = ["cho_duyet", "hoat_dong", "khoa", "tu_choi"];
-export const overviewUnavailableReasonValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["OverviewUnavailable"]["reason"]> = ["guest_count_source_missing", "sales_progress_definition_unspecified", "provisional_sales_formula_unspecified", "pos_headcount_source_missing", "staff_shortage_rule_unspecified", "menu_shortage_rule_unspecified"];
+export const overviewUnavailableReasonValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["OverviewUnavailable"]["reason"]> = ["daily_minimum_missing", "workers_present_missing"];
+export const overviewPortionGroupValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["OverviewPortion"]["group"]> = ["in_store", "online"];
 export const assignedTaskGuideKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AssignedTaskGuide"]["kind"]> = ["text", "image", "video"];
 export const createAssignedTaskGuideKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CreateAssignedTaskGuide"]["kind"]> = ["text", "image", "video"];
 export const assignedTaskMarkMarkValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AssignedTaskMark"]["mark"]> = ["done", "undone"];

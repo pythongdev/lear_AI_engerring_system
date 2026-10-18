@@ -284,6 +284,7 @@ sql:
     schema: ../db/migrations
     queries:
       - internal/tongquan/sql
+      - internal/tongquan/sql/dat_toi_thieu
     gen:
       go:
         package: sqlcgen

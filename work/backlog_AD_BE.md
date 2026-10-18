@@ -408,24 +408,21 @@ chủ quán đặt.
 **Goal:** năm mục `GET /owner-overview` đang trả *chưa có* (P3A-09) trả số theo lời chủ quán 2026-10-16
 (`master_plan/shop-facts.md` §8.6, khối *Năm vế còn hở*). Mở 2026-10-16 · Claude Code (T-198).
 
-**Acceptance (nháp — Claude chốt trước khi giao):**
-- Lát lược đồ mới: mỗi ngày bán tối đa một bộ *số bánh tối thiểu* · *số người tối thiểu*, số nguyên dương, chủ quán
-  ghi, sửa được trong ngày, có vết người ghi; file lược đồ mới ở `docs/product/2-db/`, migration có đường lùi.
-- Cửa ghi chỉ lớp `chu_quan`; một hàng ma trận quyền; hợp đồng `openapi.yaml` tăng phiên bản.
-- `serving_guests` = số bàn đang phục vụ (bàn đang mở), không nhập số khách.
-- `served_portions` · `missing_portions` gồm cả phần không có bàn, tách hai nhóm giao hàng online · offline (đọc
-  *offline* theo **S-10** cho tới khi chủ quán xác nhận).
-- `sales_progress` = số bánh (cái) đã ra so với số bánh tối thiểu; ngày chưa nhập ⇒ *chưa có*, không lấy ngày trước.
-- `provisional_sales` = tổng giá các phần đã ra, vẫn gắn nhãn tạm tính, không đứng cạnh doanh thu đã đối soát.
-- `shortages.workers` = số người đang làm (`T-197`) dưới số người tối thiểu; một trong hai chưa có ⇒ *chưa có*.
-- `shortages.menu_items` = món có số đã ra ít hơn số khách đặt.
-- Test trước cho từng mục, gồm ca *chưa nhập tối thiểu*; `./scripts/gate.sh` xanh; Claude tự chạy be-check · db-check.
+**Thiết kế:** `docs/decisions.md` **ADR-118** (2026-10-18). Lời ba vế thi công: §8.6 *Ba vế thi công*.
 
-**Điểm thiết kế Claude phải chốt trước khi giao Codex** (không để Codex quyết): (1) *giá một phần đã ra* khi phần ấy
-thuộc combo — giá combo đặt riêng (§8.9) không bằng tổng thành phần, nên cần ADR chia hay tính theo dòng đơn;
-(2) thành phần nào được đếm là *bánh* cho hàng 4; (3) nguồn *online* là kênh nào trong năm kênh §2.
+**Acceptance:**
+- Lát lược đồ `daily_minimum` (ADR-118 điểm 1): migration xuôi · lùi, file `docs/product/2-db/21-luoc-do-so-toi-thieu.md`,
+  test database cho khoá duy nhất theo ngày, hai số dương, sửa có vết.
+- `PUT /daily-minimums/{sale_date}` chỉ `chu_quan`; hợp đồng tăng phiên bản; một hàng ma trận quyền; test 403 cho lớp khác.
+- `GET /owner-overview`: `serving_guests` (điểm 2); đã ra · còn thiếu tách `in_store` · `online` (điểm 3); `sales_progress`
+  (điểm 4); `provisional_sales` (điểm 5, có ca combo đã ra hết và ca combo ra dở); `shortages.menu_items` (điểm 6);
+  `shortages.workers` *chưa có* `workers_present_missing` (điểm 7); ngày chưa nhập tối thiểu ⇒ `daily_minimum_missing`.
+- `./scripts/gate.sh` xanh; Claude tự chạy be-check · db-check trong worktree hoặc clone chính.
 
-**Nền:** `be/internal/tongquan` đã ở `HEAD` từ commit P3A-07…09 (2026-10-16); worktree tạo từ đó.
+**Nhận việc:** 2026-10-18 · Claude Code (thiết kế, phiếu, duyệt) · Codex thi công ở `../lean_wt/T-199`, nhánh `codex/T-199`.
+Codex viết cả test (lệch ADR-054 vế *Claude viết test trước*, như P3A-09 — chủ repo giao *"codex cập nhật, bạn kiểm tra"*).
+
+*Bàn giao (2026-10-19):* thực hiện Codex (nhánh `codex/T-199` từ `0f9be2d`), duyệt Claude Code — vòng 1 (phiên 2026-10-18) bắt đếm trùng bánh theo việc trạm, hai test đỏ, tên test sai mệnh đề; phiên ấy dừng giữa vòng sửa, phiên 2026-10-19 nhận duyệt tiếp. Đã kiểm: đếm theo đơn vị `(order_line_component_id, position)`, đơn vị ra khi mọi trạm `served` (`TestQC14_ComboNgayHuyVaThieuMon`: một trạm ⇒ chưa tính, hai trạm ⇒ đúng một); tạm tính bỏ combo ra dở, đơn huỷ, ngày khác; ngày chưa nhập không lấy số trước; cửa ghi 401 · 403 cho lớp khác (`TestYC16_TongQuanChiChuQuanVaNgayBan`). Bằng chứng: gate xanh trong worktree và ở clone chính — be-check PASS, `db-check — 31 bước xuôi · lùi · xuôi lại`. Ghi nhận, không phải lỗi: vết sửa số tối thiểu mang lý do là mã cửa, ADR-118 không đòi lý do người gõ. Còn lại: `shortages.supplies` vẫn đọc từng thứ kèm cả sổ ngày — `T-200` vế (2); thiếu người chờ `T-197`; trang `P4A`.
 
 [↑ đầu file](#top)
 

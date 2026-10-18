@@ -1466,13 +1466,14 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-15 | Chủ repo trả lời lượt bảy trong hội thoại (P3A-06): giá mỗi combo **chủ quán tự đưa**; khách chọn nhân **riêng từng món** trong combo; phụ thu trong combo **chủ quán đặt theo từng món của combo**, không đếm +1.000 mỗi phần; mở U-096 | §8.9 |
 | 2026-10-15 | Chủ repo trả lời lượt tám trong hội thoại (P3A-11), chọn trong câu hỏi có sẵn phương án: lựa chọn chưa đặt mức trong combo **cộng 0đ** (đóng U-096); món nhiều suất trong combo **mỗi suất chọn nhân riêng**; mức phụ thu **cộng mỗi suất một lần**; mức phụ thu trong combo **khoá như giá combo** — chỉ đổi ngoài giờ bán | §8.9 |
 | 2026-10-16 | Chủ quán trả lời năm câu của mục tổng quan (T-198), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn phương án bốn vế: khách đang phục vụ **đếm bằng số bàn** (U-097); tiến độ là **số bánh đã ra so với số bánh tối thiểu chủ quán nhập mỗi ngày** (U-098); tạm tính **cộng giá các phần đã ra bàn** (U-099); mang đi và giao hàng **có** tính, bày **tách online · offline** (U-100, mở S-10); **thiếu người** so với **số người tối thiểu chủ quán nhập mỗi ngày**, **thiếu món** là món đã ra ít hơn khách đặt (U-101) | §8.6 |
+| 2026-10-18 | Chủ repo trả lời ba vế thi công của mục tổng quan (T-199): tạm tính phần thuộc combo **không tính giá thành phần**; *bánh* của tiến độ là **bánh cuốn và bánh trứng**; **offline là bán hàng tại quán** (đóng **S-10**, suy ra 2026-10-16: *offline* gồm cả giao hàng đặt qua điện thoại — lời mới hẹp hơn: chỉ tại quán) | §8.6 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
 Mục này giữ những chỗ được **suy ra** từ luật đã chốt chứ không phải lời chủ quán nói thẳng. Bốn
 mục S-1–S-4 từng nằm đây đều đã được chủ quán xác nhận và đã lên §7.1; còn **bốn** mục chưa xác
 nhận — ~~**S-5**~~ (2026-09-01, T-039; **có lời 2026-10-09**, xem bảng) · **S-6** (2026-09-04, T-055) · **S-7** (2026-09-04, T-056) ·
-**S-8** (2026-09-08, T-068) · **S-9** (2026-09-08, T-069) · **S-10** (2026-10-16, T-198).
+**S-8** (2026-09-08, T-068) · **S-9** (2026-09-08, T-069). ~~**S-10**~~ (2026-10-16, T-198) có lời 2026-10-18, đã lên §7.1.
 
 S-5 và S-6 sinh ra cùng một kiểu: chủ quán trả lời **ai bấm**, và câu hỏi còn một vế **bấm theo gì
 / bấm lúc nào** mà lời ấy không chạm tới. **S-7 là kiểu thứ hai**: chủ quán trả lời về **cả ngày**
@@ -1498,7 +1499,6 @@ chứ đừng tin câu này (`work/findings.md` **F-003** · **F-018**).
 | **S-7** — cửa sổ **06:00–11:00** của §1 có phải **đúng một buổi bán** | **2026-09-04**, chưa hỏi | *suy ra:* **có** — chủ quán nói *"quán chỉ bán buổi sáng"* (`A1`) và *"cứ đến giờ là bán"* (`A2`), nên cửa sổ giờ duy nhất quán có cũng là buổi duy nhất quán bán. Chủ quán **không** đọc ra một mốc bắt đầu và một mốc kết thúc của *buổi*; hai câu ấy nói về **cả ngày** chứ không nói về một buổi trong nhiều buổi. ⇒ Nếu suy ra này sai thì có buổi thứ hai ngoài 06:00–11:00, và §6.23 · **ADR-038** · **I-021** đều phải viết lại | §1 · §6.23 · **ADR-038** |
 | **S-8** — mục tổng quan §8.6 có bày **cả ba** đường của vế *"còn thiếu gì"* (nguyên liệu · người · món) không | **2026-09-08**, chưa hỏi | *suy ra:* **có** — chủ quán trả lời đúng ba vế câu hỏi đã đưa ra, theo thứ tự ấy (*"nguyên liệu và con người đã có, đối với menu…"*), nên ba vế được đọc là ba thứ mục tổng quan bày. Chủ quán **không** nói thẳng *"mục tổng quan hiện cả ba"*, và chữ *"đã có"* cũng có thể chỉ nghĩa là *hai thứ ấy hệ thống ghi ở đâu đó rồi*. ⇒ Nếu suy ra này sai thì §8.6 hàng 7 chỉ còn **một** đường (nguyên liệu), và §4.9 vẫn đứng nguyên vì nó là **menu**, không phải một dòng của mục tổng quan | §8.6 · §4.9 |
 | **S-9** — giá một chiếc **giò bán rời** có đúng bằng **9.000** không | **2026-09-08**, chưa hỏi | *suy ra:* **có** — luật 1 §4.6 nói giá một suất là **tổng giá các thành phần**, dòng *giò bán rời* gồm đúng một chiếc giò, và §4.2 định giá chiếc giò là 9.000 cho cả ba cột (giò không nhận nhân). Chủ quán 2026-09-08 chốt giò là **món bán rời khách gọi bao nhiêu cũng được**, nhưng **không** đọc ra giá của nó. ⇒ Nếu suy ra này sai — quán bán lẻ một chiếc giò đắt hơn giá nó đứng trong suất — thì ba ô ⚠ ở §4.3 sai, ca **12** của §4.8 sai, và luật 1 §4.6 có ngoại lệ đầu tiên kể từ khi được viết | §4.3 · §4.2 · §4.8 ca 12 |
-| **S-10** — chữ *offline* của U-100 gồm những gì | **2026-10-16**, chưa hỏi | *suy ra:* **mọi phần không phải giao hàng đặt online** — tại quán, mang đi, tới lấy, giao hàng đặt qua điện thoại. Lời chủ quán chỉ có hai chữ *giao hàng online* · *offline*; nếu *offline* thật ra chỉ là **giao hàng đặt ngoài web** (điện thoại) thì mục tổng quan còn thiếu một phần thứ ba cho bàn và mang đi | §8.6 |
 
 Mục này **không xoá** kể cả khi rỗng: chỗ suy ra tiếp theo phải nằm ở đây, tách khỏi §7.1
 (`work/findings.md` F-004). Thấy dòng nào trong repo còn nói *"§7.2 rỗng"* ⇒ đó là pointer cũ, sửa
@@ -1851,12 +1851,21 @@ lựa chọn ấy, cùng ngày, cùng người).
 - **Hàng 5 (U-099).** Nguyên văn *"số lượng bánh đem ra"*. *Lời chọn:* tiền tạm tính **cộng giá các phần đã ra
   bàn**; phần chưa ra không tính. Nó vẫn là tạm tính, cảnh báo ở hàng 5 đứng nguyên.
 - **Hàng 2 · 3 (U-100).** Nguyên văn *"có tính ghi riêng số lượng giao hàng online và số lượng ofline"* ⇒ đơn mang
-  đi và giao hàng **có** vào hai con số này, và bày **tách hai phần**: giao hàng online · offline. *Chữ offline gồm
-  những gì là chỗ suy ra ⇒ **S-10** §7.2.*
+  đi và giao hàng **có** vào hai con số này, và bày **tách hai phần**: giao hàng online · offline. **Offline là bán hàng tại quán** (chủ repo trả lời 2026-10-18, T-199,
+  nguyên văn *"offline là bán hàng tại quán"*; đóng **S-10**).
 - **Hàng 7, vế người và món (U-101).** Nguyên văn *"so với số lượng tôi thiểu 1 ngayf sô lượng này chủ quán sẽ
   nhập, thiếu món số lượng ít hơn số lượng khách đặt"*. *Lời chọn:* **số người tối thiểu là con số riêng** ⇒ mỗi
   ngày chủ quán nhập **hai** số — bánh tối thiểu (hàng 4) và người tối thiểu; **thiếu người** khi số người đang làm
   (hàng 6, POS khai) dưới người tối thiểu. **Thiếu món** khi một món có số đã đem ra **ít hơn** số khách đặt.
+
+**Ba vế thi công — chủ repo trả lời 2026-10-18 (T-199), trong hội thoại.** (1) Tiền tạm tính của một phần thuộc combo:
+nguyên văn *"không tính giá thành phần"* ⇒ phần thuộc combo **không** quy ra giá thành phần; combo mang giá combo của
+nó. (2) *"Bánh"* của hàng 4: nguyên văn *"bánh trứng và bánh cuốn"* ⇒ đếm **bánh cuốn** và **bánh trứng** (quả trứng
+chín · tái · vàng, §4.2); giò và canh không đếm. (3) *Offline*: nguyên văn *"offline là bán hàng tại quán"*.
+
+*Cách đọc của phiên, chưa phải lời chủ quán* (**F-004**): *online* là mọi phần **không** bán tại quán — giao hàng, tới
+lấy, đặt trước qua điện thoại — vì lời U-100 chia đúng hai phần. Cách máy cộng tạm tính theo lời (1) là thiết kế,
+ở `docs/decisions.md` **ADR-118**.
 
 *Cách đọc của phiên, chưa phải lời chủ quán* (`work/findings.md` **F-004**): ngày chủ quán chưa nhập số tối thiểu thì
 hàng 4 và vế thiếu người bày *chưa có*, không lấy số ngày trước; số tối thiểu là một số cho cả ngày, không chia theo

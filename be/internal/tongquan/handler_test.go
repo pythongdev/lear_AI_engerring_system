@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -65,6 +66,16 @@ func TestYC16_TongQuanChiChuQuanVaNgayBan(t *testing.T) {
 			t.Fatalf("quyền: %d %s", w.Code, w.Body.String())
 		}
 	}
+	// Nhân viên không trực cũng không được nhập tối thiểu.
+	req := httptest.NewRequest("PUT", "/daily-minimums/2087-02-01", strings.NewReader(`{"minimum_banh":100,"minimum_workers":2}`))
+	req.Header.Set("Content-Type", "application/json")
+	req.AddCookie(&http.Cookie{Name: "banhcuon_phien", Value: testhelper.Session(t, nhanvien)})
+	denied := httptest.NewRecorder()
+	r.ServeHTTP(denied, req)
+	if denied.Code != 403 || !strings.Contains(denied.Body.String(), `"owner_only"`) {
+		t.Fatalf("nhân viên ghi được: %d %s", denied.Code, denied.Body.String())
+	}
+
 	// Người đang trực quầy cũng bị từ chối; đóng khoảng test khi xong.
 	var duty int64
 	err = pgx.BeginFunc(ctx, owner, func(tx pgx.Tx) error {
@@ -95,6 +106,54 @@ func TestYC16_TongQuanChiChuQuanVaNgayBan(t *testing.T) {
 	if w.Code != 403 {
 		t.Fatalf("POS đọc được: %d %s", w.Code, w.Body.String())
 	}
+
+	put := func(person int64, day, body string) *httptest.ResponseRecorder {
+		req := httptest.NewRequest("PUT", "/daily-minimums/"+day, strings.NewReader(body))
+		req.Header.Set("Content-Type", "application/json")
+		if person > 0 {
+			req.AddCookie(&http.Cookie{Name: "banhcuon_phien", Value: testhelper.Session(t, person)})
+		}
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+		return w
+	}
+	for _, tc := range []struct {
+		person int64
+		status int
+		code   string
+	}{{0, 401, "unauthenticated"}, {nhanvien, 403, "owner_only"}} {
+		w := put(tc.person, "2087-02-01", `{"minimum_banh":100,"minimum_workers":2}`)
+		var out struct{ Code string }
+		_ = json.Unmarshal(w.Body.Bytes(), &out)
+		if w.Code != tc.status || out.Code != tc.code {
+			t.Fatalf("quyền ghi: %d %s", w.Code, w.Body.String())
+		}
+	}
+	for _, body := range []string{`{}`, `{"minimum_banh":0,"minimum_workers":1}`, `{"minimum_banh":1,"minimum_workers":-1}`, `{"minimum_banh":1.5,"minimum_workers":1}`, `{"minimum_banh":2147483648,"minimum_workers":1}`} {
+		if w := put(chu, "2087-02-01", body); w.Code != 400 {
+			t.Fatalf("hình sai được nhận: %d %s", w.Code, w.Body.String())
+		}
+	}
+	if w := put(chu, "2087-02-30", `{"minimum_banh":1,"minimum_workers":1}`); w.Code != 400 {
+		t.Fatal("ngày sai được nhận")
+	}
+	for _, body := range []string{`{"minimum_banh":100,"minimum_workers":2}`, `{"minimum_banh":120,"minimum_workers":3}`} {
+		w := put(chu, "2087-02-01", body)
+		var out tongquan.ToiThieu
+		if err := json.Unmarshal(w.Body.Bytes(), &out); err != nil {
+			t.Fatal(err)
+		}
+		if w.Code != 200 || out.SaleDate != "2087-02-01" || out.PersonID <= 0 || out.CreatedAt.IsZero() {
+			t.Fatalf("ghi: %d %s", w.Code, w.Body.String())
+		}
+	}
+	var n int
+	if err := owner.QueryRow(ctx, `SELECT count(*) FROM shop.daily_minimum WHERE sale_date='2087-02-01' AND minimum_banh=120 AND minimum_workers=3`).Scan(&n); err != nil || n != 1 {
+		t.Fatalf("upsert: %d %v", n, err)
+	}
+	if err := owner.QueryRow(ctx, `SELECT count(*) FROM shop.record_revision WHERE target_table_code='daily_minimum' AND person_id=$1 AND before_image->>'minimum_banh'='100' AND after_image->>'minimum_banh'='120'`, chu).Scan(&n); err != nil || n < 1 {
+		t.Fatalf("vết cửa: %d %v", n, err)
+	}
 	// Mốc sát nửa đêm quán: ngày máy UTC vẫn là 14, ngày bán đã sang 15.
 	cu := ngayban.DongHo
 	ngayban.DongHo = func(context.Context, pgx.Tx) (time.Time, error) {
@@ -105,11 +164,36 @@ func TestYC16_TongQuanChiChuQuanVaNgayBan(t *testing.T) {
 	var out struct {
 		SaleDate         string                  `json:"sale_date"`
 		ProvisionalSales struct{ Status string } `json:"provisional_sales"`
+		SalesProgress    struct {
+			Status      string
+			Reason      string
+			MinimumBanh *int32 `json:"minimum_banh"`
+		} `json:"sales_progress"`
+		Shortages struct {
+			Workers struct {
+				Reason         string
+				MinimumWorkers *int32 `json:"minimum_workers"`
+			} `json:"workers"`
+		} `json:"shortages"`
 	}
 	if err = json.Unmarshal(w.Body.Bytes(), &out); err != nil {
 		t.Fatal(err)
 	}
-	if w.Code != 200 || out.SaleDate != "2026-10-15" || out.ProvisionalSales.Status != "unavailable" {
+	if w.Code != 200 || out.SaleDate != "2026-10-15" || out.ProvisionalSales.Status != "available" {
 		t.Fatalf("ngày bán/quyền chủ: %d %s", w.Code, w.Body.String())
 	}
+	if out.SalesProgress.Status != "unavailable" || out.SalesProgress.Reason != "daily_minimum_missing" || out.Shortages.Workers.Reason != "workers_present_missing" {
+		t.Fatalf("hình chưa có: %s", w.Body.String())
+	}
+	ngayban.DongHo = func(context.Context, pgx.Tx) (time.Time, error) {
+		return time.Date(2087, 2, 1, 0, 0, 0, 0, time.UTC), nil
+	}
+	w = get(chu)
+	if err := json.Unmarshal(w.Body.Bytes(), &out); err != nil {
+		t.Fatal(err)
+	}
+	if w.Code != 200 || out.SalesProgress.Status != "available" || out.SalesProgress.MinimumBanh == nil || *out.SalesProgress.MinimumBanh != 120 || out.Shortages.Workers.MinimumWorkers == nil || *out.Shortages.Workers.MinimumWorkers != 3 {
+		t.Fatalf("tối thiểu qua GET: %d %s", w.Code, w.Body.String())
+	}
+
 }

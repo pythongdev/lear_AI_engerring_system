@@ -267,6 +267,8 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"daily_minimum_banh_positive_check":            CodeInvalidRequest,
+	"daily_minimum_workers_positive_check":         CodeInvalidRequest,
 	"menu_item_name_key":                           CodeMenuItemNameConflict,
 	"menu_component_name_key":                      CodeMenuComponentNameConflict,
 	"menu_item_name_not_blank_check":               CodeInvalidRequest,

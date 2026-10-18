@@ -118,6 +118,15 @@ type CounterDuty struct {
 	CreatedAt pgtype.Timestamptz
 }
 
+type DailyMinimum struct {
+	ID             int64
+	SaleDate       pgtype.Date
+	MinimumBanh    int32
+	MinimumWorkers int32
+	PersonID       int64
+	CreatedAt      pgtype.Timestamptz
+}
+
 type DebtCollection struct {
 	ID                 int64
 	BillID             int64
