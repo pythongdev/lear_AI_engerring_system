@@ -134,6 +134,7 @@ có câu trả lời mới từ người.
 | ADR-115 | **Cửa danh mục món** (`P3A-05`): mọi đường lớp `chu_quan` kể cả đọc; đọc riêng `GET /menu-categories`, không đưa danh mục vào `GET /menu`; ẩn được danh mục còn món, món về nhóm *chưa xếp*; chuyển món đòi lý do, xếp lần đầu không; không đường bỏ xếp | Đã chốt 2026-10-15 (Claude, phiếu P3A-05) | — | `P3A-05` · ADR-110 · ADR-108 |
 | ADR-116 | **Cửa combo của chủ quán** (`P3A-06`): lập · đổi giá · ẩn · đọc, lớp `chu_quan` kể cả đọc; đổi giá đòi lý do và bị từ chối trong giờ bán; giờ bán dời về `ngayban`; bán combo tách sang `P3A-11` (L3) | Đã chốt 2026-10-15 (Claude, phiếu P3A-06; tách bước: chủ repo) | — | `P3A-06` · `P3A-11` · ADR-108 · ADR-110 |
 | ADR-117 | **Bán combo** (`P3A-11`): mức phụ thu theo món của combo là bảng riêng, chưa đặt = 0đ; combo trên đơn là dòng combo mang giá combo cùng các dòng suất con mang mức, trong chính `order_line` — tổng đơn vẫn là Σ `line_total_vnd`; `gia.Tinh` học combo; bốn lát `T-193`…`T-196` | Đã chốt 2026-10-15 (Claude viết, chủ repo duyệt) | — | `P3A-11` · I-034 · ADR-086 · ADR-116 |
+| ADR-118 | **Mục tổng quan đủ số** (`T-199`): bảng `daily_minimum` một dòng một ngày bán (bánh · người, chủ quán ghi, sửa có vết); tạm tính = Σ `line_total_vnd` của đơn vị bán đã ra hết, combo theo giá combo, không quy giá thành phần; *bánh* = thành phần `takes_filling`; tại quán = phần có bàn | Đã chốt 2026-10-18 (Claude viết theo lời chủ repo cùng ngày) | — | `T-199` · `T-197` · P3A-09 · ADR-117 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7649,3 +7650,75 @@ phải nhớ cộng thêm một bảng. Điểm 1 giữ mức combo tách khỏi
 **Applies to:** `db/migrations/` (lát mới) · `docs/product/2-db/` (file lát mới) · `be/internal/gia/` · `be/internal/don/` ·
 `be/internal/hoadon/` · `be/internal/combo/` · `docs/product/3-be/03-ham-gia.md` · `openapi.yaml`; `I-034` · `I-009` ·
 `I-010` · `I-013` · `I-032`; **ADR-086** · **ADR-108** · **ADR-116**.
+
+<a id="adr-118"></a>
+### ADR-118 — Mục tổng quan đủ số: số tối thiểu của ngày, tạm tính theo đơn vị bán đã ra hết, bánh là thành phần nhận nhân
+
+**Trạng thái:** **Đã chốt** 2026-10-18 — Claude Code viết theo lời chủ repo cùng ngày (`T-199`). Lời quán: `master_plan/shop-facts.md`
+§8.6, khối *Năm vế còn hở* (2026-10-16, đóng U-097…U-101) và *Ba vế thi công* (2026-10-18). Mọi điểm dưới đây là **lựa chọn
+của phiên**, không phải lời quán.
+
+**Context:** `GET /owner-overview` (P3A-09, `be/internal/tongquan`) trả *chưa có* cho khách, tiến độ, tạm tính, thiếu người,
+thiếu món, và chỉ đếm phần của bàn. Lời quán nay đủ, nhưng máy chưa có chỗ cất số tối thiểu chủ quán nhập mỗi ngày, và
+việc trạm (`station_job`) đếm theo **thành phần**, còn tiền nằm ở **dòng đơn** (`order_line.line_total_vnd`; dòng combo mang
+giá combo, dòng con mang mức — ADR-117).
+
+**Decision:**
+
+1. **Bảng mới `daily_minimum`**: một dòng cho một ngày bán (khoá duy nhất), `minimum_banh` và `minimum_workers` là số nguyên
+   dương, người ghi và lúc ghi; sửa có vết (`record_revision_capture`), không xoá. Cửa ghi `PUT /daily-minimums/{sale_date}`
+   lớp `chu_quan`, tạo hoặc sửa cả hai số một lần. Ngày chưa có dòng ⇒ mục cần nó trả *chưa có* với lý do
+   `daily_minimum_missing`; không lấy số ngày trước.
+2. **Khách đang phục vụ** = số `table_session` chưa `closed` (đang mở, đang phục vụ, chờ trả tiền).
+3. **Đã ra · còn thiếu** đọc từ `sanxuat.DocGom` như P3A-09 nhưng không bỏ phần không bàn: tách hai nhóm, **tại quán**
+   (phần có `dining_table_id`, kể cả dòng đem về của bàn) và **online** (phần không bàn: giao hàng, tới lấy, đặt trước
+   qua điện thoại).
+4. **Bánh** = thành phần có `takes_filling` — theo §4.2 đúng bánh cuốn và trứng nhận nhân, giò và canh thì không. **Tiến độ**
+   = số việc trạm `served` của thành phần ấy, trên đơn không huỷ của ngày bán hiện tại, so với `minimum_banh`.
+5. **Tạm tính** = Σ `line_total_vnd` của mọi **đơn vị bán** đã ra hết trong ngày bán hiện tại, đơn không huỷ. Đơn vị bán là
+   một dòng không cha cùng mọi dòng con của nó (combo = dòng combo + suất con); *đã ra hết* = mọi việc trạm của các dòng ấy
+   `served`. Không chia giá combo ra thành phần, không trừ giảm giá cả đơn; nhãn *tạm tính* giữ nguyên.
+6. **Thiếu món** = mỗi món (hoặc combo) trên các đơn đang sống có số việc trạm `served` ít hơn số việc đã đặt; trả tên,
+   số đặt, số đã ra.
+7. **Thiếu người** = số người đang làm < `minimum_workers`. Số người đang làm chưa có chỗ cất (`T-197`) ⇒ tới khi nó xong,
+   mục trả *chưa có* với lý do `workers_present_missing` kèm `minimum_workers` nếu đã nhập.
+
+**Rejected alternatives:** *chia giá combo theo tỉ lệ thành phần* — trái lời *"không tính giá thành phần"*; *cộng tạm tính
+theo từng cái bánh đã ra* — cùng lý do, và dòng thường cũng mất phụ thu; *thêm cột "là bánh" cho thành phần* — một cột
+mới để nói điều `takes_filling` đã nói; xem lại nếu quán thêm một thành phần nhận nhân mà không phải bánh; *lấy số tối
+thiểu của ngày trước khi ngày này chưa nhập* — chủ quán nói *mỗi ngày* nhập.
+
+**Applies to:** `db/migrations/` (lát mới) · `docs/product/2-db/` (file lát mới) · `be/internal/tongquan/` · cửa ghi mới ·
+`docs/product/3-be/openapi.yaml` · `docs/product/3-be/02-vai-va-quyen.md`; **ADR-117** · `T-197`.
+
+### ADR-119 — Lời nhắc kiểm tra kho tới POS: một đường đọc riêng cho quầy, chỉ tên thứ cần kiểm, nhận tín hiệu sẵn có
+
+**Trạng thái:** **Đã chốt** 2026-10-18 — Claude Code (`T-201`, duyệt lại `P3A-08`). Lời quán: người nhận nhắc là **POS**,
+việc của POS là **kiểm tra**, nhắc khi phần còn lại dưới tỉ lệ của lần nhập gần nhất (`master_plan/shop-facts.md` §8.4
+*Sửa 2026-10-14* và lượt bốn). Mọi điểm dưới đây là **lựa chọn của phiên**, không phải lời quán.
+
+**Context:** `P3A-08` tính cờ `check_reminder` trong `GET /supply-stock`, nhưng cửa ấy chỉ lớp `chu_quan` đọc, kèm tổng
+nhập, tổng dùng, hiệu số và cả sổ ngày. POS đứng quầy không đọc được gì, nên lời nhắc chưa tới người chủ quán chỉ định.
+Màn quầy đã nhận tín hiệu `changed` sau mọi cửa ghi qua `GET /counter/events` (**ADR-097** điểm 1–2).
+
+**Decision:**
+
+1. **Đường đọc mới `GET /supply-check-reminders`**, lớp `quay_hoac_chu_quan` (POS đang đứng quầy, hoặc chủ quán). Không mở
+   `GET /supply-stock` cho POS.
+2. **Chỉ trả thứ đang cần kiểm**: mỗi dòng `supply_item_id` · `name` · `purchase_unit`, cho đúng các thứ có
+   `reminder_status = ready` và `check_reminder = true`; kèm `read_at`. Con số (tổng nhập, tổng dùng, hiệu số, tỉ lệ, lần
+   nhập gần nhất) vẫn chỉ chủ quán đọc: POS cần biết **thứ nào** phải kiểm, không cần con số để kiểm bằng mắt; mở rộng sau
+   là thêm trường, không phải lùi quyền.
+3. **Một chỗ tính cờ**: đường mới đọc từ cùng truy vấn `be/internal/nguyenlieu/sql/doc.sql` (hoặc lọc kết quả của nó),
+   không chép phép so sánh. Thứ ở ba trạng thái chưa có mốc (**U-102**) không xuất hiện — đúng hành vi hiện tại, không
+   quyết thay chủ quán.
+4. **Không đường đẩy mới**: màn quầy gọi lại đường đọc này khi nhận `changed` hay `hello` từ `GET /counter/events`, và theo
+   chu kỳ kéo sẵn có. Ghi sổ ngày hay đổi tỉ lệ đã là cửa ghi, nên đã phát tín hiệu.
+5. Máy vẫn **không** kết luận thiếu, không tắt món, không đặt hàng; POS không có cửa ghi nào mới.
+
+**Rejected alternatives:** *cho POS đọc `GET /supply-stock`* — lộ toàn bộ con số và sổ ngày cho người chỉ cần biết thứ nào
+phải kiểm; *một luồng SSE riêng cho kho* — ADR-097 đã có tín hiệu đọc lại cho quầy, thêm luồng là thêm một thứ phải giữ sống;
+*bày lời nhắc trên `GET /counter/queue`* — trộn kho vào hàng đơn chờ xác nhận, hai thứ đổi theo nhịp khác nhau.
+
+**Applies to:** `be/internal/nguyenlieu/` · `docs/product/3-be/openapi.yaml` · `docs/product/3-be/01-hop-dong-api.md` ·
+`docs/product/3-be/02-vai-va-quyen.md` · `fe/src/lib/api/schema.ts`; **ADR-097** · **ADR-112** · `P3A-08` · **U-102**.
