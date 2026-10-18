@@ -206,7 +206,8 @@ func (h handler) themMon(c *gin.Context) {
 	if !apierr.ReadJSON(c.Writer, c.Request, &p) {
 		return
 	}
-	if strings.TrimSpace(p.Name) == "" {
+	p.Name = strings.TrimSpace(p.Name)
+	if p.Name == "" {
 		saiTruong(c, "name")
 		return
 	}
@@ -218,10 +219,12 @@ func (h handler) themMon(c *gin.Context) {
 		saiTruong(c, "components")
 		return
 	}
-	for i, tp := range p.Components {
+	for i := range p.Components {
+		p.Components[i].Name = strings.TrimSpace(p.Components[i].Name)
+		tp := p.Components[i]
 		field := ""
 		switch {
-		case strings.TrimSpace(tp.Name) == "":
+		case tp.Name == "":
 			field = "name"
 		case tp.BasePriceVnd == nil || *tp.BasePriceVnd < 0:
 			field = "base_price_vnd"
@@ -254,7 +257,9 @@ func (h handler) doiTenMon(c *gin.Context) {
 	if !apierr.ReadJSON(c.Writer, c.Request, &p) {
 		return
 	}
-	if strings.TrimSpace(p.Name) == "" {
+	p.Name = strings.TrimSpace(p.Name)
+	p.Reason = strings.TrimSpace(p.Reason)
+	if p.Name == "" {
 		saiTruong(c, "name")
 		return
 	}

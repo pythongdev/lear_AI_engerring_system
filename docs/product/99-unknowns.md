@@ -138,6 +138,13 @@ phạm vi của nó ở `master_plan/shop-facts.md` **§8.8**.
   (3) **tên miền** chính thức của trang web. Kèm một việc duyệt chữ: câu mô tả hiện dưới tên quán trên Google, bản
   nháp ở `fe/src/app/layout.tsx`. Ai trả lời: chủ quán (1, 2, chữ mô tả), chủ repo (3). Chặn gì: JSON-LD chưa có
   `address` · `openingHours`; chưa có canonical và `sitemap.xml` cho tới khi đặt `BANHCUON_SITE_URL`. Không chặn bán hàng.
+- **U-102** — Ba lúc máy chưa biết có nên nhắc POS kiểm tra một nguyên liệu không (mở 2026-10-18, T-200, từ câu Codex ghi
+  khi làm P3A-08): (1) thứ ấy **chưa có lần nhập nào**; (2) **lần nhập gần nhất ghi 0**; (3) sổ có **ngày dùng trước ngày
+  nhập đầu tiên**. Lời nhắc của chủ quán so phần còn lại với *một tỉ lệ của lần nhập gần nhất* (`master_plan/shop-facts.md`
+  §8.4, lượt bốn 2026-10-14), nên ba lúc này không có mốc để so. Ai trả lời: chủ quán. Chặn gì: hiện máy **không nhắc** ở
+  cả ba lúc (cờ `check_reminder` để trống, trạng thái `no_purchase` · `latest_purchase_zero` ·
+  `usage_before_first_purchase`, `docs/product/3-be/01-hop-dong-api.md` mục P3A-08); POS có thể không được nhắc một thứ
+  đang dùng mà chưa ai ghi nhập. Không chặn bán hàng.
 
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
@@ -164,7 +171,7 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 ### Đã có lời giải — không ghi lại thành Unknown nữa
 
 **Chủ quán trả lời 2026-10-16 (T-198), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn phương án
-bốn vế.** Lời đáp đã vào owner (`master_plan/shop-facts.md` §8.6; chữ *offline* là chỗ suy ra **S-10** §7.2).
+bốn vế.** Lời đáp đã vào owner (`master_plan/shop-facts.md` §8.6; chữ *offline* từng là chỗ suy ra **S-10**, có lời 2026-10-18: bán hàng tại quán).
 
 <a id="u-097"></a>
 <a id="u-098"></a>

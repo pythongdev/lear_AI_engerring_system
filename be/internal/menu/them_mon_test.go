@@ -192,3 +192,91 @@ func TestI032_ThemDoiTenMonTuChoiKhongGhi(t *testing.T) {
 		t.Fatal("từ chối mà có vết")
 	}
 }
+
+func TestI032_ThemMonCatTenVaTrungTen(t *testing.T) {
+	k := dung(t)
+	chu := k.nguoi(t, "chủ", true)
+	dm := k.id(t, `INSERT INTO shop.menu_category(name,person_id) VALUES ($1,$2) RETURNING id`, t.Name(), chu)
+	ten := "test-" + t.Name()
+	body := monMoiBody(ten, dm)
+	body["name"] = " \t" + ten + " \n"
+	for i, tp := range body["components"].([]any) {
+		tp.(map[string]any)["name"] = fmt.Sprintf(" \t%s-c%d \n", ten, i+1)
+	}
+	res := k.goi(t, "POST", "/menu-items", chu, body)
+	if res.status != 201 || res.body["name"] != ten {
+		t.Fatalf("tạo phải trả tên đã cắt: %v", res)
+	}
+	id := int64(res.body["menu_item_id"].(float64))
+	if n := k.id(t, `SELECT count(*) FROM shop.menu_item WHERE id=$1 AND name=$2`, id, ten); n != 1 {
+		t.Fatal("tên món lưu chưa cắt")
+	}
+	for i := 1; i <= 2; i++ {
+		if n := k.id(t, `SELECT count(*) FROM shop.menu_component WHERE name=$1`, fmt.Sprintf("%s-c%d", ten, i)); n != 1 {
+			t.Fatalf("tên thành phần %d lưu chưa cắt", i)
+		}
+	}
+	// Tên thành phần mới không trùng để lỗi chỉ có thể đến từ tên món.
+	bad := monMoiBody(ten+" khác", dm)
+	bad["name"] = " " + ten + " "
+	tuChoi(t, k.goi(t, "POST", "/menu-items", chu, bad), 409, "menu_item_name_conflict", "")
+	if n := k.id(t, `SELECT count(*) FROM shop.menu_item WHERE btrim(name)=$1`, ten); n != 1 {
+		t.Fatal("thêm dòng món dù tên trùng sau khi cắt")
+	}
+}
+
+func TestI032_DoiTenMonCatTenVaTrungTen(t *testing.T) {
+	k := dung(t)
+	chu := k.nguoi(t, "chủ", true)
+	dm := k.id(t, `INSERT INTO shop.menu_category(name,person_id) VALUES ($1,$2) RETURNING id`, t.Name(), chu)
+	ten := "test-" + t.Name()
+	a := k.goi(t, "POST", "/menu-items", chu, monMoiBody(ten, dm))
+	b := k.goi(t, "POST", "/menu-items", chu, monMoiBody(ten+" khác", dm))
+	if a.status != 201 || b.status != 201 {
+		t.Fatalf("tạo: %v %v", a, b)
+	}
+	id := int64(b.body["menu_item_id"].(float64))
+	path := fmt.Sprintf("/menu-items/%d", id)
+	tuChoi(t, k.goi(t, "PUT", path, chu, map[string]any{"name": " " + ten + " ", "reason": "test"}), 409, "menu_item_name_conflict", "")
+	if n := k.id(t, `SELECT count(*) FROM shop.menu_item WHERE id=$1 AND name=$2`, id, ten+" khác"); n != 1 {
+		t.Fatal("tên đổi dù bị từ chối")
+	}
+	res := k.goi(t, "PUT", path, chu, map[string]any{"name": " \t" + ten + " mới \n", "reason": " \tđổi tên \n"})
+	if res.status != 200 || res.body["name"] != ten+" mới" {
+		t.Fatalf("đổi tên phải trả tên đã cắt: %v", res)
+	}
+	if n := k.id(t, `SELECT count(*) FROM shop.menu_item WHERE id=$1 AND name=$2`, id, ten+" mới"); n != 1 {
+		t.Fatal("tên đổi lưu chưa cắt")
+	}
+	if n := k.id(t, `SELECT count(*) FROM shop.record_revision WHERE target_table_code='menu_item' AND target_row=$1 AND person_id=$2 AND reason='đổi tên' AND after_image->>'name'=$3`, id, chu, ten+" mới"); n != 1 {
+		t.Fatal("thiếu vết tên và lý do đã cắt")
+	}
+}
+
+func TestI032_ThemMonDanhMucSaiLuiGiaoDich(t *testing.T) {
+	for _, c := range []struct {
+		name   string
+		status int
+		code   string
+	}{
+		{"khong_ton_tai", 404, "menu_category_not_found"},
+		{"da_an", 409, "menu_category_hidden"},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			k := dung(t)
+			chu := k.nguoi(t, "chủ", true)
+			dm := int64(9000000000)
+			if c.name == "da_an" {
+				dm = k.id(t, `INSERT INTO shop.menu_category(name,person_id,hidden_at,hidden_by_person_id) VALUES ($1,$2,now(),$2) RETURNING id`, t.Name(), chu)
+			}
+			ten := "test-" + t.Name()
+			tuChoi(t, k.goi(t, "POST", "/menu-items", chu, monMoiBody(ten, dm)), c.status, c.code, "")
+			if n := k.id(t, `SELECT count(*) FROM shop.menu_item WHERE name=$1`, ten); n != 0 {
+				t.Fatal("món sót khi danh mục không hợp lệ")
+			}
+			if n := k.id(t, `SELECT count(*) FROM shop.menu_component WHERE name IN ($1,$2)`, ten+"-c1", ten+"-c2"); n != 0 {
+				t.Fatal("thành phần sót khi danh mục không hợp lệ")
+			}
+		})
+	}
+}
