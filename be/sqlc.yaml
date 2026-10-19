@@ -290,3 +290,12 @@ sql:
         package: sqlcgen
         out: internal/tongquan/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/tongket/sql
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/tongket/internal/sqlcgen
+        sql_package: pgx/v5

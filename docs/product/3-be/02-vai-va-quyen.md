@@ -61,6 +61,8 @@ trong giao dịch. Vai trên tài khoản chỉ chọn khung màn, không mở q
 nó thêm, **cùng lượt**: một dòng ở bảng này kèm nguồn, một hằng ở `be/internal/authz/`, test từ chối qua
 `authz.Run`. Không thêm lớp *cho đủ* trước khi có cửa dùng nó.
 
+**Cửa đọc tổng kết (P3A-10, 2026-10-19):** `GET /sale-days/{sale_date}/summary` thuộc lớp `chu_quan`; không phiên trả unauthenticated, người khác kể cả đang đứng quầy trả owner_only (phiếu Claude, ADR-120).
+
 **Cửa đọc tổng quan (P3A-09, 2026-10-15):** `GET /owner-overview` thuộc lớp
 `chu_quan`, theo `master_plan/shop-facts.md` §8.6 và phiếu P3A-09.
 `authz.Read` kiểm trước khi đọc các nguồn; POS không phải chủ quán bị `owner_only`,

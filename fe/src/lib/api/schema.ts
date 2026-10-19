@@ -4,6 +4,26 @@
  */
 
 export interface paths {
+    "/sale-days/{sale_date}/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Chủ quán đọc bốn mục tổng kết của một ngày bán.
+         * @description Lớp chu_quan; không phiên trả 401 unauthenticated, người khác kể cả POS trả 403 owner_only. Ngày phải là YYYY-MM-DD hợp lệ; sai trả 400 invalid_request, field sale_date trước quyền và database. Doanh thu cộng bill.due_vnd theo ngày bill, tách phiên bàn và đơn lẻ; trừ refund có bill_id theo ngày hoàn. Không cộng thu nợ hoặc nhận trả trước, không trừ trả lại trả trước. total_vnd có thể âm. Món bán chạy chỉ lấy đơn không cancelled thuộc hoá đơn của ngày; items gồm suất con combo, quantity con đã là số suất, không nhân cha; combos đếm dòng combo riêng. Tên hiện hành, gom theo mã, xếp quantity giảm rồi mã tăng. Mảng rỗng là []. Staff gồm người có worked hoặc ít nhất một số khác 0, xếp person_id tăng. worked lấy ô chấm công chưa huỷ; counter_orders đếm mọi kênh tạo trong khoảng trực [started_at, ended_at), ended_at null là đang trực; deliveries lấy người trên bill của đơn is_door_delivery; cancellations lấy người trên vết chuyển sales_order từ khác cancelled sang cancelled; refunds đếm cả hai loại hoàn theo người và ngày hoàn. Ngày của created_at/revised_at theo múi giờ phiên database. Doanh thu, món và staff đọc cùng giao dịch. Trạng thái két dùng phép đọc sẵn có của ket, độc lập số đếm két; chưa có dấu trả null, vẫn trả số sổ giấy còn chờ. supply_reminders là kết quả hiện tại của /supply-check-reminders, không phải ảnh lịch sử của ngày chọn. Các service nguồn đọc riêng, không là ảnh nguyên tử xuyên nguồn.
+         */
+        get: operations["getSaleDaySummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/daily-minimums/{sale_date}": {
         parameters: {
             query?: never;
@@ -1830,6 +1850,58 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        SaleDaySummary: {
+            revenue: components["schemas"]["SummaryRevenue"];
+            best_sellers: components["schemas"]["SummaryBestSellers"];
+            supply_reminders: components["schemas"]["SupplyCheckReminders"];
+            staff: components["schemas"]["SummaryStaff"][];
+        };
+        SummaryRevenue: {
+            table_session_vnd: components["schemas"]["MoneyVnd"];
+            standalone_vnd: components["schemas"]["MoneyVnd"];
+            refunds_vnd: components["schemas"]["MoneyVnd"];
+            /**
+             * Format: int64
+             * @description Đồng; table_session_vnd + standalone_vnd - refunds_vnd, có thể âm.
+             */
+            total_vnd: number;
+            /** @enum {string|null} */
+            reconciliation_status: "reconciled" | "reopened" | null;
+            /** Format: int64 */
+            paper_entries_pending: number;
+        };
+        SummaryBestSellers: {
+            items: components["schemas"]["SummaryItem"][];
+            combos: components["schemas"]["SummaryCombo"][];
+        };
+        SummaryItem: {
+            /** Format: int64 */
+            menu_item_id: number;
+            name: string;
+            /** Format: int64 */
+            quantity: number;
+        };
+        SummaryCombo: {
+            /** Format: int64 */
+            menu_combo_id: number;
+            name: string;
+            /** Format: int64 */
+            quantity: number;
+        };
+        SummaryStaff: {
+            /** Format: int64 */
+            person_id: number;
+            display_name: string;
+            worked: boolean;
+            /** Format: int64 */
+            counter_orders: number;
+            /** Format: int64 */
+            deliveries: number;
+            /** Format: int64 */
+            cancellations: number;
+            /** Format: int64 */
+            refunds: number;
+        };
         DailyMinimumInput: {
             /** Format: int32 */
             minimum_banh: number;
@@ -3213,6 +3285,37 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    getSaleDaySummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sale_date: components["schemas"]["SaleDate"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Bốn mục tổng kết; ngày chưa có dữ liệu vẫn trả 200. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SaleDaySummary"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     putDailyMinimum: {
         parameters: {
             query?: never;

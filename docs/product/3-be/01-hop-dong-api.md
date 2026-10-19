@@ -308,3 +308,14 @@ T-200 (2026-10-19, phiếu Claude): tăng MINOR 0.37.0 → 0.38.0; mỗi phần 
 `GET /supply-stock` (schema SupplyItem), không mang sổ ngày `entries`.
 Đọc một lần bằng `nguyenlieu.Doc`, giữ nguyên tổng nhập, tổng dùng, hiệu số
 và các trường nhắc kiểm tra; không đọc chi tiết từng nguyên liệu. Sinh lại type FE.
+
+
+P3A-10 (2026-10-19, phiếu Claude, ADR-120): hợp đồng 0.39.0 thêm
+`GET /sale-days/{sale_date}/summary`, lớp `chu_quan`. Ngày nhận từ path để chủ quán chọn
+ngày tổng kết; kiểm hình trước quyền. Bốn mục gồm doanh thu theo I-014, món bán chạy,
+nhắc kiểm tra nguyên liệu hiện tại và số thao tác của từng người, không chấm điểm.
+Riêng `total_vnd` là hiệu doanh thu và hoàn trong ngày nên được âm, dùng schema số nguyên
+có dấu thay vì MoneyVnd. `ket.DocTrangThaiNgay` tái dùng phép đọc dấu và sổ giấy,
+không cần số đếm két; chưa có dấu vẫn trả null và số lượt giấy còn chờ đúng.
+Doanh thu, món và staff cùng một giao dịch; két và nguyên liệu đọc riêng như tổng quan,
+không hứa ảnh nguyên tử xuyên nguồn. Không cửa ghi mới; sinh lại type FE.

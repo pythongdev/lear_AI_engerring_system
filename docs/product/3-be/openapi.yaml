@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.38.0
+  version: 0.39.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -16,6 +16,8 @@ security:
   - PersonIdentity: []
 # Nhóm trong Swagger UI = gói miền dưới be/internal/ đăng ký đường gọi ấy (chỉ để đọc, không phải luật).
 tags:
+  - name: tongket
+    description: Tổng kết một ngày bán, chỉ chủ quán (P3A-10).
   - name: tongquan
     description: Tổng quan chỉ đọc cho chủ quán (P3A-09).
   - name: combo
@@ -55,6 +57,47 @@ tags:
   - name: ket
     description: Két và ngày bán — tiền đầu ngày, đếm két, khai sổ giấy, ký đối chiếu ngày (06-duong-tien.md).
 paths:
+  /sale-days/{sale_date}/summary:
+    get:
+      operationId: getSaleDaySummary
+      tags: [tongket]
+      summary: Chủ quán đọc bốn mục tổng kết của một ngày bán.
+      description: >-
+        Lớp chu_quan; không phiên trả 401 unauthenticated, người khác kể cả POS trả 403 owner_only.
+        Ngày phải là YYYY-MM-DD hợp lệ; sai trả 400 invalid_request, field sale_date trước quyền và database.
+        Doanh thu cộng bill.due_vnd theo ngày bill, tách phiên bàn và đơn lẻ; trừ refund có bill_id theo ngày hoàn.
+        Không cộng thu nợ hoặc nhận trả trước, không trừ trả lại trả trước. total_vnd có thể âm.
+        Món bán chạy chỉ lấy đơn không cancelled thuộc hoá đơn của ngày; items gồm suất con combo,
+        quantity con đã là số suất, không nhân cha; combos đếm dòng combo riêng. Tên hiện hành, gom theo mã,
+        xếp quantity giảm rồi mã tăng. Mảng rỗng là [].
+        Staff gồm người có worked hoặc ít nhất một số khác 0, xếp person_id tăng.
+        worked lấy ô chấm công chưa huỷ; counter_orders đếm mọi kênh tạo trong khoảng trực [started_at, ended_at),
+        ended_at null là đang trực; deliveries lấy người trên bill của đơn is_door_delivery;
+        cancellations lấy người trên vết chuyển sales_order từ khác cancelled sang cancelled;
+        refunds đếm cả hai loại hoàn theo người và ngày hoàn. Ngày của created_at/revised_at theo múi giờ phiên database.
+        Doanh thu, món và staff đọc cùng giao dịch. Trạng thái két dùng phép đọc sẵn có của ket,
+        độc lập số đếm két; chưa có dấu trả null, vẫn trả số sổ giấy còn chờ.
+        supply_reminders là kết quả hiện tại của /supply-check-reminders, không phải ảnh lịch sử của ngày chọn.
+        Các service nguồn đọc riêng, không là ảnh nguyên tử xuyên nguồn.
+      parameters:
+        - in: path
+          name: sale_date
+          required: true
+          schema:
+            $ref: '#/components/schemas/SaleDate'
+      responses:
+        '200':
+          description: Bốn mục tổng kết; ngày chưa có dữ liệu vẫn trả 200.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaleDaySummary'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /daily-minimums/{sale_date}:
     put:
       operationId: putDailyMinimum
@@ -3376,6 +3419,112 @@ components:
       name: banhcuon_phien
       description: Phiên đăng nhập theo ADR-109; HttpOnly, Secure, SameSite=Strict, hạn 7 ngày.
   schemas:
+    SaleDaySummary:
+      type: object
+      additionalProperties: false
+      required: [revenue, best_sellers, supply_reminders, staff]
+      properties:
+        revenue:
+          $ref: '#/components/schemas/SummaryRevenue'
+        best_sellers:
+          $ref: '#/components/schemas/SummaryBestSellers'
+        supply_reminders:
+          $ref: '#/components/schemas/SupplyCheckReminders'
+        staff:
+          type: array
+          items:
+            $ref: '#/components/schemas/SummaryStaff'
+    SummaryRevenue:
+      type: object
+      additionalProperties: false
+      required: [table_session_vnd, standalone_vnd, refunds_vnd, total_vnd, reconciliation_status, paper_entries_pending]
+      properties:
+        table_session_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        standalone_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        refunds_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        total_vnd:
+          type: integer
+          format: int64
+          description: Đồng; table_session_vnd + standalone_vnd - refunds_vnd, có thể âm.
+        reconciliation_status:
+          type: [string, 'null']
+          enum: [reconciled, reopened, null]
+        paper_entries_pending:
+          type: integer
+          format: int64
+          minimum: 0
+    SummaryBestSellers:
+      type: object
+      additionalProperties: false
+      required: [items, combos]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SummaryItem'
+        combos:
+          type: array
+          items:
+            $ref: '#/components/schemas/SummaryCombo'
+    SummaryItem:
+      type: object
+      additionalProperties: false
+      required: [menu_item_id, name, quantity]
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        quantity:
+          type: integer
+          format: int64
+          minimum: 1
+    SummaryCombo:
+      type: object
+      additionalProperties: false
+      required: [menu_combo_id, name, quantity]
+      properties:
+        menu_combo_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        quantity:
+          type: integer
+          format: int64
+          minimum: 1
+    SummaryStaff:
+      type: object
+      additionalProperties: false
+      required: [person_id, display_name, worked, counter_orders, deliveries, cancellations, refunds]
+      properties:
+        person_id:
+          type: integer
+          format: int64
+        display_name:
+          type: string
+        worked:
+          type: boolean
+        counter_orders:
+          type: integer
+          format: int64
+          minimum: 0
+        deliveries:
+          type: integer
+          format: int64
+          minimum: 0
+        cancellations:
+          type: integer
+          format: int64
+          minimum: 0
+        refunds:
+          type: integer
+          format: int64
+          minimum: 0
     DailyMinimumInput:
       type: object
       additionalProperties: false

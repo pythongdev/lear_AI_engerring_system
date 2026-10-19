@@ -31,7 +31,7 @@ lược đồ nào đã dựng, và làm theo thứ tự nào để trang nào c
 | `P4A-04` sản phẩm | thêm món · sửa thông tin món (sửa giá, thành phần, ngừng bán đã có ở pha 3) | lát menu `P2-05` | `P3A-07` |
 | `P4A-09` kho | tổng mua · tổng dùng · hiệu số · nhắc POS khi dưới tỉ lệ | `P2A-02` + `T-186` | `P3A-08` |
 | `P4A-02` tổng quan | bảy thứ §8.6 — phần lớn đọc từ cửa đã có; một cửa đọc gom cho chủ quán | mọi lát bán hàng | `P3A-09` |
-| `P4A-03` tổng kết | doanh thu theo ngày bán · món bán chạy · cảnh báo sắp hết | mọi lát + `P3A-08` | `P3A-10` |
+| `P4A-03` tổng kết | doanh thu theo ngày bán · món bán chạy · cảnh báo sắp hết · số đếm theo người — **có cửa 2026-10-19**: `GET /sale-days/{sale_date}/summary` | mọi lát + `P3A-08` | `P3A-10` |
 
 **Lát đã dựng mà chưa trang nào cần:** chấm công (`P2A-03`), tạm ứng và thưởng (`P2A-04`). Không bước nào ở đây
 cho chúng — trang của chúng là việc của sổ FE admin, không phải câu hỏi chủ quán (`work/backlog_FE_AD.md`).

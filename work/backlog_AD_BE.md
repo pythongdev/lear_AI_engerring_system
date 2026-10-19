@@ -437,4 +437,17 @@ Codex viết cả test (lệch ADR-054 vế *Claude viết test trước*, như 
 Acceptance ở `work/backlog.md`.
 **Nhận việc:** 2026-10-19 — dẫn Claude Code, thi công Codex (nhánh `codex/P3A-10`).
 
+*Bàn giao (2026-10-19):* thực hiện Codex (nhánh `codex/P3A-10` từ `446fee2`, Codex viết cả test theo lời chủ repo *"yêu
+cầu codex làm bạn kiểm tra"*), duyệt Claude Code. Vòng 1 Codex dừng đúng phiếu: `ket.DocSo` trả `cash_day_incomplete` khi
+ngày chưa đếm két và bỏ luôn số lượt giấy chưa nhập ⇒ Claude cho thêm `ket.DocTrangThaiNgay` (dấu đối soát + sổ giấy, không
+đổi cửa cũ). Vòng 2: code xong, Codex không tới được Docker. Claude chạy be-check: một test đỏ vì dữ liệu dựng ghi dấu đối
+soát mà số đếm két và tiền đầu két không có dòng mệnh giá — Claude tự thêm hai dòng ở
+`be/internal/tongket/testdata/http.sql`. Thử đột biến: bỏ phép trừ hoàn ⇒ `TestI014_BanThuHaiHoanThuTu` đỏ; bỏ điều kiện
+*trước đó chưa huỷ* ⇒ `TestQC14_StaffBayTruongKhoangTrucVaNguoiBam` đỏ. Bằng chứng: bốn `TestI014_*`,
+`TestQC14_BanChayComboSuatConHuyChuaHoaDonVaThuTu`, `TestQC14_StaffBayTruongKhoangTrucVaNguoiBam`,
+`TestQC14_SummaryQuyenHinhSoGiayVaNhacKiemTra` (401 · 403 người thường và người đứng quầy · 400 · ngày trống · khai 3 nhập 1
+⇒ còn 2 · reconciled · reopened · cùng tập với `/supply-check-reminders`), `TestQC14_NgaySaiTruocQuyenVaDatabase`;
+`be-check: PASS` và `./scripts/gate.sh` xanh ở clone chính. Ghi nhận: két và kho đọc ngoài giao dịch của doanh thu, hợp
+đồng ghi rõ không hứa ảnh nguyên tử xuyên nguồn. Còn lại: trang `P4A-03`.
+
 [↑ đầu file](#top)
