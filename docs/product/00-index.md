@@ -122,7 +122,7 @@ Các lát lược đồ sau **thêm** dòng vào bảng này, không ghi đè d�
 | **Luồng mang đi** — liên hệ, dấu lần gửi, giờ bán và khoảng ngừng nhận đơn, rời quán và chỗ trống S-6 (P3-08, ADR-088) | [3-be/05-luong-mang-di.md](3-be/05-luong-mang-di.md) |
 | **Đường tiền** — hoá đơn đơn lẻ, hoàn, thu nợ, trả trước, đồng hồ ngày bán, đếm két và ký ngày ở ngưỡng 0đ (P3-09, ADR-089) | [3-be/06-duong-tien.md](3-be/06-duong-tien.md) |
 | **Sản xuất theo mẻ** — nổ đơn, bấm/lùi mẻ, ra bàn, chuyển phần đã làm, ghi chú bánh làm sai, huỷ đơn và một hàm gom nhu cầu (P3-10, ADR-090) | [3-be/07-san-xuat-theo-me.md](3-be/07-san-xuat-theo-me.md) |
-| **Vết sửa và sổ giấy** — test từng cửa cập nhật, đối chiếu bước QR, khai sổ và chặn ký khi còn lượt giấy (P3-11, ADR-095) | [3-be/08-vet-va-nhap-bu.md](3-be/08-vet-va-nhap-bu.md) |
+| **Vết sửa và sổ giấy** — test từng cửa cập nhật, đối chiếu bước QR, khai sổ, cửa nhập bù từng lượt giấy và chặn ký khi còn lượt giấy (P3-11, ADR-095) | [3-be/08-vet-va-nhap-bu.md](3-be/08-vet-va-nhap-bu.md) |
 | **Realtime và dự phòng** — SSE chỉ báo đọc lại, đường kéo 20 giây, khoảng tạm dừng/quán mù và bảng cắt thử PT-1…PT-6 (P3-12, ADR-097) | [3-be/09-realtime-du-phong.md](3-be/09-realtime-du-phong.md) |
 | **Cổng chất lượng pha 3** — ba scenario diễn qua API thật, một ngày bán giả qua cửa lệch 0đ, trạng thái ký của mười hai ô sang pha 4 (P3-13) | [3-be/10-cong-chat-luong-pha-3.md](3-be/10-cong-chat-luong-pha-3.md) |
 

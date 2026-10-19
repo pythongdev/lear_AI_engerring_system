@@ -8,7 +8,8 @@
 >
 > **File này là bản xuất khẩu, không phải nhà của sự thật nào.** Mọi con số có nhà thật trong repo,
 > lệch ⇒ **nhà thật thắng** ([CLAUDE.md §2](../CLAUDE.md)): mọi dữ kiện quán [shop-facts.md](shop-facts.md) ·
-> định nghĩa XONG [CLAUDE.md §8](../CLAUDE.md) + [quality/review-gate.md](../quality/review-gate.md).
+> định nghĩa XONG [CLAUDE.md §8](../CLAUDE.md) + [quality/review-gate.md](../quality/review-gate.md) · mọi đường gọi API
+> [docs/product/3-be/openapi.yaml](../docs/product/3-be/openapi.yaml) (thêm 2026-10-19, T-206, **F-069**).
 > Là bản chép nên nó **sẽ trôi** — rủi ro ghi ở [work/findings.md](../work/findings.md) F-001.
 >
 > **Schema · API · route có chủ theo PHA; bất biến thì đã có nhà thật.** *Cập nhật 2026-09-04 —
@@ -177,37 +178,14 @@ Bảy chi tiết không được bỏ:
 7. Enum trạm dùng chung ở `product_stations.station`, `order_tasks.station`, `staff.role`:
    `quay | trang_banh | gap_banh | canh | don_ban` (`staff.role` có thêm `owner`).
 
-### 3.6 API — `/api/v1`
+### 3.6 API — đã có nhà thật, không chép ở đây
 
-**Khách (không đăng nhập):** `GET settings` · `GET categories` · `GET products` · `GET products/:slug` ·
-`POST orders/quote` (**tính thử giá**, FE gọi mỗi lần đổi option) · `POST orders` · `GET orders/:code?phone=`
-
-**QR tại bàn (xác thực bằng token trong URL):** `GET t/:token` · `POST t/:token/orders` (đơn `pending`,
-**chờ quầy duyệt**) · `GET t/:token/bill`
-
-**Nhân viên (JWT, phân quyền theo `role`):** `POST staff/login` (mật khẩu hoặc **PIN 4 số**) · `GET staff/me` ·
-`GET staff/tasks?station=` (**chỉ đọc**) · `GET staff/tables` · `POST staff/sessions` ·
-`POST staff/sessions/:id/orders` (đặt hộ) · `POST staff/sessions/:id/served` (**POS ghi đã phục vụ**,
-xem luật ghi dưới) · `PATCH staff/orders/:id/confirm` · `PATCH staff/orders/:id/cancel` ·
-`POST staff/sessions/:id/checkout` · `PATCH staff/tables/:id/cleaned` (**trạm `don_ban` bấm**) ·
-`GET staff/stream?station=` (**SSE**: `task.created` / `task.updated` / `task.cancelled`)
-
-> **Luật ghi — đọc trước khi thiết kế bất kỳ màn hình trạm nào.**
-> **POS là nơi duy nhất ghi ra tiến độ sản xuất và phục vụ; ba trạm bếp chỉ đọc.** Chủ quán chốt
-> ngày **2026-08-31**: người tráng bánh, người gấp bánh, người lấy canh **không bấm gì** để báo
-> xong — *"bỏ qua bước này, POS sẽ tự cập nhật được bao nhiêu cái cho từng bàn"*. Lý do là ba đôi
-> tay ấy đang bận; thêm một nút là thêm việc cho đúng người không rảnh.
-> ⇒ **Không có `PATCH staff/tasks/:id`, không có vòng `todo → doing → done` do bếp bấm.** Con số
-> *"bàn này đã được mấy cái, còn thiếu gì"* sinh ra ở **POS**, qua `POST staff/sessions/:id/served`,
-> và người bấm là người đứng quầy. Việc phải làm thì **không ai ghi** — nó *sinh ra* từ đơn đã
-> duyệt (invariant I4 ở §6.2) và **tắt** khi POS ghi đã phục vụ.
-> **Ngoại lệ duy nhất, và là một trạm chứ không phải một món:** `don_ban` bấm *đã dọn*
-> (`PATCH staff/tables/:id/cleaned`) — đó là bước cuối của **bàn**, không phải bước giữa của món.
-> Nên "bỏ nút ở bếp" là **ba** trạm, không phải bốn.
-
-**Chủ quán (`role=owner`):** CRUD `admin/products|categories|options|staff|tables` ·
-`PATCH admin/products/:id/availability` · `GET admin/tables/:id/qr.png` · `PUT admin/settings` ·
-`GET admin/reports/daily?date=`
+*Thay 2026-10-19 (T-206, đóng **F-069**).* Bản đề xuất `/api/v1` viết 2026-08-31 ở mục này (JWT theo `role`, PIN 4 số,
+`staff/*`, `admin/*`) **không** phải bề mặt API của hệ thống, và không đường gọi nào của nó có ở hợp đồng. Đường gọi, chữ ký,
+mã lỗi: [docs/product/3-be/openapi.yaml](../docs/product/3-be/openapi.yaml) — luật đọc và đổi ở
+[docs/product/3-be/01-hop-dong-api.md](../docs/product/3-be/01-hop-dong-api.md); quyền theo vai ở
+[docs/product/3-be/02-vai-va-quyen.md](../docs/product/3-be/02-vai-va-quyen.md). Luật ghi *POS là nơi duy nhất ghi tiến độ
+sản xuất và phục vụ; ba trạm bếp chỉ đọc* là dữ kiện quán, nhà ở [shop-facts.md](shop-facts.md) §5.4.
 
 ### 3.7 Route frontend + nguyên tắc giao diện
 

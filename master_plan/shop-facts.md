@@ -38,9 +38,9 @@ chứ không ghi **tên của thứ đảm nhiệm nó**, và `work/findings.md`
 được rằng hai cái tên ấy trước đó chỉ sống ở `master_plan/prompt-fullstack.md`, một bản xuất khẩu
 tự khai **không sở hữu sự thật nào** (`docs/decisions.md` ADR-035). Ghi ở đây là **owner thật** cho
 hai cái tên, đúng đường đã chọn ở F-027: pha 1 giữ nguyên cách viết trừu tượng, tên cụ thể sống ở
-`shop-facts.md` — xem `docs/decisions.md` **ADR-041**. **Chưa chốt**: token/cấu hình bot Telegram,
-nhà cung cấp và cấu hình VPS cụ thể — đó là việc của pha 3 (BE) và pha 5 (Deploy), không phải một
-dữ kiện quán (ADR-035).
+`shop-facts.md` — xem `docs/decisions.md` **ADR-041**. **Chưa chốt**: nhà cung cấp và cấu hình VPS cụ thể — việc của
+pha 5 (Deploy, `work/backlog.md` **T-109**), không phải một dữ kiện quán (ADR-035); pha 3 đóng mà không quyết vế này
+(2026-10-19, T-206, **F-070**). Token/cấu hình bot Telegram **không còn cần** từ 2026-10-14 — đường báo đơn đã là SSE (U-080).
 
 **Sửa 2026-10-14 — đường báo đơn web đổi từ Telegram sang SSE** (chủ quán, đóng `U-080`; nguyên văn
 *"sse event"*). Đơn web mới báo về quầy bằng sự kiện SSE của màn quầy. *Cách đọc của phiên:* bot Telegram không còn

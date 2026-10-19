@@ -108,6 +108,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-206 **Ba finding tài liệu: F-067 · F-069 · F-070** — ghi lượt duyệt độc lập backend (không thấy hành vi đổi) và đóng F-067; `prompt-fullstack.md` §3.6 thành con trỏ tới hợp đồng; ba lời hứa treo của pha 3 ghi rõ chỗ nhận — L0/L1 tài liệu — 2026-10-19 · Claude Code theo lời chủ repo chọn ba việc quy trình · [chi tiết](#t-206)
 - [x] T-205 **Địa chỉ và giờ mở trên Google (hai vế của U-094)** — shop-facts §1 có địa chỉ và *trừ Tết âm lịch*; JSON-LD trang chủ có `address` · `openingHoursSpecification` 06:00–11:00 mọi ngày; U-094 hẹp lại còn tên miền và câu mô tả — L1 — 2026-10-19 · Claude Code theo lời chủ repo trong hội thoại · [chi tiết](#t-205)
 - [x] T-204 **Ba lúc chưa có mốc vẫn nhắc POS kiểm tra (U-102)** — chưa có lần nhập · lần nhập gần nhất ghi 0 ⇒ `check_reminder: true`, POS thấy tên thứ ấy ở `GET /supply-check-reminders`; dùng trước ngày nhập đầu ⇒ so tỉ lệ như thường; hợp đồng 0.42.0 (cờ thôi `null`); trang kho và tổng quan nói *Nhắc POS kiểm tra* kèm lý do — L1 — mở và nhận 2026-10-19 · Claude Code theo lời chủ repo chọn *"Luôn nhắc POS kiểm tra"*, vế 3 *"Đã có lần nhập thì so tỉ lệ như thường"* — 2026-10-19 · [chi tiết](#t-204)
 - [x] T-203 **Cửa duyệt không trao cờ chủ quán (F-071)** — `POST /accounts/{account_id}/approval` từ chối `person_id` của người mang cờ chủ quán bằng `409 account_person_is_owner` (`field: person_id`); hợp đồng 0.41.0; trang nhân viên nói đúng lời; vế mới của `I-033` — L2 — mở 2026-10-19 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"hãy yêu cầu codex làm f-071. đồng ý với đề xuất của bạn"* — 2026-10-19; Codex thi công, Claude duyệt và chạy thật · [chi tiết](#t-203)
@@ -422,6 +423,22 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-206"></a>
+### T-206 — Ba finding chỉ chạm tài liệu (F-067 · F-069 · F-070)
+
+**Yêu cầu:** chủ repo 2026-10-19 chọn trong hội thoại *"F-069: sửa prompt-fullstack, F-067: duyệt độc lập backend"* và giao
+*"làm nốt những việc còn lại như finding"*. **Mức:** L1 — chỉ tài liệu và một lượt đọc; không code, không đổi hành vi.
+
+*Nghiệm thu:*
+1. F-067: bản duyệt của agent lạnh ngữ cảnh (chỉ đọc, diff `1728c0d^..be25683`, năm miền) ghi vào finding; **Fixed**.
+2. F-069: `master_plan/prompt-fullstack.md` kể `openapi.yaml` là nhà thật; §3.6 chỉ còn con trỏ; **Fixed**.
+3. F-070: vế (2)–(4) và hai câu trôi có chỗ nhận ở owner; **Fixed**.
+4. `./scripts/gate.sh` xanh.
+
+**Bàn giao** — 2026-10-19 · **Claude Code**; lượt duyệt F-067 do một agent general-purpose lạnh ngữ cảnh, chỉ đọc, không chạy test.
+
+[↑ đầu file](#top)
 
 <a id="t-205"></a>
 ### T-205 — Ba dữ kiện để quán hiện đúng trên Google: hai vế đã có lời (U-094)

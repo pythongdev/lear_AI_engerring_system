@@ -105,11 +105,11 @@ vì vậy không dùng lại database đã chạy xong cả bộ để chạy ri
 
 | Phụ thuộc | Mệnh đề và bằng chứng cần chạy | Kết quả trong sandbox |
 |---|---|---|
-| PT-1 — mất luồng quầy | `TestI008_KhongLuongQuayThiBaKenhTuBamBiTuChoi`, `TestI008_CoLuongQuayThiNhanDon`, `TestI008_NhieuLuongQuayVaTuChoiSaiLop` | Đã viết, chờ PostgreSQL. Ba kênh dừng; hai kênh người vẫn ghi; một trong nhiều luồng còn mở thì còn thấy. |
-| PT-2 — database mất | `TestI008_PT2_DatabaseMatVaNoiLai` cắt TCP proxy tới database, kiểm lỗi có mã và giới hạn chờ, số dòng không đổi; nối lại rồi ghi/đọc đúng | Đã viết, chờ PostgreSQL. |
+| PT-1 — mất luồng quầy | `TestI008_KhongLuongQuayThiBaKenhTuBamBiTuChoi`, `TestI008_CoLuongQuayThiNhanDon`, `TestI008_NhieuLuongQuayVaTuChoiSaiLop` | PASS trong mọi `be-check` (sửa 2026-10-19, T-206). Ba kênh dừng; hai kênh người vẫn ghi; một trong nhiều luồng còn mở thì còn thấy. |
+| PT-2 — database mất | `TestI008_PT2_DatabaseMatVaNoiLai` cắt TCP proxy tới database, kiểm lỗi có mã và giới hạn chờ, số dòng không đổi; nối lại rồi ghi/đọc đúng | PASS trong mọi `be-check` (sửa 2026-10-19, T-206). |
 | PT-3 — ngân hàng không tự báo tiền | Rà route ở `be/cmd/server/router.go`, các `handler.go` và ma trận: không route webhook/ngân hàng tự ghi tiền. `TestI012_CuaTienCanNguoiCoTen` ở `be/internal/don/duong_tien_test.go`; cửa đóng phiên còn có kiểm quyền trong bộ `tai_ban_test.go` | Dẫn test có sẵn, giữ nguyên. Các cửa tiền có lớp `quay`, `nguoi_quan`, `quay_hoac_chu_quan` hoặc `chu_quan`; cửa nội bộ `theo_cua_goi` không có HTTP. |
 | PT-4 — mất tin báo có | `TestI021_MotNgayBanGiaQuaCuaRa0dLech` và `TestI021_CaiMotLanThuSaiDoiSoatKeu` ở `be/internal/don/duong_tien_test.go`: chia hai phương thức, hoàn chéo, ký ngày không nhận nguồn ngân hàng | Dẫn test có sẵn; không thêm nguồn đối soát hoặc tự quyết tiền đã về. |
-| PT-5 — mất báo sau khi đã nhận đơn | `TestI008_MatDayVanDocDuocDonDaNhan`: nhận QR khi luồng còn mở, đóng luồng, tạo việc qua kênh người; kéo vẫn thấy đơn cũ ở quầy và việc mới ở trạm | Đã viết, chờ PostgreSQL. Theo ADR-097, mất luồng **là** mù; không nhận thêm đơn khách tự bấm để kiểm ca này. |
+| PT-5 — mất báo sau khi đã nhận đơn | `TestI008_MatDayVanDocDuocDonDaNhan`: nhận QR khi luồng còn mở, đóng luồng, tạo việc qua kênh người; kéo vẫn thấy đơn cũ ở quầy và việc mới ở trạm | PASS trong mọi `be-check` (sửa 2026-10-19, T-206). Theo ADR-097, mất luồng **là** mù; không nhận thêm đơn khách tự bấm để kiểm ca này. |
 | PT-6 — sổ giấy | `TestYC08_KhaiSoGiayQuaCua`, `TestI014_KyNgayConLuotGiayBiTuChoi`, `TestI014_KhaiSoChenLucKyNgay` ở `be/internal/don/so_giay_test.go` | P3-11 đã có trong cây; dẫn test giữ nguyên. |
 
 Các ca khác: `TestI008_NutMoLaiKhepKhoangCoNguoi`, `TestI008_BaoMuCoNguoi`,

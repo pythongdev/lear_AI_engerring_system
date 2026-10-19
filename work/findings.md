@@ -4903,8 +4903,16 @@ và khi Claude buộc phải thi công thay Codex, cài lỗi vẫn trong worktr
 **Related task:**
 `T-160` · `T-161` · `T-162` · `T-163` · `T-164` · `T-165` · `T-166` (đo) · `T-167` · ADR-054 · **F-063**
 
+**Đã xử lý 2026-10-19 (T-206):** chủ repo cho một agent lạnh ngữ cảnh duyệt độc lập (*"F-067: duyệt độc lập backend"*).
+Agent chỉ đọc, so từng cửa của `be/internal/{tratruoc,hoadon,ket,sanxuat,don}/` giữa `1728c0d^` và `be25683` (handler cũ ↔
+handler · service · repository mới, mọi `.sql` cũ ↔ mới và code sqlc sinh): **không thấy hành vi đổi** — điều kiện kiểm, khoá
+`FOR UPDATE` và thứ tự khoá, ranh giới giao dịch, mã lỗi và status giữ nguyên; hai câu SQL đổi hình giữ nghĩa
+(`chon_da_lam.sql`, `gom.sql`). Một điểm thấp: `be/internal/don/duong_tien_hinh_test.go` · `mang_di_hinh_test.go` bỏ bộ đọc
+người *panic khi bị gọi* (assertion nới, có lý do trong comment; hành vi chạy thật không đổi vì middleware đã đọc người trước).
+Agent không chạy test. Vế *cài lỗi trên cây chính* đã có luật `T-167`.
+
 **Status:**
-Open
+Fixed
 
 ### F-068 — Cổng pha 3: hai hàng tầng 3 không có lời từ chối qua cửa, và vế tầng 2 của I-020 chưa bị cắt thử
 
@@ -4953,8 +4961,12 @@ file và thay §3.6 bằng một con trỏ, hoặc chuyển file sang `work/prop
 **Related task:**
 `P3-14` · **F-040** · **F-041** · **F-001** · ADR-084
 
+**Đã sửa 2026-10-19 (T-206):** chủ repo chọn sửa (*"F-069: sửa prompt-fullstack"*): đầu file thêm `openapi.yaml` vào danh
+sách nhà thật; §3.6 thay bằng con trỏ tới hợp đồng, `01-hop-dong-api.md`, `02-vai-va-quyen.md` và `shop-facts.md` §5.4 cho luật
+ghi của trạm bếp.
+
 **Status:**
-Open
+Fixed
 
 ### F-070 — Bốn lời hứa *việc của pha 3* chưa có dòng nào ở pha 3 nhận, đứng đầu là Telegram báo đơn web về quầy
 
@@ -4987,8 +4999,13 @@ nên thành một `U-XXX` trước khi ký chuyển pha 4. (2)–(4): một task
 **Related task:**
 `P3-14` · `P3-12` · `T-174` · ADR-097 · ADR-099 · ADR-041 · PT-5
 
+**Đã sửa 2026-10-19 (T-206):** (2) VPS về pha 5 (`T-109`) ở `shop-facts.md` §1, cùng câu Telegram không còn cần (U-080);
+(3) · (4) ghi *pha 3 đóng mà không quyết* và đường đọc hiện có ở `docs/product/2-db/06-luoc-do-nguoi-va-vet.md` bảng chỗ trống;
+hai câu trôi: `3-be/09-realtime-du-phong.md` PT-1 · PT-2 · PT-5 nay ghi PASS, dòng `08-vet-va-nhap-bu.md` ở `00-index.md` kể cửa
+nhập bù.
+
 **Status:**
-Open
+Fixed
 
 ### F-071 — Cửa duyệt tài khoản gắn được vào người mang cờ chủ quán, nên một lần duyệt trao luôn quyền chủ quán
 
