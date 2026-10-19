@@ -47,7 +47,7 @@ func TestQC14_BayMucVaPhanRaBan(t *testing.T) {
 	if out.Shortages.Supplies.Items[0].Balance != "7" {
 		t.Fatal("mất nguồn sổ nguyên liệu")
 	}
-	for _, section := range []ChuaCo{out.WorkersPresent, out.Shortages.Workers} {
+	for _, section := range []MucNguoi{out.WorkersPresent, out.Shortages.Workers} {
 		if section.Status != "unavailable" || section.Name == "" || section.Reason == "" {
 			t.Fatalf("chưa có phải có tên và lý do: %+v", section)
 		}

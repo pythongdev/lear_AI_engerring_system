@@ -285,6 +285,7 @@ sql:
     queries:
       - internal/tongquan/sql
       - internal/tongquan/sql/dat_toi_thieu
+      - internal/tongquan/sql/khai_nguoi
     gen:
       go:
         package: sqlcgen

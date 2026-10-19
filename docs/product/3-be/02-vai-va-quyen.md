@@ -75,6 +75,10 @@ người thường ngoài quầy bị `not_on_counter_duty`, không phiên bị 
 Chỉ trả tên và đơn vị của thứ cần kiểm, kèm định danh và mốc đọc; không mở quyền đọc
 `GET /supply-stock` cho POS, không thêm cửa ghi.
 
+**Cửa đọc số người đang làm (T-197, 2026-10-19, Claude Code):** `GET /workers-present`
+thuộc lớp `quay_hoac_chu_quan` theo ADR-121 điểm 3 — màn quầy đọc lại con số mình vừa khai;
+người thường ngoài quầy bị `not_on_counter_duty`, không phiên bị `unauthenticated`.
+
 ## 3. Ma trận cửa × lớp
 
 Mỗi cửa ghi của backend — thư mục `be/internal/<gói>/sql/<cửa>/` (`QC-13`) — có **đúng một** dòng, và
@@ -154,6 +158,7 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `nguyenlieu/sua_so` | `chu_quan` | `shop-facts.md` §8.4 — chủ quán tự nhập số liệu (2026-09-04); kế hoạch AD_BE §4; phiếu P3A-02 |
 | `khoanchi/them_loai` | `chu_quan` | `shop-facts.md` §8.10 — lời đóng U-095 (2026-10-15): chỉ chủ quán ghi khoản chi; phiếu P3A-01 |
 | `tongquan/dat_toi_thieu` | `chu_quan` | ADR-118 điểm 1 theo phiếu T-199 (2026-10-18): chủ quán nhập hai số tối thiểu của ngày |
+| `tongquan/khai_nguoi` | `quay` | `shop-facts.md` §8.6 hàng 6 — POS khai và cập nhật số người thực tế đang làm (lời đóng U-060); ADR-121 điểm 2 (T-197, 2026-10-19) |
 | `khoanchi/ghi` | `chu_quan` | `shop-facts.md` §8.10 — lời đóng U-095 (2026-10-15): chỉ chủ quán ghi khoản chi; phiếu P3A-01 |
 | `khoanchi/sua` | `chu_quan` | `shop-facts.md` §8.10 — lời đóng U-095 (2026-10-15): chỉ chủ quán ghi khoản chi; phiếu P3A-01 |
 | `daotao/gan_huong_dan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |

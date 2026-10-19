@@ -428,6 +428,29 @@ Codex viết cả test (lệch ADR-054 vế *Claude viết test trước*, như 
 
 ---
 
+<a id="t-197"></a>
+### T-197 — Chỗ cất số người đang làm do POS khai
+
+**Goal:** `workers_present` và `shortages.workers` của `GET /owner-overview` có số khi POS đã khai số người thực tế
+đang làm (`master_plan/shop-facts.md` §8.6 hàng 6, lời đóng U-060). Mở 2026-10-16 từ P3A-09.
+
+**Thiết kế:** `docs/decisions.md` **ADR-121** (2026-10-19). Acceptance: dòng T-197 ở `work/backlog.md`.
+
+*Bàn giao (2026-10-19):* Codex viết test trước ở `../lean_wt/T-197` (nhánh `codex/T-197` từ `d8836e4`, chưa commit):
+`db/tests/qd050_workers_present_declaration.sql`, `be/internal/tongquan/workers_validation_test.go`,
+`workers_handler_test.go` — đỏ vì chưa có bảng, cửa và kiểu. Claude Code chép ba test sang clone chính (nhánh `T-199`,
+chỉ chạy `gofmt`, không đổi mệnh đề) và thi công phần còn lại: migration bước 32, `sql/khai_nguoi/` + `sql/nguoi.sql`,
+`workers.go`, mục người của tổng quan (`MucNguoi` thay `ChuaCo`), hợp đồng 0.40.0, ma trận, ánh xạ ràng buộc, `schema.ts`.
+Lần chạy gate đầu đỏ ở QD-34 (bảng thiếu `created_at`): cột mốc khai đổi tên thành `created_at`, hợp đồng vẫn trả
+`declared_at`; ADR-121 điểm 1 · 4 sửa theo. Bằng chứng: be-check PASS (`TestYC15_WorkersPresentQuyenLichSuNgayBanVaTongQuan`,
+`TestQC14_WorkersPresentKiemHinhTruocQuyenVaDatabase`), db-check và `./scripts/gate.sh` xanh ở clone chính. Chưa có người duyệt
+độc lập. Còn lại: worktree `../lean_wt/T-197` chỉ còn ba file test chưa commit, gỡ được sau khi commit này vào; màn quầy
+khai số thuộc `P4A`.
+
+[↑ đầu file](#top)
+
+---
+
 <a id="p3a-10"></a>
 ### P3A-10 — Trang tổng kết đòi số theo ngày bán
 

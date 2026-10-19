@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.39.0
+  version: 0.40.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -147,7 +147,10 @@ paths:
         như DocGom; ordered là số đơn vị thành phần, served là số đơn vị có mọi trạm served.
         Việc không có thành phần là một việc/một đơn vị; không gán nước chấm cấp đơn cho món.
         Nguyên liệu dùng các dòng tổng hợp của /supply-stock, không mang sổ ngày. Các nguồn đọc riêng, không là ảnh nguyên tử xuyên nguồn.
-        Thiếu tối thiểu trả daily_minimum_missing; thiếu số người trả workers_present_missing.
+        Thiếu tối thiểu trả daily_minimum_missing. workers_present là lần khai mới nhất của ngày bán hiện tại
+        (ADR-121), không có thì workers_present_missing; shortages.workers so con số ấy với minimum_workers:
+        short khi khai ít hơn, missing_workers là phần thiếu (0 khi đủ); thiếu lần khai trả workers_present_missing,
+        có lần khai mà chưa nhập tối thiểu trả daily_minimum_missing.
         Tiền tạm tính không phải doanh thu đã đối soát; doanh thu ấy không thuộc phản hồi này.
       responses:
         '200':
@@ -3283,6 +3286,57 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /workers-present-declarations:
+    post:
+      operationId: postWorkersPresentDeclaration
+      tags: [tongquan]
+      summary: POS khai số người thực tế đang làm ở quán.
+      description: >-
+        Lớp quay (ADR-121 điểm 2): chỉ người đang đứng quầy, kể cả chủ quán đứng quầy; không phiên trả
+        unauthenticated, ngoài quầy trả not_on_counter_duty. Kiểm hình trước quyền: worker_count thiếu, null,
+        không nguyên, ngoài int32 hay ≤ 0 trả invalid_request field worker_count. Mỗi lần khai thêm một dòng,
+        không sửa lần cũ; sale_date là ngày bán hiện tại theo múi giờ quán. Không kiểm giờ bán.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkersPresentDeclarationInput'
+      responses:
+        '201':
+          description: Lần khai vừa ghi.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkersPresentDeclaration'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /workers-present:
+    get:
+      operationId: getWorkersPresent
+      tags: [tongquan]
+      summary: Quầy đọc lần khai số người mới nhất của ngày bán hiện tại.
+      description: >-
+        Lớp quay_hoac_chu_quan (ADR-121 điểm 3); không phiên trả unauthenticated, người thường ngoài quầy trả
+        not_on_counter_duty. Lần mới nhất = declared_at lớn nhất, bằng nhau thì id lớn nhất, của đúng ngày bán
+        hiện tại; chưa khai trả declaration null, không lấy ngày trước.
+      responses:
+        '200':
+          description: Ngày bán hiện tại và lần khai mới nhất hoặc null.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkersPresent'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /wrong-make-notes:
     post:
       operationId: writeWrongMakeNote
@@ -3579,6 +3633,101 @@ components:
           format: int32
           minimum: 1
           description: Chỉ có khi đúng ngày đã nhập tối thiểu.
+    WorkersPresentDeclarationInput:
+      type: object
+      additionalProperties: false
+      required: [worker_count]
+      properties:
+        worker_count:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 2147483647
+    WorkersPresentDeclaration:
+      type: object
+      additionalProperties: false
+      required: [id, sale_date, worker_count, person_id, person_name, declared_at]
+      properties:
+        id:
+          type: integer
+          format: int64
+        sale_date:
+          $ref: '#/components/schemas/SaleDate'
+        worker_count:
+          type: integer
+          format: int32
+          minimum: 1
+        person_id:
+          type: integer
+          format: int64
+          description: Người khai, từ phiên.
+        person_name:
+          type: string
+        declared_at:
+          $ref: '#/components/schemas/Instant'
+    WorkersPresent:
+      type: object
+      additionalProperties: false
+      required: [sale_date, declaration]
+      properties:
+        sale_date:
+          $ref: '#/components/schemas/SaleDate'
+        declaration:
+          oneOf:
+            - $ref: '#/components/schemas/WorkersPresentDeclaration'
+            - type: 'null'
+    OverviewWorkersPresent:
+      oneOf:
+        - $ref: '#/components/schemas/OverviewUnavailable'
+        - type: object
+          additionalProperties: false
+          required: [status, name, worker_count, person_id, person_name, declared_at]
+          description: Con số POS khai, không tự tính từ vai, trạm hay chấm công.
+          properties:
+            status:
+              type: string
+              const: available
+            name:
+              type: string
+            worker_count:
+              type: integer
+              format: int32
+              minimum: 1
+            person_id:
+              type: integer
+              format: int64
+            person_name:
+              type: string
+            declared_at:
+              $ref: '#/components/schemas/Instant'
+    OverviewWorkersShortage:
+      oneOf:
+        - $ref: '#/components/schemas/OverviewUnavailable'
+        - type: object
+          additionalProperties: false
+          required: [status, name, worker_count, minimum_workers, short, missing_workers]
+          properties:
+            status:
+              type: string
+              const: available
+            name:
+              type: string
+            worker_count:
+              type: integer
+              format: int32
+              minimum: 1
+            minimum_workers:
+              type: integer
+              format: int32
+              minimum: 1
+            short:
+              type: boolean
+              description: worker_count < minimum_workers.
+            missing_workers:
+              type: integer
+              format: int32
+              minimum: 0
+              description: minimum_workers - worker_count, 0 khi đủ.
     OverviewServingGuests:
       type: object
       additionalProperties: false
@@ -3720,7 +3869,7 @@ components:
         supplies:
           $ref: '#/components/schemas/OverviewSupplies'
         workers:
-          $ref: '#/components/schemas/OverviewUnavailable'
+          $ref: '#/components/schemas/OverviewWorkersShortage'
         menu_items:
           $ref: '#/components/schemas/OverviewMenuShortages'
     OwnerOverview:
@@ -3746,7 +3895,7 @@ components:
         provisional_sales:
           $ref: '#/components/schemas/OverviewProvisionalSales'
         workers_present:
-          $ref: '#/components/schemas/OverviewUnavailable'
+          $ref: '#/components/schemas/OverviewWorkersPresent'
         shortages:
           $ref: '#/components/schemas/OverviewShortages'
     MenuItemIdentity:
@@ -6566,6 +6715,9 @@ x-constraint-errors:
   daily_minimum_person_fkey: internal
   daily_minimum_banh_positive_check: invalid_request
   daily_minimum_workers_positive_check: invalid_request
+  workers_present_declaration_pkey: internal
+  workers_present_declaration_person_fkey: internal
+  workers_present_declaration_count_positive_check: invalid_request
   account_decided_by_person_fkey: unreviewed
   account_email_check: invalid_request
   account_email_key: email_taken

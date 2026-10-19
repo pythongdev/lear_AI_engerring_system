@@ -29,3 +29,17 @@ func (r repository) tong(ctx context.Context, ngay string) (out soTong, err erro
 	err = json.Unmarshal(raw, &out)
 	return
 }
+
+func (r repository) khai(ctx context.Context, ngay string, count int32) (KhaiNguoi, error) {
+	row, err := r.q.KhaiNguoi(ctx, sqlcgen.KhaiNguoiParams{Column1: ngay, WorkerCount: count})
+	return KhaiNguoi{ID: row.ID, SaleDate: row.SaleDate, WorkerCount: row.WorkerCount, PersonID: row.PersonID, PersonName: row.PersonName, DeclaredAt: row.DeclaredAt.Time}, err
+}
+
+func (r repository) moiNhat(ctx context.Context, ngay string) (*KhaiNguoi, error) {
+	rows, err := r.q.NguoiMoiNhat(ctx, ngay)
+	if err != nil || len(rows) == 0 {
+		return nil, err
+	}
+	row := rows[0]
+	return &KhaiNguoi{ID: row.ID, SaleDate: row.SaleDate, WorkerCount: row.WorkerCount, PersonID: row.PersonID, PersonName: row.PersonName, DeclaredAt: row.DeclaredAt.Time}, nil
+}

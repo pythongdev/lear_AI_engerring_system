@@ -137,6 +137,7 @@ có câu trả lời mới từ người.
 | ADR-118 | **Mục tổng quan đủ số** (`T-199`): bảng `daily_minimum` một dòng một ngày bán (bánh · người, chủ quán ghi, sửa có vết); tạm tính = Σ `line_total_vnd` của đơn vị bán đã ra hết, combo theo giá combo, không quy giá thành phần; *bánh* = thành phần `takes_filling`; tại quán = phần có bàn | Đã chốt 2026-10-18 (Claude viết theo lời chủ repo cùng ngày) | — | `T-199` · `T-197` · P3A-09 · ADR-117 |
 | ADR-119 | **Lời nhắc kiểm tra kho tới POS** (`T-201`): đường đọc riêng `GET /supply-check-reminders` lớp `quay_hoac_chu_quan`, chỉ tên thứ cần kiểm, cùng một chỗ tính cờ với `GET /supply-stock`; nhận tín hiệu quầy sẵn có | Đã chốt 2026-10-18 (Claude) | — | `T-201` · P3A-08 · ADR-097 · U-102 |
 | ADR-120 | **Đọc tổng kết** (`P3A-10`): một đường `GET /sale-days/{sale_date}/summary` lớp `chu_quan`, bốn mục — doanh thu ngày bán từ hai nguồn trừ hoàn ngày hoàn, món bán chạy (suất con theo món, combo riêng), lời nhắc kho, số đếm theo người không điểm không hạng | Đã chốt 2026-10-19 (Claude) | — | P3A-10 · I-014 · ADR-118 · ADR-119 |
+| ADR-121 | **Số người đang làm do POS khai** (`T-197`): bảng chỉ thêm `workers_present_declaration`, mỗi lần khai một dòng, lần mới nhất của ngày bán thắng; cửa ghi lớp `quay`, đường đọc cho quầy; tổng quan bày số và thiếu người so với `minimum_workers` | Đã chốt 2026-10-19 (Claude) | — | `T-197` · ADR-118 · U-060 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7776,3 +7777,39 @@ lát lược đồ, ngoài ranh giới của kế hoạch (§3); *xếp người
 **Applies to:** `be/internal/tongket/` · `be/cmd/server/` · `docs/product/3-be/openapi.yaml` ·
 `docs/product/3-be/01-hop-dong-api.md` · `docs/product/3-be/02-vai-va-quyen.md` · `fe/src/lib/api/schema.ts`;
 **I-014** · **ADR-059** · **ADR-118** · **ADR-119** · `P3A-10`.
+
+### ADR-121 — Số người đang làm: POS khai từng lần, lần mới nhất của ngày bán thắng
+
+**Trạng thái:** **Đã chốt** 2026-10-19 — Claude Code (`T-197`). Lời quán: con số là **số người thực tế đang làm ở quán**,
+**POS khai và cập nhật**, máy không tự tính từ vai, trạm hay chấm công, lời không nói nhịp cập nhật
+(`master_plan/shop-facts.md` §8.6 hàng 6, đóng **U-060**); thiếu người là so với số tối thiểu chủ quán nhập mỗi ngày
+(**ADR-118** điểm 1 · 7). Mọi điểm dưới đây là **lựa chọn của phiên**.
+
+**Context:** `GET /owner-overview` trả *chưa có* `workers_present_missing` cho cả `workers_present` lẫn `shortages.workers`
+vì chưa có chỗ cất con số POS khai.
+
+**Decision:**
+
+1. **Bảng chỉ thêm `workers_present_declaration`**: mỗi lần POS khai là một dòng — `worker_count` nguyên dương, `sale_date`,
+   `created_at` (lúc khai — tên cột theo QD-34, hợp đồng trả là `declared_at`; sửa 2026-10-19 khi đối chiếu QD-34 đỏ),
+   `person_id` (người khai, mặc định từ `actor_person_id()`). Vai ghi không `UPDATE`, không `DELETE`; có trigger
+   vết như mọi bảng (QD-52). *Cập nhật* = khai lần mới; lịch sử các lần khai đọc lại được. Số nguyên dương — *suy ra*:
+   người khai đang đứng quầy nên ít nhất có một người làm.
+2. **Cửa ghi `POST /workers-present-declarations`**, lớp `quay` — lời nói *POS* khai, nên lớp hẹp nhất khớp lời; chủ quán
+   đứng quầy vẫn qua (lớp cộng nhau, `docs/product/3-be/02-vai-va-quyen.md` luật 3). Không kiểm giờ bán: lời không nói.
+3. **Đường đọc `GET /workers-present`**, lớp `quay_hoac_chu_quan`: lần khai mới nhất của ngày bán hiện tại hoặc `null` — để màn
+   quầy biết con số mình đang sửa sau khi tải lại.
+4. **Con số hiện hành** = lần khai có `created_at` lớn nhất (bằng nhau thì `id` lớn nhất) **của ngày bán hiện tại**. Ngày chưa
+   có lần khai ⇒ *chưa có* `workers_present_missing`; không lấy số của ngày trước — cùng lý do ADR-118 với số tối thiểu.
+5. **Thiếu người** (`shortages.workers`) có số khi có cả con số hiện hành lẫn `minimum_workers` của ngày: `short` =
+   `worker_count < minimum_workers`, `missing_workers` = phần thiếu, 0 khi đủ. Thiếu lần khai ⇒ `workers_present_missing`
+   (kèm `minimum_workers` nếu có); có lần khai mà chưa nhập tối thiểu ⇒ `daily_minimum_missing`. Người đi giao vẫn tính là
+   đang làm — máy chỉ bày con số POS khai (U-050: đi giao không là thiếu người).
+
+**Rejected alternatives:** *một dòng mỗi ngày, sửa có vết* — mỗi lần đổi là một lần sửa, lịch sử nằm trong vết thay vì trong
+dữ liệu, và cửa phải phân nhánh tạo/sửa; *đếm từ chấm công hay `counter_duty`* — lời cấm tự tính; *lớp
+`quay_hoac_chu_quan` cho cửa ghi* — rộng hơn lời *POS khai*.
+
+**Applies to:** `db/migrations/` (bước 32) · `docs/product/2-db/` (file lát mới) ·
+`docs/product/2-db/07-thu-tu-migration.md` · `be/internal/tongquan/` · `docs/product/3-be/openapi.yaml` ·
+`docs/product/3-be/02-vai-va-quyen.md` · `fe/src/lib/api/schema.ts`; **ADR-118** · **U-060** · **U-050** · `T-197`.

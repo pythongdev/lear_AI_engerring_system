@@ -597,6 +597,14 @@ type TrainingRecord struct {
 	HiddenByPersonID pgtype.Int8
 }
 
+type WorkersPresentDeclaration struct {
+	ID          int64
+	SaleDate    pgtype.Date
+	WorkerCount int32
+	PersonID    int64
+	CreatedAt   pgtype.Timestamptz
+}
+
 type WrongMakeNote struct {
 	ID                  int64
 	StationJobID        int64

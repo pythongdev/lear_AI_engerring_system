@@ -319,3 +319,12 @@ có dấu thay vì MoneyVnd. `ket.DocTrangThaiNgay` tái dùng phép đọc dấ
 không cần số đếm két; chưa có dấu vẫn trả null và số lượt giấy còn chờ đúng.
 Doanh thu, món và staff cùng một giao dịch; két và nguyên liệu đọc riêng như tổng quan,
 không hứa ảnh nguyên tử xuyên nguồn. Không cửa ghi mới; sinh lại type FE.
+
+
+T-197 (2026-10-19, Claude Code, ADR-121): hợp đồng 0.40.0 thêm cửa ghi
+`POST /workers-present-declarations` lớp `quay` và đường đọc `GET /workers-present` lớp
+`quay_hoac_chu_quan`. Mỗi lần khai một dòng, không sửa lần cũ; con số hiện hành là lần mới
+nhất của ngày bán hiện tại, không lấy ngày trước. `GET /owner-overview` nay trả
+`workers_present` có số khi đã khai và `shortages.workers` có `short` · `missing_workers` khi
+có cả lần khai lẫn `minimum_workers`; hai schema mới thay `OverviewUnavailable` ở hai mục ấy,
+vẫn giữ nhánh *chưa có*. Ánh xạ ba ràng buộc của `workers_present_declaration`; sinh lại type FE.

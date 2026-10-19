@@ -1,4 +1,4 @@
-// Package tongquan gom nguồn đọc và giữ cửa số tối thiểu của ngày (T-199).
+// Package tongquan gom nguồn đọc, giữ cửa số tối thiểu của ngày (T-199) và cửa POS khai số người (T-197).
 package tongquan
 
 import (
@@ -14,16 +14,23 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// ChuaCo không bịa số thực tế; có thể kèm mức tối thiểu đã nhập.
-type ChuaCo struct {
-	Status         string `json:"status"`
-	Name           string `json:"name"`
-	Reason         string `json:"reason,omitempty"`
-	MinimumWorkers *int32 `json:"minimum_workers,omitempty"`
+// MucNguoi là mục số người và thiếu người: chưa có thì không bịa số, có thể kèm
+// mức tối thiểu đã nhập; có số thì chỉ là con số POS khai (ADR-121).
+type MucNguoi struct {
+	Status         string     `json:"status"`
+	Name           string     `json:"name"`
+	Reason         string     `json:"reason,omitempty"`
+	WorkerCount    *int32     `json:"worker_count,omitempty"`
+	PersonID       *int64     `json:"person_id,omitempty"`
+	PersonName     *string    `json:"person_name,omitempty"`
+	DeclaredAt     *time.Time `json:"declared_at,omitempty"`
+	MinimumWorkers *int32     `json:"minimum_workers,omitempty"`
+	Short          *bool      `json:"short,omitempty"`
+	MissingWorkers *int32     `json:"missing_workers,omitempty"`
 }
 
-func chuaCo(name, reason string) ChuaCo {
-	return ChuaCo{Status: "unavailable", Name: name, Reason: reason}
+func chuaCo(name, reason string) MucNguoi {
+	return MucNguoi{Status: "unavailable", Name: name, Reason: reason}
 }
 
 type Phan struct {
@@ -45,7 +52,7 @@ type NguyenLieu struct {
 }
 type Thieu struct {
 	Supplies  NguyenLieu `json:"supplies"`
-	Workers   ChuaCo     `json:"workers"`
+	Workers   MucNguoi   `json:"workers"`
 	MenuItems ThieuMon   `json:"menu_items"`
 }
 
@@ -58,7 +65,7 @@ type TongQuan struct {
 	MissingPortions  CacPhan   `json:"missing_portions"`
 	SalesProgress    TienDo    `json:"sales_progress"`
 	ProvisionalSales TamTinh   `json:"provisional_sales"`
-	WorkersPresent   ChuaCo    `json:"workers_present"`
+	WorkersPresent   MucNguoi  `json:"workers_present"`
 	Shortages        Thieu     `json:"shortages"`
 }
 
@@ -70,6 +77,7 @@ func (s *Service) Doc(ctx context.Context, nguoi int64) (out TongQuan, err error
 	var ngay string
 	var moc time.Time
 	var tong soTong
+	var khai *KhaiNguoi
 	// Kiểm quyền trước mọi nguồn; đóng giao dịch trước các service khác để không
 	// giữ một kết nối trong lúc chờ kết nối thứ hai (pool có thể chỉ có một).
 	err = authz.Read(ctx, s.pool, nguoi, authz.NeedOwner, func(tx pgx.Tx) error {
@@ -84,6 +92,10 @@ func (s *Service) Doc(ctx context.Context, nguoi int64) (out TongQuan, err error
 			return e
 		}
 		tong, e = repo.tong(ctx, ngay)
+		if e != nil {
+			return e
+		}
+		khai, e = repo.moiNhat(ctx, ngay)
 		return e
 	})
 	if err != nil {
@@ -101,6 +113,7 @@ func (s *Service) Doc(ctx context.Context, nguoi int64) (out TongQuan, err error
 	out, err = lap(ngay, moc, board, items)
 	if err == nil {
 		out.apDung(tong)
+		out.apDungNguoi(khai, tong.MinimumWorkers)
 	}
 	return
 }
