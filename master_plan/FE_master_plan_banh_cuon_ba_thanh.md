@@ -121,6 +121,14 @@ nhóm tuỳ chọn, còn đổi phụ thu của tuỳ chọn là của `P4-05` �
 `POST /accounts/{account_id}/approval|rejection|lock|unlock` (T-190) và `GET /people` ở hợp đồng 0.40.0; thiết kế `T-181`
 Done (**ADR-109**); không câu `U-XXX` chặn (`U-083` · `U-088` đã đóng); `P4-04` Done. Trang dưới `/chu-quan/nhan-vien`.
 
+**Mở 2026-10-19, lượt năm** (Claude Code, chủ repo bảo *"hãy yêu cầu codex làm 2 task trên bạn kiểm tra"* cho `P4A-07` ·
+`P4A-08`): `P4A-07` đủ ba điều — cửa `/assigned-tasks*` (P3A-03, lớp `quay_hoac_chu_quan`) và `GET /people` ở hợp đồng
+0.40.0; `U-084` · `U-089` đã đóng; `P4-04` Done. Trang dưới `/chu-quan/giao-viec` chỉ cho chủ quán; POS giao việc **từ
+quầy** cần một màn quầy riêng — chưa có bước. Hướng dẫn gắn vào việc (`/assigned-tasks/{assigned_task_id}/guides`) là của
+`P4A-11`. `P4A-08` đủ ba điều — cửa `/supply-items*` · `/supply-day-entries*` (P3A-02) ở hợp đồng 0.40.0; không câu `U-XXX`
+chặn; `P4-04` Done. Trang dưới `/chu-quan/nguyen-lieu`; số thiếu, tỉ lệ nhắc và lời nhắc (`/supply-stock` ·
+`/reminder-ratio`) để lại cho `P4A-09`.
+
 | ID | Trang (tên nguồn trong `PAGES_INDEX.md`) | Dữ kiện quán đã có | Chặn thêm | Mức |
 |---|---|---|---|---|
 | **P4A-01** | **Khung admin** — vỏ chung của `/admin/*` | lớp `chu_quan` ([`02-vai-va-quyen.md`](../docs/product/3-be/02-vai-va-quyen.md)) | — | L1 |

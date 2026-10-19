@@ -499,7 +499,7 @@ Còn lại: backend chặn gắn người chủ quán (**F-071**, cần task bac
 <a id="p4a-07"></a>
 ### P4A-07 — Bản cũ có bảng giao việc và danh sách việc, quán này chưa nói gì về giao việc
 
-**Phụ thuộc** · bước admin 7/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
+**Phụ thuộc** · bước admin 7/11 · mức L1 · ~~**bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`~~ — **mở 2026-10-19** (cửa `/assigned-tasks*` của P3A-03, kế hoạch §6a lượt năm)
 
 **Trang nguồn:** `/admin/staff/task-board` · `/admin/todo-list` — bảng việc theo người và danh sách việc của cả nhóm. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
@@ -514,7 +514,55 @@ ra đời ở `P4-02` (**ADR-035**).
 
 **Không làm thì mất gì:** một trang không ai dùng, hoặc một luật giao việc bịa ra rồi thành sự thật.
 
-**Nhận việc:** —
+**Sửa 2026-10-19 (Claude Code, đối chiếu hợp đồng 0.40.0):** *Goal* nói chưa có lược đồ và cửa — đã có: lược đồ `P2A-11`
+(`docs/product/2-db/16-luoc-do-giao-viec.md`), cửa `/assigned-tasks*` của P3A-03. Thiết kế chọn trường của một việc là
+**nội dung và người nhận**; hợp đồng **không có hạn** — trang không bày hạn.
+
+**Nhận việc** — 2026-10-19 · dẫn và duyệt: **Claude Code**; thi công kể cả test: **Codex** (worktree `../lean_wt/P4A-07`,
+nhánh `codex/P4A-07`, base `a921357`), theo lời chủ repo *"hãy yêu cầu codex làm 2 task trên bạn kiểm tra"*. **Claude
+chốt:** trang `/chu-quan/giao-viec`, mục *Giao việc* (Claude thêm vào `muc-chu-quan.ts` lúc tích hợp, để hai worktree không
+chạm chung file). Đọc `GET /assigned-tasks` không `include_hidden`, giữ thứ tự backend (mới nhất trước); lọc người nhận
+tuỳ chọn, gửi `assignee_person_id`, khoá query `["assigned-tasks", lọc]`. Mỗi việc bày nội dung, người nhận, người giao,
+lúc giao, *Đã xong* · *Chưa xong* theo `done` backend trả (không tự suy từ `marks`), và người · lúc của lần đánh dấu gần
+nhất khi có. Giao việc: nội dung + người nhận chọn từ `GET /people` — **mọi người** backend trả, không lọc. Sửa: nội dung,
+người nhận, lý do bắt buộc. Đánh dấu xong · bỏ đánh dấu không ô lý do. *Xoá việc* là ẩn (`/hiding`), lý do bắt buộc, qua
+một bước xác nhận nói việc biến khỏi danh sách nhưng vết còn giữ. Không phần hướng dẫn (của `P4A-11`), không hạn, không bày
+việc đã ẩn. Ghi xong chỉ làm mất hiệu lực rồi đọc lại; `assigned_task_not_found` · `_hidden` · `_already_done` ·
+`_not_done` báo trạng thái đã đổi rồi đọc lại; `person_not_found` gắn ô người nhận. Chữ trên màn là nhãn giao diện,
+không phải luật quán.
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. `fe/src/app/chu-quan/giao-viec/giao-viec.test.tsx` (Codex viết) phủ: bày danh sách đúng thứ tự và trạng thái; lọc gửi
+   `assignee_person_id`; giao việc gửi đúng thân và đọc lại; ô trống chặn ở màn; sửa thiếu lý do không gửi; `person_not_found`
+   gắn ô người nhận; đánh dấu xong · bỏ đánh dấu gửi `mark`; `assigned_task_already_done` báo và đọc lại; xoá đòi xác nhận
+   và lý do; không có chữ *hạn* hay phần hướng dẫn. Claude thử răng: bỏ bước đọc lại sau ghi ⇒ test đỏ.
+2. `npx vitest run src/app/chu-quan` · toàn bộ `fe` xanh; `tsc --noEmit` sạch.
+3. `check-fe-rules.sh` xanh; grep `refetchInterval|setQueryData` dưới `fe/src/app/chu-quan` (trừ test) rỗng.
+4. `npm run build` xong, có `/chu-quan/giao-viec`.
+5. Chạy thật cùng backend (Claude): giao việc, sửa có lý do, đánh dấu xong, đánh dấu lần hai ⇒ `409 assigned_task_already_done`,
+   bỏ đánh dấu, ẩn — đọc lại thấy đúng.
+6. `docs/product/4-fe/01-khung-fe.md` §1 · §2 dòng route mới (Claude ghi khi duyệt).
+7. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
+
+**Bàn giao** — 2026-10-19 · thực hiện kể cả test: **Codex** `gpt-6-astra` (worktree `../lean_wt/P4A-07`, nhánh
+`codex/P4A-07`, base `a921357`); duyệt: **Claude Code**. Nhánh `P4A-01`. File: `giao-viec/page.tsx` ·
+`giao-viec/giao-viec.test.tsx` · `_components/giao-viec.tsx` · `_components/du-lieu-giao-viec.ts`; Claude thêm lúc tích hợp:
+`_components/muc-chu-quan.ts` · `chu-quan.test.tsx` (tám mục, *Giao việc* sáng ở route của nó), owner `01-khung-fe.md` §1 · §2.
+Codex tự chọn giữ bộ lọc người nhận trên URL (`?assignee_person_id=`), như `?ngay=` của trang Tổng kết — Claude nhận.
+*Nghiệm thu → bằng chứng:*
+1. `giao-viec.test.tsx` 21 ca xanh. Test có răng (Claude chạy): bỏ đọc lại sau ghi ⇒ `11 failed | 10 passed`; nút đánh dấu luôn
+   gửi `done` ⇒ `1 failed`; trả lại ⇒ `21 passed`.
+2. Clone chính: `npx vitest run src/app/chu-quan` ⇒ `Tests 153 passed (153)`; `tsc --noEmit` · `eslint src/app/chu-quan` sạch.
+3. `check-fe-rules: PASS` (trong gate); grep `refetchInterval|setQueryData` dưới `fe/src/app/chu-quan` (trừ test) rỗng.
+4. `npm run build` ở clone chính có `○ /chu-quan/giao-viec`.
+5. Chạy thật 2026-10-19 19:24 (database dùng-xong-bỏ, backend thật, `curl` phiên chủ quán): giao `201` · nội dung trắng
+   `400 field=content` · người 999 `404 person_not_found` (không `field` — trang tự gắn ô) · sửa thiếu lý do `400 field=reason`,
+   có lý do `200` · đánh dấu xong `201` · lần hai `409 assigned_task_already_done` · bỏ đánh dấu `201` · lọc người nhận `200` ·
+   ẩn `200`, đọc lại rỗng. **Chưa** mở trang trên trình duyệt: phần bày do test giữ.
+6. `01-khung-fe.md` §1 dòng route, §2 dòng màn.
+7. Gate xanh ở clone chính (khối commit dưới).
+Còn lại: POS giao việc **từ quầy** — cửa mở cho `quay_hoac_chu_quan` nhưng trang nằm dưới `/chu-quan`; cần một màn quầy, chưa
+có bước (kế hoạch §6a lượt năm).
 
 [↑ đầu file](#top)
 
@@ -523,7 +571,7 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-08"></a>
 ### P4A-08 — Chủ quán ghi sổ nguyên liệu bằng tay, và trang này là cuốn sổ ấy
 
-**Phụ thuộc** · bước admin 8/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
+**Phụ thuộc** · bước admin 8/11 · mức L1 · ~~**bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`~~ — **mở 2026-10-19** (cửa `/supply-items*` · `/supply-day-entries*` của P3A-02, kế hoạch §6a lượt năm)
 
 **Trang nguồn:** `/admin/ingredients` — danh sách nguyên liệu và các lần nhập · xuất kho. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
@@ -540,7 +588,54 @@ ra đời ở `P4-02` (**ADR-035**).
 
 **Bẫy:** thứ chưa có đơn vị trong danh mục (§8.4) bày là *chưa có đơn vị*, không tự gán.
 
-**Nhận việc:** —
+**Nhận việc** — 2026-10-19 · dẫn và duyệt: **Claude Code**; thi công kể cả test: **Codex** (worktree `../lean_wt/P4A-08`,
+nhánh `codex/P4A-08`, base `a921357`), theo lời chủ repo *"hãy yêu cầu codex làm 2 task trên bạn kiểm tra"*. **Claude
+chốt:** trang `/chu-quan/nguyen-lieu`, mục *Nguyên liệu* (Claude thêm vào `muc-chu-quan.ts` lúc tích hợp). Đọc
+`GET /supply-items` (khoá `["supply-items"]`), giữ thứ tự backend; mỗi thứ bày tên và đơn vị mua, hoặc *Chưa có đơn vị*.
+**Không** bày `purchased_total` · `used_total` · `balance` · tỉ lệ · lời nhắc — đó là trang Kho (`P4A-09`). Thêm thứ: tên,
+đơn vị tuỳ chọn (trống thì không gửi). Đặt đơn vị chỉ hiện ở thứ chưa có đơn vị. Sổ một thứ mở bằng `?thu=<supply_item_id>`
+trên URL, đọc `GET /supply-items/{supply_item_id}` (khoá `["supply-items", id]`): từng dòng ngày, *Mua vào* · *Đã dùng*,
+con số đúng chuỗi backend trả kèm đơn vị, người ghi — thứ tự backend. Ghi một con số: ngày (bắt buộc, **không** mặc định từ
+đồng hồ trình duyệt — ngày của quán do backend xét), loại, con số là **chuỗi** theo khuôn hợp đồng gửi nguyên văn sau khi cắt
+khoảng trắng. Sửa con số: con số và lý do bắt buộc; không đổi ngày, loại. Không nút xoá thứ hay dòng. Không `parseFloat`,
+`Number(…)` hay phép cộng trừ trên con số ở trình duyệt. Ghi xong chỉ làm mất hiệu lực tiền tố `["supply-items"]` rồi đọc
+lại; `supply_item_name_taken` gắn ô tên, `supply_day_entry_already_recorded` nói dùng *Sửa* ở dòng đã có, lời có `field` gắn
+đúng ô. Chữ trên màn là nhãn giao diện, không phải luật quán.
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. `fe/src/app/chu-quan/nguyen-lieu/nguyen-lieu.test.tsx` (Codex viết) phủ: bày danh mục và *Chưa có đơn vị*; không bày số
+   thiếu hay lời nhắc dù phản hồi có; thêm thứ không đơn vị không gửi `purchase_unit`; tên trùng gắn ô tên; đặt đơn vị chỉ ở
+   thứ chưa có; mở sổ theo `?thu=`; ghi con số gửi đúng chuỗi (ví dụ `"1.250"`), không mặc định ngày; con số sai khuôn chặn
+   ở màn; `entry_date` tương lai bị từ chối gắn ô ngày; trùng dòng báo dùng *Sửa*; sửa thiếu lý do không gửi. Claude thử răng:
+   bỏ bước đọc lại sau ghi ⇒ test đỏ.
+2. `npx vitest run src/app/chu-quan` · toàn bộ `fe` xanh; `tsc --noEmit` sạch.
+3. `check-fe-rules.sh` xanh; grep `refetchInterval|setQueryData` dưới `fe/src/app/chu-quan` (trừ test) rỗng; grep
+   `parseFloat|Number\(|parseInt` trong file nguyên liệu (trừ test) rỗng.
+4. `npm run build` xong, có `/chu-quan/nguyen-lieu`.
+5. Chạy thật cùng backend (Claude): thêm thứ có và không đơn vị, trùng tên ⇒ `409`, đặt đơn vị, ghi mua · dùng, trùng dòng ⇒
+   `supply_day_entry_already_recorded`, ngày mai ⇒ `400 field=entry_date`, sửa có lý do — đọc lại thấy đúng.
+6. `docs/product/4-fe/01-khung-fe.md` §1 · §2 dòng route mới (Claude ghi khi duyệt).
+7. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
+
+**Bàn giao** — 2026-10-19 · thực hiện kể cả test: **Codex** `gpt-6-astra` (worktree `../lean_wt/P4A-08`, nhánh
+`codex/P4A-08`, base `a921357`); duyệt: **Claude Code**. Nhánh `P4A-01`. File: `nguyen-lieu/page.tsx` ·
+`nguyen-lieu/nguyen-lieu.test.tsx` · `_components/nguyen-lieu.tsx` · `_components/du-lieu-nguyen-lieu.ts`; Claude thêm lúc
+tích hợp: mục *Nguyên liệu* ở `muc-chu-quan.ts`, ca của nó ở `chu-quan.test.tsx`, owner `01-khung-fe.md` §1 · §2.
+*Nghiệm thu → bằng chứng:*
+1. `nguyen-lieu.test.tsx` 29 ca xanh (có ca số `-4` của `balance` không xuất hiện, `"1.250"` gửi nguyên chuỗi, `?thu=abc`).
+   Test có răng (Claude chạy): bỏ đọc lại sau ghi ⇒ `7 failed | 22 passed`; trả lại ⇒ `29 passed`.
+2. Clone chính: `npx vitest run src/app/chu-quan` ⇒ `Tests 153 passed (153)`; `tsc --noEmit` · `eslint src/app/chu-quan` sạch.
+3. `check-fe-rules: PASS`; grep `refetchInterval|setQueryData` rỗng; grep `parseFloat|parseInt|Number\(` trong file nguyên
+   liệu (trừ test) rỗng — mã `?thu=` đổi bằng `+thu`, chỉ là định danh, không phải con số sổ.
+4. `npm run build` ở clone chính có `○ /chu-quan/nguyen-lieu`.
+5. Chạy thật 2026-10-19 19:24 (cùng lượt với `P4A-07`): thêm *Gạo* có đơn vị `201`, *Hành tây* không đơn vị `201`
+   (`purchase_unit: null`) · trùng tên `409 supply_item_name_taken` · đặt đơn vị `200`, lần hai `409 supply_item_unit_already_set` ·
+   ghi mua `"10.250"` `201` (backend trả `"10.25"`) · ghi dùng `201` · trùng dòng `409 supply_day_entry_already_recorded` ·
+   ngày mai `400 field=entry_date` · sửa thiếu lý do `400 field=reason`, có lý do `200` · đọc sổ thấy hai dòng.
+   **Chưa** mở trang trên trình duyệt: phần bày do test giữ.
+6. `01-khung-fe.md` §1 dòng route, §2 dòng màn.
+7. Gate xanh ở clone chính (khối commit dưới).
+Còn lại: không — số thiếu, tỉ lệ nhắc và lời nhắc là của `P4A-09`.
 
 [↑ đầu file](#top)
 
