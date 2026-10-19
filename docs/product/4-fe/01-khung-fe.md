@@ -49,6 +49,11 @@ robots.txt không khai sitemap. Cách kiểm và phần còn chờ: [báo cáo S
 ô *Đọc lại sau ghi* và *Mất kết nối* chép đúng dòng nhóm của **ADR-102** điểm 1 trừ khi màn có lý do khác —
 khi ấy ghi lý do.
 
+**Ngày bán không suy từ đồng hồ máy** (2026-10-19, `T-202`, theo `fe-03` §6 và
+`docs/product/1-system-design/02-thoi-gian-ngay-ban.md`): màn cần *ngày bán hôm nay* lấy ngày backend trả
+(ví dụ `sale_date` của `GET /owner-overview`), không dựng từ `new Date()` của trình duyệt; ngày người dùng chọn để
+xem đi trên URL (**ADR-102** điểm 4).
+
 | Màn (route) | Đường đọc của hợp đồng | Đường ghi | Đọc lại khi | Mất kết nối bày gì | Bước |
 |---|---|---|---|---|---|
 | *(chưa có màn nào — `P4-05` thêm dòng đầu tiên)* | | | | | |
@@ -74,6 +79,9 @@ khi ấy ghi lý do.
 
 - **Không thử lại** ở lớp này — lệnh ghi không thử lại ngầm, đường đọc không thử lại lời từ chối có `code`
   (**ADR-102** điểm 2). Thử lại đường đọc khi `no_response` là cấu hình của thư viện truy vấn, chốt ở `P4-05`.
+- **Một `QueryClient`** ở `fe/src/lib/api/provider.tsx` (sửa 2026-10-19, `T-202`): `retry: false`; *đọc lại khi quay
+  lại cửa sổ* để mặc định của TanStack Query (bật) — **ADR-102** điểm 3. Màn nào muốn tắt cho một query phải ghi lý do
+  ở dòng của nó trong §2. Test: `fe/src/lib/api/provider.test.tsx`.
 - **Danh tính** (sửa 2026-10-14, `P4-04`, **ADR-109** điểm 6): cookie phiên `banhcuon_phien` `HttpOnly` do backend
   đặt; trình duyệt tự gửi tới `/api` cùng origin (`credentials: "same-origin"`), code **không** đọc hay cất mã phiên.
   Header chọn tên `X-Person-Id` đã gỡ ở `T-190`. Phiên đọc bằng `usePhien()` (`fe/src/lib/auth/session.ts`,
@@ -107,6 +115,18 @@ backend tắt ⇒ `502` kèm header trên.
 
 ## 4. Danh mục component dùng chung
 
+**Ba tầng và chiều import** — chủ repo chọn 2026-10-19 (`T-202`, lấy đề xuất `fe-04` §1):
+
+| Tầng | Thư mục | Giữ gì |
+|---|---|---|
+| 1 | `fe/src/components/ui/` | primitive shadcn sinh bằng CLI; không fetch, không đọc store, không quyết quyền |
+| 2 | `fe/src/components/shared/` | thành phần nghiệp vụ dùng ở **≥ 2** nhóm màn hay khung; nâng lên khi có nơi dùng thứ hai |
+| 3 | `fe/src/app/<route>/_components/` | thành phần riêng một màn, đặt cạnh route |
+
+Import chỉ đi **3 → 2 → 1** (tầng 3 dùng thẳng tầng 1 được); tầng 2 không import route hay thành phần riêng của route.
+Thư mục theo miền đã có (`fe/src/components/tai-khoan/`, `P4-04`) giữ nguyên tới khi một bước chạm nó thì chuyển về
+đúng tầng cùng lượt — không dời hàng loạt chỉ để cho gọn.
+
 Primitive giao diện là shadcn/ui, thêm bằng CLI ghim của `fe/` (`npx shadcn add <tên>` trong `fe/`) vào
 `fe/src/components/ui/`, **từng cái khi một màn cần** (**ADR-100**). Một thành phần được nâng lên dùng chung khi
 có nơi dùng thứ hai (**ADR-102** điểm 8) và thêm một dòng ở đây cùng lượt.
@@ -122,6 +142,6 @@ có nơi dùng thứ hai (**ADR-102** điểm 8) và thêm một dòng ở đây
 | Bước | Lấy gì |
 |---|---|
 | `P4-03` | §3.1 lệnh sinh type để so lệch; §3.2 để biết tầng chuyển tiếp là chỗ duy nhất gọi `fetch` thẳng |
-| `P4-04` | §3.1 `personId` của `createApi` — nối với tên đang chọn |
+| `P4-04` | §3.1 danh tính bằng cookie phiên (đã làm; chữ *`personId` · tên đang chọn* cũ bỏ 2026-10-19, `T-202`) |
 | `P4-05` | §1 · §2 thêm dòng màn đầu tiên; §3.1 cấu hình thư viện truy vấn; §4 primitive đầu tiên |
 | `P4-06` | §3.2 ba điều phải chứng minh trên luồng thật |

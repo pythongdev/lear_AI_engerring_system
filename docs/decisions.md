@@ -118,7 +118,7 @@ có câu trả lời mới từ người.
 | ADR-099 | **Cửa nhập bù hoá đơn từ sổ giấy**: `POST /sale-days/{sale_date}/paper-entries` (`quay_hoac_chu_quan`); từng món như đã bán; mang đi = `phone_preorder`, tại bàn = phiên mở và đóng ở `sold_at`; giá dựng lại ở mốc bán qua cùng hàm giá đọc vết sửa giá; đơn `completed`, không sinh việc bếp | Đã chốt 2026-10-13 (giao cho phiên, T-174; lời U-079; Claude thiết kế, Codex thi công) | — | T-174 · ADR-037 · ADR-086 · ADR-095 · ADR-098 · U-079 |
 | ADR-100 | **Pha 4 dùng shadcn/ui**: mọi primitive giao diện lấy từ CLI shadcn vào `fe/src/components/ui/`, không bộ UI thứ hai, không tự viết lại primitive; bản ghim chốt lúc dựng `fe/` | Đã chốt 2026-10-13 (chủ repo quyết, T-178) | — | T-176 · QC-09 |
 | ADR-101 | **Kế hoạch pha 4**: `master_plan/FE_master_plan_banh_cuon_ba_thanh.md`, mã `P4-01`…`P4-12`, sổ `work/backlog_FE.md`; nền → trang thử *Menu & giá* → màn quầy; không đổi hợp đồng, không tính tiền ở trình duyệt; admin ngoài pha 4 | Đã chốt 2026-10-13 (giao cho phiên, T-178); cách chia chờ chủ repo xác nhận | — | T-176 · ADR-076 · ADR-068 · ADR-100 |
-| ADR-102 | **Thước của pha 4**: bốn nhóm màn × cách lấy dữ liệu · ghi xong · mất kết nối · số tiền; ghi xong thì đọc lại, không cache giá; state ba chỗ, đổi người xoá sạch; RHF + Zod, Vitest + RTL, openapi-typescript + openapi-fetch, token CSS shadcn, npm; cùng origin qua Next; luồng quầy mang `X-Person-Id` bằng fetch đọc luồng — không đổi hợp đồng | Đã chốt 2026-10-13 (giao cho phiên, P4-01) | — | ADR-097 · ADR-100 · ADR-101 · U-075 |
+| ADR-102 | **Thước của pha 4**: bốn nhóm màn × cách lấy dữ liệu · ghi xong · mất kết nối · số tiền; ghi xong thì đọc lại, không cache giá; state ba chỗ, đổi người xoá sạch; RHF + Zod, Vitest + RTL, openapi-typescript + openapi-fetch, token CSS shadcn, npm; cùng origin qua Next; luồng quầy mang `X-Person-Id` bằng fetch đọc luồng — không đổi hợp đồng; **vế danh tính (điểm 4 *tên đang chọn*, điểm 7) bị ADR-109 thay** | Đã chốt 2026-10-13 (giao cho phiên, P4-01); *Sửa đổi* 2026-10-19 (T-202) | — | ADR-097 · ADR-100 · ADR-101 · ADR-109 · U-075 |
 | ADR-103 | **Mảng admin vào sổ pha 4 dưới dạng bước bị chặn**: mười một bước `P4A-01`…`P4A-11` theo đúng các trang admin của `docs/private/fe/PAGES_INDEX.md`, mô tả ở sổ riêng `work/backlog_FE_AD.md`; không bước nào *Ready* khi backend admin chưa có cửa và câu hỏi của nó chưa đóng; sửa ADR-101 điểm 6, không mở backend admin | Đã chốt 2026-10-13 (chủ repo, T-179) | — | P4A-01…P4A-11 · U-081…U-086 |
 | ADR-104 | **Lời chủ quán 2026-10-14 lật hai luật đã dựng**: mỗi người làm một tài khoản, mật khẩu riêng thay *chọn tên* (U-083 thay U-075), và đơn web báo về quầy bằng SSE thay Telegram (U-080 sửa ADR-041); `P4-04` dừng chờ thiết kế đăng nhập, không ai code mật khẩu trước khi thiết kế được duyệt | Đã chốt 2026-10-14 (chủ quán / chủ repo, T-180) | — | T-180 · U-088 · P4-04 · P4A-06 |
 | ADR-105 | **Mệnh đề lượt hai của mảng admin (`I-030`…`I-032`)**: vế *chủ quán hoặc POS* và *chủ quán* giữ ở **tầng 3** (cửa ghi của backend), database giữ *người có thật*; một việc một người nhận; đánh dấu xong là sự kiện, không phải cờ; ghi nhận đào tạo đứng trên người; món nhiều nhất một danh mục; câu đối chiếu của mỗi mệnh đề viết ở lát của nó | Đã chốt 2026-10-14 (giao cho phiên, P2A-10) | — | P2A-10 · P2A-11…P2A-13 · P2A-15 |
@@ -6898,6 +6898,9 @@ và khuôn rút ra chưa qua cổng; *đưa mảng admin vào pha 4* — không 
 
 ### ADR-102 — Thước của pha 4: màn đọc từ backend, ghi xong thì đọc lại, không cache giá; trình duyệt chỉ nói với Next, danh tính đi bằng header trên cả luồng quầy
 
+> **Vế danh tính đã bị ADR-109 thay** — điểm 4 *tên đang chọn* và cả điểm 7 không còn hiệu lực; danh tính là cookie
+> phiên. Đọc *Sửa đổi 2026-10-19* cuối ADR này.
+
 **Trạng thái:** Đã chốt 2026-10-13, **giao cho phiên** (Claude Code, bước `P4-01`; chủ repo bảo *"hãy hoàn thành task
 trên"* cùng ngày). Codex được giao phần kiểm kê chỉ đọc nhưng hết hạn mức trước khi chạy; Claude tự kiểm kê. Đóng bốn
 phần *Còn để mở* của **ADR-100**; vế stack chủ repo chọn (Next.js App Router, TanStack Query, Zustand, shadcn/ui) đọc ở
@@ -6934,7 +6937,7 @@ phần *Còn để mở* của **ADR-100**; vế stack chủ repo chọn (Next.j
      bàn này không đổ sang bàn khác; **chỉ món, số lượng, tuỳ chọn — không một số tiền nào**; không lưu xuống bộ nhớ
      trình duyệt ở bản đầu. Nháp một form, hộp thoại đang mở: state cục bộ của form. Bộ lọc, ngày bán đang xem, mục
      đang mở: trên URL.
-   - *Tên đang chọn* — Zustand, lưu trên máy (lời **U-075**: *"chọn tên"*, máy tin tên được chọn); chỉ giữ mã người
+   - *(Không còn hiệu lực — **ADR-109** thay, *Sửa đổi 2026-10-19*.)* *Tên đang chọn* — Zustand, lưu trên máy (lời **U-075**: *"chọn tên"*, máy tin tên được chọn); chỉ giữ mã người
      và nhãn lúc chọn, không cờ quyền — quyền đọc từ backend (`02-vai-va-quyen.md`). Server không đọc tên đang chọn.
    - **Đổi người** (chọn tên khác, hay bỏ chọn): xoá **toàn bộ** cache dữ liệu server, bỏ mọi nháp, đóng rồi mở lại
      luồng quầy với người mới. Lý do: đường đọc lớp `quay` · `chu_quan` trả theo người gọi, và một nháp người trước soạn
@@ -6968,7 +6971,7 @@ phần *Còn để mở* của **ADR-100**; vế stack chủ repo chọn (Next.j
      `text/event-stream`.
    - *Telemetry và phản hồi cho agent của Next:* tắt ở `P4-02`; bật lại là quyết của chủ repo — không gửi dữ liệu ra
      ngoài khi chưa ai đồng ý.
-7. **Danh tính trên luồng quầy: không đổi hợp đồng, không đổi backend.** Trình duyệt mở `GET /counter/events` bằng
+7. *(Không còn hiệu lực — **ADR-109** thay, *Sửa đổi 2026-10-19*.)* **Danh tính trên luồng quầy: không đổi hợp đồng, không đổi backend.** Trình duyệt mở `GET /counter/events` bằng
    **fetch đọc luồng**, không bằng `EventSource`, nên gửi `X-Person-Id` trong header như mọi đường gọi khác
    (`openapi.yaml` `PersonIdentity`; `authz.ChonTen` (gỡ ở `T-190`, 2026-10-14) chỉ đọc header, không đọc query hay cookie). Vì vậy
    **không cần `F-XXX`** gửi về pha 3. `EventSource` vẫn dùng được cho luồng trạm công khai, nhưng lớp realtime của
@@ -6983,7 +6986,7 @@ phần *Còn để mở* của **ADR-100**; vế stack chủ repo chọn (Next.j
    | fe-01 §8.1 · fe-02 §7.2 · fe-03 §8.4 (vế SSE) · nextjs §4.4 — danh tính SSE, origin, CORS, URL theo môi trường | ADR điểm 6 · 7; biến môi trường cụ thể: `P4-02` |
    | fe-01 §8.2 · fe-03 §8.4 (vế giá) — khách biết giá vừa đổi | ADR điểm 1 dòng *Khách* · 3: không tín hiệu riêng; đọc lại khi quay lại cửa sổ và tính thử ngay trước khi gửi. Cần hơn thế ⇒ `F-XXX` gửi pha 3 ở `P4-10` |
    | fe-01 §8.3 · fe-02 §7.1 — tín hiệu → nhóm dữ liệu đọc lại, chu kỳ trước lần đọc đầu, ngưỡng thiếu `heartbeat`, tab nền | `P4-06` |
-   | fe-01 §8.4 · fe-03 §8.1 — lưu tên, dọn cache khi đổi người, lệnh ghi đang bay | ADR điểm 4; nhiều tab cùng máy: `P4-04` |
+   | fe-01 §8.4 · fe-03 §8.1 — lưu tên, dọn cache khi đổi người, lệnh ghi đang bay | ADR điểm 4; nhiều tab cùng máy: ~~`P4-04`~~ → `P4-06` (*Sửa đổi 2026-10-19*) |
    | fe-01 §8.4 (vế owner) · nextjs §4.5 — owner FE nhận cách render, cache, realtime | `docs/product/4-fe/`, mở ở `P4-02` (**ADR-035**), dựa trên ADR này |
    | fe-01 §8.5 · fe-02 §7.5 · fe-03 §8.5 · fe-04 §7.5 · nextjs §4.1 · §4.2 — bản ghim, khung test, sinh type, form, gói | ADR điểm 5 · 6; số phiên bản: `P4-02`; nối `fe/` vào cổng: `P4-03` |
    | fe-01 §8.5 (vế API thiếu) · fe-02 §7.3 · fe-03 §8.3 · fe-04 §7.1 — đường đọc hay enum hợp đồng còn thiếu | bước gặp nó (`P4-07` · `P4-08` · `P4-09` · `P4-11`) ghi `F-XXX` gửi pha 3; màn chờ (**ADR-101** điểm 3) |
@@ -6992,7 +6995,7 @@ phần *Còn để mở* của **ADR-100**; vế stack chủ repo chọn (Next.j
    | fe-03 §8.2 — dấu gửi lại sống qua tải lại trang, bỏ nháp sau lỗi | `P4-07` (đơn điện thoại, POS) · `P4-10` (khách) |
    | fe-04 §7.3 — cài đặt máy trạm, theme tối, cỡ chữ trên thiết bị thật | `P4-09`; token: ADR điểm 5 |
    | fe-04 §7.4 — thành phần dùng chung thật, danh mục ở đâu | danh mục ở `docs/product/4-fe/` (`P4-02`); nâng lên dùng chung khi có nơi dùng thứ hai |
-   | fe-04 §7.5 (vế kiểm accessibility) | `P4-03` |
+   | fe-04 §7.5 (vế kiểm accessibility) | ~~`P4-03`~~ → `P4-05` (*Sửa đổi 2026-10-19*) |
    | nextjs §4.3 — thư viện nhận, ranh giới state | ADR điểm 4 · 5 và **ADR-100** |
    | nextjs §4.6 — trang tĩnh, hoãn prefetch | mặc định không; `P4-10` xét sau khi đo |
    | nextjs §4.7 — telemetry, ai duyệt đổi phiên bản | ADR điểm 6; đổi phiên bản là một task, Claude duyệt (**ADR-054**) |
@@ -7028,6 +7031,21 @@ người*; *khách không có tín hiệu đổi giá riêng*; *không tự gử
 **Applies to:** `P4-01`; mọi bước `P4-02`…`P4-12`; `fe/` (chưa tồn tại); `docs/product/2-db/10-quy-uoc-code.md` `QC-09`;
 `master_plan/FE_master_plan_banh_cuon_ba_thanh.md` §6 · §10; **ADR-054** · **ADR-086** · **ADR-097** · **ADR-100** ·
 **ADR-101** · **U-075** · **I-013** · **I-024**.
+
+**Sửa đổi 2026-10-19 (Claude Code, `T-202`; chủ repo bảo *"hãy làm theo đề xuất của bạn"* cùng ngày):**
+
+- *Danh tính.* **ADR-109** (chủ repo duyệt 2026-10-14) thay danh tính chọn tên bằng tài khoản và cookie phiên; `T-190`
+  gỡ `X-Person-Id` ở backend, `P4-04` gỡ ở `fe/`. Vì vậy vế *tên đang chọn* của điểm 4 và **cả điểm 7** không còn hiệu
+  lực; chữ *kèm `X-Person-Id`* ở dòng *Quầy* · *Chủ quán* của điểm 1 đọc là *kèm cookie phiên*. Vế *đổi người thì xoá
+  sạch cache* của điểm 4 vẫn đứng: nay là đăng nhập · đăng xuất · đổi mật khẩu (`docs/product/4-fe/01-khung-fe.md` §3.1).
+  Ba điều điểm 7 bắt `P4-06` chứng minh trên luồng quầy — (a) đóng tab thì backend thấy đóng, (b) tự nối lại và đọc lại,
+  (c) không đệm — vẫn là việc của `P4-06`, chỉ là luồng mang cookie thay header.
+- *Hai việc điểm 8 giao mà bị rơi.* `P4-03` · `P4-04` đã Done mà không làm *kiểm accessibility* (`fe-04` §7.5) và *nhiều
+  tab cùng máy*. Giao lại: accessibility → `P4-05` (trang đầu có hộp thoại sửa, rút khuôn cho mọi trang sau); nhiều tab
+  → `P4-06` (lớp chung của màn sống). Bước nhận ghi ở `work/backlog_FE.md`.
+- *Điểm 3 trong code.* `fe/src/lib/api/provider.tsx` đã tắt *đọc lại khi quay lại cửa sổ* cho mọi query, trái điểm 3;
+  `T-202` gỡ, kèm test.
+- **Suy ra, không phải lời chủ repo:** chọn `P4-05` · `P4-06` làm bước nhận.
 
 ### ADR-103 — Mảng admin vào sổ pha 4 dưới dạng mười một bước bị chặn, theo đúng danh sách trang của `PAGES_INDEX.md`
 

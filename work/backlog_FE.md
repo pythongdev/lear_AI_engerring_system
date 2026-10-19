@@ -368,6 +368,12 @@ khi đổi thành phần suất ([`03-ham-gia.md`](../docs/product/3-be/03-ham-g
 mọi số hiện là số backend trả. Xong thì rút **khuôn** (bảng, hộp thoại sửa có lý do, bày lời từ chối, query key)
 vào `docs/product/4-fe/` cho mọi trang sau.
 
+**Khuôn phải có thêm** (giao 2026-10-19, `T-202` — **ADR-102** *Sửa đổi*): (1) **kiểm accessibility** theo `fe-04`
+§5 · §7.5 — lỗi ô gắn `aria-describedby`, focus vào và trả về của hộp thoại, cỡ chạm; (2) **ba kiểu chỉ báo tải**
+(`fe-02` §1 · §2): khung xương lần đọc đầu · spinner trên nút khi ghi · chỉ báo nhỏ khi đọc lại mà vẫn giữ bản cũ;
+(3) **chặn bấm gửi hai lần** cho lệnh ghi của người quán (`fe-02` §3): nút tắt ngay từ lần bấm đầu tới khi có kết quả,
+một ca test bấm hai lần ⇒ một lời gọi.
+
 **Không làm thì mất gì:** khuôn của mọi màn sau được rút từ một màn chưa ai duyệt chạm tiền.
 
 **Bẫy:** không nút *thêm món*, không nút *xoá* — không có cửa (kế hoạch §7). Không cộng giá để *xem trước* ở
@@ -386,7 +392,9 @@ trình duyệt; cần xem trước thì gọi tính thử.
 
 **Goal:** một lớp chung theo **ADR-097** và [`09-realtime-du-phong.md`](../docs/product/3-be/09-realtime-du-phong.md):
 nghe luồng, nhận tín hiệu thì đọc lại đúng query, tự kéo theo `poll_interval_seconds` backend trả, **banner mất
-kết nối luôn nhìn thấy** (màn trạm: không nút đóng).
+kết nối luôn nhìn thấy** (màn trạm: không nút đóng). **Nhiều tab cùng máy** (giao 2026-10-19, `T-202` — **ADR-102**
+*Sửa đổi*): đăng xuất hay đổi người ở một tab thì tab kia của cùng trình duyệt xoá cache và về màn đăng nhập ngay, không
+đợi tới lần gọi trả 401; có test.
 
 **Không làm thì mất gì:** quầy tưởng không có đơn mới trong khi luồng đã đứt từ lâu.
 
@@ -459,7 +467,8 @@ thấy là giá tính thử của backend. Chữ khách đọc khi quán tạm d
 **Phụ thuộc** · bước 11/12 · **cần xong trước:** `P4-08`
 
 **Goal:** khai đầu két, đếm, sửa đếm có lý do, khai sổ giấy, nhập bù (**ADR-099**), đối soát xong, danh sách nợ,
-tạm dừng · tiếp tục nhận đơn, đổi mã QR. Một ngày bán giả đi hết qua màn ⇒ đối soát 0đ lệch.
+tạm dừng · tiếp tục nhận đơn, đổi mã QR. Một ngày bán giả đi hết qua màn ⇒ đối soát 0đ lệch. Ngày bán của mọi màn
+lấy từ backend, không từ đồng hồ máy (`docs/product/4-fe/01-khung-fe.md` §2, 2026-10-19).
 
 **Nhận việc:** —
 

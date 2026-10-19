@@ -70,9 +70,9 @@ ra đời ở `P4-02` (**ADR-035**).
 
 **Dữ kiện quán đã có:** ma trận vai [`02-vai-va-quyen.md`](../docs/product/3-be/02-vai-va-quyen.md) (lớp `chu_quan`); danh tính bằng tài khoản mật khẩu riêng (`master_plan/shop-facts.md` §8.8 sửa 2026-10-14, **ADR-104** — thay chọn tên của `T-143`); mảng quản trị đứng riêng khỏi bán hàng (`master_plan/shop-facts.md` §8 mở đầu).
 
-**Không lấy từ PAGES_INDEX:** `AuthGuard` · `RoleGuard minRole=MANAGER` theo JWT và đoạn *mobile bottom bar* đề xuất — quán này nhận danh tính bằng header theo **ADR-102**; vai `MANAGER` không có trong ma trận vai.
+**Không lấy từ PAGES_INDEX:** `AuthGuard` · `RoleGuard minRole=MANAGER` theo JWT và đoạn *mobile bottom bar* đề xuất — quán này nhận danh tính bằng cookie phiên của tài khoản (**ADR-109**, đã chạy từ `P4-04`; `X-Person-Id` gỡ ở `T-190`); vai `MANAGER` không có trong ma trận vai.
 
-**Theo fe_guidance:** nhóm màn **chủ quán** của ADR-102 điểm 1; ba tầng và chiều import của `fe-04-shared-components.md` §1 — khung admin dùng chung shared component với khung chủ quán của `P4-04`, không dựng bộ thứ hai.
+**Theo fe_guidance:** nhóm màn **chủ quán** của ADR-102 điểm 1; ba tầng và chiều import — chủ repo chọn 2026-10-19, owner [`01-khung-fe.md`](../docs/product/4-fe/01-khung-fe.md) §4 — khung admin dùng chung shared component với khung chủ quán của `P4-04`, không dựng bộ thứ hai.
 
 **Không làm thì mất gì:** mỗi trang admin tự dựng điều hướng và tự kiểm vai, và một trang quên kiểm thì nhân viên thấy nút của chủ quán.
 
@@ -189,7 +189,7 @@ ra đời ở `P4-02` (**ADR-035**).
 ---
 
 <a id="p4a-06"></a>
-### P4A-06 — Trang nhân viên của bản cũ quản lý tài khoản mật khẩu, còn quán này vào máy bằng chọn tên
+### P4A-06 — Trang nhân viên của bản cũ quản lý tài khoản theo vai của dự án khác, còn quán này để người làm tự đăng ký và chủ quán duyệt
 
 **Phụ thuộc** · bước admin 6/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · thiết kế đăng nhập `T-181` (**ADR-104**)
 
@@ -198,11 +198,11 @@ ra đời ở `P4-02` (**ADR-035**).
 
 **Goal:** chủ quán quản lý **tài khoản** của người làm — mỗi người một tài khoản, mật khẩu riêng (U-083, 2026-10-14, thay chọn tên). Lượt hai (U-088 đóng): người làm **tự đăng ký**, trang này là chỗ chủ quán **duyệt** và gán vai, khoá tài khoản người nghỉ; mật khẩu người làm tự đặt và tự đặt lại qua Gmail — trang không bày, không đổi mật khẩu của ai.
 
-**Dữ kiện quán đã có:** tài khoản mật khẩu riêng (`master_plan/shop-facts.md` §8.8 sửa 2026-10-14, **ADR-104**; luật cũ chọn tên của `T-143` · `U-075` còn chạy trong code tới khi thiết kế mới được duyệt); mảng con người ba mức (`master_plan/shop-facts.md` §8.7); mốc đổi người ở quầy (§8.8); bốn vai và năm trạm (§3).
+**Dữ kiện quán đã có:** tài khoản mật khẩu riêng (`master_plan/shop-facts.md` §8.8 sửa 2026-10-14, **ADR-104**; luật cũ chọn tên của `T-143` · `U-075` đã gỡ — backend ở `T-190`, `fe/` ở `P4-04`, theo **ADR-109**); mảng con người ba mức (`master_plan/shop-facts.md` §8.7); mốc đổi người ở quầy (§8.8); bốn vai và năm trạm (§3).
 
 **Không lấy từ PAGES_INDEX:** vai `chef / cashier / staff / manager` — không khớp bốn vai của quán; luồng JWT của dự án cũ — cách đăng nhập là của thiết kế ADR-104; trang đăng ký `/register` cũng không lấy.
 
-**Theo fe_guidance:** store chọn tên ở `fe-03-state-management.md` §4 — đổi người thì xoá sạch dữ liệu của người trước (**ADR-102**).
+**Theo fe_guidance:** đổi người (đăng nhập · đăng xuất) thì xoá sạch dữ liệu của người trước (**ADR-102** điểm 4, vế còn hiệu lực); store *chọn tên* của `fe-03-state-management.md` §4 không lấy — **ADR-109** thay nó bằng cookie phiên.
 
 **Không làm thì mất gì:** chủ quán không có chỗ tạo hay khoá tài khoản, và một người nghỉ việc vẫn vào được máy.
 

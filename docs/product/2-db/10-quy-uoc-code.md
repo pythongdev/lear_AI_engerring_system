@@ -721,6 +721,11 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   `compress` tắt để luồng sự kiện qua tầng chuyển tiếp không bị đệm. **Font**: font hệ thống, không tải font từ
   mạng lúc build — font mặc định của bộ khởi tạo không có bộ chữ tiếng Việt.
 
+  **`fe/AGENTS.md`** (chủ repo chọn **giữ**, 2026-10-19, `T-202`): khối `nextjs-agent-rules` do `next dev` tự viết và
+  tự viết lại mỗi lần chạy — gỡ thì cây làm việc luôn bẩn. Nó là lời nhắc của Next (*đọc tài liệu trong
+  `node_modules/next/dist/docs/`*), **không** phải luật AI của repo: luật AI chỉ ở `CLAUDE.md` (Codex vào qua
+  `AGENTS.md` gốc). Không ai thêm nội dung khác vào file ấy.
+
   Địa chỉ backend là biến môi trường phía server `BANHCUON_BE_URL`; tầng chuyển tiếp và lớp gọi API:
   `docs/product/4-fe/01-khung-fe.md` §3.
 - **Hậu quả nếu làm khác:** dải phiên bản ⇒ hai máy cài hai bản khác nhau từ cùng một `package.json`, và một

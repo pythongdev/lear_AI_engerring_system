@@ -951,6 +951,71 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-202"></a>
+### T-202 — FE đang lệch ADR-102 ở cấu hình truy vấn, và ADR-102 còn nói danh tính bằng chọn tên
+
+**Nguồn:** chủ repo 2026-10-19 bảo rà `docs/private/fe/fe_guidance/` so với `docs/product/4-fe/`, `work/backlog_FE.md`,
+`work/backlog_FE_AD.md`; Codex hết hạn mức, Claude Code tự rà (chỉ đọc), chủ repo đồng ý mở task *"để bạn làm ở session
+sau"*. Mức **L1**: một dòng cấu hình đổi hành vi đọc lại của mọi màn, còn lại là sửa con trỏ và giao việc. Làm **sau khi
+T-197 commit** — T-197 đang sửa `docs/decisions.md` và file này.
+
+**Lượt rà tìm thấy** (đo 2026-10-19, Claude Code):
+1. `fe/src/lib/api/provider.tsx` dòng 14 đặt `refetchOnWindowFocus: false` cho mọi query. ADR-102 điểm 3 và dòng *Chủ
+   quán* của điểm 1 bắt đọc lại khi quay lại cửa sổ; `fe-02-loading.md` §4 · §5 cũng thế. Hôm nay chỉ query phiên chịu, nhưng
+   `P4-05` (trang đầu chạm giá) sẽ thừa hưởng — đúng rủi ro *màn giữ giá cũ* của kế hoạch pha 4 §10. `check-fe-rules.sh`
+   không bắt ca này.
+2. ADR-102 điểm 4 (*tên đang chọn* trong Zustand, U-075) và điểm 7 (luồng quầy mang `X-Person-Id`) đã bị **ADR-109** thay
+   (cookie phiên), nhưng thân, tiêu đề và dòng bảng tổng hợp của ADR-102 không trỏ sang. Cùng chữ cũ ở
+   `docs/product/4-fe/01-khung-fe.md` §5 dòng `P4-04` (*`personId` của `createApi`*, đã gỡ), `work/backlog_FE_AD.md`
+   `P4A-01` (*danh tính bằng header theo ADR-102*) và `P4A-06` (tiêu đề *vào máy bằng chọn tên*; dòng *Theo fe_guidance* trỏ
+   store chọn tên của `fe-03` §4).
+3. ADR-102 điểm 8 giao *kiểm accessibility* (`fe-04` §7.5) cho `P4-03` và *nhiều tab cùng máy* cho `P4-04`; cả hai bước đã
+   Done mà không làm. Hệ quả: `aria-describedby` cho lỗi ô, focus của dialog, cỡ chạm (`fe-04` §5) không ai giữ; đăng xuất ở
+   một tab thì tab kia giữ cache người trước tới lần gọi 401.
+4. Chưa có bước nhận: ba kiểu chỉ báo tải (skeleton lần đầu · spinner trên nút khi ghi · chỉ báo nhỏ khi đọc lại, `fe-02`
+   §1 · §2); guard đồng bộ chống bấm gửi hai lần cho lệnh ghi của người quán (`fe-02` §3 — phía khách đã có
+   `submission_code`, I-024); *không suy ngày bán từ đồng hồ máy* (`fe-03` §6); ba tầng component và chiều import (`fe-04`
+   §1) — `P4A-01` coi là đã chốt nhưng `01-khung-fe.md` §4 không có, code đặt theo thư mục miền `components/tai-khoan/`.
+5. `fe/AGENTS.md` (khối luật của create-next-app) vào repo ở `92c16a7` (P4-04), trái câu bàn giao `P4-02` *"không
+   `AGENTS.md` của `create-next-app` (luật AI chỉ ở `CLAUDE.md`)"*.
+
+Không phải lỗi: guidance đề xuất bật `cacheComponents` · `partialPrefetching`, `QC-18` tắt có lý do — owner thắng.
+
+**Acceptance** (viết trước, 2026-10-19):
+1. `provider.tsx` không còn tắt `refetchOnWindowFocus` (giữ `retry: false`). Test Vitest mới: một query đang hiển thị, báo
+   cửa sổ quay lại (`focusManager`) ⇒ hàm đọc chạy lần hai; cài lại `refetchOnWindowFocus: false` ⇒ test đỏ, gỡ ⇒ xanh. Quyết
+   có thêm luật vào `check-fe-rules.sh` (kèm ca hồi quy) hay không — không thêm thì ghi một dòng lý do ở bàn giao.
+2. ADR-102 có mục *Sửa đổi* ghi ngày và người: vế *tên đang chọn* của điểm 4 và cả điểm 7 bị **ADR-109** thay; tiêu đề và
+   dòng bảng tổng hợp nói điều ấy; hai dòng điểm 8 (accessibility → `P4-03`, nhiều tab → `P4-04`) trỏ sang bước nhận mới.
+3. `01-khung-fe.md` §5 dòng `P4-04`, `backlog_FE_AD.md` `P4A-01` · `P4A-06` hết chữ chọn tên / header; `grep -rn
+   "X-Person-Id\|chọn tên" docs/product/4-fe work/backlog_FE.md work/backlog_FE_AD.md` chỉ còn câu nói về luật cũ như vết.
+4. Mỗi mục ở *Lượt rà tìm thấy* 3 · 4 có một chỗ nhận: dòng trong Goal hoặc khuôn của `P4-05` · `P4-06` · `P4-11` ở
+   `work/backlog_FE.md`, hoặc dòng ở `01-khung-fe.md`. Ba tầng component: chọn lấy hay bác `fe-04` §1, ghi ở
+   `01-khung-fe.md` §4; là sở thích thì hỏi chủ repo.
+5. `fe/AGENTS.md`: hỏi chủ repo giữ hay gỡ; ghi kết quả và lý do ở `QC-18`.
+6. `./scripts/gate.sh` xanh, có dòng `fe-check: PASS`.
+
+**Scope dự kiến:** `fe/src/lib/api/provider.tsx` · test mới cạnh nó · `docs/decisions.md` (ADR-102) ·
+`docs/product/4-fe/01-khung-fe.md` · `work/backlog_FE.md` · `work/backlog_FE_AD.md` · `work/backlog.md` ·
+`docs/product/2-db/10-quy-uoc-code.md` (`QC-18`) · `fe/AGENTS.md` · `scripts/check-fe-rules.sh` +
+`scripts/check-fe-rules.test.sh` (chỉ khi thêm luật).
+
+**Bàn giao** (2026-10-19): thực hiện — Claude Code (tài liệu) · Codex `gpt-6-astra` (code, worktree
+`../lean_wt/T-202`, nhánh `codex/T-202`, base `89d427b`); duyệt — Claude Code, đọc diff thật, tự chạy lại test và gate.
+Nhánh `T-202`. Kết quả theo Acceptance: (1) `provider.tsx` thôi tắt `refetchOnWindowFocus`, giữ `retry: false`; test
+`fe/src/lib/api/provider.test.tsx` *ApiProvider đọc lại query khi quay lại cửa sổ* — Claude cài lại cấu hình cũ ⇒
+`expected "vi.fn()" to be called 2 times, but got 1 times`, gỡ ⇒ `1 passed`. **Không thêm** luật vào
+`check-fe-rules.sh`: mẫu chữ không phân biệt cấu hình chung với một query có lý do tắt riêng, dễ báo nhầm; test hành vi
+giữ provider. (2) ADR-102 có *Sửa đổi 2026-10-19*, tiêu đề, dòng bảng, điểm 4 · 7 · 8 trỏ ADR-109 và bước nhận mới.
+(3) grep `X-Person-Id\|chọn tên` chỉ còn câu kể luật cũ như vết (hồ sơ `P4-01` · `P4-02` · `P4-04`, đo 2026-10-13).
+(4) accessibility · ba kiểu chỉ báo tải · chặn bấm hai lần → `P4-05`; nhiều tab → `P4-06`; ngày bán từ backend →
+`01-khung-fe.md` §2 + `P4-11`; ba tầng component → `01-khung-fe.md` §4 (chủ repo chọn *ba tầng fe-04*). (5) `fe/AGENTS.md`:
+chủ repo chọn **giữ**, ghi ở `QC-18`. (6) `./scripts/gate.sh` exit 0 (db-check PASS 32 bước, verify PASS);
+`./scripts/fe-check.sh` ⇒ `Tests 41 passed (41)` · `fe-check: PASS`. Codex chạy `tsc` không qua `npm run typecheck`
+nên báo nhầm `LayoutProps` — không phải lỗi code. Còn lại: không.
+
+[↑ đầu file](#top)
+
 <a id="t-137"></a>
 ### T-137 — Thêm một dòng con vào bản ghi đã có không để lại vết ai thêm, lúc nào, từ gì sang gì (F-047)
 
