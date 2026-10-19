@@ -30,6 +30,7 @@ current="$(git config --local --get core.hooksPath 2>/dev/null || true)"
 if [ "${1:-}" = "--check" ]; then
   [ "$current" = "$WANT" ] || exit 1
   [ -x "$WANT/commit-msg" ] || exit 1
+  [ -x "$WANT/pre-commit" ] || exit 1  # Gate 9 (F-025, T-208)
   exit 0
 fi
 

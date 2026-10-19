@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# Gate 9 — git từ chối một commit nhặt file của nhiều task (work/findings.md F-025; T-208).
+#
+# VÌ SAO: Gate 7b chỉ chấm khối commit mà phiên viết ra; người gõ `git commit` ở terminal đi vòng
+# qua nó. F-025 ghi bốn lần một commit nhặt luôn thay đổi CHƯA COMMIT của phiên khác, dưới subject
+# của task mình. Hook này đứng giữa người gõ và git, như commit-msg (Gate 8, ADR-010).
+#
+# LUẬT: mọi file đang staged phải nằm trong scope của CÙNG MỘT task — tức có ít nhất một file
+# work/scope/<MÃ>.txt cho phép tất cả chúng. Phép khớp pattern là của Gate 3, gọi qua
+#   scripts/check-scope.sh --match --task <MÃ> <path>...
+# để hai bản so khớp không trôi khỏi nhau (F-001).
+#
+# KHÔNG CHẶN khi: không file nào staged; hoặc không file scope nào có pattern (L0 không khai scope —
+# CLAUDE.md §3; khi ấy hook không biết task nào là của ai, nên im lặng thay vì đoán).
+# THOÁT HIỂM: git commit --no-verify. Hook không sửa index, không tự bỏ file nào ra.
+
+set -uo pipefail
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+cd "$ROOT" || exit 0
+
+staged=()
+while IFS= read -r f; do
+  [ -n "$f" ] && staged+=("$f")
+done < <(git diff --cached --name-only --diff-filter=ACMRD)
+[ "${#staged[@]}" -gt 0 ] || exit 0
+
+ids=()
+for s in work/scope/*.txt; do
+  [ -f "$s" ] || continue
+  # Đếm pattern đúng một phép với Gate 3: bỏ phần từ #, cắt khoảng trắng, còn khác rỗng.
+  if sed 's/#.*//' "$s" | grep -q '[^[:space:]]'; then
+    ids+=("$(basename "$s" .txt)")
+  fi
+done
+[ "${#ids[@]}" -gt 0 ] || exit 0
+
+for id in "${ids[@]}"; do
+  out="$(./scripts/check-scope.sh --match --task "$id" "${staged[@]}")"
+  if [ -z "$out" ]; then
+    exit 0
+  fi
+done
+
+{
+  echo "pre-commit (Gate 9): các file đang staged không cùng nằm trong scope của một task nào (F-025)."
+  echo "  File staged:"
+  for f in "${staged[@]}"; do
+    owners=()
+    for id in "${ids[@]}"; do
+      [ -z "$(./scripts/check-scope.sh --match --task "$id" "$f")" ] && owners+=("$id")
+    done
+    if [ "${#owners[@]}" -gt 0 ]; then
+      printf '    %s  ← %s\n' "$f" "${owners[*]}"
+    else
+      printf '    %s  ← không task nào\n' "$f"
+    fi
+  done
+  echo "  Gỡ file của task khác ra (git restore --staged <file>), hoặc khai nó vào scope của task này."
+  echo "  Cố ý gộp: git commit --no-verify."
+} >&2
+exit 1

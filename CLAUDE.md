@@ -293,6 +293,10 @@ is under 2 words or 8 characters, or repeats a subject already reachable from
 `.git/` does not travel with a clone, so run it in every fresh clone; the brief
 warns while it is not installed (ADR-010).
 
+**Gate 9 — `scripts/hooks/pre-commit`** (2026-10-19, repo owner, F-025): git refuses a commit whose
+staged files are not all inside the scope file of **one** task; its header owns the rule. Same
+escape hatch, same install.
+
 ## 7. Keeping the System Current
 
 Every session starts cold and acts on whatever it is handed, so it must be

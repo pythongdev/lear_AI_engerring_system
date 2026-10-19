@@ -271,7 +271,8 @@ r="$(newrepo h1 yes)"
 mkdir -p "$r/scripts/hooks"
 cp "$HERE_DIR/hooks/commit-msg" "$r/scripts/hooks/commit-msg"
 cp "$HERE_DIR/install-hooks.sh" "$r/scripts/install-hooks.sh"
-chmod +x "$r/scripts/hooks/commit-msg" "$r/scripts/install-hooks.sh"
+cp "$HERE_DIR/hooks/pre-commit" "$r/scripts/hooks/pre-commit"  # Gate 9 (T-208): --check đòi cả hook này
+chmod +x "$r/scripts/hooks/commit-msg" "$r/scripts/hooks/pre-commit" "$r/scripts/install-hooks.sh"
 
 brief "$r"
 case "$out" in

@@ -141,6 +141,9 @@ git -C "$repo" config user.name t
 mkdir -p "$repo/scripts/hooks"
 cp "$HOOK" "$repo/scripts/hooks/commit-msg"
 cp "$INSTALL" "$repo/scripts/install-hooks.sh"
+# Gate 9 (T-208): --check đòi cả pre-commit; repo tạm không có file scope nên hook không chặn ca nào ở đây.
+cp "$HERE/hooks/pre-commit" "$repo/scripts/hooks/pre-commit"
+chmod +x "$repo/scripts/hooks/pre-commit"
 chmod +x "$repo/scripts/hooks/commit-msg" "$repo/scripts/install-hooks.sh"
 
 # Chưa cài: --check phải đỏ.

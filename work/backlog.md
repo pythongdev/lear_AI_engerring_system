@@ -107,6 +107,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-208 **Gate 9: git từ chối commit nhặt file của nhiều task (F-025)** — `scripts/hooks/pre-commit` khớp file staged với scope từng task bằng `check-scope.sh --match`; `install-hooks.sh --check` đòi cả hook mới; CLAUDE.md §6.2 — L1 — 2026-10-19 · Claude Code theo lời chủ repo *"F-025: hook pre-commit"* · [chi tiết](#t-208)
 - [x] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ và thi công (2026-10-19, Codex không tham gia) — 2026-10-19 · [chi tiết](#t-141)
 - [x] T-207 **Test lùi mẻ chen chuyển phần của chính mẻ (F-066)** — `TestI020_LuiMeChenChuyenPhanCuaChinhMe` 12 vòng chen nhau, cả hai thứ tự đều ra mẻ đã lùi và hai đơn vị về Chưa làm; bỏ hai khoá mẻ ⇒ đỏ — L1 (chỉ thêm test) — 2026-10-19 · Claude Code · [chi tiết](#t-207)
 - [x] T-206 **Ba finding tài liệu: F-067 · F-069 · F-070** — ghi lượt duyệt độc lập backend (không thấy hành vi đổi) và đóng F-067; `prompt-fullstack.md` §3.6 thành con trỏ tới hợp đồng; ba lời hứa treo của pha 3 ghi rõ chỗ nhận — L0/L1 tài liệu — 2026-10-19 · Claude Code theo lời chủ repo chọn ba việc quy trình · [chi tiết](#t-206)
@@ -424,6 +425,21 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-208"></a>
+### T-208 — Commit nhặt thay đổi chưa commit của phiên khác (F-025)
+
+**Yêu cầu:** chủ repo 2026-10-19 chọn *"F-025: hook pre-commit"*. **Mức:** L1 — công cụ của repo, không chạm sản phẩm.
+
+*Nghiệm thu* (viết trước): (1) hook từ chối tổ hợp file của hai task và file ngoài mọi scope, cho qua khi một task phủ hết, khi không
+file nào staged, khi chưa khai scope nào; lời từ chối nêu task của từng file; `git commit` thật bị chặn, `--no-verify` đi qua —
+`scripts/pre-commit.test.sh`; (2) `install-hooks.sh --check` đỏ khi thiếu hook mới, `commit-msg.test.sh` vẫn xanh; (3) F-025 Fixed;
+`./scripts/gate.sh` xanh.
+
+**Bàn giao** — 2026-10-19 · **Claude Code**; chưa ai duyệt độc lập. `pre-commit.test: PASS` (10 ca) · `[test] commit-msg: tất cả ca
+đều đạt` · `install-hooks.sh --check` exit 0 ở clone chính. Hook chạy khoảng 1 giây trên một commit thường của repo này.
+
+[↑ đầu file](#top)
 
 <a id="t-141"></a>
 ### T-141 — Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán (U-071)

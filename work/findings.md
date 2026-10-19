@@ -2482,8 +2482,14 @@ kêu đường dẫn hỏng của file ấy), commit chưa push nên sửa bằn
 chưa theo dõi. Hình mới: lỗi không nằm ở khối dán của người dùng mà ở **cách phiên tự dựng danh sách** — lọc theo
 *file lạ đã biết* thay vì theo **scope của task**. Từ `P3-12` phiên lọc danh sách bằng các mẫu của chính scope file.
 
+**Đã sửa 2026-10-19 (T-208):** chủ repo chọn dựng cổng (*"F-025: hook pre-commit"*). `scripts/hooks/pre-commit` (Gate 9) từ chối
+commit khi file staged không cùng nằm trong scope của một task, khớp pattern bằng `check-scope.sh --match --task` (cùng phép với
+Gate 3); không file scope nào có pattern thì im; lối thoát `--no-verify`. Test `scripts/pre-commit.test.sh` 10 ca, gồm một
+`git commit` thật bị chặn. Hai commit trùng subject cũ để nguyên (ADR-008). Giới hạn: file scope cũ còn nằm lại mà rộng thì
+vẫn có thể "che" một tổ hợp — xoá file scope sau khi commit (CLAUDE.md §3.4) vẫn là việc của phiên.
+
 **Status:**
-Open
+Fixed
 
 ---
 
