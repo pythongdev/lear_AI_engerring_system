@@ -98,6 +98,9 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## In Progress
 
 - [ ] T-203 **Cửa duyệt không trao cờ chủ quán (F-071)** — `POST /accounts/{account_id}/approval` từ chối `person_id` của người mang cờ chủ quán bằng `409 account_person_is_owner` (`field: person_id`); hợp đồng 0.41.0; trang nhân viên nói đúng lời; vế mới của `I-033` — L2 — mở 2026-10-19 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"hãy yêu cầu codex làm f-071. đồng ý với đề xuất của bạn"* · [chi tiết](#t-203)
+- [ ] P4A-09 **Trang kho của chủ quán** — đọc `GET /supply-stock`: hai tổng, số thiếu theo phép trừ §8.4, lần nhập gần nhất, tỉ lệ nhắc và cờ nhắc POS kiểm tra đúng như backend trả; đặt tỉ lệ có lý do (`PUT /supply-items/{supply_item_id}/reminder-ratio`); không *dự kiến hết*, không so ngưỡng hay trừ ở trình duyệt — L1 — mở và nhận 2026-10-19 · Claude Code (dẫn, duyệt, chạy thật), Codex thi công kể cả test theo lời chủ repo *"hãy yêu cầu codex làm nốt 3 task trên nếu codex hết token bẹn làm nốt"* · [chi tiết](backlog_FE_AD.md#p4a-09)
+- [ ] P4A-10 **Trang khoản chi của chủ quán (chi phí marketing là một loại chi)** — loại chi khai rõ nguồn két · tiền riêng (`/expense-categories`), ghi · sửa có lý do khoản chi, lọc theo khoảng ngày · loại · nguồn, tổng do backend cộng (`/expenses*`); không ngân sách, không chiến dịch — L1 — mở và nhận 2026-10-19 · Claude Code (dẫn, duyệt, chạy thật), Codex thi công kể cả test theo cùng lời · [chi tiết](backlog_FE_AD.md#p4a-10)
+- [ ] P4A-11 **Trang đào tạo của chủ quán** — ghi nhận xét và đánh giá *làm được · chưa* về một người, sửa · ẩn có lý do (`/training-records*`); hướng dẫn chữ · ảnh · video gắn từng việc được giao, sửa chữ · ẩn có lý do (`/assigned-tasks/{assigned_task_id}/guides` · `/assigned-task-guides*`); POS làm từ quầy chưa có màn — L1 — mở và nhận 2026-10-19 · Claude Code (dẫn, duyệt, chạy thật), Codex thi công kể cả test theo cùng lời · [chi tiết](backlog_FE_AD.md#p4a-11)
 
 
 

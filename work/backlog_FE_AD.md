@@ -644,7 +644,7 @@ Còn lại: không — số thiếu, tỉ lệ nhắc và lời nhắc là của
 <a id="p4a-09"></a>
 ### P4A-09 — Trang kho của bản cũ dự báo ngày hết hàng, còn quán này cấm máy kết luận thiếu
 
-**Phụ thuộc** · bước admin 9/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · lược đồ tỉ lệ nhắc `T-186`
+**Phụ thuộc** · bước admin 9/11 · mức L1 · ~~**bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · lược đồ tỉ lệ nhắc `T-186`~~ — **mở 2026-10-19** (cửa `GET /supply-stock` · `PUT /supply-items/{supply_item_id}/reminder-ratio`, kế hoạch §6a lượt sáu)
 
 **Trang nguồn:** `/admin/storage` — quản lý kho: cảnh báo sắp hết, nối món với tồn kho, dự báo ngày hết. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
@@ -663,7 +663,29 @@ ra đời ở `P4-02` (**ADR-035**).
 
 **Bẫy:** số thiếu là số backend trả, không trừ ở trình duyệt; nhắc sắp hết là việc của backend, không so ngưỡng ở trình duyệt.
 
-**Nhận việc:** —
+**Nhận việc** — 2026-10-19 · dẫn và duyệt: **Claude Code**; thi công kể cả test: **Codex** (worktree `../lean_wt/P4A-09`,
+nhánh `codex/P4A-09`, base `33221a3`), theo lời chủ repo *"hãy yêu cầu codex làm nốt 3 task trên nếu codex hết token bẹn làm nốt"*. **Claude chốt:** trang `/chu-quan/kho`, mục *Kho* (Claude thêm vào
+`muc-chu-quan.ts` lúc tích hợp). Đọc `GET /supply-stock` (khoá `["supply-stock"]`), thứ tự backend; mỗi thứ bày tên, đơn vị
+hoặc *Chưa có đơn vị*, *Tổng mua vào*, *Tổng đã dùng*, *Mua vào trừ đã dùng* (`balance`, số âm bày nguyên), lần nhập gần
+nhất hoặc *Chưa có lần mua*, tỉ lệ nhắc đúng chuỗi backend (không đổi ra phần trăm — đổi là phép tính ở trình duyệt). Cờ nhắc
+chỉ đọc `check_reminder` · `reminder_status`: *Nhắc POS kiểm tra* · *Không nhắc* · ba nhãn *Máy chưa tính nhắc: …* cho ba
+trạng thái `null` của `U-102` — trang bày, không quyết. Không chữ *sắp hết*, *dự kiến hết*, *dùng/ngày*. Đặt tỉ lệ: chuỗi theo
+khuôn hợp đồng, lý do bắt buộc, gửi nguyên chuỗi; ghi xong làm mất hiệu lực `["supply-stock"]` và `["supply-items"]` rồi đọc
+lại. Không `parseFloat`, `Number(…)` hay so sánh con số ở trình duyệt; không đọc `/supply-check-reminders` (của màn quầy).
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. `fe/src/app/chu-quan/kho/kho.test.tsx` (Codex viết) phủ: đúng chuỗi ba con số, `balance` âm, hai nhãn *chưa có*; cờ `true`
+   · `false` · ba trạng thái `null`; không có chữ *sắp hết*/*dự kiến*, không có `20%`; đặt tỉ lệ gửi nguyên chuỗi rồi đọc lại;
+   tỉ lệ sai khuôn hay thiếu lý do không gửi; `field=reminder_ratio` gắn ô; lỗi đọc giữ bản cũ; bấm hai lần một lời gọi.
+   Claude thử răng: bỏ bước đọc lại sau ghi ⇒ test đỏ.
+2. `npx vitest run src/app/chu-quan` · toàn bộ `fe` xanh; `tsc --noEmit` sạch.
+3. `check-fe-rules.sh` xanh; grep `refetchInterval|setQueryData` rỗng; grep `parseFloat|parseInt|Number\(` trong file kho
+   (trừ test) rỗng.
+4. `npm run build` xong, có `/chu-quan/kho`.
+5. Chạy thật cùng backend (Claude): đọc kho thấy cờ đúng một thứ dưới tỉ lệ; đặt tỉ lệ có lý do ⇒ `200`, sai khuôn ⇒ `400
+   field=reminder_ratio` — đọc lại thấy đúng.
+6. `docs/product/4-fe/01-khung-fe.md` §1 · §2 dòng route mới (Claude ghi khi duyệt).
+7. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
 
 [↑ đầu file](#top)
 
@@ -672,7 +694,7 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-10"></a>
 ### P4A-10 — Bản cũ có trang chi phí marketing, quán này chưa có dữ kiện nào về nó
 
-**Phụ thuộc** · bước admin 10/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
+**Phụ thuộc** · bước admin 10/11 · mức L1 · ~~**bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`~~ — **mở 2026-10-19** (cửa `/expense-categories` · `/expenses*`, kế hoạch §6a lượt sáu)
 
 **Trang nguồn:** `/admin/marketing` — ngân sách, phân bổ, dòng thời gian chiến dịch. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
@@ -687,7 +709,29 @@ ra đời ở `P4-02` (**ADR-035**).
 
 **Không làm thì mất gì:** một sổ chi thứ hai lệch với khoản chi của mảng tài chính.
 
-**Nhận việc:** —
+**Nhận việc** — 2026-10-19 · dẫn và duyệt: **Claude Code**; thi công kể cả test: **Codex** (worktree `../lean_wt/P4A-10`,
+nhánh `codex/P4A-10`, base `33221a3`), theo lời chủ repo *"hãy yêu cầu codex làm nốt 3 task trên nếu codex hết token bẹn làm nốt"*. **Claude chốt (thiết kế):** **không** trang marketing riêng — chi phí
+marketing là một loại chi chủ quán tự thêm với nguồn *Tiền riêng* (§8.10 lượt năm) và ghi như mọi khoản chi. Trang
+`/chu-quan/khoan-chi`, mục *Khoản chi* (Claude thêm lúc tích hợp). Loại chi: `GET /expense-categories`, bày tên và nguồn
+*Trả từ két* · *Tiền riêng*; thêm loại thì nguồn bắt buộc chọn, không chọn sẵn; không gài sẵn loại nào. Khoản chi: tham số URL
+`?tu&den&loai&nguon`; thiếu ngày thì lấy `sale_date` của `GET /owner-overview` như trang tổng kết, không lấy đồng hồ trình
+duyệt; không so `from ≤ to` ở trình duyệt. Bày ngày, loại, nguồn, số tiền, người ghi; **tổng là `total_vnd` backend**, không
+cộng ở trình duyệt. Ghi: loại, số tiền nguyên đồng ≥ 1, ngày chi bắt buộc không mặc định; sửa: đủ bốn trường, lý do bắt buộc;
+`sale_day_reconciled` gắn ô ngày. Không xoá, không ngân sách hay chiến dịch.
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. `fe/src/app/chu-quan/khoan-chi/khoan-chi.test.tsx` (Codex viết) phủ: nguồn của loại; thêm loại thiếu nguồn không gửi, đủ
+   gửi `paid_from_till:false`; tên trùng gắn ô; ngày mặc định từ owner-overview; bốn tham số lọc gửi đúng, vắng thì không gửi;
+   tổng là `total_vnd` (phản hồi có tổng khác tổng các dòng); ngày chi trống không gửi; số tiền 0 không gửi; ghi xong đọc lại;
+   `sale_day_reconciled` gắn ô ngày; sửa thiếu lý do không gửi, đủ gửi bốn trường; `field=from` gắn ô; bấm hai lần một lời gọi.
+   Claude thử răng: bày tổng bằng phép cộng các dòng ⇒ test đỏ.
+2. `npx vitest run src/app/chu-quan` · toàn bộ `fe` xanh; `tsc --noEmit` sạch.
+3. `check-fe-rules.sh` xanh; grep `refetchInterval|setQueryData` rỗng; không phép cộng tiền trong file khoản chi (trừ test).
+4. `npm run build` xong, có `/chu-quan/khoan-chi`.
+5. Chạy thật cùng backend (Claude): thêm loại *Marketing* nguồn tiền riêng `201`, trùng tên `409`; ghi khoản `201`, ngày mai
+   ⇒ `400 field=paid_date`; lọc theo loại và nguồn; sửa có lý do `200` — đọc lại thấy đúng tổng.
+6. `docs/product/4-fe/01-khung-fe.md` §1 · §2 dòng route mới (Claude ghi khi duyệt).
+7. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
 
 [↑ đầu file](#top)
 
@@ -696,7 +740,7 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-11"></a>
 ### P4A-11 — Bản cũ có trang đào tạo nhân viên, quán này chưa có dữ kiện nào về nó
 
-**Phụ thuộc** · bước admin 11/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
+**Phụ thuộc** · bước admin 11/11 · mức L1 · ~~**bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`~~ — **mở 2026-10-19** (cửa `/training-records*` · `/assigned-tasks/{assigned_task_id}/guides` · `/assigned-task-guides*`, kế hoạch §6a lượt sáu)
 
 **Trang nguồn:** `/admin/training` — hướng dẫn công việc và theo dõi hoàn thành. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
@@ -711,6 +755,27 @@ ra đời ở `P4-02` (**ADR-035**).
 
 **Không làm thì mất gì:** một trang không ai dùng, hoặc một luật bịa ra rồi thành sự thật.
 
-**Nhận việc:** —
+**Nhận việc** — 2026-10-19 · dẫn và duyệt: **Claude Code**; thi công kể cả test: **Codex** (worktree `../lean_wt/P4A-11`,
+nhánh `codex/P4A-11`, base `33221a3`), theo lời chủ repo *"hãy yêu cầu codex làm nốt 3 task trên nếu codex hết token bẹn làm nốt"*. **Claude chốt:** trang `/chu-quan/dao-tao`, mục *Đào tạo* (Claude thêm lúc
+tích hợp), hai phần. *Ghi nhận đào tạo:* `GET /training-records` lọc `?nguoi=` · `?an=1`; bày người, nhận xét, đánh giá
+*Làm được* · *Chưa làm được* · *Chưa đánh giá*, người ghi, lúc ghi; thêm cần ít nhất nhận xét hoặc đánh giá, trường trống thì
+không gửi khoá; sửa gửi **cả hai** trường (vắng nghĩa là không còn) cùng lý do; ẩn có lý do; dòng đã ẩn không có nút. *Hướng
+dẫn theo việc:* chọn việc từ `GET /assigned-tasks` bằng `?viec=`; bày chữ, ảnh (`<img>`), video (`<video controls>`) với
+nguồn tệp `/api/assigned-task-guides/<id>/file`; gắn bằng `multipart/form-data` — chữ không phần tệp, ảnh/video không phần
+chữ, không tự đặt `Content-Type`, không tự kiểm cỡ tệp (`file_too_large` báo cỡ theo hợp đồng); sửa chỉ mẩu chữ, có lý do; ẩn
+có lý do. Màn quầy cho POS làm cùng việc ấy **chưa có bước** — trang này chỉ cho chủ quán.
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. `fe/src/app/chu-quan/dao-tao/dao-tao.test.tsx` (Codex viết) phủ: ba nhãn đánh giá; lọc `?nguoi` · `?an`; dòng ẩn không
+   nút; thêm không gửi khoá trống, cả hai trống không gửi; sửa gửi đủ hai trường kể cả `null` và lý do; ẩn thiếu lý do không
+   gửi; `?viec=` đọc đúng đường, `?viec=abc` báo không tìm thấy; ảnh/video đúng `src`; FormData của chữ và ảnh đúng phần;
+   `413` báo đúng lời; ảnh không nút sửa; ghi xong đọc lại; bấm hai lần một lời gọi. Claude thử răng: bỏ bước đọc lại ⇒ đỏ.
+2. `npx vitest run src/app/chu-quan` · toàn bộ `fe` xanh; `tsc --noEmit` sạch.
+3. `check-fe-rules.sh` xanh; grep `refetchInterval|setQueryData` rỗng.
+4. `npm run build` xong, có `/chu-quan/dao-tao`.
+5. Chạy thật cùng backend (Claude): ghi nhận chỉ nhận xét, chỉ đánh giá `201`, cả hai trống `400 field=remark`; sửa · ẩn có
+   lý do; gắn chữ và một ảnh PNG `201`, tải `/file` ra ảnh; sửa chữ có lý do; ẩn — đọc lại thấy đúng.
+6. `docs/product/4-fe/01-khung-fe.md` §1 · §2 dòng route mới (Claude ghi khi duyệt).
+7. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
 
 [↑ đầu file](#top)

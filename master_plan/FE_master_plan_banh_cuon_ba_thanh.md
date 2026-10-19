@@ -129,6 +129,15 @@ quầy** cần một màn quầy riêng — chưa có bước. Hướng dẫn g�
 chặn; `P4-04` Done. Trang dưới `/chu-quan/nguyen-lieu`; số thiếu, tỉ lệ nhắc và lời nhắc (`/supply-stock` ·
 `/reminder-ratio`) để lại cho `P4A-09`.
 
+**Mở 2026-10-19, lượt sáu** (Claude Code, chủ repo bảo *"hãy yêu cầu codex làm nốt 3 task trên"* cho `P4A-09` · `P4A-10` ·
+`P4A-11`): cả ba đủ ba điều ở hợp đồng 0.40.0 và `P4-04` Done. `P4A-09` — cửa `GET /supply-stock` ·
+`PUT /supply-items/{supply_item_id}/reminder-ratio` (lược đồ tỉ lệ nhắc `T-186` đã có); `U-102` còn mở nhưng không chặn:
+trang chỉ bày ba trạng thái backend trả, không quyết. `P4A-10` — cửa `/expense-categories` · `/expenses*`; `U-085` · `U-093` ·
+`U-095` đã đóng; **chọn ở thiết kế:** không trang marketing riêng, marketing là một loại chi trên trang `/chu-quan/khoan-chi`.
+`P4A-11` — cửa `/training-records*` · `/assigned-tasks/{assigned_task_id}/guides` · `/assigned-task-guides*`; `U-086` ·
+`U-090` · `U-091` đã đóng. Trang dưới `/chu-quan/kho` · `/chu-quan/khoan-chi` · `/chu-quan/dao-tao`; màn quầy cho POS
+ghi đào tạo và gắn hướng dẫn chưa có bước.
+
 | ID | Trang (tên nguồn trong `PAGES_INDEX.md`) | Dữ kiện quán đã có | Chặn thêm | Mức |
 |---|---|---|---|---|
 | **P4A-01** | **Khung admin** — vỏ chung của `/admin/*` | lớp `chu_quan` ([`02-vai-va-quyen.md`](../docs/product/3-be/02-vai-va-quyen.md)) | — | L1 |
