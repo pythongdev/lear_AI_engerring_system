@@ -44,7 +44,7 @@ describe("khung chủ quán", () => {
     const muc = within(nav).getByRole("link", { name: "Tổng quan" });
     expect(muc.getAttribute("href")).toBe("/chu-quan");
     expect(muc.getAttribute("aria-current")).toBe("page");
-    expect(within(nav).getAllByRole("link")).toHaveLength(2);
+    expect(within(nav).getAllByRole("link")).toHaveLength(3);
     expect(screen.getByRole("heading", { name: "Tổng quan" })).toBeTruthy();
     expect(replace).not.toHaveBeenCalled();
   });
@@ -57,6 +57,16 @@ describe("khung chủ quán", () => {
     const tongKet = within(nav).getByRole("link", { name: "Tổng kết" });
     expect(tongKet.getAttribute("href")).toBe("/chu-quan/tong-ket");
     expect(tongKet.getAttribute("aria-current")).toBe("page");
+  });
+
+  it("Sản phẩm sáng ở route của nó", async () => {
+    duongDan = "/chu-quan/san-pham";
+    moKhung(200, phien(true));
+    const nav = await screen.findByRole("navigation");
+    const sanPham = within(nav).getByRole("link", { name: "Sản phẩm" });
+    expect(sanPham.getAttribute("href")).toBe("/chu-quan/san-pham");
+    expect(sanPham.getAttribute("aria-current")).toBe("page");
+    expect(within(nav).getByRole("link", { name: "Tổng kết" }).getAttribute("aria-current")).toBeNull();
   });
 
   it("phiên quầy: chuyển về /quay, không hiện nav hay nội dung con", async () => {
@@ -77,6 +87,7 @@ describe("khung chủ quán", () => {
     expect(mucChuQuan).toEqual([
       { nhan: "Tổng quan", route: "/chu-quan" },
       { nhan: "Tổng kết", route: "/chu-quan/tong-ket" },
+      { nhan: "Sản phẩm", route: "/chu-quan/san-pham" },
     ]);
     expect(routeThieuTrang(mucChuQuan)).toEqual([]);
     expect(routeThieuTrang([...mucChuQuan, { nhan: "Không có", route: "/chu-quan/khong-co" }]))

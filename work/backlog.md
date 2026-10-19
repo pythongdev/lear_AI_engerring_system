@@ -102,8 +102,10 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 
 
+
 <a id="done"></a>
 ## Done
+- [x] P4A-04 **Trang sản phẩm của chủ quán** — xem mọi món theo danh mục (`GET /menu-categories`), thêm món kèm thành phần (`POST /menu-items`), đổi tên món có lý do (`PUT /menu-items/{menu_item_id}`); không sửa giá, không ngừng bán (thuộc `P4-05`), không tự tính giá — L2 — mở và nhận 2026-10-19 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm bạn kiểm tra"* — 2026-10-19 · [chi tiết](backlog_FE_AD.md#p4a-04)
 - [x] P4A-03 **Trang tổng kết theo ngày bán** — bốn mục từ `GET /sale-days/{sale_date}/summary`, ngày mặc định do backend trả, ngày xem trên URL, nhắc kho là kết quả hiện tại — L2 — mở 2026-10-19, **cần xong trước:** `P4A-01` · nhận 2026-10-19 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm bạn kiểm tra"* — 2026-10-19 · [chi tiết](backlog_FE_AD.md#p4a-03)
 - [x] P4A-02 **Trang tổng quan của chủ quán** — bảy mục §8.6 từ `GET /owner-overview`, ô nhập hai số tối thiểu (`PUT /daily-minimums/{sale_date}`), không kéo theo chu kỳ, bày `read_at`, tạm tính không giống doanh thu — L2 — mở 2026-10-19, **cần xong trước:** `P4A-01` · nhận 2026-10-19 · Claude Code (dẫn, test trước, duyệt), Codex thi công — 2026-10-19 · [chi tiết](backlog_FE_AD.md#p4a-02)
 - [x] P4A-01 **Khung admin dưới `/chu-quan`** — layout chung có gác theo phiên và thanh điều hướng đọc từ một danh sách; `/chu-quan` là trang Tổng quan, `/chu-quan/tong-ket` là Tổng kết; không khung `/admin` thứ hai, không bảng quyền thứ hai — L1 — mở và nhận 2026-10-19 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm tiếp bạn kiểm tra"* — 2026-10-19 · [chi tiết](backlog_FE_AD.md#p4a-01)

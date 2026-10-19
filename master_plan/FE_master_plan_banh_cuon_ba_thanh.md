@@ -107,12 +107,16 @@ chặn `P4-12` hay cổng §9.
 `P4-04` Done. Route chốt ở `docs/product/4-fe/01-khung-fe.md` §1 cùng lượt dựng — trang admin nằm dưới khung
 `/chu-quan`, không mở khung `/admin` thứ hai.
 
+**Mở 2026-10-19, lượt hai** (Claude Code, chủ repo giao `P4A-04`): `P4A-04` đủ ba điều — cửa `POST /menu-items` ·
+`PUT /menu-items/{menu_item_id}` (P3A-07) và `GET /menu-categories` (P3A-05) ở hợp đồng 0.40.0; không câu `U-XXX` chặn;
+`P4-04` Done. Trang dưới `/chu-quan/san-pham`; sửa giá · thành phần · ngừng bán vẫn của `P4-05`.
+
 | ID | Trang (tên nguồn trong `PAGES_INDEX.md`) | Dữ kiện quán đã có | Chặn thêm | Mức |
 |---|---|---|---|---|
 | **P4A-01** | **Khung admin** — vỏ chung của `/admin/*` | lớp `chu_quan` ([`02-vai-va-quyen.md`](../docs/product/3-be/02-vai-va-quyen.md)) | — | L1 |
 | **P4A-02** | **Tổng quan** — `/admin/overview` | bảy thứ chủ quán muốn thấy, `master_plan/shop-facts.md` §8.6; *số tiền dự tính* không phải doanh thu đã đối soát | — | L2 |
 | **P4A-03** | **Tổng kết** — `/admin/summary` | bốn thứ chủ quán muốn, theo ngày, hiệu suất nhân viên đã định nghĩa (§8.6 bổ sung 2026-10-14); doanh thu cộng hai nguồn, hoàn trừ ngày hoàn (§6) | — | L2 |
-| **P4A-04** | **Sản phẩm** — `/admin/products` | sửa giá · ngừng bán đã ở `P4-05`; chủ quán **cần** thêm · xoá món (§8.9 bổ sung 2026-10-14), chưa có cửa | — | L2 |
+| **P4A-04** | **Sản phẩm** — `/admin/products` | sửa giá · ngừng bán đã ở `P4-05`; chủ quán **cần** thêm · xoá món (§8.9 bổ sung 2026-10-14); có cửa thêm · đổi tên món 2026-10-16 (P3A-07) | — | L2 |
 | **P4A-05** | **Combo · danh mục · topping** — `/admin/combos` · `/admin/categories` · `/admin/toppings` | chủ quán **cần** cả ba (§8.9 bổ sung 2026-10-14); quán có combo (D42); topping là tuỳ chọn phụ thu §4.4 · §4.6 | — | L2 |
 | **P4A-06** | **Nhân viên** — `/admin/staff` | mỗi người một tài khoản, mật khẩu riêng (§8.8 sửa 2026-10-14, **ADR-104**): tự đăng ký, chủ quán duyệt; mảng con người §8.7 | thiết kế `T-181` | L2 |
 | **P4A-07** | **Giao việc** — `/admin/staff/task-board` · `/admin/todo-list` | chủ quán và POS tạo · sửa · xoá việc và đánh dấu xong (§8.7, 2026-10-14); chưa có lược đồ | — | L1 |

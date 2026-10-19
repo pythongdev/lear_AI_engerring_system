@@ -275,7 +275,7 @@ Còn lại: không.
 <a id="p4a-04"></a>
 ### P4A-04 — Trang sản phẩm của bản cũ cho thêm và xoá món, còn quán này chưa có cửa nào như thế
 
-**Phụ thuộc** · bước admin 4/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
+**Phụ thuộc** · bước admin 4/11 · mức L2 · ~~**bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`~~ — **mở 2026-10-19**: cửa `POST /menu-items` · `PUT /menu-items/{menu_item_id}` (P3A-07), đọc `GET /menu-categories` (P3A-05) · **cần xong trước:** `P4A-01`
 
 **Trang nguồn:** `/admin/products` — CRUD sản phẩm. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
@@ -292,7 +292,53 @@ ra đời ở `P4-02` (**ADR-035**).
 
 **Bẫy:** không cộng giá để *xem trước* ở trình duyệt — gọi tính thử (`P4-05` Bẫy, **ADR-086**).
 
-**Nhận việc:** —
+**Sửa 2026-10-19 (Claude Code, đối chiếu hợp đồng 0.40.0):** *xoá món* của Goal là **ngừng bán** — cửa ấy
+(`POST /menu-items/{menu_item_id}/discontinuation`) cùng sửa giá và thành phần vẫn của `P4-05`, nên trang này chỉ có
+**xem · thêm · đổi tên**. `P4-05` chưa làm, nên chưa có *khuôn hộp thoại sửa có lý do* để theo: ô đổi tên kèm lý do ở
+đây là khuôn đầu, `P4-05` nên dùng lại thay vì dựng khuôn thứ hai (suy ra, Claude Code). Thêm món tạo thành phần **mới**
+cùng giao dịch, không dùng lại thành phần có sẵn (lựa chọn của P3A-07). Món mới chưa có tuỳ chọn phụ thu — hợp đồng
+không cho đặt ở cửa này.
+
+**Nhận việc** — 2026-10-19 · dẫn, test trước và duyệt: **Claude Code**; thi công: **Codex** (worktree `../lean_wt/P4A-04`,
+nhánh `codex/P4A-04`, base `1fc57cb`). **Claude chốt:** trang ở `/chu-quan/san-pham`, mục *Sản phẩm* thêm cuối
+`muc-chu-quan.ts`; đọc `GET /menu-categories` mặc định (món của danh mục ẩn đã nằm trong `uncategorized_items`), bày từng
+danh mục và nhóm *Chưa xếp danh mục* đúng thứ tự backend, món ngừng bán có nhãn; không bày giá, không gọi
+`/price-quotes`; form *Thêm món* chọn danh mục bằng `<select>` gốc trong `Field` (shadcn chưa có Select), thành phần
+thêm · bỏ được, ít nhất một; đổi tên mở ô tại dòng món, bắt buộc lý do; ghi xong chỉ làm mất hiệu lực rồi đọc lại; lời
+từ chối có `field` (kể cả `components[i].x`) gắn đúng ô; `409 menu_category_hidden` · `menu_category_not_found` ⇒ báo và
+đọc lại. Chữ trên màn do Claude đặt trong test — là nhãn giao diện, không phải luật quán.
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. `fe/src/app/chu-quan/san-pham/san-pham.test.tsx` (Claude viết trước, 16 ca, đỏ vì chưa có trang) và
+   `fe/src/app/chu-quan/chu-quan.test.tsx` (Claude sửa: ba mục điều hướng, *Sản phẩm* sáng ở route của nó) xanh,
+   **không** sửa điều kiện kiểm: thứ tự backend, món ngừng bán và chưa xếp; không nút xoá · ngừng bán · giá; đọc lỗi;
+   chưa có danh mục; thân `POST` đúng hợp đồng, số nguyên; đọc lại sau ghi; thiếu ô thì không gửi; trùng tên; `field`
+   lồng; danh mục ẩn; phản hồi lạ không gửi lại; bấm hai lần một lệnh; đổi tên bắt buộc lý do, đúng món, món ngừng bán đổi được.
+2. `check-fe-rules.sh` xanh; grep `refetchInterval|setQueryData|price-quotes` dưới `fe/src/app/chu-quan` (trừ test) rỗng.
+3. `npm run build` xong, có `/chu-quan/san-pham`.
+4. Chạy thật cùng backend (Claude): thêm một món, đổi tên nó, đọc lại thấy tên mới; tên trùng ⇒ `409`.
+5. `docs/product/4-fe/01-khung-fe.md` §1 · §2 dòng `/chu-quan/san-pham` (Claude ghi khi duyệt).
+6. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
+
+**Bàn giao** — 2026-10-19 · thực hiện: **Codex** `gpt-6-astra` (worktree `../lean_wt/P4A-04`, nhánh `codex/P4A-04`, base
+`1fc57cb`); test trước và duyệt: **Claude Code**. Nhánh `P4A-01`. File: `san-pham/page.tsx` · `_components/san-pham.tsx` ·
+`_components/form-them-mon.tsx` · `_components/form-doi-ten-mon.tsx` · `_components/du-lieu-san-pham.ts` ·
+`_components/muc-chu-quan.ts` · `san-pham/san-pham.test.tsx` (Claude) · `chu-quan.test.tsx` (Claude); owner `01-khung-fe.md` §1 · §2.
+*Nghiệm thu → bằng chứng:*
+1. `san-pham.test.tsx` 16/16 và `chu-quan.test.tsx` 6/6 xanh; md5 hai file trước và sau khi Codex làm trùng nhau
+   (`e43e5120…` · `e8c0f39a…`). Test có răng: Claude bỏ bước đọc lại sau ghi ⇒ `3 failed | 13 passed`; trả lại ⇒ xanh.
+   **Claude sửa khi duyệt:** thêm chữ cho `menu_component_name_conflict` và `menu_item_not_found` (món không còn ⇒ đọc lại),
+   chú thích đầu hai file.
+2. `check-fe-rules: PASS`; grep `refetchInterval|setQueryData|price-quotes` dưới `fe/src/app/chu-quan` (trừ test) rỗng.
+3. `npm run build` ở clone chính xong, có `○ /chu-quan/san-pham` (worktree: Vitest không ghi được `.vite-temp` qua symlink
+   `node_modules` trong sandbox Codex, nên Codex chạy bằng `--configLoader native`).
+4. Chạy thật (database dùng-xong-bỏ, backend thật, `curl` với phiên chủ quán): `POST /menu-categories` `201` ·
+   `POST /menu-items` hai thành phần `201` · `PUT /menu-items/1` `200 {"name":"Bánh cuốn chay nấm"}` · `GET /menu-categories`
+   thấy tên mới · thêm món trùng tên `409 menu_item_name_conflict` · đổi tên lý do trắng `400 field=reason` · thành phần 2 số
+   lượng 0 `400 field=components[1].quantity` — đúng hình các ca của test. **Chưa** mở trang trên trình duyệt: phần bày do test giữ.
+5. `01-khung-fe.md` §1 dòng route, §2 dòng màn `/chu-quan/san-pham`.
+6. `npx vitest run` ⇒ `Tests 84 passed (84)`; gate xanh ở clone chính.
+Còn lại: không. `P4-05` nên dùng lại ô *đổi tên có lý do* làm khuôn sửa có lý do (suy ra, chờ chủ repo).
 
 [↑ đầu file](#top)
 
