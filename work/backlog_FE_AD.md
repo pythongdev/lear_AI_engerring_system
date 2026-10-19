@@ -103,6 +103,26 @@ ra đời ở `P4-02` (**ADR-035**).
 6. `docs/product/4-fe/01-khung-fe.md` §1 · §4 có dòng layout và thanh điều hướng (Claude ghi khi duyệt).
 7. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
 
+**Bàn giao** — 2026-10-19 · thực hiện: **Codex** `gpt-6-astra` (worktree `../lean_wt/P4A-01`, nhánh `codex/P4A-01`, base
+`103784b`); duyệt: **Claude Code** — đọc diff thật, thêm chú thích đầu ba file, tự chạy test, chứng minh test có răng, chạy
+app thật. Nhánh `P4A-01`. File: `fe/src/app/chu-quan/layout.tsx` · `page.tsx` · `chu-quan.test.tsx` ·
+`_components/muc-chu-quan.ts` · `_components/thanh-dieu-huong.tsx`; owner `01-khung-fe.md` §1 · §4.
+*Nghiệm thu → bằng chứng:*
+1. `layout.tsx` bọc `KhungTheoVai khung="/chu-quan"` + thanh; `page.tsx` thôi tự bọc (diff), `metadata` giữ.
+2. `nav aria-label="Trang chủ quán"`, một danh sách, một mục; ca *đường dẫn con không làm Tổng quan sáng*.
+3. `grep -rn "is_owner\|role_code" fe/src/app/chu-quan` chỉ trúng hai dòng dữ liệu giả của `chu-quan.test.tsx`; code chạy
+   không đọc cờ quyền — Claude đọc dòng ấy theo ý *code chạy không tự quyết quyền*.
+4. `chu-quan.test.tsx` năm ca (chủ quán · đường dẫn con · phiên quầy ⇒ `/quay` · 401 ⇒ `/dang-nhap` · mục trỏ route chưa có
+   trang). Claude tự bỏ gác khỏi layout ⇒ `Tests 2 failed | 3 passed (5)` (hai ca chặn); trả lại ⇒ `5 passed`. Codex bỏ
+   `aria-current` ⇒ `expected null to be 'page'`.
+5. Chạy thật (database dùng-xong-bỏ cổng 5499, backend thật, `next dev`, Chrome headless qua CDP gắn cookie phiên):
+   chủ quán mở `/chu-quan` ⇒ `nav ["Tổng quan href=/chu-quan aria-current=page"]`, nhãn `Trang chủ quán`; Lan vai `quay`
+   mở `/chu-quan` ⇒ về `/quay`, không `nav`; không phiên ⇒ về `/dang-nhap`. Backend vẫn chặn: Lan `GET /owner-overview`
+   ⇒ `403 owner_only`, chủ quán ⇒ `200`.
+6. `01-khung-fe.md` §1 dòng layout `/chu-quan/*`, §4 dòng `ThanhDieuHuong`.
+7. `npm run lint` · `npm run typecheck` sạch; `npx vitest run` ⇒ `Tests 46 passed (46)`; gate — dưới.
+Còn lại: không. Bước sau thêm mục của mình vào `muc-chu-quan.ts`.
+
 [↑ đầu file](#top)
 
 ---
