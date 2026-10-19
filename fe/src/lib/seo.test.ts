@@ -49,13 +49,18 @@ for (const base of [undefined, "https://example.com///"]) {
       expect(sitemap()).toEqual(base ? PUBLIC_ROUTES.map((path) => ({ url: `https://example.com${path}` })) : []);
     });
 
-    it("A5: server render JSON-LD không có address hay openingHours", async () => {
+    it("A5: server render JSON-LD có địa chỉ và giờ mở của shop-facts §1 (T-205)", async () => {
       vi.stubEnv("BANHCUON_SITE_URL", base);
       const { default: Home } = await import("@/app/page");
       const html = renderToStaticMarkup(createElement(Home));
       const json = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/)?.[1];
       expect(json).toBe(restaurantJsonLd(siteUrl()));
-      expect(JSON.parse(json!)).toEqual({ "@context": "https://schema.org", "@type": "Restaurant", name: "Bánh cuốn Bà Thanh", telephone: "+84382688666", ...(base ? { url: "https://example.com" } : {}) });
+      expect(JSON.parse(json!)).toEqual({
+        "@context": "https://schema.org", "@type": "Restaurant", name: "Bánh cuốn Bà Thanh", telephone: "+84382688666",
+        address: { "@type": "PostalAddress", streetAddress: "Số 14B6, ngõ 332 Hoàng Công Chất", addressLocality: "Phú Diễn, Bắc Từ Liêm", addressRegion: "Hà Nội", addressCountry: "VN" },
+        openingHoursSpecification: [{ "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], opens: "06:00", closes: "11:00" }],
+        ...(base ? { url: "https://example.com" } : {}),
+      });
     });
   });
 }

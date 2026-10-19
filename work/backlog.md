@@ -108,6 +108,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-205 **Địa chỉ và giờ mở trên Google (hai vế của U-094)** — shop-facts §1 có địa chỉ và *trừ Tết âm lịch*; JSON-LD trang chủ có `address` · `openingHoursSpecification` 06:00–11:00 mọi ngày; U-094 hẹp lại còn tên miền và câu mô tả — L1 — 2026-10-19 · Claude Code theo lời chủ repo trong hội thoại · [chi tiết](#t-205)
 - [x] T-204 **Ba lúc chưa có mốc vẫn nhắc POS kiểm tra (U-102)** — chưa có lần nhập · lần nhập gần nhất ghi 0 ⇒ `check_reminder: true`, POS thấy tên thứ ấy ở `GET /supply-check-reminders`; dùng trước ngày nhập đầu ⇒ so tỉ lệ như thường; hợp đồng 0.42.0 (cờ thôi `null`); trang kho và tổng quan nói *Nhắc POS kiểm tra* kèm lý do — L1 — mở và nhận 2026-10-19 · Claude Code theo lời chủ repo chọn *"Luôn nhắc POS kiểm tra"*, vế 3 *"Đã có lần nhập thì so tỉ lệ như thường"* — 2026-10-19 · [chi tiết](#t-204)
 - [x] T-203 **Cửa duyệt không trao cờ chủ quán (F-071)** — `POST /accounts/{account_id}/approval` từ chối `person_id` của người mang cờ chủ quán bằng `409 account_person_is_owner` (`field: person_id`); hợp đồng 0.41.0; trang nhân viên nói đúng lời; vế mới của `I-033` — L2 — mở 2026-10-19 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"hãy yêu cầu codex làm f-071. đồng ý với đề xuất của bạn"* — 2026-10-19; Codex thi công, Claude duyệt và chạy thật · [chi tiết](#t-203)
 - [x] P4A-11 **Trang đào tạo của chủ quán** — ghi nhận xét và đánh giá *làm được · chưa* về một người, sửa · ẩn có lý do (`/training-records*`); hướng dẫn chữ · ảnh · video gắn từng việc được giao, sửa chữ · ẩn có lý do (`/assigned-tasks/{assigned_task_id}/guides` · `/assigned-task-guides*`); POS làm từ quầy chưa có màn — L1 — mở và nhận 2026-10-19 · Claude Code (dẫn, duyệt, chạy thật), Codex thi công kể cả test theo cùng lời — 2026-10-19; Codex hết hạn mức giữa chừng, Claude làm nốt · [chi tiết](backlog_FE_AD.md#p4a-11)
@@ -421,6 +422,27 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-205"></a>
+### T-205 — Ba dữ kiện để quán hiện đúng trên Google: hai vế đã có lời (U-094)
+
+**Yêu cầu:** chủ repo 2026-10-19, trong hội thoại: *"ngõ 332 hoàng công chất số 14b6, thời gian mở cửa hang tất cả các ngày trừ
+tết âm lịc từ 6-10h30"*. Claude hỏi lại vì *10h30* lệch §1 (06:00–11:00, mốc máy dùng để khoá đặt món): chủ repo chọn **giữ
+06:00–11:00**; ngày nghỉ Tết chọn **mỗi năm chủ quán báo**; tên miền **chưa có**. **Mức:** L1 — dữ kiện quán và dữ liệu trang
+công khai; không đổi giờ bán máy dùng.
+
+*Nghiệm thu* (viết cùng lúc thi công — việc nhỏ, ghi thật):
+1. `master_plan/shop-facts.md` §1 có dòng *Địa chỉ* và vế *trừ Tết âm lịch*; nhật ký §7.1 ghi nguyên văn, lần hỏi lại và chỗ
+   *lời chọn* (phường, quận là chữ Claude viết sẵn trong phương án).
+2. `fe/src/lib/seo.test.ts` A5 đòi JSON-LD có `address` và `openingHoursSpecification` mọi ngày 06:00–11:00 — xanh.
+3. U-094 hẹp lại còn tên miền và duyệt câu mô tả, vẫn ở *Đang mở*.
+4. `./scripts/gate.sh` xanh.
+
+**Bàn giao** — 2026-10-19 · **Claude Code**, nhánh `P4A-01`; chưa ai duyệt độc lập. `npx vitest run src/lib/seo.test.ts` ⇒
+`Tests  12 passed (12)`; `tsc --noEmit` sạch; trang chủ thật (`next dev` cổng 3000) in JSON-LD có `address` và
+`openingHoursSpecification`. Còn lại: tên miền và câu mô tả — **U-094**.
+
+[↑ đầu file](#top)
 
 <a id="t-204"></a>
 ### T-204 — Ba lúc máy chưa có mốc để so thì có nhắc POS kiểm tra không (U-102)

@@ -22,12 +22,30 @@ export function publicPageMetadata(path: string): Metadata {
   };
 }
 
+// Địa chỉ và giờ mở: master_plan/shop-facts.md §1 (2026-10-19, T-205). Ngày nghỉ Tết âm lịch chủ quán báo mỗi năm,
+// nên không ghi cứng vào đây.
+export const SHOP_ADDRESS = {
+  "@type": "PostalAddress",
+  streetAddress: "Số 14B6, ngõ 332 Hoàng Công Chất",
+  addressLocality: "Phú Diễn, Bắc Từ Liêm",
+  addressRegion: "Hà Nội",
+  addressCountry: "VN",
+} as const;
+export const SHOP_OPENING_HOURS = {
+  "@type": "OpeningHoursSpecification",
+  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+  opens: "06:00",
+  closes: "11:00",
+} as const;
+
 export function restaurantJsonLd(baseUrl: string | undefined): string {
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Restaurant",
     name: SITE_NAME,
     telephone: "+84382688666",
+    address: SHOP_ADDRESS,
+    openingHoursSpecification: [SHOP_OPENING_HOURS],
     ...(baseUrl ? { url: baseUrl } : {}),
   }).replace(/</g, "\\u003c");
 }

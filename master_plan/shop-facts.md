@@ -23,7 +23,8 @@
 |---|---|
 | Tên | Bánh cuốn Bà Thanh Cao Bằng |
 | Hotline | `0382688666` |
-| Giờ bán | **06:00 – 11:00**, tất cả các ngày |
+| Giờ bán | **06:00 – 11:00**, tất cả các ngày trừ **Tết âm lịch** — ngày nghỉ Tết chủ quán báo mỗi năm (2026-10-19, T-205) |
+| Địa chỉ | **Số 14B6, ngõ 332 Hoàng Công Chất, Phú Diễn, Bắc Từ Liêm, Hà Nội** (2026-10-19, T-205) |
 | Múi giờ | `Asia/Ho_Chi_Minh` |
 | Số bàn | **15** |
 | Thanh toán | Tiền mặt tại quầy · Chuyển khoản **VietQR tĩnh** |
@@ -1466,6 +1467,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-15 | Chủ repo trả lời lượt bảy trong hội thoại (P3A-06): giá mỗi combo **chủ quán tự đưa**; khách chọn nhân **riêng từng món** trong combo; phụ thu trong combo **chủ quán đặt theo từng món của combo**, không đếm +1.000 mỗi phần; mở U-096 | §8.9 |
 | 2026-10-15 | Chủ repo trả lời lượt tám trong hội thoại (P3A-11), chọn trong câu hỏi có sẵn phương án: lựa chọn chưa đặt mức trong combo **cộng 0đ** (đóng U-096); món nhiều suất trong combo **mỗi suất chọn nhân riêng**; mức phụ thu **cộng mỗi suất một lần**; mức phụ thu trong combo **khoá như giá combo** — chỉ đổi ngoài giờ bán | §8.9 |
 | 2026-10-16 | Chủ quán trả lời năm câu của mục tổng quan (T-198), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn phương án bốn vế: khách đang phục vụ **đếm bằng số bàn** (U-097); tiến độ là **số bánh đã ra so với số bánh tối thiểu chủ quán nhập mỗi ngày** (U-098); tạm tính **cộng giá các phần đã ra bàn** (U-099); mang đi và giao hàng **có** tính, bày **tách online · offline** (U-100, mở S-10); **thiếu người** so với **số người tối thiểu chủ quán nhập mỗi ngày**, **thiếu món** là món đã ra ít hơn khách đặt (U-101) | §8.6 |
+| 2026-10-19 | Chủ repo trả lời trong hội thoại (T-205, hai vế của U-094): địa chỉ *"ngõ 332 hoàng công chất số 14b6"*, mở *"tất cả các ngày trừ tết âm lịch từ 6-10h30"*. Hỏi lại vì lệch §1 (06:00–11:00) — chủ repo chọn **giữ 06:00–11:00**; ngày nghỉ Tết chọn **mỗi năm chủ quán báo**. *Lời chọn:* phường, quận **Phú Diễn, Bắc Từ Liêm, Hà Nội** là chữ Claude viết sẵn trong phương án *"Chưa có tên miền"*, chủ repo chọn phương án ấy — chưa ai gõ ra | §1 |
 | 2026-10-19 | Chủ repo chọn trong hội thoại (T-204): chưa có lần nhập hoặc lần nhập gần nhất ghi 0 ⇒ **luôn nhắc POS kiểm tra**; dùng trước lần nhập đầu mà đã có lần nhập ⇒ **so tỉ lệ như thường** (đóng U-102) | §8.4 |
 | 2026-10-18 | Chủ repo trả lời ba vế thi công của mục tổng quan (T-199): tạm tính phần thuộc combo **không tính giá thành phần**; *bánh* của tiến độ là **bánh cuốn và bánh trứng**; **offline là bán hàng tại quán** (đóng **S-10**, suy ra 2026-10-16: *offline* gồm cả giao hàng đặt qua điện thoại — lời mới hẹp hơn: chỉ tại quán) | §8.6 |
 
