@@ -687,6 +687,25 @@ lại. Không `parseFloat`, `Number(…)` hay so sánh con số ở trình duy�
 6. `docs/product/4-fe/01-khung-fe.md` §1 · §2 dòng route mới (Claude ghi khi duyệt).
 7. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
 
+**Bàn giao** — 2026-10-19 · thực hiện: **Codex** `gpt-6-astra` (worktree `../lean_wt/P4A-09`, nhánh `codex/P4A-09`, base
+`33221a3`) viết trang và test; **Claude Code** làm nốt và duyệt. **Codex hết hạn mức** giữa chừng (*"You've hit your usage limit … try again at Oct 20th, 2026 12:23 AM"*) trước khi viết báo
+cáo, nên **không có lời tự khai**; Claude chép code về clone chính, đọc lại từng file và làm nốt theo lời chủ repo. Claude sửa: bỏ `Badge` (repo không có
+`components/ui/badge`) thay bằng nhãn `<strong>` nhấn mạnh, ca test tương ứng. Nhánh `P4A-01`. File: `kho/page.tsx` ·
+`kho/kho.test.tsx` · `_components/kho.tsx` · `_components/du-lieu-kho.ts`; Claude thêm lúc tích hợp: mục *Kho* ở
+`muc-chu-quan.ts`, ca ở `chu-quan.test.tsx`, owner `01-khung-fe.md` §1 · §2.
+*Nghiệm thu → bằng chứng:*
+1. `kho.test.tsx` 24 ca xanh. Test có răng (Claude chạy): bỏ đọc lại `["supply-stock"]` sau ghi ⇒ `3 failed | 21 passed`; trả lại ⇒ xanh.
+2. Clone chính: `npx vitest run` ⇒ `Tests 271 passed (271)`; `tsc --noEmit` · `eslint src/app/chu-quan` sạch.
+3. `check-fe-rules: PASS`; grep `refetchInterval|setQueryData` rỗng; grep `parseFloat|parseInt|Number\(` trong file kho rỗng.
+4. `npm run build` có `○ /chu-quan/kho`.
+5. Chạy thật 2026-10-19 19:53 (database dùng xong bỏ, cùng lượt với `P4A-10` · `P4A-11`): mua `10` dùng `9` ⇒ `/supply-stock`
+   trả `balance "1"`, tỉ lệ `"0.2"`, `check_reminder true`; thứ chưa mua ⇒ `no_purchase` · `null`; đặt `"0.05"` có lý do `200`
+   rồi đọc lại `check_reminder false`; `"1.5"` ⇒ `400 field=reminder_ratio`; thiếu lý do ⇒ `400 field=reason`; mã `99` ⇒
+   `404 supply_item_not_found`. **Chưa** mở trang trên trình duyệt: phần bày do test giữ.
+6. `01-khung-fe.md` §1 dòng route, §2 dòng màn.
+7. Gate xanh ở clone chính (khối commit dưới).
+Còn lại: ba trạng thái `null` chờ `U-102`; trang chỉ bày nhãn.
+
 [↑ đầu file](#top)
 
 ---
@@ -733,6 +752,25 @@ cộng ở trình duyệt. Ghi: loại, số tiền nguyên đồng ≥ 1, ngày
 6. `docs/product/4-fe/01-khung-fe.md` §1 · §2 dòng route mới (Claude ghi khi duyệt).
 7. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
 
+**Bàn giao** — 2026-10-19 · thực hiện: **Codex** `gpt-6-astra` (worktree `../lean_wt/P4A-10`, nhánh `codex/P4A-10`, base
+`33221a3`) viết trang và test; **Claude Code** làm nốt và duyệt. **Codex hết hạn mức** giữa chừng (*"You've hit your usage limit … try again at Oct 20th, 2026 12:23 AM"*) trước khi viết báo
+cáo, nên **không có lời tự khai**; Claude chép code về clone chính, đọc lại từng file và làm nốt theo lời chủ repo. Claude sửa: test dùng backend giả chung vốn bỏ
+chuỗi tham số khỏi `path` nên 16 ca đỏ — dựng backend giả cục bộ giữ tham số như `giao-viec.test.tsx`; code trang không đổi.
+Nhánh `P4A-01`. File: `khoan-chi/page.tsx` · `khoan-chi/khoan-chi.test.tsx` · `_components/khoan-chi.tsx` ·
+`_components/du-lieu-khoan-chi.ts`; Claude thêm lúc tích hợp: mục *Khoản chi*, ca ở `chu-quan.test.tsx`, owner `01-khung-fe.md`.
+*Nghiệm thu → bằng chứng:*
+1. `khoan-chi.test.tsx` 29 ca xanh. Test có răng (Claude chạy): bày tổng bằng `reduce` các dòng ⇒ `8 failed | 21 passed`; trả lại ⇒ xanh.
+2. Clone chính: `Tests 271 passed (271)`; `tsc --noEmit` · `eslint` sạch.
+3. `check-fe-rules: PASS`; grep `refetchInterval|setQueryData` rỗng; grep `reduce\(|\+= ` trong file khoản chi rỗng.
+4. `npm run build` có `○ /chu-quan/khoan-chi`.
+5. Chạy thật 2026-10-19 19:53: *Marketing* tiền riêng `201`, *Điện* từ két `201`, trùng tên `409 expense_category_name_taken`,
+   thiếu nguồn `400 field=paid_from_till`; ghi `200000` · `350000` `201`, ngày mai `400 field=paid_date`; đọc ngày ⇒
+   `total_vnd 550000`; lọc loại 1 · tiền riêng ⇒ `200000`; `from > to` ⇒ `400 field=to`; sửa thiếu lý do `400`, có lý do `200`
+   ⇒ `600000`. **Chưa** mở trang trên trình duyệt.
+6. `01-khung-fe.md` §1 · §2.
+7. Gate xanh ở clone chính.
+Còn lại: không — loại chi không đổi tên hay nguồn được vì hợp đồng không có cửa.
+
 [↑ đầu file](#top)
 
 ---
@@ -777,5 +815,25 @@ có lý do. Màn quầy cho POS làm cùng việc ấy **chưa có bước** —
    lý do; gắn chữ và một ảnh PNG `201`, tải `/file` ra ảnh; sửa chữ có lý do; ẩn — đọc lại thấy đúng.
 6. `docs/product/4-fe/01-khung-fe.md` §1 · §2 dòng route mới (Claude ghi khi duyệt).
 7. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
+
+**Bàn giao** — 2026-10-19 · thực hiện: **Codex** `gpt-6-astra` (worktree `../lean_wt/P4A-11`, nhánh `codex/P4A-11`, base
+`33221a3`) viết trang, **chưa** viết test; **Claude Code** viết test, làm nốt và duyệt. **Codex hết hạn mức** giữa chừng (*"You've hit your usage limit … try again at Oct 20th, 2026 12:23 AM"*) trước khi viết báo
+cáo, nên **không có lời tự khai**; Claude chép code về clone chính, đọc lại từng file và làm nốt theo lời chủ repo. Claude sửa: `form.watch` ⇒
+`useWatch` (eslint `react-hooks/incompatible-library`). Test ghi phần multipart qua `FormData.prototype.set` vì Node treo khi
+đọc lại `File` của jsdom bằng `req.formData()` — giới hạn môi trường test; lời gọi thật mang `multipart/form-data; boundary=…`.
+Nhánh `P4A-01`. File: `dao-tao/page.tsx` · `dao-tao/dao-tao.test.tsx` · `_components/dao-tao.tsx` · `_components/dao-tao-form.tsx`
+· `_components/du-lieu-dao-tao.ts`; Claude thêm lúc tích hợp: mục *Đào tạo*, ca ở `chu-quan.test.tsx`, owner `01-khung-fe.md`.
+*Nghiệm thu → bằng chứng:*
+1. `dao-tao.test.tsx` 21 ca xanh. Test có răng (Claude chạy): bỏ đọc lại sau ghi ⇒ `3 failed | 18 passed`; trả lại ⇒ xanh.
+2. Clone chính: `Tests 271 passed (271)`; `tsc --noEmit` · `eslint` sạch.
+3. `check-fe-rules: PASS`; grep `refetchInterval|setQueryData` rỗng.
+4. `npm run build` có `○ /chu-quan/dao-tao`.
+5. Chạy thật 2026-10-19 19:53: ghi nhận chỉ nhận xét `201`, chỉ đánh giá `201`, cả hai vắng `400 field=remark`; sửa thiếu lý do
+   `400`, có lý do `200`; ẩn `200` — đọc thường còn một dòng, `include_hidden=true` thấy dòng ẩn *bởi Chủ quán*. Gắn chữ `201`,
+   ảnh PNG `201`, ảnh kèm chữ `400 field=body`; `/file` trả `200 image/png`, trùng từng byte tệp gửi; sửa chữ có lý do `200`,
+   sửa mẩu ảnh `409 assigned_task_guide_not_text`; ẩn ảnh `200`. **Chưa** mở trang trên trình duyệt.
+6. `01-khung-fe.md` §1 · §2.
+7. Gate xanh ở clone chính.
+Còn lại: màn quầy cho POS ghi đào tạo và gắn hướng dẫn **chưa có bước**; nút tới hướng dẫn từ trang giao việc chưa có.
 
 [↑ đầu file](#top)
