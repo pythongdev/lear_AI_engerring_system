@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.44.0
+  version: 0.45.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -4533,13 +4533,19 @@ components:
     OptionGroupAdmin:
       type: object
       additionalProperties: false
-      required: [option_group_id, name, prerequisite_option_ids, options]
+      required: [option_group_id, name, menu_item_ids, prerequisite_option_ids, options]
       properties:
         option_group_id:
           type: integer
           format: int64
         name:
           type: string
+        menu_item_ids:
+          type: array
+          description: Món mang nhóm này, kể cả món đã ngừng bán (T-211).
+          items:
+            type: integer
+            format: int64
         prerequisite_option_ids:
           type: array
           description: Nhóm chỉ có mặt khi một trong các lựa chọn này được chọn; rỗng là luôn có mặt.

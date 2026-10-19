@@ -107,6 +107,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-211 **Đặt mức phụ thu theo món của combo (phần còn lại của P4A-05)** — `GET /option-groups` trả thêm `menu_item_ids` của mỗi nhóm; trang combo có form *Đặt phụ thu* gửi `PUT /menu-combos/{menu_combo_id}/surcharges` cho các cặp món · lựa chọn đã đổi, có lý do, ngoài giờ bán — L1 — mở và nhận 2026-10-19 · Claude Code — 2026-10-19 · [chi tiết](#t-211)
 - [x] T-210 **Topping: chủ quán thêm, ẩn, bật lại lựa chọn trong nhóm có sẵn** — `GET /option-groups` · `POST /option-groups/{option_group_id}/options` · `POST /menu-options/{menu_option_id}/hiding` · `…/unhiding`; hàm giá từ chối lựa chọn đã ẩn; trang `/chu-quan/topping` — L2 (chạm hàm giá) — mở và nhận 2026-10-19 · Claude Code theo lời chủ repo — 2026-10-19 · [chi tiết](#t-210)
 - [x] T-209 **Hai ô trống của cổng pha 3 (F-068)** — test cắt giữa bấm mẻ · lùi mẻ · lúc ghi vết của lần huỷ đơn, test từ chối qua cửa cho `I-006` vế tầng 3; ký ô 1 · ô 2 (`I-019` ký có lý do) — L2 (chỉ thêm test) — 2026-10-19 · Claude Code · [chi tiết](#t-209)
 - [x] T-208 **Gate 9: git từ chối commit nhặt file của nhiều task (F-025)** — `scripts/hooks/pre-commit` khớp file staged với scope từng task bằng `check-scope.sh --match`; `install-hooks.sh --check` đòi cả hook mới; CLAUDE.md §6.2 — L1 — 2026-10-19 · Claude Code theo lời chủ repo *"F-025: hook pre-commit"* · [chi tiết](#t-208)
@@ -427,6 +428,35 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-211"></a>
+### T-211 — Chủ quán đặt mức phụ thu theo từng món của combo
+
+**Yêu cầu:** chủ repo 2026-10-19 chọn làm *"Topping và phụ thu combo"*. Cửa `PUT /menu-combos/{menu_combo_id}/surcharges` có từ P3A-06; màn
+P4A-05 chỉ đọc vì thiếu nguồn *món nào mang lựa chọn nào* (`GET /menu` chỉ món đang bán, test combo cấm gọi). **Mức:** L1 — đọc thêm một
+trường và một form; luật mức combo không đổi (lượt bảy · tám §8.9, ADR-117).
+
+**Claude chốt:** `OptionGroupAdmin` thêm `menu_item_ids` (món mang nhóm, kể cả ngừng bán) — MINOR `0.44.0` → `0.45.0`. Form trên mỗi combo bày,
+cho từng món của combo, mọi lựa chọn **chưa ẩn** của các nhóm món ấy mang, ô số đặt sẵn mức hiện có (trống = chưa đặt, hàm giá cộng 0đ); lý
+do bắt buộc; chỉ gửi cặp có ô đã đổi; không đổi gì ⇒ không gửi. Lời từ chối gắn đúng ô (`surcharges[i].x`).
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. Test backend: `GET /option-groups` có `menu_item_ids` đúng món mang nhóm.
+2. `combo.test.tsx` thêm ca: form bày lựa chọn theo món, không bày lựa chọn đã ẩn; gửi đúng cặp đã đổi kèm lý do rồi đọc lại; trong giờ bán ⇒
+   lời *chỉ đặt ngoài giờ bán*; ca cũ *không gọi `/price-quotes` hay `/menu`* vẫn xanh.
+3. Chạy thật: lập combo, đặt mức *Nhiều nhân* cho món trong combo ngoài giờ bán ⇒ đọc lại thấy mức; tính thử combo cộng đúng mức.
+4. `./scripts/gate.sh` xanh, `fe-check: PASS`.
+
+**Bàn giao** — 2026-10-19 · **Claude Code**, nhánh `P4A-01`; chưa ai duyệt độc lập.
+1. `TestI010_ThemLuaChonVaoNhomCoSan` thêm vế `menu_item_ids` — PASS.
+2. `combo.test.tsx` thêm ba ca (lựa chọn theo món, bỏ đã ẩn · gửi đúng cặp đã đổi rồi đọc lại, không gọi `/price-quotes` hay `/menu` ·
+   không đổi thì không gửi, trong giờ bán nói đúng lý do); 16 ca cũ không đổi điều kiện; `Tests  238 passed (238)` dưới `chu-quan`.
+3. Chạy thật 2026-10-19 ~21:40, ngoài giờ bán: `GET /option-groups` ⇒ *Nhân [1…8] · Lượng nhân [1…8]*; lập *Combo chạy thử T-211* 30.000đ
+   (2 suất Bánh cuốn) ⇒ đặt *Nhiều nhân* 2.000 ⇒ `200`, đọc lại thấy mức; tính thử hai suất *Thịt · Nhiều nhân* ⇒ `total_vnd 34000`
+   (30.000 + 2 × 2.000; *Thịt* chưa đặt cộng 0đ). Cuối lượt ẩn combo thử (lý do ghi rõ).
+4. `PASS  Gate 1   be-check` · `PASS  Gate 1g … hợp đồng 0.45.0` · `fe-check: PASS` · `PASS  gate     không cổng nào đỏ`.
+
+[↑ đầu file](#top)
 
 <a id="t-210"></a>
 ### T-210 — Topping: chủ quán quản lý lựa chọn phụ thu (phần còn bị chặn của P4A-05)

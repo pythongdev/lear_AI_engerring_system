@@ -96,6 +96,7 @@ type LuaChonNhom struct {
 type NhomLuaChon struct {
 	OptionGroupID         int64         `json:"option_group_id"`
 	Name                  string        `json:"name"`
+	MenuItemIDs           []int64       `json:"menu_item_ids"`
 	PrerequisiteOptionIDs []int64       `json:"prerequisite_option_ids"`
 	Options               []LuaChonNhom `json:"options"`
 }

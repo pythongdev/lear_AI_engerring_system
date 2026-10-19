@@ -81,6 +81,18 @@ func TestI010_ThemLuaChonVaoNhomCoSan(t *testing.T) {
 	if d.status != 200 {
 		t.Fatalf("GET /option-groups: %v", d)
 	}
+	// T-211: mỗi nhóm nói món nào mang nó — nhóm nhân và nhóm lượng của test đều chỉ do món giả mang.
+	for _, raw := range d.body["option_groups"].([]any) {
+		g := raw.(map[string]any)
+		gid := int64(g["option_group_id"].(float64))
+		if gid != m.nhom && gid != luong {
+			continue
+		}
+		mon, _ := g["menu_item_ids"].([]any)
+		if len(mon) != 1 || int64(mon[0].(float64)) != m.mon {
+			t.Fatalf("nhóm %d: muốn menu_item_ids [%d], nhận %v", gid, m.mon, g["menu_item_ids"])
+		}
+	}
 	tuChoi(t, k.goi(t, "GET", "/option-groups", thuong, nil), 403, "owner_only", "")
 }
 

@@ -2384,6 +2384,8 @@ export interface components {
             /** Format: int64 */
             option_group_id: number;
             name: string;
+            /** @description Món mang nhóm này, kể cả món đã ngừng bán (T-211). */
+            menu_item_ids: number[];
             /** @description Nhóm chỉ có mặt khi một trong các lựa chọn này được chọn; rỗng là luôn có mặt. */
             prerequisite_option_ids: number[];
             options: components["schemas"]["MenuOptionAdmin"][];

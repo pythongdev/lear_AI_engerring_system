@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FieldError } from "@/components/ui/field";
 import { useSanPham, type Mon } from "./du-lieu-san-pham";
-import { useCombo, useLapCombo, useDoiGiaCombo, useAnCombo, tienMenu, type KieuMenu } from "./du-lieu-danh-muc-combo";
+import { useCombo, useLapCombo, useDoiGiaCombo, useAnCombo, useDatPhuThuCombo, tienMenu, type KieuMenu } from "./du-lieu-danh-muc-combo";
+import { useTopping, type NhomTopping } from "./du-lieu-topping";
 import { FormMenu, OMenu, chuMenu, soMenu } from "./form-menu";
 
 type Combo = KieuMenu["MenuCombo"];
@@ -67,9 +68,38 @@ function FormAnCombo({ c, dong, bao }: { c: Combo; dong: () => void; bao: Bao })
     <OMenu form={form} o="reason" nhan="Lý do" />
   </FormMenu>;
 }
-function TheCombo({ c, bao }: { c: Combo; bao: Bao }) {
+// T-211: mức phụ thu theo món của combo (§8.9 lượt bảy · tám). Lựa chọn của mỗi món đọc từ GET /option-groups (menu_item_ids),
+// bỏ lựa chọn đã ẩn; ô trống là chưa đặt (hàm giá cộng 0đ); chỉ gửi cặp đã đổi, kèm lý do. Màn không tính giá combo.
+type O = { key: string; menu_item_id: number; menu_option_id: number; ten: string; hienCo?: number };
+function FormDatPhuThu({ c, nhom, dong, bao }: { c: Combo; nhom: NhomTopping[]; dong: () => void; bao: Bao }) {
+  const luu = useDatPhuThuCombo(c.menu_combo_id);
+  const cacO: O[] = c.items.flatMap((mon) => nhom.filter((g) => g.menu_item_ids.includes(mon.menu_item_id)).flatMap((g) =>
+    g.options.filter((o) => o.hidden_at === null).map((o) => ({
+      key: `${mon.menu_item_id}-${o.menu_option_id}`, menu_item_id: mon.menu_item_id, menu_option_id: o.menu_option_id,
+      ten: `${mon.item_name} · ${g.name} · ${o.name}`,
+      hienCo: mon.surcharges.find((s) => s.menu_option_id === o.menu_option_id)?.surcharge_vnd,
+    }))));
+  const schema = z.object({ reason: chuMenu, muc: z.record(z.string(), z.string().trim()
+    .regex(/^\d*$/, "Nhập số đồng, từ 0 trở lên.")) }).superRefine((body, ctx) => {
+    if (!cacO.some((o) => body.muc[o.key] !== "" && Number(body.muc[o.key]) !== o.hienCo))
+      ctx.addIssue({ code: "custom", path: ["reason"], message: "Chưa đổi mức nào." });
+  });
+  const form = useForm<{ reason: string; muc: Record<string, string> }>({ resolver: zodResolver(schema),
+    defaultValues: { reason: "", muc: Object.fromEntries(cacO.map((o) => [o.key, o.hienCo === undefined ? "" : String(o.hienCo)])) } });
+  const gui = ({ reason, muc }: { reason: string; muc: Record<string, string> }) => luu.mutateAsync({ reason, surcharges: cacO
+    .filter((o) => muc[o.key] !== "" && Number(muc[o.key]) !== o.hienCo)
+    .map((o) => ({ menu_item_id: o.menu_item_id, menu_option_id: o.menu_option_id, surcharge_vnd: Number(muc[o.key]) })) });
+  if (cacO.length === 0) return <p>Các món của combo này không có lựa chọn nào để đặt phụ thu.</p>;
+  return <FormMenu form={form} ten={`Đặt phụ thu ${c.name}`} nut="Lưu phụ thu" gui={gui} cacO={["reason"]} dong={dong}
+    daLuu={(data) => { bao(`Đã đặt phụ thu cho ${data.name}.`); dong(); }}>
+    <p className="text-sm text-muted-foreground">Mức cộng vào giá combo cho mỗi suất chọn lựa chọn ấy; để trống là chưa đặt (cộng 0 đ). Chỉ đặt ngoài giờ bán.</p>
+    {cacO.map((o) => <OMenu key={o.key} form={form} o={`muc.${o.key}`} nhan={o.ten} />)}
+    <OMenu form={form} o="reason" nhan="Lý do" />
+  </FormMenu>;
+}
+function TheCombo({ c, nhom, bao }: { c: Combo; nhom?: NhomTopping[]; bao: Bao }) {
   const id = useId();
-  const [sua, setSua] = useState<"gia" | "an" | null>(null);
+  const [sua, setSua] = useState<"gia" | "an" | "phu-thu" | null>(null);
   return <section aria-labelledby={id}><Card>
     <CardHeader><CardTitle><h2 id={id}>{c.name}</h2></CardTitle></CardHeader>
     <CardContent className="space-y-4">
@@ -83,7 +113,9 @@ function TheCombo({ c, bao }: { c: Combo; bao: Bao }) {
       {!sua && <div className="flex gap-2">
         <Button variant="outline" aria-label={`Đổi giá ${c.name}`} onClick={() => setSua("gia")}>Đổi giá</Button>
         <Button variant="outline" aria-label={`Ẩn ${c.name}`} onClick={() => setSua("an")}>Ẩn</Button>
+        {nhom && <Button variant="outline" aria-label={`Đặt phụ thu ${c.name}`} onClick={() => setSua("phu-thu")}>Đặt phụ thu</Button>}
       </div>}
+      {sua === "phu-thu" && nhom && <FormDatPhuThu c={c} nhom={nhom} dong={() => setSua(null)} bao={bao} />}
       {sua === "gia" && <FormDoiGiaCombo c={c} dong={() => setSua(null)} bao={bao} />}
       {sua === "an" && <FormAnCombo c={c} dong={() => setSua(null)} bao={bao} />}
     </CardContent>
@@ -92,6 +124,7 @@ function TheCombo({ c, bao }: { c: Combo; bao: Bao }) {
 export function TrangCombo() {
   const query = useCombo();
   const sanPham = useSanPham();
+  const topping = useTopping();
   const [thongBao, bao] = useState<string | null>(null);
   const data = query.data;
   const mon = sanPham.data && [...sanPham.data.categories.flatMap((c) => c.items), ...sanPham.data.uncategorized_items]
@@ -109,7 +142,7 @@ export function TrangCombo() {
     {data && <>
       {query.isFetching && <p role="status">Đang đọc lại danh sách combo…</p>}
       {data.combos.length === 0 && <p>Chưa có combo.</p>}
-      {data.combos.map((c) => <TheCombo key={c.menu_combo_id} c={c} bao={bao} />)}
+      {data.combos.map((c) => <TheCombo key={c.menu_combo_id} c={c} nhom={topping.data?.option_groups} bao={bao} />)}
       {sanPham.isPending && <p role="status">{sanPham.fetchStatus === "paused" ? "Đang chờ kết nối để đọc món." : "Đang đọc danh sách món…"}</p>}
       {sanPham.isError && <Alert role="alert"><AlertDescription>Chưa đọc được danh sách món.
         {sanPham.data && ` Đang hiện bản đọc trước, lúc ${new Date(sanPham.dataUpdatedAt).toLocaleTimeString("vi-VN")}.`}

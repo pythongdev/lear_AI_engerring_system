@@ -17,12 +17,12 @@ vi.mock("next/navigation", () => ({
 afterEach(cleanup);
 
 const mau: components["schemas"]["OptionGroupsAdmin"] = { option_groups: [
-  { option_group_id: 1, name: "Nhân", prerequisite_option_ids: [], options: [
+  { option_group_id: 1, name: "Nhân", menu_item_ids: [10], prerequisite_option_ids: [], options: [
     { menu_option_id: 1, name: "Chay", surcharge_vnd: 0, is_default: false, hidden_at: null },
     { menu_option_id: 2, name: "Thịt", surcharge_vnd: 1000, is_default: true, hidden_at: null },
     { menu_option_id: 5, name: "Thịt + nấm", surcharge_vnd: 1000, is_default: false, hidden_at: "2026-10-19T03:00:00Z" },
   ] },
-  { option_group_id: 2, name: "Lượng nhân", prerequisite_option_ids: [2, 5], options: [
+  { option_group_id: 2, name: "Lượng nhân", menu_item_ids: [10], prerequisite_option_ids: [2, 5], options: [
     { menu_option_id: 3, name: "Thường", surcharge_vnd: 0, is_default: true, hidden_at: null },
     { menu_option_id: 4, name: "Nhiều nhân", surcharge_vnd: 1000, is_default: false, hidden_at: null },
   ] },

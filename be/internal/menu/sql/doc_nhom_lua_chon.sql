@@ -1,7 +1,10 @@
--- Cửa menu/doc_nhom (T-210, lớp chu_quan): mọi nhóm, mọi lựa chọn kể cả đã ẩn, và tập điều kiện của từng nhóm.
+-- Đường đọc GET /option-groups (T-210, lớp chu_quan): mọi nhóm, mọi lựa chọn kể cả đã ẩn, tập điều kiện của từng nhóm,
+-- và món mang nhóm (T-211 — nguồn để đặt mức phụ thu theo món của combo).
 -- name: DocNhomLuaChon :one
 SELECT COALESCE(jsonb_agg(jsonb_build_object(
  'option_group_id', g.id, 'name', g.name,
+ 'menu_item_ids', (SELECT COALESCE(jsonb_agg(ig.menu_item_id ORDER BY ig.menu_item_id), '[]'::jsonb)
+   FROM menu_item_option_group ig WHERE ig.option_group_id = g.id),
  'prerequisite_option_ids', (SELECT COALESCE(jsonb_agg(p.menu_option_id ORDER BY p.menu_option_id), '[]'::jsonb)
    FROM option_group_prerequisite p WHERE p.option_group_id = g.id),
  'options', (SELECT COALESCE(jsonb_agg(jsonb_build_object(

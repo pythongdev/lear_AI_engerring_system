@@ -66,6 +66,12 @@ export function useDoiGiaCombo(menu_combo_id: number) {
     params: { path: { menu_combo_id } }, body,
   })), "menu-combos");
 }
+export function useDatPhuThuCombo(menu_combo_id: number) {
+  const api = useApi();
+  return useGhiMenu((body: KieuMenu["SetMenuComboSurcharges"]) => call(api.PUT("/menu-combos/{menu_combo_id}/surcharges", {
+    params: { path: { menu_combo_id } }, body,
+  })), "menu-combos");
+}
 export function useAnCombo(menu_combo_id: number) {
   const api = useApi();
   return useGhiMenu((body: KieuMenu["HideMenuCombo"]) => call(api.POST("/menu-combos/{menu_combo_id}/hiding", {
@@ -85,6 +91,10 @@ export function loiMenu(failure: ApiFailure) {
     case "menu_combo_hidden": return "Combo đã bị ẩn. Hãy đọc lại danh sách.";
     case "menu_combo_not_found": return "Combo không còn trong danh sách. Hãy đọc lại danh sách.";
     case "menu_combo_price_in_sales_hours": return "Chỉ đổi giá combo ngoài giờ bán.";
+    case "menu_combo_surcharge_in_sales_hours": return "Chỉ đặt phụ thu combo ngoài giờ bán.";
+    case "menu_combo_item_not_found": return "Món không còn trong combo. Hãy đọc lại danh sách.";
+    case "menu_option_not_found": return "Lựa chọn không còn. Hãy đọc lại danh sách.";
+    case "option_combination_invalid": return "Lựa chọn không thuộc nhóm nào của món này. Hãy đọc lại danh sách.";
     case "invalid_request": return "Dữ liệu chưa hợp lệ. Hãy kiểm tra lại.";
     case "unauthenticated": return "Phiên đăng nhập đã hết. Hãy đăng nhập lại.";
     case "owner_only": return "Chỉ chủ quán được thực hiện thao tác này.";

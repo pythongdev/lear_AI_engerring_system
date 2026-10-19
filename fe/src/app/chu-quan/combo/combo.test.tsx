@@ -284,3 +284,64 @@ describe("trang combo — đổi giá và ẩn", () => {
     await waitFor(() => expect(soLanDoc(goi)).toBe(2));
   });
 });
+
+// T-211 (2026-10-19, Claude): mức phụ thu theo món nay ĐẶT được — câu "chỉ ĐỌC ở bước này" ở đầu file là của P4A-05.
+// Lựa chọn theo món đọc từ GET /option-groups (menu_item_ids), bỏ lựa chọn đã ẩn; chỉ gửi cặp đã đổi, kèm lý do.
+describe("trang combo — đặt phụ thu theo món (T-211)", () => {
+  const nhom: components["schemas"]["OptionGroupsAdmin"] = { option_groups: [
+    { option_group_id: 1, name: "Nhân", menu_item_ids: [11, 12], prerequisite_option_ids: [], options: [
+      { menu_option_id: 2, name: "Chay", surcharge_vnd: 0, is_default: false, hidden_at: null },
+      { menu_option_id: 3, name: "Thịt", surcharge_vnd: 1000, is_default: true, hidden_at: null },
+      { menu_option_id: 6, name: "Thịt + nấm", surcharge_vnd: 1000, is_default: false, hidden_at: "2026-10-19T03:00:00Z" },
+    ] },
+  ] };
+  function moVoiNhom(ghiDen: (g: GoiDen) => TraLoi) {
+    return voiBackend(<Page />, (g) => {
+      if (g.method === "GET" && g.path === "/menu-combos") return { status: 200, body: mauCombo };
+      if (g.method === "GET" && g.path === "/menu-categories") return { status: 200, body: mauMon };
+      if (g.method === "GET" && g.path === "/option-groups") return { status: 200, body: nhom };
+      if (g.method !== "GET") return ghiDen(g);
+      return { status: 599, body: { code: "khong_co_trong_hop_dong" } };
+    });
+  }
+  async function moForm() {
+    const the = (await screen.findByRole("heading", { name: "Combo Đầy đủ" })).closest("section") as HTMLElement;
+    fireEvent.click(await within(the).findByRole("button", { name: "Đặt phụ thu Combo Đầy đủ" }));
+    return within(the).getByRole("form", { name: "Đặt phụ thu Combo Đầy đủ" });
+  }
+
+  it("bày lựa chọn theo món, đặt sẵn mức hiện có, không bày lựa chọn đã ẩn", async () => {
+    moVoiNhom(() => ({ status: 599 }));
+    const f = await moForm();
+    expect((within(f).getByLabelText("Bánh cuốn trứng · Nhân · Thịt") as HTMLInputElement).value).toBe("2000");
+    expect((within(f).getByLabelText("Bánh cuốn trứng · Nhân · Chay") as HTMLInputElement).value).toBe("");
+    expect(within(f).queryByLabelText(/Thịt \+ nấm/)).toBeNull();
+    expect(within(f).queryByLabelText(/Chả quế/)).toBeNull();
+  });
+
+  it("chỉ gửi cặp đã đổi kèm lý do, rồi đọc lại; không gọi /price-quotes hay /menu", async () => {
+    const goi = moVoiNhom(() => ({ status: 200, body: mauCombo.combos[0] }));
+    const f = await moForm();
+    fireEvent.change(within(f).getByLabelText("Bánh cuốn trứng · Nhân · Chay"), { target: { value: "500" } });
+    fireEvent.change(within(f).getByLabelText("Lý do"), { target: { value: "Đặt mức chay" } });
+    fireEvent.submit(f);
+    await screen.findByText("Đã đặt phụ thu cho Combo Đầy đủ.");
+    expect(ghi(goi)).toEqual([{ method: "PUT", path: "/menu-combos/5/surcharges", body: { reason: "Đặt mức chay",
+      surcharges: [{ menu_item_id: 11, menu_option_id: 2, surcharge_vnd: 500 }] } }]);
+    await waitFor(() => expect(soLanDoc(goi)).toBe(2));
+    expect(goi.some((g) => g.path === "/price-quotes" || g.path === "/menu")).toBe(false);
+  });
+
+  it("không đổi gì thì không gửi; trong giờ bán nói đúng lý do", async () => {
+    const goi = moVoiNhom(() => ({ status: 409, body: { code: "menu_combo_surcharge_in_sales_hours" } }));
+    const f = await moForm();
+    fireEvent.change(within(f).getByLabelText("Lý do"), { target: { value: "Thử" } });
+    fireEvent.submit(f);
+    await waitFor(() => expect(f.textContent).toMatch(/Chưa đổi mức nào/));
+    expect(ghi(goi)).toHaveLength(0);
+    fireEvent.change(within(f).getByLabelText("Bánh cuốn trứng · Nhân · Thịt"), { target: { value: "3000" } });
+    fireEvent.submit(f);
+    await waitFor(() => expect(f.textContent).toMatch(/Chỉ đặt phụ thu combo ngoài giờ bán/));
+    expect(ghi(goi)).toHaveLength(1);
+  });
+});
