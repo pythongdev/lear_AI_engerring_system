@@ -1541,7 +1541,7 @@ hơn 0.
 
 **Invariant:**
 Mệnh đề của tài khoản đăng nhập (`master_plan/shop-facts.md` §8.8, lời đóng `U-083` · `U-088`,
-2026-10-14; thiết kế `docs/decisions.md` **ADR-109**, chủ repo duyệt cùng ngày). Bảy vế:
+2026-10-14; thiết kế `docs/decisions.md` **ADR-109**, chủ repo duyệt cùng ngày). Tám vế (vế cuối thêm 2026-10-19):
 
 - **Một tài khoản, nhiều nhất một người; một người, nhiều nhất một tài khoản.** Tài khoản *chờ duyệt*
   hay *bị từ chối* chưa gắn người nào; tài khoản *hoạt động* hay *khoá* gắn đúng một người thuộc tập
@@ -1558,6 +1558,9 @@ Mệnh đề của tài khoản đăng nhập (`master_plan/shop-facts.md` §8.8
 - **Đăng nhập ở quầy gắn đúng một khoảng trực quầy, và khoảng ấy là của chính người đăng nhập** — không
   có chỗ cất mốc đổi người thứ hai ngoài trực quầy (`YC-15`).
 - **Tài khoản không bị xoá cứng**; đổi trạng thái, vai hay người gắn là cập nhật có vết theo `I-018`.
+- **Duyệt không trao cờ chủ quán.** Một lần chủ quán duyệt không gắn tài khoản vào người mang cờ chủ quán; tài khoản của
+  chủ quán chỉ ra đời qua đường khởi tạo trên máy chủ. *(Thêm 2026-10-19, Claude Code, `T-203` — từ **ADR-109** điểm 3
+  chủ repo đã duyệt 2026-10-14; lộ ở **F-071**.)*
 
 **Mệnh đề không nói** đăng nhập sai bao nhiêu lần thì chặn, hay mỗi Gmail nhận bao nhiêu thư một giờ —
 hai con số của **ADR-109** giữ ở cửa backend, không phải trạng thái dữ liệu. Nó không nói vai mở quyền
@@ -1581,7 +1584,7 @@ Kịch bản âm: tài khoản chờ duyệt gắn người, tài khoản hoạt
 duyệt, hai tài khoản cùng một người, tên đăng nhập hay Gmail trùng (kể cả khác hoa thường), một bản
 mật khẩu không mang dạng băm argon2id, một mã phiên hay mã đặt lại không phải băm 32 byte, một phiên
 sống quá 7 ngày, một mã đặt lại sống quá 30 phút hay dùng ngoài hạn, một phiên đã kết thúc mở lại,
-hai phiên cùng một khoảng trực, xoá cứng một tài khoản ⇒ **bị từ chối**. Kịch bản dương: tự đăng ký,
+hai phiên cùng một khoảng trực, xoá cứng một tài khoản, duyệt gắn vào người mang cờ chủ quán ⇒ **bị từ chối**. Kịch bản dương: tự đăng ký,
 chủ quán duyệt và gán vai, đặt mật khẩu, đăng nhập ở quầy, đăng xuất ⇒ đọc lại được ai duyệt, lúc nào,
 vai, phiên mở lúc nào, kết thúc vì sao, khoảng trực quầy của chính người ấy. Kịch bản đổi mật khẩu:
 đặt hai lần ⇒ hai bản còn, bản mới nhất là hiện hành. Kiểm ngược: mọi phiên còn hiệu lực thuộc một tài

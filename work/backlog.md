@@ -97,6 +97,11 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-203 **Cửa duyệt không trao cờ chủ quán (F-071)** — `POST /accounts/{account_id}/approval` từ chối `person_id` của người mang cờ chủ quán bằng `409 account_person_is_owner` (`field: person_id`); hợp đồng 0.41.0; trang nhân viên nói đúng lời; vế mới của `I-033` — L2 — mở 2026-10-19 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"hãy yêu cầu codex làm f-071. đồng ý với đề xuất của bạn"* · [chi tiết](#t-203)
+
+- [ ] P4A-07 **Trang giao việc của chủ quán** — danh sách việc mới nhất trước, lọc theo người nhận (`GET /assigned-tasks`), giao việc, sửa có lý do, đánh dấu xong · bỏ đánh dấu, xoá là ẩn có lý do (`/assigned-tasks*`); không hướng dẫn (thuộc `P4A-11`), không hạn — L1 — mở và nhận 2026-10-19 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"hãy yêu cầu codex làm 2 task trên bạn kiểm tra"* — 2026-10-19 · [chi tiết](backlog_FE_AD.md#p4a-07)
+- [ ] P4A-08 **Trang nguyên liệu của chủ quán** — danh mục nguyên liệu (`/supply-items`), thêm thứ, đặt đơn vị lần đầu, sổ ngày của từng thứ: ghi con số mua vào · đã dùng, sửa có lý do (`/supply-day-entries*`); không bày số thiếu, tỉ lệ hay lời nhắc (thuộc `P4A-09`), không tính ở trình duyệt — L1 — mở và nhận 2026-10-19 · Claude Code (dẫn, duyệt), Codex thi công theo cùng lời — 2026-10-19 · [chi tiết](backlog_FE_AD.md#p4a-08)
+
 
 
 
@@ -411,6 +416,31 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-203"></a>
+### T-203 — Cửa duyệt tài khoản gắn được vào người mang cờ chủ quán (F-071)
+
+**Yêu cầu:** chủ repo 2026-10-19, *"hãy yêu cầu codex làm f-071. đồng ý với đề xuất của bạn"* — đề xuất ở **F-071**: cửa duyệt
+từ chối `person_id` có `is_owner`, lời từ chối mới ở hợp đồng, test hồi quy. **Mức:** L2 — chạm quyền (ai thành chủ quán) và
+hợp đồng.
+
+**Claude chốt (thiết kế, không phải lời quán):** (1) mã mới `account_person_is_owner`, `409`, kèm `field: person_id` — cùng nhóm
+`409` với `account_not_*` của cửa này; (2) kiểm ở backend trong cùng giao dịch duyệt, đọc `person.is_owner` của người được chọn;
+**không** siết ở database lượt này — luật nằm ở một cửa ghi duy nhất (Gate 1f), siết chéo bảng cần trigger và một lát lược đồ
+riêng, chưa đáng khi màn và cửa đã chặn; (3) hợp đồng tăng MINOR `0.40.0` → `0.41.0`; (4) trang nhân viên bày lời *người đã
+chọn là chủ quán*, gắn ô *Người trong quán*, đọc lại danh sách; (5) vế mới của `I-033` lấy từ **ADR-109** điểm 3 (chủ repo đã duyệt).
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. `TestI033_DuyetKhongGanVaoNguoiChuQuan` (`be/internal/taikhoan/taikhoan_test.go`, Claude viết trước — đỏ ở base `a921357`:
+   `duyệt gắn vào người chủ quán: muốn 409 account_person_is_owner, field person_id`) xanh, **không** sửa điều kiện kiểm;
+   cả package `taikhoan` xanh trong `be-check` (Claude chạy — sandbox Codex không tới Docker).
+2. Ca FE *gắn vào người chủ quán bị từ chối* ở `nhan-vien.test.tsx` (Claude viết trước, đỏ) xanh; 20 ca cũ vẫn xanh.
+3. Gate 1g xanh với hợp đồng `0.41.0`: mã ở `ErrorCode`, status `409` ở bảng status của `apierr`; dòng nhật ký ở
+   `docs/product/3-be/01-hop-dong-api.md`; `fe/src/lib/api/schema.ts` sinh lại (`fe-check: apigen PASS`).
+4. Chạy thật (Claude): dựng lại cảnh của **F-071** — người lạ duyệt gắn vào người chủ quán ⇒ `409`, không đăng nhập được.
+5. `./scripts/gate.sh` xanh ở clone chính, có `be-check` và `fe-check: PASS`.
+
+[↑ đầu file](#top)
 
 <a id="t-171"></a>
 ### T-171 · T-172 — Hai nhánh chen nhau không có test (F-064 · F-065)
