@@ -1,6 +1,7 @@
 -- I-027 (tầng 1 · tầng 3) và YC-30: một ô "có đi làm" thuộc ĐÚNG MỘT người của quán và ĐÚNG MỘT
 -- ngày, mang tên người đã tick và lúc tick; một người một ngày không có hai ô còn hiệu lực; ô tick
--- nhầm được HUỶ (lời chủ quán đóng U-070): ô ở lại, mang ai huỷ · lúc huỷ · ghi chú, không bị xoá
+-- nhầm được HUỶ (lời chủ quán đóng U-070): ô ở lại, mang ai huỷ · lúc huỷ · ghi chú, không bị xoá; từ T-141 (U-071)
+-- mỗi lần huỷ BẮT BUỘC ghi chú và người huỷ PHẢI là chủ quán — database từ chối cả hai
 -- và không đổi được người hay ngày; lược đồ không cất giờ tới, ngưỡng đi muộn hay một khoản trừ. Vế "người tick là chủ quán" là tầng 3 — database KHÔNG xét, test nói
 -- thẳng. Chạy đúng kịch bản của mục Verification ở quality/invariants.md I-027.
 -- Lát: 13-luoc-do-cham-cong.md. Thiết kế: docs/decisions.md ADR-072.
@@ -136,7 +137,8 @@ BEGIN
     RAISE NOTICE 'I-027 bị từ chối (huỷ mà không có người huỷ): %', SQLERRM;
   END;
   BEGIN
-    UPDATE attendance_day SET cancelled_at = now(), cancelled_by_person_id = 999999999 WHERE id = o1;
+    UPDATE attendance_day SET cancelled_at = now(), cancelled_by_person_id = 999999999,
+                              cancel_note = 'test-người huỷ lạ' WHERE id = o1;
     RAISE EXCEPTION 'I-027: database KHÔNG từ chối người huỷ không thuộc tập người của quán';
   EXCEPTION WHEN foreign_key_violation THEN
     RAISE NOTICE 'I-027 bị từ chối (người huỷ không phải người của quán): %', SQLERRM;
@@ -154,18 +156,38 @@ BEGIN
     RAISE NOTICE 'I-027 bị từ chối (ghi chú huỷ trên ô chưa huỷ): %', SQLERRM;
   END;
   BEGIN
-    UPDATE attendance_day SET cancelled_at = created_at - interval '1 minute', cancelled_by_person_id = chu WHERE id = o1;
+    UPDATE attendance_day SET cancelled_at = created_at - interval '1 minute', cancelled_by_person_id = chu,
+                              cancel_note = 'test-huỷ trước lúc tick' WHERE id = o1;
     RAISE EXCEPTION 'I-027: database KHÔNG từ chối một lần huỷ trước lúc tick';
   EXCEPTION WHEN check_violation THEN
     RAISE NOTICE 'I-027 bị từ chối (huỷ trước lúc tick): %', SQLERRM;
   END;
-  -- Nói thẳng hai chỗ database KHÔNG giữ: ghi chú để trống vẫn huỷ được (lời chủ quán không nói
-  -- bắt buộc — U-071), và người huỷ không bị xét có phải chủ quán không (tầng 3, như người tick).
-  UPDATE attendance_day SET cancelled_at = now(), cancelled_by_person_id = a
-  WHERE worker_person_id = a AND work_date = '2026-09-23';
-  RAISE NOTICE 'I-027 tầng 3 · U-071 — huỷ KHÔNG ghi chú, do người KHÔNG phải chủ quán: database nhận (% ô như thế)',
-    (SELECT COUNT(*) FROM attendance_day d JOIN person c ON c.id = d.cancelled_by_person_id
-     WHERE d.cancel_note IS NULL AND NOT c.is_owner);
+  -- U-071 (chủ quán chốt 2026-10-09, siết ở T-141): mỗi lần huỷ có ghi chú, và người huỷ là chủ quán.
+  BEGIN
+    UPDATE attendance_day SET cancelled_at = now(), cancelled_by_person_id = chu WHERE id = o1;
+    RAISE EXCEPTION 'I-027: database KHÔNG từ chối một lần huỷ không ghi chú (U-071)';
+  EXCEPTION WHEN check_violation THEN
+    IF SQLERRM NOT LIKE '%attendance_day_cancel_note_required_check%' THEN RAISE; END IF;
+    RAISE NOTICE 'I-027 bị từ chối (huỷ không ghi chú, U-071): %', SQLERRM;
+  END;
+  BEGIN
+    UPDATE attendance_day SET cancelled_at = now(), cancelled_by_person_id = a,
+                              cancel_note = 'test-người không phải chủ quán huỷ' WHERE id = o1;
+    RAISE EXCEPTION 'I-027: database KHÔNG từ chối một lần huỷ do người không phải chủ quán (U-071)';
+  EXCEPTION WHEN check_violation THEN
+    GET STACKED DIAGNOSTICS cols = CONSTRAINT_NAME;
+    IF cols IS DISTINCT FROM 'attendance_day_cancelled_by_owner_check' THEN RAISE; END IF;
+    RAISE NOTICE 'I-027 bị từ chối (người huỷ không phải chủ quán, U-071): %', SQLERRM;
+  END;
+  BEGIN
+    INSERT INTO attendance_day (worker_person_id, work_date, cancelled_at, cancelled_by_person_id, cancel_note)
+    VALUES (a, '2026-09-25', now(), a, 'test-thêm ô đã huỷ bởi người thường');
+    RAISE EXCEPTION 'I-027: database KHÔNG từ chối thêm một ô đã huỷ do người không phải chủ quán';
+  EXCEPTION WHEN check_violation THEN
+    GET STACKED DIAGNOSTICS cols = CONSTRAINT_NAME;
+    IF cols IS DISTINCT FROM 'attendance_day_cancelled_by_owner_check' THEN RAISE; END IF;
+    RAISE NOTICE 'I-027 bị từ chối (thêm ô đã huỷ bởi người thường, U-071): %', SQLERRM;
+  END;
 
   -- Vai ghi KHÔNG đổi được người hay ngày của một ô, KHÔNG xoá được ô (QD-50): huỷ là đường duy nhất.
   BEGIN
@@ -208,14 +230,16 @@ BEGIN
     AND (   (y.relname LIKE 'attendance%')
          OR (x.relname LIKE 'attendance%' AND y.relname <> 'person'));
   IF n <> 0 THEN RAISE EXCEPTION 'I-027: % khoá ngoại nối ô chấm công với bảng ngoài người', n; END IF;
+  -- Một ngoại lệ có tên (T-141): hàm gác người huỷ chỉ ĐỌC person và từ chối, không ghi bảng nào.
   SELECT COUNT(*) INTO n FROM pg_proc f JOIN pg_namespace ns ON ns.oid = f.pronamespace
-  WHERE ns.nspname = 'shop' AND f.prosrc ILIKE '%attendance%';
+  WHERE ns.nspname = 'shop' AND f.prosrc ILIKE '%attendance%'
+    AND NOT (f.proname = 'attendance_day_cancelled_by_owner' AND f.prosrc !~* '\m(insert|update|delete)\M');
   IF n <> 0 THEN RAISE EXCEPTION 'I-027: % hàm của schema nhắc tới ô chấm công — một đường đi từ ô tới thứ khác', n; END IF;
   SELECT COUNT(*) INTO n FROM pg_trigger g JOIN pg_class c ON c.oid = g.tgrelid
   JOIN pg_namespace ns ON ns.oid = c.relnamespace JOIN pg_proc f ON f.oid = g.tgfoid
   WHERE ns.nspname = 'shop' AND c.relname LIKE 'attendance%' AND NOT g.tgisinternal
-    AND f.proname <> 'record_revision_capture';
-  IF n <> 0 THEN RAISE EXCEPTION 'I-027: % trigger ngoài trigger vết trên ô chấm công', n; END IF;
-  RAISE NOTICE 'I-027 đọc lược đồ — 0 khoá ngoại ngoài ba khoá về người, 0 hàm nhắc tới ô, 0 trigger ngoài trigger vết ⇒ không đường nào tới một khoản trừ';
+    AND f.proname NOT IN ('record_revision_capture', 'attendance_day_cancelled_by_owner');
+  IF n <> 0 THEN RAISE EXCEPTION 'I-027: % trigger ngoài trigger vết và trigger gác người huỷ trên ô chấm công', n; END IF;
+  RAISE NOTICE 'I-027 đọc lược đồ — 0 khoá ngoại ngoài ba khoá về người, 0 hàm nhắc tới ô ngoài hàm gác người huỷ (chỉ đọc), 0 trigger ngoài trigger vết và trigger gác ⇒ không đường nào tới một khoản trừ';
   SET CONSTRAINTS ALL IMMEDIATE;
 END $$;

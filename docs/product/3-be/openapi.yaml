@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.42.0
+  version: 0.43.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -6772,6 +6772,8 @@ x-constraint-errors:
   assigned_task_person_fkey: internal
   assigned_task_pkey: internal
   attendance_day_cancel_note_only_when_cancelled_check: unreviewed
+  attendance_day_cancel_note_required_check: unreviewed
+  attendance_day_cancelled_by_owner_check: unreviewed
   attendance_day_cancelled_after_created_check: unreviewed
   attendance_day_cancelled_by_iff_cancelled_check: unreviewed
   attendance_day_cancelled_by_person_fkey: unreviewed

@@ -89,7 +89,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
 [↑ đầu file](#top)
@@ -108,6 +107,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ và thi công (2026-10-19, Codex không tham gia) — 2026-10-19 · [chi tiết](#t-141)
 - [x] T-207 **Test lùi mẻ chen chuyển phần của chính mẻ (F-066)** — `TestI020_LuiMeChenChuyenPhanCuaChinhMe` 12 vòng chen nhau, cả hai thứ tự đều ra mẻ đã lùi và hai đơn vị về Chưa làm; bỏ hai khoá mẻ ⇒ đỏ — L1 (chỉ thêm test) — 2026-10-19 · Claude Code · [chi tiết](#t-207)
 - [x] T-206 **Ba finding tài liệu: F-067 · F-069 · F-070** — ghi lượt duyệt độc lập backend (không thấy hành vi đổi) và đóng F-067; `prompt-fullstack.md` §3.6 thành con trỏ tới hợp đồng; ba lời hứa treo của pha 3 ghi rõ chỗ nhận — L0/L1 tài liệu — 2026-10-19 · Claude Code theo lời chủ repo chọn ba việc quy trình · [chi tiết](#t-206)
 - [x] T-205 **Địa chỉ và giờ mở trên Google (hai vế của U-094)** — shop-facts §1 có địa chỉ và *trừ Tết âm lịch*; JSON-LD trang chủ có `address` · `openingHoursSpecification` 06:00–11:00 mọi ngày; U-094 hẹp lại còn tên miền và câu mô tả — L1 — 2026-10-19 · Claude Code theo lời chủ repo trong hội thoại · [chi tiết](#t-205)
@@ -424,6 +424,36 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-141"></a>
+### T-141 — Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán (U-071)
+
+**Yêu cầu:** lời chủ quán đóng **U-071** (2026-10-09, T-139): ghi chú huỷ bắt buộc, chỉ chủ quán huỷ; task nằm *Ready* từ đó. Chủ
+repo 2026-10-19 giao *"làm nốt những việc còn lại"*. **Mức:** L2 — lược đồ và dữ liệu (`I-027`). Claude thiết kế và thi công.
+
+**Thiết kế (Claude):** một migration đi tới, bước 33: CHECK `attendance_day_cancel_note_required_check` (có huỷ ⇒ có ghi chú; ghi chú
+trắng đã bị từ chối từ bước 10); người huỷ là chủ quán cần đọc bảng `person` nên là trigger trước khi ghi, mang tên
+`attendance_day_cancelled_by_owner_check` (QC-10). Người huỷ không tồn tại vẫn để khoá ngoại cũ từ chối. Lùi chỉ nới luật.
+
+*Nghiệm thu* (viết trước):
+1. `db/tests/i027_attendance_one_box_per_worker_day.sql`: hai ca *database nhận* đổi thành ba ca *database từ chối* (huỷ không ghi chú ·
+   người thường huỷ · thêm ô đã huỷ bởi người thường), mỗi ca kiểm đúng tên ràng buộc — đỏ trên lược đồ 32 bước, xanh sau bước 33.
+2. Bước 33 lên và lùi một bước trên database rỗng; `db-check` xanh.
+3. Mọi dữ liệu test huỷ ô dùng người chủ quán, kèm ghi chú (`be/internal/tongket/testdata/best_staff.sql`); `be-check` xanh.
+4. `13-luoc-do-cham-cong.md` §3 · §4 · §5, bước 33 ở `07-thu-tu-migration.md`, `I-027`; hai tên mới ở `x-constraint-errors`, hợp đồng
+   `0.43.0`; `./scripts/gate.sh` xanh.
+
+**Bàn giao** — 2026-10-19 · **Claude Code**, nhánh `P4A-01`; chưa ai duyệt độc lập.
+1. Lược đồ cũ (database thử cổng 5498): `ERROR:  I-027: database KHÔNG từ chối một lần huỷ không ghi chú (U-071)`. Sau bước 33: ba
+   `NOTICE … bị từ chối (… U-071)` và không `ERROR`. Test đọc lược đồ *không đường nào tới một khoản trừ* nhận đúng một ngoại lệ có
+   tên — hàm gác người huỷ, chỉ đọc `person`, không câu ghi nào (test kiểm).
+2. `migrate up` ⇒ `20261019130000/u huy_cham_cong_nghiem`; `down 1` ⇒ `/d`; `up` lại ⇒ `/u`. Lượt gate đầu đỏ ở `QC-05` (file lùi
+   thiếu khoá chặn) — thêm khoá: đã có ô huỷ thì từ chối lùi; ghi ở bước 33 của `07-thu-tu-migration.md`.
+3. `PASS  Gate 1   be-check — mọi test backend qua PostgreSQL thật đều đạt` (dữ liệu test tổng kết huỷ ô bằng người chủ quán).
+4. `PASS  Gate 1   db-check — 33 bước xuôi · lùi · xuôi lại, 19 khối kiểm QC, 51 file test …` · `PASS  Gate 1g … hợp đồng 0.43.0` ·
+   `PASS  gate     không cổng nào đỏ`.
+
+[↑ đầu file](#top)
 
 <a id="t-207"></a>
 ### T-207 — Khoá mẻ của cửa lùi và cửa chuyển chưa có test chen nhau (F-066)

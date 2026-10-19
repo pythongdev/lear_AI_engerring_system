@@ -160,6 +160,8 @@ bản ở `HEAD` và đỏ khi file khác mà phiên bản không lớn hơn.
 Mục tiền tạm tính có schema riêng, hiện trả trạng thái chưa có công thức;
 không đưa doanh thu đã đối soát vào phản hồi tổng quan.
 
+**T-141 (2026-10-19, Claude):** tăng MINOR `0.42.0` → `0.43.0`; hai tên từ chối mới của bước 33 vào `x-constraint-errors` ở mức `unreviewed` (`attendance_day_cancel_note_required_check` · `attendance_day_cancelled_by_owner_check`) — chưa cửa nào huỷ ô chấm công, cửa ấy ra đời thì ánh xạ.
+
 **T-204 (2026-10-19, Claude):** tăng MINOR `0.41.0` → `0.42.0`; `SupplyItem.check_reminder` đổi từ `boolean | null` sang `boolean` — chưa có lần nhập hay lần nhập gần nhất bằng 0 thì `true`, dùng trước lần nhập đầu thì so tỉ lệ (U-102); `GET /supply-check-reminders` có thêm các thứ ấy; sinh lại type FE.
 
 **T-203 (2026-10-19, phiếu Claude):** tăng MINOR `0.40.0` → `0.41.0`, thêm `account_person_is_owner` (409, trường `person_id`) khi duyệt tài khoản gắn vào người mang cờ chủ quán; sinh lại type FE.

@@ -1248,8 +1248,8 @@ Mệnh đề của mức 2 mảng con người (`master_plan/shop-facts.md` §8.
   chấm công tới một khoản trừ tiền.
 - **Mỗi lần huỷ có ghi chú, và người huỷ là chủ quán** (chủ quán chốt 2026-10-09, đóng **U-071**;
   `master_plan/shop-facts.md` §8.7). Một lần huỷ không ghi chú, hay do người không phải chủ quán
-  bấm, không phải một lần huỷ. *Thêm 2026-10-09, T-139; lược đồ chấm công còn nhận cả hai cho tới
-  `T-141`.*
+  bấm, không phải một lần huỷ. *Thêm 2026-10-09, T-139; tầng 1 từ chối cả hai từ 2026-10-19 (`T-141`, bước 33 —
+  `attendance_day_cancel_note_required_check` · `attendance_day_cancelled_by_owner_check`).*
 
 **Mệnh đề không nói** huỷ rồi có được **tick lại** đúng người, đúng ngày ấy không: mệnh đề chỉ giữ *nhiều nhất
 một ô còn hiệu lực*, nên một ô mới sau khi ô cũ đã huỷ không bị cấm. Nó không nói chủ quán có được tick **bù cho

@@ -13,7 +13,7 @@ END $$;
 DO $$
 DECLARE mc bigint; m1 bigint; m2 bigint; m3 bigint; c1 bigint; c2 bigint; c3 bigint;
  s bigint; tab bigint; o bigint; root bigint; cb bigint; qty integer; a bigint; b bigint; z bigint;
- billid bigint; pp bigint; rr bigint;
+ billid bigint; pp bigint; rr bigint; huy bigint;
 BEGIN
  INSERT INTO menu_component(name,base_price_vnd,takes_filling) VALUES('test-summary-component',100,false) RETURNING id INTO mc;
  INSERT INTO menu_item(name) VALUES('test-item-low-a') RETURNING id INTO m1;
@@ -53,9 +53,12 @@ BEGIN
  INSERT INTO person(display_name) VALUES('test-worker-a') RETURNING id INTO a;
  INSERT INTO person(display_name) VALUES('test-worker-b') RETURNING id INTO b;
  INSERT INTO person(display_name) VALUES('test-worker-zero') RETURNING id INTO z;
+ INSERT INTO person(display_name,is_owner) VALUES('test-owner-cancel',true) RETURNING id INTO huy;
  INSERT INTO attendance_day(worker_person_id,work_date) VALUES(a,'2186-05-02');
+ -- T-141 (U-071): chỉ chủ quán huỷ ô chấm công.
  INSERT INTO attendance_day(worker_person_id,work_date,cancelled_at,cancelled_by_person_id,cancel_note)
- VALUES(b,'2186-05-02',now(),a,'test-cancel'),(z,'2186-05-02',now(),a,'test-cancel');
+ VALUES(b,'2186-05-02',now(),huy,'test-cancel'),
+       (z,'2186-05-02',now(),huy,'test-cancel');
  UPDATE counter_duty SET ended_at=greatest(now(),started_at+interval '1 second') WHERE ended_at IS NULL;
  INSERT INTO counter_duty(person_id,started_at,ended_at) VALUES(a,'2186-05-02T08:00:00+07','2186-05-02T09:00:00+07');
  -- Khoảng mở của B được rollback, không ảnh hưởng test khác.
