@@ -89,6 +89,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
+- [ ] P4A-02 **Trang tổng quan của chủ quán** — bảy mục §8.6 từ `GET /owner-overview`, ô nhập hai số tối thiểu (`PUT /daily-minimums/{sale_date}`), không kéo theo chu kỳ, bày `read_at`, tạm tính không giống doanh thu — L2 — mở 2026-10-19, **cần xong trước:** `P4A-01` · [chi tiết](backlog_FE_AD.md#p4a-02)
+- [ ] P4A-03 **Trang tổng kết theo ngày bán** — bốn mục từ `GET /sale-days/{sale_date}/summary`, ngày mặc định do backend trả, ngày xem trên URL, nhắc kho là kết quả hiện tại — L2 — mở 2026-10-19, **cần xong trước:** `P4A-01` · [chi tiết](backlog_FE_AD.md#p4a-03)
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
@@ -96,6 +98,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="in-progress"></a>
 ## In Progress
+
+- [ ] P4A-01 **Khung admin dưới `/chu-quan`** — layout chung có gác theo phiên và thanh điều hướng đọc từ một danh sách; `/chu-quan` là trang Tổng quan, `/chu-quan/tong-ket` là Tổng kết; không khung `/admin` thứ hai, không bảng quyền thứ hai — L1 — mở và nhận 2026-10-19 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm tiếp bạn kiểm tra"* · [chi tiết](backlog_FE_AD.md#p4a-01)
 
 
 

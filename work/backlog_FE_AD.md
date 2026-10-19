@@ -52,6 +52,9 @@ chủ quán **muốn** trang tổng kết, tự quản lý menu, giao việc, gh
 mỗi người làm có **tài khoản, mật khẩu riêng** — lời này thay *chọn tên* (**ADR-104**). Vế chưa rõ mở thành
 `U-087`…`U-090`; lượt hai và ba cùng ngày (T-182 · T-183) đóng `U-088`, `U-089`, `U-090`; lượt bốn (T-185) đóng `U-087` — không câu nào của sổ này còn mở. Lời mới **không** mở bước nào: điều (a) — backend admin có cửa — vẫn chưa có, và `P4-04` đang dừng.
 
+**Mở 2026-10-19 (Claude Code):** `P4A-01` · `P4A-02` · `P4A-03` đủ ba điều — cửa ở hợp đồng 0.40.0, không câu chặn,
+`P4-04` Done (kế hoạch §6a). Tám bước còn lại giữ nguyên *bị chặn* tới khi một lượt rà như thế mở chúng.
+
 **`PAGES_INDEX.md` cho danh sách trang, không cho cách làm.** Bản ấy chép dự án khác — đăng nhập JWT, WebSocket, CRUD
 tự do — và mọi link của nó đã chết. Cách làm theo **ADR-102** và `docs/private/fe/fe_guidance/`; chỗ trang nguồn trái
 dữ kiện quán thì dữ kiện thắng (**ADR-103** điểm 4).
@@ -61,7 +64,7 @@ dữ kiện quán thì dữ kiện thắng (**ADR-103** điểm 4).
 <a id="p4a-01"></a>
 ### P4A-01 — Mười trang admin cần chung một vỏ, và vỏ ấy phải chỉ mở cho chủ quán
 
-**Phụ thuộc** · bước admin 1/11 · mức L1 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
+**Phụ thuộc** · bước admin 1/11 · mức L1 · ~~**bị chặn bởi:** backend admin chưa có cửa · `P4-04`~~ — **mở 2026-10-19**: cửa `GET /sessions/current` (T-190), `P4-04` Done
 
 **Trang nguồn:** `/admin` cùng *Admin shell* — thanh tab chung của mọi trang `/admin/*`, chặn theo vai. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
@@ -78,7 +81,27 @@ ra đời ở `P4-02` (**ADR-035**).
 
 **Bẫy:** đừng viết bảng quyền thứ hai cho admin — đọc lớp của cửa từ cùng một chỗ `P4-04` đọc.
 
-**Nhận việc:** —
+**Nhận việc** — 2026-10-19 · dẫn và duyệt: **Claude Code**; thi công: **Codex** (worktree `../lean_wt/P4A-01`, nhánh
+`codex/P4A-01`) theo lời chủ repo *"yêu cầu codex làm tiếp bạn kiểm tra"*. **Claude chốt** (đọc owner route
+`docs/product/4-fe/01-khung-fe.md`): không mở khung `/admin` thứ hai — `khungCua` chỉ biết ba khung, và chủ quán đã có
+`/chu-quan`. Trang admin là route con của `/chu-quan`; `/chu-quan` chính là trang **Tổng quan** (`P4A-02`),
+`/chu-quan/tong-ket` là **Tổng kết** (`P4A-03`). Thanh điều hướng chỉ của khung chủ quán ⇒ tầng 3 (`01-khung-fe.md` §4).
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. `fe/src/app/chu-quan/layout.tsx` bọc mọi trang `/chu-quan/*` bằng `KhungTheoVai khung="/chu-quan"` và thanh điều
+   hướng; `fe/src/app/chu-quan/page.tsx` thôi tự bọc `KhungTheoVai` (một chỗ gác, không hai).
+2. Thanh điều hướng `fe/src/app/chu-quan/_components/` đọc từ **một** danh sách mục (nhãn + route) đặt cạnh nó; hôm nay
+   danh sách có đúng một mục *Tổng quan* → `/chu-quan`; mỗi bước sau thêm mục của mình cùng lượt dựng trang. Mục đang mở
+   mang `aria-current="page"`; là phần tử `nav` có nhãn truy cập.
+3. Không bảng quyền thứ hai: không file nào dưới `fe/src/app/chu-quan/` đọc `is_owner` hay `role_code` — gác chỉ qua
+   `KhungTheoVai` / `khungCua` (`grep -rn "is_owner\|role_code" fe/src/app/chu-quan` rỗng).
+4. Test Vitest (fetch giả): phiên chủ quán ⇒ thấy thanh, mục *Tổng quan* `aria-current`; phiên vai `quay` ⇒ chuyển
+   `/quay`, thanh không hiện; không phiên (401) ⇒ chuyển `/dang-nhap`; mỗi route trong danh sách có `page.tsx` thật dưới
+   `fe/src/app/` (test đọc cây file, danh sách thêm mục mà quên trang ⇒ đỏ).
+5. Chạy thật cùng backend (Claude): chủ quán đăng nhập ⇒ `/chu-quan` có thanh; người vai `quay` mở `/chu-quan` ⇒ về
+   `/quay`. Dán output.
+6. `docs/product/4-fe/01-khung-fe.md` §1 · §4 có dòng layout và thanh điều hướng (Claude ghi khi duyệt).
+7. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
 
 [↑ đầu file](#top)
 
@@ -87,7 +110,7 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-02"></a>
 ### P4A-02 — Chủ quán không đứng quầy vẫn muốn nhìn một bảng biết quán đang chạy thế nào
 
-**Phụ thuộc** · bước admin 2/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
+**Phụ thuộc** · bước admin 2/11 · mức L2 · ~~**bị chặn bởi:** backend admin chưa có cửa · `P4-04`~~ — **mở 2026-10-19**: cửa `GET /owner-overview` · `PUT /daily-minimums/{sale_date}` (P3A-09 · T-199 · T-197) · **cần xong trước:** `P4A-01`
 
 **Trang nguồn:** `/admin/overview` — *live floor*: thẻ số liệu, đơn đang chạy, bàn, nhật ký đã trả và đã huỷ. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
@@ -97,6 +120,14 @@ ra đời ở `P4-02` (**ADR-035**).
 **Dữ kiện quán đã có:** `master_plan/shop-facts.md` §8.6 (bảy thứ, nguyên văn của chủ quán); hàng 6 — số người thực tế do POS khai (`U-060` đã đóng); hàng 7 — ba đường *thiếu*, đường nguyên liệu theo §8.4.
 
 **Không lấy từ PAGES_INDEX:** bố cục và danh sách thẻ của dự án cũ; luồng WebSocket `OrdersWSProvider` — tín hiệu đọc lại đi bằng SSE theo **ADR-097** và **ADR-102**.
+
+**Sửa 2026-10-19 (Claude Code, đối chiếu hợp đồng 0.40.0):** (1) hợp đồng **không** có luồng SSE cho chủ quán và
+`OwnerOverview` không trả `poll_interval_seconds` ⇒ theo dòng *Chủ quán* của **ADR-102** điểm 1: đọc khi mở màn, khi quay
+lại cửa sổ (`T-202`), khi mạng về, sau mỗi lần ghi; **không** kéo theo chu kỳ, luôn bày `read_at`. Cần bảng tự chạy hơn thế
+⇒ `F-XXX` gửi pha 3, không tự đặt chu kỳ. (2) Mục nào backend trả trạng thái thiếu (`daily_minimum_missing`,
+`workers_present_missing`) thì trang nói đúng điều ấy, không suy số. (3) Trang có **ô nhập hai số tối thiểu của ngày**
+(`PUT /daily-minimums/{sale_date}`, lý do khi sửa) — chưa bước FE nào khác nhận; ghi xong thì đọc lại tổng quan. (4) Số
+người đang làm do POS khai ở màn quầy — **không** thuộc trang này. (5) Ngày bán của trang là `sale_date` backend trả.
 
 **Theo fe_guidance:** mẫu R (tín hiệu đọc lại và đường kéo dự phòng) ở `fe-01-rendering.md` §6; banner mất kết nối và chế độ suy giảm ở `fe-02-loading.md` §4.
 
@@ -113,7 +144,7 @@ ra đời ở `P4-02` (**ADR-035**).
 <a id="p4a-03"></a>
 ### P4A-03 — Trang tổng kết đòi những con số mà mảng tài chính chưa chốt
 
-**Phụ thuộc** · bước admin 3/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
+**Phụ thuộc** · bước admin 3/11 · mức L2 · ~~**bị chặn bởi:** backend admin chưa có cửa · `P4-04`~~ — **mở 2026-10-19**: cửa `GET /sale-days/{sale_date}/summary` (P3A-10) · **cần xong trước:** `P4A-01`
 
 **Trang nguồn:** `/admin/summary` — báo cáo: KPI doanh thu, món bán chạy, hiệu suất nhân viên, cảnh báo sắp hết hàng. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
@@ -129,6 +160,12 @@ ra đời ở `P4-02` (**ADR-035**).
 **Không làm thì mất gì:** báo cáo bày một con số theo định nghĩa của dự án khác, và chủ quán quyết theo nó.
 
 **Bẫy:** báo cáo theo ngày phải dùng **ngày bán**, không dùng ngày lịch của trình duyệt (`docs/product/1-system-design/02-thoi-gian-ngay-ban.md`).
+
+**Sửa 2026-10-19 (Claude Code, đối chiếu hợp đồng 0.40.0):** (1) ngày mặc định khi mở trang là `sale_date` backend trả
+(`GET /owner-overview`), ngày đang xem đi trên URL (`docs/product/4-fe/01-khung-fe.md` §2). (2) `supply_reminders` là kết
+quả **hiện tại**, không phải ảnh của ngày đang chọn — trang nói rõ điều ấy khi ngày chọn khác hôm nay. (3) Doanh thu bày
+kèm trạng thái đối soát backend trả; `total_vnd` có thể âm. (4) Ba lúc máy chưa biết có nên nhắc kiểm tra một nguyên liệu
+là câu đang mở **U-102** — trang bày đúng thứ backend trả, không tự đoán.
 
 **Nhận việc:** —
 

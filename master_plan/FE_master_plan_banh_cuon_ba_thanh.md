@@ -36,8 +36,8 @@ trong `./scripts/gate.sh`** — không có nó, báo cáo của Codex về một
 | **Đoán một luật quán** — chữ hiện cho khách, ai thấy nút nào ngoài ma trận vai | `CLAUDE.md` §3.5 | Mở `U-XXX`; màn bày lời từ chối của backend, không chặn thay |
 
 Ngoài ra **mảng admin** có mười một bước `P4A-01`…`P4A-11` trong sổ pha 4 (**ADR-103**, chủ repo 2026-10-13), nhưng
-**mọi bước ấy đang bị chặn**: backend admin chưa có cửa (**ADR-068**). Trang của chủ quán **dựng được** trong pha 4 chỉ
-là trang **có cửa ở pha 3**. Danh sách và điều kiện mở: §6a.
+các bước ấy chỉ mở khi backend admin có cửa (**ADR-068**). Trang của chủ quán **dựng được** trong pha 4 chỉ
+là trang **có cửa ở pha 3**. Danh sách và điều kiện mở: §6a — `P4A-01`…`P4A-03` mở 2026-10-19.
 
 ## 3. Pha 4 nhận gì từ pha trước — đọc trước khi viết dòng code đầu tiên
 
@@ -58,7 +58,7 @@ là trang **có cửa ở pha 3**. Danh sách và điều kiện mở: §6a.
 |---|---|---|
 | **ADR-104** · `T-181` — đăng nhập bằng tài khoản mật khẩu thay chọn tên (chủ quán 2026-10-14) | `P4-04`, rồi mọi bước cần danh tính | chờ thiết kế L3 `T-181` được chủ repo duyệt; U-088 đã đóng; U-080 (Telegram) đã đóng 2026-10-14 — báo đơn bằng SSE |
 | **S-6** — đơn giao tận nơi bấm *đã ra bàn* lúc nào | `P4-07` vế giao hàng | cửa backend đang từ chối kèm mã; màn bày lời ấy |
-| **Backend admin chưa có cửa** (ADR-068) | mọi `P4A-XX` | §6a; không chặn cổng pha 4; U-081…U-086 đã đóng 2026-10-14 |
+| **Backend admin chưa có cửa** (ADR-068) | ~~mọi `P4A-XX`~~ — **gỡ cho `P4A-01`…`P4A-03` 2026-10-19** (cửa ở hợp đồng 0.40.0: `P3A-09` · `P3A-10` · `T-197` · `T-199`; `P4-04` Done); còn chặn bước nào thì đọc §6a | §6a; không chặn cổng pha 4; U-081…U-086 đã đóng 2026-10-14 |
 | **F-068** | không chặn bước nào | nợ test của `be/`; sửa trong lane backend |
 
 ## 5. Đầu ra pha 4 nằm ở đâu
@@ -100,6 +100,12 @@ Cách làm theo **ADR-102**, không theo JWT · WebSocket của `PAGES_INDEX.md`
 **Một bước `P4A-XX` chỉ *Ready* khi đủ ba điều:** (a) chủ repo mở kế hoạch backend admin và cửa trang cần đã có trong
 `docs/product/3-be/openapi.yaml`; (b) câu `U-XXX` ở cột *Chặn thêm* đã đóng; (c) `P4-04` đã *Done*. Bước admin không
 chặn `P4-12` hay cổng §9.
+
+**Mở 2026-10-19** (Claude Code, chủ repo bảo làm tiếp đề xuất *sửa đề bài P4A rồi giao Codex*): `P4A-01` · `P4A-02` ·
+`P4A-03` đủ ba điều — cửa `GET /sessions/current` (T-190), `GET /owner-overview` · `PUT /daily-minimums/{sale_date}`
+(P3A-09 · T-199 · T-197), `GET /sale-days/{sale_date}/summary` (P3A-10) ở hợp đồng 0.40.0; không câu `U-XXX` chặn;
+`P4-04` Done. Route chốt ở `docs/product/4-fe/01-khung-fe.md` §1 cùng lượt dựng — trang admin nằm dưới khung
+`/chu-quan`, không mở khung `/admin` thứ hai.
 
 | ID | Trang (tên nguồn trong `PAGES_INDEX.md`) | Dữ kiện quán đã có | Chặn thêm | Mức |
 |---|---|---|---|---|

@@ -51,10 +51,10 @@ hình dạng chép của `work/backlog_BE.md` (**ADR-051**).
 | P4-10 | [Khách — QR tại bàn và đơn web](#p4-10) |
 | P4-11 | [Chủ quán — két và ngày bán](#p4-11) |
 | P4-12 | [Cổng chất lượng pha 4 và rà ranh giới](#p4-12) |
-| P4A-01…P4A-11 | Mảng admin, đang bị chặn — sổ riêng [`backlog_FE_AD.md`](backlog_FE_AD.md) |
+| P4A-01…P4A-11 | Mảng admin (`P4A-01`…`P4A-03` mở 2026-10-19) — sổ riêng [`backlog_FE_AD.md`](backlog_FE_AD.md) |
 
 **Chỗ đang chặn** — bảng sống ở kế hoạch §4. `P4-04` chờ thiết kế đăng nhập bằng mật khẩu (**ADR-104**, `T-181`); vế giao hàng của `P4-07`
-chờ **S-6**. Mọi `P4A-XX` chờ backend admin có cửa (**ADR-068**), không câu `U-XXX` nào còn chặn bước admin (kế hoạch §6a,
+chờ **S-6**. `P4A-01`…`P4A-03` đã mở 2026-10-19; các `P4A-XX` còn lại chờ backend admin có cửa (**ADR-068**), không câu `U-XXX` nào còn chặn bước admin (kế hoạch §6a,
 sổ `backlog_FE_AD.md`).
 
 ---
