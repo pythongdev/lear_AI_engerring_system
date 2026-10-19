@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.37.0
+  version: 0.38.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -103,7 +103,7 @@ paths:
         shortages.menu_items gom việc theo món hoặc combo gốc và tên chụp trên các đơn còn sống
         như DocGom; ordered là số đơn vị thành phần, served là số đơn vị có mọi trạm served.
         Việc không có thành phần là một việc/một đơn vị; không gán nước chấm cấp đơn cho món.
-        Nguyên liệu dùng lại sổ hiện hành. Các nguồn đọc riêng, không là ảnh nguyên tử xuyên nguồn.
+        Nguyên liệu dùng các dòng tổng hợp của /supply-stock, không mang sổ ngày. Các nguồn đọc riêng, không là ảnh nguyên tử xuyên nguồn.
         Thiếu tối thiểu trả daily_minimum_missing; thiếu số người trả workers_present_missing.
         Tiền tạm tính không phải doanh thu đã đối soát; doanh thu ấy không thuộc phản hồi này.
       responses:
@@ -3560,9 +3560,9 @@ components:
           const: available
         items:
           type: array
-          description: Dùng nguyên chi tiết sổ hiện hành; entry_date của purchased là ngày nhập, used_total là tổng dùng, balance là nhập trừ dùng. Không suy ra mức thiếu người hoặc thiếu món.
+          description: Mỗi dòng dùng nguyên kết quả /supply-stock, gồm tổng nhập, tổng dùng, hiệu số và cờ nhắc; không mang sổ ngày entries. Không suy ra mức thiếu người hoặc thiếu món.
           items:
-            $ref: '#/components/schemas/SupplyItemDetail'
+            $ref: '#/components/schemas/SupplyItem'
     OverviewShortages:
       type: object
       additionalProperties: false

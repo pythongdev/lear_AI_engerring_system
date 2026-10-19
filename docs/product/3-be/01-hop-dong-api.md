@@ -301,3 +301,10 @@ Lọc `reminder_status=ready` và `check_reminder=true` từ cùng phép đọc 
 so sánh, không trả con số hay sổ ngày, không quyết ba ca của U-102. Không thêm cửa ghi hay
 đường đẩy: màn quầy đọc lại khi nhận `hello`/`changed` từ `GET /counter/events` và theo
 chu kỳ kéo sẵn có (ADR-097). `GET /supply-stock` vẫn chỉ lớp `chu_quan`.
+
+
+T-200 (2026-10-19, phiếu Claude): tăng MINOR 0.37.0 → 0.38.0; mỗi phần tử
+`shortages.supplies.items` của `GET /owner-overview` nay là một dòng của
+`GET /supply-stock` (schema SupplyItem), không mang sổ ngày `entries`.
+Đọc một lần bằng `nguyenlieu.Doc`, giữ nguyên tổng nhập, tổng dùng, hiệu số
+và các trường nhắc kiểm tra; không đọc chi tiết từng nguyên liệu. Sinh lại type FE.

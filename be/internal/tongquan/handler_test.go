@@ -3,8 +3,10 @@ package tongquan_test
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strconv"
 	"strings"
 	"testing"
@@ -12,6 +14,7 @@ import (
 
 	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/ngayban"
+	"banhcuon/be/internal/nguyenlieu"
 	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/taikhoan"
 	"banhcuon/be/internal/testhelper"
@@ -196,4 +199,85 @@ func TestYC16_TongQuanChiChuQuanVaNgayBan(t *testing.T) {
 		t.Fatalf("tối thiểu qua GET: %d %s", w.Code, w.Body.String())
 	}
 
+}
+
+// Hai cửa đọc phải trả cùng các dòng kho, không kéo sổ ngày vào tổng quan.
+func TestQC14_TongQuanNguyenLieuBangSupplyStockKhongCoSoNgay(t *testing.T) {
+	ctx := context.Background()
+	pool, err := postgres.Open(ctx, testhelper.AppDSN(t), testhelper.ShopTZ(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer pool.Close()
+	owner, err := pgx.Connect(ctx, testhelper.OwnerDSN(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer owner.Close(ctx)
+	var chu int64
+	if err := owner.QueryRow(ctx, `INSERT INTO shop.person(display_name,is_owner) VALUES ('test-tổng quan kho',true) RETURNING id`).Scan(&chu); err != nil {
+		t.Fatal(err)
+	}
+	r := gin.New()
+	r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(pool)))
+	tongquan.Routes(r, tongquan.NewService(pool))
+	nguyenlieu.Routes(r, nguyenlieu.NewService(pool))
+	session := testhelper.Session(t, chu)
+	call := func(method, path, body string, status int) []byte {
+		t.Helper()
+		req := httptest.NewRequest(method, path, strings.NewReader(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.AddCookie(&http.Cookie{Name: "banhcuon_phien", Value: session})
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+		if w.Code != status {
+			t.Fatalf("%s %s: %d %s", method, path, w.Code, w.Body.String())
+		}
+		return w.Body.Bytes()
+	}
+	var item nguyenlieu.Thu
+	if err := json.Unmarshal(call("POST", "/supply-items", fmt.Sprintf(`{"name":"test-tổng quan kho-%d","purchase_unit":"kg"}`, chu), 201), &item); err != nil {
+		t.Fatal(err)
+	}
+	for _, entry := range []struct{ kind, measure string }{{"purchased", "10"}, {"used", "3"}} {
+		call("POST", "/supply-day-entries", fmt.Sprintf(`{"supply_item_id":%d,"entry_date":"2020-01-01","kind":%q,"measure":%q}`, item.ID, entry.kind, entry.measure), 201)
+	}
+	var overview struct {
+		Shortages struct {
+			Supplies struct{ Items []map[string]any }
+		}
+	}
+	if err := json.Unmarshal(call("GET", "/owner-overview", "", 200), &overview); err != nil {
+		t.Fatal(err)
+	}
+	var stock struct {
+		Items []map[string]any `json:"supply_items"`
+	}
+	if err := json.Unmarshal(call("GET", "/supply-stock", "", 200), &stock); err != nil {
+		t.Fatal(err)
+	}
+	fields := []string{"supply_item_id", "name", "purchase_unit", "purchased_total", "used_total", "balance", "reminder_ratio", "latest_purchase_date", "latest_purchase_measure", "reminder_status", "check_reminder"}
+	found := false
+	for _, row := range overview.Shortages.Supplies.Items {
+		if _, ok := row["entries"]; ok {
+			t.Fatalf("tổng quan mang sổ ngày: %v", row)
+		}
+		if len(row) != len(fields) {
+			t.Fatalf("sai số trường: %v", row)
+		}
+		for _, field := range fields {
+			if _, ok := row[field]; !ok {
+				t.Fatalf("thiếu %s: %v", field, row)
+			}
+		}
+		if row["supply_item_id"] == float64(item.ID) {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatal("thiếu nguyên liệu có hai dòng sổ ngày")
+	}
+	if !reflect.DeepEqual(overview.Shortages.Supplies.Items, stock.Items) {
+		t.Fatalf("tổng quan khác kho: overview=%v stock=%v", overview.Shortages.Supplies.Items, stock.Items)
+	}
 }

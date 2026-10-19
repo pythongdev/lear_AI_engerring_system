@@ -33,7 +33,7 @@ export interface paths {
         };
         /**
          * Chủ quán đọc bảy mục tổng quan của shop-facts.md §8.6.
-         * @description Chỉ chu_quan; không phiên trả unauthenticated, người khác kể cả POS trả owner_only. sale_date lấy mốc database theo múi giờ quán. Đây là ảnh hiện tại, không nhận ngày lịch sử. Phần đã ra và còn thiếu lấy từ DocGom, tách in_store (có bàn, kể cả đem về) và online (không bàn), giữ nhóm thành phần và nhân. serving_guests đếm phiên chưa closed. sales_progress đếm đơn vị (order_line_component_id, position) có mọi trạm served của thành phần chụp takes_filling trên đơn không huỷ có created_at thuộc ngày bán hiện tại theo múi giờ quán, so với minimum_banh của đúng ngày. provisional_sales cộng line_total_vnd của dòng không cha và mọi con khi tất cả việc của đơn vị bán ấy served; cần có ít nhất một việc. Không chia giá combo, không trừ giảm cả đơn. shortages.menu_items gom việc theo món hoặc combo gốc và tên chụp trên các đơn còn sống như DocGom; ordered là số đơn vị thành phần, served là số đơn vị có mọi trạm served. Việc không có thành phần là một việc/một đơn vị; không gán nước chấm cấp đơn cho món. Nguyên liệu dùng lại sổ hiện hành. Các nguồn đọc riêng, không là ảnh nguyên tử xuyên nguồn. Thiếu tối thiểu trả daily_minimum_missing; thiếu số người trả workers_present_missing. Tiền tạm tính không phải doanh thu đã đối soát; doanh thu ấy không thuộc phản hồi này.
+         * @description Chỉ chu_quan; không phiên trả unauthenticated, người khác kể cả POS trả owner_only. sale_date lấy mốc database theo múi giờ quán. Đây là ảnh hiện tại, không nhận ngày lịch sử. Phần đã ra và còn thiếu lấy từ DocGom, tách in_store (có bàn, kể cả đem về) và online (không bàn), giữ nhóm thành phần và nhân. serving_guests đếm phiên chưa closed. sales_progress đếm đơn vị (order_line_component_id, position) có mọi trạm served của thành phần chụp takes_filling trên đơn không huỷ có created_at thuộc ngày bán hiện tại theo múi giờ quán, so với minimum_banh của đúng ngày. provisional_sales cộng line_total_vnd của dòng không cha và mọi con khi tất cả việc của đơn vị bán ấy served; cần có ít nhất một việc. Không chia giá combo, không trừ giảm cả đơn. shortages.menu_items gom việc theo món hoặc combo gốc và tên chụp trên các đơn còn sống như DocGom; ordered là số đơn vị thành phần, served là số đơn vị có mọi trạm served. Việc không có thành phần là một việc/một đơn vị; không gán nước chấm cấp đơn cho món. Nguyên liệu dùng các dòng tổng hợp của /supply-stock, không mang sổ ngày. Các nguồn đọc riêng, không là ảnh nguyên tử xuyên nguồn. Thiếu tối thiểu trả daily_minimum_missing; thiếu số người trả workers_present_missing. Tiền tạm tính không phải doanh thu đã đối soát; doanh thu ấy không thuộc phản hồi này.
          */
         get: operations["getOwnerOverview"];
         put?: never;
@@ -1927,8 +1927,8 @@ export interface components {
         OverviewSupplies: {
             /** @constant */
             status: "available";
-            /** @description Dùng nguyên chi tiết sổ hiện hành; entry_date của purchased là ngày nhập, used_total là tổng dùng, balance là nhập trừ dùng. Không suy ra mức thiếu người hoặc thiếu món. */
-            items: components["schemas"]["SupplyItemDetail"][];
+            /** @description Mỗi dòng dùng nguyên kết quả /supply-stock, gồm tổng nhập, tổng dùng, hiệu số và cờ nhắc; không mang sổ ngày entries. Không suy ra mức thiếu người hoặc thiếu món. */
+            items: components["schemas"]["SupplyItem"][];
         };
         OverviewShortages: {
             supplies: components["schemas"]["OverviewSupplies"];

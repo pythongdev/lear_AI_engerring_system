@@ -14,7 +14,7 @@ func TestQC14_BayMucVaPhanRaBan(t *testing.T) {
 	board := json.RawMessage(`{"read_at":"2026-10-15T01:00:00Z","rows":[
  {"station_code":"trang_banh","menu_component_id":1,"component_name":"bánh","filling_option_ids":[2],"parts":[{"dining_table_id":1,"served":2,"missing":3},{"dining_table_id":2,"served":1,"missing":4},{"sales_order_id":9,"served":40,"missing":50}]},
  {"station_code":"canh","menu_component_id":3,"component_name":"canh","filling_option_ids":[],"parts":[{"dining_table_id":1,"served":1,"missing":0}]}]}`)
-	supplies := []nguyenlieu.ChiTiet{{Thu: nguyenlieu.Thu{ID: 1, PurchasedTotal: "10", UsedTotal: "3", Balance: "7"}, Entries: []nguyenlieu.ConSo{{EntryDate: "2026-10-14", Kind: "purchased"}}}}
+	supplies := []nguyenlieu.Thu{{ID: 1, PurchasedTotal: "10", UsedTotal: "3", Balance: "7"}}
 	out, err := lap("2026-10-15", time.Date(2026, 10, 15, 1, 0, 0, 0, time.UTC), board, supplies)
 	if err != nil {
 		t.Fatal(err)
@@ -41,7 +41,10 @@ func TestQC14_BayMucVaPhanRaBan(t *testing.T) {
 	if out.ProvisionalSales.Status != "available" || out.ProvisionalSales.Name != "Tiền bán tạm tính" || out.WorkersPresent.Reason != "workers_present_missing" {
 		t.Fatalf("bịa số: %s", b)
 	}
-	if out.Shortages.Supplies.Items[0].Balance != "7" || out.Shortages.Supplies.Items[0].Entries[0].EntryDate != "2026-10-14" {
+	if strings.Contains(string(b), `"entries"`) {
+		t.Fatalf("tổng quan không được mang sổ ngày: %s", b)
+	}
+	if out.Shortages.Supplies.Items[0].Balance != "7" {
 		t.Fatal("mất nguồn sổ nguyên liệu")
 	}
 	for _, section := range []ChuaCo{out.WorkersPresent, out.Shortages.Workers} {
@@ -54,7 +57,7 @@ func TestQC14_BayMucVaPhanRaBan(t *testing.T) {
 func TestI014_TamTinhKhongMangDoanhThuDaDoiSoat(t *testing.T) {
 	// Bảng nhu cầu thay đổi trong ngày chưa đối soát không tạo hay sửa một số doanh thu.
 	for _, board := range []string{`{"rows":[]}`, `{"rows":[{"station_code":"canh","component_name":"canh","filling_option_ids":[],"parts":[{"dining_table_id":1,"served":999,"missing":10}]}]}`} {
-		out, err := lap("2026-10-15", time.Time{}, json.RawMessage(board), []nguyenlieu.ChiTiet{})
+		out, err := lap("2026-10-15", time.Time{}, json.RawMessage(board), []nguyenlieu.Thu{})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -74,14 +77,14 @@ func TestQC14_NguonHongKhongThanhSoKhong(t *testing.T) {
 	if _, err := lap("2026-10-15", time.Time{}, json.RawMessage(`{`), nil); err == nil {
 		t.Fatal("nguồn hỏng phải báo lỗi")
 	}
-	out, err := lap("2026-10-15", time.Time{}, json.RawMessage(`{"rows":[]}`), []nguyenlieu.ChiTiet{})
+	out, err := lap("2026-10-15", time.Time{}, json.RawMessage(`{"rows":[]}`), []nguyenlieu.Thu{})
 	if err != nil || out.ServedPortions.Rows == nil || out.MissingPortions.Rows == nil || out.Shortages.Supplies.Items == nil {
 		t.Fatal("danh sách rỗng phải là []")
 	}
 }
 
 func TestQC14_ToiThieuVaNguoiChuaCo(t *testing.T) {
-	out, err := lap("2088-01-01", time.Time{}, json.RawMessage(`{"rows":[]}`), []nguyenlieu.ChiTiet{})
+	out, err := lap("2088-01-01", time.Time{}, json.RawMessage(`{"rows":[]}`), []nguyenlieu.Thu{})
 	if err != nil {
 		t.Fatal(err)
 	}

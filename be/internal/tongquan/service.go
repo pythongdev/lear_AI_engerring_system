@@ -40,8 +40,8 @@ type CacPhan struct {
 	Rows   []Phan    `json:"rows"`
 }
 type NguyenLieu struct {
-	Status string               `json:"status"`
-	Items  []nguyenlieu.ChiTiet `json:"items"`
+	Status string           `json:"status"`
+	Items  []nguyenlieu.Thu `json:"items"`
 }
 type Thieu struct {
 	Supplies  NguyenLieu `json:"supplies"`
@@ -98,22 +98,14 @@ func (s *Service) Doc(ctx context.Context, nguoi int64) (out TongQuan, err error
 	if err != nil {
 		return out, err
 	}
-	details := make([]nguyenlieu.ChiTiet, 0, len(items))
-	for _, item := range items {
-		detail, e := supplies.DocChiTiet(ctx, nguoi, item.ID)
-		if e != nil {
-			return out, e
-		}
-		details = append(details, detail)
-	}
-	out, err = lap(ngay, moc, board, details)
+	out, err = lap(ngay, moc, board, items)
 	if err == nil {
 		out.apDung(tong)
 	}
 	return
 }
 
-func lap(ngay string, moc time.Time, raw json.RawMessage, supplies []nguyenlieu.ChiTiet) (TongQuan, error) {
+func lap(ngay string, moc time.Time, raw json.RawMessage, supplies []nguyenlieu.Thu) (TongQuan, error) {
 	var board struct {
 		ReadAt time.Time `json:"read_at"`
 		Rows   []struct {
