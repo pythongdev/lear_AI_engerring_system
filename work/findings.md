@@ -4875,10 +4875,17 @@ chạy chen nhau nhiều vòng `POST /production-batches/{id}/rollback` và `POS
 tầng 1 bắt, ghi tên ràng buộc như **F-065**.
 
 **Related task:**
-`T-163` (đo) · ADR-090 · **F-064** · **F-065** (cùng họ: nhánh chen nhau không có test)
+`T-163` (đo) · `T-207` (sửa) · ADR-090 · **F-064** · **F-065** (cùng họ: nhánh chen nhau không có test)
+
+**Đã sửa 2026-10-19 (T-207):** test `TestI020_LuiMeChenChuyenPhanCuaChinhMe` (`be/internal/don/san_xuat_test.go`): 12 vòng, mỗi vòng
+một mẻ có phần của đơn đã huỷ, lùi mẻ và chuyển phần ấy chạy chen nhau; kỳ vọng lùi luôn `200`, chuyển `201` hoặc `409
+transfer_source_not_available`, rồi mẻ đã lùi, nguồn và đích về Chưa làm. Xanh: *6 chuyển trước · 6 lùi trước*. Lỗi cài trong
+worktree riêng (bỏ `FOR UPDATE` ở `khoa_me.sql` · `khoa_me_nguon.sql`, sinh lại) ⇒ đỏ ba lần liền: *lùi mẻ ⇒ 409
+station_job_transition_not_allowed* — lùi đọc chủ cũ, máy từ chối thay vì làm hỏng dữ liệu (tầng vòng đời bắt), nhưng lần lùi
+hợp lệ bị từ chối. Gỡ ⇒ xanh.
 
 **Status:**
-Open
+Fixed
 
 ### F-067 — Sáu task L2 đổi stack liền nhau không ai duyệt độc lập; một lần cài lỗi lọt ra cây chính
 

@@ -592,6 +592,63 @@ func TestI020_LuiMeTraMoiBanCungLuc(t *testing.T) {
 	t.Logf("mẻ %d lùi ⇒ hai bàn về đúng %s; lùi lần hai · mẻ lạ · mẻ đã bưng ⇒ ba mã", me, truoc)
 }
 
+// F-066 (T-207): lùi một mẻ chen với chuyển một phần của chính mẻ ấy. Mẻ được khoá trước phiên/đơn/việc ở cả hai cửa
+// (ADR-090 điểm 6), nên cửa nào tới sau thấy chủ hiện tại đã đổi xong. Thứ tự nào cũng phải ra cùng một kết cục: mẻ đã lùi,
+// cả nguồn lẫn đích về Chưa làm, không phần nào của mẻ còn hiệu lực; không cửa nào trả lỗi hệ thống (500 là ràng buộc
+// hoãn của tầng 1 bắt được một lần lùi đọc sót chủ mới).
+func TestI020_LuiMeChenChuyenPhanCuaChinhMe(t *testing.T) {
+	c := dungBan(t)
+	const vong = 12
+	thuTu := map[string]int{}
+	for i := 0; i < vong; i++ {
+		_, _, donHuy, _ := c.phienDangPhucVu(t, fmt.Sprintf("lùi chen chuyển cũ %d", i))
+		_, _, donNhan, _ := c.phienDangPhucVu(t, fmt.Sprintf("lùi chen chuyển nhận %d", i))
+		nguon := c.viec(t, donHuy, "pending")[0]
+		r := c.bamMe(t, c.quay, nguon)
+		canDat(t, r, http.StatusCreated)
+		me := r.so(t, "production_batch_id")
+		canDat(t, c.huyDon(t, c.quay, donHuy), http.StatusOK)
+		var dich int64
+		for _, v := range c.viecCua(t, donNhan, "pending") {
+			if c.khoaCua(t, v) == c.khoaCua(t, nguon) {
+				dich = v
+				break
+			}
+		}
+		if dich == 0 {
+			t.Fatalf("vòng %d: đơn nhận không có đơn vị chờ cùng thứ với %d", i, nguon)
+		}
+		var wg sync.WaitGroup
+		cong := make(chan struct{})
+		var lui, chuyen traLoi
+		wg.Add(2)
+		go func() { defer wg.Done(); <-cong; lui = c.luiMe(t, c.quay, me) }()
+		go func() { defer wg.Done(); <-cong; chuyen = c.chuyen(t, c.quay, [2]int64{nguon, dich}) }()
+		close(cong)
+		wg.Wait()
+		if lui.status != http.StatusOK {
+			t.Fatalf("vòng %d: lùi mẻ %d ⇒ %d %v, muốn 200 ở mọi thứ tự", i, me, lui.status, lui.body)
+		}
+		switch {
+		case chuyen.status == http.StatusCreated:
+			thuTu["chuyển trước"]++
+		case chuyen.status == http.StatusConflict && chuyen.body["code"] == "transfer_source_not_available":
+			thuTu["lùi trước"]++
+		default:
+			t.Fatalf("vòng %d: chuyển %d→%d ⇒ %d %v, muốn 201 hoặc 409 transfer_source_not_available", i, nguon, dich, chuyen.status, chuyen.body)
+		}
+		for _, v := range []int64{nguon, dich} {
+			if s := c.docChu(t, "SELECT status FROM shop.station_job WHERE id = $1", v); s != "pending" {
+				t.Fatalf("vòng %d: đơn vị %d còn %q sau khi mẻ %d đã lùi, muốn pending", i, v, s, me)
+			}
+		}
+		if n := c.docSo(t, "SELECT count(*) FROM shop.production_batch_item WHERE production_batch_id = $1 AND live_station_job_id IS NOT NULL", me); n != 0 {
+			t.Fatalf("vòng %d: mẻ đã lùi còn %d phần hiệu lực", i, n)
+		}
+	}
+	t.Logf("%d vòng lùi chen chuyển: %v; mọi vòng mẻ đã lùi, nguồn và đích về Chưa làm", vong, thuTu)
+}
+
 // --- đã ra bàn: số cái từng thứ cho một bàn (S-5, chốt 2026-10-09 — ADR-090 điểm 4) ---------
 
 func TestI020_DaRaBanTheoSoCaiTungThuChoMotBan(t *testing.T) {
