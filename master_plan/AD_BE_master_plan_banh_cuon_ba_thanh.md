@@ -60,7 +60,7 @@ cho chúng — trang của chúng là việc của sổ FE admin, không phải 
 | **P3A-07** | **Thêm và sửa thông tin món** | `P3A-05` | món mới vào menu đọc được ở mọi kênh; không trang thứ hai sửa giá | L2 |
 | **P3A-08** | **Đọc kho và nhắc POS** | `P3A-02` · `T-186` | tổng · hiệu số · nhắc khi dưới tỉ lệ, số do backend tính | L2 |
 | **P3A-09** | **Đọc tổng quan cho chủ quán** | `T-190` | một cửa đọc bảy thứ §8.6; *tạm tính* tách khỏi doanh thu đã đối soát | L2 |
-| **P3A-10** | **Đọc tổng kết** | `P3A-08` | doanh thu theo **ngày bán**, món bán chạy (`E48`); vế *hiệu suất nhân viên* ghi *chưa có lời* | L2 |
+| **P3A-10** | **Đọc tổng kết** | `P3A-08` | doanh thu theo **ngày bán**, món bán chạy (`E48`), nhắc kho; *hiệu suất nhân viên* là số đếm theo người, không điểm, không hạng (§8.6 *Lượt hai*; **ADR-120**, sửa 2026-10-19) | L2 |
 
 **Song song:** mọi bước chạm `docs/product/3-be/openapi.yaml`, `02-vai-va-quyen.md` và `apierr` — hai Codex không
 chạy hai bước cùng lúc (`docs/prompt-guideline.md` §6.1: scope không chạm chung file). Mỗi bước đưa về clone chính,

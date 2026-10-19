@@ -432,7 +432,9 @@ Codex viết cả test (lệch ADR-054 vế *Claude viết test trước*, như 
 ### P3A-10 — Trang tổng kết đòi số theo ngày bán
 
 **Goal:** doanh thu theo **ngày bán** (`02-thoi-gian-ngay-ban.md`), món bán chạy (`E48`), cảnh báo sắp hết từ
-`P3A-08`; *hiệu suất nhân viên* trả *chưa có lời* — không chấm điểm người.
-**Nhận việc:** —
+`P3A-08`; *hiệu suất nhân viên* là số đếm theo người, không chấm điểm, không xếp hạng (`master_plan/shop-facts.md` §8.6
+*Lượt hai* — *sửa 2026-10-19*: câu cũ *"trả chưa có lời"* viết trước lượt hai). Thiết kế: `docs/decisions.md` **ADR-120**;
+Acceptance ở `work/backlog.md`.
+**Nhận việc:** 2026-10-19 — dẫn Claude Code, thi công Codex (nhánh `codex/P3A-10`).
 
 [↑ đầu file](#top)

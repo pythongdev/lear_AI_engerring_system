@@ -135,6 +135,8 @@ có câu trả lời mới từ người.
 | ADR-116 | **Cửa combo của chủ quán** (`P3A-06`): lập · đổi giá · ẩn · đọc, lớp `chu_quan` kể cả đọc; đổi giá đòi lý do và bị từ chối trong giờ bán; giờ bán dời về `ngayban`; bán combo tách sang `P3A-11` (L3) | Đã chốt 2026-10-15 (Claude, phiếu P3A-06; tách bước: chủ repo) | — | `P3A-06` · `P3A-11` · ADR-108 · ADR-110 |
 | ADR-117 | **Bán combo** (`P3A-11`): mức phụ thu theo món của combo là bảng riêng, chưa đặt = 0đ; combo trên đơn là dòng combo mang giá combo cùng các dòng suất con mang mức, trong chính `order_line` — tổng đơn vẫn là Σ `line_total_vnd`; `gia.Tinh` học combo; bốn lát `T-193`…`T-196` | Đã chốt 2026-10-15 (Claude viết, chủ repo duyệt) | — | `P3A-11` · I-034 · ADR-086 · ADR-116 |
 | ADR-118 | **Mục tổng quan đủ số** (`T-199`): bảng `daily_minimum` một dòng một ngày bán (bánh · người, chủ quán ghi, sửa có vết); tạm tính = Σ `line_total_vnd` của đơn vị bán đã ra hết, combo theo giá combo, không quy giá thành phần; *bánh* = thành phần `takes_filling`; tại quán = phần có bàn | Đã chốt 2026-10-18 (Claude viết theo lời chủ repo cùng ngày) | — | `T-199` · `T-197` · P3A-09 · ADR-117 |
+| ADR-119 | **Lời nhắc kiểm tra kho tới POS** (`T-201`): đường đọc riêng `GET /supply-check-reminders` lớp `quay_hoac_chu_quan`, chỉ tên thứ cần kiểm, cùng một chỗ tính cờ với `GET /supply-stock`; nhận tín hiệu quầy sẵn có | Đã chốt 2026-10-18 (Claude) | — | `T-201` · P3A-08 · ADR-097 · U-102 |
+| ADR-120 | **Đọc tổng kết** (`P3A-10`): một đường `GET /sale-days/{sale_date}/summary` lớp `chu_quan`, bốn mục — doanh thu ngày bán từ hai nguồn trừ hoàn ngày hoàn, món bán chạy (suất con theo món, combo riêng), lời nhắc kho, số đếm theo người không điểm không hạng | Đã chốt 2026-10-19 (Claude) | — | P3A-10 · I-014 · ADR-118 · ADR-119 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7722,3 +7724,55 @@ phải kiểm; *một luồng SSE riêng cho kho* — ADR-097 đã có tín hi�
 
 **Applies to:** `be/internal/nguyenlieu/` · `docs/product/3-be/openapi.yaml` · `docs/product/3-be/01-hop-dong-api.md` ·
 `docs/product/3-be/02-vai-va-quyen.md` · `fe/src/lib/api/schema.ts`; **ADR-097** · **ADR-112** · `P3A-08` · **U-102**.
+
+### ADR-120 — Đọc tổng kết: một đường theo ngày bán, bốn mục, số đếm theo người không chấm điểm
+
+**Trạng thái:** **Đã chốt** 2026-10-19 — Claude Code (`P3A-10`). Lời quán: trang tổng kết bày **KPI doanh thu · món bán
+chạy · hiệu suất nhân viên · cảnh báo sắp hết**, báo cáo **theo ngày**; hiệu suất nhân viên là **số đếm, không chấm
+điểm, không xếp hạng** — ngày công, số đơn ghi lúc người ấy đứng quầy, số lần đi giao, số lần huỷ · hoàn tiền người ấy
+bấm; cảnh báo sắp hết là máy nhắc POS kiểm tra (`master_plan/shop-facts.md` §8.6 *Bổ sung 2026-10-14* và *Lượt hai*).
+Luật cộng doanh thu: `quality/invariants.md` **I-014**. Mọi điểm dưới đây là **lựa chọn của phiên**; chỗ nào là suy ra
+thì ghi rõ.
+
+**Context:** mô tả `P3A-10` viết 2026-10-14 trước lượt hai, nên còn ghi vế hiệu suất *chưa có lời*; lượt hai cùng ngày đã
+chốt cách đếm, nên vế ấy làm được. Chưa có đường nào đọc doanh thu của một ngày bán: `GET /sale-days/{sale_date}/
+cash-reconciliation` chỉ đọc phần két tiền mặt.
+
+**Decision:**
+
+1. **Một đường đọc `GET /sale-days/{sale_date}/summary`**, lớp `chu_quan` (không mệnh đề nào nói ai đọc tổng kết ⇒ lớp hẹp
+   nhất, như `GET /owner-overview`). Một ngày bán mỗi lần gọi — *theo ngày* đọc hẹp nhất; khoảng ngày là thêm tham số sau,
+   không đổi nghĩa con số. Package riêng `be/internal/tongket`, chỉ đọc, không cửa ghi, không migration.
+2. **Doanh thu** = Σ `bill.due_vnd` của hoá đơn có `sale_date` là ngày ấy, tách **phiên bàn** · **đơn lẻ** (I-014: cộng cả
+   hai nguồn), trừ Σ `refund.amount_vnd` của hoàn cho hoá đơn (`bill_id` có mặt) có `sale_date` là ngày ấy (hoàn rơi vào
+   ngày hoàn). Nợ đã nằm trong `due_vnd` (doanh thu ngày ghi nợ); thu nợ, trả trước nhận, trả lại trả trước **không** vào
+   phép này (`docs/product/1-system-design/architecture.md` §6.4 luật 1, **ADR-059** điểm 5). Hoá đơn nhập bù mang ngày
+   bán trên giấy nên tự rơi đúng ngày. Kèm trạng thái đối soát và số lượt giấy chưa nhập của ngày, đọc từ chỗ sẵn có —
+   để màn không bày một ngày chưa đóng như thể đã đối soát.
+3. **Món bán chạy** đếm `quantity` trên dòng đơn của các đơn **không huỷ** thuộc hoá đơn của ngày (đơn lẻ có hoá đơn; đơn
+   của phiên bàn có hoá đơn). Món: dòng món, **kể cả suất con của combo** (`quantity` của dòng con đã là số suất — `docs/
+   product/2-db/20-luoc-do-ban-combo.md`); combo: dòng combo, đếm **riêng** (`P3A-11` bàn giao). Xếp số giảm rồi mã tăng;
+   tên đọc từ món · combo hiện hành, gom theo mã nên đổi tên không tách một món làm hai. Đếm suất, không đếm tiền — *suy
+   ra*: `E48` nói *món bán chạy*, không nói theo tiền.
+4. **Cảnh báo sắp hết** = đúng tập của `GET /supply-check-reminders` (**ADR-119**), gọi cùng hàm, đọc tại lúc gọi chứ
+   không theo ngày — kho không có trạng thái theo ngày bán.
+5. **Số đếm theo người**, mỗi người có ít nhất một số khác 0, xếp theo `person_id`, **không trường điểm, hạng hay tổng**:
+   - `worked` — ô chấm công chưa huỷ của người ấy, `work_date` là ngày ấy (§8.7);
+   - `counter_orders` — đơn có `created_at` nằm trong một khoảng trực quầy của người ấy và ngày của `created_at` là ngày
+     ấy, **mọi kênh** — *suy ra* từ §8.8 hàng 3 (*đơn nào … cũng truy ra được người đang đứng quầy lúc ấy*);
+   - `deliveries` — hoá đơn của đơn giao tận nơi (`is_door_delivery`) có `sale_date` là ngày ấy, `bill.person_id` là
+     người ấy — *suy ra* từ lời đóng `U-057` (*người giao thực hiện thao tác đã giao + đã thu tiền*);
+   - `cancellations` — vết `record_revision` đổi `sales_order.status` sang `cancelled`, người sửa là người ấy, ngày của
+     lúc sửa là ngày ấy;
+   - `refunds` — dòng `refund` (hoàn và trả lại trả trước, mỗi lần bấm một dòng) `person_id` là người ấy, `sale_date` là
+     ngày ấy.
+   Ngày của một mốc đọc như `be/internal/ngayban` (`::date` theo múi giờ phiên database).
+
+**Rejected alternatives:** *gộp vào `GET /owner-overview`* — tổng quan là *trong buổi*, tạm tính tách khỏi doanh thu
+(**ADR-118**); trộn thì một màn bày hai con số tiền khác nghĩa; *một đường cho mỗi mục* — trang cần cả bốn cùng một ngày,
+bốn lần gọi là bốn ngày bán có thể lệch nhau; *đếm đơn theo người tạo* — `sales_order` không có cột người tạo, thêm cột là
+lát lược đồ, ngoài ranh giới của kế hoạch (§3); *xếp người theo số* — lời quán cấm xếp hạng.
+
+**Applies to:** `be/internal/tongket/` · `be/cmd/server/` · `docs/product/3-be/openapi.yaml` ·
+`docs/product/3-be/01-hop-dong-api.md` · `docs/product/3-be/02-vai-va-quyen.md` · `fe/src/lib/api/schema.ts`;
+**I-014** · **ADR-059** · **ADR-118** · **ADR-119** · `P3A-10`.
