@@ -35,6 +35,8 @@ Mỗi màn thêm **một dòng** ở đây cùng lượt dựng nó, và nhóm n
 | `/chu-quan` | chủ quán | khung chủ quán — màn nghiệp vụ dựng từ `P4-05`; trang **Tổng quan** của admin (`P4A-02`) | `P4-04` |
 | `/chu-quan/*` (layout) | chủ quán | vỏ chung mọi trang chủ quán (sửa 2026-10-19, `P4A-01`): gác một chỗ bằng `KhungTheoVai`, thanh điều hướng đọc từ `fe/src/app/chu-quan/_components/muc-chu-quan.ts`. Trang admin là route con của `/chu-quan` — **không** khung `/admin` thứ hai (`khungCua` chỉ biết ba khung); `/chu-quan/tong-ket` dành cho `P4A-03` | `P4A-01` |
 | `/chu-quan/san-pham` | chủ quán | trang **Sản phẩm** (2026-10-19, `P4A-04`): xem · thêm · đổi tên món; sửa giá · thành phần · ngừng bán vẫn ở màn của `P4-05` | `P4A-04` |
+| `/chu-quan/danh-muc` | chủ quán | trang **Danh mục** (2026-10-19, `P4A-05`): thêm · đổi tên · ẩn danh mục, xếp · chuyển món; không xoá, không gieo sẵn danh mục | `P4A-05` |
+| `/chu-quan/combo` | chủ quán | trang **Combo** (2026-10-19, `P4A-05`): xem · lập combo với giá riêng · đổi giá ngoài giờ bán · ẩn; mức phụ thu theo món chỉ đọc | `P4A-05` |
 | `/tram` | trạm (chỉ đọc) | khung trạm — bảng dựng ở các bước sau | `P4-04` |
 
 ### Hiện trên máy tìm kiếm
@@ -61,6 +63,8 @@ xem đi trên URL (**ADR-102** điểm 4).
 | `/chu-quan` — Tổng quan | `GET /owner-overview` | `PUT /daily-minimums/{sale_date}` (`sale_date` của lần đọc) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ — hợp đồng không trả `poll_interval_seconds` cho chủ quán | giữ bản cũ kèm `Alert` có mốc `read_at` của bản ấy (dòng *Chủ quán*) | `P4A-02` |
 | `/chu-quan/tong-ket` — Tổng kết | `GET /sale-days/{sale_date}/summary`; ngày xem là `?ngay=YYYY-MM-DD`, thiếu thì `sale_date` của `GET /owner-overview` | — | mở màn · đổi ngày · quay lại cửa sổ · mạng về; **không** kéo theo chu kỳ — đọc theo kỳ, ngày đã qua ít đổi | `Alert`; `400 invalid_request` ⇒ *Ngày không hợp lệ*, không bày mục; `supply_reminders` luôn ghi là kết quả hiện tại kèm `read_at` (2026-10-19, Claude Code) | `P4A-03` |
 | `/chu-quan/san-pham` — Sản phẩm | `GET /menu-categories` (mặc định; món của danh mục ẩn nằm trong `uncategorized_items`) | `POST /menu-items` · `PUT /menu-items/{menu_item_id}` (có lý do) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ | `Alert` *Chưa đọc được danh sách món*, không bày form; trang **không** bày giá, không gọi `/price-quotes` — giá do backend tính từ thành phần (2026-10-19, Claude Code) | `P4A-04` |
+| `/chu-quan/danh-muc` — Danh mục | `GET /menu-categories` (mặc định, **cùng khoá** với Sản phẩm) | `POST /menu-categories` · `PUT /menu-categories/{menu_category_id}` · `POST /menu-categories/{menu_category_id}/hiding` (có lý do) · `PUT /menu-items/{menu_item_id}/category` (lý do chỉ khi chuyển) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ | `Alert` *Chưa đọc được danh mục*, không bày form (2026-10-19, Claude Code) | `P4A-05` |
+| `/chu-quan/combo` — Combo | `GET /menu-combos` (mặc định) · `GET /menu-categories` (món chọn được khi lập, cùng khoá) | `POST /menu-combos` · `PUT /menu-combos/{menu_combo_id}/price` · `POST /menu-combos/{menu_combo_id}/hiding` (có lý do) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ | `Alert` *Chưa đọc được danh sách combo*; giá là `price_vnd` backend trả — **không** cộng giá món, không gọi `/price-quotes` (giá combo đặt riêng, `master_plan/shop-facts.md` §8.9) (2026-10-19, Claude Code) | `P4A-05` |
 
 ## 3. Lớp gọi API
 

@@ -111,6 +111,12 @@ chặn `P4-12` hay cổng §9.
 `PUT /menu-items/{menu_item_id}` (P3A-07) và `GET /menu-categories` (P3A-05) ở hợp đồng 0.40.0; không câu `U-XXX` chặn;
 `P4-04` Done. Trang dưới `/chu-quan/san-pham`; sửa giá · thành phần · ngừng bán vẫn của `P4-05`.
 
+**Mở 2026-10-19, lượt ba** (Claude Code, chủ repo giao `P4A-05`): `P4A-05` đủ ba điều cho **danh mục** và **combo** —
+cửa `/menu-categories*` · `PUT /menu-items/{menu_item_id}/category` (P3A-05) và `/menu-combos*` (P3A-06 · P3A-11) ở hợp
+đồng 0.40.0; không câu `U-XXX` chặn; `P4-04` Done. **Topping chưa đủ điều (a):** hợp đồng không có cửa thêm tuỳ chọn hay
+nhóm tuỳ chọn, còn đổi phụ thu của tuỳ chọn là của `P4-05` — phần ấy giữ *bị chặn*. Trang dưới `/chu-quan/danh-muc` ·
+`/chu-quan/combo`.
+
 | ID | Trang (tên nguồn trong `PAGES_INDEX.md`) | Dữ kiện quán đã có | Chặn thêm | Mức |
 |---|---|---|---|---|
 | **P4A-01** | **Khung admin** — vỏ chung của `/admin/*` | lớp `chu_quan` ([`02-vai-va-quyen.md`](../docs/product/3-be/02-vai-va-quyen.md)) | — | L1 |

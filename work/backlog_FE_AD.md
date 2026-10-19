@@ -347,7 +347,7 @@ Còn lại: không. `P4-05` nên dùng lại ô *đổi tên có lý do* làm kh
 <a id="p4a-05"></a>
 ### P4A-05 — Combo, danh mục và topping có trang quản lý ở bản cũ nhưng chưa có danh sách ở quán này
 
-**Phụ thuộc** · bước admin 5/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`
+**Phụ thuộc** · bước admin 5/11 · mức L2 · ~~**bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04`~~ — **mở 2026-10-19** cho danh mục (P3A-05) và combo (P3A-06 · P3A-11); **topping vẫn bị chặn** — chưa có cửa thêm tuỳ chọn · **cần xong trước:** `P4A-04`
 
 **Trang nguồn:** `/admin/combos` · `/admin/categories` · `/admin/toppings` — ba trang CRUD. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
@@ -364,7 +364,59 @@ ra đời ở `P4-02` (**ADR-035**).
 
 **Bẫy:** giá combo không bao giờ là con số nhập tay ở màn — nó là tổng thành phần (§4.7); muốn thấy thì đọc số backend trả.
 
-**Nhận việc:** —
+**Sửa 2026-10-19 (Claude Code, đối chiếu hợp đồng 0.40.0 và `master_plan/shop-facts.md` §8.9):** *Bẫy* và *Không làm thì
+mất gì* ở trên viết trước `U-092` và **đã sai**: `U-092` đóng 2026-10-14 — giá combo **đặt riêng**, không phải tổng thành
+phần; `POST /menu-combos` nhận `price_vnd` do chủ quán nhập. Bẫy đúng hôm nay: màn **không tự cộng** giá combo từ giá món,
+và chỉ bày `price_vnd` backend trả. Phụ thu trong combo chủ quán đặt **theo từng món của combo** (lượt bảy, §8.9) qua
+`PUT /menu-combos/{menu_combo_id}/surcharges` — bước này chỉ **đọc** mức đã đặt: muốn đặt cần danh sách lựa chọn của từng
+món, mà nguồn duy nhất là `GET /menu` (chỉ món đang bán) — để bước sau. **Topping:** hợp đồng chỉ có cửa đổi phụ thu một
+tuỳ chọn (của `P4-05`), không có cửa thêm tuỳ chọn hay nhóm — phần topping giữ *bị chặn*.
+
+**Nhận việc** — 2026-10-19 · dẫn, test trước và duyệt: **Claude Code**; thi công: **Codex** (worktree `../lean_wt/P4A-05`,
+nhánh `codex/P4A-05`, base `de7ca03`). **Claude chốt:** hai trang `/chu-quan/danh-muc` · `/chu-quan/combo`, mục *Danh mục*
+rồi *Combo* thêm cuối `muc-chu-quan.ts`. Danh mục đọc `GET /menu-categories` mặc định, **cùng khoá query** với trang Sản
+phẩm (fe-03 §2); thêm · đổi tên · ẩn danh mục; xếp món chưa có danh mục (không ô lý do) hoặc chuyển món (bắt buộc lý do,
+đích bỏ danh mục hiện tại); ẩn nói rõ món về *Chưa xếp danh mục*; không nút xoá; không gieo sẵn danh mục. Combo đọc
+`GET /menu-combos` mặc định; bày giá `price_vnd`, món kèm số suất, nhãn ngừng bán, mức phụ thu chỉ đọc; lập combo chọn món
+còn bán từ `GET /menu-categories`, không chọn trùng món; đổi giá · ẩn bắt buộc lý do; không gọi `/price-quotes` hay
+`/menu`; không nút đổi tên, sửa món, đặt phụ thu. Ghi xong chỉ làm mất hiệu lực rồi đọc lại; lời từ chối có `field` (kể
+cả `items[i].x`) gắn đúng ô. Chữ trên màn do Claude đặt trong test — là nhãn giao diện, không phải luật quán.
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. `fe/src/app/chu-quan/danh-muc/danh-muc.test.tsx` (19 ca, sau duyệt 20) và `fe/src/app/chu-quan/combo/combo.test.tsx` (16 ca) — Claude
+   viết trước, đỏ vì chưa có trang — cùng `chu-quan.test.tsx` (Claude sửa: năm mục, *Danh mục* sáng ở route của nó) xanh,
+   **không** sửa điều kiện kiểm.
+2. `check-fe-rules.sh` xanh; grep `refetchInterval|setQueryData|price-quotes` dưới `fe/src/app/chu-quan` (trừ test) rỗng.
+3. `npm run build` xong, có `/chu-quan/danh-muc` và `/chu-quan/combo`.
+4. Chạy thật cùng backend (Claude): thêm danh mục, xếp một món, lập combo, đổi giá ngoài giờ bán, ẩn combo — đọc lại thấy
+   đúng; tên danh mục trùng ⇒ `409`.
+5. `docs/product/4-fe/01-khung-fe.md` §1 · §2 hai dòng route mới (Claude ghi khi duyệt).
+6. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
+
+**Bàn giao** — 2026-10-19 · thực hiện: **Codex** `gpt-6-astra` (worktree `../lean_wt/P4A-05`, nhánh `codex/P4A-05`, base
+`de7ca03`); test trước và duyệt: **Claude Code**. Nhánh `P4A-01`. File: `danh-muc/page.tsx` · `combo/page.tsx` ·
+`_components/danh-muc.tsx` · `_components/combo.tsx` · `_components/du-lieu-danh-muc-combo.ts` · `_components/form-menu.tsx` ·
+`_components/muc-chu-quan.ts` · `danh-muc/danh-muc.test.tsx` (Claude) · `combo/combo.test.tsx` (Claude) · `chu-quan.test.tsx`
+(Claude); owner `01-khung-fe.md` §1 · §2.
+*Nghiệm thu → bằng chứng:*
+1. Codex làm xanh mà không sửa test (md5 trước và sau trùng: `529d2b7d…` · `2579c7d7…` · `fd52f24d…`). Test có răng: Claude
+   bỏ bước đọc lại sau ghi ⇒ `8 failed | 27 passed`; trả lại ⇒ xanh. **Claude sửa khi duyệt — lỗi ở phiếu, không ở Codex:**
+   chạy thật cho thấy món trong *Chưa xếp danh mục* có thể thuộc danh mục **đã ẩn** — dòng xếp cũ còn, backend coi là chuyển
+   và trả `400 field=reason`, mà phản hồi đọc không phân biệt với món chưa từng xếp. Phiếu chốt *không có ô lý do* ⇒ chủ quán
+   không xếp lại được món của danh mục vừa ẩn. Sửa: ô *Lý do* luôn có, không bắt buộc khi xếp, để trống thì không gửi; lời đòi
+   lý do gắn vào ô; thêm ca test thứ 20. `npx vitest run src/app/chu-quan` ⇒ `Tests 80 passed (80)`.
+2. `check-fe-rules: PASS`; grep `refetchInterval|setQueryData|price-quotes` dưới `fe/src/app/chu-quan` (trừ test) rỗng.
+3. `npm run build` ở clone chính xong, có `○ /chu-quan/combo` và `○ /chu-quan/danh-muc` (worktree: Turbopack không theo
+   symlink `node_modules`, Codex build bằng `--webpack`).
+4. Chạy thật 2026-10-19 16:13, ngoài giờ bán (database dùng-xong-bỏ, backend thật, `curl` với phiên chủ quán): thêm hai danh
+   mục `201` · trùng tên `409 menu_category_name_taken` · thêm hai món `201` · chuyển món không lý do `400 field=reason`, có
+   lý do `200` · đổi tên danh mục `200` · lập combo giá riêng 17.000 `201` · đổi giá 16.000 `200` · đọc thấy `price_vnd`
+   16000 · ẩn combo `200`, đọc lại rỗng · ẩn danh mục `200`, đọc lại thấy món về `uncategorized_items`. **Chưa** mở trang trên
+   trình duyệt: phần bày do test giữ.
+5. `01-khung-fe.md` §1 hai dòng route, §2 hai dòng màn.
+6. Gate xanh ở clone chính (khối dưới).
+Còn lại: **đặt mức phụ thu theo món của combo** (cửa có, cần nguồn danh sách lựa chọn của từng món) và **topping** (chưa có
+cửa thêm tuỳ chọn) — hai phần chưa làm của bước này.
 
 [↑ đầu file](#top)
 
