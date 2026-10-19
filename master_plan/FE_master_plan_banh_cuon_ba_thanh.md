@@ -117,6 +117,10 @@ cửa `/menu-categories*` · `PUT /menu-items/{menu_item_id}/category` (P3A-05) 
 nhóm tuỳ chọn, còn đổi phụ thu của tuỳ chọn là của `P4-05` — phần ấy giữ *bị chặn*. Trang dưới `/chu-quan/danh-muc` ·
 `/chu-quan/combo`.
 
+**Mở 2026-10-19, lượt bốn** (Claude Code, chủ repo giao `P4A-06`): `P4A-06` đủ ba điều — cửa `GET /accounts` ·
+`POST /accounts/{account_id}/approval|rejection|lock|unlock` (T-190) và `GET /people` ở hợp đồng 0.40.0; thiết kế `T-181`
+Done (**ADR-109**); không câu `U-XXX` chặn (`U-083` · `U-088` đã đóng); `P4-04` Done. Trang dưới `/chu-quan/nhan-vien`.
+
 | ID | Trang (tên nguồn trong `PAGES_INDEX.md`) | Dữ kiện quán đã có | Chặn thêm | Mức |
 |---|---|---|---|---|
 | **P4A-01** | **Khung admin** — vỏ chung của `/admin/*` | lớp `chu_quan` ([`02-vai-va-quyen.md`](../docs/product/3-be/02-vai-va-quyen.md)) | — | L1 |

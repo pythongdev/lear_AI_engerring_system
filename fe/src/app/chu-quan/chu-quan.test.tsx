@@ -44,7 +44,7 @@ describe("khung chủ quán", () => {
     const muc = within(nav).getByRole("link", { name: "Tổng quan" });
     expect(muc.getAttribute("href")).toBe("/chu-quan");
     expect(muc.getAttribute("aria-current")).toBe("page");
-    expect(within(nav).getAllByRole("link")).toHaveLength(5);
+    expect(within(nav).getAllByRole("link")).toHaveLength(6);
     expect(screen.getByRole("heading", { name: "Tổng quan" })).toBeTruthy();
     expect(replace).not.toHaveBeenCalled();
   });
@@ -81,6 +81,15 @@ describe("khung chủ quán", () => {
     expect(combo.getAttribute("aria-current")).toBeNull();
   });
 
+  it("Nhân viên sáng ở route của nó", async () => {
+    duongDan = "/chu-quan/nhan-vien";
+    moKhung(200, phien(true));
+    const nav = await screen.findByRole("navigation");
+    const nhanVien = within(nav).getByRole("link", { name: "Nhân viên" });
+    expect(nhanVien.getAttribute("href")).toBe("/chu-quan/nhan-vien");
+    expect(nhanVien.getAttribute("aria-current")).toBe("page");
+  });
+
   it("phiên quầy: chuyển về /quay, không hiện nav hay nội dung con", async () => {
     moKhung(200, phien(false));
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/quay"));
@@ -102,6 +111,7 @@ describe("khung chủ quán", () => {
       { nhan: "Sản phẩm", route: "/chu-quan/san-pham" },
       { nhan: "Danh mục", route: "/chu-quan/danh-muc" },
       { nhan: "Combo", route: "/chu-quan/combo" },
+      { nhan: "Nhân viên", route: "/chu-quan/nhan-vien" },
     ]);
     expect(routeThieuTrang(mucChuQuan)).toEqual([]);
     expect(routeThieuTrang([...mucChuQuan, { nhan: "Không có", route: "/chu-quan/khong-co" }]))

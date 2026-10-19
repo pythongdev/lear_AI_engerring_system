@@ -4989,3 +4989,28 @@ nên thành một `U-XXX` trước khi ký chuyển pha 4. (2)–(4): một task
 
 **Status:**
 Open
+
+### F-071 — Cửa duyệt tài khoản gắn được vào người mang cờ chủ quán, nên một lần duyệt trao luôn quyền chủ quán
+
+**Problem:**
+`POST /accounts/{account_id}/approval` nhận `person_id` của **bất kỳ** người nào chưa có tài khoản
+(`be/internal/taikhoan/service.go`, hàm `decide`, nhánh `approval`); backend không kiểm `person.is_owner`, database chỉ chặn một
+người hai tài khoản (`account_person_key`). Dữ liệu mồi (`db/seed/seed.pl`) luôn tạo người *Chủ quán* `is_owner` **không có tài
+khoản** (lệnh `khoitao-chu-quan` tạo người mới), nên trên mọi database có mồi đều có sẵn một người như thế. Chạy thật 2026-10-19
+(Claude Code, `P4A-06`, database dùng-xong-bỏ): thêm người `is_owner` không tài khoản, một người lạ tự đăng ký, chủ quán duyệt gắn
+`person_id` ấy ⇒ `200`; người lạ đăng nhập ⇒ phiên `is_owner: true`, `GET /owner-overview` ⇒ `200`.
+
+**Impact:**
+Trái **ADR-109** điểm 3 (*đặt cờ chủ quán không có đường qua màn duyệt — chỉ đường khởi tạo*). Cửa chỉ chủ quán gọi được, nên
+người ngoài không tự leo quyền; rủi ro là chủ quán chọn nhầm một người trong danh sách và trao quyền chủ quán cho tài khoản mới.
+
+**Decision / Fix:**
+Chưa sửa ở backend — ngoài phạm vi bước FE. Màn `P4A-06` chỉ đưa vào ô *Người trong quán* những người chưa có tài khoản **và
+không phải chủ quán** (test `nhan-vien.test.tsx`), nhưng màn là tiện, không phải bảo vệ. Cần một task backend L2: cửa duyệt từ
+chối `person_id` có `is_owner` (lời từ chối mới ở hợp đồng, bảng tên → mã) kèm test hồi quy, và xem có nên siết ở database.
+
+**Related task:**
+`P4A-06` · `T-190` · ADR-109
+
+**Status:**
+Open

@@ -6,4 +6,5 @@ export const mucChuQuan = [
   { nhan: "Sản phẩm", route: "/chu-quan/san-pham" },
   { nhan: "Danh mục", route: "/chu-quan/danh-muc" },
   { nhan: "Combo", route: "/chu-quan/combo" },
+  { nhan: "Nhân viên", route: "/chu-quan/nhan-vien" },
 ] as const;

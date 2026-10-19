@@ -1,6 +1,6 @@
 "use client";
 
-// Dùng cùng mẫu Field, RHF và chốt submit của form-doi-ten-mon cho các form danh mục/combo.
+// Dùng cùng mẫu Field, RHF và chốt submit của form-doi-ten-mon cho các form danh mục/combo; trang nhân viên đổi lời qua `loi`.
 import { useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import type { FieldPath, FieldValues, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import type { ApiResult } from "@/lib/api/client";
+import type { ApiFailure, ApiResult } from "@/lib/api/client";
 import { loiMenu, oLoiMenu } from "./du-lieu-danh-muc-combo";
 
 export const chuMenu = z.string().trim().min(1, "Không được để trống.");
@@ -32,9 +32,11 @@ export function OMenu<T extends FieldValues>({ form, o, nhan, so = false, option
   </Field>;
 }
 
-export function FormMenu<T extends FieldValues, R>({ form, ten, nut, gui, cacO, daLuu, dong, children }: {
+export function FormMenu<T extends FieldValues, R>({ form, ten, nut, gui, cacO, daLuu, dong, children,
+  loi = loiMenu, oLoi = oLoiMenu }: {
   form: UseFormReturn<T>; ten: string; nut: string; gui: (body: T) => Promise<ApiResult<R>>;
   cacO: FieldPath<T>[]; daLuu: (data: R) => string | void; dong?: () => void; children: ReactNode;
+  loi?: (failure: ApiFailure) => string; oLoi?: (failure: ApiFailure) => string | undefined;
 }) {
   const chot = useRef(false);
   const [thongBao, setThongBao] = useState<string | null>(null);
@@ -48,8 +50,8 @@ export function FormMenu<T extends FieldValues, R>({ form, ten, nut, gui, cacO, 
         setThongBao(null);
         const r = await gui(body);
         if (r.ok) { setThongBao(daLuu(r.data) ?? null); return; }
-        const message = loiMenu(r.failure);
-        const o = cacO.find((o) => o === oLoiMenu(r.failure));
+        const message = loi(r.failure);
+        const o = cacO.find((o) => o === oLoi(r.failure));
         if (o) form.setError(o, { type: "server", message });
         else setThongBao(message);
       })(event);

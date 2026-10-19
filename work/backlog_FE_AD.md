@@ -442,7 +442,55 @@ ra đời ở `P4-02` (**ADR-035**).
 
 **Bẫy:** ẩn một người không được làm mất vết những gì người ấy đã ghi (không xoá cứng — `docs/product/2-db/01-quy-uoc-du-lieu.md`).
 
-**Nhận việc:** —
+**Sửa 2026-10-19 (Claude Code, đối chiếu hợp đồng 0.40.0 và **ADR-109**):** *Goal* ở trên viết trước thiết kế và nói trang
+*không đổi mật khẩu của ai* — **ADR-109** điểm 9 (chủ repo duyệt 2026-10-14) cho chủ quán **khoá rồi mở lại kèm mật khẩu
+tạm** khi thư đặt lại không đi, và `POST /accounts/{account_id}/unlock` đòi `temporary_password`. Đọc đúng hôm nay: trang
+**không bày** mật khẩu của ai (hợp đồng không trả), chỉ nhận mật khẩu tạm lúc mở lại; người ấy phải đổi ở lần đăng nhập kế.
+*Ẩn một người* ở *Bẫy* là **khoá tài khoản** — tài khoản khoá vẫn nằm trong danh sách, không có cửa xoá.
+
+**Nhận việc** — 2026-10-19 · dẫn, test trước và thi công: **Claude Code** (chủ repo giao thẳng, *"hãy đọc kĩ và làm task
+trên"*; không phiếu cho Codex), nhánh `P4A-01`, base `72072d5`. **Claude chốt:** trang `/chu-quan/nhan-vien`, mục *Nhân viên*
+thêm cuối `muc-chu-quan.ts`. Đọc `GET /accounts` **không lọc** (một khoá query `accounts`), chia bốn nhóm theo `status` theo
+thứ tự *Chờ duyệt* · *Đang làm* · *Đã khoá* · *Đã từ chối*, giữ thứ tự backend trong nhóm; mỗi tài khoản bày tên đã khai,
+tên đăng nhập, Gmail, vai — không bày mật khẩu. Duyệt: chọn **một trong bốn vai trạm** (nhãn theo `shop-facts.md` §3; không
+có `owner` — **ADR-109** điểm 3 *Sửa đổi*) và *người trong quán*: mặc định *tạo người mới từ tên đã khai* (không gửi
+`person_id`), hoặc một người của `GET /people` **chưa có tài khoản và không phải chủ quán**. Từ chối và khoá qua một bước
+xác nhận; khoá nói rõ mọi phiên của người ấy kết thúc ngay; **không** nút khoá trên tài khoản của chính người đang đăng nhập
+(tự khoá thì chỉ lệnh máy chủ mở lại được — suy ra của phiên, backend không chặn). Mở lại đòi mật khẩu tạm ≥ 8 ký tự
+(**ADR-109** điểm 5), ô kiểu mật khẩu, xoá sau khi gửi. Không nút xoá, sửa tên, đổi vai, đặt lại mật khẩu. Ghi xong chỉ làm
+mất hiệu lực rồi đọc lại (`accounts`, và `people` sau khi duyệt); lời `account_not_*` (trạng thái đã đổi) cũng đọc lại.
+Chữ trên màn do Claude đặt trong test — là nhãn giao diện, không phải luật quán.
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. `fe/src/app/chu-quan/nhan-vien/nhan-vien.test.tsx` — Claude viết trước, đỏ vì chưa có trang — cùng `chu-quan.test.tsx`
+   (sáu mục, *Nhân viên* sáng ở route của nó) xanh.
+2. `check-fe-rules.sh` xanh; grep `refetchInterval|setQueryData` dưới `fe/src/app/chu-quan` (trừ test) rỗng.
+3. `npm run build` xong, có `/chu-quan/nhan-vien`.
+4. Chạy thật cùng backend: đăng ký hai tài khoản, duyệt một (tạo người mới), từ chối một, khoá, mở lại kèm mật khẩu tạm —
+   đọc lại thấy đúng trạng thái; duyệt lại tài khoản đã duyệt ⇒ `409 account_not_pending`.
+5. `docs/product/4-fe/01-khung-fe.md` §1 · §2 dòng route mới.
+6. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
+
+**Bàn giao** — 2026-10-19 · thực hiện, test trước và duyệt: **Claude Code**; **chưa review độc lập**. Nhánh `P4A-01`, base
+`72072d5`. File: `nhan-vien/page.tsx` · `_components/nhan-vien.tsx` · `_components/du-lieu-nhan-vien.ts` ·
+`_components/form-menu.tsx` (thêm hai tham số tuỳ chọn `loi` · `oLoi`, mặc định giữ lời menu) · `_components/muc-chu-quan.ts` ·
+`nhan-vien/nhan-vien.test.tsx` · `chu-quan.test.tsx`; owner `01-khung-fe.md` §1 · §2; kế hoạch §6a *lượt bốn*; **F-071**.
+*Nghiệm thu → bằng chứng:*
+1. Test viết trước, đỏ (`Test Files 2 failed`) vì chưa có trang và mục; sau thi công `npx vitest run src/app/chu-quan` ⇒
+   `Tests 101 passed (101)` (`nhan-vien.test.tsx` 20 ca). Test có răng: bỏ lọc người chủ quán ⇒ `2 failed`; bỏ chặn tự khoá ⇒
+   `1 failed`; bỏ đọc lại sau ghi ⇒ `6 failed`; trả lại ⇒ `20 passed`.
+2. `check-fe-rules: PASS`; grep `refetchInterval|setQueryData` dưới `fe/src/app/chu-quan` (trừ test) rỗng; `tsc --noEmit` ·
+   `eslint src/app/chu-quan` sạch.
+3. `npm run build` xong, có `○ /chu-quan/nhan-vien`.
+4. Chạy thật 2026-10-19 16:48 (database dùng-xong-bỏ, backend thật, `curl` với phiên chủ quán): đăng ký hai tài khoản `201` ·
+   danh sách không lọc trả cả ba · duyệt Minh vai `gap_banh` không `person_id` ⇒ `200`, tạo người 2 · duyệt lại ⇒
+   `409 account_not_pending` · từ chối Bình `200` · khoá Minh `200` · mở lại mật khẩu 5 ký tự ⇒ `400 password_too_short`
+   (không `field` — trang tự gắn ô) · mở lại `tam-12345` ⇒ `200` · đọc lại thấy `hoat_dong` · `tu_choi`. Cùng lượt lộ **F-071**:
+   duyệt gắn vào người `is_owner` chưa có tài khoản ⇒ `200`, người lạ đăng nhập thành chủ quán. **Chưa** mở trang trên trình
+   duyệt: phần bày do test giữ.
+5. `01-khung-fe.md` §1 dòng route, §2 dòng màn.
+6. Gate xanh, `fe-check: PASS` (`Tests 142 passed`).
+Còn lại: backend chặn gắn người chủ quán (**F-071**, cần task backend riêng).
 
 [↑ đầu file](#top)
 

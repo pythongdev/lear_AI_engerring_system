@@ -37,6 +37,7 @@ Mỗi màn thêm **một dòng** ở đây cùng lượt dựng nó, và nhóm n
 | `/chu-quan/san-pham` | chủ quán | trang **Sản phẩm** (2026-10-19, `P4A-04`): xem · thêm · đổi tên món; sửa giá · thành phần · ngừng bán vẫn ở màn của `P4-05` | `P4A-04` |
 | `/chu-quan/danh-muc` | chủ quán | trang **Danh mục** (2026-10-19, `P4A-05`): thêm · đổi tên · ẩn danh mục, xếp · chuyển món; không xoá, không gieo sẵn danh mục | `P4A-05` |
 | `/chu-quan/combo` | chủ quán | trang **Combo** (2026-10-19, `P4A-05`): xem · lập combo với giá riêng · đổi giá ngoài giờ bán · ẩn; mức phụ thu theo món chỉ đọc | `P4A-05` |
+| `/chu-quan/nhan-vien` | chủ quán | trang **Nhân viên** (2026-10-19, `P4A-06`): tài khoản theo trạng thái · duyệt kèm vai trạm · từ chối · khoá · mở lại kèm mật khẩu tạm (**ADR-109**); không bày mật khẩu, không xoá | `P4A-06` |
 | `/tram` | trạm (chỉ đọc) | khung trạm — bảng dựng ở các bước sau | `P4-04` |
 
 ### Hiện trên máy tìm kiếm
@@ -65,6 +66,7 @@ xem đi trên URL (**ADR-102** điểm 4).
 | `/chu-quan/san-pham` — Sản phẩm | `GET /menu-categories` (mặc định; món của danh mục ẩn nằm trong `uncategorized_items`) | `POST /menu-items` · `PUT /menu-items/{menu_item_id}` (có lý do) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ | `Alert` *Chưa đọc được danh sách món*, không bày form; trang **không** bày giá, không gọi `/price-quotes` — giá do backend tính từ thành phần (2026-10-19, Claude Code) | `P4A-04` |
 | `/chu-quan/danh-muc` — Danh mục | `GET /menu-categories` (mặc định, **cùng khoá** với Sản phẩm) | `POST /menu-categories` · `PUT /menu-categories/{menu_category_id}` · `POST /menu-categories/{menu_category_id}/hiding` (có lý do) · `PUT /menu-items/{menu_item_id}/category` (lý do chỉ khi chuyển) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ | `Alert` *Chưa đọc được danh mục*, không bày form (2026-10-19, Claude Code) | `P4A-05` |
 | `/chu-quan/combo` — Combo | `GET /menu-combos` (mặc định) · `GET /menu-categories` (món chọn được khi lập, cùng khoá) | `POST /menu-combos` · `PUT /menu-combos/{menu_combo_id}/price` · `POST /menu-combos/{menu_combo_id}/hiding` (có lý do) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ | `Alert` *Chưa đọc được danh sách combo*; giá là `price_vnd` backend trả — **không** cộng giá món, không gọi `/price-quotes` (giá combo đặt riêng, `master_plan/shop-facts.md` §8.9) (2026-10-19, Claude Code) | `P4A-05` |
+| `/chu-quan/nhan-vien` — Nhân viên | `GET /accounts` (không lọc, chia nhóm theo `status`) · `GET /people` (người gắn được khi duyệt: chưa có tài khoản, không phải chủ quán) · `GET /sessions/current` (không nút khoá chính mình) | `POST /accounts/{account_id}/approval` · `/rejection` · `/lock` · `/unlock` (mật khẩu tạm ≥ 8 ký tự) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ | `Alert` *Chưa đọc được danh sách tài khoản*; `account_not_*` ⇒ *trạng thái đã đổi* và đọc lại; trang **không** bày mật khẩu của ai (2026-10-19, Claude Code) | `P4A-06` |
 
 ## 3. Lớp gọi API
 
