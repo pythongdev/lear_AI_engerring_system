@@ -425,7 +425,7 @@ cửa thêm tuỳ chọn) — hai phần chưa làm của bước này.
 <a id="p4a-06"></a>
 ### P4A-06 — Trang nhân viên của bản cũ quản lý tài khoản theo vai của dự án khác, còn quán này để người làm tự đăng ký và chủ quán duyệt
 
-**Phụ thuộc** · bước admin 6/11 · mức L2 · **bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · thiết kế đăng nhập `T-181` (**ADR-104**)
+**Phụ thuộc** · bước admin 6/11 · mức L2 · ~~**bị chặn bởi:** backend admin chưa có cửa (**ADR-068**) · `P4-04` · thiết kế đăng nhập `T-181` (**ADR-104**)~~ — **mở 2026-10-19** (cửa `/accounts*` của T-190, kế hoạch §6a lượt bốn)
 
 **Trang nguồn:** `/admin/staff` — CRUD tài khoản nhân viên: vai, bật · tắt. Tên route ấy là **tên nguồn** trong `PAGES_INDEX.md`, không phải route đã chốt — owner route
 ra đời ở `P4-02` (**ADR-035**).
