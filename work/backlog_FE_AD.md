@@ -228,7 +228,45 @@ quả **hiện tại**, không phải ảnh của ngày đang chọn — trang n
 kèm trạng thái đối soát backend trả; `total_vnd` có thể âm. (4) Ba lúc máy chưa biết có nên nhắc kiểm tra một nguyên liệu
 là câu đang mở **U-102** — trang bày đúng thứ backend trả, không tự đoán.
 
-**Nhận việc:** —
+**Nhận việc** — 2026-10-19 · dẫn, test trước và duyệt: **Claude Code**; thi công: **Codex** (worktree `../lean_wt/P4A-03`,
+nhánh `codex/P4A-03`, base `f11d80e`). **Claude chốt:** trang ở `/chu-quan/tong-ket`, mục *Tổng kết* thêm vào
+`muc-chu-quan.ts`; ngày đang xem là tham số `?ngay=YYYY-MM-DD`, thiếu thì lấy `sale_date` của `GET /owner-overview`,
+đổi ngày ⇒ `router.push`; tiền bày nguyên số backend trả kể cả `total_vnd` âm, không tự tính tổng; món, combo và người làm
+giữ đúng thứ tự backend, người làm chỉ có số đếm; nhắc kiểm tra luôn ghi *kết quả hiện tại* kèm `read_at`, thêm *không phải
+của ngày …* khi ngày xem khác hôm nay của backend; không `refetchInterval`. Chữ trên màn do Claude đặt trong test — là
+nhãn giao diện, không phải luật quán.
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. `fe/src/app/chu-quan/tong-ket/tong-ket.test.tsx` (Claude viết trước, 12 ca, đỏ vì chưa có trang) và
+   `fe/src/app/chu-quan/chu-quan.test.tsx` (Claude sửa: hai mục điều hướng, *Tổng kết* sáng ở route của nó) xanh,
+   **không** sửa điều kiện kiểm: ngày mặc định từ backend dù đồng hồ máy lệch; ngày trên URL; đổi ngày đi lên URL; bốn số
+   doanh thu đúng như backend (tổng cố ý lệch phép cộng), tổng âm, trạng thái đối soát, sổ giấy còn chờ; món · combo tách
+   nhóm giữ thứ tự; ngày rỗng; người làm không điểm không hạng giữ thứ tự; nhắc kiểm tra là kết quả hiện tại có mốc, nói rõ
+   khi khác ngày; ngày sai ⇒ báo không hợp lệ; chỉ báo lần đọc đầu.
+2. `check-fe-rules.sh` xanh; grep `refetchInterval|setQueryData|new Date()|Date.now` dưới `fe/src/app/chu-quan` (trừ test) rỗng.
+3. `npm run build` xong (bắt thiếu `Suspense` quanh `useSearchParams`).
+4. Chạy thật cùng backend (Claude): mở `/chu-quan/tong-ket` không tham số ⇒ ngày bán của backend; chọn ngày khác ⇒ URL đổi,
+   số đổi theo ngày.
+5. `docs/product/4-fe/01-khung-fe.md` §2 dòng màn `/chu-quan/tong-ket` (Claude ghi khi duyệt).
+6. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
+
+**Bàn giao** — 2026-10-19 · thực hiện: **Codex** `gpt-6-astra` (worktree `../lean_wt/P4A-03`, nhánh `codex/P4A-03`, base
+`f11d80e`); test trước và duyệt: **Claude Code**. Nhánh `P4A-01`. File: `tong-ket/page.tsx` · `_components/tong-ket.tsx` ·
+`_components/muc-chu-quan.ts` · `tong-ket/tong-ket.test.tsx` (Claude) · `chu-quan.test.tsx` (Claude); owner `01-khung-fe.md` §2.
+*Nghiệm thu → bằng chứng:*
+1. `tong-ket.test.tsx` 12/12 và `chu-quan.test.tsx` 5/5 xanh; md5 hai file trước và sau khi Codex làm trùng nhau
+   (`658a3b31…` · `ab018705…`). Lỗi cài: ngày mặc định lấy `new Date()` ⇒ 1 ca đỏ; tự xếp người theo số đơn ⇒ 1 ca đỏ; gỡ ⇒ xanh.
+   **Claude sửa khi duyệt** ba chỗ: lỗi đọc tổng quan khi đã có ngày trên URL không còn báo nhầm là lỗi tổng kết; xoá trống
+   ô ngày không đẩy `?ngay=` rỗng; ô ngày dùng `Input` · `Label` của shadcn thay thẻ thô (**ADR-100**).
+2. `check-fe-rules: PASS`; grep `refetchInterval|setQueryData|new Date()|Date.now` dưới `fe/src/app/chu-quan` (trừ test) rỗng.
+3. `npm run build` ở clone chính xong, có `○ /chu-quan/tong-ket` (trong worktree Turbopack vấp symlink `node_modules`).
+4. Chạy thật (database dùng-xong-bỏ, backend thật, `curl` với phiên chủ quán): `/owner-overview` ⇒ `sale_date` 2026-10-19;
+   `/sale-days/2026-10-19/summary` và `2026-10-15` ⇒ `200`, bốn mục đúng hình hợp đồng (rỗng vì database thử chưa có đơn),
+   `read_at` dạng `+07:00`; `/sale-days/2026-13-40/summary` ⇒ `400 invalid_request` `field: sale_date` — đúng hình ca *ngày
+   sai* của test. **Chưa** mở trang trên trình duyệt: phần bày do test giữ.
+5. `01-khung-fe.md` §2 dòng màn `/chu-quan/tong-ket`.
+6. `npx vitest run` ⇒ `Tests 67 passed (67)`; `fe-check: PASS`; gate xanh ở clone chính.
+Còn lại: không.
 
 [↑ đầu file](#top)
 
