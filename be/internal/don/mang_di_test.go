@@ -786,3 +786,40 @@ func TestQC12_DuongGoiCuaLuongNgoaiBan(t *testing.T) {
 		t.Fatalf("thiếu đường gọi: %s", strings.Join(thieu, " · "))
 	}
 }
+
+// F-068 (T-209): I-006 vế tầng 3 — chỉ QR tại bàn và đặt hộ tại bàn tạo lượt gọi cho khách ngồi bàn. Một đơn của kênh không gắn
+// bàn mang bàn (kể cả bàn đang có phiên) bị từ chối ở cửa, không đơn nào được ghi, phiên của bàn ấy không đổi.
+func TestI006_KenhKhongGanBanMangBanBiTuChoi(t *testing.T) {
+	c := dungBan(t)
+	ban, phien, _, _ := c.phienDangPhucVu(t, "I-006 mang bàn")
+	truoc := c.anhPhien(t, phien)
+	soDon := c.docSo(t, "SELECT count(*) FROM shop.sales_order")
+	for _, ca := range []struct {
+		path  string
+		nguoi int64
+		body  map[string]any
+	}{
+		{"/phone-orders", c.quay, voiDong(lienHeHotlineLay(), dauLanGui(t), c.dong(false))},
+		{"/online-orders", 0, voiDong(map[string]any{"channel_code": "pickup", "customer_phone": soGoi, "customer_needed_at": canLuc}, dauLanGui(t), c.dong(false))},
+	} {
+		for _, truong := range []string{"dining_table_id", "table_session_id"} {
+			body := map[string]any{}
+			for k, v := range ca.body {
+				body[k] = v
+			}
+			if truong == "dining_table_id" {
+				body[truong] = ban
+			} else {
+				body[truong] = phien
+			}
+			canMa(t, c.post(t, ca.path, ca.nguoi, body), http.StatusBadRequest, "invalid_request", truong)
+		}
+	}
+	if n := c.docSo(t, "SELECT count(*) FROM shop.sales_order"); n != soDon {
+		t.Fatalf("đơn kênh không gắn bàn mang bàn bị từ chối mà vẫn ghi: %d → %d", soDon, n)
+	}
+	if sau := c.anhPhien(t, phien); sau != truoc {
+		t.Fatalf("phiên của bàn đổi sau lời từ chối:\n trước %s\n sau   %s", truoc, sau)
+	}
+	t.Logf("hotline · web mang bàn %d hoặc phiên %d ⇒ 400 invalid_request đúng trường; 0 đơn mới; %s", ban, phien, truoc)
+}

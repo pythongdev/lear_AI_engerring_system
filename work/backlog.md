@@ -107,6 +107,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-209 **Hai ô trống của cổng pha 3 (F-068)** — test cắt giữa bấm mẻ · lùi mẻ · lúc ghi vết của lần huỷ đơn, test từ chối qua cửa cho `I-006` vế tầng 3; ký ô 1 · ô 2 (`I-019` ký có lý do) — L2 (chỉ thêm test) — 2026-10-19 · Claude Code · [chi tiết](#t-209)
 - [x] T-208 **Gate 9: git từ chối commit nhặt file của nhiều task (F-025)** — `scripts/hooks/pre-commit` khớp file staged với scope từng task bằng `check-scope.sh --match`; `install-hooks.sh --check` đòi cả hook mới; CLAUDE.md §6.2 — L1 — 2026-10-19 · Claude Code theo lời chủ repo *"F-025: hook pre-commit"* · [chi tiết](#t-208)
 - [x] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ và thi công (2026-10-19, Codex không tham gia) — 2026-10-19 · [chi tiết](#t-141)
 - [x] T-207 **Test lùi mẻ chen chuyển phần của chính mẻ (F-066)** — `TestI020_LuiMeChenChuyenPhanCuaChinhMe` 12 vòng chen nhau, cả hai thứ tự đều ra mẻ đã lùi và hai đơn vị về Chưa làm; bỏ hai khoá mẻ ⇒ đỏ — L1 (chỉ thêm test) — 2026-10-19 · Claude Code · [chi tiết](#t-207)
@@ -425,6 +426,23 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-209"></a>
+### T-209 — Cổng pha 3 còn hai ô trống (F-068)
+
+**Yêu cầu:** chủ repo 2026-10-19, *"làm nốt những việc còn lại như finding"*. **Mức:** L2 theo invariant chạm (`I-018` · `I-020`), chỉ
+thêm test — không đổi code chạy.
+
+*Nghiệm thu* (viết trước): (1) cắt giữa lần bấm mẻ phủ hai bàn và giữa lần lùi mẻ ⇒ 500, database y như trước, gỡ kéo cắt thì đi qua;
+(2) cắt lúc ghi vết của một cửa sửa ⇒ 500, lần sửa không sống, không vết; (3) kênh không gắn bàn mang bàn/phiên ⇒ 400 đúng trường, 0 đơn,
+phiên không đổi; (4) ký ô 1 · ô 2, F-068 Fixed; `./scripts/gate.sh` xanh.
+
+**Bàn giao** — 2026-10-19 · **Claude Code**; chưa ai duyệt độc lập. Trên database thử: `--- PASS: TestI020_CatGiuaLanBamMeKhongNuaNaoSong`
+(*500, database y như trước: … 0 mẻ … 4:pending,7:pending*) · `--- PASS: TestI020_CatGiuaLanLuiMeKhongNuaNaoSong` (*… 10:made,13:made*) ·
+`--- PASS: TestI018_CatLucGhiVetCuaCuaSuaKhongNuaNaoSong` (*đơn vẫn in_progress, 1 vết*) · `--- PASS: TestI006_KenhKhongGanBanMangBanBiTuChoi`.
+Kéo cắt chính là lỗi cài (trigger của test); bốn test không cần worktree lỗi riêng. Gate — dưới.
+
+[↑ đầu file](#top)
 
 <a id="t-208"></a>
 ### T-208 — Commit nhặt thay đổi chưa commit của phiên khác (F-025)

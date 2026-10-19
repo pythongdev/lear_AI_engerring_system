@@ -4950,8 +4950,13 @@ của `I-006` (kênh không gắn bàn mang `dining_table_id`) và `I-019`; rồ
 **Related task:**
 `P3-13` · `P3-03` · ADR-082 · **F-066**
 
+**Đã sửa 2026-10-19 (T-209):** bốn test qua cửa trên PostgreSQL thật — `TestI020_CatGiuaLanBamMeKhongNuaNaoSong` ·
+`TestI020_CatGiuaLanLuiMeKhongNuaNaoSong` · `TestI018_CatLucGhiVetCuaCuaSuaKhongNuaNaoSong` (`be/internal/don/san_xuat_test.go`) ·
+`TestI006_KenhKhongGanBanMangBanBiTuChoi` (`be/internal/don/mang_di_test.go`). `I-019` vế tầng 3 ký có lý do, không lời từ chối
+(không cửa nào nhận khoá gom). Ô 1 · ô 2 ở `docs/product/3-be/10-cong-chat-luong-pha-3.md` ký lại, cổng 12/12.
+
 **Status:**
-Open
+Fixed
 
 ### F-069 — `master_plan/prompt-fullstack.md` §3.6 vẫn giữ một bề mặt API khác hẳn hợp đồng pha 3
 

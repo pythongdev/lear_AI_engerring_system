@@ -105,13 +105,19 @@ và `TestI021_MotNgayDien…`.
 Mười hai ô dưới đây là **lời** của kế hoạch pha 3 §9; chỗ ký là đây. Một ô tick khi **cách chứng minh viết kèm
 ô ấy** chạy đủ; thiếu một phần thì để trống kèm lý do và mã — không ô nào tick vì *nhìn chung đạt*.
 
-Hôm nay **10/12 ô tick**, hai ô trống có mã (2026-10-13, Claude Code: chín ô ở `P3-13`, ô 10 ở `P3-14`). Đủ các ô **không** phải câu *"được, sang pha
+**2026-10-19 (T-209): 12/12 ô tick** — ô 1 · ô 2 ký sau khi có test của `F-068`. Bản cũ: **10/12 ô tick**, hai ô trống có mã (2026-10-13, Claude Code: chín ô ở `P3-13`, ô 10 ở `P3-14`). Đủ các ô **không** phải câu *"được, sang pha
 4"*: ký chuyển pha là quyền **chủ repo** (kế hoạch §9).
 **Chủ repo ký chuyển sang pha 4 ngày 2026-10-13** (T-176), nguyên văn *"mở phase 4"*, khi cổng đứng **10/12**: ô 1 ·
 ô 2 vẫn trống và **`F-068` mang sang pha 4 ở trạng thái Open** — nợ test của `be/`, không chặn bước nào của pha 4 vì pha 4
 không đổi cửa. Câu Telegram của `F-070` thành **U-080** trước khi màn quầy của pha 4 được thiết kế.
 
-- [ ] **1. Mọi vế tầng 3 của `03-bao-ve-invariant.md` §1–§4 có một test từ chối qua cửa** — **TRỐNG, `F-068`.**
+- [x] **1. Mọi vế tầng 3 của `03-bao-ve-invariant.md` §1–§4 có một test từ chối qua cửa** — **ký 2026-10-19 (T-209,
+  Claude Code; đóng `F-068`).** `I-006`: `TestI006_KenhKhongGanBanMangBanBiTuChoi` — hotline và web mang `dining_table_id`
+  hay `table_session_id` của một bàn đang có phiên ⇒ *400 invalid_request đúng trường; 0 đơn mới*, phiên không đổi.
+  `I-019`: ký **có lý do, không có lời từ chối** — vế tầng 3 là *đúng một hàm gom*; không cửa nào nhận khoá gom từ người
+  gọi (khoá suy ở server từ dòng đơn), nên không có trạng thái sai nào dựng được qua cửa để từ chối. Bằng chứng của vế là
+  `TestI019_KhoaGomMotDinhNghia` (đoạn khoá gom giống từng byte giữa hai file SQL). Đánh giá của Claude, không phải lời chủ repo.
+  *Bản chấm 2026-10-13 dưới đây giữ nguyên làm vết.*
   Ở mức hàng (ADR-082 điểm 4) lệnh chạy đủ: 18 hàng có vế tầng 3 (`I-002 I-003 I-004 I-006 I-007 I-008 I-009 I-010
   I-012 I-013 I-014 I-016 I-019 I-020 I-021 I-022 I-023 I-024`), tập `TestI0xx` phủ 23 mã, `comm -23` **rỗng**. Mười
   sáu hàng có lời từ chối qua cửa, ví dụ `I-002` *table_session_has_open_orders* · `I-003` *dining_table_needs_cleaning*
@@ -119,7 +125,11 @@ không đổi cửa. Câu Telegram của `F-070` thành **U-080** trước khi m
   *order_transition_not_allowed* · `I-021` *gap_explanation_required* · `I-024` *submission_code_conflict*. Hai hàng
   **không**: `TestI006_SuatDemVeThuocPhienBan` và `TestI019_*` chỉ chứng minh đường đúng — vế tầng 3 của chúng là
   *không có đường thứ hai*, chưa test nào dựng trạng thái sai qua cửa để in lời từ chối.
-- [ ] **2. Mọi vế tầng 2 có ranh giới giao dịch đã bị cắt thử** — **TRỐNG, `F-068`.** Bảy hàng có vế tầng 2 (`I-004
+- [x] **2. Mọi vế tầng 2 có ranh giới giao dịch đã bị cắt thử** — **ký 2026-10-19 (T-209, Claude Code; đóng `F-068`).**
+  `TestI020_CatGiuaLanBamMeKhongNuaNaoSong` (*bấm mẻ hai bàn, cắt ở bàn thứ hai ⇒ 500, database y như trước*),
+  `TestI020_CatGiuaLanLuiMeKhongNuaNaoSong` (*cắt khi trả bàn thứ hai về Chưa làm ⇒ 500, mẻ không mang dấu lùi*),
+  `TestI018_CatLucGhiVetCuaCuaSuaKhongNuaNaoSong` (*cắt lúc ghi vết của lần huỷ đơn ⇒ 500, đơn giữ trạng thái, 0 vết mới*).
+  *Bản chấm 2026-10-13 dưới đây giữ nguyên làm vết.* Bảy hàng có vế tầng 2 (`I-004
   I-009 I-015 I-017 I-018 I-019 I-020`). Đã cắt qua cửa: `TestI004_CatGiuaLanNoKhongNuaNaoSong` (*cắt giữa lần nổ ⇒ 500,
   đơn còn pending_confirmation, 0 việc*) và `TestI017_CatGiuaLucDongKhongNuaNaoSong` (*cắt giữa lúc đóng ⇒ 500
   internal_error, database y như trước* — cắt **sau** lần ghi hoá đơn, nên phủ cả vế tầng 2 của `I-015`). `I-019`: vế

@@ -649,6 +649,98 @@ func TestI020_LuiMeChenChuyenPhanCuaChinhMe(t *testing.T) {
 	t.Logf("%d vòng lùi chen chuyển: %v; mọi vòng mẻ đã lùi, nguồn và đích về Chưa làm", vong, thuTu)
 }
 
+// F-068 (T-209): I-020 tầng 2 — một lần bấm mẻ phủ hai bàn và một lần lùi mẻ là MỘT giao dịch. Kéo cắt (trigger của test,
+// dựng bằng vai chủ lược đồ) làm câu ghi của bàn THỨ HAI hỏng giữa chừng; database phải y như trước — không bàn nào nửa
+// sống. Gỡ kéo cắt, lần bấm (lùi) lại đi qua. Cùng khuôn TestI004_CatGiuaLanNoKhongNuaNaoSong.
+func (c canh) keoCat(t *testing.T, ten, bang, khi, dieuKien string) func() {
+	t.Helper()
+	if _, err := c.owner.Exec(c.ctx, fmt.Sprintf(`CREATE FUNCTION shop.%s() RETURNS trigger LANGUAGE plpgsql AS $$
+		BEGIN
+		  IF %s THEN RAISE EXCEPTION 'test: cắt giữa %s'; END IF;
+		  RETURN NEW;
+		END $$`, ten, dieuKien, ten)); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := c.owner.Exec(c.ctx, fmt.Sprintf(`CREATE TRIGGER %s %s ON shop.%s FOR EACH ROW EXECUTE FUNCTION shop.%s()`,
+		ten, khi, bang, ten)); err != nil {
+		t.Fatal(err)
+	}
+	go_ := func() {
+		_, _ = c.owner.Exec(c.ctx, fmt.Sprintf("DROP TRIGGER IF EXISTS %s ON shop.%s", ten, bang))
+		_, _ = c.owner.Exec(c.ctx, fmt.Sprintf("DROP FUNCTION IF EXISTS shop.%s()", ten))
+	}
+	t.Cleanup(go_)
+	return go_
+}
+
+func TestI020_CatGiuaLanBamMeKhongNuaNaoSong(t *testing.T) {
+	c := dungBan(t)
+	_, _, donA, _ := c.phienDangPhucVu(t, "cắt bấm A")
+	_, _, donB, _ := c.phienDangPhucVu(t, "cắt bấm B")
+	a, b := c.viec(t, donA, "pending")[0], c.viec(t, donB, "pending")[0]
+	soMe := c.docSo(t, "SELECT count(*) FROM shop.production_batch")
+	truoc := c.anhSanXuat(t, a, b)
+	goKeo := c.keoCat(t, fmt.Sprintf("test_cat_bam_me_%d", b), "production_batch_item", "BEFORE INSERT",
+		fmt.Sprintf("NEW.station_job_id = %d", b))
+	canMa(t, c.bamMe(t, c.quay, a, b), http.StatusInternalServerError, "internal_error", "")
+	if sau := c.anhSanXuat(t, a, b); sau != truoc {
+		t.Fatalf("cắt giữa lần bấm mẻ mà một bàn nửa sống:\n trước %s\n sau   %s", truoc, sau)
+	}
+	if n := c.docSo(t, "SELECT count(*) FROM shop.production_batch"); n != soMe {
+		t.Fatalf("cắt giữa lần bấm mà mẻ vẫn ở lại: %d → %d", soMe, n)
+	}
+	t.Logf("cắt giữa lần bấm mẻ hai bàn ⇒ 500, database y như trước: %s", truoc)
+	goKeo()
+	canDat(t, c.bamMe(t, c.quay, a, b), http.StatusCreated)
+}
+
+func TestI020_CatGiuaLanLuiMeKhongNuaNaoSong(t *testing.T) {
+	c := dungBan(t)
+	_, _, donA, _ := c.phienDangPhucVu(t, "cắt lùi A")
+	_, _, donB, _ := c.phienDangPhucVu(t, "cắt lùi B")
+	a, b := c.viec(t, donA, "pending")[0], c.viec(t, donB, "pending")[0]
+	r := c.bamMe(t, c.quay, a, b)
+	canDat(t, r, http.StatusCreated)
+	me := r.so(t, "production_batch_id")
+	truoc := c.anhSanXuat(t, a, b)
+	goKeo := c.keoCat(t, fmt.Sprintf("test_cat_lui_me_%d", b), "station_job", "BEFORE UPDATE",
+		fmt.Sprintf("NEW.id = %d AND NEW.status = 'pending'", b))
+	canMa(t, c.luiMe(t, c.quay, me), http.StatusInternalServerError, "internal_error", "")
+	if sau := c.anhSanXuat(t, a, b); sau != truoc {
+		t.Fatalf("cắt giữa lần lùi mẻ mà một bàn nửa sống:\n trước %s\n sau   %s", truoc, sau)
+	}
+	if n := c.docSo(t, "SELECT count(*) FROM shop.production_batch WHERE id = $1 AND is_rolled_back", me); n != 0 {
+		t.Fatal("cắt giữa lần lùi mà mẻ vẫn mang dấu đã lùi")
+	}
+	t.Logf("cắt giữa lần lùi mẻ %d ⇒ 500, database y như trước: %s", me, truoc)
+	goKeo()
+	canDat(t, c.luiMe(t, c.quay, me), http.StatusOK)
+}
+
+// F-068 (T-209): I-018 vế *đồng thời* qua một cửa sửa — lần sửa và vết của nó là một. Kéo cắt làm câu ghi VẾT của lần huỷ đơn hỏng
+// (sau khi dòng đơn đã đổi trong cùng câu lệnh); cửa trả 500, đơn giữ trạng thái cũ và không vết nào ở lại.
+func TestI018_CatLucGhiVetCuaCuaSuaKhongNuaNaoSong(t *testing.T) {
+	c := dungBan(t)
+	_, _, don, _ := c.phienDangPhucVu(t, "cắt vết huỷ")
+	truoc := c.docChu(t, "SELECT status FROM shop.sales_order WHERE id = $1", don)
+	vet := c.docSo(t, "SELECT count(*) FROM shop.record_revision WHERE target_table_code = 'sales_order' AND target_row = $1", don)
+	goKeo := c.keoCat(t, fmt.Sprintf("test_cat_vet_huy_%d", don), "record_revision", "BEFORE INSERT",
+		fmt.Sprintf("NEW.target_table_code = 'sales_order' AND NEW.target_row = %d", don))
+	canMa(t, c.huyDon(t, c.quay, don), http.StatusInternalServerError, "internal_error", "")
+	if s := c.docChu(t, "SELECT status FROM shop.sales_order WHERE id = $1", don); s != truoc {
+		t.Fatalf("cắt lúc ghi vết mà lần sửa vẫn sống: %s → %s", truoc, s)
+	}
+	if n := c.docSo(t, "SELECT count(*) FROM shop.record_revision WHERE target_table_code = 'sales_order' AND target_row = $1", don); n != vet {
+		t.Fatalf("cắt lúc ghi vết mà vết vẫn ở lại: %d → %d", vet, n)
+	}
+	t.Logf("cắt lúc ghi vết của lần huỷ đơn %d ⇒ 500, đơn vẫn %s, %d vết", don, truoc, vet)
+	goKeo()
+	canDat(t, c.huyDon(t, c.quay, don), http.StatusOK)
+	if n := c.docSo(t, "SELECT count(*) FROM shop.record_revision WHERE target_table_code = 'sales_order' AND target_row = $1", don); n <= vet {
+		t.Fatal("huỷ lại sau khi gỡ kéo cắt mà không vết")
+	}
+}
+
 // --- đã ra bàn: số cái từng thứ cho một bàn (S-5, chốt 2026-10-09 — ADR-090 điểm 4) ---------
 
 func TestI020_DaRaBanTheoSoCaiTungThuChoMotBan(t *testing.T) {
