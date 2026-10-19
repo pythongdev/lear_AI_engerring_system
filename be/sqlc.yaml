@@ -10,6 +10,8 @@ sql:
       - internal/menu/sql/doi_phu_thu
       - internal/menu/sql/ngung_ban
       - internal/menu/sql/sua_thanh_phan
+      - internal/menu/sql/them_lua_chon
+      - internal/menu/sql/an_lua_chon
     gen:
       go:
         package: sqlcgen

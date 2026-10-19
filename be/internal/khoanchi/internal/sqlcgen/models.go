@@ -265,12 +265,14 @@ type MenuItemOptionGroup struct {
 }
 
 type MenuOption struct {
-	ID            int64
-	OptionGroupID int64
-	Name          string
-	SurchargeVnd  int64
-	CreatedAt     pgtype.Timestamptz
-	IsDefault     bool
+	ID               int64
+	OptionGroupID    int64
+	Name             string
+	SurchargeVnd     int64
+	CreatedAt        pgtype.Timestamptz
+	IsDefault        bool
+	HiddenAt         pgtype.Timestamptz
+	HiddenByPersonID pgtype.Int8
 }
 
 type OpeningFloat struct {

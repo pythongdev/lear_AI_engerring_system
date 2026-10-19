@@ -193,3 +193,95 @@ func (s *Service) DoiTenMon(ctx context.Context, nguoi, id int64, ten, lyDo stri
 	})
 	return
 }
+
+// --- T-210: topping (master_plan/shop-facts.md §8.9 *QUẢN LÝ TOPPING*) ------------------------
+
+var ThemLuaChon = authz.Door{Code: "menu/them_lua_chon", Need: authz.NeedOwner}
+
+// AnLuaChon là cửa của cả ẩn lẫn bật lại: hai đường gọi, một ô ghi (Gate 1f).
+var AnLuaChon = authz.Door{Code: "menu/an_lua_chon", Need: authz.NeedOwner}
+
+type LuaChonMoi struct {
+	MenuOptionID  int64  `json:"menu_option_id"`
+	OptionGroupID int64  `json:"option_group_id"`
+	Name          string `json:"name"`
+	SurchargeVnd  int64  `json:"surcharge_vnd"`
+}
+
+func (s *Service) DocNhom(ctx context.Context, nguoi int64) (out []NhomLuaChon, err error) {
+	err = authz.Read(ctx, s.pool, nguoi, authz.NeedOwner, func(tx pgx.Tx) error {
+		var e error
+		out, e = newRepository(tx).docNhom(ctx)
+		return e
+	})
+	return
+}
+
+// ThemLuaChon thêm một lựa chọn không mặc định vào nhóm có sẵn; moNhom là các nhóm chủ quán tích cho lựa chọn mở
+// (luật 3 §4.6). Nhóm mở phải là nhóm khác và có thật — sai thì invalid_request trên enables_option_group_ids.
+func (s *Service) ThemLuaChon(ctx context.Context, nguoi, nhom int64, ten string, phuThu int64, moNhom []int64) (out LuaChonMoi, err error) {
+	err = authz.Run(ctx, s.pool, nguoi, ThemLuaChon, func(tx pgx.Tx) error {
+		r := newRepository(tx)
+		if e := khongThay(r.khoaNhom(ctx, nhom), apierr.CodeOptionGroupNotFound); e != nil {
+			return e
+		}
+		da := map[int64]bool{}
+		for _, g := range moNhom {
+			if g == nhom || da[g] {
+				return apierr.Error{Code: apierr.CodeInvalidRequest, Field: "enables_option_group_ids"}
+			}
+			da[g] = true
+			if e := r.khoaNhom(ctx, g); e != nil {
+				if errors.Is(e, pgx.ErrNoRows) {
+					return apierr.Error{Code: apierr.CodeInvalidRequest, Field: "enables_option_group_ids"}
+				}
+				return e
+			}
+		}
+		row, e := r.themLuaChon(ctx, nhom, ten, phuThu)
+		if e != nil {
+			return e
+		}
+		for _, g := range moNhom {
+			if e := r.themDieuKien(ctx, g, row.ID); e != nil {
+				return e
+			}
+		}
+		out = LuaChonMoi{MenuOptionID: row.ID, OptionGroupID: row.OptionGroupID, Name: row.Name, SurchargeVnd: row.SurchargeVnd}
+		return nil
+	})
+	return
+}
+
+// AnLuaChon · BoAnLuaChon: lý do bắt buộc, đi qua vết (I-018). Lựa chọn mặc định của nhóm không ẩn được (§8.9, cách đọc).
+func (s *Service) AnLuaChon(ctx context.Context, nguoi, id int64, lyDo string) (out PhuThu, err error) {
+	return s.doiAn(ctx, nguoi, id, lyDo, true)
+}
+
+func (s *Service) BoAnLuaChon(ctx context.Context, nguoi, id int64, lyDo string) (out PhuThu, err error) {
+	return s.doiAn(ctx, nguoi, id, lyDo, false)
+}
+
+func (s *Service) doiAn(ctx context.Context, nguoi, id int64, lyDo string, an bool) (out PhuThu, err error) {
+	err = authz.Run(ctx, s.pool, nguoi, AnLuaChon, func(tx pgx.Tx) error {
+		r := newRepository(tx)
+		row, e := r.khoaLuaChonAn(ctx, id)
+		if e := khongThay(e, apierr.CodeMenuOptionNotFound); e != nil {
+			return e
+		}
+		switch {
+		case an && row.DaAn:
+			return apierr.Error{Code: apierr.CodeMenuOptionHidden}
+		case an && row.IsDefault:
+			return apierr.Error{Code: apierr.CodeMenuOptionIsDefault}
+		case !an && !row.DaAn:
+			return apierr.Error{Code: apierr.CodeMenuOptionNotHidden}
+		}
+		if e := r.khaiLyDo(ctx, strings.TrimSpace(lyDo)); e != nil {
+			return e
+		}
+		out = PhuThu{MenuOptionID: id}
+		return r.datAnLuaChon(ctx, id, an)
+	})
+	return
+}

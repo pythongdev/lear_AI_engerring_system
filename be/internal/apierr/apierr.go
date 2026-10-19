@@ -134,8 +134,14 @@ const (
 	CodeQRCodeIssueConflict Code = "qr_code_issue_conflict"
 
 	// Menu và giá (P3-06, I-009 · I-010).
-	CodeMenuItemNotFound          Code = "menu_item_not_found"
-	CodeMenuOptionNotFound        Code = "menu_option_not_found"
+	CodeMenuItemNotFound   Code = "menu_item_not_found"
+	CodeMenuOptionNotFound Code = "menu_option_not_found"
+	// T-210 — topping: thêm, ẩn, bật lại lựa chọn trong nhóm có sẵn.
+	CodeOptionGroupNotFound       Code = "option_group_not_found"
+	CodeMenuOptionNameTaken       Code = "menu_option_name_taken"
+	CodeMenuOptionHidden          Code = "menu_option_hidden"
+	CodeMenuOptionNotHidden       Code = "menu_option_not_hidden"
+	CodeMenuOptionIsDefault       Code = "menu_option_is_default"
 	CodeMenuComponentNotFound     Code = "menu_component_not_found"
 	CodeMenuItemComponentNotFound Code = "menu_item_component_not_found"
 	CodeMenuItemDiscontinued      Code = "menu_item_discontinued"
@@ -259,6 +265,11 @@ var statusOf = map[Code]int{
 	CodeQRCodeIssueConflict:       409,
 	CodeMenuItemNotFound:          404,
 	CodeMenuOptionNotFound:        404,
+	CodeOptionGroupNotFound:       404,
+	CodeMenuOptionNameTaken:       409,
+	CodeMenuOptionHidden:          409,
+	CodeMenuOptionNotHidden:       409,
+	CodeMenuOptionIsDefault:       409,
 	CodeMenuComponentNotFound:     404,
 	CodeMenuItemComponentNotFound: 404,
 	CodeMenuItemDiscontinued:      409,
@@ -273,6 +284,9 @@ var constraintCodes = map[string]Code{
 	"daily_minimum_workers_positive_check":             CodeInvalidRequest,
 	"workers_present_declaration_count_positive_check": CodeInvalidRequest,
 	"menu_item_name_key":                               CodeMenuItemNameConflict,
+	"menu_option_name_in_group_key":                    CodeMenuOptionNameTaken,
+	"menu_option_name_not_blank_check":                 CodeInvalidRequest,
+	"menu_option_surcharge_non_negative_check":         CodeInvalidRequest,
 	"menu_component_name_key":                          CodeMenuComponentNameConflict,
 	"menu_item_name_not_blank_check":                   CodeInvalidRequest,
 	"menu_component_name_not_blank_check":              CodeInvalidRequest,

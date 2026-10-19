@@ -1467,6 +1467,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-15 | Chủ repo trả lời lượt bảy trong hội thoại (P3A-06): giá mỗi combo **chủ quán tự đưa**; khách chọn nhân **riêng từng món** trong combo; phụ thu trong combo **chủ quán đặt theo từng món của combo**, không đếm +1.000 mỗi phần; mở U-096 | §8.9 |
 | 2026-10-15 | Chủ repo trả lời lượt tám trong hội thoại (P3A-11), chọn trong câu hỏi có sẵn phương án: lựa chọn chưa đặt mức trong combo **cộng 0đ** (đóng U-096); món nhiều suất trong combo **mỗi suất chọn nhân riêng**; mức phụ thu **cộng mỗi suất một lần**; mức phụ thu trong combo **khoá như giá combo** — chỉ đổi ngoài giờ bán | §8.9 |
 | 2026-10-16 | Chủ quán trả lời năm câu của mục tổng quan (T-198), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn phương án bốn vế: khách đang phục vụ **đếm bằng số bàn** (U-097); tiến độ là **số bánh đã ra so với số bánh tối thiểu chủ quán nhập mỗi ngày** (U-098); tạm tính **cộng giá các phần đã ra bàn** (U-099); mang đi và giao hàng **có** tính, bày **tách online · offline** (U-100, mở S-10); **thiếu người** so với **số người tối thiểu chủ quán nhập mỗi ngày**, **thiếu món** là món đã ra ít hơn khách đặt (U-101) | §8.6 |
+| 2026-10-19 | Chủ repo chọn trong hội thoại (T-210): topping là **thêm lựa chọn vào nhóm có sẵn**; chủ quán **tích** lựa chọn mới có cho chọn nhóm khác (lượng nhân) không; phụ thu **như lựa chọn cũ** (mỗi phần nhận nhân); **ẩn có lý do, bật lại được** | §8.9 |
 | 2026-10-19 | Chủ repo trả lời trong hội thoại (T-205, hai vế của U-094): địa chỉ *"ngõ 332 hoàng công chất số 14b6"*, mở *"tất cả các ngày trừ tết âm lịch từ 6-10h30"*. Hỏi lại vì lệch §1 (06:00–11:00) — chủ repo chọn **giữ 06:00–11:00**; ngày nghỉ Tết chọn **mỗi năm chủ quán báo**. *Lời chọn:* phường, quận **Phú Diễn, Bắc Từ Liêm, Hà Nội** là chữ Claude viết sẵn trong phương án *"Chưa có tên miền"*, chủ repo chọn phương án ấy — chưa ai gõ ra | §1 |
 | 2026-10-19 | Chủ repo chọn trong hội thoại (T-204): chưa có lần nhập hoặc lần nhập gần nhất ghi 0 ⇒ **luôn nhắc POS kiểm tra**; dùng trước lần nhập đầu mà đã có lần nhập ⇒ **so tỉ lệ như thường** (đóng U-102) | §8.4 |
 | 2026-10-18 | Chủ repo trả lời ba vế thi công của mục tổng quan (T-199): tạm tính phần thuộc combo **không tính giá thành phần**; *bánh* của tiến độ là **bánh cuốn và bánh trứng**; **offline là bán hàng tại quán** (đóng **S-10**, suy ra 2026-10-16: *offline* gồm cả giao hàng đặt qua điện thoại — lời mới hẹp hơn: chỉ tại quán) | §8.6 |
@@ -2158,6 +2159,18 @@ hỏi, *lời chọn* của chủ repo trong câu hỏi có sẵn phương án: 
 giá riêng. *Cách đọc của phiên, chưa ai xác nhận:* *xoá món* là ngừng bán · ẩn, không xoá cứng
 (`docs/product/2-db/01-quy-uoc-du-lieu.md`); giá combo vẫn là tổng thành phần (§4.7); lời này không chạm §6.12 (món
 ngoài bảng giá gõ tay ở quầy). Danh mục gồm những nhóm nào thì lời không nói.
+
+**2026-10-19 — QUẢN LÝ TOPPING** (T-210; chủ repo trả lời trong hội thoại, chọn trong câu hỏi có sẵn phương án). Ba vế:
+
+1. Chủ quán **thêm lựa chọn vào nhóm có sẵn** (ví dụ một loại nhân mới vào nhóm *Nhân*); **không** tạo nhóm mới.
+2. Lúc thêm một lựa chọn, **chủ quán tích** lựa chọn ấy có cho chọn nhóm khác hay không (ví dụ loại nhân mới có cho chọn
+   *Lượng nhân* không) — luật 3 của §4.6 thành một ô chủ quán đặt cho từng lựa chọn, *Chay* cũ vẫn không cho.
+3. Phụ thu của lựa chọn mới tính **như lựa chọn cũ** — một mức cho **mỗi phần nhận nhân**, máy nhân theo suất (luật 5 §4.6).
+   Chủ quán **ẩn** được một lựa chọn không bán nữa (kèm lý do, bật lại được); khách không chọn được lựa chọn đã ẩn, đơn cũ
+   giữ nguyên.
+
+*Cách đọc của phiên, chưa ai xác nhận:* lựa chọn đang là mặc định của nhóm (§4.6 luật 8) không ẩn được — ẩn nó thì màn gọi
+món chọn sẵn một thứ khách không chọn được; muốn ẩn thì đổi mặc định trước (chưa có cửa đổi mặc định).
 
 **Lượt năm 2026-10-14 — GIÁ COMBO ĐẶT RIÊNG** (T-187, đóng `U-092`; chủ repo trả lời trong hội thoại: *"Giá combo đặt
 riêng"*). Chủ quán đặt **một giá riêng** cho mỗi combo; giá ấy **không** cộng từ giá các món trong combo — câu *giá

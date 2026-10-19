@@ -2,6 +2,7 @@ package menu
 
 import (
 	"context"
+	"encoding/json"
 
 	"banhcuon/be/internal/menu/internal/sqlcgen"
 	"github.com/jackc/pgx/v5"
@@ -80,4 +81,52 @@ func (r repository) themThanhPhan(ctx context.Context, mon int64, tp ThanhPhanMo
 func (r repository) doiTenMon(ctx context.Context, id int64, ten string) (Mon, error) {
 	row, e := r.q.DoiTenMon(ctx, sqlcgen.DoiTenMonParams{ID: id, Name: ten})
 	return Mon{row.ID, row.Name}, e
+}
+
+// --- T-210: topping ---------------------------------------------------------------------------
+
+type LuaChonNhom struct {
+	MenuOptionID int64   `json:"menu_option_id"`
+	Name         string  `json:"name"`
+	SurchargeVnd int64   `json:"surcharge_vnd"`
+	IsDefault    bool    `json:"is_default"`
+	HiddenAt     *string `json:"hidden_at"`
+}
+
+type NhomLuaChon struct {
+	OptionGroupID         int64         `json:"option_group_id"`
+	Name                  string        `json:"name"`
+	PrerequisiteOptionIDs []int64       `json:"prerequisite_option_ids"`
+	Options               []LuaChonNhom `json:"options"`
+}
+
+func (r repository) docNhom(ctx context.Context) ([]NhomLuaChon, error) {
+	raw, err := r.q.DocNhomLuaChon(ctx)
+	if err != nil {
+		return nil, err
+	}
+	out := []NhomLuaChon{}
+	return out, json.Unmarshal(raw, &out)
+}
+
+func (r repository) khoaNhom(ctx context.Context, id int64) error {
+	_, err := r.q.KhoaNhom(ctx, id)
+	return err
+}
+
+func (r repository) khoaLuaChonAn(ctx context.Context, id int64) (sqlcgen.KhoaLuaChonAnRow, error) {
+	return r.q.KhoaLuaChonAn(ctx, id)
+}
+
+func (r repository) themLuaChon(ctx context.Context, nhom int64, ten string, phuThu int64) (sqlcgen.ThemLuaChonRow, error) {
+	return r.q.ThemLuaChon(ctx, sqlcgen.ThemLuaChonParams{OptionGroupID: nhom, Name: ten, SurchargeVnd: phuThu})
+}
+
+func (r repository) themDieuKien(ctx context.Context, nhom, luaChon int64) error {
+	return r.q.ThemDieuKien(ctx, sqlcgen.ThemDieuKienParams{OptionGroupID: nhom, MenuOptionID: luaChon})
+}
+
+func (r repository) datAnLuaChon(ctx context.Context, id int64, an bool) error {
+	_, err := r.q.DatAnLuaChon(ctx, sqlcgen.DatAnLuaChonParams{ID: id, Column2: an})
+	return err
 }

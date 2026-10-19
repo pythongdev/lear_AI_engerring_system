@@ -94,6 +94,7 @@ type nhomMenu struct {
 type luaChonDaDoc struct {
 	LuaChon
 	OptionGroupID int64 `json:"option_group_id"`
+	Hidden        bool  `json:"hidden"` // T-210: đã ẩn tại mốc tính
 }
 
 // Tinh kiểm từng dòng theo thứ tự gửi; lỗi đầu tiên thắng, không có kết quả một phần.
@@ -176,6 +177,12 @@ func tinhMon(ctx context.Context, q Querier, yc SuatYeuCau, moc *time.Time, truo
 	for _, id := range yc.OptionIDs {
 		if _, co := theoMa[id]; !co {
 			return tuChoi(apierr.CodeMenuOptionNotFound, "option_ids")
+		}
+	}
+	// T-210 (§8.9): khách không chọn được lựa chọn chủ quán đã ẩn; xét sau tồn tại, trước tổ hợp.
+	for _, id := range yc.OptionIDs {
+		if theoMa[id].Hidden {
+			return tuChoi(apierr.CodeMenuOptionHidden, "option_ids")
 		}
 	}
 	daChon := make(map[int64]bool, len(yc.OptionIDs))

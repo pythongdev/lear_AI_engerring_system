@@ -6,6 +6,7 @@ export const mucChuQuan = [
   { nhan: "Sản phẩm", route: "/chu-quan/san-pham" },
   { nhan: "Danh mục", route: "/chu-quan/danh-muc" },
   { nhan: "Combo", route: "/chu-quan/combo" },
+  { nhan: "Topping", route: "/chu-quan/topping" },
   { nhan: "Nhân viên", route: "/chu-quan/nhan-vien" },
   { nhan: "Giao việc", route: "/chu-quan/giao-viec" },
   { nhan: "Nguyên liệu", route: "/chu-quan/nguyen-lieu" },

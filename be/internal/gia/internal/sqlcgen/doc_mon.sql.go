@@ -58,7 +58,9 @@ menu_option_tai_moc AS (
  (COALESCE(v.before_image, to_jsonb(goc))->>'option_group_id')::bigint AS option_group_id,
  (COALESCE(v.before_image, to_jsonb(goc))->>'name')::text AS name,
  (COALESCE(v.before_image, to_jsonb(goc))->>'surcharge_vnd')::bigint AS surcharge_vnd,
- (COALESCE(v.before_image, to_jsonb(goc))->>'is_default')::boolean AS is_default
+ (COALESCE(v.before_image, to_jsonb(goc))->>'is_default')::boolean AS is_default,
+ -- T-210: đã ẩn TẠI MỐC tính (ảnh trước bước 34 không có khoá hidden_at ⇒ chưa ẩn).
+ COALESCE((COALESCE(v.before_image, to_jsonb(goc))->>'hidden_at')::timestamptz <= COALESCE($3::timestamptz, now()), false) AS an
  FROM menu_option goc
  LEFT JOIN vet v ON v.target_table_code = 'menu_option' AND v.target_row = goc.id
  WHERE goc.created_at <= COALESCE($3::timestamptz, now())
@@ -91,12 +93,12 @@ SELECT m.name, COALESCE(m.discontinued_at <= COALESCE($3::timestamptz, now()), f
    FROM option_group_prerequisite_tai_moc p WHERE p.option_group_id = g.id),
  'options', (SELECT COALESCE(jsonb_agg(jsonb_build_object(
    'menu_option_id', o.id, 'option_name', o.name, 'is_default', o.is_default) ORDER BY o.id), '[]'::jsonb)
-   FROM menu_option_tai_moc o WHERE o.option_group_id = g.id)) ORDER BY g.id), '[]'::jsonb)
+   FROM menu_option_tai_moc o WHERE o.option_group_id = g.id AND NOT o.an)) ORDER BY g.id), '[]'::jsonb)
  FROM menu_item_option_group_tai_moc ig JOIN option_group_tai_moc g ON g.id = ig.option_group_id
  WHERE ig.menu_item_id = $1::bigint)::jsonb AS nhom,
  (SELECT COALESCE(jsonb_agg(jsonb_build_object(
    'menu_option_id', o.id, 'option_group_id', g.id, 'option_group_name', g.name,
-   'option_name', o.name, 'surcharge_vnd', o.surcharge_vnd) ORDER BY o.id), '[]'::jsonb)
+   'option_name', o.name, 'surcharge_vnd', o.surcharge_vnd, 'hidden', o.an) ORDER BY o.id), '[]'::jsonb)
   FROM menu_option_tai_moc o JOIN option_group_tai_moc g ON g.id = o.option_group_id WHERE o.id = ANY($2::bigint[]))::jsonb AS lua_chon
  FROM menu_item_tai_moc m WHERE m.id = $1::bigint
 `

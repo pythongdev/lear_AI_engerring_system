@@ -48,6 +48,7 @@ Số phần nhận nhân đọc ra từ thành phần (`takes_filling`), không 
 | 3 | món không tồn tại | `menu_item_not_found` | — |
 | 4 | món đã ngừng bán tại mốc tính giá | `menu_item_discontinued` | `I-009` tầng 3 · **ADR-056** |
 | 5 | một mã lựa chọn không tồn tại | `menu_option_not_found` | — |
+| 5a | một lựa chọn đã ẩn tại mốc tính giá (thêm 2026-10-19, `T-210`) | `menu_option_hidden` (409) | §8.9 *QUẢN LÝ TOPPING* · **ADR-122** |
 | 6 | tổ hợp sai (dưới) | `option_combination_invalid` | `I-010` · §4.6 luật 3 · 7 |
 
 **Tổ hợp đúng** khi: không mã nào lặp; mỗi lựa chọn thuộc một nhóm mà món **mang**; mỗi nhóm **có

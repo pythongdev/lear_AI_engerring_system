@@ -1,6 +1,7 @@
 package menu
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -24,6 +25,10 @@ func Routes(r *gin.Engine, svc *Service) {
 	r.PUT("/menu-options/:menu_option_id/surcharge", h.doiPhuThu)
 	r.PUT("/menu-items/:menu_item_id/components/:menu_component_id", h.suaThanhPhan)
 	r.POST("/menu-items/:menu_item_id/discontinuation", h.ngungBan)
+	r.GET("/option-groups", h.docNhom)
+	r.POST("/option-groups/:option_group_id/options", h.themLuaChon)
+	r.POST("/menu-options/:menu_option_id/hiding", h.anLuaChon)
+	r.POST("/menu-options/:menu_option_id/unhiding", h.boAnLuaChon)
 }
 
 type handler struct {
@@ -268,4 +273,77 @@ func (h handler) doiTenMon(c *gin.Context) {
 	}
 	out, e := h.svc.DoiTenMon(c.Request.Context(), nguoi(c), id, p.Name, p.Reason)
 	traVe(c, e, out)
+}
+
+// --- T-210: topping ---------------------------------------------------------------------------
+
+func (h handler) docNhom(c *gin.Context) {
+	out, err := h.svc.DocNhom(c.Request.Context(), nguoi(c))
+	traVe(c, err, struct {
+		OptionGroups []NhomLuaChon `json:"option_groups"`
+	}{out})
+}
+
+func (h handler) themLuaChon(c *gin.Context) {
+	nhom, ok := docID(c, "option_group_id")
+	if !ok {
+		return
+	}
+	var yc struct {
+		Name                  string  `json:"name"`
+		SurchargeVnd          *int64  `json:"surcharge_vnd"`
+		EnablesOptionGroupIDs []int64 `json:"enables_option_group_ids"`
+	}
+	if !docJSON(c, &yc) {
+		return
+	}
+	yc.Name = strings.TrimSpace(yc.Name)
+	if yc.Name == "" {
+		saiTruong(c, "name")
+		return
+	}
+	if yc.SurchargeVnd == nil || *yc.SurchargeVnd < 0 {
+		saiTruong(c, "surcharge_vnd")
+		return
+	}
+	if yc.EnablesOptionGroupIDs == nil {
+		yc.EnablesOptionGroupIDs = []int64{}
+	}
+	for _, g := range yc.EnablesOptionGroupIDs {
+		if g <= 0 {
+			saiTruong(c, "enables_option_group_ids")
+			return
+		}
+	}
+	kq, err := h.svc.ThemLuaChon(c.Request.Context(), nguoi(c), nhom, yc.Name, *yc.SurchargeVnd, yc.EnablesOptionGroupIDs)
+	if err != nil {
+		writeErr(c, err)
+		return
+	}
+	c.Writer.Header().Set("Content-Type", "application/json")
+	c.Writer.WriteHeader(http.StatusCreated)
+	_ = json.NewEncoder(c.Writer).Encode(kq)
+}
+
+func (h handler) anLuaChon(c *gin.Context)   { h.doiAn(c, h.svc.AnLuaChon) }
+func (h handler) boAnLuaChon(c *gin.Context) { h.doiAn(c, h.svc.BoAnLuaChon) }
+
+func (h handler) doiAn(c *gin.Context, lam func(ctx context.Context, nguoi, id int64, lyDo string) (PhuThu, error)) {
+	id, ok := docID(c, "menu_option_id")
+	if !ok {
+		return
+	}
+	var yc struct {
+		Reason string `json:"reason"`
+	}
+	if !docJSON(c, &yc) {
+		return
+	}
+	if !coLyDo(c, yc.Reason) {
+		return
+	}
+	kq, err := lam(c.Request.Context(), nguoi(c), id, yc.Reason)
+	traVe(c, err, struct {
+		MenuOptionID int64 `json:"menu_option_id"`
+	}{kq.MenuOptionID})
 }

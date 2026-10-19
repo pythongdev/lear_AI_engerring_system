@@ -115,6 +115,8 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `menu/doi_ten` | `chu_quan` | Phiếu P3A-07; `shop-facts.md` §8.9, chủ quán sửa thông tin món |
 | `menu/doi_gia_thanh_phan` | `chu_quan` | `architecture.md` §6.1 · `I-012` (chủ quán đổi giá) |
 | `menu/doi_phu_thu` | `chu_quan` | `architecture.md` §6.1 · `I-012` |
+| `menu/them_lua_chon` | `chu_quan` | chủ quán quản lý topping (`master_plan/shop-facts.md` §8.9, 2026-10-19, T-210) · `I-012` |
+| `menu/an_lua_chon` | `chu_quan` | chủ quán quản lý topping — ẩn và bật lại, một cửa hai đường gọi (`master_plan/shop-facts.md` §8.9, 2026-10-19, T-210) · `I-012` |
 | `menu/sua_thanh_phan` | `chu_quan` | `architecture.md` §6.1 · `I-011` · `I-012` |
 | `menu/ngung_ban` | `chu_quan` | `architecture.md` §6.1 · `03-lat-cat.md` §3.3.4 |
 | `don/duyet` | `quay` | `05-vong-doi.md` §5.2 — quầy duyệt đơn chờ xác nhận |

@@ -252,6 +252,13 @@ var cacCaVet = []caVet{
 			c.suaMenu(t, c.chu, "PUT", fmt.Sprintf("/menu-components/%d/base-price", id), map[string]any{"base_price_vnd": 2000, "reason": "đổi giá kiểm vết"})
 		}}
 	}},
+	{"menu/an_lua_chon", func(t *testing.T, c canh) dichVet {
+		group := c.id(t, "INSERT INTO shop.option_group(name) VALUES ($1) RETURNING id", t.Name())
+		id := c.id(t, "INSERT INTO shop.menu_option(option_group_id,name,surcharge_vnd) VALUES ($1,$2,0) RETURNING id", group, t.Name())
+		return dichVet{"menu_option", id, c.chu, "hidden_at", nil, "mốc", func() {
+			c.suaMenu(t, c.chu, "POST", fmt.Sprintf("/menu-options/%d/hiding", id), map[string]any{"reason": "ẩn lựa chọn kiểm vết"})
+		}}
+	}},
 	{"menu/doi_phu_thu", func(t *testing.T, c canh) dichVet {
 		group := c.id(t, "INSERT INTO shop.option_group(name) VALUES ($1) RETURNING id", t.Name())
 		id := c.id(t, "INSERT INTO shop.menu_option(option_group_id,name,surcharge_vnd) VALUES ($1,$2,1000) RETURNING id", group, t.Name())

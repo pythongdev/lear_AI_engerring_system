@@ -417,6 +417,7 @@ cả `items[i].x`) gắn đúng ô. Chữ trên màn do Claude đặt trong test
 6. Gate xanh ở clone chính (khối dưới).
 Còn lại: **đặt mức phụ thu theo món của combo** (cửa có, cần nguồn danh sách lựa chọn của từng món) và **topping** (chưa có
 cửa thêm tuỳ chọn) — hai phần chưa làm của bước này.
+*2026-10-19 (Claude Code):* **topping** xong ở `T-210` (`work/backlog.md`) — cửa thêm · ẩn · bật lại lựa chọn và trang `/chu-quan/topping`.
 
 [↑ đầu file](#top)
 

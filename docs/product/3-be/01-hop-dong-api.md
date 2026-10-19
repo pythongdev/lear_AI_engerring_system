@@ -160,6 +160,8 @@ bản ở `HEAD` và đỏ khi file khác mà phiên bản không lớn hơn.
 Mục tiền tạm tính có schema riêng, hiện trả trạng thái chưa có công thức;
 không đưa doanh thu đã đối soát vào phản hồi tổng quan.
 
+**T-210 (2026-10-19, Claude):** tăng MINOR `0.43.0` → `0.44.0`; topping: `GET /option-groups`, `POST /option-groups/{option_group_id}/options`, `POST /menu-options/{menu_option_id}/hiding` · `/unhiding` (lớp `chu_quan`); năm mã `option_group_not_found` · `menu_option_name_taken` · `menu_option_hidden` · `menu_option_not_hidden` · `menu_option_is_default`; hàm giá trả `409 menu_option_hidden field=option_ids` khi một lựa chọn đã ẩn tại mốc tính; ba tên ràng buộc mới của bước 34 ở `internal`, ba tên cũ của `menu_option` thành mã công khai.
+
 **T-141 (2026-10-19, Claude):** tăng MINOR `0.42.0` → `0.43.0`; hai tên từ chối mới của bước 33 vào `x-constraint-errors` ở mức `unreviewed` (`attendance_day_cancel_note_required_check` · `attendance_day_cancelled_by_owner_check`) — chưa cửa nào huỷ ô chấm công, cửa ấy ra đời thì ánh xạ.
 
 **T-204 (2026-10-19, Claude):** tăng MINOR `0.41.0` → `0.42.0`; `SupplyItem.check_reminder` đổi từ `boolean | null` sang `boolean` — chưa có lần nhập hay lần nhập gần nhất bằng 0 thì `true`, dùng trước lần nhập đầu thì so tỉ lệ (U-102); `GET /supply-check-reminders` có thêm các thứ ấy; sinh lại type FE.

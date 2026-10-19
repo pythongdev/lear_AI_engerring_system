@@ -63,6 +63,12 @@ bản chép thứ hai của `shop-facts.md`.
 Tên tiếng Anh, số ít (`QD-01`). Thành phần tên `menu_component` chứ không `component` để đọc được
 nó thuộc menu — phiên chọn 2026-09-27.
 
+**Bước 34 (`20261019140000_an_lua_chon`, `T-210`, 2026-10-19 — topping, `master_plan/shop-facts.md` §8.9):** `menu_option`
+thêm `hidden_at` · `hidden_by_person_id` cùng khuôn ẩn của danh mục và combo (`menu_option_hidden_by_iff_hidden_check` ·
+`menu_option_hidden_after_created_check` · `menu_option_hidden_by_person_fkey`). Thêm lựa chọn là một dòng `menu_option` mới và
+các dòng `option_group_prerequisite` chủ quán tích — không bảng mới. Lựa chọn đã ẩn tại mốc tính thì hàm giá từ chối
+(`docs/product/3-be/03-ham-gia.md`); đơn cũ đọc ảnh chụp `order_line_option`, không đổi.
+
 ---
 
 ## 2. Mệnh đề → cái giữ nó trong lược đồ → bằng chứng

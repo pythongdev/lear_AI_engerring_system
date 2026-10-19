@@ -107,6 +107,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-210 **Topping: chủ quán thêm, ẩn, bật lại lựa chọn trong nhóm có sẵn** — `GET /option-groups` · `POST /option-groups/{option_group_id}/options` · `POST /menu-options/{menu_option_id}/hiding` · `…/unhiding`; hàm giá từ chối lựa chọn đã ẩn; trang `/chu-quan/topping` — L2 (chạm hàm giá) — mở và nhận 2026-10-19 · Claude Code theo lời chủ repo — 2026-10-19 · [chi tiết](#t-210)
 - [x] T-209 **Hai ô trống của cổng pha 3 (F-068)** — test cắt giữa bấm mẻ · lùi mẻ · lúc ghi vết của lần huỷ đơn, test từ chối qua cửa cho `I-006` vế tầng 3; ký ô 1 · ô 2 (`I-019` ký có lý do) — L2 (chỉ thêm test) — 2026-10-19 · Claude Code · [chi tiết](#t-209)
 - [x] T-208 **Gate 9: git từ chối commit nhặt file của nhiều task (F-025)** — `scripts/hooks/pre-commit` khớp file staged với scope từng task bằng `check-scope.sh --match`; `install-hooks.sh --check` đòi cả hook mới; CLAUDE.md §6.2 — L1 — 2026-10-19 · Claude Code theo lời chủ repo *"F-025: hook pre-commit"* · [chi tiết](#t-208)
 - [x] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ và thi công (2026-10-19, Codex không tham gia) — 2026-10-19 · [chi tiết](#t-141)
@@ -426,6 +427,60 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-210"></a>
+### T-210 — Topping: chủ quán quản lý lựa chọn phụ thu (phần còn bị chặn của P4A-05)
+
+**Yêu cầu:** chủ repo 2026-10-19 chọn làm *"Topping và phụ thu combo"*, rồi trả lời ba câu (`master_plan/shop-facts.md` §8.9 đoạn
+*2026-10-19 — QUẢN LÝ TOPPING*). **Mức:** L2 — chạm hàm tính giá duy nhất (`I-010` · `I-013`) và hợp đồng.
+
+**Claude chốt (thiết kế):**
+1. Bước 34 `20261019140000_an_lua_chon`: `menu_option` thêm `hidden_at` · `hidden_by_person_id` (cùng khuôn ẩn của danh mục,
+   combo); vai ghi được sửa đúng hai cột ấy. Thêm lựa chọn là `INSERT menu_option` (+ `option_group_prerequisite` cho mỗi nhóm
+   chủ quán tích); không bảng mới.
+2. Bốn cửa lớp `chu_quan`: `menu/doc_nhom` `GET /option-groups` (mọi nhóm, mọi lựa chọn kể cả đã ẩn, tập điều kiện);
+   `menu/them_lua_chon` `POST /option-groups/{option_group_id}/options` `{name, surcharge_vnd, enables_option_group_ids}` ⇒ 201;
+   `menu/an_lua_chon` `POST /menu-options/{menu_option_id}/hiding` `{reason}`; `menu/bo_an_lua_chon` `…/unhiding` `{reason}`.
+   Mã mới: `option_group_not_found` 404 · `menu_option_name_taken` 409 · `menu_option_hidden` 409 · `menu_option_not_hidden` 409 ·
+   `menu_option_is_default` 409. Không có cửa đổi tên hay xoá lựa chọn.
+3. Hàm giá (`be/internal/gia`): lựa chọn đã ẩn **tại mốc tính** ⇒ `409 menu_option_hidden field=option_ids`; menu và danh sách nhóm của
+   món không bày lựa chọn đã ẩn. Đơn cũ đọc ảnh chụp, không đổi. Mốc ẩn đọc qua vết như mọi cột khác của `doc_mon.sql`.
+4. Hợp đồng MINOR `0.43.0` → `0.44.0`.
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. `be/internal/menu`: test thêm lựa chọn vào nhóm *Nhân* có tích *Lượng nhân* ⇒ 201; tính thử món với lựa chọn mới + *Nhiều nhân* ⇒ giá
+   = giá gốc + (phụ thu mới + phụ thu nhiều nhân) × số phần nhận nhân; không tích ⇒ chọn kèm *Lượng nhân* bị `option_combination_invalid`;
+   trùng tên ⇒ `menu_option_name_taken`; nhóm lạ ⇒ `option_group_not_found`; người thường ⇒ `owner_only`.
+2. Ẩn ⇒ 200 và vết có lý do; tính thử với lựa chọn đã ẩn ⇒ `menu_option_hidden`; `GET /menu` không bày nó; ẩn lần hai ⇒
+   `menu_option_hidden`; ẩn mặc định ⇒ `menu_option_is_default`; bật lại ⇒ tính được lại; bật lựa chọn chưa ẩn ⇒ `menu_option_not_hidden`.
+3. `TestI013_*` (13 ca §4.8) vẫn xanh, không sửa điều kiện kiểm; bước 34 xuôi · lùi · xuôi trong `db-check`.
+4. Trang `/chu-quan/topping`: bày nhóm, lựa chọn, phụ thu, trạng thái ẩn; thêm lựa chọn có ô tích nhóm phụ thuộc; ẩn · bật lại bắt buộc lý do;
+   ghi xong đọc lại; `fe-check: PASS`.
+5. Chạy thật: thêm *Thịt + nấm* +1.000 có tích *Lượng nhân*, tính thử một suất trứng *Thịt + nấm · Nhiều nhân*, ẩn rồi bật lại.
+6. Gate 1f · 1g xanh (ô ghi mới, cửa mới, ma trận quyền); `./scripts/gate.sh` xanh.
+
+**Đổi thiết kế khi thi công (Claude, 2026-10-19):** Gate 1f đòi một ô một cửa — ẩn và bật lại ghi cùng hai cột, nên chúng là **một cửa**
+`menu/an_lua_chon` với hai đường gọi (khuôn khoá · mở tài khoản); không có cửa `menu/bo_an_lua_chon`. Đường đọc `GET /option-groups` dùng
+`authz.Read`, không khai cửa ghi. **ADR-122** ghi lại.
+
+**Bàn giao** — 2026-10-19 · **Claude Code**, nhánh `P4A-01`; chưa ai duyệt độc lập. Test viết cùng lượt dựng cửa, không trước.
+1. `TestI010_ThemLuaChonVaoNhomCoSan` PASS: owner_only · option_group_not_found · ba lời sai hình · menu_option_name_taken; *nấm + nhiều* ⇒
+   24.000 (= 18.000 + 2.000 × 3 phần nhận nhân); *nấm* thiếu lượng ⇒ option_combination_invalid; *chay nấm* không tích ⇒ 18.000, kèm lượng
+   ⇒ option_combination_invalid.
+2. `TestI010_AnVaBatLaiLuaChon` PASS: ẩn có vết đủ người · lý do; tính thử ⇒ menu_option_hidden; `DocMenu` không bày; ẩn lần hai ⇒ 409;
+   bật lại ⇒ tính được, menu bày lại; ẩn mặc định ⇒ menu_option_is_default. Ca vết `menu/an_lua_chon` thêm vào `cacCaVet`
+   (`TestI018_TapCuaSuaKhopTapCa` đòi mỗi cửa UPDATE một ca).
+3. `ok banhcuon/be/internal/gia` · `ok …/combo` (13 ca §4.8 không đổi điều kiện); db-check bước 34 — gate dưới. Lộ **F-072** (thứ tự gói test,
+   có sẵn ở HEAD).
+4. `/chu-quan/topping`: `topping.test.tsx` 4 ca; `chu-quan.test.tsx` thêm mục *Topping* (12 mục); `Tests  235 passed (235)`.
+5. Chạy thật (database làm việc, server thật): thêm *Thịt + nấm* +1.000 tích *Lượng nhân* ⇒ `201`; suất trứng chín *Thịt + nấm · Nhiều
+   nhân* ⇒ `unit_price_vnd 30000`, bằng đối chứng *Thịt + mộc nhĩ · Nhiều nhân*; ẩn ⇒ `200`, tính lại ⇒ `409 menu_option_hidden
+   field=lines[0].option_ids`, `GET /menu` không còn chữ *Thịt + nấm*; bật lại ⇒ tính 30000. Cuối lượt ẩn lại lựa chọn thử ấy (lý do ghi rõ).
+6. Lượt gate đầu đỏ ở `gofmt` (`apierr.go` · `menu/service.go`), sửa; lượt hai: `PASS  Gate 1   be-check` · `PASS  Gate 1   db-check — 34 bước xuôi ·
+   lùi · xuôi lại …` · `PASS  Gate 1f … 110 ô ghi, 95 cửa` · `PASS  Gate 1g … hợp đồng 0.44.0` · `fe-check: PASS` (`Tests  276 passed`) ·
+   `PASS  gate     không cổng nào đỏ`. Thêm cột vào `menu_option` làm sqlc sinh lại `models.go` của mọi miền — đúng ý, không đổi hành vi.
+
+[↑ đầu file](#top)
 
 <a id="t-209"></a>
 ### T-209 — Cổng pha 3 còn hai ô trống (F-068)

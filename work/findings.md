@@ -5053,3 +5053,25 @@ làm việc: người lạ duyệt gắn vào người *Chủ quán* `is_owner` 
 
 **Status:**
 Fixed
+
+### F-072 — `TestI010_MenuChoBietMacDinhDeChonSan` đỏ khi gói `menu` chạy trước gói `gia` trên cùng database
+
+**Problem:**
+Đo 2026-10-19 (T-210, Claude Code, database thử dùng chung, ở cả HEAD `93b0d04` không có thay đổi của T-210): `go test ./internal/menu/
+./internal/gia/` ⇒ `--- FAIL: TestI010_MenuChoBietMacDinhDeChonSan`; chạy riêng `gia` ⇒ xanh. Test ấy đọc **toàn bộ** `GET /menu` và đòi
+mọi món có nhóm phải có tổ hợp mặc định hợp lệ; các test của `menu` (`menuGia`) để lại món có nhóm mà không có mặc định.
+
+**Impact:**
+`be-check` chạy gói theo thứ tự chữ cái (`gia` trước `menu`) nên hôm nay xanh. Một gói mới đứng trước `gia` mà dựng món có nhóm — hay đổi
+thứ tự chạy — làm gate đỏ vì dữ liệu của test khác, không vì code.
+
+**Decision / Fix:**
+Chưa sửa. Đề nghị: test đọc toàn menu chỉ xét món của dữ liệu mồi (tên đọc từ `seed.pl`), hoặc test của `menu` cho món giả ngừng bán khi
+xong (như ca `menu/doi_ten` của `vet_cua_test.go`). Một task L1, chỉ test.
+
+**Related task:**
+`T-210` (đo) · `T-169` · ADR-094
+
+**Status:**
+Open
+

@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.43.0
+  version: 0.44.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -2278,6 +2278,227 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /option-groups:
+    get:
+      operationId: listOptionGroups
+      tags:
+        - menu
+      summary: Chủ quán đọc mọi nhóm tuỳ chọn và lựa chọn, kể cả đã ẩn (T-210)
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OptionGroupsAdmin'
+        '401':
+          description: Không xác định được người bấm (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Người bấm không phải chủ quán (owner_only).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /option-groups/{option_group_id}/options:
+    post:
+      operationId: addMenuOption
+      tags:
+        - menu
+      summary: Thêm lựa chọn vào nhóm có sẵn; enables_option_group_ids là các nhóm lựa chọn này mở (luật 3 §4.6, T-210)
+      description: Lựa chọn mới không là mặc định. Phụ thu là mức cho MỗI phần nhận nhân, như lựa chọn cũ.
+      parameters:
+        - name: option_group_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMenuOption'
+      responses:
+        '201':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuOptionCreated'
+        '400':
+          description: Yêu cầu sai hình (invalid_request); field chỉ trường sai nếu xác định được.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Không xác định được người bấm (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Người bấm không phải chủ quán (owner_only).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Không có nhóm (option_group_not_found).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Trùng tên trong nhóm (menu_option_name_taken).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-options/{menu_option_id}/hiding:
+    post:
+      operationId: hideMenuOption
+      tags:
+        - menu
+      summary: Ẩn lựa chọn, có lý do; khách không chọn được nữa, đơn cũ giữ nguyên (T-210)
+      parameters:
+        - name: menu_option_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HideMenuOption'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuOptionRef'
+        '400':
+          description: Yêu cầu sai hình (invalid_request); field chỉ trường sai nếu xác định được.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Không xác định được người bấm (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Người bấm không phải chủ quán (owner_only).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Không tồn tại (menu_option_not_found).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Đã ẩn (menu_option_hidden) hoặc là mặc định của nhóm (menu_option_is_default).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-options/{menu_option_id}/unhiding:
+    post:
+      operationId: unhideMenuOption
+      tags:
+        - menu
+      summary: Bật lại lựa chọn đã ẩn, có lý do (T-210)
+      parameters:
+        - name: menu_option_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HideMenuOption'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuOptionRef'
+        '400':
+          description: Yêu cầu sai hình (invalid_request); field chỉ trường sai nếu xác định được.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Không xác định được người bấm (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Người bấm không phải chủ quán (owner_only).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Không tồn tại (menu_option_not_found).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Chưa ẩn (menu_option_not_hidden).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /menu-items/{menu_item_id}/components/{menu_component_id}:
     put:
       operationId: changeItemComponent
@@ -4300,6 +4521,102 @@ components:
         reason:
           type: string
           minLength: 1
+    OptionGroupsAdmin:
+      type: object
+      additionalProperties: false
+      required: [option_groups]
+      properties:
+        option_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/OptionGroupAdmin'
+    OptionGroupAdmin:
+      type: object
+      additionalProperties: false
+      required: [option_group_id, name, prerequisite_option_ids, options]
+      properties:
+        option_group_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        prerequisite_option_ids:
+          type: array
+          description: Nhóm chỉ có mặt khi một trong các lựa chọn này được chọn; rỗng là luôn có mặt.
+          items:
+            type: integer
+            format: int64
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuOptionAdmin'
+    MenuOptionAdmin:
+      type: object
+      additionalProperties: false
+      required: [menu_option_id, name, surcharge_vnd, is_default, hidden_at]
+      properties:
+        menu_option_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        surcharge_vnd:
+          type: integer
+          format: int64
+          description: Mức cho mỗi phần nhận nhân.
+        is_default:
+          type: boolean
+        hidden_at:
+          type: [string, 'null']
+          format: date-time
+    NewMenuOption:
+      type: object
+      required: [name, surcharge_vnd]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        surcharge_vnd:
+          type: integer
+          format: int64
+          minimum: 0
+        enables_option_group_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+            minimum: 1
+    MenuOptionCreated:
+      type: object
+      additionalProperties: false
+      required: [menu_option_id, option_group_id, name, surcharge_vnd]
+      properties:
+        menu_option_id:
+          type: integer
+          format: int64
+        option_group_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        surcharge_vnd:
+          type: integer
+          format: int64
+    HideMenuOption:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+          minLength: 1
+    MenuOptionRef:
+      type: object
+      additionalProperties: false
+      required: [menu_option_id]
+      properties:
+        menu_option_id:
+          type: integer
+          format: int64
     HideTrainingItem:
       type: object
       required: [reason]
@@ -6130,6 +6447,11 @@ components:
         - menu_component_name_conflict
         - menu_item_not_found
         - menu_option_not_found
+        - option_group_not_found
+        - menu_option_name_taken
+        - menu_option_hidden
+        - menu_option_not_hidden
+        - menu_option_is_default
         - menu_component_not_found
         - menu_item_component_not_found
         - menu_item_discontinued
@@ -6281,6 +6603,11 @@ components:
         menu_component_name_conflict: 409
         menu_item_not_found: 404
         menu_option_not_found: 404
+        option_group_not_found: 404
+        menu_option_name_taken: 409
+        menu_option_hidden: 409
+        menu_option_not_hidden: 409
+        menu_option_is_default: 409
         menu_component_not_found: 404
         menu_item_component_not_found: 404
         menu_item_discontinued: 409
@@ -6852,12 +7179,15 @@ x-constraint-errors:
   menu_item_option_group_option_group_fkey: unreviewed
   menu_item_option_group_pkey: internal
   menu_item_pkey: internal
-  menu_option_name_in_group_key: internal
+  menu_option_name_in_group_key: menu_option_name_taken
   menu_option_one_default_per_group_key: internal
-  menu_option_name_not_blank_check: internal
+  menu_option_name_not_blank_check: invalid_request
   menu_option_option_group_fkey: internal
   menu_option_pkey: internal
-  menu_option_surcharge_non_negative_check: internal
+  menu_option_surcharge_non_negative_check: invalid_request
+  menu_option_hidden_after_created_check: internal
+  menu_option_hidden_by_iff_hidden_check: internal
+  menu_option_hidden_by_person_fkey: internal
   opening_float_line_amount_check: internal
   opening_float_line_one_per_denomination_key: internal
   opening_float_line_opening_float_fkey: internal

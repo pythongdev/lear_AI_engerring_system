@@ -44,7 +44,7 @@ describe("khung chủ quán", () => {
     const muc = within(nav).getByRole("link", { name: "Tổng quan" });
     expect(muc.getAttribute("href")).toBe("/chu-quan");
     expect(muc.getAttribute("aria-current")).toBe("page");
-    expect(within(nav).getAllByRole("link")).toHaveLength(11);
+    expect(within(nav).getAllByRole("link")).toHaveLength(12);
     expect(screen.getByRole("heading", { name: "Tổng quan" })).toBeTruthy();
     expect(replace).not.toHaveBeenCalled();
   });
@@ -120,6 +120,7 @@ describe("khung chủ quán", () => {
       { nhan: "Sản phẩm", route: "/chu-quan/san-pham" },
       { nhan: "Danh mục", route: "/chu-quan/danh-muc" },
       { nhan: "Combo", route: "/chu-quan/combo" },
+      { nhan: "Topping", route: "/chu-quan/topping" },
       { nhan: "Nhân viên", route: "/chu-quan/nhan-vien" },
       { nhan: "Giao việc", route: "/chu-quan/giao-viec" },
       { nhan: "Nguyên liệu", route: "/chu-quan/nguyen-lieu" },
