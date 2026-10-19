@@ -174,3 +174,35 @@ func (s *Service) DatTiLe(ctx context.Context, nguoi, id int64, ratio, reason st
 	})
 	return
 }
+
+// ThuCanKiem chỉ đưa tên và đơn vị tới POS, không đưa các con số của kho.
+type ThuCanKiem struct {
+	ID           int64   `json:"supply_item_id"`
+	Name         string  `json:"name"`
+	PurchaseUnit *string `json:"purchase_unit"`
+}
+type NhacKiemTra struct {
+	ReadAt time.Time    `json:"read_at"`
+	Items  []ThuCanKiem `json:"items"`
+}
+
+func (s *Service) DocNhacKiemTra(ctx context.Context, nguoi int64) (out NhacKiemTra, err error) {
+	out.Items = make([]ThuCanKiem, 0)
+	err = authz.Read(ctx, s.pool, nguoi, authz.NeedCounterOrOwner, func(tx pgx.Tx) error {
+		// Mốc thực của database trong cùng giao dịch kiểm quyền, không dùng đồng hồ giả của ngày bán.
+		if e := tx.QueryRow(ctx, "SELECT now()").Scan(&out.ReadAt); e != nil {
+			return e
+		}
+		items, e := newRepository(tx).doc(ctx, 0)
+		if e != nil {
+			return e
+		}
+		for _, item := range items {
+			if item.ReminderStatus == "ready" && item.CheckReminder != nil && *item.CheckReminder {
+				out.Items = append(out.Items, ThuCanKiem{ID: item.ID, Name: item.Name, PurchaseUnit: item.PurchaseUnit})
+			}
+		}
+		return nil
+	})
+	return
+}

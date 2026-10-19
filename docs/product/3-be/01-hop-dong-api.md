@@ -266,11 +266,11 @@ Tỉ lệ trên dây là chuỗi tỉ phần 0…1, thân ghi tối đa sáu ch�
 Ràng buộc `supply_item_reminder_ratio_range_check` ánh xạ invalid_request; mặc định 0.2
 của migration không giả thành lần nhập có người.
 
-Câu hỏi chuyển Claude, chưa quyết nghiệp vụ: khi chưa có dòng mua, khi lần mua gần nhất bằng 0,
+Câu hỏi chuyển Claude nay là **U-102** ở `docs/product/99-unknowns.md`, chưa quyết nghiệp vụ: khi chưa có dòng mua, khi lần mua gần nhất bằng 0,
 và khi có dòng dùng trước ngày mua đầu tiên thì nhắc như thế nào? Hiện giữ nguyên tổng của sổ,
 trả lần lượt `no_purchase`, `latest_purchase_zero`, `usage_before_first_purchase` và cờ null.
-Cờ dành để POS kiểm tra không cấp cho POS quyền đọc kho: phiếu chỉ cho chủ quán đọc; đường
-hiển thị/gửi lời nhắc tới POS cần bước tích hợp được giao riêng.
+Cờ dành để POS kiểm tra không cấp cho POS quyền đọc kho: `GET /supply-stock` vẫn chỉ cho chủ quán;
+POS đang đứng quầy đọc tên thứ cần kiểm qua `GET /supply-check-reminders` (T-201, ADR-119).
 
 T-199 (2026-10-18, phiếu Claude, ADR-118): hợp đồng 0.36.0 thêm cửa chủ quán
 `PUT /daily-minimums/{sale_date}` và nối các mục tổng quan. Hai số bắt buộc là integer dương;
@@ -292,3 +292,12 @@ của thiếu món đếm đơn vị `(order_line_component_id, position)`, khô
 Một đơn vị đã ra khi mọi việc trạm của nó served; bánh chỉ lấy thành phần chụp takes_filling.
 Việc nước chấm cấp đơn không có thành phần vẫn là một việc/một đơn vị; không gán nó
 cho món hay combo vì không trỏ dòng đơn. Điều kiện da_ra của tiền tạm tính giữ nguyên.
+
+
+T-201 (2026-10-19, phiếu Claude): hợp đồng 0.37.0 thêm `GET /supply-check-reminders`,
+lớp `quay_hoac_chu_quan` theo ADR-119. Phản hồi gồm `read_at` từ `now()` của database và
+`items` (rỗng là `[]`), mỗi thứ chỉ có `supply_item_id`, `name`, `purchase_unit`.
+Lọc `reminder_status=ready` và `check_reminder=true` từ cùng phép đọc kho; không chép phép
+so sánh, không trả con số hay sổ ngày, không quyết ba ca của U-102. Không thêm cửa ghi hay
+đường đẩy: màn quầy đọc lại khi nhận `hello`/`changed` từ `GET /counter/events` và theo
+chu kỳ kéo sẵn có (ADR-097). `GET /supply-stock` vẫn chỉ lớp `chu_quan`.

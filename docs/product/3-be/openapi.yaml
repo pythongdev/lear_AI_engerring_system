@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.36.0
+  version: 0.37.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -872,6 +872,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AssignedTask'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /supply-check-reminders:
+    get:
+      operationId: getSupplyCheckReminders
+      tags: [nguyenlieu]
+      summary: Những nguyên liệu POS cần kiểm tra.
+      description: |
+        Lớp quay_hoac_chu_quan (ADR-119): chủ quán hoặc người đang đứng quầy đọc được.
+        Không phiên trả 401 unauthenticated; người thường ngoài quầy trả 403 not_on_counter_duty.
+        Chỉ lấy reminder_status=ready và check_reminder=true từ cùng phép đọc kho.
+        Không trả con số hay sổ ngày; ba trạng thái U-102 không xuất hiện.
+        Màn quầy đọc lại khi nhận hello/changed từ GET /counter/events và theo chu kỳ kéo sẵn có.
+      responses:
+        '200':
+          description: Tên các thứ cần kiểm tra; items rỗng là [].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplyCheckReminders'
         default:
           description: Lời từ chối theo ErrorCode và x-http-status.
           content:
@@ -4157,6 +4181,31 @@ components:
         check_reminder:
           type: [boolean, 'null']
           description: Nhắc POS kiểm tra khi phần còn lại dưới tỉ lệ của lần nhập gần nhất. Bằng hoặc trên thì false. Không phải kết luận.
+    SupplyCheckReminderItem:
+      type: object
+      additionalProperties: false
+      required: [supply_item_id, name, purchase_unit]
+      properties:
+        supply_item_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        purchase_unit:
+          type: [string, 'null']
+    SupplyCheckReminders:
+      type: object
+      additionalProperties: false
+      required: [read_at, items]
+      properties:
+        read_at:
+          type: string
+          format: date-time
+          description: Mốc now() của database trong giao dịch đọc và kiểm quyền.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupplyCheckReminderItem'
     SupplyItems:
       type: object
       required: [supply_items]

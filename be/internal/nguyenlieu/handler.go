@@ -13,6 +13,7 @@ import (
 func Routes(r *gin.Engine, svc *Service) {
 	h := handler{svc: svc}
 	r.GET("/supply-stock", h.doc)
+	r.GET("/supply-check-reminders", h.nhacKiemTra)
 	r.GET("/supply-items", h.doc)
 	r.PUT("/supply-items/:supply_item_id/reminder-ratio", h.datTiLe)
 	r.POST("/supply-items", h.them)
@@ -177,5 +178,10 @@ func (h handler) datTiLe(c *gin.Context) {
 		return
 	}
 	out, err := h.svc.DatTiLe(c.Request.Context(), nguoi(c), id, p.Ratio, p.Reason)
+	tra(c, 200, out, err)
+}
+
+func (h handler) nhacKiemTra(c *gin.Context) {
+	out, err := h.svc.DocNhacKiemTra(c.Request.Context(), nguoi(c))
 	tra(c, 200, out, err)
 }

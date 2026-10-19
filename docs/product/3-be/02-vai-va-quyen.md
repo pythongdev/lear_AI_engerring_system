@@ -66,6 +66,13 @@ nó thêm, **cùng lượt**: một dòng ở bảng này kèm nguồn, một h�
 `authz.Read` kiểm trước khi đọc các nguồn; POS không phải chủ quán bị `owner_only`,
 không phiên bị `unauthenticated`. Miền `tongquan` không có cửa ghi.
 
+**Cửa đọc nhắc kiểm tra nguyên liệu (T-201, 2026-10-19, phiếu Claude):**
+`GET /supply-check-reminders` thuộc lớp `quay_hoac_chu_quan` theo ADR-119.
+`authz.Read` kiểm trước khi đọc: chủ quán hoặc người đang đứng quầy được đọc;
+người thường ngoài quầy bị `not_on_counter_duty`, không phiên bị `unauthenticated`.
+Chỉ trả tên và đơn vị của thứ cần kiểm, kèm định danh và mốc đọc; không mở quyền đọc
+`GET /supply-stock` cho POS, không thêm cửa ghi.
+
 ## 3. Ma trận cửa × lớp
 
 Mỗi cửa ghi của backend — thư mục `be/internal/<gói>/sql/<cửa>/` (`QC-13`) — có **đúng một** dòng, và

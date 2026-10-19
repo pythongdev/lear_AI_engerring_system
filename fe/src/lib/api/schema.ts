@@ -448,6 +448,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/supply-check-reminders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Những nguyên liệu POS cần kiểm tra.
+         * @description Lớp quay_hoac_chu_quan (ADR-119): chủ quán hoặc người đang đứng quầy đọc được.
+         *     Không phiên trả 401 unauthenticated; người thường ngoài quầy trả 403 not_on_counter_duty.
+         *     Chỉ lấy reminder_status=ready và check_reminder=true từ cùng phép đọc kho.
+         *     Không trả con số hay sổ ngày; ba trạng thái U-102 không xuất hiện.
+         *     Màn quầy đọc lại khi nhận hello/changed từ GET /counter/events và theo chu kỳ kéo sẵn có.
+         */
+        get: operations["getSupplyCheckReminders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/supply-stock": {
         parameters: {
             query?: never;
@@ -2223,6 +2247,20 @@ export interface components {
             reminder_status: "ready" | "no_purchase" | "latest_purchase_zero" | "usage_before_first_purchase";
             /** @description Nhắc POS kiểm tra khi phần còn lại dưới tỉ lệ của lần nhập gần nhất. Bằng hoặc trên thì false. Không phải kết luận. */
             check_reminder: boolean | null;
+        };
+        SupplyCheckReminderItem: {
+            /** Format: int64 */
+            supply_item_id: number;
+            name: string;
+            purchase_unit: string | null;
+        };
+        SupplyCheckReminders: {
+            /**
+             * Format: date-time
+             * @description Mốc now() của database trong giao dịch đọc và kiểm quyền.
+             */
+            read_at: string;
+            items: components["schemas"]["SupplyCheckReminderItem"][];
         };
         SupplyItems: {
             supply_items: components["schemas"]["SupplyItem"][];
@@ -4070,6 +4108,35 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AssignedTask"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getSupplyCheckReminders: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tên các thứ cần kiểm tra; items rỗng là []. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplyCheckReminders"];
                 };
             };
             /** @description Lời từ chối theo ErrorCode và x-http-status. */
