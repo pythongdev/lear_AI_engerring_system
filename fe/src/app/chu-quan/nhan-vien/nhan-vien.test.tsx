@@ -202,6 +202,19 @@ describe("trang nhân viên — duyệt", () => {
     await waitFor(() => expect(soLanDoc(goi)).toBe(2));
   });
 
+  // T-203 (F-071): backend từ chối gắn vào người mang cờ chủ quán — lời gắn đúng ô, nói rõ lý do, đọc lại.
+  it("gắn vào người chủ quán bị từ chối (409 account_person_is_owner, field person_id): gắn ô Người trong quán, đọc lại", async () => {
+    const goi = moTrang({ ghi: () => ({ status: 409, body: { code: "account_person_is_owner", field: "person_id" } }) });
+    const f = await mo("Duyệt Bình");
+    await waitFor(() => expect((within(f).getByLabelText("Người trong quán") as HTMLSelectElement).options.length).toBe(2));
+    go(f, "Vai", "quay");
+    go(f, "Người trong quán", "9");
+    fireEvent.click(within(f).getByRole("button", { name: "Xác nhận duyệt" }));
+    await waitFor(() => expect(oSai(f, "Người trong quán")).toBe("true"));
+    expect(f.textContent ?? "").toMatch(/chủ quán/i);
+    await waitFor(() => expect(soLanDoc(goi, "/people")).toBe(2));
+  });
+
   it("phản hồi lạ: nói chưa xác nhận được kết quả, không tự gửi lại", async () => {
     const goi = moTrang({ ghi: () => ({ status: 500, body: { khong: "phai Error" } }) });
     const f = await mo("Duyệt Minh");

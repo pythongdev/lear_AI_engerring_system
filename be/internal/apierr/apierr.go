@@ -60,6 +60,7 @@ const (
 	CodeAccountNotPending       Code = "account_not_pending"
 	CodeAccountNotActive        Code = "account_not_active"
 	CodeAccountNotLocked        Code = "account_not_locked"
+	CodeAccountPersonIsOwner    Code = "account_person_is_owner"
 	CodeCrossOriginWrite        Code = "cross_origin_write"
 
 	CodePaperLedgerMissing          Code = "paper_ledger_missing"
@@ -186,6 +187,7 @@ var statusOf = map[Code]int{
 	CodeAccountNotPending:       409,
 	CodeAccountNotActive:        409,
 	CodeAccountNotLocked:        409,
+	CodeAccountPersonIsOwner:    409,
 	CodeCrossOriginWrite:        403,
 
 	CodePaperLedgerMissing:          409,

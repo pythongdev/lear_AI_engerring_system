@@ -3,6 +3,7 @@ package taikhoan
 import (
 	"banhcuon/be/internal/taikhoan/internal/sqlcgen"
 	"context"
+	"errors"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"strconv"
@@ -39,4 +40,13 @@ func (r repository) actor(ctx context.Context, id int64) error {
 func nguoiCuaPhien(ctx context.Context, db sqlcgen.DBTX, hash []byte) (int64, error) {
 	id, err := sqlcgen.New(db).NguoiCuaPhien(ctx, hash)
 	return id.Int64, err
+}
+
+// personIsOwner giữ người không tồn tại cho kiểm tra khoá ngoại khi gắn tài khoản.
+func (r repository) personIsOwner(ctx context.Context, id int64) (bool, error) {
+	p, err := r.DocNguoi(ctx, id)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return false, nil
+	}
+	return p.IsOwner, err
 }

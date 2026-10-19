@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.40.0
+  version: 0.41.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -6110,6 +6110,7 @@ components:
         - account_not_pending
         - account_not_active
         - account_not_locked
+        - account_person_is_owner
         - cross_origin_write
         - order_intake_already_paused
         - order_intake_not_paused
@@ -6221,6 +6222,7 @@ components:
         account_not_pending: 409
         account_not_active: 409
         account_not_locked: 409
+        account_person_is_owner: 409
         cross_origin_write: 403
         order_intake_already_paused: 409
         order_intake_not_paused: 409

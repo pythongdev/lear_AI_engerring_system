@@ -45,7 +45,7 @@ function useGhiTaiKhoan<B>(gui: (body: B) => Promise<ApiResult<KetQua>>) {
   const qc = useQueryClient();
   return useMutation({ mutationFn: gui, retry: false, onSuccess: async (r) => {
     if (r.ok || (r.failure.kind === "rejected" &&
-      (r.failure.code.startsWith("account_not_") || r.failure.code === "invalid_request"))) {
+      (r.failure.code.startsWith("account_not_") || r.failure.code === "account_person_is_owner" || r.failure.code === "invalid_request"))) {
       await Promise.all(["accounts", "people"].map((key) => qc.invalidateQueries({ queryKey: [key] })));
     }
   } });
@@ -75,6 +75,7 @@ export function loiNhanVien(failure: ApiFailure) {
     case "account_not_pending":
     case "account_not_active":
     case "account_not_locked": return "Trạng thái tài khoản đã đổi. Đã đọc lại danh sách.";
+    case "account_person_is_owner": return "Người đã chọn là chủ quán — tài khoản chủ quán chỉ tạo trên máy chủ. Hãy chọn người khác hoặc tạo người mới.";
     case "password_too_short": return "Mật khẩu tạm cần ít nhất 8 ký tự.";
     case "invalid_request": return "Dữ liệu chưa hợp lệ — người đã chọn có thể vừa có tài khoản. Đã đọc lại danh sách.";
     case "unauthenticated": return "Phiên đăng nhập đã hết. Hãy đăng nhập lại.";

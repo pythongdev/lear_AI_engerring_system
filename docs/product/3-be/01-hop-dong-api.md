@@ -160,6 +160,8 @@ bản ở `HEAD` và đỏ khi file khác mà phiên bản không lớn hơn.
 Mục tiền tạm tính có schema riêng, hiện trả trạng thái chưa có công thức;
 không đưa doanh thu đã đối soát vào phản hồi tổng quan.
 
+**T-203 (2026-10-19, phiếu Claude):** tăng MINOR `0.40.0` → `0.41.0`, thêm `account_person_is_owner` (409, trường `person_id`) khi duyệt tài khoản gắn vào người mang cờ chủ quán; sinh lại type FE.
+
 ## 8. Dấu lần gửi trên dây
 
 Mọi đường gọi **tạo đơn hay tạo lượt gọi**, ở cả năm kênh, nhận dấu lần gửi của `I-024` trong **thân

@@ -97,7 +97,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-203 **Cửa duyệt không trao cờ chủ quán (F-071)** — `POST /accounts/{account_id}/approval` từ chối `person_id` của người mang cờ chủ quán bằng `409 account_person_is_owner` (`field: person_id`); hợp đồng 0.41.0; trang nhân viên nói đúng lời; vế mới của `I-033` — L2 — mở 2026-10-19 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"hãy yêu cầu codex làm f-071. đồng ý với đề xuất của bạn"* · [chi tiết](#t-203)
 
 
 
@@ -108,6 +107,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="done"></a>
 ## Done
+
+- [x] T-203 **Cửa duyệt không trao cờ chủ quán (F-071)** — `POST /accounts/{account_id}/approval` từ chối `person_id` của người mang cờ chủ quán bằng `409 account_person_is_owner` (`field: person_id`); hợp đồng 0.41.0; trang nhân viên nói đúng lời; vế mới của `I-033` — L2 — mở 2026-10-19 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"hãy yêu cầu codex làm f-071. đồng ý với đề xuất của bạn"* — 2026-10-19; Codex thi công, Claude duyệt và chạy thật · [chi tiết](#t-203)
 - [x] P4A-11 **Trang đào tạo của chủ quán** — ghi nhận xét và đánh giá *làm được · chưa* về một người, sửa · ẩn có lý do (`/training-records*`); hướng dẫn chữ · ảnh · video gắn từng việc được giao, sửa chữ · ẩn có lý do (`/assigned-tasks/{assigned_task_id}/guides` · `/assigned-task-guides*`); POS làm từ quầy chưa có màn — L1 — mở và nhận 2026-10-19 · Claude Code (dẫn, duyệt, chạy thật), Codex thi công kể cả test theo cùng lời — 2026-10-19; Codex hết hạn mức giữa chừng, Claude làm nốt · [chi tiết](backlog_FE_AD.md#p4a-11)
 - [x] P4A-10 **Trang khoản chi của chủ quán (chi phí marketing là một loại chi)** — loại chi khai rõ nguồn két · tiền riêng (`/expense-categories`), ghi · sửa có lý do khoản chi, lọc theo khoảng ngày · loại · nguồn, tổng do backend cộng (`/expenses*`); không ngân sách, không chiến dịch — L1 — mở và nhận 2026-10-19 · Claude Code (dẫn, duyệt, chạy thật), Codex thi công kể cả test theo cùng lời — 2026-10-19; Codex hết hạn mức giữa chừng, Claude làm nốt · [chi tiết](backlog_FE_AD.md#p4a-10)
 - [x] P4A-09 **Trang kho của chủ quán** — đọc `GET /supply-stock`: hai tổng, số thiếu theo phép trừ §8.4, lần nhập gần nhất, tỉ lệ nhắc và cờ nhắc POS kiểm tra đúng như backend trả; đặt tỉ lệ có lý do (`PUT /supply-items/{supply_item_id}/reminder-ratio`); không *dự kiến hết*, không so ngưỡng hay trừ ở trình duyệt — L1 — mở và nhận 2026-10-19 · Claude Code (dẫn, duyệt, chạy thật), Codex thi công kể cả test theo lời chủ repo *"hãy yêu cầu codex làm nốt 3 task trên nếu codex hết token bẹn làm nốt"* — 2026-10-19; Codex hết hạn mức giữa chừng, Claude làm nốt · [chi tiết](backlog_FE_AD.md#p4a-09)
@@ -442,6 +443,19 @@ chọn là chủ quán*, gắn ô *Người trong quán*, đọc lại danh sác
    `docs/product/3-be/01-hop-dong-api.md`; `fe/src/lib/api/schema.ts` sinh lại (`fe-check: apigen PASS`).
 4. Chạy thật (Claude): dựng lại cảnh của **F-071** — người lạ duyệt gắn vào người chủ quán ⇒ `409`, không đăng nhập được.
 5. `./scripts/gate.sh` xanh ở clone chính, có `be-check` và `fe-check: PASS`.
+
+**Bàn giao** — 2026-10-19 · thực hiện: **Codex** (worktree `../lean_wt/T-203`, nhánh `codex/T-203`, base `a921357`); duyệt và tích hợp:
+**Claude Code** — đọc diff thật, áp vào nhánh `P4A-01` (không xung đột với P4A-07…11), tự chạy gate. Không đổi điều kiện kiểm của hai test viết trước.
+File: `be/internal/{apierr/apierr.go,taikhoan/repository.go,taikhoan/service.go,taikhoan/taikhoan_test.go}` · `docs/product/3-be/{openapi.yaml,01-hop-dong-api.md}` ·
+`fe/src/lib/api/schema.ts` · `fe/src/app/chu-quan/{_components/du-lieu-nhan-vien.ts,nhan-vien/nhan-vien.test.tsx}` · `work/findings.md` (F-071 → Fixed).
+1. `--- PASS: TestI033_DuyetKhongGanVaoNguoiChuQuan (0.61s)`; `PASS  Gate 1   be-check — mọi test backend qua PostgreSQL thật đều đạt`.
+2. `fe-check: apigen PASS — schema.ts khớp hợp đồng` · `Tests  272 passed (272)` · `fe-check: PASS`.
+3. `PASS  Gate 1g  check-api-contract — hợp đồng 0.41.0; 112 đường gọi ở hợp đồng, 112 ở code; 111 mã lỗi …`.
+4. Chạy thật (database làm việc `banhcuon` cổng 5433, server thật cổng 8080): người lạ `nguoila` tự đăng ký ⇒ `cho_duyet`; chủ quán duyệt
+   gắn `person_id: 5` (người *Chủ quán* `is_owner` không tài khoản của dữ liệu mồi) ⇒ `{"code":"account_person_is_owner","field":"person_id"} HTTP 409`;
+   người lạ đăng nhập ⇒ `{"code":"invalid_credentials"} HTTP 401`.
+5. `PASS  gate     không cổng nào đỏ` (SKIP `db` — không đổi gì ở `db/`).
+Còn lại: không.
 
 [↑ đầu file](#top)
 

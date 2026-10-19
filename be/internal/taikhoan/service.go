@@ -416,6 +416,15 @@ func (s *Service) decide(ctx context.Context, person, id int64, action, role str
 			if target < 0 {
 				return fail(apierr.CodeInvalidRequest)
 			}
+			if target > 0 {
+				isOwner, err := r.personIsOwner(ctx, target)
+				if err != nil {
+					return err
+				}
+				if isOwner {
+					return apierr.Error{Code: apierr.CodeAccountPersonIsOwner, Field: "person_id"}
+				}
+			}
 			if target == 0 {
 				target, err = nguoi.TaoNguoi(ctx, tx, a.RequestedDisplayName, false)
 				if err != nil {

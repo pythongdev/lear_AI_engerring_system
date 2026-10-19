@@ -506,3 +506,49 @@ func TestI033_DatLaiTraCungMotCauMaDungMotLan(t *testing.T) {
 		t.Fatal("mã đặt lại thô không được nằm ở database")
 	}
 }
+
+// T-203 (F-071) — Claude viết TRƯỚC khi sửa. Cờ chủ quán không có đường qua màn duyệt (ADR-109 điểm 3; I-033 vế
+// *duyệt không trao cờ chủ quán*): gắn tài khoản mới vào một người mang cờ chủ quán chưa có tài khoản ⇒ bị từ chối,
+// tài khoản vẫn chờ duyệt, người ấy vẫn không tài khoản; gắn vào một người thường chưa có tài khoản ⇒ được, không là chủ quán.
+func TestI033_DuyetKhongGanVaoNguoiChuQuan(t *testing.T) {
+	k := dung(t)
+	_, chu := k.chuQuan(t, "chu")
+	// Dữ liệu mồi luôn có người chủ quán chưa có tài khoản (db/seed/seed.pl); dựng lại hình ấy, cùng một người thường.
+	var chuKhongTK, thuong int64
+	if err := k.owner.QueryRow(k.ctx, `INSERT INTO shop.person (display_name, is_owner) VALUES ($1, true) RETURNING id`,
+		"Chủ chưa có tài khoản · "+t.Name()).Scan(&chuKhongTK); err != nil {
+		t.Fatal(err)
+	}
+	if err := k.owner.QueryRow(k.ctx, `INSERT INTO shop.person (display_name, is_owner) VALUES ($1, false) RETURNING id`,
+		"Người thường · "+t.Name()).Scan(&thuong); err != nil {
+		t.Fatal(err)
+	}
+	user := tenDangNhap(t, "la")
+	dk := k.dangKy(t, user, user+"@quan.test", "Người lạ · "+t.Name(), "mat-khau-la-1")
+	path := fmt.Sprintf("/accounts/%d/approval", dk.so("account_id"))
+
+	ra := k.goi(t, "POST", path, chu, map[string]any{"role_code": "quay", "person_id": chuKhongTK})
+	if ra.status != http.StatusConflict || ra.ma() != "account_person_is_owner" || ra.chu("field") != "person_id" {
+		t.Fatal("duyệt gắn vào người chủ quán: muốn 409 account_person_is_owner, field person_id")
+	}
+	var status string
+	var conTK int
+	if err := k.owner.QueryRow(k.ctx, `SELECT status FROM shop.account WHERE id = $1`, dk.so("account_id")).Scan(&status); err != nil || status != "cho_duyet" {
+		t.Fatalf("bị từ chối thì tài khoản vẫn chờ duyệt: có %q (%v)", status, err)
+	}
+	if err := k.owner.QueryRow(k.ctx, `SELECT count(*) FROM shop.account WHERE person_id = $1`, chuKhongTK).Scan(&conTK); err != nil || conTK != 0 {
+		t.Fatal("người chủ quán không được gắn tài khoản nào qua màn duyệt")
+	}
+	if vao := k.dangNhap(t, user, "mat-khau-la-1", false); vao.status != http.StatusUnauthorized {
+		t.Fatal("tài khoản bị từ chối gắn vẫn chờ duyệt: không mở phiên")
+	}
+
+	d := k.goi(t, "POST", path, chu, map[string]any{"role_code": "quay", "person_id": thuong})
+	if d.status != http.StatusOK || d.chu("status") != "hoat_dong" || d.so("person_id") != thuong {
+		t.Fatal("duyệt gắn vào người thường chưa có tài khoản: muốn 200 hoat_dong đúng person_id")
+	}
+	vao := k.dangNhap(t, user, "mat-khau-la-1", false)
+	if vao.status != http.StatusCreated || vao.so("person_id") != thuong || vao.body["is_owner"] != false {
+		t.Fatal("đăng nhập sau duyệt: muốn đúng người, is_owner=false")
+	}
+}

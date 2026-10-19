@@ -5009,9 +5009,12 @@ Chưa sửa ở backend — ngoài phạm vi bước FE. Màn `P4A-06` chỉ đ�
 không phải chủ quán** (test `nhan-vien.test.tsx`), nhưng màn là tiện, không phải bảo vệ. Cần một task backend L2: cửa duyệt từ
 chối `person_id` có `is_owner` (lời từ chối mới ở hợp đồng, bảng tên → mã) kèm test hồi quy, và xem có nên siết ở database.
 2026-10-19: chủ repo đồng ý đề xuất, giao Codex — task `T-203` (`work/backlog.md`); không siết ở database lượt này (lý do ở entry).
+**Đã sửa 2026-10-19 (T-203):** cửa duyệt trả `409 account_person_is_owner` (`field: person_id`), hợp đồng `0.41.0`; test hồi quy
+`TestI033_DuyetKhongGanVaoNguoiChuQuan` (`be/internal/taikhoan/taikhoan_test.go`) PASS trên PostgreSQL thật; chạy thật trên database
+làm việc: người lạ duyệt gắn vào người *Chủ quán* `is_owner` ⇒ `409`, đăng nhập ⇒ `401`.
 
 **Related task:**
-`P4A-06` · `T-190` · ADR-109
+`P4A-06` · `T-190` · `T-203` · ADR-109
 
 **Status:**
-Open
+Fixed
