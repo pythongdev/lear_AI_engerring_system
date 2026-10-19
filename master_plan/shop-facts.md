@@ -1466,6 +1466,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-15 | Chủ repo trả lời lượt bảy trong hội thoại (P3A-06): giá mỗi combo **chủ quán tự đưa**; khách chọn nhân **riêng từng món** trong combo; phụ thu trong combo **chủ quán đặt theo từng món của combo**, không đếm +1.000 mỗi phần; mở U-096 | §8.9 |
 | 2026-10-15 | Chủ repo trả lời lượt tám trong hội thoại (P3A-11), chọn trong câu hỏi có sẵn phương án: lựa chọn chưa đặt mức trong combo **cộng 0đ** (đóng U-096); món nhiều suất trong combo **mỗi suất chọn nhân riêng**; mức phụ thu **cộng mỗi suất một lần**; mức phụ thu trong combo **khoá như giá combo** — chỉ đổi ngoài giờ bán | §8.9 |
 | 2026-10-16 | Chủ quán trả lời năm câu của mục tổng quan (T-198), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn phương án bốn vế: khách đang phục vụ **đếm bằng số bàn** (U-097); tiến độ là **số bánh đã ra so với số bánh tối thiểu chủ quán nhập mỗi ngày** (U-098); tạm tính **cộng giá các phần đã ra bàn** (U-099); mang đi và giao hàng **có** tính, bày **tách online · offline** (U-100, mở S-10); **thiếu người** so với **số người tối thiểu chủ quán nhập mỗi ngày**, **thiếu món** là món đã ra ít hơn khách đặt (U-101) | §8.6 |
+| 2026-10-19 | Chủ repo chọn trong hội thoại (T-204): chưa có lần nhập hoặc lần nhập gần nhất ghi 0 ⇒ **luôn nhắc POS kiểm tra**; dùng trước lần nhập đầu mà đã có lần nhập ⇒ **so tỉ lệ như thường** (đóng U-102) | §8.4 |
 | 2026-10-18 | Chủ repo trả lời ba vế thi công của mục tổng quan (T-199): tạm tính phần thuộc combo **không tính giá thành phần**; *bánh* của tiến độ là **bánh cuốn và bánh trứng**; **offline là bán hàng tại quán** (đóng **S-10**, suy ra 2026-10-16: *offline* gồm cả giao hàng đặt qua điện thoại — lời mới hẹp hơn: chỉ tại quán) | §8.6 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
@@ -1754,6 +1755,11 @@ KHÔNG mọc cột ngưỡng"* ở trên là luật cũ. **Lượt sáu 2026-10-
 nguyên văn *"tuỳ từng loại mặt hàng chủ quán sẽ ghi mức độ nhắc nhở"*: mức nhắc đặt **theo từng thứ**, do **chủ quán
 ghi**. Lời này xác nhận thẳng vế *mỗi nguyên liệu một tỉ lệ, chủ quán đặt* mà lượt bốn là *lời chọn*; lời không nhắc
 mặc định 20%, nên mặc định ấy đứng nguyên như lượt bốn ghi.
+**2026-10-19 (chủ repo, trong hội thoại, chọn trong câu hỏi có sẵn phương án; đóng `U-102`, T-204):** khi máy **chưa có mốc
+nhập** để so — thứ ấy **chưa có lần nhập nào**, hoặc **lần nhập gần nhất ghi 0** — máy **luôn nhắc POS kiểm tra** (lời chọn
+*"Luôn nhắc POS kiểm tra"*). Sổ có **ngày dùng trước ngày nhập đầu tiên** mà đã có lần nhập: máy **so tỉ lệ như thường** (lời
+chọn *"Đã có lần nhập thì so tỉ lệ như thường"*, sau khi Claude chỉ ra ngày dùng sớm nằm mãi trong sổ nên *luôn nhắc* thành
+nhắc vĩnh viễn). *Cách đọc của phiên:* *chưa có lần nhập* gồm cả một thứ vừa thêm vào danh mục, chưa có dòng sổ nào.
 - **Không nói mảng này có vào bản chạy đầu tiên hay không.** Đó là câu của
   `docs/product/0-ba/ban-hang/07-pham-vi-mvp.md` §7, và câu ấy đã chốt riêng ngày 2026-09-02
   (U-030): **không** mảng quản trị nào phải chạy cùng bản bán hàng đầu tiên.

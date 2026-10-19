@@ -479,8 +479,8 @@ export interface paths {
          * Những nguyên liệu POS cần kiểm tra.
          * @description Lớp quay_hoac_chu_quan (ADR-119): chủ quán hoặc người đang đứng quầy đọc được.
          *     Không phiên trả 401 unauthenticated; người thường ngoài quầy trả 403 not_on_counter_duty.
-         *     Chỉ lấy reminder_status=ready và check_reminder=true từ cùng phép đọc kho.
-         *     Không trả con số hay sổ ngày; ba trạng thái U-102 không xuất hiện.
+         *     Lấy mọi thứ có check_reminder=true từ cùng phép đọc kho, gồm cả thứ chưa có lần nhập
+         *     hay lần nhập gần nhất bằng 0 (U-102 đóng 2026-10-19). Không trả con số hay sổ ngày.
          *     Màn quầy đọc lại khi nhận hello/changed từ GET /counter/events và theo chu kỳ kéo sẵn có.
          */
         get: operations["getSupplyCheckReminders"];
@@ -504,9 +504,9 @@ export interface paths {
          * @description Backend cộng mọi con số ngày, không đặt lại khi mua thêm (I-026).
          *     balance là số thiếu theo §8.4 = purchased_total - used_total, không phải kết luận.
          *     latest_purchase_date là ngày hàng mua về (entry_date lớn nhất của loại purchased), không phải lúc gõ.
-         *     check_reminder chỉ được tính khi reminder_status=ready, bằng balance < reminder_ratio × latest_purchase_measure.
-         *     Chưa có lần nhập, lần nhập gần nhất bằng 0, hoặc đã dùng trước ngày mua đầu tiên thì cờ null và trạng thái có tên;
-         *     giữ nguyên hai tổng hiện hành, không tự quyết các trường hợp §8.4 chưa nói rõ. Cửa này chỉ chu_quan đọc.
+         *     check_reminder = balance < reminder_ratio × latest_purchase_measure khi reminder_status là ready hoặc
+         *     usage_before_first_purchase; chưa có lần nhập (no_purchase) hoặc lần nhập gần nhất bằng 0 (latest_purchase_zero)
+         *     thì luôn true (U-102 đóng 2026-10-19). Giữ nguyên hai tổng hiện hành. Cửa này chỉ chu_quan đọc.
          */
         get: operations["getSupplyStock"];
         put?: never;
@@ -2402,12 +2402,12 @@ export interface components {
             /** @description Khối lượng của dòng purchased gần nhất; null khi chưa có dòng mua. */
             latest_purchase_measure: string | null;
             /**
-             * @description Trạng thái tính lời nhắc; ba trạng thái sau chờ làm rõ nghiệp vụ và check_reminder là null.
+             * @description Lý do của lời nhắc; no_purchase và latest_purchase_zero luôn nhắc, usage_before_first_purchase so tỉ lệ như ready (U-102).
              * @enum {string}
              */
             reminder_status: "ready" | "no_purchase" | "latest_purchase_zero" | "usage_before_first_purchase";
-            /** @description Nhắc POS kiểm tra khi phần còn lại dưới tỉ lệ của lần nhập gần nhất. Bằng hoặc trên thì false. Không phải kết luận. */
-            check_reminder: boolean | null;
+            /** @description Nhắc POS kiểm tra khi phần còn lại dưới tỉ lệ của lần nhập gần nhất, hoặc khi chưa có mốc nhập. Bằng hoặc trên thì false. Không phải kết luận. */
+            check_reminder: boolean;
         };
         SupplyCheckReminderItem: {
             /** Format: int64 */

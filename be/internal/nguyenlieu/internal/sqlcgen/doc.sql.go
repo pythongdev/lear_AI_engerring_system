@@ -23,8 +23,8 @@ SELECT i.id, i.name, i.purchase_unit,
              WHEN last_purchase.entered_measure = 0 THEN 'latest_purchase_zero'
              WHEN t.first_used < t.first_purchase THEN 'usage_before_first_purchase'
              ELSE 'ready' END)::text AS reminder_status,
-       (CASE WHEN last_purchase.id IS NULL OR last_purchase.entered_measure = 0
-                  OR t.first_used < t.first_purchase THEN false
+       -- U-102 (chủ repo 2026-10-19, T-204): chưa có mốc nhập thì luôn nhắc; dùng trước lần nhập đầu thì so tỉ lệ như thường.
+       (CASE WHEN last_purchase.id IS NULL OR last_purchase.entered_measure = 0 THEN true
              ELSE t.purchased - t.used < i.reminder_ratio * last_purchase.entered_measure
         END)::boolean AS check_reminder
 FROM supply_item i

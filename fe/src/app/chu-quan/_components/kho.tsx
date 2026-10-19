@@ -15,15 +15,22 @@ const schema = z.object({
   reminder_ratio: z.string().trim().regex(/^(0(\.[0-9]{1,6})?|1(\.0{1,6})?)$/, goiY),
   reason: chuMenu,
 });
-function NhanNhac({ thu }: { thu: NguyenLieuKho }) {
-  if (thu.check_reminder === true) return <p><strong className="rounded-md bg-destructive px-2 py-1 text-white">Nhắc POS kiểm tra</strong></p>;
-  if (thu.check_reminder === false) return <p>Không nhắc</p>;
-  switch (thu.reminder_status) {
-    case "no_purchase": return <p>Máy chưa tính nhắc: chưa có lần mua</p>;
-    case "latest_purchase_zero": return <p>Máy chưa tính nhắc: lần mua gần nhất bằng 0</p>;
-    case "usage_before_first_purchase": return <p>Máy chưa tính nhắc: có số dùng trước lần mua đầu</p>;
-    default: return <p>Máy chưa tính nhắc</p>;
+// U-102 (chủ repo 2026-10-19, T-204): chưa có mốc nhập thì backend luôn nhắc; dùng trước lần mua đầu thì so tỉ lệ như thường.
+function LyDoNhac({ status }: { status: NguyenLieuKho["reminder_status"] }) {
+  switch (status) {
+    case "no_purchase": return <p>Lý do: chưa có lần mua</p>;
+    case "latest_purchase_zero": return <p>Lý do: lần mua gần nhất bằng 0</p>;
+    case "usage_before_first_purchase": return <p>Ghi chú: có số dùng trước lần mua đầu</p>;
+    default: return null;
   }
+}
+function NhanNhac({ thu }: { thu: NguyenLieuKho }) {
+  return <>
+    {thu.check_reminder
+      ? <p><strong className="rounded-md bg-destructive px-2 py-1 text-white">Nhắc POS kiểm tra</strong></p>
+      : <p>Không nhắc</p>}
+    <LyDoNhac status={thu.reminder_status} />
+  </>;
 }
 function Thu({ thu, bao }: { thu: NguyenLieuKho; bao: (s: string) => void }) {
   const [mo, setMo] = useState(false);

@@ -108,6 +108,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-204 **Ba lúc chưa có mốc vẫn nhắc POS kiểm tra (U-102)** — chưa có lần nhập · lần nhập gần nhất ghi 0 ⇒ `check_reminder: true`, POS thấy tên thứ ấy ở `GET /supply-check-reminders`; dùng trước ngày nhập đầu ⇒ so tỉ lệ như thường; hợp đồng 0.42.0 (cờ thôi `null`); trang kho và tổng quan nói *Nhắc POS kiểm tra* kèm lý do — L1 — mở và nhận 2026-10-19 · Claude Code theo lời chủ repo chọn *"Luôn nhắc POS kiểm tra"*, vế 3 *"Đã có lần nhập thì so tỉ lệ như thường"* — 2026-10-19 · [chi tiết](#t-204)
 - [x] T-203 **Cửa duyệt không trao cờ chủ quán (F-071)** — `POST /accounts/{account_id}/approval` từ chối `person_id` của người mang cờ chủ quán bằng `409 account_person_is_owner` (`field: person_id`); hợp đồng 0.41.0; trang nhân viên nói đúng lời; vế mới của `I-033` — L2 — mở 2026-10-19 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"hãy yêu cầu codex làm f-071. đồng ý với đề xuất của bạn"* — 2026-10-19; Codex thi công, Claude duyệt và chạy thật · [chi tiết](#t-203)
 - [x] P4A-11 **Trang đào tạo của chủ quán** — ghi nhận xét và đánh giá *làm được · chưa* về một người, sửa · ẩn có lý do (`/training-records*`); hướng dẫn chữ · ảnh · video gắn từng việc được giao, sửa chữ · ẩn có lý do (`/assigned-tasks/{assigned_task_id}/guides` · `/assigned-task-guides*`); POS làm từ quầy chưa có màn — L1 — mở và nhận 2026-10-19 · Claude Code (dẫn, duyệt, chạy thật), Codex thi công kể cả test theo cùng lời — 2026-10-19; Codex hết hạn mức giữa chừng, Claude làm nốt · [chi tiết](backlog_FE_AD.md#p4a-11)
 - [x] P4A-10 **Trang khoản chi của chủ quán (chi phí marketing là một loại chi)** — loại chi khai rõ nguồn két · tiền riêng (`/expense-categories`), ghi · sửa có lý do khoản chi, lọc theo khoảng ngày · loại · nguồn, tổng do backend cộng (`/expenses*`); không ngân sách, không chiến dịch — L1 — mở và nhận 2026-10-19 · Claude Code (dẫn, duyệt, chạy thật), Codex thi công kể cả test theo cùng lời — 2026-10-19; Codex hết hạn mức giữa chừng, Claude làm nốt · [chi tiết](backlog_FE_AD.md#p4a-10)
@@ -420,6 +421,49 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-204"></a>
+### T-204 — Ba lúc máy chưa có mốc để so thì có nhắc POS kiểm tra không (U-102)
+
+**Yêu cầu:** chủ repo 2026-10-19, trong hội thoại, chọn trong câu hỏi có sẵn phương án: *"Luôn nhắc POS kiểm tra"* cho cả ba
+lúc của **U-102** — thứ ấy chưa có lần nhập nào · lần nhập gần nhất ghi 0 · sổ có ngày dùng trước ngày nhập đầu tiên. Claude chỉ ra
+vế 3 không tự hết (ngày dùng sớm nằm mãi trong sổ ⇒ nhắc vĩnh viễn); cùng ngày chủ repo chọn lại cho vế 3: *"Đã có lần nhập thì so tỉ
+lệ như thường"* — vế 1 và vế 2 vẫn luôn nhắc. **Mức:** L1
+— đổi hành vi một lời nhắc và hợp đồng; không chạm tiền, không chạm dữ liệu đã ghi (lời nhắc là phép đọc).
+
+**Claude chốt (thiết kế):** ba trạng thái có tên giữ nguyên (`no_purchase` · `latest_purchase_zero` · `usage_before_first_purchase`) để
+màn nói được *vì sao*; `check_reminder` của `no_purchase` · `latest_purchase_zero` là `true`, của `usage_before_first_purchase` tính
+như `ready` (`balance < reminder_ratio × latest_purchase_measure`), nên cờ không còn `null` — hợp đồng đổi kiểu cờ thành `boolean`,
+MINOR `0.41.0` → `0.42.0`. Phép tính của `ready` không đổi. Một chỗ tính duy nhất (`sql/doc.sql`, ADR-119) giữ nguyên.
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. `TestI025_NhacKiemTraQuyenVaCungTapKho`: ca *chưa nhập* · *nhập không* nhắc `true`; ca *dùng trước* (còn 0 của lần nhập 10) nhắc
+   `true`, ca mới *dùng trước, còn nhiều* (còn 9) `false`; POS đọc `GET /supply-check-reminders` thấy đúng tập có cờ `true`, gồm hai ca
+   đầu. `TestI025_KhoTrangThaiChuaCoLoi`: bốn bước lần lượt `true` · `true` · `false` (còn 4 ≥ 0.2 × 5) · `true` — đỏ trước khi sửa,
+   xanh sau, trên PostgreSQL thật (`be-check`).
+2. Trang kho bày lý do của từng trạng thái (*chưa có lần mua* · *lần mua gần nhất bằng 0* nhắc; *có số dùng trước lần mua đầu* là ghi
+   chú cạnh kết quả so tỉ lệ); tổng quan bỏ nhánh *Chưa đủ dữ liệu để nhắc*; `fe-check: PASS`.
+3. Gate 1g xanh với hợp đồng `0.42.0`; dòng nhật ký ở `01-hop-dong-api.md`; `schema.ts` sinh lại.
+4. `master_plan/shop-facts.md` §8.4 ghi lời mới có ngày và người quyết; `U-102` chuyển xuống *Đã có lời giải*.
+5. Chạy thật: một thứ mới chưa nhập ⇒ POS đứng quầy đọc thấy tên ở `GET /supply-check-reminders`.
+6. `./scripts/gate.sh` xanh.
+
+**Bàn giao** — 2026-10-19 · thực hiện: **Claude Code** trên nhánh `P4A-01` (nền `54ce4b7`); chưa ai duyệt độc lập.
+File: `be/internal/nguyenlieu/{sql/doc.sql,internal/sqlcgen/doc.sql.go,repository.go,service.go,kho_test.go,nhac_kiem_test.go}` ·
+`docs/product/3-be/{openapi.yaml,01-hop-dong-api.md}` · `fe/src/lib/api/schema.ts` · `fe/src/app/chu-quan/{_components/kho.tsx,_components/tong-quan.tsx,kho/kho.test.tsx,tong-quan.test.tsx}` ·
+`master_plan/shop-facts.md` §8.4 · `docs/product/99-unknowns.md` (U-102 đóng) · `quality/invariants.md` I-025 · `docs/decisions.md` ADR-119 *Sửa đổi* · `docs/product/4-fe/01-khung-fe.md`.
+1. Đỏ trước khi sửa (database thử cổng 5498): `--- FAIL: TestI025_KhoTrangThaiChuaCoLoi` (*check_reminder:<nil>*) và `--- FAIL:
+   TestI025_NhacKiemTraQuyenVaCungTapKho`; sau sửa `ok banhcuon/be/internal/nguyenlieu` · `ok banhcuon/be/internal/tongquan`;
+   `PASS  Gate 1   be-check — mọi test backend qua PostgreSQL thật đều đạt`.
+2. `fe-check: apigen PASS — schema.ts khớp hợp đồng` · `Tests  272 passed (272)` · `fe-check: PASS`.
+3. `PASS  Gate 1g  check-api-contract — hợp đồng 0.42.0; …`.
+4. shop-facts §8.4 đoạn *2026-10-19* và dòng nhật ký; U-102 ở *Đã có lời giải*.
+5. Chạy thật (database làm việc, server thật): chủ quán thêm *Mộc nhĩ* ⇒ `reminder_status: no_purchase, check_reminder: true`;
+   POS đứng quầy `GET /supply-check-reminders` ⇒ `{"items":[{"supply_item_id":1,"name":"Mộc nhĩ","purchase_unit":"kg"}]} HTTP 200`.
+6. `PASS  gate     không cổng nào đỏ` (SKIP `db` — không đổi `db/`).
+Còn lại: không.
+
+[↑ đầu file](#top)
 
 <a id="t-203"></a>
 ### T-203 — Cửa duyệt tài khoản gắn được vào người mang cờ chủ quán (F-071)

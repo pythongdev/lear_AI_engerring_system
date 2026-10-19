@@ -53,7 +53,7 @@ func (r repository) doc(ctx context.Context, id int64) ([]Thu, error) {
 			unit = &u
 		}
 		item := Thu{ID: v.ID, Name: v.Name, PurchaseUnit: unit, PurchasedTotal: v.PurchasedTotal, UsedTotal: v.UsedTotal, Balance: v.Balance,
-			ReminderRatio: v.ReminderRatio, ReminderStatus: v.ReminderStatus}
+			ReminderRatio: v.ReminderRatio, ReminderStatus: v.ReminderStatus, CheckReminder: v.CheckReminder}
 		if v.LatestPurchaseDate != "" {
 			d := v.LatestPurchaseDate
 			item.LatestPurchaseDate = &d
@@ -61,10 +61,6 @@ func (r repository) doc(ctx context.Context, id int64) ([]Thu, error) {
 		if v.LatestPurchaseMeasure != "" {
 			m := v.LatestPurchaseMeasure
 			item.LatestPurchaseMeasure = &m
-		}
-		if v.ReminderStatus == "ready" {
-			b := v.CheckReminder
-			item.CheckReminder = &b
 		}
 		out = append(out, item)
 	}

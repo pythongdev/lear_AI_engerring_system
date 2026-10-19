@@ -25,7 +25,7 @@ type Thu struct {
 	LatestPurchaseDate    *string `json:"latest_purchase_date"`
 	LatestPurchaseMeasure *string `json:"latest_purchase_measure"`
 	ReminderStatus        string  `json:"reminder_status"`
-	CheckReminder         *bool   `json:"check_reminder"`
+	CheckReminder         bool    `json:"check_reminder"`
 	ID                    int64   `json:"supply_item_id"`
 	Name                  string  `json:"name"`
 	PurchaseUnit          *string `json:"purchase_unit"`
@@ -198,7 +198,7 @@ func (s *Service) DocNhacKiemTra(ctx context.Context, nguoi int64) (out NhacKiem
 			return e
 		}
 		for _, item := range items {
-			if item.ReminderStatus == "ready" && item.CheckReminder != nil && *item.CheckReminder {
+			if item.CheckReminder {
 				out.Items = append(out.Items, ThuCanKiem{ID: item.ID, Name: item.Name, PurchaseUnit: item.PurchaseUnit})
 			}
 		}

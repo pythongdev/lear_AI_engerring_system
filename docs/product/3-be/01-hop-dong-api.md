@@ -160,6 +160,8 @@ bản ở `HEAD` và đỏ khi file khác mà phiên bản không lớn hơn.
 Mục tiền tạm tính có schema riêng, hiện trả trạng thái chưa có công thức;
 không đưa doanh thu đã đối soát vào phản hồi tổng quan.
 
+**T-204 (2026-10-19, Claude):** tăng MINOR `0.41.0` → `0.42.0`; `SupplyItem.check_reminder` đổi từ `boolean | null` sang `boolean` — chưa có lần nhập hay lần nhập gần nhất bằng 0 thì `true`, dùng trước lần nhập đầu thì so tỉ lệ (U-102); `GET /supply-check-reminders` có thêm các thứ ấy; sinh lại type FE.
+
 **T-203 (2026-10-19, phiếu Claude):** tăng MINOR `0.40.0` → `0.41.0`, thêm `account_person_is_owner` (409, trường `person_id`) khi duyệt tài khoản gắn vào người mang cờ chủ quán; sinh lại type FE.
 
 ## 8. Dấu lần gửi trên dây
@@ -268,9 +270,9 @@ Tỉ lệ trên dây là chuỗi tỉ phần 0…1, thân ghi tối đa sáu ch�
 Ràng buộc `supply_item_reminder_ratio_range_check` ánh xạ invalid_request; mặc định 0.2
 của migration không giả thành lần nhập có người.
 
-Câu hỏi chuyển Claude nay là **U-102** ở `docs/product/99-unknowns.md`, chưa quyết nghiệp vụ: khi chưa có dòng mua, khi lần mua gần nhất bằng 0,
-và khi có dòng dùng trước ngày mua đầu tiên thì nhắc như thế nào? Hiện giữ nguyên tổng của sổ,
-trả lần lượt `no_purchase`, `latest_purchase_zero`, `usage_before_first_purchase` và cờ null.
+Ba lúc chưa có mốc (**U-102**, đóng 2026-10-19, chủ repo — `master_plan/shop-facts.md` §8.4) giữ nguyên tổng của sổ và trả lần
+lượt `no_purchase`, `latest_purchase_zero`, `usage_before_first_purchase`; **T-204** (hợp đồng 0.42.0): hai trạng thái đầu cờ `true`,
+trạng thái thứ ba so tỉ lệ như `ready`; cờ thôi `null`.
 Cờ dành để POS kiểm tra không cấp cho POS quyền đọc kho: `GET /supply-stock` vẫn chỉ cho chủ quán;
 POS đang đứng quầy đọc tên thứ cần kiểm qua `GET /supply-check-reminders` (T-201, ADR-119).
 

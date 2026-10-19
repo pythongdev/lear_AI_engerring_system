@@ -77,8 +77,7 @@ export function TrangTongQuan() {
           <h3 className="font-medium">Nguyên liệu</h3>
           <ul className="space-y-2">{data.shortages.supplies.items.map((item) => <li key={item.supply_item_id}>
             <p>{item.name}</p><p>Còn {item.balance} {item.purchase_unit}</p>
-            {item.check_reminder === true && <p>Nên kiểm tra</p>}
-            {item.check_reminder === null && <p>Chưa đủ dữ liệu để nhắc</p>}
+            {item.check_reminder && <p>Nên kiểm tra</p>}
           </li>)}</ul>
           <h3 className="font-medium">{data.shortages.workers.name}</h3>
           {data.shortages.workers.status === "unavailable" ? <ChuaCo muc={data.shortages.workers} />

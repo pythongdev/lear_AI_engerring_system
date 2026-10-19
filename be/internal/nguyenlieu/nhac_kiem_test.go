@@ -25,6 +25,7 @@ func TestI025_NhacKiemTraQuyenVaCungTapKho(t *testing.T) {
 	tuChoi(t, k.goi(t, "GET", "/supply-check-reminders", ngoai, nil), 403, "not_on_counter_duty", "")
 	tuChoi(t, k.goi(t, "GET", "/supply-check-reminders", 0, nil), 401, "unauthenticated", "")
 	tuChoi(t, k.goi(t, "GET", "/supply-stock", k.quay, nil), 403, "owner_only", "")
+	var chuaMoc []float64
 	for _, c := range []struct {
 		name, used, status string
 		buy                bool
@@ -34,9 +35,11 @@ func TestI025_NhacKiemTraQuyenVaCungTapKho(t *testing.T) {
 		{"dưới", "8.001", "ready", true, "2033-05-02", true},
 		{"bằng", "8", "ready", true, "2033-05-02", false},
 		{"trên", "7.999", "ready", true, "2033-05-02", false},
-		{"chưa nhập", "1", "no_purchase", false, "2033-05-02", false},
-		{"nhập không", "10", "latest_purchase_zero", true, "2033-05-02", false},
-		{"dùng trước", "10", "usage_before_first_purchase", true, "2033-05-01", false},
+		// U-102 (chủ repo 2026-10-19, T-204): chưa có mốc nhập ⇒ luôn nhắc; dùng trước lần nhập đầu ⇒ so tỉ lệ như thường.
+		{"chưa nhập", "1", "no_purchase", false, "2033-05-02", true},
+		{"nhập không", "10", "latest_purchase_zero", true, "2033-05-02", true},
+		{"dùng trước", "10", "usage_before_first_purchase", true, "2033-05-01", true},
+		{"dùng trước, còn nhiều", "1", "usage_before_first_purchase", true, "2033-05-01", false},
 	} {
 		id := k.thu(t, "test-nhắc-"+c.name, "kg")
 		if c.buy {
@@ -47,8 +50,11 @@ func TestI025_NhacKiemTraQuyenVaCungTapKho(t *testing.T) {
 			canDat(t, k.ghi(t, id, "2033-05-03", "purchased", "0"), 201)
 		}
 		item := k.kho(t, id)
-		if item["reminder_status"] != c.status || (item["check_reminder"] == true) != c.remind {
+		if item["reminder_status"] != c.status || item["check_reminder"] != c.remind {
 			t.Fatalf("sai ca %s: %v", c.name, item)
+		}
+		if c.status == "no_purchase" || c.status == "latest_purchase_zero" {
+			chuaMoc = append(chuaMoc, float64(id))
 		}
 	}
 	stock := k.goi(t, "GET", "/supply-stock", k.chu, nil)
@@ -93,6 +99,11 @@ func TestI025_NhacKiemTraQuyenVaCungTapKho(t *testing.T) {
 		}
 		if !reflect.DeepEqual(got, want) {
 			t.Fatalf("lời nhắc khác tập kho hoặc lộ số: %v / %v", got, want)
+		}
+		for _, id := range chuaMoc {
+			if _, ok := got[id]; !ok {
+				t.Fatalf("thứ chưa có mốc nhập %v phải tới POS: %v", id, got)
+			}
 		}
 	}
 	// Đưa mọi hiệu số đang nhắc lên trên ngưỡng bằng một dòng nhập mới qua cửa chủ quán.

@@ -138,13 +138,6 @@ phạm vi của nó ở `master_plan/shop-facts.md` **§8.8**.
   (3) **tên miền** chính thức của trang web. Kèm một việc duyệt chữ: câu mô tả hiện dưới tên quán trên Google, bản
   nháp ở `fe/src/app/layout.tsx`. Ai trả lời: chủ quán (1, 2, chữ mô tả), chủ repo (3). Chặn gì: JSON-LD chưa có
   `address` · `openingHours`; chưa có canonical và `sitemap.xml` cho tới khi đặt `BANHCUON_SITE_URL`. Không chặn bán hàng.
-- **U-102** — Ba lúc máy chưa biết có nên nhắc POS kiểm tra một nguyên liệu không (mở 2026-10-18, T-200, từ câu Codex ghi
-  khi làm P3A-08): (1) thứ ấy **chưa có lần nhập nào**; (2) **lần nhập gần nhất ghi 0**; (3) sổ có **ngày dùng trước ngày
-  nhập đầu tiên**. Lời nhắc của chủ quán so phần còn lại với *một tỉ lệ của lần nhập gần nhất* (`master_plan/shop-facts.md`
-  §8.4, lượt bốn 2026-10-14), nên ba lúc này không có mốc để so. Ai trả lời: chủ quán. Chặn gì: hiện máy **không nhắc** ở
-  cả ba lúc (cờ `check_reminder` để trống, trạng thái `no_purchase` · `latest_purchase_zero` ·
-  `usage_before_first_purchase`, `docs/product/3-be/01-hop-dong-api.md` mục P3A-08); POS có thể không được nhắc một thứ
-  đang dùng mà chưa ai ghi nhập. Không chặn bán hàng.
 
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
@@ -169,6 +162,15 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ repo trả lời 2026-10-19 (T-204), trong hội thoại, chọn trong câu hỏi có sẵn phương án.** Lời đáp đã vào owner
+(`master_plan/shop-facts.md` §8.4).
+
+<a id="u-102"></a>
+
+| Câu đã đóng | Lời chủ repo | Owner |
+|---|---|---|
+| ~~U-102 — Ba lúc máy chưa có mốc để so thì có nhắc POS kiểm tra không?~~ | “Luôn nhắc POS kiểm tra”; vế 3 chọn lại “Đã có lần nhập thì so tỉ lệ như thường”. Chưa có lần nhập hay lần nhập gần nhất ghi 0 ⇒ **nhắc**; dùng trước lần nhập đầu ⇒ **so tỉ lệ**. | `master_plan/shop-facts.md` §8.4 · **ADR-119** *Sửa đổi* |
 
 **Chủ quán trả lời 2026-10-16 (T-198), chủ repo chuyển lời trong hội thoại và chọn trong câu hỏi có sẵn phương án
 bốn vế.** Lời đáp đã vào owner (`master_plan/shop-facts.md` §8.6; chữ *offline* từng là chỗ suy ra **S-10**, có lời 2026-10-18: bán hàng tại quán).

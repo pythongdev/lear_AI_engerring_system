@@ -7744,6 +7744,10 @@ phải kiểm; *một luồng SSE riêng cho kho* — ADR-097 đã có tín hi�
 **Applies to:** `be/internal/nguyenlieu/` · `docs/product/3-be/openapi.yaml` · `docs/product/3-be/01-hop-dong-api.md` ·
 `docs/product/3-be/02-vai-va-quyen.md` · `fe/src/lib/api/schema.ts`; **ADR-097** · **ADR-112** · `P3A-08` · **U-102**.
 
+**Sửa đổi 2026-10-19 (T-204, Claude):** `U-102` đóng (`master_plan/shop-facts.md` §8.4) — điểm 2 và 3 không còn lọc theo
+`reminder_status = ready`: đường quầy trả mọi thứ có `check_reminder = true`, gồm thứ chưa có lần nhập hay lần nhập gần nhất
+bằng 0. Một chỗ tính cờ (`be/internal/nguyenlieu/sql/doc.sql`) đứng nguyên.
+
 ### ADR-120 — Đọc tổng kết: một đường theo ngày bán, bốn mục, số đếm theo người không chấm điểm
 
 **Trạng thái:** **Đã chốt** 2026-10-19 — Claude Code (`P3A-10`). Lời quán: trang tổng kết bày **KPI doanh thu · món bán

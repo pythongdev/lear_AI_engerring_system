@@ -41,14 +41,17 @@ describe("Kho", () => {
     expect(within(rows[0]).getByRole("link", { name: "Mở sổ" }).getAttribute("href")).toBe("/chu-quan/nguyen-lieu?thu=9");
     expect(g.map((x) => x.path)).toEqual(["/supply-stock"]);
   });
+  // U-102 (T-204): chưa có mốc nhập ⇒ backend gửi cờ true kèm lý do; dùng trước lần mua đầu là ghi chú cạnh kết quả so tỉ lệ.
   it.each([
-    ["no_purchase", "Máy chưa tính nhắc: chưa có lần mua"],
-    ["latest_purchase_zero", "Máy chưa tính nhắc: lần mua gần nhất bằng 0"],
-    ["usage_before_first_purchase", "Máy chưa tính nhắc: có số dùng trước lần mua đầu"],
-    ["unknown", "Máy chưa tính nhắc"],
-  ])("cờ null với %s bày đúng nhãn", async (status, label) => {
-    mo({ doc: () => ({ status: 200, body: { supply_items: [{ ...thu, check_reminder: null, reminder_status: status }] } }) });
-    expect(await screen.findByText(label)).toBeTruthy(); expect(screen.queryByText("Nhắc POS kiểm tra")).toBeNull();
+    ["no_purchase", true, "Lý do: chưa có lần mua"],
+    ["latest_purchase_zero", true, "Lý do: lần mua gần nhất bằng 0"],
+    ["usage_before_first_purchase", true, "Ghi chú: có số dùng trước lần mua đầu"],
+    ["usage_before_first_purchase", false, "Ghi chú: có số dùng trước lần mua đầu"],
+  ])("%s với cờ %s bày đúng lý do", async (status, co, label) => {
+    mo({ doc: () => ({ status: 200, body: { supply_items: [{ ...thu, check_reminder: co, reminder_status: status }] } }) });
+    expect(await screen.findByText(label)).toBeTruthy();
+    if (co) expect(screen.getByText("Nhắc POS kiểm tra").tagName).toBe("STRONG");
+    else { expect(screen.getByText("Không nhắc")).toBeTruthy(); expect(screen.queryByText("Nhắc POS kiểm tra")).toBeNull(); }
   });
   it("rỗng khác lỗi đọc lần đầu", async () => {
     mo({ doc: () => ({ status: 200, body: { supply_items: [] } }) });

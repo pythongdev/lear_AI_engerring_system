@@ -1149,6 +1149,8 @@ Mệnh đề của **mảng quản trị** — sổ nguyên liệu ở mức *s�
   gần nhất. Tỉ lệ là con số **người nhập** nên vế 1 áp cho nó; lời nhắc **không phải** một con số nguyên liệu và không
   đổi con số nào. Vẫn cấm: định lượng một suất, kết luận *thiếu*, tự tắt món. Phép đọc lược đồ ở *Verification* đổi
   theo ở bước lược đồ thêm cột tỉ lệ (`work/backlog.md` **T-186**); tới lúc ấy test cũ còn xanh vì lược đồ chưa đổi.
+  **Sửa 2026-10-19 (T-204, chủ repo đóng `U-102`):** chưa có lần nhập, hoặc lần nhập gần nhất ghi 0 ⇒ máy **nhắc** POS
+  kiểm tra; vẫn là lời nhắc, không đổi con số nào.
 - **Sửa một con số đã nhập là một lần cập nhật.** Nó để lại bản trước, bản sau, lý do và người sửa
   theo `I-018`; không có đường sửa đè.
 

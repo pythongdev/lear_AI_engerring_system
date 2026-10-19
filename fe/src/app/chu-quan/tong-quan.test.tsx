@@ -57,7 +57,12 @@ function tongQuan(p: Partial<OwnerOverview> = {}): OwnerOverview {
           {
             supply_item_id: 2, name: "Mộc nhĩ", purchase_unit: "kg", purchased_total: "0", used_total: "0", balance: "0",
             reminder_ratio: "0.2", latest_purchase_date: null, latest_purchase_measure: null,
-            reminder_status: "no_purchase", check_reminder: null,
+            reminder_status: "no_purchase", check_reminder: true,
+          },
+          {
+            supply_item_id: 3, name: "Hành tây", purchase_unit: "kg", purchased_total: "10", used_total: "2", balance: "8",
+            reminder_ratio: "0.2", latest_purchase_date: "2026-10-18", latest_purchase_measure: "10",
+            reminder_status: "ready", check_reminder: false,
           },
         ],
       },
@@ -108,15 +113,17 @@ describe("trang tổng quan của chủ quán", () => {
     expect(within(thieuGi).getByText(/Bánh cuốn trứng: khách đặt 8, đã ra 3/)).toBeTruthy();
   });
 
-  it("nguyên liệu: bày số dư backend trả và lời nhắc, không tự kết luận khi backend chưa biết (U-102)", async () => {
+  it("nguyên liệu: bày số dư và lời nhắc đúng cờ backend trả, kể cả thứ chưa có lần mua (U-102, T-204)", async () => {
     voiBackend(<Page />, () => ({ status: 200, body: tongQuan() }));
     const thieuGi = await screen.findByRole("region", { name: "Còn thiếu gì" });
     const bot = within(thieuGi).getByText(/Bột gạo/).closest("li") as HTMLElement;
     expect(within(bot).getByText(/Còn 1 kg/)).toBeTruthy();
     expect(within(bot).getByText(/Nên kiểm tra/)).toBeTruthy();
     const mocNhi = within(thieuGi).getByText(/Mộc nhĩ/).closest("li") as HTMLElement;
-    expect(within(mocNhi).getByText(/Chưa đủ dữ liệu để nhắc/)).toBeTruthy();
-    expect(within(mocNhi).queryByText(/Nên kiểm tra/)).toBeNull();
+    expect(within(mocNhi).getByText(/Nên kiểm tra/)).toBeTruthy();
+    const hanh = within(thieuGi).getByText(/Hành tây/).closest("li") as HTMLElement;
+    expect(within(hanh).getByText(/Còn 8 kg/)).toBeTruthy();
+    expect(within(hanh).queryByText(/Nên kiểm tra/)).toBeNull();
   });
 
   it("thiếu số tối thiểu · POS chưa khai: nói đúng lý do backend trả, không bày số nào", async () => {

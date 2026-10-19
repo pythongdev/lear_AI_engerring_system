@@ -140,24 +140,25 @@ func TestI025_KhoTrangThaiChuaCoLoi(t *testing.T) {
 	k := dung(t)
 	id := k.thu(t, "test-kho-chưa-có-lời", "")
 	got := k.kho(t, id)
-	if got["reminder_status"] != "no_purchase" || got["check_reminder"] != nil ||
+	// U-102 (T-204): chưa có lần nhập ⇒ nhắc; lần nhập gần nhất 0 ⇒ nhắc; dùng trước lần nhập đầu ⇒ so tỉ lệ như thường.
+	if got["reminder_status"] != "no_purchase" || got["check_reminder"] != true ||
 		got["latest_purchase_date"] != nil || got["latest_purchase_measure"] != nil ||
 		got["purchased_total"] != "0" || got["used_total"] != "0" || got["balance"] != "0" {
-		t.Fatalf("chưa nhập không được đoán: %v", got)
+		t.Fatalf("chưa có lần nhập thì nhắc, không đoán số: %v", got)
 	}
 	canDat(t, k.ghi(t, id, "2033-05-01", "used", "1"), 201)
 	got = k.kho(t, id)
-	if got["reminder_status"] != "no_purchase" || got["check_reminder"] != nil || got["balance"] != "-1" {
-		t.Fatalf("chỉ có dùng vẫn chưa có mốc: %v", got)
+	if got["reminder_status"] != "no_purchase" || got["check_reminder"] != true || got["balance"] != "-1" {
+		t.Fatalf("chỉ có dùng vẫn chưa có mốc nhập, vẫn nhắc: %v", got)
 	}
 	canDat(t, k.ghi(t, id, "2033-05-02", "purchased", "5"), 201)
 	got = k.kho(t, id)
-	if got["reminder_status"] != "usage_before_first_purchase" || got["check_reminder"] != nil || got["balance"] != "4" {
-		t.Fatalf("dùng trước ngày mua phải có trạng thái, giữ phép tổng cũ: %v", got)
+	if got["reminder_status"] != "usage_before_first_purchase" || got["check_reminder"] != false || got["balance"] != "4" {
+		t.Fatalf("dùng trước ngày mua có trạng thái, so tỉ lệ như thường (4 ≥ 0.2 × 5): %v", got)
 	}
 	canDat(t, k.ghi(t, id, "2033-05-03", "purchased", "0"), 201)
 	got = k.kho(t, id)
-	if got["reminder_status"] != "latest_purchase_zero" || got["check_reminder"] != nil || got["latest_purchase_measure"] != "0" {
-		t.Fatalf("lần nhập 0 phải có trạng thái: %v", got)
+	if got["reminder_status"] != "latest_purchase_zero" || got["check_reminder"] != true || got["latest_purchase_measure"] != "0" {
+		t.Fatalf("lần nhập 0 có trạng thái và nhắc: %v", got)
 	}
 }
