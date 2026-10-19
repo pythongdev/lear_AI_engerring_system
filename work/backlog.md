@@ -89,7 +89,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-197 **Chỗ cất số người đang làm do POS khai** — §8.6 hàng 6 đã chốt (POS khai, đóng U-060) nhưng lược đồ chưa có chỗ cất: lát lược đồ + cửa ghi của POS + nối vào `GET /owner-overview` mục `workers_present` — L2 — mở 2026-10-16 từ P3A-09
+- [ ] T-202 **Khớp FE với ADR-102 trước `P4-05`** — QueryClient đang tắt đọc lại khi quay lại cửa sổ (trái ADR-102 điểm 3); ADR-102 điểm 4 · 7 còn nói chọn tên và `X-Person-Id` dù ADR-109 đã thay; hai việc ADR-102 giao cho `P4-03` · `P4-04` (accessibility, nhiều tab) bị rơi; vài đề xuất `fe_guidance` chưa có bước nhận — L1 — mở 2026-10-19 từ lượt rà `fe_guidance` (Claude Code), làm ở phiên sau, **sau khi T-197 commit** · [chi tiết](#t-202)
 - [ ] T-141 **Huỷ ô chấm công: ghi chú bắt buộc, chỉ chủ quán** — migration siết lát chấm công (U-071, `I-027`), test `db/tests/i027_*` đổi từ *database nhận* sang *database từ chối*, `13-luoc-do-cham-cong.md` — L2 — Claude viết test đỏ, Codex thi công · [chi tiết](#t-139)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
@@ -98,6 +98,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-197 **Chỗ cất số người đang làm do POS khai** — mở 2026-10-16 từ P3A-09; nhận 2026-10-19 · Claude Code (dẫn), Codex thi công và viết test theo lời chủ repo *"hãy làm t-197 giao cho codex làm bạn kiểm tra"* — L2. **Thiết kế: ADR-121.** *Acceptance:* (1) migration bước 32 bảng `workers_present_declaration` — mỗi lần khai một dòng (`worker_count` nguyên dương, `sale_date`, `declared_at`, người khai), không sửa không xoá cho vai ghi, có trigger vết, lùi chặn khi có dòng; file `docs/product/2-db/22-luoc-do-so-nguoi-dang-lam.md`, dòng 32 ở `07-thu-tu-migration.md`, test database (số ≤ 0 bị từ chối, thiếu người khai bị từ chối, vai ghi không UPDATE · DELETE được); (2) `POST /workers-present-declarations` lớp `quay` — không phiên ⇒ `unauthenticated`, ngoài quầy (kể cả chủ quán không đứng quầy) ⇒ `not_on_counter_duty`, `worker_count` thiếu · ≤ 0 · không nguyên ⇒ `invalid_request`; trả dòng vừa ghi; (3) `GET /workers-present` lớp `quay_hoac_chu_quan` trả lần khai mới nhất của ngày bán hiện tại hoặc `null`; (4) `GET /owner-overview`: `workers_present` có số khi ngày bán hiện tại có lần khai (lần mới nhất thắng, lần của ngày trước không dùng), không có ⇒ *chưa có* `workers_present_missing`; `shortages.workers` có số khi có cả lần khai và `minimum_workers` — `short` = khai < tối thiểu, `missing_workers` = phần thiếu (0 khi đủ) — thiếu lần khai ⇒ `workers_present_missing`, có lần khai mà chưa nhập tối thiểu ⇒ `daily_minimum_missing`; (5) hợp đồng tăng phiên bản phụ, `schema.ts` sinh lại, ma trận thêm một dòng cho cửa ghi; test mới đỏ trước khi có code; db-check · be-check · `./scripts/gate.sh` xanh do Claude tự chạy · [ADR-121](../docs/decisions.md)
 
 
 <a id="done"></a>
@@ -400,6 +401,57 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-202"></a>
+### T-202 — FE đang lệch ADR-102 ở cấu hình truy vấn, và ADR-102 còn nói danh tính bằng chọn tên
+
+**Nguồn:** chủ repo 2026-10-19 bảo rà `docs/private/fe/fe_guidance/` so với `docs/product/4-fe/`, `work/backlog_FE.md`,
+`work/backlog_FE_AD.md`; Codex hết hạn mức, Claude Code tự rà (chỉ đọc), chủ repo đồng ý mở task *"để bạn làm ở session
+sau"*. Mức **L1**: một dòng cấu hình đổi hành vi đọc lại của mọi màn, còn lại là sửa con trỏ và giao việc. Làm **sau khi
+T-197 commit** — T-197 đang sửa `docs/decisions.md` và file này.
+
+**Lượt rà tìm thấy** (đo 2026-10-19, Claude Code):
+1. `fe/src/lib/api/provider.tsx` dòng 14 đặt `refetchOnWindowFocus: false` cho mọi query. ADR-102 điểm 3 và dòng *Chủ
+   quán* của điểm 1 bắt đọc lại khi quay lại cửa sổ; `fe-02-loading.md` §4 · §5 cũng thế. Hôm nay chỉ query phiên chịu, nhưng
+   `P4-05` (trang đầu chạm giá) sẽ thừa hưởng — đúng rủi ro *màn giữ giá cũ* của kế hoạch pha 4 §10. `check-fe-rules.sh`
+   không bắt ca này.
+2. ADR-102 điểm 4 (*tên đang chọn* trong Zustand, U-075) và điểm 7 (luồng quầy mang `X-Person-Id`) đã bị **ADR-109** thay
+   (cookie phiên), nhưng thân, tiêu đề và dòng bảng tổng hợp của ADR-102 không trỏ sang. Cùng chữ cũ ở
+   `docs/product/4-fe/01-khung-fe.md` §5 dòng `P4-04` (*`personId` của `createApi`*, đã gỡ), `work/backlog_FE_AD.md`
+   `P4A-01` (*danh tính bằng header theo ADR-102*) và `P4A-06` (tiêu đề *vào máy bằng chọn tên*; dòng *Theo fe_guidance* trỏ
+   store chọn tên của `fe-03` §4).
+3. ADR-102 điểm 8 giao *kiểm accessibility* (`fe-04` §7.5) cho `P4-03` và *nhiều tab cùng máy* cho `P4-04`; cả hai bước đã
+   Done mà không làm. Hệ quả: `aria-describedby` cho lỗi ô, focus của dialog, cỡ chạm (`fe-04` §5) không ai giữ; đăng xuất ở
+   một tab thì tab kia giữ cache người trước tới lần gọi 401.
+4. Chưa có bước nhận: ba kiểu chỉ báo tải (skeleton lần đầu · spinner trên nút khi ghi · chỉ báo nhỏ khi đọc lại, `fe-02`
+   §1 · §2); guard đồng bộ chống bấm gửi hai lần cho lệnh ghi của người quán (`fe-02` §3 — phía khách đã có
+   `submission_code`, I-024); *không suy ngày bán từ đồng hồ máy* (`fe-03` §6); ba tầng component và chiều import (`fe-04`
+   §1) — `P4A-01` coi là đã chốt nhưng `01-khung-fe.md` §4 không có, code đặt theo thư mục miền `components/tai-khoan/`.
+5. `fe/AGENTS.md` (khối luật của create-next-app) vào repo ở `92c16a7` (P4-04), trái câu bàn giao `P4-02` *"không
+   `AGENTS.md` của `create-next-app` (luật AI chỉ ở `CLAUDE.md`)"*.
+
+Không phải lỗi: guidance đề xuất bật `cacheComponents` · `partialPrefetching`, `QC-18` tắt có lý do — owner thắng.
+
+**Acceptance** (viết trước, 2026-10-19):
+1. `provider.tsx` không còn tắt `refetchOnWindowFocus` (giữ `retry: false`). Test Vitest mới: một query đang hiển thị, báo
+   cửa sổ quay lại (`focusManager`) ⇒ hàm đọc chạy lần hai; cài lại `refetchOnWindowFocus: false` ⇒ test đỏ, gỡ ⇒ xanh. Quyết
+   có thêm luật vào `check-fe-rules.sh` (kèm ca hồi quy) hay không — không thêm thì ghi một dòng lý do ở bàn giao.
+2. ADR-102 có mục *Sửa đổi* ghi ngày và người: vế *tên đang chọn* của điểm 4 và cả điểm 7 bị **ADR-109** thay; tiêu đề và
+   dòng bảng tổng hợp nói điều ấy; hai dòng điểm 8 (accessibility → `P4-03`, nhiều tab → `P4-04`) trỏ sang bước nhận mới.
+3. `01-khung-fe.md` §5 dòng `P4-04`, `backlog_FE_AD.md` `P4A-01` · `P4A-06` hết chữ chọn tên / header; `grep -rn
+   "X-Person-Id\|chọn tên" docs/product/4-fe work/backlog_FE.md work/backlog_FE_AD.md` chỉ còn câu nói về luật cũ như vết.
+4. Mỗi mục ở *Lượt rà tìm thấy* 3 · 4 có một chỗ nhận: dòng trong Goal hoặc khuôn của `P4-05` · `P4-06` · `P4-11` ở
+   `work/backlog_FE.md`, hoặc dòng ở `01-khung-fe.md`. Ba tầng component: chọn lấy hay bác `fe-04` §1, ghi ở
+   `01-khung-fe.md` §4; là sở thích thì hỏi chủ repo.
+5. `fe/AGENTS.md`: hỏi chủ repo giữ hay gỡ; ghi kết quả và lý do ở `QC-18`.
+6. `./scripts/gate.sh` xanh, có dòng `fe-check: PASS`.
+
+**Scope dự kiến:** `fe/src/lib/api/provider.tsx` · test mới cạnh nó · `docs/decisions.md` (ADR-102) ·
+`docs/product/4-fe/01-khung-fe.md` · `work/backlog_FE.md` · `work/backlog_FE_AD.md` · `work/backlog.md` ·
+`docs/product/2-db/10-quy-uoc-code.md` (`QC-18`) · `fe/AGENTS.md` · `scripts/check-fe-rules.sh` +
+`scripts/check-fe-rules.test.sh` (chỉ khi thêm luật).
+
+[↑ đầu file](#top)
 
 <a id="t-171"></a>
 ### T-171 · T-172 — Hai nhánh chen nhau không có test (F-064 · F-065)
