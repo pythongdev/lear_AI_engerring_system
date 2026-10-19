@@ -57,7 +57,7 @@ xem đi trên URL (**ADR-102** điểm 4).
 
 | Màn (route) | Đường đọc của hợp đồng | Đường ghi | Đọc lại khi | Mất kết nối bày gì | Bước |
 |---|---|---|---|---|---|
-| *(chưa có màn nào — `P4-05` thêm dòng đầu tiên)* | | | | | |
+| `/chu-quan` — Tổng quan | `GET /owner-overview` | `PUT /daily-minimums/{sale_date}` (`sale_date` của lần đọc) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ — hợp đồng không trả `poll_interval_seconds` cho chủ quán | giữ bản cũ kèm `Alert` có mốc `read_at` của bản ấy (dòng *Chủ quán*) | `P4A-02` |
 
 ## 3. Lớp gọi API
 

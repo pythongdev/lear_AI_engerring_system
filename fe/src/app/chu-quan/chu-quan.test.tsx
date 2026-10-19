@@ -45,7 +45,7 @@ describe("khung chủ quán", () => {
     expect(muc.getAttribute("href")).toBe("/chu-quan");
     expect(muc.getAttribute("aria-current")).toBe("page");
     expect(within(nav).getAllByRole("link")).toHaveLength(1);
-    expect(screen.getByText(/Màn chủ quán \(menu, đối soát\)/)).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Tổng quan" })).toBeTruthy();
     expect(replace).not.toHaveBeenCalled();
   });
 
@@ -60,14 +60,14 @@ describe("khung chủ quán", () => {
     moKhung(200, phien(false));
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/quay"));
     expect(screen.queryByRole("navigation")).toBeNull();
-    expect(screen.queryByText(/Màn chủ quán \(menu, đối soát\)/)).toBeNull();
+    expect(screen.queryByRole("heading", { name: "Tổng quan" })).toBeNull();
   });
 
   it("401 unauthenticated: chuyển về /dang-nhap, không hiện nav hay nội dung con", async () => {
     moKhung(401, { code: "unauthenticated" });
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/dang-nhap"));
     expect(screen.queryByRole("navigation")).toBeNull();
-    expect(screen.queryByText(/Màn chủ quán \(menu, đối soát\)/)).toBeNull();
+    expect(screen.queryByRole("heading", { name: "Tổng quan" })).toBeNull();
   });
 
   it("mọi mục có page.tsx thật; phát hiện route giả trong bản sao", () => {

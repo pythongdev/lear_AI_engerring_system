@@ -146,7 +146,7 @@ ra đời ở `P4-02` (**ADR-035**).
 lại cửa sổ (`T-202`), khi mạng về, sau mỗi lần ghi; **không** kéo theo chu kỳ, luôn bày `read_at`. Cần bảng tự chạy hơn thế
 ⇒ `F-XXX` gửi pha 3, không tự đặt chu kỳ. (2) Mục nào backend trả trạng thái thiếu (`daily_minimum_missing`,
 `workers_present_missing`) thì trang nói đúng điều ấy, không suy số. (3) Trang có **ô nhập hai số tối thiểu của ngày**
-(`PUT /daily-minimums/{sale_date}`, lý do khi sửa) — chưa bước FE nào khác nhận; ghi xong thì đọc lại tổng quan. (4) Số
+(`PUT /daily-minimums/{sale_date}`; cửa không nhận lý do — backend ghi vết sửa bằng mã cửa `tongquan/dat_toi_thieu`) — chưa bước FE nào khác nhận; ghi xong thì đọc lại tổng quan. (4) Số
 người đang làm do POS khai ở màn quầy — **không** thuộc trang này. (5) Ngày bán của trang là `sale_date` backend trả.
 
 **Theo fe_guidance:** mẫu R (tín hiệu đọc lại và đường kéo dự phòng) ở `fe-01-rendering.md` §6; banner mất kết nối và chế độ suy giảm ở `fe-02-loading.md` §4.
@@ -155,7 +155,48 @@ người đang làm do POS khai ở màn quầy — **không** thuộc trang nà
 
 **Bẫy:** *số tiền dự tính* (§8.6 hàng 5) là tạm tính trong buổi — không bao giờ bày cạnh hay giống doanh thu đã đối soát; và frontend không cộng tiền (**ADR-086**).
 
-**Nhận việc:** —
+**Nhận việc** — 2026-10-19 · dẫn, test trước và duyệt: **Claude Code**; thi công: **Codex** (worktree `../lean_wt/P4A-02`,
+nhánh `codex/P4A-02`). **Claude chốt:** trang ở `/chu-quan` (thay chữ giữ chỗ); thành phần riêng màn ⇒ tầng 3 dưới
+`fe/src/app/chu-quan/_components/`; giờ hiển thị theo múi giờ quán `Asia/Ho_Chi_Minh` (`master_plan/shop-facts.md` §1)
+— không theo múi giờ máy; tiền định dạng `vi-VN` từ số nguyên backend trả, không phép tính; không `refetchInterval`.
+Chữ trên màn do Claude đặt trong test — là nhãn giao diện, không phải luật quán.
+
+*Nghiệm thu* (viết trước, 2026-10-19):
+1. `fe/src/app/chu-quan/tong-quan.test.tsx` (Claude viết trước, 9 ca đỏ vì chưa có code) xanh, **không** sửa điều kiện
+   kiểm: ngày bán · mốc đọc từ backend dù đồng hồ máy lệch; tiền tạm tính đúng số, nhãn *chưa đối soát*, không chữ
+   *doanh thu*; bảy mục; nguyên liệu bày số dư và lời nhắc, `check_reminder: null` ⇒ *Chưa đủ dữ liệu để nhắc* (U-102);
+   hai trạng thái thiếu nói đúng lý do, không số; nhập tối thiểu — bấm hai lần một PUT tới `sale_date` backend trả rồi đọc
+   lại; điền sẵn số đã nhập; lời từ chối có `field` gắn đúng ô; đọc lại lỗi giữ bản cũ kèm cảnh báo có mốc.
+2. `check-fe-rules.sh` xanh (không phép tính trên tên tiền); `grep -rn "refetchInterval" fe/src/app/chu-quan` rỗng.
+3. Chỉ báo tải (`fe-02` §1 · §2): lần đọc đầu chữ *Đang đọc tổng quan…*; khi ghi nút tắt và đổi chữ *Đang lưu…*. Primitive
+   `skeleton` · `spinner` của shadcn **chưa cài được** — máy không ra mạng 2026-10-19 (`npx shadcn add` ⇒ `ENOTFOUND
+   ui.shadcn.com`); không tự viết primitive (**ADR-100** điểm 2), cài sau là một việc riêng.
+4. Chạy thật cùng backend (Claude): ngày chưa nhập tối thiểu ⇒ hai lý do thiếu; nhập ⇒ tiến độ và thiếu người hiện số;
+   Lan vai `quay` gọi `PUT /daily-minimums` ⇒ `403 owner_only`.
+5. `docs/product/4-fe/01-khung-fe.md` §2 dòng màn `/chu-quan` (Claude ghi khi duyệt).
+6. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
+
+**Bàn giao** — 2026-10-19 · thực hiện: **Codex** `gpt-6-astra` (worktree `../lean_wt/P4A-02`, nhánh `codex/P4A-02`, base
+`d5849f4`); test trước và duyệt: **Claude Code**. Nhánh `P4A-01` (cùng nhánh bước trước). File: `page.tsx` ·
+`_components/tong-quan.tsx` · `_components/du-lieu-tong-quan.ts` · `_components/form-toi-thieu.tsx` · `tong-quan.test.tsx`
+(Claude) · `chu-quan.test.tsx`; owner `01-khung-fe.md` §2.
+*Nghiệm thu → bằng chứng:*
+1. `tong-quan.test.tsx` 9/9 xanh; md5 file test trước và sau khi Codex làm trùng nhau (`a0206cf5…`). **Claude sửa test của
+   mình một chỗ khi duyệt:** ca *bấm hai lần* dùng `fireEvent.click` hai lần — React render lại giữa hai lần nên nút đã
+   tắt, gỡ chốt đồng bộ mà test vẫn xanh (không có răng). Đổi thành hai `requestSubmit()` trong cùng một `act`: gỡ chốt ⇒
+   `expected 3 to be 2`, trả lại ⇒ xanh. Hai lỗi cài khác: đổi chữ mục tiền thành *Doanh thu hôm nay* ⇒ ca tiền đỏ; bỏ gác
+   layout ⇒ hai ca gác đỏ. **Codex đổi `chu-quan.test.tsx`** một dòng (chữ giữ chỗ ⇒ tiêu đề *Tổng quan*) nhưng để hai ca
+   gác vẫn tìm chữ giữ chỗ đã mất ⇒ vế *không hiện nội dung* luôn đúng; Claude đổi hai dòng ấy sang tiêu đề *Tổng quan*.
+2. `check-fe-rules: PASS`; grep `refetchInterval|setQueryData|new Date()|Date.now` dưới `fe/src/app/chu-quan` (trừ test) rỗng.
+3. *Đang đọc tổng quan…* lần đầu; nút *Đang lưu…* khi ghi; primitive `skeleton` · `spinner` chưa cài (máy không mạng).
+4. Chạy thật (database dùng-xong-bỏ, backend thật, `next dev`, Chrome headless qua CDP): ngày chưa nhập ⇒ *Chưa nhập số tối
+   thiểu của ngày* · *POS chưa khai số người đang làm* (cả mục thiếu người), tiền *0 đ · Tiền bán tạm tính, chưa đối soát*;
+   chủ quán điền 300 · 4 và bấm lưu trên form ⇒ *Đã lưu số tối thiểu.*, mốc đọc 13:41:09 → 13:41:16, *0 / 300 bánh*; Lan đứng
+   quầy khai 3 người (`201`) ⇒ *3 người* · *Thiếu 1 người*; Lan `PUT /daily-minimums` ⇒ `403 owner_only`. Database thử không
+   có đơn nên dòng món · phần đã ra rỗng — hình bày của chúng do test giữ.
+5. `01-khung-fe.md` §2 dòng màn `/chu-quan`.
+6. `npm run lint` · `typecheck` sạch; `npx vitest run` ⇒ `Tests 55 passed (55)`; gate — xem báo cáo cuối phiên.
+Còn lại: cài primitive `skeleton` · `spinner` khi máy có mạng (việc riêng).
 
 [↑ đầu file](#top)
 
