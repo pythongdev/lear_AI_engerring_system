@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Menu &amp; giá · Chủ quán</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="styles.css" rel="stylesheet">
+</head>
+<body>
+<div class="design-toggle"><input type="checkbox" id="hien-ten" checked><label for="hien-ten">Hiện tên component</label><a href="index.html">Mục lục thiết kế</a></div>
+<div data-component="KhungChuQuan" class="shell" ><span class="nhan-component">KhungChuQuan</span>
+<nav data-component="ThanhDieuHuong" class="navigation" aria-label="Trang chủ quán"><span class="nhan-component">ThanhDieuHuong</span>
+<a class="brand" href="index.html"><b>BT</b><span>Bánh cuốn Bà Thanh<small>Chủ quán</small></span></a><div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hôm nay</summary><div class="nav-links"><a href="tong-quan.html">Tổng quan</a><a href="tong-ket.html">Tổng kết</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group selected" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Thực đơn</summary><div class="nav-links"><a href="san-pham.html">Sản phẩm</a><a href="menu-gia.html" aria-current="page">Menu &amp; giá</a><a href="danh-muc.html">Danh mục</a><a href="combo.html">Combo</a><a href="topping.html">Topping</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Con người</summary><div class="nav-links"><a href="nhan-vien.html">Nhân viên</a><a href="giao-viec.html">Giao việc</a><a href="dao-tao.html">Đào tạo</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hàng &amp; tiền</summary><div class="nav-links"><a href="nguyen-lieu.html">Nguyên liệu</a><a href="kho.html">Kho</a><a href="khoan-chi.html">Khoản chi</a></div></details>
+</div>
+
+</nav>
+<main data-component="TrangMenuGia" class="page-content" ><span class="nhan-component">TrangMenuGia</span>
+<header data-component="DauTrang" class="page-header" ><span class="nhan-component">DauTrang</span>
+<div><h1>Menu &amp; giá</h1><p class="muted">Bản thiết kế tĩnh · số liệu minh hoạ</p></div><div class="actions"><button type="button" class="primary">Đọc lại menu</button></div>
+</header>
+<div class="split"><div class="stack"><section data-component="BangDuLieu" class="card" ><span class="nhan-component">BangDuLieu</span>
+<h2>Bánh cuốn · Giá bán</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Bánh cuốn · Giá bán"><table><thead><tr><th scope="col">Lựa chọn</th><th scope="col">Giá</th></tr></thead><tbody><tr><td>Giá</td><td>[GIÁ]</td></tr></tbody></table></div>
+</section>
+<section data-component="BangDuLieu" class="card" ><span class="nhan-component">BangDuLieu</span>
+<h2>Thành phần</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Thành phần"><table><thead><tr><th scope="col">Thành phần</th><th scope="col">Số lượng</th><th scope="col">Giá gốc</th><th scope="col">Thao tác</th></tr></thead><tbody><tr><td>Bánh cuốn</td><td>1</td><td>[GIÁ]</td><td><div class="actions"><button type="button" class="primary">Đổi giá gốc</button><button type="button">Đổi số lượng</button></div></td></tr></tbody></table></div>
+</section>
+<div class="actions"><button type="button" class="primary">Ngừng bán</button></div><section data-component="BangDuLieu" class="card" ><span class="nhan-component">BangDuLieu</span>
+<h2>Nhóm [TÊN NHÓM]</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Nhóm [TÊN NHÓM]"><table><thead><tr><th scope="col">Lựa chọn</th><th scope="col">Phụ thu</th><th scope="col">Thao tác</th></tr></thead><tbody><tr><td>[LỰA CHỌN]</td><td>[GIÁ]</td><td><button type="button">Đổi phụ thu</button></td></tr></tbody></table></div>
+</section>
+</div><aside data-component="HopThoaiSuaCoLyDo" class="drawer" aria-label="Đổi giá gốc Bánh cuốn"><span class="nhan-component">HopThoaiSuaCoLyDo</span>
+<form data-component="FormGiaGoc" class="card form-body" aria-label="Đổi giá gốc Bánh cuốn"><span class="nhan-component">FormGiaGoc</span>
+<h2>Đổi giá gốc Bánh cuốn</h2><label class="field">Giá gốc mới (đồng)<input type="number" placeholder="[GIÁ]"></label><label class="field">Lý do<input type="text"></label><p class="muted">Nhập lý do cho thay đổi này.</p><div class="actions"><button type="button" class="primary">Lưu</button><button type="button">Huỷ</button></div>
+</form>
+
+</aside>
+</div>
+</main>
+
+</div>
+<section id="chu-giai"><h2>Chú giải component</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Chú giải component"><table><thead><tr><th scope="col">Tên</th><th scope="col">Nó là gì</th><th scope="col">Phạm vi</th></tr></thead><tbody><tr><td><code>BangDuLieu</code></td><td>Bảng dữ liệu có vùng cuộn ngang riêng.</td><td>dùng chung</td></tr><tr><td><code>DauTrang</code></td><td>Tiêu đề trang, lời dẫn và thao tác chính.</td><td>dùng chung</td></tr><tr><td><code>FormGiaGoc</code></td><td>Các ô giá gốc và lý do của HopThoaiSuaCoLyDo.</td><td>riêng trang</td></tr><tr><td><code>HopThoaiSuaCoLyDo</code></td><td>Ngăn bên phải để sửa dữ liệu và nhập lý do.</td><td>dùng chung</td></tr><tr><td><code>KhungChuQuan</code></td><td>Vỏ trang nối điều hướng với nội dung quản trị.</td><td>dùng chung</td></tr><tr><td><code>NhomDieuHuong</code></td><td>Một nhóm liên kết đến các trang cùng mảng.</td><td>dùng chung</td></tr><tr><td><code>ThanhDieuHuong</code></td><td>Thanh bên trên máy tính và thanh bốn nhóm ở đáy điện thoại.</td><td>dùng chung</td></tr><tr><td><code>TrangMenuGia</code></td><td>Nội dung riêng của trang Menu &amp; giá.</td><td>riêng trang</td></tr></tbody></table></div></section>
+</body>
+</html>

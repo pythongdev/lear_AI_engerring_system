@@ -98,7 +98,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 - [ ] P4-07 **Màn quầy: nhận đơn — đợt một, hàng chờ** — duyệt · từ chối, tạm dừng · quán mù kèm mở lại, nhắc và tự nhả đơn hẹn; soạn lượt gọi POS và đơn điện thoại để đợt hai; đơn chờ chưa bày được món (F-074) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-07)
 - [ ] P4-09 **Sản xuất theo mẻ — phần làm được** — bảng trạm chỉ đọc, ra bàn ở quầy; bấm mẻ · lùi mẻ · chuyển · ghi làm sai chờ đường đọc mã việc trạm (F-073) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-09)
-- [ ] T-215 **Bản thiết kế tĩnh cho từng trang chủ quán, có tên component** — 13 trang HTML mở thẳng từ file trong `docs/product/4-fe/thiet_ke/chu_quan/`, một trang một route của `mucChuQuan`, mỗi khối mang nhãn tên component và bảng chú giải; chỉ bày đúng ô và thao tác trang thật đang có, số minh hoạ; không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"hãy yêu cầu codex làm và bạn kiểm tra"* · [chi tiết](#t-215)
 
 
 
@@ -112,6 +111,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-215 **Bản thiết kế tĩnh cho từng trang chủ quán, có tên component** — 13 trang HTML mở thẳng từ file trong `docs/product/4-fe/thiet_ke/chu_quan/`, một trang một route của `mucChuQuan`, mỗi khối mang nhãn tên component và bảng chú giải; chỉ bày đúng ô và thao tác trang thật đang có, số minh hoạ; không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"hãy yêu cầu codex làm và bạn kiểm tra"* — 2026-10-20 · [chi tiết](#t-215)
 - [x] T-214 **Một lệnh chạy toàn bộ hệ thống trên máy phát triển** — `make dev` bật database · migration · mồi rồi chạy server Go (8080) và Next (3000) cùng lúc, log có tiền tố, Ctrl+C hay một bên chết thì tắt cả hai, database giữ chạy; `make be` · `make fe` chạy riêng; `docs/command/make.md` §4 — L1 — mở và nhận 2026-10-20 · Codex thi công (hết hạn mức trước báo cáo), Claude Code duyệt và chạy thật — 2026-10-20 · [chi tiết](#t-214)
 - [x] P4-06 **Lớp realtime chung** — `TinHieuProvider` đọc SSE qua client API, tín hiệu chỉ làm đọc lại, im 25 giây là đứt, tự nối lại, banner không nút; luồng ở layout `/quay` · `/tram`; `tuyChonKeo()` kéo theo chu kỳ; nhiều tab qua `BroadcastChannel`; chạy thật: đóng tab quầy ⇒ `409 shop_not_seeing_orders` — L2 — Codex thi công, Claude Code test trước và duyệt — 2026-10-20 · [chi tiết](backlog_FE.md#p4-06)
 - [x] P4-05 **Trang *Menu & giá* — trang thử, rút khuôn** — `/chu-quan/menu-gia`: giá mỗi tổ hợp, thành phần qua tính thử, phụ thu; đổi giá gốc · phụ thu · số lượng có lý do, ngừng bán; khuôn ở `01-khung-fe.md` §6; chạy thật trên trình duyệt: đổi giá ⇒ số mới không tải lại trang — L2 — Codex thi công, Claude Code test trước và duyệt — 2026-10-20 · [chi tiết](backlog_FE.md#p4-05)
@@ -458,6 +458,13 @@ thẳng từ file, chỉ gọi mạng tới Google Fonts; (3) tập `data-compon
 dùng chung mang đúng tên trong danh mục ở `index.html`; khối có component thật thì mang tên thật; (5) mỗi ô và thao tác bày ra đều có trong
 component trang tương ứng (Claude đối chiếu từng trang với `_components/*.tsx`); (6) ở bề rộng 390px không cuộn ngang trang, thanh điều hướng
 xuống đáy, bảng cuộn trong hộp; (7) dùng `button` · `input` · `label` thật; (8) `./scripts/gate.sh` xanh.
+
+**Bàn giao** — 2026-10-20 · thực hiện: **Codex** (worktree `../lean_wt/T-215`, nhánh `codex/T-215`, base `4b7da4e`, đã gỡ); duyệt và tích hợp:
+**Claude Code**, nhánh `P4A-01`. File: 15 file dưới `docs/product/4-fe/thiet_ke/chu_quan/`, cùng dòng owner ở `CLAUDE.md` §2. (1) Script kiểm riêng của
+Claude ⇒ thiếu 0, thừa 0. (2) URL ngoài Google Fonts: 0 ở cả 14 trang. (3) Mọi trang `chú giải khớp=True`, nhãn sai 0, khối thiếu nhãn 0.
+(4) Danh mục `index.html` có 14 tên dùng chung; Codex thêm `FormMenu` · `OMenu` (tên thật trong `form-menu.tsx`). (5) Claude đối chiếu nhãn với
+`_components/*.tsx`: mọi nhãn soát được đều có trong component thật; giá dùng `[GIÁ]`. (6) Playwright khung nhìn 390px ⇒ `scrollWidth` 390 ở cả 14
+trang, không khối nào tràn ngoài hộp cuộn bảng. (7) Có ở mọi trang. (8) Gate xanh ở clone chính.
 
 [↑ đầu file](#top)
 

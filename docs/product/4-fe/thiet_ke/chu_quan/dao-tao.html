@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đào tạo · Chủ quán</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="styles.css" rel="stylesheet">
+</head>
+<body>
+<div class="design-toggle"><input type="checkbox" id="hien-ten" checked><label for="hien-ten">Hiện tên component</label><a href="index.html">Mục lục thiết kế</a></div>
+<div data-component="KhungChuQuan" class="shell" ><span class="nhan-component">KhungChuQuan</span>
+<nav data-component="ThanhDieuHuong" class="navigation" aria-label="Trang chủ quán"><span class="nhan-component">ThanhDieuHuong</span>
+<a class="brand" href="index.html"><b>BT</b><span>Bánh cuốn Bà Thanh<small>Chủ quán</small></span></a><div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hôm nay</summary><div class="nav-links"><a href="tong-quan.html">Tổng quan</a><a href="tong-ket.html">Tổng kết</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Thực đơn</summary><div class="nav-links"><a href="san-pham.html">Sản phẩm</a><a href="menu-gia.html">Menu &amp; giá</a><a href="danh-muc.html">Danh mục</a><a href="combo.html">Combo</a><a href="topping.html">Topping</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group selected" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Con người</summary><div class="nav-links"><a href="nhan-vien.html">Nhân viên</a><a href="giao-viec.html">Giao việc</a><a href="dao-tao.html" aria-current="page">Đào tạo</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hàng &amp; tiền</summary><div class="nav-links"><a href="nguyen-lieu.html">Nguyên liệu</a><a href="kho.html">Kho</a><a href="khoan-chi.html">Khoản chi</a></div></details>
+</div>
+
+</nav>
+<main data-component="TrangDaoTao" class="page-content" ><span class="nhan-component">TrangDaoTao</span>
+<header data-component="DauTrang" class="page-header" ><span class="nhan-component">DauTrang</span>
+<div><h1>Đào tạo</h1><p class="muted">Bản thiết kế tĩnh · số liệu minh hoạ</p></div><div class="actions"><button type="button" class="primary">Đọc lại ghi nhận</button></div>
+</header>
+<section data-component="BoLoc" class="filters" ><span class="nhan-component">BoLoc</span>
+<label class="field">Lọc người<select><option>Mọi người</option><option>[NGƯỜI A]</option></select></label><label class="field check">Kèm ghi nhận đã ẩn<input type="checkbox"></label>
+</section>
+<div class="split"><div class="stack"><section data-component="BangDuLieu" class="card" ><span class="nhan-component">BangDuLieu</span>
+<h2>Ghi nhận đào tạo</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Ghi nhận đào tạo"><table><thead><tr><th scope="col">Người</th><th scope="col">Nhận xét</th><th scope="col">Đánh giá</th><th scope="col">Người ghi</th><th scope="col">Lúc ghi</th><th scope="col">Thao tác</th></tr></thead><tbody><tr><td>[NGƯỜI A]</td><td>[NHẬN XÉT]</td><td><span data-component="HuyHieuTrangThai" class="badge warning" ><span class="nhan-component">HuyHieuTrangThai</span>
+Chưa làm được
+</span>
+</td><td>[NGƯỜI B]</td><td>20/10/2026 09:00</td><td><div class="actions"><button type="button" class="primary">Sửa</button><button type="button">Ẩn</button></div></td></tr></tbody></table></div>
+</section>
+<section data-component="ThemGhiNhan" class="card form-body" aria-label="Thêm ghi nhận"><span class="nhan-component">ThemGhiNhan</span>
+<form data-component="FormMenu" class="form-body" aria-label="Thêm ghi nhận"><span class="nhan-component">FormMenu</span>
+<h2>Thêm ghi nhận</h2><div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span>
+<label class="field">Người<select><option>Chọn người</option><option>[NGƯỜI A]</option></select></label>
+</div>
+<label class="field">Nhận xét<textarea rows="3"></textarea></label><label class="field">Đánh giá<select><option>Chưa đánh giá</option><option>Làm được</option><option>Chưa làm được</option></select></label><div class="actions"><button type="button" class="primary">Thêm ghi nhận</button></div>
+</form>
+
+</section>
+<section data-component="HuongDanTheoViec" class="card" ><span class="nhan-component">HuongDanTheoViec</span>
+<h2>Hướng dẫn theo việc</h2><div class="actions"><button type="button" class="primary">Đọc lại danh sách việc</button></div><label class="field">Việc được giao<select><option>[NỘI DUNG VIỆC A] — [NGƯỜI A]</option></select></label><label class="field check">Kèm hướng dẫn đã ẩn<input type="checkbox"></label><div class="actions"><button type="button" class="primary">Đọc lại hướng dẫn</button></div><section data-component="BangDuLieu" class="card" ><span class="nhan-component">BangDuLieu</span>
+<h2>Danh sách hướng dẫn</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Danh sách hướng dẫn"><table><thead><tr><th scope="col">Nội dung hướng dẫn</th><th scope="col">Người gắn</th><th scope="col">Lúc gắn</th><th scope="col">Thao tác</th></tr></thead><tbody><tr><td>[NỘI DUNG HƯỚNG DẪN]</td><td>[NGƯỜI B]</td><td>20/10/2026 08:30</td><td><div class="actions"><button type="button" class="primary">Sửa</button><button type="button">Ẩn</button></div></td></tr></tbody></table></div>
+</section>
+<section data-component="GanHuongDan" class="card form-body" aria-label="Gắn hướng dẫn"><span class="nhan-component">GanHuongDan</span>
+<form data-component="FormMenu" class="form-body" aria-label="Gắn hướng dẫn"><span class="nhan-component">FormMenu</span>
+<h2>Gắn hướng dẫn</h2><label class="field">Loại<select><option>Chữ</option><option>Ảnh</option><option>Video</option></select></label><label class="field">Nội dung hướng dẫn<textarea rows="3"></textarea></label><div class="actions"><button type="button" class="primary">Gắn hướng dẫn</button></div>
+</form>
+
+</section>
+
+</section>
+</div><aside data-component="HopThoaiSuaCoLyDo" class="drawer" ><span class="nhan-component">HopThoaiSuaCoLyDo</span>
+<section data-component="SuaGhiNhan" class="card form-body" aria-label="Sửa ghi nhận 1"><span class="nhan-component">SuaGhiNhan</span>
+<form data-component="FormMenu" class="form-body" aria-label="Sửa ghi nhận 1"><span class="nhan-component">FormMenu</span>
+<h2>Sửa ghi nhận 1</h2><label class="field">Nhận xét<textarea rows="3">[NHẬN XÉT]</textarea></label><label class="field">Đánh giá<select><option>Chưa làm được</option><option>Làm được</option><option>Chưa đánh giá</option></select></label><div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span>
+<label class="field">Lý do<input type="text"></label>
+</div>
+<div class="actions"><button type="button" class="primary">Lưu thay đổi</button><button type="button">Huỷ</button></div>
+</form>
+
+</section>
+
+</aside>
+</div>
+</main>
+
+</div>
+<section id="chu-giai"><h2>Chú giải component</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Chú giải component"><table><thead><tr><th scope="col">Tên</th><th scope="col">Nó là gì</th><th scope="col">Phạm vi</th></tr></thead><tbody><tr><td><code>BangDuLieu</code></td><td>Bảng dữ liệu có vùng cuộn ngang riêng.</td><td>dùng chung</td></tr><tr><td><code>BoLoc</code></td><td>Các trường chọn phạm vi dữ liệu đang xem.</td><td>dùng chung</td></tr><tr><td><code>DauTrang</code></td><td>Tiêu đề trang, lời dẫn và thao tác chính.</td><td>dùng chung</td></tr><tr><td><code>FormMenu</code></td><td>Khuôn form dùng chung cho các trường nhập và nút lưu, huỷ.</td><td>dùng chung</td></tr><tr><td><code>GanHuongDan</code></td><td>Loại và nội dung hướng dẫn gắn cho việc được chọn.</td><td>riêng trang</td></tr><tr><td><code>HopThoaiSuaCoLyDo</code></td><td>Ngăn bên phải để sửa dữ liệu và nhập lý do.</td><td>dùng chung</td></tr><tr><td><code>HuongDanTheoViec</code></td><td>Hướng dẫn gắn với việc đang chọn.</td><td>riêng trang</td></tr><tr><td><code>HuyHieuTrangThai</code></td><td>Nhãn trạng thái của một bản ghi.</td><td>dùng chung</td></tr><tr><td><code>KhungChuQuan</code></td><td>Vỏ trang nối điều hướng với nội dung quản trị.</td><td>dùng chung</td></tr><tr><td><code>NhomDieuHuong</code></td><td>Một nhóm liên kết đến các trang cùng mảng.</td><td>dùng chung</td></tr><tr><td><code>OMenu</code></td><td>Trường nhập hoặc chọn có nhãn trong FormMenu.</td><td>dùng chung</td></tr><tr><td><code>SuaGhiNhan</code></td><td>Nhận xét, đánh giá và lý do sửa ghi nhận.</td><td>riêng trang</td></tr><tr><td><code>ThanhDieuHuong</code></td><td>Thanh bên trên máy tính và thanh bốn nhóm ở đáy điện thoại.</td><td>dùng chung</td></tr><tr><td><code>ThemGhiNhan</code></td><td>Người được đào tạo, nhận xét và đánh giá để ghi thêm.</td><td>riêng trang</td></tr><tr><td><code>TrangDaoTao</code></td><td>Nội dung riêng của trang Đào tạo.</td><td>riêng trang</td></tr></tbody></table></div></section>
+</body>
+</html>

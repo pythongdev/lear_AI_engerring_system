@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Combo · Chủ quán</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="styles.css" rel="stylesheet">
+</head>
+<body>
+<div class="design-toggle"><input type="checkbox" id="hien-ten" checked><label for="hien-ten">Hiện tên component</label><a href="index.html">Mục lục thiết kế</a></div>
+<div data-component="KhungChuQuan" class="shell" ><span class="nhan-component">KhungChuQuan</span>
+<nav data-component="ThanhDieuHuong" class="navigation" aria-label="Trang chủ quán"><span class="nhan-component">ThanhDieuHuong</span>
+<a class="brand" href="index.html"><b>BT</b><span>Bánh cuốn Bà Thanh<small>Chủ quán</small></span></a><div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hôm nay</summary><div class="nav-links"><a href="tong-quan.html">Tổng quan</a><a href="tong-ket.html">Tổng kết</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group selected" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Thực đơn</summary><div class="nav-links"><a href="san-pham.html">Sản phẩm</a><a href="menu-gia.html">Menu &amp; giá</a><a href="danh-muc.html">Danh mục</a><a href="combo.html" aria-current="page">Combo</a><a href="topping.html">Topping</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Con người</summary><div class="nav-links"><a href="nhan-vien.html">Nhân viên</a><a href="giao-viec.html">Giao việc</a><a href="dao-tao.html">Đào tạo</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hàng &amp; tiền</summary><div class="nav-links"><a href="nguyen-lieu.html">Nguyên liệu</a><a href="kho.html">Kho</a><a href="khoan-chi.html">Khoản chi</a></div></details>
+</div>
+
+</nav>
+<main data-component="TrangCombo" class="page-content" ><span class="nhan-component">TrangCombo</span>
+<header data-component="DauTrang" class="page-header" ><span class="nhan-component">DauTrang</span>
+<div><h1>Combo</h1><p class="muted">Bản thiết kế tĩnh · số liệu minh hoạ</p></div><div class="actions"><button type="button" class="primary">Đọc lại danh sách</button></div>
+</header>
+<div class="split"><div class="stack"><section data-component="BangDuLieu" class="card" ><span class="nhan-component">BangDuLieu</span>
+<h2>[TÊN COMBO] · [GIÁ]</h2><div class="table-scroll" tabindex="0" role="region" aria-label="[TÊN COMBO] · [GIÁ]"><table><thead><tr><th scope="col">Món</th><th scope="col">Số suất</th><th scope="col">Phụ thu</th></tr></thead><tbody><tr><td>Bánh cuốn</td><td>1</td><td>[TÊN NHÓM] · [LỰA CHỌN]: [GIÁ]</td></tr><tr><td>Trứng</td><td>1</td><td>—</td></tr></tbody></table></div>
+</section>
+<div class="actions"><button type="button" class="primary">Đổi giá</button><button type="button">Ẩn</button><button type="button">Đặt phụ thu</button></div><form data-component="FormMenu" class="card form-body" aria-label="Lập combo"><span class="nhan-component">FormMenu</span>
+<h2>Lập combo</h2><div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span>
+<label class="field">Tên combo<input type="text"></label>
+</div>
+<div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span>
+<label class="field">Giá combo (đồng)<input type="number" placeholder="[GIÁ]"></label>
+</div>
+<div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span>
+<label class="field">Món 1<select><option>Chọn món 1</option><option>Bánh cuốn</option><option>Trứng</option><option>Giò</option></select></label>
+</div>
+<div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span>
+<label class="field">Số suất món 1<input type="number" value="1"></label>
+</div>
+<button type="button" disabled>Bỏ món 1</button><button type="button">Thêm món vào combo</button><div class="actions"><button type="button" class="primary">Lập combo</button></div>
+</form>
+</div><aside data-component="HopThoaiSuaCoLyDo" class="drawer" aria-label="Đổi giá [TÊN COMBO]"><span class="nhan-component">HopThoaiSuaCoLyDo</span>
+<form data-component="FormMenu" class="card form-body" aria-label="Đổi giá [TÊN COMBO]"><span class="nhan-component">FormMenu</span>
+<h2>Đổi giá [TÊN COMBO]</h2><div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span>
+<label class="field">Giá mới (đồng)<input type="number" placeholder="[GIÁ]"></label>
+</div>
+<div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span>
+<label class="field">Lý do<input type="text"></label>
+</div>
+<div class="actions"><button type="button" class="primary">Lưu giá</button><button type="button">Huỷ</button></div>
+</form>
+
+</aside>
+</div>
+</main>
+
+</div>
+<section id="chu-giai"><h2>Chú giải component</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Chú giải component"><table><thead><tr><th scope="col">Tên</th><th scope="col">Nó là gì</th><th scope="col">Phạm vi</th></tr></thead><tbody><tr><td><code>BangDuLieu</code></td><td>Bảng dữ liệu có vùng cuộn ngang riêng.</td><td>dùng chung</td></tr><tr><td><code>DauTrang</code></td><td>Tiêu đề trang, lời dẫn và thao tác chính.</td><td>dùng chung</td></tr><tr><td><code>FormMenu</code></td><td>Khuôn form dùng chung cho các trường nhập và nút lưu, huỷ.</td><td>dùng chung</td></tr><tr><td><code>HopThoaiSuaCoLyDo</code></td><td>Ngăn bên phải để sửa dữ liệu và nhập lý do.</td><td>dùng chung</td></tr><tr><td><code>KhungChuQuan</code></td><td>Vỏ trang nối điều hướng với nội dung quản trị.</td><td>dùng chung</td></tr><tr><td><code>NhomDieuHuong</code></td><td>Một nhóm liên kết đến các trang cùng mảng.</td><td>dùng chung</td></tr><tr><td><code>OMenu</code></td><td>Trường nhập hoặc chọn có nhãn trong FormMenu.</td><td>dùng chung</td></tr><tr><td><code>ThanhDieuHuong</code></td><td>Thanh bên trên máy tính và thanh bốn nhóm ở đáy điện thoại.</td><td>dùng chung</td></tr><tr><td><code>TrangCombo</code></td><td>Nội dung riêng của trang Combo.</td><td>riêng trang</td></tr></tbody></table></div></section>
+</body>
+</html>

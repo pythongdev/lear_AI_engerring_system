@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tổng kết · Chủ quán</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="styles.css" rel="stylesheet">
+</head>
+<body>
+<div class="design-toggle"><input type="checkbox" id="hien-ten" checked><label for="hien-ten">Hiện tên component</label><a href="index.html">Mục lục thiết kế</a></div>
+<div data-component="KhungChuQuan" class="shell" ><span class="nhan-component">KhungChuQuan</span>
+<nav data-component="ThanhDieuHuong" class="navigation" aria-label="Trang chủ quán"><span class="nhan-component">ThanhDieuHuong</span>
+<a class="brand" href="index.html"><b>BT</b><span>Bánh cuốn Bà Thanh<small>Chủ quán</small></span></a><div data-component="NhomDieuHuong" class="nav-group selected" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hôm nay</summary><div class="nav-links"><a href="tong-quan.html">Tổng quan</a><a href="tong-ket.html" aria-current="page">Tổng kết</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Thực đơn</summary><div class="nav-links"><a href="san-pham.html">Sản phẩm</a><a href="menu-gia.html">Menu &amp; giá</a><a href="danh-muc.html">Danh mục</a><a href="combo.html">Combo</a><a href="topping.html">Topping</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Con người</summary><div class="nav-links"><a href="nhan-vien.html">Nhân viên</a><a href="giao-viec.html">Giao việc</a><a href="dao-tao.html">Đào tạo</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hàng &amp; tiền</summary><div class="nav-links"><a href="nguyen-lieu.html">Nguyên liệu</a><a href="kho.html">Kho</a><a href="khoan-chi.html">Khoản chi</a></div></details>
+</div>
+
+</nav>
+<main data-component="TrangTongKet" class="page-content" ><span class="nhan-component">TrangTongKet</span>
+<header data-component="DauTrang" class="page-header" ><span class="nhan-component">DauTrang</span>
+<div><h1>Tổng kết</h1><p class="muted">Ngày bán 20/10/2026 · số liệu minh hoạ</p></div>
+</header>
+<section data-component="BoLoc" class="filters" ><span class="nhan-component">BoLoc</span>
+<label class="field">Ngày bán<input type="date" value="2026-10-20"></label>
+</section>
+<div class="grid"><section data-component="DoanhThu" class="card" ><span class="nhan-component">DoanhThu</span>
+<h2>Doanh thu</h2><dl><dt>Phiên bàn</dt><dd>[GIÁ]</dd><dt>Đơn lẻ</dt><dd>[GIÁ]</dd><dt>Hoàn tiền</dt><dd>[GIÁ]</dd><dt>Tổng</dt><dd>[GIÁ]</dd></dl><span data-component="HuyHieuTrangThai" class="badge " ><span class="nhan-component">HuyHieuTrangThai</span>
+Chưa đối soát
+</span>
+<p>2 mục sổ giấy còn chờ</p>
+</section>
+<section data-component="BangDuLieu" class="card" ><span class="nhan-component">BangDuLieu</span>
+<h2>Món bán chạy · Món</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Món bán chạy · Món"><table><thead><tr><th scope="col">Món</th><th scope="col">Số lượng</th></tr></thead><tbody><tr><td>Bánh cuốn</td><td>56</td></tr><tr><td>Trứng</td><td>18</td></tr><tr><td>Giò</td><td>8</td></tr></tbody></table></div>
+</section>
+</div><section data-component="BangDuLieu" class="card" ><span class="nhan-component">BangDuLieu</span>
+<h2>Hiệu suất nhân viên</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Hiệu suất nhân viên"><table><thead><tr><th scope="col">Người</th><th scope="col">Đi làm</th><th scope="col">Đơn ghi ở quầy</th><th scope="col">Lần đi giao</th><th scope="col">Lần huỷ</th><th scope="col">Lần hoàn tiền</th></tr></thead><tbody><tr><td>[NGƯỜI A]</td><td>Có đi làm</td><td>24</td><td>3</td><td>1</td><td>0</td></tr><tr><td>[NGƯỜI B]</td><td>Không đi làm</td><td>0</td><td>0</td><td>0</td><td>0</td></tr></tbody></table></div>
+</section>
+<section data-component="DaiCanDeY" class="notice" ><span class="nhan-component">DaiCanDeY</span>
+<h2>Cảnh báo sắp hết</h2><p>Kết quả hiện tại, đọc lúc 09:42:15.</p><p>Trứng</p>
+</section>
+
+</main>
+
+</div>
+<section id="chu-giai"><h2>Chú giải component</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Chú giải component"><table><thead><tr><th scope="col">Tên</th><th scope="col">Nó là gì</th><th scope="col">Phạm vi</th></tr></thead><tbody><tr><td><code>BangDuLieu</code></td><td>Bảng dữ liệu có vùng cuộn ngang riêng.</td><td>dùng chung</td></tr><tr><td><code>BoLoc</code></td><td>Các trường chọn phạm vi dữ liệu đang xem.</td><td>dùng chung</td></tr><tr><td><code>DaiCanDeY</code></td><td>Dải nhắc việc cần chú ý từ dữ liệu đang xem.</td><td>dùng chung</td></tr><tr><td><code>DauTrang</code></td><td>Tiêu đề trang, lời dẫn và thao tác chính.</td><td>dùng chung</td></tr><tr><td><code>DoanhThu</code></td><td>Các khoản doanh thu và trạng thái đối soát do backend trả.</td><td>riêng trang</td></tr><tr><td><code>HuyHieuTrangThai</code></td><td>Nhãn trạng thái của một bản ghi.</td><td>dùng chung</td></tr><tr><td><code>KhungChuQuan</code></td><td>Vỏ trang nối điều hướng với nội dung quản trị.</td><td>dùng chung</td></tr><tr><td><code>NhomDieuHuong</code></td><td>Một nhóm liên kết đến các trang cùng mảng.</td><td>dùng chung</td></tr><tr><td><code>ThanhDieuHuong</code></td><td>Thanh bên trên máy tính và thanh bốn nhóm ở đáy điện thoại.</td><td>dùng chung</td></tr><tr><td><code>TrangTongKet</code></td><td>Nội dung riêng của trang Tổng kết.</td><td>riêng trang</td></tr></tbody></table></div></section>
+</body>
+</html>
