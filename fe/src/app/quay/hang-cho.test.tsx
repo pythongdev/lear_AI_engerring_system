@@ -25,10 +25,11 @@ type CounterQueue = components["schemas"]["CounterQueue"];
 // Cố ý không theo mã đơn: màn giữ thứ tự backend.
 const hangMau: CounterQueue = {
   read_at: "2026-10-20T02:15:00Z", poll_interval_seconds: 20, paused_since: null, blind_since: null,
+  active_orders: [],
   orders: [
-    { sales_order_id: 41, channel_code: "delivery", dining_table_id: null, created_at: "2026-10-20T02:10:00Z", customer_phone: "0901111111", customer_needed_at: null },
-    { sales_order_id: 40, channel_code: "qr_table", dining_table_id: 3, created_at: "2026-10-20T02:05:00Z", customer_phone: null, customer_needed_at: null },
-    { sales_order_id: 42, channel_code: "pickup", dining_table_id: null, created_at: "2026-10-20T02:12:00Z", customer_phone: "0902222222", customer_needed_at: "2026-10-20T03:00:00Z" },
+    { total_vnd: 0, lines: [], sales_order_id: 41, channel_code: "delivery", dining_table_id: null, created_at: "2026-10-20T02:10:00Z", customer_phone: "0901111111", customer_needed_at: null },
+    { total_vnd: 0, lines: [], sales_order_id: 40, channel_code: "qr_table", dining_table_id: 3, created_at: "2026-10-20T02:05:00Z", customer_phone: null, customer_needed_at: null },
+    { total_vnd: 0, lines: [], sales_order_id: 42, channel_code: "pickup", dining_table_id: null, created_at: "2026-10-20T02:12:00Z", customer_phone: "0902222222", customer_needed_at: "2026-10-20T03:00:00Z" },
   ],
 };
 const banMau = { tables: [{ dining_table_id: 3, label: "Bàn 3", state: "in_session", table_session_id: 9, table_session_status: "open" }] };

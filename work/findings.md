@@ -5125,8 +5125,12 @@ Chưa sửa — gửi pha 3 (**ADR-102** điểm 8). Đề nghị: `GET /counter
 backend tính), hay một đường đọc đơn theo mã lớp `quay`; và một đường đọc đơn đang làm của quầy (kênh, cách trao, trạng thái) cho *rời quán* và *tiền* của
 `P4-08`. Màn quầy bày ngay khi hợp đồng có.
 
+**Sửa 2026-10-20 (T-218, Codex thi công, Claude Code duyệt; ADR-123 điểm 2):** `GET /counter/queue` trả thêm `lines` · `total_vnd` đọc từ ảnh
+chụp cho mỗi đơn chờ, và `active_orders` — đơn ngoài bàn `confirmed` · `in_progress` · `delivering` kèm cách trao, liên hệ, tiền và `unserved_jobs`;
+hợp đồng `0.47.0`. `TestI009_HangChoBayAnhChupDon` xanh qua PostgreSQL thật. Màn quầy dùng các trường mới là phần còn lại của `P4-07` · `P4-08`.
+
 **Related task:**
-`P4-07` · ADR-102
+`P4-07` · `T-218` · ADR-102 · ADR-123
 
 **Status:**
-Open
+Fixed

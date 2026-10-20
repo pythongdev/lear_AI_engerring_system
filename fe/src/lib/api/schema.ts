@@ -945,7 +945,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Đơn chờ xác nhận và trạng thái nhận đơn, lớp quay
+         * Đơn chờ xác nhận, đơn ngoài bàn đang làm và trạng thái nhận đơn, lớp quay
          * @description Không nhận thân yêu cầu. Mốc từ database; không tự mở lại khoảng mù khi luồng nối lại.
          */
         get: operations["counterQueue"];
@@ -2870,6 +2870,30 @@ export interface components {
                 customer_phone: string | null;
                 /** Format: date-time */
                 customer_needed_at: string | null;
+                total_vnd: components["schemas"]["MoneyVnd"];
+                lines: components["schemas"]["PriceLine"][];
+            }[];
+            active_orders: {
+                /** Format: int64 */
+                sales_order_id: number;
+                /** @enum {string} */
+                channel_code: "delivery" | "pickup" | "phone_preorder";
+                /** @enum {string} */
+                handover_code: "door_delivery" | "shop_pickup";
+                /** @enum {string} */
+                status: "confirmed" | "in_progress" | "delivering";
+                /** Format: date-time */
+                created_at: string;
+                customer_phone: string;
+                customer_name: string | null;
+                delivery_address: string | null;
+                /** Format: date-time */
+                customer_needed_at: string | null;
+                contact_note: string | null;
+                total_vnd: components["schemas"]["MoneyVnd"];
+                lines: components["schemas"]["PriceLine"][];
+                /** Format: int64 */
+                unserved_jobs: number;
             }[];
         };
         IntakeSpell: {
@@ -7948,6 +7972,9 @@ export const sessionRole_codeValues: ReadonlyArray<FlattenedDeepRequired<compone
 export const preorderReminderStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PreorderReminder"]["status"]> = ["confirmed", "in_progress"];
 export const orderCancelledStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["OrderCancelled"]["status"]> = ["cancelled"];
 export const counterQueueOrdersChannel_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CounterQueue"]["orders"]["channel_code"]> = ["qr_table", "delivery", "pickup"];
+export const counterQueueActive_ordersChannel_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CounterQueue"]["active_orders"]["channel_code"]> = ["delivery", "pickup", "phone_preorder"];
+export const counterQueueActive_ordersHandover_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CounterQueue"]["active_orders"]["handover_code"]> = ["door_delivery", "shop_pickup"];
+export const counterQueueActive_ordersStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CounterQueue"]["active_orders"]["status"]> = ["confirmed", "in_progress", "delivering"];
 export const onlineOrderRequestChannel_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["OnlineOrderRequest"]["channel_code"]> = ["delivery", "pickup"];
 export const phoneOrderRequestHandover_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PhoneOrderRequest"]["handover_code"]> = ["door_delivery", "shop_pickup"];
 export const takeawayOrderChannel_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["TakeawayOrder"]["channel_code"]> = ["delivery", "pickup", "phone_preorder"];

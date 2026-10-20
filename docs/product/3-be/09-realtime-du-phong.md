@@ -70,7 +70,15 @@ Bộ phát gộp tín hiệu đang chờ của mỗi màn vào tối đa một d
 
 `GET /production-board` giữ phép gom cũ và thêm `read_at`, `poll_interval_seconds`.
 `GET /counter/queue` qua lớp `quay`, đọc đơn `pending_confirmation` theo thời điểm tạo rồi mã đơn;
-trả `orders`, `paused_since`, `blind_since` và cùng hai trường mốc/chu kỳ.
+trả `orders`, `active_orders`, `paused_since`, `blind_since` và cùng hai trường mốc/chu kỳ.
+T-218 (2026-10-20, thiết kế Claude): mỗi đơn chờ thêm `total_vnd` và `lines` từ ảnh chụp
+`order_line` · `order_line_component` · `order_line_option`, cùng hình `doc_don.sql`, không tính lại giá.
+Tổng cộng `line_total_vnd` mọi dòng; `lines` lấy dòng không cha theo `id`, lồng suất combo trong `portions`.
+`active_orders` chỉ gồm đơn ngoài bàn (`table_session_id IS NULL`) ở trạng thái `confirmed` ·
+`in_progress` · `delivering`, theo `created_at` rồi `id`; trả mã đơn, kênh, cách trao, trạng thái,
+mốc tạo, điện thoại, tên khách, địa chỉ, giờ cần hàng, ghi chú liên hệ, cùng tổng và dòng đã chụp.
+`unserved_jobs` đếm việc trạm của đơn có `status <> 'served'`, cùng điều kiện cửa rời quán.
+Hai mảng rỗng trả `[]`; tất cả vẫn trong một câu SQL và giữ nguyên quyền lớp `quay`.
 Mốc và dữ liệu ở mỗi đường đọc trong cùng câu SQL, đọc thẳng chỗ ghi.
 Chu kỳ do hằng `realtime.PollIntervalSeconds = 20` cấp cho cả hai; hợp đồng công bố cùng giá trị.
 Màn cần tự kéo mỗi chu kỳ ngay cả khi không có SSE (pha 4).

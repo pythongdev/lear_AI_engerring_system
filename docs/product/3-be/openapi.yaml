@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.46.0
+  version: 0.47.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -1714,7 +1714,7 @@ paths:
       operationId: counterQueue
       tags:
         - nhandon
-      summary: Đơn chờ xác nhận và trạng thái nhận đơn, lớp quay
+      summary: Đơn chờ xác nhận, đơn ngoài bàn đang làm và trạng thái nhận đơn, lớp quay
       description: >-
         Không nhận thân yêu cầu. Mốc từ database; không tự mở lại khoảng mù khi luồng nối lại.
       responses:
@@ -5521,7 +5521,7 @@ components:
       description: 'Khung SSE: event hello, changed hoặc heartbeat; data JSON {"read_at": RFC3339}. Không dữ liệu nghiệp vụ.'
     CounterQueue:
       type: object
-      required: [read_at, poll_interval_seconds, orders, paused_since, blind_since]
+      required: [read_at, poll_interval_seconds, orders, active_orders, paused_since, blind_since]
       properties:
         read_at:
           type: string
@@ -5539,7 +5539,7 @@ components:
           type: array
           items:
             type: object
-            required: [sales_order_id, channel_code, dining_table_id, created_at, customer_phone, customer_needed_at]
+            required: [sales_order_id, channel_code, dining_table_id, created_at, customer_phone, customer_needed_at, total_vnd, lines]
             properties:
               sales_order_id:
                 type: integer
@@ -5558,6 +5558,54 @@ components:
               customer_needed_at:
                 type: [string, 'null']
                 format: date-time
+              total_vnd:
+                $ref: '#/components/schemas/MoneyVnd'
+              lines:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PriceLine'
+        active_orders:
+          type: array
+          items:
+            type: object
+            required: [sales_order_id, channel_code, handover_code, status, created_at, customer_phone, customer_name, delivery_address, customer_needed_at, contact_note, total_vnd, lines, unserved_jobs]
+            properties:
+              sales_order_id:
+                type: integer
+                format: int64
+              channel_code:
+                type: string
+                enum: [delivery, pickup, phone_preorder]
+              handover_code:
+                type: string
+                enum: [door_delivery, shop_pickup]
+              status:
+                type: string
+                enum: [confirmed, in_progress, delivering]
+              created_at:
+                type: string
+                format: date-time
+              customer_phone:
+                type: string
+              customer_name:
+                type: [string, 'null']
+              delivery_address:
+                type: [string, 'null']
+              customer_needed_at:
+                type: [string, 'null']
+                format: date-time
+              contact_note:
+                type: [string, 'null']
+              total_vnd:
+                $ref: '#/components/schemas/MoneyVnd'
+              lines:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PriceLine'
+              unserved_jobs:
+                type: integer
+                format: int64
+                minimum: 0
     IntakeSpell:
       type: object
       required: [id, started_at, started_by_person_id, ended_at, ended_by_person_id]

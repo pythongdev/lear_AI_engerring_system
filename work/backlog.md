@@ -96,9 +96,9 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] P4-07 **Màn quầy: nhận đơn — đợt một, hàng chờ** — duyệt · từ chối, tạm dừng · quán mù kèm mở lại, nhắc và tự nhả đơn hẹn; soạn lượt gọi POS và đơn điện thoại để đợt hai; đơn chờ chưa bày được món (F-074) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-07)
-- [ ] P4-09 **Sản xuất theo mẻ — phần làm được** — bảng trạm chỉ đọc, ra bàn ở quầy; bấm mẻ · lùi mẻ · chuyển · ghi làm sai chưa làm — đường đọc mã việc trạm đã có (`GET /counter/station-jobs`, T-217, F-073 đã sửa) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-09)
-- [ ] T-218 **Hàng chờ quầy bày món, tiền và đơn đang làm (F-074)** — `GET /counter/queue` thêm `lines` · `total_vnd` đọc từ ảnh chụp cho mỗi đơn chờ, và `active_orders` (đơn ngoài bàn `confirmed` · `in_progress` · `delivering`, kèm cách trao, liên hệ, tiền, số việc chưa ra bàn) — L2 (hợp đồng) — mở và nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo cùng lời · [chi tiết](#t-218)
+- [ ] P4-07 **Màn quầy: nhận đơn — đợt một, hàng chờ** — duyệt · từ chối, tạm dừng · quán mù kèm mở lại, nhắc và tự nhả đơn hẹn; soạn lượt gọi POS và đơn điện thoại, bày món · tiền và nút *rời quán* đang làm ở đợt hai (Codex, test trước của Claude) — hợp đồng của `T-218` — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-07)
+- [ ] P4-09 **Sản xuất theo mẻ — phần làm được** — bảng trạm chỉ đọc, ra bàn ở quầy; bấm mẻ · lùi mẻ · chuyển · ghi làm sai đang làm ở lượt hai (Codex, test trước của Claude) — đường đọc của `T-217` — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-09)
+- [ ] T-220 **Bảng từng bàn trang Vận hành đọc rõ trên điện thoại** — ở màn ≤ 640px, bảng `#bang-ban` của `KhoiBanDangPhucVu` trong `van_hanh/van-hanh.html` đổi thành một thẻ mỗi bàn (nhãn · giá trị), không cuộn ngang, không chữ nào gãy dòng xấu; máy tính giữ bảng như cũ; không đổi số, không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm bạn kiểm tra"* · [chi tiết](#t-220)
 
 
 
@@ -112,6 +112,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-218 **Hàng chờ quầy bày món, tiền và đơn đang làm (F-074)** — `GET /counter/queue` thêm `lines` · `total_vnd` đọc từ ảnh chụp cho mỗi đơn chờ, và `active_orders` (đơn ngoài bàn `confirmed` · `in_progress` · `delivering`, kèm cách trao, liên hệ, tiền, số việc chưa ra bàn); hợp đồng `0.47.0` — L2 (hợp đồng) — mở và nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công — 2026-10-20 · [chi tiết](#t-218)
 - [x] T-219 **Bản thiết kế tĩnh trang Vận hành của chủ quán** — một trang HTML mới trong `docs/product/4-fe/thiet_ke/chu_quan/van_hanh/`: bàn đang phục vụ · sắp phục vụ · trống, từng bàn đặt ban đầu · đã ra · còn thiếu, bánh theo nhân và bát canh, tiền đơn và tiền bánh đã ra, bảng tổng còn thiếu, công cụ cộng thử bàn sắp phục vụ vào bàn đang phục vụ để ghép đơn; số minh hoạ, là đề xuất chứ không phải hợp đồng; không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm bạn kiểm tra"* — 2026-10-20 · [chi tiết](#t-219)
 - [x] T-217 **Đường đọc việc trạm và mẻ cho quầy (F-073)** — `GET /counter/station-jobs` lớp `quay`: từng việc trạm còn sống kèm khoá gom, mẻ còn hiệu lực, ghi làm sai, cờ chuyển được; mẻ chưa lùi kèm việc và cờ đã ra bàn; khoá gom bản thứ ba dưới `TestI019` — L2 (hợp đồng) — mở và nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm 2 việc trên bạn kiểm tra"* — 2026-10-20 · [chi tiết](#t-217)
 - [x] T-216 **Bản thiết kế tĩnh cho phía khách, có tên component** — 9 trang HTML điện thoại trước trong `docs/product/4-fe/thiet_ke/khach_hang/`: trang chủ, mở bằng mã QR, thực đơn, chọn món, giỏ, đã gửi lượt tại bàn, thông tin đơn online, đã đặt online, quán không nhận đơn; theo cùng khuôn nhãn và chú giải của T-215; chỉ bày điều hợp đồng và dữ kiện quán đã có, chữ chưa chốt để giữ chỗ; không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"hãy viết prompt yêu cầu codex làm các file html cho client side"* — 2026-10-20 · [chi tiết](#t-216)
@@ -443,6 +444,28 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
 
+<a id="t-220"></a>
+### T-220 — Bảng từng bàn của trang Vận hành khó đọc trên điện thoại
+
+**Yêu cầu:** chủ repo 2026-10-20, về `BangDuLieu` trong `KhoiBanDangPhucVu` của `van_hanh/van-hanh.html`: *"gom dữ liệu dài quá thành 2 dòng tôi muốn
+với điện thoại cần nhìn rõ hết thông tin"*, rồi *"yêu cầu codex làm bạn kiểm tra"*. **Mức:** L1 — tài liệu thiết kế, không đổi hành vi, hợp đồng hay dữ liệu.
+
+**Claude chốt:** bảng `#bang-ban` có 10 cột, ép rộng tối thiểu 1080px, nên trên điện thoại phải cuộn ngang và tiêu đề dài gãy hai dòng. Ở màn ≤ 640px
+mỗi bàn (kể cả dòng tổng) thành một thẻ: tên bàn làm đầu thẻ, mỗi cột thành một dòng *nhãn — giá trị*, nhãn lấy từ tiêu đề cột qua `data-label`. Từ
+641px trở lên giữ nguyên bảng. Chỉ đổi bảng này; hai bảng khác trên trang không đổi.
+
+*Nghiệm thu* (viết trước): (1) chỉ `van_hanh/van-hanh.html` đổi, và `van_hanh/component.md` nếu cần một câu tả bố cục điện thoại; (2) mọi số và tiền
+trong `#bang-ban` giữ nguyên, đủ 6 bàn + dòng tổng × 10 cột; (3) ở 390px sau khi bấm *Xem từng bàn*: trang `scrollWidth` = 390, vùng bảng không cuộn
+ngang, mỗi dòng *nhãn — giá trị* nằm trên đúng một dòng chữ; (4) ở 1280px bảng vẫn là bảng 10 cột như trước; (5) tập `data-component` không đổi;
+(6) không thêm URL ngoài; (7) `./scripts/gate.sh` xanh.
+
+**Bổ sung** — chủ repo 2026-10-20: *"3 cột Đặt ban đầu (bánh) · Đã ra · Còn thiếu — có function hide cho 3 cột trên; Bánh Chay … Tiền bánh đã ra luôn hiện,
+phần trên rất hữu ích"*. **Claude chốt:** một `button` thật trên bảng, bật · tắt ba cột đó ở cả bảng máy tính lẫn thẻ điện thoại (kể cả dòng tổng),
+`aria-pressed` theo trạng thái; mặc định hiện; sáu cột còn lại không có cách nào ẩn. Nghiệm thu thêm: (8) bấm nút thì 3 cột (thead, tbody, tfoot) ẩn,
+bấm lại thì hiện, ở cả 390px và 1280px; 6 cột còn lại luôn hiện; không lưu trạng thái vào trình duyệt.
+
+[↑ đầu file](#top)
+
 <a id="t-219"></a>
 ### T-219 — Chủ quán không có màn nào cho thấy quán đang chạy thế nào theo từng bàn
 
@@ -513,6 +536,15 @@ xanh: đơn giao chờ xác nhận có `lines` · `total_vnd` bằng đúng ph�
 `doc_don.sql`, không gọi hàm giá (I-009; Claude đọc diff); (3) `openapi.yaml`: `CounterQueue` thêm trường theo ADR-123 điểm 2, tăng MINOR,
 ghi một dòng ở `01-hop-dong-api.md`; `09-realtime-du-phong.md` ghi phần đọc mới; (4) `fe/src/lib/api/schema.ts` sinh lại và test FE hiện có
 của `/quay` còn xanh; (5) `./scripts/gate.sh` xanh, kể cả `be-check` Claude chạy.
+
+**Bàn giao** — 2026-10-20 · thực hiện: **Codex** (worktree `../lean_wt/T-218`, nhánh `codex/T-218`, base `cc4838a` — trước `T-217`); duyệt và
+tích hợp: **Claude Code**, nhánh `P4A-01`. Lúc đưa về, dòng phiên bản của patch sửa từ `0.45.0` sang `0.46.0` (nền đã có `T-217`), type FE sinh
+lại trên nền mới. File: `be/internal/nhandon/sql/hang_cho.sql` · `internal/sqlcgen/hang_cho.sql.go` · `be/cmd/server/hang_cho_test.go` (Claude) ·
+`openapi.yaml` · `01-hop-dong-api.md` · `09-realtime-du-phong.md` · `fe/src/lib/api/schema.ts` · `fe/src/app/quay/hang-cho.test.tsx` (mẫu thêm trường
+bắt buộc, không đổi ca). (1) `--- PASS: TestI009_HangChoBayAnhChupDon` qua PostgreSQL thật. (2) Claude đọc `hang_cho.sql`: dòng và tổng gom từ
+`order_line` · `order_line_component` · `order_line_option`, không gọi hàm giá; `unserved_jobs` cùng điều kiện `status <> 'served'` của
+`roi_quan/doc_viec.sql`. (3) `check-api-contract` *hợp đồng 0.47.0; 117 đường gọi*. (4) `fe-check: PASS`, 354 test. (5) Gate ở clone chính: *PASS gate
+không cổng nào đỏ*. **Còn lại:** màn quầy bày món · nút *rời quán* (đợt hai `P4-07`) và tiền (`P4-08`).
 
 [↑ đầu file](#top)
 

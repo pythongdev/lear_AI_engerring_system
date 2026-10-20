@@ -155,6 +155,8 @@ bản ở `HEAD` và đỏ khi file khác mà phiên bản không lớn hơn.
 - **Không phiên bản trong đường dẫn** (không tiền tố kiểu `/v1`). Quán có một backend và một FE, triển
   khai cùng nhau; hai phiên bản đường gọi chạy song song là thứ không ai cần mà phải giữ cả hai.
 
+**T-218 (2026-10-20, phiếu Claude):** tăng MINOR `0.46.0` → `0.47.0` (dựng trên `T-217`); `GET /counter/queue` thêm `total_vnd` · `lines` từ ảnh chụp đơn vào `orders`, thêm `active_orders` cho đơn ngoài bàn đang làm với thông tin trao hàng và `unserved_jobs`; sinh lại type FE.
+
 **P3A-09 (2026-10-15):** tăng MINOR `0.33.0` → `0.34.0`, thêm
 `GET /owner-overview` và schema bảy mục §8.6; sinh lại type FE.
 Mục tiền tạm tính có schema riêng, hiện trả trạng thái chưa có công thức;
