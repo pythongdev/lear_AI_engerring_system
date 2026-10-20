@@ -32,6 +32,7 @@ Mỗi màn thêm **một dòng** ở đây cùng lượt dựng nó, và nhóm n
 | `/quen-mat-khau` | — | xin mã đặt lại (luôn cùng một câu) và đặt lại bằng mã trong thư | `P4-04` |
 | `/doi-mat-khau` | — | đổi mật khẩu; bắt buộc khi đang dùng mật khẩu tạm | `P4-04` |
 | `/quay` | quầy | khung quầy — màn nghiệp vụ dựng ở các bước sau | `P4-04` |
+| `/quay/giao-viec` · `/quay/dao-tao` | quầy | POS giao việc và ghi đào tạo từ quầy (2026-10-19, `T-212`): **cùng** `TrangGiaoViec` · `TrangDaoTao` của chủ quán trong khung quầy; `/quay` có hai lối vào | `T-212` |
 | `/chu-quan` | chủ quán | khung chủ quán — màn nghiệp vụ dựng từ `P4-05`; trang **Tổng quan** của admin (`P4A-02`) | `P4-04` |
 | `/chu-quan/*` (layout) | chủ quán | vỏ chung mọi trang chủ quán (sửa 2026-10-19, `P4A-01`): gác một chỗ bằng `KhungTheoVai`, thanh điều hướng đọc từ `fe/src/app/chu-quan/_components/muc-chu-quan.ts`. Trang admin là route con của `/chu-quan` — **không** khung `/admin` thứ hai (`khungCua` chỉ biết ba khung); `/chu-quan/tong-ket` dành cho `P4A-03` | `P4A-01` |
 | `/chu-quan/san-pham` | chủ quán | trang **Sản phẩm** (2026-10-19, `P4A-04`): xem · thêm · đổi tên món; sửa giá · thành phần · ngừng bán vẫn ở màn của `P4-05` | `P4A-04` |

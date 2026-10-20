@@ -11,6 +11,7 @@ vi.mock("next/navigation", () => ({
     (fn) => { nav.listeners.add(fn); return () => { nav.listeners.delete(fn); }; }, () => nav.search,
   )),
   useRouter: () => ({ replace: (url: string) => { nav.search = url.split("?")[1] ?? ""; nav.listeners.forEach((fn) => fn()); } }),
+  usePathname: () => "/chu-quan/dao-tao", // T-212: trang đọc đường dẫn hiện tại thay vì viết cứng
 }));
 afterEach(() => { cleanup(); nav.search = ""; vi.restoreAllMocks(); });
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNguoi } from "./du-lieu-nhan-vien";
@@ -84,10 +84,12 @@ export function TrangDaoTao() {
   const people = useNguoi();
   const tasks = useViec();
   const [thongBao, bao] = useState("");
+  // T-212: cùng trang chạy ở /chu-quan/dao-tao và /quay/dao-tao — giữ đường dẫn đang mở.
+  const pathname = usePathname();
   function doi(key: string, value: string) {
     const next = new URLSearchParams(params.toString());
     if (value) next.set(key, value); else next.delete(key);
-    router.replace(`/chu-quan/dao-tao${next.size ? `?${next}` : ""}`, { scroll: false });
+    router.replace(`${pathname}${next.size ? `?${next}` : ""}`, { scroll: false });
   }
   return <div className="mx-auto w-full max-w-4xl space-y-8 p-4 sm:p-6">
     <h1 className="text-2xl font-semibold">Đào tạo</h1>

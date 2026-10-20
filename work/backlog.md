@@ -107,6 +107,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-212 **Màn POS giao việc và đào tạo từ quầy (phần còn lại của P4A-07 · P4A-11)** — `/quay/giao-viec` · `/quay/dao-tao` dùng lại trang của chủ quán trong khung quầy; `/quay` có hai lối vào — L1 — mở và nhận 2026-10-19 · Claude Code theo lời chủ repo chọn *"Màn POS giao việc và đào tạo"* — 2026-10-20 · [chi tiết](#t-212)
 - [x] T-211 **Đặt mức phụ thu theo món của combo (phần còn lại của P4A-05)** — `GET /option-groups` trả thêm `menu_item_ids` của mỗi nhóm; trang combo có form *Đặt phụ thu* gửi `PUT /menu-combos/{menu_combo_id}/surcharges` cho các cặp món · lựa chọn đã đổi, có lý do, ngoài giờ bán — L1 — mở và nhận 2026-10-19 · Claude Code — 2026-10-19 · [chi tiết](#t-211)
 - [x] T-210 **Topping: chủ quán thêm, ẩn, bật lại lựa chọn trong nhóm có sẵn** — `GET /option-groups` · `POST /option-groups/{option_group_id}/options` · `POST /menu-options/{menu_option_id}/hiding` · `…/unhiding`; hàm giá từ chối lựa chọn đã ẩn; trang `/chu-quan/topping` — L2 (chạm hàm giá) — mở và nhận 2026-10-19 · Claude Code theo lời chủ repo — 2026-10-19 · [chi tiết](#t-210)
 - [x] T-209 **Hai ô trống của cổng pha 3 (F-068)** — test cắt giữa bấm mẻ · lùi mẻ · lúc ghi vết của lần huỷ đơn, test từ chối qua cửa cho `I-006` vế tầng 3; ký ô 1 · ô 2 (`I-019` ký có lý do) — L2 (chỉ thêm test) — 2026-10-19 · Claude Code · [chi tiết](#t-209)
@@ -428,6 +429,27 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-212"></a>
+### T-212 — POS giao việc và ghi đào tạo từ quầy
+
+**Yêu cầu:** chủ repo 2026-10-19 chọn *"Màn POS giao việc và đào tạo"*. Lời đóng `U-089` (POS tạo · sửa · xoá · đánh dấu việc) và `U-090` · `U-091`
+(POS ghi nhận xét, gắn hướng dẫn) đã có cửa lớp `quay_hoac_chu_quan` (`docs/product/3-be/02-vai-va-quyen.md`); chỉ thiếu màn. **Mức:** L1 — màn
+mới trên cửa sẵn có, không đổi hợp đồng.
+
+**Claude chốt:** hai route trong khung `/quay` (gác `KhungTheoVai`, như `/quay`), **dùng lại** `TrangGiaoViec` · `TrangDaoTao` — không chép
+component thứ hai; trang đào tạo đọc đường dẫn hiện tại thay vì viết cứng `/chu-quan/dao-tao`. `/quay` có hai lối vào.
+
+*Nghiệm thu* (viết trước): (1) test: POS mở `/quay` thấy hai lối vào; `/quay/giao-viec` · `/quay/dao-tao` bày trang trong khung quầy; chủ
+quán mở `/quay/giao-viec` thì về `/chu-quan`; đổi bộ lọc ở `/quay/dao-tao` giữ đường dẫn `/quay/dao-tao`; (2) test cũ của hai trang chủ quán
+xanh; (3) chạy thật: POS đứng quầy giao một việc ⇒ `201`; (4) `fe-check: PASS`, gate xanh.
+
+**Bàn giao** — 2026-10-20 · **Claude Code**, nhánh `P4A-01`; chưa ai duyệt độc lập. (1) `src/app/quay/quay.test.tsx` 4 ca xanh. (2) Mock điều
+hướng của `dao-tao.test.tsx` thêm `usePathname` (trang đọc đường dẫn hiện tại) — không đổi điều kiện kiểm; `Tests  245 passed (245)` dưới
+`src/app`. (3) Chạy thật: *Người lạ* vai `quay` vào quầy, `POST /assigned-tasks` ⇒ `201` (người tạo là POS); `next dev` trả `200` cho
+`/quay/giao-viec` · `/quay/dao-tao`. (4) Gate — dưới.
+
+[↑ đầu file](#top)
 
 <a id="t-211"></a>
 ### T-211 — Chủ quán đặt mức phụ thu theo từng món của combo
