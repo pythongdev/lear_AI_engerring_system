@@ -951,6 +951,33 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-213"></a>
+### T-213 — Test của `gia` đỏ vì dữ liệu test `menu` để lại (F-072)
+
+**Yêu cầu:** chủ repo 2026-10-20 giao cùng `P4-05` · `P4-06` (*"hãy làm tất cả task trên"*). Gốc: `work/findings.md` **F-072**. **Mức:** L1 — chỉ
+test, không đổi hành vi.
+
+**Claude chốt** (trong hai cách F-072 đề nghị): test dựng món giả có nhóm lựa chọn **tự ngừng bán** món ấy khi xong (`t.Cleanup` gọi cửa thật
+`POST /menu-items/{menu_item_id}/discontinuation`), giống ca `menu/doi_ten`; không đổi điều kiện kiểm của test `gia`. Lý do: sửa ở nơi để lại
+rác thì mọi test đọc toàn menu sau này đều được lợi, còn lọc theo tên mồi chỉ chữa một test.
+
+*Nghiệm thu* (viết trước): (1) mọi test dưới `be/internal/` dựng món mang nhóm đều dọn dẹp — danh sách lấy bằng grep; (2) `go test -p 1 -count=1
+./internal/menu/ ./internal/gia/` xanh (Claude chạy, cần Docker), cả khi `menu` chạy trước; (3) `be-check` và gate xanh.
+
+**Bàn giao** — 2026-10-20 · thực hiện: **Codex** `gpt-6-astra` (worktree `../lean_wt/T-213`, nhánh `codex/T-213`, base `0b42889`); duyệt:
+**Claude Code**. Nhánh `P4A-01`. File: `be/internal/menu/menu_test.go` (`menuGia` dọn bằng `t.Cleanup`) · `be/internal/don/scenario_test.go`
+(`dungScenario` dọn từng món sao chép) · `be/internal/don/don_test.go` (`donMonTest`, gọi ở `TestI009_SuaMenuSauKhiDatDonCuKhongDoi`). Món của
+`combo/muc_test.go` · `gia/combo_test.go` đã có dọn bằng SQL, `vet_cua_test.go` tạo món đã ngừng — giữ nguyên.
+*Nghiệm thu → bằng chứng:* (1) Codex grep `menu_item_option_group` và các hàm dựng dưới `be/internal/`, bảng trong báo cáo; Claude đọc lại diff.
+(2) Claude chạy trên database mới mỗi lần: bản gốc `go test -p 1 ./internal/menu/ ./internal/gia/` ⇒ `--- FAIL: TestI010_MenuChoBietMacDinhDeChonSan`;
+bản sửa cùng thứ tự ⇒ `ok … menu` · `ok … gia`; thứ tự ngược ⇒ `ok` cả hai. (Chạy hai thứ tự nối nhau trên **cùng** database thì đỏ vì trùng tên
+theo `t.Name()` — test vốn không chạy lại được trên database đã dùng, `09-realtime-du-phong.md` §5; không phải lỗi của bản sửa.) (3) Gate ở clone
+chính: `PASS  Gate 1   be-check — mọi test backend qua PostgreSQL thật đều đạt`, `PASS  gate`. Còn lại: không.
+
+[↑ đầu file](#top)
+
+---
+
 <a id="t-202"></a>
 ### T-202 — FE đang lệch ADR-102 ở cấu hình truy vấn, và ADR-102 còn nói danh tính bằng chọn tên
 

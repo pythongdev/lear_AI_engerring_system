@@ -96,6 +96,10 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] P4-07 **Màn quầy: nhận đơn — đợt một, hàng chờ** — duyệt · từ chối, tạm dừng · quán mù kèm mở lại, nhắc và tự nhả đơn hẹn; soạn lượt gọi POS và đơn điện thoại để đợt hai; đơn chờ chưa bày được món (F-074) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-07)
+- [ ] P4-09 **Sản xuất theo mẻ — phần làm được** — bảng trạm chỉ đọc, ra bàn ở quầy; bấm mẻ · lùi mẻ · chuyển · ghi làm sai chờ đường đọc mã việc trạm (F-073) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-09)
+
+
 
 
 
@@ -107,6 +111,9 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] P4-06 **Lớp realtime chung** — `TinHieuProvider` đọc SSE qua client API, tín hiệu chỉ làm đọc lại, im 25 giây là đứt, tự nối lại, banner không nút; luồng ở layout `/quay` · `/tram`; `tuyChonKeo()` kéo theo chu kỳ; nhiều tab qua `BroadcastChannel`; chạy thật: đóng tab quầy ⇒ `409 shop_not_seeing_orders` — L2 — Codex thi công, Claude Code test trước và duyệt — 2026-10-20 · [chi tiết](backlog_FE.md#p4-06)
+- [x] P4-05 **Trang *Menu & giá* — trang thử, rút khuôn** — `/chu-quan/menu-gia`: giá mỗi tổ hợp, thành phần qua tính thử, phụ thu; đổi giá gốc · phụ thu · số lượng có lý do, ngừng bán; khuôn ở `01-khung-fe.md` §6; chạy thật trên trình duyệt: đổi giá ⇒ số mới không tải lại trang — L2 — Codex thi công, Claude Code test trước và duyệt — 2026-10-20 · [chi tiết](backlog_FE.md#p4-05)
+- [x] T-213 **Sửa test phụ thuộc thứ tự gói (F-072)** — test dựng món giả có nhóm tự ngừng bán qua cửa thật khi xong; bản gốc `menu` → `gia` đỏ, bản sửa cả hai thứ tự xanh; F-072 đóng — L1 — mở và nhận 2026-10-20 · Codex thi công, Claude Code duyệt theo lời chủ repo *"yêu cầu codex làm bạn kiểm tra"* — 2026-10-20 · [chi tiết](backlog_archive.md#t-213)
 - [x] T-212 **Màn POS giao việc và đào tạo từ quầy (phần còn lại của P4A-07 · P4A-11)** — `/quay/giao-viec` · `/quay/dao-tao` dùng lại trang của chủ quán trong khung quầy; `/quay` có hai lối vào — L1 — mở và nhận 2026-10-19 · Claude Code theo lời chủ repo chọn *"Màn POS giao việc và đào tạo"* — 2026-10-20 · [chi tiết](#t-212)
 - [x] T-211 **Đặt mức phụ thu theo món của combo (phần còn lại của P4A-05)** — `GET /option-groups` trả thêm `menu_item_ids` của mỗi nhóm; trang combo có form *Đặt phụ thu* gửi `PUT /menu-combos/{menu_combo_id}/surcharges` cho các cặp món · lựa chọn đã đổi, có lý do, ngoài giờ bán — L1 — mở và nhận 2026-10-19 · Claude Code — 2026-10-19 · [chi tiết](#t-211)
 - [x] T-210 **Topping: chủ quán thêm, ẩn, bật lại lựa chọn trong nhóm có sẵn** — `GET /option-groups` · `POST /option-groups/{option_group_id}/options` · `POST /menu-options/{menu_option_id}/hiding` · `…/unhiding`; hàm giá từ chối lựa chọn đã ẩn; trang `/chu-quan/topping` — L2 (chạm hàm giá) — mở và nhận 2026-10-19 · Claude Code theo lời chủ repo — 2026-10-19 · [chi tiết](#t-210)

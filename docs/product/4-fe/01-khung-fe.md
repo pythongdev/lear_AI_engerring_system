@@ -31,11 +31,14 @@ Mỗi màn thêm **một dòng** ở đây cùng lượt dựng nó, và nhóm n
 | `/dang-ky` | — | tự đăng ký, chờ chủ quán duyệt | `P4-04` |
 | `/quen-mat-khau` | — | xin mã đặt lại (luôn cùng một câu) và đặt lại bằng mã trong thư | `P4-04` |
 | `/doi-mat-khau` | — | đổi mật khẩu; bắt buộc khi đang dùng mật khẩu tạm | `P4-04` |
-| `/quay` | quầy | khung quầy — màn nghiệp vụ dựng ở các bước sau | `P4-04` |
+| `/quay` | quầy | khung quầy; màn chính là **hàng chờ quầy** (2026-10-20, `P4-07` đợt một): đơn chờ xác nhận · duyệt · từ chối, tạm dừng · quán mù và *Mở lại nhận đơn*, đơn hẹn; soạn lượt gọi và đơn điện thoại là đợt hai | `P4-04` · `P4-07` |
+| `/quay/san-xuat` | quầy | **Sản xuất** (2026-10-20, `P4-09`): cùng bảng của trạm + *Ra bàn* theo bàn · đơn không bàn; bấm mẻ · lùi mẻ · chuyển · ghi làm sai chờ đường đọc (F-073) | `P4-09` |
+| `/quay/*` (layout) | quầy | vỏ chung (2026-10-20, `P4-06`): `KhungTheoVai` gác một chỗ, `TinHieuProvider` giữ `GET /counter/events` **suốt ca** — đổi trang con không đóng mở lại luồng (luồng quầy là dấu hiệu *quán còn nhìn thấy*, **ADR-097** điểm 4), `BaoMatKetNoi` dính đầu màn; trang con không tự bọc khung | `P4-06` |
 | `/quay/giao-viec` · `/quay/dao-tao` | quầy | POS giao việc và ghi đào tạo từ quầy (2026-10-19, `T-212`): **cùng** `TrangGiaoViec` · `TrangDaoTao` của chủ quán trong khung quầy; `/quay` có hai lối vào | `T-212` |
 | `/chu-quan` | chủ quán | khung chủ quán — màn nghiệp vụ dựng từ `P4-05`; trang **Tổng quan** của admin (`P4A-02`) | `P4-04` |
 | `/chu-quan/*` (layout) | chủ quán | vỏ chung mọi trang chủ quán (sửa 2026-10-19, `P4A-01`): gác một chỗ bằng `KhungTheoVai`, thanh điều hướng đọc từ `fe/src/app/chu-quan/_components/muc-chu-quan.ts`. Trang admin là route con của `/chu-quan` — **không** khung `/admin` thứ hai (`khungCua` chỉ biết ba khung); `/chu-quan/tong-ket` dành cho `P4A-03` | `P4A-01` |
 | `/chu-quan/san-pham` | chủ quán | trang **Sản phẩm** (2026-10-19, `P4A-04`): xem · thêm · đổi tên món; sửa giá · thành phần · ngừng bán vẫn ở màn của `P4-05` | `P4A-04` |
+| `/chu-quan/menu-gia` | chủ quán | trang **Menu & giá** (2026-10-20, `P4-05`) — trang thử chạm tiền, khuôn ở §6: giá mỗi tổ hợp · thành phần · phụ thu; đổi giá gốc · phụ thu · số lượng thành phần suất có lý do, ngừng bán; không thêm món, không xoá | `P4-05` |
 | `/chu-quan/danh-muc` | chủ quán | trang **Danh mục** (2026-10-19, `P4A-05`): thêm · đổi tên · ẩn danh mục, xếp · chuyển món; không xoá, không gieo sẵn danh mục | `P4A-05` |
 | `/chu-quan/combo` | chủ quán | trang **Combo** (2026-10-19, `P4A-05`): xem · lập combo với giá riêng · đổi giá ngoài giờ bán · ẩn; mức phụ thu theo món đặt được từ `T-211` (lựa chọn theo món đọc `GET /option-groups`) | `P4A-05` |
 | `/chu-quan/topping` | chủ quán | trang **Topping** (2026-10-19, `T-210`): nhóm tuỳ chọn và lựa chọn, phụ thu mỗi phần nhận nhân; thêm lựa chọn vào nhóm có sẵn kèm nhóm nó mở; ẩn · bật lại có lý do; mặc định không ẩn | `T-210` |
@@ -45,7 +48,8 @@ Mỗi màn thêm **một dòng** ở đây cùng lượt dựng nó, và nhóm n
 | `/chu-quan/kho` | chủ quán | trang **Kho** (2026-10-19, `P4A-09`): hai tổng, *mua vào trừ đã dùng*, lần nhập gần nhất, tỉ lệ nhắc và cờ nhắc POS kiểm tra đúng như backend trả; đặt tỉ lệ có lý do; không *dự kiến hết* | `P4A-09` |
 | `/chu-quan/khoan-chi` | chủ quán | trang **Khoản chi** (2026-10-19, `P4A-10`): loại chi khai nguồn két · tiền riêng, ghi · sửa có lý do khoản chi, lọc ngày · loại · nguồn; chi phí marketing là một loại chi ở đây, không có trang riêng | `P4A-10` |
 | `/chu-quan/dao-tao` | chủ quán | trang **Đào tạo** (2026-10-19, `P4A-11`): ghi nhận xét và đánh giá *làm được · chưa* về một người, sửa · ẩn có lý do; hướng dẫn chữ · ảnh · video gắn từng việc được giao, sửa chữ · ẩn có lý do; màn quầy cho POS chưa có | `P4A-11` |
-| `/tram` | trạm (chỉ đọc) | khung trạm — bảng dựng ở các bước sau | `P4-04` |
+| `/tram` | trạm (chỉ đọc) | **Bảng trạm** (2026-10-20, `P4-09`): bảng sản xuất gom theo trạm, không một nút | `P4-04` · `P4-09` |
+| `/tram/*` (layout) | trạm (chỉ đọc) | vỏ chung (2026-10-20, `P4-06`): `KhungTheoVai` + `TinHieuProvider` trên `GET /production-board/events` + `BaoMatKetNoi` | `P4-06` |
 
 ### Hiện trên máy tìm kiếm
 
@@ -71,6 +75,9 @@ xem đi trên URL (**ADR-102** điểm 4).
 | `/chu-quan` — Tổng quan | `GET /owner-overview` | `PUT /daily-minimums/{sale_date}` (`sale_date` của lần đọc) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ — hợp đồng không trả `poll_interval_seconds` cho chủ quán | giữ bản cũ kèm `Alert` có mốc `read_at` của bản ấy (dòng *Chủ quán*) | `P4A-02` |
 | `/chu-quan/tong-ket` — Tổng kết | `GET /sale-days/{sale_date}/summary`; ngày xem là `?ngay=YYYY-MM-DD`, thiếu thì `sale_date` của `GET /owner-overview` | — | mở màn · đổi ngày · quay lại cửa sổ · mạng về; **không** kéo theo chu kỳ — đọc theo kỳ, ngày đã qua ít đổi | `Alert`; `400 invalid_request` ⇒ *Ngày không hợp lệ*, không bày mục; `supply_reminders` luôn ghi là kết quả hiện tại kèm `read_at` (2026-10-19, Claude Code) | `P4A-03` |
 | `/chu-quan/san-pham` — Sản phẩm | `GET /menu-categories` (mặc định; món của danh mục ẩn nằm trong `uncategorized_items`) | `POST /menu-items` · `PUT /menu-items/{menu_item_id}` (có lý do) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ | `Alert` *Chưa đọc được danh sách món*, không bày form; trang **không** bày giá, không gọi `/price-quotes` — giá do backend tính từ thành phần (2026-10-19, Claude Code) | `P4A-04` |
+| `/chu-quan/menu-gia` — Menu & giá | `GET /menu` (giá mỗi tổ hợp) · `POST /price-quotes` **một lần cho mỗi món**, dòng `{menu_item_id, quantity: 1, option_ids: prices[0].option_ids}` — đọc `lines[0].components` (mã, tên, số lượng, giá gốc), vì hợp đồng không có đường đọc thành phần riêng · `GET /option-groups` (phụ thu) | `PUT /menu-components/{menu_component_id}/base-price` · `PUT /menu-options/{menu_option_id}/surcharge` · `PUT /menu-items/{menu_item_id}/components/{menu_component_id}` · `POST /menu-items/{menu_item_id}/discontinuation` — cả bốn có lý do | mở màn · quay lại cửa sổ · mạng về · sau ghi (khoá `menu` · `price-quotes` · `option-groups`, thêm `menu-categories` khi ngừng bán); **không** kéo theo chu kỳ | `Alert` *Chưa đọc được menu* kèm giờ của bản cũ; món tính thử lỗi bày *Chưa đọc được thành phần* và không nút sửa thành phần; số là số backend, màn chỉ định dạng `35.000đ`. Lời nhắc giờ bán trước khi đổi số lượng **luôn** hiện — hợp đồng không có đường đọc giờ bán, màn không đoán từ đồng hồ máy (`03-ham-gia.md` §4; suy ra 2026-10-20, Claude Code, chờ chủ repo) | `P4-05` |
+| `/quay` — Hàng chờ quầy | `GET /counter/queue` (`tuyChonKeo`) · `GET /dining-tables` (nhãn bàn) · `GET /preorder-reminders` (kéo 20 giây — đường này không trả chu kỳ) | `POST /orders/{sales_order_id}/approval` · `/rejection` · `POST /shop-blind/reopening`; layout gọi `POST /preorder-releases` thân `{}` mỗi 20 giây (*máy POS tự gọi*, `05-luong-mang-di.md` §2) | tín hiệu `hello` · `changed` · chu kỳ backend · sau ghi | `BaoMatKetNoi` của layout; tạm dừng · quán mù chỉ theo `paused_since` · `blind_since`; đơn chờ **chưa** bày món — hợp đồng chưa trả (F-074) | `P4-07` |
+| `/quay/san-xuat` — Sản xuất · `/tram` — Bảng trạm | `GET /production-board` (`tuyChonKeo`) · `GET /menu` (tên nhân) · `GET /dining-tables` (nhãn bàn) — cả ba công khai | quầy: `POST /served-marks`; trạm: không | tín hiệu · chu kỳ backend · sau ghi | luôn hiện *Cập nhật lúc* của `read_at`; *Hết việc* chỉ khi đọc được mà rỗng; đọc lỗi giữ bản cũ kèm cảnh báo (`05-realtime-va-du-phong.md` §1.3) | `P4-09` |
 | `/chu-quan/danh-muc` — Danh mục | `GET /menu-categories` (mặc định, **cùng khoá** với Sản phẩm) | `POST /menu-categories` · `PUT /menu-categories/{menu_category_id}` · `POST /menu-categories/{menu_category_id}/hiding` (có lý do) · `PUT /menu-items/{menu_item_id}/category` (lý do chỉ khi chuyển) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ | `Alert` *Chưa đọc được danh mục*, không bày form (2026-10-19, Claude Code) | `P4A-05` |
 | `/chu-quan/combo` — Combo | `GET /menu-combos` (mặc định) · `GET /menu-categories` (món chọn được khi lập, cùng khoá) | `POST /menu-combos` · `PUT /menu-combos/{menu_combo_id}/price` · `POST /menu-combos/{menu_combo_id}/hiding` (có lý do) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ | `Alert` *Chưa đọc được danh sách combo*; giá là `price_vnd` backend trả — **không** cộng giá món, không gọi `/price-quotes` (giá combo đặt riêng, `master_plan/shop-facts.md` §8.9) (2026-10-19, Claude Code) | `P4A-05` |
 | `/chu-quan/topping` — Topping | `GET /option-groups` | `POST /option-groups/{option_group_id}/options` · `POST /menu-options/{menu_option_id}/hiding` · `…/unhiding` | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ | phụ thu là số backend trả, không nhân theo suất ở màn; không tính giá (2026-10-19, Claude Code) | `T-210` |
@@ -101,7 +108,9 @@ xem đi trên URL (**ADR-102** điểm 4).
   | `unexpected` | có phản hồi nhưng lạ hình — mã không có trong hợp đồng, thân không phải `Error` | coi như lỗi hệ thống; mã lạ là dấu hợp đồng và code lệch ⇒ `F-XXX` |
 
 - **Không thử lại** ở lớp này — lệnh ghi không thử lại ngầm, đường đọc không thử lại lời từ chối có `code`
-  (**ADR-102** điểm 2). Thử lại đường đọc khi `no_response` là cấu hình của thư viện truy vấn, chốt ở `P4-05`.
+  (**ADR-102** điểm 2). Đường đọc gặp `no_response` **cũng không** thử lại ngầm (chốt 2026-10-20, `P4-05`, Claude Code):
+  `retry: false` giữ nguyên; màn giữ bản cũ kèm cảnh báo và đọc lại khi quay lại cửa sổ, khi mạng về, hay khi người bấm
+  *Đọc lại*. Màn sống (quầy, trạm) còn kéo theo chu kỳ của `P4-06`.
 - **Một `QueryClient`** ở `fe/src/lib/api/provider.tsx` (sửa 2026-10-19, `T-202`): `retry: false`; *đọc lại khi quay
   lại cửa sổ* để mặc định của TanStack Query (bật) — **ADR-102** điểm 3. Màn nào muốn tắt cho một query phải ghi lý do
   ở dòng của nó trong §2. Test: `fe/src/lib/api/provider.test.tsx`.
@@ -136,6 +145,24 @@ thẳng backend; `/counter/queue` không danh tính `401 unauthenticated`, có `
 `a%2Fb` ra cùng lời backend; `405` giữ `Allow`; sự kiện `hello` của luồng trạm tới sau 0,01 giây — không đệm;
 backend tắt ⇒ `502` kèm header trên.
 
+### 3.3 Lớp realtime và nhiều tab (`P4-06`, 2026-10-20)
+
+- **Luồng là tín hiệu đọc lại** (**ADR-097**): `TinHieuProvider` mở luồng bằng client của `useApi()` (`parseAs: "stream"`,
+  không `EventSource`), đọc khung SSE; `hello` · `changed` ⇒ `invalidateQueries()` **mọi** query (không bảng tín hiệu → query,
+  ADR-097 bác bảng ấy); `heartbeat` chỉ giữ mốc còn sống. Dữ liệu kèm tín hiệu không vào cache.
+- **Đứt** = luồng kết thúc, lỗi, trả khác 200, mất phản hồi, hay **im 25 giây** (2,5 nhịp heartbeat 10 giây — chốt ở đây, câu fe-01 §8.3
+  của ADR-102 điểm 8). Đứt ⇒ huỷ lời gọi, `BaoMatKetNoi` hiện (`role="alert"`, không nút, dính đầu màn), nối lại sau 1 · 2 · 4 · 8 rồi
+  10 giây, về lại 1 giây sau một `hello`. Lần nối đầu chưa hiện banner. Tab nền giữ luồng (luồng quầy là dấu hiệu *quán còn nhìn thấy*).
+- **Kéo theo chu kỳ:** đường đọc sống trải `tuyChonKeo()` — `poll_interval_seconds × 1000`, chưa có lần đọc thì 20 giây (hằng của
+  hợp đồng), cả khi tab nền, cả khi luồng sống (**ADR-102** điểm 1).
+- **Nhiều tab:** đăng nhập thành công và đăng xuất gửi `{ loai: "doi-phien", tab }` trên `BroadcastChannel("banhcuon-phien")`;
+  `KhungTheoVai` của tab **khác** xoá sạch cache rồi về `/dang-nhap`; tin của chính tab hay tin lạ bị bỏ qua.
+- **Đo trên app thật** 2026-10-20 (Claude Code, backend thật + `next dev` + Chromium): qua Next, `hello` của luồng trạm tới sau 29 ms —
+  không đệm; POS đứng quầy mở `/quay` ⇒ đơn web `201`, tín hiệu `changed` ⇒ màn đọc lại; tắt backend ⇒ banner; bật lại ⇒ nối lại,
+  đọc lại, banner tắt; **đóng tab quầy ⇒ đơn web kế tiếp `409 shop_not_seeing_orders`** — backend thấy luồng quầy đóng qua Next
+  (ba điều của **ADR-102** điểm 7 đều làm được qua Next, không cần `F-XXX`); hai tab chủ quán, đăng xuất ở tab A ⇒ tab B về
+  `/dang-nhap` sau 168 ms. `next dev` mở luồng hai lần lúc vào màn vì React chạy hiệu ứng hai lần ở chế độ phát triển; lần đầu bị huỷ.
+
 ## 4. Danh mục component dùng chung
 
 **Ba tầng và chiều import** — chủ repo chọn 2026-10-19 (`T-202`, lấy đề xuất `fe-04` §1):
@@ -160,6 +187,11 @@ có nơi dùng thứ hai (**ADR-102** điểm 8) và thêm một dòng ở đây
 | `TheTaiKhoan` · `Truong` · `Bao` · `NutGui` | `fe/src/components/tai-khoan/khung-form.tsx` | khung, ô nhập kèm lỗi, dòng báo, nút gửi của màn tài khoản — ghép từ primitive trên | năm màn tài khoản | `P4-04` |
 | `KhungTheoVai` | `fe/src/components/tai-khoan/khung-theo-vai.tsx` | gác lối vào khung theo phiên, thanh đầu có nút đăng xuất | `/quay` · `/chu-quan` · `/tram` | `P4-04` |
 | `ThanhDieuHuong` (tầng 3) | `fe/src/app/chu-quan/_components/thanh-dieu-huong.tsx` | `nav` giữa các trang chủ quán, đọc **một** danh sách mục; mục khớp đúng đường dẫn mang `aria-current`; thêm trang ⇒ thêm mục cùng lượt (test đỏ khi mục trỏ route chưa có `page.tsx`) | layout `/chu-quan/*` | `P4A-01` |
+| Primitive shadcn `Dialog` | `fe/src/components/ui/dialog.tsx` | hộp thoại: focus vào khi mở, trả về nút mở khi đóng, `Esc` đóng (Radix) | hộp thoại sửa có lý do | `P4-05` |
+| `HopThoaiSuaCoLyDo` (tầng 3, khuôn) | `fe/src/app/chu-quan/_components/hop-thoai-sua-co-ly-do.tsx` | một hộp thoại cho bốn lệnh sửa có lý do của *Menu & giá* — §6 | `/chu-quan/menu-gia` | `P4-05` |
+| `TinHieuProvider` · `BaoMatKetNoi` · `tuyChonKeo` · `chuKyKeoMs` | `fe/src/lib/realtime/tin-hieu.tsx` | lớp realtime chung — §3.3 | layout `/quay` · `/tram`; màn quầy · trạm trải `tuyChonKeo()` vào `useQuery` | `P4-06` |
+| `BangSanXuat` · `useSanXuat` (tầng 2) | `fe/src/components/shared/bang-san-xuat.tsx` · `du-lieu-san-xuat.ts` | bảng sản xuất **không nút**; nút của quầy nằm ngoài | `/tram` · `/quay/san-xuat` | `P4-09` |
+| `TuNhaDonHen` (tầng 3) | `fe/src/app/quay/_components/tu-nha-don-hen.tsx` | máy quầy tự nhả đơn hẹn theo chu kỳ; lỗi thì nói ra | layout `/quay` | `P4-07` |
 
 ## 5. Bước sau đọc gì ở đây
 
@@ -169,3 +201,22 @@ có nơi dùng thứ hai (**ADR-102** điểm 8) và thêm một dòng ở đây
 | `P4-04` | §3.1 danh tính bằng cookie phiên (đã làm; chữ *`personId` · tên đang chọn* cũ bỏ 2026-10-19, `T-202`) |
 | `P4-05` | §1 · §2 thêm dòng màn đầu tiên; §3.1 cấu hình thư viện truy vấn; §4 primitive đầu tiên |
 | `P4-06` | §3.2 ba điều phải chứng minh trên luồng thật |
+
+## 6. Khuôn một màn — rút từ trang thử *Menu & giá* (`P4-05`, 2026-10-20)
+
+Trang đầu chạm tiền đã qua test viết trước, duyệt diff và chạy thật cùng backend; màn sau làm **theo** khuôn này, khác
+thì ghi lý do ở dòng §2 của mình. File mẫu: `fe/src/app/chu-quan/_components/du-lieu-menu-gia.ts` · `menu-gia.tsx` ·
+`hop-thoai-sua-co-ly-do.tsx`; test mẫu: `fe/src/app/chu-quan/menu-gia/menu-gia.test.tsx`.
+
+| Phần | Khuôn |
+|---|---|
+| Dữ liệu | một file `du-lieu-<màn>.ts`: mỗi đường đọc một `useQuery`, khoá bắt đầu bằng tên đường gọi (`["menu"]`, `["option-groups"]`, `["price-quotes", id, …]`) để màn khác cùng đọc thì cùng khoá; lời từ chối đổi chữ trong **một** hàm `loi<Màn>(failure)` theo `code`, không theo status |
+| Danh sách | giữ thứ tự backend, không tự xếp; mỗi mục một `section` có `aria-label` là tên — test tìm bằng `getByRole("region")` |
+| Số tiền | chỉ định dạng số backend trả (`toLocaleString("vi-VN")` + `đ`); không cộng, không nhân, không suy giá — `check-fe-rules` chặn phần bắt được |
+| Sửa có lý do | `Dialog` của shadcn mở từ nút có `aria-label` *động từ + tên*; ô số chỉ nhận chữ số; lý do bỏ khoảng trắng đầu cuối, rỗng ⇒ lỗi ở ô, không gửi; lỗi ô gắn `aria-invalid` và `aria-describedby`; `field` của lời từ chối gắn đúng ô, không có `field` thì bày trong hộp thoại |
+| Gửi | một lần bấm một lời gọi (cờ chặn + nút tắt, chữ *Đang lưu…* kèm vòng quay); `no_response` ⇒ *chưa xác nhận được kết quả*, không gửi lại ngầm |
+| Sau ghi | thành công ⇒ đóng hộp thoại, báo `role="status"`, chỉ `invalidateQueries` các khoá của màn rồi đọc lại; đọc lại lỗi ⇒ *Đã lưu nhưng chưa đọc lại được*; `*_not_found` hay trạng thái đã đổi ⇒ báo rồi đọc lại |
+| Chỉ báo tải | lần đọc đầu: khung xương `role="status"` *Đang tải …*; đang ghi: vòng quay trên nút; đọc lại mà còn bản cũ: dòng nhỏ *Đang cập nhật…*, bản cũ giữ trên màn |
+| Mất kết nối | lỗi đọc giữ bản cũ kèm `Alert` có giờ của bản ấy; nút *Đọc lại* |
+| Test viết trước | backend giả bằng `fetch` tiêm vào `ApiProvider`, trả được lời hứa chưa giải để thử trạng thái chờ; mỗi ca kiểm **thân** lệnh ghi đúng hợp đồng và **số lần** đọc lại; cài lỗi *bỏ đọc lại* phải làm test đỏ |
+

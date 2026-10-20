@@ -5069,9 +5069,59 @@ thứ tự chạy — làm gate đỏ vì dữ liệu của test khác, không v
 Chưa sửa. Đề nghị: test đọc toàn menu chỉ xét món của dữ liệu mồi (tên đọc từ `seed.pl`), hoặc test của `menu` cho món giả ngừng bán khi
 xong (như ca `menu/doi_ten` của `vet_cua_test.go`). Một task L1, chỉ test.
 
+**Sửa 2026-10-20 (T-213, Codex thi công, Claude duyệt):** chọn cách thứ hai — `menuGia` của `menu/menu_test.go`, `dungScenario` của `don/scenario_test.go` và `TestI009_SuaMenuSauKhiDatDonCuKhongDoi` tự ngừng bán món giả bằng `t.Cleanup` qua cửa thật; test `gia` không đổi. Đo trên database mới: bản gốc `menu` → `gia` ⇒ `--- FAIL: TestI010_MenuChoBietMacDinhDeChonSan`; bản sửa cả hai thứ tự ⇒ `ok`.
+
 **Related task:**
 `T-210` (đo) · `T-169` · ADR-094
 
 **Status:**
+Fixed
+
+
+### F-073 — Màn quầy không bấm được mẻ, lùi mẻ, chuyển phần hay ghi làm sai: không đường đọc nào trả mã việc trạm hay mã mẻ
+
+**Problem:**
+Đo 2026-10-20 (P4-09, Claude Code, hợp đồng 0.45.0): `POST /production-batches` đòi `station_job_ids`, `POST /wrong-make-notes` đòi
+`station_job_id`, `POST /station-job-transfers` đòi `from_station_job_id` · `to_station_job_id`, `GET /station-jobs/{id}/transfer-candidates`
+đòi một mã việc, `POST /production-batches/{id}/rollback` đòi mã mẻ. Không một đường `GET` nào trả `station_job_id` hay `production_batch_id`:
+`GET /production-board` chỉ trả hàng đã gom theo (trạm, thành phần, nhân) và phần theo bàn · đơn, kèm số đếm. Mã mẻ chỉ có trong phản hồi lúc
+tạo mẻ — lùi mẻ sau khi tải lại màn là không làm được.
+
+**Impact:**
+Bốn việc của `P4-09` (bấm mẻ · lùi mẻ · chuyển · ghi làm sai) không dựng được mà không đổi hợp đồng; pha 4 không được đổi hợp đồng (kế hoạch
+pha 4 §9). Bếp không có ai ghi tiến độ qua màn ⇒ số *đã làm* trên bảng trạm đứng yên. *Ra bàn* (`POST /served-marks`) dùng đúng khoá gom của
+bảng nên làm được.
+
+**Decision / Fix:**
+Chưa sửa — gửi pha 3 (**ADR-102** điểm 8 dòng *đường đọc hay enum hợp đồng còn thiếu*; **ADR-101** điểm 3: màn chờ). Đề nghị: một đường đọc
+lớp `quay` trả việc trạm chưa ra bàn (mã việc, khoá gom, bàn · đơn, trạng thái) và mẻ còn lùi được (mã mẻ, mốc, các mã việc) — một task L2
+pha 3, Claude thiết kế. `P4-09` làm phần chỉ đọc và *ra bàn*.
+
+**Related task:**
+`P4-09` · ADR-090 · ADR-102
+
+**Status:**
 Open
 
+### F-074 — Hàng chờ quầy không cho thấy đơn chờ gồm những món gì
+
+**Problem:**
+Đo 2026-10-20 (P4-07, Claude Code, hợp đồng 0.45.0): `GET /counter/queue` trả mỗi đơn chờ xác nhận mã đơn, kênh, bàn, mốc tạo, số điện thoại,
+giờ cần hàng — **không** dòng món, số lượng hay tổng tiền; không có `GET /orders/{sales_order_id}`. Quầy duyệt hay từ chối đơn web · QR mà
+không nhìn thấy khách gọi gì.
+
+**Impact:**
+Quầy duyệt mù: không biết đơn có món đang hết hay không trước khi bấm. Màn vẫn duyệt · từ chối được (`P4-07`); thiếu dữ liệu để quyết.
+Cùng gốc: không đường đọc nào kê đơn **đang làm** của quầy (`in_progress` · kênh · cách trao), nên nút *rời quán* (`POST /orders/{sales_order_id}/departure`,
+đơn `door_delivery`) không có chỗ đặt — màn không biết đơn nào là đơn giao đang làm.
+
+**Decision / Fix:**
+Chưa sửa — gửi pha 3 (**ADR-102** điểm 8). Đề nghị: `GET /counter/queue` trả thêm dòng đơn đã chụp (tên món, lựa chọn, số lượng, thành tiền
+backend tính), hay một đường đọc đơn theo mã lớp `quay`; và một đường đọc đơn đang làm của quầy (kênh, cách trao, trạng thái) cho *rời quán* và *tiền* của
+`P4-08`. Màn quầy bày ngay khi hợp đồng có.
+
+**Related task:**
+`P4-07` · ADR-102
+
+**Status:**
+Open

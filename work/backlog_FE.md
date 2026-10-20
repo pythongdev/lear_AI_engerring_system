@@ -379,7 +379,44 @@ một ca test bấm hai lần ⇒ một lời gọi.
 **Bẫy:** không nút *thêm món*, không nút *xoá* — không có cửa (kế hoạch §7). Không cộng giá để *xem trước* ở
 trình duyệt; cần xem trước thì gọi tính thử.
 
-**Nhận việc:** —
+**Nhận việc** — 2026-10-20 · dẫn, test trước và duyệt: **Claude Code**; thi công: **Codex** (worktree `../lean_wt/P4-05`, nhánh
+`codex/P4-05`, base `0b42889`), theo lời chủ repo *"hãy làm tất cả task trên yêu cầu codex làm bạn kiểm tra"*. **Claude chốt:** route
+`/chu-quan/menu-gia`, mục *Menu & giá* sau *Sản phẩm*; thành phần đọc bằng `POST /price-quotes` một lần mỗi món với tổ hợp đầu tiên
+backend kê (hợp đồng không có đường đọc thành phần, và pha 4 không đổi hợp đồng — kế hoạch §9); phụ thu từ `GET /option-groups`; bốn lệnh
+mở trong `Dialog` shadcn (thêm bằng CLI ghim); lời nhắc giờ bán **luôn** hiện trước khi đổi số lượng vì không có đường đọc giờ bán (suy
+ra, chờ chủ repo); đường đọc gặp `no_response` không thử lại ngầm.
+
+*Nghiệm thu* (viết trước, 2026-10-20):
+1. `fe/src/app/chu-quan/menu-gia/menu-gia.test.tsx` (Claude viết trước, 26 ca, đỏ vì chưa có trang) và `chu-quan.test.tsx` (thêm mục
+   điều hướng) xanh, **không** sửa điều kiện kiểm: thứ tự backend; giá · thành phần · phụ thu là số backend; không nút thêm · xoá; khung
+   xương; đọc lỗi; tính thử một món lỗi; bốn lệnh đúng thân; lý do bắt buộc với `aria-describedby`; ô số sai không gửi; `field` gắn đúng
+   ô; `*_not_found` · `menu_item_discontinued` đọc lại; mất phản hồi không gửi lại; bấm hai lần một lệnh; Huỷ · Esc trả focus; *Đang
+   cập nhật…*; đọc lại lỗi sau ghi.
+2. `check-fe-rules` xanh; `grep setQueryData|refetchInterval` dưới `fe/src/app/chu-quan` (trừ test) rỗng.
+3. `npm run build` xong, có `/chu-quan/menu-gia`.
+4. Chạy thật trên trình duyệt cùng backend (Claude): chủ quán đổi giá ⇒ màn hiện số mới **không tải lại trang** (ADR-102 điểm 3).
+5. Khuôn rút vào `docs/product/4-fe/01-khung-fe.md` §6; dòng §1 · §2 · §4.
+6. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
+
+**Bàn giao** — 2026-10-20 · thực hiện: **Codex** `gpt-6-astra`; test trước và duyệt: **Claude Code**. Nhánh `P4A-01`. File:
+`menu-gia/page.tsx` · `_components/menu-gia.tsx` · `_components/du-lieu-menu-gia.ts` · `_components/hop-thoai-sua-co-ly-do.tsx` ·
+`_components/muc-chu-quan.ts` · `fe/src/components/ui/dialog.tsx` (Claude, shadcn CLI) · `menu-gia/menu-gia.test.tsx` (Claude) ·
+`chu-quan.test.tsx` (Claude); owner `01-khung-fe.md` §1 · §2 · §3.1 · §4 · §6.
+*Nghiệm thu → bằng chứng:*
+1. `menu-gia.test.tsx` 26/26; md5 trước và sau khi Codex làm trùng nhau (`7de08404…`). Codex chỉ ra **lỗi test của Claude**: ca *Tổng
+   quan* đếm cứng 12 liên kết — Claude sửa thành 13 (không phải điều kiện của P4-05). Test có răng: Claude bỏ bước đọc lại sau ghi ⇒
+   `7 failed | 19 passed`; trả lại ⇒ xanh. **Claude sửa khi duyệt:** chữ lời nhắc giờ bán, nhãn *Giá* cho món không lựa chọn, chú thích
+   đầu ba file.
+2. `check-fe-rules: PASS`; grep rỗng.
+3. Codex: `npm run build -- --webpack` có `○ /chu-quan/menu-gia` (Turbopack bị sandbox chặn mở cổng); `npm run build` ở clone chính qua gate.
+4. Chạy thật (database dùng-xong-bỏ có dữ liệu mồi, backend thật, `next dev`, Chromium điều khiển bằng Playwright): đăng nhập chủ quán ⇒
+   `/chu-quan`; *Giò bán rời* trước `Giò × 1 · 9.000đ`, giá bán `9.000đ`; thiếu lý do ⇒ ô `aria-invalid=true`, *Nhập lý do.*; đổi giá
+   gốc *Giò* thành `11.000đ` ⇒ thành phần `11.000đ`, giá bán `11.000đ` (số backend tính lại), cờ đặt trước khi đổi vẫn còn ⇒ **không tải
+   lại trang**; focus về nút *Đổi giá gốc Giò*; ngừng bán *Canh bánh cuốn* ⇒ món biến khỏi màn.
+5. `01-khung-fe.md` §1 · §2 · §3.1 · §4 · §6.
+6. Gate ở clone chính — khối bàn giao cuối phiên.
+Còn lại: lời nhắc giờ bán luôn hiện là suy ra (chờ chủ repo); đổi giá gốc thành phần dùng chung (vd *Giò*) đổi giá mọi món mang nó — màn
+chưa nói điều ấy trong hộp thoại.
 
 [↑ đầu file](#top)
 
@@ -398,7 +435,35 @@ kết nối luôn nhìn thấy** (màn trạm: không nút đóng). **Nhiều ta
 
 **Không làm thì mất gì:** quầy tưởng không có đơn mới trong khi luồng đã đứt từ lâu.
 
-**Nhận việc:** —
+**Nhận việc** — 2026-10-20 · dẫn, test trước và duyệt: **Claude Code**; thi công: **Codex** (worktree `../lean_wt/P4-06`, nhánh
+`codex/P4-06`, base `0b42889`), theo lời chủ repo *"hãy làm tất cả task trên yêu cầu codex làm bạn kiểm tra"*. **Claude chốt:** một module
+`fe/src/lib/realtime/tin-hieu.tsx`; luồng mở qua client API (fetch đọc luồng) cho cả hai luồng; tín hiệu làm mất hiệu lực **mọi** query;
+ngưỡng im 25 giây, nối lại 1–10 giây; banner không nút; luồng ở **layout** `/quay` · `/tram` (dời `KhungTheoVai` khỏi trang con);
+nhiều tab qua `BroadcastChannel`.
+
+*Nghiệm thu* (viết trước, 2026-10-20):
+1. `fe/src/lib/realtime/realtime.test.tsx` (16 ca) · `fe/src/lib/auth/nhieu-tab.test.tsx` (4 ca) do Claude viết trước, đỏ vì chưa có code,
+   và `fe/src/app/quay/quay.test.tsx` (Claude bọc layout) xanh, **không** sửa điều kiện kiểm.
+2. `check-fe-rules` xanh; `grep EventSource|setQueryData` dưới `fe/src` (trừ test) rỗng.
+3. Chạy thật cùng backend qua Next: luồng không đệm; tắt · bật backend ⇒ banner rồi tự nối và đọc lại; đóng tab quầy ⇒ backend thấy luồng
+   đóng; hai tab: đăng xuất một tab ⇒ tab kia về `/dang-nhap`.
+4. `01-khung-fe.md` §1 · §3.3 · §4.
+5. `./scripts/gate.sh` xanh, có `fe-check: PASS`.
+
+**Bàn giao** — 2026-10-20 · thực hiện: **Codex** `gpt-6-astra`; test trước và duyệt: **Claude Code**. Nhánh `P4A-01`. File:
+`fe/src/lib/realtime/tin-hieu.tsx` · `fe/src/app/quay/layout.tsx` · `fe/src/app/tram/layout.tsx` · `quay/page.tsx` · `quay/giao-viec/page.tsx` ·
+`quay/dao-tao/page.tsx` · `tram/page.tsx` · `fe/src/lib/auth/session.ts` · `fe/src/components/tai-khoan/khung-theo-vai.tsx`; test của Claude:
+`realtime.test.tsx` · `nhieu-tab.test.tsx` · `quay.test.tsx`; owner `01-khung-fe.md`.
+*Nghiệm thu → bằng chứng:*
+1. `Tests 301 passed (301)` ở worktree; md5 ba file test trước và sau khi Codex làm trùng nhau. Test có răng: Claude bỏ lệnh đọc lại khi có
+   tín hiệu ⇒ `2 failed | 12 passed`; trả lại ⇒ xanh. **Claude sửa khi duyệt:** chú thích đầu ba file.
+2. `check-fe-rules: PASS`; grep rỗng.
+3. Chạy thật — dán ở `01-khung-fe.md` §3.3: `hello` qua Next sau 29 ms; đơn web khi tab quầy mở `201`; tắt backend ⇒ *Mất kết nối trực
+   tiếp. Đang tự nối lại.*; bật lại ⇒ nối thêm 1 lần, đọc lại 1 lần, banner tắt; đóng tab quầy ⇒ `409 {"code":"shop_not_seeing_orders"}`;
+   đăng xuất tab A ⇒ tab B `/dang-nhap` sau 168 ms.
+4. `01-khung-fe.md` §1 (hai layout) · §3.3 · §4.
+5. Gate ở clone chính — khối bàn giao cuối phiên.
+Còn lại: màn quầy · trạm chưa trải `tuyChonKeo()` — việc của `P4-07` · `P4-09`.
 
 [↑ đầu file](#top)
 
@@ -412,7 +477,23 @@ kết nối luôn nhìn thấy** (màn trạm: không nút đóng). **Nhiều ta
 **Goal:** hàng đợi quầy, duyệt · từ chối đơn chờ, POS tạo lượt gọi, đơn điện thoại, nhả đơn hẹn; vế giao hàng
 bày lời từ chối của **S-6** tới khi có lời. Chẻ tiếp lúc nhận nếu một phiên không đủ.
 
-**Nhận việc:** —
+**Nhận việc** — 2026-10-20 · dẫn, test trước và duyệt: **Claude Code**; thi công: **Codex** (worktree `../lean_wt/P4-07`, nhánh
+`codex/P4-07`, base `0b42889` + nền chưa commit của `T-213` · `P4-05` · `P4-06` đặt trong index), theo lời chủ repo *"hãy làm tất cả task trên"*.
+**Chẻ lúc nhận** (kế hoạch §6: bước to chẻ nếu một phiên không đủ): **đợt một** — hàng chờ quầy, duyệt · từ chối, tạm dừng · quán mù kèm
+*Mở lại nhận đơn* (quầy cần để hết mù — `09-realtime-du-phong.md` §2), đơn hẹn và máy quầy tự nhả; **đợt hai** — soạn lượt gọi POS
+(`POST /table-orders`) và đơn điện thoại (`POST /phone-orders`), dùng chung bộ soạn món với `P4-10`. **Thiếu ở hợp đồng** (F-074): hàng
+chờ không trả món của đơn; không đường đọc đơn đang làm nên *rời quán* chưa có chỗ đặt.
+
+*Nghiệm thu đợt một* (viết trước): (1) `fe/src/app/quay/hang-cho.test.tsx` (Claude, 14 ca) xanh không sửa; test cũ `quay.test.tsx` ·
+`realtime.test.tsx` xanh; (2) `check-fe-rules` xanh; (3) chạy thật: đơn web về hàng chờ qua SSE không tải lại, duyệt ⇒ việc xuống trạm;
+(4) `01-khung-fe.md` §1 · §2 · §4; (5) gate xanh.
+
+**Bàn giao đợt một** — 2026-10-20 · thực hiện: **Codex** `gpt-6-astra`; test trước và duyệt: **Claude Code**. Nhánh `P4A-01`. File:
+`fe/src/app/quay/_components/hang-cho.tsx` · `du-lieu-hang-cho.ts` · `tu-nha-don-hen.tsx` · `quay/page.tsx` · `quay/layout.tsx`;
+`quay/hang-cho.test.tsx` (Claude). *Bằng chứng:* (1) md5 test trước = sau (`9e20ac7c…`); worktree `340 passed`. (3) Chạy thật (database
+dùng-xong-bỏ, backend thật, `next dev`, Chromium): POS đứng quầy mở `/quay` ⇒ đơn web `201` hiện ở hàng chờ sau 39 ms, cờ không tải lại
+còn; nội dung *Giao tận nơi · Tạo lúc 09:38 · 0903333333*; *Duyệt đơn 1* ⇒ *Đã duyệt đơn 1.*, đơn rời hàng chờ; trạm thấy việc của đơn 1.
+(4) owner đã ghi. (5) gate — khối bàn giao cuối phiên. **Còn lại:** đợt hai; F-074.
 
 [↑ đầu file](#top)
 
@@ -440,7 +521,21 @@ chỉ hiện cho chủ quán (**ADR-098**). Mọi số tiền là số backend t
 **Goal:** bảng trạm chỉ đọc; bấm mẻ · lùi mẻ · ra bàn · chuyển · ghi làm sai ở màn quầy (**ADR-090**).
 Test chứng minh màn trạm không có nút thao tác.
 
-**Nhận việc:** —
+**Nhận việc** — 2026-10-20 · dẫn, test trước và duyệt: **Claude Code**; thi công: **Codex** (worktree `../lean_wt/P4-09`, cùng nền như
+`P4-07`). **Chặn một phần:** bấm mẻ · lùi mẻ · chuyển · ghi làm sai cần `station_job_id` · `production_batch_id` mà không đường đọc nào trả
+(**F-073**, gửi pha 3). Làm phần không bị chặn: bảng trạm chỉ đọc và *ra bàn* ở quầy (`POST /served-marks` dùng khoá gom của bảng).
+
+*Nghiệm thu phần làm được* (viết trước): (1) `fe/src/app/tram/tram.test.tsx` (5 ca, gồm *không một nút* lúc có bảng · rỗng · lỗi) và
+`fe/src/app/quay/san-xuat/san-xuat.test.tsx` (9 ca) do Claude viết, dữ liệu mẫu `mau-san-xuat.ts`, xanh không sửa; (2) `check-fe-rules`
+xanh; (3) chạy thật: trạm thấy việc, không nút; ra bàn đi tới backend; (4) owner; (5) gate.
+
+**Bàn giao phần làm được** — 2026-10-20 · thực hiện: **Codex** `gpt-6-astra`; test trước và duyệt: **Claude Code**. File:
+`fe/src/components/shared/bang-san-xuat.tsx` · `du-lieu-san-xuat.ts` · `man-tram.tsx` · `fe/src/app/quay/san-xuat/{page,san-xuat,hop-thoai-ra-ban,du-lieu-ra-ban}`
+· `tram/page.tsx` · liên kết *Sản xuất* ở `quay/page.tsx` (Claude ghép tay vì `P4-07` cùng sửa file). *Bằng chứng:* (1) md5 ba file của
+Claude trước = sau; worktree `341 passed`; test có răng — thêm một nút vào bảng hay bày *Hết việc* lúc lỗi ⇒ `2 failed`. (3) Chạy thật:
+tài khoản vai `trang_banh` vào `/tram` ⇒ hai trạm, `main` có **0** nút, *Cập nhật lúc 09:38:24*; *Ra bàn Đơn 1* số 1 khi chưa ai bấm mẻ ⇒
+*Số ra bàn vượt số đã làm* (`served_quantity_exceeds_made`) — đúng chỗ F-073 chặn. **Còn lại:** bốn việc chờ F-073; nút *Ra bàn* đang xếp
+thành một hàng dưới bảng, chưa đặt cạnh từng phần.
 
 [↑ đầu file](#top)
 
