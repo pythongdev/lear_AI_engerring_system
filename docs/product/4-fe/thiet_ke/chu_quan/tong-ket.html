@@ -5,7 +5,145 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tổng kết · Chủ quán</title>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-<link href="styles.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { paper: '#F6F5F1', ink: '#1C1B19', muted: '#5F5B53', line: '#E4E1DA', accent: '#1E6B50', selected: '#E8F1EC', 'selected-ink': '#14432F' },
+      fontFamily: { sans: ['"Be Vietnam Pro"', 'ui-sans-serif', 'system-ui', 'sans-serif'], mono: ['ui-monospace', 'SFMono-Regular', 'Consolas', 'monospace'] }
+    }
+  }
+}
+</script>
+<style type="text/tailwindcss">
+@layer base {
+  body { @apply m-0 bg-paper text-ink font-sans text-sm leading-relaxed antialiased; }
+  a { @apply text-accent underline-offset-[3px] hover:underline; }
+  button { @apply min-h-[44px] px-4 py-2 bg-white border border-line rounded-xl cursor-pointer shadow-sm transition-colors hover:border-accent hover:bg-paper disabled:text-muted disabled:bg-paper disabled:cursor-default disabled:shadow-none; }
+  button.primary { @apply bg-accent border-accent text-white font-semibold hover:bg-[#185a43] hover:border-[#185a43]; }
+  :focus-visible { @apply outline outline-[3px] outline-accent outline-offset-[3px]; }
+  h1 { @apply text-[28px] leading-tight font-bold tracking-tight; }
+  h2 { @apply text-base font-semibold; }
+  h3 { @apply text-sm font-semibold; }
+  small { @apply text-muted; }
+  p + p { @apply mt-2; }
+  table { @apply w-full border-collapse text-left; }
+  th { @apply text-muted font-medium text-xs bg-[#FAF9F6] uppercase tracking-wide; }
+  th, td { @apply px-3.5 py-3 border-b border-line align-top; }
+  td { @apply tabular-nums; }
+  tbody tr:last-child td { @apply border-b-0; }
+  tbody tr { @apply transition-colors hover:bg-[#FCFBF9]; }
+  input[type="checkbox"] { @apply w-[18px] h-[18px] accent-accent shrink-0; }
+  input:not([type="checkbox"]), select, textarea { @apply w-full min-w-0 min-h-[44px] px-3 py-2.5 border border-[#B9B3A7] rounded-lg bg-white text-sm font-normal focus:border-accent; }
+  textarea { @apply resize-y; }
+  fieldset { @apply m-0 min-w-0 border border-line rounded-xl p-3.5 gap-3; display: grid; }
+  legend { @apply px-1.5; }
+  dl { display: grid; @apply grid-cols-[1fr_auto] gap-3; }
+  dd { @apply m-0 font-semibold; }
+  code { @apply font-mono text-xs bg-paper px-1 py-0.5 rounded; }
+}
+@layer components {
+  .muted { @apply text-muted; }
+  [data-component] { @apply relative min-w-0; }
+  .nhan-component { @apply table w-fit self-start max-w-full [overflow-wrap:anywhere] px-1.5 py-0.5 mb-2 rounded bg-ink text-white font-mono text-[10px] leading-normal font-normal normal-case tracking-normal; }
+  body:has(#hien-ten:not(:checked)) .nhan-component { @apply hidden; }
+  .design-toggle { @apply flex gap-2 items-center flex-wrap px-6 py-2.5 border-b border-line bg-white text-xs; }
+  .design-toggle label { @apply cursor-pointer; }
+  .design-toggle a { @apply ml-auto; }
+  .shell { display: grid; @apply grid-cols-[232px_minmax(0,1fr)] min-h-screen; }
+  .shell > .nhan-component { @apply absolute top-0 left-0 z-[2]; }
+  .navigation { @apply px-3.5 py-6 bg-white border-r border-line; }
+  .brand { @apply flex items-center gap-2.5 text-ink no-underline hover:no-underline text-xs font-semibold mx-1 mb-8; }
+  .brand b { display: grid; @apply place-items-center shrink-0 w-9 h-9 bg-accent rounded-xl text-white; }
+  .brand small { @apply block text-[11px] font-normal; }
+  .nav-group { @apply mb-5; }
+  .nav-group summary { @apply text-muted text-[11px] font-semibold tracking-wider uppercase px-3 pb-2 list-none; }
+  .nav-group summary::-webkit-details-marker { display: none; }
+  .nav-links a { @apply block px-3 py-2 text-ink no-underline hover:no-underline rounded-lg hover:bg-paper; }
+  .nav-links a[aria-current="page"] { @apply text-selected-ink bg-selected font-semibold; }
+  .page-content { @apply px-8 pt-7 pb-11; }
+  .page-content > * + * { @apply mt-6; }
+  .page-header { @apply flex flex-wrap items-end justify-between gap-3.5 pt-6; }
+  .page-header > .nhan-component { @apply absolute top-0 left-0; }
+  .page-header p { @apply mt-2; }
+  .card { @apply bg-white border border-line rounded-2xl p-5 min-w-0 shadow-sm; }
+  .card > h2 { @apply mb-3.5; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .number { @apply text-[28px] font-bold tracking-tight leading-snug my-2 [overflow-wrap:anywhere]; }
+  .notice { @apply px-5 py-4 border border-[#F1DDBE] rounded-2xl bg-[#FFF6E8] text-[#7A4100]; }
+  .notice p { @apply mt-1; }
+  .split { display: grid; @apply grid-cols-[minmax(0,1fr)_300px] gap-6 items-start; }
+  .stack { @apply flex flex-col gap-5 min-w-0; }
+  .drawer { @apply bg-white p-5 border border-line rounded-2xl shadow-lg shadow-ink/5 min-w-0; }
+  .drawer > .card { @apply p-0 border-0 shadow-none my-3.5; }
+  .drawer .number { @apply text-2xl; }
+  .table-scroll { @apply max-w-full overflow-x-auto rounded-xl border border-line; }
+  .card table { @apply min-w-[480px]; }
+  td .actions { @apply min-w-[130px]; }
+  td > a { @apply inline-block pt-2.5; }
+  .actions { @apply flex flex-wrap gap-2 items-center; }
+  .form-body { @apply flex flex-col gap-4; }
+  .field { @apply flex flex-col gap-1.5 text-[13px] font-medium; }
+  .field.check { @apply flex-row items-center justify-start font-normal; }
+  .filters { @apply flex flex-wrap items-end gap-3.5 pt-7; }
+  .filters > .nhan-component { @apply absolute top-0; }
+  .filters .field { @apply grow shrink basis-40; }
+  .badge { @apply inline-block text-selected-ink bg-selected px-2.5 py-1 rounded-lg text-xs font-medium; }
+  .badge > .nhan-component { @apply mb-1; }
+  .badge.red { @apply text-[#8C1D18] bg-[#FBE3E1]; }
+  .badge.warning { @apply text-[#7A4100] bg-[#FFF6E8]; }
+  .empty { @apply py-4 text-muted; }
+  #chu-giai { @apply max-w-[1200px] mx-auto my-9 p-6 border-t border-line; }
+  #chu-giai h2 { @apply mb-3.5; }
+  #chu-giai table { @apply min-w-[600px]; }
+  .index-content { @apply max-w-[1200px] mx-auto px-6 py-8; }
+  .index-content > * + * { @apply mt-7; }
+  .index-content .page-header { @apply block; }
+  .page-directory { display: grid; @apply grid-cols-3 gap-3; }
+  .directory-item { @apply flex flex-col p-5 bg-white border border-line rounded-2xl no-underline hover:no-underline shadow-sm transition hover:border-accent hover:shadow-md; }
+  .directory-item small { @apply [overflow-wrap:anywhere] mt-1.5; }
+  @media (min-width: 641px) {
+    .nav-group details::details-content { content-visibility: visible; display: block; }
+    .nav-group details:not([open]) > .nav-links { display: block; }
+  }
+  @media (min-width: 1500px) { .page-content { @apply max-w-[1500px] w-full mx-auto; } }
+  @media (min-width: 641px) and (max-width: 1050px) {
+    .shell { @apply grid-cols-[190px_minmax(0,1fr)]; }
+    .page-content { @apply px-5 py-6; }
+    .split { @apply grid-cols-1; }
+  }
+  @media (max-width: 640px) {
+    body { @apply pb-[150px]; }
+    .design-toggle { @apply px-3.5; }
+    .design-toggle a { @apply ml-6; }
+    .shell { @apply block min-h-0; }
+    .shell > .nhan-component { @apply static mx-3.5 mt-1.5 mb-0; }
+    .page-content { @apply px-3.5 pt-4 pb-6; }
+    .page-content > * + * { @apply mt-4; }
+    h1 { @apply text-2xl; }
+    .page-header { @apply gap-3; }
+    .page-header .actions { @apply w-full; }
+    .grid, .split { @apply grid-cols-1 gap-3.5; }
+    .number { @apply text-[26px]; }
+    .card, .drawer { @apply p-4; }
+    .navigation { @apply fixed z-10 bottom-0 inset-x-0 px-1.5 pt-2 pb-[max(12px,env(safe-area-inset-bottom))] border-0 border-t border-line grid-cols-4 gap-1; display: grid; }
+    .navigation > .nhan-component { @apply col-span-full m-0 justify-self-start; }
+    .navigation .brand { @apply hidden; }
+    .nav-group { @apply m-0 static; }
+    .nav-group > .nhan-component { @apply text-[8px] mb-1 p-0.5; }
+    .nav-group summary { @apply min-h-[44px] px-0.5 py-3 text-center text-[10px] normal-case tracking-normal rounded-lg cursor-pointer; }
+    .nav-group.selected summary { @apply text-selected-ink bg-selected; }
+    .nav-group details[open] summary { @apply outline outline-2 outline-accent; }
+    .nav-links { @apply absolute bottom-[calc(100%+8px)] inset-x-2.5 p-3 border border-line rounded-2xl bg-white shadow-xl; }
+    .nav-links a { @apply min-h-[44px]; }
+    .index-content { @apply px-3.5 py-5; }
+    .page-directory { @apply grid-cols-2; }
+    .directory-item { @apply p-3.5; }
+    #chu-giai { @apply px-3.5 py-4 mt-4; }
+  }
+}
+</style>
 </head>
 <body>
 <div class="design-toggle"><input type="checkbox" id="hien-ten" checked><label for="hien-ten">Hiện tên component</label><a href="index.html">Mục lục thiết kế</a></div>

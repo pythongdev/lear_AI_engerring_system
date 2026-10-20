@@ -1,7 +1,9 @@
 # Mở bản thiết kế trang chủ quán
 
 Bản thiết kế tĩnh của trang chủ quán nằm ở [docs/product/4-fe/thiet_ke/chu_quan/](../product/4-fe/thiet_ke/chu_quan/index.html): 13 trang HTML,
-một trang mục lục `index.html` và một `styles.css` chung (T-215). Không cần chạy database, server Go hay Next — chỉ cần trình duyệt. Mọi lệnh
+một trang mục lục `index.html` (T-215). Mỗi trang tự mang style: Tailwind nạp từ CDN `cdn.tailwindcss.com` cộng một khối
+`<style type="text/tailwindcss">` nhúng ngay trong trang (2026-10-20), nên mở file nào cũng có giao diện, nhưng **máy cần có mạng**. Không cần chạy database,
+server Go hay Next — chỉ cần trình duyệt. Mọi lệnh
 dưới đây chạy ở **thư mục gốc repo**, trên macOS. Viết 2026-10-20.
 
 ## 1. Mở nhanh bằng trình duyệt mặc định
