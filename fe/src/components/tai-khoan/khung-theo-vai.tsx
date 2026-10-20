@@ -1,19 +1,27 @@
 "use client";
 // Khung theo vai (P4-04): gác lối vào khung quầy · chủ quán · trạm theo phiên đăng nhập. Đây là TIỆN, không phải
 // bảo vệ — mọi cửa vẫn do backend chặn theo lớp quyền (02-vai-va-quyen.md); khung chỉ chọn màn mặc định.
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { khungCua, type Khung } from "@/lib/auth/khung";
 import { loiTaiKhoan } from "@/lib/auth/messages";
-import { useDangXuat, usePhien } from "@/lib/auth/session";
+import { ngheDoiPhien, useDangXuat, usePhien } from "@/lib/auth/session";
 
 const TEN_KHUNG: Record<Khung, string> = { "/chu-quan": "Chủ quán", "/quay": "Quầy", "/tram": "Trạm (chỉ xem)" };
 
 export function KhungTheoVai({ khung, children }: { khung: Khung; children: ReactNode }) {
   const router = useRouter();
+  const qc = useQueryClient();
+  const [daDoiPhien, setDaDoiPhien] = useState(false);
+  useEffect(() => ngheDoiPhien(() => {
+    setDaDoiPhien(true);
+    qc.clear();
+    router.replace("/dang-nhap");
+  }), [qc, router]);
   const phien = usePhien();
   const dangXuat = useDangXuat();
   const r = phien.data;
@@ -24,7 +32,7 @@ export function KhungTheoVai({ khung, children }: { khung: Khung; children: Reac
     if (diDau) router.replace(diDau);
   }, [diDau, router]);
 
-  if (phien.isPending || diDau) return <p className="p-6">Đang mở…</p>;
+  if (daDoiPhien || phien.isPending || diDau) return <p className="p-6">Đang mở…</p>;
   if (r && !r.ok)
     return (
       <Alert variant="destructive" className="m-6 w-auto">

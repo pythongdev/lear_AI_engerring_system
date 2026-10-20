@@ -9,6 +9,31 @@ import { useApi } from "@/lib/api/provider";
 
 import type { Session } from "./khung";
 
+// Mã chỉ sống trong tab, không chứa danh tính hay mã phiên.
+let maTab: string | undefined;
+function tabHienTai() {
+  return maTab ??= Array.from(crypto.getRandomValues(new Uint32Array(4)), (n) => n.toString(16).padStart(8, "0")).join("");
+}
+
+function baoDoiPhien() {
+  if (typeof BroadcastChannel === "undefined") return;
+  const kenh = new BroadcastChannel("banhcuon-phien");
+  kenh.postMessage({ loai: "doi-phien", tab: tabHienTai() });
+  kenh.close();
+}
+
+export function ngheDoiPhien(nhan: () => void) {
+  if (typeof BroadcastChannel === "undefined") return () => {};
+  const tab = tabHienTai();
+  const kenh = new BroadcastChannel("banhcuon-phien");
+  kenh.onmessage = ({ data }: MessageEvent<unknown>) => {
+    if (typeof data === "object" && data !== null && "loai" in data &&
+        data.loai === "doi-phien" && "tab" in data &&
+        typeof data.tab === "string" && data.tab !== tab) nhan();
+  };
+  return () => kenh.close();
+}
+
 export const KHOA_PHIEN = ["sessions", "current"] as const;
 
 /** `null` = chưa đăng nhập (401); lỗi khác giữ trong `ApiResult` để màn bày. */
@@ -35,6 +60,7 @@ export function useDangNhap() {
       if (!r.ok) return;
       // Xoá sạch cache của người trước; khung đọc lại phiên từ backend (không ghi tay cache — ADR-102 điểm 3).
       qc.clear();
+      baoDoiPhien();
     },
   });
 }
@@ -46,6 +72,7 @@ export function useDangXuat() {
     mutationFn: () => call(api.POST("/sessions/current/end")),
     onSettled: () => {
       qc.clear();
+      baoDoiPhien();
     },
   });
 }
