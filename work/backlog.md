@@ -96,7 +96,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-216 **Bản thiết kế tĩnh cho phía khách, có tên component** — 9 trang HTML điện thoại trước trong `docs/product/4-fe/thiet_ke/khach_hang/`: trang chủ, mở bằng mã QR, thực đơn, chọn món, giỏ, đã gửi lượt tại bàn, thông tin đơn online, đã đặt online, quán không nhận đơn; theo cùng khuôn nhãn và chú giải của T-215; chỉ bày điều hợp đồng và dữ kiện quán đã có, chữ chưa chốt để giữ chỗ; không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"hãy viết prompt yêu cầu codex làm các file html cho client side"* · [chi tiết](#t-216)
 - [ ] P4-07 **Màn quầy: nhận đơn — đợt một, hàng chờ** — duyệt · từ chối, tạm dừng · quán mù kèm mở lại, nhắc và tự nhả đơn hẹn; soạn lượt gọi POS và đơn điện thoại để đợt hai; đơn chờ chưa bày được món (F-074) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-07)
 - [ ] P4-09 **Sản xuất theo mẻ — phần làm được** — bảng trạm chỉ đọc, ra bàn ở quầy; bấm mẻ · lùi mẻ · chuyển · ghi làm sai chờ đường đọc mã việc trạm (F-073) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-09)
 
@@ -112,6 +111,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-216 **Bản thiết kế tĩnh cho phía khách, có tên component** — 9 trang HTML điện thoại trước trong `docs/product/4-fe/thiet_ke/khach_hang/`: trang chủ, mở bằng mã QR, thực đơn, chọn món, giỏ, đã gửi lượt tại bàn, thông tin đơn online, đã đặt online, quán không nhận đơn; theo cùng khuôn nhãn và chú giải của T-215; chỉ bày điều hợp đồng và dữ kiện quán đã có, chữ chưa chốt để giữ chỗ; không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"hãy viết prompt yêu cầu codex làm các file html cho client side"* — 2026-10-20 · [chi tiết](#t-216)
 - [x] T-215 **Bản thiết kế tĩnh cho từng trang chủ quán, có tên component** — 13 trang HTML mở thẳng từ file trong `docs/product/4-fe/thiet_ke/chu_quan/`, một trang một route của `mucChuQuan`, mỗi khối mang nhãn tên component và bảng chú giải; chỉ bày đúng ô và thao tác trang thật đang có, số minh hoạ; không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"hãy yêu cầu codex làm và bạn kiểm tra"* — 2026-10-20 · [chi tiết](#t-215)
 - [x] T-214 **Một lệnh chạy toàn bộ hệ thống trên máy phát triển** — `make dev` bật database · migration · mồi rồi chạy server Go (8080) và Next (3000) cùng lúc, log có tiền tố, Ctrl+C hay một bên chết thì tắt cả hai, database giữ chạy; `make be` · `make fe` chạy riêng; `docs/command/make.md` §4 — L1 — mở và nhận 2026-10-20 · Codex thi công (hết hạn mức trước báo cáo), Claude Code duyệt và chạy thật — 2026-10-20 · [chi tiết](#t-214)
 - [x] P4-06 **Lớp realtime chung** — `TinHieuProvider` đọc SSE qua client API, tín hiệu chỉ làm đọc lại, im 25 giây là đứt, tự nối lại, banner không nút; luồng ở layout `/quay` · `/tram`; `tuyChonKeo()` kéo theo chu kỳ; nhiều tab qua `BroadcastChannel`; chạy thật: đóng tab quầy ⇒ `409 shop_not_seeing_orders` — L2 — Codex thi công, Claude Code test trước và duyệt — 2026-10-20 · [chi tiết](backlog_FE.md#p4-06)
@@ -448,15 +448,28 @@ ngay sau T-215. **Mức:** L1. Đây là tài liệu thiết kế, không đổi
 `P4-10` ([chi tiết](backlog_FE.md#p4-10)), nên bản này là đề xuất, không chốt route.
 
 **Claude chốt:** chín trang, đặt tên theo việc khách làm (route thật do `P4-10` đặt): `trang-chu` · `mo-ma-qr` · `thuc-don` · `chon-mon` ·
-`gio-hang` · `da-gui-luot` · `thong-tin-dat` · `da-dat` · `khong-nhan-don`, cùng `index.html` và `styles.css`. Trang làm cho điện thoại trước, trên máy tính
+`gio-hang` · `da-gui-luot` · `thong-tin-dat` · `da-dat` · `khong-nhan-don`, cùng `index.html`; mỗi trang tự mang style như bộ T-215 sau 78ef56c — Tailwind
+CDN cộng khối `<style type="text/tailwindcss">` nhúng trong trang, không `styles.css` riêng (2026-10-20, chủ repo: *"làm file html đó kết hợp với css
+và tailwind để khi tôi mở có màu và có căn chỉnh"*). Trang làm cho điện thoại trước, trên máy tính
 thì nằm giữa một cột hẹp. Khuôn nhãn, công tắc và chú giải giống T-215. Nguồn nội dung: các cửa công khai của `docs/product/3-be/openapi.yaml`
 (`GET /menu`, `POST /price-quotes`, `GET /qr-codes/{code}`, `POST /qr-codes/{code}/orders`, `POST /online-orders`) và `master_plan/shop-facts.md`.
 Không bày thứ hợp đồng chưa có, ví dụ khách xem trạng thái đơn hay xin tính tiền. Mọi giá là giá backend trả, khách không thấy phép cộng.
 Chữ hiện cho khách mà quán chưa chốt (lời khi quán tạm dừng nhận đơn, `P4-10`) bày dạng giữ chỗ.
 
-*Nghiệm thu* (viết trước): (1) đúng 11 file như trên; (2) chỉ gọi mạng tới Google Fonts; (3) tập `data-component` mỗi trang trùng khít chú giải;
+*Nghiệm thu* (viết trước; sửa 2026-10-20 theo lời trên): (1) đúng 10 file như trên; (2) chỉ gọi mạng tới Google Fonts và `cdn.tailwindcss.com`; (3) tập `data-component` mỗi trang trùng khít chú giải;
 (4) tên dùng chung có trong danh mục `index.html`, tên trùng nghĩa với T-215 thì dùng lại đúng tên ấy; (5) mỗi ô và nút có nguồn ở hợp đồng hoặc
 `shop-facts.md` (Claude đối chiếu); (6) ở 390px không cuộn ngang; (7) dùng `button` · `input` · `label` thật; (8) `./scripts/gate.sh` xanh.
+
+**Bàn giao** — 2026-10-20 · thực hiện: **Codex** (worktree `../lean_wt/T-216`, nhánh `codex/T-216`, base `a6f309b`, đã gỡ) theo phiếu viết **trước**
+khi chủ repo đổi khuôn sang Tailwind (`78ef56c`), nên Codex nộp 11 file kèm `styles.css`; **Claude Code** chuyển sang khuôn mới khi tích hợp: chép
+nguyên khối Tailwind CDN + `tailwind.config` của `chu_quan/kho.html` vào từng trang, nhúng CSS của Codex vào `<style type="text/tailwindcss">`, thêm lại
+độ đậm `h1` · `h3` mà preflight bỏ, giữ tên ở cột đầu bảng chú giải trên một dòng, bỏ `styles.css`; thêm §8 vào `docs/command/mo-thiet-ke.md`.
+Nhánh `P4A-01`. (1) 10 file. (2) URL ngoài Google Fonts · `cdn.tailwindcss.com`: 0. (3) Script kiểm của Claude: 9/9 trang `chú giải khớp=True`,
+nhãn sai 0. (4) Tên dùng chung trùng bộ `chu_quan` (`DauTrang`, `BangDuLieu`, `ThongBaoLoi`…). (5) Claude soát chữ từng trang: giá khớp
+`shop-facts.md` §4 (suất giò 21/25/29 nghìn = giò + 4 bánh), trường đơn online khớp `OnlineOrderRequest`, phí ship 0đ · hotline · *"Quán mở cửa 6h–11h
+sáng"* từ `shop-facts.md`, mã lỗi có trong hợp đồng; chữ chưa chốt là `[CHỮ CHỜ CHỦ QUÁN CHỐT]`. (6) Playwright 390px: `scrollWidth` 390 cả 10 trang.
+(7) Có. (8) Gate xanh. **Khoảng trống hợp đồng Codex nêu, để `P4-10` xử lý:** `GET /menu` không có danh mục · mô tả · ảnh; combo chưa ánh xạ được với
+*Combo Đầy đủ*; `OnlineOrderRequest` không có trường chọn trả trước; hai cửa gửi đơn chỉ khai `default: Error`.
 
 [↑ đầu file](#top)
 
