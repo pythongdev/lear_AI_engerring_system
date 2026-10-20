@@ -111,6 +111,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-214 **Một lệnh chạy toàn bộ hệ thống trên máy phát triển** — `make dev` bật database · migration · mồi rồi chạy server Go (8080) và Next (3000) cùng lúc, log có tiền tố, Ctrl+C hay một bên chết thì tắt cả hai, database giữ chạy; `make be` · `make fe` chạy riêng; `docs/command/make.md` §4 — L1 — mở và nhận 2026-10-20 · Codex thi công (hết hạn mức trước báo cáo), Claude Code duyệt và chạy thật — 2026-10-20 · [chi tiết](#t-214)
 - [x] P4-06 **Lớp realtime chung** — `TinHieuProvider` đọc SSE qua client API, tín hiệu chỉ làm đọc lại, im 25 giây là đứt, tự nối lại, banner không nút; luồng ở layout `/quay` · `/tram`; `tuyChonKeo()` kéo theo chu kỳ; nhiều tab qua `BroadcastChannel`; chạy thật: đóng tab quầy ⇒ `409 shop_not_seeing_orders` — L2 — Codex thi công, Claude Code test trước và duyệt — 2026-10-20 · [chi tiết](backlog_FE.md#p4-06)
 - [x] P4-05 **Trang *Menu & giá* — trang thử, rút khuôn** — `/chu-quan/menu-gia`: giá mỗi tổ hợp, thành phần qua tính thử, phụ thu; đổi giá gốc · phụ thu · số lượng có lý do, ngừng bán; khuôn ở `01-khung-fe.md` §6; chạy thật trên trình duyệt: đổi giá ⇒ số mới không tải lại trang — L2 — Codex thi công, Claude Code test trước và duyệt — 2026-10-20 · [chi tiết](backlog_FE.md#p4-05)
 - [x] T-213 **Sửa test phụ thuộc thứ tự gói (F-072)** — test dựng món giả có nhóm tự ngừng bán qua cửa thật khi xong; bản gốc `menu` → `gia` đỏ, bản sửa cả hai thứ tự xanh; F-072 đóng — L1 — mở và nhận 2026-10-20 · Codex thi công, Claude Code duyệt theo lời chủ repo *"yêu cầu codex làm bạn kiểm tra"* — 2026-10-20 · [chi tiết](backlog_archive.md#t-213)
@@ -436,6 +437,33 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-214"></a>
+### T-214 — Chạy hệ thống trên máy phải gõ ba lệnh ở ba cửa sổ, tự ghép năm biến môi trường
+
+**Yêu cầu:** chủ repo 2026-10-20 *"yêu cầu codex tạo câu lệnh để chạy toàn bộ hệ thống"*, chỉ vào `docs/command/make.md`. **Mức:** L1 — công cụ
+máy phát triển, không đổi hành vi, hợp đồng hay dữ liệu.
+
+**Claude chốt:** `make dev` = `setup` (bật · migrate · mồi, đã có sẵn) rồi chạy **cùng lúc** `be/cmd/server` (cổng 8080) và `npm run dev` của `fe/`
+(cổng 3000), log hai bên có tiền tố; Ctrl+C hay một bên chết thì tắt cả hai, database **giữ** chạy. Thêm `make be` · `make fe` chạy riêng từng bên.
+Biến môi trường dựng trong Makefile, đọc lại `compose.yaml` không chép: DSN vai `shop_app` ở `127.0.0.1:$(DB_PORT)`; múi giờ từ `SHOP_TZ` sẵn có;
+`BANHCUON_ORIGIN=http://localhost:3000` (tầng chuyển tiếp đưa nguyên Origin của trình duyệt lên, nên phải mở đúng địa chỉ này); `BANHCUON_FILE_DIR`
+mặc định `.dev/files` ở gốc repo, tự tạo, có `.gitignore` riêng `*`; mọi biến đổi được bằng `VAR=… make dev`. Không tạo chủ quán tự động — tài khoản
+đăng nhập vẫn qua `khoitao-chu-quan` (mật khẩu đọc từ stdin), `make.md` chỉ cách. Không thêm công cụ ngoài (không `concurrently`, không `foreman`).
+
+*Nghiệm thu* (viết trước): (1) `make help` liệt kê `dev` · `be` · `fe`; (2) chạy thật trên máy (Claude, vì sandbox Codex không tới Docker): `make dev`
+từ database đã tắt ⇒ `curl http://127.0.0.1:8080/menu` trả `200`, `http://localhost:3000/` trả `200`, `curl http://localhost:3000/api/menu` trả
+`200`; (3) Ctrl+C ⇒ không còn tiến trình nghe 8080 · 3000, `make status` vẫn *healthy*; (4) thiếu `fe/node_modules` ⇒ dừng với một câu chỉ
+`npm ci`, không im lặng; (5) `docs/command/make.md` có mục chạy toàn bộ hệ thống, câu cũ về lệnh `go run` tay ở §9 trỏ sang lệnh mới; (6) gate xanh.
+
+**Bàn giao** — 2026-10-20 · thực hiện: **Codex** (worktree `../lean_wt/T-214`, nhánh `codex/T-214`, base `981e1af`), hết hạn mức sau khi xong code, trước
+báo cáo; duyệt, chạy thật và tích hợp: **Claude Code**, nhánh `P4A-01`. File: `Makefile`, `docs/command/make.md`. (1) `make help` có `dev` · `be` · `fe`.
+(2) `make dev` từ database tắt ⇒ `be /menu: 200`, `fe /: 200`, `fe /api/menu: 200`; `POST /api/sessions` với Origin `http://localhost:3000` ⇒
+`invalid_credentials`, với `http://127.0.0.1:3000` ⇒ `cross_origin_write` (đúng lời dặn mở `localhost`). (3) Ctrl+C (SIGINT cả nhóm) ⇒ không còn
+tiến trình nghe 8080 · 3000, `make status` *healthy*; DSN sai làm server Go chết ⇒ Next tắt theo, `make: *** [dev] Error 1`. (4) `make fe` thiếu
+`node_modules` ⇒ `Thiếu fe/node_modules; hãy chạy: cd fe && npm ci` (log của Codex). (5) make.md §4 mới, §10 trỏ `make be`. (6) Gate — dưới.
+
+[↑ đầu file](#top)
 
 <a id="t-212"></a>
 ### T-212 — POS giao việc và ghi đào tạo từ quầy

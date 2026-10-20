@@ -1,27 +1,81 @@
-# Lệnh tắt cho database LÀM VIỆC trên máy phát triển (compose project `banhcuon`),
-# và cho trang Swagger UI đọc hợp đồng API (`make swagger`).
+# Lệnh chạy hệ thống và database LÀM VIỆC trên máy phát triển
+# (compose project `banhcuon`), cùng Swagger UI đọc hợp đồng API.
 # Hướng dẫn từng bước: docs/guideline/chay-database-tren-may.md; bảng tra lệnh:
 # docs/command/make.md. Chỗ đặt file này:
 # docs/product/2-db/10-quy-uoc-code.md QC-08.
 #
-# File này không mang cấu hình riêng: database, cổng, vai lấy từ compose.yaml; múi giờ
+# Mặc định phát triển khớp compose.yaml và db/init/; múi giờ
 # đọc từ master_plan/shop-facts.md §1 lúc chạy, như scripts/db-check.sh (QC-06).
 # Bộ kiểm (./scripts/db-check.sh) KHÔNG đi qua đây — nó dựng database riêng của nó.
 #
 #   make            danh sách lệnh
+#   make dev        bật database rồi chạy backend và frontend
 #   make setup      bật + tạo bảng + nạp dữ liệu mồi (lần đầu)
 #   make psql       vào psql bên trong container
 
 SHOP_TZ := $(shell grep -m1 '^| Múi giờ |' master_plan/shop-facts.md | grep -o '`[^`]*`' | head -1 | tr -d '`')
 PSQL    := docker compose exec -e PGTZ=$(SHOP_TZ) db psql -X -U shop_owner -d banhcuon
 
+DB_PORT ?= 5433
+BANHCUON_DATABASE_URL ?= postgres://shop_app:shop_app_dev@127.0.0.1:$(DB_PORT)/banhcuon?sslmode=disable
+BANHCUON_SHOP_TZ ?= $(SHOP_TZ)
+BANHCUON_ORIGIN ?= http://localhost:3000
+BANHCUON_FILE_DIR ?= $(CURDIR)/.dev/files
+BANHCUON_BE_URL ?= http://127.0.0.1:8080
+export DB_PORT
+BE_ENV = BANHCUON_DATABASE_URL="$(BANHCUON_DATABASE_URL)" BANHCUON_SHOP_TZ="$(BANHCUON_SHOP_TZ)" BANHCUON_ORIGIN="$(BANHCUON_ORIGIN)" BANHCUON_FILE_DIR="$(BANHCUON_FILE_DIR)"
+BE_RUN = cd be && $(BE_ENV) go run ./cmd/server
+FE_RUN = cd fe && BANHCUON_BE_URL="$(BANHCUON_BE_URL)" npm run dev
+
+# Bash 3.2: monitor mode tạo nhóm riêng; tắt monitor trong nhóm để con cùng nhóm.
+# Bộ đọc log nằm trong nhóm đó. Theo dõi PID server, không chờ pipe log đóng.
+define DEV_RUN
+set -m; \
+be_pid=; fe_pid=; \
+cleanup() { \
+  trap "" INT TERM; \
+  for pid in $$be_pid $$fe_pid; do kill -TERM -- -$$pid 2>/dev/null || :; done; \
+  sleep 1; \
+  for pid in $$be_pid $$fe_pid; do kill -KILL -- -$$pid 2>/dev/null || :; done; \
+  wait 2>/dev/null || :; \
+}; \
+trap cleanup EXIT; trap "exit 130" INT; trap "exit 143" TERM; \
+(set +m; { $(BE_RUN); } > >(while IFS= read -r line || [ -n "$$line" ]; do printf "[be] %s\n" "$$line"; done) 2>&1) & be_pid=$$!; \
+(set +m; { $(FE_RUN); } > >(while IFS= read -r line || [ -n "$$line" ]; do printf "[fe] %s\n" "$$line"; done) 2>&1) & fe_pid=$$!; \
+while kill -0 "$$be_pid" 2>/dev/null && kill -0 "$$fe_pid" 2>/dev/null; do sleep 0.2; done; \
+if ! kill -0 "$$be_pid" 2>/dev/null; then wait "$$be_pid"; else wait "$$fe_pid"; fi
+endef
+
 .DEFAULT_GOAL := help
-.PHONY: help setup up migrate seed psql shell status stop reset swagger swagger-stop check-tz
+.PHONY: help setup up migrate seed psql shell status stop reset swagger swagger-stop check-tz dev be fe check-go check-fe dev-files
 
 help: ## Liệt kê các lệnh
-	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-9s %s\n", $$1, $$2}'
+	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-12s %s\n", $$1, $$2}'
 
-setup: up migrate seed ## Lần đầu: bật database, tạo bảng, nạp dữ liệu mồi
+dev: check-tz check-go check-fe dev-files ## Bật database rồi chạy backend + frontend; Ctrl+C tắt cả hai
+	$(MAKE) setup
+	@bash -c '$(DEV_RUN)'
+
+be: check-tz check-go dev-files ## Chạy server Go (cần database đã bật)
+	$(BE_RUN)
+
+fe: check-fe ## Chạy giao diện Next ở cổng 3000
+	$(FE_RUN)
+
+check-go:
+	@command -v go >/dev/null 2>&1 || { echo "Thiếu lệnh go; hãy cài Go rồi chạy lại."; exit 1; }
+
+check-fe:
+	@command -v npm >/dev/null 2>&1 || { echo "Thiếu lệnh npm; hãy cài Node.js và npm rồi chạy lại."; exit 1; }
+	@[ -d fe/node_modules ] || { echo "Thiếu fe/node_modules; hãy chạy: cd fe && npm ci"; exit 1; }
+
+dev-files:
+	@mkdir -p "$(CURDIR)/.dev" && printf '*\n' > "$(CURDIR)/.dev/.gitignore" && mkdir -p "$(BANHCUON_FILE_DIR)"
+
+setup: ## Lần đầu: bật database, tạo bảng, nạp dữ liệu mồi
+	$(MAKE) up
+	$(MAKE) migrate
+	$(MAKE) seed
 
 up: ## Bật database (cổng 127.0.0.1:5433), chờ tới khi sẵn sàng
 	docker compose up -d --wait db
