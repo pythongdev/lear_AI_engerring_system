@@ -1,6 +1,6 @@
 // I-019 tầng 3 (ADR-090 điểm 8): bảng nhu cầu, ứng viên chuyển và cửa đã ra bàn đọc khoá gom từ MỘT
-// định nghĩa. sqlc không ghép đoạn câu giữa hai file, nên đoạn ấy nằm ở gom.sql và chon_da_lam.sql
-// giữa hai dòng đánh dấu (T-163); test này giữ hai bản giống từng byte. Không cần database.
+// định nghĩa. sqlc không ghép đoạn câu giữa các file, nên đoạn ấy nằm ở gom.sql, chon_da_lam.sql và
+// viec_quay.sql giữa hai dòng đánh dấu (T-163, T-217); test này giữ các bản giống từng byte. Không cần database.
 package sanxuat
 
 import (
@@ -28,9 +28,12 @@ func doanKhoaGom(t *testing.T, file string) string {
 }
 
 func TestI019_KhoaGomMotDinhNghia(t *testing.T) {
-	gom, ra := doanKhoaGom(t, "sql/gom.sql"), doanKhoaGom(t, "sql/chon_da_lam.sql")
-	if gom != ra {
-		t.Fatalf("khoá gom lệch giữa sql/gom.sql và sql/chon_da_lam.sql (I-019 tầng 3: một định nghĩa):\n--- gom.sql\n%s\n--- chon_da_lam.sql\n%s", gom, ra)
+	gom := doanKhoaGom(t, "sql/gom.sql")
+	// viec_quay.sql (T-217, F-073): đường đọc việc trạm của quầy trả khoá gom của từng việc — bản thứ ba.
+	for _, file := range []string{"sql/chon_da_lam.sql", "sql/viec_quay.sql"} {
+		if ra := doanKhoaGom(t, file); gom != ra {
+			t.Fatalf("khoá gom lệch giữa sql/gom.sql và %s (I-019 tầng 3: một định nghĩa):\n--- gom.sql\n%s\n--- %s\n%s", file, gom, file, ra)
+		}
 	}
 	for _, phan := range []string{"j.station_code", "c.menu_component_id", "filling_option_ids", "c.takes_filling"} {
 		if !strings.Contains(gom, phan) {

@@ -79,6 +79,12 @@ Chỉ trả tên và đơn vị của thứ cần kiểm, kèm định danh và 
 thuộc lớp `quay_hoac_chu_quan` theo ADR-121 điểm 3 — màn quầy đọc lại con số mình vừa khai;
 người thường ngoài quầy bị `not_on_counter_duty`, không phiên bị `unauthenticated`.
 
+**Cửa đọc việc trạm của quầy (T-217, 2026-10-20, phiếu Claude):**
+`GET /counter/station-jobs` thuộc lớp `quay`; `authz.Read` với `authz.NeedCounter`
+kiểm trước khi đọc. Không phiên trả `unauthenticated`; người ngoài quầy, kể cả
+chủ quán không đứng quầy, trả `not_on_counter_duty`. Chỉ đọc việc trạm và mẻ,
+không ghi dữ liệu; bảng trạm công khai giữ nguyên.
+
 ## 3. Ma trận cửa × lớp
 
 Mỗi cửa ghi của backend — thư mục `be/internal/<gói>/sql/<cửa>/` (`QC-13`) — có **đúng một** dòng, và

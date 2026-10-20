@@ -1925,6 +1925,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/counter/station-jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Lớp quay; authz.Read kiểm người đang đứng quầy trước khi đọc, không ghi dữ liệu. Việc còn sống và nguồn chuyển hợp lệ của đơn huỷ, cùng các mẻ chưa lùi liên quan, đọc trong một câu SQL. T-217, 2026-10-20, phiếu Claude. */
+        get: operations["counterStationJobs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/production-board": {
         parameters: {
             query?: never;
@@ -2878,6 +2895,42 @@ export interface components {
             ended_at: string | null;
             /** Format: int64 */
             ended_by_person_id: number | null;
+        };
+        CounterStationJobs: {
+            read_at: components["schemas"]["Instant"];
+            /** @constant */
+            poll_interval_seconds: 20;
+            /** @description Việc còn sống hoặc nguồn chuyển hợp lệ của đơn huỷ; sắp theo station_job_id tăng. */
+            jobs: {
+                /** Format: int64 */
+                station_job_id: number;
+                /** Format: int64 */
+                sales_order_id: number;
+                /** Format: int64 */
+                dining_table_id: number | null;
+                station_code: string;
+                /** Format: int64 */
+                menu_component_id: number | null;
+                component_name: string;
+                filling_option_ids: number[];
+                status: string;
+                order_status: string;
+                /** Format: int64 */
+                production_batch_id: number | null;
+                /** Format: int64 */
+                wrong_make_note_id: number | null;
+                transferable: boolean;
+            }[];
+            /** @description Mẻ chưa lùi có thứ ở jobs; sắp theo production_batch_id tăng. */
+            batches: {
+                /** Format: int64 */
+                production_batch_id: number;
+                made_at: components["schemas"]["Instant"];
+                /** @description Toàn bộ việc đang giữ thứ của mẻ, đúng tập cửa lùi chạm tới; sắp tăng. */
+                station_job_ids: number[];
+                /** @description Có việc served trong station_job_ids; cửa lùi từ chối khi có. */
+                has_served_units: boolean;
+            }[];
         };
         ProductionBoard: {
             /** Format: date-time */
@@ -7766,6 +7819,35 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrderCancelled"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    counterStationJobs: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Việc trạm và mẻ của quầy tại read_at. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CounterStationJobs"];
                 };
             };
             /** @description Lời từ chối theo ErrorCode và x-http-status. */

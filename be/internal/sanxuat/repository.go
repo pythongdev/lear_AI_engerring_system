@@ -162,3 +162,7 @@ func (r repository) noThanhPhan(ctx context.Context, donID int64) error {
 func (r repository) noNuocCham(ctx context.Context, donID int64) error {
 	return r.q.NoNuocCham(ctx, donID)
 }
+
+func (r repository) viecQuay(ctx context.Context) (json.RawMessage, error) {
+	return r.q.ViecQuay(ctx, realtime.PollIntervalSeconds)
+}

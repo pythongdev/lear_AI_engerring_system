@@ -20,6 +20,7 @@ func Routes(r *gin.Engine, svc *Service) {
 	r.POST("/station-job-transfers", h.chuyen)
 	r.POST("/wrong-make-notes", h.ghiLamSai)
 	r.POST("/wrong-make-notes/:id/cancellation", h.huyGhiLamSai)
+	r.GET("/counter/station-jobs", h.viecQuay)
 	r.GET("/production-board", h.bang)
 	r.GET("/production-board/events", h.events)
 	r.GET("/station-jobs/:id/transfer-candidates", h.ungVien)
@@ -233,4 +234,13 @@ func (h handler) events(c *gin.Context) {
 		return
 	}
 	h.svc.broker.Serve(c.Writer, c.Request, false, false, at, h.svc.Moc)
+}
+
+func (h handler) viecQuay(c *gin.Context) {
+	out, err := h.svc.ViecQuay(c.Request.Context(), nguoi(c))
+	if err != nil {
+		apierr.WriteError(c.Writer, err)
+		return
+	}
+	apierr.JSON(c.Writer, http.StatusOK, out)
 }

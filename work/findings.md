@@ -5097,11 +5097,16 @@ Chưa sửa — gửi pha 3 (**ADR-102** điểm 8 dòng *đường đọc hay e
 lớp `quay` trả việc trạm chưa ra bàn (mã việc, khoá gom, bàn · đơn, trạng thái) và mẻ còn lùi được (mã mẻ, mốc, các mã việc) — một task L2
 pha 3, Claude thiết kế. `P4-09` làm phần chỉ đọc và *ra bàn*.
 
+**Sửa 2026-10-20 (T-217, Codex thi công, Claude Code duyệt; ADR-123 điểm 1):** thêm `GET /counter/station-jobs` lớp `quay` — từng việc trạm còn
+sống kèm khoá gom, `production_batch_id` · `wrong_make_note_id` còn hiệu lực và `transferable`, cùng mẻ chưa lùi kèm `station_job_ids` và
+`has_served_units`; bảng trạm công khai không đổi. `TestI019_QuayDocLaiViecTramVaMe` bấm mẻ rồi lùi đúng mẻ ấy chỉ bằng mã đọc lại — xanh qua
+PostgreSQL thật. Màn quầy dùng đường này là phần còn lại của `P4-09`.
+
 **Related task:**
-`P4-09` · ADR-090 · ADR-102
+`P4-09` · `T-217` · ADR-090 · ADR-102 · ADR-123
 
 **Status:**
-Open
+Fixed
 
 ### F-074 — Hàng chờ quầy không cho thấy đơn chờ gồm những món gì
 

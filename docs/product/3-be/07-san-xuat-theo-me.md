@@ -19,7 +19,7 @@ lược đồ ở migration (ý định tại [lát sản xuất pha 2](../2-db/
 
 Đọc bảng cửa để biết ô nào có một người ghi, rồi đọc giao dịch và phép gom. Mỗi `station_job`
 là một đơn vị, không có ô tổng lưu riêng. **POS là nơi duy nhất ghi tiến độ sản xuất và phục vụ**;
-hai đường đọc không có cửa ghi hay kiểm quyền, cùng hình `GET /dining-tables`.
+hai đường đọc bảng trạm và ứng viên không có cửa ghi hay kiểm quyền, cùng hình `GET /dining-tables`.
 
 Nguồn của lựa chọn triển khai là phiếu ADR-090 ngày 2026-10-09. Chỗ nào là suy luận của phiên,
 hoặc cần Claude/chủ quán quyết tiếp, được giữ tên ở §6. Hợp đồng 0.9.0 là bản trên dây.
@@ -122,6 +122,22 @@ mảng hàng luôn là mảng, kể cả rỗng; lọc trạm không thay cách 
 có ghi chú sống) 409 `transfer_source_not_available`. Đích là việc đang chờ thuộc đơn
 `in_progress`, cùng khoá nguồn; đơn lẻ trả bàn null. Kết quả đọc là gợi ý tại thời điểm đọc;
 cửa ghi chuyển vẫn khoá và kiểm lại trạng thái, không bắt buộc chọn trong gợi ý.
+
+**Đường đọc việc trạm của quầy (T-217, 2026-10-20, phiếu Claude):**
+`GET /counter/station-jobs` thuộc lớp `quay`, kiểm bằng `authz.Read` và
+`authz.NeedCounter`, không ghi dữ liệu. `viec_quay.sql` đọc `jobs` và `batches`
+trong một câu SQL, trả `read_at` từ database `now()` và chu kỳ kéo từ
+`realtime.PollIntervalSeconds`. `jobs` gồm mọi việc của đơn `in_progress` hoặc
+phiên chưa đóng, cộng nguồn chuyển hợp lệ: đơn huỷ, việc `made`, có thứ đã làm
+còn hiệu lực và không có ghi làm sai còn hiệu lực. Mỗi việc có mã mẻ và mã ghi
+làm sai còn hiệu lực (null nếu không có), cùng `transferable` theo đúng điều kiện
+nguồn chuyển. Khoá gom trong câu đọc mới chép nguyên đoạn đánh dấu của `gom.sql`;
+`TestI019_KhoaGomMotDinhNghia` giữ cả ba bản giống từng byte.
+`batches` chỉ gồm mẻ chưa lùi có ít nhất một thứ ở việc thuộc `jobs`, nhưng
+`station_job_ids` chứa toàn bộ tập `viec_cua_me.sql` trả, kể cả việc ngoài `jobs`.
+`has_served_units` cho biết tập ấy có việc `served`. Hai danh sách sắp tăng theo
+mã, các mã việc trong mẻ cũng sắp tăng. Hợp đồng 0.46.0 khai hình phản hồi;
+`GET /production-board` giữ nguyên, không thêm mã việc hay mã mẻ.
 
 ## 5. Nhận việc — xét tên từ chối
 

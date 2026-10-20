@@ -97,7 +97,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## In Progress
 
 - [ ] P4-07 **Màn quầy: nhận đơn — đợt một, hàng chờ** — duyệt · từ chối, tạm dừng · quán mù kèm mở lại, nhắc và tự nhả đơn hẹn; soạn lượt gọi POS và đơn điện thoại để đợt hai; đơn chờ chưa bày được món (F-074) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-07)
-- [ ] P4-09 **Sản xuất theo mẻ — phần làm được** — bảng trạm chỉ đọc, ra bàn ở quầy; bấm mẻ · lùi mẻ · chuyển · ghi làm sai chờ đường đọc mã việc trạm (F-073) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-09)
+- [ ] P4-09 **Sản xuất theo mẻ — phần làm được** — bảng trạm chỉ đọc, ra bàn ở quầy; bấm mẻ · lùi mẻ · chuyển · ghi làm sai chưa làm — đường đọc mã việc trạm đã có (`GET /counter/station-jobs`, T-217, F-073 đã sửa) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-09)
+- [ ] T-218 **Hàng chờ quầy bày món, tiền và đơn đang làm (F-074)** — `GET /counter/queue` thêm `lines` · `total_vnd` đọc từ ảnh chụp cho mỗi đơn chờ, và `active_orders` (đơn ngoài bàn `confirmed` · `in_progress` · `delivering`, kèm cách trao, liên hệ, tiền, số việc chưa ra bàn) — L2 (hợp đồng) — mở và nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo cùng lời · [chi tiết](#t-218)
 
 
 
@@ -111,6 +112,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-219 **Bản thiết kế tĩnh trang Vận hành của chủ quán** — một trang HTML mới trong `docs/product/4-fe/thiet_ke/chu_quan/van_hanh/`: bàn đang phục vụ · sắp phục vụ · trống, từng bàn đặt ban đầu · đã ra · còn thiếu, bánh theo nhân và bát canh, tiền đơn và tiền bánh đã ra, bảng tổng còn thiếu, công cụ cộng thử bàn sắp phục vụ vào bàn đang phục vụ để ghép đơn; số minh hoạ, là đề xuất chứ không phải hợp đồng; không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm bạn kiểm tra"* — 2026-10-20 · [chi tiết](#t-219)
+- [x] T-217 **Đường đọc việc trạm và mẻ cho quầy (F-073)** — `GET /counter/station-jobs` lớp `quay`: từng việc trạm còn sống kèm khoá gom, mẻ còn hiệu lực, ghi làm sai, cờ chuyển được; mẻ chưa lùi kèm việc và cờ đã ra bàn; khoá gom bản thứ ba dưới `TestI019` — L2 (hợp đồng) — mở và nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm 2 việc trên bạn kiểm tra"* — 2026-10-20 · [chi tiết](#t-217)
 - [x] T-216 **Bản thiết kế tĩnh cho phía khách, có tên component** — 9 trang HTML điện thoại trước trong `docs/product/4-fe/thiet_ke/khach_hang/`: trang chủ, mở bằng mã QR, thực đơn, chọn món, giỏ, đã gửi lượt tại bàn, thông tin đơn online, đã đặt online, quán không nhận đơn; theo cùng khuôn nhãn và chú giải của T-215; chỉ bày điều hợp đồng và dữ kiện quán đã có, chữ chưa chốt để giữ chỗ; không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"hãy viết prompt yêu cầu codex làm các file html cho client side"* — 2026-10-20 · [chi tiết](#t-216)
 - [x] T-215 **Bản thiết kế tĩnh cho từng trang chủ quán, có tên component** — 13 trang HTML mở thẳng từ file trong `docs/product/4-fe/thiet_ke/chu_quan/`, một trang một route của `mucChuQuan`, mỗi khối mang nhãn tên component và bảng chú giải; chỉ bày đúng ô và thao tác trang thật đang có, số minh hoạ; không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"hãy yêu cầu codex làm và bạn kiểm tra"* — 2026-10-20 · [chi tiết](#t-215)
 - [x] T-214 **Một lệnh chạy toàn bộ hệ thống trên máy phát triển** — `make dev` bật database · migration · mồi rồi chạy server Go (8080) và Next (3000) cùng lúc, log có tiền tố, Ctrl+C hay một bên chết thì tắt cả hai, database giữ chạy; `make be` · `make fe` chạy riêng; `docs/command/make.md` §4 — L1 — mở và nhận 2026-10-20 · Codex thi công (hết hạn mức trước báo cáo), Claude Code duyệt và chạy thật — 2026-10-20 · [chi tiết](#t-214)
@@ -439,6 +442,79 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-219"></a>
+### T-219 — Chủ quán không có màn nào cho thấy quán đang chạy thế nào theo từng bàn
+
+**Yêu cầu:** chủ repo 2026-10-20 *"hãy thiết kế 1 page mới trang này sẽ dùng để quản lý quán đang hoạt động thế nào"* — thấy tổng số bàn đang
+phục vụ, bấm để liệt kê từng bàn với số đặt ban đầu và số còn thiếu; bảng tổng còn thiếu; số bàn còn dư; số canh và số theo nhân của từng bàn và
+tổng; số bàn đang · sắp · trống; *cộng thử* bàn sắp phục vụ vào bàn đang phục vụ để ghép đơn; tiền từng bàn, tổng tiền và tiền của số bánh đã lấy
+ra. Sau đó *"yêu cầu codex làm bạn kiểm tra"*. **Mức:** L1 — tài liệu thiết kế, không đổi hành vi, hợp đồng hay dữ liệu.
+
+**Claude chốt:** một trang `van_hanh/van-hanh.html` kèm `van_hanh/component.md`, theo khuôn thư mục mới của `tong_quan/` (Tailwind CDN nhúng như bộ
+T-215); không sửa `index.html` vì việc chuyển `tong-quan.html` vào `tong_quan/` còn chưa commit. Trang là **đề xuất**: hợp đồng chưa có đường đọc
+theo bàn, nên mỗi khối không có nguồn trong `docs/product/3-be/openapi.yaml` mang nhãn *đề xuất — chưa có trong hợp đồng*. Số bàn 15 lấy từ
+`master_plan/shop-facts.md`; giá đơn vị minh hoạ lấy từ §4 của file đó. **Suy luận của Claude, chờ chủ repo xác nhận:** *bàn còn dư* hiểu là bàn
+trống; *sắp phục vụ* là bàn đã gửi lượt gọi mà chưa có món nào ra bàn; *đã lấy ra* là đã ra bàn; *nhân* là số bánh theo loại nhân (Chay · Thịt ·
+Thịt + mộc nhĩ). Cộng thử chỉ tính trên trang, không ghi gì.
+
+*Nghiệm thu* (viết trước): (1) đúng 2 file mới trong `van_hanh/`, không đổi file khác; (2) chỉ gọi mạng tới Google Fonts và `cdn.tailwindcss.com`;
+(3) tập `data-component` của trang trùng khít bảng trong `component.md`; (4) tên dùng chung trùng bộ `chu_quan`; (5) số trong trang cộng khớp
+nhau — đang + sắp + trống = 15, tổng các bàn = dòng tổng, còn thiếu = đặt − đã ra; (6) bấm *Xem từng bàn* mở · đóng được danh sách, tick bàn sắp
+phục vụ thì tổng cộng thử đổi theo, chạy bằng JavaScript nhúng trong trang; (7) ở 390px không cuộn ngang trang; (8) dùng `button` · `input` ·
+`label` thật; (9) `./scripts/gate.sh` xanh.
+
+**Bàn giao** — 2026-10-20 · thực hiện: **Codex** (worktree `../lean_wt/T-219`, nhánh `codex/T-219`, base `cc4838a`, đã gỡ); duyệt và tích hợp:
+**Claude Code**, chép `van_hanh/` về nhánh `P4A-01`. (1) Hai file `van_hanh/van-hanh.html` · `van_hanh/component.md`. (2) URL ngoài chỉ Google Fonts ·
+`cdn.tailwindcss.com`. (3) Script của Codex: 13 tên `data-component` trùng khít `component.md`. (4) Bảy tên dùng chung trùng bộ `chu_quan`. (5) Script
+của Codex: 6 + 3 + 6 = 15 bàn, từng bàn còn thiếu = đặt − đã ra, dòng tổng và bảng toàn quán khớp; Claude đối chiếu giá đơn vị Chay 3.000 · Thịt 4.000 ·
+canh 0đ với `shop-facts.md` §4.2. (6)(7) Claude chạy Chromium headless (Playwright): 390px `scrollWidth` 390 trước và sau khi mở bảng, 1280px 1280, 0 lỗi
+JavaScript, *Xem từng bàn* đặt `aria-expanded=true`, tick một bàn đổi số cộng thử. (8) 2 `button`, 4 checkbox có `label`. (9) Gate xanh. Bốn cách hiểu ở
+*Claude chốt* vẫn chờ chủ repo xác nhận.
+
+[↑ đầu file](#top)
+
+<a id="t-217"></a>
+### T-217 — Quầy không đọc được mã việc trạm và mã mẻ (F-073)
+
+**Yêu cầu:** chủ repo 2026-10-20 *"Đóng hai finding đang chặn … yêu cầu codex làm 2 việc trên bạn kiểm tra"*. **Mức:** L2 — thêm một đường đọc
+vào hợp đồng đã công bố. Thiết kế: **ADR-123** điểm 1 và 3. F-073 chặn bốn việc của `P4-09` ([chi tiết](backlog_FE.md#p4-09)); task này chỉ làm
+backend và hợp đồng — màn quầy dùng đường đọc mới là phần còn lại của `P4-09`.
+
+*Nghiệm thu* (viết trước, 2026-10-20, Claude Code): (1) `TestI019_KhoaGomMotDinhNghia` so `gom.sql` · `chon_da_lam.sql` · `viec_quay.sql` và xanh
+(Claude sửa test trước, đỏ khi chưa có file); (2) `TestI019_QuayDocLaiViecTramVaMe` (`be/cmd/server/viec_quay_test.go`, Claude viết trước) xanh:
+người ngoài quầy bị `403 not_on_counter_duty`; quầy đọc việc chờ của đơn vừa gọi, bấm mẻ bằng mã đọc được, đọc lại thấy mẻ cùng tập việc,
+lùi mẻ bằng mã đọc được, đọc lại không còn mẻ và việc về chờ; (3) `openapi.yaml` khai đường mới, schema `CounterStationJobs` đủ trường của
+ADR-123 điểm 1, tăng MINOR lên `0.46.0`, ghi một dòng ở `01-hop-dong-api.md`; (4) `02-vai-va-quyen.md` ghi cửa đọc lớp `quay`;
+`07-san-xuat-theo-me.md` ghi đường đọc; (5) `fe/src/lib/api/schema.ts` sinh lại; (6) `./scripts/gate.sh` xanh, kể cả `be-check` Claude chạy.
+
+**Bàn giao** — 2026-10-20 · thực hiện: **Codex** (worktree `../lean_wt/T-217`, nhánh `codex/T-217`, base `cc4838a`) theo phiếu; duyệt: **Claude Code**,
+đọc diff thật và chạy lại mọi kiểm. Nhánh `P4A-01`. File: `be/internal/sanxuat/` (`handler.go` · `service.go` · `repository.go` · `sql/viec_quay.sql` ·
+`internal/sqlcgen/viec_quay.sql.go` · `khoa_gom_test.go` của Claude) · `be/cmd/server/viec_quay_test.go` (Claude) · `openapi.yaml` · `01-hop-dong-api.md` ·
+`02-vai-va-quyen.md` · `07-san-xuat-theo-me.md` · `fe/src/lib/api/schema.ts` · ADR-123. (1) `--- PASS: TestI019_KhoaGomMotDinhNghia` (đỏ trước khi có
+`viec_quay.sql`). (2) `--- PASS: TestI019_QuayDocLaiViecTramVaMe` qua PostgreSQL thật — tên test đổi từ `TestF073…` vì QC-17 đòi mã mệnh đề.
+(3)–(5) `check-api-contract` *hợp đồng 0.46.0; 117 đường gọi*; `fe-check: PASS`, 354 test FE. (6) Gate ở clone chính: *PASS gate không cổng nào đỏ*.
+Claude soát: đoạn khoá gom chép nguyên; điều kiện *còn sống* và *nguồn chuyển hợp lệ* khớp `gom.sql`; `station_job_ids` của mẻ đúng tập
+`viec_cua_me.sql`; đọc qua `authz.Read` lớp `quay`. Codex không tự quyết điều nghiệp vụ nào. **Còn lại:** màn quầy dùng đường đọc mới cho bấm mẻ ·
+lùi mẻ · chuyển · ghi làm sai — phần còn lại của `P4-09`.
+
+[↑ đầu file](#top)
+
+<a id="t-218"></a>
+### T-218 — Hàng chờ quầy không cho thấy món, tiền, và đơn đang làm (F-074)
+
+**Yêu cầu:** cùng lời chủ repo với `T-217`. **Mức:** L2 — đổi một đường đọc của hợp đồng đã công bố; chạm tiền hiển thị. Thiết kế:
+**ADR-123** điểm 2 và 3. F-074 chặn phần *bày món* và nút *rời quán* của `P4-07` ([chi tiết](backlog_FE.md#p4-07)) và phần tiền của `P4-08`; task
+này chỉ làm backend và hợp đồng.
+
+*Nghiệm thu* (viết trước, 2026-10-20, Claude Code): (1) `TestI009_HangChoBayAnhChupDon` (`be/cmd/server/hang_cho_test.go`, Claude viết trước)
+xanh: đơn giao chờ xác nhận có `lines` · `total_vnd` bằng đúng phản hồi lúc ghi đơn; duyệt xong rời hàng chờ, có ở `active_orders` với
+`in_progress` · `door_delivery` · địa chỉ · số điện thoại · `unserved_jobs` ≥ 1 và cùng tiền; (2) dòng và tiền đọc từ `order_line*` như
+`doc_don.sql`, không gọi hàm giá (I-009; Claude đọc diff); (3) `openapi.yaml`: `CounterQueue` thêm trường theo ADR-123 điểm 2, tăng MINOR,
+ghi một dòng ở `01-hop-dong-api.md`; `09-realtime-du-phong.md` ghi phần đọc mới; (4) `fe/src/lib/api/schema.ts` sinh lại và test FE hiện có
+của `/quay` còn xanh; (5) `./scripts/gate.sh` xanh, kể cả `be-check` Claude chạy.
+
+[↑ đầu file](#top)
 
 <a id="t-216"></a>
 ### T-216 — Phía khách chưa có màn nào để chủ repo nhìn và gọi tên từng khối

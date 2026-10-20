@@ -7860,3 +7860,34 @@ và bật lại được.
 
 **Applies to:** `db/migrations/` (bước 34) · `be/internal/menu/` · `be/internal/gia/` · `docs/product/3-be/openapi.yaml` ·
 `docs/product/3-be/02-vai-va-quyen.md` · `fe/src/app/chu-quan/topping/`; **ADR-086** · **ADR-094** · `T-210`.
+
+### ADR-123 — Hai đường đọc của quầy: việc trạm kèm mẻ, và hàng chờ kèm món, tiền, đơn đang làm
+
+**Status:** Đã chốt 2026-10-20 (Claude Code, thiết kế cho `T-217` · `T-218`, theo lời chủ repo *"đóng hai finding đang chặn"*).
+
+**Context:** F-073 — bấm mẻ, lùi mẻ, chuyển phần và ghi làm sai đòi mã việc trạm hay mã mẻ, mà không đường `GET` nào trả hai mã ấy;
+`GET /production-board` công khai và chỉ trả số đã gom. F-074 — `GET /counter/queue` không trả món, số lượng, tổng tiền, và không đường
+đọc nào kê đơn ngoài bàn đang làm cho nút *rời quán* · *trao tại quầy*. Pha 4 không được đổi hợp đồng (ADR-102 điểm 8), nên đây là việc pha 3.
+
+**Decision:**
+1. **`GET /counter/station-jobs`**, miền `sanxuat`, lớp `quay` (`authz.Read`). Bảng trạm công khai **giữ nguyên**, không thêm mã nào.
+   Trả `read_at`, `poll_interval_seconds` và hai danh sách:
+   `jobs` — từng việc trạm còn sống, cùng điều kiện *còn sống* với `gom.sql` (đơn `in_progress` hoặc phiên bàn chưa đóng), cộng mọi việc
+   đã làm của đơn đã huỷ còn là nguồn chuyển hợp lệ (đúng điều kiện `available` của `gom.sql`): mã việc, mã đơn, bàn, trạm, khoá gom
+   (`menu_component_id`, `component_name`, `filling_option_ids`), trạng thái việc, trạng thái đơn, `production_batch_id` của thứ đã làm còn
+   hiệu lực (null nếu không), `wrong_make_note_id` còn hiệu lực (null nếu không), `transferable`; sắp theo mã việc.
+   `batches` — mẻ chưa lùi có ít nhất một thứ đang ở một việc của `jobs`: mã mẻ, `made_at`, `station_job_ids` (việc đang giữ thứ của mẻ,
+   đúng tập `viec_cua_me.sql` mà cửa lùi chạm), `has_served_units`; sắp theo mã mẻ.
+   Khoá gom đọc từ **cùng đoạn đánh dấu** của `gom.sql` — bản thứ ba ở `viec_quay.sql`, `TestI019_KhoaGomMotDinhNghia` so cả ba (I-019 tầng 3).
+2. **`GET /counter/queue`** thêm, cho mỗi đơn chờ, `total_vnd` và `lines` (`PriceLine`), đọc từ ảnh chụp `order_line*` đúng như `doc_don.sql`
+   — không gọi lại hàm giá (I-009). Thêm `active_orders`: đơn **ngoài bàn** (`table_session_id` null) ở `confirmed` · `in_progress` ·
+   `delivering`, kèm kênh, cách trao, trạng thái, liên hệ, giờ cần hàng, `total_vnd`, `lines`, `unserved_jobs` (số việc chưa ra bàn — cửa rời
+   quán từ chối khi còn); sắp theo mốc tạo rồi mã. Đơn tại bàn không vào đây: chúng đi theo phiên bàn.
+3. Không đường đọc mới nào có quyền ghi; FE chọn nút theo trạng thái và cách trao, backend vẫn là người từ chối.
+
+**Rejected alternatives:** *thêm mã vào `GET /production-board`* — bảng công khai, màn trạm không cần mã, và mã việc là chìa để ghi;
+*`GET /orders/{sales_order_id}`* — quầy phải gọi N lần cho N đơn chờ, mỗi lần một mốc đọc khác nhau; *tính lại tiền bằng hàm giá* — lệch ảnh
+chụp khi menu đã sửa (I-009).
+
+**Applies to:** `be/internal/sanxuat/` · `be/internal/nhandon/` · `docs/product/3-be/openapi.yaml` · `docs/product/3-be/02-vai-va-quyen.md` ·
+`docs/product/3-be/07-san-xuat-theo-me.md` · `docs/product/3-be/09-realtime-du-phong.md`; **ADR-090** · **ADR-097** · **ADR-102** · F-073 · F-074 · `T-217` · `T-218`.

@@ -414,3 +414,14 @@ func (s *Service) HuyGhiLamSai(ctx context.Context, nguoi int64, id int64) (moc 
 	})
 	return moc, err
 }
+
+// ViecQuay chỉ đọc sau khi kiểm người đang đứng quầy (T-217).
+func (s *Service) ViecQuay(ctx context.Context, personID int64) (json.RawMessage, error) {
+	var out json.RawMessage
+	err := authz.Read(ctx, s.pool, personID, authz.NeedCounter, func(tx pgx.Tx) error {
+		var err error
+		out, err = newRepository(tx).viecQuay(ctx)
+		return err
+	})
+	return out, err
+}

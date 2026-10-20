@@ -160,6 +160,8 @@ bản ở `HEAD` và đỏ khi file khác mà phiên bản không lớn hơn.
 Mục tiền tạm tính có schema riêng, hiện trả trạng thái chưa có công thức;
 không đưa doanh thu đã đối soát vào phản hồi tổng quan.
 
+**T-217 (2026-10-20, phiếu Claude):** tăng MINOR `0.45.0` → `0.46.0`; thêm `GET /counter/station-jobs` lớp `quay`, trả `CounterStationJobs` để quầy đọc lại mã việc trạm và mẻ; giữ nguyên bảng trạm công khai.
+
 **T-211 (2026-10-19, Claude):** tăng MINOR `0.44.0` → `0.45.0`; `OptionGroupAdmin` của `GET /option-groups` thêm `menu_item_ids` (món mang nhóm) — nguồn để màn combo đặt mức phụ thu theo món.
 
 **T-210 (2026-10-19, Claude):** tăng MINOR `0.43.0` → `0.44.0`; topping: `GET /option-groups`, `POST /option-groups/{option_group_id}/options`, `POST /menu-options/{menu_option_id}/hiding` · `/unhiding` (lớp `chu_quan`); năm mã `option_group_not_found` · `menu_option_name_taken` · `menu_option_hidden` · `menu_option_not_hidden` · `menu_option_is_default`; hàm giá trả `409 menu_option_hidden field=option_ids` khi một lựa chọn đã ẩn tại mốc tính; ba tên ràng buộc mới của bước 34 ở `internal`, ba tên cũ của `menu_option` thành mã công khai.

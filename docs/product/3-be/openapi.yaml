@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.45.0
+  version: 0.46.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -3634,6 +3634,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /counter/station-jobs:
+    get:
+      operationId: counterStationJobs
+      tags:
+        - sanxuat
+      description: >-
+        Lớp quay; authz.Read kiểm người đang đứng quầy trước khi đọc, không ghi dữ liệu.
+        Việc còn sống và nguồn chuyển hợp lệ của đơn huỷ, cùng các mẻ chưa lùi liên quan,
+        đọc trong một câu SQL. T-217, 2026-10-20, phiếu Claude.
+      responses:
+        '200':
+          description: Việc trạm và mẻ của quầy tại read_at.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterStationJobs'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /production-board:
     get:
       operationId: getProductionBoard
@@ -5574,6 +5596,88 @@ components:
         ended_by_person_id:
           type: [integer, 'null']
           format: int64
+    CounterStationJobs:
+      type: object
+      additionalProperties: false
+      required: [read_at, poll_interval_seconds, jobs, batches]
+      properties:
+        read_at:
+          $ref: '#/components/schemas/Instant'
+        poll_interval_seconds:
+          type: integer
+          const: 20
+        jobs:
+          type: array
+          description: Việc còn sống hoặc nguồn chuyển hợp lệ của đơn huỷ; sắp theo station_job_id tăng.
+          items:
+            type: object
+            additionalProperties: false
+            required: [station_job_id, sales_order_id, dining_table_id, station_code, menu_component_id, component_name, filling_option_ids, status, order_status, production_batch_id, wrong_make_note_id, transferable]
+            properties:
+              station_job_id:
+                type: integer
+                format: int64
+                minimum: 1
+              sales_order_id:
+                type: integer
+                format: int64
+                minimum: 1
+              dining_table_id:
+                type: [integer, 'null']
+                format: int64
+                minimum: 1
+              station_code:
+                type: string
+              menu_component_id:
+                type: [integer, 'null']
+                format: int64
+                minimum: 1
+              component_name:
+                type: string
+              filling_option_ids:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+                  minimum: 1
+              status:
+                type: string
+              order_status:
+                type: string
+              production_batch_id:
+                type: [integer, 'null']
+                format: int64
+                minimum: 1
+              wrong_make_note_id:
+                type: [integer, 'null']
+                format: int64
+                minimum: 1
+              transferable:
+                type: boolean
+        batches:
+          type: array
+          description: Mẻ chưa lùi có thứ ở jobs; sắp theo production_batch_id tăng.
+          items:
+            type: object
+            additionalProperties: false
+            required: [production_batch_id, made_at, station_job_ids, has_served_units]
+            properties:
+              production_batch_id:
+                type: integer
+                format: int64
+                minimum: 1
+              made_at:
+                $ref: '#/components/schemas/Instant'
+              station_job_ids:
+                type: array
+                description: Toàn bộ việc đang giữ thứ của mẻ, đúng tập cửa lùi chạm tới; sắp tăng.
+                items:
+                  type: integer
+                  format: int64
+                  minimum: 1
+              has_served_units:
+                type: boolean
+                description: Có việc served trong station_job_ids; cửa lùi từ chối khi có.
     ProductionBoard:
       type: 'object'
       required:
