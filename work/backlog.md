@@ -98,6 +98,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 - [ ] P4-07 **Màn quầy: nhận đơn — đợt một, hàng chờ** — duyệt · từ chối, tạm dừng · quán mù kèm mở lại, nhắc và tự nhả đơn hẹn; soạn lượt gọi POS và đơn điện thoại để đợt hai; đơn chờ chưa bày được món (F-074) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-07)
 - [ ] P4-09 **Sản xuất theo mẻ — phần làm được** — bảng trạm chỉ đọc, ra bàn ở quầy; bấm mẻ · lùi mẻ · chuyển · ghi làm sai chờ đường đọc mã việc trạm (F-073) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-09)
+- [ ] T-215 **Bản thiết kế tĩnh cho từng trang chủ quán, có tên component** — 13 trang HTML mở thẳng từ file trong `docs/product/4-fe/thiet_ke/chu_quan/`, một trang một route của `mucChuQuan`, mỗi khối mang nhãn tên component và bảng chú giải; chỉ bày đúng ô và thao tác trang thật đang có, số minh hoạ; không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"hãy yêu cầu codex làm và bạn kiểm tra"* · [chi tiết](#t-215)
 
 
 
@@ -437,6 +438,28 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-215"></a>
+### T-215 — Giao diện admin `/chu-quan` khó dùng, và chủ repo không có tên gọi chung cho từng khối để tả chỗ cần sửa
+
+**Yêu cầu:** chủ repo 2026-10-20 *"phần admin trông không đẹp và tiện dung lắm"*. Sau khi xem bản nháp ba màn trên canvas (Tổng quan, Kho, Tổng quan
+trên điện thoại), chủ repo nói *"hãy làm giao diện như trên ở trong docs/product/4-fe/thiet_ke/chu_quan từng trang 1 và có tên các component để tôi có thể
+dễ dàng miêu tả cho bạn hiểu hãy yêu cầu codex làm và bạn kiểm tra"*. **Mức:** L1. Đây là tài liệu thiết kế, không đổi hành vi, hợp đồng hay dữ
+liệu. Route và component thật vẫn do `docs/product/4-fe/01-khung-fe.md` nắm; bản thiết kế là đề xuất cho tới khi một task áp nó vào `fe/`.
+
+**Claude chốt:** mỗi trang là một file HTML tĩnh, đặt tên theo đoạn cuối route (`/chu-quan` ⇒ `tong-quan.html`). Mọi trang dùng chung một
+`styles.css`, có `index.html` mục lục kèm danh mục component dùng chung. Không JS framework, không bước build. Mỗi khối mang `data-component` và một nhãn
+tên nhìn thấy được (có công tắc ẩn/hiện), cuối trang có bảng chú giải. Khối nào ứng với component đã có trong
+`fe/src/app/chu-quan/_components/` thì dùng lại đúng tên đó. Nội dung chỉ gồm ô và thao tác trang thật đang có; số là minh hoạ; không bày con số mà
+frontend phải tự cộng trừ mới ra (ADR-086).
+
+*Nghiệm thu* (viết trước): (1) thư mục có đúng 13 trang, mỗi route của `mucChuQuan` một trang, cộng `index.html` và `styles.css`; (2) trang mở
+thẳng từ file, chỉ gọi mạng tới Google Fonts; (3) tập `data-component` của mỗi trang trùng khít tập tên trong bảng chú giải của trang đó; (4) khối
+dùng chung mang đúng tên trong danh mục ở `index.html`; khối có component thật thì mang tên thật; (5) mỗi ô và thao tác bày ra đều có trong
+component trang tương ứng (Claude đối chiếu từng trang với `_components/*.tsx`); (6) ở bề rộng 390px không cuộn ngang trang, thanh điều hướng
+xuống đáy, bảng cuộn trong hộp; (7) dùng `button` · `input` · `label` thật; (8) `./scripts/gate.sh` xanh.
+
+[↑ đầu file](#top)
 
 <a id="t-214"></a>
 ### T-214 — Chạy hệ thống trên máy phải gõ ba lệnh ở ba cửa sổ, tự ghép năm biến môi trường
