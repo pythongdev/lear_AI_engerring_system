@@ -108,9 +108,18 @@ func (k khung) menuGia(t *testing.T) menuGia {
 	soMenu++
 	ten := func(s string) string { return fmt.Sprintf("test-%s %d · %s", s, soMenu, t.Name()) }
 	var m menuGia
+	chu := k.nguoi(t, "chủ dọn menu test", true)
 	m.banh = k.id(t, `INSERT INTO shop.menu_component (name, base_price_vnd, takes_filling) VALUES ($1, 3000, true) RETURNING id`, ten("bánh"))
 	m.gio = k.id(t, `INSERT INTO shop.menu_component (name, base_price_vnd, takes_filling) VALUES ($1, 9000, false) RETURNING id`, ten("giò"))
 	m.mon = k.id(t, `INSERT INTO shop.menu_item (name) VALUES ($1) RETURNING id`, ten("suất"))
+	t.Cleanup(func() {
+		r := k.goi(t, "POST", fmt.Sprintf("/menu-items/%d/discontinuation", m.mon), chu,
+			map[string]any{"reason": "test: dọn món giả sau khi chạy"})
+		// Một số ca đã ngừng bán món trong phần kiểm tra.
+		if r.status != http.StatusOK && (r.status != http.StatusConflict || r.body["code"] != "menu_item_discontinued") {
+			t.Errorf("dọn món test %d: %d %v", m.mon, r.status, r.body)
+		}
+	})
 	k.id(t, `INSERT INTO shop.menu_item_component (menu_item_id, menu_component_id, quantity) VALUES ($1, $2, 3) RETURNING id`, m.mon, m.banh)
 	k.id(t, `INSERT INTO shop.menu_item_component (menu_item_id, menu_component_id, quantity) VALUES ($1, $2, 1) RETURNING id`, m.mon, m.gio)
 	m.nhom = k.id(t, `INSERT INTO shop.option_group (name) VALUES ($1) RETURNING id`, ten("nhân"))

@@ -62,6 +62,7 @@ func dungScenario(t *testing.T, day int) *dienScenario {
 		moi, co := monMoi[cu]
 		if !co {
 			moi = n.id(t, "INSERT INTO shop.menu_item(name) SELECT name || $2 FROM shop.menu_item WHERE id=$1 RETURNING id", cu, " · "+t.Name())
+			n.donMonTest(t, moi, n.chu)
 			monMoi[cu] = moi
 			rows, err := n.owner.Query(n.ctx, "SELECT menu_component_id, quantity FROM shop.menu_item_component WHERE menu_item_id=$1 ORDER BY id", cu)
 			if err != nil {

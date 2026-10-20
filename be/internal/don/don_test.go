@@ -357,6 +357,19 @@ func (k khung) suaMenu(t *testing.T, chu int64, method, path string, body map[st
 	}
 }
 
+// donMonTest đăng ký trước khi gắn nhóm để cả test dừng sớm cũng dọn món qua cửa thật.
+func (k khung) donMonTest(t *testing.T, mon, chu int64) {
+	t.Helper()
+	t.Cleanup(func() {
+		status, body := k.goi(t, "POST", fmt.Sprintf("/menu-items/%d/discontinuation", mon), chu,
+			map[string]any{"reason": "test: dọn món giả sau khi chạy"})
+		// Scenario và ca sửa menu có thể đã ngừng bán món khi kiểm tra.
+		if status != http.StatusOK && (status != http.StatusConflict || body["code"] != "menu_item_discontinued") {
+			t.Errorf("dọn món test %d: %d %v", mon, status, body)
+		}
+	})
+}
+
 // --- đọc lại một dòng đơn đã ghi -------------------------------------------------------------
 
 // anhDong: mọi thứ của một dòng đơn mà I-009 giữ — giá, tên, thành phần, tuỳ chọn đã chụp.
@@ -482,17 +495,18 @@ func TestI010_TuChoiToanBoLuotGoi(t *testing.T) {
 // món đã ngừng thì cửa từ chối.
 func TestI009_SuaMenuSauKhiDatDonCuKhongDoi(t *testing.T) {
 	k := dung(t)
+	chu := k.nguoi(t, "chủ quán", true)
 	ten := func(s string) string { return fmt.Sprintf("test-%s · %s", s, t.Name()) }
 	banh := k.id(t, `INSERT INTO shop.menu_component (name, base_price_vnd, takes_filling) VALUES ($1, 3000, true) RETURNING id`, ten("bánh"))
 	gio := k.id(t, `INSERT INTO shop.menu_component (name, base_price_vnd, takes_filling) VALUES ($1, 9000, false) RETURNING id`, ten("giò"))
 	mon := k.id(t, `INSERT INTO shop.menu_item (name) VALUES ($1) RETURNING id`, ten("suất"))
+	k.donMonTest(t, mon, chu)
 	k.id(t, `INSERT INTO shop.menu_item_component (menu_item_id, menu_component_id, quantity) VALUES ($1, $2, 3) RETURNING id`, mon, banh)
 	k.id(t, `INSERT INTO shop.menu_item_component (menu_item_id, menu_component_id, quantity) VALUES ($1, $2, 1) RETURNING id`, mon, gio)
 	nhom := k.id(t, `INSERT INTO shop.option_group (name) VALUES ($1) RETURNING id`, ten("nhân"))
 	thit := k.id(t, `INSERT INTO shop.menu_option (option_group_id, name, surcharge_vnd) VALUES ($1, 'thịt', 1000) RETURNING id`, nhom)
 	k.id(t, `INSERT INTO shop.menu_item_option_group (menu_item_id, option_group_id) VALUES ($1, $2) RETURNING id`, mon, nhom)
 
-	chu := k.nguoi(t, "chủ quán", true)
 	a := k.nguoi(t, "A", false)
 	k.vaoQuay(t, a)
 	p := k.phienBan(t)
