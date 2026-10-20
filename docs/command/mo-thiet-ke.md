@@ -71,6 +71,10 @@ open -a Safari docs/product/4-fe/thiet_ke/chu_quan/index.html
 open -a "Google Chrome" docs/product/4-fe/thiet_ke/chu_quan/tong-quan.html
 open -a Safari docs/product/4-fe/thiet_ke/chu_quan/tong-quan.html
 
+# Vận hành · Chủ quán (T-219, đề xuất — trang nằm trong thư mục con van_hanh/)
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/chu_quan/van_hanh/van-hanh.html
+open -a Safari docs/product/4-fe/thiet_ke/chu_quan/van_hanh/van-hanh.html
+
 # Tổng kết · Chủ quán
 open -a "Google Chrome" docs/product/4-fe/thiet_ke/chu_quan/tong-ket.html
 open -a Safari docs/product/4-fe/thiet_ke/chu_quan/tong-ket.html
