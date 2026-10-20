@@ -96,6 +96,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-216 **Bản thiết kế tĩnh cho phía khách, có tên component** — 9 trang HTML điện thoại trước trong `docs/product/4-fe/thiet_ke/khach_hang/`: trang chủ, mở bằng mã QR, thực đơn, chọn món, giỏ, đã gửi lượt tại bàn, thông tin đơn online, đã đặt online, quán không nhận đơn; theo cùng khuôn nhãn và chú giải của T-215; chỉ bày điều hợp đồng và dữ kiện quán đã có, chữ chưa chốt để giữ chỗ; không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"hãy viết prompt yêu cầu codex làm các file html cho client side"* · [chi tiết](#t-216)
 - [ ] P4-07 **Màn quầy: nhận đơn — đợt một, hàng chờ** — duyệt · từ chối, tạm dừng · quán mù kèm mở lại, nhắc và tự nhả đơn hẹn; soạn lượt gọi POS và đơn điện thoại để đợt hai; đơn chờ chưa bày được món (F-074) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-07)
 - [ ] P4-09 **Sản xuất theo mẻ — phần làm được** — bảng trạm chỉ đọc, ra bàn ở quầy; bấm mẻ · lùi mẻ · chuyển · ghi làm sai chờ đường đọc mã việc trạm (F-073) — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-09)
 
@@ -438,6 +439,26 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-216"></a>
+### T-216 — Phía khách chưa có màn nào để chủ repo nhìn và gọi tên từng khối
+
+**Yêu cầu:** chủ repo 2026-10-20 *"hãy viết prompt yêu cầu codex làm các file html cho client side và để vào docs/product/4-fe/thiet_ke/khach_hang"*,
+ngay sau T-215. **Mức:** L1. Đây là tài liệu thiết kế, không đổi hành vi, hợp đồng hay dữ liệu. Phía khách mới có trang giữ chỗ `/`; màn thật là bước
+`P4-10` ([chi tiết](backlog_FE.md#p4-10)), nên bản này là đề xuất, không chốt route.
+
+**Claude chốt:** chín trang, đặt tên theo việc khách làm (route thật do `P4-10` đặt): `trang-chu` · `mo-ma-qr` · `thuc-don` · `chon-mon` ·
+`gio-hang` · `da-gui-luot` · `thong-tin-dat` · `da-dat` · `khong-nhan-don`, cùng `index.html` và `styles.css`. Trang làm cho điện thoại trước, trên máy tính
+thì nằm giữa một cột hẹp. Khuôn nhãn, công tắc và chú giải giống T-215. Nguồn nội dung: các cửa công khai của `docs/product/3-be/openapi.yaml`
+(`GET /menu`, `POST /price-quotes`, `GET /qr-codes/{code}`, `POST /qr-codes/{code}/orders`, `POST /online-orders`) và `master_plan/shop-facts.md`.
+Không bày thứ hợp đồng chưa có, ví dụ khách xem trạng thái đơn hay xin tính tiền. Mọi giá là giá backend trả, khách không thấy phép cộng.
+Chữ hiện cho khách mà quán chưa chốt (lời khi quán tạm dừng nhận đơn, `P4-10`) bày dạng giữ chỗ.
+
+*Nghiệm thu* (viết trước): (1) đúng 11 file như trên; (2) chỉ gọi mạng tới Google Fonts; (3) tập `data-component` mỗi trang trùng khít chú giải;
+(4) tên dùng chung có trong danh mục `index.html`, tên trùng nghĩa với T-215 thì dùng lại đúng tên ấy; (5) mỗi ô và nút có nguồn ở hợp đồng hoặc
+`shop-facts.md` (Claude đối chiếu); (6) ở 390px không cuộn ngang; (7) dùng `button` · `input` · `label` thật; (8) `./scripts/gate.sh` xanh.
+
+[↑ đầu file](#top)
 
 <a id="t-215"></a>
 ### T-215 — Giao diện admin `/chu-quan` khó dùng, và chủ repo không có tên gọi chung cho từng khối để tả chỗ cần sửa
