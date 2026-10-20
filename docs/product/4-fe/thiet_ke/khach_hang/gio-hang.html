@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Giỏ hàng · Bánh cuốn Bà Thanh Cao Bằng</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { paper: '#F6F5F1', ink: '#1C1B19', muted: '#5F5B53', line: '#E4E1DA', accent: '#1E6B50', selected: '#E8F1EC', 'selected-ink': '#14432F' },
+      fontFamily: { sans: ['"Be Vietnam Pro"', 'ui-sans-serif', 'system-ui', 'sans-serif'], mono: ['ui-monospace', 'SFMono-Regular', 'Consolas', 'monospace'] }
+    }
+  }
+}
+</script>
+<style type="text/tailwindcss">
+:root {
+  color-scheme: light;
+  --paper: #F6F5F1;
+  --ink: #1C1B19;
+  --muted: #5F5B53;
+  --line: #E4E1DA;
+  --accent: #1E6B50;
+  --selected: #E8F1EC;
+  --selected-ink: #14432F;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.6 'Be Vietnam Pro', sans-serif; }
+a { color: var(--accent); text-underline-offset: 3px; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { min-height: 44px; padding: 9px 15px; background: white; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: white; font-weight: 600; }
+button:disabled { color: var(--muted); background: var(--paper); cursor: default; }
+button:hover:not(:disabled) { border-color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: 24px; line-height: 1.3; letter-spacing: -.025em; }
+h2 { font-size: 16px; font-weight: 600; line-height: 1.5; }
+h3 { font-size: 14px; }
+small, .muted { color: var(--muted); }
+p + p { margin-top: 8px; }
+[data-component] { position: relative; min-width: 0; }
+.nhan-component { display: table; max-width: 100%; overflow-wrap: anywhere; padding: 2px 6px; margin: 0 0 9px; border-radius: 4px; background: var(--ink); color: white; font: 10px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: 0; text-transform: none; font-weight: 400; }
+body:has(#hien-ten:not(:checked)) .nhan-component { display: none; }
+.design-toggle { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 10px 14px; border-bottom: 1px solid var(--line); background: white; font-size: 12px; max-width: 480px; margin: auto; }
+.design-toggle label { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+.design-toggle a { display: inline-flex; align-items: center; min-height: 44px; margin-left: auto; }
+input[type="checkbox"], input[type="radio"] { width: 18px; height: 18px; accent-color: var(--accent); flex: 0 0 auto; }
+.shell { max-width: 480px; margin: auto; padding: 20px 14px 24px; }
+.shell > * + * { margin-top: 18px; }
+.page-header { padding: 8px 0 12px; }
+.page-header h1 { margin: 16px 0 8px; }
+.brand { font-weight: 600; }
+.context { display: inline-block; color: var(--selected-ink); background: var(--selected); padding: 5px 9px; border-radius: 8px; margin: 8px 4px 0 0; }
+.card { background: white; border: 1px solid var(--line); border-radius: 14px; padding: 16px; min-width: 0; }
+.card h2 { margin-bottom: 12px; }
+.price { display: block; font-size: 24px; line-height: 1.4; font-weight: 700; margin-top: 8px; }
+.link-button { display: flex; min-height: 44px; align-items: center; justify-content: space-between; padding: 10px 12px; margin-top: 12px; border: 1px solid var(--line); background: white; border-radius: 10px; text-decoration: none; font-weight: 500; }
+.link-button:hover { border-color: var(--accent); }
+.field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; }
+.field input, select, textarea { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid #827C70; border-radius: 9px; background: white; font-size: 16px; font-weight: 400; }
+textarea { min-height: 88px; resize: vertical; }
+.field-wrap { margin: 14px 0; }
+.check { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.options { padding: 4px 0; }
+.options:has(.nhan option[value="1"]:checked) .luong { display: none; }
+body:has(#giao:checked) .contact.pickup,
+body:has(#lay:checked) .contact.delivery { display: none; }
+.contact > p { margin-top: 14px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.actions > button { flex: 1; }
+.has-dock { padding-bottom: 190px; }
+.dock { position: fixed; z-index: 10; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100%, 480px); background: white; border-top: 1px solid var(--line); padding: 12px 14px max(12px, env(safe-area-inset-bottom)); }
+.dock > button { width: 100%; }
+.dock p { margin-bottom: 8px; }
+.notice { padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: #FFF6E8; color: #7A4100; margin-top: 14px; }
+.error-code { display: block; margin-top: 8px; color: #7A4100; overflow-wrap: anywhere; }
+.variants { border-top: 1px solid var(--line); padding-top: 12px; }
+summary { cursor: pointer; min-height: 44px; padding: 10px 0; color: var(--muted); }
+.table-scroll { max-width: 100%; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+th { color: var(--muted); font-weight: 500; font-size: 12px; background: #FAF9F6; }
+th, td { padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+td { font-variant-numeric: tabular-nums; }
+tbody tr:last-child td { border-bottom: 0; }
+.price-table { margin-top: 14px; }
+.price-table td:last-child { white-space: nowrap; }
+code { font: 12px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; }
+#chu-giai { max-width: 480px; margin: 24px auto; padding: 16px 14px; border-top: 1px solid var(--line); }
+#chu-giai h2 { margin-bottom: 14px; }
+#chu-giai td:first-child code, #danh-muc-component td:first-child code { white-space: nowrap; overflow-wrap: normal; }
+#chu-giai table, #danh-muc-component table { min-width: 600px; }
+.flow { padding: 0; list-style: none; }
+.flow li { padding: 5px 0; }
+.flow li + li::before { content: '↓'; display: block; color: var(--muted); }
+.flow a { display: inline-flex; min-height: 44px; align-items: center; }
+/* Preflight của Tailwind đặt font-weight của tiêu đề về inherit; giữ độ đậm như bản trước. */
+h1 { font-weight: 700; }
+h3 { font-weight: 600; }
+</style>
+</head>
+<body class="has-dock">
+<div class="design-toggle"><input type="checkbox" id="hien-ten" checked><label for="hien-ten">Hiện tên component</label><a href="index.html">Mục lục thiết kế</a></div>
+<main data-component="KhungKhach" class="shell" ><span class="nhan-component">KhungKhach</span>
+<header data-component="ThanhDauKhach" class="page-header" ><span class="nhan-component">ThanhDauKhach</span>
+<p class="brand">Bánh cuốn Bà Thanh Cao Bằng</p><p class="context">Bàn 5 · online dùng nút tiếp tục</p><h1>Giỏ hàng</h1><p class="muted">Bản thiết kế tĩnh · số liệu minh hoạ</p>
+</header>
+<section data-component="DongGioHang" class="card" ><span class="nhan-component">DongGioHang</span>
+<h2>Suất trứng chín</h2><p>Thịt · Thường</p><div data-component="ONhap" class="field-wrap" ><span class="nhan-component">ONhap</span>
+<label class="field">Số lượng · bắt buộc<input name="quantity" type="number" min="1" step="1" value="1" required></label>
+</div>
+<button type="button">Bỏ dòng</button><p class="price">25.000đ</p>
+</section>
+<section data-component="GiaTinhThu" class="card" ><span class="nhan-component">GiaTinhThu</span>
+<p>Giá tính thử</p><strong class="price">25.000đ</strong><p class="muted">Giá từ hệ thống</p>
+</section>
+<a class="link-button" href="thuc-don.html">Chọn thêm món</a><div data-component="ONhap" class="card" ><span class="nhan-component">ONhap</span>
+<label class="check"><input type="checkbox" name="is_takeaway">Đem về · chỉ cho dòng tại bàn</label>
+</div>
+<details class="variants"><summary>Các ca lỗi của bản thiết kế</summary><section data-component="ThongBaoLoi" class="notice" ><span class="nhan-component">ThongBaoLoi</span>
+<p>[CHỮ CHỜ CHỦ QUÁN CHỐT]</p><small class="error-code"><code>invalid_request</code></small>
+</section>
+<section data-component="ThongBaoLoi" class="notice" ><span class="nhan-component">ThongBaoLoi</span>
+<p>[CHỮ CHỜ CHỦ QUÁN CHỐT]</p><small class="error-code"><code>menu_item_not_found</code></small>
+</section>
+<section data-component="ThongBaoLoi" class="notice" ><span class="nhan-component">ThongBaoLoi</span>
+<p>[CHỮ CHỜ CHỦ QUÁN CHỐT]</p><small class="error-code"><code>menu_option_not_found</code></small>
+</section>
+<section data-component="ThongBaoLoi" class="notice" ><span class="nhan-component">ThongBaoLoi</span>
+<p>[CHỮ CHỜ CHỦ QUÁN CHỐT]</p><small class="error-code"><code>menu_item_discontinued</code></small>
+</section>
+<section data-component="ThongBaoLoi" class="notice" ><span class="nhan-component">ThongBaoLoi</span>
+<p>[CHỮ CHỜ CHỦ QUÁN CHỐT]</p><small class="error-code"><code>option_combination_invalid</code></small>
+</section>
+<section data-component="ThongBaoLoi" class="notice" ><span class="nhan-component">ThongBaoLoi</span>
+<p>[CHỮ CHỜ CHỦ QUÁN CHỐT]</p><small class="error-code"><code>menu_combo_not_found</code></small>
+</section>
+<section data-component="ThongBaoLoi" class="notice" ><span class="nhan-component">ThongBaoLoi</span>
+<p>[CHỮ CHỜ CHỦ QUÁN CHỐT]</p><small class="error-code"><code>menu_combo_hidden</code></small>
+</section>
+<section data-component="ThongBaoLoi" class="notice" ><span class="nhan-component">ThongBaoLoi</span>
+<p>[CHỮ CHỜ CHỦ QUÁN CHỐT]</p><small class="error-code"><code>combo_portions_mismatch</code></small>
+</section>
+<section data-component="ThongBaoLoi" class="notice" ><span class="nhan-component">ThongBaoLoi</span>
+<p>[CHỮ CHỜ CHỦ QUÁN CHỐT]</p><small class="error-code"><code>internal_error</code></small>
+</section>
+<section data-component="ThongBaoLoi" class="notice" ><span class="nhan-component">ThongBaoLoi</span>
+<p>[CHỮ CHỜ CHỦ QUÁN CHỐT]</p><small class="error-code"><code>qr_code_not_current</code></small>
+</section>
+<section data-component="ThongBaoLoi" class="notice" ><span class="nhan-component">ThongBaoLoi</span>
+<p>[CHỮ CHỜ CHỦ QUÁN CHỐT]</p><small class="error-code"><code>submission_code_conflict</code></small>
+</section>
+<section data-component="ThongBaoLoi" class="notice" ><span class="nhan-component">ThongBaoLoi</span>
+<p>[CHỮ CHỜ CHỦ QUÁN CHỐT]</p><small class="error-code"><code>dining_table_needs_cleaning</code></small>
+</section>
+</details><a class="link-button" href="khong-nhan-don.html">Xem mẫu khi quán không nhận đơn</a><section data-component="DauTrang" class="card" ><span class="nhan-component">DauTrang</span>
+<h2>Các kết quả mẫu</h2><p class="muted">Các liên kết dưới đây chỉ để duyệt bản thiết kế.</p><a class="link-button" href="da-gui-luot.html">Xem mẫu đã gửi lượt</a><a class="link-button" href="thong-tin-dat.html">Online: tiếp tục nhập liên hệ</a>
+</section>
+<div data-component="NutChinhDinhDay" class="dock" ><span class="nhan-component">NutChinhDinhDay</span>
+<p class="muted">Tại bàn · hai trạng thái nút mẫu</p><div class="actions"><button type="button" class="primary">Gửi lượt</button><button type="button" disabled aria-busy="true">Đang gửi…</button></div>
+</div>
+
+</main>
+<section id="chu-giai"><h2>Chú giải component</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Chú giải component"><table><thead><tr><th scope="col">Tên</th><th scope="col">Nó là gì</th><th scope="col">Phạm vi</th></tr></thead><tbody><tr><td><code>DauTrang</code></td><td>Tiêu đề trang, lời dẫn và thao tác chính. </td><td>dùng chung</td></tr><tr><td><code>DongGioHang</code></td><td>Một dòng món đã chọn cùng số lượng và giá backend trả. PriceLine.item_name, options[].option_name, quantity, line_total_vnd; sửa quantity hoặc bỏ phần tử lines trước khi gửi; tính thử lại qua PriceQuoteRequest.</td><td>dùng chung</td></tr><tr><td><code>GiaTinhThu</code></td><td>Giá tính thử do POST /price-quotes trả, không diễn giải phép cộng. </td><td>dùng chung</td></tr><tr><td><code>KhungKhach</code></td><td>Vỏ một cột của trang khách, rộng tối đa 480px. </td><td>dùng chung</td></tr><tr><td><code>NutChinhDinhDay</code></td><td>Vùng hành động chính cố định ở đáy màn hình. QrOrderRequest.submission_code: UUID chữ thường, đặt một lần lúc bấm gửi và giữ nguyên khi gửi lại (SubmissionCode, I-024). Đang gửi vô hiệu nút; không tự cấp dấu mới khi thử lại. Online dùng OnlineOrderRequest.submission_code với cùng nguyên tắc.</td><td>dùng chung</td></tr><tr><td><code>ONhap</code></td><td>Trường nhập hoặc chọn có nhãn dành cho khách. TableOrderLineRequest.is_takeaway (boolean, mặc định false); không dùng cho online.</td><td>dùng chung</td></tr><tr><td><code>ThanhDauKhach</code></td><td>Tên quán và ngữ cảnh tại bàn hoặc đặt online. </td><td>dùng chung</td></tr><tr><td><code>ThongBaoLoi</code></td><td>Thông báo lỗi hoặc lời từ chối cần xử lý. Lỗi tính thử theo POST /price-quotes và PriceLineRequest; lỗi gửi minh hoạ theo ErrorCode. POST gửi dùng default Error, không liệt kê riêng mọi lỗi của từng cửa; cần Claude xác nhận độ phủ.</td><td>dùng chung</td></tr></tbody></table></div></section>
+</body>
+</html>
