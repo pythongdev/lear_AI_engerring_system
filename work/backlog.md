@@ -89,7 +89,11 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
+- [ ] T-225 **Đường đọc cho trang Vận hành: từng bàn, từng thứ, tiền đã ra, lịch sử đem ra** — một cửa đọc mới cho chủ quán (và người đứng quầy): phiên bàn chưa đóng chia *đang phục vụ* · *sắp phục vụ*, mỗi thứ đặt · đã ra · thiếu kèm cờ nhiều, tiền đơn và tiền đã ra, bàn trống, lịch sử từng lần đem ra — L2 (Claude thiết kế, ADR nếu thêm bảng, test trước) — mở 2026-10-21 · [chi tiết](#t-225)
+- [ ] T-226 **Trang `/chu-quan/van-hanh` — phần đọc theo thiết kế đã chốt** — năm khối của `van_hanh/van-hanh.html`, số lấy từ `T-225`, cộng thử chỉ tính trên màn — L1 — mở 2026-10-21, **cần xong trước:** `T-225` · [chi tiết](#t-226)
+- [ ] T-228 **Bấm ô số trên trang Vận hành ghi *đã đem ra*** — chọn 0…số thiếu, xác nhận, gửi `POST /served-marks` cho một bàn; chỉ bật khi phiên đang đứng quầy (S-5, chủ repo giữ 2026-10-21) — L2 — mở 2026-10-21, **cần xong trước:** `T-226` · [chi tiết](#t-228)
 - [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
+- [ ] T-227 **BỊ CHẶN bởi U-103 — Thanh toán bàn từ trang Vận hành chỉ thu phần đã ra** — bấm tiền bánh đã ra để đóng phiên và xoá bàn khỏi bảng; đổi luật tính tiền phiên (`shop-facts.md` §6.1, 2026-10-21) và viết lại `I-002` — L3 (thiết kế duyệt trước code, ADR, chia L1/L2 khi mở) — mở 2026-10-21 · [chi tiết](#t-227)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
 [↑ đầu file](#top)
@@ -97,7 +101,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-220 **Bảng từng bàn trang Vận hành đọc rõ trên điện thoại** — ở màn ≤ 640px, bảng `#bang-ban` của `KhoiBanDangPhucVu` trong `van_hanh/van-hanh.html` đổi thành một thẻ mỗi bàn (nhãn · giá trị), không cuộn ngang, không chữ nào gãy dòng xấu; máy tính giữ bảng như cũ; không đổi số, không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm bạn kiểm tra"* · [chi tiết](#t-220)
 
 
 
@@ -111,6 +114,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-224 **Thiết kế trang Vận hành chốt, chia thành task** — ghi ba lời chủ repo (thanh toán chỉ thu phần đã ra · bấm đem ra vẫn là người đứng quầy · nghĩa *sắp phục vụ*), mở `U-103`, mở `T-225`…`T-228` — L1 — mở và làm 2026-10-21 · Claude Code theo lời chủ repo *"tôi chốt thiết kế hiện tại của trang vận hành hãy làm các task để hoàn thành trang trên"* — 2026-10-21 · [chi tiết](#t-224)
+- [x] T-220 **Trang Vận hành — thiết kế chốt** — mở để bảng từng bàn đọc rõ trên điện thoại, rồi theo lời chủ repo từng bước thành bản chốt: tổng thiếu theo bàn lên đầu (bấm ô ghi đem ra, bấm tiền thanh toán, trượt mở chi tiết, ô nhiều có *), cộng thử ghép đơn, từng bàn dạng cột, sơ đồ bàn, lịch sử phục vụ — L1 — mở và nhận 2026-10-20 · Codex (thẻ điện thoại), Claude Code (các lượt sửa theo lời chủ repo) — 2026-10-21 · [chi tiết](#t-220)
 - [x] T-222 **Màn QR có tiêu đề hình mã QR + số bàn, `/dat-mon` lên máy tìm kiếm** — hai việc còn lại của `P4-10`: `h1` màn `/ban/[ma]` bày biểu tượng mã QR và *Bàn {số}*; `/dat-mon` vào `PUBLIC_ROUTES`, có metadata công khai và nằm trong sitemap — L1 — mở và nhận 2026-10-21 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm các task trên còn bạn kiểm tra"* — 2026-10-21 · [chi tiết](#t-222)
 - [x] P4-10 **Khách: QR tại bàn và đơn web** — `/ban/[ma]` gửi lượt gọi QR, `/dat-mon` đơn giao · mang đi · đặt trước; menu lấy ở server từng request, tổng là tính thử của cả giỏ, gửi lại không nhân đôi (`I-024`), câu tạm dừng · mất kết nối chủ repo chọn 2026-10-21 — L2 — nhận 2026-10-21 · Claude Code (dẫn, test trước, duyệt), Codex thi công — 2026-10-21 · [chi tiết](backlog_FE.md#p4-10)
 - [x] T-221 **Bộ soạn món soạn được combo và theo lựa chọn phụ thuộc** — phần còn lại của đợt hai `P4-07`: nhóm có điều kiện chỉ hiện khi điều kiện được chọn; combo chọn nhân từng suất, giá dòng combo từ `POST /price-quotes`; hàng chờ bày suất của combo — L1 — nhận 2026-10-21 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex thực hiện 2 việc trên bạn kiểm tra"* — 2026-10-21 · [chi tiết](#t-221)
@@ -448,6 +453,73 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
 
+<a id="t-228"></a>
+### T-228 — Trang Vận hành chỉ cho xem số thiếu, chưa ghi được phần đã đem ra
+
+**Yêu cầu:** chủ repo 2026-10-21 chốt thiết kế `docs/product/4-fe/thiet_ke/chu_quan/van_hanh/van-hanh.html`: bấm một ô số của
+*Tổng thiếu theo bàn* hiện ô chọn 0…số thiếu, chọn số thì hộp xác nhận nhắc lại số cái và bàn, xác nhận thì số thiếu trừ đi; lịch sử
+thêm một dòng. Cùng ngày chủ repo chọn: người bấm **vẫn là người đứng quầy** (giữ S-5, `master_plan/shop-facts.md` §5.4). **Mức:** L2 —
+ghi việc trạm sang `served`, chạm đếm của bảng sản xuất (`I-019` · `I-020`). **Cần xong trước:** `T-226`.
+
+**Việc của Claude trước khi giao:** (1) đối chiếu khoá gom của `ServedItem` (trạm · thành phần · `filling_option_ids`) với cách thiết kế
+tách cột — trứng tách *tái · chín*, ô *nhiều* — và chốt mỗi ô bấm gửi những hàng nào; lệch thì chọn cách bày, không đổi luật S-5;
+(2) cửa `sanxuat/ra_ban` thuộc lớp `quay` (`docs/product/3-be/02-vai-va-quyen.md`): phiên không đứng quầy thì ô chỉ đọc kèm câu nói
+rõ vì sao, không ẩn nút rồi để cửa từ chối; (3) viết test trước. *Nghiệm thu* viết lúc mở task.
+
+<a id="t-227"></a>
+### T-227 — Hoá đơn bàn cộng mọi phần đã gọi, trong khi chủ repo chọn chỉ thu phần đã ra
+
+**Yêu cầu:** chủ repo 2026-10-21 chọn trong hội thoại phương án *"Chỉ tiền món đã ra — món chưa ra bị bỏ khỏi hoá đơn lúc thanh toán"*
+(`master_plan/shop-facts.md` §6.1); thiết kế đã chốt cho bấm số ở cột *Tiền bánh đã ra* để thanh toán và xoá bàn khỏi bảng. Hôm nay
+`phien.TongTien` cộng `line_total_vnd` của **mọi** đơn chưa huỷ và cửa đóng từ chối phiên còn đơn chưa xong
+(`docs/product/3-be/04-luong-tai-ban.md` §4); `quality/invariants.md` **I-002** giữ *tổng bằng mọi đơn*. **Mức:** L3 — luật tiền,
+invariant, hợp đồng; mở thì chia thành phần L1 · L2, thiết kế được duyệt trước dòng code đầu, ADR. **BỊ CHẶN** bởi **U-103**
+(`docs/product/99-unknowns.md`): phần chưa ra có huỷ việc trạm không, và luật áp cho mọi lần đóng phiên hay chỉ trang Vận hành — hai vế
+đổi hẳn cách làm. Cửa `hoadon/dong` thuộc lớp `quay`, nên người bấm cũng là người đứng quầy như `T-228` — *suy ra* của Claude, hỏi lại
+khi U-103 có lời.
+
+<a id="t-226"></a>
+### T-226 — Chủ quán chưa có trang Vận hành thật, chỉ có bản thiết kế tĩnh
+
+**Yêu cầu:** chủ repo 2026-10-21 *"tôi chốt thiết kế hiện tại của trang vận hành hãy làm các task để hoàn thành trang trên"*. **Mức:**
+L1 — trang đọc, số do backend trả, không ghi. **Cần xong trước:** `T-225`.
+
+**Phạm vi:** route `/chu-quan/van-hanh` trong khung chủ quán (`docs/product/4-fe/01-khung-fe.md`, thêm mục điều hướng cùng lượt), năm khối
+theo thứ tự thiết kế: `BangThieuTheoBan` (cột Thịt · Mộc nhĩ · Trứng tách kiểu · Chay · Canh · Tiền bánh đã ra; ô *nhiều* nền vàng có
+`*`; bấm tên bàn trượt mở chi tiết dạng cột ngay dưới hàng) · `CongThuGhepDon` (tick bàn sắp phục vụ ⇒ hàng đỏ và tổng `+n` đỏ, chỉ tính
+trên màn, không ghi) · `KhoiBanDangPhucVu` (mỗi bàn dạng cột, mặc định ẩn, nút *Chi tiết* mở bảng đầy đủ) · `SoDoBan` (mặc định ẩn) ·
+`LichSuDemRa` (theo giờ và theo bàn, mặc định ẩn). **Không** làm ở task này: bấm ô số (`T-228`), bấm tiền (`T-227`). Số trong bản thiết kế
+là minh hoạ, không phải dữ liệu. *Nghiệm thu* viết lúc mở task, khi hợp đồng của `T-225` đã có.
+
+<a id="t-225"></a>
+### T-225 — Không đường đọc nào trả tình hình từng bàn theo từng thứ
+
+**Yêu cầu:** cùng lời chủ repo 2026-10-21 ở `T-226`. Bản thiết kế đã ghi rõ chỗ thiếu (`van_hanh/component.md`): `GET /dining-tables`
+chỉ có trạng thái bàn, `GET /counter/queue` không có số theo nhân, `GET /owner-overview` có tổng mà không có từng bàn. **Mức:** L2 — hợp
+đồng mới, con số tiền bày cho chủ quán. **Chưa nhận.**
+
+**Phải trả được** (lấy từ thiết kế đã chốt): mỗi phiên bàn chưa đóng — nhãn bàn (kể cả bàn ghép), nhóm *đang phục vụ* hay *sắp phục vụ*
+(nghĩa chủ repo xác nhận 2026-10-21, `shop-facts.md` §5.4); mỗi thứ đặt · đã ra · thiếu theo thành phần, nhân và lựa chọn (kiểu trứng,
+rau), kèm cờ *nhiều*; tiền đơn và tiền đã ra; bàn trống; lịch sử đem ra — giờ, bàn, thứ, số cái, người bấm.
+
+**Việc của Claude trước khi giao:** (1) tiền đã ra dùng **đúng** phép cộng *tạm tính* của tổng quan (`shop-facts.md` §8.6, U-099 ·
+T-199: phần thuộc combo không tính giá thành phần), không viết phép cộng thứ hai; (2) `station_job` không có cột giờ ra bàn
+(`db/migrations/20260928130000_san_xuat_theo_me.up.sql`), nên lịch sử phải chọn nguồn — đọc vết cập nhật hay thêm bảng ghi từng lần
+đem ra (migration, ADR); (3) quyền: chủ quán đọc, người đứng quầy có đọc không (cần cho `T-228`) — ghi vào ma trận
+`02-vai-va-quyen.md`; (4) test hồi quy trước cho nghĩa *sắp phục vụ · đang phục vụ* và cho tiền đã ra bằng tạm tính trên cùng dữ liệu.
+
+<a id="t-224"></a>
+### T-224 — Thiết kế trang Vận hành đã chốt mà chưa có task nào để làm thật
+
+**Yêu cầu:** chủ repo 2026-10-21 *"tôi chốt thiết kế hiện tại của trang vận hành hãy làm các task để hoàn thành trang trên"*. **Mức:** L1 —
+ghi lời và mở task, không đổi code.
+
+**Claude làm:** đối chiếu thiết kế với hợp đồng thì lệch hai chỗ, hỏi chủ repo ba câu trong hội thoại, chủ repo chọn: (1) thanh toán
+**chỉ thu phần đã ra** — ghi `master_plan/shop-facts.md` §6.1 và §7.1, vế còn hở thành **U-103**, `quality/invariants.md` **I-002** mang dòng
+*sửa đổi đang chờ*; (2) bấm *đã đem ra* **vẫn là người đứng quầy** — giữ S-5, ghi §7.1; (3) **đúng** cả hai cách hiểu *sắp phục vụ* và *đã
+đem ra* của T-219 — ghi §5.4. Mở `T-225` (đọc, L2) · `T-226` (trang, L1) · `T-228` (ghi đem ra, L2) · `T-227` (thanh toán, L3, bị chặn).
+*Bằng chứng:* `check-scope` · `check-links` · `check-doc-status` chạy trong lượt này.
+
 <a id="t-223"></a>
 ### T-223 — Đơn giao tận nơi không rời quán được vì vế S-6 từng chưa có lời
 
@@ -537,6 +609,14 @@ ngang, mỗi dòng *nhãn — giá trị* nằm trên đúng một dòng chữ; 
 phần trên rất hữu ích"*. **Claude chốt:** một `button` thật trên bảng, bật · tắt ba cột đó ở cả bảng máy tính lẫn thẻ điện thoại (kể cả dòng tổng),
 `aria-pressed` theo trạng thái; mặc định hiện; sáu cột còn lại không có cách nào ẩn. Nghiệm thu thêm: (8) bấm nút thì 3 cột (thead, tbody, tfoot) ẩn,
 bấm lại thì hiện, ở cả 390px và 1280px; 6 cột còn lại luôn hiện; không lưu trạng thái vào trình duyệt.
+
+**Thiết kế chốt** — 2026-10-21, chủ repo *"tôi chốt thiết kế hiện tại của trang vận hành"*. Sau phần thẻ điện thoại (Codex), Claude Code sửa
+`van_hanh/van-hanh.html` · `van_hanh/component.md` theo từng lời của chủ repo trong hội thoại 2026-10-20…21; nút ẩn ba cột tổng ở *Bổ sung*
+trên đã bị chủ repo bỏ. Bản chốt, từ trên xuống: `BangThieuTheoBan` (mới) · `CongThuGhepDon` (bỏ bảng chỉ số, tick đẩy hàng đỏ vào bảng tổng
+thiếu) · `KhoiBanDangPhucVu` (từng bàn dạng cột, mặc định ẩn, nút *Chi tiết*) · `SoDoBan` (mặc định ẩn) · `LichSuDemRa` (mới); bỏ
+`TheTrangThaiBan` và `BangTongConThieu`. Số là minh hoạ; trứng, giò, nhiều nhân, canh rau · không rau là ví dụ chủ repo yêu cầu thêm. *Bằng
+chứng:* mỗi lượt chạy `check-scope` (và `check-links` khi đổi `component.md`), kiểm thẻ HTML cân, chạy thử jsdom các thao tác (tick cộng
+thử, chọn số · xác nhận · huỷ, thanh toán, trượt mở, ẩn · hiện); chưa xem trên trình duyệt thật. Các task làm thật: `T-224`.
 
 [↑ đầu file](#top)
 

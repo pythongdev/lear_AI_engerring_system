@@ -133,6 +133,12 @@ về **người đứng quầy**, và lời đáp — *"Có — ghi cả mốc �
 `quality/invariants.md` **I-012** đòi *ai bấm* ở **hai cửa ghi ngoài quầy**. Nguyên văn lời đáp và
 phạm vi của nó ở `master_plan/shop-facts.md` **§8.8**.
 
+<a id="u-103"></a>
+- **U-103** — Thanh toán bàn chỉ thu phần đã ra (chủ repo chọn 2026-10-21, `master_plan/shop-facts.md` §6.1): **(1)** phần
+  chưa ra bị bỏ khỏi hoá đơn thì việc trạm của nó còn chờ có bị huỷ — bếp dừng làm — không, hay vẫn làm tiếp? **(2)** luật
+  áp cho **mọi** lần đóng phiên bàn ở quầy, hay chỉ khi thanh toán từ trang Vận hành của chủ quán? (mở 2026-10-21, T-224).
+  Ai trả lời: chủ quán, qua chủ repo. Chặn gì: `T-227` (thanh toán từ trang Vận hành) và việc viết lại
+  `quality/invariants.md` **I-002**; phần đọc và bấm đem ra của trang không bị chặn.
 - **U-094** — Tên miền chính thức của trang web, và câu mô tả hiện dưới tên quán trên Google (mở 2026-10-14, T-189;
   hẹp lại 2026-10-19, T-205 — địa chỉ và ngày mở đã có lời, vào `master_plan/shop-facts.md` §1). Còn lại: (1) **tên
   miền** — chủ repo trả lời 2026-10-19 *"Chưa có tên miền"*; (2) **duyệt chữ** câu mô tả, bản nháp ở `fe/src/lib/seo.ts`

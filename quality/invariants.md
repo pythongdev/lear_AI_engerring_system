@@ -63,6 +63,10 @@ POS — không bao giờ tách thành nhiều hoá đơn. Với **nhóm bàn gh�
 "cùng một phiên": lượt gọi từ bàn 4 và lượt gọi từ bàn 5 của cùng nhóm vẫn ra **một** hoá đơn
 (`master_plan/shop-facts.md` §6.16).
 
+⚠️ **Sửa đổi đang chờ** (2026-10-21, T-224): chủ repo chọn *thanh toán một bàn chỉ thu tiền các phần đã ra bàn*
+(`master_plan/shop-facts.md` §6.1). Vế *một phiên đúng một hoá đơn* không đổi; vế *tổng bằng mọi đơn* sẽ viết lại ở
+`T-227` khi **U-103** có lời (`docs/product/99-unknowns.md`). Tới lúc ấy mệnh đề trên vẫn là thứ máy giữ.
+
 **Why:**
 Tách hoá đơn theo lượt gọi là **thu thiếu tiền**: lượt gọi thêm lúc quầy đã bắt đầu thu rất dễ rơi
 ra ngoài lần thu duy nhất. `shop-facts.md` §6.1 gọi đây là lỗi tiền nguy hiểm nhất của luồng tại
