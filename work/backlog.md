@@ -99,7 +99,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-226 **Trang `/chu-quan/van-hanh` — phần đọc theo thiết kế đã chốt** — năm khối của `van_hanh/van-hanh.html`, số lấy từ `T-225`, cộng thử chỉ tính trên màn — L1 — mở 2026-10-21, `T-225` xong 2026-10-21; nhận 2026-10-21 — Codex thi công, Claude duyệt · [chi tiết](#t-226)
 
 
 
@@ -113,6 +112,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-226 **Trang `/chu-quan/van-hanh` — phần đọc theo thiết kế đã chốt** — năm khối của `van_hanh/van-hanh.html`, số lấy từ `T-225`, cộng thử chỉ tính trên màn — L1 — mở 2026-10-21, `T-225` xong 2026-10-21; nhận 2026-10-21 — Codex thi công, Claude duyệt — xong 2026-10-21 · [chi tiết](#t-226)
 - [x] T-225 **Đường đọc cho trang Vận hành: từng bàn, từng thứ, tiền đã ra, lịch sử đem ra** — một cửa đọc mới cho chủ quán (và người đứng quầy): phiên bàn chưa đóng chia *đang phục vụ* · *sắp phục vụ*, mỗi thứ đặt · đã ra · thiếu kèm cờ nhiều, tiền đơn và tiền đã ra, bàn trống, lịch sử từng lần đem ra — L2 (Claude thiết kế ADR-124 và viết test trước, Codex thi công, Claude duyệt) — mở 2026-10-21, nhận 2026-10-21 — xong 2026-10-21 · Codex thi công, Claude duyệt · [chi tiết](#t-225)
 - [x] T-224 **Thiết kế trang Vận hành chốt, chia thành task** — ghi ba lời chủ repo (thanh toán chỉ thu phần đã ra · bấm đem ra vẫn là người đứng quầy · nghĩa *sắp phục vụ*), mở `U-103`, mở `T-225`…`T-228` — L1 — mở và làm 2026-10-21 · Claude Code theo lời chủ repo *"tôi chốt thiết kế hiện tại của trang vận hành hãy làm các task để hoàn thành trang trên"* — 2026-10-21 · [chi tiết](#t-224)
 - [x] T-220 **Trang Vận hành — thiết kế chốt** — mở để bảng từng bàn đọc rõ trên điện thoại, rồi theo lời chủ repo từng bước thành bản chốt: tổng thiếu theo bàn lên đầu (bấm ô ghi đem ra, bấm tiền thanh toán, trượt mở chi tiết, ô nhiều có *), cộng thử ghép đơn, từng bàn dạng cột, sơ đồ bàn, lịch sử phục vụ — L1 — mở và nhận 2026-10-20 · Codex (thẻ điện thoại), Claude Code (các lượt sửa theo lời chủ repo) — 2026-10-21 · [chi tiết](#t-220)
@@ -499,19 +499,19 @@ này. Ánh xạ theo tên là *suy ra*, chờ chủ repo. Ô *nhiều* = `extra_
 React. Không kéo theo chu kỳ (hợp đồng không trả `poll_interval_seconds`), có nút *Đọc lại*. Bỏ nhãn *đề xuất — chưa có trong hợp đồng*.
 
 **Acceptance** (viết 2026-10-21, trước khi giao; test ở `fe/src/app/chu-quan/van-hanh/`):
-- [ ] Ánh xạ cột: Bánh cuốn × ba nhân, `Trứng tái`, `Trứng chín`, `Canh bánh cuốn`, `Giò` ⇒ mỗi thứ đúng một cột, `Giò` vào *Khác*; không có thứ lạ ⇒ không cột *Khác*.
-- [ ] `BangThieuTheoBan` chỉ hàng phiên `serving`, bàn ghép `A + B`, ô = tổng `missing`, tiền = `served_amount_vnd`, hàng *Tổng* đúng; ô nhiều có `*`.
-- [ ] Bấm nhãn bàn mở chi tiết ngay dưới hàng (`aria-expanded`) có tổng · đã ra · thiếu và *Tiền đơn* = `order_total_vnd`; bấm lại đóng.
-- [ ] Tick phiên `waiting` ⇒ hàng đỏ và *Tổng* `x+y`; *Bỏ chọn hết* gỡ; không lời gọi mạng nào khác `GET /service-board`, không ghi `localStorage`/`sessionStorage`.
-- [ ] `KhoiBanDangPhucVu`, `SoDoBan`, hai phần `LichSuDemRa` mặc định ẩn; nút đổi `aria-expanded` và `hidden`.
-- [ ] `SoDoBan` bốn nhãn theo `service_group` / `empty_tables`, số ô = số bàn backend trả.
-- [ ] `LichSuDemRa` giữ thứ tự backend, *Lần thứ* đúng khi một bàn có hai mốc, có tên người.
-- [ ] Lỗi lần đầu ⇒ `Alert` *Chưa đọc được tình hình bàn*, không khối nào; dữ liệu rỗng ⇒ câu rỗng, không lỗi.
-- [ ] Mọi số tiền trên màn là `order_total_vnd` / `served_amount_vnd` hoặc tổng của chúng, chỉ định dạng lại.
-- [ ] Mục *Vận hành* ngay sau *Tổng quan* trong `muc-chu-quan.ts`, `chu-quan.test.tsx` xanh; `01-khung-fe.md` có dòng ở §1 và §2.
-- [ ] `./scripts/gate.sh` xanh, Claude chạy lại cả `fe-check`.
+- [x] Ánh xạ cột: Bánh cuốn × ba nhân, `Trứng tái`, `Trứng chín`, `Canh bánh cuốn`, `Giò` ⇒ mỗi thứ đúng một cột, `Giò` vào *Khác*; không có thứ lạ ⇒ không cột *Khác*.
+- [x] `BangThieuTheoBan` chỉ hàng phiên `serving`, bàn ghép `A + B`, ô = tổng `missing`, tiền = `served_amount_vnd`, hàng *Tổng* đúng; ô nhiều có `*`.
+- [x] Bấm nhãn bàn mở chi tiết ngay dưới hàng (`aria-expanded`) có tổng · đã ra · thiếu và *Tiền đơn* = `order_total_vnd`; bấm lại đóng.
+- [x] Tick phiên `waiting` ⇒ hàng đỏ và *Tổng* `x+y`; *Bỏ chọn hết* gỡ; không lời gọi mạng nào khác `GET /service-board`, không ghi `localStorage`/`sessionStorage`.
+- [x] `KhoiBanDangPhucVu`, `SoDoBan`, hai phần `LichSuDemRa` mặc định ẩn; nút đổi `aria-expanded` và `hidden`.
+- [x] `SoDoBan` bốn nhãn theo `service_group` / `empty_tables`, số ô = số bàn backend trả.
+- [x] `LichSuDemRa` giữ thứ tự backend, *Lần thứ* đúng khi một bàn có hai mốc, có tên người.
+- [x] Lỗi lần đầu ⇒ `Alert` *Chưa đọc được tình hình bàn*, không khối nào; dữ liệu rỗng ⇒ câu rỗng, không lỗi.
+- [x] Mọi số tiền trên màn là `order_total_vnd` / `served_amount_vnd` hoặc tổng của chúng, chỉ định dạng lại.
+- [x] Mục *Vận hành* ngay sau *Tổng quan* trong `muc-chu-quan.ts`, `chu-quan.test.tsx` xanh; `01-khung-fe.md` có dòng ở §1 và §2.
+- [x] `./scripts/gate.sh` xanh, Claude chạy lại cả `fe-check`.
 
-**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-226`, nhánh `codex/T-226`) · duyệt: Claude — chưa duyệt.
+**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-226`, nhánh `codex/T-226`, nền là T-225 chưa commit) · duyệt: Claude 2026-10-21 — đọc diff tám file, đối chiếu từng dòng Acceptance với 14 test ở `van-hanh.test.tsx` và test ánh xạ cột; Claude sửa một chỗ: `Alert` giữ bản cũ in giờ `read_at` đã định dạng thay vì chuỗi ISO (sửa test theo). Đưa về clone chính, `./scripts/gate.sh` xanh, `fe-check` PASS đủ lint · typecheck · 426 test · build. Còn mở: ánh xạ cột theo tên là suy ra, chờ chủ repo; `T-228` · `T-227` dựng tiếp trên trang này.
 
 <a id="t-225"></a>
 ### T-225 — Không đường đọc nào trả tình hình từng bàn theo từng thứ

@@ -2,6 +2,7 @@
 // test chu-quan.test.tsx đỏ khi một mục trỏ tới route chưa có page.tsx.
 export const mucChuQuan = [
   { nhan: "Tổng quan", route: "/chu-quan" },
+  { nhan: "Vận hành", route: "/chu-quan/van-hanh" },
   { nhan: "Tổng kết", route: "/chu-quan/tong-ket" },
   { nhan: "Sản phẩm", route: "/chu-quan/san-pham" },
   { nhan: "Menu & giá", route: "/chu-quan/menu-gia" },

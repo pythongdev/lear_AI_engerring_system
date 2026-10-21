@@ -44,7 +44,7 @@ describe("khung chủ quán", () => {
     const muc = within(nav).getByRole("link", { name: "Tổng quan" });
     expect(muc.getAttribute("href")).toBe("/chu-quan");
     expect(muc.getAttribute("aria-current")).toBe("page");
-    expect(within(nav).getAllByRole("link")).toHaveLength(13);
+    expect(within(nav).getAllByRole("link")).toHaveLength(14);
     expect(screen.getByRole("heading", { name: "Tổng quan" })).toBeTruthy();
     expect(replace).not.toHaveBeenCalled();
   });
@@ -90,7 +90,7 @@ describe("khung chủ quán", () => {
     expect(nhanVien.getAttribute("aria-current")).toBe("page");
   });
 
-  it.each([["Giao việc", "/chu-quan/giao-viec"], ["Nguyên liệu", "/chu-quan/nguyen-lieu"], ["Kho", "/chu-quan/kho"], ["Khoản chi", "/chu-quan/khoan-chi"], ["Đào tạo", "/chu-quan/dao-tao"]])("%s sáng ở route của nó", async (nhan, route) => {
+  it.each([["Vận hành", "/chu-quan/van-hanh"], ["Giao việc", "/chu-quan/giao-viec"], ["Nguyên liệu", "/chu-quan/nguyen-lieu"], ["Kho", "/chu-quan/kho"], ["Khoản chi", "/chu-quan/khoan-chi"], ["Đào tạo", "/chu-quan/dao-tao"]])("%s sáng ở route của nó", async (nhan, route) => {
     duongDan = route;
     moKhung(200, phien(true));
     const nav = await screen.findByRole("navigation");
@@ -116,6 +116,7 @@ describe("khung chủ quán", () => {
   it("mọi mục có page.tsx thật; phát hiện route giả trong bản sao", () => {
     expect(mucChuQuan).toEqual([
       { nhan: "Tổng quan", route: "/chu-quan" },
+      { nhan: "Vận hành", route: "/chu-quan/van-hanh" },
       { nhan: "Tổng kết", route: "/chu-quan/tong-ket" },
       { nhan: "Sản phẩm", route: "/chu-quan/san-pham" },
       { nhan: "Menu & giá", route: "/chu-quan/menu-gia" },
