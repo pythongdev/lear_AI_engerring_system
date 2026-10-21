@@ -14,9 +14,9 @@ export function useHangCho() {
     return r.data;
   } });
 }
-export function useBan() {
+export function useBan(enabled = true) {
   const api = useApi();
-  return useQuery({ queryKey: khoaHangCho[1], queryFn: async () => {
+  return useQuery({ queryKey: khoaHangCho[1], enabled, queryFn: async () => {
     const r = await call(api.GET("/dining-tables"));
     if (!r.ok) throw r.failure;
     return r.data;
@@ -45,6 +45,9 @@ export function loiHangCho(f: ApiFailure) {
   if (f.kind === "no_response") return "Chưa xác nhận được kết quả… Hãy đọc lại để kiểm tra.";
   if (f.kind === "unexpected") return "Phản hồi không đúng hợp đồng. Chưa xác nhận được kết quả.";
   switch (f.code) {
+    case "order_jobs_not_served": return "Đơn còn món chưa ra bàn. Đang đọc lại.";
+    // S-6 (shop-facts §7.2): quán chưa chốt lúc nào bấm "đã ra bàn" cho đơn giao tận nơi; backend từ chối kèm mã này tới khi có lời.
+    case "delivery_served_mark_undecided": return "Chưa rời quán được: quán chưa chốt lúc nào ghi món đã ra cho đơn giao tận nơi. Hãy hỏi chủ quán.";
     case "order_transition_not_allowed": return "Đơn đã được xử lý ở nơi khác. Đang đọc lại.";
     case "sales_order_not_found": return "Không còn tìm thấy đơn. Đang đọc lại.";
     case "not_on_counter_duty": return "Bạn phải đứng quầy để thực hiện việc này.";
@@ -54,6 +57,6 @@ export function loiHangCho(f: ApiFailure) {
   }
 }
 export function canDocLai(f: ApiFailure) {
-  return f.kind === "rejected" && ["order_transition_not_allowed", "sales_order_not_found", "shop_not_blind"].includes(f.code);
+  return f.kind === "rejected" && ["order_jobs_not_served", "order_transition_not_allowed", "sales_order_not_found", "shop_not_blind"].includes(f.code);
 }
 export const gio = (moc: string) => new Date(moc).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });

@@ -5,18 +5,19 @@ import { LoaderCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DongMonDaGhi } from "@/components/shared/dong-mon-da-ghi";
 import { call } from "@/lib/api/client";
 import { useApi } from "@/lib/api/provider";
 import { canDocLai, gio, loiHangCho, useBan, useDocLaiHangCho, useDonHen, useHangCho } from "./du-lieu-hang-cho";
 
-function NutLenh({ id, loai, bao }: { id?: number; loai: "duyet" | "tu-choi" | "mo-lai"; bao: (s: string) => void }) {
+function NutLenh({ id, loai, bao }: { id?: number; loai: "duyet" | "tu-choi" | "mo-lai" | "roi-quan"; bao: (s: string) => void }) {
   const api = useApi();
   const docLai = useDocLaiHangCho();
   const chot = useRef(false);
   const [ban, setBan] = useState(false);
   const [mo, setMo] = useState(false);
   const [loi, setLoi] = useState<string | null>(null);
-  const nhan = loai === "duyet" ? `Duyệt đơn ${id}` : loai === "tu-choi" ? `Từ chối đơn ${id}` : "Mở lại nhận đơn";
+  const nhan = loai === "roi-quan" ? `Rời quán đơn ${id}` : loai === "duyet" ? `Duyệt đơn ${id}` : loai === "tu-choi" ? `Từ chối đơn ${id}` : "Mở lại nhận đơn";
   async function gui() {
     if (chot.current) return;
     chot.current = true;
@@ -24,12 +25,12 @@ function NutLenh({ id, loai, bao }: { id?: number; loai: "duyet" | "tu-choi" | "
     setLoi(null);
     try {
       const r = loai === "mo-lai" ? await call(api.POST("/shop-blind/reopening")) :
-        await call(api.POST(loai === "duyet" ? "/orders/{sales_order_id}/approval" : "/orders/{sales_order_id}/rejection", {
+        await call(api.POST(loai === "roi-quan" ? "/orders/{sales_order_id}/departure" : loai === "duyet" ? "/orders/{sales_order_id}/approval" : "/orders/{sales_order_id}/rejection", {
           params: { path: { sales_order_id: id! } },
         }));
       if (r.ok) {
         setMo(false);
-        bao(loai === "mo-lai" ? "Đã mở lại nhận đơn." : `Đã ${loai === "duyet" ? "duyệt" : "từ chối"} đơn ${id}.`);
+        bao(loai === "roi-quan" ? `Đơn ${id} đã rời quán.` : loai === "mo-lai" ? "Đã mở lại nhận đơn." : `Đã ${loai === "duyet" ? "duyệt" : "từ chối"} đơn ${id}.`);
         if (!await docLai()) bao("Đã lưu nhưng chưa đọc lại được. Đang hiện bản đọc trước; hãy đọc lại.");
       } else {
         const message = loiHangCho(r.failure);
@@ -82,7 +83,21 @@ export function HangCho() {
       <p>Tạo lúc {gio(don.created_at)}</p>
       {don.customer_phone && <p>{don.customer_phone}</p>}
       {don.customer_needed_at && <p>Cần lúc {gio(don.customer_needed_at)}</p>}
+      <DongMonDaGhi lines={don.lines} total={don.total_vnd} />
       <div className="flex flex-wrap gap-2"><NutLenh loai="duyet" id={don.sales_order_id} bao={setBao} /><NutLenh loai="tu-choi" id={don.sales_order_id} bao={setBao} /></div>
+    </section>)}
+    <h2 className="text-xl font-semibold">Đơn đang làm</h2>
+    {hang.data?.active_orders?.map((don) => <section key={don.sales_order_id} aria-label={`Đơn đang làm ${don.sales_order_id}`} className="space-y-2 rounded-lg border p-4">
+      <h3>Đơn {don.sales_order_id}</h3>
+      <p>{don.handover_code === "door_delivery" ? "Giao tận nơi" : "Khách tự đến lấy"}</p>
+      <p>{don.status === "delivering" ? "Đang giao" : don.status === "in_progress" ? "Đang làm" : "Đã xác nhận"}</p>
+      <p>{don.customer_name} {don.customer_phone}</p>
+      {don.delivery_address && <p>{don.delivery_address}</p>}
+      {don.contact_note && <p>{don.contact_note}</p>}
+      {don.customer_needed_at && <p>Cần lúc {gio(don.customer_needed_at)}</p>}
+      <DongMonDaGhi lines={don.lines} total={don.total_vnd} />
+      {don.unserved_jobs > 0 && <p>{don.unserved_jobs} việc chưa ra bàn</p>}
+      {don.handover_code === "door_delivery" && don.status === "in_progress" && <NutLenh loai="roi-quan" id={don.sales_order_id} bao={setBao} />}
     </section>)}
     <h2 className="text-xl font-semibold">Đơn hẹn</h2>
     {hen.isPending && <p role="status" className="animate-pulse">Đang tải đơn hẹn…</p>}

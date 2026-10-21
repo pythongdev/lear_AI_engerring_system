@@ -495,6 +495,32 @@ dùng-xong-bỏ, backend thật, `next dev`, Chromium): POS đứng quầy mở 
 còn; nội dung *Giao tận nơi · Tạo lúc 09:38 · 0903333333*; *Duyệt đơn 1* ⇒ *Đã duyệt đơn 1.*, đơn rời hàng chờ; trạm thấy việc của đơn 1.
 (4) owner đã ghi. (5) gate — khối bàn giao cuối phiên. **Còn lại:** đợt hai; F-074.
 
+**Nhận đợt hai** — 2026-10-20 · dẫn, test trước và duyệt: **Claude Code**; thi công: **Codex** (worktree `../lean_wt/P4-07b`, nhánh
+`codex/P4-07b`, base `eab46bb` + nền chưa commit của `T-218` đặt trong index), theo lời chủ repo *"còn gì chưa làm thì bạn yêu cầu codex làm
+nốt"*. F-074 đã sửa ở `T-218` nên hợp đồng đủ. **Claude chốt hình màn** (không phải luật quán): hàng chờ bày `lines` · `total_vnd` của từng
+đơn chờ; mục *Đơn đang làm* bày `active_orders`, nút *Rời quán* chỉ ở đơn `door_delivery` `in_progress`; `/quay/goi-mon` soạn lượt gọi
+(`POST /table-orders`: chọn bàn, món, một lựa chọn mỗi nhóm — chọn sẵn `is_default`, số lượng, *Mang về*); `/quay/dien-thoai` soạn đơn
+điện thoại (`POST /phone-orders`: cách trao, số điện thoại, địa chỉ khi giao tận nơi, giờ cần hàng đọc theo giờ quán, tên, ghi chú). Bộ
+soạn món dùng chung cho `P4-10`; giá dòng là `menu.prices` backend trả, tổng chỉ là `total_vnd` sau khi gửi. **Combo ở bộ soạn để lượt sau.**
+
+*Nghiệm thu đợt hai* (viết trước): (1) `fe/src/app/quay/goi-mon.test.tsx` (Claude, 12 ca) xanh không sửa; `hang-cho.test.tsx` ·
+`quay.test.tsx` · `realtime.test.tsx` xanh; (2) `check-fe-rules` xanh; (3) chạy thật: POS tạo lượt gọi một bàn và một đơn điện thoại giao
+tận nơi qua màn, backend thật, việc xuống trạm; đơn ấy hiện ở *Đơn đang làm*; (4) `01-khung-fe.md` §1 · §2 · §4; (5) gate xanh.
+
+**Bàn giao đợt hai** — 2026-10-21 · thực hiện: **Codex** `gpt-6-astra` (worktree `../lean_wt/P4-07b`); test trước, duyệt và tích hợp:
+**Claude Code**, nhánh `P4A-01`. File: `quay/_components/hang-cho.tsx` · `du-lieu-hang-cho.ts` · `quay/page.tsx` · mới `soan-don.tsx` ·
+`du-lieu-soan-don.ts` · `quay/goi-mon/page.tsx` · `quay/dien-thoai/page.tsx` · `components/shared/bo-soan-mon.tsx` · `dong-mon-da-ghi.tsx` ·
+`01-khung-fe.md` §1 · §2 · §4 (Claude gộp tay cạnh dòng `P4-09`); `quay/goi-mon.test.tsx` (Claude). **Claude sửa lúc duyệt:** (a) dòng
+`coGia` của test đổi regex sang so chuỗi cùng nghĩa — `check-fe-rules` đọc `|` trong regex literal là phép tính với tên tiền; (b) chạy thật
+cho thấy rời quán đơn giao tận nơi bị backend từ chối `delivery_served_mark_undecided` (**S-6** chưa có lời, kế hoạch pha 4 §5: màn bày lời
+ấy) ⇒ `loiHangCho` thêm câu *Chưa rời quán được: quán chưa chốt lúc nào ghi món đã ra…* và một ca test. *Bằng chứng:* (1) 13 ca
+`goi-mon.test.tsx` xanh; clone chính `379 passed` trước ca S-6, test quầy `52 passed` sau; `tsc` · `lint` sạch; (2) `check-fe-rules: PASS`;
+(3) chạy thật 2026-10-21 (database dùng-xong-bỏ `p409run`, backend thật, `next dev`, Chromium): *Gọi món tại bàn* bàn 5 · *Suất giò* ⇒
+*Đã gửi lượt gọi 5 · tổng 25.000đ*, trạm thêm 10 việc; *Đơn điện thoại* giao tận nơi cần hàng sau 10 phút ⇒ *Đã tạo đơn 4 · tổng 25.000đ*,
+đơn nổ ngay, hiện ở *Đơn đang làm 4* kèm địa chỉ, món, tổng, *10 việc chưa ra bàn* và nút *Rời quán đơn 4*; bấm ⇒ câu S-6 ở trên;
+(4) đã ghi; (5) gate dưới. **Còn lại (ngoài đợt này):** bộ soạn chưa soạn combo và chưa xét `prerequisite_option_ids` (tổ hợp không có
+trong `prices` thì không cho gửi, không gửi sai); rời quán đơn giao chờ **S-6**.
+
 [↑ đầu file](#top)
 
 ---
@@ -536,6 +562,30 @@ Claude trước = sau; worktree `341 passed`; test có răng — thêm một nú
 tài khoản vai `trang_banh` vào `/tram` ⇒ hai trạm, `main` có **0** nút, *Cập nhật lúc 09:38:24*; *Ra bàn Đơn 1* số 1 khi chưa ai bấm mẻ ⇒
 *Số ra bàn vượt số đã làm* (`served_quantity_exceeds_made`) — đúng chỗ F-073 chặn. **Còn lại:** bốn việc chờ F-073; nút *Ra bàn* đang xếp
 thành một hàng dưới bảng, chưa đặt cạnh từng phần.
+
+**Nhận lượt hai** — 2026-10-20 · dẫn, test trước và duyệt: **Claude Code**; thi công: **Codex** (worktree `../lean_wt/P4-09b`, nhánh
+`codex/P4-09b`, base `eab46bb` — đã có `GET /counter/station-jobs` của `T-217`), theo lời chủ repo *"còn gì chưa làm thì bạn yêu cầu codex làm
+nốt"*. **Claude chốt hình màn** (không phải luật quán): nút *Bấm mẻ* theo hàng gom còn việc `pending`, hộp thoại tick từng việc; *Lùi mẻ*
+theo mẻ, khoá khi `has_served_units`, phải xác nhận; *Chuyển việc* chỉ việc `transferable`, chọn một ứng viên backend trả; *Ghi làm sai*
+chỉ việc đơn huỷ `made` · `served` chưa có ghi chú, ghi chú tuỳ chọn gửi nguyên văn. Mọi mã lấy từ đường đọc, không suy từ bảng gom.
+
+*Nghiệm thu lượt hai* (viết trước): (1) `fe/src/app/quay/san-xuat/thao-tac-me.test.tsx` (Claude, 13 ca) xanh không sửa, dữ liệu mẫu
+`viecMau` · `ungVienMau`; ca đầu `san-xuat.test.tsx` đổi thành *đọc việc trạm lỗi thì không nút*; `tram.test.tsx` xanh — bảng trạm vẫn
+không một nút; (2) `check-fe-rules` xanh; (3) chạy thật: bấm mẻ rồi lùi đúng mẻ ấy qua màn, backend thật; (4) `01-khung-fe.md` §1 · §2;
+(5) gate xanh.
+
+**Bàn giao lượt hai** — 2026-10-20 · thực hiện: **Codex** `gpt-6-astra` (worktree `../lean_wt/P4-09b`, base `eab46bb`), hết hạn mức trước
+khi viết báo cáo nên **không có lời tự khai**; duyệt và tích hợp: **Claude Code**, nhánh `P4A-01`. File: `san-xuat/san-xuat.tsx` ·
+`hop-thoai-ra-ban.tsx` (bỏ dòng chú F-073) · mới `du-lieu-me.ts` · `hop-thoai-me.tsx` · `components/shared/du-lieu-san-xuat.ts` (kiểu
+`Pick` cho khoá gom) · `01-khung-fe.md` §1 · §2. Claude đọc diff: mọi mã việc · mã mẻ lấy từ `GET /counter/station-jobs`, ứng viên chuyển
+từ `GET /station-jobs/{id}/transfer-candidates`, không suy từ bảng gom; *Lùi mẻ* tắt khi `has_served_units`. *Bằng chứng:* (1)
+`thao-tac-me.test.tsx` · `san-xuat.test.tsx` · `mau-san-xuat.ts` giống hệt bản Claude (`diff -q`); clone chính `367 passed`, `tsc` ·
+`eslint` sạch; (2) · (5) gate ở clone chính *PASS gate không cổng nào đỏ*, kể cả `be-check`; (4) đã ghi. (3) Chạy thật 2026-10-21 (Claude Code; database dùng-xong-bỏ
+compose `p409run` cổng 5499, backend thật cổng 8099, `next dev` 3099, Chromium): POS đăng nhập đứng quầy, một lượt gọi bàn 3 ⇒ 10 việc
+`pending`; `/quay/san-xuat` ⇒ *Bấm mẻ* · tick một việc · *Ghi mẻ* ⇒ *Đã ghi mẻ 2.*; *Lùi mẻ 2* · *Xác nhận lùi mẻ* ⇒ *Đã lùi mẻ 2.*, đọc lại
+còn 0 nút lùi. **Claude sửa khi chạy thật:** cùng một thứ chờ ở hai trạm (gấp · tráng) cho hai nút *Bấm mẻ Bánh cuốn · Thịt · Thường* trùng
+tên đứng cạnh nhau ⇒ `san-xuat.tsx` xếp nút bấm mẻ theo nhóm `role="group"` *Trạm …*, tên nút giữ nguyên; chạy lại thấy ba nhóm
+`gap_banh` · `trang_banh` · `canh`, test quầy · trạm `44 passed`. **Còn lại (ngoài lượt này):** nút *Ra bàn* vẫn xếp một hàng dưới bảng.
 
 [↑ đầu file](#top)
 

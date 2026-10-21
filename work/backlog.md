@@ -96,8 +96,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] P4-07 **Màn quầy: nhận đơn — đợt một, hàng chờ** — duyệt · từ chối, tạm dừng · quán mù kèm mở lại, nhắc và tự nhả đơn hẹn; soạn lượt gọi POS và đơn điện thoại, bày món · tiền và nút *rời quán* đang làm ở đợt hai (Codex, test trước của Claude) — hợp đồng của `T-218` — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-07)
-- [ ] P4-09 **Sản xuất theo mẻ — phần làm được** — bảng trạm chỉ đọc, ra bàn ở quầy; bấm mẻ · lùi mẻ · chuyển · ghi làm sai đang làm ở lượt hai (Codex, test trước của Claude) — đường đọc của `T-217` — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công · [chi tiết](backlog_FE.md#p4-09)
 - [ ] T-220 **Bảng từng bàn trang Vận hành đọc rõ trên điện thoại** — ở màn ≤ 640px, bảng `#bang-ban` của `KhoiBanDangPhucVu` trong `van_hanh/van-hanh.html` đổi thành một thẻ mỗi bàn (nhãn · giá trị), không cuộn ngang, không chữ nào gãy dòng xấu; máy tính giữ bảng như cũ; không đổi số, không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm bạn kiểm tra"* · [chi tiết](#t-220)
 
 
@@ -112,6 +110,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] P4-07 **Màn quầy: nhận và ghi đơn** — đợt một hàng chờ (duyệt · từ chối, tạm dừng · quán mù, đơn hẹn); đợt hai bày món · tiền, đơn đang làm · rời quán (bị chặn bởi S-6, màn nói rõ), `/quay/goi-mon` · `/quay/dien-thoai`; combo ở bộ soạn để sau — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công — 2026-10-21 · [chi tiết](backlog_FE.md#p4-07)
+- [x] P4-09 **Sản xuất theo mẻ — phần làm được** — bảng trạm chỉ đọc, ra bàn ở quầy; bấm mẻ · lùi mẻ · chuyển · ghi làm sai (lượt hai, Codex; chạy thật 2026-10-21) — đường đọc của `T-217` — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công — 2026-10-21 · [chi tiết](backlog_FE.md#p4-09)
 - [x] T-218 **Hàng chờ quầy bày món, tiền và đơn đang làm (F-074)** — `GET /counter/queue` thêm `lines` · `total_vnd` đọc từ ảnh chụp cho mỗi đơn chờ, và `active_orders` (đơn ngoài bàn `confirmed` · `in_progress` · `delivering`, kèm cách trao, liên hệ, tiền, số việc chưa ra bàn); hợp đồng `0.47.0` — L2 (hợp đồng) — mở và nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công — 2026-10-20 · [chi tiết](#t-218)
 - [x] T-219 **Bản thiết kế tĩnh trang Vận hành của chủ quán** — một trang HTML mới trong `docs/product/4-fe/thiet_ke/chu_quan/van_hanh/`: bàn đang phục vụ · sắp phục vụ · trống, từng bàn đặt ban đầu · đã ra · còn thiếu, bánh theo nhân và bát canh, tiền đơn và tiền bánh đã ra, bảng tổng còn thiếu, công cụ cộng thử bàn sắp phục vụ vào bàn đang phục vụ để ghép đơn; số minh hoạ, là đề xuất chứ không phải hợp đồng; không đổi `fe/` — L1 — mở và nhận 2026-10-20 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm bạn kiểm tra"* — 2026-10-20 · [chi tiết](#t-219)
 - [x] T-217 **Đường đọc việc trạm và mẻ cho quầy (F-073)** — `GET /counter/station-jobs` lớp `quay`: từng việc trạm còn sống kèm khoá gom, mẻ còn hiệu lực, ghi làm sai, cờ chuyển được; mẻ chưa lùi kèm việc và cờ đã ra bàn; khoá gom bản thứ ba dưới `TestI019` — L2 (hợp đồng) — mở và nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm 2 việc trên bạn kiểm tra"* — 2026-10-20 · [chi tiết](#t-217)
