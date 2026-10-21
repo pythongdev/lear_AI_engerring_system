@@ -886,6 +886,9 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
      tiền rời quán.
 8. **Nút "Tạm dừng nhận đơn" của chủ quán có ưu tiên CAO HƠN giờ mở cửa** — dùng khi hết nguyên
    liệu giữa buổi. Ngoài giờ bán, web khoá nút đặt và hiện *"Quán mở cửa 6h–11h sáng"*.
+   Lúc quán đang tạm dừng, web hiện *"Quán đang tạm dừng nhận đơn. Bạn vui lòng quay lại sau ít phút
+   hoặc gọi hotline 0382688666 để đặt."* (2026-10-21, chủ repo chọn trong hội thoại, `P4-10`. *Lời
+   chọn:* câu là chữ Claude viết sẵn trong phương án *"Câu trung tính + hotline"*; số hotline lấy ở §1.)
 9. **Một khoản tiền gắn với đúng MỘT đơn vị tính tiền** — hoặc một phiên bàn, hoặc một đơn lẻ,
    không bao giờ cả hai. ⇒ **báo cáo doanh thu phải cộng từ CẢ HAI nguồn**; bỏ sót một nguồn là
    báo cáo thiếu tiền.
@@ -953,6 +956,9 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
       khách** (chủ quán chốt **2026-09-04**, trả lời **U-035** — nguyên văn: *"không cho đặt qua web
       cho đặt qua hotline và ghi giấy trực tiếp với pos, trên web có dòng thông báo"*). Khách muốn
       đặt thì **gọi hotline**; quán **ghi giấy trực tiếp cùng POS** như mọi ca ở mục này.
+      Dòng thông báo ấy là *"Quán tạm chưa nhận đơn qua web. Bạn vui lòng gọi hotline 0382688666 để
+      đặt."* — không nói lý do kỹ thuật cho khách (2026-10-21, chủ repo chọn trong hội thoại, `P4-10`.
+      *Lời chọn:* câu là chữ Claude viết sẵn trong phương án *"Mời gọi hotline"*.)
       - Đây là **điều kiện thứ ba** để một đơn được tạo, đứng cạnh *trong giờ bán* và *chủ quán
         không bấm tạm dừng* (§6.8) — nay ở `quality/invariants.md` **I-008**. Nó khác hai điều kiện
         kia ở một chỗ: hai điều kiện kia do **người** bật, điều kiện này thì **không ai bấm được**,
@@ -1470,6 +1476,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-19 | Chủ repo chọn trong hội thoại (T-210): topping là **thêm lựa chọn vào nhóm có sẵn**; chủ quán **tích** lựa chọn mới có cho chọn nhóm khác (lượng nhân) không; phụ thu **như lựa chọn cũ** (mỗi phần nhận nhân); **ẩn có lý do, bật lại được** | §8.9 |
 | 2026-10-19 | Chủ repo trả lời trong hội thoại (T-205, hai vế của U-094): địa chỉ *"ngõ 332 hoàng công chất số 14b6"*, mở *"tất cả các ngày trừ tết âm lịch từ 6-10h30"*. Hỏi lại vì lệch §1 (06:00–11:00) — chủ repo chọn **giữ 06:00–11:00**; ngày nghỉ Tết chọn **mỗi năm chủ quán báo**. *Lời chọn:* phường, quận **Phú Diễn, Bắc Từ Liêm, Hà Nội** là chữ Claude viết sẵn trong phương án *"Chưa có tên miền"*, chủ repo chọn phương án ấy — chưa ai gõ ra | §1 |
 | 2026-10-19 | Chủ repo chọn trong hội thoại (T-204): chưa có lần nhập hoặc lần nhập gần nhất ghi 0 ⇒ **luôn nhắc POS kiểm tra**; dùng trước lần nhập đầu mà đã có lần nhập ⇒ **so tỉ lệ như thường** (đóng U-102) | §8.4 |
+| 2026-10-21 | Chủ repo chọn trong hội thoại (`P4-10`): lúc quán tạm dừng, web hiện **câu trung tính kèm hotline**; lúc quán mất kết nối, dòng thông báo **mời gọi hotline, không nói lý do kỹ thuật** — cả hai là *lời chọn*, chữ do Claude viết sẵn trong phương án | §6.8 · §6.11 |
 | 2026-10-18 | Chủ repo trả lời ba vế thi công của mục tổng quan (T-199): tạm tính phần thuộc combo **không tính giá thành phần**; *bánh* của tiến độ là **bánh cuốn và bánh trứng**; **offline là bán hàng tại quán** (đóng **S-10**, suy ra 2026-10-16: *offline* gồm cả giao hàng đặt qua điện thoại — lời mới hẹp hơn: chỉ tại quán) | §8.6 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**

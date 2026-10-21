@@ -110,6 +110,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] P4-10 **Khách: QR tại bàn và đơn web** — `/ban/[ma]` gửi lượt gọi QR, `/dat-mon` đơn giao · mang đi · đặt trước; menu lấy ở server từng request, tổng là tính thử của cả giỏ, gửi lại không nhân đôi (`I-024`), câu tạm dừng · mất kết nối chủ repo chọn 2026-10-21 — L2 — nhận 2026-10-21 · Claude Code (dẫn, test trước, duyệt), Codex thi công — 2026-10-21 · [chi tiết](backlog_FE.md#p4-10)
+- [x] T-221 **Bộ soạn món soạn được combo và theo lựa chọn phụ thuộc** — phần còn lại của đợt hai `P4-07`: nhóm có điều kiện chỉ hiện khi điều kiện được chọn; combo chọn nhân từng suất, giá dòng combo từ `POST /price-quotes`; hàng chờ bày suất của combo — L1 — nhận 2026-10-21 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex thực hiện 2 việc trên bạn kiểm tra"* — 2026-10-21 · [chi tiết](#t-221)
 - [x] P4-07 **Màn quầy: nhận và ghi đơn** — đợt một hàng chờ (duyệt · từ chối, tạm dừng · quán mù, đơn hẹn); đợt hai bày món · tiền, đơn đang làm · rời quán (bị chặn bởi S-6, màn nói rõ), `/quay/goi-mon` · `/quay/dien-thoai`; combo ở bộ soạn để sau — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công — 2026-10-21 · [chi tiết](backlog_FE.md#p4-07)
 - [x] P4-09 **Sản xuất theo mẻ — phần làm được** — bảng trạm chỉ đọc, ra bàn ở quầy; bấm mẻ · lùi mẻ · chuyển · ghi làm sai (lượt hai, Codex; chạy thật 2026-10-21) — đường đọc của `T-217` — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công — 2026-10-21 · [chi tiết](backlog_FE.md#p4-09)
 - [x] T-218 **Hàng chờ quầy bày món, tiền và đơn đang làm (F-074)** — `GET /counter/queue` thêm `lines` · `total_vnd` đọc từ ảnh chụp cho mỗi đơn chờ, và `active_orders` (đơn ngoài bàn `confirmed` · `in_progress` · `delivering`, kèm cách trao, liên hệ, tiền, số việc chưa ra bàn); hợp đồng `0.47.0` — L2 (hợp đồng) — mở và nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công — 2026-10-20 · [chi tiết](#t-218)
@@ -443,6 +445,41 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-221"></a>
+### T-221 — Bộ soạn món chưa soạn được combo và chưa theo lựa chọn phụ thuộc
+
+**Yêu cầu:** chủ repo 2026-10-21 *"P4-07 đợt hai … yêu cầu codex thực hiện 2 việc trên bạn kiểm tra"*, rồi chọn trong câu hỏi có sẵn phương án:
+*"Combo + lựa chọn phụ thuộc"*. Đợt hai `P4-07` đã xong (`60878db`) nhưng để lại hai chỗ ([chi tiết](backlog_FE.md#p4-07)): bộ soạn dùng chung
+`components/shared/bo-soan-mon.tsx` hiện mọi nhóm lựa chọn kể cả nhóm có điều kiện, và chưa soạn combo. **Mức:** L1 — backend vẫn kiểm mọi tổ hợp và
+mọi suất (`03-ham-gia.md` §1 · §1.1), màn sai thì đơn bị từ chối chứ không sai tiền; không đổi hợp đồng, dữ liệu.
+
+**Claude chốt hình màn** (không phải luật quán): nhóm có `prerequisite_option_ids` chỉ hiện khi dòng đã chọn một lựa chọn trong tập ấy; ẩn đi thì bỏ
+mã của nó khỏi `option_ids`; hiện lại thì chọn sẵn `is_default` nếu có. Nút *Thêm combo …* theo `menu.combos`; dòng combo có *Số lượng* là số combo, mỗi
+món của combo bày `quantity × số combo` nhóm *{món} suất k*, mỗi suất chọn riêng theo luật trên (`shop-facts.md` §8.9 lượt tám); gửi
+`{menu_combo_id, quantity, portions}` — suất cùng tổ hợp gom một phần tử — kèm `is_takeaway` ở lượt gọi bàn. Giá dòng combo là `line_total_vnd` của
+`POST /price-quotes` cho riêng dòng ấy; chưa có giá thì chưa gửi được. Dòng món giữ giá `menu.prices`, không gọi tính thử. `DongMonDaGhi` bày suất của
+dòng combo.
+
+*Nghiệm thu* (viết trước, 2026-10-21): (1) `fe/src/app/quay/combo.test.tsx` (Claude, 11 ca, md5 `ca0ccf77…`) xanh không sửa; `goi-mon.test.tsx` ·
+`hang-cho.test.tsx` · `quay.test.tsx` xanh; (2) `check-fe-rules` xanh; (3) chạy thật: POS gửi một lượt gọi có combo qua màn, backend thật, giá màn
+bày bằng `total_vnd` backend trả; (4) `01-khung-fe.md` ghi bộ soạn biết combo; (5) `./scripts/gate.sh` xanh.
+
+**Bàn giao** — 2026-10-21 · thực hiện: **Codex** `gpt-6-astra` (worktree `../lean_wt/T-221`, nhánh `codex/T-221`, base `9ea2f46`, đã gỡ); báo cáo
+của Codex mất khi phiên Claude nối lại (scratchpad dựng mới) nên **không có lời tự khai**; test trước, duyệt và tích hợp: **Claude Code**, nhánh
+`P4A-01`. File: `components/shared/bo-soan-mon.tsx` (luật nhóm `chonNhom` dùng chung cho món lẻ và từng suất, `dongGui`, `useGiaCombo`,
+`loiCombo`) · `dong-mon-da-ghi.tsx` (bày suất) · `quay/_components/soan-don.tsx` · `du-lieu-soan-don.ts` · `01-khung-fe.md` §2 · §4;
+`quay/combo.test.tsx` (Claude). **Claude sửa lúc duyệt:** chú thích tiếng Anh trong `chonNhom` viết lại tiếng Việt. *Bằng chứng:* (1) md5 test
+trước = sau (`ca0ccf77…`); clone chính `391 passed`; test có răng — bỏ luật nhóm có điều kiện ⇒ `3 failed`, bày giá combo thay số tính thử ⇒
+`4 failed`; `tsc` · `eslint` sạch; (2) `check-fe-rules: PASS`; (3) chạy thật 2026-10-21 (Claude Code; database dùng-xong-bỏ compose `t221run`
+cổng 5499, backend thật cổng 8098 với `BANHCUON_SHOP_TZ=UTC` để giờ máy 08:42 UTC rơi vào giờ bán, `next dev` 3098, Chromium; combo thử *2 Bánh
+cuốn + 1 Canh* giá 55.000đ chủ quán lập qua `POST /menu-combos`): POS đứng quầy, *Bánh cuốn* chọn Chay ⇒ nhóm *Lượng nhân* biến mất; combo bày
+*Bánh cuốn suất 1 · 2 · Canh bánh cuốn suất 1*, *Giá dòng 55.000đ* từ tính thử (suất 2 sang Chay vẫn 55.000đ — cặp chưa đặt mức là 0đ, `U-096`);
+gửi ⇒ `201`, *Đã gửi lượt gọi 1 · tổng 58.000đ*; thân gửi gom hai suất khác tổ hợp, không giá; (4) đã ghi; (5) gate *PASS không cổng nào đỏ*,
+có `fe-check`. **Còn lại:** bộ soạn chưa tự kiểm suất thiếu lựa chọn trước khi tính thử — backend từ chối `option_combination_invalid` và màn bày
+mã; chưa gây sai tiền.
+
+[↑ đầu file](#top)
 
 <a id="t-220"></a>
 ### T-220 — Bảng từng bàn của trang Vận hành khó đọc trên điện thoại

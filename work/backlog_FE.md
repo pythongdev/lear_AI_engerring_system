@@ -518,8 +518,8 @@ cho thấy rời quán đơn giao tận nơi bị backend từ chối `delivery_
 (3) chạy thật 2026-10-21 (database dùng-xong-bỏ `p409run`, backend thật, `next dev`, Chromium): *Gọi món tại bàn* bàn 5 · *Suất giò* ⇒
 *Đã gửi lượt gọi 5 · tổng 25.000đ*, trạm thêm 10 việc; *Đơn điện thoại* giao tận nơi cần hàng sau 10 phút ⇒ *Đã tạo đơn 4 · tổng 25.000đ*,
 đơn nổ ngay, hiện ở *Đơn đang làm 4* kèm địa chỉ, món, tổng, *10 việc chưa ra bàn* và nút *Rời quán đơn 4*; bấm ⇒ câu S-6 ở trên;
-(4) đã ghi; (5) gate dưới. **Còn lại (ngoài đợt này):** bộ soạn chưa soạn combo và chưa xét `prerequisite_option_ids` (tổ hợp không có
-trong `prices` thì không cho gửi, không gửi sai); rời quán đơn giao chờ **S-6**.
+(4) đã ghi; (5) gate dưới. **Còn lại (ngoài đợt này):** ~~bộ soạn chưa soạn combo và chưa xét `prerequisite_option_ids`~~ — xong ở
+`T-221` 2026-10-21 ([chi tiết](backlog.md#t-221)); rời quán đơn giao chờ **S-6**.
 
 [↑ đầu file](#top)
 
@@ -597,10 +597,42 @@ tên đứng cạnh nhau ⇒ `san-xuat.tsx` xếp nút bấm mẻ theo nhóm `ro
 **Phụ thuộc** · bước 10/12 · **cần xong trước:** `P4-05` · `P4-06`
 
 **Goal:** quét mã, gọi món, gửi lượt (`I-024` — gửi lại không nhân đôi); đơn mang đi · giao · đặt trước. Giá khách
-thấy là giá tính thử của backend. Chữ khách đọc khi quán tạm dừng nhận đơn chưa chốt — hỏi khi dựng
-(`master_plan/shop-facts.md`, `I-008`).
+thấy là giá tính thử của backend. Chữ khách đọc khi quán tạm dừng nhận đơn **chốt 2026-10-21** (chủ repo
+chọn trong hội thoại) — nguyên câu ở `master_plan/shop-facts.md` §6.8; luật chặn: `I-008`.
 
-**Nhận việc:** —
+**Nhận việc** — 2026-10-21 · dẫn, test trước và duyệt: **Claude Code**; thi công: **Codex** (worktree `../lean_wt/P4-10`, nhánh `codex/P4-10`,
+base `346f0c7` + nền chưa commit của `T-221` đặt trong index), theo lời chủ repo *"P4-10, câu chữ khi quán tạm dừng nhận đơn … yêu cầu codex
+thực hiện 2 việc trên bạn kiểm tra"*. Cùng ngày chủ repo chọn câu tạm dừng và câu mất kết nối (`shop-facts.md` §6.8 · §6.11). **Claude chốt
+hình màn** (không phải luật quán): `/ban/[ma]` — khách QR; `/dat-mon` — đơn web `delivery` · `pickup`. Page là server component lấy
+`GET /qr-codes/{code}` · `GET /menu` bằng `fetch` `cache: "no-store"` cho từng request (**ADR-102** điểm 1 · 3), không cú pháp cache của Next;
+màn khách chỉ thấy nhãn bàn (`I-023`). Bộ soạn là `BoSoanMon` của `T-221`, không *Mang về* ở QR (khách tại bàn — giữ hẹp, quầy vẫn có). Tổng khách
+thấy là `total_vnd` của `POST /price-quotes` cho cả giỏ hiện tại; gửi chỉ mở khi lần tính thử mới nhất xong. Gửi theo khuôn `SoanDon` (một
+`submission_code` mỗi lần bấm, giữ cho *Gửi lại*, `I-024`). Giỏ nháp ở Zustand `fe/src/lib/nhap-khach.ts` theo khoá ngữ cảnh (mã QR · đơn web),
+chỉ mã món, số lượng, lựa chọn (**ADR-102** điểm 4). Ba lời từ chối theo nguyên văn shop-facts; lời khác do Claude chọn, chờ chủ quán duyệt.
+Không thêm `/dat-mon` vào `PUBLIC_ROUTES` ở lượt này.
+
+*Nghiệm thu* (viết trước, 2026-10-21): (1) `fe/src/app/ban/khach-qr.test.tsx` (8 ca) · `fe/src/app/dat-mon/dat-mon.test.tsx` (7 ca) · dữ liệu mẫu
+`fe/src/app/ban/mau-khach.ts` do Claude viết, xanh không sửa (md5 `125a759a…` · `2b1c30aa…` · `4488d4fe…`); test cũ xanh; (2) `check-fe-rules` xanh;
+(3) chạy thật cùng backend: khách mở `/ban/{mã}` của một bàn, gửi một lượt; gửi lại cùng dấu không sinh đơn thứ hai; chủ quán bật tạm dừng ⇒
+`/dat-mon` bày đúng câu §6.8; (4) `01-khung-fe.md` §1 · §2 · §4; (5) `./scripts/gate.sh` xanh.
+
+**Bàn giao** — 2026-10-21 · thực hiện: **Codex** `gpt-6-astra` (worktree `../lean_wt/P4-10`, đã gỡ); duyệt, tích hợp và chạy thật: **Claude Code**,
+nhánh `P4A-01`. Codex không chạy được Vitest — `node_modules` của worktree là link sang clone chính, ngoài vùng sandbox cho ghi (`EPERM` ở
+`.vite-temp`) — nên gate của Codex đỏ ở bước test; Claude chạy lại. File mới: `app/ban/[ma]/page.tsx` · `app/dat-mon/page.tsx` (server component,
+`fetch` `no-store`) · `app/ban/_components/phieu-khach.tsx` (bộ soạn, tính thử cả giỏ, gửi giữ dấu) · `loi-khach.ts` · `lib/nhap-khach.ts`
+(`useNhapKhach`, `dungLai`); `01-khung-fe.md` §1 · §2 · §4; test của Claude `ban/khach-qr.test.tsx` · `dat-mon/dat-mon.test.tsx` ·
+`ban/mau-khach.ts`. *Bằng chứng:* (1) md5 ba file trước = sau; clone chính `406 passed` (thêm 15 ca); test có răng — bỏ `no-store` ở page QR ⇒
+`1 failed`; đột biến bỏ vế *không đang tính* ở nút gửi **sống sót**, vì khoá tính thử gồm nội dung giỏ nên giỏ đổi thì nút đã khoá tới khi tính
+xong — vế ấy chỉ còn tác dụng khi đọc lại cùng giỏ; (2) `check-fe-rules: PASS`, `tsc` · `eslint` sạch; (3) chạy thật 2026-10-21 (Claude Code;
+database dùng-xong-bỏ compose `p410run` cổng 5499, backend thật 8098 với `BANHCUON_SHOP_TZ=UTC` để 09:0x UTC rơi vào giờ bán, `next dev` 3098,
+Chromium; POS đứng quầy giữ `/quay` mở; mã QR bàn 5 chủ quán cấp qua `POST /dining-tables/5/qr-code`): HTML server của `/ban/{mã}` đã có món
+và nhãn bàn; khách gửi lượt ⇒ `201` đơn 5, *Đã gửi lượt gọi · tổng 0đ* (Canh giá 0đ trong dữ liệu mồi); phát lại đúng thân và dấu ⇒ `200` cùng
+đơn 5, không đơn thứ hai (`I-024`); chủ quán `POST /order-intake/pause` ⇒ `/dat-mon` đến lấy ⇒ `409 order_intake_paused`, khách đọc đúng câu
+§6.8; mở lại ⇒ bấm *Đặt đơn* lần nữa ⇒ `201` đơn 6; (4) đã ghi; (5) gate *PASS không cổng nào đỏ*, có `fe-check`. **Chữ khách đọc Codex tự
+viết, chờ chủ quán duyệt:** *Bạn vui lòng quét lại mã trên bàn.* · *Chưa đọc được bàn / menu. Bạn vui lòng tải lại trang.* · *Chưa xác nhận được
+kết quả. Bạn có thể bấm Gửi lại.* · *Chưa gửi được phiếu. Bạn vui lòng kiểm tra lại thông tin.* · *Chưa tính được tổng / giá. Bạn vui lòng thử
+lại.* **Còn lại:** `h1` màn QR là nhãn trơ của bàn (*5*); `/dat-mon` chưa vào `PUBLIC_ROUTES`; khoảng trống hợp đồng `T-216` nêu (menu không
+danh mục · mô tả · ảnh, không trường trả trước) đứng nguyên.
 
 [↑ đầu file](#top)
 
