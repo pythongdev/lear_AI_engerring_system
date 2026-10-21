@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { LoaderCircle } from "lucide-react";
-import { BoSoanMon, giaDong, type DongSoan } from "@/components/shared/bo-soan-mon";
+import { BoSoanMon, giaDong, dongGui, useGiaCombo, type DongSoan } from "@/components/shared/bo-soan-mon";
 import { tien } from "@/components/shared/dong-mon-da-ghi";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -37,7 +37,8 @@ export function SoanDon({ dienThoai = false }: { dienThoai?: boolean }) {
   const [choGuiLai, setChoGuiLai] = useState(false);
   const chot = useRef(false);
   const phieu = useRef<Phieu | null>(null);
-  const duMon = lines.length > 0 && lines.every((d) => Number.isInteger(d.quantity) && d.quantity > 0 && giaDong(d));
+  const quotes = useGiaCombo(lines);
+  const duMon = lines.length > 0 && lines.every((d, i) => Number.isInteger(d.quantity) && d.quantity > 0 && (d.combo ? quotes[i].isSuccess && !quotes[i].isFetching : giaDong(d)));
   const hopLe = duMon && (dienThoai ? !!(cach && sdt.trim() && gioCan && (cach !== "door_delivery" || diaChi.trim())) : !!banId);
 
   async function gui() {
@@ -49,7 +50,7 @@ export function SoanDon({ dienThoai = false }: { dienThoai?: boolean }) {
     try {
       if (!phieu.current) {
         const submission_code = crypto.randomUUID();
-        const dong = lines.map((d) => ({ menu_item_id: d.mon.menu_item_id, quantity: d.quantity, option_ids: [...d.option_ids] }));
+        const dong = lines.map(dongGui);
         phieu.current = dienThoai ? { loai: "dien-thoai", body: {
           submission_code, handover_code: cach as "door_delivery" | "shop_pickup", customer_phone: sdt,
           delivery_address: cach === "door_delivery" ? diaChi : null,
@@ -107,7 +108,7 @@ export function SoanDon({ dienThoai = false }: { dienThoai?: boolean }) {
           <label className="block">Tên khách<Input value={ten} onChange={(e) => setTen(e.target.value)} /></label>
           <label className="block">Ghi chú<Input value={ghiChu} onChange={(e) => setGhiChu(e.target.value)} /></label>
         </>}
-        {menu.data && <BoSoanMon items={menu.data.items} lines={lines} onChange={setLines} mangVe={!dienThoai} />}
+        {menu.data && <BoSoanMon quotes={quotes} combos={menu.data.combos} items={menu.data.items} lines={lines} onChange={setLines} mangVe={!dienThoai} />}
       </fieldset>
       <Button type="submit" disabled={dangGui || (!choGuiLai && !hopLe)} className="min-h-11">
         {dangGui ? <><LoaderCircle aria-hidden className="animate-spin" />Đang gửi…</> : choGuiLai ? "Gửi lại" : dienThoai ? "Gửi đơn điện thoại" : "Gửi lượt gọi"}

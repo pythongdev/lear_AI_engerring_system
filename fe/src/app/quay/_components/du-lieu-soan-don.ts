@@ -1,5 +1,6 @@
 "use client";
 
+import { loiCombo } from "@/components/shared/bo-soan-mon";
 import { useQuery } from "@tanstack/react-query";
 import { call, type ApiFailure } from "@/lib/api/client";
 import { useApi } from "@/lib/api/provider";
@@ -15,6 +16,8 @@ export function useMenuSoan() {
 export function loiSoanDon(f: ApiFailure) {
   if (f.kind === "no_response") return "Chưa xác nhận được kết quả… Bấm Gửi lại để kiểm tra cùng lượt gửi.";
   if (f.kind === "unexpected") return "Phản hồi không đúng hợp đồng. Chưa xác nhận được kết quả…";
+  const combo = loiCombo(f.code);
+  if (combo) return combo;
   switch (f.code) {
     case "dining_table_needs_cleaning": return "Bàn đang chờ dọn. Phiếu vẫn được giữ lại.";
     case "menu_item_discontinued": return "Món đã ngừng bán. Hãy kiểm tra lại phiếu.";
