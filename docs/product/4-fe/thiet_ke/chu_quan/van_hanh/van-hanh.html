@@ -195,10 +195,49 @@ tailwind.config = {
   .ban-cot .dong + .dong { margin-top: .25rem; }
   .ban-cot .co-rau, .ban-cot .tien-da-ra { color: #1E7B3A; }
   .ban-cot .khong-rau, .ban-cot .tien-don { color: #B42318; }
-  #chi-tiet-ban #bang-tong-thieu { min-width: 0; width: 100%; }
+  #bang-tong-thieu { min-width: 0; width: 100%; }
   #bang-tong-thieu td { text-align: center; white-space: nowrap; vertical-align: top; font-size: 16px; }
   #bang-tong-thieu td .dong { display: block; }
   #bang-tong-thieu td.khong { color: #9A958C; }
+  #bang-tong-thieu tr.dong-ghep th, #bang-tong-thieu tr.dong-ghep td { background: #FDECEC; color: #B42318; }
+  #bang-tong-thieu .them { color: #B42318; }
+  #bang-tong-thieu td.nhieu { background: #FFF6D6; }
+  #bang-tong-thieu .chon-ban { min-height: 44px; padding: 0 .25rem; border: 0; background: none; box-shadow: none; color: #1E6B50; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+  #bang-tong-thieu .chon-ban[aria-expanded="true"] { background: #E8F1EC; border-radius: .5rem; text-decoration: none; }
+  .truot { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+  .truot.mo { grid-template-rows: 1fr; }
+  .truot-trong { overflow: hidden; min-height: 0; }
+  .truot.mo .truot-trong { padding: .5rem 0; }
+  #bang-tong-thieu tr.dong-truot > td { padding: 0 .5rem; background: #FAF9F6; text-align: left; }
+  #bang-tong-thieu .ban-cot { min-width: 0; width: 100%; }
+  @media (prefers-reduced-motion: reduce) { .truot { transition: none; } }
+  #bang-tong-thieu .o-so { min-height: 36px; min-width: 44px; padding: .125rem .5rem; border: 1px dashed #C9C4BA; background: transparent; box-shadow: none; border-radius: .5rem; font: inherit; color: inherit; }
+  #bang-tong-thieu .o-so:hover, #bang-tong-thieu .o-so[aria-expanded="true"] { border-style: solid; border-color: #1E6B50; background: #E8F1EC; }
+  #chon-so { position: absolute; z-index: 30; padding: .75rem; max-width: 280px; background: #fff; border: 1px solid #E4E1DA; border-radius: .75rem; box-shadow: 0 8px 24px rgba(28,27,25,.15); }
+  #chon-so p { font-size: 13px; color: #5F5B53; margin-bottom: .5rem; }
+  #chon-so .chon-so-nut { display: flex; flex-wrap: wrap; gap: .375rem; }
+  #chon-so .chon-so-nut button { min-width: 44px; padding: .25rem .5rem; font-weight: 700; }
+  #bang-tong-thieu .o-tien { min-height: 36px; padding: .125rem .5rem; border: 1px dashed #1E7B3A; background: transparent; box-shadow: none; border-radius: .5rem; font: inherit; color: inherit; }
+  #bang-tong-thieu .o-tien:hover { border-style: solid; background: #E8F1EC; }
+  #xac-nhan-tt { width: min(92vw, 380px); padding: 1.25rem; border: 1px solid #E4E1DA; border-radius: 1rem; }
+  #xac-nhan-tt::backdrop { background: rgba(28,27,25,.4); }
+  #xac-nhan-tt .canh-bao { color: #B42318; }
+  #xac-nhan-ra { width: min(92vw, 380px); padding: 1.25rem; border: 1px solid #E4E1DA; border-radius: 1rem; }
+  #xac-nhan-ra::backdrop { background: rgba(28,27,25,.4); }
+  #xac-nhan-ra .actions button { min-width: 96px; }
+  #lich-su-ra { min-width: 0; width: 100%; }
+  #lich-su-ra td { white-space: nowrap; }
+  #lich-su-ra tr.moi td, #lich-su-ra tr.moi th { background: #E8F1EC; }
+  .lich-su-ban { display: grid; gap: .5rem; }
+  .lich-su-ban details { border: 1px solid #E4E1DA; border-radius: .75rem; background: #fff; }
+  .lich-su-ban summary { display: flex; justify-content: space-between; gap: .5rem; padding: .625rem .875rem; cursor: pointer; font-weight: 700; }
+  .lich-su-ban summary span { font-weight: 400; color: #5F5B53; font-size: 14px; }
+  .lich-su-ban ol { margin: 0; padding: 0 .875rem .75rem; list-style: none; }
+  .lich-su-ban li { display: grid; grid-template-columns: 4.5rem 5.5rem 1fr auto; gap: .5rem; padding: .375rem 0; border-top: 1px solid #F0EEE9; font-size: 14px; }
+  .lich-su-ban li.moi { background: #E8F1EC; }
+  .lich-su-ban li b { text-align: right; }
+  #bang-tong-thieu td.tien { color: #1E7B3A; font-weight: 700; }
+  #bang-tong-thieu td.nhieu strong { font-weight: 700; margin-left: .125rem; }
   .ban-cot .nhieu { margin-top: .125rem; font-size: 13px; color: #7A4100; text-transform: none; }
 </style>
 </head>
@@ -223,23 +262,16 @@ tailwind.config = {
 <main data-component="TrangVanHanh" class="page-content" ><span class="nhan-component">TrangVanHanh</span>
 <header data-component="DauTrang" class="page-header" ><span class="nhan-component">DauTrang</span>
 <div><h1>VẬN HÀNH</h1><p class="muted">Ngày bán 20/10/2026 · Đọc lúc 09:42:15 (giờ Việt Nam)</p><p>Số minh hoạ — bản đề xuất, không phải hợp đồng</p></div></header>
-<section data-component="TheTrangThaiBan" class="card" ><span class="nhan-component">TheTrangThaiBan</span>
-<h2>Nhịp phục vụ trong quán</h2><span data-component="HuyHieuTrangThai" class="badge warning" ><span class="nhan-component">HuyHieuTrangThai</span>
-đề xuất — chưa có trong hợp đồng</span><div class="metrics mt-4"><section data-component="TheSo" class="card" ><span class="nhan-component">TheSo</span>
-<h3>Đang phục vụ</h3><p class="number">6 <span class="text-sm font-normal">bàn</span></p></section><section data-component="TheSo" class="card" ><span class="nhan-component">TheSo</span>
-<h3>Sắp phục vụ</h3><p class="number">3 <span class="text-sm font-normal">bàn</span></p></section><section data-component="TheSo" class="card" ><span class="nhan-component">TheSo</span>
-<h3>Còn trống</h3><p class="number">6 <span class="text-sm font-normal">bàn</span></p></section></div><div data-component="SoDoBan" class="mt-5" ><span class="nhan-component">SoDoBan</span>
-<h3>Sơ đồ 15 bàn</h3><p class="muted">Xanh: đang phục vụ · Vàng: sắp phục vụ · Xám: còn trống. Thứ tự số minh hoạ, không phải vị trí thật.</p><div class="table-map"><div class="table-tile serving"><strong>Bàn 01</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 02</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 03</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 04</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 05</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 06</strong><small>Đang phục vụ</small></div><div class="table-tile waiting"><strong>Bàn 07</strong><small>Sắp phục vụ</small></div><div class="table-tile waiting"><strong>Bàn 08</strong><small>Sắp phục vụ</small></div><div class="table-tile waiting"><strong>Bàn 09</strong><small>Sắp phục vụ</small></div><div class="table-tile vacant"><strong>Bàn 10</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 11</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 12</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 13</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 14</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 15</strong><small>Còn trống</small></div></div></div></section><section data-component="KhoiBanDangPhucVu" class="card" ><span class="nhan-component">KhoiBanDangPhucVu</span>
+<section data-component="BangThieuTheoBan" class="card" ><span class="nhan-component">BangThieuTheoBan</span>
+<h2>Tổng thiếu theo bàn</h2><div class="mt-3"><div class="table-scroll" tabindex="0" role="region" aria-label="Tổng thiếu theo bàn"><table id="bang-tong-thieu"><thead><tr><th scope="col">Bàn</th><th scope="col">Thịt</th><th scope="col">Mộc nhĩ</th><th scope="col">Trứng</th><th scope="col">Chay</th><th scope="col">Canh</th><th scope="col">Tiền bánh đã ra</th></tr></thead><tbody><tr><th scope="row"><button type="button" class="chon-ban" data-ban="01" aria-expanded="false">Bàn 01</button></th><td class="nhieu">2<strong>*</strong></td><td class="khong">0</td><td><span class="dong">1 tái</span></td><td>2</td><td class="nhieu">1<strong>*</strong></td><td class="tien">16.000đ</td></tr><tr><th scope="row"><button type="button" class="chon-ban" data-ban="02" aria-expanded="false">Bàn 02</button></th><td>2</td><td class="nhieu">1<strong>*</strong></td><td class="khong">0</td><td class="khong">0</td><td class="khong">0</td><td class="tien">21.000đ</td></tr><tr><th scope="row"><button type="button" class="chon-ban" data-ban="03" aria-expanded="false">Bàn 03</button></th><td class="khong">0</td><td>2</td><td class="khong">0</td><td>2</td><td>2</td><td class="tien">15.000đ</td></tr><tr><th scope="row"><button type="button" class="chon-ban" data-ban="04" aria-expanded="false">Bàn 04</button></th><td class="nhieu">2<strong>*</strong></td><td>2</td><td class="nhieu"><span class="dong">1 tái<strong>*</strong></span><span class="dong">1 chín<strong>*</strong></span></td><td class="khong">0</td><td>1</td><td class="tien">34.000đ</td></tr><tr><th scope="row"><button type="button" class="chon-ban" data-ban="05" aria-expanded="false">Bàn 05</button></th><td>2</td><td>2</td><td class="khong">0</td><td class="khong">0</td><td class="nhieu">1<strong>*</strong></td><td class="tien">20.000đ</td></tr></tbody><tfoot><tr><th scope="row">Tổng</th><td id="tt-1" data-goc="8">8</td><td id="tt-2" data-goc="7">7</td><td id="tt-trung"><span class="dong" data-loai="tái" data-goc="2">2 tái</span><span class="dong" data-loai="chín" data-goc="1">1 chín</span></td><td id="tt-0" data-goc="4">4</td><td id="tt-canh" data-goc="5">5</td><td class="tien" id="tt-tien" data-goc="106000">106.000đ</td></tr></tfoot></table></div><p class="muted mt-2"><strong>*</strong> nhiều nhân (bánh, trứng) hoặc canh nhiều rau. Bấm vào một ô số để báo đã đem ra.</p><div id="chon-so" role="dialog" aria-labelledby="chon-so-tieu-de" hidden><p id="chon-so-tieu-de"></p><div class="chon-so-nut"></div></div><dialog id="xac-nhan-ra" aria-labelledby="xac-nhan-tieu-de"><h3 id="xac-nhan-tieu-de">Xác nhận đem ra</h3><p id="xac-nhan-noi-dung" class="my-3"></p><div class="actions justify-end"><button type="button" id="xac-nhan-huy">Huỷ</button><button type="button" id="xac-nhan-dong-y" class="primary">Xác nhận</button></div></dialog><dialog id="xac-nhan-tt" aria-labelledby="xac-nhan-tt-tieu-de"><h3 id="xac-nhan-tt-tieu-de">Xác nhận thanh toán</h3><p id="xac-nhan-tt-noi-dung" class="my-3"></p><div class="actions justify-end"><button type="button" id="xac-nhan-tt-huy">Huỷ</button><button type="button" id="xac-nhan-tt-dong-y" class="primary">Đã thanh toán</button></div></dialog></div></section><section data-component="CongThuGhepDon" class="card" ><span class="nhan-component">CongThuGhepDon</span>
+<h2>Cộng thử ghép đơn</h2><span data-component="HuyHieuTrangThai" class="badge warning" ><span class="nhan-component">HuyHieuTrangThai</span>
+đề xuất — chưa có trong hợp đồng</span><div class="grid mt-4"><fieldset><legend>Bàn sắp phục vụ</legend><label class="choice" for="ban-7"><input type="checkbox" id="ban-7" name="ban-ghep" value="7"><span><strong>Bàn 07 · 30.000đ</strong><small>Chay 2 · Thịt 4 · Thịt + mộc nhĩ 2</small><small>Canh 2 bát · Chưa có món ra bàn</small></span></label><label class="choice" for="ban-8"><input type="checkbox" id="ban-8" name="ban-ghep" value="8"><span><strong>Bàn 08 · 28.000đ</strong><small>Chay 4 · Thịt 0 · Thịt + mộc nhĩ 4</small><small>Canh 3 bát · Chưa có món ra bàn</small></span></label><label class="choice" for="ban-9"><input type="checkbox" id="ban-9" name="ban-ghep" value="9"><span><strong>Bàn 09 · 36.000đ</strong><small>Chay 0 · Thịt 6 · Thịt + mộc nhĩ 3</small><small>Canh 2 bát · Chưa có món ra bàn</small></span></label><button type="button" id="bo-chon">Bỏ chọn hết</button></fieldset><div class="min-w-0"><p id="tom-tat-chon" role="status" class="mb-3">Đã chọn 0 bàn.</p></div></div></section><section data-component="KhoiBanDangPhucVu" class="card" ><span class="nhan-component">KhoiBanDangPhucVu</span>
 <h2>Bàn đang phục vụ</h2><span data-component="HuyHieuTrangThai" class="badge warning" ><span class="nhan-component">HuyHieuTrangThai</span>
 đề xuất — chưa có trong hợp đồng</span><div class="actions justify-between my-4"><p class="number">6 <span class="text-sm font-normal">tổng bàn đang phục vụ</span></p><button type="button" id="nut-chi-tiet" aria-expanded="false" aria-controls="bang-chi-tiet">Chi tiết</button></div>
-<div id="chi-tiet-ban" class="mt-4"><div class="khoi-ban-cot mb-4"><p class="mb-2"><strong>Bàn 01</strong></p><div class="table-scroll" tabindex="0" role="region" aria-label="Bàn 01 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Chay</th><th scope="col">Thịt<span class="dong nhieu">nhiều</span></th><th scope="col">Trứng</th><th scope="col">Canh<span class="dong nhieu">nhiều</span></th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 4</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 4</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 1</span><span class="dong tien-da-ra">đã ra 0</span><span class="dong tien-don">thiếu 1</span></td><td><span class="dong co-rau">rau 1 / 1</span><span class="dong khong-rau"><s>rau</s> 1 / 0</span><span class="dong gio">giò 1 / 0</span></td><td><span class="dong tien-da-ra">16.000đ</span><span class="dong tien-don">50.000đ</span></td></tr></tbody></table></div></div><div class="khoi-ban-cot mb-4"><p class="mb-2"><strong>Bàn 02</strong></p><div class="table-scroll" tabindex="0" role="region" aria-label="Bàn 02 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Thịt</th><th scope="col">Thịt + mộc nhĩ<span class="dong nhieu">nhiều</span></th><th scope="col">Canh</th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 6</span><span class="dong tien-da-ra">đã ra 4</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 2</span><span class="dong tien-da-ra">đã ra 1</span><span class="dong tien-don">thiếu 1</span></td><td><span class="dong co-rau">rau 2 / 2</span></td><td><span class="dong tien-da-ra">21.000đ</span><span class="dong tien-don">34.000đ</span></td></tr></tbody></table></div></div><div class="khoi-ban-cot mb-4"><p class="mb-2"><strong>Bàn 03</strong></p><div class="table-scroll" tabindex="0" role="region" aria-label="Bàn 03 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Chay</th><th scope="col">Thịt + mộc nhĩ</th><th scope="col">Canh</th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 3</span><span class="dong tien-da-ra">đã ra 1</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 5</span><span class="dong tien-da-ra">đã ra 3</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong co-rau">rau 2 / 1</span><span class="dong khong-rau"><s>rau</s> 1 / 0</span><span class="dong gio">giò 2 / 0</span></td><td><span class="dong tien-da-ra">15.000đ</span><span class="dong tien-don">47.000đ</span></td></tr></tbody></table></div></div><div class="khoi-ban-cot mb-4"><p class="mb-2"><strong>Bàn 04</strong></p><div class="table-scroll" tabindex="0" role="region" aria-label="Bàn 04 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Chay</th><th scope="col">Thịt<span class="dong nhieu">nhiều</span></th><th scope="col">Thịt + mộc nhĩ</th><th scope="col">Trứng<span class="dong nhieu">nhiều</span></th><th scope="col">Canh</th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 2</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 0</span></td><td><span class="dong">tổng 4</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 4</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 3</span><span class="dong tien-da-ra">đã ra 1</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong co-rau">rau 1 / 1</span><span class="dong khong-rau"><s>rau</s> 2 / 1</span></td><td><span class="dong tien-da-ra">34.000đ</span><span class="dong tien-don">72.000đ</span></td></tr></tbody></table></div></div><div class="khoi-ban-cot mb-4"><p class="mb-2"><strong>Bàn 05</strong></p><div class="table-scroll" tabindex="0" role="region" aria-label="Bàn 05 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Thịt</th><th scope="col">Thịt + mộc nhĩ</th><th scope="col">Canh<span class="dong nhieu">nhiều</span></th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 3</span><span class="dong tien-da-ra">đã ra 1</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 6</span><span class="dong tien-da-ra">đã ra 4</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong co-rau">rau 2 / 1</span></td><td><span class="dong tien-da-ra">20.000đ</span><span class="dong tien-don">36.000đ</span></td></tr></tbody></table></div></div><div class="mb-4"><p class="mb-2"><strong>Tổng thiếu theo bàn</strong></p><div class="table-scroll" tabindex="0" role="region" aria-label="Tổng thiếu theo bàn"><table id="bang-tong-thieu"><thead><tr><th scope="col">Bàn</th><th scope="col">Thịt</th><th scope="col">Mộc nhĩ</th><th scope="col">Trứng</th><th scope="col">Chay</th><th scope="col">Canh</th></tr></thead><tbody><tr><th scope="row">Bàn 01</th><td>2</td><td class="khong">0</td><td><span class="dong">1 tái</span></td><td>2</td><td>1</td></tr><tr><th scope="row">Bàn 02</th><td>2</td><td>1</td><td class="khong">0</td><td class="khong">0</td><td class="khong">0</td></tr><tr><th scope="row">Bàn 03</th><td class="khong">0</td><td>2</td><td class="khong">0</td><td>2</td><td>2</td></tr><tr><th scope="row">Bàn 04</th><td>2</td><td>2</td><td><span class="dong">1 tái</span><span class="dong">1 chín</span></td><td class="khong">0</td><td>1</td></tr><tr><th scope="row">Bàn 05</th><td>2</td><td>2</td><td class="khong">0</td><td class="khong">0</td><td>1</td></tr></tbody><tfoot><tr><th scope="row">Tổng</th><td>8</td><td>7</td><td><span class="dong">2 tái</span><span class="dong">1 chín</span></td><td>4</td><td>5</td></tr></tfoot></table></div></div><div id="bang-chi-tiet" hidden><div data-component="BangDuLieu" class="" ><span class="nhan-component">BangDuLieu</span>
-<div class="table-scroll" tabindex="0" role="region" aria-label="Bàn"><table id="bang-ban"><thead><tr><th scope="col">Bàn</th><th scope="col" data-cot="tong">Đặt ban đầu (bánh)</th><th scope="col" data-cot="tong">Đã ra</th><th scope="col" data-cot="tong">Còn thiếu</th><th scope="col">Bánh Chay (đặt / đã ra)</th><th scope="col">Bánh Thịt (đặt / đã ra)</th><th scope="col">Bánh Thịt + mộc nhĩ (đặt / đã ra)</th><th scope="col">Canh (đặt / đã lấy)</th><th scope="col">Tiền đơn</th><th scope="col">Tiền bánh đã ra</th></tr></thead><tbody><tr><th scope="row">Bàn 01</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">8</td><td data-label="Đã ra" data-cot="tong">4</td><td data-label="Còn thiếu" data-cot="tong">4</td><td data-label="Bánh Chay (đặt / đã ra)">4 / 2</td><td data-label="Bánh Thịt (đặt / đã ra)">4 / 2</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">0 / 0</td><td data-label="Canh (đặt / đã lấy)">2 / 1</td><td data-label="Tiền đơn">28.000đ</td><td data-label="Tiền bánh đã ra">14.000đ</td></tr><tr><th scope="row">Bàn 02</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">8</td><td data-label="Đã ra" data-cot="tong">5</td><td data-label="Còn thiếu" data-cot="tong">3</td><td data-label="Bánh Chay (đặt / đã ra)">0 / 0</td><td data-label="Bánh Thịt (đặt / đã ra)">6 / 4</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">2 / 1</td><td data-label="Canh (đặt / đã lấy)">2 / 2</td><td data-label="Tiền đơn">32.000đ</td><td data-label="Tiền bánh đã ra">20.000đ</td></tr><tr><th scope="row">Bàn 03</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">8</td><td data-label="Đã ra" data-cot="tong">4</td><td data-label="Còn thiếu" data-cot="tong">4</td><td data-label="Bánh Chay (đặt / đã ra)">3 / 1</td><td data-label="Bánh Thịt (đặt / đã ra)">0 / 0</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">5 / 3</td><td data-label="Canh (đặt / đã lấy)">3 / 1</td><td data-label="Tiền đơn">29.000đ</td><td data-label="Tiền bánh đã ra">15.000đ</td></tr><tr><th scope="row">Bàn 04</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">10</td><td data-label="Đã ra" data-cot="tong">6</td><td data-label="Còn thiếu" data-cot="tong">4</td><td data-label="Bánh Chay (đặt / đã ra)">2 / 2</td><td data-label="Bánh Thịt (đặt / đã ra)">4 / 2</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">4 / 2</td><td data-label="Canh (đặt / đã lấy)">3 / 2</td><td data-label="Tiền đơn">38.000đ</td><td data-label="Tiền bánh đã ra">22.000đ</td></tr><tr><th scope="row">Bàn 05</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">9</td><td data-label="Đã ra" data-cot="tong">5</td><td data-label="Còn thiếu" data-cot="tong">4</td><td data-label="Bánh Chay (đặt / đã ra)">0 / 0</td><td data-label="Bánh Thịt (đặt / đã ra)">3 / 1</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">6 / 4</td><td data-label="Canh (đặt / đã lấy)">2 / 1</td><td data-label="Tiền đơn">36.000đ</td><td data-label="Tiền bánh đã ra">20.000đ</td></tr><tr><th scope="row">Bàn 06</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">12</td><td data-label="Đã ra" data-cot="tong">7</td><td data-label="Còn thiếu" data-cot="tong">5</td><td data-label="Bánh Chay (đặt / đã ra)">5 / 3</td><td data-label="Bánh Thịt (đặt / đã ra)">5 / 3</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">2 / 1</td><td data-label="Canh (đặt / đã lấy)">4 / 2</td><td data-label="Tiền đơn">43.000đ</td><td data-label="Tiền bánh đã ra">25.000đ</td></tr></tbody><tfoot><tr><th scope="row">Tổng 6 bàn</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">55</td><td data-label="Đã ra" data-cot="tong">31</td><td data-label="Còn thiếu" data-cot="tong">24</td><td data-label="Bánh Chay (đặt / đã ra)">14 / 8</td><td data-label="Bánh Thịt (đặt / đã ra)">22 / 12</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">19 / 11</td><td data-label="Canh (đặt / đã lấy)">16 / 9</td><td data-label="Tiền đơn">206.000đ</td><td data-label="Tiền bánh đã ra">116.000đ</td></tr></tfoot></table></div></div></div></div></section><section data-component="BangTongConThieu" class="card" ><span class="nhan-component">BangTongConThieu</span>
-<h2>Tổng còn thiếu · Toàn quán</h2><span data-component="HuyHieuTrangThai" class="badge warning" ><span class="nhan-component">HuyHieuTrangThai</span>
-đề xuất — chưa có trong hợp đồng</span><p class="muted my-3">Toàn quán trong mẫu = 6 bàn đang phục vụ + 3 bàn sắp phục vụ; 6 bàn trống không có đơn. Cột đang phục vụ đối chiếu dòng tổng bảng từng bàn.</p><div data-component="BangDuLieu" class="" ><span class="nhan-component">BangDuLieu</span>
-<div class="table-scroll" tabindex="0" role="region" aria-label="Chỉ số"><table id="bang-thieu"><thead><tr><th scope="col">Chỉ số</th><th scope="col">Đang phục vụ</th><th scope="col">Sắp phục vụ</th><th scope="col">Toàn quán</th></tr></thead><tbody><tr><th scope="row">Bánh Chay còn thiếu</th><td>6</td><td>6</td><td>12</td></tr><tr><th scope="row">Bánh Thịt còn thiếu</th><td>10</td><td>10</td><td>20</td></tr><tr><th scope="row">Bánh Thịt + mộc nhĩ còn thiếu</th><td>8</td><td>9</td><td>17</td></tr><tr><th scope="row">Tổng bánh còn thiếu</th><td>24</td><td>25</td><td>49</td></tr><tr><th scope="row">Canh còn thiếu (bát)</th><td>7</td><td>7</td><td>14</td></tr><tr><th scope="row">Tổng tiền các bàn</th><td>206.000đ</td><td>94.000đ</td><td>300.000đ</td></tr><tr><th scope="row">Tiền bánh đã ra</th><td>116.000đ</td><td>0đ</td><td>116.000đ</td></tr></tbody></table></div></div><p class="mt-4"><strong>Số bàn còn dư: 6 bàn</strong> (= còn trống; giả định chờ xác nhận).</p></section><section data-component="CongThuGhepDon" class="card" ><span class="nhan-component">CongThuGhepDon</span>
-<h2>Cộng thử ghép đơn</h2><span data-component="HuyHieuTrangThai" class="badge warning" ><span class="nhan-component">HuyHieuTrangThai</span>
-đề xuất — chưa có trong hợp đồng</span><p class="my-3 font-semibold">Cộng thử — chỉ tính trên màn, không ghi gì</p><p class="muted mb-4">“Hiện tại” là lượng đã đặt và tiền đơn của 6 bàn đang phục vụ, khớp dòng tổng từng bàn; không phải lượng còn thiếu.</p><div class="grid"><fieldset><legend>Bàn sắp phục vụ</legend><label class="choice" for="ban-7"><input type="checkbox" id="ban-7" name="ban-ghep" value="7"><span><strong>Bàn 07 · 30.000đ</strong><small>Chay 2 · Thịt 4 · Thịt + mộc nhĩ 2</small><small>Canh 2 bát · Chưa có món ra bàn</small></span></label><label class="choice" for="ban-8"><input type="checkbox" id="ban-8" name="ban-ghep" value="8"><span><strong>Bàn 08 · 28.000đ</strong><small>Chay 4 · Thịt 0 · Thịt + mộc nhĩ 4</small><small>Canh 3 bát · Chưa có món ra bàn</small></span></label><label class="choice" for="ban-9"><input type="checkbox" id="ban-9" name="ban-ghep" value="9"><span><strong>Bàn 09 · 36.000đ</strong><small>Chay 0 · Thịt 6 · Thịt + mộc nhĩ 3</small><small>Canh 2 bát · Chưa có món ra bàn</small></span></label><button type="button" id="bo-chon">Bỏ chọn hết</button></fieldset><div class="min-w-0"><p id="tom-tat-chon" role="status" class="mb-3">Đã chọn 0 bàn.</p><div data-component="BangDuLieu" class="" ><span class="nhan-component">BangDuLieu</span>
-<div class="table-scroll" tabindex="0" role="region" aria-label="Chỉ số cộng thử"><table id="bang-ghep"><thead><tr><th scope="col">Chỉ số cộng thử</th><th scope="col">Hiện tại (đang phục vụ)</th><th scope="col">Cộng thêm (đã tick)</th><th scope="col">Sau khi ghép</th></tr></thead><tbody><tr><th scope="row">Bánh Chay</th><td>14</td><td><span id="them-0">0</span></td><td><span id="sau-0">14</span></td></tr><tr><th scope="row">Bánh Thịt</th><td>22</td><td><span id="them-1">0</span></td><td><span id="sau-1">22</span></td></tr><tr><th scope="row">Bánh Thịt + mộc nhĩ</th><td>19</td><td><span id="them-2">0</span></td><td><span id="sau-2">19</span></td></tr><tr><th scope="row">Canh (bát)</th><td>16</td><td><span id="them-3">0</span></td><td><span id="sau-3">16</span></td></tr><tr><th scope="row">Tổng tiền</th><td>206.000đ</td><td><span id="them-4">0đ</span></td><td><span id="sau-4">206.000đ</span></td></tr></tbody></table></div></div></div></div></section><aside class="notice" aria-labelledby="gia-dinh"><h2 id="gia-dinh">Giả định của bản thiết kế</h2><p>Bốn cách hiểu do Claude đề xuất trong phiếu T-219 ngày 20/10/2026, CHỜ chủ repo xác nhận:</p><ul class="list-disc pl-5 mt-2"><li>Bàn còn dư = bàn trống.</li><li>Sắp phục vụ = bàn đã gửi lượt gọi mà chưa có món ra bàn.</li><li>Đã lấy ra = đã ra bàn.</li><li>Nhân = số bánh theo loại nhân.</li></ul><p>Đây là cách trình bày thử, chưa xác lập luật nghiệp vụ hay thao tác ghép đơn thật.</p></aside></main></div><section id="chu-giai"><h2>Chú giải component</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Chú giải component"><table><thead><tr><th scope="col">Tên</th><th scope="col">Nó là gì</th><th scope="col">Phạm vi</th></tr></thead><tbody><tr><th scope="row">KhungChuQuan</th><td>Vỏ trang nối điều hướng với nội dung quản trị.</td><td>dùng chung</td></tr><tr><th scope="row">ThanhDieuHuong</th><td>Thanh bên trên máy tính, thanh bốn nhóm ở đáy điện thoại.</td><td>dùng chung</td></tr><tr><th scope="row">NhomDieuHuong</th><td>Một nhóm liên kết đến các trang cùng mảng.</td><td>dùng chung</td></tr><tr><th scope="row">DauTrang</th><td>Tiêu đề trang, ngày bán và giờ đọc minh hoạ.</td><td>dùng chung</td></tr><tr><th scope="row">TheSo</th><td>Một chỉ số minh hoạ, chỉ định dạng để đọc.</td><td>dùng chung</td></tr><tr><th scope="row">BangDuLieu</th><td>Bảng dữ liệu có vùng cuộn ngang riêng.</td><td>dùng chung</td></tr><tr><th scope="row">HuyHieuTrangThai</th><td>Nhãn chỉ rõ phần đề xuất chưa có trong hợp đồng.</td><td>dùng chung</td></tr><tr><th scope="row">TrangVanHanh</th><td>Nội dung trang Vận hành, route đề xuất /chu-quan/van-hanh.</td><td>riêng trang</td></tr><tr><th scope="row">TheTrangThaiBan</th><td>Ba thẻ số: 6 đang phục vụ, 3 sắp phục vụ, 6 còn trống.</td><td>riêng trang</td></tr><tr><th scope="row">SoDoBan</th><td>Lưới bàn 1–15; màu và chữ cùng chỉ trạng thái, không mô tả vị trí thật.</td><td>riêng trang</td></tr><tr><th scope="row">KhoiBanDangPhucVu</th><td>Tổng bàn đang phục vụ; nút mở/đóng bảng từng bàn có dòng tổng.</td><td>riêng trang</td></tr><tr><th scope="row">BangTongConThieu</th><td>Tổng còn thiếu và tiền: tách đang phục vụ, sắp phục vụ, toàn quán.</td><td>riêng trang</td></tr><tr><th scope="row">CongThuGhepDon</th><td>Tick bàn sắp phục vụ để cộng thử trên màn hình; không ghi dữ liệu.</td><td>riêng trang</td></tr></tbody></table></div></section>
+<div id="chi-tiet-ban" class="mt-4"><div class="khoi-ban-cot mb-4" data-ban="01"><div class="actions justify-between mb-2"><strong>Bàn 01</strong><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="vung-ban-01">Hiện</button></div><div class="table-scroll" id="vung-ban-01" hidden tabindex="0" role="region" aria-label="Bàn 01 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Chay</th><th scope="col">Thịt<span class="dong nhieu">nhiều</span></th><th scope="col">Trứng</th><th scope="col">Canh<span class="dong nhieu">nhiều</span></th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 4</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 4</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 1</span><span class="dong tien-da-ra">đã ra 0</span><span class="dong tien-don">thiếu 1</span></td><td><span class="dong co-rau">rau 1 / 1</span><span class="dong khong-rau"><s>rau</s> 1 / 0</span><span class="dong gio">giò 1 / 0</span></td><td><span class="dong tien-da-ra">16.000đ</span><span class="dong tien-don">50.000đ</span></td></tr></tbody></table></div></div><div class="khoi-ban-cot mb-4" data-ban="02"><div class="actions justify-between mb-2"><strong>Bàn 02</strong><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="vung-ban-02">Hiện</button></div><div class="table-scroll" id="vung-ban-02" hidden tabindex="0" role="region" aria-label="Bàn 02 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Thịt</th><th scope="col">Thịt + mộc nhĩ<span class="dong nhieu">nhiều</span></th><th scope="col">Canh</th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 6</span><span class="dong tien-da-ra">đã ra 4</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 2</span><span class="dong tien-da-ra">đã ra 1</span><span class="dong tien-don">thiếu 1</span></td><td><span class="dong co-rau">rau 2 / 2</span></td><td><span class="dong tien-da-ra">21.000đ</span><span class="dong tien-don">34.000đ</span></td></tr></tbody></table></div></div><div class="khoi-ban-cot mb-4" data-ban="03"><div class="actions justify-between mb-2"><strong>Bàn 03</strong><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="vung-ban-03">Hiện</button></div><div class="table-scroll" id="vung-ban-03" hidden tabindex="0" role="region" aria-label="Bàn 03 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Chay</th><th scope="col">Thịt + mộc nhĩ</th><th scope="col">Canh</th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 3</span><span class="dong tien-da-ra">đã ra 1</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 5</span><span class="dong tien-da-ra">đã ra 3</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong co-rau">rau 2 / 1</span><span class="dong khong-rau"><s>rau</s> 1 / 0</span><span class="dong gio">giò 2 / 0</span></td><td><span class="dong tien-da-ra">15.000đ</span><span class="dong tien-don">47.000đ</span></td></tr></tbody></table></div></div><div class="khoi-ban-cot mb-4" data-ban="04"><div class="actions justify-between mb-2"><strong>Bàn 04</strong><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="vung-ban-04">Hiện</button></div><div class="table-scroll" id="vung-ban-04" hidden tabindex="0" role="region" aria-label="Bàn 04 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Chay</th><th scope="col">Thịt<span class="dong nhieu">nhiều</span></th><th scope="col">Thịt + mộc nhĩ</th><th scope="col">Trứng<span class="dong nhieu">nhiều</span></th><th scope="col">Canh</th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 2</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 0</span></td><td><span class="dong">tổng 4</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 4</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 3</span><span class="dong tien-da-ra">đã ra 1</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong co-rau">rau 1 / 1</span><span class="dong khong-rau"><s>rau</s> 2 / 1</span></td><td><span class="dong tien-da-ra">34.000đ</span><span class="dong tien-don">72.000đ</span></td></tr></tbody></table></div></div><div class="khoi-ban-cot mb-4" data-ban="05"><div class="actions justify-between mb-2"><strong>Bàn 05</strong><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="vung-ban-05">Hiện</button></div><div class="table-scroll" id="vung-ban-05" hidden tabindex="0" role="region" aria-label="Bàn 05 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Thịt</th><th scope="col">Thịt + mộc nhĩ</th><th scope="col">Canh<span class="dong nhieu">nhiều</span></th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 3</span><span class="dong tien-da-ra">đã ra 1</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 6</span><span class="dong tien-da-ra">đã ra 4</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong co-rau">rau 2 / 1</span></td><td><span class="dong tien-da-ra">20.000đ</span><span class="dong tien-don">36.000đ</span></td></tr></tbody></table></div></div><div id="bang-chi-tiet" hidden><div data-component="BangDuLieu" class="" ><span class="nhan-component">BangDuLieu</span>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Bàn"><table id="bang-ban"><thead><tr><th scope="col">Bàn</th><th scope="col" data-cot="tong">Đặt ban đầu (bánh)</th><th scope="col" data-cot="tong">Đã ra</th><th scope="col" data-cot="tong">Còn thiếu</th><th scope="col">Bánh Chay (đặt / đã ra)</th><th scope="col">Bánh Thịt (đặt / đã ra)</th><th scope="col">Bánh Thịt + mộc nhĩ (đặt / đã ra)</th><th scope="col">Canh (đặt / đã lấy)</th><th scope="col">Tiền đơn</th><th scope="col">Tiền bánh đã ra</th></tr></thead><tbody><tr><th scope="row">Bàn 01</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">8</td><td data-label="Đã ra" data-cot="tong">4</td><td data-label="Còn thiếu" data-cot="tong">4</td><td data-label="Bánh Chay (đặt / đã ra)">4 / 2</td><td data-label="Bánh Thịt (đặt / đã ra)">4 / 2</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">0 / 0</td><td data-label="Canh (đặt / đã lấy)">2 / 1</td><td data-label="Tiền đơn">28.000đ</td><td data-label="Tiền bánh đã ra">14.000đ</td></tr><tr><th scope="row">Bàn 02</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">8</td><td data-label="Đã ra" data-cot="tong">5</td><td data-label="Còn thiếu" data-cot="tong">3</td><td data-label="Bánh Chay (đặt / đã ra)">0 / 0</td><td data-label="Bánh Thịt (đặt / đã ra)">6 / 4</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">2 / 1</td><td data-label="Canh (đặt / đã lấy)">2 / 2</td><td data-label="Tiền đơn">32.000đ</td><td data-label="Tiền bánh đã ra">20.000đ</td></tr><tr><th scope="row">Bàn 03</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">8</td><td data-label="Đã ra" data-cot="tong">4</td><td data-label="Còn thiếu" data-cot="tong">4</td><td data-label="Bánh Chay (đặt / đã ra)">3 / 1</td><td data-label="Bánh Thịt (đặt / đã ra)">0 / 0</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">5 / 3</td><td data-label="Canh (đặt / đã lấy)">3 / 1</td><td data-label="Tiền đơn">29.000đ</td><td data-label="Tiền bánh đã ra">15.000đ</td></tr><tr><th scope="row">Bàn 04</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">10</td><td data-label="Đã ra" data-cot="tong">6</td><td data-label="Còn thiếu" data-cot="tong">4</td><td data-label="Bánh Chay (đặt / đã ra)">2 / 2</td><td data-label="Bánh Thịt (đặt / đã ra)">4 / 2</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">4 / 2</td><td data-label="Canh (đặt / đã lấy)">3 / 2</td><td data-label="Tiền đơn">38.000đ</td><td data-label="Tiền bánh đã ra">22.000đ</td></tr><tr><th scope="row">Bàn 05</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">9</td><td data-label="Đã ra" data-cot="tong">5</td><td data-label="Còn thiếu" data-cot="tong">4</td><td data-label="Bánh Chay (đặt / đã ra)">0 / 0</td><td data-label="Bánh Thịt (đặt / đã ra)">3 / 1</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">6 / 4</td><td data-label="Canh (đặt / đã lấy)">2 / 1</td><td data-label="Tiền đơn">36.000đ</td><td data-label="Tiền bánh đã ra">20.000đ</td></tr><tr><th scope="row">Bàn 06</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">12</td><td data-label="Đã ra" data-cot="tong">7</td><td data-label="Còn thiếu" data-cot="tong">5</td><td data-label="Bánh Chay (đặt / đã ra)">5 / 3</td><td data-label="Bánh Thịt (đặt / đã ra)">5 / 3</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">2 / 1</td><td data-label="Canh (đặt / đã lấy)">4 / 2</td><td data-label="Tiền đơn">43.000đ</td><td data-label="Tiền bánh đã ra">25.000đ</td></tr></tbody><tfoot><tr><th scope="row">Tổng 6 bàn</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">55</td><td data-label="Đã ra" data-cot="tong">31</td><td data-label="Còn thiếu" data-cot="tong">24</td><td data-label="Bánh Chay (đặt / đã ra)">14 / 8</td><td data-label="Bánh Thịt (đặt / đã ra)">22 / 12</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">19 / 11</td><td data-label="Canh (đặt / đã lấy)">16 / 9</td><td data-label="Tiền đơn">206.000đ</td><td data-label="Tiền bánh đã ra">116.000đ</td></tr></tfoot></table></div></div></div></div></section><section data-component="SoDoBan" class="card" ><span class="nhan-component">SoDoBan</span>
+<div class="actions justify-between"><h3>Sơ đồ 15 bàn</h3><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="vung-so-do">Hiện</button></div><div id="vung-so-do" class="mt-2" hidden><p class="muted">Xanh: đang phục vụ · Vàng: sắp phục vụ · Xám: còn trống. Thứ tự số minh hoạ, không phải vị trí thật.</p><div class="table-map"><div class="table-tile serving"><strong>Bàn 01</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 02</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 03</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 04</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 05</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 06</strong><small>Đang phục vụ</small></div><div class="table-tile waiting"><strong>Bàn 07</strong><small>Sắp phục vụ</small></div><div class="table-tile waiting"><strong>Bàn 08</strong><small>Sắp phục vụ</small></div><div class="table-tile waiting"><strong>Bàn 09</strong><small>Sắp phục vụ</small></div><div class="table-tile vacant"><strong>Bàn 10</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 11</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 12</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 13</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 14</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 15</strong><small>Còn trống</small></div></div></div></section><section data-component="LichSuDemRa" class="card" ><span class="nhan-component">LichSuDemRa</span>
+<h2>Lịch sử phục vụ</h2><div class="mt-3"><div class="actions justify-between mb-2"><p><strong>Lịch sử đem ra</strong></p><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="vung-lich-su-ra">Hiện</button></div><div id="vung-lich-su-ra" hidden><div class="table-scroll" tabindex="0" role="region" aria-label="Lịch sử đem ra"><table id="lich-su-ra"><thead><tr><th scope="col">Giờ</th><th scope="col">Bàn</th><th scope="col">Món</th><th scope="col">Số cái</th><th scope="col">Lần thứ (của bàn)</th></tr></thead><tbody></tbody></table></div></div></div><div class="mt-5"><div class="actions justify-between mb-2"><p><strong>Lịch sử theo bàn</strong></p><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="lich-su-ban">Hiện</button></div><div id="lich-su-ban" class="lich-su-ban" hidden></div></div></section><aside class="notice" aria-labelledby="gia-dinh"><h2 id="gia-dinh">Giả định của bản thiết kế</h2><p>Chủ repo chốt thiết kế ngày 21/10/2026 (T-224) và xác nhận: sắp phục vụ = bàn đã gửi lượt gọi mà chưa có phần nào ra bàn; đã đem ra = đã ra bàn; bấm đem ra là người đứng quầy; thanh toán chỉ thu tiền phần đã ra (vế còn hở: U-103).</p><p class="mt-2">Còn là cách hiểu của Claude, chưa xác nhận: cột Thịt · Mộc nhĩ · Chay đếm số bánh theo loại nhân. Số trên trang là minh hoạ.</p></aside></main></div><section id="chu-giai"><h2>Chú giải component</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Chú giải component"><table><thead><tr><th scope="col">Tên</th><th scope="col">Nó là gì</th><th scope="col">Phạm vi</th></tr></thead><tbody><tr><th scope="row">KhungChuQuan</th><td>Vỏ trang nối điều hướng với nội dung quản trị.</td><td>dùng chung</td></tr><tr><th scope="row">ThanhDieuHuong</th><td>Thanh bên trên máy tính, thanh bốn nhóm ở đáy điện thoại.</td><td>dùng chung</td></tr><tr><th scope="row">NhomDieuHuong</th><td>Một nhóm liên kết đến các trang cùng mảng.</td><td>dùng chung</td></tr><tr><th scope="row">DauTrang</th><td>Tiêu đề trang, ngày bán và giờ đọc minh hoạ.</td><td>dùng chung</td></tr><tr><th scope="row">BangDuLieu</th><td>Bảng dữ liệu có vùng cuộn ngang riêng.</td><td>dùng chung</td></tr><tr><th scope="row">HuyHieuTrangThai</th><td>Nhãn chỉ rõ phần đề xuất chưa có trong hợp đồng.</td><td>dùng chung</td></tr><tr><th scope="row">TrangVanHanh</th><td>Nội dung trang Vận hành, route đề xuất /chu-quan/van-hanh.</td><td>riêng trang</td></tr><tr><th scope="row">SoDoBan</th><td>Lưới bàn 1–15; màu và chữ cùng chỉ trạng thái, không mô tả vị trí thật.</td><td>riêng trang</td></tr><tr><th scope="row">LichSuDemRa</th><td>Lịch sử đem ra theo giờ và lịch sử theo bàn; mỗi phần có nút Hiện/Ẩn, mặc định ẩn.</td><td>riêng trang</td></tr><tr><th scope="row">BangThieuTheoBan</th><td>Số còn thiếu từng bàn theo Thịt, Mộc nhĩ, Trứng (tách tái / chín), Chay, Canh, có hàng tổng.</td><td>riêng trang</td></tr><tr><th scope="row">KhoiBanDangPhucVu</th><td>Tổng bàn đang phục vụ; nút mở/đóng bảng từng bàn có dòng tổng.</td><td>riêng trang</td></tr><tr><th scope="row">CongThuGhepDon</th><td>Tick bàn sắp phục vụ để cộng thử trên màn hình; không ghi dữ liệu.</td><td>riêng trang</td></tr></tbody></table></div></section>
 <script>
 const demo = {"prices": [3000, 4000, 4000], "active": [{"id": 1, "ordered": [4, 4, 0], "served": [2, 2, 0], "soup": 2, "taken": 1}, {"id": 2, "ordered": [0, 6, 2], "served": [0, 4, 1], "soup": 2, "taken": 2}, {"id": 3, "ordered": [3, 0, 5], "served": [1, 0, 3], "soup": 3, "taken": 1}, {"id": 4, "ordered": [2, 4, 4], "served": [2, 2, 2], "soup": 3, "taken": 2}, {"id": 5, "ordered": [0, 3, 6], "served": [0, 1, 4], "soup": 2, "taken": 1}, {"id": 6, "ordered": [5, 5, 2], "served": [3, 3, 1], "soup": 4, "taken": 2}], "waiting": [{"id": 7, "ordered": [2, 4, 2], "served": [0, 0, 0], "soup": 2, "taken": 0}, {"id": 8, "ordered": [4, 0, 4], "served": [0, 0, 0], "soup": 3, "taken": 0}, {"id": 9, "ordered": [0, 6, 3], "served": [0, 0, 0], "soup": 2, "taken": 0}]};
 const sumOrdered = rows => rows.reduce((sum, row) => sum.map((v, i) => v + row.ordered[i]), [0, 0, 0]);
@@ -253,9 +285,20 @@ function updateMerge() {
   const selected = demo.waiting.filter(row => ids.includes(row.id));
   const counts = sumOrdered(selected);
   const added = [...counts, selected.reduce((n, row) => n + row.soup, 0), amount(counts)];
-  added.forEach((n, i) => {
-    document.getElementById(`them-${i}`).textContent = i === 4 ? money(n) : n;
-    document.getElementById(`sau-${i}`).textContent = i === 4 ? money(current[i] + n) : current[i] + n;
+  const bangThieu = document.querySelector('#bang-tong-thieu tbody');
+  bangThieu.querySelectorAll('tr.dong-ghep').forEach(tr => tr.remove());
+  const o = n => n === 0 ? '<td class="khong">0</td>' : `<td>${n}</td>`;
+  selected.forEach(row => {
+    bangThieu.insertAdjacentHTML('beforeend', `<tr class="dong-ghep"><th scope="row">Bàn ${String(row.id).padStart(2, '0')}</th>${o(row.ordered[1] - row.served[1])}${o(row.ordered[2] - row.served[2])}${o(0)}${o(row.ordered[0] - row.served[0])}${o(row.soup - row.taken)}<td class="tien">0đ</td></tr>`);
+  });
+  const themThieu = { 'tt-0': 0, 'tt-1': 0, 'tt-2': 0, 'tt-canh': 0 };
+  selected.forEach(row => {
+    [0, 1, 2].forEach(i => { themThieu[`tt-${i}`] += row.ordered[i] - row.served[i]; });
+    themThieu['tt-canh'] += row.soup - row.taken;
+  });
+  Object.entries(themThieu).forEach(([id, n]) => {
+    const cell = document.getElementById(id);
+    cell.innerHTML = cell.dataset.goc + (n > 0 ? `<span class="them">+${n}</span>` : '');
   });
   document.getElementById('tom-tat-chon').textContent = `Đã chọn ${selected.length} bàn. Sau khi ghép: ${currentCounts.reduce((a, b) => a + b, 0) + counts.reduce((a, b) => a + b, 0)} bánh, ${current[3] + added[3]} bát canh, ${money(current[4] + added[4])}.`;
 }
@@ -264,6 +307,202 @@ document.getElementById('bo-chon').addEventListener('click', () => {
   choices.forEach(input => { input.checked = false; });
   updateMerge();
 });
+const TEN_COT = ['Thịt', 'Mộc nhĩ', 'Trứng', 'Chay', 'Canh'];
+const DON_VI = { 'Trứng': 'quả trứng', 'Canh': 'bát canh' };
+const O_TONG = { 'Thịt': 'tt-1', 'Mộc nhĩ': 'tt-2', 'Chay': 'tt-0', 'Canh': 'tt-canh' };
+const sao = '<strong>*</strong>';
+const nutSo = (n, ten, loai, nhieu) => `<button type="button" class="o-so" data-n="${n}" data-ten="${ten}" data-loai="${loai}" data-nhieu="${nhieu ? 1 : ''}" aria-haspopup="dialog" aria-expanded="false">${n}${loai ? ' ' + loai : ''}${nhieu ? sao : ''}</button>`;
+document.querySelectorAll('#bang-tong-thieu > tbody > tr').forEach(tr => {
+  [...tr.children].slice(1, 6).forEach((td, i) => {
+    if (td.classList.contains('khong')) return;
+    const nhieu = !!td.querySelector('strong');
+    const dong = td.querySelectorAll('.dong');
+    if (dong.length) {
+      dong.forEach(sp => {
+        const n = parseInt(sp.textContent, 10);
+        const loai = sp.textContent.replace(/^\d+\s*/, '').replace('*', '').trim();
+        sp.innerHTML = nutSo(n, TEN_COT[i], loai, nhieu);
+      });
+    } else {
+      td.innerHTML = nutSo(parseInt(td.textContent, 10), TEN_COT[i], '', nhieu);
+    }
+  });
+});
+const lichSu = [
+  { gio: '09:05:10', ban: 'Bàn 02', mon: 'Thịt', so: 2 },
+  { gio: '09:08:40', ban: 'Bàn 01', mon: 'Chay', so: 2 },
+  { gio: '09:12:05', ban: 'Bàn 02', mon: 'Thịt', so: 2 },
+  { gio: '09:12:30', ban: 'Bàn 02', mon: 'Mộc nhĩ', so: 1 },
+  { gio: '09:20:15', ban: 'Bàn 01', mon: 'Thịt', so: 1 },
+  { gio: '09:31:50', ban: 'Bàn 01', mon: 'Thịt', so: 1 },
+  { gio: '09:33:00', ban: 'Bàn 04', mon: 'Trứng tái', so: 1 },
+];
+function veLichSu(moi) {
+  const lan = {};
+  const hang = lichSu.map((x, i) => {
+    lan[x.ban] = (lan[x.ban] || 0) + 1;
+    return `<tr${moi && i === lichSu.length - 1 ? ' class="moi"' : ''}><td>${x.gio}</td><th scope="row">${x.ban}</th><td>${x.mon}</td><td>${x.so}</td><td>lần ${lan[x.ban]}</td></tr>`;
+  });
+  document.querySelector('#lich-su-ra tbody').innerHTML = hang.reverse().join('');
+  const cacBan = ['Bàn 01', 'Bàn 02', 'Bàn 03', 'Bàn 04', 'Bàn 05'];
+  const dangMo = new Set([...document.querySelectorAll('#lich-su-ban details[open]')].map(d => d.dataset.ban));
+  document.getElementById('lich-su-ban').innerHTML = cacBan.map(b => {
+    const cua = lichSu.map((x, i) => ({ ...x, i })).filter(x => x.ban === b);
+    const tong = cua.reduce((t, x) => t + x.so, 0);
+    const ds = cua.length
+      ? cua.map((x, k) => `<li${moi && x.i === lichSu.length - 1 ? ' class="moi"' : ''}><span>lần ${k + 1}</span><span>${x.gio}</span><span>${x.mon}</span><b>${x.so} cái</b></li>`).join('')
+      : '<li><span class="muted">Chưa đem ra lần nào.</span></li>';
+    const mo = dangMo.has(b) || (moi && lichSu[lichSu.length - 1].ban === b);
+    return `<details data-ban="${b}"${mo ? ' open' : ''}><summary>${b}<span>${cua.length} lần · ${tong} cái</span></summary><ol>${ds}</ol></details>`;
+  }).join('');
+}
+veLichSu(false);
+document.querySelectorAll('.nut-an-hien').forEach(nut => nut.addEventListener('click', () => {
+  const mo = nut.getAttribute('aria-expanded') !== 'true';
+  nut.setAttribute('aria-expanded', String(mo));
+  nut.textContent = mo ? 'Ẩn' : 'Hiện';
+  document.getElementById(nut.getAttribute('aria-controls')).hidden = !mo;
+}));
+const chonSo = document.getElementById('chon-so');
+const xacNhan = document.getElementById('xac-nhan-ra');
+let oDangChon = null;
+let soDaChon = 0;
+function dongChonSo() {
+  chonSo.hidden = true;
+  if (oDangChon) oDangChon.setAttribute('aria-expanded', 'false');
+}
+function moChonSo(nut) {
+  dongChonSo();
+  oDangChon = nut;
+  const ban = nut.closest('tr').querySelector('.chon-ban').textContent;
+  const ten = nut.dataset.ten + (nut.dataset.loai ? ' ' + nut.dataset.loai : '');
+  document.getElementById('chon-so-tieu-de').textContent = `${ban} · ${ten}: đã đem ra mấy?`;
+  const n = Number(nut.dataset.n);
+  chonSo.querySelector('.chon-so-nut').innerHTML = Array.from({ length: n + 1 }, (_, k) => `<button type="button" data-so="${k}">${k}</button>`).join('');
+  chonSo.hidden = false;
+  nut.setAttribute('aria-expanded', 'true');
+  const r = nut.getBoundingClientRect();
+  const rong = chonSo.offsetWidth;
+  chonSo.style.top = `${r.bottom + window.scrollY + 6}px`;
+  chonSo.style.left = `${Math.max(8, Math.min(r.left + window.scrollX, window.scrollX + document.documentElement.clientWidth - rong - 8))}px`;
+  chonSo.querySelector('button').focus();
+}
+document.body.appendChild(chonSo);
+document.getElementById('bang-tong-thieu').addEventListener('click', event => {
+  const nut = event.target.closest('.o-so');
+  if (!nut) return;
+  event.stopPropagation();
+  if (!chonSo.hidden && oDangChon === nut) { dongChonSo(); return; }
+  moChonSo(nut);
+});
+chonSo.addEventListener('click', event => {
+  const nut = event.target.closest('button[data-so]');
+  if (!nut) return;
+  event.stopPropagation();
+  soDaChon = Number(nut.dataset.so);
+  dongChonSo();
+  if (soDaChon === 0) { oDangChon.focus(); return; }
+  const ban = oDangChon.closest('tr').querySelector('.chon-ban').textContent;
+  const ten = oDangChon.dataset.ten;
+  const donVi = DON_VI[ten] ? DON_VI[ten] + (oDangChon.dataset.loai ? ' ' + oDangChon.dataset.loai : '') : 'bánh ' + ten;
+  const con = Number(oDangChon.dataset.n);
+  document.getElementById('xac-nhan-noi-dung').innerHTML = `Quán đã đem ra <strong>${soDaChon} ${donVi}</strong> cho <strong>${ban}</strong>.<br>Còn thiếu sẽ từ ${con} xuống <strong>${con - soDaChon}</strong>.`;
+  xacNhan.showModal();
+});
+document.addEventListener('click', event => { if (!chonSo.hidden && !chonSo.contains(event.target)) dongChonSo(); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape' && !chonSo.hidden) { dongChonSo(); oDangChon.focus(); } });
+document.getElementById('xac-nhan-huy').addEventListener('click', () => { xacNhan.close(); oDangChon.focus(); });
+document.getElementById('xac-nhan-dong-y').addEventListener('click', () => {
+  xacNhan.close();
+  const nut = oDangChon;
+  const conLai = Number(nut.dataset.n) - soDaChon;
+  const ten = nut.dataset.ten;
+  if (ten === 'Trứng') {
+    const sp = [...document.querySelectorAll('#tt-trung .dong')].find(x => x.dataset.loai === nut.dataset.loai);
+    sp.dataset.goc = Number(sp.dataset.goc) - soDaChon;
+    sp.textContent = `${sp.dataset.goc} ${sp.dataset.loai}`;
+    sp.hidden = sp.dataset.goc === '0';
+  } else {
+    const o = document.getElementById(O_TONG[ten]);
+    o.dataset.goc = Number(o.dataset.goc) - soDaChon;
+  }
+  const td = nut.closest('td');
+  if (conLai > 0) {
+    nut.outerHTML = nutSo(conLai, ten, nut.dataset.loai, nut.dataset.nhieu);
+  } else if (nut.parentElement.classList.contains('dong')) {
+    nut.parentElement.remove();
+  } else {
+    td.innerHTML = '0';
+  }
+  if (!td.querySelector('.o-so')) { td.className = 'khong'; td.textContent = '0'; }
+  lichSu.push({ gio: new Date().toLocaleTimeString('vi-VN', { hour12: false }), ban: td.closest('tr').querySelector('.chon-ban').textContent, mon: ten + (nut.dataset.loai ? ' ' + nut.dataset.loai : ''), so: soDaChon });
+  veLichSu(true);
+  updateMerge();
+});
+const xacNhanTt = document.getElementById('xac-nhan-tt');
+let hangThanhToan = null;
+document.querySelectorAll('#bang-tong-thieu > tbody > tr').forEach(tr => {
+  const td = tr.querySelector('td.tien');
+  if (!td || !tr.querySelector('.chon-ban')) return;
+  td.innerHTML = `<button type="button" class="o-tien" aria-haspopup="dialog">${td.textContent}</button>`;
+});
+const thieuCuaHang = tr => [...tr.querySelectorAll('.o-so')].map(n => ({ ten: n.dataset.ten, loai: n.dataset.loai, n: Number(n.dataset.n) }));
+document.getElementById('bang-tong-thieu').addEventListener('click', event => {
+  const nut = event.target.closest('.o-tien');
+  if (!nut) return;
+  hangThanhToan = nut.closest('tr');
+  const ban = hangThanhToan.querySelector('.chon-ban').textContent;
+  const con = thieuCuaHang(hangThanhToan);
+  const canhBao = con.length
+    ? `<br><span class="canh-bao">Bàn vẫn còn thiếu: ${con.map(x => `${x.n} ${x.ten}${x.loai ? ' ' + x.loai : ''}`).join(', ')}. Thanh toán sẽ bỏ phần này.</span>`
+    : '';
+  document.getElementById('xac-nhan-tt-noi-dung').innerHTML = `<strong>${ban}</strong> thanh toán <strong>${nut.textContent}</strong> tiền bánh đã ra.<br>Bàn sẽ bị xoá khỏi bảng tổng thiếu.${canhBao}`;
+  xacNhanTt.showModal();
+});
+document.getElementById('xac-nhan-tt-huy').addEventListener('click', () => { xacNhanTt.close(); hangThanhToan.querySelector('.o-tien').focus(); });
+document.getElementById('xac-nhan-tt-dong-y').addEventListener('click', () => {
+  xacNhanTt.close();
+  thieuCuaHang(hangThanhToan).forEach(x => {
+    if (x.ten === 'Trứng') {
+      const sp = [...document.querySelectorAll('#tt-trung .dong')].find(y => y.dataset.loai === x.loai);
+      sp.dataset.goc = Number(sp.dataset.goc) - x.n;
+      sp.textContent = `${sp.dataset.goc} ${sp.dataset.loai}`;
+      sp.hidden = sp.dataset.goc === '0';
+    } else {
+      const o = document.getElementById(O_TONG[x.ten]);
+      o.dataset.goc = Number(o.dataset.goc) - x.n;
+    }
+  });
+  const tien = document.getElementById('tt-tien');
+  tien.dataset.goc = Number(tien.dataset.goc) - Number(hangThanhToan.querySelector('.o-tien').textContent.replace(/\D/g, ''));
+  tien.textContent = money(Number(tien.dataset.goc));
+  const sau = hangThanhToan.nextElementSibling;
+  if (sau && sau.classList.contains('dong-truot')) sau.remove();
+  hangThanhToan.remove();
+  updateMerge();
+});
+function dongTruot() {
+  document.querySelectorAll('#bang-tong-thieu tr.dong-truot').forEach(tr => {
+    const khung = tr.querySelector('.truot');
+    khung.classList.remove('mo');
+    const xoa = () => tr.remove();
+    khung.addEventListener('transitionend', xoa, { once: true });
+    setTimeout(xoa, 400);
+  });
+}
+document.querySelectorAll('#bang-tong-thieu .chon-ban').forEach(nut => nut.addEventListener('click', () => {
+  const mo = nut.getAttribute('aria-expanded') !== 'true';
+  document.querySelectorAll('#bang-tong-thieu .chon-ban').forEach(b => b.setAttribute('aria-expanded', 'false'));
+  dongTruot();
+  if (!mo) return;
+  const hang = nut.closest('tr');
+  const id = `truot-ban-${nut.dataset.ban}`;
+  hang.insertAdjacentHTML('afterend', `<tr class="dong-truot" id="${id}"><td colspan="${hang.children.length}"><div class="truot"><div class="truot-trong"><p class="mb-2"><strong>Bàn ${nut.dataset.ban}</strong></p><div class="table-scroll">${document.querySelector(`.khoi-ban-cot[data-ban="${nut.dataset.ban}"] table`).outerHTML}</div></div></div></td></tr>`);
+  nut.setAttribute('aria-expanded', 'true');
+  nut.setAttribute('aria-controls', id);
+  const khung = hang.nextElementSibling.querySelector('.truot');
+  requestAnimationFrame(() => requestAnimationFrame(() => khung.classList.add('mo')));
+}));
 document.getElementById('nut-chi-tiet').addEventListener('click', event => {
   const open = event.currentTarget.getAttribute('aria-expanded') !== 'true';
   event.currentTarget.setAttribute('aria-expanded', String(open));
