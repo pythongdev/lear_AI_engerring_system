@@ -3,19 +3,25 @@
 -- name: Tong :one
 WITH don_ngay AS (
  SELECT id FROM sales_order WHERE status <> 'cancelled' AND created_at::date = $1::text::date
-), don_vi AS (
- SELECT g.id, sum(l.line_total_vnd) AS amount_vnd
- FROM order_line g JOIN don_ngay o ON o.id = g.sales_order_id
+), don_nguon AS (
+ SELECT id FROM don_ngay
+),
+ -- tạm tính: đầu
+don_vi AS (
+ SELECT g.id, g.sales_order_id, sum(l.line_total_vnd) AS amount_vnd
+ FROM order_line g JOIN don_nguon o ON o.id = g.sales_order_id
  JOIN order_line l ON l.id = g.id OR l.parent_order_line_id = g.id
  WHERE g.parent_order_line_id IS NULL
- GROUP BY g.id
+ GROUP BY g.id, g.sales_order_id
 ), da_ra AS (
- SELECT d.id, d.amount_vnd FROM don_vi d
+ SELECT d.id, d.sales_order_id, d.amount_vnd FROM don_vi d
  WHERE EXISTS (SELECT 1 FROM station_job j JOIN order_line l ON l.id = j.order_line_id
                WHERE l.id = d.id OR l.parent_order_line_id = d.id)
  AND NOT EXISTS (SELECT 1 FROM station_job j JOIN order_line l ON l.id = j.order_line_id
                  WHERE (l.id = d.id OR l.parent_order_line_id = d.id) AND j.status <> 'served')
-), don_vi_thanh_phan AS (
+)
+ -- tạm tính: cuối
+, don_vi_thanh_phan AS (
  SELECT sales_order_id, order_line_id, order_line_component_id, position,
         bool_and(status = 'served') AS da_ra_het
  FROM station_job

@@ -10,6 +10,7 @@ import (
 func Routes(r *gin.Engine, svc *Service) {
 	h := handler{svc: svc}
 	r.GET("/owner-overview", h.doc)
+	r.GET("/service-board", h.docBang)
 	r.PUT("/daily-minimums/:sale_date", h.dat)
 	r.POST("/workers-present-declarations", h.khai)
 	r.GET("/workers-present", h.docNguoi)
@@ -77,6 +78,16 @@ func (h handler) khai(c *gin.Context) {
 func (h handler) docNguoi(c *gin.Context) {
 	id, _ := middleware.Nguoi(c)
 	out, err := h.svc.DocNguoi(c.Request.Context(), id)
+	if err != nil {
+		apierr.WriteError(c.Writer, err)
+		return
+	}
+	apierr.JSON(c.Writer, 200, out)
+}
+
+func (h handler) docBang(c *gin.Context) {
+	id, _ := middleware.Nguoi(c)
+	out, err := h.svc.DocBang(c.Request.Context(), id)
 	if err != nil {
 		apierr.WriteError(c.Writer, err)
 		return

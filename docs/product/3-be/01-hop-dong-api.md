@@ -342,3 +342,11 @@ nhất của ngày bán hiện tại, không lấy ngày trước. `GET /owner-o
 `workers_present` có số khi đã khai và `shortages.workers` có `short` · `missing_workers` khi
 có cả lần khai lẫn `minimum_workers`; hai schema mới thay `OverviewUnavailable` ở hai mục ấy,
 vẫn giữ nhánh *chưa có*. Ánh xạ ba ràng buộc của `workers_present_declaration`; sinh lại type FE.
+
+
+T-225 (2026-10-21, phiếu Claude, ADR-124): tăng MINOR 0.47.0 → 0.48.0,
+thêm `GET /service-board` lớp `quay_hoac_chu_quan` và các schema của trang Vận hành.
+Ngày bán do backend quy như tổng quan, không nhận ngày từ người gọi. Tiền đơn dùng
+`phien.TongTien`; tiền đã ra dùng đoạn tạm tính chung với tổng quan. Lịch sử đọc vết
+made → served trong ngày bán, kể cả phiên đã đóng. Không cửa ghi, migration hay
+ánh xạ ràng buộc mới; giữ unauthenticated và not_on_counter_duty. Sinh lại type FE.

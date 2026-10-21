@@ -89,7 +89,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-226 **Trang `/chu-quan/van-hanh` — phần đọc theo thiết kế đã chốt** — năm khối của `van_hanh/van-hanh.html`, số lấy từ `T-225`, cộng thử chỉ tính trên màn — L1 — mở 2026-10-21, **cần xong trước:** `T-225` · [chi tiết](#t-226)
 - [ ] T-228 **Bấm ô số trên trang Vận hành ghi *đã đem ra*** — chọn 0…số thiếu, xác nhận, gửi `POST /served-marks` cho một bàn; chỉ bật khi phiên đang đứng quầy (S-5, chủ repo giữ 2026-10-21) — L2 — mở 2026-10-21, **cần xong trước:** `T-226` · [chi tiết](#t-228)
 - [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
 - [ ] T-227 **BỊ CHẶN bởi U-103 — Thanh toán bàn từ trang Vận hành chỉ thu phần đã ra** — bấm tiền bánh đã ra để đóng phiên và xoá bàn khỏi bảng; đổi luật tính tiền phiên (`shop-facts.md` §6.1, 2026-10-21) và viết lại `I-002` — L3 (thiết kế duyệt trước code, ADR, chia L1/L2 khi mở) — mở 2026-10-21 · [chi tiết](#t-227)
@@ -100,7 +99,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-225 **Đường đọc cho trang Vận hành: từng bàn, từng thứ, tiền đã ra, lịch sử đem ra** — một cửa đọc mới cho chủ quán (và người đứng quầy): phiên bàn chưa đóng chia *đang phục vụ* · *sắp phục vụ*, mỗi thứ đặt · đã ra · thiếu kèm cờ nhiều, tiền đơn và tiền đã ra, bàn trống, lịch sử từng lần đem ra — L2 (Claude thiết kế ADR-124 và viết test trước, Codex thi công, Claude duyệt) — mở 2026-10-21, nhận 2026-10-21 · [chi tiết](#t-225)
+- [ ] T-226 **Trang `/chu-quan/van-hanh` — phần đọc theo thiết kế đã chốt** — năm khối của `van_hanh/van-hanh.html`, số lấy từ `T-225`, cộng thử chỉ tính trên màn — L1 — mở 2026-10-21, `T-225` xong 2026-10-21; nhận 2026-10-21 — Codex thi công, Claude duyệt · [chi tiết](#t-226)
 
 
 
@@ -114,6 +113,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-225 **Đường đọc cho trang Vận hành: từng bàn, từng thứ, tiền đã ra, lịch sử đem ra** — một cửa đọc mới cho chủ quán (và người đứng quầy): phiên bàn chưa đóng chia *đang phục vụ* · *sắp phục vụ*, mỗi thứ đặt · đã ra · thiếu kèm cờ nhiều, tiền đơn và tiền đã ra, bàn trống, lịch sử từng lần đem ra — L2 (Claude thiết kế ADR-124 và viết test trước, Codex thi công, Claude duyệt) — mở 2026-10-21, nhận 2026-10-21 — xong 2026-10-21 · Codex thi công, Claude duyệt · [chi tiết](#t-225)
 - [x] T-224 **Thiết kế trang Vận hành chốt, chia thành task** — ghi ba lời chủ repo (thanh toán chỉ thu phần đã ra · bấm đem ra vẫn là người đứng quầy · nghĩa *sắp phục vụ*), mở `U-103`, mở `T-225`…`T-228` — L1 — mở và làm 2026-10-21 · Claude Code theo lời chủ repo *"tôi chốt thiết kế hiện tại của trang vận hành hãy làm các task để hoàn thành trang trên"* — 2026-10-21 · [chi tiết](#t-224)
 - [x] T-220 **Trang Vận hành — thiết kế chốt** — mở để bảng từng bàn đọc rõ trên điện thoại, rồi theo lời chủ repo từng bước thành bản chốt: tổng thiếu theo bàn lên đầu (bấm ô ghi đem ra, bấm tiền thanh toán, trượt mở chi tiết, ô nhiều có *), cộng thử ghép đơn, từng bàn dạng cột, sơ đồ bàn, lịch sử phục vụ — L1 — mở và nhận 2026-10-20 · Codex (thẻ điện thoại), Claude Code (các lượt sửa theo lời chủ repo) — 2026-10-21 · [chi tiết](#t-220)
 - [x] T-222 **Màn QR có tiêu đề hình mã QR + số bàn, `/dat-mon` lên máy tìm kiếm** — hai việc còn lại của `P4-10`: `h1` màn `/ban/[ma]` bày biểu tượng mã QR và *Bàn {số}*; `/dat-mon` vào `PUBLIC_ROUTES`, có metadata công khai và nằm trong sitemap — L1 — mở và nhận 2026-10-21 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm các task trên còn bạn kiểm tra"* — 2026-10-21 · [chi tiết](#t-222)
@@ -491,12 +491,34 @@ trên màn, không ghi) · `KhoiBanDangPhucVu` (mỗi bàn dạng cột, mặc �
 `LichSuDemRa` (theo giờ và theo bàn, mặc định ẩn). **Không** làm ở task này: bấm ô số (`T-228`), bấm tiền (`T-227`). Số trong bản thiết kế
 là minh hoạ, không phải dữ liệu. *Nghiệm thu* viết lúc mở task, khi hợp đồng của `T-225` đã có.
 
+**Claude quyết 2026-10-21 (trình bày, không phải luật quán):** hợp đồng `GET /service-board` trả từng *thứ* theo tên thành phần và lựa
+chọn đã chụp, không trả sẵn cột. Màn xếp cột bằng một hàm thuần `fe/src/app/chu-quan/_components/cot-van-hanh.ts`: `Bánh cuốn` tách theo
+lựa chọn nhóm `Nhân` thành Thịt · Mộc nhĩ (`Thịt + mộc nhĩ`) · Chay; `Trứng …` một cột, một dòng mỗi kiểu; `Canh bánh cuốn` cột Canh; mọi
+thứ khác (giò, nước chấm, tên bị đổi) vào cột **Khác**, chỉ hiện khi có — để không số thiếu nào bị giấu, dù bản thiết kế không có cột
+này. Ánh xạ theo tên là *suy ra*, chờ chủ repo. Ô *nhiều* = `extra_filling` và còn thiếu; không suy *nhiều rau*. Cộng thử chỉ trong state
+React. Không kéo theo chu kỳ (hợp đồng không trả `poll_interval_seconds`), có nút *Đọc lại*. Bỏ nhãn *đề xuất — chưa có trong hợp đồng*.
+
+**Acceptance** (viết 2026-10-21, trước khi giao; test ở `fe/src/app/chu-quan/van-hanh/`):
+- [ ] Ánh xạ cột: Bánh cuốn × ba nhân, `Trứng tái`, `Trứng chín`, `Canh bánh cuốn`, `Giò` ⇒ mỗi thứ đúng một cột, `Giò` vào *Khác*; không có thứ lạ ⇒ không cột *Khác*.
+- [ ] `BangThieuTheoBan` chỉ hàng phiên `serving`, bàn ghép `A + B`, ô = tổng `missing`, tiền = `served_amount_vnd`, hàng *Tổng* đúng; ô nhiều có `*`.
+- [ ] Bấm nhãn bàn mở chi tiết ngay dưới hàng (`aria-expanded`) có tổng · đã ra · thiếu và *Tiền đơn* = `order_total_vnd`; bấm lại đóng.
+- [ ] Tick phiên `waiting` ⇒ hàng đỏ và *Tổng* `x+y`; *Bỏ chọn hết* gỡ; không lời gọi mạng nào khác `GET /service-board`, không ghi `localStorage`/`sessionStorage`.
+- [ ] `KhoiBanDangPhucVu`, `SoDoBan`, hai phần `LichSuDemRa` mặc định ẩn; nút đổi `aria-expanded` và `hidden`.
+- [ ] `SoDoBan` bốn nhãn theo `service_group` / `empty_tables`, số ô = số bàn backend trả.
+- [ ] `LichSuDemRa` giữ thứ tự backend, *Lần thứ* đúng khi một bàn có hai mốc, có tên người.
+- [ ] Lỗi lần đầu ⇒ `Alert` *Chưa đọc được tình hình bàn*, không khối nào; dữ liệu rỗng ⇒ câu rỗng, không lỗi.
+- [ ] Mọi số tiền trên màn là `order_total_vnd` / `served_amount_vnd` hoặc tổng của chúng, chỉ định dạng lại.
+- [ ] Mục *Vận hành* ngay sau *Tổng quan* trong `muc-chu-quan.ts`, `chu-quan.test.tsx` xanh; `01-khung-fe.md` có dòng ở §1 và §2.
+- [ ] `./scripts/gate.sh` xanh, Claude chạy lại cả `fe-check`.
+
+**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-226`, nhánh `codex/T-226`) · duyệt: Claude — chưa duyệt.
+
 <a id="t-225"></a>
 ### T-225 — Không đường đọc nào trả tình hình từng bàn theo từng thứ
 
 **Yêu cầu:** cùng lời chủ repo 2026-10-21 ở `T-226`. Bản thiết kế đã ghi rõ chỗ thiếu (`van_hanh/component.md`): `GET /dining-tables`
 chỉ có trạng thái bàn, `GET /counter/queue` không có số theo nhân, `GET /owner-overview` có tổng mà không có từng bàn. **Mức:** L2 — hợp
-đồng mới, con số tiền bày cho chủ quán. **Chưa nhận.**
+đồng mới, con số tiền bày cho chủ quán. Nhận 2026-10-21, xong 2026-10-21.
 
 **Phải trả được** (lấy từ thiết kế đã chốt): mỗi phiên bàn chưa đóng — nhãn bàn (kể cả bàn ghép), nhóm *đang phục vụ* hay *sắp phục vụ*
 (nghĩa chủ repo xác nhận 2026-10-21, `shop-facts.md` §5.4); mỗi thứ đặt · đã ra · thiếu theo thành phần, nhân và lựa chọn (kiểu trứng,
@@ -530,7 +552,7 @@ trạm đi qua `vongdoi.CoVet` ở chế độ nghiêm, nên vết đã có ngư
 `testdata/service_board.sql`, và một dòng ở `be/internal/sanxuat/khoa_gom_test.go`. Fixture đã chạy thử trên database migrate từ số 0: năm lần
 `made → served` sinh năm dòng vết cùng người và cùng `created_at`.
 
-**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-225`, nhánh `codex/T-225` từ `efbb4b0`) · duyệt: Claude — chưa duyệt.
+**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-225`, nhánh `codex/T-225` từ `efbb4b0`; tiến trình đầu bị ngắt trước báo cáo, nối lại bằng `codex exec resume`) · duyệt: Claude 2026-10-21 — đọc diff, tự chạy `./scripts/gate.sh` trong worktree có Docker: mọi cổng PASS, `be-check` PASS trên PostgreSQL thật, bảy test Acceptance trên PASS cùng `TestQC14_ComboNgayHuyVaThieuMon`; bốn file test của Claude không đổi (SHA-1 khớp). Claude chỉ bỏ một dòng trống thừa ở `01-hop-dong-api.md`. Đưa về clone chính bằng patch, chạy lại gate.
 
 <a id="t-224"></a>
 ### T-224 — Thiết kế trang Vận hành đã chốt mà chưa có task nào để làm thật

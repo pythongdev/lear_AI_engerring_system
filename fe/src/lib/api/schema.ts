@@ -44,6 +44,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/service-board": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Tình hình từng phiên bàn và lịch sử đem ra của trang Vận hành.
+         * @description ADR-124: lớp quay_hoac_chu_quan; không phiên trả unauthenticated, người ngoài quầy không phải chủ quán trả not_on_counter_duty. Ảnh hiện tại, ngày bán quy như owner-overview; không nhận ngày lịch sử. sessions gồm mọi phiên chưa closed và mọi bàn ghép của phiên, bỏ đơn cancelled. serving khi có đơn vị ra hết, waiting khi có đơn chưa huỷ nhưng chưa đơn vị nào ra, no_order khi không có đơn chưa huỷ. Items gom thành phần và tập tuỳ chọn nhân, bỏ trạm; một đơn vị là (order_line_component_id, position), việc không thành phần là đơn vị riêng. served khi mọi trạm served; missing = ordered - served. Options là tên đã chụp; extra_filling khi có lựa chọn nhóm Lượng nhân không mặc định. order_total_vnd dùng phien.TongTien; served_amount_vnd dùng cùng phép tạm tính với owner-overview trên đơn của phiên, không chia giá combo, không là số phải thu. empty_tables không thuộc phiên chưa đóng nào. serve_history đọc vết made → served trong ngày bán, kể cả phiên đã đóng; gom theo mốc, người, bàn, trạm và khoá gom, quantity đếm việc, mới nhất trước. Mọi danh sách rỗng là [].
+         */
+        get: operations["getServiceBoard"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/owner-overview": {
         parameters: {
             query?: never;
@@ -2049,6 +2069,63 @@ export interface components {
             person_id: number;
             created_at: components["schemas"]["Instant"];
         };
+        ServiceBoard: {
+            sale_date: components["schemas"]["SaleDate"];
+            read_at: components["schemas"]["Instant"];
+            sessions: components["schemas"]["ServiceBoardSession"][];
+            empty_tables: components["schemas"]["ServiceBoardTable"][];
+            serve_history: components["schemas"]["ServiceBoardHistory"][];
+        };
+        ServiceBoardSession: {
+            /** Format: int64 */
+            table_session_id: number;
+            session_status: string;
+            /** @enum {string} */
+            service_group: "serving" | "waiting" | "no_order";
+            tables: components["schemas"]["ServiceBoardTable"][];
+            order_total_vnd: components["schemas"]["MoneyVnd"];
+            served_amount_vnd: components["schemas"]["MoneyVnd"];
+            items: components["schemas"]["ServiceBoardItem"][];
+        };
+        ServiceBoardTable: {
+            /** Format: int64 */
+            dining_table_id: number;
+            label: string;
+        };
+        ServiceBoardItem: {
+            /** Format: int64 */
+            menu_component_id: number | null;
+            component_name: string;
+            filling_option_ids: number[];
+            options: components["schemas"]["ServiceBoardOption"][];
+            extra_filling: boolean;
+            /** Format: int64 */
+            ordered: number;
+            /** Format: int64 */
+            served: number;
+            /** Format: int64 */
+            missing: number;
+        };
+        ServiceBoardOption: {
+            option_group_name: string;
+            option_name: string;
+        };
+        ServiceBoardHistory: {
+            served_at: components["schemas"]["Instant"];
+            /** Format: int64 */
+            person_id: number;
+            person_name: string;
+            /** Format: int64 */
+            dining_table_id: number;
+            table_label: string;
+            station_code: string;
+            /** Format: int64 */
+            menu_component_id: number | null;
+            component_name: string;
+            filling_option_ids: number[];
+            /** Format: int64 */
+            quantity: number;
+        };
         OverviewUnavailable: {
             /** @constant */
             status: "unavailable";
@@ -3623,6 +3700,35 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DailyMinimum"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getServiceBoard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Phiên bàn hiện tại, bàn trống và lịch sử đem ra. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceBoard"];
                 };
             };
             /** @description Lời từ chối theo ErrorCode và x-http-status. */
@@ -7957,6 +8063,7 @@ type ReadonlyArray<T> = [
     unknown[]
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
 export const pathsAccountsGetParametersQueryStatusValues: ReadonlyArray<FlattenedDeepRequired<paths>["/accounts"]["get"]["parameters"]["query"]["status"]> = ["cho_duyet", "hoat_dong", "khoa", "tu_choi"];
+export const serviceBoardSessionService_groupValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ServiceBoardSession"]["service_group"]> = ["serving", "waiting", "no_order"];
 export const overviewUnavailableReasonValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["OverviewUnavailable"]["reason"]> = ["daily_minimum_missing", "workers_present_missing"];
 export const overviewPortionGroupValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["OverviewPortion"]["group"]> = ["in_store", "online"];
 export const assignedTaskGuideKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AssignedTaskGuide"]["kind"]> = ["text", "image", "video"];

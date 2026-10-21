@@ -30,7 +30,8 @@ func doanKhoaGom(t *testing.T, file string) string {
 func TestI019_KhoaGomMotDinhNghia(t *testing.T) {
 	gom := doanKhoaGom(t, "sql/gom.sql")
 	// viec_quay.sql (T-217, F-073): đường đọc việc trạm của quầy trả khoá gom của từng việc — bản thứ ba.
-	for _, file := range []string{"sql/chon_da_lam.sql", "sql/viec_quay.sql"} {
+	// bang_van_hanh.sql (T-225, ADR-124 điểm 3): bảng từng bàn của trang Vận hành — bản thứ tư.
+	for _, file := range []string{"sql/chon_da_lam.sql", "sql/viec_quay.sql", "../tongquan/sql/bang_van_hanh.sql"} {
 		if ra := doanKhoaGom(t, file); gom != ra {
 			t.Fatalf("khoá gom lệch giữa sql/gom.sql và %s (I-019 tầng 3: một định nghĩa):\n--- gom.sql\n%s\n--- %s\n%s", file, gom, file, ra)
 		}

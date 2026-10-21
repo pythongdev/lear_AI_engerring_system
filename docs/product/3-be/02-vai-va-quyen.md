@@ -68,6 +68,12 @@ nó thêm, **cùng lượt**: một dòng ở bảng này kèm nguồn, một h�
 `authz.Read` kiểm trước khi đọc các nguồn; POS không phải chủ quán bị `owner_only`,
 không phiên bị `unauthenticated`. Miền `tongquan` không có cửa ghi.
 
+**Cửa đọc trang Vận hành (T-225, 2026-10-21, phiếu Claude):**
+`GET /service-board` thuộc lớp `quay_hoac_chu_quan` theo ADR-124.
+`authz.Read` kiểm trước mọi nguồn: chủ quán hoặc người đang đứng quầy được đọc;
+người ngoài quầy không phải chủ quán bị `not_on_counter_duty`, không phiên bị `unauthenticated`.
+Trả từng phiên bàn, tiền đơn, tiền đã ra, bàn trống và lịch sử đem ra; không thêm cửa ghi.
+
 **Cửa đọc nhắc kiểm tra nguyên liệu (T-201, 2026-10-19, phiếu Claude):**
 `GET /supply-check-reminders` thuộc lớp `quay_hoac_chu_quan` theo ADR-119.
 `authz.Read` kiểm trước khi đọc: chủ quán hoặc người đang đứng quầy được đọc;

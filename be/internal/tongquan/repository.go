@@ -43,3 +43,12 @@ func (r repository) moiNhat(ctx context.Context, ngay string) (*KhaiNguoi, error
 	row := rows[0]
 	return &KhaiNguoi{ID: row.ID, SaleDate: row.SaleDate, WorkerCount: row.WorkerCount, PersonID: row.PersonID, PersonName: row.PersonName, DeclaredAt: row.DeclaredAt.Time}, nil
 }
+
+func (r repository) bang(ctx context.Context, ngay string) (out BangVanHanh, err error) {
+	raw, err := r.q.BangVanHanh(ctx, ngay)
+	if err != nil {
+		return out, err
+	}
+	err = json.Unmarshal(raw, &out)
+	return
+}

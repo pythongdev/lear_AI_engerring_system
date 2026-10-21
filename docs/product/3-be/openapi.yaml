@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.47.0
+  version: 0.48.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -123,6 +123,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DailyMinimum'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /service-board:
+    get:
+      operationId: getServiceBoard
+      tags: [tongquan]
+      summary: Tình hình từng phiên bàn và lịch sử đem ra của trang Vận hành.
+      description: >-
+        ADR-124: lớp quay_hoac_chu_quan; không phiên trả unauthenticated,
+        người ngoài quầy không phải chủ quán trả not_on_counter_duty.
+        Ảnh hiện tại, ngày bán quy như owner-overview; không nhận ngày lịch sử.
+        sessions gồm mọi phiên chưa closed và mọi bàn ghép của phiên, bỏ đơn cancelled.
+        serving khi có đơn vị ra hết, waiting khi có đơn chưa huỷ nhưng chưa đơn vị nào ra,
+        no_order khi không có đơn chưa huỷ. Items gom thành phần và tập tuỳ chọn nhân, bỏ trạm;
+        một đơn vị là (order_line_component_id, position), việc không thành phần là đơn vị riêng.
+        served khi mọi trạm served; missing = ordered - served. Options là tên đã chụp;
+        extra_filling khi có lựa chọn nhóm Lượng nhân không mặc định.
+        order_total_vnd dùng phien.TongTien; served_amount_vnd dùng cùng phép tạm tính
+        với owner-overview trên đơn của phiên, không chia giá combo, không là số phải thu.
+        empty_tables không thuộc phiên chưa đóng nào. serve_history đọc vết made → served
+        trong ngày bán, kể cả phiên đã đóng; gom theo mốc, người, bàn, trạm và khoá gom,
+        quantity đếm việc, mới nhất trước. Mọi danh sách rỗng là [].
+      responses:
+        '200':
+          description: Phiên bàn hiện tại, bàn trống và lịch sử đem ra.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceBoard'
         default:
           description: Lời từ chối theo ErrorCode và x-http-status.
           content:
@@ -3858,6 +3891,141 @@ components:
           description: Người tạo; người sửa nằm trong record_revision.
         created_at:
           $ref: '#/components/schemas/Instant'
+    ServiceBoard:
+      type: object
+      additionalProperties: false
+      required: [sale_date, read_at, sessions, empty_tables, serve_history]
+      properties:
+        sale_date:
+          $ref: '#/components/schemas/SaleDate'
+        read_at:
+          $ref: '#/components/schemas/Instant'
+        sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceBoardSession'
+        empty_tables:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceBoardTable'
+        serve_history:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceBoardHistory'
+    ServiceBoardSession:
+      type: object
+      additionalProperties: false
+      required: [table_session_id, session_status, service_group, tables, order_total_vnd, served_amount_vnd, items]
+      properties:
+        table_session_id:
+          type: integer
+          format: int64
+          minimum: 0
+        session_status:
+          type: string
+        service_group:
+          type: string
+          enum: [serving, waiting, no_order]
+        tables:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceBoardTable'
+        order_total_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        served_amount_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceBoardItem'
+    ServiceBoardTable:
+      type: object
+      additionalProperties: false
+      required: [dining_table_id, label]
+      properties:
+        dining_table_id:
+          type: integer
+          format: int64
+          minimum: 0
+        label:
+          type: string
+    ServiceBoardItem:
+      type: object
+      additionalProperties: false
+      required: [menu_component_id, component_name, filling_option_ids, options, extra_filling, ordered, served, missing]
+      properties:
+        menu_component_id:
+          type: [integer, 'null']
+          format: int64
+        component_name:
+          type: string
+        filling_option_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceBoardOption'
+        extra_filling:
+          type: boolean
+        ordered:
+          type: integer
+          format: int64
+          minimum: 0
+        served:
+          type: integer
+          format: int64
+          minimum: 0
+        missing:
+          type: integer
+          format: int64
+          minimum: 0
+    ServiceBoardOption:
+      type: object
+      additionalProperties: false
+      required: [option_group_name, option_name]
+      properties:
+        option_group_name:
+          type: string
+        option_name:
+          type: string
+    ServiceBoardHistory:
+      type: object
+      additionalProperties: false
+      required: [served_at, person_id, person_name, dining_table_id, table_label, station_code, menu_component_id, component_name, filling_option_ids, quantity]
+      properties:
+        served_at:
+          $ref: '#/components/schemas/Instant'
+        person_id:
+          type: integer
+          format: int64
+          minimum: 0
+        person_name:
+          type: string
+        dining_table_id:
+          type: integer
+          format: int64
+          minimum: 0
+        table_label:
+          type: string
+        station_code:
+          type: string
+        menu_component_id:
+          type: [integer, 'null']
+          format: int64
+        component_name:
+          type: string
+        filling_option_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        quantity:
+          type: integer
+          format: int64
+          minimum: 0
     OverviewUnavailable:
       type: object
       additionalProperties: false
