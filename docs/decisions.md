@@ -139,6 +139,7 @@ có câu trả lời mới từ người.
 | ADR-120 | **Đọc tổng kết** (`P3A-10`): một đường `GET /sale-days/{sale_date}/summary` lớp `chu_quan`, bốn mục — doanh thu ngày bán từ hai nguồn trừ hoàn ngày hoàn, món bán chạy (suất con theo món, combo riêng), lời nhắc kho, số đếm theo người không điểm không hạng | Đã chốt 2026-10-19 (Claude) | — | P3A-10 · I-014 · ADR-118 · ADR-119 |
 | ADR-121 | **Số người đang làm do POS khai** (`T-197`): bảng chỉ thêm `workers_present_declaration`, mỗi lần khai một dòng, lần mới nhất của ngày bán thắng; cửa ghi lớp `quay`, đường đọc cho quầy; tổng quan bày số và thiếu người so với `minimum_workers` | Đã chốt 2026-10-19 (Claude) | — | `T-197` · ADR-118 · U-060 |
 | ADR-122 | **Topping: thêm, ẩn, bật lại lựa chọn trong nhóm có sẵn** (`T-210`): thêm là một dòng `menu_option`; nhóm phụ thuộc chủ quán tích; ẩn là hai cột, một cửa cho ẩn và bật lại; hàm giá từ chối lựa chọn đã ẩn tại mốc tính; không ẩn được mặc định | Đã chốt 2026-10-19 (Claude) | — | `T-210` · ADR-086 · ADR-094 · §8.9 |
+| ADR-124 | **Đường đọc trang Vận hành** (`T-225`): `GET /service-board` lớp `quay_hoac_chu_quan` — phiên bàn chưa đóng chia `serving` · `waiting` · `no_order`, thứ đặt · đã ra · thiếu theo đơn vị, tiền đã ra bằng đoạn tạm tính dùng chung với tổng quan, lịch sử đem ra đọc từ vết `made → served` | Đã chốt 2026-10-21 (Claude) | — | `T-225` · ADR-118 · ADR-092 · I-019 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7891,3 +7892,47 @@ chụp khi menu đã sửa (I-009).
 
 **Applies to:** `be/internal/sanxuat/` · `be/internal/nhandon/` · `docs/product/3-be/openapi.yaml` · `docs/product/3-be/02-vai-va-quyen.md` ·
 `docs/product/3-be/07-san-xuat-theo-me.md` · `docs/product/3-be/09-realtime-du-phong.md`; **ADR-090** · **ADR-097** · **ADR-102** · F-073 · F-074 · `T-217` · `T-218`.
+
+### ADR-124 — Đường đọc trang Vận hành: từng phiên bàn theo đơn vị, tiền đã ra bằng đoạn tạm tính dùng chung, lịch sử đem ra đọc từ vết
+
+**Status:** Đã chốt 2026-10-21 (Claude Code, thiết kế cho `T-225`, theo lời chủ repo *"tôi chốt thiết kế hiện tại của trang vận hành hãy làm
+các task để hoàn thành trang trên"* và *"yêu cầu codex làm bạn kiểm tra"*). Lời quán dùng ở đây: *sắp phục vụ* · *đã đem ra*
+(`master_plan/shop-facts.md` §5.4, chủ repo xác nhận 2026-10-21), tạm tính cộng phần đã ra, combo không tính giá thành phần (§8.6, U-099 ·
+T-199). Mọi điểm dưới đây là **lựa chọn của phiên**, không phải lời quán.
+
+**Context:** thiết kế trang Vận hành (`docs/product/4-fe/thiet_ke/chu_quan/van_hanh/component.md`) cần, cho từng bàn, mỗi thứ đặt · đã ra ·
+thiếu, tiền đơn, tiền đã ra, và lịch sử từng lần đem ra. `GET /dining-tables` chỉ có trạng thái bàn, `GET /counter/queue` không có số theo nhân,
+`GET /owner-overview` chỉ có tổng. `station_job` không có cột giờ ra bàn. Nhưng chỉ một câu đổi trạng thái việc trạm
+(`be/internal/vongdoi/sql/chuyen_viec/chuyen.sql`), nó luôn chạy trong `vongdoi.CoVet`, và vết ở chế độ nghiêm từ 2026-10-10 (ADR-092): mỗi lần
+`made → served` đã để lại một dòng `record_revision` có người bấm, và `created_at` của dòng ấy là mốc giao dịch — chung cho mọi việc của một lần bấm.
+
+**Decision:**
+1. **`GET /service-board`**, miền `tongquan`, lớp `quay_hoac_chu_quan` (`authz.Read`): chủ quán đọc, và người đang đứng quầy đọc — `T-228` bấm ô
+   số trên chính trang này. Không cửa ghi. Ảnh hiện tại của ngày bán hiện tại (cùng phép quy ngày với `GET /owner-overview`), không nhận ngày lịch sử.
+2. **`sessions`** — mỗi `table_session` chưa `closed`: mã phiên, trạng thái phiên, **mọi** bàn của phiên (`table_session_member`, bàn ghép hiện đủ),
+   và `service_group`: `serving` khi ít nhất một đơn vị của phiên đã ra hết; `waiting` (*sắp phục vụ*) khi phiên có đơn không huỷ mà chưa đơn vị
+   nào ra; `no_order` khi phiên chưa có đơn không huỷ nào — lời §5.4 nói *đã gửi lượt gọi*, phiên chưa gửi gì thì không tự xếp vào nhóm nào.
+3. **`items` của một phiên** đếm theo **đơn vị** như `sales_progress` của ADR-118: một đơn vị là `(order_line_component_id, position)` qua mọi trạm
+   (bánh cuốn có việc ở tráng và gấp là **một** cái), việc không thành phần (nước chấm) là một đơn vị; *đã ra* = mọi trạm của đơn vị `served`. Gom
+   theo thành phần gốc + tập tuỳ chọn nhân — khoá gom (I-019 tầng 3) **bỏ trạm**, đọc từ **cùng đoạn đánh dấu** của `be/internal/sanxuat/sql/gom.sql` (bản thứ tư,
+   `TestI019_KhoaGomMotDinhNghia` so cả bốn). Mỗi dòng: `menu_component_id` · `component_name` · `filling_option_ids` · `options` (tên nhóm và tên
+   lựa chọn đã chụp ở `order_line_option`) · `extra_filling` · `ordered` · `served` · `missing`. Đơn huỷ không vào. Backend **không** chia cột Thịt ·
+   Mộc nhĩ · Chay: đó còn là cách hiểu chưa xác nhận của thiết kế, việc của màn (`T-226`).
+4. **`extra_filling`** = dòng có tuỳ chọn đã chụp thuộc nhóm tên `Lượng nhân` mà không phải lựa chọn mặc định của nhóm (§4.6 luật 3 · 8: lượng
+   *Thường* là mặc định). Một chỗ tính, ở backend.
+5. **Tiền:** `order_total_vnd` = `phien.TongTien` (một chỗ cộng tiền phiên, I-002). `served_amount_vnd` = phép cộng tạm tính của ADR-118 điểm 5 trên
+   đơn của phiên: đoạn *đơn vị bán + đã ra hết* tách khỏi `be/internal/tongquan/sql/tong.sql` thành **một đoạn đánh dấu** đọc từ tập đơn nguồn, giống từng byte
+   ở hai file, một test so hai bản — không có phép cộng thứ hai. Nhãn vẫn là *tạm tính*; không là số phải thu (`T-227` còn bị chặn bởi U-103).
+6. **`empty_tables`** — bàn không thuộc phiên chưa đóng nào: mã và nhãn. Trạng thái dọn bàn vẫn ở `GET /dining-tables`.
+7. **`serve_history`** — đọc từ `record_revision` (`target_table_code = 'station_job'`, ảnh trước `made`, ảnh sau `served`), đơn có bàn, mốc trong
+   ngày bán hiện tại, kể cả phiên đã đóng. Một mục = một lần bấm cho một bàn và một khoá gom của một trạm: `served_at` (`record_revision.created_at`),
+   `person_id` · `person_name`, `dining_table_id` · `table_label`, `station_code`, `menu_component_id` · `component_name` · `filling_option_ids`,
+   `quantity` = số việc trạm của lần bấm ấy. Mới nhất trước. Không khớp theo chuỗi lý do — khớp theo hai ảnh.
+
+**Rejected alternatives:** *thêm bảng ghi từng lần đem ra* — chép lại điều vết đã ghi trong cùng giao dịch, và thêm một chỗ phải giữ khớp với
+`station_job`; xem lại nếu vết đổi chế độ hay một đường mới đổi việc trạm ngoài `vongdoi`. *Cột `served_at` trên `station_job`* — đổi lược đồ
+bảng sản xuất để có thứ đã có. *Đếm theo việc trạm như `GET /production-board`* — một cái bánh thành hai. *Màn tự đọc tên nhóm để ra cờ nhiều* —
+hai chỗ biết tên nhóm. *Mở `GET /owner-overview` cho quầy* — lộ tạm tính cả ngày và số người, quầy cần từng bàn.
+
+**Applies to:** `be/internal/tongquan/` · `be/internal/sanxuat/khoa_gom_test.go` · `docs/product/3-be/openapi.yaml` · `docs/product/3-be/02-vai-va-quyen.md` ·
+`fe/src/lib/api/schema.ts`; **ADR-118** · **ADR-092** · **ADR-123** · I-002 · I-019 · `T-225` · `T-226` · `T-228`.

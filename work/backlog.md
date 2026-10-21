@@ -89,7 +89,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-225 **Đường đọc cho trang Vận hành: từng bàn, từng thứ, tiền đã ra, lịch sử đem ra** — một cửa đọc mới cho chủ quán (và người đứng quầy): phiên bàn chưa đóng chia *đang phục vụ* · *sắp phục vụ*, mỗi thứ đặt · đã ra · thiếu kèm cờ nhiều, tiền đơn và tiền đã ra, bàn trống, lịch sử từng lần đem ra — L2 (Claude thiết kế, ADR nếu thêm bảng, test trước) — mở 2026-10-21 · [chi tiết](#t-225)
 - [ ] T-226 **Trang `/chu-quan/van-hanh` — phần đọc theo thiết kế đã chốt** — năm khối của `van_hanh/van-hanh.html`, số lấy từ `T-225`, cộng thử chỉ tính trên màn — L1 — mở 2026-10-21, **cần xong trước:** `T-225` · [chi tiết](#t-226)
 - [ ] T-228 **Bấm ô số trên trang Vận hành ghi *đã đem ra*** — chọn 0…số thiếu, xác nhận, gửi `POST /served-marks` cho một bàn; chỉ bật khi phiên đang đứng quầy (S-5, chủ repo giữ 2026-10-21) — L2 — mở 2026-10-21, **cần xong trước:** `T-226` · [chi tiết](#t-228)
 - [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
@@ -101,6 +100,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-225 **Đường đọc cho trang Vận hành: từng bàn, từng thứ, tiền đã ra, lịch sử đem ra** — một cửa đọc mới cho chủ quán (và người đứng quầy): phiên bàn chưa đóng chia *đang phục vụ* · *sắp phục vụ*, mỗi thứ đặt · đã ra · thiếu kèm cờ nhiều, tiền đơn và tiền đã ra, bàn trống, lịch sử từng lần đem ra — L2 (Claude thiết kế ADR-124 và viết test trước, Codex thi công, Claude duyệt) — mở 2026-10-21, nhận 2026-10-21 · [chi tiết](#t-225)
 
 
 
@@ -507,6 +507,30 @@ T-199: phần thuộc combo không tính giá thành phần), không viết phé
 (`db/migrations/20260928130000_san_xuat_theo_me.up.sql`), nên lịch sử phải chọn nguồn — đọc vết cập nhật hay thêm bảng ghi từng lần
 đem ra (migration, ADR); (3) quyền: chủ quán đọc, người đứng quầy có đọc không (cần cho `T-228`) — ghi vào ma trận
 `02-vai-va-quyen.md`; (4) test hồi quy trước cho nghĩa *sắp phục vụ · đang phục vụ* và cho tiền đã ra bằng tạm tính trên cùng dữ liệu.
+
+**Claude quyết 2026-10-21** (`docs/decisions.md` **ADR-124**): (1) tiền đã ra = đoạn *tạm tính* tách khỏi `be/internal/tongquan/sql/tong.sql`
+thành một đoạn đánh dấu, giống từng byte ở file đọc mới; (2) lịch sử đọc từ **vết** `record_revision` (`made → served`) — mọi lần đổi việc
+trạm đi qua `vongdoi.CoVet` ở chế độ nghiêm, nên vết đã có người bấm và mốc giao dịch; **không** migration, không bảng mới; (3) lớp
+`quay_hoac_chu_quan`; (4) test viết trước, dưới đây. Đường: `GET /service-board`, miền `tongquan`.
+
+**Acceptance** (viết 2026-10-21, trước khi giao):
+- [ ] `TestI019_BangVanHanhDemTheoDonViVaNhom` xanh — đếm theo đơn vị qua mọi trạm; `serving` · `waiting` · `no_order`; bàn ghép một phiên hai
+  bàn; đơn huỷ không vào; bàn trống đúng tập.
+- [ ] `TestI002_BangVanHanhTienDonBangTongTienPhien` xanh — `order_total_vnd` bằng `phien.TongTien`.
+- [ ] `TestI014_BangVanHanhTienDaRaBangTamTinh` xanh — tiền đã ra chỉ đơn vị bán ra hết, và khớp tạm tính của `GET /owner-overview` trên cùng dữ liệu.
+- [ ] `TestI014_TamTinhMotDinhNghia` xanh — đoạn tạm tính giống từng byte ở `tong.sql` và `bang_van_hanh.sql`.
+- [ ] `TestI019_KhoaGomMotDinhNghia` xanh với bản thứ tư `be/internal/tongquan/sql/bang_van_hanh.sql`.
+- [ ] `TestI019_LichSuDemRaDocTuVet` xanh — một lần bấm một mục, `quantity` đúng, có người và giờ, bỏ vết khác ngày và vết không phải `made → served`.
+- [ ] `TestYC15_BangVanHanhQuayHoacChuQuan` xanh — chủ quán và người đứng quầy 200, người ngoài quầy `not_on_counter_duty`, không phiên `unauthenticated`.
+- [ ] Test có sẵn của `be/internal/tongquan/` vẫn xanh (tạm tính tổng quan không đổi số).
+- [ ] `docs/product/3-be/openapi.yaml` có `GET /service-board` và schema, `info.version` tăng; `02-vai-va-quyen.md` có dòng cửa đọc; `fe/src/lib/api/schema.ts`
+  sinh lại; `./scripts/gate.sh` xanh, `be-check` do Claude chạy.
+
+*Test do Claude viết trước khi giao* (ADR-054, L2): `be/internal/tongquan/service_board_test.go` · `service_board_handler_test.go` ·
+`testdata/service_board.sql`, và một dòng ở `be/internal/sanxuat/khoa_gom_test.go`. Fixture đã chạy thử trên database migrate từ số 0: năm lần
+`made → served` sinh năm dòng vết cùng người và cùng `created_at`.
+
+**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-225`, nhánh `codex/T-225` từ `efbb4b0`) · duyệt: Claude — chưa duyệt.
 
 <a id="t-224"></a>
 ### T-224 — Thiết kế trang Vận hành đã chốt mà chưa có task nào để làm thật
