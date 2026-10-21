@@ -89,6 +89,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
+- [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
 [↑ đầu file](#top)
@@ -110,6 +111,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-222 **Màn QR có tiêu đề hình mã QR + số bàn, `/dat-mon` lên máy tìm kiếm** — hai việc còn lại của `P4-10`: `h1` màn `/ban/[ma]` bày biểu tượng mã QR và *Bàn {số}*; `/dat-mon` vào `PUBLIC_ROUTES`, có metadata công khai và nằm trong sitemap — L1 — mở và nhận 2026-10-21 · Claude Code (dẫn, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex làm các task trên còn bạn kiểm tra"* — 2026-10-21 · [chi tiết](#t-222)
 - [x] P4-10 **Khách: QR tại bàn và đơn web** — `/ban/[ma]` gửi lượt gọi QR, `/dat-mon` đơn giao · mang đi · đặt trước; menu lấy ở server từng request, tổng là tính thử của cả giỏ, gửi lại không nhân đôi (`I-024`), câu tạm dừng · mất kết nối chủ repo chọn 2026-10-21 — L2 — nhận 2026-10-21 · Claude Code (dẫn, test trước, duyệt), Codex thi công — 2026-10-21 · [chi tiết](backlog_FE.md#p4-10)
 - [x] T-221 **Bộ soạn món soạn được combo và theo lựa chọn phụ thuộc** — phần còn lại của đợt hai `P4-07`: nhóm có điều kiện chỉ hiện khi điều kiện được chọn; combo chọn nhân từng suất, giá dòng combo từ `POST /price-quotes`; hàng chờ bày suất của combo — L1 — nhận 2026-10-21 · Claude Code (dẫn, test trước, duyệt), Codex thi công theo lời chủ repo *"yêu cầu codex thực hiện 2 việc trên bạn kiểm tra"* — 2026-10-21 · [chi tiết](#t-221)
 - [x] P4-07 **Màn quầy: nhận và ghi đơn** — đợt một hàng chờ (duyệt · từ chối, tạm dừng · quán mù, đơn hẹn); đợt hai bày món · tiền, đơn đang làm · rời quán (bị chặn bởi S-6, màn nói rõ), `/quay/goi-mon` · `/quay/dien-thoai`; combo ở bộ soạn để sau — L2 — nhận 2026-10-20 · Claude Code (dẫn, test trước, duyệt), Codex thi công — 2026-10-21 · [chi tiết](backlog_FE.md#p4-07)
@@ -445,6 +447,41 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-223"></a>
+### T-223 — Đơn giao tận nơi không rời quán được vì vế S-6 từng chưa có lời
+
+**Yêu cầu:** chủ repo 2026-10-21 trả lời **S-6** (`master_plan/shop-facts.md` §7.2): quầy bấm *"đã ra bàn"* của đơn giao **lúc đơn rời quán — cùng
+mốc quầy đã bấm để đưa đơn sang Đang giao**. Hôm nay cửa rời quán (`docs/product/3-be/05-luong-mang-di.md` §4) từ chối mọi đơn còn việc trạm chưa
+`served` bằng `delivery_served_mark_undecided` **409**, nên trên thực tế đơn giao có món không rời quán được. **Mức:** L2 — đổi hợp đồng API, cửa ghi
+việc trạm, và chạm đếm của bảng sản xuất (`I-019` · `I-020`). **Chưa nhận.** Việc của Claude trước khi giao: đọc cửa *ra bàn* hiện có (S-5, số cái
+cho một bàn) để biết ghi `served` cho đơn không có bàn đi đường nào; quyết việc trạm còn `pending` lúc rời quán thì từ chối bằng tên mới hay giữ tên
+cũ (đây là **suy ra** — chủ quán chưa nói đơn giao có được đi khi chưa làm đủ); viết test hồi quy trước; rồi mới giao Codex.
+
+<a id="t-222"></a>
+### T-222 — Màn QR chỉ bày nhãn trơ của bàn, `/dat-mon` chưa lên máy tìm kiếm
+
+**Yêu cầu:** chủ repo 2026-10-21, trả lời phần *Còn lại* của `P4-10` ([chi tiết](backlog_FE.md#p4-10)): *"Tiêu đề màn QR: đang chỉ là nhãn trơ của
+bàn ("5") --> hình qr code và số bàn"* · *"Máy tìm kiếm: /dat-mon chưa được đưa vào danh sách trang công khai --> đưa sang"* · *"yêu cầu codex làm
+các task trên còn bạn kiểm tra"*. **Mức:** L1 — đổi chữ và metadata của màn khách, không chạm tiền, dữ liệu hay hợp đồng.
+
+**Claude chốt hình màn** (không phải luật quán): *hình qr code* đọc là **biểu tượng** mã QR (`QrCode` của `lucide-react`, `aria-hidden`) đứng trước
+chữ, **không** vẽ lại chính mã khách vừa quét. Chữ: nhãn bàn chỉ gồm chữ số (`"5"`) thì bày *Bàn 5*; nhãn đã có chữ (`"Bàn 3"`, `"Sân 2"`) thì bày
+nguyên nhãn — nhãn là chữ tự do chủ quán gõ (`dining_table_label_not_blank_check`), nên thêm *Bàn* vô điều kiện sẽ ra *Bàn Bàn 3*. `/dat-mon` theo
+đúng ba bước của [`02-toi-uu-seo.md`](../docs/product/4-fe/02-toi-uu-seo.md) *Thêm một trang công khai*.
+
+*Nghiệm thu* (viết trước, 2026-10-21): (1) test mới ở `fe/src/app/ban/khach-qr.test.tsx`: nhãn `"5"` ⇒ `h1` có chữ đúng *Bàn 5* và một `svg`; nhãn
+`"Bàn 3"` ⇒ chữ đúng *Bàn 3*; tám ca cũ xanh; (2) `fe/src/lib/seo.test.ts`: `PUBLIC_ROUTES` là `["/", "/dat-mon"]`, metadata của `app/dat-mon/page`
+bằng `publicPageMetadata("/dat-mon")` (index, canonical chỉ khi có địa chỉ gốc), sitemap có cả hai; (3) `01-khung-fe.md` (bảng route, dòng
+`PhieuKhach`) và `02-toi-uu-seo.md` ghi `/dat-mon` công khai; (4) `check-fe-rules` xanh; (5) `./scripts/gate.sh` xanh.
+
+**Bàn giao** — 2026-10-21 · thực hiện: **Codex** `gpt-6-astra` (worktree `../lean_wt/T-222`, nhánh `codex/T-222`, base `4284489`, đã gỡ); Codex
+chết giữa lúc chạy gate, **không có báo cáo** — Vitest trong worktree lại vướng `EPERM` ở `.vite-temp` như `P4-10`. Duyệt, tích hợp và chạy lại: **Claude
+Code**, nhánh `P4A-01`. File: `ban/_components/phieu-khach.tsx` (h1) · `ban/khach-qr.test.tsx` (+3 ca: `"5"`, `" 5 "`, `"Bàn 3"`) · `dat-mon/page.tsx`
+(metadata) · `lib/seo.ts` · `lib/seo.test.ts` (A4 + ca `/dat-mon`) · `01-khung-fe.md` · `02-toi-uu-seo.md`. *Bằng chứng:* (1)(2) clone chính
+`411 passed`; test có răng — đổi luật chữ số thành `/^X/` ⇒ `2 failed`, trả lại ⇒ xanh; (3) đã ghi; (4) `check-fe-rules` xanh, `tsc` · `eslint`
+sạch; (5) gate *PASS không cổng nào đỏ*. Cùng lượt Claude ghi lời chủ repo: **S-6** có lời (`shop-facts.md` §5.4 · §7.1 · §7.2, `05-vong-doi.md`,
+`05-luong-mang-di.md`), năm câu chữ khách của `P4-10` được duyệt (`backlog_FE.md`), mở `T-223`.
 
 <a id="t-221"></a>
 ### T-221 — Bộ soạn món chưa soạn được combo và chưa theo lựa chọn phụ thuộc

@@ -106,8 +106,9 @@ phải đúng cặp từ `in_progress` tới `delivering`, cách trao `door_deli
 `order_transition_not_allowed` **409** trước khi xét việc trạm.
 
 Sau đó đọc **bất kỳ** `station_job` của đơn có `status <> 'served'`: còn thì từ chối
-`delivery_served_mark_undecided` **409**, không ghi gì. Đây là chỗ S-6 chưa có lời ở `shop-facts.md`
-§7.2; cửa không tự đổi việc trạm. Không còn thì gọi `vongdoi.ChuyenDon(..., "delivering")`
+`delivery_served_mark_undecided` **409**, không ghi gì; cửa không tự đổi việc trạm. S-6 **có lời
+2026-10-21** (`shop-facts.md` §7.2: mốc *đã ra bàn* của đơn giao là lúc rời quán), nên hành vi này
+đã lỗi thời và đổi ở `T-223`. Không còn thì gọi `vongdoi.ChuyenDon(..., "delivering")`
 trong chính giao dịch; vết mang người quầy và lý do. Trả **200** theo `OrderTransition`, hai trường
 phiên là null. Cửa rời quán chỉ giữ câu khoá/đọc dưới `sql/roi_quan/`, không sở hữu ô ghi mới.
 
@@ -137,7 +138,7 @@ Các tên `sales_order_*` còn lại tiếp tục theo giải thích của [lu�
 
 | Chỗ trống | Hôm nay | Ai gỡ |
 |---|---|---|
-| **S-6 — lúc nào POS bấm đã ra bàn của đơn giao** | rời quán khi còn việc chưa served bị từ chối kèm mã; không tự ghi việc trạm | chủ quán, `shop-facts.md` §7.2 |
+| **S-6 — lúc nào POS bấm đã ra bàn của đơn giao** | có lời 2026-10-21 (lúc rời quán); cửa vẫn từ chối khi còn việc chưa served, chưa ghi mốc | `T-223` (`work/backlog.md`) |
 | **Bật/tắt tạm dừng nhận đơn** | chưa có cửa; khoảng tạm dừng hôm nay chỉ ghi tay ở database; ai bấm chưa có lời ở `architecture.md` §7 dòng *Hết nguyên liệu → tạm dừng nhận đơn* | Claude/chủ quán làm rõ trước khi dựng cửa |
 | **Phát hiện quán mù và ghi khoảng mù** | cửa tạo chỉ đọc `shop_blind_spell` | `P3-12` |
 | **Hoàn thành của đơn lẻ** | cần hoá đơn đơn lẻ; lát này chưa có cửa tới trạng thái ấy | `P3-09` thu tiền · `P3-10` ghi đã ra bàn |

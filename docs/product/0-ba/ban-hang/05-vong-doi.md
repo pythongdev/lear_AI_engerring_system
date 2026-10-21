@@ -216,9 +216,8 @@ Ba điều phải đọc kèm bảng:
   **hai người khác nhau** cho cùng nút *"đã ra bàn"*. Lời chốt 2026-09-04 khép chỗ ấy: **người
   đứng quầy bấm**, kể cả với đơn giao; người đi giao vẫn **không** bấm mốc nào của bảng bếp. ⇒ §5.5
   chạy được cho đơn giao, và không ai phải bấm khống một mốc cho suất đang ở nhà khách.
-  *Vế **lúc nào** quầy bấm thì lời ấy không nói* — chỗ **suy ra** là **S-6** ở
-  `master_plan/shop-facts.md` §7.2 (*lúc đơn rời quán*, cùng mốc sang `Đang giao`); đừng đọc nó
-  thành lời chủ quán, và đừng dựng màn người đi giao như thể nó đã chốt (CLAUDE.md §3.5).
+  *Vế **lúc nào** quầy bấm:* **lúc đơn rời quán**, cùng mốc sang `Đang giao` — chủ repo xác nhận
+  2026-10-21, đóng **S-6** ở `master_plan/shop-facts.md` §7.2.
 - **Bấm nhầm thì LÙI ĐƯỢC, và không có mốc thời gian cứng** (chủ quán chốt 2026-09-01, trả lời
   U-024): *"có đường lui, thời gian tuỳ theo thực tế để POS quyết định"*. Không có "trong vòng N
   phút" — người đứng quầy nhìn tình huống thật rồi quyết, đúng cùng một kiểu với quyền hoàn tiền

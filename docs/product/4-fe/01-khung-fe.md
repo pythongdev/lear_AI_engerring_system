@@ -24,7 +24,7 @@ Mỗi màn thêm **một dòng** ở đây cùng lượt dựng nó, và nhóm n
 | Route | Nhóm (ADR-102) | Là gì | Bước dựng |
 |---|---|---|---|
 | `/ban/[ma]` | khách | Nhãn bàn và bộ soạn gọi món qua QR; mã cũ mời quét lại (2026-10-21, theo phiếu Claude) | `P4-10` |
-| `/dat-mon` | khách | Đơn giao tận nơi hoặc đến lấy, giờ cần hàng theo giờ quán (2026-10-21, theo phiếu Claude) | `P4-10` |
+| `/dat-mon` | khách | Trang công khai cho máy tìm kiếm; đơn giao tận nơi hoặc đến lấy, giờ cần hàng theo giờ quán (2026-10-21, chủ repo, T-222) | `P4-10` |
 | `/` | — | trang giữ chỗ của khung, không dữ liệu, không màn nghiệp vụ | `P4-02` |
 | /robots.txt | — | chỉ dẫn thu thập cho máy tìm kiếm | `T-189` |
 | /sitemap.xml | — | danh sách URL công khai | `T-189` |
@@ -202,7 +202,7 @@ có nơi dùng thứ hai (**ADR-102** điểm 8) và thêm một dòng ở đây
 | `TuNhaDonHen` (tầng 3) | `fe/src/app/quay/_components/tu-nha-don-hen.tsx` | máy quầy tự nhả đơn hẹn theo chu kỳ; lỗi thì nói ra | layout `/quay` | `P4-07` |
 | `BoSoanMon` (tầng 2) | `fe/src/components/shared/bo-soan-mon.tsx` | món lẻ, radio mặc định, số lượng, mang về tuỳ màn; nhóm có điều kiện chỉ có mặt khi chọn ít nhất một mã trong tập điều kiện, vắng thì bỏ lựa chọn, có mặt lại thì chọn mặc định nếu có; món lẻ tra đúng tập `option_ids` trong `prices`; combo chọn riêng từng suất, gom suất cùng món và tổ hợp, lấy giá dòng từ `POST /price-quotes`, chưa có giá thì chưa gửi; không tính tiền ở FE (2026-10-21, theo phiếu Claude) | `/quay/goi-mon` · `/quay/dien-thoai`; dành để `P4-10` dùng lại | `P4-07` |
 | `DongMonDaGhi` (tầng 2) | `fe/src/components/shared/dong-mon-da-ghi.tsx` | bày dòng món và định dạng tiền backend bằng `Intl.NumberFormat("vi-VN")` + `đ` | hàng chờ · đơn đang làm; hàm định dạng dùng cả bộ soạn | `P4-07` |
-| `PhieuKhach` (tầng 3) · `loiKhach` | `fe/src/app/ban/_components/phieu-khach.tsx` · `loi-khach.ts` | dùng `BoSoanMon`, tính thử cả giỏ, gửi giữ dấu; lời từ chối theo phiếu; không thêm route vào `PUBLIC_ROUTES` (2026-10-21, theo phiếu Claude) | `/ban/[ma]` · `/dat-mon` | `P4-10` |
+| `PhieuKhach` (tầng 3) · `loiKhach` | `fe/src/app/ban/_components/phieu-khach.tsx` · `loi-khach.ts` | dùng `BoSoanMon`, tính thử cả giỏ, gửi giữ dấu; lời từ chối theo phiếu; h1 màn QR có biểu tượng `QrCode` ẩn với trình đọc màn hình và chữ `Bàn {số}` khi nhãn chỉ gồm chữ số sau trim, nhãn khác giữ nguyên; màn `/dat-mon` giữ h1 `Đặt món` không biểu tượng (2026-10-21, chủ repo, T-222) | `/ban/[ma]` · `/dat-mon` | `P4-10` |
 | `useNhapKhach` · `dungLai` | `fe/src/lib/nhap-khach.ts` | Zustand theo `qr:{ma}` và `web`, chỉ mã món/combo, số lượng, lựa chọn và suất; dựng lại với menu hiện tại, bỏ dòng không còn; `xoaHet()` xoá mọi khoá; không lưu bộ nhớ trình duyệt (2026-10-21, theo phiếu Claude) | hai màn khách | `P4-10` |
 | `SoanDon` · `useMenuSoan` (tầng 3) | `fe/src/app/quay/_components/soan-don.tsx` · `du-lieu-soan-don.ts` | hai phiếu dùng chung khuôn gửi một lần, giữ dấu và thân khi chưa rõ kết quả (2026-10-21, theo phiếu Claude) | `/quay/goi-mon` · `/quay/dien-thoai` | `P4-07` |
 

@@ -38,6 +38,14 @@ for (const base of [undefined, "https://example.com///"]) {
       expect(() => publicPageMetadata("/private")).toThrow("Route chưa được công khai");
     });
 
+    it("T-222: đặt món bật index và chỉ có canonical khi có địa chỉ gốc", async () => {
+      vi.stubEnv("BANHCUON_SITE_URL", base);
+      vi.resetModules();
+      const { metadata } = await import("@/app/dat-mon/page");
+      expect(metadata).toEqual(publicPageMetadata("/dat-mon"));
+      expect(metadata).toEqual({ robots: { index: true, follow: true }, ...(base ? { alternates: { canonical: "/dat-mon" } } : {}) });
+    });
+
     it("A3: robots chặn /api/ và sitemap chỉ khi có địa chỉ gốc", () => {
       vi.stubEnv("BANHCUON_SITE_URL", base);
       expect(robots()).toEqual({ rules: { userAgent: "*", allow: "/", disallow: "/api/" }, ...(base ? { sitemap: "https://example.com/sitemap.xml" } : {}) });
@@ -45,7 +53,7 @@ for (const base of [undefined, "https://example.com///"]) {
 
     it("A4: sitemap khớp PUBLIC_ROUTES, không có lastModified giả", () => {
       vi.stubEnv("BANHCUON_SITE_URL", base);
-      expect(PUBLIC_ROUTES).toEqual(["/"]);
+      expect(PUBLIC_ROUTES).toEqual(["/", "/dat-mon"]);
       expect(sitemap()).toEqual(base ? PUBLIC_ROUTES.map((path) => ({ url: `https://example.com${path}` })) : []);
     });
 

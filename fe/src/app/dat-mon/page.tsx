@@ -1,6 +1,9 @@
+import { publicPageMetadata } from "@/lib/seo";
 import { backendUrl } from "@/lib/api/backend-url";
 import type { components } from "@/lib/api/schema";
 import { PhieuKhach } from "../ban/_components/phieu-khach";
+
+export const metadata = publicPageMetadata("/dat-mon");
 
 export default async function DatMonPage() {
   let initialMenu: components["schemas"]["Menu"] | undefined;

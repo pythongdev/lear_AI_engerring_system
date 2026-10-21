@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { QrCode } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BoSoanMon, dongGui, giaDong, useGiaCombo } from "@/components/shared/bo-soan-mon";
 import { tien } from "@/components/shared/dong-mon-da-ghi";
@@ -100,7 +101,10 @@ export function PhieuKhach({ ma, nhan, initialMenu }: {
     } finally { chot.current = false; setDangGui(false); }
   }
   return <main className="mx-auto max-w-2xl space-y-5 p-4">
-    <h1 className="text-2xl font-semibold">{web ? "Đặt món" : nhan}</h1>
+    <h1 className="flex items-center gap-2 text-2xl font-semibold">
+      {!web && <QrCode aria-hidden="true" />}
+      {web ? "Đặt món" : /^\d+$/.test(nhan?.trim() ?? "") ? `Bàn ${nhan!.trim()}` : nhan}
+    </h1>
     {bao && <p role="status">{bao}</p>}
     {loi && <p role="alert">{loi}</p>}
     {menu.isError && <p role="alert">Chưa đọc được menu. Đang hiện bản đọc lúc {new Date(menu.dataUpdatedAt).toLocaleTimeString("vi-VN")}. <Button onClick={() => void menu.refetch()}>Đọc lại menu</Button></p>}

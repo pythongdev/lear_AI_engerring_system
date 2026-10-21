@@ -5,7 +5,7 @@ export const SITE_NAME = "Bánh cuốn Bà Thanh";
 export const SITE_DESCRIPTION =
   "Bánh cuốn Bà Thanh — đặt món giao tận nơi miễn phí ship hoặc mang đi. Bán 6h–11h sáng. Hotline 0382688666.";
 
-export const PUBLIC_ROUTES: readonly string[] = ["/"];
+export const PUBLIC_ROUTES: readonly string[] = ["/", "/dat-mon"];
 
 // Biến phía server, được đọc lúc build; không dùng tiền tố NEXT_PUBLIC_.
 export function siteUrl(): string | undefined {

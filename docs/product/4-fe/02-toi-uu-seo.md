@@ -9,7 +9,7 @@ code là **bản nháp chờ chủ quán duyệt — U-094**, chưa phải nội
 
 Layout mặc định yêu cầu không lập chỉ mục và không theo liên kết vì phần lớn màn là nội bộ hoặc QR gắn bàn.
 Chỉ trang nằm trong `PUBLIC_ROUTES` ở `fe/src/lib/seo.ts` mới được bật bằng `publicPageMetadata(path)`;
-truyền đường dẫn ngoài danh sách sẽ báo lỗi. Hiện danh sách chỉ có `/`. Đây là chỉ dẫn cho máy tìm kiếm;
+truyền đường dẫn ngoài danh sách sẽ báo lỗi. Danh sách gồm `/` và `/dat-mon` (2026-10-21, chủ repo, T-222). Đây là chỉ dẫn cho máy tìm kiếm;
 quyền truy cập vẫn do hệ thống xác thực và phân quyền đảm nhiệm.
 
 Địa chỉ gốc lấy từ `BANHCUON_SITE_URL`, bỏ dấu `/` cuối, không dùng tiền tố `NEXT_PUBLIC_`. Khi có biến,

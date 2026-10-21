@@ -726,9 +726,9 @@ U-024). Hai câu này khép nốt bảng bốn con số:
   ca ấy lại: **không** có ngoại lệ, mốc *"đã ra bàn"* của mọi việc trạm đều do quầy bấm, kể cả khi
   suất ấy sắp rời quán. ⇒ *Người đi giao vẫn không bấm mốc nào của bảng bếp*, đúng hình dạng
   U-009: người ở ngoài quầy không nhận thêm thao tác nào.
-- ⇒ *Cách đọc, không phải lời chủ quán nói thẳng:* **lúc nào** quầy bấm mốc ấy cho một đơn giao
-  thì lời 2026-09-04 **không** nói. Chỗ suy ra là **S-6** ở §7.2 — đừng đọc nó thành lời chủ quán,
-  và đừng dựng màn người đi giao như thể câu ấy đã chốt.
+- ⇒ **Lúc nào** quầy bấm mốc ấy cho một đơn giao: **lúc đơn rời quán — cùng mốc quầy đã bấm để
+  đưa đơn sang `Đang giao`** (chủ repo xác nhận **2026-10-21**, đóng **S-6** ở §7.2; lời 2026-09-04
+  từng chỉ nói **ai** bấm). ⇒ Quầy không chờ người đi giao báo về mới bấm.
 - ⇒ *Chỗ từng chưa có lời, nay đã chốt — **U-049**, đóng **2026-09-08**:* tài liệu ở đây gọi người
   đi giao là *"nhân viên quán"* và không nói thêm; §3 chia **bốn vai** cho **năm trạm việc**, mà
   *đi giao* **không** phải một trạm. Chủ quán đã trả lời: **người đi giao là một trong bốn vai của
@@ -1477,13 +1477,14 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-19 | Chủ repo trả lời trong hội thoại (T-205, hai vế của U-094): địa chỉ *"ngõ 332 hoàng công chất số 14b6"*, mở *"tất cả các ngày trừ tết âm lịch từ 6-10h30"*. Hỏi lại vì lệch §1 (06:00–11:00) — chủ repo chọn **giữ 06:00–11:00**; ngày nghỉ Tết chọn **mỗi năm chủ quán báo**. *Lời chọn:* phường, quận **Phú Diễn, Bắc Từ Liêm, Hà Nội** là chữ Claude viết sẵn trong phương án *"Chưa có tên miền"*, chủ repo chọn phương án ấy — chưa ai gõ ra | §1 |
 | 2026-10-19 | Chủ repo chọn trong hội thoại (T-204): chưa có lần nhập hoặc lần nhập gần nhất ghi 0 ⇒ **luôn nhắc POS kiểm tra**; dùng trước lần nhập đầu mà đã có lần nhập ⇒ **so tỉ lệ như thường** (đóng U-102) | §8.4 |
 | 2026-10-21 | Chủ repo chọn trong hội thoại (`P4-10`): lúc quán tạm dừng, web hiện **câu trung tính kèm hotline**; lúc quán mất kết nối, dòng thông báo **mời gọi hotline, không nói lý do kỹ thuật** — cả hai là *lời chọn*, chữ do Claude viết sẵn trong phương án | §6.8 · §6.11 |
+| 2026-10-21 | Chủ repo xác nhận trong hội thoại: với đơn **giao tận nơi**, quầy bấm *"đã ra bàn"* **lúc đơn rời quán — cùng mốc quầy đã bấm để đưa đơn sang `Đang giao`** (đóng **S-6**, suy ra 2026-09-04 đúng) | §5.4 · §6.7 |
 | 2026-10-18 | Chủ repo trả lời ba vế thi công của mục tổng quan (T-199): tạm tính phần thuộc combo **không tính giá thành phần**; *bánh* của tiến độ là **bánh cuốn và bánh trứng**; **offline là bán hàng tại quán** (đóng **S-10**, suy ra 2026-10-16: *offline* gồm cả giao hàng đặt qua điện thoại — lời mới hẹp hơn: chỉ tại quán) | §8.6 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
 
 Mục này giữ những chỗ được **suy ra** từ luật đã chốt chứ không phải lời chủ quán nói thẳng. Bốn
-mục S-1–S-4 từng nằm đây đều đã được chủ quán xác nhận và đã lên §7.1; còn **bốn** mục chưa xác
-nhận — ~~**S-5**~~ (2026-09-01, T-039; **có lời 2026-10-09**, xem bảng) · **S-6** (2026-09-04, T-055) · **S-7** (2026-09-04, T-056) ·
+mục S-1–S-4 từng nằm đây đều đã được chủ quán xác nhận và đã lên §7.1; còn **ba** mục chưa xác
+nhận (đếm lại 2026-10-21) — ~~**S-5**~~ (2026-09-01, T-039; **có lời 2026-10-09**, xem bảng) · ~~**S-6**~~ (2026-09-04, T-055; **có lời 2026-10-21**, xem bảng) · **S-7** (2026-09-04, T-056) ·
 **S-8** (2026-09-08, T-068) · **S-9** (2026-09-08, T-069). ~~**S-10**~~ (2026-10-16, T-198) có lời 2026-10-18, đã lên §7.1.
 
 S-5 và S-6 sinh ra cùng một kiểu: chủ quán trả lời **ai bấm**, và câu hỏi còn một vế **bấm theo gì
@@ -1506,7 +1507,7 @@ chứ đừng tin câu này (`work/findings.md` **F-003** · **F-018**).
 | **S-3** — hoàn tiền phải ghi vết, ai ghi | 2026-08-30 | **người đứng quầy** vừa quyết vừa ghi | §6.4 |
 | **S-4** — *"đã làm xong, còn ở bếp"* có phải một con số riêng | 2026-08-31 (hỏng) → **2026-09-01** | **có** — bánh nằm chờ thật; bảng quầy **bốn** con số, **người đứng quầy bấm** | §5.4 |
 | **S-5** — *"đã bưng ra bàn"* bấm theo **đơn vị nào** | 2026-09-01 → **2026-10-09** | **số cái từng thứ, cho một bàn** — POS nhập số rồi bấm. Suy ra cũ *theo bàn, không theo mẻ* đúng; vế *theo số cái* là lời mới | §5.4 |
-| **S-6** — với đơn **giao tận nơi**, quầy bấm *"đã ra bàn"* **lúc nào** | **2026-09-04**, chưa hỏi | *suy ra:* **lúc đơn rời quán** — cùng mốc quầy đã bấm để đưa đơn sang `Đang giao` (§6.7, chốt 2026-09-01 trả lời U-023), vì quầy chỉ nhìn thấy suất ấy tới lúc đó. Chủ quán 2026-09-04 mới chỉ nói **ai** bấm (*"pos"*, U-031), chưa nói **lúc nào**. ⇒ Nếu suy ra này sai thì mốc *"đã ra bàn"* của đơn giao nghĩa là **tới tay khách**, và quầy phải chờ người đi giao báo về mới bấm được | §5.4 · §6.7 · `docs/product/0-ba/ban-hang/05-vong-doi.md` §5.2 |
+| **S-6** — với đơn **giao tận nơi**, quầy bấm *"đã ra bàn"* **lúc nào** | 2026-09-04 → **2026-10-21** | **lúc đơn rời quán — cùng mốc quầy đã bấm để đưa đơn sang `Đang giao`** (chủ repo 2026-10-21; suy ra cũ đúng). Cửa rời quán hôm nay còn từ chối — sửa ở `T-223`. *Suy ra cũ:* **lúc đơn rời quán** — cùng mốc quầy đã bấm để đưa đơn sang `Đang giao` (§6.7, chốt 2026-09-01 trả lời U-023), vì quầy chỉ nhìn thấy suất ấy tới lúc đó. Chủ quán 2026-09-04 mới chỉ nói **ai** bấm (*"pos"*, U-031), chưa nói **lúc nào**. ⇒ Nếu suy ra này sai thì mốc *"đã ra bàn"* của đơn giao nghĩa là **tới tay khách**, và quầy phải chờ người đi giao báo về mới bấm được | §5.4 · §6.7 · `docs/product/0-ba/ban-hang/05-vong-doi.md` §5.2 |
 | **S-7** — cửa sổ **06:00–11:00** của §1 có phải **đúng một buổi bán** | **2026-09-04**, chưa hỏi | *suy ra:* **có** — chủ quán nói *"quán chỉ bán buổi sáng"* (`A1`) và *"cứ đến giờ là bán"* (`A2`), nên cửa sổ giờ duy nhất quán có cũng là buổi duy nhất quán bán. Chủ quán **không** đọc ra một mốc bắt đầu và một mốc kết thúc của *buổi*; hai câu ấy nói về **cả ngày** chứ không nói về một buổi trong nhiều buổi. ⇒ Nếu suy ra này sai thì có buổi thứ hai ngoài 06:00–11:00, và §6.23 · **ADR-038** · **I-021** đều phải viết lại | §1 · §6.23 · **ADR-038** |
 | **S-8** — mục tổng quan §8.6 có bày **cả ba** đường của vế *"còn thiếu gì"* (nguyên liệu · người · món) không | **2026-09-08**, chưa hỏi | *suy ra:* **có** — chủ quán trả lời đúng ba vế câu hỏi đã đưa ra, theo thứ tự ấy (*"nguyên liệu và con người đã có, đối với menu…"*), nên ba vế được đọc là ba thứ mục tổng quan bày. Chủ quán **không** nói thẳng *"mục tổng quan hiện cả ba"*, và chữ *"đã có"* cũng có thể chỉ nghĩa là *hai thứ ấy hệ thống ghi ở đâu đó rồi*. ⇒ Nếu suy ra này sai thì §8.6 hàng 7 chỉ còn **một** đường (nguyên liệu), và §4.9 vẫn đứng nguyên vì nó là **menu**, không phải một dòng của mục tổng quan | §8.6 · §4.9 |
 | **S-9** — giá một chiếc **giò bán rời** có đúng bằng **9.000** không | **2026-09-08**, chưa hỏi | *suy ra:* **có** — luật 1 §4.6 nói giá một suất là **tổng giá các thành phần**, dòng *giò bán rời* gồm đúng một chiếc giò, và §4.2 định giá chiếc giò là 9.000 cho cả ba cột (giò không nhận nhân). Chủ quán 2026-09-08 chốt giò là **món bán rời khách gọi bao nhiêu cũng được**, nhưng **không** đọc ra giá của nó. ⇒ Nếu suy ra này sai — quán bán lẻ một chiếc giò đắt hơn giá nó đứng trong suất — thì ba ô ⚠ ở §4.3 sai, ca **12** của §4.8 sai, và luật 1 §4.6 có ngoại lệ đầu tiên kể từ khi được viết | §4.3 · §4.2 · §4.8 ca 12 |

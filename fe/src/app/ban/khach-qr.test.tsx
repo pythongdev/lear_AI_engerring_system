@@ -37,6 +37,18 @@ const luotXong = { status: 201, body: { sales_order_id: 70, table_session_id: 9,
   total_vnd: 71000, lines: [] } };
 
 describe("khách QR tại bàn — lấy trước ở server", () => {
+  it.each([
+    ["5", "Bàn 5"],
+    [" 5 ", "Bàn 5"],
+    ["Bàn 3", "Bàn 3"],
+  ])("h1 nhãn %j hiện đúng %j và một biểu tượng QR", async (label, heading) => {
+    await mo("ma-tieu-de", { qr: { status: 200, body: { label } } });
+    const h1 = screen.getByRole("heading", { level: 1 });
+    expect(h1.textContent?.trim()).toBe(heading);
+    expect(h1.querySelectorAll("svg")).toHaveLength(1);
+    expect(h1.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true");
+  });
+
   it("bàn và menu lấy ở server, không cache; lần vẽ đầu đã có nhãn bàn và món; không lộ định danh bàn", async () => {
     const { server } = await mo("ma-a1");
     expect(server.map((g) => new URL(g.url).pathname).sort()).toEqual(["/menu", "/qr-codes/ma-a1"]);

@@ -634,6 +634,9 @@ kết quả. Bạn có thể bấm Gửi lại.* · *Chưa gửi được phiế
 lại.* **Còn lại:** `h1` màn QR là nhãn trơ của bàn (*5*); `/dat-mon` chưa vào `PUBLIC_ROUTES`; khoảng trống hợp đồng `T-216` nêu (menu không
 danh mục · mô tả · ảnh, không trường trả trước) đứng nguyên.
 
+*2026-10-21, chủ repo:* năm câu chữ khách đọc ở trên **được duyệt** (*"Câu chữ chờ duyệt: đồng ý"*), giữ nguyên; `h1` màn QR và `/dat-mon` công
+khai chuyển sang `T-222` ([chi tiết](backlog.md#t-222)).
+
 [↑ đầu file](#top)
 
 ---
