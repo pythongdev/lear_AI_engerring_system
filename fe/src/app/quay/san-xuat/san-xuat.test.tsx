@@ -2,7 +2,8 @@
 // điều kiện kiểm. Giữ (ADR-090, lời S-5): POS là nơi duy nhất ghi tiến độ; màn quầy bày cùng bảng của trạm và cho ghi
 // *ra bàn* theo từng bàn hay từng đơn không bàn — POS nhập số cái từng thứ, gửi đúng một trong dining_table_id ·
 // sales_order_id, mỗi item là khoá gom của bảng; ghi xong đọc lại; lời từ chối theo code; một lần bấm một lời gọi.
-// Bấm mẻ · lùi mẻ · chuyển · ghi làm sai CHƯA có trên màn: hợp đồng không có đường đọc mã việc trạm (F-073).
+// Bấm mẻ · lùi mẻ · chuyển · ghi làm sai: thao-tac-me.test.tsx (đường đọc T-217). Ở đây GET /counter/station-jobs trả 599,
+// nên màn không bày nút thao tác mẻ nào — đọc lỗi thì không nút.
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -52,12 +53,12 @@ const go = (hop: HTMLElement, nhan: string, v: string) => fireEvent.change(withi
 const bam = (hop: HTMLElement) => fireEvent.click(within(hop).getByRole("button", { name: /^(Ghi ra bàn|Đang lưu…)$/ }));
 
 describe("màn sản xuất ở quầy — ra bàn", () => {
-  it("bày cùng bảng của trạm; mỗi bàn · đơn không bàn có một nút Ra bàn; không nút bấm mẻ · lùi · chuyển · làm sai", async () => {
+  it("bày cùng bảng của trạm; mỗi bàn · đơn không bàn có một nút Ra bàn; đọc việc trạm lỗi thì không nút thao tác mẻ", async () => {
     mo();
     expect(await screen.findByRole("region", { name: "Trạm cuon" })).toBeTruthy();
     expect(await screen.findByRole("button", { name: "Ra bàn Bàn 3" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Ra bàn Đơn 77" })).toBeTruthy();
-    expect(screen.queryByRole("button", { name: /mẻ|chuyển|làm sai/i })).toBeNull();
+    expect(screen.queryByRole("button", { name: /^(Bấm mẻ|Lùi mẻ|Chuyển việc|Ghi làm sai)/ })).toBeNull();
   });
 
   it("ra bàn theo bàn: hộp thoại kê mọi thứ của bàn ấy; chỉ gửi thứ có số; thân đúng hợp đồng; xong thì báo và đọc lại", async () => {

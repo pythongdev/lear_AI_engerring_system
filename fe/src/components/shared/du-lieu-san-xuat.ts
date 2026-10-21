@@ -31,13 +31,13 @@ export function useSanXuat() {
     return r.data;
   } });
   const options = menu.data?.items.flatMap((m) => m.option_groups.flatMap((g) => g.options)) ?? [];
-  const tenHang = (h: HangSanXuat) => [h.component_name, ...h.filling_option_ids.map((id) =>
+  const tenHang = (h: Pick<HangSanXuat, "component_name" | "filling_option_ids">) => [h.component_name, ...h.filling_option_ids.map((id) =>
     options.find((o) => o.menu_option_id === id)?.option_name ?? `Nhân ${id}`)].join(" · ");
-  const tenPhan = (p: PhanSanXuat) => p.dining_table_id !== null
+  const tenPhan = (p: Pick<PhanSanXuat, "dining_table_id" | "sales_order_id">) => p.dining_table_id !== null
     ? ban.data?.tables.find((b) => b.dining_table_id === p.dining_table_id)?.label ?? `Bàn ${p.dining_table_id}`
     : `Đơn ${p.sales_order_id}`;
   return { bang, menu, ban, tenHang, tenPhan };
 }
 export type DuLieuSanXuat = ReturnType<typeof useSanXuat>;
-export const khoaHang = (h: HangSanXuat) => JSON.stringify([h.station_code, h.menu_component_id, h.filling_option_ids]);
-export const khoaPhan = (p: PhanSanXuat) => p.dining_table_id !== null ? `ban-${p.dining_table_id}` : `don-${p.sales_order_id}`;
+export const khoaHang = (h: Pick<HangSanXuat, "station_code" | "menu_component_id" | "filling_option_ids">) => JSON.stringify([h.station_code, h.menu_component_id, h.filling_option_ids]);
+export const khoaPhan = (p: Pick<PhanSanXuat, "dining_table_id" | "sales_order_id">) => p.dining_table_id !== null ? `ban-${p.dining_table_id}` : `don-${p.sales_order_id}`;

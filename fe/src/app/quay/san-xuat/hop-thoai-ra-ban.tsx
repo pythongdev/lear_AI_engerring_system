@@ -1,6 +1,5 @@
 "use client";
-// Ra bàn theo bàn hay đơn không bàn (P4-09, lời S-5): POS nhập số cái từng thứ; item là khoá gom của bảng. Bấm mẻ · lùi ·
-// chuyển · ghi làm sai chưa có: hợp đồng không trả mã việc trạm (F-073).
+// Ra bàn theo bàn hay đơn không bàn (P4-09, lời S-5): POS nhập số cái từng thứ; item là khoá gom của bảng.
 import { useId, useRef, useState, type FormEvent } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
