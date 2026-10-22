@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Quán Bánh Cuốn · Bàn 03</title>
+<style>
+:root { color-scheme:dark; --bg:#000000; --card:#1F2937; --line:#2D3748; --muted:#9CA3AF; --accent:#FF7A1A; --field:#374151; --text:#F9FAFB}
+* { box-sizing:border-box}
+body { margin:0; background:#0a0a0a; color:var(--text); font:12px/1.45 'Be Vietnam Pro',system-ui,sans-serif}
+button,input,textarea { font:inherit; color:inherit}
+button { cursor:pointer; border:1px solid var(--line); border-radius:7px; background:transparent; padding:6px 10px}
+button:hover { filter:brightness(1.15)}
+:focus-visible { outline:2px solid var(--accent); outline-offset:3px}
+h1,h2,h3,p { margin:0}
+h1 { font-size:20px; font-weight:600}
+h2,h3 { font-size:14px; font-weight:500}
+.muted { color:var(--muted)}
+.price { color:var(--accent); white-space:nowrap}
+.primary { background:var(--accent); border-color:var(--accent); color:#fff}
+.plain { border:0; padding:0}
+.row { display:flex; align-items:center; justify-content:space-between; gap:8px}
+.phone { max-width:472px; margin:24px auto; background:#000; border:1px solid #0f172a; border-radius:24px; padding:0 15px 16px; overflow:clip}
+.status { height:30px; font-size:11px; position:relative}
+.status:after { content:''; width:150px; height:16px; border-radius:12px; background:#0f172a; position:absolute; top:5px; left:50%; transform:translateX(-50%)}
+.sticky { position:sticky; top:0; z-index:5; background:#000}
+.header { min-height:58px; border-bottom:1px solid var(--line)}
+.header small { font-size:11px; color:var(--muted)}
+.mini { height:50px; gap:8px; border-bottom:1px solid var(--line)}
+.mini>button { border-radius:20px; white-space:nowrap; font-size:11px; padding:4px 9px}
+.chips { display:flex; gap:6px; overflow:auto; scrollbar-width:none; flex:1}
+.chip { background:var(--field); border-radius:16px; white-space:nowrap; font-size:10px; padding:4px 8px}
+.banner { height:96px; background:#3a2310; border-radius:10px; margin:8px 0; display:flex; flex-direction:column; justify-content:end; padding:10px 12px; gap:18px}
+.banner div { text-align:center; color:#7c4a23; font-size:16px}
+.search { background:var(--field); border:0; border-radius:8px; width:100%; height:34px; padding:0 12px; margin:14px 0}
+input::placeholder,textarea::placeholder { color:var(--muted)}
+.tabs { display:flex; gap:17px; border-bottom:1px solid var(--line); overflow:auto; white-space:nowrap}
+.tabs button { border:0; border-radius:0; color:var(--muted); padding:10px 0; font-size:12px}
+.tabs .active { color:var(--accent); border-bottom:3px solid var(--accent)}
+.label { font-size:12px; color:var(--muted); margin:12px 0 8px}
+.rail { display:flex; gap:12px; overflow:auto}
+.favourite { flex:0 0 112px; border:1px solid var(--line); background:var(--card); border-radius:8px; overflow:hidden; font-size:11px}
+.fav-image { height:56px; background:var(--field); display:grid; place-items:center; position:relative; font-size:20px}
+.heart { position:absolute; right:4px; top:4px; background:#ffffffcc; color:#6b7280; border:0; padding:1px 5px; border-radius:6px; font-size:13px}
+.heart[aria-pressed=true] { color:#ef4444}
+.fav-copy { padding:4px 6px}
+.fav-copy p { margin-top:3px}
+.card { display:grid; grid-template-columns:80px minmax(0,1fr) 110px; gap:12px; padding:12px; border:1px solid var(--line); background:var(--card); border-radius:10px; margin-bottom:12px; min-height:142px}
+.thumb { height:80px; background:var(--field); border-radius:8px; display:grid; place-items:center; font-size:26px; position:relative}
+.thumb>.plain { font-size:26px}
+.card-copy { display:flex; flex-direction:column; align-items:start; min-width:0}
+.card h3 { line-height:1.4; margin-bottom:5px}
+.dishes { list-style:none; padding:0; margin:0; color:var(--muted); font-size:11px}
+.dishes li { display:flex; gap:6px; align-items:center; margin-bottom:3px}
+.badge { background:#3a2a18; color:var(--accent); padding:1px 5px; border-radius:5px; font-size:10px; white-space:nowrap}
+.detail { color:var(--accent); font-size:11px; margin-top:auto; padding-top:8px}
+.controls>.price { font-size:14px; margin-bottom:6px}
+.stepper { display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.stepper button { width:30px; height:30px; padding:0; background:var(--field); border:0; font-size:17px}
+.stepper button:last-child { background:var(--accent); color:#fff}
+.stepper output { min-width:24px; text-align:center; font-size:14px}
+.fillings { display:flex; flex-direction:column; gap:4px; margin-top:12px}
+.fillings button { padding:4px 3px; font-size:10px; color:var(--muted); white-space:nowrap}
+.fillings button[aria-pressed=true] { background:var(--accent); border-color:var(--accent); color:#fff}
+.description { color:var(--muted); font-size:11px}
+.product { cursor:pointer}
+.soup-card { min-height:100px}
+.summary { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px; margin-top:12px}
+.summary .label { font-size:11px; margin-top:16px}
+summary { cursor:pointer; list-style:none}
+summary::-webkit-details-marker { display:none}
+.disclosure:after { content:'⌄ Hiện'; color:var(--muted); font-size:11px; margin-left:auto}
+details[open]>.disclosure:after { content:'⌄ Ẩn'}
+.order-line { display:flex; align-items:center; gap:6px}
+.order-line .name { flex:1; font-size:13px}
+.compact.stepper { gap:3px}
+.compact.stepper button { width:23px; height:23px; background:transparent; border:1px solid var(--line); color:var(--muted); font-size:12px}
+.compact.stepper output { min-width:19px; font-size:11px}
+.order-line>.price { font-size:10px; color:var(--muted)}
+.trash { border:0; padding:0; font-size:11px; color:var(--muted)}
+.subitems { border-left:2px solid var(--line); padding-left:10px; margin:8px 0 0 10px}
+.subitems .order-line { margin:3px 0}
+.subitems .name { font-size:11px; color:var(--muted)}
+.subitems .trash { margin-left:40px}
+.subtotal { text-align:right; color:var(--muted); font-size:10px; margin:5px 0 8px}
+.total { border-top:1px solid var(--line); padding-top:10px; margin-top:12px; font-size:13px}
+.canh { border:1px solid var(--line); border-radius:8px; padding:8px; margin-top:12px}
+.canh .row { margin-top:4px; font-size:11px}
+.canh output { color:var(--accent)}
+.table-wrap { overflow:auto}
+table { border-collapse:collapse; width:100%; font-size:10px; margin:6px 0 12px; text-align:left; white-space:nowrap}
+th { font-weight:400; color:var(--muted); font-size:9px}
+td,th { padding:3px 3px 3px 0}
+td:nth-child(2),td:nth-child(3) { color:var(--accent); font-size:9px}
+td:nth-child(4) { color:var(--muted); font-size:9px}
+td:last-child,th:last-child { text-align:right}
+.note { border-top:1px solid var(--line); padding-top:8px; font-size:11px}
+.saved { color:#22c55e; font-size:10px}
+textarea { width:100%; resize:vertical; min-height:40px; border:0; background:var(--field); border-radius:7px; padding:10px; margin-top:8px; font-size:11px}
+.checkout { width:100%; height:52px; border-radius:12px; margin-top:12px; font-size:15px}
+.checkout .count { background:#ff9a4d; border-radius:6px; font-size:12px; padding:3px 9px}
+.bottom-nav { display:flex; justify-content:space-between; background:#0a0a0a; border:1px solid var(--line); border-radius:8px; margin-top:10px; padding:8px 7px; font-size:9px; color:var(--muted)}
+.bottom-nav a { color:inherit; text-decoration:none}
+.bottom-nav a:first-child { color:var(--accent)}
+dialog { width:min(380px,calc(100% - 24px)); max-height:calc(100dvh - 32px); border:1px solid var(--line); border-radius:12px; background:var(--card); color:var(--text); padding:18px; overscroll-behavior:contain}
+dialog::backdrop { background:#000b}
+dialog h2 { font-size:16px; margin-bottom:18px}
+dialog .row { margin:10px 0}
+dialog .actions { display:flex; gap:12px; margin-top:16px}
+dialog .actions button { flex:1; min-height:34px}
+dialog .radio { display:flex; align-items:center; gap:10px; margin:16px 0}
+dialog .radio .muted { margin-left:auto; font-size:11px}
+input[type=radio] { accent-color:var(--accent)}
+.modal-hero { height:90px; background:var(--field); display:grid; place-items:center; margin:-18px -18px 14px; color:var(--muted)}
+.drawer { margin:0 0 0 auto; height:100dvh; max-height:100dvh; border-radius:12px 0 0 12px; width:min(380px,100%)}
+.drawer[open] { display:flex; flex-direction:column; animation:slide-in .22s ease-out}
+.drawer h2 { margin:0}
+.drawer header { border-bottom:1px solid var(--line); padding-bottom:12px}
+.drawer-footer { margin-top:auto; padding-top:24px}
+.drawer .order-line { margin:18px 0 2px}
+.drawer .price { margin:6px 0}
+.drawer .checkout { height:36px; font-size:13px}
+.drawer .continue { width:100%; margin-top:8px; border:0}
+.notice { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--card); border:1px solid var(--accent); border-radius:8px; padding:12px; z-index:20; width:max-content; max-width:90vw}
+.notice:empty { display:none}
+@keyframes slide-in { from { transform:translateX(100%)}
+to { transform:translateX(0)}
+}
+@media(max-width:480px) { .phone { margin:0 auto; border-radius:0; padding-left:10px; padding-right:10px}
+.card { grid-template-columns:64px minmax(0,1fr) 100px; gap:8px; padding:10px}
+.thumb { height:64px}
+.card h3 { font-size:13px}
+.tabs { gap:14px}
+.header h1 { font-size:19px}
+.subitems .trash { margin-left:16px}
+}
+@media(prefers-reduced-motion:reduce) { .drawer[open] { animation:none}
+}
+
+</style>
+</head>
+<body>
+<main class="phone" id="menu">
+<div class="status row" aria-label="Thanh trạng thái"><span>9:41</span><span>📶 🔋</span></div>
+<div class="sticky"><header class="header row" data-component="MenuHeader"><div><h1>Quán Bánh Cuốn</h1><small>Bàn 03</small></div><button data-demo>⎆ Đăng nhập</button></header>
+<div class="mini row" data-component="MiniCartStrip"><button class="primary" data-open="cart">3 món</button><div class="chips"><span class="chip">Combo Đầy Đặn ×1</span><span class="chip">Bánh cuốn thịt ×1</span><span class="chip">Canh ×1</span></div><span class="price">77.000đ</span></div></div>
+<section class="banner" data-component="RestaurantBanner"><div>🥟 ảnh quán</div><p>Bánh cuốn tươi — ngon mỗi ngày</p></section>
+<input class="search" data-component="SearchBar" type="search" aria-label="Tìm món nhanh" placeholder="🔍   Tìm món nhanh...">
+<nav class="tabs" data-component="CategoryTabs" aria-label="Danh mục"><button class="active" aria-pressed="true">Tất cả</button><button aria-pressed="false">Bánh cuốn</button><button aria-pressed="false">Đồ uống</button><button aria-pressed="false">Combo</button><button aria-pressed="false">Tráng miệng</button></nav>
+<section data-component="FavouritesRail" id="favourites"><h2 class="label">YÊU THÍCH</h2><div class="rail" id="favourites-list"></div></section>
+<section data-component="ComboSection"><h2 class="label">COMBO</h2><div id="combos"></div></section>
+<section data-component="ProductList"><h2 class="label">MÓN LẺ</h2><div id="products"></div></section>
+<section class="summary" data-component="OrderSummary" id="summary"><details open><summary class="row disclosure"><h2>Tóm tắt đơn hàng</h2><span class="badge">Bàn 03</span></summary>
+<h3 class="label">COMBO</h3><div id="summary-combo"></div><span class="badge">Nhân thịt</span><details open class="combo-breakdown"><summary class="detail">⌃ Ẩn chi tiết</summary><div class="subitems" id="subitems"></div></details><p class="subtotal">Subtotal: 42.000đ</p>
+<h3 class="label">MÓN LẺ</h3><div id="summary-product"></div><span class="badge">Nhân thịt</span><p class="subtotal">Subtotal: 35.000đ</p><div class="row total"><span>Tổng cộng:</span><span class="price">77.000đ</span></div>
+<section class="canh" id="canh"><h3 class="muted" style="font-size:11px">CANH</h3><div id="soup-quantities"></div></section>
+<details open><summary class="row label disclosure">TỔNG SỐ MÓN (5 LOẠI)</summary><div class="table-wrap"><table><thead><tr><th>Món</th><th>Nhân</th><th>SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead><tbody id="dish-totals"></tbody></table></div></details>
+<div class="note"><div class="row"><label for="note" class="muted">GHI CHÚ</label><span class="saved">✓ Đã lưu</span></div><textarea id="note" placeholder="ít hành, mang thêm tương ớt..."></textarea></div></details></section>
+<button class="checkout primary row" data-component="CartBottomBar" data-open="confirm"><span class="count">3</span><span>Thanh toán</span><span>77.000đ</span></button>
+<nav class="bottom-nav" data-component="ClientBottomNav" aria-label="Điều hướng cuối trang"><a href="#menu">🏠 Menu</a><span>🧾 Đơn</span><a href="#favourites">♥ Thích</a><span>📡 Theo dõi</span><span>⚙ Cài đặt</span></nav>
+</main>
+<dialog id="confirm" aria-labelledby="confirm-title"><h2 id="confirm-title">Xác nhận đặt hàng</h2><div class="row"><span>1× Combo Đầy Đặn</span><span class="price">42.000đ</span></div><div class="row"><span>1× Bánh cuốn thịt</span><span class="price">35.000đ</span></div><div class="row"><span>1× Canh (có rau)</span><span class="price">0đ</span></div><div class="row total"><span>Tổng cộng</span><span class="price" style="font-size:16px">77.000đ</span></div><textarea id="kitchen-note" aria-label="Ghi chú cho bếp (tuỳ chọn)" placeholder="Ghi chú cho bếp (tuỳ chọn)"></textarea><div class="actions"><button data-close>Hủy</button><button class="primary" data-place>Đặt hàng</button></div></dialog>
+<dialog id="filling" aria-labelledby="filling-title"><h2 id="filling-title">Bánh cuốn thịt</h2><p class="muted">Chọn nhân (bắt buộc)</p><label class="radio"><input type="radio" name="filling" value="Nhân thịt" checked>Nhân thịt<span class="muted">+0đ</span></label><label class="radio"><input type="radio" name="filling" value="Nhân thịt mộc nhĩ">Nhân thịt mộc nhĩ<span class="muted">+0đ</span></label><div class="row total"><span class="muted">Tổng</span><span class="price">35.000đ</span></div><div class="actions"><button data-close>Đóng</button><button class="primary" data-add="product">Thêm vào giỏ</button></div></dialog>
+<dialog id="cart" class="drawer" aria-labelledby="cart-title"><header><div class="row"><h2 id="cart-title">Giỏ hàng</h2><button class="price" data-view>▤ Xem đơn</button><button class="plain" data-close aria-label="Đóng giỏ hàng">✕</button></div><p class="muted" style="font-size:11px">Khách · Bàn 03</p></header><div class="row"><h3>Tóm tắt đơn hàng</h3><span class="chip">3 món</span></div><div id="cart-lines"></div><div class="drawer-footer"><div class="row total"><span class="muted">Tổng cộng</span><span class="price" style="font-size:18px">77.000đ</span></div><button class="checkout primary" data-open="confirm">Thanh toán</button><button class="continue muted" data-close>Tiếp tục chọn món</button></div></dialog>
+<dialog id="combo" aria-labelledby="combo-title"><div class="modal-hero">🍱 ảnh combo</div><h2 id="combo-title">Combo Đầy Đặn</h2><p class="price" style="font-size:14px">42.000đ</p><div class="muted"><p style="margin-top:20px">1x Giò</p><p style="margin-top:12px">3x Bánh Cuốn</p><p style="margin-top:12px">1x Canh</p></div><div class="actions"><button data-close>Đóng</button><button class="primary" data-add="combo">Thêm combo vào giỏ</button></div></dialog>
+<div class="notice" role="status" aria-live="polite"></div>
+<script>
+// PANEL 9 is a static specimen: totals and independent counters stay illustrative.
+const step = (n, compact = false) => `<span class="stepper ${compact ? 'compact' : ''}"><button data-step="-1" aria-label="Giảm số lượng">−</button><output aria-live="polite">${n}</output><button data-step="1" aria-label="Tăng số lượng">＋</button></span>`;
+const heart = (on = false) => `<button class="heart" aria-label="Yêu thích" aria-pressed="${on}">${on ? '♥' : '♡'}</button>`;
+const fillings = () => '<div class="fillings" aria-label="Chọn nhân"><button aria-pressed="true">Nhân thịt</button><button aria-pressed="false">Nhân thịt mộc nhĩ</button></div>';
+const combos = [
+ ['Suất Đầy Đủ Trứng Chín','30.000đ',[['Bánh Trứng Chín',1],['Giò',1],['Bánh Cuốn',3],['Canh',1]],0],
+ ['Suất Đầy Đủ Trứng Tái','30.000đ',[['Bánh Trứng Tái',1],['Giò',1],['Bánh Cuốn',3],['Canh',1]],0],
+ ['Combo Đầy Đặn','42.000đ',[['Bánh Trứng Chín',1],['Bánh Trứng Tái',1],['Giò',1],['Bánh Cuốn',3],['Canh',1]],1],
+ ['Suất Giò','21.000đ',[['Giò',1],['Bánh Cuốn',3],['Canh',1]],0]
+];
+const line = (name, n, price = '') => `<div class="order-line"><span class="name">${name}</span>${step(n,true)}${price ? `<span class="price">${price}</span>` : ''}<button class="trash" aria-label="Xóa ${name}">🗑</button></div>`;
+document.querySelector('#favourites-list').innerHTML = [['Suất Giò','21.000đ'],['Bánh Chay','18.000đ'],['Combo Đầy Đặn','42.000đ']].map(([name,price]) => `<article class="favourite"><div class="fav-image">🍜${heart(true)}</div><div class="fav-copy">${name}<p class="price">${price}</p></div></article>`).join('');
+document.querySelector('#combos').innerHTML = combos.map(([name,price,dishes,n]) => `<article class="card" data-component="ComboCard"><div class="thumb">🍱${heart()}</div><div class="card-copy"><h3>${name}</h3><ul class="dishes">${dishes.map(([dish,qty]) => `<li><span class="badge">×${qty}</span>${dish}</li>`).join('')}</ul><button class="plain detail" data-open="combo">Chi tiết</button></div><div class="controls"><p class="price">${price}</p>${step(n)}${fillings()}</div></article>`).join('');
+document.querySelector('#products').innerHTML = [['Bánh cuốn thịt','35.000đ','🍜','Bánh cuốn nhân thịt mộc nhĩ truyền thống',1],['Canh mọc','10.000đ','🍲','Có rau / không rau — chọn ở Tóm tắt đơn',0]].map(([name,price,emoji,desc,n]) => {
+ const action = n ? 'data-open="filling"' : 'data-soup';
+ return `<article class="card ${n ? 'product' : 'soup-card'}" data-component="ProductCard" ${n ? 'data-product' : ''}><div class="thumb"><button class="plain" ${action} aria-label="${name}">${emoji}</button>${heart()}</div><div class="card-copy"><h3><button class="plain" ${action}>${name}</button></h3><p class="description">${desc}</p><button class="plain detail" ${action}>Chi tiết</button></div><div class="controls"><p class="price">${price}</p>${step(n)}${n ? fillings() : ''}</div></article>`;
+}).join('');
+document.querySelector('#summary-combo').innerHTML = line('Combo Đầy Đặn',1,'42.000đ');
+document.querySelector('#summary-product').innerHTML = line('Bánh cuốn thịt',1,'35.000đ');
+document.querySelector('#subitems').innerHTML = combos[2][2].map(([name,n]) => line(name,n)).join('');
+document.querySelector('#soup-quantities').innerHTML = [['Bát có rau',1],['Bát không rau',0]].map(([name,n]) => `<div class="row"><span>${name}</span>${step(n,true)}</div>`).join('');
+document.querySelector('#dish-totals').innerHTML = [['Bánh Trứng Chín',1,'—','—'],['Bánh Trứng Tái',1,'—','—'],['Bánh Cuốn',3,'4.000đ','12.000đ'],['Giò',1,'9.000đ','9.000đ'],['Bánh cuốn thịt',1,'35.000đ','35.000đ'],['Canh (có rau)',1,'—','—']].map(([name,n,price,total]) => `<tr><td>${name}</td><td>${name.startsWith('Canh') ? '—' : 'Nhân thịt'}</td><td>×${n}</td><td>${price}</td><td>${total}</td></tr>`).join('');
+document.querySelector('#cart-lines').innerHTML = line('Combo Đầy Đặn',1) + '<button class="plain muted" data-open="combo" style="font-size:11px">3 món · bấm để xem</button><p class="price">42.000đ</p>' + line('Bánh cuốn thịt',1) + '<p class="muted" style="font-size:11px">+ Nhân thịt</p><p class="price">35.000đ</p>' + line('Canh (có rau)',1) + '<p class="price">0đ</p>';
+const dialogs = [...document.querySelectorAll('dialog')];
+let returnFocus = null;
+let noticeTimer;
+function notice(message) {
+ const box = document.querySelector('.notice');
+ box.textContent = message;
+ clearTimeout(noticeTimer);
+ noticeTimer = setTimeout(() => { box.textContent = ''; },2600);
+}
+function openDialog(id,trigger) {
+ const current = dialogs.find(dialog => dialog.open);
+ if (!current) returnFocus = trigger;
+ if (current) current.close();
+ if (id === 'confirm') document.querySelector('#kitchen-note').value = document.querySelector('#note').value;
+ document.getElementById(id).showModal();
+ document.body.style.overflow = 'hidden';
+}
+function closeDialog(dialog) {
+ dialog.close();
+ document.body.style.overflow = '';
+ if (returnFocus?.isConnected) returnFocus.focus({preventScroll:true});
+}
+for (const dialog of dialogs) {
+ dialog.addEventListener('cancel',event => { event.preventDefault(); closeDialog(dialog); });
+ dialog.addEventListener('click',event => {
+  if (event.target !== dialog) return;
+  const r = dialog.getBoundingClientRect();
+  if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) closeDialog(dialog);
+ });
+}
+document.addEventListener('click',event => {
+ const button = event.target.closest('button');
+ if (!button) {
+  if (event.target.closest('[data-product]')) openDialog('filling',document.querySelector('[data-product] [data-open]'));
+  return;
+ }
+ if (button.dataset.open) return openDialog(button.dataset.open,button);
+ if (button.hasAttribute('data-close')) return closeDialog(button.closest('dialog'));
+ if (button.dataset.step) {
+  const output = button.parentElement.querySelector('output');
+  output.value = Math.max(0,Number(output.value) + Number(button.dataset.step));
+  return;
+ }
+ if (button.matches('.heart')) {
+  const selected = button.getAttribute('aria-pressed') !== 'true';
+  button.setAttribute('aria-pressed',selected);
+  button.textContent = selected ? '♥' : '♡';
+ }
+ if (button.closest('.fillings')) for (const sibling of button.parentElement.children) sibling.setAttribute('aria-pressed',sibling === button);
+ if (button.closest('.tabs')) for (const sibling of button.parentElement.children) {
+  sibling.classList.toggle('active',sibling === button);
+  sibling.setAttribute('aria-pressed',sibling === button);
+ }
+ if (button.classList.contains('trash')) button.closest('.order-line').querySelector('output').value = 0;
+ if (button.hasAttribute('data-soup') || button.hasAttribute('data-view')) {
+  if (button.closest('dialog')) closeDialog(button.closest('dialog'));
+  document.querySelector('#summary > details').open = true;
+  document.querySelector(button.hasAttribute('data-soup') ? '#canh' : '#summary').scrollIntoView({block:'center'});
+ }
+ if (button.dataset.add) {
+  const target = button.dataset.add === 'product' ? document.querySelector('[data-product] output') : document.querySelectorAll('[data-component="ComboCard"] output')[2];
+  target.value = Number(target.value) + 1;
+  if (button.dataset.add === 'product') {
+   const filling = document.querySelector('input[name="filling"]:checked').value;
+   document.querySelectorAll('[data-product] .fillings button').forEach(option => option.setAttribute('aria-pressed',option.textContent === filling));
+  }
+  closeDialog(button.closest('dialog'));
+ }
+ if (button.hasAttribute('data-place')) { closeDialog(button.closest('dialog')); notice('Bản minh hoạ — chưa gửi đơn hàng.'); }
+ if (button.hasAttribute('data-demo')) notice('Bản minh hoạ giao diện đăng nhập.');
+});
+document.querySelector('.combo-breakdown').addEventListener('toggle',event => {
+ event.target.querySelector('summary').textContent = event.target.open ? '⌃ Ẩn chi tiết' : '⌄ Chi tiết';
+});
+</script>
+</body>
+</html>
