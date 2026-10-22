@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { ApiProvider } from "@/lib/api/provider";
 import { SITE_DESCRIPTION, SITE_NAME, siteUrl } from "@/lib/seo";
+import { ChuyenGiaoDien } from "@/components/shared/chuyen-giao-dien";
+import { scriptGiaoDien } from "@/lib/giao-dien";
 import "./globals.css";
 
 const baseUrl = siteUrl();
@@ -21,9 +23,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="vi" className="font-sans">
+    <html lang="vi" className="font-sans" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: scriptGiaoDien }} />
+      </head>
       <body>
         <ApiProvider>{children}</ApiProvider>
+        <ChuyenGiaoDien />
       </body>
     </html>
   );

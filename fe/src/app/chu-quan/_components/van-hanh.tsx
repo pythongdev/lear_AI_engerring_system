@@ -44,8 +44,8 @@ function SoCot({ items, cot, field = "missing", them = [] }: { items: ThuVanHanh
     const a = goc.filter((i) => cotVanHanh(i).dong === dong), b = phu.filter((i) => cotVanHanh(i).dong === dong);
     const nhieu = [...a, ...b].some((i) => i.extra_filling && i.missing > 0);
     const themSo = cong(b, field);
-    return <div key={dong} className={nhieu ? "rounded bg-yellow-100 px-1 text-yellow-950" : ""}>
-      {cong(a, field)}{themSo > 0 && <span className="font-semibold text-red-700">+{themSo}</span>}{dong && ` ${dong}`}{nhieu && "*"}
+    return <div key={dong} className={nhieu ? "rounded bg-yellow-100 dark:bg-yellow-950 px-1 text-yellow-950 dark:text-yellow-100" : ""}>
+      {cong(a, field)}{themSo > 0 && <span className="font-semibold text-red-700 dark:text-red-300">+{themSo}</span>}{dong && ` ${dong}`}{nhieu && "*"}
     </div>;
   })}</>;
 }
@@ -130,14 +130,14 @@ function HangThieu({ phien, cot, them, demRa }: { phien: Phien; cot: readonly Co
   const [mo, setMo] = useState(false);
   const id = useId();
   return <>
-    <tr className={them ? "bg-red-50 text-red-800" : ""}>
+    <tr className={them ? "bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200" : ""}>
       <th scope="row"><Button variant="ghost" aria-expanded={mo} aria-controls={id} onClick={() => setMo(!mo)}>{nhanBan(phien)}</Button></th>
       {cot.map((c) => <td key={c}>{them ? <SoCot items={phien.items} cot={c} /> : (() => {
         const items = thuCot(phien.items, c).filter((i) => i.missing > 0);
         return items.length ? items.map((item, index) => {
           const { dong } = cotVanHanh(item);
           const chu = `${item.missing}${dong ? ` ${dong}` : ""}${item.extra_filling ? "*" : ""}`;
-          return <div key={index} className={item.extra_filling ? "rounded bg-yellow-100 px-1 text-yellow-950" : ""}>
+          return <div key={index} className={item.extra_filling ? "rounded bg-yellow-100 dark:bg-yellow-950 px-1 text-yellow-950 dark:text-yellow-100" : ""}>
             {demRa && phien.tables.length === 1 ? <Button variant="ghost" aria-label={`Đem ra ${nhanBan(phien)} · ${tenThu(item)}`} onClick={() => demRa({ phien, item, ten: tenThu(item) })}>{chu}</Button> : chu}
           </div>;
         }) : "0";
@@ -157,7 +157,7 @@ function BangThieuTheoBan({ serving, chon, cot, demRa }: { serving: Phien[]; cho
         {chon.map((p) => <HangThieu key={p.table_session_id} phien={p} cot={cot} them />)}
       </tbody>
       <tfoot className="border-t font-semibold"><tr><th scope="row">Tổng</th>{cot.map((c) => <td key={c}><SoCot items={serving.flatMap((p) => p.items)} them={chon.flatMap((p) => p.items)} cot={c} /></td>)}
-        <td>{tien(tongTien(serving, "served_amount_vnd"))}{tongTien(chon, "served_amount_vnd") > 0 && <span className="text-red-700">+{tien(tongTien(chon, "served_amount_vnd"))}</span>}</td>
+        <td>{tien(tongTien(serving, "served_amount_vnd"))}{tongTien(chon, "served_amount_vnd") > 0 && <span className="text-red-700 dark:text-red-300">+{tien(tongTien(chon, "served_amount_vnd"))}</span>}</td>
       </tr></tfoot>
     </table></VungBang><p className="text-sm">* nhiều nhân</p>
     <p>{demRa ? "Bấm vào một ô số để báo đã đem ra." : "Chỉ người đang đứng quầy ghi được đem ra. Bạn chưa đứng quầy nên các ô chỉ để xem."}</p>
@@ -195,7 +195,7 @@ function KhoiBanDangPhucVu({ serving, cot }: { serving: Phien[]; cot: readonly C
   </section>;
 }
 function SoDoBan({ data }: { data: BangVanHanh }) {
-  const trangThai = { serving: ["Đang phục vụ", "bg-green-100 text-green-950"], waiting: ["Sắp phục vụ", "bg-yellow-100 text-yellow-950"], no_order: ["Đã mở, chưa gọi", ""], empty: ["Còn trống", "bg-gray-100 text-gray-800"] } as const;
+  const trangThai = { serving: ["Đang phục vụ", "bg-green-100 dark:bg-green-950 text-green-950 dark:text-green-100"], waiting: ["Sắp phục vụ", "bg-yellow-100 dark:bg-yellow-950 text-yellow-950 dark:text-yellow-100"], no_order: ["Đã mở, chưa gọi", ""], empty: ["Còn trống", "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100"] } as const;
   const ban = [...data.sessions.flatMap((p) => p.tables.map((b) => ({ ...b, nhom: p.service_group }))), ...data.empty_tables.map((b) => ({ ...b, nhom: "empty" as const }))].sort((a, b) => a.dining_table_id - b.dining_table_id);
   return <section aria-label="Sơ đồ bàn" className={khung}><h2 className="text-xl font-semibold">Sơ đồ bàn</h2><AnHien ten="sơ đồ bàn">
     <ul aria-label="Các bàn" className="grid grid-cols-3 gap-3 sm:grid-cols-5">{ban.map((b) => <li key={b.dining_table_id} className={`rounded border p-3 ${trangThai[b.nhom][1]}`}><strong>{b.label}</strong><p>{trangThai[b.nhom][0]}</p></li>)}</ul>

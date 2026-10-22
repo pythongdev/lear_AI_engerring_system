@@ -27,7 +27,7 @@ function LyDoNhac({ status }: { status: NguyenLieuKho["reminder_status"] }) {
 function NhanNhac({ thu }: { thu: NguyenLieuKho }) {
   return <>
     {thu.check_reminder
-      ? <p><strong className="rounded-md bg-destructive px-2 py-1 text-white">Nhắc POS kiểm tra</strong></p>
+      ? <p><strong className="rounded-md bg-destructive px-2 py-1 text-white dark:text-black">Nhắc POS kiểm tra</strong></p>
       : <p>Không nhắc</p>}
     <LyDoNhac status={thu.reminder_status} />
   </>;

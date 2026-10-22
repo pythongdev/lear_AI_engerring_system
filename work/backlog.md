@@ -110,6 +110,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="done"></a>
 ## Done
+- [x] T-229 **Chưa có nút chuyển giao diện sáng / tối** — nút dùng chung ở khung gốc, nhớ lựa chọn, lần đầu theo máy, không nháy màu lúc tải — L1 — mở và xong 2026-10-22 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-229)
 
 - [x] T-228 **Bấm ô số trên trang Vận hành ghi *đã đem ra*** — chọn 0…số thiếu, xác nhận, gửi `POST /served-marks` cho một bàn; chỉ bật khi phiên đang đứng quầy (S-5, chủ repo giữ 2026-10-21) — L2 — mở 2026-10-21, bắt đầu 2026-10-21 (Claude thiết kế và viết test, Codex thi công), **cần xong trước:** `T-226` — 2026-10-22 · [chi tiết](#t-228)
 - [x] T-226 **Trang `/chu-quan/van-hanh` — phần đọc theo thiết kế đã chốt** — năm khối của `van_hanh/van-hanh.html`, số lấy từ `T-225`, cộng thử chỉ tính trên màn — L1 — mở 2026-10-21, `T-225` xong 2026-10-21; nhận 2026-10-21 — Codex thi công, Claude duyệt — xong 2026-10-21 · [chi tiết](#t-226)
@@ -452,6 +453,32 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-229"></a>
+### T-229 — Chưa có nút chuyển giao diện sáng / tối
+
+**Yêu cầu:** chủ repo 2026-10-22: *"yêu cầu codex làm button chuyển từ light and dark"*. Nền đã có: `fe/src/app/globals.css` có khối
+`.dark` và `@custom-variant dark` của shadcn, nhưng không code nào gắn class `dark`. **Mức:** L1 — hành vi giao diện, không chạm tiền,
+dữ liệu, hợp đồng.
+
+**Claude quyết 2026-10-22 (trình bày, không phải luật quán):** (1) một nút dùng chung `ChuyenGiaoDien` ở `fe/src/components/shared/`,
+gắn **một lần** ở `fe/src/app/layout.tsx`, nổi góc **dưới trái** mọi màn; (2) lựa chọn lưu ở `localStorage` khoá `giao-dien`
+(`sang` · `toi`), đọc ghi đều bọc `try/catch`; chưa chọn thì theo `prefers-color-scheme` của máy; (3) một đoạn script chạy trước khi vẽ
+trong `<head>` gắn class để không nháy màu; `<html>` có `suppressHydrationWarning`; (4) **không thêm thư viện** (không `next-themes`) —
+thêm phụ thuộc là việc của ADR-100; (5) chỗ ghi cứng màu (`bg-yellow-100`, `text-red-700`…) thêm biến thể `dark:` để chữ còn đọc được.
+
+**Acceptance** (viết 2026-10-22, trước khi giao):
+- [x] Mọi màn có một nút có `aria-label` nói nó chuyển sang giao diện nào; bấm thì `<html>` thêm hoặc bỏ class `dark`.
+- [x] Lựa chọn được ghi vào `localStorage["giao-dien"]` và còn giữ sau khi tải lại; `localStorage` ném lỗi thì nút vẫn chuyển được, không vỡ màn.
+- [x] Chưa có lựa chọn: theo `prefers-color-scheme` của máy.
+- [x] Script trước khi vẽ gắn class đúng trước lúc React chạy; không cảnh báo hydration.
+- [x] Không thêm phụ thuộc vào `fe/package.json`.
+- [x] Màu ghi cứng trong `fe/src/**/*.tsx` có biến thể `dark:`.
+- [x] Test Vitest cho ba ý đầu; test cũ còn xanh.
+- [x] `docs/product/4-fe/01-khung-fe.md` §4 có một dòng cho `ChuyenGiaoDien`.
+- [x] `./scripts/gate.sh` xanh; Claude chạy lại `fe-check`.
+
+**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-229`, nhánh `codex/T-229`, nền `9315ac2`, đã gỡ) · duyệt: Claude 2026-10-22 — đọc diff, **bỏ** chỗ Codex sửa tay `fe/src/components/ui/dialog.tsx` (primitive shadcn, ADR-100 điểm 2); grep lại màu ghi cứng: mọi lớp ngoài test có `dark:`. Codex không chạy được Vitest trong sandbox (EPERM ghi `.vite-temp`); Claude chạy ở clone chính: `./scripts/gate.sh` xanh, `fe-check` 449/449 test, build qua. File: `fe/src/lib/giao-dien.ts` · `fe/src/components/shared/chuyen-giao-dien.tsx` · `chuyen-giao-dien.test.tsx` · `fe/src/app/layout.tsx` · `fe/src/app/chu-quan/_components/kho.tsx` · `van-hanh.tsx` · `docs/product/4-fe/01-khung-fe.md`. Còn lại: chưa xem trực quan trên trình duyệt thật.
 
 <a id="t-228"></a>
 ### T-228 — Trang Vận hành chỉ cho xem số thiếu, chưa ghi được phần đã đem ra
