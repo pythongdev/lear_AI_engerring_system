@@ -18,7 +18,7 @@ type Service struct{ pool *pgxpool.Pool }
 
 func NewService(pool *pgxpool.Pool) *Service { return &Service{pool: pool} }
 
-// TongTien là một chỗ cộng line_total_vnd cho cả tính tiền và đóng phiên.
+// TongTien cộng suất đã ra hết theo ADR-125, dùng chung cho tính tiền và đóng phiên.
 func TongTien(ctx context.Context, tx pgx.Tx, id int64) (int64, error) {
 	return newRepository(tx).tongTien(ctx, id)
 }
@@ -40,4 +40,10 @@ func (s *Service) TinhTien(ctx context.Context, nguoi, id int64) (int64, error) 
 		return err
 	})
 	return due, err
+}
+
+// DonCoSuatDaRa đọc số suất (không dùng tiền > 0), nên suất miễn phí cũng hoàn thành đơn.
+// Cùng đoạn SQL đánh dấu với TongTien; cửa đóng đã khoá phiên và mọi đơn/việc.
+func DonCoSuatDaRa(ctx context.Context, tx pgx.Tx, id int64) ([]int64, error) {
+	return newRepository(tx).donCoSuatDaRa(ctx, id)
 }

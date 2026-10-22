@@ -34,6 +34,7 @@ import (
 	"banhcuon/be/internal/sanxuat"
 	"banhcuon/be/internal/taikhoan"
 	"banhcuon/be/internal/testhelper"
+	"banhcuon/be/internal/tongquan"
 	"banhcuon/be/internal/tratruoc"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
@@ -83,6 +84,7 @@ func dung(t *testing.T) khung {
 	gia.Routes(r, gia.NewService(pool))
 	ban.Routes(r, ban.NewService(pool))
 	phien.Routes(r, phien.NewService(pool))
+	tongquan.Routes(r, tongquan.NewService(pool))
 	tratruoc.Routes(r, tratruoc.NewService(pool))
 	hoadon.Routes(r, hoadon.NewService(pool))
 	ket.Routes(r, ket.NewService(pool))

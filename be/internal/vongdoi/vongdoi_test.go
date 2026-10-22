@@ -170,5 +170,25 @@ func TestI016_BangChuyenViecKhopVongDoi(t *testing.T) {
 		t.Fatalf("§4 của 05-luoc-do-san-xuat.md phải đọc ra ba mã việc trạm, đọc được %v", ma)
 	}
 	owner := capCuaOwner(t, "### 5.4", ma)
+	// Phiếu T-227 mang ADR-125 đã duyệt mới hơn bản BA trong worktree: giữ nguyên
+	// mọi cặp cũ, chỉ thêm đúng hai cặp huỷ đã được giao; vẫn so toàn bộ tập, không bỏ điều kiện.
+	owner = append(owner, "pending → cancelled", "made → discarded")
+	sort.Strings(owner)
 	soHaiTap(t, "vòng đời việc trạm §5.4", owner, capCuaCode(vongdoi.CapViec()))
+}
+
+// ADR-125: huỷ việc là chuyển một chiều, không thể làm/đem ra lại.
+func TestI017_HuyViecLaTrangThaiCuoi(t *testing.T) {
+	for _, pair := range [][2]string{{"pending", "cancelled"}, {"made", "discarded"}} {
+		if err := vongdoi.KiemChuyenViec(pair[0], pair[1]); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, from := range []string{"cancelled", "discarded"} {
+		for _, to := range []string{"pending", "made", "served", "cancelled", "discarded"} {
+			if err := vongdoi.KiemChuyenViec(from, to); err == nil {
+				t.Fatalf("không được chuyển %s → %s", from, to)
+			}
+		}
+	}
 }

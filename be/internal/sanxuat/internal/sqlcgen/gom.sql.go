@@ -27,7 +27,8 @@ WITH viec AS MATERIALIZED (
  LEFT JOIN order_line_component c ON c.id = j.order_line_component_id
  -- khoá gom: cuối
  -- Chỉ phần còn sống, không quét cả lịch sử: nhu cầu và ứng viên chỉ lấy từ đây, nguồn là $2.
- WHERE o.status = 'in_progress' OR (s.status IS NOT NULL AND s.status <> 'closed') OR j.id = $2::bigint
+ WHERE j.status IN ('pending', 'made', 'served')
+   AND (o.status = 'in_progress' OR (s.status IS NOT NULL AND s.status <> 'closed') OR j.id = $2::bigint)
 ), phan AS (
  SELECT station_code, menu_component_id, filling_option_ids,
         min(component_name) AS component_name, dining_table_id,

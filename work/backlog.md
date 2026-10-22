@@ -508,23 +508,30 @@ dở **không thu**. Thiết kế: `docs/decisions.md` **ADR-125**, chủ repo d
 `docs/prompt-guideline.md` §6.1 *L2: Claude viết test trước*, theo lời chủ repo); Claude duyệt diff, chạy lại `be-check` · `db-check` · gate.
 
 **Phần A — L2, database + backend + hợp đồng** (Acceptance viết 2026-10-22, trước khi giao):
-- [ ] Migration mới: `station_job.status` nhận `cancelled` · `discarded`; `id_if_made_or_served` phủ `made · served · discarded`; có `.down.sql`
+- [x] Migration mới: `station_job.status` nhận `cancelled` · `discarded`; `id_if_made_or_served` phủ `made · served · discarded`; có `.down.sql`
       từ chối lùi khi đã có việc mang hai trạng thái ấy; `docs/product/2-db/05-luoc-do-san-xuat.md` và `07-thu-tu-migration.md` ghi bước mới.
-- [ ] `vongdoi`: thêm `pending → cancelled`, `made → discarded`, có vết; không đường nào ra khỏi hai trạng thái ấy.
-- [ ] Một đoạn tính *tiền đã ra theo suất* (ADR-125 điểm 1 · 2, kể cả (b)) thay đoạn tạm tính đánh dấu ở `tongquan`; `phien.TongTien`,
+- [x] `vongdoi`: thêm `pending → cancelled`, `made → discarded`, có vết; không đường nào ra khỏi hai trạng thái ấy.
+- [x] Một đoạn tính *tiền đã ra theo suất* (ADR-125 điểm 1 · 2, kể cả (b)) thay đoạn tạm tính đánh dấu ở `tongquan`; `phien.TongTien`,
       `phien/tinh_tien`, `hoadon/dong`, `GET /service-board` và `GET /owner-overview` cùng đọc nó; test so các bản đánh dấu còn xanh.
-- [ ] `hoadon/dong`: còn đơn chưa xong thì **không** từ chối; trong cùng giao dịch huỷ việc chưa ra, sang trạng thái đơn theo ADR-125 điểm 4,
+- [x] `hoadon/dong`: còn đơn chưa xong thì **không** từ chối; trong cùng giao dịch huỷ việc chưa ra, sang trạng thái đơn theo ADR-125 điểm 4,
       rồi lập hoá đơn bằng đoạn ở trên; lời từ chối tiền (`payment_parts_mismatch` · `debtor_name_mismatch`) đến trước mọi câu ghi.
-- [ ] Lùi một mẻ có việc `discarded` ⇒ tên từ chối mới, mã công khai 409; bảng sản xuất, hàng chờ, gom, chuyển phần bỏ hai trạng thái mới.
-- [ ] Test qua đường gọi HTTP: dòng 3 suất ra 2 ⇒ hoá đơn 2 suất; combo ra dở ⇒ 0; món có 2 thành phần ra 1 ⇒ 0; đóng khi còn việc
+- [x] Lùi một mẻ có việc `discarded` ⇒ tên từ chối mới, mã công khai 409; bảng sản xuất, hàng chờ, gom, chuyển phần bỏ hai trạng thái mới.
+- [x] Test qua đường gọi HTTP: dòng 3 suất ra 2 ⇒ hoá đơn 2 suất; combo ra dở ⇒ 0; món có 2 thành phần ra 1 ⇒ 0; đóng khi còn việc
       `pending` · `made` · đơn QR chờ duyệt ⇒ 201, việc `cancelled` · `discarded`, đơn đúng trạng thái, có vết; ghép bàn huỷ cả hai bàn;
       cắt giữa lúc đóng ⇒ không nửa nào sống; đóng ⟂ gọi thêm 8 vòng ⇒ không phiên đóng còn đơn hay việc sống; `served_amount_vnd` = `due_vnd`;
       thành phần không trạm không chặn thu. Các test cũ của I-002 · I-017 sửa theo luật mới — không nới điều kiện nào khác.
-- [ ] `docs/product/3-be/openapi.yaml` bỏ `table_session_has_open_orders` khỏi cửa đóng, thêm mã mới, tăng phiên bản; `04-luong-tai-ban.md` §4
+- [x] `docs/product/3-be/openapi.yaml` bỏ `table_session_has_open_orders` khỏi cửa đóng, thêm mã mới, tăng phiên bản; `04-luong-tai-ban.md` §4
       viết lại; `fe/src/lib/api/schema.ts` sinh lại, chỗ FE nhắc mã bỏ đi sửa tối thiểu.
-- [ ] `./scripts/gate.sh` xanh; Claude chạy lại `be-check` · `db-check`.
+- [x] `./scripts/gate.sh` xanh; Claude chạy lại `be-check` · `db-check`.
 
-**Phần B — L1, màn quầy và trang Vận hành** — viết Acceptance khi phần A vào clone chính.
+**Bàn giao phần A:** thực hiện: Codex (worktree `../lean_wt/T-227`, nhánh `codex/T-227`, nền `a8c6cfc`; vòng hai hết hạn mức trước báo
+cáo) · duyệt và sửa nốt: Claude 2026-10-22. Claude trả lời hai câu của Codex (ADR-125 *Làm rõ điểm 4*), sửa phiên bản hợp đồng `1.0.0` →
+`0.49.0`, sửa đường lùi migration (`SET EXPRESSION` giữ vị trí cột — trước đó `db-check` đỏ vì lệch thứ tự cột), và chặn một lỗi tiền:
+Codex đã mở `pending_confirmation → completed` cho đơn QR chưa duyệt có món không trạm, nên đơn ấy bị thu tiền — nay đoạn tiền chỉ đếm đơn đã
+duyệt và đơn chưa duyệt lúc đóng luôn huỷ (test `TestI017_GiuDonDaHuyVaHuyQRChuaDuyetKhongTram`). Claude chạy ở clone chính: `./scripts/gate.sh`
+xanh đủ be-check · db-check (35 bước xuôi · lùi · xuôi lại) · verify, và `./scripts/fe-check.sh` PASS sau khi sinh lại `schema.ts`.
+
+**Phần B — L1, màn quầy và trang Vận hành** — viết Acceptance khi phần A đã commit.
 
 <a id="t-226"></a>
 ### T-226 — Chủ quán chưa có trang Vận hành thật, chỉ có bản thiết kế tĩnh

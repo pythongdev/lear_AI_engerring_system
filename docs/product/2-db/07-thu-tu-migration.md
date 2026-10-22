@@ -60,6 +60,7 @@ ngược từ dưới lên, **từng bước một**.
 | 32 | `20261019120000_so_nguoi_dang_lam` | `T-197` | `workers_present_declaration`, mỗi lần POS khai một dòng, số nguyên dương, người khai bắt buộc, trigger vết; vai ghi chỉ thêm, không sửa không xoá; lùi chặn khi bảng có dòng, rỗng thì gỡ trigger và bảng (ADR-121) | 8 · 20 |
 | 33 | `20261019130000_huy_cham_cong_nghiem` | `T-141` | huỷ ô chấm công: `attendance_day_cancel_note_required_check` (có huỷ thì có ghi chú) và trigger `attendance_day_cancelled_by_owner_trg` (người huỷ là chủ quán, tên từ chối `attendance_day_cancelled_by_owner_check`) — U-071; lùi chặn khi đã có ô huỷ, rỗng thì gỡ CHECK và trigger | 10 |
 | 34 | `20261019140000_an_lua_chon` | `T-210` | `menu_option.hidden_at` · `hidden_by_person_id` và ba ràng buộc ẩn — topping ẩn · bật lại (§8.9); lùi chặn khi còn lựa chọn đang ẩn, rỗng thì gỡ hai cột | 2 · 21 |
+| 35 | `20261022120000_huy_viec_khi_dong_phien` | `T-227` | `station_job.status` thêm cancelled · discarded; khoá hai chiều mục mẻ giữ cả discarded; trigger từ chối lùi mẻ có phần discarded. Lùi migration chặn khi có một trong hai trạng thái mới, nếu không thì trả miền cũ và khoá cũ (ADR-125) | 7 · 13 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`

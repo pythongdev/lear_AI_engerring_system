@@ -57,8 +57,10 @@ số suất và số thành phần; sau cùng ghi đúng một nước chấm c�
 Bất kỳ lỗi nào lùi cả đơn, phiên và các việc. Trả trạng thái sau nổ; tra dấu gửi lại trước nhánh
 tạo nên không nổ lần hai. Giữ bước phiên Mở → Đang phục vụ của P3-07.
 
-`CapViec` giữ đúng bốn cặp: chưa có → `pending`, `pending` → `made`, `made` → `served`,
-`made` → `pending`. Cặp ngoài bảng trả `station_job_transition_not_allowed`.
+`CapViec` giữ các cặp: chưa có → `pending`, `pending` → `made`, `made` → `served`,
+`made` → `pending`; T-227 (2026-10-22, phiếu Claude, ADR-125) thêm `pending → cancelled` và
+`made → discarded` lúc đóng phiên. Không đường ra khỏi hai trạng thái huỷ; cặp ngoài bảng
+trả `station_job_transition_not_allowed`. Đóng huỷ cả việc của đơn đã huỷ từ trước.
 `NhaNguonChuyen` là ngoại lệ trong cùng cửa chuyển việc: chỉ nguồn `made` của đơn huỷ, có lần
 chuyển đã ghi và vật đã đổi đúng chủ, được nhả về `pending`. Cái đã `served` không đổi chủ — nó đã
 ra tới bàn khách (ADR-090 điểm 3; sửa lúc duyệt 2026-10-09, bản thi công nhận cả `served`). Vết sửa mang người quầy và lý do chuyển trạng thái.
@@ -74,7 +76,8 @@ Huỷ đơn khoá phiên trước đơn theo cùng thứ tự. Các danh sách �
   không `pending` hoặc của đơn huỷ từ chối cả tập. Thêm mẻ, thêm mỗi vật với mã làm cho và mã
   đang giữ bằng nhau, rồi gọi chuyển việc sang `made`. Cạnh tranh cùng việc được kiểm lại sau khoá.
 - **Lùi mẻ:** khoá mẻ, từ chối không có hoặc đã lùi; kiểm chủ hiện tại của mọi vật. Có `served`
-  thì chặn; có ghi chú còn hiệu lực thì chặn. Ghi người/mốc lùi, đổi mọi bản soi rồi gọi chuyển
+  thì chặn; có `discarded` trả `production_batch_has_discarded_jobs` (409), cùng tên từ chối
+  `production_batch_no_discarded_jobs_check` của migration; có ghi chú còn hiệu lực thì chặn. Ghi người/mốc lùi, đổi mọi bản soi rồi gọi chuyển
   việc về `pending`, cùng giao dịch. Không chỉ đọc `made_for_station_job_id` vì chủ có thể đã đổi.
   Việc của đơn **đã huỷ** cũng về `pending` qua `vongdoi.LuiViecCuaMe` (chỉ cặp `made` → `pending`):
   mẻ lùi là mẻ không có thật, giữ việc ở `made` để lại một thứ không ai làm mà cửa chuyển sẽ đem
@@ -194,3 +197,8 @@ Danh sách trên là phép kiểm cần chạy, không phải lời khẳng đ�
 không đổi thuộc báo cáo thi công. Claude giữ phần tích hợp, cập nhật task và khối commit.
 
 [↑ đầu file](#top)
+
+
+T-227 (2026-10-22, phiếu Claude, ADR-125): bảng sản xuất, hàng chờ quầy, gom và chuyển phần
+bỏ việc cancelled/discarded. Việc discarded giữ mục mẻ còn hiệu lực; không xoá việc hay mục mẻ.
+Cửa đóng phiên và thứ tự huỷ trong giao dịch được mô tả ở `04-luong-tai-ban.md` §4.

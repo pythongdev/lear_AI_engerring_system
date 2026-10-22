@@ -16,10 +16,10 @@ WITH viec AS MATERIALIZED (
  LEFT JOIN table_session s ON s.id = o.table_session_id
  LEFT JOIN order_line_component c ON c.id = j.order_line_component_id
  -- khoá gom: cuối
- WHERE o.status = 'in_progress' OR (s.status IS NOT NULL AND s.status <> 'closed')
+ WHERE j.status IN ('pending', 'made', 'served') AND (o.status = 'in_progress' OR (s.status IS NOT NULL AND s.status <> 'closed')
    OR (o.status = 'cancelled' AND j.status = 'made'
      AND EXISTS (SELECT 1 FROM production_batch_item i WHERE i.live_station_job_id = j.id)
-     AND NOT EXISTS (SELECT 1 FROM wrong_make_note n WHERE n.live_station_job_id = j.id))
+     AND NOT EXISTS (SELECT 1 FROM wrong_make_note n WHERE n.live_station_job_id = j.id)))
 ), jobs AS (
  SELECT v.id AS station_job_id, v.sales_order_id, v.dining_table_id, v.station_code,
    v.menu_component_id, v.component_name, v.filling_option_ids, v.status, v.order_status,

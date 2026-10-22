@@ -50,6 +50,6 @@ SELECT jsonb_build_object('read_at', now(), 'poll_interval_seconds', $1::integer
    'customer_name', o.customer_name, 'delivery_address', o.delivery_address,
    'customer_needed_at', o.customer_needed_at, 'contact_note', o.contact_note,
    'total_vnd', o.total_vnd, 'lines', o.lines,
-   'unserved_jobs', (SELECT count(*) FROM station_job j WHERE j.sales_order_id = o.id AND j.status <> 'served'))
+   'unserved_jobs', (SELECT count(*) FROM station_job j WHERE j.sales_order_id = o.id AND j.status IN ('pending', 'made')))
    ORDER BY o.created_at, o.id) FROM queue_orders o
    WHERE o.table_session_id IS NULL AND o.status IN ('confirmed', 'in_progress', 'delivering')), '[]'::jsonb))::jsonb AS result;

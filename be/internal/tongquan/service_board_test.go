@@ -160,8 +160,8 @@ func TestI002_BangVanHanhTienDonBangTongTienPhien(t *testing.T) {
 			t.Fatalf("bàn %s: order_total_vnd %d, phien.TongTien %d", nhan, s.OrderTotalVnd, want)
 		}
 	}
-	if a := phienCuaBan(t, b, "test-t225-A"); a.OrderTotalVnd != 14000 {
-		t.Fatalf("8000 + 1000 + 5000, bỏ đơn huỷ 99999: %d", a.OrderTotalVnd)
+	if a := phienCuaBan(t, b, "test-t225-A"); a.OrderTotalVnd != 6000 {
+		t.Fatalf("1000 + 5000, bỏ suất chưa ra hết và đơn huỷ 99999: %d", a.OrderTotalVnd)
 	}
 }
 
@@ -170,7 +170,7 @@ func TestI014_BangVanHanhTienDaRaBangTamTinh(t *testing.T) {
 	_, _, _, b, tongTruoc, tongSau := bangFixture(t)
 	a := phienCuaBan(t, b, "test-t225-A")
 	if a.ServedAmountVnd != 6000 {
-		t.Fatalf("chỉ đơn vị bán ra hết: canh 1000 + bánh thường 5000; bánh nhiều ra dở không tính: %d", a.ServedAmountVnd)
+		t.Fatalf("canh 1000 + bánh thường 5000; suất bánh nhiều gồm hai cái chưa ra hết: %d", a.ServedAmountVnd)
 	}
 	if s := phienCuaBan(t, b, "test-t225-B1"); s.ServedAmountVnd != 0 {
 		t.Fatalf("chưa phần nào ra ⇒ 0: %d", s.ServedAmountVnd)
@@ -271,7 +271,13 @@ func TestI014_TamTinhMotDinhNghia(t *testing.T) {
 	if ban := doanTamTinh(t, "sql/bang_van_hanh.sql"); ban != tong {
 		t.Fatalf("đoạn tạm tính lệch giữa sql/tong.sql và sql/bang_van_hanh.sql:\n--- tong.sql\n%s\n--- bang_van_hanh.sql\n%s", tong, ban)
 	}
-	for _, phan := range []string{"line_total_vnd", "parent_order_line_id", "status <> 'served'"} {
+	if phien := doanTamTinh(t, "../phien/sql/tong_tien.sql"); phien != tong {
+		t.Fatal("đoạn tiền phiên lệch tổng quan")
+	}
+	if don := doanTamTinh(t, "../phien/sql/don_co_suat_da_ra.sql"); don != tong {
+		t.Fatal("đoạn đếm suất lệch tổng quan")
+	}
+	for _, phan := range []string{"line_total_vnd", "parent_order_line_id", "bool_and(j.status = 'served')", "min(c.so_suat)", "floor("} {
 		if !strings.Contains(tong, phan) {
 			t.Fatalf("đoạn tạm tính thiếu %s — đơn vị bán = dòng gốc + dòng con, ra hết = mọi việc served", phan)
 		}

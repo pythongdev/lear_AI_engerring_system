@@ -20,7 +20,7 @@ func (r repository) khoaPhien(ctx context.Context, id int64) (string, error) {
 	return r.q.KhoaPhien(ctx, id)
 }
 
-func (r repository) khoaDonCuaPhien(ctx context.Context, id int64) ([]string, error) {
+func (r repository) khoaDonCuaPhien(ctx context.Context, id int64) ([]sqlcgen.KhoaDonCuaPhienRow, error) {
 	return r.q.KhoaDonCuaPhien(ctx, pgtype.Int8{Int64: id, Valid: true})
 }
 
@@ -190,4 +190,8 @@ func (r repository) mocNhapBu(ctx context.Context, sold time.Time, ngay string, 
 }
 func (r repository) banNhapBu(ctx context.Context, id int64) (bool, error) {
 	return r.q.BanNhapBu(ctx, id)
+}
+
+func (r repository) khoaViecCuaPhien(ctx context.Context, id int64) ([]sqlcgen.KhoaViecCuaPhienRow, error) {
+	return r.q.KhoaViecCuaPhien(ctx, pgtype.Int8{Int64: id, Valid: true})
 }

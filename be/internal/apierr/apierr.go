@@ -96,6 +96,7 @@ const (
 	CodeStationJobTransitionNotAllowed   Code = "station_job_transition_not_allowed"
 	CodeProductionBatchNotFound          Code = "production_batch_not_found"
 	CodeProductionBatchAlreadyRolledBack Code = "production_batch_already_rolled_back"
+	CodeProductionBatchHasDiscardedJobs  Code = "production_batch_has_discarded_jobs"
 	CodeProductionBatchHasServedUnits    Code = "production_batch_has_served_units"
 	CodeStationJobHasWrongMakeNote       Code = "station_job_has_wrong_make_note"
 	CodeTransferSourceNotAvailable       Code = "transfer_source_not_available"
@@ -117,7 +118,6 @@ const (
 	CodeTableSessionNotFound             Code = "table_session_not_found"
 	CodeOrderTransitionNotAllowed        Code = "order_transition_not_allowed"
 	CodeTableSessionTransitionNotAllowed Code = "table_session_transition_not_allowed"
-	CodeTableSessionHasOpenOrders        Code = "table_session_has_open_orders"
 	CodePaymentPartsMismatch             Code = "payment_parts_mismatch"
 	CodeDebtorNameMismatch               Code = "debtor_name_mismatch"
 
@@ -229,6 +229,7 @@ var statusOf = map[Code]int{
 	CodeStationJobTransitionNotAllowed:   409,
 	CodeProductionBatchNotFound:          404,
 	CodeProductionBatchAlreadyRolledBack: 409,
+	CodeProductionBatchHasDiscardedJobs:  409,
 	CodeProductionBatchHasServedUnits:    409,
 	CodeStationJobHasWrongMakeNote:       409,
 	CodeTransferSourceNotAvailable:       409,
@@ -250,7 +251,6 @@ var statusOf = map[Code]int{
 	CodeTableSessionNotFound:             404,
 	CodeOrderTransitionNotAllowed:        409,
 	CodeTableSessionTransitionNotAllowed: 409,
-	CodeTableSessionHasOpenOrders:        409,
 	CodePaymentPartsMismatch:             422,
 	CodeDebtorNameMismatch:               422,
 
@@ -280,6 +280,7 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"production_batch_no_discarded_jobs_check":         CodeProductionBatchHasDiscardedJobs,
 	"daily_minimum_banh_positive_check":                CodeInvalidRequest,
 	"daily_minimum_workers_positive_check":             CodeInvalidRequest,
 	"workers_present_declaration_count_positive_check": CodeInvalidRequest,

@@ -141,9 +141,15 @@ func (c canh) donBan(t *testing.T, nguoi, ban int64) traLoi {
 	return c.post(t, fmt.Sprintf("/dining-tables/%d/cleaning", ban), nguoi, map[string]any{})
 }
 
-// xong: đơn tới Hoàn thành — dựng tay; cửa ghi đã phục vụ là của P3-10.
+// xong: làm và đem ra mọi việc qua HTTP, rồi dựng trạng thái Hoàn thành cho test cũ.
 func (c canh) xong(t *testing.T, don int64) {
 	t.Helper()
+	if ids := c.viecCua(t, don, "pending"); len(ids) > 0 {
+		canDat(t, c.bamMe(t, c.quay, ids...), http.StatusCreated)
+	}
+	if ids := c.viecCua(t, don, "made"); len(ids) > 0 {
+		canDat(t, c.raBan(t, c.quay, ids...), http.StatusOK)
+	}
 	if err := c.coVet(func(tx pgx.Tx) error {
 		_, err := tx.Exec(c.ctx, "UPDATE shop.sales_order SET status = 'completed' WHERE id = $1", don)
 		return err
@@ -479,19 +485,12 @@ func TestI002_BanGhepGoiVaoPhienCuaNhom(t *testing.T) {
 	}
 	c.xong(t, donA)
 	canDat(t, c.tinhTien(t, c.quay, phien), http.StatusOK)
-	tong := tongA + b.so(t, "total_vnd")
-	truoc := c.anhPhien(t, phien)
-	canMa(t, c.dongPhien(t, c.quay, phien, tong, 0, 0, ""), http.StatusConflict, "table_session_has_open_orders", "")
-	if c.anhPhien(t, phien) != truoc {
-		t.Fatal("đóng bị từ chối mà phiên đã đổi")
-	}
-	c.xong(t, b.so(t, "sales_order_id"))
-	d := c.dongPhien(t, c.quay, phien, tong, 0, 0, "")
+	d := c.dongPhien(t, c.quay, phien, tongA, 0, 0, "")
 	canDat(t, d, http.StatusCreated)
-	if d.so(t, "due_vnd") != tong {
-		t.Fatalf("hoá đơn nhóm ghép: muốn %d, nhận %d", tong, d.so(t, "due_vnd"))
+	if d.so(t, "due_vnd") != tongA || c.trangThaiDon(t, b.so(t, "sales_order_id")) != "cancelled" {
+		t.Fatalf("nhóm ghép chỉ thu bàn A đã ra, huỷ đơn bàn B: %v", d.body)
 	}
-	t.Logf("nhóm ghép: đơn của bàn B chặn đóng tới khi xong; đóng ⇒ %s", c.anhPhien(t, phien))
+	c.khongViecSong(t, phien)
 }
 
 // --- I-006: suất đem về của khách ngồi bàn thuộc phiên bàn ------------------------------------------
@@ -619,32 +618,90 @@ func TestI016_KhachQRGoiThemLucChoThanhToan(t *testing.T) {
 	t.Logf("khách QR gọi thêm lúc Chờ thanh toán ⇒ phiên %d về serving, 0 vết, đơn %d", phien, them.so(t, "sales_order_id"))
 }
 
-// --- I-017: đóng phiên — chặn bởi món, không chặn bởi tiền; một giao dịch -----------------------------
+// --- I-017: đóng phiên huỷ việc chưa ra, không chặn bởi tiền; một giao dịch -----------------------------
 
-func TestI017_DongPhienBiChanBoiMonChuaXong(t *testing.T) {
+func TestI017_DongPhienHuyMonChuaXong(t *testing.T) {
 	c := dungBan(t)
 	ban, phien, don1, tong1 := c.phienDangPhucVu(t, "bàn")
 	c.xong(t, don1)
-	// Một lượt gọi QR chờ duyệt cũng là món chưa xong — nó vẫn thuộc phiên (§5.2).
+	d := c.datHo(t, c.quay, ban, dauLanGui(t), c.dong(false))
+	canDat(t, d, http.StatusCreated)
+	ids := c.viec(t, d.so(t, "sales_order_id"), "pending")
+	me := c.bamMe(t, c.quay, ids[0])
+	canDat(t, me, http.StatusCreated)
 	q := c.goiQR(t, c.capMaQR(t, ban), dauLanGui(t), c.dong(false))
 	canDat(t, q, http.StatusCreated)
-	if q.so(t, "table_session_id") != phien {
-		t.Fatalf("khách QR ở bàn đang có phiên ⇒ vào phiên ấy; nhận %v", q.body)
-	}
 	canDat(t, c.tinhTien(t, c.quay, phien), http.StatusOK)
-	truoc := c.anhPhien(t, phien)
-	canMa(t, c.dongPhien(t, c.quay, phien, tong1, 0, 0, ""), http.StatusConflict, "table_session_has_open_orders", "")
-	if c.anhPhien(t, phien) != truoc {
-		t.Fatal("đóng bị từ chối mà phiên, bàn hay hoá đơn đã đổi")
+	if q.so(t, "table_session_id") != phien {
+		t.Fatalf("khách QR phải vào cùng phiên: %v", q.body)
 	}
-	t.Logf("còn một đơn Chờ xác nhận ⇒ table_session_has_open_orders; %s", truoc)
-	canDat(t, c.tuChoi(t, c.quay, q.so(t, "sales_order_id")), http.StatusOK)
-	d := c.dongPhien(t, c.quay, phien, 0, tong1, 0, "")
-	canDat(t, d, http.StatusCreated)
-	if d.so(t, "due_vnd") != tong1 {
-		t.Fatalf("đơn Huỷ không vào hoá đơn: muốn %d, nhận %d", tong1, d.so(t, "due_vnd"))
+	closed := c.dongPhien(t, c.quay, phien, tong1, 0, 0, "")
+	canDat(t, closed, http.StatusCreated)
+	if closed.so(t, "due_vnd") != tong1 {
+		t.Fatalf("chỉ thu đơn đã ra: %v", closed.body)
 	}
-	t.Logf("từ chối đơn chờ duyệt rồi đóng ⇒ %s", c.anhPhien(t, phien))
+	for _, id := range []int64{d.so(t, "sales_order_id"), q.so(t, "sales_order_id")} {
+		if c.trangThaiDon(t, id) != "cancelled" {
+			t.Fatalf("đơn %d chưa huỷ", id)
+		}
+	}
+	for i, id := range ids {
+		want, from := "cancelled", "pending"
+		if i == 0 {
+			want, from = "discarded", "made"
+		}
+		if c.docChu(t, "SELECT status FROM shop.station_job WHERE id=$1", id) != want {
+			t.Fatalf("việc %d chưa %s", id, want)
+		}
+		if n := c.docSo(t, `SELECT count(*) FROM shop.record_revision WHERE target_table_code='station_job' AND target_row=$1
+		 AND before_image->>'status'=$2 AND after_image->>'status'=$3 AND person_id=$4 AND btrim(reason)<>''`, id, from, want, c.quay); n != 1 {
+			t.Fatalf("việc %d có %d vết", id, n)
+		}
+	}
+	c.khongViecSong(t, phien)
+	before := c.anhViecPhien(t, phien)
+	canMa(t, c.luiMe(t, c.quay, me.so(t, "production_batch_id")), http.StatusConflict, "production_batch_has_discarded_jobs", "")
+	if c.anhViecPhien(t, phien) != before {
+		t.Fatal("lùi mẻ bị từ chối đã đổi việc/mục mẻ/vết")
+	}
+	for _, h := range c.bang(t, "") {
+		for _, p := range h.phan {
+			if p.ban == ban {
+				t.Fatal("bảng sản xuất còn việc phiên đã đóng")
+			}
+		}
+	}
+	status, out := c.goi(t, "GET", "/counter/station-jobs", c.quay, nil)
+	if status != http.StatusOK {
+		t.Fatalf("việc quầy: %d %v", status, out)
+	}
+	old := map[int64]bool{}
+	for _, id := range ids {
+		old[id] = true
+	}
+	for _, raw := range out["jobs"].([]any) {
+		j := raw.(map[string]any)
+		if old[int64(j["station_job_id"].(float64))] {
+			t.Fatal("việc huỷ vẫn ở hàng quầy")
+		}
+	}
+	_, _, target, _ := c.phienDangPhucVu(t, "bàn nhận")
+	targetID := c.viec(t, target, "pending")[0]
+	for _, source := range []int64{ids[0], ids[1]} {
+		canMa(t, c.chuyen(t, c.quay, [2]int64{source, targetID}), http.StatusConflict, "transfer_source_not_available", "")
+	}
+	if c.anhViecPhien(t, phien) != before {
+		t.Fatal("chuyển việc huỷ đã đổi nguồn")
+	}
+
+}
+
+func (c canh) khongViecSong(t *testing.T, phien int64) {
+	t.Helper()
+	if n := c.docSo(t, `SELECT count(*) FROM shop.station_job j JOIN shop.sales_order o ON o.id=j.sales_order_id
+	 WHERE o.table_session_id=$1 AND j.status IN ('pending','made')`, phien); n != 0 {
+		t.Fatalf("phiên đóng còn %d việc sống", n)
+	}
 }
 
 func TestI017_TienChuaThuKhongChanDong(t *testing.T) {
@@ -671,12 +728,16 @@ func TestI017_TienChuaThuKhongChanDong(t *testing.T) {
 	t.Logf("khách chưa trả, cho nợ ⇒ phiên vẫn đóng: %s", c.anhPhien(t, phien))
 }
 
-// Cắt sau lần ghi thứ hai của cửa đóng (hoá đơn, trạng thái phiên đã ghi; dòng bàn của phiên chưa) ⇒
+// Cắt lúc ghi dòng bàn, sau khi đã huỷ việc, đổi đơn và ghi hoá đơn/trạng thái phiên ⇒
 // không nửa nào sống. Cái kéo cắt là một trigger test gắn vào đúng một phiên, gỡ khi test xong.
 func TestI017_CatGiuaLucDongKhongNuaNaoSong(t *testing.T) {
 	c := dungBan(t)
-	_, phien, don, tong := c.phienDangPhucVu(t, "bàn")
+	ban, phien, don, tong := c.phienDangPhucVu(t, "bàn")
 	c.xong(t, don)
+	them := c.datHo(t, c.quay, ban, dauLanGui(t), c.dong(false))
+	canDat(t, them, http.StatusCreated)
+	ids := c.viec(t, them.so(t, "sales_order_id"), "pending")
+	canDat(t, c.bamMe(t, c.quay, ids[0]), http.StatusCreated)
 	canDat(t, c.tinhTien(t, c.quay, phien), http.StatusOK)
 	ham := fmt.Sprintf("test_cat_dong_phien_%d", phien)
 	if _, err := c.owner.Exec(c.ctx, fmt.Sprintf(`CREATE FUNCTION shop.%s() RETURNS trigger LANGUAGE plpgsql AS $$
@@ -698,13 +759,18 @@ func TestI017_CatGiuaLucDongKhongNuaNaoSong(t *testing.T) {
 	}
 	t.Cleanup(goKeo)
 	truoc := c.anhPhien(t, phien)
+	viecTruoc := c.anhViecPhien(t, phien)
 	canMa(t, c.dongPhien(t, c.quay, phien, tong, 0, 0, ""), http.StatusInternalServerError, "internal_error", "")
 	if sau := c.anhPhien(t, phien); sau != truoc {
 		t.Fatalf("cắt giữa lúc đóng mà một nửa sống:\n trước %s\n sau   %s", truoc, sau)
 	}
 	t.Logf("cắt giữa lúc đóng ⇒ 500 internal_error, database y như trước: %s", truoc)
+	if c.anhViecPhien(t, phien) != viecTruoc {
+		t.Fatal("cắt giữa lúc đóng đã để lại việc/mẻ/vết")
+	}
 	goKeo()
 	canDat(t, c.dongPhien(t, c.quay, phien, tong, 0, 0, ""), http.StatusCreated)
+	c.khongViecSong(t, phien)
 	t.Logf("gỡ kéo cắt, đóng lại ⇒ %s", c.anhPhien(t, phien))
 }
 
@@ -729,14 +795,21 @@ func TestI017_DongVaGoiThemChenNhau(t *testing.T) {
 		switch {
 		case dong.status == http.StatusCreated:
 			canMa(t, goi, http.StatusConflict, "dining_table_needs_cleaning", "")
+			c.khongViecSong(t, phien)
 			dongTruoc++
 		case goi.status == http.StatusCreated:
 			if goi.so(t, "table_session_id") != phien {
 				t.Fatalf("vòng %d: gọi thêm vào phiên khác %v", vong, goi.body)
 			}
-			if dong.chu("code") != "table_session_transition_not_allowed" && dong.chu("code") != "table_session_has_open_orders" {
+			if dong.chu("code") != "table_session_transition_not_allowed" {
 				t.Fatalf("vòng %d: gọi thêm đã vào phiên mà đóng trả %d %v", vong, dong.status, dong.body)
 			}
+			canDat(t, c.tinhTien(t, c.quay, phien), http.StatusOK)
+			canDat(t, c.dongPhien(t, c.quay, phien, tong, 0, 0, ""), http.StatusCreated)
+			if c.trangThaiDon(t, goi.so(t, "sales_order_id")) != "cancelled" {
+				t.Fatal("lượt gọi chen chưa ra phải huỷ khi đóng lại")
+			}
+			c.khongViecSong(t, phien)
 			goiTruoc++
 		default:
 			t.Fatalf("vòng %d: đóng %d %v · gọi %d %v", vong, dong.status, dong.body, goi.status, goi.body)

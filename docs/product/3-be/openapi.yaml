@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.48.0
+  version: 0.49.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -144,8 +144,9 @@ paths:
         một đơn vị là (order_line_component_id, position), việc không thành phần là đơn vị riêng.
         served khi mọi trạm served; missing = ordered - served. Options là tên đã chụp;
         extra_filling khi có lựa chọn nhóm Lượng nhân không mặc định.
-        order_total_vnd dùng phien.TongTien; served_amount_vnd dùng cùng phép tạm tính
-        với owner-overview trên đơn của phiên, không chia giá combo, không là số phải thu.
+        ADR-125: order_total_vnd và served_amount_vnd dùng cùng đoạn tiền theo suất với phien.TongTien
+        và owner-overview; bằng due_vnd trước giảm giá khi đóng phiên. Suất ra dở không thu;
+        thành phần không trạm không chặn thu. Đơn cancelled không vào tiền.
         empty_tables không thuộc phiên chưa đóng nào. serve_history đọc vết made → served
         trong ngày bán, kể cả phiên đã đóng; gom theo mốc, người, bàn, trạm và khoá gom,
         quantity đếm việc, mới nhất trước. Mọi danh sách rỗng là [].
@@ -174,8 +175,11 @@ paths:
         và online (không bàn), giữ nhóm thành phần và nhân. serving_guests đếm phiên chưa closed.
         sales_progress đếm đơn vị (order_line_component_id, position) có mọi trạm served của thành phần chụp takes_filling trên đơn không huỷ
         có created_at thuộc ngày bán hiện tại theo múi giờ quán, so với minimum_banh của đúng ngày.
-        provisional_sales cộng line_total_vnd của dòng không cha và mọi con khi tất cả việc của
-        đơn vị bán ấy served; cần có ít nhất một việc. Không chia giá combo, không trừ giảm cả đơn.
+        ADR-125: provisional_sales cộng số suất đã ra hết nhân giá suất của dòng gốc và mọi con,
+        cùng đoạn tiền với phien.TongTien. Đếm đơn vị thành phần đã served ở mọi trạm, chia số đơn vị
+        mỗi suất, lấy floor rồi min qua các thành phần; không phụ thuộc thứ tự position.
+        Thành phần không trạm không tham gia min, suất chỉ có thành phần không trạm tính đã ra.
+        Suất ra dở không thu, không chia giá combo theo thành phần, không trừ giảm cả đơn.
         shortages.menu_items gom việc theo món hoặc combo gốc và tên chụp trên các đơn còn sống
         như DocGom; ordered là số đơn vị thành phần, served là số đơn vị có mọi trạm served.
         Việc không có thành phần là một việc/một đơn vị; không gán nước chấm cấp đơn cho món.
@@ -2956,6 +2960,12 @@ paths:
   /table-sessions/{table_session_id}/closing:
     post:
       operationId: closeSession
+      description: >-
+        ADR-125: phiên awaiting_payment đóng trong một giao dịch; không chặn bởi đơn chưa xong.
+        Kiểm tiền trước mọi câu ghi; pending thành cancelled, made thành discarded, served giữ nguyên.
+        Đơn completed/cancelled giữ nguyên; đơn chưa xong có việc served hoặc suất đã ra thành completed,
+        còn lại cancelled, gồm QR chờ duyệt. Hoá đơn chỉ thu suất đã ra hết, bỏ đơn đã huỷ trước đó.
+        Phủ mọi bàn ghép; phần đã làm nhưng chưa bưng không thu và không thể lùi mẻ của phần discarded.
       tags:
         - hoadon
       parameters:
@@ -6789,7 +6799,6 @@ components:
         - table_session_not_found
         - order_transition_not_allowed
         - table_session_transition_not_allowed
-        - table_session_has_open_orders
         - payment_parts_mismatch
         - debtor_name_mismatch
         - order_intake_paused
@@ -6822,6 +6831,7 @@ components:
         - station_job_transition_not_allowed
         - production_batch_not_found
         - production_batch_already_rolled_back
+        - production_batch_has_discarded_jobs
         - production_batch_has_served_units
         - station_job_has_wrong_make_note
         - transfer_source_not_available
@@ -6903,6 +6913,7 @@ components:
         station_job_transition_not_allowed: 409
         production_batch_not_found: 404
         production_batch_already_rolled_back: 409
+        production_batch_has_discarded_jobs: 409
         production_batch_has_served_units: 409
         station_job_has_wrong_make_note: 409
         transfer_source_not_available: 409
@@ -6945,7 +6956,6 @@ components:
         table_session_not_found: 404
         order_transition_not_allowed: 409
         table_session_transition_not_allowed: 409
-        table_session_has_open_orders: 409
         payment_parts_mismatch: 422
         debtor_name_mismatch: 422
     Error:
@@ -7606,6 +7616,7 @@ x-constraint-errors:
   production_batch_item_transfer_fkey: internal
   production_batch_made_by_person_fkey: internal
   production_batch_pkey: internal
+  production_batch_no_discarded_jobs_check: production_batch_has_discarded_jobs
   production_batch_rolled_back_after_made_check: internal
   production_batch_rolled_back_by_iff_rolled_back_check: internal
   production_batch_rolled_back_by_person_fkey: internal

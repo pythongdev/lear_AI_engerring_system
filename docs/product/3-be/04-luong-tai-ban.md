@@ -108,20 +108,39 @@ lý do. Dọn bàn cũng khai lý do quanh câu sửa mốc. Không người th�
 
 ## 4. Tính tiền, đóng phiên và dọn bàn
 
+T-227 (2026-10-22, phiếu Claude; ADR-125 và phần làm rõ điểm 4): mọi lần đóng phiên bàn
+đi qua `POST /table-sessions/{table_session_id}/closing`, chỉ thu **suất đã ra hết** và huỷ
+mọi việc trạm chưa ra, gồm việc của mọi bàn ghép và việc nước chấm cấp đơn.
+
 `phien/tinh_tien` khoá phiên, chuyển sang `awaiting_payment` qua `vongdoi`, rồi trả `due_vnd`.
-`phien.TongTien` là **một chỗ cộng tiền của phiên** dùng chung với đóng: tổng `order_line.line_total_vnd`
-của mọi đơn không `cancelled`, gồm mọi bàn ghép và mọi lượt gọi. Câu đọc lại một đơn khi gửi lại chỉ
-cộng các dòng của chính đơn ấy; nó không tính tổng phiên hay quyết số phải thu.
+`phien.TongTien`, bill-request, closing, `GET /service-board` (`served_amount_vnd`) và
+`GET /owner-overview` (`amount_vnd`) dùng **cùng đoạn SQL đánh dấu**. Một suất là một đơn vị
+của dòng gốc cùng phần tương ứng của mọi dòng con. Với mỗi thành phần, đếm đơn vị đã served
+ở mọi trạm, chia lượng mỗi suất rồi lấy floor; số suất đã ra là min qua mọi thành phần.
+Đếm số đơn vị, không ghép theo vị trí. Giá suất bằng tổng `line_total_vnd` của gốc và con
+chia số lượng gốc. Thành phần không trạm không tham gia min; suất chỉ có thành phần không
+trạm tính là đã ra. Đơn chưa duyệt (`id_if_approved` rỗng) không mang suất nào, kể cả thành
+phần không trạm (`master_plan/shop-facts.md` §6 quy tắc 2). Nước chấm cấp đơn không mang tiền. Đơn đã huỷ không vào phép cộng;
+suất ra dở không thu; giảm giá cả đơn vẫn trừ trên số tiền mới ở hoá đơn.
 
-`hoadon/dong` kiểm hình tiền trước quyền: ba phần tiền là số nguyên không âm và bắt buộc; tên người
-nợ nếu có không được trắng. Trong **một giao dịch**, cửa khoá phiên, dùng bảng `vongdoi` kiểm có thể
-sang `closed` trước mọi câu ghi, rồi khoá **mọi** đơn của phiên theo thứ tự mã đơn. Còn đơn ngoài
-`completed`/`cancelled` thì `table_session_has_open_orders` **409**.
+`hoadon/dong` kiểm hình tiền trước quyền: ba phần tiền bắt buộc, nguyên không âm; tên người
+nợ nếu có không được trắng. Trong **một giao dịch**, khoá phiên, kiểm chuyển từ
+`awaiting_payment` sang `closed`, khoá mọi đơn theo mã rồi mọi việc theo mã. Đọc tiền đã ra
+và chạy bộ kiểm phần tiền dùng chung với `Ghi` **trước mọi câu ghi**, nên các lời từ chối
+`payment_parts_mismatch`, `debtor_name_mismatch`, `invalid_request` không huỷ việc nào.
 
-Sau đó cửa gọi `TongTien`, **thêm `bill` trước**, để `person_id` lấy mặc định từ người đã kiểm của
-giao dịch, rồi gọi `ChuyenPhien(closed)`: sửa trạng thái phiên trước, đánh dấu mọi dòng bàn đã đóng
-sau. Khoá ngoại hoãn được kiểm lúc commit; cắt giữa chừng lùi cả hoá đơn, trạng thái và dòng bàn.
-Không kiểm tiền đã thu đủ để chặn đóng: phần chưa thu là nợ và database kiểm tên người nợ.
+Sau khi kiểm tiền, chuyển việc `pending → cancelled`, `made → discarded`; giữ `served`
+và hai trạng thái huỷ đã có. Việc discarded vẫn giữ mục mẻ còn hiệu lực. Chuyển qua
+`vongdoi` và ghi vết người, lý do, trước/sau. Không từ chối chỉ vì còn đơn chưa xong.
+Đơn đã `completed` hoặc `cancelled` giữ nguyên, kể cả đơn huỷ có việc served: không phục hồi,
+không thu đơn huỷ. Đơn chưa xong chuyển `completed` nếu có ít nhất một việc served **hoặc**
+một suất được đoạn tiền tính là đã ra (kể cả suất giá 0, không trạm); còn lại `cancelled`.
+Đơn QR chờ duyệt **luôn** sang `cancelled`: không có đường `pending_confirmation → completed`.
+
+Sau đó gọi lại `TongTien`, thêm `bill`, rồi `ChuyenPhien(closed)`: sửa trạng thái phiên và
+đánh dấu mọi dòng bàn đã đóng. Tất cả nằm trong cùng giao dịch và khoá ngoại hoãn;
+cắt giữa chừng lùi cả việc, đơn, vết, hoá đơn và bàn. Tiền chưa thu vẫn ghi thành nợ,
+không chặn đóng khi phần tiền và tên người nợ hợp lệ.
 
 | Tên từ chối | Mã công khai | Status |
 |---|---|---|

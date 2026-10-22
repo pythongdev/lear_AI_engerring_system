@@ -7,6 +7,8 @@ BEGIN
  PERFORM set_config('shop.actor_person_id',p::text,true);
  PERFORM set_config('shop.revision_reason','test-t199-sql',true);
  INSERT INTO menu_component(name,base_price_vnd,takes_filling) VALUES ('test-t199-component',100,true) RETURNING id INTO mc;
+ -- no_jobs là chưa nổ việc của thành phần có trạm, không phải thành phần miễn trạm (ADR-125).
+ INSERT INTO menu_component_station(menu_component_id,station_code) VALUES (mc,'trang_banh'),(mc,'gap_banh');
  INSERT INTO menu_item(name) VALUES ('test-t199-item') RETURNING id INTO mi;
  INSERT INTO menu_item_component(menu_item_id,menu_component_id,quantity) VALUES(mi,mc,1);
  INSERT INTO menu_combo(name,price_vnd) VALUES ('test-t199-combo',5000) RETURNING id INTO cb;

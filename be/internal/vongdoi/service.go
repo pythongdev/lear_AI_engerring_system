@@ -123,3 +123,25 @@ func ChuyenPhien(ctx context.Context, tx pgx.Tx, id int64, den string) error {
 	}
 	return nil
 }
+
+// ChotDonCuaPhien chỉ dùng ở hoadon/dong, sau khoá phiên/mọi đơn và huỷ việc chưa ra.
+// ADR-125 làm rõ điểm 4: không phục hồi đơn huỷ, không đổi đơn hoàn thành. Đơn chưa duyệt luôn
+// sang cancelled — không có đường pending_confirmation → completed (shop-facts §6 quy tắc 2).
+func ChotDonCuaPhien(ctx context.Context, tx pgx.Tx, id int64, daRa bool) error {
+	repo := newRepository(tx)
+	tu, kenh, _, err := repo.khoaDon(ctx, id)
+	if err != nil {
+		return err
+	}
+	if tu == "completed" || tu == "cancelled" {
+		return nil
+	}
+	if (kenh != "staff_pos" && kenh != "qr_table") || (tu != "pending_confirmation" && tu != "confirmed" && tu != "in_progress") {
+		return apierr.Error{Code: apierr.CodeOrderTransitionNotAllowed}
+	}
+	den := "cancelled"
+	if daRa && tu != "pending_confirmation" {
+		den = "completed"
+	}
+	return CoVet(ctx, tx, CuaChuyenDon.Code+": đóng phiên, "+tu+" → "+den, func() error { return repo.chuyenDon(ctx, id, den) })
+}

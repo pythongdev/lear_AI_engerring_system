@@ -7971,6 +7971,14 @@ tính **cả dòng** — dòng 3 cái ra 2 cộng 0 — trong khi số người 
 6. **I-002** viết lại: tổng của phiên = Σ suất đã ra hết của mọi đơn thuộc phiên; vế *một phiên đúng một hoá đơn* giữ. Test hồi quy: suất dở
    không vào, dòng 3 cái ra 2 thu 2, combo ra dở thu 0, đóng xong không còn việc `pending`/`made` của phiên, số `GET /service-board` bằng hoá đơn.
 
+**Làm rõ điểm 4 (2026-10-22, Claude, sau câu hỏi của Codex khi thi công; không thêm luật quán):** điểm 4 chỉ đổi đơn **chưa** ở
+`completed`/`cancelled`. Đơn đã `cancelled` trước lúc đóng giữ nguyên `cancelled` và không vào hoá đơn, như hôm nay — kể cả khi có việc đã
+ra (luật huỷ đơn và chuyển phần đã làm của U-033 không đổi). Đơn chưa xong sang `completed` khi nó có ít nhất một việc `served` **hoặc** ít nhất
+một suất được đoạn tiền ở điểm 2 tính là đã ra (gồm suất chỉ có thành phần không trạm, điểm (b)); còn lại sang `cancelled`. Như thế mọi suất
+đoạn tiền đếm đều nằm trên đơn không huỷ, và đơn huỷ không mang suất nào.
+Đơn **chưa duyệt** (`id_if_approved` rỗng) không mang suất nào — điểm (b) không vượt qua bước duyệt của `master_plan/shop-facts.md` §6
+quy tắc 2 — và lúc đóng luôn sang `cancelled`.
+
 **Hai điểm chủ repo duyệt cùng thiết kế (2026-10-22):** (a) *đã làm xong chưa bưng* cũng không thu và bị bỏ (`discarded`); (b) một thành phần
 **không có trạm** (`menu_component_station` không bắt buộc) không tham gia phép `min` của điểm 1; suất chỉ gồm thành phần không trạm tính là đã ra.
 

@@ -145,27 +145,35 @@ type NoiDung struct {
 	Moc                                                               time.Time
 }
 
-// Ghi là ô thêm bill duy nhất; cửa gọi giữ khoá đơn/phiên và ngày chưa ký.
-func Ghi(ctx context.Context, tx pgx.Tx, b NoiDung) (int64, error) {
+// kiemPhanTien không ghi: dùng trước huỷ việc và ở cửa Ghi để giữ đúng một bộ kiểm tiền.
+func kiemPhanTien(b NoiDung) error {
 	// Trừ dần để tránh tràn bigint khi yêu cầu có nhiều phần tiền rất lớn.
 	if b.Discount < 0 || b.Discount > b.Due {
-		return 0, sai("discount_vnd")
+		return sai("discount_vnd")
 	}
 	if err := kiemTenGiam(b.Discount, b.DiscountCustomerName); err != nil {
-		return 0, err
+		return err
 	}
 	con := b.Due - b.Discount
 	for _, v := range []int64{b.Cash, b.Transfer, b.PrepaidCash, b.PrepaidTransfer, b.Debt} {
 		if v < 0 || v > con {
-			return 0, apierr.Error{Code: apierr.CodePaymentPartsMismatch}
+			return apierr.Error{Code: apierr.CodePaymentPartsMismatch}
 		}
 		con -= v
 	}
 	if con != 0 {
-		return 0, apierr.Error{Code: apierr.CodePaymentPartsMismatch}
+		return apierr.Error{Code: apierr.CodePaymentPartsMismatch}
 	}
 	if (b.Debt > 0) != (b.Debtor != nil) {
-		return 0, apierr.Error{Code: apierr.CodeDebtorNameMismatch}
+		return apierr.Error{Code: apierr.CodeDebtorNameMismatch}
+	}
+	return nil
+}
+
+// Ghi là ô thêm bill duy nhất; cửa gọi giữ khoá đơn/phiên và ngày chưa ký.
+func Ghi(ctx context.Context, tx pgx.Tx, b NoiDung) (int64, error) {
+	if err := kiemPhanTien(b); err != nil {
+		return 0, err
 	}
 	repo := newRepository(tx)
 	var khoan int64
@@ -233,23 +241,66 @@ func (s *Service) DongPhien(ctx context.Context, nguoi, id int64, yc DongYeuCau)
 		if err := vongdoi.KiemChuyenPhien(status, "closed"); err != nil {
 			return err
 		}
-		states, err := repo.khoaDonCuaPhien(ctx, id)
+		dons, err := repo.khoaDonCuaPhien(ctx, id)
 		if err != nil {
 			return err
 		}
-		for _, s := range states {
-			if s != "completed" && s != "cancelled" {
-				return apierr.Error{Code: apierr.CodeTableSessionHasOpenOrders}
+		jobs, err := repo.khoaViecCuaPhien(ctx, id)
+		if err != nil {
+			return err
+		}
+		// Kiểm tất cả lời từ chối tiền trước câu ghi đầu tiên. Huỷ pending/made không đổi suất đã ra.
+		due, err = phien.TongTien(ctx, tx, id)
+		if err != nil {
+			return err
+		}
+		b := NoiDung{Phien: &id, Due: due, Discount: yc.DiscountVnd, DiscountCustomerName: yc.DiscountCustomerName,
+			Cash: *yc.CashVnd, Transfer: *yc.TransferVnd, Debt: *yc.DebtVnd, Debtor: yc.DebtorName, Moc: moc}
+		if err := kiemPhanTien(b); err != nil {
+			return err
+		}
+		daRa := map[int64]bool{}
+		for _, j := range jobs {
+			den := ""
+			switch j.Status {
+			case "served":
+				daRa[j.SalesOrderID] = true
+			case "pending":
+				den = "cancelled"
+			case "made":
+				den = "discarded"
+			}
+			if den != "" {
+				if err := vongdoi.ChuyenViec(ctx, tx, j.ID, den); err != nil {
+					return err
+				}
+			}
+		}
+		coSuat, err := phien.DonCoSuatDaRa(ctx, tx, id)
+		if err != nil {
+			return err
+		}
+		for _, don := range coSuat {
+			daRa[don] = true
+		}
+		for _, don := range dons {
+			if don.Status == "completed" || don.Status == "cancelled" {
+				continue
+			}
+			if err := vongdoi.ChotDonCuaPhien(ctx, tx, don.ID, daRa[don.ID]); err != nil {
+				return err
 			}
 		}
 		due, err = phien.TongTien(ctx, tx, id)
 		if err != nil {
 			return err
 		}
-		bill, err = Ghi(ctx, tx, NoiDung{Phien: &id, Due: due, Discount: yc.DiscountVnd, DiscountCustomerName: yc.DiscountCustomerName, Cash: *yc.CashVnd, Transfer: *yc.TransferVnd, Debt: *yc.DebtVnd, Debtor: yc.DebtorName, Moc: moc})
+		b.Due = due
+		bill, err = Ghi(ctx, tx, b)
 		if err != nil {
 			return err
 		}
+
 		return vongdoi.ChuyenPhien(ctx, tx, id, "closed")
 	})
 	return bill, due, err

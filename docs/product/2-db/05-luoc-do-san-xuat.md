@@ -202,6 +202,8 @@ với tập mã trong ràng buộc kiểm — mỗi dòng giữ đúng dạng c�
 | `station_job.status` | `pending` | Chưa làm (§5.4) |
 | `station_job.status` | `made` | Đã làm xong, còn ở bếp (§5.4) |
 | `station_job.status` | `served` | Đã ra bàn (§5.4) |
+| `station_job.status` | `cancelled` | Huỷ khi chưa làm (ADR-125) |
+| `station_job.status` | `discarded` | Đã làm nhưng bỏ khi đóng phiên, vẫn giữ mục mẻ (ADR-125) |
 
 `served` là tên của **trạng thái** *Đã ra bàn* — với đơn mang đi, owner đọc nó là *đóng gói và trao*
 (§5.4 dòng thứ ba của bảng). Mã không nói **ai** bấm, **theo đơn vị nào**, hay **lúc nào** với đơn
@@ -243,3 +245,10 @@ không có cột tiền.
 | `P2-11` | §2 cột *Bằng chứng* · §3 — năm tập của hàng `I-004` mà lát này đọc ra được (pha 1 liệt bảy; tập thứ năm là **F-044**, tập thứ tư gộp vào tập *thiếu hoặc thừa việc*), hai tập của hàng `I-020`, hai chiều của `I-019`; các hàm đối chiếu trong ba file test là điểm bắt đầu, và mỗi hàm đã **đỏ** một lần trên dữ liệu cài lỗi |
 | `P2-13` | chấm lại `YC-06` · `YC-07` bằng §2 |
 | pha 3 | §3 — cửa nổ đơn · một hàm gom · cửa bấm và lùi mẻ · cửa chuyển · hàm xác thực việc trạm; §5 `S-5` · `S-6` trước khi dựng bảng quầy |
+
+
+T-227 (2026-10-22, phiếu Claude, ADR-125): bước 35 ở `07-thu-tu-migration.md`
+đổi miền trạng thái việc trạm; `id_if_made_or_served` phủ cả made · served · discarded.
+Hai trạng thái huỷ không có đường ra trong vongdoi. Việc discarded giữ mục mẻ còn hiệu lực;
+`production_batch_no_discarded_jobs_check` từ chối lùi mẻ chứa nó. Migration lùi từ chối
+khi đã có việc cancelled hoặc discarded, không đổi trạng thái để ép lùi.

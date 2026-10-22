@@ -12,7 +12,7 @@ import (
 var CuaChuyenViec = authz.Door{Code: "vongdoi/chuyen_viec", Need: authz.NeedCallingDoor}
 
 func CapViec() [][2]string {
-	return [][2]string{{"", "pending"}, {"pending", "made"}, {"made", "served"}, {"made", "pending"}}
+	return [][2]string{{"", "pending"}, {"pending", "made"}, {"made", "served"}, {"made", "pending"}, {"pending", "cancelled"}, {"made", "discarded"}}
 }
 func KiemChuyenViec(tu, den string) error {
 	if !coCap(CapViec(), tu, den) {
@@ -57,7 +57,7 @@ func doiViec(ctx context.Context, tx pgx.Tx, id int64, den string, transferID in
 			return apierr.Error{Code: apierr.CodeStationJobTransitionNotAllowed}
 		}
 	} else {
-		if don == "cancelled" && !(luiMe && tu == "made") {
+		if don == "cancelled" && den != "cancelled" && den != "discarded" && !(luiMe && tu == "made") {
 			return apierr.Error{Code: apierr.CodeStationJobTransitionNotAllowed}
 		}
 		if err := KiemChuyenViec(tu, den); err != nil {

@@ -20,3 +20,7 @@ func (r repository) khoa(ctx context.Context, id int64) (string, error) {
 func (r repository) tongTien(ctx context.Context, id int64) (int64, error) {
 	return r.q.TongTien(ctx, pgtype.Int8{Int64: id, Valid: true})
 }
+
+func (r repository) donCoSuatDaRa(ctx context.Context, id int64) ([]int64, error) {
+	return r.q.DonCoSuatDaRa(ctx, pgtype.Int8{Int64: id, Valid: true})
+}

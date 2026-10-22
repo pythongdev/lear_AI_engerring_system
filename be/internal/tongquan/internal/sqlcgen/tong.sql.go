@@ -16,18 +16,37 @@ WITH don_ngay AS (
  SELECT id FROM don_ngay
 ),
  -- tạm tính: đầu
+ -- ADR-125: đếm suất đã ra, lấy min qua thành phần của dòng gốc và mọi dòng con.
 don_vi AS (
- SELECT g.id, g.sales_order_id, sum(l.line_total_vnd) AS amount_vnd
+ SELECT g.id, g.sales_order_id, g.quantity,
+        sum(l.line_total_vnd) AS amount_vnd
  FROM order_line g JOIN don_nguon o ON o.id = g.sales_order_id
+ -- Đơn khách gửi chưa duyệt không mang suất nào (shop-facts §6 quy tắc 2), kể cả thành phần không trạm.
+ JOIN sales_order da_duyet ON da_duyet.id = g.sales_order_id AND da_duyet.id_if_approved IS NOT NULL
  JOIN order_line l ON l.id = g.id OR l.parent_order_line_id = g.id
  WHERE g.parent_order_line_id IS NULL
- GROUP BY g.id, g.sales_order_id
+ GROUP BY g.id, g.sales_order_id, g.quantity
+), thanh_phan_da_ra AS (
+ SELECT d.id, c.id AS component_id,
+        floor(count(u.position) FILTER (WHERE u.da_ra_het)::numeric * d.quantity
+              / (l.quantity::numeric * c.quantity)) AS so_suat
+ FROM don_vi d JOIN order_line l ON l.id = d.id OR l.parent_order_line_id = d.id
+ JOIN order_line_component c ON c.order_line_id = l.id
+ LEFT JOIN LATERAL (
+   SELECT j.position, bool_and(j.status = 'served') AS da_ra_het
+   FROM station_job j WHERE j.order_line_component_id = c.id
+   GROUP BY j.position
+ ) u ON true
+ -- Thành phần không có trạm không tham gia min; vẫn giữ việc đã chụp nếu cấu hình trạm đổi.
+ WHERE EXISTS (SELECT 1 FROM menu_component_station m WHERE m.menu_component_id = c.menu_component_id)
+    OR EXISTS (SELECT 1 FROM station_job j WHERE j.order_line_component_id = c.id)
+ GROUP BY d.id, c.id, d.quantity, l.quantity, c.quantity
 ), da_ra AS (
- SELECT d.id, d.sales_order_id, d.amount_vnd FROM don_vi d
- WHERE EXISTS (SELECT 1 FROM station_job j JOIN order_line l ON l.id = j.order_line_id
-               WHERE l.id = d.id OR l.parent_order_line_id = d.id)
- AND NOT EXISTS (SELECT 1 FROM station_job j JOIN order_line l ON l.id = j.order_line_id
-                 WHERE (l.id = d.id OR l.parent_order_line_id = d.id) AND j.status <> 'served')
+ SELECT d.id, d.sales_order_id,
+        least(d.quantity, coalesce(min(c.so_suat), d.quantity))::bigint AS served_portions,
+        (d.amount_vnd / d.quantity * least(d.quantity, coalesce(min(c.so_suat), d.quantity)))::bigint AS amount_vnd
+ FROM don_vi d LEFT JOIN thanh_phan_da_ra c ON c.id = d.id
+ GROUP BY d.id, d.sales_order_id, d.quantity, d.amount_vnd
 )
  -- tạm tính: cuối
 , don_vi_thanh_phan AS (

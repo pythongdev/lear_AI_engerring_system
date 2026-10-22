@@ -12,22 +12,27 @@ import (
 )
 
 const khoaDonCuaPhien = `-- name: KhoaDonCuaPhien :many
-SELECT status FROM sales_order WHERE table_session_id = $1 ORDER BY id FOR UPDATE
+SELECT id, status FROM sales_order WHERE table_session_id = $1 ORDER BY id FOR UPDATE
 `
 
-func (q *Queries) KhoaDonCuaPhien(ctx context.Context, tableSessionID pgtype.Int8) ([]string, error) {
+type KhoaDonCuaPhienRow struct {
+	ID     int64
+	Status string
+}
+
+func (q *Queries) KhoaDonCuaPhien(ctx context.Context, tableSessionID pgtype.Int8) ([]KhoaDonCuaPhienRow, error) {
 	rows, err := q.db.Query(ctx, khoaDonCuaPhien, tableSessionID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []string
+	var items []KhoaDonCuaPhienRow
 	for rows.Next() {
-		var status string
-		if err := rows.Scan(&status); err != nil {
+		var i KhoaDonCuaPhienRow
+		if err := rows.Scan(&i.ID, &i.Status); err != nil {
 			return nil, err
 		}
-		items = append(items, status)
+		items = append(items, i)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

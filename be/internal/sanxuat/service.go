@@ -190,6 +190,9 @@ func (s *Service) LuiMe(ctx context.Context, nguoi int64, id int64) (ids []int64
 			return err
 		}
 		for _, v := range ds {
+			if v.TrangThai == "discarded" {
+				return apierr.Error{Code: apierr.CodeProductionBatchHasDiscardedJobs}
+			}
 			if v.TrangThai == "served" {
 				return apierr.Error{Code: apierr.CodeProductionBatchHasServedUnits}
 			}
