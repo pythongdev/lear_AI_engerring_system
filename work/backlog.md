@@ -110,6 +110,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="done"></a>
 ## Done
+- [x] T-231 **Trang Vận hành của chủ quán mặc phong cách mới** — áp `van-hanh-copy.html` và `styke/style.md` lên `/chu-quan/van-hanh`: màu nền · thẻ · viền · cam nhấn, sáng và tối; hành vi, chữ đọc được và test giữ nguyên — L1 — mở và xong 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-231)
 - [x] T-230 **Nút sáng / tối nằm góc dưới, chủ repo muốn nó cạnh nút Đăng xuất** — thanh đầu khung theo vai có nút; trang không thanh đầu giữ nút nổi — L1 — mở và xong 2026-10-22 (chủ repo yêu cầu) · [chi tiết](#t-230)
 - [x] T-229 **Chưa có nút chuyển giao diện sáng / tối** — nút dùng chung ở khung gốc, nhớ lựa chọn, lần đầu theo máy, không nháy màu lúc tải — L1 — mở và xong 2026-10-22 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-229)
 
@@ -454,6 +455,40 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-231"></a>
+### T-231 — Trang Vận hành thật chưa theo bản thiết kế phong cách mới
+
+**Yêu cầu:** chủ repo 2026-10-23: *"hãy sửa page fe/src/app/chu-quan/van-hanh dựa trên thiết kế mới
+docs/product/4-fe/thiet_ke/chu_quan/van_hanh/van-hanh-copy.html, docs/product/4-fe/thiet_ke/styke/style.md — yêu cầu codex làm và bạn
+kiểm tra"*. **Mức:** L1 — chỉ đổi giao diện, không chạm tiền, dữ liệu, hợp đồng.
+
+**Claude quyết 2026-10-23 (trình bày, không phải luật quán):** (1) chỉ đổi **phong cách** của `TrangVanHanh`
+(`fe/src/app/chu-quan/_components/van-hanh.tsx`): token `--bg · --card · --line · --muted · --accent · --field · --text` và màu
+trạng thái đề xuất của bản thiết kế, khai **trong phạm vi trang** (lớp bọc), sáng mặc định, tối theo lớp `.dark` sẵn có của T-229 — không
+sửa `globals.css`, khung chủ quán, thanh điều hướng hay primitive `components/ui/`; (2) không thêm phông *Be Vietnam Pro* (thêm phông là
+việc của khung gốc); (3) phần của bản thiết kế **chưa có dữ liệu hay luật** không làm ở đây: hộp *Xác nhận thanh toán* (thuộc `T-227`),
+tách canh *rau · không rau · giò*, nhãn *đề xuất — chưa có trong hợp đồng*, nhãn component, chú giải, khối *Giả định*; (4) bản thiết kế bỏ
+cột *Người* ở lịch sử đem ra — giữ cột, hỏi chủ repo sau.
+
+**Acceptance** (viết 2026-10-23, trước khi giao):
+- [x] Trang dùng token của bản thiết kế cho nền, thẻ (bo 10px, viền mảnh), bảng (chữ phụ xám ở đầu cột, viền dòng), nút chính cam, ô *nhiều* nền vàng trạng thái, sơ đồ bàn xanh · vàng · trung tính, dòng *Tổng* nền `--field`, *Tiền bánh đã ra* màu cam.
+- [x] Đổi sáng / tối bằng nút sẵn có thì trang đổi theo bộ token tương ứng; không còn lớp màu Tailwind ghi cứng (`bg-yellow-100`, `text-red-700`…) trong `van-hanh.tsx`.
+- [x] `dem-ra.test.tsx` giữ nguyên từng byte; `van-hanh.test.tsx` chỉ đổi ba assertion màu (Claude sửa 2026-10-23, trước khi giao lại: test cũ đòi `bg-yellow-100` · `bg-red-50` · `text-red-700`, nay đòi lớp có nghĩa `nhieu` · `dong-ghep` · `them` như bản thiết kế); cả hai xanh — hành vi, tên truy cập, câu chữ không đổi.
+- [x] Ngoài test trên, chỉ `fe/src/app/chu-quan/_components/van-hanh.tsx` đổi; không thêm phụ thuộc.
+- [x] `./scripts/gate.sh` xanh; Claude chạy lại `fe-check`.
+
+**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-231`, nhánh `codex/T-231`, nền `23c18b4`, đã gỡ) · duyệt: Claude 2026-10-23.
+Lượt đầu Codex dừng không sửa gì vì phiếu tự mâu thuẫn (bảo xoá lớp màu mà test cũ đòi); Claude sửa ba assertion rồi giao lại. Claude đọc
+diff: chỉ đổi lớp và CSS trong khối `<style>` của trang, không đụng logic, lời gọi API hay chữ; `cmp` xác nhận hai file test đúng bản
+Claude để lại. Codex không chạy được Vitest trong sandbox (EPERM `.vite-temp`); Claude chạy ở clone chính: `vitest run src/app/chu-quan`
+290/290; mọi cổng tĩnh của `./scripts/gate.sh` xanh nhưng Gate 1 đỏ vì **một test không thuộc task này** —
+`fe/src/app/ban/thuc-don-khach.test.tsx` (file chưa commit của một phần việc khác đang làm dở trong clone chính, không có ở `HEAD`). Bằng
+chứng riêng của T-231, ở worktree = `HEAD` + diff này: `vitest run` 450/450, `lint` và `tsc --noEmit` thoát 0. Cảnh báo bảo mật Next.js
+chặn build một lần, chạy lại thì đi tiếp. Codex giữ token `--vh-*` khai trong phạm vi trang, cả hộp thoại (portal) cũng mang lớp ấy. Còn lại:
+chưa xem trực quan trên trình duyệt; bản thiết kế bỏ cột *Người* của lịch sử đem ra — giữ, chờ chủ repo nói.
+
+[↑ đầu file](#top)
 
 <a id="t-230"></a>
 ### T-230 — Nút sáng / tối nằm góc dưới, chủ repo muốn nó cạnh nút Đăng xuất

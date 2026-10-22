@@ -45,7 +45,7 @@ describe("Vận hành", () => {
     expect(rows[1].textContent).toContain("A + B"); expect(rows[2].textContent).toContain("D");
     expect(cells(rows[1])).toEqual(["7*", "7", "7 tái7 chín", "7", "7", "7 Giò", "23.123đ"]);
     expect(cells(rows[3])).toEqual(["14*", "7", "7 tái7 chín", "7", "7", "7 Giò", "46.246đ"]);
-    expect(rows[1].querySelector(".bg-yellow-100")).toBeTruthy();
+    expect(rows[1].querySelector(".nhieu")).toBeTruthy();
     expect(b.queryByRole("button", { name: "C" })).toBeNull();
     expect(metadata.title).toBe("Vận hành"); expect(screen.getByText(/Ngày bán: 2025-02-03/).textContent).toContain("10:17:29");
   });
@@ -63,9 +63,9 @@ describe("Vận hành", () => {
     const g = mo(); const b = await bang();
     fireEvent.click(screen.getByRole("checkbox", { name: "C · 79.123đ" }));
     const row = b.getByRole("button", { name: "C" }).closest("tr")!;
-    expect(row.className).toContain("bg-red-50"); expect(cells(row)[0]).toBe("11"); expect(cells(row).at(-1)).toBe("0đ");
+    expect(row.className).toContain("dong-ghep"); expect(cells(row)[0]).toBe("11"); expect(cells(row).at(-1)).toBe("0đ");
     expect(cells(b.getAllByRole("row").at(-1)!)[0]).toBe("14+11*");
-    expect(b.getByText("+11").className).toContain("text-red-700"); expect(screen.getByText("Đã chọn 1 bàn.")).toBeTruthy();
+    expect(b.getByText("+11").className).toContain("them"); expect(screen.getByText("Đã chọn 1 bàn.")).toBeTruthy();
     fireEvent.click(nut("Bỏ chọn hết")); expect(b.queryByRole("button", { name: "C" })).toBeNull(); expect(screen.getByText("Đã chọn 0 bàn.")).toBeTruthy();
     expect(g.map(({ method, path }) => ({ method, path }))).toEqual([{ method: "GET", path: "/service-board" }, { method: "GET", path: "/sessions/current" }]);
     expect(set).not.toHaveBeenCalled(); expect(remove).not.toHaveBeenCalled(); expect(clear).not.toHaveBeenCalled();
