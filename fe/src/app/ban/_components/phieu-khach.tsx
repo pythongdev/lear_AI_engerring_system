@@ -13,7 +13,7 @@ import type { components } from "@/lib/api/schema";
 import { dungLai, useNhapKhach } from "@/lib/nhap-khach";
 import { SITE_NAME } from "@/lib/seo";
 import { ThucDonKhach } from "./thuc-don-khach";
-import styles from "./thuc-don-khach.module.css";
+import "./thuc-don-khach.css";
 import { loiKhach } from "./loi-khach";
 
 type Phieu = { loai: "qr"; ma: string; body: components["schemas"]["QrOrderRequest"] }
@@ -103,20 +103,20 @@ export function PhieuKhach({ ma, nhan, initialMenu }: {
       catch { setLoi("Đã lưu nhưng chưa đọc lại được menu. Bạn vui lòng đọc lại menu."); }
     } finally { chot.current = false; setDangGui(false); }
   }
-  return <main className={styles.page}><div className={styles.phone}>
-    <header data-component="MenuHeader"><small>{SITE_NAME}</small>
-    <h1 className="flex items-center gap-2 text-2xl font-semibold">
+  return <main className="khach-menu min-h-dvh bg-[var(--page)] text-[12px] leading-[1.45] text-[var(--text)]"><div className="phone mx-auto max-w-[472px] bg-[var(--bg)] px-[15px] pb-4">
+    <header data-component="MenuHeader" className="flex min-h-[58px] items-center gap-3 border-b border-[var(--line)]"><div><small className="text-[11px] text-[var(--muted)]">{SITE_NAME}</small>
+    <h1 className="flex items-center gap-2 text-[20px] font-semibold">
       {!web && <QrCode aria-hidden="true" />}
       {web ? "Đặt món" : /^\d+$/.test(nhan?.trim() ?? "") ? `Bàn ${nhan!.trim()}` : nhan}
-    </h1></header>
+    </h1></div></header>
     {bao && <p role="status">{bao}</p>}
     {loi && <p role="alert">{loi}</p>}
     {menu.isError && <p role="alert">Chưa đọc được menu. Đang hiện bản đọc lúc {new Date(menu.dataUpdatedAt).toLocaleTimeString("vi-VN")}. <Button onClick={() => void menu.refetch()}>Đọc lại menu</Button></p>}
-    <form onSubmit={(e) => { e.preventDefault(); void gui(); }} className="space-y-4">
-      <fieldset disabled={dangGui || choGuiLai} className="space-y-4">
+    <form onSubmit={(e) => { e.preventDefault(); void gui(); }}>
+      <fieldset disabled={dangGui || choGuiLai}>
         <ThucDonKhach items={menu.data.items} combos={menu.data.combos} lines={lines} onChange={(ds) => sua(khoaNhap, ds)} quotes={quotesKhach}
           total={duMon && tong.isSuccess && !tong.isFetching ? tong.data.total_vnd : undefined}
-          thongTin={web && <>
+          thongTin={web && <div className="space-y-4">
           <fieldset className="flex flex-wrap gap-4"><legend>Cách nhận hàng</legend>
             <label className="inline-flex min-h-11 items-center gap-2"><input type="radio" name="cach" checked={cach === "delivery"} onChange={() => setCach("delivery")} />Giao tận nơi</label>
             <label className="inline-flex min-h-11 items-center gap-2"><input type="radio" name="cach" checked={cach === "pickup"} onChange={() => setCach("pickup")} />Đến lấy</label>
@@ -127,12 +127,16 @@ export function PhieuKhach({ ma, nhan, initialMenu }: {
           <p>Giờ quán: Asia/Ho_Chi_Minh (UTC+07:00).</p>
           <label className="block">Tên<Input value={ten} onChange={(e) => setTen(e.target.value)} /></label>
           <label className="block">Ghi chú<Input value={ghiChu} onChange={(e) => setGhiChu(e.target.value)} /></label>
-        </>}
+        </div>}
           tong={duMon && (tong.isFetching ? <p role="status">Đang tính tổng…</p> : tong.isError
         ? <p role="alert">{tong.error.message} <Button type="button" onClick={() => void tong.refetch()}>Tính lại</Button></p>
-        : tong.isSuccess && <p>Tổng tạm tính {tien(tong.data.total_vnd)}</p>)} />
+        : tong.isSuccess && <p className="text-[var(--accent)]">Tổng tạm tính {tien(tong.data.total_vnd)}</p>)} />
       </fieldset>
-      <Button data-component="CartBottomBar" className={styles.submit} type="submit" disabled={dangGui || (!choGuiLai && !hopLe)}>{dangGui ? "Đang gửi…" : choGuiLai ? "Gửi lại" : web ? "Đặt đơn" : "Gửi lượt gọi"}</Button>
+      <button data-component="CartBottomBar" className="mt-3 flex h-[52px] w-full items-center justify-between gap-2 rounded-xl border-0 bg-[var(--accent)] px-3 text-[15px] text-[#fff]" type="submit" disabled={dangGui || (!choGuiLai && !hopLe)}>
+        <span aria-hidden="true" className="rounded-md bg-[#ff9a4d] px-[9px] py-[3px] text-[12px]">{lines.reduce((n, d) => n + (Number.isFinite(d.quantity) ? d.quantity : 0), 0)}</span>
+        <span>{dangGui ? "Đang gửi…" : choGuiLai ? "Gửi lại" : web ? "Đặt đơn" : "Gửi lượt gọi"}</span>
+        <span aria-hidden="true">{duMon && tong.isSuccess && !tong.isFetching ? tien(tong.data.total_vnd) : ""}</span>
+      </button>
     </form>
   </div></main>;
 }

@@ -1,0 +1,33 @@
+.khach-menu {
+  --bg: #FFFFFF; --card: #F3F4F6; --line: #E5E7EB; --muted: #6B7280;
+  --accent: #EA6A0C; --field: #E5E7EB; --text: #111827; --page: #F3F4F6; --badge: #FDECDC;
+  color-scheme: light;
+}
+.khach-menu:where(.dark *) {
+  --bg: #000000; --card: #1F2937; --line: #2D3748; --muted: #9CA3AF;
+  --accent: #FF7A1A; --field: #374151; --text: #F9FAFB; --page: #0a0a0a; --badge: #3a2a18;
+  color-scheme: dark;
+}
+.khach-menu button { cursor: pointer; }
+.khach-menu button:disabled { opacity: .5; cursor: default; }
+.khach-menu button:hover:not(:disabled) { filter: brightness(1.15); }
+.khach-menu :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; box-shadow: none; }
+.khach-menu input { accent-color: var(--accent); border-color: var(--line); box-shadow: none; }
+.khach-menu input:not([type=radio]) { background: var(--field); color: var(--text); }
+.khach-menu input::placeholder { color: var(--muted); }
+.khach-menu section, .khach-menu fieldset { min-width: 0; border-color: var(--line); }
+.khach-menu .chips { scrollbar-width: none; }
+.khach-menu .chips::-webkit-scrollbar { display: none; }
+.khach-menu .stepper button { width: 30px; height: 30px; padding: 0; border: 0; border-radius: 7px; background: var(--field); font-size: 17px; }
+.khach-menu .stepper button:last-child { background: var(--accent); color: #fff; }
+.khach-menu .summary .quantity { width: 48px; height: 23px; padding: 0 3px; border: 1px solid var(--line); border-radius: 5px; background: transparent; font-size: 11px; }
+.khach-menu .choices fieldset { gap: 4px; }
+.khach-menu .choices legend { font-size: 11px; color: var(--muted); }
+.khach-menu .choices label:has(input[type=radio]) { display: inline-flex; min-height: 0; gap: 4px; margin: 4px 4px 4px 0; padding: 3px 8px; border: 1px solid var(--line); border-radius: 16px; background: var(--field); font-size: 11px; }
+.khach-menu .choices label:has(input:checked) { border-color: var(--accent); background: var(--badge); color: var(--accent); }
+.khach-menu .choices label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 480px) {
+  .khach-menu .phone { padding-inline: 10px; }
+  .khach-menu .card { grid-template-columns: 64px minmax(0, 1fr) 100px; gap: 8px; padding: 10px; }
+  .khach-menu .thumb { height: 64px; }
+}

@@ -5134,3 +5134,24 @@ hợp đồng `0.47.0`. `TestI009_HangChoBayAnhChupDon` xanh qua PostgreSQL th�
 
 **Status:**
 Fixed
+
+### F-075 — CSS module trong `fe/` bị đọc như CSS thường, trang dùng nó hiện không kiểu nào
+
+**Problem:**
+Đo 2026-10-23 (T-233, Claude Code): `fe/next.config.ts` khai `turbopack.rules["*.css"] = { loaders: ["@tailwindcss/turbopack"], as: "*.css" }`.
+Mẫu ấy khớp cả `*.module.css` và đổi đuôi thành `*.module.css.css`, nên Turbopack coi file là CSS toàn cục: selector không băm, đối tượng
+`styles` import từ nó rỗng, mọi `className={styles.x}` thành `undefined`. `thuc-don-khach.module.css` của T-232 là file module duy nhất.
+
+**Impact:**
+`/ban/[ma]` và `/dat-mon` hiện chữ trơn không thẻ không màu dù T-232 qua gate, `fe-check` và `next build`. Không cổng nào thấy: vitest xử lý CSS
+module theo cách riêng, test chỉ đọc vai và tên truy cập; T-232 ghi *chưa xem trực quan*.
+
+**Decision / Fix:**
+T-233 bỏ CSS module ở trang khách, dùng file CSS thường có lớp gốc và lớp Tailwind. Chưa thêm luật chặn `*.module.css` — chờ lần thứ hai
+(`quality/review-gate.md` → *Vòng phản hồi*). Việc giao diện ở `fe/` cần ảnh chụp trình duyệt thật làm bằng chứng, không chỉ test.
+
+**Related task:**
+`T-232` · `T-233`
+
+**Status:**
+Open

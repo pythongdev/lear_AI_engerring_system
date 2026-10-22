@@ -98,6 +98,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## In Progress
 
 - [ ] T-227 **Thanh toán bàn chỉ thu phần đã ra, phần chưa ra huỷ việc trạm** — bấm tiền bánh đã ra để đóng phiên và xoá bàn khỏi bảng; đổi luật tính tiền phiên (`shop-facts.md` §6.1, 2026-10-21) và viết lại `I-002` — L3 (thiết kế duyệt trước code, ADR, chia L1/L2 khi mở) — mở 2026-10-21, U-103 có lời và bắt đầu 2026-10-22 · [chi tiết](#t-227)
+- [ ] T-233 **Trang gọi món của khách hiện không có kiểu nào, chưa giống bản thiết kế menu** — CSS module của T-232 bị luật Turbopack trong `next.config.ts` đọc như CSS thường nên mọi `styles.*` rỗng (F-075); viết lại kiểu bằng một file CSS thường trong phạm vi trang và lớp Tailwind, đối chiếu ảnh chụp với `menu.html` ở hai giao diện; hành vi và test giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-233)
 
 
 
@@ -457,6 +458,42 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
 
+<a id="t-233"></a>
+### T-233 — Trang gọi món của khách hiện không có kiểu nào, chưa giống bản thiết kế menu
+
+**Yêu cầu:** chủ repo 2026-10-23, mở `http://localhost:3000/ban/<mã>` và `docs/product/4-fe/thiet_ke/khach_hang/menu/menu.html`: *"yêu cầu
+codex chỉnh lại để giống với menu.html — css và tailwind"*. **Mức:** L1 — chỉ trình bày màn khách; không chạm hợp đồng, cửa ghi, tiền.
+
+**Claude đo 2026-10-23:** chụp hai trang bằng Chrome headless ở bề ngang 480px — trang thật là chữ trơn trên nền tối, không thẻ, không khung,
+không màu nhấn. HTML phục vụ không có thuộc tính `class` trên `main` hay `article`; file CSS phục vụ có `.page`, `.card` không băm và tên
+nguồn `thuc-don-khach.module.css.css`. Gốc: luật `turbopack.rules["*.css"]` (`as: "*.css"`) trong `fe/next.config.ts` khớp cả `*.module.css` và
+gắn lại đuôi `.css`, nên file mất nghĩa module, `styles.*` là `undefined` (F-075). Test không thấy vì vitest tự xử lý CSS module.
+
+**Claude quyết 2026-10-23 (trình bày, không phải luật quán):** (1) không sửa `next.config.ts` — luật ấy nạp Tailwind cho cả app; thay vào đó
+bỏ `thuc-don-khach.module.css`, kiểu của trang khách là một file CSS thường import từ `phieu-khach.tsx`, mọi selector nằm dưới một lớp gốc
+của trang (token màu, thứ Tailwind khó viết), còn bố cục dùng lớp Tailwind đọc token qua `var(--…)`; (2) giữ nguyên mọi quyết định (1)–(6) của
+T-232, trong đó phần **không** làm; (3) thêm ô ảnh giữ chỗ trên thẻ như bản thiết kế, chỉ là khối trang trí có biểu tượng `lucide`
+`aria-hidden`, không ảnh thật; (4) nút gửi được thêm số món và tổng `aria-hidden` như `CartBottomBar` nhưng tên truy cập giữ đúng chữ cũ;
+(5) nút xoá dòng thành biểu tượng thùng rác, tên truy cập vẫn `Xoá dòng N`; ô `Số lượng` giữ là ô số, chỉ thu nhỏ theo `.compact`.
+
+**Acceptance** (viết 2026-10-23, trước khi giao):
+- [ ] Ảnh chụp `/ban/<mã>` ở 480px, sáng và tối, có đủ khối của bản thiết kế mà T-232 đã làm: đầu trang hàng ngang, dải giỏ với nút cam bo tròn và chip, ô tìm nền `--field`, nhãn mục nhạt, thẻ ba cột (ô ảnh · chữ · giá + bớt/thêm) nền `--card` viền bo 10px, huy hiệu ×N, tóm tắt đơn là thẻ, nút gửi cam cao 52px rộng hết khung `max-width: 472px` — Claude chụp và so với `menu.html`.
+- [ ] Không còn file `*.module.css` dưới `fe/src/app/ban/`; mọi selector của file CSS mới bắt đầu bằng lớp gốc của trang; màu chỉ qua token của `menu.html` (giá trị sáng · tối như `thuc-don-khach.module.css` hiện có), tối theo `.dark` sẵn có.
+- [ ] `khach-qr.test.tsx` và `dat-mon.test.tsx` giữ nguyên từng byte và xanh; `thuc-don-khach.test.tsx` xanh, chỉ đổi nếu phép kiểm dựa vào chữ hiển thị đã đổi theo quyết định (5).
+- [ ] Không sửa `next.config.ts`, `globals.css`, `components/ui/`, `BoSoanMon`; không thêm phụ thuộc.
+- [ ] `01-khung-fe.md` dòng `ThucDonKhach` nói kiểu ở file CSS thường; `./scripts/gate.sh` xanh; Claude chạy lại `fe-check`.
+
+**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-233`, nhánh `codex/T-233`, nền `2a8df0f`, chưa gỡ) · duyệt: Claude 2026-10-23 — đọc
+diff bốn file; Codex dùng `.khach-menu:where(.dark *)` cho bộ tối và `<button>` thường cho nút gửi (tên truy cập giữ nguyên, số món và tổng
+`aria-hidden`). Claude sửa một chỗ: mục COMBO / MÓN LẺ rỗng thì ẩn cả nhãn (menu hiện không có combo nào nên nhãn đứng trơ). Codex không chạy
+được gate trong sandbox (cache Go); Claude chạy ở clone chính: `./scripts/gate.sh` xanh, `fe-check` 454/454 test, build qua (lần đầu dừng ở
+`SecurityFatalError` của Next.js, chạy lại thì qua). Ảnh Chrome headless `/ban/<mã>` hai giao diện: đầu trang, dải giỏ cam, ô tìm, thẻ ba cột
+có ô ảnh, stepper, nền và màu đúng token của `menu.html`. Còn lại: (a) `fe/src/app/ban/_components/thuc-don-khach.module.css` chưa xoá — lệnh
+xoá của Claude bị từ chối, file không còn được import; (b) chưa thấy luật `@media (max-width:480px)` trên ảnh vì Chrome headless không thu cửa
+sổ dưới ~500px; (c) chưa chụp tóm tắt đơn có dòng và nút gửi khi có tổng — headless không bấm thêm món được.
+
+[↑ đầu file](#top)
+
 <a id="t-232"></a>
 ### T-232 — Trang gọi món của khách còn là bộ soạn của quầy, chưa theo bản thiết kế menu
 
@@ -528,6 +565,7 @@ chặn build một lần, chạy lại thì đi tiếp. Codex giữ token `--vh-
 chưa xem trực quan trên trình duyệt; bản thiết kế bỏ cột *Người* của lịch sử đem ra — giữ, chờ chủ repo nói.
 Chủ repo 2026-10-23, sau duyệt: *"Tổng thiếu theo bàn — bỏ table ngoài cùng"* ⇒ Claude bỏ khung viền quanh bảng của khối này (giữ vùng cuộn ngang); 25/25 test trang xanh.
 Chủ repo 2026-10-23: *"giảm space giữa các component ở bên trong và ngoài cùng"* ⇒ trang bỏ đệm riêng (khung chung `p-6` vẫn giữ — dùng chung với `/quay`, `/tram`), khoảng giữa khối 12→8px, đệm thẻ 12→10px, lề bảng bỏ, ô và lưới bàn gọn hơn; 25/25 test trang xanh.
+Chủ repo 2026-10-23: *"giảm thêm chút nữa — codex làm, bạn kiểm tra"* ⇒ Codex (worktree `../lean_wt/T-231b`, nền `1d182c0`, đã gỡ) giảm khoảng cách theo số Claude giao: giữa khối 8→6px, đệm thẻ 10→8px, ô bảng 8→6px, thẻ chọn · sơ đồ · lịch sử gọn hơn, vùng bấm giữ nguyên; mép ngoài dùng lề âm `-m-3 sm:-m-2` (còn 12px / 16px, khung chung `p-6` không đổi). Claude duyệt: Codex để `mx-auto` cạnh lề âm làm mất lề âm ngang — Claude bỏ `mx-auto w-full`. `vitest run src/app/chu-quan` 290/290, eslint, `tsc` xanh.
 
 [↑ đầu file](#top)
 
