@@ -23,7 +23,7 @@ const data: BangVanHanh = {
 };
 function mo(doc: (n: number) => { status: number; body: unknown } = () => ({ status: 200, body: data })) {
   let n = 0;
-  return voiBackend(<Page />, () => doc(++n));
+  return voiBackend(<Page />, (g) => g.path === "/sessions/current" ? { status: 401, body: { code: "unauthenticated" } } : doc(++n));
 }
 const bang = async () => within(await screen.findByRole("region", { name: "Bảng tổng thiếu" }));
 const cells = (r: HTMLElement) => within(r).getAllByRole("cell").map((x) => x.textContent);
@@ -58,7 +58,7 @@ describe("Vận hành", () => {
     expect(detail.textContent).toContain("Tiền đơn: 79.123đ");
     fireEvent.click(btn); expect(btn.getAttribute("aria-expanded")).toBe("false"); expect(document.getElementById(detail.id)).toBeNull();
   });
-  it("tick thêm hàng đỏ và tổng x+y, bỏ chọn gỡ; chỉ GET service-board, không ghi trình duyệt", async () => {
+  it("tick thêm hàng đỏ và tổng x+y, bỏ chọn gỡ; chỉ GET service-board và sessions/current, không ghi trình duyệt", async () => {
     const set = vi.spyOn(Storage.prototype, "setItem"); const remove = vi.spyOn(Storage.prototype, "removeItem"); const clear = vi.spyOn(Storage.prototype, "clear");
     const g = mo(); const b = await bang();
     fireEvent.click(screen.getByRole("checkbox", { name: "C · 79.123đ" }));
@@ -67,7 +67,7 @@ describe("Vận hành", () => {
     expect(cells(b.getAllByRole("row").at(-1)!)[0]).toBe("14+11*");
     expect(b.getByText("+11").className).toContain("text-red-700"); expect(screen.getByText("Đã chọn 1 bàn.")).toBeTruthy();
     fireEvent.click(nut("Bỏ chọn hết")); expect(b.queryByRole("button", { name: "C" })).toBeNull(); expect(screen.getByText("Đã chọn 0 bàn.")).toBeTruthy();
-    expect(g.map(({ method, path }) => ({ method, path }))).toEqual([{ method: "GET", path: "/service-board" }]);
+    expect(g.map(({ method, path }) => ({ method, path }))).toEqual([{ method: "GET", path: "/service-board" }, { method: "GET", path: "/sessions/current" }]);
     expect(set).not.toHaveBeenCalled(); expect(remove).not.toHaveBeenCalled(); expect(clear).not.toHaveBeenCalled();
   });
   it("đọc lại bỏ tick phiên hết waiting và không tự chọn lại khi nó quay về", async () => {
@@ -122,7 +122,7 @@ describe("Vận hành", () => {
     expect(values.length).toBeGreaterThan(5);
     expect(values.every((v) => ["79.123đ", "23.123đ", "46.246đ", "158.246đ"].includes(v))).toBe(true);
     expect(screen.getAllByRole("button").every((b) => !/[\d.]+đ/.test(b.textContent!))).toBe(true);
-    expect(document.body.textContent).not.toContain("Bấm vào một ô số");
+    expect(document.body.textContent).toContain("Chỉ người đang đứng quầy ghi được đem ra. Bạn chưa đứng quầy nên các ô chỉ để xem.");
   });
   it("không đánh dấu nhiều khi không thiếu, Khác hiện cả khi chỉ có ở phiên no_order", async () => {
     mo(() => ({ status: 200, body: { ...data, sessions: [phien(21, "serving", "A", [thu("Bánh cuốn", "Thịt", { extra_filling: true, missing: 0, served: 13 })]), phien(41, "no_order", "E", [thu("Giò")])] } }));

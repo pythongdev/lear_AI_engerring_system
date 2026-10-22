@@ -89,7 +89,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-228 **Bấm ô số trên trang Vận hành ghi *đã đem ra*** — chọn 0…số thiếu, xác nhận, gửi `POST /served-marks` cho một bàn; chỉ bật khi phiên đang đứng quầy (S-5, chủ repo giữ 2026-10-21) — L2 — mở 2026-10-21, **cần xong trước:** `T-226` · [chi tiết](#t-228)
 - [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
 - [ ] T-227 **BỊ CHẶN bởi U-103 — Thanh toán bàn từ trang Vận hành chỉ thu phần đã ra** — bấm tiền bánh đã ra để đóng phiên và xoá bàn khỏi bảng; đổi luật tính tiền phiên (`shop-facts.md` §6.1, 2026-10-21) và viết lại `I-002` — L3 (thiết kế duyệt trước code, ADR, chia L1/L2 khi mở) — mở 2026-10-21 · [chi tiết](#t-227)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
@@ -112,6 +111,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-228 **Bấm ô số trên trang Vận hành ghi *đã đem ra*** — chọn 0…số thiếu, xác nhận, gửi `POST /served-marks` cho một bàn; chỉ bật khi phiên đang đứng quầy (S-5, chủ repo giữ 2026-10-21) — L2 — mở 2026-10-21, bắt đầu 2026-10-21 (Claude thiết kế và viết test, Codex thi công), **cần xong trước:** `T-226` — 2026-10-22 · [chi tiết](#t-228)
 - [x] T-226 **Trang `/chu-quan/van-hanh` — phần đọc theo thiết kế đã chốt** — năm khối của `van_hanh/van-hanh.html`, số lấy từ `T-225`, cộng thử chỉ tính trên màn — L1 — mở 2026-10-21, `T-225` xong 2026-10-21; nhận 2026-10-21 — Codex thi công, Claude duyệt — xong 2026-10-21 · [chi tiết](#t-226)
 - [x] T-225 **Đường đọc cho trang Vận hành: từng bàn, từng thứ, tiền đã ra, lịch sử đem ra** — một cửa đọc mới cho chủ quán (và người đứng quầy): phiên bàn chưa đóng chia *đang phục vụ* · *sắp phục vụ*, mỗi thứ đặt · đã ra · thiếu kèm cờ nhiều, tiền đơn và tiền đã ra, bàn trống, lịch sử từng lần đem ra — L2 (Claude thiết kế ADR-124 và viết test trước, Codex thi công, Claude duyệt) — mở 2026-10-21, nhận 2026-10-21 — xong 2026-10-21 · Codex thi công, Claude duyệt · [chi tiết](#t-225)
 - [x] T-224 **Thiết kế trang Vận hành chốt, chia thành task** — ghi ba lời chủ repo (thanh toán chỉ thu phần đã ra · bấm đem ra vẫn là người đứng quầy · nghĩa *sắp phục vụ*), mở `U-103`, mở `T-225`…`T-228` — L1 — mở và làm 2026-10-21 · Claude Code theo lời chủ repo *"tôi chốt thiết kế hiện tại của trang vận hành hãy làm các task để hoàn thành trang trên"* — 2026-10-21 · [chi tiết](#t-224)
@@ -465,6 +465,31 @@ ghi việc trạm sang `served`, chạm đếm của bảng sản xuất (`I-019
 tách cột — trứng tách *tái · chín*, ô *nhiều* — và chốt mỗi ô bấm gửi những hàng nào; lệch thì chọn cách bày, không đổi luật S-5;
 (2) cửa `sanxuat/ra_ban` thuộc lớp `quay` (`docs/product/3-be/02-vai-va-quyen.md`): phiên không đứng quầy thì ô chỉ đọc kèm câu nói
 rõ vì sao, không ẩn nút rồi để cửa từ chối; (3) viết test trước. *Nghiệm thu* viết lúc mở task.
+
+**Claude quyết 2026-10-21 (trình bày, không phải luật quán; S-5 và cửa `POST /served-marks` giữ nguyên, hợp đồng không đổi):**
+(1) *Lệch khoá:* một thứ của `GET /service-board` là khoá gom **bỏ trạm**, đếm theo đơn vị; `ServedItem` là khoá gom **có trạm**, đếm theo
+việc trạm, và cửa chỉ nhận cái đã ở `made`. Nên mỗi dòng bấm được là **đúng một** thứ (`menu_component_id` + `filling_option_ids`) của
+một phiên; ô gom nhiều thứ còn thiếu (thịt thường và thịt *nhiều*) tách thành từng dòng, như trứng đã tách *tái · chín*. Lúc bấm, màn đọc
+`GET /production-board` (công khai), lấy mọi hàng cùng khoá ở mọi trạm có phần của bàn ấy, gửi **một `ServedItem` mỗi trạm** cùng số
+đã chọn. Ô chọn đi 0…`min(thiếu, made của bàn ở từng trạm)` và nói số chưa làm xong — không bày số mà cửa chắc chắn từ chối.
+(2) *Phiên ghép nhiều bàn:* cửa nhận **một** `dining_table_id`, còn số của phiên cộng mọi bàn ⇒ ô chỉ đọc, câu chỉ sang màn Sản xuất của quầy.
+(3) *Không đứng quầy* (`counter_duty_id` của `GET /sessions/current` rỗng hay chưa đọc được) ⇒ không nút, có câu nói vì sao. Hàng *Tổng*
+và hàng cộng thử không bấm được. (4) Còn hở, ghi lại không chữa ở đây: cửa chọn việc mỗi trạm độc lập (cũ trước); nếu tráng và gấp đã làm
+khác đơn vị thì một lần bấm có thể chưa làm *thiếu* giảm đủ — tính chất sẵn có của cửa, cũng có ở màn Sản xuất của quầy.
+
+**Acceptance** (viết 2026-10-21, trước khi giao; test viết trước ở `fe/src/app/chu-quan/van-hanh/dem-ra.test.tsx`, người thi công không sửa):
+- [x] Đứng quầy: mỗi thứ còn thiếu của phiên một bàn là một nút `Đem ra <bàn> · <thứ>`; thịt thường và thịt nhiều tách dòng; có câu *Bấm vào một ô số để báo đã đem ra.*
+- [x] Không đứng quầy: không nút số, câu *Chỉ người đang đứng quầy ghi được đem ra…*, không lời gọi ghi.
+- [x] Phiên ghép nhiều bàn: không nút, câu chỉ sang màn Sản xuất của quầy.
+- [x] Bấm ô đọc `GET /production-board` một lần; nút 0…`min(thiếu, made từng trạm của bàn)`; nói số chưa làm xong.
+- [x] Chọn 0 đóng, không ghi; *Huỷ* ở hộp xác nhận không ghi.
+- [x] Hộp *Xác nhận đem ra* nhắc số cái, thứ, bàn, thiếu trước → sau; *Xác nhận* gửi đúng một `POST /served-marks` với một hàng mỗi trạm của đúng khoá gom; báo *Đã ghi đem ra…*; đọc lại `GET /service-board`.
+- [x] Hàng nhiều nhân gửi khoá gom của nó, không lẫn hàng thường; bấm *Xác nhận* hai lần chỉ gửi một lần.
+- [x] Cửa từ chối ⇒ báo theo mã, không báo đã ghi; `served_quantity_exceeds_made` thì đọc lại bảng. Đọc bảng sản xuất lỗi ⇒ báo, không nút số.
+- [x] Mười bốn test cũ của `van-hanh.test.tsx` còn xanh (chỉ sửa backend giả cho đúng đường, và câu *Bấm vào một ô số*); `01-khung-fe.md` §1 · §2 ghi nguồn mới và cửa ghi.
+- [x] `./scripts/gate.sh` xanh; Claude chạy lại `fe-check`. Không file `be/`, `db/`, `openapi.yaml` nào đổi.
+
+**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-228`, nhánh `codex/T-228`, nền `1341942`; phiên đầu hết hạn mức trước khi sửa file, làm tiếp bằng `codex exec resume` 2026-10-22) · duyệt: Claude 2026-10-22 — đọc diff ba file (`van-hanh.tsx`, `van-hanh.test.tsx`, `01-khung-fe.md`), đối chiếu mười quyết định của phiếu; `dem-ra.test.tsx` giữ nguyên từng byte (`cmp`). Codex không chạy được Vitest trong sandbox; Claude chạy lại: worktree 437/437 test xanh (build vấp symlink `node_modules`, lỗi môi trường), đưa về clone chính, `./scripts/gate.sh` xanh đủ lint · typecheck · test · build. Còn mở: điểm (4) ở trên — cửa chọn việc mỗi trạm độc lập.
 
 <a id="t-227"></a>
 ### T-227 — Hoá đơn bàn cộng mọi phần đã gọi, trong khi chủ repo chọn chỉ thu phần đã ra
