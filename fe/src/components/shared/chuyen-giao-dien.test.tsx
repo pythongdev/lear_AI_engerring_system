@@ -78,3 +78,13 @@ it("script vẫn theo hệ thống khi không truy cập được localStorage",
   expect(() => new Function(scriptGiaoDien)()).not.toThrow();
   expect(document.documentElement.classList.contains("dark")).toBe(true);
 });
+
+it("nút ở thanh đầu không nổi; nút nổi tự ẩn khi trang có nút ở thanh đầu (T-230)", () => {
+  render(<><ChuyenGiaoDien /><ChuyenGiaoDien noi /></>);
+  const [dau, noi] = screen.getAllByRole("button", { name: "Chuyển sang giao diện tối" });
+  expect(dau.dataset.giaoDien).toBe("dau");
+  expect(dau.className).not.toContain("fixed");
+  expect(noi.dataset.giaoDien).toBe("noi");
+  expect(noi.className).toContain("fixed");
+  expect(noi.className).toContain("[body:has([data-giao-dien=dau])_&]:hidden");
+});

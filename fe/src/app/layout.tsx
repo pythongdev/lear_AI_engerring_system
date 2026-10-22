@@ -29,7 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body>
         <ApiProvider>{children}</ApiProvider>
-        <ChuyenGiaoDien />
+        <ChuyenGiaoDien noi />
       </body>
     </html>
   );

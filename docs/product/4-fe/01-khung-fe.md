@@ -193,7 +193,7 @@ có nơi dùng thứ hai (**ADR-102** điểm 8) và thêm một dòng ở đây
 
 | Component | Ở đâu | Làm gì | Ai dùng | Bước |
 |---|---|---|---|---|
-| `ChuyenGiaoDien` (tầng 2) | `fe/src/components/shared/chuyen-giao-dien.tsx` | nút sáng / tối, lưu lựa chọn ở localStorage; chưa chọn thì theo hệ thống (2026-10-22, theo phiếu Claude) | root layout, mọi màn | `T-229` |
+| `ChuyenGiaoDien` (tầng 2) | `fe/src/components/shared/chuyen-giao-dien.tsx` | nút sáng / tối, lưu lựa chọn ở localStorage; chưa chọn thì theo hệ thống (2026-10-22, theo phiếu Claude); ở thanh đầu `KhungTheoVai` đứng trước *Đăng xuất*, nút nổi góc dưới của root layout tự ẩn khi trang có nút ở thanh đầu (2026-10-22, chủ repo) | root layout (nổi) · `KhungTheoVai` | `T-229` · `T-230` |
 | Primitive shadcn: `Button` · `Input` · `Label` · `Checkbox` · `Field` · `Card` · `Alert` · `Separator` | `fe/src/components/ui/` | sinh bằng CLI ghim, không sửa tay focus, bàn phím, accessibility (**ADR-100** điểm 2) | mọi màn | `P4-04` |
 | `TheTaiKhoan` · `Truong` · `Bao` · `NutGui` | `fe/src/components/tai-khoan/khung-form.tsx` | khung, ô nhập kèm lỗi, dòng báo, nút gửi của màn tài khoản — ghép từ primitive trên | năm màn tài khoản | `P4-04` |
 | `KhungTheoVai` | `fe/src/components/tai-khoan/khung-theo-vai.tsx` | gác lối vào khung theo phiên, thanh đầu có nút đăng xuất | `/quay` · `/chu-quan` · `/tram` | `P4-04` |

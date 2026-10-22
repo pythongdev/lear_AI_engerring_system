@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
+import { ChuyenGiaoDien } from "@/components/shared/chuyen-giao-dien";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { khungCua, type Khung } from "@/lib/auth/khung";
@@ -49,18 +50,21 @@ export function KhungTheoVai({ khung, children }: { khung: Khung; children: Reac
           {s.display_name}
           {s.counter_duty_id ? " · đang đứng quầy" : ""}
         </span>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={dangXuat.isPending}
-          onClick={async () => {
-            await dangXuat.mutateAsync();
-            router.replace("/dang-nhap");
-          }}
-        >
-          Đăng xuất
-        </Button>
+        <div className="flex items-center gap-2">
+          <ChuyenGiaoDien />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={dangXuat.isPending}
+            onClick={async () => {
+              await dangXuat.mutateAsync();
+              router.replace("/dang-nhap");
+            }}
+          >
+            Đăng xuất
+          </Button>
+        </div>
       </header>
       <main className="p-6">{children}</main>
     </div>

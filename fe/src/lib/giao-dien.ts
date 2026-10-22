@@ -6,7 +6,7 @@ export function khoiTaoGiaoDien() {
   } catch {
     // Bộ nhớ bị chặn: dùng lựa chọn của hệ thống.
   }
-  const toi = daLuu === "toi" || (daLuu !== "sang" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const toi = daLuu === "toi" || (daLuu !== "sang" && window.matchMedia?.("(prefers-color-scheme: dark)").matches === true);
   document.documentElement.classList.toggle("dark", toi);
   document.documentElement.style.colorScheme = toi ? "dark" : "light";
 }

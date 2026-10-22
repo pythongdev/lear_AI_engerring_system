@@ -110,6 +110,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="done"></a>
 ## Done
+- [x] T-230 **Nút sáng / tối nằm góc dưới, chủ repo muốn nó cạnh nút Đăng xuất** — thanh đầu khung theo vai có nút; trang không thanh đầu giữ nút nổi — L1 — mở và xong 2026-10-22 (chủ repo yêu cầu) · [chi tiết](#t-230)
 - [x] T-229 **Chưa có nút chuyển giao diện sáng / tối** — nút dùng chung ở khung gốc, nhớ lựa chọn, lần đầu theo máy, không nháy màu lúc tải — L1 — mở và xong 2026-10-22 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-229)
 
 - [x] T-228 **Bấm ô số trên trang Vận hành ghi *đã đem ra*** — chọn 0…số thiếu, xác nhận, gửi `POST /served-marks` cho một bàn; chỉ bật khi phiên đang đứng quầy (S-5, chủ repo giữ 2026-10-21) — L2 — mở 2026-10-21, bắt đầu 2026-10-21 (Claude thiết kế và viết test, Codex thi công), **cần xong trước:** `T-226` — 2026-10-22 · [chi tiết](#t-228)
@@ -453,6 +454,22 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-230"></a>
+### T-230 — Nút sáng / tối nằm góc dưới, chủ repo muốn nó cạnh nút Đăng xuất
+
+**Yêu cầu:** chủ repo 2026-10-22, sau T-229: *"tôi muốn có button tối sáng ở cạnh nut đăng xuất"*. **Mức:** L1 — chỉ vị trí nút.
+
+**Claude quyết 2026-10-22 (trình bày):** `KhungTheoVai` (`/quay` · `/chu-quan` · `/tram`) đặt `ChuyenGiaoDien` ngay trước nút *Đăng xuất*;
+trang không có thanh đầu (đăng nhập, đặt món công khai…) giữ nút nổi góc dưới trái; nút nổi tự ẩn khi trang có nút ở thanh đầu, nên mỗi màn
+đúng một nút.
+
+**Acceptance** (viết 2026-10-22, trước khi sửa):
+- [x] Thanh đầu khung theo vai có nút sáng / tối đứng ngay trước *Đăng xuất*.
+- [x] Nút nổi ẩn khi trang có nút ở thanh đầu; trang không thanh đầu vẫn có nút nổi.
+- [x] Test cũ còn xanh; `./scripts/gate.sh` xanh.
+
+**Bàn giao:** thực hiện: Claude 2026-10-22 · duyệt: chưa có người duyệt độc lập. File: `chuyen-giao-dien.tsx` (prop `noi`) · test · `fe/src/app/layout.tsx` · `fe/src/components/tai-khoan/khung-theo-vai.tsx` · `fe/src/lib/giao-dien.ts` (chịu được máy không có `matchMedia` — tám test cũ của khung vỡ vì jsdom thiếu hàm này) · `01-khung-fe.md` §4. jsdom không chấm `:has`, nên Claude soát CSS đã sinh có luật `display:none`. `./scripts/gate.sh` xanh, `fe-check` 450/450.
 
 <a id="t-229"></a>
 ### T-229 — Chưa có nút chuyển giao diện sáng / tối
