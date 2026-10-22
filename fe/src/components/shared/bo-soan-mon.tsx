@@ -18,7 +18,7 @@ export type DongSoan = { quantity: number; is_takeaway: boolean } & (
   { combo: Combo; portions: Suat[]; mon?: never }
 );
 const coMat = (g: Nhom, ids: number[]) => !g.prerequisite_option_ids.length || g.prerequisite_option_ids.some((v) => ids.includes(v));
-function chonNhom(groups: Nhom[], ids: number[]) {
+export function chonNhom(groups: Nhom[], ids: number[]) {
   let ketQua = ids;
   // Lặp tới khi đứng yên: nhóm có điều kiện có thể phụ thuộc nhóm đứng sau nó trong menu.
   for (let i = 0; i <= groups.length; i++) {
@@ -30,7 +30,7 @@ function chonNhom(groups: Nhom[], ids: number[]) {
   }
   return ketQua;
 }
-function soSuat(combo: Combo, quantity: number, cu: Suat[] = []): Suat[] {
+export function soSuat(combo: Combo, quantity: number, cu: Suat[] = []): Suat[] {
   if (!Number.isInteger(quantity) || quantity < 1) return cu;
   return combo.items.flatMap((mon) => {
     const con = cu.filter((p) => p.mon.menu_item_id === mon.menu_item_id);
@@ -75,7 +75,7 @@ export function giaDong(dong: DongSoan) {
   if (dong.combo) return undefined;
   return dong.mon.prices.find((p) => p.option_ids.length === dong.option_ids.length && p.option_ids.every((id) => dong.option_ids.includes(id)));
 }
-function LuaChon({ groups, ids, name, onChange }: { groups: Nhom[]; ids: number[]; name: string; onChange: (ids: number[]) => void }) {
+export function LuaChon({ groups, ids, name, onChange }: { groups: Nhom[]; ids: number[]; name: string; onChange: (ids: number[]) => void }) {
   return groups.filter((g) => coMat(g, ids)).map((g) => <fieldset key={g.option_group_id} className="space-x-3">
     <legend>{g.option_group_name}</legend>
     {g.options.map((o) => <label key={o.menu_option_id} className="inline-flex min-h-11 items-center gap-2">

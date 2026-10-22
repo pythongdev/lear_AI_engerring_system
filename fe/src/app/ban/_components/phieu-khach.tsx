@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { QrCode } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { BoSoanMon, dongGui, giaDong, useGiaCombo } from "@/components/shared/bo-soan-mon";
+import { dongGui, giaDong, useGiaCombo } from "@/components/shared/bo-soan-mon";
 import { tien } from "@/components/shared/dong-mon-da-ghi";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,9 @@ import { call } from "@/lib/api/client";
 import { useApi } from "@/lib/api/provider";
 import type { components } from "@/lib/api/schema";
 import { dungLai, useNhapKhach } from "@/lib/nhap-khach";
+import { SITE_NAME } from "@/lib/seo";
+import { ThucDonKhach } from "./thuc-don-khach";
+import styles from "./thuc-don-khach.module.css";
 import { loiKhach } from "./loi-khach";
 
 type Phieu = { loai: "qr"; ma: string; body: components["schemas"]["QrOrderRequest"] }
@@ -100,17 +103,20 @@ export function PhieuKhach({ ma, nhan, initialMenu }: {
       catch { setLoi("Đã lưu nhưng chưa đọc lại được menu. Bạn vui lòng đọc lại menu."); }
     } finally { chot.current = false; setDangGui(false); }
   }
-  return <main className="mx-auto max-w-2xl space-y-5 p-4">
+  return <main className={styles.page}><div className={styles.phone}>
+    <header data-component="MenuHeader"><small>{SITE_NAME}</small>
     <h1 className="flex items-center gap-2 text-2xl font-semibold">
       {!web && <QrCode aria-hidden="true" />}
       {web ? "Đặt món" : /^\d+$/.test(nhan?.trim() ?? "") ? `Bàn ${nhan!.trim()}` : nhan}
-    </h1>
+    </h1></header>
     {bao && <p role="status">{bao}</p>}
     {loi && <p role="alert">{loi}</p>}
     {menu.isError && <p role="alert">Chưa đọc được menu. Đang hiện bản đọc lúc {new Date(menu.dataUpdatedAt).toLocaleTimeString("vi-VN")}. <Button onClick={() => void menu.refetch()}>Đọc lại menu</Button></p>}
     <form onSubmit={(e) => { e.preventDefault(); void gui(); }} className="space-y-4">
       <fieldset disabled={dangGui || choGuiLai} className="space-y-4">
-        {web && <>
+        <ThucDonKhach items={menu.data.items} combos={menu.data.combos} lines={lines} onChange={(ds) => sua(khoaNhap, ds)} quotes={quotesKhach}
+          total={duMon && tong.isSuccess && !tong.isFetching ? tong.data.total_vnd : undefined}
+          thongTin={web && <>
           <fieldset className="flex flex-wrap gap-4"><legend>Cách nhận hàng</legend>
             <label className="inline-flex min-h-11 items-center gap-2"><input type="radio" name="cach" checked={cach === "delivery"} onChange={() => setCach("delivery")} />Giao tận nơi</label>
             <label className="inline-flex min-h-11 items-center gap-2"><input type="radio" name="cach" checked={cach === "pickup"} onChange={() => setCach("pickup")} />Đến lấy</label>
@@ -122,12 +128,11 @@ export function PhieuKhach({ ma, nhan, initialMenu }: {
           <label className="block">Tên<Input value={ten} onChange={(e) => setTen(e.target.value)} /></label>
           <label className="block">Ghi chú<Input value={ghiChu} onChange={(e) => setGhiChu(e.target.value)} /></label>
         </>}
-        <BoSoanMon items={menu.data.items} combos={menu.data.combos} lines={lines} onChange={(ds) => sua(khoaNhap, ds)} quotes={quotesKhach} mangVe={false} />
-      </fieldset>
-      {duMon && (tong.isFetching ? <p role="status">Đang tính tổng…</p> : tong.isError
+          tong={duMon && (tong.isFetching ? <p role="status">Đang tính tổng…</p> : tong.isError
         ? <p role="alert">{tong.error.message} <Button type="button" onClick={() => void tong.refetch()}>Tính lại</Button></p>
-        : tong.isSuccess && <p>Tổng tạm tính {tien(tong.data.total_vnd)}</p>)}
-      <Button type="submit" disabled={dangGui || (!choGuiLai && !hopLe)}>{dangGui ? "Đang gửi…" : choGuiLai ? "Gửi lại" : web ? "Đặt đơn" : "Gửi lượt gọi"}</Button>
+        : tong.isSuccess && <p>Tổng tạm tính {tien(tong.data.total_vnd)}</p>)} />
+      </fieldset>
+      <Button data-component="CartBottomBar" className={styles.submit} type="submit" disabled={dangGui || (!choGuiLai && !hopLe)}>{dangGui ? "Đang gửi…" : choGuiLai ? "Gửi lại" : web ? "Đặt đơn" : "Gửi lượt gọi"}</Button>
     </form>
-  </main>;
+  </div></main>;
 }

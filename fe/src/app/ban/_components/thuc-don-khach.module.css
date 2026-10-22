@@ -1,0 +1,44 @@
+.page {
+  --bg: #FFFFFF; --card: #F3F4F6; --line: #E5E7EB; --muted: #6B7280;
+  --accent: #EA6A0C; --field: #E5E7EB; --text: #111827; --page: #F3F4F6; --badge: #FDECDC;
+  background: var(--page); color: var(--text); min-height: 100dvh; font-size: 12px; line-height: 1.45;
+}
+html[class~="dark"] .page {
+  --bg: #000000; --card: #1F2937; --line: #2D3748; --muted: #9CA3AF;
+  --accent: #FF7A1A; --field: #374151; --text: #F9FAFB; --page: #0a0a0a; --badge: #3a2a18;
+  color-scheme: dark;
+}
+.phone { max-width: 472px; margin: 0 auto; padding: 0 16px 16px; background: var(--bg); }
+.phone header { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.phone h1 { font-size: 20px; }
+.phone h2, .phone h3 { font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.phone small, .phone li { color: var(--muted); font-size: 11px; }
+.phone button { background: var(--field); color: var(--text); border: 1px solid var(--line); border-radius: 7px; padding: 6px 10px; cursor: pointer; }
+.phone button:disabled { opacity: .5; cursor: default; }
+.phone button:hover:not(:disabled) { filter: brightness(1.15); }
+.phone :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.phone input { accent-color: var(--accent); border-color: var(--line); box-shadow: none; }
+.phone input:not([type=radio]) { background: var(--field); color: var(--text); }
+.phone input::placeholder { color: var(--muted); }
+.phone section, .phone fieldset { border-color: var(--line); min-width: 0; }
+.mini { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 8px; min-height: 50px; background: var(--bg); border-bottom: 1px solid var(--line); }
+.phone .mini > button { border-radius: 20px; white-space: nowrap; background: var(--accent); color: #fff; }
+.chips { display: flex; gap: 6px; overflow: auto; scrollbar-width: none; flex: 1; }
+.chips span { background: var(--field); border-radius: 16px; white-space: nowrap; font-size: 10px; padding: 4px 8px; }
+.price { color: var(--accent); white-space: nowrap; margin-bottom: 6px; }
+.search { width: 100%; height: 34px; padding: 0 12px; margin: 14px 0; border-radius: 8px; }
+.phone .label { color: var(--muted); font-size: 12px; margin: 12px 0 8px; }
+.card { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 12px; border: 1px solid var(--line); background: var(--card); border-radius: 10px; margin-bottom: 12px; }
+.card ul { margin-top: 6px; }
+.card li { margin-bottom: 3px; }
+.badge { background: var(--badge); color: var(--accent); padding: 1px 5px; border-radius: 5px; font-size: 10px; }
+.stepper { display: flex; align-items: center; gap: 6px; }
+.phone .stepper button { width: 30px; height: 30px; padding: 0; border: 0; font-size: 17px; }
+.phone .stepper button:last-child { background: var(--accent); color: #fff; }
+.stepper output { min-width: 24px; text-align: center; font-size: 14px; }
+.summary { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-top: 12px; scroll-margin-top: 64px; }
+.summary section { padding: 12px 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; }
+.summary label:has(input[type=radio]) { padding: 0 8px; margin: 4px 4px 4px 0; border-radius: 16px; background: var(--field); }
+.summary label:has(input:checked) { outline: 1px solid var(--accent); }
+.summary input[type=number] { max-width: 100px; }
+.phone .submit { width: 100%; height: 52px; margin-top: 12px; border-radius: 12px; background: var(--accent); color: #fff; font-size: 15px; }

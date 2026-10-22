@@ -110,6 +110,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="done"></a>
 ## Done
+- [x] T-232 **Trang gọi món của khách theo bản thiết kế menu** — dựng `/ban/[ma]` (và `/dat-mon`, cùng component) theo `khach_hang/menu/menu.html`: thẻ combo và món lẻ có nút bớt · thêm, ô tìm món, dải giỏ dính đầu trang, tóm tắt đơn, nút gửi cam, màu sáng · tối; phần chưa có dữ liệu hay luật không làm; hành vi gửi và test cũ giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-232)
 - [x] T-231 **Trang Vận hành của chủ quán mặc phong cách mới** — áp `van-hanh-copy.html` và `styke/style.md` lên `/chu-quan/van-hanh`: màu nền · thẻ · viền · cam nhấn, sáng và tối; hành vi, chữ đọc được và test giữ nguyên — L1 — mở và xong 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-231)
 - [x] T-230 **Nút sáng / tối nằm góc dưới, chủ repo muốn nó cạnh nút Đăng xuất** — thanh đầu khung theo vai có nút; trang không thanh đầu giữ nút nổi — L1 — mở và xong 2026-10-22 (chủ repo yêu cầu) · [chi tiết](#t-230)
 - [x] T-229 **Chưa có nút chuyển giao diện sáng / tối** — nút dùng chung ở khung gốc, nhớ lựa chọn, lần đầu theo máy, không nháy màu lúc tải — L1 — mở và xong 2026-10-22 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-229)
@@ -456,6 +457,44 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
 
+<a id="t-232"></a>
+### T-232 — Trang gọi món của khách còn là bộ soạn của quầy, chưa theo bản thiết kế menu
+
+**Yêu cầu:** chủ repo 2026-10-23, mở `docs/product/4-fe/thiet_ke/khach_hang/menu/menu.html`: *"yêu cầu codex làm task để tạo page trên
+còn bạn kiểm tra"*. **Mức:** L1 — giao diện và cách soạn giỏ trên màn khách; không chạm hợp đồng, cửa ghi, tiền (tổng vẫn chỉ lấy backend).
+
+**Claude quyết 2026-10-23 (trình bày, không phải luật quán):** (1) trang thật của bản thiết kế là `PhieuKhach` — dùng chung cho
+`/ban/[ma]` và `/dat-mon`, nên cả hai đổi; `BoSoanMon` của quầy **không** đổi, phía khách có component riêng, chỉ được thêm `export`
+cho hàm sẵn có trong `bo-soan-mon.tsx`; (2) làm: thẻ combo (tên, giá `price_vnd`, danh sách món ×số), thẻ món lẻ (tên, giá thấp nhất
+trong `prices`), nút bớt · thêm trên thẻ, ô tìm theo tên lọc ngay trên màn, dải giỏ dính đầu trang (số món, tổng backend), tóm tắt đơn từng
+dòng (lựa chọn dạng chip, bớt · thêm, xoá, giá dòng từ `POST /price-quotes`), nút gửi cam to cuối trang, token sáng · tối của
+`styke/style.md` khai trong phạm vi trang theo lớp `.dark` sẵn có (T-229); (3) **không** làm vì `/menu` công khai không có dữ liệu hay vì
+là luật quán chưa có: tab danh mục, ảnh · banner · khẩu hiệu, mô tả món, yêu thích, nút Đăng nhập, điều hướng cuối trang, khối CANH và
+bảng *Tổng số món* với đơn giá từng thành phần, ghi chú cho bếp (`QrOrderRequest` không có trường), hộp xác nhận trước khi gửi, ngăn kéo
+giỏ, nút sáng · tối thứ hai; (4) giữ `h1` = nhãn bàn có biểu tượng QR (T-222, chủ repo 2026-10-21) thay vì tên quán như bản thiết kế — tên
+quán `SITE_NAME` đứng ngoài `h1`; (5) giữ chữ nút *Gửi lượt gọi* · *Đặt đơn* · *Gửi lại*, không dùng *Thanh toán* — khách QR chưa trả tiền
+lúc gửi; (6) ba tài liệu `customer_menu_*` cạnh bản thiết kế dò từ codebase khác, không phải nguồn của task.
+
+**Acceptance** (viết 2026-10-23, trước khi giao):
+- [x] Màn khách bày thẻ combo và thẻ món lẻ theo khối `ComboSection` · `ProductList`; nút thêm trên thẻ có tên truy cập `Thêm {tên món}` · `Thêm combo {tên}` và thêm một dòng với lựa chọn mặc định; nút bớt giảm số của dòng cuối cùng của món ấy, về 0 thì bỏ dòng; số giữa hai nút là tổng số lượng các dòng của món — test mới.
+- [x] Ô tìm món lọc thẻ theo tên, không phân biệt hoa thường và dấu; không khớp thì có một câu báo — test mới.
+- [x] Dải giỏ dính đầu trang có số món và tổng `total_vnd` khi tính xong, không tự tính tiền; bấm đưa tới tóm tắt đơn — test mới.
+- [x] Tóm tắt đơn: mỗi dòng vẫn là vùng `Dòng N` với lựa chọn là radio, ô `Số lượng`, nút `Xoá dòng N`; combo bày suất như trước; giá dòng combo vẫn từ `useGiaCombo`.
+- [x] `khach-qr.test.tsx` và `dat-mon.test.tsx` giữ nguyên từng byte và xanh — gửi, gửi lại giữ dấu, lời từ chối, giỏ nháp, `h1` không đổi.
+- [x] Màu chỉ qua token của bản thiết kế, sáng mặc định, tối theo `.dark`; không sửa `globals.css`, `components/ui/`, `BoSoanMon` (ngoài `export`); không thêm phụ thuộc.
+- [x] `01-khung-fe.md` có dòng component mới; `./scripts/gate.sh` xanh; Claude chạy lại `fe-check`.
+
+**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-232`, nhánh `codex/T-232`, nền `23c18b4`, đã gỡ) · duyệt: Claude 2026-10-23 — đọc diff
+sáu file; Claude sửa bốn chỗ: dùng lại `LuaChon` của `BoSoanMon` (thêm `export`) thay bản Codex chép lại, bỏ `export` thừa của `coMat`; chữ
+trên nút cam là `#fff` như bản thiết kế (Codex dùng `--text`, ở giao diện sáng thành chữ đen trên cam); ô số lượng xoá trống đếm 0 ở thẻ,
+chip và dải giỏ, nút bớt bỏ được dòng ấy (trước đó hiện `NaN`) — thêm test; nhóm COMBO / MÓN LẺ rỗng trong tóm tắt thì ẩn; bộ tối đổi từ `:global(.dark) .page` sang `html[class~="dark"] .page` vì `next build` báo không đọc được `:global` (bộ tối có thể bị bỏ). Codex không chạy
+được gate trong sandbox (cache Go); Claude chạy ở clone chính: `./scripts/gate.sh` xanh, `fe-check` PASS 454/454 test, build qua;
+`khach-qr.test.tsx` · `dat-mon.test.tsx` không đổi. File: `fe/src/app/ban/_components/thuc-don-khach.tsx` · `thuc-don-khach.module.css` ·
+`fe/src/app/ban/thuc-don-khach.test.tsx` · `phieu-khach.tsx` · `fe/src/components/shared/bo-soan-mon.tsx` · `docs/product/4-fe/01-khung-fe.md`.
+Còn lại: chưa xem trực quan trên trình duyệt thật ở cả hai giao diện. `next build` đôi lúc dừng với `SecurityFatalError` khuyên nâng Next.js 16.4.0 — chạy lại thì qua; nâng phụ thuộc ngoài phạm vi task này.
+
+[↑ đầu file](#top)
+
 <a id="t-231"></a>
 ### T-231 — Trang Vận hành thật chưa theo bản thiết kế phong cách mới
 
@@ -487,6 +526,8 @@ Claude để lại. Codex không chạy được Vitest trong sandbox (EPERM `.v
 chứng riêng của T-231, ở worktree = `HEAD` + diff này: `vitest run` 450/450, `lint` và `tsc --noEmit` thoát 0. Cảnh báo bảo mật Next.js
 chặn build một lần, chạy lại thì đi tiếp. Codex giữ token `--vh-*` khai trong phạm vi trang, cả hộp thoại (portal) cũng mang lớp ấy. Còn lại:
 chưa xem trực quan trên trình duyệt; bản thiết kế bỏ cột *Người* của lịch sử đem ra — giữ, chờ chủ repo nói.
+Chủ repo 2026-10-23, sau duyệt: *"Tổng thiếu theo bàn — bỏ table ngoài cùng"* ⇒ Claude bỏ khung viền quanh bảng của khối này (giữ vùng cuộn ngang); 25/25 test trang xanh.
+Chủ repo 2026-10-23: *"giảm space giữa các component ở bên trong và ngoài cùng"* ⇒ trang bỏ đệm riêng (khung chung `p-6` vẫn giữ — dùng chung với `/quay`, `/tram`), khoảng giữa khối 12→8px, đệm thẻ 12→10px, lề bảng bỏ, ô và lưới bàn gọn hơn; 25/25 test trang xanh.
 
 [↑ đầu file](#top)
 
