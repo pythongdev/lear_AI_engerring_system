@@ -90,7 +90,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## Ready
 
 - [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
-- [ ] T-227 **BỊ CHẶN bởi U-103 — Thanh toán bàn từ trang Vận hành chỉ thu phần đã ra** — bấm tiền bánh đã ra để đóng phiên và xoá bàn khỏi bảng; đổi luật tính tiền phiên (`shop-facts.md` §6.1, 2026-10-21) và viết lại `I-002` — L3 (thiết kế duyệt trước code, ADR, chia L1/L2 khi mở) — mở 2026-10-21 · [chi tiết](#t-227)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
 [↑ đầu file](#top)
@@ -98,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-227 **Thanh toán bàn chỉ thu phần đã ra, phần chưa ra huỷ việc trạm** — bấm tiền bánh đã ra để đóng phiên và xoá bàn khỏi bảng; đổi luật tính tiền phiên (`shop-facts.md` §6.1, 2026-10-21) và viết lại `I-002` — L3 (thiết kế duyệt trước code, ADR, chia L1/L2 khi mở) — mở 2026-10-21, U-103 có lời và bắt đầu 2026-10-22 · [chi tiết](#t-227)
 
 
 
@@ -498,10 +498,13 @@ khác đơn vị thì một lần bấm có thể chưa làm *thiếu* giảm đ
 (`master_plan/shop-facts.md` §6.1); thiết kế đã chốt cho bấm số ở cột *Tiền bánh đã ra* để thanh toán và xoá bàn khỏi bảng. Hôm nay
 `phien.TongTien` cộng `line_total_vnd` của **mọi** đơn chưa huỷ và cửa đóng từ chối phiên còn đơn chưa xong
 (`docs/product/3-be/04-luong-tai-ban.md` §4); `quality/invariants.md` **I-002** giữ *tổng bằng mọi đơn*. **Mức:** L3 — luật tiền,
-invariant, hợp đồng; mở thì chia thành phần L1 · L2, thiết kế được duyệt trước dòng code đầu, ADR. **BỊ CHẶN** bởi **U-103**
-(`docs/product/99-unknowns.md`): phần chưa ra có huỷ việc trạm không, và luật áp cho mọi lần đóng phiên hay chỉ trang Vận hành — hai vế
-đổi hẳn cách làm. Cửa `hoadon/dong` thuộc lớp `quay`, nên người bấm cũng là người đứng quầy như `T-228` — *suy ra* của Claude, hỏi lại
-khi U-103 có lời.
+invariant, hợp đồng; mở thì chia thành phần L1 · L2, thiết kế được duyệt trước dòng code đầu, ADR. Cửa `hoadon/dong` thuộc lớp
+`quay`, nên người bấm cũng là người đứng quầy như `T-228` — *suy ra* của Claude, chưa hỏi.
+
+**U-103 có lời** (chủ repo 2026-10-22, chọn trong hội thoại; ghi `master_plan/shop-facts.md` §6.1): **(1)** phần chưa ra lúc thanh toán
+bị **huỷ, bếp dừng làm**; **(2)** luật áp cho **mọi** lần đóng phiên bàn, không riêng trang Vận hành. Cùng ngày chủ repo chọn thêm: suất ra
+dở **không thu**. Thiết kế đề xuất: `docs/decisions.md` **ADR-125** — **chờ chủ repo duyệt**, kèm hai điểm còn hở (a) · (b) của nó; duyệt xong
+mới chia phần A (L2) · B (L1), viết Acceptance và phiếu việc giao Codex.
 
 <a id="t-226"></a>
 ### T-226 — Chủ quán chưa có trang Vận hành thật, chỉ có bản thiết kế tĩnh

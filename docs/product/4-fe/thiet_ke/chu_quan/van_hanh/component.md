@@ -100,7 +100,7 @@ Chủ repo chốt thiết kế ngày 2026-10-21 (`work/backlog.md` T-224) và x�
 trong hội thoại: **sắp phục vụ** = bàn đã gửi lượt gọi mà chưa có phần nào ra
 bàn; **đã đem ra** = đã ra bàn (`master_plan/shop-facts.md` §5.4); bấm đem ra
 **vẫn là người đứng quầy**; thanh toán **chỉ thu tiền phần đã ra**
-(`shop-facts.md` §6.1, vế còn hở ở `docs/product/99-unknowns.md` U-103).
+(`shop-facts.md` §6.1; phần chưa ra bị huỷ, áp cho mọi lần đóng phiên — chốt 2026-10-22).
 
 Còn là cách hiểu của Claude, chưa xác nhận: cột Thịt · Mộc nhĩ · Chay đếm số
 bánh theo loại nhân. "Bàn còn dư" không còn trên trang. Số trên trang là minh hoạ.

@@ -140,6 +140,7 @@ có câu trả lời mới từ người.
 | ADR-121 | **Số người đang làm do POS khai** (`T-197`): bảng chỉ thêm `workers_present_declaration`, mỗi lần khai một dòng, lần mới nhất của ngày bán thắng; cửa ghi lớp `quay`, đường đọc cho quầy; tổng quan bày số và thiếu người so với `minimum_workers` | Đã chốt 2026-10-19 (Claude) | — | `T-197` · ADR-118 · U-060 |
 | ADR-122 | **Topping: thêm, ẩn, bật lại lựa chọn trong nhóm có sẵn** (`T-210`): thêm là một dòng `menu_option`; nhóm phụ thuộc chủ quán tích; ẩn là hai cột, một cửa cho ẩn và bật lại; hàm giá từ chối lựa chọn đã ẩn tại mốc tính; không ẩn được mặc định | Đã chốt 2026-10-19 (Claude) | — | `T-210` · ADR-086 · ADR-094 · §8.9 |
 | ADR-124 | **Đường đọc trang Vận hành** (`T-225`): `GET /service-board` lớp `quay_hoac_chu_quan` — phiên bàn chưa đóng chia `serving` · `waiting` · `no_order`, thứ đặt · đã ra · thiếu theo đơn vị, tiền đã ra bằng đoạn tạm tính dùng chung với tổng quan, lịch sử đem ra đọc từ vết `made → served` | Đã chốt 2026-10-21 (Claude) | — | `T-225` · ADR-118 · ADR-092 · I-019 |
+| ADR-125 | **Hoá đơn phiên bàn chỉ cộng suất đã ra hết** (`T-227`): một đoạn tính tiền đã ra theo suất dùng chung cho hoá đơn, tạm tính và trang Vận hành; đóng phiên huỷ mọi việc trạm chưa ra (`station_job` thêm `cancelled`) | Đề xuất 2026-10-22 (Claude), chờ chủ repo duyệt | — | `T-227` · ADR-118 · ADR-124 · I-002 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7936,3 +7937,46 @@ hai chỗ biết tên nhóm. *Mở `GET /owner-overview` cho quầy* — lộ t�
 
 **Applies to:** `be/internal/tongquan/` · `be/internal/sanxuat/khoa_gom_test.go` · `docs/product/3-be/openapi.yaml` · `docs/product/3-be/02-vai-va-quyen.md` ·
 `fe/src/lib/api/schema.ts`; **ADR-118** · **ADR-092** · **ADR-123** · I-002 · I-019 · `T-225` · `T-226` · `T-228`.
+
+### ADR-125 — Hoá đơn phiên bàn chỉ cộng suất đã ra hết; đóng phiên huỷ mọi việc trạm chưa ra
+
+**Status:** Đề xuất 2026-10-22 (Claude Code, thiết kế cho `T-227`) — **chờ chủ repo duyệt**, chưa dòng code nào. Lời quán dùng ở đây
+(`master_plan/shop-facts.md` §6.1): thanh toán chỉ thu phần đã bưng ra (2026-10-21); phần chưa ra bị **huỷ, bếp dừng làm**; áp cho **mọi**
+lần đóng phiên bàn; suất ra dở **không thu** (cả ba 2026-10-22, đóng U-103). Mọi điểm dưới đây ngoài ba lời ấy là **lựa chọn của phiên**.
+
+**Context:** `phien.TongTien` cộng `line_total_vnd` của mọi đơn không huỷ; `hoadon/dong` từ chối phiên còn đơn chưa xong
+(`table_session_has_open_orders`); `station_job.status` chỉ có `pending · made · served`, không có trạng thái huỷ. Tạm tính của ADR-118 điểm 5
+tính **cả dòng** — dòng 3 cái ra 2 cộng 0 — trong khi số người đứng quầy bấm để thanh toán (`served_amount_vnd` của ADR-124) phải bằng số hoá đơn thu.
+
+**Decision (đề xuất):**
+1. **Suất** = một đơn vị của dòng gốc (`order_line` không cha, `k` trong `1…quantity`) cùng phần tương ứng của mọi dòng con. Số suất đã ra của
+   một dòng gốc = `min` trên mọi thành phần của nó và của dòng con, của `floor(số đơn vị thành phần đã ra hết ở mọi trạm / số đơn vị thành phần
+   mỗi suất)`. Đếm, không dựa vào thứ tự `position`. Giá một suất = Σ `line_total_vnd` của dòng gốc và dòng con / `quantity` của dòng gốc.
+2. **Một đoạn tính tiền đã ra** thay đoạn *tạm tính* đánh dấu của ADR-118 · ADR-124: Σ suất đã ra × giá suất. Dùng chung cho `phien.TongTien`,
+   `due_vnd` của `phien/tinh_tien`, hoá đơn của `hoadon/dong`, `served_amount_vnd` của `GET /service-board` và `amount_vnd` của
+   `GET /owner-overview`. Hệ quả: tạm tính tổng quan đổi từ *cả dòng* sang *từng suất* — cùng lời U-099, chỉ đếm mịn hơn. Giảm giá cả đơn vẫn trừ
+   ở hoá đơn như hôm nay, trên số mới.
+3. **`station_job` thêm trạng thái `cancelled`** (migration: đổi `station_job_status_check`, `vongdoi` thêm `pending → cancelled` và
+   `made → cancelled`, có vết). Bảng sản xuất, hàng chờ, gom và tạm tính bỏ việc `cancelled`. Mục mẻ (`production_batch_item`) của việc đã làm
+   giữ nguyên — đã làm là đã làm.
+4. **`hoadon/dong`** trong cùng giao dịch, sau khoá phiên và mọi đơn: huỷ mọi việc trạm chưa `served` của phiên; đơn có ít nhất một việc `served`
+   sang `completed`, đơn không còn việc nào ra sang `cancelled` (gồm đơn QR chưa duyệt); rồi tính hoá đơn bằng đoạn ở điểm 2. Bỏ từ chối
+   `table_session_has_open_orders` khỏi cửa này (hợp đồng đổi phiên bản). Không có cửa đóng thứ hai: màn quầy và trang Vận hành gọi cùng cửa.
+5. **Màn hiện trước khi xác nhận** số phần sẽ bị huỷ, tách *chưa làm* và *đã làm xong chưa bưng*, để người đứng quầy bấm đem ra trước nếu phần ấy
+   đã thật ra bàn. Trang Vận hành: bấm số *Tiền bánh đã ra* mở cùng hộp thanh toán; quyền theo lớp `quay` như `T-228`.
+6. **I-002** viết lại: tổng của phiên = Σ suất đã ra hết của mọi đơn thuộc phiên; vế *một phiên đúng một hoá đơn* giữ. Test hồi quy: suất dở
+   không vào, dòng 3 cái ra 2 thu 2, combo ra dở thu 0, đóng xong không còn việc `pending`/`made` của phiên, số `GET /service-board` bằng hoá đơn.
+
+**Còn hở — cần chủ repo xác nhận khi duyệt:** (a) *đã làm xong chưa bưng* cũng không thu và bị huỷ — đọc từ *"chỉ thu phần đã bưng ra"*, suy
+ra của Claude; (b) một thành phần **không có trạm** (`menu_component_station` không bắt buộc) không bao giờ có việc để ra, nên theo điểm 1 suất
+chứa nó không bao giờ được thu. Đề xuất: thành phần không trạm không tham gia phép `min`; nếu suất chỉ gồm thành phần không trạm thì tính là đã ra.
+
+**Rejected alternatives:** *xoá việc trạm chưa ra* — trái luật không xoá cứng, mất vết; *giữ tạm tính cả dòng và thêm phép cộng thứ hai cho hoá
+đơn* — số bấm để thanh toán khác số thu; *chia giá combo theo thành phần* — trái lời *"Không thu suất đó"* và U-099; *cửa đóng riêng cho trang Vận
+hành* — trái lời *"Mọi lần đóng phiên"*.
+
+**Chia thi công (sau khi duyệt):** `T-227` phần A, L2 — migration, `vongdoi`, đoạn tiền, `phien`, `hoadon/dong`, hợp đồng, I-002 và test;
+phần B, L1 — màn quầy và trang Vận hành. Codex thi công theo phiếu việc; Claude duyệt diff và chạy lại gate.
+
+**Applies to:** `db/migrations/` · `be/internal/{vongdoi,phien,hoadon,tongquan,sanxuat}/` · `docs/product/3-be/openapi.yaml` ·
+`docs/product/3-be/04-luong-tai-ban.md` §4 · `quality/invariants.md` I-002 · `fe/`; **ADR-118** · **ADR-124** · `T-227`.

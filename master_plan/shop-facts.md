@@ -804,10 +804,13 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
      **2026-10-21**, trang Vận hành của chủ quán, T-224). Câu hỏi: *"Khi bấm số tiền để thanh toán
      một bàn, quán thu bao nhiêu?"*; phương án được chọn: *"Chỉ tiền món đã ra — món chưa ra bị bỏ
      khỏi hoá đơn lúc thanh toán"* (*lời chọn*, chữ do Claude viết sẵn). Vẫn **một** hoá đơn cho cả
-     phiên — luật trên không đổi; đổi là hoá đơn ấy cộng gì. *Chưa có lời:* phần chưa ra bị bỏ thì
-     bếp có dừng làm không, và luật áp cho **mọi** lần đóng phiên hay chỉ khi thanh toán ở trang
-     Vận hành ⇒ `docs/product/99-unknowns.md` **U-103**. Tới khi T-227 xong, máy vẫn thu đủ mọi
-     phần đã gọi (`docs/product/3-be/04-luong-tai-ban.md` §4).
+     phiên — luật trên không đổi; đổi là hoá đơn ấy cộng gì. **Phần chưa ra lúc thanh toán bị huỷ,
+     bếp dừng làm**, và luật áp cho **mọi** lần đóng phiên bàn, không riêng trang Vận hành (chủ repo
+     chọn trong hội thoại **2026-10-22**, đóng U-103; nguyên văn hai phương án được chọn: *"Huỷ, bếp
+     dừng làm"* · *"Mọi lần đóng phiên"*). Một **suất ra dở** — combo hay món nhiều thành phần mới ra
+     một phần — thì **không thu suất đó** (chủ repo chọn 2026-10-22, nguyên văn *"Không thu suất
+     đó"*): chỉ suất đã ra hết mới vào hoá đơn, phần đã bưng của suất dở quán chịu. Tới khi T-227 xong, máy vẫn thu đủ mọi phần đã gọi
+     (`docs/product/3-be/04-luong-tai-ban.md` §4).
 2. **Đơn do KHÁCH tự gửi phải được quầy duyệt trước khi xuống bếp; đơn do NHÂN VIÊN nhập thì
    không.** Phải duyệt: `qr_table`, `delivery`, `pickup`. Không cần duyệt: `staff_pos`,
    `phone_preorder`. Lý do là mục đích của bước duyệt — chặn đơn ảo — chỉ có nghĩa với đơn không
@@ -1488,6 +1491,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-21 | Chủ repo chọn trong hội thoại (`P4-10`): lúc quán tạm dừng, web hiện **câu trung tính kèm hotline**; lúc quán mất kết nối, dòng thông báo **mời gọi hotline, không nói lý do kỹ thuật** — cả hai là *lời chọn*, chữ do Claude viết sẵn trong phương án | §6.8 · §6.11 |
 | 2026-10-21 | Chủ repo xác nhận trong hội thoại: với đơn **giao tận nơi**, quầy bấm *"đã ra bàn"* **lúc đơn rời quán — cùng mốc quầy đã bấm để đưa đơn sang `Đang giao`** (đóng **S-6**, suy ra 2026-09-04 đúng) | §5.4 · §6.7 |
 | 2026-10-21 | Chủ repo chọn trong hội thoại (T-224, chốt thiết kế trang Vận hành): **thanh toán một bàn chỉ thu tiền các phần đã ra bàn**, phần chưa ra bị bỏ khỏi hoá đơn (*lời chọn*; vế bếp dừng làm và phạm vi áp ⇒ **U-103**); bấm *"đã đem ra"* trên trang ấy **vẫn là người đứng quầy** (giữ S-5); xác nhận **bàn sắp phục vụ** = đã gửi lượt gọi mà chưa phần nào ra bàn, và *đã đem ra* = đã bưng ra bàn | §5.4 · §6.1 |
+| 2026-10-22 | Chủ repo chọn trong hội thoại (T-227, đóng **U-103**): lúc thanh toán một bàn, phần **chưa ra** bị **huỷ, bếp dừng làm**; luật *chỉ thu phần đã ra* áp cho **mọi** lần đóng phiên bàn, không riêng trang Vận hành; suất ra dở (combo hay món nhiều thành phần mới ra một phần) **không thu suất đó** | §6.1 |
 | 2026-10-18 | Chủ repo trả lời ba vế thi công của mục tổng quan (T-199): tạm tính phần thuộc combo **không tính giá thành phần**; *bánh* của tiến độ là **bánh cuốn và bánh trứng**; **offline là bán hàng tại quán** (đóng **S-10**, suy ra 2026-10-16: *offline* gồm cả giao hàng đặt qua điện thoại — lời mới hẹp hơn: chỉ tại quán) | §8.6 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
