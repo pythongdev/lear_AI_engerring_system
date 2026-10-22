@@ -6,9 +6,10 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Quán Bánh Cuốn · Bàn 03</title>
 <style>
-:root { color-scheme:dark; --bg:#000000; --card:#1F2937; --line:#2D3748; --muted:#9CA3AF; --accent:#FF7A1A; --field:#374151; --text:#F9FAFB}
+:root { color-scheme:dark; --bg:#000000; --card:#1F2937; --line:#2D3748; --muted:#9CA3AF; --accent:#FF7A1A; --field:#374151; --text:#F9FAFB; --page:#0a0a0a; --notch:#0f172a; --banner:#3a2310; --banner-ink:#7c4a23; --badge:#3a2a18}
+:root[data-theme=light] { color-scheme:light; --bg:#FFFFFF; --card:#F3F4F6; --line:#E5E7EB; --muted:#6B7280; --accent:#EA6A0C; --field:#E5E7EB; --text:#111827; --page:#F3F4F6; --notch:#E5E7EB; --banner:#FDE8D4; --banner-ink:#C2702F; --badge:#FDECDC}
 * { box-sizing:border-box}
-body { margin:0; background:#0a0a0a; color:var(--text); font:12px/1.45 'Be Vietnam Pro',system-ui,sans-serif}
+body { margin:0; background:var(--page); color:var(--text); font:12px/1.45 'Be Vietnam Pro',system-ui,sans-serif}
 button,input,textarea { font:inherit; color:inherit}
 button { cursor:pointer; border:1px solid var(--line); border-radius:7px; background:transparent; padding:6px 10px}
 button:hover { filter:brightness(1.15)}
@@ -21,18 +22,19 @@ h2,h3 { font-size:14px; font-weight:500}
 .primary { background:var(--accent); border-color:var(--accent); color:#fff}
 .plain { border:0; padding:0}
 .row { display:flex; align-items:center; justify-content:space-between; gap:8px}
-.phone { max-width:472px; margin:24px auto; background:#000; border:1px solid #0f172a; border-radius:24px; padding:0 15px 16px; overflow:clip}
+.phone { max-width:472px; margin:24px auto; background:var(--bg); border:1px solid var(--notch); border-radius:24px; padding:0 15px 16px; overflow:clip}
 .status { height:30px; font-size:11px; position:relative}
-.status:after { content:''; width:150px; height:16px; border-radius:12px; background:#0f172a; position:absolute; top:5px; left:50%; transform:translateX(-50%)}
-.sticky { position:sticky; top:0; z-index:5; background:#000}
+.status:after { content:''; width:150px; height:16px; border-radius:12px; background:var(--notch); position:absolute; top:5px; left:50%; transform:translateX(-50%)}
+.sticky { position:sticky; top:0; z-index:5; background:var(--bg)}
 .header { min-height:58px; border-bottom:1px solid var(--line)}
 .header small { font-size:11px; color:var(--muted)}
+.header-actions { display:flex; gap:6px}
 .mini { height:50px; gap:8px; border-bottom:1px solid var(--line)}
 .mini>button { border-radius:20px; white-space:nowrap; font-size:11px; padding:4px 9px}
 .chips { display:flex; gap:6px; overflow:auto; scrollbar-width:none; flex:1}
 .chip { background:var(--field); border-radius:16px; white-space:nowrap; font-size:10px; padding:4px 8px}
-.banner { height:96px; background:#3a2310; border-radius:10px; margin:8px 0; display:flex; flex-direction:column; justify-content:end; padding:10px 12px; gap:18px}
-.banner div { text-align:center; color:#7c4a23; font-size:16px}
+.banner { height:96px; background:var(--banner); border-radius:10px; margin:8px 0; display:flex; flex-direction:column; justify-content:end; padding:10px 12px; gap:18px}
+.banner div { text-align:center; color:var(--banner-ink); font-size:16px}
 .search { background:var(--field); border:0; border-radius:8px; width:100%; height:34px; padding:0 12px; margin:14px 0}
 input::placeholder,textarea::placeholder { color:var(--muted)}
 .tabs { display:flex; gap:17px; border-bottom:1px solid var(--line); overflow:auto; white-space:nowrap}
@@ -53,7 +55,7 @@ input::placeholder,textarea::placeholder { color:var(--muted)}
 .card h3 { line-height:1.4; margin-bottom:5px}
 .dishes { list-style:none; padding:0; margin:0; color:var(--muted); font-size:11px}
 .dishes li { display:flex; gap:6px; align-items:center; margin-bottom:3px}
-.badge { background:#3a2a18; color:var(--accent); padding:1px 5px; border-radius:5px; font-size:10px; white-space:nowrap}
+.badge { background:var(--badge); color:var(--accent); padding:1px 5px; border-radius:5px; font-size:10px; white-space:nowrap}
 .detail { color:var(--accent); font-size:11px; margin-top:auto; padding-top:8px}
 .controls>.price { font-size:14px; margin-bottom:6px}
 .stepper { display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
@@ -100,7 +102,7 @@ td:last-child,th:last-child { text-align:right}
 textarea { width:100%; resize:vertical; min-height:40px; border:0; background:var(--field); border-radius:7px; padding:10px; margin-top:8px; font-size:11px}
 .checkout { width:100%; height:52px; border-radius:12px; margin-top:12px; font-size:15px}
 .checkout .count { background:#ff9a4d; border-radius:6px; font-size:12px; padding:3px 9px}
-.bottom-nav { display:flex; justify-content:space-between; background:#0a0a0a; border:1px solid var(--line); border-radius:8px; margin-top:10px; padding:8px 7px; font-size:9px; color:var(--muted)}
+.bottom-nav { display:flex; justify-content:space-between; background:var(--page); border:1px solid var(--line); border-radius:8px; margin-top:10px; padding:8px 7px; font-size:9px; color:var(--muted)}
 .bottom-nav a { color:inherit; text-decoration:none}
 .bottom-nav a:first-child { color:var(--accent)}
 dialog { width:min(380px,calc(100% - 24px)); max-height:calc(100dvh - 32px); border:1px solid var(--line); border-radius:12px; background:var(--card); color:var(--text); padding:18px; overscroll-behavior:contain}
@@ -143,7 +145,7 @@ to { transform:translateX(0)}
 <body>
 <main class="phone" id="menu">
 <div class="status row" aria-label="Thanh trạng thái"><span>9:41</span><span>📶 🔋</span></div>
-<div class="sticky"><header class="header row" data-component="MenuHeader"><div><h1>Quán Bánh Cuốn</h1><small>Bàn 03</small></div><button data-demo>⎆ Đăng nhập</button></header>
+<div class="sticky"><header class="header row" data-component="MenuHeader"><div><h1>Quán Bánh Cuốn</h1><small>Bàn 03</small></div><div class="header-actions"><button id="theme-toggle" aria-label="Chuyển giao diện sáng" title="Chuyển sáng / tối">☀️</button><button data-demo>⎆ Đăng nhập</button></div></header>
 <div class="mini row" data-component="MiniCartStrip"><button class="primary" data-open="cart">3 món</button><div class="chips"><span class="chip">Combo Đầy Đặn ×1</span><span class="chip">Bánh cuốn thịt ×1</span><span class="chip">Canh ×1</span></div><span class="price">77.000đ</span></div></div>
 <section class="banner" data-component="RestaurantBanner"><div>🥟 ảnh quán</div><p>Bánh cuốn tươi — ngon mỗi ngày</p></section>
 <input class="search" data-component="SearchBar" type="search" aria-label="Tìm món nhanh" placeholder="🔍   Tìm món nhanh...">
@@ -166,6 +168,11 @@ to { transform:translateX(0)}
 <dialog id="combo" aria-labelledby="combo-title"><div class="modal-hero">🍱 ảnh combo</div><h2 id="combo-title">Combo Đầy Đặn</h2><p class="price" style="font-size:14px">42.000đ</p><div class="muted"><p style="margin-top:20px">1x Giò</p><p style="margin-top:12px">3x Bánh Cuốn</p><p style="margin-top:12px">1x Canh</p></div><div class="actions"><button data-close>Đóng</button><button class="primary" data-add="combo">Thêm combo vào giỏ</button></div></dialog>
 <div class="notice" role="status" aria-live="polite"></div>
 <script>
+// Theme toggle: dark is the panel default; the choice is remembered per browser when storage allows.
+const themeBtn = document.querySelector('#theme-toggle');
+const applyTheme = t => { document.documentElement.dataset.theme = t; themeBtn.textContent = t === 'light' ? '🌙' : '☀️'; themeBtn.setAttribute('aria-label', t === 'light' ? 'Chuyển giao diện tối' : 'Chuyển giao diện sáng'); };
+try { applyTheme(localStorage.getItem('menu-theme') || 'dark'); } catch { applyTheme('dark'); }
+themeBtn.addEventListener('click', () => { const t = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; applyTheme(t); try { localStorage.setItem('menu-theme', t); } catch {} });
 // PANEL 9 is a static specimen: totals and independent counters stay illustrative.
 const step = (n, compact = false) => `<span class="stepper ${compact ? 'compact' : ''}"><button data-step="-1" aria-label="Giảm số lượng">−</button><output aria-live="polite">${n}</output><button data-step="1" aria-label="Tăng số lượng">＋</button></span>`;
 const heart = (on = false) => `<button class="heart" aria-label="Yêu thích" aria-pressed="${on}">${on ? '♥' : '♡'}</button>`;

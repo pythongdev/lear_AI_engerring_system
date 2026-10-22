@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vận hành · Chủ quán</title>
+<style>
+:root { color-scheme:dark; --bg:#000000; --card:#1F2937; --line:#2D3748; --muted:#9CA3AF; --accent:#FF7A1A; --field:#374151; --text:#F9FAFB; --page:#0a0a0a; --notch:#0f172a; --banner:#3a2310; --banner-ink:#7c4a23; --badge:#3a2a18}
+:root[data-theme=light] { color-scheme:light; --bg:#FFFFFF; --card:#F3F4F6; --line:#E5E7EB; --muted:#6B7280; --accent:#EA6A0C; --field:#E5E7EB; --text:#111827; --page:#F3F4F6; --notch:#E5E7EB; --banner:#FDE8D4; --banner-ink:#C2702F; --badge:#FDECDC}
+/* Hai màu cố định của nguồn cũng đi qua biến. */
+:root { --on-accent:#fff; --backdrop:#000b;
+  /* đề xuất — không có trong nguồn style.md: màu trạng thái, không dùng cho thao tác. */
+  --serving-bg:#18352A; --serving-ink:#B7D9C5;
+  --warning-bg:#38321E; --warning-ink:#E2D398;
+  --vacant-bg:var(--bg); --vacant-ink:var(--muted);
+}
+:root[data-theme=light] {
+  /* đề xuất — không có trong nguồn style.md */
+  --serving-bg:#E8F1EC; --serving-ink:#24543A;
+  --warning-bg:#F5EED6; --warning-ink:#66551D;
+}
+* { box-sizing:border-box }
+body { margin:0; background:var(--page); color:var(--text); font:12px/1.45 'Be Vietnam Pro',system-ui,sans-serif }
+h1,h2,h3,p { margin:0 }
+h1 { font-size:20px; font-weight:600 }
+h2,h3 { font-size:14px; font-weight:500 }
+a { color:inherit; text-underline-offset:3px }
+button,input,textarea,select { font:inherit; color:inherit }
+button { cursor:pointer; border:1px solid var(--line); border-radius:7px; background:transparent; padding:6px 10px }
+button:hover { filter:brightness(1.15) }
+.primary { background:var(--accent); border-color:var(--accent); color:var(--on-accent) }
+:focus-visible { outline:2px solid var(--accent); outline-offset:3px }
+small,.muted { color:var(--muted) }
+small { font-size:11px }
+p + p { margin-top:8px }
+input[type=checkbox] { width:18px; height:18px; accent-color:var(--accent); flex-shrink:0 }
+/* đề xuất — bảng chủ quán dùng chữ 12px, ô số 16px/18px và padding 8px để dễ đọc. */
+table { border-collapse:collapse; width:100%; font-size:12px; text-align:left; margin:6px 0 12px }
+th { color:var(--muted); font-size:12px; font-weight:400 }
+th,td { padding:8px; border-bottom:1px solid var(--line); vertical-align:top }
+td { font-variant-numeric:tabular-nums }
+[data-component] { position:relative; min-width:0 }
+.nhan-component { display:table; width:fit-content; align-self:start; max-width:100%; overflow-wrap:anywhere; padding:2px 6px; margin-bottom:8px; border-radius:5px; background:var(--field); color:var(--text); font:400 10px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace; text-transform:none; letter-spacing:normal }
+body:has(#hien-ten:not(:checked)) .nhan-component { display:none }
+.design-toggle { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 24px; border-bottom:1px solid var(--line); background:var(--bg) }
+.design-toggle label { cursor:pointer }
+.design-toggle a { margin-left:auto }
+/* đề xuất — giữ bố cục chủ quán: sidebar 232px/190px, breakpoint 640px/1050px/1500px. */
+.shell { display:grid; grid-template-columns:232px minmax(0,1fr); min-height:100vh; background:var(--bg) }
+.shell > .nhan-component { position:absolute; top:0; left:0; z-index:2 }
+.navigation { padding:24px 14px; background:var(--page); border-right:1px solid var(--line) }
+.brand { display:flex; align-items:center; gap:10px; margin:0 4px 24px; font-weight:600; text-decoration:none }
+.brand b { display:grid; place-items:center; flex-shrink:0; width:36px; height:36px; background:var(--field); border-radius:8px }
+.brand small { display:block; font-weight:400 }
+.nav-group { margin-bottom:20px }
+summary { cursor:pointer; list-style:none }
+summary::-webkit-details-marker { display:none }
+.nav-group summary { padding:0 12px 8px; color:var(--muted); font-size:11px }
+.nav-links a { display:block; padding:8px 12px; border-radius:7px; text-decoration:none }
+.nav-links a:hover { background:var(--field) }
+.nav-links a[aria-current=page] { color:var(--accent); background:var(--badge); font-weight:600 }
+.page-content { min-width:0; padding:24px 32px 40px }
+.page-content > * + * { margin-top:12px }
+.page-header { display:flex; flex-wrap:wrap; align-items:end; justify-content:space-between; gap:12px; padding-top:24px }
+.page-header > .nhan-component { position:absolute; top:0; left:0 }
+.page-header p { margin-top:8px }
+.card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px; min-width:0 }
+.card > h2 { margin-bottom:12px }
+.card h3 { line-height:1.4 }
+.grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px }
+/* đề xuất — giữ số tổng lớn 28px (26px trên điện thoại) của trang chủ quán. */
+.number { font-size:28px; font-weight:600; line-height:1.4; margin:8px 0; overflow-wrap:anywhere }
+.notice { padding:12px; border:1px solid var(--line); border-radius:8px; background:var(--card) }
+.notice p { margin-top:4px }
+.table-scroll { min-width:0; max-width:100%; overflow-x:auto; border:1px solid var(--line); border-radius:8px }
+.card table { min-width:480px }
+.actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center }
+.badge { display:inline-block; padding:1px 5px; border-radius:5px; font-size:10px; background:var(--field); color:var(--text) }
+.badge > .nhan-component { margin-bottom:4px }
+/* đề xuất — không có trong nguồn style.md: badge cảnh báo dùng màu trạng thái vàng. */
+.badge.warning { background:var(--warning-bg); color:var(--warning-ink) }
+#chu-giai { max-width:1200px; margin:24px auto; padding:24px; border-top:1px solid var(--line) }
+#chu-giai h2 { margin-bottom:12px }
+#chu-giai table { min-width:600px }
+/* Utility còn dùng trong markup và template JavaScript, tương đương Tailwind. */
+.mt-2 { margin-top:8px } .mt-3 { margin-top:12px } .mt-4 { margin-top:16px } .mt-5 { margin-top:20px }
+.mb-2 { margin-bottom:8px } .mb-3 { margin-bottom:12px } .mb-4 { margin-bottom:16px }
+.my-3 { margin-top:12px; margin-bottom:12px } .my-4 { margin-top:16px; margin-bottom:16px }
+.justify-end { justify-content:flex-end } .justify-between { justify-content:space-between }
+.min-w-0 { min-width:0 } .font-normal { font-weight:400 }
+/* đề xuất — giữ utility text-sm 14px của nội dung hiện có. */
+.text-sm { font-size:14px; line-height:20px }
+@media (min-width:641px) {
+  .nav-group details::details-content { content-visibility:visible; display:block }
+  .nav-group details:not([open]) > .nav-links { display:block }
+}
+@media (min-width:1500px) { .page-content { max-width:1500px; width:100%; margin:0 auto } }
+@media (min-width:641px) and (max-width:1050px) {
+  .shell { grid-template-columns:190px minmax(0,1fr) }
+  .page-content { padding:24px 20px }
+}
+@media (max-width:640px) {
+  body { padding-bottom:150px }
+  .design-toggle { padding:10px 14px }
+  .shell { display:block; min-height:0 }
+  .shell > .nhan-component { position:static; margin:6px 14px 0 }
+  .page-content { padding:16px 14px 24px }
+  .page-header .actions { width:100% }
+  .grid { grid-template-columns:minmax(0,1fr) }
+  .number { font-size:26px }
+  .navigation { position:fixed; z-index:10; bottom:0; left:0; right:0; padding:8px 6px max(12px,env(safe-area-inset-bottom)); border:0; border-top:1px solid var(--line); display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px }
+  .navigation > .nhan-component { grid-column:1/-1; margin:0; justify-self:start }
+  .navigation .brand { display:none }
+  .nav-group { margin:0; position:static; min-width:0 }
+  /* đề xuất — giữ nhãn component mobile 8px và vùng chạm điều hướng 44px. */
+  .nav-group > .nhan-component { font-size:8px; margin-bottom:4px; padding:2px }
+  .nav-group summary { min-height:44px; padding:12px 2px; text-align:center; font-size:10px; border-radius:7px }
+  .nav-group.selected summary { color:var(--accent); background:var(--badge) }
+  .nav-group details[open] summary { outline:2px solid var(--accent); outline-offset:3px }
+  .nav-links { position:absolute; bottom:calc(100% + 8px); left:10px; right:10px; padding:12px; border:1px solid var(--line); border-radius:10px; background:var(--card) }
+  .nav-links a { min-height:44px }
+  #chu-giai { padding:16px 14px; margin-top:16px }
+}
+@media (max-width:480px) {
+  .page-content { padding-left:10px; padding-right:10px }
+  h1 { font-size:19px }
+  .card h3 { font-size:13px }
+}
+
+/* đề xuất — giữ kích thước và chuyển động khối vận hành: chữ 13/14/16/18px, nút 36/44px, popover tối đa 280px, trượt .3s; màu trạng thái riêng qua biến ở trên. */
+  .table-map { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .75rem; margin-top: 1rem; }
+  .table-tile { border: 1px solid var(--line); border-radius: 10px; padding: 1rem .5rem; text-align: center; }
+  .table-tile strong, .table-tile small { display: block; color: inherit; }
+  .serving { background: var(--serving-bg); color: var(--serving-ink); }
+  .waiting { background: var(--warning-bg); color: var(--warning-ink); }
+  .vacant { background: var(--vacant-bg); color: var(--vacant-ink); }
+  .metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; }
+  tfoot { background: var(--field); font-weight: 700; }
+  .choice { display: flex; align-items: start; gap: .75rem; padding: 1rem; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
+  .choice:has(input:checked) { background: var(--field); border-color: var(--accent); }
+  .choice input { margin-top: .25rem; }
+  .choice small { display: block; margin-top: .25rem; }
+  #chi-tiet-ban table { min-width: 1080px; }
+  [hidden] { display: none !important; }
+  @media (max-width: 640px) { .metrics { grid-template-columns: 1fr; } .table-map { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+  @media (max-width: 640px) {
+    #chi-tiet-ban .table-scroll { border: 0; border-radius: 0; }
+    #chi-tiet-ban #bang-ban { display: block; min-width: 0; }
+    #bang-ban thead {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+    }
+    #bang-ban tbody, #bang-ban tfoot { display: block; }
+    #bang-ban tfoot { background: transparent; }
+    #bang-ban tbody tr, #bang-ban tfoot tr {
+      display: block; margin-bottom: .75rem; padding: .5rem;
+      border: 1px solid var(--line); border-radius: 10px;
+    }
+    #bang-ban tfoot tr { background: var(--field); margin-bottom: 0; }
+    #bang-ban th[scope="row"] {
+      display: block; padding: .25rem 0 .5rem; background: transparent;
+      color: var(--muted); font-size: 14px; font-weight: 400;
+      text-transform: none; letter-spacing: normal;
+    }
+    #bang-ban td {
+      display: flex; justify-content: space-between; align-items: baseline; gap: .5rem;
+      padding: .375rem 0; border: 0; white-space: nowrap; line-height: 1.5rem;
+    }
+    #bang-ban td::before {
+      content: attr(data-label); font-size: 11px; font-weight: 400; color: var(--muted);
+      white-space: nowrap;
+    }
+  }
+  #chi-tiet-ban .ban-cot { min-width: 0; width: 100%; }
+  .ban-cot th, .ban-cot td { text-align: center; white-space: nowrap; }
+  .ban-cot td { font-size: 18px; font-weight: 400; vertical-align: top; }
+  .ban-cot td:last-child { font-weight: 700; }
+  .ban-cot .dong { display: block; }
+  .ban-cot .dong + .dong { margin-top: .25rem; }
+  .ban-cot .co-rau { color: var(--text); }
+  .ban-cot .tien-da-ra { color: var(--accent); }
+  .ban-cot .khong-rau, .ban-cot .tien-don { color: var(--text); }
+  #bang-tong-thieu { min-width: 0; width: 100%; }
+  #bang-tong-thieu td { text-align: center; white-space: nowrap; vertical-align: top; font-size: 16px; }
+  #bang-tong-thieu td .dong { display: block; }
+  #bang-tong-thieu td.khong { color: var(--muted); }
+  #bang-tong-thieu tr.dong-ghep th, #bang-tong-thieu tr.dong-ghep td { background: var(--field); color: var(--text); }
+  #bang-tong-thieu .them { color: var(--text); }
+  #bang-tong-thieu td.nhieu { background: var(--warning-bg); }
+  #bang-tong-thieu .chon-ban { min-height: 44px; padding: 0 .25rem; border: 0; background: none; color: var(--text); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+  #bang-tong-thieu .chon-ban[aria-expanded="true"] { color: var(--accent); background: var(--field); border-radius: 7px; text-decoration: none; }
+  .truot { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+  .truot.mo { grid-template-rows: 1fr; }
+  .truot-trong { overflow: hidden; min-height: 0; }
+  .truot.mo .truot-trong { padding: .5rem 0; }
+  #bang-tong-thieu tr.dong-truot > td { padding: 0 .5rem; background: var(--bg); text-align: left; }
+  #bang-tong-thieu .ban-cot { min-width: 0; width: 100%; }
+  @media (prefers-reduced-motion: reduce) { .truot { transition: none; } }
+  #bang-tong-thieu .o-so { min-height: 36px; min-width: 44px; padding: .125rem .5rem; border: 1px solid var(--line); background: transparent; border-radius: 7px; font: inherit; color: inherit; }
+  #bang-tong-thieu .o-so[aria-expanded="true"] { border-style: solid; border-color: var(--accent); background: var(--field); }
+  #chon-so { position: absolute; z-index: 30; padding: .75rem; max-width: min(280px, calc(100vw - 16px)); background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+  #chon-so p { font-size: 13px; color: var(--muted); margin-bottom: .5rem; }
+  #chon-so .chon-so-nut { display: flex; flex-wrap: wrap; gap: .375rem; }
+  #chon-so .chon-so-nut button { min-width: 44px; padding: .25rem .5rem; font-weight: 700; }
+  #bang-tong-thieu .o-tien { min-height: 36px; padding: .125rem .5rem; border: 1px solid var(--line); background: transparent; border-radius: 7px; font: inherit; color: inherit; }
+  #bang-tong-thieu .o-tien:hover { border-style: solid; background: var(--field); }
+  #xac-nhan-tt .canh-bao { color: var(--text); }
+  #xac-nhan-ra .actions button { min-width: 96px; }
+  #lich-su-ra { min-width: 0; width: 100%; }
+  #lich-su-ra td { white-space: nowrap; }
+  #lich-su-ra tr.moi td, #lich-su-ra tr.moi th { background: var(--field); }
+  .lich-su-ban { display: grid; gap: .5rem; }
+  .lich-su-ban details { border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+  .lich-su-ban summary { display: flex; justify-content: space-between; gap: .5rem; padding: .625rem .875rem; cursor: pointer; font-weight: 700; }
+  .lich-su-ban summary span { font-weight: 400; color: var(--muted); font-size: 14px; }
+  .lich-su-ban ol { margin: 0; padding: 0 .875rem .75rem; list-style: none; }
+  .lich-su-ban li { display: grid; grid-template-columns: 4.5rem 5.5rem minmax(0,1fr) auto; gap: .5rem; padding: .375rem 0; border-top: 1px solid var(--line); font-size: 14px; }
+  .lich-su-ban li.moi { background: var(--field); }
+  .lich-su-ban li b { text-align: right; }
+  #bang-tong-thieu td.tien { color: var(--accent); font-weight: 700; }
+  #bang-tong-thieu td.nhieu strong { font-weight: 700; margin-left: .125rem; }
+  .ban-cot .nhieu { margin-top: .125rem; font-size: 13px; color: var(--warning-ink); text-transform: none; }
+
+/* đề xuất — không có trong nguồn style.md: nhấn ô nhiều, trạng thái bàn và lịch sử bằng nền trạng thái/trung tính. */
+#bang-tong-thieu td.nhieu { color:var(--warning-ink) }
+#bang-tong-thieu .them { margin-left:4px; font-weight:600 }
+#xac-nhan-tt .canh-bao { color:var(--warning-ink) }
+/* đề xuất — bảng tổng tối thiểu 560px, bảng lồng/lịch sử 480px, lịch sử mobile hai cột; cuộn trong wrapper. */
+#bang-tong-thieu { min-width:560px; table-layout:fixed }
+#bang-tong-thieu .ban-cot { min-width:480px }
+#lich-su-ra { min-width:480px }
+@media (max-width:480px) {
+  .lich-su-ban li { grid-template-columns:repeat(2,minmax(0,1fr)); overflow-wrap:anywhere }
+  .lich-su-ban summary { flex-wrap:wrap }
+}
+dialog { width:min(380px,calc(100% - 24px)); max-height:calc(100dvh - 32px); border:1px solid var(--line); border-radius:12px; background:var(--card); color:var(--text); padding:18px; overscroll-behavior:contain }
+dialog::backdrop { background:var(--backdrop) }
+dialog h2 { font-size:16px; margin-bottom:18px }
+dialog .actions { display:flex; gap:12px; margin-top:16px }
+dialog .actions button { flex:1; min-height:34px }
+</style>
+</head>
+<body>
+<div class="design-toggle"><input type="checkbox" id="hien-ten" checked><label for="hien-ten">Hiện tên component</label><a href="../index.html">Mục lục thiết kế</a><button id="theme-toggle" aria-label="Chuyển giao diện sáng" title="Chuyển sáng / tối">☀️</button></div>
+<div data-component="KhungChuQuan" class="shell" ><span class="nhan-component">KhungChuQuan</span>
+<nav data-component="ThanhDieuHuong" class="navigation" aria-label="Trang chủ quán"><span class="nhan-component">ThanhDieuHuong</span>
+<a class="brand" href="../index.html"><b>BT</b><span>Bánh cuốn Bà Thanh<small>Chủ quán</small></span></a><div data-component="NhomDieuHuong" class="nav-group selected" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hôm nay</summary><div class="nav-links"><a href="../tong_quan/tong-quan.html">Tổng quan</a><a href="van-hanh.html" aria-current="page">Vận hành</a><a href="../tong-ket.html">Tổng kết</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Thực đơn</summary><div class="nav-links"><a href="../san-pham.html">Sản phẩm</a><a href="../menu-gia.html">Menu &amp; giá</a><a href="../danh-muc.html">Danh mục</a><a href="../combo.html">Combo</a><a href="../topping.html">Topping</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Con người</summary><div class="nav-links"><a href="../nhan-vien.html">Nhân viên</a><a href="../giao-viec.html">Giao việc</a><a href="../dao-tao.html">Đào tạo</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hàng &amp; tiền</summary><div class="nav-links"><a href="../nguyen-lieu.html">Nguyên liệu</a><a href="../kho.html">Kho</a><a href="../khoan-chi.html">Khoản chi</a></div></details>
+</div>
+
+</nav>
+<main data-component="TrangVanHanh" class="page-content" ><span class="nhan-component">TrangVanHanh</span>
+<header data-component="DauTrang" class="page-header" ><span class="nhan-component">DauTrang</span>
+<div><h1>VẬN HÀNH</h1><p class="muted">Ngày bán 20/10/2026 · Đọc lúc 09:42:15 (giờ Việt Nam)</p><p>Số minh hoạ — bản đề xuất, không phải hợp đồng</p></div></header>
+<section data-component="BangThieuTheoBan" class="card" ><span class="nhan-component">BangThieuTheoBan</span>
+<h2>Tổng thiếu theo bàn</h2><div class="mt-3"><div class="table-scroll" tabindex="0" role="region" aria-label="Tổng thiếu theo bàn"><table id="bang-tong-thieu"><thead><tr><th scope="col">Bàn</th><th scope="col">Thịt</th><th scope="col">Mộc nhĩ</th><th scope="col">Trứng</th><th scope="col">Chay</th><th scope="col">Canh</th><th scope="col">Tiền bánh đã ra</th></tr></thead><tbody><tr><th scope="row"><button type="button" class="chon-ban" data-ban="01" aria-expanded="false">Bàn 01</button></th><td class="nhieu">2<strong>*</strong></td><td class="khong">0</td><td><span class="dong">1 tái</span></td><td>2</td><td class="nhieu">1<strong>*</strong></td><td class="tien">16.000đ</td></tr><tr><th scope="row"><button type="button" class="chon-ban" data-ban="02" aria-expanded="false">Bàn 02</button></th><td>2</td><td class="nhieu">1<strong>*</strong></td><td class="khong">0</td><td class="khong">0</td><td class="khong">0</td><td class="tien">21.000đ</td></tr><tr><th scope="row"><button type="button" class="chon-ban" data-ban="03" aria-expanded="false">Bàn 03</button></th><td class="khong">0</td><td>2</td><td class="khong">0</td><td>2</td><td>2</td><td class="tien">15.000đ</td></tr><tr><th scope="row"><button type="button" class="chon-ban" data-ban="04" aria-expanded="false">Bàn 04</button></th><td class="nhieu">2<strong>*</strong></td><td>2</td><td class="nhieu"><span class="dong">1 tái<strong>*</strong></span><span class="dong">1 chín<strong>*</strong></span></td><td class="khong">0</td><td>1</td><td class="tien">34.000đ</td></tr><tr><th scope="row"><button type="button" class="chon-ban" data-ban="05" aria-expanded="false">Bàn 05</button></th><td>2</td><td>2</td><td class="khong">0</td><td class="khong">0</td><td class="nhieu">1<strong>*</strong></td><td class="tien">20.000đ</td></tr></tbody><tfoot><tr><th scope="row">Tổng</th><td id="tt-1" data-goc="8">8</td><td id="tt-2" data-goc="7">7</td><td id="tt-trung"><span class="dong" data-loai="tái" data-goc="2">2 tái</span><span class="dong" data-loai="chín" data-goc="1">1 chín</span></td><td id="tt-0" data-goc="4">4</td><td id="tt-canh" data-goc="5">5</td><td class="tien" id="tt-tien" data-goc="106000">106.000đ</td></tr></tfoot></table></div><p class="muted mt-2"><strong>*</strong> nhiều nhân (bánh, trứng) hoặc canh nhiều rau. Bấm vào một ô số để báo đã đem ra.</p><div id="chon-so" role="dialog" aria-labelledby="chon-so-tieu-de" hidden><p id="chon-so-tieu-de"></p><div class="chon-so-nut"></div></div><dialog id="xac-nhan-ra" aria-labelledby="xac-nhan-tieu-de"><h3 id="xac-nhan-tieu-de">Xác nhận đem ra</h3><p id="xac-nhan-noi-dung" class="my-3"></p><div class="actions justify-end"><button type="button" id="xac-nhan-huy">Huỷ</button><button type="button" id="xac-nhan-dong-y" class="primary">Xác nhận</button></div></dialog><dialog id="xac-nhan-tt" aria-labelledby="xac-nhan-tt-tieu-de"><h3 id="xac-nhan-tt-tieu-de">Xác nhận thanh toán</h3><p id="xac-nhan-tt-noi-dung" class="my-3"></p><div class="actions justify-end"><button type="button" id="xac-nhan-tt-huy">Huỷ</button><button type="button" id="xac-nhan-tt-dong-y" class="primary">Đã thanh toán</button></div></dialog></div></section><section data-component="CongThuGhepDon" class="card" ><span class="nhan-component">CongThuGhepDon</span>
+<h2>Cộng thử ghép đơn</h2><span data-component="HuyHieuTrangThai" class="badge warning" ><span class="nhan-component">HuyHieuTrangThai</span>
+đề xuất — chưa có trong hợp đồng</span><div class="grid mt-4"><fieldset><legend>Bàn sắp phục vụ</legend><label class="choice" for="ban-7"><input type="checkbox" id="ban-7" name="ban-ghep" value="7"><span><strong>Bàn 07 · 30.000đ</strong><small>Chay 2 · Thịt 4 · Thịt + mộc nhĩ 2</small><small>Canh 2 bát · Chưa có món ra bàn</small></span></label><label class="choice" for="ban-8"><input type="checkbox" id="ban-8" name="ban-ghep" value="8"><span><strong>Bàn 08 · 28.000đ</strong><small>Chay 4 · Thịt 0 · Thịt + mộc nhĩ 4</small><small>Canh 3 bát · Chưa có món ra bàn</small></span></label><label class="choice" for="ban-9"><input type="checkbox" id="ban-9" name="ban-ghep" value="9"><span><strong>Bàn 09 · 36.000đ</strong><small>Chay 0 · Thịt 6 · Thịt + mộc nhĩ 3</small><small>Canh 2 bát · Chưa có món ra bàn</small></span></label><button type="button" id="bo-chon">Bỏ chọn hết</button></fieldset><div class="min-w-0"><p id="tom-tat-chon" role="status" class="mb-3">Đã chọn 0 bàn.</p></div></div></section><section data-component="KhoiBanDangPhucVu" class="card" ><span class="nhan-component">KhoiBanDangPhucVu</span>
+<h2>Bàn đang phục vụ</h2><span data-component="HuyHieuTrangThai" class="badge warning" ><span class="nhan-component">HuyHieuTrangThai</span>
+đề xuất — chưa có trong hợp đồng</span><div class="actions justify-between my-4"><p class="number">6 <span class="text-sm font-normal">tổng bàn đang phục vụ</span></p><button type="button" id="nut-chi-tiet" aria-expanded="false" aria-controls="bang-chi-tiet">Chi tiết</button></div>
+<div id="chi-tiet-ban" class="mt-4"><div class="khoi-ban-cot mb-4" data-ban="01"><div class="actions justify-between mb-2"><strong>Bàn 01</strong><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="vung-ban-01">Hiện</button></div><div class="table-scroll" id="vung-ban-01" hidden tabindex="0" role="region" aria-label="Bàn 01 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Chay</th><th scope="col">Thịt<span class="dong nhieu">nhiều</span></th><th scope="col">Trứng</th><th scope="col">Canh<span class="dong nhieu">nhiều</span></th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 4</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 4</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 1</span><span class="dong tien-da-ra">đã ra 0</span><span class="dong tien-don">thiếu 1</span></td><td><span class="dong co-rau">rau 1 / 1</span><span class="dong khong-rau"><s>rau</s> 1 / 0</span><span class="dong gio">giò 1 / 0</span></td><td><span class="dong tien-da-ra">16.000đ</span><span class="dong tien-don">50.000đ</span></td></tr></tbody></table></div></div><div class="khoi-ban-cot mb-4" data-ban="02"><div class="actions justify-between mb-2"><strong>Bàn 02</strong><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="vung-ban-02">Hiện</button></div><div class="table-scroll" id="vung-ban-02" hidden tabindex="0" role="region" aria-label="Bàn 02 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Thịt</th><th scope="col">Thịt + mộc nhĩ<span class="dong nhieu">nhiều</span></th><th scope="col">Canh</th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 6</span><span class="dong tien-da-ra">đã ra 4</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 2</span><span class="dong tien-da-ra">đã ra 1</span><span class="dong tien-don">thiếu 1</span></td><td><span class="dong co-rau">rau 2 / 2</span></td><td><span class="dong tien-da-ra">21.000đ</span><span class="dong tien-don">34.000đ</span></td></tr></tbody></table></div></div><div class="khoi-ban-cot mb-4" data-ban="03"><div class="actions justify-between mb-2"><strong>Bàn 03</strong><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="vung-ban-03">Hiện</button></div><div class="table-scroll" id="vung-ban-03" hidden tabindex="0" role="region" aria-label="Bàn 03 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Chay</th><th scope="col">Thịt + mộc nhĩ</th><th scope="col">Canh</th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 3</span><span class="dong tien-da-ra">đã ra 1</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 5</span><span class="dong tien-da-ra">đã ra 3</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong co-rau">rau 2 / 1</span><span class="dong khong-rau"><s>rau</s> 1 / 0</span><span class="dong gio">giò 2 / 0</span></td><td><span class="dong tien-da-ra">15.000đ</span><span class="dong tien-don">47.000đ</span></td></tr></tbody></table></div></div><div class="khoi-ban-cot mb-4" data-ban="04"><div class="actions justify-between mb-2"><strong>Bàn 04</strong><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="vung-ban-04">Hiện</button></div><div class="table-scroll" id="vung-ban-04" hidden tabindex="0" role="region" aria-label="Bàn 04 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Chay</th><th scope="col">Thịt<span class="dong nhieu">nhiều</span></th><th scope="col">Thịt + mộc nhĩ</th><th scope="col">Trứng<span class="dong nhieu">nhiều</span></th><th scope="col">Canh</th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 2</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 0</span></td><td><span class="dong">tổng 4</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 4</span><span class="dong tien-da-ra">đã ra 2</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 3</span><span class="dong tien-da-ra">đã ra 1</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong co-rau">rau 1 / 1</span><span class="dong khong-rau"><s>rau</s> 2 / 1</span></td><td><span class="dong tien-da-ra">34.000đ</span><span class="dong tien-don">72.000đ</span></td></tr></tbody></table></div></div><div class="khoi-ban-cot mb-4" data-ban="05"><div class="actions justify-between mb-2"><strong>Bàn 05</strong><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="vung-ban-05">Hiện</button></div><div class="table-scroll" id="vung-ban-05" hidden tabindex="0" role="region" aria-label="Bàn 05 theo cột"><table class="ban-cot"><thead><tr><th scope="col">Thịt</th><th scope="col">Thịt + mộc nhĩ</th><th scope="col">Canh<span class="dong nhieu">nhiều</span></th><th scope="col"><span class="dong tien-da-ra">Tiền bánh đã ra</span><span class="dong tien-don">Tiền đơn</span></th></tr></thead><tbody><tr><td><span class="dong">tổng 3</span><span class="dong tien-da-ra">đã ra 1</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong">tổng 6</span><span class="dong tien-da-ra">đã ra 4</span><span class="dong tien-don">thiếu 2</span></td><td><span class="dong co-rau">rau 2 / 1</span></td><td><span class="dong tien-da-ra">20.000đ</span><span class="dong tien-don">36.000đ</span></td></tr></tbody></table></div></div><div id="bang-chi-tiet" hidden><div data-component="BangDuLieu" class="" ><span class="nhan-component">BangDuLieu</span>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Bàn"><table id="bang-ban"><thead><tr><th scope="col">Bàn</th><th scope="col" data-cot="tong">Đặt ban đầu (bánh)</th><th scope="col" data-cot="tong">Đã ra</th><th scope="col" data-cot="tong">Còn thiếu</th><th scope="col">Bánh Chay (đặt / đã ra)</th><th scope="col">Bánh Thịt (đặt / đã ra)</th><th scope="col">Bánh Thịt + mộc nhĩ (đặt / đã ra)</th><th scope="col">Canh (đặt / đã lấy)</th><th scope="col">Tiền đơn</th><th scope="col">Tiền bánh đã ra</th></tr></thead><tbody><tr><th scope="row">Bàn 01</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">8</td><td data-label="Đã ra" data-cot="tong">4</td><td data-label="Còn thiếu" data-cot="tong">4</td><td data-label="Bánh Chay (đặt / đã ra)">4 / 2</td><td data-label="Bánh Thịt (đặt / đã ra)">4 / 2</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">0 / 0</td><td data-label="Canh (đặt / đã lấy)">2 / 1</td><td data-label="Tiền đơn">28.000đ</td><td data-label="Tiền bánh đã ra">14.000đ</td></tr><tr><th scope="row">Bàn 02</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">8</td><td data-label="Đã ra" data-cot="tong">5</td><td data-label="Còn thiếu" data-cot="tong">3</td><td data-label="Bánh Chay (đặt / đã ra)">0 / 0</td><td data-label="Bánh Thịt (đặt / đã ra)">6 / 4</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">2 / 1</td><td data-label="Canh (đặt / đã lấy)">2 / 2</td><td data-label="Tiền đơn">32.000đ</td><td data-label="Tiền bánh đã ra">20.000đ</td></tr><tr><th scope="row">Bàn 03</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">8</td><td data-label="Đã ra" data-cot="tong">4</td><td data-label="Còn thiếu" data-cot="tong">4</td><td data-label="Bánh Chay (đặt / đã ra)">3 / 1</td><td data-label="Bánh Thịt (đặt / đã ra)">0 / 0</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">5 / 3</td><td data-label="Canh (đặt / đã lấy)">3 / 1</td><td data-label="Tiền đơn">29.000đ</td><td data-label="Tiền bánh đã ra">15.000đ</td></tr><tr><th scope="row">Bàn 04</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">10</td><td data-label="Đã ra" data-cot="tong">6</td><td data-label="Còn thiếu" data-cot="tong">4</td><td data-label="Bánh Chay (đặt / đã ra)">2 / 2</td><td data-label="Bánh Thịt (đặt / đã ra)">4 / 2</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">4 / 2</td><td data-label="Canh (đặt / đã lấy)">3 / 2</td><td data-label="Tiền đơn">38.000đ</td><td data-label="Tiền bánh đã ra">22.000đ</td></tr><tr><th scope="row">Bàn 05</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">9</td><td data-label="Đã ra" data-cot="tong">5</td><td data-label="Còn thiếu" data-cot="tong">4</td><td data-label="Bánh Chay (đặt / đã ra)">0 / 0</td><td data-label="Bánh Thịt (đặt / đã ra)">3 / 1</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">6 / 4</td><td data-label="Canh (đặt / đã lấy)">2 / 1</td><td data-label="Tiền đơn">36.000đ</td><td data-label="Tiền bánh đã ra">20.000đ</td></tr><tr><th scope="row">Bàn 06</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">12</td><td data-label="Đã ra" data-cot="tong">7</td><td data-label="Còn thiếu" data-cot="tong">5</td><td data-label="Bánh Chay (đặt / đã ra)">5 / 3</td><td data-label="Bánh Thịt (đặt / đã ra)">5 / 3</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">2 / 1</td><td data-label="Canh (đặt / đã lấy)">4 / 2</td><td data-label="Tiền đơn">43.000đ</td><td data-label="Tiền bánh đã ra">25.000đ</td></tr></tbody><tfoot><tr><th scope="row">Tổng 6 bàn</th><td data-label="Đặt ban đầu (bánh)" data-cot="tong">55</td><td data-label="Đã ra" data-cot="tong">31</td><td data-label="Còn thiếu" data-cot="tong">24</td><td data-label="Bánh Chay (đặt / đã ra)">14 / 8</td><td data-label="Bánh Thịt (đặt / đã ra)">22 / 12</td><td data-label="Bánh Thịt + mộc nhĩ (đặt / đã ra)">19 / 11</td><td data-label="Canh (đặt / đã lấy)">16 / 9</td><td data-label="Tiền đơn">206.000đ</td><td data-label="Tiền bánh đã ra">116.000đ</td></tr></tfoot></table></div></div></div></div></section><section data-component="SoDoBan" class="card" ><span class="nhan-component">SoDoBan</span>
+<div class="actions justify-between"><h3>Sơ đồ 15 bàn</h3><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="vung-so-do">Hiện</button></div><div id="vung-so-do" class="mt-2" hidden><p class="muted">Xanh: đang phục vụ · Vàng: sắp phục vụ · Xám: còn trống. Thứ tự số minh hoạ, không phải vị trí thật.</p><div class="table-map"><div class="table-tile serving"><strong>Bàn 01</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 02</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 03</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 04</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 05</strong><small>Đang phục vụ</small></div><div class="table-tile serving"><strong>Bàn 06</strong><small>Đang phục vụ</small></div><div class="table-tile waiting"><strong>Bàn 07</strong><small>Sắp phục vụ</small></div><div class="table-tile waiting"><strong>Bàn 08</strong><small>Sắp phục vụ</small></div><div class="table-tile waiting"><strong>Bàn 09</strong><small>Sắp phục vụ</small></div><div class="table-tile vacant"><strong>Bàn 10</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 11</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 12</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 13</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 14</strong><small>Còn trống</small></div><div class="table-tile vacant"><strong>Bàn 15</strong><small>Còn trống</small></div></div></div></section><section data-component="LichSuDemRa" class="card" ><span class="nhan-component">LichSuDemRa</span>
+<h2>Lịch sử phục vụ</h2><div class="mt-3"><div class="actions justify-between mb-2"><p><strong>Lịch sử đem ra</strong></p><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="vung-lich-su-ra">Hiện</button></div><div id="vung-lich-su-ra" hidden><div class="table-scroll" tabindex="0" role="region" aria-label="Lịch sử đem ra"><table id="lich-su-ra"><thead><tr><th scope="col">Giờ</th><th scope="col">Bàn</th><th scope="col">Món</th><th scope="col">Số cái</th><th scope="col">Lần thứ (của bàn)</th></tr></thead><tbody></tbody></table></div></div></div><div class="mt-5"><div class="actions justify-between mb-2"><p><strong>Lịch sử theo bàn</strong></p><button type="button" class="nut-an-hien" aria-expanded="false" aria-controls="lich-su-ban">Hiện</button></div><div id="lich-su-ban" class="lich-su-ban" hidden></div></div></section><aside class="notice" aria-labelledby="gia-dinh"><h2 id="gia-dinh">Giả định của bản thiết kế</h2><p>Chủ repo chốt thiết kế ngày 21/10/2026 (T-224) và xác nhận: sắp phục vụ = bàn đã gửi lượt gọi mà chưa có phần nào ra bàn; đã đem ra = đã ra bàn; bấm đem ra là người đứng quầy; thanh toán chỉ thu tiền phần đã ra (vế còn hở: U-103).</p><p class="mt-2">Còn là cách hiểu của Claude, chưa xác nhận: cột Thịt · Mộc nhĩ · Chay đếm số bánh theo loại nhân. Số trên trang là minh hoạ.</p></aside></main></div><section id="chu-giai"><h2>Chú giải component</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Chú giải component"><table><thead><tr><th scope="col">Tên</th><th scope="col">Nó là gì</th><th scope="col">Phạm vi</th></tr></thead><tbody><tr><th scope="row">KhungChuQuan</th><td>Vỏ trang nối điều hướng với nội dung quản trị.</td><td>dùng chung</td></tr><tr><th scope="row">ThanhDieuHuong</th><td>Thanh bên trên máy tính, thanh bốn nhóm ở đáy điện thoại.</td><td>dùng chung</td></tr><tr><th scope="row">NhomDieuHuong</th><td>Một nhóm liên kết đến các trang cùng mảng.</td><td>dùng chung</td></tr><tr><th scope="row">DauTrang</th><td>Tiêu đề trang, ngày bán và giờ đọc minh hoạ.</td><td>dùng chung</td></tr><tr><th scope="row">BangDuLieu</th><td>Bảng dữ liệu có vùng cuộn ngang riêng.</td><td>dùng chung</td></tr><tr><th scope="row">HuyHieuTrangThai</th><td>Nhãn chỉ rõ phần đề xuất chưa có trong hợp đồng.</td><td>dùng chung</td></tr><tr><th scope="row">TrangVanHanh</th><td>Nội dung trang Vận hành, route đề xuất /chu-quan/van-hanh.</td><td>riêng trang</td></tr><tr><th scope="row">SoDoBan</th><td>Lưới bàn 1–15; màu và chữ cùng chỉ trạng thái, không mô tả vị trí thật.</td><td>riêng trang</td></tr><tr><th scope="row">LichSuDemRa</th><td>Lịch sử đem ra theo giờ và lịch sử theo bàn; mỗi phần có nút Hiện/Ẩn, mặc định ẩn.</td><td>riêng trang</td></tr><tr><th scope="row">BangThieuTheoBan</th><td>Số còn thiếu từng bàn theo Thịt, Mộc nhĩ, Trứng (tách tái / chín), Chay, Canh, có hàng tổng.</td><td>riêng trang</td></tr><tr><th scope="row">KhoiBanDangPhucVu</th><td>Tổng bàn đang phục vụ; nút mở/đóng bảng từng bàn có dòng tổng.</td><td>riêng trang</td></tr><tr><th scope="row">CongThuGhepDon</th><td>Tick bàn sắp phục vụ để cộng thử trên màn hình; không ghi dữ liệu.</td><td>riêng trang</td></tr></tbody></table></div></section>
+<script>
+const themeBtn = document.querySelector('#theme-toggle');
+const applyTheme = t => { document.documentElement.dataset.theme = t; themeBtn.textContent = t === 'light' ? '🌙' : '☀️'; themeBtn.setAttribute('aria-label', t === 'light' ? 'Chuyển giao diện tối' : 'Chuyển giao diện sáng'); };
+try { applyTheme(localStorage.getItem('menu-theme') || 'dark'); } catch { applyTheme('dark'); }
+themeBtn.addEventListener('click', () => { const t = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; applyTheme(t); try { localStorage.setItem('menu-theme', t); } catch {} });
+
+const demo = {"prices": [3000, 4000, 4000], "active": [{"id": 1, "ordered": [4, 4, 0], "served": [2, 2, 0], "soup": 2, "taken": 1}, {"id": 2, "ordered": [0, 6, 2], "served": [0, 4, 1], "soup": 2, "taken": 2}, {"id": 3, "ordered": [3, 0, 5], "served": [1, 0, 3], "soup": 3, "taken": 1}, {"id": 4, "ordered": [2, 4, 4], "served": [2, 2, 2], "soup": 3, "taken": 2}, {"id": 5, "ordered": [0, 3, 6], "served": [0, 1, 4], "soup": 2, "taken": 1}, {"id": 6, "ordered": [5, 5, 2], "served": [3, 3, 1], "soup": 4, "taken": 2}], "waiting": [{"id": 7, "ordered": [2, 4, 2], "served": [0, 0, 0], "soup": 2, "taken": 0}, {"id": 8, "ordered": [4, 0, 4], "served": [0, 0, 0], "soup": 3, "taken": 0}, {"id": 9, "ordered": [0, 6, 3], "served": [0, 0, 0], "soup": 2, "taken": 0}]};
+const sumOrdered = rows => rows.reduce((sum, row) => sum.map((v, i) => v + row.ordered[i]), [0, 0, 0]);
+const amount = counts => counts.reduce((sum, n, i) => sum + n * demo.prices[i], 0);
+const money = value => value.toLocaleString('vi-VN') + 'đ';
+const currentCounts = sumOrdered(demo.active);
+const current = [...currentCounts, demo.active.reduce((n, row) => n + row.soup, 0), amount(currentCounts)];
+const choices = [...document.querySelectorAll('input[name="ban-ghep"]')];
+function updateMerge() {
+  const ids = choices.filter(input => input.checked).map(input => Number(input.value));
+  const selected = demo.waiting.filter(row => ids.includes(row.id));
+  const counts = sumOrdered(selected);
+  const added = [...counts, selected.reduce((n, row) => n + row.soup, 0), amount(counts)];
+  const bangThieu = document.querySelector('#bang-tong-thieu tbody');
+  bangThieu.querySelectorAll('tr.dong-ghep').forEach(tr => tr.remove());
+  const o = n => n === 0 ? '<td class="khong">0</td>' : `<td>${n}</td>`;
+  selected.forEach(row => {
+    bangThieu.insertAdjacentHTML('beforeend', `<tr class="dong-ghep"><th scope="row">Bàn ${String(row.id).padStart(2, '0')}</th>${o(row.ordered[1] - row.served[1])}${o(row.ordered[2] - row.served[2])}${o(0)}${o(row.ordered[0] - row.served[0])}${o(row.soup - row.taken)}<td class="tien">0đ</td></tr>`);
+  });
+  const themThieu = { 'tt-0': 0, 'tt-1': 0, 'tt-2': 0, 'tt-canh': 0 };
+  selected.forEach(row => {
+    [0, 1, 2].forEach(i => { themThieu[`tt-${i}`] += row.ordered[i] - row.served[i]; });
+    themThieu['tt-canh'] += row.soup - row.taken;
+  });
+  Object.entries(themThieu).forEach(([id, n]) => {
+    const cell = document.getElementById(id);
+    cell.innerHTML = cell.dataset.goc + (n > 0 ? `<span class="them">+${n}</span>` : '');
+  });
+  document.getElementById('tom-tat-chon').textContent = `Đã chọn ${selected.length} bàn. Sau khi ghép: ${currentCounts.reduce((a, b) => a + b, 0) + counts.reduce((a, b) => a + b, 0)} bánh, ${current[3] + added[3]} bát canh, ${money(current[4] + added[4])}.`;
+}
+choices.forEach(input => input.addEventListener('change', updateMerge));
+document.getElementById('bo-chon').addEventListener('click', () => {
+  choices.forEach(input => { input.checked = false; });
+  updateMerge();
+});
+const TEN_COT = ['Thịt', 'Mộc nhĩ', 'Trứng', 'Chay', 'Canh'];
+const DON_VI = { 'Trứng': 'quả trứng', 'Canh': 'bát canh' };
+const O_TONG = { 'Thịt': 'tt-1', 'Mộc nhĩ': 'tt-2', 'Chay': 'tt-0', 'Canh': 'tt-canh' };
+const sao = '<strong>*</strong>';
+const nutSo = (n, ten, loai, nhieu) => `<button type="button" class="o-so" data-n="${n}" data-ten="${ten}" data-loai="${loai}" data-nhieu="${nhieu ? 1 : ''}" aria-haspopup="dialog" aria-expanded="false">${n}${loai ? ' ' + loai : ''}${nhieu ? sao : ''}</button>`;
+document.querySelectorAll('#bang-tong-thieu > tbody > tr').forEach(tr => {
+  [...tr.children].slice(1, 6).forEach((td, i) => {
+    if (td.classList.contains('khong')) return;
+    const nhieu = !!td.querySelector('strong');
+    const dong = td.querySelectorAll('.dong');
+    if (dong.length) {
+      dong.forEach(sp => {
+        const n = parseInt(sp.textContent, 10);
+        const loai = sp.textContent.replace(/^\d+\s*/, '').replace('*', '').trim();
+        sp.innerHTML = nutSo(n, TEN_COT[i], loai, nhieu);
+      });
+    } else {
+      td.innerHTML = nutSo(parseInt(td.textContent, 10), TEN_COT[i], '', nhieu);
+    }
+  });
+});
+const lichSu = [
+  { gio: '09:05:10', ban: 'Bàn 02', mon: 'Thịt', so: 2 },
+  { gio: '09:08:40', ban: 'Bàn 01', mon: 'Chay', so: 2 },
+  { gio: '09:12:05', ban: 'Bàn 02', mon: 'Thịt', so: 2 },
+  { gio: '09:12:30', ban: 'Bàn 02', mon: 'Mộc nhĩ', so: 1 },
+  { gio: '09:20:15', ban: 'Bàn 01', mon: 'Thịt', so: 1 },
+  { gio: '09:31:50', ban: 'Bàn 01', mon: 'Thịt', so: 1 },
+  { gio: '09:33:00', ban: 'Bàn 04', mon: 'Trứng tái', so: 1 },
+];
+function veLichSu(moi) {
+  const lan = {};
+  const hang = lichSu.map((x, i) => {
+    lan[x.ban] = (lan[x.ban] || 0) + 1;
+    return `<tr${moi && i === lichSu.length - 1 ? ' class="moi"' : ''}><td>${x.gio}</td><th scope="row">${x.ban}</th><td>${x.mon}</td><td>${x.so}</td><td>lần ${lan[x.ban]}</td></tr>`;
+  });
+  document.querySelector('#lich-su-ra tbody').innerHTML = hang.reverse().join('');
+  const cacBan = ['Bàn 01', 'Bàn 02', 'Bàn 03', 'Bàn 04', 'Bàn 05'];
+  const dangMo = new Set([...document.querySelectorAll('#lich-su-ban details[open]')].map(d => d.dataset.ban));
+  document.getElementById('lich-su-ban').innerHTML = cacBan.map(b => {
+    const cua = lichSu.map((x, i) => ({ ...x, i })).filter(x => x.ban === b);
+    const tong = cua.reduce((t, x) => t + x.so, 0);
+    const ds = cua.length
+      ? cua.map((x, k) => `<li${moi && x.i === lichSu.length - 1 ? ' class="moi"' : ''}><span>lần ${k + 1}</span><span>${x.gio}</span><span>${x.mon}</span><b>${x.so} cái</b></li>`).join('')
+      : '<li><span class="muted">Chưa đem ra lần nào.</span></li>';
+    const mo = dangMo.has(b) || (moi && lichSu[lichSu.length - 1].ban === b);
+    return `<details data-ban="${b}"${mo ? ' open' : ''}><summary>${b}<span>${cua.length} lần · ${tong} cái</span></summary><ol>${ds}</ol></details>`;
+  }).join('');
+}
+veLichSu(false);
+document.querySelectorAll('.nut-an-hien').forEach(nut => nut.addEventListener('click', () => {
+  const mo = nut.getAttribute('aria-expanded') !== 'true';
+  nut.setAttribute('aria-expanded', String(mo));
+  nut.textContent = mo ? 'Ẩn' : 'Hiện';
+  document.getElementById(nut.getAttribute('aria-controls')).hidden = !mo;
+}));
+const chonSo = document.getElementById('chon-so');
+const xacNhan = document.getElementById('xac-nhan-ra');
+let oDangChon = null;
+let soDaChon = 0;
+function dongChonSo() {
+  chonSo.hidden = true;
+  if (oDangChon) oDangChon.setAttribute('aria-expanded', 'false');
+}
+function moChonSo(nut) {
+  dongChonSo();
+  oDangChon = nut;
+  const ban = nut.closest('tr').querySelector('.chon-ban').textContent;
+  const ten = nut.dataset.ten + (nut.dataset.loai ? ' ' + nut.dataset.loai : '');
+  document.getElementById('chon-so-tieu-de').textContent = `${ban} · ${ten}: đã đem ra mấy?`;
+  const n = Number(nut.dataset.n);
+  chonSo.querySelector('.chon-so-nut').innerHTML = Array.from({ length: n + 1 }, (_, k) => `<button type="button" data-so="${k}">${k}</button>`).join('');
+  chonSo.hidden = false;
+  nut.setAttribute('aria-expanded', 'true');
+  const r = nut.getBoundingClientRect();
+  const rong = chonSo.offsetWidth;
+  chonSo.style.top = `${r.bottom + window.scrollY + 6}px`;
+  chonSo.style.left = `${Math.max(8, Math.min(r.left + window.scrollX, window.scrollX + document.documentElement.clientWidth - rong - 8))}px`;
+  chonSo.querySelector('button').focus();
+}
+document.body.appendChild(chonSo);
+document.getElementById('bang-tong-thieu').addEventListener('click', event => {
+  const nut = event.target.closest('.o-so');
+  if (!nut) return;
+  event.stopPropagation();
+  if (!chonSo.hidden && oDangChon === nut) { dongChonSo(); return; }
+  moChonSo(nut);
+});
+chonSo.addEventListener('click', event => {
+  const nut = event.target.closest('button[data-so]');
+  if (!nut) return;
+  event.stopPropagation();
+  soDaChon = Number(nut.dataset.so);
+  dongChonSo();
+  if (soDaChon === 0) { oDangChon.focus(); return; }
+  const ban = oDangChon.closest('tr').querySelector('.chon-ban').textContent;
+  const ten = oDangChon.dataset.ten;
+  const donVi = DON_VI[ten] ? DON_VI[ten] + (oDangChon.dataset.loai ? ' ' + oDangChon.dataset.loai : '') : 'bánh ' + ten;
+  const con = Number(oDangChon.dataset.n);
+  document.getElementById('xac-nhan-noi-dung').innerHTML = `Quán đã đem ra <strong>${soDaChon} ${donVi}</strong> cho <strong>${ban}</strong>.<br>Còn thiếu sẽ từ ${con} xuống <strong>${con - soDaChon}</strong>.`;
+  xacNhan.showModal();
+});
+document.addEventListener('click', event => { if (!chonSo.hidden && !chonSo.contains(event.target)) dongChonSo(); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape' && !chonSo.hidden) { dongChonSo(); oDangChon.focus(); } });
+document.getElementById('xac-nhan-huy').addEventListener('click', () => { xacNhan.close(); oDangChon.focus(); });
+document.getElementById('xac-nhan-dong-y').addEventListener('click', () => {
+  xacNhan.close();
+  const nut = oDangChon;
+  const conLai = Number(nut.dataset.n) - soDaChon;
+  const ten = nut.dataset.ten;
+  if (ten === 'Trứng') {
+    const sp = [...document.querySelectorAll('#tt-trung .dong')].find(x => x.dataset.loai === nut.dataset.loai);
+    sp.dataset.goc = Number(sp.dataset.goc) - soDaChon;
+    sp.textContent = `${sp.dataset.goc} ${sp.dataset.loai}`;
+    sp.hidden = sp.dataset.goc === '0';
+  } else {
+    const o = document.getElementById(O_TONG[ten]);
+    o.dataset.goc = Number(o.dataset.goc) - soDaChon;
+  }
+  const td = nut.closest('td');
+  if (conLai > 0) {
+    nut.outerHTML = nutSo(conLai, ten, nut.dataset.loai, nut.dataset.nhieu);
+  } else if (nut.parentElement.classList.contains('dong')) {
+    nut.parentElement.remove();
+  } else {
+    td.innerHTML = '0';
+  }
+  if (!td.querySelector('.o-so')) { td.className = 'khong'; td.textContent = '0'; }
+  lichSu.push({ gio: new Date().toLocaleTimeString('vi-VN', { hour12: false }), ban: td.closest('tr').querySelector('.chon-ban').textContent, mon: ten + (nut.dataset.loai ? ' ' + nut.dataset.loai : ''), so: soDaChon });
+  veLichSu(true);
+  updateMerge();
+});
+const xacNhanTt = document.getElementById('xac-nhan-tt');
+let hangThanhToan = null;
+document.querySelectorAll('#bang-tong-thieu > tbody > tr').forEach(tr => {
+  const td = tr.querySelector('td.tien');
+  if (!td || !tr.querySelector('.chon-ban')) return;
+  td.innerHTML = `<button type="button" class="o-tien" aria-haspopup="dialog">${td.textContent}</button>`;
+});
+const thieuCuaHang = tr => [...tr.querySelectorAll('.o-so')].map(n => ({ ten: n.dataset.ten, loai: n.dataset.loai, n: Number(n.dataset.n) }));
+document.getElementById('bang-tong-thieu').addEventListener('click', event => {
+  const nut = event.target.closest('.o-tien');
+  if (!nut) return;
+  hangThanhToan = nut.closest('tr');
+  const ban = hangThanhToan.querySelector('.chon-ban').textContent;
+  const con = thieuCuaHang(hangThanhToan);
+  const canhBao = con.length
+    ? `<br><span class="canh-bao">Bàn vẫn còn thiếu: ${con.map(x => `${x.n} ${x.ten}${x.loai ? ' ' + x.loai : ''}`).join(', ')}. Thanh toán sẽ bỏ phần này.</span>`
+    : '';
+  document.getElementById('xac-nhan-tt-noi-dung').innerHTML = `<strong>${ban}</strong> thanh toán <strong>${nut.textContent}</strong> tiền bánh đã ra.<br>Bàn sẽ bị xoá khỏi bảng tổng thiếu.${canhBao}`;
+  xacNhanTt.showModal();
+});
+document.getElementById('xac-nhan-tt-huy').addEventListener('click', () => { xacNhanTt.close(); hangThanhToan.querySelector('.o-tien').focus(); });
+document.getElementById('xac-nhan-tt-dong-y').addEventListener('click', () => {
+  xacNhanTt.close();
+  thieuCuaHang(hangThanhToan).forEach(x => {
+    if (x.ten === 'Trứng') {
+      const sp = [...document.querySelectorAll('#tt-trung .dong')].find(y => y.dataset.loai === x.loai);
+      sp.dataset.goc = Number(sp.dataset.goc) - x.n;
+      sp.textContent = `${sp.dataset.goc} ${sp.dataset.loai}`;
+      sp.hidden = sp.dataset.goc === '0';
+    } else {
+      const o = document.getElementById(O_TONG[x.ten]);
+      o.dataset.goc = Number(o.dataset.goc) - x.n;
+    }
+  });
+  const tien = document.getElementById('tt-tien');
+  tien.dataset.goc = Number(tien.dataset.goc) - Number(hangThanhToan.querySelector('.o-tien').textContent.replace(/\D/g, ''));
+  tien.textContent = money(Number(tien.dataset.goc));
+  const sau = hangThanhToan.nextElementSibling;
+  if (sau && sau.classList.contains('dong-truot')) sau.remove();
+  hangThanhToan.remove();
+  updateMerge();
+});
+function dongTruot() {
+  document.querySelectorAll('#bang-tong-thieu tr.dong-truot').forEach(tr => {
+    const khung = tr.querySelector('.truot');
+    khung.classList.remove('mo');
+    const xoa = () => tr.remove();
+    khung.addEventListener('transitionend', xoa, { once: true });
+    setTimeout(xoa, 400);
+  });
+}
+document.querySelectorAll('#bang-tong-thieu .chon-ban').forEach(nut => nut.addEventListener('click', () => {
+  const mo = nut.getAttribute('aria-expanded') !== 'true';
+  document.querySelectorAll('#bang-tong-thieu .chon-ban').forEach(b => b.setAttribute('aria-expanded', 'false'));
+  dongTruot();
+  if (!mo) return;
+  const hang = nut.closest('tr');
+  const id = `truot-ban-${nut.dataset.ban}`;
+  hang.insertAdjacentHTML('afterend', `<tr class="dong-truot" id="${id}"><td colspan="${hang.children.length}"><div class="truot"><div class="truot-trong"><p class="mb-2"><strong>Bàn ${nut.dataset.ban}</strong></p><div class="table-scroll">${document.querySelector(`.khoi-ban-cot[data-ban="${nut.dataset.ban}"] table`).outerHTML}</div></div></div></td></tr>`);
+  nut.setAttribute('aria-expanded', 'true');
+  nut.setAttribute('aria-controls', id);
+  const khung = hang.nextElementSibling.querySelector('.truot');
+  requestAnimationFrame(() => requestAnimationFrame(() => khung.classList.add('mo')));
+}));
+document.getElementById('nut-chi-tiet').addEventListener('click', event => {
+  const open = event.currentTarget.getAttribute('aria-expanded') !== 'true';
+  event.currentTarget.setAttribute('aria-expanded', String(open));
+  event.currentTarget.textContent = open ? 'Ẩn chi tiết' : 'Chi tiết';
+  document.getElementById('bang-chi-tiet').hidden = !open;
+});
+updateMerge();
+</script>
+</body>
+</html>
