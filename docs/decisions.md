@@ -140,7 +140,7 @@ có câu trả lời mới từ người.
 | ADR-121 | **Số người đang làm do POS khai** (`T-197`): bảng chỉ thêm `workers_present_declaration`, mỗi lần khai một dòng, lần mới nhất của ngày bán thắng; cửa ghi lớp `quay`, đường đọc cho quầy; tổng quan bày số và thiếu người so với `minimum_workers` | Đã chốt 2026-10-19 (Claude) | — | `T-197` · ADR-118 · U-060 |
 | ADR-122 | **Topping: thêm, ẩn, bật lại lựa chọn trong nhóm có sẵn** (`T-210`): thêm là một dòng `menu_option`; nhóm phụ thuộc chủ quán tích; ẩn là hai cột, một cửa cho ẩn và bật lại; hàm giá từ chối lựa chọn đã ẩn tại mốc tính; không ẩn được mặc định | Đã chốt 2026-10-19 (Claude) | — | `T-210` · ADR-086 · ADR-094 · §8.9 |
 | ADR-124 | **Đường đọc trang Vận hành** (`T-225`): `GET /service-board` lớp `quay_hoac_chu_quan` — phiên bàn chưa đóng chia `serving` · `waiting` · `no_order`, thứ đặt · đã ra · thiếu theo đơn vị, tiền đã ra bằng đoạn tạm tính dùng chung với tổng quan, lịch sử đem ra đọc từ vết `made → served` | Đã chốt 2026-10-21 (Claude) | — | `T-225` · ADR-118 · ADR-092 · I-019 |
-| ADR-125 | **Hoá đơn phiên bàn chỉ cộng suất đã ra hết** (`T-227`): một đoạn tính tiền đã ra theo suất dùng chung cho hoá đơn, tạm tính và trang Vận hành; đóng phiên huỷ mọi việc trạm chưa ra (`station_job` thêm `cancelled`) | Đề xuất 2026-10-22 (Claude), chờ chủ repo duyệt | — | `T-227` · ADR-118 · ADR-124 · I-002 |
+| ADR-125 | **Hoá đơn phiên bàn chỉ cộng suất đã ra hết** (`T-227`): một đoạn tính tiền đã ra theo suất dùng chung cho hoá đơn, tạm tính và trang Vận hành; đóng phiên huỷ mọi việc trạm chưa ra (`station_job` thêm `cancelled` · `discarded`) | Đã chốt 2026-10-22 (Claude, chủ repo duyệt) | — | `T-227` · ADR-118 · ADR-124 · I-002 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7940,7 +7940,8 @@ hai chỗ biết tên nhóm. *Mở `GET /owner-overview` cho quầy* — lộ t�
 
 ### ADR-125 — Hoá đơn phiên bàn chỉ cộng suất đã ra hết; đóng phiên huỷ mọi việc trạm chưa ra
 
-**Status:** Đề xuất 2026-10-22 (Claude Code, thiết kế cho `T-227`) — **chờ chủ repo duyệt**, chưa dòng code nào. Lời quán dùng ở đây
+**Status:** Đã chốt 2026-10-22 — Claude Code đề xuất, chủ repo duyệt trong hội thoại (nguyên văn *"duyệt"*), gồm cả hai đề xuất (a) · (b)
+ở dưới; điểm 3 làm rõ cùng ngày, sau khi đọc khoá hai chiều của mẻ. Lời quán dùng ở đây
 (`master_plan/shop-facts.md` §6.1): thanh toán chỉ thu phần đã bưng ra (2026-10-21); phần chưa ra bị **huỷ, bếp dừng làm**; áp cho **mọi**
 lần đóng phiên bàn; suất ra dở **không thu** (cả ba 2026-10-22, đóng U-103). Mọi điểm dưới đây ngoài ba lời ấy là **lựa chọn của phiên**.
 
@@ -7956,9 +7957,12 @@ tính **cả dòng** — dòng 3 cái ra 2 cộng 0 — trong khi số người 
    `due_vnd` của `phien/tinh_tien`, hoá đơn của `hoadon/dong`, `served_amount_vnd` của `GET /service-board` và `amount_vnd` của
    `GET /owner-overview`. Hệ quả: tạm tính tổng quan đổi từ *cả dòng* sang *từng suất* — cùng lời U-099, chỉ đếm mịn hơn. Giảm giá cả đơn vẫn trừ
    ở hoá đơn như hôm nay, trên số mới.
-3. **`station_job` thêm trạng thái `cancelled`** (migration: đổi `station_job_status_check`, `vongdoi` thêm `pending → cancelled` và
-   `made → cancelled`, có vết). Bảng sản xuất, hàng chờ, gom và tạm tính bỏ việc `cancelled`. Mục mẻ (`production_batch_item`) của việc đã làm
-   giữ nguyên — đã làm là đã làm.
+3. **`station_job` thêm hai trạng thái**: `cancelled` (huỷ lúc còn `pending` — chưa làm) và `discarded` (bỏ lúc đã `made` — đã làm, không
+   bưng). Hai tên vì khoá hai chiều của mẻ (`station_job_made_in_batch_fkey` ⟷ `production_batch_item_live_station_job_fkey`): việc đã làm giữ
+   đúng một mục mẻ còn hiệu lực, việc chưa làm không giữ mục nào. Migration đổi `station_job_status_check` và cột sinh `id_if_made_or_served`
+   phủ `made · served · discarded`; mục mẻ của việc `discarded` giữ nguyên — đã làm là đã làm. `vongdoi` thêm `pending → cancelled` và
+   `made → discarded`, có vết. Lùi một mẻ có việc `discarded` bị từ chối (tên từ chối mới, mã công khai 409). Bảng sản xuất, hàng chờ, gom,
+   chuyển phần và tạm tính bỏ hai trạng thái này. Phần nước chấm cấp đơn (không dòng đơn) không mang tiền; chưa ra thì cũng huỷ.
 4. **`hoadon/dong`** trong cùng giao dịch, sau khoá phiên và mọi đơn: huỷ mọi việc trạm chưa `served` của phiên; đơn có ít nhất một việc `served`
    sang `completed`, đơn không còn việc nào ra sang `cancelled` (gồm đơn QR chưa duyệt); rồi tính hoá đơn bằng đoạn ở điểm 2. Bỏ từ chối
    `table_session_has_open_orders` khỏi cửa này (hợp đồng đổi phiên bản). Không có cửa đóng thứ hai: màn quầy và trang Vận hành gọi cùng cửa.
@@ -7967,9 +7971,8 @@ tính **cả dòng** — dòng 3 cái ra 2 cộng 0 — trong khi số người 
 6. **I-002** viết lại: tổng của phiên = Σ suất đã ra hết của mọi đơn thuộc phiên; vế *một phiên đúng một hoá đơn* giữ. Test hồi quy: suất dở
    không vào, dòng 3 cái ra 2 thu 2, combo ra dở thu 0, đóng xong không còn việc `pending`/`made` của phiên, số `GET /service-board` bằng hoá đơn.
 
-**Còn hở — cần chủ repo xác nhận khi duyệt:** (a) *đã làm xong chưa bưng* cũng không thu và bị huỷ — đọc từ *"chỉ thu phần đã bưng ra"*, suy
-ra của Claude; (b) một thành phần **không có trạm** (`menu_component_station` không bắt buộc) không bao giờ có việc để ra, nên theo điểm 1 suất
-chứa nó không bao giờ được thu. Đề xuất: thành phần không trạm không tham gia phép `min`; nếu suất chỉ gồm thành phần không trạm thì tính là đã ra.
+**Hai điểm chủ repo duyệt cùng thiết kế (2026-10-22):** (a) *đã làm xong chưa bưng* cũng không thu và bị bỏ (`discarded`); (b) một thành phần
+**không có trạm** (`menu_component_station` không bắt buộc) không tham gia phép `min` của điểm 1; suất chỉ gồm thành phần không trạm tính là đã ra.
 
 **Rejected alternatives:** *xoá việc trạm chưa ra* — trái luật không xoá cứng, mất vết; *giữ tạm tính cả dòng và thêm phép cộng thứ hai cho hoá
 đơn* — số bấm để thanh toán khác số thu; *chia giá combo theo thành phần* — trái lời *"Không thu suất đó"* và U-099; *cửa đóng riêng cho trang Vận

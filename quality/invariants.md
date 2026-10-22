@@ -57,15 +57,14 @@ xuất hiện trên hai hoá đơn chưa đóng cùng lúc.
 ### I-002 — Tính tiền theo phiên bàn, không theo lượt gọi
 
 **Invariant:**
-Tổng tiền của một phiên bàn bằng tổng của **mọi** đơn thuộc phiên đó, và một phiên sinh ra đúng
-**một** hoá đơn. Nhiều lượt gọi tại cùng một bàn — bằng bất kỳ tổ hợp nào của QR tại bàn và Staff
+Tổng tiền của một phiên bàn bằng tổng giá của mọi **suất đã ra hết** thuộc mọi đơn của phiên đó,
+và một phiên sinh ra đúng **một** hoá đơn. Suất ra dở và suất chưa ra không vào hoá đơn (sửa 2026-10-22,
+`master_plan/shop-facts.md` §6.1, `docs/decisions.md` ADR-125); trước ngày ấy vế này là *tổng của mọi đơn*. Nhiều lượt gọi tại cùng một bàn — bằng bất kỳ tổ hợp nào của QR tại bàn và Staff
 POS — không bao giờ tách thành nhiều hoá đơn. Với **nhóm bàn ghép**, "cùng một bàn" đọc thành
 "cùng một phiên": lượt gọi từ bàn 4 và lượt gọi từ bàn 5 của cùng nhóm vẫn ra **một** hoá đơn
 (`master_plan/shop-facts.md` §6.16).
 
-⚠️ **Sửa đổi đang chờ** (2026-10-21, T-224): chủ repo chọn *thanh toán một bàn chỉ thu tiền các phần đã ra bàn*
-(`master_plan/shop-facts.md` §6.1); 2026-10-22 thêm: phần chưa ra lúc ấy bị huỷ, và luật áp cho mọi lần đóng phiên. Vế *một
-phiên đúng một hoá đơn* không đổi; vế *tổng bằng mọi đơn* viết lại cùng thiết kế của `T-227`. Tới lúc ấy mệnh đề trên vẫn là thứ máy giữ.
+⚠️ **Máy chưa giữ vế mới** tới khi `T-227` xong: hôm nay `phien.TongTien` còn cộng mọi đơn không huỷ.
 
 **Why:**
 Tách hoá đơn theo lượt gọi là **thu thiếu tiền**: lượt gọi thêm lúc quầy đã bắt đầu thu rất dễ rơi
@@ -73,8 +72,9 @@ ra ngoài lần thu duy nhất. `shop-facts.md` §6.1 gọi đây là lỗi ti�
 bàn; §6.9 thì buộc mỗi khoản tiền gắn với đúng **một** đơn vị tính tiền.
 
 **Verification:**
-Kịch bản: bàn 5 gọi ba lượt — QR, Staff POS đặt hộ, rồi QR lần nữa sau khi quầy đã bấm tính tiền.
-Kỳ vọng: đúng một hoá đơn cho bàn 5, và tổng của nó bằng tổng ba lượt. Kiểm ngược: đếm số hoá đơn
+Kịch bản: bàn 5 gọi ba lượt — QR, Staff POS đặt hộ, rồi QR lần nữa sau khi quầy đã bấm tính tiền,
+và mọi suất đã ra hết. Kỳ vọng: đúng một hoá đơn cho bàn 5, và tổng của nó bằng tổng ba lượt. Kịch bản suất: dòng 3
+suất ra 2 ⇒ thu 2 suất; combo ra dở ⇒ thu 0; số tiền đã ra của `GET /service-board` bằng số hoá đơn thu. Kiểm ngược: đếm số hoá đơn
 sinh ra cho một phiên phải luôn bằng 1. Đối soát cuối ngày (`shop-facts.md` §6.10) so tổng doanh
 thu phiên bàn với sổ giấy và tiền trong két, ngưỡng lệch chấp nhận là 0đ.
 
@@ -656,40 +656,41 @@ nếu không, bảng và sản phẩm đã rời nhau.
 *Phát hiện ở BA-07, 2026-09-01. Đọc lại ở T-039 cùng ngày — đường lùi của việc trạm chuyển từ
 ca bị từ chối sang dòng hợp lệ (U-024).*
 
-### I-017 — Phiên bàn không thể `Đã đóng` khi còn đơn chưa `Hoàn thành` và chưa `Huỷ`
+### I-017 — Phiên bàn `Đã đóng` thì không còn đơn nào chưa `Hoàn thành` hay `Huỷ`, và không còn việc trạm nào sống
 
 **Invariant:**
-Một phiên bàn chỉ chuyển sang `Đã đóng` khi **mọi** đơn thuộc phiên đó ở `Hoàn thành` **hoặc**
-`Huỷ`. Còn một đơn ở `Mới`, `Chờ xác nhận`, `Đã xác nhận` hay `Đang thực hiện` thì thao tác đóng
-phiên **bị từ chối**. Với **nhóm ghép bàn**, "mọi đơn thuộc phiên" phủ đơn của **tất cả** các bàn
-trong nhóm (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.7, `master_plan/shop-facts.md` §6.16), vì nhóm ghép vẫn là
-**một** phiên (I-002).
+Sau khi một phiên bàn chuyển sang `Đã đóng`, **mọi** đơn thuộc phiên ở `Hoàn thành` **hoặc** `Huỷ`, và
+**không** việc trạm nào của phiên còn `pending` hay `made`. Từ 2026-10-22 điều ấy đạt được **bằng chính lần
+đóng**, không bằng từ chối: trong cùng giao dịch, việc chưa làm sang `cancelled`, việc đã làm chưa bưng sang
+`discarded`, đơn có ít nhất một việc đã ra sang `Hoàn thành`, đơn còn lại sang `Huỷ` (`master_plan/shop-facts.md`
+§6.1 — *"Huỷ, bếp dừng làm"* · *"Mọi lần đóng phiên"*; `docs/decisions.md` ADR-125). Trước ngày ấy đóng phiên
+**bị từ chối** khi còn đơn chưa xong. Với **nhóm ghép bàn**, "mọi đơn thuộc phiên" phủ đơn của **tất cả** các
+bàn trong nhóm (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.1.7, `master_plan/shop-facts.md` §6.16), vì nhóm
+ghép vẫn là **một** phiên (I-002).
 
 **Điều kiện này nói về MÓN, không nói về TIỀN.** Phiên **vẫn** đóng được khi khách chưa trả đồng
 nào: quán **cho nợ**, và lúc đóng POS bắt buộc ghi **ai nợ** và **nợ bao nhiêu** (I-005,
-`shop-facts.md` §6.14). Hai luật ngược chiều nhau và **không được nhớ nhầm thành một**: món chưa
-xong thì **chặn** đóng phiên; tiền chưa thu thì **không** chặn.
+`shop-facts.md` §6.14). Tiền chưa thu thì **không** chặn đóng.
 
 **Why:**
 Đóng phiên là mốc **cuối cùng** phiên còn nhận được lượt gọi và còn tính thêm được tiền (§5.3): từ
 đó bàn đi tiếp sang `Bàn cần dọn` rồi `Trống`, và mọi việc bếp còn treo của phiên ấy mất chỗ đứng.
-Đóng khi còn một đơn `Đang thực hiện` hỏng theo hai chiều cùng lúc — bếp vẫn làm ra một suất **không
-còn hoá đơn nào để về**, và khách đã trả tiền cho một món **không bao giờ được bưng ra**. Cả hai đều
-im lặng: không thao tác nào sai, chỉ có đối soát cuối ngày thấy lệch mà không truy được lý do
-(`shop-facts.md` §6.10, ngưỡng **0đ**).
+Một việc còn sống sau khi đóng hỏng theo hai chiều — bếp làm ra một suất **không còn hoá đơn nào để
+về**, hoặc khách trả tiền cho một món **không bao giờ được bưng ra**. Huỷ trong cùng giao dịch đóng
+và chỉ thu suất đã ra hết (I-002) chặn cả hai. Cả hai lỗi đều im lặng: chỉ đối soát cuối ngày thấy
+lệch mà không truy được lý do (`shop-facts.md` §6.10, ngưỡng **0đ**).
 
-Chiều ngược lại phải chặn cùng lúc, nếu không luật này đẻ ra một cái bẫy: **không** được lấy nó làm
-cớ giữ phiên mở để chờ tiền. Không cho nợ thì một bàn quỵt tiền **khoá luôn cái bàn đó** cả buổi
-(§3.1.6) — đúng thứ chủ quán chốt 2026-08-31 là phải tránh.
+**Không** được lấy luật này làm cớ giữ phiên mở để chờ tiền: một bàn quỵt tiền **khoá luôn cái bàn
+đó** cả buổi (§3.1.6) — đúng thứ chủ quán chốt 2026-08-31 là phải tránh.
 
 **Verification:**
-Kịch bản âm: bàn 5 có hai đơn, một `Hoàn thành` và một `Đang thực hiện` ⇒ bấm đóng phiên **bị từ
-chối**; huỷ hoặc hoàn thành nốt đơn thứ hai ⇒ đóng được. Kịch bản nợ: mọi đơn đã `Hoàn thành`, khách
-không trả được ⇒ phiên **đóng được**, và POS **bắt buộc** ghi ai nợ và bao nhiêu (I-005); bỏ trống
-một trong hai ⇒ thao tác bị từ chối. Kịch bản ghép bàn: nhóm bàn 4 + bàn 5, bàn 4 xong hết, bàn 5
-còn một đơn `Đang thực hiện` ⇒ **không** đóng được phiên, và bàn 4 **không** về `Trống` sớm hơn
-(I-003). Kịch bản gọi thêm: phiên ở `Chờ thanh toán` nhận một lượt gọi mới ⇒ phiên quay lại
-`Đang phục vụ` và **không** đóng được cho tới khi lượt gọi ấy xong (`shop-facts.md` §6.1, I-001).
+Kịch bản huỷ: bàn 5 có một đơn đã ra hết, một đơn `Đang thực hiện` có việc `pending` và việc `made`,
+và một lượt QR chờ duyệt ⇒ đóng **được**; sau đó việc `pending` là `cancelled`, việc `made` là
+`discarded`, đơn đã ra là `Hoàn thành`, hai đơn kia là `Huỷ`, hoá đơn chỉ cộng suất đã ra hết, mỗi
+lần đổi có vết. Kịch bản nợ: khách không trả được ⇒ phiên **đóng được**, và POS **bắt buộc** ghi ai
+nợ và bao nhiêu (I-005); bỏ trống một trong hai ⇒ thao tác bị từ chối và không việc nào bị huỷ.
+Kịch bản ghép bàn: nhóm bàn 4 + bàn 5 ⇒ việc chưa ra của **cả hai** bàn bị huỷ cùng một lần đóng.
+Kịch bản chen: đóng ⟂ gọi thêm ⇒ không bao giờ có phiên `Đã đóng` còn đơn chưa xong hay việc sống.
 
 *Phát hiện ở BA-07, 2026-09-01.*
 

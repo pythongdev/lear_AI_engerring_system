@@ -503,8 +503,28 @@ invariant, hợp đồng; mở thì chia thành phần L1 · L2, thiết kế đ
 
 **U-103 có lời** (chủ repo 2026-10-22, chọn trong hội thoại; ghi `master_plan/shop-facts.md` §6.1): **(1)** phần chưa ra lúc thanh toán
 bị **huỷ, bếp dừng làm**; **(2)** luật áp cho **mọi** lần đóng phiên bàn, không riêng trang Vận hành. Cùng ngày chủ repo chọn thêm: suất ra
-dở **không thu**. Thiết kế đề xuất: `docs/decisions.md` **ADR-125** — **chờ chủ repo duyệt**, kèm hai điểm còn hở (a) · (b) của nó; duyệt xong
-mới chia phần A (L2) · B (L1), viết Acceptance và phiếu việc giao Codex.
+dở **không thu**. Thiết kế: `docs/decisions.md` **ADR-125**, chủ repo duyệt 2026-10-22 (*"duyệt"*), gồm (a) · (b). `quality/invariants.md`
+**I-002** và **I-017** viết lại cùng ngày. Chủ repo 2026-10-22: *"yêu cầu codex làm bạn kiểm tra"* — Codex viết cả test lẫn code (lệch
+`docs/prompt-guideline.md` §6.1 *L2: Claude viết test trước*, theo lời chủ repo); Claude duyệt diff, chạy lại `be-check` · `db-check` · gate.
+
+**Phần A — L2, database + backend + hợp đồng** (Acceptance viết 2026-10-22, trước khi giao):
+- [ ] Migration mới: `station_job.status` nhận `cancelled` · `discarded`; `id_if_made_or_served` phủ `made · served · discarded`; có `.down.sql`
+      từ chối lùi khi đã có việc mang hai trạng thái ấy; `docs/product/2-db/05-luoc-do-san-xuat.md` và `07-thu-tu-migration.md` ghi bước mới.
+- [ ] `vongdoi`: thêm `pending → cancelled`, `made → discarded`, có vết; không đường nào ra khỏi hai trạng thái ấy.
+- [ ] Một đoạn tính *tiền đã ra theo suất* (ADR-125 điểm 1 · 2, kể cả (b)) thay đoạn tạm tính đánh dấu ở `tongquan`; `phien.TongTien`,
+      `phien/tinh_tien`, `hoadon/dong`, `GET /service-board` và `GET /owner-overview` cùng đọc nó; test so các bản đánh dấu còn xanh.
+- [ ] `hoadon/dong`: còn đơn chưa xong thì **không** từ chối; trong cùng giao dịch huỷ việc chưa ra, sang trạng thái đơn theo ADR-125 điểm 4,
+      rồi lập hoá đơn bằng đoạn ở trên; lời từ chối tiền (`payment_parts_mismatch` · `debtor_name_mismatch`) đến trước mọi câu ghi.
+- [ ] Lùi một mẻ có việc `discarded` ⇒ tên từ chối mới, mã công khai 409; bảng sản xuất, hàng chờ, gom, chuyển phần bỏ hai trạng thái mới.
+- [ ] Test qua đường gọi HTTP: dòng 3 suất ra 2 ⇒ hoá đơn 2 suất; combo ra dở ⇒ 0; món có 2 thành phần ra 1 ⇒ 0; đóng khi còn việc
+      `pending` · `made` · đơn QR chờ duyệt ⇒ 201, việc `cancelled` · `discarded`, đơn đúng trạng thái, có vết; ghép bàn huỷ cả hai bàn;
+      cắt giữa lúc đóng ⇒ không nửa nào sống; đóng ⟂ gọi thêm 8 vòng ⇒ không phiên đóng còn đơn hay việc sống; `served_amount_vnd` = `due_vnd`;
+      thành phần không trạm không chặn thu. Các test cũ của I-002 · I-017 sửa theo luật mới — không nới điều kiện nào khác.
+- [ ] `docs/product/3-be/openapi.yaml` bỏ `table_session_has_open_orders` khỏi cửa đóng, thêm mã mới, tăng phiên bản; `04-luong-tai-ban.md` §4
+      viết lại; `fe/src/lib/api/schema.ts` sinh lại, chỗ FE nhắc mã bỏ đi sửa tối thiểu.
+- [ ] `./scripts/gate.sh` xanh; Claude chạy lại `be-check` · `db-check`.
+
+**Phần B — L1, màn quầy và trang Vận hành** — viết Acceptance khi phần A vào clone chính.
 
 <a id="t-226"></a>
 ### T-226 — Chủ quán chưa có trang Vận hành thật, chỉ có bản thiết kế tĩnh
