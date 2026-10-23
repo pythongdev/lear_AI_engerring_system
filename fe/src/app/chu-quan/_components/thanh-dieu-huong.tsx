@@ -10,14 +10,14 @@ export function ThanhDieuHuong() {
   const duongDan = usePathname();
 
   return (
-    <nav aria-label="Trang chủ quán" className="mb-6 border-b pb-3">
-      <ul className="flex flex-wrap gap-4">
+    <nav aria-label="Trang chủ quán" className="mb-3 border-b pb-2">
+      <ul className="flex flex-wrap gap-x-1 gap-y-1 text-sm">
         {mucChuQuan.map((muc) => (
           <li key={muc.route}>
             <Link
               href={muc.route}
               aria-current={duongDan === muc.route ? "page" : undefined}
-              className="underline-offset-4 hover:underline aria-[current=page]:font-semibold aria-[current=page]:underline"
+              className="block rounded-md px-2 py-1 hover:bg-muted aria-[current=page]:bg-muted aria-[current=page]:font-semibold"
             >
               {muc.nhan}
             </Link>
