@@ -20,7 +20,7 @@ const gio = (s: string) => new Date(s).toLocaleTimeString("vi-VN", { timeZone: "
 const cong = (items: ThuVanHanh[], field: "ordered" | "served" | "missing") => items.reduce((n, i) => n + i[field], 0);
 const thuCot = (items: ThuVanHanh[], cot: CotVanHanh) => items.filter((i) => cotVanHanh(i).cot === cot);
 const tongTien = (ps: Phien[], field: "order_total_vnd" | "served_amount_vnd") => ps.reduce((n, p) => n + p[field], 0);
-const khung = "vh-card space-y-2";
+const khung = "vh-card space-y-1.5";
 
 function VungBang({ ten, children }: { ten: string; children: ReactNode }) {
   return <div role="region" aria-label={ten} tabIndex={0} className="vh-table-scroll">{children}</div>;
@@ -28,7 +28,7 @@ function VungBang({ ten, children }: { ten: string; children: ReactNode }) {
 function AnHien({ ten, children, chiTiet = false }: { ten: string; children: ReactNode; chiTiet?: boolean }) {
   const [mo, setMo] = useState(false);
   const id = useId();
-  return <div className="space-y-2">
+  return <div className="space-y-1.5">
     <Button variant="outline" aria-label={`${mo ? "Ẩn" : chiTiet ? "Chi tiết" : "Hiện"} ${ten}`} aria-expanded={mo} aria-controls={id} onClick={() => setMo(!mo)}>
       {mo ? "Ẩn" : chiTiet ? "Chi tiết" : "Hiện"}
     </Button>
@@ -50,8 +50,8 @@ function SoCot({ items, cot, field = "missing", them = [] }: { items: ThuVanHanh
   })}</>;
 }
 function ChiTietBan({ phien, cot }: { phien: Phien; cot: readonly CotVanHanh[] }) {
-  return <div className="space-y-2 p-2">
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">{cot.map((c) => <div key={c} className="space-y-1 rounded border p-2">
+  return <div className="space-y-1.5 p-1.5">
+    <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-6">{cot.map((c) => <div key={c} className="space-y-1 rounded border p-1.5">
       <h4 className="font-semibold">{c}</h4>
       {([['ordered', 'tổng'], ['served', 'đã ra'], ['missing', 'thiếu']] as const).map(([field, label]) => <div key={field}><span>{label}</span><SoCot items={phien.items} cot={c} field={field} /></div>)}
     </div>)}</div>
@@ -168,9 +168,9 @@ function CongThuGhepDon({ waiting, chon, doi, cot }: { waiting: Phien[]; chon: n
   return <section aria-label="Cộng thử ghép đơn" className={khung}>
     <h2 className="text-xl font-semibold">Cộng thử ghép đơn</h2>
     {!waiting.length && <p>Chưa bàn nào sắp phục vụ.</p>}
-    <div className="grid gap-2 sm:grid-cols-2">{waiting.map((p) => <div key={p.table_session_id} className="choice space-y-2">
-      <label className="flex items-center gap-3"><Checkbox className="vh-checkbox" checked={chon.includes(p.table_session_id)} onCheckedChange={(checked) => doi(checked ? [...chon, p.table_session_id] : chon.filter((id) => id !== p.table_session_id))} />{nhanBan(p)} · {tien(p.order_total_vnd)}</label>
-      <div className="flex flex-wrap gap-3">{cot.map((c) => <div key={c}>{c}: <SoCot items={p.items} cot={c} field="ordered" /></div>)}</div>
+    <div className="grid gap-1.5 sm:grid-cols-2">{waiting.map((p) => <div key={p.table_session_id} className="choice space-y-1">
+      <label className="flex items-center gap-2"><Checkbox className="vh-checkbox" checked={chon.includes(p.table_session_id)} onCheckedChange={(checked) => doi(checked ? [...chon, p.table_session_id] : chon.filter((id) => id !== p.table_session_id))} />{nhanBan(p)} · {tien(p.order_total_vnd)}</label>
+      <div className="flex flex-wrap gap-2">{cot.map((c) => <div key={c}>{c}: <SoCot items={p.items} cot={c} field="ordered" /></div>)}</div>
     </div>)}</div>
     <p role="status">Đã chọn {chon.length} bàn.</p><Button variant="outline" onClick={() => doi([])}>Bỏ chọn hết</Button>
   </section>;
@@ -244,8 +244,9 @@ export function TrangVanHanh() {
   const duocGhi = !phien.isError && !!phien.data?.ok && phien.data.data.counter_duty_id != null;
   const [chonDemRa, setChonDemRa] = useState<ChonDemRa | null>(null);
   const [ketQua, setKetQua] = useState("");
-  return <div className="trang-van-hanh mx-auto w-full min-w-0 max-w-7xl space-y-2">
-    <header className="space-y-1"><h1 className="text-2xl font-semibold">Vận hành</h1>{query.data && <p>Ngày bán: {query.data.sale_date} · Giờ đọc: <time dateTime={query.data.read_at}>{gio(query.data.read_at)}</time></p>}</header>
+  // Lề âm bù khoảng đệm p-6 của khung chung dùng cho cả quầy và trạm; không lề âm trên vì thanh điều hướng nằm ngay trên.
+  return <div className="trang-van-hanh -mx-3 -mb-3 sm:-mx-2 sm:-mb-2 min-w-0 max-w-7xl space-y-1.5">
+    <header className="space-y-0.5"><h1 className="text-2xl font-semibold">Vận hành</h1>{query.data && <p>Ngày bán: {query.data.sale_date} · Giờ đọc: <time dateTime={query.data.read_at}>{gio(query.data.read_at)}</time></p>}</header>
     <Button variant="outline" disabled={query.isFetching} onClick={() => void query.refetch()}>Đọc lại</Button>
     {query.isPending && <p role="status">{query.fetchStatus === "paused" ? "Đang chờ kết nối." : "Đang đọc tình hình bàn…"}</p>}
     {query.isError && <Alert className="vh-alert" role="alert"><AlertDescription>Chưa đọc được tình hình bàn. {loiVanHanh(query.error as unknown as ApiFailure)}{query.data && ` Đang hiện bản đọc trước, lúc ${gio(query.data.read_at)}.`}</AlertDescription></Alert>}
@@ -271,7 +272,7 @@ export function TrangVanHanh() {
       }
       .trang-van-hanh .vh-card {
         min-width:0; background:var(--vh-card); border:1px solid var(--vh-line);
-        border-radius:10px; padding:10px;
+        border-radius:10px; padding:8px;
       }
       .trang-van-hanh h1 { font-size:20px; font-weight:600; text-transform:uppercase; }
       .trang-van-hanh h2, .trang-van-hanh h3 { font-size:14px; font-weight:500; }
@@ -293,7 +294,7 @@ export function TrangVanHanh() {
       .trang-van-hanh .vh-table-scroll:has(> .bang-tong-thieu) { border:0; border-radius:0; }
       .trang-van-hanh table { border-collapse:collapse; font-size:12px; margin:0; }
       .trang-van-hanh th { color:var(--vh-muted); font-weight:400; }
-      .trang-van-hanh th, .trang-van-hanh td { padding:8px; border-bottom:1px solid var(--vh-line); vertical-align:top; }
+      .trang-van-hanh th, .trang-van-hanh td { padding:6px; border-bottom:1px solid var(--vh-line); vertical-align:top; }
       .trang-van-hanh td { font-variant-numeric:tabular-nums; }
       .trang-van-hanh tfoot { background:var(--vh-field); font-weight:700; }
       .trang-van-hanh tfoot th { font-weight:700; }
@@ -309,19 +310,19 @@ export function TrangVanHanh() {
       }
       .trang-van-hanh .chon-ban[aria-expanded="true"] { color:var(--vh-accent); background:var(--vh-field); text-decoration:none; }
       .trang-van-hanh .o-so, .trang-van-hanh.vh-dialog button { min-height:36px; min-width:44px; }
-      .trang-van-hanh .choice { padding:10px; border:1px solid var(--vh-line); border-radius:10px; }
+      .trang-van-hanh .choice { padding:8px; border:1px solid var(--vh-line); border-radius:10px; }
       .trang-van-hanh .choice label { cursor:pointer; font-weight:600; }
       .trang-van-hanh .choice:has([role="checkbox"][data-state="checked"]) { background:var(--vh-field); border-color:var(--vh-accent); }
       .trang-van-hanh .number { display:inline-block; font-size:28px; font-weight:600; line-height:1.2; margin:0; color:var(--vh-text); }
-      .trang-van-hanh .table-map { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; margin-top:8px; }
-      .trang-van-hanh .table-tile { border:1px solid var(--vh-line); border-radius:10px; padding:10px 6px; text-align:center; overflow-wrap:anywhere; }
+      .trang-van-hanh .table-map { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; margin-top:4px; }
+      .trang-van-hanh .table-tile { border:1px solid var(--vh-line); border-radius:10px; padding:6px 4px; text-align:center; overflow-wrap:anywhere; }
       .trang-van-hanh .serving { background:var(--vh-serving-bg); color:var(--vh-serving-ink); }
       .trang-van-hanh .waiting { background:var(--vh-warning-bg); color:var(--vh-warning-ink); }
       .trang-van-hanh .vacant { background:var(--vh-vacant-bg); color:var(--vh-vacant-ink); }
-      .trang-van-hanh .lich-su-ban { display:grid; gap:6px; }
-      .trang-van-hanh .lich-su-ban > div { border:1px solid var(--vh-line); border-radius:10px; background:var(--vh-card); padding:8px 10px; }
-      .trang-van-hanh .lich-su-ban h4 { margin-bottom:8px; }
-      .trang-van-hanh .lich-su-ban li { padding:6px 0; border-top:1px solid var(--vh-line); font-size:14px; }
+      .trang-van-hanh .lich-su-ban { display:grid; gap:4px; }
+      .trang-van-hanh .lich-su-ban > div { border:1px solid var(--vh-line); border-radius:10px; background:var(--vh-card); padding:6px 8px; }
+      .trang-van-hanh .lich-su-ban h4 { margin-bottom:4px; }
+      .trang-van-hanh .lich-su-ban li { padding:4px 0; border-top:1px solid var(--vh-line); font-size:14px; }
       .trang-van-hanh .border { border-color:var(--vh-line); }
       .trang-van-hanh .vh-alert, .trang-van-hanh.vh-dialog { background:var(--vh-card); color:var(--vh-text); border:1px solid var(--vh-line); box-shadow:none; }
       .trang-van-hanh.vh-dialog { border-radius:12px; }
@@ -329,7 +330,7 @@ export function TrangVanHanh() {
         .trang-van-hanh .table-map { grid-template-columns:repeat(3,minmax(0,1fr)); }
         .trang-van-hanh .bang-day-du, .trang-van-hanh .bang-day-du tbody, .trang-van-hanh .bang-day-du tfoot { display:block; width:100%; }
         .trang-van-hanh .bang-day-du thead { display:none; }
-        .trang-van-hanh .bang-day-du tr { display:block; border-bottom:1px solid var(--vh-line); padding:8px; }
+        .trang-van-hanh .bang-day-du tr { display:block; border-bottom:1px solid var(--vh-line); padding:6px; }
         .trang-van-hanh .bang-day-du th { display:block; text-align:left; }
         .trang-van-hanh .bang-day-du td { display:flex; justify-content:space-between; gap:8px; }
         .trang-van-hanh .bang-day-du td::before { content:attr(data-label); font-weight:400; color:var(--vh-muted); }
