@@ -5155,3 +5155,26 @@ T-233 bỏ CSS module ở trang khách, dùng file CSS thường có lớp gốc
 
 **Status:**
 Open
+
+### F-076 — `next build` của Next.js 16.4.0 tự dừng cách lượt để nhắc nâng cấp bảo mật, làm Gate 1 lúc đỏ lúc xanh
+
+**Problem:**
+Đo 2026-10-23 (Claude Code, lượt bản thiết kế trang Sản phẩm): `scripts/verify.sh` gọi `next build` mỗi khi `fe/` có thay đổi. Với
+`"next": "16.4.0"` trong `fe/package.json`, build in xong cây route rồi thoát mã 1 bằng `Error [SecurityFatalError]: Your version of
+Next.js is affected by a known security vulnerability` và *"Retry the same command to continue"*. Hai lần chạy liền nhau: lần 1 exit 1,
+lần 2 exit 0. Thông báo còn gợi ý chạy `next upgrade --agent=security` — lệnh đổi dependency, không phải việc của task đang làm.
+
+**Impact:**
+Gate 1 đỏ không do thay đổi của task, kể cả task chỉ sửa docs, vì `verify.sh` build khi cây có file `fe/` của phiên khác chưa commit.
+Phiên dễ đi tìm lỗi trong diff của mình, hoặc tưởng một test chập chờn là nguyên nhân (cùng lượt, `realtime.test.tsx` đỏ một lần rồi
+qua 5/5 khi chạy riêng).
+
+**Decision / Fix:**
+Chưa sửa. Đọc output `verify.sh` tìm `SecurityFatalError` trước khi tìm lỗi trong diff; chạy lại một lần là qua. Cách sửa thật là nâng
+Next.js trong một task riêng (đổi dependency `fe/`, chạy lại `fe-check`), chờ chủ repo quyết.
+
+**Related task:**
+chưa có task
+
+**Status:**
+Open
