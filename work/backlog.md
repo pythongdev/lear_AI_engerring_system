@@ -98,7 +98,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-235 **Next.js 16.4.0 dính lỗ hổng bảo mật, `next build` dừng cách lượt** — nâng `next` và `eslint-config-next` trong `fe/` lên bản vá theo `next upgrade --agent=security`, đóng F-076 — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-235)
 - [ ] T-238 **Trang Sản phẩm có nút Cập nhật cho tên, danh mục, giá và trạng thái của món** — mỗi dòng món mở ngăn bên phải: đổi tên, chuyển danh mục, đổi giá gốc từng thành phần, ngừng bán, mọi lệnh có lý do; dùng lại các cửa ghi sẵn có, không đổi backend hay hợp đồng; bán lại món đã ngừng chờ U-104 — L2 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-238)
 - [ ] T-227 **Thanh toán bàn chỉ thu phần đã ra, phần chưa ra huỷ việc trạm** — bấm tiền bánh đã ra để đóng phiên và xoá bàn khỏi bảng; đổi luật tính tiền phiên (`shop-facts.md` §6.1, 2026-10-21) và viết lại `I-002` — L3 (thiết kế duyệt trước code, ADR, chia L1/L2 khi mở) — mở 2026-10-21, U-103 có lời và bắt đầu 2026-10-22 · [chi tiết](#t-227)
 - [ ] T-233 **Trang gọi món của khách hiện không có kiểu nào, chưa giống bản thiết kế menu** — CSS module của T-232 bị luật Turbopack trong `next.config.ts` đọc như CSS thường nên mọi `styles.*` rỗng (F-075); viết lại kiểu bằng một file CSS thường trong phạm vi trang và lớp Tailwind, đối chiếu ảnh chụp với `menu.html` ở hai giao diện; hành vi và test giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-233)
@@ -114,6 +113,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="done"></a>
 ## Done
+- [x] T-235 **Next.js 16.4.0 dính lỗ hổng bảo mật, `next build` dừng cách lượt** — nâng `next` và `eslint-config-next` trong `fe/` lên bản vá theo `next upgrade --agent=security`, đóng F-076 — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-235)
 - [x] T-236 **Máy phát triển chưa có dữ liệu cho phần lớn các mục của trang chủ quán** — thêm bộ *dữ liệu thử* riêng cho máy dev (danh mục, combo, giao việc, đào tạo, khoản chi, sổ nguyên liệu, chấm công…), ghi nhãn rõ không phải sự thật của quán, chạy bằng một lệnh make riêng sau `make seed`; `db/seed/seed.pl` giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-236)
 - [x] T-234 **Trang Sản phẩm của chủ quán theo bản thiết kế, bày đủ thuộc tính món đã có** — áp `san_pham/san-pham.html` lên `/chu-quan/san-pham`: đầu trang có số món và hai nút, mỗi danh mục một bảng Món · Danh mục · Trạng thái · Giá · Thao tác, thêm món và đổi tên trong ngăn bên phải; giá là số `GET /menu` trả cho từng tổ hợp, không cộng, không tính thử — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-234)
 - [x] T-232 **Trang gọi món của khách theo bản thiết kế menu** — dựng `/ban/[ma]` (và `/dat-mon`, cùng component) theo `khach_hang/menu/menu.html`: thẻ combo và món lẻ có nút bớt · thêm, ô tìm món, dải giỏ dính đầu trang, tóm tắt đơn, nút gửi cam, màu sáng · tối; phần chưa có dữ liệu hay luật không làm; hành vi gửi và test cũ giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-232)
@@ -521,11 +521,21 @@ gặp chỗ vỡ thì dừng và báo.
 tác dụng và `next.config.ts` là chỗ từng gây F-075.
 
 **Acceptance** (viết 2026-10-23, trước khi giao):
-- [ ] `fe/package.json`: `next` và `eslint-config-next` cùng một phiên bản vá > 16.4.0, ghim chính xác (không `^`/`~`); `fe/package-lock.json` khớp (`npm ls next` in đúng bản ấy).
-- [ ] `next build` chạy hai lần liền trong `fe/` đều exit 0, không còn `SecurityFatalError`.
-- [ ] `fe-check` xanh (lint, typecheck, test, build) — Claude chạy lại ở clone chính.
-- [ ] Chỉ đổi `fe/package.json` và `fe/package-lock.json`; `./scripts/gate.sh` xanh.
-- [ ] F-076 chuyển *Resolved* với bản đã nâng — Claude ghi sau khi duyệt.
+- [x] `fe/package.json`: `next` và `eslint-config-next` cùng một phiên bản vá > 16.4.0, ghim chính xác (không `^`/`~`); `fe/package-lock.json` khớp (`npm ls next` in đúng bản ấy).
+- [x] `next build` chạy hai lần liền trong `fe/` đều exit 0, không còn `SecurityFatalError`.
+- [x] `fe-check` xanh (lint, typecheck, test, build) — Claude chạy lại ở clone chính.
+- [x] Chỉ đổi `fe/package.json` và `fe/package-lock.json`; `./scripts/gate.sh` xanh.
+- [x] F-076 chuyển *Resolved* với bản đã nâng — Claude ghi sau khi duyệt.
+
+**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-235`, nhánh `codex/T-235`, nền `e21999a`, chưa gỡ) · duyệt: Claude 2026-10-23.
+Diff chỉ `fe/package.json` và `fe/package-lock.json`: `next` và `eslint-config-next` 16.4.0 → 16.4.2 ghim chính xác; lockfile kéo theo
+`@next/env`, `@next/eslint-plugin-next`, tám gói `@next/swc-*` cùng 16.4.2, khoảng `sharp` tuỳ chọn `^0.35.4` → `^0.35.5`, bỏ một cờ
+`"peer": true`; `react`/`react-dom` giữ 19.3.0; không thêm `experimental.agentUpgrade`. Bằng chứng: `next build` hai lần liền trong
+worktree đều exit 0, không `SecurityFatalError`; Claude áp diff lên clone chính, `npm ci`, `npm ls` in `next@16.4.2` ·
+`eslint-config-next@16.4.2`, `scripts/fe-check.sh` in `fe-check: PASS`. Gate ở clone chính bắt thêm `QC-18`
+(`docs/product/2-db/10-quy-uoc-code.md`) còn ghim `next 16.4.0` — phép kiểm ấy chỉ chạy trong db-check nên worktree Codex không thấy.
+Claude mở rộng scope, sửa bảng ghim và phép kiểm QC-18 sang 16.4.2 (thêm `eslint-config-next`) — lệch dòng Acceptance *chỉ đổi hai file*
+có chủ ý, vì QC-18 nói lên bản là một task. F-076 chuyển *Resolved*.
 
 <a id="t-238"></a>
 ### T-238 — Trang Sản phẩm chỉ đổi được tên món, chưa cập nhật được danh mục, giá, trạng thái

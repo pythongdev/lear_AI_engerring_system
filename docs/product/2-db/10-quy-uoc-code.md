@@ -695,7 +695,7 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
 
   | Gói | Bản | Vai |
   |---|---|---|
-  | `next` · `eslint-config-next` | `16.4.0` | khung App Router (`QC-09`) và luật lint đi kèm |
+  | `next` · `eslint-config-next` | `16.4.2` | khung App Router (`QC-09`) và luật lint đi kèm — nâng từ `16.4.0` lên bản vá bảo mật 2026-10-23 (`T-235`, Claude duyệt; F-076) |
   | `react` · `react-dom` | `19.3.0` | |
   | `typescript` | `5.9.3` | bản `create-next-app` 16.4.0 chọn |
   | `shadcn` | `4.21.4` | CLI primitive, chạy `npx shadcn add` trong `fe/` (**ADR-100** điểm 3); khởi tạo nền Radix, kiểu `radix-nova`, màu nền `neutral` — `fe/components.json` |
@@ -737,7 +737,7 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   [ -f fe/package-lock.json ] || echo "thiếu fe/package-lock.json"
   grep -qx 'save-exact=true' fe/.npmrc 2>/dev/null || echo "fe/.npmrc không đặt save-exact=true"
   grep -nE '"[^"]+": "[~^><=*]' fe/package.json | grep -v '"node":' | sed 's/^/fe\/package.json dải phiên bản: /'
-  for pv in next:16.4.0 react:19.3.0 react-dom:19.3.0 shadcn:4.21.4 @tanstack/react-query:5.104.2 zustand:5.0.15 openapi-typescript:7.13.0 openapi-fetch:0.17.0 react-hook-form:7.90.0 zod:4.6.7 vitest:5.0.4; do
+  for pv in next:16.4.2 eslint-config-next:16.4.2 react:19.3.0 react-dom:19.3.0 shadcn:4.21.4 @tanstack/react-query:5.104.2 zustand:5.0.15 openapi-typescript:7.13.0 openapi-fetch:0.17.0 react-hook-form:7.90.0 zod:4.6.7 vitest:5.0.4; do
     grep -qF "\"${pv%%:*}\": \"${pv#*:}\"" fe/package.json || echo "fe/package.json không ghim ${pv%%:*} ${pv#*:}"
   done
   for s in dev build start; do grep -qE "\"$s\": \"NEXT_TELEMETRY_DISABLED=1 " fe/package.json || echo "lệnh npm $s không tắt telemetry"; done

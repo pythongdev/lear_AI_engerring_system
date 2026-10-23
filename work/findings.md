@@ -5170,11 +5170,12 @@ Phiên dễ đi tìm lỗi trong diff của mình, hoặc tưởng một test ch
 qua 5/5 khi chạy riêng).
 
 **Decision / Fix:**
-Chưa sửa. Đọc output `verify.sh` tìm `SecurityFatalError` trước khi tìm lỗi trong diff; chạy lại một lần là qua. Cách sửa thật là nâng
+Sửa 2026-10-23 (T-235, Codex làm, Claude duyệt): nâng `next` và `eslint-config-next` lên **16.4.2**; `next build` hai lần liền đều exit 0,
+`fe-check` xanh. Ghi chú gốc trước khi sửa: chưa sửa. Đọc output `verify.sh` tìm `SecurityFatalError` trước khi tìm lỗi trong diff; chạy lại một lần là qua. Cách sửa thật là nâng
 Next.js trong một task riêng (đổi dependency `fe/`, chạy lại `fe-check`), chờ chủ repo quyết.
 
 **Related task:**
-chưa có task
+`T-235`
 
 **Status:**
-Open
+Resolved
