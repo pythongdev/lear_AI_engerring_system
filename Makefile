@@ -47,7 +47,7 @@ if ! kill -0 "$$be_pid" 2>/dev/null; then wait "$$be_pid"; else wait "$$fe_pid";
 endef
 
 .DEFAULT_GOAL := help
-.PHONY: help setup up migrate seed psql shell status stop reset swagger swagger-stop check-tz dev be fe check-go check-fe dev-files
+.PHONY: help setup up migrate seed seed-thu psql shell status stop reset swagger swagger-stop check-tz dev be fe check-go check-fe dev-files
 
 help: ## Liệt kê các lệnh
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-12s %s\n", $$1, $$2}'
@@ -90,6 +90,11 @@ seed: check-tz ## Nạp dữ liệu mồi — tự bỏ qua nếu database đã 
 	  perl db/seed/seed.pl | docker compose exec -T -e PGTZ=$(SHOP_TZ) db \
 	    psql -X -q -v ON_ERROR_STOP=1 -U shop_owner -d banhcuon >/dev/null && echo "seed: đã nạp dữ liệu mồi"; \
 	fi
+
+seed-thu: check-tz ## Nạp dữ liệu thử máy dev sau make seed — đã có danh mục thì bỏ qua
+	@sql="$$(perl db/seed/du-lieu-thu.pl)" && \
+	  printf '%s\n' "$$sql" | docker compose exec -T -e PGTZ=$(SHOP_TZ) db \
+	    psql -X -q -v ON_ERROR_STOP=1 -U shop_owner -d banhcuon
 
 psql: check-tz ## Vào psql bên trong container (\q để thoát)
 	$(PSQL)

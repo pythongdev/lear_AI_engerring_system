@@ -149,3 +149,15 @@ thử; mặc định luôn là owner):
 | `P2-13` | ba scenario dựng đơn trên menu này, không tự gõ món |
 | `P2-08` | **xong 2026-09-28** — §4 hàng *Người*; [`06-luoc-do-nguoi-va-vet.md`](06-luoc-do-nguoi-va-vet.md) |
 | pha 3 | §2 — ba loại trứng là ba thành phần; hàm tính giá phải ra đúng mọi ca của §4.8 như §3 |
+
+
+## Dữ liệu thử của máy dev (T-236, 2026-10-23)
+
+Theo phiếu giao việc của Claude, bộ [du-lieu-thu.pl](../../../db/seed/du-lieu-thu.pl)
+chỉ giúp giao diện có dữ liệu hiện, **không phải sự thật của quán**.
+Bộ dựng đọc tên danh mục và ánh xạ thành phần từ owner `master_plan/shop-facts.md` §4.2 lúc chạy;
+món, thành phần và giá gốc để cộng giá combo được đọc từ database đã có dữ liệu mồi.
+Chạy `make seed` rồi `make seed-thu`; đã có danh mục thì báo bỏ qua, không nhân đôi.
+Tên tự đặt có dấu `(thử)`; lượng sổ, tiền chi và ngày công chỉ là số minh hoạ.
+Mọi lần ghi dùng `shop_app` trong một giao dịch với chủ quán là người thao tác; lỗi thì rollback.
+Bước kiểm trong `scripts/db-check.sh` dựng hai lượt, đếm các bảng rồi rollback để giữ nền cho scenario.

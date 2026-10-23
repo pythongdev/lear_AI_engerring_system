@@ -98,8 +98,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-236 **Máy phát triển chưa có dữ liệu cho phần lớn các mục của trang chủ quán** — thêm bộ *dữ liệu thử* riêng cho máy dev (danh mục, combo, giao việc, đào tạo, khoản chi, sổ nguyên liệu, chấm công…), ghi nhãn rõ không phải sự thật của quán, chạy bằng một lệnh make riêng sau `make seed`; `db/seed/seed.pl` giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-236)
 - [ ] T-235 **Next.js 16.4.0 dính lỗ hổng bảo mật, `next build` dừng cách lượt** — nâng `next` và `eslint-config-next` trong `fe/` lên bản vá theo `next upgrade --agent=security`, đóng F-076 — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-235)
+- [ ] T-238 **Trang Sản phẩm có nút Cập nhật cho tên, danh mục, giá và trạng thái của món** — mỗi dòng món mở ngăn bên phải: đổi tên, chuyển danh mục, đổi giá gốc từng thành phần, ngừng bán, mọi lệnh có lý do; dùng lại các cửa ghi sẵn có, không đổi backend hay hợp đồng; bán lại món đã ngừng chờ U-104 — L2 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-238)
 - [ ] T-227 **Thanh toán bàn chỉ thu phần đã ra, phần chưa ra huỷ việc trạm** — bấm tiền bánh đã ra để đóng phiên và xoá bàn khỏi bảng; đổi luật tính tiền phiên (`shop-facts.md` §6.1, 2026-10-21) và viết lại `I-002` — L3 (thiết kế duyệt trước code, ADR, chia L1/L2 khi mở) — mở 2026-10-21, U-103 có lời và bắt đầu 2026-10-22 · [chi tiết](#t-227)
 - [ ] T-233 **Trang gọi món của khách hiện không có kiểu nào, chưa giống bản thiết kế menu** — CSS module của T-232 bị luật Turbopack trong `next.config.ts` đọc như CSS thường nên mọi `styles.*` rỗng (F-075); viết lại kiểu bằng một file CSS thường trong phạm vi trang và lớp Tailwind, đối chiếu ảnh chụp với `menu.html` ở hai giao diện; hành vi và test giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-233)
 
@@ -114,6 +114,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="done"></a>
 ## Done
+- [x] T-236 **Máy phát triển chưa có dữ liệu cho phần lớn các mục của trang chủ quán** — thêm bộ *dữ liệu thử* riêng cho máy dev (danh mục, combo, giao việc, đào tạo, khoản chi, sổ nguyên liệu, chấm công…), ghi nhãn rõ không phải sự thật của quán, chạy bằng một lệnh make riêng sau `make seed`; `db/seed/seed.pl` giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-236)
 - [x] T-234 **Trang Sản phẩm của chủ quán theo bản thiết kế, bày đủ thuộc tính món đã có** — áp `san_pham/san-pham.html` lên `/chu-quan/san-pham`: đầu trang có số món và hai nút, mỗi danh mục một bảng Món · Danh mục · Trạng thái · Giá · Thao tác, thêm món và đổi tên trong ngăn bên phải; giá là số `GET /menu` trả cho từng tổ hợp, không cộng, không tính thử — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-234)
 - [x] T-232 **Trang gọi món của khách theo bản thiết kế menu** — dựng `/ban/[ma]` (và `/dat-mon`, cùng component) theo `khach_hang/menu/menu.html`: thẻ combo và món lẻ có nút bớt · thêm, ô tìm món, dải giỏ dính đầu trang, tóm tắt đơn, nút gửi cam, màu sáng · tối; phần chưa có dữ liệu hay luật không làm; hành vi gửi và test cũ giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-232)
 - [x] T-231 **Trang Vận hành của chủ quán mặc phong cách mới** — áp `van-hanh-copy.html` và `styke/style.md` lên `/chu-quan/van-hanh`: màu nền · thẻ · viền · cam nhấn, sáng và tối; hành vi, chữ đọc được và test giữ nguyên — L1 — mở và xong 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-231)
@@ -486,12 +487,23 @@ dựng đơn bán — Tổng quan, Vận hành, Tổng kết lấy dữ liệu t
 `docs/command/tai-khoan-dev.md` (mật khẩu băm qua backend), bộ dựng này không tạo tài khoản.
 
 **Acceptance** (viết 2026-10-23, trước khi giao):
-- [ ] Một lệnh make mới (khai trong `make help` và `docs/command/make.md`) nạp dữ liệu thử lên database đã `make seed`; chạy lần hai thì báo đã có và bỏ qua, không lỗi, không nhân đôi.
-- [ ] Sau lệnh ấy, mỗi bảng sau có ít nhất một dòng: `menu_category`, `menu_item_category` (mọi món đang bán thuộc một danh mục), `menu_combo`, `menu_combo_item`, `assigned_task`, `assigned_task_guide`, `training_record`, `expense`, `supply_day_entry`, `attendance_day` — Claude kiểm bằng `SELECT count(*)` trên database làm việc.
-- [ ] File của bộ dựng không chứa con số tiền nào của menu, tên món hay tên danh mục gõ tay; tên tự đặt có *(thử)*.
-- [ ] `scripts/db-check.sh` dựng thêm dữ liệu thử sau dữ liệu mồi và in một dòng `PASS`/`FAIL` cho nó — Claude chạy (sandbox Codex không tới Docker).
-- [ ] `docs/product/2-db/08-du-lieu-moi.md` có một mục ngắn nói bộ thử này là gì, không phải sự thật của quán, chạy thế nào.
-- [ ] `db/seed/seed.pl` không đổi; `./scripts/gate.sh` xanh.
+- [x] Một lệnh make mới (khai trong `make help` và `docs/command/make.md`) nạp dữ liệu thử lên database đã `make seed`; chạy lần hai thì báo đã có và bỏ qua, không lỗi, không nhân đôi.
+- [x] Sau lệnh ấy, mỗi bảng sau có ít nhất một dòng: `menu_category`, `menu_item_category` (mọi món đang bán thuộc một danh mục), `menu_combo`, `menu_combo_item`, `assigned_task`, `assigned_task_guide`, `training_record`, `expense`, `supply_day_entry`, `attendance_day` — Claude kiểm bằng `SELECT count(*)` trên database làm việc.
+- [x] File của bộ dựng không chứa con số tiền nào của menu, tên món hay tên danh mục gõ tay; tên tự đặt có *(thử)*.
+- [x] `scripts/db-check.sh` dựng thêm dữ liệu thử sau dữ liệu mồi và in một dòng `PASS`/`FAIL` cho nó — Claude chạy (sandbox Codex không tới Docker).
+- [x] `docs/product/2-db/08-du-lieu-moi.md` có một mục ngắn nói bộ thử này là gì, không phải sự thật của quán, chạy thế nào.
+- [x] `db/seed/seed.pl` không đổi; `./scripts/gate.sh` xanh.
+
+**Bàn giao:** thực hiện: Codex · duyệt: Claude 2026-10-23. Worktree đầu `../lean_wt/T-236` bị một phiên Claude song song dùng nhầm cùng
+mã (nay là T-238): lúc 11:44 nó `reset --hard` nhánh `codex/T-236` về `1b6a966` và ghi đè scope — Claude dựng lại diff của Codex từ bản đã
+đọc và chuyển sang `../lean_wt/T-236-du-lieu-thu` (nhánh `codex/T-236-du-lieu-thu`, nền `1b6a966`). Vòng sửa 1: `shop_app` không có quyền
+TEMP nên bỏ mọi bảng tạm (JSONB, mảng, `set_config`). Claude tự sửa một dòng: database dev có thể có nhiều chủ quán ⇒ lấy id nhỏ nhất.
+File: `db/seed/du-lieu-thu.pl` (mới), `Makefile` (`make seed-thu`), `docs/command/make.md`, `docs/product/2-db/08-du-lieu-moi.md`,
+`scripts/db-check.sh` (bước 4b). Bằng chứng: gate ở clone chính `PASS dữ liệu thử — assigned_task=1 · assigned_task_guide=1 ·
+attendance_day=1 · expense=1 · menu_category=2 · menu_combo=1 · menu_combo_item=2 · menu_item_category=10 · supply_day_entry=2 ·
+training_record=1` và *lượt hai báo bỏ qua, số dòng không đổi*. Còn lại: database làm việc của chủ repo dựng từ bản `seed.pl` cũ (0 loại
+chi, 1 hàng mua vào) nên `make seed-thu` dừng ở *thiếu loại chi* — cần `make reset` rồi `make setup` và `make seed-thu`, rồi tạo lại tài
+khoản theo `docs/command/tai-khoan-dev.md`.
 
 <a id="t-235"></a>
 ### T-235 — Next.js 16.4.0 dính lỗ hổng bảo mật, `next build` dừng cách lượt
@@ -514,6 +526,32 @@ tác dụng và `next.config.ts` là chỗ từng gây F-075.
 - [ ] `fe-check` xanh (lint, typecheck, test, build) — Claude chạy lại ở clone chính.
 - [ ] Chỉ đổi `fe/package.json` và `fe/package-lock.json`; `./scripts/gate.sh` xanh.
 - [ ] F-076 chuyển *Resolved* với bản đã nâng — Claude ghi sau khi duyệt.
+
+<a id="t-238"></a>
+### T-238 — Trang Sản phẩm chỉ đổi được tên món, chưa cập nhật được danh mục, giá, trạng thái
+
+**Yêu cầu:** chủ repo 2026-10-23: *"tạo button cập nhật cho các thuộc tính tên, giá, danh mục, trạng thái — yêu cầu codex làm, bạn
+kiểm tra"*. Hỏi lại cùng ngày, chủ repo chọn: giá = **sửa giá gốc thành phần** ngay trên trang; trạng thái = **chỉ nút Ngừng bán**
+(hợp đồng không có cửa bán lại — mở `U-104`). **Mức:** L2 — trang thêm cửa ghi tiền (giá gốc thành phần) và ghi dữ liệu menu; không
+đổi backend, hợp đồng, migration.
+
+**Claude quyết 2026-10-23 (trình bày, không phải luật quán):** (1) cột Thao tác mỗi dòng một nút **Cập nhật** (aria-label
+*Cập nhật <tên>*) thay nút *Đổi tên*, mở ngăn bên phải tiêu đề *Cập nhật <tên>* có bốn phần, mỗi phần một form riêng gửi một lệnh:
+*Đổi tên* (`PUT /menu-items/{id}`, form sẵn có), *Chuyển danh mục* (`PUT /menu-items/{id}/category`), *Giá gốc thành phần*
+(`PUT /menu-components/{id}/base-price`, mỗi thành phần một form), *Ngừng bán* (`POST /menu-items/{id}/discontinuation`); mọi lệnh
+bắt buộc lý do — riêng lần **xếp đầu** món chưa xếp thì hợp đồng không nhận lý do, form không hỏi; (2) thành phần và giá gốc đọc qua
+`POST /price-quotes` như trang Menu & giá (`useThanhPhanGia`, hợp đồng không có đường đọc thành phần riêng) với tổ hợp đầu của
+món; món ngừng bán không có trong `/menu` nên phần giá ghi *Món đã ngừng bán, không đổi giá ở đây*; (3) phần giá luôn có lời nhắc
+*Đổi giá gốc thì mọi món dùng chung thành phần này đổi giá theo*; số tiền gửi là số nguyên không âm chủ quán gõ, FE không tính;
+(4) món ngừng bán: không phần *Ngừng bán*, có câu *Món đã ngừng bán. Chưa có cách bán lại (U-104).*; (5) ghi xong làm mất hiệu lực
+`["menu-categories"]`, `["menu"]`, `["price-quotes"]` rồi đọc lại; ngăn giữ mở, báo *Đã …*; (6) luật cũ của P4A-04 *trang không có nút
+giá · ngừng bán* được nới theo lời chủ repo; luật *không ghi tay cache*, *một lần bấm một lệnh*, *lời từ chối gắn đúng ô* giữ.
+
+**Acceptance** (viết 2026-10-23, trước khi giao):
+- [ ] `san-pham.test.tsx` do Claude viết trước (hồi quy `I-018` phía FE — mọi lệnh cập nhật mang lý do, thiếu lý do không gửi; `I-013` — FE không gửi giá món, chỉ giá gốc chủ quán gõ) — xanh, Codex không sửa.
+- [ ] Mỗi dòng có nút *Cập nhật <tên>*; ngăn có đủ bốn phần như quyết định (1), (2), (4); thân lệnh đúng hợp đồng.
+- [ ] Chỉ đổi file trong `fe/src/app/chu-quan/_components/` (san-pham, du-lieu-san-pham, form mới cho danh mục · giá · ngừng bán) và test trên; không sửa `du-lieu-menu-gia.ts`, `hop-thoai-sua-co-ly-do.tsx`, `components/ui/`; không thêm phụ thuộc.
+- [ ] `./scripts/gate.sh` xanh ở clone chính; Claude chạy lại test trang Menu & giá và Danh mục.
 
 <a id="t-234"></a>
 ### T-234 — Trang Sản phẩm của chủ quán chưa theo bản thiết kế, chỉ bày tên món

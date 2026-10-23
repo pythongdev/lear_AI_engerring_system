@@ -14,6 +14,7 @@ make help             # giống hệt lệnh trên
 ## 2. Lần đầu tiên — dựng database từ số 0
 ```bash
 make setup            # bật database + tạo bảng + nạp dữ liệu mồi, một lệnh là xong
+make seed-thu         # sau make seed: thêm dữ liệu thử máy dev; đã có danh mục thì bỏ qua
 make psql             # vào xem
 ```
 `make setup` chạy lần lượt `make up`, `make migrate`, `make seed`. Xong thì database có đủ bảng,
@@ -175,3 +176,6 @@ go run ./cmd/khoitao-chu-quan -username chuquan -email chuquan@example.com -disp
 
 Cấp stdin từ nguồn bí mật của môi trường triển khai. Lệnh dùng cùng DSN và múi giờ
 như server, tạo người có cờ chủ quán và tài khoản vai owner trong cùng giao dịch.
+
+
+make reset && make setup && make seed-thu

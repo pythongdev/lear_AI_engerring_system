@@ -333,6 +333,77 @@ else
   fail "dữ liệu mồi — db/seed/seed.pl không đọc được owner:"; printf '%s\n' "$seed_sql" | sed 's/^/     /'
 fi
 
+# --- 4b. dữ liệu thử máy dev (T-236) ------------------------------------------
+# Kiểm trong một giao dịch rồi rollback: S5 tự gán danh mục cho món, nên không
+# để fixture thử làm trùng khoá hoặc đổi các đáp số scenario phía sau.
+# Chỉ bỏ BEGIN/COMMIT ngoài cùng của SQL sinh ra; mọi cửa ghi/trigger giữ nguyên.
+if trial_sql="$(perl db/seed/du-lieu-thu.pl 2>&1)"; then
+  trial_body="$(printf '%s\n' "$trial_sql" | sed '/^BEGIN;$/d; /^COMMIT;$/d')"
+  if out="$({
+    echo 'BEGIN;'
+    printf '%s\n' "$trial_body"
+    cat <<'SQL'
+DO $check$
+DECLARE t text; n bigint; counts jsonb := '{}'::jsonb;
+BEGIN
+  FOREACH t IN ARRAY ARRAY['menu_category', 'menu_item_category', 'menu_combo',
+    'menu_combo_item', 'assigned_task', 'assigned_task_guide', 'training_record',
+    'expense', 'supply_day_entry', 'attendance_day'] LOOP
+    EXECUTE format('SELECT count(*) FROM %I', t) INTO n;
+    IF n < 1 THEN RAISE EXCEPTION 'dữ liệu thử: % rỗng', t; END IF;
+    counts := counts || jsonb_build_object(t, n);
+  END LOOP;
+  -- Giữ số đếm trong cài đặt giao dịch, không cần bảng tạm hay đổi vai.
+  PERFORM set_config('shop.trial_counts', counts::text, true);
+  IF EXISTS (SELECT 1 FROM menu_item i WHERE i.discontinued_at IS NULL
+    AND (SELECT count(*) FROM menu_item_category c WHERE c.menu_item_id = i.id) <> 1) THEN
+    RAISE EXCEPTION 'dữ liệu thử: món đang bán thiếu danh mục';
+  END IF;
+  IF EXISTS (
+    SELECT 1 FROM menu_combo co WHERE co.price_vnd <> (
+      SELECT sum(ci.quantity * ic.quantity * c.base_price_vnd)
+      FROM menu_combo_item ci
+      JOIN menu_item_component ic ON ic.menu_item_id = ci.menu_item_id
+      JOIN menu_component c ON c.id = ic.menu_component_id
+      WHERE ci.menu_combo_id = co.id)) THEN
+    RAISE EXCEPTION 'dữ liệu thử: giá combo lệch tổng giá gốc món lẻ';
+  END IF;
+END $check$;
+-- Ép kiểm cả trigger hoãn vì phép thử kết thúc bằng rollback.
+SET CONSTRAINTS ALL IMMEDIATE;
+SQL
+    printf '%s\n' "$trial_body"
+    cat <<'SQL'
+DO $check$
+DECLARE r record; n bigint;
+BEGIN
+  FOR r IN SELECT key AS table_name, value::bigint AS row_count
+    FROM jsonb_each_text(current_setting('shop.trial_counts')::jsonb) LOOP
+    EXECUTE format('SELECT count(*) FROM %I', r.table_name) INTO n;
+    IF n <> r.row_count THEN RAISE EXCEPTION 'dữ liệu thử: lượt hai đổi số dòng %', r.table_name; END IF;
+  END LOOP;
+END $check$;
+SELECT string_agg(key || '=' || value, ' · ' ORDER BY key)
+FROM jsonb_each_text(current_setting('shop.trial_counts')::jsonb);
+ROLLBACK;
+SQL
+  } | psql_f -f - 2>&1)"; then
+    if printf '%s\n' "$out" | grep -q 'seed-thu: đã có danh mục — bỏ qua'; then
+      echo "PASS dữ liệu thử — $(printf '%s\n' "$out" | grep '^assigned_task=')"
+      echo "PASS dữ liệu thử lượt hai — báo bỏ qua, số dòng không đổi"
+    else
+      fail "dữ liệu thử — lượt hai không báo bỏ qua"
+      printf '%s\n' "$out" | sed 's/^/     /'
+    fi
+  else
+    fail "dữ liệu thử — không dựng/kiểm được (giữ nguyên mọi khoá của lược đồ)"
+    printf '%s\n' "$out" | sed 's/^/     /'
+  fi
+else
+  fail "dữ liệu thử — bộ dựng không đọc được owner"
+  printf '%s\n' "$trial_sql" | sed 's/^/     /'
+fi
+
 # --- 5. khoá chặn của đường lùi biết kêu (P2-09) ------------------------------
 # Database có dữ liệu mồi: bước rỗng được lùi (luật 2), bước đầu có dữ liệu phải
 # từ chối mà không đổi lược đồ. Gỡ dirty về bước ấy rồi xuôi lại đỉnh, so ảnh seeded.
