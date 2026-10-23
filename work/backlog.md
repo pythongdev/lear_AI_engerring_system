@@ -89,6 +89,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
+- [ ] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — thêm danh mục của từng món vào `GET /menu` (hợp đồng, truy vấn, handler) rồi trang khách `/dat-mon`, `/ban/[ma]` nhóm món theo danh mục đọc từ API — L2 (đổi hợp đồng API) — mở 2026-10-23 (chủ repo chọn), làm sau T-236 · [chi tiết](#t-237)
 - [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
@@ -97,9 +98,9 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-236 **Máy phát triển chưa có dữ liệu cho phần lớn các mục của trang chủ quán** — thêm bộ *dữ liệu thử* riêng cho máy dev (danh mục, combo, giao việc, đào tạo, khoản chi, sổ nguyên liệu, chấm công…), ghi nhãn rõ không phải sự thật của quán, chạy bằng một lệnh make riêng sau `make seed`; `db/seed/seed.pl` giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-236)
 - [ ] T-235 **Next.js 16.4.0 dính lỗ hổng bảo mật, `next build` dừng cách lượt** — nâng `next` và `eslint-config-next` trong `fe/` lên bản vá theo `next upgrade --agent=security`, đóng F-076 — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-235)
 - [ ] T-227 **Thanh toán bàn chỉ thu phần đã ra, phần chưa ra huỷ việc trạm** — bấm tiền bánh đã ra để đóng phiên và xoá bàn khỏi bảng; đổi luật tính tiền phiên (`shop-facts.md` §6.1, 2026-10-21) và viết lại `I-002` — L3 (thiết kế duyệt trước code, ADR, chia L1/L2 khi mở) — mở 2026-10-21, U-103 có lời và bắt đầu 2026-10-22 · [chi tiết](#t-227)
-- [ ] T-234 **Trang Sản phẩm của chủ quán theo bản thiết kế, bày đủ thuộc tính món đã có** — áp `san_pham/san-pham.html` lên `/chu-quan/san-pham`: đầu trang có số món và hai nút, mỗi danh mục một bảng Món · Danh mục · Trạng thái · Giá · Thao tác, thêm món và đổi tên trong ngăn bên phải; giá là số `GET /menu` trả cho từng tổ hợp, không cộng, không tính thử — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-234)
 - [ ] T-233 **Trang gọi món của khách hiện không có kiểu nào, chưa giống bản thiết kế menu** — CSS module của T-232 bị luật Turbopack trong `next.config.ts` đọc như CSS thường nên mọi `styles.*` rỗng (F-075); viết lại kiểu bằng một file CSS thường trong phạm vi trang và lớp Tailwind, đối chiếu ảnh chụp với `menu.html` ở hai giao diện; hành vi và test giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-233)
 
 
@@ -113,6 +114,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="done"></a>
 ## Done
+- [x] T-234 **Trang Sản phẩm của chủ quán theo bản thiết kế, bày đủ thuộc tính món đã có** — áp `san_pham/san-pham.html` lên `/chu-quan/san-pham`: đầu trang có số món và hai nút, mỗi danh mục một bảng Món · Danh mục · Trạng thái · Giá · Thao tác, thêm món và đổi tên trong ngăn bên phải; giá là số `GET /menu` trả cho từng tổ hợp, không cộng, không tính thử — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-234)
 - [x] T-232 **Trang gọi món của khách theo bản thiết kế menu** — dựng `/ban/[ma]` (và `/dat-mon`, cùng component) theo `khach_hang/menu/menu.html`: thẻ combo và món lẻ có nút bớt · thêm, ô tìm món, dải giỏ dính đầu trang, tóm tắt đơn, nút gửi cam, màu sáng · tối; phần chưa có dữ liệu hay luật không làm; hành vi gửi và test cũ giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-232)
 - [x] T-231 **Trang Vận hành của chủ quán mặc phong cách mới** — áp `van-hanh-copy.html` và `styke/style.md` lên `/chu-quan/van-hanh`: màu nền · thẻ · viền · cam nhấn, sáng và tối; hành vi, chữ đọc được và test giữ nguyên — L1 — mở và xong 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-231)
 - [x] T-230 **Nút sáng / tối nằm góc dưới, chủ repo muốn nó cạnh nút Đăng xuất** — thanh đầu khung theo vai có nút; trang không thanh đầu giữ nút nổi — L1 — mở và xong 2026-10-22 (chủ repo yêu cầu) · [chi tiết](#t-230)
@@ -460,6 +462,37 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
 
+<a id="t-237"></a>
+### T-237 — Trang gọi món của khách chưa chia món theo danh mục
+
+**Yêu cầu:** chủ repo 2026-10-23, cùng lượt T-236: *"để client menu page fetch dữ liệu"*; hỏi lại, chủ repo chọn **chia món theo danh
+mục** đọc từ API. Trang khách đã gọi `GET /menu` nhưng schema `Menu` (`docs/product/3-be/openapi.yaml`) không mang danh mục. **Mức:** L2 —
+đổi hợp đồng API công khai. Claude thiết kế và viết test trước khi giao; Acceptance viết lúc mở, sau khi T-236 xong.
+
+<a id="t-236"></a>
+### T-236 — Máy phát triển chưa có dữ liệu cho phần lớn các mục của trang chủ quán
+
+**Yêu cầu:** chủ repo 2026-10-23: *"http://localhost:3000/chu-quan hãy tạo dữ liệu cho tất cả các danh mục có trong page trên dựa trên
+shop-fact … yêu cầu codex làm bạn kiểm tra"*. Hỏi lại cùng ngày: `shop-facts.md` chưa chốt danh mục món (§8.9 *"Danh mục gồm những nhóm
+nào thì lời không nói"*), chưa có combo nào (§8.9 lượt bảy vế 1), không có việc giao, đào tạo, khoản chi hay số sổ nguyên liệu nào — chủ
+repo chọn **dữ liệu thử riêng**: không đưa vào `seed.pl`, ghi nhãn không phải sự thật của quán. **Mức:** L1 — chỉ dữ liệu máy dev, không
+đổi lược đồ, hợp đồng, luật tiền.
+
+**Claude quyết 2026-10-23 (cách làm, không phải luật quán):** (1) một bộ dựng riêng dưới `db/seed/`, chạy **sau** `seed.pl` trên database
+đã có dữ liệu mồi, bằng vai `shop_app`, đi qua đúng cửa và trigger của lược đồ; (2) không chép số tiền hay tên món của quán vào file
+(ADR-001, F-001): tên danh mục đọc từ cột *Danh mục* của `shop-facts.md` §4.2 lúc chạy, món và giá đọc từ database; giá combo thử = tổng
+giá món lẻ đọc từ database, không gõ tay; (3) mọi tên tự đặt (việc giao, bài đào tạo, combo, ghi chú khoản chi…) mang chữ *(thử)*; (4) không
+dựng đơn bán — Tổng quan, Vận hành, Tổng kết lấy dữ liệu từ đơn thật tạo qua giao diện; (5) tài khoản đăng nhập vẫn theo
+`docs/command/tai-khoan-dev.md` (mật khẩu băm qua backend), bộ dựng này không tạo tài khoản.
+
+**Acceptance** (viết 2026-10-23, trước khi giao):
+- [ ] Một lệnh make mới (khai trong `make help` và `docs/command/make.md`) nạp dữ liệu thử lên database đã `make seed`; chạy lần hai thì báo đã có và bỏ qua, không lỗi, không nhân đôi.
+- [ ] Sau lệnh ấy, mỗi bảng sau có ít nhất một dòng: `menu_category`, `menu_item_category` (mọi món đang bán thuộc một danh mục), `menu_combo`, `menu_combo_item`, `assigned_task`, `assigned_task_guide`, `training_record`, `expense`, `supply_day_entry`, `attendance_day` — Claude kiểm bằng `SELECT count(*)` trên database làm việc.
+- [ ] File của bộ dựng không chứa con số tiền nào của menu, tên món hay tên danh mục gõ tay; tên tự đặt có *(thử)*.
+- [ ] `scripts/db-check.sh` dựng thêm dữ liệu thử sau dữ liệu mồi và in một dòng `PASS`/`FAIL` cho nó — Claude chạy (sandbox Codex không tới Docker).
+- [ ] `docs/product/2-db/08-du-lieu-moi.md` có một mục ngắn nói bộ thử này là gì, không phải sự thật của quán, chạy thế nào.
+- [ ] `db/seed/seed.pl` không đổi; `./scripts/gate.sh` xanh.
+
 <a id="t-235"></a>
 ### T-235 — Next.js 16.4.0 dính lỗ hổng bảo mật, `next build` dừng cách lượt
 
@@ -502,13 +535,21 @@ trong phạm vi trang, sáng mặc định, tối theo `.dark`, không sửa `gl
 giải, khối *Trạng thái minh hoạ*, nút sáng / tối của bản thiết kế.
 
 **Acceptance** (viết 2026-10-23, trước khi giao):
-- [ ] Đầu trang: tiêu đề *Sản phẩm* kèm huy hiệu *N món* (N = số món backend trả, kể cả chưa xếp), nút *Đọc lại danh sách* và nút cam *Thêm món*; không có nút *Thêm món* khi chưa có danh mục hoặc chưa đọc được.
-- [ ] Mỗi danh mục (đúng thứ backend) và nhóm *Chưa xếp danh mục* là một thẻ có bảng cột Món · Danh mục · Trạng thái · Giá · Thao tác trong vùng cuộn ngang riêng; trạng thái *Đang bán* hoặc huy hiệu *Ngừng bán*; danh mục trống hiện *Chưa có món*.
-- [ ] Ô giá bày đúng từng giá `GET /menu` trả theo cách định dạng `tienGia`, kèm tên lựa chọn; *—* cho món ngừng bán, *Chưa có giá*, *Chưa đọc được giá* như quyết định (1); không có lời gọi `/price-quotes`.
-- [ ] *Thêm món* và *Đổi tên* mở ngăn bên phải rộng tối đa 380px; hành vi gửi, kiểm, lời từ chối giữ nguyên.
-- [ ] `san-pham.test.tsx` do Claude sửa trước khi giao (đọc dòng bảng thay vì mục danh sách, bấm *Thêm món* để mở ngăn, thêm ca kiểm cột và huy hiệu) — xanh, Codex không sửa.
-- [ ] Chỉ đổi `san-pham.tsx`, `du-lieu-san-pham.ts`, `form-them-mon.tsx`, `form-doi-ten-mon.tsx` dưới `fe/src/app/chu-quan/_components/` và test trên; không thêm phụ thuộc.
-- [ ] `./scripts/gate.sh` xanh; Claude chạy lại `fe-check`.
+- [x] Đầu trang: tiêu đề *Sản phẩm* kèm huy hiệu *N món* (N = số món backend trả, kể cả chưa xếp), nút *Đọc lại danh sách* và nút cam *Thêm món*; không có nút *Thêm món* khi chưa có danh mục hoặc chưa đọc được.
+- [x] Mỗi danh mục (đúng thứ backend) và nhóm *Chưa xếp danh mục* là một thẻ có bảng cột Món · Danh mục · Trạng thái · Giá · Thao tác trong vùng cuộn ngang riêng; trạng thái *Đang bán* hoặc huy hiệu *Ngừng bán*; danh mục trống hiện *Chưa có món*.
+- [x] Ô giá bày đúng từng giá `GET /menu` trả theo cách định dạng `tienGia`, kèm tên lựa chọn; *—* cho món ngừng bán, *Chưa có giá*, *Chưa đọc được giá* như quyết định (1); không có lời gọi `/price-quotes`.
+- [x] *Thêm món* và *Đổi tên* mở ngăn bên phải rộng tối đa 380px; hành vi gửi, kiểm, lời từ chối giữ nguyên.
+- [x] `san-pham.test.tsx` do Claude sửa trước khi giao (đọc dòng bảng thay vì mục danh sách, bấm *Thêm món* để mở ngăn, thêm ca kiểm cột và huy hiệu) — xanh, Codex không sửa.
+- [x] Chỉ đổi `san-pham.tsx`, `du-lieu-san-pham.ts`, `form-them-mon.tsx`, `form-doi-ten-mon.tsx` dưới `fe/src/app/chu-quan/_components/` và test trên; không thêm phụ thuộc.
+- [x] `./scripts/gate.sh` xanh; Claude chạy lại `fe-check`.
+
+**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-234`, nhánh `codex/T-234`, nền `e21999a`, đã gỡ) · duyệt: Claude 2026-10-23.
+Claude viết lại `san-pham.test.tsx` trước khi giao (đọc dòng bảng, mở ngăn *Thêm món*, thêm bốn ca cột · số món · giá · lỗi giá) và chạy
+thấy đỏ 7/20; `cmp` xác nhận Codex không đổi file ấy. Claude đọc diff: chỉ bốn file `_components` trong scope; giá chỉ là phần tử `prices`
+của `GET /menu` qua `useMenuGia` và `tienGia`, không phép cộng tiền nào (tổng duy nhất là đếm số món); ghi xong làm mất hiệu lực
+`["menu-categories"]` và `["menu"]`; `FormThemMon` bỏ h2 riêng vì `DialogTitle` thay — form này chỉ trang Sản phẩm dùng. Sandbox của Codex
+chặn `next build` (không mở được cổng); Claude chạy `./scripts/gate.sh` ở clone chính sau `git apply`: lượt đầu đỏ vì F-076 (Next.js
+16.4.0 tự dừng nhắc nâng cấp), lượt hai xanh, Vitest 458/458. Còn lại: chưa xem trực quan trên trình duyệt ở hai giao diện.
 
 <a id="t-233"></a>
 ### T-233 — Trang gọi món của khách hiện không có kiểu nào, chưa giống bản thiết kế menu

@@ -1,6 +1,6 @@
 "use client";
 // Đọc món theo danh mục, thêm món và đổi tên món (P4A-04). Ghi xong chỉ làm mất hiệu lực rồi đọc lại — không ghi tay
-// cache, không gửi lại ngầm (ADR-102 điểm 2). Trang không đọc giá: giá món do backend tính từ thành phần (ADR-086).
+// cache, không gửi lại ngầm (ADR-102 điểm 2). Giá hiển thị lấy từ GET /menu, do backend tính (ADR-086).
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { call, type ApiFailure, type ApiResult } from "@/lib/api/client";
@@ -28,7 +28,10 @@ function useDocLaiSauGhi() {
   return async (r: ApiResult<KetQua>) => {
     if (r.ok || (r.failure.kind === "rejected" &&
       ["menu_category_hidden", "menu_category_not_found", "menu_item_not_found"].includes(r.failure.code))) {
-      await qc.invalidateQueries({ queryKey: khoa });
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: khoa }),
+        qc.invalidateQueries({ queryKey: ["menu"] }),
+      ]);
     }
   };
 }

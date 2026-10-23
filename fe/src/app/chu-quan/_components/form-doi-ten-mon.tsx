@@ -48,7 +48,7 @@ export function FormDoiTenMon({ mon, dong, daLuu }: { mon: Mon; dong: () => void
     </fieldset>
     {thongBao && <Alert role="status"><AlertDescription>{thongBao}</AlertDescription></Alert>}
     <div className="flex gap-2">
-      <Button type="submit" disabled={ban}>{ban ? "Đang lưu…" : "Lưu tên"}</Button>
+      <Button className="sp-primary" type="submit" disabled={ban}>{ban ? "Đang lưu…" : "Lưu tên"}</Button>
       <Button type="button" variant="outline" disabled={ban} onClick={dong}>Huỷ</Button>
     </div>
   </form>;

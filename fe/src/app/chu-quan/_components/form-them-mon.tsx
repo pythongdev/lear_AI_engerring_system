@@ -63,7 +63,6 @@ export function FormThemMon({ categories }: { categories: DanhSachMon["categorie
   }
   const loiDanhMuc = form.formState.errors.menu_category_id?.message;
   return <form aria-label="Thêm món" onSubmit={gui} noValidate className="space-y-4">
-    <h2 className="text-lg font-semibold">Thêm món</h2>
     <fieldset disabled={ban} className="space-y-4">
       {oNhap("name", "Tên món")}
       <Field data-invalid={!!loiDanhMuc}>
@@ -95,6 +94,6 @@ export function FormThemMon({ categories }: { categories: DanhSachMon["categorie
       <Button type="button" variant="outline" onClick={() => append(thanhPhanMoi())}>Thêm thành phần</Button>
     </fieldset>
     {thongBao && <Alert role="status"><AlertDescription>{thongBao}</AlertDescription></Alert>}
-    <Button type="submit" disabled={ban}>{ban ? "Đang lưu…" : "Thêm món"}</Button>
+    <Button className="sp-primary" type="submit" disabled={ban}>{ban ? "Đang lưu…" : "Thêm món"}</Button>
   </form>;
 }

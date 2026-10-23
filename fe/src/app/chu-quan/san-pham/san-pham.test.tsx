@@ -1,6 +1,7 @@
 // Test hồi quy P4A-04 — Claude viết TRƯỚC khi có code (L2). Người thi công làm cho xanh, KHÔNG sửa điều kiện kiểm.
 // Giữ: danh sách món là đúng thứ backend trả từ GET /menu-categories, kể cả món ngừng bán và món chưa xếp; trang không
-// bày, không cộng giá (ADR-086 — giá món do backend tính từ thành phần); sửa giá · thành phần · ngừng bán là của P4-05,
+// cộng, không tính thử giá (ADR-086 — giá món do backend tính từ thành phần) — T-234 (chủ repo 2026-10-23) cho trang bày
+// giá đọc từ GET /menu, đúng từng tổ hợp backend trả; sửa giá · thành phần · ngừng bán là của P4-05,
 // trang này không có nút ấy; ghi chờ backend xác nhận rồi đọc lại, không ghi tay cache (ADR-102 điểm 2); đổi tên bắt
 // buộc lý do; lời từ chối có field gắn đúng ô; bấm gửi hai lần chỉ gửi một lệnh (fe-02 §3).
 import { cleanup, fireEvent, screen, waitFor, within } from "@testing-library/react";
@@ -13,6 +14,7 @@ import Page from "./page";
 
 type MenuCategoryList = components["schemas"]["MenuCategoryList"];
 type MenuCategory = components["schemas"]["MenuCategory"];
+type Menu = components["schemas"]["Menu"];
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
@@ -41,13 +43,34 @@ const mau: MenuCategoryList = {
   uncategorized_items: [{ menu_item_id: 20, item_name: "Chả quế", discontinued: false }],
 };
 
+// Món ngừng bán (10) không có trong GET /menu; giá là số backend trả, trang không cộng.
+const menuMau: Menu = {
+  items: [
+    {
+      menu_item_id: 11, item_name: "Bánh cuốn trứng",
+      option_groups: [{ option_group_id: 5, option_group_name: "Nhân", prerequisite_option_ids: [], options: [
+        { menu_option_id: 51, option_name: "Thịt", is_default: true },
+        { menu_option_id: 52, option_name: "Chay", is_default: false },
+      ] }],
+      prices: [{ option_ids: [51], unit_price_vnd: 35000 }, { option_ids: [52], unit_price_vnd: 30000 }],
+    },
+    { menu_item_id: 20, item_name: "Chả quế", option_groups: [], prices: [{ option_ids: [], unit_price_vnd: 10000 }] },
+  ],
+  combos: [],
+};
+
 type TraLoi = { status: number; body?: unknown };
-function moTrang(tl: { doc?: (lan: number) => TraLoi; ghi?: (g: GoiDen) => TraLoi } = {}) {
+function moTrang(tl: { doc?: (lan: number) => TraLoi; menu?: (lan: number) => TraLoi; ghi?: (g: GoiDen) => TraLoi } = {}) {
   let lan = 0;
+  let lanMenu = 0;
   return voiBackend(<Page />, (g) => {
     if (g.method === "GET" && g.path === "/menu-categories") {
       lan += 1;
       return tl.doc ? tl.doc(lan) : { status: 200, body: mau };
+    }
+    if (g.method === "GET" && g.path === "/menu") {
+      lanMenu += 1;
+      return tl.menu ? tl.menu(lanMenu) : { status: 200, body: menuMau };
     }
     if ((g.method === "POST" && g.path === "/menu-items") || (g.method === "PUT" && g.path.startsWith("/menu-items/"))) {
       return tl.ghi ? tl.ghi(g) : { status: 599, body: { code: "khong_co_trong_hop_dong" } };
@@ -56,13 +79,23 @@ function moTrang(tl: { doc?: (lan: number) => TraLoi; ghi?: (g: GoiDen) => TraLo
   });
 }
 const soLanDoc = (g: GoiDen[]) => g.filter((x) => x.method === "GET" && x.path === "/menu-categories").length;
+const soLanDocGia = (g: GoiDen[]) => g.filter((x) => x.method === "GET" && x.path === "/menu").length;
 const ghi = (g: GoiDen[]) => g.filter((x) => x.method !== "GET");
 
+// Mỗi món một dòng bảng; dòng đầu là dòng tiêu đề cột.
 function tenMon(vung: HTMLElement) {
-  return within(vung).getAllByRole("listitem").map((li) => li.textContent ?? "");
+  return within(vung).getAllByRole("row").slice(1).map((tr) => tr.textContent ?? "");
 }
+function dongMon(vung: HTMLElement, ten: string) {
+  const dong = within(vung).getAllByRole("row").find((tr) => within(tr).queryAllByRole("cell")[0]?.textContent?.startsWith(ten));
+  if (!dong) throw new Error("Không thấy dòng " + ten);
+  return dong;
+}
+const gia = (so: string) => new RegExp(so.replace(".", "\\.") + "\\s?đ");
 
+// Thêm món nằm trong ngăn bên phải: bấm nút ở đầu trang để mở.
 async function formThem() {
+  fireEvent.click(await screen.findByRole("button", { name: "Thêm món" }));
   return screen.findByRole("form", { name: "Thêm món" });
 }
 function go(o: HTMLElement, nhan: string, giaTri: string) {
@@ -81,7 +114,7 @@ function dienMonHopLe(f: HTMLElement) {
 const oSai = (o: HTMLElement, nhan: string) => within(o).getByLabelText(nhan).getAttribute("aria-invalid");
 
 describe("trang sản phẩm — danh sách", () => {
-  it("bày món theo danh mục đúng thứ backend, kể cả món ngừng bán và món chưa xếp; chỉ đọc /menu-categories", async () => {
+  it("bày món theo danh mục đúng thứ backend, kể cả món ngừng bán và món chưa xếp; chỉ đọc /menu-categories và /menu", async () => {
     const goi = moTrang();
     const banhCuon = await screen.findByRole("region", { name: "Bánh cuốn" });
     const ten = tenMon(banhCuon);
@@ -95,7 +128,53 @@ describe("trang sản phẩm — danh sách", () => {
     // Thứ tự danh mục cũng là của backend.
     const doUong = screen.getByRole("region", { name: "Đồ uống" });
     expect(banhCuon.compareDocumentPosition(doUong) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(goi.map((g) => `${g.method} ${g.path}`)).toEqual(["GET /menu-categories"]);
+    await waitFor(() => expect(soLanDocGia(goi)).toBe(1));
+    expect(goi.map((g) => `${g.method} ${g.path}`).sort()).toEqual(["GET /menu", "GET /menu-categories"]);
+  });
+
+  it("đầu trang có số món; bảng có cột Món · Danh mục · Trạng thái · Giá · Thao tác", async () => {
+    moTrang();
+    const banhCuon = await screen.findByRole("region", { name: "Bánh cuốn" });
+    expect(screen.getByRole("heading", { level: 1 }).textContent ?? "").toMatch(/Sản phẩm\s*3 món/);
+    expect(within(banhCuon).getAllByRole("columnheader").map((th) => th.textContent))
+      .toEqual(["Món", "Danh mục", "Trạng thái", "Giá", "Thao tác"]);
+    const trung = dongMon(banhCuon, "Bánh cuốn trứng");
+    const o = within(trung).getAllByRole("cell").map((td) => td.textContent ?? "");
+    expect(o[1]).toBe("Bánh cuốn");
+    expect(o[2]).toBe("Đang bán");
+    expect(o[2]).not.toMatch(/Ngừng bán/);
+    expect(dongMon(banhCuon, "Bánh cuốn thịt").textContent ?? "").toMatch(/Ngừng bán/);
+    const chaQue = within(dongMon(screen.getByRole("region", { name: "Chưa xếp danh mục" }), "Chả quế")).getAllByRole("cell");
+    expect(chaQue[1].textContent).toBe("Chưa xếp");
+  });
+
+  it("giá: đúng từng tổ hợp GET /menu trả kèm tên lựa chọn; món ngừng bán không có giá; không tính thử", async () => {
+    const goi = moTrang();
+    const banhCuon = await screen.findByRole("region", { name: "Bánh cuốn" });
+    await waitFor(() => expect(within(dongMon(banhCuon, "Bánh cuốn trứng")).getAllByRole("cell")[3].textContent ?? "").toMatch(gia("35.000")));
+    const oTrung = within(dongMon(banhCuon, "Bánh cuốn trứng")).getAllByRole("cell")[3].textContent ?? "";
+    expect(oTrung).toMatch(/Thịt/);
+    expect(oTrung).toMatch(/Chay/);
+    expect(oTrung).toMatch(gia("30.000"));
+    // Không cộng, không chọn thay: không có số nào ngoài hai giá backend trả.
+    expect(oTrung.match(/\d+(\.\d{3})*/g)).toEqual(["35.000", "30.000"]);
+    expect(within(dongMon(banhCuon, "Bánh cuốn thịt")).getAllByRole("cell")[3].textContent).toBe("—");
+    const chaQue = within(dongMon(screen.getByRole("region", { name: "Chưa xếp danh mục" }), "Chả quế")).getAllByRole("cell");
+    expect(chaQue[3].textContent ?? "").toMatch(gia("10.000"));
+    expect(goi.some((g) => g.path === "/price-quotes")).toBe(false);
+  });
+
+  it("món đang bán mà /menu không có: ô giá nói chưa có giá", async () => {
+    moTrang({ menu: () => ({ status: 200, body: { items: [], combos: [] } }) });
+    const banhCuon = await screen.findByRole("region", { name: "Bánh cuốn" });
+    await waitFor(() => expect(within(dongMon(banhCuon, "Bánh cuốn trứng")).getAllByRole("cell")[3].textContent).toBe("Chưa có giá"));
+  });
+
+  it("/menu đọc lỗi: bảng món vẫn hiện, ô giá nói chưa đọc được giá", async () => {
+    moTrang({ menu: () => ({ status: 500, body: { code: "internal_error" } }) });
+    const banhCuon = await screen.findByRole("region", { name: "Bánh cuốn" });
+    await waitFor(() => expect(within(dongMon(banhCuon, "Bánh cuốn trứng")).getAllByRole("cell")[3].textContent).toBe("Chưa đọc được giá"));
+    expect(tenMon(banhCuon)).toHaveLength(2);
   });
 
   it("không có nút xoá, ngừng bán hay sửa giá — phần ấy của P4-05", async () => {
@@ -143,9 +222,11 @@ describe("trang sản phẩm — thêm món", () => {
       },
     }]);
     await waitFor(() => expect(soLanDoc(goi)).toBe(2));
+    // Đọc lại cả giá để món mới có giá; ngăn vẫn mở, form đã xoá để thêm tiếp.
+    await waitFor(() => expect(soLanDocGia(goi)).toBe(2));
     expect((within(f).getByLabelText("Tên món") as HTMLInputElement).value).toBe("");
-    // Không gọi tính giá hay đọc menu bán: trang không bày giá.
-    expect(goi.some((g) => g.path === "/price-quotes" || g.path === "/menu")).toBe(false);
+    // Không gọi tính thử: giá chỉ là số GET /menu trả.
+    expect(goi.some((g) => g.path === "/price-quotes")).toBe(false);
   });
 
   it("bỏ được thành phần thêm sau, không bỏ được thành phần duy nhất", async () => {
@@ -254,6 +335,9 @@ describe("trang sản phẩm — đổi tên món", () => {
       method: "PUT", path: "/menu-items/11", body: { name: "Bánh cuốn trứng gà", reason: "Ghi rõ trứng gà" },
     }]);
     await waitFor(() => expect(soLanDoc(goi)).toBe(2));
+    await waitFor(() => expect(soLanDocGia(goi)).toBe(2));
+    // Lưu xong ngăn đóng.
+    expect(screen.queryByRole("form", { name: "Đổi tên Bánh cuốn trứng" })).toBeNull();
   });
 
   it("món ngừng bán vẫn đổi tên được", async () => {
