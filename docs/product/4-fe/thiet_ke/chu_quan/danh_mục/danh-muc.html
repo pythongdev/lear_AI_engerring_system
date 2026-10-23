@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Danh mục · Chủ quán</title>
+<style>
+:root { color-scheme:dark; --bg:#000000; --card:#1F2937; --line:#2D3748; --muted:#9CA3AF; --accent:#FF7A1A; --field:#374151; --text:#F9FAFB; --page:#0a0a0a; --notch:#0f172a; --banner:#3a2310; --banner-ink:#7c4a23; --badge:#3a2a18}
+:root[data-theme=light] { color-scheme:light; --bg:#FFFFFF; --card:#F3F4F6; --line:#E5E7EB; --muted:#6B7280; --accent:#EA6A0C; --field:#E5E7EB; --text:#111827; --page:#F3F4F6; --notch:#E5E7EB; --banner:#FDE8D4; --banner-ink:#C2702F; --badge:#FDECDC}
+* { box-sizing:border-box}
+body { margin:0; background:var(--page); color:var(--text); font:12px/1.45 'Be Vietnam Pro',system-ui,sans-serif}
+button,input,textarea { font:inherit; color:inherit}
+button { cursor:pointer; border:1px solid var(--line); border-radius:7px; background:transparent; padding:6px 10px}
+button:hover { filter:brightness(1.15)}
+:focus-visible { outline:2px solid var(--accent); outline-offset:3px}
+h1,h2,h3,p { margin:0}
+h1 { font-size:20px; font-weight:600}
+h2,h3 { font-size:14px; font-weight:500}
+.muted { color:var(--muted)}
+.price { color:var(--accent); white-space:nowrap}
+.primary { background:var(--accent); border-color:var(--accent); color:#fff}
+.plain { border:0; padding:0}
+.row { display:flex; align-items:center; justify-content:space-between; gap:8px}
+.phone { max-width:472px; margin:24px auto; background:var(--bg); border:1px solid var(--notch); border-radius:24px; padding:0 15px 16px; overflow:clip}
+.status { height:30px; font-size:11px; position:relative}
+.status:after { content:''; width:150px; height:16px; border-radius:12px; background:var(--notch); position:absolute; top:5px; left:50%; transform:translateX(-50%)}
+.sticky { position:sticky; top:0; z-index:5; background:var(--bg)}
+.header { min-height:58px; border-bottom:1px solid var(--line)}
+.header small { font-size:11px; color:var(--muted)}
+.header-actions { display:flex; gap:6px}
+.mini { height:50px; gap:8px; border-bottom:1px solid var(--line)}
+.mini>button { border-radius:20px; white-space:nowrap; font-size:11px; padding:4px 9px}
+.chips { display:flex; gap:6px; overflow:auto; scrollbar-width:none; flex:1}
+.chip { background:var(--field); border-radius:16px; white-space:nowrap; font-size:10px; padding:4px 8px}
+.banner { height:96px; background:var(--banner); border-radius:10px; margin:8px 0; display:flex; flex-direction:column; justify-content:end; padding:10px 12px; gap:18px}
+.banner div { text-align:center; color:var(--banner-ink); font-size:16px}
+.search { background:var(--field); border:0; border-radius:8px; width:100%; height:34px; padding:0 12px; margin:14px 0}
+input::placeholder,textarea::placeholder { color:var(--muted)}
+.tabs { display:flex; gap:17px; border-bottom:1px solid var(--line); overflow:auto; white-space:nowrap}
+.tabs button { border:0; border-radius:0; color:var(--muted); padding:10px 0; font-size:12px}
+.tabs .active { color:var(--accent); border-bottom:3px solid var(--accent)}
+.label { font-size:12px; color:var(--muted); margin:12px 0 8px}
+.rail { display:flex; gap:12px; overflow:auto}
+.favourite { flex:0 0 112px; border:1px solid var(--line); background:var(--card); border-radius:8px; overflow:hidden; font-size:11px}
+.fav-image { height:56px; background:var(--field); display:grid; place-items:center; position:relative; font-size:20px}
+.heart { position:absolute; right:4px; top:4px; background:#ffffffcc; color:#6b7280; border:0; padding:1px 5px; border-radius:6px; font-size:13px}
+.heart[aria-pressed=true] { color:#ef4444}
+.fav-copy { padding:4px 6px}
+.fav-copy p { margin-top:3px}
+.card { display:grid; grid-template-columns:80px minmax(0,1fr) 110px; gap:12px; padding:12px; border:1px solid var(--line); background:var(--card); border-radius:10px; margin-bottom:12px; min-height:142px}
+.thumb { height:80px; background:var(--field); border-radius:8px; display:grid; place-items:center; font-size:26px; position:relative}
+.thumb>.plain { font-size:26px}
+.card-copy { display:flex; flex-direction:column; align-items:start; min-width:0}
+.card h3 { line-height:1.4; margin-bottom:5px}
+.dishes { list-style:none; padding:0; margin:0; color:var(--muted); font-size:11px}
+.dishes li { display:flex; gap:6px; align-items:center; margin-bottom:3px}
+.badge { background:var(--badge); color:var(--accent); padding:1px 5px; border-radius:5px; font-size:10px; white-space:nowrap}
+.detail { color:var(--accent); font-size:11px; margin-top:auto; padding-top:8px}
+.controls>.price { font-size:14px; margin-bottom:6px}
+.stepper { display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.stepper button { width:30px; height:30px; padding:0; background:var(--field); border:0; font-size:17px}
+.stepper button:last-child { background:var(--accent); color:#fff}
+.stepper output { min-width:24px; text-align:center; font-size:14px}
+.fillings { display:flex; flex-direction:column; gap:4px; margin-top:12px}
+.fillings button { padding:4px 3px; font-size:10px; color:var(--muted); white-space:nowrap}
+.fillings button[aria-pressed=true] { background:var(--accent); border-color:var(--accent); color:#fff}
+.description { color:var(--muted); font-size:11px}
+.product { cursor:pointer}
+.soup-card { min-height:100px}
+.summary { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px; margin-top:12px}
+.summary .label { font-size:11px; margin-top:16px}
+summary { cursor:pointer; list-style:none}
+summary::-webkit-details-marker { display:none}
+.disclosure:after { content:'⌄ Hiện'; color:var(--muted); font-size:11px; margin-left:auto}
+details[open]>.disclosure:after { content:'⌄ Ẩn'}
+.order-line { display:flex; align-items:center; gap:6px}
+.order-line .name { flex:1; font-size:13px}
+.compact.stepper { gap:3px}
+.compact.stepper button { width:23px; height:23px; background:transparent; border:1px solid var(--line); color:var(--muted); font-size:12px}
+.compact.stepper output { min-width:19px; font-size:11px}
+.order-line>.price { font-size:10px; color:var(--muted)}
+.trash { border:0; padding:0; font-size:11px; color:var(--muted)}
+.subitems { border-left:2px solid var(--line); padding-left:10px; margin:8px 0 0 10px}
+.subitems .order-line { margin:3px 0}
+.subitems .name { font-size:11px; color:var(--muted)}
+.subitems .trash { margin-left:40px}
+.subtotal { text-align:right; color:var(--muted); font-size:10px; margin:5px 0 8px}
+.total { border-top:1px solid var(--line); padding-top:10px; margin-top:12px; font-size:13px}
+.canh { border:1px solid var(--line); border-radius:8px; padding:8px; margin-top:12px}
+.canh .row { margin-top:4px; font-size:11px}
+.canh output { color:var(--accent)}
+.table-wrap { overflow:auto}
+table { border-collapse:collapse; width:100%; font-size:10px; margin:6px 0 12px; text-align:left; white-space:nowrap}
+th { font-weight:400; color:var(--muted); font-size:9px}
+td,th { padding:3px 3px 3px 0}
+td:nth-child(2),td:nth-child(3) { color:var(--accent); font-size:9px}
+td:nth-child(4) { color:var(--muted); font-size:9px}
+td:last-child,th:last-child { text-align:right}
+.note { border-top:1px solid var(--line); padding-top:8px; font-size:11px}
+.saved { color:#22c55e; font-size:10px}
+textarea { width:100%; resize:vertical; min-height:40px; border:0; background:var(--field); border-radius:7px; padding:10px; margin-top:8px; font-size:11px}
+.checkout { width:100%; height:52px; border-radius:12px; margin-top:12px; font-size:15px}
+.checkout .count { background:#ff9a4d; border-radius:6px; font-size:12px; padding:3px 9px}
+.bottom-nav { display:flex; justify-content:space-between; background:var(--page); border:1px solid var(--line); border-radius:8px; margin-top:10px; padding:8px 7px; font-size:9px; color:var(--muted)}
+.bottom-nav a { color:inherit; text-decoration:none}
+.bottom-nav a:first-child { color:var(--accent)}
+dialog { width:min(380px,calc(100% - 24px)); max-height:calc(100dvh - 32px); border:1px solid var(--line); border-radius:12px; background:var(--card); color:var(--text); padding:18px; overscroll-behavior:contain}
+dialog::backdrop { background:#000b}
+dialog h2 { font-size:16px; margin-bottom:18px}
+dialog .row { margin:10px 0}
+dialog .actions { display:flex; gap:12px; margin-top:16px}
+dialog .actions button { flex:1; min-height:34px}
+dialog .radio { display:flex; align-items:center; gap:10px; margin:16px 0}
+dialog .radio .muted { margin-left:auto; font-size:11px}
+input[type=radio] { accent-color:var(--accent)}
+.modal-hero { height:90px; background:var(--field); display:grid; place-items:center; margin:-18px -18px 14px; color:var(--muted)}
+.drawer { margin:0 0 0 auto; height:100dvh; max-height:100dvh; border-radius:12px 0 0 12px; width:min(380px,100%)}
+.drawer[open] { display:flex; flex-direction:column; animation:slide-in .22s ease-out}
+.drawer h2 { margin:0}
+.drawer header { border-bottom:1px solid var(--line); padding-bottom:12px}
+.drawer-footer { margin-top:auto; padding-top:24px}
+.drawer .order-line { margin:18px 0 2px}
+.drawer .price { margin:6px 0}
+.drawer .checkout { height:36px; font-size:13px}
+.drawer .continue { width:100%; margin-top:8px; border:0}
+.notice { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--card); border:1px solid var(--accent); border-radius:8px; padding:12px; z-index:20; width:max-content; max-width:90vw}
+.notice:empty { display:none}
+@keyframes slide-in { from { transform:translateX(100%)}
+to { transform:translateX(0)}
+}
+@media(max-width:480px) { .phone { margin:0 auto; border-radius:0; padding-left:10px; padding-right:10px}
+.card { grid-template-columns:64px minmax(0,1fr) 100px; gap:8px; padding:10px}
+.thumb { height:64px}
+.card h3 { font-size:13px}
+.tabs { gap:14px}
+.header h1 { font-size:19px}
+.subitems .trash { margin-left:16px}
+}
+@media(prefers-reduced-motion:reduce) { .drawer[open] { animation:none}
+}
+
+/* đề xuất — không có trong nguồn style.md */
+/* Khung chủ quán, nhãn component, bảng món, trường form và trạng thái bên dưới là phần mở rộng.
+   Không thêm token màu. Sidebar 232px, nội dung tối đa 1200px, breakpoint 640px theo tiền lệ. */
+a { color:inherit; text-underline-offset:3px }
+[data-component] { position:relative; min-width:0 }
+.nhan-component { display:table; max-width:100%; overflow-wrap:anywhere; padding:2px 6px; margin-bottom:8px; border-radius:5px; background:var(--field); color:var(--text); font-size:10px }
+body:has(#hien-ten:not(:checked)) .nhan-component { display:none }
+.design-toggle { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 15px; background:var(--bg); border-bottom:1px solid var(--line) }
+.design-toggle a { margin-left:auto }
+input[type=checkbox] { accent-color:var(--accent) }
+.shell { display:grid; grid-template-columns:232px minmax(0,1fr); background:var(--bg); min-height:70vh }
+.shell > .nhan-component { position:absolute; top:0; left:0 }
+.navigation { padding:24px 12px; border-right:1px solid var(--line); background:var(--page) }
+.brand { display:flex; align-items:center; gap:8px; margin-bottom:24px; text-decoration:none }
+.brand b { padding:10px; border-radius:8px; background:var(--field) }
+.brand small { display:block; color:var(--muted) }
+.nav-group { margin-bottom:20px }
+.nav-group summary { padding:8px 12px; color:var(--muted); font-size:11px }
+.nav-links a { display:block; padding:8px 12px; text-decoration:none; border-radius:7px }
+.nav-links a:hover { background:var(--field) }
+.nav-links a[aria-current=page] { color:var(--accent); background:var(--badge) }
+.page-content { min-width:0; width:100%; max-width:1200px; margin:0 auto; padding:24px 15px }
+.page-content > * + * { margin-top:12px }
+.page-header { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; padding-top:24px }
+.page-header > .nhan-component { position:absolute; top:0; left:0 }
+.page-header p { margin-top:8px; font-size:11px }
+h1 .badge { vertical-align:middle; font-weight:400 }
+.actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center }
+.panel { padding:12px; border:1px solid var(--line); border-radius:10px; background:var(--card) }
+.table-scroll { min-width:0; max-width:100%; overflow-x:auto }
+.product-table td,.product-table th { padding:8px; border-bottom:1px solid var(--line) }
+.product-table td { color:var(--text); font-size:12px }
+.product-table tr:last-child td { border-bottom:0 }
+.product-table .badge { margin-left:8px; color:var(--muted); background:var(--field) }
+.empty { padding:12px 0; color:var(--muted) }
+.state-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px }
+.state-grid h3 { margin-bottom:8px }
+.state-grid button { margin-top:12px }
+.form-body { display:flex; flex-direction:column; gap:12px; min-width:0 }
+.form-body h2 { margin:0 }
+.field { display:flex; flex-direction:column; gap:6px }
+.field.check { flex-direction:row; align-items:center }
+.field input:not([type=checkbox]),select { width:100%; min-width:0; padding:10px; border:1px solid var(--line); border-radius:7px; background:var(--field); color:var(--text); font:inherit }
+fieldset { min-width:0; margin:0 0 12px; padding:12px; border:1px solid var(--line); border-radius:8px }
+fieldset > * + * { margin-top:12px }
+button:disabled { color:var(--muted); cursor:default }
+body.modal-open { overflow:hidden }
+#chu-giai { max-width:1200px; margin:24px auto; padding:24px 15px; border-top:1px solid var(--line) }
+#chu-giai table { min-width:680px }
+#chu-giai td,#chu-giai th { padding:8px; color:var(--text); font-size:11px; border-bottom:1px solid var(--line) }
+#chu-giai th { color:var(--muted) }
+@media(min-width:641px) {
+ .nav-group details::details-content { content-visibility:visible; display:block }
+ .nav-group details:not([open]) > .nav-links { display:block }
+}
+@media(max-width:640px) {
+ body { padding-bottom:150px }
+ .shell { display:block; min-height:0 }
+ .shell > .nhan-component { position:static; margin:6px 15px 0 }
+ .page-content { padding-top:16px }
+ .state-grid { grid-template-columns:minmax(0,1fr) }
+ .navigation { position:fixed; z-index:5; bottom:0; left:0; right:0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; padding:8px 6px max(12px,env(safe-area-inset-bottom)); border:0; border-top:1px solid var(--line) }
+ .navigation > .nhan-component { grid-column:1/-1; margin:0 }
+ .navigation .brand { display:none }
+ .nav-group { margin:0; position:static }
+ .nav-group > .nhan-component { font-size:8px; padding:2px; margin-bottom:4px }
+ .nav-group summary { min-height:44px; padding:12px 2px; text-align:center; font-size:10px; border-radius:7px }
+ .nav-group.selected summary { color:var(--accent); background:var(--badge) }
+ .nav-group details[open] summary { outline:2px solid var(--accent) }
+ .nav-links { position:absolute; bottom:calc(100% + 8px); left:10px; right:10px; padding:12px; border:1px solid var(--line); border-radius:10px; background:var(--card) }
+ .nav-links a { min-height:44px }
+}
+@media(max-width:480px) {
+ .page-content,.design-toggle,#chu-giai { padding-left:10px; padding-right:10px }
+ h1 { font-size:19px }
+}
+/* Đề xuất: lỗi gắn ô, dùng nguyên token nguồn. */
+.group-heading { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px }
+[aria-invalid=true] { outline:2px solid var(--accent) }
+.field-error { color:var(--accent); font-size:11px }
+.demo-message { margin-top:12px; color:var(--muted) }
+[hidden] { display:none !important }
+</style>
+</head>
+<body>
+<div class="design-toggle"><input type="checkbox" id="hien-ten" checked><label for="hien-ten">Hiện tên component</label><a href="../index.html">Mục lục thiết kế</a><button id="theme-toggle" aria-label="Chuyển giao diện sáng" title="Chuyển sáng / tối">☀️</button></div>
+<div data-component="KhungChuQuan" class="shell"><span class="nhan-component">KhungChuQuan</span>
+<nav data-component="ThanhDieuHuong" class="navigation" aria-label="Trang chủ quán"><span class="nhan-component">ThanhDieuHuong</span>
+<a class="brand" href="../index.html"><b>BT</b><span>Bánh cuốn Bà Thanh<small>Chủ quán</small></span></a><div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hôm nay</summary><div class="nav-links"><a href="../tong_quan/tong-quan.html">Tổng quan</a><a href="../tong-ket.html">Tổng kết</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group selected" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Thực đơn</summary><div class="nav-links"><a href="../san_pham/san-pham.html">Sản phẩm</a><a href="../menu-gia.html">Menu &amp; giá</a><a href="danh-muc.html" aria-current="page">Danh mục</a><a href="../combo.html">Combo</a><a href="../topping.html">Topping</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Con người</summary><div class="nav-links"><a href="../nhan-vien.html">Nhân viên</a><a href="../giao-viec.html">Giao việc</a><a href="../dao-tao.html">Đào tạo</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hàng &amp; tiền</summary><div class="nav-links"><a href="../nguyen-lieu.html">Nguyên liệu</a><a href="../kho.html">Kho</a><a href="../khoan-chi.html">Khoản chi</a></div></details>
+</div>
+
+</nav>
+<main data-component="TrangDanhMuc" class="page-content"><span class="nhan-component">TrangDanhMuc</span><header data-component="DauTrang" class="page-header" ><span class="nhan-component">DauTrang</span><div><h1>Danh mục <span class="badge">2 danh mục</span></h1><p class="muted">Bản thiết kế tĩnh · số liệu minh hoạ, không phải hợp đồng</p></div><div class="actions"><button type="button" data-reload >Đọc lại danh sách</button><button type="button" data-action="add" class="primary">Thêm danh mục</button></div></header>
+<p class="muted">Danh mục và món giữ thứ tự backend trả, gồm cả món ngừng bán. Các tên dưới đây chỉ là ví dụ.</p><p id="read-message" role="status"></p><section data-component="NhomDanhMuc" class="panel" aria-label="Bánh cuốn"><span class="nhan-component">NhomDanhMuc</span><div class="group-heading"><h2>Bánh cuốn</h2><div class="actions"><button type="button" data-action="rename" data-category="Bánh cuốn" >Đổi tên</button><button type="button" data-action="hide" data-category="Bánh cuốn" >Ẩn</button></div></div><section data-component="BangDuLieu" class="" ><span class="nhan-component">BangDuLieu</span><div class="table-scroll" tabindex="0" role="region" aria-label="Món trong Bánh cuốn"><table class="product-table"><thead><tr><th scope="col">Món</th><th scope="col">Thao tác</th></tr></thead><tbody><tr><td>Bánh cuốn trứng</td><td><button type="button" data-action="move" data-category="Bánh cuốn" data-item="Bánh cuốn trứng" aria-label="Chuyển danh mục Bánh cuốn trứng">Chuyển danh mục</button></td></tr><tr><td>Bánh cuốn thịt <span class="badge">Ngừng bán</span></td><td><button type="button" data-action="move" data-category="Bánh cuốn" data-item="Bánh cuốn thịt" aria-label="Chuyển danh mục Bánh cuốn thịt">Chuyển danh mục</button></td></tr></tbody></table></div></section>
+</section>
+<section data-component="NhomDanhMuc" class="panel" aria-label="Đồ uống"><span class="nhan-component">NhomDanhMuc</span><div class="group-heading"><h2>Đồ uống</h2><div class="actions"><button type="button" data-action="rename" data-category="Đồ uống" >Đổi tên</button><button type="button" data-action="hide" data-category="Đồ uống" >Ẩn</button></div></div><section data-component="TrangThaiTrong" class="empty" ><span class="nhan-component">TrangThaiTrong</span><p>Chưa có món</p></section>
+</section>
+<section data-component="NhomDanhMuc" class="panel" aria-label="Chưa xếp danh mục"><span class="nhan-component">NhomDanhMuc</span><div class="group-heading"><h2>Chưa xếp danh mục</h2></div><section data-component="BangDuLieu" class="" ><span class="nhan-component">BangDuLieu</span><div class="table-scroll" tabindex="0" role="region" aria-label="Món trong Chưa xếp danh mục"><table class="product-table"><thead><tr><th scope="col">Món</th><th scope="col">Thao tác</th></tr></thead><tbody><tr><td>Chả quế</td><td><button type="button" data-action="move" data-category="" data-item="Chả quế" aria-label="Xếp danh mục Chả quế">Xếp danh mục</button></td></tr></tbody></table></div></section>
+</section>
+<details class="panel"><summary>Trạng thái minh hoạ · mở để đối chiếu</summary><p class="muted">Các tình huống riêng, không xảy ra đồng thời. Mốc giờ chỉ minh hoạ. Tên trùng là ví dụ lỗi từ backend, không tự kiểm trùng ở trình duyệt.</p><div class="state-grid"><section data-component="TrangDanhMuc" class="panel" ><span class="nhan-component">TrangDanhMuc</span><h3>Đang tải</h3><p role="status">Đang đọc danh mục…</p><button disabled>Đọc lại danh sách</button></section>
+<section data-component="TrangDanhMuc" class="panel" ><span class="nhan-component">TrangDanhMuc</span><h3>Đang chờ kết nối</h3><p role="status">Đang chờ kết nối.</p></section>
+<section data-component="TrangDanhMuc" class="panel" ><span class="nhan-component">TrangDanhMuc</span><h3>Đọc lỗi, chưa có dữ liệu</h3><p role="alert">Chưa đọc được danh mục. Hãy thử lại.</p><button type="button" data-reload >Đọc lại danh sách</button><p class="muted">Không hiện form thêm khi chưa đọc được dữ liệu.</p></section>
+<section data-component="TrangDanhMuc" class="panel" ><span class="nhan-component">TrangDanhMuc</span><h3>Lỗi khi có bản đọc trước</h3><p>Chưa đọc được danh mục. Đang hiện bản đọc trước, lúc 09:30:00.</p><p>Đã ghi, chưa cập nhật được dữ liệu.</p><button type="button" data-reload >Đọc lại danh sách</button></section>
+<section data-component="TrangDanhMuc" class="panel" ><span class="nhan-component">TrangDanhMuc</span><h3>Đang đọc lại</h3><p role="status">Đang đọc lại danh mục…</p><button disabled>Đọc lại danh sách</button></section>
+<section data-component="TrangThaiTrong" class="panel" ><span class="nhan-component">TrangThaiTrong</span><h3>Chưa có danh mục.</h3><p>Chưa xếp danh mục</p><p>Chưa có món</p><button type="button" data-action="add" >Thêm danh mục</button></section>
+<section data-component="FormMenu" class="panel" ><span class="nhan-component">FormMenu</span><h3>Đang gửi · minh hoạ</h3><button class="primary" disabled>Đang lưu…</button><p class="muted">Khoá nút gửi để tránh gửi lặp.</p></section>
+<section data-component="FormMenu" class="panel" ><span class="nhan-component">FormMenu</span><h3>Tên trùng · phản hồi minh hoạ</h3><div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span><label class="field">Tên danh mục<input value="Đồ uống" aria-invalid="true" aria-describedby="duplicate-error" readonly></label><p id="duplicate-error" class="field-error">Tên danh mục bị trùng.</p></div>
+</section>
+</div></details></main></div><section id="chu-giai"><h2>Chú giải component</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Chú giải component"><table><thead><tr><th>Tên</th><th>Nó là gì</th><th>Phạm vi</th></tr></thead><tbody><tr><td><code>BangDuLieu</code></td><td>Bảng món với vùng cuộn ngang riêng.</td><td>dùng chung</td></tr><tr><td><code>DauTrang</code></td><td>Tiêu đề, số đếm minh hoạ và thao tác chính.</td><td>dùng chung</td></tr><tr><td><code>FormMenu</code></td><td>Khuôn form thêm, đổi tên, ẩn và xếp món.</td><td>dùng chung</td></tr><tr><td><code>HopThoaiSuaCoLyDo</code></td><td>Ngăn sửa dữ liệu có ô lý do.</td><td>dùng chung</td></tr><tr><td><code>KhungChuQuan</code></td><td>Vỏ trang nối điều hướng với nội dung.</td><td>dùng chung</td></tr><tr><td><code>NhomDanhMuc</code></td><td>Danh mục và món; gồm nhóm chưa xếp không có thao tác quản lý nhóm.</td><td>riêng trang</td></tr><tr><td><code>NhomDieuHuong</code></td><td>Nhóm liên kết cùng mảng.</td><td>dùng chung</td></tr><tr><td><code>OMenu</code></td><td>Trường nhập hoặc chọn và lỗi gắn ô.</td><td>dùng chung</td></tr><tr><td><code>ThanhDieuHuong</code></td><td>Thanh bên máy tính và điều hướng đáy điện thoại.</td><td>dùng chung</td></tr><tr><td><code>TrangDanhMuc</code></td><td>Nội dung Danh mục và các mẫu trạng thái đọc.</td><td>riêng trang</td></tr><tr><td><code>TrangThaiTrong</code></td><td>Lời giải thích khi chưa có danh mục hoặc món.</td><td>dùng chung</td></tr></tbody></table></div></section><dialog id="add-dialog" class="drawer" aria-labelledby="add-title"><form data-component="FormMenu" class="form-body" novalidate aria-label="Thêm danh mục"><span class="nhan-component">FormMenu</span><h2 id="add-title">Thêm danh mục</h2><p class="muted">Minh hoạ · không ghi dữ liệu.</p><div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span><label class="field" for="add-name">Tên danh mục<input id="add-name" type="text" value=""></label><p id="add-name-error" class="field-error" aria-live="polite"></p></div>
+<div class="actions"><button type="submit" class="primary">Thêm danh mục</button><button type="button" data-close >Huỷ</button></div><p class="demo-message" role="status"></p></form>
+</dialog><dialog data-component="HopThoaiSuaCoLyDo" class="drawer" id="edit-dialog" aria-labelledby="edit-title"><span class="nhan-component">HopThoaiSuaCoLyDo</span><form data-component="FormMenu" class="form-body" novalidate><span class="nhan-component">FormMenu</span><h2 id="edit-title">Đổi tên danh mục</h2><p class="muted">Minh hoạ · không ghi dữ liệu.</p><p id="edit-explanation"></p><div id="name-wrap"><div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span><label class="field" for="edit-name">Tên mới<input id="edit-name" type="text" value=""></label><p id="edit-name-error" class="field-error" aria-live="polite"></p></div>
+</div><div id="target-wrap"><div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span><label class="field" for="target">Danh mục đích<select id="target"><option value="">Chọn danh mục</option></select></label><p id="target-error" class="field-error" aria-live="polite"></p></div>
+</div><div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span><label class="field" for="reason">Lý do<input id="reason" type="text" value=""></label><p id="reason-error" class="field-error" aria-live="polite"></p></div>
+<div class="actions"><button type="submit" class="primary" id="edit-save">Lưu</button><button type="button" data-close >Huỷ</button></div><p class="demo-message" role="status"></p></form>
+</dialog>
+<script>const themeBtn = document.querySelector('#theme-toggle');
+const applyTheme = t => { document.documentElement.dataset.theme = t; themeBtn.textContent = t === 'light' ? '🌙' : '☀️'; themeBtn.setAttribute('aria-label', t === 'light' ? 'Chuyển giao diện tối' : 'Chuyển giao diện sáng'); };
+try { applyTheme(localStorage.getItem('menu-theme') || 'dark'); } catch { applyTheme('dark'); }
+themeBtn.addEventListener('click', () => { const t = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; applyTheme(t); try { localStorage.setItem('menu-theme', t); } catch {} });
+
+
+// Chỉ trình diễn form; không gọi API, không sửa danh sách hay mô phỏng thành công.
+let trigger, action, category;
+const addDialog = document.querySelector('#add-dialog');
+const editDialog = document.querySelector('#edit-dialog');
+const categories = ['Bánh cuốn', 'Đồ uống'];
+function clearErrors(dialog) {
+ dialog.querySelectorAll('[aria-invalid]').forEach(el => el.removeAttribute('aria-invalid'));
+ dialog.querySelectorAll('.field-error,.demo-message').forEach(el => el.textContent = '');
+}
+function invalid(id, message) {
+ const el = document.getElementById(id);
+ el.setAttribute('aria-invalid','true'); el.setAttribute('aria-describedby',id+'-error');
+ document.getElementById(id+'-error').textContent = message;
+}
+document.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', () => {
+ trigger = button; action = button.dataset.action; category = button.dataset.category;
+ const dialog = action === 'add' ? addDialog : editDialog;
+ dialog.querySelector('form').reset(); clearErrors(dialog);
+ if (action !== 'add') {
+  document.querySelector('#name-wrap').hidden = action !== 'rename';
+  document.querySelector('#target-wrap').hidden = action !== 'move';
+  document.querySelector('#edit-name').value = category || '';
+  const title = action === 'rename' ? 'Đổi tên danh mục '+category : action === 'hide' ? 'Ẩn danh mục '+category : (category ? 'Chuyển' : 'Xếp')+' danh mục '+button.dataset.item;
+  document.querySelector('#edit-title').textContent = title;
+  dialog.querySelector('form').setAttribute('aria-label',title);
+  document.querySelector('#edit-save').textContent = action === 'rename' ? 'Lưu tên' : action === 'hide' ? 'Xác nhận ẩn' : 'Lưu';
+  document.querySelector('#edit-explanation').textContent = action === 'hide' ? 'Các món sẽ về nhóm Chưa xếp danh mục.' : action === 'move' && !category ? 'Cần lý do nếu món từng thuộc một danh mục đã ẩn.' : 'Lý do là bắt buộc.';
+  const select = document.querySelector('#target');
+  select.replaceChildren(new Option('Chọn danh mục',''));
+  categories.filter(name => name !== category).forEach(name => select.add(new Option(name,name)));
+ }
+ dialog.showModal(); document.body.classList.add('modal-open');
+}));
+document.querySelectorAll('dialog').forEach(dialog => {
+ dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
+ dialog.addEventListener('close', () => { document.body.classList.remove('modal-open'); trigger?.focus(); });
+ dialog.querySelector('form').addEventListener('submit', event => {
+  event.preventDefault(); clearErrors(dialog);
+  if (dialog === addDialog && !document.querySelector('#add-name').value.trim()) invalid('add-name','Nhập tên danh mục.');
+  if (dialog === editDialog) {
+   if (action === 'rename' && !document.querySelector('#edit-name').value.trim()) invalid('edit-name','Nhập tên mới.');
+   if (action === 'move' && !document.querySelector('#target').value) invalid('target','Chọn danh mục đích.');
+   if ((action !== 'move' || category) && !document.querySelector('#reason').value.trim()) invalid('reason','Nhập lý do.');
+  }
+  const error = dialog.querySelector('[aria-invalid=true]');
+  if (error) { error.focus(); return; }
+  dialog.querySelector('.demo-message').textContent = 'Bản thiết kế tĩnh · không gửi hoặc ghi dữ liệu.';
+ });
+});
+document.querySelectorAll('[data-reload]').forEach(button => button.addEventListener('click', () => {
+ document.querySelector('#read-message').textContent = 'Minh hoạ đọc lại danh sách · không kết nối dữ liệu.';
+}));
+// Đề xuất: chỉ mở một nhóm điều hướng trên điện thoại, đóng bằng Escape.
+const groups = [...document.querySelectorAll('.nav-group details')];
+groups.forEach(group => group.addEventListener('toggle', () => {
+  if (group.open && matchMedia('(max-width:640px)').matches) groups.filter(other => other !== group).forEach(other => { other.open = false; });
+}));
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && !document.querySelector('dialog[open]')) groups.forEach(group => { if (group.open) { group.open = false; group.querySelector('summary').focus(); } });
+});
+</script></body></html>
