@@ -97,7 +97,9 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-235 **Next.js 16.4.0 dính lỗ hổng bảo mật, `next build` dừng cách lượt** — nâng `next` và `eslint-config-next` trong `fe/` lên bản vá theo `next upgrade --agent=security`, đóng F-076 — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-235)
 - [ ] T-227 **Thanh toán bàn chỉ thu phần đã ra, phần chưa ra huỷ việc trạm** — bấm tiền bánh đã ra để đóng phiên và xoá bàn khỏi bảng; đổi luật tính tiền phiên (`shop-facts.md` §6.1, 2026-10-21) và viết lại `I-002` — L3 (thiết kế duyệt trước code, ADR, chia L1/L2 khi mở) — mở 2026-10-21, U-103 có lời và bắt đầu 2026-10-22 · [chi tiết](#t-227)
+- [ ] T-234 **Trang Sản phẩm của chủ quán theo bản thiết kế, bày đủ thuộc tính món đã có** — áp `san_pham/san-pham.html` lên `/chu-quan/san-pham`: đầu trang có số món và hai nút, mỗi danh mục một bảng Món · Danh mục · Trạng thái · Giá · Thao tác, thêm món và đổi tên trong ngăn bên phải; giá là số `GET /menu` trả cho từng tổ hợp, không cộng, không tính thử — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-234)
 - [ ] T-233 **Trang gọi món của khách hiện không có kiểu nào, chưa giống bản thiết kế menu** — CSS module của T-232 bị luật Turbopack trong `next.config.ts` đọc như CSS thường nên mọi `styles.*` rỗng (F-075); viết lại kiểu bằng một file CSS thường trong phạm vi trang và lớp Tailwind, đối chiếu ảnh chụp với `menu.html` ở hai giao diện; hành vi và test giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-233)
 
 
@@ -457,6 +459,56 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-235"></a>
+### T-235 — Next.js 16.4.0 dính lỗ hổng bảo mật, `next build` dừng cách lượt
+
+**Yêu cầu:** chủ repo 2026-10-23 dán cảnh báo *"Next.js 16.4.0 is affected by a known security vulnerability … Run `next upgrade
+--agent=security`"* và nói: *"yêu cầu codex chạy bạn kiểm tra"*. **Mức:** L1 — đổi phụ thuộc của `fe/`, không chạm dữ liệu, hợp đồng, tiền.
+Gốc của F-076 (build dừng cách lượt ở `SecurityFatalError`).
+
+**Claude quyết 2026-10-23:** nâng lên bản vá **nhỏ nhất** mà lệnh của Next.js đề xuất, không nhảy major, không nâng thư viện khác ngoài
+những gói lệnh ấy bắt buộc kéo theo (`react`, `react-dom` chỉ đổi nếu bản vá đòi); không sửa code, `next.config.ts` hay test để chiều bản mới —
+gặp chỗ vỡ thì dừng và báo.
+
+**Claude quyết thêm 2026-10-23:** lệnh `next upgrade --agent=security` đề xuất **16.4.2** và đòi thêm `experimental.agentUpgrade:
+"security"` vào `next.config.ts` (Codex dừng vì file ngoài scope). Bỏ qua cờ ấy: bản vá là phiên bản, không phải cờ; cờ thử nghiệm không rõ
+tác dụng và `next.config.ts` là chỗ từng gây F-075.
+
+**Acceptance** (viết 2026-10-23, trước khi giao):
+- [ ] `fe/package.json`: `next` và `eslint-config-next` cùng một phiên bản vá > 16.4.0, ghim chính xác (không `^`/`~`); `fe/package-lock.json` khớp (`npm ls next` in đúng bản ấy).
+- [ ] `next build` chạy hai lần liền trong `fe/` đều exit 0, không còn `SecurityFatalError`.
+- [ ] `fe-check` xanh (lint, typecheck, test, build) — Claude chạy lại ở clone chính.
+- [ ] Chỉ đổi `fe/package.json` và `fe/package-lock.json`; `./scripts/gate.sh` xanh.
+- [ ] F-076 chuyển *Resolved* với bản đã nâng — Claude ghi sau khi duyệt.
+
+<a id="t-234"></a>
+### T-234 — Trang Sản phẩm của chủ quán chưa theo bản thiết kế, chỉ bày tên món
+
+**Yêu cầu:** chủ repo 2026-10-23: *"fe/src/app/chu-quan/san-pham — hãy yêu cầu codex sửa page trên dựa trên
+docs/product/4-fe/thiet_ke/chu_quan/san_pham/san-pham.html, hãy thêm tất cả các thuộc tính của sản phẩm vào"*. Hỏi lại cùng ngày "tất cả
+thuộc tính" là gì, chủ repo chọn **chỉ dữ liệu đã có** (không mở rộng API), rồi cùng lượt nói thêm: *"thêm giá và danh mục sản phẩm"*. **Mức:** L1 —
+giao diện, chỉ **đọc** số tiền backend trả như trang Menu & giá (P4-05), không cộng, không tính thử, không đổi dữ liệu hay hợp đồng.
+
+**Claude quyết 2026-10-23 (trình bày, không phải luật quán):** (1) thuộc tính món là những gì `MenuCategoryItem` trả — tên, danh mục
+chứa nó (hoặc *Chưa xếp*), trạng thái *Đang bán* / *Ngừng bán* theo `discontinued` — cộng **giá** đọc từ `GET /menu` (khoá `["menu"]`
+dùng chung với Menu & giá), ghép theo `menu_item_id`: mỗi phần tử `prices` một dòng *tên lựa chọn · giá*, không lựa chọn thì chỉ giá; không
+chọn giá thấp nhất, không cộng (ADR-086); món ngừng bán không có trong `/menu` nên ô giá là *—*; món đang bán mà `/menu` không có thì
+*Chưa có giá*; `/menu` đọc lỗi thì ô giá *Chưa đọc được giá*, bảng vẫn hiện; thêm hay đổi tên xong đọc lại cả hai. Thành phần, giá gốc,
+ngày tạo, mã món không bày. Luật *trang không bày giá* của test P4A-04 được nới theo lời chủ repo; luật *không gọi `/price-quotes`* giữ; (2) phong cách như `T-231`: token của bản thiết kế khai
+trong phạm vi trang, sáng mặc định, tối theo `.dark`, không sửa `globals.css`, khung, `components/ui/`, `hop-thoai-sua-co-ly-do.tsx`
+(khuôn ấy gắn lệnh giá của P4-05); (3) *Thêm món* mở ngăn bên phải, thêm xong ngăn **vẫn mở** với form đã xoá để thêm tiếp (bản thiết kế
+đóng ngăn chỉ vì nó là bản tĩnh); *Đổi tên* mở ngăn bên phải, lưu xong đóng ngăn và báo trên trang; (4) không làm nhãn component, chú
+giải, khối *Trạng thái minh hoạ*, nút sáng / tối của bản thiết kế.
+
+**Acceptance** (viết 2026-10-23, trước khi giao):
+- [ ] Đầu trang: tiêu đề *Sản phẩm* kèm huy hiệu *N món* (N = số món backend trả, kể cả chưa xếp), nút *Đọc lại danh sách* và nút cam *Thêm món*; không có nút *Thêm món* khi chưa có danh mục hoặc chưa đọc được.
+- [ ] Mỗi danh mục (đúng thứ backend) và nhóm *Chưa xếp danh mục* là một thẻ có bảng cột Món · Danh mục · Trạng thái · Giá · Thao tác trong vùng cuộn ngang riêng; trạng thái *Đang bán* hoặc huy hiệu *Ngừng bán*; danh mục trống hiện *Chưa có món*.
+- [ ] Ô giá bày đúng từng giá `GET /menu` trả theo cách định dạng `tienGia`, kèm tên lựa chọn; *—* cho món ngừng bán, *Chưa có giá*, *Chưa đọc được giá* như quyết định (1); không có lời gọi `/price-quotes`.
+- [ ] *Thêm món* và *Đổi tên* mở ngăn bên phải rộng tối đa 380px; hành vi gửi, kiểm, lời từ chối giữ nguyên.
+- [ ] `san-pham.test.tsx` do Claude sửa trước khi giao (đọc dòng bảng thay vì mục danh sách, bấm *Thêm món* để mở ngăn, thêm ca kiểm cột và huy hiệu) — xanh, Codex không sửa.
+- [ ] Chỉ đổi `san-pham.tsx`, `du-lieu-san-pham.ts`, `form-them-mon.tsx`, `form-doi-ten-mon.tsx` dưới `fe/src/app/chu-quan/_components/` và test trên; không thêm phụ thuộc.
+- [ ] `./scripts/gate.sh` xanh; Claude chạy lại `fe-check`.
 
 <a id="t-233"></a>
 ### T-233 — Trang gọi món của khách hiện không có kiểu nào, chưa giống bản thiết kế menu
