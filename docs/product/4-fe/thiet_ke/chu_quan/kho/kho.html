@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kho · Chủ quán</title>
+<style>
+:root{color-scheme:dark;--bg:#000;--card:#1F2937;--line:#2D3748;--muted:#9CA3AF;--accent:#FF7A1A;--field:#374151;--text:#F9FAFB;--page:#0a0a0a;--badge:#3a2a18}
+:root[data-theme=light]{color-scheme:light;--bg:#fff;--card:#F3F4F6;--line:#E5E7EB;--muted:#6B7280;--accent:#EA6A0C;--field:#E5E7EB;--text:#111827;--page:#F3F4F6;--badge:#FDECDC}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--text);font:12px/1.45 'Be Vietnam Pro',system-ui,sans-serif}a{color:var(--accent);text-underline-offset:3px}button,input{font:inherit;color:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:7px;background:transparent;padding:8px 12px;min-height:36px}button:hover{filter:brightness(1.15)}:focus-visible{outline:2px solid var(--accent);outline-offset:3px}h1,h2,p{margin:0}h1{font-size:26px;font-weight:600}h2{font-size:14px;font-weight:500}.muted,small{color:var(--muted)}.primary{background:var(--accent);border-color:var(--accent);color:#fff}.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.design-toggle{display:flex;align-items:center;gap:8px;padding:10px 24px;border-bottom:1px solid var(--line);font-size:11px;background:var(--bg)}.design-toggle a{margin-left:auto}.design-toggle button{min-height:30px;padding:4px 10px}.nhan-component{display:none;font:10px/1.5 ui-monospace,monospace;color:var(--accent);border:1px dashed var(--line);padding:2px 5px;margin-bottom:8px;width:fit-content}body:has(#hien-ten:checked) .nhan-component{display:table}.shell{display:grid;grid-template-columns:208px minmax(0,1fr);min-height:calc(100vh - 52px)}.shell>.nhan-component{display:none!important}.navigation{background:var(--bg);border-right:1px solid var(--line);padding:28px 16px}.brand{display:flex;gap:10px;align-items:center;color:var(--text);text-decoration:none;margin-bottom:36px;font-weight:600}.brand b{display:grid;place-items:center;background:var(--badge);color:var(--accent);width:36px;height:36px;border-radius:10px}.brand small{display:block;font-size:10px;font-weight:400;margin-top:3px}.nav-group{margin-bottom:24px}.nav-group summary{list-style:none;color:var(--muted);font-size:10px;padding:0 10px 8px}.nav-group summary::-webkit-details-marker{display:none}.nav-links a{display:block;text-decoration:none;color:var(--muted);padding:9px 10px;border-radius:7px;margin:2px 0}.nav-links a:hover{background:var(--card)}.nav-links a[aria-current]{background:var(--badge);color:var(--accent);font-weight:600}.page-content{width:100%;max-width:1600px;margin:auto;padding:36px 32px 60px;align-self:start}.page-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px}.page-header p{margin-top:6px}.eyebrow{font-size:10px;letter-spacing:1.6px;color:var(--accent);margin-bottom:8px}.split{display:grid;grid-template-columns:minmax(0,1fr) 288px;gap:20px;align-items:start}.stack{min-width:0}.card,.drawer{border:1px solid var(--line);border-radius:10px;background:var(--bg);padding:18px}.card>h2{margin-bottom:16px}.table-scroll{overflow:auto;max-width:100%}table{border-collapse:collapse;width:100%;white-space:nowrap;text-align:left;font-size:11px}th{font-size:10px;font-weight:400;color:var(--muted);background:var(--card)}td,th{padding:14px 12px;border-bottom:1px solid var(--line)}td{font-variant-numeric:tabular-nums}tbody tr:last-child td{border-bottom:0}tbody td:first-child{font-weight:500}tbody td:nth-child(4){color:var(--accent);font-size:16px;font-weight:600}td button{min-height:30px;padding:5px 8px;font-size:10px}td>a{display:block;margin-top:8px;font-size:10px}.badge{display:inline-block;border:1px solid var(--line);padding:4px 7px;border-radius:5px;color:var(--muted);font-size:10px}.badge.red{color:var(--accent);background:var(--badge);border-color:var(--badge)}.stack>p{font-size:11px;margin-top:12px}.drawer{background:var(--card)}.drawer>.card{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0 0 18px}.number{font-size:28px;letter-spacing:-1px;margin:8px 0;color:var(--accent);font-weight:600}.form-body{display:flex;flex-direction:column;gap:16px}.drawer .form-body{padding:20px 0 0;border:0;background:transparent}.field{display:flex;flex-direction:column;gap:8px;font-size:11px}.field input{width:100%;min-height:40px;background:var(--field);border:1px solid var(--line);border-radius:7px;padding:10px 12px}.form-body>.muted{font-size:10px}.form-body .actions{padding-top:4px}.form-body .primary{flex:1}.overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:24px}.metric{padding:16px 18px;background:var(--card);border:1px solid var(--line);border-radius:10px}.metric small{font-size:11px}.metric strong{display:block;font-size:26px;font-weight:600;margin:6px 0}.metric p{font-size:10px;color:var(--muted)}.metric.attention strong{color:var(--accent)}#chu-giai{max-width:1400px;margin:0 auto;padding:24px 32px;border-top:1px solid var(--line)}#chu-giai h2{margin-bottom:12px}code{font-size:10px}#chu-giai td{white-space:normal}.section-intro{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.section-intro small{font-size:10px}.demo-note{margin-top:20px;font-size:10px;color:var(--muted)}
+@media(min-width:761px){.nav-links{display:block!important}}
+@media(max-width:1150px){.split{grid-template-columns:minmax(0,1fr)}.drawer{max-width:none}.drawer .form-body{max-width:520px}}
+@media(max-width:760px){.shell{display:block}.navigation{padding:14px;border-right:0;border-bottom:1px solid var(--line)}.brand{margin-bottom:14px}.navigation>.nhan-component{display:none!important}.nav-group{display:inline-block;vertical-align:top;margin:0 6px 0 0}.nav-group summary{padding:8px;cursor:pointer}.nav-links{position:absolute;z-index:5;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px;min-width:160px}.page-content{padding:24px 14px}.page-header{align-items:start}h1{font-size:22px}.overview{gap:8px}.metric{padding:12px}.metric strong{font-size:22px}.metric p{font-size:9px}.design-toggle{padding:8px 14px;flex-wrap:wrap}#chu-giai{padding:20px 14px}}
+@media(max-width:480px){.overview{grid-template-columns:1fr}.metric{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px}.metric strong{grid-column:2;grid-row:1/3;margin:0}.metric p{grid-column:1}.page-header{flex-wrap:wrap}.card,.drawer{padding:14px}}
+</style>
+</head>
+<body>
+<div class="design-toggle"><input type="checkbox" id="hien-ten"><label for="hien-ten">Hiện tên component</label><button id="theme-toggle" aria-label="Chuyển giao diện sáng">☀ Sáng</button><a href="../index.html">Mục lục thiết kế</a></div>
+<div data-component="KhungChuQuan" class="shell" ><span class="nhan-component">KhungChuQuan</span>
+<nav data-component="ThanhDieuHuong" class="navigation" aria-label="Trang chủ quán"><span class="nhan-component">ThanhDieuHuong</span>
+<a class="brand" href="../index.html"><b>BT</b><span>Bánh cuốn Bà Thanh<small>Chủ quán</small></span></a><div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hôm nay</summary><div class="nav-links"><a href="../tong_quan/tong-quan.html">Tổng quan</a><a href="../tong-ket.html">Tổng kết</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Thực đơn</summary><div class="nav-links"><a href="../san-pham.html">Sản phẩm</a><a href="../menu-gia.html">Menu &amp; giá</a><a href="../danh-muc.html">Danh mục</a><a href="../combo.html">Combo</a><a href="../topping.html">Topping</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Con người</summary><div class="nav-links"><a href="../nhan-vien.html">Nhân viên</a><a href="../giao-viec.html">Giao việc</a><a href="../dao-tao.html">Đào tạo</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group selected" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hàng &amp; tiền</summary><div class="nav-links"><a href="../nguyen-lieu.html">Nguyên liệu</a><a href="kho.html" aria-current="page">Kho</a><a href="../khoan-chi.html">Khoản chi</a></div></details>
+</div>
+
+</nav>
+<main data-component="TrangKho" class="page-content" ><span class="nhan-component">TrangKho</span>
+<header data-component="DauTrang" class="page-header" ><span class="nhan-component">DauTrang</span>
+<div><div class="eyebrow">HÀNG &amp; TIỀN / KHO</div><h1>Kho nguyên liệu</h1><p class="muted">Bản thiết kế tĩnh · số liệu minh hoạ</p></div><div class="actions"><button type="button" class="primary">Đọc lại kho</button></div>
+</header>
+<section class="overview" aria-label="Tóm tắt dữ liệu minh hoạ">
+<div class="metric"><small>Nguyên liệu theo dõi</small><strong>02</strong><p>Trong bảng minh hoạ bên dưới</p></div>
+<div class="metric attention"><small>Đang có nhắc</small><strong>01</strong><p>Trứng · nhắc POS kiểm tra</p></div>
+<div class="metric"><small>Không có nhắc</small><strong>01</strong><p>Giò · theo dữ liệu minh hoạ</p></div>
+</section><div class="split"><div class="stack"><section data-component="BangDuLieu" class="card" ><span class="nhan-component">BangDuLieu</span>
+<div class="section-intro"><h2>Theo dõi nguyên liệu</h2><small>02 nguyên liệu · minh hoạ</small></div><div class="table-scroll" tabindex="0" role="region" aria-label="Kho nguyên liệu"><table><thead><tr><th scope="col">Nguyên liệu</th><th scope="col">Tổng mua vào</th><th scope="col">Tổng đã dùng</th><th scope="col">Mua vào trừ đã dùng</th><th scope="col">Lần nhập gần nhất</th><th scope="col">Tỉ lệ nhắc</th><th scope="col">Nhắc</th><th scope="col">Thao tác</th></tr></thead><tbody><tr><td>Trứng</td><td>100 quả</td><td>96 quả</td><td>4 quả</td><td>20/10/2026 · 100 quả</td><td>0.2</td><td><span data-component="HuyHieuTrangThai" class="badge red" ><span class="nhan-component">HuyHieuTrangThai</span>
+Nhắc POS kiểm tra
+</span>
+</td><td><button type="button">Đặt tỉ lệ</button><a href="../nguyen-lieu.html">Mở sổ</a></td></tr><tr><td>Giò</td><td>6 kg</td><td>3.9 kg</td><td>2.1 kg</td><td>19/10/2026 · 3 kg</td><td>0.2</td><td><span data-component="HuyHieuTrangThai" class="badge " ><span class="nhan-component">HuyHieuTrangThai</span>
+Không nhắc
+</span>
+</td><td><button type="button">Đặt tỉ lệ</button><a href="../nguyen-lieu.html">Mở sổ</a></td></tr></tbody></table></div>
+</section>
+<p class="muted">Tỉ lệ nhắc: tỉ phần của lần nhập gần nhất, từ 0 đến 1</p></div><aside data-component="HopThoaiSuaCoLyDo" class="drawer" ><span class="nhan-component">HopThoaiSuaCoLyDo</span>
+<section data-component="TheSo" class="card" ><span class="nhan-component">TheSo</span>
+<p class="eyebrow">ĐANG XEM · TRỨNG</p><h2>Lần nhập gần nhất</h2><p class="number">100 quả</p>
+</section>
+<form onsubmit="return false" data-component="FormMenu" class="card form-body" aria-label="Đặt tỉ lệ Trứng"><span class="nhan-component">FormMenu</span>
+<h2>Đặt tỉ lệ Trứng</h2><div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span>
+<label class="field">Tỉ lệ nhắc<input type="text" value="0.2"></label>
+</div>
+<p class="muted">Nhập số từ 0 đến 1, dùng dấu chấm, tối đa 6 chữ số lẻ, ví dụ 0.2.</p><div data-component="OMenu" class="field-wrap" ><span class="nhan-component">OMenu</span>
+<label class="field">Lý do (bắt buộc)<input type="text"></label>
+</div>
+<div class="actions"><button type="button" class="primary">Lưu tỉ lệ</button><button type="button">Huỷ</button></div>
+</form>
+
+</aside>
+</div>
+<p class="demo-note">Bản thiết kế tĩnh · thao tác chưa kết nối dữ liệu. Bố cục desktop và thẻ tóm tắt là đề xuất trình bày.</p></main>
+
+</div>
+<section id="chu-giai"><h2>Chú giải component</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Chú giải component"><table><thead><tr><th scope="col">Tên</th><th scope="col">Nó là gì</th><th scope="col">Phạm vi</th></tr></thead><tbody><tr><td><code>BangDuLieu</code></td><td>Bảng dữ liệu có vùng cuộn ngang riêng.</td><td>dùng chung</td></tr><tr><td><code>DauTrang</code></td><td>Tiêu đề trang, lời dẫn và thao tác chính.</td><td>dùng chung</td></tr><tr><td><code>FormMenu</code></td><td>Khuôn form dùng chung cho các trường nhập và nút lưu, huỷ.</td><td>dùng chung</td></tr><tr><td><code>HopThoaiSuaCoLyDo</code></td><td>Ngăn bên phải để sửa dữ liệu và nhập lý do.</td><td>dùng chung</td></tr><tr><td><code>HuyHieuTrangThai</code></td><td>Nhãn trạng thái của một bản ghi.</td><td>dùng chung</td></tr><tr><td><code>KhungChuQuan</code></td><td>Vỏ trang nối điều hướng với nội dung quản trị.</td><td>dùng chung</td></tr><tr><td><code>NhomDieuHuong</code></td><td>Một nhóm liên kết đến các trang cùng mảng.</td><td>dùng chung</td></tr><tr><td><code>OMenu</code></td><td>Trường nhập hoặc chọn có nhãn trong FormMenu.</td><td>dùng chung</td></tr><tr><td><code>ThanhDieuHuong</code></td><td>Thanh bên trên máy tính và thanh bốn nhóm ở đáy điện thoại.</td><td>dùng chung</td></tr><tr><td><code>TheSo</code></td><td>Một chỉ số được trả về, chỉ định dạng để đọc.</td><td>dùng chung</td></tr><tr><td><code>TrangKho</code></td><td>Nội dung riêng của trang Kho.</td><td>riêng trang</td></tr></tbody></table></div></section>
+<script>
+const themeButton = document.querySelector('#theme-toggle');
+const applyTheme = theme => {
+ document.documentElement.dataset.theme = theme;
+ themeButton.textContent = theme === 'light' ? '☾ Tối' : '☀ Sáng';
+ themeButton.setAttribute('aria-label', theme === 'light' ? 'Chuyển giao diện tối' : 'Chuyển giao diện sáng');
+};
+try { applyTheme(localStorage.getItem('menu-theme') || 'dark'); } catch { applyTheme('dark'); }
+themeButton.addEventListener('click', () => {
+ const theme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+ applyTheme(theme);
+ try { localStorage.setItem('menu-theme', theme); } catch {}
+});
+</script></body>
+</html>
