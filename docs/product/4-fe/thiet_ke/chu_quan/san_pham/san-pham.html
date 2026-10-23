@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sản phẩm · Chủ quán</title>
+<style>
+:root { color-scheme:dark; --bg:#000000; --card:#1F2937; --line:#2D3748; --muted:#9CA3AF; --accent:#FF7A1A; --field:#374151; --text:#F9FAFB; --page:#0a0a0a; --notch:#0f172a; --banner:#3a2310; --banner-ink:#7c4a23; --badge:#3a2a18}
+:root[data-theme=light] { color-scheme:light; --bg:#FFFFFF; --card:#F3F4F6; --line:#E5E7EB; --muted:#6B7280; --accent:#EA6A0C; --field:#E5E7EB; --text:#111827; --page:#F3F4F6; --notch:#E5E7EB; --banner:#FDE8D4; --banner-ink:#C2702F; --badge:#FDECDC}
+* { box-sizing:border-box}
+body { margin:0; background:var(--page); color:var(--text); font:12px/1.45 'Be Vietnam Pro',system-ui,sans-serif}
+button,input,textarea { font:inherit; color:inherit}
+button { cursor:pointer; border:1px solid var(--line); border-radius:7px; background:transparent; padding:6px 10px}
+button:hover { filter:brightness(1.15)}
+:focus-visible { outline:2px solid var(--accent); outline-offset:3px}
+h1,h2,h3,p { margin:0}
+h1 { font-size:20px; font-weight:600}
+h2,h3 { font-size:14px; font-weight:500}
+.muted { color:var(--muted)}
+.price { color:var(--accent); white-space:nowrap}
+.primary { background:var(--accent); border-color:var(--accent); color:#fff}
+.plain { border:0; padding:0}
+.row { display:flex; align-items:center; justify-content:space-between; gap:8px}
+.phone { max-width:472px; margin:24px auto; background:var(--bg); border:1px solid var(--notch); border-radius:24px; padding:0 15px 16px; overflow:clip}
+.status { height:30px; font-size:11px; position:relative}
+.status:after { content:''; width:150px; height:16px; border-radius:12px; background:var(--notch); position:absolute; top:5px; left:50%; transform:translateX(-50%)}
+.sticky { position:sticky; top:0; z-index:5; background:var(--bg)}
+.header { min-height:58px; border-bottom:1px solid var(--line)}
+.header small { font-size:11px; color:var(--muted)}
+.header-actions { display:flex; gap:6px}
+.mini { height:50px; gap:8px; border-bottom:1px solid var(--line)}
+.mini>button { border-radius:20px; white-space:nowrap; font-size:11px; padding:4px 9px}
+.chips { display:flex; gap:6px; overflow:auto; scrollbar-width:none; flex:1}
+.chip { background:var(--field); border-radius:16px; white-space:nowrap; font-size:10px; padding:4px 8px}
+.banner { height:96px; background:var(--banner); border-radius:10px; margin:8px 0; display:flex; flex-direction:column; justify-content:end; padding:10px 12px; gap:18px}
+.banner div { text-align:center; color:var(--banner-ink); font-size:16px}
+.search { background:var(--field); border:0; border-radius:8px; width:100%; height:34px; padding:0 12px; margin:14px 0}
+input::placeholder,textarea::placeholder { color:var(--muted)}
+.tabs { display:flex; gap:17px; border-bottom:1px solid var(--line); overflow:auto; white-space:nowrap}
+.tabs button { border:0; border-radius:0; color:var(--muted); padding:10px 0; font-size:12px}
+.tabs .active { color:var(--accent); border-bottom:3px solid var(--accent)}
+.label { font-size:12px; color:var(--muted); margin:12px 0 8px}
+.rail { display:flex; gap:12px; overflow:auto}
+.favourite { flex:0 0 112px; border:1px solid var(--line); background:var(--card); border-radius:8px; overflow:hidden; font-size:11px}
+.fav-image { height:56px; background:var(--field); display:grid; place-items:center; position:relative; font-size:20px}
+.heart { position:absolute; right:4px; top:4px; background:#ffffffcc; color:#6b7280; border:0; padding:1px 5px; border-radius:6px; font-size:13px}
+.heart[aria-pressed=true] { color:#ef4444}
+.fav-copy { padding:4px 6px}
+.fav-copy p { margin-top:3px}
+.card { display:grid; grid-template-columns:80px minmax(0,1fr) 110px; gap:12px; padding:12px; border:1px solid var(--line); background:var(--card); border-radius:10px; margin-bottom:12px; min-height:142px}
+.thumb { height:80px; background:var(--field); border-radius:8px; display:grid; place-items:center; font-size:26px; position:relative}
+.thumb>.plain { font-size:26px}
+.card-copy { display:flex; flex-direction:column; align-items:start; min-width:0}
+.card h3 { line-height:1.4; margin-bottom:5px}
+.dishes { list-style:none; padding:0; margin:0; color:var(--muted); font-size:11px}
+.dishes li { display:flex; gap:6px; align-items:center; margin-bottom:3px}
+.badge { background:var(--badge); color:var(--accent); padding:1px 5px; border-radius:5px; font-size:10px; white-space:nowrap}
+.detail { color:var(--accent); font-size:11px; margin-top:auto; padding-top:8px}
+.controls>.price { font-size:14px; margin-bottom:6px}
+.stepper { display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.stepper button { width:30px; height:30px; padding:0; background:var(--field); border:0; font-size:17px}
+.stepper button:last-child { background:var(--accent); color:#fff}
+.stepper output { min-width:24px; text-align:center; font-size:14px}
+.fillings { display:flex; flex-direction:column; gap:4px; margin-top:12px}
+.fillings button { padding:4px 3px; font-size:10px; color:var(--muted); white-space:nowrap}
+.fillings button[aria-pressed=true] { background:var(--accent); border-color:var(--accent); color:#fff}
+.description { color:var(--muted); font-size:11px}
+.product { cursor:pointer}
+.soup-card { min-height:100px}
+.summary { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px; margin-top:12px}
+.summary .label { font-size:11px; margin-top:16px}
+summary { cursor:pointer; list-style:none}
+summary::-webkit-details-marker { display:none}
+.disclosure:after { content:'⌄ Hiện'; color:var(--muted); font-size:11px; margin-left:auto}
+details[open]>.disclosure:after { content:'⌄ Ẩn'}
+.order-line { display:flex; align-items:center; gap:6px}
+.order-line .name { flex:1; font-size:13px}
+.compact.stepper { gap:3px}
+.compact.stepper button { width:23px; height:23px; background:transparent; border:1px solid var(--line); color:var(--muted); font-size:12px}
+.compact.stepper output { min-width:19px; font-size:11px}
+.order-line>.price { font-size:10px; color:var(--muted)}
+.trash { border:0; padding:0; font-size:11px; color:var(--muted)}
+.subitems { border-left:2px solid var(--line); padding-left:10px; margin:8px 0 0 10px}
+.subitems .order-line { margin:3px 0}
+.subitems .name { font-size:11px; color:var(--muted)}
+.subitems .trash { margin-left:40px}
+.subtotal { text-align:right; color:var(--muted); font-size:10px; margin:5px 0 8px}
+.total { border-top:1px solid var(--line); padding-top:10px; margin-top:12px; font-size:13px}
+.canh { border:1px solid var(--line); border-radius:8px; padding:8px; margin-top:12px}
+.canh .row { margin-top:4px; font-size:11px}
+.canh output { color:var(--accent)}
+.table-wrap { overflow:auto}
+table { border-collapse:collapse; width:100%; font-size:10px; margin:6px 0 12px; text-align:left; white-space:nowrap}
+th { font-weight:400; color:var(--muted); font-size:9px}
+td,th { padding:3px 3px 3px 0}
+td:nth-child(2),td:nth-child(3) { color:var(--accent); font-size:9px}
+td:nth-child(4) { color:var(--muted); font-size:9px}
+td:last-child,th:last-child { text-align:right}
+.note { border-top:1px solid var(--line); padding-top:8px; font-size:11px}
+.saved { color:#22c55e; font-size:10px}
+textarea { width:100%; resize:vertical; min-height:40px; border:0; background:var(--field); border-radius:7px; padding:10px; margin-top:8px; font-size:11px}
+.checkout { width:100%; height:52px; border-radius:12px; margin-top:12px; font-size:15px}
+.checkout .count { background:#ff9a4d; border-radius:6px; font-size:12px; padding:3px 9px}
+.bottom-nav { display:flex; justify-content:space-between; background:var(--page); border:1px solid var(--line); border-radius:8px; margin-top:10px; padding:8px 7px; font-size:9px; color:var(--muted)}
+.bottom-nav a { color:inherit; text-decoration:none}
+.bottom-nav a:first-child { color:var(--accent)}
+dialog { width:min(380px,calc(100% - 24px)); max-height:calc(100dvh - 32px); border:1px solid var(--line); border-radius:12px; background:var(--card); color:var(--text); padding:18px; overscroll-behavior:contain}
+dialog::backdrop { background:#000b}
+dialog h2 { font-size:16px; margin-bottom:18px}
+dialog .row { margin:10px 0}
+dialog .actions { display:flex; gap:12px; margin-top:16px}
+dialog .actions button { flex:1; min-height:34px}
+dialog .radio { display:flex; align-items:center; gap:10px; margin:16px 0}
+dialog .radio .muted { margin-left:auto; font-size:11px}
+input[type=radio] { accent-color:var(--accent)}
+.modal-hero { height:90px; background:var(--field); display:grid; place-items:center; margin:-18px -18px 14px; color:var(--muted)}
+.drawer { margin:0 0 0 auto; height:100dvh; max-height:100dvh; border-radius:12px 0 0 12px; width:min(380px,100%)}
+.drawer[open] { display:flex; flex-direction:column; animation:slide-in .22s ease-out}
+.drawer h2 { margin:0}
+.drawer header { border-bottom:1px solid var(--line); padding-bottom:12px}
+.drawer-footer { margin-top:auto; padding-top:24px}
+.drawer .order-line { margin:18px 0 2px}
+.drawer .price { margin:6px 0}
+.drawer .checkout { height:36px; font-size:13px}
+.drawer .continue { width:100%; margin-top:8px; border:0}
+.notice { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--card); border:1px solid var(--accent); border-radius:8px; padding:12px; z-index:20; width:max-content; max-width:90vw}
+.notice:empty { display:none}
+@keyframes slide-in { from { transform:translateX(100%)}
+to { transform:translateX(0)}
+}
+@media(max-width:480px) { .phone { margin:0 auto; border-radius:0; padding-left:10px; padding-right:10px}
+.card { grid-template-columns:64px minmax(0,1fr) 100px; gap:8px; padding:10px}
+.thumb { height:64px}
+.card h3 { font-size:13px}
+.tabs { gap:14px}
+.header h1 { font-size:19px}
+.subitems .trash { margin-left:16px}
+}
+@media(prefers-reduced-motion:reduce) { .drawer[open] { animation:none}
+}
+
+/* đề xuất — không có trong nguồn style.md */
+/* Khung chủ quán, nhãn component, bảng món, trường form và trạng thái bên dưới là phần mở rộng.
+   Không thêm token màu. Sidebar 232px, nội dung tối đa 1200px, breakpoint 640px theo tiền lệ. */
+a { color:inherit; text-underline-offset:3px }
+[data-component] { position:relative; min-width:0 }
+.nhan-component { display:table; max-width:100%; overflow-wrap:anywhere; padding:2px 6px; margin-bottom:8px; border-radius:5px; background:var(--field); color:var(--text); font-size:10px }
+body:has(#hien-ten:not(:checked)) .nhan-component { display:none }
+.design-toggle { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 15px; background:var(--bg); border-bottom:1px solid var(--line) }
+.design-toggle a { margin-left:auto }
+input[type=checkbox] { accent-color:var(--accent) }
+.shell { display:grid; grid-template-columns:232px minmax(0,1fr); background:var(--bg); min-height:70vh }
+.shell > .nhan-component { position:absolute; top:0; left:0 }
+.navigation { padding:24px 12px; border-right:1px solid var(--line); background:var(--page) }
+.brand { display:flex; align-items:center; gap:8px; margin-bottom:24px; text-decoration:none }
+.brand b { padding:10px; border-radius:8px; background:var(--field) }
+.brand small { display:block; color:var(--muted) }
+.nav-group { margin-bottom:20px }
+.nav-group summary { padding:8px 12px; color:var(--muted); font-size:11px }
+.nav-links a { display:block; padding:8px 12px; text-decoration:none; border-radius:7px }
+.nav-links a:hover { background:var(--field) }
+.nav-links a[aria-current=page] { color:var(--accent); background:var(--badge) }
+.page-content { min-width:0; width:100%; max-width:1200px; margin:0 auto; padding:24px 15px }
+.page-content > * + * { margin-top:12px }
+.page-header { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; padding-top:24px }
+.page-header > .nhan-component { position:absolute; top:0; left:0 }
+.page-header p { margin-top:8px; font-size:11px }
+h1 .badge { vertical-align:middle; font-weight:400 }
+.actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center }
+.panel { padding:12px; border:1px solid var(--line); border-radius:10px; background:var(--card) }
+.table-scroll { min-width:0; max-width:100%; overflow-x:auto }
+.product-table td,.product-table th { padding:8px; border-bottom:1px solid var(--line) }
+.product-table td { color:var(--text); font-size:12px }
+.product-table tr:last-child td { border-bottom:0 }
+.product-table .badge { margin-left:8px; color:var(--muted); background:var(--field) }
+.empty { padding:12px 0; color:var(--muted) }
+.state-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px }
+.state-grid h3 { margin-bottom:8px }
+.state-grid button { margin-top:12px }
+.form-body { display:flex; flex-direction:column; gap:12px; min-width:0 }
+.form-body h2 { margin:0 }
+.field { display:flex; flex-direction:column; gap:6px }
+.field.check { flex-direction:row; align-items:center }
+.field input:not([type=checkbox]),select { width:100%; min-width:0; padding:10px; border:1px solid var(--line); border-radius:7px; background:var(--field); color:var(--text); font:inherit }
+fieldset { min-width:0; margin:0 0 12px; padding:12px; border:1px solid var(--line); border-radius:8px }
+fieldset > * + * { margin-top:12px }
+button:disabled { color:var(--muted); cursor:default }
+body.modal-open { overflow:hidden }
+#chu-giai { max-width:1200px; margin:24px auto; padding:24px 15px; border-top:1px solid var(--line) }
+#chu-giai table { min-width:680px }
+#chu-giai td,#chu-giai th { padding:8px; color:var(--text); font-size:11px; border-bottom:1px solid var(--line) }
+#chu-giai th { color:var(--muted) }
+@media(min-width:641px) {
+ .nav-group details::details-content { content-visibility:visible; display:block }
+ .nav-group details:not([open]) > .nav-links { display:block }
+}
+@media(max-width:640px) {
+ body { padding-bottom:150px }
+ .shell { display:block; min-height:0 }
+ .shell > .nhan-component { position:static; margin:6px 15px 0 }
+ .page-content { padding-top:16px }
+ .state-grid { grid-template-columns:minmax(0,1fr) }
+ .navigation { position:fixed; z-index:5; bottom:0; left:0; right:0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; padding:8px 6px max(12px,env(safe-area-inset-bottom)); border:0; border-top:1px solid var(--line) }
+ .navigation > .nhan-component { grid-column:1/-1; margin:0 }
+ .navigation .brand { display:none }
+ .nav-group { margin:0; position:static }
+ .nav-group > .nhan-component { font-size:8px; padding:2px; margin-bottom:4px }
+ .nav-group summary { min-height:44px; padding:12px 2px; text-align:center; font-size:10px; border-radius:7px }
+ .nav-group.selected summary { color:var(--accent); background:var(--badge) }
+ .nav-group details[open] summary { outline:2px solid var(--accent) }
+ .nav-links { position:absolute; bottom:calc(100% + 8px); left:10px; right:10px; padding:12px; border:1px solid var(--line); border-radius:10px; background:var(--card) }
+ .nav-links a { min-height:44px }
+}
+@media(max-width:480px) {
+ .page-content,.design-toggle,#chu-giai { padding-left:10px; padding-right:10px }
+ h1 { font-size:19px }
+}
+</style>
+</head>
+<body>
+<div class="design-toggle"><input type="checkbox" id="hien-ten" checked><label for="hien-ten">Hiện tên component</label><a href="../index.html">Mục lục thiết kế</a><button id="theme-toggle" aria-label="Chuyển giao diện sáng" title="Chuyển sáng / tối">☀️</button></div>
+<div data-component="KhungChuQuan" class="shell"><span class="nhan-component">KhungChuQuan</span>
+<nav data-component="ThanhDieuHuong" class="navigation" aria-label="Trang chủ quán"><span class="nhan-component">ThanhDieuHuong</span>
+<a class="brand" href="../index.html"><b>BT</b><span>Bánh cuốn Bà Thanh<small>Chủ quán</small></span></a><div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hôm nay</summary><div class="nav-links"><a href="../tong_quan/tong-quan.html">Tổng quan</a><a href="../tong-ket.html">Tổng kết</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group selected" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Thực đơn</summary><div class="nav-links"><a href="san-pham.html" aria-current="page">Sản phẩm</a><a href="../menu-gia.html">Menu &amp; giá</a><a href="../danh-muc.html">Danh mục</a><a href="../combo.html">Combo</a><a href="../topping.html">Topping</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Con người</summary><div class="nav-links"><a href="../nhan-vien.html">Nhân viên</a><a href="../giao-viec.html">Giao việc</a><a href="../dao-tao.html">Đào tạo</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hàng &amp; tiền</summary><div class="nav-links"><a href="../nguyen-lieu.html">Nguyên liệu</a><a href="../kho.html">Kho</a><a href="../khoan-chi.html">Khoản chi</a></div></details>
+</div>
+
+</nav>
+<main data-component="TrangSanPham" class="page-content"><span class="nhan-component">TrangSanPham</span>
+<header data-component="DauTrang" class="page-header"><span class="nhan-component">DauTrang</span><div><h1>Sản phẩm <span class="badge">3 món</span></h1><p class="muted">Bản thiết kế tĩnh · số liệu minh hoạ, không phải hợp đồng</p></div><div class="actions"><button type="button" data-reload>Đọc lại danh sách</button><button type="button" class="primary" data-open="them-mon">Thêm món</button></div></header>
+<section data-component="BangDuLieu" class="panel"><span class="nhan-component">BangDuLieu</span><h2>[DANH MỤC]</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Danh sách món theo danh mục"><table class="product-table"><thead><tr><th scope="col">Món</th><th scope="col">Thao tác</th></tr></thead><tbody><tr><td>Bánh cuốn</td><td><button type="button" data-rename="Bánh cuốn" aria-label="Đổi tên Bánh cuốn">Đổi tên</button></td></tr><tr><td>Trứng</td><td><button type="button" data-rename="Trứng" aria-label="Đổi tên Trứng">Đổi tên</button></td></tr><tr><td>Giò <span class="badge">Ngừng bán</span></td><td><button type="button" data-rename="Giò" aria-label="Đổi tên Giò">Đổi tên</button></td></tr></tbody></table></div></section>
+<section data-component="NhomChuaXep" class="panel"><span class="nhan-component">NhomChuaXep</span><h2>Chưa xếp danh mục</h2><section data-component="TrangThaiTrong" class="empty"><span class="nhan-component">TrangThaiTrong</span><p>Chưa có món</p></section></section>
+<details class="panel"><summary>Trạng thái minh hoạ · đề xuất cách trình bày</summary><p class="muted">Các tình huống riêng, không diễn ra đồng thời.</p><div class="state-grid">
+<section class="panel"><h3>Đang đọc</h3><p role="status">Đang đọc danh sách món…</p></section>
+<section class="panel"><h3>Đọc chưa thành công</h3><p>Chưa đọc được danh sách món. Hãy thử lại.</p><button type="button" data-reload>Đọc lại danh sách</button></section>
+<section class="panel"><h3>Có bản đọc trước</h3><p>Chưa đọc được danh sách món. Đang hiện bản đọc trước.</p><button type="button" data-reload>Đọc lại danh sách</button></section>
+<section data-component="TrangThaiTrong" class="panel"><span class="nhan-component">TrangThaiTrong</span><h3>Danh sách trống</h3><p>Chưa có món</p></section>
+<section data-component="TrangThaiTrong" class="panel"><span class="nhan-component">TrangThaiTrong</span><h3>Chưa có danh mục</h3><p>Chưa có danh mục. Hãy thêm danh mục trước khi thêm món.</p></section>
+</div></details>
+</main>
+</div>
+<section id="chu-giai"><h2>Chú giải component</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Chú giải component"><table><thead><tr><th scope="col">Tên</th><th scope="col">Nó là gì</th><th scope="col">Phạm vi</th></tr></thead><tbody><tr><td><code>BangDuLieu</code></td><td>Bảng dữ liệu có vùng cuộn ngang riêng.</td><td>dùng chung</td></tr><tr><td><code>DauTrang</code></td><td>Tiêu đề trang, lời dẫn và thao tác chính.</td><td>dùng chung</td></tr><tr><td><code>FormDoiTenMon</code></td><td>Tên mới của món và lý do thay đổi.</td><td>riêng trang</td></tr><tr><td><code>FormThemMon</code></td><td>Tên món, danh mục và các thành phần để thêm món.</td><td>riêng trang</td></tr><tr><td><code>HopThoaiSuaCoLyDo</code></td><td>Ngăn bên phải để sửa dữ liệu và nhập lý do.</td><td>dùng chung</td></tr><tr><td><code>KhungChuQuan</code></td><td>Vỏ trang nối điều hướng với nội dung quản trị.</td><td>dùng chung</td></tr><tr><td><code>NhomChuaXep</code></td><td>Các món chưa xếp danh mục.</td><td>riêng trang</td></tr><tr><td><code>NhomDieuHuong</code></td><td>Một nhóm liên kết đến các trang cùng mảng.</td><td>dùng chung</td></tr><tr><td><code>ThanhDieuHuong</code></td><td>Thanh bên trên máy tính và thanh bốn nhóm ở đáy điện thoại.</td><td>dùng chung</td></tr><tr><td><code>TrangSanPham</code></td><td>Nội dung riêng của trang Sản phẩm.</td><td>riêng trang</td></tr><tr><td><code>TrangThaiTrong</code></td><td>Lời giải thích khi danh sách chưa có dữ liệu.</td><td>dùng chung</td></tr></tbody></table></div></section>
+
+<dialog id="them-mon" class="drawer" aria-labelledby="them-title">
+<form data-component="FormThemMon" class="form-body" aria-label="Thêm món"><span class="nhan-component">FormThemMon</span>
+<h2 id="them-title">Thêm món</h2><p class="muted">Minh hoạ thao tác · không ghi dữ liệu.</p><label class="field">Tên món<input type="text"></label><label class="field">Danh mục<select><option>Chọn danh mục</option><option>[DANH MỤC]</option></select></label><div id="thanh-phan"><fieldset><legend>Thành phần 1</legend><label class="field">Tên thành phần 1<input type="text"></label><label class="field">Giá gốc thành phần 1 (đồng)<input type="number" placeholder="[GIÁ]"></label><label class="field">Số lượng thành phần 1<input type="number" value="1"></label><label class="field check">Thành phần 1 nhận nhân<input type="checkbox"></label><button type="button" disabled>Bỏ thành phần 1</button></fieldset></div><button type="button" id="them-thanh-phan">Thêm thành phần</button><div class="actions"><button type="submit" class="primary">Thêm món</button><button type="button" data-close>Huỷ</button></div>
+</form>
+</dialog>
+<dialog id="doi-ten" class="drawer" data-component="HopThoaiSuaCoLyDo" aria-labelledby="doi-title"><span class="nhan-component">HopThoaiSuaCoLyDo</span>
+<form data-component="FormDoiTenMon" class="form-body" aria-label="Đổi tên món"><span class="nhan-component">FormDoiTenMon</span><h2 id="doi-title">Đổi tên Bánh cuốn</h2><p class="muted">Minh hoạ thao tác · không ghi dữ liệu.</p><label class="field">Tên mới<input id="ten-moi" type="text" value="Bánh cuốn"></label><label class="field">Lý do<input type="text"></label><div class="actions"><button type="submit" class="primary">Lưu tên</button><button type="button" data-close>Huỷ</button></div></form>
+</dialog>
+<div class="notice" role="status" aria-live="polite"></div>
+<script>
+const themeBtn = document.querySelector('#theme-toggle');
+const applyTheme = t => { document.documentElement.dataset.theme = t; themeBtn.textContent = t === 'light' ? '🌙' : '☀️'; themeBtn.setAttribute('aria-label', t === 'light' ? 'Chuyển giao diện tối' : 'Chuyển giao diện sáng'); };
+try { applyTheme(localStorage.getItem('menu-theme') || 'dark'); } catch { applyTheme('dark'); }
+themeBtn.addEventListener('click', () => { const t = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; applyTheme(t); try { localStorage.setItem('menu-theme', t); } catch {} });
+
+// Đề xuất: tương tác chỉ để duyệt bố cục, không gọi API hay ghi món.
+let trigger = null;
+let timer;
+const announce = message => {
+  const notice = document.querySelector('.notice');
+  clearTimeout(timer);
+  notice.textContent = message;
+  timer = setTimeout(() => { notice.textContent = ''; }, 2600);
+};
+function openDialog(id, button) {
+  trigger = button;
+  document.querySelector('.notice').textContent = '';
+  document.getElementById(id).showModal();
+  document.body.classList.add('modal-open');
+}
+document.querySelectorAll('[data-open]').forEach(button => button.addEventListener('click', () => openDialog(button.dataset.open, button)));
+document.querySelectorAll('[data-rename]').forEach(button => button.addEventListener('click', () => {
+  const form = document.querySelector('#doi-ten form');
+  form.reset();
+  document.querySelector('#ten-moi').value = button.dataset.rename;
+  document.querySelector('#doi-title').textContent = 'Đổi tên ' + button.dataset.rename;
+  form.setAttribute('aria-label', 'Đổi tên ' + button.dataset.rename);
+  openDialog('doi-ten', button);
+}));
+document.querySelectorAll('dialog').forEach(dialog => {
+  dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('close', () => {
+    document.body.classList.remove('modal-open');
+    if (trigger?.isConnected) trigger.focus();
+  });
+  dialog.querySelector('form').addEventListener('submit', event => {
+    event.preventDefault();
+    dialog.close();
+    announce('Bản thiết kế tĩnh · không ghi dữ liệu.');
+  });
+});
+document.querySelectorAll('[data-reload]').forEach(button => button.addEventListener('click', () => announce('Đang đọc danh sách món… · Minh hoạ, không kết nối dữ liệu.')));
+const parts = document.querySelector('#thanh-phan');
+const partTemplate = parts.firstElementChild.cloneNode(true);
+function labelParts() {
+  [...parts.children].forEach((part, i) => {
+    const n = i + 1;
+    part.querySelector('legend').textContent = 'Thành phần ' + n;
+    const labels = part.querySelectorAll('label');
+    ['Tên thành phần ' + n, 'Giá gốc thành phần ' + n + ' (đồng)', 'Số lượng thành phần ' + n, 'Thành phần ' + n + ' nhận nhân'].forEach((text, j) => { labels[j].firstChild.textContent = text; });
+    const remove = part.querySelector('button');
+    remove.textContent = 'Bỏ thành phần ' + n;
+    remove.disabled = parts.children.length === 1;
+    remove.onclick = () => { part.remove(); labelParts(); };
+  });
+}
+document.querySelector('#them-thanh-phan').addEventListener('click', () => { parts.append(partTemplate.cloneNode(true)); labelParts(); parts.lastElementChild.querySelector('input').focus(); });
+labelParts();
+// Đề xuất: chỉ mở một nhóm điều hướng trên điện thoại, đóng bằng Escape.
+const groups = [...document.querySelectorAll('.nav-group details')];
+groups.forEach(group => group.addEventListener('toggle', () => {
+  if (group.open && matchMedia('(max-width:640px)').matches) groups.filter(other => other !== group).forEach(other => { other.open = false; });
+}));
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && !document.querySelector('dialog[open]')) groups.forEach(group => { if (group.open) { group.open = false; group.querySelector('summary').focus(); } });
+});
+</script>
+</body>
+</html>
