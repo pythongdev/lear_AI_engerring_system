@@ -89,6 +89,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
+- [ ] T-244 **Bảy suất (đầy đủ, suất giò, suất trứng) là món thường, chưa phải combo ghép từ món lẻ** — chủ repo 2026-10-24 chọn chuyển thành combo thật ở `/chu-quan/combo`, trang Sản phẩm chỉ còn món lẻ; mỗi suất con chọn nhân riêng (I-034) — L3 (dữ liệu mồi, đường giá, kịch bản; thiết kế chờ chủ repo duyệt, chia ba phần L2 khi mở) — mở 2026-10-24, sau T-242 · [chi tiết](#t-244)
 - [ ] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — thêm danh mục của từng món vào `GET /menu` (hợp đồng, truy vấn, handler) rồi trang khách `/dat-mon`, `/ban/[ma]` nhóm món theo danh mục đọc từ API — L2 (đổi hợp đồng API) — mở 2026-10-23 (chủ repo chọn), làm sau T-236 · [chi tiết](#t-237)
 - [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
@@ -98,7 +99,10 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-238 **Trang Sản phẩm có nút Cập nhật cho tên, danh mục, giá và trạng thái của món** — mỗi dòng món mở ngăn bên phải: đổi tên, chuyển danh mục, đổi giá gốc từng thành phần, ngừng bán, mọi lệnh có lý do; dùng lại các cửa ghi sẵn có, không đổi backend hay hợp đồng; bán lại món đã ngừng chờ U-104 — L2 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-238)
+- [ ] T-245 **Viết lại trang Giao việc theo HTML, mobile first** — L1 — chủ repo giao Codex 2026-10-24 · [chi tiết](#t-245)
+
+- [ ] T-243 **Món đã ngừng bán chưa bán lại được** — chủ repo đóng U-104 (bán lại, giữ món cũ cùng tên · thành phần · lịch sử): cửa mới `POST /menu-items/{menu_item_id}/resumption` có lý do xoá mốc ngừng bán trên chính dòng món (ADR-126), hợp đồng · ma trận quyền · service · test backend, và form *Bán lại* trên trang Sản phẩm — L2 — mở 2026-10-24 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-243)
+- [ ] T-242 **Menu chưa có bánh trứng bán rời, trang Sản phẩm xếp mọi món vào một danh mục** — thêm ba dòng *bánh trứng bán rời* chín · tái · vàng vào dữ liệu mồi theo `shop-facts.md` §4.9 (2026-10-23), dữ liệu thử máy dev chia danh mục **Món lẻ** (trên) và **Combo** (dưới) theo cột *Nhóm trên menu*; ca giá 14 xanh — L2 (dòng menu có tiền) — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-242)
 - [ ] T-227 **Thanh toán bàn chỉ thu phần đã ra, phần chưa ra huỷ việc trạm** — bấm tiền bánh đã ra để đóng phiên và xoá bàn khỏi bảng; đổi luật tính tiền phiên (`shop-facts.md` §6.1, 2026-10-21) và viết lại `I-002` — L3 (thiết kế duyệt trước code, ADR, chia L1/L2 khi mở) — mở 2026-10-21, U-103 có lời và bắt đầu 2026-10-22 · [chi tiết](#t-227)
 - [ ] T-233 **Trang gọi món của khách hiện không có kiểu nào, chưa giống bản thiết kế menu** — CSS module của T-232 bị luật Turbopack trong `next.config.ts` đọc như CSS thường nên mọi `styles.*` rỗng (F-075); viết lại kiểu bằng một file CSS thường trong phạm vi trang và lớp Tailwind, đối chiếu ảnh chụp với `menu.html` ở hai giao diện; hành vi và test giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-233)
 
@@ -113,6 +117,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="done"></a>
 ## Done
+- [x] T-238 **Trang Sản phẩm có nút Cập nhật cho tên, danh mục, giá và trạng thái của món** — mỗi dòng món mở ngăn bên phải: đổi tên, chuyển danh mục, đổi giá gốc từng thành phần, ngừng bán, mọi lệnh có lý do; dùng lại các cửa ghi sẵn có, không đổi backend hay hợp đồng; bán lại món đã ngừng chờ U-104 — L2 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-238)
+- [x] T-240 **Máy dev không có lệnh make nào tạo lại tài khoản đăng nhập sau `make reset`** — thêm `make tai-khoan-dev` tạo chủ quán và bốn tài khoản theo vai như `docs/command/tai-khoan-dev.md`, chạy lại không lỗi; thay khối lệnh dài trong tài liệu ấy bằng lệnh make — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-240)
 - [x] T-235 **Next.js 16.4.0 dính lỗ hổng bảo mật, `next build` dừng cách lượt** — nâng `next` và `eslint-config-next` trong `fe/` lên bản vá theo `next upgrade --agent=security`, đóng F-076 — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-235)
 - [x] T-236 **Máy phát triển chưa có dữ liệu cho phần lớn các mục của trang chủ quán** — thêm bộ *dữ liệu thử* riêng cho máy dev (danh mục, combo, giao việc, đào tạo, khoản chi, sổ nguyên liệu, chấm công…), ghi nhãn rõ không phải sự thật của quán, chạy bằng một lệnh make riêng sau `make seed`; `db/seed/seed.pl` giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-236)
 - [x] T-234 **Trang Sản phẩm của chủ quán theo bản thiết kế, bày đủ thuộc tính món đã có** — áp `san_pham/san-pham.html` lên `/chu-quan/san-pham`: đầu trang có số món và hai nút, mỗi danh mục một bảng Món · Danh mục · Trạng thái · Giá · Thao tác, thêm món và đổi tên trong ngăn bên phải; giá là số `GET /menu` trả cho từng tổ hợp, không cộng, không tính thử — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-234)
@@ -463,6 +469,133 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
 
+<a id="t-242"></a>
+### T-242 — Menu chưa có bánh trứng bán rời, trang Sản phẩm xếp mọi món vào một danh mục
+
+**Yêu cầu:** chủ repo 2026-10-23, nhìn `/chu-quan/san-pham`: *"bao gồm bánh cuốn, bánh trứng, giò và canh — phần dưới là những
+combos … Đầy đủ bao gồm 1 trứng, 1 giò và 3 bánh với 1 canh hãy cập nhật page trên"*, rồi *"yêu cầu codex làm nốt bạn kiểm tra"*.
+Hỏi lại cùng ngày, chủ repo chọn: **giữ luật cũ** — Đầy đủ không kèm canh (`U-048`); **thêm món bán lẻ mới** — bánh trứng chín ·
+tái · vàng, mỗi loại một dòng, giá như thành phần; **giò bán rời 9.000, không chọn nhân** (đóng S-9). Claude ghi cả ba vào
+`master_plan/shop-facts.md` §4.3 · §4.4 · §4.5 · §4.8 (ca 14) · §4.9 (cột *Nhóm trên menu*) · §7.1 · §7.2. **Mức:** L2 — thêm dòng
+menu có tiền; không đổi migration, hợp đồng API, backend hay FE.
+
+**Claude quyết 2026-10-23 (thi công, không phải luật quán):** (1) tên dòng menu là **Bánh trứng chín / tái / vàng**, theo chữ chủ
+repo; (2) trang Sản phẩm đã bày mỗi danh mục một khối theo thứ tự `/menu-categories` trả về, nên **không sửa FE** — dữ liệu thử máy
+dev (`db/seed/du-lieu-thu.pl`, T-236) tạo danh mục theo cột *Nhóm trên menu* §4.9 thay cho cột *Danh mục* §4.2, và **Món lẻ** phải
+được bày trước **Combo**; (3) ca giá 14 trong §4.8 là test hồi quy do Claude viết trước, chạy qua `seed.pl --price-cases` (db-check)
+và `--price-cases-tsv` (test cửa giá pha 3).
+
+**Acceptance** (viết 2026-10-23, trước khi giao):
+- [ ] `perl db/seed/seed.pl` chạy được trên shop-facts mới; `%MENU` có ba dòng *bánh trứng* trỏ dòng §4.5 *Bánh trứng bán rời*, loại trứng đúng, tên §4.8 ca 14 khớp.
+- [ ] Ca 14 (Bánh trứng vàng · Thịt · Nhiều = 10.000) và mười ba ca cũ xanh ở `db-check` và ở test cửa giá của `be-check`.
+- [ ] Sau `make reset` + dữ liệu thử: có đúng hai danh mục **Món lẻ** (bánh cuốn, giò bán rời, canh, ba bánh trứng) và **Combo** (ba đầy đủ, suất giò, ba suất trứng); không còn danh mục Bánh cuốn / Ăn kèm. ~~`GET /menu-categories` trả Món lẻ trước Combo~~ — bỏ 2026-10-24: hợp đồng sắp danh mục theo tên (`openapi.yaml` `MenuCategories`), Acceptance cũ mâu thuẫn với *không sửa `be/`*; chủ repo chọn chuyển bảy suất thành combo thật ở `/chu-quan/combo` → T-244.
+- [ ] Không món nào kèm sẵn canh; không sửa migration, `openapi.yaml`, `be/`, `fe/`.
+- [ ] `docs/product/2-db/08-du-lieu-moi.md` và `docs/command/` (nếu nói danh mục hay số dòng menu của dữ liệu thử) theo kịp.
+- [ ] `./scripts/gate.sh` xanh ở clone chính.
+
+**Bàn giao:** thực hiện: Codex (chưa giao) · duyệt: Claude. Shop-facts đã sửa ở clone chính, chưa commit — worktree của Codex nhận
+bản này staged sẵn.
+
+<a id="t-244"></a>
+### T-244 — Bảy suất là món thường, chưa phải combo ghép từ món lẻ
+
+**Yêu cầu:** chủ repo 2026-10-24, nhìn `/chu-quan/san-pham` sau T-242: *"để món lẻ ở page trên. combos để ở page dưới
+http://localhost:3000/chu-quan/combo"*. Hỏi lại cùng ngày, chủ repo chọn **chuyển thành combo thật** (không chỉ đổi chỗ hiện),
+với hệ quả Claude nêu sẵn trong câu hỏi: bỏ bảy suất khỏi món thường, dựng lại thành combo ghép từ món lẻ, **mỗi cái bánh chọn
+nhân riêng**. **Mức:** L3 — đổi dữ liệu mồi có tiền, đường tính giá của ca 1–10 §4.8, việc bếp sinh từ dòng con. Thiết kế dưới đây
+**chờ chủ repo duyệt** trước khi giao (CLAUDE.md §3).
+
+**Thiết kế đề xuất (Claude 2026-10-24, chưa duyệt):**
+1. **Shop-facts trước.** §4.3 giữ ba dòng giá như *giá khi mọi suất con cùng một nhân*; §4.5 ghi *Đầy đủ* = combo **3 × Bánh cuốn +
+   1 × Bánh trứng (chín/tái/vàng) + 1 × Giò bán rời**, *Suất giò* = **4 × Bánh cuốn + 1 × Giò bán rời**, *Suất trứng* = **4 × Bánh cuốn
+   + 1 × Bánh trứng**; §4.9 cột *Nhóm trên menu* = Combo nghĩa là `menu_combo`. Ghi lời 2026-10-24 ở §7.1. Đối chiếu đã tính (Claude):
+   giá combo = Σ giá gốc món lẻ (Đầy đủ 26.000 · suất giò 21.000 · suất trứng 20.000) và mức phụ thu theo món = phụ thu §4.4 của món lẻ
+   ⇒ ra đúng mọi ô §4.3 khi các suất con cùng nhân. Giá trộn nhân (ví dụ 3 bánh thịt + trứng chay = 29.000) là hệ quả mới, ghi rõ.
+2. **`seed.pl`:** không chèn bảy `menu_item` ấy nữa; chèn bảy `menu_combo` + `menu_combo_item`, giá combo và từng dòng
+   `menu_combo_item_option_surcharge` **tính từ database** (giá gốc, `menu_option.surcharge_vnd`), không gõ số (F-001). Thiếu dòng mức
+   = 0đ (U-096) nên mọi lựa chọn có phụ thu phải có dòng.
+3. **Ca giá §4.8:** ca của bảy suất chạy qua đường giá combo (`POST /price-quotes` nhánh combo, T-195) ở `--price-cases` · `--price-cases-tsv`;
+   thêm một ca trộn nhân. Test cửa giá pha 3 (`be/internal/gia/gia_test.go`) đọc ca combo.
+4. **Kịch bản và phép đối chiếu** đang gọi suất như món (`db/scenario/*.sql`, `db/reconcile/proof/{baseline,i004_7,i009_4,i018_3}.sql`,
+   `be/internal/don/don_test.go`, `be/cmd/server/realtime_test.go`): đổi sang món lẻ hoặc combo, **giữ đúng điều mỗi ca canh** — ca nào
+   không đọc được điều ấy sau khi đổi thì dừng và báo, không viết lại ý ca.
+5. **Dữ liệu thử** (`du-lieu-thu.pl`): chỉ còn danh mục Món lẻ; bỏ *Combo ghép món (thử)* vì đã có combo thật.
+6. **FE:** trang Sản phẩm tự chỉ còn món lẻ; trang Combo đã đọc `/menu-combos`. Trang khách (`fe/src/app/ban/`) đã có nhánh combo — kiểm
+   bảy combo hiện và đặt được, không thêm tính năng.
+7. **ADR-127** ghi lựa chọn *combo thật thay vì nhóm trình bày* và hệ quả *mỗi suất con chọn nhân riêng*.
+
+**Chia khi mở:** (a) shop-facts + seed + ca giá + ADR — L2; (b) kịch bản, phép đối chiếu, test backend — L2; (c) kiểm FE — L1.
+
+**Acceptance** (viết 2026-10-24, trước khi giao):
+- [ ] Sau `make reset` + `make setup`: không `menu_item` nào tên *Đầy đủ…* / *Suất giò* / *Suất trứng…*; có đúng bảy `menu_combo` đúng thành phần mục 1.
+- [ ] Mọi ca §4.8 (cũ + ca trộn nhân) xanh ở `db-check` và test cửa giá của `be-check`; báo giá combo khi mọi suất con cùng nhân khớp từng ô §4.3.
+- [ ] Mọi kịch bản và phép đối chiếu xanh, mỗi ca giữ điều nó canh (Claude đọc diff từng ca).
+- [ ] `/chu-quan/san-pham` chỉ bày món lẻ; `/chu-quan/combo` bày bảy combo; trang khách đặt được một combo Đầy đủ — Claude chạy trên máy dev.
+- [ ] Không đổi migration hay `openapi.yaml`; `./scripts/gate.sh` xanh ở clone chính.
+
+**Bàn giao:** thực hiện: Codex (chưa giao — chờ duyệt thiết kế) · duyệt: Claude.
+
+<a id="t-241"></a>
+### T-241 — Gate 9 chặn commit liên tiếp mà lời từ chối không chỉ ra file thủ phạm
+
+**Yêu cầu:** chủ repo 2026-10-23, sau khi khối T-239 bị Gate 9 chặn: *"tại sao toàn gặp lỗi này hãy sửa 1 lần dứt … chia commit
+cũng được"*. Nguyên nhân và cách vá: F-025, đoạn 2026-10-23. **Mức:** L1 — một git hook và luật giao khối commit.
+
+**Acceptance:**
+- [x] Lời từ chối của `scripts/hooks/pre-commit` nêu task gần nhất (ít file ngoài scope nhất; hoà thì scope mới sửa nhất), chỉ các
+  file ngoài scope của nó kèm task của từng file, và dòng `git restore --staged <file…>` — `scripts/pre-commit.test.sh` ca *chỉ nêu file
+  ngoài task gần nhất và lệnh gỡ*.
+- [x] `CLAUDE.md` §6.1: khối mở bằng `git reset -q`; file chung có dòng task khác thì tách theo task, chạy thử trước khi giao.
+- [x] Việc chưa commit của T-235 · T-238 · T-240 · T-239 · T-241 tách thành năm commit, chạy thử trong worktree tạm: mỗi commit qua
+  hook thật, cây sạch sau commit cuối; `./scripts/gate.sh` xanh.
+
+**Bàn giao:** thực hiện và kiểm: Claude 2026-10-23. File: `scripts/hooks/pre-commit`, `scripts/pre-commit.test.sh`, `CLAUDE.md`,
+`work/findings.md`, `work/backlog.md`.
+
+<a id="t-240"></a>
+### T-240 — Máy dev không có lệnh make nào tạo lại tài khoản đăng nhập sau `make reset`
+
+**Yêu cầu:** chủ repo 2026-10-23: đăng nhập `chu` không được sau khi dựng lại database — bảng `account` trống vì `make reset` xoá hết
+và `make setup`, `make seed-thu` không tạo tài khoản; khối lệnh dài ở `docs/command/tai-khoan-dev.md` phải dán tay. Chủ repo: *"đưa lệnh
+make để tôi chạy · yêu cầu codex làm bạn kiểm tra"*. **Mức:** L1 — công cụ máy dev, không đổi lược đồ, hợp đồng, luật quán.
+
+**Claude quyết 2026-10-23 (cách làm, không phải luật quán):** (1) một script dưới `db/seed/` gọi bằng `make tai-khoan-dev`; chủ quán tạo
+bằng `be/cmd/khoitao-chu-quan`, bốn tài khoản theo vai đi qua đúng cửa backend (`POST /accounts` rồi duyệt bằng phiên chủ quán), nên
+cần backend đang chạy — thiếu thì dừng và nói chạy `make be`; (2) tên đăng nhập, mật khẩu và vai giữ đúng bảng trong
+`docs/command/tai-khoan-dev.md`; người gắn vào là bốn người không phải chủ quán theo thứ tự id (như tài liệu đang giả định), tên hiển
+thị đọc từ database, không gõ tay; số người khác bốn thì dừng; (3) tài khoản đã có thì bỏ qua, không lỗi.
+
+**Acceptance** (viết 2026-10-23, trước khi giao):
+- [x] `make tai-khoan-dev` (có trong `make help` và `docs/command/make.md`) trên database vừa `make setup`, backend đang chạy, tạo `chu`, `quay`, `trang`, `gap`, `canh` ở trạng thái `hoat_dong`, gắn đúng vai và người — Claude kiểm bằng `SELECT` trên database làm việc.
+- [x] Đăng nhập `POST /sessions` bằng từng cặp tên/mật khẩu của bảng trả 2xx — Claude chạy.
+- [x] Chạy lần hai báo đã có và bỏ qua từng tài khoản, exit 0, không thêm dòng.
+- [x] Backend không chạy thì dừng với lời nhắc `make be`, exit khác 0, không ghi gì.
+- [x] `docs/command/tai-khoan-dev.md` thay khối lệnh dài bằng `make tai-khoan-dev`; bảng tài khoản giữ nguyên.
+- [x] Không chạm `be/`, `fe/`, migration, `seed.pl`; `./scripts/gate.sh` xanh.
+
+**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-240`, nhánh `codex/T-240`, nền `42dae88` + diff chưa commit của T-239 ở
+`Makefile`, `docs/command/make.md` stage sẵn) · duyệt: Claude 2026-10-23, một vòng, không sửa. File: `db/seed/tai-khoan-dev.sh` (mới),
+`Makefile`, `docs/command/make.md`, `docs/command/tai-khoan-dev.md`. Bằng chứng Claude chạy trên database làm việc: lượt một tạo `chu` →
+person 6 *Chủ quán (dev)*, `quay`/`trang`/`gap`/`canh` → person 1…4 đúng vai, cả năm `hoat_dong`; `POST /sessions` cả năm cặp → 201; lượt
+hai năm dòng *đã có, bỏ qua*, exit 0; `BANHCUON_BE_URL` trỏ cổng tắt → *backend chưa chạy — … `make be`*, exit khác 0.
+
+<a id="t-239"></a>
+### T-239 — Thử trang khách trên máy dev phải dán mã QR 32 ký tự
+
+**Yêu cầu:** chủ repo 2026-10-23: `/ban/976d2f…` báo *"Bạn vui lòng quét lại mã trên bàn."* — *"đang trong giai đoạn test tạm thời bỏ
+qua lỗi trên. không để [mã] hãy để số bàn"*. Nguyên nhân: database làm việc dựng lại nên mã cũ không còn hiện hành; và không đường đọc
+công khai nào tra mã từ số bàn (I-023, cố ý). **Claude quyết (cách làm, không phải luật quán):** không đổi app hay hợp đồng; một file SQL
+chỉ cho máy dev, chạy bằng make, thay mã hiện hành của mỗi bàn bằng tên bàn qua đúng ràng buộc và vết (lý do + người là chủ quán đầu
+tiên) — cố ý bỏ vế *không đoán được* của I-023 trên máy dev. **Mức:** L1.
+
+**Acceptance:**
+- [x] `make ma-qr-so-ban` (trong `make help` và `docs/command/make.md`) đổi mã của mọi bàn; chạy lần hai báo đổi 0 bàn, không lỗi.
+- [x] `GET /qr-codes/1` trả `{"label":"1"}` và `/ban/1` hiện *Bàn 1* — Claude chạy trên database làm việc.
+- [x] Không chạm `fe/`, `be/`, migration hay `seed.pl`; `./scripts/gate.sh` xanh.
+
+**Bàn giao:** thực hiện và kiểm: Claude 2026-10-23. File: `db/seed/ma-qr-so-ban.sql`, `Makefile`, `docs/command/make.md`. Bằng chứng:
+`NOTICE: ma-qr-so-ban: đổi 15 bàn`, lượt hai `đổi 0 bàn`; `curl localhost:8080/qr-codes/1` → `{"label":"1"}`. Sau `make reset` phải chạy lại lệnh.
+
 <a id="t-237"></a>
 ### T-237 — Trang gọi món của khách chưa chia món theo danh mục
 
@@ -537,6 +670,24 @@ worktree đều exit 0, không `SecurityFatalError`; Claude áp diff lên clone 
 Claude mở rộng scope, sửa bảng ghim và phép kiểm QC-18 sang 16.4.2 (thêm `eslint-config-next`) — lệch dòng Acceptance *chỉ đổi hai file*
 có chủ ý, vì QC-18 nói lên bản là một task. F-076 chuyển *Resolved*.
 
+<a id="t-243"></a>
+### T-243 — Món đã ngừng bán chưa bán lại được
+
+**Yêu cầu:** chủ repo 2026-10-24 trả lời `U-104`: *"trả lời có"*, rồi *"giữ món cũ cùng tên, cùng thành phần, cùng lịch sử"*; *"yêu cầu codex
+cập nhật, bạn kiểm tra"*. Lời đã vào `master_plan/shop-facts.md` §8.9; thiết kế: `docs/decisions.md` **ADR-126**. **Mức:** L2 — đổi hợp đồng
+API, thêm cửa ghi dữ liệu menu; không migration.
+
+**Acceptance** (viết 2026-10-24, trước khi giao):
+- [ ] Test backend do Claude viết trước trong `be/internal/menu/menu_test.go` (`TestI018_BanLaiGiuLichSu`, `TestI012_ChiChuQuanBanLai`) xanh qua
+      PostgreSQL thật — Claude chạy `be-check`: bán lại có lý do xoá mốc, giữ tên và thành phần, để đúng một vết (ảnh trước có mốc cũ, ảnh sau
+      rỗng mốc, đúng người · lý do); thiếu lý do 400 `field=reason`; món chưa ngừng 409 `menu_item_not_discontinued`; không thấy 404; không phải
+      chủ quán 403 · chưa đăng nhập 401, không ghi; bán lại xong ngừng bán lần nữa được.
+- [ ] `openapi.yaml` có `resumeMenuItem` và mã `menu_item_not_discontinued` (409), phiên bản tăng; `02-vai-va-quyen.md` thêm dòng
+      `menu/ban_lai` lớp `chu_quan`; Gate 1f · 1g xanh.
+- [ ] Trang Sản phẩm: món ngừng bán có form *Bán lại <tên>* (ô *Lý do bán lại* bắt buộc, nút *Bán lại*), gửi đúng thân `{ reason }`, xong báo
+      *Đã bán lại <tên>.* và đọc lại; test FE do Claude viết trước, xanh.
+- [ ] `./scripts/gate.sh` xanh ở clone chính.
+
 <a id="t-238"></a>
 ### T-238 — Trang Sản phẩm chỉ đổi được tên món, chưa cập nhật được danh mục, giá, trạng thái
 
@@ -553,15 +704,24 @@ bắt buộc lý do — riêng lần **xếp đầu** món chưa xếp thì hợ
 `POST /price-quotes` như trang Menu & giá (`useThanhPhanGia`, hợp đồng không có đường đọc thành phần riêng) với tổ hợp đầu của
 món; món ngừng bán không có trong `/menu` nên phần giá ghi *Món đã ngừng bán, không đổi giá ở đây*; (3) phần giá luôn có lời nhắc
 *Đổi giá gốc thì mọi món dùng chung thành phần này đổi giá theo*; số tiền gửi là số nguyên không âm chủ quán gõ, FE không tính;
-(4) món ngừng bán: không phần *Ngừng bán*, có câu *Món đã ngừng bán. Chưa có cách bán lại (U-104).*; (5) ghi xong làm mất hiệu lực
+(4) món ngừng bán: không phần *Ngừng bán*, có câu *Món đã ngừng bán. Chưa có cách bán lại.* (chờ `U-104`); (5) ghi xong làm mất hiệu lực
 `["menu-categories"]`, `["menu"]`, `["price-quotes"]` rồi đọc lại; ngăn giữ mở, báo *Đã …*; (6) luật cũ của P4A-04 *trang không có nút
 giá · ngừng bán* được nới theo lời chủ repo; luật *không ghi tay cache*, *một lần bấm một lệnh*, *lời từ chối gắn đúng ô* giữ.
 
 **Acceptance** (viết 2026-10-23, trước khi giao):
-- [ ] `san-pham.test.tsx` do Claude viết trước (hồi quy `I-018` phía FE — mọi lệnh cập nhật mang lý do, thiếu lý do không gửi; `I-013` — FE không gửi giá món, chỉ giá gốc chủ quán gõ) — xanh, Codex không sửa.
-- [ ] Mỗi dòng có nút *Cập nhật <tên>*; ngăn có đủ bốn phần như quyết định (1), (2), (4); thân lệnh đúng hợp đồng.
-- [ ] Chỉ đổi file trong `fe/src/app/chu-quan/_components/` (san-pham, du-lieu-san-pham, form mới cho danh mục · giá · ngừng bán) và test trên; không sửa `du-lieu-menu-gia.ts`, `hop-thoai-sua-co-ly-do.tsx`, `components/ui/`; không thêm phụ thuộc.
-- [ ] `./scripts/gate.sh` xanh ở clone chính; Claude chạy lại test trang Menu & giá và Danh mục.
+- [x] `san-pham.test.tsx` do Claude viết trước (hồi quy `I-018` phía FE — mọi lệnh cập nhật mang lý do, thiếu lý do không gửi; `I-013` — FE không gửi giá món, chỉ giá gốc chủ quán gõ) — xanh, Codex không sửa.
+- [x] Mỗi dòng có nút *Cập nhật <tên>*; ngăn có đủ bốn phần như quyết định (1), (2), (4); thân lệnh đúng hợp đồng.
+- [x] Chỉ đổi file trong `fe/src/app/chu-quan/_components/` (san-pham, du-lieu-san-pham, form mới cho danh mục · giá · ngừng bán) và test trên; không sửa `du-lieu-menu-gia.ts`, `hop-thoai-sua-co-ly-do.tsx`, `components/ui/`; không thêm phụ thuộc.
+- [x] `./scripts/gate.sh` xanh ở clone chính; Claude chạy lại test trang Menu & giá và Danh mục.
+
+**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-238`, nhánh `codex/T-238`, nền `42dae88`) · duyệt: Claude 2026-10-23. Claude viết
+`san-pham.test.tsx` trước (31 ca, đỏ 16 trước khi giao) và `cmp` xác nhận Codex không đổi nó. Claude đọc diff: ba form mới
+(`form-danh-muc-mon.tsx`, `form-gia-thanh-phan.tsx`, `form-ngung-ban.tsx`) và ba hook ghi trong `du-lieu-san-pham.ts`; thân lệnh giá chỉ
+`{ base_price_vnd, reason }`, giá kiểm `^\d+$` số nguyên an toàn, không phép tính tiền nào; xếp lần đầu không gửi lý do; ghi xong làm mất
+hiệu lực `["menu-categories"]`, `["menu"]`, `["price-quotes"]`; ngăn đặt ở cấp trang để món chuyển nhóm không làm mất ngăn. Sandbox Codex
+chặn `next build`; Claude chạy `./scripts/gate.sh` trong worktree rồi ở clone chính sau `git apply`: lượt đầu đỏ vì việc khác đang dở (F-076
+ở worktree; QC-18 ở clone chính lúc T-235 đang đổi bảng ghim), lượt hai xanh, Vitest 469/469. Còn lại: chưa xem trên trình duyệt; bán lại
+món đã ngừng chờ `U-104`.
 
 <a id="t-234"></a>
 ### T-234 — Trang Sản phẩm của chủ quán chưa theo bản thiết kế, chỉ bày tên món
@@ -2970,3 +3130,24 @@ Một tới ba dòng.
 - [ ] Viết lại đáng kể thì để lại một dòng *nghiêng* cuối entry: ngày, ai yêu cầu, đổi cái gì.
 
 [↑ đầu file](#top)
+
+<a id="t-245"></a>
+### T-245 — Viết lại trang Giao việc theo HTML, mobile first
+
+**Yêu cầu:** chủ repo 2026-10-24; lấy bố cục và màu từ `docs/product/4-fe/thiet_ke/chu_quan/giao-viec/giao-viec.html`, giữ API thật và quy tắc hiện có. L1, Codex thực hiện, chưa được review độc lập.
+
+**Scope:** `fe/src/app/chu-quan/_components/giao-viec.tsx`, CSS riêng của trang, `fe/src/app/chu-quan/giao-viec/page.tsx`, test trang, `work/backlog.md`. Component dùng chung nên màn quầy cũng nhận giao diện mới.
+
+**Acceptance (viết trước):**
+- Thống kê tổng/chưa xong/đã xong theo danh sách API đang đọc; tìm nội dung và lọc trạng thái kết hợp lọc người trên URL.
+- Mobile dùng thẻ một cột, desktop hiện các trường theo cột; nút dễ chạm, nội dung dài không đẩy tràn trang; form thêm/sửa/xoá trong hộp thoại có quản lý focus.
+- Giữ giao/sửa/xoá có lý do/đánh dấu, xử lý lỗi và chống gửi trùng; test hồi quy trang đạt.
+- Chạy gate, ghi đúng các bước đạt hoặc bị chặn.
+
+**Bàn giao 2026-10-24:** Codex thực hiện trên nhánh `P4A-01`, nền `449c760`; chưa review độc lập. Đã đọc diff và kiểm scope riêng, không thay API/hook dữ liệu. Thêm CSS có prefix `gv-`, bố cục một cột mặc định, ba thống kê từ 600px, danh sách nhiều cột từ 1100px. Form thêm/sửa dùng textarea; hộp thoại Radix giữ focus và hỗ trợ Escape.
+
+**Bằng chứng:** `npm test -- --run src/app/chu-quan/giao-viec/giao-viec.test.tsx`: `Test Files 1 passed (1); Tests 23 passed (23)`; gồm 21 test cũ giữ nguyên và hai test mới chứng minh thống kê/tìm/lọc, hộp thoại/Escape/trả focus. `npm run lint`, `npm run typecheck`, `./scripts/check-fe-rules.sh` đạt. Toàn bộ frontend: `Test Files 35 passed (35); Tests 471 passed (471)`. Responsive mới kiểm bằng đọc CSS, chưa kiểm hình trên trình duyệt.
+
+**Gate chung:** `./scripts/gate.sh` trả 2. Gate 3 và 1b–1h PASS; Gate 1 dừng ở `FAIL be-check — Docker không chạy. Bật Docker rồi chạy lại ./scripts/be-check.sh`. Cây làm việc đã có thay đổi backend/database từ trước. Giữ In Progress vì chưa đạt gate và chưa kiểm responsive trên trình duyệt; bước tiếp theo là kiểm trang ở 375/768/1440px, bật Docker và chạy lại gate. Không commit.
+
+**Kết quả build:** `./scripts/fe-check.sh` đạt apigen/lint/typecheck/471 test rồi dừng ở production build: `TurbopackInternalError`, `binding to a port — Operation not permitted (os error 1)`. Đã chạy lại `npm run build` với `require_escalated`, vẫn cùng lỗi. Chưa xác nhận build đạt. Gate lần cuối vẫn trả 2 do Docker chưa chạy. Index trống; khối commit chỉ được chứa năm file trong scope của việc này. `work/backlog.md` đã có thay đổi từ trước, cần stage riêng phần T-245 bằng `git add -p`.

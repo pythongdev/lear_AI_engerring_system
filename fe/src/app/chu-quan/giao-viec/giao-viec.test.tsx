@@ -66,6 +66,32 @@ describe("Giao việc", () => {
     expect(document.body.textContent).not.toMatch(/hạn/i);
     expect(g.some((x) => x.path.includes("/guides"))).toBe(false);
   });
+  it("thống kê từ API, tìm nội dung kết hợp trạng thái và báo rỗng", async () => {
+    moTrang();
+    await screen.findByText("Lau bàn");
+    const summary = screen.getByRole("region", { name: "Tóm tắt công việc" });
+    expect(Array.from(summary.querySelectorAll("strong"), (el) => el.textContent)).toEqual(["2", "1", "1"]);
+    const filters = screen.getByRole("group", { name: "Lọc trạng thái" });
+    fireEvent.click(within(filters).getByRole("button", { name: "Đã xong" }));
+    expect(screen.queryByText("Lau bàn")).toBeNull();
+    expect(screen.getByText("Rửa rau")).toBeTruthy();
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "LAU" } });
+    expect(screen.getByText("Không có công việc phù hợp.")).toBeTruthy();
+    fireEvent.click(within(filters).getByRole("button", { name: "Tất cả" }));
+    expect(screen.getByText("Lau bàn")).toBeTruthy();
+    expect(screen.queryByText("Rửa rau")).toBeNull();
+    expect(Array.from(summary.querySelectorAll("strong"), (el) => el.textContent)).toEqual(["2", "1", "1"]);
+  });
+  it("mở form trong hộp thoại, Escape đóng và trả focus về nút thêm", async () => {
+    moTrang();
+    const trigger = await screen.findByRole("button", { name: "Giao việc mới" });
+    trigger.focus(); fireEvent.click(trigger);
+    const dialog = screen.getByRole("dialog", { name: "Thêm công việc" });
+    expect(within(dialog).getByRole("textbox", { name: "Nội dung" }).tagName).toBe("TEXTAREA");
+    fireEvent.keyDown(dialog, { key: "Escape" });
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+  });
   it("bày danh sách rỗng", async () => {
     moTrang({ doc: () => ({ status: 200, body: { assigned_tasks: [] } }) });
     expect(await screen.findByText("Chưa có việc nào.")).toBeTruthy();
