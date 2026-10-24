@@ -159,7 +159,7 @@ func tuChoi(t *testing.T, r traVe, status int, code, field string) {
 // tao giao một việc qua cửa; người tạo là nguoi.
 func (k khung) tao(t *testing.T, nguoi int64, noiDung string, nhan int64) traVe {
 	t.Helper()
-	return k.goi(t, "POST", "/assigned-tasks", nguoi, map[string]any{"content": noiDung, "assignee_person_id": nhan})
+	return k.goi(t, "POST", "/assigned-tasks", nguoi, map[string]any{"content": noiDung, "assignee_person_id": nhan, "due_at": "2026-10-25T09:30:00+07:00"})
 }
 
 func (k khung) danhDau(t *testing.T, nguoi, viec int64, dau string) traVe {
@@ -206,7 +206,7 @@ func TestI030_ChiChuQuanHoacNguoiDungQuayLamViecGiao(t *testing.T) {
 		method, path string
 		body         any
 	}{
-		{"POST", "/assigned-tasks", map[string]any{"content": "test-lau bàn", "assignee_person_id": k.nv}},
+		{"POST", "/assigned-tasks", map[string]any{"content": "test-lau bàn", "assignee_person_id": k.nv, "due_at": "2026-10-25T09:30:00+07:00"}},
 		{"PUT", fmt.Sprintf("/assigned-tasks/%d", viec), map[string]any{"content": "test-rửa hai nồi", "assignee_person_id": k.nv, "reason": "test: sửa"}},
 		{"POST", fmt.Sprintf("/assigned-tasks/%d/hiding", viec), map[string]any{"reason": "test: ẩn"}},
 		{"POST", fmt.Sprintf("/assigned-tasks/%d/marks", viec), map[string]any{"mark": "done"}},

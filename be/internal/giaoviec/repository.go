@@ -4,20 +4,29 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"time"
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/giaoviec/internal/sqlcgen"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 )
+
+func hanDB(t *time.Time) pgtype.Timestamptz {
+	if t == nil {
+		return pgtype.Timestamptz{}
+	}
+	return pgtype.Timestamptz{Time: *t, Valid: true}
+}
 
 type repository struct{ q *sqlcgen.Queries }
 
 func newRepository(tx pgx.Tx) repository { return repository{sqlcgen.New(tx)} }
 func (r repository) tao(ctx context.Context, p YeuCau) (int64, error) {
-	return r.q.Tao(ctx, sqlcgen.TaoParams{Content: p.Content, AssigneePersonID: p.AssigneeID})
+	return r.q.Tao(ctx, sqlcgen.TaoParams{Content: p.Content, AssigneePersonID: p.AssigneeID, DueAt: hanDB(p.DueAt)})
 }
 func (r repository) sua(ctx context.Context, id int64, p YeuCau) error {
-	return r.q.Sua(ctx, sqlcgen.SuaParams{ID: id, Content: p.Content, AssigneePersonID: p.AssigneeID})
+	return r.q.Sua(ctx, sqlcgen.SuaParams{ID: id, Content: p.Content, AssigneePersonID: p.AssigneeID, Column4: hanDB(p.DueAt)})
 }
 func (r repository) an(ctx context.Context, id int64) error { return r.q.An(ctx, id) }
 func (r repository) danhDau(ctx context.Context, id int64, mark string) error {
@@ -48,6 +57,9 @@ func (r repository) doc(ctx context.Context, id, nhan int64, kemAn bool) ([]Viec
 		x := Viec{ID: v.ID, Content: v.Content, AssigneeID: v.AssigneePersonID, AssigneeName: v.AssigneeName, PersonID: v.PersonID, PersonName: v.PersonName, CreatedAt: v.CreatedAt.Time, Done: v.Done, Marks: []Dau{}}
 		if e = json.Unmarshal(v.Marks, &x.Marks); e != nil {
 			return nil, e
+		}
+		if v.DueAt.Valid {
+			x.DueAt = &v.DueAt.Time
 		}
 		if v.HiddenAt.Valid {
 			x.HiddenAt = &v.HiddenAt.Time

@@ -7,19 +7,27 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const sua = `-- name: Sua :exec
-UPDATE assigned_task SET content = $2, assignee_person_id = $3 WHERE id = $1
+UPDATE assigned_task SET content = $2, assignee_person_id = $3, due_at = coalesce($4::timestamptz, due_at) WHERE id = $1
 `
 
 type SuaParams struct {
 	ID               int64
 	Content          string
 	AssigneePersonID int64
+	Column4          pgtype.Timestamptz
 }
 
 func (q *Queries) Sua(ctx context.Context, arg SuaParams) error {
-	_, err := q.db.Exec(ctx, sua, arg.ID, arg.Content, arg.AssigneePersonID)
+	_, err := q.db.Exec(ctx, sua,
+		arg.ID,
+		arg.Content,
+		arg.AssigneePersonID,
+		arg.Column4,
+	)
 	return err
 }

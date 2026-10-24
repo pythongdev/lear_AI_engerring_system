@@ -2560,6 +2560,8 @@ export interface components {
             person_id: number;
             person_name: string;
             created_at: components["schemas"]["Instant"];
+            /** @description Hạn hoàn thành; null chỉ dành cho việc cũ chưa nhập hạn. Ngày giờ có offset. */
+            due_at: components["schemas"]["Instant"] | null;
             /** @description Sự kiện mới nhất theo created_at DESC, id DESC là done; không sự kiện thì false. */
             done: boolean;
             /** @description Thứ tự created_at, id tăng dần; chưa có trả mảng rỗng. */
@@ -2573,11 +2575,14 @@ export interface components {
             assigned_tasks: components["schemas"]["AssignedTask"][];
         };
         CreateAssignedTask: {
+            due_at: components["schemas"]["Instant"];
             content: string;
             /** Format: int64 */
             assignee_person_id: number;
         };
+        /** @description Bỏ due_at thì giữ hạn cũ; khi có phải là ngày giờ RFC3339 hợp lệ, không null/rỗng. Sửa hạn cũng cần reason. */
         UpdateAssignedTask: {
+            due_at?: components["schemas"]["Instant"];
             content: string;
             /** Format: int64 */
             assignee_person_id: number;

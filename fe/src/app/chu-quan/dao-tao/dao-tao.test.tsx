@@ -54,7 +54,7 @@ const huongDan = [hd(11, "text", "Rửa rau ba lần"), hd(12, "image", null), h
 const people = [{ person_id: 1, display_name: "Chủ Lan", is_owner: true }, { person_id: 2, display_name: "Mai", is_owner: false }];
 const viec: K["AssignedTask"] = {
   assigned_task_id: 3, content: "Rửa rau", done: false, assignee_person_id: 2, assignee_name: "Mai", person_id: 1,
-  person_name: "Chủ Lan", created_at: "2026-10-19T02:00:00Z", marks: [], ...an,
+  person_name: "Chủ Lan", created_at: "2026-10-19T02:00:00Z", due_at: null, marks: [], ...an,
 };
 function mo(opts: { ghiNhan?: () => Tra; huongDan?: () => Tra; ghi?: (g: GoiDen) => Tra } = {}) {
   return voiBackend((g) => {

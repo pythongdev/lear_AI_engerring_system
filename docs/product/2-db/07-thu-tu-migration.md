@@ -17,11 +17,11 @@ lược đồ từ số không · chỗ chứng minh từng điều ấy chạy 
 
 ---
 
-## 1. Thứ tự dựng — hai mươi bốn bước
+## 1. Thứ tự dựng — theo tên file
 
 Công cụ chạy các bước theo **tên file**, tức theo mốc giờ ở đầu tên (`QC-05`). Thứ tự dưới đây là
 thứ tự ấy; cột *đứng trên* nói bước nào phải có trước, vì bước sau thêm cột, khoá ngoại hay ràng
-buộc vào bảng của nó. Dựng lại từ số không là chạy đúng hai mươi bốn bước này, từ trên xuống; lùi là đi
+buộc vào bảng của nó. Dựng lại từ số không là chạy đủ các bước trong bảng này, từ trên xuống; lùi là đi
 ngược từ dưới lên, **từng bước một**.
 
 | # | File (`db/migrations/`, bỏ đuôi) | Lát | Dựng gì | Đứng trên |
@@ -61,6 +61,7 @@ ngược từ dưới lên, **từng bước một**.
 | 33 | `20261019130000_huy_cham_cong_nghiem` | `T-141` | huỷ ô chấm công: `attendance_day_cancel_note_required_check` (có huỷ thì có ghi chú) và trigger `attendance_day_cancelled_by_owner_trg` (người huỷ là chủ quán, tên từ chối `attendance_day_cancelled_by_owner_check`) — U-071; lùi chặn khi đã có ô huỷ, rỗng thì gỡ CHECK và trigger | 10 |
 | 34 | `20261019140000_an_lua_chon` | `T-210` | `menu_option.hidden_at` · `hidden_by_person_id` và ba ràng buộc ẩn — topping ẩn · bật lại (§8.9); lùi chặn khi còn lựa chọn đang ẩn, rỗng thì gỡ hai cột | 2 · 21 |
 | 35 | `20261022120000_huy_viec_khi_dong_phien` | `T-227` | `station_job.status` thêm cancelled · discarded; khoá hai chiều mục mẻ giữ cả discarded; trigger từ chối lùi mẻ có phần discarded. Lùi migration chặn khi có một trong hai trạng thái mới, nếu không thì trả miền cũ và khoá cũ (ADR-125) | 7 · 13 |
+| 36 | `20261024120000_han_giao_viec` | `T-246` | `assigned_task.due_at` ngày giờ có múi giờ, nullable cho lịch sử, quyền UPDATE đúng cột; lùi chặn khi có bất kỳ hạn nào đã nhập rồi gỡ quyền/cột (ADR-127) | 24 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`

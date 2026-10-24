@@ -13,10 +13,24 @@ import "./giao-viec.css";
 import { useNguoi, type Nguoi } from "./du-lieu-nhan-vien";
 import { FormMenu, OMenu, chuMenu, soMenu } from "./form-menu";
 import { daDoi, useViec, useTaoViec, useSuaViec, useAnViec, useDanhDau, loiGiaoViec, oLoiGiaoViec,
-  type Viec, type TaoViec, type SuaViec, type AnViec } from "./du-lieu-giao-viec";
+  type Viec, type TaoViec, type AnViec } from "./du-lieu-giao-viec";
 
-const taoSchema = z.object({ content: chuMenu, assignee_person_id: soMenu });
-const suaSchema = taoSchema.extend({ reason: chuMenu });
+// datetime-local không mang múi giờ: luôn gắn +07:00, không dùng múi giờ máy.
+const hanGui = (value: string) => `${value}${value.length === 16 ? ":00" : ""}+07:00`;
+const hanSchema = z.string().min(1, "Chọn ngày và giờ hoàn thành.").refine((value) => {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/.test(value)) return false;
+  const d = new Date(hanGui(value));
+  return Number.isFinite(d.getTime()) && new Date(d.getTime() + 7 * 3600 * 1000).toISOString().slice(0, value.length) === value;
+}, "Ngày giờ chưa hợp lệ.");
+const taoSchema = z.object({ content: chuMenu, assignee_person_id: soMenu, due_at: hanSchema });
+const suaSchema = taoSchema.extend({ reason: chuMenu, due_at: z.union([hanSchema, z.literal("")]) });
+function hanNhap(iso: string | null) {
+  if (!iso) return "";
+  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }).formatToParts(new Date(iso));
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((p) => p.type === type)?.value;
+  const value = `${part("year")}-${part("month")}-${part("day")}T${part("hour")}:${part("minute")}:${part("second")}`;
+  return value.endsWith(":00") ? value.slice(0, 16) : value;
+}
 const anSchema = z.object({ reason: chuMenu });
 const loi = { loi: loiGiaoViec, oLoi: oLoiGiaoViec };
 const luc = (iso: string | number) => new Date(iso).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
@@ -41,28 +55,38 @@ function NoiDung({ o, error }: { o: UseFormRegisterReturn<"content">; error?: st
     {error && <p id={`${id}-loi`} className="text-destructive">{error}</p>}
   </div>;
 }
+function HanHoanThanh({ o, error, batBuoc }: { o: UseFormRegisterReturn<"due_at">; error?: string; batBuoc: boolean }) {
+  const id = useId();
+  return <div className="gv-content-field"><label htmlFor={id}>Hạn hoàn thành{batBuoc ? " *" : ""}</label>
+    <input id={id} type="datetime-local" step="1" {...o} required={batBuoc} aria-invalid={!!error} aria-describedby={`${id}-goi-y${error ? ` ${id}-loi` : ""}`} />
+    <small id={`${id}-goi-y`}>Ngày và giờ Việt Nam (GMT+7).{!batBuoc && " Việc cũ chưa có hạn có thể để trống."}</small>
+    {error && <p id={`${id}-loi`} className="text-destructive">{error}</p>}
+  </div>;
+}
 function FormTao({ nguoi, dong, daLuu }: Chung) {
   const luu = useTaoViec();
-  const form = useForm<TaoViec>({ resolver: zodResolver(taoSchema), defaultValues: { content: "" } });
-  return <FormMenu form={form} ten="Giao việc mới" nut="Giao việc" gui={luu.mutateAsync} cacO={["content", "assignee_person_id"]}
+  const form = useForm<TaoViec>({ resolver: zodResolver(taoSchema), defaultValues: { content: "", due_at: "" } });
+  return <FormMenu form={form} ten="Giao việc mới" nut="Giao việc" gui={(body) => luu.mutateAsync({ ...body, due_at: hanGui(body.due_at) })} cacO={["content", "assignee_person_id", "due_at"]}
     dong={dong} daLuu={daLuu} {...loi}>
     <NoiDung o={form.register("content")} error={form.formState.errors.content?.message} />
     <OMenu form={form} o="assignee_person_id" nhan="Người nhận" options={options(nguoi)} />
+    <HanHoanThanh o={form.register("due_at")} error={form.formState.errors.due_at?.message} batBuoc />
   </FormMenu>;
 }
 function FormSua({ t, nguoi, dong, daLuu, bao }: Chung & { t: Viec }) {
   const luu = useSuaViec(t.assigned_task_id);
-  const form = useForm<SuaViec>({ resolver: zodResolver(suaSchema), defaultValues: {
-    content: t.content, assignee_person_id: t.assignee_person_id, reason: "",
+  const form = useForm<z.infer<typeof suaSchema>>({ resolver: zodResolver(t.due_at ? taoSchema.extend({ reason: chuMenu }) : suaSchema), defaultValues: {
+    content: t.content, assignee_person_id: t.assignee_person_id, reason: "", due_at: hanNhap(t.due_at),
   } });
   return <FormMenu form={form} ten={`Sửa ${t.content}`} nut="Lưu thay đổi" gui={async (body) => {
-      const r = await luu.mutateAsync(body);
+      const r = await luu.mutateAsync({ ...body, due_at: body.due_at && body.due_at !== hanNhap(t.due_at) ? hanGui(body.due_at) : undefined });
       if (!r.ok && daDoi(r.failure)) bao(loiGiaoViec(r.failure));
       return r;
     }}
-    cacO={["content", "assignee_person_id", "reason"]} dong={dong} daLuu={daLuu} {...loi}>
+    cacO={["content", "assignee_person_id", "reason", "due_at"]} dong={dong} daLuu={daLuu} {...loi}>
     <NoiDung o={form.register("content")} error={form.formState.errors.content?.message} />
     <OMenu form={form} o="assignee_person_id" nhan="Người nhận" options={options(nguoi)} />
+    <HanHoanThanh o={form.register("due_at")} error={form.formState.errors.due_at?.message} batBuoc={!!t.due_at} />
     <OMenu form={form} o="reason" nhan="Lý do" />
   </FormMenu>;
 }
@@ -97,7 +121,7 @@ function TheViec({ t, nguoi, bao }: { t: Viec; nguoi: Nguoi[]; bao: (s: string) 
     <div className="gv-task-title"><h2>{t.content}</h2><small>CV-{String(t.assigned_task_id).padStart(3, "0")}</small></div>
     <p className="gv-person"><span className="gv-avatar" aria-hidden="true">{t.assignee_name.split(" ").filter(Boolean).map((n) => n[0]).slice(-2).join("")}</span><span><span className="gv-mobile-label">Người nhận: </span>{t.assignee_name}</span><span className="sr-only"> · </span></p>
     <p><span className="gv-mobile-label">Người giao: </span>{t.person_name}<span className="sr-only"> · </span></p>
-    <p><span className="gv-mobile-label">Lúc giao: </span>{luc(t.created_at)}</p>
+    <div className="gv-time"><p><span className="gv-mobile-label">Lúc giao: </span>{luc(t.created_at)}</p><p className="gv-due">Hạn hoàn thành: {t.due_at ? luc(t.due_at) : "Chưa có hạn"}</p></div>
     <p><span className={`gv-badge ${t.done ? "" : "gv-pending"}`}>{t.done ? "Đã xong" : "Chưa xong"}</span></p>
     <p className="gv-last-mark">{cuoi ? <>Đánh dấu gần nhất: {cuoi.person_name} · {luc(cuoi.created_at)}</> : "—"}</p>
     <div className="gv-task-actions">
@@ -173,7 +197,7 @@ export function TrangGiaoViec() {
     {query.data && <>
       {query.isFetching && <p role="status">Đang đọc lại danh sách việc…</p>}
       {tasks.length === 0 ? <p className="gv-empty">Chưa có việc nào.</p> : shown.length === 0 ? <p className="gv-empty">Không có công việc phù hợp.</p> : <>
-        <div className="gv-columns" aria-hidden="true"><span>Nội dung công việc</span><span>Người nhận</span><span>Người giao</span><span>Lúc giao</span><span>Trạng thái</span><span>Đánh dấu gần nhất</span><span>Thao tác</span></div>
+        <div className="gv-columns" aria-hidden="true"><span>Nội dung công việc</span><span>Người nhận</span><span>Người giao</span><span>Lúc giao / Hạn</span><span>Trạng thái</span><span>Đánh dấu gần nhất</span><span>Thao tác</span></div>
         <ul aria-label="Công việc">{shown.map((t) => <TheViec key={t.assigned_task_id} t={t} nguoi={nguoi.data?.people ?? []} bao={bao} />)}</ul>
       </>}
     </>}

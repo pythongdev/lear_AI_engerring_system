@@ -99,6 +99,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-246 **Hạn hoàn thành bắt buộc ngày và giờ khi giao việc mới** — L2, DB/API/FE — chủ repo 2026-10-24 cho phép Codex thực hiện xuyên tầng · [chi tiết](#t-246)
+
 - [ ] T-245 **Viết lại trang Giao việc theo HTML, mobile first** — L1 — chủ repo giao Codex 2026-10-24 · [chi tiết](#t-245)
 
 - [ ] T-243 **Món đã ngừng bán chưa bán lại được** — chủ repo đóng U-104 (bán lại, giữ món cũ cùng tên · thành phần · lịch sử): cửa mới `POST /menu-items/{menu_item_id}/resumption` có lý do xoá mốc ngừng bán trên chính dòng món (ADR-126), hợp đồng · ma trận quyền · service · test backend, và form *Bán lại* trên trang Sản phẩm — L2 — mở 2026-10-24 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-243)
@@ -3151,3 +3153,28 @@ Một tới ba dòng.
 **Gate chung:** `./scripts/gate.sh` trả 2. Gate 3 và 1b–1h PASS; Gate 1 dừng ở `FAIL be-check — Docker không chạy. Bật Docker rồi chạy lại ./scripts/be-check.sh`. Cây làm việc đã có thay đổi backend/database từ trước. Giữ In Progress vì chưa đạt gate và chưa kiểm responsive trên trình duyệt; bước tiếp theo là kiểm trang ở 375/768/1440px, bật Docker và chạy lại gate. Không commit.
 
 **Kết quả build:** `./scripts/fe-check.sh` đạt apigen/lint/typecheck/471 test rồi dừng ở production build: `TurbopackInternalError`, `binding to a port — Operation not permitted (os error 1)`. Đã chạy lại `npm run build` với `require_escalated`, vẫn cùng lỗi. Chưa xác nhận build đạt. Gate lần cuối vẫn trả 2 do Docker chưa chạy. Index trống; khối commit chỉ được chứa năm file trong scope của việc này. `work/backlog.md` đã có thay đổi từ trước, cần stage riêng phần T-245 bằng `git add -p`.
+
+<a id="t-246"></a>
+### T-246 — Hạn hoàn thành bắt buộc ngày và giờ khi giao việc mới
+
+**Lời chủ repo 2026-10-24:** “ngày và giờ”, “bắt buộc khi giao việc”, rồi “cho phép bạn có quyền làm” sau khi Codex nêu ranh giới L2. Chủ repo cho phép Codex thiết kế/triển khai xuyên DB/API/FE trong lượt này; không commit.
+
+**Thiết kế:** `due_at` là một instant; FE nhập ngày giờ Việt Nam (+07:00), API nhận RFC3339 có offset. POST bắt buộc có hạn; PUT cho phép bỏ trường để giữ hạn cũ, khi có trường phải hợp lệ. Việc cũ chưa có hạn giữ null, không backfill thời điểm giả. Không thêm luật hạn phải ở tương lai vì chủ repo chưa yêu cầu. Quyền và lý do sửa giữ nguyên.
+
+**Acceptance viết trước:**
+- POST thiếu/null/rỗng/sai ngày giờ hoặc không offset bị từ chối 400 invalid_request field=due_at; đúng thì ghi và đọc lại đúng instant.
+- PUT đổi hạn có lý do và vết trước/sau; bỏ due_at giữ nguyên; việc cũ null vẫn đọc/sửa được.
+- FE bắt nhập ngày giờ khi giao mới, gửi RFC3339 +07:00 dù máy dùng múi giờ khác; sửa hiện lại giờ Việt Nam, không xoá hạn đã có; hiển thị hạn và trạng thái chưa có hạn của việc cũ.
+- Test hồi quy backend/FE; sinh sqlc/type; gate và báo đúng phần không chạy được.
+
+**Thực hiện:** Codex; chưa review độc lập.
+
+**Bàn giao 2026-10-24:** Codex thực hiện trên nhánh `P4A-01`, nền `7108eb1`; chưa được review độc lập. Đã thêm cặp migration và áp dụng **đúng một bước** trên database phát triển: `docker compose run --rm migrate up 1` in `20261024120000/u han_giao_viec (18.486375ms)`; trước đó phiên bản là `20261022120000`. Không gán hạn cho dữ liệu cũ. Triển khai lại backend đang chạy để nhận trường API mới, rồi tải lại FE.
+
+**Acceptance → bằng chứng:** kiểm request thiếu/null/rỗng/ngày sai/không offset ở `TestQC14_HinhGiaoViecTruocQuyenVaDatabase`; bắt hạn ở service tại `TestI030_TaoViecKhongHanBiChanTruocDatabase`; lưu/đọc/đổi hạn có vết và giữ việc cũ ở `TestI030_HanHoanThanhLuuDocSuaCoVet`; chặn mất hạn khi lùi migration ở `TestI030_LuiMigrationKhongLamMatHan`. Hai test tích hợp mới đã PASS trên PostgreSQL thật trong gate. Test phân quyền cũ được bổ sung due_at hợp lệ để tiếp tục kiểm quyền, không đổi assertion.
+
+**FE:** `npm test -- --run src/app/chu-quan/giao-viec/giao-viec.test.tsx`: `Tests 27 passed (27)`; kiểm bắt buộc nhập, gửi `+07:00`, đổi hạn có lý do, không xoá hạn đã có, lỗi API gắn đúng ô. Lượt chạy `TZ=America/New_York` của 26 test trước khi bổ sung ca lỗi field cũng PASS. Lượt `./scripts/fe-check.sh` đạt sinh type/lint/typecheck và `35 passed / 474 tests passed`, dừng ở build do Turbopack `binding to a port — Operation not permitted`, kể cả khi chạy `require_escalated`; sau đó thêm một ca field, tổng hiện tại 475. `./scripts/check-write-paths.sh`: `111 ô ghi, 95 cửa`; `./scripts/check-sqlcgen.sh`: tập file và nội dung khớp bản sinh lại.
+
+**Kết quả cuối:** `./scripts/gate.sh` với `require_escalated` trả 2; Gate 3, 1b–1h PASS. Toàn bộ backend PostgreSQL PASS (riêng giao việc: `ok banhcuon/be/internal/giaoviec 1.834s`, hai test lưu/vết và chặn rollback PASS), frontend `35 passed / 475 tests passed`; verify dừng ở production build Turbopack `binding to a port — Operation not permitted (os error 1)`. Dòng nhãn Gate 1 gắn FAIL lên be-check dù phần mô tả ghi mọi test đạt vì wrapper dùng exit code của cả verify; nguyên nhân thực nằm ở lỗi build bên dưới. `./scripts/db-check.sh` chạy riêng ngoài sandbox: `PASS — 36 bước xuôi · lùi · xuôi lại, 19 khối kiểm QC, 52 file test, dữ liệu mồi + §4.8, khoá chặn, 147 câu đối chiếu, 149 lỗi cài, ba scenario + ngày quản trị, 37 mã YC`. Cột trên DB phát triển đã đọc lại: `due_at|timestamp with time zone|YES`.
+
+**Còn lại:** giữ In Progress vì gate chưa xanh do môi trường build; cần chạy lại build/gate trên môi trường cho Turbopack mở cổng và kiểm giao diện trực tiếp. Chưa kiểm responsive trên trình duyệt, chưa commit. Khối commit phải chỉ stage phần ADR-127 trong `docs/decisions.md` và đoạn hạn hoàn thành của T-246 trong `master_plan/shop-facts.md` vì hai file đã có diff từ trước; các model sqlc của mọi miền chỉ thêm trường DueAt do sinh từ schema chung.

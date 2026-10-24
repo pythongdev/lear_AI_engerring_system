@@ -27,6 +27,7 @@ type Dau struct {
 type Viec struct {
 	ID           int64      `json:"assigned_task_id"`
 	Content      string     `json:"content"`
+	DueAt        *time.Time `json:"due_at"`
 	AssigneeID   int64      `json:"assignee_person_id"`
 	AssigneeName string     `json:"assignee_name"`
 	PersonID     int64      `json:"person_id"`
@@ -39,14 +40,18 @@ type Viec struct {
 	HiddenByName *string    `json:"hidden_by_name"`
 }
 type YeuCau struct {
-	Content    string `json:"content"`
-	AssigneeID int64  `json:"assignee_person_id"`
-	Reason     string `json:"reason"`
+	Content    string     `json:"content"`
+	AssigneeID int64      `json:"assignee_person_id"`
+	Reason     string     `json:"reason"`
+	DueAt      *time.Time `json:"due_at"`
 }
 type Service struct{ pool *pgxpool.Pool }
 
 func NewService(pool *pgxpool.Pool) *Service { return &Service{pool: pool} }
 func (s *Service) Tao(ctx context.Context, nguoi int64, p YeuCau) (out Viec, err error) {
+	if p.DueAt == nil || p.DueAt.IsZero() {
+		return out, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "due_at"}
+	}
 	err = authz.Run(ctx, s.pool, nguoi, Tao, func(tx pgx.Tx) error {
 		r := newRepository(tx)
 		// Khoá ngoại kiểm người nhận trong chính giao dịch, dịch thành person_not_found.

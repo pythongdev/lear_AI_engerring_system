@@ -37,3 +37,5 @@
 .gv-toolbar{flex-direction:row;justify-content:space-between}.gv-columns,.gv-task{display:grid;grid-template-columns:minmax(150px,1.7fr) minmax(100px,1fr) minmax(80px,.8fr) minmax(105px,1fr) 95px minmax(110px,1fr) minmax(125px,1.1fr);gap:12px;align-items:center}
 .gv-columns{background:var(--gv-panel);padding:14px 12px;font-size:10px;color:var(--gv-muted)}.gv-task{padding:16px 12px}.gv-task-title h2{font-size:12px}.gv-task>p{font-size:11px}.gv-mobile-label{display:none}.gv-last-mark{line-height:1.7}.gv-task-actions{gap:6px}.gv-task-actions button{font-size:10px;padding-inline:8px}
 }
+
+.gv-time{font-size:11px;color:var(--gv-muted);overflow-wrap:anywhere}.gv-due{margin-top:8px;color:var(--gv-accent)}

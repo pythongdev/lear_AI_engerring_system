@@ -7,19 +7,22 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const tao = `-- name: Tao :one
-INSERT INTO assigned_task (content, assignee_person_id) VALUES ($1, $2) RETURNING id
+INSERT INTO assigned_task (content, assignee_person_id, due_at) VALUES ($1, $2, $3) RETURNING id
 `
 
 type TaoParams struct {
 	Content          string
 	AssigneePersonID int64
+	DueAt            pgtype.Timestamptz
 }
 
 func (q *Queries) Tao(ctx context.Context, arg TaoParams) (int64, error) {
-	row := q.db.QueryRow(ctx, tao, arg.Content, arg.AssigneePersonID)
+	row := q.db.QueryRow(ctx, tao, arg.Content, arg.AssigneePersonID, arg.DueAt)
 	var id int64
 	err := row.Scan(&id)
 	return id, err

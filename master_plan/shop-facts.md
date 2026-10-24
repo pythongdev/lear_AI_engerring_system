@@ -211,7 +211,8 @@ trên dòng *canh bánh cuốn* — xem §4.5 và §5.3.
 | **Suất giò** | 1 giò + 4 bánh | **21.000** | **25.000** | **29.000** |
 | Combo "Đầy đủ" trứng chín / tái / vàng | 3 bánh + 1 trứng + 1 giò | 26.000 | **30.000** | 34.000 |
 | **Suất trứng** chín / tái / vàng | 1 trứng + 4 bánh | **20.000** | **25.000** | **30.000** |
-| **Giò bán rời** | 1 giò | ⚠️ **9.000** | ⚠️ **9.000** | ⚠️ **9.000** |
+| **Giò bán rời** | 1 giò | **9.000** | **9.000** | **9.000** |
+| **Bánh trứng bán rời** chín / tái / vàng | 1 trứng | **8.000** | **9.000** | **10.000** |
 | **Canh bánh cuốn** | 1 bát canh | **0** | **0** | **0** |
 
 **Suất giò, chủ quán chốt 2026-08-29:** *"1 cái giò là 9.000, tính thêm tiền số lượng bánh là ra
@@ -229,16 +230,19 @@ số**, chủ quán nói thẳng: *"số bánh / số giò TRONG MỘT SUẤT l�
 bánh, *suất trứng* vẫn đúng 4 bánh, *combo* vẫn đúng 3 bánh, và §4.5 · §4.6 · §4.8 không đổi một
 chữ nào vì lời chốt này.
 
-⚠️ **Ô giá của *giò bán rời* là ô ⚠ đầu tiên kể từ 2026-08-30** — bảng giá lại có một ô chưa được
-chủ quán đọc thành lời. **9.000** ở đó là **hệ quả tính ra** từ luật 1 §4.6 (giá suất = tổng giá
-thành phần; một chiếc giò rời gồm đúng một chiếc giò, §4.2 ⇒ 9.000), **không** phải con số chủ quán
-nói. Cùng hình dạng **S-1** ngày 2026-08-30 — ô suất trứng cũng từng là hệ quả tính ra, và phải hỏi
-mới thành fact. Ghi ở §7.2 thành **S-9**; đừng đọc ba ô ấy như đã chốt.
+**Giá giò bán rời — chủ repo chốt 2026-10-23 trong hội thoại** (T-242, đóng **S-9**): chọn phương án
+*"9.000, không chọn nhân"* ⇒ ba ô của dòng ấy đúng là 9.000, suy ra 2026-09-08 từ luật 1 §4.6 đúng.
 
-Bát canh thì **không** có ô ⚠: chủ quán nói thẳng *"không tính tiền"*.
+**Bánh trứng bán rời — chủ repo chốt 2026-10-23 trong hội thoại** (T-242): khách gọi riêng **một quả
+trứng** chín, tái hoặc vàng, không kèm bánh. Chủ repo chọn hai phương án Claude đưa sẵn: *"thêm món
+bán lẻ mới"* và *"3 món, giá như thành phần"* ⇒ **ba dòng menu**, mỗi loại trứng một dòng, giá đúng
+giá thành phần §4.2 theo nhân khách chọn (quả trứng nhận nhân — §4.5). Tên *bánh trứng* là chữ chủ
+repo dùng, cùng nghĩa với lời 2026-10-18 (§8.6: *bánh trứng* = quả trứng chín · tái · vàng). Cùng
+lượt, chủ repo nói *"đầy đủ bao gồm 1 trứng, 1 giò và 3 bánh với 1 canh"*; hỏi lại thì chủ repo chọn
+**giữ luật cũ** — combo "Đầy đủ" **không** kèm sẵn bát canh (`U-048`, §4.5), canh khách chọn riêng.
 
-Đây là ô cuối cùng còn trống của bảng giá; **từ 2026-08-30 bảng giá đã đầy** — rồi **2026-09-08 mở
-lại một ô ⚠** cho giò bán rời (S-9), là ô ⚠ duy nhất hiện nay.
+Bát canh **không** có ô ⚠: chủ quán nói thẳng *"không tính tiền"*. **Từ 2026-10-23 bảng giá không
+còn ô ⚠ nào.**
 
 ### 4.4 Nhóm tuỳ chọn và phụ thu
 
@@ -258,12 +262,13 @@ Hai cột "Món lẻ" và "Combo" ở trên chỉ là hai trường hợp hay g�
 | Suất giò | 4 (bốn cái bánh; giò không nhận nhân) | +4.000 (**×4**) |
 | Combo "Đầy đủ" | 4 (ba cái bánh + quả trứng) | +4.000 (**×4**) |
 | Suất trứng | 5 (bốn cái bánh + quả trứng) | +5.000 (**×5**) |
+| Bánh trứng bán rời | 1 (quả trứng) | +1.000 (**×1**) |
 
 ### 4.5 Thành phần một suất bán — chủ quán chốt 2026-08-19
 
-Đây là thứ **bếp làm ra**, khác với thứ khách trả tiền. **Sáu dòng menu tính tới 2026-09-08** (đếm
-bảng ngay dưới, đừng tin câu này — `work/findings.md` **F-003**), và **bốn** trong sáu dòng ấy bếp
-làm ra **nhiều thứ hơn tên món**:
+Đây là thứ **bếp làm ra**, khác với thứ khách trả tiền. **Bảy dòng ở bảng dưới tính tới 2026-10-23** (đếm
+bảng, đừng tin câu này — `work/findings.md` **F-003**), và **bốn** trong bảy dòng ấy bếp làm ra
+**nhiều thứ hơn tên món**:
 
 | Suất bán | Bếp làm ra | Phần **nhận** tuỳ chọn nhân |
 |---|---|---|
@@ -272,6 +277,7 @@ làm ra **nhiều thứ hơn tên món**:
 | Suất **giò** | **1 chiếc giò + 4 cái bánh cuốn** | 4 cái bánh (giò **không** nhận nhân) |
 | **Combo "Đầy đủ"** | **3 cái bánh cuốn + 1 quả trứng + 1 chiếc giò** | 3 cái bánh **và** quả trứng |
 | **Giò bán rời** | 1 chiếc giò | **không phần nào** — giò không nhận nhân (§4.6 luật 6) |
+| **Bánh trứng bán rời** (chín / tái / vàng) | 1 quả trứng | quả trứng đó (thêm 2026-10-23, §4.3) |
 | **Canh bánh cuốn** | 1 bát canh | **không phần nào** |
 
 Khách gọi "1 suất trứng" thì bếp làm **5 thứ**, không phải 1. Đây là chỗ hay bị làm thiếu nhất.
@@ -351,7 +357,7 @@ Ba ô khớp liên tiếp không phải trùng hợp ⇒ **"giá suất = tổng
 đã bị lời chủ quán ngày 2026-08-29 về suất giò phủ nhận và đã gỡ bỏ. Nếu thấy câu đó quay lại ở
 bất kỳ tài liệu nào, **đó là bug**, không phải quy tắc.
 
-### 4.8 Mười một tổ hợp giá bắt buộc phủ
+### 4.8 Các tổ hợp giá bắt buộc phủ
 
 Đây là danh sách **tổ hợp đầu vào** mà việc tính giá phải làm đúng, kèm giá kỳ vọng tính từ §4.2 và
 §4.4.
@@ -369,16 +375,19 @@ bất kỳ tài liệu nào, **đó là bug**, không phải quy tắc.
 | 9 | Combo Đầy đủ chín | Thịt | Thường | **30.000** | combo: phụ thu ×4 |
 | 10 | Combo Đầy đủ tái | Thịt + mộc nhĩ | Nhiều | **34.000** | |
 | 11 | Bánh cuốn | Chay | Nhiều | **PHẢI BỊ TỪ CHỐI** | không phải một giá, mà là luật ở §4.6.3 |
-| 12 | **Giò bán rời ×3** | — | — | ⚠️ **27.000** | 3 × 9.000; giò không nhận nhân nên **nhóm nhân không được hiện** — ô giá còn ⚠ (**S-9**) |
+| 12 | **Giò bán rời ×3** | — | — | **27.000** | 3 × 9.000; giò không nhận nhân nên **nhóm nhân không được hiện** (giá có lời 2026-10-23, đóng **S-9**) |
 | 13 | **Canh bánh cuốn ×2** | — | — | **0** | dòng 0đ **vẫn phải nằm trên đơn**: nó là việc của trạm `canh` (§4.5) và là thứ khách chọn số lượng. Một đơn *chỉ* có canh vẫn là đơn hợp lệ, tổng **0đ** |
+| 14 | **Bánh trứng vàng** (bán rời) | Thịt | Nhiều | **10.000** | 1 quả trứng, đúng giá thành phần §4.2; quả trứng nhận nhân nên **nhóm nhân phải hiện** — phụ thu ×1 |
 
-**Mười ba ca tính tới 2026-09-08** — đếm bảng, đừng tin câu này (`work/findings.md` **F-003**). Ca
+**Mười bốn ca tính tới 2026-10-23** — đếm bảng, đừng tin câu này (`work/findings.md` **F-003**). Ca
 1–10 đều tính được và đã đối chiếu khớp bảng giá §4.3 từ 2026-08-30. Ca 11 là ca duy nhất có kết
 quả không phải một con số. **Ca 12 và ca 13 vào bảng ngày 2026-09-08** cùng hai dòng menu mới, và
 mỗi ca canh đúng một chỗ dễ hỏng của chúng: ca 12 canh việc **hiện nhóm tuỳ chọn cho một món không
 nhận nhân**, ca 13 canh việc **một dòng 0đ bị lặng lẽ bỏ khỏi đơn** vì nó không cộng thêm tiền —
 bỏ nó đi thì trạm `canh` không thấy bát canh thứ hai, và đó chính là ca chủ quán kể ra khi chốt
-`U-046`. Mười ba ca này là **hợp đồng với chủ quán**: đủ cả mười ba mới được coi là tính giá đúng.
+`U-046`. **Ca 14 vào bảng ngày 2026-10-23** cùng ba dòng *bánh trứng bán rời*, canh chiều ngược
+của ca 12: một món **một thành phần mà có nhận nhân** phải hiện nhóm nhân và thu phụ thu ×1. Các ca
+này là **hợp đồng với chủ quán**: đủ mọi ca mới được coi là tính giá đúng.
 
 ### 4.9 MENU — chủ quán tự gọi tên từng món, 2026-09-08
 
@@ -391,18 +400,21 @@ chọn ăn bao nhiêu cái thì tuỳ. giò: khách có thể gọi bao nhiêu c
 Mục này chỉ ghi **món nào có mặt trên menu**. Giá và cách tính vẫn ở §4.2–§4.3, thành phần bếp làm
 ra vẫn ở §4.5 — không chép một ô nào của chúng xuống đây (`work/findings.md` **F-001**).
 
-| # | Chủ quán gọi tên | Đã có ở §4.3 chưa | Ghi chú |
-|---|---|---|---|
-| 1 | *đầy đủ trứng chín* | ✅ Combo "Đầy đủ" trứng chín | |
-| 2 | *đầy đủ trứng tái* | ✅ Combo "Đầy đủ" trứng tái | chủ quán viết *"tai"*, đọc là **tái** — cùng ba loại trứng chín/tái/vàng của §4.2 |
-| 3 | *đầy đủ trứng vàng* | ✅ Combo "Đầy đủ" trứng vàng | |
-| 4 | *suất giò* | ✅ Suất giò | |
-| 5 | *suất trứng chín* | ✅ Suất trứng chín | |
-| 6 | *suất trứng tái* | ✅ Suất trứng tái | |
-| 7 | *suất trứng vàng* | ✅ Suất trứng vàng | |
-| 8 | *bánh cuốn — khách ăn bao nhiêu cái thì tuỳ* | ✅ Suất bánh cuốn (1 cái, giá theo cái) | **`U-047` đóng 2026-09-08**: đó là **số lượng khách gọi**, đúng như §4.3 đang làm — không đổi gì |
-| 9 | *giò — khách gọi bao nhiêu cũng được* | ✅ **Giò bán rời**, thêm vào §4.2 · §4.3 · §4.5 ngày 2026-09-08 | **`U-047` đóng**: giò là **món bán rời**, khách gọi bao nhiêu chiếc cũng được. ⚠️ Ô giá **9.000** là hệ quả tính từ luật 1 §4.6, chủ quán chưa đọc thành lời ⇒ **S-9** §7.2 |
-| 10 | *canh bánh cuốn* | ✅ **Canh bánh cuốn 0đ**, thêm vào §4.2 · §4.3 · §4.5 ngày 2026-09-08 | **`U-046` đóng**: *"bưng kèm sẵn không tính tiền nhưng cần có trong menu để khách chọn"* — dòng menu **0đ có số lượng**, vì một suất đầy đủ đôi khi cần 2 bát. **`U-048` đóng cùng ngày, lượt sau**: **không suất nào bưng kèm canh**, nên con số khách chọn ở dòng này là **TỔNG số bát** bếp bưng (§4.5 · §5.3) |
+| # | Chủ quán gọi tên | Đã có ở §4.3 chưa | Nhóm trên menu | Ghi chú |
+|---|---|---|---|---|
+| 1 | *đầy đủ trứng chín* | ✅ Combo "Đầy đủ" trứng chín | Combo | |
+| 2 | *đầy đủ trứng tái* | ✅ Combo "Đầy đủ" trứng tái | Combo | chủ quán viết *"tai"*, đọc là **tái** — cùng ba loại trứng chín/tái/vàng của §4.2 |
+| 3 | *đầy đủ trứng vàng* | ✅ Combo "Đầy đủ" trứng vàng | Combo | |
+| 4 | *suất giò* | ✅ Suất giò | Combo | |
+| 5 | *suất trứng chín* | ✅ Suất trứng chín | Combo | |
+| 6 | *suất trứng tái* | ✅ Suất trứng tái | Combo | |
+| 7 | *suất trứng vàng* | ✅ Suất trứng vàng | Combo | |
+| 8 | *bánh cuốn — khách ăn bao nhiêu cái thì tuỳ* | ✅ Suất bánh cuốn (1 cái, giá theo cái) | Món lẻ | **`U-047` đóng 2026-09-08**: đó là **số lượng khách gọi**, đúng như §4.3 đang làm — không đổi gì |
+| 9 | *giò — khách gọi bao nhiêu cũng được* | ✅ **Giò bán rời**, thêm vào §4.2 · §4.3 · §4.5 ngày 2026-09-08 | Món lẻ | **`U-047` đóng**: giò là **món bán rời**, khách gọi bao nhiêu chiếc cũng được. Ô giá **9.000** có lời 2026-10-23 (đóng **S-9**, §4.3) |
+| 10 | *canh bánh cuốn* | ✅ **Canh bánh cuốn 0đ**, thêm vào §4.2 · §4.3 · §4.5 ngày 2026-09-08 | Món lẻ | **`U-046` đóng**: *"bưng kèm sẵn không tính tiền nhưng cần có trong menu để khách chọn"* — dòng menu **0đ có số lượng**, vì một suất đầy đủ đôi khi cần 2 bát. **`U-048` đóng cùng ngày, lượt sau**: **không suất nào bưng kèm canh**, nên con số khách chọn ở dòng này là **TỔNG số bát** bếp bưng (§4.5 · §5.3) |
+| 11 | *bánh trứng chín* | ✅ **Bánh trứng bán rời** chín, thêm vào §4.3 · §4.5 ngày 2026-10-23 | Món lẻ | chủ repo chốt 2026-10-23 (T-242): một quả trứng chín, không kèm bánh, giá như thành phần §4.2 |
+| 12 | *bánh trứng tái* | ✅ **Bánh trứng bán rời** tái, thêm vào §4.3 · §4.5 ngày 2026-10-23 | Món lẻ | chủ repo chốt 2026-10-23 (T-242): một quả trứng tái, không kèm bánh, giá như thành phần §4.2 |
+| 13 | *bánh trứng vàng* | ✅ **Bánh trứng bán rời** vàng, thêm vào §4.3 · §4.5 ngày 2026-10-23 | Món lẻ | chủ repo chốt 2026-10-23 (T-242): một quả trứng vàng, không kèm bánh, giá như thành phần §4.2 |
 
 **Bảy dòng đầu khớp đúng từng chữ với §4.3, không thừa không thiếu** — đây là phép đếm và phép đối
 chiếu của phiên viết, không phải lời chủ quán (`work/findings.md` **F-003**): chủ quán liệt kê
@@ -416,12 +428,19 @@ sau nữa. Hai điều lời đáp ấy chốt, và cả hai đều là **luật
   từng chữ. Con số khách gọi là **số lượng món bán rời**, việc của dòng đơn, không phải của cấu
   tạo suất.
 - **Menu có hai dòng mới, và một trong hai không sinh một đồng doanh thu nào**: *giò bán rời*
-  (⚠️ giá là hệ quả tính ra, **S-9**) và *canh bánh cuốn* (**0đ**, chủ quán nói thẳng). Menu vì thế
+  (giá khi ấy là hệ quả tính ra, **S-9** — có lời 2026-10-23) và *canh bánh cuốn* (**0đ**, chủ quán nói thẳng). Menu vì thế
   đi từ **bốn** lên **sáu** dòng, và mọi chỗ trong repo còn chép chữ *"bốn suất bán"* đã được sửa
   trong cùng lần sửa này (`CLAUDE.md` §7.2) — `architecture.md` §6.1 ·
   `docs/product/0-ba/ban-hang/03-lat-cat.md` §3 · `08-scenario.md`. Hàng nhật ký §7.1 ngày
   2026-08-19 **không** sửa: nó ghi đúng cái đã chốt hôm ấy.
 - §4.8 đi từ mười một lên **mười ba** ca, hai ca mới canh hai chỗ dễ hỏng riêng của hai dòng này.
+
+**Nhóm trên menu — chủ repo chốt 2026-10-23 trong hội thoại** (T-242), nguyên văn: *"bao gồm bánh cuốn,
+bánh trứng, giò và canh — phần dưới là những combos"* ⇒ menu chia **hai nhóm**: **Món lẻ** (bánh cuốn,
+bánh trứng bán rời, giò bán rời, canh) đứng **trên**, **Combo** (đầy đủ, suất giò, suất trứng) đứng
+**dưới**. Cột *Nhóm trên menu* ở bảng trên ghi nhóm của từng dòng. *Cách đọc của phiên, chưa phải lời
+chủ repo* (**F-004**): chữ *combo* ở đây là **nhóm trình bày** của các suất nhiều thành phần — không
+phải bảng `menu_combo` (combo ghép món có giá riêng, §8.9) — và không đổi giá hay cấu tạo suất nào.
 
 ## 5. Hai luồng bán
 
@@ -1492,14 +1511,16 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-21 | Chủ repo xác nhận trong hội thoại: với đơn **giao tận nơi**, quầy bấm *"đã ra bàn"* **lúc đơn rời quán — cùng mốc quầy đã bấm để đưa đơn sang `Đang giao`** (đóng **S-6**, suy ra 2026-09-04 đúng) | §5.4 · §6.7 |
 | 2026-10-21 | Chủ repo chọn trong hội thoại (T-224, chốt thiết kế trang Vận hành): **thanh toán một bàn chỉ thu tiền các phần đã ra bàn**, phần chưa ra bị bỏ khỏi hoá đơn (*lời chọn*; vế bếp dừng làm và phạm vi áp ⇒ **U-103**); bấm *"đã đem ra"* trên trang ấy **vẫn là người đứng quầy** (giữ S-5); xác nhận **bàn sắp phục vụ** = đã gửi lượt gọi mà chưa phần nào ra bàn, và *đã đem ra* = đã bưng ra bàn | §5.4 · §6.1 |
 | 2026-10-22 | Chủ repo chọn trong hội thoại (T-227, đóng **U-103**): lúc thanh toán một bàn, phần **chưa ra** bị **huỷ, bếp dừng làm**; luật *chỉ thu phần đã ra* áp cho **mọi** lần đóng phiên bàn, không riêng trang Vận hành; suất ra dở (combo hay món nhiều thành phần mới ra một phần) **không thu suất đó** | §6.1 |
+| 2026-10-23 | Chủ repo chọn trong hội thoại (T-242): **giò bán rời 9.000, không chọn nhân** (đóng **S-9**, suy ra 2026-09-08 đúng); thêm **ba dòng *bánh trứng bán rời*** chín · tái · vàng, một quả trứng, giá như thành phần §4.2; menu chia **Món lẻ** (trên) và **Combo** (dưới); combo "Đầy đủ" **giữ luật cũ, không kèm canh** | §4.3 · §4.5 · §4.8 · §4.9 |
 | 2026-10-18 | Chủ repo trả lời ba vế thi công của mục tổng quan (T-199): tạm tính phần thuộc combo **không tính giá thành phần**; *bánh* của tiến độ là **bánh cuốn và bánh trứng**; **offline là bán hàng tại quán** (đóng **S-10**, suy ra 2026-10-16: *offline* gồm cả giao hàng đặt qua điện thoại — lời mới hẹp hơn: chỉ tại quán) | §8.6 |
+| 2026-10-24 | Chủ repo trả lời `U-104` trong hội thoại (T-243): **món đã ngừng bán được bán lại**, và bán lại là **giữ món cũ** — cùng tên, cùng thành phần, cùng lịch sử | §8.9 (*bán lại món đã ngừng*) |
 
-### 7.2 Chỗ suy ra chưa xác nhận — **năm mục, tính tới 2026-09-08**
+### 7.2 Chỗ suy ra chưa xác nhận — **hai mục, tính tới 2026-10-23**
 
 Mục này giữ những chỗ được **suy ra** từ luật đã chốt chứ không phải lời chủ quán nói thẳng. Bốn
-mục S-1–S-4 từng nằm đây đều đã được chủ quán xác nhận và đã lên §7.1; còn **ba** mục chưa xác
-nhận (đếm lại 2026-10-21) — ~~**S-5**~~ (2026-09-01, T-039; **có lời 2026-10-09**, xem bảng) · ~~**S-6**~~ (2026-09-04, T-055; **có lời 2026-10-21**, xem bảng) · **S-7** (2026-09-04, T-056) ·
-**S-8** (2026-09-08, T-068) · **S-9** (2026-09-08, T-069). ~~**S-10**~~ (2026-10-16, T-198) có lời 2026-10-18, đã lên §7.1.
+mục S-1–S-4 từng nằm đây đều đã được chủ quán xác nhận và đã lên §7.1; còn **hai** mục chưa xác
+nhận (đếm lại 2026-10-23) — ~~**S-5**~~ (2026-09-01, T-039; **có lời 2026-10-09**, xem bảng) · ~~**S-6**~~ (2026-09-04, T-055; **có lời 2026-10-21**, xem bảng) · **S-7** (2026-09-04, T-056) ·
+**S-8** (2026-09-08, T-068) · ~~**S-9**~~ (2026-09-08, T-069; **có lời 2026-10-23**, xem bảng). ~~**S-10**~~ (2026-10-16, T-198) có lời 2026-10-18, đã lên §7.1.
 
 S-5 và S-6 sinh ra cùng một kiểu: chủ quán trả lời **ai bấm**, và câu hỏi còn một vế **bấm theo gì
 / bấm lúc nào** mà lời ấy không chạm tới. **S-7 là kiểu thứ hai**: chủ quán trả lời về **cả ngày**
@@ -1509,9 +1530,9 @@ chỗ suy ra là việc đọc trật tự ấy thành một mệnh đề *cả 
 kiểu thứ tư, và là kiểu nguy hiểm nhất vì nó ra một CON SỐ TIỀN**: luật tính giá đã chốt cho ra
 đúng một đáp số, nên đáp số ấy trông như một fact — nhưng chủ quán chưa từng đọc nó. **S-1** ngày
 2026-08-30 là cùng kiểu, và hỏi ra thì đúng; điều đó không làm kiểu này an toàn, nó chỉ cho thấy
-hỏi là rẻ.
+hỏi là rẻ — **S-9 hỏi ra 2026-10-23 cũng đúng**.
 
-⚠️ Con số *ba* ở tiêu đề là **phép đếm của phiên, không phải một quyết định** — đếm lại ở bảng dưới
+⚠️ Con số *hai* ở tiêu đề là **phép đếm của phiên, không phải một quyết định** — đếm lại ở bảng dưới
 chứ đừng tin câu này (`work/findings.md` **F-003** · **F-018**).
 
 | Chỗ suy ra | Hỏi ngày | Lời giải | Nay ở |
@@ -1524,7 +1545,7 @@ chứ đừng tin câu này (`work/findings.md` **F-003** · **F-018**).
 | **S-6** — với đơn **giao tận nơi**, quầy bấm *"đã ra bàn"* **lúc nào** | 2026-09-04 → **2026-10-21** | **lúc đơn rời quán — cùng mốc quầy đã bấm để đưa đơn sang `Đang giao`** (chủ repo 2026-10-21; suy ra cũ đúng). Cửa rời quán hôm nay còn từ chối — sửa ở `T-223`. *Suy ra cũ:* **lúc đơn rời quán** — cùng mốc quầy đã bấm để đưa đơn sang `Đang giao` (§6.7, chốt 2026-09-01 trả lời U-023), vì quầy chỉ nhìn thấy suất ấy tới lúc đó. Chủ quán 2026-09-04 mới chỉ nói **ai** bấm (*"pos"*, U-031), chưa nói **lúc nào**. ⇒ Nếu suy ra này sai thì mốc *"đã ra bàn"* của đơn giao nghĩa là **tới tay khách**, và quầy phải chờ người đi giao báo về mới bấm được | §5.4 · §6.7 · `docs/product/0-ba/ban-hang/05-vong-doi.md` §5.2 |
 | **S-7** — cửa sổ **06:00–11:00** của §1 có phải **đúng một buổi bán** | **2026-09-04**, chưa hỏi | *suy ra:* **có** — chủ quán nói *"quán chỉ bán buổi sáng"* (`A1`) và *"cứ đến giờ là bán"* (`A2`), nên cửa sổ giờ duy nhất quán có cũng là buổi duy nhất quán bán. Chủ quán **không** đọc ra một mốc bắt đầu và một mốc kết thúc của *buổi*; hai câu ấy nói về **cả ngày** chứ không nói về một buổi trong nhiều buổi. ⇒ Nếu suy ra này sai thì có buổi thứ hai ngoài 06:00–11:00, và §6.23 · **ADR-038** · **I-021** đều phải viết lại | §1 · §6.23 · **ADR-038** |
 | **S-8** — mục tổng quan §8.6 có bày **cả ba** đường của vế *"còn thiếu gì"* (nguyên liệu · người · món) không | **2026-09-08**, chưa hỏi | *suy ra:* **có** — chủ quán trả lời đúng ba vế câu hỏi đã đưa ra, theo thứ tự ấy (*"nguyên liệu và con người đã có, đối với menu…"*), nên ba vế được đọc là ba thứ mục tổng quan bày. Chủ quán **không** nói thẳng *"mục tổng quan hiện cả ba"*, và chữ *"đã có"* cũng có thể chỉ nghĩa là *hai thứ ấy hệ thống ghi ở đâu đó rồi*. ⇒ Nếu suy ra này sai thì §8.6 hàng 7 chỉ còn **một** đường (nguyên liệu), và §4.9 vẫn đứng nguyên vì nó là **menu**, không phải một dòng của mục tổng quan | §8.6 · §4.9 |
-| **S-9** — giá một chiếc **giò bán rời** có đúng bằng **9.000** không | **2026-09-08**, chưa hỏi | *suy ra:* **có** — luật 1 §4.6 nói giá một suất là **tổng giá các thành phần**, dòng *giò bán rời* gồm đúng một chiếc giò, và §4.2 định giá chiếc giò là 9.000 cho cả ba cột (giò không nhận nhân). Chủ quán 2026-09-08 chốt giò là **món bán rời khách gọi bao nhiêu cũng được**, nhưng **không** đọc ra giá của nó. ⇒ Nếu suy ra này sai — quán bán lẻ một chiếc giò đắt hơn giá nó đứng trong suất — thì ba ô ⚠ ở §4.3 sai, ca **12** của §4.8 sai, và luật 1 §4.6 có ngoại lệ đầu tiên kể từ khi được viết | §4.3 · §4.2 · §4.8 ca 12 |
+| **S-9** — giá một chiếc **giò bán rời** có đúng bằng **9.000** không | 2026-09-08 → **2026-10-23** | **đúng** — chủ repo chọn *"9.000, không chọn nhân"* (T-242); suy ra cũ đúng | §4.3 · §4.8 ca 12 |
 
 Mục này **không xoá** kể cả khi rỗng: chỗ suy ra tiếp theo phải nằm ở đây, tách khỏi §7.1
 (`work/findings.md` F-004). Thấy dòng nào trong repo còn nói *"§7.2 rỗng"* ⇒ đó là pointer cũ, sửa
@@ -2072,6 +2093,8 @@ hạn) và của một ghi nhận đào tạo do thiết kế chọn, chủ quá
 công việc chữ · ảnh · video gắn với **từng việc được giao** — mỗi việc giao mang hướng dẫn của chính nó, không phải một
 bản hướng dẫn chung cho một loại công việc.
 
+**Bổ sung 2026-10-24 — hạn hoàn thành của việc giao** (chủ repo, T-246): hạn gồm **ngày và giờ**, và **bắt buộc khi giao việc mới**. Nguyên văn hai câu trả lời: “ngày và giờ”, “bắt buộc khi giao việc”. Chủ repo cho phép Codex thực hiện xuyên DB/API/FE trong lượt này. Lời chưa chỉ định hạn cho các việc đã tồn tại, cũng chưa yêu cầu chỉ được chọn hạn tương lai; thiết kế chuyển tiếp và cách lưu ở ADR-127, không coi là lời chủ quán.
+
 ### 8.8 Mức 1 của mảng CON NGƯỜI — **mỗi lần đổi người ở QUẦY là một mốc có giờ**
 
 **Chủ quán chốt 2026-09-20** — câu **`C36`**, hỏi qua `work/backlog_AD.md` **ADM-53** và chuyển về
@@ -2181,6 +2204,13 @@ hỏi, *lời chọn* của chủ repo trong câu hỏi có sẵn phương án: 
 giá riêng. *Cách đọc của phiên, chưa ai xác nhận:* *xoá món* là ngừng bán · ẩn, không xoá cứng
 (`docs/product/2-db/01-quy-uoc-du-lieu.md`); giá combo vẫn là tổng thành phần (§4.7); lời này không chạm §6.12 (món
 ngoài bảng giá gõ tay ở quầy). Danh mục gồm những nhóm nào thì lời không nói.
+
+**2026-10-24 — BÁN LẠI MÓN ĐÃ NGỪNG** (T-243, đóng `U-104`; chủ repo trả lời trong hội thoại). Nguyên văn: *"trả lời có"*, rồi *"giữ món cũ cùng
+tên, cùng thành phần, cùng lịch sử"*. ⇒ Chủ quán **bán lại được** một món đã ngừng bán, và bán lại là đưa
+**chính món ấy** trở lại menu — không tạo món mới, không đổi tên, không đổi thành phần, đơn cũ và lịch sử sửa của món giữ
+nguyên. *Cách đọc của phiên, chưa phải lời chủ repo* (**F-004**): bán lại mang lý do và để lại vết như mọi lần sửa menu
+(`quality/invariants.md` I-018); mốc ngừng bán cũ không mất mà nằm trong vết; món đã bán lại thì ngừng bán lần nữa
+được.
 
 **2026-10-19 — QUẢN LÝ TOPPING** (T-210; chủ repo trả lời trong hội thoại, chọn trong câu hỏi có sẵn phương án). Ba vế:
 

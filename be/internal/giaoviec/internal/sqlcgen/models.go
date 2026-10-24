@@ -38,6 +38,7 @@ type AssignedTask struct {
 	CreatedAt        pgtype.Timestamptz
 	HiddenAt         pgtype.Timestamptz
 	HiddenByPersonID pgtype.Int8
+	DueAt            pgtype.Timestamptz
 }
 
 type AssignedTaskGuide struct {

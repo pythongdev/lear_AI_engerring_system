@@ -19,7 +19,7 @@ type Viec = components["schemas"]["AssignedTask"];
 type TraLoi = { status: number; body?: unknown };
 const viec = (id: number, content: string, done: boolean): Viec => ({
   assigned_task_id: id, content, done, assignee_person_id: 2, assignee_name: "Mai", person_id: 1, person_name: "Chủ Lan",
-  created_at: "2026-10-19T02:00:00Z", marks: [], hidden_at: null, hidden_by_person_id: null, hidden_by_name: null,
+  created_at: "2026-10-19T02:00:00Z", due_at: null, marks: [], hidden_at: null, hidden_by_person_id: null, hidden_by_name: null,
 });
 const ds = [viec(9, "Lau bàn", false), viec(2, "Rửa rau", true)];
 const people = [{ person_id: 1, display_name: "Chủ Lan", is_owner: true }, { person_id: 2, display_name: "Mai", is_owner: false }];
@@ -44,12 +44,12 @@ const sai = (f: HTMLElement, ten: string) => within(f).getByLabelText(ten).getAt
 async function tao() {
   await screen.findByText("Lau bàn");
   const f = await mo("Giao việc mới");
-  go(f, "Nội dung", "  Quét sân  "); go(f, "Người nhận", "1");
+  go(f, "Nội dung", "  Quét sân  "); go(f, "Người nhận", "1"); go(f, "Hạn hoàn thành *", "2026-10-25T09:30");
   return f;
 }
 
 describe("Giao việc", () => {
-  it("giữ thứ tự backend, nhãn theo done, người và lúc đánh dấu là phần tử cuối; không có hạn hay guides", async () => {
+  it("giữ thứ tự backend, nhãn theo done, người và lúc đánh dấu là phần tử cuối; có hạn hoàn thành, không gọi guides", async () => {
     const marks: Viec["marks"] = [
       { assigned_task_mark_id: 1, mark: "undone", person_id: 3, person_name: "Người trước", created_at: "2026-10-19T03:00:00Z" },
       { assigned_task_mark_id: 2, mark: "done", person_id: 4, person_name: "Người cuối", created_at: "2026-10-19T04:00:00Z" },
@@ -63,7 +63,7 @@ describe("Giao việc", () => {
     expect(items[0].textContent).toContain("Người nhận: Mai · Người giao: Chủ Lan · Lúc giao: 09:00:00 19/10/2026");
     expect(items[0].textContent).toContain("Đánh dấu gần nhất: Người cuối · 11:00:00 19/10/2026");
     expect(items[0].textContent).not.toContain("Người trước");
-    expect(document.body.textContent).not.toMatch(/hạn/i);
+    expect(within(items[0]).getByText("Hạn hoàn thành: Chưa có hạn")).toBeTruthy();
     expect(g.some((x) => x.path.includes("/guides"))).toBe(false);
   });
   it("thống kê từ API, tìm nội dung kết hợp trạng thái và báo rỗng", async () => {
@@ -92,6 +92,21 @@ describe("Giao việc", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     await waitFor(() => expect(document.activeElement).toBe(trigger));
   });
+  it("sửa hạn hiện giờ Việt Nam và gửi hạn mới cùng lý do", async () => {
+    const g = moTrang({ doc: () => ({ status: 200, body: { assigned_tasks: [{ ...ds[0], due_at: "2026-10-25T02:30:00Z" }] } }) });
+    const f = await mo("Sửa Lau bàn");
+    expect((within(f).getByLabelText("Hạn hoàn thành *") as HTMLInputElement).value).toBe("2026-10-25T09:30");
+    go(f, "Hạn hoàn thành *", "2026-10-26T10:45"); go(f, "Lý do", "Đổi ca"); gui(f);
+    await screen.findByText("Đã sửa việc.");
+    expect(ghi(g)[0].body).toEqual({ content: "Lau bàn", assignee_person_id: 2, due_at: "2026-10-26T10:45:00+07:00", reason: "Đổi ca" });
+  });
+  it("không được xoá hạn đã có khi sửa", async () => {
+    const g = moTrang({ doc: () => ({ status: 200, body: { assigned_tasks: [{ ...ds[0], due_at: "2026-10-25T02:30:00Z" }] } }) });
+    const f = await mo("Sửa Lau bàn");
+    go(f, "Hạn hoàn thành *", ""); go(f, "Lý do", "Sửa"); gui(f);
+    await waitFor(() => expect(sai(f, "Hạn hoàn thành *")).toBe("true"));
+    expect(ghi(g)).toEqual([]);
+  });
   it("bày danh sách rỗng", async () => {
     moTrang({ doc: () => ({ status: 200, body: { assigned_tasks: [] } }) });
     expect(await screen.findByText("Chưa có việc nào.")).toBeTruthy();
@@ -115,11 +130,11 @@ describe("Giao việc", () => {
     const g = moTrang({ doc: (lan) => ({ status: 200, body: { assigned_tasks: lan === 1 ? ds : [viec(10, "Kết quả đọc lại", false)] } }) });
     const f = await tao(); gui(f); gui(f);
     expect(await screen.findByText("Đã giao việc.")).toBeTruthy();
-    expect(ghi(g)).toEqual([{ method: "POST", path: "/assigned-tasks", body: { content: "Quét sân", assignee_person_id: 1 } }]);
+    expect(ghi(g)).toEqual([{ method: "POST", path: "/assigned-tasks", body: { content: "Quét sân", assignee_person_id: 1, due_at: "2026-10-25T09:30:00+07:00" } }]);
     expect(doc(g)).toBe(2);
     expect(await screen.findByText("Kết quả đọc lại")).toBeTruthy();
   });
-  it.each(["Nội dung", "Người nhận"])("thiếu %s thì không gửi", async (ten) => {
+  it.each(["Nội dung", "Người nhận", "Hạn hoàn thành *"])("thiếu %s thì không gửi", async (ten) => {
     const g = moTrang(); const f = await tao(); go(f, ten, ten === "Nội dung" ? "   " : ""); gui(f);
     await waitFor(() => expect(sai(f, ten)).toBe("true")); expect(ghi(g)).toEqual([]);
   });
@@ -138,7 +153,7 @@ describe("Giao việc", () => {
     const f = await tao(); gui(f);
     await waitFor(() => expect(sai(f, "Người nhận")).toBe("true")); expect(ghi(g)).toHaveLength(1);
   });
-  it.each([["content", "Nội dung"], ["assignee_person_id", "Người nhận"], ["reason", "Lý do"]])("lỗi field %s gắn đúng ô", async (field, ten) => {
+  it.each([["content", "Nội dung"], ["assignee_person_id", "Người nhận"], ["reason", "Lý do"], ["due_at", "Hạn hoàn thành"]])("lỗi field %s gắn đúng ô", async (field, ten) => {
     moTrang({ ghi: () => ({ status: 400, body: { code: "invalid_request", field } }) });
     const f = await mo("Sửa Lau bàn"); go(f, "Lý do", "Đổi việc"); gui(f);
     await waitFor(() => expect(sai(f, ten)).toBe("true"));

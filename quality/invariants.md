@@ -1425,7 +1425,7 @@ Mệnh đề của việc giao trên máy (`master_plan/shop-facts.md` §8.7, l�
 - ***Xoá* là ẩn, không xoá cứng.** Một việc đã ẩn đọc lại được — kể cả nội dung, người nhận, các
   lần đánh dấu —, cùng **ai ẩn** và **lúc ẩn**.
 
-**Mệnh đề không nói** việc có **hạn** hay không, có ghi chú riêng hay không, hay một việc giao cho
+**Lời ban đầu 2026-10-14 không nói** việc có **hạn** hay không (bổ sung 2026-10-24 ở cuối mục này), có ghi chú riêng hay không, hay một việc giao cho
 nhiều người cùng lúc: lời giao trường của một việc cho thiết kế, và thiết kế không thêm trường để
 sẵn. Nó không nói người **nhận** việc có được tự đánh dấu xong không — lời chỉ nêu chủ quán và POS.
 Hướng dẫn công việc gắn với việc giao là `I-031`, không phải mệnh đề này.
@@ -1454,6 +1454,8 @@ mọi việc đã ẩn có người ẩn và lúc ẩn.
 
 *Viết ở P2A-10, 2026-10-14, Claude Code — từ lời chủ quán đóng `U-084` · `U-089`. Hai chỗ suy ra ghi
 ở mục Why; tầng giữ vế *chủ quán hoặc POS* chọn ở **ADR-105**.*
+
+**Bổ sung I-030, 2026-10-24 (chủ repo, T-246):** giao việc **mới qua phần mềm** bắt buộc có hạn hoàn thành gồm ngày và giờ (`shop-facts.md` §8.7). Lớp API và service từ chối tạo thiếu hạn; việc có trước thay đổi chưa được chủ repo gán hạn nên được giữ chưa có hạn, không tự sinh một mốc giả (lựa chọn chuyển tiếp ADR-127). Sửa hạn giữ đầy đủ vết như sửa nội dung. Kiểm: `TestQC14_HinhGiaoViecTruocQuyenVaDatabase` từ chối thiếu/null/rỗng/sai ngày giờ/không múi giờ; `TestI030_TaoViecKhongHanBiChanTruocDatabase` kiểm service; `TestI030_HanHoanThanhLuuDocSuaCoVet` kiểm lưu/đọc/sửa/vết, giữ hạn khi không gửi trường và đọc/sửa việc cũ chưa có hạn. Database cho phép giá trị rỗng để tương thích lịch sử; không dùng mệnh đề này để tuyên bố mọi INSERT trực tiếp đều bị chặn.
 
 ### I-031 — Mỗi hướng dẫn công việc thuộc ĐÚNG MỘT việc giao; mỗi ghi nhận đào tạo thuộc ĐÚNG MỘT người của quán, mang tên người ghi và lúc ghi; đánh giá chỉ có hai giá trị ĐẠT · CHƯA
 

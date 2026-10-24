@@ -1,8 +1,10 @@
 package giaoviec
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
+	"time"
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/middleware"
@@ -42,10 +44,17 @@ func ma(c *gin.Context, field string) (int64, bool) {
 }
 
 func docYeuCau(c *gin.Context, sua bool) (YeuCau, bool) {
+	var body struct {
+		Content    string          `json:"content"`
+		AssigneeID int64           `json:"assignee_person_id"`
+		Reason     string          `json:"reason"`
+		DueAt      json.RawMessage `json:"due_at"`
+	}
 	var p YeuCau
-	if !apierr.ReadJSON(c.Writer, c.Request, &p) {
+	if !apierr.ReadJSON(c.Writer, c.Request, &body) {
 		return p, false
 	}
+	p.Content, p.AssigneeID, p.Reason = body.Content, body.AssigneeID, body.Reason
 	p.Content = strings.TrimSpace(p.Content)
 	if p.Content == "" {
 		sai(c, "content")
@@ -59,6 +68,19 @@ func docYeuCau(c *gin.Context, sua bool) (YeuCau, bool) {
 	if sua && p.Reason == "" {
 		sai(c, "reason")
 		return p, false
+	}
+	if !sua || len(body.DueAt) > 0 {
+		var raw string
+		if json.Unmarshal(body.DueAt, &raw) != nil || raw == "" {
+			sai(c, "due_at")
+			return p, false
+		}
+		due, err := time.Parse(time.RFC3339Nano, raw)
+		if err != nil || due.IsZero() || due.Year() < 1 || due.Year() > 9999 {
+			sai(c, "due_at")
+			return p, false
+		}
+		p.DueAt = &due
 	}
 	return p, true
 }

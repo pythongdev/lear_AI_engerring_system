@@ -155,6 +155,8 @@ bản ở `HEAD` và đỏ khi file khác mà phiên bản không lớn hơn.
 - **Không phiên bản trong đường dẫn** (không tiền tố kiểu `/v1`). Quán có một backend và một FE, triển
   khai cùng nhau; hai phiên bản đường gọi chạy song song là thứ không ai cần mà phải giữ cả hai.
 
+**T-246 (2026-10-24, Codex được chủ repo cho phép xuyên tầng, ADR-127):** tăng `0.49.0` → `0.50.0`. `AssignedTask` thêm `due_at` luôn trả, nullable cho việc cũ. `CreateAssignedTask` bắt buộc hạn RFC3339 có offset; `UpdateAssignedTask` nhận tuỳ chọn, bỏ trường giữ nguyên, có trường không cho null/rỗng. Lỗi vẫn dùng `invalid_request`, field `due_at`. Sinh lại type FE.
+
 **T-227 (2026-10-22, phiếu Claude, ADR-125):** tăng MINOR `0.48.0` → `0.49.0`; closing bỏ `table_session_has_open_orders`, huỷ việc chưa ra và chỉ thu suất đã ra hết; tiền phiên, service-board và owner-overview dùng cùng đoạn tính theo suất, thành phần không trạm không chặn thu. Thêm `production_batch_has_discarded_jobs` (409), ánh xạ `production_batch_no_discarded_jobs_check`. Đơn đã completed/cancelled giữ nguyên theo phần làm rõ điểm 4; Claude sinh lại type FE ở clone chính.
 
 **T-218 (2026-10-20, phiếu Claude):** tăng MINOR `0.46.0` → `0.47.0` (dựng trên `T-217`); `GET /counter/queue` thêm `total_vnd` · `lines` từ ảnh chụp đơn vào `orders`, thêm `active_orders` cho đơn ngoài bàn đang làm với thông tin trao hàng và `unserved_jobs`; sinh lại type FE.

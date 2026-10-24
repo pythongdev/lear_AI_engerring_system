@@ -141,6 +141,7 @@ có câu trả lời mới từ người.
 | ADR-122 | **Topping: thêm, ẩn, bật lại lựa chọn trong nhóm có sẵn** (`T-210`): thêm là một dòng `menu_option`; nhóm phụ thuộc chủ quán tích; ẩn là hai cột, một cửa cho ẩn và bật lại; hàm giá từ chối lựa chọn đã ẩn tại mốc tính; không ẩn được mặc định | Đã chốt 2026-10-19 (Claude) | — | `T-210` · ADR-086 · ADR-094 · §8.9 |
 | ADR-124 | **Đường đọc trang Vận hành** (`T-225`): `GET /service-board` lớp `quay_hoac_chu_quan` — phiên bàn chưa đóng chia `serving` · `waiting` · `no_order`, thứ đặt · đã ra · thiếu theo đơn vị, tiền đã ra bằng đoạn tạm tính dùng chung với tổng quan, lịch sử đem ra đọc từ vết `made → served` | Đã chốt 2026-10-21 (Claude) | — | `T-225` · ADR-118 · ADR-092 · I-019 |
 | ADR-125 | **Hoá đơn phiên bàn chỉ cộng suất đã ra hết** (`T-227`): một đoạn tính tiền đã ra theo suất dùng chung cho hoá đơn, tạm tính và trang Vận hành; đóng phiên huỷ mọi việc trạm chưa ra (`station_job` thêm `cancelled` · `discarded`) | Đã chốt 2026-10-22 (Claude, chủ repo duyệt) | — | `T-227` · ADR-118 · ADR-124 · I-002 |
+| ADR-126 | **Bán lại món đã ngừng** (`T-243`): cửa `POST /menu-items/{menu_item_id}/resumption` xoá mốc ngừng bán trên chính dòng món, có lý do; lịch sử nằm trong vết `record_revision`, không bảng mới | Đã chốt 2026-10-24 (Claude, theo lời chủ repo đóng U-104) | — | `T-243` · I-018 · I-009 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7991,3 +7992,41 @@ phần B, L1 — màn quầy và trang Vận hành. Codex thi công theo phiếu
 
 **Applies to:** `db/migrations/` · `be/internal/{vongdoi,phien,hoadon,tongquan,sanxuat}/` · `docs/product/3-be/openapi.yaml` ·
 `docs/product/3-be/04-luong-tai-ban.md` §4 · `quality/invariants.md` I-002 · `fe/`; **ADR-118** · **ADR-124** · `T-227`.
+
+### ADR-126 — Bán lại món đã ngừng: xoá mốc ngừng bán trên chính dòng món, lịch sử nằm trong vết
+
+**Status:** Đã chốt 2026-10-24 — Claude Code chọn, theo lời chủ repo đóng `U-104` cùng ngày (`master_plan/shop-facts.md` §8.9,
+đoạn *bán lại món đã ngừng*): *"trả lời có"*, rồi *"giữ món cũ cùng tên, cùng thành phần, cùng lịch sử"*. Mọi điểm dưới đây ngoài lời ấy là
+**lựa chọn của phiên**.
+
+**Context:** ngừng bán (`menu/ngung_ban`, P3-06) đặt `menu_item.discontinued_at = now()` một lần, có lý do; lần thứ hai bị từ chối
+`menu_item_discontinued`. Hợp đồng không có cửa nào xoá mốc ấy. Mọi bảng của lược đồ mang `record_revision_capture()`: một lần sửa có khai
+`shop.revision_reason` để lại ảnh trước, ảnh sau, lý do và người sửa (I-018 tầng 2).
+
+**Decision:**
+1. Cửa mới `menu/ban_lai`, lớp `chu_quan`: `POST /menu-items/{menu_item_id}/resumption`, thân `{ reason }` bắt buộc không rỗng sau cắt
+   khoảng trắng. Khoá dòng món; không có trả 404 `menu_item_not_found`; món **chưa** ngừng trả 409 mã mới `menu_item_not_discontinued`, không
+   ghi gì. Còn lại: khai lý do rồi `UPDATE menu_item SET discontinued_at = NULL` trên **chính dòng ấy** — tên, thành phần, danh mục, đơn cũ
+   không đổi. Trả `{ menu_item_id }`.
+2. Lịch sử là vết sẵn có: lần bán lại sinh một dòng `record_revision` với ảnh trước mang mốc ngừng bán cũ, ảnh sau rỗng mốc. Không bảng mới,
+   không migration.
+3. Đã bán lại thì ngừng bán lần nữa được (cửa ngừng bán chỉ từ chối khi mốc đang có). Combo chứa món ấy tự hiện lại ở `GET /menu` khi mọi
+   món của nó còn bán — không có cửa riêng.
+4. Trang Sản phẩm (T-238) thay câu *"Chưa có cách bán lại"* bằng form *Bán lại* có lý do.
+
+**Rejected alternatives:** *tạo món mới* — trái lời *"giữ món cũ"*; *bảng sự kiện ngừng/bán lại riêng* — thêm một nơi giữ lịch sử khi vết
+`record_revision` đã giữ đủ cái gì · ai · lúc nào; *`DELETE /menu-items/{id}/discontinuation`* — hợp đồng dùng cặp `POST` cho hành động đối
+nhau (`/hiding` · `/unhiding`) và một `DELETE` mang thân lý do là hình lạ.
+
+
+## ADR-127 — Hạn hoàn thành của việc giao là instant, bắt buộc ở cửa tạo
+
+**Status:** chốt 2026-10-24, Codex chọn cách triển khai theo quyền chủ repo trao trong hội thoại T-246. Lời chủ repo: hạn có ngày và giờ, bắt buộc khi giao việc; các điểm chuyển tiếp dưới đây là lựa chọn của phiên.
+
+**Context:** việc giao trước đây không có hạn (ADR-105); không có dữ kiện để tự đặt hạn cho việc cũ.
+
+**Decision:** thêm `assigned_task.due_at` kiểu `timestamptz`, nullable cho lịch sử; không backfill. API trả `due_at` luôn có khoá, null khi việc cũ chưa có hạn. POST bắt buộc RFC3339 có offset; thiếu/null/rỗng/không hợp lệ trả `invalid_request` field `due_at`. Service cũng chặn thiếu hạn trước ghi. PUT nhận trường tuỳ chọn: không gửi giữ nguyên; có gửi phải hợp lệ, không null/rỗng. Không mở thao tác xoá hạn. Trigger vết hiện có ghi cả hạn trước/sau cùng lý do sửa. Màn FE nhập ngày giờ Việt Nam, luôn chuyển +07:00 độc lập múi giờ máy, bắt nhập khi tạo hoặc sửa việc đã có hạn; việc cũ được giữ trống hoặc bổ sung hạn. Không thêm điều kiện phải sau hiện tại/lúc tạo vì lời chưa yêu cầu.
+
+**Alternatives:** NOT NULL và tự gán hạn cho việc cũ tạo dữ kiện giả; chặn mọi INSERT trực tiếp sẽ đòi thay toàn bộ dữ liệu dựng/kịch bản lịch sử, không cần cho cửa giao việc có kiểm API/service; lưu ngày giờ không múi giờ làm hạn lệch theo máy.
+
+**Consequences:** schema cho phép null dù cửa tạo bắt buộc; đây là giới hạn rõ ở I-030. Migration cấp quyền sửa đúng cột mới; rollback từ chối nếu còn bất kỳ hạn nào để không làm mất dữ liệu. Triển khai migration trước backend, backend trước frontend; hợp đồng tăng 0.50.0, sinh lại sqlc và type FE.

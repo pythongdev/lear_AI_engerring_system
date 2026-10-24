@@ -30,8 +30,9 @@ kể cả lần sửa tay của chủ lược đồ; không quyền xoá (QD-50)
 Không sự kiện nghĩa là chưa xong. Khi đã có sự kiện, đọc mới nhất theo `created_at DESC, id DESC`
 như test Claude viết trước; `id` phân định hai sự kiện cùng mốc. Bảng việc không cất trạng thái
 hay cờ xong độc lập. `mark_code` là loại sự kiện: `done` là đánh dấu xong, `undone` là bỏ đánh dấu.
-Không có hạn, ghi chú riêng hay nhiều người nhận. Đây là hình Claude chọn trong phiếu, không
-phải lời bổ sung của chủ quán.
+Thiết kế ban đầu không có hạn, ghi chú riêng hay nhiều người nhận. **T-246, 2026-10-24:** chủ repo yêu cầu hạn ngày giờ bắt buộc khi giao mới; ADR-127 bổ sung hạn, hai vế ghi chú riêng và nhiều người nhận giữ nguyên.
+
+Migration [`20261024120000_han_giao_viec.up.sql`](../../../db/migrations/20261024120000_han_giao_viec.up.sql) thêm `assigned_task.due_at` kiểu `timestamptz`, cho phép null để giữ việc cũ chưa có hạn, không backfill; API/service chịu trách nhiệm bắt nhập khi tạo. Vai ghi được UPDATE cột này; trigger vết hiện có giữ ảnh trước/sau. Rollback chặn khi có hạn đã nhập. Test `TestI030_HanHoanThanhLuuDocSuaCoVet` kiểm lưu, đọc, sửa có vết và giữ việc cũ.
 
 ## 2. Mệnh đề → cái giữ nó → bằng chứng
 

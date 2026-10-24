@@ -13,7 +13,7 @@ import (
 
 const doc = `-- name: Doc :many
 SELECT t.id, t.content, t.assignee_person_id, a.display_name AS assignee_name,
- t.person_id, p.display_name AS person_name, t.created_at,
+ t.person_id, p.display_name AS person_name, t.created_at, t.due_at,
  t.hidden_at, t.hidden_by_person_id, h.display_name AS hidden_by_name,
  coalesce((SELECT m.mark_code = 'done' FROM assigned_task_mark m
  WHERE m.assigned_task_id = t.id ORDER BY m.created_at DESC, m.id DESC LIMIT 1), false)::boolean AS done,
@@ -43,6 +43,7 @@ type DocRow struct {
 	PersonID         int64
 	PersonName       string
 	CreatedAt        pgtype.Timestamptz
+	DueAt            pgtype.Timestamptz
 	HiddenAt         pgtype.Timestamptz
 	HiddenByPersonID pgtype.Int8
 	HiddenByName     pgtype.Text
@@ -67,6 +68,7 @@ func (q *Queries) Doc(ctx context.Context, arg DocParams) ([]DocRow, error) {
 			&i.PersonID,
 			&i.PersonName,
 			&i.CreatedAt,
+			&i.DueAt,
 			&i.HiddenAt,
 			&i.HiddenByPersonID,
 			&i.HiddenByName,
