@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tổng kết · Chủ quán</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { paper: '#F6F5F1', ink: '#1C1B19', muted: '#5F5B53', line: '#E4E1DA', accent: '#1E6B50', selected: '#E8F1EC', 'selected-ink': '#14432F' },
+      fontFamily: { sans: ['"Be Vietnam Pro"', 'ui-sans-serif', 'system-ui', 'sans-serif'], mono: ['ui-monospace', 'SFMono-Regular', 'Consolas', 'monospace'] }
+    }
+  }
+}
+</script>
+<style type="text/tailwindcss">
+@layer base {
+  body { @apply m-0 bg-paper text-ink font-sans text-sm leading-relaxed antialiased; }
+  a { @apply text-accent underline-offset-[3px] hover:underline; }
+  button { @apply min-h-[44px] px-4 py-2 bg-white border border-line rounded-xl cursor-pointer shadow-sm transition-colors hover:border-accent hover:bg-paper disabled:text-muted disabled:bg-paper disabled:cursor-default disabled:shadow-none; }
+  button.primary { @apply bg-accent border-accent text-white font-semibold hover:bg-[#185a43] hover:border-[#185a43]; }
+  :focus-visible { @apply outline outline-[3px] outline-accent outline-offset-[3px]; }
+  h1 { @apply text-[28px] leading-tight font-bold tracking-tight; }
+  h2 { @apply text-base font-semibold; }
+  h3 { @apply text-sm font-semibold; }
+  small { @apply text-muted; }
+  p + p { @apply mt-2; }
+  table { @apply w-full border-collapse text-left; }
+  th { @apply text-muted font-medium text-xs bg-[#FAF9F6] uppercase tracking-wide; }
+  th, td { @apply px-3.5 py-3 border-b border-line align-top; }
+  td { @apply tabular-nums; }
+  tbody tr:last-child td { @apply border-b-0; }
+  tbody tr { @apply transition-colors hover:bg-[#FCFBF9]; }
+  input[type="checkbox"] { @apply w-[18px] h-[18px] accent-accent shrink-0; }
+  input:not([type="checkbox"]), select, textarea { @apply w-full min-w-0 min-h-[44px] px-3 py-2.5 border border-[#B9B3A7] rounded-lg bg-white text-sm font-normal focus:border-accent; }
+  textarea { @apply resize-y; }
+  fieldset { @apply m-0 min-w-0 border border-line rounded-xl p-3.5 gap-3; display: grid; }
+  legend { @apply px-1.5; }
+  dl { display: grid; @apply grid-cols-[1fr_auto] gap-3; }
+  dd { @apply m-0 font-semibold; }
+  code { @apply font-mono text-xs bg-paper px-1 py-0.5 rounded; }
+}
+@layer components {
+  .muted { @apply text-muted; }
+  [data-component] { @apply relative min-w-0; }
+  .nhan-component { @apply table w-fit self-start max-w-full [overflow-wrap:anywhere] px-1.5 py-0.5 mb-2 rounded bg-ink text-white font-mono text-[10px] leading-normal font-normal normal-case tracking-normal; }
+  body:has(#hien-ten:not(:checked)) .nhan-component { @apply hidden; }
+  .design-toggle { @apply flex gap-2 items-center flex-wrap px-6 py-2.5 border-b border-line bg-white text-xs; }
+  .design-toggle label { @apply cursor-pointer; }
+  .design-toggle a { @apply ml-auto; }
+  .shell { display: grid; @apply grid-cols-[232px_minmax(0,1fr)] min-h-screen; }
+  .shell > .nhan-component { @apply absolute top-0 left-0 z-[2]; }
+  .navigation { @apply px-3.5 py-6 bg-white border-r border-line; }
+  .brand { @apply flex items-center gap-2.5 text-ink no-underline hover:no-underline text-xs font-semibold mx-1 mb-8; }
+  .brand b { display: grid; @apply place-items-center shrink-0 w-9 h-9 bg-accent rounded-xl text-white; }
+  .brand small { @apply block text-[11px] font-normal; }
+  .nav-group { @apply mb-5; }
+  .nav-group summary { @apply text-muted text-[11px] font-semibold tracking-wider uppercase px-3 pb-2 list-none; }
+  .nav-group summary::-webkit-details-marker { display: none; }
+  .nav-links a { @apply block px-3 py-2 text-ink no-underline hover:no-underline rounded-lg hover:bg-paper; }
+  .nav-links a[aria-current="page"] { @apply text-selected-ink bg-selected font-semibold; }
+  .page-content { @apply px-8 pt-7 pb-11; }
+  .page-content > * + * { @apply mt-6; }
+  .page-header { @apply flex flex-wrap items-end justify-between gap-3.5 pt-6; }
+  .page-header > .nhan-component { @apply absolute top-0 left-0; }
+  .page-header p { @apply mt-2; }
+  .card { @apply bg-white border border-line rounded-2xl p-5 min-w-0 shadow-sm; }
+  .card > h2 { @apply mb-3.5; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .number { @apply text-[28px] font-bold tracking-tight leading-snug my-2 [overflow-wrap:anywhere]; }
+  .notice { @apply px-5 py-4 border border-[#F1DDBE] rounded-2xl bg-[#FFF6E8] text-[#7A4100]; }
+  .notice p { @apply mt-1; }
+  .split { display: grid; @apply grid-cols-[minmax(0,1fr)_300px] gap-6 items-start; }
+  .stack { @apply flex flex-col gap-5 min-w-0; }
+  .drawer { @apply bg-white p-5 border border-line rounded-2xl shadow-lg shadow-ink/5 min-w-0; }
+  .drawer > .card { @apply p-0 border-0 shadow-none my-3.5; }
+  .drawer .number { @apply text-2xl; }
+  .table-scroll { @apply max-w-full overflow-x-auto rounded-xl border border-line; }
+  .card table { @apply min-w-[480px]; }
+  td .actions { @apply min-w-[130px]; }
+  td > a { @apply inline-block pt-2.5; }
+  .actions { @apply flex flex-wrap gap-2 items-center; }
+  .form-body { @apply flex flex-col gap-4; }
+  .field { @apply flex flex-col gap-1.5 text-[13px] font-medium; }
+  .field.check { @apply flex-row items-center justify-start font-normal; }
+  .filters { @apply flex flex-wrap items-end gap-3.5 pt-7; }
+  .filters > .nhan-component { @apply absolute top-0; }
+  .filters .field { @apply grow shrink basis-40; }
+  .badge { @apply inline-block text-selected-ink bg-selected px-2.5 py-1 rounded-lg text-xs font-medium; }
+  .badge > .nhan-component { @apply mb-1; }
+  .badge.red { @apply text-[#8C1D18] bg-[#FBE3E1]; }
+  .badge.warning { @apply text-[#7A4100] bg-[#FFF6E8]; }
+  .empty { @apply py-4 text-muted; }
+  #chu-giai { @apply max-w-[1200px] mx-auto my-9 p-6 border-t border-line; }
+  #chu-giai h2 { @apply mb-3.5; }
+  #chu-giai table { @apply min-w-[600px]; }
+  .index-content { @apply max-w-[1200px] mx-auto px-6 py-8; }
+  .index-content > * + * { @apply mt-7; }
+  .index-content .page-header { @apply block; }
+  .page-directory { display: grid; @apply grid-cols-3 gap-3; }
+  .directory-item { @apply flex flex-col p-5 bg-white border border-line rounded-2xl no-underline hover:no-underline shadow-sm transition hover:border-accent hover:shadow-md; }
+  .directory-item small { @apply [overflow-wrap:anywhere] mt-1.5; }
+  @media (min-width: 641px) {
+    .nav-group details::details-content { content-visibility: visible; display: block; }
+    .nav-group details:not([open]) > .nav-links { display: block; }
+  }
+  @media (min-width: 1500px) { .page-content { @apply max-w-[1500px] w-full mx-auto; } }
+  @media (min-width: 641px) and (max-width: 1050px) {
+    .shell { @apply grid-cols-[190px_minmax(0,1fr)]; }
+    .page-content { @apply px-5 py-6; }
+    .split { @apply grid-cols-1; }
+  }
+  @media (max-width: 640px) {
+    body { @apply pb-[150px]; }
+    .design-toggle { @apply px-3.5; }
+    .design-toggle a { @apply ml-6; }
+    .shell { @apply block min-h-0; }
+    .shell > .nhan-component { @apply static mx-3.5 mt-1.5 mb-0; }
+    .page-content { @apply px-3.5 pt-4 pb-6; }
+    .page-content > * + * { @apply mt-4; }
+    h1 { @apply text-2xl; }
+    .page-header { @apply gap-3; }
+    .page-header .actions { @apply w-full; }
+    .grid, .split { @apply grid-cols-1 gap-3.5; }
+    .number { @apply text-[26px]; }
+    .card, .drawer { @apply p-4; }
+    .navigation { @apply fixed z-10 bottom-0 inset-x-0 px-1.5 pt-2 pb-[max(12px,env(safe-area-inset-bottom))] border-0 border-t border-line grid-cols-4 gap-1; display: grid; }
+    .navigation > .nhan-component { @apply col-span-full m-0 justify-self-start; }
+    .navigation .brand { @apply hidden; }
+    .nav-group { @apply m-0 static; }
+    .nav-group > .nhan-component { @apply text-[8px] mb-1 p-0.5; }
+    .nav-group summary { @apply min-h-[44px] px-0.5 py-3 text-center text-[10px] normal-case tracking-normal rounded-lg cursor-pointer; }
+    .nav-group.selected summary { @apply text-selected-ink bg-selected; }
+    .nav-group details[open] summary { @apply outline outline-2 outline-accent; }
+    .nav-links { @apply absolute bottom-[calc(100%+8px)] inset-x-2.5 p-3 border border-line rounded-2xl bg-white shadow-xl; }
+    .nav-links a { @apply min-h-[44px]; }
+    .index-content { @apply px-3.5 py-5; }
+    .page-directory { @apply grid-cols-2; }
+    .directory-item { @apply p-3.5; }
+    #chu-giai { @apply px-3.5 py-4 mt-4; }
+  }
+}
+</style>
+<style>
+:root{--orange:#bd5524} .page-content{max-width:1550px}.navigation{background:#fffdf9}.brand b,button.primary{background:var(--orange);border-color:var(--orange)}.nav-links a[aria-current]{background:#fff0e5;color:#99431c}.eyebrow{font-size:11px;letter-spacing:2px;color:#9b532e;font-weight:700}.page-header{padding-top:0}h1{font-size:36px}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;background:white;padding:14px;border:1px solid #e4e1da;border-radius:14px}.periods{display:flex;gap:5px;background:#f6f5f1;padding:4px;border-radius:12px}.periods button{border:0;box-shadow:none;background:transparent}.periods button[aria-pressed=true]{background:#1c1b19;color:white}.date-nav{display:flex;align-items:center;gap:10px}.date-nav input{width:165px}.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.metric{padding:22px;background:white;border:1px solid #e4e1da;border-radius:16px}.metric strong{display:block;font-size:30px;letter-spacing:-1px;margin:10px 0}.metric.hero{background:#234b3d;color:white;border-color:#234b3d}.metric.hero small{color:#d6e8de}.metric small{display:block}.metric .label{font-weight:500}.two-col{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;align-items:start}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}.section-head h2{margin:0}.bars{display:flex;align-items:end;height:175px;gap:14px;padding:15px 0 25px;border-bottom:1px solid #e4e1da}.bar-col{flex:1;text-align:center;height:100%;display:flex;flex-direction:column;justify-content:end;position:relative}.bar{background:#bdd2c5;border-radius:6px 6px 0 0;min-height:5px}.bar-col.peak .bar{background:#bd5524}.bar-col small{position:absolute;bottom:-25px;width:100%;font-size:11px}.bar-col b{font-size:11px;margin-bottom:5px}.stat-row{display:flex;justify-content:space-between;gap:20px;padding:13px 0;border-bottom:1px solid #eeeae3}.stat-row:last-child{border-bottom:0}.timeline{list-style:none;padding:0;margin:0}.timeline li{display:grid;grid-template-columns:55px 1fr;gap:16px;padding:13px 0;border-bottom:1px solid #eeeae3}.timeline time{font-weight:650;color:#9b532e}.timeline p{margin:0}.timeline small{display:block;margin-top:4px}.note{padding:14px;border-radius:12px;background:#fff6e8;margin-bottom:12px}.note.green{background:#edf4ee}.muted-line{font-size:12px;color:#777168;margin-top:14px}.pill{padding:5px 10px;border-radius:20px;background:#f4eee5;color:#805d31;font-size:11px}.summary-strip{background:#edece5;padding:16px 20px;border-radius:12px}.table-scroll table{min-width:650px}#save-status{font-size:12px;color:#1e6b50}textarea{min-height:85px}.legend{font-size:12px;color:#777168}.period-hint{font-size:12px;color:#777168}@media(max-width:1100px){.two-col{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:640px){h1{font-size:29px}.metric{padding:16px}.metric strong{font-size:24px}.toolbar{align-items:stretch}.date-nav{flex-wrap:wrap}.date-nav input{flex:1}.bars{gap:8px}.page-content{padding:20px 14px}.kpis{gap:10px}}
+</style></head>
+<body>
+<div class="design-toggle"><input type="checkbox" id="hien-ten"><label for="hien-ten">Hiện tên component</label><a href="../index.html">Mục lục thiết kế</a></div>
+<div data-component="KhungChuQuan" class="shell" ><span class="nhan-component">KhungChuQuan</span>
+<nav data-component="ThanhDieuHuong" class="navigation" aria-label="Trang chủ quán"><span class="nhan-component">ThanhDieuHuong</span>
+<a class="brand" href="../index.html"><b>BT</b><span>Bánh cuốn Bà Thanh<small>Chủ quán</small></span></a><div data-component="NhomDieuHuong" class="nav-group selected" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hôm nay</summary><div class="nav-links"><a href="../tong_quan/tong-quan.html">Tổng quan</a><a href="tong-ket.html" aria-current="page">Tổng kết</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Thực đơn</summary><div class="nav-links"><a href="../san_pham/san-pham.html">Sản phẩm</a><a href="../menu-gia.html">Menu &amp; giá</a><a href="../danh-muc.html">Danh mục</a><a href="../combos/combo.html">Combo</a><a href="../topping.html">Topping</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Con người</summary><div class="nav-links"><a href="../nhan-vien/nhan-vien.html">Nhân viên</a><a href="../giao-viec/giao-viec.html">Giao việc</a><a href="../dao_tao/dao-tao.html">Đào tạo</a></div></details>
+</div>
+<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
+<details><summary>Hàng &amp; tiền</summary><div class="nav-links"><a href="../nguyen-lieu/nguyen-lieu.html">Nguyên liệu</a><a href="../kho/kho.html">Kho</a><a href="../khoan-chi/khoan-chi.html">Khoản chi</a></div></details>
+</div>
+
+</nav>
+<main class="page-content" data-component="TrangTongKet">
+<header class="page-header"><div><p class="eyebrow">NHÌN LẠI HOẠT ĐỘNG QUÁN</p><h1>Tổng kết</h1><p class="muted">Tiền thu, tiền chi và những chuyện đáng nhớ.</p></div><span class="pill">Bản thiết kế · số liệu minh hoạ</span></header>
+<section class="toolbar" data-component="BoLocKy"><div class="periods" role="group" aria-label="Kỳ tổng kết"><button data-period="day" aria-pressed="true">Ngày</button><button data-period="week" aria-pressed="false">Tuần</button><button data-period="month" aria-pressed="false">Tháng</button></div><div class="date-nav"><button id="prev" aria-label="Kỳ trước">←</button><label><span class="sr-only">Chọn ngày trong kỳ</span><input id="date" type="date" value="2026-10-24"></label><button id="next" aria-label="Kỳ sau">→</button><button id="today">Hôm nay</button></div></section>
+<div class="section-head"><h2 id="range"></h2><span class="period-hint">Dữ liệu mẫu để duyệt bố cục</span></div>
+<section class="kpis" id="kpis" data-component="ChiSoTongKet" aria-label="Các chỉ số tổng kết"></section>
+<p class="summary-strip" id="insight"></p>
+<div class="two-col"><section class="card" data-component="NhipBanHang"><div class="section-head"><h2 id="chart-title">Nhịp bán trong ngày</h2><span class="pill">Số suất</span></div><div class="bars" id="bars" role="img"></div><p class="muted-line" id="chart-note"></p></section>
+<section class="card" data-component="TienThuVaChi"><div class="section-head"><h2>Tiền thu &amp; chi</h2><span class="pill">VNĐ</span></div><div id="money"></div><p class="muted-line">Tiền nguyên liệu là khoản mua trong kỳ. Phần còn lại chưa trừ các chi phí khác, không phải lợi nhuận.</p></section></div>
+<div class="two-col"><section class="card" data-component="KhachVaThoiGianAn"><div class="section-head"><h2>Khách &amp; thời gian ăn</h2><span class="pill">Chỉ khách tại bàn</span></div><div id="dining"></div><p class="muted-line">Đề xuất hiển thị: bắt đầu ăn từ mốc món đầu tiên ra bàn; thời gian ăn đến lúc khách rời bàn. Các mốc và cách ghi cần được duyệt trước khi triển khai.</p></section>
+<section class="card" data-component="HieuQuaLamViec"><h2>Hiệu quả làm việc</h2><div id="efficiency"></div><p class="muted-line">Suất / giờ công = tổng suất bán ÷ tổng giờ làm của cả nhóm. Chỉ số minh hoạ cho toàn quán, chưa dùng để xếp hạng từng người.</p></section></div>
+<section class="card" data-component="BangNhinLai"><div class="section-head"><h2 id="detail-title">Chi tiết trong ngày</h2><span class="muted">Đối chiếu cùng ghi chú</span></div><div class="table-scroll" tabindex="0" role="region" aria-label="Chi tiết tổng kết"><table><thead><tr><th scope="col" id="bucket-title">Giờ</th><th scope="col">Doanh thu</th><th scope="col">Suất bán</th><th scope="col">Khách tại bàn</th><th scope="col">Ghi chú</th></tr></thead><tbody id="details"></tbody></table></div></section>
+<div class="two-col"><section class="card" data-component="DienBienTrongNgay"><div class="section-head"><h2 id="events-title">Diễn biến trong ngày</h2><span class="pill">Các mốc đáng chú ý</span></div><ol class="timeline" id="events"></ol></section>
+<section class="card" data-component="GhiChuNgay"><div class="section-head"><h2>Thời tiết &amp; ghi chú</h2><span class="pill" id="note-date"></span></div><div id="existing-notes"></div><form id="note-form"><label class="field">Thời tiết<select id="weather"><option>Trời mưa</option><option>Nắng</option><option>Nhiều mây</option><option>Không ghi nhận</option></select></label><label class="field" style="margin-top:12px">Điều cần nhớ<textarea id="note-text" maxlength="1000" placeholder="Ví dụ: mưa từ 8 giờ, khách đến muộn; ngày mai chuẩn bị thêm giò…"></textarea></label><div class="actions" style="margin-top:12px"><button class="primary" type="submit">Lưu ghi chú mẫu</button><span id="save-status" role="status"></span></div></form><p class="muted-line">Ghi chú gắn với ngày đang chọn. Trong bản mẫu, ghi chú chỉ giữ khi trang còn mở.</p></section></div>
+<details class="legend" id="chu-giai"><summary>Chú giải các khối thiết kế</summary><p>BoLocKy · ChiSoTongKet · NhipBanHang · TienThuVaChi · KhachVaThoiGianAn · HieuQuaLamViec · BangNhinLai · DienBienTrongNgay · GhiChuNgay. Mỗi khối là một phần riêng để góp ý thiết kế.</p></details>
+</main></div><script>
+let period='day';const notes=new Map();const $=id=>document.getElementById(id);const money=n=>new Intl.NumberFormat('vi-VN').format(n)+' ₫';const fmt=d=>d.toLocaleDateString('vi-VN');const date=()=>new Date($('date').value+'T12:00:00');const iso=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+function bounds(){let a=date(),b=date();if(period==='week'){a.setDate(a.getDate()-(a.getDay()+6)%7);b=new Date(a);b.setDate(a.getDate()+6)}if(period==='month'){a.setDate(1);b=new Date(a.getFullYear(),a.getMonth()+1,0)}return [a,b]}
+const row=(a,b)=>`<div class="stat-row"><span>${a}</span><strong>${b}</strong></div>`;
+function render(){if(!$('date').value)return;const [a,b]=bounds(),days=period==='day'?1:period==='week'?7:b.getDate(),revenue=6480000*days,material=2180000*days,labor=1260000*days,servings=216*days;
+$('range').textContent=period==='day'?fmt(a):fmt(a)+' — '+fmt(b);document.querySelectorAll('[data-period]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.period===period));
+const metrics=[['Tổng doanh thu',money(revenue),'Sau hoàn tiền · tất cả kênh bán'],['Tiền mua nguyên liệu',money(material),'33,6% doanh thu · mua trong kỳ'],['Tiền cho con người',money(labor),'19,4% doanh thu · minh hoạ tiền công'],['Suất đã bán',servings.toLocaleString('vi-VN')+' suất','Tại bàn, mang đi và giao hàng'],['Khách tại bàn',(148*days).toLocaleString('vi-VN')+' khách','Không suy số khách từ đơn mang đi'],['Thời gian ăn trung bình','24 phút','Từ món đầu ra bàn đến khách rời bàn']];
+$('kpis').innerHTML=metrics.map((x,i)=>`<article class="metric ${i===0?'hero':''}"><span class="label">${x[0]}</span><strong>${x[1]}</strong><small>${x[2]}</small></article>`).join('');
+$('insight').textContent='Bán '+servings.toLocaleString('vi-VN')+' suất · '+money(revenue-material-labor)+' còn lại sau tiền mua nguyên liệu và tiền công. Xem cùng diễn biến để hiểu thay đổi trong kỳ.';
+$('money').innerHTML=row('Tổng doanh thu',money(revenue))+row('Mua nguyên liệu',money(material))+row('Tiền công / nhân sự',money(labor))+row('Còn lại trước chi phí khác',money(revenue-material-labor));
+$('dining').innerHTML=row('Khách bắt đầu ăn đầu tiên', '06:12')+row('Khung giờ bắt đầu ăn đông nhất','07:00 – 08:00')+row('Thời gian ăn trung bình','24 phút')+row('Thời gian chờ món đầu trung bình','8 phút');
+$('efficiency').innerHTML=row('Tổng giờ công',(24*days)+' giờ')+row('Số suất / giờ công','9 suất')+row('Doanh thu / giờ công',money(270000))+row('Việc hoàn thành',(18*days)+' / '+(20*days)+' việc');
+let labels,counts;if(period==='day'){labels=['06h','07h','08h','09h','10h','11h'];counts=[24,62,48,36,28,18]}else if(period==='week'){labels=['T2','T3','T4','T5','T6','T7','CN'];counts=[190,204,210,198,222,238,250]}else{labels=['01–07','08–14','15–21','22–28',...(days>28?['29–'+days]:[])];counts=[1480,1530,1460,1578,...(days>28?[216*(days-28)]:[])]}
+$('chart-title').textContent=period==='day'?'Nhịp bán trong ngày':period==='week'?'Suất bán theo ngày':'Suất bán theo từng nhóm ngày';$('bars').setAttribute('aria-label',labels.map((x,i)=>x+': '+counts[i]+' suất').join(', '));$('bars').innerHTML=labels.map((x,i)=>`<div class="bar-col ${counts[i]===Math.max(...counts)?'peak':''}"><b>${counts[i]}</b><div class="bar" style="height:${counts[i]/Math.max(...counts)*115}px"></div><small>${x}</small></div>`).join('');$('chart-note').textContent=period==='day'?'Đông nhất lúc 07:00–08:00: 62 suất. Mưa bắt đầu lúc 08:10.':'Các cột cộng đủ tổng suất của kỳ. Đối chiếu ghi chú mưa và các ngày đông khách bên dưới.';
+$('bucket-title').textContent=period==='day'?'Giờ':'Ngày';$('detail-title').textContent=period==='day'?'Chi tiết trong ngày':'Chi tiết từng ngày';let detail=period==='day'?counts:Array.from({length:days},(_,i)=>period==='week'?counts[i]:216);let customers=period==='day'?[16,44,34,24,18,12]:Array.from({length:days},()=>148);
+$('details').innerHTML=detail.map((n,i)=>{let d=new Date(a);d.setDate(a.getDate()+i);return `<tr><td>${period==='day'?labels[i]+' – '+(7+i)+'h':fmt(d)}</td><td>${money(n*30000)}</td><td>${n}</td><td>${customers[i]}</td><td>${i===2?'Mưa, khách đến rải rác':i===1?'Cao điểm, tăng người ra món':'—'}</td></tr>`}).join('');
+$('events-title').textContent=period==='day'?'Diễn biến trong ngày':'Điểm đáng chú ý trong kỳ';let ev=period==='day'?[['05:30','Bắt đầu chuẩn bị','4 người vào ca, kiểm tra nguyên liệu.'],['06:12','Những khách đầu tiên bắt đầu ăn','Món đầu tiên được đưa ra bàn.'],['07:00','Bắt đầu giờ cao điểm','62 suất trong một giờ; thêm người hỗ trợ ra món.'],['08:10','Trời bắt đầu mưa','Khách tại bàn đến rải rác, cần xem lại đơn giao.'],['09:20','Bổ sung nguyên liệu','Mua thêm trứng, đã tính trong tiền mua nguyên liệu.'],['11:30','Kết thúc bán trong bản mẫu','Rà lại tiền thu, tiền chi và công việc còn dở.']]:[[fmt(a),'Đầu kỳ','Xem doanh thu, suất bán và tiền chi từng ngày trong bảng phía trên.'],[fmt(new Date(a.getFullYear(),a.getMonth(),a.getDate()+2)),'Có mưa buổi sáng','Ghi chú mẫu: khách đến rải rác.'],[fmt(b),'Cuối kỳ','Tổng hợp công việc và các ghi chú cần xem lại.']];$('events').innerHTML=ev.map(x=>`<li><time>${x[0]}</time><div><p><b>${x[1]}</b></p><small>${x[2]}</small></div></li>`).join('');
+$('note-date').textContent=fmt(date());$('existing-notes').replaceChildren();let sample=document.createElement('div');sample.className='note';sample.textContent=period==='day'?'08:10 · Trời mưa. Khách đến muộn hơn, chú ý đóng gói đơn giao.':'Ghi chú mẫu trong kỳ: có mưa buổi sáng; cao điểm cần thêm người ra món.';$('existing-notes').append(sample);for(const [key,entry] of notes){if(key>=iso(a)&&key<=iso(b)){let el=document.createElement('div');el.className='note green';el.textContent=key+' · '+entry.weather+' · '+entry.text;$('existing-notes').append(el)}}const saved=notes.get($('date').value);$('note-text').value=saved?.text||'';$('weather').value=saved?.weather||'Trời mưa';$('save-status').textContent='';
+}
+document.querySelectorAll('[data-period]').forEach(x=>x.onclick=()=>{period=x.dataset.period;render()});$('date').onchange=render;function move(step){let d=date();if(period==='month'){d.setDate(1);d.setMonth(d.getMonth()+step)}else d.setDate(d.getDate()+step*(period==='week'?7:1));$('date').value=iso(d);render()}$('prev').onclick=()=>move(-1);$('next').onclick=()=>move(1);$('today').onclick=()=>{$('date').value=iso(new Date());render()};$('note-form').onsubmit=e=>{e.preventDefault();if(!$('date').value)return;notes.set($('date').value,{weather:$('weather').value,text:$('note-text').value.trim()});render();$('save-status').textContent='Đã giữ ghi chú trong bản mẫu.'};
+for(const el of document.querySelectorAll('[data-component]')){const label=document.createElement('span');label.className='nhan-component';label.textContent=el.dataset.component;if(!el.querySelector(':scope > .nhan-component'))el.prepend(label)}render();
+</script></body></html>
