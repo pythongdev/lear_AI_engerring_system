@@ -3197,3 +3197,7 @@ Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/bac
 **Bổ sung giao diện T-247 — chủ repo 2026-10-24:** thêm Ẩn/Hiện toàn bộ nội dung từng mục chi, giữ tiêu đề và số khoản con; trạng thái riêng không mất khi lọc/sửa dữ liệu. Bỏ hai thẻ tổng Trả từ két và Tiền riêng, chỉ giữ Tổng chi trong kỳ; bộ lọc và dữ liệu nguồn tiền vẫn giữ nguyên.
 
 **Kiểm tra phần Ẩn/Hiện T-247:** Node VM PASS: thu gọn từng mục độc lập, giữ trạng thái sau render, chỉ còn thẻ tổng chi; các kiểm tra sửa/xoá và sửa tiền vẫn PASS. Gate 2026-10-24 chạy lại ngoài sandbox trả 2 do build Turbopack bị chặn mở cổng (`Operation not permitted`), các test backend đạt. Chưa kiểm trực quan; giữ In Progress chờ gate xanh.
+
+**Bổ sung yêu cầu T-247 — 2026-10-24:** thêm nút Ẩn/Hiện cho toàn bộ bảng “Các khoản chi”. Acceptance: mặc định hiện; ẩn cả bảng và thông báo rỗng, giữ tiêu đề/nút; bấm lại hiện; trạng thái không mất khi đổi bộ lọc, thuộc tính aria-expanded đồng bộ.
+
+**Kiểm tra nút bảng T-247 — 2026-10-24:** đã thêm Ẩn/Hiện cho bảng “Các khoản chi”, mặc định hiện, giữ tiêu đề và trạng thái khi lọc. Node VM PASS: JavaScript hợp lệ, ba lần bấm đồng bộ hidden/nhãn/aria-expanded. Chưa kiểm trực quan. Gate trực tiếp trả 2 do Docker; chạy lại ngoài sandbox trả 2 tại build FE vì Turbopack không được mở cổng (`Operation not permitted`). Giữ In Progress, chưa commit.
