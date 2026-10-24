@@ -3186,8 +3186,14 @@ Một tới ba dòng.
 
 Chủ repo yêu cầu 2026-10-24; chỉ bản HTML minh hoạ, không đổi API hay dữ liệu thật. Codex thực hiện, chưa review độc lập.
 
-Acceptance: sửa tên mục và khoản con, đồng bộ tên vào sổ; sửa khoản chi giữ yêu cầu lý do; xoá có xác nhận và cập nhật tổng/bộ lọc; chặn xoá mục hoặc khoản con còn khoản chi (chủ repo chọn 2026-10-24); đếm toàn bộ khoản chi, kể cả ngoài bộ lọc. Không thay đổi số tiền khi chỉ đổi tên.
+Acceptance: sửa tên mục và khoản con, đồng bộ tên vào sổ; từ nút Sửa của khoản con/mục có thể chọn lần ghi theo ngày để sửa tiền; sửa khoản chi giữ yêu cầu lý do; xoá có xác nhận và cập nhật tổng/bộ lọc; chặn xoá mục hoặc khoản con còn khoản chi (chủ repo chọn 2026-10-24); đếm toàn bộ khoản chi, kể cả ngoài bộ lọc. Không thay đổi số tiền khi chỉ đổi tên.
 
 Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
 
 **Bàn giao T-247 — 2026-10-24:** Codex thực hiện trên nhánh `P4A-01`, chưa review độc lập. Có form đổi tên mục/khoản con (đồng bộ tên sổ, giữ số tiền, chặn trùng), xoá khoản chi với lý do/xác nhận, xoá mục/khoản con khi không còn khoản chi. Chủ repo chọn chặn xoá khi còn khoản chi; kiểm trên toàn bộ dữ liệu minh hoạ, không chỉ các dòng đang lọc. Cho phép chuyển khoản chi bằng form sửa có sẵn. Mọi thao tác chỉ ở bộ nhớ trình duyệt, không đổi dữ liệu thật. Kiểm bằng Node VM: đổi tên, giữ tổng, chặn trùng, xác nhận, xoá khoản chi cập nhật tổng, chặn xoá mục có dữ liệu, xoá khoản con/mục rỗng đều PASS. Gate trực tiếp lần đầu bị chặn Docker; chạy lại ngoài sandbox trả 2 do Turbopack không được mở cổng (`Operation not permitted`). Các cổng scope, tài liệu, hợp đồng đạt; backend test đạt. Giữ In Progress vì gate chưa xanh. Cần chạy lại gate ở môi trường cho phép mở cổng và kiểm tra trực quan; chưa commit. Kiểm bổ sung PASS: chặn xoá cả khoản chi ngoài bộ lọc, đổi tên mục giữ liên kết khoản chi.
+
+**Bổ sung T-247 — chủ repo 2026-10-24:** nút Sửa mở cả đổi tên và danh sách các lần ghi (ngày, số tiền, người ghi); chọn Sửa tiền mở đúng form sửa khoản chi có lý do. Tiền sửa cập nhật vào lần ghi cũ và tổng, không thêm dòng. Tên đang nhập phải lưu trước khi chuyển sang sửa tiền. Kiểm Node VM PASS: chọn đúng khoản theo mục/khoản con, nạp số tiền/ngày, sửa tiền giữ số dòng và cập nhật tổng, bảo vệ tên chưa lưu. Chưa kiểm trực quan. Gate chạy lại ngoài sandbox vẫn trả 2 tại Turbopack mở cổng bị chặn; giữ In Progress, chưa commit.
+
+**Bổ sung giao diện T-247 — chủ repo 2026-10-24:** thêm Ẩn/Hiện toàn bộ nội dung từng mục chi, giữ tiêu đề và số khoản con; trạng thái riêng không mất khi lọc/sửa dữ liệu. Bỏ hai thẻ tổng Trả từ két và Tiền riêng, chỉ giữ Tổng chi trong kỳ; bộ lọc và dữ liệu nguồn tiền vẫn giữ nguyên.
+
+**Kiểm tra phần Ẩn/Hiện T-247:** Node VM PASS: thu gọn từng mục độc lập, giữ trạng thái sau render, chỉ còn thẻ tổng chi; các kiểm tra sửa/xoá và sửa tiền vẫn PASS. Gate 2026-10-24 chạy lại ngoài sandbox trả 2 do build Turbopack bị chặn mở cổng (`Operation not permitted`), các test backend đạt. Chưa kiểm trực quan; giữ In Progress chờ gate xanh.
