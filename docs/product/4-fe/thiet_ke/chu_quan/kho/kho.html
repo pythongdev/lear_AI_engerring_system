@@ -14,6 +14,7 @@
 @media(max-width:760px){.shell{display:block}.navigation{padding:14px;border-right:0;border-bottom:1px solid var(--line)}.brand{margin-bottom:14px}.navigation>.nhan-component{display:none!important}.nav-group{display:inline-block;vertical-align:top;margin:0 6px 0 0}.nav-group summary{padding:8px;cursor:pointer}.nav-links{position:absolute;z-index:5;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px;min-width:160px}.page-content{padding:24px 14px}.page-header{align-items:start}h1{font-size:22px}.overview{gap:8px}.metric{padding:12px}.metric strong{font-size:22px}.metric p{font-size:9px}.design-toggle{padding:8px 14px;flex-wrap:wrap}#chu-giai{padding:20px 14px}}
 @media(max-width:480px){.overview{grid-template-columns:1fr}.metric{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px}.metric strong{grid-column:2;grid-row:1/3;margin:0}.metric p{grid-column:1}.page-header{flex-wrap:wrap}.card,.drawer{padding:14px}}
 .add-ingredient{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 12px;border:1px solid var(--accent);border-radius:7px;text-decoration:none}.add-ingredient:hover{filter:brightness(1.15)}
+dialog{width:min(440px,calc(100% - 28px));max-height:calc(100dvh - 32px);overflow:auto;margin:auto;padding:24px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text)}dialog::backdrop{background:#000b}.dialog-heading{display:flex;align-items:start;justify-content:space-between;gap:16px;margin-bottom:20px}.dialog-heading h2{font-size:18px;font-weight:600}.dialog-heading p{font-size:11px;color:var(--muted);margin-top:6px}.dialog-close{padding:0;min-width:32px;min-height:32px;font-size:18px}.ingredient-form{display:flex;flex-direction:column;gap:18px}.ingredient-form .field{font-size:12px}.ingredient-form small{font-size:10px}.ingredient-form .actions{justify-content:flex-end;border-top:1px solid var(--line);padding-top:16px}.prototype-note{padding:10px 12px;border:1px solid var(--line);border-radius:7px;font-size:11px;color:var(--muted)}.prototype-feedback{font-size:11px;color:var(--accent)}.prototype-feedback:empty{display:none}html:has(dialog[open]){overflow:hidden}
 </style>
 </head>
 <body>
@@ -36,7 +37,7 @@
 </nav>
 <main data-component="TrangKho" class="page-content" ><span class="nhan-component">TrangKho</span>
 <header data-component="DauTrang" class="page-header" ><span class="nhan-component">DauTrang</span>
-<div><div class="eyebrow">HÀNG &amp; TIỀN / KHO</div><h1>Kho nguyên liệu</h1><p class="muted">Bản thiết kế tĩnh · số liệu minh hoạ</p></div><div class="actions"><button type="button">Đọc lại kho</button><a class="primary add-ingredient" href="../nguyen-lieu.html">＋ Thêm nguyên liệu</a></div>
+<div><div class="eyebrow">HÀNG &amp; TIỀN / KHO</div><h1>Kho nguyên liệu</h1><p class="muted">Bản thiết kế tĩnh · số liệu minh hoạ</p></div><div class="actions"><button type="button">Đọc lại kho</button><button type="button" class="primary add-ingredient" id="open-add-ingredient" aria-haspopup="dialog" aria-controls="add-ingredient-dialog">＋ Thêm nguyên liệu</button></div>
 </header>
 <section class="overview" aria-label="Tóm tắt dữ liệu minh hoạ">
 <div class="metric"><small>Nguyên liệu theo dõi</small><strong>02</strong><p>Trong bảng minh hoạ bên dưới</p></div>
@@ -71,7 +72,47 @@ Không nhắc
 
 </div>
 <section id="chu-giai"><h2>Chú giải component</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Chú giải component"><table><thead><tr><th scope="col">Tên</th><th scope="col">Nó là gì</th><th scope="col">Phạm vi</th></tr></thead><tbody><tr><td><code>BangDuLieu</code></td><td>Bảng dữ liệu có vùng cuộn ngang riêng.</td><td>dùng chung</td></tr><tr><td><code>DauTrang</code></td><td>Tiêu đề trang, lời dẫn và thao tác chính.</td><td>dùng chung</td></tr><tr><td><code>FormMenu</code></td><td>Khuôn form dùng chung cho các trường nhập và nút lưu, huỷ.</td><td>dùng chung</td></tr><tr><td><code>HopThoaiSuaCoLyDo</code></td><td>Ngăn bên phải để sửa dữ liệu và nhập lý do.</td><td>dùng chung</td></tr><tr><td><code>HuyHieuTrangThai</code></td><td>Nhãn trạng thái của một bản ghi.</td><td>dùng chung</td></tr><tr><td><code>KhungChuQuan</code></td><td>Vỏ trang nối điều hướng với nội dung quản trị.</td><td>dùng chung</td></tr><tr><td><code>NhomDieuHuong</code></td><td>Một nhóm liên kết đến các trang cùng mảng.</td><td>dùng chung</td></tr><tr><td><code>OMenu</code></td><td>Trường nhập hoặc chọn có nhãn trong FormMenu.</td><td>dùng chung</td></tr><tr><td><code>ThanhDieuHuong</code></td><td>Thanh bên trên máy tính và thanh bốn nhóm ở đáy điện thoại.</td><td>dùng chung</td></tr><tr><td><code>TheSo</code></td><td>Một chỉ số được trả về, chỉ định dạng để đọc.</td><td>dùng chung</td></tr><tr><td><code>TrangKho</code></td><td>Nội dung riêng của trang Kho.</td><td>riêng trang</td></tr></tbody></table></div></section>
+<dialog id="add-ingredient-dialog" aria-labelledby="add-ingredient-title" aria-describedby="add-ingredient-description" data-component="HopThoaiThemNguyenLieu">
+<header class="dialog-heading"><div><p class="eyebrow">KHO NGUYÊN LIỆU</p><h2 id="add-ingredient-title">Thêm nguyên liệu</h2><p id="add-ingredient-description">Điền thông tin nguyên liệu bạn muốn theo dõi.</p></div><button type="button" class="dialog-close" id="close-add-ingredient" aria-label="Đóng hộp thoại">×</button></header>
+<form id="add-ingredient-form" class="ingredient-form">
+<label class="field" for="ingredient-name">Tên nguyên liệu <input id="ingredient-name" name="name" type="text" placeholder="Ví dụ: Bột gạo" required autofocus></label>
+<label class="field" for="ingredient-unit">Đơn vị mua (tuỳ chọn)<input id="ingredient-unit" name="unit" type="text" placeholder="Ví dụ: kg, quả, lít"><small>Để trống nếu chưa có đơn vị mua.</small></label>
+<p class="prototype-note">Bản minh hoạ giao diện. Thông tin nhập tại đây chưa được lưu vào kho.</p>
+<p id="ingredient-feedback" class="prototype-feedback" role="status"></p>
+<div class="actions"><button type="button" id="cancel-add-ingredient">Huỷ</button><button type="submit" class="primary">Thêm nguyên liệu</button></div>
+</form>
+</dialog>
 <script>
+const ingredientDialog = document.querySelector('#add-ingredient-dialog');
+const ingredientTrigger = document.querySelector('#open-add-ingredient');
+const ingredientForm = document.querySelector('#add-ingredient-form');
+const ingredientFeedback = document.querySelector('#ingredient-feedback');
+ingredientTrigger.addEventListener('click', () => {
+ ingredientFeedback.textContent = '';
+ ingredientDialog.showModal();
+});
+for (const id of ['close-add-ingredient', 'cancel-add-ingredient']) {
+ document.getElementById(id).addEventListener('click', () => ingredientDialog.close());
+}
+ingredientDialog.addEventListener('click', event => {
+ const box = ingredientDialog.getBoundingClientRect();
+ if (event.target === ingredientDialog && (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom)) ingredientDialog.close();
+});
+ingredientDialog.addEventListener('close', () => ingredientTrigger.focus());
+ingredientForm.addEventListener('submit', event => {
+ event.preventDefault();
+ const nameInput = document.querySelector('#ingredient-name');
+ if (!nameInput.value.trim()) {
+  nameInput.setCustomValidity('Vui lòng nhập tên nguyên liệu.');
+  nameInput.reportValidity();
+  return;
+ }
+ ingredientFeedback.textContent = 'Bạn vừa thử thao tác thêm nguyên liệu. Bản minh hoạ chưa lưu dữ liệu.';
+});
+document.querySelector('#ingredient-name').addEventListener('input', event => {
+ event.target.setCustomValidity('');
+ ingredientFeedback.textContent = '';
+});
 const themeButton = document.querySelector('#theme-toggle');
 const applyTheme = theme => {
  document.documentElement.dataset.theme = theme;
