@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Theo dõi đơn hàng · Bàn 03</title><style>
+:root { color-scheme:dark; --bg:#000000; --card:#1F2937; --line:#2D3748; --muted:#9CA3AF; --accent:#FF7A1A; --field:#374151; --text:#F9FAFB; --page:#0a0a0a; --notch:#0f172a; --banner:#3a2310; --banner-ink:#7c4a23; --badge:#3a2a18}
+:root[data-theme=light] { color-scheme:light; --bg:#FFFFFF; --card:#F3F4F6; --line:#E5E7EB; --muted:#6B7280; --accent:#EA6A0C; --field:#E5E7EB; --text:#111827; --page:#F3F4F6; --notch:#E5E7EB; --banner:#FDE8D4; --banner-ink:#C2702F; --badge:#FDECDC}
+* { box-sizing:border-box}
+body { margin:0; background:var(--page); color:var(--text); font:12px/1.45 'Be Vietnam Pro',system-ui,sans-serif}
+button,input,textarea { font:inherit; color:inherit}
+button { cursor:pointer; border:1px solid var(--line); border-radius:7px; background:transparent; padding:6px 10px}
+button:hover { filter:brightness(1.15)}
+:focus-visible { outline:2px solid var(--accent); outline-offset:3px}
+h1,h2,h3,p { margin:0}
+h1 { font-size:20px; font-weight:600}
+h2,h3 { font-size:14px; font-weight:500}
+.muted { color:var(--muted)}
+.price { color:var(--accent); white-space:nowrap}
+.primary { background:var(--accent); border-color:var(--accent); color:#fff}
+.plain { border:0; padding:0}
+.row { display:flex; align-items:center; justify-content:space-between; gap:8px}
+.phone { max-width:472px; margin:24px auto; background:var(--bg); border:1px solid var(--notch); border-radius:24px; padding:0 15px 16px; overflow:clip}
+.status { height:30px; font-size:11px; position:relative}
+.status:after { content:''; width:150px; height:16px; border-radius:12px; background:var(--notch); position:absolute; top:5px; left:50%; transform:translateX(-50%)}
+.sticky { position:sticky; top:0; z-index:5; background:var(--bg)}
+.header { min-height:58px; border-bottom:1px solid var(--line)}
+.header small { font-size:11px; color:var(--muted)}
+.header-actions { display:flex; gap:6px}
+.mini { height:50px; gap:8px; border-bottom:1px solid var(--line)}
+.mini>button { border-radius:20px; white-space:nowrap; font-size:11px; padding:4px 9px}
+.chips { display:flex; gap:6px; overflow:auto; scrollbar-width:none; flex:1}
+.chip { background:var(--field); border-radius:16px; white-space:nowrap; font-size:10px; padding:4px 8px}
+.banner { height:96px; background:var(--banner); border-radius:10px; margin:8px 0; display:flex; flex-direction:column; justify-content:end; padding:10px 12px; gap:18px}
+.banner div { text-align:center; color:var(--banner-ink); font-size:16px}
+.search { background:var(--field); border:0; border-radius:8px; width:100%; height:34px; padding:0 12px; margin:14px 0}
+input::placeholder,textarea::placeholder { color:var(--muted)}
+.tabs { display:flex; gap:17px; border-bottom:1px solid var(--line); overflow:auto; white-space:nowrap}
+.tabs button { border:0; border-radius:0; color:var(--muted); padding:10px 0; font-size:12px}
+.tabs .active { color:var(--accent); border-bottom:3px solid var(--accent)}
+.label { font-size:12px; color:var(--muted); margin:12px 0 8px}
+.rail { display:flex; gap:12px; overflow:auto}
+.favourite { flex:0 0 112px; border:1px solid var(--line); background:var(--card); border-radius:8px; overflow:hidden; font-size:11px}
+.fav-image { height:56px; background:var(--field); display:grid; place-items:center; position:relative; font-size:20px}
+.heart { position:absolute; right:4px; top:4px; background:#ffffffcc; color:#6b7280; border:0; padding:1px 5px; border-radius:6px; font-size:13px}
+.heart[aria-pressed=true] { color:#ef4444}
+.fav-copy { padding:4px 6px}
+.fav-copy p { margin-top:3px}
+.card { display:grid; grid-template-columns:80px minmax(0,1fr) 110px; gap:12px; padding:12px; border:1px solid var(--line); background:var(--card); border-radius:10px; margin-bottom:12px; min-height:142px}
+.thumb { height:80px; background:var(--field); border-radius:8px; display:grid; place-items:center; font-size:26px; position:relative}
+.thumb>.plain { font-size:26px}
+.card-copy { display:flex; flex-direction:column; align-items:start; min-width:0}
+.card h3 { line-height:1.4; margin-bottom:5px}
+.dishes { list-style:none; padding:0; margin:0; color:var(--muted); font-size:11px}
+.dishes li { display:flex; gap:6px; align-items:center; margin-bottom:3px}
+.badge { background:var(--badge); color:var(--accent); padding:1px 5px; border-radius:5px; font-size:10px; white-space:nowrap}
+.detail { color:var(--accent); font-size:11px; margin-top:auto; padding-top:8px}
+.controls>.price { font-size:14px; margin-bottom:6px}
+.stepper { display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.stepper button { width:30px; height:30px; padding:0; background:var(--field); border:0; font-size:17px}
+.stepper button:last-child { background:var(--accent); color:#fff}
+.stepper output { min-width:24px; text-align:center; font-size:14px}
+.fillings { display:flex; flex-direction:column; gap:4px; margin-top:12px}
+.fillings button { padding:4px 3px; font-size:10px; color:var(--muted); white-space:nowrap}
+.fillings button[aria-pressed=true] { background:var(--accent); border-color:var(--accent); color:#fff}
+.description { color:var(--muted); font-size:11px}
+.product { cursor:pointer}
+.soup-card { min-height:100px}
+.summary { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px; margin-top:12px}
+.summary .label { font-size:11px; margin-top:16px}
+summary { cursor:pointer; list-style:none}
+summary::-webkit-details-marker { display:none}
+.disclosure:after { content:'⌄ Hiện'; color:var(--muted); font-size:11px; margin-left:auto}
+details[open]>.disclosure:after { content:'⌄ Ẩn'}
+.order-line { display:flex; align-items:center; gap:6px}
+.order-line .name { flex:1; font-size:13px}
+.compact.stepper { gap:3px}
+.compact.stepper button { width:23px; height:23px; background:transparent; border:1px solid var(--line); color:var(--muted); font-size:12px}
+.compact.stepper output { min-width:19px; font-size:11px}
+.order-line>.price { font-size:10px; color:var(--muted)}
+.trash { border:0; padding:0; font-size:11px; color:var(--muted)}
+.subitems { border-left:2px solid var(--line); padding-left:10px; margin:8px 0 0 10px}
+.subitems .order-line { margin:3px 0}
+.subitems .name { font-size:11px; color:var(--muted)}
+.subitems .trash { margin-left:40px}
+.subtotal { text-align:right; color:var(--muted); font-size:10px; margin:5px 0 8px}
+.total { border-top:1px solid var(--line); padding-top:10px; margin-top:12px; font-size:13px}
+.canh { border:1px solid var(--line); border-radius:8px; padding:8px; margin-top:12px}
+.canh .row { margin-top:4px; font-size:11px}
+.canh output { color:var(--accent)}
+.table-wrap { overflow:auto}
+table { border-collapse:collapse; width:100%; font-size:10px; margin:6px 0 12px; text-align:left; white-space:nowrap}
+th { font-weight:400; color:var(--muted); font-size:9px}
+td,th { padding:3px 3px 3px 0}
+td:nth-child(2),td:nth-child(3) { color:var(--accent); font-size:9px}
+td:nth-child(4) { color:var(--muted); font-size:9px}
+td:last-child,th:last-child { text-align:right}
+.note { border-top:1px solid var(--line); padding-top:8px; font-size:11px}
+.saved { color:#22c55e; font-size:10px}
+textarea { width:100%; resize:vertical; min-height:40px; border:0; background:var(--field); border-radius:7px; padding:10px; margin-top:8px; font-size:11px}
+.checkout { width:100%; height:52px; border-radius:12px; margin-top:12px; font-size:15px}
+.checkout .count { background:#ff9a4d; border-radius:6px; font-size:12px; padding:3px 9px}
+.bottom-nav { display:flex; justify-content:space-between; background:var(--page); border:1px solid var(--line); border-radius:8px; margin-top:10px; padding:8px 7px; font-size:9px; color:var(--muted)}
+.bottom-nav a { color:inherit; text-decoration:none}
+.bottom-nav a:first-child { color:var(--accent)}
+dialog { width:min(380px,calc(100% - 24px)); max-height:calc(100dvh - 32px); border:1px solid var(--line); border-radius:12px; background:var(--card); color:var(--text); padding:18px; overscroll-behavior:contain}
+dialog::backdrop { background:#000b}
+dialog h2 { font-size:16px; margin-bottom:18px}
+dialog .row { margin:10px 0}
+dialog .actions { display:flex; gap:12px; margin-top:16px}
+dialog .actions button { flex:1; min-height:34px}
+dialog .radio { display:flex; align-items:center; gap:10px; margin:16px 0}
+dialog .radio .muted { margin-left:auto; font-size:11px}
+input[type=radio] { accent-color:var(--accent)}
+.modal-hero { height:90px; background:var(--field); display:grid; place-items:center; margin:-18px -18px 14px; color:var(--muted)}
+.drawer { margin:0 0 0 auto; height:100dvh; max-height:100dvh; border-radius:12px 0 0 12px; width:min(380px,100%)}
+.drawer[open] { display:flex; flex-direction:column; animation:slide-in .22s ease-out}
+.drawer h2 { margin:0}
+.drawer header { border-bottom:1px solid var(--line); padding-bottom:12px}
+.drawer-footer { margin-top:auto; padding-top:24px}
+.drawer .order-line { margin:18px 0 2px}
+.drawer .price { margin:6px 0}
+.drawer .checkout { height:36px; font-size:13px}
+.drawer .continue { width:100%; margin-top:8px; border:0}
+.notice { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--card); border:1px solid var(--accent); border-radius:8px; padding:12px; z-index:20; width:max-content; max-width:90vw}
+.notice:empty { display:none}
+@keyframes slide-in { from { transform:translateX(100%)}
+to { transform:translateX(0)}
+}
+@media(max-width:480px) { .phone { margin:0 auto; border-radius:0; padding-left:10px; padding-right:10px}
+.card { grid-template-columns:64px minmax(0,1fr) 100px; gap:8px; padding:10px}
+.thumb { height:64px}
+.card h3 { font-size:13px}
+.tabs { gap:14px}
+.header h1 { font-size:19px}
+.subitems .trash { margin-left:16px}
+}
+@media(prefers-reduced-motion:reduce) { .drawer[open] { animation:none}
+}
+
+
+/* Combo detail: a self-contained menu preview. */
+#combo { width:min(472px,calc(100% - 20px)); padding:0; background:var(--bg); border-radius:24px; }
+.combo-top { display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--line); }
+.combo-top button { min-height:40px; }
+.combo-top span { color:var(--muted); font-size:11px; }
+.combo-hero { position:relative; margin:16px 18px 0; height:190px; border-radius:18px; overflow:hidden; display:grid; place-items:center; background:radial-gradient(ellipse at 50% 45%,#ffe7ba,#dca86d); }
+.combo-plate { width:220px; height:135px; border-radius:50%; background:#fff7e6; border:9px solid #f6e3c5; box-shadow:0 18px 30px #74461840; display:flex; justify-content:center; align-items:center; gap:8px; transform:rotate(-8deg); font-size:52px; }
+.combo-plate span:last-child { font-size:40px; }
+.combo-hero small { position:absolute; bottom:12px; left:14px; color:#694522; font-size:10px; }
+.combo-copy { padding:22px 22px 18px; }
+.combo-eyebrow { color:var(--accent); font-size:10px; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+#combo h2 { font-size:26px; line-height:1.2; margin:0 0 10px; letter-spacing:-.7px; }
+.combo-unit { display:flex; align-items:baseline; gap:7px; margin-bottom:12px; }
+.combo-unit .price { font-size:24px; font-weight:650; }
+.combo-copy>p:last-child { color:var(--muted); font-size:13px; line-height:1.7; }
+.combo-includes { padding:0 22px 20px; }
+.combo-section-title { display:flex; align-items:center; justify-content:space-between; padding:16px 0 8px; border-top:1px solid var(--line); }
+.combo-section-title h3 { font-size:15px; font-weight:600; }
+.combo-section-title span { color:var(--muted); font-size:11px; }
+.combo-item { display:flex; gap:12px; align-items:center; padding:12px 0; border-bottom:1px solid var(--line); font-size:13px; }
+.combo-item-icon { display:grid; place-items:center; width:42px; height:42px; background:var(--card); border-radius:12px; font-size:23px; }
+.combo-item strong { margin-left:auto; color:var(--accent); font-size:13px; }
+.combo-footer { position:sticky; bottom:0; background:var(--bg); padding:16px 22px max(20px,env(safe-area-inset-bottom)); border-top:1px solid var(--line); }
+.combo-footer .row { margin:0 0 14px; }
+.combo-footer .stepper { height:40px; }
+.combo-footer .stepper button { width:40px; height:38px; }
+.combo-footer>button { width:100%; display:flex; justify-content:space-between; align-items:center; min-height:50px; border-radius:13px; padding:12px 16px; font-size:14px; font-weight:600; }
+.combo-footer button:disabled { opacity:.4; cursor:default; }
+@media(max-width:480px) { #combo { width:100%; max-width:100%; height:100dvh; max-height:100dvh; margin:0; border:0; border-radius:0; } }
+
+
+a {color:inherit;text-decoration:none} .header h1 {font-size:17px} .live {color:#4ade80;font-size:10px;white-space:nowrap} .intro {padding:20px 0 6px} .intro h2 {font-size:24px;font-weight:650;margin:5px 0} .eyebrow {font-size:10px;letter-spacing:1.6px;color:var(--accent)} .pill {border-radius:20px;padding:5px 9px;background:var(--badge);color:var(--accent);font-size:11px} .progress {width:100%;height:6px;accent-color:var(--accent);margin:16px 0 8px} .dish {display:flex;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid var(--line)} .dish:last-child {border:0} .dish-icon {width:38px;height:38px;background:var(--field);border-radius:10px;display:grid;place-items:center;font-size:21px} .dish-copy {flex:1} .dish-copy small {display:block;color:var(--muted);margin-top:4px;font-size:10px} .dish-state {text-align:right;font-size:10px} .done {color:#4ade80} .cancel {color:#f87171;font-size:10px;border:0;padding:5px 0} .combo-heading {padding:14px 0 4px;font-size:13px;cursor:pointer} .combo-body {padding-left:12px;border-left:2px solid var(--line);margin:8px 0} .caption {font-size:10px;color:var(--muted)} .money-row {margin:12px 0} .money-row strong {font-size:24px;color:var(--accent)} .help {padding:12px;background:var(--banner);border-radius:8px;font-size:11px;color:var(--muted);margin-top:12px} .actions-grid {display:grid;grid-template-columns:1fr 1.7fr;gap:10px;margin:16px 0} .actions-grid a,.actions-grid button {text-align:center;padding:13px 6px;border-radius:10px} .demo-tools {margin-top:16px;color:var(--muted);font-size:10px} .demo-tools button {font-size:10px;margin-top:8px} .connection {padding:10px;background:var(--banner);border-radius:8px;margin-top:10px} [hidden] {display:none!important} table {font-size:11px} td,th {padding:9px 5px;border-bottom:1px solid var(--line)} .bottom-nav {position:sticky;bottom:8px} .bottom-nav a:first-child {color:inherit} .bottom-nav [aria-current] {color:var(--accent)} .note-copy {padding-top:12px;margin-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:11px} .summary>summary {cursor:pointer} .summary h2 {font-weight:600} .finish {padding:12px;color:#4ade80;background:#14532d33;border-radius:8px;margin-top:12px} @media(max-width:360px) {.header h1 {font-size:14px}.header {gap:5px}.summary {padding:10px}}
+</style></head><body>
+<main class="phone">
+<div class="status row" aria-label="Thanh trạng thái"><span>9:41</span><span>📶 🔋</span></div>
+<header class="header row sticky" data-component="OrderDetailHeader"><a href="../menu/menu.html" aria-label="Quay lại menu">←</a><h1>Theo dõi đơn hàng</h1><span class="live" id="connection-state">● Minh hoạ</span><button id="theme-toggle" aria-label="Chuyển sáng tối">☀</button></header>
+<div class="connection" id="connection-error" role="status" hidden>Mất kết nối minh hoạ. Tiến độ đang hiển thị có thể chưa mới. <button id="retry">Thử lại</button></div>
+<section class="intro"><p class="eyebrow">BỮA ĂN CỦA BẠN</p><div class="row"><h2>Bàn 03</h2><span class="pill" id="order-status">Đang chuẩn bị</span></div><div class="row muted"><span>Đơn #BC-0042</span><span>Đặt lúc 09:29 · 12 phút trước</span></div></section>
+<section class="summary" data-component="OrderProgress"><div class="row"><h2>Món đang được chuẩn bị</h2><span class="price" id="progress-label">1/5 phần</span></div><progress class="progress" id="progress" value="1" max="5" aria-label="Tiến độ ra món">1/5</progress><p class="caption">Món sẽ được mang ra ngay khi làm xong.</p>
+<details open><summary class="combo-heading">Combo Đầy Đặn <span class="muted">×1</span> <span class="price" style="float:right">42.000đ</span></summary><div class="combo-body" id="combo-dishes"></div></details>
+<div id="single-dishes"></div><div class="note-copy">Ghi chú cho bếp: Ít hành, mang thêm tương ớt.</div></section>
+<details class="summary" open data-component="DishSummary"><summary class="row"><h2>Tổng hợp món</h2><span class="muted">⌄</span></summary><div class="table-wrap"><table><thead><tr><th>Món</th><th>SL</th><th>Đã ra</th><th>Còn</th></tr></thead><tbody id="dish-summary"></tbody></table></div><p class="caption">Giá combo được tính theo combo, không cộng lại giá từng món bên trong.</p></details>
+<section class="summary" data-component="MoneySummary"><h2>Tạm tính đơn hàng</h2><div class="row money-row"><span class="muted">Đã ra</span><span id="served-money">0đ</span></div><div class="row money-row"><span class="muted">Chưa ra</span><span id="remaining-money">77.000đ</span></div><div class="row total"><span>Tổng cộng</span><strong class="price" style="font-size:24px">77.000đ</strong></div><p class="caption" style="margin-top:8px">Số tiền minh hoạ · Chưa thanh toán</p></section>
+<p class="finish" id="finished" role="status" hidden>✓ Tất cả món đã được mang ra. Chúc bạn ngon miệng!</p>
+<div class="help">Cần hỗ trợ hoặc đổi món? Vui lòng trao đổi với nhân viên tại quán.</div>
+<div class="actions-grid"><button class="cancel" data-cancel="đơn hàng">Huỷ đơn hàng</button><a class="primary" href="../menu/menu.html?add_to_order=BC-0042">＋ Gọi thêm món</a></div>
+<nav class="bottom-nav" aria-label="Điều hướng cuối trang"><a href="../menu/menu.html">🏠 Menu</a><a href="order-detail.html" aria-current="page">🧾 Đơn</a><a href="../favourite/favourite.html">♥ Thích</a><a href="#progress">📡 Theo dõi</a><button class="plain" id="settings">⚙ Cài đặt</button></nav>
+<details class="demo-tools"><summary>Bản thiết kế · dữ liệu minh hoạ</summary><p>Không kết nối máy chủ. Dùng các nút dưới đây để xem trạng thái giao diện.</p><button id="advance">Mô phỏng mang ra món tiếp theo</button> <button id="disconnect">Mô phỏng mất kết nối</button> <button id="reset">Đặt lại</button></details>
+</main>
+<dialog id="cancel-dialog" aria-labelledby="cancel-title"><h2 id="cancel-title">Yêu cầu huỷ</h2><p id="cancel-description" style="margin:12px 0"></p><p class="muted">Đây là bản thiết kế. Điều kiện huỷ và số tiền cần được máy chủ xác nhận khi triển khai.</p><div class="actions"><button id="close-cancel">Quay lại</button><button class="primary" id="confirm-cancel">Xem phản hồi minh hoạ</button></div></dialog>
+<div class="notice" role="status" aria-live="polite" hidden></div>
+<script>
+const $ = s => document.querySelector(s);
+const dishes = [{name:'Bánh cuốn thịt',detail:'Nhân thịt · trong combo',icon:'🥟',served:true},{name:'Trứng',detail:'Trong combo',icon:'🍳',served:false},{name:'Chả lụa',detail:'Trong combo',icon:'🍽',served:false},{name:'Bánh cuốn thịt',detail:'Nhân thịt · món lẻ · 35.000đ',icon:'🥟',served:false},{name:'Canh mọc',detail:'Có rau · 0đ',icon:'🍲',served:false}];
+function render() {
+ const row = d => `<div class="dish"><span class="dish-icon" aria-hidden="true">${d.icon}</span><div class="dish-copy">${d.name}<small>${d.detail}</small></div><div class="dish-state">${d.served?'<span class="done">✓ Đã ra 1/1</span>':`<span class="muted">Còn 1 phần</span><br><button class="cancel" data-cancel="${d.name}">Yêu cầu huỷ</button>`}</div></div>`;
+ $('#combo-dishes').innerHTML = dishes.slice(0,3).map(row).join('');
+ $('#single-dishes').innerHTML = dishes.slice(3).map(row).join('');
+ const served = dishes.filter(d=>d.served).length;
+ $('#progress').value=served; $('#progress-label').textContent=served+'/5 phần';
+ $('#order-status').textContent=served===5?'Đã ra đủ món':'Đang chuẩn bị';
+ $('#finished').hidden=served!==5; $('#advance').disabled=served===5;
+ // Sample money only: the combo moves to the served amount when all of its components are served.
+ const amount=(dishes.slice(0,3).every(d=>d.served)?42000:0)+(dishes[3].served?35000:0);
+ const money=n=>n.toLocaleString('vi-VN')+'đ';
+ $('#served-money').textContent=money(amount); $('#remaining-money').textContent=money(77000-amount);
+ $('#dish-summary').innerHTML=[['Bánh cuốn thịt',2,Number(dishes[0].served)+Number(dishes[3].served)],['Trứng',1,Number(dishes[1].served)],['Chả lụa',1,Number(dishes[2].served)],['Canh mọc · có rau',1,Number(dishes[4].served)]].map(([name,qty,n])=>`<tr><td>${name}</td><td>${qty}</td><td class="done">${n}</td><td>${qty-n}</td></tr>`).join('');
+}
+function theme(t) {document.documentElement.dataset.theme=t; $('#theme-toggle').textContent=t==='light'?'☾':'☀';}
+try {theme(localStorage.getItem('menu-theme')||'dark');} catch {theme('dark');}
+$('#theme-toggle').onclick=()=>{const t=document.documentElement.dataset.theme==='light'?'dark':'light';theme(t);try{localStorage.setItem('menu-theme',t);}catch{}};
+let timer; function notice(message) {clearTimeout(timer);$('.notice').textContent=message;$('.notice').hidden=false;timer=setTimeout(()=>$('.notice').hidden=true,4000);}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cancel]');if(b){$('#cancel-description').textContent='Bạn muốn yêu cầu huỷ '+b.dataset.cancel+'?';$('#cancel-dialog').showModal();}});
+$('#close-cancel').onclick=()=>$('#cancel-dialog').close();
+$('#confirm-cancel').onclick=()=>{$('#cancel-dialog').close();notice('Minh hoạ yêu cầu huỷ — chưa thay đổi đơn hàng.');};
+$('#advance').onclick=()=>{const next=dishes.find(d=>!d.served);if(next)next.served=true;render();notice('Minh hoạ: nhân viên vừa mang ra một món.');};
+function connection(ok) {$('#connection-error').hidden=ok;$('#connection-state').textContent=ok?'● Minh hoạ':'● Mất kết nối';}
+$('#disconnect').onclick=()=>connection(false);$('#retry').onclick=()=>connection(true);
+$('#reset').onclick=()=>{dishes.forEach((d,i)=>d.served=i===0);connection(true);render();};
+$('#settings').onclick=()=>notice('Dùng nút ☀ / ☾ ở đầu trang để đổi giao diện.');
+render();
+</script></body></html>
