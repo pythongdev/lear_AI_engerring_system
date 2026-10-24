@@ -99,6 +99,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-247 **Sửa và xoá mục, khoản con, khoản chi trong bản HTML Khoản chi** — L1, chủ repo giao Codex 2026-10-24 · [chi tiết](#t-247)
+
 - [ ] T-246 **Hạn hoàn thành bắt buộc ngày và giờ khi giao việc mới** — L2, DB/API/FE — chủ repo 2026-10-24 cho phép Codex thực hiện xuyên tầng · [chi tiết](#t-246)
 
 - [ ] T-245 **Viết lại trang Giao việc theo HTML, mobile first** — L1 — chủ repo giao Codex 2026-10-24 · [chi tiết](#t-245)
@@ -3178,3 +3180,14 @@ Một tới ba dòng.
 **Kết quả cuối:** `./scripts/gate.sh` với `require_escalated` trả 2; Gate 3, 1b–1h PASS. Toàn bộ backend PostgreSQL PASS (riêng giao việc: `ok banhcuon/be/internal/giaoviec 1.834s`, hai test lưu/vết và chặn rollback PASS), frontend `35 passed / 475 tests passed`; verify dừng ở production build Turbopack `binding to a port — Operation not permitted (os error 1)`. Dòng nhãn Gate 1 gắn FAIL lên be-check dù phần mô tả ghi mọi test đạt vì wrapper dùng exit code của cả verify; nguyên nhân thực nằm ở lỗi build bên dưới. `./scripts/db-check.sh` chạy riêng ngoài sandbox: `PASS — 36 bước xuôi · lùi · xuôi lại, 19 khối kiểm QC, 52 file test, dữ liệu mồi + §4.8, khoá chặn, 147 câu đối chiếu, 149 lỗi cài, ba scenario + ngày quản trị, 37 mã YC`. Cột trên DB phát triển đã đọc lại: `due_at|timestamp with time zone|YES`.
 
 **Còn lại:** giữ In Progress vì gate chưa xanh do môi trường build; cần chạy lại build/gate trên môi trường cho Turbopack mở cổng và kiểm giao diện trực tiếp. Chưa kiểm responsive trên trình duyệt, chưa commit. Khối commit phải chỉ stage phần ADR-127 trong `docs/decisions.md` và đoạn hạn hoàn thành của T-246 trong `master_plan/shop-facts.md` vì hai file đã có diff từ trước; các model sqlc của mọi miền chỉ thêm trường DueAt do sinh từ schema chung.
+
+<a id="t-247"></a>
+### T-247 — Sửa và xoá trong bản thiết kế Khoản chi
+
+Chủ repo yêu cầu 2026-10-24; chỉ bản HTML minh hoạ, không đổi API hay dữ liệu thật. Codex thực hiện, chưa review độc lập.
+
+Acceptance: sửa tên mục và khoản con, đồng bộ tên vào sổ; sửa khoản chi giữ yêu cầu lý do; xoá có xác nhận và cập nhật tổng/bộ lọc; chặn xoá mục hoặc khoản con còn khoản chi (chủ repo chọn 2026-10-24); đếm toàn bộ khoản chi, kể cả ngoài bộ lọc. Không thay đổi số tiền khi chỉ đổi tên.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao T-247 — 2026-10-24:** Codex thực hiện trên nhánh `P4A-01`, chưa review độc lập. Có form đổi tên mục/khoản con (đồng bộ tên sổ, giữ số tiền, chặn trùng), xoá khoản chi với lý do/xác nhận, xoá mục/khoản con khi không còn khoản chi. Chủ repo chọn chặn xoá khi còn khoản chi; kiểm trên toàn bộ dữ liệu minh hoạ, không chỉ các dòng đang lọc. Cho phép chuyển khoản chi bằng form sửa có sẵn. Mọi thao tác chỉ ở bộ nhớ trình duyệt, không đổi dữ liệu thật. Kiểm bằng Node VM: đổi tên, giữ tổng, chặn trùng, xác nhận, xoá khoản chi cập nhật tổng, chặn xoá mục có dữ liệu, xoá khoản con/mục rỗng đều PASS. Gate trực tiếp lần đầu bị chặn Docker; chạy lại ngoài sandbox trả 2 do Turbopack không được mở cổng (`Operation not permitted`). Các cổng scope, tài liệu, hợp đồng đạt; backend test đạt. Giữ In Progress vì gate chưa xanh. Cần chạy lại gate ở môi trường cho phép mở cổng và kiểm tra trực quan; chưa commit. Kiểm bổ sung PASS: chặn xoá cả khoản chi ngoài bộ lọc, đổi tên mục giữ liên kết khoản chi.
