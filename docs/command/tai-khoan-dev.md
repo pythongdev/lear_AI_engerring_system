@@ -40,27 +40,19 @@ không quan trọng.
 
 ## Tạo lại tài khoản
 
-Bật backend bằng `make be` ở một cửa sổ, rồi chạy khối dưới ở gốc repo, trong một cửa sổ khác. Mật khẩu chủ quán đi qua stdin, đúng như
-lệnh gốc yêu cầu. Bốn người theo vai mang `person_id` 1…4 theo dữ liệu mồi hiện nay (người 5 là *Chủ quán*
-của dữ liệu mồi; lệnh khởi tạo dưới đây thêm một người chủ quán nữa, *Chủ quán (dev)*); nếu dữ liệu mồi
-đổi thì kiểm lại bằng `make psql` → `SELECT id, display_name FROM person;`.
+Ở gốc repo, bật backend trong một cửa sổ:
 
 ```bash
-echo 'chuquan123' | (cd be && BANHCUON_DATABASE_URL="postgres://shop_app:shop_app_dev@127.0.0.1:5433/banhcuon?sslmode=disable" \
-  BANHCUON_SHOP_TZ="$(grep -m1 '^| Múi giờ |' master_plan/shop-facts.md | grep -o '`[^`]*`' | head -1 | tr -d '`')" \
-  go run ./cmd/khoitao-chu-quan -username chu -email chu@quan.test -display-name 'Chủ quán (dev)')
-
-B=http://127.0.0.1:8080; H='content-type: application/json'; J=$(mktemp)
-curl -s -c "$J" -H "$H" -d '{"username":"chu","password":"chuquan123"}' $B/sessions >/dev/null
-for row in "quay|Người đứng quầy|quay1234|quay|1" "trang|Người tráng bánh|trang1234|trang_banh|2" \
-           "gap|Người gấp bánh|gap12345|gap_banh|3" "canh|Người canh & dọn|canh1234|canh_don_ban|4"; do
-  IFS='|' read u n pw role pid <<<"$row"
-  id=$(curl -s -H "$H" -d "{\"username\":\"$u\",\"email\":\"$u@quan.test\",\"display_name\":\"$n\",\"password\":\"$pw\"}" \
-       $B/accounts | grep -oE '"account_id":[0-9]+' | cut -d: -f2)
-  curl -s -b "$J" -H "$H" -d "{\"role_code\":\"$role\",\"person_id\":$pid}" $B/accounts/$id/approval; echo
-done
-rm -f "$J"
+make be
 ```
 
-Mỗi dòng in ra phải có `"status":"hoat_dong"`. Nếu không, tài khoản đó đã có sẵn, hoặc `person_id`
-không còn đúng.
+Trong cửa sổ khác, cũng ở gốc repo:
+
+```bash
+make tai-khoan-dev
+```
+
+Chạy lại an toàn: tài khoản có cùng tên đăng nhập sẽ được bỏ qua, không đổi mật khẩu hay vai.
+Lệnh lấy bốn người không phải chủ quán, sắp theo id, rồi lần lượt gắn với `quay`, `trang`, `gap`,
+`canh`; tên hiển thị lấy từ database. Nếu số người không phải chủ quán khác 4, lệnh dừng và báo rõ.
+Cuối lệnh có bảng tên đăng nhập và trạng thái tạo mới hoặc bỏ qua.

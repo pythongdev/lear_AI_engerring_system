@@ -15,6 +15,7 @@ make help             # giống hệt lệnh trên
 ```bash
 make setup            # bật database + tạo bảng + nạp dữ liệu mồi, một lệnh là xong
 make seed-thu         # sau make seed: thêm dữ liệu thử máy dev; đã có danh mục thì bỏ qua
+make tai-khoan-dev    # bật make be ở cửa sổ khác trước; tạo tài khoản thử, đã có thì bỏ qua
 make psql             # vào xem
 ```
 `make setup` chạy lần lượt `make up`, `make migrate`, `make seed`. Xong thì database có đủ bảng,
