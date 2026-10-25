@@ -353,6 +353,15 @@ BEGIN
     IF n < 1 THEN RAISE EXCEPTION 'dữ liệu thử: % rỗng', t; END IF;
     counts := counts || jsonb_build_object(t, n);
   END LOOP;
+  -- T-242: nhóm trình bày §4.9, khác với menu_combo ghép món.
+  IF (SELECT count(*) FROM menu_category) <> 2
+     OR (SELECT count(*) FROM menu_item_category) <> 13
+     OR (SELECT count(*) FROM menu_item_category ic JOIN menu_category c
+         ON c.id = ic.menu_category_id WHERE c.name = 'Món lẻ') <> 6
+     OR (SELECT count(*) FROM menu_item_category ic JOIN menu_category c
+         ON c.id = ic.menu_category_id WHERE c.name = 'Combo') <> 7 THEN
+    RAISE EXCEPTION 'dữ liệu thử: cần hai nhóm, Món lẻ 6 món và Combo 7 món (§4.9)';
+  END IF;
   -- Giữ số đếm trong cài đặt giao dịch, không cần bảng tạm hay đổi vai.
   PERFORM set_config('shop.trial_counts', counts::text, true);
   IF EXISTS (SELECT 1 FROM menu_item i WHERE i.discontinued_at IS NULL

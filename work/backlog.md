@@ -106,7 +106,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 - [ ] T-245 **Viết lại trang Giao việc theo HTML, mobile first** — L1 — chủ repo giao Codex 2026-10-24 · [chi tiết](#t-245)
 
 - [ ] T-243 **Món đã ngừng bán chưa bán lại được** — chủ repo đóng U-104 (bán lại, giữ món cũ cùng tên · thành phần · lịch sử): cửa mới `POST /menu-items/{menu_item_id}/resumption` có lý do xoá mốc ngừng bán trên chính dòng món (ADR-126), hợp đồng · ma trận quyền · service · test backend, và form *Bán lại* trên trang Sản phẩm — L2 — mở 2026-10-24 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-243)
-- [ ] T-242 **Menu chưa có bánh trứng bán rời, trang Sản phẩm xếp mọi món vào một danh mục** — thêm ba dòng *bánh trứng bán rời* chín · tái · vàng vào dữ liệu mồi theo `shop-facts.md` §4.9 (2026-10-23), dữ liệu thử máy dev chia danh mục **Món lẻ** (trên) và **Combo** (dưới) theo cột *Nhóm trên menu*; ca giá 14 xanh — L2 (dòng menu có tiền) — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-242)
 - [ ] T-227 **Thanh toán bàn chỉ thu phần đã ra, phần chưa ra huỷ việc trạm** — bấm tiền bánh đã ra để đóng phiên và xoá bàn khỏi bảng; đổi luật tính tiền phiên (`shop-facts.md` §6.1, 2026-10-21) và viết lại `I-002` — L3 (thiết kế duyệt trước code, ADR, chia L1/L2 khi mở) — mở 2026-10-21, U-103 có lời và bắt đầu 2026-10-22 · [chi tiết](#t-227)
 - [ ] T-233 **Trang gọi món của khách hiện không có kiểu nào, chưa giống bản thiết kế menu** — CSS module của T-232 bị luật Turbopack trong `next.config.ts` đọc như CSS thường nên mọi `styles.*` rỗng (F-075); viết lại kiểu bằng một file CSS thường trong phạm vi trang và lớp Tailwind, đối chiếu ảnh chụp với `menu.html` ở hai giao diện; hành vi và test giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-233)
 
@@ -121,6 +120,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="done"></a>
 ## Done
+- [x] T-242 **Menu chưa có bánh trứng bán rời, trang Sản phẩm xếp mọi món vào một danh mục** — thêm ba dòng *bánh trứng bán rời* chín · tái · vàng vào dữ liệu mồi theo `shop-facts.md` §4.9 (2026-10-23), dữ liệu thử máy dev chia danh mục **Món lẻ** (trên) và **Combo** (dưới) theo cột *Nhóm trên menu*; ca giá 14 xanh — L2 (dòng menu có tiền) — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-242)
 - [x] T-238 **Trang Sản phẩm có nút Cập nhật cho tên, danh mục, giá và trạng thái của món** — mỗi dòng món mở ngăn bên phải: đổi tên, chuyển danh mục, đổi giá gốc từng thành phần, ngừng bán, mọi lệnh có lý do; dùng lại các cửa ghi sẵn có, không đổi backend hay hợp đồng; bán lại món đã ngừng chờ U-104 — L2 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-238)
 - [x] T-240 **Máy dev không có lệnh make nào tạo lại tài khoản đăng nhập sau `make reset`** — thêm `make tai-khoan-dev` tạo chủ quán và bốn tài khoản theo vai như `docs/command/tai-khoan-dev.md`, chạy lại không lỗi; thay khối lệnh dài trong tài liệu ấy bằng lệnh make — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-240)
 - [x] T-235 **Next.js 16.4.0 dính lỗ hổng bảo mật, `next build` dừng cách lượt** — nâng `next` và `eslint-config-next` trong `fe/` lên bản vá theo `next upgrade --agent=security`, đóng F-076 — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-235)
@@ -490,15 +490,14 @@ dev (`db/seed/du-lieu-thu.pl`, T-236) tạo danh mục theo cột *Nhóm trên m
 và `--price-cases-tsv` (test cửa giá pha 3).
 
 **Acceptance** (viết 2026-10-23, trước khi giao):
-- [ ] `perl db/seed/seed.pl` chạy được trên shop-facts mới; `%MENU` có ba dòng *bánh trứng* trỏ dòng §4.5 *Bánh trứng bán rời*, loại trứng đúng, tên §4.8 ca 14 khớp.
-- [ ] Ca 14 (Bánh trứng vàng · Thịt · Nhiều = 10.000) và mười ba ca cũ xanh ở `db-check` và ở test cửa giá của `be-check`.
-- [ ] Sau `make reset` + dữ liệu thử: có đúng hai danh mục **Món lẻ** (bánh cuốn, giò bán rời, canh, ba bánh trứng) và **Combo** (ba đầy đủ, suất giò, ba suất trứng); không còn danh mục Bánh cuốn / Ăn kèm. ~~`GET /menu-categories` trả Món lẻ trước Combo~~ — bỏ 2026-10-24: hợp đồng sắp danh mục theo tên (`openapi.yaml` `MenuCategories`), Acceptance cũ mâu thuẫn với *không sửa `be/`*; chủ repo chọn chuyển bảy suất thành combo thật ở `/chu-quan/combo` → T-244.
-- [ ] Không món nào kèm sẵn canh; không sửa migration, `openapi.yaml`, `be/`, `fe/`.
-- [ ] `docs/product/2-db/08-du-lieu-moi.md` và `docs/command/` (nếu nói danh mục hay số dòng menu của dữ liệu thử) theo kịp.
-- [ ] `./scripts/gate.sh` xanh ở clone chính.
+- [x] `perl db/seed/seed.pl` chạy được trên shop-facts mới; `%MENU` có ba dòng *bánh trứng* trỏ dòng §4.5 *Bánh trứng bán rời*, loại trứng đúng, tên §4.8 ca 14 khớp.
+- [x] Ca 14 (Bánh trứng vàng · Thịt · Nhiều = 10.000) và mười ba ca cũ xanh ở `db-check` và ở test cửa giá của `be-check`.
+- [x] Sau `make reset` + dữ liệu thử: có đúng hai danh mục **Món lẻ** (bánh cuốn, giò bán rời, canh, ba bánh trứng) và **Combo** (ba đầy đủ, suất giò, ba suất trứng); không còn danh mục Bánh cuốn / Ăn kèm. ~~`GET /menu-categories` trả Món lẻ trước Combo~~ — bỏ 2026-10-24: hợp đồng sắp danh mục theo tên (`openapi.yaml` `MenuCategories`), Acceptance cũ mâu thuẫn với *không sửa `be/`*; chủ repo chọn chuyển bảy suất thành combo thật ở `/chu-quan/combo` → T-244.
+- [x] Không món nào kèm sẵn canh; không sửa migration, `openapi.yaml`, `be/`, `fe/`.
+- [x] `docs/product/2-db/08-du-lieu-moi.md` và `docs/command/` (nếu nói danh mục hay số dòng menu của dữ liệu thử) theo kịp.
+- [x] `./scripts/gate.sh` xanh ở clone chính.
 
-**Bàn giao:** thực hiện: Codex (chưa giao) · duyệt: Claude. Shop-facts đã sửa ở clone chính, chưa commit — worktree của Codex nhận
-bản này staged sẵn.
+**Bàn giao:** thực hiện: Codex (worktree `../lean_wt/T-242`, nhánh `codex/T-242`, nền `f38f06d` + shop-facts staged sẵn; Codex dừng ở thứ tự danh mục và báo đúng) · duyệt: Claude 2026-10-24, áp diff lên clone chính. File: `db/seed/seed.pl` (ba dòng bánh trứng, `--menu-groups-tsv`), `db/seed/du-lieu-thu.pl` (danh mục theo nhóm §4.9), `scripts/db-check.sh` (dữ liệu thử phải có Món lẻ 6 · Combo 7), `docs/product/2-db/08-du-lieu-moi.md`, `master_plan/shop-facts.md`. Claude sửa một câu của 08 (Gate 1d: pha 2 không nêu endpoint). Bằng chứng: `seed.pl --price-cases-tsv` in ca 14 `Bánh trứng vàng … 10000`; `./scripts/gate.sh` ở clone chính `PASS db-check — … dữ liệu mồi + §4.8 …`, `PASS be-check`, `PASS gate`. Dòng Acceptance thứ tự danh mục bỏ, chuyển sang T-244. `docs/command/` không nói số món hay tên danh mục nên không đổi.
 
 <a id="t-244"></a>
 ### T-244 — Bảy suất là món thường, chưa phải combo ghép từ món lẻ

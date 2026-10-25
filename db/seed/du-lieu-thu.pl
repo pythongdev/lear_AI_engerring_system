@@ -1,10 +1,6 @@
 #!/usr/bin/env perl
 # T-236 — chỉ cho máy dev, KHÔNG phải sự thật của quán. Chạy sau make seed.
-# Đọc bảng §4.2 lúc chạy như seed.pl; không giữ tên món/danh mục hay giá menu.
-# Gán mọi món đang bán: nếu mọi thành phần cùng thuộc danh mục đồ kèm thì
-# lấy chính danh mục đó; tổng quát chọn thành phần nhận nhân trước, rồi id
-# menu_item_component nhỏ nhất. Với món chỉ có thành phần cùng danh mục,
-# quy tắc này luôn trả đúng danh mục chung, không cần gõ tên danh mục đồ kèm.
+# Đọc nhóm §4.9 qua seed.pl để dùng chung ánh xạ tên dòng menu.
 # Combo gồm hai món có giá gốc dương đầu tiên theo id; giá = tổng giá gốc
 # món lẻ (chưa chọn tuỳ chọn), tính từ thành phần trong database bằng SQL.
 # Lượng sổ, tiền khoản chi và ngày công là SỐ MINH HOẠ; tên tự đặt có (thử).
@@ -17,53 +13,23 @@ use open qw(:std :encoding(UTF-8));
 
 my $facts = $ENV{SHOP_FACTS} // 'master_plan/shop-facts.md';
 sub fail { die "du-lieu-thu.pl: $_[0] ($facts)\n" }
-sub clean { my $s = shift; $s =~ s/\*\*?|⚠️|⚠//g; $s =~ s/^\s+|\s+$//g; return $s }
-sub cells {
-    my $s = shift;
-    $s =~ s/^\s*\|//; $s =~ s/\|\s*$//;
-    return map { clean($_) } split /\|/, $s;
-}
 sub sqlq { my $s = shift; $s =~ s/'/''/g; return "'$s'" }
-open my $fh, '<', $facts or fail('không mở được owner');
-my (@rows, @headers, $section, $table);
-while (my $line = <$fh>) {
+# Gọi bằng danh sách đối số, không qua shell; SHOP_FACTS được kế thừa để thử owner hỏng.
+use FindBin qw($Bin);
+open my $seed, '-|', $^X, "$Bin/seed.pl", '--menu-groups-tsv'
+    or fail('không chạy được seed.pl');
+my (%mapping, %seen, @categories);
+while (my $line = <$seed>) {
     chomp $line;
-    if ($line =~ /^### 4\.2 /) { $section = 1; next }
-    last if $section && $line =~ /^#{1,3} /;
-    next unless $section;
-    if (!$table && $line =~ /^\|/) {
-        my @h = cells($line);
-        if (grep { $_ eq 'Danh mục' } @h) { @headers = @h; $table = 1 }
-        next;
-    }
-    next unless $table;
-    last unless $line =~ /^\|/;
-    next if $line =~ /^\|[- :|]+$/;
-    my @c = cells($line);
-    fail('§4.2: số cột không khớp') unless @c == @headers;
-    push @rows, { map { $headers[$_] => $c[$_] } 0 .. $#headers };
+    my ($name, $category) = split /\t/, $line, -1;
+    fail('§4.9: dòng thiếu tên món hoặc nhóm')
+        unless defined $category && length $name && length $category;
+    fail("§4.9: món lặp '$name'") if exists $mapping{$name};
+    $mapping{$name} = $category;
+    push @categories, $category unless $seen{$category}++;
 }
-close $fh;
-fail('§4.2: không thấy bảng Danh mục / Thành phần') unless @rows;
-my (%mapping, %categories);
-for my $r (@rows) {
-    my $category = $r->{'Danh mục'};
-    fail('§4.2: danh mục rỗng') unless defined $category && length $category;
-    my ($rest) = ($r->{'Thành phần'} // '') =~ /^1 \S+ (.+)$/;
-    fail('§4.2: không đọc được thành phần') unless defined $rest;
-    my @parts = split m{ / }, $rest;
-    my @names;
-    if (@parts > 1) {
-        my ($base, $first) = $parts[0] =~ /^(\S+) (.+)$/;
-        fail('§4.2: không đọc được họ thành phần') unless defined $first;
-        @names = map { ucfirst("$base $_") } ($first, @parts[1 .. $#parts]);
-    } else { @names = (ucfirst($rest)) }
-    for my $name (@names) {
-        fail('§4.2: thành phần lặp') if exists $mapping{$name};
-        $mapping{$name} = $category;
-    }
-    $categories{$category} = 1;
-}
+close $seed or fail('seed.pl không đọc được nhóm menu');
+fail('§4.9: không thấy nhóm menu') unless @categories;
 # Đọc/kiểm hết owner trước khi in bất kỳ SQL nào.
 print <<'SQL';
 -- Dữ liệu thử máy dev T-236; không phải dữ kiện quán.
@@ -75,7 +41,7 @@ DECLARE
   worker_id bigint;
   task_id bigint;
   combo_id bigint;
-  component_categories jsonb;
+  item_categories jsonb;
   combo_item_ids bigint[];
   combo_price bigint;
   today date := (now() AT TIME ZONE current_setting('TimeZone'))::date;
@@ -93,33 +59,28 @@ BEGIN
   SELECT id INTO STRICT worker_id FROM person WHERE NOT is_owner ORDER BY id LIMIT 1;
   -- Biến trong khối DO: shop_app không cần quyền TEMP.
 SQL
-print "  SELECT jsonb_object_agg(component_name, category_name) INTO component_categories\n";
+print "  SELECT jsonb_object_agg(item_name, category_name) INTO item_categories\n";
 print "  FROM (VALUES\n";
 print join(",\n", map { '    (' . sqlq($_) . ', ' . sqlq($mapping{$_}) . ')' } sort keys %mapping),
-    "\n  ) AS mapping(component_name, category_name);\n";
+    "\n  ) AS mapping(item_name, category_name);\n";
 print '  INSERT INTO menu_category (name) VALUES ',
-    join(', ', map { '(' . sqlq($_) . ')' } sort keys %categories), ";\n";
+    join(', ', map { '(' . sqlq($_) . ')' } @categories), ";\n";
 print <<'SQL';
-  -- Không âm thầm bỏ món/thành phần khi database và owner lệch nhau.
+  -- Không âm thầm bỏ món khi database và owner lệch nhau.
   IF NOT EXISTS (SELECT 1 FROM menu_item WHERE discontinued_at IS NULL)
      OR EXISTS (
        SELECT 1 FROM menu_item i WHERE i.discontinued_at IS NULL
-       AND (NOT EXISTS (SELECT 1 FROM menu_item_component ic WHERE ic.menu_item_id = i.id)
-         OR EXISTS (
-           SELECT 1 FROM menu_item_component ic
-           JOIN menu_component c ON c.id = ic.menu_component_id
-           WHERE ic.menu_item_id = i.id AND component_categories ->> c.name IS NULL))) THEN
-    RAISE EXCEPTION 'seed-thu: menu rỗng hoặc thành phần không khớp owner §4.2';
+       AND item_categories ->> i.name IS NULL)
+     OR EXISTS (
+       SELECT 1 FROM jsonb_object_keys(item_categories) AS names(name)
+       WHERE NOT EXISTS (SELECT 1 FROM menu_item i WHERE i.name = names.name
+                         AND i.discontinued_at IS NULL)) THEN
+    RAISE EXCEPTION 'seed-thu: menu rỗng hoặc tên món không khớp owner §4.9';
   END IF;
   INSERT INTO menu_item_category (menu_item_id, menu_category_id)
-  SELECT i.id, chosen.category_id FROM menu_item i
-  CROSS JOIN LATERAL (
-    SELECT cat.id AS category_id FROM menu_item_component ic
-    JOIN menu_component c ON c.id = ic.menu_component_id
-    JOIN menu_category cat ON cat.name = component_categories ->> c.name
-    WHERE ic.menu_item_id = i.id
-    ORDER BY c.takes_filling DESC, ic.id LIMIT 1
-  ) chosen WHERE i.discontinued_at IS NULL;
+  SELECT i.id, cat.id FROM menu_item i
+  JOIN menu_category cat ON cat.name = item_categories ->> i.name
+  WHERE i.discontinued_at IS NULL;
 
   SELECT array_agg(chosen.id ORDER BY chosen.id), sum(chosen.price_vnd)
     INTO combo_item_ids, combo_price

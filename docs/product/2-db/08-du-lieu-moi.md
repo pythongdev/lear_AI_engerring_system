@@ -134,7 +134,7 @@ thử; mặc định luôn là owner):
 | **Người** — bốn vai, chủ quán (`shop-facts.md` §3) | **dựng 2026-09-28 (`P2-08`)**: một người cho mỗi dòng bảng *Vai* của §3, đọc lúc chạy, cộng chủ quán (`is_owner`); tên hiển thị là **tên vai** — quán chưa khai tên ai. Chủ quán là người thao tác lúc cấp mã QR (U-062). *Ai đứng trạm nào* không mồi: chỉ quầy có mốc đổi, và POS khai lúc bán thật | `P2-08` — xong; tên người thật là việc của quán |
 | **Đơn vị mua của các tên chỉ có ở danh sách 2026-09-06** | để trống (`NULL`); câu hỏi ở `work/admin-questions.md` B12. Lời chủ quán 2026-09-30 cho các tên ấy còn là **bản nháp ở B12, chưa về owner** nên bộ dựng không đọc; về bảng *Hàng mua vào* của §8.4 thì lần dựng sau tự mang đơn vị | chủ quán qua owner §8.4 |
 | **Số chỗ ngồi của bàn** (§1) | không cột nào cất; dữ liệu mồi không dựng | — cần thì một migration mới |
-| **Ô giá ⚠ của giò bán rời** (`S-9`, §7.2) | dựng đúng ô owner đang ghi; ca 12 khớp ô ấy. Chủ quán đọc ô khác ⇒ owner đổi, dữ liệu mồi đổi theo | chủ quán |
+| **Giá giò bán rời** (`S-9`, §7.2) | đã được chủ repo xác nhận 2026-10-23; không còn ô ⚠. Bộ dựng tiếp tục đọc giá từ owner | đã có lời |
 | **Bắt buộc chọn một nhân** (§4.4 · §4.6 luật 7) | không cất (`03-luoc-do-menu-gia.md` §5); cửa của `P3-06` giữ. **Mặc định Thịt · Thường** (luật 8) **dựng từ 2026-10-11** — xem §3 bổ sung `T-169` | `P3-06` · `T-169` |
 | **Lượt chỉ sửa `shop-facts.md`** không gọi bộ kiểm | cổng coi file `.md` là tài liệu và bỏ qua `verify.sh`, nên đổi giá ở owner **không** tự chạy lại các ca giá | lượt sửa giá chạy tay `./scripts/db-check.sh` |
 | **Dựng lại trên database đã có dữ liệu** | không làm được — chỉ vào database rỗng | `P2-09` (thứ tự dựng lại từ số không) |
@@ -155,7 +155,15 @@ thử; mặc định luôn là owner):
 
 Theo phiếu giao việc của Claude, bộ [du-lieu-thu.pl](../../../db/seed/du-lieu-thu.pl)
 chỉ giúp giao diện có dữ liệu hiện, **không phải sự thật của quán**.
-Bộ dựng đọc tên danh mục và ánh xạ thành phần từ owner `master_plan/shop-facts.md` §4.2 lúc chạy;
+Bổ sung T-242 (2026-10-24): bộ dựng đọc cột *Nhóm trên menu* §4.9 qua
+`seed.pl --menu-groups-tsv`, dùng chung ánh xạ tên dòng menu của seed chính.
+Tính tới 2026-10-23, bảng có 13 dòng menu: sáu món Món lẻ và bảy món Combo
+(đếm lại bảng owner khi thay đổi). Nhóm hợp lệ đọc từ lời chốt *đứng trên/dưới*
+ngay trong §4.9; thiếu nhóm, nhóm lạ hoặc tên món không khớp thì dừng.
+Danh mục được chèn theo lần xuất hiện đầu trong bảng; hợp đồng pha 3 bày danh mục theo tên,
+nên Combo hiện trước Món lẻ — chủ repo 2026-10-24 chọn chuyển bảy suất thành
+combo ghép món thật ở trang Combo (T-244) thay vì đổi thứ tự.
+Các nhóm trình bày này khác với combo ghép món có giá riêng;
 món, thành phần và giá gốc để cộng giá combo được đọc từ database đã có dữ liệu mồi.
 Chạy `make seed` rồi `make seed-thu`; đã có danh mục thì báo bỏ qua, không nhân đôi.
 Tên tự đặt có dấu `(thử)`; lượng sổ, tiền chi và ngày công chỉ là số minh hoạ.

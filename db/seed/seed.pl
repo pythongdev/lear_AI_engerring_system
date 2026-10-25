@@ -8,6 +8,7 @@
 # đối chiếu hai chiều với §4.9 mỗi lần chạy.
 #
 #   perl db/seed/seed.pl                 # SQL dựng dữ liệu mồi (vai shop_app, một giao dịch)
+#   perl db/seed/seed.pl --menu-groups-tsv # tên dòng menu <TAB> nhóm §4.9 (dữ liệu thử)
 #   perl db/seed/seed.pl --supply-names  # tên hàng mua vào sẽ chèn, mỗi dòng một tên
 #   perl db/seed/seed.pl --price-cases   # SQL tính lại các ca giá của §4.8 từ database
 #   perl db/seed/seed.pl --defaults-tsv  # mặc định đọc từ §4.6 luật 8, mỗi dòng: nhóm <TAB> lựa chọn
@@ -37,6 +38,9 @@ my %MENU = (
   'suất trứng vàng'   => ['Suất trứng vàng',   'Suất trứng',     'vàng'],
   'bánh cuốn'         => ['Bánh cuốn',         'Suất bánh cuốn'],
   'giò'               => ['Giò bán rời',       'Giò bán rời'],
+  'bánh trứng chín'   => ['Bánh trứng chín', 'Bánh trứng bán rời', 'chín'],
+  'bánh trứng tái'    => ['Bánh trứng tái', 'Bánh trứng bán rời', 'tái'],
+  'bánh trứng vàng'   => ['Bánh trứng vàng', 'Bánh trứng bán rời', 'vàng', 'Bánh trứng vàng (bán rời)'],
   'canh bánh cuốn'    => ['Canh bánh cuốn',    'Canh bánh cuốn'],
 );
 
@@ -227,7 +231,7 @@ my @items;
         : $f->{names}[0];
       push @parts, [ $c, $n ];
     }
-    push @items, { name => $m->[0], alias => $m->[3] // $m->[0], parts => \@parts,
+    push @items, { name => $m->[0], alias => $m->[3] // $m->[0], parts => \@parts, group => $r->{'Nhóm trên menu'},
                    takes => (grep { $comp{ $_->[0] }{takes} } @parts) ? 1 : 0 };
     $seen{$k} = 1;
   }
@@ -314,6 +318,21 @@ my @expenses = (['Điện', 1], ['Nước', 1], ['Wifi', 1], ['Xăng xe', 1], ['
 # --- in SQL -----------------------------------------------------------------------------
 my $mode = $ARGV[0] // '';
 
+# Nhóm hợp lệ đọc từ lời chốt trình bày §4.9, không giữ tên danh mục trong code.
+# Chỉ dữ liệu thử cần nhóm; seed chính vẫn giữ trách nhiệm dựng menu.
+if ($mode eq '--menu-groups-tsv') {
+  my $sec = join "\n", section('### 4.9 ');
+  my @groups = $sec =~ /\*\*([^*]+)\*\*\s*\([^)]*\)\s*đứng\s*\*\*(?:trên|dưới)\*\*/g;
+  die_owner('§4.9: không đọc được hai nhóm trong lời chốt trình bày') unless @groups == 2;
+  my %allowed = map { $_ => 1 } @groups;
+  for my $it (@items) {
+    my $g = $it->{group};
+    die_owner("§4.9 '$it->{name}': thiếu nhóm hoặc nhóm lạ")
+      unless defined $g && $allowed{$g};
+  }
+  print "$_->{name}\t$_->{group}\n" for @items;
+  exit 0;
+}
 if ($mode eq '--supply-names') { print "$_->[0]\n" for @supplies; exit 0 }
 if ($mode eq '--price-cases') { price_cases(); exit 0 }
 if ($mode eq '--price-cases-tsv') { price_cases_tsv(); exit 0 }
