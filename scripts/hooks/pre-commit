@@ -26,37 +26,50 @@ done < <(git diff --cached --name-only --diff-filter=ACMRD)
 [ "${#staged[@]}" -gt 0 ] || exit 0
 
 ids=()
-for s in work/scope/*.txt; do
+# Mới sửa trước (ls -t): hai task hoà thì task vừa khai scope gần nhất là "task gần nhất" (T-241).
+while IFS= read -r s; do
   [ -f "$s" ] || continue
   # Đếm pattern đúng một phép với Gate 3: bỏ phần từ #, cắt khoảng trắng, còn khác rỗng.
   if sed 's/#.*//' "$s" | grep -q '[^[:space:]]'; then
     ids+=("$(basename "$s" .txt)")
   fi
-done
+done < <(ls -t work/scope/*.txt 2>/dev/null)
 [ "${#ids[@]}" -gt 0 ] || exit 0
 
+# Task gần nhất = task để ít file staged nằm ngoài scope nhất. Lời từ chối chỉ nêu những file ấy và
+# lệnh gỡ chúng (T-241): file chung như work/backlog.md nằm trong scope của mọi task, liệt kê nó kèm
+# cả trăm mã thì người đọc không thấy thủ phạm.
+best="" best_out="" best_n=-1
 for id in "${ids[@]}"; do
   out="$(./scripts/check-scope.sh --match --task "$id" "${staged[@]}")"
   if [ -z "$out" ]; then
     exit 0
   fi
+  n="$(printf '%s\n' "$out" | wc -l | tr -d ' ')"
+  if [ "$best_n" -lt 0 ] || [ "$n" -lt "$best_n" ]; then
+    best="$id" best_out="$out" best_n="$n"
+  fi
 done
 
 {
   echo "pre-commit (Gate 9): các file đang staged không cùng nằm trong scope của một task nào (F-025)."
-  echo "  File staged:"
-  for f in "${staged[@]}"; do
+  echo "  Gần nhất là $best: $(( ${#staged[@]} - best_n ))/${#staged[@]} file nằm trong scope của nó. File ngoài scope $best:"
+  restore=""
+  while IFS= read -r f; do
     owners=()
     for id in "${ids[@]}"; do
       [ -z "$(./scripts/check-scope.sh --match --task "$id" "$f")" ] && owners+=("$id")
     done
-    if [ "${#owners[@]}" -gt 0 ]; then
+    if [ "${#owners[@]}" -gt 5 ]; then
+      printf '    %s  ← %s … (%s task)\n' "$f" "${owners[*]:0:5}" "${#owners[@]}"
+    elif [ "${#owners[@]}" -gt 0 ]; then
       printf '    %s  ← %s\n' "$f" "${owners[*]}"
     else
       printf '    %s  ← không task nào\n' "$f"
     fi
-  done
-  echo "  Gỡ file của task khác ra (git restore --staged <file>), hoặc khai nó vào scope của task này."
-  echo "  Cố ý gộp: git commit --no-verify."
+    restore="$restore $(printf '%q' "$f")"
+  done <<< "$best_out"
+  echo "  Commit cho $best: git restore --staged$restore"
+  echo "  Hoặc khai các file ấy vào work/scope/$best.txt. Cố ý gộp: git commit --no-verify."
 } >&2
 exit 1

@@ -254,6 +254,7 @@ uncommitted, ends with:
 git diff --name-only HEAD
 git ls-files --others --exclude-standard
 
+git reset -q                         # bỏ stage cũ, không đổi file
 git add CLAUDE.md work/backlog.md
 git commit -m "T-XXX: what changed" -m "Why it changed.
 Verified: ./scripts/gate.sh green."
@@ -262,8 +263,8 @@ Verified: ./scripts/gate.sh green."
 - **List the files one by one, read off the two commands above** — never
   `git add -A`, never `.`, never from memory. Include only this task's files.
   Check `git diff --cached --name-only`: if someone else's files are staged,
-  report them and do not hand over a block that would commit them; do not alter
-  another person's index without authorization.
+  name them in the report — the block's `git reset -q` unstages them, and the
+  session itself never runs it.
 - **A scope file never belongs in the block** (Gate 7b names it if you list it).
 - **Subject follows §6**, in the language the change is written in. An L0 change
   with no task ID drops the `T-XXX:` prefix.
@@ -273,6 +274,11 @@ Verified: ./scripts/gate.sh green."
   commit order.
 - **Uncommitted work that is not yours is not folded in.** Name it, say it is not
   in your block, leave it to whoever made it.
+- **The block starts with `git reset -q`** (2026-10-23, repo owner, T-241): it only
+  unstages, so a file another session left staged never rides along (Gate 9). A
+  shared file (`work/backlog.md`, `Makefile`…) holding another task's uncommitted
+  lines is not handed whole: split it per task (index blobs via `git update-index
+  --cacheinfo`), dry-run the commits in a throwaway worktree, hand over that.
 
 Give the block whether or not the user asks — asking to commit is a separate
 request (§6). In Claude hook mode Gate 7 checks for it; in Codex it is manual.

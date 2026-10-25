@@ -2544,6 +2544,14 @@ lát của cùng lượt ấy (`db/tests/i009_…` · `i013_…` · `03-luoc-do-
 quả: `HEAD` kể bằng chứng *"bảy lần đỏ"* và *"đã sửa test `I-013`"* trong khi test đã sửa chưa có
 trong `HEAD` — đúng hình lần thứ tư. ⇒ Kết luận không đổi; đường vá vẫn thuộc chủ repo.
 
+**Lần nữa — 2026-10-23, ghi bởi T-241 (Claude Code); vá 2026-10-23, chủ repo yêu cầu.** Gate 9 chặn đúng, nhưng chủ repo gặp
+nó liên tiếp: bốn task Done chưa commit (T-235 · T-238 · T-239 · T-240) chung `work/backlog.md`, `Makefile`, `docs/command/make.md`,
+và `docs/command/tai-khoan-dev.md` của T-240 đã bị stage sẵn trước khi dán khối của T-239 — khối không nhắc. Lời từ chối liệt kê
+cả trăm mã cho `work/backlog.md` nên không thấy thủ phạm. Vá: (1) `scripts/hooks/pre-commit` nay nêu task gần nhất, chỉ file
+ngoài scope của nó và đúng lệnh `git restore --staged`; (2) `CLAUDE.md` §6.1: khối commit mở bằng `git reset -q`, file chung mang
+dòng của task khác được tách theo task và chạy thử trong worktree tạm trước khi giao. Còn mở: phiên vẫn để nhiều task Done chưa
+commit chồng lên nhau — commit ngay sau mỗi task là cách rẻ nhất.
+
 ### F-026 — Ba invariant sinh SAU khi kế hoạch chia nhóm, nên không nhóm nào của pha 1 nhận chúng
 
 **Problem:**

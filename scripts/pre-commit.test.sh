@@ -49,10 +49,20 @@ ca 0 "một task khai cả hai thư mục" a/x.txt b/y.txt
 printf 'a/\n!a/x.txt\n' > work/scope/T-4.txt
 ca 1 "dòng ! của task chặn chính nó" a/x.txt b/y.txt
 out="$(git reset -q; echo z >> a/x.txt; echo z >> b/y.txt; git add a/x.txt b/y.txt; scripts/hooks/pre-commit 2>&1)"
-if printf '%s' "$out" | grep -q 'a/x.txt  ← T-1' && printf '%s' "$out" | grep -q 'b/y.txt  ← T-2'; then
-  echo "  ok   lời từ chối nêu task của từng file"
-else echo "  FAIL lời từ chối không nêu task của từng file: $out"; fails=$((fails + 1)); fi
+if printf '%s' "$out" | grep -qE 'a/x.txt  ← T-1|b/y.txt  ← T-2'; then
+  echo "  ok   lời từ chối nêu task của file ngoài scope"
+else echo "  FAIL lời từ chối không nêu task của file ngoài scope: $out"; fails=$((fails + 1)); fi
 git checkout -q -- .; git reset -q
+
+# T-241: ba file, task gần nhất phủ hai — chỉ file thừa được nêu, kèm đúng lệnh gỡ.
+printf 'a/\nc.txt\n' > work/scope/T-5.txt
+out="$(git reset -q; echo v >> a/x.txt; echo v >> b/y.txt; echo v >> c.txt; git add a/x.txt b/y.txt c.txt; scripts/hooks/pre-commit 2>&1)"
+if printf '%s' "$out" | grep -q 'Gần nhất là T-5: 2/3' \
+   && printf '%s' "$out" | grep -qx '  Commit cho T-5: git restore --staged b/y.txt' \
+   && ! printf '%s' "$out" | grep -q 'a/x.txt  ←'; then
+  echo "  ok   lời từ chối chỉ nêu file ngoài task gần nhất và lệnh gỡ"
+else echo "  FAIL lời từ chối không chỉ thẳng file thừa: $out"; fails=$((fails + 1)); fi
+git checkout -q -- .; git reset -q; rm -f work/scope/T-5.txt
 
 # Tầng thật: cài hook rồi git commit.
 ./scripts/install-hooks.sh >/dev/null 2>&1
