@@ -951,6 +951,22 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-249"></a>
+### T-249 — Trang Combo theo bản HTML chuẩn
+
+Chủ repo giao trực tiếp Codex ngày 2026-10-25. Mức L1, chỉ giao diện `/chu-quan/combo`, dựa trên `docs/product/4-fe/thiet_ke/chu_quan/combos/combo.html`. Không đổi API hay luật giá.
+
+Nghiệm thu viết trước: bố cục điều hướng, tiêu đề, ba thống kê, bộ lọc/tìm kiếm, lưới thẻ, chi tiết và hộp thoại lập/đổi giá theo HTML; thích ứng màn nhỏ, sáng/tối; giữ lập, đổi giá, ẩn và phụ thu qua API hiện có. Không bịa đơn giá lẻ hoặc phân loại thành phần khi API không cung cấp. Test combo và gate phải xanh.
+
+Bàn giao: Codex thực hiện, chưa có duyệt độc lập; nhánh `P4A-01`, base `52aef5a`. Cây có sẵn thay đổi các việc khác, giữ nguyên.
+
+Bằng chứng giao diện: Chrome headless, dữ liệu giả qua fetch chỉ cho phiên kiểm tra, sáng/tối ở 1440 × 1000 và 390 × 1000; scrollWidth lần lượt 1440 và 390 (không tràn ngang). Ảnh ở `/private/tmp/combo-{dark,light}-{1440,390}.png`; hộp thoại chọn món theo hàng ở `/private/tmp/combo-dialog.png`. Test `combo.test.tsx`: 22 passed, gồm luồng API cũ, tìm kiếm, chọn thẻ, thống kê/lọc ẩn và tham số `include_hidden=true`. `npm run typecheck` exit 0. Gate trong sandbox dừng vì không truy cập Docker; đã chạy lại ngoài sandbox và exit 0: PASS gate, không cổng nào đỏ. Log đầy đủ: `/private/tmp/combo-page-gate-escalated.log`. Backend test với PostgreSQL thật, 37 migration xuôi/lùi/xuôi, 53 file test DB, 147 câu đối chiếu, 149 lỗi cài và 18 file test script đều đạt; verify bao gồm check-fe-rules, lint/typecheck/test/build frontend và so type API. Gate có NOTE về tài liệu chưa track từ trước, không thuộc task này.
+
+Phạm vi đã mở rộng thêm `du-lieu-danh-muc-combo.ts`: dùng tham số include_hidden có sẵn, không đổi hợp đồng. API không trả đơn giá lẻ hay loại thành phần nên không đưa số/loại minh hoạ của HTML vào dữ liệu thật. Các thao tác lập, đổi giá, ẩn, phụ thu vẫn qua hook cũ; hộp thoại đóng sau khi backend xác nhận thành công.
+
+Kết thúc: task Done, scope giữ tới khi chủ repo commit; chưa commit, index rỗng. Đã đọc diff, không đổi hợp đồng/luật giá, test cũ chỉ đổi cách mở hộp thoại/chọn thẻ và kiểm tra form được reset khi mở lại. Chưa có duyệt độc lập; bước tiếp theo là chủ repo xem trang và commit phần T-249. `work/backlog.md` có sẵn thay đổi của việc khác, cần stage riêng hunk T-249.
+
+
 <a id="t-213"></a>
 ### T-213 — Test của `gia` đỏ vì dữ liệu test `menu` để lại (F-072)
 

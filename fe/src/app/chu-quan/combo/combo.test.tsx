@@ -4,13 +4,14 @@
 // từ GET /menu-categories (cùng khoá query với trang Sản phẩm), món ngừng bán không chọn được; đổi giá và ẩn bắt buộc
 // lý do; đổi giá trong giờ bán bị backend từ chối và trang nói đúng lý do; mức phụ thu theo món chỉ ĐỌC ở bước này;
 // ghi chờ backend xác nhận rồi đọc lại, không ghi tay cache (ADR-102 điểm 2); lời từ chối gắn đúng ô; bấm hai lần gửi một lệnh.
-import { cleanup, fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { voiBackend, type GoiDen } from "@/components/tai-khoan/test-utils";
 import type { components } from "@/lib/api/schema";
 
 import Page from "./page";
+import { ApiProvider } from "@/lib/api/provider";
 
 type MenuComboList = components["schemas"]["MenuComboList"];
 type MenuCombo = components["schemas"]["MenuCombo"];
@@ -79,10 +80,14 @@ function go(o: HTMLElement, nhan: string, giaTri: string) {
 }
 const oSai = (o: HTMLElement, nhan: string) => within(o).getByLabelText(nhan).getAttribute("aria-invalid");
 async function mo(nhanNut: string) {
+  if (nhanNut.endsWith("Combo Chay")) fireEvent.click(await screen.findByRole("button", { name: "Xem Combo Chay" }));
   fireEvent.click(await screen.findByRole("button", { name: nhanNut }));
   return screen.getByRole("form", { name: nhanNut });
 }
 async function formLap() {
+  const nutLap = await screen.findByRole("button", { name: "＋ Lập combo" });
+  await waitFor(() => expect(nutLap.hasAttribute("disabled")).toBe(false));
+  fireEvent.click(nutLap);
   const f = await screen.findByRole("form", { name: "Lập combo" });
   // Danh sách món đọc xong thì ô chọn món 1 mới có lựa chọn.
   await waitFor(() => expect((within(f).getByLabelText("Món 1") as HTMLSelectElement).options.length).toBeGreaterThan(1));
@@ -122,7 +127,7 @@ describe("trang combo — danh sách", () => {
   it("chưa có combo: nói chưa có, vẫn cho lập", async () => {
     moTrang({ doc: () => ({ status: 200, body: { combos: [] } }) });
     expect(await screen.findByText(/Chưa có combo/)).toBeTruthy();
-    expect(await screen.findByRole("form", { name: "Lập combo" })).toBeTruthy();
+    expect(await formLap()).toBeTruthy();
   });
 
   it("đọc lỗi: báo không đọc được", async () => {
@@ -153,7 +158,8 @@ describe("trang combo — lập", () => {
       ] },
     }]);
     await waitFor(() => expect(soLanDoc(goi)).toBe(2));
-    expect((within(f).getByLabelText("Tên combo") as HTMLInputElement).value).toBe("");
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect((within(await formLap()).getByLabelText("Tên combo") as HTMLInputElement).value).toBe("");
   });
 
   it("bỏ được món thêm sau, không bỏ được món duy nhất", async () => {
@@ -305,9 +311,8 @@ describe("trang combo — đặt phụ thu theo món (T-211)", () => {
     });
   }
   async function moForm() {
-    const the = (await screen.findByRole("heading", { name: "Combo Đầy đủ" })).closest("section") as HTMLElement;
-    fireEvent.click(await within(the).findByRole("button", { name: "Đặt phụ thu Combo Đầy đủ" }));
-    return within(the).getByRole("form", { name: "Đặt phụ thu Combo Đầy đủ" });
+    fireEvent.click(await screen.findByRole("button", { name: "Đặt phụ thu Combo Đầy đủ" }));
+    return screen.getByRole("form", { name: "Đặt phụ thu Combo Đầy đủ" });
   }
 
   it("bày lựa chọn theo món, đặt sẵn mức hiện có, không bày lựa chọn đã ẩn", async () => {
@@ -343,5 +348,45 @@ describe("trang combo — đặt phụ thu theo món (T-211)", () => {
     fireEvent.submit(f);
     await waitFor(() => expect(f.textContent).toMatch(/Chỉ đặt phụ thu combo ngoài giờ bán/));
     expect(ghi(goi)).toHaveLength(1);
+  });
+});
+
+// T-249: bộ lọc và lựa chọn chỉ đổi cách bày dữ liệu, không phát sinh lệnh ghi.
+describe("trang combo — lọc và chi tiết", () => {
+  it("đọc cả combo ẩn bằng tham số include_hidden của API", async () => {
+    const urls: URL[] = [];
+    render(<ApiProvider fetch={async (req) => {
+      const url = new URL(req.url);
+      urls.push(url);
+      const body = url.pathname.endsWith("/menu-combos") ? mauCombo : url.pathname.endsWith("/menu-categories") ? mauMon : { option_groups: [] };
+      return new Response(JSON.stringify(body), { status: 200, headers: { "content-type": "application/json" } });
+    }}><Page /></ApiProvider>);
+    await screen.findByRole("region", { name: "Combo Đầy đủ" });
+    expect(urls.find((url) => url.pathname.endsWith("/menu-combos"))?.searchParams.get("include_hidden")).toBe("true");
+  });
+  it("tìm theo tên không phân biệt hoa thường, chọn thẻ cập nhật chi tiết", async () => {
+    const goi = moTrang();
+    await screen.findByRole("button", { name: "Xem Combo Chay" });
+    fireEvent.click(screen.getByRole("button", { name: "Xem Combo Chay" }));
+    expect(within(screen.getByRole("complementary", { name: "Chi tiết combo" })).getByRole("heading", { name: "Combo Chay" })).toBeTruthy();
+    fireEvent.change(screen.getByRole("searchbox", { name: "Tìm tên combo" }), { target: { value: "ĐẦY ĐỦ" } });
+    expect(screen.queryByRole("region", { name: "Combo Chay" })).toBeNull();
+    expect(screen.getByRole("region", { name: "Combo Đầy đủ" })).toBeTruthy();
+    fireEvent.change(screen.getByRole("searchbox", { name: "Tìm tên combo" }), { target: { value: "không khớp" } });
+    expect(screen.getByText("Không có combo phù hợp.")).toBeTruthy();
+    expect(ghi(goi)).toEqual([]);
+  });
+  it("lọc combo ẩn, thống kê theo toàn danh sách và không cho sửa combo đã ẩn", async () => {
+    moTrang({ doc: () => ({ status: 200, body: { combos: [mauCombo.combos[0], { ...mauCombo.combos[1], hidden_at: "2026-10-25T01:00:00Z" }] } }) });
+    await screen.findByRole("region", { name: "Combo Chay" });
+    fireEvent.click(screen.getByRole("button", { name: "Đã ẩn" }));
+    expect(screen.queryByRole("region", { name: "Combo Đầy đủ" })).toBeNull();
+    expect(screen.getByRole("region", { name: "Combo Chay" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Đổi giá Combo Chay" })).toBeNull();
+    const tomTat = screen.getByRole("region", { name: "Tóm tắt danh sách" });
+    expect([...tomTat.querySelectorAll("strong")].map((n) => n.textContent)).toEqual(["2", "1", "1"]);
+    fireEvent.click(screen.getByRole("button", { name: "Hiển thị" }));
+    expect(screen.queryByRole("region", { name: "Combo Chay" })).toBeNull();
+    expect(screen.getByRole("region", { name: "Combo Đầy đủ" })).toBeTruthy();
   });
 });

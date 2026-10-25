@@ -120,6 +120,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="done"></a>
 ## Done
+
+- [x] T-249 **Trang Combo theo bản HTML chuẩn** — L1 — xong 2026-10-25 · [chi tiết](backlog_archive.md#t-249)
 - [x] T-242 **Menu chưa có bánh trứng bán rời, trang Sản phẩm xếp mọi món vào một danh mục** — thêm ba dòng *bánh trứng bán rời* chín · tái · vàng vào dữ liệu mồi theo `shop-facts.md` §4.9 (2026-10-23), dữ liệu thử máy dev chia danh mục **Món lẻ** (trên) và **Combo** (dưới) theo cột *Nhóm trên menu*; ca giá 14 xanh — L2 (dòng menu có tiền) — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-242)
 - [x] T-238 **Trang Sản phẩm có nút Cập nhật cho tên, danh mục, giá và trạng thái của món** — mỗi dòng món mở ngăn bên phải: đổi tên, chuyển danh mục, đổi giá gốc từng thành phần, ngừng bán, mọi lệnh có lý do; dùng lại các cửa ghi sẵn có, không đổi backend hay hợp đồng; bán lại món đã ngừng chờ U-104 — L2 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-238)
 - [x] T-240 **Máy dev không có lệnh make nào tạo lại tài khoản đăng nhập sau `make reset`** — thêm `make tai-khoan-dev` tạo chủ quán và bốn tài khoản theo vai như `docs/command/tai-khoan-dev.md`, chạy lại không lỗi; thay khối lệnh dài trong tài liệu ấy bằng lệnh make — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-23 · [chi tiết](#t-240)

@@ -51,7 +51,7 @@ export function useXepDanhMuc(menu_item_id: number) {
 export function useCombo() {
   const api = useApi();
   return useQuery({ queryKey: ["menu-combos"], queryFn: async () => {
-    const r = await call(api.GET("/menu-combos"));
+    const r = await call(api.GET("/menu-combos", { params: { query: { include_hidden: true } } }));
     if (!r.ok) throw r.failure;
     return r.data;
   } });
