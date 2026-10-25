@@ -47,7 +47,7 @@ if ! kill -0 "$$be_pid" 2>/dev/null; then wait "$$be_pid"; else wait "$$fe_pid";
 endef
 
 .DEFAULT_GOAL := help
-.PHONY: help setup up migrate seed seed-thu tai-khoan-dev psql shell status stop reset swagger swagger-stop check-tz dev be fe check-go check-fe dev-files
+.PHONY: help setup up migrate seed seed-thu tai-khoan-dev ma-qr-so-ban psql shell status stop reset swagger swagger-stop check-tz dev be fe check-go check-fe dev-files
 
 help: ## Liệt kê các lệnh
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-12s %s\n", $$1, $$2}'
@@ -99,6 +99,10 @@ seed-thu: check-tz ## Nạp dữ liệu thử máy dev sau make seed — đã c�
 tai-khoan-dev: check-tz check-go ## Tạo tài khoản thử máy dev — tài khoản đã có thì bỏ qua
 	@BANHCUON_DATABASE_URL="$(BANHCUON_DATABASE_URL)" BANHCUON_SHOP_TZ="$(BANHCUON_SHOP_TZ)" \
 	  BANHCUON_BE_URL="$(BANHCUON_BE_URL)" bash db/seed/tai-khoan-dev.sh
+
+ma-qr-so-ban: check-tz ## Chỉ máy dev: mã QR của mỗi bàn thành số bàn — mở /ban/<số bàn>
+	docker compose exec -T -e PGTZ=$(SHOP_TZ) db \
+	  psql -X -q -v ON_ERROR_STOP=1 -U shop_owner -d banhcuon < db/seed/ma-qr-so-ban.sql
 
 psql: check-tz ## Vào psql bên trong container (\q để thoát)
 	$(PSQL)
