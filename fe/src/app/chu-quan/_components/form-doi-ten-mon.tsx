@@ -12,10 +12,11 @@ import { loiSanPham, oBiTuChoi, useDoiTenMon, type DoiTenMon, type Mon } from ".
 
 const schema = z.object({ name: z.string().trim().min(1, "Nhập tên mới."), reason: z.string().trim().min(1, "Nhập lý do.") });
 
-export function FormDoiTenMon({ mon, dong, daLuu }: { mon: Mon; dong: () => void; daLuu: (ten: string) => void }) {
+export function FormDoiTenMon({ mon, dong }: { mon: Mon; dong: () => void }) {
   const id = useId();
   const luu = useDoiTenMon(mon.menu_item_id);
   const chot = useRef(false);
+  const [daLuu, setDaLuu] = useState<string | null>(null);
   const [thongBao, setThongBao] = useState<string | null>(null);
   const form = useForm<DoiTenMon>({ resolver: zodResolver(schema), defaultValues: { name: mon.item_name, reason: "" } });
   const ban = form.formState.isSubmitting || luu.isPending;
@@ -26,8 +27,9 @@ export function FormDoiTenMon({ mon, dong, daLuu }: { mon: Mon; dong: () => void
     try {
       await form.handleSubmit(async (body) => {
         setThongBao(null);
+        setDaLuu(null);
         const r = await luu.mutateAsync(body);
-        if (r.ok) { daLuu(r.data.name); return; }
+        if (r.ok) { setDaLuu(`Đã đổi tên thành ${r.data.name}.`); return; }
         const message = loiSanPham(r.failure);
         const o = oBiTuChoi(r.failure);
         if (o === "name" || o === "reason") form.setError(o, { type: "server", message });
@@ -46,7 +48,8 @@ export function FormDoiTenMon({ mon, dong, daLuu }: { mon: Mon; dong: () => void
         </Field>;
       })}
     </fieldset>
-    {thongBao && <Alert role="status"><AlertDescription>{thongBao}</AlertDescription></Alert>}
+    {thongBao && <Alert role="alert"><AlertDescription>{thongBao}</AlertDescription></Alert>}
+    {daLuu && <p role="status">{daLuu}</p>}
     <div className="flex gap-2">
       <Button className="sp-primary" type="submit" disabled={ban}>{ban ? "Đang lưu…" : "Lưu tên"}</Button>
       <Button type="button" variant="outline" disabled={ban} onClick={dong}>Huỷ</Button>

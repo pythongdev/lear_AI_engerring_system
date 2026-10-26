@@ -11,7 +11,9 @@ export type DanhSachMon = components["schemas"]["MenuCategoryList"];
 export type Mon = components["schemas"]["MenuCategoryItem"];
 export type ThemMon = components["schemas"]["MenuItemCreate"];
 export type DoiTenMon = components["schemas"]["MenuItemRename"];
-type KetQua = components["schemas"]["MenuItemIdentity"];
+export type ChuyenDanhMuc = components["schemas"]["AssignMenuItemCategory"];
+export type DoiGiaThanhPhan = components["schemas"]["ComponentPriceChange"];
+export type NgungBan = components["schemas"]["MenuDiscontinuationRequest"];
 const khoa = ["menu-categories"] as const;
 
 export function useSanPham() {
@@ -25,12 +27,13 @@ export function useSanPham() {
 
 function useDocLaiSauGhi() {
   const qc = useQueryClient();
-  return async (r: ApiResult<KetQua>) => {
+  return async (r: ApiResult<unknown>) => {
     if (r.ok || (r.failure.kind === "rejected" &&
-      ["menu_category_hidden", "menu_category_not_found", "menu_item_not_found"].includes(r.failure.code))) {
+      (r.failure.code.endsWith("_not_found") || ["menu_category_hidden", "menu_item_discontinued"].includes(r.failure.code)))) {
       await Promise.all([
         qc.invalidateQueries({ queryKey: khoa }),
         qc.invalidateQueries({ queryKey: ["menu"] }),
+        qc.invalidateQueries({ queryKey: ["price-quotes"] }),
       ]);
     }
   };
@@ -50,9 +53,36 @@ export function useDoiTenMon(menu_item_id: number) {
   })), retry: false, onSuccess });
 }
 
+export function useChuyenDanhMuc(menu_item_id: number) {
+  const api = useApi();
+  const onSuccess = useDocLaiSauGhi();
+  return useMutation({ mutationFn: (body: ChuyenDanhMuc) => call(api.PUT("/menu-items/{menu_item_id}/category", {
+    params: { path: { menu_item_id } }, body,
+  })), retry: false, onSuccess });
+}
+
+export function useDoiGiaThanhPhan(menu_component_id: number) {
+  const api = useApi();
+  const onSuccess = useDocLaiSauGhi();
+  return useMutation({ mutationFn: (body: DoiGiaThanhPhan) => call(api.PUT("/menu-components/{menu_component_id}/base-price", {
+    params: { path: { menu_component_id } }, body,
+  })), retry: false, onSuccess });
+}
+
+export function useNgungBan(menu_item_id: number) {
+  const api = useApi();
+  const onSuccess = useDocLaiSauGhi();
+  return useMutation({ mutationFn: (body: NgungBan) => call(api.POST("/menu-items/{menu_item_id}/discontinuation", {
+    params: { path: { menu_item_id } }, body,
+  })), retry: false, onSuccess });
+}
+
 export function loiSanPham(failure: ApiFailure) {
   if (failure.kind !== "rejected") return "Chưa xác nhận được kết quả. Hãy đọc lại danh sách để kiểm tra.";
   switch (failure.code) {
+    case "menu_item_already_in_category": return "Món đã ở danh mục này.";
+    case "menu_item_discontinued": return "Món đã ngừng bán rồi. Đang đọc lại danh sách.";
+    case "menu_component_not_found": return "Thành phần không còn. Đang đọc lại danh sách.";
     case "menu_item_name_conflict": return "Tên món bị trùng. Hãy chọn tên khác.";
     case "menu_component_name_conflict": return "Tên thành phần bị trùng với thành phần đã có. Hãy đặt tên khác.";
     case "menu_item_not_found": return "Món không còn trong danh sách. Hãy đọc lại danh sách.";

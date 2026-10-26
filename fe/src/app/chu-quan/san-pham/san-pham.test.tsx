@@ -1,9 +1,10 @@
 // Test hồi quy P4A-04 — Claude viết TRƯỚC khi có code (L2). Người thi công làm cho xanh, KHÔNG sửa điều kiện kiểm.
 // Giữ: danh sách món là đúng thứ backend trả từ GET /menu-categories, kể cả món ngừng bán và món chưa xếp; trang không
 // cộng, không tính thử giá (ADR-086 — giá món do backend tính từ thành phần) — T-234 (chủ repo 2026-10-23) cho trang bày
-// giá đọc từ GET /menu, đúng từng tổ hợp backend trả; sửa giá · thành phần · ngừng bán là của P4-05,
-// trang này không có nút ấy; ghi chờ backend xác nhận rồi đọc lại, không ghi tay cache (ADR-102 điểm 2); đổi tên bắt
-// buộc lý do; lời từ chối có field gắn đúng ô; bấm gửi hai lần chỉ gửi một lệnh (fe-02 §3).
+// giá đọc từ GET /menu, đúng từng tổ hợp backend trả. T-238 (chủ repo 2026-10-23) thêm ngăn *Cập nhật* mỗi món: đổi tên,
+// chuyển danh mục, đổi giá gốc thành phần, ngừng bán — hồi quy I-018 phía FE (mọi lệnh cập nhật mang lý do, thiếu lý do
+// không gửi) và I-013 (FE không gửi giá món, chỉ giá gốc chủ quán gõ); ghi chờ backend xác nhận rồi đọc lại, không ghi
+// tay cache (ADR-102 điểm 2); lời từ chối có field gắn đúng ô; bấm gửi hai lần chỉ gửi một lệnh (fe-02 §3).
 import { cleanup, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -15,6 +16,7 @@ import Page from "./page";
 type MenuCategoryList = components["schemas"]["MenuCategoryList"];
 type MenuCategory = components["schemas"]["MenuCategory"];
 type Menu = components["schemas"]["Menu"];
+type PriceQuote = components["schemas"]["PriceQuote"];
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
@@ -59,6 +61,25 @@ const menuMau: Menu = {
   combos: [],
 };
 
+// Thành phần đọc qua POST /price-quotes như trang Menu & giá (hợp đồng không có đường đọc thành phần riêng).
+function bangGia(id: number): PriceQuote {
+  const line = id === 11
+    ? {
+      menu_item_id: 11, item_name: "Bánh cuốn trứng", quantity: 1, unit_price_vnd: 35000, line_total_vnd: 35000,
+      components: [
+        { menu_component_id: 101, component_name: "Bánh cuốn", quantity: 3, takes_filling: true, base_price_vnd: 10000 },
+        { menu_component_id: 102, component_name: "Trứng", quantity: 1, takes_filling: false, base_price_vnd: 5000 },
+      ],
+      options: [{ menu_option_id: 51, option_group_name: "Nhân", option_name: "Thịt", surcharge_vnd: 0 }],
+    }
+    : {
+      menu_item_id: 20, item_name: "Chả quế", quantity: 1, unit_price_vnd: 10000, line_total_vnd: 10000,
+      components: [{ menu_component_id: 103, component_name: "Chả quế", quantity: 1, takes_filling: false, base_price_vnd: 10000 }],
+      options: [],
+    };
+  return { lines: [line], total_vnd: line.line_total_vnd };
+}
+
 type TraLoi = { status: number; body?: unknown };
 function moTrang(tl: { doc?: (lan: number) => TraLoi; menu?: (lan: number) => TraLoi; ghi?: (g: GoiDen) => TraLoi } = {}) {
   let lan = 0;
@@ -72,7 +93,10 @@ function moTrang(tl: { doc?: (lan: number) => TraLoi; menu?: (lan: number) => Tr
       lanMenu += 1;
       return tl.menu ? tl.menu(lanMenu) : { status: 200, body: menuMau };
     }
-    if ((g.method === "POST" && g.path === "/menu-items") || (g.method === "PUT" && g.path.startsWith("/menu-items/"))) {
+    if (g.method === "POST" && g.path === "/price-quotes") {
+      return { status: 200, body: bangGia((g.body as { lines: { menu_item_id: number }[] }).lines[0].menu_item_id) };
+    }
+    if (g.method !== "GET") {
       return tl.ghi ? tl.ghi(g) : { status: 599, body: { code: "khong_co_trong_hop_dong" } };
     }
     return { status: 599, body: { code: "khong_co_trong_hop_dong" } };
@@ -80,7 +104,15 @@ function moTrang(tl: { doc?: (lan: number) => TraLoi; menu?: (lan: number) => Tr
 }
 const soLanDoc = (g: GoiDen[]) => g.filter((x) => x.method === "GET" && x.path === "/menu-categories").length;
 const soLanDocGia = (g: GoiDen[]) => g.filter((x) => x.method === "GET" && x.path === "/menu").length;
-const ghi = (g: GoiDen[]) => g.filter((x) => x.method !== "GET");
+// Tính thử là lời đọc đi bằng POST, không phải lệnh ghi.
+const ghi = (g: GoiDen[]) => g.filter((x) => x.method !== "GET" && x.path !== "/price-quotes");
+const soLanThu = (g: GoiDen[]) => g.filter((x) => x.path === "/price-quotes").length;
+
+// Ngăn Cập nhật của một món: bấm nút ở cột Thao tác.
+async function moCapNhat(ten: string) {
+  fireEvent.click(await screen.findByRole("button", { name: `Cập nhật ${ten}` }));
+  return screen.findByRole("dialog", { name: `Cập nhật ${ten}` });
+}
 
 // Mỗi món một dòng bảng; dòng đầu là dòng tiêu đề cột.
 function tenMon(vung: HTMLElement) {
@@ -177,10 +209,12 @@ describe("trang sản phẩm — danh sách", () => {
     expect(tenMon(banhCuon)).toHaveLength(2);
   });
 
-  it("không có nút xoá, ngừng bán hay sửa giá — phần ấy của P4-05", async () => {
-    moTrang();
-    await screen.findByRole("region", { name: "Bánh cuốn" });
-    expect(screen.queryByRole("button", { name: /xoá|xóa|ngừng bán|giá/i })).toBeNull();
+  it("ngoài ngăn chỉ có nút Cập nhật mỗi món; không nút xoá; chưa mở ngăn thì không tính thử", async () => {
+    const goi = moTrang();
+    const banhCuon = await screen.findByRole("region", { name: "Bánh cuốn" });
+    expect(within(dongMon(banhCuon, "Bánh cuốn trứng")).getByRole("button", { name: "Cập nhật Bánh cuốn trứng" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /xoá|xóa|ngừng bán|giá|Đổi tên/i })).toBeNull();
+    expect(soLanThu(goi)).toBe(0);
   });
 
   it("đọc lỗi: báo không đọc được, không bày form thêm món", async () => {
@@ -308,9 +342,8 @@ describe("trang sản phẩm — thêm món", () => {
 
 describe("trang sản phẩm — đổi tên món", () => {
   async function moDoiTen(ten: string) {
-    const nut = await screen.findByRole("button", { name: `Đổi tên ${ten}` });
-    fireEvent.click(nut);
-    return screen.getByRole("form", { name: `Đổi tên ${ten}` });
+    const ngan = await moCapNhat(ten);
+    return within(ngan).getByRole("form", { name: `Đổi tên ${ten}` });
   }
 
   it("tên cũ điền sẵn; thiếu lý do thì không gửi", async () => {
@@ -336,13 +369,20 @@ describe("trang sản phẩm — đổi tên món", () => {
     }]);
     await waitFor(() => expect(soLanDoc(goi)).toBe(2));
     await waitFor(() => expect(soLanDocGia(goi)).toBe(2));
-    // Lưu xong ngăn đóng.
-    expect(screen.queryByRole("form", { name: "Đổi tên Bánh cuốn trứng" })).toBeNull();
+    // Lưu xong ngăn vẫn mở để cập nhật tiếp.
+    expect(screen.getByRole("dialog", { name: "Cập nhật Bánh cuốn trứng" })).toBeTruthy();
   });
 
-  it("món ngừng bán vẫn đổi tên được", async () => {
-    moTrang();
-    expect(await screen.findByRole("button", { name: "Đổi tên Bánh cuốn thịt" })).toBeTruthy();
+  it("món ngừng bán vẫn đổi tên, chuyển danh mục được; không có phần ngừng bán, không đổi giá ở đây", async () => {
+    const goi = moTrang();
+    const ngan = await moCapNhat("Bánh cuốn thịt");
+    expect(within(ngan).getByRole("form", { name: "Đổi tên Bánh cuốn thịt" })).toBeTruthy();
+    expect(within(ngan).getByRole("form", { name: "Chuyển danh mục Bánh cuốn thịt" })).toBeTruthy();
+    expect(within(ngan).queryByRole("form", { name: /^Ngừng bán/ })).toBeNull();
+    expect(ngan.textContent ?? "").toMatch(/Món đã ngừng bán\. Chưa có cách bán lại\./);
+    expect(ngan.textContent ?? "").toMatch(/không đổi giá ở đây/);
+    expect(within(ngan).queryByRole("form", { name: /^Giá gốc/ })).toBeNull();
+    expect(soLanThu(goi)).toBe(0);
   });
 
   it("tên trùng (409): lỗi gắn ô Tên mới", async () => {
@@ -353,5 +393,167 @@ describe("trang sản phẩm — đổi tên món", () => {
     fireEvent.click(within(f).getByRole("button", { name: "Lưu tên" }));
     await waitFor(() => expect(oSai(f, "Tên mới")).toBe("true"));
     expect(f.textContent ?? "").toMatch(/trùng/);
+  });
+});
+
+describe("trang sản phẩm — chuyển danh mục", () => {
+  async function formDanhMuc(ten: string) {
+    const ngan = await moCapNhat(ten);
+    return within(ngan).getByRole("form", { name: `Chuyển danh mục ${ten}` });
+  }
+
+  it("chọn được danh mục khác đang hiện, theo thứ backend; chuyển cần lý do, thiếu thì không gửi", async () => {
+    const goi = moTrang({ ghi: () => ({ status: 200, body: danhMuc(1, "Đồ uống", []) }) });
+    const f = await formDanhMuc("Bánh cuốn trứng");
+    const chon = within(f).getByLabelText("Danh mục mới") as HTMLSelectElement;
+    expect([...chon.options].filter((o) => o.value !== "").map((o) => [o.value, o.textContent])).toEqual([["1", "Đồ uống"]]);
+    fireEvent.change(chon, { target: { value: "1" } });
+    go(f, "Lý do chuyển", "   ");
+    fireEvent.click(within(f).getByRole("button", { name: "Lưu danh mục" }));
+    await waitFor(() => expect(oSai(f, "Lý do chuyển")).toBe("true"));
+    expect(ghi(goi)).toEqual([]);
+    go(f, "Lý do chuyển", "Xếp lại menu");
+    fireEvent.click(within(f).getByRole("button", { name: "Lưu danh mục" }));
+    expect(await screen.findByText("Đã chuyển Bánh cuốn trứng sang Đồ uống.")).toBeTruthy();
+    expect(ghi(goi)).toEqual([{
+      method: "PUT", path: "/menu-items/11/category", body: { menu_category_id: 1, reason: "Xếp lại menu" },
+    }]);
+    await waitFor(() => expect(soLanDoc(goi)).toBe(2));
+  });
+
+  it("món chưa xếp: xếp lần đầu không hỏi lý do, thân lệnh chỉ có menu_category_id", async () => {
+    const goi = moTrang({ ghi: () => ({ status: 200, body: danhMuc(2, "Bánh cuốn", []) }) });
+    const f = await formDanhMuc("Chả quế");
+    expect(within(f).queryByLabelText("Lý do chuyển")).toBeNull();
+    const chon = within(f).getByLabelText("Danh mục mới") as HTMLSelectElement;
+    expect([...chon.options].filter((o) => o.value !== "").map((o) => o.value)).toEqual(["2", "1"]);
+    fireEvent.change(chon, { target: { value: "2" } });
+    fireEvent.click(within(f).getByRole("button", { name: "Lưu danh mục" }));
+    expect(await screen.findByText("Đã chuyển Chả quế sang Bánh cuốn.")).toBeTruthy();
+    expect(ghi(goi)).toEqual([{ method: "PUT", path: "/menu-items/20/category", body: { menu_category_id: 2 } }]);
+  });
+
+  it("chưa chọn danh mục: không gửi, đánh dấu ô Danh mục mới", async () => {
+    const goi = moTrang();
+    const f = await formDanhMuc("Bánh cuốn trứng");
+    go(f, "Lý do chuyển", "thử");
+    fireEvent.click(within(f).getByRole("button", { name: "Lưu danh mục" }));
+    await waitFor(() => expect(oSai(f, "Danh mục mới")).toBe("true"));
+    expect(ghi(goi)).toEqual([]);
+  });
+
+  it("danh mục đích vừa bị ẩn (409 menu_category_hidden): báo trong form và đọc lại danh sách", async () => {
+    const goi = moTrang({ ghi: () => ({ status: 409, body: { code: "menu_category_hidden" } }) });
+    const f = await formDanhMuc("Bánh cuốn trứng");
+    fireEvent.change(within(f).getByLabelText("Danh mục mới"), { target: { value: "1" } });
+    go(f, "Lý do chuyển", "thử");
+    fireEvent.click(within(f).getByRole("button", { name: "Lưu danh mục" }));
+    await waitFor(() => expect(f.textContent ?? "").toMatch(/không còn dùng được/));
+    await waitFor(() => expect(soLanDoc(goi)).toBe(2));
+  });
+});
+
+describe("trang sản phẩm — giá gốc thành phần", () => {
+  async function formGia(mon: string, thanhPhan: string) {
+    const ngan = await moCapNhat(mon);
+    return within(ngan).findByRole("form", { name: `Giá gốc ${thanhPhan}` });
+  }
+
+  it("liệt kê thành phần đọc qua tính thử với tổ hợp đầu của món; có lời nhắc giá dùng chung", async () => {
+    const goi = moTrang();
+    const ngan = await moCapNhat("Bánh cuốn trứng");
+    expect(await within(ngan).findByRole("form", { name: "Giá gốc Bánh cuốn" })).toBeTruthy();
+    expect(within(ngan).getByRole("form", { name: "Giá gốc Trứng" })).toBeTruthy();
+    expect(ngan.textContent ?? "").toMatch(/mọi món dùng chung thành phần này đổi giá theo/);
+    const thu = goi.filter((g) => g.path === "/price-quotes");
+    expect(thu).toHaveLength(1);
+    expect(thu[0].body).toEqual({ lines: [{ menu_item_id: 11, quantity: 1, option_ids: [51] }] });
+    // Giá gốc hiện tại điền sẵn đúng số backend trả.
+    const f = within(ngan).getByRole("form", { name: "Giá gốc Bánh cuốn" });
+    expect((within(f).getByLabelText("Giá gốc mới (đồng)") as HTMLInputElement).value).toBe("10000");
+  });
+
+  it("gửi đúng giá gốc chủ quán gõ và lý do, không gửi giá món; xong thì đọc lại menu, danh sách và tính thử", async () => {
+    const goi = moTrang({ ghi: () => ({ status: 200, body: { menu_component_id: 102, base_price_vnd: 6000 } }) });
+    const f = await formGia("Bánh cuốn trứng", "Trứng");
+    go(f, "Giá gốc mới (đồng)", "6000");
+    go(f, "Lý do đổi giá", "Trứng lên giá");
+    fireEvent.click(within(f).getByRole("button", { name: "Lưu giá" }));
+    expect(await screen.findByText("Đã đổi giá gốc Trứng.")).toBeTruthy();
+    expect(ghi(goi)).toEqual([{
+      method: "PUT", path: "/menu-components/102/base-price", body: { base_price_vnd: 6000, reason: "Trứng lên giá" },
+    }]);
+    await waitFor(() => expect(soLanDocGia(goi)).toBe(2));
+    await waitFor(() => expect(soLanDoc(goi)).toBe(2));
+    await waitFor(() => expect(soLanThu(goi)).toBe(2));
+  });
+
+  it("thiếu lý do, giá âm hoặc không nguyên: không gửi, đánh dấu đúng ô", async () => {
+    const goi = moTrang();
+    const f = await formGia("Bánh cuốn trứng", "Trứng");
+    go(f, "Giá gốc mới (đồng)", "6000");
+    go(f, "Lý do đổi giá", " ");
+    fireEvent.click(within(f).getByRole("button", { name: "Lưu giá" }));
+    await waitFor(() => expect(oSai(f, "Lý do đổi giá")).toBe("true"));
+    go(f, "Lý do đổi giá", "thử");
+    for (const sai of ["-1", "1500.5", "abc"]) {
+      go(f, "Giá gốc mới (đồng)", sai);
+      fireEvent.click(within(f).getByRole("button", { name: "Lưu giá" }));
+      await waitFor(() => expect(oSai(f, "Giá gốc mới (đồng)")).toBe("true"));
+    }
+    expect(ghi(goi)).toEqual([]);
+  });
+
+  it("lời từ chối có field base_price_vnd gắn ô Giá gốc mới", async () => {
+    moTrang({ ghi: () => ({ status: 400, body: { code: "invalid_request", field: "base_price_vnd" } }) });
+    const f = await formGia("Bánh cuốn trứng", "Trứng");
+    go(f, "Giá gốc mới (đồng)", "6000");
+    go(f, "Lý do đổi giá", "thử");
+    fireEvent.click(within(f).getByRole("button", { name: "Lưu giá" }));
+    await waitFor(() => expect(oSai(f, "Giá gốc mới (đồng)")).toBe("true"));
+  });
+
+  it("bấm lưu giá hai lần liền chỉ gửi một lệnh", async () => {
+    const goi = moTrang({ ghi: () => ({ status: 200, body: { menu_component_id: 102, base_price_vnd: 6000 } }) });
+    const f = await formGia("Bánh cuốn trứng", "Trứng");
+    go(f, "Giá gốc mới (đồng)", "6000");
+    go(f, "Lý do đổi giá", "thử");
+    const nut = within(f).getByRole("button", { name: "Lưu giá" });
+    fireEvent.click(nut);
+    fireEvent.click(nut);
+    expect(await screen.findByText("Đã đổi giá gốc Trứng.")).toBeTruthy();
+    expect(ghi(goi)).toHaveLength(1);
+  });
+});
+
+describe("trang sản phẩm — ngừng bán", () => {
+  async function formNgung(ten: string) {
+    const ngan = await moCapNhat(ten);
+    return within(ngan).getByRole("form", { name: `Ngừng bán ${ten}` });
+  }
+
+  it("thiếu lý do thì không gửi; có lý do thì gửi đúng thân, báo và đọc lại", async () => {
+    const goi = moTrang({ ghi: () => ({ status: 200, body: { menu_item_id: 11, discontinued_at: "2026-10-23T05:00:00Z" } }) });
+    const f = await formNgung("Bánh cuốn trứng");
+    fireEvent.click(within(f).getByRole("button", { name: "Ngừng bán" }));
+    await waitFor(() => expect(oSai(f, "Lý do ngừng bán")).toBe("true"));
+    expect(ghi(goi)).toEqual([]);
+    go(f, "Lý do ngừng bán", "Hết mùa");
+    fireEvent.click(within(f).getByRole("button", { name: "Ngừng bán" }));
+    expect(await screen.findByText("Đã ngừng bán Bánh cuốn trứng.")).toBeTruthy();
+    expect(ghi(goi)).toEqual([{
+      method: "POST", path: "/menu-items/11/discontinuation", body: { reason: "Hết mùa" },
+    }]);
+    await waitFor(() => expect(soLanDoc(goi)).toBe(2));
+    await waitFor(() => expect(soLanDocGia(goi)).toBe(2));
+  });
+
+  it("món đã ngừng bán ở backend (409 menu_item_discontinued): báo và đọc lại danh sách", async () => {
+    const goi = moTrang({ ghi: () => ({ status: 409, body: { code: "menu_item_discontinued" } }) });
+    const f = await formNgung("Bánh cuốn trứng");
+    go(f, "Lý do ngừng bán", "Hết mùa");
+    fireEvent.click(within(f).getByRole("button", { name: "Ngừng bán" }));
+    await waitFor(() => expect(f.textContent ?? "").toMatch(/đã ngừng bán/i));
+    await waitFor(() => expect(soLanDoc(goi)).toBe(2));
   });
 });

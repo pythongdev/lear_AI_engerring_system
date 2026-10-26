@@ -8,6 +8,9 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/
 import { useSanPham, type Mon } from "./du-lieu-san-pham";
 import { useMenuGia, tienGia } from "./du-lieu-menu-gia";
 import { FormDoiTenMon } from "./form-doi-ten-mon";
+import { FormDanhMucMon } from "./form-danh-muc-mon";
+import { GiaThanhPhanMon } from "./form-gia-thanh-phan";
+import { FormNgungBan } from "./form-ngung-ban";
 import { FormThemMon } from "./form-them-mon";
 
 type GiaQuery = ReturnType<typeof useMenuGia>;
@@ -25,26 +28,17 @@ function GiaMon({ mon, gia }: { mon: Mon; gia: GiaQuery }) {
   </div>);
 }
 
-function DongMon({ mon, danhMuc, gia, bao }: { mon: Mon; danhMuc: string; gia: GiaQuery; bao: (s: string) => void }) {
-  const [sua, setSua] = useState(false);
+function DongMon({ mon, danhMuc, gia, capNhat }: { mon: Mon; danhMuc: string; gia: GiaQuery; capNhat: (mon: Mon) => void }) {
   return <tr>
     <td>{mon.item_name}</td><td>{danhMuc}</td>
     <td>{mon.discontinued ? <span className="sp-badge sp-discontinued">Ngừng bán</span> : "Đang bán"}</td>
     <td><GiaMon mon={mon} gia={gia} /></td>
-    <td><Dialog open={sua} onOpenChange={setSua}>
-      <DialogTrigger asChild><Button variant="outline" onClick={() => bao("")} aria-label={`Đổi tên ${mon.item_name}`}>Đổi tên</Button></DialogTrigger>
-      <DialogContent className="trang-san-pham sp-drawer" aria-describedby={undefined}>
-        <DialogTitle>Đổi tên {mon.item_name}</DialogTitle>
-        <FormDoiTenMon mon={mon} dong={() => setSua(false)} daLuu={(ten) => {
-          setSua(false); bao(`Đã đổi tên thành ${ten}.`);
-        }} />
-      </DialogContent>
-    </Dialog></td>
+    <td><Button variant="outline" onClick={() => capNhat(mon)} aria-label={`Cập nhật ${mon.item_name}`}>Cập nhật</Button></td>
   </tr>;
 }
 
-function DanhMuc({ ten, items, gia, bao, chuaXep = false }: {
-  ten: string; items: Mon[]; gia: GiaQuery; bao: (s: string) => void; chuaXep?: boolean;
+function DanhMuc({ ten, items, gia, capNhat, chuaXep = false }: {
+  ten: string; items: Mon[]; gia: GiaQuery; capNhat: (mon: Mon) => void; chuaXep?: boolean;
 }) {
   const id = useId();
   return <section aria-labelledby={id} className="sp-panel">
@@ -52,7 +46,7 @@ function DanhMuc({ ten, items, gia, bao, chuaXep = false }: {
     {items.length === 0 ? <p className="sp-empty">Chưa có món</p> :
       <div className="sp-table-scroll" role="region" aria-label={`Bảng món ${ten}`} tabIndex={0}>
         <table><thead><tr>{["Món", "Danh mục", "Trạng thái", "Giá", "Thao tác"].map((c) => <th key={c} scope="col">{c}</th>)}</tr></thead>
-          <tbody>{items.map((mon) => <DongMon key={mon.menu_item_id} mon={mon} danhMuc={chuaXep ? "Chưa xếp" : ten} gia={gia} bao={bao} />)}</tbody>
+          <tbody>{items.map((mon) => <DongMon key={mon.menu_item_id} mon={mon} danhMuc={chuaXep ? "Chưa xếp" : ten} gia={gia} capNhat={capNhat} />)}</tbody>
         </table>
       </div>}
   </section>;
@@ -62,7 +56,12 @@ export function TrangSanPham() {
   const query = useSanPham();
   const gia = useMenuGia();
   const data = query.data;
-  const [thongBao, setThongBao] = useState("");
+  const [chon, setChon] = useState<Mon | null>(null);
+  // Ngăn ở cấp trang: món chuyển nhóm không làm mất form và câu báo sau ghi.
+  const danhMuc = data?.categories.find((c) => c.items.some((m) => m.menu_item_id === chon?.menu_item_id));
+  const mon = chon && (danhMuc?.items.find((m) => m.menu_item_id === chon.menu_item_id)
+    ?? data?.uncategorized_items.find((m) => m.menu_item_id === chon.menu_item_id) ?? chon);
+  const monGia = gia.data?.items.find((m) => m.menu_item_id === mon?.menu_item_id);
   const soMon = data && data.categories.reduce((n, c) => n + c.items.length, data.uncategorized_items.length);
   return <div className="trang-san-pham mx-auto w-full min-w-0 max-w-[1200px] space-y-3">
     <header className="flex flex-wrap items-center justify-between gap-3">
@@ -84,13 +83,34 @@ export function TrangSanPham() {
     {query.isError && <Alert role="alert"><AlertDescription>
       Chưa đọc được danh sách món.{data ? " Đang hiện bản đọc trước." : " Hãy thử lại."}
     </AlertDescription></Alert>}
-    {thongBao && <p role="status">{thongBao}</p>}
+
     {data && <>
       {query.isFetching && <p role="status">Đang đọc lại danh sách…</p>}
-      {data.categories.map((c) => <DanhMuc key={c.menu_category_id} ten={c.name} items={c.items} gia={gia} bao={setThongBao} />)}
-      <DanhMuc ten="Chưa xếp danh mục" items={data.uncategorized_items} gia={gia} bao={setThongBao} chuaXep />
+      {data.categories.map((c) => <DanhMuc key={c.menu_category_id} ten={c.name} items={c.items} gia={gia} capNhat={setChon} />)}
+      <DanhMuc ten="Chưa xếp danh mục" items={data.uncategorized_items} gia={gia} capNhat={setChon} chuaXep />
       {data.categories.length === 0 && <p>Chưa có danh mục. Hãy thêm danh mục trước khi thêm món.</p>}
     </>}
+    <Dialog open={!!mon} onOpenChange={(open) => { if (!open) setChon(null); }}>
+      <DialogContent className="trang-san-pham sp-drawer" aria-describedby={undefined}>
+        {mon && <>
+          <DialogTitle>Cập nhật {mon.item_name}</DialogTitle>
+          <section className="space-y-3"><h2>Đổi tên</h2>
+            <FormDoiTenMon mon={mon} dong={() => setChon(null)} />
+          </section>
+          <section className="space-y-3"><h2>Chuyển danh mục</h2>
+            <FormDanhMucMon mon={mon} categories={data?.categories ?? []} danhMucId={danhMuc?.menu_category_id} />
+          </section>
+          <section className="space-y-3"><h2>Giá gốc thành phần</h2>
+            <p>Đổi giá gốc thì mọi món dùng chung thành phần này đổi giá theo.</p>
+            {mon.discontinued ? <p>Món đã ngừng bán, không đổi giá ở đây.</p>
+              : gia.isPending ? <p role="status">Đang đọc giá…</p>
+              : gia.isError ? <p role="alert">Chưa đọc được thành phần.</p>
+              : monGia ? <GiaThanhPhanMon monGia={monGia} /> : <p>Chưa có giá để đổi.</p>}
+          </section>
+          <section className="space-y-3"><h2>Ngừng bán</h2><FormNgungBan mon={mon} /></section>
+        </>}
+      </DialogContent>
+    </Dialog>
     <style>{`
       .trang-san-pham {
         --sp-bg:#FFFFFF; --sp-card:#F3F4F6; --sp-line:#E5E7EB; --sp-muted:#6B7280;
