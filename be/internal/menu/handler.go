@@ -20,6 +20,7 @@ import (
 func Routes(r *gin.Engine, svc *Service) {
 	h := handler{svc: svc}
 	r.POST("/menu-items", h.themMon)
+	r.POST("/menu-items/:menu_item_id/components", h.themThanhPhanMon)
 	r.PUT("/menu-items/:menu_item_id", h.doiTenMon)
 	r.PUT("/menu-components/:menu_component_id/base-price", h.doiGiaThanhPhan)
 	r.PUT("/menu-options/:menu_option_id/surcharge", h.doiPhuThu)
@@ -346,4 +347,79 @@ func (h handler) doiAn(c *gin.Context, lam func(ctx context.Context, nguoi, id i
 	traVe(c, err, struct {
 		MenuOptionID int64 `json:"menu_option_id"`
 	}{kq.MenuOptionID})
+}
+
+func (h handler) themThanhPhanMon(c *gin.Context) {
+	id, ok := docID(c, "menu_item_id")
+	if !ok {
+		return
+	}
+	var raw struct {
+		MenuComponentID json.RawMessage `json:"menu_component_id"`
+		Component       json.RawMessage `json:"component"`
+		Quantity        int32           `json:"quantity"`
+		Reason          string          `json:"reason"`
+	}
+	if !docJSON(c, &raw) {
+		return
+	}
+	if (len(raw.MenuComponentID) == 0) == (len(raw.Component) == 0) {
+		saiTruong(c, "")
+		return
+	}
+	p := GanThanhPhan{Quantity: raw.Quantity, Reason: raw.Reason}
+	if len(raw.MenuComponentID) > 0 {
+		if err := json.Unmarshal(raw.MenuComponentID, &p.MenuComponentID); err != nil || p.MenuComponentID == nil {
+			saiTruong(c, "menu_component_id")
+			return
+		}
+	} else {
+		if err := json.Unmarshal(raw.Component, &p.Component); err != nil || p.Component == nil {
+			saiTruong(c, "component")
+			return
+		}
+	}
+	if (p.MenuComponentID == nil) == (p.Component == nil) {
+		saiTruong(c, "")
+		return
+	}
+	if p.Quantity < 1 {
+		saiTruong(c, "quantity")
+		return
+	}
+	if !coLyDo(c, p.Reason) {
+		return
+	}
+	if p.MenuComponentID != nil && *p.MenuComponentID < 1 {
+		saiTruong(c, "menu_component_id")
+		return
+	}
+	if tp := p.Component; tp != nil {
+		tp.Name = strings.TrimSpace(tp.Name)
+		field := ""
+		switch {
+		case tp.Name == "":
+			field = "name"
+		case tp.BasePriceVnd == nil || *tp.BasePriceVnd < 0:
+			field = "base_price_vnd"
+		case tp.TakesFilling == nil:
+			field = "takes_filling"
+		case tp.StationCode != "quay" && tp.StationCode != "trang_banh" && tp.StationCode != "gap_banh" && tp.StationCode != "canh" && tp.StationCode != "don_ban":
+			field = "station_code"
+		}
+		if field != "" {
+			saiTruong(c, "component."+field)
+			return
+		}
+	}
+	out, err := h.svc.ThemThanhPhanMon(c.Request.Context(), nguoi(c), id, p)
+	if err != nil {
+		writeErr(c, err)
+		return
+	}
+	apierr.JSON(c.Writer, 201, struct {
+		MenuItemID      int64 `json:"menu_item_id"`
+		MenuComponentID int64 `json:"menu_component_id"`
+		Quantity        int32 `json:"quantity"`
+	}{out.MenuItemID, out.MenuComponentID, out.Quantity})
 }

@@ -18,10 +18,18 @@ var DoiTen = authz.Door{Code: "danhmuc/doi_ten", Need: authz.NeedOwner}
 var An = authz.Door{Code: "danhmuc/an", Need: authz.NeedOwner}
 var XepMon = authz.Door{Code: "danhmuc/xep_mon", Need: authz.NeedOwner}
 
+type ThanhPhan struct {
+	ID           int64  `json:"menu_component_id"`
+	Name         string `json:"component_name"`
+	Quantity     int32  `json:"quantity"`
+	BasePriceVnd int64  `json:"base_price_vnd"`
+	TakesFilling bool   `json:"takes_filling"`
+}
 type Mon struct {
-	ID           int64  `json:"menu_item_id"`
-	Name         string `json:"item_name"`
-	Discontinued bool   `json:"discontinued"`
+	Components   []ThanhPhan `json:"components"`
+	ID           int64       `json:"menu_item_id"`
+	Name         string      `json:"item_name"`
+	Discontinued bool        `json:"discontinued"`
 }
 type DanhMuc struct {
 	ID           int64      `json:"menu_category_id"`

@@ -127,6 +127,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-257 **Thêm thành phần cho món đã có từ ngăn Cập nhật, và bảng Sản phẩm liệt kê thành phần** (gộp T-256) — cửa `POST /menu-items/{id}/components` qua thư mục cửa `menu/them_mon`, thành phần mới bắt chọn trạm; `GET /menu-categories` trả thành phần (ADR-130) — L2 — mở 2026-10-26 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-26: gate xanh ở clone chính, fe-check 507/507 · [chi tiết](#t-257)
 - [x] T-255 **Canh bánh cuốn có nhóm lựa chọn Rau: không rau · ít rau · nhiều rau** — chủ repo chốt 2026-10-26: cả ba 0đ, mặc định *ít rau*, chỉ áp cho canh; ghi vào `shop-facts.md` §4.4 · §4.6 luật 8 · §4.8, seed gắn nhóm chỉ cho canh, ca giá phủ cả chiều *bánh cuốn không nhận rau* — L2 (dữ liệu menu, ca giá) — mở 2026-10-26, Claude làm — xong 2026-10-26: gate xanh, §4.8 17/17 ca khớp ở database, cửa đơn và cửa giá · [chi tiết](#t-255)
 - [x] T-244 **Bảy suất Đầy đủ · Suất giò · Suất trứng thành `menu_combo` thật, mỗi suất con chọn nhân riêng** — L3 — thiết kế Claude 2026-10-24, duyệt 2026-10-25; Codex làm (ba worktree song song cho T-251), Claude lead và tích hợp; đóng cùng ba phần a+b+c sau khi fullgate main xanh và UI máy dev nghiệm thu — xong 2026-10-25 · [chi tiết](backlog_archive.md#t-244)
 - [x] T-252 **Bảy suất chuyển thành combo thật — phần (c): kiểm FE trên máy dev** — L1 — root + chủ repo nghiệm thu UI thật (6 món lẻ · 7 combo · combo Đầy đủ chín trộn nhân ra 29.000đ), reset dev được chủ repo cho phép, backup `/private/tmp/t244-dev-before.dump` giữ — xong 2026-10-25 · [chi tiết](backlog_archive.md#t-252)
@@ -3214,3 +3215,22 @@ Chủ repo yêu cầu 2026-10-26 trong hội thoại: *"canh bánh cuốn gồm 
 Acceptance viết trước: (1) `shop-facts.md` §4.4 có nhóm *Rau* ba lựa chọn 0đ, §4.6 luật 8 nói mặc định *ít rau*, §7.1 có dòng chốt; (2) `seed.pl` gắn nhóm Rau **chỉ** cho *Canh bánh cuốn*, cờ mặc định *Ít rau*; (3) §4.8 có cột *Rau*, ca 13 chọn *ít rau*, ca 16 (*không rau* ⇒ 0) và ca 17 (*bánh cuốn + ít rau* ⇒ từ chối) khớp ở cả `--price-cases` (database) lẫn test cửa giá Go (`--price-cases-tsv`); (4) gate xanh.
 
 Ghi chú: file `shop-facts.md`, `seed.pl` và `work/backlog.md` đã có diff chưa commit của việc khác trước lượt này — khối commit phải tách riêng phần T-255. Suy luận chưa chốt: phiếu trạm `canh` có in lựa chọn rau hay không (ghi ở §4.4).
+
+<a id="t-256"></a>
+### T-256 — gộp vào T-257 (2026-10-26)
+
+Lựa chọn đã hiện sẵn ở cột Giá; thành phần cần `GET /menu-categories` trả kèm (đổi hợp đồng), nên làm cùng T-257 theo ADR-130.
+
+<a id="t-257"></a>
+### T-257 — Thêm thành phần cho món đã có, bảng Sản phẩm liệt kê thành phần
+
+Chủ repo báo 2026-10-26: ngăn *Cập nhật* không có nút thêm thành phần, thành phần mới không hiện trên `/chu-quan/san-pham`. Mức L2 (hợp đồng, cửa ghi đổi giá món). Thiết kế: ADR-130. Thực hiện: Codex; duyệt: Claude. Worktree `../lean_wt/T-257`, nhánh `codex/T-257`, nền = `818b262` + toàn bộ thay đổi chưa commit của clone chính lúc giao (đã `git add -A` trong worktree làm mốc, nên diff chưa stage là phần của Codex).
+
+Acceptance viết trước:
+1. `openapi.yaml`: `POST /menu-items/{menu_item_id}/components` thân đúng một trong `menu_component_id` hoặc `component{name, base_price_vnd, takes_filling, station_code}`, cùng `quantity ≥ 1`, `reason` không rỗng; trả `ItemComponent`; mã lỗi 400/401/403/404/409; `MenuCategoryItem` có `components`; phiên bản hợp đồng tăng.
+2. Câu ghi nằm dưới `be/internal/menu/sql/them_mon/`; Gate 1f · 1g xanh, ma trận không thêm dòng.
+3. Test Go (PostgreSQL thật): thêm thành phần có sẵn ⇒ giá món qua `GET /menu` tăng đúng số lượng × giá gốc; tạo thành phần mới ⇒ có dòng `menu_component_station` đúng trạm; thiếu lý do ⇒ 400, không ghi; có vết `record_revision` trên `menu_item` mang lý do (I-018); món ngừng bán ⇒ 409; thành phần đã có trong món ⇒ 409; trạm lạ ⇒ 400; người không phải chủ quán ⇒ 403.
+4. FE: bảng có cột *Thành phần* đọc từ `GET /menu-categories`; ngăn *Cập nhật* có form *Thêm thành phần* (chọn thành phần có sẵn hoặc tạo mới, trạm bắt buộc khi tạo mới, số lượng, lý do); xong thì đọc lại danh sách và menu, không ghi tay cache; bấm hai lần chỉ gửi một lệnh; không gửi giá món (I-013). Test P4A-04 cũ giữ nguyên điều kiện.
+5. `./scripts/gate.sh` xanh ở clone chính sau khi Claude đưa patch về.
+
+**Bàn giao 2026-10-26:** thực hiện Codex (`codex exec`, worktree `../lean_wt/T-257`), duyệt và tích hợp Claude. Claude sửa thêm ba chỗ Codex dừng đúng luật: nới test cột của T-234 thêm *Thành phần* (test bố cục, không phải invariant), thêm `components: []` vào fixture `combo.test.tsx` · `danh-muc.test.tsx`, và lọc khỏi form các thành phần món đã có. Bằng chứng: worktree `be-check` PASS gồm `TestQC14_ThemThanhPhanHinh`, `TestI018_ThemThanhPhanVetTramVaTuChoi`, `TestI013_ThemThanhPhanGiaMenuVaDanhMuc`; clone chính `./scripts/gate.sh` PASS (hợp đồng 0.52.0, 122 ô ghi, 100 cửa), `./scripts/fe-check.sh` PASS 507/507. Lệch thiết kế: test hồi quy viết bởi Codex chứ không phải Claude viết trước như luật L2 — Claude đọc lại và thấy đủ Acceptance. Còn mở: `POST /menu-items` vẫn tạo thành phần không trạm (ADR-130 *Consequences*). Phụ thuộc: diff nằm trên các thay đổi menu chưa commit của T-238 · T-243, nên commit sau chúng.

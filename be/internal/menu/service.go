@@ -285,3 +285,52 @@ func (s *Service) doiAn(ctx context.Context, nguoi, id int64, lyDo string, an bo
 	})
 	return
 }
+
+// ThemThanhPhanMon dùng cùng cửa ghi ThemMon (ADR-130).
+type ThanhPhanGanMoi struct {
+	Name         string `json:"name"`
+	BasePriceVnd *int64 `json:"base_price_vnd"`
+	TakesFilling *bool  `json:"takes_filling"`
+	StationCode  string `json:"station_code"`
+}
+type GanThanhPhan struct {
+	MenuComponentID *int64           `json:"menu_component_id"`
+	Component       *ThanhPhanGanMoi `json:"component"`
+	Quantity        int32            `json:"quantity"`
+	Reason          string           `json:"reason"`
+}
+
+func (s *Service) ThemThanhPhanMon(ctx context.Context, nguoi, mon int64, p GanThanhPhan) (out ThanhPhanSuat, err error) {
+	err = authz.Run(ctx, s.pool, nguoi, ThemMon, func(tx pgx.Tx) error {
+		r := newRepository(tx)
+		ngung, e := r.khoaMonNgungBan(ctx, mon)
+		if e = khongThay(e, apierr.CodeMenuItemNotFound); e != nil {
+			return e
+		}
+		if ngung {
+			return apierr.Error{Code: apierr.CodeMenuItemDiscontinued}
+		}
+		var id int64
+		if p.MenuComponentID != nil {
+			id = *p.MenuComponentID
+			if e = khongThay(r.khoaThanhPhan(ctx, id), apierr.CodeMenuComponentNotFound); e != nil {
+				return e
+			}
+		}
+		if e = r.khaiLyDo(ctx, strings.TrimSpace(p.Reason)); e != nil {
+			return e
+		}
+		if p.Component != nil {
+			id, e = r.taoThanhPhanCoTram(ctx, *p.Component)
+			if e != nil {
+				return e
+			}
+		}
+		if e = r.ganThanhPhan(ctx, mon, id, p.Quantity); e != nil {
+			return e
+		}
+		out = ThanhPhanSuat{MenuItemID: mon, MenuComponentID: id, Quantity: p.Quantity}
+		return nil
+	})
+	return
+}

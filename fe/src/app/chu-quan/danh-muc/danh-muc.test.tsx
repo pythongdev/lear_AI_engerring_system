@@ -34,12 +34,12 @@ function danhMuc(id: number, name: string, items: MenuCategory["items"]): MenuCa
 const mau: MenuCategoryList = {
   categories: [
     danhMuc(2, "Bánh cuốn", [
-      { menu_item_id: 11, item_name: "Bánh cuốn trứng", discontinued: false },
-      { menu_item_id: 10, item_name: "Bánh cuốn thịt", discontinued: true },
+      { menu_item_id: 11, item_name: "Bánh cuốn trứng", discontinued: false, components: [] },
+      { menu_item_id: 10, item_name: "Bánh cuốn thịt", discontinued: true, components: [] },
     ]),
     danhMuc(1, "Đồ uống", []),
   ],
-  uncategorized_items: [{ menu_item_id: 20, item_name: "Chả quế", discontinued: false }],
+  uncategorized_items: [{ menu_item_id: 20, item_name: "Chả quế", discontinued: false, components: [] }],
 };
 
 type TraLoi = { status: number; body?: unknown };

@@ -37,12 +37,12 @@ function danhMuc(id: number, name: string, items: MenuCategory["items"]): MenuCa
 const mau: MenuCategoryList = {
   categories: [
     danhMuc(2, "Bánh cuốn", [
-      { menu_item_id: 11, item_name: "Bánh cuốn trứng", discontinued: false },
-      { menu_item_id: 10, item_name: "Bánh cuốn thịt", discontinued: true },
+      { menu_item_id: 11, item_name: "Bánh cuốn trứng", components: bangGia(11).lines[0].components, discontinued: false },
+      { menu_item_id: 10, item_name: "Bánh cuốn thịt", components: [], discontinued: true },
     ]),
     danhMuc(1, "Đồ uống", []),
   ],
-  uncategorized_items: [{ menu_item_id: 20, item_name: "Chả quế", discontinued: false }],
+  uncategorized_items: [{ menu_item_id: 20, item_name: "Chả quế", components: bangGia(20).lines[0].components, discontinued: false }],
 };
 
 // Món ngừng bán (10) không có trong GET /menu; giá là số backend trả, trang không cộng.
@@ -164,12 +164,12 @@ describe("trang sản phẩm — danh sách", () => {
     expect(goi.map((g) => `${g.method} ${g.path}`).sort()).toEqual(["GET /menu", "GET /menu-categories"]);
   });
 
-  it("đầu trang có số món; bảng có cột Món · Danh mục · Trạng thái · Giá · Thao tác", async () => {
+  it("đầu trang có số món; bảng có cột Món · Danh mục · Trạng thái · Giá · Thành phần · Thao tác", async () => {
     moTrang();
     const banhCuon = await screen.findByRole("region", { name: "Bánh cuốn" });
     expect(screen.getByRole("heading", { level: 1 }).textContent ?? "").toMatch(/Sản phẩm\s*3 món/);
     expect(within(banhCuon).getAllByRole("columnheader").map((th) => th.textContent))
-      .toEqual(["Món", "Danh mục", "Trạng thái", "Giá", "Thao tác"]);
+      .toEqual(["Món", "Danh mục", "Trạng thái", "Giá", "Thành phần", "Thao tác"]);
     const trung = dongMon(banhCuon, "Bánh cuốn trứng");
     const o = within(trung).getAllByRole("cell").map((td) => td.textContent ?? "");
     expect(o[1]).toBe("Bánh cuốn");
@@ -555,5 +555,50 @@ describe("trang sản phẩm — ngừng bán", () => {
     fireEvent.click(within(f).getByRole("button", { name: "Ngừng bán" }));
     await waitFor(() => expect(f.textContent ?? "").toMatch(/đã ngừng bán/i));
     await waitFor(() => expect(soLanDoc(goi)).toBe(2));
+  });
+});
+
+describe("T-257 — thêm thành phần", () => {
+  async function moForm() {
+    await moCapNhat("Bánh cuốn trứng");
+    return screen.findByRole("form", { name: "Thêm thành phần" });
+  }
+  it("I013: cột Thành phần dùng danh mục, không tính thử lúc tải", async () => {
+    const goi = moTrang();
+    expect(await screen.findByText("Bánh cuốn ×3")).toBeTruthy();
+    expect(screen.getAllByRole("columnheader", { name: "Thành phần" }).length).toBeGreaterThan(0);
+    expect(soLanThu(goi)).toBe(0);
+  });
+  it("I013: chọn thành phần từ món khác, chỉ gửi id và số lượng; bấm hai lần một lệnh, xong đọc lại", async () => {
+    const goi = moTrang({ ghi: () => ({ status: 201, body: { menu_item_id: 11, menu_component_id: 103, quantity: 2 } }) });
+    const f = await moForm();
+    go(f, "Thành phần", "103"); go(f, "Số lượng thành phần", "2"); go(f, "Lý do thêm thành phần", "  bổ sung  ");
+    fireEvent.submit(f); fireEvent.submit(f);
+    await screen.findByText("Đã thêm thành phần.");
+    expect(ghi(goi)).toHaveLength(1);
+    expect(ghi(goi)[0]).toMatchObject({ method: "POST", path: "/menu-items/11/components", body: {
+      menu_component_id: 103, quantity: 2, reason: "bổ sung",
+    } });
+    expect(soLanDoc(goi)).toBeGreaterThan(1); expect(soLanDocGia(goi)).toBeGreaterThan(1);
+  });
+  it("I018: tạo mới bắt buộc trạm và lý do, rồi gửi đúng giá gốc chủ quán nhập", async () => {
+    const goi = moTrang({ ghi: () => ({ status: 201, body: { menu_item_id: 11, menu_component_id: 104, quantity: 1 } }) });
+    const f = await moForm();
+    go(f, "Thành phần", "new"); go(f, "Tên thành phần mới", "  Rau  "); go(f, "Giá gốc (đồng)", "2000");
+    fireEvent.submit(f);
+    await waitFor(() => expect(oSai(f, "Trạm")).toBe("true"));
+    expect(oSai(f, "Lý do thêm thành phần")).toBe("true"); expect(ghi(goi)).toHaveLength(0);
+    go(f, "Trạm", "canh"); go(f, "Lý do thêm thành phần", "thêm rau"); fireEvent.submit(f);
+    await screen.findByText("Đã thêm thành phần.");
+    expect(ghi(goi)[0].body).toEqual({ quantity: 1, reason: "thêm rau", component: {
+      name: "Rau", base_price_vnd: 2000, takes_filling: false, station_code: "canh",
+    } });
+  });
+  it("QC14: từ chối có field gắn đúng ô", async () => {
+    const goi = moTrang({ ghi: () => ({ status: 400, body: { code: "invalid_request", field: "component.station_code" } }) });
+    const f = await moForm();
+    go(f, "Thành phần", "new"); go(f, "Tên thành phần mới", "Rau"); go(f, "Giá gốc (đồng)", "2000");
+    go(f, "Trạm", "canh"); go(f, "Lý do thêm thành phần", "thêm rau"); fireEvent.submit(f);
+    await waitFor(() => expect(oSai(f, "Trạm")).toBe("true")); expect(ghi(goi)).toHaveLength(1);
   });
 });

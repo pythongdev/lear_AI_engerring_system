@@ -13,6 +13,8 @@ import { GiaThanhPhanMon } from "./form-gia-thanh-phan";
 import { FormNgungBan } from "./form-ngung-ban";
 import { FormThemMon } from "./form-them-mon";
 
+import { FormThemThanhPhan } from "./form-them-thanh-phan";
+
 type GiaQuery = ReturnType<typeof useMenuGia>;
 
 function GiaMon({ mon, gia }: { mon: Mon; gia: GiaQuery }) {
@@ -33,6 +35,7 @@ function DongMon({ mon, danhMuc, gia, capNhat }: { mon: Mon; danhMuc: string; gi
     <td>{mon.item_name}</td><td>{danhMuc}</td>
     <td>{mon.discontinued ? <span className="sp-badge sp-discontinued">Ngừng bán</span> : "Đang bán"}</td>
     <td><GiaMon mon={mon} gia={gia} /></td>
+    <td>{(mon.components ?? []).map((c) => <div key={c.menu_component_id}>{c.component_name} ×{c.quantity}</div>)}</td>
     <td><Button variant="outline" onClick={() => capNhat(mon)} aria-label={`Cập nhật ${mon.item_name}`}>Cập nhật</Button></td>
   </tr>;
 }
@@ -45,7 +48,7 @@ function DanhMuc({ ten, items, gia, capNhat, chuaXep = false }: {
     <h2 id={id}>{ten}</h2>
     {items.length === 0 ? <p className="sp-empty">Chưa có món</p> :
       <div className="sp-table-scroll" role="region" aria-label={`Bảng món ${ten}`} tabIndex={0}>
-        <table><thead><tr>{["Món", "Danh mục", "Trạng thái", "Giá", "Thao tác"].map((c) => <th key={c} scope="col">{c}</th>)}</tr></thead>
+        <table><thead><tr>{["Món", "Danh mục", "Trạng thái", "Giá", "Thành phần", "Thao tác"].map((c) => <th key={c} scope="col">{c}</th>)}</tr></thead>
           <tbody>{items.map((mon) => <DongMon key={mon.menu_item_id} mon={mon} danhMuc={chuaXep ? "Chưa xếp" : ten} gia={gia} capNhat={capNhat} />)}</tbody>
         </table>
       </div>}
@@ -62,6 +65,8 @@ export function TrangSanPham() {
   const mon = chon && (danhMuc?.items.find((m) => m.menu_item_id === chon.menu_item_id)
     ?? data?.uncategorized_items.find((m) => m.menu_item_id === chon.menu_item_id) ?? chon);
   const monGia = gia.data?.items.find((m) => m.menu_item_id === mon?.menu_item_id);
+  const thanhPhan = [...new Map((data ? [...data.categories.flatMap((c) => c.items), ...data.uncategorized_items] : [])
+    .flatMap((m) => m.components ?? []).map((c) => [c.menu_component_id, c] as const)).values()];
   const soMon = data && data.categories.reduce((n, c) => n + c.items.length, data.uncategorized_items.length);
   return <div className="trang-san-pham mx-auto w-full min-w-0 max-w-[1200px] space-y-3">
     <header className="flex flex-wrap items-center justify-between gap-3">
@@ -94,6 +99,8 @@ export function TrangSanPham() {
       <DialogContent className="trang-san-pham sp-drawer" aria-describedby={undefined}>
         {mon && <>
           <DialogTitle>Cập nhật {mon.item_name}</DialogTitle>
+          {!mon.discontinued && <FormThemThanhPhan key={mon.menu_item_id} mon={mon}
+            components={thanhPhan.filter((c) => !mon.components?.some((x) => x.menu_component_id === c.menu_component_id))} />}
           <section className="space-y-3"><h2>Đổi tên</h2>
             <FormDoiTenMon mon={mon} dong={() => setChon(null)} />
           </section>

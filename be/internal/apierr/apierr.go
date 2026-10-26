@@ -15,6 +15,7 @@ import (
 type Code string
 
 const (
+	CodeMenuItemComponentConflict      Code = "menu_item_component_conflict"
 	CodeMenuItemNameConflict           Code = "menu_item_name_conflict"
 	CodeMenuComponentNameConflict      Code = "menu_component_name_conflict"
 	CodeMenuComboPriceInSalesHours     Code = "menu_combo_price_in_sales_hours"
@@ -160,6 +161,7 @@ var statusOf = map[Code]int{
 	CodeMenuCategoryHidden:             409,
 	CodeMenuItemNameConflict:           409,
 	CodeMenuComponentNameConflict:      409,
+	CodeMenuItemComponentConflict:      409,
 	CodeMenuCategoryNameTaken:          409,
 	CodeMenuItemAlreadyInCategory:      409,
 	CodeAssignedTaskGuideNotFound:      404,
@@ -288,6 +290,7 @@ var constraintCodes = map[string]Code{
 	"menu_option_name_in_group_key":                    CodeMenuOptionNameTaken,
 	"menu_option_name_not_blank_check":                 CodeInvalidRequest,
 	"menu_option_surcharge_non_negative_check":         CodeInvalidRequest,
+	"menu_item_component_once_key":                     CodeMenuItemComponentConflict,
 	"menu_component_name_key":                          CodeMenuComponentNameConflict,
 	"menu_item_name_not_blank_check":                   CodeInvalidRequest,
 	"menu_component_name_not_blank_check":              CodeInvalidRequest,

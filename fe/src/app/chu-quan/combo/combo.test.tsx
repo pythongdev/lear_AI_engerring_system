@@ -51,12 +51,12 @@ const mauMon: MenuCategoryList = {
   categories: [{
     menu_category_id: 2, name: "Bánh cuốn", person_id: 1, person_name: "Chủ", created_at: "2026-10-16T01:00:00Z",
     hidden_at: null, hidden_by_person_id: null, hidden_by_name: null, items: [
-      { menu_item_id: 11, item_name: "Bánh cuốn trứng", discontinued: false },
-      { menu_item_id: 10, item_name: "Bánh cuốn thịt", discontinued: true },
-      { menu_item_id: 12, item_name: "Bánh cuốn chay", discontinued: false },
+      { menu_item_id: 11, item_name: "Bánh cuốn trứng", discontinued: false, components: [] },
+      { menu_item_id: 10, item_name: "Bánh cuốn thịt", discontinued: true, components: [] },
+      { menu_item_id: 12, item_name: "Bánh cuốn chay", discontinued: false, components: [] },
     ],
   }],
-  uncategorized_items: [{ menu_item_id: 20, item_name: "Chả quế", discontinued: false }],
+  uncategorized_items: [{ menu_item_id: 20, item_name: "Chả quế", discontinued: false, components: [] }],
 };
 
 type TraLoi = { status: number; body?: unknown };

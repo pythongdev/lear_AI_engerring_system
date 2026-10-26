@@ -178,6 +178,8 @@ không đưa doanh thu đã đối soát vào phản hồi tổng quan.
 
 **T-203 (2026-10-19, phiếu Claude):** tăng MINOR `0.40.0` → `0.41.0`, thêm `account_person_is_owner` (409, trường `person_id`) khi duyệt tài khoản gắn vào người mang cờ chủ quán; sinh lại type FE.
 
+**T-257 (2026-10-26, phiếu Claude, ADR-130):** tăng `0.50.0` → `0.51.0`; thêm `POST /menu-items/{menu_item_id}/components`, `MenuCategoryItem.components` và mã `menu_item_component_conflict` (409) cho `menu_item_component_once_key`. Dùng lại cửa `menu/them_mon`, không thêm dòng ma trận. Các ràng buộc trạm được xét là `internal`: id thành phần vừa tạo tồn tại, chỉ chèn một trạm đã kiểm trong năm mã, nên yêu cầu hợp lệ không gây từ chối tại đó. Sinh lại type FE.
+
 ## 8. Dấu lần gửi trên dây
 
 Mọi đường gọi **tạo đơn hay tạo lượt gọi**, ở cả năm kênh, nhận dấu lần gửi của `I-024` trong **thân

@@ -131,3 +131,15 @@ func (r repository) datAnLuaChon(ctx context.Context, id int64, an bool) error {
 	_, err := r.q.DatAnLuaChon(ctx, sqlcgen.DatAnLuaChonParams{ID: id, Column2: an})
 	return err
 }
+
+func (r repository) taoThanhPhanCoTram(ctx context.Context, tp ThanhPhanGanMoi) (int64, error) {
+	id, err := r.q.ThemThanhPhan(ctx, sqlcgen.ThemThanhPhanParams{Name: tp.Name, BasePriceVnd: *tp.BasePriceVnd, TakesFilling: *tp.TakesFilling})
+	if err != nil {
+		return 0, err
+	}
+	err = r.q.GanTramThanhPhan(ctx, sqlcgen.GanTramThanhPhanParams{MenuComponentID: id, StationCode: tp.StationCode})
+	return id, err
+}
+func (r repository) ganThanhPhan(ctx context.Context, mon, tp int64, quantity int32) error {
+	return r.q.GanThanhPhan(ctx, sqlcgen.GanThanhPhanParams{MenuItemID: mon, MenuComponentID: tp, Quantity: quantity})
+}

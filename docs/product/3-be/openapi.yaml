@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.50.0
+  version: 0.51.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -2536,6 +2536,69 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /menu-items/{menu_item_id}/components:
+    post:
+      operationId: addItemComponent
+      tags:
+        - menu
+      summary: Thêm thành phần vào món đang bán, có lý do
+      parameters:
+        - name: menu_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemComponentAdd'
+      responses:
+        '201':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemComponent'
+        '400':
+          description: Yêu cầu sai hình (invalid_request); field chỉ trường sai nếu xác định được.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Không xác định được người bấm (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Người bấm không phải chủ quán (owner_only).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Không tồn tại (menu_item_not_found, menu_component_not_found).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: menu_item_discontinued, menu_component_name_conflict, menu_item_component_conflict.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /menu-items/{menu_item_id}/components/{menu_component_id}:
     put:
       operationId: changeItemComponent
@@ -4523,8 +4586,12 @@ components:
           minLength: 1
     MenuCategoryItem:
       type: object
-      required: [menu_item_id, item_name, discontinued]
+      required: [menu_item_id, item_name, discontinued, components]
       properties:
+        components:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuCategoryComponent'
         menu_item_id:
           type: integer
           format: int64
@@ -6790,6 +6857,7 @@ components:
         - dining_table_not_found
         - qr_code_issue_conflict
         - menu_item_name_conflict
+        - menu_item_component_conflict
         - menu_component_name_conflict
         - menu_item_not_found
         - menu_option_not_found
@@ -6947,6 +7015,7 @@ components:
         dining_table_not_found: 404
         qr_code_issue_conflict: 409
         menu_item_name_conflict: 409
+        menu_item_component_conflict: 409
         menu_component_name_conflict: 409
         menu_item_not_found: 404
         menu_option_not_found: 404
@@ -7347,6 +7416,61 @@ components:
           type: string
           minLength: 1
           description: Sau khi bỏ khoảng trắng đầu cuối phải còn nội dung.
+    MenuCategoryComponent:
+      type: object
+      required: [menu_component_id, component_name, quantity, base_price_vnd, takes_filling]
+      properties:
+        menu_component_id:
+          type: integer
+          format: int64
+        component_name:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+        base_price_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        takes_filling:
+          type: boolean
+    ItemComponentAdd:
+      type: object
+      required: [quantity, reason]
+      oneOf:
+        - required: [menu_component_id]
+          not:
+            required: [component]
+        - required: [component]
+          not:
+            required: [menu_component_id]
+      properties:
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+        reason:
+          type: string
+          minLength: 1
+          pattern: '\S'
+        menu_component_id:
+          type: integer
+          format: int64
+          minimum: 1
+        component:
+          type: object
+          required: [name, base_price_vnd, takes_filling, station_code]
+          properties:
+            name:
+              type: string
+              minLength: 1
+              pattern: '\S'
+            base_price_vnd:
+              $ref: '#/components/schemas/MoneyVnd'
+            takes_filling:
+              type: boolean
+            station_code:
+              type: string
+              enum: [quay, trang_banh, gap_banh, canh, don_ban]
     ItemComponent:
       type: object
       required: [menu_item_id, menu_component_id, quantity]
@@ -7509,13 +7633,13 @@ x-constraint-errors:
   menu_component_name_key: menu_component_name_conflict
   menu_component_name_not_blank_check: invalid_request
   menu_component_pkey: internal
-  menu_component_station_menu_component_fkey: unreviewed
-  menu_component_station_once_key: unreviewed
+  menu_component_station_menu_component_fkey: internal
+  menu_component_station_once_key: internal
   menu_component_station_pkey: internal
-  menu_component_station_station_code_check: unreviewed
+  menu_component_station_station_code_check: internal
   menu_item_component_menu_component_fkey: internal
   menu_item_component_menu_item_fkey: internal
-  menu_item_component_once_key: internal
+  menu_item_component_once_key: menu_item_component_conflict
   menu_item_component_pkey: internal
   menu_item_component_quantity_positive_check: invalid_request
   menu_item_name_key: menu_item_name_conflict
