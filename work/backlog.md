@@ -114,8 +114,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 - [ ] T-246 **Hạn hoàn thành bắt buộc ngày và giờ khi giao việc mới** — L2, DB/API/FE — chủ repo 2026-10-24 cho phép Codex thực hiện xuyên tầng · [chi tiết](#t-246)
 
-- [ ] T-245 **Viết lại trang Giao việc theo HTML, mobile first** — L1 — chủ repo giao Codex 2026-10-24 · [chi tiết](#t-245)
-
 - [ ] T-243 **Món đã ngừng bán chưa bán lại được** — chủ repo đóng U-104 (bán lại, giữ món cũ cùng tên · thành phần · lịch sử): cửa mới `POST /menu-items/{menu_item_id}/resumption` có lý do xoá mốc ngừng bán trên chính dòng món (ADR-126), hợp đồng · ma trận quyền · service · test backend, và form *Bán lại* trên trang Sản phẩm — L2 — mở 2026-10-24 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-243)
 - [ ] T-227 **Thanh toán bàn chỉ thu phần đã ra, phần chưa ra huỷ việc trạm** — bấm tiền bánh đã ra để đóng phiên và xoá bàn khỏi bảng; đổi luật tính tiền phiên (`shop-facts.md` §6.1, 2026-10-21) và viết lại `I-002` — L3 (thiết kế duyệt trước code, ADR, chia L1/L2 khi mở) — mở 2026-10-21, U-103 có lời và bắt đầu 2026-10-22 · [chi tiết](#t-227)
 - [ ] T-233 **Trang gọi món của khách hiện không có kiểu nào, chưa giống bản thiết kế menu** — CSS module của T-232 bị luật Turbopack trong `next.config.ts` đọc như CSS thường nên mọi `styles.*` rỗng (F-075); viết lại kiểu bằng một file CSS thường trong phạm vi trang và lớp Tailwind, đối chiếu ảnh chụp với `menu.html` ở hai giao diện; hành vi và test giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-233)
@@ -131,6 +129,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="done"></a>
 ## Done
+
+- [x] T-245 **Viết lại trang Giao việc theo HTML, mobile first** — L1 — chủ repo giao Codex 2026-10-24 · [chi tiết](#t-245)
 
 - [x] T-261 **Canh bánh cuốn nằm cuối món lẻ trên trang khách, nút Rau mặc định Ít rau** — L1, chủ repo 2026-10-26 — xong 2026-10-26, gate đạt · [chi tiết](#t-261)
 - [x] T-260 **Bảng cột cho combo và món lẻ, nút Chi tiết combo trong Tóm tắt đơn hàng** — L1, chủ repo 2026-10-26 — xong 2026-10-26, gate đạt · [chi tiết](#t-260)
@@ -3133,6 +3133,8 @@ Một tới ba dòng.
 - Giữ giao/sửa/xoá có lý do/đánh dấu, xử lý lỗi và chống gửi trùng; test hồi quy trang đạt.
 - Chạy gate, ghi đúng các bước đạt hoặc bị chặn.
 
+**Tiếp tục 2026-10-26 (chủ repo giao Codex):** đối chiếu lại đúng HTML mẫu. Acceptance bổ sung trước khi sửa: danh sách là bảng bảy cột, cuộn ngang bên trong trên màn hẹp như mẫu; màu nền, thống kê, bộ lọc và thao tác theo mẫu; giữ hạn hoàn thành và API hiện có. Tiêu chí bảng cuộn này thay tiêu chí thẻ mobile ở trên theo yêu cầu khớp HTML. Kiểm tra hồi quy thao tác, lint/typecheck và gate; ghi rõ kiểm tra giao diện thực tế nếu thực hiện được.
+
 **Bàn giao 2026-10-24:** Codex thực hiện trên nhánh `P4A-01`, nền `449c760`; chưa review độc lập. Đã đọc diff và kiểm scope riêng, không thay API/hook dữ liệu. Thêm CSS có prefix `gv-`, bố cục một cột mặc định, ba thống kê từ 600px, danh sách nhiều cột từ 1100px. Form thêm/sửa dùng textarea; hộp thoại Radix giữ focus và hỗ trợ Escape.
 
 **Bằng chứng:** `npm test -- --run src/app/chu-quan/giao-viec/giao-viec.test.tsx`: `Test Files 1 passed (1); Tests 23 passed (23)`; gồm 21 test cũ giữ nguyên và hai test mới chứng minh thống kê/tìm/lọc, hộp thoại/Escape/trả focus. `npm run lint`, `npm run typecheck`, `./scripts/check-fe-rules.sh` đạt. Toàn bộ frontend: `Test Files 35 passed (35); Tests 471 passed (471)`. Responsive mới kiểm bằng đọc CSS, chưa kiểm hình trên trình duyệt.
@@ -3140,6 +3142,10 @@ Một tới ba dòng.
 **Gate chung:** `./scripts/gate.sh` trả 2. Gate 3 và 1b–1h PASS; Gate 1 dừng ở `FAIL be-check — Docker không chạy. Bật Docker rồi chạy lại ./scripts/be-check.sh`. Cây làm việc đã có thay đổi backend/database từ trước. Giữ In Progress vì chưa đạt gate và chưa kiểm responsive trên trình duyệt; bước tiếp theo là kiểm trang ở 375/768/1440px, bật Docker và chạy lại gate. Không commit.
 
 **Kết quả build:** `./scripts/fe-check.sh` đạt apigen/lint/typecheck/471 test rồi dừng ở production build: `TurbopackInternalError`, `binding to a port — Operation not permitted (os error 1)`. Đã chạy lại `npm run build` với `require_escalated`, vẫn cùng lỗi. Chưa xác nhận build đạt. Gate lần cuối vẫn trả 2 do Docker chưa chạy. Index trống; khối commit chỉ được chứa năm file trong scope của việc này. `work/backlog.md` đã có thay đổi từ trước, cần stage riêng phần T-245 bằng `git add -p`.
+
+**Bàn giao tiếp 2026-10-26:** Codex thực hiện trên nhánh `P4A-01`, nền `e01940f`; chưa review độc lập. Đã đổi danh sách sang bảng HTML bảy cột với tiêu đề truy cập được, cuộn trong vùng bảng; đồng bộ màu sáng/tối, thống kê, khoảng cách, bộ lọc và nút thao tác theo mẫu. Hộp thoại có nút đóng và trả focus về nút mở. Giữ API, hạn hoàn thành và xử lý lỗi hiện có; component dùng chung cũng áp dụng cho trang quầy. Chỉ sửa component, CSS, test của Giao việc và mục task này; đã đọc diff và kiểm scope riêng, index trống.
+
+**Bằng chứng 2026-10-26:** test trang `Test Files 1 passed (1); Tests 27 passed (27)`; toàn bộ frontend `Test Files 36 passed (36); Tests 518 passed (518)`; `npm run lint` và `npm run typecheck` đạt. Chromium/Playwright với API giả: `PASS 375`, `PASS 768`, `PASS 1440`, bảng đủ bảy cột, không tràn ngang toàn trang, đóng hộp thoại trả focus; `PASS pageErrors=[]`. Đã xem ảnh desktop nền tối; bảng cuộn bên trong ở 375/768px. Không ghi dữ liệu thật trong lượt kiểm trình duyệt. Diff bốn file của task không có lỗi khoảng trắng. Gate chung `./scripts/gate.sh` exit 0: `PASS gate — không cổng nào đỏ`; be-check, db-check và 18 script test đều đạt. Các NOTE về file chưa track và đường dẫn hỏng thuộc tài liệu có sẵn ngoài task này. Đã chuyển Done, giữ scope tới khi chủ repo commit. Khối commit chỉ chứa bốn file của task; các thay đổi backend/database, tài liệu thiết kế và Khoản chi có sẵn không thuộc khối.
 
 <a id="t-246"></a>
 ### T-246 — Hạn hoàn thành bắt buộc ngày và giờ khi giao việc mới

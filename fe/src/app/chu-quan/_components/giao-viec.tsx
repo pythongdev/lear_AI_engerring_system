@@ -7,8 +7,8 @@ import { useForm, type UseFormRegisterReturn } from "react-hook-form";
 import { z } from "zod";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, RotateCw } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { Plus, RotateCw, X } from "lucide-react";
 import "./giao-viec.css";
 import { useNguoi, type Nguoi } from "./du-lieu-nhan-vien";
 import { FormMenu, OMenu, chuMenu, soMenu } from "./form-menu";
@@ -41,8 +41,10 @@ function HopThoai({ mo, dong, ten, children, nut }: { mo: boolean; dong: () => v
   return <Dialog open={mo} onOpenChange={(open) => { if (!open) dong(); }}>
     <DialogTrigger asChild>{nut}</DialogTrigger>
     <DialogContent className="gv-dialog" showCloseButton={false}>
-      <div><p className="gv-eyebrow">GIAO VIỆC</p><DialogTitle>{ten}</DialogTitle></div>
-      <DialogDescription>Ghi rõ việc cần làm và chọn người nhận.</DialogDescription>
+      <div className="gv-dialog-heading"><div><p className="gv-eyebrow">GIAO VIỆC</p><DialogTitle>{ten}</DialogTitle>
+        <DialogDescription>Ghi rõ việc cần làm và chọn người nhận.</DialogDescription></div>
+        <DialogClose asChild><Button variant="ghost" size="icon" aria-label="Đóng hộp thoại"><X aria-hidden="true" /></Button></DialogClose>
+      </div>
       {children}
     </DialogContent>
   </Dialog>;
@@ -117,14 +119,14 @@ function TheViec({ t, nguoi, bao }: { t: Viec; nguoi: Nguoi[]; bao: (s: string) 
       bao(r.ok ? "Đã lưu đánh dấu." : loiGiaoViec(r.failure));
     } finally { chot.current = false; }
   }
-  return <li className="gv-task">
-    <div className="gv-task-title"><h2>{t.content}</h2><small>CV-{String(t.assigned_task_id).padStart(3, "0")}</small></div>
-    <p className="gv-person"><span className="gv-avatar" aria-hidden="true">{t.assignee_name.split(" ").filter(Boolean).map((n) => n[0]).slice(-2).join("")}</span><span><span className="gv-mobile-label">Người nhận: </span>{t.assignee_name}</span><span className="sr-only"> · </span></p>
-    <p><span className="gv-mobile-label">Người giao: </span>{t.person_name}<span className="sr-only"> · </span></p>
-    <div className="gv-time"><p><span className="gv-mobile-label">Lúc giao: </span>{luc(t.created_at)}</p><p className="gv-due">Hạn hoàn thành: {t.due_at ? luc(t.due_at) : "Chưa có hạn"}</p></div>
-    <p><span className={`gv-badge ${t.done ? "" : "gv-pending"}`}>{t.done ? "Đã xong" : "Chưa xong"}</span></p>
-    <p className="gv-last-mark">{cuoi ? <>Đánh dấu gần nhất: {cuoi.person_name} · {luc(cuoi.created_at)}</> : "—"}</p>
-    <div className="gv-task-actions">
+  return <tr className="gv-task">
+    <td className="gv-task-title"><h2>{t.content}</h2><small>CV-{String(t.assigned_task_id).padStart(3, "0")}</small></td>
+    <td><span className="gv-person"><span className="gv-avatar" aria-hidden="true">{t.assignee_name.split(" ").filter(Boolean).map((n) => n[0]).slice(-2).join("")}</span>{t.assignee_name}</span></td>
+    <td>{t.person_name}</td>
+    <td className="gv-time"><p>{luc(t.created_at)}</p><p className="gv-due">Hạn hoàn thành: {t.due_at ? luc(t.due_at) : "Chưa có hạn"}</p></td>
+    <td><span className={`gv-badge ${t.done ? "" : "gv-pending"}`}>{t.done ? "Đã xong" : "Chưa xong"}</span></td>
+    <td className="gv-last-mark">{cuoi ? <>{cuoi.person_name} · {luc(cuoi.created_at)}</> : "—"}</td>
+    <td><div className="gv-task-actions">
       <HopThoai mo={sua === "sua"} dong={dong} ten="Sửa công việc" nut={<Button variant="outline" disabled={danhDau.isPending} onClick={() => setSua("sua")} aria-label={`Sửa ${t.content}`}>Sửa</Button>}>
         <FormSua bao={bao} t={t} nguoi={nguoi} dong={dong} daLuu={() => { bao("Đã sửa việc."); dong(); }} />
       </HopThoai>
@@ -132,8 +134,8 @@ function TheViec({ t, nguoi, bao }: { t: Viec; nguoi: Nguoi[]; bao: (s: string) 
       <HopThoai mo={sua === "an"} dong={dong} ten="Xoá công việc" nut={<Button variant="outline" disabled={danhDau.isPending} onClick={() => setSua("an")} aria-label={`Xoá ${t.content}`}>Xoá việc</Button>}>
         <FormAn bao={bao} t={t} dong={dong} daLuu={() => { bao("Đã xoá việc khỏi danh sách."); dong(); }} />
       </HopThoai>
-    </div>
-  </li>;
+    </div></td>
+  </tr>;
 }
 
 export function TrangGiaoViec() {
@@ -197,8 +199,11 @@ export function TrangGiaoViec() {
     {query.data && <>
       {query.isFetching && <p role="status">Đang đọc lại danh sách việc…</p>}
       {tasks.length === 0 ? <p className="gv-empty">Chưa có việc nào.</p> : shown.length === 0 ? <p className="gv-empty">Không có công việc phù hợp.</p> : <>
-        <div className="gv-columns" aria-hidden="true"><span>Nội dung công việc</span><span>Người nhận</span><span>Người giao</span><span>Lúc giao / Hạn</span><span>Trạng thái</span><span>Đánh dấu gần nhất</span><span>Thao tác</span></div>
-        <ul aria-label="Công việc">{shown.map((t) => <TheViec key={t.assigned_task_id} t={t} nguoi={nguoi.data?.people ?? []} bao={bao} />)}</ul>
+        <div className="gv-table-scroll" tabIndex={0} role="region" aria-label="Danh sách công việc">
+          <table className="gv-table"><thead><tr>
+            {["Nội dung công việc", "Người nhận", "Người giao", "Lúc giao", "Trạng thái", "Đánh dấu gần nhất", "Thao tác"].map((ten) => <th key={ten} scope="col">{ten}</th>)}
+          </tr></thead><tbody>{shown.map((t) => <TheViec key={t.assigned_task_id} t={t} nguoi={nguoi.data?.people ?? []} bao={bao} />)}</tbody></table>
+        </div>
       </>}
     </>}
     </section>
