@@ -132,6 +132,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-261 **Canh bánh cuốn nằm cuối món lẻ trên trang khách, nút Rau mặc định Ít rau** — L1, chủ repo 2026-10-26 — xong 2026-10-26, gate đạt · [chi tiết](#t-261)
 - [x] T-260 **Bảng cột cho combo và món lẻ, nút Chi tiết combo trong Tóm tắt đơn hàng** — L1, chủ repo 2026-10-26 — xong 2026-10-26, gate đạt · [chi tiết](#t-260)
 
 
@@ -3323,3 +3324,12 @@ Gate lượt trước `/private/tmp/ban3-filling-gate-escalated.log` đã kết 
 **Bổ sung ảnh — chủ repo 2026-10-26 (trước sửa):** Tăng kích thước ảnh giữ chỗ trên thẻ combo và món lẻ. Acceptance: ảnh trên điện thoại tăng từ 48px lên 72px, màn lớn từ 80px lên 96px, biểu tượng bên trong tăng tương ứng; cột giá vẫn ở góc phải, bộ chọn vẫn xếp dọc bên trái, không tràn ngang ở 320/390/472/768px; bảng trượt và thêm/bớt giữ nguyên. Đây là chỉnh trình bày trong T-259, không thêm test mô phỏng CSS.
 
 **Bằng chứng ảnh lớn 2026-10-26:** Playwright `/private/tmp/t259-image-ui.cjs` → PASS toàn bộ thẻ combo/món tại 320/390/472/768px: ảnh đúng 72×72px trên mobile và 96×96px màn lớn, nội dung trái/giá trên phải, hai nút chọn xếp dọc, không tràn ngang, Chay ẩn lượng và thêm combo hoạt động, pageErrors=[] (`/private/tmp/t259-image-ui.log`). Đã xem ảnh sáng `/private/tmp/t259-image-light.png`, có ảnh tối cùng tiền tố. Chỉ sửa kích thước CSS, không thay dữ liệu hay hành vi. Gate `/private/tmp/t259-image-gate.log` đang chạy; chưa kết luận lượt mới xanh. Snapshot commit đã điều chỉnh theo HEAD 2ce23a4; index thật trống, chưa commit.
+
+<a id="t-261"></a>
+### T-261 — Canh bánh cuốn nằm cuối món lẻ trên trang khách
+
+Chủ repo yêu cầu 2026-10-26 trong hội thoại, cho `fe/src/app/ban`: *"canh bánh cuốn để xuống cuối cùng của món lẻ. để mặc định là ít rau, có thêm tuỳ chọn nhiều rau"*. Mức L1 (chỉ thứ tự trình bày). Claude làm, chưa review độc lập, nhánh `P4A-01`.
+
+Acceptance viết trước: (1) danh sách *MÓN LẺ* của trang khách đặt *Canh bánh cuốn* cuối, các món khác giữ thứ tự menu trả; (2) thẻ canh có nút *Rau* mặc định *Ít rau*, chọn được *Nhiều rau* — dữ liệu đã có từ T-255, test `thuc-don-khach.test.tsx` canh cả hai; (3) gate xanh.
+
+Ghi chú: database dev của chủ repo chưa nạp lại seed sau T-255 nên canh chưa có nhóm Rau; Claude đã chạy năm câu `INSERT` nhóm Rau của `db/seed/seed.pl` vào database dev (chỉ thêm). Nhóm Rau vẫn giữ ba lựa chọn đã chốt ở T-255 (cả *Không rau*); bỏ *Không rau* là đổi luật, chờ chủ repo nói.

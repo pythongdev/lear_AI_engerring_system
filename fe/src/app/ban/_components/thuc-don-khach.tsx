@@ -40,6 +40,8 @@ function chonNhan(portions: { mon: { option_groups: Nhom[] }; option_ids: number
     .flatMap((g) => g.options.filter((o) => p.option_ids.includes(o.menu_option_id)).map((o) => o.option_name))));
   return ten.size ? [...ten].join(", ") : "—";
 }
+// Canh bánh cuốn đi kèm bánh, nên nằm cuối danh sách món lẻ (chủ repo 2026-10-26, T-261).
+const cuoiDanhSach = (m: Mon) => m.item_name === "Canh bánh cuốn" ? 1 : 0;
 const timTen = (ten: string) => ten.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/gi, "d").toLowerCase();
 
 // Ô số lượng bị xoá trống là NaN; đếm như 0 để thẻ và dải giỏ không hiện NaN.
@@ -61,7 +63,7 @@ export function ThucDonKhach({ items, combos = [], lines, onChange, quotes, tota
     <LuaChonTruot groups={nhanNhom(groups)} ids={daChon(key, groups)} name={`${id}-${key}`} onChange={(ids) => setLuaChon((cu) => ({ ...cu, [key]: ids }))} />
   </div>;
   const sua = (i: number, dong: DongSoan) => onChange(lines.map((d, j) => j === i ? dong : d));
-  const monLoc = items.filter((m) => timTen(m.item_name).includes(timTen(tim)));
+  const monLoc = items.filter((m) => timTen(m.item_name).includes(timTen(tim))).sort((a, b) => cuoiDanhSach(a) - cuoiDanhSach(b));
   const comboLoc = combos.filter((c) => timTen(c.name).includes(timTen(tim)));
   function stepper(ten: string, matches: (d: DongSoan) => boolean, them: () => void, combo = false) {
     const count = lines.filter(matches).reduce((n, d) => n + so(d), 0);

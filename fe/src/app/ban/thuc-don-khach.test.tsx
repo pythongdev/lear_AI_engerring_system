@@ -8,7 +8,7 @@ import type { components } from "@/lib/api/schema";
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); useNhapKhach.getState().xoaHet(); });
 
-async function mo(tinhThu?: (...a: Parameters<Ghi>) => Promise<TraLoi>) {
+async function mo(tinhThu?: (...a: Parameters<Ghi>) => Promise<TraLoi>, suaMenu?: (menu: components["schemas"]["Menu"]) => void) {
   serverBackend();
   const menu: components["schemas"]["Menu"] = await (await fetch("http://localhost/menu")).json();
   menu.items[0].option_groups[0].options.push({ menu_option_id: 13, option_name: "Thịt + mộc nhĩ", is_default: false });
@@ -18,6 +18,7 @@ async function mo(tinhThu?: (...a: Parameters<Ghi>) => Promise<TraLoi>) {
     menu_combo_id: 99, name: "Đầy đặn", price_vnd: 72000,
     items: [{ ...menu.items[0], quantity: 2, surcharges: [] }],
   }];
+  suaMenu?.(menu);
   const b = clientBackend(tinhThu);
   // Giữ menu thử có combo khi hook đọc lại.
   const fetchMenu: typeof fetch = async (input) => {
@@ -214,4 +215,19 @@ it("bấm nhóm thì danh sách lựa chọn mở ngay trong thẻ, đánh dấu
   fireEvent.click(mon.getByRole("radio", { name: /^Thịt$/ }));
   expect(mon.queryByRole("radio")).toBeNull();
   expect(mon.getByRole("button", { name: "Nhân: Thịt" })).toBeTruthy();
+});
+
+it("canh bánh cuốn nằm cuối món lẻ, nút Rau mặc định Ít rau và chọn được Nhiều rau (T-261)", async () => {
+  await mo(undefined, (menu) => menu.items.unshift({ menu_item_id: 3, item_name: "Canh bánh cuốn", option_groups: [
+    { option_group_id: 7, option_group_name: "Rau", prerequisite_option_ids: [], options: [
+      { menu_option_id: 31, option_name: "Không rau", is_default: false }, { menu_option_id: 32, option_name: "Ít rau", is_default: true },
+      { menu_option_id: 33, option_name: "Nhiều rau", is_default: false }] },
+  ], prices: [{ option_ids: [31], unit_price_vnd: 0 }, { option_ids: [32], unit_price_vnd: 0 }, { option_ids: [33], unit_price_vnd: 0 }] }));
+  const list = screen.getByRole("heading", { name: "MÓN LẺ" }).closest("section")!;
+  expect([...list.querySelectorAll("h3")].map((h) => h.textContent)).toEqual(["Bánh cuốn", "Canh", "Canh bánh cuốn"]);
+  const nut = within(card("Thêm Canh bánh cuốn")).getByRole("button", { name: /^Rau:/ });
+  expect(nut.textContent).toContain("Ít rau");
+  fireEvent.click(nut);
+  fireEvent.click(within(card("Thêm Canh bánh cuốn")).getByLabelText("Nhiều rau"));
+  expect(nut.textContent).toContain("Nhiều rau");
 });
