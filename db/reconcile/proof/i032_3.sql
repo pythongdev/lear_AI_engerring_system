@@ -4,4 +4,4 @@ DO $$ BEGIN
   PERFORM set_config('shop.revision_reason', 'lỗi cài I-032/3', true);
 END $$;
 -- Vượt quyền xoá để mô phỏng trạng thái hỏng đã tồn tại sau giao dịch.
-DELETE FROM menu_combo_item WHERE menu_combo_id = (SELECT min(id) FROM menu_combo);
+DELETE FROM menu_combo_item WHERE menu_combo_id = (SELECT id FROM menu_combo WHERE name = 'Mẫu combo');

@@ -951,6 +951,188 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-244"></a>
+### T-244 — Bảy suất là món thường, chưa phải combo ghép từ món lẻ
+
+**Yêu cầu:** chủ repo 2026-10-24, nhìn `/chu-quan/san-pham` sau T-242: *"để món lẻ ở page trên. combos để ở page dưới
+http://localhost:3000/chu-quan/combo"*. Hỏi lại cùng ngày, chủ repo chọn **chuyển thành combo thật** (không chỉ đổi chỗ hiện),
+với hệ quả Claude nêu sẵn trong câu hỏi: bỏ bảy suất khỏi món thường, dựng lại thành combo ghép từ món lẻ, **mỗi cái bánh chọn
+nhân riêng**. **Mức:** L3 — đổi dữ liệu mồi có tiền, đường tính giá của ca 1–10 §4.8, việc bếp sinh từ dòng con. Thiết kế dưới đây
+**chờ chủ repo duyệt** trước khi giao (CLAUDE.md §3).
+
+**Thiết kế đề xuất (Claude 2026-10-24, chưa duyệt):**
+1. **Shop-facts trước.** §4.3 giữ ba dòng giá như *giá khi mọi suất con cùng một nhân*; §4.5 ghi *Đầy đủ* = combo **3 × Bánh cuốn +
+   1 × Bánh trứng (chín/tái/vàng) + 1 × Giò bán rời**, *Suất giò* = **4 × Bánh cuốn + 1 × Giò bán rời**, *Suất trứng* = **4 × Bánh cuốn
+   + 1 × Bánh trứng**; §4.9 cột *Nhóm trên menu* = Combo nghĩa là `menu_combo`. Ghi lời 2026-10-24 ở §7.1. Đối chiếu đã tính (Claude):
+   giá combo = Σ giá gốc món lẻ (Đầy đủ 26.000 · suất giò 21.000 · suất trứng 20.000) và mức phụ thu theo món = phụ thu §4.4 của món lẻ
+   ⇒ ra đúng mọi ô §4.3 khi các suất con cùng nhân. Giá trộn nhân (ví dụ 3 bánh thịt + trứng chay = 29.000) là hệ quả mới, ghi rõ.
+2. **`seed.pl`:** không chèn bảy `menu_item` ấy nữa; chèn bảy `menu_combo` + `menu_combo_item`, giá combo và từng dòng
+   `menu_combo_item_option_surcharge` **tính từ database** (giá gốc, `menu_option.surcharge_vnd`), không gõ số (F-001). Thiếu dòng mức
+   = 0đ (U-096) nên mọi lựa chọn có phụ thu phải có dòng.
+3. **Ca giá §4.8:** ca của bảy suất chạy qua đường giá combo (`POST /price-quotes` nhánh combo, T-195) ở `--price-cases` · `--price-cases-tsv`;
+   thêm một ca trộn nhân. Test cửa giá pha 3 (`be/internal/gia/gia_test.go`) đọc ca combo.
+4. **Kịch bản và phép đối chiếu** đang gọi suất như món (`db/scenario/*.sql`, `db/reconcile/proof/{baseline,i004_7,i009_4,i018_3}.sql`,
+   `be/internal/don/don_test.go`, `be/cmd/server/realtime_test.go`): đổi sang món lẻ hoặc combo, **giữ đúng điều mỗi ca canh** — ca nào
+   không đọc được điều ấy sau khi đổi thì dừng và báo, không viết lại ý ca.
+5. **Dữ liệu thử** (`du-lieu-thu.pl`): chỉ còn danh mục Món lẻ; bỏ *Combo ghép món (thử)* vì đã có combo thật.
+6. **FE:** trang Sản phẩm tự chỉ còn món lẻ; trang Combo đã đọc `/menu-combos`. Trang khách (`fe/src/app/ban/`) đã có nhánh combo — kiểm
+   bảy combo hiện và đặt được, không thêm tính năng.
+7. **ADR-127** ghi lựa chọn *combo thật thay vì nhóm trình bày* và hệ quả *mỗi suất con chọn nhân riêng*.
+
+**Chia khi mở:** (a) shop-facts + seed + ca giá + ADR — L2; (b) kịch bản, phép đối chiếu, test backend — L2; (c) kiểm FE — L1.
+
+**Claude duyệt thiết kế 2026-10-25.** Căn cứ: lược đồ sẵn (`menu_combo` · `menu_combo_item` · `menu_combo_item_option_surcharge`; dòng combo trên `order_line`, ADR-116 · ADR-117), hợp đồng combo đã bán được (`POST /price-quotes` nhánh combo T-195, cửa chủ quán T-193…T-196), đường giá cho combo đã có (`be/internal/gia/combo_test.go`, kiểm hồi quy I-034 ở `db/tests/i034_combo_on_order.sql`). Thiết kế không đẻ luật mới: §4.3 (giá ba cột), §4.4 (số phần nhận nhân), §4.5 (thành phần suất bán), §4.8 (**mười bốn ca** — ca 14 là Bánh trứng vàng bán rời, thêm 2026-10-23 ở T-242), §4.9 (nhóm Combo) đứng nguyên; lời "mỗi suất con chọn nhân riêng" là lời chủ repo 2026-10-24, không cần hỏi thêm. Luật phụ thu combo đã có: §8.9 lượt tám vế 3 (2026-10-15, đóng U-096) — *mức phụ thu cộng mỗi suất một lần*; backend đã làm đúng (`be/internal/gia/service.go:318–324`), nên seed lưu mức mỗi suất, không nhân `menu_combo_item.quantity`. Hệ quả "giá trộn nhân" chỉ là một ô mới của §4.6 (tổng thành phần, phụ thu theo phần), không phải luật. Dời **ADR-129** (số kế tiếp sau ADR-128) cho lời "combo thật thay vì nhóm trình bày; mỗi suất con chọn nhân riêng"; shop-facts §7.1 thêm dòng 2026-10-25 ghi lại; §4.8 thêm **ca 15** trộn nhân (ca 14 đã có — không ghi đè). Hai mục này (ADR + shop-facts) do **Claude** viết lúc tích hợp phần (a), KHÔNG để Codex chạm.
+
+**Chia việc đã mở 2026-10-25.** Phần (a) mở ở **T-250** (L2, Codex làm, Claude duyệt tích hợp): seed.pl + ca giá; không chạm shop-facts, ADR, invariants, migration, openapi, backend, FE. Phần (b) mở ở **T-251** 2026-10-25 ngay sau khi Claude tích hợp (a) (L2): mở rộng parser `seed.pl --price-cases-tsv` cho ca 15 trộn nhân, kịch bản `db/scenario/*.sql`, phép đối chiếu `db/reconcile/proof/{baseline,i004_7,i009_4,i018_3}.sql`, `be/internal/don/scenario_test.go` · `be/internal/don/don_test.go` · `be/cmd/server/realtime_test.go` · `be/internal/gia/gia_test.go` (đọc TSV sáu cột); dữ liệu thử (`db/seed/du-lieu-thu.pl`) bỏ *Combo ghép món (thử)*; mỗi ca giữ điều nó canh — ca nào không giữ được thì dừng, Claude xử. Phần (c) mở ở **T-252** 2026-10-25 (L1), chờ T-251: kiểm giao diện trên máy dev (Sản phẩm chỉ bày món lẻ; Combo bày bảy combo thật; trang khách đặt được một combo Đầy đủ).
+
+**Acceptance tổng** (viết 2026-10-24, trước khi giao — áp cho ba phần cộng lại):
+- [x] Sau `make reset` + `make setup`: không `menu_item` nào tên *Đầy đủ…* / *Suất giò* / *Suất trứng…*; có đúng bảy `menu_combo` đúng thành phần mục 1.
+- [x] Mọi ca §4.8 (cũ + ca trộn nhân mới) xanh ở `db-check` và test cửa giá của `be-check`; báo giá combo khi mọi suất con cùng nhân khớp từng ô §4.3.
+- [x] Mọi kịch bản và phép đối chiếu xanh, mỗi ca giữ điều nó canh (Claude đọc diff từng ca).
+- [x] `/chu-quan/san-pham` chỉ bày món lẻ; `/chu-quan/combo` bày bảy combo; trang khách đặt được một combo Đầy đủ — Claude chạy trên máy dev.
+- [x] Không đổi migration hay `openapi.yaml`; `./scripts/gate.sh` xanh ở clone chính.
+
+**Bàn giao:** thiết kế: Claude 2026-10-24, duyệt 2026-10-25. Thực hiện phần (a): Codex ở T-250; phần (b), (c) mở sau. Toàn task: Claude lead · Codex làm · Claude tích hợp.
+
+**Đóng T-244 (parent) 2026-10-25 — ba phần đã xong:**
+- **Review:** Claude. **Implementation:** Codex (ba worktree song song cho T-251 — `/private/tmp/t251` root parser + SQL fixtures + 2 proof i032; `/private/tmp/t251-be` scenario_test.go S3 composite `test-s3`/`test-scenario-s3-…` + loader/payload; `/private/tmp/t251-trial` du-lieu-thu.pl + db-check.sh; T-250 ở `/private/tmp/t250`; T-252 UI check root + chủ repo trên máy dev). **Base commit:** `52aef5a` (nhánh `P4A-01`).
+- **Files feature** (18 code từ `/private/tmp/t251-code-files.txt` + 1 owner Claude sửa + 1 ADR + 1 shop-facts + 1 backlog + 1 archive):
+  - Seed: `db/seed/seed.pl`, `db/seed/du-lieu-thu.pl`
+  - Scenario: `db/scenario/prelude.sql`, `db/scenario/yc.sql`, `db/scenario/doc_lai.sql`, `db/scenario/s3_doi_gia_giua_buoi.sql`, `db/scenario/s5_ngay_quan_tri_luot_hai.sql`
+  - Reconcile: `db/reconcile/proof/baseline.sql`, `db/reconcile/proof/i009_4.sql`, `db/reconcile/proof/i018_3.sql`, `db/reconcile/proof/i032_3.sql`, `db/reconcile/proof/i032_4.sql`
+  - Test backend: `be/cmd/server/realtime_test.go`, `be/internal/don/scenario_test.go`, `be/internal/don/san_xuat_test.go`, `be/internal/don/don_test.go`, `be/internal/gia/gia_test.go`
+  - DB check: `scripts/db-check.sh`
+  - Owner (Claude): `docs/product/2-db/08-du-lieu-moi.md`, `master_plan/shop-facts.md` (§4.8 ca 15 · §4.9 2026-10-25 · §7.1 hai dòng 2026-10-25), `docs/decisions.md` (**ADR-129** mới), `work/backlog.md` + `work/backlog_archive.md` (mục chi tiết T-244/T-250/T-251/T-252).
+- **Evidence:**
+  - Fullgate main `./scripts/gate.sh` **PASS toàn bộ** — log `/private/tmp/t251-main-gate.log` (sao chép từ task `b0gporhig`): Gate 3 (179 scope file) · 1b · 1c (6578 khối · 102 U-XXX · 21 chuyển tiếp) · 1d · 1e (61 bảng) · 1f (121 ô ghi · 100 cửa) · 1g (hợp đồng 0.51.0 · 124 đường · 448 tên từ chối · 100 cửa) · 1h · be-check (PostgreSQL thật) · db-check **37 bước · 19 khối QC · 53 file test · dữ liệu mồi + §4.8 15/15 · 147 câu đối chiếu · 149 lỗi cài · ba scenario + ngày quản trị + đối chiếu · 37 YC** · verify 18 test.sh. Worktree gate `/private/tmp/t251-integrated-gate.log` cũng PASS.
+  - UI nghiệm thu máy dev (T-252): 15/15 ca §4.8 + 35/35 tổ hợp trộn nhân khớp từng đồng (`/private/tmp/t252-dev-prices.log`); FE+BE thật ra 29.000đ cho combo Đầy đủ chín trộn nhân (ảnh `/private/tmp/t252-dev-customer-29000.png`).
+  - i032 proof độc lập không rò (`/private/tmp/t251-proof032-check.log`): checkpoint `i032_3` → `I-032/3=1 (combo:8)` · `I-032/4=0`; checkpoint `i032_4` → `I-032/4=1 (thanh_phan:18)` · `I-032/3=0`.
+- **Backup + approval:** backup chỉ-đọc `/private/tmp/t244-dev-before.dump` (330 730 bytes · mode 0600 · `pg_restore -l` đọc OK trước reset). Chủ repo nói rõ trong hội thoại 2026-10-25: *"cho phép dựng lại DB dev từ bộ mới"* và cho phép tạo lại tài khoản thử.
+- Khối commit §6.1 do root chuẩn (hoặc Claude dán khi được yêu cầu) — chỉ feature T-244 (gộp a+b+c), tách blob cho `docs/decisions.md` (ADR-128 T-248 nằm ngoài), `master_plan/shop-facts.md` (nếu có đoạn T-248 finance), `work/backlog.md` (loại T-248 pointer dòng 106 + chi tiết T-248 lines 3353+), `work/backlog_archive.md` (loại T-249 — commit riêng của T-249 đã xong trước).
+
+<a id="t-250"></a>
+### T-250 — Bảy suất chuyển thành combo thật · phần (a) seed và ca giá
+
+**Yêu cầu:** mở 2026-10-25 từ phần (a) của T-244 (Claude duyệt thiết kế cùng ngày). Chuyển bảy suất (Đầy đủ chín/tái/vàng, Suất giò, Suất trứng chín/tái/vàng) khỏi `menu_item` sang `menu_combo` thật, mỗi suất con chọn nhân riêng; đường giá combo đã có từ T-193…T-196 chỉ cần dữ liệu mồi đi đúng cột. **Mức:** L2 — dữ liệu mồi có tiền, đường tính giá của ca 1–10 §4.8.
+
+**Phạm vi code — chỉ Codex sửa:**
+- `db/seed/seed.pl` — bảng `%MENU`, hàm `read_price_cases`, phần in SQL cho menu, hai nhánh `--price-cases` / `--price-cases-tsv`.
+
+**Phạm vi không chạm (Claude giữ bản quyền; để Claude vá sau khi (a) xanh):** `master_plan/shop-facts.md`, `docs/decisions.md`, `quality/invariants.md`, `docs/product/`, mọi file dưới `db/migrations/`, `db/scenario/`, `db/reconcile/`, `db/tests/`, `db/seed/du-lieu-thu.pl`, `be/`, `fe/`, `openapi.yaml`. (Scope cho T-250 giới hạn đúng seed.pl + backlog.)
+
+**Luật nghiệp vụ (chỉ nhắc, không mở lại):**
+- Giá combo (`menu_combo.price_vnd`) = giá Chay §4.3 của suất ấy: Đầy đủ **26.000**, Suất giò **21.000**, Suất trứng **20.000**. Đọc từ §4.3 lúc chạy, không gõ.
+- Thành phần (`menu_combo_item.quantity` × `menu_item`): Đầy đủ = 3 × *Bánh cuốn* + 1 × *Bánh trứng {loại}* + 1 × *Giò bán rời*; Suất giò = 4 × *Bánh cuốn* + 1 × *Giò bán rời*; Suất trứng = 4 × *Bánh cuốn* + 1 × *Bánh trứng {loại}*. "Loại trứng" chín/tái/vàng theo cột ba của `%MENU`.
+- Mức phụ thu theo món của combo (`menu_combo_item_option_surcharge`): mỗi combo_item nhận một tập `menu_option` qua `menu_item_option_group` của `menu_item` nền (bánh cuốn: Nhân · Lượng nhân; bánh trứng: Nhân · Lượng nhân; giò bán rời: không mang). Mức mỗi dòng = `menu_option.surcharge_vnd` **mỗi suất**, không nhân `menu_combo_item.quantity` — backend đã tự nhân với quantity của suất khi tính (`be/internal/gia/service.go:324`), và luật §8.9 lượt tám vế 3 nói *"mức phụ thu cộng mỗi suất một lần"*. Ví dụ *Bánh cuốn × Thịt* = 1.000 (ca 9 Combo Đầy đủ sau đó cho suất `{Bánh cuốn, quantity=3, Thịt}` nên LineTotal = 1.000 × 3 = 3.000, khớp §4.3 phụ thu ×4 của Đầy đủ Thịt+Thường = 26.000 + 3.000 + 1.000 = 30.000). **Tính từ database**, không gõ. U-096 đóng (chủ repo chọn *cộng 0đ*) nên lựa chọn phụ thu 0đ (Chay, Thường) có thể để dòng hay bỏ — chọn **chèn mọi lựa chọn hiện có** để không phụ thuộc U-096. Bằng chứng ca kỳ vọng: `be/internal/gia/combo_test.go:115–116` (`hai trứng Nhiều — mức cộng mỗi suất một lần ⇒ 5000 + 2*700`), với seed test lưu mức = 700 cho (trứng, Nhiều) không nhân `menu_combo_item.quantity` (dòng 67).
+
+**Luật đi theo (đã có):** `menu_combo` tạo bằng vai `shop_app`; `price_vnd > 0`; dòng `menu_combo_item` ít nhất một mỗi combo (trigger `menu_combo_has_item_check`); mỗi cặp `(menu_combo_item_id, menu_option_id)` của bảng mức là duy nhất; lựa chọn phải thuộc một nhóm mà `menu_item` nền mang (xem `db/tests/i034_combo_on_order.sql`).
+
+**Thao tác seed.pl, cách Codex nên đi:**
+1. Trong `%MENU`, giữ bảy dòng combo nhưng đổi vai trò: không còn là `menu_item`, chuyển thành *dòng combo* với trường thành phần đọc từ §4.5. Giữ ba dòng *bánh trứng bán rời* và dòng *bánh cuốn*, *giò bán rời*, *canh bánh cuốn* đứng nguyên dưới dạng `menu_item`.
+2. Phần dựng `menu_item` (dòng 384–398) chỉ còn in cho sáu dòng *món lẻ* + *canh bánh cuốn* — bảy dòng combo không được in `INSERT INTO menu_item`.
+3. Thêm phần in `INSERT INTO menu_combo (name, price_vnd)` dùng tên dòng menu của §4.9 (cột *Chủ quán gọi tên*, đã viết hoa) và giá đọc từ §4.3 cột *Chay*. Giá đọc qua bảng §4.3 (cột 1 = tên suất đã có trong `%MENU` vế hai), không gõ.
+4. Thêm phần in `INSERT INTO menu_combo_item` cho từng dòng con, chọn `menu_item` nền theo tên §4.9 (ví dụ *Bánh cuốn*, *Bánh trứng chín*, *Giò bán rời*).
+5. Thêm phần in `INSERT INTO menu_combo_item_option_surcharge` cho mọi lựa chọn mà `menu_item` nền mang, mức = `menu_option.surcharge_vnd` **mỗi suất** (không nhân `menu_combo_item.quantity`; backend nhân với quantity của suất khi cộng). Dùng JOIN qua `menu_item_option_group` + `option_group` + `menu_option` để không gõ số và không gõ tên.
+6. `read_price_cases`: ca 5–10 §4.8 (**sáu ca combo** — 3 Suất trứng chín/tái/vàng, 1 Suất giò, 2 Combo Đầy đủ chín/tái) đi nhánh combo (dùng `menu_combo` thay `menu_item`, danh sách `menu_combo_item_id` + `menu_option_id` thay `menu_option`); ca 1–4 (**bốn ca Bánh cuốn món lẻ**) và ca 11 (từ chối), 12 (Giò bán rời), 13 (Canh), 14 (Bánh trứng vàng) giữ nhánh `menu_item`. Giữ nguyên hình output đã dùng: `pg_temp.seed_price` thành hai nhánh — nhánh combo tính `menu_combo.price_vnd + Σ (menu_combo_item_option_surcharge.surcharge_vnd × menu_combo_item.quantity)` để khớp cách backend tính (giá combo cộng tổng từng suất, mỗi suất = don × quantity).
+7. `--price-cases-tsv` phát ra thêm cột định danh *loại dòng* (`item` vs `combo`) để test cửa giá pha 3 phân nhánh — hoặc Codex đề xuất hình khác và nói rõ.
+
+**Acceptance (viết 2026-10-25):**
+- [x] `perl db/seed/seed.pl` chạy xong, không `menu_item` tên *Đầy đủ*/*Suất giò*/*Suất trứng*; có đúng bảy `menu_combo` tên khớp §4.9 bảy dòng đầu; mỗi combo có đúng số `menu_combo_item` theo mục *Luật nghiệp vụ* vế hai; bảng `menu_combo_item_option_surcharge` có mức cho mọi lựa chọn mà `menu_item` nền mang.
+- [x] `perl db/seed/seed.pl --price-cases` chạy xong, mười ca §4.8 ca 1–10 ra chữ *khớp* trên dữ liệu mồi mới; ca 11–14 giữ xanh.
+- [x] `perl db/seed/seed.pl --price-cases-tsv` hợp lệ (một dòng mỗi ca; mọi dòng có đủ cột; có đánh dấu *loại dòng* mà pha 3 đọc được).
+- [x] `scripts/db-check.sh` phần giá in `PASS §4.8 … ca khớp` (14/14 ca ở worktree T-250 trước T-251; 15/15 ca ở main sau T-251).
+- [x] Không chạm `master_plan/shop-facts.md`, `docs/decisions.md`, `quality/invariants.md`, `docs/product/`, migration, `openapi.yaml`, `be/`, `fe/`, `db/scenario/`, `db/reconcile/`, `db/tests/`, `db/seed/du-lieu-thu.pl` *trong phạm vi Codex phần (a); Claude bổ sung owner trong lượt tích hợp*.
+- [x] `./scripts/gate.sh` xanh ở main sau khi T-251 chuyển fixtures sang combo và T-252 nghiệm thu dev (log `/private/tmp/t251-main-gate.log`).
+
+**Bàn giao 2026-10-25 — phần (a) đã tích hợp code, chờ T-251:**
+- Codex làm ở worktree `/private/tmp/t250` trên nhánh phụ, chỉ chạm `db/seed/seed.pl` (patch 61+ / 7− đã lưu `/private/tmp/t250-seed.patch`). Hình đổi theo đúng *Thao tác seed.pl* mục 1–7: `%MENU` không in bảy `menu_item` cho suất; thêm vòng in `menu_combo` + `menu_combo_item` + `menu_combo_item_option_surcharge` (mức đọc qua JOIN `menu_option.surcharge_vnd`, không gõ số); `read_price_cases` giữ kind `item|combo`; `price_cases_tsv` thêm cột thứ sáu `item|combo`; `pg_temp.seed_price` thêm nhánh combo tính `menu_combo.price_vnd + Σ (surcharge × menu_combo_item.quantity)` cho mỗi suất con mang nhóm (giò bán rời không nhận nhân nên bị loại qua `EXISTS menu_item_option_group`).
+- Bằng chứng Codex (log `/private/tmp/t250-*`):
+  - `perl -c db/seed/seed.pl` syntax OK; seed sinh SQL nạp database tạm `t250_seed_check` qua `docker compose` ở worktree thành công.
+  - `SELECT count(*)` trên database tạm: `menu_item = 6`, `menu_combo = 7`, `menu_combo_item = 17`, `menu_combo_item_option_surcharge = 65`.
+  - `perl db/seed/seed.pl --price-cases` khớp **14 / 14** ca §4.8 từng đồng (`/private/tmp/t250-price-run.log`).
+  - Codex đối chiếu toàn bảng chủ repo: **35 / 35** tổ hợp combo khớp từng đồng (`/private/tmp/t250-all-prices.log`).
+  - `--price-cases-tsv` phát sáu cột — giữ năm cột cũ, thêm `kind` cuối.
+  - `./scripts/gate.sh` ở worktree exit 2 vì consumer TSV cũ đòi năm cột và fixtures gọi bảy suất như `menu_item` — phụ thuộc phần (b), nằm trong Acceptance *"biết trước"*.
+- Claude lượt tích hợp 2026-10-25: áp patch vào clone chính (`db/seed/seed.pl`); viết **ADR-129**; cập nhật `master_plan/shop-facts.md` §4.9 (2026-10-25 chỉ sang ADR-129), §8.9 lượt bảy (bỏ câu *"không phải suất Combo Đầy đủ"*, dán luật áp cho `menu_combo`), §7.1 (dòng 2026-10-25). Scope T-250 mở rộng thêm `master_plan/shop-facts.md` + `docs/decisions.md`.
+- Đóng cùng T-251 ở commit §6.1 gộp — xem `### T-244` *Đóng T-244 (parent)*.
+
+<a id="t-251"></a>
+### T-251 — Bảy suất chuyển thành combo thật · phần (b) mở rộng parser, fixtures và test
+
+**Yêu cầu:** mở 2026-10-25 ngay khi (a) tích hợp xong (T-250, Claude áp patch Codex). Hoàn tất chuyển bảy suất sang `menu_combo` xuyên fixtures và kịch bản để `./scripts/gate.sh` xanh ở clone chính; thêm **ca 15 trộn nhân** vào §4.8 cùng mở rộng parser `seed.pl --price-cases-tsv` để đọc nhân riêng theo từng suất con. **Mức:** L2 — kịch bản SQL, test backend, dữ liệu thử; không chạm migration, `openapi.yaml`, `be/` cửa ghi, cửa quyền.
+
+**Phạm vi code — chỉ Codex sửa (đính chính 2026-10-25, Claude lead):**
+- `db/seed/seed.pl` — mở rộng `read_price_cases` + `price_cases_tsv` cho hình *nhân riêng theo suất con* (parser đọc token `Món=Nhân:Thịt | Món=Nhân:Chay | Món=Lượng nhân:Thường`).
+- `master_plan/shop-facts.md` §4.8 — **ca 15 Claude đã thêm 2026-10-25** cùng lượt lead: *Combo Đầy đủ chín · Bánh cuốn=Thịt Thường · Bánh trứng chín=Chay ⇒ 29.000*. Codex **không** sửa file này (AGENTS: Codex không viết owner).
+- `db/seed/du-lieu-thu.pl` — bỏ *Combo ghép món (thử)* (bảy combo thật đã có), chỉnh dữ liệu thử để `/chu-quan/combo` bày đúng bảy combo.
+- `db/scenario/prelude.sql` — hàm `pg_temp.sc_mon` mở rộng cho nhánh combo (nạp qua `menu_combo` + lưu `menu_combo_id`/`menu_combo_item_option_id` theo đúng khuôn dòng đơn combo ADR-116·117). Thêm vào scope 2026-10-25.
+- `db/scenario/yc.sql`, `db/scenario/doc_lai.sql`, `db/scenario/s1_qr_tai_ban.sql`, `db/scenario/s2_ba_don_mang_di.sql`, `db/scenario/s5_ngay_quan_tri_luot_hai.sql`, `db/reconcile/proof/baseline.sql`, `db/reconcile/proof/i004_7.sql`, `db/reconcile/proof/i009_4.sql` — chuyển bảy suất sang `menu_combo` (ADR-116·117). Giữ đúng điều mỗi ca canh.
+- `db/reconcile/proof/i032_3.sql`, `db/reconcile/proof/i032_4.sql` — giữ nguyên `-- kêu I-032/3` và `-- kêu I-032/4`, đổi selector `(SELECT min(id) FROM menu_combo[_item])` sang **combo fixture `'Mẫu combo'`** đã dựng ở `baseline.sql:519` (hidden, không order, không surcharge).
+- `db/scenario/s3_doi_gia_giua_buoi.sql`, `db/reconcile/proof/baseline.sql` (phần đơn `don_lay`), `db/reconcile/proof/i018_3.sql` — **giữ `menu_item` composite** nhưng đổi tên fixture (prefix `test-s3`/`test-baseline`) để không đè bảy tên combo thật của seed; dựng qua `prelude.sql` đọc `menu_component`/`menu_component_station`, không hardcode giá.
+- `be/internal/gia/gia_test.go` (đọc TSV) — đổi kiểm `len(o) != 5` thành `len(o) != 6`, phân nhánh gọi cửa `POST /price-quotes` theo `kind` (`item`/`combo`).
+- `be/internal/don/don_test.go` — cùng việc.
+- `be/internal/don/scenario_test.go` · `be/cmd/server/realtime_test.go` — dựng đơn qua nhánh combo khi ca ấy đã là combo; S3 composite riêng `test-scenario-s3-…` đọc qua `menu_component`/`menu_component_station`.
+- `be/internal/don/san_xuat_test.go` — `TestI019_BangNhuCauTachNguocVeTungBan` dòng 896 đổi sang `voiDong(..., dongScenario(ca, ca.soSuat))`, giữ nguyên assertion I-019/I-020.
+- `be/internal/don/*_test.go` — scope mở rộng 2026-10-25: payload / fixture / snapshot phụ thuộc loại combo (`tai_ban_test.go:93` cùng kiểu). Không đổi production.
+- `be/internal/combo/*_test.go` — chỉ `*_test.go`, không chạm production.
+- `scripts/db-check.sh` — nếu đoạn kiểm *dữ liệu thử: Món lẻ 6 · Combo 7* cần đổi, sửa cùng lần.
+
+**Phạm vi không chạm:** `db/migrations/`, `db/tests/i0*.sql` (`i034` tự dựng `test-i034 …`, self-contained), `docs/product/3-be/openapi.yaml`, `be/internal/gia/service.go`, `be/internal/combo/{handler,service,repository}.go`, `be/internal/combo/sql/`, `be/internal/menu/`, cửa ghi, `fe/` (T-252), `quality/invariants.md`, `docs/decisions.md`, `docs/product/`.
+
+**Luật nghiệp vụ (đã có, chỉ nhắc):**
+- Phụ thu combo *cộng mỗi suất một lần*, backend đã nhân với `menu_combo_item.quantity` khi tính (§8.9 lượt tám vế 3). Seed đã lưu mức mỗi suất.
+- Mỗi suất con chọn nhân riêng (§8.9 lượt bảy vế 2, lượt tám vế 2). Ca 15 là ca canh ở tầng seed/test.
+- **Ca 15 đã vào shop-facts §4.8 lúc 2026-10-25 (Claude lead):** `| 15 | Combo Đầy đủ chín | Bánh cuốn=Thịt / Bánh trứng chín=Chay | Bánh cuốn=Thường / Bánh trứng chín=— | 29.000 | 26.000 + 3 × 1.000; mỗi suất con chọn nhân riêng (§8.9 lượt bảy vế 2) |`. Parser `--price-cases-tsv` phát token `Món=Nhóm:Lựa chọn` nối bằng `|`.
+
+**Thiết kế test cho ca S3 · baseline · i018_3 — Claude chốt 2026-10-25:**
+- **Vấn đề:** S3 và `proof/i018_3.sql` cần một *dòng menu composite* để sửa `menu_item_component.quantity` (S3.9) · `menu_component.base_price_vnd` rồi định giá lại dòng tới lấy (i018_3) · ngừng bán rồi vẫn giữ ảnh chụp (S3.8/10). Combo giá riêng (`menu_combo.price_vnd`) không có `menu_item_component`, nên đổi ID `menu_combo` ⇒ **mất ca canh**.
+- **Quyết định:** **giữ composite `menu_item` riêng** cho S3·baseline·i018_3, với **tên prefix `test-s3`/`test-baseline`** để không đè bảy combo thật của seed. Composite này dựng trong `prelude.sql` đọc `menu_component` từ DB, không hardcode.
+- **Chủ seed vẫn 6 món lẻ + 7 combo thật** — composite không là dòng menu bán cho khách, không vào `menu_category`, không hiện ở `/chu-quan/san-pham`.
+- **Expectation không đổi:** 125 câu I-0xx + 22 câu QD giữ nguyên tập rỗng; mọi phép đối chiếu I-009/I-013 chạy đúng.
+
+**Acceptance (viết 2026-10-25):**
+- [x] `perl db/seed/seed.pl --price-cases` khớp **15 / 15** ca §4.8; ca 15 ra `29000đ`.
+- [x] `perl db/seed/seed.pl --price-cases-tsv` hợp lệ, 15 dòng (ca 15 trộn nhân).
+- [x] `rg "không có ca giá|Đầy đủ|Suất giò|Suất trứng" be/ db/scenario db/reconcile` — không còn hit phụ thuộc bảy suất là `menu_item`.
+- [x] `make db-check` xanh (log `/private/tmp/t251-main-gate.log`).
+- [x] `make be-check` xanh.
+- [x] `./scripts/gate.sh` ở clone chính **xanh** — không FAIL.
+- [x] Không chạm migration, `openapi.yaml`, `be/internal/gia/service.go`, `be/internal/combo/`, cửa ghi, `fe/`, `docs/decisions.md`, `docs/product/`, `quality/invariants.md` (lưu ý: `docs/product/2-db/08-du-lieu-moi.md` do Claude sửa trong scope T-244 parent, nằm ngoài giới hạn Codex).
+
+**Bàn giao:** thực hiện: Codex ba worktree song song (`/private/tmp/t251` root — parser + SQL fixtures + 2 proof i032; `/private/tmp/t251-be` — 4 test file backend loader/payload + S3 composite; `/private/tmp/t251-trial` — du-lieu-thu.pl + db-check.sh), work order Claude gửi 2026-10-25 trong cùng lượt tích hợp T-250 · duyệt tích hợp: Claude (áp patch 18 file `/private/tmp/t251-integration.patch` lên clone chính, chạy toàn gate xanh, đóng T-250 cùng T-251). Chi tiết đóng và evidence: xem `### T-244` *Đóng T-244 (parent)*.
+
+<a id="t-252"></a>
+### T-252 — Bảy suất chuyển thành combo thật · phần (c) kiểm FE trên máy dev
+
+**Yêu cầu:** mở 2026-10-25, **chờ T-251** xong. Xác nhận trang chủ quán và trang khách chạy đúng với dữ liệu mồi mới trên máy dev; không đổi code. **Mức:** L1 — kiểm bằng mắt + script `make reset` + `make setup`, không đổi code FE/BE.
+
+**Phạm vi:**
+- `make reset` xoá database dev; `make setup` chạy lại migration + seed. **Chủ repo đã cho phép reset + tạo lại tài khoản thử 2026-10-25 trong hội thoại cùng lượt tích hợp T-251** — root đã lưu backup chỉ-đọc `/private/tmp/t244-dev-before.dump` trước khi reset (dev trước reset: 10 `menu_item` · 1 `menu_combo` · 0 orders · 5 accounts · 1 expense). Root triển khai reset sau khi Claude tích hợp xong và trước khi nghiệm thu UI. Claude **không** tự reset database dev; root (chủ repo đứng máy) chạy `make reset` + `make setup` + `make tai-khoan-dev`.
+- Kiểm `/chu-quan/san-pham`: chỉ còn Món lẻ (bánh cuốn · ba bánh trứng · giò bán rời · canh — 6 món).
+- Kiểm `/chu-quan/combo`: bảy combo thật hiện với giá 26.000/21.000/20.000.
+- Kiểm trang khách (`/ban/[ma]` hoặc `/dat-mon`): một combo Đầy đủ chín đặt được, chọn nhân riêng cho bánh cuốn và cho bánh trứng, giá hiển thị khớp hàm tính (29.000 cho bánh thịt thường + trứng chay).
+
+**Phạm vi không chạm:** không đổi code `fe/`, `be/`, `db/`, `docs/`, chỉ chạy và chụp bằng chứng.
+
+**Acceptance (viết 2026-10-25):**
+- [x] `make reset` + `make setup` chạy trên database dev; không lỗi.
+- [x] Trang Sản phẩm chỉ bày sáu món lẻ; trang Combo bày đúng bảy combo thật; trang khách đặt được một combo Đầy đủ chín (bánh Thịt Thường · trứng Chay) và cộng ra **29.000**.
+- [x] `./scripts/gate.sh` ở clone chính vẫn xanh (T-251 làm xong, log `/private/tmp/t251-main-gate.log`).
+- [x] Không phát sinh T-253 (không sai FE/BE).
+
+**Bàn giao:** thực hiện: Codex **hoặc** Claude (chủ repo chọn — chỉ cần mắt người đứng trước browser); duyệt tích hợp: Claude. Hoàn tất T-252 ⇒ đóng cả T-244, T-250, T-251.
+
+**Nghiệm thu 2026-10-25 — chủ repo + root chạy trên máy dev, Claude duyệt bằng chứng:**
+- **UI thật + backend DB tạm, không mock** (vòng kiểm trước khi reset dev — `/private/tmp/t252-ui-check.log`, `/private/tmp/t252-ui-evidence.json`): trang Sản phẩm bày đúng 6 món lẻ; trang Combo 7 cards; khách QR gửi *Đầy đủ trứng chín* (3 bánh cuốn Thịt+Thường + trứng Chay + giò) qua `POST /price-quotes` nhánh combo → `HTTP 201 · total 29.000đ · pending_confirmation`. Ảnh `/private/tmp/t252-{products,combos,customer-29000,customer-sent}.png`. Server tạm cấu hình `America/Guatemala` chỉ để kiểm trong giờ bán, không chạm cấu hình dev.
+- **Chủ repo cho phép reset DB dev + tạo lại tài khoản thử 2026-10-25** (nguyên văn: *"cho phép dựng lại DB dev từ bộ mới"*). Backup chỉ-đọc `/private/tmp/t244-dev-before.dump` (330 730 bytes · mode 0600), `pg_restore -l` đọc OK trước reset.
+- **Root chạy sau khi Claude áp patch + gate main xanh:** `make reset` (37 migration xuôi) + `make setup` seed + `make seed-thu` + `make ma-qr-so-ban` + `make tai-khoan-dev` — tất cả exit 0, log `/private/tmp/t252-dev-{reset,trial,qr,accounts}.log`. Dev sau reset: **6 `menu_item` · 7 `menu_combo` · 17 `menu_combo_item` · 65 mức phụ thu · 5 accounts** · 0 orders.
+- **UI trực tiếp localhost:3000 với dev mới** (không proxy, không mock, backend 8080 + FE 3000 với `Asia/Ho_Chi_Minh`): sản phẩm 6, combo 7 tên, quote combo Đầy đủ chín trộn nhân ra **29.000**. Log `/private/tmp/t252-dev-ui.log`, ảnh `/private/tmp/t252-dev-{products,combos,customer-29000}.png`.
+- **Kiểm giá trên dev mới** (`/private/tmp/t252-dev-prices.log`): 15/15 ca §4.8 + 35/35 tổ hợp hệ quả trộn nhân khớp từng đồng.
+- Dev đã lau dọn: DB tạm xoá · backend tạm 8099 dừng · Chrome headless dừng; chỉ giữ ảnh/log làm bằng chứng.
+
+**Hoàn tất T-252 ⇒ đóng cả T-244, T-250, T-251.**
+
+
 <a id="t-249"></a>
 ### T-249 — Trang Combo theo bản HTML chuẩn
 

@@ -115,14 +115,17 @@ func (k khung) id(t *testing.T, sql string, args ...any) int64 {
 // --- §4.8 đọc lúc chạy (cùng cách gia_test.go) ----------------------------------------------
 
 type caGia struct {
-	so      int
-	mon     string
-	soSuat  int
-	chon    [][2]string
-	tuChoi  bool
-	kyVong  int64
-	monID   int64
-	chonIDs []int64
+	so       int
+	mon      string
+	soSuat   int
+	chon     [][2]string
+	tuChoi   bool
+	kyVong   int64
+	monID    int64
+	chonIDs  []int64
+	kind     string
+	chonCon  map[string][][2]string
+	portions []gia.SuatYeuCau
 }
 
 func chaySeed(t *testing.T, args ...string) string {
@@ -147,10 +150,13 @@ func docCa(t *testing.T) []caGia {
 	var cas []caGia
 	for _, dong := range strings.Split(strings.TrimSpace(chaySeed(t, "--price-cases-tsv")), "\n") {
 		o := strings.Split(dong, "\t")
-		if len(o) != 5 {
+		if len(o) != 6 {
 			t.Fatalf("dòng ca §4.8 sai hình: %q", dong)
 		}
-		c := caGia{mon: o[1]}
+		c := caGia{mon: o[1], kind: o[5], chonCon: map[string][][2]string{}}
+		if c.kind != "item" && c.kind != "combo" {
+			t.Fatalf("loại ca không hợp lệ: %q", o[5])
+		}
 		var err error
 		if c.so, err = strconv.Atoi(o[0]); err != nil {
 			t.Fatal(err)
@@ -164,7 +170,14 @@ func docCa(t *testing.T) []caGia {
 				if !ok {
 					t.Fatalf("lựa chọn sai hình: %q", p)
 				}
-				c.chon = append(c.chon, [2]string{g, l})
+				if nhom, luaChon, co := strings.Cut(l, ":"); co {
+					if c.kind != "combo" {
+						t.Fatalf("ca món lẻ không có lựa chọn theo con: %q", p)
+					}
+					c.chonCon[g] = append(c.chonCon[g], [2]string{nhom, luaChon})
+				} else {
+					c.chon = append(c.chon, [2]string{g, l})
+				}
 			}
 		}
 		if o[4] == "REJECT" {
@@ -198,12 +211,66 @@ func (k khung) napMenuThat(t *testing.T) {
 func (k khung) caCoMa(t *testing.T) []caGia {
 	t.Helper()
 	cas := docCa(t)
+	docID := func(query string, args ...any) int64 {
+		var id int64
+		if err := k.owner.QueryRow(k.ctx, query, args...).Scan(&id); err != nil {
+			t.Fatal(err)
+		}
+		return id
+	}
+	chonID := func(ds [][2]string) []int64 {
+		ids := []int64{}
+		for _, gl := range ds {
+			ids = append(ids, docID(`SELECT o.id FROM shop.menu_option o JOIN shop.option_group g ON g.id=o.option_group_id WHERE g.name=$1 AND o.name=$2`, gl[0], gl[1]))
+		}
+		return ids
+	}
 	for i := range cas {
 		c := &cas[i]
-		c.monID = k.id(t, "SELECT id FROM shop.menu_item WHERE name = $1", c.mon)
-		for _, gl := range c.chon {
-			c.chonIDs = append(c.chonIDs, k.id(t, `SELECT o.id FROM shop.menu_option o
-				JOIN shop.option_group g ON g.id = o.option_group_id WHERE g.name = $1 AND o.name = $2`, gl[0], gl[1]))
+		c.chonIDs = chonID(c.chon)
+		if c.kind == "item" {
+			c.monID = docID("SELECT id FROM shop.menu_item WHERE name=$1", c.mon)
+			continue
+		}
+		c.monID = docID("SELECT id FROM shop.menu_combo WHERE name=$1", c.mon)
+		rows, err := k.owner.Query(k.ctx, `SELECT i.id,i.name,x.quantity,EXISTS(SELECT 1 FROM shop.menu_item_option_group g WHERE g.menu_item_id=i.id) FROM shop.menu_combo_item x JOIN shop.menu_item i ON i.id=x.menu_item_id WHERE x.menu_combo_id=$1 ORDER BY x.id`, c.monID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		type con struct {
+			id   int64
+			name string
+			qty  int32
+			chon bool
+		}
+		var children []con
+		for rows.Next() {
+			var x con
+			if err := rows.Scan(&x.id, &x.name, &x.qty, &x.chon); err != nil {
+				t.Fatal(err)
+			}
+			children = append(children, x)
+		}
+		rows.Close()
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
+		}
+		found := map[string]bool{}
+		for _, x := range children {
+			ids := []int64{}
+			if x.chon {
+				ids = append(ids, c.chonIDs...)
+				if ds, ok := c.chonCon[x.name]; ok {
+					ids = append(ids, chonID(ds)...)
+					found[x.name] = true
+				}
+			}
+			c.portions = append(c.portions, gia.SuatYeuCau{MenuItemID: x.id, Quantity: x.qty * int32(c.soSuat), OptionIDs: ids})
+		}
+		for name := range c.chonCon {
+			if !found[name] {
+				t.Fatalf("ca %d: lựa chọn trỏ món không thuộc combo hoặc không nhận nhân: %s", c.so, name)
+			}
 		}
 	}
 	return cas
@@ -270,6 +337,9 @@ func dauLanGui(t *testing.T) string {
 }
 
 func dongYeuCau(c caGia) gia.DongYeuCau {
+	if c.kind == "combo" {
+		return gia.DongYeuCau{MenuComboID: c.monID, Quantity: int32(c.soSuat), Portions: c.portions}
+	}
 	return gia.DongYeuCau{MenuItemID: c.monID, Quantity: int32(c.soSuat), OptionIDs: c.chonIDs}
 }
 
@@ -343,8 +413,11 @@ func (k khung) tinhThu(t *testing.T, d gia.DongYeuCau) (int64, string) {
 	if ids == nil {
 		ids = []int64{}
 	}
-	status, body := k.goi(t, "POST", "/price-quotes", 0, map[string]any{"lines": []any{
-		map[string]any{"menu_item_id": d.MenuItemID, "quantity": d.Quantity, "option_ids": ids}}})
+	line := map[string]any{"menu_item_id": d.MenuItemID, "quantity": d.Quantity, "option_ids": ids}
+	if d.MenuComboID != 0 {
+		line = map[string]any{"menu_combo_id": d.MenuComboID, "quantity": d.Quantity, "portions": d.Portions}
+	}
+	status, body := k.goi(t, "POST", "/price-quotes", 0, map[string]any{"lines": []any{line}})
 	if status != http.StatusOK {
 		code, _ := body["code"].(string)
 		return 0, code
@@ -395,11 +468,15 @@ func (k khung) anhDong(t *testing.T, donID int64) string {
 	return s
 }
 
+// dong đọc đúng dòng gốc và các suất con của nó; các dòng khác trong cùng đơn không được cộng vào.
 func (k khung) dong(t *testing.T, donID int64) (thanhTien, donGia int64, soTP, khaiTP int) {
 	t.Helper()
-	if err := k.owner.QueryRow(k.ctx, `SELECT l.line_total_vnd, l.unit_price_vnd,
-		(SELECT count(*) FROM shop.order_line_component c WHERE c.order_line_id = l.id), l.component_count
-		FROM shop.order_line l WHERE l.sales_order_id = $1`, donID).Scan(&thanhTien, &donGia, &soTP, &khaiTP); err != nil {
+	if err := k.owner.QueryRow(k.ctx, `SELECT
+   (SELECT sum(x.line_total_vnd) FROM shop.order_line x WHERE x.id=l.id OR x.parent_order_line_id=l.id),
+   l.unit_price_vnd,
+   (SELECT count(*) FROM shop.order_line_component c JOIN shop.order_line x ON x.id=c.order_line_id WHERE x.id=l.id OR x.parent_order_line_id=l.id),
+   (SELECT sum(x.component_count) FROM shop.order_line x WHERE x.id=l.id OR x.parent_order_line_id=l.id)
+ FROM shop.order_line l WHERE l.sales_order_id=$1 AND l.parent_order_line_id IS NULL`, donID).Scan(&thanhTien, &donGia, &soTP, &khaiTP); err != nil {
 		t.Fatal(err)
 	}
 	return

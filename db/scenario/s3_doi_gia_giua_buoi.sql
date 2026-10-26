@@ -8,15 +8,16 @@ DO $$
 DECLARE t bigint := pg_temp.sc_ban('3'); s bigint; o bigint; l bigint;
 BEGIN
   PERFORM pg_temp.sc_buoc('Người đứng quầy', 'scenario 3 — khách QR bàn 3 gửi lượt 8:00');
+  PERFORM pg_temp.sc_fixture_combo('Suất giò', 'test-s3 suất giò');
   INSERT INTO table_session (status, created_at) VALUES ('open', pg_temp.sc_luc('08:00')) RETURNING id INTO s;
   INSERT INTO table_session_member (table_session_id, dining_table_id, created_at)
   VALUES (s, t, pg_temp.sc_luc('08:00'));
   o := pg_temp.sc_don('qr_table', s, t, pg_temp.sc_luc('08:00'));
-  l := pg_temp.sc_mon(o, 'Suất giò', 1, ARRAY['Thịt', 'Thường']);
+  l := pg_temp.sc_mon(o, 'test-s3 suất giò', 1, ARRAY['Thịt', 'Thường']);
   UPDATE sales_order SET status = 'pending_confirmation' WHERE id = o;
   INSERT INTO sc VALUES ('s3_ban', t), ('s3_phien', s), ('s3_luot_8h', o), ('s3_dong_8h', l);
   PERFORM pg_temp.sc_xong(pg_temp.sc_luc('08:00'));
-  RAISE NOTICE 'S3.1 phiên % bàn 3 · dòng % "Suất giò" khoá % đ lúc 08:00', s, l,
+  RAISE NOTICE 'S3.1 phiên % bàn 3 · dòng % "test-s3 suất giò" khoá % đ lúc 08:00', s, l,
     (SELECT unit_price_vnd FROM order_line WHERE id = l);
 END $$;
 
@@ -66,11 +67,11 @@ DECLARE s bigint := pg_temp.sc_id('s3_phien'); t bigint := pg_temp.sc_id('s3_ban
 BEGIN
   PERFORM pg_temp.sc_buoc('Người đứng quầy', 'scenario 3 — khách QR bàn 3 gửi lượt 9:00');
   o := pg_temp.sc_don('qr_table', s, t, pg_temp.sc_luc('09:00'));
-  l := pg_temp.sc_mon(o, 'Suất giò', 1, ARRAY['Thịt', 'Thường']);
+  l := pg_temp.sc_mon(o, 'test-s3 suất giò', 1, ARRAY['Thịt', 'Thường']);
   UPDATE sales_order SET status = 'pending_confirmation' WHERE id = o;
   INSERT INTO sc VALUES ('s3_luot_9h', o), ('s3_dong_9h', l);
   PERFORM pg_temp.sc_xong(pg_temp.sc_luc('09:00'));
-  RAISE NOTICE 'S3.5 dòng % "Suất giò" cùng tuỳ chọn khoá % đ lúc 09:00', l,
+  RAISE NOTICE 'S3.5 dòng % "test-s3 suất giò" cùng tuỳ chọn khoá % đ lúc 09:00', l,
     (SELECT unit_price_vnd FROM order_line WHERE id = l);
 END $$;
 DO $$
@@ -118,7 +119,7 @@ BEGIN
   UPDATE table_session_member SET session_closed = true WHERE table_session_id = s;
   INSERT INTO sc VALUES ('s3_hoa_don', b);
   PERFORM pg_temp.sc_xong(pg_temp.sc_luc('09:20'));
-  RAISE NOTICE 'S3.7 hoá đơn % của phiên bàn 3: % đ · các mức giá của "Suất giò" trên hoá đơn: %', b, due,
+  RAISE NOTICE 'S3.7 hoá đơn % của phiên bàn 3: % đ · các mức giá của "test-s3 suất giò" trên hoá đơn: %', b, due,
     (SELECT string_agg(DISTINCT l.unit_price_vnd::text, ' · ') FROM order_line l
        JOIN sales_order o ON o.id = l.sales_order_id WHERE o.table_session_id = s);
 END $$;
@@ -137,37 +138,37 @@ DO $$
 DECLARE l bigint := pg_temp.sc_id('s3_dong_8h');
 BEGIN
   PERFORM pg_temp.sc_buoc('Chủ quán', 'scenario 3 — chủ quán ngừng bán suất giò');
-  UPDATE menu_item SET discontinued_at = pg_temp.sc_luc('10:00') WHERE name = 'Suất giò';
+  UPDATE menu_item SET discontinued_at = pg_temp.sc_luc('10:00') WHERE name = 'test-s3 suất giò';
   PERFORM pg_temp.sc_xong(pg_temp.sc_luc('10:00'));
-  RAISE NOTICE 'S3.8 "Suất giò" ngừng bán lúc % · dòng 8:00 vẫn đọc "%" · % đ',
-    (SELECT to_char(discontinued_at, 'HH24:MI') FROM menu_item WHERE name = 'Suất giò'),
+  RAISE NOTICE 'S3.8 "test-s3 suất giò" ngừng bán lúc % · dòng 8:00 vẫn đọc "%" · % đ',
+    (SELECT to_char(discontinued_at, 'HH24:MI') FROM menu_item WHERE name = 'test-s3 suất giò'),
     (SELECT item_name FROM order_line WHERE id = l), (SELECT unit_price_vnd FROM order_line WHERE id = l);
 END $$;
 
--- 9 — Chủ quán sửa THÀNH PHẦN combo "Đầy đủ" (trứng tái — món Scenario 1 đã gọi) bớt một cái bánh:
+-- 9 — Chủ quán sửa THÀNH PHẦN fixture composite đã gọi ở bước 1, bớt một cái bánh:
 -- chiều thứ tư. Luật "chờ hết buổi" là luật cho người: máy nhắc (pha 4) rồi VẪN cho lưu, và để vết.
 DO $$
 DECLARE mic bigint; truoc int;
 BEGIN
   SELECT ic.id, ic.quantity INTO mic, truoc FROM menu_item_component ic
     JOIN menu_item i ON i.id = ic.menu_item_id JOIN menu_component c ON c.id = ic.menu_component_id
-   WHERE i.name = 'Đầy đủ trứng tái' AND c.name = 'Bánh cuốn';
-  PERFORM pg_temp.sc_buoc('Chủ quán', 'scenario 3 — chủ quán bớt một cái bánh của combo giữa buổi');
+   WHERE i.name = 'test-s3 suất giò' AND c.name = 'Bánh cuốn';
+  PERFORM pg_temp.sc_buoc('Chủ quán', 'scenario 3 — chủ quán bớt một cái bánh của fixture composite giữa buổi');
   UPDATE menu_item_component SET quantity = quantity - 1 WHERE id = mic;
   PERFORM pg_temp.sc_xong(pg_temp.sc_luc('10:05'));
   INSERT INTO sc VALUES ('s3_thanh_phan', mic);
-  RAISE NOTICE 'S3.9 combo "Đầy đủ trứng tái": bánh cuốn % → % cái/suất · vết: %', truoc,
+  RAISE NOTICE 'S3.9 fixture "test-s3 suất giò": bánh cuốn % → % cái/suất · vết: %', truoc,
     (SELECT quantity FROM menu_item_component WHERE id = mic),
     (SELECT format('%s sửa lúc %s, lý do "%s"', p.display_name, to_char(r.revised_at, 'HH24:MI'), r.reason)
        FROM record_revision r JOIN person p ON p.id = r.person_id
       WHERE r.target_table_code = 'menu_item_component' AND r.target_row = mic);
 END $$;
 
--- 10 — Mở lại đơn của Scenario 1 sau khi thành phần đã đổi: tiền và số bánh đọc từ ảnh chụp lúc đặt.
+-- 10 — Mở lại đơn 8:00 của chính fixture S3 sau khi thành phần đổi; đọc ảnh chụp lúc đặt.
 DO $$
-DECLARE o bigint := pg_temp.sc_id('s1_luot1');
+DECLARE o bigint := pg_temp.sc_id('s3_luot_8h');
 BEGIN
-  RAISE NOTICE 'S3.10 đọc lại lượt 1 của Scenario 1: % đ · % cái bánh (menu hiện hành: % cái/suất)',
+  RAISE NOTICE 'S3.10 đọc lại lượt 8:00 của Scenario 3: % đ · % cái bánh (menu hiện hành: % cái/suất)',
     pg_temp.sc_tong(o),
     (SELECT sum(l.quantity * c.quantity) FROM order_line l JOIN order_line_component c ON c.order_line_id = l.id
       WHERE l.sales_order_id = o AND c.component_name = 'Bánh cuốn'),

@@ -49,9 +49,12 @@ vai dựng lược đồ: dữ liệu mồi đi đúng đường quyền mà d�
 | `menu_component` | §4.2 | một hàng một họ thành phần; giá gốc là cột *Chay* (§4.6 luật 2); *nhận nhân* khi ba cột giá không bằng nhau |
 | `option_group` · `menu_option` | §4.4 bảng đầu · §4.6 luật 8 | tên nhóm là chữ đậm của cột *Nhóm tuỳ chọn*; phụ thu là cột *Món lẻ* — mức cho **mỗi** phần nhận nhân (§4.4 câu dưới bảng, §4.6 luật 5); cờ mặc định đọc từ luật 8 (`T-169`) |
 | `option_group_prerequisite` | §4.4 cột *Nhóm tuỳ chọn*, cụm *khi … ≠ …* | tập điều kiện = mọi lựa chọn của nhóm được nhắc, trừ lựa chọn sau dấu ≠ (§4.6 luật 3) |
-| `menu_item` | §4.9 cột *Chủ quán gọi tên* | mỗi hàng một dòng menu; tên hiển thị ở §2 |
-| `menu_item_component` | §4.5 cột *Bếp làm ra* | *số · loại từ · tên*, nối bằng ` + `; tên nối về họ thành phần của §4.2 |
-| `menu_item_option_group` | §4.4 · §4.8 ca 12 | mọi nhóm của §4.4 gắn cho dòng menu có **ít nhất một** phần nhận nhân; dòng không có phần nào (giò bán rời, canh) không mang nhóm nào |
+| `menu_item` | §4.9 cột *Chủ quán gọi tên* — **chỉ nhóm Món lẻ** (sáu hàng, 2026-10-25 T-250 · ADR-129) | mỗi hàng một dòng menu `menu_item`; tên hiển thị ở §2. Bảy hàng nhóm *Combo* không vào bảng này — xem ba hàng `menu_combo*` dưới |
+| `menu_item_component` | §4.5 cột *Bếp làm ra* — chỉ các dòng tương ứng với sáu Món lẻ | *số · loại từ · tên*, nối bằng ` + `; tên nối về họ thành phần của §4.2. Bảy dòng combo không có `menu_item_component` — thành phần của chúng nằm ở `menu_combo_item` theo suất con |
+| `menu_item_option_group` | §4.4 · §4.8 ca 12 | mọi nhóm của §4.4 gắn cho `menu_item` có **ít nhất một** phần nhận nhân; dòng không có phần nào (giò bán rời, canh) không mang nhóm nào |
+| `menu_combo` | §4.9 cột *Chủ quán gọi tên* — **chỉ nhóm Combo** (bảy hàng, 2026-10-25 T-250 · ADR-129) | mỗi hàng một dòng menu `menu_combo`; giá `price_vnd` đọc cột *Chay* của §4.3 (26.000 cho ba Đầy đủ · 21.000 cho Suất giò · 20.000 cho ba Suất trứng) — là giá *khi mọi suất con cùng một nhân* (§4.9 đoạn 2026-10-25). Mô hình giá: giá combo + Σ phụ thu mỗi suất, không nhân `menu_combo_item.quantity` (backend tự nhân — `be/internal/gia/service.go:324`, §8.9 lượt tám vế 3) |
+| `menu_combo_item` | §4.5 cột *Bếp làm ra* nối về Món lẻ | mỗi suất con của một combo nối tới một hàng `menu_item` của sáu Món lẻ: Combo *Đầy đủ* = 3× bánh cuốn + 1× bánh trứng (chín · tái · vàng theo combo) + 1× giò bán rời; Suất giò = 4× bánh cuốn + 1× giò bán rời; Suất trứng = 4× bánh cuốn + 1× bánh trứng. `quantity` lưu đúng số suất con, không nhân vào mức phụ thu |
+| `menu_combo_item_option_surcharge` | §4.4 cột *Combo* · §4.6 luật 5 | mức phụ thu **theo từng cặp (suất con, lựa chọn)**: bánh cuốn và bánh trứng mang nhóm *Nhân* (+1.000 mỗi suất) và nhóm *Lượng nhân* (+1.000 mỗi suất); giò bán rời không nhận nhân nên không có hàng nào. Mức lưu mỗi suất, không nhân `quantity`. Ca 15 §4.8 *trộn nhân giữa suất con* (bánh cuốn=Thịt Thường, bánh trứng=Chay ⇒ 29.000) là ca canh của mô hình này (2026-10-25 T-251) |
 | `menu_component_station` | §5.3 khối ví dụ · §3 | mỗi dòng *trạm │ thứ* nối *thứ* về họ thành phần; dòng không nối được (nước chấm) là việc cấp đơn, không thuộc thành phần nào |
 | `supply_item` | §8.4 danh sách 2026-09-06 và bảng *Hàng mua vào* | nối các dòng của đoạn danh sách tới dòng trống, đọc chuỗi nguyên văn trong `*"…"*`, tách bằng `, `; đọc cột *Hàng mua vào* và *Đơn vị mua* của bảng; gộp theo §2, tên chỉ có trong danh sách cũ mang đơn vị `NULL`; không dựng con số ngày hay thêm người cho lát này |
 
@@ -157,15 +160,17 @@ Theo phiếu giao việc của Claude, bộ [du-lieu-thu.pl](../../../db/seed/du
 chỉ giúp giao diện có dữ liệu hiện, **không phải sự thật của quán**.
 Bổ sung T-242 (2026-10-24): bộ dựng đọc cột *Nhóm trên menu* §4.9 qua
 `seed.pl --menu-groups-tsv`, dùng chung ánh xạ tên dòng menu của seed chính.
-Tính tới 2026-10-23, bảng có 13 dòng menu: sáu món Món lẻ và bảy món Combo
-(đếm lại bảng owner khi thay đổi). Nhóm hợp lệ đọc từ lời chốt *đứng trên/dưới*
-ngay trong §4.9; thiếu nhóm, nhóm lạ hoặc tên món không khớp thì dừng.
-Danh mục được chèn theo lần xuất hiện đầu trong bảng; hợp đồng pha 3 bày danh mục theo tên,
-nên Combo hiện trước Món lẻ — chủ repo 2026-10-24 chọn chuyển bảy suất thành
-combo ghép món thật ở trang Combo (T-244) thay vì đổi thứ tự.
-Các nhóm trình bày này khác với combo ghép món có giá riêng;
-món, thành phần và giá gốc để cộng giá combo được đọc từ database đã có dữ liệu mồi.
-Chạy `make seed` rồi `make seed-thu`; đã có danh mục thì báo bỏ qua, không nhân đôi.
+**Bổ sung T-250 (2026-10-25, ADR-129)**: bộ dựng chính (`seed.pl`) đã chuyển
+bảy hàng nhóm *Combo* từ `menu_item` sang `menu_combo` + `menu_combo_item` +
+`menu_combo_item_option_surcharge` — xem ba hàng mới ở §1 bảng *Dựng gì, tra ở đâu*.
+Tính tới 2026-10-25, bộ seed chính nạp **sáu `menu_item` (Món lẻ) + bảy `menu_combo`
+(Combo)**; tổng *dòng menu* chủ quán gọi tên vẫn là mười ba (đếm lại bảng owner khi
+thay đổi). Nhóm hợp lệ đọc từ lời chốt *đứng trên/dưới* ngay trong §4.9; thiếu nhóm,
+nhóm lạ hoặc tên món không khớp thì dừng.
+Bộ `du-lieu-thu.pl` chỉ chèn **một danh mục Món lẻ** gồm sáu dòng `menu_item`; **không**
+còn chèn *Combo ghép món (thử)* vì bảy combo thật đã có sẵn ở seed chính và trang Combo
+đọc từ `menu_combo` (T-244 · T-251 · ADR-129). Chạy `make seed` rồi `make seed-thu`;
+đã có danh mục thì báo bỏ qua, không nhân đôi.
 Tên tự đặt có dấu `(thử)`; lượng sổ, tiền chi và ngày công chỉ là số minh hoạ.
 Mọi lần ghi dùng `shop_app` trong một giao dịch với chủ quán là người thao tác; lỗi thì rollback.
 Bước kiểm trong `scripts/db-check.sh` dựng hai lượt, đếm các bảng rồi rollback để giữ nền cho scenario.

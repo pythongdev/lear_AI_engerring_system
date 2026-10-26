@@ -81,11 +81,43 @@ END $f$;
 -- Gọi một món: dòng đơn + ảnh chụp thành phần và tuỳ chọn, giá và mốc khoá tại lúc gọi (I-009).
 CREATE FUNCTION pg_temp.bc_mon(p_don bigint, p_mon text, p_so integer, p_tc text[])
 RETURNS bigint LANGUAGE plpgsql AS $f$
-DECLARE it bigint; sel bigint[]; price bigint; n integer; l bigint;
+DECLARE it bigint; cb bigint; combo_price bigint; part record; child_sel bigint[];
+        sel bigint[]; price bigint; n integer; l bigint; root bigint;
         luc timestamptz := (SELECT created_at FROM sales_order WHERE id = p_don);
 BEGIN
-  SELECT id INTO STRICT it FROM menu_item WHERE name = p_mon;
+  SELECT id, price_vnd INTO cb, combo_price FROM menu_combo WHERE name = p_mon;
   SELECT coalesce(array_agg(id), '{}') INTO sel FROM menu_option WHERE name = ANY (p_tc);
+  IF cb IS NOT NULL THEN
+    INSERT INTO order_line (sales_order_id, quantity, menu_combo_id, item_name, unit_price_vnd, priced_at, created_at)
+    VALUES (p_don, p_so, cb, p_mon, combo_price, luc, luc) RETURNING id INTO root;
+    FOR part IN SELECT x.id, x.menu_item_id, x.quantity, i.name FROM menu_combo_item x
+      JOIN menu_item i ON i.id = x.menu_item_id WHERE x.menu_combo_id = cb ORDER BY x.id LOOP
+      SELECT coalesce(array_agg(o.id), '{}') INTO child_sel FROM menu_option o
+        JOIN menu_item_option_group g ON g.option_group_id = o.option_group_id
+        WHERE g.menu_item_id = part.menu_item_id AND o.id = ANY(sel);
+      IF pg_temp.bc_gia(part.menu_item_id, child_sel) IS NULL THEN
+        RAISE EXCEPTION 'ngày mẫu: tổ hợp combo không hợp lệ % %', p_mon, p_tc;
+      END IF;
+      SELECT coalesce(sum(surcharge_vnd), 0) INTO price FROM menu_combo_item_option_surcharge
+        WHERE menu_combo_item_id = part.id AND menu_option_id = ANY(child_sel);
+      SELECT count(*) INTO n FROM menu_item_component WHERE menu_item_id = part.menu_item_id;
+      INSERT INTO order_line (sales_order_id, quantity, menu_item_id, parent_order_line_id,
+        item_name, unit_price_vnd, component_count, priced_at, created_at)
+      VALUES (p_don, p_so * part.quantity, part.menu_item_id, root, part.name, price, n, luc, luc) RETURNING id INTO l;
+      INSERT INTO order_line_component (order_line_id, position, line_component_count, menu_component_id,
+        component_name, quantity, takes_filling, base_price_vnd)
+      SELECT l, row_number() OVER (ORDER BY ic.id), n, ic.menu_component_id, mc.name, ic.quantity,
+        mc.takes_filling, mc.base_price_vnd FROM menu_item_component ic
+        JOIN menu_component mc ON mc.id = ic.menu_component_id WHERE ic.menu_item_id = part.menu_item_id;
+      INSERT INTO order_line_option (order_line_id, menu_option_id, option_group_name, option_name, surcharge_vnd)
+      SELECT l, o.id, g.name, o.name, coalesce(s.surcharge_vnd, 0) FROM menu_option o
+        JOIN option_group g ON g.id = o.option_group_id
+        LEFT JOIN menu_combo_item_option_surcharge s ON s.menu_combo_item_id = part.id AND s.menu_option_id = o.id
+        WHERE o.id = ANY(child_sel);
+    END LOOP;
+    RETURN root;
+  END IF;
+  SELECT id INTO STRICT it FROM menu_item WHERE name = p_mon;
   price := pg_temp.bc_gia(it, sel);
   IF price IS NULL THEN RAISE EXCEPTION 'ngày mẫu: tổ hợp không hợp lệ % %', p_mon, p_tc; END IF;
   SELECT count(*) INTO n FROM menu_item_component WHERE menu_item_id = it;
@@ -295,7 +327,17 @@ BEGIN
                            submission_code, created_at)
   VALUES ('pickup', 'new', 'shop_pickup', '0900000010', pg_temp.bc_luc('09:30'),
           gen_random_uuid()::text, pg_temp.bc_luc('09:00')) RETURNING id INTO o;
-  PERFORM pg_temp.bc_mon(o, 'Suất giò', 1, ARRAY['Thịt']);
+  -- Fixture riêng của phép kiểm giá món lẻ; không tái tạo tên combo thật trong menu_item.
+  INSERT INTO menu_item (name) VALUES ('test-proof Suất giò') RETURNING id INTO it;
+  INSERT INTO menu_item_component (menu_item_id, menu_component_id, quantity)
+  SELECT it, ic.menu_component_id, sum(x.quantity * ic.quantity)::integer
+    FROM menu_combo c JOIN menu_combo_item x ON x.menu_combo_id = c.id
+    JOIN menu_item_component ic ON ic.menu_item_id = x.menu_item_id
+    WHERE c.name = 'Suất giò' GROUP BY ic.menu_component_id;
+  INSERT INTO menu_item_option_group (menu_item_id, option_group_id)
+  SELECT DISTINCT it, g.option_group_id FROM menu_combo c JOIN menu_combo_item x ON x.menu_combo_id = c.id
+    JOIN menu_item_option_group g ON g.menu_item_id = x.menu_item_id WHERE c.name = 'Suất giò';
+  PERFORM pg_temp.bc_mon(o, 'test-proof Suất giò', 1, ARRAY['Thịt']);
   UPDATE sales_order SET status = 'pending_confirmation' WHERE id = o;
   UPDATE sales_order SET status = 'confirmed' WHERE id = o;
   PERFORM pg_temp.bc_no(o);

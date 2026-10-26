@@ -96,7 +96,7 @@ func rtSetup(t *testing.T, heartbeat time.Duration) *rtFixture {
 	}
 	for _, row := range strings.Split(strings.TrimSpace(string(data)), "\n") {
 		fields := strings.Split(row, "\t")
-		if len(fields) != 5 || fields[0] != "2" {
+		if len(fields) != 6 || fields[0] != "2" || fields[5] != "item" {
 			continue
 		}
 		item := f.id("SELECT id FROM shop.menu_item WHERE name=$1", fields[1])

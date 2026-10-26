@@ -82,8 +82,8 @@ BEGIN
   RETURN o;
 END $f$;
 
--- Gọi một món: dòng đơn + ảnh chụp thành phần và tuỳ chọn; giá và mốc khoá tại lúc gọi (I-009).
-CREATE FUNCTION pg_temp.sc_mon(p_don bigint, p_mon text, p_so integer, p_tc text[])
+-- Dòng món lẻ hoặc suất con: ảnh chụp thành phần/tuỳ chọn, mức phụ thu riêng khi có cha combo.
+CREATE FUNCTION pg_temp.sc_mon_le(p_don bigint, p_mon text, p_so integer, p_tc text[], p_cha bigint DEFAULT NULL)
 RETURNS bigint LANGUAGE plpgsql AS $f$
 DECLARE it bigint; sel bigint[]; price bigint; n integer; l bigint;
         luc timestamptz := (SELECT created_at FROM sales_order WHERE id = p_don);
@@ -92,10 +92,16 @@ BEGIN
   SELECT coalesce(array_agg(id), '{}') INTO sel FROM menu_option WHERE name = ANY (p_tc);
   price := pg_temp.sc_gia(it, sel);
   IF price IS NULL THEN RAISE EXCEPTION 'scenario: tổ hợp không hợp lệ % %', p_mon, p_tc; END IF;
+  IF p_cha IS NOT NULL THEN
+    SELECT coalesce(sum(s.surcharge_vnd), 0) INTO price
+    FROM order_line cha JOIN menu_combo_item ci ON ci.menu_combo_id = cha.menu_combo_id
+    JOIN menu_combo_item_option_surcharge s ON s.menu_combo_item_id = ci.id
+    WHERE cha.id = p_cha AND ci.menu_item_id = it AND s.menu_option_id = ANY (sel);
+  END IF;
   SELECT count(*) INTO n FROM menu_item_component WHERE menu_item_id = it;
   INSERT INTO order_line (sales_order_id, quantity, menu_item_id, item_name, unit_price_vnd,
-                          component_count, priced_at, created_at)
-  VALUES (p_don, p_so, it, p_mon, price, n, luc, luc) RETURNING id INTO l;
+                          component_count, priced_at, created_at, parent_order_line_id)
+  VALUES (p_don, p_so, it, p_mon, price, n, luc, luc, p_cha) RETURNING id INTO l;
   INSERT INTO order_line_component (order_line_id, position, line_component_count, menu_component_id,
                                     component_name, quantity, takes_filling, base_price_vnd)
   SELECT l, row_number() OVER (ORDER BY ic.id), n, ic.menu_component_id, mc.name, ic.quantity,
@@ -103,9 +109,54 @@ BEGIN
   FROM menu_item_component ic JOIN menu_component mc ON mc.id = ic.menu_component_id
   WHERE ic.menu_item_id = it;
   INSERT INTO order_line_option (order_line_id, menu_option_id, option_group_name, option_name, surcharge_vnd)
-  SELECT l, o.id, g.name, o.name, o.surcharge_vnd
+  SELECT l, o.id, g.name, o.name,
+    CASE WHEN p_cha IS NULL THEN o.surcharge_vnd ELSE coalesce((
+      SELECT s.surcharge_vnd FROM order_line cha
+      JOIN menu_combo_item ci ON ci.menu_combo_id = cha.menu_combo_id
+      JOIN menu_combo_item_option_surcharge s ON s.menu_combo_item_id = ci.id
+      WHERE cha.id = p_cha AND ci.menu_item_id = it AND s.menu_option_id = o.id), 0) END
   FROM menu_option o JOIN option_group g ON g.id = o.option_group_id WHERE o.id = ANY (sel);
   RETURN l;
+END $f$;
+
+-- Combo thật: cha giữ giá riêng; con giữ tổng số suất của mọi combo và phụ thu mỗi suất.
+-- Tổ hợp hiện tại của kịch bản đồng nhất giữa các suất mang cùng nhóm; giò không nhận nhân.
+CREATE FUNCTION pg_temp.sc_mon(p_don bigint, p_mon text, p_so integer, p_tc text[])
+RETURNS bigint LANGUAGE plpgsql AS $f$
+DECLARE cb record; part record; tc text[]; l bigint;
+        luc timestamptz := (SELECT created_at FROM sales_order WHERE id = p_don);
+BEGIN
+  SELECT id, price_vnd INTO cb FROM menu_combo WHERE name = p_mon;
+  IF NOT FOUND THEN RETURN pg_temp.sc_mon_le(p_don, p_mon, p_so, p_tc); END IF;
+  INSERT INTO order_line (sales_order_id, quantity, menu_combo_id, item_name, unit_price_vnd,
+                          priced_at, created_at)
+  VALUES (p_don, p_so, cb.id, p_mon, cb.price_vnd, luc, luc) RETURNING id INTO l;
+  FOR part IN SELECT ci.menu_item_id, ci.quantity, i.name FROM menu_combo_item ci
+    JOIN menu_item i ON i.id = ci.menu_item_id WHERE ci.menu_combo_id = cb.id ORDER BY ci.id LOOP
+    SELECT coalesce(array_agg(o.name ORDER BY o.id), '{}') INTO tc
+    FROM menu_option o JOIN menu_item_option_group ig ON ig.option_group_id = o.option_group_id
+    WHERE ig.menu_item_id = part.menu_item_id AND o.name = ANY (p_tc);
+    PERFORM pg_temp.sc_mon_le(p_don, part.name, part.quantity * p_so, tc, l);
+  END LOOP;
+  RETURN l;
+END $f$;
+
+-- Fixture món lẻ composite cho S3: giữ điểm canh giá thành phần và ảnh chụp của I-009.
+-- Recipe lấy từ combo thật trong DB; fixture không đè tên bảy combo hoặc mang giá gõ tay.
+CREATE FUNCTION pg_temp.sc_fixture_combo(p_combo text, p_ten text) RETURNS bigint
+LANGUAGE plpgsql AS $f$
+DECLARE cb bigint; it bigint;
+BEGIN
+  SELECT id INTO STRICT cb FROM menu_combo WHERE name = p_combo;
+  INSERT INTO menu_item (name) VALUES (p_ten) RETURNING id INTO it;
+  INSERT INTO menu_item_component (menu_item_id, menu_component_id, quantity)
+  SELECT it, ic.menu_component_id, sum(ci.quantity * ic.quantity)::integer
+  FROM menu_combo_item ci JOIN menu_item_component ic ON ic.menu_item_id = ci.menu_item_id
+  WHERE ci.menu_combo_id = cb GROUP BY ic.menu_component_id;
+  INSERT INTO menu_item_option_group (menu_item_id, option_group_id)
+  SELECT DISTINCT it, ig.option_group_id FROM menu_combo_item ci
+  JOIN menu_item_option_group ig ON ig.menu_item_id = ci.menu_item_id WHERE ci.menu_combo_id = cb;
+  RETURN it;
 END $f$;
 
 -- Đã xác nhận → Đang thực hiện, và mọi việc trạm của đơn, cùng giao dịch (I-004 vế hai, tầng 2).

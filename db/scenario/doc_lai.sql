@@ -151,7 +151,7 @@ END $$;
 -- ============================================================ Scenario 3
 DO $$
 DECLARE s bigint; l_cu record; l_moi record; hd record; chenh bigint; so_banh bigint; mc bigint;
-        s1_l1 record; banh_anh_chup bigint; banh_menu int;
+        banh_anh_chup bigint; banh_menu int; banh_truoc int;
 BEGIN
   s := pg_temp.dl_phien('3');
   SELECT l.* INTO STRICT l_cu FROM order_line l JOIN sales_order o ON o.id = l.sales_order_id
@@ -185,15 +185,16 @@ BEGIN
   PERFORM pg_temp.dl_dung((SELECT discontinued_at IS NOT NULL FROM menu_item WHERE id = l_cu.menu_item_id)
                           AND l_cu.item_name = (SELECT name FROM menu_item WHERE id = l_cu.menu_item_id),
                           'S3 — món đã ngừng bán, dòng cũ vẫn đúng tên');
-  -- Đơn Scenario 1 sau khi thành phần combo đổi: ảnh chụp, không phải menu hiện hành.
-  SELECT l.* INTO STRICT s1_l1 FROM order_line l JOIN sales_order o ON o.id = l.sales_order_id
-   WHERE o.table_session_id = pg_temp.dl_phien('5') ORDER BY l.priced_at LIMIT 1;
-  SELECT sum(s1_l1.quantity * c.quantity) INTO banh_anh_chup FROM order_line_component c
-   WHERE c.order_line_id = s1_l1.id AND c.menu_component_id = mc;
-  SELECT ic.quantity INTO banh_menu FROM menu_item_component ic
-   WHERE ic.menu_item_id = s1_l1.menu_item_id AND ic.menu_component_id = mc;
-  PERFORM pg_temp.dl_dung(banh_anh_chup <> s1_l1.quantity * banh_menu,
-                          'S3 — đơn S1 đọc số bánh từ ảnh chụp, khác menu hiện hành');
+  -- Fixture composite S3 đã đổi recipe sau khi hai đơn khoá giá; ảnh chụp dòng 8:00 giữ nguyên.
+  SELECT sum(c.quantity) INTO banh_anh_chup FROM order_line_component c
+   WHERE c.order_line_id = l_cu.id AND c.menu_component_id = mc;
+  SELECT ic.quantity, (r.before_image ->> 'quantity')::integer INTO STRICT banh_menu, banh_truoc
+   FROM menu_item_component ic JOIN record_revision r
+     ON r.target_table_code = 'menu_item_component' AND r.target_row = ic.id
+   WHERE ic.menu_item_id = l_cu.menu_item_id AND ic.menu_component_id = mc
+     AND pg_temp.dl_cua_ngay(r.revised_at);
+  PERFORM pg_temp.dl_dung(banh_anh_chup = banh_truoc AND banh_anh_chup <> banh_menu,
+                          'S3 — ảnh chụp số bánh giữ đúng recipe trước sửa và khác recipe hiện hành');
   PERFORM pg_temp.dl_dung(EXISTS (SELECT 1 FROM record_revision r JOIN person p ON p.id = r.person_id
                                   WHERE r.target_table_code = 'menu_item_component' AND p.is_owner
                                     AND pg_temp.dl_cua_ngay(r.revised_at)
@@ -206,8 +207,8 @@ BEGIN
   RAISE NOTICE 'S3 đọc lại: dòng 8:00 % đ · dòng 9:00 % đ · chênh % = % bánh × % · hoá đơn bàn 3 % đ · món "%" ngừng bán lúc %',
     l_cu.unit_price_vnd, l_moi.unit_price_vnd, l_moi.unit_price_vnd - l_cu.unit_price_vnd, so_banh, chenh,
     hd.due_vnd, l_cu.item_name, to_char((SELECT discontinued_at FROM menu_item WHERE id = l_cu.menu_item_id), 'HH24:MI');
-  RAISE NOTICE 'S3 đọc lại: đơn S1 lượt 1 % đ · % cái bánh theo ảnh chụp (menu hiện hành: % cái/suất × % suất)',
-    s1_l1.line_total_vnd, banh_anh_chup, banh_menu, s1_l1.quantity;
+  RAISE NOTICE 'S3 đọc lại: đơn 8:00 % đ · % cái bánh mỗi suất theo ảnh chụp (menu hiện hành: % cái/suất × % suất)',
+    l_cu.line_total_vnd, banh_anh_chup, banh_menu, l_cu.quantity;
 END $$;
 
 -- Tiền của cả ba scenario, cộng từ hoá đơn — so với phép cộng tay ở file cổng §4.
@@ -379,11 +380,11 @@ BEGIN
   JOIN person q ON q.id = ic.person_id JOIN person r ON r.id = b.person_id
   WHERE c.name = 'S5 món sau buổi (dữ liệu diễn)' AND b.name = 'S5 combo hai suất (dữ liệu diễn)'
     AND pg_temp.dl_cua_ngay(c.created_at) AND pg_temp.dl_cua_ngay(b.created_at);
-  PERFORM pg_temp.dl_dung(rec.mon = 'Suất trứng tái' AND rec.price_vnd = 27000 AND rec.quantity = 2
+  PERFORM pg_temp.dl_dung(rec.mon = 'Bánh trứng tái' AND rec.price_vnd = 27000 AND rec.quantity = 2
     AND rec.nguoi_lap = 'Chủ quán' AND rec.nguoi_xep = 'Chủ quán' AND rec.nguoi_combo = 'Chủ quán'
     AND rec.luc_danh_muc = (d + time '12:00') AT TIME ZONE current_setting('TimeZone')
     AND rec.luc_combo = rec.luc_danh_muc, 'S5.7 danh mục, món, thành phần và giá riêng 27000');
-  RAISE NOTICE 'S5.7 đọc lại: Suất trứng tái thuộc danh mục mới, combo 2 suất giá riêng 27000 đ lúc 12:00';
+  RAISE NOTICE 'S5.7 đọc lại: Bánh trứng tái thuộc danh mục mới, combo 2 suất giá riêng 27000 đ lúc 12:00';
 
   SELECT s.end_reason, s.ended_at, c.ended_at AS het_truc INTO STRICT rec
   FROM login_session s JOIN counter_duty c ON c.id = s.counter_duty_id

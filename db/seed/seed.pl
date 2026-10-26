@@ -13,7 +13,7 @@
 #   perl db/seed/seed.pl --price-cases   # SQL tính lại các ca giá của §4.8 từ database
 #   perl db/seed/seed.pl --defaults-tsv  # mặc định đọc từ §4.6 luật 8, mỗi dòng: nhóm <TAB> lựa chọn
 #   perl db/seed/seed.pl --price-cases-tsv  # các ca §4.8 cho test cửa giá của pha 3 (P3-06), mỗi dòng:
-#        số ca <TAB> dòng menu <TAB> số suất <TAB> nhóm=lựa chọn|… <TAB> giá kỳ vọng hoặc REJECT
+#        số ca <TAB> dòng menu <TAB> số suất <TAB> nhóm=lựa chọn|… <TAB> giá kỳ vọng hoặc REJECT <TAB> item|combo
 #
 # Owner đổi hình mà script không đọc được ⇒ in lỗi ra stderr, exit 1, không in nửa bộ SQL.
 use strict;
@@ -231,12 +231,30 @@ my @items;
         : $f->{names}[0];
       push @parts, [ $c, $n ];
     }
-    push @items, { name => $m->[0], alias => $m->[3] // $m->[0], parts => \@parts, group => $r->{'Nhóm trên menu'},
+    push @items, { name => $m->[0], alias => $m->[3] // $m->[0], parts => \@parts, group => $r->{'Nhóm trên menu'}, recipe => $m->[1],
+                   kind => $r->{'Nhóm trên menu'} eq 'Combo' ? 'combo' : 'item',
                    takes => (grep { $comp{ $_->[0] }{takes} } @parts) ? 1 : 0 };
     $seen{$k} = 1;
   }
   my @gone = grep { !$seen{$_} } sort keys %MENU;
   die_owner("%MENU có dòng mà §4.9 không còn: @gone") if @gone;
+}
+
+# Giá combo đọc từ cột Chay §4.3; số thành phần đã đọc từ §4.5.
+my @combo_prices = table('Suất bán', section('### 4.3 '));
+for my $it (grep { $_->{kind} eq 'combo' } @items) {
+  my @rows = grep { my $name = $_->{'Suất bán'}; my $recipe = $it->{recipe};
+    $name eq $recipe || $name =~ /^\Q$recipe\E\s+(?:trứng )?chín\b/ } @combo_prices;
+  die_owner("§4.3: cần đúng một giá cho '$it->{name}'") unless @rows == 1;
+  $it->{price} = money($rows[0]{'Chay'}, "§4.3 $it->{name}");
+  my @children;
+  for my $part (@{ $it->{parts} }) {
+    my @base = grep { $_->{kind} eq 'item' && @{ $_->{parts} } == 1
+      && $_->{parts}[0][0] eq $part->[0] && $_->{parts}[0][1] == 1 } @items;
+    die_owner("§4.5 '$it->{name}': cần đúng một món lẻ cho '$part->[0]'") unless @base == 1;
+    push @children, [ $base[0]{name}, $part->[1] ];
+  }
+  $it->{children} = \@children;
 }
 
 # --- §5.3: thành phần xuống trạm nào ------------------------------------------------------
@@ -382,7 +400,7 @@ for my $g (grep { $_->{req} } @grp) {
 }
 
 print "\n-- §4.9 dòng menu · §4.5 thành phần suất · nhóm tuỳ chọn cho suất có phần nhận nhân (§4.8 ca 12).\n";
-for my $it (@items) {
+for my $it (grep { $_->{kind} eq 'item' } @items) {
   printf "INSERT INTO menu_item (name) VALUES (%s);\n", sqlq($it->{name});
   for (@{ $it->{parts} }) {
     printf "INSERT INTO menu_item_component (menu_item_id, menu_component_id, quantity)"
@@ -395,6 +413,22 @@ for my $it (@items) {
       . " SELECT i.id, g.id FROM menu_item i, option_group g WHERE i.name = %s AND g.name = %s;\n",
       sqlq($it->{name}), sqlq($g->{name});
   }
+}
+
+print "\n-- §4.3 · §4.5: combo thật ghép từ món lẻ; giá riêng đọc từ cột Chay.\n";
+for my $it (grep { $_->{kind} eq 'combo' } @items) {
+  printf "INSERT INTO menu_combo (name, price_vnd) VALUES (%s, %d);\n", sqlq($it->{name}), $it->{price};
+  for my $child (@{ $it->{children} }) {
+    printf "INSERT INTO menu_combo_item (menu_combo_id, menu_item_id, quantity)"
+      . " SELECT c.id, i.id, %d FROM menu_combo c, menu_item i WHERE c.name = %s AND i.name = %s;\n",
+      $child->[1], sqlq($it->{name}), sqlq($child->[0]);
+  }
+  # Mức mỗi suất; hàm giá nhân số suất lúc cộng tiền, không nhân hai lần (I-034).
+  printf "INSERT INTO menu_combo_item_option_surcharge (menu_combo_item_id, menu_option_id, surcharge_vnd)"
+    . " SELECT x.id, o.id, o.surcharge_vnd FROM menu_combo c"
+    . " JOIN menu_combo_item x ON x.menu_combo_id = c.id"
+    . " JOIN menu_item_option_group g ON g.menu_item_id = x.menu_item_id"
+    . " JOIN menu_option o ON o.option_group_id = g.option_group_id WHERE c.name = %s;\n", sqlq($it->{name});
 }
 
 print "\n-- §5.3 (ví dụ nổ đơn) · §3: thành phần xuống trạm nào.\n";
@@ -433,13 +467,23 @@ sub read_price_cases {
     for my $g (@grp) {
       my $v = $r->{ $g->{name} } // die_owner("§4.8: không có cột '$g->{name}'");
       next if $v eq '—' || $v eq '';
-      my ($o) = grep { lc $_->[0] eq lc $v } @{ $g->{opt} };
-      ($o) = grep { index(lc $_->[0], lc $v) == 0 } @{ $g->{opt} } unless $o;
-      $o or die_owner("§4.8 ca $r->{'#'}: '$v' không là lựa chọn của '$g->{name}'");
-      push @sel, [ $g->{name}, $o->[0] ];
+      my @values = $v =~ /=/ ? split(m{ / }, $v) : ($v);
+      for my $value (@values) {
+        my $child;
+        if ($value =~ /^(.+?)=(.+)$/) {
+          ($child, $value) = ($1, $2);
+          die_owner("§4.8 ca $r->{'#'}: '$child' không phải món con của '$it->{name}'")
+            unless $it->{kind} eq 'combo' && grep { $_->[0] eq $child } @{ $it->{children} };
+        }
+        next if $value eq '—';
+        my ($o) = grep { lc $_->[0] eq lc $value } @{ $g->{opt} };
+        ($o) = grep { index(lc $_->[0], lc $value) == 0 } @{ $g->{opt} } unless $o;
+        $o or die_owner("§4.8 ca $r->{'#'}: '$value' không là lựa chọn của '$g->{name}'");
+        push @sel, [ $g->{name}, $o->[0], $child ];
+      }
     }
     my $want = $r->{'Giá kỳ vọng'} =~ /TỪ CHỐI/ ? undef : money($r->{'Giá kỳ vọng'}, "§4.8 ca $r->{'#'}");
-    push @out, [ $r->{'#'} + 0, $it->{name}, $qty, \@sel, $want ];
+    push @out, [ $r->{'#'} + 0, $it->{name}, $qty, \@sel, $want, $it->{kind} ];
   }
   die_owner('§4.8: bảng ca giá rỗng') unless @out;
   return @out;
@@ -447,27 +491,51 @@ sub read_price_cases {
 
 sub price_cases_tsv {
   for my $c (read_price_cases()) {
-    my ($no, $item, $qty, $sel, $want) = @$c;
-    print join("\t", $no, $item, $qty, join('|', map { "$_->[0]=$_->[1]" } @$sel), $want // 'REJECT'), "\n";
+    my ($no, $item, $qty, $sel, $want, $kind) = @$c;
+    print join("\t", $no, $item, $qty, join('|', map { defined $_->[2] ? "$_->[2]=$_->[0]:$_->[1]" : "$_->[0]=$_->[1]" } @$sel), $want // 'REJECT', $kind), "\n";
   }
 }
 
 sub price_cases {
   my @case = map {
     my ($no, $item, $qty, $sel, $want) = @$_;
-    sprintf "(%d, %s, %d, ARRAY[%s]::text[], ARRAY[%s]::text[], %s)",
+    sprintf "(%d, %s, %d, ARRAY[%s]::text[], ARRAY[%s]::text[], %s, ARRAY[%s]::text[])",
       $no, sqlq($item), $qty,
-      join(', ', map { sqlq($_->[0]) } @$sel), join(', ', map { sqlq($_->[1]) } @$sel), $want // 'NULL';
+      join(', ', map { sqlq($_->[0]) } @$sel), join(', ', map { sqlq($_->[1]) } @$sel), $want // 'NULL',
+      join(', ', map { defined $_->[2] ? sqlq($_->[2]) : 'NULL' } @$sel);
   } read_price_cases();
   print <<'SQL';
 -- §4.8 tính lại từ dữ liệu mồi. Phép tính CHỈ để chứng minh dữ liệu đủ — hàm tính giá là của pha 3.
 -- Giá một suất = Σ số lượng × giá gốc + (số phần nhận nhân) × Σ phụ thu đã chọn (§4.6 luật 1 · 5).
 -- Không hợp lệ (NULL) khi một lựa chọn thuộc nhóm suất không mang, hay nhóm có điều kiện mà
 -- không lựa chọn nào trong tập điều kiện được chọn (§4.6 luật 3).
-CREATE FUNCTION pg_temp.seed_price(p_item text, p_groups text[], p_opts text[]) RETURNS bigint
+CREATE FUNCTION pg_temp.seed_price(p_item text, p_groups text[], p_opts text[], p_items text[] DEFAULT NULL) RETURNS bigint
 LANGUAGE plpgsql AS $$
-DECLARE it bigint; sel bigint[]; bad int; base bigint; n_fill bigint; sur bigint;
+DECLARE it bigint; combo bigint; part record; part_price bigint; part_groups text[]; part_opts text[]; sel bigint[]; bad int; base bigint; n_fill bigint; sur bigint;
 BEGIN
+  SELECT id INTO combo FROM menu_combo WHERE name = p_item;
+  IF combo IS NOT NULL THEN
+    SELECT price_vnd INTO base FROM menu_combo WHERE id = combo;
+    FOR part IN SELECT x.id, x.menu_item_id, x.quantity, i.name FROM menu_combo_item x
+      JOIN menu_item i ON i.id = x.menu_item_id WHERE x.menu_combo_id = combo LOOP
+      -- Chỉ món mang nhóm lựa chọn mới nhận tổ hợp của ca; giò không nhận nhân.
+      IF EXISTS (SELECT 1 FROM menu_item_option_group WHERE menu_item_id = part.menu_item_id) THEN
+        SELECT coalesce(array_agg(u.g), '{}'), coalesce(array_agg(u.o), '{}') INTO part_groups, part_opts
+          FROM unnest(p_groups, p_opts, coalesce(p_items, array_fill(NULL::text, ARRAY[cardinality(p_groups)]))) u(g, o, m)
+          WHERE u.m IS NULL OR u.m = part.name;
+        part_price := pg_temp.seed_price(part.name, part_groups, part_opts);
+        IF part_price IS NULL THEN RETURN NULL; END IF;
+        SELECT coalesce(sum(s.surcharge_vnd), 0) INTO sur
+          FROM menu_combo_item_option_surcharge s
+          JOIN menu_option o ON o.id = s.menu_option_id
+          JOIN option_group g ON g.id = o.option_group_id
+          JOIN unnest(part_groups, part_opts) u(gn, op) ON u.gn = g.name AND u.op = o.name
+          WHERE s.menu_combo_item_id = part.id;
+        base := base + part.quantity * sur;
+      END IF;
+    END LOOP;
+    RETURN base;
+  END IF;
   SELECT id INTO STRICT it FROM menu_item WHERE name = p_item;
   SELECT coalesce(array_agg(o.id), '{}') INTO sel
     FROM unnest(p_groups, p_opts) u(g, o)
@@ -497,9 +565,9 @@ BEGIN
 SQL
   print '    ', join(",\n    ", @case), "\n";
   print <<'SQL';
-  ) v(no, item, qty, groups, opts, want) ORDER BY no LOOP
+  ) v(no, item, qty, groups, opts, want, items) ORDER BY no LOOP
     n := n + 1;
-    got := pg_temp.seed_price(r.item, r.groups, r.opts) * r.qty;
+    got := pg_temp.seed_price(r.item, r.groups, r.opts, r.items) * r.qty;
     IF got IS NOT DISTINCT FROM r.want THEN
       RAISE NOTICE 'ca % khớp: % ×% [%] ⇒ %', r.no, r.item, r.qty, array_to_string(r.opts, ' · '),
         coalesce(got::text || 'đ', 'TỪ CHỐI');

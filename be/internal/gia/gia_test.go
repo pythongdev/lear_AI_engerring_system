@@ -71,14 +71,17 @@ func dung(t *testing.T) khung {
 // --- §4.8 đọc lúc chạy --------------------------------------------------------------------
 
 type caGia struct {
-	so      int
-	mon     string
-	soSuat  int
-	chon    [][2]string // [nhóm, lựa chọn]
-	tuChoi  bool
-	kyVong  int64
-	monID   int64
-	chonIDs []int64
+	so       int
+	mon      string
+	soSuat   int
+	chon     [][2]string // [nhóm, lựa chọn]
+	tuChoi   bool
+	kyVong   int64
+	monID    int64
+	chonIDs  []int64
+	kind     string
+	chonCon  map[string][][2]string
+	portions []gia.SuatYeuCau
 }
 
 func gocRepo(t *testing.T) string {
@@ -108,10 +111,13 @@ func docCa(t *testing.T) []caGia {
 	var cas []caGia
 	for _, dong := range strings.Split(strings.TrimSpace(chaySeed(t, "--price-cases-tsv")), "\n") {
 		o := strings.Split(dong, "\t")
-		if len(o) != 5 {
+		if len(o) != 6 {
 			t.Fatalf("dòng ca §4.8 sai hình: %q", dong)
 		}
-		c := caGia{mon: o[1]}
+		c := caGia{mon: o[1], kind: o[5], chonCon: map[string][][2]string{}}
+		if c.kind != "item" && c.kind != "combo" {
+			t.Fatalf("loại ca không hợp lệ: %q", o[5])
+		}
 		var err error
 		if c.so, err = strconv.Atoi(o[0]); err != nil {
 			t.Fatal(err)
@@ -125,7 +131,14 @@ func docCa(t *testing.T) []caGia {
 				if !ok {
 					t.Fatalf("lựa chọn sai hình: %q", p)
 				}
-				c.chon = append(c.chon, [2]string{g, l})
+				if nhom, luaChon, co := strings.Cut(l, ":"); co {
+					if c.kind != "combo" {
+						t.Fatalf("ca món lẻ không có lựa chọn theo con: %q", p)
+					}
+					c.chonCon[g] = append(c.chonCon[g], [2]string{nhom, luaChon})
+				} else {
+					c.chon = append(c.chon, [2]string{g, l})
+				}
 			}
 		}
 		if o[4] == "REJECT" {
@@ -161,19 +174,66 @@ func (k khung) napMenuThat(t *testing.T) {
 func (k khung) caCoMa(t *testing.T) []caGia {
 	t.Helper()
 	cas := docCa(t)
+	docID := func(query string, args ...any) int64 {
+		var id int64
+		if err := k.owner.QueryRow(k.ctx, query, args...).Scan(&id); err != nil {
+			t.Fatal(err)
+		}
+		return id
+	}
+	chonID := func(ds [][2]string) []int64 {
+		ids := []int64{}
+		for _, gl := range ds {
+			ids = append(ids, docID(`SELECT o.id FROM shop.menu_option o JOIN shop.option_group g ON g.id=o.option_group_id WHERE g.name=$1 AND o.name=$2`, gl[0], gl[1]))
+		}
+		return ids
+	}
 	for i := range cas {
 		c := &cas[i]
-		if err := k.owner.QueryRow(k.ctx, "SELECT id FROM shop.menu_item WHERE name = $1", c.mon).Scan(&c.monID); err != nil {
-			t.Fatalf("ca %d: món %q: %v", c.so, c.mon, err)
+		c.chonIDs = chonID(c.chon)
+		if c.kind == "item" {
+			c.monID = docID("SELECT id FROM shop.menu_item WHERE name=$1", c.mon)
+			continue
 		}
-		for _, gl := range c.chon {
-			var id int64
-			if err := k.owner.QueryRow(k.ctx, `SELECT o.id FROM shop.menu_option o
-				JOIN shop.option_group g ON g.id = o.option_group_id WHERE g.name = $1 AND o.name = $2`,
-				gl[0], gl[1]).Scan(&id); err != nil {
-				t.Fatalf("ca %d: lựa chọn %v: %v", c.so, gl, err)
+		c.monID = docID("SELECT id FROM shop.menu_combo WHERE name=$1", c.mon)
+		rows, err := k.owner.Query(k.ctx, `SELECT i.id,i.name,x.quantity,EXISTS(SELECT 1 FROM shop.menu_item_option_group g WHERE g.menu_item_id=i.id) FROM shop.menu_combo_item x JOIN shop.menu_item i ON i.id=x.menu_item_id WHERE x.menu_combo_id=$1 ORDER BY x.id`, c.monID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		type con struct {
+			id   int64
+			name string
+			qty  int32
+			chon bool
+		}
+		var children []con
+		for rows.Next() {
+			var x con
+			if err := rows.Scan(&x.id, &x.name, &x.qty, &x.chon); err != nil {
+				t.Fatal(err)
 			}
-			c.chonIDs = append(c.chonIDs, id)
+			children = append(children, x)
+		}
+		rows.Close()
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
+		}
+		found := map[string]bool{}
+		for _, x := range children {
+			ids := []int64{}
+			if x.chon {
+				ids = append(ids, c.chonIDs...)
+				if ds, ok := c.chonCon[x.name]; ok {
+					ids = append(ids, chonID(ds)...)
+					found[x.name] = true
+				}
+			}
+			c.portions = append(c.portions, gia.SuatYeuCau{MenuItemID: x.id, Quantity: x.qty * int32(c.soSuat), OptionIDs: ids})
+		}
+		for name := range c.chonCon {
+			if !found[name] {
+				t.Fatalf("ca %d: lựa chọn trỏ món không thuộc combo hoặc không nhận nhân: %s", c.so, name)
+			}
 		}
 	}
 	return cas
@@ -228,6 +288,9 @@ func (k khung) goi(t *testing.T, method, path string, body any) traVe {
 }
 
 func dongCua(c caGia) map[string]any {
+	if c.kind == "combo" {
+		return map[string]any{"menu_combo_id": c.monID, "quantity": c.soSuat, "portions": c.portions}
+	}
 	ids := c.chonIDs
 	if ids == nil {
 		ids = []int64{}
@@ -288,14 +351,41 @@ func TestI013_BangCaGiaQuaTinhThu(t *testing.T) {
 		tong := so(t, r.body["total_vnd"], "total_vnd")
 		t.Logf("ca %d %s ×%d %v ⇒ đơn giá %d, thành tiền %d, tổng %d (§4.8 đòi %d)",
 			c.so, c.mon, c.soSuat, c.chon, donGia, thanhTien, tong, c.kyVong)
-		if thanhTien != c.kyVong || tong != c.kyVong || donGia*int64(c.soSuat) != c.kyVong {
+		if thanhTien != c.kyVong || tong != c.kyVong || (c.kind == "item" && donGia*int64(c.soSuat) != c.kyVong) {
 			t.Fatalf("ca %d lệch §4.8", c.so)
 		}
-		if so(t, d["menu_item_id"], "menu_item_id") != c.monID || so(t, d["quantity"], "quantity") != int64(c.soSuat) {
+		idField := "menu_item_id"
+		if c.kind == "combo" {
+			idField = "menu_combo_id"
+		}
+		if so(t, d[idField], idField) != c.monID || so(t, d["quantity"], "quantity") != int64(c.soSuat) {
 			t.Fatalf("ca %d: dòng trả về không phải dòng đã gửi: %v", c.so, d)
 		}
 		if d["item_name"] != c.mon {
 			t.Fatalf("ca %d: tên món %v, muốn %q", c.so, d["item_name"], c.mon)
+		}
+		if c.kind == "combo" {
+			portions, _ := d["portions"].([]any)
+			if len(portions) != len(c.portions) {
+				t.Fatalf("ca %d: số nhóm suất trả về %d, gửi %d", c.so, len(portions), len(c.portions))
+			}
+			sum := donGia * int64(c.soSuat)
+			for i, p := range c.portions {
+				got := portions[i].(map[string]any)
+				if so(t, got["menu_item_id"], "menu_item_id") != p.MenuItemID || so(t, got["quantity"], "quantity") != int64(p.Quantity) {
+					t.Fatalf("ca %d: suất %d sai: %v", c.so, i, got)
+				}
+				comps, _ := got["components"].([]any)
+				opts, _ := got["options"].([]any)
+				if len(comps) == 0 || len(opts) != len(p.OptionIDs) {
+					t.Fatalf("ca %d: thiếu ảnh chụp suất %d: %v", c.so, i, got)
+				}
+				sum += so(t, got["line_total_vnd"], "line_total_vnd")
+			}
+			if sum != c.kyVong {
+				t.Fatalf("ca %d: giá gốc cộng suất %d, muốn %d", c.so, sum, c.kyVong)
+			}
+			continue
 		}
 		if comps, _ := d["components"].([]any); len(comps) == 0 {
 			t.Fatalf("ca %d: dòng giá phải kể thành phần đã tính: %v", c.so, d)
@@ -324,7 +414,49 @@ func TestI013_MenuKeGiaMoiToHop(t *testing.T) {
 		sort.Slice(s, func(i, j int) bool { return s[i] < s[j] })
 		return fmt.Sprint(s)
 	}
+	combos := map[int64]map[string]any{}
+	for _, x := range r.body["combos"].([]any) {
+		m := x.(map[string]any)
+		combos[so(t, m["menu_combo_id"], "menu_combo_id")] = m
+	}
 	for _, c := range k.caCoMa(t) {
+		if c.kind == "combo" {
+			m, ok := combos[c.monID]
+			if !ok {
+				t.Fatalf("ca %d: combo %s không có trên menu", c.so, c.mon)
+			}
+			if m["name"] != c.mon {
+				t.Fatalf("ca %d: tên combo không khớp: %v", c.so, m)
+			}
+			total := so(t, m["price_vnd"], "price_vnd") * int64(c.soSuat)
+			children := map[int64]map[string]any{}
+			for _, raw := range m["items"].([]any) {
+				x := raw.(map[string]any)
+				children[so(t, x["menu_item_id"], "menu_item_id")] = x
+			}
+			for _, p := range c.portions {
+				child, ok := children[p.MenuItemID]
+				if !ok {
+					t.Fatalf("ca %d: menu thiếu món con %d", c.so, p.MenuItemID)
+				}
+				if so(t, child["quantity"], "quantity")*int64(c.soSuat) != int64(p.Quantity) {
+					t.Fatalf("ca %d: số suất con không khớp: %v", c.so, child)
+				}
+				levels := map[int64]int64{}
+				for _, raw := range child["surcharges"].([]any) {
+					x := raw.(map[string]any)
+					levels[so(t, x["menu_option_id"], "menu_option_id")] = so(t, x["surcharge_vnd"], "surcharge_vnd")
+				}
+				for _, id := range p.OptionIDs {
+					total += levels[id] * int64(p.Quantity)
+				}
+			}
+			if total != c.kyVong {
+				t.Fatalf("ca %d: dữ liệu menu combo tính %d, §4.8 đòi %d", c.so, total, c.kyVong)
+			}
+			t.Logf("ca %d: menu kể giá combo và mức từng suất khớp %d", c.so, total)
+			continue
+		}
 		m, co := theoMa[c.monID]
 		if !co {
 			t.Fatalf("ca %d: món %q không có trên menu", c.so, c.mon)

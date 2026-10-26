@@ -172,7 +172,7 @@ BEGIN
   o := pg_temp.sc_don('staff_pos', s, pg_temp.sc_ban('10'), pg_temp.sc_luc('10:25'));
   PERFORM pg_temp.sc_mon(o, 'Suất trứng chín', 1, ARRAY['Chay']);
   r := pg_temp.sc_mon(o, 'Suất trứng chín', 1, ARRAY['Chay']);
-  UPDATE order_line SET is_takeaway = true WHERE id = r;
+  UPDATE order_line SET is_takeaway = true WHERE id = r OR parent_order_line_id = r;
   UPDATE sales_order SET status = 'confirmed' WHERE id = o;
   PERFORM pg_temp.sc_no(o, pg_temp.sc_luc('10:25'));
   INSERT INTO sc VALUES ('phien_10', s), ('don_10', o), ('dong_dem_ve', r);

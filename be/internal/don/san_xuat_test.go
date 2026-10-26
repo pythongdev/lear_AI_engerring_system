@@ -889,11 +889,7 @@ func TestI019_BangNhuCauTachNguocVeTungBan(t *testing.T) {
 			continue
 		}
 		b := n.banMoi(t, fmt.Sprintf("ca %d", ca.so))
-		ids := ca.chonIDs
-		if ids == nil {
-			ids = []int64{}
-		}
-		r := n.datHo(t, n.quay, b, dauLanGui(t), map[string]any{"menu_item_id": ca.monID, "quantity": ca.soSuat, "option_ids": ids, "is_takeaway": false})
+		r := n.datHo(t, n.quay, b, dauLanGui(t), dongScenario(ca, ca.soSuat))
 		canDat(t, r, http.StatusCreated)
 		ban, don = append(ban, b), append(don, r.so(t, "sales_order_id"))
 	}

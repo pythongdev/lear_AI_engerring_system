@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 # T-236 — chỉ cho máy dev, KHÔNG phải sự thật của quán. Chạy sau make seed.
 # Đọc nhóm §4.9 qua seed.pl để dùng chung ánh xạ tên dòng menu.
-# Combo gồm hai món có giá gốc dương đầu tiên theo id; giá = tổng giá gốc
-# món lẻ (chưa chọn tuỳ chọn), tính từ thành phần trong database bằng SQL.
+# Bảy combo thật đã do seed.pl dựng; dữ liệu thử chỉ xếp món lẻ vào danh mục,
+# không tạo thêm combo hay sao chép giá của combo.
 # Lượng sổ, tiền khoản chi và ngày công là SỐ MINH HOẠ; tên tự đặt có (thử).
 # Dùng ngày hiện tại của TimeZone kết nối (Makefile/db-check đặt PGTZ).
 # Không đổi đồng hồ, tắt trigger hay mở khoá: lỗi ghi sẽ dừng và rollback cả bộ.
@@ -40,10 +40,7 @@ DECLARE
   owner_id bigint;
   worker_id bigint;
   task_id bigint;
-  combo_id bigint;
   item_categories jsonb;
-  combo_item_ids bigint[];
-  combo_price bigint;
   today date := (now() AT TIME ZONE current_setting('TimeZone'))::date;
 BEGIN
   -- Khoá trong giao dịch để hai lượt dựng đồng thời không cùng vượt dấu hiệu.
@@ -63,8 +60,6 @@ print "  SELECT jsonb_object_agg(item_name, category_name) INTO item_categories\
 print "  FROM (VALUES\n";
 print join(",\n", map { '    (' . sqlq($_) . ', ' . sqlq($mapping{$_}) . ')' } sort keys %mapping),
     "\n  ) AS mapping(item_name, category_name);\n";
-print '  INSERT INTO menu_category (name) VALUES ',
-    join(', ', map { '(' . sqlq($_) . ')' } @categories), ";\n";
 print <<'SQL';
   -- Không âm thầm bỏ món khi database và owner lệch nhau.
   IF NOT EXISTS (SELECT 1 FROM menu_item WHERE discontinued_at IS NULL)
@@ -73,34 +68,20 @@ print <<'SQL';
        AND item_categories ->> i.name IS NULL)
      OR EXISTS (
        SELECT 1 FROM jsonb_object_keys(item_categories) AS names(name)
-       WHERE NOT EXISTS (SELECT 1 FROM menu_item i WHERE i.name = names.name
-                         AND i.discontinued_at IS NULL)) THEN
+       WHERE (SELECT count(*) FROM menu_item i WHERE i.name = names.name
+              AND i.discontinued_at IS NULL)
+           + (SELECT count(*) FROM menu_combo c WHERE c.name = names.name
+              AND c.hidden_at IS NULL) <> 1) THEN
     RAISE EXCEPTION 'seed-thu: menu rỗng hoặc tên món không khớp owner §4.9';
   END IF;
+  -- Danh mục chỉ dành cho món lẻ; nhóm Combo của owner được kiểm qua menu_combo.
+  INSERT INTO menu_category (name)
+    SELECT DISTINCT item_categories ->> i.name FROM menu_item i
+    WHERE i.discontinued_at IS NULL;
   INSERT INTO menu_item_category (menu_item_id, menu_category_id)
   SELECT i.id, cat.id FROM menu_item i
   JOIN menu_category cat ON cat.name = item_categories ->> i.name
   WHERE i.discontinued_at IS NULL;
-
-  SELECT array_agg(chosen.id ORDER BY chosen.id), sum(chosen.price_vnd)
-    INTO combo_item_ids, combo_price
-  FROM (
-    SELECT i.id, sum(ic.quantity * c.base_price_vnd)::bigint AS price_vnd
-    FROM menu_item i
-    JOIN menu_item_component ic ON ic.menu_item_id = i.id
-    JOIN menu_component c ON c.id = ic.menu_component_id
-    WHERE i.discontinued_at IS NULL
-    GROUP BY i.id HAVING sum(ic.quantity * c.base_price_vnd) > 0
-    ORDER BY i.id LIMIT 2
-  ) chosen;
-  IF coalesce(cardinality(combo_item_ids), 0) <> 2 THEN
-    RAISE EXCEPTION 'seed-thu: cần hai món có giá gốc dương';
-  END IF;
-  INSERT INTO menu_combo (name, price_vnd)
-    VALUES ('Combo ghép món (thử)', combo_price)
-    RETURNING id INTO combo_id;
-  INSERT INTO menu_combo_item (menu_combo_id, menu_item_id, quantity)
-    SELECT combo_id, item_id, 1 FROM unnest(combo_item_ids) AS items(item_id);
 
   INSERT INTO assigned_task (content, assignee_person_id)
     VALUES ('Chuẩn bị khu vực làm việc (thử)', worker_id) RETURNING id INTO task_id;

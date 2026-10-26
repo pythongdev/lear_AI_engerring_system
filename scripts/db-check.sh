@@ -353,14 +353,24 @@ BEGIN
     IF n < 1 THEN RAISE EXCEPTION 'dữ liệu thử: % rỗng', t; END IF;
     counts := counts || jsonb_build_object(t, n);
   END LOOP;
-  -- T-242: nhóm trình bày §4.9, khác với menu_combo ghép món.
-  IF (SELECT count(*) FROM menu_category) <> 2
-     OR (SELECT count(*) FROM menu_item_category) <> 13
+  -- T-251: sáu món lẻ có danh mục; bảy suất ghép là combo thật của seed.
+  IF (SELECT count(*) FROM menu_category) <> 1
+     OR (SELECT count(*) FROM menu_item_category) <> 6
      OR (SELECT count(*) FROM menu_item_category ic JOIN menu_category c
          ON c.id = ic.menu_category_id WHERE c.name = 'Món lẻ') <> 6
-     OR (SELECT count(*) FROM menu_item_category ic JOIN menu_category c
-         ON c.id = ic.menu_category_id WHERE c.name = 'Combo') <> 7 THEN
-    RAISE EXCEPTION 'dữ liệu thử: cần hai nhóm, Món lẻ 6 món và Combo 7 món (§4.9)';
+     OR (SELECT count(*) FROM menu_combo) <> 7
+     OR (SELECT count(*) FROM menu_combo_item) <> 17 THEN
+    RAISE EXCEPTION 'dữ liệu thử: cần 6 món lẻ có danh mục, 7 combo thật với 17 dòng thành phần (§4.5 · §4.9)';
+  END IF;
+  -- Mức phụ thu là mỗi suất, không nhân số suất của dòng thành phần lần thứ hai.
+  IF EXISTS (
+    SELECT 1 FROM menu_combo_item x
+    JOIN menu_item_option_group g ON g.menu_item_id = x.menu_item_id
+    JOIN menu_option o ON o.option_group_id = g.option_group_id
+    LEFT JOIN menu_combo_item_option_surcharge s
+      ON s.menu_combo_item_id = x.id AND s.menu_option_id = o.id
+    WHERE s.surcharge_vnd IS DISTINCT FROM o.surcharge_vnd) THEN
+    RAISE EXCEPTION 'dữ liệu thử: combo thiếu hoặc lệch mức phụ thu mỗi suất';
   END IF;
   -- Giữ số đếm trong cài đặt giao dịch, không cần bảng tạm hay đổi vai.
   PERFORM set_config('shop.trial_counts', counts::text, true);

@@ -8030,3 +8030,18 @@ nhau (`/hiding` · `/unhiding`) và một `DELETE` mang thân lý do là hình l
 **Alternatives:** NOT NULL và tự gán hạn cho việc cũ tạo dữ kiện giả; chặn mọi INSERT trực tiếp sẽ đòi thay toàn bộ dữ liệu dựng/kịch bản lịch sử, không cần cho cửa giao việc có kiểm API/service; lưu ngày giờ không múi giờ làm hạn lệch theo máy.
 
 **Consequences:** schema cho phép null dù cửa tạo bắt buộc; đây là giới hạn rõ ở I-030. Migration cấp quyền sửa đúng cột mới; rollback từ chối nếu còn bất kỳ hạn nào để không làm mất dữ liệu. Triển khai migration trước backend, backend trước frontend; hợp đồng tăng 0.50.0, sinh lại sqlc và type FE.
+
+## ADR-129 — Bảy suất Đầy đủ · Suất giò · Suất trứng là `menu_combo` thật, mỗi suất con chọn nhân riêng
+
+**Status:** chốt 2026-10-25. Chủ repo duyệt thiết kế T-244 trong hội thoại và giao T-250 (phần a) cho Codex làm, Claude duyệt tích hợp. Phần (b) T-251 và phần (c) T-252 mở sau khi (a) xanh.
+
+**Decision:** chuyển bảy dòng *Đầy đủ trứng chín/tái/vàng · Suất giò · Suất trứng chín/tái/vàng* khỏi `menu_item`; dựng lại thành bảy `menu_combo` + `menu_combo_item` ghép từ ba `menu_item` nền *Bánh cuốn · Bánh trứng {loại} · Giò bán rời*. `menu_combo.price_vnd` = ô cột *Chay* §4.3 của suất ấy (26.000 · 21.000 · 20.000). `menu_combo_item_option_surcharge.surcharge_vnd` = `menu_option.surcharge_vnd` **mỗi suất, không nhân `menu_combo_item.quantity`** — hàm tính giá đã nhân với số phần nhận nhân (`be/internal/gia/service.go:324`) đúng §8.9 lượt tám vế 3 (*"mức phụ thu cộng mỗi suất một lần"*). Dòng mức chèn cho **mọi** `menu_option` mà `menu_item` nền mang (U-096 đóng *"cộng 0đ"*), không gõ số, không gõ tên. Khách chọn nhân **riêng từng suất con** (§8.9 lượt bảy vế 2, lượt tám vế 2).
+
+**Alternatives:** (1) giữ bảy `menu_item`, chỉ chia nhóm trình bày trên trang chủ quán — bỏ 2026-10-24 trong hội thoại T-244 vì không mở đường cho *mỗi suất chọn nhân riêng*. (2) gõ sẵn số 26.000/21.000/20.000 vào seed — vi phạm F-001 (không chép giá), bỏ. (3) Lưu phụ thu nhân theo `menu_combo_item.quantity` (ví dụ bánh ×3 cho dòng mức ×3) — tạo lớp nhân thứ hai với mã backend đã nhân theo quantity khi tính, hỏng ca 9 và ca 10, bỏ.
+
+**Consequences:**
+- §4.3 · §4.5 · §4.8 ca 1–14 không đổi. Shop-facts §4.9 (cột *Nhóm trên menu*) và §8.9 (lượt bảy · lượt tám) đọc lại thành *áp cho mọi `menu_combo`*, kể cả bảy suất cũ.
+- Giá combo và mức phụ thu *khi mọi suất con cùng một nhân* khớp từng ô §4.3 — Codex đã đối chiếu 35/35 tổ hợp bảng chủ repo trong database tạm T-250 (log `/private/tmp/t250-all-prices.log`). Tổ hợp trộn nhân là ô mới của §4.6, không phải luật mới; ca 15 trộn nhân vào §4.8 ở T-251 cùng mở rộng parser `seed.pl --price-cases-tsv` để đọc lựa chọn theo từng suất con.
+- Fixtures và kịch bản `db/scenario/*.sql`, `db/reconcile/proof/{baseline,i004_7,i009_4,i018_3}.sql`, `be/internal/don/scenario_test.go`, `be/cmd/server/realtime_test.go`, `be/internal/gia/gia_test.go` đang gọi bảy suất như `menu_item` phải chuyển sang `menu_combo` — việc của T-251 (phần b). TSV phát thêm cột `item|combo` cuối (seed.pl đã in; consumer backend đọc len 6 ở T-251).
+- Dữ liệu thử `db/seed/du-lieu-thu.pl` bỏ *Combo ghép món (thử)* vì bảy combo thật đã có — việc của T-251.
+- Không đổi migration, `openapi.yaml` hay cửa backend; đường giá combo đã có từ T-193…T-196 và `be/internal/gia/combo_test.go` đã có bộ kiểm hồi quy. Thiết kế không đẻ luật mới nên không cần cập nhật `quality/invariants.md`.

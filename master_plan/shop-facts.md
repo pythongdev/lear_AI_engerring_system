@@ -378,16 +378,22 @@ bất kỳ tài liệu nào, **đó là bug**, không phải quy tắc.
 | 12 | **Giò bán rời ×3** | — | — | **27.000** | 3 × 9.000; giò không nhận nhân nên **nhóm nhân không được hiện** (giá có lời 2026-10-23, đóng **S-9**) |
 | 13 | **Canh bánh cuốn ×2** | — | — | **0** | dòng 0đ **vẫn phải nằm trên đơn**: nó là việc của trạm `canh` (§4.5) và là thứ khách chọn số lượng. Một đơn *chỉ* có canh vẫn là đơn hợp lệ, tổng **0đ** |
 | 14 | **Bánh trứng vàng** (bán rời) | Thịt | Nhiều | **10.000** | 1 quả trứng, đúng giá thành phần §4.2; quả trứng nhận nhân nên **nhóm nhân phải hiện** — phụ thu ×1 |
+| 15 | **Combo Đầy đủ chín** | Bánh cuốn=Thịt / Bánh trứng chín=Chay | Bánh cuốn=Thường / Bánh trứng chín=— | **29.000** | 26.000 + 3 × 1.000; **mỗi suất con chọn nhân riêng** (§8.9 lượt bảy vế 2) |
 
-**Mười bốn ca tính tới 2026-10-23** — đếm bảng, đừng tin câu này (`work/findings.md` **F-003**). Ca
+**Mười lăm ca tính tới 2026-10-25** — đếm bảng, đừng tin câu này (`work/findings.md` **F-003**). Ca
 1–10 đều tính được và đã đối chiếu khớp bảng giá §4.3 từ 2026-08-30. Ca 11 là ca duy nhất có kết
 quả không phải một con số. **Ca 12 và ca 13 vào bảng ngày 2026-09-08** cùng hai dòng menu mới, và
 mỗi ca canh đúng một chỗ dễ hỏng của chúng: ca 12 canh việc **hiện nhóm tuỳ chọn cho một món không
 nhận nhân**, ca 13 canh việc **một dòng 0đ bị lặng lẽ bỏ khỏi đơn** vì nó không cộng thêm tiền —
 bỏ nó đi thì trạm `canh` không thấy bát canh thứ hai, và đó chính là ca chủ quán kể ra khi chốt
 `U-046`. **Ca 14 vào bảng ngày 2026-10-23** cùng ba dòng *bánh trứng bán rời*, canh chiều ngược
-của ca 12: một món **một thành phần mà có nhận nhân** phải hiện nhóm nhân và thu phụ thu ×1. Các ca
-này là **hợp đồng với chủ quán**: đủ mọi ca mới được coi là tính giá đúng.
+của ca 12: một món **một thành phần mà có nhận nhân** phải hiện nhóm nhân và thu phụ thu ×1.
+**Ca 15 vào bảng ngày 2026-10-25** cùng T-251 (ADR-129): canh chỗ dễ hỏng nhất của *combo = `menu_combo`
+thật* — **trộn nhân giữa hai suất con** của cùng một combo, mỗi suất chọn nhân riêng. Bánh cuốn chọn
+Thịt+Thường cộng +1.000 mỗi suất (ba suất ⇒ +3.000), bánh trứng chín chọn Chay không cộng gì; tổng
+26.000 + 3.000 = 29.000. Nếu lộ trình tính giá chỉ đọc **một** nhân chung cho cả combo thì ca này ra
+sai (sẽ ra 30.000 nếu nhân Thịt áp cả trứng, hoặc 26.000 nếu nhân Chay áp cả bánh). Các ca này là
+**hợp đồng với chủ quán**: đủ mọi ca mới được coi là tính giá đúng.
 
 ### 4.9 MENU — chủ quán tự gọi tên từng món, 2026-09-08
 
@@ -438,9 +444,17 @@ sau nữa. Hai điều lời đáp ấy chốt, và cả hai đều là **luật
 **Nhóm trên menu — chủ repo chốt 2026-10-23 trong hội thoại** (T-242), nguyên văn: *"bao gồm bánh cuốn,
 bánh trứng, giò và canh — phần dưới là những combos"* ⇒ menu chia **hai nhóm**: **Món lẻ** (bánh cuốn,
 bánh trứng bán rời, giò bán rời, canh) đứng **trên**, **Combo** (đầy đủ, suất giò, suất trứng) đứng
-**dưới**. Cột *Nhóm trên menu* ở bảng trên ghi nhóm của từng dòng. *Cách đọc của phiên, chưa phải lời
-chủ repo* (**F-004**): chữ *combo* ở đây là **nhóm trình bày** của các suất nhiều thành phần — không
-phải bảng `menu_combo` (combo ghép món có giá riêng, §8.9) — và không đổi giá hay cấu tạo suất nào.
+**dưới**. Cột *Nhóm trên menu* ở bảng trên ghi nhóm của từng dòng.
+
+**2026-10-25 (T-244 · T-250, ADR-129):** chủ repo chọn **Combo = `menu_combo` thật** — bảy dòng nhóm
+Combo chuyển khỏi `menu_item` sang `menu_combo` + `menu_combo_item` ghép từ *Bánh cuốn · Bánh trứng · Giò
+bán rời*, và **mỗi suất con chọn nhân riêng**. Giá `menu_combo.price_vnd` giữ nguyên các ô §4.3 cột
+*Chay* (Đầy đủ 26.000 · Suất giò 21.000 · Suất trứng 20.000) — là giá *khi mọi suất con cùng một nhân*;
+tổ hợp trộn nhân là **hệ quả** của §4.6 (giá combo + Σ phụ thu theo phần nhận nhân), không phải luật mới
+và không đổi §4.3 · §4.5 · §4.8 (ca 1–14 đứng nguyên). Luật phụ thu *mức mỗi suất, không nhân theo
+`menu_combo_item.quantity`* bám §8.9 lượt tám vế 3 (backend tự nhân với số phần nhận nhân khi tính). Ca
+15 trộn nhân vào §4.8 ở T-251 cùng mở rộng parser `--price-cases-tsv` để đọc lựa chọn theo từng suất
+con.
 
 ## 5. Hai luồng bán
 
@@ -1514,6 +1528,8 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-23 | Chủ repo chọn trong hội thoại (T-242): **giò bán rời 9.000, không chọn nhân** (đóng **S-9**, suy ra 2026-09-08 đúng); thêm **ba dòng *bánh trứng bán rời*** chín · tái · vàng, một quả trứng, giá như thành phần §4.2; menu chia **Món lẻ** (trên) và **Combo** (dưới); combo "Đầy đủ" **giữ luật cũ, không kèm canh** | §4.3 · §4.5 · §4.8 · §4.9 |
 | 2026-10-18 | Chủ repo trả lời ba vế thi công của mục tổng quan (T-199): tạm tính phần thuộc combo **không tính giá thành phần**; *bánh* của tiến độ là **bánh cuốn và bánh trứng**; **offline là bán hàng tại quán** (đóng **S-10**, suy ra 2026-10-16: *offline* gồm cả giao hàng đặt qua điện thoại — lời mới hẹp hơn: chỉ tại quán) | §8.6 |
 | 2026-10-24 | Chủ repo trả lời `U-104` trong hội thoại (T-243): **món đã ngừng bán được bán lại**, và bán lại là **giữ món cũ** — cùng tên, cùng thành phần, cùng lịch sử | §8.9 (*bán lại món đã ngừng*) |
+| 2026-10-25 | Chủ repo duyệt thiết kế T-244 và giao T-250 (phần a) trong hội thoại: bảy suất *Đầy đủ · Suất giò · Suất trứng* chuyển khỏi `menu_item`, dựng lại thành **`menu_combo` thật** ghép từ *Bánh cuốn · Bánh trứng · Giò bán rời*, **mỗi suất con chọn nhân riêng**; §4.3 · §4.5 · §4.8 (ca 1–14) không đổi — giá combo và mức phụ thu theo món là **hệ quả** của §4.6 khi tổ hợp cùng nhân. Ca 15 trộn nhân vào §4.8 ở T-251 cùng mở rộng parser `seed.pl --price-cases-tsv`. Xem **ADR-129** | §4.9 · §8.9 (lượt bảy · lượt tám) |
+| 2026-10-25 | Claude thêm **ca 15 §4.8** cùng lượt lead T-251: *Combo Đầy đủ chín · Bánh cuốn=Thịt Thường · Bánh trứng chín=Chay ⇒ 29.000* (26.000 + 3 × 1.000). Parser `seed.pl --price-cases-tsv` ở worktree /private/tmp/t251 đã khớp 15/15 trên fixture rút gọn (log `/private/tmp/t251-price-run.log`); hình token: `Bánh cuốn=Nhân:Thịt\|Bánh trứng chín=Nhân:Chay\|Bánh cuốn=Lượng nhân:Thường`. Ca này canh chỗ dễ hỏng duy nhất của *combo thật*: trộn nhân giữa hai suất con cùng combo. **Hợp đồng với chủ quán** — ADR-129 là nền thiết kế, dòng này là ca kiểm | §4.8 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **hai mục, tính tới 2026-10-23**
 
@@ -2241,8 +2257,12 @@ combos tôi sẽ tự đưa giá"*, rồi chọn trong câu hỏi có sẵn phư
    đặt cho lựa chọn ấy của món ấy vào giá combo. Câu *phụ thu cộng thêm vào giá combo* của lượt T-188 đứng nguyên;
    lượt này nói cộng **bao nhiêu**.
 
-*Combo* ở lượt này là combo chủ quán lập (`quality/invariants.md` `I-032`), **không** phải suất *Combo "Đầy đủ"* của
-§4.3–§4.5 — suất ấy là một dòng menu, giữ giá tổng thành phần và phụ thu ×4 như cũ.
+*Combo* ở lượt này là combo chủ quán lập (`quality/invariants.md` `I-032`). **Từ 2026-10-25 (T-244 · T-250,
+ADR-129) bảy suất *Combo "Đầy đủ" · Suất giò · Suất trứng* của §4.3–§4.5 cũng là `menu_combo`** và chịu
+đúng ba luật của lượt này: mỗi suất con chọn nhân riêng, phụ thu đặt theo từng món con, cộng mỗi suất một
+lần. Ô giá §4.3 cột *Chay* (26.000 · 21.000 · 20.000) là *giá khi mọi suất con cùng một nhân*; bảng phụ
+thu §4.4 cột *Combo* cho ba ô ấy đọc lại thành *hệ quả §4.6 khi tổ hợp đồng nhất* — ô *Suất Đầy đủ Thịt
+Thường = 26.000 + 4 × 1.000 = 30.000* vẫn khớp §4.3 vì ba bánh × 1.000 + một trứng × 1.000 = ×4.
 
 *Cách đọc của phiên, chưa ai xác nhận:* tổ hợp lựa chọn của mỗi món trong combo theo đúng luật của món ấy (luật 3 · 7
 của §4.6 áp **từng món** — *Chay + Nhiều nhân* vẫn bị từ chối).

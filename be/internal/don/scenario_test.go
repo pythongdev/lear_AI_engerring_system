@@ -14,9 +14,15 @@ import (
 	"testing"
 	"time"
 
+	"banhcuon/be/internal/gia"
 	"banhcuon/be/internal/ngayban"
 	"banhcuon/be/internal/testhelper"
 	"github.com/jackc/pgx/v5"
+)
+
+const (
+	caGioThuong    = -8
+	caGioComposite = -18
 )
 
 type dienScenario struct {
@@ -50,71 +56,163 @@ func dungScenario(t *testing.T, day int) *dienScenario {
 	if _, err := n.owner.Exec(n.ctx, "SELECT set_config('TimeZone', $1, false)", testhelper.ShopTZ(t)); err != nil {
 		t.Fatal(err)
 	}
-	// Cùng thành phần riêng được chia sẻ giữa các món riêng: đổi giá bánh tác động
-	// cả suất giò lẫn combo, nhưng không làm hỏng menu của test chạy sau.
+	// Món lẻ, combo và component đều clone riêng. Các fixture S3 composite cùng dùng
+	// component riêng ấy để đổi giá giữa buổi mà không đụng dữ liệu của test khác.
 	thanhPhan := map[int64]int64{}
 	monMoi := map[int64]int64{}
+	cloneMon := func(cu int64) int64 {
+		if id, ok := monMoi[cu]; ok {
+			return id
+		}
+		moi := n.id(t, "INSERT INTO shop.menu_item(name) SELECT 'test-scenario ' || name || $2 FROM shop.menu_item WHERE id=$1 RETURNING id", cu, " · "+t.Name())
+		n.donMonTest(t, moi, n.chu)
+		monMoi[cu] = moi
+		rows, err := n.owner.Query(n.ctx, "SELECT menu_component_id,quantity FROM shop.menu_item_component WHERE menu_item_id=$1 ORDER BY id", cu)
+		if err != nil {
+			t.Fatal(err)
+		}
+		type tp struct {
+			id int64
+			so int
+		}
+		var ds []tp
+		for rows.Next() {
+			var x tp
+			if err := rows.Scan(&x.id, &x.so); err != nil {
+				t.Fatal(err)
+			}
+			ds = append(ds, x)
+		}
+		rows.Close()
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
+		}
+		for _, x := range ds {
+			id, ok := thanhPhan[x.id]
+			if !ok {
+				id = n.id(t, `INSERT INTO shop.menu_component(name,base_price_vnd,takes_filling) SELECT name || $2,base_price_vnd,takes_filling FROM shop.menu_component WHERE id=$1 RETURNING id`, x.id, " · "+t.Name())
+				thanhPhan[x.id] = id
+				if err := n.coVet(func(tx pgx.Tx) error {
+					_, err := tx.Exec(n.ctx, `INSERT INTO shop.menu_component_station(menu_component_id,station_code) SELECT $2,station_code FROM shop.menu_component_station WHERE menu_component_id=$1`, x.id, id)
+					return err
+				}); err != nil {
+					t.Fatal(err)
+				}
+			}
+			n.id(t, "INSERT INTO shop.menu_item_component(menu_item_id,menu_component_id,quantity) VALUES($1,$2,$3) RETURNING id", moi, id, x.so)
+		}
+		if err := n.coVet(func(tx pgx.Tx) error {
+			_, err := tx.Exec(n.ctx, `INSERT INTO shop.menu_item_option_group(menu_item_id,option_group_id) SELECT $2,option_group_id FROM shop.menu_item_option_group WHERE menu_item_id=$1`, cu, moi)
+			return err
+		}); err != nil {
+			t.Fatal(err)
+		}
+		return moi
+	}
+	comboMoi := map[int64]int64{}
+	cloneCombo := func(cu int64) int64 {
+		if id, ok := comboMoi[cu]; ok {
+			return id
+		}
+		type child struct {
+			id, mon int64
+			so      int
+		}
+		var children []child
+		rows, err := n.owner.Query(n.ctx, `SELECT id,menu_item_id,quantity FROM shop.menu_combo_item WHERE menu_combo_id=$1 ORDER BY id`, cu)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for rows.Next() {
+			var x child
+			if err := rows.Scan(&x.id, &x.mon, &x.so); err != nil {
+				t.Fatal(err)
+			}
+			children = append(children, x)
+		}
+		rows.Close()
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
+		}
+		for i := range children {
+			children[i].mon = cloneMon(children[i].mon)
+		}
+		var moi int64
+		if err := n.coVet(func(tx pgx.Tx) error {
+			if err := tx.QueryRow(n.ctx, `INSERT INTO shop.menu_combo(name,price_vnd) SELECT 'test-scenario ' || name || $2,price_vnd FROM shop.menu_combo WHERE id=$1 RETURNING id`, cu, " · "+t.Name()).Scan(&moi); err != nil {
+				return err
+			}
+			for _, x := range children {
+				var ci int64
+				if err := tx.QueryRow(n.ctx, `INSERT INTO shop.menu_combo_item(menu_combo_id,menu_item_id,quantity) VALUES($1,$2,$3) RETURNING id`, moi, x.mon, x.so).Scan(&ci); err != nil {
+					return err
+				}
+				if _, err := tx.Exec(n.ctx, `INSERT INTO shop.menu_combo_item_option_surcharge(menu_combo_item_id,menu_option_id,surcharge_vnd) SELECT $2,menu_option_id,surcharge_vnd FROM shop.menu_combo_item_option_surcharge WHERE menu_combo_item_id=$1`, x.id, ci); err != nil {
+					return err
+				}
+			}
+			return nil
+		}); err != nil {
+			t.Fatal(err)
+		}
+		comboMoi[cu] = moi
+		t.Cleanup(func() {
+			if err := n.coVet(func(tx pgx.Tx) error {
+				_, err := tx.Exec(n.ctx, `UPDATE shop.menu_combo SET hidden_at=now(),hidden_by_person_id=$2 WHERE id=$1 AND hidden_at IS NULL`, moi, n.chu)
+				return err
+			}); err != nil {
+				t.Error(err)
+			}
+		})
+		return moi
+	}
 	for _, c := range n.caCoMa(t) {
 		if c.tuChoi {
 			continue
 		}
-		cu := c.monID
-		moi, co := monMoi[cu]
-		if !co {
-			moi = n.id(t, "INSERT INTO shop.menu_item(name) SELECT name || $2 FROM shop.menu_item WHERE id=$1 RETURNING id", cu, " · "+t.Name())
-			n.donMonTest(t, moi, n.chu)
-			monMoi[cu] = moi
-			rows, err := n.owner.Query(n.ctx, "SELECT menu_component_id, quantity FROM shop.menu_item_component WHERE menu_item_id=$1 ORDER BY id", cu)
-			if err != nil {
-				t.Fatal(err)
+		if c.kind == "combo" {
+			c.monID = cloneCombo(c.monID)
+			portions := append([]gia.SuatYeuCau(nil), c.portions...)
+			for i := range portions {
+				portions[i].MenuItemID = cloneMon(portions[i].MenuItemID)
 			}
-			type tp struct {
-				id int64
-				so int
-			}
-			var ds []tp
-			for rows.Next() {
-				var x tp
-				if err := rows.Scan(&x.id, &x.so); err != nil {
-					t.Fatal(err)
-				}
-				ds = append(ds, x)
-			}
-			rows.Close()
-			if rows.Err() != nil {
-				t.Fatal(rows.Err())
-			}
-			for _, x := range ds {
-				id, co := thanhPhan[x.id]
-				if !co {
-					id = n.id(t, `INSERT INTO shop.menu_component(name,base_price_vnd,takes_filling)
-       SELECT name || $2,base_price_vnd,takes_filling FROM shop.menu_component WHERE id=$1 RETURNING id`, x.id, " · "+t.Name())
-					thanhPhan[x.id] = id
-					if err := n.coVet(func(tx pgx.Tx) error {
-						_, err := tx.Exec(n.ctx, `INSERT INTO shop.menu_component_station(menu_component_id,station_code)
-       SELECT $2,station_code FROM shop.menu_component_station WHERE menu_component_id=$1`, x.id, id)
-						return err
-					}); err != nil {
-						t.Fatal(err)
-					}
-				}
-				n.id(t, "INSERT INTO shop.menu_item_component(menu_item_id,menu_component_id,quantity) VALUES($1,$2,$3) RETURNING id", moi, id, x.so)
-			}
-			if err := n.coVet(func(tx pgx.Tx) error {
-				_, err := tx.Exec(n.ctx, `INSERT INTO shop.menu_item_option_group(menu_item_id,option_group_id)
-      SELECT $2,option_group_id FROM shop.menu_item_option_group WHERE menu_item_id=$1`, cu, moi)
-				return err
-			}); err != nil {
-				t.Fatal(err)
-			}
+			c.portions = portions
+		} else {
+			c.monID = cloneMon(c.monID)
 		}
-		c.monID = moi
 		s.cas[c.so] = c
 	}
 	gio := s.ca(t, 8)
 	gio.chonIDs = append([]int64(nil), s.ca(t, 2).chonIDs...)
-	gio.kyVong -= 4 * (giaScenario(s.ca(t, 3), 1) - giaScenario(s.ca(t, 2), 1))
-	s.cas[14] = gio // suất giò nhân thường; §4.8 chỉ có ca giò nhiều nhân.
+	nFill := n.docSo(t, `SELECT sum(x.quantity*ic.quantity) FROM shop.menu_combo_item x JOIN shop.menu_item_component ic ON ic.menu_item_id=x.menu_item_id JOIN shop.menu_component c ON c.id=ic.menu_component_id WHERE x.menu_combo_id=$1 AND c.takes_filling`, gio.monID)
+	gio.kyVong -= nFill * (giaScenario(s.ca(t, 3), 1) - giaScenario(s.ca(t, 2), 1))
+	gio.portions = append([]gia.SuatYeuCau(nil), gio.portions...)
+	for i := range gio.portions {
+		ids := []int64{}
+		if n.docSo(t, "SELECT count(*) FROM shop.menu_item_option_group WHERE menu_item_id=$1", gio.portions[i].MenuItemID) > 0 {
+			ids = append(ids, gio.chonIDs...)
+		}
+		gio.portions[i].OptionIDs = ids
+	}
+	s.cas[caGioThuong] = gio
+	composite := func(c caGia) caGia {
+		moi := n.id(t, `INSERT INTO shop.menu_item(name) SELECT 'test-s3 composite ' || name FROM shop.menu_combo WHERE id=$1 RETURNING id`, c.monID)
+		n.donMonTest(t, moi, n.chu)
+		if err := n.coVet(func(tx pgx.Tx) error {
+			if _, err := tx.Exec(n.ctx, `INSERT INTO shop.menu_item_component(menu_item_id,menu_component_id,quantity) SELECT $2::bigint,ic.menu_component_id,sum(x.quantity*ic.quantity) FROM shop.menu_combo_item x JOIN shop.menu_item_component ic ON ic.menu_item_id=x.menu_item_id WHERE x.menu_combo_id=$1 GROUP BY ic.menu_component_id`, c.monID, moi); err != nil {
+				return err
+			}
+			_, err := tx.Exec(n.ctx, `INSERT INTO shop.menu_item_option_group(menu_item_id,option_group_id) SELECT DISTINCT $2::bigint,g.option_group_id FROM shop.menu_combo_item x JOIN shop.menu_item_option_group g ON g.menu_item_id=x.menu_item_id WHERE x.menu_combo_id=$1`, c.monID, moi)
+			return err
+		}); err != nil {
+			t.Fatal(err)
+		}
+		c.kind = "item"
+		c.monID = moi
+		c.portions = nil
+		return c
+	}
+	s.cas[caGioComposite] = composite(gio)
 	s.banh = n.docSo(t, "SELECT menu_component_id FROM shop.menu_item_component WHERE menu_item_id=$1", s.ca(t, 1).monID)
 	return s
 }
@@ -135,6 +233,13 @@ func (s *dienScenario) ca(t *testing.T, so int) caGia {
 	return c
 }
 func dongScenario(c caGia, so int) map[string]any {
+	if c.kind == "combo" {
+		portions := append([]gia.SuatYeuCau(nil), c.portions...)
+		for i := range portions {
+			portions[i].Quantity = portions[i].Quantity / int32(c.soSuat) * int32(so)
+		}
+		return map[string]any{"menu_combo_id": c.monID, "quantity": so, "portions": portions, "is_takeaway": false}
+	}
 	ids := c.chonIDs
 	if ids == nil {
 		ids = []int64{}
@@ -253,7 +358,7 @@ func (s *dienScenario) scenario1(t *testing.T) ketScenario {
 	ban := s.banMoi(t, "S1 bàn 5")
 	ma := s.capMaQR(t, ban)
 	s.trangThai(t, sc, 0, ban, "empty")
-	a, b, c := s.ca(t, 10), s.ca(t, 14), s.ca(t, 1)
+	a, b, c := s.ca(t, 10), s.ca(t, caGioThuong), s.ca(t, 1)
 	// Ca giò thường suy từ ca giò nhiều và chênh phụ thu đọc từ owner.
 	if !strings.Contains(strings.ToLower(b.mon), "giò") {
 		t.Fatalf("ca suất giò không còn là suất giò: %s", b.mon)
@@ -432,7 +537,7 @@ func (s *dienScenario) scenario3(t *testing.T, combo luotScenario) ketScenario {
 	t.Helper()
 	const sc = "S3"
 	ban := s.banMoi(t, "S3 bàn 3")
-	c := s.ca(t, 14)
+	c := s.ca(t, caGioComposite)
 	cu := giaScenario(c, 1)
 	s.gio(t, time.Date(2031, 7, s.moc.Day(), 8, 0, 0, 0, s.loc))
 	body := func() map[string]any {
@@ -448,7 +553,8 @@ func (s *dienScenario) scenario3(t *testing.T, combo luotScenario) ketScenario {
 	r := s.goiBuoc(t, sc, 2, "PUT", fmt.Sprintf("/menu-components/%d/base-price", s.banh), s.chu, map[string]any{"base_price_vnd": base + delta, "reason": "P3-13 nâng giá chay giữa buổi"}, http.StatusOK)
 	canSoScenario(t, r.so(t, "base_price_vnd"), base+delta, "giá chay mới")
 	s.goiBuoc(t, sc, 3, "GET", "/menu", 0, nil, http.StatusOK)
-	moi := cu + 4*delta
+	nFill := s.docSo(t, `SELECT sum(ic.quantity) FROM shop.menu_item_component ic JOIN shop.menu_component c ON c.id=ic.menu_component_id WHERE ic.menu_item_id=$1 AND c.takes_filling`, c.monID)
+	moi := cu + nFill*delta
 	// /menu là một đường đọc dùng chung cho cả năm kênh, không nhận channel.
 	menu := s.goiBuoc(t, sc, 4, "GET", "/menu", 0, nil, http.StatusOK)
 	s.canGiaMenu(t, menu, c.monID, c.chonIDs, moi)
@@ -485,11 +591,26 @@ func (s *dienScenario) scenario3(t *testing.T, combo luotScenario) ketScenario {
 		r = s.postBuoc(t, sc, 8, x.path, x.nguoi, voiDong(x.lienHe, dauLanGui(t), dongScenario(c, 1)), http.StatusConflict)
 		canMa(t, r, http.StatusConflict, "menu_item_discontinued", "")
 	}
-	reason := "P3-13 sửa combo giữa buổi có vết"
-	r = s.goiBuoc(t, sc, 9, "PUT", fmt.Sprintf("/menu-items/%d/components/%d", s.ca(t, 10).monID, s.banh), s.chu, map[string]any{"quantity": 2, "reason": reason}, http.StatusOK)
-	canSoScenario(t, r.so(t, "quantity"), 2, "đổi thành phần vẫn cho lưu")
+	// S3 giữ phép canh sửa recipe trên chính món lẻ giả đã có hai đơn ở bước 1 và 5.
+	// Combo S1 vẫn được replay bên dưới để kiểm ảnh chụp combo sau đổi giá component chung.
+	cuRecipe := s.docSo(t, "SELECT quantity FROM shop.menu_item_component WHERE menu_item_id=$1 AND menu_component_id=$2", c.monID, s.banh)
+	if cuRecipe < 2 {
+		t.Fatalf("fixture S3 phải có nhiều hơn một bánh để kiểm thay recipe: %d", cuRecipe)
+	}
+	moiRecipe := cuRecipe - 1
+	anhCu := s.anhDong(t, d1)
+	viecCu := s.docSo(t, `SELECT count(*) FROM shop.station_job j JOIN shop.order_line_component ic ON ic.id=j.order_line_component_id WHERE j.sales_order_id=$1 AND ic.menu_component_id=$2 AND j.station_code='trang_banh'`, d1, s.banh)
+	reason := "P3-13 sửa fixture S3 giữa buổi có vết"
+	r = s.goiBuoc(t, sc, 9, "PUT", fmt.Sprintf("/menu-items/%d/components/%d", c.monID, s.banh), s.chu, map[string]any{"quantity": moiRecipe, "reason": reason}, http.StatusOK)
+	canSoScenario(t, r.so(t, "quantity"), moiRecipe, "đổi thành phần vẫn cho lưu")
 	canSoScenario(t, s.docSo(t, `SELECT count(*) FROM shop.record_revision WHERE target_table_code='menu_item_component'
-  AND before_image->>'quantity'='3' AND after_image->>'quantity'='2' AND reason=$1 AND person_id=$2`, reason, s.chu), 1, "vết sửa thành phần có người và lý do")
+      AND (before_image->>'quantity')::bigint=$1 AND (after_image->>'quantity')::bigint=$2 AND reason=$3 AND person_id=$4`, cuRecipe, moiRecipe, reason, s.chu), 1, "vết sửa thành phần có người và lý do")
+	if sau := s.anhDong(t, d1); sau != anhCu {
+		t.Fatalf("sửa recipe kéo ngược ảnh chụp S3: trước %s; sau %s", anhCu, sau)
+	}
+	canSoScenario(t, s.docSo(t, `SELECT ic.quantity FROM shop.order_line_component ic JOIN shop.order_line l ON l.id=ic.order_line_id WHERE l.sales_order_id=$1 AND ic.menu_component_id=$2`, d1, s.banh), cuRecipe, "snapshot S3 giữ số bánh trước sửa")
+	canSoScenario(t, s.docSo(t, `SELECT count(*) FROM shop.station_job j JOIN shop.order_line_component ic ON ic.id=j.order_line_component_id WHERE j.sales_order_id=$1 AND ic.menu_component_id=$2 AND j.station_code='trang_banh'`, d1, s.banh), viecCu, "việc S3 giữ số bánh trước sửa")
+
 	// Hợp đồng ItemComponent không có trường nhắc; không tự bịa một trường để ký đạt phần UI.
 	t.Logf("S3 bước 9: hợp đồng ItemComponent chưa có lời nhắc trước khi lưu; cần Claude chấm riêng yêu cầu ấy")
 	s.docLai(t, sc, 10, combo)

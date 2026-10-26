@@ -102,7 +102,7 @@ DO $$
 DECLARE category bigint; combo bigint; item bigint;
 BEGIN
   PERFORM pg_temp.sc_buoc('Chủ quán', 'S5.7 — danh mục và combo giá riêng ngoài giờ bán');
-  SELECT id INTO STRICT item FROM menu_item WHERE name = 'Suất trứng tái';
+  SELECT id INTO STRICT item FROM menu_item WHERE name = 'Bánh trứng tái';
   INSERT INTO menu_category (name, created_at)
   VALUES ('S5 món sau buổi (dữ liệu diễn)', pg_temp.sc_luc('12:00')) RETURNING id INTO category;
   INSERT INTO menu_item_category (menu_item_id, menu_category_id, created_at)
@@ -111,7 +111,7 @@ BEGIN
   VALUES ('S5 combo hai suất (dữ liệu diễn)', 27000, pg_temp.sc_luc('12:00')) RETURNING id INTO combo;
   INSERT INTO menu_combo_item (menu_combo_id, menu_item_id, quantity, created_at)
   VALUES (combo, item, 2, pg_temp.sc_luc('12:00'));
-  RAISE NOTICE 'S5.7 12:00 Chủ quán thêm danh mục, xếp Suất trứng tái, combo hai suất giá riêng 27000 đ';
+  RAISE NOTICE 'S5.7 12:00 Chủ quán thêm danh mục, xếp Bánh trứng tái, combo hai suất giá riêng 27000 đ';
 END $$;
 
 -- S5.8 — master_plan/shop-facts.md §8.8 dòng 2075–2076, 2019–2021.
