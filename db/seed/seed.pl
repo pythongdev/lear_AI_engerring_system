@@ -133,6 +133,8 @@ for my $r (table('Nhóm tuỳ chọn', section('### 4.4 '))) {
   my $x = { name => $g, opt => [ map { [ $o[$_], $s[$_] ] } 0 .. $#o ] };
   # "(chỉ hiện khi nhân ≠ Chay)" ⇒ tập điều kiện = mọi lựa chọn của nhóm ấy trừ Chay (§4.6 luật 3).
   @{$x}{qw(req_group req_not)} = ($1, $2) if $r->{'Nhóm tuỳ chọn'} =~ /khi (\S+) ≠ ([^)]+)\)/;
+  # "(chỉ cho <dòng menu>, …)" ⇒ nhóm gắn cho đúng dòng ấy thay vì mọi món nhận nhân (T-255, nhóm Rau).
+  $x->{only} = lc $1 if $r->{'Nhóm tuỳ chọn'} =~ /\(chỉ cho ([^,)]+)/;
   push @grp, $x;
   $grp{ lc $g } = $x;
 }
@@ -156,7 +158,10 @@ for my $x (grep { $_->{req_group} } @grp) {
   for my $g (@grp) {
     my ($kw) = split ' ', lc $g->{name};
     my ($best) = sort { length $b->[0] <=> length $a->[0] }
-                 grep { my $o = lc $_->[0]; $rule =~ /(?<!\p{L})\Q$kw $o\E(?!\p{L})/ } @{ $g->{opt} };
+                 grep { my $o = lc $_->[0];
+                        # Tên lựa chọn đã mang chữ đầu của nhóm ("ít rau") thì câu luật nói thẳng tên ấy.
+                        my $say = $o =~ /(?<!\p{L})\Q$kw\E(?!\p{L})/ ? $o : "$kw $o";
+                        $rule =~ /(?<!\p{L})\Q$say\E(?!\p{L})/ } @{ $g->{opt} };
     if (!$best) {
       die_owner("§4.6 luật 8 nói '$kw …' mà không lựa chọn nào của '$g->{name}' (§4.4) khớp: '$rule'")
         if $rule =~ /(?<!\p{L})\Q$kw\E\s+\p{L}/;
@@ -170,8 +175,8 @@ for my $x (grep { $_->{req_group} } @grp) {
 
 # Ba cột giá §4.2 phải là giá chay + phụ thu §4.4 (§4.6 luật 2 · 5); lệch ⇒ hai owner cãi nhau.
 {
-  my ($fill) = grep { !$_->{req_group} } @grp;
-  my ($lvl)  = grep { $_->{req_group} } @grp;
+  my ($fill) = grep { !$_->{req_group} && !$_->{only} } @grp;
+  my ($lvl)  = grep { $_->{req_group} && !$_->{only} } @grp;
   die_owner('§4.4: cần một nhóm nhân và một nhóm phụ thuộc nó') unless $fill && $lvl;
   for my $f (@fam) {
     for my $col (grep { $_ ne 'Chay' } keys %{ $f->{price} }) {
@@ -238,6 +243,11 @@ my @items;
   }
   my @gone = grep { !$seen{$_} } sort keys %MENU;
   die_owner("%MENU có dòng mà §4.9 không còn: @gone") if @gone;
+}
+
+for my $g (grep { $_->{only} } @grp) {
+  die_owner("§4.4: nhóm '$g->{name}' chỉ cho '$g->{only}' mà §4.9 không có món lẻ ấy")
+    unless grep { $_->{kind} eq 'item' && lc $_->{name} eq $g->{only} } @items;
 }
 
 # Giá combo đọc từ cột Chay §4.3; số thành phần đã đọc từ §4.5.
@@ -407,8 +417,7 @@ for my $it (grep { $_->{kind} eq 'item' } @items) {
       . " SELECT i.id, c.id, %d FROM menu_item i, menu_component c WHERE i.name = %s AND c.name = %s;\n",
       $_->[1], sqlq($it->{name}), sqlq($_->[0]);
   }
-  next unless $it->{takes};
-  for my $g (@grp) {
+  for my $g (grep { $_->{only} ? $_->{only} eq lc $it->{name} : $it->{takes} } @grp) {
     printf "INSERT INTO menu_item_option_group (menu_item_id, option_group_id)"
       . " SELECT i.id, g.id FROM menu_item i, option_group g WHERE i.name = %s AND g.name = %s;\n",
       sqlq($it->{name}), sqlq($g->{name});

@@ -250,8 +250,17 @@ còn ô ⚠ nào.**
 |---|---|---|---|
 | **Nhân** (bắt buộc chọn 1) | Chay / Thịt / Thịt + mộc nhĩ | 0 / +1.000 / +1.000 | 0 / +4.000 / +4.000 |
 | **Lượng nhân** (chỉ hiện khi nhân ≠ Chay) | Thường / Nhiều nhân | 0 / +1.000 | 0 / +4.000 |
+| **Rau** (chỉ cho canh bánh cuốn, bắt buộc chọn 1) | Không rau / Ít rau / Nhiều rau | 0 / 0 / 0 | — |
 
 Loại nhân (thịt hay thịt + mộc nhĩ) **không đổi giá**.
+
+**Nhóm Rau — chủ repo chốt 2026-10-26 trong hội thoại** (T-255), nguyên văn: *"canh bánh cuốn gồm có
+lựa chọn sau không rau, ít rau và nhiều rau"*; cùng lượt, chủ repo chọn: **cả ba lựa chọn 0đ**, **mặc
+định *ít rau*** (§4.6 luật 8), và nhóm **chỉ áp cho canh bánh cuốn** — không món lẻ nào khác, không
+suất con nào của combo mang nhóm này. Canh không có phần nhận nhân, nên luật *phụ thu ×số phần nhận
+nhân* dưới đây không đụng tới nhóm Rau; cột *Combo* để trống vì canh không nằm trong combo nào (§4.5).
+**Suy luận của người viết, chưa phải lời chốt:** lựa chọn rau là lời dặn cho trạm `canh` (§5.3) giống
+lựa chọn nhân là lời dặn cho trạm bánh — chủ repo chưa nói phiếu trạm phải in nó ra.
 
 Hai cột "Món lẻ" và "Combo" ở trên chỉ là hai trường hợp hay gặp của **cùng một luật**: phụ thu là
 **+1.000 cho MỖI phần nhận nhân**.
@@ -336,7 +345,8 @@ khác bảng giá §4.2 và bảng phụ thu §4.4 ở đúng chỗ đó: hai b�
 6. **Giò không nhận nhân, nhưng 4 cái bánh trong suất giò thì có** (chủ quán chốt 2026-08-29).
 7. Một dòng đơn chọn **một** loại nhân + **một** lượng nhân, áp cho **mọi phần nhận nhân** của
    suất đó. Không chọn nhân riêng cho từng cái bánh.
-8. **Mặc định là nhân Thịt, lượng Thường** khi khách không chọn gì.
+8. **Mặc định là nhân Thịt, lượng Thường** khi khách không chọn gì; canh bánh cuốn mặc định **ít rau**
+   (chủ repo 2026-10-26, T-255).
 9. Khách **không bao giờ** gửi giá lên; giá luôn do hệ thống tự xác định lại từ bảng giá. Nhận giá
    do khách gửi nghĩa là có ngày khách đặt được món 0đ.
 
@@ -362,25 +372,30 @@ bất kỳ tài liệu nào, **đó là bug**, không phải quy tắc.
 Đây là danh sách **tổ hợp đầu vào** mà việc tính giá phải làm đúng, kèm giá kỳ vọng tính từ §4.2 và
 §4.4.
 
-| # | Món | Nhân | Lượng nhân | Giá kỳ vọng | Ghi chú |
-|---|---|---|---|---|---|
-| 1 | Bánh cuốn | Chay | — | **3.000** | |
-| 2 | Bánh cuốn | Thịt | Thường | **4.000** | |
-| 3 | Bánh cuốn | Thịt | Nhiều | **5.000** | |
-| 4 | Bánh cuốn | Thịt + mộc nhĩ | Nhiều | **5.000** | phải **bằng ca 3** — loại nhân không đổi giá |
-| 5 | Suất trứng chín | Chay | — | **20.000** | 8.000 + 4 × 3.000 |
-| 6 | Suất trứng tái | Thịt + mộc nhĩ | Thường | **25.000** | 9.000 + 4 × 4.000; phụ thu ×5 |
-| 7 | Suất trứng vàng | Thịt | Nhiều | **30.000** | 10.000 + 4 × 5.000; phụ thu ×5 |
-| 8 | Suất giò | Thịt | Nhiều | **29.000** | 9.000 + 4 × 5.000; giò không nhận nhân, bánh thì có |
-| 9 | Combo Đầy đủ chín | Thịt | Thường | **30.000** | combo: phụ thu ×4 |
-| 10 | Combo Đầy đủ tái | Thịt + mộc nhĩ | Nhiều | **34.000** | |
-| 11 | Bánh cuốn | Chay | Nhiều | **PHẢI BỊ TỪ CHỐI** | không phải một giá, mà là luật ở §4.6.3 |
-| 12 | **Giò bán rời ×3** | — | — | **27.000** | 3 × 9.000; giò không nhận nhân nên **nhóm nhân không được hiện** (giá có lời 2026-10-23, đóng **S-9**) |
-| 13 | **Canh bánh cuốn ×2** | — | — | **0** | dòng 0đ **vẫn phải nằm trên đơn**: nó là việc của trạm `canh` (§4.5) và là thứ khách chọn số lượng. Một đơn *chỉ* có canh vẫn là đơn hợp lệ, tổng **0đ** |
-| 14 | **Bánh trứng vàng** (bán rời) | Thịt | Nhiều | **10.000** | 1 quả trứng, đúng giá thành phần §4.2; quả trứng nhận nhân nên **nhóm nhân phải hiện** — phụ thu ×1 |
-| 15 | **Combo Đầy đủ chín** | Bánh cuốn=Thịt / Bánh trứng chín=Chay | Bánh cuốn=Thường / Bánh trứng chín=— | **29.000** | 26.000 + 3 × 1.000; **mỗi suất con chọn nhân riêng** (§8.9 lượt bảy vế 2) |
+| # | Món | Nhân | Lượng nhân | Rau | Giá kỳ vọng | Ghi chú |
+|---|---|---|---|---|---|---|
+| 1 | Bánh cuốn | Chay | — | — | **3.000** | |
+| 2 | Bánh cuốn | Thịt | Thường | — | **4.000** | |
+| 3 | Bánh cuốn | Thịt | Nhiều | — | **5.000** | |
+| 4 | Bánh cuốn | Thịt + mộc nhĩ | Nhiều | — | **5.000** | phải **bằng ca 3** — loại nhân không đổi giá |
+| 5 | Suất trứng chín | Chay | — | — | **20.000** | 8.000 + 4 × 3.000 |
+| 6 | Suất trứng tái | Thịt + mộc nhĩ | Thường | — | **25.000** | 9.000 + 4 × 4.000; phụ thu ×5 |
+| 7 | Suất trứng vàng | Thịt | Nhiều | — | **30.000** | 10.000 + 4 × 5.000; phụ thu ×5 |
+| 8 | Suất giò | Thịt | Nhiều | — | **29.000** | 9.000 + 4 × 5.000; giò không nhận nhân, bánh thì có |
+| 9 | Combo Đầy đủ chín | Thịt | Thường | — | **30.000** | combo: phụ thu ×4 |
+| 10 | Combo Đầy đủ tái | Thịt + mộc nhĩ | Nhiều | — | **34.000** | |
+| 11 | Bánh cuốn | Chay | Nhiều | — | **PHẢI BỊ TỪ CHỐI** | không phải một giá, mà là luật ở §4.6.3 |
+| 12 | **Giò bán rời ×3** | — | — | — | **27.000** | 3 × 9.000; giò không nhận nhân nên **nhóm nhân không được hiện** (giá có lời 2026-10-23, đóng **S-9**) |
+| 13 | **Canh bánh cuốn ×2** | — | — | Ít rau | **0** | dòng 0đ **vẫn phải nằm trên đơn**: nó là việc của trạm `canh` (§4.5) và là thứ khách chọn số lượng. Một đơn *chỉ* có canh vẫn là đơn hợp lệ, tổng **0đ** |
+| 14 | **Bánh trứng vàng** (bán rời) | Thịt | Nhiều | — | **10.000** | 1 quả trứng, đúng giá thành phần §4.2; quả trứng nhận nhân nên **nhóm nhân phải hiện** — phụ thu ×1 |
+| 15 | **Combo Đầy đủ chín** | Bánh cuốn=Thịt / Bánh trứng chín=Chay | Bánh cuốn=Thường / Bánh trứng chín=— | — | **29.000** | 26.000 + 3 × 1.000; **mỗi suất con chọn nhân riêng** (§8.9 lượt bảy vế 2) |
+| 16 | **Canh bánh cuốn** | — | — | Không rau | **0** | lựa chọn không phải mặc định vẫn **0đ** — cả ba lựa chọn rau không đổi giá (T-255) |
+| 17 | Bánh cuốn | Thịt | Thường | Ít rau | **PHẢI BỊ TỪ CHỐI** | nhóm Rau **chỉ** gắn cho canh (§4.4, T-255): gửi rau cho món khác là phiếu bếp mâu thuẫn, như ca 11 |
 
-**Mười lăm ca tính tới 2026-10-25** — đếm bảng, đừng tin câu này (`work/findings.md` **F-003**). Ca
+**Mười bảy ca tính tới 2026-10-26** — đếm bảng, đừng tin câu này (`work/findings.md` **F-003**). **Cột
+*Rau*, ca 16 và ca 17 vào bảng ngày 2026-10-26** cùng nhóm Rau (§4.4, T-255): ca 13 nay chọn *ít rau*
+vì nhóm Rau bắt buộc chọn một; ca 16 canh việc lựa chọn rau **không đổi giá**, ca 17 canh việc nhóm
+Rau **không lọt sang món khác**. Ca
 1–10 đều tính được và đã đối chiếu khớp bảng giá §4.3 từ 2026-08-30. Ca 11 là ca duy nhất có kết
 quả không phải một con số. **Ca 12 và ca 13 vào bảng ngày 2026-09-08** cùng hai dòng menu mới, và
 mỗi ca canh đúng một chỗ dễ hỏng của chúng: ca 12 canh việc **hiện nhóm tuỳ chọn cho một món không
@@ -1530,6 +1545,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-24 | Chủ repo trả lời `U-104` trong hội thoại (T-243): **món đã ngừng bán được bán lại**, và bán lại là **giữ món cũ** — cùng tên, cùng thành phần, cùng lịch sử | §8.9 (*bán lại món đã ngừng*) |
 | 2026-10-25 | Chủ repo duyệt thiết kế T-244 và giao T-250 (phần a) trong hội thoại: bảy suất *Đầy đủ · Suất giò · Suất trứng* chuyển khỏi `menu_item`, dựng lại thành **`menu_combo` thật** ghép từ *Bánh cuốn · Bánh trứng · Giò bán rời*, **mỗi suất con chọn nhân riêng**; §4.3 · §4.5 · §4.8 (ca 1–14) không đổi — giá combo và mức phụ thu theo món là **hệ quả** của §4.6 khi tổ hợp cùng nhân. Ca 15 trộn nhân vào §4.8 ở T-251 cùng mở rộng parser `seed.pl --price-cases-tsv`. Xem **ADR-129** | §4.9 · §8.9 (lượt bảy · lượt tám) |
 | 2026-10-25 | Claude thêm **ca 15 §4.8** cùng lượt lead T-251: *Combo Đầy đủ chín · Bánh cuốn=Thịt Thường · Bánh trứng chín=Chay ⇒ 29.000* (26.000 + 3 × 1.000). Parser `seed.pl --price-cases-tsv` ở worktree /private/tmp/t251 đã khớp 15/15 trên fixture rút gọn (log `/private/tmp/t251-price-run.log`); hình token: `Bánh cuốn=Nhân:Thịt\|Bánh trứng chín=Nhân:Chay\|Bánh cuốn=Lượng nhân:Thường`. Ca này canh chỗ dễ hỏng duy nhất của *combo thật*: trộn nhân giữa hai suất con cùng combo. **Hợp đồng với chủ quán** — ADR-129 là nền thiết kế, dòng này là ca kiểm | §4.8 |
+| 2026-10-26 | Chủ repo chốt trong hội thoại (T-255): **canh bánh cuốn có nhóm lựa chọn *Rau*** — *không rau · ít rau · nhiều rau*, cả ba **0đ**, mặc định **ít rau**, nhóm **chỉ** gắn cho canh. §4.8 thêm cột *Rau*, ca 13 chọn *ít rau*, thêm ca 16 (*không rau* ⇒ 0) và ca 17 (*bánh cuốn + ít rau* ⇒ từ chối) | §4.4 · §4.6 luật 8 · §4.8 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **hai mục, tính tới 2026-10-23**
 
