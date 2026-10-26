@@ -98,6 +98,11 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-259 **Gom lựa chọn nhân và lượng nhân thành nút mở bảng trượt** — L1, chủ repo giao Codex 2026-10-26 · [chi tiết](#t-259)
+
+
+
+
 - [ ] T-254 **Dừng phiên dev bằng make stop-dev** — L1, chủ repo giao Codex 2026-10-25 · [chi tiết](#t-254)
 
 - [ ] T-253 **Thông tin và form sửa đầy đủ sản phẩm trong HTML** — L1, chủ repo giao Codex 2026-10-25 · [chi tiết](#t-253)
@@ -126,6 +131,11 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="done"></a>
 ## Done
+
+- [x] T-260 **Bảng cột cho combo và món lẻ, nút Chi tiết combo trong Tóm tắt đơn hàng** — L1, chủ repo 2026-10-26 — xong 2026-10-26, gate đạt · [chi tiết](#t-260)
+
+
+- [x] T-258 **Chọn nhân ngay trên thẻ combo và món lẻ của khách** — L1, chủ repo giao Codex 2026-10-26; combo chọn chung, mặc định thịt + vừa; tóm tắt chỉ đọc; chọn và thêm món/combo ngay tại chi tiết, dùng chung giỏ theo bàn/web — xong 2026-10-26, gate đạt · [chi tiết](#t-258)
 
 - [x] T-257 **Thêm thành phần cho món đã có từ ngăn Cập nhật, và bảng Sản phẩm liệt kê thành phần** (gộp T-256) — cửa `POST /menu-items/{id}/components` qua thư mục cửa `menu/them_mon`, thành phần mới bắt chọn trạm; `GET /menu-categories` trả thành phần (ADR-130) — L2 — mở 2026-10-26 (chủ repo yêu cầu; Codex làm, Claude duyệt) — xong 2026-10-26: gate xanh ở clone chính, fe-check 507/507 · [chi tiết](#t-257)
 - [x] T-255 **Canh bánh cuốn có nhóm lựa chọn Rau: không rau · ít rau · nhiều rau** — chủ repo chốt 2026-10-26: cả ba 0đ, mặc định *ít rau*, chỉ áp cho canh; ghi vào `shop-facts.md` §4.4 · §4.6 luật 8 · §4.8, seed gắn nhóm chỉ cho canh, ca giá phủ cả chiều *bánh cuốn không nhận rau* — L2 (dữ liệu menu, ca giá) — mở 2026-10-26, Claude làm — xong 2026-10-26: gate xanh, §4.8 17/17 ca khớp ở database, cửa đơn và cửa giá · [chi tiết](#t-255)
@@ -3234,3 +3244,82 @@ Acceptance viết trước:
 5. `./scripts/gate.sh` xanh ở clone chính sau khi Claude đưa patch về.
 
 **Bàn giao 2026-10-26:** thực hiện Codex (`codex exec`, worktree `../lean_wt/T-257`), duyệt và tích hợp Claude. Claude sửa thêm ba chỗ Codex dừng đúng luật: nới test cột của T-234 thêm *Thành phần* (test bố cục, không phải invariant), thêm `components: []` vào fixture `combo.test.tsx` · `danh-muc.test.tsx`, và lọc khỏi form các thành phần món đã có. Bằng chứng: worktree `be-check` PASS gồm `TestQC14_ThemThanhPhanHinh`, `TestI018_ThemThanhPhanVetTramVaTuChoi`, `TestI013_ThemThanhPhanGiaMenuVaDanhMuc`; clone chính `./scripts/gate.sh` PASS (hợp đồng 0.52.0, 122 ô ghi, 100 cửa), `./scripts/fe-check.sh` PASS 507/507. Lệch thiết kế: test hồi quy viết bởi Codex chứ không phải Claude viết trước như luật L2 — Claude đọc lại và thấy đủ Acceptance. Còn mở: `POST /menu-items` vẫn tạo thành phần không trạm (ADR-130 *Consequences*). Phụ thuộc: diff nằm trên các thay đổi menu chưa commit của T-238 · T-243, nên commit sau chúng.
+
+<a id="t-258"></a>
+### T-258 — Khách phải chọn nhân trong tóm tắt đơn thay vì ngay trên thẻ món
+
+**Goal:** Chọn nhân và lượng nhân ngay trên thẻ COMBO/MÓN LẺ; chọn chung mọi suất của combo, theo lời chủ repo 2026-10-26. Mặc định thịt + vừa (nhãn hiển thị của mức Thường hiện có); tóm tắt chỉ hiện lựa chọn đã thêm.
+
+**Phạm vi và mức:** L1, chỉ FE; dùng nhóm, mặc định và mã lựa chọn từ menu; không đổi giá, API, seed hay quy tắc nhân. Mỗi lần thêm chụp lựa chọn hiện tại, không đổi dòng đã thêm. Món không nhận nhân giữ đúng nhóm riêng.
+
+**Acceptance viết trước sửa:** Thẻ hiện lựa chọn khi giỏ trống; thịt + vừa được chọn mặc định; chọn chay ẩn lượng nhân và bỏ mã lượng nhân; chọn nhiều nhân giữ mã đúng. Combo áp chung lựa chọn cho mọi suất phù hợp. Thêm cùng món/combo với lựa chọn khác giữ từng dòng riêng. Tóm tắt không có radio, vẫn hiện lựa chọn và giữ số lượng/xoá. Nháp cũ giữ lựa chọn khi quay lại. Verify bằng test thẻ khách, QR và đặt món, rồi gate toàn cây.
+
+**Cách thực hiện:** Đọc brief và owner → khai scope → ghi acceptance → chọn nhóm từ menu → thêm bộ chọn trên thẻ → chụp mã khi thêm → tóm tắt chỉ đọc → test hồi quy → gate và đọc diff → cập nhật bàn giao, không commit.
+
+**Bàn giao:** Codex thực hiện trên nhánh P4A-01, base 818b262, chưa duyệt độc lập. File trong work/scope/T-258.txt; work/backlog.md và owner FE có diff việc khác từ trước, phải stage riêng phần task này. Index trống khi kiểm.
+
+**Bằng chứng 2026-10-26:** `npm test -- src/app/ban/thuc-don-khach.test.tsx src/app/ban/khach-qr.test.tsx src/app/dat-mon/dat-mon.test.tsx` → 3 files, 24 tests passed. Hai test mới phủ lựa chọn trên thẻ, mặc định, thịt + mộc nhĩ, nhiều nhân, chay ẩn và bỏ lượng nhân, thân tính giá đúng, combo áp chung, giữ từng tổ hợp khi thêm; tăng số combo giữ cùng nhân. Test QR nháp kiểm quay lại còn Chay, tóm tắt không radio. `./scripts/fe-check.sh` ngoài sandbox → apigen, lint, typecheck, 35 files / 494 tests, production build đều đạt, `fe-check: PASS` (log `/private/tmp/ban3-filling-fe-escalated.log`). Lượt trong sandbox đã dừng vì build không tiến triển.
+
+Trình duyệt thật `/ban/3`, 390px, sáng/tối: PASS mặc định Thịt + Vừa, combo chọn chung Thịt + mộc nhĩ + Nhiều nhân, món lẻ Chay ẩn lượng nhân, summaryRadios=0, horizontalOverflow=false, pageErrors=[]; ảnh `/private/tmp/ban3-filling-light.png` và `/private/tmp/ban3-filling-dark.png` đã xem. Không gửi đơn thật. Đọc diff theo Gate 4, không đổi hợp đồng/giá/mặc định dữ liệu; test cũ đổi thao tác chọn trước thêm và kiểm mô tả thay radio đúng yêu cầu. Diff riêng task không lỗi whitespace; scope --match --task T-258 không in vi phạm.
+
+Gate trực tiếp trong sandbox exit 2 vì không truy cập Docker, Gate 3 và 1b–1h PASS (log `/private/tmp/ban3-filling-gate.log`). Lượt ngoài sandbox `/private/tmp/ban3-filling-gate-escalated.log` đang ở đối chiếu DB, truy vấn QD-10 active, không chờ khoá. Giữ In Progress tới khi có kết quả cuối. Chưa commit, chưa duyệt độc lập.
+
+**Bổ sung chủ repo 2026-10-26 (trước sửa):** Chuyển nhóm Nhân/Lượng nhân sang cột phải dưới giá và bớt/thêm. Ảnh của combo/món lẻ mở trang chi tiết riêng. Trang chạy thật chưa có route chi tiết khách: thêm `/thuc-don/[loai]/[id]` đọc GET /menu no-store, `loai` là combo hoặc mon; quay về đúng mã bàn qua tham số `ban`, thiếu thì về /dat-mon. Chỉ hiện tên, giá/tổ hợp, thành phần combo và nhóm lựa chọn do menu trả; không tự thêm ảnh, mô tả, công thức hay luật bán.
+
+Acceptance bổ sung: bộ chọn nằm cột phải ở 320/390/472px, không tràn ngang; ảnh là liên kết có tên truy cập đúng combo/món, giữ ngữ cảnh bàn; chi tiết hiển thị đúng dữ liệu menu, xử lý không tồn tại/lỗi đọc, quay lại không mất giỏ. Scope bổ sung CSS, phieu-khach.tsx (truyền mã bàn), route chi tiết và test tại fe/src/app/thuc-don/. Kiểm test luồng khách và chi tiết, trình duyệt thật sáng/tối, fe-check rồi gate. Đang thực hiện.
+
+**Bằng chứng bổ sung bố cục/chi tiết 2026-10-26:** `./scripts/fe-check.sh` ngoài sandbox → `fe-check: PASS`, apigen/lint/typecheck/36 files và 503 tests/production build đều qua (`/private/tmp/ban3-detail-fe.log`). Test chi tiết kiểm combo đúng giá và số lượng món, món lẻ đúng tổ hợp, đọc no-store, đường về bàn hoặc đặt món, loại/id sai và món vắng trả 404, lỗi backend/mất mạng hiện cảnh báo; test thẻ kiểm href combo/món mang đúng mã bàn. Trình duyệt `/private/tmp/ban3-detail-ui.cjs` → PASS ở 320/390/472px: bộ chọn trong cột phải cùng mép với stepper, không tràn ngang, ảnh mở đúng chi tiết combo/món, quay về `/ban/3` giữ giỏ và nhân, không pageerror. Đã xem ảnh menu sáng/tối và trang chi tiết ở `/private/tmp/ban3-detail-menu-light.png`, `/private/tmp/ban3-detail-menu-dark.png`, `/private/tmp/ban3-detail-combo.png`, `/private/tmp/ban3-detail-mon.png`. Diff task không lỗi whitespace, đã đọc lại diff; không gửi đơn thật.
+
+Gate lượt trước `/private/tmp/ban3-filling-gate-escalated.log` đã kết thúc `PASS gate` (có db-check và 18 script test). Lượt mới sau bổ sung `/private/tmp/ban3-detail-gate.log` đang chạy, chưa kết luận. Giữ In Progress để chờ kết quả lượt mới; bước tiếp theo là đọc log và cập nhật trạng thái khi toàn bộ đạt. Index hiện có các file của lượt trước: owner FE, thuc-don-khach.tsx, khach-qr.test.tsx, thuc-don-khach.test.tsx và backlog; chưa thay index. Hai file owner/backlog có nội dung việc khác: dùng add -p chỉ lấy phần T-258 khi bàn giao. Chưa commit, chưa duyệt độc lập.
+
+**Bổ sung bố cục 2026-10-26 (trước sửa):** Chủ repo yêu cầu ba lựa chọn Chay/Thịt/Thịt + mộc nhĩ cùng một dòng; Vừa/Nhiều cùng một dòng. Giữ khối ở bên phải ảnh, cho khối lựa chọn dùng chung chiều rộng hai cột chữ + giá, thu gọn chip để không xuống hàng ở 320px. Acceptance: mỗi nhóm nhân/lượng có các nút cùng toạ độ hàng ở 320/390/472px, không tràn ngang, nhãn Nhiều được rút gọn từ Nhiều nhân chỉ ở giao diện. Phần yêu cầu “chọn chay lượng bánh cần thay đổi” và “click Nhiều giá sẽ giảm” đang chờ chủ repo làm rõ số bánh/giá mong muốn; chưa đổi số bánh hay quy tắc giá vì có thể là L2, phải chuyển Claude theo §7.4 nếu đổi nghiệp vụ. Chỉ làm phần bố cục độc lập trong lúc chờ.
+
+**Chủ repo làm rõ 2026-10-26:** “nhiều nhân giá tăng , bánh chay bánh. hãy giữ nguyên fe cái này cần thay đổi phía back end”. Phần giá ở FE giữ nguyên; không đổi số bánh, không đổi giá menu/seed/hàm tính giá. Ý tăng giá khi nhiều nhân đã rõ; câu về bánh chay chưa cho số bánh hoặc quy tắc quy đổi, không suy diễn. Bàn giao Claude phần backend ảnh hưởng giá/số lượng theo CLAUDE.md §7.4 (L2); Claude cần làm rõ số bánh chay mong muốn trước khi sửa dữ liệu/hợp đồng/hàm giá. Chưa triển khai backend.
+
+**Bằng chứng bố cục một dòng 2026-10-26:** `./scripts/fe-check.sh` ngoài sandbox → `fe-check: PASS`, apigen, lint, typecheck, 36 files/503 tests và build production đều đạt (`/private/tmp/ban3-inline-fe.log`). Trình duyệt thật → PASS ở 320/390/472px: mọi nhãn của từng nhóm cùng toạ độ y, không tràn ngang, vẫn nằm bên phải ảnh, liên kết chi tiết và quay lại giữ giỏ đều qua, không pageerror. Đã xem ảnh `/private/tmp/ban3-inline-menu-light.png`; có ảnh tối `/private/tmp/ban3-inline-menu-dark.png`. Chỉ rút gọn nhãn Nhiều nhân thành Nhiều, các mã lựa chọn/giá/số bánh giữ nguyên. Gate mới `/private/tmp/ban3-inline-gate.log` đang chạy; giữ In Progress, chưa khẳng định gate đạt. Bước tiếp theo: đọc log cuối; Claude nhận phần giá backend. Chưa commit.
+
+
+**Bổ sung chọn tại chi tiết — chủ repo 2026-10-26 (trước sửa):** Trang chi tiết cũng chọn món được. Tiếp tục T-258 ở mức L1, dùng giỏ nháp hiện có theo `qr:<ban>` hoặc `web`. Acceptance: chọn nhân/lượng nhân theo mặc định và điều kiện của menu; nhập số lượng nguyên dương, thêm đúng món/combo cùng lựa chọn vào giỏ; mỗi lần thêm giữ lựa chọn riêng và các dòng cũ; bàn khác và giỏ web không lẫn nhau; quay về menu vẫn giữ giỏ; không gửi đơn thật tại trang chi tiết. Combo chọn chung các suất phù hợp như thẻ menu; giá món lẻ lấy đúng tổ hợp, combo được tính lại tại giỏ qua API hiện có. Kiểm test chi tiết và luồng khách, fe-check, gate.
+
+**Bằng chứng chọn tại chi tiết 2026-10-26:** Codex tiếp tục trên nhánh P4A-01, base 0120d0c; chưa duyệt độc lập. `npm --prefix fe test -- src/app/thuc-don/chi-tiet.test.tsx src/app/ban/thuc-don-khach.test.tsx src/app/ban/khach-qr.test.tsx src/app/dat-mon/dat-mon.test.tsx` → 4 files/40 tests passed. Test mới kiểm mặc định, chọn nhiều/chay, giá đúng tổ hợp, giữ dòng cũ và từng lựa chọn riêng, cách ly bàn/web, combo đúng số suất, số lượng không hợp lệ bị chặn, tổ hợp thiếu giá bị chặn và món không có nhóm vẫn thêm được. `./scripts/fe-check.sh` → `fe-check: PASS`: apigen/lint/typecheck, 36 files/514 tests và production build đạt (`/private/tmp/detail-select-fe.log`). Trình duyệt thật `/private/tmp/detail-select-ui.cjs` → PASS tại 320/390/472px: thêm Chay ×2 từ chi tiết, quay về /ban/3 giữ số lượng và nhân, không tràn ngang, pageErrors=[]; combo Thịt + Nhiều cũng thêm và quay về giữ đúng lựa chọn. Đã xem ảnh `/private/tmp/detail-select-mobile.png`; có ảnh combo tối `/private/tmp/detail-select-combo-dark.png`. Không gửi đơn thật. Gate toàn cây `/private/tmp/detail-select-gate.log` đang chạy; index gốc trống, không thay staging của chủ repo.
+
+**Kết luận kiểm tra 2026-10-26:** Lượt `/private/tmp/detail-select-gate.log` đã kết thúc exit 0, `PASS gate`: Gate 3, 1b–1h và verify đều đạt; backend PostgreSQL thật, fe-check, db-check và 18 script test đã chạy. Test chi tiết sau bổ sung key theo loại/id → 16 tests passed (chuyển món đặt lại lựa chọn/số lượng đúng món mới). Phạm vi riêng T-258 đạt, đã đọc diff theo Gate 4, không thêm dependency/hợp đồng/giá; test thêm kiểm hành vi thay vì nới assertion cũ. Đã kiểm khối commit bằng index tạm `/private/tmp/t258-commit/index`, diff --cached --check và hook Gate 9 đạt; index thật vẫn trống. Snapshot hai file chung trong `/private/tmp/t258-commit/` chỉ gồm phần T-258 trên HEAD; các diff việc khác ở owner FE/backlog được giữ ngoài khối. Phần FE của T-258 hoàn tất; yêu cầu giá backend từ lượt trước vẫn bàn giao Claude như đoạn làm rõ ở trên, không triển khai trong task FE này. Chưa commit, chưa duyệt độc lập.
+
+<a id="t-259"></a>
+### T-260 — Tóm tắt đơn hàng liệt kê từng suất combo, dài và rối
+
+**Yêu cầu — chủ repo 2026-10-26:** Trên `/ban/3`, phần Tóm tắt đơn hàng có nút Chi tiết để ẩn/hiện thông tin; thông tin hiện dạng `×3 Bánh cuốn`, `×1 Bánh trứng vàng`, `×1 Giò`.
+
+**Acceptance (trước sửa):** Mỗi dòng combo trong tóm tắt có nút Chi tiết, mặc định thu, bấm thì mở/thu (aria-expanded) danh sách thành phần gộp theo món: số suất của cả dòng (đổi theo số lượng combo) rồi tên món, Giò bán rời hiện gọn là Giò; món có lựa chọn kèm mô tả lựa chọn (suy luận của Claude: không làm mất nhân đã chọn), suất khác lựa chọn tách dòng riêng. Dòng món lẻ giữ mô tả như cũ. Dữ liệu gửi giỏ/báo giá không đổi. Kiểm test hành vi, fe-check và gate.
+
+**Bổ sung — chủ repo 2026-10-26 (trước sửa):** Phần COMBO của tóm tắt có các cột Nhân, Lượng nhân, Số lượng, Giá và nút xoá. Acceptance: mỗi dòng combo một hàng cột, Nhân/Lượng nhân đọc từ lựa chọn của các suất (khác nhau thì nối dấu phẩy, không có — ví dụ Chay — thì "—"), số lượng sửa được như cũ, giá là giá dòng từ API, xoá bỏ dòng; vì nhân đã có cột nên danh sách Chi tiết chỉ còn `×N tên món`; màn hẹp không tràn trang (bảng tự cuộn ngang). Món lẻ giữ như cũ.
+
+**Bổ sung 2 — chủ repo 2026-10-26 (trước sửa):** Phần MÓN LẺ dùng cùng các cột Nhân, Lượng nhân, Số lượng, Giá, xoá. Giá món lẻ là tiền cả dòng do backend tính qua `/price-quotes` như combo (suy luận của Claude: cho khớp cột Giá của combo vốn là giá dòng; FE không tự nhân tiền — luật cong-tien, ADR-102). Món lẻ không có nút Chi tiết.
+
+**Bổ sung 3 — chủ repo 2026-10-26 (trước sửa):** Mỗi nhóm chỉ một nhãn "COMBO" / "MÓN LẺ" (bỏ nhãn cột lặp "Combo"/"Món"). Thêm cùng combo nhiều lần thì gom một dòng cộng số lượng; combo khác lựa chọn vẫn là dòng riêng (suy luận của Claude: gom theo combo + lựa chọn để không mất cột Nhân). Giỏ đã lưu từ trước không tự gộp lại. Khoá truy vấn giá dòng kèm chỉ số dòng để hai dòng giống nhau không trùng truy vấn.
+
+**Bàn giao:** Claude trên nhánh P4A-01, chưa duyệt độc lập. File trong work/scope/T-260.txt; file component/test/backlog có diff T-258/T-259 chưa commit — chỉ stage phần T-260.
+
+**Bằng chứng 2026-10-26:** `npm --prefix fe test -- src/app/ban/ src/app/thuc-don/ src/app/quay` → 99 tests passed (cột Nhân/Lượng nhân/Giá của combo và món lẻ, Chay hiện "—", giá món lẻ theo số lượng từ API, Chi tiết mở/thu với aria-expanded, gom combo cùng lựa chọn, khác lựa chọn tách dòng, một nhãn COMBO). Test mẫu sửa đường `/api/menu` để menu tải lại không làm rơi combo. Trình duyệt thật `/ban/3` ở 320 và 390px: không tràn ngang, không lỗi trang, Chi tiết hiện `×6 Bánh cuốn · ×2 Bánh trứng chín · ×2 Giò`. `./scripts/gate.sh` exit 0, `PASS gate` (be-check, db-check, fe-check, 18 script test). Diff đọc theo Gate 4: không đổi hợp đồng hay dữ liệu; trang quầy không đổi hành vi (cờ món lẻ mặc định tắt). Chưa commit, chưa duyệt độc lập.
+
+### T-259 — Gom lựa chọn nhân và lượng nhân thành nút mở bảng trượt
+
+**Yêu cầu — chủ repo 2026-10-26:** Trên trang `/ban/3`, cả COMBO và MÓN LẺ gom các lựa chọn Nhân vào một nút, bấm mở bảng trượt để chọn; làm tương tự với Lượng nhân.
+
+**Acceptance (trước sửa):** Mỗi nhóm hiển thị một nút kèm lựa chọn hiện tại; bấm mở bảng trượt từ dưới lên có tên nhóm và tên món/combo, lựa chọn hiện tại được đánh dấu. Chọn một lựa chọn sẽ cập nhật nút và đóng bảng; có nút đóng, Escape và bấm nền đóng được, focus trở về nút mở. Cả combo và món lẻ giữ mặc định, điều kiện Chay ẩn lượng nhân, tổ hợp gửi giỏ và từng lần thêm riêng như cũ. Bảng vừa màn hình nhỏ, hỗ trợ sáng/tối và giảm chuyển động. Kiểm test hành vi, fe-check và gate; không gửi đơn thật.
+
+**Bàn giao ban đầu:** Codex trên nhánh P4A-01, base b84c0f0, chưa review độc lập. Scope trong work/scope/T-259.txt. Cây đã có nhiều thay đổi việc khác, gồm backlog và owner FE; chỉ stage phần T-259 khi bàn giao commit.
+
+**Bằng chứng 2026-10-26:** `npm --prefix fe test -- src/app/ban/thuc-don-khach.test.tsx src/app/ban/khach-qr.test.tsx` → 2 files/19 tests passed; bao gồm cập nhật nút/đóng bảng, tên nhóm/món, đánh dấu lựa chọn, Escape/nút đóng/focus, giữ tổ hợp riêng và dữ liệu giỏ. `./scripts/fe-check.sh` → `fe-check: PASS` (apigen, lint, typecheck, 36 files/516 tests và production build), log `/private/tmp/t259-fe.log`. Playwright `/private/tmp/t259-ui.cjs` → PASS cả combo/món ở 320/390/768px, mặc định Thịt + Vừa, chọn Thịt + mộc nhĩ/Nhiều, Chay ẩn lượng, Escape/nền trả focus; sáng/tối đúng, reduced motion không animation, overflow=false, pageErrors=[] (`/private/tmp/t259-ui2.log`). Đã xem ảnh bảng tối `/private/tmp/t259-sheet-dark.png`; không gửi đơn thật. Diff đọc theo Gate 4: không thêm dependency/hợp đồng/giá, các assertion payload cũ giữ nguyên; test đổi thao tác để mở bảng trước khi chọn. Scope riêng T-259 và diff --check đạt. Gate toàn cây `/private/tmp/t259-gate.log` đang chạy; chưa kết luận gate xanh, chưa commit, chưa review độc lập.
+
+**Kết luận 2026-10-26:** `./scripts/gate.sh` exit 0, `PASS gate` (`/private/tmp/t259-gate.log`): Gate 3, 1b–1h, backend PostgreSQL thật, fe-check, db-check (147 câu đối chiếu, 149 lỗi cài) và 18 script test đều đạt. Hoàn tất phần giao diện. Đã tách snapshot owner FE/backlog chỉ có T-259 trên HEAD trong `/private/tmp/t259-commit/`, kiểm index tạm và staged diff trong worktree `/private/tmp/t259-review`, Gate 9 đạt; index thật giữ trống. Các diff việc khác vẫn ngoài khối commit. Chưa commit, chưa review độc lập. Scope giữ tới khi chủ repo commit.
+
+**Bổ sung bố cục — chủ repo 2026-10-26 (trước sửa):** Tiếp tục T-259: tên, thành phần và bộ chọn nằm bên trái; giá và bộ −/số lượng/＋ ở góc phải cùng hàng thẻ. Acceptance: hai nút Nhân và Lượng nhân xếp dọc dưới nội dung, không bị đẩy xuống dưới cột giá; cột giá/số lượng ghim góc trên bên phải cả combo/món lẻ; tên Giò bán rời trong thành phần combo hiển thị gọn Giò theo ví dụ; màn nhỏ không tràn ngang; bảng trượt, chọn Chay và thêm/bớt vẫn hoạt động. Kiểm trực quan trên trình duyệt và gate; không thêm test mô phỏng riêng cho thay đổi bố cục.
+
+**Bằng chứng bổ sung bố cục 2026-10-26:** `npm --prefix fe test -- src/app/ban/thuc-don-khach.test.tsx src/app/ban/khach-qr.test.tsx` → 2 files/19 tests passed. Playwright `/private/tmp/t259-layout-ui.cjs` kiểm mọi thẻ combo/món lẻ ở 320/390/472/768px → PASS giá cùng hàng trên với tên, bên phải nội dung; bộ chọn ở cột trái, hai nút xếp dọc; Giò hiển thị gọn trong combo; không tràn ngang; chọn Chay ẩn lượng và thêm combo giữ lựa chọn; pageErrors=[] (`/private/tmp/t259-layout-ui.log`). Đã xem ảnh `/private/tmp/t259-layout-light.png`, có ảnh tối `/private/tmp/t259-layout-dark.png`. Không gửi đơn thật. Chỉ đổi bố cục và nhãn trình bày, không đổi mã/dữ liệu/giá; không thêm test mô phỏng CSS. Gate mới `/private/tmp/t259-layout-gate.log` đang chạy; chưa kết luận lượt mới xanh, chưa commit.
+
+**Kết luận bổ sung bố cục 2026-10-26:** Gate mới `/private/tmp/t259-layout-gate.log` kết thúc exit 0, `PASS gate`: backend PostgreSQL thật, frontend lint/typecheck/36 files/516 tests/build, db-check và 18 script test đều đạt. Hoàn tất T-259 theo bố cục mới. Snapshot và staged diff trong `/private/tmp/t259-commit/` và `/private/tmp/t259-review` cập nhật lại theo bản cuối; Gate 9 và diff --check đạt, index thật trống. Chưa commit, chưa review độc lập; giữ scope tới lúc chủ repo commit.
+
+**Bổ sung ảnh — chủ repo 2026-10-26 (trước sửa):** Tăng kích thước ảnh giữ chỗ trên thẻ combo và món lẻ. Acceptance: ảnh trên điện thoại tăng từ 48px lên 72px, màn lớn từ 80px lên 96px, biểu tượng bên trong tăng tương ứng; cột giá vẫn ở góc phải, bộ chọn vẫn xếp dọc bên trái, không tràn ngang ở 320/390/472/768px; bảng trượt và thêm/bớt giữ nguyên. Đây là chỉnh trình bày trong T-259, không thêm test mô phỏng CSS.
+
+**Bằng chứng ảnh lớn 2026-10-26:** Playwright `/private/tmp/t259-image-ui.cjs` → PASS toàn bộ thẻ combo/món tại 320/390/472/768px: ảnh đúng 72×72px trên mobile và 96×96px màn lớn, nội dung trái/giá trên phải, hai nút chọn xếp dọc, không tràn ngang, Chay ẩn lượng và thêm combo hoạt động, pageErrors=[] (`/private/tmp/t259-image-ui.log`). Đã xem ảnh sáng `/private/tmp/t259-image-light.png`, có ảnh tối cùng tiền tố. Chỉ sửa kích thước CSS, không thay dữ liệu hay hành vi. Gate `/private/tmp/t259-image-gate.log` đang chạy; chưa kết luận lượt mới xanh. Snapshot commit đã điều chỉnh theo HEAD 2ce23a4; index thật trống, chưa commit.

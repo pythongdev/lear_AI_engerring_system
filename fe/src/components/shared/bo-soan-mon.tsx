@@ -56,11 +56,13 @@ export function loiCombo(code: string) {
     case "menu_option_hidden": return "Có lựa chọn đã ẩn. Hãy kiểm tra lại phiếu.";
   }
 }
-export function useGiaCombo(lines: DongSoan[]) {
+// monLe: trang khách cần cả giá dòng món lẻ cho cột Giá; tiền vẫn do backend tính.
+export function useGiaCombo(lines: DongSoan[], monLe = false) {
   const api = useApi();
-  return useQueries({ queries: lines.map((d) => {
+  // Khoá kèm chỉ số dòng: hai dòng giống hệt nhau không thành truy vấn trùng.
+  return useQueries({ queries: lines.map((d, i) => {
     const body = { lines: [dongGui(d)] };
-    return { queryKey: ["gia-combo", body], enabled: !!d.combo && Number.isInteger(d.quantity) && d.quantity > 0, retry: false,
+    return { queryKey: ["gia-combo", i, body], enabled: (monLe || !!d.combo) && Number.isInteger(d.quantity) && d.quantity > 0, retry: false,
       queryFn: async () => {
         const r = await call(api.POST("/price-quotes", { body }));
         if (!r.ok) throw new Error(r.failure.kind === "rejected" ? loiCombo(r.failure.code) ?? `Chưa tính được giá. Mã: ${r.failure.code}` : "Chưa tính được giá…");

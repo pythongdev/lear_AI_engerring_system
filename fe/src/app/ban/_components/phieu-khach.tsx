@@ -34,7 +34,7 @@ export function PhieuKhach({ ma, nhan, initialMenu }: {
     return r.data;
   } });
   const lines = dungLai(nhap, menu.data);
-  const quotes = useGiaCombo(lines);
+  const quotes = useGiaCombo(lines, true);
   // Bộ soạn dùng cả ở quầy; khách chỉ thấy lời trung tính cho lỗi không phải lỗi combo đã có chữ.
   const quotesKhach = quotes.map((q) => q.isError ? { ...q, error: new Error(q.error.message.includes("Mã:") ? "Chưa tính được giá. Bạn vui lòng thử lại." : q.error.message) } : q);
   const duMon = lines.length > 0 && lines.every((d) => Number.isInteger(d.quantity) && d.quantity > 0 && (d.combo || giaDong(d)));

@@ -20,15 +20,55 @@
 .khach-menu .chips::-webkit-scrollbar { display: none; }
 .khach-menu .stepper button { width: 30px; height: 30px; padding: 0; border: 0; border-radius: 7px; background: var(--field); font-size: 17px; }
 .khach-menu .stepper button:last-child { background: var(--accent); color: #fff; }
+/* Bảng combo và món lẻ trong tóm tắt: tên | nhân | lượng nhân | số lượng | giá | xoá; màn quá hẹp thì cuộn ngang trong bảng. */
+.khach-menu .combo-row { display: grid; grid-template-columns: minmax(48px, 1fr) 48px 40px 40px 54px 14px; align-items: center; gap: 4px; min-width: 260px; }
+.khach-menu .summary .combo-row .quantity { width: 40px; }
 .khach-menu .summary .quantity { width: 48px; height: 23px; padding: 0 3px; border: 1px solid var(--line); border-radius: 5px; background: transparent; font-size: 11px; }
-.khach-menu .choices fieldset { display: flex; flex-wrap: nowrap; justify-content: flex-end; gap: 4px; }
-.khach-menu .choices legend { width: 100%; text-align: right; font-size: 11px; color: var(--muted); }
-.khach-menu .choices label:has(input[type=radio]) { display: inline-flex; flex-shrink: 0; white-space: nowrap; min-height: 0; gap: 3px; margin: 3px 0; padding: 3px 5px; border: 1px solid var(--line); border-radius: 16px; background: var(--field); font-size: 11px; }
-.khach-menu .choices input[type=radio] { width: 11px; height: 11px; }
-.khach-menu .choices label:has(input:checked) { border-color: var(--accent); background: var(--badge); color: var(--accent); }
-.khach-menu .choices label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
+/* Thẻ món/combo: nửa trái là ảnh, nửa phải là toàn bộ thông tin suất. */
+.khach-menu .card { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.khach-menu .thumb { min-height: 140px; height: 100%; }
+.khach-menu .thumb svg { width: 36px; height: 36px; }
+.khach-menu .choices { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; margin-top: 8px; }
+.khach-menu .card-actions { margin-top: auto; padding-top: 10px; }
+/* Nút lựa chọn: chỉ chữ cam trong viên viền cam, một vệt sáng chạy quanh viền. */
+@property --vien-goc { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.khach-menu .choice-trigger {
+  display: inline-block; max-width: 100%; padding: 3px 10px; border: 1px solid transparent; border-radius: 999px;
+  background: linear-gradient(var(--card), var(--card)) padding-box,
+    conic-gradient(from var(--vien-goc), var(--accent) 0 70%, #FFE2C2 82%, var(--accent) 94%) border-box;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 35%, transparent);
+  color: var(--accent); font-size: 11px; line-height: 1.4; text-align: left;
+  animation: vien-sang 2.4s linear infinite;
+}
+.khach-menu .choice-trigger strong { font-weight: 600; }
+@keyframes vien-sang { to { --vien-goc: 360deg; } }
+.khach-menu .detail-toggle { display: inline-flex; align-items: center; gap: 3px; padding: 0; border: 0; background: none; color: var(--muted); font-size: 11px; text-decoration: underline; text-underline-offset: 2px; }
+.khach-menu .detail-toggle svg { transition: transform 240ms ease-out; }
+.khach-menu .detail-toggle[aria-expanded=true] svg { transform: rotate(180deg); }
+.khach-menu .detail { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 240ms ease-out; }
+.khach-menu .detail > ul { min-height: 0; overflow: hidden; opacity: 0; transform: translateY(-6px); transition: opacity 240ms ease-out, transform 240ms ease-out; }
+.khach-menu .detail[data-open=true] { grid-template-rows: 1fr; }
+.khach-menu .detail[data-open=true] > ul { padding-top: 6px; opacity: 1; transform: none; }
+/* Nửa thông tin của thẻ căn hết sang phải. */
+.khach-menu .info .detail, .khach-menu .choice { align-self: stretch; }
+.khach-menu .info li { justify-content: flex-end; }
+.khach-menu .info .choice-list { justify-content: flex-end; }
+.khach-menu .info .choice-trigger { text-align: right; }
+.khach-menu .choice-trigger svg { display: inline; vertical-align: -1px; transition: transform 240ms ease-out; }
+.khach-menu .choice-trigger[aria-expanded=true] svg { transform: rotate(180deg); }
+.khach-menu .choice-list { display: flex; flex-wrap: wrap; gap: 6px; min-height: 0; overflow: hidden; border: 0; opacity: 0; transform: translateY(-6px); transition: opacity 240ms ease-out, transform 240ms ease-out; }
+.khach-menu .detail[data-open=true] > .choice-list { padding-top: 6px; opacity: 1; transform: none; }
+.khach-menu .choice-option { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); font-size: 11px; cursor: pointer; }
+.khach-menu .choice-option:has(input:checked) { border-color: var(--accent); background: var(--badge); color: var(--accent); }
+.khach-menu .choice-option input { width: 12px; height: 12px; flex-shrink: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .khach-menu .choice-trigger { animation: none; }
+  .khach-menu .detail, .khach-menu .detail > *, .khach-menu .detail-toggle svg, .khach-menu .choice-trigger svg { transition: none; }
+}
 @media (max-width: 480px) {
   .khach-menu .phone { padding-inline: 10px; }
-  .khach-menu .card { grid-template-columns: 64px minmax(0, 1fr) 100px; gap: 8px; padding: 10px; }
-  .khach-menu .thumb { height: 64px; }
+  .khach-menu .card { gap: 10px; padding: 10px; }
+  .khach-menu .thumb { min-height: 120px; }
+  .khach-menu .thumb svg { width: 32px; height: 32px; }
+  .khach-menu .card .stepper button { width: 27px; height: 30px; }
 }
