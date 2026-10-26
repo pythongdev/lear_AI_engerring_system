@@ -21,9 +21,10 @@
 .khach-menu .stepper button { width: 30px; height: 30px; padding: 0; border: 0; border-radius: 7px; background: var(--field); font-size: 17px; }
 .khach-menu .stepper button:last-child { background: var(--accent); color: #fff; }
 .khach-menu .summary .quantity { width: 48px; height: 23px; padding: 0 3px; border: 1px solid var(--line); border-radius: 5px; background: transparent; font-size: 11px; }
-.khach-menu .choices fieldset { gap: 4px; }
-.khach-menu .choices legend { font-size: 11px; color: var(--muted); }
-.khach-menu .choices label:has(input[type=radio]) { display: inline-flex; min-height: 0; gap: 4px; margin: 4px 4px 4px 0; padding: 3px 8px; border: 1px solid var(--line); border-radius: 16px; background: var(--field); font-size: 11px; }
+.khach-menu .choices fieldset { display: flex; flex-wrap: nowrap; justify-content: flex-end; gap: 4px; }
+.khach-menu .choices legend { width: 100%; text-align: right; font-size: 11px; color: var(--muted); }
+.khach-menu .choices label:has(input[type=radio]) { display: inline-flex; flex-shrink: 0; white-space: nowrap; min-height: 0; gap: 3px; margin: 3px 0; padding: 3px 5px; border: 1px solid var(--line); border-radius: 16px; background: var(--field); font-size: 11px; }
+.khach-menu .choices input[type=radio] { width: 11px; height: 11px; }
 .khach-menu .choices label:has(input:checked) { border-color: var(--accent); background: var(--badge); color: var(--accent); }
 .khach-menu .choices label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
 @media (max-width: 480px) {

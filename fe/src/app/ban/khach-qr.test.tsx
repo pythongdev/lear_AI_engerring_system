@@ -159,12 +159,13 @@ describe("khách QR tại bàn — giỏ, tổng tính thử, gửi", () => {
 describe("khách QR tại bàn — giỏ nháp", () => {
   it("giỏ giữ khi rời trang rồi quay lại cùng mã; mã khác thì giỏ trống; nháp không một số tiền nào", async () => {
     await mo("ma-f1");
+    fireEvent.click(screen.getByRole("radio", { name: "Chay" }));
     fireEvent.click(screen.getByRole("button", { name: "Thêm Bánh cuốn" }));
-    fireEvent.click(within(screen.getByRole("region", { name: "Dòng 1" })).getByRole("radio", { name: "Chay" }));
     cleanup();
     await mo("ma-f1");
     const d = screen.getByRole("region", { name: "Dòng 1" });
-    expect((within(d).getByRole("radio", { name: "Chay" }) as HTMLInputElement).checked).toBe(true);
+    expect(within(d).getByText("Chay")).toBeTruthy();
+    expect(within(d).queryByRole("radio")).toBeNull();
     expect(JSON.stringify(useNhapKhach.getState())).toContain("12");
     expect(coGia(useNhapKhach.getState())).toBe(false);
     cleanup();
