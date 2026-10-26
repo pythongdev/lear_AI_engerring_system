@@ -1,0 +1,4 @@
+# Quyền chạy lệnh của Codex trong repo này (2026-10-26, chủ repo): chạy mọi lệnh
+# không hỏi, trừ lệnh xoá và git commit — hai loại đó bị chặn ở rules/no-delete-commit.rules.
+approval_policy = "never"
+sandbox_mode = "danger-full-access"

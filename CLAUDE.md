@@ -238,6 +238,11 @@ per-level review, cold-context review — are in `quality/review-gate.md`.
 
 - Work on a branch off `main`; never commit directly to `main`.
 - Commit or push only when the user asks.
+- **Quyền chạy lệnh** (2026-10-26, chủ repo): Claude và Codex chạy mọi lệnh
+  không cần hỏi, **trừ lệnh xoá** (`rm`, `git rm`, `git clean`, xoá nhánh,
+  worktree, stash, container/volume…) **và `git commit`** — hai loại này chủ repo
+  tự chạy. Chặn ở `.claude/settings.json` (`permissions.deny`) và
+  `.codex/rules/no-delete-commit.rules`; cần xoá thì đưa lệnh cho chủ repo.
 - One task per commit. Subject: `T-XXX: what changed` (imperative, ≤ 72 chars).
 - Scope is session state and never reaches a commit: `work/scope/` is ignored by
   git and `work/scope.txt` is a comment-only stub (F-020, ADR-063).
