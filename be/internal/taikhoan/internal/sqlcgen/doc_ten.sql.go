@@ -7,15 +7,30 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const docTen = `-- name: DocTen :one
 SELECT id, username, email, requested_display_name, status, person_id, role_code, decided_at, decided_by_person_id, created_at FROM account WHERE username=$1 FOR UPDATE
 `
 
-func (q *Queries) DocTen(ctx context.Context, username string) (Account, error) {
+type DocTenRow struct {
+	ID                   int64
+	Username             pgtype.Text
+	Email                pgtype.Text
+	RequestedDisplayName string
+	Status               string
+	PersonID             pgtype.Int8
+	RoleCode             pgtype.Text
+	DecidedAt            pgtype.Timestamptz
+	DecidedByPersonID    pgtype.Int8
+	CreatedAt            pgtype.Timestamptz
+}
+
+func (q *Queries) DocTen(ctx context.Context, username pgtype.Text) (DocTenRow, error) {
 	row := q.db.QueryRow(ctx, docTen, username)
-	var i Account
+	var i DocTenRow
 	err := row.Scan(
 		&i.ID,
 		&i.Username,

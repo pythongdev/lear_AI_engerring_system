@@ -94,6 +94,13 @@ bán hàng sinh con số đủ dấu hay sửa có vết hợp lệ, và cho v�
 `I-027` **chưa có tập** cho vế *không sinh khoản trừ*, *người khác tick hộ trên máy chủ quán*;
 *ghi chú huỷ bắt buộc và người được huỷ* còn để trống, chờ **U-071**.
 
+I-035 (T-263, 2026-10-27): `I-035/1` tìm tài khoản không số không thư;
+`I-035/2` tìm số sai dạng; `I-035/3` đọc khoá ngoại bảng khách tới người,
+trực quầy hoặc tài khoản người làm; `I-035/4` tìm đơn ngoài delivery/pickup mang
+tài khoản khách. Mỗi câu có file lỗi cùng số ở `db/reconcile/proof/`.
+`I-033/7` chỉ xét username/email khi có giá trị theo ADR-131; thiếu cả hai liên hệ
+thuộc `I-035/1`.
+
 ---
 
 ## 2. Tập chưa có câu — vì sao, ai nợ
@@ -179,9 +186,8 @@ của mệnh đề ấy trong cùng thay đổi.
 
 | Mệnh đề | Trạng thái | Vì sao | Ai nợ |
 |---|---|---|---|
-| `I-035` | chưa có lát | mệnh đề thêm 2026-10-27 (T-262, ADR-131) trước lược đồ tài khoản khách; chưa có bảng để truy vấn | `T-263` — viết câu ở `db/reconcile/` và gỡ dòng này trong cùng thay đổi |
 
-Trước dòng `I-035`, danh sách này rỗng từ P2A-05 (2026-10-14).
+Danh sách này rỗng; T-263 (2026-10-27) đã có đủ bốn câu cho I-035 theo phiếu lược đồ.
 
 ---
 

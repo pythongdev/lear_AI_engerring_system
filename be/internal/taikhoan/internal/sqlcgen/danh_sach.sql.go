@@ -7,21 +7,36 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const danhSach = `-- name: DanhSach :many
 SELECT id, username, email, requested_display_name, status, person_id, role_code, decided_at, decided_by_person_id, created_at FROM account WHERE ($1::text='' OR status=$1) ORDER BY created_at,id
 `
 
-func (q *Queries) DanhSach(ctx context.Context, dollar_1 string) ([]Account, error) {
+type DanhSachRow struct {
+	ID                   int64
+	Username             pgtype.Text
+	Email                pgtype.Text
+	RequestedDisplayName string
+	Status               string
+	PersonID             pgtype.Int8
+	RoleCode             pgtype.Text
+	DecidedAt            pgtype.Timestamptz
+	DecidedByPersonID    pgtype.Int8
+	CreatedAt            pgtype.Timestamptz
+}
+
+func (q *Queries) DanhSach(ctx context.Context, dollar_1 string) ([]DanhSachRow, error) {
 	rows, err := q.db.Query(ctx, danhSach, dollar_1)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Account
+	var items []DanhSachRow
 	for rows.Next() {
-		var i Account
+		var i DanhSachRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Username,

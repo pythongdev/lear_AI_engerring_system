@@ -7,6 +7,8 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const themTaiKhoan = `-- name: ThemTaiKhoan :one
@@ -14,8 +16,8 @@ INSERT INTO account (username,email,requested_display_name) VALUES ($1,$2,$3) RE
 `
 
 type ThemTaiKhoanParams struct {
-	Username             string
-	Email                string
+	Username             pgtype.Text
+	Email                pgtype.Text
 	RequestedDisplayName string
 }
 

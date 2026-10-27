@@ -11,7 +11,7 @@ import (
 
 // Chỉ file này gọi sqlc (QC-13); service đọc kiểu qua các tên dưới, giao dịch do authz mở ở service.
 type (
-	account            = sqlcgen.Account
+	account            = sqlcgen.DocTaiKhoanRow
 	loginSession       = sqlcgen.LoginSession
 	ketThucPhienParams = sqlcgen.KetThucPhienParams
 	moPhienParams      = sqlcgen.MoPhienParams
@@ -23,7 +23,10 @@ type repository struct{ *sqlcgen.Queries }
 
 func newRepository(tx pgx.Tx) repository { return repository{sqlcgen.New(tx)} }
 func nullableID(id int64) pgtype.Int8    { return pgtype.Int8{Int64: id, Valid: id != 0} }
-func nullableText(s string) pgtype.Text  { return pgtype.Text{String: s, Valid: s != ""} }
+
+// requiredText giữ chuỗi rỗng là giá trị để CHECK cũ vẫn từ chối, không đổi thành NULL.
+func requiredText(s string) pgtype.Text { return pgtype.Text{String: s, Valid: true} }
+func nullableText(s string) pgtype.Text { return pgtype.Text{String: s, Valid: s != ""} }
 func (r repository) password(ctx context.Context, id int64, hash string, setter int64) error {
 	return r.GhiMatKhau(ctx, sqlcgen.GhiMatKhauParams{AccountID: id, PasswordHash: hash, SetByPersonID: nullableID(setter), MustChangePassword: setter != 0})
 }

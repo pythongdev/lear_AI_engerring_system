@@ -10,8 +10,8 @@ import (
 
 type Account struct {
 	ID                   int64
-	Username             string
-	Email                string
+	Username             pgtype.Text
+	Email                pgtype.Text
 	RequestedDisplayName string
 	Status               string
 	PersonID             pgtype.Int8
@@ -19,6 +19,7 @@ type Account struct {
 	DecidedAt            pgtype.Timestamptz
 	DecidedByPersonID    pgtype.Int8
 	CreatedAt            pgtype.Timestamptz
+	Phone                pgtype.Text
 }
 
 type AccountPassword struct {
@@ -117,6 +118,44 @@ type CounterDuty struct {
 	StartedAt pgtype.Timestamptz
 	EndedAt   pgtype.Timestamptz
 	CreatedAt pgtype.Timestamptz
+}
+
+type CustomerAccount struct {
+	ID                int64
+	Phone             pgtype.Text
+	Email             pgtype.Text
+	DisplayName       string
+	DeliveryName      pgtype.Text
+	DeliveryPhone     pgtype.Text
+	DeliveryAddress   pgtype.Text
+	DeliveryUpdatedAt pgtype.Timestamptz
+	CreatedAt         pgtype.Timestamptz
+}
+
+type CustomerPassword struct {
+	ID                int64
+	CustomerAccountID int64
+	PasswordHash      string
+	CreatedAt         pgtype.Timestamptz
+}
+
+type CustomerPasswordReset struct {
+	ID                int64
+	CustomerAccountID int64
+	TokenHash         []byte
+	CreatedAt         pgtype.Timestamptz
+	ExpiresAt         pgtype.Timestamptz
+	UsedAt            pgtype.Timestamptz
+}
+
+type CustomerSession struct {
+	ID                int64
+	CustomerAccountID int64
+	TokenHash         []byte
+	CreatedAt         pgtype.Timestamptz
+	ExpiresAt         pgtype.Timestamptz
+	EndedAt           pgtype.Timestamptz
+	EndReason         pgtype.Text
 }
 
 type DailyMinimum struct {
@@ -507,6 +546,7 @@ type SalesOrder struct {
 	IDIfCompletedStandalone pgtype.Int8
 	IDIfApproved            pgtype.Int8
 	IDIfCancelled           pgtype.Int8
+	CustomerAccountID       pgtype.Int8
 }
 
 type ShopBlindSpell struct {

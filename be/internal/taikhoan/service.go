@@ -78,7 +78,7 @@ func (s *Service) register(ctx context.Context, in ChuQuanMoi, owner bool) (KetQ
 	}
 	err = authz.Run(ctx, s.pool, 0, door, func(tx pgx.Tx) error {
 		r := newRepository(tx)
-		id, err := r.ThemTaiKhoan(ctx, themTaiKhoanParams{Username: strings.ToLower(in.Username), Email: strings.ToLower(in.Email), RequestedDisplayName: in.DisplayName})
+		id, err := r.ThemTaiKhoan(ctx, themTaiKhoanParams{Username: requiredText(strings.ToLower(in.Username)), Email: requiredText(strings.ToLower(in.Email)), RequestedDisplayName: in.DisplayName})
 		if err != nil {
 			return err
 		}
@@ -141,7 +141,7 @@ func (s *Service) login(ctx context.Context, username, password string, atCounte
 	var token string
 	err := authz.Run(ctx, s.pool, 0, DangNhap, func(tx pgx.Tx) error {
 		r := newRepository(tx)
-		a, err := r.DocTen(ctx, strings.ToLower(username))
+		a, err := r.DocTen(ctx, requiredText(strings.ToLower(username)))
 		if errors.Is(err, pgx.ErrNoRows) {
 			return fail(apierr.CodeInvalidCredentials)
 		}
@@ -193,7 +193,7 @@ func (s *Service) login(ctx context.Context, username, password string, atCounte
 		if err = r.MoPhien(ctx, moPhienParams{AccountID: a.ID, TokenHash: hash, CounterDutyID: nullableID(duty)}); err != nil {
 			return err
 		}
-		out, err = sessionResult(ctx, r, a, duty)
+		out, err = sessionResult(ctx, r, account(a), duty)
 		return err
 	})
 	return out, token, err
@@ -281,7 +281,7 @@ func (s *Service) requestReset(ctx context.Context, email string) error {
 	var token, address string
 	err := authz.Run(ctx, s.pool, 0, YeuCauDatLai, func(tx pgx.Tx) error {
 		r := newRepository(tx)
-		a, err := r.DocThu(ctx, strings.ToLower(email))
+		a, err := r.DocThu(ctx, requiredText(strings.ToLower(email)))
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil
 		}
@@ -303,7 +303,7 @@ func (s *Service) requestReset(ctx context.Context, email string) error {
 		if err != nil {
 			return err
 		}
-		address = a.Email
+		address = a.Email.String
 		return r.TaoMa(ctx, taoMaParams{AccountID: a.ID, TokenHash: hash})
 	})
 	if err != nil {
@@ -372,7 +372,7 @@ func (s *Service) list(ctx context.Context, person int64, status string) ([]Acco
 				v := a.RoleCode.String
 				role = &v
 			}
-			out = append(out, Account{a.ID, a.Username, a.Email, a.RequestedDisplayName, a.Status, role, p, a.CreatedAt.Time})
+			out = append(out, Account{a.ID, a.Username.String, a.Email.String, a.RequestedDisplayName, a.Status, role, p, a.CreatedAt.Time})
 		}
 		return nil
 	})

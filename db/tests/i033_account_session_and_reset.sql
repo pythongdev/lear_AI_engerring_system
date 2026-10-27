@@ -216,9 +216,11 @@ BEGIN
     RAISE NOTICE 'I-033 bị từ chối (xoá một bản mật khẩu): %', SQLERRM;
   END;
   -- Không cột nào ngoài account_password.password_hash mang chữ "password" hay "mat_khau" (đọc lược đồ).
+  -- 2026-10-27 (T-263, Claude): customer_password.password_hash là chỗ cất băm của khách theo I-035, cùng luật này.
   IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'shop'
              AND (column_name LIKE '%password%' OR column_name LIKE '%mat_khau%')
-             AND NOT (table_name = 'account_password' AND column_name IN ('password_hash', 'must_change_password'))) THEN
+             AND NOT (table_name = 'account_password' AND column_name IN ('password_hash', 'must_change_password'))
+             AND NOT (table_name = 'customer_password' AND column_name = 'password_hash')) THEN
     RAISE EXCEPTION 'I-033: một cột ngoài bảng mật khẩu cất mật khẩu';
   END IF;
 

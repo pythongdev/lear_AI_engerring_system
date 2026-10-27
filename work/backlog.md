@@ -89,7 +89,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-263 **Lược đồ đăng nhập bằng số điện thoại · Gmail và tài khoản khách** — L2, lát a của ADR-131 (đã duyệt 2026-10-27); giao Codex khi T-262 đã commit · [chi tiết](#t-263)
 - [ ] T-264 **Backend và hợp đồng đăng nhập số điện thoại · Gmail, cửa khách** — L2, lát b của ADR-131; chờ T-263 · [chi tiết](#t-264)
 - [ ] T-265 **Màn đăng nhập một ô và trang tài khoản khách** — L2, lát c của ADR-131; chờ T-264 · [chi tiết](#t-265)
 - [ ] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — thêm danh mục của từng món vào `GET /menu` (hợp đồng, truy vấn, handler) rồi trang khách `/dat-mon`, `/ban/[ma]` nhóm món theo danh mục đọc từ API — L2 (đổi hợp đồng API) — mở 2026-10-23 (chủ repo chọn), làm sau T-236 · [chi tiết](#t-237)
@@ -133,6 +132,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-263 **Lược đồ đăng nhập bằng số điện thoại · Gmail và tài khoản khách** — L2, lát a của ADR-131; Codex làm, Claude duyệt 2026-10-27 · [chi tiết](#t-263)
 - [x] T-262 **Thiết kế đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản** — L3, chủ repo duyệt ADR-131 2026-10-27 · [chi tiết](#t-262)
 
 - [x] T-245 **Viết lại trang Giao việc theo HTML, mobile first** — L1 — chủ repo giao Codex 2026-10-24 · [chi tiết](#t-245)
@@ -3360,6 +3360,12 @@ Acceptance viết trước: (1) lời quán vào §8.8 và nhật ký `shop-fact
 ### T-263 — Lược đồ đăng nhập bằng số điện thoại · Gmail và tài khoản khách
 
 Lát a của **ADR-131** (điểm 1–7), mức L2. Migration mới: `account.phone` (duy nhất, CHECK mẫu chuẩn hoá), `account.email` và `account.username` thành tuỳ chọn, CHECK có số hoặc thư; bốn bảng `customer_account` · `customer_password` · `customer_session` · `customer_password_reset`; `sales_order.customer_account_id` chỉ cho `delivery` · `pickup`. Down từ chối khi có dữ liệu sẽ mất. File ý định `docs/product/2-db/23-luoc-do-tai-khoan-khach.md`, dòng thứ tự ở `07-thu-tu-migration.md`. Giao Codex sau khi ADR-131 được duyệt và invariant + test hồi quy đã có.
+
+**Bàn giao 2026-10-27:** thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-263`, nhánh `codex/T-263` từ `4326e46`), duyệt **Claude**. Hai vòng: vòng một Codex dừng đúng phiếu ở hai chỗ — cột `sales_order.customer_account_id` chưa có khuôn chặn sửa, và Gate 1g đòi ánh xạ tên ràng buộc ngoài scope. Claude quyết: trigger `sales_order_customer_account_immutable_check` theo khuôn `customer_session_ended_immutable_check` (thu hồi UPDATE theo cột trên `sales_order` phải cấp lại mọi cột khác); tên mới vào `x-constraint-errors` là `unreviewed` (`*_pkey` là `internal`), T-264 gán mã công khai; hợp đồng 0.51.1. Claude tự sửa hai chỗ khi duyệt: `db/tests/i033_account_session_and_reset.sql` nhận `customer_password.password_hash` là chỗ cất băm hợp lệ (I-035 mở rộng luật băm của I-033; trước đó test đỏ vì đọc lược đồ thấy cột `password`), và `scripts/db-check.sh` thêm khối T-263 theo khuôn T-146/T-175 (lên trên tài khoản kiểu cũ; đường lùi từ chối khi đã có khách — một giao dịch, ROLLBACK).
+
+File: migration `20261027120000_tai_khoan_khach` (up/down), `db/tests/i035_…` (Claude viết trước, không sửa) · `i033_…`, `db/reconcile/i035.sql` + `proof/i035_1…4.sql`, `db/reconcile/i033.sql`, `docs/product/2-db/23-luoc-do-tai-khoan-khach.md` · `07-thu-tu-migration.md` · `09-doi-chieu-bat-bien.md`, `openapi.yaml` (ánh xạ + phiên bản), `scripts/db-check.sh`, `be/internal/taikhoan/{repository,service}.go` (chỉ đổi kiểu nullable cho build qua), sqlc sinh lại. Ở clone chính, dòng thứ tự là **38** (sau `20261024140000_khoan_chi_chi_tiet` của T-248 chưa commit); trong blob của commit T-263 nó là 37 — khi commit T-248, dòng của T-248 phải đứng trước.
+
+Kiểm đã chạy (Claude): `./scripts/db-check.sh` trong worktree — `PASS T-263 lên được trên tài khoản cũ; đường lùi từ chối khi đã có khách`, `PASS db/tests/i035_…`, `PASS db/tests/i033_…`, `PASS kêu i035_1…4`, `PASS lùi 20261027120000_tai_khoan_khach`, `db-check: PASS`; `./scripts/gate.sh` ở clone chính sau khi tích hợp: mọi cổng PASS (be-check, db-check 38 bước, verify). Gate trong worktree đỏ ở `fe-check` vì `thuc-don-khach.tsx` ở HEAD import `./lua-chon-truot` — file chưa track của T-259, không do T-263.
 
 <a id="t-264"></a>
 ### T-264 — Backend và hợp đồng đăng nhập số điện thoại · Gmail, cửa khách

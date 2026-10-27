@@ -37,8 +37,8 @@ AND NOT EXISTS (SELECT 1 FROM account_password p WHERE p.account_id = a.id)
 
 -- @@ I-033/7 — định danh không chuẩn hoá hoặc không duy nhất
 SELECT a.id FROM account a
-WHERE a.username IS NULL OR a.username COLLATE "C" !~ '^[a-z0-9._-]{3,32}$'
- OR a.email IS NULL OR a.email <> lower(a.email) OR position('@' IN a.email) = 0
+WHERE a.username COLLATE "C" !~ '^[a-z0-9._-]{3,32}$'
+ OR a.email <> lower(a.email) OR position('@' IN a.email) = 0
  OR EXISTS (SELECT 1 FROM account b WHERE b.id <> a.id AND (lower(b.username) = lower(a.username) OR lower(b.email) = lower(a.email)))
 
 -- @@ I-033/8 — bản mật khẩu thiếu tài khoản, dấu tạo, người đặt hoặc cờ buộc đổi không khớp

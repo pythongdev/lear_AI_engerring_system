@@ -134,6 +134,24 @@ if [ "$n_mig" -gt 0 ]; then
         printf '%s\n' "$out" | tail -8
       fi
     fi
+    if [ "$v" = 20261027120000 ]; then
+      # T-263: lên được khi đã có tài khoản kiểu cũ; đường lùi từ chối khi đã có khách. Một giao dịch, ROLLBACK.
+      if out="$({ echo 'BEGIN;'; echo 'SET search_path = shop;';
+                  echo "INSERT INTO account (username, email, requested_display_name) VALUES ('t263.cu', 't263.cu@gmail.com', 'T-263 cũ');";
+                  cat db/migrations/20261027120000_tai_khoan_khach.up.sql;
+                  echo "SELECT 'T263_UP_GREEN' FROM account WHERE username = 't263.cu' AND phone IS NULL;";
+                  echo "INSERT INTO customer_account (phone, display_name) VALUES ('0912345678', 'T-263 khách');";
+                  cat db/migrations/20261027120000_tai_khoan_khach.down.sql;
+                  echo 'ROLLBACK;'; } | psql_f -f - 2>&1)"; then
+        fail "T-263 đường lùi — không từ chối khi đã có khách"
+      elif printf '%s\n' "$out" | grep -q 'T263_UP_GREEN' &&
+           printf '%s\n' "$out" | grep -q 'customer_account đang giữ dữ liệu'; then
+        echo "PASS T-263 lên được trên tài khoản cũ; đường lùi từ chối khi đã có khách"
+      else
+        fail "T-263 lên trên dữ liệu cũ hoặc khoá chặn — lỗi khác điều cần chứng minh:"
+        printf '%s\n' "$out" | tail -12
+      fi
+    fi
     if out="$(migrate up 1)"; then
       schema_dump > "$snap/$v"; echo "PASS xuôi ${f%.up.sql}"
       printf '%s\n' "$prev" > "$snap/$v.prev"; prev="$v"

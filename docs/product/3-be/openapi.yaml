@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.51.0
+  version: 0.51.1
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -7955,3 +7955,40 @@ x-constraint-errors:
   expense_category_fkey: expense_category_not_found
   expense_person_fkey: internal
   expense_positive_amount_check: internal
+
+  # T-263 — lát lược đồ; T-264 sẽ gán mã công khai.
+  account_contact_check: unreviewed
+  account_phone_check: unreviewed
+  account_phone_key: unreviewed
+  customer_account_contact_check: unreviewed
+  customer_account_delivery_address_check: unreviewed
+  customer_account_delivery_name_check: unreviewed
+  customer_account_delivery_phone_check: unreviewed
+  customer_account_display_name_check: unreviewed
+  customer_account_email_check: unreviewed
+  customer_account_email_key: unreviewed
+  customer_account_phone_check: unreviewed
+  customer_account_phone_key: unreviewed
+  customer_account_pkey: internal
+  customer_password_account_fkey: unreviewed
+  customer_password_hash_check: unreviewed
+  customer_password_pkey: internal
+  customer_password_reset_account_fkey: unreviewed
+  customer_password_reset_expiry_check: unreviewed
+  customer_password_reset_pkey: internal
+  customer_password_reset_token_hash_check: unreviewed
+  customer_password_reset_token_key: unreviewed
+  customer_password_reset_used_at_check: unreviewed
+  customer_password_reset_used_once_check: unreviewed
+  customer_session_account_fkey: unreviewed
+  customer_session_end_pair_check: unreviewed
+  customer_session_end_reason_check: unreviewed
+  customer_session_ended_at_check: unreviewed
+  customer_session_ended_immutable_check: unreviewed
+  customer_session_expiry_check: unreviewed
+  customer_session_pkey: internal
+  customer_session_token_hash_check: unreviewed
+  customer_session_token_key: unreviewed
+  sales_order_customer_account_channel_check: unreviewed
+  sales_order_customer_account_fkey: unreviewed
+  sales_order_customer_account_immutable_check: unreviewed
