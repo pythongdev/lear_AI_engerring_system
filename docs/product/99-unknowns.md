@@ -139,6 +139,27 @@ phạm vi của nó ở `master_plan/shop-facts.md` **§8.8**.
   (`SITE_DESCRIPTION`). Ai trả lời: chủ repo (1), chủ quán (2). Chặn gì: chưa có canonical và `sitemap.xml` cho tới khi
   đặt `BANHCUON_SITE_URL`; câu mô tả vẫn là bản nháp. Không chặn bán hàng.
 
+**Ngày 2026-10-27, T-262 mở bốn câu** khi chuyển lời *đăng nhập bằng số điện thoại hoặc Gmail, khách cũng có tài khoản*
+(`master_plan/shop-facts.md` §8.8 lượt ba) về thiết kế **ADR-131**. Lời nói khách được gì, chưa nói tới mép của nó.
+
+<a id="u-105"></a>
+- **U-105** — Người **chỉ khai số điện thoại** (không có Gmail) quên mật khẩu thì lấy lại tài khoản thế nào? Với người
+  làm đã có đường *chủ quán khoá rồi mở lại kèm mật khẩu tạm* (ADR-109); với **khách** thì chưa có ai làm hộ. Ai trả
+  lời: chủ quán. Chặn gì: khách chỉ có số điện thoại quên mật khẩu thì không vào lại được tài khoản cũ — tạm thời màn
+  quên mật khẩu nói thẳng điều đó; không chặn đặt món (đăng nhập là tuỳ chọn).
+<a id="u-106"></a>
+- **U-106** — *"Xem lại đơn đã đặt"* gồm những đơn nào: chỉ đơn **web** (giao tận nơi, đến lấy) đặt lúc đã đăng nhập,
+  hay cả **lượt gọi tại bàn qua QR**; và xem lùi bao lâu? Ai trả lời: chủ quán. Chặn gì: lịch sử tạm chỉ gồm đơn web đặt
+  lúc đã đăng nhập, không giới hạn thời gian; lượt gọi QR không gắn vào tài khoản.
+<a id="u-107"></a>
+- **U-107** — *"Nhớ tên, số điện thoại, địa chỉ giao"*: nhớ **một** bộ hay **nhiều** địa chỉ; máy tự lưu theo đơn gần
+  nhất hay khách tự sửa ở trang tài khoản? Ai trả lời: chủ quán. Chặn gì: tạm nhớ **một** bộ do khách tự sửa ở trang
+  tài khoản; form đặt điền sẵn, khách sửa cho riêng đơn ấy không ghi ngược vào bộ đã nhớ.
+<a id="u-108"></a>
+- **U-108** — Khách muốn **xoá tài khoản** hay xoá số điện thoại, địa chỉ đã nhớ thì sao? Repo không xoá cứng (`QD-50`),
+  còn đây là dữ liệu cá nhân của người ngoài quán. Ai trả lời: chủ quán (luật), chủ repo (cách làm). Chặn gì: chưa có
+  cửa xoá tài khoản khách; khách xoá được địa chỉ đã nhớ bằng cách để trống.
+
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
 

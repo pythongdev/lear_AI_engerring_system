@@ -146,7 +146,9 @@ của mảng tài chính.
   chủ quán: nó **không** vào phép đối soát két cuối ngày.
 - **Tài khoản đăng nhập** (§8.8, lời đóng `U-083` · `U-088`; thiết kế **ADR-109**, chủ repo duyệt 2026-10-14).
   Người làm **tự đăng ký** và tự đặt mật khẩu; tài khoản chỉ dùng được sau khi **chủ quán duyệt** và gán vai, chủ
-  quán **khoá** được khi người nghỉ việc. Gmail **chỉ để nhận thư đặt lại** mật khẩu. Ở máy quầy dùng chung, người
+  quán **khoá** được khi người nghỉ việc. Đăng nhập bằng **số điện thoại hoặc Gmail** kèm mật khẩu, đăng ký khai một
+  trong hai (lượt ba 2026-10-27, thay *Gmail chỉ để nhận thư*; thiết kế **ADR-131**); Gmail vẫn là đường tự đặt lại
+  mật khẩu. Ở máy quầy dùng chung, người
   trước đăng xuất, người sau đăng nhập, và **lần đăng nhập ở quầy là mốc đổi người** `C36`. Thư không đi được thì
   chủ quán đặt một mật khẩu tạm, người làm đổi ở lần đăng nhập kế.
 

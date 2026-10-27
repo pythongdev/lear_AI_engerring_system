@@ -1546,6 +1546,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-25 | Chủ repo duyệt thiết kế T-244 và giao T-250 (phần a) trong hội thoại: bảy suất *Đầy đủ · Suất giò · Suất trứng* chuyển khỏi `menu_item`, dựng lại thành **`menu_combo` thật** ghép từ *Bánh cuốn · Bánh trứng · Giò bán rời*, **mỗi suất con chọn nhân riêng**; §4.3 · §4.5 · §4.8 (ca 1–14) không đổi — giá combo và mức phụ thu theo món là **hệ quả** của §4.6 khi tổ hợp cùng nhân. Ca 15 trộn nhân vào §4.8 ở T-251 cùng mở rộng parser `seed.pl --price-cases-tsv`. Xem **ADR-129** | §4.9 · §8.9 (lượt bảy · lượt tám) |
 | 2026-10-25 | Claude thêm **ca 15 §4.8** cùng lượt lead T-251: *Combo Đầy đủ chín · Bánh cuốn=Thịt Thường · Bánh trứng chín=Chay ⇒ 29.000* (26.000 + 3 × 1.000). Parser `seed.pl --price-cases-tsv` ở worktree /private/tmp/t251 đã khớp 15/15 trên fixture rút gọn (log `/private/tmp/t251-price-run.log`); hình token: `Bánh cuốn=Nhân:Thịt\|Bánh trứng chín=Nhân:Chay\|Bánh cuốn=Lượng nhân:Thường`. Ca này canh chỗ dễ hỏng duy nhất của *combo thật*: trộn nhân giữa hai suất con cùng combo. **Hợp đồng với chủ quán** — ADR-129 là nền thiết kế, dòng này là ca kiểm | §4.8 |
 | 2026-10-26 | Chủ repo chốt trong hội thoại (T-255): **canh bánh cuốn có nhóm lựa chọn *Rau*** — *không rau · ít rau · nhiều rau*, cả ba **0đ**, mặc định **ít rau**, nhóm **chỉ** gắn cho canh. §4.8 thêm cột *Rau*, ca 13 chọn *ít rau*, thêm ca 16 (*không rau* ⇒ 0) và ca 17 (*bánh cuốn + ít rau* ⇒ từ chối) | §4.4 · §4.6 luật 8 · §4.8 |
+| 2026-10-27 | Chủ repo chuyển lời chủ quán trong hội thoại (T-262) và chọn trong câu hỏi có sẵn phương án: đăng nhập bằng **số điện thoại hoặc Gmail gõ vào ô, kèm mật khẩu** (không OTP, không nút Google) cho người làm, chủ quán **và khách**; đăng ký khai **một trong hai**; khách đăng nhập **tuỳ chọn**, **không chờ duyệt**, được **xem lại đơn** và **nhớ tên, số điện thoại, địa chỉ giao**. Thay vế 3 lượt hai §8.8 ở chỗ *đăng nhập bằng gì*; mở `U-105` … `U-108`. Xem **ADR-131** | §8.8 (lượt ba) |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **hai mục, tính tới 2026-10-23**
 
@@ -2203,6 +2204,21 @@ mail quên tự đặt lại"*, chủ repo chọn ba vế trong câu hỏi có s
 
 *Cách đọc của phiên, chưa ai xác nhận:* đặt lại mật khẩu qua thư cần mạng và một dịch vụ gửi thư — mất mạng thì không
 đặt lại được, đó là một phụ thuộc ngoài mới; màn trạm chỉ đọc giữ công khai như hiện nay.
+
+**Lượt ba 2026-10-27 — đăng nhập bằng SỐ ĐIỆN THOẠI hoặc GMAIL, và KHÁCH cũng có tài khoản** (T-262; chủ repo chuyển
+lời chủ quán trong hội thoại — *"đăng nhập thật bằng số điện thoại hoặc Gmail"* — và chọn từng vế trong câu hỏi có sẵn
+phương án; chủ repo xác nhận lời đến từ chủ quán). **Thay vế 3 của lượt hai** ở chỗ *đăng nhập bằng gì*; vế 1, 2, 4
+giữ nguyên cho người làm.
+
+1. Người làm, chủ quán **và khách** đăng nhập bằng **số điện thoại hoặc địa chỉ Gmail**, kèm **mật khẩu**. Gmail là một
+   **địa chỉ gõ vào ô**, không phải nút *Đăng nhập với Google*; không có mã OTP.
+2. Đăng ký khai **số điện thoại hoặc Gmail — một trong hai là đủ**. Gmail vẫn là đường tự đặt lại mật khẩu khi quên.
+3. **Khách đăng nhập là tuỳ chọn**: quét QR và đặt món trên web vẫn chạy khi chưa đăng nhập.
+4. Khách tự đăng ký là **dùng được ngay**, không chờ chủ quán duyệt (người làm vẫn chờ duyệt như vế 1 lượt hai).
+5. Khách đã đăng nhập được: **xem lại đơn đã đặt**, và máy **nhớ tên, số điện thoại, địa chỉ giao** để khỏi gõ lại.
+
+Chỗ lời chưa phủ — người chỉ khai số điện thoại quên mật khẩu, đơn nào vào lịch sử, nhớ một hay nhiều địa chỉ, khách
+muốn xoá tài khoản — là `U-105` … `U-108` ở `docs/product/99-unknowns.md`. Thiết kế: `docs/decisions.md` **ADR-131**.
 
 **Lời này KHÔNG chạm chấm công.** *Lúc này ai đứng quầy* và *hôm nay người này làm mấy giờ* là hai
 câu khác nhau; câu thứ hai là mức 2 của §8.7 đã có lời đáp `C30` · `C31` · `C32` ngày 2026-09-25 ở §8.7; các vế còn thiếu

@@ -89,6 +89,9 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
+- [ ] T-263 **Lược đồ đăng nhập bằng số điện thoại · Gmail và tài khoản khách** — L2, lát a của ADR-131; **chờ chủ repo duyệt ADR-131** · [chi tiết](#t-263)
+- [ ] T-264 **Backend và hợp đồng đăng nhập số điện thoại · Gmail, cửa khách** — L2, lát b của ADR-131; chờ T-263 · [chi tiết](#t-264)
+- [ ] T-265 **Màn đăng nhập một ô và trang tài khoản khách** — L2, lát c của ADR-131; chờ T-264 · [chi tiết](#t-265)
 - [ ] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — thêm danh mục của từng món vào `GET /menu` (hợp đồng, truy vấn, handler) rồi trang khách `/dat-mon`, `/ban/[ma]` nhóm món theo danh mục đọc từ API — L2 (đổi hợp đồng API) — mở 2026-10-23 (chủ repo chọn), làm sau T-236 · [chi tiết](#t-237)
 - [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
@@ -98,6 +101,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-262 **Thiết kế đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản** — L3, chủ repo 2026-10-27; ADR-131 chờ duyệt, phiếu ba lát đã lập · [chi tiết](#t-262)
 - [ ] T-259 **Gom lựa chọn nhân và lượng nhân thành nút mở bảng trượt** — L1, chủ repo giao Codex 2026-10-26 · [chi tiết](#t-259)
 
 
@@ -3339,3 +3343,27 @@ Chủ repo yêu cầu 2026-10-26 trong hội thoại, cho `fe/src/app/ban`: *"ca
 Acceptance viết trước: (1) danh sách *MÓN LẺ* của trang khách đặt *Canh bánh cuốn* cuối, các món khác giữ thứ tự menu trả; (2) thẻ canh có nút *Rau* mặc định *Ít rau*, chọn được *Nhiều rau* — dữ liệu đã có từ T-255, test `thuc-don-khach.test.tsx` canh cả hai; (3) gate xanh.
 
 Ghi chú: database dev của chủ repo chưa nạp lại seed sau T-255 nên canh chưa có nhóm Rau; Claude đã chạy năm câu `INSERT` nhóm Rau của `db/seed/seed.pl` vào database dev (chỉ thêm). Nhóm Rau vẫn giữ ba lựa chọn đã chốt ở T-255 (cả *Không rau*); bỏ *Không rau* là đổi luật, chờ chủ repo nói.
+
+<a id="t-262"></a>
+### T-262 — Thiết kế đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản
+
+Chủ repo yêu cầu 2026-10-27 trong hội thoại: *"Thiết kế đăng nhập thật bằng số điện thoại hoặc Gmail; làm rõ dùng mật khẩu hay OTP, Gmail là địa chỉ đăng nhập hay nút Đăng nhập với Google, rồi lập phiếu triển khai cho Codex."* Mức **L3** (tài khoản, mật khẩu, dữ liệu khách, hợp đồng). Claude Code làm, chưa review độc lập, nhánh `P4A-01`.
+
+Lời đã chốt (chủ repo chuyển lời chủ quán, chọn trong câu hỏi có sẵn phương án): mật khẩu, không OTP; Gmail là địa chỉ gõ vào ô; cả khách có tài khoản; khách đăng nhập tuỳ chọn, không chờ duyệt, được xem lại đơn và nhớ tên · số điện thoại · địa chỉ giao; đăng ký khai một trong hai. Ghi ở `master_plan/shop-facts.md` §8.8 lượt ba.
+
+Acceptance viết trước: (1) lời quán vào §8.8 và nhật ký `shop-facts.md`, kéo theo `07-pham-vi-mvp.md` · `0-ba/admin/01-ranh-gioi.md`; (2) chỗ lời chưa phủ thành `U-105`…`U-108`; (3) thiết kế **ADR-131** ở trạng thái *Đề xuất*, ADR-109 ghi lời đổi; (4) ba lát `T-263` · `T-264` · `T-265` có entry và phiếu Codex ở scratchpad; (5) gate xanh. Task sang *Done* khi chủ repo duyệt ADR-131; trước khi giao `T-263`, Claude thêm invariant tài khoản khách và test hồi quy (mức L2).
+
+<a id="t-263"></a>
+### T-263 — Lược đồ đăng nhập bằng số điện thoại · Gmail và tài khoản khách
+
+Lát a của **ADR-131** (điểm 1–7), mức L2. Migration mới: `account.phone` (duy nhất, CHECK mẫu chuẩn hoá), `account.email` và `account.username` thành tuỳ chọn, CHECK có số hoặc thư; bốn bảng `customer_account` · `customer_password` · `customer_session` · `customer_password_reset`; `sales_order.customer_account_id` chỉ cho `delivery` · `pickup`. Down từ chối khi có dữ liệu sẽ mất. File ý định `docs/product/2-db/23-luoc-do-tai-khoan-khach.md`, dòng thứ tự ở `07-thu-tu-migration.md`. Giao Codex sau khi ADR-131 được duyệt và invariant + test hồi quy đã có.
+
+<a id="t-264"></a>
+### T-264 — Backend và hợp đồng đăng nhập số điện thoại · Gmail, cửa khách
+
+Lát b của **ADR-131**, mức L2, sau `T-263`. Gói `be/internal/dinhdanh`; `POST /sessions` nhận `identifier`; đăng ký người làm khai số hoặc thư; miền mới `be/internal/khach` (đăng ký, đăng nhập, phiên, thông tin giao, lịch sử đơn, đổi và đặt lại mật khẩu); lớp quyền `khach`, cookie `banhcuon_khach`; `POST /online-orders` gắn tài khoản khách khi phiên hợp lệ. `openapi.yaml` tăng phiên bản phụ.
+
+<a id="t-265"></a>
+### T-265 — Màn đăng nhập một ô và trang tài khoản khách
+
+Lát c của **ADR-131**, mức L2, sau `T-264`. `/dang-nhap` · `/dang-ky` dùng ô *Số điện thoại hoặc Gmail*; trang Nhân viên hiện số điện thoại; nhánh mới `/khach/dang-nhap` · `/khach/dang-ky` · `/khach/tai-khoan` · `/khach/don` · `/khach/quen-mat-khau`; `/dat-mon` điền sẵn thông tin đã nhớ; cập nhật `docs/product/4-fe/01-khung-fe.md`.

@@ -142,6 +142,7 @@ có câu trả lời mới từ người.
 | ADR-124 | **Đường đọc trang Vận hành** (`T-225`): `GET /service-board` lớp `quay_hoac_chu_quan` — phiên bàn chưa đóng chia `serving` · `waiting` · `no_order`, thứ đặt · đã ra · thiếu theo đơn vị, tiền đã ra bằng đoạn tạm tính dùng chung với tổng quan, lịch sử đem ra đọc từ vết `made → served` | Đã chốt 2026-10-21 (Claude) | — | `T-225` · ADR-118 · ADR-092 · I-019 |
 | ADR-125 | **Hoá đơn phiên bàn chỉ cộng suất đã ra hết** (`T-227`): một đoạn tính tiền đã ra theo suất dùng chung cho hoá đơn, tạm tính và trang Vận hành; đóng phiên huỷ mọi việc trạm chưa ra (`station_job` thêm `cancelled` · `discarded`) | Đã chốt 2026-10-22 (Claude, chủ repo duyệt) | — | `T-227` · ADR-118 · ADR-124 · I-002 |
 | ADR-126 | **Bán lại món đã ngừng** (`T-243`): cửa `POST /menu-items/{menu_item_id}/resumption` xoá mốc ngừng bán trên chính dòng món, có lý do; lịch sử nằm trong vết `record_revision`, không bảng mới | Đã chốt 2026-10-24 (Claude, theo lời chủ repo đóng U-104) | — | `T-243` · I-018 · I-009 |
+| ADR-131 | **Đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản riêng** (`T-262`): một ô định danh chuẩn hoá; tài khoản người làm thêm số điện thoại, thư và tên đăng nhập thành tuỳ chọn; khách ở bảng, cookie và lớp quyền `khach` riêng, không bao giờ chạm `person`; đơn web gắn tài khoản khách; ba lát `T-263` → `T-264` → `T-265` | **Đề xuất** 2026-10-27 — chờ chủ repo duyệt | — | ADR-109 · ADR-085 · `U-105`…`U-108` |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7387,6 +7388,10 @@ nên tài khoản chủ quán không phải mang một trong bốn vai trạm. C
 không; quyền vẫn đọc từ cờ `is_owner`, không từ mã vai. Mã bốn vai trạm: `quay` · `trang_banh` · `gap_banh` ·
 `canh_don_ban` (vai *canh & dọn* của §3 không có mã ở owner; `canh_don_ban` là tên của phiên).
 
+**Lời quán đổi 2026-10-27 (T-262).** `shop-facts.md` §8.8 *lượt ba* lật điểm 4: đăng nhập bằng **số điện thoại hoặc
+Gmail**, không còn bằng tên đăng nhập. Điểm 4 giữ nguyên chữ cho tới khi thiết kế thay — **ADR-131** (đề xuất, chờ chủ
+repo duyệt) — được duyệt; code hiện chạy vẫn theo điểm 4 cũ.
+
 ### ADR-110 — Backend admin mở thi công theo trang: mỗi trang admin ứng các cửa nó cần, lớp đọc từ mệnh đề
 
 **Trạng thái:** **Đã chốt** 2026-10-14. Điểm 1 là **lời chủ repo** trong phiên: *"mở một task lập kế hoạch backend
@@ -8055,3 +8060,70 @@ nhau (`/hiding` · `/unhiding`) và một `DELETE` mang thân lý do là hình l
 **Alternatives:** (a) thư mục cửa riêng `menu/them_thanh_phan` — Gate 1f đỏ vì hai cửa chung ô *thêm* `menu_item_component`, bỏ. (b) FE gọi `POST /price-quotes` từng món lúc tải trang để lấy thành phần — trái test hồi quy P4A-04 (*không tính thử khi chưa mở ngăn*), bỏ. (c) Gắn nhóm lựa chọn có sẵn vào món trong cùng đợt — `menu_item_option_group` chưa có vết thêm dòng con nên lần gắn không giữ được I-018; để sau, nhóm *Rau* của canh đi qua seed (T-255).
 
 **Consequences:** hợp đồng tăng phiên bản phụ; ma trận quyền không thêm dòng (cửa cũ); món đã ngừng bán bị từ chối `menu_item_discontinued`; thành phần đã có trong món bị từ chối bằng ràng buộc khoá đôi của bảng (tên từ chối ánh xạ trong hợp đồng). `POST /menu-items` vẫn tạo thành phần **không** trạm — khoảng trống có từ trước, chưa sửa ở đây.
+
+## ADR-131 — Đăng nhập bằng số điện thoại hoặc Gmail; khách có tài khoản riêng, tách hẳn khỏi tài khoản người làm
+
+**Status:** **Đề xuất** 2026-10-27 — Claude Code thiết kế (task `T-262`, mức **L3**), **chờ chủ repo duyệt**; chưa lát
+nào được giao trước khi duyệt. Lời quán: `master_plan/shop-facts.md` §8.8 *lượt ba* (chủ repo chuyển lời chủ quán và
+chọn vế). Mọi điểm dưới đây là thiết kế của phiên, không phải lời chủ quán; chỗ lời chưa phủ là `U-105`…`U-108`, mỗi
+điểm dùng mặc định hẹp ghi ở câu ấy.
+
+**Context:** **ADR-109** điểm 4 cho người làm đăng nhập bằng tên đăng nhập, Gmail chỉ để nhận thư đặt lại. Lời mới:
+đăng nhập bằng **số điện thoại hoặc Gmail gõ vào ô, kèm mật khẩu**; đăng ký khai **một trong hai**; **khách** cũng có
+tài khoản — tuỳ chọn, không chờ duyệt, được xem lại đơn và được nhớ tên, số điện thoại, địa chỉ giao. Khách là người
+ngoài quán: mọi khoá ngoại *ai bấm* trỏ `person`, quyền đọc `person.is_owner` và `counter_duty` (**ADR-085**).
+
+**Decision:**
+
+1. **Một ô định danh, một phép chuẩn hoá dùng chung** (gói Go thuần mới `be/internal/dinhdanh`, không import Gin):
+   có `@` ⇒ thư — cắt khoảng trắng hai đầu, viết thường, phải có chữ trước và sau `@`; không có `@` ⇒ số điện thoại —
+   bỏ khoảng trắng, `.`, `-`, `(`, `)`; đầu `+84` hoặc `84` (11–12 chữ số) đổi thành `0`; kết quả phải khớp
+   `^0[1-9][0-9]{8,9}$`. Sai cả hai ⇒ từ chối `identifier_invalid`. Database cất **dạng đã chuẩn hoá** và kiểm lại bằng
+   CHECK cùng mẫu, nên `0912 345 678` và `+84912345678` là một người.
+2. **Tài khoản người làm** (`account`, lát `P2A-14`): thêm `phone` (tuỳ chọn, duy nhất); `email` và `username` thành
+   tuỳ chọn; CHECK *có ít nhất số điện thoại hoặc thư*. Đăng ký thôi hỏi tên đăng nhập; đăng nhập thôi nhận tên đăng
+   nhập — tài khoản cũ đều đã có thư nên không ai bị khoá ngoài. Cột `username` giữ để không mất vết. Mọi điểm khác của
+   ADR-109 (duyệt, vai, argon2id, phiên 7 ngày, chặn 15 phút sau 5 lần sai, đăng nhập `tai_quay` là mốc `C36`, đặt lại
+   qua thư 30 phút) **giữ nguyên**.
+3. **Khách ở bảng riêng, không bao giờ là `person`:** `customer_account` (số điện thoại · thư · tên, cùng luật điểm 1),
+   `customer_password` (chỉ thêm, argon2id), `customer_session` (băm SHA-256 của mã 32 byte, 7 ngày, không trực quầy),
+   `customer_password_reset` (30 phút, một lần). Khách đăng ký xong **mở phiên luôn**, không trạng thái chờ duyệt. Một số
+   điện thoại có thể vừa là tài khoản người làm vừa là tài khoản khách — hai không gian tách nhau, hai màn đăng nhập.
+4. **Phiên khách đi cookie riêng** `banhcuon_khach` (`HttpOnly` · `Secure` · `SameSite=Strict`) và **lớp quyền mới
+   `khach`** ở `docs/product/3-be/02-vai-va-quyen.md`: cửa lớp `khach` chỉ đọc cookie khách; `Authenticator` của người
+   làm không bao giờ đọc nó. Cookie khách gửi tới cửa người làm ⇒ `unauthenticated`, và ngược lại.
+5. **Đơn web gắn tài khoản khách:** `sales_order.customer_account_id` tuỳ chọn, chỉ cho kênh `delivery` · `pickup`
+   (CHECK), chỉ cửa `POST /online-orders` đặt và chỉ lúc tạo. Phiên khách hỏng hay hết hạn thì đơn **vẫn đi**, như khách
+   chưa đăng nhập — đăng nhập là tuỳ chọn. Đơn giữ `customer_name` · `customer_phone` · `delivery_address` của riêng nó;
+   sửa thông tin đã nhớ không đổi đơn cũ. Lượt gọi QR **không** gắn (mặc định hẹp của `U-106`).
+6. **Thông tin giao đã nhớ:** **một** bộ tên · số điện thoại · địa chỉ trên `customer_account`, khách tự sửa ở trang
+   tài khoản; form đặt điền sẵn, sửa ở form chỉ cho đơn ấy (mặc định hẹp của `U-107`). Để trống là xoá bộ đã nhớ.
+7. **Lịch sử đơn:** `GET /customer-accounts/current/orders` trả đơn có `customer_account_id` của chính phiên, mới nhất
+   trước, chia trang; chỉ đọc. Không ghép đơn ẩn danh cũ theo số điện thoại — người khác có thể đã gõ số ấy.
+8. **Quên mật khẩu:** đường thư như ADR-109 điểm 8 (cùng một câu trả lời dù có tài khoản hay không, 3 thư một giờ),
+   cho cả người làm lẫn khách, chỉ khi tài khoản có thư. Tài khoản chỉ có số điện thoại: người làm nhờ chủ quán (đường
+   mật khẩu tạm sẵn có); khách **chưa có đường** — màn nói thẳng điều đó (`U-105`). Không SMS, không OTP.
+9. **Lỗi đăng nhập không lộ ai có tài khoản:** sai định danh hay sai mật khẩu đều là `login_failed`. Đăng ký trùng
+   trả `phone_taken` / `email_taken` (409) — chấp nhận lộ *số này đã đăng ký*, vì đăng ký không thể vừa từ chối vừa
+   im lặng.
+10. **Ba lát nối tiếp:** `T-263` lược đồ (L2) → `T-264` backend + hợp đồng (L2, tăng phiên bản phụ `openapi.yaml`)
+    → `T-265` giao diện (L2). Mỗi lát một phiếu Codex; lát sau giao khi lát trước đã vào nhánh.
+
+**Why:** một ô định danh khớp lời *số điện thoại hoặc Gmail* mà không bắt người dùng chọn loại; chuẩn hoá ở cả Go lẫn
+CHECK để hai cách gõ một số không thành hai tài khoản. Tách khách khỏi `person` giữ bất biến *mọi `person` là người của
+quán* mà ma trận quyền dựa vào — một tài khoản khách không có đường nào thành người đứng quầy, kể cả khi code sai một
+chỗ. Mật khẩu thay vì OTP vì chủ quán chọn vậy, và vì SMS tốn tiền mỗi tin, cần nhà cung cấp mới và chết thì không ai
+vào được máy.
+
+**Rejected alternatives:** *một bảng `account` có cột loại `khach`* — một nhánh `if` sai là khách mở được cửa người
+làm, và mọi CHECK của `account` phải mang thêm vế loại; *OTP qua SMS* — chủ quán không chọn, thêm phụ thuộc ngoài tốn
+tiền; *nút Đăng nhập với Google* — chủ quán không chọn, cần tên miền cố định (`U-094` còn mở); *giữ đăng nhập bằng tên
+đăng nhập song song* — ba cách gõ cho một ô, không ai yêu cầu; *ghép đơn cũ theo số điện thoại* — lộ đơn của người khác.
+
+**Consequences:** sửa **ADR-109** điểm 4 khi được duyệt; `I-033` mở rộng và thêm một invariant cho tài khoản khách
+(Claude viết cùng test hồi quy trước khi giao `T-263`); `docs/product/1-system-design/01-ranh-gioi-he-thong.md` **PT-7**
+giờ cũng phục vụ khách; `docs/product/4-fe/01-khung-fe.md` thêm nhánh `/khach/…`. Không đổi giá, két hay luồng trạm.
+
+**Applies to:** `T-263` · `T-264` · `T-265`; `db/migrations/`; `be/internal/taikhoan/`, `be/internal/khach/` (mới),
+`be/internal/dinhdanh/` (mới), `be/internal/authz/`, cửa `POST /online-orders`; `docs/product/3-be/openapi.yaml` ·
+`02-vai-va-quyen.md`; `fe/src/app/dang-nhap`, `dang-ky`, `quen-mat-khau`, `dat-mon`, `khach/` (mới).

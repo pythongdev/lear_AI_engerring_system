@@ -106,7 +106,7 @@ Mặc định của một thứ không ai nhắc là **ngoài MVP**, không ph�
 | **Tách bàn, tách hoá đơn** | ngược thẳng với I-002 và §3.1.4: một phiên bàn là **một** hoá đơn. *(Chiều ngược lại — **ghép** bàn — thì **đã vào MVP**, xem ghi chú ngay dưới bảng)* |
 | **Đặt bàn trước** | `phone_preorder` là đặt **món** trước, không phải giữ **bàn** (§2.3). Quán chưa bao giờ nói tới việc giữ chỗ |
 | **Đánh giá món, phản hồi của khách** | không nguồn nào nhắc tới |
-| **Tài khoản đăng nhập cho khách** | khách quét QR là xong, không có bước đăng nhập nào ở §3.1 hay §3.2 |
+| ~~**Tài khoản đăng nhập cho khách**~~ | **Đã vào phạm vi 2026-10-27** (chủ quán, `shop-facts.md` §8.8 lượt ba; thiết kế **ADR-131**): khách đăng nhập **tuỳ chọn** bằng số điện thoại hoặc Gmail; quét QR và đặt web vẫn chạy khi chưa đăng nhập |
 | **Nhiều chi nhánh, nhiều quán** | mọi dữ kiện ở `shop-facts.md` tả **một** quán |
 
 **Một dòng của khuôn cũ nay chỉ còn đúng một nửa.** Khuôn BA-09 xếp *"tách/gộp bàn"* thành một dòng
