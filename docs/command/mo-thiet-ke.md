@@ -166,3 +166,12 @@ open -a Safari docs/product/4-fe/thiet_ke/khach_hang/da-dat.html
 open -a "Google Chrome" docs/product/4-fe/thiet_ke/khach_hang/khong-nhan-don.html
 open -a Safari docs/product/4-fe/thiet_ke/khach_hang/khong-nhan-don.html
 ```
+
+
+## Mở bản menu Gemini có nút chọn nhân và lượng nhân
+
+Lệnh mở theo yêu cầu chủ repo ngày 2026-10-27; chạy từ thư mục gốc repo. Trang dùng Tailwind CDN và Google Fonts nên cần mạng để tải đầy đủ giao diện.
+
+```bash
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/khach_hang/menu/gemini/menu-1-button-nhan-luong-nhan.html
+```
