@@ -179,7 +179,9 @@ của mệnh đề ấy trong cùng thay đổi.
 
 | Mệnh đề | Trạng thái | Vì sao | Ai nợ |
 |---|---|---|---|
-Không còn mệnh đề chưa có lát trong danh sách này (P2A-05, 2026-10-14).
+| `I-035` | chưa có lát | mệnh đề thêm 2026-10-27 (T-262, ADR-131) trước lược đồ tài khoản khách; chưa có bảng để truy vấn | `T-263` — viết câu ở `db/reconcile/` và gỡ dòng này trong cùng thay đổi |
+
+Trước dòng `I-035`, danh sách này rỗng từ P2A-05 (2026-10-14).
 
 ---
 

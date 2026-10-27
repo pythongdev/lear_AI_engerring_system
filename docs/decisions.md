@@ -142,7 +142,7 @@ có câu trả lời mới từ người.
 | ADR-124 | **Đường đọc trang Vận hành** (`T-225`): `GET /service-board` lớp `quay_hoac_chu_quan` — phiên bàn chưa đóng chia `serving` · `waiting` · `no_order`, thứ đặt · đã ra · thiếu theo đơn vị, tiền đã ra bằng đoạn tạm tính dùng chung với tổng quan, lịch sử đem ra đọc từ vết `made → served` | Đã chốt 2026-10-21 (Claude) | — | `T-225` · ADR-118 · ADR-092 · I-019 |
 | ADR-125 | **Hoá đơn phiên bàn chỉ cộng suất đã ra hết** (`T-227`): một đoạn tính tiền đã ra theo suất dùng chung cho hoá đơn, tạm tính và trang Vận hành; đóng phiên huỷ mọi việc trạm chưa ra (`station_job` thêm `cancelled` · `discarded`) | Đã chốt 2026-10-22 (Claude, chủ repo duyệt) | — | `T-227` · ADR-118 · ADR-124 · I-002 |
 | ADR-126 | **Bán lại món đã ngừng** (`T-243`): cửa `POST /menu-items/{menu_item_id}/resumption` xoá mốc ngừng bán trên chính dòng món, có lý do; lịch sử nằm trong vết `record_revision`, không bảng mới | Đã chốt 2026-10-24 (Claude, theo lời chủ repo đóng U-104) | — | `T-243` · I-018 · I-009 |
-| ADR-131 | **Đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản riêng** (`T-262`): một ô định danh chuẩn hoá; tài khoản người làm thêm số điện thoại, thư và tên đăng nhập thành tuỳ chọn; khách ở bảng, cookie và lớp quyền `khach` riêng, không bao giờ chạm `person`; đơn web gắn tài khoản khách; ba lát `T-263` → `T-264` → `T-265` | **Đề xuất** 2026-10-27 — chờ chủ repo duyệt | — | ADR-109 · ADR-085 · `U-105`…`U-108` |
+| ADR-131 | **Đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản riêng** (`T-262`): một ô định danh chuẩn hoá; tài khoản người làm thêm số điện thoại, thư và tên đăng nhập thành tuỳ chọn; khách ở bảng, cookie và lớp quyền `khach` riêng, không bao giờ chạm `person`; đơn web gắn tài khoản khách; ba lát `T-263` → `T-264` → `T-265` | Đã chốt 2026-10-27 (chủ repo duyệt, T-262) | — | ADR-109 · ADR-085 · I-035 · `U-105`…`U-108` |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -7388,9 +7388,9 @@ nên tài khoản chủ quán không phải mang một trong bốn vai trạm. C
 không; quyền vẫn đọc từ cờ `is_owner`, không từ mã vai. Mã bốn vai trạm: `quay` · `trang_banh` · `gap_banh` ·
 `canh_don_ban` (vai *canh & dọn* của §3 không có mã ở owner; `canh_don_ban` là tên của phiên).
 
-**Lời quán đổi 2026-10-27 (T-262).** `shop-facts.md` §8.8 *lượt ba* lật điểm 4: đăng nhập bằng **số điện thoại hoặc
-Gmail**, không còn bằng tên đăng nhập. Điểm 4 giữ nguyên chữ cho tới khi thiết kế thay — **ADR-131** (đề xuất, chờ chủ
-repo duyệt) — được duyệt; code hiện chạy vẫn theo điểm 4 cũ.
+**Sửa đổi 2026-10-27 (T-262; chủ repo duyệt ADR-131 cùng ngày).** `shop-facts.md` §8.8 *lượt ba* lật điểm 4: đăng
+nhập bằng **số điện thoại hoặc Gmail**, không còn bằng tên đăng nhập; tên đăng nhập và Gmail thành tuỳ chọn, thêm số
+điện thoại. Điểm 4 **bị ADR-131 thay**; mọi điểm khác giữ nguyên. Code chạy theo điểm 4 cũ cho tới khi lát `T-264` vào.
 
 ### ADR-110 — Backend admin mở thi công theo trang: mỗi trang admin ứng các cửa nó cần, lớp đọc từ mệnh đề
 
@@ -8063,8 +8063,8 @@ nhau (`/hiding` · `/unhiding`) và một `DELETE` mang thân lý do là hình l
 
 ## ADR-131 — Đăng nhập bằng số điện thoại hoặc Gmail; khách có tài khoản riêng, tách hẳn khỏi tài khoản người làm
 
-**Status:** **Đề xuất** 2026-10-27 — Claude Code thiết kế (task `T-262`, mức **L3**), **chờ chủ repo duyệt**; chưa lát
-nào được giao trước khi duyệt. Lời quán: `master_plan/shop-facts.md` §8.8 *lượt ba* (chủ repo chuyển lời chủ quán và
+**Status:** **Đã chốt** 2026-10-27 — Claude Code thiết kế (task `T-262`, mức **L3**), chủ repo duyệt nguyên bản trong
+hội thoại cùng ngày (nguyên văn *"duyệt"*). Lời quán: `master_plan/shop-facts.md` §8.8 *lượt ba* (chủ repo chuyển lời chủ quán và
 chọn vế). Mọi điểm dưới đây là thiết kế của phiên, không phải lời chủ quán; chỗ lời chưa phủ là `U-105`…`U-108`, mỗi
 điểm dùng mặc định hẹp ghi ở câu ấy.
 

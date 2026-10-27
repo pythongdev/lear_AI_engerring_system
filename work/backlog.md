@@ -89,7 +89,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-263 **Lược đồ đăng nhập bằng số điện thoại · Gmail và tài khoản khách** — L2, lát a của ADR-131; **chờ chủ repo duyệt ADR-131** · [chi tiết](#t-263)
+- [ ] T-263 **Lược đồ đăng nhập bằng số điện thoại · Gmail và tài khoản khách** — L2, lát a của ADR-131 (đã duyệt 2026-10-27); giao Codex khi T-262 đã commit · [chi tiết](#t-263)
 - [ ] T-264 **Backend và hợp đồng đăng nhập số điện thoại · Gmail, cửa khách** — L2, lát b của ADR-131; chờ T-263 · [chi tiết](#t-264)
 - [ ] T-265 **Màn đăng nhập một ô và trang tài khoản khách** — L2, lát c của ADR-131; chờ T-264 · [chi tiết](#t-265)
 - [ ] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — thêm danh mục của từng món vào `GET /menu` (hợp đồng, truy vấn, handler) rồi trang khách `/dat-mon`, `/ban/[ma]` nhóm món theo danh mục đọc từ API — L2 (đổi hợp đồng API) — mở 2026-10-23 (chủ repo chọn), làm sau T-236 · [chi tiết](#t-237)
@@ -101,7 +101,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-262 **Thiết kế đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản** — L3, chủ repo 2026-10-27; ADR-131 chờ duyệt, phiếu ba lát đã lập · [chi tiết](#t-262)
 - [ ] T-259 **Gom lựa chọn nhân và lượng nhân thành nút mở bảng trượt** — L1, chủ repo giao Codex 2026-10-26 · [chi tiết](#t-259)
 
 
@@ -133,6 +132,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 <a id="done"></a>
 ## Done
+
+- [x] T-262 **Thiết kế đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản** — L3, chủ repo duyệt ADR-131 2026-10-27 · [chi tiết](#t-262)
 
 - [x] T-245 **Viết lại trang Giao việc theo HTML, mobile first** — L1 — chủ repo giao Codex 2026-10-24 · [chi tiết](#t-245)
 
@@ -3352,6 +3353,8 @@ Chủ repo yêu cầu 2026-10-27 trong hội thoại: *"Thiết kế đăng nh�
 Lời đã chốt (chủ repo chuyển lời chủ quán, chọn trong câu hỏi có sẵn phương án): mật khẩu, không OTP; Gmail là địa chỉ gõ vào ô; cả khách có tài khoản; khách đăng nhập tuỳ chọn, không chờ duyệt, được xem lại đơn và nhớ tên · số điện thoại · địa chỉ giao; đăng ký khai một trong hai. Ghi ở `master_plan/shop-facts.md` §8.8 lượt ba.
 
 Acceptance viết trước: (1) lời quán vào §8.8 và nhật ký `shop-facts.md`, kéo theo `07-pham-vi-mvp.md` · `0-ba/admin/01-ranh-gioi.md`; (2) chỗ lời chưa phủ thành `U-105`…`U-108`; (3) thiết kế **ADR-131** ở trạng thái *Đề xuất*, ADR-109 ghi lời đổi; (4) ba lát `T-263` · `T-264` · `T-265` có entry và phiếu Codex ở scratchpad; (5) gate xanh. Task sang *Done* khi chủ repo duyệt ADR-131; trước khi giao `T-263`, Claude thêm invariant tài khoản khách và test hồi quy (mức L2).
+
+**Kết quả 2026-10-27:** chủ repo duyệt ADR-131 (nguyên văn *"duyệt"*). Claude thêm **I-035** vào `quality/invariants.md`; test hồi quy `i035_customer_account_apart_from_staff.sql` viết trước lược đồ, nằm cùng phiếu T-263 ở scratchpad và vào `db/tests/` trong worktree của Codex (đặt ở cây chính trước khi có lược đồ là gate đỏ). Gate xanh. Chưa review độc lập.
 
 <a id="t-263"></a>
 ### T-263 — Lược đồ đăng nhập bằng số điện thoại · Gmail và tài khoản khách

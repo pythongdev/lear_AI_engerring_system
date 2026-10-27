@@ -1636,3 +1636,44 @@ của combo thuộc đúng một combo đủ suất.
 
 *Viết ở P3A-11, 2026-10-15, Claude Code — từ lời lượt bảy, lượt tám (`master_plan/shop-facts.md` §8.9). Chỗ suy ra ghi
 ở mục Why.*
+
+### I-035 — Tài khoản đăng nhập mang SỐ ĐIỆN THOẠI hoặc GMAIL, mỗi thứ đứng một lần, ở dạng đã chuẩn hoá; tài khoản KHÁCH không bao giờ là người của quán; một đơn gắn tài khoản khách chỉ khi là đơn web
+
+**Invariant:**
+Mệnh đề của đăng nhập bằng số điện thoại hoặc Gmail (`master_plan/shop-facts.md` §8.8 *lượt ba*, 2026-10-27; thiết
+kế `docs/decisions.md` **ADR-131**, chủ repo duyệt cùng ngày). Năm vế:
+
+- **Mỗi tài khoản, của người làm hay của khách, mang ít nhất một trong hai: số điện thoại hoặc Gmail.**
+- **Số điện thoại chỉ được cất ở dạng đã chuẩn hoá** — mười hoặc mười một chữ số, bắt đầu bằng `0` rồi một chữ số khác
+  `0`; Gmail cất viết thường. Hai cách gõ một số (`0912 345 678`, `+84912345678`) là **một** số.
+- **Trong cùng một loại tài khoản, mỗi số điện thoại và mỗi Gmail đứng một lần.** Hai loại tách nhau: một số có thể vừa
+  là tài khoản người làm vừa là tài khoản khách.
+- **Tài khoản khách không bao giờ là, và không trỏ tới, một người của quán**; phiên khách không gắn trực quầy. Mật khẩu,
+  mã phiên và mã đặt lại của khách theo đúng luật cất băm và có hạn của `I-033` (argon2id; băm 32 byte; phiên ≤ 7 ngày;
+  mã đặt lại ≤ 30 phút, dùng một lần).
+- **Một đơn gắn tài khoản khách chỉ khi là đơn web** (giao tận nơi, đến lấy).
+
+**Mệnh đề không nói** khách quên mật khẩu mà không có Gmail thì sao (`U-105`), đơn nào vào lịch sử ngoài đơn web
+(`U-106`), nhớ bao nhiêu địa chỉ (`U-107`), hay xoá tài khoản khách (`U-108`). Nó không nói chặn sau bao nhiêu lần sai —
+con số ấy ở cửa backend như `I-033`.
+
+**Giới hạn đã biết:** máy không biết số điện thoại hay Gmail có thật của người khai — không có OTP (lời chủ quán); một
+người gõ số của người khác vẫn đăng ký được nếu số ấy chưa có tài khoản.
+
+**Why:**
+Lời quán cho đăng nhập bằng số điện thoại hoặc Gmail và mở tài khoản cho khách. Hai cách gõ một số mà thành hai tài
+khoản thì người dùng quên mình đăng ký kiểu nào là mất tài khoản. Khách mà là một người của quán thì mọi cửa đọc người
+của quán và cờ chủ quán — ma trận quyền của **ADR-085** — có thêm một đường để người ngoài lọt vào. Lượt gọi tại bàn
+không gắn tài khoản là mặc định hẹp chờ `U-106`. Mẫu chuẩn hoá và việc tách hai loại là **thiết kế** ADR-131, chủ repo
+duyệt.
+
+**Verification:**
+Kịch bản âm: tài khoản người làm hay khách không số không thư; số mang `+84`, thiếu số `0` đầu, quá ngắn, có khoảng
+trắng; Gmail có chữ hoa; hai khách cùng số hay cùng Gmail; mật khẩu khách không phải argon2id; mã phiên khách không
+phải băm 32 byte hay sống quá 7 ngày; mã đặt lại khách sống quá 30 phút; đơn kênh khác giao tận nơi và đến lấy mang tài
+khoản khách ⇒ **bị từ chối**. Kịch bản dương: tài khoản người làm chỉ có số; khách đăng ký chỉ bằng số rồi mở phiên
+bằng vai ghi; một số vừa là tài khoản người làm vừa là tài khoản khách; đơn đến lấy mang tài khoản khách. Kiểm ngược:
+không khoá ngoại nào từ bảng khách tới người của quán hay trực quầy.
+
+*Viết ở T-262, 2026-10-27, Claude Code — từ lời §8.8 lượt ba và thiết kế **ADR-131** chủ repo duyệt. Test hồi quy
+`i035_customer_account_apart_from_staff` viết trước lược đồ, vào `db/tests/` cùng lát `T-263`.*
