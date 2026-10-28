@@ -98,6 +98,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-268 **Gộp món lẻ giống nhau trong giỏ khách** — L1, chủ repo giao Codex 2026-10-28 · [chi tiết](#t-268)
+
 - [ ] T-266 **Sản phẩm và combo chưa có ảnh** — L1, chủ repo giao Codex 2026-10-28 · [chi tiết](#t-266)
 
 - [ ] T-259 **Gom lựa chọn nhân và lượng nhân thành nút mở bảng trượt** — L1, chủ repo giao Codex 2026-10-26 · [chi tiết](#t-259)
@@ -3400,3 +3402,17 @@ Acceptance → bằng chứng: `fe/src/components/tai-khoan/t265.test.tsx` (gử
 **Phạm vi:** Component ảnh dùng chung trong thư mục component chủ quán, trang sản phẩm, trang combo và CSS combo, tài nguyên ảnh công khai trong `fe/public/images/san-pham/`, hồ sơ này; khai báo trong `work/scope/T-266.txt`.
 
 **Bàn giao:** Codex thực hiện, chưa được duyệt độc lập; nhánh `P4A-01`, nền `5451284`. Cây đã có nhiều thay đổi của việc khác, bao gồm `work/backlog.md`; chỉ bổ sung mục việc này. Chủ repo chỉ định tệp `docs/product/4-fe/thiet_ke/anh/banh-cuon.png`; bản public trùng nguyên tệp gốc (đã kiểm bằng `cmp`); dùng ảnh giò, trứng, suất giò/trứng/đầy đủ từ Downloads cho các tên tương ứng, các biến thể chín/tái/vàng dùng chung ảnh minh hoạ theo loại. Canh và combo tên mới chưa có ảnh riêng dùng ảnh minh hoạ đĩa bánh cuốn có nhãn; món mới chưa có ánh xạ có khung giữ chỗ. Kiểm chứng: 57 kiểm thử riêng của hai trang đạt; gate chạy đầy đủ FE: 36 tệp/518 kiểm thử đạt, lint, typecheck, apigen và build đều đạt; render 13 tên món/combo trỏ đúng tệp, ảnh bánh cuốn khớp nguyên tệp gốc, cả 7 ảnh tải qua bộ tối ưu Next trả HTTP 200. `./scripts/gate.sh` thoát 2: phần DB báo đỏ khi xuôi lại và khi lùi migration tài khoản khách `20261027120000_tai_khoan_khach`, còn các hàm `customer_password_reset_used_guard`/`customer_session_ended_guard` trong lược đồ; đây là lỗi ngoài phạm vi L1, chuyển Claude xử lý. Log gốc: `/tmp/t266-gate.log`. Giữ In Progress vì gate chung chưa đạt; bước tiếp theo là Claude sửa bước lùi migration và chạy lại gate, rồi đóng việc thêm ảnh. Chưa commit; khối commit dùng blob riêng của backlog để không gom thay đổi việc khác.
+
+
+<a id="t-268"></a>
+### T-268 — Gộp món lẻ giống nhau trong giỏ khách
+
+**Yêu cầu:** chủ repo 2026-10-28 muốn món lẻ giống nhau ở `/ban/3` gộp một dòng và cộng số lượng.
+
+**Mức:** L1, chỉ đổi nháp giỏ khách ở FE; không đổi hợp đồng, cách tính tiền hay dữ liệu đơn đã lưu.
+
+**Acceptance (trước code):** cùng mã món và cùng tập lựa chọn thì cộng số lượng, kể cả món không lựa chọn và nháp cũ; khác mã món hoặc bất kỳ lựa chọn nào vẫn tách dòng. Giữ thứ tự xuất hiện đầu tiên, sửa số lượng/xoá/bớt đúng dòng; báo giá và gửi đơn dùng số lượng đã gộp. Không gộp dòng có số lượng đang nhập trống/không hợp lệ.
+
+**Scope:** `fe/src/lib/nhap-khach.ts`, `fe/src/app/ban/thuc-don-khach.test.tsx`, `docs/product/4-fe/01-khung-fe.md`, `work/backlog.md`.
+
+**Bàn giao 2026-10-28:** Codex thực hiện trên nhánh `P4A-01`, nền `d9d7e26`, chưa duyệt độc lập. Gộp món lẻ trong `useNhapKhach.sua` và `dungLai`, dùng mã món + tập lựa chọn đã sắp thứ tự; không tính tiền ở FE. Nháp cũ và thêm từ chi tiết dùng cùng đường gộp; combo giữ xử lý hiện có. Bằng chứng acceptance: kiểm thử thẻ món xác nhận cộng số lượng, báo giá backend, sửa/bớt; kiểm thử món không lựa chọn xác nhận gộp, xoá cả dòng, thân gửi đúng số lượng; kiểm thử nháp cũ xác nhận đảo thứ tự lựa chọn vẫn gộp, khác rau/mã món tách riêng, ô trống không mất. Nhóm liên quan 4 tệp/46 kiểm thử đạt; `./scripts/fe-check.sh` đạt apigen, lint, typecheck, 39 tệp/542 kiểm thử và build; sau bổ sung kiểm thân gửi chạy lại tệp tóm tắt 12/12 đạt. Log frontend `/tmp/t268-fe.log`. Đã đọc diff, không thêm dependency/đổi API; kiểm whitespace các tệp của việc này đạt, scope riêng đạt, index chính trống. Cây có nhiều thay đổi từ trước; khối commit phải dùng blob tách riêng backlog và owner FE. Gate trên cây chính `/tmp/t268-gate.log` còn chạy database ở PID 35443 (gate PID 22365); không tuyên bố gate xanh. Kiểm bản commit tách riêng trong `/tmp/t268-review` (có bổ sung nút lựa chọn chưa track từ nền để resolve import): `./scripts/gate.sh` thoát 2; scope, doc-status, schema, cửa ghi, hợp đồng, Gin đạt; links đỏ do tài liệu nền thiếu, verify đỏ tại typecheck vì nền `d9d7e26` có giao diện tài khoản khách nhưng hợp đồng/type chưa có `CustomerProfile` và các endpoint tài khoản khách. Log `/tmp/t268-isolated-gate.log`. Không sửa các owner API L2 ngoài phạm vi. Giữ In Progress; bước tiếp theo Claude tích hợp hợp đồng/type và tài liệu nền, đọc log gate cây chính rồi chạy lại gate. Đã kiểm nội dung stage tách riêng và whitespace trong worktree kiểm tra; index cây chính không thay đổi, chưa commit.
