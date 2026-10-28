@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component combo</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#EA6A0C',
+                            dark: '#FF7A1A',
+                            hover: '#d05b05',
+                            light: '#fdf3ed'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border-color: #e2e8f0;
+        }
+        .dark {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border-color: #334155;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Bảng trượt trong thẻ: cao 0 -> cao thật */
+        .slide-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .25s ease; }
+        .slide-panel.open { grid-template-rows: 1fr; }
+        .slide-panel > div { overflow: hidden; }
+    </style>
+</head>
+<body class="min-h-screen p-4">
+    <!--
+        Component tách nguyên khối từ meniu-anh-ngan.html.
+        Khi nhúng: chép ComboSection, CSS/biến màu, cấu hình Tailwind và script bên dưới.
+        Ảnh minh hoạ: anh-mon.jpg cùng thư mục; đổi src khi chuyển component.
+        Thêm class "dark" vào thẻ html để dùng giao diện tối.
+        Đây là bản thiết kế tĩnh: giá minh hoạ, nút xem ảnh chỉ hiện thông báo.
+    -->
+    <main class="w-full max-w-[390px] mx-auto">
+        <!-- 4. ComboSection -->
+        <div data-component="ComboSection" class="space-y-4">
+            <h2 class="text-xs font-bold text-[var(--text-sub)] uppercase tracking-wider flex items-center gap-2">
+                <span>Combo đặc trưng</span>
+                <div class="h-[1px] bg-[var(--border-color)] flex-1"></div>
+            </h2>
+
+            <!-- ComboCard 1 -->
+            <div class="combo-card bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-sm hover:border-brand/40 transition">
+                <!-- Ảnh to nằm ngang trên cùng -->
+                <div class="w-full h-44 bg-slate-100 dark:bg-slate-800 relative cursor-pointer group overflow-hidden" onclick="alert('Chuyển sang trang chi tiết món')">
+                    <img src="anh-mon.jpg" alt="Đầy đủ trứng chín" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-1 rounded-lg">Xem chi tiết ảnh</div>
+                </div>
+
+                <div class="p-4">
+                <!-- Tên món + giá cùng một hàng -->
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-base leading-snug">Đầy đủ trứng chín</h3>
+                    </div>
+                    <span class="text-base font-bold text-brand whitespace-nowrap price-val">30.000 ₫</span>
+                </div>
+                <!-- Hàng chip -->
+                <div class="mt-3 flex items-center justify-between gap-2">
+                    <button onclick="togglePanel(this, 'details')" class="h-8 px-3 inline-flex items-center gap-1.5 rounded-full text-xs transition font-medium border border-[var(--border-color)] text-[var(--text-sub)] hover:border-brand/40 hover:text-brand">
+                        <span>Thành phần</span><span class="arrow text-[10px] transition-transform duration-200">▾</span>
+                    </button>
+                    <button onclick="togglePanel(this, 'options')" class="h-8 px-3 inline-flex items-center gap-1.5 rounded-full text-xs transition bg-brand/10 text-brand font-semibold border border-brand/20 hover:bg-brand/15">
+                        <strong class="opt-label font-semibold">Thịt · Vừa</strong><span class="arrow text-[10px] transition-transform duration-200">▾</span>
+                    </button>
+                </div>
+                <!-- Tuỳ chọn: trượt xuống trong thẻ, không bật popup -->
+                <div class="slide-panel" data-panel="options"><div>
+                    <div class="mt-3 space-y-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl">
+                        <div class="opt-group">
+                            <p class="font-bold text-[11px] text-[var(--text-sub)] mb-1.5">Nhân:</p>
+                            <div class="grid grid-cols-2 gap-2">
+                            <div onclick="pickOption(this)" class="opt px-3 py-2 rounded-xl text-xs font-semibold text-center cursor-pointer transition border border-brand bg-brand/10 text-brand">Thịt</div>
+                            <div onclick="pickOption(this)" class="opt px-3 py-2 rounded-xl text-xs font-medium text-center cursor-pointer transition border border-[var(--border-color)] hover:border-brand/40">Chay</div>
+                            </div>
+                        </div>
+                        <div class="opt-group">
+                            <p class="font-bold text-[11px] text-[var(--text-sub)] mb-1.5">Lượng nhân:</p>
+                            <div class="grid grid-cols-2 gap-2">
+                            <div onclick="pickOption(this)" class="opt px-3 py-2 rounded-xl text-xs font-semibold text-center cursor-pointer transition border border-brand bg-brand/10 text-brand">Vừa</div>
+                            <div onclick="pickOption(this)" class="opt px-3 py-2 rounded-xl text-xs font-medium text-center cursor-pointer transition border border-[var(--border-color)] hover:border-brand/40">Nhiều</div>
+                            </div>
+                        </div>
+                    </div>
+                </div></div>
+                <!-- Thành phần: trượt xuống trong thẻ -->
+                <div class="slide-panel" data-panel="details"><div>
+                    <div class="mt-3 text-xs text-[var(--text-sub)] space-y-1 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl">
+                            <div class="flex justify-between"><span>3× Bánh cuốn</span><span>(mặc định)</span></div>
+                            <div class="flex justify-between"><span>1× Trứng chín</span><span>(mặc định)</span></div>
+                            <div class="flex justify-between"><span>1× Giò</span><span>(mặc định)</span></div>
+                    </div>
+                </div></div>
+                <!-- Nút cam: số lượng + thành tiền -->
+                <div class="qty-bar mt-4 h-12 pl-5 pr-1.5 rounded-full bg-brand text-white shadow-md flex items-center justify-between" data-unit="30000" data-unit-name="suất">
+                    <span class="qty-text text-sm font-semibold"></span>
+                    <div class="flex items-center gap-1 bg-white/15 rounded-full p-1">
+                        <button onclick="adjustQty(this, -1)" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-bold transition disabled:opacity-40 disabled:cursor-not-allowed text-lg">−</button>
+                        <span class="qty w-7 text-center text-sm font-bold">1</span>
+                        <button onclick="adjustQty(this, 1)" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-bold transition disabled:opacity-40 disabled:cursor-not-allowed text-lg">＋</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- ComboCard 2 -->
+            <div class="combo-card bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-sm hover:border-brand/40 transition">
+                <div class="w-full h-44 bg-slate-100 dark:bg-slate-800 relative cursor-pointer group overflow-hidden" onclick="alert('Chuyển sang trang chi tiết món')">
+                    <img src="anh-mon.jpg" alt="Suất giò" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-1 rounded-lg">Xem chi tiết ảnh</div>
+                </div>
+                <div class="p-4">
+                <!-- Tên món + giá cùng một hàng -->
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-base leading-snug">Suất giò</h3>
+                    </div>
+                    <span class="text-base font-bold text-brand whitespace-nowrap price-val">29.000 ₫</span>
+                </div>
+                <!-- Hàng chip -->
+                <div class="mt-3 flex items-center justify-between gap-2">
+                    <button onclick="togglePanel(this, 'details')" class="h-8 px-3 inline-flex items-center gap-1.5 rounded-full text-xs transition font-medium border border-[var(--border-color)] text-[var(--text-sub)] hover:border-brand/40 hover:text-brand">
+                        <span>Thành phần</span><span class="arrow text-[10px] transition-transform duration-200">▾</span>
+                    </button>
+                    <button onclick="togglePanel(this, 'options')" class="h-8 px-3 inline-flex items-center gap-1.5 rounded-full text-xs transition bg-brand/10 text-brand font-semibold border border-brand/20 hover:bg-brand/15">
+                        <strong class="opt-label font-semibold">Thịt · Nhiều</strong><span class="arrow text-[10px] transition-transform duration-200">▾</span>
+                    </button>
+                </div>
+                <!-- Tuỳ chọn: trượt xuống trong thẻ, không bật popup -->
+                <div class="slide-panel" data-panel="options"><div>
+                    <div class="mt-3 space-y-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl">
+                        <div class="opt-group">
+                            <p class="font-bold text-[11px] text-[var(--text-sub)] mb-1.5">Nhân:</p>
+                            <div class="grid grid-cols-2 gap-2">
+                            <div onclick="pickOption(this)" class="opt px-3 py-2 rounded-xl text-xs font-semibold text-center cursor-pointer transition border border-brand bg-brand/10 text-brand">Thịt</div>
+                            <div onclick="pickOption(this)" class="opt px-3 py-2 rounded-xl text-xs font-medium text-center cursor-pointer transition border border-[var(--border-color)] hover:border-brand/40">Chay</div>
+                            </div>
+                        </div>
+                        <div class="opt-group">
+                            <p class="font-bold text-[11px] text-[var(--text-sub)] mb-1.5">Lượng nhân:</p>
+                            <div class="grid grid-cols-2 gap-2">
+                            <div onclick="pickOption(this)" class="opt px-3 py-2 rounded-xl text-xs font-medium text-center cursor-pointer transition border border-[var(--border-color)] hover:border-brand/40">Vừa</div>
+                            <div onclick="pickOption(this)" class="opt px-3 py-2 rounded-xl text-xs font-semibold text-center cursor-pointer transition border border-brand bg-brand/10 text-brand">Nhiều</div>
+                            </div>
+                        </div>
+                    </div>
+                </div></div>
+                <!-- Thành phần: trượt xuống trong thẻ -->
+                <div class="slide-panel" data-panel="details"><div>
+                    <div class="mt-3 text-xs text-[var(--text-sub)] space-y-1 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl">
+                            <div class="flex justify-between"><span>1× Giò</span><span>(mặc định)</span></div>
+                            <div class="flex justify-between"><span>4× Bánh cuốn</span><span>(mặc định)</span></div>
+                    </div>
+                </div></div>
+                <!-- Nút cam: số lượng + thành tiền -->
+                <div class="qty-bar mt-4 h-12 pl-5 pr-1.5 rounded-full bg-brand text-white shadow-md flex items-center justify-between" data-unit="29000" data-unit-name="suất">
+                    <span class="qty-text text-sm font-semibold"></span>
+                    <div class="flex items-center gap-1 bg-white/15 rounded-full p-1">
+                        <button onclick="adjustQty(this, -1)" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-bold transition disabled:opacity-40 disabled:cursor-not-allowed text-lg">−</button>
+                        <span class="qty w-7 text-center text-sm font-bold">2</span>
+                        <button onclick="adjustQty(this, 1)" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-bold transition disabled:opacity-40 disabled:cursor-not-allowed text-lg">＋</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        const fmtVnd = n => n.toLocaleString('vi-VN') + ' ₫';
+
+        // Thẻ món: trượt mở/đóng bảng "options" hoặc "details" ngay trong thẻ
+        function togglePanel(btn, name) {
+            const card = btn.closest('.combo-card, .product-card');
+            const panel = card.querySelector(`.slide-panel[data-panel="${name}"]`);
+            const open = panel.classList.toggle('open');
+            btn.querySelector('.arrow').style.transform = open ? 'rotate(180deg)' : '';
+        }
+
+        // Chọn một giá trị trong nhóm; nhãn chip ghép mọi nhóm, bảng giữ mở
+        function pickOption(item) {
+            item.closest('.opt-group').querySelectorAll('.opt').forEach(el => el.className = OPT_OFF);
+            item.className = OPT_ON;
+            const card = item.closest('.combo-card, .product-card');
+            card.querySelector('.opt-label').textContent =
+                [...card.querySelectorAll('.opt-group .opt.text-brand')].map(el => el.textContent).join(' · ');
+        }
+        const OPT_ON = 'opt px-3 py-2 rounded-xl text-xs font-semibold text-center cursor-pointer transition border border-brand bg-brand/10 text-brand';
+        const OPT_OFF = 'opt px-3 py-2 rounded-xl text-xs font-medium text-center cursor-pointer transition border border-[var(--border-color)] hover:border-brand/40';
+
+        // Nút cam: số lượng × đơn giá
+        function renderQty(bar) {
+            const qty = parseInt(bar.querySelector('.qty').textContent);
+            bar.querySelector('button').disabled = qty === 0;
+            bar.querySelector('.qty-text').textContent = qty > 0
+                ? `${qty} ${bar.dataset.unitName} · ${fmtVnd(qty * Number(bar.dataset.unit))}`
+                : 'Thêm vào giỏ';
+        }
+
+        function adjustQty(btn, change) {
+            const bar = btn.closest('.qty-bar');
+            const span = bar.querySelector('.qty');
+            span.textContent = Math.max(0, parseInt(span.textContent) + change);
+            renderQty(bar);
+        }
+
+        document.querySelectorAll('.qty-bar').forEach(renderQty);
+    </script>
+</body>
+</html>
