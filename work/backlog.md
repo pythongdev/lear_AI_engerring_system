@@ -89,8 +89,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-264 **Backend và hợp đồng đăng nhập số điện thoại · Gmail, cửa khách** — L2, lát b của ADR-131; chờ T-263 · [chi tiết](#t-264)
-- [ ] T-265 **Màn đăng nhập một ô và trang tài khoản khách** — L2, lát c của ADR-131; chờ T-264 · [chi tiết](#t-265)
 - [ ] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — thêm danh mục của từng món vào `GET /menu` (hợp đồng, truy vấn, handler) rồi trang khách `/dat-mon`, `/ban/[ma]` nhóm món theo danh mục đọc từ API — L2 (đổi hợp đồng API) — mở 2026-10-23 (chủ repo chọn), làm sau T-236 · [chi tiết](#t-237)
 - [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
@@ -134,6 +132,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-265 **Màn đăng nhập một ô và trang tài khoản khách** — L2, lát c của ADR-131; Codex làm, Claude duyệt 2026-10-28 · [chi tiết](#t-265)
+- [x] T-264 **Backend và hợp đồng đăng nhập số điện thoại · Gmail, cửa khách** — L2, lát b của ADR-131; Codex làm, Claude duyệt 2026-10-28 · [chi tiết](#t-264)
 - [x] T-263 **Lược đồ đăng nhập bằng số điện thoại · Gmail và tài khoản khách** — L2, lát a của ADR-131; Codex làm, Claude duyệt 2026-10-27 · [chi tiết](#t-263)
 - [x] T-262 **Thiết kế đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản** — L3, chủ repo duyệt ADR-131 2026-10-27 · [chi tiết](#t-262)
 
@@ -3374,10 +3374,18 @@ Kiểm đã chạy (Claude): `./scripts/db-check.sh` trong worktree — `PASS T-
 
 Lát b của **ADR-131**, mức L2, sau `T-263`. Gói `be/internal/dinhdanh`; `POST /sessions` nhận `identifier`; đăng ký người làm khai số hoặc thư; miền mới `be/internal/khach` (đăng ký, đăng nhập, phiên, thông tin giao, lịch sử đơn, đổi và đặt lại mật khẩu); lớp quyền `khach`, cookie `banhcuon_khach`; `POST /online-orders` gắn tài khoản khách khi phiên hợp lệ. `openapi.yaml` tăng phiên bản phụ.
 
+**Bàn giao 2026-10-28:** thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-264`, nhánh `codex/T-264` từ `4326e46` + T-263 stage sẵn), duyệt **Claude**. Codex dừng hai lần đúng phiếu (chưa có khuôn chia trang; phiếu viết sai ý về file nền) và một lần hết hạn mức. Claude chốt khuôn chia trang keyset `before_id`/`limit` (1…50, mặc định 20) → `{orders, next_before_id}`. Vòng duyệt có Docker lộ ba nhóm đỏ: (a) test hồi quy của Claude gửi `Origin` khi `BANHCUON_ORIGIN` rỗng, chưa mở luồng quầy trước đơn web, và sửa phiên bằng vai chủ không khai lý do — Claude sửa test, không đổi điều kiện kiểm; (b) cửa khách không khai `shop.revision_reason`, thiếu ca I-018 cho `khach/dat_lai` · `ket_thuc_phien` · `luu_giao` — Codex sửa; (c) **lỗ hổng thiết kế T-263**: `record_revision.person_id` bắt buộc người của quán nên mọi lần khách tự sửa vỡ. Chủ repo chọn *"Giữ vết, người sửa để trống"* (câu hỏi có sẵn phương án, 2026-10-28) ⇒ Claude thêm migration `20261028090000_vet_cua_khach` (`record_revision_person_check`: rỗng chỉ cho bốn bảng `customer_*`; lùi từ chối khi đã có vết rỗng), sửa `db/reconcile/i018.sql`, ghi sửa đổi vào I-018 và ADR-131, nới ba test I-018 nhận `check_violation` bên cạnh `not_null_violation` (lần sửa không người vẫn bị từ chối).
+
+Kiểm đã chạy (Claude): trong worktree `db-check: PASS — 38 bước…`, `be-check` mọi test PASS; FE còn đúng `khach-qr.test.tsx` đỏ sẵn ở HEAD (sửa đổi chưa commit của task khác ở clone chính làm nó xanh). Clone chính sau tích hợp: `./scripts/gate.sh` mọi cổng PASS (be-check, db-check 39 bước, verify, hợp đồng 0.52.0 134/134). Ở clone chính dòng thứ tự migration là **39** (sau T-248 37, T-263 38); trong blob commit T-264 là 38. Hợp đồng: T-264 và T-248 (chưa commit) cùng đặt `0.52.0` — ai commit sau phải tăng tiếp.
+
 <a id="t-265"></a>
 ### T-265 — Màn đăng nhập một ô và trang tài khoản khách
 
 Lát c của **ADR-131**, mức L2, sau `T-264`. `/dang-nhap` · `/dang-ky` dùng ô *Số điện thoại hoặc Gmail*; trang Nhân viên hiện số điện thoại; nhánh mới `/khach/dang-nhap` · `/khach/dang-ky` · `/khach/tai-khoan` · `/khach/don` · `/khach/quen-mat-khau`; `/dat-mon` điền sẵn thông tin đã nhớ; cập nhật `docs/product/4-fe/01-khung-fe.md`.
+
+**Bàn giao 2026-10-28:** thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-265`, nhánh `codex/T-265` từ `17dcb81` + T-264 stage sẵn), duyệt **Claude**. Phiếu gốc mất cùng scratchpad phiên trước; Claude viết lại từ entry này và ADR-131. Vòng một Codex dừng cả task vì `fe/src/app/ban/_components/phieu-khach.tsx` ngoài scope; Claude mở scope và chốt: `PhieuKhach` nhận `initialDelivery` tuỳ chọn, chỉ `/dat-mon` truyền khi có phiên khách, trang QR không truyền (`U-106`). Vòng hai Codex hết hạn mức **trước khi viết báo cáo** — không có lời tự khai; Claude duyệt thẳng diff và test. File: nhánh `fe/src/app/khach/` (đăng nhập, đăng ký, tài khoản, đơn, quên và đặt lại mật khẩu), `fe/src/components/khach/`, `fe/src/lib/khach/session.ts`, `/dat-mon` (`dat-mon-khach.tsx`), form người làm (đăng nhập, quên mật khẩu, khung), `01-khung-fe.md`.
+
+Acceptance → bằng chứng: `fe/src/components/tai-khoan/t265.test.tsx` (gửi identifier nguyên; đăng ký thiếu số và thư không gọi API) · `fe/src/app/khach/khach.test.tsx` (đăng ký chuyển `/khach/tai-khoan`; 401 chuyển `/khach/dang-nhap`; *Xem thêm* gửi `next_before_id`, `null` ẩn nút; quên mật khẩu báo rõ tài khoản chỉ có số) · `fe/src/app/dat-mon/t265.test.tsx` (có phiên điền sẵn, sửa form không PUT; không phiên form trống). Kiểm đã chạy (Claude): trong worktree `./scripts/fe-check.sh` — 525 test qua, còn đúng `khach-qr.test.tsx:162` đỏ sẵn ở HEAD; clone chính sau tích hợp: `./scripts/gate.sh` mọi cổng PASS (be-check, db-check 39 bước, verify gồm fe-check).
 
 
 <a id="t-266"></a>

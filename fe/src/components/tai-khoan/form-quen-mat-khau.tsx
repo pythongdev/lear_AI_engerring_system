@@ -33,6 +33,7 @@ export function FormQuenMatKhau() {
 
   return (
     <TheTaiKhoan tieuDe="Quên mật khẩu">
+      <p>Tài khoản chỉ có số điện thoại thì nhờ chủ quán đặt mật khẩu tạm.</p>
       <form onSubmit={guiMa} className="flex flex-col gap-3">
         <Truong id="email" nhan="Gmail của tài khoản" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
         {ketQua ? <Bao loai={ketQua.loai}>{ketQua.chu}</Bao> : null}

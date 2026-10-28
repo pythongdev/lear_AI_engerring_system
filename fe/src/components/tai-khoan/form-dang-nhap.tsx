@@ -18,9 +18,9 @@ import { useDangNhap } from "@/lib/auth/session";
 import { Bao, NutGui, TheTaiKhoan, Truong } from "./khung-form";
 
 const schema = z.object({
-  username: z.string().trim().min(1, "Nhập tên đăng nhập."),
+  identifier: z.string().refine((v) => v.trim().length > 0, "Nhập số điện thoại hoặc Gmail."),
   password: z.string().min(1, "Nhập mật khẩu."),
-  at_counter: z.boolean(),
+  tai_quay: z.boolean(),
 });
 
 export function FormDangNhap() {
@@ -29,7 +29,7 @@ export function FormDangNhap() {
   const [loi, setLoi] = useState<string | null>(null);
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-    defaultValues: { username: "", password: "", at_counter: false },
+    defaultValues: { identifier: "", password: "", tai_quay: false },
   });
 
   const gui = form.handleSubmit(async (vao) => {
@@ -45,15 +45,15 @@ export function FormDangNhap() {
   return (
     <TheTaiKhoan tieuDe="Đăng nhập">
       <form onSubmit={gui} className="flex flex-col gap-3" noValidate>
-        <Truong id="username" nhan="Tên đăng nhập" autoComplete="username" loi={form.formState.errors.username?.message} {...form.register("username")} />
+        <Truong id="identifier" nhan="Số điện thoại hoặc Gmail" autoComplete="username" loi={form.formState.errors.identifier?.message} {...form.register("identifier")} />
         <Truong id="password" nhan="Mật khẩu" type="password" autoComplete="current-password" loi={form.formState.errors.password?.message} {...form.register("password")} />
         <Controller
           control={form.control}
-          name="at_counter"
+          name="tai_quay"
           render={({ field }) => (
             <Field orientation="horizontal">
-              <Checkbox id="at_counter" name={field.name} checked={field.value} onCheckedChange={(v) => field.onChange(v === true)} onBlur={field.onBlur} ref={field.ref} />
-              <FieldLabel htmlFor="at_counter" className="font-normal">
+              <Checkbox id="tai_quay" name={field.name} checked={field.value} onCheckedChange={(v) => field.onChange(v === true)} onBlur={field.onBlur} ref={field.ref} />
+              <FieldLabel htmlFor="tai_quay" className="font-normal">
                 Đăng nhập tại quầy (bắt đầu đứng quầy)
               </FieldLabel>
             </Field>

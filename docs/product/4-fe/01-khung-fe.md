@@ -30,6 +30,12 @@ Mỗi màn thêm **một dòng** ở đây cùng lượt dựng nó, và nhóm n
 | /robots.txt | — | chỉ dẫn thu thập cho máy tìm kiếm | `T-189` |
 | /sitemap.xml | — | danh sách URL công khai | `T-189` |
 | `/api/[...path]` | — | **tầng chuyển tiếp** cùng origin, không phải màn (§3.2) | `P4-02` |
+| `/khach/dang-nhap` | khách | một ô số điện thoại hoặc Gmail và mật khẩu; đăng nhập tuỳ chọn (2026-10-28, phiếu Claude, ADR-131) | `T-265` |
+| `/khach/dang-ky` | khách | tên, ít nhất số điện thoại hoặc Gmail, mật khẩu; mở phiên ngay sau đăng ký | `T-265` |
+| `/khach/tai-khoan` | khách | tên · số · thư; sửa hoặc xoá bộ giao đã nhớ, đổi mật khẩu, đăng xuất | `T-265` |
+| `/khach/don` | khách | lịch sử đơn của phiên, mới nhất trước, Xem thêm theo con trỏ backend | `T-265` |
+| `/khach/quen-mat-khau` | khách | xin mã qua Gmail; nói rõ khách chỉ có số chưa có cách lấy lại mật khẩu | `T-265` |
+| `/khach/dat-lai-mat-khau` | khách | đặt mật khẩu bằng mã trong thư; nhận `token` trên URL hoặc nhập mã | `T-265` |
 | `/dang-nhap` | — | đăng nhập; *tại quầy* mở trực quầy (mốc `C36`, **ADR-109** điểm 7) | `P4-04` |
 | `/dang-ky` | — | tự đăng ký, chờ chủ quán duyệt | `P4-04` |
 | `/quen-mat-khau` | — | xin mã đặt lại (luôn cùng một câu) và đặt lại bằng mã trong thư | `P4-04` |
@@ -80,7 +86,11 @@ xem đi trên URL (**ADR-102** điểm 4).
 |---|---|---|---|---|---|
 | `/thuc-don/[loai]/[id]` | `GET /menu` phía server, `no-store` từng request | — | mở trang chi tiết | lỗi đọc có lời báo và đường về; sai loại/id hoặc không còn trong menu trả 404; chọn nhân/lượng và số lượng, thêm món/combo vào giỏ nháp chung theo bàn hoặc web qua `ChonMonChiTiet`; món lẻ hiện giá tổ hợp từ menu, giá combo không tự cộng và tính lại ở giỏ; quay lại bằng Link giữ giỏ nháp (2026-10-26, chủ repo) | `T-258` |
 | `/ban/[ma]` | `GET /qr-codes/{code}` · `GET /menu` ở server từng request với `no-store`; menu vào Query bằng `initialData`, khoá `menu` | `POST /price-quotes` cả giỏ · `POST /qr-codes/{code}/orders` | menu khi mở màn · quay lại cửa sổ · mạng về · sau ghi; tổng khi giỏ đổi | giữ nháp; gửi mất phản hồi khoá phiếu, *Gửi lại* giữ thân và dấu; tổng chỉ lấy backend (2026-10-21, theo phiếu Claude) | `P4-10` |
-| `/dat-mon` | `GET /menu` ở server từng request với `no-store`, `initialData`, khoá `menu` chung | `POST /price-quotes` cả giỏ · `POST /online-orders` | như màn QR | cùng khuôn giữ thân và dấu; thành công xoá giỏ và form; giờ gửi `+07:00` (2026-10-21, theo phiếu Claude) | `P4-10` |
+| `/dat-mon` | `GET /menu` ở server từng request với `no-store`, `initialData`, khoá `menu` chung; `GET /customer-sessions/current` phía trình duyệt để điền sẵn một lần tên · số · địa chỉ đã nhớ (2026-10-28, phiếu Claude) | `POST /price-quotes` cả giỏ · `POST /online-orders` | như màn QR | cùng khuôn giữ thân và dấu; thành công xoá giỏ và form; giờ gửi `+07:00` (2026-10-21, theo phiếu Claude); không phiên hoặc lỗi đọc phiên vẫn đặt ẩn danh, sửa form chỉ cho đơn ấy, không ghi bộ đã nhớ; trong lúc đọc phiên vẫn render tên món từ menu server | `P4-10` |
+| `/khach/dang-nhap` · `/khach/dang-ky` | — | `POST /customer-sessions` · `POST /customer-accounts` | thành công dọn cache và nháp khách, chuyển tài khoản để đọc phiên mới | báo chưa rõ kết quả khi mất phản hồi; không gửi lại ngầm | `T-265` |
+| `/khach/tai-khoan` | `GET /customer-sessions/current` | `PUT /customer-accounts/current/delivery-profile` · `PUT /customer-accounts/current/password` · `POST /customer-sessions/current/end` | mở màn · quay lại cửa sổ · mạng về · sau ghi đọc lại phiên; 401 chuyển đăng nhập khách; đổi mật khẩu giữ phiên hiện tại | giữ bản đọc cũ kèm lỗi, mốc đọc và nút Đọc lại; lưu xong nhưng đọc lại lỗi báo rõ đã lưu | `T-265` |
+| `/khach/don` | `GET /customer-accounts/current/orders`; Xem thêm gửi `before_id` bằng `next_before_id`, null thì ẩn nút | — | mở màn · quay lại cửa sổ · mạng về · Xem thêm; giữ thứ tự backend, 401 chuyển đăng nhập khách | giữ trang cũ kèm lỗi, mốc đọc và nút Đọc lại | `T-265` |
+| `/khach/quen-mat-khau` · `/khach/dat-lai-mat-khau` | — | `POST /customer-password-reset-requests` · `POST /customer-password-resets` | xin mã luôn cùng câu khi thành công; đặt lại xong dọn cache và nháp khách, mời đăng nhập | báo chưa rõ kết quả, không gửi lại ngầm | `T-265` |
 | `/chu-quan` — Tổng quan | `GET /owner-overview` | `PUT /daily-minimums/{sale_date}` (`sale_date` của lần đọc) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ — hợp đồng không trả `poll_interval_seconds` cho chủ quán | giữ bản cũ kèm `Alert` có mốc `read_at` của bản ấy (dòng *Chủ quán*) | `P4A-02` |
 | `/chu-quan/van-hanh` — Vận hành | `GET /service-board`; `GET /sessions/current` (bật nút), `GET /production-board` (lúc mở ô chọn); cột Thịt · Mộc nhĩ · Trứng · Chay · Canh xếp theo tên thành phần và lựa chọn đã chụp, thứ không khớp vào cột Khác — suy ra 2026-10-21, Claude Code, chờ chủ repo | `POST /served-marks` — ghi đem ra (`T-228`) (2026-10-21, theo phiếu Claude) | mở màn · quay lại cửa sổ · mạng về · nút *Đọc lại*, không kéo theo chu kỳ | giữ bản cũ kèm `Alert` giờ `read_at`; chỉ đếm, cộng số backend và định dạng tiền, không tính giá (2026-10-21, theo phiếu Claude) | `T-226`, `T-228` |
 | `/chu-quan/tong-ket` — Tổng kết | `GET /sale-days/{sale_date}/summary`; ngày xem là `?ngay=YYYY-MM-DD`, thiếu thì `sale_date` của `GET /owner-overview` | — | mở màn · đổi ngày · quay lại cửa sổ · mạng về; **không** kéo theo chu kỳ — đọc theo kỳ, ngày đã qua ít đổi | `Alert`; `400 invalid_request` ⇒ *Ngày không hợp lệ*, không bày mục; `supply_reminders` luôn ghi là kết quả hiện tại kèm `read_at` (2026-10-19, Claude Code) | `P4A-03` |
@@ -133,6 +143,12 @@ xem đi trên URL (**ADR-102** điểm 4).
   Khung theo vai chọn ở `fe/src/lib/auth/khung.ts` — vai chọn màn, **không** mở quyền.
 - **Test:** `fe/src/lib/api/client.test.ts` — lời từ chối mẫu `option_combination_invalid` kèm `field`, mã lạ,
   thân không phải JSON, mất kết nối, tầng chuyển tiếp không nối được backend, không gửi header danh tính.
+
+**Phiên khách** (2026-10-28, phiếu Claude, ADR-131): `usePhienKhach()` ở `fe/src/lib/khach/session.ts`
+đọc `GET /customer-sessions/current` bằng cookie HttpOnly riêng của backend; không đọc/lưu cookie trong JavaScript.
+Cache khách dùng khoá `customer-sessions` và `customer-accounts`, tách khỏi người làm. Đăng nhập, đăng xuất và đặt lại
+mật khẩu khách huỷ truy vấn đang chạy, dọn cache khách và giỏ nháp web (giữ nháp QR); không kết thúc phiên người làm. Form tài khoản
+và lịch sử gặp 401 chuyển về `/khach/dang-nhap`; form đăng nhập sai chỉ hiện lỗi. Query không thử lại ngầm.
 
 ### 3.2 Tầng chuyển tiếp cùng origin
 
@@ -198,6 +214,10 @@ có nơi dùng thứ hai (**ADR-102** điểm 8) và thêm một dòng ở đây
 | `ChuyenGiaoDien` (tầng 2) | `fe/src/components/shared/chuyen-giao-dien.tsx` | nút sáng / tối, lưu lựa chọn ở localStorage; chưa chọn thì theo hệ thống (2026-10-22, theo phiếu Claude); ở thanh đầu `KhungTheoVai` đứng trước *Đăng xuất*, nút nổi góc dưới của root layout tự ẩn khi trang có nút ở thanh đầu (2026-10-22, chủ repo) | root layout (nổi) · `KhungTheoVai` | `T-229` · `T-230` |
 | Primitive shadcn: `Button` · `Input` · `Label` · `Checkbox` · `Field` · `Card` · `Alert` · `Separator` | `fe/src/components/ui/` | sinh bằng CLI ghim, không sửa tay focus, bàn phím, accessibility (**ADR-100** điểm 2) | mọi màn | `P4-04` |
 | `TheTaiKhoan` · `Truong` · `Bao` · `NutGui` | `fe/src/components/tai-khoan/khung-form.tsx` | khung, ô nhập kèm lỗi, dòng báo, nút gửi của màn tài khoản — ghép từ primitive trên | năm màn tài khoản | `P4-04` |
+| `KhungKhach` · `LoiDocKhach` | `fe/src/components/khach/khung.tsx` | khung khách, điều hướng Đặt món · Đơn đã đặt · Tài khoản; lỗi đọc kèm mốc và nút đọc lại | các trang `/khach/…` | `T-265` |
+| `FormKhach` | `fe/src/components/khach/form.tsx` | React Hook Form + Zod, primitive shadcn; gắn lỗi vào ô, chặn gửi trùng, 401 ở form riêng tư chuyển đăng nhập | các form khách | `T-265` |
+| `DangNhapKhach` · `TaiKhoanKhach` · `DonKhach` · `QuenMatKhauKhach` · `DatLaiMatKhauKhach` | `fe/src/components/khach/` | các màn theo nguồn dữ liệu §2; miền khách trong phạm vi phiếu Claude 2026-10-28 | nhánh khách | `T-265` |
+| `DatMonKhach` | `fe/src/app/dat-mon/dat-mon-khach.tsx` | đọc phiên tuỳ chọn, lối vào Đăng nhập/Tài khoản, truyền prop `initialDelivery` cho `PhieuKhach`; refetch cùng khách không ghi đè nháp; QR không truyền prop | `/dat-mon` | `T-265` |
 | `KhungTheoVai` | `fe/src/components/tai-khoan/khung-theo-vai.tsx` | gác lối vào khung theo phiên, thanh đầu có nút đăng xuất | `/quay` · `/chu-quan` · `/tram` | `P4-04` |
 | `ThanhDieuHuong` (tầng 3) | `fe/src/app/chu-quan/_components/thanh-dieu-huong.tsx` | `nav` giữa các trang chủ quán, đọc **một** danh sách mục; mục khớp đúng đường dẫn mang `aria-current`; thêm trang ⇒ thêm mục cùng lượt (test đỏ khi mục trỏ route chưa có `page.tsx`) | layout `/chu-quan/*` | `P4A-01` |
 | Primitive shadcn `Dialog` | `fe/src/components/ui/dialog.tsx` | hộp thoại: focus vào khi mở, trả về nút mở khi đóng, `Esc` đóng (Radix) | hộp thoại sửa có lý do | `P4-05` |

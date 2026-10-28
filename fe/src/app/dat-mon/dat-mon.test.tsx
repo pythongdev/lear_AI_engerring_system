@@ -28,6 +28,7 @@ async function mo(gui?: Ghi) {
   const trang = await DatMonPage();
   const b = clientBackend(undefined, gui);
   render(<ApiProvider fetch={b.fetch}>{trang}</ApiProvider>);
+  await screen.findByRole("button", { name: "Thêm Bánh cuốn" });
   return { server, goi: b.goi };
 }
 const nutDat = () => screen.getByRole("button", { name: "Đặt đơn" }) as HTMLButtonElement;

@@ -19,8 +19,9 @@ import { loiKhach } from "./loi-khach";
 type Phieu = { loai: "qr"; ma: string; body: components["schemas"]["QrOrderRequest"] }
   | { loai: "web"; body: components["schemas"]["OnlineOrderRequest"] };
 
-export function PhieuKhach({ ma, nhan, initialMenu }: {
+export function PhieuKhach({ ma, nhan, initialMenu, initialDelivery }: {
   ma?: string; nhan?: string; initialMenu: components["schemas"]["Menu"];
+  initialDelivery?: Pick<components["schemas"]["CustomerProfile"], "delivery_name" | "delivery_phone" | "delivery_address">;
 }) {
   const api = useApi();
   const qc = useQueryClient();
@@ -47,10 +48,10 @@ export function PhieuKhach({ ma, nhan, initialMenu }: {
     },
   });
   const [cach, setCach] = useState<"delivery" | "pickup" | "">("");
-  const [sdt, setSdt] = useState("");
-  const [diaChi, setDiaChi] = useState("");
+  const [sdt, setSdt] = useState(initialDelivery?.delivery_phone ?? "");
+  const [diaChi, setDiaChi] = useState(initialDelivery?.delivery_address ?? "");
   const [gioCan, setGioCan] = useState("");
-  const [ten, setTen] = useState("");
+  const [ten, setTen] = useState(initialDelivery?.delivery_name ?? "");
   const [ghiChu, setGhiChu] = useState("");
   const [bao, setBao] = useState<string | null>(null);
   const [loi, setLoi] = useState<string | null>(null);

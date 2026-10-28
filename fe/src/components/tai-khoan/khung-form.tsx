@@ -29,8 +29,8 @@ export function Truong({ nhan, loi, id, ...input }: TruongProps) {
   return (
     <Field data-invalid={loi ? true : undefined}>
       <FieldLabel htmlFor={id}>{nhan}</FieldLabel>
-      <Input id={id} aria-invalid={loi ? true : undefined} {...input} />
-      {loi ? <FieldError>{loi}</FieldError> : null}
+      <Input id={id} aria-invalid={loi ? true : undefined} aria-describedby={loi ? `${id}-loi` : undefined} {...input} />
+      {loi ? <FieldError id={`${id}-loi`}>{loi}</FieldError> : null}
     </Field>
   );
 }
