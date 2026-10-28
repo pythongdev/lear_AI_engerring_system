@@ -100,6 +100,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-266 **Sản phẩm và combo chưa có ảnh** — L1, chủ repo giao Codex 2026-10-28 · [chi tiết](#t-266)
+
 - [ ] T-259 **Gom lựa chọn nhân và lượng nhân thành nút mở bảng trượt** — L1, chủ repo giao Codex 2026-10-26 · [chi tiết](#t-259)
 
 
@@ -3376,3 +3378,17 @@ Lát b của **ADR-131**, mức L2, sau `T-263`. Gói `be/internal/dinhdanh`; `P
 ### T-265 — Màn đăng nhập một ô và trang tài khoản khách
 
 Lát c của **ADR-131**, mức L2, sau `T-264`. `/dang-nhap` · `/dang-ky` dùng ô *Số điện thoại hoặc Gmail*; trang Nhân viên hiện số điện thoại; nhánh mới `/khach/dang-nhap` · `/khach/dang-ky` · `/khach/tai-khoan` · `/khach/don` · `/khach/quen-mat-khau`; `/dat-mon` điền sẵn thông tin đã nhớ; cập nhật `docs/product/4-fe/01-khung-fe.md`.
+
+
+<a id="t-266"></a>
+### T-266 — Sản phẩm và combo chưa có ảnh
+
+**Goal:** Bổ sung vùng ảnh trên danh sách và chi tiết sản phẩm, combo của chủ quán; dùng đúng ảnh chủ repo gửi cho bánh cuốn.
+
+**Nguồn:** Chủ repo yêu cầu 2026-10-28 tại `/chu-quan/san-pham`. Đây là thay đổi trình bày L1, chưa thêm cơ chế tải ảnh lên hay lưu ảnh trong DB/API.
+
+**Nghiệm thu trước khi sửa:** Mọi sản phẩm, kể cả chưa xếp danh mục hoặc ngừng bán, và mọi combo có vùng ảnh; ảnh xuất hiện cả trong chi tiết; ảnh bánh cuốn đúng tệp chủ repo gửi; món chưa có tệp riêng và ảnh tải lỗi có hình giữ chỗ cùng nhãn rõ ràng; không thay đổi giá, trạng thái hay các thao tác hiện có.
+
+**Phạm vi:** Component ảnh dùng chung trong thư mục component chủ quán, trang sản phẩm, trang combo và CSS combo, tài nguyên ảnh công khai trong `fe/public/images/san-pham/`, hồ sơ này; khai báo trong `work/scope/T-266.txt`.
+
+**Bàn giao:** Codex thực hiện, chưa được duyệt độc lập; nhánh `P4A-01`, nền `5451284`. Cây đã có nhiều thay đổi của việc khác, bao gồm `work/backlog.md`; chỉ bổ sung mục việc này. Chủ repo chỉ định tệp `docs/product/4-fe/thiet_ke/anh/banh-cuon.png`; bản public trùng nguyên tệp gốc (đã kiểm bằng `cmp`); dùng ảnh giò, trứng, suất giò/trứng/đầy đủ từ Downloads cho các tên tương ứng, các biến thể chín/tái/vàng dùng chung ảnh minh hoạ theo loại. Canh và combo tên mới chưa có ảnh riêng dùng ảnh minh hoạ đĩa bánh cuốn có nhãn; món mới chưa có ánh xạ có khung giữ chỗ. Kiểm chứng: 57 kiểm thử riêng của hai trang đạt; gate chạy đầy đủ FE: 36 tệp/518 kiểm thử đạt, lint, typecheck, apigen và build đều đạt; render 13 tên món/combo trỏ đúng tệp, ảnh bánh cuốn khớp nguyên tệp gốc, cả 7 ảnh tải qua bộ tối ưu Next trả HTTP 200. `./scripts/gate.sh` thoát 2: phần DB báo đỏ khi xuôi lại và khi lùi migration tài khoản khách `20261027120000_tai_khoan_khach`, còn các hàm `customer_password_reset_used_guard`/`customer_session_ended_guard` trong lược đồ; đây là lỗi ngoài phạm vi L1, chuyển Claude xử lý. Log gốc: `/tmp/t266-gate.log`. Giữ In Progress vì gate chung chưa đạt; bước tiếp theo là Claude sửa bước lùi migration và chạy lại gate, rồi đóng việc thêm ảnh. Chưa commit; khối commit dùng blob riêng của backlog để không gom thay đổi việc khác.

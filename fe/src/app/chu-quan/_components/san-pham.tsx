@@ -12,6 +12,7 @@ import { FormDanhMucMon } from "./form-danh-muc-mon";
 import { GiaThanhPhanMon } from "./form-gia-thanh-phan";
 import { FormNgungBan } from "./form-ngung-ban";
 import { FormThemMon } from "./form-them-mon";
+import { AnhSanPham } from "./anh-san-pham";
 
 import { FormThemThanhPhan } from "./form-them-thanh-phan";
 
@@ -32,7 +33,9 @@ function GiaMon({ mon, gia }: { mon: Mon; gia: GiaQuery }) {
 
 function DongMon({ mon, danhMuc, gia, capNhat }: { mon: Mon; danhMuc: string; gia: GiaQuery; capNhat: (mon: Mon) => void }) {
   return <tr>
-    <td>{mon.item_name}</td><td>{danhMuc}</td>
+    <td><div className="flex items-center gap-3"><span>{mon.item_name}</span>
+      <AnhSanPham ten={mon.item_name} className="order-first h-20 w-20" />
+    </div></td><td>{danhMuc}</td>
     <td>{mon.discontinued ? <span className="sp-badge sp-discontinued">Ngừng bán</span> : "Đang bán"}</td>
     <td><GiaMon mon={mon} gia={gia} /></td>
     <td>{(mon.components ?? []).map((c) => <div key={c.menu_component_id}>{c.component_name} ×{c.quantity}</div>)}</td>
@@ -99,6 +102,7 @@ export function TrangSanPham() {
       <DialogContent className="trang-san-pham sp-drawer" aria-describedby={undefined}>
         {mon && <>
           <DialogTitle>Cập nhật {mon.item_name}</DialogTitle>
+          <AnhSanPham key={mon.menu_item_id} ten={mon.item_name} className="aspect-[4/3] w-full" />
           {!mon.discontinued && <FormThemThanhPhan key={mon.menu_item_id} mon={mon}
             components={thanhPhan.filter((c) => !mon.components?.some((x) => x.menu_component_id === c.menu_component_id))} />}
           <section className="space-y-3"><h2>Đổi tên</h2>

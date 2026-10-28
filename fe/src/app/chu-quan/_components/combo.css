@@ -19,3 +19,4 @@ main:has(>.combo-shell){padding:0}main:has(>.combo-shell)>nav{display:none}
 @media(min-width:761px){.cb-nav details::details-content{content-visibility:visible}.cb-nav details>div{display:block!important}}
 
 .cb-form-heading{font-size:12px;font-weight:500;margin:0 0 6px}.cb-dialog .cb-muted{font-size:11px}.cb-ingredient{display:grid;grid-template-columns:minmax(0,1fr) 88px 36px;gap:8px;align-items:end;min-width:0}.cb-ingredient [data-slot=field]{min-width:0;gap:8px}.cb-ingredient button{padding:4px;min-height:40px}.cb-ingredient input,.cb-ingredient select{padding:10px 8px}.cb-ingredient [data-slot=field-error]{grid-column:1/-1;overflow-wrap:anywhere}
+.combo-shell .cb-photo{width:100%;aspect-ratio:4/3;background:var(--cb-card);color:var(--cb-muted);border:1px solid var(--cb-line);border-radius:8px}

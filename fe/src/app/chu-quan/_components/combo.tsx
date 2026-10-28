@@ -15,6 +15,7 @@ import { useSanPham, type Mon } from "./du-lieu-san-pham";
 import { useCombo, useLapCombo, useDoiGiaCombo, useAnCombo, useDatPhuThuCombo, tienMenu, type KieuMenu } from "./du-lieu-danh-muc-combo";
 import { useTopping, type NhomTopping } from "./du-lieu-topping";
 import { FormMenu, OMenu, chuMenu, soMenu } from "./form-menu";
+import { AnhSanPham } from "./anh-san-pham";
 
 type Combo = KieuMenu["MenuCombo"];
 type Bao = (message: string) => void;
@@ -158,14 +159,15 @@ export function TrangCombo() {
         <div className="cb-toolbar"><div className="cb-tabs" aria-label="Lọc combo">{[["all", "Tất cả"], ["visible", "Hiển thị"], ["hidden", "Đã ẩn"]].map(([id, ten]) => <button key={id} aria-pressed={loc === id} onClick={() => setLoc(id)}>{ten}</button>)}</div><input type="search" aria-label="Tìm tên combo" placeholder="Tìm tên combo…" value={tim} onChange={(e) => setTim(e.target.value)} /></div>
         <div className="cb-list">{hien.map((item) => <section className="cb-item" aria-label={item.name} key={item.menu_combo_id} data-selected={c?.menu_combo_id === item.menu_combo_id}>
           <button className="cb-select" aria-label={`Xem ${item.name}`} aria-pressed={c?.menu_combo_id === item.menu_combo_id} onClick={() => { setChon(item.menu_combo_id); dong(); }}>
-            <span className="cb-row"><span className="cb-icon" aria-hidden="true">▦</span><span className="cb-badge">{item.hidden_at ? "Đã ẩn" : "Hiển thị"}</span></span>
+            <AnhSanPham ten={item.name} combo className="cb-photo" />
+            <span className="cb-row"><span className="cb-badge">{item.hidden_at ? "Đã ẩn" : "Hiển thị"}</span></span>
             <span className="cb-name">{item.name}</span>
           </button>
           <ThanhPhan c={item} /><div className="cb-total"><small>Giá combo</small><strong className="cb-price">{tienMenu(item.price_vnd)}</strong></div>
         </section>)}</div>
         {hien.length === 0 && <p className="cb-empty">{combos.length === 0 ? "Chưa có combo." : "Không có combo phù hợp."}</p>}
       </section><aside className="cb-detail" aria-label="Chi tiết combo">{c ? <>
-        <span className="cb-icon" aria-hidden="true">▦</span><h2>{c.name}</h2><span className="cb-badge">{c.hidden_at ? "Đã ẩn" : "Đang hiển thị"}</span>
+        <AnhSanPham key={c.menu_combo_id} ten={c.name} combo className="cb-photo" /><h2>{c.name}</h2><span className="cb-badge">{c.hidden_at ? "Đã ẩn" : "Đang hiển thị"}</span>
         <p className="cb-price">{tienMenu(c.price_vnd)}</p><h3>THÀNH PHẦN COMBO</h3><ThanhPhan c={c} />
         {c.hidden_at === null && <div className="cb-actions"><Button aria-label={`Đổi giá ${c.name}`} onClick={() => setSua("gia")}>Đổi giá</Button><Button variant="outline" aria-label={`Ẩn ${c.name}`} onClick={() => setSua("an")}>Ẩn combo</Button>{topping.data && <Button variant="outline" aria-label={`Đặt phụ thu ${c.name}`} onClick={() => setSua("phu-thu")}>Đặt phụ thu</Button>}</div>}
       </> : <p className="cb-muted">Chọn một combo để xem chi tiết.</p>}</aside></div>
