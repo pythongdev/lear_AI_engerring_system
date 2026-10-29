@@ -98,6 +98,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-273 **Bố trí bốn món theo vòng cung trong bản mẫu menu mâm** — L1, chủ repo giao Codex 2026-10-29 · [chi tiết](#t-273)
+
 - [ ] T-268 **Gộp món lẻ giống nhau trong giỏ khách** — L1, chủ repo giao Codex 2026-10-28 · [chi tiết](#t-268)
 
 - [ ] T-266 **Sản phẩm và combo chưa có ảnh** — L1, chủ repo giao Codex 2026-10-28 · [chi tiết](#t-266)
@@ -3416,3 +3418,20 @@ Acceptance → bằng chứng: `fe/src/components/tai-khoan/t265.test.tsx` (gử
 **Scope:** `fe/src/lib/nhap-khach.ts`, `fe/src/app/ban/thuc-don-khach.test.tsx`, `docs/product/4-fe/01-khung-fe.md`, `work/backlog.md`.
 
 **Bàn giao 2026-10-28:** Codex thực hiện trên nhánh `P4A-01`, nền `d9d7e26`, chưa duyệt độc lập. Gộp món lẻ trong `useNhapKhach.sua` và `dungLai`, dùng mã món + tập lựa chọn đã sắp thứ tự; không tính tiền ở FE. Nháp cũ và thêm từ chi tiết dùng cùng đường gộp; combo giữ xử lý hiện có. Bằng chứng acceptance: kiểm thử thẻ món xác nhận cộng số lượng, báo giá backend, sửa/bớt; kiểm thử món không lựa chọn xác nhận gộp, xoá cả dòng, thân gửi đúng số lượng; kiểm thử nháp cũ xác nhận đảo thứ tự lựa chọn vẫn gộp, khác rau/mã món tách riêng, ô trống không mất. Nhóm liên quan 4 tệp/46 kiểm thử đạt; `./scripts/fe-check.sh` đạt apigen, lint, typecheck, 39 tệp/542 kiểm thử và build; sau bổ sung kiểm thân gửi chạy lại tệp tóm tắt 12/12 đạt. Log frontend `/tmp/t268-fe.log`. Đã đọc diff, không thêm dependency/đổi API; kiểm whitespace các tệp của việc này đạt, scope riêng đạt, index chính trống. Cây có nhiều thay đổi từ trước; khối commit phải dùng blob tách riêng backlog và owner FE. Gate trên cây chính `/tmp/t268-gate.log` còn chạy database ở PID 35443 (gate PID 22365); không tuyên bố gate xanh. Kiểm bản commit tách riêng trong `/tmp/t268-review` (có bổ sung nút lựa chọn chưa track từ nền để resolve import): `./scripts/gate.sh` thoát 2; scope, doc-status, schema, cửa ghi, hợp đồng, Gin đạt; links đỏ do tài liệu nền thiếu, verify đỏ tại typecheck vì nền `d9d7e26` có giao diện tài khoản khách nhưng hợp đồng/type chưa có `CustomerProfile` và các endpoint tài khoản khách. Log `/tmp/t268-isolated-gate.log`. Không sửa các owner API L2 ngoài phạm vi. Giữ In Progress; bước tiếp theo Claude tích hợp hợp đồng/type và tài liệu nền, đọc log gate cây chính rồi chạy lại gate. Đã kiểm nội dung stage tách riêng và whitespace trong worktree kiểm tra; index cây chính không thay đổi, chưa commit.
+
+
+<a id="t-273"></a>
+### T-273 — Bố trí bốn món theo vòng cung trong bản mẫu menu mâm
+
+Chủ repo giao trực tiếp Codex ngày 2026-10-29; L1, chỉ bản HTML minh hoạ.
+Phạm vi: `docs/private/prompt/menu-mam.html`, `work/backlog.md`.
+
+Acceptance cập nhật trước lượt sửa 2026-10-29 theo yêu cầu mới của chủ repo: (1) mặc định bốn mâm nằm trên vòng cung, có tên và giá ở 320/390/430px và desktop; (2) nút trước/sau hoặc vuốt ngang dịch một món để xem đủ sáu món, không tự thêm vào giỏ và không nhận cuộn dọc là vuốt; (3) bấm mâm đổi chi tiết, giữ lựa chọn và giỏ; (4) lọc đúng bốn combo/hai món lẻ, không nhân đôi món để đủ bốn; (5) ví dụ 64.000đ, tăng/giảm/bỏ và giỏ trống giữ đúng; (6) chạy gate và báo kết quả thật. Yêu cầu vòng cung thay cho lưới sáu món ở lượt trước.
+
+Thực hiện: Codex; chưa có duyệt độc lập. Nhánh `P4A-01`, base `6dea88f`; cây có thay đổi của nhiều task từ trước, không đưa vào task này.
+
+Bàn giao Codex 2026-10-29: lưới ba cột hai hàng thay carousel; bấm mâm đổi chi tiết; bỏ xử lý vuốt và nút chuyển mâm. Đã đọc diff, không thêm dependency hay đổi giá/cách tính. Chrome headless PASS ở 320×700, 390×844, 430×932, 1280×900: sáu nút món nằm trong viewport, không tràn ngang và không bị thanh đáy che. PASS các thao tác chọn không thêm giỏ, ví dụ 64.000đ và thành phần [7,2,0,2,2], khác nhân thành dòng riêng, lọc 4/2/6, giữ giỏ/lựa chọn, tăng/giảm/bỏ, mở/đóng đơn, giỏ trống.
+
+Gate ở worktree riêng `/tmp/menu-grid-273-check` từ HEAD: Gate 3, 1c, 1e, 1f, 1g, 1h PASS; 1d và verify SKIP (chỉ tài liệu). Gate 1b FAIL vì prompt profile có từ HEAD trỏ hai file `customer_profile.md` và `customer_profile_loading.md` chưa tồn tại trong HEAD. Không sửa tài liệu profile ngoài phạm vi. Task giữ In Progress vì gate chưa xanh; phần giao diện đã hoàn tất. Log `/tmp/menu-grid-273-isolated-gate.log`, ảnh `/tmp/menu-grid-273.png`. Chưa duyệt độc lập, chưa commit. Bước tiếp: lead xử lý liên kết profile rồi chạy lại gate và chuyển Done.
+
+Lượt sửa vòng cung 2026-10-29 theo yêu cầu mới: hiển thị tối đa bốn mâm theo cung, có tên và giá; nút trước/sau và vuốt ngang dịch cửa sổ từng món, dừng đúng hai biên. Bấm mâm đổi chi tiết, không thêm giỏ. Lọc hai món lẻ chỉ hiện hai mâm. Đã đọc diff, không thêm dependency, không đổi dữ liệu minh hoạ hay phép tính. Chrome headless PASS 320×700, 390×844, 430×932, 1280×900: bốn mâm theo cung, không tràn ngang hoặc đè nút; thao tác cảm ứng qua Chrome DevTools Input PASS vuốt trái/phải và cuộn dọc không đổi mâm. PASS nút/biên, chọn mâm, ví dụ 64.000đ, khác nhân thành dòng riêng, lọc 4/2/4, giữ lựa chọn và giỏ, tăng/giảm/bỏ, mở/đóng đơn và giỏ trống. Ảnh `/tmp/menu-arc-273.png`, kịch bản kiểm `/tmp/menu-arc-test.cjs`. Gate chạy lại trên snapshot chỉ chứa task này: exit 2, Gate 3/1c/1e/1f/1g/1h PASS, 1d/verify SKIP; Gate 1b vẫn FAIL đúng hai liên kết profile thiếu từ HEAD như ghi ở lượt trước, log `/tmp/menu-arc-273-gate.log`. Giữ In Progress vì gate chưa xanh; phần vòng cung hoàn tất, chờ lead gỡ lỗi liên kết ngoài phạm vi rồi nghiệm thu. Chưa commit, chưa có duyệt độc lập. Khối commit mới của lượt vòng cung thay khối commit lưới ở lượt trước.
