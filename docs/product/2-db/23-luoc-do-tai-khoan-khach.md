@@ -79,3 +79,10 @@ Hợp đồng 0.51.1 ánh xạ khoá chính mới thành internal, các tên cò
 thành unreviewed theo phiếu; lát T-264 sẽ gán mã công khai.
 Cookie, quyền cửa khách, chuẩn hoá đầu vào và gửi thư thuộc lát backend kế tiếp;
 lát này không quyết các câu hỏi còn mở về khách ở ADR-131.
+
+## Vết của khách — sửa đổi 2026-10-28 (T-264)
+
+Migration `20261028090000_vet_cua_khach` cho `record_revision.person_id` rỗng **chỉ** khi
+`target_table_code` là một trong bốn bảng khách (`record_revision_person_check`): khách không phải người
+của quán, ai sửa đọc qua dòng đích. Lùi từ chối khi đã có vết người sửa rỗng
+(`record_revision_person_rollback_check`). Lý do và phương án bị bác: ADR-131 *Sửa đổi 2026-10-28*; luật: I-018.

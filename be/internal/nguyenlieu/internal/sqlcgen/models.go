@@ -506,7 +506,7 @@ type RecordRevision struct {
 	BeforeImage     []byte
 	AfterImage      []byte
 	Reason          string
-	PersonID        int64
+	PersonID        pgtype.Int8
 	RevisedAt       pgtype.Timestamptz
 	CreatedAt       pgtype.Timestamptz
 }

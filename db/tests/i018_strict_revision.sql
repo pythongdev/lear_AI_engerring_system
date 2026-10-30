@@ -103,7 +103,8 @@ BEGIN
   BEGIN
     PERFORM qr_code_issue(t1);
     RAISE EXCEPTION 'T-138: database KHÔNG từ chối đổi mã QR không có người';
-  EXCEPTION WHEN not_null_violation THEN
+  -- 2026-10-28 (T-264, Claude): bảng không phải khách từ chối người rỗng bằng record_revision_person_check (ADR-131 sửa đổi).
+  EXCEPTION WHEN not_null_violation OR check_violation THEN
     RAISE NOTICE 'T-138 đổi mã QR không người bị từ chối: %', SQLERRM;
   END;
 

@@ -733,6 +733,13 @@ lần **sửa một bản ghi đã có**. Hai tập không trùng nhau: xác nh�
 phải I-018 (không sửa gì cả); đóng phiên nhầm rồi cập nhật là I-018 mà tiền có thể không đổi. Một
 lần hoàn tiền thì thuộc **cả hai**.
 
+**Sửa đổi 2026-10-28 (T-264; chủ repo chọn trong câu hỏi có sẵn phương án: *"Giữ vết, người sửa để trống"*).**
+Khách có tài khoản (ADR-131, I-035) không phải người của quán, nên lần **khách tự sửa** dữ liệu của mình — thông tin
+giao đã nhớ, kết thúc phiên, dùng mã đặt lại — vẫn giữ đủ bản trước · bản sau · lý do, còn **ai sửa** đọc qua chính
+dòng đích (`customer_account`, hay `customer_account_id` của bảng `customer_*`) chứ không qua `person_id`. Chỉ bốn
+bảng `customer_account` · `customer_password` · `customer_session` · `customer_password_reset` được để `person_id`
+rỗng (`record_revision_person_check`); mọi bảng khác vẫn bắt buộc người của quán như trên.
+
 **Verification:**
 Kịch bản dựng lại: sửa nội dung một đơn rồi đọc bản ghi ⇒ dựng lại được đơn **trước** và **sau**,
 đọc được **lý do** và **tên người sửa**; xoá bất kỳ một trong bốn thứ ⇒ bản ghi **không hợp lệ**.

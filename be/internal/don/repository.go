@@ -85,7 +85,7 @@ func (r repository) themBan(ctx context.Context, sessionID, tableID int64) error
 	return r.q.ThemBan(ctx, sqlcgen.ThemBanParams{TableSessionID: sessionID, DiningTableID: tableID})
 }
 
-func (r repository) themDon(ctx context.Context, channel, status string, sessionID, tableID int64, submission string, qrID *int64, lh LienHe) (int64, error) {
+func (r repository) themDon(ctx context.Context, channel, status string, sessionID, tableID int64, submission string, qrID *int64, lh LienHe, customer ...int64) (int64, error) {
 	var qr pgtype.Int8
 	if qrID != nil {
 		qr = pgtype.Int8{Int64: *qrID, Valid: true}
@@ -94,9 +94,13 @@ func (r repository) themDon(ctx context.Context, channel, status string, session
 	if lh.CustomerNeededAt != nil {
 		can = mocPG(*lh.CustomerNeededAt)
 	}
+	var customerID pgtype.Int8
+	if len(customer) > 0 && customer[0] > 0 {
+		customerID = pgtype.Int8{Int64: customer[0], Valid: true}
+	}
 	return r.q.ThemDon(ctx, sqlcgen.ThemDonParams{ChannelCode: channel, Status: status, Column3: sessionID, Column4: tableID,
 		SubmissionCode: submission, QrCodeID: qr, Column7: lh.HandoverCode, Column8: lh.CustomerPhone,
-		DeliveryAddress: chuPG(lh.DeliveryAddress), CustomerNeededAt: can, CustomerName: chuPG(lh.CustomerName), ContactNote: chuPG(lh.ContactNote)})
+		DeliveryAddress: chuPG(lh.DeliveryAddress), CustomerNeededAt: can, CustomerName: chuPG(lh.CustomerName), ContactNote: chuPG(lh.ContactNote), CustomerAccountID: customerID})
 }
 
 func (r repository) themDongTaiMoc(ctx context.Context, donID int64, d gia.Dong, takeaway *bool, at pgtype.Timestamptz) (int64, error) {
@@ -247,4 +251,10 @@ func (r repository) themPhienGiay(ctx context.Context, tableID int64, sold time.
 	}
 	err = r.q.ThemBan(ctx, sqlcgen.ThemBanParams{TableSessionID: id, DiningTableID: tableID, SessionClosed: true, CleanedAt: mocPG(sold)})
 	return id, err
+}
+
+// DocDaTao đọc cùng hình dòng món cho lịch sử khách; bên gọi đã lọc quyền sở hữu.
+func DocDaTao(ctx context.Context, tx pgx.Tx, submission string) (DaTao, error) {
+	d, _, _, e := newRepository(tx).docDon(ctx, submission)
+	return d, e
 }

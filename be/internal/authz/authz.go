@@ -21,6 +21,7 @@ type Need string
 
 const (
 	NeedPublic         Need = "cong_khai"
+	NeedCustomer       Need = "khach"
 	NeedCounterOrOwner Need = "quay_hoac_chu_quan"
 
 	// NeedCounterOrCustomer: người đang đứng quầy, hoặc khách QR/web không người (ADR-087 · ADR-088).
@@ -57,14 +58,17 @@ const (
 
 // Caller là người gửi yêu cầu: một người của quán, hoặc (chỉ lớp quay_hoac_khach) một mã QR hoặc khách web.
 type Caller struct {
-	PersonID int64
-	QRCode   string
-	Online   bool
+	PersonID      int64
+	QRCode        string
+	CustomerToken string
+	Online        bool
 }
 
 // Granted là thứ đã qua lớp: người đã kiểm, hoặc bàn tra từ mã hiện hành.
 type Granted struct {
-	PersonID int64
+	PersonID          int64
+	CustomerAccountID int64
+	CustomerSessionID int64
 	Seat
 }
 
@@ -87,12 +91,19 @@ func Read(ctx context.Context, pool *pgxpool.Pool, personID int64, need Need, fn
 
 func runAs(ctx context.Context, pool *pgxpool.Pool, caller Caller, d Door, fn func(pgx.Tx, Granted) error) error {
 	switch d.Need {
-	case NeedPublic, NeedCounterOrOwner, NeedCounter, NeedOwner, NeedCounterOrCustomer, NeedPerson:
+	case NeedCustomer, NeedPublic, NeedCounterOrOwner, NeedCounter, NeedOwner, NeedCounterOrCustomer, NeedPerson:
 	default:
 		return fmt.Errorf("cửa %q không có lối vào trực tiếp cho lớp %q", d.Code, d.Need)
 	}
 	return postgres.InTx(ctx, pool, func(tx pgx.Tx) error {
 		g := Granted{PersonID: caller.PersonID}
+		if d.Need == NeedCustomer {
+			a, s, e := CustomerSession(ctx, tx, caller.CustomerToken)
+			if e != nil {
+				return e
+			}
+			return fn(tx, Granted{CustomerAccountID: a, CustomerSessionID: s})
+		}
 		if d.Need == NeedPublic {
 			return fn(tx, Granted{})
 		}
@@ -134,4 +145,8 @@ func runAs(ctx context.Context, pool *pgxpool.Pool, caller Caller, d Door, fn fu
 		}
 		return fn(tx, g)
 	})
+}
+
+func ReadAs(ctx context.Context, pool *pgxpool.Pool, caller Caller, need Need, fn func(pgx.Tx, Granted) error) error {
+	return runAs(ctx, pool, caller, Door{Need: need}, fn)
 }

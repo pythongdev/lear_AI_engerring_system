@@ -90,7 +90,7 @@ describe("nhiều tab cùng máy", () => {
     let ok = false;
     function DangNhap() {
       const dn = useDangNhap();
-      return <button type="button" onClick={() => dn.mutate({ username: "lan", password: "matkhau123", at_counter: true })}>vào</button>;
+      return <button type="button" onClick={() => dn.mutate({ identifier: "lan", password: "matkhau123", tai_quay: true })}>vào</button>;
     }
     const fetch = async (req: Request) => {
       const path = new URL(req.url).pathname.replace(/^\/api/, "");

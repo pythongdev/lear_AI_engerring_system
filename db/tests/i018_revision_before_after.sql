@@ -78,7 +78,8 @@ BEGIN
     PERFORM set_config('shop.actor_person_id', '', true);
     UPDATE sales_order SET customer_phone = '0944444444' WHERE id = o1;
     RAISE EXCEPTION 'I-018: database KHÔNG từ chối lần sửa có lý do mà không có người sửa';
-  EXCEPTION WHEN not_null_violation THEN
+  -- 2026-10-28 (T-264, Claude): bảng không phải khách từ chối người rỗng bằng record_revision_person_check (ADR-131 sửa đổi).
+  EXCEPTION WHEN not_null_violation OR check_violation THEN
     RAISE NOTICE 'I-018 bị từ chối (sửa có lý do, không người sửa): %', SQLERRM;
   END;
 

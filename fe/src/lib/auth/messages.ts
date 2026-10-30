@@ -2,6 +2,10 @@
 import type { ApiFailure, ErrorCode } from "@/lib/api/client";
 
 const CHU: Partial<Record<ErrorCode, string>> = {
+  login_failed: "Sai số điện thoại, Gmail hoặc mật khẩu.",
+  identifier_invalid: "Số điện thoại hoặc Gmail chưa đúng dạng.",
+  contact_required: "Nhập số điện thoại hoặc Gmail.",
+  phone_taken: "Số điện thoại này đã có người dùng.",
   invalid_credentials: "Sai tên đăng nhập hoặc mật khẩu.",
   login_temporarily_blocked: "Đăng nhập sai 5 lần liền — tài khoản tạm khoá 15 phút, thử lại sau.",
   username_taken: "Tên đăng nhập này đã có người dùng.",

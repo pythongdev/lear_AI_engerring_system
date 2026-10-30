@@ -99,7 +99,7 @@ function TheTaiKhoan({ t, chinhMinh, nguoiTrong, bao }: { t: TaiKhoan; chinhMinh
   return <li className="space-y-3 border-b py-4 last:border-0">
     <h3 className="font-medium">{t.display_name}</h3>
     <p className="text-sm text-muted-foreground">
-      Tên đăng nhập: {t.username} · Gmail: {t.email}{t.role_code && ` · Vai: ${tenVai(t.role_code)}`} · Đăng ký ngày {ngay(t.created_at)}
+      Số điện thoại: {t.phone ?? "Chưa có"} · Gmail: {t.email ?? "Chưa có"}{t.role_code && ` · Vai: ${tenVai(t.role_code)}`} · Đăng ký ngày {ngay(t.created_at)}
     </p>
     {!sua && <div className="flex gap-2">
       {t.status === "cho_duyet" && <>{nut("duyet", "Duyệt")}{nut("tu-choi", "Từ chối")}</>}

@@ -49,7 +49,7 @@ export function usePhien() {
   });
 }
 
-export type DangNhapVao = { username: string; password: string; at_counter: boolean };
+export type DangNhapVao = { identifier: string; password: string; tai_quay: boolean };
 
 export function useDangNhap() {
   const api = useApi();

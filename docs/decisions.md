@@ -8127,3 +8127,10 @@ giờ cũng phục vụ khách; `docs/product/4-fe/01-khung-fe.md` thêm nhánh 
 **Applies to:** `T-263` · `T-264` · `T-265`; `db/migrations/`; `be/internal/taikhoan/`, `be/internal/khach/` (mới),
 `be/internal/dinhdanh/` (mới), `be/internal/authz/`, cửa `POST /online-orders`; `docs/product/3-be/openapi.yaml` ·
 `02-vai-va-quyen.md`; `fe/src/app/dang-nhap`, `dang-ky`, `quen-mat-khau`, `dat-mon`, `khach/` (mới).
+
+**Sửa đổi 2026-10-28 (T-264; chủ repo chọn *"Giữ vết, người sửa để trống"*).** Điểm 3 dựng bốn bảng khách có
+trigger vết như mọi bảng (QD-52), nhưng `record_revision.person_id` bắt buộc người của quán nên mọi lần khách tự sửa
+đều vỡ — lỗ hổng của thiết kế T-263, lộ ra khi T-264 chạy test. Chọn: `person_id` được rỗng **chỉ** với bốn bảng
+`customer_*` (CHECK `record_revision_person_check`, migration `20261028090000_vet_cua_khach`); ai sửa đọc qua dòng
+đích. Bác *bỏ trigger vết khỏi bảng khách*: mất bản trước của địa chỉ giao đã nhớ, và phải mở ngoại lệ cho QD-52.
+I-018 ghi sửa đổi cùng ngày.

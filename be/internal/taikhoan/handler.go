@@ -48,14 +48,14 @@ func (h handler) register(c *gin.Context) {
 }
 func (h handler) login(c *gin.Context) {
 	var in struct {
-		Username  string `json:"username"`
-		Password  string `json:"password"`
-		AtCounter bool   `json:"at_counter"`
+		Identifier string `json:"identifier"`
+		Password   string `json:"password"`
+		AtCounter  bool   `json:"tai_quay"`
 	}
 	if !apierr.ReadJSON(c.Writer, c.Request, &in) {
 		return
 	}
-	out, token, err := h.s.login(c.Request.Context(), in.Username, in.Password, in.AtCounter)
+	out, token, err := h.s.login(c.Request.Context(), in.Identifier, in.Password, in.AtCounter)
 	if err == nil {
 		setCookie(c, token, 7*24*60*60)
 	}

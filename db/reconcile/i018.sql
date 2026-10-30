@@ -9,7 +9,10 @@
 SELECT r.id AS vet, r.target_table_code AS bang, r.target_row AS dong
 FROM record_revision r
 WHERE r.before_image IS NULL OR r.after_image IS NULL
-   OR btrim(coalesce(r.reason, '')) = '' OR r.person_id IS NULL
+   OR btrim(coalesce(r.reason, '')) = ''
+   -- 2026-10-28 (T-264, ADR-131): bảng khách ghi vết với người sửa rỗng; ai sửa là khách của dòng đích.
+   OR (r.person_id IS NULL AND r.target_table_code NOT IN
+        ('customer_account', 'customer_password', 'customer_session', 'customer_password_reset'))
 
 -- @@ I-018/3 — dòng đơn sửa sau một lần đổi giá giữa buổi mà không đọc ra giá trị trước và sau của đúng dòng ấy
 -- Dòng đã sửa = mốc khoá muộn hơn lúc tạo dòng; giữa hai mốc ấy có một lần đổi giá của thành phần

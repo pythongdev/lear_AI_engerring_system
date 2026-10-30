@@ -25,7 +25,7 @@ afterEach(cleanup);
 function tk(account_id: number, display_name: string, status: TaiKhoan["status"], person_id: number | null = null,
   role_code: string | null = null): TaiKhoan {
   return {
-    account_id, username: display_name.toLowerCase().replace(/\s+/g, ""), email: `tk${account_id}@gmail.com`,
+    account_id, phone: account_id === 3 ? "0912345678" : null, username: display_name.toLowerCase().replace(/\s+/g, ""), email: account_id === 4 ? null : `tk${account_id}@gmail.com`,
     display_name, status, role_code, person_id, created_at: "2026-10-18T02:00:00Z",
   };
 }
@@ -99,15 +99,16 @@ describe("trang nhân viên — danh sách", () => {
     expect(soLanDoc(goi)).toBe(1);
   });
 
-  it("mỗi tài khoản bày tên đăng nhập, Gmail và vai theo tên của quán; không bày mật khẩu", async () => {
+  it("mỗi tài khoản bày số điện thoại, Gmail và vai theo tên của quán; không bày mật khẩu", async () => {
     moTrang();
     const dangLam = await nhom("Đang làm");
     const hoa = within(dangLam).getAllByRole("listitem")[1];
-    expect(hoa.textContent).toContain("hoa");
+    expect(hoa.textContent).toContain("0912345678");
     expect(hoa.textContent).toContain("tk3@gmail.com");
     expect(hoa.textContent).toContain("Người tráng bánh");
     const khoa = screen.getByRole("region", { name: "Đã khoá" });
     expect(khoa.textContent).toContain("Người đứng quầy");
+    expect(khoa.textContent).toContain("Số điện thoại: Chưa có · Gmail: Chưa có");
     expect(document.body.textContent ?? "").not.toMatch(/mật khẩu/i);
   });
 

@@ -356,3 +356,5 @@ Ngày bán do backend quy như tổng quan, không nhận ngày từ người g�
 `phien.TongTien`; tiền đã ra dùng đoạn tạm tính chung với tổng quan. Lịch sử đọc vết
 made → served trong ngày bán, kể cả phiên đã đóng. Không cửa ghi, migration hay
 ánh xạ ràng buộc mới; giữ unauthenticated và not_on_counter_duty. Sinh lại type FE.
+
+T-264 (2026-10-27, phiếu Claude, ADR-131): hợp đồng 0.52.0 chuyển đăng nhập người làm sang identifier, password, tai_quay; đăng ký nhận display_name, phone/email, password. Sai dạng identifier trả identifier_invalid; không có tài khoản hoặc sai mật khẩu trả login_failed. Thêm chín đường khách với cookie banhcuon_khach tách khỏi cookie người làm. Đơn web gắn khách khi phiên còn hiệu lực, còn lại vẫn ẩn danh. Riêng lịch sử khách dùng before_id và limit theo khuôn Claude chốt; không áp sang cửa khác.

@@ -66,7 +66,8 @@ BEGIN
     PERFORM set_config('shop.actor_person_id', '', true);
     INSERT INTO menu_item_component (menu_item_id, menu_component_id, quantity) VALUES (m, c_banh, 2);
     RAISE EXCEPTION 'F-047: database KHÔNG từ chối lần thêm có lý do mà không có người';
-  EXCEPTION WHEN not_null_violation THEN
+  -- 2026-10-28 (T-264, Claude): bảng không phải khách từ chối người rỗng bằng record_revision_person_check (ADR-131 sửa đổi).
+  EXCEPTION WHEN not_null_violation OR check_violation THEN
     RAISE NOTICE 'F-047 bị từ chối (thêm có lý do, không người): %', SQLERRM;
   END;
   PERFORM set_config('shop.actor_person_id', b::text, true);

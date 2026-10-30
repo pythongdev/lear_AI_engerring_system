@@ -1,6 +1,7 @@
 package don_test
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/json"
@@ -16,10 +17,12 @@ import (
 	"testing"
 	"time"
 
+	"banhcuon/be/internal/authz"
 	"banhcuon/be/internal/combo"
 	"banhcuon/be/internal/danhmuc"
 	"banhcuon/be/internal/daotao"
 	"banhcuon/be/internal/giaoviec"
+	"banhcuon/be/internal/khach"
 	"banhcuon/be/internal/khoanchi"
 	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/ngayban"
@@ -481,6 +484,36 @@ var cacCaVet = []caVet{
 			canDat(t, c.post(t, "/password-resets", 0, map[string]any{"token": thu.ma, "new_password": "mat-khau-vet-moi"}), 200)
 		}}
 	}},
+	// Ba cửa UPDATE của khách: cùng phép kiểm ảnh/lý do/số vết, actor phải NULL.
+	{"khach/luu_giao", func(t *testing.T, c canh) dichVet {
+		c, token, id, _ := khachVetSetup(t, c, nil)
+		return dichVet{"customer_account", id, 0, "delivery_name", nil, "Tên nhận kiểm vết", func() {
+			khachVetGoi(t, c, "PUT", "/customer-accounts/current/delivery-profile", token, map[string]any{
+				"delivery_name": "Tên nhận kiểm vết", "delivery_phone": "0912345678", "delivery_address": "Địa chỉ kiểm vết",
+			}, 200)
+		}}
+	}},
+	{"khach/ket_thuc_phien", func(t *testing.T, c canh) dichVet {
+		c, token, _, _ := khachVetSetup(t, c, nil)
+		h := sha256.Sum256([]byte(token))
+		id := c.docSo(t, "SELECT id FROM shop.customer_session WHERE token_hash=$1", h[:])
+		return dichVet{"customer_session", id, 0, "ended_at", nil, "mốc", func() {
+			khachVetGoi(t, c, "POST", "/customer-sessions/current/end", token, nil, 200)
+		}}
+	}},
+	{"khach/dat_lai", func(t *testing.T, c canh) dichVet {
+		thu := &thuVet{}
+		c, _, _, email := khachVetSetup(t, c, thu)
+		khachVetGoi(t, c, "POST", "/customer-password-reset-requests", "", map[string]any{"email": email}, 202)
+		if thu.ma == "" {
+			t.Fatal("không có mã đặt lại khách")
+		}
+		h := sha256.Sum256([]byte(thu.ma))
+		id := c.docSo(t, "SELECT id FROM shop.customer_password_reset WHERE token_hash=$1", h[:])
+		return dichVet{"customer_password_reset", id, 0, "used_at", nil, "mốc", func() {
+			khachVetGoi(t, c, "POST", "/customer-password-resets", "", map[string]any{"token": thu.ma, "new_password": "mat-khau-vet-moi"}, 200)
+		}}
+	}},
 	// Hai cửa khép khoảng của P3-12 (Claude thêm 2026-10-12 khi duyệt: TestI018_TapCuaSuaKhopTapCa đòi).
 	{"nhandon/mo_lai", func(t *testing.T, c canh) dichVet {
 		c.srv = nhandonSrv(t, c)
@@ -592,7 +625,7 @@ func TestI018_MoiCuaSuaCoVet(t *testing.T) {
 			}
 			var before, after []byte
 			var reason string
-			var person int64
+			var person *int64
 			rows, err := c.owner.Query(c.ctx, `SELECT before_image,after_image,reason,person_id FROM shop.record_revision WHERE id>$1 AND target_table_code=$2 AND target_row=$3`, moc, d.bang, d.id)
 			if err != nil {
 				t.Fatal(err)
@@ -614,8 +647,15 @@ func TestI018_MoiCuaSuaCoVet(t *testing.T) {
 				if !reflect.DeepEqual(b, truoc) || !reflect.DeepEqual(a, sau) {
 					t.Fatalf("vết khác ảnh thật: %s → %s", before, after)
 				}
-				if strings.TrimSpace(reason) == "" || person != d.nguoi {
-					t.Fatalf("lý do %q, người %d, cần %d", reason, person, d.nguoi)
+				if strings.TrimSpace(reason) == "" {
+					t.Fatal("vết không có lý do")
+				}
+				if d.nguoi == 0 {
+					if person != nil {
+						t.Fatalf("vết khách phải có person_id NULL, được %d", *person)
+					}
+				} else if person == nil || *person != d.nguoi {
+					t.Fatalf("người %v, cần %d", person, d.nguoi)
 				}
 			}
 			if err := rows.Err(); err != nil {
@@ -696,4 +736,55 @@ func taikhoanSrv(t *testing.T, c canh, thu taikhoan.Mailer) *httptest.Server {
 	srv := httptest.NewServer(r)
 	t.Cleanup(srv.Close)
 	return srv
+}
+
+// khachVetSetup đi qua cửa đăng ký thật; không tạo person hay dùng cookie người làm.
+func khachVetSetup(t *testing.T, c canh, mail taikhoan.Mailer) (canh, string, int64, string) {
+	t.Helper()
+	r := gin.New()
+	khach.Routes(r, khach.NewService(c.pool, mail))
+	c.srv = httptest.NewServer(r)
+	t.Cleanup(c.srv.Close)
+	email := fmt.Sprintf("vet.%d@khach.test", c.chu)
+	out, token := khachVetGoi(t, c, "POST", "/customer-accounts", "", map[string]any{
+		"display_name": "Khách kiểm vết", "email": email, "password": "mat-khau-vet-1",
+	}, 201)
+	if token == "" {
+		t.Fatal("đăng ký khách thiếu cookie")
+	}
+	return c, token, int64(out["customer_account_id"].(float64)), email
+}
+func khachVetGoi(t *testing.T, c canh, method, path, token string, body any, want int) (map[string]any, string) {
+	t.Helper()
+	raw, err := json.Marshal(body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req, err := http.NewRequestWithContext(c.ctx, method, c.srv.URL+path, bytes.NewReader(raw))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	if token != "" {
+		req.AddCookie(&http.Cookie{Name: authz.CookieKhach, Value: token})
+	}
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer res.Body.Close()
+	var out map[string]any
+	if err = json.NewDecoder(res.Body).Decode(&out); err != nil {
+		t.Fatal(err)
+	}
+	if res.StatusCode != want {
+		t.Fatalf("%s %s: %d %v, muốn %d", method, path, res.StatusCode, out, want)
+	}
+	var session string
+	for _, cookie := range res.Cookies() {
+		if cookie.Name == authz.CookieKhach {
+			session = cookie.Value
+		}
+	}
+	return out, session
 }

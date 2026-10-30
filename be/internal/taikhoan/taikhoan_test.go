@@ -169,14 +169,14 @@ func tenDangNhap(t *testing.T, ten string) string {
 func (k khung) dangKy(t *testing.T, user, email, ten, matKhau string) traVe {
 	t.Helper()
 	return k.goi(t, "POST", "/accounts", "", map[string]any{
-		"username": user, "email": email, "display_name": ten, "password": matKhau,
+		"email": email, "display_name": ten, "password": matKhau,
 	})
 }
 
 func (k khung) dangNhap(t *testing.T, user, matKhau string, taiQuay bool) traVe {
 	t.Helper()
 	return k.goi(t, "POST", "/sessions", "", map[string]any{
-		"username": user, "password": matKhau, "at_counter": taiQuay,
+		"identifier": user + "@quan.test", "password": matKhau, "tai_quay": taiQuay,
 	})
 }
 
@@ -207,10 +207,7 @@ func TestI033_DangKyChoDuyetRoiChuQuanDuyetMoiDangNhapDuoc(t *testing.T) {
 	if ra := k.dangNhap(t, user, "mat-khau-moi", false); ra.status != http.StatusUnauthorized || ra.cookie != "" {
 		t.Fatal("tài khoản chờ duyệt KHÔNG được mở phiên (ADR-109 điểm 2)")
 	}
-	// Trùng tên đăng nhập hay Gmail, khác hoa thường ⇒ 409 (điểm 4).
-	if ra := k.dangKy(t, strings.ToUpper(user), "khac."+user+"@quan.test", "X", "mat-khau-moi"); ra.status != http.StatusConflict || ra.ma() != "username_taken" {
-		t.Fatal("tên đăng nhập trùng khác hoa thường: muốn 409 username_taken")
-	}
+	// Thư trùng, khác hoa thường vẫn bị từ chối (ADR-131).
 	if ra := k.dangKy(t, "khac."+user, user+"@quan.test", "X", "mat-khau-moi"); ra.status != http.StatusConflict || ra.ma() != "email_taken" {
 		t.Fatal("Gmail trùng khác hoa thường: muốn 409 email_taken")
 	}
@@ -311,8 +308,8 @@ func TestI033_NamLanSaiChanMuoiLamPhut(t *testing.T) {
 	_, chu := k.chuQuan(t, "chu")
 	nv, _ := k.nhanVien(t, chu, "nv")
 	for i := 1; i <= 5; i++ {
-		if ra := k.dangNhap(t, nv, "sai-mat-khau", false); ra.status != http.StatusUnauthorized || ra.ma() != "invalid_credentials" {
-			t.Fatalf("lần sai %d: muốn 401 invalid_credentials", i)
+		if ra := k.dangNhap(t, nv, "sai-mat-khau", false); ra.status != http.StatusUnauthorized || ra.ma() != "login_failed" {
+			t.Fatalf("lần sai %d: muốn 401 login_failed", i)
 		}
 	}
 	ra := k.dangNhap(t, nv, "mat-khau-nv-1", false)
@@ -320,8 +317,8 @@ func TestI033_NamLanSaiChanMuoiLamPhut(t *testing.T) {
 		t.Fatal("sau 5 lần sai liền, đúng mật khẩu cũng bị chặn: muốn 429 login_temporarily_blocked")
 	}
 	// Tên đăng nhập không tồn tại trả cùng câu với sai mật khẩu — không để lộ ai có tài khoản.
-	if ra := k.dangNhap(t, "khong.ai."+nv, "sai-mat-khau", false); ra.status != http.StatusUnauthorized || ra.ma() != "invalid_credentials" {
-		t.Fatal("tên không tồn tại: muốn 401 invalid_credentials như sai mật khẩu")
+	if ra := k.dangNhap(t, "khong.ai."+nv, "sai-mat-khau", false); ra.status != http.StatusUnauthorized || ra.ma() != "login_failed" {
+		t.Fatal("tên không tồn tại: muốn 401 login_failed như sai mật khẩu")
 	}
 }
 

@@ -13,24 +13,25 @@ import (
 
 const themDon = `-- name: ThemDon :one
 INSERT INTO sales_order (channel_code, status, table_session_id, dining_table_id, submission_code, qr_code_id,
- handover_code, customer_phone, delivery_address, customer_needed_at, customer_name, contact_note)
-VALUES ($1, $2, nullif($3::bigint, 0), nullif($4::bigint, 0), $5, $6, nullif($7, ''), nullif($8, ''), $9, $10, $11, $12)
+ handover_code, customer_phone, delivery_address, customer_needed_at, customer_name, contact_note, customer_account_id)
+VALUES ($1, $2, nullif($3::bigint, 0), nullif($4::bigint, 0), $5, $6, nullif($7, ''), nullif($8, ''), $9, $10, $11, $12, $13)
 RETURNING id
 `
 
 type ThemDonParams struct {
-	ChannelCode      string
-	Status           string
-	Column3          int64
-	Column4          int64
-	SubmissionCode   string
-	QrCodeID         pgtype.Int8
-	Column7          interface{}
-	Column8          interface{}
-	DeliveryAddress  pgtype.Text
-	CustomerNeededAt pgtype.Timestamptz
-	CustomerName     pgtype.Text
-	ContactNote      pgtype.Text
+	ChannelCode       string
+	Status            string
+	Column3           int64
+	Column4           int64
+	SubmissionCode    string
+	QrCodeID          pgtype.Int8
+	Column7           interface{}
+	Column8           interface{}
+	DeliveryAddress   pgtype.Text
+	CustomerNeededAt  pgtype.Timestamptz
+	CustomerName      pgtype.Text
+	ContactNote       pgtype.Text
+	CustomerAccountID pgtype.Int8
 }
 
 func (q *Queries) ThemDon(ctx context.Context, arg ThemDonParams) (int64, error) {
@@ -47,6 +48,7 @@ func (q *Queries) ThemDon(ctx context.Context, arg ThemDonParams) (int64, error)
 		arg.CustomerNeededAt,
 		arg.CustomerName,
 		arg.ContactNote,
+		arg.CustomerAccountID,
 	)
 	var id int64
 	err := row.Scan(&id)

@@ -49,6 +49,7 @@ trong giao dịch. Vai trên tài khoản chỉ chọn khung màn, không mở q
 
 | Lớp | Qua khi | Nguồn |
 |---|---|---|
+| `khach` | phiên banhcuon_khach còn hiệu lực, kiểm trong giao dịch; không khai person | ADR-131; T-264 |
 | `cong_khai` | không đòi phiên; chính cửa kiểm mật khẩu hoặc mã khi cần | ADR-109; phiếu T-190 |
 | `quay` | người bấm có một khoảng `counter_duty` chứa mốc giao dịch của cửa | `architecture.md` §4 điều 1; `shop-facts.md` §3 · §6.13 · §8.8 (`C36`) |
 | `quay_hoac_chu_quan` | người có thật mang cờ chủ quán hoặc đang đứng quầy; thiếu người trả unauthenticated, người thường ngoài quầy trả not_on_counter_duty | `shop-facts.md` §6.27 (*POS hoặc chủ quán*); ADR-079; khai tiền đầu két là **suy luận, ADR-089 điểm 8** |
@@ -214,3 +215,16 @@ khi bấm rời, chỉ khoảng mở của chính người gọi được khép.
 [↑ đầu file](#top)
 
 P3A-08 (2026-10-15, phiếu Claude): `GET /supply-stock` chỉ lớp `chu_quan`; cờ nhắc dành cho POS kiểm tra không tự cấp quyền đọc kho cho POS.
+
+| `khach/dang_ky` | `cong_khai` | ADR-131; T-264 |
+| `khach/dang_nhap` | `cong_khai` | ADR-131; T-264 |
+| `khach/dang_xuat` | `khach` | ADR-131; T-264 |
+| `khach/doi_mat_khau` | `khach` | ADR-131; T-264 |
+| `khach/luu_giao` | `khach` | ADR-131; T-264 |
+| `khach/dat_lai` | `cong_khai` | ADR-131; T-264 |
+| `khach/yeu_cau_dat_lai` | `cong_khai` | ADR-131; T-264 |
+| `khach/mo_phien` | `theo_cua_goi` | ADR-131; T-264 |
+| `khach/ghi_mat_khau` | `theo_cua_goi` | ADR-131; T-264 |
+| `khach/ket_thuc_phien` | `theo_cua_goi` | ADR-131; T-264 |
+
+Hai cửa đọc `GET /customer-sessions/current` và `GET /customer-accounts/current/orders` thuộc lớp `khach`, chỉ đọc phiên khách.

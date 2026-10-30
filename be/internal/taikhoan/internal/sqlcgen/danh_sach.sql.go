@@ -12,13 +12,14 @@ import (
 )
 
 const danhSach = `-- name: DanhSach :many
-SELECT id, username, email, requested_display_name, status, person_id, role_code, decided_at, decided_by_person_id, created_at FROM account WHERE ($1::text='' OR status=$1) ORDER BY created_at,id
+SELECT id, username, email, phone, requested_display_name, status, person_id, role_code, decided_at, decided_by_person_id, created_at FROM account WHERE ($1::text='' OR status=$1) ORDER BY created_at,id
 `
 
 type DanhSachRow struct {
 	ID                   int64
 	Username             pgtype.Text
 	Email                pgtype.Text
+	Phone                pgtype.Text
 	RequestedDisplayName string
 	Status               string
 	PersonID             pgtype.Int8
@@ -41,6 +42,7 @@ func (q *Queries) DanhSach(ctx context.Context, dollar_1 string) ([]DanhSachRow,
 			&i.ID,
 			&i.Username,
 			&i.Email,
+			&i.Phone,
 			&i.RequestedDisplayName,
 			&i.Status,
 			&i.PersonID,

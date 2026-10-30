@@ -1,6 +1,7 @@
 package main
 
 import (
+	"banhcuon/be/internal/khach"
 	"banhcuon/be/internal/taikhoan"
 	"banhcuon/be/internal/tongket"
 	"banhcuon/be/internal/tongquan"
@@ -55,6 +56,7 @@ func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtim
 	phien.Routes(r, phien.NewService(pool))
 	nguoi.Routes(r, nguoi.NewService(pool))
 	taikhoan.Routes(r, taikhoan.NewService(pool, taikhoan.SMTPFromEnv()))
+	khach.Routes(r, khach.NewService(pool, taikhoan.SMTPFromEnv()))
 	tratruoc.Routes(r, tratruoc.NewService(pool))
 	hoadon.Routes(r, hoadon.NewService(pool))
 	ket.Routes(r, ket.NewService(pool))

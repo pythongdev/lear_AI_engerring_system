@@ -302,3 +302,22 @@ sql:
         package: sqlcgen
         out: internal/tongket/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/khach/sql
+      - internal/khach/sql/dang_ky
+      - internal/khach/sql/dang_nhap
+      - internal/khach/sql/dang_xuat
+      - internal/khach/sql/doi_mat_khau
+      - internal/khach/sql/luu_giao
+      - internal/khach/sql/dat_lai
+      - internal/khach/sql/yeu_cau_dat_lai
+      - internal/khach/sql/mo_phien
+      - internal/khach/sql/ghi_mat_khau
+      - internal/khach/sql/ket_thuc_phien
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/khach/internal/sqlcgen
+        sql_package: pgx/v5

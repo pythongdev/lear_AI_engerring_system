@@ -12,17 +12,23 @@ import (
 )
 
 const themTaiKhoan = `-- name: ThemTaiKhoan :one
-INSERT INTO account (username,email,requested_display_name) VALUES ($1,$2,$3) RETURNING id
+INSERT INTO account (username,email,requested_display_name,phone) VALUES ($1,$2,$3,$4) RETURNING id
 `
 
 type ThemTaiKhoanParams struct {
 	Username             pgtype.Text
 	Email                pgtype.Text
 	RequestedDisplayName string
+	Phone                pgtype.Text
 }
 
 func (q *Queries) ThemTaiKhoan(ctx context.Context, arg ThemTaiKhoanParams) (int64, error) {
-	row := q.db.QueryRow(ctx, themTaiKhoan, arg.Username, arg.Email, arg.RequestedDisplayName)
+	row := q.db.QueryRow(ctx, themTaiKhoan,
+		arg.Username,
+		arg.Email,
+		arg.RequestedDisplayName,
+		arg.Phone,
+	)
 	var id int64
 	err := row.Scan(&id)
 	return id, err

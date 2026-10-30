@@ -4,6 +4,7 @@ package taikhoan
 import (
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
+	"banhcuon/be/internal/dinhdanh"
 	"banhcuon/be/internal/nguoi"
 	"banhcuon/be/internal/vongdoi"
 	"context"
@@ -35,7 +36,8 @@ func NewService(pool *pgxpool.Pool, mail Mailer) *Service {
 }
 
 type ChuQuanMoi struct {
-	Username    string `json:"username"`
+	Username    string `json:"-"`
+	Phone       string `json:"phone"`
 	Email       string `json:"email"`
 	DisplayName string `json:"display_name"`
 	Password    string `json:"password"`
@@ -56,7 +58,8 @@ type Session struct {
 type Account struct {
 	AccountID   int64     `json:"account_id"`
 	Username    string    `json:"username"`
-	Email       string    `json:"email"`
+	Email       *string   `json:"email"`
+	Phone       *string   `json:"phone"`
 	DisplayName string    `json:"display_name"`
 	Status      string    `json:"status"`
 	RoleCode    *string   `json:"role_code"`
@@ -68,6 +71,11 @@ func fail(c apierr.Code) error                             { return apierr.Error
 func actor(ctx context.Context, tx pgx.Tx, id int64) error { return newRepository(tx).actor(ctx, id) }
 func (s *Service) register(ctx context.Context, in ChuQuanMoi, owner bool) (KetQua, error) {
 	var out KetQua
+	phone, email, err := dinhdanh.LienHe(in.Phone, in.Email)
+	if err != nil {
+		return out, err
+	}
+	in.Phone, in.Email = phone, email
 	hash, err := hashPassword(in.Password)
 	if err != nil {
 		return out, err
@@ -78,7 +86,7 @@ func (s *Service) register(ctx context.Context, in ChuQuanMoi, owner bool) (KetQ
 	}
 	err = authz.Run(ctx, s.pool, 0, door, func(tx pgx.Tx) error {
 		r := newRepository(tx)
-		id, err := r.ThemTaiKhoan(ctx, themTaiKhoanParams{Username: requiredText(strings.ToLower(in.Username)), Email: requiredText(strings.ToLower(in.Email)), RequestedDisplayName: in.DisplayName})
+		id, err := r.ThemTaiKhoan(ctx, themTaiKhoanParams{Username: nullableText(strings.ToLower(in.Username)), Phone: nullableText(in.Phone), Email: nullableText(in.Email), RequestedDisplayName: in.DisplayName})
 		if err != nil {
 			return err
 		}
@@ -139,31 +147,35 @@ func sessionResult(ctx context.Context, r repository, a account, duty int64) (Se
 func (s *Service) login(ctx context.Context, username, password string, atCounter bool) (Session, string, error) {
 	var out Session
 	var token string
-	err := authz.Run(ctx, s.pool, 0, DangNhap, func(tx pgx.Tx) error {
+	_, identifier, err := dinhdanh.ChuanHoa(username)
+	if err != nil {
+		return out, "", err
+	}
+	err = authz.Run(ctx, s.pool, 0, DangNhap, func(tx pgx.Tx) error {
 		r := newRepository(tx)
-		a, err := r.DocTen(ctx, requiredText(strings.ToLower(username)))
+		a, err := r.DocTen(ctx, requiredText(identifier))
 		if errors.Is(err, pgx.ErrNoRows) {
-			return fail(apierr.CodeInvalidCredentials)
+			return fail(apierr.CodeLoginFailed)
 		}
 		if err != nil {
 			return err
 		}
 		if a.Status != "hoat_dong" {
-			return fail(apierr.CodeInvalidCredentials)
+			return fail(apierr.CodeLoginFailed)
 		}
 		if s.blocked(a.ID) {
 			return fail(apierr.CodeLoginTemporarilyBlocked)
 		}
 		pw, err := r.DocMatKhau(ctx, a.ID)
 		if errors.Is(err, pgx.ErrNoRows) {
-			return fail(apierr.CodeInvalidCredentials)
+			return fail(apierr.CodeLoginFailed)
 		}
 		if err != nil {
 			return err
 		}
 		if !verifyPassword(password, pw.PasswordHash) {
 			s.failed(a.ID)
-			return fail(apierr.CodeInvalidCredentials)
+			return fail(apierr.CodeLoginFailed)
 		}
 		s.success(a.ID)
 		if err = actor(ctx, tx, a.PersonID.Int64); err != nil {
@@ -372,7 +384,7 @@ func (s *Service) list(ctx context.Context, person int64, status string) ([]Acco
 				v := a.RoleCode.String
 				role = &v
 			}
-			out = append(out, Account{a.ID, a.Username.String, a.Email.String, a.RequestedDisplayName, a.Status, role, p, a.CreatedAt.Time})
+			out = append(out, Account{AccountID: a.ID, Username: a.Username.String, Email: textPointer(a.Email), Phone: textPointer(a.Phone), DisplayName: a.RequestedDisplayName, Status: a.Status, RoleCode: role, PersonID: p, CreatedAt: a.CreatedAt.Time})
 		}
 		return nil
 	})

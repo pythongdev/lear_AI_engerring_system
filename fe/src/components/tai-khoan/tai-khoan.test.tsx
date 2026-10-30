@@ -18,25 +18,25 @@ const phien = (p: object = {}) => ({
 });
 
 function dien(user: string, pass: string, taiQuay: boolean) {
-  fireEvent.change(screen.getByLabelText("Tên đăng nhập"), { target: { value: user } });
+  fireEvent.change(screen.getByLabelText("Số điện thoại hoặc Gmail"), { target: { value: user } });
   fireEvent.change(screen.getByLabelText("Mật khẩu"), { target: { value: pass } });
   if (taiQuay) fireEvent.click(screen.getByLabelText(/Đăng nhập tại quầy/));
   fireEvent.click(screen.getByRole("button", { name: "Đăng nhập" }));
 }
 
 describe("màn đăng nhập", () => {
-  it("tại quầy: gửi at_counter=true rồi vào khung quầy", async () => {
+  it("tại quầy: gửi tai_quay=true rồi vào khung quầy", async () => {
     const goi = voiBackend(<FormDangNhap />, () => ({ status: 201, body: phien({ counter_duty_id: 3 }) }));
     dien("lan", "mat-khau-1", true);
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/quay"));
-    expect(goi[0]).toEqual({ method: "POST", path: "/sessions", body: { username: "lan", password: "mat-khau-1", at_counter: true } });
+    expect(goi[0]).toEqual({ method: "POST", path: "/sessions", body: { identifier: "lan", password: "mat-khau-1", tai_quay: true } });
   });
 
-  it("ngoài quầy: at_counter=false; chủ quán vào khung chủ quán", async () => {
+  it("ngoài quầy: tai_quay=false; chủ quán vào khung chủ quán", async () => {
     const goi = voiBackend(<FormDangNhap />, () => ({ status: 201, body: phien({ is_owner: true, role_code: "owner" }) }));
     dien("chu", "mat-khau-1", false);
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/chu-quan"));
-    expect((goi[0].body as { at_counter: boolean }).at_counter).toBe(false);
+    expect((goi[0].body as { tai_quay: boolean }).tai_quay).toBe(false);
   });
 
   it("mật khẩu tạm ⇒ màn đổi mật khẩu", async () => {
@@ -46,7 +46,7 @@ describe("màn đăng nhập", () => {
   });
 
   it.each([
-    ["invalid_credentials", 401, /Sai tên đăng nhập hoặc mật khẩu/],
+    ["login_failed", 401, /Sai số điện thoại, Gmail hoặc mật khẩu/],
     ["login_temporarily_blocked", 429, /15 phút/],
   ])("từ chối %s ⇒ chữ riêng, không đi đâu", async (code, status, chu) => {
     voiBackend(<FormDangNhap />, () => ({ status, body: { code } }));

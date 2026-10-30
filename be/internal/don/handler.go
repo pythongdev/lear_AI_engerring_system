@@ -105,7 +105,7 @@ func (h handler) taoNgoaiBan(c *gin.Context, phone bool) {
 		return
 	}
 	// Khách web không đọc danh tính, kể cả yêu cầu có header của người trong quán.
-	caller := authz.Caller{Online: true}
+	caller := authz.Caller{Online: true, CustomerToken: authz.CustomerToken(c.Request)}
 	if phone {
 		caller = authz.Caller{PersonID: nguoi(c)}
 	}

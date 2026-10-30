@@ -53,3 +53,10 @@ func (r repository) personIsOwner(ctx context.Context, id int64) (bool, error) {
 	}
 	return p.IsOwner, err
 }
+
+func textPointer(v pgtype.Text) *string {
+	if !v.Valid {
+		return nil
+	}
+	return &v.String
+}

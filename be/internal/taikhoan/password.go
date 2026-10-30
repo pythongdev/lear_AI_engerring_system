@@ -55,3 +55,9 @@ func newToken() (string, []byte, error) {
 	return token, tokenHash(token), nil
 }
 func tokenHash(token string) []byte { h := sha256.Sum256([]byte(token)); return h[:] }
+
+// Các miền tài khoản dùng chung định dạng mật khẩu và mã của ADR-109.
+func HashPassword(s string) (string, error) { return hashPassword(s) }
+func VerifyPassword(s, h string) bool       { return verifyPassword(s, h) }
+func NewToken() (string, []byte, error)     { return newToken() }
+func TokenHash(s string) []byte             { return tokenHash(s) }

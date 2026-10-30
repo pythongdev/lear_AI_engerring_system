@@ -207,7 +207,20 @@ func (s *Service) Tao(ctx context.Context, caller authz.Caller, yc YeuCauTaiQuay
 			if yc.ngoaiBan != nil {
 				lh = *yc.ngoaiBan
 			}
-			if out.SalesOrderID, err = repo.themDon(ctx, channel, status, sessionID, tableID, yc.SubmissionCode, qrID, lh); err != nil {
+			var customerID int64
+			if caller.Online && caller.CustomerToken != "" {
+				var e error
+				customerID, _, e = authz.CustomerSession(ctx, tx, caller.CustomerToken)
+				if e != nil {
+					var ae apierr.Error
+					if errors.As(e, &ae) && ae.Code == apierr.CodeUnauthenticated {
+						customerID = 0
+					} else {
+						return e
+					}
+				}
+			}
+			if out.SalesOrderID, err = repo.themDon(ctx, channel, status, sessionID, tableID, yc.SubmissionCode, qrID, lh, customerID); err != nil {
 				return err
 			}
 			for index, d := range kq.Lines {

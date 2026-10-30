@@ -15,6 +15,10 @@ import (
 type Code string
 
 const (
+	CodeIdentifierInvalid              Code = "identifier_invalid"
+	CodeContactRequired                Code = "contact_required"
+	CodePhoneTaken                     Code = "phone_taken"
+	CodeLoginFailed                    Code = "login_failed"
 	CodeMenuItemComponentConflict      Code = "menu_item_component_conflict"
 	CodeMenuItemNameConflict           Code = "menu_item_name_conflict"
 	CodeMenuComponentNameConflict      Code = "menu_component_name_conflict"
@@ -151,6 +155,10 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
+	CodeIdentifierInvalid:              400,
+	CodeContactRequired:                400,
+	CodePhoneTaken:                     409,
+	CodeLoginFailed:                    401,
 	CodeMenuComboPriceInSalesHours:     409,
 	CodeMenuComboHidden:                409,
 	CodeMenuComboNotFound:              404,
@@ -282,6 +290,19 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"account_contact_check":                   CodeContactRequired,
+	"account_phone_check":                     CodeIdentifierInvalid,
+	"account_phone_key":                       CodePhoneTaken,
+	"customer_account_contact_check":          CodeContactRequired,
+	"customer_account_phone_check":            CodeIdentifierInvalid,
+	"customer_account_phone_key":              CodePhoneTaken,
+	"customer_account_email_check":            CodeIdentifierInvalid,
+	"customer_account_email_key":              CodeEmailTaken,
+	"customer_account_display_name_check":     CodeInvalidRequest,
+	"customer_account_delivery_name_check":    CodeInvalidRequest,
+	"customer_account_delivery_phone_check":   CodeIdentifierInvalid,
+	"customer_account_delivery_address_check": CodeInvalidRequest,
+
 	"production_batch_no_discarded_jobs_check":         CodeProductionBatchHasDiscardedJobs,
 	"daily_minimum_banh_positive_check":                CodeInvalidRequest,
 	"daily_minimum_workers_positive_check":             CodeInvalidRequest,

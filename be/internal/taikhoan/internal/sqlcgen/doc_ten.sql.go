@@ -12,13 +12,14 @@ import (
 )
 
 const docTen = `-- name: DocTen :one
-SELECT id, username, email, requested_display_name, status, person_id, role_code, decided_at, decided_by_person_id, created_at FROM account WHERE username=$1 FOR UPDATE
+SELECT id, username, email, phone, requested_display_name, status, person_id, role_code, decided_at, decided_by_person_id, created_at FROM account WHERE phone=$1 OR email=$1 FOR UPDATE
 `
 
 type DocTenRow struct {
 	ID                   int64
 	Username             pgtype.Text
 	Email                pgtype.Text
+	Phone                pgtype.Text
 	RequestedDisplayName string
 	Status               string
 	PersonID             pgtype.Int8
@@ -28,13 +29,14 @@ type DocTenRow struct {
 	CreatedAt            pgtype.Timestamptz
 }
 
-func (q *Queries) DocTen(ctx context.Context, username pgtype.Text) (DocTenRow, error) {
-	row := q.db.QueryRow(ctx, docTen, username)
+func (q *Queries) DocTen(ctx context.Context, phone pgtype.Text) (DocTenRow, error) {
+	row := q.db.QueryRow(ctx, docTen, phone)
 	var i DocTenRow
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
 		&i.Email,
+		&i.Phone,
 		&i.RequestedDisplayName,
 		&i.Status,
 		&i.PersonID,
