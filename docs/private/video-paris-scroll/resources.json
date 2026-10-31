@@ -1,0 +1,55 @@
+{
+  "checked_on": "2026-10-31",
+  "video": {
+    "id": "nPxMF2YV77I",
+    "url": "https://www.youtube.com/watch?v=nPxMF2YV77I",
+    "title": "I Built $10000 Website With Free AI Tools In 15 Minutes || No Coding || Free Resources",
+    "author": "Creativo",
+    "duration_seconds": 926
+  },
+  "verification": {
+    "read": ["video metadata and official description", "public Drive folder file listing"],
+    "full_transcript_available": false,
+    "resources_downloaded": false,
+    "website_implemented": false,
+    "prompts": "Original practice prompts written by Codex; not copied from the video"
+  },
+  "author_resources": {
+    "folder_url": "https://drive.google.com/drive/folders/1xGDm_8QRT2nS4lIT8Pvsrx9nOoSnDoIo",
+    "files": [
+      {
+        "name": "Image 1",
+        "mime_type": "image/jpeg",
+        "url": "https://drive.google.com/file/d/1H-YRC1lLjeOiBdXUU4NS2LIAjx1V6_0U/view",
+        "local_destination": "assets/images/"
+      },
+      {
+        "name": "Image 2",
+        "mime_type": "image/jpeg",
+        "url": "https://drive.google.com/file/d/1TzG-Y-0SNekuQ6Ls4geFwMpmg2jPN6cn/view",
+        "local_destination": "assets/images/"
+      },
+      {
+        "name": "Image 3",
+        "mime_type": "image/jpeg",
+        "url": "https://drive.google.com/file/d/1E4i_h6VdMFpg7ZqxgRytzw2HF5VCurot/view",
+        "local_destination": "assets/images/"
+      },
+      {
+        "name": "Plane window.mp4",
+        "mime_type": "video/mp4",
+        "url": "https://drive.google.com/file/d/1RLaJ1CCpT7VqC7zUPRhYogBfB3x9p8gW/view",
+        "local_destination": "assets/videos/"
+      }
+    ]
+  },
+  "tools_named_in_description": [
+    "ChatGPT",
+    "Flow AI",
+    "Clipchamp",
+    "Ezgif",
+    "Antigravity IDE",
+    "Google AI Studio",
+    "Cloudinary"
+  ]
+}
