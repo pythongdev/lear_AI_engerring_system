@@ -136,6 +136,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-274 **Bản mẫu menu theo concept bàn gỗ ấm cúng** — L1, Codex làm, Claude duyệt, chủ repo yêu cầu 2026-10-30 · [chi tiết](#t-274)
 - [x] T-265 **Màn đăng nhập một ô và trang tài khoản khách** — L2, lát c của ADR-131; Codex làm, Claude duyệt 2026-10-28 · [chi tiết](#t-265)
 - [x] T-264 **Backend và hợp đồng đăng nhập số điện thoại · Gmail, cửa khách** — L2, lát b của ADR-131; Codex làm, Claude duyệt 2026-10-28 · [chi tiết](#t-264)
 - [x] T-263 **Lược đồ đăng nhập bằng số điện thoại · Gmail và tài khoản khách** — L2, lát a của ADR-131; Codex làm, Claude duyệt 2026-10-27 · [chi tiết](#t-263)
@@ -3435,3 +3436,16 @@ Bàn giao Codex 2026-10-29: lưới ba cột hai hàng thay carousel; bấm mâm
 Gate ở worktree riêng `/tmp/menu-grid-273-check` từ HEAD: Gate 3, 1c, 1e, 1f, 1g, 1h PASS; 1d và verify SKIP (chỉ tài liệu). Gate 1b FAIL vì prompt profile có từ HEAD trỏ hai file `customer_profile.md` và `customer_profile_loading.md` chưa tồn tại trong HEAD. Không sửa tài liệu profile ngoài phạm vi. Task giữ In Progress vì gate chưa xanh; phần giao diện đã hoàn tất. Log `/tmp/menu-grid-273-isolated-gate.log`, ảnh `/tmp/menu-grid-273.png`. Chưa duyệt độc lập, chưa commit. Bước tiếp: lead xử lý liên kết profile rồi chạy lại gate và chuyển Done.
 
 Lượt sửa vòng cung 2026-10-29 theo yêu cầu mới: hiển thị tối đa bốn mâm theo cung, có tên và giá; nút trước/sau và vuốt ngang dịch cửa sổ từng món, dừng đúng hai biên. Bấm mâm đổi chi tiết, không thêm giỏ. Lọc hai món lẻ chỉ hiện hai mâm. Đã đọc diff, không thêm dependency, không đổi dữ liệu minh hoạ hay phép tính. Chrome headless PASS 320×700, 390×844, 430×932, 1280×900: bốn mâm theo cung, không tràn ngang hoặc đè nút; thao tác cảm ứng qua Chrome DevTools Input PASS vuốt trái/phải và cuộn dọc không đổi mâm. PASS nút/biên, chọn mâm, ví dụ 64.000đ, khác nhân thành dòng riêng, lọc 4/2/4, giữ lựa chọn và giỏ, tăng/giảm/bỏ, mở/đóng đơn và giỏ trống. Ảnh `/tmp/menu-arc-273.png`, kịch bản kiểm `/tmp/menu-arc-test.cjs`. Gate chạy lại trên snapshot chỉ chứa task này: exit 2, Gate 3/1c/1e/1f/1g/1h PASS, 1d/verify SKIP; Gate 1b vẫn FAIL đúng hai liên kết profile thiếu từ HEAD như ghi ở lượt trước, log `/tmp/menu-arc-273-gate.log`. Giữ In Progress vì gate chưa xanh; phần vòng cung hoàn tất, chờ lead gỡ lỗi liên kết ngoài phạm vi rồi nghiệm thu. Chưa commit, chưa có duyệt độc lập. Khối commit mới của lượt vòng cung thay khối commit lưới ở lượt trước.
+
+<a id="t-274"></a>
+### T-274 — Bản mẫu menu theo concept bàn gỗ ấm cúng
+
+Chủ repo yêu cầu 2026-10-30: giao Codex tạo menu giống concept `docs/private/anh/menu-moi/Giao diện món Bánh cuốn ấm cúng.png`, Claude kiểm tra. L1.
+
+Quyết định của Claude 2026-10-30 (suy ra, chờ chủ repo duyệt khi xem bản mẫu): làm bản mẫu HTML trong `docs/private/prompt/menu-am-cung/`, không đụng `fe/`, vì lời yêu cầu nối tiếp chuỗi bản mẫu `menu-mam.html` và `thuc-don-khach.tsx` đang có thay đổi chưa commit. Ảnh món chỉ cắt từ concept vì ảnh thật không cùng phong cách. Dưới 480px dải món cuộn ngang thay vì nhồi đủ 5 món như ảnh, để giữ vùng bấm 44px. Giá theo `master_plan/shop-facts.md` §4.3–§4.4.
+
+Acceptance: (A1) bố cục đúng concept từ tên quán tới dải vòng cung; (A2) không tràn ngang ở 320×568, 390×844, 430×932, 1280×900; (A3) vùng bấm ≥ 44px; (A4) đĩa nhỏ, nút ‹ ›, vuốt ngang đổi món đồng bộ, không thêm giỏ, dừng ở biên, cuộn dọc không đổi món; (A5) *Mua* và nút + thêm đúng số lượng, chấm đếm đúng; (A6) *Chi tiết* đổi lựa chọn đổi giá đúng (combo Chay 26.000đ, Thịt + Nhiều 34.000đ); (A7) giỏ gộp/tách dòng, 2 combo + 1 bánh cuốn + 1 canh = 64.000đ, không có nút gửi đơn; (A8) không request mạng, không lỗi console, reduced-motion; (A9) kịch bản Chrome headless và ảnh đối chiếu; gate xanh.
+
+Sửa acceptance 2026-10-30 (Claude, sau khi thấy ảnh chụp): nút + ở đĩa nhỏ thêm theo lựa chọn đang giữ của món, không theo mặc định, để giá trên thẻ luôn bằng giá được thêm.
+
+Bàn giao 2026-10-30: thực hiện Codex (`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-274`, nhánh `codex/T-274` từ `02d6fbe`, hai vòng), duyệt Claude. Sandbox của Codex chặn Chrome nên Claude tự chạy kịch bản 390×844 và 320×568 cùng bốn khung còn lại: mọi kiểm tra PASS, 0 lỗi console, 0 request mạng. Đối chiếu ảnh với concept: vòng 1 tìm ra ảnh lớn đè tên và giá, đã sửa. Còn lệch có chủ ý: dưới 480px hiện khoảng 4 món thay vì 5; giỏ khởi đầu trống. Còn lệch chưa sửa: gỗ tối hơn concept vì nền phải vá, ảnh lớn của bốn món ngoài combo mờ hơn vì phóng từ ảnh nhỏ. Bản mẫu chưa có chế độ *Hỗn hợp* (T-271). Chưa nối vào `fe/`.

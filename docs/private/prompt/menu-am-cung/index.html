@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Bánh cuốn Bà Thanh · Cao Bằng</title>
+<style>
+:root{font-family:"Be Vietnam Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#fffaf4;background:#160e09;color-scheme:dark;--orange:#ff7200;--muted:#c9c3bc}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 35%,#50301b 0,#21150e 45%,#100b08 85%);min-height:100vh}button,input{font:inherit}button{color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}button:disabled{cursor:default;opacity:.3}button:focus-visible,input:focus-visible{outline:3px solid #ffce75;outline-offset:3px}button{min-width:44px;min-height:44px}button svg{pointer-events:none}button:active:not(:disabled){filter:brightness(1.18)}[hidden]{display:none!important}
+.menu{display:flex;flex-direction:column;container-type:inline-size;position:relative;width:100%;max-width:520px;margin:auto;overflow:hidden;isolation:isolate;min-height:100svh;min-height:100dvh;background:#28150b url('background.webp') center top/100% auto no-repeat;box-shadow:0 0 90px #0009;padding-top:env(safe-area-inset-top);padding-bottom:0}
+.menu > *{flex-shrink:0}
+.menu:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,transparent 27%,#16080020 40%,#10070290 65%,#160a0340 85%)}
+.brand{position:relative;isolation:isolate;height:max(74px,16cqw);padding:5.5cqw 7cqw 0 13.8cqw;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.brand:before{content:"";position:absolute;z-index:-1;inset:-12px 8% -28px -10%;pointer-events:none;background:radial-gradient(ellipse at 30% 25%,#130b06e0 0,#130b0699 48%,transparent 75%)}.brand h1{margin:0;font-size:clamp(20px,4.4cqw,24px);font-weight:750;line-height:1.1;white-space:nowrap;text-shadow:0 2px 4px #000,0 0 14px #000b}.brand p{font-size:clamp(15px,3cqw,17px);color:#f1e8dc;margin:4px 0 0;font-weight:600;text-shadow:0 2px 4px #000,0 0 10px #000}.cart-open{position:relative;flex-shrink:0;width:44px;height:44px;border:1px solid #a7a39b88;border-radius:50%;background:#171511ac;display:grid;place-items:center;margin-top:-5px}.cart-open svg{width:29px;height:29px}.badge{display:grid;place-items:center;position:absolute;right:-4px;top:-6px;background:#ff6800;min-width:21px;height:23px;padding:0 5px;border-radius:50%;font-size:13px;color:white;font-weight:700;line-height:1}
+.hero{--plate-width:72%;position:relative;flex:none;height:44cqw;margin-top:13cqw;overflow:hidden;touch-action:pan-y;user-select:none}.hero-image{position:absolute;inset:0;margin:auto;display:block;width:var(--plate-width);height:100%;max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 9px 8px #10060065);-webkit-user-drag:none;transition:opacity .18s}.hero-image.is-soup{width:calc(var(--plate-width) * .6)}.arrow{position:absolute;top:42%;transform:translateY(-50%);display:grid;place-items:center;width:44px;height:44px;border:1px solid #c8c4bb88;border-radius:50%;background:#17130ed9;font-size:41px;line-height:1;font-weight:300;padding:0 0 5px}.prev{left:3.5%}.next{right:3.5%}.summary{text-align:center;padding:0 10px;text-shadow:0 2px 10px #140800}.summary h2{font-size:clamp(28px,5.7cqw,33px);margin:2px 0 0;font-weight:750;line-height:1.2}.price{color:var(--orange);font-weight:750}.hero-price{font-size:clamp(35px,6.2cqw,39px);margin:1px 0 5px;line-height:1.15}.ingredients{font-size:clamp(12px,2.65cqw,15px);color:var(--muted);margin:0;line-height:1.5;min-height:23px}
+.purchase{display:flex;align-items:center;gap:10px;margin:12px 6% 0}.quantity{display:flex;border:1px solid #bcb2a680;border-radius:15px;overflow:hidden;background:#1d160ed9;flex-shrink:0}.quantity button{border:0;background:none;font-size:26px;padding:0;width:44px}.quantity output{min-width:24px;display:grid;place-items:center;font-size:20px;border-inline:1px solid #bcb2a62b}.buy{flex:1;border:0;border-radius:14px;background:linear-gradient(120deg,#ff7c00,#ff6200);font-size:19px;font-weight:700;padding:0 12px}.details{border:1px solid #eee8e0;border-radius:14px;background:#19110cc9;padding:0 10px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:15px;white-space:nowrap}.info-glyph{font-size:23px;font-weight:800;line-height:1}.info-icon{width:23px;height:23px;flex:none}
+.shelf{position:relative;display:flex;flex-direction:column;flex:1 0 auto;margin-top:20px;padding-top:10px;padding-bottom:env(safe-area-inset-bottom);isolation:isolate}.shelf:before{content:"";position:absolute;z-index:-1;top:0;left:-12%;width:124%;height:100%;border-radius:50% 50% 0 0 / 48px 48px 0 0;background:url('rim.webp') top center/100% auto no-repeat,linear-gradient(180deg,#1d0f08e8,#140a05f5),#1d1008 url('wood.webp') center/100% 100% no-repeat;box-shadow:inset 0 6px 9px #120700,0 -2px 3px #b5693280}.shelf:after{content:"";pointer-events:none;position:absolute;z-index:-1;bottom:calc(54px + env(safe-area-inset-bottom));left:-12%;width:124%;height:28px;border-radius:50% 50% 0 0 / 26px 26px 0 0;border-top:7px ridge #a7602d;box-shadow:0 -3px 5px #120800;background:none}
+.strip{flex:0 0 auto;display:flex;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:none;padding:15px 4px 33px;scroll-behavior:smooth;scroll-snap-type:x proximity;min-height:222px}.strip::-webkit-scrollbar{display:none}.dish{flex:0 0 20%;min-width:0;text-align:center;position:relative;padding:0 1px;transform:translateY(var(--drop)) rotate(var(--tilt));transform-origin:50% 20%;scroll-snap-align:center}.dish:nth-child(1){--drop:23px;--tilt:-8deg}.dish:nth-child(2){--drop:5px;--tilt:-4deg}.dish:nth-child(3){--drop:0px;--tilt:0deg}.dish:nth-child(4){--drop:7px;--tilt:4deg}.dish:nth-child(5){--drop:26px;--tilt:8deg}.dish-select{display:block;width:100%;height:77px;padding:3px 0;border:0;background:none;position:relative}.dish-select img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 3px #0007)}.dish-select[aria-pressed=true] img{filter:drop-shadow(0 0 1px #fff3c6) drop-shadow(0 0 2px #ff8a00) drop-shadow(0 0 4px #ff6a00)}.dish-select[aria-pressed=true]:before{content:"";position:absolute;inset:4px 1px;border:2px solid #ff8500;box-shadow:0 0 6px #ff7100,inset 0 0 5px #ff7e00;border-radius:50%;transform:rotate(-6deg)}.dish h3{font-size:clamp(11px,2.35cqw,13px);line-height:1.3;margin:5px -3px 1px;white-space:nowrap;font-weight:700}.dish-price{text-shadow:0 1px 3px #000,0 0 6px #000b;font-size:clamp(14px,3cqw,17px);margin:0;font-weight:700;white-space:nowrap}.dish-controls{display:flex;justify-content:center;margin-top:2px;gap:0}.mini{position:relative;border:0;background:none;width:44px;height:44px;padding:0;display:grid;place-items:center;font-size:25px}.mini:before{content:"";position:absolute;inset:5px;border:1px solid #aaa49a99;border-radius:50%;background:#191914dc;z-index:-1}.mini .badge{top:0;right:0;min-width:18px;height:19px;font-size:11px}.browse-hint{position:relative;flex:none;margin-top:auto;display:flex;align-items:center;justify-content:center;gap:12px;padding:2px 0 16px;font-size:12px;text-shadow:0 1px 6px #000}.hint-arrow{background:none;border:0;font-size:35px;line-height:1}.live{position:fixed;z-index:4;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translate(-50%,12px);width:max-content;max-width:90vw;background:#21160ff2;border:1px solid #a0784e;border-radius:12px;padding:12px 18px;box-shadow:0 4px 20px #0006;font-size:14px;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s}.live.visible{opacity:1;transform:translate(-50%,0)}
+dialog{position:fixed;inset:auto 0 0;margin:0 auto;width:min(100%,520px);max-width:100%;max-height:88svh;padding:0;border:1px solid #775032;border-bottom:0;border-radius:25px 25px 0 0;background:#24180f;color:#fffaf4;box-shadow:0 -16px 70px #0007;overflow:auto;overscroll-behavior:contain}dialog::backdrop{background:#080401b5;backdrop-filter:blur(4px)}dialog[open]{animation:slide-up .22s ease-out}.sheet-panel{padding:12px 22px calc(22px + env(safe-area-inset-bottom))}.sheet-panel:before{content:"";display:block;width:36px;height:4px;border-radius:4px;background:#9b7e66;margin:0 auto 12px}.sheet-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}.sheet-heading h2{font-size:23px;margin:0}.close{border:1px solid #88715d;border-radius:50%;background:#38291e;font-size:27px;flex-shrink:0}.sheet-panel .ingredients{margin:8px 0}.sheet-price{font-size:28px;margin:9px 0 16px}fieldset{border:0;padding:0;margin:17px 0}legend{font-weight:700;margin-bottom:9px;font-size:16px}.options{display:flex;gap:8px;flex-wrap:wrap}.option{position:relative;display:flex;align-items:center;justify-content:center;min-height:44px;padding:9px 13px;border:1px solid #826044;border-radius:12px;cursor:pointer;background:#302219}.option:has(input:checked){border-color:var(--orange);background:#5e300e;color:#ffba74}.option:has(input:focus-visible){outline:3px solid #ffce75;outline-offset:2px}.option input{position:absolute;width:1px;height:1px;opacity:0}.sheet-note{color:var(--muted);font-size:13px;line-height:1.5}.sheet-done{width:100%;margin-top:8px}.cart-row{border-bottom:1px solid #6e4a3066;padding:16px 0}.cart-row h3{margin:0 0 6px;font-size:17px}.row-options{margin:0;color:var(--muted);font-size:13px;line-height:1.6}.row-price{font-size:15px;color:#ffad5c;margin:6px 0}.row-actions{display:flex;align-items:center;gap:8px}.row-actions button{border:1px solid #81654b;border-radius:10px;background:#37271b;font-size:23px}.row-actions output{min-width:24px;text-align:center}.row-actions .remove{margin-left:auto;font-size:14px;padding:0 14px}.cart-total{display:flex;align-items:center;justify-content:space-between;font-size:20px;font-weight:700;margin-top:22px}.cart-total strong{color:var(--orange)}.empty{padding:30px 0;text-align:center;color:var(--muted)}
+@keyframes slide-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@media(max-width:479px){.brand{padding-left:8%;padding-right:5%}.hero{--plate-width:77%;margin-top:13cqw;height:46cqw}.purchase{margin-inline:4%;gap:7px}.quantity output{min-width:20px}.details{padding:0 8px;font-size:13px;gap:4px}.buy{padding:0 10px;font-size:17px}.dish{flex-basis:94px}.strip{padding-left:5px;padding-right:8px}.dish h3{font-size:11px}.dish-price{font-size:15px}.shelf{margin-top:23px}.brand h1{font-size:clamp(19px,5.1cqw,23px)}}
+@media(max-width:349px){.dish{flex-basis:90px}.brand{padding-left:6%;padding-right:4%}.brand h1{font-size:19px}.hero{margin-top:14cqw}.purchase{gap:5px;margin-inline:9px}.details{padding:0 5px;font-size:12px}.quantity button{width:44px}.buy{padding:0 8px}.summary h2{font-size:27px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main class="menu">
+  <header class="brand"><div><h1>Bánh cuốn Bà Thanh</h1><p>Cao Bằng</p></div><button class="cart-open" id="cart-open" aria-label="Mở giỏ, 0 suất"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 5h4l4 17h15l4-12H9"/><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="25" cy="27" r="1.7" fill="currentColor"/></svg><span class="badge" id="cart-badge" hidden></span></button></header>
+  <section class="hero" id="hero" aria-label="Món đang xem, vuốt ngang để đổi món"><img class="hero-image" id="hero-image" src="combo-large.webp" alt="Đĩa Combo Đầy đủ" draggable="false"><button class="arrow prev" id="prev" aria-label="Món trước">‹</button><button class="arrow next" id="next" aria-label="Món tiếp theo">›</button></section>
+  <section class="summary" aria-label="Thông tin món"><h2 id="hero-name"></h2><p class="price hero-price" id="hero-price"></p><p class="ingredients" id="hero-ingredients"></p></section>
+  <div class="purchase"><div class="quantity" aria-label="Số suất"><button id="quantity-minus" aria-label="Giảm số suất" disabled>−</button><output id="quantity" aria-label="Số suất đang chọn">1</output><button id="quantity-plus" aria-label="Tăng số suất">+</button></div><button class="buy" id="buy">Mua</button><button class="details" id="details"><svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v6" stroke-linecap="round"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/></svg> Chi tiết</button></div>
+  <section class="shelf" aria-label="Danh sách món"><div class="strip" id="strip"></div><div class="browse-hint"><button class="hint-arrow" id="hint-prev" aria-label="Xem món trước">‹</button><span>Vuốt để xem món</span><button class="hint-arrow" id="hint-next" aria-label="Xem món tiếp theo">›</button></div></section>
+</main>
+<div class="live" id="live" role="status" aria-live="polite" aria-atomic="true"></div>
+<dialog id="detail-dialog" aria-labelledby="detail-name"><div class="sheet-panel"><div class="sheet-heading"><h2 id="detail-name"></h2><button class="close" aria-label="Đóng chi tiết" data-close>×</button></div><p class="ingredients" id="detail-ingredients"></p><p class="price sheet-price" id="detail-price"></p><div id="detail-options"></div><p class="sheet-note">Lựa chọn được giữ riêng cho từng món.</p><button class="buy sheet-done" data-close>Xong</button></div></dialog>
+<dialog id="cart-dialog" aria-labelledby="cart-title"><div class="sheet-panel"><div class="sheet-heading"><h2 id="cart-title">Giỏ món của bạn</h2><button class="close" aria-label="Đóng giỏ" data-close>×</button></div><div id="cart-rows"></div><div class="cart-total" id="cart-total"><span>Tổng tiền</span><strong id="total"></strong></div></div></dialog>
+<script>
+'use strict';
+// All displayed prices, including cart snapshots, come from this one menu array.
+const menu = [
+ {id:'banh-cuon',name:'Bánh cuốn',ingredients:'1 bánh cuốn',image:'banh-cuon.webp',prices:{chay:3000,vua:4000,nhieu:5000}},
+ {id:'combo',name:'Combo Đầy đủ',ingredients:'3 bánh cuốn · 1 trứng · 1 chiếc giò',image:'combo.webp',large:'combo-large.webp',prices:{chay:26000,vua:30000,nhieu:34000},egg:true},
+ {id:'gio',name:'Suất giò',ingredients:'4 bánh cuốn · 1 chiếc giò',image:'gio.webp',prices:{chay:21000,vua:25000,nhieu:29000}},
+ {id:'trung',name:'Suất trứng',ingredients:'4 bánh cuốn · 1 trứng',image:'trung.webp',prices:{chay:20000,vua:25000,nhieu:30000},egg:true},
+ {id:'canh',name:'Canh bánh cuốn',ingredients:'1 bát canh',image:'canh.webp',prices:{free:0},soup:true}
+];
+const $=id=>document.getElementById(id);
+const defaults=item=>item.soup?{rau:'Ít rau'}:{nhan:'Thịt',luong:'Vừa',...(item.egg?{trung:'Chín'}:{})};
+const choices=menu.map(defaults);
+const unitPrice=(item,choice)=>item.soup?item.prices.free:choice.nhan==='Chay'?item.prices.chay:choice.luong==='Nhiều'?item.prices.nhieu:item.prices.vua;
+const money=value=>value===0?'Miễn phí':new Intl.NumberFormat('vi-VN').format(value)+'đ';
+const cart=[];
+let selected=1, quantity=1, detailIndex=1, opener=null, toastTimer, nextRow=1;
+const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+function effectiveOptions(item,choice){const value={...choice};if(value.nhan==='Chay')delete value.luong;return value;}
+function optionText(choice){return Object.values(choice).join(' · ');}
+function setQuantity(value){quantity=Math.max(1,value);$('quantity').value=quantity;$('quantity-minus').disabled=quantity===1;}
+function renderPrices(){
+ $('hero-price').textContent=money(unitPrice(menu[selected],choices[selected]));
+ menu.forEach((item,i)=>{
+  const price=money(unitPrice(item,choices[i]));
+  $('price-'+i).textContent=price;
+  $('add-'+i).setAttribute('aria-label','Thêm 1 '+item.name+' với lựa chọn đang giữ: '+optionText(effectiveOptions(item,choices[i]))+'; '+price);
+ });
+ if($('detail-dialog').open)$('detail-price').textContent=money(unitPrice(menu[detailIndex],choices[detailIndex]));
+}
+function keepVisible(){
+ const strip=$('strip'), card=strip.children[selected];
+ const left=card.offsetLeft, right=left+card.offsetWidth;
+ if(left<strip.scrollLeft+5)strip.scrollTo({left:Math.max(0,left-5),behavior:reducedMotion()?'instant':'smooth'});
+ else if(right>strip.scrollLeft+strip.clientWidth-6)strip.scrollTo({left:right-strip.clientWidth+6,behavior:reducedMotion()?'instant':'smooth'});
+}
+function select(index){
+ if(index<0||index>=menu.length)return;
+ selected=index;setQuantity(1);
+ const item=menu[index];$('hero-image').classList.toggle('is-soup',Boolean(item.soup));$('hero-image').src=item.large||item.image;$('hero-image').alt='Đĩa '+item.name;if(item.soup)$('hero-image').alt='Bát canh bánh cuốn';
+ $('hero-name').textContent=item.name;$('hero-ingredients').textContent=item.ingredients;
+ document.querySelectorAll('.dish-select').forEach((button,i)=>button.setAttribute('aria-pressed',String(i===index)));
+ for(const id of ['prev','hint-prev'])$(id).disabled=index===0;
+ for(const id of ['next','hint-next'])$(id).disabled=index===menu.length-1;
+ renderPrices();keepVisible();
+}
+function announce(message){clearTimeout(toastTimer);$('live').textContent=message;$('live').classList.add('visible');toastTimer=setTimeout(()=>$('live').classList.remove('visible'),2400);}
+function updateBadges(){
+ const count=cart.reduce((sum,row)=>sum+row.quantity,0);
+ $('cart-badge').textContent=count;$('cart-badge').hidden=count===0;$('cart-open').setAttribute('aria-label','Mở giỏ, '+count+' suất');
+ menu.forEach((item,i)=>{const n=cart.filter(row=>row.index===i).reduce((sum,row)=>sum+row.quantity,0);$('badge-'+i).hidden=n===0;$('badge-'+i).textContent=n;});
+}
+function add(index,count,choice){
+ const item=menu[index], options=effectiveOptions(item,choice),key=JSON.stringify([item.id,options]);
+ const row=cart.find(row=>row.key===key);
+ if(row)row.quantity+=count;
+ else cart.push({id:nextRow++,key,index,options,quantity:count});
+ updateBadges();announce('Đã thêm '+count+' suất '+item.name+' vào giỏ. Giỏ có '+cart.reduce((n,r)=>n+r.quantity,0)+' suất.');
+}
+function openSheet(dialog,button){opener=button;dialog.showModal();document.body.style.overflow='hidden';dialog.querySelector('[data-close]').focus();}
+for(const dialog of document.querySelectorAll('dialog')){
+ dialog.querySelectorAll('[data-close]').forEach(button=>button.addEventListener('click',()=>dialog.close()));
+ dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
+ dialog.addEventListener('close',()=>{document.body.style.overflow='';opener?.focus({preventScroll:true});});
+}
+function openDetails(index,button){
+ detailIndex=index;const item=menu[index],choice=choices[index];
+ $('detail-name').textContent=item.name;$('detail-ingredients').textContent=item.ingredients;$('detail-price').textContent=money(unitPrice(item,choice));
+ const groups=item.soup?[['rau','Rau',['Không rau','Ít rau','Nhiều rau']]]:[['nhan','Nhân',['Chay','Thịt','Thịt + mộc nhĩ','Mộc nhĩ']],['luong','Lượng nhân',['Vừa','Nhiều']],...(item.egg?[['trung','Trứng',['Chín','Tái','Vàng']]]:[])];
+ $('detail-options').replaceChildren();
+ for(const [key,label,values] of groups){
+  const field=document.createElement('fieldset');field.dataset.group=key;
+  const legend=document.createElement('legend');legend.textContent=label;field.append(legend);
+  const options=document.createElement('div');options.className='options';field.append(options);
+  for(const value of values){
+   const labelNode=document.createElement('label');labelNode.className='option';
+   const input=document.createElement('input');input.type='radio';input.name=key;input.value=value;input.checked=choice[key]===value;
+   input.addEventListener('change',()=>{choice[key]=value;const amount=$('detail-options').querySelector('[data-group="luong"]');if(amount)amount.hidden=choice.nhan==='Chay';renderPrices();});
+   labelNode.append(input,document.createTextNode(value));options.append(labelNode);
+  }
+  if(key==='luong')field.hidden=choice.nhan==='Chay';$('detail-options').append(field);
+ }
+ openSheet($('detail-dialog'),button);
+}
+function renderCart(focusId){
+ const rows=$('cart-rows');rows.replaceChildren();
+ if(!cart.length){const empty=document.createElement('p');empty.className='empty';empty.textContent='Bạn chưa chọn món';rows.append(empty);}
+ for(const row of cart){
+  const item=menu[row.index],section=document.createElement('section');section.className='cart-row';section.dataset.row=row.id;
+  const heading=document.createElement('h3');heading.textContent=item.name;
+  const options=document.createElement('p');options.className='row-options';options.textContent=optionText(row.options);
+  const price=document.createElement('p');price.className='row-price';price.textContent='Đơn giá: '+money(unitPrice(item,row.options));
+  const actions=document.createElement('div');actions.className='row-actions';
+  for(const [action,text,label] of [['minus','−','Giảm'],['plus','+','Tăng'],['remove','Bỏ','Bỏ']]){
+   const button=document.createElement('button');button.textContent=text;button.className=action;button.id='row-'+row.id+'-'+action;button.setAttribute('aria-label',label+' '+item.name+' · '+optionText(row.options));
+   button.disabled=action==='minus'&&row.quantity===1;
+   button.addEventListener('click',()=>{if(action==='remove')cart.splice(cart.indexOf(row),1);else row.quantity+=action==='plus'?1:-1;updateBadges();renderCart(button.id);});
+   actions.append(button);
+   if(action==='minus'){const count=document.createElement('output');count.textContent=row.quantity;count.setAttribute('aria-label','Số suất '+item.name);actions.append(count);}
+  }
+  section.append(heading,options,price,actions);rows.append(section);
+ }
+ $('total').textContent=money(cart.reduce((sum,row)=>sum+unitPrice(menu[row.index],row.options)*row.quantity,0));$('cart-total').hidden=!cart.length;
+ if(focusId){const focus=$(focusId);if(focus&&!focus.disabled)focus.focus();else $('cart-dialog').querySelector('[data-close]').focus();}
+}
+menu.forEach((item,index)=>{
+ const card=document.createElement('article');card.className='dish';
+ card.innerHTML='<button class="dish-select" aria-pressed="false"><img draggable="false" alt="'+(item.soup?'Bát ':'Đĩa ')+item.name+'" src="'+item.image+'"></button><h3>'+item.name+'</h3><p class="price dish-price" id="price-'+index+'"></p><div class="dish-controls"><button class="mini info" aria-label="Chi tiết '+item.name+'"><span class="info-glyph" aria-hidden="true">i</span></button><button class="mini add" id="add-'+index+'" aria-label="Thêm 1 '+item.name+' với lựa chọn đang giữ">+<span class="badge" id="badge-'+index+'" hidden></span></button></div>';
+ const pick=card.querySelector('.dish-select');pick.setAttribute('aria-label','Xem '+item.name);pick.addEventListener('click',()=>select(index));
+ card.querySelector('.info').addEventListener('click',event=>openDetails(index,event.currentTarget));
+ card.querySelector('.add').addEventListener('click',()=>add(index,1,choices[index]));
+ $('strip').append(card);
+});
+$('prev').onclick=$('hint-prev').onclick=()=>select(selected-1);
+$('next').onclick=$('hint-next').onclick=()=>select(selected+1);
+$('quantity-minus').onclick=()=>setQuantity(quantity-1);$('quantity-plus').onclick=()=>setQuantity(quantity+1);
+$('buy').onclick=()=>{add(selected,quantity,choices[selected]);setQuantity(1);};
+$('details').onclick=event=>openDetails(selected,event.currentTarget);
+$('cart-open').onclick=event=>{renderCart();openSheet($('cart-dialog'),event.currentTarget);};
+// A vertical gesture cancels the swipe; horizontal navigation stops at both ends.
+let gesture=null;
+$('hero').addEventListener('pointerdown',event=>{if(event.target.closest('button')||!event.isPrimary)return;gesture={id:event.pointerId,x:event.clientX,y:event.clientY,vertical:false};$('hero').setPointerCapture(event.pointerId);});
+$('hero').addEventListener('pointermove',event=>{if(!gesture||gesture.id!==event.pointerId)return;const dx=Math.abs(event.clientX-gesture.x),dy=Math.abs(event.clientY-gesture.y);if(dy>12&&dy>dx)gesture.vertical=true;});
+$('hero').addEventListener('pointerup',event=>{if(!gesture||gesture.id!==event.pointerId)return;const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;if(!gesture.vertical&&Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.5)select(selected+(dx<0?1:-1));gesture=null;});
+$('hero').addEventListener('pointercancel',()=>gesture=null);
+window.addEventListener('resize',keepVisible);select(1);
+</script>
+</body>
+</html>
