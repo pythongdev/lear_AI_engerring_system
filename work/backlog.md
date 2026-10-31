@@ -98,6 +98,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-279 **Bản HTML chi tiết món kể chuyện theo cuộn** — L1, chủ repo giao Codex 2026-10-31; dựa trên ý tưởng đầy đủ và mẫu Paris · [chi tiết](#t-279)
+
 - [ ] T-275 **Bản thực hành Paris từ tài nguyên video Creativo** — L1, chủ repo giao Codex 2026-10-31; agent phụ đối chiếu nguồn và duyệt độc lập · [chi tiết](#t-275)
 
 - [ ] T-273 **Bố trí bốn món theo vòng cung trong bản mẫu menu mâm** — L1, chủ repo giao Codex 2026-10-29 · [chi tiết](#t-273)
@@ -3468,3 +3470,18 @@ Bàn giao Codex 2026-10-31: đã dựng HTML/CSS/JS tĩnh trong website/, 157 JP
 Acceptance → bằng chứng: A1/A2: ffprobe + kiểm manifest 157 file tồn tại/duy nhất/thứ tự số; Chrome xác nhận frame 0→39→78→140→156→78→0 tương ứng cuộn 0→25→50→90→100→50→0%, reviewer kiểm thêm 80%→125, cache≤10 và pending≤3. A3: đọc HTML và xem ảnh hero/nội dung; A4/A5: Chrome PASS 320×700, 390×844 DPR3, 430×932, 1280×900; reviewer PASS thêm 320×568 DPR2; không tràn ngang, resize, keyboard skip, href có đích, giảm chuyển động mở đầu + đổi trực tiếp, tắt JS, manifest 404/toàn bộ frame 404/một frame lỗi đều xử lý; đường bình thường 0 lỗi JS/HTTP. Kịch bản/log chính `/tmp/paris-scroll-task/browser-check.cjs`, `browser-results.txt`, ảnh hero/content; duyệt độc lập `/tmp/paris-quality-review.json`, `/tmp/paris-quality-review.cjs`, `/tmp/paris-review-extra.cjs`; reviewer không phát hiện lỗi chặn. Node syntax và whitespace PASS; không thêm dependency hoặc sửa ứng dụng quán. Chưa kiểm Safari/thiết bị thật/trình đọc màn hình.
 
 A6: đã đọc diff/red flags và chạy gate. Gate trên cây chung khởi chạy nhưng bị dừng (exit 143), không có kết quả để tuyên bố xanh. Gate trực tiếp trên worktree `/tmp/paris-scroll-task/review-tree` từ HEAD chỉ ghép task Paris: exit 2, scope/1c/1e/1f/1g/1h PASS, 1d và verify SKIP (gate coi docs/ là tài liệu); Gate 1b FAIL đúng hai link từ file profile-gemini.md có sẵn trong HEAD tới `customer_profile.md` và `customer_profile_loading.md` chưa tồn tại trong HEAD. Log `/tmp/paris-scroll-task/isolated-gate.log`. Không sửa profile ngoài phạm vi; giữ In Progress vì gate chưa xanh. Phần website đã được kiểm xong. Bước tiếp theo: lead xử lý liên kết profile theo task riêng, chạy lại gate rồi nghiệm thu Done. Backlog commit được tách blob chỉ chứa phần Paris trên HEAD; manifest liệt kê từng tệp từ git, index cây chính giữ nguyên, không commit.
+
+<a id="t-279"></a>
+### T-279 — Bản HTML chi tiết món kể chuyện theo cuộn
+
+Chủ repo yêu cầu 2026-10-31: dựng file HTML xem trước trang product detail theo `docs/private/thiet-ke/y-tuong-day-du.md`, tương tự bản Paris trong `docs/private/video-paris-scroll`. L1, bản mẫu cục bộ; không đổi nghiệp vụ hay ứng dụng thật.
+
+Phạm vi: `docs/private/thiet-ke/product-detail/` và phần hồ sơ việc này trong `work/backlog.md`. Ảnh gốc đọc từ `docs/private/anh/Vibrant Vietnamese Rice Roll Feast.png`, sao chép vào thư mục bản mẫu để mở độc lập.
+
+Acceptance ghi trước khi thi công: A1 — năm nhịp toàn cảnh, tiến gần, khám phá ảnh, chọn phần, kết bằng toàn cảnh; nền kem, nâu, cam đất và xanh lá. A2 — ảnh phóng/dịch theo cuộn; hỗ trợ giảm chuyển động và mở trực tiếp file HTML. A3 — lựa chọn, số lượng và tổng tiền minh hoạ cập nhật; thêm giỏ và xem giỏ hoạt động trong bộ nhớ, ghi rõ không gửi đơn thật. A4 — không tràn ngang ở 320/390/430/1280px, điều khiển có nhãn và dùng bàn phím được. A5 — tự đọc diff, kiểm JavaScript và trình duyệt, chạy trực tiếp `./scripts/gate.sh`, bàn giao commit chỉ chứa việc này.
+
+Bàn giao đang làm: Codex, chưa duyệt độc lập; nhánh `P4A-01`, nền `3ff2490`. Cây chung và backlog đã có nhiều diff việc khác; không gom chúng vào commit. Chưa commit.
+
+Bằng chứng 2026-10-31: A1 — tự xem ảnh Chrome desktop 1280px và mobile 320px (hero, khối chuyển cảnh và khối chọn phần); có đủ năm nhịp, dùng ảnh gốc và CSS/JS inline, không thêm dependency. A2 — Chrome mở trực tiếp file://, cuộn 0/50/90/100% rồi trở về đầu đổi đúng chương 1/2/3 và transform ảnh; giảm chuyển động tĩnh, bật/tắt trực tiếp được, không JS vẫn đọc đủ ba mô tả. A3 — phần 49.000đ + thêm 7.000đ × 2 = 112.000đ, thêm hai lần gộp 4 phần = 224.000đ, bỏ món về giỏ trống; yêu thích, Escape và trả focus về nút giỏ đạt. A4 — Chrome 320×700, 390×844, 430×932, 1280×900 không tràn ngang; skip link bằng Tab/Enter, anchor, ảnh, 0 lỗi JavaScript và 0 request ngoài. Kịch bản và output ở `/tmp/t279-preview/check.cjs`, `/tmp/t279-preview/results.txt`; ảnh trong cùng thư mục. A5 — JavaScript hợp lệ, đã đọc diff/red flags, không đổi API hay nghiệp vụ; index cây chính giữ trống.
+
+Gate trực tiếp cây chung được khởi chạy, dừng lượt của phiên này vì check-scope vẫn chạy nhiều phút chưa ra output; không tuyên bố kết quả cây chung. Gate trên worktree riêng `/tmp/t279-preview/review-tree` từ HEAD chỉ có bản HTML, ảnh và hồ sơ việc này thoát 2: Gate 3/1c/1e/1f/1g/1h PASS, 1d và verify SKIP (docs-only); Gate 1b FAIL do hai đường dẫn nền trong `docs/private/prompt/profile-gemini.md` tới `customer_profile.md` và `customer_profile_loading.md` không có từ HEAD. Log `/tmp/t279-preview/gate-review.log`. Không sửa phần hồ sơ khách ngoài phạm vi. Giữ In Progress vì gate chưa xanh; giao diện đã đủ để chủ repo xem. Bước tiếp theo: lead xử lý hai liên kết nền rồi chạy lại gate để nghiệm thu. Chưa duyệt độc lập, chưa commit. Backlog trong khối commit được tách blob chỉ chứa T-279; các diff CLAUDE.md, Makefile, BE/DB/FE, tài liệu và backlog của việc khác giữ ngoài khối commit.
