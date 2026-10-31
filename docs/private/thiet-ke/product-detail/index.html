@@ -12,6 +12,12 @@
 @media(min-width:1600px){.hero-copy{padding-left:max(5vw,calc((100vw - 1440px)/2))}.hero-visual{max-height:1000px}}
 @media(max-width:760px){html{scroll-padding-top:20px}.topbar{height:72px;padding:0 6vw}.brand{font-size:20px}.brand small{font-size:8px}.nav{gap:0}.nav>a{display:none}.cart-button{padding:7px 11px;font-size:11px}.hero{grid-template-columns:1fr;min-height:auto}.hero-copy{padding:28px 7vw 37px}.breadcrumb{margin-bottom:28px;font-size:10px}.hero h1{font-size:clamp(47px,11.5vw,72px);letter-spacing:-2px;margin:19px 0}.hero-description{max-width:330px;font-size:13px;margin-bottom:20px}.hero-price{font-size:25px;margin-bottom:20px}.hero-price span{font-size:10px}.hero .primary{padding:14px 20px}.scroll-hint{margin-top:22px;font-size:10px}.hero-visual{height:70svh;min-height:450px;max-height:700px}.hero-visual img{object-position:center 38%}.photo-tag{width:70px;height:70px;font-size:15px}.image-caption{font-size:8px;left:20px;right:20px}.ribbon{padding:17px 6vw;font-size:8px;letter-spacing:1px}.ribbon span:last-child{display:none}.intro{padding:66px 7vw 55px}h2{font-size:39px}.intro p{font-size:12px}.story-stage{grid-template-columns:1fr;min-height:0}.story-photo{margin:25px 7vw 0;height:470px;border-radius:180px 180px 0 0}.story-text{padding:30px 8vw 38px}.story-text h2{font-size:36px;line-height:1.1;margin:12px 0}.story-text p{font-size:12px;max-width:100%;margin:12px 0}.story-chapter{font-size:17px}.story-counter{margin-top:18px}.chapter-dots{margin-top:17px}.story-notes{grid-template-columns:1fr;padding:20px 8vw 40px;gap:15px}.has-motion .story{height:245svh}.has-motion .story-stage{height:100svh;min-height:580px;display:flex;flex-direction:column;justify-content:center}.has-motion .story-photo{width:86vw;flex:0 1 53svh;min-height:220px;height:53svh;margin:20px 7vw 0}.has-motion .story-text{flex:0 0 auto;width:100%;padding:22px 8vw 25px}.has-motion .story-text p{min-height:60px}.story-counter{gap:12px}.order-section{padding:65px 7vw}.section-heading{display:block;margin-bottom:28px}.section-heading>p{max-width:100%;margin-top:18px}.order-grid{grid-template-columns:1fr;gap:32px}.order-image{min-height:0;height:116vw;max-height:620px}.order-title h3{font-size:34px}.order-description{font-size:12px}.demo-note{font-size:10px}.variant{font-size:11px;padding:12px 9px}.variant small{margin-left:0;font-size:10px}.closing{grid-template-columns:1fr}.closing-image{height:90vw;min-height:320px;max-height:520px}.closing-copy{padding:48px 8vw 55px}.closing-copy h2{font-size:43px}.footer{padding:27px 7vw 100px;align-items:start}.footer p{max-width:170px;font-size:9px;margin:0}.mobile-bar{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:10;background:var(--cream);border-top:1px solid var(--line);padding:12px 6vw calc(12px + env(safe-area-inset-bottom));align-items:center;justify-content:space-between;gap:20px;box-shadow:0 -5px 30px #352c2308}.mobile-bar small{display:block;color:var(--muted);font-size:9px}.mobile-bar strong{font:22px var(--serif)}.mobile-bar .primary{min-height:43px;padding:10px 17px;font-size:11px;gap:14px}.toast{bottom:92px;width:max-content}dialog{padding:25px}.eyebrow{font-size:9px;letter-spacing:2px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}.story-photo img{will-change:auto}}
+
+/* Food exploration: the photography leads, controls remain available by keyboard. */
+.story{background:#191b15}.story-stage{position:relative;display:flex;align-items:center;min-height:820px;isolation:isolate}.story-photo{position:absolute;inset:0;margin:0;height:100%;border-radius:0;z-index:-2;overflow:hidden}.story-photo::after{content:'';position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,#141810f2 0%,#141810cc 30%,#14181018 67%),linear-gradient(0deg,#11170db3,transparent 36%);pointer-events:none}.story-photo .scene-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:65% 43%;opacity:0;transform:scale(1.02);transform-origin:65% 45%;transition:opacity .65s ease;will-change:opacity,transform}.story-photo .scene-image.active{opacity:1}.story-photo .scene-image[data-scene="0"]{object-position:68% 43%}.has-motion .story{height:340svh}.has-motion .story-stage{height:100svh;min-height:700px}.has-motion .story-photo{height:100%;max-height:none}.story-text{padding:110px 6vw 95px;width:53%;max-width:700px;z-index:3}.story-text h2{font-size:clamp(43px,5vw,76px);margin:24px 0;letter-spacing:-2px}.story-text p{max-width:345px;font-size:14px;color:#e4ded0;min-height:90px}.story-chapter{color:#eac69c}.scene-topline{position:absolute;inset:28px 4vw auto;display:flex;justify-content:space-between;align-items:center;gap:20px;font-size:9px;letter-spacing:1.7px;z-index:4}.scene-topline button{border:1px solid #e4ded066;color:#fff;background:#191b1566;backdrop-filter:blur(12px);border-radius:24px;padding:9px 15px;font-size:11px;letter-spacing:0}.scene-topline button span{margin-left:12px}.scene-topline button[aria-pressed="true"]{background:var(--cream);color:var(--ink)}.scene-controls{display:flex;flex-direction:column;align-items:flex-start;gap:7px;margin-top:30px}.scene-choice{background:transparent;border:0;border-bottom:1px solid #e4ded02b;color:#c2bbad;min-height:43px;font-size:12px;padding:8px 18px 8px 0;display:flex;gap:14px;align-items:center;text-align:left}.scene-choice span{color:#b0a48e;font-size:9px;letter-spacing:1px}.scene-choice.active{color:#fff;border-bottom-color:#ddba87}.scene-choice.active span{color:#edc992}.scene-choice:hover{color:white}.scene-choice:focus-visible,.scene-topline button:focus-visible{outline-color:#f1c693}.story-counter{color:#d9cbb2;font-size:9px;margin-top:30px;letter-spacing:.5px}.scene-caption{position:absolute;bottom:30px;right:4vw;color:#eee4d5;font-size:9px;letter-spacing:1.8px;z-index:4}.hero-visual img{object-position:50% 45%}.story-notes{background:#262c20}.hero h1{font-size:clamp(48px,5.5vw,84px)}
+@media(max-width:760px){.hero-copy{padding-bottom:30px}.hero h1{font-size:clamp(46px,11vw,72px)}.hero-visual{order:-1;height:58svh;min-height:380px;max-height:600px}.story-stage,.has-motion .story-stage{height:calc(100svh - 76px);min-height:650px;display:flex;justify-content:flex-end;flex-direction:column;align-items:stretch}.has-motion .story{height:290svh}.story-photo,.has-motion .story-photo{position:absolute;inset:0;width:100%;height:100%;margin:0;min-height:0;flex:none}.story-photo::after{background:linear-gradient(0deg,#13180ff7 0%,#13180fdb 27%,#13180f12 66%),linear-gradient(180deg,#13180f55,transparent 25%)}.story-photo .scene-image{object-position:60% 28%;transform-origin:60% 30%}.story-photo .scene-image[data-scene="0"]{object-position:65% 38%}.scene-topline{inset:20px 6vw auto;gap:10px;letter-spacing:1px;font-size:8px}.scene-topline>span{max-width:145px}.scene-topline button{padding:8px 11px;font-size:10px;white-space:nowrap}.scene-topline button span{margin-left:4px}.story-text,.has-motion .story-text{flex:none;width:100%;padding:270px 7vw 38px;max-width:none}.story-text h2{font-size:clamp(35px,9vw,48px);line-height:1.05;margin:12px 0 14px;letter-spacing:-1.4px}.story-text p,.has-motion .story-text p{font-size:12px;line-height:1.75;max-width:340px;min-height:65px;margin:0}.story-chapter{font-size:17px}.scene-controls{flex-direction:row;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:19px;align-items:stretch}.scene-choice{font-size:10px;line-height:1.4;padding:8px 0;display:block;min-height:49px;white-space:normal}.scene-choice span{display:block;margin-bottom:5px;font-size:8px}.story-counter{margin-top:17px;font-size:8px}.scene-caption{display:none}.story-notes{padding:25px 7vw 40px}.story-note b{font-size:23px}}
+@media(prefers-reduced-motion:reduce){.story-photo .scene-image{will-change:auto}}
+
 </style>
 </head>
 <body>
@@ -25,36 +31,48 @@
 <div class="hero-copy">
 <div class="breadcrumb"><a href="#chon-phan">Bếp nhà</a><span>/</span><span>Bánh cuốn</span></div>
 <div class="eyebrow" style="color:var(--green)">Một mâm bánh cuốn, từng lớp vị</div>
-<h1 id="hero-title">Một đĩa<br>bánh cuốn.<br><em>Đủ vị bữa ngon.</em></h1>
-<p class="hero-description">Chậm lại một chút. Khám phá từng góc mâm bánh, rồi chọn một phần theo vị bạn thích.</p>
+<h1 id="hero-title">Mềm một lớp bánh.<br><em>Thèm cả<br>một mâm.</em></h1>
+<p class="hero-description">Lại gần lớp bánh óng mềm, ngắm chút hành vàng, theo miếng bánh chạm nước chấm. Có những món ngon, nhìn thôi đã muốn thử.</p>
 <p class="hero-price">35.000₫ <span>/ phần · giá minh hoạ</span></p>
 <a class="primary" href="#chon-phan">Chọn phần của bạn <span aria-hidden="true">↗</span></a>
 <a href="#cau-chuyen" class="scroll-hint"><span aria-hidden="true">↓</span> CUỘN NHẸ, KHÁM PHÁ TỪNG LỚP VỊ</a>
 </div>
-<div class="hero-visual"><img src="assets/banh-cuon.png" width="1027" height="1536" alt="Toàn cảnh bàn ăn: đĩa bánh cuốn ở giữa, quanh là các bát ăn kèm và rau xanh" fetchpriority="high"><div class="photo-tag" aria-hidden="true">Một mâm<br>đủ vị</div><div class="image-caption"><span>GÓC NHÌN TỪ BÀN ĂN</span><span>01 — TOÀN CẢNH</span></div></div>
+<div class="hero-visual"><img src="assets/banh-cuon-nang-banh.png" width="1024" height="1536" alt="Ảnh AI minh hoạ: đũa nâng bánh cuốn mỏng mềm, để lộ nhân và hành vàng" fetchpriority="high"><div class="photo-tag" aria-hidden="true">Nhìn thôi<br>đã thèm</div><div class="image-caption"><span>MỀM · ÓNG · NÓNG HỔI</span><span>ẢNH MINH HOẠ BẰNG AI</span></div></div>
 </section>
 <div class="ribbon"><span>Bánh cuốn Bà Thanh</span><span>Quen vị, thương bữa nhà</span><span>Một hành trình bằng hình ảnh</span></div>
-<section class="intro" id="cau-chuyen"><div class="eyebrow">Cúi lại gần hơn một chút</div><h2>Có cả một bữa ngon<br>trong từng góc nhỏ.</h2><p>Từ lớp bánh mềm đến sắc xanh bên mâm. Cuộn tiếp để đi gần hơn, ngắm kỹ hơn những điều làm nên một bàn ăn đầy cảm hứng.</p></section>
-<section class="story" aria-label="Khám phá ba góc mâm bánh theo cuộn">
+<section class="intro" id="cau-chuyen"><div class="eyebrow">Đừng vội. Lại gần một chút.</div><h2>Từng nếp bánh mềm.<br>Từng chút vị khiến bạn thèm.</h2><p>Cuộn để theo đũa nâng bánh, nhìn vào lớp nhân rồi chạm nước chấm. Hoặc tự chọn góc bạn muốn ngắm lâu hơn.</p></section>
+<section class="story" aria-label="Khám phá bánh cuốn qua ba góc ảnh">
 <div class="story-stage">
-<div class="story-photo"><img id="story-image" src="assets/banh-cuon.png" width="1027" height="1536" alt="Khám phá đĩa bánh, bát ăn kèm và rau xanh trong ảnh mâm bánh cuốn"></div>
-<div class="story-text"><span class="story-chapter" id="chapter-number">01 / 03</span><h2 id="chapter-title">Bắt đầu từ<br>lớp bánh mềm.</h2><p id="chapter-description">Ngay giữa mâm, những lớp bánh xếp lên nhau, óng nhẹ dưới ánh sáng. Càng nhìn gần, càng thấy rõ từng nếp bánh.</p><div class="chapter-dots" aria-hidden="true"><i class="active"></i><i></i><i></i></div><div class="story-counter" aria-hidden="true"><span>ĐI THEO TỪNG LỚP VỊ</span><span class="story-track"><i></i></span><span>↓</span></div></div>
+<div class="story-photo" id="explore-photo">
+<img class="scene-image active" id="story-image" src="assets/banh-cuon.png" width="1027" height="1536" alt="Toàn cảnh mâm bánh cuốn" data-scene="0">
+<img class="scene-image" src="assets/banh-cuon-nang-banh.png" width="1024" height="1536" alt="Ảnh AI minh hoạ: đũa nâng lớp bánh mỏng óng, phần nhân lộ ra ở đầu bánh" data-scene="1" aria-hidden="true">
+<img class="scene-image" src="assets/banh-cuon-cham-sot.png" width="1024" height="1536" alt="Ảnh AI minh hoạ: miếng bánh vừa chạm bát nước chấm màu hổ phách" data-scene="2" aria-hidden="true">
 </div>
-<div class="story-notes"><div class="story-note"><b>01. Lớp bánh</b><p>Nhìn gần từng nếp bánh ngay giữa mâm.</p></div><div class="story-note"><b>02. Bát ăn kèm</b><p>Dịch ánh nhìn xuống bát ăn kèm phía dưới.</p></div><div class="story-note"><b>03. Sắc xanh</b><p>Khép lại bằng sắc xanh ở góc bàn ăn.</p></div></div>
+<div class="scene-topline"><span>NGẮM MỘT CHÚT. THÈM THÊM MỘT CHÚT.</span><button type="button" id="zoom-photo" aria-pressed="false" aria-controls="explore-photo">Ngắm kỹ hơn <span aria-hidden="true">＋</span></button></div>
+<div class="story-text"><span class="story-chapter" id="chapter-number">01 / 03</span><h2 id="chapter-title">Một mâm ngon.<br>Mời bạn lại gần.</h2><p id="chapter-description">Lớp bánh trắng mềm, hành vàng và những sắc xanh quanh mâm. Bắt đầu từ toàn cảnh, rồi theo đũa nâng một miếng bánh lên nhé.</p>
+<div class="scene-controls" role="group" aria-label="Chọn góc khám phá">
+<button type="button" class="scene-choice active" data-choice="0" aria-pressed="true" aria-controls="explore-photo"><span>01</span> Ngắm cả mâm</button>
+<button type="button" class="scene-choice" data-choice="1" aria-pressed="false" aria-controls="explore-photo"><span>02</span> Nâng lớp bánh</button>
+<button type="button" class="scene-choice" data-choice="2" aria-pressed="false" aria-controls="explore-photo"><span>03</span> Chạm nước chấm</button>
+</div>
+<div class="story-counter" aria-hidden="true"><span>CUỘN TIẾP ĐỂ KHÁM PHÁ</span><span class="story-track"><i></i></span><span>↓</span></div></div>
+<div class="scene-caption" id="scene-caption">01 — TOÀN CẢNH MÂM BÁNH</div>
+</div>
+<div class="story-notes"><div class="story-note"><b>01. Ngắm cả mâm</b><p>Một mâm bánh trắng mềm, hành vàng, sắc xanh. Lại gần một chút nhé.</p></div><div class="story-note"><b>02. Nâng lớp bánh</b><p>Nếp bánh óng mỏng rủ xuống theo đầu đũa, để lộ phần nhân bên trong.</p></div><div class="story-note"><b>03. Chạm nước chấm</b><p>Một chút nước chấm bám trên mép bánh. Chỉ còn đợi bạn thử một miếng.</p></div></div>
 </section>
 <section class="order-section" id="chon-phan" aria-labelledby="order-heading">
 <div class="section-heading"><div><div class="eyebrow" style="color:var(--green)">Đến lượt vị của bạn</div><h2 id="order-heading">Một phần, theo ý thích.</h2></div><p>Chọn phần ăn, thêm chút bạn thích.<br>Phần còn lại, cứ để bếp lo.</p></div>
 <div class="order-grid"><div class="order-image"><img src="assets/banh-cuon.png" width="1027" height="1536" alt="Ảnh minh hoạ mâm bánh cuốn, không đại diện chính xác cho một phần ăn" loading="lazy"><span>GỢI Ý TRÌNH BÀY · ẢNH MINH HOẠ</span></div>
-<form id="order-form"><div class="order-title"><h3>Bánh cuốn<br>theo vị bạn.</h3><button class="heart" type="button" id="favorite" aria-label="Yêu thích món này" aria-pressed="false">♡</button></div><p class="order-description">Một phần bánh cho bữa ăn bạn đang mong đợi. Thử lựa chọn bên dưới để xem phần ăn của bạn.</p><div class="unit-price" id="unit-price">35.000₫ <span style="font:11px sans-serif;color:var(--muted)">/ phần</span></div><p class="demo-note">Bản xem trước: tên phần, giá và món thêm chỉ để thử giao diện. Các thành phần trong ảnh không mặc nhiên đi kèm phần ăn. Giỏ thử không gửi đơn thật.</p>
+<form id="order-form"><div class="order-title"><h3>Bánh cuốn<br>theo vị bạn.</h3><button class="heart" type="button" id="favorite" aria-label="Yêu thích món này" aria-pressed="false">♡</button></div><p class="order-description">Một phần bánh cho bữa ăn bạn đang mong đợi. Thử lựa chọn bên dưới để xem phần ăn của bạn.</p><div class="unit-price" id="unit-price">35.000₫ <span style="font:11px sans-serif;color:var(--muted)">/ phần</span></div><p class="demo-note">Bản xem trước: ảnh cận cảnh tạo bằng AI; tên phần, giá và món thêm chỉ để thử giao diện. Các thành phần trong ảnh không mặc nhiên đi kèm phần ăn. Giỏ thử không gửi đơn thật.</p>
 <fieldset><legend>01 — Chọn phần ăn</legend><div class="variants"><label class="variant"><input type="radio" name="portion" value="35000" checked>Phần cơ bản<small>35.000₫ / phần</small></label><label class="variant"><input type="radio" name="portion" value="49000">Phần đầy đặn<small>49.000₫ / phần</small></label></div></fieldset>
 <fieldset><legend>02 — Thêm một chút</legend><label class="extra"><span><input type="checkbox" id="extra" value="7000">Thêm phần ăn kèm</span><span>+ 7.000₫</span></label></fieldset>
 <div class="quantity-row"><span>03 — Số lượng</span><div class="stepper"><button id="decrease" type="button" aria-label="Giảm số lượng" disabled>−</button><output id="quantity" aria-live="polite">1</output><button id="increase" type="button" aria-label="Tăng số lượng">+</button></div></div>
 <div class="total-line"><span>Tạm tính minh hoạ</span><output id="total" aria-live="polite">35.000₫</output></div><button class="primary add-button" type="submit"><span>Thêm vào giỏ thử</span><span aria-hidden="true">↗</span></button><p class="micro">Bạn có thể xem và bỏ món trong giỏ thử.</p>
 </form></div>
 </section>
-<section class="closing"><div class="closing-image"><img src="assets/banh-cuon.png" width="1027" height="1536" alt="Trở lại toàn cảnh mâm bánh cuốn nhiều sắc màu" loading="lazy"></div><div class="closing-copy"><div class="eyebrow">Một mâm, nhiều điều để thương</div><h2>Bữa ngon bắt đầu<br>từ một phần<br><em>hợp ý bạn.</em></h2><a class="text-link" href="#chon-phan">Chọn một phần của bạn <span aria-hidden="true">↗</span></a></div></section>
+<section class="closing"><div class="closing-image"><img src="assets/banh-cuon-cham-sot.png" width="1024" height="1536" alt="Ảnh AI minh hoạ miếng bánh bên bát nước chấm" loading="lazy"></div><div class="closing-copy"><div class="eyebrow">Một mâm, nhiều điều để thương</div><h2>Bữa ngon bắt đầu<br>từ một phần<br><em>hợp ý bạn.</em></h2><a class="text-link" href="#chon-phan">Chọn một phần của bạn <span aria-hidden="true">↗</span></a></div></section>
 </main>
-<footer class="footer"><a class="brand" href="#dau-trang">BÀ THANH<span style="color:var(--orange)">.</span></a><p>Bản thiết kế xem trước · Nội dung và giá minh hoạ.<br>Hình ảnh kể chuyện, chưa phải thực đơn chính thức.</p></footer>
+<footer class="footer"><a class="brand" href="#dau-trang">BÀ THANH<span style="color:var(--orange)">.</span></a><p>Bản thiết kế xem trước · Nội dung và giá minh hoạ.<br>Ảnh cận cảnh tạo bằng AI, chỉ minh hoạ cảm hứng món ăn.</p></footer>
 <div class="mobile-bar"><div><small>TẠM TÍNH MINH HOẠ</small><strong id="mobile-total">35.000₫</strong></div><a class="primary" href="#chon-phan">Chọn phần của bạn <span aria-hidden="true">↗</span></a></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <dialog id="cart" aria-labelledby="cart-title"><div class="dialog-top"><h2 id="cart-title">Giỏ thử của bạn</h2><button type="button" id="close-cart" class="close" aria-label="Đóng giỏ thử">×</button></div><p class="demo-note">Giỏ chỉ để xem trước, lưu trong lần mở trang này. Không gửi đơn, không thanh toán.</p><div id="cart-content"></div><button class="primary" type="button" id="continue">Tiếp tục chọn món <span aria-hidden="true">↗</span></button></dialog>
@@ -138,41 +156,61 @@ $('continue').addEventListener('click', () => { $('cart').close(); $('chon-phan'
 $('cart').addEventListener('click', event => { if (event.target !== $('cart')) return; const rect = $('cart').getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right) $('cart').close(); });
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 const story = document.querySelector('.story');
-const photo = $('story-image');
+const photos = [...document.querySelectorAll('.scene-image')];
+const choices = [...document.querySelectorAll('.scene-choice')];
 const chapters = [
-  { title: ['Bắt đầu từ', 'lớp bánh mềm.'], description: 'Ngay giữa mâm, những lớp bánh xếp lên nhau, óng nhẹ dưới ánh sáng. Càng nhìn gần, càng thấy rõ từng nếp bánh.' },
-  { title: ['Thêm một góc,', 'thêm một vị.'], description: 'Ánh nhìn dịch xuống những bát ăn kèm. Màu trong của nước, sắc ấm của bát sứ, một điểm dừng nhỏ giữa mâm bánh.' },
-  { title: ['Chút sắc xanh,', 'trọn cảm hứng.'], description: 'Ở góc mâm, những lá rau xanh làm bàn ăn thêm tươi mắt. Một vòng khám phá khép lại, để bạn chọn phần ăn hợp ý mình.' }
+  { title: ['Một mâm ngon.', 'Mời bạn lại gần.'], description: 'Lớp bánh trắng mềm, hành vàng và những sắc xanh quanh mâm. Bắt đầu từ toàn cảnh, rồi theo đũa nâng một miếng bánh lên nhé.', caption: '01 — TOÀN CẢNH MÂM BÁNH' },
+  { title: ['Mỏng tang lớp bánh.', 'Đầy một miếng ngon.'], description: 'Theo đầu đũa, nếp bánh mềm rủ xuống, óng nhẹ và để lộ phần nhân. Chút hành vàng trên mặt khiến ánh nhìn muốn nán lại lâu hơn.', caption: '02 — NẾP BÁNH MỀM · ẢNH AI MINH HOẠ' },
+  { title: ['Chạm chút nước chấm.', 'Thèm thêm một miếng.'], description: 'Mép bánh vừa chạm làn nước màu hổ phách. Một giọt nhỏ bám lại, vài gợn sóng lan ra. Bạn đã muốn thử một miếng chưa?', caption: '03 — CHẠM NƯỚC CHẤM · ẢNH AI MINH HOẠ' }
 ];
-let frame = 0; let chapter = -1;
+let frame = 0, chapter = -1, desiredChapter = 0, progress = 0, manualAt = null, zoomed = false;
+function resetZoom() {
+  zoomed = false;
+  $('zoom-photo').setAttribute('aria-pressed','false');
+  $('zoom-photo').replaceChildren(document.createTextNode('Ngắm kỹ hơn '),Object.assign(document.createElement('span'),{textContent:'＋'}));
+}
+function showChapter(index) {
+  desiredChapter = index;
+  if(index === chapter || !photos[index].complete || !photos[index].naturalWidth) return;
+  chapter = index; resetZoom();
+  photos.forEach((photo,i)=>{photo.classList.toggle('active',i===index);photo.setAttribute('aria-hidden',String(i!==index));});
+  choices.forEach((button,i)=>{button.classList.toggle('active',i===index);button.setAttribute('aria-pressed',String(i===index));});
+  $('chapter-number').textContent = '0'+(index+1)+' / 03';
+  $('chapter-title').replaceChildren(document.createTextNode(chapters[index].title[0]),document.createElement('br'),document.createTextNode(chapters[index].title[1]));
+  $('chapter-description').textContent=chapters[index].description;
+  $('scene-caption').textContent=chapters[index].caption;
+}
 function renderStory() {
-  frame = 0;
-  if (motion.matches) return;
-  const rect = story.getBoundingClientRect();
-  const travel = Math.max(1, story.offsetHeight - document.querySelector('.story-stage').offsetHeight);
-  const progress = Math.max(0, Math.min(1, -rect.top / travel));
-  // Keyframes: full plate -> lower bowl -> greens. A flat image stays top-down.
-  const stops = [{p:0,s:1,x:0,y:0},{p:.34,s:1.5,x:0,y:8},{p:.67,s:1.65,x:0,y:-20},{p:1,s:1.8,x:-19,y:-21}];
-  let a=stops[0], b=stops[1];
-  for(let i=1;i<stops.length;i++){if(progress<=stops[i].p){a=stops[i-1];b=stops[i];break;}}
-  const t=(progress-a.p)/(b.p-a.p); const lerp=(key)=>a[key]+(b[key]-a[key])*t;
-  photo.style.transform = `translate(${lerp('x')}%,${lerp('y')}%) scale(${lerp('s')})`;
-  story.style.setProperty('--progress', String(progress));
-  const next = progress < .4 ? 0 : progress < .74 ? 1 : 2;
-  if (next !== chapter) {
-    chapter = next;
-    $('chapter-number').textContent = '0' + (chapter + 1) + ' / 03';
-    $('chapter-title').replaceChildren(document.createTextNode(chapters[chapter].title[0]), document.createElement('br'), document.createTextNode(chapters[chapter].title[1]));
-    $('chapter-description').textContent = chapters[chapter].description;
-    document.querySelectorAll('.chapter-dots i').forEach((dot, index) => dot.classList.toggle('active', index === chapter));
+  frame=0;
+  if(!motion.matches){
+    const rect=story.getBoundingClientRect();
+    const travel=Math.max(1,story.offsetHeight-document.querySelector('.story-stage').offsetHeight);
+    progress=Math.max(0,Math.min(1,-rect.top/travel));
+    if(manualAt!==null && Math.abs(window.scrollY-manualAt)>Math.min(140,innerHeight*.15)) manualAt=null;
+    if(manualAt===null) showChapter(progress<.34?0:progress<.68?1:2);
+    story.style.setProperty('--progress',String(progress));
   }
+  const scale=zoomed?1.24:motion.matches?1:1.02+progress*.07;
+  photos.forEach(photo=>{photo.style.transform=`scale(${scale})`;});
 }
-function schedule(){if(!frame && !document.hidden) frame=requestAnimationFrame(renderStory);}
-function setMotion(){
-  document.body.classList.toggle('has-motion', !motion.matches);
-  if(motion.matches){document.querySelectorAll('.chapter-dots i').forEach((dot,index)=>dot.classList.toggle('active',index===0)); photo.style.transform='none'; chapter=-1; $('chapter-number').textContent='01 / 03'; $('chapter-title').replaceChildren(document.createTextNode(chapters[0].title[0]),document.createElement('br'),document.createTextNode(chapters[0].title[1])); $('chapter-description').textContent=chapters[0].description;}
-  else schedule();
-}
+function schedule(){if(!frame&&!document.hidden) frame=requestAnimationFrame(renderStory);}
+function setMotion(){document.body.classList.toggle('has-motion',!motion.matches);manualAt=null;schedule();}
+choices.forEach((button,index)=>button.addEventListener('click',()=>{manualAt=window.scrollY;showChapter(index);schedule();}));
+$('zoom-photo').addEventListener('click',()=>{
+  zoomed=!zoomed;
+  $('zoom-photo').setAttribute('aria-pressed',String(zoomed));
+  $('zoom-photo').textContent=zoomed?'Thu về toàn cảnh  −':'Ngắm kỹ hơn  ＋';
+  // Respect reduced motion while still allowing an immediate closer look.
+  photos.forEach(photo=>{photo.style.transform=`scale(${zoomed?1.24:1.02})`;});
+});
+photos.forEach((photo,index)=>photo.addEventListener('load',()=>{if(desiredChapter===index){showChapter(index);schedule();}}));
+document.querySelectorAll('img').forEach(photo=>photo.addEventListener('error',()=>{
+  if(photo.dataset.fallback)return;
+  photo.dataset.fallback='true';
+  photo.src='assets/banh-cuon.png';
+  photo.alt='Ảnh toàn cảnh thay thế vì ảnh cận cảnh chưa tải được';
+}));
+showChapter(0);
 window.addEventListener('scroll',schedule,{passive:true});
 window.addEventListener('resize',schedule,{passive:true});
 document.addEventListener('visibilitychange',schedule);
