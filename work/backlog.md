@@ -98,6 +98,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-275 **Bản thực hành Paris từ tài nguyên video Creativo** — L1, chủ repo giao Codex 2026-10-31; agent phụ đối chiếu nguồn và duyệt độc lập · [chi tiết](#t-275)
+
 - [ ] T-273 **Bố trí bốn món theo vòng cung trong bản mẫu menu mâm** — L1, chủ repo giao Codex 2026-10-29 · [chi tiết](#t-273)
 
 - [ ] T-268 **Gộp món lẻ giống nhau trong giỏ khách** — L1, chủ repo giao Codex 2026-10-28 · [chi tiết](#t-268)
@@ -3449,3 +3451,20 @@ Acceptance: (A1) bố cục đúng concept từ tên quán tới dải vòng cun
 Sửa acceptance 2026-10-30 (Claude, sau khi thấy ảnh chụp): nút + ở đĩa nhỏ thêm theo lựa chọn đang giữ của món, không theo mặc định, để giá trên thẻ luôn bằng giá được thêm.
 
 Bàn giao 2026-10-30: thực hiện Codex (`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-274`, nhánh `codex/T-274` từ `02d6fbe`, hai vòng), duyệt Claude. Sandbox của Codex chặn Chrome nên Claude tự chạy kịch bản 390×844 và 320×568 cùng bốn khung còn lại: mọi kiểm tra PASS, 0 lỗi console, 0 request mạng. Đối chiếu ảnh với concept: vòng 1 tìm ra ảnh lớn đè tên và giá, đã sửa. Còn lệch có chủ ý: dưới 480px hiện khoảng 4 món thay vì 5; giỏ khởi đầu trống. Còn lệch chưa sửa: gỗ tối hơn concept vì nền phải vá, ảnh lớn của bốn món ngoài combo mờ hơn vì phóng từ ảnh nhỏ. Bản mẫu chưa có chế độ *Hỗn hợp* (T-271). Chưa nối vào `fe/`.
+
+<a id="t-275"></a>
+### T-275 — Bản thực hành Paris từ tài nguyên video Creativo
+
+Chủ repo giao trực tiếp 2026-10-31: đọc `docs/private/video-paris-scroll/prompts.md`, thực hành giống video Creativo tại mốc 77 giây, dùng agent phụ đảm bảo chất lượng. L1, chỉ dựng website tĩnh độc lập trong `docs/private/video-paris-scroll/website/`; backlog và scope là hồ sơ công việc. Không sửa ứng dụng quán, owner nghiệp vụ hoặc triển khai lên mạng.
+
+Acceptance trước triển khai (Codex, 2026-10-31): (A1) kiểm kê frame thật: hiện 0 frame, không có định dạng/kích thước/thứ tự để công bố; dừng phần hiệu ứng theo prompt, dùng ảnh tĩnh có nhãn, không bịa tên frame; nếu chủ repo cho phép chuẩn bị frame từ video thật thì ghi rõ thay đổi; (A2) dùng tài nguyên thật từ Drive tác giả, đường dẫn tương đối phục vụ từ website/; (A3) bố cục tạp chí với điều hướng, hero, giới thiệu, ba địa điểm, hành trình một ngày, footer, nội dung tiếng Việt không bịa giá/đánh giá; (A4) không tràn ngang 320/390/430/1280px, bàn phím và reduced-motion dùng được, có xử lý ảnh lỗi; (A5) server gốc website/ không có request ảnh lỗi hay JavaScript lỗi, ghi cách chạy và giới hạn thực tế; (A6) agent độc lập đọc artifact và bằng chứng, chạy `./scripts/gate.sh`, đọc diff và bàn giao commit chỉ chứa task này.
+
+Thực hiện Codex, agent `reference_review` đối chiếu nguồn và agent `quality_review` duyệt artifact/trình duyệt độc lập, đều chỉ đọc. Nhánh `P4A-01`, nền `39f2143`. Cây có nhiều thay đổi từ trước ngoài phạm vi và task khác đang thêm backlog; không gộp vào việc này. Tài liệu nguồn ngoài website/ giữ nguyên theo prompt.
+
+Cập nhật phạm vi được chủ repo xác nhận 2026-10-31: “Dùng video gốc để làm tiếp hiệu ứng cuộn”. Cho phép tách `Plane window.mp4` thật vào `website/assets/frames/` dù assets/frames/ gốc đang rỗng. Acceptance A1 bổ sung: kiểm kê chuỗi thật sau tách; cuộn xuôi/ngược đúng frame; canvas giữ tỷ lệ, resize/DPR, requestAnimationFrame, tải trước và cache có giới hạn, ưu tiên frame đầu, trạng thái tải/lỗi, reduced-motion dùng ảnh tĩnh. Giữ mọi sản phẩm trong website/.
+
+Bàn giao Codex 2026-10-31: đã dựng HTML/CSS/JS tĩnh trong website/, 157 JPEG 1280×720 từ video thật 1920×1080/30fps/10,433s của tác giả, tách 15fps, 4,66 MiB. Nguồn và hash video ở website/assets/sources.json; frames.json lấy danh sách file thật theo số. Canvas cuộn hai chiều, resize/DPR, RAF theo sự kiện, cache 10 và tải đồng thời 3; lỗi ảnh/manifest giữ cảnh hoặc về poster, reduced-motion bỏ request chuỗi. Nội dung Paris tiếng Việt, liên kết nội trang, không đặt tour/backend/triển khai. Cách chạy trong website/README.md.
+
+Acceptance → bằng chứng: A1/A2: ffprobe + kiểm manifest 157 file tồn tại/duy nhất/thứ tự số; Chrome xác nhận frame 0→39→78→140→156→78→0 tương ứng cuộn 0→25→50→90→100→50→0%, reviewer kiểm thêm 80%→125, cache≤10 và pending≤3. A3: đọc HTML và xem ảnh hero/nội dung; A4/A5: Chrome PASS 320×700, 390×844 DPR3, 430×932, 1280×900; reviewer PASS thêm 320×568 DPR2; không tràn ngang, resize, keyboard skip, href có đích, giảm chuyển động mở đầu + đổi trực tiếp, tắt JS, manifest 404/toàn bộ frame 404/một frame lỗi đều xử lý; đường bình thường 0 lỗi JS/HTTP. Kịch bản/log chính `/tmp/paris-scroll-task/browser-check.cjs`, `browser-results.txt`, ảnh hero/content; duyệt độc lập `/tmp/paris-quality-review.json`, `/tmp/paris-quality-review.cjs`, `/tmp/paris-review-extra.cjs`; reviewer không phát hiện lỗi chặn. Node syntax và whitespace PASS; không thêm dependency hoặc sửa ứng dụng quán. Chưa kiểm Safari/thiết bị thật/trình đọc màn hình.
+
+A6: đã đọc diff/red flags và chạy gate. Gate trên cây chung khởi chạy nhưng bị dừng (exit 143), không có kết quả để tuyên bố xanh. Gate trực tiếp trên worktree `/tmp/paris-scroll-task/review-tree` từ HEAD chỉ ghép task Paris: exit 2, scope/1c/1e/1f/1g/1h PASS, 1d và verify SKIP (gate coi docs/ là tài liệu); Gate 1b FAIL đúng hai link từ file profile-gemini.md có sẵn trong HEAD tới `customer_profile.md` và `customer_profile_loading.md` chưa tồn tại trong HEAD. Log `/tmp/paris-scroll-task/isolated-gate.log`. Không sửa profile ngoài phạm vi; giữ In Progress vì gate chưa xanh. Phần website đã được kiểm xong. Bước tiếp theo: lead xử lý liên kết profile theo task riêng, chạy lại gate rồi nghiệm thu Done. Backlog commit được tách blob chỉ chứa phần Paris trên HEAD; manifest liệt kê từng tệp từ git, index cây chính giữ nguyên, không commit.

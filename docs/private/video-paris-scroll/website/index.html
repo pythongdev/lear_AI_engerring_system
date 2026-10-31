@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080e1a">
+  <meta name="description" content="Một chuyến dạo Paris bằng hình ảnh: từ ô cửa máy bay đến tháp Eiffel, rồi chậm lại giữa những con phố.">
+  <title>Paris, qua một ô cửa — Carnet de voyage</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#gioi-thieu">Bỏ qua phần hình ảnh</a>
+  <header class="site-header">
+    <a class="wordmark" href="#dau-trang" aria-label="Paris, về đầu trang">PARIS<span class="wordmark-dot">.</span></a>
+    <nav aria-label="Điều hướng chính">
+      <a href="#gioi-thieu">Câu chuyện</a>
+      <a href="#diem-den">Điểm đến</a>
+      <a class="nav-itinerary" href="#hanh-trinh">Một ngày ở Paris <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="journey" id="dau-trang" aria-labelledby="hero-title">
+      <div class="journey-stage">
+        <img class="journey-poster" src="assets/images/eiffel.jpg" alt="Hình ảnh minh hoạ tháp Eiffel nhô lên giữa những tầng mây xanh đêm" width="1920" height="1008" fetchpriority="high">
+        <canvas class="journey-canvas" aria-hidden="true"></canvas>
+        <div class="hero-shade" aria-hidden="true"></div>
+        <div class="hero-copy">
+          <p class="eyebrow">CARNET DE VOYAGE <span aria-hidden="true">/</span> FRANCE</p>
+          <h1 id="hero-title">Paris,<br>qua một<br><em>ô cửa.</em></h1>
+          <p class="hero-description">Một khoảng trời mới.<br>Một thành phố để phải lòng.</p>
+          <a class="hero-link" href="#gioi-thieu">Bắt đầu khám phá <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="hero-aside hero-aside-left">
+          <span class="small-index">01 — LỜI MỞ ĐẦU</span>
+          <p>Đôi khi, một chuyến đi<br>bắt đầu từ một ánh nhìn.</p>
+        </div>
+        <div class="hero-aside hero-aside-right">
+          <span class="small-index">ĐI CHẬM. NHÌN THẬT LÂU.</span>
+          <p>Để Paris kể câu chuyện<br>theo cách của riêng bạn.</p>
+        </div>
+        <div class="journey-bottom">
+          <a class="scroll-cue" href="#gioi-thieu"><span aria-hidden="true">↓</span> <span class="scroll-label">Cuộn để đi qua những tầng mây</span></a>
+          <p class="loading-status" role="status">Đang chuẩn bị hình ảnh…</p>
+          <span class="journey-counter" aria-hidden="true">01 <span>/</span> 03</span>
+        </div>
+        <div class="journey-progress" aria-hidden="true"><span></span></div>
+      </div>
+    </section>
+
+    <section class="introduction section-shell" id="gioi-thieu" aria-labelledby="intro-title">
+      <div class="section-kicker"><span>LE GOÛT DE PARIS</span><span>02 / CÂU CHUYỆN</span></div>
+      <div class="intro-grid">
+        <h2 id="intro-title">Có những nơi<br>để đến.<br><em>Có Paris để nhớ.</em></h2>
+        <div class="intro-copy">
+          <p class="lead">Đừng vội đi hết Paris.<br>Hãy dành thời gian ở lại với một góc nhỏ.</p>
+          <p>Một chiếc ghế cạnh cửa sổ quán cà phê. Một buổi dạo bên sông Seine. Một lần ngước nhìn tháp Eiffel giữa khoảng trời rộng. Paris có thể bắt đầu từ những điều giản dị như thế.</p>
+          <a class="text-link" href="#diem-den">Tìm một góc Paris của bạn <span aria-hidden="true">↘</span></a>
+        </div>
+      </div>
+      <figure class="paris-panorama">
+        <img src="assets/images/eiffel.jpg" alt="Tháp Eiffel sáng giữa mây, một hình dung điện ảnh về Paris" width="1920" height="1008" loading="lazy">
+        <figcaption><span>PARIS, ENTRE CIEL ET RÊVE</span><span>Hình ảnh AI minh hoạ từ tài nguyên Creativo</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="places section-shell" id="diem-den" aria-labelledby="places-title">
+      <div class="section-kicker"><span>LES ESCALES</span><span>03 / ĐIỂM DỪNG</span></div>
+      <div class="section-heading"><h2 id="places-title">Ba góc nhìn.<br><em>Một Paris.</em></h2><p>Chọn một điểm dừng.<br>Để dành phần còn lại cho lần trở lại.</p></div>
+      <div class="place-list">
+        <article class="place">
+          <span class="place-number" aria-hidden="true">01</span>
+          <div class="place-title"><span class="eyebrow">MỘT BIỂU TƯỢNG</span><h3>Tháp Eiffel</h3></div>
+          <p>Chọn một góc nhìn từ xa, rồi đi bộ lại gần. Tháp Eiffel hiện lên khác đi khi bạn thôi nhìn qua màn hình và dành một lúc để ngước lên.</p>
+          <a class="place-link" href="#buoi-chieu" aria-label="Xem gợi ý thăm tháp Eiffel vào buổi chiều">↗</a>
+        </article>
+        <article class="place">
+          <span class="place-number" aria-hidden="true">02</span>
+          <div class="place-title"><span class="eyebrow">MỘT CUỘC GẶP VỚI NGHỆ THUẬT</span><h3>Louvre</h3></div>
+          <p>Không cần xem mọi thứ trong một lần. Hãy chọn vài tác phẩm bạn muốn gặp, hoặc chỉ dành thời gian dạo quanh sân bảo tàng và ngắm kiến trúc.</p>
+          <a class="place-link" href="#buoi-sang" aria-label="Xem gợi ý ghé Louvre vào buổi sáng">↗</a>
+        </article>
+        <article class="place">
+          <span class="place-number" aria-hidden="true">03</span>
+          <div class="place-title"><span class="eyebrow">MỘT KHOẢNG LANG THANG</span><h3>Montmartre</h3></div>
+          <p>Đi chậm qua những con phố dốc, ghé một quán nhỏ và tìm một chỗ dừng chân. Một buổi sáng thong thả cũng có thể là phần đáng nhớ nhất của chuyến đi.</p>
+          <a class="place-link" href="#mot-lan-khac" aria-label="Xem gợi ý dành Montmartre cho một buổi riêng">↗</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="itinerary section-shell" id="hanh-trinh" aria-labelledby="itinerary-title">
+      <div class="section-kicker"><span>PRENDRE SON TEMPS</span><span>04 / MỘT NGÀY GỢI Ý</span></div>
+      <div class="itinerary-grid">
+        <div class="itinerary-intro"><p class="eyebrow">KHÔNG CẦN ĐI THẬT XA</p><h2 id="itinerary-title">Một ngày.<br>Vừa đủ để<br><em>muốn trở lại.</em></h2><p>Một gợi ý để bắt đầu, bạn có thể đổi thứ tự hoặc bỏ bớt điểm dừng theo nhịp của mình.</p></div>
+        <ol class="timeline">
+          <li id="buoi-sang"><span class="time-label">BUỔI SÁNG</span><h3>Cà phê, rồi một chút nghệ thuật.</h3><p>Bắt đầu nhẹ nhàng, sau đó dành buổi sáng cho khu Louvre. Nếu muốn vào bảo tàng, hãy kiểm tra lịch và vé trên trang chính thức trước chuyến đi.</p></li>
+          <li><span class="time-label">BUỔI TRƯA</span><h3>Để dòng sông dẫn lối.</h3><p>Tìm một bữa trưa vừa ý rồi dạo bên sông Seine. Chừa một khoảng trống trong lịch để dừng lại ở nơi khiến bạn tò mò.</p></li>
+          <li id="buoi-chieu"><span class="time-label">CHIỀU MUỘN</span><h3>Hẹn nhau dưới tháp Eiffel.</h3><p>Đi về phía tháp Eiffel khi chiều xuống. Ngắm từ xa hay chọn ghé thăm đều được; chỉ cần dành đủ thời gian để tận hưởng buổi cuối ngày.</p></li>
+        </ol>
+      </div>
+      <aside class="another-day" id="mot-lan-khac"><span class="asterisk" aria-hidden="true">✳</span><p><strong>Để dành một buổi khác cho Montmartre.</strong> Đừng cố ghép tất cả vào một ngày. Còn giờ mở cửa, vé và đường đi, hãy kiểm tra nguồn chính thức khi bạn lên kế hoạch thực tế.</p></aside>
+    </section>
+
+    <section class="closing" aria-labelledby="closing-title">
+      <img src="assets/images/clouds.jpg" alt="" width="1440" height="756" loading="lazy">
+      <div><p class="eyebrow">À BIENTÔT, PARIS</p><h2 id="closing-title">Hẹn Paris,<br><em>một ngày thật gần.</em></h2><a href="#dau-trang" class="hero-link">Nhìn lại từ ô cửa <span aria-hidden="true">↑</span></a></div>
+    </section>
+  </main>
+
+  <footer class="site-footer section-shell">
+    <a class="wordmark" href="#dau-trang">PARIS<span class="wordmark-dot">.</span></a>
+    <p>Một bản thực hành kể chuyện bằng hình ảnh.<br>Không nhận đặt tour. Hình ảnh AI mang tính minh hoạ.</p>
+    <a href="https://www.youtube.com/watch?v=nPxMF2YV77I&amp;t=77s" target="_blank" rel="noopener noreferrer">Cảm hứng từ Creativo <span aria-hidden="true">↗</span></a>
+  </footer>
+</body>
+</html>

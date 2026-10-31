@@ -1,0 +1,26 @@
+{
+  "source_video": "https://drive.google.com/file/d/1RLaJ1CCpT7VqC7zUPRhYogBfB3x9p8gW/view",
+  "source_author": "Creativo",
+  "reference": "https://www.youtube.com/watch?v=nPxMF2YV77I&t=77s",
+  "downloaded_on": "2026-10-31",
+  "video_sha256": "233145e36aa4c26c14ed56c26ba57914f6eed4d5c77b917198f3a1231eda152c",
+  "source_video_probe": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "duration_seconds": 10.433333
+  },
+  "frame_count": 157,
+  "frame_dimensions": [
+    1280,
+    720
+  ],
+  "frame_format": "JPEG",
+  "frame_order": "numeric suffix, zero-padded to four digits",
+  "conversion": "ffmpeg -i Plane-window.mp4 -vf fps=15,scale=1280:-2 -q:v 5 assets/frames/paris-%04d.jpg",
+  "images": {
+    "assets/images/eiffel.jpg": "https://drive.google.com/file/d/1E4i_h6VdMFpg7ZqxgRytzw2HF5VCurot/view",
+    "assets/images/clouds.jpg": "https://drive.google.com/file/d/1TzG-Y-0SNekuQ6Ls4geFwMpmg2jPN6cn/view"
+  },
+  "notes": "Original AI imagery is illustrative. Veo watermark from the source video is preserved. No claim of ownership or license grant."
+}
