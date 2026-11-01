@@ -160,6 +160,35 @@ phạm vi của nó ở `master_plan/shop-facts.md` **§8.8**.
   còn đây là dữ liệu cá nhân của người ngoài quán. Ai trả lời: chủ quán (luật), chủ repo (cách làm). Chặn gì: chưa có
   cửa xoá tài khoản khách; khách xoá được địa chỉ đã nhớ bằng cách để trống.
 
+**Ngày 2026-11-01, T-283 mở sáu câu** khi chủ repo đề xuất tính năng chat với app (lời nguyên văn và cách đọc ở
+`work/backlog.md` entry `T-283`, thiết kế đề xuất ở **ADR-136**). Lời nêu mong muốn, chưa nói tới mép của nó; hai
+trong sáu câu đụng luật quán đã chốt nên không được suy ra.
+
+<a id="u-112"></a>
+- **U-112** — Trợ lý chat chạy bằng dịch vụ AI bên ngoài (LLM): dùng nhà cung cấp và model nào, trần chi phí mỗi tháng
+  bao nhiêu, và có chấp nhận gửi nội dung chat (tên, số điện thoại, địa chỉ khách, tên nhân viên) ra dịch vụ ấy không?
+  Ai trả lời: chủ repo. Chặn gì: mọi bước gọi model của lane `CHAT`; kế hoạch tạm dựng sau một lớp đổi được nhà cung cấp.
+<a id="u-113"></a>
+- **U-113** — Nhân viên trạm (canh, tráng, gấp) *"xác nhận"* trên chat có nghĩa gì: chỉ là **tin báo** để POS xem rồi
+  POS ghi tiến độ, hay **ghi thẳng** tiến độ? Chủ quán chốt 2026-08-31 *"bỏ qua bước này, POS sẽ tự cập nhật"* vì ba đôi
+  tay ấy đang bận (`shop-facts.md` §5.4, ADR-011); ghi thẳng là lật luật này. Kèm theo: bếp cầm thiết bị gì để đọc và
+  bấm? Ai trả lời: chủ quán. Chặn gì: hộp tin trạm ↔ POS của lane `CHAT`; tạm đọc là **tin báo, POS vẫn là người ghi**.
+<a id="u-114"></a>
+- **U-114** — *"Chủ quán có tất cả các quyền"* trong chat có vượt luật *chủ quán không đứng quầy thì nhờ người đứng quầy
+  bấm* (`shop-facts.md` §6.13, `architecture.md` §4) không? Ai trả lời: chủ quán. Chặn gì: bước chủ quán ra lệnh ghi
+  bằng chat; tạm giữ luật cũ — chủ quán không đứng quầy bị từ chối đúng như ở màn tay.
+<a id="u-115"></a>
+- **U-115** — Việc chạm tiền (thu, huỷ, hoàn, ghi nợ, giảm giá, đối soát) có được làm qua chat không, hay chat chỉ dẫn
+  sang màn tay? Ai trả lời: chủ quán. Chặn gì: danh sách cửa ghi chat được gọi; tạm **không** mở cửa chạm tiền nào.
+<a id="u-116"></a>
+- **U-116** — *"Báo nghỉ"*: ai báo cho ai, báo trước bao lâu, có cần ai duyệt không, và có chạm ca · lương không? Hôm nay
+  chưa có chỗ cất loại nghỉ, câu `C30` ở `work/admin-questions.md` mới có lời một phần. Ai trả lời: chủ quán. Chặn gì:
+  bước báo nghỉ của lane `CHAT`, gồm cả lược đồ của nó; các bước khác không phụ thuộc.
+<a id="u-117"></a>
+- **U-117** — Khách đặt món qua chat: có phải đăng nhập không; áp cho đơn giao · đến lấy, hay cả khách ngồi bàn QR gọi
+  thêm; và khách có nhắn được tới POS không, hay chỉ nói chuyện với trợ lý? Ai trả lời: chủ quán. Chặn gì: bước đặt món
+  qua chat; hỏi thông tin quán không phụ thuộc. Tạm đọc: chỉ đơn giao · đến lấy, theo đúng luật đơn web đang có.
+
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
 

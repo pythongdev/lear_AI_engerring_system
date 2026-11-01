@@ -143,6 +143,7 @@ có câu trả lời mới từ người.
 | ADR-125 | **Hoá đơn phiên bàn chỉ cộng suất đã ra hết** (`T-227`): một đoạn tính tiền đã ra theo suất dùng chung cho hoá đơn, tạm tính và trang Vận hành; đóng phiên huỷ mọi việc trạm chưa ra (`station_job` thêm `cancelled` · `discarded`) | Đã chốt 2026-10-22 (Claude, chủ repo duyệt) | — | `T-227` · ADR-118 · ADR-124 · I-002 |
 | ADR-126 | **Bán lại món đã ngừng** (`T-243`): cửa `POST /menu-items/{menu_item_id}/resumption` xoá mốc ngừng bán trên chính dòng món, có lý do; lịch sử nằm trong vết `record_revision`, không bảng mới | Đã chốt 2026-10-24 (Claude, theo lời chủ repo đóng U-104) | — | `T-243` · I-018 · I-009 |
 | ADR-131 | **Đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản riêng** (`T-262`): một ô định danh chuẩn hoá; tài khoản người làm thêm số điện thoại, thư và tên đăng nhập thành tuỳ chọn; khách ở bảng, cookie và lớp quyền `khach` riêng, không bao giờ chạm `person`; đơn web gắn tài khoản khách; ba lát `T-263` → `T-264` → `T-265` | Đã chốt 2026-10-27 (chủ repo duyệt, T-262) | — | ADR-109 · ADR-085 · I-035 · `U-105`…`U-108` |
+| ADR-136 | **Chat là một mặt mới, không phải một đường ghi mới** (`T-283`): trợ lý chỉ gọi đúng các cửa đã có, dưới chính phiên người đang chat, quyền kiểm tại mốc ghi; lời model không tự ghi — mọi lệnh ghi qua thẻ người bấm xác nhận; giá và số liệu chỉ lấy từ công cụ đọc; tin báo trạm ↔ POS là dữ liệu riêng, không phải tiến độ; model là phụ thuộc ngoài có đường suy giảm, chat không bao giờ là đường duy nhất | **Đề xuất** 2026-11-01 (Claude Code) — chờ chủ repo duyệt | CAO nếu bỏ qua (chạm đơn, quyền) | lane `CHAT` · U-112…U-117 · ADR-011 · ADR-085 · ADR-097 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -8134,3 +8135,47 @@ trigger vết như mọi bảng (QD-52), nhưng `record_revision.person_id` bắ
 `customer_*` (CHECK `record_revision_person_check`, migration `20261028090000_vet_cua_khach`); ai sửa đọc qua dòng
 đích. Bác *bỏ trigger vết khỏi bảng khách*: mất bản trước của địa chỉ giao đã nhớ, và phải mở ngoại lệ cho QD-52.
 I-018 ghi sửa đổi cùng ngày.
+
+---
+
+## ADR-136 — Chat là một mặt mới, không phải một đường ghi mới
+
+**Status:** **Đề xuất** 2026-11-01 — Claude Code thiết kế (task `T-283`, tính năng mức **L3**), **chờ chủ repo duyệt**.
+Mong muốn là của chủ repo (nguyên văn ở `work/backlog.md` entry `T-283`); mọi điểm dưới đây là thiết kế của phiên, chưa
+phải lời quán. Không bước thi công nào của lane `CHAT` được bắt đầu trước khi ADR này chuyển sang *Đã chốt*.
+
+**Decision:**
+1. **Hai thứ, không phải một.** *Trợ lý* (khách hỏi quán, đặt món; người làm hỏi số liệu, ra lệnh bằng lời) và *hộp tin
+   nội bộ* (POS nhắn trạm, trạm báo lại POS) là hai năng lực dùng chung một ô chat.
+2. **Trợ lý chỉ gọi cửa đã có.** Công cụ của trợ lý nối vào service của các domain, chạy dưới **chính phiên** người đang
+   chat; `authz` kiểm lớp trong giao dịch tại mốc ghi như mọi cửa (ADR-085). Trợ lý không có tài khoản, không có quyền
+   riêng, không có câu SQL ghi riêng; Gate 1f và 1g tiếp tục giữ một cửa cho một việc.
+3. **Danh sách công cụ do backend chọn theo phiên**, không do model chọn: khách không bao giờ được đưa công cụ của
+   người làm. Lời khách chèn vào chat không mở được thứ không có trong danh sách.
+4. **Lời model không tự ghi.** Mọi lệnh ghi hiện thành **thẻ xác nhận** có nội dung đọc được; người bấm mới chạy cửa, và
+   người bấm là người vào vết (`I-012`). Cửa chạm tiền chưa mở qua chat cho tới khi `U-115` có lời.
+5. **Giá, món, tồn, trạng thái đơn chỉ lấy từ công cụ đọc.** Model không được tự nói một con số; giá vẫn qua hàm giá duy
+   nhất (ADR-086), đơn vẫn qua duyệt của POS (`shop-facts.md` §6.2).
+6. **Tin báo trạm ↔ POS là dữ liệu riêng, không phải tiến độ.** POS vẫn là nơi duy nhất ghi tiến độ (ADR-011); `U-113`
+   quyết có lật hay không.
+7. **Model là phụ thuộc ngoài có đường suy giảm.** Hỏng, chậm hay hết trần chi phí thì ô chat nói thẳng và chỉ sang màn
+   tay; không màn nào phụ thuộc chat. Không giữ giao dịch database trong lúc chờ model. Phụ thuộc mới được ghi vào
+   `01-ranh-gioi-he-thong.md` ở bước của nó.
+8. **Thứ tự rủi ro tăng dần:** chỉ đọc trước, rồi tới ghi có xác nhận; khách trước khi đặt món phải qua được bộ kiểm
+   chữ (eval) gồm cả lời chèn lệnh.
+
+**Why:** chép luật vào một đường riêng cho chat là đúng họ lỗi `F-001`, lại ở chỗ đắt nhất (đơn, tiền, quyền). Ba đôi tay
+ở bếp đang bận là lý do chủ quán bỏ nút báo xong ngày 2026-08-31, nên chat không được âm thầm đưa nút ấy trở lại. Đo
+2026-11-01: backend đã có đủ khung cho điểm 2 (`authz.Door`, SSE `platform/realtime`, `GET /service-board`,
+`GET /production-board`, `/assigned-tasks`, tài khoản khách); chưa có gì về model, ô chat, tin báo hay báo nghỉ.
+
+**Rejected alternatives:** *cho model một tài khoản dịch vụ quyền rộng* — mất luật quyền gắn chỗ đứng và mất người chịu
+trách nhiệm trong vết; *trợ lý tự ghi không cần xác nhận* — một câu hiểu sai thành một đơn hoặc một việc giao sai, không ai
+biết; *chat người với người thuần tuý, không model* — rẻ hơn nhưng không làm được phần hỏi đáp và ra lệnh bằng lời mà lời
+yêu cầu nói tới, vẫn là phương án lùi nếu `U-112` trả lời không dùng model.
+
+**Consequences:** thêm một phụ thuộc ngoài có chi phí theo lượt dùng; thêm bộ kiểm chữ phải chạy khi đổi prompt hoặc model.
+`02-vai-va-quyen.md` thêm dòng cho từng cửa mới, không thêm lớp quyền nào cho trợ lý. Kế hoạch ở
+`master_plan/CHAT_master_plan_banh_cuon_ba_thanh.md`, mô tả từng bước ở `work/backlog_CHAT.md`.
+
+**Applies to:** `T-283` · lane `CHAT` · `U-112`…`U-117`.
