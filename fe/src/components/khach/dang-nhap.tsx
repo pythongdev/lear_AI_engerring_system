@@ -6,6 +6,7 @@ import { z } from "zod";
 import { call } from "@/lib/api/client";
 import { useApi } from "@/lib/api/provider";
 import { useDonPhienKhach } from "@/lib/khach/session";
+import { GoogleKhach } from "./google";
 import { KhungKhach } from "./khung";
 import { FormKhach, batBuoc, matKhau } from "./form";
 
@@ -18,6 +19,7 @@ export function DangNhapKhach({ dangKy = false }: { dangKy?: boolean }) {
   async function xong() { await don(); router.replace("/khach/tai-khoan"); }
   return <KhungKhach title={dangKy ? "Đăng ký tài khoản khách" : "Đăng nhập dành cho khách"}>
     <p className="text-muted-foreground">Nhớ thông tin giao và xem lại đơn đã đặt. Bạn vẫn có thể đặt món khi chưa đăng nhập.</p>
+    <GoogleKhach success={xong} />
     {dangKy ? <FormKhach schema={register} defaults={{ display_name: "", phone: "", email: "", password: "" }} fields={[
       { name: "display_name", label: "Tên", autoComplete: "name" }, { name: "phone", label: "Số điện thoại", type: "tel", autoComplete: "tel" },
       { name: "email", label: "Gmail", type: "email", autoComplete: "email" }, { name: "password", label: "Mật khẩu (ít nhất 8 ký tự)", type: "password", autoComplete: "new-password" },

@@ -15,6 +15,8 @@ import (
 type Code string
 
 const (
+	CodeGoogleLoginDisabled            Code = "google_login_disabled"
+	CodeGoogleTokenInvalid             Code = "google_token_invalid"
 	CodeIdentifierInvalid              Code = "identifier_invalid"
 	CodeContactRequired                Code = "contact_required"
 	CodePhoneTaken                     Code = "phone_taken"
@@ -155,6 +157,8 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
+	CodeGoogleLoginDisabled:            503,
+	CodeGoogleTokenInvalid:             401,
 	CodeIdentifierInvalid:              400,
 	CodeContactRequired:                400,
 	CodePhoneTaken:                     409,

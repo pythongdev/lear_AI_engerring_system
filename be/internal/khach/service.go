@@ -7,6 +7,7 @@ import (
 	"banhcuon/be/internal/dinhdanh"
 	"banhcuon/be/internal/don"
 	"banhcuon/be/internal/gia"
+	"banhcuon/be/internal/google"
 	"banhcuon/be/internal/taikhoan"
 	"context"
 	"errors"
@@ -55,10 +56,12 @@ type attempt struct {
 	until time.Time
 }
 type Service struct {
-	pool     *pgxpool.Pool
-	mail     taikhoan.Mailer
-	mu       sync.Mutex
-	attempts map[int64]attempt
+	googleClientID string
+	googleVerifier google.Verifier
+	pool           *pgxpool.Pool
+	mail           taikhoan.Mailer
+	mu             sync.Mutex
+	attempts       map[int64]attempt
 }
 
 func NewService(p *pgxpool.Pool, m taikhoan.Mailer) *Service {
@@ -130,6 +133,9 @@ func (s *Service) login(ctx context.Context, identifier, password string) (Profi
 			return fail(apierr.CodeLoginTemporarilyBlocked)
 		}
 		hash, e := r.MatKhau(ctx, a.ID)
+		if errors.Is(e, pgx.ErrNoRows) {
+			return fail(apierr.CodeLoginFailed)
+		}
 		if e != nil {
 			return e
 		}

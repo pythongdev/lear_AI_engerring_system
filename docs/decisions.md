@@ -143,6 +143,7 @@ có câu trả lời mới từ người.
 | ADR-125 | **Hoá đơn phiên bàn chỉ cộng suất đã ra hết** (`T-227`): một đoạn tính tiền đã ra theo suất dùng chung cho hoá đơn, tạm tính và trang Vận hành; đóng phiên huỷ mọi việc trạm chưa ra (`station_job` thêm `cancelled` · `discarded`) | Đã chốt 2026-10-22 (Claude, chủ repo duyệt) | — | `T-227` · ADR-118 · ADR-124 · I-002 |
 | ADR-126 | **Bán lại món đã ngừng** (`T-243`): cửa `POST /menu-items/{menu_item_id}/resumption` xoá mốc ngừng bán trên chính dòng món, có lý do; lịch sử nằm trong vết `record_revision`, không bảng mới | Đã chốt 2026-10-24 (Claude, theo lời chủ repo đóng U-104) | — | `T-243` · I-018 · I-009 |
 | ADR-131 | **Đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản riêng** (`T-262`): một ô định danh chuẩn hoá; tài khoản người làm thêm số điện thoại, thư và tên đăng nhập thành tuỳ chọn; khách ở bảng, cookie và lớp quyền `khach` riêng, không bao giờ chạm `person`; đơn web gắn tài khoản khách; ba lát `T-263` → `T-264` → `T-265` | Đã chốt 2026-10-27 (chủ repo duyệt, T-262) | — | ADR-109 · ADR-085 · I-035 · `U-105`…`U-108` |
+| ADR-132 | **Khách đăng ký và đăng nhập bằng nút Google** (`T-267`): FE lấy Google ID token bằng Google Identity Services, BE tự kiểm chữ ký RS256 qua JWKS bằng thư viện chuẩn của Go; bảng chỉ thêm `customer_google_identity` nối `sub` với tài khoản khách; cửa `POST /customer-sessions/google`; Gmail đã có tài khoản mật khẩu thì từ chối, không tự nối; chỉ khách | Đã chốt 2026-10-29 (chủ repo duyệt, T-267) | — | ADR-131 · I-035 · PT-8 |
 | ADR-136 | **Chat là một mặt mới, không phải một đường ghi mới** (`T-283`): trợ lý chỉ gọi đúng các cửa đã có, dưới chính phiên người đang chat, quyền kiểm tại mốc ghi; lời model không tự ghi — mọi lệnh ghi qua thẻ người bấm xác nhận; giá và số liệu chỉ lấy từ công cụ đọc; tin báo trạm ↔ POS là dữ liệu riêng, không phải tiến độ; model là phụ thuộc ngoài có đường suy giảm, chat không bao giờ là đường duy nhất | **Đề xuất** 2026-11-01 (Claude Code) — chờ chủ repo duyệt | CAO nếu bỏ qua (chạm đơn, quyền) | lane `CHAT` · U-112…U-117 · ADR-011 · ADR-085 · ADR-097 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
@@ -8135,6 +8136,62 @@ trigger vết như mọi bảng (QD-52), nhưng `record_revision.person_id` bắ
 `customer_*` (CHECK `record_revision_person_check`, migration `20261028090000_vet_cua_khach`); ai sửa đọc qua dòng
 đích. Bác *bỏ trigger vết khỏi bảng khách*: mất bản trước của địa chỉ giao đã nhớ, và phải mở ngoại lệ cho QD-52.
 I-018 ghi sửa đổi cùng ngày.
+
+**Sửa đổi 2026-10-28 (T-267; chủ repo chọn *"đồng ý đổi"*).** Phương án bị loại *nút Đăng nhập với Google* được lấy
+lại **cho khách** — thiết kế ở **ADR-132**. Người làm và chủ quán vẫn theo điểm 2, không có nút Google.
+
+## ADR-132 — Khách đăng ký và đăng nhập bằng nút Google
+
+**Status:** **Đã chốt** 2026-10-29 — Claude Code thiết kế (task `T-267`, mức **L2**), chủ repo duyệt trong hội
+thoại (nguyên văn *"duyệt"*). Hướng do chủ repo chọn trong câu
+hỏi có sẵn phương án cùng ngày: nút đặt *"chỉ trang khách"*, *"đồng ý đổi"* phương án ADR-131 đã loại. Lời:
+`master_plan/shop-facts.md` §8.8 *lượt bốn*. Mọi điểm dưới đây là thiết kế của phiên.
+
+**Context:** ADR-131 loại nút Google vì chủ quán chưa chọn và vì cần tên miền cố định (`U-094`). Chủ repo nay muốn khách
+bấm một nút là máy dùng tài khoản Google đang đăng nhập trên trình duyệt để tạo tài khoản và đăng nhập luôn. Tên miền
+vẫn chưa có, nhưng Google cho khai `http://localhost:3000` làm origin lúc phát triển; tên miền thật chỉ cần lúc triển
+khai và được thêm vào cùng Client ID. `QC-11` ghim đúng hai phụ thuộc Go trực tiếp.
+
+**Decision:**
+
+1. **Chỉ khách.** Nút *Tiếp tục với Google* ở `/khach/dang-ky` và `/khach/dang-nhap`. Màn và cửa của người làm không
+   đổi; `account` không có cột Google.
+2. **Luồng ID token, không Client Secret.** FE nạp Google Identity Services (`https://accounts.google.com/gsi/client`),
+   vẽ nút bằng Client ID; Google trả một ID token (JWT) cho trình duyệt, FE gửi nguyên chuỗi tới
+   `POST /customer-sessions/google` `{credential}`. Không dùng luồng mã uỷ quyền nên không cất bí mật nào.
+3. **BE tự kiểm token bằng thư viện chuẩn** (gói Go thuần mới `be/internal/google`, không import Gin, không thêm phụ
+   thuộc): tiêu đề `alg` = `RS256`, `kid` có trong JWKS `https://www.googleapis.com/oauth2/v3/certs` (giữ trong bộ nhớ
+   theo `Cache-Control: max-age`, gặp `kid` lạ thì nạp lại một lần); chữ ký đúng; `iss` ∈ {`accounts.google.com`,
+   `https://accounts.google.com`}; `aud` = Client ID; `exp` chưa qua (lệch đồng hồ cho phép 60 giây); `sub` không rỗng;
+   `email_verified` = true. Sai bất kỳ điều nào ⇒ `google_token_invalid`. Bộ kiểm là một interface để test thay bằng
+   khoá RSA sinh tại chỗ.
+4. **Nối bằng `sub`, không bằng thư.** Bảng chỉ thêm `customer_google_identity` (`customer_account_id` duy nhất,
+   `google_sub` duy nhất, không UPDATE, không khoá ngoại tới người của quán). `sub` đã nối ⇒ mở phiên cho đúng tài khoản
+   ấy. `sub` mới và thư chưa thuộc tài khoản khách nào ⇒ một giao dịch tạo `customer_account` (thư = thư Google đã
+   viết thường, tên = `name` của token, trống thì phần trước `@`), dòng nối và phiên. Tài khoản tạo bằng Google **không
+   có mật khẩu**; đăng nhập bằng mật khẩu với thư ấy là `login_failed` cho tới khi khách tự đặt mật khẩu qua đường quên
+   mật khẩu (ADR-131 điểm 8).
+5. **Thư đã thuộc một tài khoản khách chưa nối Google ⇒ từ chối `email_taken`, không tự nối, không ghi gì.** Màn nói
+   khách đăng nhập bằng mật khẩu. Tự nối mở đường chiếm trước: người khác đăng ký sẵn bằng thư của nạn nhân và giữ mật
+   khẩu, nạn nhân bấm Google rồi dùng tài khoản mà kẻ kia vẫn vào được. Nối Google vào tài khoản mật khẩu có sẵn là
+   việc sau, khi có màn *nối từ trang tài khoản* (đã đăng nhập bằng mật khẩu rồi mới nối).
+6. **Cấu hình:** BE đọc `BANHCUON_GOOGLE_CLIENT_ID`, FE đọc `NEXT_PUBLIC_GOOGLE_CLIENT_ID` (cùng giá trị). Trống ⇒ FE
+   không vẽ nút, cửa trả `google_login_disabled`; mọi đường đăng nhập khác chạy như cũ.
+7. **Phụ thuộc ngoài mới PT-8** (`docs/product/1-system-design/01-ranh-gioi-he-thong.md`): Google chết hay chặn ⇒ chỉ
+   nút Google hỏng; khách đăng nhập bằng mật khẩu (nếu đã đặt) hoặc đặt món không đăng nhập — đăng nhập là tuỳ chọn.
+
+**Why:** ID token + JWKS là đường Google khuyên cho đăng nhập từ trình duyệt, không cần bí mật phía máy chủ; tự kiểm bằng
+`crypto/rsa` giữ `QC-11` nguyên và đủ ngắn để test hết các nhánh từ chối. Nối bằng `sub` vì thư Google có thể đổi còn
+`sub` thì không. Từ chối thay vì tự nối vì một tài khoản khách bị chiếm lộ địa chỉ giao và lịch sử đơn.
+
+**Rejected alternatives:** *thư viện `google.golang.org/api/idtoken`* — kéo cả module lớn, phải sửa `QC-11`, đổi lấy
+khoảng trăm dòng; *luồng mã uỷ quyền với Client Secret* — thêm bí mật cần cất và một vòng chuyển hướng, không được gì
+cho đăng nhập; *tự nối theo thư đã xác minh* — chiếm trước như điểm 5; *nút Google cho người làm* — chủ repo chọn chỉ
+trang khách, và tài khoản người làm còn phải chờ duyệt.
+
+**Consequences:** `I-035` thêm một kịch bản ở Verification (bảng nối mới vẫn không trỏ tới người của quán — phép kiểm
+ngược `customer\_%` sẵn có phủ nó); test hồi quy `i035_google_identity.sql` viết trước lược đồ. Hợp đồng tăng phiên bản
+phụ. Triển khai thật cần chủ repo tạo Client ID ở Google Cloud Console và thêm tên miền khi `U-094` có lời.
 
 ---
 

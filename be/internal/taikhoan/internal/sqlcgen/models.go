@@ -132,6 +132,13 @@ type CustomerAccount struct {
 	CreatedAt         pgtype.Timestamptz
 }
 
+type CustomerGoogleIdentity struct {
+	ID                int64
+	CustomerAccountID int64
+	GoogleSubCode     string
+	CreatedAt         pgtype.Timestamptz
+}
+
 type CustomerPassword struct {
 	ID                int64
 	CustomerAccountID int64

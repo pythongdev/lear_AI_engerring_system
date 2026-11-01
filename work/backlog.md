@@ -143,6 +143,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 - [x] T-283 **Tính năng chat với app chưa có kế hoạch và sổ việc riêng** — L1 (chỉ tài liệu kế hoạch; tính năng là L3), chủ repo yêu cầu 2026-11-01, Codex soạn, Claude duyệt · [chi tiết](#t-283)
 - [x] T-274 **Bản mẫu menu theo concept bàn gỗ ấm cúng** — L1, Codex làm, Claude duyệt, chủ repo yêu cầu 2026-10-30 · [chi tiết](#t-274)
+- [x] T-267 **Khách đăng ký và đăng nhập bằng nút Google** — L2, ADR-132; Codex làm, Claude duyệt 2026-10-29 · [chi tiết](#t-267)
 - [x] T-265 **Màn đăng nhập một ô và trang tài khoản khách** — L2, lát c của ADR-131; Codex làm, Claude duyệt 2026-10-28 · [chi tiết](#t-265)
 - [x] T-264 **Backend và hợp đồng đăng nhập số điện thoại · Gmail, cửa khách** — L2, lát b của ADR-131; Codex làm, Claude duyệt 2026-10-28 · [chi tiết](#t-264)
 - [x] T-263 **Lược đồ đăng nhập bằng số điện thoại · Gmail và tài khoản khách** — L2, lát a của ADR-131; Codex làm, Claude duyệt 2026-10-27 · [chi tiết](#t-263)
@@ -3388,6 +3389,29 @@ Lát b của **ADR-131**, mức L2, sau `T-263`. Gói `be/internal/dinhdanh`; `P
 **Bàn giao 2026-10-28:** thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-264`, nhánh `codex/T-264` từ `4326e46` + T-263 stage sẵn), duyệt **Claude**. Codex dừng hai lần đúng phiếu (chưa có khuôn chia trang; phiếu viết sai ý về file nền) và một lần hết hạn mức. Claude chốt khuôn chia trang keyset `before_id`/`limit` (1…50, mặc định 20) → `{orders, next_before_id}`. Vòng duyệt có Docker lộ ba nhóm đỏ: (a) test hồi quy của Claude gửi `Origin` khi `BANHCUON_ORIGIN` rỗng, chưa mở luồng quầy trước đơn web, và sửa phiên bằng vai chủ không khai lý do — Claude sửa test, không đổi điều kiện kiểm; (b) cửa khách không khai `shop.revision_reason`, thiếu ca I-018 cho `khach/dat_lai` · `ket_thuc_phien` · `luu_giao` — Codex sửa; (c) **lỗ hổng thiết kế T-263**: `record_revision.person_id` bắt buộc người của quán nên mọi lần khách tự sửa vỡ. Chủ repo chọn *"Giữ vết, người sửa để trống"* (câu hỏi có sẵn phương án, 2026-10-28) ⇒ Claude thêm migration `20261028090000_vet_cua_khach` (`record_revision_person_check`: rỗng chỉ cho bốn bảng `customer_*`; lùi từ chối khi đã có vết rỗng), sửa `db/reconcile/i018.sql`, ghi sửa đổi vào I-018 và ADR-131, nới ba test I-018 nhận `check_violation` bên cạnh `not_null_violation` (lần sửa không người vẫn bị từ chối).
 
 Kiểm đã chạy (Claude): trong worktree `db-check: PASS — 38 bước…`, `be-check` mọi test PASS; FE còn đúng `khach-qr.test.tsx` đỏ sẵn ở HEAD (sửa đổi chưa commit của task khác ở clone chính làm nó xanh). Clone chính sau tích hợp: `./scripts/gate.sh` mọi cổng PASS (be-check, db-check 39 bước, verify, hợp đồng 0.52.0 134/134). Ở clone chính dòng thứ tự migration là **39** (sau T-248 37, T-263 38); trong blob commit T-264 là 38. Hợp đồng: T-264 và T-248 (chưa commit) cùng đặt `0.52.0` — ai commit sau phải tăng tiếp.
+
+<a id="t-267"></a>
+### T-267 — Khách đăng ký và đăng nhập bằng nút Google
+
+Mức **L2** (đăng nhập, dữ liệu lưu, hợp đồng). Chủ repo yêu cầu 2026-10-28 và chọn trong câu hỏi có sẵn phương án: nút
+chỉ ở trang khách, đổi phương án ADR-131 đã loại. Lời: `master_plan/shop-facts.md` §8.8 *lượt bốn*; thiết kế **ADR-132**
+(*Đề xuất*); phụ thuộc ngoài **PT-8**; test hồi quy `db/tests/i035_google_identity.sql` Claude viết trước lược đồ.
+
+Acceptance viết trước: (1) migration `customer_google_identity` (up/down; lùi từ chối khi đã có dòng) và
+`i035_google_identity` xanh, `i035_…` cũ vẫn xanh; (2) gói `be/internal/google` kiểm ID token đúng ADR-132 điểm 3, test
+từng nhánh từ chối bằng khoá RSA sinh tại chỗ và JWKS giả; (3) `POST /customer-sessions/google`: `sub` đã nối ⇒ mở
+phiên; `sub` mới ⇒ một giao dịch tạo tài khoản + dòng nối + phiên; thư đã có tài khoản khách chưa nối ⇒ `email_taken`,
+không ghi gì; token sai ⇒ `google_token_invalid`; thiếu Client ID ⇒ `google_login_disabled`; không chạm `account` ·
+`person`; (4) `openapi.yaml` tăng phiên bản phụ, ma trận quyền và ánh xạ ràng buộc đủ; (5) `/khach/dang-ky` ·
+`/khach/dang-nhap` có nút Google khi có `NEXT_PUBLIC_GOOGLE_CLIENT_ID`, thành công sang `/khach/tai-khoan`, `email_taken`
+báo đăng nhập bằng mật khẩu; (6) gate xanh, Claude tự chạy `db-check` · `be-check`.
+
+Chủ repo còn phải tạo **Google OAuth Client ID** (loại *Web application*, origin `http://localhost:3000`) và đặt vào
+`BANHCUON_GOOGLE_CLIENT_ID` · `NEXT_PUBLIC_GOOGLE_CLIENT_ID`; thiếu nó nút không hiện, mọi đường khác chạy như cũ.
+
+**Bàn giao 2026-10-29:** thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-267`, nhánh `codex/T-267` từ `d9d7e26` + toàn bộ thay đổi chưa commit của clone chính stage sẵn, gồm T-264), duyệt **Claude**. Vòng một Codex dừng đúng phiếu vì cửa mới cần `be/sqlc.yaml` ngoài scope; Claude mở scope. Vòng hai Codex hết hạn mức **trước khi viết báo cáo** — Claude duyệt thẳng diff. Claude tự sửa hai chỗ khi tích hợp: dòng PT-8 bỏ đường dẫn URL (Gate 1d coi là route), và cột `google_sub` đổi thành `google_sub_code` (QD-60 kêu ở mọi ca đối chiếu vì cột so byte không mang hậu tố `_code`; QD-61 đòi hậu tố ấy — tên ràng buộc giữ nguyên nên hợp đồng không đổi). File: migration `20261028120000_khach_google`, `db/tests/i035_google_identity.sql` (Claude viết trước, chỉ đổi tên cột), `24-luoc-do-khach-google.md` · `07-thu-tu-migration.md` · `09-doi-chieu-bat-bien.md`, `scripts/db-check.sh`, gói `be/internal/google/`, `be/internal/khach/` (`google.go`, cửa, handler, repository, đăng nhập mật khẩu khi không có mật khẩu ⇒ `login_failed`), `be/sqlc.yaml` + sqlc sinh lại, `apierr`, `router.go`, `Makefile`, hợp đồng **0.53.0** + `02-vai-va-quyen.md`, `fe/src/components/khach/google.tsx` (+ test), `dang-nhap.tsx`, `messages.ts`, `schema.ts`, `01-khung-fe.md`.
+
+Acceptance → bằng chứng: (1) `PASS db/tests/i035_google_identity.sql`, `PASS lùi 20261028120000_khach_google`; (2) `TestI035_GoogleVerify` 16 ca con (`valid` · `bad_signature` · `wrong_alg` · `unknown_kid` · `wrong_aud` · `wrong_iss` · `second_issuer` · `expired` · `expiry_boundary` · `clock_skew` · `missing_exp` · `unverified` · `verified_string` · `empty_sub` · `blank_sub` · `cache_expired`); (3) `TestI035_GoogleAccountSessionAndEmailCollision` (tạo tài khoản không mật khẩu, đăng nhập lại đúng tài khoản, mật khẩu ⇒ `login_failed`, thư đã có ⇒ `email_taken` không ghi gì) · `TestI035_GoogleConcurrentSubject` · `TestI035_GoogleDisabledAndInvalid` · `TestI035_GoogleHandlerCookie` · `TestI035_GoogleHandlerErrors`; (4) Gate 1g `hợp đồng 0.53.0; 135 đường gọi … 111 dòng ma trận`; (5) `fe/src/components/khach/google.test.tsx` (không Client ID thì không có nút; callback gửi `credential` và chuyển `/khach/tai-khoan` ở cả đăng ký lẫn đăng nhập; `email_taken` hiện câu dùng mật khẩu); (6) `./scripts/gate.sh` ở clone chính 2026-10-29: mọi cổng PASS (db-check 40 bước, be-check, verify, fe-check 546 test). Chủ repo duyệt ADR-132 ngày 2026-10-29 (nguyên văn *"duyệt"*); test user `pythondevhn2023@gmail.com` đã thêm, Client ID ở `docs/private/google-login/README.md`. Commit sau T-264 (và T-248 cho `models.go` · hợp đồng): khối commit áp `T-267.patch` bằng `git apply --cached`.
 
 <a id="t-265"></a>
 ### T-265 — Màn đăng nhập một ô và trang tài khoản khách

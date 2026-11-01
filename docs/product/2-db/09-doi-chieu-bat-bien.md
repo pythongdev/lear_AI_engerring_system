@@ -301,3 +301,7 @@ làm khác.
 ## Giảm giá cả đơn (T-175, ADR-098)
 
 Từ bước 23, `I-005/1`, `I-005/3` và `I-015/1` · `I-015/2` đọc số sau giảm (`due_vnd − discount_vnd`) để so với phần trả và nợ. `I-012` đọc số tiền sau giảm của thao tác. `I-002/2` và `I-007/2` vẫn dùng tổng dòng trước giảm; không trừ giảm khi so hoá đơn với dòng đơn. Phép trừ két vẫn đọc phần tiền mặt. `TestI021_NgayCoGiamGiaRa0dLech` chạy các câu tiền liên quan do `scripts/reconcile.sh --emit-queries` xuất trên ngày/hoá đơn đã giảm, đồng thời so phép trừ két và dấu ký qua HTTP.
+
+T-267 (2026-10-28, ADR-132): I-035/3 dùng mẫu customer_* nên đã phủ
+customer_google_identity; không thêm phép đối chiếu. Test i035_google_identity.sql
+kiểm liên kết duy nhất, chỉ thêm và không trỏ người của quán.

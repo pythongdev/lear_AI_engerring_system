@@ -1547,6 +1547,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-25 | Claude thêm **ca 15 §4.8** cùng lượt lead T-251: *Combo Đầy đủ chín · Bánh cuốn=Thịt Thường · Bánh trứng chín=Chay ⇒ 29.000* (26.000 + 3 × 1.000). Parser `seed.pl --price-cases-tsv` ở worktree /private/tmp/t251 đã khớp 15/15 trên fixture rút gọn (log `/private/tmp/t251-price-run.log`); hình token: `Bánh cuốn=Nhân:Thịt\|Bánh trứng chín=Nhân:Chay\|Bánh cuốn=Lượng nhân:Thường`. Ca này canh chỗ dễ hỏng duy nhất của *combo thật*: trộn nhân giữa hai suất con cùng combo. **Hợp đồng với chủ quán** — ADR-129 là nền thiết kế, dòng này là ca kiểm | §4.8 |
 | 2026-10-26 | Chủ repo chốt trong hội thoại (T-255): **canh bánh cuốn có nhóm lựa chọn *Rau*** — *không rau · ít rau · nhiều rau*, cả ba **0đ**, mặc định **ít rau**, nhóm **chỉ** gắn cho canh. §4.8 thêm cột *Rau*, ca 13 chọn *ít rau*, thêm ca 16 (*không rau* ⇒ 0) và ca 17 (*bánh cuốn + ít rau* ⇒ từ chối) | §4.4 · §4.6 luật 8 · §4.8 |
 | 2026-10-27 | Chủ repo chuyển lời chủ quán trong hội thoại (T-262) và chọn trong câu hỏi có sẵn phương án: đăng nhập bằng **số điện thoại hoặc Gmail gõ vào ô, kèm mật khẩu** (không OTP, không nút Google) cho người làm, chủ quán **và khách**; đăng ký khai **một trong hai**; khách đăng nhập **tuỳ chọn**, **không chờ duyệt**, được **xem lại đơn** và **nhớ tên, số điện thoại, địa chỉ giao**. Thay vế 3 lượt hai §8.8 ở chỗ *đăng nhập bằng gì*; mở `U-105` … `U-108`. Xem **ADR-131** | §8.8 (lượt ba) |
+| 2026-10-28 | Chủ repo chọn trong câu hỏi có sẵn phương án (T-267): **khách** đăng ký và đăng nhập được bằng **nút Google** ở trang khách; người làm và chủ quán không có nút ấy. Thay vế 1 lượt ba §8.8 ở chỗ *không phải nút Google*, chỉ cho khách. Xem **ADR-132** | §8.8 (lượt bốn) |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **hai mục, tính tới 2026-10-23**
 
@@ -2219,6 +2220,13 @@ giữ nguyên cho người làm.
 
 Chỗ lời chưa phủ — người chỉ khai số điện thoại quên mật khẩu, đơn nào vào lịch sử, nhớ một hay nhiều địa chỉ, khách
 muốn xoá tài khoản — là `U-105` … `U-108` ở `docs/product/99-unknowns.md`. Thiết kế: `docs/decisions.md` **ADR-131**.
+
+**Lượt bốn 2026-10-28 — KHÁCH được đăng ký và đăng nhập bằng nút Google** (T-267; chủ repo chọn trong câu hỏi có sẵn
+phương án: đặt nút *"chỉ trang khách"*, *"đồng ý đổi"* quyết định cũ). **Thay vế 1 lượt ba ở chỗ *"không phải nút Đăng
+nhập với Google"*, chỉ cho khách:** ở trang đăng ký và đăng nhập của khách có nút Google — bấm là máy dùng tài khoản
+Google đang đăng nhập trên trình duyệt, tạo tài khoản khách nếu chưa có rồi đăng nhập luôn. Người làm và chủ quán vẫn
+đăng nhập như lượt ba, không có nút Google. Mọi vế khác của lượt ba giữ nguyên. Thiết kế: `docs/decisions.md`
+**ADR-132**.
 
 **Lời này KHÔNG chạm chấm công.** *Lúc này ai đứng quầy* và *hôm nay người này làm mấy giờ* là hai
 câu khác nhau; câu thứ hai là mức 2 của §8.7 đã có lời đáp `C30` · `C31` · `C32` ngày 2026-09-25 ở §8.7; các vế còn thiếu

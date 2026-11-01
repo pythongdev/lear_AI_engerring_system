@@ -152,6 +152,22 @@ if [ "$n_mig" -gt 0 ]; then
         printf '%s\n' "$out" | tail -12
       fi
     fi
+    if [ "$v" = 20261028120000 ]; then
+      if out="$({ echo 'BEGIN;'; echo 'SET search_path = shop;';
+                  cat db/migrations/20261028120000_khach_google.up.sql;
+                  cat db/tests/i035_google_identity.sql;
+                  echo '\echo T267_TEST_GREEN';
+                  cat db/migrations/20261028120000_khach_google.down.sql;
+                  echo 'ROLLBACK;'; } | psql_f -f - 2>&1)"; then
+        fail "T-267 đường lùi — không từ chối liên kết Google đã ghi"
+      elif printf '%s\n' "$out" | grep -q '^T267_TEST_GREEN$' &&
+           printf '%s\n' "$out" | grep -q 'customer_google_identity đang giữ dữ liệu'; then
+        echo "PASS T-267 test Google xanh; đường lùi từ chối liên kết đã ghi"
+      else
+        fail "T-267 test Google hoặc khoá chặn — lỗi khác điều cần chứng minh:"
+        printf '%s\n' "$out" | tail -12
+      fi
+    fi
     if out="$(migrate up 1)"; then
       schema_dump > "$snap/$v"; echo "PASS xuôi ${f%.up.sql}"
       printf '%s\n' "$prev" > "$snap/$v.prev"; prev="$v"

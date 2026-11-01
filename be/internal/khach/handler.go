@@ -12,6 +12,7 @@ func Routes(r *gin.Engine, s *Service) {
 	h := handler{s}
 	r.POST("/customer-accounts", h.register)
 	r.POST("/customer-sessions", h.login)
+	r.POST("/customer-sessions/google", h.google)
 	r.GET("/customer-sessions/current", h.current)
 	r.POST("/customer-sessions/current/end", h.logout)
 	r.PUT("/customer-accounts/current/delivery-profile", h.delivery)
@@ -145,4 +146,18 @@ func (h handler) history(c *gin.Context) {
 	}
 	out, e := h.s.history(c.Request.Context(), cookie(c), before, int32(limit))
 	result(c, 200, out, e)
+}
+
+func (h handler) google(c *gin.Context) {
+	var in struct {
+		Credential string `json:"credential"`
+	}
+	if !apierr.ReadJSON(c.Writer, c.Request, &in) {
+		return
+	}
+	out, token, err := h.s.loginGoogle(c.Request.Context(), in.Credential)
+	if err == nil {
+		setCookie(c, token, 604800)
+	}
+	result(c, 201, out, err)
 }

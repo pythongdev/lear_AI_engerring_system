@@ -217,6 +217,7 @@ khi bấm rời, chỉ khoảng mở của chính người gọi được khép.
 P3A-08 (2026-10-15, phiếu Claude): `GET /supply-stock` chỉ lớp `chu_quan`; cờ nhắc dành cho POS kiểm tra không tự cấp quyền đọc kho cho POS.
 
 | `khach/dang_ky` | `cong_khai` | ADR-131; T-264 |
+| `khach/google` | `cong_khai` | ADR-132; T-267; kiểm ID token trước giao dịch, tái dùng cửa tạo tài khoản và mở phiên |
 | `khach/dang_nhap` | `cong_khai` | ADR-131; T-264 |
 | `khach/dang_xuat` | `khach` | ADR-131; T-264 |
 | `khach/doi_mat_khau` | `khach` | ADR-131; T-264 |

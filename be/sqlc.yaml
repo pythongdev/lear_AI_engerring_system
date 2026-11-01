@@ -306,6 +306,7 @@ sql:
     schema: ../db/migrations
     queries:
       - internal/khach/sql
+      - internal/khach/sql/google
       - internal/khach/sql/dang_ky
       - internal/khach/sql/dang_nhap
       - internal/khach/sql/dang_xuat

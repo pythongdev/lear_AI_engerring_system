@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.52.0
+  version: 0.53.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -3875,6 +3875,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /customer-sessions/google:
+    post:
+      operationId: loginCustomerGoogle
+      tags: [khach]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoogleCredential'
+      responses:
+        '201':
+          description: Tạo hoặc mở phiên khách theo ADR-132; không tự nối thư đã có tài khoản.
+          headers:
+            Set-Cookie:
+              description: banhcuon_khach; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=604800, xoá khi đăng xuất.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerProfile'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /customer-sessions/current:
     get:
       operationId: currentCustomer
@@ -4081,6 +4110,14 @@ components:
         password:
           type: string
           minLength: 8
+    GoogleCredential:
+      type: object
+      additionalProperties: false
+      required: [credential]
+      properties:
+        credential:
+          type: string
+          minLength: 1
     CustomerLogin:
       type: object
       required: [identifier, password]
@@ -7165,6 +7202,8 @@ components:
         - identifier_invalid
         - contact_required
         - phone_taken
+        - google_login_disabled
+        - google_token_invalid
         - login_failed
         - menu_combo_not_found
         - menu_combo_hidden
@@ -7287,6 +7326,8 @@ components:
         identifier_invalid: 400
         contact_required: 400
         phone_taken: 409
+        google_login_disabled: 503
+        google_token_invalid: 401
         login_failed: 401
         menu_combo_not_found: 404
         menu_combo_hidden: 409
@@ -8362,3 +8403,9 @@ x-constraint-errors:
   sales_order_customer_account_channel_check: internal
   sales_order_customer_account_fkey: internal
   sales_order_customer_account_immutable_check: internal
+
+  customer_google_identity_pkey: internal
+  customer_google_identity_account_fkey: unreviewed
+  customer_google_identity_account_key: unreviewed
+  customer_google_identity_sub_key: unreviewed
+  customer_google_identity_sub_check: unreviewed

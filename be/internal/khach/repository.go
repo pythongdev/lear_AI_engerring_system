@@ -62,3 +62,7 @@ func (r repository) coVet(ctx context.Context, reason string, fn func() error) e
 func (r repository) useReset(ctx context.Context, id int64) error {
 	return r.coVet(ctx, DatLai.Code, func() error { return r.DungMa(ctx, id) })
 }
+
+func (r repository) linkGoogle(ctx context.Context, id int64, sub string) error {
+	return r.LinkGoogle(ctx, sqlcgen.LinkGoogleParams{CustomerAccountID: id, GoogleSubCode: sub})
+}

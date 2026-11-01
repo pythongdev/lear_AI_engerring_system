@@ -260,3 +260,14 @@ thì ghi lý do ở dòng §2 của mình. File mẫu: `fe/src/app/chu-quan/_com
 | Mất kết nối | lỗi đọc giữ bản cũ kèm `Alert` có giờ của bản ấy; nút *Đọc lại* |
 | Test viết trước | backend giả bằng `fetch` tiêm vào `ApiProvider`, trả được lời hứa chưa giải để thử trạng thái chờ; mỗi ca kiểm **thân** lệnh ghi đúng hợp đồng và **số lần** đọc lại; cài lỗi *bỏ đọc lại* phải làm test đỏ |
 
+
+## Nút Google cho khách — T-267, 2026-10-28
+
+Theo ADR-132, `GoogleKhach` ở `fe/src/components/khach/google.tsx` dùng chung
+cho `/khach/dang-ky` và `/khach/dang-nhap`, trên form với dòng ngăn “hoặc”.
+Chỉ hiện khi có NEXT_PUBLIC_GOOGLE_CLIENT_ID; Makefile truyền biến này cho FE.
+Script Google Identity Services nạp một lần bằng next/script; nút continue_with dùng locale vi.
+Callback gửi credential qua lớp API tới POST /customer-sessions/google; thành công
+dọn cache khách và chuyển /khach/tai-khoan như đăng nhập mật khẩu. email_taken
+nhắc đăng nhập bằng mật khẩu; các lỗi khác qua hàm dịch lỗi tài khoản.
+Không có CSP hoặc COOP trong next.config.ts nên không thêm header mới.

@@ -1682,5 +1682,9 @@ khoản khách ⇒ **bị từ chối**. Kịch bản dương: tài khoản ngư
 bằng vai ghi; một số vừa là tài khoản người làm vừa là tài khoản khách; đơn đến lấy mang tài khoản khách. Kiểm ngược:
 không khoá ngoại nào từ bảng khách tới người của quán hay trực quầy.
 
+*Thêm 2026-10-28 (T-267, Claude Code, **ADR-132**):* tài khoản khách tạo bằng Google mang thư, không mật khẩu ⇒
+**được**; dòng nối `customer_google_identity` trùng `sub`, trùng tài khoản, `sub` rỗng, hay bị vai ghi UPDATE ⇒ **bị từ
+chối**; kiểm ngược `customer\_%` phủ cả bảng nối. Test hồi quy `i035_google_identity` viết trước lược đồ.
+
 *Viết ở T-262, 2026-10-27, Claude Code — từ lời §8.8 lượt ba và thiết kế **ADR-131** chủ repo duyệt. Test hồi quy
 `i035_customer_account_apart_from_staff` viết trước lược đồ, vào `db/tests/` cùng lát `T-263`.*
