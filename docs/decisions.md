@@ -144,6 +144,7 @@ có câu trả lời mới từ người.
 | ADR-126 | **Bán lại món đã ngừng** (`T-243`): cửa `POST /menu-items/{menu_item_id}/resumption` xoá mốc ngừng bán trên chính dòng món, có lý do; lịch sử nằm trong vết `record_revision`, không bảng mới | Đã chốt 2026-10-24 (Claude, theo lời chủ repo đóng U-104) | — | `T-243` · I-018 · I-009 |
 | ADR-131 | **Đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản riêng** (`T-262`): một ô định danh chuẩn hoá; tài khoản người làm thêm số điện thoại, thư và tên đăng nhập thành tuỳ chọn; khách ở bảng, cookie và lớp quyền `khach` riêng, không bao giờ chạm `person`; đơn web gắn tài khoản khách; ba lát `T-263` → `T-264` → `T-265` | Đã chốt 2026-10-27 (chủ repo duyệt, T-262) | — | ADR-109 · ADR-085 · I-035 · `U-105`…`U-108` |
 | ADR-132 | **Khách đăng ký và đăng nhập bằng nút Google** (`T-267`): FE lấy Google ID token bằng Google Identity Services, BE tự kiểm chữ ký RS256 qua JWKS bằng thư viện chuẩn của Go; bảng chỉ thêm `customer_google_identity` nối `sub` với tài khoản khách; cửa `POST /customer-sessions/google`; Gmail đã có tài khoản mật khẩu thì từ chối, không tự nối; chỉ khách | Đã chốt 2026-10-29 (chủ repo duyệt, T-267) | — | ADR-131 · I-035 · PT-8 |
+| ADR-133 | **Xác nhận Gmail khách qua thư** (`T-270`): Gmail khách tự gõ nằm ở `pending_email` tới khi bấm link 24 giờ; chỉ `email` đã xác nhận mới duy nhất, mới dùng để đăng nhập và nhận thư đặt lại; khách dùng được ngay; gửi lại tối đa 3 thư một giờ; Gmail từ Google vào thẳng `email`; chỉ khách | Đã chốt 2026-10-29 (chủ repo chọn từng vế, T-270) | — | ADR-131 · ADR-132 · I-035 · PT-7 |
 | ADR-136 | **Chat là một mặt mới, không phải một đường ghi mới** (`T-283`): trợ lý chỉ gọi đúng các cửa đã có, dưới chính phiên người đang chat, quyền kiểm tại mốc ghi; lời model không tự ghi — mọi lệnh ghi qua thẻ người bấm xác nhận; giá và số liệu chỉ lấy từ công cụ đọc; tin báo trạm ↔ POS là dữ liệu riêng, không phải tiến độ; model là phụ thuộc ngoài có đường suy giảm, chat không bao giờ là đường duy nhất | **Đề xuất** 2026-11-01 (Claude Code) — chờ chủ repo duyệt | CAO nếu bỏ qua (chạm đơn, quyền) | lane `CHAT` · U-112…U-117 · ADR-011 · ADR-085 · ADR-097 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
@@ -8192,6 +8193,52 @@ trang khách, và tài khoản người làm còn phải chờ duyệt.
 **Consequences:** `I-035` thêm một kịch bản ở Verification (bảng nối mới vẫn không trỏ tới người của quán — phép kiểm
 ngược `customer\_%` sẵn có phủ nó); test hồi quy `i035_google_identity.sql` viết trước lược đồ. Hợp đồng tăng phiên bản
 phụ. Triển khai thật cần chủ repo tạo Client ID ở Google Cloud Console và thêm tên miền khi `U-094` có lời.
+
+## ADR-133 — Xác nhận Gmail khách qua thư; Gmail chưa xác nhận không giữ chỗ
+
+**Status:** **Đã chốt** 2026-10-29 — Claude Code thiết kế (task `T-270`, mức **L2**). Ba vế hành vi do chủ repo chọn
+trong câu hỏi có sẵn phương án cùng ngày: *"Dùng được ngay, Gmail treo"*, *"Chỉ khách"*, *"24 giờ"*. Lời:
+`master_plan/shop-facts.md` §8.8 *lượt năm*. Phần còn lại là thiết kế của phiên.
+
+**Context:** ADR-131 lưu Gmail khách gõ lúc đăng ký mà không kiểm ai sở hữu nó. Ai cũng đăng ký được bằng Gmail người
+khác; chủ thật sau đó đăng ký bị `email_taken`, bấm nút Google cũng bị từ chối (ADR-132 điểm 5), và thư đặt lại mật
+khẩu của tài khoản kia gửi vào hộp thư của chủ thật.
+
+**Decision:**
+
+1. **Hai cột:** `customer_account.email` là Gmail **đã xác nhận** (duy nhất, dùng để đăng nhập, nhận thư đặt lại);
+   cột mới `pending_email` là Gmail **chờ xác nhận** — **không** duy nhất, không đăng nhập được bằng nó, không nhận thư
+   đặt lại. CHECK *có liên lạc* đổi thành *số điện thoại hoặc `email` hoặc `pending_email`*; `pending_email` viết
+   thường, có `@`, khác `email` của chính dòng.
+2. **Đăng ký bằng form có Gmail:** Gmail vào `pending_email`, tạo mã xác nhận, mở phiên ngay (khách dùng được ngay),
+   gửi thư sau khi giao dịch xong; gửi hỏng hay chưa cấu hình SMTP **không** làm hỏng đăng ký (đường suy giảm PT-7).
+   Kiểm trùng lúc đăng ký chỉ so với `email` đã xác nhận.
+3. **Mã xác nhận:** bảng `customer_email_verification` (Gmail của lần gửi, băm SHA-256 của mã 32 byte, sống tối đa
+   **24 giờ**, dùng **một lần**, chỉ thêm, chỉ `used_at` được sửa). Thư mang link
+   `<BANHCUON_ORIGIN>/khach/xac-nhan-gmail?ma=<mã>`.
+4. **Bấm link:** cửa công khai nhận mã — mã lạ, hết hạn, đã dùng, hay Gmail của mã không còn là `pending_email` của
+   tài khoản ⇒ `verification_invalid`; Gmail đã là `email` của tài khoản khác ⇒ `email_taken`. Hợp lệ ⇒ một giao dịch:
+   dùng mã, `email` ← `pending_email`, `pending_email` ← rỗng. Không cần đang đăng nhập (mở link trên máy khác vẫn được).
+5. **Gửi lại:** khách đang đăng nhập có Gmail chờ ⇒ gửi lại thư mới, tối đa **3 thư một giờ** cho mỗi tài khoản (cùng
+   mức thư đặt lại); mã cũ vẫn sống tới hạn.
+6. **Gmail từ nút Google** đã được Google xác nhận (`email_verified`) ⇒ vào thẳng `email`, không thư. Vì Gmail chờ
+   không giữ chỗ, chủ thật bấm Google khi kẻ khác đang *chờ* Gmail ấy thì tạo được tài khoản; kẻ kia xác nhận sau sẽ bị
+   `email_taken`.
+7. **Tài khoản cũ** (tạo trước T-270, chỉ có ở máy dev) giữ `email` như đã có — chưa chạy thật nên không có dữ liệu
+   thật để chuyển.
+8. **Vết:** lần khách tự xác nhận để lại vết người sửa rỗng như bốn bảng khách khác — `record_revision_person_check`
+   thêm `customer_email_verification`.
+
+**Why:** để Gmail chờ ở cột riêng, không duy nhất, nên kẻ gõ nhầm hay cố ý không chặn được chủ thật mà vẫn giữ vế
+*dùng được ngay*; luật *chỉ Gmail đã xác nhận mới đăng nhập và nhận thư đặt lại* chặn đường chiếm tài khoản qua thư.
+
+**Rejected alternatives:** *chặn đăng nhập tới khi xác nhận* — chủ repo chọn dùng được ngay; *một cột `email` cộng cờ
+`email_verified_at`* — Gmail chờ vẫn giữ chỗ duy nhất, chủ thật vẫn bị chặn; *mã gõ tay như thư đặt lại* — link một
+lần bấm là đủ và ít sai.
+
+**Consequences:** `I-035` thêm kịch bản ở Verification, test hồi quy `i035_email_verification.sql` viết trước lược đồ;
+PT-7 nay phục vụ cả thư xác nhận (đường suy giảm không đổi: mất thư thì Gmail cứ chờ, khách vẫn dùng bằng phiên và số
+điện thoại); hợp đồng tăng phiên bản phụ; muốn nhận thư thật ở máy dev phải cấu hình `BANHCUON_SMTP_*`.
 
 ---
 

@@ -10,6 +10,8 @@ import (
 
 func Routes(r *gin.Engine, s *Service) {
 	h := handler{s}
+	r.POST("/customer-email-verifications", h.verify)
+	r.POST("/customer-accounts/current/email-verification", h.resend)
 	r.POST("/customer-accounts", h.register)
 	r.POST("/customer-sessions", h.login)
 	r.POST("/customer-sessions/google", h.google)
@@ -160,4 +162,18 @@ func (h handler) google(c *gin.Context) {
 		setCookie(c, token, 604800)
 	}
 	result(c, 201, out, err)
+}
+
+func (h handler) verify(c *gin.Context) {
+	var in struct {
+		Token string `json:"token"`
+	}
+	if !apierr.ReadJSON(c.Writer, c.Request, &in) {
+		return
+	}
+	out, err := h.s.verify(c.Request.Context(), in.Token)
+	result(c, 200, out, err)
+}
+func (h handler) resend(c *gin.Context) {
+	result(c, 202, map[string]string{"status": "ok"}, h.s.resend(c.Request.Context(), cookie(c)))
 }

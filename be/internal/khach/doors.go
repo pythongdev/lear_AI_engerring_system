@@ -3,6 +3,8 @@ package khach
 import "banhcuon/be/internal/authz"
 
 var (
+	XacNhan      = authz.Door{Code: "khach/xac_nhan", Need: authz.NeedPublic}
+	GuiXacNhan   = authz.Door{Code: "khach/gui_xac_nhan", Need: authz.NeedCustomer}
 	GoogleLogin  = authz.Door{Code: "khach/google", Need: authz.NeedPublic}
 	DangKy       = authz.Door{Code: "khach/dang_ky", Need: authz.NeedPublic}
 	DangNhap     = authz.Door{Code: "khach/dang_nhap", Need: authz.NeedPublic}

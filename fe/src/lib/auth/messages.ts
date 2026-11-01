@@ -4,6 +4,9 @@ import type { ApiFailure, ErrorCode } from "@/lib/api/client";
 const CHU: Partial<Record<ErrorCode, string>> = {
   google_login_disabled: "Đăng nhập bằng Google chưa sẵn sàng. Vui lòng thử lại sau.",
   google_token_invalid: "Chưa đăng nhập được bằng Google. Vui lòng thử lại.",
+  no_pending_email: "Tài khoản không có Gmail đang chờ xác nhận.",
+  verification_invalid: "Link xác nhận không còn dùng được. Đăng nhập rồi bấm Gửi lại thư xác nhận.",
+  verification_rate_limited: "Đã gửi nhiều lần, thử lại sau một giờ.",
   login_failed: "Sai số điện thoại, Gmail hoặc mật khẩu.",
   identifier_invalid: "Số điện thoại hoặc Gmail chưa đúng dạng.",
   contact_required: "Nhập số điện thoại hoặc Gmail.",

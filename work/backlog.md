@@ -143,6 +143,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 - [x] T-283 **Tính năng chat với app chưa có kế hoạch và sổ việc riêng** — L1 (chỉ tài liệu kế hoạch; tính năng là L3), chủ repo yêu cầu 2026-11-01, Codex soạn, Claude duyệt · [chi tiết](#t-283)
 - [x] T-274 **Bản mẫu menu theo concept bàn gỗ ấm cúng** — L1, Codex làm, Claude duyệt, chủ repo yêu cầu 2026-10-30 · [chi tiết](#t-274)
+- [x] T-270 **Xác nhận Gmail khách qua thư** — L2, ADR-133; Codex làm, Claude duyệt 2026-10-29 · [chi tiết](#t-270)
 - [x] T-267 **Khách đăng ký và đăng nhập bằng nút Google** — L2, ADR-132; Codex làm, Claude duyệt 2026-10-29 · [chi tiết](#t-267)
 - [x] T-265 **Màn đăng nhập một ô và trang tài khoản khách** — L2, lát c của ADR-131; Codex làm, Claude duyệt 2026-10-28 · [chi tiết](#t-265)
 - [x] T-264 **Backend và hợp đồng đăng nhập số điện thoại · Gmail, cửa khách** — L2, lát b của ADR-131; Codex làm, Claude duyệt 2026-10-28 · [chi tiết](#t-264)
@@ -3389,6 +3390,26 @@ Lát b của **ADR-131**, mức L2, sau `T-263`. Gói `be/internal/dinhdanh`; `P
 **Bàn giao 2026-10-28:** thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-264`, nhánh `codex/T-264` từ `4326e46` + T-263 stage sẵn), duyệt **Claude**. Codex dừng hai lần đúng phiếu (chưa có khuôn chia trang; phiếu viết sai ý về file nền) và một lần hết hạn mức. Claude chốt khuôn chia trang keyset `before_id`/`limit` (1…50, mặc định 20) → `{orders, next_before_id}`. Vòng duyệt có Docker lộ ba nhóm đỏ: (a) test hồi quy của Claude gửi `Origin` khi `BANHCUON_ORIGIN` rỗng, chưa mở luồng quầy trước đơn web, và sửa phiên bằng vai chủ không khai lý do — Claude sửa test, không đổi điều kiện kiểm; (b) cửa khách không khai `shop.revision_reason`, thiếu ca I-018 cho `khach/dat_lai` · `ket_thuc_phien` · `luu_giao` — Codex sửa; (c) **lỗ hổng thiết kế T-263**: `record_revision.person_id` bắt buộc người của quán nên mọi lần khách tự sửa vỡ. Chủ repo chọn *"Giữ vết, người sửa để trống"* (câu hỏi có sẵn phương án, 2026-10-28) ⇒ Claude thêm migration `20261028090000_vet_cua_khach` (`record_revision_person_check`: rỗng chỉ cho bốn bảng `customer_*`; lùi từ chối khi đã có vết rỗng), sửa `db/reconcile/i018.sql`, ghi sửa đổi vào I-018 và ADR-131, nới ba test I-018 nhận `check_violation` bên cạnh `not_null_violation` (lần sửa không người vẫn bị từ chối).
 
 Kiểm đã chạy (Claude): trong worktree `db-check: PASS — 38 bước…`, `be-check` mọi test PASS; FE còn đúng `khach-qr.test.tsx` đỏ sẵn ở HEAD (sửa đổi chưa commit của task khác ở clone chính làm nó xanh). Clone chính sau tích hợp: `./scripts/gate.sh` mọi cổng PASS (be-check, db-check 39 bước, verify, hợp đồng 0.52.0 134/134). Ở clone chính dòng thứ tự migration là **39** (sau T-248 37, T-263 38); trong blob commit T-264 là 38. Hợp đồng: T-264 và T-248 (chưa commit) cùng đặt `0.52.0` — ai commit sau phải tăng tiếp.
+
+<a id="t-270"></a>
+### T-270 — Xác nhận Gmail khách qua thư
+
+Mức **L2** (đăng nhập, dữ liệu lưu, hợp đồng). Chủ repo hỏi 2026-10-29 trang `/khach/dang-ky` có gửi thư xác nhận
+Gmail không (không — từ ADR-131 tới nay), rồi chọn ba vế trong câu hỏi có sẵn phương án. Lời: `shop-facts.md` §8.8
+*lượt năm*; thiết kế **ADR-133**; test hồi quy `db/tests/i035_email_verification.sql` Claude viết trước lược đồ.
+Dựa trên T-264 và T-267 chưa commit.
+
+Acceptance viết trước: (1) migration xác nhận Gmail (up/down; lùi từ chối khi đã có mã hay Gmail chờ),
+`i035_email_verification` xanh, `i035_*` cũ vẫn xanh; (2) đăng ký có Gmail ⇒ `pending_email`, mã, phiên, thư sau giao
+dịch, gửi hỏng không làm hỏng đăng ký; (3) đăng nhập và đặt lại mật khẩu chỉ khớp `email` đã xác nhận; (4) cửa xác
+nhận công khai: hợp lệ ⇒ chuyển Gmail; mã lạ/hết hạn/đã dùng/Gmail đã đổi ⇒ `verification_invalid`; Gmail đã của người
+khác ⇒ `email_taken`; (5) gửi lại khi đang đăng nhập, quá 3 thư một giờ ⇒ từ chối; (6) hợp đồng tăng phiên bản phụ,
+`CustomerProfile` có `pending_email`; (7) FE: báo đã gửi thư sau đăng ký, trang tài khoản hiện Gmail chờ + nút gửi lại,
+trang `/khach/xac-nhan-gmail`; (8) gate xanh, Claude tự chạy `db-check` · `be-check`.
+
+**Bàn giao 2026-10-29:** thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-270`, nhánh `codex/T-270` từ `6dea88f` + toàn bộ thay đổi chưa commit của clone chính stage sẵn, gồm T-264 và T-267), duyệt **Claude**. Codex làm hết phần trong scope nhưng không tới được Docker; dừng đúng phiếu ở `be/internal/don/vet_cua_test.go` ngoài scope. Claude mở scope và tự sửa: `thuVet` cài `SendEmailVerification`, `khachVetSetup` xác nhận Gmail khi có hộp thư giả (ca `khach/dat_lai` cần Gmail đã xác nhận mới nhận thư đặt lại), thêm ca vết `khach/xac_nhan` (thư mục `sql/xac_nhan/` có UPDATE nên `TestI018_TapCuaSuaKhopTapCa` đòi), gofmt. Giả định Codex ghi lại và Claude nhận: gửi lại trả `202 {"status":"ok"}` theo khuôn yêu cầu đặt lại; giới hạn 3 mã một giờ tính cả mã lúc đăng ký. File: migration `20261029120000_xac_nhan_gmail`, `db/tests/i035_email_verification.sql` (Claude viết trước, không sửa), `db/reconcile/i035.sql`, `25-luoc-do-xac-nhan-gmail.md` · `07` · `09`, `scripts/db-check.sh`, `be/internal/khach/` (`verification.go` + test, đăng ký, đăng nhập, Google, câu SQL), `be/internal/taikhoan/` (`Mailer.SendEmailVerification`, `smtp.go`), `apierr`, `router.go` (`WithOrigin`), `be/sqlc.yaml` + sqlc sinh lại, `vet_cua_test.go`, hợp đồng **0.54.0** + `01-hop-dong-api.md` · `02-vai-va-quyen.md`, FE `/khach/xac-nhan-gmail` + test, `tai-khoan.tsx`, `messages.ts`, `schema.ts`, `01-khung-fe.md`.
+
+Acceptance → bằng chứng: (1) `PASS db/tests/i035_email_verification.sql`, `PASS lùi 20261029120000_xac_nhan_gmail`; (2)(3)(5) `TestI035_EmailVerificationLifecycle` (Gmail chờ, một mã, thư đúng origin sau commit, đăng nhập và đặt lại với Gmail chờ bị từ chối, xác nhận rồi đăng nhập được, gửi lại lần bốn ⇒ `verification_rate_limited`, không Gmail chờ ⇒ `no_pending_email`) · `TestI035_EmailVerificationMailerFailureStill201`; (4) `TestI035_EmailVerificationExpiredAndChanged` (`expired` · `changed`) · `TestI035_EmailVerificationGoogleCollision`; (6) Gate 1g `hợp đồng 0.54.0; 137 đường gọi … 113 dòng ma trận`; (7) `fe/src/app/khach/xac-nhan-gmail/xac-nhan-gmail.test.tsx` 6 test; (8) `./scripts/gate.sh` ở clone chính 2026-10-29: mọi cổng PASS (db-check 41 bước, be-check, verify). Commit sau T-264 và T-267, bằng `docs/private/google-login/T-270.patch`.
 
 <a id="t-267"></a>
 ### T-267 — Khách đăng ký và đăng nhập bằng nút Google

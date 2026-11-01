@@ -55,7 +55,7 @@ func (s *Service) loginGoogle(ctx context.Context, credential string) (Profile, 
 				if name == "" {
 					name, _, _ = strings.Cut(email, "@")
 				}
-				id, e = r.create(ctx, Registration{Email: email, DisplayName: name})
+				id, e = r.createGoogle(ctx, Registration{Email: email, DisplayName: name})
 				if e != nil {
 					return e
 				}

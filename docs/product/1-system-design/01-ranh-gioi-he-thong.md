@@ -54,6 +54,8 @@ với `architecture.md` §8).
 
 *Thêm **PT-8** 2026-10-28 (T-267, Claude Code) khi khách được đăng nhập bằng nút Google (**ADR-132**); phép đếm thành tám.*
 
+*Mở rộng **PT-7** 2026-10-29 (T-270, Claude Code, **ADR-133**): dịch vụ thư nay gửi cả thư xác nhận Gmail của khách. Mất thư thì Gmail khách cứ ở trạng thái chờ; khách vẫn dùng bằng phiên đang mở và số điện thoại, không ai phải bù.*
+
 Mã `PT-x` là **nhãn cục bộ của file này**, để §3 và các bước sau (**P1-08** · **P1-10** · **P1-11**)
 trỏ được vào đúng một dòng. Nó không phải một mã dùng chung của repo.
 

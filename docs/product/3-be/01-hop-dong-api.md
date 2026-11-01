@@ -358,3 +358,10 @@ made → served trong ngày bán, kể cả phiên đã đóng. Không cửa ghi
 ánh xạ ràng buộc mới; giữ unauthenticated và not_on_counter_duty. Sinh lại type FE.
 
 T-264 (2026-10-27, phiếu Claude, ADR-131): hợp đồng 0.52.0 chuyển đăng nhập người làm sang identifier, password, tai_quay; đăng ký nhận display_name, phone/email, password. Sai dạng identifier trả identifier_invalid; không có tài khoản hoặc sai mật khẩu trả login_failed. Thêm chín đường khách với cookie banhcuon_khach tách khỏi cookie người làm. Đơn web gắn khách khi phiên còn hiệu lực, còn lại vẫn ẩn danh. Riêng lịch sử khách dùng before_id và limit theo khuôn Claude chốt; không áp sang cửa khác.
+
+T-270 (2026-10-29, phiếu Claude, ADR-133): 0.53.0 → 0.54.0. Thêm xác nhận công khai và gửi lại lớp khách,
+CustomerProfile luôn trả pending_email nullable. Gửi lại trả 202 CustomerOK theo khuôn yêu cầu đặt lại.
+Ba mã verification_invalid (400), no_pending_email (409), verification_rate_limited (429).
+Nhận việc: ràng buộc Gmail chờ và email trên mã là internal vì đã chuẩn hoá trước khi ghi; khoá chính,
+FK, băm, thời hạn do server cấp; dùng một lần đã khoá tài khoản và đọc lại mã trước khi sửa. Các ràng buộc
+ấy là internal; xung đột customer_account_email_key vẫn email_taken. Tên chặn đường lùi chỉ ở down, không thuộc bảng ánh xạ mà Gate 1g đọc từ up (cùng khuôn lát trước).

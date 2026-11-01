@@ -63,6 +63,9 @@ const (
 	CodePasswordTooShort        Code = "password_too_short"
 	CodeInvalidCredentials      Code = "invalid_credentials"
 	CodeLoginTemporarilyBlocked Code = "login_temporarily_blocked"
+	CodeVerificationInvalid     Code = "verification_invalid"
+	CodeNoPendingEmail          Code = "no_pending_email"
+	CodeVerificationRateLimited Code = "verification_rate_limited"
 	CodeResetTokenInvalid       Code = "reset_token_invalid"
 	CodeAccountNotPending       Code = "account_not_pending"
 	CodeAccountNotActive        Code = "account_not_active"
@@ -204,6 +207,9 @@ var statusOf = map[Code]int{
 	CodeInvalidCredentials:      401,
 	CodeLoginTemporarilyBlocked: 429,
 	CodeResetTokenInvalid:       400,
+	CodeVerificationInvalid:     400,
+	CodeNoPendingEmail:          409,
+	CodeVerificationRateLimited: 429,
 	CodeAccountNotPending:       409,
 	CodeAccountNotActive:        409,
 	CodeAccountNotLocked:        409,

@@ -65,6 +65,7 @@ ngược từ dưới lên, **từng bước một**.
 | 37 | `20261027120000_tai_khoan_khach` | `T-263` | `account.phone`, email/username tuỳ chọn; bốn bảng khách tách người làm; liên kết đơn web bất biến sau tạo. Lùi từ chối nếu account thiếu email/username, có phone, hoặc customer_account có dòng; gỡ trigger/hàm/CHECK/FK/cột liên kết đơn trước, rồi bảng con trước bảng khách, trả account về hình cũ | 27 · 8 · 20 |
 | 38 | `20261028090000_vet_cua_khach` | `T-264` | `record_revision.person_id` được rỗng chỉ cho bốn bảng `customer_*` (ADR-131 sửa đổi 2026-10-28). Lùi từ chối nếu đã có vết người sửa rỗng | 37 |
 | 39 | `20261028120000_khach_google` | `T-267` | `customer_google_identity`, liên kết Google chỉ thêm; lùi khoá bảng và từ chối khi đã có dòng (`customer_google_identity_rollback_check`) | 39 |
+| 40 | `20261029120000_xac_nhan_gmail` | `T-270` | `customer_email_verification` và Gmail chờ; lùi khoá hai bảng, từ chối khi có mã hoặc pending_email; trả quyền và hai CHECK về bước trước | 40 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`

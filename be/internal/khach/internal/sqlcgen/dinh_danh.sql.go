@@ -12,16 +12,30 @@ import (
 )
 
 const dinhDanh = `-- name: DinhDanh :one
-SELECT id, phone, email, display_name, delivery_name, delivery_phone, delivery_address, delivery_updated_at, created_at FROM customer_account WHERE phone=$1 OR email=$1 FOR UPDATE
+SELECT id, phone, email, pending_email, display_name, delivery_name, delivery_phone, delivery_address, delivery_updated_at, created_at FROM customer_account WHERE phone=$1 OR email=$1 FOR UPDATE
 `
 
-func (q *Queries) DinhDanh(ctx context.Context, phone pgtype.Text) (CustomerAccount, error) {
+type DinhDanhRow struct {
+	ID                int64
+	Phone             pgtype.Text
+	Email             pgtype.Text
+	PendingEmail      pgtype.Text
+	DisplayName       string
+	DeliveryName      pgtype.Text
+	DeliveryPhone     pgtype.Text
+	DeliveryAddress   pgtype.Text
+	DeliveryUpdatedAt pgtype.Timestamptz
+	CreatedAt         pgtype.Timestamptz
+}
+
+func (q *Queries) DinhDanh(ctx context.Context, phone pgtype.Text) (DinhDanhRow, error) {
 	row := q.db.QueryRow(ctx, dinhDanh, phone)
-	var i CustomerAccount
+	var i DinhDanhRow
 	err := row.Scan(
 		&i.ID,
 		&i.Phone,
 		&i.Email,
+		&i.PendingEmail,
 		&i.DisplayName,
 		&i.DeliveryName,
 		&i.DeliveryPhone,

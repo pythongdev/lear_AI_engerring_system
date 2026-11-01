@@ -18,6 +18,7 @@ import (
 )
 
 type Mailer interface {
+	SendEmailVerification(context.Context, string, string) error
 	SendPasswordReset(context.Context, string, string) error
 }
 type attempt struct {

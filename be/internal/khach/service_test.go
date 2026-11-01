@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/url"
 	"strings"
 	"testing"
 	"time"
@@ -16,8 +17,12 @@ import (
 )
 
 type testMailer struct {
-	tokens    []string
-	addresses []string
+	links                 []string
+	verificationAddresses []string
+	verificationError     error
+	onVerification        func(string, string)
+	tokens                []string
+	addresses             []string
 }
 
 func (m *testMailer) SendPasswordReset(_ context.Context, email, token string) error {
@@ -46,12 +51,13 @@ func wantCode(t *testing.T, e error, c apierr.Code) {
 }
 
 func TestI035_KhachChanNamLanMuoiLamPhut(t *testing.T) {
-	ctx, s, _ := testService(t)
+	ctx, s, m := testService(t)
 	email := fmt.Sprintf("chan.%d@quan.test", time.Now().UnixNano())
 	a, token, e := s.register(ctx, Registration{Email: email, DisplayName: "Chặn thử", Password: "mat-khau-123"})
 	if e != nil {
 		t.Fatal(e)
 	}
+	confirmLast(t, ctx, s, m)
 	for i := 0; i < 5; i++ {
 		_, _, e = s.login(ctx, strings.ToUpper(email), "sai")
 		wantCode(t, e, apierr.CodeLoginFailed)
@@ -86,6 +92,7 @@ func TestI035_KhachDatLaiThuBaLanMotGioMaMotLan(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
+	confirmLast(t, ctx, s, m)
 	if e = s.requestReset(ctx, "khongco."+email); e != nil || len(m.tokens) != 0 {
 		t.Fatalf("thư không có tài khoản: %v", e)
 	}
@@ -119,5 +126,24 @@ func TestI035_KhachDatLaiThuBaLanMotGioMaMotLan(t *testing.T) {
 	}
 	if e = s.requestReset(ctx, phone); e != nil || len(m.tokens) != 3 {
 		t.Fatalf("số điện thoại nhận thư: %v", e)
+	}
+}
+
+func (m *testMailer) SendEmailVerification(_ context.Context, email, link string) error {
+	if m.onVerification != nil {
+		m.onVerification(email, link)
+	}
+	m.links = append(m.links, link)
+	m.verificationAddresses = append(m.verificationAddresses, email)
+	return m.verificationError
+}
+func confirmLast(t *testing.T, ctx context.Context, s *Service, m *testMailer) {
+	t.Helper()
+	link, err := url.Parse(m.links[len(m.links)-1])
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err = s.verify(ctx, link.Query().Get("ma")); err != nil {
+		t.Fatal(err)
 	}
 }

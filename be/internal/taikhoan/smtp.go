@@ -28,6 +28,12 @@ func SMTPFromEnv() Mailer {
 type smtpMailer struct{ host, port, from, user, password string }
 
 func (m smtpMailer) SendPasswordReset(ctx context.Context, email, token string) error {
+	return m.send(ctx, email, "Dat lai mat khau", "Ma dat lai mat khau (han 30 phut, dung mot lan):\r\n"+token)
+}
+func (m smtpMailer) SendEmailVerification(ctx context.Context, email, link string) error {
+	return m.send(ctx, email, "Xac nhan Gmail", "Mo link de xac nhan Gmail (han 24 gio, dung mot lan):\r\n"+link)
+}
+func (m smtpMailer) send(ctx context.Context, email, subject, body string) error {
 	from, err := mail.ParseAddress(m.from)
 	if err != nil {
 		return err
@@ -74,7 +80,7 @@ func (m smtpMailer) SendPasswordReset(ctx context.Context, email, token string) 
 	if err != nil {
 		return err
 	}
-	_, err = fmt.Fprintf(w, "From: %s\r\nTo: %s\r\nSubject: Dat lai mat khau\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\nMa dat lai mat khau (han 30 phut, dung mot lan):\r\n%s\r\n", from.String(), to.String(), token)
+	_, err = fmt.Fprintf(w, "From: %s\r\nTo: %s\r\nSubject: %s\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n%s\r\n", from.String(), to.String(), subject, body)
 	if err != nil {
 		return err
 	}

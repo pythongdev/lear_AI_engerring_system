@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.53.0
+  version: 0.54.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -4083,6 +4083,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /customer-email-verifications:
+    post:
+      operationId: verifyCustomerEmail
+      tags: [khach]
+      security: []
+      description: ADR-133; mã dùng một lần trong 24 giờ. Mã sai, đã dùng, hết hạn hoặc Gmail chờ đổi trả verification_invalid; trùng Gmail đã xác nhận trả email_taken.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: Gmail đã xác nhận; không tạo phiên.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerProfile'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /customer-accounts/current/email-verification:
+    post:
+      operationId: resendCustomerEmailVerification
+      tags: [khach]
+      security:
+        - CustomerIdentity: []
+      description: ADR-133; no_pending_email nếu không có Gmail chờ; verification_rate_limited khi đã có 3 mã trong giờ qua, tính cả mã đăng ký. Gửi thư hỏng vẫn nhận yêu cầu.
+      responses:
+        '202':
+          description: Đã tạo mã và thử gửi thư.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerOK'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     CustomerIdentity:
@@ -4099,7 +4148,7 @@ components:
     CustomerRegistration:
       type: object
       required: [display_name, password]
-      description: Cần ít nhất phone hoặc email; chuẩn hoá ADR-131, thiếu cả hai trả contact_required.
+      description: Cần ít nhất phone hoặc email; chuẩn hoá ADR-131, thiếu cả hai trả contact_required. Gmail form vào pending_email, gửi thư xác nhận sau giao dịch; chỉ email đã xác nhận giữ chỗ (ADR-133).
       properties:
         display_name:
           type: string
@@ -4128,7 +4177,7 @@ components:
           type: string
     CustomerProfile:
       type: object
-      required: [customer_account_id, display_name, phone, email, delivery_name, delivery_phone, delivery_address]
+      required: [customer_account_id, display_name, phone, email, pending_email, delivery_name, delivery_phone, delivery_address]
       properties:
         customer_account_id:
           type: integer
@@ -4138,6 +4187,8 @@ components:
         phone:
           type: [string, "null"]
         email:
+          type: [string, "null"]
+        pending_email:
           type: [string, "null"]
         delivery_name:
           type: [string, "null"]
@@ -7240,6 +7291,9 @@ components:
         - password_too_short
         - invalid_credentials
         - login_temporarily_blocked
+        - verification_invalid
+        - no_pending_email
+        - verification_rate_limited
         - reset_token_invalid
         - account_not_pending
         - account_not_active
@@ -7364,6 +7418,9 @@ components:
         password_too_short: 400
         invalid_credentials: 401
         login_temporarily_blocked: 429
+        verification_invalid: 400
+        no_pending_email: 409
+        verification_rate_limited: 429
         reset_token_invalid: 400
         account_not_pending: 409
         account_not_active: 409
@@ -8409,3 +8466,13 @@ x-constraint-errors:
   customer_google_identity_account_key: unreviewed
   customer_google_identity_sub_key: unreviewed
   customer_google_identity_sub_check: unreviewed
+  customer_account_pending_email_check: internal
+  customer_account_pending_email_differs_check: internal
+  customer_email_verification_account_fkey: internal
+  customer_email_verification_email_check: internal
+  customer_email_verification_expiry_check: internal
+  customer_email_verification_pkey: internal
+  customer_email_verification_token_hash_check: internal
+  customer_email_verification_token_key: internal
+  customer_email_verification_used_at_check: internal
+  customer_email_verification_used_once_check: internal

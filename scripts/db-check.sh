@@ -152,6 +152,28 @@ if [ "$n_mig" -gt 0 ]; then
         printf '%s\n' "$out" | tail -12
       fi
     fi
+    if [ "$v" = 20261029120000 ]; then
+      for kind in pending code; do
+        if out="$({ echo 'BEGIN; SET search_path = shop;';
+                    cat db/migrations/20261029120000_xac_nhan_gmail.up.sql;
+                    if [ "$kind" = pending ]; then
+                      echo "INSERT INTO customer_account (pending_email, display_name) VALUES ('t270.pending@gmail.com', 'T-270');";
+                    else
+                      cat db/tests/i035_email_verification.sql;
+                    fi
+                    echo '\echo T270_TEST_GREEN';
+                    cat db/migrations/20261029120000_xac_nhan_gmail.down.sql;
+                    echo 'ROLLBACK;'; } | psql_f -f - 2>&1)"; then
+          fail "T-270 đường lùi — không từ chối $kind"
+        elif printf '%s\n' "$out" | grep -q '^T270_TEST_GREEN$' &&
+             printf '%s\n' "$out" | grep -q 'còn mã xác nhận hoặc Gmail chờ'; then
+          echo "PASS T-270 test $kind xanh; đường lùi từ chối dữ liệu đã ghi"
+        else
+          fail "T-270 test $kind hoặc khoá chặn — lỗi khác điều cần chứng minh:"
+          printf '%s\n' "$out" | tail -12
+        fi
+      done
+    fi
     if [ "$v" = 20261028120000 ]; then
       if out="$({ echo 'BEGIN;'; echo 'SET search_path = shop;';
                   cat db/migrations/20261028120000_khach_google.up.sql;

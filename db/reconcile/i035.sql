@@ -3,7 +3,7 @@
 -- @@ I-035/1 — tài khoản không có số điện thoại lẫn thư
 SELECT 'account' AS loai, id FROM account WHERE phone IS NULL AND email IS NULL
 UNION ALL
-SELECT 'customer_account' AS loai, id FROM customer_account WHERE phone IS NULL AND email IS NULL
+SELECT 'customer_account' AS loai, id FROM customer_account WHERE phone IS NULL AND email IS NULL AND pending_email IS NULL
 
 -- @@ I-035/2 — số điện thoại chưa chuẩn hoá
 SELECT 'account' AS loai, id FROM account WHERE phone COLLATE "C" !~ '^0[1-9][0-9]{8,9}$'

@@ -35,6 +35,7 @@ type Profile struct {
 	DisplayName     string  `json:"display_name"`
 	Phone           *string `json:"phone"`
 	Email           *string `json:"email"`
+	PendingEmail    *string `json:"pending_email"`
 	DeliveryName    *string `json:"delivery_name"`
 	DeliveryPhone   *string `json:"delivery_phone"`
 	DeliveryAddress *string `json:"delivery_address"`
@@ -56,6 +57,7 @@ type attempt struct {
 	until time.Time
 }
 type Service struct {
+	origin         string
 	googleClientID string
 	googleVerifier google.Verifier
 	pool           *pgxpool.Pool
@@ -70,7 +72,7 @@ func NewService(p *pgxpool.Pool, m taikhoan.Mailer) *Service {
 func fail(c apierr.Code) error { return apierr.Error{Code: c} }
 func (s *Service) register(ctx context.Context, in Registration) (Profile, string, error) {
 	var out Profile
-	var token string
+	var token, verification string
 	phone, email, e := dinhdanh.LienHe(in.Phone, in.Email)
 	if e != nil {
 		return out, token, e
@@ -82,9 +84,28 @@ func (s *Service) register(ctx context.Context, in Registration) (Profile, strin
 	}
 	e = authz.Run(ctx, s.pool, 0, DangKy, func(tx pgx.Tx) error {
 		r := repo(tx)
+		if email != "" {
+			_, err := r.DinhDanh(ctx, text(email))
+			if err == nil {
+				return fail(apierr.CodeEmailTaken)
+			}
+			if !errors.Is(err, pgx.ErrNoRows) {
+				return err
+			}
+		}
 		id, e := r.create(ctx, in)
 		if e != nil {
 			return e
+		}
+		if email != "" {
+			var h []byte
+			verification, h, e = taikhoan.NewToken()
+			if e != nil {
+				return e
+			}
+			if e = r.verificationCode(ctx, id, email, h); e != nil {
+				return e
+			}
 		}
 		if e = r.password(ctx, id, hash); e != nil {
 			return e
@@ -96,6 +117,9 @@ func (s *Service) register(ctx context.Context, in Registration) (Profile, strin
 		out, e = r.profile(ctx, id)
 		return e
 	})
+	if e == nil && verification != "" {
+		s.sendVerification(ctx, email, verification)
+	}
 	return out, token, e
 }
 func open(ctx context.Context, r repository, id int64) (string, error) {

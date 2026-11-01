@@ -18,7 +18,7 @@ func pointer(s pgtype.Text) *string {
 	return &s.String
 }
 func (r repository) create(ctx context.Context, in Registration) (int64, error) {
-	return r.ThemTaiKhoan(ctx, sqlcgen.ThemTaiKhoanParams{Phone: text(in.Phone), Email: text(in.Email), DisplayName: in.DisplayName})
+	return r.ThemTaiKhoan(ctx, sqlcgen.ThemTaiKhoanParams{Phone: text(in.Phone), PendingEmail: text(in.Email), DisplayName: in.DisplayName})
 }
 func (r repository) password(ctx context.Context, id int64, h string) error {
 	return r.GhiMatKhau(ctx, sqlcgen.GhiMatKhauParams{CustomerAccountID: id, PasswordHash: h})
@@ -41,7 +41,7 @@ func (r repository) resetCode(ctx context.Context, id int64, h []byte) error {
 }
 func (r repository) profile(ctx context.Context, id int64) (Profile, error) {
 	a, e := r.Doc(ctx, id)
-	return Profile{a.ID, a.DisplayName, pointer(a.Phone), pointer(a.Email), pointer(a.DeliveryName), pointer(a.DeliveryPhone), pointer(a.DeliveryAddress)}, e
+	return Profile{a.ID, a.DisplayName, pointer(a.Phone), pointer(a.Email), pointer(a.PendingEmail), pointer(a.DeliveryName), pointer(a.DeliveryPhone), pointer(a.DeliveryAddress)}, e
 }
 func (r repository) orders(ctx context.Context, id, before int64, limit int32) ([]sqlcgen.DonRow, error) {
 	return r.Don(ctx, sqlcgen.DonParams{CustomerAccountID: pgtype.Int8{Int64: id, Valid: true}, Column2: before, Column3: limit})
@@ -65,4 +65,19 @@ func (r repository) useReset(ctx context.Context, id int64) error {
 
 func (r repository) linkGoogle(ctx context.Context, id int64, sub string) error {
 	return r.LinkGoogle(ctx, sqlcgen.LinkGoogleParams{CustomerAccountID: id, GoogleSubCode: sub})
+}
+
+func (r repository) createGoogle(ctx context.Context, in Registration) (int64, error) {
+	return r.ThemTaiKhoan(ctx, sqlcgen.ThemTaiKhoanParams{Email: text(in.Email), DisplayName: in.DisplayName})
+}
+func (r repository) verificationCode(ctx context.Context, id int64, email string, hash []byte) error {
+	return r.TaoXacNhan(ctx, sqlcgen.TaoXacNhanParams{CustomerAccountID: id, Email: email, TokenHash: hash})
+}
+func (r repository) verifyEmail(ctx context.Context, id, codeID int64) error {
+	return r.coVet(ctx, XacNhan.Code, func() error {
+		if err := r.DungXacNhan(ctx, codeID); err != nil {
+			return err
+		}
+		return r.XacNhanEmail(ctx, id)
+	})
 }

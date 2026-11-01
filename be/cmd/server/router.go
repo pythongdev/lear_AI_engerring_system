@@ -58,7 +58,7 @@ func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtim
 	nguoi.Routes(r, nguoi.NewService(pool))
 	taikhoan.Routes(r, taikhoan.NewService(pool, taikhoan.SMTPFromEnv()))
 	googleClientID := strings.TrimSpace(os.Getenv("BANHCUON_GOOGLE_CLIENT_ID"))
-	khach.Routes(r, khach.NewService(pool, taikhoan.SMTPFromEnv()).WithGoogle(googleClientID, google.New(googleClientID, google.Options{})))
+	khach.Routes(r, khach.NewService(pool, taikhoan.SMTPFromEnv()).WithOrigin(os.Getenv("BANHCUON_ORIGIN")).WithGoogle(googleClientID, google.New(googleClientID, google.Options{})))
 	tratruoc.Routes(r, tratruoc.NewService(pool))
 	hoadon.Routes(r, hoadon.NewService(pool))
 	ket.Routes(r, ket.NewService(pool))

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -514,6 +515,24 @@ var cacCaVet = []caVet{
 			khachVetGoi(t, c, "POST", "/customer-password-resets", "", map[string]any{"token": thu.ma, "new_password": "mat-khau-vet-moi"}, 200)
 		}}
 	}},
+	{"khach/xac_nhan", func(t *testing.T, c canh) dichVet {
+		thu := &thuVet{}
+		r := gin.New()
+		khach.Routes(r, khach.NewService(c.pool, thu))
+		c.srv = httptest.NewServer(r)
+		t.Cleanup(c.srv.Close)
+		khachVetGoi(t, c, "POST", "/customer-accounts", "", map[string]any{
+			"display_name": "Khách kiểm vết xác nhận", "email": fmt.Sprintf("vet.xn.%d@khach.test", c.chu), "password": "mat-khau-vet-1",
+		}, 201)
+		if thu.xacNhan == "" {
+			t.Fatal("không có mã xác nhận Gmail")
+		}
+		h := sha256.Sum256([]byte(thu.xacNhan))
+		id := c.docSo(t, "SELECT id FROM shop.customer_email_verification WHERE token_hash=$1", h[:])
+		return dichVet{"customer_email_verification", id, 0, "used_at", nil, "mốc", func() {
+			khachVetGoi(t, c, "POST", "/customer-email-verifications", "", map[string]any{"token": thu.xacNhan}, 200)
+		}}
+	}},
 	// Hai cửa khép khoảng của P3-12 (Claude thêm 2026-10-12 khi duyệt: TestI018_TapCuaSuaKhopTapCa đòi).
 	{"nhandon/mo_lai", func(t *testing.T, c canh) dichVet {
 		c.srv = nhandonSrv(t, c)
@@ -720,11 +739,20 @@ func nhandonSrv(t *testing.T, c canh) *httptest.Server {
 	return srv
 }
 
-// thuVet giữ mã đặt lại thay cho dịch vụ gửi thư.
-type thuVet struct{ ma string }
+// thuVet giữ mã đặt lại và mã xác nhận Gmail thay cho dịch vụ gửi thư.
+type thuVet struct{ ma, xacNhan string }
 
 func (m *thuVet) SendPasswordReset(_ context.Context, _, token string) error {
 	m.ma = token
+	return nil
+}
+
+func (m *thuVet) SendEmailVerification(_ context.Context, _, link string) error {
+	u, err := url.Parse(link)
+	if err != nil {
+		return err
+	}
+	m.xacNhan = u.Query().Get("ma")
 	return nil
 }
 
@@ -751,6 +779,11 @@ func khachVetSetup(t *testing.T, c canh, mail taikhoan.Mailer) (canh, string, in
 	}, 201)
 	if token == "" {
 		t.Fatal("đăng ký khách thiếu cookie")
+	}
+	// ADR-133: Gmail tự gõ còn chờ; chỉ Gmail đã xác nhận mới nhận thư đặt lại.
+	if thu, ok := mail.(*thuVet); ok && thu.xacNhan != "" {
+		khachVetGoi(t, c, "POST", "/customer-email-verifications", "", map[string]any{"token": thu.xacNhan}, 200)
+		thu.xacNhan = ""
 	}
 	return c, token, int64(out["customer_account_id"].(float64)), email
 }

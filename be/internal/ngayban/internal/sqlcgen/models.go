@@ -130,6 +130,17 @@ type CustomerAccount struct {
 	DeliveryAddress   pgtype.Text
 	DeliveryUpdatedAt pgtype.Timestamptz
 	CreatedAt         pgtype.Timestamptz
+	PendingEmail      pgtype.Text
+}
+
+type CustomerEmailVerification struct {
+	ID                int64
+	CustomerAccountID int64
+	Email             string
+	TokenHash         []byte
+	CreatedAt         pgtype.Timestamptz
+	ExpiresAt         pgtype.Timestamptz
+	UsedAt            pgtype.Timestamptz
 }
 
 type CustomerGoogleIdentity struct {

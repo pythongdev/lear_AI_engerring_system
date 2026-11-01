@@ -1548,6 +1548,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-26 | Chủ repo chốt trong hội thoại (T-255): **canh bánh cuốn có nhóm lựa chọn *Rau*** — *không rau · ít rau · nhiều rau*, cả ba **0đ**, mặc định **ít rau**, nhóm **chỉ** gắn cho canh. §4.8 thêm cột *Rau*, ca 13 chọn *ít rau*, thêm ca 16 (*không rau* ⇒ 0) và ca 17 (*bánh cuốn + ít rau* ⇒ từ chối) | §4.4 · §4.6 luật 8 · §4.8 |
 | 2026-10-27 | Chủ repo chuyển lời chủ quán trong hội thoại (T-262) và chọn trong câu hỏi có sẵn phương án: đăng nhập bằng **số điện thoại hoặc Gmail gõ vào ô, kèm mật khẩu** (không OTP, không nút Google) cho người làm, chủ quán **và khách**; đăng ký khai **một trong hai**; khách đăng nhập **tuỳ chọn**, **không chờ duyệt**, được **xem lại đơn** và **nhớ tên, số điện thoại, địa chỉ giao**. Thay vế 3 lượt hai §8.8 ở chỗ *đăng nhập bằng gì*; mở `U-105` … `U-108`. Xem **ADR-131** | §8.8 (lượt ba) |
 | 2026-10-28 | Chủ repo chọn trong câu hỏi có sẵn phương án (T-267): **khách** đăng ký và đăng nhập được bằng **nút Google** ở trang khách; người làm và chủ quán không có nút ấy. Thay vế 1 lượt ba §8.8 ở chỗ *không phải nút Google*, chỉ cho khách. Xem **ADR-132** | §8.8 (lượt bốn) |
+| 2026-10-29 | Chủ repo chọn trong câu hỏi có sẵn phương án (T-270): Gmail **khách** tự gõ lúc đăng ký được **xác nhận qua thư**, link **24 giờ**; khách **dùng được ngay**, Gmail **chờ xác nhận** tới khi bấm link; **chỉ khách**. Xem **ADR-133** | §8.8 (lượt năm) |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **hai mục, tính tới 2026-10-23**
 
@@ -2227,6 +2228,12 @@ nhập với Google"*, chỉ cho khách:** ở trang đăng ký và đăng nhậ
 Google đang đăng nhập trên trình duyệt, tạo tài khoản khách nếu chưa có rồi đăng nhập luôn. Người làm và chủ quán vẫn
 đăng nhập như lượt ba, không có nút Google. Mọi vế khác của lượt ba giữ nguyên. Thiết kế: `docs/decisions.md`
 **ADR-132**.
+
+**Lượt năm 2026-10-29 — Gmail khách tự gõ phải được xác nhận qua thư** (T-270; chủ repo hỏi *"có tự gửi email để
+xác nhận email có là đúng hay không"* rồi chọn trong câu hỏi có sẵn phương án): khách đăng ký bằng Gmail kèm mật khẩu
+thì máy **gửi thư có link xác nhận, link sống 24 giờ**; khách **vẫn dùng được ngay** (vế 4 lượt ba giữ nguyên), còn
+Gmail ấy **chờ xác nhận** cho tới khi bấm link. **Chỉ khách**; người làm vẫn do chủ quán duyệt tay. Gmail lấy từ nút
+Google đã được Google xác nhận nên không gửi thư. Thiết kế: `docs/decisions.md` **ADR-133**.
 
 **Lời này KHÔNG chạm chấm công.** *Lúc này ai đứng quầy* và *hôm nay người này làm mấy giờ* là hai
 câu khác nhau; câu thứ hai là mức 2 của §8.7 đã có lời đáp `C30` · `C31` · `C32` ngày 2026-09-25 ở §8.7; các vế còn thiếu

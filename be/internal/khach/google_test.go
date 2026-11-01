@@ -29,7 +29,7 @@ func TestI035_GoogleDisabledAndInvalid(t *testing.T) {
 	wantCode(t, err, apierr.CodeGoogleTokenInvalid)
 }
 func TestI035_GoogleAccountSessionAndEmailCollision(t *testing.T) {
-	ctx, s, _ := testService(t)
+	ctx, s, m := testService(t)
 	suffix := fmt.Sprint(time.Now().UnixNano())
 	email := "google." + suffix + "@gmail.com"
 	sub := "google-" + suffix
@@ -65,6 +65,7 @@ func TestI035_GoogleAccountSessionAndEmailCollision(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	confirmLast(t, ctx, s, m)
 	s.WithGoogle("client", fakeGoogle{claims: google.Claims{Sub: "new-" + sub, Email: "password." + email}})
 	_, _, err = s.loginGoogle(ctx, "credential")
 	wantCode(t, err, apierr.CodeEmailTaken)

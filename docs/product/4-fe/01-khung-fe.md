@@ -32,6 +32,7 @@ Mỗi màn thêm **một dòng** ở đây cùng lượt dựng nó, và nhóm n
 | `/api/[...path]` | — | **tầng chuyển tiếp** cùng origin, không phải màn (§3.2) | `P4-02` |
 | `/khach/dang-nhap` | khách | một ô số điện thoại hoặc Gmail và mật khẩu; đăng nhập tuỳ chọn (2026-10-28, phiếu Claude, ADR-131) | `T-265` |
 | `/khach/dang-ky` | khách | tên, ít nhất số điện thoại hoặc Gmail, mật khẩu; mở phiên ngay sau đăng ký | `T-265` |
+| `/khach/xac-nhan-gmail` | công khai | đọc ma từ query, xác nhận một lần, link về tài khoản | `T-270` |
 | `/khach/tai-khoan` | khách | tên · số · thư; sửa hoặc xoá bộ giao đã nhớ, đổi mật khẩu, đăng xuất | `T-265` |
 | `/khach/don` | khách | lịch sử đơn của phiên, mới nhất trước, Xem thêm theo con trỏ backend | `T-265` |
 | `/khach/quen-mat-khau` | khách | xin mã qua Gmail; nói rõ khách chỉ có số chưa có cách lấy lại mật khẩu | `T-265` |
@@ -88,7 +89,7 @@ xem đi trên URL (**ADR-102** điểm 4).
 | `/ban/[ma]` | `GET /qr-codes/{code}` · `GET /menu` ở server từng request với `no-store`; menu vào Query bằng `initialData`, khoá `menu` | `POST /price-quotes` cả giỏ · `POST /qr-codes/{code}/orders` | menu khi mở màn · quay lại cửa sổ · mạng về · sau ghi; tổng khi giỏ đổi | giữ nháp; gửi mất phản hồi khoá phiếu, *Gửi lại* giữ thân và dấu; tổng chỉ lấy backend (2026-10-21, theo phiếu Claude) | `P4-10` |
 | `/dat-mon` | `GET /menu` ở server từng request với `no-store`, `initialData`, khoá `menu` chung; `GET /customer-sessions/current` phía trình duyệt để điền sẵn một lần tên · số · địa chỉ đã nhớ (2026-10-28, phiếu Claude) | `POST /price-quotes` cả giỏ · `POST /online-orders` | như màn QR | cùng khuôn giữ thân và dấu; thành công xoá giỏ và form; giờ gửi `+07:00` (2026-10-21, theo phiếu Claude); không phiên hoặc lỗi đọc phiên vẫn đặt ẩn danh, sửa form chỉ cho đơn ấy, không ghi bộ đã nhớ; trong lúc đọc phiên vẫn render tên món từ menu server | `P4-10` |
 | `/khach/dang-nhap` · `/khach/dang-ky` | — | `POST /customer-sessions` · `POST /customer-accounts` | thành công dọn cache và nháp khách, chuyển tài khoản để đọc phiên mới | báo chưa rõ kết quả khi mất phản hồi; không gửi lại ngầm | `T-265` |
-| `/khach/tai-khoan` | `GET /customer-sessions/current` | `PUT /customer-accounts/current/delivery-profile` · `PUT /customer-accounts/current/password` · `POST /customer-sessions/current/end` | mở màn · quay lại cửa sổ · mạng về · sau ghi đọc lại phiên; 401 chuyển đăng nhập khách; đổi mật khẩu giữ phiên hiện tại | giữ bản đọc cũ kèm lỗi, mốc đọc và nút Đọc lại; lưu xong nhưng đọc lại lỗi báo rõ đã lưu | `T-265` |
+| `/khach/tai-khoan` | `GET /customer-sessions/current` | `PUT /customer-accounts/current/delivery-profile` · `PUT /customer-accounts/current/password` · `POST /customer-sessions/current/end` · `POST /customer-accounts/current/email-verification` | mở màn · quay lại cửa sổ · mạng về · sau ghi đọc lại phiên; 401 chuyển đăng nhập khách; đổi mật khẩu giữ phiên hiện tại | giữ bản đọc cũ kèm lỗi, mốc đọc và nút Đọc lại; lưu xong nhưng đọc lại lỗi báo rõ đã lưu | `T-265` |
 | `/khach/don` | `GET /customer-accounts/current/orders`; Xem thêm gửi `before_id` bằng `next_before_id`, null thì ẩn nút | — | mở màn · quay lại cửa sổ · mạng về · Xem thêm; giữ thứ tự backend, 401 chuyển đăng nhập khách | giữ trang cũ kèm lỗi, mốc đọc và nút Đọc lại | `T-265` |
 | `/khach/quen-mat-khau` · `/khach/dat-lai-mat-khau` | — | `POST /customer-password-reset-requests` · `POST /customer-password-resets` | xin mã luôn cùng câu khi thành công; đặt lại xong dọn cache và nháp khách, mời đăng nhập | báo chưa rõ kết quả, không gửi lại ngầm | `T-265` |
 | `/chu-quan` — Tổng quan | `GET /owner-overview` | `PUT /daily-minimums/{sale_date}` (`sale_date` của lần đọc) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ — hợp đồng không trả `poll_interval_seconds` cho chủ quán | giữ bản cũ kèm `Alert` có mốc `read_at` của bản ấy (dòng *Chủ quán*) | `P4A-02` |
@@ -271,3 +272,11 @@ Callback gửi credential qua lớp API tới POST /customer-sessions/google; th
 dọn cache khách và chuyển /khach/tai-khoan như đăng nhập mật khẩu. email_taken
 nhắc đăng nhập bằng mật khẩu; các lỗi khác qua hàm dịch lỗi tài khoản.
 Không có CSP hoặc COOP trong next.config.ts nên không thêm header mới.
+
+### Xác nhận Gmail khách (2026-10-29, phiếu Claude, T-270)
+
+XacNhanGmail đọc ma từ query ở /khach/xac-nhan-gmail, gọi POST /customer-email-verifications một lần,
+không tự gửi lại khi mất phản hồi; thiếu ma không gọi. Hiện thành công, verification_invalid hoặc email_taken
+bằng câu của phiếu; thành công làm mới cache phiên khách, không lấy hồ sơ trả về làm phiên đăng nhập.
+Trang tài khoản đọc pending_email từ GET /customer-sessions/current, báo đã gửi thư và Gmail đang chờ,
+nút gửi lại gọi POST /customer-accounts/current/email-verification; verification_rate_limited báo thử sau một giờ.

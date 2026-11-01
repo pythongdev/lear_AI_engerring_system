@@ -53,18 +53,39 @@ func (q *Queries) TaoMa(ctx context.Context, arg TaoMaParams) error {
 	return err
 }
 
+const taoXacNhan = `-- name: TaoXacNhan :exec
+INSERT INTO customer_email_verification(customer_account_id,email,token_hash,expires_at) VALUES ($1,$2,$3,now()+interval '24 hours')
+`
+
+type TaoXacNhanParams struct {
+	CustomerAccountID int64
+	Email             string
+	TokenHash         []byte
+}
+
+func (q *Queries) TaoXacNhan(ctx context.Context, arg TaoXacNhanParams) error {
+	_, err := q.db.Exec(ctx, taoXacNhan, arg.CustomerAccountID, arg.Email, arg.TokenHash)
+	return err
+}
+
 const themTaiKhoan = `-- name: ThemTaiKhoan :one
-INSERT INTO customer_account(phone,email,display_name) VALUES ($1,$2,$3) RETURNING id
+INSERT INTO customer_account(phone,email,pending_email,display_name) VALUES ($1,$2,$3,$4) RETURNING id
 `
 
 type ThemTaiKhoanParams struct {
-	Phone       pgtype.Text
-	Email       pgtype.Text
-	DisplayName string
+	Phone        pgtype.Text
+	Email        pgtype.Text
+	PendingEmail pgtype.Text
+	DisplayName  string
 }
 
 func (q *Queries) ThemTaiKhoan(ctx context.Context, arg ThemTaiKhoanParams) (int64, error) {
-	row := q.db.QueryRow(ctx, themTaiKhoan, arg.Phone, arg.Email, arg.DisplayName)
+	row := q.db.QueryRow(ctx, themTaiKhoan,
+		arg.Phone,
+		arg.Email,
+		arg.PendingEmail,
+		arg.DisplayName,
+	)
 	var id int64
 	err := row.Scan(&id)
 	return id, err

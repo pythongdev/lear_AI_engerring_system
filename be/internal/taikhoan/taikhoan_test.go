@@ -549,3 +549,5 @@ func TestI033_DuyetKhongGanVaoNguoiChuQuan(t *testing.T) {
 		t.Fatal("đăng nhập sau duyệt: muốn đúng người, is_owner=false")
 	}
 }
+
+func (m *thuGia) SendEmailVerification(context.Context, string, string) error { return nil }

@@ -1686,5 +1686,11 @@ không khoá ngoại nào từ bảng khách tới người của quán hay tr�
 **được**; dòng nối `customer_google_identity` trùng `sub`, trùng tài khoản, `sub` rỗng, hay bị vai ghi UPDATE ⇒ **bị từ
 chối**; kiểm ngược `customer\_%` phủ cả bảng nối. Test hồi quy `i035_google_identity` viết trước lược đồ.
 
+*Thêm 2026-10-29 (T-270, Claude Code, **ADR-133**):* khách chỉ có Gmail chờ xác nhận vẫn tạo và mở phiên được; Gmail
+chờ không giữ chỗ (trùng chờ, hay trùng `email` đã xác nhận của người khác ⇒ **được**); Gmail chờ có chữ hoa, thiếu
+`@`, trùng `email` của chính dòng; mã xác nhận quá 24 giờ, không phải băm 32 byte, dùng lần hai, bị vai ghi sửa băm;
+hai tài khoản cùng một `email` đã xác nhận ⇒ **bị từ chối**; lần khách tự xác nhận để lại vết người sửa rỗng. Test
+hồi quy `i035_email_verification` viết trước lược đồ.
+
 *Viết ở T-262, 2026-10-27, Claude Code — từ lời §8.8 lượt ba và thiết kế **ADR-131** chủ repo duyệt. Test hồi quy
 `i035_customer_account_apart_from_staff` viết trước lược đồ, vào `db/tests/` cùng lát `T-263`.*

@@ -17,12 +17,26 @@ const password = z.object({ current_password: batBuoc, new_password: matKhau });
 export function TaiKhoanKhach() {
   const api = useApi(); const router = useRouter(); const phien = usePhienKhach(); const don = useDonPhienKhach();
   const [busy, setBusy] = useState(false); const lock = useRef(false);
+  const [notice, setNotice] = useState<string | null>(null);
   const [loi, setLoi] = useState<ApiFailure | null>(null);
   useChuyenDangNhap(phien.data === null || hetPhien(loi));
   const p = phien.data;
   async function docLai() {
     const r = await phien.refetch();
     return r.isError ? "Đã lưu nhưng chưa đọc lại được thông tin. Bấm Đọc lại để cập nhật." : "Đã lưu thông tin giao.";
+  }
+  async function guiLai() {
+    if (lock.current) return; lock.current = true; setBusy(true); setLoi(null); setNotice(null);
+    try {
+      const r = await call(api.POST("/customer-accounts/current/email-verification"));
+      if (!r.ok) {
+        if (r.failure.kind === "rejected" && r.failure.code === "verification_rate_limited") {
+          setNotice("Đã gửi nhiều lần, thử lại sau một giờ.");
+        } else setLoi(r.failure);
+        return;
+      }
+      setNotice(`Đã gửi thư xác nhận tới ${p?.pending_email}. Mở thư và bấm link trong 24 giờ.`);
+    } finally { lock.current = false; setBusy(false); }
   }
   async function thoat() {
     if (lock.current) return; lock.current = true; setBusy(true); setLoi(null);
@@ -39,6 +53,12 @@ export function TaiKhoanKhach() {
       <section aria-label="Thông tin cá nhân" className="space-y-2"><h2 className="text-lg font-semibold">{p.display_name}</h2>
         <p>Số điện thoại: {p.phone || "Chưa có"}</p><p>Gmail: {p.email || "Chưa có"}</p>
       </section>
+      {p.pending_email && <section aria-label="Xác nhận Gmail" className="space-y-2">
+        <p>Gmail {p.pending_email} đang chờ xác nhận</p>
+        <p>Đã gửi thư xác nhận tới {p.pending_email}. Mở thư và bấm link trong 24 giờ.</p>
+        <Button disabled={busy} onClick={() => void guiLai()}>Gửi lại thư xác nhận</Button>
+      </section>}
+      {notice && <Bao loai="tin">{notice}</Bao>}
       <section aria-label="Thông tin giao đã nhớ" className="space-y-3"><h2 className="font-semibold">Thông tin giao đã nhớ</h2>
         <p>Chỉ nhớ một bộ thông tin. Để trống cả ba ô rồi lưu để xoá bộ đã nhớ.</p>
         <FormKhach schema={delivery} defaults={{ delivery_name: p.delivery_name ?? "", delivery_phone: p.delivery_phone ?? "", delivery_address: p.delivery_address ?? "" }}

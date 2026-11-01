@@ -17,3 +17,12 @@ func (q *Queries) DungMa(ctx context.Context, id int64) error {
 	_, err := q.db.Exec(ctx, dungMa, id)
 	return err
 }
+
+const dungXacNhan = `-- name: DungXacNhan :exec
+UPDATE customer_email_verification SET used_at=clock_timestamp() WHERE id=$1
+`
+
+func (q *Queries) DungXacNhan(ctx context.Context, id int64) error {
+	_, err := q.db.Exec(ctx, dungXacNhan, id)
+	return err
+}
