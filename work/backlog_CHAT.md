@@ -201,6 +201,11 @@ kiểm mạng của component chat không có lời gọi model/ghi; gate.
 
 **Nhận việc:**
 
+2026-11-03, Claude: phiếu giao Codex, worktree `../lean_wt/CHAT-04`, nhánh `codex/CHAT-04` từ `63ebec1`. Claude chọn tên và chỗ: `OChat`
+tầng 2 ở `fe/src/components/shared/o-chat.tsx`, con trực tiếp của `KhungTheoVai`, ngoài `TinHieuProvider`; bảng không chặn, không nút gửi;
+cờ chỉ bật khi bằng `"true"`. Lượt Codex đầu viết xong code và test rồi dừng vì hết hạn mức (tới 18:26), chưa có báo cáo; Claude chạy thử
+`vitest` trong worktree: 28/28 xanh. Việc kế tiếp: Codex làm nốt gate và báo cáo, Claude duyệt.
+
 [↑ đầu file](#top)
 
 ---

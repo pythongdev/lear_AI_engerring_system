@@ -99,6 +99,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] CHAT-04 **App chưa có chỗ mở và đóng chat** — L1, ADR-137 điểm 1; 2026-11-03 Claude giao Codex vỏ `OChat` sau cờ `NEXT_PUBLIC_CHAT_ENABLED`, chưa nối model hay cửa ghi · [mô tả](backlog_CHAT.md#chat-04)
 - [ ] T-279 **Bản HTML chi tiết món kể chuyện theo cuộn** — L1, chủ repo giao Codex 2026-10-31; dựa trên ý tưởng đầy đủ và mẫu Paris · [chi tiết](#t-279)
 
 - [ ] T-280 **Lát D — Sửa bản mẫu /dang-nhap theo lời U-111 2026-11-01** — L1, chủ repo đã trả lời U-111 2026-11-01 (Gmail chưa có vai làm việc dùng như khách, chủ quán cấp quyền sau); Codex thi công · [chi tiết](#t-280)
