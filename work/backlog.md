@@ -100,6 +100,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## In Progress
 
 - [ ] CHAT-12 **Tin báo trạm chưa có chỗ cất tách khỏi tiến độ** — L2, ADR-137 điểm 3 · 6 · 9; 2026-11-03 Claude viết test `I-038` trước (đỏ: chưa có bảng), giao Codex migration `20261103120000_hop_tin` · [mô tả](backlog_CHAT.md#chat-12)
+- [ ] T-286 **Chưa có số đo thật để chọn model cho chat** — L1, chủ repo chọn *"Chạy thử qua API cả ba"* 2026-11-03 (`U-112`); Codex dựng bộ thử ngoài repo, Claude duyệt đạt 2026-11-03; chờ chủ repo tạo khoá API và chạy thật · [chi tiết](#t-286)
 - [ ] T-279 **Bản HTML chi tiết món kể chuyện theo cuộn** — L1, chủ repo giao Codex 2026-10-31; dựa trên ý tưởng đầy đủ và mẫu Paris · [chi tiết](#t-279)
 
 - [ ] T-280 **Lát D — Sửa bản mẫu /dang-nhap theo lời U-111 2026-11-01** — L1, chủ repo đã trả lời U-111 2026-11-01 (Gmail chưa có vai làm việc dùng như khách, chủ quán cấp quyền sau); Codex thi công · [chi tiết](#t-280)
@@ -3880,6 +3881,21 @@ Chủ repo trả lời 2026-11-03 trong phiên, nguyên văn: *"có thể dung d
 Acceptance ghi trước: A1 — lời nguyên văn và các vế đã chọn nằm ở `master_plan/shop-facts.md` §8.11, phần suy ra tách riêng (F-004). A2 — `U-116` chuyển sang *Đã có lời giải*, `U-112` hẹp lại còn ba ứng viên và chờ số đo. A3 — dòng `C30` ở §8.7 và `work/admin-questions.md` trỏ tới lời thay thế. A4 — tham chiếu còn ghi `U-116` là đang mở được sửa, trừ dòng có ngày là lịch sử. A5 — `./scripts/gate.sh` không thêm cổng đỏ mới.
 
 Đã làm: §8.11 điểm 5 thêm ba ứng viên, điểm 7 mới cho báo nghỉ; dòng `C30` §8.7; `C30` ở `work/admin-questions.md`; `docs/product/99-unknowns.md`; dòng *Báo nghỉ* §2 của kế hoạch CHAT; đầu sổ CHAT; dòng `CHAT-34` ở đây. Giữ nguyên vì có ngày: ADR-137 *Status*, dòng Done `CHAT-01`, các dòng *Chờ U-116* trong entry 30…32 (đầu sổ ghi chúng là lịch sử). *Lời đổi luật cũ:* `C30` là lời chủ quán 2026-09-25 rằng nghỉ đột xuất không trừ tiền; chủ repo chọn *"Cũng cắt như báo trước"* sau khi Claude đọc lại lời cũ trong câu hỏi. Chưa có xác nhận từ chủ quán. Còn lại: thiết kế báo nghỉ (vế chặn tick chạm chấm công) là bước Claude, trước `CHAT-30`.
+
+[↑ đầu file](#top)
+
+<a id="t-286"></a>
+### T-286 — Chưa có số đo thật để chọn model cho chat
+
+Chủ repo chọn 2026-11-03 *"Chạy thử qua API cả ba"* (DeepSeek, OpenAI, Claude Sonnet) và *"Chưa có, soạn bộ thử trước"* cho khoá API. Mức **L1**. Bộ thử đặt **ngoài repo** ở `../lean_wt/model-trial/`, để khoá API không bao giờ nằm cạnh repo và để không dựng sớm phần của `CHAT-03`/`CHAT-06`. Repo chỉ nhận kết quả đo, ghi vào `U-112` khi chủ repo chọn.
+
+Acceptance ghi trước khi giao: A1 — chạy được không cần khoá (`--fake`) và ra báo cáo đủ cột. A2 — cùng bộ câu cho cả ba hãng, gọi bằng thư viện chuẩn, khoá và tên model chỉ đọc từ biến môi trường. A3 — các nhóm ca: giá đúng (ca dương), tổ hợp thiếu, lệnh chèn trong tên món, xin dữ liệu người khác, tiếng Việt không dấu, hỏi điều chưa có. A4 — menu và người trong ca đều là dữ liệu giả, không tên người thật, không giá thật của quán (`shop-facts.md` §8.11 điểm 5). A5 — đo token vào/ra, độ trễ, đúng/sai từng ca, chi phí theo bảng giá do người chạy điền, chiếu ra một tháng theo số lượt người chạy nhập; không có giá hay số lượt nào viết sẵn trong code.
+
+Bàn giao 2026-11-03: **Codex** dựng bộ thử ở `../lean_wt/model-trial/` (`chay_thu.py`, `ca_thu.json` 18 ca, `menu_gia.json`, `bang_gia.json` để trống, `HUONG_DAN.md`), model `gpt-6-astra`; **Claude** duyệt, một vòng sửa: (1) câu nhóm 4 tự nói *"dữ liệu bịa"* với model, viết lại như khách thật hỏi; (2) nhóm từ chối đòi trùng nguyên văn câu mẫu, đổi thành chấm *từ chối, không chữ số, không từ cấm*. Repo không đổi file nào.
+
+Bằng chứng (Claude tự chạy sau vòng sửa): A1 — `python3 chay_thu.py --fake --luot-thang 1000` ra `fake: 15/18 ca đạt`, ba ca trượt đúng nhóm 1, 3, 6 cố ý sai, tạo `.md` và `.json`. A2 — chạy không biến môi trường: cả ba hãng *"bỏ qua: thiếu khoá/tên model"*, không gọi mạng; thiếu `--luot-thang` thì dừng. A4 — menu sáu món tên bịa; câu nhóm 4 không chứa *bịa*/*thử*. A5 — `grep` không thấy số thập phân hay tên model viết cứng; `bang_gia.json` giá `null`.
+
+Còn lại — việc của chủ repo: tạo khoá ba hãng, đặt biến môi trường ngoài repo, điền `bang_gia.json` theo trang giá ngày chạy, chạy theo `HUONG_DAN.md`. Rồi Claude đọc báo cáo trong `ket_qua/`, chủ repo chọn model, Claude ghi vào `U-112`.
 
 [↑ đầu file](#top)
 
