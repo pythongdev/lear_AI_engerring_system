@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.54.0
+  version: 0.55.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -830,6 +830,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AssignedTask'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /assigned-tasks/mine:
+    get:
+      operationId: listMyAssignedTasks
+      tags: [giaoviec]
+      summary: Đọc việc chưa ẩn của chính người đang đăng nhập.
+      description: Lớp nguoi_quan, người lấy từ phiên; không nhận định danh người từ tham số hay thân yêu cầu. Thứ tự created_at DESC, id DESC. Chỉ kèm hướng dẫn chữ chưa ẩn, không trả hình hay video. Không có việc thì assigned_tasks là mảng rỗng. Không phiên người của quán, kể cả chỉ có cookie khách, trả unauthenticated.
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyAssignedTasks'
         default:
           description: Lời từ chối theo ErrorCode và x-http-status.
           content:
@@ -5611,6 +5630,45 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AssignedTask'
+    MyAssignedTask:
+      type: object
+      required: [assigned_task_id, content, due_at, created_at, assigned_by_name, done, guides]
+      properties:
+        assigned_task_id:
+          type: integer
+          format: int64
+        content:
+          type: string
+        due_at:
+          description: Hạn hoàn thành; null chỉ dành cho việc cũ chưa nhập hạn. Ngày giờ có offset.
+          oneOf:
+            - $ref: '#/components/schemas/Instant'
+            - type: 'null'
+        created_at:
+          $ref: '#/components/schemas/Instant'
+        assigned_by_name:
+          type: string
+          description: person.display_name của người giao việc.
+        done:
+          type: boolean
+          description: Sự kiện mới nhất theo created_at DESC, id DESC là done; không sự kiện thì false.
+        guides:
+          type: array
+          description: Chỉ hướng dẫn chữ chưa ẩn, theo created_at ASC, id ASC; không có trả mảng rỗng.
+          items:
+            type: object
+            required: [body]
+            properties:
+              body:
+                type: string
+    MyAssignedTasks:
+      type: object
+      required: [assigned_tasks]
+      properties:
+        assigned_tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/MyAssignedTask'
     CreateAssignedTask:
       type: object
       required: [content, assignee_person_id, due_at]

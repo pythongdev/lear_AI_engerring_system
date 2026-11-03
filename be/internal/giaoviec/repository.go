@@ -46,7 +46,7 @@ func (r repository) khoa(ctx context.Context, id int64) error {
 	return nil
 }
 
-// Danh sách và chi tiết cùng dùng Doc; chỉ câu này suy ra done từ sự kiện mới nhất.
+// Danh sách và chi tiết cùng dùng Doc; DocCuaToi cũng suy ra done từ sự kiện mới nhất.
 func (r repository) doc(ctx context.Context, id, nhan int64, kemAn bool) ([]Viec, error) {
 	rows, e := r.q.Doc(ctx, sqlcgen.DocParams{Column1: id, Column2: nhan, Column3: kemAn})
 	if e != nil {
@@ -83,4 +83,23 @@ func (r repository) docViec(ctx context.Context, id int64) (Viec, error) {
 		return Viec{}, apierr.Error{Code: apierr.CodeAssignedTaskNotFound}
 	}
 	return rows[0], nil
+}
+
+func (r repository) cuaToi(ctx context.Context, nguoi int64) ([]ViecCuaToi, error) {
+	rows, e := r.q.DocCuaToi(ctx, nguoi)
+	if e != nil {
+		return nil, e
+	}
+	out := make([]ViecCuaToi, 0, len(rows))
+	for _, v := range rows {
+		x := ViecCuaToi{ID: v.ID, Content: v.Content, CreatedAt: v.CreatedAt.Time, AssignedByName: v.AssignedByName, Done: v.Done, Guides: []HuongDanChu{}}
+		if v.DueAt.Valid {
+			x.DueAt = &v.DueAt.Time
+		}
+		if e = json.Unmarshal(v.Guides, &x.Guides); e != nil {
+			return nil, e
+		}
+		out = append(out, x)
+	}
+	return out, nil
 }

@@ -424,6 +424,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/assigned-tasks/mine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Đọc việc chưa ẩn của chính người đang đăng nhập.
+         * @description Lớp nguoi_quan, người lấy từ phiên; không nhận định danh người từ tham số hay thân yêu cầu. Thứ tự created_at DESC, id DESC. Chỉ kèm hướng dẫn chữ chưa ẩn, không trả hình hay video. Không có việc thì assigned_tasks là mảng rỗng. Không phiên người của quán, kể cả chỉ có cookie khách, trả unauthenticated.
+         */
+        get: operations["listMyAssignedTasks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/assigned-tasks/{assigned_task_id}": {
         parameters: {
             query?: never;
@@ -2914,6 +2934,25 @@ export interface components {
         AssignedTasks: {
             assigned_tasks: components["schemas"]["AssignedTask"][];
         };
+        MyAssignedTask: {
+            /** Format: int64 */
+            assigned_task_id: number;
+            content: string;
+            /** @description Hạn hoàn thành; null chỉ dành cho việc cũ chưa nhập hạn. Ngày giờ có offset. */
+            due_at: components["schemas"]["Instant"] | null;
+            created_at: components["schemas"]["Instant"];
+            /** @description person.display_name của người giao việc. */
+            assigned_by_name: string;
+            /** @description Sự kiện mới nhất theo created_at DESC, id DESC là done; không sự kiện thì false. */
+            done: boolean;
+            /** @description Chỉ hướng dẫn chữ chưa ẩn, theo created_at ASC, id ASC; không có trả mảng rỗng. */
+            guides: {
+                body: string;
+            }[];
+        };
+        MyAssignedTasks: {
+            assigned_tasks: components["schemas"]["MyAssignedTask"][];
+        };
         CreateAssignedTask: {
             due_at: components["schemas"]["Instant"];
             content: string;
@@ -4882,6 +4921,35 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AssignedTask"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listMyAssignedTasks: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyAssignedTasks"];
                 };
             };
             /** @description Lời từ chối theo ErrorCode và x-http-status. */

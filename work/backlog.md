@@ -92,7 +92,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 - [ ] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — thêm danh mục của từng món vào `GET /menu` (hợp đồng, truy vấn, handler) rồi trang khách `/dat-mon`, `/ban/[ma]` nhóm món theo danh mục đọc từ API — L2 (đổi hợp đồng API) — mở 2026-10-23 (chủ repo chọn), làm sau T-236 · [chi tiết](#t-237)
 - [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
-- [ ] CHAT-34 **Người được giao việc không có đường nào đọc việc của chính mình** — L2, ADR-137 điểm 2; Codex làm, Claude duyệt, 2026-11-01. Sau đó theo thứ tự `CHAT-04` → `CHAT-12` → `CHAT-13` → `CHAT-14`. Nhánh gọi model chờ `U-112`; báo nghỉ có lời 2026-11-03 (`U-116` đóng, T-285), chờ Claude thiết kế vì chạm ô chấm công. Mô tả: [sổ chat](backlog_CHAT.md#chat-34).
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
 [↑ đầu file](#top)
@@ -150,6 +149,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] CHAT-34 **Người được giao việc không có đường nào đọc việc của chính mình** — L2, ADR-137 điểm 2; 2026-11-03 Codex dựng `GET /assigned-tasks/mine` (`listMyAssignedTasks`, lớp `nguoi_quan`, hợp đồng 0.55.0), Claude viết test trước và duyệt; tiếp theo `CHAT-04` → `CHAT-12` → `CHAT-13` → `CHAT-14` · [mô tả](backlog_CHAT.md#chat-34)
 - [x] T-287 **Gate 1b đỏ vì 109 đường chết có sẵn** — L1, 2026-11-03; Codex bỏ dấu đường dẫn ở 19 bản thiết kế và thêm năm dòng ignore có chủ, Claude duyệt; Gate 1b xanh · [chi tiết](#t-287)
 - [x] T-285 **Ghi lời báo nghỉ và ba ứng viên model** — L1, chủ repo trả lời 2026-11-03; đóng `U-116`, hẹp `U-112`; lời mới thay vế nghỉ đột xuất của `C30` · [chi tiết](#t-285)
 - [x] T-284 **Sổ CHAT còn Acceptance trái ADR-137, kế hoạch và luật dữ liệu cá nhân** — L1, 2026-11-03; Codex sửa 17 chỗ của `work/backlog_CHAT.md` theo phiếu, Claude duyệt; giữ 13/14 lỗi của đợt kiểm · [chi tiết](#t-284)

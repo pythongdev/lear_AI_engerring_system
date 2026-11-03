@@ -1110,6 +1110,8 @@ Lời yêu cầu nói người dọn nhận *"những việc phụ khác"*; *đ�
 2026-11-03, Claude (T-284): test `be/internal/giaoviec/viec_cua_toi_test.go` chỉ có ca không phiên,
 thiếu ca cookie khách mà Acceptance dòng 2 đòi; Claude bổ sung trước khi chạy lại phiếu.
 
+2026-11-03, CHAT-34 xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-34-v2`, nhánh `codex/CHAT-34-v2`, nền `ab731b3`, model `gpt-6-astra`); **Claude** viết test trước, thêm ca cookie khách, chạy đỏ trước (`be-check`: route rơi vào `/assigned-tasks/{assigned_task_id}`, 400), rồi duyệt. File: `be/internal/giaoviec/` (`handler.go`, `service.go`, `repository.go`, `sql/doc_cua_toi.sql`, `internal/sqlcgen/doc_cua_toi.sql.go`, `viec_cua_toi_test.go`), `docs/product/3-be/openapi.yaml` (0.55.0, `listMyAssignedTasks`), `fe/src/lib/api/schema.ts`. Bằng chứng: mã băm test không đổi; Claude chạy `./scripts/gate.sh` cây chính sau `git apply` — `be-check` PASS (`TestI030_ViecCuaToiChiTraViecCuaChinhNguoiDangNhap` PASS), Gate 1g PASS, `PASS gate không cổng nào đỏ`; `fe-check` PASS trong worktree. Cửa dùng `authz.NeedPerson` (`nguoi_quan`), người từ phiên, chỉ hướng dẫn `text` chưa ẩn, không đường ghi. Chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---

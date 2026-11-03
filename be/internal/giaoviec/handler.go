@@ -14,6 +14,7 @@ import (
 func Routes(r *gin.Engine, svc *Service) {
 	h := handler{svc}
 	r.GET("/assigned-tasks", h.doc)
+	r.GET("/assigned-tasks/mine", h.cuaToi)
 	r.POST("/assigned-tasks", h.tao)
 	r.GET("/assigned-tasks/:assigned_task_id", h.chiTiet)
 	r.PUT("/assigned-tasks/:assigned_task_id", h.sua)
@@ -168,5 +169,10 @@ func (h handler) doc(c *gin.Context) {
 		kemAn = raw[0] == "true"
 	}
 	out, e := h.svc.Doc(c.Request.Context(), nguoi(c), nhan, kemAn)
+	tra(c, 200, map[string]any{"assigned_tasks": out}, e)
+}
+
+func (h handler) cuaToi(c *gin.Context) {
+	out, e := h.svc.CuaToi(c.Request.Context(), nguoi(c))
 	tra(c, 200, map[string]any{"assigned_tasks": out}, e)
 }

@@ -45,6 +45,18 @@ type YeuCau struct {
 	Reason     string     `json:"reason"`
 	DueAt      *time.Time `json:"due_at"`
 }
+type HuongDanChu struct {
+	Body string `json:"body"`
+}
+type ViecCuaToi struct {
+	ID             int64         `json:"assigned_task_id"`
+	Content        string        `json:"content"`
+	DueAt          *time.Time    `json:"due_at"`
+	CreatedAt      time.Time     `json:"created_at"`
+	AssignedByName string        `json:"assigned_by_name"`
+	Done           bool          `json:"done"`
+	Guides         []HuongDanChu `json:"guides"`
+}
 type Service struct{ pool *pgxpool.Pool }
 
 func NewService(pool *pgxpool.Pool) *Service { return &Service{pool: pool} }
@@ -131,6 +143,15 @@ func (s *Service) ChiTiet(ctx context.Context, nguoi, id int64) (out Viec, err e
 	err = authz.Read(ctx, s.pool, nguoi, authz.NeedCounterOrOwner, func(tx pgx.Tx) error {
 		var e error
 		out, e = newRepository(tx).docViec(ctx, id)
+		return e
+	})
+	return
+}
+
+func (s *Service) CuaToi(ctx context.Context, nguoi int64) (out []ViecCuaToi, err error) {
+	err = authz.Read(ctx, s.pool, nguoi, authz.NeedPerson, func(tx pgx.Tx) error {
+		var e error
+		out, e = newRepository(tx).cuaToi(ctx, nguoi)
 		return e
 	})
 	return
