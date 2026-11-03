@@ -461,7 +461,7 @@ migration sau duyệt.
 2026-11-03, Claude: test `db/tests/i038_station_message.sql` viết trước, chạy `db-check` trong worktree `../lean_wt/CHAT-12` (nhánh
 `codex/CHAT-12` từ `63ebec1`) đỏ đúng lý do `relation "station_message" does not exist`. Cũng đỏ ở đối chiếu: `I-038` chưa có câu ở
 `db/reconcile/`, nên phiếu giao thêm `db/reconcile/i038.sql` bốn câu và file lỗi. Migration `20261103120000_hop_tin`, file lát
-`docs/product/2-db/26-luoc-do-hop-tin.md`. Phiếu chờ hạn mức Codex.
+`docs/product/2-db/26-luoc-do-hop-tin.md`. Phiếu ở `../lean_wt/chat-review/CHAT-12-phieu.md`, chạy sau CHAT-04 bằng cùng script chờ.
 
 [↑ đầu file](#top)
 
