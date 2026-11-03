@@ -1,5 +1,8 @@
 # Các câu lệnh Codex CLI trong terminal
 
+
+codex logout 
+codex login
 Đối chiếu với `codex --help` của bản `codex-cli 0.157.0` (2026-10-20). Bản khác
 có thể thêm/bớt lệnh — chạy `codex <lệnh> --help` để xem đúng bản đang cài.
 
