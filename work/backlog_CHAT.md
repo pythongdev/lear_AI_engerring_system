@@ -209,6 +209,13 @@ cờ chỉ bật khi bằng `"true"`. Lượt Codex đầu viết xong code và 
 2026-11-03 17:00, Claude: hạn mức Codex đổi thành hạn tuần, mở lại 2026-11-06 23:04; chủ repo chọn chờ Codex. Script chờ
 `../lean_wt/chat-review/cho-han-muc-chat.sh` resume phiên Codex `01a1a0c6-6a19-72d1-a7eb-ff4f823dd733` rồi chạy phiếu CHAT-12; báo cáo ra cùng thư mục.
 
+2026-11-04, CHAT-04 xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-04`, nhánh `codex/CHAT-04`, nền `63ebec1`, model `gpt-6-astra`, hai lượt
+vì hết hạn mức giữa chừng); **Claude** chọn tên, chỗ gắn và duyệt. File: `fe/src/components/shared/o-chat.tsx` · `o-chat.test.tsx`, ba layout,
+dòng `OChat` ở `docs/product/4-fe/01-khung-fe.md` §4, `Makefile` (truyền cờ). Codex sửa test A6 để đổi người qua đường đọc phiên thật thay vì
+ghi tay vào cache — Claude chấp nhận. Bằng chứng: `o-chat.test.tsx` 28/28 (A1…A6, cả ba layout, cờ bật/tắt); Claude chạy `./scripts/gate.sh`
+trong worktree (`fe-check: PASS`, 584 test FE) và lại ở cây chính sau `git apply`: `PASS gate không cổng nào đỏ`. Chưa diễn tay trên điện
+thoại thật; chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---

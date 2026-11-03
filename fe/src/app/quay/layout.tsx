@@ -2,6 +2,7 @@
 // ở layout để đổi trang con không đóng mở lại luồng.
 import type { ReactNode } from "react";
 
+import { OChat } from "@/components/shared/o-chat";
 import { KhungTheoVai } from "@/components/tai-khoan/khung-theo-vai";
 import { BaoMatKetNoi, TinHieuProvider } from "@/lib/realtime/tin-hieu";
 import { TuNhaDonHen } from "./_components/tu-nha-don-hen";
@@ -14,6 +15,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <TuNhaDonHen />
         {children}
       </TinHieuProvider>
+      <OChat />
     </KhungTheoVai>
   );
 }

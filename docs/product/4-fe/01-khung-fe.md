@@ -212,6 +212,7 @@ có nơi dùng thứ hai (**ADR-102** điểm 8) và thêm một dòng ở đây
 
 | Component | Ở đâu | Làm gì | Ai dùng | Bước |
 |---|---|---|---|---|
+| `OChat` (tầng 2) | `fe/src/components/shared/o-chat.tsx` | vỏ chat không chặn màn, mở/đóng và trả focus; chưa nối model hay cửa ghi, nháp chỉ ở state và xoá khi đổi người; cờ `NEXT_PUBLIC_CHAT_ENABLED` chỉ bật khi bằng `"true"`, tắt mặc định theo ADR-137 điểm 1 (2026-11-03, theo phiếu Claude); con trực tiếp của `KhungTheoVai`, ngoài `TinHieuProvider` | layout `/quay` · `/tram` · `/chu-quan` | `CHAT-04` |
 | `ChuyenGiaoDien` (tầng 2) | `fe/src/components/shared/chuyen-giao-dien.tsx` | nút sáng / tối, lưu lựa chọn ở localStorage; chưa chọn thì theo hệ thống (2026-10-22, theo phiếu Claude); ở thanh đầu `KhungTheoVai` đứng trước *Đăng xuất*, nút nổi góc dưới của root layout tự ẩn khi trang có nút ở thanh đầu (2026-10-22, chủ repo) | root layout (nổi) · `KhungTheoVai` | `T-229` · `T-230` |
 | Primitive shadcn: `Button` · `Input` · `Label` · `Checkbox` · `Field` · `Card` · `Alert` · `Separator` | `fe/src/components/ui/` | sinh bằng CLI ghim, không sửa tay focus, bàn phím, accessibility (**ADR-100** điểm 2) | mọi màn | `P4-04` |
 | `TheTaiKhoan` · `Truong` · `Bao` · `NutGui` | `fe/src/components/tai-khoan/khung-form.tsx` | khung, ô nhập kèm lỗi, dòng báo, nút gửi của màn tài khoản — ghép từ primitive trên | năm màn tài khoản | `P4-04` |

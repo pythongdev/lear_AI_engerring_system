@@ -2,6 +2,7 @@
 // backend vẫn chặn theo lớp chu_quan) và thanh điều hướng giữa các trang admin. Không bảng quyền thứ hai.
 import type { ReactNode } from "react";
 
+import { OChat } from "@/components/shared/o-chat";
 import { KhungTheoVai } from "@/components/tai-khoan/khung-theo-vai";
 
 import { ThanhDieuHuong } from "./_components/thanh-dieu-huong";
@@ -11,6 +12,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     <KhungTheoVai khung="/chu-quan">
       <ThanhDieuHuong />
       {children}
+      <OChat />
     </KhungTheoVai>
   );
 }

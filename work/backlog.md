@@ -99,7 +99,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] CHAT-04 **App chưa có chỗ mở và đóng chat** — L1, ADR-137 điểm 1; 2026-11-03 Claude giao Codex vỏ `OChat` sau cờ `NEXT_PUBLIC_CHAT_ENABLED`, chưa nối model hay cửa ghi · [mô tả](backlog_CHAT.md#chat-04)
 - [ ] CHAT-12 **Tin báo trạm chưa có chỗ cất tách khỏi tiến độ** — L2, ADR-137 điểm 3 · 6 · 9; 2026-11-03 Claude viết test `I-038` trước (đỏ: chưa có bảng), giao Codex migration `20261103120000_hop_tin` · [mô tả](backlog_CHAT.md#chat-12)
 - [ ] T-279 **Bản HTML chi tiết món kể chuyện theo cuộn** — L1, chủ repo giao Codex 2026-10-31; dựa trên ý tưởng đầy đủ và mẫu Paris · [chi tiết](#t-279)
 
@@ -151,6 +150,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] CHAT-04 **App chưa có chỗ mở và đóng chat** — L1, ADR-137 điểm 1; 2026-11-04 Codex dựng vỏ `OChat` sau cờ `NEXT_PUBLIC_CHAT_ENABLED` ở ba khung `/quay` · `/tram` · `/chu-quan`, chưa nối model hay cửa ghi; Claude duyệt · [mô tả](backlog_CHAT.md#chat-04)
 - [x] CHAT-34 **Người được giao việc không có đường nào đọc việc của chính mình** — L2, ADR-137 điểm 2; 2026-11-03 Codex dựng `GET /assigned-tasks/mine` (`listMyAssignedTasks`, lớp `nguoi_quan`, hợp đồng 0.55.0), Claude viết test trước và duyệt; tiếp theo `CHAT-04` → `CHAT-12` → `CHAT-13` → `CHAT-14` · [mô tả](backlog_CHAT.md#chat-34)
 - [x] T-287 **Gate 1b đỏ vì 109 đường chết có sẵn** — L1, 2026-11-03; Codex bỏ dấu đường dẫn ở 19 bản thiết kế và thêm năm dòng ignore có chủ, Claude duyệt; Gate 1b xanh · [chi tiết](#t-287)
 - [x] T-285 **Ghi lời báo nghỉ và ba ứng viên model** — L1, chủ repo trả lời 2026-11-03; đóng `U-116`, hẹp `U-112`; lời mới thay vế nghỉ đột xuất của `C30` · [chi tiết](#t-285)
