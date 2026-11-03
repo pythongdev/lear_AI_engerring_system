@@ -1,4 +1,5 @@
 # Admin Products — Cross-Page Data Flow (the catalog, after a write leaves `/admin/products`)
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **TL;DR:** ✅ implemented.
 > A product created, edited, or deleted on `/admin/products` is a **write that outlives the page**.
@@ -12,9 +13,9 @@
 > Sources traced on branch `experience_claude.md_system_1`:
 > [`fe/src/app/(dashboard)/admin/products/page.tsx`](../../../../../fe/src/app/(dashboard)/admin/products/page.tsx) ·
 > [`fe/src/app/(dashboard)/admin/products/_components/ProductFormModal.tsx`](../../../../../fe/src/app/(dashboard)/admin/products/_components/ProductFormModal.tsx) ·
-> [`fe/src/features/admin/admin.api.ts`](../../../../../fe/src/features/admin/admin.api.ts) ·
-> [`be/internal/service/product_service.go`](../../../../../be/internal/service/product_service.go) ·
-> [`be/internal/db/products.sql.go`](../../../../../be/internal/db/products.sql.go) ·
+> fe/src/features/admin/admin.api.ts (dự án gốc: fe/src/features/admin/admin.api.ts) ·
+> be/internal/service/product_service.go (dự án gốc: be/internal/service/product_service.go) ·
+> be/internal/db/products.sql.go (dự án gốc: be/internal/db/products.sql.go) ·
 > [`fe/src/app/(shop)/menu/page.tsx`](../../../../../fe/src/app/(shop)/menu/page.tsx) ·
 > [`fe/src/app/(dashboard)/pos/page.tsx`](../../../../../fe/src/app/(dashboard)/pos/page.tsx)
 >
@@ -119,7 +120,7 @@ A topping write (create / update / delete) calls `invalidateToppingCaches`:
 The cache TTL when a key is **set** is `productCacheTTL = 5 * time.Minute`
 (`product_service.go:21`). After a write the key is **deleted outright** — it is not reset to a new
 value. The next read from any downstream page repopulates it lazily (cache-aside pattern, see
-[docs/system/03_be/REDIS_CACHE.md](../../../03_be/REDIS_CACHE.md)).
+docs/system/03_be/REDIS_CACHE.md (dự án gốc: 03_be/REDIS_CACHE.md)).
 
 **What is NOT evicted:** The admin table's own `GET /products/all` endpoint — `ListAllProducts`
 (`product_service.go:194-209`) — is intentionally **uncached**. It goes to MySQL on every call,
@@ -262,8 +263,8 @@ customer order detail, and any order history all read the snapshotted `name` + `
 created **after** the edit.
 
 > This is the intended behavior — see
-> [docs/system/02_spec/BUSINESS_RULES.md](../../../02_spec/BUSINESS_RULES.md) and the order object
-> model in [docs/system/02_spec/object/OBJECT_MODELS.md](../../../02_spec/object/OBJECT_MODELS.md).
+> docs/system/02_spec/BUSINESS_RULES.md (dự án gốc: 02_spec/BUSINESS_RULES.md) and the order object
+> model in docs/system/02_spec/object/OBJECT_MODELS.md (dự án gốc: 02_spec/object/OBJECT_MODELS.md).
 
 ---
 
@@ -377,8 +378,8 @@ that already have a warmed TanStack Query cache, bounded by their `staleTime` (5
 | BE endpoints, auth, caching, errors | [admin_products_be.md](admin_products_be.md) |
 | Loading states | [admin_products_loading.md](admin_products_loading.md) |
 | End-to-end CRUD narrative | [SCENARIO_PRODUCT_CRUD.md](SCENARIO_PRODUCT_CRUD.md) |
-| Redis cache keys, TTL, invalidation patterns | [docs/system/03_be/REDIS_CACHE.md](../../../03_be/REDIS_CACHE.md) |
-| Order object model / price-snapshot rule | [docs/system/02_spec/BUSINESS_RULES.md](../../../02_spec/BUSINESS_RULES.md) · [docs/system/02_spec/object/OBJECT_MODELS.md](../../../02_spec/object/OBJECT_MODELS.md) |
+| Redis cache keys, TTL, invalidation patterns | docs/system/03_be/REDIS_CACHE.md (dự án gốc: 03_be/REDIS_CACHE.md) |
+| Order object model / price-snapshot rule | docs/system/02_spec/BUSINESS_RULES.md (dự án gốc: 02_spec/BUSINESS_RULES.md) · docs/system/02_spec/object/OBJECT_MODELS.md (dự án gốc: 02_spec/object/OBJECT_MODELS.md) |
 | Availability toggle bug (full detail) | [PRODUCTS_BUGS.md](PRODUCTS_BUGS.md) #1 |
 | `invalidateProductCaches` · `invalidateToppingCaches` | `be/internal/service/product_service.go:709-721` |
 | `ListProductsAvailable` (is_available=1 filter) | `be/internal/db/products.sql.go:467-470` |

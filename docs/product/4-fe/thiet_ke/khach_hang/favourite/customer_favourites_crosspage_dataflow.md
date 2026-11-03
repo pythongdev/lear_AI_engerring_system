@@ -1,4 +1,5 @@
 # Customer Favourites — Cross-Page Data Flow
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **Status:** ✅ implemented
 > **What this is:** how the favourites suite (`/menu/favourites` + `/save` + `/sets`) **exchanges
@@ -14,9 +15,9 @@
 > [cross-component flow](customer_favourites_crosscomponent_dataflow.md) ·
 > [loading](customer_favourites_loading.md) · [SCENARIO_FAVOURITES.md](SCENARIO_FAVOURITES.md)
 >
-> Store shapes + storage keys live in [../../../07_business_logic/LOGIC_FE.md](../../../07_business_logic/LOGIC_FE.md) (favourites store · cart store) —
+> Store shapes + storage keys live in ../../../07_business_logic/LOGIC_FE.md (dự án gốc: 07_business_logic/LOGIC_FE.md) (favourites store · cart store) —
 > linked, not restated here (one model, one home). The downstream order pipeline is owned by
-> [../customer_menu/customer_menu_crosspage_dataflow.md](../customer_menu/customer_menu_crosspage_dataflow.md).
+> ../customer_menu/customer_menu_crosspage_dataflow.md (dự án gốc: customer_menu/customer_menu_crosspage_dataflow.md).
 
 ---
 
@@ -89,8 +90,8 @@ anchor, not here).
 
 Both hand-offs build the `CartItem` inline (`product_<id>_<sortedToppingIds>` / `combo_<id>` keys,
 `favourites/page.tsx:99-119`, `sets/page.tsx:75-96`). The eventual cart→order payload is
-normalised by the single builder `lib/order-payload.ts` at submit time — owned by
-[../../../07_business_logic/LOGIC_FE.md](../../../07_business_logic/LOGIC_FE.md) (order payload); not re-described here.
+normalised by the single builder lib/order-payload.ts at submit time — owned by
+../../../07_business_logic/LOGIC_FE.md (dự án gốc: 07_business_logic/LOGIC_FE.md) (order payload); not re-described here.
 
 ---
 
@@ -117,5 +118,5 @@ No state is passed in the URL; the destination reads `useFavouritesStore` direct
   it is pull + TTL. See [customer_favourites_be.md](customer_favourites_be.md) Flag 2.
 - **The cart is shared mutable state.** "Add all" / "apply set" **appends** to whatever the guest
   already has in the cart — it does not replace it. A guest who applies two sets gets both
-  (`addItem` is additive, `store/cart.ts`). Owned by the cart store; noted here because the
+  (`addItem` is additive, store/cart.ts). Owned by the cart store; noted here because the
   hand-off is cross-page.

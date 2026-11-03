@@ -1,4 +1,5 @@
 # Admin Products — `/admin/products`
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **TL;DR:** ✅ implemented · manager+ · Product CRUD: page header with add button, products table
 > (name, category, price, toppings, availability), form modal with image upload and topping
@@ -44,7 +45,7 @@
 ## Business Logic Used
 
 - `is_available` drives customer menu (`is_available=true` filter) and POS "Hết" state →
-  [../02_spec/BUSINESS_RULES.md §2 Order Rules](../02_spec/BUSINESS_RULES.md#2-order-rules)
+  ../02_spec/BUSINESS_RULES.md §2 Order Rules (dự án gốc: 02_spec/BUSINESS_RULES.md#2-order-rules)
 - Price changes never rewrite existing orders (price snapshot at order time) →
-  [../02_spec/BUSINESS_RULES.md §2 Order Rules](../02_spec/BUSINESS_RULES.md#2-order-rules)
-- Admin CRUD pattern → [../07_business_logic/LOGIC_FE.md](../07_business_logic/LOGIC_FE.md) (admin CRUD pattern)
+  ../02_spec/BUSINESS_RULES.md §2 Order Rules (dự án gốc: 02_spec/BUSINESS_RULES.md#2-order-rules)
+- Admin CRUD pattern → ../07_business_logic/LOGIC_FE.md (dự án gốc: 07_business_logic/LOGIC_FE.md) (admin CRUD pattern)

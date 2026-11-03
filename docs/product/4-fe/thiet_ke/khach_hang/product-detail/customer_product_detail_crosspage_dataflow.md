@@ -1,4 +1,5 @@
 # Customer Product Detail — Cross-Page Data Flow
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **TL;DR:** ✅ implemented · what `/menu/product/:id` hands off and how that data lives across the
 > pages that outlive it. This page has **no BE write** — its only durable output is a single
@@ -8,8 +9,8 @@
 > — `partialize` persists nothing but `orderNote` + `activeOrderId`, so an added line is **wiped by
 > a full page reload (F5)**.
 > Traced from source on branch `experience_claude.md_system_1` (NOT from docs).
-> Sources: `fe/src/app/(shop)/menu/product/[id]/page.tsx` · `fe/src/store/cart.ts` ·
-> `fe/src/types/cart.ts` · `fe/src/lib/order-payload.ts` · `fe/src/lib/storage-keys.ts`.
+> Sources: `fe/src/app/(shop)/menu/product/[id]/page.tsx` · fe/src/store/cart.ts ·
+> fe/src/types/cart.ts · fe/src/lib/order-payload.ts · fe/src/lib/storage-keys.ts.
 >
 > Siblings: page → [customer_product_detail.md](customer_product_detail.md) ·
 > BE → [customer_product_detail_be.md](customer_product_detail_be.md) ·
@@ -17,7 +18,7 @@
 > scenario → [SCENARIO_PRODUCT_ADD.md](SCENARIO_PRODUCT_ADD.md).
 > Order-level cross-page/device machinery (SSE, order cache, multi-device) is **not** here — it
 > begins once `POST /orders` fires on `/menu`/`/checkout`: see
-> [../customer_menu/customer_menu_crosspage_dataflow.md](../customer_menu/customer_menu_crosspage_dataflow.md).
+> ../customer_menu/customer_menu_crosspage_dataflow.md (dự án gốc: customer_menu/customer_menu_crosspage_dataflow.md).
 
 ---
 
@@ -102,7 +103,7 @@ itself.
 
 > Everything past `POST /orders` — the order row, SSE/WS fan-out, the `order_cache_*` localStorage
 > snapshot, multi-device tracking — is documented once, at
-> [../customer_menu/customer_menu_crosspage_dataflow.md](../customer_menu/customer_menu_crosspage_dataflow.md).
+> ../customer_menu/customer_menu_crosspage_dataflow.md (dự án gốc: customer_menu/customer_menu_crosspage_dataflow.md).
 > This page contributes a cart line and nothing more.
 
 ---
@@ -152,4 +153,4 @@ in-progress cart — they would only converge after an order is actually created
 - Cart→order builder: `fe/src/lib/order-payload.ts:27-58`
 - Storage key: `fe/src/lib/storage-keys.ts:6`
 - Order-level cross-page flow (downstream of `POST /orders`):
-  [../customer_menu/customer_menu_crosspage_dataflow.md](../customer_menu/customer_menu_crosspage_dataflow.md)
+  ../customer_menu/customer_menu_crosspage_dataflow.md (dự án gốc: customer_menu/customer_menu_crosspage_dataflow.md)

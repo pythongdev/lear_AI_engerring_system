@@ -1,4 +1,5 @@
 # Customer Order Detail — Loading States · `/order/:id`
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **TL;DR:** ✅ implemented · how `/order/:id` behaves while data is in flight. **No `loading.tsx`
 > and no `<Suspense>` exist for this route.** Data is driven entirely by `useOrderSSE`, not
@@ -10,7 +11,7 @@
 > revisit, skipping the skeleton entirely.
 >
 > Traced from source on branch `experience_claude.md_system_1` (NOT from docs).
-> Sources: `fe/src/app/(shop)/order/[id]/page.tsx` · `fe/src/hooks/useOrderSSE.ts` ·
+> Sources: `fe/src/app/(shop)/order/[id]/page.tsx` · fe/src/hooks/useOrderSSE.ts ·
 > `fe/src/components/shared/ConnectionErrorBanner.tsx` · `fe/src/app/(shop)/loading.tsx`
 >
 > Page overview → [customer_order_detail.md](customer_order_detail.md) ·
@@ -18,7 +19,7 @@
 > Cross-page data flow → [customer_order_detail_crosspage_dataflow.md](customer_order_detail_crosspage_dataflow.md) ·
 > Scenario → [SCENARIO_ORDER_DETAIL.md](SCENARIO_ORDER_DETAIL.md) ·
 > Bugs → [ORDER_DETAIL_BUGS.md](ORDER_DETAIL_BUGS.md) ·
-> Order object model → [../../../02_spec/object/OBJECT_MODEL_ORDER.md](../../../02_spec/object/OBJECT_MODEL_ORDER.md)
+> Order object model → ../../../02_spec/object/OBJECT_MODEL_ORDER.md (dự án gốc: 02_spec/object/OBJECT_MODEL_ORDER.md)
 
 ---
 
@@ -63,7 +64,7 @@ would add no value because this page has no async server component data to strea
 
 ---
 
-### Layer 2 — `useOrderSSE` three-phase load sequence · `fe/src/hooks/useOrderSSE.ts`
+### Layer 2 — `useOrderSSE` three-phase load sequence · fe/src/hooks/useOrderSSE.ts
 
 `useOrderSSE(orderId)` is the sole data source for this page. It is **not** a TanStack Query
 hook — there is no `isLoading` flag from `useQuery`. Loading state is inferred from whether
@@ -81,7 +82,7 @@ useEffect(() => {
 ```
 
 - `cacheKey(id)` expands to `STORAGE_KEYS.ORDER_CACHE + id`, where `STORAGE_KEYS.ORDER_CACHE`
-  is `'order_cache_'` (`useOrderSSE.ts:9`, `fe/src/lib/storage-keys.ts`).
+  is `'order_cache_'` (`useOrderSSE.ts:9`, fe/src/lib/storage-keys.ts).
 - If a cache entry exists from a prior visit, `setOrder(...)` fires **synchronously during
   mount** (before any network call). The page renders the full order UI with stale data, and
   the skeleton is never shown.

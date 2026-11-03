@@ -1,4 +1,5 @@
 # Admin Products — Cross-Component Data Flow (manager edits a product's price)
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **Status:** ✅ implemented
 > **What this is:** a deep zoom on one concrete action on `/admin/products` —
@@ -17,8 +18,8 @@
 > - [`fe/src/app/(dashboard)/admin/products/_components/ProductsTable.tsx`](../../../../../fe/src/app/(dashboard)/admin/products/_components/ProductsTable.tsx)
 > - [`fe/src/app/(dashboard)/admin/products/_components/ProductFormModal.tsx`](../../../../../fe/src/app/(dashboard)/admin/products/_components/ProductFormModal.tsx)
 > - [`fe/src/app/(dashboard)/admin/products/_components/ProductPageHeader.tsx`](../../../../../fe/src/app/(dashboard)/admin/products/_components/ProductPageHeader.tsx)
-> - [`fe/src/features/admin/admin.api.ts`](../../../../../fe/src/features/admin/admin.api.ts)
-> - [`fe/src/types/product.ts`](../../../../../fe/src/types/product.ts)
+> - fe/src/features/admin/admin.api.ts (dự án gốc: fe/src/features/admin/admin.api.ts)
+> - fe/src/types/product.ts (dự án gốc: fe/src/types/product.ts)
 >
 > Siblings:
 > [admin_products.md](admin_products.md) ·
@@ -497,8 +498,8 @@ The FE flow is correct (same `invalidateQueries` pattern). However, the BE handl
 | Page zones / wireframe / object model | [admin_products.md](admin_products.md) |
 | BE endpoints, auth, caching, N+1, errors | [admin_products_be.md](admin_products_be.md) |
 | Known bugs (availability toggle broken) | [PRODUCTS_BUGS.md](PRODUCTS_BUGS.md) |
-| Product type shape (`Product`, `Topping`, `Category`) | [`fe/src/types/product.ts`](../../../../../fe/src/types/product.ts) |
-| `listProducts` / `updateProduct` / `toggleAvailability` / `uploadFile` | [`fe/src/features/admin/admin.api.ts:39-52`](../../../../../fe/src/features/admin/admin.api.ts) |
+| Product type shape (`Product`, `Topping`, `Category`) | fe/src/types/product.ts (dự án gốc: fe/src/types/product.ts) |
+| `listProducts` / `updateProduct` / `toggleAvailability` / `uploadFile` | `fe/src/features/admin/admin.api.ts:39-52` (dự án gốc: fe/src/features/admin/admin.api.ts) |
 | State layers rule (Query vs Zustand vs useState) | `fe/CLAUDE.md §Architecture` |
 | Cross-page implications (price change → customer menu) | [admin_products_crosspage_dataflow.md](admin_products_crosspage_dataflow.md) |
 | Loading states (isLoading skeleton, modal lazy load) | [admin_products_loading.md](admin_products_loading.md) |

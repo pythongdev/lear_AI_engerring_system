@@ -1,4 +1,5 @@
 # Customer Order Detail — Cross-Page Data Flow (`/order/:id`)
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **Status:** ✅ implemented. `/order/:id` is the **standalone live-order page** — it owns the URL
 > id, runs a full REST + SSE pipeline on mount, and is the primary writer of `order_cache_<id>`
@@ -7,19 +8,19 @@
 >
 > Traced from source on branch `experience_claude.md_system_1`:
 > [`fe/src/app/(shop)/order/[id]/page.tsx`](../../../../../fe/src/app/(shop)/order/[id]/page.tsx) ·
-> [`fe/src/hooks/useOrderSSE.ts`](../../../../../fe/src/hooks/useOrderSSE.ts) ·
-> [`fe/src/store/cart.ts`](../../../../../fe/src/store/cart.ts) ·
-> [`fe/src/lib/storage-keys.ts`](../../../../../fe/src/lib/storage-keys.ts) ·
-> [`fe/src/types/order.ts`](../../../../../fe/src/types/order.ts) ·
-> [`be/internal/sse/handler.go`](../../../../../be/internal/sse/handler.go) ·
-> [`be/internal/service/order_service.go`](../../../../../be/internal/service/order_service.go)
+> fe/src/hooks/useOrderSSE.ts (dự án gốc: fe/src/hooks/useOrderSSE.ts) ·
+> fe/src/store/cart.ts (dự án gốc: fe/src/store/cart.ts) ·
+> fe/src/lib/storage-keys.ts (dự án gốc: fe/src/lib/storage-keys.ts) ·
+> fe/src/types/order.ts (dự án gốc: fe/src/types/order.ts) ·
+> be/internal/sse/handler.go (dự án gốc: be/internal/sse/handler.go) ·
+> be/internal/service/order_service.go (dự án gốc: be/internal/service/order_service.go)
 >
 > BE endpoints + auth → [customer_order_detail_be.md](customer_order_detail_be.md) ·
 > FE view + zones → [customer_order_detail.md](customer_order_detail.md) ·
 > Loading states → [customer_order_detail_loading.md](customer_order_detail_loading.md) ·
 > Narrative → [SCENARIO_ORDER_DETAIL.md](SCENARIO_ORDER_DETAIL.md) ·
-> List-page twin (cache reader) → [../customer_order_list/customer_order_list_crosspage_dataflow.md](../customer_order_list/customer_order_list_crosspage_dataflow.md) ·
-> Order object model → [../../../02_spec/object/OBJECT_MODEL_ORDER.md](../../../02_spec/object/OBJECT_MODEL_ORDER.md)
+> List-page twin (cache reader) → ../customer_order_list/customer_order_list_crosspage_dataflow.md (dự án gốc: customer_order_list/customer_order_list_crosspage_dataflow.md) ·
+> Order object model → ../../../02_spec/object/OBJECT_MODEL_ORDER.md (dự án gốc: 02_spec/object/OBJECT_MODEL_ORDER.md)
 
 ---
 
@@ -97,7 +98,7 @@
 ## 1. The status lifecycle every page renders against
 
 All pages share the same `OrderStatus` union
-([`fe/src/types/order.ts:29-36`](../../../../../fe/src/types/order.ts)):
+(`fe/src/types/order.ts:29-36` (dự án gốc: fe/src/types/order.ts)):
 
 ```
    POST /orders
@@ -145,15 +146,15 @@ useEffect(() => {
 ```
 
 `cacheKey(id)` = `STORAGE_KEYS.ORDER_CACHE + id` = `"order_cache_" + id`
-([`useOrderSSE.ts:9`](../../../../../fe/src/hooks/useOrderSSE.ts) ·
-[`storage-keys.ts:3`](../../../../../fe/src/lib/storage-keys.ts)).
+(`useOrderSSE.ts:9` (dự án gốc: fe/src/hooks/useOrderSSE.ts) ·
+`storage-keys.ts:3` (dự án gốc: fe/src/lib/storage-keys.ts)).
 
 This write happens on:
-- Seed from `GET /orders/:id` on mount ([`useOrderSSE.ts:55-57`](../../../../../fe/src/hooks/useOrderSSE.ts))
-- Every SSE delta that calls `setOrder(...)` ([`useOrderSSE.ts:83-121`](../../../../../fe/src/hooks/useOrderSSE.ts))
+- Seed from `GET /orders/:id` on mount (`useOrderSSE.ts:55-57` (dự án gốc: fe/src/hooks/useOrderSSE.ts))
+- Every SSE delta that calls `setOrder(...)` (`useOrderSSE.ts:83-121` (dự án gốc: fe/src/hooks/useOrderSSE.ts))
 
 The `/order` list page reads this exact key on its next mount via `loadCachedOrders()` — see
-[`customer_order_list_crosspage_dataflow.md §3`](../customer_order_list/customer_order_list_crosspage_dataflow.md).
+`customer_order_list_crosspage_dataflow.md §3` (dự án gốc: customer_order_list/customer_order_list_crosspage_dataflow.md).
 
 ### 2b. Cart store writes (outgoing navigation)
 
@@ -167,12 +168,12 @@ All three navigation buttons on `/order/:id` write into the cart store before pu
 | "Đặt thêm món" | `order.table_id` (always rendered) when `!isActive` | `order.table_id!` ░ | `null` ▓ | `/menu` |
 
 `setTableId` is memory-only (not in `partialize`):
-[`cart.ts:153`](../../../../../fe/src/store/cart.ts):
+`cart.ts:153` (dự án gốc: fe/src/store/cart.ts):
 `(s) => ({ orderNote: s.orderNote, activeOrderId: s.activeOrderId })`.
 
 `setActiveOrderId` is persisted under key `STORAGE_KEYS.CART_CONFIG = 'cart-config-v3'`
-([`storage-keys.ts:5`](../../../../../fe/src/lib/storage-keys.ts) ·
-[`cart.ts:128`](../../../../../fe/src/store/cart.ts)).
+(`storage-keys.ts:5` (dự án gốc: fe/src/lib/storage-keys.ts) ·
+`cart.ts:128` (dự án gốc: fe/src/store/cart.ts)).
 
 ```
    STORE STATE WRITTEN BEFORE EACH NAVIGATION
@@ -231,7 +232,7 @@ SSE-written status — but **only if the list page mounts or re-mounts after thi
 
 The list page's `loadCachedOrders()` runs once in `useEffect([], [])`:
 `order/page.tsx:10-24` (see sibling doc
-[`customer_order_list_crosspage_dataflow.md §3`](../customer_order_list/customer_order_list_crosspage_dataflow.md)).
+`customer_order_list_crosspage_dataflow.md §3` (dự án gốc: customer_order_list/customer_order_list_crosspage_dataflow.md)).
 It does not re-scan on focus or interval. After `/order/:id` updates the cache via SSE, the list
 card is stale until the list page is re-mounted (navigated away and back, or F5).
 
@@ -240,9 +241,9 @@ card is stale until the list page is re-mounted (navigated away and back, or F5)
 ## 6. SSE event table — what `useOrderSSE` handles and what it misses
 
 The SSE channel `order:<id>` is subscribed in
-[`be/internal/sse/handler.go:42`](../../../../../be/internal/sse/handler.go).
+`be/internal/sse/handler.go:42` (dự án gốc: be/internal/sse/handler.go).
 The `extractEventType` function parses the `type` field of each Redis payload
-([`be/internal/sse/group_handler.go:87-95`](../../../../../be/internal/sse/group_handler.go)).
+(`be/internal/sse/group_handler.go:87-95` (dự án gốc: be/internal/sse/group_handler.go)).
 
 Events published by `order_service.go` to `order:<id>` and their FE handling:
 
@@ -263,7 +264,7 @@ Events published by `order_service.go` to `order:<id>` and their FE handling:
 > instead. ❓ UNVERIFIED: whether any publisher calls `publishOrderEvent(ctx, "order_init", ...)`.
 
 Also published to `orders:kds` (kitchen board) on every `publishOrderEvent` call:
-[`order_service.go:818`](../../../../../be/internal/service/order_service.go). This is the
+`order_service.go:818` (dự án gốc: be/internal/service/order_service.go). This is the
 separate KDS channel; `/order/:id` does not subscribe to it.
 
 ---
@@ -416,13 +417,13 @@ fresh `GET /orders/:id` seed at `useOrderSSE.ts:55-57`).
 | Loading states (skeleton, SSE banner, isNotFound) | [customer_order_detail_loading.md](customer_order_detail_loading.md) |
 | Narrative scenario | [SCENARIO_ORDER_DETAIL.md](SCENARIO_ORDER_DETAIL.md) |
 | Known FE live-update bugs | [ORDER_DETAIL_BUGS.md](ORDER_DETAIL_BUGS.md) |
-| List-page twin (cache reader, overlay model) | [../customer_order_list/customer_order_list_crosspage_dataflow.md](../customer_order_list/customer_order_list_crosspage_dataflow.md) |
-| `Order` / `OrderItem` / `OrderStatus` types | [`fe/src/types/order.ts`](../../../../../fe/src/types/order.ts) |
-| Cart store (fields, persist, `partialize`) | [`fe/src/store/cart.ts`](../../../../../fe/src/store/cart.ts) |
-| localStorage key constants | [`fe/src/lib/storage-keys.ts`](../../../../../fe/src/lib/storage-keys.ts) |
-| SSE hook (cache read/write + event handling) | [`fe/src/hooks/useOrderSSE.ts`](../../../../../fe/src/hooks/useOrderSSE.ts) |
+| List-page twin (cache reader, overlay model) | ../customer_order_list/customer_order_list_crosspage_dataflow.md (dự án gốc: customer_order_list/customer_order_list_crosspage_dataflow.md) |
+| `Order` / `OrderItem` / `OrderStatus` types | fe/src/types/order.ts (dự án gốc: fe/src/types/order.ts) |
+| Cart store (fields, persist, `partialize`) | fe/src/store/cart.ts (dự án gốc: fe/src/store/cart.ts) |
+| localStorage key constants | fe/src/lib/storage-keys.ts (dự án gốc: fe/src/lib/storage-keys.ts) |
+| SSE hook (cache read/write + event handling) | fe/src/hooks/useOrderSSE.ts (dự án gốc: fe/src/hooks/useOrderSSE.ts) |
 | Page component (mutations + nav buttons) | [`fe/src/app/(shop)/order/[id]/page.tsx`](../../../../../fe/src/app/(shop)/order/[id]/page.tsx) |
-| BE SSE fan-out (Redis subscribe loop) | [`be/internal/sse/handler.go`](../../../../../be/internal/sse/handler.go) |
-| BE publish (per-order + KDS channels) | [`be/internal/service/order_service.go`](../../../../../be/internal/service/order_service.go) |
-| Business logic — cancel rules | [`docs/system/07_business_logic/LOGIC_INDEX.md`](../../../07_business_logic/LOGIC_INDEX.md) |
-| Order object model (field home) | [../../../02_spec/object/OBJECT_MODEL_ORDER.md](../../../02_spec/object/OBJECT_MODEL_ORDER.md) |
+| BE SSE fan-out (Redis subscribe loop) | be/internal/sse/handler.go (dự án gốc: be/internal/sse/handler.go) |
+| BE publish (per-order + KDS channels) | be/internal/service/order_service.go (dự án gốc: be/internal/service/order_service.go) |
+| Business logic — cancel rules | docs/system/07_business_logic/LOGIC_INDEX.md (dự án gốc: 07_business_logic/LOGIC_INDEX.md) |
+| Order object model (field home) | ../../../02_spec/object/OBJECT_MODEL_ORDER.md (dự án gốc: 02_spec/object/OBJECT_MODEL_ORDER.md) |

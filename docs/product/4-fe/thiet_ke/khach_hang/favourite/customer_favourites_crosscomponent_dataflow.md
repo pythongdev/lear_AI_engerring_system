@@ -1,4 +1,5 @@
 # Customer Favourites — Cross-Component Data Flow ("add all to cart" in depth)
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **Status:** ✅ implemented  
 > **What this is:** a deep zoom on the central cross-component story of the favourites suite —
@@ -16,12 +17,12 @@
 > - [SCENARIO_FAVOURITES.md](SCENARIO_FAVOURITES.md) — end-to-end narrative.
 >
 > Traced from source on branch `experience_claude.md_system_1`:  
-> [`fe/src/store/favourites.ts`](../../../../../fe/src/store/favourites.ts) ·
-> [`fe/src/store/cart.ts`](../../../../../fe/src/store/cart.ts) ·
+> fe/src/store/favourites.ts (dự án gốc: fe/src/store/favourites.ts) ·
+> fe/src/store/cart.ts (dự án gốc: fe/src/store/cart.ts) ·
 > [`fe/src/app/(shop)/menu/favourites/page.tsx`](../../../../../fe/src/app/(shop)/menu/favourites/page.tsx) ·
 > [`fe/src/app/(shop)/menu/favourites/save/page.tsx`](../../../../../fe/src/app/(shop)/menu/favourites/save/page.tsx) ·
 > [`fe/src/app/(shop)/menu/favourites/sets/page.tsx`](../../../../../fe/src/app/(shop)/menu/favourites/sets/page.tsx) ·
-> [`fe/src/lib/storage-keys.ts`](../../../../../fe/src/lib/storage-keys.ts)
+> fe/src/lib/storage-keys.ts (dự án gốc: fe/src/lib/storage-keys.ts)
 
 ---
 
@@ -97,10 +98,10 @@ pages and `FavouritesTopNav` (cart badge only).
 
 ### 2.1 `useFavouritesStore` (the favourites hub)
 
-Defined at [`fe/src/store/favourites.ts:43`](../../../../../fe/src/store/favourites.ts).
+Defined at `fe/src/store/favourites.ts:43` (dự án gốc: fe/src/store/favourites.ts).
 
 Full store shape and field definitions live in
-[`../../../07_business_logic/LOGIC_FE.md`](../../../07_business_logic/LOGIC_FE.md) — the summary here
+../../../07_business_logic/LOGIC_FE.md (dự án gốc: 07_business_logic/LOGIC_FE.md) — the summary here
 is the cross-component contract only.
 
 ```
@@ -125,14 +126,14 @@ useFavouritesStore  (Zustand + persist)
 ```
 
 > `STORAGE_KEYS.FAVOURITES` is `'favourites'` — confirmed at
-> [`fe/src/lib/storage-keys.ts:4`](../../../../../fe/src/lib/storage-keys.ts).
+> `fe/src/lib/storage-keys.ts:4` (dự án gốc: fe/src/lib/storage-keys.ts).
 
 ### 2.2 `useCartStore` (the cart target)
 
-Defined at [`fe/src/store/cart.ts:40`](../../../../../fe/src/store/cart.ts).
+Defined at `fe/src/store/cart.ts:40` (dự án gốc: fe/src/store/cart.ts).
 
 The cart store shape and persistence rules are the canonical fact in
-[`../../../07_business_logic/LOGIC_FE.md`](../../../07_business_logic/LOGIC_FE.md). For this page the
+../../../07_business_logic/LOGIC_FE.md (dự án gốc: 07_business_logic/LOGIC_FE.md). For this page the
 only relevant surface is:
 
 ```
@@ -235,7 +236,7 @@ After hydration, each `items[]` entry is joined against the catalog inline at
 | `combo` | `allCombos.find(x => x.id === item.id)` | `name`, `imageUrl`, `basePrice`, `comboItems` (names via nested product lookup), `subtotalPerPortion = basePrice` |
 
 `FavouriteItemResolved` is the hydrated type declared at
-[`fe/src/store/favourites.ts:21–28`](../../../../../fe/src/store/favourites.ts). Items that fail
+`fe/src/store/favourites.ts:21–28` (dự án gốc: fe/src/store/favourites.ts). Items that fail
 the `find` (stale, but not yet pruned in this render) are silently dropped via `flatMap`.
 
 ### Step 4 — Filter tabs gate the displayed list
@@ -359,7 +360,7 @@ The page maps each `sets[]` entry to a `SetCard`, resolving items inline before 
 ```
 
 Note: `sets[]` items are a **snapshot** taken at save time (`addSet` copies `[...s.items]` at
-[`favourites.ts:67`](../../../../../fe/src/store/favourites.ts)). If the current `items[]` list
+`favourites.ts:67` (dự án gốc: fe/src/store/favourites.ts)). If the current `items[]` list
 changed after the set was saved, the set's items are unaffected — apply always uses the frozen
 snapshot, not the live store.
 
@@ -377,7 +378,7 @@ const onSubmit = (data: FormData) => {
 ```
 
 `addSet` snapshots the current `items[]` into a new `FavouriteSet` entry with a `crypto.randomUUID()`
-id ([`favourites.ts:62–69`](../../../../../fe/src/store/favourites.ts)). After `router.push`, the
+id (`favourites.ts:62–69` (dự án gốc: fe/src/store/favourites.ts)). After `router.push`, the
 sets page mounts and reads the updated `sets[]` from the persisted store.
 
 ---
@@ -496,16 +497,16 @@ Guest         FavouritesPage       useFavouritesStore     TanStack Query     use
 |---|---|
 | Page zones / wireframe / object model | [customer_favourites.md](customer_favourites.md) |
 | BE endpoints (GET /products, GET /combos) | [customer_favourites_be.md](customer_favourites_be.md) |
-| Favourites store shape + persistence | [`fe/src/store/favourites.ts`](../../../../../fe/src/store/favourites.ts) |
-| Cart store shape + persistence rules | [`fe/src/store/cart.ts`](../../../../../fe/src/store/cart.ts) |
-| localStorage key constants | [`fe/src/lib/storage-keys.ts`](../../../../../fe/src/lib/storage-keys.ts) |
-| `FavouriteItemResolved` type | [`fe/src/store/favourites.ts:21–28`](../../../../../fe/src/store/favourites.ts) |
+| Favourites store shape + persistence | fe/src/store/favourites.ts (dự án gốc: fe/src/store/favourites.ts) |
+| Cart store shape + persistence rules | fe/src/store/cart.ts (dự án gốc: fe/src/store/cart.ts) |
+| localStorage key constants | fe/src/lib/storage-keys.ts (dự án gốc: fe/src/lib/storage-keys.ts) |
+| `FavouriteItemResolved` type | `fe/src/store/favourites.ts:21–28` (dự án gốc: fe/src/store/favourites.ts) |
 | List page orchestration (resolve, filter, counts, handlers) | [`fe/src/app/(shop)/menu/favourites/page.tsx`](../../../../../fe/src/app/(shop)/menu/favourites/page.tsx) |
 | Save-set page | [`fe/src/app/(shop)/menu/favourites/save/page.tsx`](../../../../../fe/src/app/(shop)/menu/favourites/save/page.tsx) |
 | Sets list page + handleApplySet | [`fe/src/app/(shop)/menu/favourites/sets/page.tsx`](../../../../../fe/src/app/(shop)/menu/favourites/sets/page.tsx) |
 | SetCard (rename local state + apply) | [`fe/src/app/(shop)/menu/favourites/sets/components/SetCard.tsx`](../../../../../fe/src/app/(shop)/menu/favourites/sets/components/SetCard.tsx) |
-| State layers (Query / Zustand / useState) | [04_fe/STATE_MANAGEMENT.md](../../../04_fe/STATE_MANAGEMENT.md) |
-| Business-logic rules (cart, favourites, RBAC) | [07_business_logic/LOGIC_FE.md](../../../07_business_logic/LOGIC_FE.md) |
+| State layers (Query / Zustand / useState) | 04_fe/STATE_MANAGEMENT.md (dự án gốc: 04_fe/STATE_MANAGEMENT.md) |
+| Business-logic rules (cart, favourites, RBAC) | 07_business_logic/LOGIC_FE.md (dự án gốc: 07_business_logic/LOGIC_FE.md) |
 | Cross-page data flow (persistence, handoff) | [customer_favourites_crosspage_dataflow.md](customer_favourites_crosspage_dataflow.md) |
 | End-to-end narrative | [SCENARIO_FAVOURITES.md](SCENARIO_FAVOURITES.md) |
 

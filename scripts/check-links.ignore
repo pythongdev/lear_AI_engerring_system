@@ -295,3 +295,9 @@ docs/private/fe/PAGES_INDEX.md :: ../04_fe/DESIGN_SYSTEM.md  # T-179 — bản c
 docs/private/fe/PAGES_INDEX.md :: ../01_flow/CLIENT_FLOW.md  # T-179 — bản chép dự án khác (ADR-103)
 docs/private/fe/PAGES_INDEX.md :: ../01_flow/STAFF_FLOW.md  # T-179 — bản chép dự án khác (ADR-103)
 docs/private/fe/PAGES_INDEX.md :: ../05_dev_guide/NEW_PAGE_GUIDE.md  # T-179 — bản chép dự án khác (ADR-103)
+# --- T-287 (2026-11-03): file do các lát sau của ADR-135 tạo, chưa dựng — gỡ khi lát ấy tạo file ---
+docs/decisions.md :: db/tests/i037_staff_google_identity.sql      # T-281 — Lát A của ADR-135 tạo file này
+docs/decisions.md :: be/internal/taikhoan/google_link.go          # ADR-135 điểm 8 — lát sau tạo file này
+quality/invariants.md :: db/tests/i037_staff_google_identity.sql  # T-281 — Lát A của ADR-135 tạo file này
+# --- T-287: bằng chứng kiểm trên máy, không phải con trỏ ---
+docs/private/video-paris-scroll/website/README.md :: /tmp/paris-quality-review.json  # T-275 — bằng chứng kiểm trên máy lúc ấy

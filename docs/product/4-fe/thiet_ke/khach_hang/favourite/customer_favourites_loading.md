@@ -1,4 +1,5 @@
 # Customer Favourites Suite — Loading States
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **TL;DR:** ✅ implemented · how `/menu/favourites`, `/menu/favourites/save`, and
 > `/menu/favourites/sets` behave while data is in flight. All three pages share the same two
@@ -18,7 +19,7 @@
 > `fe/src/app/(shop)/menu/favourites/page.tsx` ·
 > `fe/src/app/(shop)/menu/favourites/save/page.tsx` ·
 > `fe/src/app/(shop)/menu/favourites/sets/page.tsx` ·
-> `fe/src/store/favourites.ts`
+> fe/src/store/favourites.ts
 
 ---
 

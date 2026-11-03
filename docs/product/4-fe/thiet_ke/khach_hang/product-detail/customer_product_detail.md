@@ -1,4 +1,5 @@
 # Product Detail — `/menu/product/:id`
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **TL;DR:** ✅ implemented · guest JWT / open browse · Full-screen product view: hero image,
 > name/price/description, optional topping selector, quantity stepper, and a sticky add-to-cart
@@ -58,5 +59,5 @@
 
 ## Business Logic Used
 
-- Cart item shape (toppings, price math) → [../07_business_logic/LOGIC_FE.md](../07_business_logic/LOGIC_FE.md) (cart store)
-- Topping price snapshot rules at order time → [../02_spec/BUSINESS_RULES.md §2 Order Rules](../02_spec/BUSINESS_RULES.md#2-order-rules)
+- Cart item shape (toppings, price math) → ../07_business_logic/LOGIC_FE.md (dự án gốc: 07_business_logic/LOGIC_FE.md) (cart store)
+- Topping price snapshot rules at order time → ../02_spec/BUSINESS_RULES.md §2 Order Rules (dự án gốc: 02_spec/BUSINESS_RULES.md#2-order-rules)

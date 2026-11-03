@@ -1,4 +1,5 @@
 # Favourites Suite — `/menu/favourites` · `/menu/favourites/save` · `/menu/favourites/sets`
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **TL;DR:** ✅ implemented · guest (local-only state) · Three small pages forming one feature:
 > a favourites list (hearted products/combos), a "save current favourites as a named set" form,
@@ -58,6 +59,6 @@
 
 ## Business Logic Used
 
-- Favourites/sets store shape + localStorage keys → [../07_business_logic/LOGIC_FE.md](../07_business_logic/LOGIC_FE.md) (favourites store, storage keys)
-- Re-added items still flow through the single payload builder at checkout → [../07_business_logic/LOGIC_FE.md](../07_business_logic/LOGIC_FE.md) (order payload)
-- Availability check against menu → [../02_spec/BUSINESS_RULES.md §2 Order Rules](../02_spec/BUSINESS_RULES.md#2-order-rules)
+- Favourites/sets store shape + localStorage keys → ../07_business_logic/LOGIC_FE.md (dự án gốc: 07_business_logic/LOGIC_FE.md) (favourites store, storage keys)
+- Re-added items still flow through the single payload builder at checkout → ../07_business_logic/LOGIC_FE.md (dự án gốc: 07_business_logic/LOGIC_FE.md) (order payload)
+- Availability check against menu → ../02_spec/BUSINESS_RULES.md §2 Order Rules (dự án gốc: 02_spec/BUSINESS_RULES.md#2-order-rules)

@@ -1,4 +1,5 @@
 # Customer Menu — Cross-Page Data Flow (the order, after it leaves `/menu`)
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **What this is:** the **cross-page** companion to
 > [customer_menu_crosscomponent_dataflow.md](customer_menu_crosscomponent_dataflow.md).
@@ -15,13 +16,13 @@
 >   the customer's browser to the **staff/admin** devices.
 >
 > Traced from source on branch `experience_claude.md_system_1_test_iphon2_change_code`:
-> [`fe/src/store/cart.ts`](../../../../../fe/src/store/cart.ts) ·
-> [`fe/src/types/order.ts`](../../../../../fe/src/types/order.ts) ·
-> [`fe/src/lib/storage-keys.ts`](../../../../../fe/src/lib/storage-keys.ts) ·
-> [`fe/src/hooks/useOrderSSE.ts`](../../../../../fe/src/hooks/useOrderSSE.ts) ·
-> [`fe/src/hooks/useOrderMonitorSSE.ts`](../../../../../fe/src/hooks/useOrderMonitorSSE.ts) ·
-> [`fe/src/hooks/useOverviewWS.ts`](../../../../../fe/src/hooks/useOverviewWS.ts) ·
-> [`fe/src/hooks/useAdminSSE.ts`](../../../../../fe/src/hooks/useAdminSSE.ts).
+> fe/src/store/cart.ts (dự án gốc: fe/src/store/cart.ts) ·
+> fe/src/types/order.ts (dự án gốc: fe/src/types/order.ts) ·
+> fe/src/lib/storage-keys.ts (dự án gốc: fe/src/lib/storage-keys.ts) ·
+> fe/src/hooks/useOrderSSE.ts (dự án gốc: fe/src/hooks/useOrderSSE.ts) ·
+> fe/src/hooks/useOrderMonitorSSE.ts (dự án gốc: fe/src/hooks/useOrderMonitorSSE.ts) ·
+> fe/src/hooks/useOverviewWS.ts (dự án gốc: fe/src/hooks/useOverviewWS.ts) ·
+> fe/src/hooks/useAdminSSE.ts (dự án gốc: fe/src/hooks/useAdminSSE.ts).
 
 ---
 
@@ -73,7 +74,7 @@ sees the customer's `order_cache` or `activeOrderId`; the **only** datum it shar
 
 ## 1. The status lifecycle every page renders against
 
-All five pages render the **same** `OrderStatus` enum ([`order.ts:29`](../../../../../fe/src/types/order.ts)).
+All five pages render the **same** `OrderStatus` enum (`order.ts:29` (dự án gốc: fe/src/types/order.ts)).
 Knowing this one machine explains every badge, every SSE event, and every "is this order still
 active?" filter downstream:
 
@@ -101,9 +102,9 @@ active?" filter downstream:
 | `paid` | payment | history only | ❌ filtered out |
 
 > The admin `ACTIVE` set is literally `{pending, confirmed, preparing, ready, delivered}`
-> ([`useOverviewWS.ts:8`](../../../../../fe/src/hooks/useOverviewWS.ts)) — any transition **out** of
+> (`useOverviewWS.ts:8` (dự án gốc: fe/src/hooks/useOverviewWS.ts)) — any transition **out** of
 > it removes the card from the live floor. The customer's `useOrderSSE` instead **stops** its SSE
-> loop on `cancelled`/`delivered` ([`useOrderSSE.ts:98-122`](../../../../../fe/src/hooks/useOrderSSE.ts)).
+> loop on `cancelled`/`delivered` (`useOrderSSE.ts:98-122` (dự án gốc: fe/src/hooks/useOrderSSE.ts)).
 
 ---
 
@@ -139,8 +140,8 @@ there. On `201`, `TableConfirmModal` (or `/checkout`) does exactly **three write
 | # | Write | Where it lands | Who reads it later | Source |
 |---|---|---|---|---|
 | ① | `order_cache_<id> = JSON(order)` | ▓ localStorage | `/order/<id>` (instant paint) **+** `/order` list (history) | [`TableConfirmModal.tsx:37`](../../../../../fe/src/features/menu/components/TableConfirmModal.tsx) |
-| ② | `clearCart()` | ░ cart store memory | empties only the **draft** (`items`/`paymentMethod`/`orderNote`); **keeps** `tableId`/`tableName`/`activeOrderId` (overrides Invariant 5) | [`cart.ts:89`](../../../../../fe/src/store/cart.ts) |
-| ③ | `setActiveOrderId(<id>)` | ▓ cart store, persisted | `/tracking` (no URL id — see §5) **+** `/menu` `ActiveOrderRecoveryBanner` (order-recovery) | [`cart.ts:93,153`](../../../../../fe/src/store/cart.ts) |
+| ② | `clearCart()` | ░ cart store memory | empties only the **draft** (`items`/`paymentMethod`/`orderNote`); **keeps** `tableId`/`tableName`/`activeOrderId` (overrides Invariant 5) | `cart.ts:89` (dự án gốc: fe/src/store/cart.ts) |
+| ③ | `setActiveOrderId(<id>)` | ▓ cart store, persisted | `/tracking` (no URL id — see §5) **+** `/menu` `ActiveOrderRecoveryBanner` (order-recovery) | `cart.ts:93,153` (dự án gốc: fe/src/store/cart.ts) |
 
 > **Why two keys, not one?** `order_cache_<id>` answers *"what is this specific order?"* (keyed by
 > id — many can coexist). `activeOrderId` answers *"which order is the guest currently on?"* (exactly
@@ -152,7 +153,7 @@ there. On `201`, `TableConfirmModal` (or `/checkout`) does exactly **three write
 
 ## 3. `order_cache_<id>` — the in-browser order record (a self-refreshing cache)
 
-`STORAGE_KEYS.ORDER_CACHE = "order_cache_"` ([`storage-keys.ts:3`](../../../../../fe/src/lib/storage-keys.ts));
+`STORAGE_KEYS.ORDER_CACHE = "order_cache_"` (`storage-keys.ts:3` (dự án gốc: fe/src/lib/storage-keys.ts));
 the full key is the prefix + the order id. It is written in **three** places and read in **two**, and
 it is the single mechanism that lets an order survive a reload or a tab switch.
 
@@ -166,7 +167,7 @@ it is the single mechanism that lets an order survive a reload or a tab switch.
 ```
 
 **The self-refresh loop** — this is the subtle part. `useOrderSSE` doesn't just *read* the cache;
-it **writes the merged order back on every state change** ([`useOrderSSE.ts:41-46`](../../../../../fe/src/hooks/useOrderSSE.ts)):
+it **writes the merged order back on every state change** (`useOrderSSE.ts:41-46` (dự án gốc: fe/src/hooks/useOrderSSE.ts)):
 
 ```
    ┌─────────────────────────────────────────────────────────────────────┐
@@ -192,7 +193,7 @@ persisted. The list iterates **every** `order_cache_*` key, parses each, and sor
         └─ "Xoá lịch sử" removes ALL order_cache_* keys  ([order/page.tsx:41-51])
 ```
 
-> **The cached object is the full `Order`** ([`order.ts:38`](../../../../../fe/src/types/order.ts)):
+> **The cached object is the full `Order`** (`order.ts:38` (dự án gốc: fe/src/types/order.ts)):
 > `id · order_number · status · source · table_name · total_amount · items[]`. The list filters
 > combo headers (`combo_id && !combo_ref_id`) before counting, and derives progress from
 > `Σ qty_served / Σ quantity` ([`order/page.tsx:91-94`](../../../../../fe/src/app/(shop)/order/page.tsx)).
@@ -218,8 +219,8 @@ shareable / reloadable without the store. It is driven by `useOrderSSE(params.id
 ```
 
 > The SSE channel relays Redis pub/sub **only** and never emits an initial snapshot, so the page must
-> seed itself via REST first — that's why phase ② exists ([`useOrderSSE.ts:51-62`](../../../../../fe/src/hooks/useOrderSSE.ts)).
-> Reconnect is exponential backoff, max 5 attempts, banner after 3 ([`useOrderSSE.ts:16-21`](../../../../../fe/src/hooks/useOrderSSE.ts)).
+> seed itself via REST first — that's why phase ② exists (`useOrderSSE.ts:51-62` (dự án gốc: fe/src/hooks/useOrderSSE.ts)).
+> Reconnect is exponential backoff, max 5 attempts, banner after 3 (`useOrderSSE.ts:16-21` (dự án gốc: fe/src/hooks/useOrderSSE.ts)).
 
 This page is also the **fork point** back into the other pages:
 
@@ -281,7 +282,7 @@ because the two customer pages watch the **same order over two different channel
    └──────────────────────────────────────────┴──────────────────────────────────────────┘
 ```
 
-What the monitor channel carries that the detail page never needs ([`useOrderMonitorSSE.ts:63-89`](../../../../../fe/src/hooks/useOrderMonitorSSE.ts)):
+What the monitor channel carries that the detail page never needs (`useOrderMonitorSSE.ts:63-89` (dự án gốc: fe/src/hooks/useOrderMonitorSSE.ts)):
 
 | SSE `data.type` | Computes | Renders |
 |---|---|---|
@@ -290,9 +291,9 @@ What the monitor channel carries that the detail page never needs ([`useOrderMon
 | `tables.status` | per-table `serving/waiting/empty` | floor queue |
 | `items_added` / `item_updated` / `item_cancelled` | `itemsChangedAt = Date.now()` ⇒ refetch `GET /orders/:id` | OrderDetailCard |
 
-> See [customer_tracking.md](../customer_tracking/customer_tracking.md) for the full zone breakdown.
+> See customer_tracking.md (dự án gốc: customer_tracking/customer_tracking.md) for the full zone breakdown.
 > A `401`/`403` here means the **guest JWT (2 h) expired** and is treated as permanent — the retry
-> loop stops and the page shows "quét lại mã QR" ([`useOrderMonitorSSE.ts:54-58`](../../../../../fe/src/hooks/useOrderMonitorSSE.ts)).
+> loop stops and the page shows "quét lại mã QR" (`useOrderMonitorSSE.ts:54-58` (dự án gốc: fe/src/hooks/useOrderMonitorSSE.ts)).
 
 ---
 
@@ -317,9 +318,9 @@ about the same order purely from the **BE**, keyed off the same `order.id`:
 
 | Step | Admin mechanism | File |
 |---|---|---|
-| 1. order is born | `/sse/admin` pushes a lightweight `new_order` ping (`order_id`, `order_number`, `table_id`) | [`useAdminSSE.ts:30-48`](../../../../../fe/src/hooks/useAdminSSE.ts) |
-| 2. hydrate | admin `GET /orders/:id`, inserts into the `['orders','live']` TanStack cache (only if `ACTIVE`) | [`useOverviewWS.ts:22-31`](../../../../../fe/src/hooks/useOverviewWS.ts) |
-| 3. live patches | orders **WS** relays `item_progress` / `order_status_changed` / `order_updated`; non-active statuses dropped | [`useOverviewWS.ts:33-66`](../../../../../fe/src/hooks/useOverviewWS.ts) |
+| 1. order is born | `/sse/admin` pushes a lightweight `new_order` ping (`order_id`, `order_number`, `table_id`) | `useAdminSSE.ts:30-48` (dự án gốc: fe/src/hooks/useAdminSSE.ts) |
+| 2. hydrate | admin `GET /orders/:id`, inserts into the `['orders','live']` TanStack cache (only if `ACTIVE`) | `useOverviewWS.ts:22-31` (dự án gốc: fe/src/hooks/useOverviewWS.ts) |
+| 3. live patches | orders **WS** relays `item_progress` / `order_status_changed` / `order_updated`; non-active statuses dropped | `useOverviewWS.ts:33-66` (dự án gốc: fe/src/hooks/useOverviewWS.ts) |
 
 **Two consequences worth remembering:**
 - The customer's `order_cache_<id>` and the admin's `['orders','live']` entry are **independent
@@ -412,8 +413,8 @@ A cancel is the most instructive cross-page event because **who** cancels change
   ([`order/[id]/page.tsx:66`](../../../../../fe/src/app/(shop)/order/[id]/page.tsx)).
 - ⚠️ **DRIFT (owner decision 2026-06-12):** the target rule is *"customer can cancel any time until
   payment completes"*, but the code still enforces `progress < 30% && {confirmed, preparing}`. The FE
-  here mirrors the **old** rule — see [LOGIC_FE §5 DRIFT](../../../07_business_logic/LOGIC_FE.md) /
-  [LOGIC_BE §3](../../../07_business_logic/LOGIC_BE.md#3--cancel-rule--drift).
+  here mirrors the **old** rule — see LOGIC_FE §5 DRIFT (dự án gốc: 07_business_logic/LOGIC_FE.md) /
+  LOGIC_BE §3 (dự án gốc: 07_business_logic/LOGIC_BE.md#3--cancel-rule--drift).
 
 ### 8b. Admin cancels — the customer finds out over SSE
 
@@ -532,7 +533,7 @@ exactly what each page recovers after a hard refresh:
 | `items` | ░ cart store (memory) | ❌ (not in `partialize`) | ❌ | `/menu` only, pre-POST (cleared on POST) |
 | `tableId`, `tableName` | ░ cart store (memory) | ❌ (not in `partialize`) | ❌ | survive `clearCart()` in-session → enable `/menu` order-recovery; lost on F5 |
 | `order_cache_<id>` | ▓ localStorage | ✅ | ❌ (per-browser) | `/order/<id>` + `/order` list |
-| `activeOrderId` | ▓ cart store, persisted | ✅ ([`cart.ts:153`](../../../../../fe/src/store/cart.ts)) | ❌ | `/tracking` pointer **+** `/menu` recovery banner |
+| `activeOrderId` | ▓ cart store, persisted | ✅ (`cart.ts:153` (dự án gốc: fe/src/store/cart.ts)) | ❌ | `/tracking` pointer **+** `/menu` recovery banner |
 | order id | the URL | ✅ | ✅ (shareable link) | `/order/<id>`, `?add_to_order=` |
 | **the order row** | **BE (MySQL + Redis)** | ✅ | ✅ | **every page, every device** |
 
@@ -550,12 +551,12 @@ exactly what each page recovers after a hard refresh:
 | On-page (cross-component) flow | [customer_menu_crosscomponent_dataflow.md](customer_menu_crosscomponent_dataflow.md) |
 | Page zones / wireframe / object model | [customer_menu.md](customer_menu.md) |
 | BE endpoints, auth, caching, errors | [customer_menu_be.md](customer_menu_be.md) |
-| Tracking page zones + monitor SSE | [../customer_tracking/customer_tracking.md](../customer_tracking/customer_tracking.md) |
+| Tracking page zones + monitor SSE | ../customer_tracking/customer_tracking.md (dự án gốc: customer_tracking/customer_tracking.md) |
 | Full lunch-rush narrative | [SCENARIO_LUNCH_RUSH.md](SCENARIO_LUNCH_RUSH.md) |
-| `Order` / `OrderItem` / status types | [`fe/src/types/order.ts`](../../../../../fe/src/types/order.ts) |
-| Cart store (fields, persist, `partialize`) | [`fe/src/store/cart.ts`](../../../../../fe/src/store/cart.ts) |
-| localStorage key constants | [`fe/src/lib/storage-keys.ts`](../../../../../fe/src/lib/storage-keys.ts) |
-| Customer order SSE | [`fe/src/hooks/useOrderSSE.ts`](../../../../../fe/src/hooks/useOrderSSE.ts) |
-| Customer monitor (queue/floor) SSE | [`fe/src/hooks/useOrderMonitorSSE.ts`](../../../../../fe/src/hooks/useOrderMonitorSSE.ts) |
-| Admin live orders WS + new-order SSE | [`fe/src/hooks/useOverviewWS.ts`](../../../../../fe/src/hooks/useOverviewWS.ts) · [`useAdminSSE.ts`](../../../../../fe/src/hooks/useAdminSSE.ts) |
-| Realtime config (channels, reconnect) | [../../../02_spec/BUSINESS_RULES.md §6](../../../02_spec/BUSINESS_RULES.md#6-realtime-config) |
+| `Order` / `OrderItem` / status types | fe/src/types/order.ts (dự án gốc: fe/src/types/order.ts) |
+| Cart store (fields, persist, `partialize`) | fe/src/store/cart.ts (dự án gốc: fe/src/store/cart.ts) |
+| localStorage key constants | fe/src/lib/storage-keys.ts (dự án gốc: fe/src/lib/storage-keys.ts) |
+| Customer order SSE | fe/src/hooks/useOrderSSE.ts (dự án gốc: fe/src/hooks/useOrderSSE.ts) |
+| Customer monitor (queue/floor) SSE | fe/src/hooks/useOrderMonitorSSE.ts (dự án gốc: fe/src/hooks/useOrderMonitorSSE.ts) |
+| Admin live orders WS + new-order SSE | fe/src/hooks/useOverviewWS.ts (dự án gốc: fe/src/hooks/useOverviewWS.ts) · `useAdminSSE.ts` (dự án gốc: fe/src/hooks/useAdminSSE.ts) |
+| Realtime config (channels, reconnect) | ../../../02_spec/BUSINESS_RULES.md §6 (dự án gốc: 02_spec/BUSINESS_RULES.md#6-realtime-config) |

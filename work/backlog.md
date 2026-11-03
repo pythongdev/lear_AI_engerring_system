@@ -150,6 +150,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-287 **Gate 1b đỏ vì 109 đường chết có sẵn** — L1, 2026-11-03; Codex bỏ dấu đường dẫn ở 19 bản thiết kế và thêm năm dòng ignore có chủ, Claude duyệt; Gate 1b xanh · [chi tiết](#t-287)
 - [x] T-285 **Ghi lời báo nghỉ và ba ứng viên model** — L1, chủ repo trả lời 2026-11-03; đóng `U-116`, hẹp `U-112`; lời mới thay vế nghỉ đột xuất của `C30` · [chi tiết](#t-285)
 - [x] T-284 **Sổ CHAT còn Acceptance trái ADR-137, kế hoạch và luật dữ liệu cá nhân** — L1, 2026-11-03; Codex sửa 17 chỗ của `work/backlog_CHAT.md` theo phiếu, Claude duyệt; giữ 13/14 lỗi của đợt kiểm · [chi tiết](#t-284)
 - [x] CHAT-02 **Thiết kế nhánh chat không model** — L3, chủ repo duyệt ADR-137 2026-11-01; lượt nhánh model làm sau khi có `U-112` · [mô tả](backlog_CHAT.md#chat-02)
@@ -3880,3 +3881,17 @@ Acceptance ghi trước: A1 — lời nguyên văn và các vế đã chọn n�
 
 [↑ đầu file](#top)
 
+<a id="t-287"></a>
+### T-287 — Gate 1b đỏ vì 109 đường chết có sẵn
+
+Chủ repo yêu cầu 2026-11-03: *"mở task yêu cầu codex làm"*, sau khi gate chặn mọi lượt vì Gate 1b. Đo cùng ngày (`./scripts/check-links.sh`): 109 đường chết, ba nhóm. **Nhóm 1** — `docs/decisions.md` (ADR-135) và `quality/invariants.md` (`I-037`) trỏ hai file mà các lát sau của ADR-135 sẽ tạo (Lát A là `T-281`). **Nhóm 2** — `docs/private/video-paris-scroll/website/README.md` (T-275) nêu `/tmp/paris-quality-review.json`, bằng chứng kiểm trên máy chứ không phải con trỏ. **Nhóm 3** — khoảng 104 đường trong các bản thiết kế dưới `docs/product/4-fe/thiet_ke/` (vào repo ở `210b212`), trỏ cấu trúc thư mục của dự án gốc như `fe/src/store/cart.ts`, `02_spec/BUSINESS_RULES.md`, không có ở repo này.
+
+Quyết định: nhóm 1 và 2 ghi vào `scripts/check-links.ignore` kèm chủ ngoại lệ (Claude, theo luật của file ấy). Nhóm 3: chủ repo chọn *"Bỏ dấu đường dẫn"* trong câu hỏi có sẵn phương án — đổi đúng các đường chết từ link hay dấu nháy ngược thành chữ thường, thêm một dòng đầu file nói đó là cấu trúc của dự án gốc; không đổi chữ khác, không loại thư mục khỏi gate. Mức **L1**: chỉ tài liệu và file ignore.
+
+Acceptance ghi trước khi giao: A1 — Gate 1b PASS. A2 — chỉ đổi file dưới `docs/product/4-fe/thiet_ke/` và `scripts/check-links.ignore`. A3 — ở nhóm 3 chỉ đổi đường đang chết; đường mở được giữ nguyên; `git diff --word-diff` không có chữ nào khác đổi ngoài dấu và dòng đầu file. A4 — mỗi dòng ignore có chủ (`T-281`/ADR-135, `T-275`). A5 — `./scripts/gate.sh` không có cổng đỏ.
+
+Bàn giao 2026-11-03: **Codex** thực hiện (worktree `../lean_wt/T-287`, nhánh `codex/T-287`, nền `404a419`, model `gpt-6-astra`), **Claude** duyệt; chưa có người duyệt thứ ba. File đổi: 19 file dưới `docs/product/4-fe/thiet_ke/` và `scripts/check-links.ignore` (Codex), `work/backlog.md` (Claude). Phiếu, báo cáo, patch ở `../lean_wt/chat-review/T-287-*`.
+
+Bằng chứng: A1 — Claude chạy `./scripts/gate.sh` trong worktree: Gate 1b PASS, `PASS gate không cổng nào đỏ`. A2 — `git status --short` worktree: 19 file thiết kế và file ignore. A3 — `git diff --word-diff=porcelain`: 190 mẩu xoá, 209 mẩu thêm, toàn là dấu link, dấu nháy ngược, chữ *(dự án gốc: …)* và dòng đầu file; Claude dò mọi đích link bị gỡ, không đích nào mở được ở repo này. A4 — năm dòng ignore đúng phiếu, chủ `T-281`/ADR-135 và `T-275`. A5 — gate cây chính sau `git apply`: xem dòng Done.
+
+[↑ đầu file](#top)

@@ -1,4 +1,5 @@
 # Combo Detail — `/menu/combo/:id` · Cross-Page Data Flow
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **TL;DR:** ✅ implemented · this page is **read-only on the BE** and its only handoff is **one
 > combo cart item written to the cart store**. That item then rides the same cart→order pipeline as
@@ -6,13 +7,13 @@
 > `partialize` keeps only `orderNote` + `activeOrderId`, so a combo added here **does not survive an
 > F5** and is lost if the browser is reloaded before submitting on `/menu`.
 > Sources: `fe/src/app/(shop)/menu/combo/[id]/page.tsx:58-71` (handoff) ·
-> `fe/src/store/cart.ts` (store + `partialize:153`) · `fe/src/lib/storage-keys.ts:6` ·
-> `fe/src/lib/order-payload.ts` (downstream consumer) · `fe/src/types/cart.ts`.
+> fe/src/store/cart.ts (store + `partialize:153`) · `fe/src/lib/storage-keys.ts:6` ·
+> fe/src/lib/order-payload.ts (downstream consumer) · fe/src/types/cart.ts.
 >
 > Siblings → [page](customer_combo_detail.md) · [BE](customer_combo_detail_be.md) ·
 > [loading](customer_combo_detail_loading.md) · [scenario](SCENARIO_COMBO_ADD.md) ·
 > the fuller cart→order story it links into →
-> [../customer_menu/customer_menu_crosspage_dataflow.md](../customer_menu/customer_menu_crosspage_dataflow.md)
+> ../customer_menu/customer_menu_crosspage_dataflow.md (dự án gốc: customer_menu/customer_menu_crosspage_dataflow.md)
 
 ---
 
@@ -41,7 +42,7 @@ This page never touches THE WIRE. Its entire cross-page footprint is the single 
 None. This page renders against the **combo catalog** (static-ish, 5-min cached), not against any
 order/entity status. It has no SSE/WS, no order id, no live state. The order status lifecycle begins
 only **after** the cart is submitted downstream — see
-[../customer_menu/customer_menu_crosspage_dataflow.md §1](../customer_menu/customer_menu_crosspage_dataflow.md).
+../customer_menu/customer_menu_crosspage_dataflow.md §1 (dự án gốc: customer_menu/customer_menu_crosspage_dataflow.md).
 
 ## 2. The moment of handoff — what this page leaves behind
 
@@ -68,15 +69,15 @@ The cart item is consumed on `/menu`, never here:
   where `combo_items` overrides are the **non-canh** sub-items (`order-payload.ts:34-36`) — canh is
   stripped because canh lives as standalone cart items, never inside a combo.
 - The BE then **expands the combo** at write time (header line `unit_price=0` + priced sub-item
-  rows). Rule home: [../../02_spec/BUSINESS_RULES.md §2.5 Combo Expansion](../../02_spec/BUSINESS_RULES.md) ·
-  pipeline: [../../02_spec/object/OBJECT_MODEL_ORDER.md](../../02_spec/object/OBJECT_MODEL_ORDER.md).
+  rows). Rule home: ../../02_spec/BUSINESS_RULES.md §2.5 Combo Expansion (dự án gốc: 02_spec/BUSINESS_RULES.md) ·
+  pipeline: ../../02_spec/object/OBJECT_MODEL_ORDER.md (dự án gốc: 02_spec/object/OBJECT_MODEL_ORDER.md).
   Do not re-read those rules here — this page only *produces the input* to them.
 
 ## 4. Downstream surface — `/checkout` (online path)
 
 Same cart, same `buildOrderItemsPayload` — the online checkout form reuses the identical builder, so
 a combo added here is submittable through either path with no shape difference. Detail lives in
-[../customer_menu/customer_menu_crosspage_dataflow.md](../customer_menu/customer_menu_crosspage_dataflow.md).
+../customer_menu/customer_menu_crosspage_dataflow.md (dự án gốc: customer_menu/customer_menu_crosspage_dataflow.md).
 
 ## 5. Reload (F5) behavior on this page
 
@@ -101,8 +102,8 @@ a combo added here is submittable through either path with no shape difference. 
 - Storage key: `fe/src/lib/storage-keys.ts:6` (`CART_CONFIG = 'cart-config-v3'`)
 - Cart→order conversion: `fe/src/lib/order-payload.ts:27-58`
 - Cart item shape: `fe/src/types/cart.ts:11-21`
-- Combo expansion rule (downstream, not restated): `../../02_spec/BUSINESS_RULES.md` §2.5 ·
-  `../../02_spec/object/OBJECT_MODEL_ORDER.md`
+- Combo expansion rule (downstream, not restated): ../../02_spec/BUSINESS_RULES.md §2.5 ·
+  ../../02_spec/object/OBJECT_MODEL_ORDER.md
 
 > ⚠️ **Drift note:** the storage key constant is named `CART_CONFIG = 'cart-config-v3'`
 > (`storage-keys.ts:6`) while the Zustand persist `version` is `5` (`cart.ts:129`). The `v3` in the

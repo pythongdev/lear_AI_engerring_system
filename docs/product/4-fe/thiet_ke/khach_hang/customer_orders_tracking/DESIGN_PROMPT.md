@@ -1,4 +1,5 @@
 # Design Prompt — Customer Orders & Tracking Page (`/orders`)
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > Paste the block below into Claude (design / artifact mode). It **merges two real pages** —
 > `/tracking` (live monitoring of your active order + whole-floor queue) and `/order` (your order
@@ -106,13 +107,13 @@ Design a **mobile-first "My Orders & Live Tracking" screen** for a Vietnamese b�
 This merged prompt is assembled from the two real pages — follow these for any ambiguity:
 
 - **Tracking half** (active order banner · per-dish progress · whole-floor queue · live stream):
-  [`../customer_tracking/customer_tracking.md`](../customer_tracking/customer_tracking.md) ·
-  real render → [`../customer_tracking/COMPARISON_VISUAL_MOCKUP_VI.md`](../customer_tracking/COMPARISON_VISUAL_MOCKUP_VI.md) ·
-  BE surface → [`../customer_tracking/customer_tracking_be.md`](../customer_tracking/customer_tracking_be.md)
+  ../customer_tracking/customer_tracking.md (dự án gốc: customer_tracking/customer_tracking.md) ·
+  real render → ../customer_tracking/COMPARISON_VISUAL_MOCKUP_VI.md (dự án gốc: customer_tracking/COMPARISON_VISUAL_MOCKUP_VI.md) ·
+  BE surface → ../customer_tracking/customer_tracking_be.md (dự án gốc: customer_tracking/customer_tracking_be.md)
 - **Order-list half** (history cards · 3-card detail · cancel rules):
-  [`../customer_order_list/customer_order_list.md`](../customer_order_list/customer_order_list.md) ·
-  real render → [`../customer_order_list/COMPARISON_VISUAL_MOCKUP_VI.md`](../customer_order_list/COMPARISON_VISUAL_MOCKUP_VI.md) ·
-  BE surface → [`../customer_order_list/customer_order_list_be.md`](../customer_order_list/customer_order_list_be.md)
+  ../customer_order_list/customer_order_list.md (dự án gốc: customer_order_list/customer_order_list.md) ·
+  real render → ../customer_order_list/COMPARISON_VISUAL_MOCKUP_VI.md (dự án gốc: customer_order_list/COMPARISON_VISUAL_MOCKUP_VI.md) ·
+  BE surface → ../customer_order_list/customer_order_list_be.md (dự án gốc: customer_order_list/customer_order_list_be.md)
 
 > ⚠️ **Known live-code gaps to keep in mind (don't design around them as if fixed):** on `/tracking`
 > the status badge only advances on item changes (the `order.status` SSE case never matches), and

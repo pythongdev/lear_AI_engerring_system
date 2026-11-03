@@ -1,10 +1,11 @@
 # Customer Profile — `/profile`
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **TL;DR:** ✅ FE implemented · ⚠️ backend missing — both endpoints (`GET /customer/profile` and
 > `PUT /customer/profile`) return Gin's default 404; the page always loads in "new profile" (create)
 > mode and Save can never succeed today. This is FE-only groundwork for the 🔮 PLANNED online
 > customer account (order from home / pickup / delivery).
-> Sources traced: `fe/src/app/(shop)/profile/page.tsx` · `fe/src/hooks/useCustomerProfile.ts` · all
+> Sources traced: `fe/src/app/(shop)/profile/page.tsx` · fe/src/hooks/useCustomerProfile.ts · all
 > five `profile/components/` files.
 > BE view (missing endpoint reality, full trace) → [customer_profile_be.md](customer_profile_be.md)
 > Bugs → [PROFILE_BUGS.md](PROFILE_BUGS.md)
@@ -89,17 +90,17 @@
 ## Business Logic Used
 
 - Profile fetch/update hooks (query key `['customer','profile']`, stale 5 min, no retry on 401/404)
-  → [`../../../07_business_logic/LOGIC_FE.md`](../../../07_business_logic/LOGIC_FE.md)
+  → ../../../07_business_logic/LOGIC_FE.md (dự án gốc: 07_business_logic/LOGIC_FE.md)
 - Customer role isolation (never part of staff hierarchy, no RBAC elevation)
-  → [`../../../02_spec/BUSINESS_RULES.md §1 RBAC`](../../../02_spec/BUSINESS_RULES.md#1-rbac-role-hierarchy)
+  → `../../../02_spec/BUSINESS_RULES.md §1 RBAC` (dự án gốc: 02_spec/BUSINESS_RULES.md#1-rbac-role-hierarchy)
 - 🔮 PLANNED online customer account (login from home, pickup/delivery order flow) extends this page
-  → [`../../../02_spec/BUSINESS_RULES.md §5 JWT / Auth Rules`](../../../02_spec/BUSINESS_RULES.md#5-jwt--auth-rules)
+  → `../../../02_spec/BUSINESS_RULES.md §5 JWT / Auth Rules` (dự án gốc: 02_spec/BUSINESS_RULES.md#5-jwt--auth-rules)
 
 ---
 
 ## Object Model — Customer Profile Page (FE shapes only)
 
-> Traced from `fe/src/hooks/useCustomerProfile.ts` and `fe/src/app/(shop)/profile/` on branch
+> Traced from fe/src/hooks/useCustomerProfile.ts and `fe/src/app/(shop)/profile/` on branch
 > `experience_claude.md_system_1`. **This page owns only the `CustomerProfile` and
 > `UpdateProfileForm` FE shapes.** No BE handler, service, repo, or DB column exists today —
 > see [customer_profile_be.md](customer_profile_be.md) for the full missing-endpoint trace.

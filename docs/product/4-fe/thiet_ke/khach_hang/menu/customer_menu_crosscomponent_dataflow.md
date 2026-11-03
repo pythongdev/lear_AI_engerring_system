@@ -1,7 +1,8 @@
 # Customer Menu — Cross-Component Data Flow (the 11:40 order, in depth)
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **What this is:** a deep zoom on **one beat** of the lunch rush —
-> *[SCENARIO_LUNCH_RUSH.md](../../../02_spec/object/SCENARIO_LUNCH_RUSH.md) → "11:40 — 1 guest sits at Bàn 01"* —
+> *SCENARIO_LUNCH_RUSH.md (dự án gốc: 02_spec/object/SCENARIO_LUNCH_RUSH.md) → "11:40 — 1 guest sits at Bàn 01"* —
 > told from the **`/menu` page's point of view**. It answers one question:
 > **how do the widgets on this single page share the data for this order, without prop-drilling?**
 >
@@ -11,9 +12,9 @@
 > - The scenario's §A–§D cover the same flow more briefly; this file is the long version of **§A**.
 >
 > Traced from source on branch `experience_claude.md_system_1_test_iphon2_change_code`:
-> [`fe/src/store/cart.ts`](../../../../../fe/src/store/cart.ts) ·
-> [`fe/src/lib/order-payload.ts`](../../../../../fe/src/lib/order-payload.ts) ·
-> [`fe/src/lib/storage-keys.ts`](../../../../../fe/src/lib/storage-keys.ts).
+> fe/src/store/cart.ts (dự án gốc: fe/src/store/cart.ts) ·
+> fe/src/lib/order-payload.ts (dự án gốc: fe/src/lib/order-payload.ts) ·
+> fe/src/lib/storage-keys.ts (dự án gốc: fe/src/lib/storage-keys.ts).
 
 ---
 
@@ -88,10 +89,10 @@ store. That is the whole answer to "how is data managed cross-component" — the
 
 ## 2. The single source: one Zustand store, a module singleton
 
-`useCartStore` ([`cart.ts:40`](../../../../../fe/src/store/cart.ts)) is created **once** at module load
+`useCartStore` (`cart.ts:40` (dự án gốc: fe/src/store/cart.ts)) is created **once** at module load
 (`create<CartState>()(...)`). Every component that calls `useCartStore(...)` subscribes to that **same**
-instance — there is no provider, no context, no prop tree. This is the project's [State Management Layer 2
-rule](../../../04_fe/STATE_MANAGEMENT.md): **client state → Zustand, in memory.**
+instance — there is no provider, no context, no prop tree. This is the project's State Management Layer 2
+rule (dự án gốc: 04_fe/STATE_MANAGEMENT.md): **client state → Zustand, in memory.**
 
 ```
                   ❌ what we DON'T do            ✅ what we DO do
@@ -134,7 +135,7 @@ interface CartState {
 ### 2.2 Why selectors are the key to "components never disagree"
 
 `total()` and `itemCount()` are **not stored numbers** — they are computed on read from `items`
-([`cart.ts:124-125`](../../../../../fe/src/store/cart.ts)):
+(`cart.ts:124-125` (dự án gốc: fe/src/store/cart.ts)):
 
 ```ts
 total:     () => get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
@@ -177,11 +178,11 @@ setTableId(<uuid>)     ──▶ useCartStore ──▶ (decides the checkout br
 ### Step 2 — Add the combo (the one optimistic write in the app)
 
 Tapping `[+]` on Suất Giò in `ComboSection` calls `addItem()` with a `CartItem` of `type: 'combo'`.
-`addItem` ([`cart.ts:50`](../../../../../fe/src/store/cart.ts)) **dedups by `id`**: same id → bump
+`addItem` (`cart.ts:50` (dự án gốc: fe/src/store/cart.ts)) **dedups by `id`**: same id → bump
 `quantity`, new id → append. The combo's cart id is `combo_<id>` (one combo = one line).
 
 This is **instant** — no network wait. It is the *only* optimistic update in the app
-([scenario §A](../../../02_spec/object/SCENARIO_LUNCH_RUSH.md), LOADING_PATTERNS §Optimistic).
+(scenario §A (dự án gốc: 02_spec/object/SCENARIO_LUNCH_RUSH.md), LOADING_PATTERNS §Optimistic).
 
 ```
   STORE AFTER STEP 2-3  (combo added, nhân chosen)
@@ -209,7 +210,7 @@ modelled as a ₫0 topping (the TOP epic; see [customer_menu.md §5](customer_me
 ### Step 4 — Canh có rau is its **own** cart row (not inside the combo)
 
 The guest sets the canh via `setCanhQty(productId, rauTopping, 'rau', 1)`
-([`cart.ts:97`](../../../../../fe/src/store/cart.ts)). This upserts a **standalone** line with a stable id:
+(`cart.ts:97` (dự án gốc: fe/src/store/cart.ts)). This upserts a **standalone** line with a stable id:
 
 | Choice | Cart id (`canhCartId`) | `toppings` |
 |---|---|---|
@@ -279,7 +280,7 @@ This is the [customer_menu.md Key Interaction](customer_menu.md#key-interactions
 ### Step 8 — Cart → payload → POST (the one builder)
 
 `TableConfirmModal` does **not** build `items[]` by hand. It calls the single builder
-`buildOrderItemsPayload(cart.items)` ([`order-payload.ts:27`](../../../../../fe/src/lib/order-payload.ts)).
+`buildOrderItemsPayload(cart.items)` (`order-payload.ts:27` (dự án gốc: fe/src/lib/order-payload.ts)).
 For our two cart lines it produces (traced from the code):
 
 ```jsonc
@@ -293,28 +294,28 @@ For our two cart lines it produces (traced from the code):
 ]
 ```
 
-The three transforms the builder performs, all visible in [`order-payload.ts`](../../../../../fe/src/lib/order-payload.ts):
+The three transforms the builder performs, all visible in `order-payload.ts` (dự án gốc: fe/src/lib/order-payload.ts):
 
 1. **Combo → header + overrides.** A `type:'combo'` line becomes `product_id: null` + `combo_id` +
-   `combo_items` overrides ([line 31–45](../../../../../fe/src/lib/order-payload.ts)).
+   `combo_items` overrides (line 31–45 (dự án gốc: fe/src/lib/order-payload.ts)).
 2. **Canh stripped from the combo.** `isSoupName()` filters canh out of the overrides
-   ([line 13, 35](../../../../../fe/src/lib/order-payload.ts)) — it travels only as its standalone row.
+   (line 13, 35 (dự án gốc: fe/src/lib/order-payload.ts)) — it travels only as its standalone row.
    *(The BE treats supplied `combo_items` as the **complete** sub-item list, so omitting canh means the BE
    never re-expands it.)*
 3. **Toppings flattened to ids.** `item.toppings.map(t => t.id)` — the combo's nhân is applied to every
    non-canh sub-item; the standalone canh carries its own `Rau mùi tàu`
-   ([line 36, 52](../../../../../fe/src/lib/order-payload.ts)).
+   (line 36, 52 (dự án gốc: fe/src/lib/order-payload.ts)).
 
 > **Why one builder matters:** the same `buildOrderItemsPayload()` is used by the table-confirm modal,
 > online checkout, and add-to-order — so all three produce byte-identical payloads **and** match the
 > "Tổng số món" preview exactly. Building `items[]` inline in a page is forbidden (fe/CLAUDE.md).
 > What happens to this payload server-side (combo explodes into a ₫0 header + priced children, `total_amount`
-> derived) is [customer_menu_be.md](customer_menu_be.md) / [scenario §② ](../../../02_spec/object/SCENARIO_LUNCH_RUSH.md).
+> derived) is [customer_menu_be.md](customer_menu_be.md) / scenario §②  (dự án gốc: 02_spec/object/SCENARIO_LUNCH_RUSH.md).
 
 ### Step 9 — Handoff and forget
 
 On `201`, the page:
-1. `clearCart()` ([`cart.ts:89`](../../../../../fe/src/store/cart.ts)) — empties only the **draft**
+1. `clearCart()` (`cart.ts:89` (dự án gốc: fe/src/store/cart.ts)) — empties only the **draft**
    (`items`, `paymentMethod`, `orderNote`) and **keeps the identity** (`tableId`, `tableName`,
    `activeOrderId`) so the order stays recoverable. **(Overrides the old Invariant 5 — owner-approved.)**
 2. `setActiveOrderId(<id>)` — points the cleared cart at the new order so other pages (and the `/menu`
@@ -353,7 +354,7 @@ This file is about cross-**component** (many widgets, one page). The scenario al
 | **Cross-component** (`/menu` widgets) | `useCartStore` singleton + selectors | n/a (in-memory) | tableId/tableName, items, totals, canh gate |
 | **Cross-page** (`/menu` → `/order/:id`) | URL param + `order_cache_<id>` + `activeOrderId` | ✅ (localStorage) | only the **order id** travels; cart is gone |
 
-The store itself only **persists** two fields (`partialize` at [`cart.ts:153`](../../../../../fe/src/store/cart.ts)):
+The store itself only **persists** two fields (`partialize` at `cart.ts:153` (dự án gốc: fe/src/store/cart.ts)):
 
 ```ts
 partialize: (s) => ({ orderNote: s.orderNote, activeOrderId: s.activeOrderId })
@@ -368,7 +369,7 @@ flushes any legacy canh counter so old persisted carts can't reintroduce stale c
 ## 6. Gotchas worth remembering
 
 - **`items` is never persisted.** Reload during ordering = empty cart. Only `orderNote` + `activeOrderId`
-  survive ([`cart.ts:153`](../../../../../fe/src/store/cart.ts)).
+  survive (`cart.ts:153` (dự án gốc: fe/src/store/cart.ts)).
 - **No `filling` field.** Nhân is a ₫0 topping inside `CartItem.toppings[]`, not a column. (Migration 016
   added one; 017 dropped it.)
 - **Canh is identified by id prefix, not a type flag.** `canh_*` ids drive both the standalone-row logic
@@ -378,7 +379,7 @@ flushes any legacy canh counter so old persisted carts can't reintroduce stale c
 - **One builder, three callers.** Never build `items[]` in a page — always `buildOrderItemsPayload()`,
   or the saved order will drift from the on-screen preview.
 - **`addItem` dedups by `id`.** Same logical line = same id = quantity bump, not a duplicate row
-  ([`cart.ts:51`](../../../../../fe/src/store/cart.ts)).
+  (`cart.ts:51` (dự án gốc: fe/src/store/cart.ts)).
 
 ---
 
@@ -418,12 +419,12 @@ flushes any legacy canh counter so old persisted carts can't reintroduce stale c
 |---|---|
 | Page zones / wireframe / object model | [customer_menu.md](customer_menu.md) |
 | BE endpoints, auth, caching, errors | [customer_menu_be.md](customer_menu_be.md) |
-| The full lunch-rush narrative (this beat = 11:40) | [SCENARIO_LUNCH_RUSH.md](../../../02_spec/object/SCENARIO_LUNCH_RUSH.md) |
-| Cart store (fields, actions, persist) | [`fe/src/store/cart.ts`](../../../../../fe/src/store/cart.ts) |
-| Cart → order payload builder | [`fe/src/lib/order-payload.ts`](../../../../../fe/src/lib/order-payload.ts) |
-| State layers (Query / Zustand / useState) | [04_fe/STATE_MANAGEMENT.md](../../../04_fe/STATE_MANAGEMENT.md) |
-| Order payload + cart rules (business) | [07_business_logic/LOGIC_FE.md](../../../07_business_logic/LOGIC_FE.md) |
-| localStorage key constants | [`fe/src/lib/storage-keys.ts`](../../../../../fe/src/lib/storage-keys.ts) |
+| The full lunch-rush narrative (this beat = 11:40) | SCENARIO_LUNCH_RUSH.md (dự án gốc: 02_spec/object/SCENARIO_LUNCH_RUSH.md) |
+| Cart store (fields, actions, persist) | fe/src/store/cart.ts (dự án gốc: fe/src/store/cart.ts) |
+| Cart → order payload builder | fe/src/lib/order-payload.ts (dự án gốc: fe/src/lib/order-payload.ts) |
+| State layers (Query / Zustand / useState) | 04_fe/STATE_MANAGEMENT.md (dự án gốc: 04_fe/STATE_MANAGEMENT.md) |
+| Order payload + cart rules (business) | 07_business_logic/LOGIC_FE.md (dự án gốc: 07_business_logic/LOGIC_FE.md) |
+| localStorage key constants | fe/src/lib/storage-keys.ts (dự án gốc: fe/src/lib/storage-keys.ts) |
 
 ---
 

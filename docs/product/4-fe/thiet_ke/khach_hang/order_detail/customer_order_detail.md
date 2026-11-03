@@ -1,4 +1,5 @@
 # Customer Order Detail — `/order/:id`
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **TL;DR:** ✅ implemented · guest JWT · The richest customer page: live order view over SSE
 > (`useOrderSSE`) with per-dish progress, collapsible combo groups, a per-product summary table
@@ -78,7 +79,7 @@
 
 ## Business Logic Used
 
-- Cancel rules (< 30 % vs target) → [../02_spec/BUSINESS_RULES.md §3 Cancel Rules](../02_spec/BUSINESS_RULES.md#3-cancel-rules)
-- Item status derived from `qty_served` → [../02_spec/BUSINESS_RULES.md §2.4](../02_spec/BUSINESS_RULES.md#24-item-status-derived--no-column)
-- Combo header filtering + grouping → [../07_business_logic/LOGIC_FE.md](../07_business_logic/LOGIC_FE.md) (combo display, SSE hook)
-- SSE auth (Bearer header) + reconnect → [../02_spec/BUSINESS_RULES.md §6 Realtime Config](../02_spec/BUSINESS_RULES.md#6-realtime-config)
+- Cancel rules (< 30 % vs target) → ../02_spec/BUSINESS_RULES.md §3 Cancel Rules (dự án gốc: 02_spec/BUSINESS_RULES.md#3-cancel-rules)
+- Item status derived from `qty_served` → ../02_spec/BUSINESS_RULES.md §2.4 (dự án gốc: 02_spec/BUSINESS_RULES.md#24-item-status-derived--no-column)
+- Combo header filtering + grouping → ../07_business_logic/LOGIC_FE.md (dự án gốc: 07_business_logic/LOGIC_FE.md) (combo display, SSE hook)
+- SSE auth (Bearer header) + reconnect → ../02_spec/BUSINESS_RULES.md §6 Realtime Config (dự án gốc: 02_spec/BUSINESS_RULES.md#6-realtime-config)

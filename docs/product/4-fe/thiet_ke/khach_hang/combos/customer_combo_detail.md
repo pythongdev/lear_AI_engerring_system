@@ -1,4 +1,5 @@
 # Combo Detail — `/menu/combo/:id`
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **TL;DR:** ✅ implemented · guest JWT / open browse · Full-screen combo view: hero image,
 > name/price/description, list of included items ("Gồm có"), quantity stepper, sticky add-to-cart
@@ -52,5 +53,5 @@
 ## Business Logic Used
 
 - Combo expansion at order time (header line `unit_price=0`, sub-items priced) →
-  [../02_spec/BUSINESS_RULES.md §2.5 Combo Expansion](../02_spec/BUSINESS_RULES.md#25-combo-expansion)
-- Combo cart shape + payload overrides → [../07_business_logic/LOGIC_FE.md](../07_business_logic/LOGIC_FE.md) (order payload builder)
+  ../02_spec/BUSINESS_RULES.md §2.5 Combo Expansion (dự án gốc: 02_spec/BUSINESS_RULES.md#25-combo-expansion)
+- Combo cart shape + payload overrides → ../07_business_logic/LOGIC_FE.md (dự án gốc: 07_business_logic/LOGIC_FE.md) (order payload builder)

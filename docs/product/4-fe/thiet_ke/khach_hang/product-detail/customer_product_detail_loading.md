@@ -1,4 +1,5 @@
 # Customer Product Detail — Loading States
+> Đường dẫn chữ thường trong file này là cấu trúc của dự án gốc, không có trong repo này (T-287, 2026-11-03).
 
 > **TL;DR:** ✅ implemented · how `/menu/product/:id` behaves while data is in flight. Two layers:
 > (1) a route-level spinner during navigation (shared `(shop)/loading.tsx`), (2) per-query state
@@ -11,7 +12,7 @@
 > `fe/src/app/(shop)/loading.tsx` ·
 > `fe/src/app/(shop)/menu/product/[id]/page.tsx` ·
 > `fe/src/components/product-detail/ProductDetailSkeleton.tsx` ·
-> `fe/src/hooks/useProductDetail.ts` ·
+> fe/src/hooks/useProductDetail.ts ·
 > `fe/src/components/product-detail/CTAFooter.tsx`
 >
 > Siblings:
@@ -122,7 +123,7 @@ skeleton and content — the skeleton is removed and content mounts synchronousl
 
 ## Hook Semantics · `useProductDetail.ts:1-12`
 
-Source: `../../../../../fe/src/hooks/useProductDetail.ts`
+Source: ../../../../../fe/src/hooks/useProductDetail.ts
 
 ```ts
 export function useProductDetail(id: string) {
