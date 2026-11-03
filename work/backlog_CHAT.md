@@ -206,6 +206,9 @@ tầng 2 ở `fe/src/components/shared/o-chat.tsx`, con trực tiếp của `Khu
 cờ chỉ bật khi bằng `"true"`. Lượt Codex đầu viết xong code và test rồi dừng vì hết hạn mức (tới 18:26), chưa có báo cáo; Claude chạy thử
 `vitest` trong worktree: 28/28 xanh. Việc kế tiếp: Codex làm nốt gate và báo cáo, Claude duyệt.
 
+2026-11-03 17:00, Claude: hạn mức Codex đổi thành hạn tuần, mở lại 2026-11-06 23:04; chủ repo chọn chờ Codex. Script chờ
+`../lean_wt/chat-review/cho-han-muc-chat.sh` resume phiên Codex `01a1a0c6-6a19-72d1-a7eb-ff4f823dd733` rồi chạy phiếu CHAT-12; báo cáo ra cùng thư mục.
+
 [↑ đầu file](#top)
 
 ---
