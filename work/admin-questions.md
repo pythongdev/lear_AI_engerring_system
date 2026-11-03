@@ -212,7 +212,7 @@ bản thứ hai, nhưng không ngăn được việc hai vế kia bị bỏ qua.
 > **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7.
 
 **C30.** Nghỉ có báo trước / nghỉ đột xuất có trừ tiền không?
-> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7. Còn hỏi: Nghỉ có báo trước có trừ tiền không?
+> **Trả lời:** **Đã nhận một phần 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7. Còn hỏi: Nghỉ có báo trước có trừ tiền không? **Có lời 2026-11-03 (chủ repo, T-285)** — `master_plan/shop-facts.md` §8.11 điểm 7; lời ấy thay cả vế nghỉ đột xuất.
 
 **C31.** **Chấm công bằng cách nào**? Nhân viên tự bấm trên máy, hay người đứng quầy điểm danh đầu buổi?
 > **Trả lời:** **ĐÃ VỀ OWNER 2026-09-25 (T-091)** — `master_plan/shop-facts.md` §8.7.

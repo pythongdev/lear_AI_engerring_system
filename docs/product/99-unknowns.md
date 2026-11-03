@@ -167,11 +167,10 @@ trong sáu câu đụng luật quán đã chốt nên không được suy ra.
 <a id="u-112"></a>
 - **U-112** — Trợ lý chat chạy bằng dịch vụ AI bên ngoài (LLM): dùng **nhà cung cấp và model nào**? (Hẹp lại 2026-11-01,
   CHAT-01: chủ repo chọn trần **10 USD/tháng** và **không gửi dữ liệu cá nhân** ra dịch vụ ngoài, xem ADR-136 *Sửa đổi*;
-  câu model chủ repo chọn *"Chưa chọn"*.) Ai trả lời: chủ repo. Chặn gì: mọi bước gọi model của lane `CHAT`.
-<a id="u-116"></a>
-- **U-116** — *"Báo nghỉ"*: ai báo cho ai, báo trước bao lâu, có cần ai duyệt không, và có chạm ca · lương không? Hôm nay
-  chưa có chỗ cất loại nghỉ, câu `C30` ở `work/admin-questions.md` mới có lời một phần. Ai trả lời: chủ quán. Chặn gì:
-  bước báo nghỉ của lane `CHAT`, gồm cả lược đồ của nó; các bước khác không phụ thuộc.
+  câu model chủ repo chọn *"Chưa chọn"*. Hẹp tiếp 2026-11-03, T-285: chủ repo nêu ba ứng viên *"deep seek, chat gpt plus
+  hoặc claude sonet cần kiểm tra thực tế"* và chọn *"Chạy thử qua API cả ba"*; ChatGPT Plus không có API cho backend nên
+  ứng viên thứ hai đọc là OpenAI API — Claude nói rõ trong câu hỏi trước khi chủ repo chọn. Khoá API chưa có.) Ai trả lời:
+  chủ repo, sau khi có số đo của lượt thử ba hãng trên dữ liệu giả. Chặn gì: mọi bước gọi model của lane `CHAT`.
 
 **Ngày 2026-10-31, T-278 mở U-111 — đóng 2026-11-01** sau khi chủ repo trả lời hai lượt liên tiếp. Nguyên văn: *"cho
 đang kí bằng gmail không cần duyệt"* (lượt một, trả lời câu *"Gmail chưa có tài khoản người làm sẽ được xử lý thế
@@ -209,6 +208,12 @@ tay, chủ quán không đứng quầy bị từ chối ở cửa quầy. **U-11
 nợ, giảm giá, đối soát không làm qua chat. **U-117** — *"Giao · đến lấy, không bắt đăng nhập"*: đúng luật đơn web đang có,
 đơn vẫn qua POS duyệt, khách chỉ nói với trợ lý, không nhắn POS. Lời đã vào `master_plan/shop-facts.md` §8.11 và
 **ADR-136** *Sửa đổi*.
+
+**Chủ repo trả lời 2026-11-03 (T-285), một phần bằng lời tự do, phần còn lại chọn trong câu hỏi có sẵn phương án.**
+**U-116** — nguyên văn: *"nhân viên báo cho chủ quán trước ngày. cần dc chủ quán duyệt, cắt lương."* Chọn thêm:
+*"Không trả ngày nghỉ"*, *"Cũng cắt như báo trước"*, *"trước 3 ngày"*, *"Vẫn nhận, ghi đột xuất"*, *"Không có từ chối"*,
+*"Máy chặn tick"*. Lời và phần suy ra đã vào `master_plan/shop-facts.md` §8.11 điểm 7; lời này **thay** vế nghỉ đột xuất
+của `C30` (§8.7). Câu ghi *ai trả lời: chủ quán* nhưng lời là của chủ repo; chưa có xác nhận lời đến từ chủ quán.
 
 **Chủ repo trả lời 2026-11-01 (T-278), trong hội thoại, hai lượt liên tiếp.** Lời đáp đã vào owner
 (`master_plan/shop-facts.md` §8.8 *lượt sáu*) và **ADR-135** điểm 1–2.

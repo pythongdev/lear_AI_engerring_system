@@ -92,7 +92,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 - [ ] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — thêm danh mục của từng món vào `GET /menu` (hợp đồng, truy vấn, handler) rồi trang khách `/dat-mon`, `/ban/[ma]` nhóm món theo danh mục đọc từ API — L2 (đổi hợp đồng API) — mở 2026-10-23 (chủ repo chọn), làm sau T-236 · [chi tiết](#t-237)
 - [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
-- [ ] CHAT-34 **Người được giao việc không có đường nào đọc việc của chính mình** — L2, ADR-137 điểm 2; Codex làm, Claude duyệt, 2026-11-01. Sau đó theo thứ tự `CHAT-04` → `CHAT-12` → `CHAT-13` → `CHAT-14`. Nhánh gọi model chờ `U-112`; báo nghỉ chờ `U-116`. Mô tả: [sổ chat](backlog_CHAT.md#chat-34).
+- [ ] CHAT-34 **Người được giao việc không có đường nào đọc việc của chính mình** — L2, ADR-137 điểm 2; Codex làm, Claude duyệt, 2026-11-01. Sau đó theo thứ tự `CHAT-04` → `CHAT-12` → `CHAT-13` → `CHAT-14`. Nhánh gọi model chờ `U-112`; báo nghỉ có lời 2026-11-03 (`U-116` đóng, T-285), chờ Claude thiết kế vì chạm ô chấm công. Mô tả: [sổ chat](backlog_CHAT.md#chat-34).
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
 [↑ đầu file](#top)
@@ -150,6 +150,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-285 **Ghi lời báo nghỉ và ba ứng viên model** — L1, chủ repo trả lời 2026-11-03; đóng `U-116`, hẹp `U-112`; lời mới thay vế nghỉ đột xuất của `C30` · [chi tiết](#t-285)
 - [x] T-284 **Sổ CHAT còn Acceptance trái ADR-137, kế hoạch và luật dữ liệu cá nhân** — L1, 2026-11-03; Codex sửa 17 chỗ của `work/backlog_CHAT.md` theo phiếu, Claude duyệt; giữ 13/14 lỗi của đợt kiểm · [chi tiết](#t-284)
 - [x] CHAT-02 **Thiết kế nhánh chat không model** — L3, chủ repo duyệt ADR-137 2026-11-01; lượt nhánh model làm sau khi có `U-112` · [mô tả](backlog_CHAT.md#chat-02)
 - [x] CHAT-01 **Thu lời và duyệt ADR-136** — L3, chủ repo duyệt 2026-11-01; đóng `U-113` · `U-114` · `U-115` · `U-117`, hẹp `U-112`; `U-116` còn mở (sửa 2026-11-03, T-284: dòng cũ ghi nhầm `U-113` là hẹp) · [mô tả](backlog_CHAT.md#chat-01)
@@ -3867,3 +3868,15 @@ Bằng chứng: A1 — Claude đọc toàn bộ diff, mỗi sửa đúng chỗ p
 Còn lại: worktree `../lean_wt/T-284` và nhánh `codex/T-284` chờ chủ repo xoá sau commit; `03-ham-gia.md` dòng *Thêm · bỏ một thành phần* chưa sửa; test `CHAT-34` thiếu ca cookie khách.
 
 [↑ đầu file](#top)
+
+<a id="t-285"></a>
+### T-285 — Lời báo nghỉ và ứng viên model chưa vào owner
+
+Chủ repo trả lời 2026-11-03 trong phiên, nguyên văn: *"có thể dung deep seek, chat gpt plus hoặc claude sonet cần kiểm tra thực tế"* (`U-112`) và *"nhân viên báo cho chủ quán trước ngày. cần dc chủ quán duyệt, cắt lương."* (`U-116`), rồi chọn bảy vế trong hai lượt câu hỏi có sẵn phương án do Claude hỏi. Mức **L1**: ghi lời, không đổi code. Claude làm, chưa có người duyệt thứ hai.
+
+Acceptance ghi trước: A1 — lời nguyên văn và các vế đã chọn nằm ở `master_plan/shop-facts.md` §8.11, phần suy ra tách riêng (F-004). A2 — `U-116` chuyển sang *Đã có lời giải*, `U-112` hẹp lại còn ba ứng viên và chờ số đo. A3 — dòng `C30` ở §8.7 và `work/admin-questions.md` trỏ tới lời thay thế. A4 — tham chiếu còn ghi `U-116` là đang mở được sửa, trừ dòng có ngày là lịch sử. A5 — `./scripts/gate.sh` không thêm cổng đỏ mới.
+
+Đã làm: §8.11 điểm 5 thêm ba ứng viên, điểm 7 mới cho báo nghỉ; dòng `C30` §8.7; `C30` ở `work/admin-questions.md`; `docs/product/99-unknowns.md`; dòng *Báo nghỉ* §2 của kế hoạch CHAT; đầu sổ CHAT; dòng `CHAT-34` ở đây. Giữ nguyên vì có ngày: ADR-137 *Status*, dòng Done `CHAT-01`, các dòng *Chờ U-116* trong entry 30…32 (đầu sổ ghi chúng là lịch sử). *Lời đổi luật cũ:* `C30` là lời chủ quán 2026-09-25 rằng nghỉ đột xuất không trừ tiền; chủ repo chọn *"Cũng cắt như báo trước"* sau khi Claude đọc lại lời cũ trong câu hỏi. Chưa có xác nhận từ chủ quán. Còn lại: thiết kế báo nghỉ (vế chặn tick chạm chấm công) là bước Claude, trước `CHAT-30`.
+
+[↑ đầu file](#top)
+

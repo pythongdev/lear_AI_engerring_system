@@ -2087,7 +2087,7 @@ máy — vẫn đúng cả ba chứ?*; chủ quán chọn **"Đúng, cả ba m�
 | C27 | Nguyên văn: “hiện tại chưa có tăng có tối.” Chưa rõ cụm này nói chưa có tăng ca hay chưa có ca tối; chưa chốt cách tính làm thêm. |
 | C28 | Có thưởng lễ Tết. Chưa trả lời vế thưởng ngày đông khách. |
 | C29 | Có tạm ứng; chủ quán duyệt. |
-| C30 | Nguyên văn: “nghỉ có báo trước, nghi đột xuất không trừ tiêng.” Xác nhận nghỉ đột xuất không trừ tiền; chưa rõ vế khấu trừ khi nghỉ có báo trước. |
+| C30 | Nguyên văn: “nghỉ có báo trước, nghi đột xuất không trừ tiêng.” Xác nhận nghỉ đột xuất không trừ tiền; chưa rõ vế khấu trừ khi nghỉ có báo trước. *Thay 2026-11-03 bởi lời chủ repo, §8.11 điểm 7: cả hai loại nghỉ đều không trả lương ngày ấy.* |
 | C31 | Nhân viên tự bấm chấm công trên máy. *Vế người đánh dấu **đã được thay** 2026-09-30 bởi lời đóng `U-069`: chủ quán tick hết, nhân viên không bấm — đọc mục bổ sung dưới.* |
 | C32 | Đi muộn không bị trừ tiền. Chưa nêu ngưỡng phút để ghi nhận đi muộn. |
 | C33 | Trả lương theo ngày, theo tuần. Chưa nêu mốc trả cụ thể. |
@@ -2420,8 +2420,19 @@ entry `T-283`.
 3. Việc **chạm tiền** (thu, huỷ, hoàn, ghi nợ, giảm giá, đối soát) **không** làm qua chat; chat chỉ dẫn sang màn tay.
 4. Khách đặt qua chat: **chỉ giao · đến lấy, không bắt đăng nhập**; đơn vẫn qua POS duyệt (§6.2); khách chỉ nói với trợ lý.
 5. Không gửi dữ liệu cá nhân (tên, số điện thoại, địa chỉ khách, tên nhân viên) ra dịch vụ AI ngoài; trần chi phí model
-   **10 USD/tháng**. Model chưa chọn (`U-112`).
+   **10 USD/tháng**. Model chưa chọn (`U-112`). *Bổ sung 2026-11-03, chủ repo (T-285):* ba ứng viên DeepSeek, OpenAI
+   (chủ repo nói *"chat gpt plus"*; gói ấy không có API, nên là OpenAI API) và Claude Sonnet; chọn sau lượt thử thật qua API.
 
 6. Nhân viên đọc và bấm hộp tin trên **điện thoại riêng**, đăng nhập tài khoản của mình.
 
-Chưa có lời: báo nghỉ (`U-116`).
+7. **Báo nghỉ** (chủ repo 2026-11-03, T-285; đóng `U-116`; chưa có xác nhận lời đến từ chủ quán). Nguyên văn: *"nhân viên
+   báo cho chủ quán trước ngày. cần dc chủ quán duyệt, cắt lương."* Các vế chọn trong câu hỏi có sẵn phương án:
+   - Nhân viên báo cho **chủ quán**, **trước 3 ngày**. Báo muộn hơn máy **vẫn nhận, ghi là nghỉ đột xuất**.
+   - **Không có từ chối**: chủ quán chỉ ghi nhận đã biết.
+   - **Không trả lương ngày nghỉ**, không phạt thêm; nghỉ đột xuất **cũng vậy**. Vế này **thay** lời `C30` ngày
+     2026-09-25 (*"nghỉ đột xuất không trừ tiền"*, §8.7).
+   - Ngày nghỉ đã được ghi nhận thì **máy chặn tick** ô *có đi làm* của người ấy, trừ khi huỷ lần nghỉ trước.
+
+   *Suy ra của phiên, chưa ai xác nhận (F-004):* *"duyệt"* trong nguyên văn đọc là *ghi nhận đã biết*, vì vế *"Không có
+   từ chối"*. Chưa nói: đếm *3 ngày* từ mốc nào; ai được huỷ một lần nghỉ; nghỉ đột xuất không báo trên máy thì không có
+   bản ghi nào, chủ quán không tick là đủ. Vế *chặn tick* chạm chấm công nên cần thiết kế riêng trước lược đồ.

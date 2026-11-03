@@ -9,6 +9,8 @@ Mỗi entry là mô tả để giao bước sau, không phải lời cho phép l
 
 **Cập nhật 2026-11-01 (CHAT-01):** ADR-136 đã chốt. Nhánh nào mở, nhánh nào đóng: kế hoạch §4; thiết kế nhánh không model: ADR-137.
 Các dòng `chờ U-113` · `U-114` · `U-115` · `U-117` bên dưới là lịch sử: những câu ấy đã có lời ở `master_plan/shop-facts.md` §8.11.
+**Cập nhật 2026-11-03 (T-285):** `U-116` có lời ở §8.11 điểm 7, nên các dòng `chờ U-116` của 30…32 cũng là lịch sử.
+Lời chặn tick ô chấm công, nên theo Acceptance cuối của CHAT-30 Claude thiết kế riêng trước khi giao lược đồ.
 `U-112` đã hẹp 2026-11-01 — trần 10 USD/tháng và không gửi dữ liệu cá nhân ra ngoài đã có lời
 (`shop-facts.md` §8.11 điểm 5), chỉ còn chọn nhà cung cấp và model.
 `CHAT-27` · `CHAT-28` · `CHAT-29` loại khỏi lộ trình theo ADR-136 *Sửa đổi* (`U-115`).

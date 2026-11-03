@@ -49,7 +49,7 @@ nhãn tra ngay dưới bảng: mỗi nhãn ghi **operationId, đường thật v
 | Người canh nhận số cần múc và báo đã múc/đem | C18 đọc; báo: chưa có | Tin báo riêng, không tiến độ; chờ U-113 |
 | Người dọn nhận bàn, báo POS xác nhận, nhận việc phụ | C19; C08 phía POS; đọc việc: chưa có | CHAT-34; chờ U-113 |
 | Khách muốn thêm: trạm báo / khách nhắn POS | Chưa có cửa tin báo | Chờ U-113 (trạm), U-117 (khách) |
-| Báo nghỉ, kể cả chủ quán nhập hộ | Chưa có | Chờ U-116, không suy ca/lương từ tin |
+| Báo nghỉ, kể cả chủ quán nhập hộ | Chưa có | U-116 có lời 2026-11-03 (shop-facts §8.11 điểm 7); chạm ô chấm công nên Claude thiết kế trước lược đồ |
 | Các trạm khác nhận và báo tương tự | C18 đọc; báo: chưa có | Tráng, gấp; không tự ghi tiến độ; chờ U-113 |
 
 ### Cửa thật để đọc bảng trên
