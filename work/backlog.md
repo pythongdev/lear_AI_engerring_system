@@ -150,8 +150,9 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-284 **Sổ CHAT còn Acceptance trái ADR-137, kế hoạch và luật dữ liệu cá nhân** — L1, 2026-11-03; Codex sửa 17 chỗ của `work/backlog_CHAT.md` theo phiếu, Claude duyệt; giữ 13/14 lỗi của đợt kiểm · [chi tiết](#t-284)
 - [x] CHAT-02 **Thiết kế nhánh chat không model** — L3, chủ repo duyệt ADR-137 2026-11-01; lượt nhánh model làm sau khi có `U-112` · [mô tả](backlog_CHAT.md#chat-02)
-- [x] CHAT-01 **Thu lời và duyệt ADR-136** — L3, chủ repo duyệt 2026-11-01; đóng `U-114` · `U-115` · `U-117`, hẹp `U-112` · `U-113`; `U-116` còn mở · [mô tả](backlog_CHAT.md#chat-01)
+- [x] CHAT-01 **Thu lời và duyệt ADR-136** — L3, chủ repo duyệt 2026-11-01; đóng `U-113` · `U-114` · `U-115` · `U-117`, hẹp `U-112`; `U-116` còn mở (sửa 2026-11-03, T-284: dòng cũ ghi nhầm `U-113` là hẹp) · [mô tả](backlog_CHAT.md#chat-01)
 - [x] T-283 **Tính năng chat với app chưa có kế hoạch và sổ việc riêng** — L1 (chỉ tài liệu kế hoạch; tính năng là L3), chủ repo yêu cầu 2026-11-01, Codex soạn, Claude duyệt · [chi tiết](#t-283)
 - [x] T-277 **Hiệu ứng khi ảnh món xuất hiện trong trang thử menu** — L1, Claude làm, chủ repo yêu cầu 2026-10-31 · [chi tiết](#t-277)
 - [x] T-274 **Bản mẫu menu theo concept bàn gỗ ấm cúng** — L1, Codex làm, Claude duyệt, chủ repo yêu cầu 2026-10-30 · [chi tiết](#t-274)
@@ -3849,3 +3850,20 @@ Bàn giao 2026-11-01: **Codex** soạn hai file theo phiếu của Claude (workt
 Bằng chứng: A1 — Claude tự chạy đối chiếu 92 cặp operationId–đường trong kế hoạch với `openapi.yaml` 0.54.0 cây chính, sai 0; 24 dòng năng lực. A2 — 34 bước trong bảng, 34 entry, hai danh sách khớp. A3 — kế hoạch §3 giữ ADR-011 và §6.13, mọi nhánh chờ đúng câu `U-XXX`; Claude đọc toàn bộ hai file. A4 — bảng §4 và câu sau bảng. A5 — `./scripts/gate.sh` cây chính đỏ đúng Gate 1b với bốn đường không thuộc T-283: hai đường ở ADR-135 và một ở `quality/invariants.md` trỏ file của các lát sau của ADR-135 chưa dựng, một đường `/tmp` ở README của T-275; Gate 3, 1c, 1d, 1e, 1f, 1g, 1h, be-check, db-check, verify đều PASS.
 
 Còn lại: chủ repo duyệt ADR-136 và trả lời `U-112`…`U-117`, đó là `CHAT-01`. Không dòng code nào được viết. Nhận xét đo: cây chính còn hơn 200 file chưa commit, nên phiếu thi công đầu tiên chỉ giao được sau khi phần nền đó về nhánh tích hợp.
+
+<a id="t-284"></a>
+### T-284 — Sổ CHAT còn Acceptance trái ADR-137, kế hoạch và luật dữ liệu cá nhân
+
+Chủ repo yêu cầu 2026-11-03: chạy đợt Codex kiểm từng task của `work/backlog_CHAT.md` (mỗi task một phiên, chỉ đọc, ngoài repo ở `../lean_wt/chat-review/`, tổng hợp `TONG-HOP.md`), rồi chọn *"Claude đối chiếu, Codex sửa"* trong câu hỏi có sẵn phương án. Mức **L1**: chỉ sửa mô tả task chưa giao, không đổi luật, không đổi code.
+
+Claude đối chiếu 14 lỗi của bản tổng hợp với repo 2026-11-03. **Giữ 13**: dữ liệu cá nhân gửi hãng AI chưa thành phép kiểm (CHAT-06/18/21, `shop-facts.md` §8.11 điểm 5); CHAT-09 chặn rộng hơn kế hoạch §4; CHAT-13 đòi bằng chứng thẻ FE của CHAT-14; CHAT-20 thiếu nguồn đọc lớp `chu_quan` (`counterQueue` lớp `quay`, `nhandon/tam_dung` lớp `chu_quan`); CHAT-23 sai khi gửi lại (`createOnlineOrder` 200 trả trạng thái hiện tại); CHAT-33 chấm phiên không gắn cửa; CHAT-19 cấm cả đầu vào của `unhideMenuOption`; CHAT-06 cho phép luôn từ chối; CHAT-04/12/14 thiếu điểm của ADR-137; CHAT-03/05/17/18/24 thiếu phép kiểm; CHAT-01/02 Done mà trống bàn giao; Q112 cũ; CHAT-27…29 bị loại mà sổ chưa ghi. **Bác 1**: *31 task thiếu dòng trạng thái* — lane khác cũng chỉ ghi dòng khi task mở, dòng `CHAT-34` đã nêu thứ tự kế tiếp. Ngoài lane, để việc sau: `docs/product/3-be/03-ham-gia.md` dòng *Thêm · bỏ một thành phần* còn ghi *chưa có cửa* dù đã có `addItemComponent`; test của `CHAT-34` thiếu ca cookie khách (ghi ở entry `CHAT-34`).
+
+Acceptance ghi trước khi giao: A1 — mỗi lỗi được giữ có sửa tương ứng trong `work/backlog_CHAT.md`, đúng chỗ phiếu nêu. A2 — sổ trỏ owner (ADR-137 điểm, `shop-facts.md` §8.11, ma trận quyền), không chép lại luật hay tên cột. A3 — không đổi luật, không mở nhánh nào, không tự đặt ngưỡng hay tên mới. A4 — `./scripts/gate.sh` xanh. A5 — chỉ `work/backlog_CHAT.md` đổi trong worktree của Codex.
+
+Bàn giao 2026-11-03: **Codex** thực hiện (worktree `../lean_wt/T-284`, nhánh `codex/T-284`, nền `210b212`, model `gpt-6-astra`), **Claude** duyệt; chưa có người duyệt thứ ba. Phiếu, báo cáo và patch ở `../lean_wt/chat-review/T-284-*`, ngoài repo. File đổi: `work/backlog_CHAT.md` (Codex, 17 sửa S1…S17), `work/backlog.md` (Claude: dòng này, entry này, dòng Done `CHAT-01` sửa `U-113` từ *hẹp* thành *đóng*).
+
+Bằng chứng: A1 — Claude đọc toàn bộ diff, mỗi sửa đúng chỗ phiếu nêu, không chạm entry khác. A2 — sổ trỏ ADR-137 điểm 1/3/4/6/8, `shop-facts.md` §8.11 điểm 5, §6.10, ma trận quyền; không chép tên cột. A3 — không tên hay ngưỡng mới; `setSupplyItemReminderRatio`, `unhideMenuOption`, `createOnlineOrder`, `listPeople`, `counterQueue` có trong `openapi.yaml` 0.54.0; §6.10 là quy tắc *Đối soát cuối ngày* (Claude `grep -n`). A5 — worktree chỉ đổi `work/backlog_CHAT.md`. A4 — `./scripts/gate.sh` cây chính sau `git apply`: Gate 3, 1c, 1e, 1f, 1g, 1h, verify PASS; 1d, be, fe, db SKIP; **Gate 1b FAIL** với các đường có sẵn ngoài task (ADR-135 và `quality/invariants.md` trỏ file `I-037` chưa dựng, README video Paris trỏ `/tmp`, các bản thiết kế dưới `docs/product/4-fe/thiet_ke/`), không đường nào trong file của T-284.
+
+Còn lại: worktree `../lean_wt/T-284` và nhánh `codex/T-284` chờ chủ repo xoá sau commit; `03-ham-gia.md` dòng *Thêm · bỏ một thành phần* chưa sửa; test `CHAT-34` thiếu ca cookie khách.
+
+[↑ đầu file](#top)

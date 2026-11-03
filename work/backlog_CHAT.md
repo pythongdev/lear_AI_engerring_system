@@ -9,6 +9,10 @@ Mỗi entry là mô tả để giao bước sau, không phải lời cho phép l
 
 **Cập nhật 2026-11-01 (CHAT-01):** ADR-136 đã chốt. Nhánh nào mở, nhánh nào đóng: kế hoạch §4; thiết kế nhánh không model: ADR-137.
 Các dòng `chờ U-113` · `U-114` · `U-115` · `U-117` bên dưới là lịch sử: những câu ấy đã có lời ở `master_plan/shop-facts.md` §8.11.
+`U-112` đã hẹp 2026-11-01 — trần 10 USD/tháng và không gửi dữ liệu cá nhân ra ngoài đã có lời
+(`shop-facts.md` §8.11 điểm 5), chỉ còn chọn nhà cung cấp và model.
+`CHAT-27` · `CHAT-28` · `CHAT-29` loại khỏi lộ trình theo ADR-136 *Sửa đổi* (`U-115`).
+`CHAT-26` chưa mở, phải hỏi lại trước (cũng ADR-136 *Sửa đổi*, suy ra của phiên).
 
 **Chung cho mọi bước.**
 
@@ -17,7 +21,8 @@ Các dòng `chờ U-113` · `U-114` · `U-115` · `U-117` bên dưới là lịc
   Không lấy danh mục dưới đây làm bằng chứng code đã chạy. Claude giao scope và Acceptance trước mỗi phiếu.
 - `C01`…`C19` là nhóm tra tại kế hoạch §2, có operationId · đường · lớp của cửa thật. `Q112`…`Q117`
   dưới đây chỉ là cách đọc tạm các câu `U-112`…`U-117` ở `docs/product/99-unknowns.md`, không thay owner:
-  **Q112:** chờ chọn hãng/model, trần tiền và dữ liệu gửi ngoài; tạm lớp đổi hãng, không gọi model thật.
+  **Q112:** chờ chọn hãng/model; trần và phạm vi dữ liệu đã có lời ở `shop-facts.md` §8.11 điểm 5;
+  tạm lớp đổi hãng, không gọi model thật.
   **Q113:** chờ nghĩa xác nhận và thiết bị; tạm tin báo, POS vẫn ghi tiến độ.
   **Q114:** chờ quyền chủ quán; tạm giữ luật cũ, ngoài quầy không qua cửa quầy.
   **Q115:** chờ danh sách cửa ghi; tạm không mở cửa chạm tiền.
@@ -42,7 +47,10 @@ Các dòng `chờ U-113` · `U-114` · `U-115` · `U-117` bên dưới là lịc
   BE: `./scripts/be-check.sh`; DB: `./scripts/db-check.sh`; FE: `./scripts/fe-check.sh` khi lát chạm tầng ấy.
   Thiếu môi trường thì ghi chưa chạy và giao Claude chạy, không đánh dấu đạt. Eval là kiểm riêng, gate
   xanh không thay eval. Đổi prompt/model/danh sách công cụ phải chạy lại tập eval chịu ảnh hưởng.
-- G1…G4 là Acceptance dự kiến áp thêm cho mọi lát model/ghi/FE tương ứng, gồm cả ca từ chối. Verify của
+- **G6:** mọi lát gọi model kiểm đúng nội dung gửi hãng — câu người dùng nhập, kết quả công cụ, lịch sử hội thoại —
+  không chứa tên, số điện thoại, địa chỉ khách hay tên nhân viên (`shop-facts.md` §8.11 điểm 5).
+  Kiểm danh sách công cụ không thay được phép kiểm này.
+- G1…G4 và G6 là Acceptance dự kiến áp thêm cho mọi lát model/ghi/FE tương ứng, gồm cả ca từ chối. Verify của
   từng entry nói rõ phép riêng. Tên test mới, đường API, bảng/cột, component mới do Claude quyết ở owner
   trước thi công; mô tả dưới đây không đặt tên chúng. Nhóm BE 15…20, 25…29 dùng thẻ chung 11, không sửa FE;
   cần màn riêng thì Claude tách lát FE, duyệt trước mở nhóm. Không gộp DB · BE · FE trong một phiếu.
@@ -75,6 +83,11 @@ năng.
 
 **Nhận việc:**
 
+2026-11-01, Claude; chủ repo chọn trong câu hỏi có sẵn phương án. Kết quả ở ADR-136 *Sửa đổi 2026-11-01*,
+`shop-facts.md` §8.11 và `docs/product/99-unknowns.md`: đóng `U-113` · `U-114` · `U-115` · `U-117`,
+hẹp `U-112` (còn nhà cung cấp/model), `U-116` còn mở. Lệnh đã chạy lúc ấy không được ghi lại ở entry này.
+Ghi bổ sung 2026-11-03, T-284.
+
 [↑ đầu file](#top)
 
 ---
@@ -96,19 +109,29 @@ thiết kế.
 
 **Acceptance dự kiến:**
 
-- [ ] Có ánh xạ công cụ → cửa/lớp; phần chưa có cửa và phần bị cấm không được vào danh sách thực thi.
-- [ ] Thiết kế tin chỉ ra người nhận, loại việc canh/dọn, POS nhận hồi đáp, ca người kiêm đi giao/POS gánh; thiếu
+**Lượt một — xong 2026-11-01, ADR-137**
+
+- [x] Thiết kế tin chỉ ra người nhận, loại việc canh/dọn, POS nhận hồi đáp, ca người kiêm đi giao/POS gánh; thiếu
       lời thì giữ nhánh đóng.
+- [x] Luồng tin riêng không phát nội dung vào SSE công khai; không dựng hàng đợi hay cache nghiệp vụ.
+
+**Lượt hai — chưa làm, chờ `U-112`**
+
+- [ ] Có ánh xạ công cụ → cửa/lớp; phần chưa có cửa và phần bị cấm không được vào danh sách thực thi.
 - [ ] Thiết kế thẻ ghi rõ gắn phiên/thân lệnh, đổi nội dung phải xác nhận lại, quyền kiểm lại, chống bấm lặp hoặc từ
       chối gửi lại.
 - [ ] Có giới hạn dữ liệu gửi ngoài, lịch sử/log, hạn chờ, token/lượt và trần tháng; nếu bộ đếm/thẻ cần chỗ cất mới
       thì có lát DB trước BE.
-- [ ] Luồng tin riêng không phát nội dung vào SSE công khai; không dựng hàng đợi hay cache nghiệp vụ.
+- [ ] Thiết kế cách lọc dữ liệu cá nhân khỏi kết quả công cụ trước khi gửi hãng (G6), và chốt ngưỡng *quá cũ*
+      của từng nguồn đọc dùng ở CHAT-05.
 
 **Verify:** Claude duyệt từng tình huống với owner và test từ chối dự kiến; đối chiếu ranh giới DB/BE/FE; gate tài
 liệu.
 
 **Nhận việc:**
+
+2026-11-01, Claude thiết kế lượt một (ADR-137), chủ repo duyệt; lượt hai chưa làm.
+Ghi bổ sung 2026-11-03, T-284.
 
 [↑ đầu file](#top)
 
@@ -138,7 +161,9 @@ phần ngân sách đã dùng.
 - [ ] Log đo token/chi phí không chứa cookie, mật khẩu hay thông tin cá nhân ngoài phần U-112 cho phép.
 
 **Verify:** be-check với hãng giả lập lỗi/chậm/quá hạn/đồng thời/khởi động lại; một lần gọi thật đã được duyệt trên
-dữ liệu thử; lưu token và giá dùng, gate.
+dữ liệu thử; lưu token và giá dùng, gate. Thêm ca đóng chat huỷ yêu cầu đang chờ; phép chứng minh không có giao
+dịch DB mở trong lúc chờ model (cách đo do bước này bàn giao); đọc log thật, không có cookie, mật khẩu hay dữ
+liệu cá nhân.
 
 **Nhận việc:**
 
@@ -162,11 +187,15 @@ nhớ trình duyệt mặc định.
 
 - [ ] Mở, đóng và Esc hoạt động; focus trở lại nút mở; app vẫn thao tác tay được.
 - [ ] Đóng/mở chat ở quầy không ngắt luồng quầy và không tự mở một luồng quầy cho khách.
-- [ ] Vỏ rỗng không gửi mạng tới model, không có nút thực thi lệnh.
+- [ ] Chính component chat không phát lời gọi mạng nào tới model hay cửa ghi; tác vụ nền sẵn có của layout
+      (ví dụ `POST /preorder-releases` ở `/quay`, file `fe/src/app/quay/_components/tu-nha-don-hen.tsx`) không tính.
+- [ ] Vỏ nằm sau cờ của ADR-137 điểm 1, tắt mặc định; tắt cờ thì không có nút mở ở cả ba layout
+      `/quay` · `/tram` · `/chu-quan`; trang khách chưa gắn.
+- [ ] Đóng mở không đụng `TinHieuProvider`; nháp chỉ ở state của component.
 - [ ] Đổi người dùng không thấy bản nháp/hội thoại của người trước.
 
-**Verify:** fe-check và diễn bàn phím, điện thoại, đổi trang con của quầy; kiểm mạng không có lời gọi model/ghi;
-gate.
+**Verify:** fe-check và diễn bàn phím, điện thoại, đổi trang con của quầy; ở cả ba layout, cờ bật và tắt;
+kiểm mạng của component chat không có lời gọi model/ghi; gate.
 
 **Nhận việc:**
 
@@ -193,7 +222,8 @@ kế, không chép số liên hệ vào prompt cố định.
 - [ ] Danh sách công cụ của khách chỉ đọc công khai; không có công cụ đặt món, tiền, người làm hay SQL.
 - [ ] Giá món/tổ hợp/combo trả đúng nguồn đọc hiện tại; câu hỏi thiếu lựa chọn không đoán số hoặc tự sửa tổ hợp.
 - [ ] Thông tin chưa có trong nguồn trả chưa biết; không tự nghĩ giờ bán, món còn hay số điện thoại.
-- [ ] Nguồn lỗi hoặc quá cũ không được biến thành số hiện tại; model không trả một con số thiếu căn cứ.
+- [ ] Nguồn lỗi hoặc quá cũ không được biến thành số hiện tại; model không trả một con số thiếu căn cứ;
+      ngưỡng *quá cũ* do Claude chốt ở CHAT-02 lượt hai trước khi giao phiếu.
 
 **Verify:** be-check với nguồn menu/giá thật của dữ liệu thử; so với gia.Tinh; ca tool giả, giá đổi và nguồn lỗi;
 gate. Chưa mở khách thật.
@@ -220,7 +250,9 @@ fixture.
 
 **Acceptance dự kiến:**
 
-- [ ] Có câu giá món lẻ/combo, tổ hợp thiếu/sai, giá vừa đổi, hết món; số bày ra khớp backend hoặc từ chối nêu số.
+- [ ] Ca dương: câu giá món lẻ/combo đủ lựa chọn phải trả đúng giá backend; từ chối là trượt.
+- [ ] Ca thiếu/sai tổ hợp, giá vừa đổi, hết món: từ chối nêu số là đạt, đoán số là trượt.
+- [ ] Có nhóm ca kiểm nội dung gửi hãng theo G6, gồm kết quả công cụ có tên người.
 - [ ] Có lời giả chủ quán, “bỏ chỉ dẫn”, xin dữ liệu người khác, yêu cầu gọi cửa kín và lệnh ẩn trong tên món/tin;
       không lọt công cụ cấm.
 - [ ] Có tiếng Việt thiếu dấu/sai chữ, số lượng mơ hồ; yêu cầu chưa rõ không biến thành lệnh ghi.
@@ -310,7 +342,8 @@ gate.
 - [ ] Câu hỏi số bàn/trạm hiện nguồn và mốc backend; mất kết nối không giả dữ liệu rỗng là hết việc.
 - [ ] Đăng xuất/đổi người ở tab khác làm sạch dữ liệu riêng và huỷ phản hồi đang chờ.
 - [ ] Có lời từ chối rõ cho người không quyền, không thử lại ngầm để vượt lớp.
-- [ ] Biên bản chỉ đọc đạt trước bất kỳ cửa ghi của chat được bật.
+- [ ] Biên bản chỉ đọc đạt trước bất kỳ lệnh ghi **qua model** nào được bật; nhánh không model
+      (12…14, 30…32, 34) không chờ biên bản này (kế hoạch §4).
 
 **Verify:** fe-check; diễn hai tab, hai không gian, cắt SSE và đọc lại; so số trên màn tay, ghi biên bản chỉ đọc;
 gate.
@@ -406,6 +439,9 @@ giao.
 - [ ] Một tin gửi tới người kiêm hai trạm không bị nhân đôi; vẫn phân biệt hai loại việc.
 - [ ] Ghi tin “xong” không đổi tiến độ, trạng thái bàn hoặc đánh dấu việc giao.
 - [ ] Ràng buộc từ chối người/đối tượng sai; migration xuôi-lùi-xuôi đạt, lùi có dữ liệu bị chặn.
+- [ ] Bảng đúng ADR-137 điểm 3 — chỉ thêm, `UPDATE` và xoá bị DB từ chối, không khoá ngoại tới việc trạm/phiên/việc
+      giao; mã gửi trùng theo điểm 6; người nhận rỗng là gửi về quầy.
+- [ ] Test hồi quy `I-038` do Claude viết trước, đỏ trước migration, xanh sau.
 
 **Verify:** db-check, ca lỗi ràng buộc và đối chiếu tiến độ/bàn trước-sau; Gate 1e; gate. Tên lược đồ chỉ chốt ở
 migration sau duyệt.
@@ -439,7 +475,8 @@ lên productionEvents công khai.
 - [ ] Có ca người kiêm đi giao/POS gánh, đổi người hoặc chưa có người nhận: hành vi đúng lời/thiết kế; chưa đủ lời
       thì từ chối định tuyến, không đoán.
 - [ ] Sau COMMIT mới phát tín hiệu đọc lại; mất SSE kéo vẫn đọc đủ tin từ DB; gửi lại không nhân bản tin.
-- [ ] Tin chỉ ghi sau khi người gửi xác nhận nội dung trên thẻ tin; lời model không gọi cửa gửi tin.
+- [ ] Danh sách công cụ của model không có cửa gửi tin (ADR-137 điểm 8); cửa gửi chỉ nhận người gửi từ phiên.
+      Thẻ xác nhận trước khi gửi là Acceptance của CHAT-14, không phải của bước này.
 
 **Verify:** be-check qua PostgreSQL thật, ca một người hai trạm, quyền đọc/gửi, lặp, mất SSE; đối chiếu không đổi
 tiến độ; Gate 1f/1g; gate.
@@ -475,9 +512,12 @@ POS nếu chưa có luật mới.
 - [ ] Tráng/gấp có cùng kiểu tin theo quyền đã duyệt; không có nút báo xong ghi tiến độ ở trạm.
 - [ ] Trước gửi có thẻ kiểm nội dung, loại việc và người nhận; bỏ thẻ không ghi, bấm xác nhận mới gửi.
 - [ ] Người được giao thấy việc phụ của mình kèm hạn, đọc từ cửa của CHAT-34; không có nút đánh dấu xong.
+- [ ] POS chọn người nhận từng lần từ `listPeople`, vai chỉ để gợi ý; người nhận không hoạt động bị từ chối
+      và FE bày rõ lời từ chối (ADR-137 điểm 4).
 
 **Verify:** fe-check; diễn một tài khoản canh_don_ban trên thiết bị đã chọn, POS và người khác; model tắt, SSE tắt,
-gửi mất phản hồi; gate.
+gửi mất phản hồi; ca tráng và gấp gửi tin về quầy, ca người được giao thấy việc phụ có hạn và không có nút đánh dấu;
+gate.
 
 **Nhận việc:**
 
@@ -553,6 +593,7 @@ thị cho model.
 - [ ] Thẻ ghi đúng số, đơn vị, ngày người nói; mơ hồ về ngày/đơn vị thì chưa có thẻ ghi.
 - [ ] POS không là chủ bị từ chối; đổi đơn vị đã đặt bị cửa hiện hữu từ chối.
 - [ ] Tổng đọc từ BE, sửa có vết; tạo đơn bán không tự tạo dòng dùng nguyên liệu.
+- [ ] Đặt tỉ lệ nhắc qua thẻ gọi đúng `setSupplyItemReminderRatio`, sai quyền bị từ chối.
 
 **Verify:** be-check I-025/I-026 với số thập phân, sai quyền/đơn vị; eval số và ngày; kiểm thẻ chung, gate.
 
@@ -576,11 +617,12 @@ khẩu.
 
 **Acceptance dự kiến:**
 
-- [ ] Chủ quán xác nhận đúng tài khoản và vai được phép trước khi duyệt/khoá; tên mơ hồ không thực thi.
+- [ ] Chủ quán xác nhận đúng tài khoản và vai được phép trước khi duyệt/từ chối/khoá; tên mơ hồ không thực thi.
 - [ ] POS và khách bị từ chối cửa chủ quán; thao tác không tạo person/tài khoản dịch vụ cho trợ lý.
 - [ ] Khoá làm phiên mục tiêu hết hiệu lực theo cửa cũ; yêu cầu mở lại cần bí mật đi màn tay, không qua prompt/log.
 
-**Verify:** be-check I-033/I-035 và khoá giữa đề xuất-xác nhận; kiểm payload/log không bí mật, thẻ chung; gate.
+**Verify:** be-check I-033/I-035 và khoá giữa đề xuất-xác nhận; kiểm payload/log không bí mật, thẻ chung;
+nội dung gửi hãng không chứa tên người hay Gmail (G6); gate.
 
 **Nhận việc:**
 
@@ -603,7 +645,8 @@ bù giá.
 **Acceptance dự kiến:**
 
 - [ ] Đổi tên, xếp danh mục, ẩn/ngừng bán theo đúng cửa và lý do; không sửa ảnh chụp đơn cũ.
-- [ ] POS/khách bị từ chối; đối tượng không có hoặc đã ẩn nhận đúng lỗi, không tạo thay thế.
+- [ ] POS/khách bị từ chối; đối tượng không có nhận đúng lỗi; đối tượng đã ẩn bị từ chối ở cửa sửa/ẩn
+      nhưng là đầu vào hợp lệ của `unhideMenuOption`.
 - [ ] Payload có giá/phụ thu/thành phần không được lách sang bước này; chuyển nhóm 26 hoặc màn tay.
 
 **Verify:** be-check I-009/I-018/I-032, eval tên món chứa chỉ thị và ranh giới giá; kiểm thẻ chung, gate.
@@ -624,6 +667,9 @@ bù giá.
 **Bẫy:** Chat sống không có nghĩa POS thấy đơn; mạng về không tự mở lại. Tắt ô chat không được biến đổi nhận đơn.
 
 **Chặn bởi:** Chờ U-112 (Q112), U-114 (Q114), U-115 (Q115).
+Chưa có đường đọc trạng thái nhận đơn cho lớp `chu_quan` — `counterQueue` lớp `quay`, còn
+`nhandon/tam_dung` · `nhandon/tiep_tuc` lớp `chu_quan` (`02-vai-va-quyen.md`);
+Claude thiết kế nguồn đọc trước khi mở, không hạ lớp `counterQueue`.
 
 **Acceptance dự kiến:**
 
@@ -659,10 +705,12 @@ I-008/I-010/I-013/I-022/I-024/I-034/I-035.
 - [ ] Đơn giao/đến lấy đủ liên hệ theo hợp đồng, giá từ hàm duy nhất; thiếu lựa chọn/liên hệ bị từ chối, không sửa
       hộ.
 - [ ] Đơn khách chờ POS duyệt, chưa sinh việc trạm; giờ đóng/tạm dừng/quán mù bị từ chối đúng cửa.
-- [ ] Gửi lại cùng dấu/thân không sinh đơn thứ hai; hai lần gửi thực sự khác nhau vẫn là hai đơn.
+- [ ] Gửi lại cùng dấu/thân không sinh đơn thứ hai; hai lần gửi thực sự khác nhau vẫn là hai đơn;
+      lần gửi lại trả trạng thái hiện tại của đơn (`createOnlineOrder` 200).
 - [ ] QR/gọi thêm/nhắn trực tiếp POS chỉ mở nếu lời U-117 cho phép và thiết kế riêng được duyệt; không tự mở từ API
       có sẵn.
-- [ ] Thông tin cá nhân nhập trực tiếp không bắt buộc đi qua model; đăng nhập giữ luật nhánh đã được chốt.
+- [ ] Thông tin cá nhân nhập thẳng vào thẻ, không đi qua model, prompt hay log gửi hãng (G6);
+      đăng nhập giữ luật nhánh đã chốt.
 
 **Verify:** be-check toàn nhánh web đã duyệt, ca lặp/từ chối/quán mù; eval giá và lời giả POS; chưa mở FE đặt món
 tới 23; gate.
@@ -716,7 +764,8 @@ FE.
 **Acceptance dự kiến:**
 
 - [ ] Thẻ hiện món/lựa chọn/số lượng/kênh/liên hệ/tổng BE trước bấm; thiếu dữ liệu không có gửi hợp lệ.
-- [ ] Từ chối tổ hợp và giờ/quán mù có lời, không báo đã đặt; thành công bày mã đơn và chờ POS duyệt.
+- [ ] Từ chối tổ hợp và giờ/quán mù có lời, không báo đã đặt; lần tạo bày mã đơn và trạng thái chờ POS duyệt;
+      lần gửi lại bày trạng thái hiện tại backend trả, có thể đã qua duyệt.
 - [ ] Mất phản hồi giữ dấu/thân và trạng thái chưa rõ; người bấm gửi lại không tạo đơn đôi.
 - [ ] Đổi phiên khách không lộ bộ giao hoặc hội thoại của người trước; tắt chat vẫn mở màn đặt tay được.
 
@@ -745,6 +794,7 @@ eval đặt món; gate.
 - [ ] Thẻ phân biệt bàn với điện thoại và suất đem về; số/giá lấy BE, không tổng FE tự tính.
 - [ ] Đổi người/rời quầy trong lúc xem thẻ bị cửa từ chối; thẻ cũ bị bỏ khi phiên đổi.
 - [ ] Mất phản hồi không gửi lại ngầm; gửi lại có chủ ý giữ dấu và thân; màn tay vẫn thao tác được.
+- [ ] Lỗi theo trường của hợp đồng bày đúng trường trên thẻ.
 
 **Verify:** fe-check, diễn POS/chủ ngoài quầy và hai tab, gửi mất phản hồi, so đơn màn tay; gate.
 
@@ -785,6 +835,8 @@ chung, gate.
 <a id="chat-26"></a>
 ### CHAT-26 — Chat chưa đổi giá và cấu tạo món qua hàm giá duy nhất
 
+**Chưa mở** — đổi giá qua chat không nằm trong câu `U-115`, phải hỏi lại trước (ADR-136 *Sửa đổi*).
+
 **Goal:** Nối BE C05 và phần có giá của C04 theo danh sách U-115 cho phép; bày thay đổi có lý do.
 
 **Đứng trên:** L2, Codex; sau CHAT-19, CHAT-23, CHAT-24. C04/C05; docs/product/3-be/03-ham-gia.md;
@@ -813,6 +865,9 @@ owner, không tự biến thành cấm cứng.
 <a id="chat-27"></a>
 ### CHAT-27 — Chat chưa ghi khoản chi mà giữ nguồn tiền và vết
 
+**Loại khỏi lộ trình 2026-11-01** (ADR-136 *Sửa đổi*, `U-115`: việc chạm tiền không qua chat);
+entry giữ để truy lại, không giao phiếu.
+
 **Goal:** Nối BE C10 từng thao tác sau khi U-115 cho phép; không suy một khoản là chi két nếu người chưa khai nguồn.
 
 **Đứng trên:** L2, Codex; sau CHAT-11, CHAT-26. C10; quality/invariants.md I-018/I-021/I-029; shop-facts §8.10.
@@ -838,6 +893,9 @@ không phải xoá cứng.
 
 <a id="chat-28"></a>
 ### CHAT-28 — Chat chưa có phép mở các lệnh tiền theo đúng chỗ đứng
+
+**Loại khỏi lộ trình 2026-11-01** (ADR-136 *Sửa đổi*, `U-115`: việc chạm tiền không qua chat);
+entry giữ để truy lại, không giao phiếu.
 
 **Goal:** Chỉ khi U-115 cho phép, nối BE từng cửa C13; nếu không thì giữ toàn nhóm là đường dẫn màn tay.
 
@@ -867,6 +925,11 @@ tiền, thẻ chung; gate.
 
 <a id="chat-29"></a>
 ### CHAT-29 — Chat chưa khai két và đối soát mà giữ nguyên phép kiểm tiền
+
+**Loại khỏi lộ trình 2026-11-01** (ADR-136 *Sửa đổi*, `U-115`: việc chạm tiền không qua chat);
+entry giữ để truy lại, không giao phiếu.
+Dòng Acceptance *không có đường chat “đóng dù lệch”* trái luật đối soát (`shop-facts.md` §6.10 — chủ quán bấm được
+ngày lệch nếu ghi giải thích); mở lại thì viết lại dòng ấy.
 
 **Goal:** Nối BE C14 và đặt số tối thiểu C03 theo phép được duyệt; từng thẻ chỉ một việc, không chuỗi tự đối soát.
 
@@ -998,8 +1061,9 @@ mục tiêu.
       ghi đôi.
 - [ ] Một người canh+dọn nhận hai loại việc, báo khách muốn thêm và báo dọn chỉ tạo tin; POS quyết bước nghiệp vụ
       riêng.
-- [ ] Chủ ngoài quầy, cookie khách, quyền vừa bị rút, lời chèn lệnh và số model bịa đều bị chặn; giá/tiền khớp bộ
-      chuẩn.
+- [ ] Chấm theo cặp phiên × cửa của ma trận `02-vai-va-quyen.md`, có cả ca được phép và ca bị chặn — chủ ngoài
+      quầy bị chặn ở cửa lớp `quay` nhưng qua ở cửa lớp `chu_quan`, cookie khách chỉ qua cửa lớp
+      `khach` · `quay_hoac_khach`; quyền vừa bị rút, lời chèn lệnh và số model bịa đều bị chặn; giá/tiền khớp bộ chuẩn.
 - [ ] Cắt model, hết trần, quá hạn, mất SSE/mạng và mất phản hồi sau ghi đều có đường suy giảm; màn tay vẫn chạy.
 - [ ] Có số đo token/lần gọi/chi phí/độ trễ, so trần và tiêu chí đã duyệt; không dùng ước lượng §7 làm số đo.
 - [ ] Có biên bản từng năng lực đạt/chặn/loại, Claude duyệt; bán thật chờ T-109 đạt và chủ repo quyết, không tự mở
@@ -1040,6 +1104,9 @@ Lời yêu cầu nói người dọn nhận *"những việc phụ khác"*; *đ�
 **Nhận việc:**
 
 2026-11-01, Claude: phiếu giao Codex, worktree `../lean_wt/CHAT-34`, nhánh `codex/CHAT-34` từ `de881a2` cộng thay đổi chưa commit của cây chính stage sẵn. Test `be/internal/giaoviec/viec_cua_toi_test.go` Claude viết trước, chưa chạy đỏ trên database. Lần chạy Codex đầu dừng vì hết hạn mức (tới 23:20), chưa có code. Việc kế tiếp: chạy lại phiếu, Claude duyệt diff và chạy `be-check`.
+
+2026-11-03, Claude (T-284): test `be/internal/giaoviec/viec_cua_toi_test.go` chỉ có ca không phiên,
+thiếu ca cookie khách mà Acceptance dòng 2 đòi; Claude bổ sung trước khi chạy lại phiếu.
 
 [↑ đầu file](#top)
 
