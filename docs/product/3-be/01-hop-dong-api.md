@@ -366,3 +366,8 @@ Ba mã verification_invalid (400), no_pending_email (409), verification_rate_lim
 Nhận việc: ràng buộc Gmail chờ và email trên mã là internal vì đã chuẩn hoá trước khi ghi; khoá chính,
 FK, băm, thời hạn do server cấp; dùng một lần đã khoá tài khoản và đọc lại mã trước khi sửa. Các ràng buộc
 ấy là internal; xung đột customer_account_email_key vẫn email_taken. Tên chặn đường lùi chỉ ở down, không thuộc bảng ánh xạ mà Gate 1g đọc từ up (cùng khuôn lát trước).
+
+CHAT-12 (2026-11-03, Claude, ADR-137): 0.55.0 → 0.56.0. Bảng chỉ thêm `station_message` (bước 42) đưa mười tên
+ràng buộc vào `x-constraint-errors`: khoá chính `internal`, chín tên còn lại `unreviewed` vì chưa cửa nào ghi tin.
+CHAT-13 dựng bốn cửa của ADR-137 điểm 5 thì xét từng tên — người nhận lạ thành `message_recipient_invalid`, mã gửi
+trùng là đường gửi lại an toàn của điểm 6. Không đường gọi hay mã mới.

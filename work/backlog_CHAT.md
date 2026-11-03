@@ -470,6 +470,17 @@ migration sau duyệt.
 `db/reconcile/`, nên phiếu giao thêm `db/reconcile/i038.sql` bốn câu và file lỗi. Migration `20261103120000_hop_tin`, file lát
 `docs/product/2-db/26-luoc-do-hop-tin.md`. Phiếu ở `../lean_wt/chat-review/CHAT-12-phieu.md`, chạy sau CHAT-04 bằng cùng script chờ.
 
+2026-11-04, CHAT-12 xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-12`, nhánh `codex/CHAT-12`, nền `63ebec1`, model `gpt-6-astra`);
+**Claude** viết test `I-038` trước (mã băm không đổi `627239d1…`), duyệt, và tự làm phần Codex dừng đúng chỗ vì ngoài scope: mười tên
+ràng buộc mới vào `x-constraint-errors` — khoá chính `internal`, chín tên `unreviewed` chờ cửa của `CHAT-13` — hợp đồng 0.55.0 → 0.56.0,
+đoạn lịch sử ở `docs/product/3-be/01-hop-dong-api.md`; dòng `26-luoc-do-hop-tin.md` ở `CLAUDE.md` §2. File: migration
+`20261103120000_hop_tin` (up/down), `db/tests/i038_station_message.sql`, `db/reconcile/i038.sql` + `proof/i038_1…4.sql`,
+`docs/product/2-db/26-luoc-do-hop-tin.md` · `07-thu-tu-migration.md` (bước 42) · `09-doi-chieu-bat-bien.md`, khối CHAT-12 ở
+`scripts/db-check.sh`, `models.go` sinh lại ở 24 miền. Bằng chứng (Claude chạy `./scripts/gate.sh` có Docker trong worktree, rồi ở cây chính
+sau `git apply`): `PASS db/tests/i038_station_message.sql` đủ 17 ca, `PASS CHAT-12 test I-038 xanh; đường lùi từ chối tin đã gửi`,
+`PASS lùi 20261103120000_hop_tin — lược đồ giống hệt lúc trước bước ấy`, `PASS kêu i038_1…4`, `be-check` PASS, Gate 1g PASS hợp đồng 0.56.0.
+Ghi chú: `db-check.sh` dòng 598 in `printf: write error: Broken pipe` (`printf | grep -m1` có sẵn, không đổi kết quả). Chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---

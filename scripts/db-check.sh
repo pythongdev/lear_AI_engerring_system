@@ -152,6 +152,23 @@ if [ "$n_mig" -gt 0 ]; then
         printf '%s\n' "$out" | tail -12
       fi
     fi
+    if [ "$v" = 20261103120000 ]; then
+      # CHAT-12: test xanh rồi lùi có tin phải bị chặn; giao dịch không giữ dữ liệu.
+      if out="$({ echo 'BEGIN; SET search_path = shop;';
+                  cat db/migrations/20261103120000_hop_tin.up.sql;
+                  cat db/tests/i038_station_message.sql;
+                  echo '\echo CHAT12_TEST_GREEN';
+                  cat db/migrations/20261103120000_hop_tin.down.sql;
+                  echo 'ROLLBACK;'; } | psql_f -f - 2>&1)"; then
+        fail "CHAT-12 đường lùi — không từ chối khi đã có tin"
+      elif printf '%s\n' "$out" | grep -q '^CHAT12_TEST_GREEN$' &&
+           printf '%s\n' "$out" | grep -q 'đường lùi từ chối: station_message đang giữ tin đã gửi'; then
+        echo "PASS CHAT-12 test I-038 xanh; đường lùi từ chối tin đã gửi"
+      else
+        fail "CHAT-12 test I-038 hoặc khoá chặn — lỗi khác điều cần chứng minh:"
+        printf '%s\n' "$out" | tail -12
+      fi
+    fi
     if [ "$v" = 20261029120000 ]; then
       for kind in pending code; do
         if out="$({ echo 'BEGIN; SET search_path = shop;';

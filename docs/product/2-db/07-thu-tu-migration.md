@@ -67,6 +67,7 @@ ngược từ dưới lên, **từng bước một**.
 | 39 | `20261028090000_vet_cua_khach` | `T-264` | `record_revision.person_id` được rỗng chỉ cho bốn bảng `customer_*` (ADR-131 sửa đổi 2026-10-28). Lùi từ chối nếu đã có vết người sửa rỗng | 38 |
 | 40 | `20261028120000_khach_google` | `T-267` | `customer_google_identity`, liên kết Google chỉ thêm; lùi khoá bảng và từ chối khi đã có dòng (`customer_google_identity_rollback_check`) | 39 |
 | 41 | `20261029120000_xac_nhan_gmail` | `T-270` | `customer_email_verification` và Gmail chờ; lùi khoá hai bảng, từ chối khi có mã hoặc pending_email; trả quyền và hai CHECK về bước trước | 40 |
+| 42 | `20261103120000_hop_tin` | `CHAT-12` | `station_message` chỉ thêm, trigger vết; lùi khoá bảng, từ chối khi còn tin, rỗng mới gỡ trigger và bảng cùng sequence/quyền (ADR-137, I-038) | 41 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`

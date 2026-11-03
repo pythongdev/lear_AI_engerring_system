@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.55.0
+  version: 0.56.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -8637,6 +8637,16 @@ x-constraint-errors:
   station_job_transfer_pkey: internal
   station_job_transfer_production_batch_item_fkey: internal
   station_job_transfer_to_station_job_fkey: internal
+  station_message_body_check: unreviewed
+  station_message_different_people_check: unreviewed
+  station_message_dining_table_fkey: unreviewed
+  station_message_pkey: internal
+  station_message_recipient_person_fkey: unreviewed
+  station_message_reply_to_message_fkey: unreviewed
+  station_message_sender_person_fkey: unreviewed
+  station_message_submission_code_check: unreviewed
+  station_message_submission_code_key: unreviewed
+  station_message_work_code_check: unreviewed
   supply_day_entry_kind_code_check: internal
   supply_day_entry_measure_nonnegative_finite_check: internal
   supply_day_entry_one_kind_per_item_day_key: supply_day_entry_already_recorded

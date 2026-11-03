@@ -86,6 +86,7 @@ Số `n` của `I-0xx/n` là **thứ tự của tập** trong ô *Phép đối c
 | `I-032` | tên danh mục → `I-032/1` · món thuộc danh mục → `I-032/2` · ít nhất một món → `I-032/3` · món và số phần → `I-032/4` · giá riêng → `I-032/5` · ngoài buổi → `I-032/6` · ẩn → `I-032/7` · chủ quán (kể cả người xếp món vào danh mục, thêm 2026-10-14 ở P2A-15) → `I-032/8`; sửa có vết dùng `I-018`, đơn cũ giữ giá dùng `I-009` |
 | `I-033` | hình trạng thái → `I-033/1` · phiên còn hiệu lực khi không hoạt động → `I-033/2` · trực quầy sai người → `I-033/3` · băm hiện hành → `I-033/4` · vai owner thiếu cờ → `I-033/5` · hoạt động thiếu mật khẩu → `I-033/6` · định danh → `I-033/7` · dấu bản mật khẩu → `I-033/8` · hình phiên → `I-033/9` · hình mã đặt lại → `I-033/10` · sửa phiên kết thúc → `I-033/11` · sửa mã đã dùng → `I-033/12` · người duyệt, khoá hay sửa tài khoản là chủ quán → `I-033/13` (thêm 2026-10-14 ở P2A-15) · mốc phiên quầy ↔ khoảng trực → `I-033/14` · mã đặt lại đã dùng ↔ bản mật khẩu mới và phiên cũ → `I-033/15` (thêm 2026-10-14 ở T-190, hai tập P2A-15 để cho lát backend); vết chung `I-018/1` |
 | `I-034` | mức theo món của combo → `I-034/1` · dòng combo đủ hình → `I-034/2` · dòng con trỏ đúng → `I-034/3` · đủ suất → `I-034/4` · tiền suất bằng mức tại mốc và mức đã chụp → `I-034/5` · mức khoá trong giờ bán → `I-034/6` · giá combo tại mốc → `I-034/7`; tiền đơn là Σ dòng nên *giá combo cộng mức* là `I-034/5` cộng `I-034/7` |
+| `I-038` | khoá ngoại vượt ranh giới → `I-038/1` · người gửi trùng người nhận → `I-038/2` · quyền sửa/xoá tin → `I-038/3` · nội dung/nhãn sai miền → `I-038/4`; sửa tay có vết dùng `I-018/1` |
 
 Vế mà pha 1 đã nói thẳng là **không có tập** (`I-022` vế ngược, `I-023` vế *không đoán được*, hai vế
 của `I-024`) không có dòng nào ở đây: chúng là kịch bản của `quality/invariants.md`, không phải phép
@@ -100,6 +101,13 @@ trực quầy hoặc tài khoản người làm; `I-035/4` tìm đơn ngoài del
 tài khoản khách. Mỗi câu có file lỗi cùng số ở `db/reconcile/proof/`.
 `I-033/7` chỉ xét username/email khi có giá trị theo ADR-131; thiếu cả hai liên hệ
 thuộc `I-035/1`.
+
+I-038 (CHAT-12, 2026-11-04): bốn câu trong db/reconcile/i038.sql đọc ranh giới
+khoá ngoại, người gửi/nhận, quyền shop_app và miền nội dung/nhãn việc.
+Mỗi câu có file lỗi cùng số ở db/reconcile/proof/; tập câu kêu phải đúng tập khai.
+Vế *tin riêng chỉ người gửi, người nhận hoặc quầy đọc được* là tầng 3, thuộc
+cửa đọc của CHAT-13. Test db/tests/i038_station_message.sql kiểm việc gửi tin
+không đổi nội dung bảng khác; phép đọc dữ liệu tĩnh không thay thế kịch bản ấy.
 
 ---
 

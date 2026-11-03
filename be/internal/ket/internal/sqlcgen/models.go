@@ -625,6 +625,18 @@ type StationJobTransfer struct {
 	PersonID              int64
 }
 
+type StationMessage struct {
+	ID                int64
+	SenderPersonID    int64
+	RecipientPersonID pgtype.Int8
+	WorkCode          string
+	Body              string
+	DiningTableID     pgtype.Int8
+	ReplyToMessageID  pgtype.Int8
+	SubmissionCode    string
+	CreatedAt         pgtype.Timestamptz
+}
+
 type SupplyDayEntry struct {
 	ID             int64
 	SupplyItemID   int64
