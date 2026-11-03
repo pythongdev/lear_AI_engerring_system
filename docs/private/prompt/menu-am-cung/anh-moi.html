@@ -20,14 +20,14 @@ dialog{position:fixed;inset:auto 0 0;margin:0 auto;width:min(100%,520px);max-wid
 @keyframes slide-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @media(max-width:479px){.brand{padding-left:8%;padding-right:5%}.hero{--plate-width:77%;margin-top:13cqw;height:46cqw}.purchase{margin-inline:4%;gap:7px}.quantity output{min-width:20px}.details{padding:0 8px;font-size:13px;gap:4px}.buy{padding:0 10px;font-size:17px}.dish{flex-basis:94px}.strip{padding-left:5px;padding-right:8px}.dish h3{font-size:11px}.dish-price{font-size:15px}.shelf{margin-top:23px}.brand h1{font-size:clamp(19px,5.1cqw,23px)}}
 @media(max-width:349px){.dish{flex-basis:90px}.brand{padding-left:6%;padding-right:4%}.brand h1{font-size:19px}.hero{margin-top:14cqw}.purchase{gap:5px;margin-inline:9px}.details{padding:0 5px;font-size:12px}.quantity button{width:44px}.buy{padding:0 8px}.summary h2{font-size:27px}}
-.scene{position:absolute;z-index:-1;top:0;left:0;width:100%;height:100cqw;pointer-events:none}.scene img{display:block;width:100%;height:100%;object-fit:cover}.scene:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0e060266 0,#0e060200 22%,#0e060200 58%,#170b05e6 84%,#170b05 100%)}.menu.has-photo{background:#170b05}.menu.has-photo:before{display:none}.dish-select img{display:block;width:71px;height:71px;margin:0 auto;border-radius:50%;object-fit:cover}.dish-select img[alt^='Bát ']{width:100%;border-radius:0;object-fit:contain}.dish-select[aria-pressed=true]:before{inset:0 auto 0 50%;width:77px;height:77px;margin-left:-38.5px;transform:none}
+.scene{position:absolute;z-index:-1;top:0;left:0;width:100%;height:100cqw;overflow:hidden;pointer-events:none}.scene img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;will-change:opacity,transform}.scene:after{z-index:1}.scene:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0e060266 0,#0e060200 22%,#0e060200 58%,#170b05e6 84%,#170b05 100%)}.menu.has-photo{background:#170b05}.menu.has-photo:before{display:none}.dish-select img{display:block;width:71px;height:71px;margin:0 auto;border-radius:50%;object-fit:cover}.dish-select img[alt^='Bát ']{width:100%;border-radius:0;object-fit:contain}.dish-select[aria-pressed=true]:before{inset:0 auto 0 50%;width:77px;height:77px;margin-left:-38.5px;transform:none}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
 <main class="menu">
   <header class="brand"><div><h1>Bánh cuốn Bà Thanh</h1><p>Cao Bằng</p></div><button class="cart-open" id="cart-open" aria-label="Mở giỏ, 0 suất"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 5h4l4 17h15l4-12H9"/><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="25" cy="27" r="1.7" fill="currentColor"/></svg><span class="badge" id="cart-badge" hidden></span></button></header>
-  <div class="scene" id="scene" hidden><img id="scene-image" alt="" draggable="false"></div>
+  <div class="scene" id="scene"></div>
   <section class="hero" id="hero" aria-label="Món đang xem, vuốt ngang để đổi món"><img class="hero-image" id="hero-image" alt="Đĩa Combo Đầy đủ" draggable="false"><button class="arrow prev" id="prev" aria-label="Món trước">‹</button><button class="arrow next" id="next" aria-label="Món tiếp theo">›</button></section>
   <section class="summary" aria-label="Thông tin món"><h2 id="hero-name"></h2><p class="price hero-price" id="hero-price"></p><p class="ingredients" id="hero-ingredients"></p></section>
   <div class="purchase"><div class="quantity" aria-label="Số suất"><button id="quantity-minus" aria-label="Giảm số suất" disabled>−</button><output id="quantity" aria-label="Số suất đang chọn">1</output><button id="quantity-plus" aria-label="Tăng số suất">+</button></div><button class="buy" id="buy">Mua</button><button class="details" id="details"><svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v6" stroke-linecap="round"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/></svg> Chi tiết</button></div>
@@ -72,15 +72,38 @@ function keepVisible(){
  if(left<strip.scrollLeft+5)strip.scrollTo({left:Math.max(0,left-5),behavior:reducedMotion()?'instant':'smooth'});
  else if(right>strip.scrollLeft+strip.clientWidth-6)strip.scrollTo({left:right-strip.clientWidth+6,behavior:reducedMotion()?'instant':'smooth'});
 }
+// The bare table photo shows behind the soup bowl, which has no photo of its own.
+const tablePhoto=getComputedStyle(document.querySelector('.menu')).backgroundImage.slice(5,-2);
+const easeOut='cubic-bezier(.2,.7,.2,1)';
+let sceneToken=0;
+// A new photo fades in over the old one and moves in from the swipe direction; the old one leaves when it is covered.
+function showScene(item,dir){
+ const token=++sceneToken,image=new Image();
+ image.alt=item.photo?'Ảnh '+item.name:'';image.draggable=false;image.src=item.photo||tablePhoto;if(!item.photo)image.style.objectPosition='top';
+ image.decode().catch(()=>{}).then(()=>{
+  if(token!==sceneToken)return;
+  const scene=$('scene'),old=[...scene.querySelectorAll('img')];
+  scene.append(image);
+  if(reducedMotion()){old.forEach(node=>node.remove());return;}
+  image.animate([{opacity:0,transform:'translateX('+dir*6+'%) scale(1.08)'},{opacity:1,transform:'none'}],{duration:560,easing:easeOut}).finished.finally(()=>old.forEach(node=>node.remove()));
+ });
+}
+function rise(node,delay,from='translateY(10px)'){node.animate([{opacity:0,transform:from},{opacity:1,transform:'none'}],{duration:360,delay,easing:easeOut,fill:'backwards'});}
+function playAppear(item){
+ if(reducedMotion())return;
+ rise($('hero-name'),80);rise($('hero-price'),140);rise($('hero-ingredients'),200);
+ if(!item.photo)rise($('hero-image'),120,'translateY(12px) scale(.86)');
+ const picked=document.querySelector('.dish-select[aria-pressed=true] img');if(picked)rise(picked,0,'scale(.88)');
+}
 function select(index){
  if(index<0||index>=menu.length)return;
- selected=index;setQuantity(1);
- const item=menu[index];$('scene').hidden=!item.photo;$('hero-image').hidden=Boolean(item.photo);document.querySelector('.menu').classList.toggle('has-photo',Boolean(item.photo));if(item.photo){$('scene-image').src=item.photo;$('scene-image').alt='Ảnh '+item.name;}$('hero-image').classList.toggle('is-soup',Boolean(item.soup));$('hero-image').src=item.large||item.image;$('hero-image').alt='Đĩa '+item.name;if(item.soup)$('hero-image').alt='Bát canh bánh cuốn';
+ const dir=Math.sign(index-selected);selected=index;setQuantity(1);
+ const item=menu[index];$('hero-image').hidden=Boolean(item.photo);document.querySelector('.menu').classList.add('has-photo');showScene(item,dir);$('hero-image').classList.toggle('is-soup',Boolean(item.soup));$('hero-image').src=item.large||item.image;$('hero-image').alt='Đĩa '+item.name;if(item.soup)$('hero-image').alt='Bát canh bánh cuốn';
  $('hero-name').textContent=item.name;$('hero-ingredients').textContent=item.ingredients;
  document.querySelectorAll('.dish-select').forEach((button,i)=>button.setAttribute('aria-pressed',String(i===index)));
  for(const id of ['prev','hint-prev'])$(id).disabled=index===0;
  for(const id of ['next','hint-next'])$(id).disabled=index===menu.length-1;
- renderPrices();keepVisible();
+ renderPrices();keepVisible();playAppear(item);
 }
 function announce(message){clearTimeout(toastTimer);$('live').textContent=message;$('live').classList.add('visible');toastTimer=setTimeout(()=>$('live').classList.remove('visible'),2400);}
 function updateBadges(){
